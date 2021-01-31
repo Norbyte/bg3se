@@ -22,8 +22,7 @@ DWriteWrapper::DWriteWrapper()
 
 	CreateFactory = (DWriteCreateFactoryProc)GetProcAddress(dllHandle, "DWriteCreateFactory");
 
-	if (CreateFactory == NULL)
-	{
+	if (CreateFactory == NULL) {
 		Fail("Could not locate DWriteCreateFactory in DWrite.dll");
 	}
 

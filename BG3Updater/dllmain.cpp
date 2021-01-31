@@ -51,7 +51,7 @@ std::string trim(std::string const & s)
 #pragma pack(push, 1)
 struct PackageSignature
 {
-	static constexpr uint32_t MAGIC_V1 = 'NSE1';
+	static constexpr uint32_t MAGIC_V1 = 'BGS1';
 
 	uint32_t Magic;
 	uint8_t EccSignature[64];

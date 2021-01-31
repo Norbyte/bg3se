@@ -22,8 +22,9 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{64C761E8-2D71-4BD0-A3E3-85F9246AEAA3}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>OsiLoader</RootNamespace>
+    <RootNamespace>BG3Updater</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>BG3Updater</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
