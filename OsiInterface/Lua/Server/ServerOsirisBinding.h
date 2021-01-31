@@ -1,0 +1,270 @@
+#pragma once
+
+#include <Lua/LuaBinding.h>
+#include <CustomFunctions.h>
+#include <OsirisHelpers.h>
+
+namespace dse::esv
+{
+	class ExtensionState;
+
+	struct OsirisHookSignature
+	{
+		enum HookType
+		{
+			BeforeTrigger,
+			AfterTrigger,
+			BeforeDeleteTrigger,
+			AfterDeleteTrigger
+		};
+
+		STDString name;
+		uint32_t arity;
+		HookType type;
+
+		inline bool operator == (OsirisHookSignature const& o) const
+		{
+			return name == o.name
+				&& arity == o.arity
+				&& type == o.type;
+		}
+	};
+}
+
+namespace std
+{
+	template<> struct hash<dse::esv::OsirisHookSignature>
+	{
+		typedef dse::esv::OsirisHookSignature argument_type;
+		typedef std::size_t result_type;
+
+		result_type operator()(argument_type const& sig) const noexcept
+		{
+			return std::hash<dse::STDString>{}(sig.name) ^ std::hash<uint32_t>{}(sig.arity | ((uint32_t)sig.type << 6));
+		}
+	};
+}
+
+namespace dse::esv::lua
+{
+	using namespace dse::lua;
+
+	void LuaToOsi(lua_State * L, int i, TypedValue & tv, ValueType osiType, bool allowNil = false);
+	TypedValue * LuaToOsi(lua_State * L, int i, ValueType osiType, bool allowNil = false);
+	void LuaToOsi(lua_State * L, int i, OsiArgumentValue & arg, ValueType osiType, bool allowNil = false);
+	void OsiToLua(lua_State * L, OsiArgumentValue const & arg);
+	void OsiToLua(lua_State * L, TypedValue const & tv);
+	Function const* LookupOsiFunction(STDString const& name, uint32_t arity);
+
+	class OsiFunction
+	{
+	public:
+		inline bool IsBound() const
+		{
+			return function_ != nullptr;
+		}
+
+		inline bool IsDB() const
+		{
+			return IsBound() && function_->Type == FunctionType::Database;
+		}
+
+		bool Bind(Function const * func, class ServerState & state);
+		void Unbind();
+
+		int LuaCall(lua_State * L);
+		int LuaGet(lua_State * L);
+		int LuaDelete(lua_State * L);
+
+	private:
+		Function const * function_{ nullptr };
+		AdapterRef adapter_;
+		ServerState * state_;
+
+		void OsiCall(lua_State * L);
+		void OsiInsert(lua_State * L, bool deleteTuple);
+		int OsiQuery(lua_State * L);
+		int OsiUserQuery(lua_State * L);
+
+		bool MatchTuple(lua_State * L, int firstIndex, TupleVec const & tuple);
+		void ConstructTuple(lua_State * L, TupleVec const & tuple);
+	};
+
+	class OsiFunctionNameProxy : public Userdata<OsiFunctionNameProxy>, public Callable
+	{
+	public:
+		static char const * const MetatableName;
+		// Maximum number of OUT params that a query can return.
+		// (This setting determines how many function arities we'll check during name lookup)
+		static constexpr uint32_t MaxQueryOutParams = 6;
+
+		static void PopulateMetatable(lua_State * L);
+
+		OsiFunctionNameProxy(STDString const & name, ServerState & state);
+
+		void UnbindAll();
+		int LuaCall(lua_State * L);
+
+	private:
+		STDString name_;
+		std::vector<OsiFunction> functions_;
+		ServerState & state_;
+		uint32_t generationId_;
+
+		static int LuaGet(lua_State * L);
+		static int LuaDelete(lua_State * L);
+		bool BeforeCall(lua_State * L);
+		OsiFunction * TryGetFunction(uint32_t arity);
+		OsiFunction * CreateFunctionMapping(uint32_t arity, Function const * func);
+	};
+
+
+	class CustomLuaCall : public CustomCallBase
+	{
+	public:
+		inline CustomLuaCall(STDString const & name, std::vector<CustomFunctionParam> params,
+			RegistryEntry handler)
+			: CustomCallBase(name, std::move(params)), handler_(std::move(handler))
+		{}
+
+		virtual bool Call(OsiArgumentDesc const & params) override;
+
+	private:
+		RegistryEntry handler_;
+	};
+
+
+	class CustomLuaQuery : public CustomQueryBase
+	{
+	public:
+		inline CustomLuaQuery(STDString const & name, std::vector<CustomFunctionParam> params,
+			RegistryEntry handler)
+			: CustomQueryBase(name, std::move(params)), handler_(std::move(handler))
+		{}
+
+		virtual bool Query(OsiArgumentDesc & params) override;
+
+	private:
+		RegistryEntry handler_;
+	};
+
+
+	inline void OsiReleaseArgument(OsiArgumentDesc & arg)
+	{
+		arg.NextParam = nullptr;
+	}
+
+	inline void OsiReleaseArgument(TypedValue & arg) {}
+	inline void OsiReleaseArgument(ListNode<TypedValue *> & arg) {}
+	inline void OsiReleaseArgument(ListNode<TupleLL::Item> & arg) {}
+
+	template <class T>
+	class OsiArgumentPool
+	{
+	public:
+		OsiArgumentPool()
+		{
+			argumentPool_.resize(1024);
+			usedArguments_ = 0;
+		}
+
+		T * AllocateArguments(uint32_t num, uint32_t & tail)
+		{
+			if (usedArguments_ + num > argumentPool_.size()) {
+				throw std::runtime_error("Ran out of argument descriptors");
+			}
+
+			tail = usedArguments_;
+			auto ptr = argumentPool_.data() + usedArguments_;
+			for (uint32_t i = 0; i < num; i++) {
+				new (ptr + i) T();
+			}
+
+			usedArguments_ += num;
+			return ptr;
+		}
+
+		void ReleaseArguments(uint32_t tail, uint32_t num)
+		{
+			if (tail + num != usedArguments_) {
+				throw std::runtime_error("Attempted to release arguments out of order");
+			}
+
+			for (uint32_t i = 0; i < num; i++) {
+				OsiReleaseArgument(argumentPool_[tail + i]);
+			}
+
+			usedArguments_ -= num;
+		}
+
+	private:
+		std::vector<T> argumentPool_;
+		uint32_t usedArguments_;
+	};
+
+	template <class T>
+	class OsiArgumentListPin
+	{
+	public:
+		inline OsiArgumentListPin(OsiArgumentPool<T> & pool, uint32_t numArgs)
+			: pool_(pool), numArgs_(numArgs)
+		{
+			args_ = pool.AllocateArguments(numArgs_, tail_);
+		}
+
+		inline ~OsiArgumentListPin()
+		{
+			pool_.ReleaseArguments(tail_, numArgs_);
+		}
+
+		inline T * Args() const
+		{
+			return args_;
+		}
+
+	private:
+		OsiArgumentPool<T> & pool_;
+		uint32_t numArgs_;
+		uint32_t tail_;
+		T * args_;
+	};
+
+
+	class OsirisCallbackManager : Noncopyable<OsirisCallbackManager>
+	{
+	public:
+		OsirisCallbackManager(ExtensionState& state);
+		~OsirisCallbackManager();
+
+		void Subscribe(STDString const& name, uint32_t arity, OsirisHookSignature::HookType type, RegistryEntry handler);
+		void StoryLoaded();
+		void StorySetMerging(bool isMerging);
+
+	private:
+		static constexpr uint64_t AfterTriggerNodeRef = 0x8000000000000000ull;
+		static constexpr uint64_t DeleteTriggerNodeRef = 0x4000000000000000ull;
+
+		ExtensionState& state_;
+		std::vector<RegistryEntry> subscribers_;
+		std::unordered_multimap<OsirisHookSignature, std::size_t> nameSubscriberRefs_;
+		std::unordered_multimap<uint64_t, std::size_t> nodeSubscriberRefs_;
+		bool storyLoaded_{ false };
+		bool osirisHooked_{ false };
+		// Are we currently merging Osiris files (story)?
+		// If so, then we won't trigger events for calls/inserts that might occur during the merge,
+		// as those are not real inserts but byproducts of the merge process.
+		bool merging_{ false };
+
+		void RegisterNodeHandler(OsirisHookSignature const& sig, std::size_t handlerId);
+		void HookOsiris();
+
+		void InsertPreHook(Node* node, TuplePtrLL* tuple, bool deleted);
+		void InsertPostHook(Node* node, TuplePtrLL* tuple, bool deleted);
+		void CallQueryPreHook(Node* node, OsiArgumentDesc* args);
+		void CallQueryPostHook(Node* node, OsiArgumentDesc* args, bool succeeded);
+		void RunHandlers(uint64_t nodeRef, TuplePtrLL* tuple) const;
+		void RunHandler(lua_State* L, RegistryEntry const& func, TuplePtrLL* tuple) const;
+		void RunHandlers(uint64_t nodeRef, OsiArgumentDesc* tuple) const;
+		void RunHandler(lua_State* L, RegistryEntry const& func, OsiArgumentDesc* tuple) const;
+	};
+}

@@ -1,0 +1,307 @@
+syntax = "proto3";
+
+package dse.osidbg;
+
+option cc_enable_arenas = true;
+option optimize_for = LITE_RUNTIME;
+
+enum StatusCode {
+  SUCCESS = 0;
+  UNSUPPORTED_BREAKPOINT_TYPE = 1;
+  INVALID_NODE_ID = 2;
+  NOT_IN_PAUSE = 3;
+  NO_DEBUGGEE = 4;
+  INVALID_CONTINUE_ACTION = 5;
+  IN_PAUSE = 6;
+  INVALID_GOAL_ID = 7;
+  UNSUPPORTED_CONTINUE_FLAGS = 8;
+  INVALID_DATABASE_ID = 9;
+  NOT_CALLABLE = 10;
+  INVALID_PARAMETERS = 11;
+  NO_ADAPTER = 12;
+  INVALID_EVAL_TYPE = 13;
+  EVAL_ENGINE_NOT_READY = 14;
+  INVALID_PARAM_TUPLE_ARITY = 15;
+  INVALID_PARAM_TYPE = 16;
+  MISSING_REQUIRED_PARAM = 17;
+}
+
+message MsgTypedValue {
+  uint32 type_id = 1;
+  oneof value {
+    int64 intval = 2;
+    float floatval = 3;
+    string stringval = 4;
+  }
+}
+
+message MsgTuple {
+  repeated MsgTypedValue column = 1;
+}
+
+message MsgFrame {
+  enum FrameType {
+    IS_VALID = 0;
+    PUSHDOWN = 1;
+    INSERT = 2;
+    DELETE_ = 3;
+    PUSHDOWN_DELETE = 4;
+    RULE_ACTION = 5;
+    GOAL_INIT_ACTION = 6;
+    GOAL_EXIT_ACTION = 7;
+  };
+  
+  uint32 node_id = 1;
+  FrameType type = 2;
+  MsgTuple tuple = 3;
+  uint32 goal_id = 4;
+  uint32 action_index = 5;
+}
+
+message DbgIdentifyRequest {
+  uint32 protocol_version = 1;
+}
+
+message BkVersionInfoResponse {
+  uint32 protocol_version = 1;
+  bool story_loaded = 2;
+  bool story_initialized = 4;
+}
+
+message DbgSetGlobalBreakpoints {
+  enum GlobalBreakpointType {
+    NONE = 0;
+    STORY_LOADED = 1;
+    VALID = 2;
+    PUSHDOWN = 4;
+    INSERT = 8;
+    RULE_ACTION = 16;
+    INIT_CALL = 32;
+    EXIT_CALL = 64;
+    GAME_INIT = 128;
+    GAME_EXIT = 256;
+    DELETE_ = 512;
+	FAILED_QUERY = 1024;
+  };
+
+  uint32 breakpoint_mask = 1;
+}
+
+message MsgBreakpoint {
+  enum BreakpointType {
+    NONE = 0;
+    VALID = 1;
+    PUSHDOWN = 2;
+    INSERT = 4;
+    RULE_ACTION = 8;
+    INIT_CALL = 16;
+    EXIT_CALL = 32;
+    DELETE_ = 64;
+	FAILED_QUERY = 128;
+  };
+
+  uint32 node_id = 1;
+  uint32 breakpoint_mask = 2;
+  uint32 goal_id = 3;
+  bool is_init_action = 4;
+  int32 action_index = 5;
+}
+
+message DbgSetBreakpoints {
+  repeated MsgBreakpoint breakpoint = 1;
+}
+
+message BkBreakpointTriggered {
+  enum QueryStatus {
+    NOT_A_QUERY = 0;
+    SUCCEEDED = 1;
+    FAILED = 2;
+  };
+
+  repeated MsgFrame call_stack = 1;
+  QueryStatus query_succeeded = 2;
+  MsgTuple query_results = 3;
+  uint32 query_node_id = 4;
+}
+
+message BkGlobalBreakpointTriggered {
+  enum Reason {
+    STORY_LOADED = 0;
+    GAME_INIT = 1;
+    GAME_EXIT = 2;
+  };
+  
+  Reason reason = 1;
+}
+
+message DbgContinue {
+  enum Action {
+    CONTINUE = 0;
+    STEP_OVER = 1;
+    STEP_INTO = 2;
+    STEP_OUT = 3;
+    PAUSE = 4;
+  };
+
+  enum Flags {
+    NONE = 0;
+    // Don't break on Pushdown events if the node is a rule node
+    SKIP_RULE_PUSHDOWN = 1;
+    // Don't break inside database propagation chains
+    SKIP_DB_PROPAGATION = 2;
+  };
+
+  Action action = 1;
+  // Same as MsgBreakpoint::BreakpointType
+  uint32 breakpoint_mask = 2;
+  uint32 flags = 3;
+}
+
+message DbgGetDatabaseContents {
+  uint32 database_id = 1;
+}
+
+// Requests the debugger to send all story goals/dbs/nodes to the frontend.
+// This is used to validate that the debug info loaded on the frontend
+// matches the story being executed on the backend.
+message DbgSyncStory {
+}
+
+// Requests the debugger to evaluate an expression
+message DbgEvaluate {
+  enum EvalType {
+    // calls IsValid; returns a result row and a true/false match flag
+    IS_VALID = 0;
+    // calls Pushdown; returns an arbitrary number of result rows
+    PUSHDOWN = 1;
+    // calls Insert; no result
+    INSERT = 2;
+    // calls Delete; no result
+    DELETE_ = 3;
+  }
+
+  EvalType type = 1;
+  uint32 node_id = 2;
+  MsgTuple params = 3;
+}
+
+message BkResult {
+  StatusCode status_code = 1;
+}
+
+message BkStoryLoaded {
+}
+
+// Notifies the frontend that the story was unloaded
+message BkDebugSessionEnded {
+}
+
+message MsgActionInfo {
+  string function = 1;
+  uint32 arity = 2;
+  int32 goal_id = 3;
+}
+
+message MsgGoalInfo {
+  uint32 id = 1;
+  string name = 2;
+  repeated MsgActionInfo initActions = 3;
+  repeated MsgActionInfo exitActions = 4;
+}
+
+message MsgDatabaseInfo {
+  uint32 id = 1;
+  repeated uint32 argumentType = 2;
+}
+
+message MsgNodeInfo {
+  uint32 id = 1;
+  uint32 type = 2;
+  string name = 3;
+}
+
+message MsgRuleInfo {
+  uint32 node_id = 1;
+  repeated MsgActionInfo actions = 2;
+}
+
+// Story synchronization data
+// Each message may contain an arbitrary amount of goals/dbs/nodes.
+// Elements in subsequent messages must be appended to the nodes sent previously.
+message BkSyncStoryData {
+  repeated MsgGoalInfo goal = 1;
+  repeated MsgDatabaseInfo database = 2;
+  repeated MsgNodeInfo node = 3;
+  repeated MsgRuleInfo rule = 4;
+}
+
+// Indicates that all story nodes were sent to the frontend.
+message BkSyncStoryFinished {
+}
+
+// Debug output text (DebugBreak) from the story script
+message BkDebugOutput {
+  string message = 1;
+}
+
+// Indicates the start of a database dump
+message BkBeginDatabaseContents {
+  uint32 database_id = 1;
+}
+
+// Adds row(s) to a database that is currently being dumped
+message BkDatabaseRow {
+  uint32 database_id = 1;
+  repeated MsgTuple row = 2;
+}
+
+// Indicates the end of a database dump
+message BkEndDatabaseContents {
+  uint32 database_id = 1;
+}
+
+// Adds row(s) to the result set of an evaluation
+message BkEvaluateRow {
+  repeated MsgTuple row = 1;
+}
+
+// Indicates the end of an evaluation
+message BkEvaluateFinished {
+  StatusCode result_code = 1;
+  bool query_succeeded = 2;
+}
+
+message DebuggerToBackend {
+  oneof msg {
+    DbgIdentifyRequest identify = 1;
+    DbgSetGlobalBreakpoints setGlobalBreakpoints = 2;
+    DbgSetBreakpoints setBreakpoints = 3;
+    DbgContinue continue = 4;
+    DbgGetDatabaseContents getDatabaseContents = 5;
+    DbgSyncStory syncStory = 8;
+	DbgEvaluate evaluate = 9;
+  }
+  uint32 seq_no = 6;
+  uint32 reply_seq_no = 7;
+}
+
+message BackendToDebugger {
+  oneof msg {
+    BkVersionInfoResponse versionInfo = 1;
+    BkBreakpointTriggered breakpointTriggered = 2;
+    BkResult results = 4;
+    BkStoryLoaded storyLoaded = 5;
+    BkDebugSessionEnded debugSessionEnded = 6;
+    BkGlobalBreakpointTriggered globalBreakpointTriggered = 7;
+    BkSyncStoryData syncStoryData = 10;
+    BkSyncStoryFinished syncStoryFinished = 11;
+	BkDebugOutput debugOutput = 12;
+	BkBeginDatabaseContents beginDatabaseContents = 13;
+	BkDatabaseRow databaseRow = 14;
+	BkEndDatabaseContents endDatabaseContents = 15;
+	BkEvaluateRow evaluateRow = 16;
+	BkEvaluateFinished evaluateFinished = 17;
+  }
+  uint32 seq_no = 8;
+  uint32 reply_seq_no = 9;
+}

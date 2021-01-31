@@ -1,0 +1,100 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30330.147
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OsiInterface", "OsiInterface\OsiInterface.vcxproj", "{4723A102-E4DE-4874-BED7-6DA4EC2D0C80}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EBEA8609-CD90-4009-A619-1B28DD2BE833} = {EBEA8609-CD90-4009-A619-1B28DD2BE833}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LuaLib", "LuaLib\LuaLib.vcxproj", "{EBEA8609-CD90-4009-A619-1B28DD2BE833}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OsiLoader", "OsiLoader\OsiLoader.vcxproj", "{64C761E8-2D71-4BD0-A3E3-85F9246AEAA3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{73CA7CC2-15C4-4883-8DD2-55A8F77EC8A1} = {73CA7CC2-15C4-4883-8DD2-55A8F77EC8A1}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CrashReporter", "CrashReporter\CrashReporter.vcxproj", "{208222DF-6C06-4D25-86B5-F29544C55CE4}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TinyCrypt", "TinyCrypt\TinyCrypt.vcxproj", "{73CA7CC2-15C4-4883-8DD2-55A8F77EC8A1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UpdateSigner", "UpdateSigner\UpdateSigner.vcxproj", "{4BE94306-AB22-4297-A1D1-D8C6B68A3C40}"
+	ProjectSection(ProjectDependencies) = postProject
+		{73CA7CC2-15C4-4883-8DD2-55A8F77EC8A1} = {73CA7CC2-15C4-4883-8DD2-55A8F77EC8A1}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LuaDebugger", "LuaDebugger\LuaDebugger.csproj", "{31E71543-CBCF-43BB-AF77-D210D548118E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Editor Debug|x64 = Editor Debug|x64
+		Release|x64 = Release|x64
+		ReleaseExtensionsOnly|x64 = ReleaseExtensionsOnly|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4723A102-E4DE-4874-BED7-6DA4EC2D0C80}.Debug|x64.ActiveCfg = Debug|x64
+		{4723A102-E4DE-4874-BED7-6DA4EC2D0C80}.Debug|x64.Build.0 = Debug|x64
+		{4723A102-E4DE-4874-BED7-6DA4EC2D0C80}.Editor Debug|x64.ActiveCfg = Editor Debug|x64
+		{4723A102-E4DE-4874-BED7-6DA4EC2D0C80}.Editor Debug|x64.Build.0 = Editor Debug|x64
+		{4723A102-E4DE-4874-BED7-6DA4EC2D0C80}.Release|x64.ActiveCfg = Release|x64
+		{4723A102-E4DE-4874-BED7-6DA4EC2D0C80}.Release|x64.Build.0 = Release|x64
+		{4723A102-E4DE-4874-BED7-6DA4EC2D0C80}.ReleaseExtensionsOnly|x64.ActiveCfg = ReleaseExtensionsOnly|x64
+		{4723A102-E4DE-4874-BED7-6DA4EC2D0C80}.ReleaseExtensionsOnly|x64.Build.0 = ReleaseExtensionsOnly|x64
+		{EBEA8609-CD90-4009-A619-1B28DD2BE833}.Debug|x64.ActiveCfg = Debug|x64
+		{EBEA8609-CD90-4009-A619-1B28DD2BE833}.Debug|x64.Build.0 = Debug|x64
+		{EBEA8609-CD90-4009-A619-1B28DD2BE833}.Editor Debug|x64.ActiveCfg = Debug|x64
+		{EBEA8609-CD90-4009-A619-1B28DD2BE833}.Editor Debug|x64.Build.0 = Debug|x64
+		{EBEA8609-CD90-4009-A619-1B28DD2BE833}.Release|x64.ActiveCfg = Release|x64
+		{EBEA8609-CD90-4009-A619-1B28DD2BE833}.Release|x64.Build.0 = Release|x64
+		{EBEA8609-CD90-4009-A619-1B28DD2BE833}.ReleaseExtensionsOnly|x64.ActiveCfg = Release|x64
+		{EBEA8609-CD90-4009-A619-1B28DD2BE833}.ReleaseExtensionsOnly|x64.Build.0 = Release|x64
+		{64C761E8-2D71-4BD0-A3E3-85F9246AEAA3}.Debug|x64.ActiveCfg = Debug|x64
+		{64C761E8-2D71-4BD0-A3E3-85F9246AEAA3}.Debug|x64.Build.0 = Debug|x64
+		{64C761E8-2D71-4BD0-A3E3-85F9246AEAA3}.Editor Debug|x64.ActiveCfg = Debug|x64
+		{64C761E8-2D71-4BD0-A3E3-85F9246AEAA3}.Editor Debug|x64.Build.0 = Debug|x64
+		{64C761E8-2D71-4BD0-A3E3-85F9246AEAA3}.Release|x64.ActiveCfg = Release|x64
+		{64C761E8-2D71-4BD0-A3E3-85F9246AEAA3}.Release|x64.Build.0 = Release|x64
+		{64C761E8-2D71-4BD0-A3E3-85F9246AEAA3}.ReleaseExtensionsOnly|x64.ActiveCfg = Release|x64
+		{64C761E8-2D71-4BD0-A3E3-85F9246AEAA3}.ReleaseExtensionsOnly|x64.Build.0 = Release|x64
+		{208222DF-6C06-4D25-86B5-F29544C55CE4}.Debug|x64.ActiveCfg = Debug|x64
+		{208222DF-6C06-4D25-86B5-F29544C55CE4}.Debug|x64.Build.0 = Debug|x64
+		{208222DF-6C06-4D25-86B5-F29544C55CE4}.Editor Debug|x64.ActiveCfg = Debug|x64
+		{208222DF-6C06-4D25-86B5-F29544C55CE4}.Editor Debug|x64.Build.0 = Debug|x64
+		{208222DF-6C06-4D25-86B5-F29544C55CE4}.Release|x64.ActiveCfg = Release|x64
+		{208222DF-6C06-4D25-86B5-F29544C55CE4}.Release|x64.Build.0 = Release|x64
+		{208222DF-6C06-4D25-86B5-F29544C55CE4}.ReleaseExtensionsOnly|x64.ActiveCfg = Release|x64
+		{208222DF-6C06-4D25-86B5-F29544C55CE4}.ReleaseExtensionsOnly|x64.Build.0 = Release|x64
+		{73CA7CC2-15C4-4883-8DD2-55A8F77EC8A1}.Debug|x64.ActiveCfg = Debug|x64
+		{73CA7CC2-15C4-4883-8DD2-55A8F77EC8A1}.Debug|x64.Build.0 = Debug|x64
+		{73CA7CC2-15C4-4883-8DD2-55A8F77EC8A1}.Editor Debug|x64.ActiveCfg = Debug|x64
+		{73CA7CC2-15C4-4883-8DD2-55A8F77EC8A1}.Editor Debug|x64.Build.0 = Debug|x64
+		{73CA7CC2-15C4-4883-8DD2-55A8F77EC8A1}.Release|x64.ActiveCfg = Release|x64
+		{73CA7CC2-15C4-4883-8DD2-55A8F77EC8A1}.Release|x64.Build.0 = Release|x64
+		{73CA7CC2-15C4-4883-8DD2-55A8F77EC8A1}.ReleaseExtensionsOnly|x64.ActiveCfg = Release|x64
+		{73CA7CC2-15C4-4883-8DD2-55A8F77EC8A1}.ReleaseExtensionsOnly|x64.Build.0 = Release|x64
+		{4BE94306-AB22-4297-A1D1-D8C6B68A3C40}.Debug|x64.ActiveCfg = Debug|x64
+		{4BE94306-AB22-4297-A1D1-D8C6B68A3C40}.Debug|x64.Build.0 = Debug|x64
+		{4BE94306-AB22-4297-A1D1-D8C6B68A3C40}.Editor Debug|x64.ActiveCfg = Debug|x64
+		{4BE94306-AB22-4297-A1D1-D8C6B68A3C40}.Editor Debug|x64.Build.0 = Debug|x64
+		{4BE94306-AB22-4297-A1D1-D8C6B68A3C40}.Release|x64.ActiveCfg = Release|x64
+		{4BE94306-AB22-4297-A1D1-D8C6B68A3C40}.Release|x64.Build.0 = Release|x64
+		{4BE94306-AB22-4297-A1D1-D8C6B68A3C40}.ReleaseExtensionsOnly|x64.ActiveCfg = Release|x64
+		{4BE94306-AB22-4297-A1D1-D8C6B68A3C40}.ReleaseExtensionsOnly|x64.Build.0 = Release|x64
+		{31E71543-CBCF-43BB-AF77-D210D548118E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{31E71543-CBCF-43BB-AF77-D210D548118E}.Debug|x64.Build.0 = Debug|Any CPU
+		{31E71543-CBCF-43BB-AF77-D210D548118E}.Editor Debug|x64.ActiveCfg = Debug|Any CPU
+		{31E71543-CBCF-43BB-AF77-D210D548118E}.Editor Debug|x64.Build.0 = Debug|Any CPU
+		{31E71543-CBCF-43BB-AF77-D210D548118E}.Release|x64.ActiveCfg = Release|Any CPU
+		{31E71543-CBCF-43BB-AF77-D210D548118E}.Release|x64.Build.0 = Release|Any CPU
+		{31E71543-CBCF-43BB-AF77-D210D548118E}.ReleaseExtensionsOnly|x64.ActiveCfg = Release|Any CPU
+		{31E71543-CBCF-43BB-AF77-D210D548118E}.ReleaseExtensionsOnly|x64.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {869ED102-116A-4EBE-945A-2B7F8167D515}
+	EndGlobalSection
+EndGlobal

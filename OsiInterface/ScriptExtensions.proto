@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+package dse;
+
+option cc_enable_arenas = true;
+option optimize_for = LITE_RUNTIME;
+
+// Notifies the Lua runtime that a message was sent from a remote Lua script
+message MsgPostLuaMessage {
+  string channel_name = 1;
+  string payload = 2;
+}
+
+// Notifies the Lua runtime to reload client-side state
+message MsgS2CResetLuaMessage {
+  bool bootstrap_scripts = 1;
+}
+
+// Notifies the server that the client supports extender messages
+message MsgC2SExtenderHello {
+  uint32 version = 1;
+}
+
+message StatRequirement {
+    int32 requirement = 1;
+    int32 int_param = 2;
+    string string_param = 3;
+    bool negate = 4;
+}
+
+message StatProperty {
+    uint32 property_context = 1;
+    uint32 type = 2;
+    string conditions = 3;
+    repeated string string_params = 4;
+    repeated int32 int_params = 5;
+    repeated float float_params = 6;
+    repeated bool bool_params = 7;
+    repeated int32 surface_boosts = 8;
+    string name = 9;
+}
+
+message StatPropertyList {
+    string name = 1;
+    repeated StatProperty properties = 2;
+}
+
+message StatIndexedProperty {
+    int32 intval = 1;
+    string stringval = 2;
+}
+
+// Updates a stats entry on the client
+message MsgS2CSyncStat {
+  string name = 1;
+  sint32 level = 2;
+  int32 modifier_list = 3;
+  repeated StatIndexedProperty indexed_properties = 4;
+  string ai_flags = 5;
+  repeated StatRequirement requirements = 6;
+  repeated StatRequirement memorization_requirements = 7;
+  repeated string combo_categories = 8;
+  repeated StatPropertyList property_lists = 9;
+}
+
+// Disconnects a client with a server-defined message
+message MsgS2CKick {
+  string message = 1;
+}
+
+message MessageWrapper {
+  oneof msg {
+    MsgPostLuaMessage post_lua = 1;
+    MsgS2CResetLuaMessage s2c_reset_lua = 2;
+    MsgC2SExtenderHello c2s_extender_hello = 5;
+    MsgS2CSyncStat s2c_sync_stat = 6;
+    MsgS2CKick s2c_kick = 7;
+  }
+}

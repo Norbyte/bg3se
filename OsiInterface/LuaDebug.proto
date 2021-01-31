@@ -1,0 +1,257 @@
+syntax = "proto3";
+
+package dse.lua.dbg;
+
+option cc_enable_arenas = true;
+option optimize_for = LITE_RUNTIME;
+
+enum StatusCode {
+  SUCCESS = 0;
+  NOT_IN_PAUSE = 1;
+  NO_DEBUGGEE = 2;
+  INVALID_CONTINUE_ACTION = 3;
+  IN_PAUSE = 4;
+  EVAL_ENGINE_NOT_READY = 5;
+  EVAL_FAILED = 6;
+  NO_SUCH_FILE = 7;
+}
+
+enum DbgContext {
+  SERVER = 0;
+  CLIENT = 1;
+}
+
+enum MsgValueType {
+  NIL = 0;
+  BOOLEAN = 1;
+  INTEGER = 2;
+  FLOAT = 3;
+  STRING = 4;
+  TABLE = 5;
+  FUNCTION = 6;
+  USERDATA = 7;
+  THREAD = 8;
+  UNKNOWN = 9;
+  OBJECT_HANDLE = 10;
+  NONE = 11;
+}
+
+message MsgTableKey {
+  enum Type {
+    NUMERIC = 0;
+    TEXT = 1;
+  };
+  
+  Type type = 1;
+  int64 index = 2;
+  string key = 3;
+}
+
+message MsgVariablesRef {
+  int32 variableRef = 1;
+  int32 frame = 2;
+  int32 local = 3;
+  repeated MsgTableKey key = 4;
+}
+
+message MsgValue {
+  MsgValueType type_id = 1;
+  oneof value {
+    bool boolval = 2;
+    int64 intval = 3;
+    float floatval = 4;
+    string stringval = 5;
+    MsgVariablesRef variables = 6;
+  }
+}
+
+message MsgChildValue {
+  enum Type {
+    NUMERIC = 0;
+    TEXT = 1;
+  };
+  
+  Type type = 1;
+  int64 index = 2;
+  string name = 3;
+  MsgValue value = 4;
+}
+
+message MsgStackFrame {
+  string source = 1;
+  string path = 2;
+  string function = 3;
+  int32 line = 4;
+  int32 scope_first_line = 5;
+  int32 scope_last_line = 6;
+}
+
+message DbgConnectRequest {
+  uint32 protocol_version = 1;
+}
+
+message BkConnectResponse {
+  uint32 protocol_version = 1;
+}
+
+message DbgUpdateSettings {
+  bool break_on_error = 1;
+  bool break_on_generic_error = 2;
+}
+
+message MsgBreakpoint {
+  string path = 1;
+  int32 line = 2;
+}
+
+message DbgSetBreakpoints {
+  repeated MsgBreakpoint breakpoint = 1;
+}
+
+message BkBreakpointTriggered {
+  enum Reason {
+    BREAKPOINT = 0;
+    EXCEPTION = 1;
+    PAUSE = 2;
+    STEP = 3;
+  };
+  
+  Reason reason = 1;
+  repeated MsgStackFrame stack = 2;
+  DbgContext context = 3;
+  string message = 4;
+}
+
+message DbgContinue {
+  enum Action {
+    CONTINUE = 0;
+    STEP_OVER = 1;
+    STEP_INTO = 2;
+    STEP_OUT = 3;
+    PAUSE = 4;
+  };
+
+  DbgContext context = 1;
+  Action action = 2;
+}
+
+// Requests the debugger to evaluate an expression
+message DbgEvaluate {
+  DbgContext context = 1;
+  string expression = 2;
+  int32 frame = 3;
+}
+
+// Requests the debugger to return a list of child variables for the given expression
+message DbgGetVariables {
+  DbgContext context = 1;
+  int32 variableRef = 2;
+  int32 frame = 3;
+  int32 local = 4;
+  repeated MsgTableKey key = 5;
+}
+
+// Response to an evaluation request
+message BkEvaluateResponse {
+  MsgValue result = 1;
+  string error_message = 2;
+}
+
+// Response to an evaluation request
+message BkGetVariablesResponse {
+  repeated MsgChildValue result = 1;
+  string error_message = 2;
+}
+
+// Requests the list of loaded mods and source files from the server
+message DbgFetchMods {
+}
+
+// Notifies the frontend that the server or client Lua state was recreated or was deleted
+message BkContextUpdated {
+  enum Status {
+    UNLOADED = 0;
+    LOADED = 1;
+  };
+
+  DbgContext context = 1;
+  Status status = 2;
+}
+
+message MsgModuleInfo {
+  string uuid = 1;
+  string name = 2;
+  string author = 3;
+  string path = 4;
+}
+
+message MsgSourceFileInfo {
+  string path = 1;
+}
+
+message BkModInfoResponse {
+  repeated MsgModuleInfo module = 1;
+  repeated MsgSourceFileInfo source = 2;
+}
+
+message BkDebugOutput {
+  enum Severity {
+    LEVEL_INFO = 0;
+    LEVEL_WARNING = 1;
+    LEVEL_ERROR = 2;
+    LEVEL_DEBUG = 3;
+  };
+
+  string message = 1;
+  Severity severity = 2;
+}
+
+message BkResult {
+  StatusCode status_code = 1;
+}
+
+message BkDebuggerReady {
+}
+
+// Requests the the source code for a file loaded on the backend
+message DbgRequestSource {
+  string name = 1;
+}
+
+// Response to a source code fetch request
+message BkSourceResponse {
+  string name = 1;
+  string body = 2;
+}
+
+message DebuggerToBackend {
+  uint32 seq_no = 1;
+  uint32 reply_seq_no = 2;
+  oneof msg {
+    DbgConnectRequest connect = 3;
+    DbgUpdateSettings updateSettings = 4;
+    DbgSetBreakpoints setBreakpoints = 5;
+    DbgContinue continue = 6;
+    DbgEvaluate evaluate = 7;
+    DbgFetchMods fetchMods = 8;
+    DbgRequestSource requestSource = 9;
+    DbgGetVariables getVariables = 10;
+  }
+}
+
+message BackendToDebugger {
+  uint32 seq_no = 1;
+  uint32 reply_seq_no = 2;
+  oneof msg {
+    BkConnectResponse connectResponse = 3;
+    BkBreakpointTriggered breakpointTriggered = 4;
+    BkEvaluateResponse evaluateResponse = 5;
+    BkContextUpdated contextUpdated = 6;
+    BkModInfoResponse modInfoResponse = 7;
+    BkDebugOutput debugOutput = 8;
+    BkResult results = 9;
+    BkDebuggerReady debuggerReady = 10;
+    BkSourceResponse sourceResponse = 11;
+    BkGetVariablesResponse getVariablesResponse = 12;
+  }
+}
