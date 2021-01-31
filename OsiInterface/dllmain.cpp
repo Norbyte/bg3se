@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "DxgiWrapper.h"
+#include "DWriteWrapper.h"
 #include "OsirisProxy.h"
 #include "json/json.h"
 #include <ShellAPI.h>
@@ -114,16 +114,16 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 	case DLL_PROCESS_ATTACH:
 		gThisModule = hModule;
 		if (ShouldRunProxy()) {
-			gDxgiWrapper = std::make_unique<DxgiWrapper>();
+			gDWriteWrapper = std::make_unique<DWriteWrapper>();
 			SetupOsirisProxy(hModule);
 		}
 		break;
 
 	case DLL_PROCESS_DETACH:
-		if (gDxgiWrapper) {
+		if (gDWriteWrapper) {
 			dse::gOsirisProxy->Shutdown();
 			dse::gOsirisProxy.reset();
-			gDxgiWrapper.reset();
+			gDWriteWrapper.reset();
 		}
 		break;
 

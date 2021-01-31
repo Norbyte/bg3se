@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "DxgiWrapper.h"
+#include "DWriteWrapper.h"
 #include "HttpFetcher.h"
 #include "ErrorUtils.h"
 #include "Crypto.h"
@@ -449,22 +449,17 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 			freopen_s(&reopenedStream, "CONOUT$", "w", stdout);
 #endif
 
-			// Allow loading graphics mods that work via DXGI.dll (ReShade, etc.)
-			// DXGI.dll should be renamed to DxgiNext.dll, and the updater will load it automatically.
-			DEBUG("Chain-loading DXGINext");
-			LoadLibraryW(L"DxgiNext.dll");
-
-			DEBUG("Creating DXGI wrapper");
-			gDxgiWrapper = std::make_unique<DxgiWrapper>();
+			DEBUG("Creating DWrite wrapper");
+			gDWriteWrapper = std::make_unique<DWriteWrapper>();
 			DEBUG("Start updater thread");
 			StartUpdaterThread();
 		}
 		break;
 
 	case DLL_PROCESS_DETACH:
-		if (gDxgiWrapper) {
+		if (gDWriteWrapper) {
 			DEBUG("Shutting down wrapper");
-			gDxgiWrapper.reset();
+			gDWriteWrapper.reset();
 		}
 		break;
 

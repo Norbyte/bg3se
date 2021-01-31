@@ -1,12 +1,4 @@
-LIBRARY DXGI
+LIBRARY DWriteWrapper
 
 EXPORTS
-	CreateDXGIFactory=WrappedCreateDXGIFactory @1
-	CreateDXGIFactory1=WrappedCreateDXGIFactory1 @2
-	CreateDXGIFactory2=WrappedCreateDXGIFactory2 @3
-	DXGIDumpJournal=WrappedDXGIDumpJournal
-	DXGIReportAdapterConfiguration=WrappedDXGIReportAdapterConfiguration
-	DXGID3D10CreateDevice=WrappedDXGID3D10CreateDevice @13
-	DXGID3D10CreateLayeredDevice=WrappedDXGID3D10CreateLayeredDevice @14
-	DXGID3D10GetLayeredDeviceSize=WrappedDXGID3D10GetLayeredDeviceSize @15
-	DXGID3D10RegisterLayers=WrappedDXGID3D10RegisterLayers
+	DWriteCreateFactory=WrappedDWriteCreateFactory @1

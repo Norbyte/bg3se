@@ -102,8 +102,7 @@
       <AdditionalLibraryDirectories>$(SolutionDir)\External\curl\lib;$(SolutionDir)\External\ziplib\Bin\x64\Debug;$(SolutionDir)$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y "$(TargetPath)" "C:\Program Files (x86)\Steam\steamapps\common\Divinity Original Sin 2\Classic\DXGI.dll"
-copy /Y "$(TargetPath)" "C:\Program Files (x86)\Steam\steamapps\common\Divinity Original Sin 2\DefEd\bin\DXGI.dll"</Command>
+      <Command>copy /Y "$(TargetPath)" "C:\Program Files (x86)\Steam\steamapps\common\Baldurs Gate 3\bin\DWrite.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -166,13 +165,12 @@ copy /Y "$(TargetPath)" "C:\Program Files (x86)\Steam\steamapps\common\Divinity 
       <AdditionalLibraryDirectories>$(SolutionDir)\External\curl\lib;$(SolutionDir)\External\ziplib\Bin\x64\Release;$(SolutionDir)$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y "$(TargetPath)" "C:\Program Files (x86)\Steam\steamapps\common\Divinity Original Sin 2\Classic\DXGI.dll"
-copy /Y "$(TargetPath)" "C:\Program Files (x86)\Steam\steamapps\common\Divinity Original Sin 2\DefEd\bin\DXGI.dll"</Command>
+      <Command>copy /Y "$(TargetPath)" "C:\Program Files (x86)\Steam\steamapps\common\Baldurs Gate 3\bin\DWrite.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Crypto.h" />
-    <ClInclude Include="DxgiWrapper.h" />
+    <ClInclude Include="DWriteWrapper.h" />
     <ClInclude Include="ErrorUtils.h" />
     <ClInclude Include="HttpFetcher.h" />
     <ClInclude Include="resource.h" />
@@ -182,7 +180,7 @@ copy /Y "$(TargetPath)" "C:\Program Files (x86)\Steam\steamapps\common\Divinity 
   <ItemGroup>
     <ClCompile Include="Crypto.cpp" />
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="DxgiWrapper.cpp" />
+    <ClCompile Include="DWriteWrapper.cpp" />
     <ClCompile Include="HttpFetcher.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
