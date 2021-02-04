@@ -25,8 +25,6 @@ DWriteWrapper::DWriteWrapper()
 	if (CreateFactory == NULL) {
 		Fail("Could not locate DWriteCreateFactory in DWrite.dll");
 	}
-
-	DEBUG("DWrite exports successfully mapped");
 }
 
 DWriteWrapper::~DWriteWrapper()

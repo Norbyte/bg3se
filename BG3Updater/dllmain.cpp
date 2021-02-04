@@ -6,10 +6,10 @@
 #include "Crypto.h"
 #include <ZipLib/ZipArchive.h>
 #include <ZipLib/ZipFile.h>
+#include "json/json.h"
 
 #include <Shlwapi.h>
 #include <Shlobj.h>
-#include <comdef.h>
 
 #include <vector>
 #include <thread>
@@ -18,15 +18,12 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
+#include <unordered_map>
 
-HRESULT UnzipToFolder(PCWSTR pszZipFile, PCWSTR pszDestFolder, std::string & reason);
-
-#define UPDATER_HOST L"d1ov7wr93ghrd7.cloudfront.net"
-#define UPDATER_PATH_PREFIX L"/"
-#define UPDATER_PATH_POSTFIX L"/Latest.zip"
-
-// Switch to toggle between ZipLib and Shell Zip API
-#define USE_ZIPLIB
+#define UPDATER_HOST L"d7ueajfc8twst.cloudfront.net"
+#define UPDATER_PATH_PREFIX L"/Channels/"
+#define UPDATER_MANIFEST_PATH L"/Manifest.json"
+#define UPDATER_CHANNEL L"Release"
 
 extern "C" {
 
@@ -35,6 +32,111 @@ int default_CSPRNG(uint8_t* dest, unsigned int size)
 	Fail("Signature verifier should not call CSPRNG");
 }
 
+}
+
+std::optional<std::wstring> GetGameVersion()
+{
+	HMODULE hGameModule = GetModuleHandleW(L"bg3.exe");
+	if (hGameModule == NULL) {
+		hGameModule = GetModuleHandleW(L"bg3_dx11.exe");
+	}
+
+	if (hGameModule == NULL) {
+		return {};
+	}
+
+	auto hResource = FindResource(hGameModule, MAKEINTRESOURCE(VS_VERSION_INFO), RT_VERSION);
+	if (hResource == NULL) return {};
+	auto dwSize = SizeofResource(hGameModule, hResource);
+	auto hData = LoadResource(hGameModule, hResource);
+	if (hData == NULL) return {};
+	auto pRes = LockResource(hData);
+	if (pRes == NULL) return {};
+
+	auto pResCopy = LocalAlloc(LMEM_FIXED, dwSize);
+	CopyMemory(pResCopy, pRes, dwSize);
+
+	UINT verLength;
+	VS_FIXEDFILEINFO* fixedFileInfo;
+	if (VerQueryValue(pResCopy, L"\\", (LPVOID*)&fixedFileInfo, &verLength) != TRUE) return {};
+
+	wchar_t version[100];
+	swprintf_s(version, L"v%d.%d.%d.%d",
+		HIWORD(fixedFileInfo->dwFileVersionMS),
+		LOWORD(fixedFileInfo->dwFileVersionMS),
+		HIWORD(fixedFileInfo->dwFileVersionLS),
+		LOWORD(fixedFileInfo->dwFileVersionLS));
+
+	LocalFree(pResCopy);
+	FreeResource(hData);
+	return version;
+}
+
+void ConfigGetBool(Json::Value& node, char const* key, bool& value)
+{
+	auto configVar = node[key];
+	if (!configVar.isNull() && configVar.isBool()) {
+		value = configVar.asBool();
+	}
+}
+
+void ConfigGetString(Json::Value& node, char const* key, std::wstring& value)
+{
+	auto configVar = node[key];
+	if (!configVar.isNull() && configVar.isString()) {
+		value = FromUTF8(configVar.asString());
+	}
+}
+
+std::wstring GetDefaultExtensionPath()
+{
+	TCHAR appDataPath[MAX_PATH];
+	if (!SUCCEEDED(SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, appDataPath)))
+	{
+		return L"";
+	}
+
+	return std::wstring(appDataPath) + L"\\BG3ScriptExtender";
+}
+
+void LoadConfigFile(std::wstring const& configPath, UpdaterConfig& config)
+{
+	config.UpdateHost = UPDATER_HOST;
+	config.UpdatePath = UPDATER_PATH_PREFIX;
+	config.ManifestPath = UPDATER_MANIFEST_PATH;
+	config.UpdateChannel = UPDATER_CHANNEL;
+	config.ExtensionPath = GetDefaultExtensionPath();
+#if defined(_DEBUG)
+	config.Debug = true;
+#else
+	config.Debug = false;
+#endif
+	config.ValidateSignature = true;
+
+	std::ifstream f(configPath, std::ios::in);
+	if (!f.good()) {
+		return;
+	}
+
+	Json::CharReaderBuilder factory;
+	Json::Value root;
+	std::string errs;
+	if (!Json::parseFromStream(factory, f, &root, &errs)) {
+		std::wstring werrs = FromUTF8(errs);
+
+		std::wstringstream err;
+		err << L"Failed to load configuration file '" << configPath << "':\r\n" << werrs;
+		Fail(ToUTF8(err.str()).c_str());
+	}
+
+	ConfigGetString(root, "UpdateHost", config.UpdateHost);
+	ConfigGetString(root, "UpdatePath", config.UpdatePath);
+	ConfigGetString(root, "ManifestPath", config.ManifestPath);
+	ConfigGetString(root, "UpdateChannel", config.UpdateChannel);
+#if defined(_DEBUG)
+	ConfigGetBool(root, "Debug", config.Debug);
+	ConfigGetBool(root, "ValidateSignature", config.ValidateSignature);
+#endif
 }
 
 std::string trim(std::string const & s)
@@ -47,6 +149,56 @@ std::string trim(std::string const & s)
 	size_t last = s.find_last_not_of(" \t\r\n");
 	return s.substr(first, (last - first + 1));
 }
+
+struct Manifest
+{
+	struct Version
+	{
+		std::string Path;
+		std::string Digest;
+	};
+
+	std::unordered_map<std::string, Version> Versions;
+};
+
+class ManifestParser
+{
+public:
+	bool Parse(std::string const& json, Manifest& manifest, std::string& parseError)
+	{
+		Json::CharReaderBuilder factory;
+		Json::Value root;
+		std::string errs;
+		auto reader = factory.newCharReader();
+		if (!reader->parse(json.data(), json.data() + json.size(), &root, &errs)) {
+			parseError = errs;
+			return false;
+		}
+
+		manifest.Versions.clear();
+
+		auto versions = root["Versions"];
+		if (!versions.isArray()) {
+			parseError = "Manifest has no 'Versions' array";
+			return false;
+		}
+
+		for (auto const& ver : versions) {
+			if (!ver.isObject()) {
+				parseError = "Version info is not an object";
+				return false;
+			}
+
+			Manifest::Version version;
+			auto versionNumber = ver["Version"].asString();
+			version.Path = ver["Path"].asString();
+			version.Digest = ver["Digest"].asString();
+			manifest.Versions.insert(std::make_pair(versionNumber, version));
+		}
+
+		return true;
+	}
+};
 
 #pragma pack(push, 1)
 struct PackageSignature
@@ -125,7 +277,6 @@ public:
 
 	bool UnzipPackage(std::wstring const& zipPath, std::wstring const& extensionPath, std::string& reason)
 	{
-#if defined(USE_ZIPLIB)
 		auto archive = ZipFile::Open(zipPath);
 		if (!archive) {
 			reason = "Script Extender update failed:\r\nUnable to open update package, file possibly corrupted?";
@@ -178,65 +329,62 @@ public:
 		}
 
 		return true;
-#else
-		std::string unzipReason;
-		HRESULT hr = UnzipToFolder(zipPath.c_str(), extensionPath_.c_str(), unzipReason);
-		if (hr == S_OK) {
-			return true;
-		}
-
-		if (hr == S_FALSE) {
-			reason = "Unable to extract Script Extender update package.\r\n";
-			reason += unzipReason;
-		} else {
-			_com_error err(hr);
-			LPCTSTR errMsg = err.ErrorMessage();
-
-			std::stringstream ss;
-			ss << "Unable to extract Script Extender update package.\r\n"
-				<< "HRESULT 0x"
-				<< std::hex << std::setw(8) << std::setfill('0') << hr;
-			if (errMsg != nullptr) {
-				ss << ": " << ToUTF8(errMsg);
-			}
-
-			reason = ss.str();
-		}
-
-		return false;
-#endif
 	}
 
 	bool TryToUpdate(std::string & reason)
 	{
-		HttpFetcher fetcher(UPDATER_HOST);
+		HttpFetcher fetcher(config_.UpdateHost);
 
-		std::wstring packageUri = UPDATER_PATH_PREFIX + updateChannel_ + UPDATER_PATH_POSTFIX;
+		std::wstring manifestUrl = config_.UpdatePath + config_.UpdateChannel + config_.ManifestPath;
 
-		std::string etag;
-		DEBUG("Fetching ETag");
-		if (!fetcher.FetchETag(packageUri.c_str(), etag)) {
-			reason = "Failed to check for for Script Extender updates. Make sure you're connected to the internet and try again\r\n";
+		DEBUG("Fetching manifest");
+		std::vector<uint8_t> manifestBinary;
+		if (!fetcher.Fetch(manifestUrl.c_str(), manifestBinary)) {
+			reason = "Failed to check for Script Extender updates. Make sure you're connected to the internet and try again.\r\n";
 			reason += fetcher.GetLastError();
 			return false;
 		}
 
-		DEBUG("Server returned ETag %s", etag.c_str());
-		std::string currentETag = ReadETag();
-		if (currentETag == etag) {
-			DEBUG("Package is already up to date, nothing to do.");
+		std::string manifestStr((char *)manifestBinary.data(), (char *)manifestBinary.data() + manifestBinary.size());
+		DEBUG("Server returned manifest: %s", manifestStr.c_str());
+		ManifestParser parser;
+		Manifest manifest;
+		std::string parseError;
+		if (!parser.Parse(manifestStr, manifest, parseError)) {
+			reason = "Failed to check for Script Extender updates:\r\nUnable to parse manifest: ";
+			reason += parseError;
+			return false;
+		}
+
+		auto version = manifest.Versions.find(ToUTF8(gameVersion_));
+		if (version == manifest.Versions.end()) {
+			reason = "Failed to check for Script Extender updates:\r\nScript extender not available for game version ";
+			reason += ToUTF8(gameVersion_);
+			return false;
+		}
+
+		DEBUG("Selected version for update: %s / %s", version->second.Path.c_str(), version->second.Digest.c_str());
+
+		auto digest = ReadCurrentDigest();
+		DEBUG("Current digest is: %s", digest.c_str());
+		if (digest == version->second.Digest) {
+			DEBUG("Extender already up to date.");
 			return true;
 		}
 
-		DEBUG("Fetching update package: %s", ToUTF8(packageUri).c_str());
+		auto packagePath = ToUTF8(config_.UpdatePath + config_.UpdateChannel) + "/" + version->second.Path;
+		DEBUG("Fetching update package: %s", packagePath.c_str());
 		std::vector<uint8_t> response;
-		if (!fetcher.Fetch(packageUri.c_str(), response)) {
-			reason = "Failed to download Script Extender updates. Make sure you're connected to the internet and try again\r\n";
+		if (!fetcher.Fetch(FromUTF8(packagePath).c_str(), response)) {
+			reason = "Failed to download Script Extender update package.\r\n";
+			reason += "Path: ";
+			reason += packagePath;
+			reason += "\r\n";
 			reason += fetcher.GetLastError();
 			return false;
 		}
 
-		auto zipPath = extensionPath_ + L"\\Update.zip";
+		auto zipPath = extensionPath_ + L"\\Package.zip";
 		DEBUG("Saving update to: %s", ToUTF8(zipPath).c_str());
 		SaveFile(zipPath, response);
 
@@ -256,7 +404,7 @@ public:
 		DEBUG("Unpacking update to %s", ToUTF8(extensionPath_).c_str());
 		if (UnzipPackage(zipPath, extensionPath_, reason)) {
 			DEBUG("Saving updated ETag");
-			SaveETag(etag);
+			SaveDigest(version->second.Digest);
 			return true;
 		} else {
 			DEBUG("Unzipping failed: %s", reason.c_str());
@@ -269,12 +417,28 @@ public:
 		return completed_;
 	}
 
+	void InitConsole()
+	{
+#if defined(_DEBUG)
+		if (!config_.Debug) return;
+
+		AllocConsole();
+		SetConsoleTitleW(L"Script Extender Updater Debug Console");
+		FILE* reopenedStream;
+		freopen_s(&reopenedStream, "CONOUT$", "w", stdout);
+#endif
+	}
+
+	void LoadConfig()
+	{
+		LoadConfigFile(L"ScriptExtenderUpdaterConfig.json", config_);
+	}
+
 private:
-	std::wstring appDataPath_;
 	std::wstring extensionPath_;
 	std::wstring dllPath_;
-	std::wstring updateChannel_;
-	bool isGame_{ false };
+	std::wstring gameVersion_;
+	UpdaterConfig config_;
 	bool completed_{ false };
 
 	bool ExtenderDLLExists()
@@ -282,15 +446,15 @@ private:
 		return PathFileExists(dllPath_.c_str());
 	}
 
-	std::string ReadETag()
+	std::string ReadCurrentDigest()
 	{
 		if (!ExtenderDLLExists()) {
 			// Force update if extension DLL is missing
 			return "";
 		}
 
-		auto etagPath = extensionPath_ + L"\\.etag";
-		std::ifstream f(etagPath, std::ios::binary | std::ios::in);
+		auto digestPath = extensionPath_ + L"\\.digest";
+		std::ifstream f(digestPath, std::ios::binary | std::ios::in);
 		if (!f.good()) {
 			return "";
 		}
@@ -302,19 +466,19 @@ private:
 		std::string s;
 		s.resize(size);
 		f.read(s.data(), size);
-		DEBUG("ETag loaded: %s", s.c_str());
+		DEBUG("Digest loaded: %s", s.c_str());
 		return s;
 	}
 
-	void SaveETag(std::string const & etag)
+	void SaveDigest(std::string const & digest)
 	{
-		auto etagPath = extensionPath_ + L"\\.etag";
+		auto etagPath = extensionPath_ + L"\\.digest";
 		std::ofstream f(etagPath, std::ios::binary | std::ios::out);
 		if (!f.good()) {
 			return;
 		}
 
-		f.write(etag.c_str(), etag.size());
+		f.write(digest.c_str(), digest.size());
 	}
 
 	void SaveFile(std::wstring const & path, std::vector<uint8_t> const & body)
@@ -329,43 +493,27 @@ private:
 
 	void UpdatePaths()
 	{
-		isGame_ = (GetModuleHandleW(L"bg3.exe") != NULL || GetModuleHandleW(L"bg3_dx11.exe") != NULL);
-
-		TCHAR appDataPath[MAX_PATH];
-		if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, appDataPath)))
-		{
-			appDataPath_ = appDataPath;
+		auto rootDir = config_.ExtensionPath;
+		if (!PathFileExistsW(rootDir.c_str())) {
+			CreateDirectoryW(rootDir.c_str(), NULL);
 		}
 
-		extensionPath_ = appDataPath_ + L"\\OsirisExtender";
-		if (!PathFileExists(extensionPath_.c_str())) {
-			CreateDirectory(extensionPath_.c_str(), NULL);
-		}
-
-		if (isGame_) {
-			dllPath_ = extensionPath_ + L"\\OsiExtenderEoCApp.dll";
+		auto version = GetGameVersion();
+		if (version) {
+			gameVersion_ = *version;
 		} else {
-			dllPath_ = extensionPath_ + L"\\OsiExtenderEoCPlugin.dll";
+			gameVersion_ = L"Unknown Version";
 		}
 
-		DEBUG("Determined DLL path: %s", ToUTF8(dllPath_).c_str());
-
-		updateChannel_ = L"Release";
-		std::ifstream channelFile("OsiUpdateChannel.txt", std::ios::in | std::ios::binary);
-		if (channelFile.good()) {
-			std::string channel;
-			channelFile.seekg(0, std::ios::end);
-			channel.resize(channelFile.tellg());
-			channelFile.seekg(0, std::ios::beg);
-			channelFile.read(channel.data(), channel.size());
-
-			channel = trim(channel);
-			if (!channel.empty()) {
-				updateChannel_ = FromUTF8(channel);
-			}
+		extensionPath_ = rootDir + L"\\" + gameVersion_;
+		if (!PathFileExistsW(extensionPath_.c_str())) {
+			CreateDirectoryW(extensionPath_.c_str(), NULL);
 		}
 
-		DEBUG("Update channel: %s", ToUTF8(updateChannel_).c_str());
+		dllPath_ = extensionPath_ + L"\\BG3ScriptExtender.dll";
+
+		DEBUG("DLL path: %s", ToUTF8(dllPath_).c_str());
+		DEBUG("Update channel: %s", ToUTF8(config_.UpdateChannel).c_str());
 	}
 };
 
@@ -408,7 +556,7 @@ DWORD WINAPI ClientWorkerSuspenderThread(LPVOID param)
 		}
 
 		Sleep(1);
-	}
+		}
 
 	DEBUG("Client suspend worker exiting");
 	return 0;
@@ -416,9 +564,10 @@ DWORD WINAPI ClientWorkerSuspenderThread(LPVOID param)
 
 DWORD WINAPI UpdaterThread(LPVOID param)
 {
-	DEBUG("Init loader");
 	gErrorUtils = std::make_unique<ErrorUtils>();
 	gLoader = std::make_unique<OsiLoader>();
+	gLoader->LoadConfig();
+	gLoader->InitConsole();
 	CreateThread(NULL, 0, &ClientWorkerSuspenderThread, NULL, 0, NULL);
 	DEBUG("Launch loader");
 	gLoader->Launch();
@@ -440,25 +589,15 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 	switch (ul_reason_for_call)
 	{
 	case DLL_PROCESS_ATTACH:
+		DisableThreadLibraryCalls(hModule);
 		if (ShouldLoad()) {
-#if defined(_DEBUG)
-			AllocConsole();
-			SetConsoleTitleW(L"Script Extender Updater Debug Console");
-			DisableThreadLibraryCalls(hModule);
-			FILE * reopenedStream;
-			freopen_s(&reopenedStream, "CONOUT$", "w", stdout);
-#endif
-
-			DEBUG("Creating DWrite wrapper");
 			gDWriteWrapper = std::make_unique<DWriteWrapper>();
-			DEBUG("Start updater thread");
 			StartUpdaterThread();
 		}
 		break;
 
 	case DLL_PROCESS_DETACH:
 		if (gDWriteWrapper) {
-			DEBUG("Shutting down wrapper");
 			gDWriteWrapper.reset();
 		}
 		break;

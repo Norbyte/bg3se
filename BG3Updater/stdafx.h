@@ -19,4 +19,14 @@ void Fail(char const * reason);
 
 std::string ToUTF8(std::wstring const & s);
 std::wstring FromUTF8(std::string const & s);
-std::string GetLastErrorString(DWORD lastError);
+
+struct UpdaterConfig
+{
+	std::wstring UpdateHost;
+	std::wstring UpdatePath;
+	std::wstring ManifestPath;
+	std::wstring UpdateChannel;
+	std::wstring ExtensionPath;
+	bool Debug;
+	bool ValidateSignature;
+};

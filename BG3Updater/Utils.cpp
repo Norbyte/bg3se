@@ -1,10 +1,6 @@
 #include "stdafx.h"
 #include "ErrorUtils.h"
 
-#include <Shellapi.h>
-#include <Shlwapi.h>
-#include <Shlobj.h>
-#include <Shldisp.h>
 #include <atlbase.h>
 #include <psapi.h>
 #include <iostream>
@@ -67,7 +63,7 @@ bool ErrorUtils::ShowErrorDialog(wchar_t const * msg) const
 		retries++;
 	}
 
-	if (retries >= 300) {
+	if (retries >= 600) {
 		return false;
 	}
 
@@ -84,11 +80,7 @@ void ErrorUtils::ClientHandleError(wchar_t const * msg, bool exitGame) const
 		filtered.replace(filtered.begin() + pos, filtered.begin() + pos + 2, L"<br>");
 	}
 
-	STDWString str;
-	str.Size = filtered.size();
-	str.Capacity = 0xfff; // Used to bypass 7-character inline buffer check
-	str.BufPtr = const_cast<wchar_t *>(filtered.c_str());
-	EoCClientHandleError(*EoCClient, &str, exitGame, &str);
+	EoCClientHandleError(*EoCClient, filtered, exitGame, filtered);
 }
 
 bool ErrorUtils::CanShowError() const
@@ -138,23 +130,29 @@ bool ErrorUtils::FindModule()
 void ErrorUtils::FindErrorFuncs()
 {
 	uint8_t const fragment1[] = { 
-		0x4C, 0x8D, 0x8D, 0x08, 0x04, 0x00, 0x00, // lea     r9, [rbp+8F8h+var_4F0]
-		0x41, 0xB0, 0x01, // mov     r8b, 1
-		0x48, 0x8D, 0x95, 0xE8, 0x03, 0x00, 0x00, // lea     rdx, [rbp+8F8h+var_510]
-		0xE8 // call    ecl__EocClient__HandleError
+		0x90, // nop 
+		0x45, 0x33, 0xC0, // xor     r8d, r8d
+		0x33, 0xD2, // xor     edx, edx
+		0x48, 0x8D, 0x4C, 0x24, 0x28, // lea     rcx, [rsp+78h+var_50]
+		0xE8 // call    ls__TranslatedString__GetTranslatedString
 	};
 
 	uint8_t const fragment2[] = {
-		0x48, 0x8D, 0x8D, 0xE8, 0x03, 0x00, 0x00 // lea     rdx, [rbp+8F8h+var_510]
+		0x4C, 0x8D, 0x4C, 0x24, 0x38, // lea     r9, [rsp+78h+a1]
+		0x45, 0x33, 0xC0, // xor     r8d, r8d
+		0x48, 0x8B, 0xD0, // mov     rdx, rax
+		0x48, 0x8B, 0xCB, // mov     rcx, rbx
+		0xE8 // call    ecl__EocClient__HandleError
 	};
 
 	auto moduleEnd = moduleStart_ + moduleSize_;
 	for (auto p = moduleStart_; p < moduleEnd; p++) {
-		if (*p == 0x48 && p[1] == 0x8B && p[2] == 0x0D
-			&& memcmp(p + 7, fragment1, sizeof(fragment1)) == 0
-			&& memcmp(p + 29, fragment2, sizeof(fragment2)) == 0) {
-			EoCClient = (eclEoCClient **)AsmLeaToAbsoluteAddress(p);
-			EoCClientHandleError = (EoCClient__HandleError)AsmCallToAbsoluteAddress(p + 24);
+		if (*p == 0x90 && p[1] == 0x45 && p[2] == 0x33
+			&& memcmp(p, fragment1, sizeof(fragment1)) == 0
+			&& memcmp(p + 0x10, fragment2, sizeof(fragment2)) == 0) {
+			EoCClient = (eclEoCClient **)AsmLeaToAbsoluteAddress(p - 0x18);
+			EoCClientHandleError = (EoCClient__HandleError)AsmCallToAbsoluteAddress(p + 0x1E);
+			break;
 		}
 	}
 }
@@ -164,7 +162,7 @@ void ErrorUtils::SuspendClientThread() const
 	auto thread = FindClientThread();
 	if (thread != nullptr) {
 		auto hThread = OpenThread(THREAD_SUSPEND_RESUME, FALSE, thread->ThreadId);
-		if (hThread != INVALID_HANDLE_VALUE) {
+		if (hThread && hThread != INVALID_HANDLE_VALUE) {
 			SuspendThread(hThread);
 			CloseHandle(hThread);
 			// The error handler only displays a status message during the loading screen
@@ -180,7 +178,7 @@ void ErrorUtils::ResumeClientThread() const
 	auto thread = FindClientThread();
 	if (thread != nullptr) {
 		auto hThread = OpenThread(THREAD_SUSPEND_RESUME, FALSE, thread->ThreadId);
-		if (hThread != INVALID_HANDLE_VALUE) {
+		if (hThread && hThread != INVALID_HANDLE_VALUE) {
 			ResumeThread(hThread);
 			CloseHandle(hThread);
 		}
@@ -243,109 +241,4 @@ std::wstring FromUTF8(std::string const & s)
 	converted.resize(size);
 	MultiByteToWideChar(CP_UTF8, 0, s.c_str(), (int)s.size(), converted.data(), (int)converted.size());
 	return converted;
-}
-
-std::string GetLastErrorString(DWORD lastError)
-{
-	if (lastError == 0) return "";
-
-	LPSTR messageBuffer = nullptr;
-	size_t size = FormatMessageA(
-		FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM 
-		| FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_HMODULE,
-		LoadLibrary(_T("wininet.dll")), 
-		lastError, 
-		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), 
-		(LPSTR)&messageBuffer, 
-		0, NULL);
-
-	std::string message(messageBuffer, size);
-	LocalFree(messageBuffer);
-
-	return message;
-}
-
-//
-// Helper class for exception-safe scope-based 
-// CoInitialize/CoUninitialize calls.
-//
-class CComScopedInit
-{
-public:
-
-	CComScopedInit()
-	{
-		HRESULT hr = ::CoInitialize(NULL);
-		if (FAILED(hr))
-			AtlThrow(hr);
-	}
-
-	~CComScopedInit()
-	{
-		::CoUninitialize();
-	}
-
-
-	// Ban copy
-private:
-	CComScopedInit(const CComScopedInit&);
-	CComScopedInit& operator=(const CComScopedInit&);
-};
-
-
-//
-// Unzip a zip file to the specified folder.
-//
-HRESULT UnzipToFolder(PCWSTR pszZipFile, PCWSTR pszDestFolder, std::string & reason)
-{
-	CComScopedInit comInit;
-
-	HRESULT hr;
-
-	CComPtr<IShellDispatch> spISD;
-	hr = spISD.CoCreateInstance(CLSID_Shell);
-	if (FAILED(hr))
-		return hr;
-
-	CComVariant vtZipFile(pszZipFile);
-	CComPtr<Folder> spZipFile;
-	hr = spISD->NameSpace(vtZipFile, &spZipFile);
-	if (FAILED(hr))
-		return hr;
-
-	if (hr == S_FALSE) {
-		reason = "IShellDispatch::NameSpace() call failed on zip file\r\n";
-		reason += ToUTF8(pszZipFile);
-		return hr;
-	}
-
-	CComVariant vtDestFolder(pszDestFolder);
-	CComPtr<Folder> spDestination;
-	hr = spISD->NameSpace(vtDestFolder, &spDestination);
-	if (FAILED(hr))
-		return hr;
-
-	if (hr == S_FALSE) {
-		reason = "IShellDispatch::NameSpace() call failed on destination folder\r\n";
-		reason += ToUTF8(pszDestFolder);
-		return hr;
-	}
-
-	CComPtr<FolderItems> spFilesInside;
-	hr = spZipFile->Items(&spFilesInside);
-	if (FAILED(hr))
-		return hr;
-
-	CComPtr<IDispatch> spDispItem;
-	hr = spFilesInside.QueryInterface(&spDispItem);
-	if (FAILED(hr))
-		return hr;
-
-	CComVariant vtItem(spDispItem);
-	CComVariant vtOptions(FOF_NO_UI);
-	hr = spDestination->CopyHere(vtItem, vtOptions);
-	if (FAILED(hr))
-		return hr;
-
-	return S_OK;
 }

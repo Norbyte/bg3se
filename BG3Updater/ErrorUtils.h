@@ -4,7 +4,6 @@
 #include <optional>
 #include <vector>
 
-#pragma pack(push, 1)
 enum class GameState : uint32_t
 {
 	Unknown = 0,
@@ -48,29 +47,9 @@ struct EoCClientState
 
 struct eclEoCClient
 {
-	uint8_t Unkn[64];
+	uint8_t Unkn[0x60];
 	EoCClientState ** State;
 };
-
-struct STDWString
-{
-	union {
-		wchar_t Buf[8];
-		wchar_t * BufPtr{ nullptr };
-	};
-	uint64_t Size{ 0 };
-	uint64_t Capacity{ 7 };
-
-	inline wchar_t const * GetPtr() const
-	{
-		if (Size > 7) {
-			return BufPtr;
-		} else {
-			return Buf;
-		}
-	}
-};
-#pragma pack(pop)
 
 struct THREADNAME_INFO
 {
@@ -110,7 +89,7 @@ public:
 	void ResumeClientThread() const;
 
 private:
-	typedef void(*EoCClient__HandleError)(void * self, STDWString * message, bool exitGame, STDWString *a4);
+	typedef void(*EoCClient__HandleError)(void * self, std::wstring const& message, bool exitGame, std::wstring const& a4);
 
 	struct ThreadInfo
 	{
