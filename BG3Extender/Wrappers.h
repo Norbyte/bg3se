@@ -2,7 +2,7 @@
 
 #include <functional>
 
-namespace dse {
+namespace bg3se {
 
 	template <typename T>
 	class WrappedFunction;

@@ -23,7 +23,7 @@
 void InitCrashReporting();
 void ShutdownCrashReporting();
 
-namespace dse
+namespace bg3se
 {
 
 std::unique_ptr<OsirisProxy> gOsirisProxy;
@@ -1275,8 +1275,6 @@ void OsirisProxy::LoadExtensionStateServer()
 	PostInitLibraries();
 
 	if (extensionsEnabled_ && !Libraries.CriticalInitializationFailed()) {
-		Libraries.EnableCustomStats();
-		Libraries.DisableItemFolding();
 		//networkManager_.ExtendNetworkingServer();
 		FunctionLibrary.OnBaseModuleLoadedServer();
 	}
@@ -1316,8 +1314,6 @@ void OsirisProxy::LoadExtensionStateClient()
 	PostInitLibraries();
 
 	if (extensionsEnabled_ && !Libraries.CriticalInitializationFailed()) {
-		Libraries.EnableCustomStats();
-		Libraries.DisableItemFolding();
 		//networkManager_.ExtendNetworkingClient();
 		FunctionLibrary.OnBaseModuleLoadedClient();
 	}

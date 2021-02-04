@@ -4,7 +4,7 @@
 #include <GameDefinitions/Enumerations.h>
 #include <ExtensionHelpers.h>
 
-namespace dse
+namespace bg3se
 {
 
 #define BEGIN_BITMASK_NS(NS, T, type) \

@@ -4,7 +4,7 @@
 #include <memory>
 #include <cassert>
 
-namespace dse
+namespace bg3se
 {
 	template <typename T>
 	class ROWriteAnchor

@@ -6,7 +6,7 @@
 
 #if !defined(OSI_NO_DEBUGGER)
 
-namespace dse::osidbg
+namespace bg3se::osidbg
 {
 	DebugMessageHandler::DebugMessageHandler(OsirisDebugInterface& intf)
 		: intf_(intf)

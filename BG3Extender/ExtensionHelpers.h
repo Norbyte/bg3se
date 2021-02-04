@@ -8,7 +8,7 @@
 #include <GameDefinitions/Projectile.h>
 #include <GameDefinitions/TurnManager.h>*/
 
-namespace dse
+namespace bg3se
 {
 	ecl::EoCClient * GetEoCClient();
 	esv::EoCServer * GetEoCServer();

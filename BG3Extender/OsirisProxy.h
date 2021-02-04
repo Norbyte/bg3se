@@ -24,7 +24,7 @@
 #include <mutex>
 #include <shared_mutex>
 
-namespace dse {
+namespace bg3se {
 
 
 struct ToolConfig

@@ -1,0 +1,367 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="CustomFunctions.cpp" />
+    <ClCompile Include="DataLibraries.cpp" />
+    <ClCompile Include="DataLibrariesBG3Game.cpp" />
+    <ClCompile Include="Debugger.cpp" />
+    <ClCompile Include="DebugInterface.cpp" />
+    <ClCompile Include="DebugMessages.cpp" />
+    <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="DWriteWrapper.cpp" />
+    <ClCompile Include="CrashReporter.cpp" />
+    <ClCompile Include="ExtensionState.cpp" />
+    <ClCompile Include="GlobalFixedStrings.cpp" />
+    <ClCompile Include="NodeHooks.cpp" />
+    <ClCompile Include="osidebug.pb.cc" />
+    <ClCompile Include="OsirisHelpers.cpp" />
+    <ClCompile Include="OsirisProxy.cpp" />
+    <ClCompile Include="OsirisWrappers.cpp" />
+    <ClCompile Include="PropertyMap.cpp" />
+    <ClCompile Include="ScriptExtensions.pb.cc" />
+    <ClCompile Include="ScriptHelpers.cpp" />
+    <ClCompile Include="Stats.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="Lua\Shared\LuaStats.cpp">
+      <Filter>Lua\Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="Lua\Server\LuaServer.cpp">
+      <Filter>Lua\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="Lua\Client\LuaClient.cpp">
+      <Filter>Lua\Client</Filter>
+    </ClCompile>
+    <ClCompile Include="Lua\LuaBinding.cpp">
+      <Filter>Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaDebug.pb.cc">
+      <Filter>Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="Lua\LuaDebugger.cpp">
+      <Filter>Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="Lua\LuaDebugMessages.cpp">
+      <Filter>Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="Lua\LuaExtFunctions.cpp">
+      <Filter>Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="Lua\LuaOsiBridge.cpp">
+      <Filter>Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="Lua\LuaSerializers.cpp">
+      <Filter>Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="Functions\FunctionLibrary.cpp">
+      <Filter>Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="Functions\FunctionUtilities.cpp">
+      <Filter>Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="Functions\LuaFunctions.cpp">
+      <Filter>Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="Functions\MathFunctions.cpp">
+      <Filter>Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="Functions\UtilityFunctions.cpp">
+      <Filter>Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="Functions\StatFunctions.cpp">
+      <Filter>Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="EntitySystem.cpp">
+      <Filter>GameDefinitions</Filter>
+    </ClCompile>
+    <ClCompile Include="Enumerations.cpp">
+      <Filter>GameDefinitions</Filter>
+    </ClCompile>
+    <ClCompile Include="GameDefinitions\GameHelpers.cpp">
+      <Filter>GameDefinitions</Filter>
+    </ClCompile>
+    <ClCompile Include="GameDefinitions\PropertyMaps.cpp">
+      <Filter>GameDefinitions</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CustomFunctions.h" />
+    <ClInclude Include="DataLibraries.h" />
+    <ClInclude Include="Debugger.h" />
+    <ClInclude Include="DebugInterface.h" />
+    <ClInclude Include="DebugMessages.h" />
+    <ClInclude Include="DWriteWrapper.h" />
+    <ClInclude Include="ExtensionHelpers.h" />
+    <ClInclude Include="ExtensionState.h" />
+    <ClInclude Include="ExtensionStateClient.h" />
+    <ClInclude Include="ExtensionStateServer.h" />
+    <ClInclude Include="GlobalFixedStrings.h" />
+    <ClInclude Include="NodeHooks.h" />
+    <ClInclude Include="osidebug.pb.h" />
+    <ClInclude Include="OsirisHelpers.h" />
+    <ClInclude Include="OsirisProxy.h" />
+    <ClInclude Include="OsirisWrappers.h" />
+    <ClInclude Include="PropertyMap.h" />
+    <ClInclude Include="PropertyMaps.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="ScriptExtensions.pb.h" />
+    <ClInclude Include="ScriptHelpers.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="Utils.h" />
+    <ClInclude Include="Version.h" />
+    <ClInclude Include="Wrappers.h" />
+    <ClInclude Include="Lua\Shared\LuaStats.h">
+      <Filter>Lua\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="Lua\Server\LuaBindingServer.h">
+      <Filter>Lua\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="Lua\Server\ServerOsirisBinding.h">
+      <Filter>Lua\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="Lua\Client\LuaBindingClient.h">
+      <Filter>Lua\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="Lua\LuaBinding.h">
+      <Filter>Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaDebug.pb.h">
+      <Filter>Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="Lua\LuaDebugger.h">
+      <Filter>Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="Lua\LuaDebugMessages.h">
+      <Filter>Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="Lua\LuaHelpers.h">
+      <Filter>Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="Lua\LuaSerializers.h">
+      <Filter>Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="Functions\FunctionLibrary.h">
+      <Filter>Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\Components\Boosts.h">
+      <Filter>GameDefinitions\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\Components\Combat.h">
+      <Filter>GameDefinitions\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\Components\Components.h">
+      <Filter>GameDefinitions\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\Components\Passives.h">
+      <Filter>GameDefinitions\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\Components\Projectile.h">
+      <Filter>GameDefinitions\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\Components\Stats.h">
+      <Filter>GameDefinitions\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\Passives.h">
+      <Filter>GameDefinitions</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\Stats\Stats.h">
+      <Filter>GameDefinitions\Stats</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\Stats\Character.h">
+      <Filter>GameDefinitions\Stats</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\Stats\Common.h">
+      <Filter>GameDefinitions\Stats</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\Stats\Functors.h">
+      <Filter>GameDefinitions\Stats</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\Stats\Item.h">
+      <Filter>GameDefinitions\Stats</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\BaseUtilities.h">
+      <Filter>GameDefinitions\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\BaseContainers.h">
+      <Filter>GameDefinitions\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\BaseMemory.h">
+      <Filter>GameDefinitions\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\BaseString.h">
+      <Filter>GameDefinitions\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\BaseTypes.h">
+      <Filter>GameDefinitions\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\EntitySystem.h">
+      <Filter>GameDefinitions</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\EntityManager.h">
+      <Filter>GameDefinitions</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\Enumerations.h">
+      <Filter>GameDefinitions</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\Hit.h">
+      <Filter>GameDefinitions</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\Item.h">
+      <Filter>GameDefinitions</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\Level.h">
+      <Filter>GameDefinitions</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\Misc.h">
+      <Filter>GameDefinitions</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\Module.h">
+      <Filter>GameDefinitions</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\Osiris.h">
+      <Filter>GameDefinitions</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\Party.h">
+      <Filter>GameDefinitions</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\ResourceDefinitions.h">
+      <Filter>GameDefinitions</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\RootTemplates.h">
+      <Filter>GameDefinitions</Filter>
+    </ClInclude>
+    <ClInclude Include="Surface.h">
+      <Filter>GameDefinitions</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\Status.h">
+      <Filter>GameDefinitions</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\Symbols.h">
+      <Filter>GameDefinitions</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\Surface.h">
+      <Filter>GameDefinitions</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\Character.h">
+      <Filter>GameDefinitions</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="BG3Extender.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\APIDocs.md" />
+    <None Include="..\CHANGELOG.md" />
+    <None Include="..\LuaAPIDocs.md" />
+    <None Include="..\Misc\ExtIdeHelpers.lua" />
+    <None Include="cpp.hint" />
+    <None Include="Exports.def" />
+    <None Include="GlobalFixedStrings.inl" />
+    <None Include="LuaDebug.proto" />
+    <None Include="LuaScripts\Game.Math.lua" />
+    <None Include="LuaScripts\Game.Tooltip.lua" />
+    <None Include="LuaScripts\SandboxStartup.lua" />
+    <None Include="Misc\ExtIdeHelpers.lua" />
+    <None Include="osidebug.proto" />
+    <None Include="ScriptExtensions.proto" />
+    <None Include="Lua\Shared\LuaCharacter.inl">
+      <Filter>Lua\Shared</Filter>
+    </None>
+    <None Include="Lua\Shared\LuaItem.inl">
+      <Filter>Lua\Shared</Filter>
+    </None>
+    <None Include="Lua\Shared\LuaShared.inl">
+      <Filter>Lua\Shared</Filter>
+    </None>
+    <None Include="Lua\Shared\RootTemplates.inl">
+      <Filter>Lua\Shared</Filter>
+    </None>
+    <None Include="Lua\Shared\StatAttributes.inl">
+      <Filter>Lua\Shared</Filter>
+    </None>
+    <None Include="Lua\Shared\StatEntries.inl">
+      <Filter>Lua\Shared</Filter>
+    </None>
+    <None Include="Lua\Shared\StatEnumerators.inl">
+      <Filter>Lua\Shared</Filter>
+    </None>
+    <None Include="Lua\Shared\StatMisc.inl">
+      <Filter>Lua\Shared</Filter>
+    </None>
+    <None Include="Lua\Server\ServerCharacter.inl">
+      <Filter>Lua\Server</Filter>
+    </None>
+    <None Include="Lua\Server\ServerCombat.inl">
+      <Filter>Lua\Server</Filter>
+    </None>
+    <None Include="Lua\Server\ServerItem.inl">
+      <Filter>Lua\Server</Filter>
+    </None>
+    <None Include="Lua\Server\ServerNetwork.inl">
+      <Filter>Lua\Server</Filter>
+    </None>
+    <None Include="Lua\Server\ServerOsirisListeners.inl">
+      <Filter>Lua\Server</Filter>
+    </None>
+    <None Include="Lua\Server\ServerStatus.inl">
+      <Filter>Lua\Server</Filter>
+    </None>
+    <None Include="Lua\Server\ServerProjectile.inl">
+      <Filter>Lua\Server</Filter>
+    </None>
+    <None Include="Lua\Server\ServerSurface.inl">
+      <Filter>Lua\Server</Filter>
+    </None>
+    <None Include="Lua\LevelIteratorFunctions.inl">
+      <Filter>Lua</Filter>
+    </None>
+    <None Include="GameDefinitions\EngineHooks.inl">
+      <Filter>GameDefinitions</Filter>
+    </None>
+    <None Include="GameDefinitions\Enumerations.inl">
+      <Filter>GameDefinitions</Filter>
+    </None>
+    <None Include="LuaScripts\BuiltinLibrary.lua">
+      <Filter>LuaScripts</Filter>
+    </None>
+    <None Include="LuaScripts\BuiltinLibraryClient.lua">
+      <Filter>LuaScripts</Filter>
+    </None>
+    <None Include="LuaScripts\BuiltinLibraryServer.lua">
+      <Filter>LuaScripts</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="GameDefinitions">
+      <UniqueIdentifier>{581518a7-1c05-452d-a105-cdbb2d439de4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Functions">
+      <UniqueIdentifier>{135d4463-ad2a-4d08-af20-09987534023e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lua">
+      <UniqueIdentifier>{1eed3983-e758-4216-975e-34f5bc26bcfb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lua\Client">
+      <UniqueIdentifier>{2848ce4c-627e-43e4-b269-ca7c332eb831}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lua\Server">
+      <UniqueIdentifier>{5452fa8e-c0ba-4783-b66b-08a2cc19ba1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lua\Shared">
+      <UniqueIdentifier>{e7b25b28-613a-4d12-8e8f-3b8634c01e37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameDefinitions\Components">
+      <UniqueIdentifier>{58e2b7a0-26ea-413b-8447-cc2aa633c808}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameDefinitions\Stats">
+      <UniqueIdentifier>{fa1a29e1-4d48-4aad-941d-f07addb3a28c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameDefinitions\Base">
+      <UniqueIdentifier>{cba2f21e-b9fd-45e3-83e2-dd45e281ae43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LuaScripts">
+      <UniqueIdentifier>{7e3d1d69-4254-4a02-aa81-5997dbc5c292}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

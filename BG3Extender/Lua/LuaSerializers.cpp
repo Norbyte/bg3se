@@ -7,7 +7,7 @@
 #define P(name) s.VisitProperty(#name, v.name)
 #define PO(name, default) s.VisitOptionalProperty(#name, v.name, default)
 
-namespace dse::lua
+namespace bg3se::lua
 {/*
 	LuaSerializer& operator << (LuaSerializer& s, CEquipmentSet& v)
 	{

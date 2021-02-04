@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package dse.lua.dbg;
+package bg3se.lua.dbg;
 
 option cc_enable_arenas = true;
 option optimize_for = LITE_RUNTIME;

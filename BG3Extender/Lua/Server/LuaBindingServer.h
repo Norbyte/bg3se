@@ -5,15 +5,15 @@
 #include <GameDefinitions/Status.h>
 #include <ExtensionHelpers.h>
 
-namespace dse::esv
+namespace bg3se::esv
 {
 	struct PendingHit;
 	class ExtensionState;
 }
 
-namespace dse::esv::lua
+namespace bg3se::esv::lua
 {
-	using namespace ::dse::lua;
+	using namespace ::bg3se::lua;
 
 	class StatusHandleProxy : public Userdata<StatusHandleProxy>, public Indexable, public NewIndexable, public Pushable<PushPolicy::None>
 	{

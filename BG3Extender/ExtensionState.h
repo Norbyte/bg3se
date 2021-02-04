@@ -7,7 +7,7 @@
 
 namespace Json { class Value; }
 
-namespace dse
+namespace bg3se
 {
 	struct ExtensionModConfig
 	{

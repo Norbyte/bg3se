@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package dse.osidbg;
+package bg3se.osidbg;
 
 option cc_enable_arenas = true;
 option optimize_for = LITE_RUNTIME;

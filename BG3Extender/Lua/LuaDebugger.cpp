@@ -10,7 +10,7 @@
 
 #if !defined(OSI_NO_DEBUGGER)
 
-namespace dse::lua::dbg
+namespace bg3se::lua::dbg
 {
 	ContextDebugger::ContextDebugger(DebugMessageHandler& messageHandler, DbgContext ctx)
 		: messageHandler_(messageHandler), context_(ctx)
@@ -626,7 +626,7 @@ namespace dse::lua::dbg
 			lua_insert(L, top + 1);
 		}
 
-		if (dse::lua::CallWithTraceback(L, (int)locals.size(), LUA_MULTRET)) {
+		if (bg3se::lua::CallWithTraceback(L, (int)locals.size(), LUA_MULTRET)) {
 			req.Response->set_error_message(lua_tostring(L, -1));
 			lua_pop(L, 1);
 			return ResultCode::EvalFailed;

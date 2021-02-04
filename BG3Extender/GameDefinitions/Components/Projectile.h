@@ -6,13 +6,13 @@
 #include <GameDefinitions/EntitySystem.h>
 #include <GameDefinitions/Hit.h>
 
-namespace dse
+namespace bg3se
 {
 	struct StatsFunctorSet;
 }
 
 
-namespace dse::esv
+namespace bg3se::esv
 {
 	struct ProjectileComponent : public BaseComponent
 	{

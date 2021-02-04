@@ -10,7 +10,7 @@
 struct lua_State;
 struct lua_Debug;
 
-namespace dse::lua::dbg
+namespace bg3se::lua::dbg
 {
 	struct DebuggerEvaluateRequest;
 	struct DebuggerGetVariablesRequest;

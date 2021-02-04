@@ -9,7 +9,7 @@
 #include "Sound.h"
 */
 
-namespace dse
+namespace bg3se
 {
 	struct CharacterTemplate;
 
@@ -276,7 +276,7 @@ namespace dse
 
 	namespace ecl 
 	{
-		/*struct PlayerManager : public dse::PlayerManager
+		/*struct PlayerManager : public bg3se::PlayerManager
 		{
 			void* VMT_IProfileSelector;
 			void* VMT_EventListener;

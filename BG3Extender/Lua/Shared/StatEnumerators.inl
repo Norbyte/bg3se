@@ -1,7 +1,7 @@
 #include <GameDefinitions/Stats/Stats.h>
 #include <Lua/LuaBinding.h>
 
-namespace dse::lua
+namespace bg3se::lua
 {
 	/*void FetchSkillSetEntries(lua_State * L, RPGStats * stats)
 	{

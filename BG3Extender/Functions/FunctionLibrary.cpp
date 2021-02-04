@@ -6,7 +6,7 @@
 #include <fstream>
 #include "json/json.h"
 
-namespace dse::esv
+namespace bg3se::esv
 {
 	namespace func
 	{

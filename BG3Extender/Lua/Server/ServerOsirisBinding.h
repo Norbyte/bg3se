@@ -4,7 +4,7 @@
 #include <CustomFunctions.h>
 #include <OsirisHelpers.h>
 
-namespace dse::esv
+namespace bg3se::esv
 {
 	class ExtensionState;
 
@@ -33,21 +33,21 @@ namespace dse::esv
 
 namespace std
 {
-	template<> struct hash<dse::esv::OsirisHookSignature>
+	template<> struct hash<bg3se::esv::OsirisHookSignature>
 	{
-		typedef dse::esv::OsirisHookSignature argument_type;
+		typedef bg3se::esv::OsirisHookSignature argument_type;
 		typedef std::size_t result_type;
 
 		result_type operator()(argument_type const& sig) const noexcept
 		{
-			return std::hash<dse::STDString>{}(sig.name) ^ std::hash<uint32_t>{}(sig.arity | ((uint32_t)sig.type << 6));
+			return std::hash<bg3se::STDString>{}(sig.name) ^ std::hash<uint32_t>{}(sig.arity | ((uint32_t)sig.type << 6));
 		}
 	};
 }
 
-namespace dse::esv::lua
+namespace bg3se::esv::lua
 {
-	using namespace dse::lua;
+	using namespace bg3se::lua;
 
 	void LuaToOsi(lua_State * L, int i, TypedValue & tv, ValueType osiType, bool allowNil = false);
 	TypedValue * LuaToOsi(lua_State * L, int i, ValueType osiType, bool allowNil = false);

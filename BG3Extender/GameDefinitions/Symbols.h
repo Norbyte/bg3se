@@ -7,7 +7,7 @@
 #include <GameDefinitions/RootTemplates.h>
 #include <GameDefinitions/Stats/Stats.h>
 
-namespace dse
+namespace bg3se
 {
 	/*enum class EsvGlobalEoCApp {
 		EsvLSDialogEventManager = 0,
@@ -116,6 +116,8 @@ namespace dse
 		ecl::EoCClient** ecl__EoCClient{ nullptr };
 		esv::EoCServer** esv__EoCServer{ nullptr };
 
+		ecl::EoCClient::HandleErrorProc* ecl__EoCClient__HandleError{ nullptr };
+
 		ecl::GameStateEventManager__ExecuteGameStateChangedEvent ecl__GameStateEventManager__ExecuteGameStateChangedEvent{ nullptr };
 		esv::GameStateEventManager__ExecuteGameStateChangedEvent esv__GameStateEventManager__ExecuteGameStateChangedEvent{ nullptr };
 		ecl::GameStateThreaded__GameStateWorker__DoWork ecl__GameStateThreaded__GameStateWorker__DoWork{ nullptr };
@@ -172,7 +174,6 @@ namespace dse
 		{
 			if (ecl__EoCClient != nullptr
 				&& *ecl__EoCClient != nullptr
-				&& (*ecl__EoCClient)->GameStateMachine != nullptr
 				&& (*ecl__EoCClient)->GameStateMachine != nullptr) {
 				return (*ecl__EoCClient)->GameStateMachine->State;
 			} else {

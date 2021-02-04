@@ -2,7 +2,7 @@
 
 #include "BaseTypes.h"
 
-namespace dse
+namespace bg3se
 {
 	struct LevelManager;
 	struct EntityWorldBase;
@@ -56,7 +56,7 @@ namespace dse
 		};
 
 
-		struct EntityManager : public dse::EntityManager
+		struct EntityManager : public bg3se::EntityManager
 		{
 			__int64 field_48;
 			Array<void*> field_50;

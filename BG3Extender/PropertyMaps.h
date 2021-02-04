@@ -4,7 +4,7 @@
 #include "Functions/FunctionLibrary.h"
 #include "PropertyMap.h"
 
-namespace dse
+namespace bg3se
 {
 	template <class T>
 	struct GlobalPropertyMap

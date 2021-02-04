@@ -7,7 +7,7 @@
 #include <GameDefinitions/Osiris.h>
 #include "DebugInterface.h"
 
-namespace dse::osidbg
+namespace bg3se::osidbg
 {
 	enum class GlobalBreakpointReason
 	{

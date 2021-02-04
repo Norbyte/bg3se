@@ -7,7 +7,7 @@
 #include "OsirisProxy.h"
 #include <PropertyMaps.h>
 
-namespace dse
+namespace bg3se
 {
 	StaticSymbols & GetStaticSymbols()
 	{
@@ -617,7 +617,7 @@ namespace dse
 		DamageList.Clear();
 	}
 
-	void HitDamageInfo::ClearDamage(dse::DamageType damageType)
+	void HitDamageInfo::ClearDamage(bg3se::DamageType damageType)
 	{
 		for (auto const& dmg : DamageList) {
 			if (dmg.DamageType == damageType) {
@@ -628,7 +628,7 @@ namespace dse
 		DamageList.ClearDamage(damageType);
 	}
 
-	void HitDamageInfo::AddDamage(dse::DamageType damageType, int32_t amount)
+	void HitDamageInfo::AddDamage(bg3se::DamageType damageType, int32_t amount)
 	{
 		TotalDamage += amount;
 		DamageList.AddDamage(damageType, amount);
@@ -650,7 +650,7 @@ namespace dse
 	}
 
 
-	void DamagePairList::ClearDamage(dse::DamageType damageType)
+	void DamagePairList::ClearDamage(bg3se::DamageType damageType)
 	{
 		for (uint32_t i = 0; i < Size; i++) {
 			if (Buf[i].DamageType == damageType) {
@@ -1043,7 +1043,7 @@ namespace dse
 
 	namespace ecl
 	{
-		EoCUI::EoCUI(dse::Path * path)
+		EoCUI::EoCUI(bg3se::Path * path)
 		{
 			GetStaticSymbols().EoCUI__ctor(this, path);
 		}

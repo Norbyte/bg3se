@@ -44,7 +44,7 @@ struct TableStruct {
   static const ::google::protobuf::uint32 offsets[];
 };
 }  // namespace protobuf_LuaDebug_2eproto
-namespace dse {
+namespace bg3se {
 namespace lua {
 namespace dbg {
 class BackendToDebugger;
@@ -133,40 +133,40 @@ class MsgVariablesRefDefaultTypeInternal;
 extern MsgVariablesRefDefaultTypeInternal _MsgVariablesRef_default_instance_;
 }  // namespace dbg
 }  // namespace lua
-}  // namespace dse
+}  // namespace bg3se
 namespace google {
 namespace protobuf {
-template<> ::dse::lua::dbg::BackendToDebugger* Arena::CreateMaybeMessage<::dse::lua::dbg::BackendToDebugger>(Arena*);
-template<> ::dse::lua::dbg::BkBreakpointTriggered* Arena::CreateMaybeMessage<::dse::lua::dbg::BkBreakpointTriggered>(Arena*);
-template<> ::dse::lua::dbg::BkConnectResponse* Arena::CreateMaybeMessage<::dse::lua::dbg::BkConnectResponse>(Arena*);
-template<> ::dse::lua::dbg::BkContextUpdated* Arena::CreateMaybeMessage<::dse::lua::dbg::BkContextUpdated>(Arena*);
-template<> ::dse::lua::dbg::BkDebugOutput* Arena::CreateMaybeMessage<::dse::lua::dbg::BkDebugOutput>(Arena*);
-template<> ::dse::lua::dbg::BkDebuggerReady* Arena::CreateMaybeMessage<::dse::lua::dbg::BkDebuggerReady>(Arena*);
-template<> ::dse::lua::dbg::BkEvaluateResponse* Arena::CreateMaybeMessage<::dse::lua::dbg::BkEvaluateResponse>(Arena*);
-template<> ::dse::lua::dbg::BkGetVariablesResponse* Arena::CreateMaybeMessage<::dse::lua::dbg::BkGetVariablesResponse>(Arena*);
-template<> ::dse::lua::dbg::BkModInfoResponse* Arena::CreateMaybeMessage<::dse::lua::dbg::BkModInfoResponse>(Arena*);
-template<> ::dse::lua::dbg::BkResult* Arena::CreateMaybeMessage<::dse::lua::dbg::BkResult>(Arena*);
-template<> ::dse::lua::dbg::BkSourceResponse* Arena::CreateMaybeMessage<::dse::lua::dbg::BkSourceResponse>(Arena*);
-template<> ::dse::lua::dbg::DbgConnectRequest* Arena::CreateMaybeMessage<::dse::lua::dbg::DbgConnectRequest>(Arena*);
-template<> ::dse::lua::dbg::DbgContinue* Arena::CreateMaybeMessage<::dse::lua::dbg::DbgContinue>(Arena*);
-template<> ::dse::lua::dbg::DbgEvaluate* Arena::CreateMaybeMessage<::dse::lua::dbg::DbgEvaluate>(Arena*);
-template<> ::dse::lua::dbg::DbgFetchMods* Arena::CreateMaybeMessage<::dse::lua::dbg::DbgFetchMods>(Arena*);
-template<> ::dse::lua::dbg::DbgGetVariables* Arena::CreateMaybeMessage<::dse::lua::dbg::DbgGetVariables>(Arena*);
-template<> ::dse::lua::dbg::DbgRequestSource* Arena::CreateMaybeMessage<::dse::lua::dbg::DbgRequestSource>(Arena*);
-template<> ::dse::lua::dbg::DbgSetBreakpoints* Arena::CreateMaybeMessage<::dse::lua::dbg::DbgSetBreakpoints>(Arena*);
-template<> ::dse::lua::dbg::DbgUpdateSettings* Arena::CreateMaybeMessage<::dse::lua::dbg::DbgUpdateSettings>(Arena*);
-template<> ::dse::lua::dbg::DebuggerToBackend* Arena::CreateMaybeMessage<::dse::lua::dbg::DebuggerToBackend>(Arena*);
-template<> ::dse::lua::dbg::MsgBreakpoint* Arena::CreateMaybeMessage<::dse::lua::dbg::MsgBreakpoint>(Arena*);
-template<> ::dse::lua::dbg::MsgChildValue* Arena::CreateMaybeMessage<::dse::lua::dbg::MsgChildValue>(Arena*);
-template<> ::dse::lua::dbg::MsgModuleInfo* Arena::CreateMaybeMessage<::dse::lua::dbg::MsgModuleInfo>(Arena*);
-template<> ::dse::lua::dbg::MsgSourceFileInfo* Arena::CreateMaybeMessage<::dse::lua::dbg::MsgSourceFileInfo>(Arena*);
-template<> ::dse::lua::dbg::MsgStackFrame* Arena::CreateMaybeMessage<::dse::lua::dbg::MsgStackFrame>(Arena*);
-template<> ::dse::lua::dbg::MsgTableKey* Arena::CreateMaybeMessage<::dse::lua::dbg::MsgTableKey>(Arena*);
-template<> ::dse::lua::dbg::MsgValue* Arena::CreateMaybeMessage<::dse::lua::dbg::MsgValue>(Arena*);
-template<> ::dse::lua::dbg::MsgVariablesRef* Arena::CreateMaybeMessage<::dse::lua::dbg::MsgVariablesRef>(Arena*);
+template<> ::bg3se::lua::dbg::BackendToDebugger* Arena::CreateMaybeMessage<::bg3se::lua::dbg::BackendToDebugger>(Arena*);
+template<> ::bg3se::lua::dbg::BkBreakpointTriggered* Arena::CreateMaybeMessage<::bg3se::lua::dbg::BkBreakpointTriggered>(Arena*);
+template<> ::bg3se::lua::dbg::BkConnectResponse* Arena::CreateMaybeMessage<::bg3se::lua::dbg::BkConnectResponse>(Arena*);
+template<> ::bg3se::lua::dbg::BkContextUpdated* Arena::CreateMaybeMessage<::bg3se::lua::dbg::BkContextUpdated>(Arena*);
+template<> ::bg3se::lua::dbg::BkDebugOutput* Arena::CreateMaybeMessage<::bg3se::lua::dbg::BkDebugOutput>(Arena*);
+template<> ::bg3se::lua::dbg::BkDebuggerReady* Arena::CreateMaybeMessage<::bg3se::lua::dbg::BkDebuggerReady>(Arena*);
+template<> ::bg3se::lua::dbg::BkEvaluateResponse* Arena::CreateMaybeMessage<::bg3se::lua::dbg::BkEvaluateResponse>(Arena*);
+template<> ::bg3se::lua::dbg::BkGetVariablesResponse* Arena::CreateMaybeMessage<::bg3se::lua::dbg::BkGetVariablesResponse>(Arena*);
+template<> ::bg3se::lua::dbg::BkModInfoResponse* Arena::CreateMaybeMessage<::bg3se::lua::dbg::BkModInfoResponse>(Arena*);
+template<> ::bg3se::lua::dbg::BkResult* Arena::CreateMaybeMessage<::bg3se::lua::dbg::BkResult>(Arena*);
+template<> ::bg3se::lua::dbg::BkSourceResponse* Arena::CreateMaybeMessage<::bg3se::lua::dbg::BkSourceResponse>(Arena*);
+template<> ::bg3se::lua::dbg::DbgConnectRequest* Arena::CreateMaybeMessage<::bg3se::lua::dbg::DbgConnectRequest>(Arena*);
+template<> ::bg3se::lua::dbg::DbgContinue* Arena::CreateMaybeMessage<::bg3se::lua::dbg::DbgContinue>(Arena*);
+template<> ::bg3se::lua::dbg::DbgEvaluate* Arena::CreateMaybeMessage<::bg3se::lua::dbg::DbgEvaluate>(Arena*);
+template<> ::bg3se::lua::dbg::DbgFetchMods* Arena::CreateMaybeMessage<::bg3se::lua::dbg::DbgFetchMods>(Arena*);
+template<> ::bg3se::lua::dbg::DbgGetVariables* Arena::CreateMaybeMessage<::bg3se::lua::dbg::DbgGetVariables>(Arena*);
+template<> ::bg3se::lua::dbg::DbgRequestSource* Arena::CreateMaybeMessage<::bg3se::lua::dbg::DbgRequestSource>(Arena*);
+template<> ::bg3se::lua::dbg::DbgSetBreakpoints* Arena::CreateMaybeMessage<::bg3se::lua::dbg::DbgSetBreakpoints>(Arena*);
+template<> ::bg3se::lua::dbg::DbgUpdateSettings* Arena::CreateMaybeMessage<::bg3se::lua::dbg::DbgUpdateSettings>(Arena*);
+template<> ::bg3se::lua::dbg::DebuggerToBackend* Arena::CreateMaybeMessage<::bg3se::lua::dbg::DebuggerToBackend>(Arena*);
+template<> ::bg3se::lua::dbg::MsgBreakpoint* Arena::CreateMaybeMessage<::bg3se::lua::dbg::MsgBreakpoint>(Arena*);
+template<> ::bg3se::lua::dbg::MsgChildValue* Arena::CreateMaybeMessage<::bg3se::lua::dbg::MsgChildValue>(Arena*);
+template<> ::bg3se::lua::dbg::MsgModuleInfo* Arena::CreateMaybeMessage<::bg3se::lua::dbg::MsgModuleInfo>(Arena*);
+template<> ::bg3se::lua::dbg::MsgSourceFileInfo* Arena::CreateMaybeMessage<::bg3se::lua::dbg::MsgSourceFileInfo>(Arena*);
+template<> ::bg3se::lua::dbg::MsgStackFrame* Arena::CreateMaybeMessage<::bg3se::lua::dbg::MsgStackFrame>(Arena*);
+template<> ::bg3se::lua::dbg::MsgTableKey* Arena::CreateMaybeMessage<::bg3se::lua::dbg::MsgTableKey>(Arena*);
+template<> ::bg3se::lua::dbg::MsgValue* Arena::CreateMaybeMessage<::bg3se::lua::dbg::MsgValue>(Arena*);
+template<> ::bg3se::lua::dbg::MsgVariablesRef* Arena::CreateMaybeMessage<::bg3se::lua::dbg::MsgVariablesRef>(Arena*);
 }  // namespace protobuf
 }  // namespace google
-namespace dse {
+namespace bg3se {
 namespace lua {
 namespace dbg {
 
@@ -294,7 +294,7 @@ const int MsgValueType_ARRAYSIZE = MsgValueType_MAX + 1;
 
 // ===================================================================
 
-class MsgTableKey : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.lua.dbg.MsgTableKey) */ {
+class MsgTableKey : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.lua.dbg.MsgTableKey) */ {
  public:
   MsgTableKey();
   virtual ~MsgTableKey();
@@ -435,13 +435,13 @@ class MsgTableKey : public ::google::protobuf::MessageLite /* @@protoc_insertion
   ::google::protobuf::int64 index() const;
   void set_index(::google::protobuf::int64 value);
 
-  // .dse.lua.dbg.MsgTableKey.Type type = 1;
+  // .bg3se.lua.dbg.MsgTableKey.Type type = 1;
   void clear_type();
   static const int kTypeFieldNumber = 1;
-  ::dse::lua::dbg::MsgTableKey_Type type() const;
-  void set_type(::dse::lua::dbg::MsgTableKey_Type value);
+  ::bg3se::lua::dbg::MsgTableKey_Type type() const;
+  void set_type(::bg3se::lua::dbg::MsgTableKey_Type value);
 
-  // @@protoc_insertion_point(class_scope:dse.lua.dbg.MsgTableKey)
+  // @@protoc_insertion_point(class_scope:bg3se.lua.dbg.MsgTableKey)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -456,7 +456,7 @@ class MsgTableKey : public ::google::protobuf::MessageLite /* @@protoc_insertion
 };
 // -------------------------------------------------------------------
 
-class MsgVariablesRef : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.lua.dbg.MsgVariablesRef) */ {
+class MsgVariablesRef : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.lua.dbg.MsgVariablesRef) */ {
  public:
   MsgVariablesRef();
   virtual ~MsgVariablesRef();
@@ -553,16 +553,16 @@ class MsgVariablesRef : public ::google::protobuf::MessageLite /* @@protoc_inser
 
   // accessors -------------------------------------------------------
 
-  // repeated .dse.lua.dbg.MsgTableKey key = 4;
+  // repeated .bg3se.lua.dbg.MsgTableKey key = 4;
   int key_size() const;
   void clear_key();
   static const int kKeyFieldNumber = 4;
-  ::dse::lua::dbg::MsgTableKey* mutable_key(int index);
-  ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgTableKey >*
+  ::bg3se::lua::dbg::MsgTableKey* mutable_key(int index);
+  ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgTableKey >*
       mutable_key();
-  const ::dse::lua::dbg::MsgTableKey& key(int index) const;
-  ::dse::lua::dbg::MsgTableKey* add_key();
-  const ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgTableKey >&
+  const ::bg3se::lua::dbg::MsgTableKey& key(int index) const;
+  ::bg3se::lua::dbg::MsgTableKey* add_key();
+  const ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgTableKey >&
       key() const;
 
   // int32 variableRef = 1;
@@ -583,14 +583,14 @@ class MsgVariablesRef : public ::google::protobuf::MessageLite /* @@protoc_inser
   ::google::protobuf::int32 local() const;
   void set_local(::google::protobuf::int32 value);
 
-  // @@protoc_insertion_point(class_scope:dse.lua.dbg.MsgVariablesRef)
+  // @@protoc_insertion_point(class_scope:bg3se.lua.dbg.MsgVariablesRef)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
   template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgTableKey > key_;
+  ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgTableKey > key_;
   ::google::protobuf::int32 variableref_;
   ::google::protobuf::int32 frame_;
   ::google::protobuf::int32 local_;
@@ -599,7 +599,7 @@ class MsgVariablesRef : public ::google::protobuf::MessageLite /* @@protoc_inser
 };
 // -------------------------------------------------------------------
 
-class MsgValue : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.lua.dbg.MsgValue) */ {
+class MsgValue : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.lua.dbg.MsgValue) */ {
  public:
   MsgValue();
   virtual ~MsgValue();
@@ -705,11 +705,11 @@ class MsgValue : public ::google::protobuf::MessageLite /* @@protoc_insertion_po
 
   // accessors -------------------------------------------------------
 
-  // .dse.lua.dbg.MsgValueType type_id = 1;
+  // .bg3se.lua.dbg.MsgValueType type_id = 1;
   void clear_type_id();
   static const int kTypeIdFieldNumber = 1;
-  ::dse::lua::dbg::MsgValueType type_id() const;
-  void set_type_id(::dse::lua::dbg::MsgValueType value);
+  ::bg3se::lua::dbg::MsgValueType type_id() const;
+  void set_type_id(::bg3se::lua::dbg::MsgValueType value);
 
   // bool boolval = 2;
   private:
@@ -764,24 +764,24 @@ class MsgValue : public ::google::protobuf::MessageLite /* @@protoc_insertion_po
   void unsafe_arena_set_allocated_stringval(
       ::std::string* stringval);
 
-  // .dse.lua.dbg.MsgVariablesRef variables = 6;
+  // .bg3se.lua.dbg.MsgVariablesRef variables = 6;
   bool has_variables() const;
   void clear_variables();
   static const int kVariablesFieldNumber = 6;
   private:
-  const ::dse::lua::dbg::MsgVariablesRef& _internal_variables() const;
+  const ::bg3se::lua::dbg::MsgVariablesRef& _internal_variables() const;
   public:
-  const ::dse::lua::dbg::MsgVariablesRef& variables() const;
-  ::dse::lua::dbg::MsgVariablesRef* release_variables();
-  ::dse::lua::dbg::MsgVariablesRef* mutable_variables();
-  void set_allocated_variables(::dse::lua::dbg::MsgVariablesRef* variables);
+  const ::bg3se::lua::dbg::MsgVariablesRef& variables() const;
+  ::bg3se::lua::dbg::MsgVariablesRef* release_variables();
+  ::bg3se::lua::dbg::MsgVariablesRef* mutable_variables();
+  void set_allocated_variables(::bg3se::lua::dbg::MsgVariablesRef* variables);
   void unsafe_arena_set_allocated_variables(
-      ::dse::lua::dbg::MsgVariablesRef* variables);
-  ::dse::lua::dbg::MsgVariablesRef* unsafe_arena_release_variables();
+      ::bg3se::lua::dbg::MsgVariablesRef* variables);
+  ::bg3se::lua::dbg::MsgVariablesRef* unsafe_arena_release_variables();
 
   void clear_value();
   ValueCase value_case() const;
-  // @@protoc_insertion_point(class_scope:dse.lua.dbg.MsgValue)
+  // @@protoc_insertion_point(class_scope:bg3se.lua.dbg.MsgValue)
  private:
   void set_has_boolval();
   void set_has_intval();
@@ -803,7 +803,7 @@ class MsgValue : public ::google::protobuf::MessageLite /* @@protoc_insertion_po
     ::google::protobuf::int64 intval_;
     float floatval_;
     ::google::protobuf::internal::ArenaStringPtr stringval_;
-    ::dse::lua::dbg::MsgVariablesRef* variables_;
+    ::bg3se::lua::dbg::MsgVariablesRef* variables_;
   } value_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   ::google::protobuf::uint32 _oneof_case_[1];
@@ -812,7 +812,7 @@ class MsgValue : public ::google::protobuf::MessageLite /* @@protoc_insertion_po
 };
 // -------------------------------------------------------------------
 
-class MsgChildValue : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.lua.dbg.MsgChildValue) */ {
+class MsgChildValue : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.lua.dbg.MsgChildValue) */ {
  public:
   MsgChildValue();
   virtual ~MsgChildValue();
@@ -947,20 +947,20 @@ class MsgChildValue : public ::google::protobuf::MessageLite /* @@protoc_inserti
   void unsafe_arena_set_allocated_name(
       ::std::string* name);
 
-  // .dse.lua.dbg.MsgValue value = 4;
+  // .bg3se.lua.dbg.MsgValue value = 4;
   bool has_value() const;
   void clear_value();
   static const int kValueFieldNumber = 4;
   private:
-  const ::dse::lua::dbg::MsgValue& _internal_value() const;
+  const ::bg3se::lua::dbg::MsgValue& _internal_value() const;
   public:
-  const ::dse::lua::dbg::MsgValue& value() const;
-  ::dse::lua::dbg::MsgValue* release_value();
-  ::dse::lua::dbg::MsgValue* mutable_value();
-  void set_allocated_value(::dse::lua::dbg::MsgValue* value);
+  const ::bg3se::lua::dbg::MsgValue& value() const;
+  ::bg3se::lua::dbg::MsgValue* release_value();
+  ::bg3se::lua::dbg::MsgValue* mutable_value();
+  void set_allocated_value(::bg3se::lua::dbg::MsgValue* value);
   void unsafe_arena_set_allocated_value(
-      ::dse::lua::dbg::MsgValue* value);
-  ::dse::lua::dbg::MsgValue* unsafe_arena_release_value();
+      ::bg3se::lua::dbg::MsgValue* value);
+  ::bg3se::lua::dbg::MsgValue* unsafe_arena_release_value();
 
   // int64 index = 2;
   void clear_index();
@@ -968,13 +968,13 @@ class MsgChildValue : public ::google::protobuf::MessageLite /* @@protoc_inserti
   ::google::protobuf::int64 index() const;
   void set_index(::google::protobuf::int64 value);
 
-  // .dse.lua.dbg.MsgChildValue.Type type = 1;
+  // .bg3se.lua.dbg.MsgChildValue.Type type = 1;
   void clear_type();
   static const int kTypeFieldNumber = 1;
-  ::dse::lua::dbg::MsgChildValue_Type type() const;
-  void set_type(::dse::lua::dbg::MsgChildValue_Type value);
+  ::bg3se::lua::dbg::MsgChildValue_Type type() const;
+  void set_type(::bg3se::lua::dbg::MsgChildValue_Type value);
 
-  // @@protoc_insertion_point(class_scope:dse.lua.dbg.MsgChildValue)
+  // @@protoc_insertion_point(class_scope:bg3se.lua.dbg.MsgChildValue)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -982,7 +982,7 @@ class MsgChildValue : public ::google::protobuf::MessageLite /* @@protoc_inserti
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   ::google::protobuf::internal::ArenaStringPtr name_;
-  ::dse::lua::dbg::MsgValue* value_;
+  ::bg3se::lua::dbg::MsgValue* value_;
   ::google::protobuf::int64 index_;
   int type_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
@@ -990,7 +990,7 @@ class MsgChildValue : public ::google::protobuf::MessageLite /* @@protoc_inserti
 };
 // -------------------------------------------------------------------
 
-class MsgStackFrame : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.lua.dbg.MsgStackFrame) */ {
+class MsgStackFrame : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.lua.dbg.MsgStackFrame) */ {
  public:
   MsgStackFrame();
   virtual ~MsgStackFrame();
@@ -1174,7 +1174,7 @@ class MsgStackFrame : public ::google::protobuf::MessageLite /* @@protoc_inserti
   ::google::protobuf::int32 scope_last_line() const;
   void set_scope_last_line(::google::protobuf::int32 value);
 
-  // @@protoc_insertion_point(class_scope:dse.lua.dbg.MsgStackFrame)
+  // @@protoc_insertion_point(class_scope:bg3se.lua.dbg.MsgStackFrame)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -1192,7 +1192,7 @@ class MsgStackFrame : public ::google::protobuf::MessageLite /* @@protoc_inserti
 };
 // -------------------------------------------------------------------
 
-class DbgConnectRequest : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.lua.dbg.DbgConnectRequest) */ {
+class DbgConnectRequest : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.lua.dbg.DbgConnectRequest) */ {
  public:
   DbgConnectRequest();
   virtual ~DbgConnectRequest();
@@ -1295,7 +1295,7 @@ class DbgConnectRequest : public ::google::protobuf::MessageLite /* @@protoc_ins
   ::google::protobuf::uint32 protocol_version() const;
   void set_protocol_version(::google::protobuf::uint32 value);
 
-  // @@protoc_insertion_point(class_scope:dse.lua.dbg.DbgConnectRequest)
+  // @@protoc_insertion_point(class_scope:bg3se.lua.dbg.DbgConnectRequest)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -1308,7 +1308,7 @@ class DbgConnectRequest : public ::google::protobuf::MessageLite /* @@protoc_ins
 };
 // -------------------------------------------------------------------
 
-class BkConnectResponse : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.lua.dbg.BkConnectResponse) */ {
+class BkConnectResponse : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.lua.dbg.BkConnectResponse) */ {
  public:
   BkConnectResponse();
   virtual ~BkConnectResponse();
@@ -1411,7 +1411,7 @@ class BkConnectResponse : public ::google::protobuf::MessageLite /* @@protoc_ins
   ::google::protobuf::uint32 protocol_version() const;
   void set_protocol_version(::google::protobuf::uint32 value);
 
-  // @@protoc_insertion_point(class_scope:dse.lua.dbg.BkConnectResponse)
+  // @@protoc_insertion_point(class_scope:bg3se.lua.dbg.BkConnectResponse)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -1424,7 +1424,7 @@ class BkConnectResponse : public ::google::protobuf::MessageLite /* @@protoc_ins
 };
 // -------------------------------------------------------------------
 
-class DbgUpdateSettings : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.lua.dbg.DbgUpdateSettings) */ {
+class DbgUpdateSettings : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.lua.dbg.DbgUpdateSettings) */ {
  public:
   DbgUpdateSettings();
   virtual ~DbgUpdateSettings();
@@ -1533,7 +1533,7 @@ class DbgUpdateSettings : public ::google::protobuf::MessageLite /* @@protoc_ins
   bool break_on_generic_error() const;
   void set_break_on_generic_error(bool value);
 
-  // @@protoc_insertion_point(class_scope:dse.lua.dbg.DbgUpdateSettings)
+  // @@protoc_insertion_point(class_scope:bg3se.lua.dbg.DbgUpdateSettings)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -1547,7 +1547,7 @@ class DbgUpdateSettings : public ::google::protobuf::MessageLite /* @@protoc_ins
 };
 // -------------------------------------------------------------------
 
-class MsgBreakpoint : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.lua.dbg.MsgBreakpoint) */ {
+class MsgBreakpoint : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.lua.dbg.MsgBreakpoint) */ {
  public:
   MsgBreakpoint();
   virtual ~MsgBreakpoint();
@@ -1673,7 +1673,7 @@ class MsgBreakpoint : public ::google::protobuf::MessageLite /* @@protoc_inserti
   ::google::protobuf::int32 line() const;
   void set_line(::google::protobuf::int32 value);
 
-  // @@protoc_insertion_point(class_scope:dse.lua.dbg.MsgBreakpoint)
+  // @@protoc_insertion_point(class_scope:bg3se.lua.dbg.MsgBreakpoint)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -1687,7 +1687,7 @@ class MsgBreakpoint : public ::google::protobuf::MessageLite /* @@protoc_inserti
 };
 // -------------------------------------------------------------------
 
-class DbgSetBreakpoints : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.lua.dbg.DbgSetBreakpoints) */ {
+class DbgSetBreakpoints : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.lua.dbg.DbgSetBreakpoints) */ {
  public:
   DbgSetBreakpoints();
   virtual ~DbgSetBreakpoints();
@@ -1784,32 +1784,32 @@ class DbgSetBreakpoints : public ::google::protobuf::MessageLite /* @@protoc_ins
 
   // accessors -------------------------------------------------------
 
-  // repeated .dse.lua.dbg.MsgBreakpoint breakpoint = 1;
+  // repeated .bg3se.lua.dbg.MsgBreakpoint breakpoint = 1;
   int breakpoint_size() const;
   void clear_breakpoint();
   static const int kBreakpointFieldNumber = 1;
-  ::dse::lua::dbg::MsgBreakpoint* mutable_breakpoint(int index);
-  ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgBreakpoint >*
+  ::bg3se::lua::dbg::MsgBreakpoint* mutable_breakpoint(int index);
+  ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgBreakpoint >*
       mutable_breakpoint();
-  const ::dse::lua::dbg::MsgBreakpoint& breakpoint(int index) const;
-  ::dse::lua::dbg::MsgBreakpoint* add_breakpoint();
-  const ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgBreakpoint >&
+  const ::bg3se::lua::dbg::MsgBreakpoint& breakpoint(int index) const;
+  ::bg3se::lua::dbg::MsgBreakpoint* add_breakpoint();
+  const ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgBreakpoint >&
       breakpoint() const;
 
-  // @@protoc_insertion_point(class_scope:dse.lua.dbg.DbgSetBreakpoints)
+  // @@protoc_insertion_point(class_scope:bg3se.lua.dbg.DbgSetBreakpoints)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
   template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgBreakpoint > breakpoint_;
+  ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgBreakpoint > breakpoint_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_LuaDebug_2eproto::TableStruct;
 };
 // -------------------------------------------------------------------
 
-class BkBreakpointTriggered : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.lua.dbg.BkBreakpointTriggered) */ {
+class BkBreakpointTriggered : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.lua.dbg.BkBreakpointTriggered) */ {
  public:
   BkBreakpointTriggered();
   virtual ~BkBreakpointTriggered();
@@ -1925,16 +1925,16 @@ class BkBreakpointTriggered : public ::google::protobuf::MessageLite /* @@protoc
 
   // accessors -------------------------------------------------------
 
-  // repeated .dse.lua.dbg.MsgStackFrame stack = 2;
+  // repeated .bg3se.lua.dbg.MsgStackFrame stack = 2;
   int stack_size() const;
   void clear_stack();
   static const int kStackFieldNumber = 2;
-  ::dse::lua::dbg::MsgStackFrame* mutable_stack(int index);
-  ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgStackFrame >*
+  ::bg3se::lua::dbg::MsgStackFrame* mutable_stack(int index);
+  ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgStackFrame >*
       mutable_stack();
-  const ::dse::lua::dbg::MsgStackFrame& stack(int index) const;
-  ::dse::lua::dbg::MsgStackFrame* add_stack();
-  const ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgStackFrame >&
+  const ::bg3se::lua::dbg::MsgStackFrame& stack(int index) const;
+  ::bg3se::lua::dbg::MsgStackFrame* add_stack();
+  const ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgStackFrame >&
       stack() const;
 
   // string message = 4;
@@ -1960,26 +1960,26 @@ class BkBreakpointTriggered : public ::google::protobuf::MessageLite /* @@protoc
   void unsafe_arena_set_allocated_message(
       ::std::string* message);
 
-  // .dse.lua.dbg.BkBreakpointTriggered.Reason reason = 1;
+  // .bg3se.lua.dbg.BkBreakpointTriggered.Reason reason = 1;
   void clear_reason();
   static const int kReasonFieldNumber = 1;
-  ::dse::lua::dbg::BkBreakpointTriggered_Reason reason() const;
-  void set_reason(::dse::lua::dbg::BkBreakpointTriggered_Reason value);
+  ::bg3se::lua::dbg::BkBreakpointTriggered_Reason reason() const;
+  void set_reason(::bg3se::lua::dbg::BkBreakpointTriggered_Reason value);
 
-  // .dse.lua.dbg.DbgContext context = 3;
+  // .bg3se.lua.dbg.DbgContext context = 3;
   void clear_context();
   static const int kContextFieldNumber = 3;
-  ::dse::lua::dbg::DbgContext context() const;
-  void set_context(::dse::lua::dbg::DbgContext value);
+  ::bg3se::lua::dbg::DbgContext context() const;
+  void set_context(::bg3se::lua::dbg::DbgContext value);
 
-  // @@protoc_insertion_point(class_scope:dse.lua.dbg.BkBreakpointTriggered)
+  // @@protoc_insertion_point(class_scope:bg3se.lua.dbg.BkBreakpointTriggered)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
   template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgStackFrame > stack_;
+  ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgStackFrame > stack_;
   ::google::protobuf::internal::ArenaStringPtr message_;
   int reason_;
   int context_;
@@ -1988,7 +1988,7 @@ class BkBreakpointTriggered : public ::google::protobuf::MessageLite /* @@protoc
 };
 // -------------------------------------------------------------------
 
-class DbgContinue : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.lua.dbg.DbgContinue) */ {
+class DbgContinue : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.lua.dbg.DbgContinue) */ {
  public:
   DbgContinue();
   virtual ~DbgContinue();
@@ -2106,19 +2106,19 @@ class DbgContinue : public ::google::protobuf::MessageLite /* @@protoc_insertion
 
   // accessors -------------------------------------------------------
 
-  // .dse.lua.dbg.DbgContext context = 1;
+  // .bg3se.lua.dbg.DbgContext context = 1;
   void clear_context();
   static const int kContextFieldNumber = 1;
-  ::dse::lua::dbg::DbgContext context() const;
-  void set_context(::dse::lua::dbg::DbgContext value);
+  ::bg3se::lua::dbg::DbgContext context() const;
+  void set_context(::bg3se::lua::dbg::DbgContext value);
 
-  // .dse.lua.dbg.DbgContinue.Action action = 2;
+  // .bg3se.lua.dbg.DbgContinue.Action action = 2;
   void clear_action();
   static const int kActionFieldNumber = 2;
-  ::dse::lua::dbg::DbgContinue_Action action() const;
-  void set_action(::dse::lua::dbg::DbgContinue_Action value);
+  ::bg3se::lua::dbg::DbgContinue_Action action() const;
+  void set_action(::bg3se::lua::dbg::DbgContinue_Action value);
 
-  // @@protoc_insertion_point(class_scope:dse.lua.dbg.DbgContinue)
+  // @@protoc_insertion_point(class_scope:bg3se.lua.dbg.DbgContinue)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -2132,7 +2132,7 @@ class DbgContinue : public ::google::protobuf::MessageLite /* @@protoc_insertion
 };
 // -------------------------------------------------------------------
 
-class DbgEvaluate : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.lua.dbg.DbgEvaluate) */ {
+class DbgEvaluate : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.lua.dbg.DbgEvaluate) */ {
  public:
   DbgEvaluate();
   virtual ~DbgEvaluate();
@@ -2252,11 +2252,11 @@ class DbgEvaluate : public ::google::protobuf::MessageLite /* @@protoc_insertion
   void unsafe_arena_set_allocated_expression(
       ::std::string* expression);
 
-  // .dse.lua.dbg.DbgContext context = 1;
+  // .bg3se.lua.dbg.DbgContext context = 1;
   void clear_context();
   static const int kContextFieldNumber = 1;
-  ::dse::lua::dbg::DbgContext context() const;
-  void set_context(::dse::lua::dbg::DbgContext value);
+  ::bg3se::lua::dbg::DbgContext context() const;
+  void set_context(::bg3se::lua::dbg::DbgContext value);
 
   // int32 frame = 3;
   void clear_frame();
@@ -2264,7 +2264,7 @@ class DbgEvaluate : public ::google::protobuf::MessageLite /* @@protoc_insertion
   ::google::protobuf::int32 frame() const;
   void set_frame(::google::protobuf::int32 value);
 
-  // @@protoc_insertion_point(class_scope:dse.lua.dbg.DbgEvaluate)
+  // @@protoc_insertion_point(class_scope:bg3se.lua.dbg.DbgEvaluate)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -2279,7 +2279,7 @@ class DbgEvaluate : public ::google::protobuf::MessageLite /* @@protoc_insertion
 };
 // -------------------------------------------------------------------
 
-class DbgGetVariables : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.lua.dbg.DbgGetVariables) */ {
+class DbgGetVariables : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.lua.dbg.DbgGetVariables) */ {
  public:
   DbgGetVariables();
   virtual ~DbgGetVariables();
@@ -2376,23 +2376,23 @@ class DbgGetVariables : public ::google::protobuf::MessageLite /* @@protoc_inser
 
   // accessors -------------------------------------------------------
 
-  // repeated .dse.lua.dbg.MsgTableKey key = 5;
+  // repeated .bg3se.lua.dbg.MsgTableKey key = 5;
   int key_size() const;
   void clear_key();
   static const int kKeyFieldNumber = 5;
-  ::dse::lua::dbg::MsgTableKey* mutable_key(int index);
-  ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgTableKey >*
+  ::bg3se::lua::dbg::MsgTableKey* mutable_key(int index);
+  ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgTableKey >*
       mutable_key();
-  const ::dse::lua::dbg::MsgTableKey& key(int index) const;
-  ::dse::lua::dbg::MsgTableKey* add_key();
-  const ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgTableKey >&
+  const ::bg3se::lua::dbg::MsgTableKey& key(int index) const;
+  ::bg3se::lua::dbg::MsgTableKey* add_key();
+  const ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgTableKey >&
       key() const;
 
-  // .dse.lua.dbg.DbgContext context = 1;
+  // .bg3se.lua.dbg.DbgContext context = 1;
   void clear_context();
   static const int kContextFieldNumber = 1;
-  ::dse::lua::dbg::DbgContext context() const;
-  void set_context(::dse::lua::dbg::DbgContext value);
+  ::bg3se::lua::dbg::DbgContext context() const;
+  void set_context(::bg3se::lua::dbg::DbgContext value);
 
   // int32 variableRef = 2;
   void clear_variableref();
@@ -2412,14 +2412,14 @@ class DbgGetVariables : public ::google::protobuf::MessageLite /* @@protoc_inser
   ::google::protobuf::int32 local() const;
   void set_local(::google::protobuf::int32 value);
 
-  // @@protoc_insertion_point(class_scope:dse.lua.dbg.DbgGetVariables)
+  // @@protoc_insertion_point(class_scope:bg3se.lua.dbg.DbgGetVariables)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
   template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgTableKey > key_;
+  ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgTableKey > key_;
   int context_;
   ::google::protobuf::int32 variableref_;
   ::google::protobuf::int32 frame_;
@@ -2429,7 +2429,7 @@ class DbgGetVariables : public ::google::protobuf::MessageLite /* @@protoc_inser
 };
 // -------------------------------------------------------------------
 
-class BkEvaluateResponse : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.lua.dbg.BkEvaluateResponse) */ {
+class BkEvaluateResponse : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.lua.dbg.BkEvaluateResponse) */ {
  public:
   BkEvaluateResponse();
   virtual ~BkEvaluateResponse();
@@ -2549,22 +2549,22 @@ class BkEvaluateResponse : public ::google::protobuf::MessageLite /* @@protoc_in
   void unsafe_arena_set_allocated_error_message(
       ::std::string* error_message);
 
-  // .dse.lua.dbg.MsgValue result = 1;
+  // .bg3se.lua.dbg.MsgValue result = 1;
   bool has_result() const;
   void clear_result();
   static const int kResultFieldNumber = 1;
   private:
-  const ::dse::lua::dbg::MsgValue& _internal_result() const;
+  const ::bg3se::lua::dbg::MsgValue& _internal_result() const;
   public:
-  const ::dse::lua::dbg::MsgValue& result() const;
-  ::dse::lua::dbg::MsgValue* release_result();
-  ::dse::lua::dbg::MsgValue* mutable_result();
-  void set_allocated_result(::dse::lua::dbg::MsgValue* result);
+  const ::bg3se::lua::dbg::MsgValue& result() const;
+  ::bg3se::lua::dbg::MsgValue* release_result();
+  ::bg3se::lua::dbg::MsgValue* mutable_result();
+  void set_allocated_result(::bg3se::lua::dbg::MsgValue* result);
   void unsafe_arena_set_allocated_result(
-      ::dse::lua::dbg::MsgValue* result);
-  ::dse::lua::dbg::MsgValue* unsafe_arena_release_result();
+      ::bg3se::lua::dbg::MsgValue* result);
+  ::bg3se::lua::dbg::MsgValue* unsafe_arena_release_result();
 
-  // @@protoc_insertion_point(class_scope:dse.lua.dbg.BkEvaluateResponse)
+  // @@protoc_insertion_point(class_scope:bg3se.lua.dbg.BkEvaluateResponse)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -2572,13 +2572,13 @@ class BkEvaluateResponse : public ::google::protobuf::MessageLite /* @@protoc_in
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   ::google::protobuf::internal::ArenaStringPtr error_message_;
-  ::dse::lua::dbg::MsgValue* result_;
+  ::bg3se::lua::dbg::MsgValue* result_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_LuaDebug_2eproto::TableStruct;
 };
 // -------------------------------------------------------------------
 
-class BkGetVariablesResponse : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.lua.dbg.BkGetVariablesResponse) */ {
+class BkGetVariablesResponse : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.lua.dbg.BkGetVariablesResponse) */ {
  public:
   BkGetVariablesResponse();
   virtual ~BkGetVariablesResponse();
@@ -2675,16 +2675,16 @@ class BkGetVariablesResponse : public ::google::protobuf::MessageLite /* @@proto
 
   // accessors -------------------------------------------------------
 
-  // repeated .dse.lua.dbg.MsgChildValue result = 1;
+  // repeated .bg3se.lua.dbg.MsgChildValue result = 1;
   int result_size() const;
   void clear_result();
   static const int kResultFieldNumber = 1;
-  ::dse::lua::dbg::MsgChildValue* mutable_result(int index);
-  ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgChildValue >*
+  ::bg3se::lua::dbg::MsgChildValue* mutable_result(int index);
+  ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgChildValue >*
       mutable_result();
-  const ::dse::lua::dbg::MsgChildValue& result(int index) const;
-  ::dse::lua::dbg::MsgChildValue* add_result();
-  const ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgChildValue >&
+  const ::bg3se::lua::dbg::MsgChildValue& result(int index) const;
+  ::bg3se::lua::dbg::MsgChildValue* add_result();
+  const ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgChildValue >&
       result() const;
 
   // string error_message = 2;
@@ -2710,21 +2710,21 @@ class BkGetVariablesResponse : public ::google::protobuf::MessageLite /* @@proto
   void unsafe_arena_set_allocated_error_message(
       ::std::string* error_message);
 
-  // @@protoc_insertion_point(class_scope:dse.lua.dbg.BkGetVariablesResponse)
+  // @@protoc_insertion_point(class_scope:bg3se.lua.dbg.BkGetVariablesResponse)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
   template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgChildValue > result_;
+  ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgChildValue > result_;
   ::google::protobuf::internal::ArenaStringPtr error_message_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_LuaDebug_2eproto::TableStruct;
 };
 // -------------------------------------------------------------------
 
-class DbgFetchMods : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.lua.dbg.DbgFetchMods) */ {
+class DbgFetchMods : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.lua.dbg.DbgFetchMods) */ {
  public:
   DbgFetchMods();
   virtual ~DbgFetchMods();
@@ -2821,7 +2821,7 @@ class DbgFetchMods : public ::google::protobuf::MessageLite /* @@protoc_insertio
 
   // accessors -------------------------------------------------------
 
-  // @@protoc_insertion_point(class_scope:dse.lua.dbg.DbgFetchMods)
+  // @@protoc_insertion_point(class_scope:bg3se.lua.dbg.DbgFetchMods)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -2833,7 +2833,7 @@ class DbgFetchMods : public ::google::protobuf::MessageLite /* @@protoc_insertio
 };
 // -------------------------------------------------------------------
 
-class BkContextUpdated : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.lua.dbg.BkContextUpdated) */ {
+class BkContextUpdated : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.lua.dbg.BkContextUpdated) */ {
  public:
   BkContextUpdated();
   virtual ~BkContextUpdated();
@@ -2945,19 +2945,19 @@ class BkContextUpdated : public ::google::protobuf::MessageLite /* @@protoc_inse
 
   // accessors -------------------------------------------------------
 
-  // .dse.lua.dbg.DbgContext context = 1;
+  // .bg3se.lua.dbg.DbgContext context = 1;
   void clear_context();
   static const int kContextFieldNumber = 1;
-  ::dse::lua::dbg::DbgContext context() const;
-  void set_context(::dse::lua::dbg::DbgContext value);
+  ::bg3se::lua::dbg::DbgContext context() const;
+  void set_context(::bg3se::lua::dbg::DbgContext value);
 
-  // .dse.lua.dbg.BkContextUpdated.Status status = 2;
+  // .bg3se.lua.dbg.BkContextUpdated.Status status = 2;
   void clear_status();
   static const int kStatusFieldNumber = 2;
-  ::dse::lua::dbg::BkContextUpdated_Status status() const;
-  void set_status(::dse::lua::dbg::BkContextUpdated_Status value);
+  ::bg3se::lua::dbg::BkContextUpdated_Status status() const;
+  void set_status(::bg3se::lua::dbg::BkContextUpdated_Status value);
 
-  // @@protoc_insertion_point(class_scope:dse.lua.dbg.BkContextUpdated)
+  // @@protoc_insertion_point(class_scope:bg3se.lua.dbg.BkContextUpdated)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -2971,7 +2971,7 @@ class BkContextUpdated : public ::google::protobuf::MessageLite /* @@protoc_inse
 };
 // -------------------------------------------------------------------
 
-class MsgModuleInfo : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.lua.dbg.MsgModuleInfo) */ {
+class MsgModuleInfo : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.lua.dbg.MsgModuleInfo) */ {
  public:
   MsgModuleInfo();
   virtual ~MsgModuleInfo();
@@ -3160,7 +3160,7 @@ class MsgModuleInfo : public ::google::protobuf::MessageLite /* @@protoc_inserti
   void unsafe_arena_set_allocated_path(
       ::std::string* path);
 
-  // @@protoc_insertion_point(class_scope:dse.lua.dbg.MsgModuleInfo)
+  // @@protoc_insertion_point(class_scope:bg3se.lua.dbg.MsgModuleInfo)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -3176,7 +3176,7 @@ class MsgModuleInfo : public ::google::protobuf::MessageLite /* @@protoc_inserti
 };
 // -------------------------------------------------------------------
 
-class MsgSourceFileInfo : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.lua.dbg.MsgSourceFileInfo) */ {
+class MsgSourceFileInfo : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.lua.dbg.MsgSourceFileInfo) */ {
  public:
   MsgSourceFileInfo();
   virtual ~MsgSourceFileInfo();
@@ -3296,7 +3296,7 @@ class MsgSourceFileInfo : public ::google::protobuf::MessageLite /* @@protoc_ins
   void unsafe_arena_set_allocated_path(
       ::std::string* path);
 
-  // @@protoc_insertion_point(class_scope:dse.lua.dbg.MsgSourceFileInfo)
+  // @@protoc_insertion_point(class_scope:bg3se.lua.dbg.MsgSourceFileInfo)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -3309,7 +3309,7 @@ class MsgSourceFileInfo : public ::google::protobuf::MessageLite /* @@protoc_ins
 };
 // -------------------------------------------------------------------
 
-class BkModInfoResponse : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.lua.dbg.BkModInfoResponse) */ {
+class BkModInfoResponse : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.lua.dbg.BkModInfoResponse) */ {
  public:
   BkModInfoResponse();
   virtual ~BkModInfoResponse();
@@ -3406,45 +3406,45 @@ class BkModInfoResponse : public ::google::protobuf::MessageLite /* @@protoc_ins
 
   // accessors -------------------------------------------------------
 
-  // repeated .dse.lua.dbg.MsgModuleInfo module = 1;
+  // repeated .bg3se.lua.dbg.MsgModuleInfo module = 1;
   int module_size() const;
   void clear_module();
   static const int kModuleFieldNumber = 1;
-  ::dse::lua::dbg::MsgModuleInfo* mutable_module(int index);
-  ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgModuleInfo >*
+  ::bg3se::lua::dbg::MsgModuleInfo* mutable_module(int index);
+  ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgModuleInfo >*
       mutable_module();
-  const ::dse::lua::dbg::MsgModuleInfo& module(int index) const;
-  ::dse::lua::dbg::MsgModuleInfo* add_module();
-  const ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgModuleInfo >&
+  const ::bg3se::lua::dbg::MsgModuleInfo& module(int index) const;
+  ::bg3se::lua::dbg::MsgModuleInfo* add_module();
+  const ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgModuleInfo >&
       module() const;
 
-  // repeated .dse.lua.dbg.MsgSourceFileInfo source = 2;
+  // repeated .bg3se.lua.dbg.MsgSourceFileInfo source = 2;
   int source_size() const;
   void clear_source();
   static const int kSourceFieldNumber = 2;
-  ::dse::lua::dbg::MsgSourceFileInfo* mutable_source(int index);
-  ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgSourceFileInfo >*
+  ::bg3se::lua::dbg::MsgSourceFileInfo* mutable_source(int index);
+  ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgSourceFileInfo >*
       mutable_source();
-  const ::dse::lua::dbg::MsgSourceFileInfo& source(int index) const;
-  ::dse::lua::dbg::MsgSourceFileInfo* add_source();
-  const ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgSourceFileInfo >&
+  const ::bg3se::lua::dbg::MsgSourceFileInfo& source(int index) const;
+  ::bg3se::lua::dbg::MsgSourceFileInfo* add_source();
+  const ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgSourceFileInfo >&
       source() const;
 
-  // @@protoc_insertion_point(class_scope:dse.lua.dbg.BkModInfoResponse)
+  // @@protoc_insertion_point(class_scope:bg3se.lua.dbg.BkModInfoResponse)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
   template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgModuleInfo > module_;
-  ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgSourceFileInfo > source_;
+  ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgModuleInfo > module_;
+  ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgSourceFileInfo > source_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_LuaDebug_2eproto::TableStruct;
 };
 // -------------------------------------------------------------------
 
-class BkDebugOutput : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.lua.dbg.BkDebugOutput) */ {
+class BkDebugOutput : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.lua.dbg.BkDebugOutput) */ {
  public:
   BkDebugOutput();
   virtual ~BkDebugOutput();
@@ -3583,13 +3583,13 @@ class BkDebugOutput : public ::google::protobuf::MessageLite /* @@protoc_inserti
   void unsafe_arena_set_allocated_message(
       ::std::string* message);
 
-  // .dse.lua.dbg.BkDebugOutput.Severity severity = 2;
+  // .bg3se.lua.dbg.BkDebugOutput.Severity severity = 2;
   void clear_severity();
   static const int kSeverityFieldNumber = 2;
-  ::dse::lua::dbg::BkDebugOutput_Severity severity() const;
-  void set_severity(::dse::lua::dbg::BkDebugOutput_Severity value);
+  ::bg3se::lua::dbg::BkDebugOutput_Severity severity() const;
+  void set_severity(::bg3se::lua::dbg::BkDebugOutput_Severity value);
 
-  // @@protoc_insertion_point(class_scope:dse.lua.dbg.BkDebugOutput)
+  // @@protoc_insertion_point(class_scope:bg3se.lua.dbg.BkDebugOutput)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -3603,7 +3603,7 @@ class BkDebugOutput : public ::google::protobuf::MessageLite /* @@protoc_inserti
 };
 // -------------------------------------------------------------------
 
-class BkResult : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.lua.dbg.BkResult) */ {
+class BkResult : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.lua.dbg.BkResult) */ {
  public:
   BkResult();
   virtual ~BkResult();
@@ -3700,13 +3700,13 @@ class BkResult : public ::google::protobuf::MessageLite /* @@protoc_insertion_po
 
   // accessors -------------------------------------------------------
 
-  // .dse.lua.dbg.StatusCode status_code = 1;
+  // .bg3se.lua.dbg.StatusCode status_code = 1;
   void clear_status_code();
   static const int kStatusCodeFieldNumber = 1;
-  ::dse::lua::dbg::StatusCode status_code() const;
-  void set_status_code(::dse::lua::dbg::StatusCode value);
+  ::bg3se::lua::dbg::StatusCode status_code() const;
+  void set_status_code(::bg3se::lua::dbg::StatusCode value);
 
-  // @@protoc_insertion_point(class_scope:dse.lua.dbg.BkResult)
+  // @@protoc_insertion_point(class_scope:bg3se.lua.dbg.BkResult)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -3719,7 +3719,7 @@ class BkResult : public ::google::protobuf::MessageLite /* @@protoc_insertion_po
 };
 // -------------------------------------------------------------------
 
-class BkDebuggerReady : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.lua.dbg.BkDebuggerReady) */ {
+class BkDebuggerReady : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.lua.dbg.BkDebuggerReady) */ {
  public:
   BkDebuggerReady();
   virtual ~BkDebuggerReady();
@@ -3816,7 +3816,7 @@ class BkDebuggerReady : public ::google::protobuf::MessageLite /* @@protoc_inser
 
   // accessors -------------------------------------------------------
 
-  // @@protoc_insertion_point(class_scope:dse.lua.dbg.BkDebuggerReady)
+  // @@protoc_insertion_point(class_scope:bg3se.lua.dbg.BkDebuggerReady)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -3828,7 +3828,7 @@ class BkDebuggerReady : public ::google::protobuf::MessageLite /* @@protoc_inser
 };
 // -------------------------------------------------------------------
 
-class DbgRequestSource : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.lua.dbg.DbgRequestSource) */ {
+class DbgRequestSource : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.lua.dbg.DbgRequestSource) */ {
  public:
   DbgRequestSource();
   virtual ~DbgRequestSource();
@@ -3948,7 +3948,7 @@ class DbgRequestSource : public ::google::protobuf::MessageLite /* @@protoc_inse
   void unsafe_arena_set_allocated_name(
       ::std::string* name);
 
-  // @@protoc_insertion_point(class_scope:dse.lua.dbg.DbgRequestSource)
+  // @@protoc_insertion_point(class_scope:bg3se.lua.dbg.DbgRequestSource)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -3961,7 +3961,7 @@ class DbgRequestSource : public ::google::protobuf::MessageLite /* @@protoc_inse
 };
 // -------------------------------------------------------------------
 
-class BkSourceResponse : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.lua.dbg.BkSourceResponse) */ {
+class BkSourceResponse : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.lua.dbg.BkSourceResponse) */ {
  public:
   BkSourceResponse();
   virtual ~BkSourceResponse();
@@ -4104,7 +4104,7 @@ class BkSourceResponse : public ::google::protobuf::MessageLite /* @@protoc_inse
   void unsafe_arena_set_allocated_body(
       ::std::string* body);
 
-  // @@protoc_insertion_point(class_scope:dse.lua.dbg.BkSourceResponse)
+  // @@protoc_insertion_point(class_scope:bg3se.lua.dbg.BkSourceResponse)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -4118,7 +4118,7 @@ class BkSourceResponse : public ::google::protobuf::MessageLite /* @@protoc_inse
 };
 // -------------------------------------------------------------------
 
-class DebuggerToBackend : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.lua.dbg.DebuggerToBackend) */ {
+class DebuggerToBackend : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.lua.dbg.DebuggerToBackend) */ {
  public:
   DebuggerToBackend();
   virtual ~DebuggerToBackend();
@@ -4239,129 +4239,129 @@ class DebuggerToBackend : public ::google::protobuf::MessageLite /* @@protoc_ins
   ::google::protobuf::uint32 reply_seq_no() const;
   void set_reply_seq_no(::google::protobuf::uint32 value);
 
-  // .dse.lua.dbg.DbgConnectRequest connect = 3;
+  // .bg3se.lua.dbg.DbgConnectRequest connect = 3;
   bool has_connect() const;
   void clear_connect();
   static const int kConnectFieldNumber = 3;
   private:
-  const ::dse::lua::dbg::DbgConnectRequest& _internal_connect() const;
+  const ::bg3se::lua::dbg::DbgConnectRequest& _internal_connect() const;
   public:
-  const ::dse::lua::dbg::DbgConnectRequest& connect() const;
-  ::dse::lua::dbg::DbgConnectRequest* release_connect();
-  ::dse::lua::dbg::DbgConnectRequest* mutable_connect();
-  void set_allocated_connect(::dse::lua::dbg::DbgConnectRequest* connect);
+  const ::bg3se::lua::dbg::DbgConnectRequest& connect() const;
+  ::bg3se::lua::dbg::DbgConnectRequest* release_connect();
+  ::bg3se::lua::dbg::DbgConnectRequest* mutable_connect();
+  void set_allocated_connect(::bg3se::lua::dbg::DbgConnectRequest* connect);
   void unsafe_arena_set_allocated_connect(
-      ::dse::lua::dbg::DbgConnectRequest* connect);
-  ::dse::lua::dbg::DbgConnectRequest* unsafe_arena_release_connect();
+      ::bg3se::lua::dbg::DbgConnectRequest* connect);
+  ::bg3se::lua::dbg::DbgConnectRequest* unsafe_arena_release_connect();
 
-  // .dse.lua.dbg.DbgUpdateSettings updateSettings = 4;
+  // .bg3se.lua.dbg.DbgUpdateSettings updateSettings = 4;
   bool has_updatesettings() const;
   void clear_updatesettings();
   static const int kUpdateSettingsFieldNumber = 4;
   private:
-  const ::dse::lua::dbg::DbgUpdateSettings& _internal_updatesettings() const;
+  const ::bg3se::lua::dbg::DbgUpdateSettings& _internal_updatesettings() const;
   public:
-  const ::dse::lua::dbg::DbgUpdateSettings& updatesettings() const;
-  ::dse::lua::dbg::DbgUpdateSettings* release_updatesettings();
-  ::dse::lua::dbg::DbgUpdateSettings* mutable_updatesettings();
-  void set_allocated_updatesettings(::dse::lua::dbg::DbgUpdateSettings* updatesettings);
+  const ::bg3se::lua::dbg::DbgUpdateSettings& updatesettings() const;
+  ::bg3se::lua::dbg::DbgUpdateSettings* release_updatesettings();
+  ::bg3se::lua::dbg::DbgUpdateSettings* mutable_updatesettings();
+  void set_allocated_updatesettings(::bg3se::lua::dbg::DbgUpdateSettings* updatesettings);
   void unsafe_arena_set_allocated_updatesettings(
-      ::dse::lua::dbg::DbgUpdateSettings* updatesettings);
-  ::dse::lua::dbg::DbgUpdateSettings* unsafe_arena_release_updatesettings();
+      ::bg3se::lua::dbg::DbgUpdateSettings* updatesettings);
+  ::bg3se::lua::dbg::DbgUpdateSettings* unsafe_arena_release_updatesettings();
 
-  // .dse.lua.dbg.DbgSetBreakpoints setBreakpoints = 5;
+  // .bg3se.lua.dbg.DbgSetBreakpoints setBreakpoints = 5;
   bool has_setbreakpoints() const;
   void clear_setbreakpoints();
   static const int kSetBreakpointsFieldNumber = 5;
   private:
-  const ::dse::lua::dbg::DbgSetBreakpoints& _internal_setbreakpoints() const;
+  const ::bg3se::lua::dbg::DbgSetBreakpoints& _internal_setbreakpoints() const;
   public:
-  const ::dse::lua::dbg::DbgSetBreakpoints& setbreakpoints() const;
-  ::dse::lua::dbg::DbgSetBreakpoints* release_setbreakpoints();
-  ::dse::lua::dbg::DbgSetBreakpoints* mutable_setbreakpoints();
-  void set_allocated_setbreakpoints(::dse::lua::dbg::DbgSetBreakpoints* setbreakpoints);
+  const ::bg3se::lua::dbg::DbgSetBreakpoints& setbreakpoints() const;
+  ::bg3se::lua::dbg::DbgSetBreakpoints* release_setbreakpoints();
+  ::bg3se::lua::dbg::DbgSetBreakpoints* mutable_setbreakpoints();
+  void set_allocated_setbreakpoints(::bg3se::lua::dbg::DbgSetBreakpoints* setbreakpoints);
   void unsafe_arena_set_allocated_setbreakpoints(
-      ::dse::lua::dbg::DbgSetBreakpoints* setbreakpoints);
-  ::dse::lua::dbg::DbgSetBreakpoints* unsafe_arena_release_setbreakpoints();
+      ::bg3se::lua::dbg::DbgSetBreakpoints* setbreakpoints);
+  ::bg3se::lua::dbg::DbgSetBreakpoints* unsafe_arena_release_setbreakpoints();
 
-  // .dse.lua.dbg.DbgContinue continue = 6;
+  // .bg3se.lua.dbg.DbgContinue continue = 6;
   bool has_continue_() const;
   void clear_continue_();
   static const int kContinueFieldNumber = 6;
   private:
-  const ::dse::lua::dbg::DbgContinue& _internal_continue_() const;
+  const ::bg3se::lua::dbg::DbgContinue& _internal_continue_() const;
   public:
-  const ::dse::lua::dbg::DbgContinue& continue_() const;
-  ::dse::lua::dbg::DbgContinue* release_continue_();
-  ::dse::lua::dbg::DbgContinue* mutable_continue_();
-  void set_allocated_continue_(::dse::lua::dbg::DbgContinue* continue_);
+  const ::bg3se::lua::dbg::DbgContinue& continue_() const;
+  ::bg3se::lua::dbg::DbgContinue* release_continue_();
+  ::bg3se::lua::dbg::DbgContinue* mutable_continue_();
+  void set_allocated_continue_(::bg3se::lua::dbg::DbgContinue* continue_);
   void unsafe_arena_set_allocated_continue_(
-      ::dse::lua::dbg::DbgContinue* continue_);
-  ::dse::lua::dbg::DbgContinue* unsafe_arena_release_continue_();
+      ::bg3se::lua::dbg::DbgContinue* continue_);
+  ::bg3se::lua::dbg::DbgContinue* unsafe_arena_release_continue_();
 
-  // .dse.lua.dbg.DbgEvaluate evaluate = 7;
+  // .bg3se.lua.dbg.DbgEvaluate evaluate = 7;
   bool has_evaluate() const;
   void clear_evaluate();
   static const int kEvaluateFieldNumber = 7;
   private:
-  const ::dse::lua::dbg::DbgEvaluate& _internal_evaluate() const;
+  const ::bg3se::lua::dbg::DbgEvaluate& _internal_evaluate() const;
   public:
-  const ::dse::lua::dbg::DbgEvaluate& evaluate() const;
-  ::dse::lua::dbg::DbgEvaluate* release_evaluate();
-  ::dse::lua::dbg::DbgEvaluate* mutable_evaluate();
-  void set_allocated_evaluate(::dse::lua::dbg::DbgEvaluate* evaluate);
+  const ::bg3se::lua::dbg::DbgEvaluate& evaluate() const;
+  ::bg3se::lua::dbg::DbgEvaluate* release_evaluate();
+  ::bg3se::lua::dbg::DbgEvaluate* mutable_evaluate();
+  void set_allocated_evaluate(::bg3se::lua::dbg::DbgEvaluate* evaluate);
   void unsafe_arena_set_allocated_evaluate(
-      ::dse::lua::dbg::DbgEvaluate* evaluate);
-  ::dse::lua::dbg::DbgEvaluate* unsafe_arena_release_evaluate();
+      ::bg3se::lua::dbg::DbgEvaluate* evaluate);
+  ::bg3se::lua::dbg::DbgEvaluate* unsafe_arena_release_evaluate();
 
-  // .dse.lua.dbg.DbgFetchMods fetchMods = 8;
+  // .bg3se.lua.dbg.DbgFetchMods fetchMods = 8;
   bool has_fetchmods() const;
   void clear_fetchmods();
   static const int kFetchModsFieldNumber = 8;
   private:
-  const ::dse::lua::dbg::DbgFetchMods& _internal_fetchmods() const;
+  const ::bg3se::lua::dbg::DbgFetchMods& _internal_fetchmods() const;
   public:
-  const ::dse::lua::dbg::DbgFetchMods& fetchmods() const;
-  ::dse::lua::dbg::DbgFetchMods* release_fetchmods();
-  ::dse::lua::dbg::DbgFetchMods* mutable_fetchmods();
-  void set_allocated_fetchmods(::dse::lua::dbg::DbgFetchMods* fetchmods);
+  const ::bg3se::lua::dbg::DbgFetchMods& fetchmods() const;
+  ::bg3se::lua::dbg::DbgFetchMods* release_fetchmods();
+  ::bg3se::lua::dbg::DbgFetchMods* mutable_fetchmods();
+  void set_allocated_fetchmods(::bg3se::lua::dbg::DbgFetchMods* fetchmods);
   void unsafe_arena_set_allocated_fetchmods(
-      ::dse::lua::dbg::DbgFetchMods* fetchmods);
-  ::dse::lua::dbg::DbgFetchMods* unsafe_arena_release_fetchmods();
+      ::bg3se::lua::dbg::DbgFetchMods* fetchmods);
+  ::bg3se::lua::dbg::DbgFetchMods* unsafe_arena_release_fetchmods();
 
-  // .dse.lua.dbg.DbgRequestSource requestSource = 9;
+  // .bg3se.lua.dbg.DbgRequestSource requestSource = 9;
   bool has_requestsource() const;
   void clear_requestsource();
   static const int kRequestSourceFieldNumber = 9;
   private:
-  const ::dse::lua::dbg::DbgRequestSource& _internal_requestsource() const;
+  const ::bg3se::lua::dbg::DbgRequestSource& _internal_requestsource() const;
   public:
-  const ::dse::lua::dbg::DbgRequestSource& requestsource() const;
-  ::dse::lua::dbg::DbgRequestSource* release_requestsource();
-  ::dse::lua::dbg::DbgRequestSource* mutable_requestsource();
-  void set_allocated_requestsource(::dse::lua::dbg::DbgRequestSource* requestsource);
+  const ::bg3se::lua::dbg::DbgRequestSource& requestsource() const;
+  ::bg3se::lua::dbg::DbgRequestSource* release_requestsource();
+  ::bg3se::lua::dbg::DbgRequestSource* mutable_requestsource();
+  void set_allocated_requestsource(::bg3se::lua::dbg::DbgRequestSource* requestsource);
   void unsafe_arena_set_allocated_requestsource(
-      ::dse::lua::dbg::DbgRequestSource* requestsource);
-  ::dse::lua::dbg::DbgRequestSource* unsafe_arena_release_requestsource();
+      ::bg3se::lua::dbg::DbgRequestSource* requestsource);
+  ::bg3se::lua::dbg::DbgRequestSource* unsafe_arena_release_requestsource();
 
-  // .dse.lua.dbg.DbgGetVariables getVariables = 10;
+  // .bg3se.lua.dbg.DbgGetVariables getVariables = 10;
   bool has_getvariables() const;
   void clear_getvariables();
   static const int kGetVariablesFieldNumber = 10;
   private:
-  const ::dse::lua::dbg::DbgGetVariables& _internal_getvariables() const;
+  const ::bg3se::lua::dbg::DbgGetVariables& _internal_getvariables() const;
   public:
-  const ::dse::lua::dbg::DbgGetVariables& getvariables() const;
-  ::dse::lua::dbg::DbgGetVariables* release_getvariables();
-  ::dse::lua::dbg::DbgGetVariables* mutable_getvariables();
-  void set_allocated_getvariables(::dse::lua::dbg::DbgGetVariables* getvariables);
+  const ::bg3se::lua::dbg::DbgGetVariables& getvariables() const;
+  ::bg3se::lua::dbg::DbgGetVariables* release_getvariables();
+  ::bg3se::lua::dbg::DbgGetVariables* mutable_getvariables();
+  void set_allocated_getvariables(::bg3se::lua::dbg::DbgGetVariables* getvariables);
   void unsafe_arena_set_allocated_getvariables(
-      ::dse::lua::dbg::DbgGetVariables* getvariables);
-  ::dse::lua::dbg::DbgGetVariables* unsafe_arena_release_getvariables();
+      ::bg3se::lua::dbg::DbgGetVariables* getvariables);
+  ::bg3se::lua::dbg::DbgGetVariables* unsafe_arena_release_getvariables();
 
   void clear_msg();
   MsgCase msg_case() const;
-  // @@protoc_insertion_point(class_scope:dse.lua.dbg.DebuggerToBackend)
+  // @@protoc_insertion_point(class_scope:bg3se.lua.dbg.DebuggerToBackend)
  private:
   void set_has_connect();
   void set_has_updatesettings();
@@ -4383,14 +4383,14 @@ class DebuggerToBackend : public ::google::protobuf::MessageLite /* @@protoc_ins
   ::google::protobuf::uint32 reply_seq_no_;
   union MsgUnion {
     MsgUnion() {}
-    ::dse::lua::dbg::DbgConnectRequest* connect_;
-    ::dse::lua::dbg::DbgUpdateSettings* updatesettings_;
-    ::dse::lua::dbg::DbgSetBreakpoints* setbreakpoints_;
-    ::dse::lua::dbg::DbgContinue* continue__;
-    ::dse::lua::dbg::DbgEvaluate* evaluate_;
-    ::dse::lua::dbg::DbgFetchMods* fetchmods_;
-    ::dse::lua::dbg::DbgRequestSource* requestsource_;
-    ::dse::lua::dbg::DbgGetVariables* getvariables_;
+    ::bg3se::lua::dbg::DbgConnectRequest* connect_;
+    ::bg3se::lua::dbg::DbgUpdateSettings* updatesettings_;
+    ::bg3se::lua::dbg::DbgSetBreakpoints* setbreakpoints_;
+    ::bg3se::lua::dbg::DbgContinue* continue__;
+    ::bg3se::lua::dbg::DbgEvaluate* evaluate_;
+    ::bg3se::lua::dbg::DbgFetchMods* fetchmods_;
+    ::bg3se::lua::dbg::DbgRequestSource* requestsource_;
+    ::bg3se::lua::dbg::DbgGetVariables* getvariables_;
   } msg_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   ::google::protobuf::uint32 _oneof_case_[1];
@@ -4399,7 +4399,7 @@ class DebuggerToBackend : public ::google::protobuf::MessageLite /* @@protoc_ins
 };
 // -------------------------------------------------------------------
 
-class BackendToDebugger : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.lua.dbg.BackendToDebugger) */ {
+class BackendToDebugger : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.lua.dbg.BackendToDebugger) */ {
  public:
   BackendToDebugger();
   virtual ~BackendToDebugger();
@@ -4522,159 +4522,159 @@ class BackendToDebugger : public ::google::protobuf::MessageLite /* @@protoc_ins
   ::google::protobuf::uint32 reply_seq_no() const;
   void set_reply_seq_no(::google::protobuf::uint32 value);
 
-  // .dse.lua.dbg.BkConnectResponse connectResponse = 3;
+  // .bg3se.lua.dbg.BkConnectResponse connectResponse = 3;
   bool has_connectresponse() const;
   void clear_connectresponse();
   static const int kConnectResponseFieldNumber = 3;
   private:
-  const ::dse::lua::dbg::BkConnectResponse& _internal_connectresponse() const;
+  const ::bg3se::lua::dbg::BkConnectResponse& _internal_connectresponse() const;
   public:
-  const ::dse::lua::dbg::BkConnectResponse& connectresponse() const;
-  ::dse::lua::dbg::BkConnectResponse* release_connectresponse();
-  ::dse::lua::dbg::BkConnectResponse* mutable_connectresponse();
-  void set_allocated_connectresponse(::dse::lua::dbg::BkConnectResponse* connectresponse);
+  const ::bg3se::lua::dbg::BkConnectResponse& connectresponse() const;
+  ::bg3se::lua::dbg::BkConnectResponse* release_connectresponse();
+  ::bg3se::lua::dbg::BkConnectResponse* mutable_connectresponse();
+  void set_allocated_connectresponse(::bg3se::lua::dbg::BkConnectResponse* connectresponse);
   void unsafe_arena_set_allocated_connectresponse(
-      ::dse::lua::dbg::BkConnectResponse* connectresponse);
-  ::dse::lua::dbg::BkConnectResponse* unsafe_arena_release_connectresponse();
+      ::bg3se::lua::dbg::BkConnectResponse* connectresponse);
+  ::bg3se::lua::dbg::BkConnectResponse* unsafe_arena_release_connectresponse();
 
-  // .dse.lua.dbg.BkBreakpointTriggered breakpointTriggered = 4;
+  // .bg3se.lua.dbg.BkBreakpointTriggered breakpointTriggered = 4;
   bool has_breakpointtriggered() const;
   void clear_breakpointtriggered();
   static const int kBreakpointTriggeredFieldNumber = 4;
   private:
-  const ::dse::lua::dbg::BkBreakpointTriggered& _internal_breakpointtriggered() const;
+  const ::bg3se::lua::dbg::BkBreakpointTriggered& _internal_breakpointtriggered() const;
   public:
-  const ::dse::lua::dbg::BkBreakpointTriggered& breakpointtriggered() const;
-  ::dse::lua::dbg::BkBreakpointTriggered* release_breakpointtriggered();
-  ::dse::lua::dbg::BkBreakpointTriggered* mutable_breakpointtriggered();
-  void set_allocated_breakpointtriggered(::dse::lua::dbg::BkBreakpointTriggered* breakpointtriggered);
+  const ::bg3se::lua::dbg::BkBreakpointTriggered& breakpointtriggered() const;
+  ::bg3se::lua::dbg::BkBreakpointTriggered* release_breakpointtriggered();
+  ::bg3se::lua::dbg::BkBreakpointTriggered* mutable_breakpointtriggered();
+  void set_allocated_breakpointtriggered(::bg3se::lua::dbg::BkBreakpointTriggered* breakpointtriggered);
   void unsafe_arena_set_allocated_breakpointtriggered(
-      ::dse::lua::dbg::BkBreakpointTriggered* breakpointtriggered);
-  ::dse::lua::dbg::BkBreakpointTriggered* unsafe_arena_release_breakpointtriggered();
+      ::bg3se::lua::dbg::BkBreakpointTriggered* breakpointtriggered);
+  ::bg3se::lua::dbg::BkBreakpointTriggered* unsafe_arena_release_breakpointtriggered();
 
-  // .dse.lua.dbg.BkEvaluateResponse evaluateResponse = 5;
+  // .bg3se.lua.dbg.BkEvaluateResponse evaluateResponse = 5;
   bool has_evaluateresponse() const;
   void clear_evaluateresponse();
   static const int kEvaluateResponseFieldNumber = 5;
   private:
-  const ::dse::lua::dbg::BkEvaluateResponse& _internal_evaluateresponse() const;
+  const ::bg3se::lua::dbg::BkEvaluateResponse& _internal_evaluateresponse() const;
   public:
-  const ::dse::lua::dbg::BkEvaluateResponse& evaluateresponse() const;
-  ::dse::lua::dbg::BkEvaluateResponse* release_evaluateresponse();
-  ::dse::lua::dbg::BkEvaluateResponse* mutable_evaluateresponse();
-  void set_allocated_evaluateresponse(::dse::lua::dbg::BkEvaluateResponse* evaluateresponse);
+  const ::bg3se::lua::dbg::BkEvaluateResponse& evaluateresponse() const;
+  ::bg3se::lua::dbg::BkEvaluateResponse* release_evaluateresponse();
+  ::bg3se::lua::dbg::BkEvaluateResponse* mutable_evaluateresponse();
+  void set_allocated_evaluateresponse(::bg3se::lua::dbg::BkEvaluateResponse* evaluateresponse);
   void unsafe_arena_set_allocated_evaluateresponse(
-      ::dse::lua::dbg::BkEvaluateResponse* evaluateresponse);
-  ::dse::lua::dbg::BkEvaluateResponse* unsafe_arena_release_evaluateresponse();
+      ::bg3se::lua::dbg::BkEvaluateResponse* evaluateresponse);
+  ::bg3se::lua::dbg::BkEvaluateResponse* unsafe_arena_release_evaluateresponse();
 
-  // .dse.lua.dbg.BkContextUpdated contextUpdated = 6;
+  // .bg3se.lua.dbg.BkContextUpdated contextUpdated = 6;
   bool has_contextupdated() const;
   void clear_contextupdated();
   static const int kContextUpdatedFieldNumber = 6;
   private:
-  const ::dse::lua::dbg::BkContextUpdated& _internal_contextupdated() const;
+  const ::bg3se::lua::dbg::BkContextUpdated& _internal_contextupdated() const;
   public:
-  const ::dse::lua::dbg::BkContextUpdated& contextupdated() const;
-  ::dse::lua::dbg::BkContextUpdated* release_contextupdated();
-  ::dse::lua::dbg::BkContextUpdated* mutable_contextupdated();
-  void set_allocated_contextupdated(::dse::lua::dbg::BkContextUpdated* contextupdated);
+  const ::bg3se::lua::dbg::BkContextUpdated& contextupdated() const;
+  ::bg3se::lua::dbg::BkContextUpdated* release_contextupdated();
+  ::bg3se::lua::dbg::BkContextUpdated* mutable_contextupdated();
+  void set_allocated_contextupdated(::bg3se::lua::dbg::BkContextUpdated* contextupdated);
   void unsafe_arena_set_allocated_contextupdated(
-      ::dse::lua::dbg::BkContextUpdated* contextupdated);
-  ::dse::lua::dbg::BkContextUpdated* unsafe_arena_release_contextupdated();
+      ::bg3se::lua::dbg::BkContextUpdated* contextupdated);
+  ::bg3se::lua::dbg::BkContextUpdated* unsafe_arena_release_contextupdated();
 
-  // .dse.lua.dbg.BkModInfoResponse modInfoResponse = 7;
+  // .bg3se.lua.dbg.BkModInfoResponse modInfoResponse = 7;
   bool has_modinforesponse() const;
   void clear_modinforesponse();
   static const int kModInfoResponseFieldNumber = 7;
   private:
-  const ::dse::lua::dbg::BkModInfoResponse& _internal_modinforesponse() const;
+  const ::bg3se::lua::dbg::BkModInfoResponse& _internal_modinforesponse() const;
   public:
-  const ::dse::lua::dbg::BkModInfoResponse& modinforesponse() const;
-  ::dse::lua::dbg::BkModInfoResponse* release_modinforesponse();
-  ::dse::lua::dbg::BkModInfoResponse* mutable_modinforesponse();
-  void set_allocated_modinforesponse(::dse::lua::dbg::BkModInfoResponse* modinforesponse);
+  const ::bg3se::lua::dbg::BkModInfoResponse& modinforesponse() const;
+  ::bg3se::lua::dbg::BkModInfoResponse* release_modinforesponse();
+  ::bg3se::lua::dbg::BkModInfoResponse* mutable_modinforesponse();
+  void set_allocated_modinforesponse(::bg3se::lua::dbg::BkModInfoResponse* modinforesponse);
   void unsafe_arena_set_allocated_modinforesponse(
-      ::dse::lua::dbg::BkModInfoResponse* modinforesponse);
-  ::dse::lua::dbg::BkModInfoResponse* unsafe_arena_release_modinforesponse();
+      ::bg3se::lua::dbg::BkModInfoResponse* modinforesponse);
+  ::bg3se::lua::dbg::BkModInfoResponse* unsafe_arena_release_modinforesponse();
 
-  // .dse.lua.dbg.BkDebugOutput debugOutput = 8;
+  // .bg3se.lua.dbg.BkDebugOutput debugOutput = 8;
   bool has_debugoutput() const;
   void clear_debugoutput();
   static const int kDebugOutputFieldNumber = 8;
   private:
-  const ::dse::lua::dbg::BkDebugOutput& _internal_debugoutput() const;
+  const ::bg3se::lua::dbg::BkDebugOutput& _internal_debugoutput() const;
   public:
-  const ::dse::lua::dbg::BkDebugOutput& debugoutput() const;
-  ::dse::lua::dbg::BkDebugOutput* release_debugoutput();
-  ::dse::lua::dbg::BkDebugOutput* mutable_debugoutput();
-  void set_allocated_debugoutput(::dse::lua::dbg::BkDebugOutput* debugoutput);
+  const ::bg3se::lua::dbg::BkDebugOutput& debugoutput() const;
+  ::bg3se::lua::dbg::BkDebugOutput* release_debugoutput();
+  ::bg3se::lua::dbg::BkDebugOutput* mutable_debugoutput();
+  void set_allocated_debugoutput(::bg3se::lua::dbg::BkDebugOutput* debugoutput);
   void unsafe_arena_set_allocated_debugoutput(
-      ::dse::lua::dbg::BkDebugOutput* debugoutput);
-  ::dse::lua::dbg::BkDebugOutput* unsafe_arena_release_debugoutput();
+      ::bg3se::lua::dbg::BkDebugOutput* debugoutput);
+  ::bg3se::lua::dbg::BkDebugOutput* unsafe_arena_release_debugoutput();
 
-  // .dse.lua.dbg.BkResult results = 9;
+  // .bg3se.lua.dbg.BkResult results = 9;
   bool has_results() const;
   void clear_results();
   static const int kResultsFieldNumber = 9;
   private:
-  const ::dse::lua::dbg::BkResult& _internal_results() const;
+  const ::bg3se::lua::dbg::BkResult& _internal_results() const;
   public:
-  const ::dse::lua::dbg::BkResult& results() const;
-  ::dse::lua::dbg::BkResult* release_results();
-  ::dse::lua::dbg::BkResult* mutable_results();
-  void set_allocated_results(::dse::lua::dbg::BkResult* results);
+  const ::bg3se::lua::dbg::BkResult& results() const;
+  ::bg3se::lua::dbg::BkResult* release_results();
+  ::bg3se::lua::dbg::BkResult* mutable_results();
+  void set_allocated_results(::bg3se::lua::dbg::BkResult* results);
   void unsafe_arena_set_allocated_results(
-      ::dse::lua::dbg::BkResult* results);
-  ::dse::lua::dbg::BkResult* unsafe_arena_release_results();
+      ::bg3se::lua::dbg::BkResult* results);
+  ::bg3se::lua::dbg::BkResult* unsafe_arena_release_results();
 
-  // .dse.lua.dbg.BkDebuggerReady debuggerReady = 10;
+  // .bg3se.lua.dbg.BkDebuggerReady debuggerReady = 10;
   bool has_debuggerready() const;
   void clear_debuggerready();
   static const int kDebuggerReadyFieldNumber = 10;
   private:
-  const ::dse::lua::dbg::BkDebuggerReady& _internal_debuggerready() const;
+  const ::bg3se::lua::dbg::BkDebuggerReady& _internal_debuggerready() const;
   public:
-  const ::dse::lua::dbg::BkDebuggerReady& debuggerready() const;
-  ::dse::lua::dbg::BkDebuggerReady* release_debuggerready();
-  ::dse::lua::dbg::BkDebuggerReady* mutable_debuggerready();
-  void set_allocated_debuggerready(::dse::lua::dbg::BkDebuggerReady* debuggerready);
+  const ::bg3se::lua::dbg::BkDebuggerReady& debuggerready() const;
+  ::bg3se::lua::dbg::BkDebuggerReady* release_debuggerready();
+  ::bg3se::lua::dbg::BkDebuggerReady* mutable_debuggerready();
+  void set_allocated_debuggerready(::bg3se::lua::dbg::BkDebuggerReady* debuggerready);
   void unsafe_arena_set_allocated_debuggerready(
-      ::dse::lua::dbg::BkDebuggerReady* debuggerready);
-  ::dse::lua::dbg::BkDebuggerReady* unsafe_arena_release_debuggerready();
+      ::bg3se::lua::dbg::BkDebuggerReady* debuggerready);
+  ::bg3se::lua::dbg::BkDebuggerReady* unsafe_arena_release_debuggerready();
 
-  // .dse.lua.dbg.BkSourceResponse sourceResponse = 11;
+  // .bg3se.lua.dbg.BkSourceResponse sourceResponse = 11;
   bool has_sourceresponse() const;
   void clear_sourceresponse();
   static const int kSourceResponseFieldNumber = 11;
   private:
-  const ::dse::lua::dbg::BkSourceResponse& _internal_sourceresponse() const;
+  const ::bg3se::lua::dbg::BkSourceResponse& _internal_sourceresponse() const;
   public:
-  const ::dse::lua::dbg::BkSourceResponse& sourceresponse() const;
-  ::dse::lua::dbg::BkSourceResponse* release_sourceresponse();
-  ::dse::lua::dbg::BkSourceResponse* mutable_sourceresponse();
-  void set_allocated_sourceresponse(::dse::lua::dbg::BkSourceResponse* sourceresponse);
+  const ::bg3se::lua::dbg::BkSourceResponse& sourceresponse() const;
+  ::bg3se::lua::dbg::BkSourceResponse* release_sourceresponse();
+  ::bg3se::lua::dbg::BkSourceResponse* mutable_sourceresponse();
+  void set_allocated_sourceresponse(::bg3se::lua::dbg::BkSourceResponse* sourceresponse);
   void unsafe_arena_set_allocated_sourceresponse(
-      ::dse::lua::dbg::BkSourceResponse* sourceresponse);
-  ::dse::lua::dbg::BkSourceResponse* unsafe_arena_release_sourceresponse();
+      ::bg3se::lua::dbg::BkSourceResponse* sourceresponse);
+  ::bg3se::lua::dbg::BkSourceResponse* unsafe_arena_release_sourceresponse();
 
-  // .dse.lua.dbg.BkGetVariablesResponse getVariablesResponse = 12;
+  // .bg3se.lua.dbg.BkGetVariablesResponse getVariablesResponse = 12;
   bool has_getvariablesresponse() const;
   void clear_getvariablesresponse();
   static const int kGetVariablesResponseFieldNumber = 12;
   private:
-  const ::dse::lua::dbg::BkGetVariablesResponse& _internal_getvariablesresponse() const;
+  const ::bg3se::lua::dbg::BkGetVariablesResponse& _internal_getvariablesresponse() const;
   public:
-  const ::dse::lua::dbg::BkGetVariablesResponse& getvariablesresponse() const;
-  ::dse::lua::dbg::BkGetVariablesResponse* release_getvariablesresponse();
-  ::dse::lua::dbg::BkGetVariablesResponse* mutable_getvariablesresponse();
-  void set_allocated_getvariablesresponse(::dse::lua::dbg::BkGetVariablesResponse* getvariablesresponse);
+  const ::bg3se::lua::dbg::BkGetVariablesResponse& getvariablesresponse() const;
+  ::bg3se::lua::dbg::BkGetVariablesResponse* release_getvariablesresponse();
+  ::bg3se::lua::dbg::BkGetVariablesResponse* mutable_getvariablesresponse();
+  void set_allocated_getvariablesresponse(::bg3se::lua::dbg::BkGetVariablesResponse* getvariablesresponse);
   void unsafe_arena_set_allocated_getvariablesresponse(
-      ::dse::lua::dbg::BkGetVariablesResponse* getvariablesresponse);
-  ::dse::lua::dbg::BkGetVariablesResponse* unsafe_arena_release_getvariablesresponse();
+      ::bg3se::lua::dbg::BkGetVariablesResponse* getvariablesresponse);
+  ::bg3se::lua::dbg::BkGetVariablesResponse* unsafe_arena_release_getvariablesresponse();
 
   void clear_msg();
   MsgCase msg_case() const;
-  // @@protoc_insertion_point(class_scope:dse.lua.dbg.BackendToDebugger)
+  // @@protoc_insertion_point(class_scope:bg3se.lua.dbg.BackendToDebugger)
  private:
   void set_has_connectresponse();
   void set_has_breakpointtriggered();
@@ -4698,16 +4698,16 @@ class BackendToDebugger : public ::google::protobuf::MessageLite /* @@protoc_ins
   ::google::protobuf::uint32 reply_seq_no_;
   union MsgUnion {
     MsgUnion() {}
-    ::dse::lua::dbg::BkConnectResponse* connectresponse_;
-    ::dse::lua::dbg::BkBreakpointTriggered* breakpointtriggered_;
-    ::dse::lua::dbg::BkEvaluateResponse* evaluateresponse_;
-    ::dse::lua::dbg::BkContextUpdated* contextupdated_;
-    ::dse::lua::dbg::BkModInfoResponse* modinforesponse_;
-    ::dse::lua::dbg::BkDebugOutput* debugoutput_;
-    ::dse::lua::dbg::BkResult* results_;
-    ::dse::lua::dbg::BkDebuggerReady* debuggerready_;
-    ::dse::lua::dbg::BkSourceResponse* sourceresponse_;
-    ::dse::lua::dbg::BkGetVariablesResponse* getvariablesresponse_;
+    ::bg3se::lua::dbg::BkConnectResponse* connectresponse_;
+    ::bg3se::lua::dbg::BkBreakpointTriggered* breakpointtriggered_;
+    ::bg3se::lua::dbg::BkEvaluateResponse* evaluateresponse_;
+    ::bg3se::lua::dbg::BkContextUpdated* contextupdated_;
+    ::bg3se::lua::dbg::BkModInfoResponse* modinforesponse_;
+    ::bg3se::lua::dbg::BkDebugOutput* debugoutput_;
+    ::bg3se::lua::dbg::BkResult* results_;
+    ::bg3se::lua::dbg::BkDebuggerReady* debuggerready_;
+    ::bg3se::lua::dbg::BkSourceResponse* sourceresponse_;
+    ::bg3se::lua::dbg::BkGetVariablesResponse* getvariablesresponse_;
   } msg_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   ::google::protobuf::uint32 _oneof_case_[1];
@@ -4725,18 +4725,18 @@ class BackendToDebugger : public ::google::protobuf::MessageLite /* @@protoc_ins
 #endif  // __GNUC__
 // MsgTableKey
 
-// .dse.lua.dbg.MsgTableKey.Type type = 1;
+// .bg3se.lua.dbg.MsgTableKey.Type type = 1;
 inline void MsgTableKey::clear_type() {
   type_ = 0;
 }
-inline ::dse::lua::dbg::MsgTableKey_Type MsgTableKey::type() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.MsgTableKey.type)
-  return static_cast< ::dse::lua::dbg::MsgTableKey_Type >(type_);
+inline ::bg3se::lua::dbg::MsgTableKey_Type MsgTableKey::type() const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.MsgTableKey.type)
+  return static_cast< ::bg3se::lua::dbg::MsgTableKey_Type >(type_);
 }
-inline void MsgTableKey::set_type(::dse::lua::dbg::MsgTableKey_Type value) {
+inline void MsgTableKey::set_type(::bg3se::lua::dbg::MsgTableKey_Type value) {
   
   type_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.MsgTableKey.type)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.MsgTableKey.type)
 }
 
 // int64 index = 2;
@@ -4744,13 +4744,13 @@ inline void MsgTableKey::clear_index() {
   index_ = GOOGLE_LONGLONG(0);
 }
 inline ::google::protobuf::int64 MsgTableKey::index() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.MsgTableKey.index)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.MsgTableKey.index)
   return index_;
 }
 inline void MsgTableKey::set_index(::google::protobuf::int64 value) {
   
   index_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.MsgTableKey.index)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.MsgTableKey.index)
 }
 
 // string key = 3;
@@ -4758,20 +4758,20 @@ inline void MsgTableKey::clear_key() {
   key_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& MsgTableKey::key() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.MsgTableKey.key)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.MsgTableKey.key)
   return key_.Get();
 }
 inline void MsgTableKey::set_key(const ::std::string& value) {
   
   key_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.MsgTableKey.key)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.MsgTableKey.key)
 }
 #if LANG_CXX11
 inline void MsgTableKey::set_key(::std::string&& value) {
   
   key_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.lua.dbg.MsgTableKey.key)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.lua.dbg.MsgTableKey.key)
 }
 #endif
 inline void MsgTableKey::set_key(const char* value) {
@@ -4779,22 +4779,22 @@ inline void MsgTableKey::set_key(const char* value) {
   
   key_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.lua.dbg.MsgTableKey.key)
+  // @@protoc_insertion_point(field_set_char:bg3se.lua.dbg.MsgTableKey.key)
 }
 inline void MsgTableKey::set_key(const char* value,
     size_t size) {
   
   key_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.lua.dbg.MsgTableKey.key)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.lua.dbg.MsgTableKey.key)
 }
 inline ::std::string* MsgTableKey::mutable_key() {
   
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.MsgTableKey.key)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.MsgTableKey.key)
   return key_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* MsgTableKey::release_key() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.MsgTableKey.key)
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.MsgTableKey.key)
   
   return key_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -4806,10 +4806,10 @@ inline void MsgTableKey::set_allocated_key(::std::string* key) {
   }
   key_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), key,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.MsgTableKey.key)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.MsgTableKey.key)
 }
 inline ::std::string* MsgTableKey::unsafe_arena_release_key() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.MsgTableKey.key)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.MsgTableKey.key)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return key_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -4825,7 +4825,7 @@ inline void MsgTableKey::unsafe_arena_set_allocated_key(
   }
   key_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       key, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.MsgTableKey.key)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.MsgTableKey.key)
 }
 
 // -------------------------------------------------------------------
@@ -4837,13 +4837,13 @@ inline void MsgVariablesRef::clear_variableref() {
   variableref_ = 0;
 }
 inline ::google::protobuf::int32 MsgVariablesRef::variableref() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.MsgVariablesRef.variableRef)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.MsgVariablesRef.variableRef)
   return variableref_;
 }
 inline void MsgVariablesRef::set_variableref(::google::protobuf::int32 value) {
   
   variableref_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.MsgVariablesRef.variableRef)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.MsgVariablesRef.variableRef)
 }
 
 // int32 frame = 2;
@@ -4851,13 +4851,13 @@ inline void MsgVariablesRef::clear_frame() {
   frame_ = 0;
 }
 inline ::google::protobuf::int32 MsgVariablesRef::frame() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.MsgVariablesRef.frame)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.MsgVariablesRef.frame)
   return frame_;
 }
 inline void MsgVariablesRef::set_frame(::google::protobuf::int32 value) {
   
   frame_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.MsgVariablesRef.frame)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.MsgVariablesRef.frame)
 }
 
 // int32 local = 3;
@@ -4865,42 +4865,42 @@ inline void MsgVariablesRef::clear_local() {
   local_ = 0;
 }
 inline ::google::protobuf::int32 MsgVariablesRef::local() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.MsgVariablesRef.local)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.MsgVariablesRef.local)
   return local_;
 }
 inline void MsgVariablesRef::set_local(::google::protobuf::int32 value) {
   
   local_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.MsgVariablesRef.local)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.MsgVariablesRef.local)
 }
 
-// repeated .dse.lua.dbg.MsgTableKey key = 4;
+// repeated .bg3se.lua.dbg.MsgTableKey key = 4;
 inline int MsgVariablesRef::key_size() const {
   return key_.size();
 }
 inline void MsgVariablesRef::clear_key() {
   key_.Clear();
 }
-inline ::dse::lua::dbg::MsgTableKey* MsgVariablesRef::mutable_key(int index) {
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.MsgVariablesRef.key)
+inline ::bg3se::lua::dbg::MsgTableKey* MsgVariablesRef::mutable_key(int index) {
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.MsgVariablesRef.key)
   return key_.Mutable(index);
 }
-inline ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgTableKey >*
+inline ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgTableKey >*
 MsgVariablesRef::mutable_key() {
-  // @@protoc_insertion_point(field_mutable_list:dse.lua.dbg.MsgVariablesRef.key)
+  // @@protoc_insertion_point(field_mutable_list:bg3se.lua.dbg.MsgVariablesRef.key)
   return &key_;
 }
-inline const ::dse::lua::dbg::MsgTableKey& MsgVariablesRef::key(int index) const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.MsgVariablesRef.key)
+inline const ::bg3se::lua::dbg::MsgTableKey& MsgVariablesRef::key(int index) const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.MsgVariablesRef.key)
   return key_.Get(index);
 }
-inline ::dse::lua::dbg::MsgTableKey* MsgVariablesRef::add_key() {
-  // @@protoc_insertion_point(field_add:dse.lua.dbg.MsgVariablesRef.key)
+inline ::bg3se::lua::dbg::MsgTableKey* MsgVariablesRef::add_key() {
+  // @@protoc_insertion_point(field_add:bg3se.lua.dbg.MsgVariablesRef.key)
   return key_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgTableKey >&
+inline const ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgTableKey >&
 MsgVariablesRef::key() const {
-  // @@protoc_insertion_point(field_list:dse.lua.dbg.MsgVariablesRef.key)
+  // @@protoc_insertion_point(field_list:bg3se.lua.dbg.MsgVariablesRef.key)
   return key_;
 }
 
@@ -4908,18 +4908,18 @@ MsgVariablesRef::key() const {
 
 // MsgValue
 
-// .dse.lua.dbg.MsgValueType type_id = 1;
+// .bg3se.lua.dbg.MsgValueType type_id = 1;
 inline void MsgValue::clear_type_id() {
   type_id_ = 0;
 }
-inline ::dse::lua::dbg::MsgValueType MsgValue::type_id() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.MsgValue.type_id)
-  return static_cast< ::dse::lua::dbg::MsgValueType >(type_id_);
+inline ::bg3se::lua::dbg::MsgValueType MsgValue::type_id() const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.MsgValue.type_id)
+  return static_cast< ::bg3se::lua::dbg::MsgValueType >(type_id_);
 }
-inline void MsgValue::set_type_id(::dse::lua::dbg::MsgValueType value) {
+inline void MsgValue::set_type_id(::bg3se::lua::dbg::MsgValueType value) {
   
   type_id_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.MsgValue.type_id)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.MsgValue.type_id)
 }
 
 // bool boolval = 2;
@@ -4936,7 +4936,7 @@ inline void MsgValue::clear_boolval() {
   }
 }
 inline bool MsgValue::boolval() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.MsgValue.boolval)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.MsgValue.boolval)
   if (has_boolval()) {
     return value_.boolval_;
   }
@@ -4948,7 +4948,7 @@ inline void MsgValue::set_boolval(bool value) {
     set_has_boolval();
   }
   value_.boolval_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.MsgValue.boolval)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.MsgValue.boolval)
 }
 
 // int64 intval = 3;
@@ -4965,7 +4965,7 @@ inline void MsgValue::clear_intval() {
   }
 }
 inline ::google::protobuf::int64 MsgValue::intval() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.MsgValue.intval)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.MsgValue.intval)
   if (has_intval()) {
     return value_.intval_;
   }
@@ -4977,7 +4977,7 @@ inline void MsgValue::set_intval(::google::protobuf::int64 value) {
     set_has_intval();
   }
   value_.intval_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.MsgValue.intval)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.MsgValue.intval)
 }
 
 // float floatval = 4;
@@ -4994,7 +4994,7 @@ inline void MsgValue::clear_floatval() {
   }
 }
 inline float MsgValue::floatval() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.MsgValue.floatval)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.MsgValue.floatval)
   if (has_floatval()) {
     return value_.floatval_;
   }
@@ -5006,7 +5006,7 @@ inline void MsgValue::set_floatval(float value) {
     set_has_floatval();
   }
   value_.floatval_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.MsgValue.floatval)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.MsgValue.floatval)
 }
 
 // string stringval = 5;
@@ -5024,7 +5024,7 @@ inline void MsgValue::clear_stringval() {
   }
 }
 inline const ::std::string& MsgValue::stringval() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.MsgValue.stringval)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.MsgValue.stringval)
   if (has_stringval()) {
     return value_.stringval_.Get();
   }
@@ -5038,11 +5038,11 @@ inline void MsgValue::set_stringval(const ::std::string& value) {
   }
   value_.stringval_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.MsgValue.stringval)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.MsgValue.stringval)
 }
 #if LANG_CXX11
 inline void MsgValue::set_stringval(::std::string&& value) {
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.MsgValue.stringval)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.MsgValue.stringval)
   if (!has_stringval()) {
     clear_value();
     set_has_stringval();
@@ -5050,7 +5050,7 @@ inline void MsgValue::set_stringval(::std::string&& value) {
   }
   value_.stringval_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.lua.dbg.MsgValue.stringval)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.lua.dbg.MsgValue.stringval)
 }
 #endif
 inline void MsgValue::set_stringval(const char* value) {
@@ -5062,7 +5062,7 @@ inline void MsgValue::set_stringval(const char* value) {
   }
   value_.stringval_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.lua.dbg.MsgValue.stringval)
+  // @@protoc_insertion_point(field_set_char:bg3se.lua.dbg.MsgValue.stringval)
 }
 inline void MsgValue::set_stringval(const char* value,
                              size_t size) {
@@ -5075,7 +5075,7 @@ inline void MsgValue::set_stringval(const char* value,
       &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size),
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.lua.dbg.MsgValue.stringval)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.lua.dbg.MsgValue.stringval)
 }
 inline ::std::string* MsgValue::mutable_stringval() {
   if (!has_stringval()) {
@@ -5085,10 +5085,10 @@ inline ::std::string* MsgValue::mutable_stringval() {
   }
   return value_.stringval_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.MsgValue.stringval)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.MsgValue.stringval)
 }
 inline ::std::string* MsgValue::release_stringval() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.MsgValue.stringval)
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.MsgValue.stringval)
   if (has_stringval()) {
     clear_has_value();
     return value_.stringval_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -5107,10 +5107,10 @@ inline void MsgValue::set_allocated_stringval(::std::string* stringval) {
     value_.stringval_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), stringval,
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.MsgValue.stringval)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.MsgValue.stringval)
 }
 inline ::std::string* MsgValue::unsafe_arena_release_stringval() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.MsgValue.stringval)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.MsgValue.stringval)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   if (has_stringval()) {
     clear_has_value();
@@ -5130,10 +5130,10 @@ inline void MsgValue::unsafe_arena_set_allocated_stringval(::std::string* string
     set_has_stringval();
     value_.stringval_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), stringval, GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.MsgValue.stringval)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.MsgValue.stringval)
 }
 
-// .dse.lua.dbg.MsgVariablesRef variables = 6;
+// .bg3se.lua.dbg.MsgVariablesRef variables = 6;
 inline bool MsgValue::has_variables() const {
   return value_case() == kVariables;
 }
@@ -5148,14 +5148,14 @@ inline void MsgValue::clear_variables() {
     clear_has_value();
   }
 }
-inline const ::dse::lua::dbg::MsgVariablesRef& MsgValue::_internal_variables() const {
+inline const ::bg3se::lua::dbg::MsgVariablesRef& MsgValue::_internal_variables() const {
   return *value_.variables_;
 }
-inline ::dse::lua::dbg::MsgVariablesRef* MsgValue::release_variables() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.MsgValue.variables)
+inline ::bg3se::lua::dbg::MsgVariablesRef* MsgValue::release_variables() {
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.MsgValue.variables)
   if (has_variables()) {
     clear_has_value();
-      ::dse::lua::dbg::MsgVariablesRef* temp = value_.variables_;
+      ::bg3se::lua::dbg::MsgVariablesRef* temp = value_.variables_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -5165,39 +5165,39 @@ inline ::dse::lua::dbg::MsgVariablesRef* MsgValue::release_variables() {
     return NULL;
   }
 }
-inline const ::dse::lua::dbg::MsgVariablesRef& MsgValue::variables() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.MsgValue.variables)
+inline const ::bg3se::lua::dbg::MsgVariablesRef& MsgValue::variables() const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.MsgValue.variables)
   return has_variables()
       ? *value_.variables_
-      : *reinterpret_cast< ::dse::lua::dbg::MsgVariablesRef*>(&::dse::lua::dbg::_MsgVariablesRef_default_instance_);
+      : *reinterpret_cast< ::bg3se::lua::dbg::MsgVariablesRef*>(&::bg3se::lua::dbg::_MsgVariablesRef_default_instance_);
 }
-inline ::dse::lua::dbg::MsgVariablesRef* MsgValue::unsafe_arena_release_variables() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.MsgValue.variables)
+inline ::bg3se::lua::dbg::MsgVariablesRef* MsgValue::unsafe_arena_release_variables() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.MsgValue.variables)
   if (has_variables()) {
     clear_has_value();
-    ::dse::lua::dbg::MsgVariablesRef* temp = value_.variables_;
+    ::bg3se::lua::dbg::MsgVariablesRef* temp = value_.variables_;
     value_.variables_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void MsgValue::unsafe_arena_set_allocated_variables(::dse::lua::dbg::MsgVariablesRef* variables) {
+inline void MsgValue::unsafe_arena_set_allocated_variables(::bg3se::lua::dbg::MsgVariablesRef* variables) {
   clear_value();
   if (variables) {
     set_has_variables();
     value_.variables_ = variables;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.MsgValue.variables)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.MsgValue.variables)
 }
-inline ::dse::lua::dbg::MsgVariablesRef* MsgValue::mutable_variables() {
+inline ::bg3se::lua::dbg::MsgVariablesRef* MsgValue::mutable_variables() {
   if (!has_variables()) {
     clear_value();
     set_has_variables();
-    value_.variables_ = CreateMaybeMessage< ::dse::lua::dbg::MsgVariablesRef >(
+    value_.variables_ = CreateMaybeMessage< ::bg3se::lua::dbg::MsgVariablesRef >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.MsgValue.variables)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.MsgValue.variables)
   return value_.variables_;
 }
 
@@ -5214,18 +5214,18 @@ inline MsgValue::ValueCase MsgValue::value_case() const {
 
 // MsgChildValue
 
-// .dse.lua.dbg.MsgChildValue.Type type = 1;
+// .bg3se.lua.dbg.MsgChildValue.Type type = 1;
 inline void MsgChildValue::clear_type() {
   type_ = 0;
 }
-inline ::dse::lua::dbg::MsgChildValue_Type MsgChildValue::type() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.MsgChildValue.type)
-  return static_cast< ::dse::lua::dbg::MsgChildValue_Type >(type_);
+inline ::bg3se::lua::dbg::MsgChildValue_Type MsgChildValue::type() const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.MsgChildValue.type)
+  return static_cast< ::bg3se::lua::dbg::MsgChildValue_Type >(type_);
 }
-inline void MsgChildValue::set_type(::dse::lua::dbg::MsgChildValue_Type value) {
+inline void MsgChildValue::set_type(::bg3se::lua::dbg::MsgChildValue_Type value) {
   
   type_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.MsgChildValue.type)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.MsgChildValue.type)
 }
 
 // int64 index = 2;
@@ -5233,13 +5233,13 @@ inline void MsgChildValue::clear_index() {
   index_ = GOOGLE_LONGLONG(0);
 }
 inline ::google::protobuf::int64 MsgChildValue::index() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.MsgChildValue.index)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.MsgChildValue.index)
   return index_;
 }
 inline void MsgChildValue::set_index(::google::protobuf::int64 value) {
   
   index_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.MsgChildValue.index)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.MsgChildValue.index)
 }
 
 // string name = 3;
@@ -5247,20 +5247,20 @@ inline void MsgChildValue::clear_name() {
   name_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& MsgChildValue::name() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.MsgChildValue.name)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.MsgChildValue.name)
   return name_.Get();
 }
 inline void MsgChildValue::set_name(const ::std::string& value) {
   
   name_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.MsgChildValue.name)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.MsgChildValue.name)
 }
 #if LANG_CXX11
 inline void MsgChildValue::set_name(::std::string&& value) {
   
   name_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.lua.dbg.MsgChildValue.name)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.lua.dbg.MsgChildValue.name)
 }
 #endif
 inline void MsgChildValue::set_name(const char* value) {
@@ -5268,22 +5268,22 @@ inline void MsgChildValue::set_name(const char* value) {
   
   name_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.lua.dbg.MsgChildValue.name)
+  // @@protoc_insertion_point(field_set_char:bg3se.lua.dbg.MsgChildValue.name)
 }
 inline void MsgChildValue::set_name(const char* value,
     size_t size) {
   
   name_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.lua.dbg.MsgChildValue.name)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.lua.dbg.MsgChildValue.name)
 }
 inline ::std::string* MsgChildValue::mutable_name() {
   
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.MsgChildValue.name)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.MsgChildValue.name)
   return name_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* MsgChildValue::release_name() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.MsgChildValue.name)
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.MsgChildValue.name)
   
   return name_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -5295,10 +5295,10 @@ inline void MsgChildValue::set_allocated_name(::std::string* name) {
   }
   name_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), name,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.MsgChildValue.name)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.MsgChildValue.name)
 }
 inline ::std::string* MsgChildValue::unsafe_arena_release_name() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.MsgChildValue.name)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.MsgChildValue.name)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return name_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -5314,10 +5314,10 @@ inline void MsgChildValue::unsafe_arena_set_allocated_name(
   }
   name_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       name, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.MsgChildValue.name)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.MsgChildValue.name)
 }
 
-// .dse.lua.dbg.MsgValue value = 4;
+// .bg3se.lua.dbg.MsgValue value = 4;
 inline bool MsgChildValue::has_value() const {
   return this != internal_default_instance() && value_ != NULL;
 }
@@ -5327,42 +5327,42 @@ inline void MsgChildValue::clear_value() {
   }
   value_ = NULL;
 }
-inline const ::dse::lua::dbg::MsgValue& MsgChildValue::_internal_value() const {
+inline const ::bg3se::lua::dbg::MsgValue& MsgChildValue::_internal_value() const {
   return *value_;
 }
-inline const ::dse::lua::dbg::MsgValue& MsgChildValue::value() const {
-  const ::dse::lua::dbg::MsgValue* p = value_;
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.MsgChildValue.value)
-  return p != NULL ? *p : *reinterpret_cast<const ::dse::lua::dbg::MsgValue*>(
-      &::dse::lua::dbg::_MsgValue_default_instance_);
+inline const ::bg3se::lua::dbg::MsgValue& MsgChildValue::value() const {
+  const ::bg3se::lua::dbg::MsgValue* p = value_;
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.MsgChildValue.value)
+  return p != NULL ? *p : *reinterpret_cast<const ::bg3se::lua::dbg::MsgValue*>(
+      &::bg3se::lua::dbg::_MsgValue_default_instance_);
 }
-inline ::dse::lua::dbg::MsgValue* MsgChildValue::release_value() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.MsgChildValue.value)
+inline ::bg3se::lua::dbg::MsgValue* MsgChildValue::release_value() {
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.MsgChildValue.value)
   
-  ::dse::lua::dbg::MsgValue* temp = value_;
+  ::bg3se::lua::dbg::MsgValue* temp = value_;
   if (GetArenaNoVirtual() != NULL) {
     temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
   }
   value_ = NULL;
   return temp;
 }
-inline ::dse::lua::dbg::MsgValue* MsgChildValue::unsafe_arena_release_value() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.MsgChildValue.value)
+inline ::bg3se::lua::dbg::MsgValue* MsgChildValue::unsafe_arena_release_value() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.MsgChildValue.value)
   
-  ::dse::lua::dbg::MsgValue* temp = value_;
+  ::bg3se::lua::dbg::MsgValue* temp = value_;
   value_ = NULL;
   return temp;
 }
-inline ::dse::lua::dbg::MsgValue* MsgChildValue::mutable_value() {
+inline ::bg3se::lua::dbg::MsgValue* MsgChildValue::mutable_value() {
   
   if (value_ == NULL) {
-    auto* p = CreateMaybeMessage<::dse::lua::dbg::MsgValue>(GetArenaNoVirtual());
+    auto* p = CreateMaybeMessage<::bg3se::lua::dbg::MsgValue>(GetArenaNoVirtual());
     value_ = p;
   }
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.MsgChildValue.value)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.MsgChildValue.value)
   return value_;
 }
-inline void MsgChildValue::set_allocated_value(::dse::lua::dbg::MsgValue* value) {
+inline void MsgChildValue::set_allocated_value(::bg3se::lua::dbg::MsgValue* value) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   if (message_arena == NULL) {
     delete value_;
@@ -5379,7 +5379,7 @@ inline void MsgChildValue::set_allocated_value(::dse::lua::dbg::MsgValue* value)
     
   }
   value_ = value;
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.MsgChildValue.value)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.MsgChildValue.value)
 }
 
 // -------------------------------------------------------------------
@@ -5391,20 +5391,20 @@ inline void MsgStackFrame::clear_source() {
   source_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& MsgStackFrame::source() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.MsgStackFrame.source)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.MsgStackFrame.source)
   return source_.Get();
 }
 inline void MsgStackFrame::set_source(const ::std::string& value) {
   
   source_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.MsgStackFrame.source)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.MsgStackFrame.source)
 }
 #if LANG_CXX11
 inline void MsgStackFrame::set_source(::std::string&& value) {
   
   source_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.lua.dbg.MsgStackFrame.source)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.lua.dbg.MsgStackFrame.source)
 }
 #endif
 inline void MsgStackFrame::set_source(const char* value) {
@@ -5412,22 +5412,22 @@ inline void MsgStackFrame::set_source(const char* value) {
   
   source_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.lua.dbg.MsgStackFrame.source)
+  // @@protoc_insertion_point(field_set_char:bg3se.lua.dbg.MsgStackFrame.source)
 }
 inline void MsgStackFrame::set_source(const char* value,
     size_t size) {
   
   source_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.lua.dbg.MsgStackFrame.source)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.lua.dbg.MsgStackFrame.source)
 }
 inline ::std::string* MsgStackFrame::mutable_source() {
   
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.MsgStackFrame.source)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.MsgStackFrame.source)
   return source_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* MsgStackFrame::release_source() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.MsgStackFrame.source)
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.MsgStackFrame.source)
   
   return source_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -5439,10 +5439,10 @@ inline void MsgStackFrame::set_allocated_source(::std::string* source) {
   }
   source_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), source,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.MsgStackFrame.source)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.MsgStackFrame.source)
 }
 inline ::std::string* MsgStackFrame::unsafe_arena_release_source() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.MsgStackFrame.source)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.MsgStackFrame.source)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return source_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -5458,7 +5458,7 @@ inline void MsgStackFrame::unsafe_arena_set_allocated_source(
   }
   source_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       source, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.MsgStackFrame.source)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.MsgStackFrame.source)
 }
 
 // string path = 2;
@@ -5466,20 +5466,20 @@ inline void MsgStackFrame::clear_path() {
   path_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& MsgStackFrame::path() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.MsgStackFrame.path)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.MsgStackFrame.path)
   return path_.Get();
 }
 inline void MsgStackFrame::set_path(const ::std::string& value) {
   
   path_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.MsgStackFrame.path)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.MsgStackFrame.path)
 }
 #if LANG_CXX11
 inline void MsgStackFrame::set_path(::std::string&& value) {
   
   path_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.lua.dbg.MsgStackFrame.path)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.lua.dbg.MsgStackFrame.path)
 }
 #endif
 inline void MsgStackFrame::set_path(const char* value) {
@@ -5487,22 +5487,22 @@ inline void MsgStackFrame::set_path(const char* value) {
   
   path_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.lua.dbg.MsgStackFrame.path)
+  // @@protoc_insertion_point(field_set_char:bg3se.lua.dbg.MsgStackFrame.path)
 }
 inline void MsgStackFrame::set_path(const char* value,
     size_t size) {
   
   path_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.lua.dbg.MsgStackFrame.path)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.lua.dbg.MsgStackFrame.path)
 }
 inline ::std::string* MsgStackFrame::mutable_path() {
   
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.MsgStackFrame.path)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.MsgStackFrame.path)
   return path_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* MsgStackFrame::release_path() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.MsgStackFrame.path)
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.MsgStackFrame.path)
   
   return path_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -5514,10 +5514,10 @@ inline void MsgStackFrame::set_allocated_path(::std::string* path) {
   }
   path_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), path,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.MsgStackFrame.path)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.MsgStackFrame.path)
 }
 inline ::std::string* MsgStackFrame::unsafe_arena_release_path() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.MsgStackFrame.path)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.MsgStackFrame.path)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return path_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -5533,7 +5533,7 @@ inline void MsgStackFrame::unsafe_arena_set_allocated_path(
   }
   path_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       path, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.MsgStackFrame.path)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.MsgStackFrame.path)
 }
 
 // string function = 3;
@@ -5541,20 +5541,20 @@ inline void MsgStackFrame::clear_function() {
   function_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& MsgStackFrame::function() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.MsgStackFrame.function)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.MsgStackFrame.function)
   return function_.Get();
 }
 inline void MsgStackFrame::set_function(const ::std::string& value) {
   
   function_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.MsgStackFrame.function)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.MsgStackFrame.function)
 }
 #if LANG_CXX11
 inline void MsgStackFrame::set_function(::std::string&& value) {
   
   function_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.lua.dbg.MsgStackFrame.function)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.lua.dbg.MsgStackFrame.function)
 }
 #endif
 inline void MsgStackFrame::set_function(const char* value) {
@@ -5562,22 +5562,22 @@ inline void MsgStackFrame::set_function(const char* value) {
   
   function_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.lua.dbg.MsgStackFrame.function)
+  // @@protoc_insertion_point(field_set_char:bg3se.lua.dbg.MsgStackFrame.function)
 }
 inline void MsgStackFrame::set_function(const char* value,
     size_t size) {
   
   function_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.lua.dbg.MsgStackFrame.function)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.lua.dbg.MsgStackFrame.function)
 }
 inline ::std::string* MsgStackFrame::mutable_function() {
   
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.MsgStackFrame.function)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.MsgStackFrame.function)
   return function_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* MsgStackFrame::release_function() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.MsgStackFrame.function)
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.MsgStackFrame.function)
   
   return function_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -5589,10 +5589,10 @@ inline void MsgStackFrame::set_allocated_function(::std::string* function) {
   }
   function_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), function,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.MsgStackFrame.function)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.MsgStackFrame.function)
 }
 inline ::std::string* MsgStackFrame::unsafe_arena_release_function() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.MsgStackFrame.function)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.MsgStackFrame.function)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return function_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -5608,7 +5608,7 @@ inline void MsgStackFrame::unsafe_arena_set_allocated_function(
   }
   function_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       function, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.MsgStackFrame.function)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.MsgStackFrame.function)
 }
 
 // int32 line = 4;
@@ -5616,13 +5616,13 @@ inline void MsgStackFrame::clear_line() {
   line_ = 0;
 }
 inline ::google::protobuf::int32 MsgStackFrame::line() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.MsgStackFrame.line)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.MsgStackFrame.line)
   return line_;
 }
 inline void MsgStackFrame::set_line(::google::protobuf::int32 value) {
   
   line_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.MsgStackFrame.line)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.MsgStackFrame.line)
 }
 
 // int32 scope_first_line = 5;
@@ -5630,13 +5630,13 @@ inline void MsgStackFrame::clear_scope_first_line() {
   scope_first_line_ = 0;
 }
 inline ::google::protobuf::int32 MsgStackFrame::scope_first_line() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.MsgStackFrame.scope_first_line)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.MsgStackFrame.scope_first_line)
   return scope_first_line_;
 }
 inline void MsgStackFrame::set_scope_first_line(::google::protobuf::int32 value) {
   
   scope_first_line_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.MsgStackFrame.scope_first_line)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.MsgStackFrame.scope_first_line)
 }
 
 // int32 scope_last_line = 6;
@@ -5644,13 +5644,13 @@ inline void MsgStackFrame::clear_scope_last_line() {
   scope_last_line_ = 0;
 }
 inline ::google::protobuf::int32 MsgStackFrame::scope_last_line() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.MsgStackFrame.scope_last_line)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.MsgStackFrame.scope_last_line)
   return scope_last_line_;
 }
 inline void MsgStackFrame::set_scope_last_line(::google::protobuf::int32 value) {
   
   scope_last_line_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.MsgStackFrame.scope_last_line)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.MsgStackFrame.scope_last_line)
 }
 
 // -------------------------------------------------------------------
@@ -5662,13 +5662,13 @@ inline void DbgConnectRequest::clear_protocol_version() {
   protocol_version_ = 0u;
 }
 inline ::google::protobuf::uint32 DbgConnectRequest::protocol_version() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.DbgConnectRequest.protocol_version)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.DbgConnectRequest.protocol_version)
   return protocol_version_;
 }
 inline void DbgConnectRequest::set_protocol_version(::google::protobuf::uint32 value) {
   
   protocol_version_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.DbgConnectRequest.protocol_version)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.DbgConnectRequest.protocol_version)
 }
 
 // -------------------------------------------------------------------
@@ -5680,13 +5680,13 @@ inline void BkConnectResponse::clear_protocol_version() {
   protocol_version_ = 0u;
 }
 inline ::google::protobuf::uint32 BkConnectResponse::protocol_version() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.BkConnectResponse.protocol_version)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.BkConnectResponse.protocol_version)
   return protocol_version_;
 }
 inline void BkConnectResponse::set_protocol_version(::google::protobuf::uint32 value) {
   
   protocol_version_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.BkConnectResponse.protocol_version)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.BkConnectResponse.protocol_version)
 }
 
 // -------------------------------------------------------------------
@@ -5698,13 +5698,13 @@ inline void DbgUpdateSettings::clear_break_on_error() {
   break_on_error_ = false;
 }
 inline bool DbgUpdateSettings::break_on_error() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.DbgUpdateSettings.break_on_error)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.DbgUpdateSettings.break_on_error)
   return break_on_error_;
 }
 inline void DbgUpdateSettings::set_break_on_error(bool value) {
   
   break_on_error_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.DbgUpdateSettings.break_on_error)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.DbgUpdateSettings.break_on_error)
 }
 
 // bool break_on_generic_error = 2;
@@ -5712,13 +5712,13 @@ inline void DbgUpdateSettings::clear_break_on_generic_error() {
   break_on_generic_error_ = false;
 }
 inline bool DbgUpdateSettings::break_on_generic_error() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.DbgUpdateSettings.break_on_generic_error)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.DbgUpdateSettings.break_on_generic_error)
   return break_on_generic_error_;
 }
 inline void DbgUpdateSettings::set_break_on_generic_error(bool value) {
   
   break_on_generic_error_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.DbgUpdateSettings.break_on_generic_error)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.DbgUpdateSettings.break_on_generic_error)
 }
 
 // -------------------------------------------------------------------
@@ -5730,20 +5730,20 @@ inline void MsgBreakpoint::clear_path() {
   path_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& MsgBreakpoint::path() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.MsgBreakpoint.path)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.MsgBreakpoint.path)
   return path_.Get();
 }
 inline void MsgBreakpoint::set_path(const ::std::string& value) {
   
   path_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.MsgBreakpoint.path)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.MsgBreakpoint.path)
 }
 #if LANG_CXX11
 inline void MsgBreakpoint::set_path(::std::string&& value) {
   
   path_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.lua.dbg.MsgBreakpoint.path)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.lua.dbg.MsgBreakpoint.path)
 }
 #endif
 inline void MsgBreakpoint::set_path(const char* value) {
@@ -5751,22 +5751,22 @@ inline void MsgBreakpoint::set_path(const char* value) {
   
   path_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.lua.dbg.MsgBreakpoint.path)
+  // @@protoc_insertion_point(field_set_char:bg3se.lua.dbg.MsgBreakpoint.path)
 }
 inline void MsgBreakpoint::set_path(const char* value,
     size_t size) {
   
   path_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.lua.dbg.MsgBreakpoint.path)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.lua.dbg.MsgBreakpoint.path)
 }
 inline ::std::string* MsgBreakpoint::mutable_path() {
   
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.MsgBreakpoint.path)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.MsgBreakpoint.path)
   return path_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* MsgBreakpoint::release_path() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.MsgBreakpoint.path)
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.MsgBreakpoint.path)
   
   return path_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -5778,10 +5778,10 @@ inline void MsgBreakpoint::set_allocated_path(::std::string* path) {
   }
   path_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), path,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.MsgBreakpoint.path)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.MsgBreakpoint.path)
 }
 inline ::std::string* MsgBreakpoint::unsafe_arena_release_path() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.MsgBreakpoint.path)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.MsgBreakpoint.path)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return path_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -5797,7 +5797,7 @@ inline void MsgBreakpoint::unsafe_arena_set_allocated_path(
   }
   path_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       path, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.MsgBreakpoint.path)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.MsgBreakpoint.path)
 }
 
 // int32 line = 2;
@@ -5805,46 +5805,46 @@ inline void MsgBreakpoint::clear_line() {
   line_ = 0;
 }
 inline ::google::protobuf::int32 MsgBreakpoint::line() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.MsgBreakpoint.line)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.MsgBreakpoint.line)
   return line_;
 }
 inline void MsgBreakpoint::set_line(::google::protobuf::int32 value) {
   
   line_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.MsgBreakpoint.line)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.MsgBreakpoint.line)
 }
 
 // -------------------------------------------------------------------
 
 // DbgSetBreakpoints
 
-// repeated .dse.lua.dbg.MsgBreakpoint breakpoint = 1;
+// repeated .bg3se.lua.dbg.MsgBreakpoint breakpoint = 1;
 inline int DbgSetBreakpoints::breakpoint_size() const {
   return breakpoint_.size();
 }
 inline void DbgSetBreakpoints::clear_breakpoint() {
   breakpoint_.Clear();
 }
-inline ::dse::lua::dbg::MsgBreakpoint* DbgSetBreakpoints::mutable_breakpoint(int index) {
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.DbgSetBreakpoints.breakpoint)
+inline ::bg3se::lua::dbg::MsgBreakpoint* DbgSetBreakpoints::mutable_breakpoint(int index) {
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.DbgSetBreakpoints.breakpoint)
   return breakpoint_.Mutable(index);
 }
-inline ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgBreakpoint >*
+inline ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgBreakpoint >*
 DbgSetBreakpoints::mutable_breakpoint() {
-  // @@protoc_insertion_point(field_mutable_list:dse.lua.dbg.DbgSetBreakpoints.breakpoint)
+  // @@protoc_insertion_point(field_mutable_list:bg3se.lua.dbg.DbgSetBreakpoints.breakpoint)
   return &breakpoint_;
 }
-inline const ::dse::lua::dbg::MsgBreakpoint& DbgSetBreakpoints::breakpoint(int index) const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.DbgSetBreakpoints.breakpoint)
+inline const ::bg3se::lua::dbg::MsgBreakpoint& DbgSetBreakpoints::breakpoint(int index) const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.DbgSetBreakpoints.breakpoint)
   return breakpoint_.Get(index);
 }
-inline ::dse::lua::dbg::MsgBreakpoint* DbgSetBreakpoints::add_breakpoint() {
-  // @@protoc_insertion_point(field_add:dse.lua.dbg.DbgSetBreakpoints.breakpoint)
+inline ::bg3se::lua::dbg::MsgBreakpoint* DbgSetBreakpoints::add_breakpoint() {
+  // @@protoc_insertion_point(field_add:bg3se.lua.dbg.DbgSetBreakpoints.breakpoint)
   return breakpoint_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgBreakpoint >&
+inline const ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgBreakpoint >&
 DbgSetBreakpoints::breakpoint() const {
-  // @@protoc_insertion_point(field_list:dse.lua.dbg.DbgSetBreakpoints.breakpoint)
+  // @@protoc_insertion_point(field_list:bg3se.lua.dbg.DbgSetBreakpoints.breakpoint)
   return breakpoint_;
 }
 
@@ -5852,62 +5852,62 @@ DbgSetBreakpoints::breakpoint() const {
 
 // BkBreakpointTriggered
 
-// .dse.lua.dbg.BkBreakpointTriggered.Reason reason = 1;
+// .bg3se.lua.dbg.BkBreakpointTriggered.Reason reason = 1;
 inline void BkBreakpointTriggered::clear_reason() {
   reason_ = 0;
 }
-inline ::dse::lua::dbg::BkBreakpointTriggered_Reason BkBreakpointTriggered::reason() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.BkBreakpointTriggered.reason)
-  return static_cast< ::dse::lua::dbg::BkBreakpointTriggered_Reason >(reason_);
+inline ::bg3se::lua::dbg::BkBreakpointTriggered_Reason BkBreakpointTriggered::reason() const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.BkBreakpointTriggered.reason)
+  return static_cast< ::bg3se::lua::dbg::BkBreakpointTriggered_Reason >(reason_);
 }
-inline void BkBreakpointTriggered::set_reason(::dse::lua::dbg::BkBreakpointTriggered_Reason value) {
+inline void BkBreakpointTriggered::set_reason(::bg3se::lua::dbg::BkBreakpointTriggered_Reason value) {
   
   reason_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.BkBreakpointTriggered.reason)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.BkBreakpointTriggered.reason)
 }
 
-// repeated .dse.lua.dbg.MsgStackFrame stack = 2;
+// repeated .bg3se.lua.dbg.MsgStackFrame stack = 2;
 inline int BkBreakpointTriggered::stack_size() const {
   return stack_.size();
 }
 inline void BkBreakpointTriggered::clear_stack() {
   stack_.Clear();
 }
-inline ::dse::lua::dbg::MsgStackFrame* BkBreakpointTriggered::mutable_stack(int index) {
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.BkBreakpointTriggered.stack)
+inline ::bg3se::lua::dbg::MsgStackFrame* BkBreakpointTriggered::mutable_stack(int index) {
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.BkBreakpointTriggered.stack)
   return stack_.Mutable(index);
 }
-inline ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgStackFrame >*
+inline ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgStackFrame >*
 BkBreakpointTriggered::mutable_stack() {
-  // @@protoc_insertion_point(field_mutable_list:dse.lua.dbg.BkBreakpointTriggered.stack)
+  // @@protoc_insertion_point(field_mutable_list:bg3se.lua.dbg.BkBreakpointTriggered.stack)
   return &stack_;
 }
-inline const ::dse::lua::dbg::MsgStackFrame& BkBreakpointTriggered::stack(int index) const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.BkBreakpointTriggered.stack)
+inline const ::bg3se::lua::dbg::MsgStackFrame& BkBreakpointTriggered::stack(int index) const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.BkBreakpointTriggered.stack)
   return stack_.Get(index);
 }
-inline ::dse::lua::dbg::MsgStackFrame* BkBreakpointTriggered::add_stack() {
-  // @@protoc_insertion_point(field_add:dse.lua.dbg.BkBreakpointTriggered.stack)
+inline ::bg3se::lua::dbg::MsgStackFrame* BkBreakpointTriggered::add_stack() {
+  // @@protoc_insertion_point(field_add:bg3se.lua.dbg.BkBreakpointTriggered.stack)
   return stack_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgStackFrame >&
+inline const ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgStackFrame >&
 BkBreakpointTriggered::stack() const {
-  // @@protoc_insertion_point(field_list:dse.lua.dbg.BkBreakpointTriggered.stack)
+  // @@protoc_insertion_point(field_list:bg3se.lua.dbg.BkBreakpointTriggered.stack)
   return stack_;
 }
 
-// .dse.lua.dbg.DbgContext context = 3;
+// .bg3se.lua.dbg.DbgContext context = 3;
 inline void BkBreakpointTriggered::clear_context() {
   context_ = 0;
 }
-inline ::dse::lua::dbg::DbgContext BkBreakpointTriggered::context() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.BkBreakpointTriggered.context)
-  return static_cast< ::dse::lua::dbg::DbgContext >(context_);
+inline ::bg3se::lua::dbg::DbgContext BkBreakpointTriggered::context() const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.BkBreakpointTriggered.context)
+  return static_cast< ::bg3se::lua::dbg::DbgContext >(context_);
 }
-inline void BkBreakpointTriggered::set_context(::dse::lua::dbg::DbgContext value) {
+inline void BkBreakpointTriggered::set_context(::bg3se::lua::dbg::DbgContext value) {
   
   context_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.BkBreakpointTriggered.context)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.BkBreakpointTriggered.context)
 }
 
 // string message = 4;
@@ -5915,20 +5915,20 @@ inline void BkBreakpointTriggered::clear_message() {
   message_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& BkBreakpointTriggered::message() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.BkBreakpointTriggered.message)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.BkBreakpointTriggered.message)
   return message_.Get();
 }
 inline void BkBreakpointTriggered::set_message(const ::std::string& value) {
   
   message_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.BkBreakpointTriggered.message)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.BkBreakpointTriggered.message)
 }
 #if LANG_CXX11
 inline void BkBreakpointTriggered::set_message(::std::string&& value) {
   
   message_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.lua.dbg.BkBreakpointTriggered.message)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.lua.dbg.BkBreakpointTriggered.message)
 }
 #endif
 inline void BkBreakpointTriggered::set_message(const char* value) {
@@ -5936,22 +5936,22 @@ inline void BkBreakpointTriggered::set_message(const char* value) {
   
   message_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.lua.dbg.BkBreakpointTriggered.message)
+  // @@protoc_insertion_point(field_set_char:bg3se.lua.dbg.BkBreakpointTriggered.message)
 }
 inline void BkBreakpointTriggered::set_message(const char* value,
     size_t size) {
   
   message_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.lua.dbg.BkBreakpointTriggered.message)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.lua.dbg.BkBreakpointTriggered.message)
 }
 inline ::std::string* BkBreakpointTriggered::mutable_message() {
   
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.BkBreakpointTriggered.message)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.BkBreakpointTriggered.message)
   return message_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* BkBreakpointTriggered::release_message() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.BkBreakpointTriggered.message)
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.BkBreakpointTriggered.message)
   
   return message_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -5963,10 +5963,10 @@ inline void BkBreakpointTriggered::set_allocated_message(::std::string* message)
   }
   message_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), message,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.BkBreakpointTriggered.message)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.BkBreakpointTriggered.message)
 }
 inline ::std::string* BkBreakpointTriggered::unsafe_arena_release_message() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.BkBreakpointTriggered.message)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.BkBreakpointTriggered.message)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return message_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -5982,57 +5982,57 @@ inline void BkBreakpointTriggered::unsafe_arena_set_allocated_message(
   }
   message_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       message, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.BkBreakpointTriggered.message)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.BkBreakpointTriggered.message)
 }
 
 // -------------------------------------------------------------------
 
 // DbgContinue
 
-// .dse.lua.dbg.DbgContext context = 1;
+// .bg3se.lua.dbg.DbgContext context = 1;
 inline void DbgContinue::clear_context() {
   context_ = 0;
 }
-inline ::dse::lua::dbg::DbgContext DbgContinue::context() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.DbgContinue.context)
-  return static_cast< ::dse::lua::dbg::DbgContext >(context_);
+inline ::bg3se::lua::dbg::DbgContext DbgContinue::context() const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.DbgContinue.context)
+  return static_cast< ::bg3se::lua::dbg::DbgContext >(context_);
 }
-inline void DbgContinue::set_context(::dse::lua::dbg::DbgContext value) {
+inline void DbgContinue::set_context(::bg3se::lua::dbg::DbgContext value) {
   
   context_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.DbgContinue.context)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.DbgContinue.context)
 }
 
-// .dse.lua.dbg.DbgContinue.Action action = 2;
+// .bg3se.lua.dbg.DbgContinue.Action action = 2;
 inline void DbgContinue::clear_action() {
   action_ = 0;
 }
-inline ::dse::lua::dbg::DbgContinue_Action DbgContinue::action() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.DbgContinue.action)
-  return static_cast< ::dse::lua::dbg::DbgContinue_Action >(action_);
+inline ::bg3se::lua::dbg::DbgContinue_Action DbgContinue::action() const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.DbgContinue.action)
+  return static_cast< ::bg3se::lua::dbg::DbgContinue_Action >(action_);
 }
-inline void DbgContinue::set_action(::dse::lua::dbg::DbgContinue_Action value) {
+inline void DbgContinue::set_action(::bg3se::lua::dbg::DbgContinue_Action value) {
   
   action_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.DbgContinue.action)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.DbgContinue.action)
 }
 
 // -------------------------------------------------------------------
 
 // DbgEvaluate
 
-// .dse.lua.dbg.DbgContext context = 1;
+// .bg3se.lua.dbg.DbgContext context = 1;
 inline void DbgEvaluate::clear_context() {
   context_ = 0;
 }
-inline ::dse::lua::dbg::DbgContext DbgEvaluate::context() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.DbgEvaluate.context)
-  return static_cast< ::dse::lua::dbg::DbgContext >(context_);
+inline ::bg3se::lua::dbg::DbgContext DbgEvaluate::context() const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.DbgEvaluate.context)
+  return static_cast< ::bg3se::lua::dbg::DbgContext >(context_);
 }
-inline void DbgEvaluate::set_context(::dse::lua::dbg::DbgContext value) {
+inline void DbgEvaluate::set_context(::bg3se::lua::dbg::DbgContext value) {
   
   context_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.DbgEvaluate.context)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.DbgEvaluate.context)
 }
 
 // string expression = 2;
@@ -6040,20 +6040,20 @@ inline void DbgEvaluate::clear_expression() {
   expression_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& DbgEvaluate::expression() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.DbgEvaluate.expression)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.DbgEvaluate.expression)
   return expression_.Get();
 }
 inline void DbgEvaluate::set_expression(const ::std::string& value) {
   
   expression_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.DbgEvaluate.expression)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.DbgEvaluate.expression)
 }
 #if LANG_CXX11
 inline void DbgEvaluate::set_expression(::std::string&& value) {
   
   expression_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.lua.dbg.DbgEvaluate.expression)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.lua.dbg.DbgEvaluate.expression)
 }
 #endif
 inline void DbgEvaluate::set_expression(const char* value) {
@@ -6061,22 +6061,22 @@ inline void DbgEvaluate::set_expression(const char* value) {
   
   expression_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.lua.dbg.DbgEvaluate.expression)
+  // @@protoc_insertion_point(field_set_char:bg3se.lua.dbg.DbgEvaluate.expression)
 }
 inline void DbgEvaluate::set_expression(const char* value,
     size_t size) {
   
   expression_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.lua.dbg.DbgEvaluate.expression)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.lua.dbg.DbgEvaluate.expression)
 }
 inline ::std::string* DbgEvaluate::mutable_expression() {
   
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.DbgEvaluate.expression)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.DbgEvaluate.expression)
   return expression_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* DbgEvaluate::release_expression() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.DbgEvaluate.expression)
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.DbgEvaluate.expression)
   
   return expression_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -6088,10 +6088,10 @@ inline void DbgEvaluate::set_allocated_expression(::std::string* expression) {
   }
   expression_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), expression,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.DbgEvaluate.expression)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.DbgEvaluate.expression)
 }
 inline ::std::string* DbgEvaluate::unsafe_arena_release_expression() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.DbgEvaluate.expression)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.DbgEvaluate.expression)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return expression_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -6107,7 +6107,7 @@ inline void DbgEvaluate::unsafe_arena_set_allocated_expression(
   }
   expression_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       expression, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.DbgEvaluate.expression)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.DbgEvaluate.expression)
 }
 
 // int32 frame = 3;
@@ -6115,31 +6115,31 @@ inline void DbgEvaluate::clear_frame() {
   frame_ = 0;
 }
 inline ::google::protobuf::int32 DbgEvaluate::frame() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.DbgEvaluate.frame)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.DbgEvaluate.frame)
   return frame_;
 }
 inline void DbgEvaluate::set_frame(::google::protobuf::int32 value) {
   
   frame_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.DbgEvaluate.frame)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.DbgEvaluate.frame)
 }
 
 // -------------------------------------------------------------------
 
 // DbgGetVariables
 
-// .dse.lua.dbg.DbgContext context = 1;
+// .bg3se.lua.dbg.DbgContext context = 1;
 inline void DbgGetVariables::clear_context() {
   context_ = 0;
 }
-inline ::dse::lua::dbg::DbgContext DbgGetVariables::context() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.DbgGetVariables.context)
-  return static_cast< ::dse::lua::dbg::DbgContext >(context_);
+inline ::bg3se::lua::dbg::DbgContext DbgGetVariables::context() const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.DbgGetVariables.context)
+  return static_cast< ::bg3se::lua::dbg::DbgContext >(context_);
 }
-inline void DbgGetVariables::set_context(::dse::lua::dbg::DbgContext value) {
+inline void DbgGetVariables::set_context(::bg3se::lua::dbg::DbgContext value) {
   
   context_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.DbgGetVariables.context)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.DbgGetVariables.context)
 }
 
 // int32 variableRef = 2;
@@ -6147,13 +6147,13 @@ inline void DbgGetVariables::clear_variableref() {
   variableref_ = 0;
 }
 inline ::google::protobuf::int32 DbgGetVariables::variableref() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.DbgGetVariables.variableRef)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.DbgGetVariables.variableRef)
   return variableref_;
 }
 inline void DbgGetVariables::set_variableref(::google::protobuf::int32 value) {
   
   variableref_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.DbgGetVariables.variableRef)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.DbgGetVariables.variableRef)
 }
 
 // int32 frame = 3;
@@ -6161,13 +6161,13 @@ inline void DbgGetVariables::clear_frame() {
   frame_ = 0;
 }
 inline ::google::protobuf::int32 DbgGetVariables::frame() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.DbgGetVariables.frame)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.DbgGetVariables.frame)
   return frame_;
 }
 inline void DbgGetVariables::set_frame(::google::protobuf::int32 value) {
   
   frame_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.DbgGetVariables.frame)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.DbgGetVariables.frame)
 }
 
 // int32 local = 4;
@@ -6175,42 +6175,42 @@ inline void DbgGetVariables::clear_local() {
   local_ = 0;
 }
 inline ::google::protobuf::int32 DbgGetVariables::local() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.DbgGetVariables.local)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.DbgGetVariables.local)
   return local_;
 }
 inline void DbgGetVariables::set_local(::google::protobuf::int32 value) {
   
   local_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.DbgGetVariables.local)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.DbgGetVariables.local)
 }
 
-// repeated .dse.lua.dbg.MsgTableKey key = 5;
+// repeated .bg3se.lua.dbg.MsgTableKey key = 5;
 inline int DbgGetVariables::key_size() const {
   return key_.size();
 }
 inline void DbgGetVariables::clear_key() {
   key_.Clear();
 }
-inline ::dse::lua::dbg::MsgTableKey* DbgGetVariables::mutable_key(int index) {
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.DbgGetVariables.key)
+inline ::bg3se::lua::dbg::MsgTableKey* DbgGetVariables::mutable_key(int index) {
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.DbgGetVariables.key)
   return key_.Mutable(index);
 }
-inline ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgTableKey >*
+inline ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgTableKey >*
 DbgGetVariables::mutable_key() {
-  // @@protoc_insertion_point(field_mutable_list:dse.lua.dbg.DbgGetVariables.key)
+  // @@protoc_insertion_point(field_mutable_list:bg3se.lua.dbg.DbgGetVariables.key)
   return &key_;
 }
-inline const ::dse::lua::dbg::MsgTableKey& DbgGetVariables::key(int index) const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.DbgGetVariables.key)
+inline const ::bg3se::lua::dbg::MsgTableKey& DbgGetVariables::key(int index) const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.DbgGetVariables.key)
   return key_.Get(index);
 }
-inline ::dse::lua::dbg::MsgTableKey* DbgGetVariables::add_key() {
-  // @@protoc_insertion_point(field_add:dse.lua.dbg.DbgGetVariables.key)
+inline ::bg3se::lua::dbg::MsgTableKey* DbgGetVariables::add_key() {
+  // @@protoc_insertion_point(field_add:bg3se.lua.dbg.DbgGetVariables.key)
   return key_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgTableKey >&
+inline const ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgTableKey >&
 DbgGetVariables::key() const {
-  // @@protoc_insertion_point(field_list:dse.lua.dbg.DbgGetVariables.key)
+  // @@protoc_insertion_point(field_list:bg3se.lua.dbg.DbgGetVariables.key)
   return key_;
 }
 
@@ -6218,7 +6218,7 @@ DbgGetVariables::key() const {
 
 // BkEvaluateResponse
 
-// .dse.lua.dbg.MsgValue result = 1;
+// .bg3se.lua.dbg.MsgValue result = 1;
 inline bool BkEvaluateResponse::has_result() const {
   return this != internal_default_instance() && result_ != NULL;
 }
@@ -6228,42 +6228,42 @@ inline void BkEvaluateResponse::clear_result() {
   }
   result_ = NULL;
 }
-inline const ::dse::lua::dbg::MsgValue& BkEvaluateResponse::_internal_result() const {
+inline const ::bg3se::lua::dbg::MsgValue& BkEvaluateResponse::_internal_result() const {
   return *result_;
 }
-inline const ::dse::lua::dbg::MsgValue& BkEvaluateResponse::result() const {
-  const ::dse::lua::dbg::MsgValue* p = result_;
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.BkEvaluateResponse.result)
-  return p != NULL ? *p : *reinterpret_cast<const ::dse::lua::dbg::MsgValue*>(
-      &::dse::lua::dbg::_MsgValue_default_instance_);
+inline const ::bg3se::lua::dbg::MsgValue& BkEvaluateResponse::result() const {
+  const ::bg3se::lua::dbg::MsgValue* p = result_;
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.BkEvaluateResponse.result)
+  return p != NULL ? *p : *reinterpret_cast<const ::bg3se::lua::dbg::MsgValue*>(
+      &::bg3se::lua::dbg::_MsgValue_default_instance_);
 }
-inline ::dse::lua::dbg::MsgValue* BkEvaluateResponse::release_result() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.BkEvaluateResponse.result)
+inline ::bg3se::lua::dbg::MsgValue* BkEvaluateResponse::release_result() {
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.BkEvaluateResponse.result)
   
-  ::dse::lua::dbg::MsgValue* temp = result_;
+  ::bg3se::lua::dbg::MsgValue* temp = result_;
   if (GetArenaNoVirtual() != NULL) {
     temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
   }
   result_ = NULL;
   return temp;
 }
-inline ::dse::lua::dbg::MsgValue* BkEvaluateResponse::unsafe_arena_release_result() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.BkEvaluateResponse.result)
+inline ::bg3se::lua::dbg::MsgValue* BkEvaluateResponse::unsafe_arena_release_result() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.BkEvaluateResponse.result)
   
-  ::dse::lua::dbg::MsgValue* temp = result_;
+  ::bg3se::lua::dbg::MsgValue* temp = result_;
   result_ = NULL;
   return temp;
 }
-inline ::dse::lua::dbg::MsgValue* BkEvaluateResponse::mutable_result() {
+inline ::bg3se::lua::dbg::MsgValue* BkEvaluateResponse::mutable_result() {
   
   if (result_ == NULL) {
-    auto* p = CreateMaybeMessage<::dse::lua::dbg::MsgValue>(GetArenaNoVirtual());
+    auto* p = CreateMaybeMessage<::bg3se::lua::dbg::MsgValue>(GetArenaNoVirtual());
     result_ = p;
   }
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.BkEvaluateResponse.result)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.BkEvaluateResponse.result)
   return result_;
 }
-inline void BkEvaluateResponse::set_allocated_result(::dse::lua::dbg::MsgValue* result) {
+inline void BkEvaluateResponse::set_allocated_result(::bg3se::lua::dbg::MsgValue* result) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   if (message_arena == NULL) {
     delete result_;
@@ -6280,7 +6280,7 @@ inline void BkEvaluateResponse::set_allocated_result(::dse::lua::dbg::MsgValue* 
     
   }
   result_ = result;
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.BkEvaluateResponse.result)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.BkEvaluateResponse.result)
 }
 
 // string error_message = 2;
@@ -6288,20 +6288,20 @@ inline void BkEvaluateResponse::clear_error_message() {
   error_message_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& BkEvaluateResponse::error_message() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.BkEvaluateResponse.error_message)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.BkEvaluateResponse.error_message)
   return error_message_.Get();
 }
 inline void BkEvaluateResponse::set_error_message(const ::std::string& value) {
   
   error_message_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.BkEvaluateResponse.error_message)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.BkEvaluateResponse.error_message)
 }
 #if LANG_CXX11
 inline void BkEvaluateResponse::set_error_message(::std::string&& value) {
   
   error_message_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.lua.dbg.BkEvaluateResponse.error_message)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.lua.dbg.BkEvaluateResponse.error_message)
 }
 #endif
 inline void BkEvaluateResponse::set_error_message(const char* value) {
@@ -6309,22 +6309,22 @@ inline void BkEvaluateResponse::set_error_message(const char* value) {
   
   error_message_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.lua.dbg.BkEvaluateResponse.error_message)
+  // @@protoc_insertion_point(field_set_char:bg3se.lua.dbg.BkEvaluateResponse.error_message)
 }
 inline void BkEvaluateResponse::set_error_message(const char* value,
     size_t size) {
   
   error_message_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.lua.dbg.BkEvaluateResponse.error_message)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.lua.dbg.BkEvaluateResponse.error_message)
 }
 inline ::std::string* BkEvaluateResponse::mutable_error_message() {
   
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.BkEvaluateResponse.error_message)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.BkEvaluateResponse.error_message)
   return error_message_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* BkEvaluateResponse::release_error_message() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.BkEvaluateResponse.error_message)
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.BkEvaluateResponse.error_message)
   
   return error_message_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -6336,10 +6336,10 @@ inline void BkEvaluateResponse::set_allocated_error_message(::std::string* error
   }
   error_message_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), error_message,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.BkEvaluateResponse.error_message)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.BkEvaluateResponse.error_message)
 }
 inline ::std::string* BkEvaluateResponse::unsafe_arena_release_error_message() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.BkEvaluateResponse.error_message)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.BkEvaluateResponse.error_message)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return error_message_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -6355,40 +6355,40 @@ inline void BkEvaluateResponse::unsafe_arena_set_allocated_error_message(
   }
   error_message_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       error_message, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.BkEvaluateResponse.error_message)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.BkEvaluateResponse.error_message)
 }
 
 // -------------------------------------------------------------------
 
 // BkGetVariablesResponse
 
-// repeated .dse.lua.dbg.MsgChildValue result = 1;
+// repeated .bg3se.lua.dbg.MsgChildValue result = 1;
 inline int BkGetVariablesResponse::result_size() const {
   return result_.size();
 }
 inline void BkGetVariablesResponse::clear_result() {
   result_.Clear();
 }
-inline ::dse::lua::dbg::MsgChildValue* BkGetVariablesResponse::mutable_result(int index) {
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.BkGetVariablesResponse.result)
+inline ::bg3se::lua::dbg::MsgChildValue* BkGetVariablesResponse::mutable_result(int index) {
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.BkGetVariablesResponse.result)
   return result_.Mutable(index);
 }
-inline ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgChildValue >*
+inline ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgChildValue >*
 BkGetVariablesResponse::mutable_result() {
-  // @@protoc_insertion_point(field_mutable_list:dse.lua.dbg.BkGetVariablesResponse.result)
+  // @@protoc_insertion_point(field_mutable_list:bg3se.lua.dbg.BkGetVariablesResponse.result)
   return &result_;
 }
-inline const ::dse::lua::dbg::MsgChildValue& BkGetVariablesResponse::result(int index) const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.BkGetVariablesResponse.result)
+inline const ::bg3se::lua::dbg::MsgChildValue& BkGetVariablesResponse::result(int index) const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.BkGetVariablesResponse.result)
   return result_.Get(index);
 }
-inline ::dse::lua::dbg::MsgChildValue* BkGetVariablesResponse::add_result() {
-  // @@protoc_insertion_point(field_add:dse.lua.dbg.BkGetVariablesResponse.result)
+inline ::bg3se::lua::dbg::MsgChildValue* BkGetVariablesResponse::add_result() {
+  // @@protoc_insertion_point(field_add:bg3se.lua.dbg.BkGetVariablesResponse.result)
   return result_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgChildValue >&
+inline const ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgChildValue >&
 BkGetVariablesResponse::result() const {
-  // @@protoc_insertion_point(field_list:dse.lua.dbg.BkGetVariablesResponse.result)
+  // @@protoc_insertion_point(field_list:bg3se.lua.dbg.BkGetVariablesResponse.result)
   return result_;
 }
 
@@ -6397,20 +6397,20 @@ inline void BkGetVariablesResponse::clear_error_message() {
   error_message_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& BkGetVariablesResponse::error_message() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.BkGetVariablesResponse.error_message)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.BkGetVariablesResponse.error_message)
   return error_message_.Get();
 }
 inline void BkGetVariablesResponse::set_error_message(const ::std::string& value) {
   
   error_message_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.BkGetVariablesResponse.error_message)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.BkGetVariablesResponse.error_message)
 }
 #if LANG_CXX11
 inline void BkGetVariablesResponse::set_error_message(::std::string&& value) {
   
   error_message_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.lua.dbg.BkGetVariablesResponse.error_message)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.lua.dbg.BkGetVariablesResponse.error_message)
 }
 #endif
 inline void BkGetVariablesResponse::set_error_message(const char* value) {
@@ -6418,22 +6418,22 @@ inline void BkGetVariablesResponse::set_error_message(const char* value) {
   
   error_message_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.lua.dbg.BkGetVariablesResponse.error_message)
+  // @@protoc_insertion_point(field_set_char:bg3se.lua.dbg.BkGetVariablesResponse.error_message)
 }
 inline void BkGetVariablesResponse::set_error_message(const char* value,
     size_t size) {
   
   error_message_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.lua.dbg.BkGetVariablesResponse.error_message)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.lua.dbg.BkGetVariablesResponse.error_message)
 }
 inline ::std::string* BkGetVariablesResponse::mutable_error_message() {
   
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.BkGetVariablesResponse.error_message)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.BkGetVariablesResponse.error_message)
   return error_message_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* BkGetVariablesResponse::release_error_message() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.BkGetVariablesResponse.error_message)
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.BkGetVariablesResponse.error_message)
   
   return error_message_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -6445,10 +6445,10 @@ inline void BkGetVariablesResponse::set_allocated_error_message(::std::string* e
   }
   error_message_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), error_message,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.BkGetVariablesResponse.error_message)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.BkGetVariablesResponse.error_message)
 }
 inline ::std::string* BkGetVariablesResponse::unsafe_arena_release_error_message() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.BkGetVariablesResponse.error_message)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.BkGetVariablesResponse.error_message)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return error_message_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -6464,7 +6464,7 @@ inline void BkGetVariablesResponse::unsafe_arena_set_allocated_error_message(
   }
   error_message_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       error_message, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.BkGetVariablesResponse.error_message)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.BkGetVariablesResponse.error_message)
 }
 
 // -------------------------------------------------------------------
@@ -6475,32 +6475,32 @@ inline void BkGetVariablesResponse::unsafe_arena_set_allocated_error_message(
 
 // BkContextUpdated
 
-// .dse.lua.dbg.DbgContext context = 1;
+// .bg3se.lua.dbg.DbgContext context = 1;
 inline void BkContextUpdated::clear_context() {
   context_ = 0;
 }
-inline ::dse::lua::dbg::DbgContext BkContextUpdated::context() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.BkContextUpdated.context)
-  return static_cast< ::dse::lua::dbg::DbgContext >(context_);
+inline ::bg3se::lua::dbg::DbgContext BkContextUpdated::context() const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.BkContextUpdated.context)
+  return static_cast< ::bg3se::lua::dbg::DbgContext >(context_);
 }
-inline void BkContextUpdated::set_context(::dse::lua::dbg::DbgContext value) {
+inline void BkContextUpdated::set_context(::bg3se::lua::dbg::DbgContext value) {
   
   context_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.BkContextUpdated.context)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.BkContextUpdated.context)
 }
 
-// .dse.lua.dbg.BkContextUpdated.Status status = 2;
+// .bg3se.lua.dbg.BkContextUpdated.Status status = 2;
 inline void BkContextUpdated::clear_status() {
   status_ = 0;
 }
-inline ::dse::lua::dbg::BkContextUpdated_Status BkContextUpdated::status() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.BkContextUpdated.status)
-  return static_cast< ::dse::lua::dbg::BkContextUpdated_Status >(status_);
+inline ::bg3se::lua::dbg::BkContextUpdated_Status BkContextUpdated::status() const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.BkContextUpdated.status)
+  return static_cast< ::bg3se::lua::dbg::BkContextUpdated_Status >(status_);
 }
-inline void BkContextUpdated::set_status(::dse::lua::dbg::BkContextUpdated_Status value) {
+inline void BkContextUpdated::set_status(::bg3se::lua::dbg::BkContextUpdated_Status value) {
   
   status_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.BkContextUpdated.status)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.BkContextUpdated.status)
 }
 
 // -------------------------------------------------------------------
@@ -6512,20 +6512,20 @@ inline void MsgModuleInfo::clear_uuid() {
   uuid_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& MsgModuleInfo::uuid() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.MsgModuleInfo.uuid)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.MsgModuleInfo.uuid)
   return uuid_.Get();
 }
 inline void MsgModuleInfo::set_uuid(const ::std::string& value) {
   
   uuid_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.MsgModuleInfo.uuid)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.MsgModuleInfo.uuid)
 }
 #if LANG_CXX11
 inline void MsgModuleInfo::set_uuid(::std::string&& value) {
   
   uuid_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.lua.dbg.MsgModuleInfo.uuid)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.lua.dbg.MsgModuleInfo.uuid)
 }
 #endif
 inline void MsgModuleInfo::set_uuid(const char* value) {
@@ -6533,22 +6533,22 @@ inline void MsgModuleInfo::set_uuid(const char* value) {
   
   uuid_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.lua.dbg.MsgModuleInfo.uuid)
+  // @@protoc_insertion_point(field_set_char:bg3se.lua.dbg.MsgModuleInfo.uuid)
 }
 inline void MsgModuleInfo::set_uuid(const char* value,
     size_t size) {
   
   uuid_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.lua.dbg.MsgModuleInfo.uuid)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.lua.dbg.MsgModuleInfo.uuid)
 }
 inline ::std::string* MsgModuleInfo::mutable_uuid() {
   
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.MsgModuleInfo.uuid)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.MsgModuleInfo.uuid)
   return uuid_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* MsgModuleInfo::release_uuid() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.MsgModuleInfo.uuid)
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.MsgModuleInfo.uuid)
   
   return uuid_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -6560,10 +6560,10 @@ inline void MsgModuleInfo::set_allocated_uuid(::std::string* uuid) {
   }
   uuid_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), uuid,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.MsgModuleInfo.uuid)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.MsgModuleInfo.uuid)
 }
 inline ::std::string* MsgModuleInfo::unsafe_arena_release_uuid() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.MsgModuleInfo.uuid)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.MsgModuleInfo.uuid)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return uuid_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -6579,7 +6579,7 @@ inline void MsgModuleInfo::unsafe_arena_set_allocated_uuid(
   }
   uuid_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       uuid, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.MsgModuleInfo.uuid)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.MsgModuleInfo.uuid)
 }
 
 // string name = 2;
@@ -6587,20 +6587,20 @@ inline void MsgModuleInfo::clear_name() {
   name_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& MsgModuleInfo::name() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.MsgModuleInfo.name)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.MsgModuleInfo.name)
   return name_.Get();
 }
 inline void MsgModuleInfo::set_name(const ::std::string& value) {
   
   name_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.MsgModuleInfo.name)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.MsgModuleInfo.name)
 }
 #if LANG_CXX11
 inline void MsgModuleInfo::set_name(::std::string&& value) {
   
   name_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.lua.dbg.MsgModuleInfo.name)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.lua.dbg.MsgModuleInfo.name)
 }
 #endif
 inline void MsgModuleInfo::set_name(const char* value) {
@@ -6608,22 +6608,22 @@ inline void MsgModuleInfo::set_name(const char* value) {
   
   name_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.lua.dbg.MsgModuleInfo.name)
+  // @@protoc_insertion_point(field_set_char:bg3se.lua.dbg.MsgModuleInfo.name)
 }
 inline void MsgModuleInfo::set_name(const char* value,
     size_t size) {
   
   name_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.lua.dbg.MsgModuleInfo.name)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.lua.dbg.MsgModuleInfo.name)
 }
 inline ::std::string* MsgModuleInfo::mutable_name() {
   
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.MsgModuleInfo.name)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.MsgModuleInfo.name)
   return name_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* MsgModuleInfo::release_name() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.MsgModuleInfo.name)
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.MsgModuleInfo.name)
   
   return name_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -6635,10 +6635,10 @@ inline void MsgModuleInfo::set_allocated_name(::std::string* name) {
   }
   name_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), name,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.MsgModuleInfo.name)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.MsgModuleInfo.name)
 }
 inline ::std::string* MsgModuleInfo::unsafe_arena_release_name() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.MsgModuleInfo.name)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.MsgModuleInfo.name)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return name_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -6654,7 +6654,7 @@ inline void MsgModuleInfo::unsafe_arena_set_allocated_name(
   }
   name_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       name, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.MsgModuleInfo.name)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.MsgModuleInfo.name)
 }
 
 // string author = 3;
@@ -6662,20 +6662,20 @@ inline void MsgModuleInfo::clear_author() {
   author_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& MsgModuleInfo::author() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.MsgModuleInfo.author)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.MsgModuleInfo.author)
   return author_.Get();
 }
 inline void MsgModuleInfo::set_author(const ::std::string& value) {
   
   author_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.MsgModuleInfo.author)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.MsgModuleInfo.author)
 }
 #if LANG_CXX11
 inline void MsgModuleInfo::set_author(::std::string&& value) {
   
   author_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.lua.dbg.MsgModuleInfo.author)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.lua.dbg.MsgModuleInfo.author)
 }
 #endif
 inline void MsgModuleInfo::set_author(const char* value) {
@@ -6683,22 +6683,22 @@ inline void MsgModuleInfo::set_author(const char* value) {
   
   author_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.lua.dbg.MsgModuleInfo.author)
+  // @@protoc_insertion_point(field_set_char:bg3se.lua.dbg.MsgModuleInfo.author)
 }
 inline void MsgModuleInfo::set_author(const char* value,
     size_t size) {
   
   author_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.lua.dbg.MsgModuleInfo.author)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.lua.dbg.MsgModuleInfo.author)
 }
 inline ::std::string* MsgModuleInfo::mutable_author() {
   
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.MsgModuleInfo.author)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.MsgModuleInfo.author)
   return author_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* MsgModuleInfo::release_author() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.MsgModuleInfo.author)
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.MsgModuleInfo.author)
   
   return author_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -6710,10 +6710,10 @@ inline void MsgModuleInfo::set_allocated_author(::std::string* author) {
   }
   author_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), author,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.MsgModuleInfo.author)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.MsgModuleInfo.author)
 }
 inline ::std::string* MsgModuleInfo::unsafe_arena_release_author() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.MsgModuleInfo.author)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.MsgModuleInfo.author)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return author_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -6729,7 +6729,7 @@ inline void MsgModuleInfo::unsafe_arena_set_allocated_author(
   }
   author_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       author, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.MsgModuleInfo.author)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.MsgModuleInfo.author)
 }
 
 // string path = 4;
@@ -6737,20 +6737,20 @@ inline void MsgModuleInfo::clear_path() {
   path_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& MsgModuleInfo::path() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.MsgModuleInfo.path)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.MsgModuleInfo.path)
   return path_.Get();
 }
 inline void MsgModuleInfo::set_path(const ::std::string& value) {
   
   path_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.MsgModuleInfo.path)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.MsgModuleInfo.path)
 }
 #if LANG_CXX11
 inline void MsgModuleInfo::set_path(::std::string&& value) {
   
   path_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.lua.dbg.MsgModuleInfo.path)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.lua.dbg.MsgModuleInfo.path)
 }
 #endif
 inline void MsgModuleInfo::set_path(const char* value) {
@@ -6758,22 +6758,22 @@ inline void MsgModuleInfo::set_path(const char* value) {
   
   path_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.lua.dbg.MsgModuleInfo.path)
+  // @@protoc_insertion_point(field_set_char:bg3se.lua.dbg.MsgModuleInfo.path)
 }
 inline void MsgModuleInfo::set_path(const char* value,
     size_t size) {
   
   path_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.lua.dbg.MsgModuleInfo.path)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.lua.dbg.MsgModuleInfo.path)
 }
 inline ::std::string* MsgModuleInfo::mutable_path() {
   
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.MsgModuleInfo.path)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.MsgModuleInfo.path)
   return path_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* MsgModuleInfo::release_path() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.MsgModuleInfo.path)
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.MsgModuleInfo.path)
   
   return path_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -6785,10 +6785,10 @@ inline void MsgModuleInfo::set_allocated_path(::std::string* path) {
   }
   path_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), path,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.MsgModuleInfo.path)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.MsgModuleInfo.path)
 }
 inline ::std::string* MsgModuleInfo::unsafe_arena_release_path() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.MsgModuleInfo.path)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.MsgModuleInfo.path)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return path_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -6804,7 +6804,7 @@ inline void MsgModuleInfo::unsafe_arena_set_allocated_path(
   }
   path_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       path, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.MsgModuleInfo.path)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.MsgModuleInfo.path)
 }
 
 // -------------------------------------------------------------------
@@ -6816,20 +6816,20 @@ inline void MsgSourceFileInfo::clear_path() {
   path_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& MsgSourceFileInfo::path() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.MsgSourceFileInfo.path)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.MsgSourceFileInfo.path)
   return path_.Get();
 }
 inline void MsgSourceFileInfo::set_path(const ::std::string& value) {
   
   path_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.MsgSourceFileInfo.path)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.MsgSourceFileInfo.path)
 }
 #if LANG_CXX11
 inline void MsgSourceFileInfo::set_path(::std::string&& value) {
   
   path_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.lua.dbg.MsgSourceFileInfo.path)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.lua.dbg.MsgSourceFileInfo.path)
 }
 #endif
 inline void MsgSourceFileInfo::set_path(const char* value) {
@@ -6837,22 +6837,22 @@ inline void MsgSourceFileInfo::set_path(const char* value) {
   
   path_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.lua.dbg.MsgSourceFileInfo.path)
+  // @@protoc_insertion_point(field_set_char:bg3se.lua.dbg.MsgSourceFileInfo.path)
 }
 inline void MsgSourceFileInfo::set_path(const char* value,
     size_t size) {
   
   path_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.lua.dbg.MsgSourceFileInfo.path)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.lua.dbg.MsgSourceFileInfo.path)
 }
 inline ::std::string* MsgSourceFileInfo::mutable_path() {
   
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.MsgSourceFileInfo.path)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.MsgSourceFileInfo.path)
   return path_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* MsgSourceFileInfo::release_path() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.MsgSourceFileInfo.path)
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.MsgSourceFileInfo.path)
   
   return path_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -6864,10 +6864,10 @@ inline void MsgSourceFileInfo::set_allocated_path(::std::string* path) {
   }
   path_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), path,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.MsgSourceFileInfo.path)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.MsgSourceFileInfo.path)
 }
 inline ::std::string* MsgSourceFileInfo::unsafe_arena_release_path() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.MsgSourceFileInfo.path)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.MsgSourceFileInfo.path)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return path_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -6883,70 +6883,70 @@ inline void MsgSourceFileInfo::unsafe_arena_set_allocated_path(
   }
   path_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       path, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.MsgSourceFileInfo.path)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.MsgSourceFileInfo.path)
 }
 
 // -------------------------------------------------------------------
 
 // BkModInfoResponse
 
-// repeated .dse.lua.dbg.MsgModuleInfo module = 1;
+// repeated .bg3se.lua.dbg.MsgModuleInfo module = 1;
 inline int BkModInfoResponse::module_size() const {
   return module_.size();
 }
 inline void BkModInfoResponse::clear_module() {
   module_.Clear();
 }
-inline ::dse::lua::dbg::MsgModuleInfo* BkModInfoResponse::mutable_module(int index) {
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.BkModInfoResponse.module)
+inline ::bg3se::lua::dbg::MsgModuleInfo* BkModInfoResponse::mutable_module(int index) {
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.BkModInfoResponse.module)
   return module_.Mutable(index);
 }
-inline ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgModuleInfo >*
+inline ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgModuleInfo >*
 BkModInfoResponse::mutable_module() {
-  // @@protoc_insertion_point(field_mutable_list:dse.lua.dbg.BkModInfoResponse.module)
+  // @@protoc_insertion_point(field_mutable_list:bg3se.lua.dbg.BkModInfoResponse.module)
   return &module_;
 }
-inline const ::dse::lua::dbg::MsgModuleInfo& BkModInfoResponse::module(int index) const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.BkModInfoResponse.module)
+inline const ::bg3se::lua::dbg::MsgModuleInfo& BkModInfoResponse::module(int index) const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.BkModInfoResponse.module)
   return module_.Get(index);
 }
-inline ::dse::lua::dbg::MsgModuleInfo* BkModInfoResponse::add_module() {
-  // @@protoc_insertion_point(field_add:dse.lua.dbg.BkModInfoResponse.module)
+inline ::bg3se::lua::dbg::MsgModuleInfo* BkModInfoResponse::add_module() {
+  // @@protoc_insertion_point(field_add:bg3se.lua.dbg.BkModInfoResponse.module)
   return module_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgModuleInfo >&
+inline const ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgModuleInfo >&
 BkModInfoResponse::module() const {
-  // @@protoc_insertion_point(field_list:dse.lua.dbg.BkModInfoResponse.module)
+  // @@protoc_insertion_point(field_list:bg3se.lua.dbg.BkModInfoResponse.module)
   return module_;
 }
 
-// repeated .dse.lua.dbg.MsgSourceFileInfo source = 2;
+// repeated .bg3se.lua.dbg.MsgSourceFileInfo source = 2;
 inline int BkModInfoResponse::source_size() const {
   return source_.size();
 }
 inline void BkModInfoResponse::clear_source() {
   source_.Clear();
 }
-inline ::dse::lua::dbg::MsgSourceFileInfo* BkModInfoResponse::mutable_source(int index) {
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.BkModInfoResponse.source)
+inline ::bg3se::lua::dbg::MsgSourceFileInfo* BkModInfoResponse::mutable_source(int index) {
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.BkModInfoResponse.source)
   return source_.Mutable(index);
 }
-inline ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgSourceFileInfo >*
+inline ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgSourceFileInfo >*
 BkModInfoResponse::mutable_source() {
-  // @@protoc_insertion_point(field_mutable_list:dse.lua.dbg.BkModInfoResponse.source)
+  // @@protoc_insertion_point(field_mutable_list:bg3se.lua.dbg.BkModInfoResponse.source)
   return &source_;
 }
-inline const ::dse::lua::dbg::MsgSourceFileInfo& BkModInfoResponse::source(int index) const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.BkModInfoResponse.source)
+inline const ::bg3se::lua::dbg::MsgSourceFileInfo& BkModInfoResponse::source(int index) const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.BkModInfoResponse.source)
   return source_.Get(index);
 }
-inline ::dse::lua::dbg::MsgSourceFileInfo* BkModInfoResponse::add_source() {
-  // @@protoc_insertion_point(field_add:dse.lua.dbg.BkModInfoResponse.source)
+inline ::bg3se::lua::dbg::MsgSourceFileInfo* BkModInfoResponse::add_source() {
+  // @@protoc_insertion_point(field_add:bg3se.lua.dbg.BkModInfoResponse.source)
   return source_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::dse::lua::dbg::MsgSourceFileInfo >&
+inline const ::google::protobuf::RepeatedPtrField< ::bg3se::lua::dbg::MsgSourceFileInfo >&
 BkModInfoResponse::source() const {
-  // @@protoc_insertion_point(field_list:dse.lua.dbg.BkModInfoResponse.source)
+  // @@protoc_insertion_point(field_list:bg3se.lua.dbg.BkModInfoResponse.source)
   return source_;
 }
 
@@ -6959,20 +6959,20 @@ inline void BkDebugOutput::clear_message() {
   message_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& BkDebugOutput::message() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.BkDebugOutput.message)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.BkDebugOutput.message)
   return message_.Get();
 }
 inline void BkDebugOutput::set_message(const ::std::string& value) {
   
   message_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.BkDebugOutput.message)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.BkDebugOutput.message)
 }
 #if LANG_CXX11
 inline void BkDebugOutput::set_message(::std::string&& value) {
   
   message_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.lua.dbg.BkDebugOutput.message)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.lua.dbg.BkDebugOutput.message)
 }
 #endif
 inline void BkDebugOutput::set_message(const char* value) {
@@ -6980,22 +6980,22 @@ inline void BkDebugOutput::set_message(const char* value) {
   
   message_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.lua.dbg.BkDebugOutput.message)
+  // @@protoc_insertion_point(field_set_char:bg3se.lua.dbg.BkDebugOutput.message)
 }
 inline void BkDebugOutput::set_message(const char* value,
     size_t size) {
   
   message_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.lua.dbg.BkDebugOutput.message)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.lua.dbg.BkDebugOutput.message)
 }
 inline ::std::string* BkDebugOutput::mutable_message() {
   
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.BkDebugOutput.message)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.BkDebugOutput.message)
   return message_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* BkDebugOutput::release_message() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.BkDebugOutput.message)
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.BkDebugOutput.message)
   
   return message_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -7007,10 +7007,10 @@ inline void BkDebugOutput::set_allocated_message(::std::string* message) {
   }
   message_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), message,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.BkDebugOutput.message)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.BkDebugOutput.message)
 }
 inline ::std::string* BkDebugOutput::unsafe_arena_release_message() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.BkDebugOutput.message)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.BkDebugOutput.message)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return message_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -7026,39 +7026,39 @@ inline void BkDebugOutput::unsafe_arena_set_allocated_message(
   }
   message_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       message, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.BkDebugOutput.message)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.BkDebugOutput.message)
 }
 
-// .dse.lua.dbg.BkDebugOutput.Severity severity = 2;
+// .bg3se.lua.dbg.BkDebugOutput.Severity severity = 2;
 inline void BkDebugOutput::clear_severity() {
   severity_ = 0;
 }
-inline ::dse::lua::dbg::BkDebugOutput_Severity BkDebugOutput::severity() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.BkDebugOutput.severity)
-  return static_cast< ::dse::lua::dbg::BkDebugOutput_Severity >(severity_);
+inline ::bg3se::lua::dbg::BkDebugOutput_Severity BkDebugOutput::severity() const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.BkDebugOutput.severity)
+  return static_cast< ::bg3se::lua::dbg::BkDebugOutput_Severity >(severity_);
 }
-inline void BkDebugOutput::set_severity(::dse::lua::dbg::BkDebugOutput_Severity value) {
+inline void BkDebugOutput::set_severity(::bg3se::lua::dbg::BkDebugOutput_Severity value) {
   
   severity_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.BkDebugOutput.severity)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.BkDebugOutput.severity)
 }
 
 // -------------------------------------------------------------------
 
 // BkResult
 
-// .dse.lua.dbg.StatusCode status_code = 1;
+// .bg3se.lua.dbg.StatusCode status_code = 1;
 inline void BkResult::clear_status_code() {
   status_code_ = 0;
 }
-inline ::dse::lua::dbg::StatusCode BkResult::status_code() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.BkResult.status_code)
-  return static_cast< ::dse::lua::dbg::StatusCode >(status_code_);
+inline ::bg3se::lua::dbg::StatusCode BkResult::status_code() const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.BkResult.status_code)
+  return static_cast< ::bg3se::lua::dbg::StatusCode >(status_code_);
 }
-inline void BkResult::set_status_code(::dse::lua::dbg::StatusCode value) {
+inline void BkResult::set_status_code(::bg3se::lua::dbg::StatusCode value) {
   
   status_code_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.BkResult.status_code)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.BkResult.status_code)
 }
 
 // -------------------------------------------------------------------
@@ -7074,20 +7074,20 @@ inline void DbgRequestSource::clear_name() {
   name_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& DbgRequestSource::name() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.DbgRequestSource.name)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.DbgRequestSource.name)
   return name_.Get();
 }
 inline void DbgRequestSource::set_name(const ::std::string& value) {
   
   name_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.DbgRequestSource.name)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.DbgRequestSource.name)
 }
 #if LANG_CXX11
 inline void DbgRequestSource::set_name(::std::string&& value) {
   
   name_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.lua.dbg.DbgRequestSource.name)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.lua.dbg.DbgRequestSource.name)
 }
 #endif
 inline void DbgRequestSource::set_name(const char* value) {
@@ -7095,22 +7095,22 @@ inline void DbgRequestSource::set_name(const char* value) {
   
   name_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.lua.dbg.DbgRequestSource.name)
+  // @@protoc_insertion_point(field_set_char:bg3se.lua.dbg.DbgRequestSource.name)
 }
 inline void DbgRequestSource::set_name(const char* value,
     size_t size) {
   
   name_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.lua.dbg.DbgRequestSource.name)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.lua.dbg.DbgRequestSource.name)
 }
 inline ::std::string* DbgRequestSource::mutable_name() {
   
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.DbgRequestSource.name)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.DbgRequestSource.name)
   return name_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* DbgRequestSource::release_name() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.DbgRequestSource.name)
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.DbgRequestSource.name)
   
   return name_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -7122,10 +7122,10 @@ inline void DbgRequestSource::set_allocated_name(::std::string* name) {
   }
   name_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), name,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.DbgRequestSource.name)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.DbgRequestSource.name)
 }
 inline ::std::string* DbgRequestSource::unsafe_arena_release_name() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.DbgRequestSource.name)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.DbgRequestSource.name)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return name_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -7141,7 +7141,7 @@ inline void DbgRequestSource::unsafe_arena_set_allocated_name(
   }
   name_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       name, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.DbgRequestSource.name)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.DbgRequestSource.name)
 }
 
 // -------------------------------------------------------------------
@@ -7153,20 +7153,20 @@ inline void BkSourceResponse::clear_name() {
   name_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& BkSourceResponse::name() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.BkSourceResponse.name)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.BkSourceResponse.name)
   return name_.Get();
 }
 inline void BkSourceResponse::set_name(const ::std::string& value) {
   
   name_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.BkSourceResponse.name)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.BkSourceResponse.name)
 }
 #if LANG_CXX11
 inline void BkSourceResponse::set_name(::std::string&& value) {
   
   name_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.lua.dbg.BkSourceResponse.name)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.lua.dbg.BkSourceResponse.name)
 }
 #endif
 inline void BkSourceResponse::set_name(const char* value) {
@@ -7174,22 +7174,22 @@ inline void BkSourceResponse::set_name(const char* value) {
   
   name_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.lua.dbg.BkSourceResponse.name)
+  // @@protoc_insertion_point(field_set_char:bg3se.lua.dbg.BkSourceResponse.name)
 }
 inline void BkSourceResponse::set_name(const char* value,
     size_t size) {
   
   name_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.lua.dbg.BkSourceResponse.name)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.lua.dbg.BkSourceResponse.name)
 }
 inline ::std::string* BkSourceResponse::mutable_name() {
   
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.BkSourceResponse.name)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.BkSourceResponse.name)
   return name_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* BkSourceResponse::release_name() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.BkSourceResponse.name)
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.BkSourceResponse.name)
   
   return name_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -7201,10 +7201,10 @@ inline void BkSourceResponse::set_allocated_name(::std::string* name) {
   }
   name_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), name,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.BkSourceResponse.name)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.BkSourceResponse.name)
 }
 inline ::std::string* BkSourceResponse::unsafe_arena_release_name() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.BkSourceResponse.name)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.BkSourceResponse.name)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return name_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -7220,7 +7220,7 @@ inline void BkSourceResponse::unsafe_arena_set_allocated_name(
   }
   name_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       name, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.BkSourceResponse.name)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.BkSourceResponse.name)
 }
 
 // string body = 2;
@@ -7228,20 +7228,20 @@ inline void BkSourceResponse::clear_body() {
   body_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& BkSourceResponse::body() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.BkSourceResponse.body)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.BkSourceResponse.body)
   return body_.Get();
 }
 inline void BkSourceResponse::set_body(const ::std::string& value) {
   
   body_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.BkSourceResponse.body)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.BkSourceResponse.body)
 }
 #if LANG_CXX11
 inline void BkSourceResponse::set_body(::std::string&& value) {
   
   body_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.lua.dbg.BkSourceResponse.body)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.lua.dbg.BkSourceResponse.body)
 }
 #endif
 inline void BkSourceResponse::set_body(const char* value) {
@@ -7249,22 +7249,22 @@ inline void BkSourceResponse::set_body(const char* value) {
   
   body_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.lua.dbg.BkSourceResponse.body)
+  // @@protoc_insertion_point(field_set_char:bg3se.lua.dbg.BkSourceResponse.body)
 }
 inline void BkSourceResponse::set_body(const char* value,
     size_t size) {
   
   body_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.lua.dbg.BkSourceResponse.body)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.lua.dbg.BkSourceResponse.body)
 }
 inline ::std::string* BkSourceResponse::mutable_body() {
   
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.BkSourceResponse.body)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.BkSourceResponse.body)
   return body_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* BkSourceResponse::release_body() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.BkSourceResponse.body)
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.BkSourceResponse.body)
   
   return body_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -7276,10 +7276,10 @@ inline void BkSourceResponse::set_allocated_body(::std::string* body) {
   }
   body_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), body,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.BkSourceResponse.body)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.BkSourceResponse.body)
 }
 inline ::std::string* BkSourceResponse::unsafe_arena_release_body() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.BkSourceResponse.body)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.BkSourceResponse.body)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return body_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -7295,7 +7295,7 @@ inline void BkSourceResponse::unsafe_arena_set_allocated_body(
   }
   body_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       body, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.BkSourceResponse.body)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.BkSourceResponse.body)
 }
 
 // -------------------------------------------------------------------
@@ -7307,13 +7307,13 @@ inline void DebuggerToBackend::clear_seq_no() {
   seq_no_ = 0u;
 }
 inline ::google::protobuf::uint32 DebuggerToBackend::seq_no() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.DebuggerToBackend.seq_no)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.DebuggerToBackend.seq_no)
   return seq_no_;
 }
 inline void DebuggerToBackend::set_seq_no(::google::protobuf::uint32 value) {
   
   seq_no_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.DebuggerToBackend.seq_no)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.DebuggerToBackend.seq_no)
 }
 
 // uint32 reply_seq_no = 2;
@@ -7321,16 +7321,16 @@ inline void DebuggerToBackend::clear_reply_seq_no() {
   reply_seq_no_ = 0u;
 }
 inline ::google::protobuf::uint32 DebuggerToBackend::reply_seq_no() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.DebuggerToBackend.reply_seq_no)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.DebuggerToBackend.reply_seq_no)
   return reply_seq_no_;
 }
 inline void DebuggerToBackend::set_reply_seq_no(::google::protobuf::uint32 value) {
   
   reply_seq_no_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.DebuggerToBackend.reply_seq_no)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.DebuggerToBackend.reply_seq_no)
 }
 
-// .dse.lua.dbg.DbgConnectRequest connect = 3;
+// .bg3se.lua.dbg.DbgConnectRequest connect = 3;
 inline bool DebuggerToBackend::has_connect() const {
   return msg_case() == kConnect;
 }
@@ -7345,14 +7345,14 @@ inline void DebuggerToBackend::clear_connect() {
     clear_has_msg();
   }
 }
-inline const ::dse::lua::dbg::DbgConnectRequest& DebuggerToBackend::_internal_connect() const {
+inline const ::bg3se::lua::dbg::DbgConnectRequest& DebuggerToBackend::_internal_connect() const {
   return *msg_.connect_;
 }
-inline ::dse::lua::dbg::DbgConnectRequest* DebuggerToBackend::release_connect() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.DebuggerToBackend.connect)
+inline ::bg3se::lua::dbg::DbgConnectRequest* DebuggerToBackend::release_connect() {
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.DebuggerToBackend.connect)
   if (has_connect()) {
     clear_has_msg();
-      ::dse::lua::dbg::DbgConnectRequest* temp = msg_.connect_;
+      ::bg3se::lua::dbg::DbgConnectRequest* temp = msg_.connect_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -7362,43 +7362,43 @@ inline ::dse::lua::dbg::DbgConnectRequest* DebuggerToBackend::release_connect() 
     return NULL;
   }
 }
-inline const ::dse::lua::dbg::DbgConnectRequest& DebuggerToBackend::connect() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.DebuggerToBackend.connect)
+inline const ::bg3se::lua::dbg::DbgConnectRequest& DebuggerToBackend::connect() const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.DebuggerToBackend.connect)
   return has_connect()
       ? *msg_.connect_
-      : *reinterpret_cast< ::dse::lua::dbg::DbgConnectRequest*>(&::dse::lua::dbg::_DbgConnectRequest_default_instance_);
+      : *reinterpret_cast< ::bg3se::lua::dbg::DbgConnectRequest*>(&::bg3se::lua::dbg::_DbgConnectRequest_default_instance_);
 }
-inline ::dse::lua::dbg::DbgConnectRequest* DebuggerToBackend::unsafe_arena_release_connect() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.DebuggerToBackend.connect)
+inline ::bg3se::lua::dbg::DbgConnectRequest* DebuggerToBackend::unsafe_arena_release_connect() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.DebuggerToBackend.connect)
   if (has_connect()) {
     clear_has_msg();
-    ::dse::lua::dbg::DbgConnectRequest* temp = msg_.connect_;
+    ::bg3se::lua::dbg::DbgConnectRequest* temp = msg_.connect_;
     msg_.connect_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void DebuggerToBackend::unsafe_arena_set_allocated_connect(::dse::lua::dbg::DbgConnectRequest* connect) {
+inline void DebuggerToBackend::unsafe_arena_set_allocated_connect(::bg3se::lua::dbg::DbgConnectRequest* connect) {
   clear_msg();
   if (connect) {
     set_has_connect();
     msg_.connect_ = connect;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.DebuggerToBackend.connect)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.DebuggerToBackend.connect)
 }
-inline ::dse::lua::dbg::DbgConnectRequest* DebuggerToBackend::mutable_connect() {
+inline ::bg3se::lua::dbg::DbgConnectRequest* DebuggerToBackend::mutable_connect() {
   if (!has_connect()) {
     clear_msg();
     set_has_connect();
-    msg_.connect_ = CreateMaybeMessage< ::dse::lua::dbg::DbgConnectRequest >(
+    msg_.connect_ = CreateMaybeMessage< ::bg3se::lua::dbg::DbgConnectRequest >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.DebuggerToBackend.connect)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.DebuggerToBackend.connect)
   return msg_.connect_;
 }
 
-// .dse.lua.dbg.DbgUpdateSettings updateSettings = 4;
+// .bg3se.lua.dbg.DbgUpdateSettings updateSettings = 4;
 inline bool DebuggerToBackend::has_updatesettings() const {
   return msg_case() == kUpdateSettings;
 }
@@ -7413,14 +7413,14 @@ inline void DebuggerToBackend::clear_updatesettings() {
     clear_has_msg();
   }
 }
-inline const ::dse::lua::dbg::DbgUpdateSettings& DebuggerToBackend::_internal_updatesettings() const {
+inline const ::bg3se::lua::dbg::DbgUpdateSettings& DebuggerToBackend::_internal_updatesettings() const {
   return *msg_.updatesettings_;
 }
-inline ::dse::lua::dbg::DbgUpdateSettings* DebuggerToBackend::release_updatesettings() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.DebuggerToBackend.updateSettings)
+inline ::bg3se::lua::dbg::DbgUpdateSettings* DebuggerToBackend::release_updatesettings() {
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.DebuggerToBackend.updateSettings)
   if (has_updatesettings()) {
     clear_has_msg();
-      ::dse::lua::dbg::DbgUpdateSettings* temp = msg_.updatesettings_;
+      ::bg3se::lua::dbg::DbgUpdateSettings* temp = msg_.updatesettings_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -7430,43 +7430,43 @@ inline ::dse::lua::dbg::DbgUpdateSettings* DebuggerToBackend::release_updatesett
     return NULL;
   }
 }
-inline const ::dse::lua::dbg::DbgUpdateSettings& DebuggerToBackend::updatesettings() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.DebuggerToBackend.updateSettings)
+inline const ::bg3se::lua::dbg::DbgUpdateSettings& DebuggerToBackend::updatesettings() const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.DebuggerToBackend.updateSettings)
   return has_updatesettings()
       ? *msg_.updatesettings_
-      : *reinterpret_cast< ::dse::lua::dbg::DbgUpdateSettings*>(&::dse::lua::dbg::_DbgUpdateSettings_default_instance_);
+      : *reinterpret_cast< ::bg3se::lua::dbg::DbgUpdateSettings*>(&::bg3se::lua::dbg::_DbgUpdateSettings_default_instance_);
 }
-inline ::dse::lua::dbg::DbgUpdateSettings* DebuggerToBackend::unsafe_arena_release_updatesettings() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.DebuggerToBackend.updateSettings)
+inline ::bg3se::lua::dbg::DbgUpdateSettings* DebuggerToBackend::unsafe_arena_release_updatesettings() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.DebuggerToBackend.updateSettings)
   if (has_updatesettings()) {
     clear_has_msg();
-    ::dse::lua::dbg::DbgUpdateSettings* temp = msg_.updatesettings_;
+    ::bg3se::lua::dbg::DbgUpdateSettings* temp = msg_.updatesettings_;
     msg_.updatesettings_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void DebuggerToBackend::unsafe_arena_set_allocated_updatesettings(::dse::lua::dbg::DbgUpdateSettings* updatesettings) {
+inline void DebuggerToBackend::unsafe_arena_set_allocated_updatesettings(::bg3se::lua::dbg::DbgUpdateSettings* updatesettings) {
   clear_msg();
   if (updatesettings) {
     set_has_updatesettings();
     msg_.updatesettings_ = updatesettings;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.DebuggerToBackend.updateSettings)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.DebuggerToBackend.updateSettings)
 }
-inline ::dse::lua::dbg::DbgUpdateSettings* DebuggerToBackend::mutable_updatesettings() {
+inline ::bg3se::lua::dbg::DbgUpdateSettings* DebuggerToBackend::mutable_updatesettings() {
   if (!has_updatesettings()) {
     clear_msg();
     set_has_updatesettings();
-    msg_.updatesettings_ = CreateMaybeMessage< ::dse::lua::dbg::DbgUpdateSettings >(
+    msg_.updatesettings_ = CreateMaybeMessage< ::bg3se::lua::dbg::DbgUpdateSettings >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.DebuggerToBackend.updateSettings)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.DebuggerToBackend.updateSettings)
   return msg_.updatesettings_;
 }
 
-// .dse.lua.dbg.DbgSetBreakpoints setBreakpoints = 5;
+// .bg3se.lua.dbg.DbgSetBreakpoints setBreakpoints = 5;
 inline bool DebuggerToBackend::has_setbreakpoints() const {
   return msg_case() == kSetBreakpoints;
 }
@@ -7481,14 +7481,14 @@ inline void DebuggerToBackend::clear_setbreakpoints() {
     clear_has_msg();
   }
 }
-inline const ::dse::lua::dbg::DbgSetBreakpoints& DebuggerToBackend::_internal_setbreakpoints() const {
+inline const ::bg3se::lua::dbg::DbgSetBreakpoints& DebuggerToBackend::_internal_setbreakpoints() const {
   return *msg_.setbreakpoints_;
 }
-inline ::dse::lua::dbg::DbgSetBreakpoints* DebuggerToBackend::release_setbreakpoints() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.DebuggerToBackend.setBreakpoints)
+inline ::bg3se::lua::dbg::DbgSetBreakpoints* DebuggerToBackend::release_setbreakpoints() {
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.DebuggerToBackend.setBreakpoints)
   if (has_setbreakpoints()) {
     clear_has_msg();
-      ::dse::lua::dbg::DbgSetBreakpoints* temp = msg_.setbreakpoints_;
+      ::bg3se::lua::dbg::DbgSetBreakpoints* temp = msg_.setbreakpoints_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -7498,43 +7498,43 @@ inline ::dse::lua::dbg::DbgSetBreakpoints* DebuggerToBackend::release_setbreakpo
     return NULL;
   }
 }
-inline const ::dse::lua::dbg::DbgSetBreakpoints& DebuggerToBackend::setbreakpoints() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.DebuggerToBackend.setBreakpoints)
+inline const ::bg3se::lua::dbg::DbgSetBreakpoints& DebuggerToBackend::setbreakpoints() const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.DebuggerToBackend.setBreakpoints)
   return has_setbreakpoints()
       ? *msg_.setbreakpoints_
-      : *reinterpret_cast< ::dse::lua::dbg::DbgSetBreakpoints*>(&::dse::lua::dbg::_DbgSetBreakpoints_default_instance_);
+      : *reinterpret_cast< ::bg3se::lua::dbg::DbgSetBreakpoints*>(&::bg3se::lua::dbg::_DbgSetBreakpoints_default_instance_);
 }
-inline ::dse::lua::dbg::DbgSetBreakpoints* DebuggerToBackend::unsafe_arena_release_setbreakpoints() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.DebuggerToBackend.setBreakpoints)
+inline ::bg3se::lua::dbg::DbgSetBreakpoints* DebuggerToBackend::unsafe_arena_release_setbreakpoints() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.DebuggerToBackend.setBreakpoints)
   if (has_setbreakpoints()) {
     clear_has_msg();
-    ::dse::lua::dbg::DbgSetBreakpoints* temp = msg_.setbreakpoints_;
+    ::bg3se::lua::dbg::DbgSetBreakpoints* temp = msg_.setbreakpoints_;
     msg_.setbreakpoints_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void DebuggerToBackend::unsafe_arena_set_allocated_setbreakpoints(::dse::lua::dbg::DbgSetBreakpoints* setbreakpoints) {
+inline void DebuggerToBackend::unsafe_arena_set_allocated_setbreakpoints(::bg3se::lua::dbg::DbgSetBreakpoints* setbreakpoints) {
   clear_msg();
   if (setbreakpoints) {
     set_has_setbreakpoints();
     msg_.setbreakpoints_ = setbreakpoints;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.DebuggerToBackend.setBreakpoints)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.DebuggerToBackend.setBreakpoints)
 }
-inline ::dse::lua::dbg::DbgSetBreakpoints* DebuggerToBackend::mutable_setbreakpoints() {
+inline ::bg3se::lua::dbg::DbgSetBreakpoints* DebuggerToBackend::mutable_setbreakpoints() {
   if (!has_setbreakpoints()) {
     clear_msg();
     set_has_setbreakpoints();
-    msg_.setbreakpoints_ = CreateMaybeMessage< ::dse::lua::dbg::DbgSetBreakpoints >(
+    msg_.setbreakpoints_ = CreateMaybeMessage< ::bg3se::lua::dbg::DbgSetBreakpoints >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.DebuggerToBackend.setBreakpoints)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.DebuggerToBackend.setBreakpoints)
   return msg_.setbreakpoints_;
 }
 
-// .dse.lua.dbg.DbgContinue continue = 6;
+// .bg3se.lua.dbg.DbgContinue continue = 6;
 inline bool DebuggerToBackend::has_continue_() const {
   return msg_case() == kContinue;
 }
@@ -7549,14 +7549,14 @@ inline void DebuggerToBackend::clear_continue_() {
     clear_has_msg();
   }
 }
-inline const ::dse::lua::dbg::DbgContinue& DebuggerToBackend::_internal_continue_() const {
+inline const ::bg3se::lua::dbg::DbgContinue& DebuggerToBackend::_internal_continue_() const {
   return *msg_.continue__;
 }
-inline ::dse::lua::dbg::DbgContinue* DebuggerToBackend::release_continue_() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.DebuggerToBackend.continue)
+inline ::bg3se::lua::dbg::DbgContinue* DebuggerToBackend::release_continue_() {
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.DebuggerToBackend.continue)
   if (has_continue_()) {
     clear_has_msg();
-      ::dse::lua::dbg::DbgContinue* temp = msg_.continue__;
+      ::bg3se::lua::dbg::DbgContinue* temp = msg_.continue__;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -7566,43 +7566,43 @@ inline ::dse::lua::dbg::DbgContinue* DebuggerToBackend::release_continue_() {
     return NULL;
   }
 }
-inline const ::dse::lua::dbg::DbgContinue& DebuggerToBackend::continue_() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.DebuggerToBackend.continue)
+inline const ::bg3se::lua::dbg::DbgContinue& DebuggerToBackend::continue_() const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.DebuggerToBackend.continue)
   return has_continue_()
       ? *msg_.continue__
-      : *reinterpret_cast< ::dse::lua::dbg::DbgContinue*>(&::dse::lua::dbg::_DbgContinue_default_instance_);
+      : *reinterpret_cast< ::bg3se::lua::dbg::DbgContinue*>(&::bg3se::lua::dbg::_DbgContinue_default_instance_);
 }
-inline ::dse::lua::dbg::DbgContinue* DebuggerToBackend::unsafe_arena_release_continue_() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.DebuggerToBackend.continue)
+inline ::bg3se::lua::dbg::DbgContinue* DebuggerToBackend::unsafe_arena_release_continue_() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.DebuggerToBackend.continue)
   if (has_continue_()) {
     clear_has_msg();
-    ::dse::lua::dbg::DbgContinue* temp = msg_.continue__;
+    ::bg3se::lua::dbg::DbgContinue* temp = msg_.continue__;
     msg_.continue__ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void DebuggerToBackend::unsafe_arena_set_allocated_continue_(::dse::lua::dbg::DbgContinue* continue_) {
+inline void DebuggerToBackend::unsafe_arena_set_allocated_continue_(::bg3se::lua::dbg::DbgContinue* continue_) {
   clear_msg();
   if (continue_) {
     set_has_continue_();
     msg_.continue__ = continue_;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.DebuggerToBackend.continue)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.DebuggerToBackend.continue)
 }
-inline ::dse::lua::dbg::DbgContinue* DebuggerToBackend::mutable_continue_() {
+inline ::bg3se::lua::dbg::DbgContinue* DebuggerToBackend::mutable_continue_() {
   if (!has_continue_()) {
     clear_msg();
     set_has_continue_();
-    msg_.continue__ = CreateMaybeMessage< ::dse::lua::dbg::DbgContinue >(
+    msg_.continue__ = CreateMaybeMessage< ::bg3se::lua::dbg::DbgContinue >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.DebuggerToBackend.continue)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.DebuggerToBackend.continue)
   return msg_.continue__;
 }
 
-// .dse.lua.dbg.DbgEvaluate evaluate = 7;
+// .bg3se.lua.dbg.DbgEvaluate evaluate = 7;
 inline bool DebuggerToBackend::has_evaluate() const {
   return msg_case() == kEvaluate;
 }
@@ -7617,14 +7617,14 @@ inline void DebuggerToBackend::clear_evaluate() {
     clear_has_msg();
   }
 }
-inline const ::dse::lua::dbg::DbgEvaluate& DebuggerToBackend::_internal_evaluate() const {
+inline const ::bg3se::lua::dbg::DbgEvaluate& DebuggerToBackend::_internal_evaluate() const {
   return *msg_.evaluate_;
 }
-inline ::dse::lua::dbg::DbgEvaluate* DebuggerToBackend::release_evaluate() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.DebuggerToBackend.evaluate)
+inline ::bg3se::lua::dbg::DbgEvaluate* DebuggerToBackend::release_evaluate() {
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.DebuggerToBackend.evaluate)
   if (has_evaluate()) {
     clear_has_msg();
-      ::dse::lua::dbg::DbgEvaluate* temp = msg_.evaluate_;
+      ::bg3se::lua::dbg::DbgEvaluate* temp = msg_.evaluate_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -7634,43 +7634,43 @@ inline ::dse::lua::dbg::DbgEvaluate* DebuggerToBackend::release_evaluate() {
     return NULL;
   }
 }
-inline const ::dse::lua::dbg::DbgEvaluate& DebuggerToBackend::evaluate() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.DebuggerToBackend.evaluate)
+inline const ::bg3se::lua::dbg::DbgEvaluate& DebuggerToBackend::evaluate() const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.DebuggerToBackend.evaluate)
   return has_evaluate()
       ? *msg_.evaluate_
-      : *reinterpret_cast< ::dse::lua::dbg::DbgEvaluate*>(&::dse::lua::dbg::_DbgEvaluate_default_instance_);
+      : *reinterpret_cast< ::bg3se::lua::dbg::DbgEvaluate*>(&::bg3se::lua::dbg::_DbgEvaluate_default_instance_);
 }
-inline ::dse::lua::dbg::DbgEvaluate* DebuggerToBackend::unsafe_arena_release_evaluate() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.DebuggerToBackend.evaluate)
+inline ::bg3se::lua::dbg::DbgEvaluate* DebuggerToBackend::unsafe_arena_release_evaluate() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.DebuggerToBackend.evaluate)
   if (has_evaluate()) {
     clear_has_msg();
-    ::dse::lua::dbg::DbgEvaluate* temp = msg_.evaluate_;
+    ::bg3se::lua::dbg::DbgEvaluate* temp = msg_.evaluate_;
     msg_.evaluate_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void DebuggerToBackend::unsafe_arena_set_allocated_evaluate(::dse::lua::dbg::DbgEvaluate* evaluate) {
+inline void DebuggerToBackend::unsafe_arena_set_allocated_evaluate(::bg3se::lua::dbg::DbgEvaluate* evaluate) {
   clear_msg();
   if (evaluate) {
     set_has_evaluate();
     msg_.evaluate_ = evaluate;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.DebuggerToBackend.evaluate)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.DebuggerToBackend.evaluate)
 }
-inline ::dse::lua::dbg::DbgEvaluate* DebuggerToBackend::mutable_evaluate() {
+inline ::bg3se::lua::dbg::DbgEvaluate* DebuggerToBackend::mutable_evaluate() {
   if (!has_evaluate()) {
     clear_msg();
     set_has_evaluate();
-    msg_.evaluate_ = CreateMaybeMessage< ::dse::lua::dbg::DbgEvaluate >(
+    msg_.evaluate_ = CreateMaybeMessage< ::bg3se::lua::dbg::DbgEvaluate >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.DebuggerToBackend.evaluate)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.DebuggerToBackend.evaluate)
   return msg_.evaluate_;
 }
 
-// .dse.lua.dbg.DbgFetchMods fetchMods = 8;
+// .bg3se.lua.dbg.DbgFetchMods fetchMods = 8;
 inline bool DebuggerToBackend::has_fetchmods() const {
   return msg_case() == kFetchMods;
 }
@@ -7685,14 +7685,14 @@ inline void DebuggerToBackend::clear_fetchmods() {
     clear_has_msg();
   }
 }
-inline const ::dse::lua::dbg::DbgFetchMods& DebuggerToBackend::_internal_fetchmods() const {
+inline const ::bg3se::lua::dbg::DbgFetchMods& DebuggerToBackend::_internal_fetchmods() const {
   return *msg_.fetchmods_;
 }
-inline ::dse::lua::dbg::DbgFetchMods* DebuggerToBackend::release_fetchmods() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.DebuggerToBackend.fetchMods)
+inline ::bg3se::lua::dbg::DbgFetchMods* DebuggerToBackend::release_fetchmods() {
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.DebuggerToBackend.fetchMods)
   if (has_fetchmods()) {
     clear_has_msg();
-      ::dse::lua::dbg::DbgFetchMods* temp = msg_.fetchmods_;
+      ::bg3se::lua::dbg::DbgFetchMods* temp = msg_.fetchmods_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -7702,43 +7702,43 @@ inline ::dse::lua::dbg::DbgFetchMods* DebuggerToBackend::release_fetchmods() {
     return NULL;
   }
 }
-inline const ::dse::lua::dbg::DbgFetchMods& DebuggerToBackend::fetchmods() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.DebuggerToBackend.fetchMods)
+inline const ::bg3se::lua::dbg::DbgFetchMods& DebuggerToBackend::fetchmods() const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.DebuggerToBackend.fetchMods)
   return has_fetchmods()
       ? *msg_.fetchmods_
-      : *reinterpret_cast< ::dse::lua::dbg::DbgFetchMods*>(&::dse::lua::dbg::_DbgFetchMods_default_instance_);
+      : *reinterpret_cast< ::bg3se::lua::dbg::DbgFetchMods*>(&::bg3se::lua::dbg::_DbgFetchMods_default_instance_);
 }
-inline ::dse::lua::dbg::DbgFetchMods* DebuggerToBackend::unsafe_arena_release_fetchmods() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.DebuggerToBackend.fetchMods)
+inline ::bg3se::lua::dbg::DbgFetchMods* DebuggerToBackend::unsafe_arena_release_fetchmods() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.DebuggerToBackend.fetchMods)
   if (has_fetchmods()) {
     clear_has_msg();
-    ::dse::lua::dbg::DbgFetchMods* temp = msg_.fetchmods_;
+    ::bg3se::lua::dbg::DbgFetchMods* temp = msg_.fetchmods_;
     msg_.fetchmods_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void DebuggerToBackend::unsafe_arena_set_allocated_fetchmods(::dse::lua::dbg::DbgFetchMods* fetchmods) {
+inline void DebuggerToBackend::unsafe_arena_set_allocated_fetchmods(::bg3se::lua::dbg::DbgFetchMods* fetchmods) {
   clear_msg();
   if (fetchmods) {
     set_has_fetchmods();
     msg_.fetchmods_ = fetchmods;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.DebuggerToBackend.fetchMods)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.DebuggerToBackend.fetchMods)
 }
-inline ::dse::lua::dbg::DbgFetchMods* DebuggerToBackend::mutable_fetchmods() {
+inline ::bg3se::lua::dbg::DbgFetchMods* DebuggerToBackend::mutable_fetchmods() {
   if (!has_fetchmods()) {
     clear_msg();
     set_has_fetchmods();
-    msg_.fetchmods_ = CreateMaybeMessage< ::dse::lua::dbg::DbgFetchMods >(
+    msg_.fetchmods_ = CreateMaybeMessage< ::bg3se::lua::dbg::DbgFetchMods >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.DebuggerToBackend.fetchMods)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.DebuggerToBackend.fetchMods)
   return msg_.fetchmods_;
 }
 
-// .dse.lua.dbg.DbgRequestSource requestSource = 9;
+// .bg3se.lua.dbg.DbgRequestSource requestSource = 9;
 inline bool DebuggerToBackend::has_requestsource() const {
   return msg_case() == kRequestSource;
 }
@@ -7753,14 +7753,14 @@ inline void DebuggerToBackend::clear_requestsource() {
     clear_has_msg();
   }
 }
-inline const ::dse::lua::dbg::DbgRequestSource& DebuggerToBackend::_internal_requestsource() const {
+inline const ::bg3se::lua::dbg::DbgRequestSource& DebuggerToBackend::_internal_requestsource() const {
   return *msg_.requestsource_;
 }
-inline ::dse::lua::dbg::DbgRequestSource* DebuggerToBackend::release_requestsource() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.DebuggerToBackend.requestSource)
+inline ::bg3se::lua::dbg::DbgRequestSource* DebuggerToBackend::release_requestsource() {
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.DebuggerToBackend.requestSource)
   if (has_requestsource()) {
     clear_has_msg();
-      ::dse::lua::dbg::DbgRequestSource* temp = msg_.requestsource_;
+      ::bg3se::lua::dbg::DbgRequestSource* temp = msg_.requestsource_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -7770,43 +7770,43 @@ inline ::dse::lua::dbg::DbgRequestSource* DebuggerToBackend::release_requestsour
     return NULL;
   }
 }
-inline const ::dse::lua::dbg::DbgRequestSource& DebuggerToBackend::requestsource() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.DebuggerToBackend.requestSource)
+inline const ::bg3se::lua::dbg::DbgRequestSource& DebuggerToBackend::requestsource() const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.DebuggerToBackend.requestSource)
   return has_requestsource()
       ? *msg_.requestsource_
-      : *reinterpret_cast< ::dse::lua::dbg::DbgRequestSource*>(&::dse::lua::dbg::_DbgRequestSource_default_instance_);
+      : *reinterpret_cast< ::bg3se::lua::dbg::DbgRequestSource*>(&::bg3se::lua::dbg::_DbgRequestSource_default_instance_);
 }
-inline ::dse::lua::dbg::DbgRequestSource* DebuggerToBackend::unsafe_arena_release_requestsource() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.DebuggerToBackend.requestSource)
+inline ::bg3se::lua::dbg::DbgRequestSource* DebuggerToBackend::unsafe_arena_release_requestsource() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.DebuggerToBackend.requestSource)
   if (has_requestsource()) {
     clear_has_msg();
-    ::dse::lua::dbg::DbgRequestSource* temp = msg_.requestsource_;
+    ::bg3se::lua::dbg::DbgRequestSource* temp = msg_.requestsource_;
     msg_.requestsource_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void DebuggerToBackend::unsafe_arena_set_allocated_requestsource(::dse::lua::dbg::DbgRequestSource* requestsource) {
+inline void DebuggerToBackend::unsafe_arena_set_allocated_requestsource(::bg3se::lua::dbg::DbgRequestSource* requestsource) {
   clear_msg();
   if (requestsource) {
     set_has_requestsource();
     msg_.requestsource_ = requestsource;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.DebuggerToBackend.requestSource)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.DebuggerToBackend.requestSource)
 }
-inline ::dse::lua::dbg::DbgRequestSource* DebuggerToBackend::mutable_requestsource() {
+inline ::bg3se::lua::dbg::DbgRequestSource* DebuggerToBackend::mutable_requestsource() {
   if (!has_requestsource()) {
     clear_msg();
     set_has_requestsource();
-    msg_.requestsource_ = CreateMaybeMessage< ::dse::lua::dbg::DbgRequestSource >(
+    msg_.requestsource_ = CreateMaybeMessage< ::bg3se::lua::dbg::DbgRequestSource >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.DebuggerToBackend.requestSource)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.DebuggerToBackend.requestSource)
   return msg_.requestsource_;
 }
 
-// .dse.lua.dbg.DbgGetVariables getVariables = 10;
+// .bg3se.lua.dbg.DbgGetVariables getVariables = 10;
 inline bool DebuggerToBackend::has_getvariables() const {
   return msg_case() == kGetVariables;
 }
@@ -7821,14 +7821,14 @@ inline void DebuggerToBackend::clear_getvariables() {
     clear_has_msg();
   }
 }
-inline const ::dse::lua::dbg::DbgGetVariables& DebuggerToBackend::_internal_getvariables() const {
+inline const ::bg3se::lua::dbg::DbgGetVariables& DebuggerToBackend::_internal_getvariables() const {
   return *msg_.getvariables_;
 }
-inline ::dse::lua::dbg::DbgGetVariables* DebuggerToBackend::release_getvariables() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.DebuggerToBackend.getVariables)
+inline ::bg3se::lua::dbg::DbgGetVariables* DebuggerToBackend::release_getvariables() {
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.DebuggerToBackend.getVariables)
   if (has_getvariables()) {
     clear_has_msg();
-      ::dse::lua::dbg::DbgGetVariables* temp = msg_.getvariables_;
+      ::bg3se::lua::dbg::DbgGetVariables* temp = msg_.getvariables_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -7838,39 +7838,39 @@ inline ::dse::lua::dbg::DbgGetVariables* DebuggerToBackend::release_getvariables
     return NULL;
   }
 }
-inline const ::dse::lua::dbg::DbgGetVariables& DebuggerToBackend::getvariables() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.DebuggerToBackend.getVariables)
+inline const ::bg3se::lua::dbg::DbgGetVariables& DebuggerToBackend::getvariables() const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.DebuggerToBackend.getVariables)
   return has_getvariables()
       ? *msg_.getvariables_
-      : *reinterpret_cast< ::dse::lua::dbg::DbgGetVariables*>(&::dse::lua::dbg::_DbgGetVariables_default_instance_);
+      : *reinterpret_cast< ::bg3se::lua::dbg::DbgGetVariables*>(&::bg3se::lua::dbg::_DbgGetVariables_default_instance_);
 }
-inline ::dse::lua::dbg::DbgGetVariables* DebuggerToBackend::unsafe_arena_release_getvariables() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.DebuggerToBackend.getVariables)
+inline ::bg3se::lua::dbg::DbgGetVariables* DebuggerToBackend::unsafe_arena_release_getvariables() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.DebuggerToBackend.getVariables)
   if (has_getvariables()) {
     clear_has_msg();
-    ::dse::lua::dbg::DbgGetVariables* temp = msg_.getvariables_;
+    ::bg3se::lua::dbg::DbgGetVariables* temp = msg_.getvariables_;
     msg_.getvariables_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void DebuggerToBackend::unsafe_arena_set_allocated_getvariables(::dse::lua::dbg::DbgGetVariables* getvariables) {
+inline void DebuggerToBackend::unsafe_arena_set_allocated_getvariables(::bg3se::lua::dbg::DbgGetVariables* getvariables) {
   clear_msg();
   if (getvariables) {
     set_has_getvariables();
     msg_.getvariables_ = getvariables;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.DebuggerToBackend.getVariables)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.DebuggerToBackend.getVariables)
 }
-inline ::dse::lua::dbg::DbgGetVariables* DebuggerToBackend::mutable_getvariables() {
+inline ::bg3se::lua::dbg::DbgGetVariables* DebuggerToBackend::mutable_getvariables() {
   if (!has_getvariables()) {
     clear_msg();
     set_has_getvariables();
-    msg_.getvariables_ = CreateMaybeMessage< ::dse::lua::dbg::DbgGetVariables >(
+    msg_.getvariables_ = CreateMaybeMessage< ::bg3se::lua::dbg::DbgGetVariables >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.DebuggerToBackend.getVariables)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.DebuggerToBackend.getVariables)
   return msg_.getvariables_;
 }
 
@@ -7892,13 +7892,13 @@ inline void BackendToDebugger::clear_seq_no() {
   seq_no_ = 0u;
 }
 inline ::google::protobuf::uint32 BackendToDebugger::seq_no() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.BackendToDebugger.seq_no)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.BackendToDebugger.seq_no)
   return seq_no_;
 }
 inline void BackendToDebugger::set_seq_no(::google::protobuf::uint32 value) {
   
   seq_no_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.BackendToDebugger.seq_no)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.BackendToDebugger.seq_no)
 }
 
 // uint32 reply_seq_no = 2;
@@ -7906,16 +7906,16 @@ inline void BackendToDebugger::clear_reply_seq_no() {
   reply_seq_no_ = 0u;
 }
 inline ::google::protobuf::uint32 BackendToDebugger::reply_seq_no() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.BackendToDebugger.reply_seq_no)
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.BackendToDebugger.reply_seq_no)
   return reply_seq_no_;
 }
 inline void BackendToDebugger::set_reply_seq_no(::google::protobuf::uint32 value) {
   
   reply_seq_no_ = value;
-  // @@protoc_insertion_point(field_set:dse.lua.dbg.BackendToDebugger.reply_seq_no)
+  // @@protoc_insertion_point(field_set:bg3se.lua.dbg.BackendToDebugger.reply_seq_no)
 }
 
-// .dse.lua.dbg.BkConnectResponse connectResponse = 3;
+// .bg3se.lua.dbg.BkConnectResponse connectResponse = 3;
 inline bool BackendToDebugger::has_connectresponse() const {
   return msg_case() == kConnectResponse;
 }
@@ -7930,14 +7930,14 @@ inline void BackendToDebugger::clear_connectresponse() {
     clear_has_msg();
   }
 }
-inline const ::dse::lua::dbg::BkConnectResponse& BackendToDebugger::_internal_connectresponse() const {
+inline const ::bg3se::lua::dbg::BkConnectResponse& BackendToDebugger::_internal_connectresponse() const {
   return *msg_.connectresponse_;
 }
-inline ::dse::lua::dbg::BkConnectResponse* BackendToDebugger::release_connectresponse() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.BackendToDebugger.connectResponse)
+inline ::bg3se::lua::dbg::BkConnectResponse* BackendToDebugger::release_connectresponse() {
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.BackendToDebugger.connectResponse)
   if (has_connectresponse()) {
     clear_has_msg();
-      ::dse::lua::dbg::BkConnectResponse* temp = msg_.connectresponse_;
+      ::bg3se::lua::dbg::BkConnectResponse* temp = msg_.connectresponse_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -7947,43 +7947,43 @@ inline ::dse::lua::dbg::BkConnectResponse* BackendToDebugger::release_connectres
     return NULL;
   }
 }
-inline const ::dse::lua::dbg::BkConnectResponse& BackendToDebugger::connectresponse() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.BackendToDebugger.connectResponse)
+inline const ::bg3se::lua::dbg::BkConnectResponse& BackendToDebugger::connectresponse() const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.BackendToDebugger.connectResponse)
   return has_connectresponse()
       ? *msg_.connectresponse_
-      : *reinterpret_cast< ::dse::lua::dbg::BkConnectResponse*>(&::dse::lua::dbg::_BkConnectResponse_default_instance_);
+      : *reinterpret_cast< ::bg3se::lua::dbg::BkConnectResponse*>(&::bg3se::lua::dbg::_BkConnectResponse_default_instance_);
 }
-inline ::dse::lua::dbg::BkConnectResponse* BackendToDebugger::unsafe_arena_release_connectresponse() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.BackendToDebugger.connectResponse)
+inline ::bg3se::lua::dbg::BkConnectResponse* BackendToDebugger::unsafe_arena_release_connectresponse() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.BackendToDebugger.connectResponse)
   if (has_connectresponse()) {
     clear_has_msg();
-    ::dse::lua::dbg::BkConnectResponse* temp = msg_.connectresponse_;
+    ::bg3se::lua::dbg::BkConnectResponse* temp = msg_.connectresponse_;
     msg_.connectresponse_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void BackendToDebugger::unsafe_arena_set_allocated_connectresponse(::dse::lua::dbg::BkConnectResponse* connectresponse) {
+inline void BackendToDebugger::unsafe_arena_set_allocated_connectresponse(::bg3se::lua::dbg::BkConnectResponse* connectresponse) {
   clear_msg();
   if (connectresponse) {
     set_has_connectresponse();
     msg_.connectresponse_ = connectresponse;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.BackendToDebugger.connectResponse)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.BackendToDebugger.connectResponse)
 }
-inline ::dse::lua::dbg::BkConnectResponse* BackendToDebugger::mutable_connectresponse() {
+inline ::bg3se::lua::dbg::BkConnectResponse* BackendToDebugger::mutable_connectresponse() {
   if (!has_connectresponse()) {
     clear_msg();
     set_has_connectresponse();
-    msg_.connectresponse_ = CreateMaybeMessage< ::dse::lua::dbg::BkConnectResponse >(
+    msg_.connectresponse_ = CreateMaybeMessage< ::bg3se::lua::dbg::BkConnectResponse >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.BackendToDebugger.connectResponse)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.BackendToDebugger.connectResponse)
   return msg_.connectresponse_;
 }
 
-// .dse.lua.dbg.BkBreakpointTriggered breakpointTriggered = 4;
+// .bg3se.lua.dbg.BkBreakpointTriggered breakpointTriggered = 4;
 inline bool BackendToDebugger::has_breakpointtriggered() const {
   return msg_case() == kBreakpointTriggered;
 }
@@ -7998,14 +7998,14 @@ inline void BackendToDebugger::clear_breakpointtriggered() {
     clear_has_msg();
   }
 }
-inline const ::dse::lua::dbg::BkBreakpointTriggered& BackendToDebugger::_internal_breakpointtriggered() const {
+inline const ::bg3se::lua::dbg::BkBreakpointTriggered& BackendToDebugger::_internal_breakpointtriggered() const {
   return *msg_.breakpointtriggered_;
 }
-inline ::dse::lua::dbg::BkBreakpointTriggered* BackendToDebugger::release_breakpointtriggered() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.BackendToDebugger.breakpointTriggered)
+inline ::bg3se::lua::dbg::BkBreakpointTriggered* BackendToDebugger::release_breakpointtriggered() {
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.BackendToDebugger.breakpointTriggered)
   if (has_breakpointtriggered()) {
     clear_has_msg();
-      ::dse::lua::dbg::BkBreakpointTriggered* temp = msg_.breakpointtriggered_;
+      ::bg3se::lua::dbg::BkBreakpointTriggered* temp = msg_.breakpointtriggered_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -8015,43 +8015,43 @@ inline ::dse::lua::dbg::BkBreakpointTriggered* BackendToDebugger::release_breakp
     return NULL;
   }
 }
-inline const ::dse::lua::dbg::BkBreakpointTriggered& BackendToDebugger::breakpointtriggered() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.BackendToDebugger.breakpointTriggered)
+inline const ::bg3se::lua::dbg::BkBreakpointTriggered& BackendToDebugger::breakpointtriggered() const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.BackendToDebugger.breakpointTriggered)
   return has_breakpointtriggered()
       ? *msg_.breakpointtriggered_
-      : *reinterpret_cast< ::dse::lua::dbg::BkBreakpointTriggered*>(&::dse::lua::dbg::_BkBreakpointTriggered_default_instance_);
+      : *reinterpret_cast< ::bg3se::lua::dbg::BkBreakpointTriggered*>(&::bg3se::lua::dbg::_BkBreakpointTriggered_default_instance_);
 }
-inline ::dse::lua::dbg::BkBreakpointTriggered* BackendToDebugger::unsafe_arena_release_breakpointtriggered() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.BackendToDebugger.breakpointTriggered)
+inline ::bg3se::lua::dbg::BkBreakpointTriggered* BackendToDebugger::unsafe_arena_release_breakpointtriggered() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.BackendToDebugger.breakpointTriggered)
   if (has_breakpointtriggered()) {
     clear_has_msg();
-    ::dse::lua::dbg::BkBreakpointTriggered* temp = msg_.breakpointtriggered_;
+    ::bg3se::lua::dbg::BkBreakpointTriggered* temp = msg_.breakpointtriggered_;
     msg_.breakpointtriggered_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void BackendToDebugger::unsafe_arena_set_allocated_breakpointtriggered(::dse::lua::dbg::BkBreakpointTriggered* breakpointtriggered) {
+inline void BackendToDebugger::unsafe_arena_set_allocated_breakpointtriggered(::bg3se::lua::dbg::BkBreakpointTriggered* breakpointtriggered) {
   clear_msg();
   if (breakpointtriggered) {
     set_has_breakpointtriggered();
     msg_.breakpointtriggered_ = breakpointtriggered;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.BackendToDebugger.breakpointTriggered)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.BackendToDebugger.breakpointTriggered)
 }
-inline ::dse::lua::dbg::BkBreakpointTriggered* BackendToDebugger::mutable_breakpointtriggered() {
+inline ::bg3se::lua::dbg::BkBreakpointTriggered* BackendToDebugger::mutable_breakpointtriggered() {
   if (!has_breakpointtriggered()) {
     clear_msg();
     set_has_breakpointtriggered();
-    msg_.breakpointtriggered_ = CreateMaybeMessage< ::dse::lua::dbg::BkBreakpointTriggered >(
+    msg_.breakpointtriggered_ = CreateMaybeMessage< ::bg3se::lua::dbg::BkBreakpointTriggered >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.BackendToDebugger.breakpointTriggered)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.BackendToDebugger.breakpointTriggered)
   return msg_.breakpointtriggered_;
 }
 
-// .dse.lua.dbg.BkEvaluateResponse evaluateResponse = 5;
+// .bg3se.lua.dbg.BkEvaluateResponse evaluateResponse = 5;
 inline bool BackendToDebugger::has_evaluateresponse() const {
   return msg_case() == kEvaluateResponse;
 }
@@ -8066,14 +8066,14 @@ inline void BackendToDebugger::clear_evaluateresponse() {
     clear_has_msg();
   }
 }
-inline const ::dse::lua::dbg::BkEvaluateResponse& BackendToDebugger::_internal_evaluateresponse() const {
+inline const ::bg3se::lua::dbg::BkEvaluateResponse& BackendToDebugger::_internal_evaluateresponse() const {
   return *msg_.evaluateresponse_;
 }
-inline ::dse::lua::dbg::BkEvaluateResponse* BackendToDebugger::release_evaluateresponse() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.BackendToDebugger.evaluateResponse)
+inline ::bg3se::lua::dbg::BkEvaluateResponse* BackendToDebugger::release_evaluateresponse() {
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.BackendToDebugger.evaluateResponse)
   if (has_evaluateresponse()) {
     clear_has_msg();
-      ::dse::lua::dbg::BkEvaluateResponse* temp = msg_.evaluateresponse_;
+      ::bg3se::lua::dbg::BkEvaluateResponse* temp = msg_.evaluateresponse_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -8083,43 +8083,43 @@ inline ::dse::lua::dbg::BkEvaluateResponse* BackendToDebugger::release_evaluater
     return NULL;
   }
 }
-inline const ::dse::lua::dbg::BkEvaluateResponse& BackendToDebugger::evaluateresponse() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.BackendToDebugger.evaluateResponse)
+inline const ::bg3se::lua::dbg::BkEvaluateResponse& BackendToDebugger::evaluateresponse() const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.BackendToDebugger.evaluateResponse)
   return has_evaluateresponse()
       ? *msg_.evaluateresponse_
-      : *reinterpret_cast< ::dse::lua::dbg::BkEvaluateResponse*>(&::dse::lua::dbg::_BkEvaluateResponse_default_instance_);
+      : *reinterpret_cast< ::bg3se::lua::dbg::BkEvaluateResponse*>(&::bg3se::lua::dbg::_BkEvaluateResponse_default_instance_);
 }
-inline ::dse::lua::dbg::BkEvaluateResponse* BackendToDebugger::unsafe_arena_release_evaluateresponse() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.BackendToDebugger.evaluateResponse)
+inline ::bg3se::lua::dbg::BkEvaluateResponse* BackendToDebugger::unsafe_arena_release_evaluateresponse() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.BackendToDebugger.evaluateResponse)
   if (has_evaluateresponse()) {
     clear_has_msg();
-    ::dse::lua::dbg::BkEvaluateResponse* temp = msg_.evaluateresponse_;
+    ::bg3se::lua::dbg::BkEvaluateResponse* temp = msg_.evaluateresponse_;
     msg_.evaluateresponse_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void BackendToDebugger::unsafe_arena_set_allocated_evaluateresponse(::dse::lua::dbg::BkEvaluateResponse* evaluateresponse) {
+inline void BackendToDebugger::unsafe_arena_set_allocated_evaluateresponse(::bg3se::lua::dbg::BkEvaluateResponse* evaluateresponse) {
   clear_msg();
   if (evaluateresponse) {
     set_has_evaluateresponse();
     msg_.evaluateresponse_ = evaluateresponse;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.BackendToDebugger.evaluateResponse)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.BackendToDebugger.evaluateResponse)
 }
-inline ::dse::lua::dbg::BkEvaluateResponse* BackendToDebugger::mutable_evaluateresponse() {
+inline ::bg3se::lua::dbg::BkEvaluateResponse* BackendToDebugger::mutable_evaluateresponse() {
   if (!has_evaluateresponse()) {
     clear_msg();
     set_has_evaluateresponse();
-    msg_.evaluateresponse_ = CreateMaybeMessage< ::dse::lua::dbg::BkEvaluateResponse >(
+    msg_.evaluateresponse_ = CreateMaybeMessage< ::bg3se::lua::dbg::BkEvaluateResponse >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.BackendToDebugger.evaluateResponse)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.BackendToDebugger.evaluateResponse)
   return msg_.evaluateresponse_;
 }
 
-// .dse.lua.dbg.BkContextUpdated contextUpdated = 6;
+// .bg3se.lua.dbg.BkContextUpdated contextUpdated = 6;
 inline bool BackendToDebugger::has_contextupdated() const {
   return msg_case() == kContextUpdated;
 }
@@ -8134,14 +8134,14 @@ inline void BackendToDebugger::clear_contextupdated() {
     clear_has_msg();
   }
 }
-inline const ::dse::lua::dbg::BkContextUpdated& BackendToDebugger::_internal_contextupdated() const {
+inline const ::bg3se::lua::dbg::BkContextUpdated& BackendToDebugger::_internal_contextupdated() const {
   return *msg_.contextupdated_;
 }
-inline ::dse::lua::dbg::BkContextUpdated* BackendToDebugger::release_contextupdated() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.BackendToDebugger.contextUpdated)
+inline ::bg3se::lua::dbg::BkContextUpdated* BackendToDebugger::release_contextupdated() {
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.BackendToDebugger.contextUpdated)
   if (has_contextupdated()) {
     clear_has_msg();
-      ::dse::lua::dbg::BkContextUpdated* temp = msg_.contextupdated_;
+      ::bg3se::lua::dbg::BkContextUpdated* temp = msg_.contextupdated_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -8151,43 +8151,43 @@ inline ::dse::lua::dbg::BkContextUpdated* BackendToDebugger::release_contextupda
     return NULL;
   }
 }
-inline const ::dse::lua::dbg::BkContextUpdated& BackendToDebugger::contextupdated() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.BackendToDebugger.contextUpdated)
+inline const ::bg3se::lua::dbg::BkContextUpdated& BackendToDebugger::contextupdated() const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.BackendToDebugger.contextUpdated)
   return has_contextupdated()
       ? *msg_.contextupdated_
-      : *reinterpret_cast< ::dse::lua::dbg::BkContextUpdated*>(&::dse::lua::dbg::_BkContextUpdated_default_instance_);
+      : *reinterpret_cast< ::bg3se::lua::dbg::BkContextUpdated*>(&::bg3se::lua::dbg::_BkContextUpdated_default_instance_);
 }
-inline ::dse::lua::dbg::BkContextUpdated* BackendToDebugger::unsafe_arena_release_contextupdated() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.BackendToDebugger.contextUpdated)
+inline ::bg3se::lua::dbg::BkContextUpdated* BackendToDebugger::unsafe_arena_release_contextupdated() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.BackendToDebugger.contextUpdated)
   if (has_contextupdated()) {
     clear_has_msg();
-    ::dse::lua::dbg::BkContextUpdated* temp = msg_.contextupdated_;
+    ::bg3se::lua::dbg::BkContextUpdated* temp = msg_.contextupdated_;
     msg_.contextupdated_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void BackendToDebugger::unsafe_arena_set_allocated_contextupdated(::dse::lua::dbg::BkContextUpdated* contextupdated) {
+inline void BackendToDebugger::unsafe_arena_set_allocated_contextupdated(::bg3se::lua::dbg::BkContextUpdated* contextupdated) {
   clear_msg();
   if (contextupdated) {
     set_has_contextupdated();
     msg_.contextupdated_ = contextupdated;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.BackendToDebugger.contextUpdated)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.BackendToDebugger.contextUpdated)
 }
-inline ::dse::lua::dbg::BkContextUpdated* BackendToDebugger::mutable_contextupdated() {
+inline ::bg3se::lua::dbg::BkContextUpdated* BackendToDebugger::mutable_contextupdated() {
   if (!has_contextupdated()) {
     clear_msg();
     set_has_contextupdated();
-    msg_.contextupdated_ = CreateMaybeMessage< ::dse::lua::dbg::BkContextUpdated >(
+    msg_.contextupdated_ = CreateMaybeMessage< ::bg3se::lua::dbg::BkContextUpdated >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.BackendToDebugger.contextUpdated)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.BackendToDebugger.contextUpdated)
   return msg_.contextupdated_;
 }
 
-// .dse.lua.dbg.BkModInfoResponse modInfoResponse = 7;
+// .bg3se.lua.dbg.BkModInfoResponse modInfoResponse = 7;
 inline bool BackendToDebugger::has_modinforesponse() const {
   return msg_case() == kModInfoResponse;
 }
@@ -8202,14 +8202,14 @@ inline void BackendToDebugger::clear_modinforesponse() {
     clear_has_msg();
   }
 }
-inline const ::dse::lua::dbg::BkModInfoResponse& BackendToDebugger::_internal_modinforesponse() const {
+inline const ::bg3se::lua::dbg::BkModInfoResponse& BackendToDebugger::_internal_modinforesponse() const {
   return *msg_.modinforesponse_;
 }
-inline ::dse::lua::dbg::BkModInfoResponse* BackendToDebugger::release_modinforesponse() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.BackendToDebugger.modInfoResponse)
+inline ::bg3se::lua::dbg::BkModInfoResponse* BackendToDebugger::release_modinforesponse() {
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.BackendToDebugger.modInfoResponse)
   if (has_modinforesponse()) {
     clear_has_msg();
-      ::dse::lua::dbg::BkModInfoResponse* temp = msg_.modinforesponse_;
+      ::bg3se::lua::dbg::BkModInfoResponse* temp = msg_.modinforesponse_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -8219,43 +8219,43 @@ inline ::dse::lua::dbg::BkModInfoResponse* BackendToDebugger::release_modinfores
     return NULL;
   }
 }
-inline const ::dse::lua::dbg::BkModInfoResponse& BackendToDebugger::modinforesponse() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.BackendToDebugger.modInfoResponse)
+inline const ::bg3se::lua::dbg::BkModInfoResponse& BackendToDebugger::modinforesponse() const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.BackendToDebugger.modInfoResponse)
   return has_modinforesponse()
       ? *msg_.modinforesponse_
-      : *reinterpret_cast< ::dse::lua::dbg::BkModInfoResponse*>(&::dse::lua::dbg::_BkModInfoResponse_default_instance_);
+      : *reinterpret_cast< ::bg3se::lua::dbg::BkModInfoResponse*>(&::bg3se::lua::dbg::_BkModInfoResponse_default_instance_);
 }
-inline ::dse::lua::dbg::BkModInfoResponse* BackendToDebugger::unsafe_arena_release_modinforesponse() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.BackendToDebugger.modInfoResponse)
+inline ::bg3se::lua::dbg::BkModInfoResponse* BackendToDebugger::unsafe_arena_release_modinforesponse() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.BackendToDebugger.modInfoResponse)
   if (has_modinforesponse()) {
     clear_has_msg();
-    ::dse::lua::dbg::BkModInfoResponse* temp = msg_.modinforesponse_;
+    ::bg3se::lua::dbg::BkModInfoResponse* temp = msg_.modinforesponse_;
     msg_.modinforesponse_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void BackendToDebugger::unsafe_arena_set_allocated_modinforesponse(::dse::lua::dbg::BkModInfoResponse* modinforesponse) {
+inline void BackendToDebugger::unsafe_arena_set_allocated_modinforesponse(::bg3se::lua::dbg::BkModInfoResponse* modinforesponse) {
   clear_msg();
   if (modinforesponse) {
     set_has_modinforesponse();
     msg_.modinforesponse_ = modinforesponse;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.BackendToDebugger.modInfoResponse)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.BackendToDebugger.modInfoResponse)
 }
-inline ::dse::lua::dbg::BkModInfoResponse* BackendToDebugger::mutable_modinforesponse() {
+inline ::bg3se::lua::dbg::BkModInfoResponse* BackendToDebugger::mutable_modinforesponse() {
   if (!has_modinforesponse()) {
     clear_msg();
     set_has_modinforesponse();
-    msg_.modinforesponse_ = CreateMaybeMessage< ::dse::lua::dbg::BkModInfoResponse >(
+    msg_.modinforesponse_ = CreateMaybeMessage< ::bg3se::lua::dbg::BkModInfoResponse >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.BackendToDebugger.modInfoResponse)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.BackendToDebugger.modInfoResponse)
   return msg_.modinforesponse_;
 }
 
-// .dse.lua.dbg.BkDebugOutput debugOutput = 8;
+// .bg3se.lua.dbg.BkDebugOutput debugOutput = 8;
 inline bool BackendToDebugger::has_debugoutput() const {
   return msg_case() == kDebugOutput;
 }
@@ -8270,14 +8270,14 @@ inline void BackendToDebugger::clear_debugoutput() {
     clear_has_msg();
   }
 }
-inline const ::dse::lua::dbg::BkDebugOutput& BackendToDebugger::_internal_debugoutput() const {
+inline const ::bg3se::lua::dbg::BkDebugOutput& BackendToDebugger::_internal_debugoutput() const {
   return *msg_.debugoutput_;
 }
-inline ::dse::lua::dbg::BkDebugOutput* BackendToDebugger::release_debugoutput() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.BackendToDebugger.debugOutput)
+inline ::bg3se::lua::dbg::BkDebugOutput* BackendToDebugger::release_debugoutput() {
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.BackendToDebugger.debugOutput)
   if (has_debugoutput()) {
     clear_has_msg();
-      ::dse::lua::dbg::BkDebugOutput* temp = msg_.debugoutput_;
+      ::bg3se::lua::dbg::BkDebugOutput* temp = msg_.debugoutput_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -8287,43 +8287,43 @@ inline ::dse::lua::dbg::BkDebugOutput* BackendToDebugger::release_debugoutput() 
     return NULL;
   }
 }
-inline const ::dse::lua::dbg::BkDebugOutput& BackendToDebugger::debugoutput() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.BackendToDebugger.debugOutput)
+inline const ::bg3se::lua::dbg::BkDebugOutput& BackendToDebugger::debugoutput() const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.BackendToDebugger.debugOutput)
   return has_debugoutput()
       ? *msg_.debugoutput_
-      : *reinterpret_cast< ::dse::lua::dbg::BkDebugOutput*>(&::dse::lua::dbg::_BkDebugOutput_default_instance_);
+      : *reinterpret_cast< ::bg3se::lua::dbg::BkDebugOutput*>(&::bg3se::lua::dbg::_BkDebugOutput_default_instance_);
 }
-inline ::dse::lua::dbg::BkDebugOutput* BackendToDebugger::unsafe_arena_release_debugoutput() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.BackendToDebugger.debugOutput)
+inline ::bg3se::lua::dbg::BkDebugOutput* BackendToDebugger::unsafe_arena_release_debugoutput() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.BackendToDebugger.debugOutput)
   if (has_debugoutput()) {
     clear_has_msg();
-    ::dse::lua::dbg::BkDebugOutput* temp = msg_.debugoutput_;
+    ::bg3se::lua::dbg::BkDebugOutput* temp = msg_.debugoutput_;
     msg_.debugoutput_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void BackendToDebugger::unsafe_arena_set_allocated_debugoutput(::dse::lua::dbg::BkDebugOutput* debugoutput) {
+inline void BackendToDebugger::unsafe_arena_set_allocated_debugoutput(::bg3se::lua::dbg::BkDebugOutput* debugoutput) {
   clear_msg();
   if (debugoutput) {
     set_has_debugoutput();
     msg_.debugoutput_ = debugoutput;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.BackendToDebugger.debugOutput)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.BackendToDebugger.debugOutput)
 }
-inline ::dse::lua::dbg::BkDebugOutput* BackendToDebugger::mutable_debugoutput() {
+inline ::bg3se::lua::dbg::BkDebugOutput* BackendToDebugger::mutable_debugoutput() {
   if (!has_debugoutput()) {
     clear_msg();
     set_has_debugoutput();
-    msg_.debugoutput_ = CreateMaybeMessage< ::dse::lua::dbg::BkDebugOutput >(
+    msg_.debugoutput_ = CreateMaybeMessage< ::bg3se::lua::dbg::BkDebugOutput >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.BackendToDebugger.debugOutput)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.BackendToDebugger.debugOutput)
   return msg_.debugoutput_;
 }
 
-// .dse.lua.dbg.BkResult results = 9;
+// .bg3se.lua.dbg.BkResult results = 9;
 inline bool BackendToDebugger::has_results() const {
   return msg_case() == kResults;
 }
@@ -8338,14 +8338,14 @@ inline void BackendToDebugger::clear_results() {
     clear_has_msg();
   }
 }
-inline const ::dse::lua::dbg::BkResult& BackendToDebugger::_internal_results() const {
+inline const ::bg3se::lua::dbg::BkResult& BackendToDebugger::_internal_results() const {
   return *msg_.results_;
 }
-inline ::dse::lua::dbg::BkResult* BackendToDebugger::release_results() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.BackendToDebugger.results)
+inline ::bg3se::lua::dbg::BkResult* BackendToDebugger::release_results() {
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.BackendToDebugger.results)
   if (has_results()) {
     clear_has_msg();
-      ::dse::lua::dbg::BkResult* temp = msg_.results_;
+      ::bg3se::lua::dbg::BkResult* temp = msg_.results_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -8355,43 +8355,43 @@ inline ::dse::lua::dbg::BkResult* BackendToDebugger::release_results() {
     return NULL;
   }
 }
-inline const ::dse::lua::dbg::BkResult& BackendToDebugger::results() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.BackendToDebugger.results)
+inline const ::bg3se::lua::dbg::BkResult& BackendToDebugger::results() const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.BackendToDebugger.results)
   return has_results()
       ? *msg_.results_
-      : *reinterpret_cast< ::dse::lua::dbg::BkResult*>(&::dse::lua::dbg::_BkResult_default_instance_);
+      : *reinterpret_cast< ::bg3se::lua::dbg::BkResult*>(&::bg3se::lua::dbg::_BkResult_default_instance_);
 }
-inline ::dse::lua::dbg::BkResult* BackendToDebugger::unsafe_arena_release_results() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.BackendToDebugger.results)
+inline ::bg3se::lua::dbg::BkResult* BackendToDebugger::unsafe_arena_release_results() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.BackendToDebugger.results)
   if (has_results()) {
     clear_has_msg();
-    ::dse::lua::dbg::BkResult* temp = msg_.results_;
+    ::bg3se::lua::dbg::BkResult* temp = msg_.results_;
     msg_.results_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void BackendToDebugger::unsafe_arena_set_allocated_results(::dse::lua::dbg::BkResult* results) {
+inline void BackendToDebugger::unsafe_arena_set_allocated_results(::bg3se::lua::dbg::BkResult* results) {
   clear_msg();
   if (results) {
     set_has_results();
     msg_.results_ = results;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.BackendToDebugger.results)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.BackendToDebugger.results)
 }
-inline ::dse::lua::dbg::BkResult* BackendToDebugger::mutable_results() {
+inline ::bg3se::lua::dbg::BkResult* BackendToDebugger::mutable_results() {
   if (!has_results()) {
     clear_msg();
     set_has_results();
-    msg_.results_ = CreateMaybeMessage< ::dse::lua::dbg::BkResult >(
+    msg_.results_ = CreateMaybeMessage< ::bg3se::lua::dbg::BkResult >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.BackendToDebugger.results)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.BackendToDebugger.results)
   return msg_.results_;
 }
 
-// .dse.lua.dbg.BkDebuggerReady debuggerReady = 10;
+// .bg3se.lua.dbg.BkDebuggerReady debuggerReady = 10;
 inline bool BackendToDebugger::has_debuggerready() const {
   return msg_case() == kDebuggerReady;
 }
@@ -8406,14 +8406,14 @@ inline void BackendToDebugger::clear_debuggerready() {
     clear_has_msg();
   }
 }
-inline const ::dse::lua::dbg::BkDebuggerReady& BackendToDebugger::_internal_debuggerready() const {
+inline const ::bg3se::lua::dbg::BkDebuggerReady& BackendToDebugger::_internal_debuggerready() const {
   return *msg_.debuggerready_;
 }
-inline ::dse::lua::dbg::BkDebuggerReady* BackendToDebugger::release_debuggerready() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.BackendToDebugger.debuggerReady)
+inline ::bg3se::lua::dbg::BkDebuggerReady* BackendToDebugger::release_debuggerready() {
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.BackendToDebugger.debuggerReady)
   if (has_debuggerready()) {
     clear_has_msg();
-      ::dse::lua::dbg::BkDebuggerReady* temp = msg_.debuggerready_;
+      ::bg3se::lua::dbg::BkDebuggerReady* temp = msg_.debuggerready_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -8423,43 +8423,43 @@ inline ::dse::lua::dbg::BkDebuggerReady* BackendToDebugger::release_debuggerread
     return NULL;
   }
 }
-inline const ::dse::lua::dbg::BkDebuggerReady& BackendToDebugger::debuggerready() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.BackendToDebugger.debuggerReady)
+inline const ::bg3se::lua::dbg::BkDebuggerReady& BackendToDebugger::debuggerready() const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.BackendToDebugger.debuggerReady)
   return has_debuggerready()
       ? *msg_.debuggerready_
-      : *reinterpret_cast< ::dse::lua::dbg::BkDebuggerReady*>(&::dse::lua::dbg::_BkDebuggerReady_default_instance_);
+      : *reinterpret_cast< ::bg3se::lua::dbg::BkDebuggerReady*>(&::bg3se::lua::dbg::_BkDebuggerReady_default_instance_);
 }
-inline ::dse::lua::dbg::BkDebuggerReady* BackendToDebugger::unsafe_arena_release_debuggerready() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.BackendToDebugger.debuggerReady)
+inline ::bg3se::lua::dbg::BkDebuggerReady* BackendToDebugger::unsafe_arena_release_debuggerready() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.BackendToDebugger.debuggerReady)
   if (has_debuggerready()) {
     clear_has_msg();
-    ::dse::lua::dbg::BkDebuggerReady* temp = msg_.debuggerready_;
+    ::bg3se::lua::dbg::BkDebuggerReady* temp = msg_.debuggerready_;
     msg_.debuggerready_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void BackendToDebugger::unsafe_arena_set_allocated_debuggerready(::dse::lua::dbg::BkDebuggerReady* debuggerready) {
+inline void BackendToDebugger::unsafe_arena_set_allocated_debuggerready(::bg3se::lua::dbg::BkDebuggerReady* debuggerready) {
   clear_msg();
   if (debuggerready) {
     set_has_debuggerready();
     msg_.debuggerready_ = debuggerready;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.BackendToDebugger.debuggerReady)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.BackendToDebugger.debuggerReady)
 }
-inline ::dse::lua::dbg::BkDebuggerReady* BackendToDebugger::mutable_debuggerready() {
+inline ::bg3se::lua::dbg::BkDebuggerReady* BackendToDebugger::mutable_debuggerready() {
   if (!has_debuggerready()) {
     clear_msg();
     set_has_debuggerready();
-    msg_.debuggerready_ = CreateMaybeMessage< ::dse::lua::dbg::BkDebuggerReady >(
+    msg_.debuggerready_ = CreateMaybeMessage< ::bg3se::lua::dbg::BkDebuggerReady >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.BackendToDebugger.debuggerReady)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.BackendToDebugger.debuggerReady)
   return msg_.debuggerready_;
 }
 
-// .dse.lua.dbg.BkSourceResponse sourceResponse = 11;
+// .bg3se.lua.dbg.BkSourceResponse sourceResponse = 11;
 inline bool BackendToDebugger::has_sourceresponse() const {
   return msg_case() == kSourceResponse;
 }
@@ -8474,14 +8474,14 @@ inline void BackendToDebugger::clear_sourceresponse() {
     clear_has_msg();
   }
 }
-inline const ::dse::lua::dbg::BkSourceResponse& BackendToDebugger::_internal_sourceresponse() const {
+inline const ::bg3se::lua::dbg::BkSourceResponse& BackendToDebugger::_internal_sourceresponse() const {
   return *msg_.sourceresponse_;
 }
-inline ::dse::lua::dbg::BkSourceResponse* BackendToDebugger::release_sourceresponse() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.BackendToDebugger.sourceResponse)
+inline ::bg3se::lua::dbg::BkSourceResponse* BackendToDebugger::release_sourceresponse() {
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.BackendToDebugger.sourceResponse)
   if (has_sourceresponse()) {
     clear_has_msg();
-      ::dse::lua::dbg::BkSourceResponse* temp = msg_.sourceresponse_;
+      ::bg3se::lua::dbg::BkSourceResponse* temp = msg_.sourceresponse_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -8491,43 +8491,43 @@ inline ::dse::lua::dbg::BkSourceResponse* BackendToDebugger::release_sourcerespo
     return NULL;
   }
 }
-inline const ::dse::lua::dbg::BkSourceResponse& BackendToDebugger::sourceresponse() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.BackendToDebugger.sourceResponse)
+inline const ::bg3se::lua::dbg::BkSourceResponse& BackendToDebugger::sourceresponse() const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.BackendToDebugger.sourceResponse)
   return has_sourceresponse()
       ? *msg_.sourceresponse_
-      : *reinterpret_cast< ::dse::lua::dbg::BkSourceResponse*>(&::dse::lua::dbg::_BkSourceResponse_default_instance_);
+      : *reinterpret_cast< ::bg3se::lua::dbg::BkSourceResponse*>(&::bg3se::lua::dbg::_BkSourceResponse_default_instance_);
 }
-inline ::dse::lua::dbg::BkSourceResponse* BackendToDebugger::unsafe_arena_release_sourceresponse() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.BackendToDebugger.sourceResponse)
+inline ::bg3se::lua::dbg::BkSourceResponse* BackendToDebugger::unsafe_arena_release_sourceresponse() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.BackendToDebugger.sourceResponse)
   if (has_sourceresponse()) {
     clear_has_msg();
-    ::dse::lua::dbg::BkSourceResponse* temp = msg_.sourceresponse_;
+    ::bg3se::lua::dbg::BkSourceResponse* temp = msg_.sourceresponse_;
     msg_.sourceresponse_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void BackendToDebugger::unsafe_arena_set_allocated_sourceresponse(::dse::lua::dbg::BkSourceResponse* sourceresponse) {
+inline void BackendToDebugger::unsafe_arena_set_allocated_sourceresponse(::bg3se::lua::dbg::BkSourceResponse* sourceresponse) {
   clear_msg();
   if (sourceresponse) {
     set_has_sourceresponse();
     msg_.sourceresponse_ = sourceresponse;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.BackendToDebugger.sourceResponse)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.BackendToDebugger.sourceResponse)
 }
-inline ::dse::lua::dbg::BkSourceResponse* BackendToDebugger::mutable_sourceresponse() {
+inline ::bg3se::lua::dbg::BkSourceResponse* BackendToDebugger::mutable_sourceresponse() {
   if (!has_sourceresponse()) {
     clear_msg();
     set_has_sourceresponse();
-    msg_.sourceresponse_ = CreateMaybeMessage< ::dse::lua::dbg::BkSourceResponse >(
+    msg_.sourceresponse_ = CreateMaybeMessage< ::bg3se::lua::dbg::BkSourceResponse >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.BackendToDebugger.sourceResponse)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.BackendToDebugger.sourceResponse)
   return msg_.sourceresponse_;
 }
 
-// .dse.lua.dbg.BkGetVariablesResponse getVariablesResponse = 12;
+// .bg3se.lua.dbg.BkGetVariablesResponse getVariablesResponse = 12;
 inline bool BackendToDebugger::has_getvariablesresponse() const {
   return msg_case() == kGetVariablesResponse;
 }
@@ -8542,14 +8542,14 @@ inline void BackendToDebugger::clear_getvariablesresponse() {
     clear_has_msg();
   }
 }
-inline const ::dse::lua::dbg::BkGetVariablesResponse& BackendToDebugger::_internal_getvariablesresponse() const {
+inline const ::bg3se::lua::dbg::BkGetVariablesResponse& BackendToDebugger::_internal_getvariablesresponse() const {
   return *msg_.getvariablesresponse_;
 }
-inline ::dse::lua::dbg::BkGetVariablesResponse* BackendToDebugger::release_getvariablesresponse() {
-  // @@protoc_insertion_point(field_release:dse.lua.dbg.BackendToDebugger.getVariablesResponse)
+inline ::bg3se::lua::dbg::BkGetVariablesResponse* BackendToDebugger::release_getvariablesresponse() {
+  // @@protoc_insertion_point(field_release:bg3se.lua.dbg.BackendToDebugger.getVariablesResponse)
   if (has_getvariablesresponse()) {
     clear_has_msg();
-      ::dse::lua::dbg::BkGetVariablesResponse* temp = msg_.getvariablesresponse_;
+      ::bg3se::lua::dbg::BkGetVariablesResponse* temp = msg_.getvariablesresponse_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -8559,39 +8559,39 @@ inline ::dse::lua::dbg::BkGetVariablesResponse* BackendToDebugger::release_getva
     return NULL;
   }
 }
-inline const ::dse::lua::dbg::BkGetVariablesResponse& BackendToDebugger::getvariablesresponse() const {
-  // @@protoc_insertion_point(field_get:dse.lua.dbg.BackendToDebugger.getVariablesResponse)
+inline const ::bg3se::lua::dbg::BkGetVariablesResponse& BackendToDebugger::getvariablesresponse() const {
+  // @@protoc_insertion_point(field_get:bg3se.lua.dbg.BackendToDebugger.getVariablesResponse)
   return has_getvariablesresponse()
       ? *msg_.getvariablesresponse_
-      : *reinterpret_cast< ::dse::lua::dbg::BkGetVariablesResponse*>(&::dse::lua::dbg::_BkGetVariablesResponse_default_instance_);
+      : *reinterpret_cast< ::bg3se::lua::dbg::BkGetVariablesResponse*>(&::bg3se::lua::dbg::_BkGetVariablesResponse_default_instance_);
 }
-inline ::dse::lua::dbg::BkGetVariablesResponse* BackendToDebugger::unsafe_arena_release_getvariablesresponse() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.lua.dbg.BackendToDebugger.getVariablesResponse)
+inline ::bg3se::lua::dbg::BkGetVariablesResponse* BackendToDebugger::unsafe_arena_release_getvariablesresponse() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.lua.dbg.BackendToDebugger.getVariablesResponse)
   if (has_getvariablesresponse()) {
     clear_has_msg();
-    ::dse::lua::dbg::BkGetVariablesResponse* temp = msg_.getvariablesresponse_;
+    ::bg3se::lua::dbg::BkGetVariablesResponse* temp = msg_.getvariablesresponse_;
     msg_.getvariablesresponse_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void BackendToDebugger::unsafe_arena_set_allocated_getvariablesresponse(::dse::lua::dbg::BkGetVariablesResponse* getvariablesresponse) {
+inline void BackendToDebugger::unsafe_arena_set_allocated_getvariablesresponse(::bg3se::lua::dbg::BkGetVariablesResponse* getvariablesresponse) {
   clear_msg();
   if (getvariablesresponse) {
     set_has_getvariablesresponse();
     msg_.getvariablesresponse_ = getvariablesresponse;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.BackendToDebugger.getVariablesResponse)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.BackendToDebugger.getVariablesResponse)
 }
-inline ::dse::lua::dbg::BkGetVariablesResponse* BackendToDebugger::mutable_getvariablesresponse() {
+inline ::bg3se::lua::dbg::BkGetVariablesResponse* BackendToDebugger::mutable_getvariablesresponse() {
   if (!has_getvariablesresponse()) {
     clear_msg();
     set_has_getvariablesresponse();
-    msg_.getvariablesresponse_ = CreateMaybeMessage< ::dse::lua::dbg::BkGetVariablesResponse >(
+    msg_.getvariablesresponse_ = CreateMaybeMessage< ::bg3se::lua::dbg::BkGetVariablesResponse >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.lua.dbg.BackendToDebugger.getVariablesResponse)
+  // @@protoc_insertion_point(field_mutable:bg3se.lua.dbg.BackendToDebugger.getVariablesResponse)
   return msg_.getvariablesresponse_;
 }
 
@@ -8666,20 +8666,20 @@ inline BackendToDebugger::MsgCase BackendToDebugger::msg_case() const {
 
 }  // namespace dbg
 }  // namespace lua
-}  // namespace dse
+}  // namespace bg3se
 
 namespace google {
 namespace protobuf {
 
-template <> struct is_proto_enum< ::dse::lua::dbg::MsgTableKey_Type> : ::std::true_type {};
-template <> struct is_proto_enum< ::dse::lua::dbg::MsgChildValue_Type> : ::std::true_type {};
-template <> struct is_proto_enum< ::dse::lua::dbg::BkBreakpointTriggered_Reason> : ::std::true_type {};
-template <> struct is_proto_enum< ::dse::lua::dbg::DbgContinue_Action> : ::std::true_type {};
-template <> struct is_proto_enum< ::dse::lua::dbg::BkContextUpdated_Status> : ::std::true_type {};
-template <> struct is_proto_enum< ::dse::lua::dbg::BkDebugOutput_Severity> : ::std::true_type {};
-template <> struct is_proto_enum< ::dse::lua::dbg::StatusCode> : ::std::true_type {};
-template <> struct is_proto_enum< ::dse::lua::dbg::DbgContext> : ::std::true_type {};
-template <> struct is_proto_enum< ::dse::lua::dbg::MsgValueType> : ::std::true_type {};
+template <> struct is_proto_enum< ::bg3se::lua::dbg::MsgTableKey_Type> : ::std::true_type {};
+template <> struct is_proto_enum< ::bg3se::lua::dbg::MsgChildValue_Type> : ::std::true_type {};
+template <> struct is_proto_enum< ::bg3se::lua::dbg::BkBreakpointTriggered_Reason> : ::std::true_type {};
+template <> struct is_proto_enum< ::bg3se::lua::dbg::DbgContinue_Action> : ::std::true_type {};
+template <> struct is_proto_enum< ::bg3se::lua::dbg::BkContextUpdated_Status> : ::std::true_type {};
+template <> struct is_proto_enum< ::bg3se::lua::dbg::BkDebugOutput_Severity> : ::std::true_type {};
+template <> struct is_proto_enum< ::bg3se::lua::dbg::StatusCode> : ::std::true_type {};
+template <> struct is_proto_enum< ::bg3se::lua::dbg::DbgContext> : ::std::true_type {};
+template <> struct is_proto_enum< ::bg3se::lua::dbg::MsgValueType> : ::std::true_type {};
 
 }  // namespace protobuf
 }  // namespace google

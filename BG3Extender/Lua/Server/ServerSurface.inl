@@ -1,7 +1,7 @@
 //#include <GameDefinitions/Surface.h>
 #include <Lua/LuaBinding.h>
 
-namespace dse::lua
+namespace bg3se::lua
 {
 	/*char const* const ObjectProxy<esv::Surface>::MetatableName = "esv::Surface";
 
@@ -148,9 +148,9 @@ namespace dse::lua
 }
 
 
-namespace dse::esv::lua
+namespace bg3se::esv::lua
 {
-	using namespace dse::lua;
+	using namespace bg3se::lua;
 
 	int GetSurface(lua_State* L)
 	{

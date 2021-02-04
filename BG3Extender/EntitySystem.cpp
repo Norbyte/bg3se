@@ -7,7 +7,7 @@
 #include <GameDefinitions/ResourceDefinitions.h>
 #include "OsirisProxy.h"
 
-namespace dse
+namespace bg3se
 {
 	BaseComponent* ObjectFactoryBase::Get(ObjectHandle handle) const
 	{

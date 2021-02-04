@@ -2,7 +2,7 @@
 #include <GameDefinitions/Stats/Character.h>
 #include <Lua/LuaBinding.h>
 
-namespace dse::lua
+namespace bg3se::lua
 {
 	int LuaStatGetAttribute(lua_State* L, CRPGStats_Object* object, char const* attributeName, std::optional<int> level);
 	int LuaStatSetAttribute(lua_State* L, CRPGStats_Object* object, char const* attributeName, int valueIdx);

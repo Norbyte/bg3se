@@ -3,7 +3,7 @@
 #include <OsirisProxy.h>
 #include <GameDefinitions/Symbols.h>
 
-namespace dse
+namespace bg3se
 {
 	ecl::EoCClient * GetEoCClient()
 	{

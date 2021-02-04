@@ -43,7 +43,7 @@ struct TableStruct {
   static const ::google::protobuf::uint32 offsets[];
 };
 }  // namespace protobuf_ScriptExtensions_2eproto
-namespace dse {
+namespace bg3se {
 class MessageWrapper;
 class MessageWrapperDefaultTypeInternal;
 extern MessageWrapperDefaultTypeInternal _MessageWrapper_default_instance_;
@@ -80,28 +80,28 @@ extern StatPropertyListDefaultTypeInternal _StatPropertyList_default_instance_;
 class StatRequirement;
 class StatRequirementDefaultTypeInternal;
 extern StatRequirementDefaultTypeInternal _StatRequirement_default_instance_;
-}  // namespace dse
+}  // namespace bg3se
 namespace google {
 namespace protobuf {
-template<> ::dse::MessageWrapper* Arena::CreateMaybeMessage<::dse::MessageWrapper>(Arena*);
-template<> ::dse::MsgC2SExtenderHello* Arena::CreateMaybeMessage<::dse::MsgC2SExtenderHello>(Arena*);
-template<> ::dse::MsgC2SRequestNetworkFixedStrings* Arena::CreateMaybeMessage<::dse::MsgC2SRequestNetworkFixedStrings>(Arena*);
-template<> ::dse::MsgPostLuaMessage* Arena::CreateMaybeMessage<::dse::MsgPostLuaMessage>(Arena*);
-template<> ::dse::MsgS2CKick* Arena::CreateMaybeMessage<::dse::MsgS2CKick>(Arena*);
-template<> ::dse::MsgS2CResetLuaMessage* Arena::CreateMaybeMessage<::dse::MsgS2CResetLuaMessage>(Arena*);
-template<> ::dse::MsgS2CSyncNetworkFixedStrings* Arena::CreateMaybeMessage<::dse::MsgS2CSyncNetworkFixedStrings>(Arena*);
-template<> ::dse::MsgS2CSyncStat* Arena::CreateMaybeMessage<::dse::MsgS2CSyncStat>(Arena*);
-template<> ::dse::StatIndexedProperty* Arena::CreateMaybeMessage<::dse::StatIndexedProperty>(Arena*);
-template<> ::dse::StatProperty* Arena::CreateMaybeMessage<::dse::StatProperty>(Arena*);
-template<> ::dse::StatPropertyList* Arena::CreateMaybeMessage<::dse::StatPropertyList>(Arena*);
-template<> ::dse::StatRequirement* Arena::CreateMaybeMessage<::dse::StatRequirement>(Arena*);
+template<> ::bg3se::MessageWrapper* Arena::CreateMaybeMessage<::bg3se::MessageWrapper>(Arena*);
+template<> ::bg3se::MsgC2SExtenderHello* Arena::CreateMaybeMessage<::bg3se::MsgC2SExtenderHello>(Arena*);
+template<> ::bg3se::MsgC2SRequestNetworkFixedStrings* Arena::CreateMaybeMessage<::bg3se::MsgC2SRequestNetworkFixedStrings>(Arena*);
+template<> ::bg3se::MsgPostLuaMessage* Arena::CreateMaybeMessage<::bg3se::MsgPostLuaMessage>(Arena*);
+template<> ::bg3se::MsgS2CKick* Arena::CreateMaybeMessage<::bg3se::MsgS2CKick>(Arena*);
+template<> ::bg3se::MsgS2CResetLuaMessage* Arena::CreateMaybeMessage<::bg3se::MsgS2CResetLuaMessage>(Arena*);
+template<> ::bg3se::MsgS2CSyncNetworkFixedStrings* Arena::CreateMaybeMessage<::bg3se::MsgS2CSyncNetworkFixedStrings>(Arena*);
+template<> ::bg3se::MsgS2CSyncStat* Arena::CreateMaybeMessage<::bg3se::MsgS2CSyncStat>(Arena*);
+template<> ::bg3se::StatIndexedProperty* Arena::CreateMaybeMessage<::bg3se::StatIndexedProperty>(Arena*);
+template<> ::bg3se::StatProperty* Arena::CreateMaybeMessage<::bg3se::StatProperty>(Arena*);
+template<> ::bg3se::StatPropertyList* Arena::CreateMaybeMessage<::bg3se::StatPropertyList>(Arena*);
+template<> ::bg3se::StatRequirement* Arena::CreateMaybeMessage<::bg3se::StatRequirement>(Arena*);
 }  // namespace protobuf
 }  // namespace google
-namespace dse {
+namespace bg3se {
 
 // ===================================================================
 
-class MsgPostLuaMessage : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.MsgPostLuaMessage) */ {
+class MsgPostLuaMessage : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.MsgPostLuaMessage) */ {
  public:
   MsgPostLuaMessage();
   virtual ~MsgPostLuaMessage();
@@ -244,7 +244,7 @@ class MsgPostLuaMessage : public ::google::protobuf::MessageLite /* @@protoc_ins
   void unsafe_arena_set_allocated_payload(
       ::std::string* payload);
 
-  // @@protoc_insertion_point(class_scope:dse.MsgPostLuaMessage)
+  // @@protoc_insertion_point(class_scope:bg3se.MsgPostLuaMessage)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -258,7 +258,7 @@ class MsgPostLuaMessage : public ::google::protobuf::MessageLite /* @@protoc_ins
 };
 // -------------------------------------------------------------------
 
-class MsgS2CResetLuaMessage : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.MsgS2CResetLuaMessage) */ {
+class MsgS2CResetLuaMessage : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.MsgS2CResetLuaMessage) */ {
  public:
   MsgS2CResetLuaMessage();
   virtual ~MsgS2CResetLuaMessage();
@@ -361,7 +361,7 @@ class MsgS2CResetLuaMessage : public ::google::protobuf::MessageLite /* @@protoc
   bool bootstrap_scripts() const;
   void set_bootstrap_scripts(bool value);
 
-  // @@protoc_insertion_point(class_scope:dse.MsgS2CResetLuaMessage)
+  // @@protoc_insertion_point(class_scope:bg3se.MsgS2CResetLuaMessage)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -374,7 +374,7 @@ class MsgS2CResetLuaMessage : public ::google::protobuf::MessageLite /* @@protoc
 };
 // -------------------------------------------------------------------
 
-class MsgS2CSyncNetworkFixedStrings : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.MsgS2CSyncNetworkFixedStrings) */ {
+class MsgS2CSyncNetworkFixedStrings : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.MsgS2CSyncNetworkFixedStrings) */ {
  public:
   MsgS2CSyncNetworkFixedStrings();
   virtual ~MsgS2CSyncNetworkFixedStrings();
@@ -493,7 +493,7 @@ class MsgS2CSyncNetworkFixedStrings : public ::google::protobuf::MessageLite /* 
   const ::google::protobuf::RepeatedPtrField< ::std::string>& network_string() const;
   ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_network_string();
 
-  // @@protoc_insertion_point(class_scope:dse.MsgS2CSyncNetworkFixedStrings)
+  // @@protoc_insertion_point(class_scope:bg3se.MsgS2CSyncNetworkFixedStrings)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -506,7 +506,7 @@ class MsgS2CSyncNetworkFixedStrings : public ::google::protobuf::MessageLite /* 
 };
 // -------------------------------------------------------------------
 
-class MsgC2SRequestNetworkFixedStrings : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.MsgC2SRequestNetworkFixedStrings) */ {
+class MsgC2SRequestNetworkFixedStrings : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.MsgC2SRequestNetworkFixedStrings) */ {
  public:
   MsgC2SRequestNetworkFixedStrings();
   virtual ~MsgC2SRequestNetworkFixedStrings();
@@ -603,7 +603,7 @@ class MsgC2SRequestNetworkFixedStrings : public ::google::protobuf::MessageLite 
 
   // accessors -------------------------------------------------------
 
-  // @@protoc_insertion_point(class_scope:dse.MsgC2SRequestNetworkFixedStrings)
+  // @@protoc_insertion_point(class_scope:bg3se.MsgC2SRequestNetworkFixedStrings)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -615,7 +615,7 @@ class MsgC2SRequestNetworkFixedStrings : public ::google::protobuf::MessageLite 
 };
 // -------------------------------------------------------------------
 
-class MsgC2SExtenderHello : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.MsgC2SExtenderHello) */ {
+class MsgC2SExtenderHello : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.MsgC2SExtenderHello) */ {
  public:
   MsgC2SExtenderHello();
   virtual ~MsgC2SExtenderHello();
@@ -718,7 +718,7 @@ class MsgC2SExtenderHello : public ::google::protobuf::MessageLite /* @@protoc_i
   ::google::protobuf::uint32 version() const;
   void set_version(::google::protobuf::uint32 value);
 
-  // @@protoc_insertion_point(class_scope:dse.MsgC2SExtenderHello)
+  // @@protoc_insertion_point(class_scope:bg3se.MsgC2SExtenderHello)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -731,7 +731,7 @@ class MsgC2SExtenderHello : public ::google::protobuf::MessageLite /* @@protoc_i
 };
 // -------------------------------------------------------------------
 
-class StatRequirement : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.StatRequirement) */ {
+class StatRequirement : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.StatRequirement) */ {
  public:
   StatRequirement();
   virtual ~StatRequirement();
@@ -869,7 +869,7 @@ class StatRequirement : public ::google::protobuf::MessageLite /* @@protoc_inser
   bool negate() const;
   void set_negate(bool value);
 
-  // @@protoc_insertion_point(class_scope:dse.StatRequirement)
+  // @@protoc_insertion_point(class_scope:bg3se.StatRequirement)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -885,7 +885,7 @@ class StatRequirement : public ::google::protobuf::MessageLite /* @@protoc_inser
 };
 // -------------------------------------------------------------------
 
-class StatProperty : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.StatProperty) */ {
+class StatProperty : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.StatProperty) */ {
  public:
   StatProperty();
   virtual ~StatProperty();
@@ -1110,7 +1110,7 @@ class StatProperty : public ::google::protobuf::MessageLite /* @@protoc_insertio
   ::google::protobuf::uint32 type() const;
   void set_type(::google::protobuf::uint32 value);
 
-  // @@protoc_insertion_point(class_scope:dse.StatProperty)
+  // @@protoc_insertion_point(class_scope:bg3se.StatProperty)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -1135,7 +1135,7 @@ class StatProperty : public ::google::protobuf::MessageLite /* @@protoc_insertio
 };
 // -------------------------------------------------------------------
 
-class StatPropertyList : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.StatPropertyList) */ {
+class StatPropertyList : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.StatPropertyList) */ {
  public:
   StatPropertyList();
   virtual ~StatPropertyList();
@@ -1232,16 +1232,16 @@ class StatPropertyList : public ::google::protobuf::MessageLite /* @@protoc_inse
 
   // accessors -------------------------------------------------------
 
-  // repeated .dse.StatProperty properties = 2;
+  // repeated .bg3se.StatProperty properties = 2;
   int properties_size() const;
   void clear_properties();
   static const int kPropertiesFieldNumber = 2;
-  ::dse::StatProperty* mutable_properties(int index);
-  ::google::protobuf::RepeatedPtrField< ::dse::StatProperty >*
+  ::bg3se::StatProperty* mutable_properties(int index);
+  ::google::protobuf::RepeatedPtrField< ::bg3se::StatProperty >*
       mutable_properties();
-  const ::dse::StatProperty& properties(int index) const;
-  ::dse::StatProperty* add_properties();
-  const ::google::protobuf::RepeatedPtrField< ::dse::StatProperty >&
+  const ::bg3se::StatProperty& properties(int index) const;
+  ::bg3se::StatProperty* add_properties();
+  const ::google::protobuf::RepeatedPtrField< ::bg3se::StatProperty >&
       properties() const;
 
   // string name = 1;
@@ -1267,21 +1267,21 @@ class StatPropertyList : public ::google::protobuf::MessageLite /* @@protoc_inse
   void unsafe_arena_set_allocated_name(
       ::std::string* name);
 
-  // @@protoc_insertion_point(class_scope:dse.StatPropertyList)
+  // @@protoc_insertion_point(class_scope:bg3se.StatPropertyList)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
   template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::google::protobuf::RepeatedPtrField< ::dse::StatProperty > properties_;
+  ::google::protobuf::RepeatedPtrField< ::bg3se::StatProperty > properties_;
   ::google::protobuf::internal::ArenaStringPtr name_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_ScriptExtensions_2eproto::TableStruct;
 };
 // -------------------------------------------------------------------
 
-class StatIndexedProperty : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.StatIndexedProperty) */ {
+class StatIndexedProperty : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.StatIndexedProperty) */ {
  public:
   StatIndexedProperty();
   virtual ~StatIndexedProperty();
@@ -1407,7 +1407,7 @@ class StatIndexedProperty : public ::google::protobuf::MessageLite /* @@protoc_i
   ::google::protobuf::int32 intval() const;
   void set_intval(::google::protobuf::int32 value);
 
-  // @@protoc_insertion_point(class_scope:dse.StatIndexedProperty)
+  // @@protoc_insertion_point(class_scope:bg3se.StatIndexedProperty)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -1421,7 +1421,7 @@ class StatIndexedProperty : public ::google::protobuf::MessageLite /* @@protoc_i
 };
 // -------------------------------------------------------------------
 
-class MsgS2CSyncStat : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.MsgS2CSyncStat) */ {
+class MsgS2CSyncStat : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.MsgS2CSyncStat) */ {
  public:
   MsgS2CSyncStat();
   virtual ~MsgS2CSyncStat();
@@ -1518,40 +1518,40 @@ class MsgS2CSyncStat : public ::google::protobuf::MessageLite /* @@protoc_insert
 
   // accessors -------------------------------------------------------
 
-  // repeated .dse.StatIndexedProperty indexed_properties = 4;
+  // repeated .bg3se.StatIndexedProperty indexed_properties = 4;
   int indexed_properties_size() const;
   void clear_indexed_properties();
   static const int kIndexedPropertiesFieldNumber = 4;
-  ::dse::StatIndexedProperty* mutable_indexed_properties(int index);
-  ::google::protobuf::RepeatedPtrField< ::dse::StatIndexedProperty >*
+  ::bg3se::StatIndexedProperty* mutable_indexed_properties(int index);
+  ::google::protobuf::RepeatedPtrField< ::bg3se::StatIndexedProperty >*
       mutable_indexed_properties();
-  const ::dse::StatIndexedProperty& indexed_properties(int index) const;
-  ::dse::StatIndexedProperty* add_indexed_properties();
-  const ::google::protobuf::RepeatedPtrField< ::dse::StatIndexedProperty >&
+  const ::bg3se::StatIndexedProperty& indexed_properties(int index) const;
+  ::bg3se::StatIndexedProperty* add_indexed_properties();
+  const ::google::protobuf::RepeatedPtrField< ::bg3se::StatIndexedProperty >&
       indexed_properties() const;
 
-  // repeated .dse.StatRequirement requirements = 6;
+  // repeated .bg3se.StatRequirement requirements = 6;
   int requirements_size() const;
   void clear_requirements();
   static const int kRequirementsFieldNumber = 6;
-  ::dse::StatRequirement* mutable_requirements(int index);
-  ::google::protobuf::RepeatedPtrField< ::dse::StatRequirement >*
+  ::bg3se::StatRequirement* mutable_requirements(int index);
+  ::google::protobuf::RepeatedPtrField< ::bg3se::StatRequirement >*
       mutable_requirements();
-  const ::dse::StatRequirement& requirements(int index) const;
-  ::dse::StatRequirement* add_requirements();
-  const ::google::protobuf::RepeatedPtrField< ::dse::StatRequirement >&
+  const ::bg3se::StatRequirement& requirements(int index) const;
+  ::bg3se::StatRequirement* add_requirements();
+  const ::google::protobuf::RepeatedPtrField< ::bg3se::StatRequirement >&
       requirements() const;
 
-  // repeated .dse.StatRequirement memorization_requirements = 7;
+  // repeated .bg3se.StatRequirement memorization_requirements = 7;
   int memorization_requirements_size() const;
   void clear_memorization_requirements();
   static const int kMemorizationRequirementsFieldNumber = 7;
-  ::dse::StatRequirement* mutable_memorization_requirements(int index);
-  ::google::protobuf::RepeatedPtrField< ::dse::StatRequirement >*
+  ::bg3se::StatRequirement* mutable_memorization_requirements(int index);
+  ::google::protobuf::RepeatedPtrField< ::bg3se::StatRequirement >*
       mutable_memorization_requirements();
-  const ::dse::StatRequirement& memorization_requirements(int index) const;
-  ::dse::StatRequirement* add_memorization_requirements();
-  const ::google::protobuf::RepeatedPtrField< ::dse::StatRequirement >&
+  const ::bg3se::StatRequirement& memorization_requirements(int index) const;
+  ::bg3se::StatRequirement* add_memorization_requirements();
+  const ::google::protobuf::RepeatedPtrField< ::bg3se::StatRequirement >&
       memorization_requirements() const;
 
   // repeated string combo_categories = 8;
@@ -1576,16 +1576,16 @@ class MsgS2CSyncStat : public ::google::protobuf::MessageLite /* @@protoc_insert
   const ::google::protobuf::RepeatedPtrField< ::std::string>& combo_categories() const;
   ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_combo_categories();
 
-  // repeated .dse.StatPropertyList property_lists = 9;
+  // repeated .bg3se.StatPropertyList property_lists = 9;
   int property_lists_size() const;
   void clear_property_lists();
   static const int kPropertyListsFieldNumber = 9;
-  ::dse::StatPropertyList* mutable_property_lists(int index);
-  ::google::protobuf::RepeatedPtrField< ::dse::StatPropertyList >*
+  ::bg3se::StatPropertyList* mutable_property_lists(int index);
+  ::google::protobuf::RepeatedPtrField< ::bg3se::StatPropertyList >*
       mutable_property_lists();
-  const ::dse::StatPropertyList& property_lists(int index) const;
-  ::dse::StatPropertyList* add_property_lists();
-  const ::google::protobuf::RepeatedPtrField< ::dse::StatPropertyList >&
+  const ::bg3se::StatPropertyList& property_lists(int index) const;
+  ::bg3se::StatPropertyList* add_property_lists();
+  const ::google::protobuf::RepeatedPtrField< ::bg3se::StatPropertyList >&
       property_lists() const;
 
   // string name = 1;
@@ -1646,18 +1646,18 @@ class MsgS2CSyncStat : public ::google::protobuf::MessageLite /* @@protoc_insert
   ::google::protobuf::int32 modifier_list() const;
   void set_modifier_list(::google::protobuf::int32 value);
 
-  // @@protoc_insertion_point(class_scope:dse.MsgS2CSyncStat)
+  // @@protoc_insertion_point(class_scope:bg3se.MsgS2CSyncStat)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
   template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::google::protobuf::RepeatedPtrField< ::dse::StatIndexedProperty > indexed_properties_;
-  ::google::protobuf::RepeatedPtrField< ::dse::StatRequirement > requirements_;
-  ::google::protobuf::RepeatedPtrField< ::dse::StatRequirement > memorization_requirements_;
+  ::google::protobuf::RepeatedPtrField< ::bg3se::StatIndexedProperty > indexed_properties_;
+  ::google::protobuf::RepeatedPtrField< ::bg3se::StatRequirement > requirements_;
+  ::google::protobuf::RepeatedPtrField< ::bg3se::StatRequirement > memorization_requirements_;
   ::google::protobuf::RepeatedPtrField< ::std::string> combo_categories_;
-  ::google::protobuf::RepeatedPtrField< ::dse::StatPropertyList > property_lists_;
+  ::google::protobuf::RepeatedPtrField< ::bg3se::StatPropertyList > property_lists_;
   ::google::protobuf::internal::ArenaStringPtr name_;
   ::google::protobuf::internal::ArenaStringPtr ai_flags_;
   ::google::protobuf::int32 level_;
@@ -1667,7 +1667,7 @@ class MsgS2CSyncStat : public ::google::protobuf::MessageLite /* @@protoc_insert
 };
 // -------------------------------------------------------------------
 
-class MsgS2CKick : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.MsgS2CKick) */ {
+class MsgS2CKick : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.MsgS2CKick) */ {
  public:
   MsgS2CKick();
   virtual ~MsgS2CKick();
@@ -1787,7 +1787,7 @@ class MsgS2CKick : public ::google::protobuf::MessageLite /* @@protoc_insertion_
   void unsafe_arena_set_allocated_message(
       ::std::string* message);
 
-  // @@protoc_insertion_point(class_scope:dse.MsgS2CKick)
+  // @@protoc_insertion_point(class_scope:bg3se.MsgS2CKick)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -1800,7 +1800,7 @@ class MsgS2CKick : public ::google::protobuf::MessageLite /* @@protoc_insertion_
 };
 // -------------------------------------------------------------------
 
-class MessageWrapper : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.MessageWrapper) */ {
+class MessageWrapper : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.MessageWrapper) */ {
  public:
   MessageWrapper();
   virtual ~MessageWrapper();
@@ -1908,114 +1908,114 @@ class MessageWrapper : public ::google::protobuf::MessageLite /* @@protoc_insert
 
   // accessors -------------------------------------------------------
 
-  // .dse.MsgPostLuaMessage post_lua = 1;
+  // .bg3se.MsgPostLuaMessage post_lua = 1;
   bool has_post_lua() const;
   void clear_post_lua();
   static const int kPostLuaFieldNumber = 1;
   private:
-  const ::dse::MsgPostLuaMessage& _internal_post_lua() const;
+  const ::bg3se::MsgPostLuaMessage& _internal_post_lua() const;
   public:
-  const ::dse::MsgPostLuaMessage& post_lua() const;
-  ::dse::MsgPostLuaMessage* release_post_lua();
-  ::dse::MsgPostLuaMessage* mutable_post_lua();
-  void set_allocated_post_lua(::dse::MsgPostLuaMessage* post_lua);
+  const ::bg3se::MsgPostLuaMessage& post_lua() const;
+  ::bg3se::MsgPostLuaMessage* release_post_lua();
+  ::bg3se::MsgPostLuaMessage* mutable_post_lua();
+  void set_allocated_post_lua(::bg3se::MsgPostLuaMessage* post_lua);
   void unsafe_arena_set_allocated_post_lua(
-      ::dse::MsgPostLuaMessage* post_lua);
-  ::dse::MsgPostLuaMessage* unsafe_arena_release_post_lua();
+      ::bg3se::MsgPostLuaMessage* post_lua);
+  ::bg3se::MsgPostLuaMessage* unsafe_arena_release_post_lua();
 
-  // .dse.MsgS2CResetLuaMessage s2c_reset_lua = 2;
+  // .bg3se.MsgS2CResetLuaMessage s2c_reset_lua = 2;
   bool has_s2c_reset_lua() const;
   void clear_s2c_reset_lua();
   static const int kS2CResetLuaFieldNumber = 2;
   private:
-  const ::dse::MsgS2CResetLuaMessage& _internal_s2c_reset_lua() const;
+  const ::bg3se::MsgS2CResetLuaMessage& _internal_s2c_reset_lua() const;
   public:
-  const ::dse::MsgS2CResetLuaMessage& s2c_reset_lua() const;
-  ::dse::MsgS2CResetLuaMessage* release_s2c_reset_lua();
-  ::dse::MsgS2CResetLuaMessage* mutable_s2c_reset_lua();
-  void set_allocated_s2c_reset_lua(::dse::MsgS2CResetLuaMessage* s2c_reset_lua);
+  const ::bg3se::MsgS2CResetLuaMessage& s2c_reset_lua() const;
+  ::bg3se::MsgS2CResetLuaMessage* release_s2c_reset_lua();
+  ::bg3se::MsgS2CResetLuaMessage* mutable_s2c_reset_lua();
+  void set_allocated_s2c_reset_lua(::bg3se::MsgS2CResetLuaMessage* s2c_reset_lua);
   void unsafe_arena_set_allocated_s2c_reset_lua(
-      ::dse::MsgS2CResetLuaMessage* s2c_reset_lua);
-  ::dse::MsgS2CResetLuaMessage* unsafe_arena_release_s2c_reset_lua();
+      ::bg3se::MsgS2CResetLuaMessage* s2c_reset_lua);
+  ::bg3se::MsgS2CResetLuaMessage* unsafe_arena_release_s2c_reset_lua();
 
-  // .dse.MsgS2CSyncNetworkFixedStrings s2c_sync_strings = 3;
+  // .bg3se.MsgS2CSyncNetworkFixedStrings s2c_sync_strings = 3;
   bool has_s2c_sync_strings() const;
   void clear_s2c_sync_strings();
   static const int kS2CSyncStringsFieldNumber = 3;
   private:
-  const ::dse::MsgS2CSyncNetworkFixedStrings& _internal_s2c_sync_strings() const;
+  const ::bg3se::MsgS2CSyncNetworkFixedStrings& _internal_s2c_sync_strings() const;
   public:
-  const ::dse::MsgS2CSyncNetworkFixedStrings& s2c_sync_strings() const;
-  ::dse::MsgS2CSyncNetworkFixedStrings* release_s2c_sync_strings();
-  ::dse::MsgS2CSyncNetworkFixedStrings* mutable_s2c_sync_strings();
-  void set_allocated_s2c_sync_strings(::dse::MsgS2CSyncNetworkFixedStrings* s2c_sync_strings);
+  const ::bg3se::MsgS2CSyncNetworkFixedStrings& s2c_sync_strings() const;
+  ::bg3se::MsgS2CSyncNetworkFixedStrings* release_s2c_sync_strings();
+  ::bg3se::MsgS2CSyncNetworkFixedStrings* mutable_s2c_sync_strings();
+  void set_allocated_s2c_sync_strings(::bg3se::MsgS2CSyncNetworkFixedStrings* s2c_sync_strings);
   void unsafe_arena_set_allocated_s2c_sync_strings(
-      ::dse::MsgS2CSyncNetworkFixedStrings* s2c_sync_strings);
-  ::dse::MsgS2CSyncNetworkFixedStrings* unsafe_arena_release_s2c_sync_strings();
+      ::bg3se::MsgS2CSyncNetworkFixedStrings* s2c_sync_strings);
+  ::bg3se::MsgS2CSyncNetworkFixedStrings* unsafe_arena_release_s2c_sync_strings();
 
-  // .dse.MsgC2SRequestNetworkFixedStrings c2s_request_strings = 4;
+  // .bg3se.MsgC2SRequestNetworkFixedStrings c2s_request_strings = 4;
   bool has_c2s_request_strings() const;
   void clear_c2s_request_strings();
   static const int kC2SRequestStringsFieldNumber = 4;
   private:
-  const ::dse::MsgC2SRequestNetworkFixedStrings& _internal_c2s_request_strings() const;
+  const ::bg3se::MsgC2SRequestNetworkFixedStrings& _internal_c2s_request_strings() const;
   public:
-  const ::dse::MsgC2SRequestNetworkFixedStrings& c2s_request_strings() const;
-  ::dse::MsgC2SRequestNetworkFixedStrings* release_c2s_request_strings();
-  ::dse::MsgC2SRequestNetworkFixedStrings* mutable_c2s_request_strings();
-  void set_allocated_c2s_request_strings(::dse::MsgC2SRequestNetworkFixedStrings* c2s_request_strings);
+  const ::bg3se::MsgC2SRequestNetworkFixedStrings& c2s_request_strings() const;
+  ::bg3se::MsgC2SRequestNetworkFixedStrings* release_c2s_request_strings();
+  ::bg3se::MsgC2SRequestNetworkFixedStrings* mutable_c2s_request_strings();
+  void set_allocated_c2s_request_strings(::bg3se::MsgC2SRequestNetworkFixedStrings* c2s_request_strings);
   void unsafe_arena_set_allocated_c2s_request_strings(
-      ::dse::MsgC2SRequestNetworkFixedStrings* c2s_request_strings);
-  ::dse::MsgC2SRequestNetworkFixedStrings* unsafe_arena_release_c2s_request_strings();
+      ::bg3se::MsgC2SRequestNetworkFixedStrings* c2s_request_strings);
+  ::bg3se::MsgC2SRequestNetworkFixedStrings* unsafe_arena_release_c2s_request_strings();
 
-  // .dse.MsgC2SExtenderHello c2s_extender_hello = 5;
+  // .bg3se.MsgC2SExtenderHello c2s_extender_hello = 5;
   bool has_c2s_extender_hello() const;
   void clear_c2s_extender_hello();
   static const int kC2SExtenderHelloFieldNumber = 5;
   private:
-  const ::dse::MsgC2SExtenderHello& _internal_c2s_extender_hello() const;
+  const ::bg3se::MsgC2SExtenderHello& _internal_c2s_extender_hello() const;
   public:
-  const ::dse::MsgC2SExtenderHello& c2s_extender_hello() const;
-  ::dse::MsgC2SExtenderHello* release_c2s_extender_hello();
-  ::dse::MsgC2SExtenderHello* mutable_c2s_extender_hello();
-  void set_allocated_c2s_extender_hello(::dse::MsgC2SExtenderHello* c2s_extender_hello);
+  const ::bg3se::MsgC2SExtenderHello& c2s_extender_hello() const;
+  ::bg3se::MsgC2SExtenderHello* release_c2s_extender_hello();
+  ::bg3se::MsgC2SExtenderHello* mutable_c2s_extender_hello();
+  void set_allocated_c2s_extender_hello(::bg3se::MsgC2SExtenderHello* c2s_extender_hello);
   void unsafe_arena_set_allocated_c2s_extender_hello(
-      ::dse::MsgC2SExtenderHello* c2s_extender_hello);
-  ::dse::MsgC2SExtenderHello* unsafe_arena_release_c2s_extender_hello();
+      ::bg3se::MsgC2SExtenderHello* c2s_extender_hello);
+  ::bg3se::MsgC2SExtenderHello* unsafe_arena_release_c2s_extender_hello();
 
-  // .dse.MsgS2CSyncStat s2c_sync_stat = 6;
+  // .bg3se.MsgS2CSyncStat s2c_sync_stat = 6;
   bool has_s2c_sync_stat() const;
   void clear_s2c_sync_stat();
   static const int kS2CSyncStatFieldNumber = 6;
   private:
-  const ::dse::MsgS2CSyncStat& _internal_s2c_sync_stat() const;
+  const ::bg3se::MsgS2CSyncStat& _internal_s2c_sync_stat() const;
   public:
-  const ::dse::MsgS2CSyncStat& s2c_sync_stat() const;
-  ::dse::MsgS2CSyncStat* release_s2c_sync_stat();
-  ::dse::MsgS2CSyncStat* mutable_s2c_sync_stat();
-  void set_allocated_s2c_sync_stat(::dse::MsgS2CSyncStat* s2c_sync_stat);
+  const ::bg3se::MsgS2CSyncStat& s2c_sync_stat() const;
+  ::bg3se::MsgS2CSyncStat* release_s2c_sync_stat();
+  ::bg3se::MsgS2CSyncStat* mutable_s2c_sync_stat();
+  void set_allocated_s2c_sync_stat(::bg3se::MsgS2CSyncStat* s2c_sync_stat);
   void unsafe_arena_set_allocated_s2c_sync_stat(
-      ::dse::MsgS2CSyncStat* s2c_sync_stat);
-  ::dse::MsgS2CSyncStat* unsafe_arena_release_s2c_sync_stat();
+      ::bg3se::MsgS2CSyncStat* s2c_sync_stat);
+  ::bg3se::MsgS2CSyncStat* unsafe_arena_release_s2c_sync_stat();
 
-  // .dse.MsgS2CKick s2c_kick = 7;
+  // .bg3se.MsgS2CKick s2c_kick = 7;
   bool has_s2c_kick() const;
   void clear_s2c_kick();
   static const int kS2CKickFieldNumber = 7;
   private:
-  const ::dse::MsgS2CKick& _internal_s2c_kick() const;
+  const ::bg3se::MsgS2CKick& _internal_s2c_kick() const;
   public:
-  const ::dse::MsgS2CKick& s2c_kick() const;
-  ::dse::MsgS2CKick* release_s2c_kick();
-  ::dse::MsgS2CKick* mutable_s2c_kick();
-  void set_allocated_s2c_kick(::dse::MsgS2CKick* s2c_kick);
+  const ::bg3se::MsgS2CKick& s2c_kick() const;
+  ::bg3se::MsgS2CKick* release_s2c_kick();
+  ::bg3se::MsgS2CKick* mutable_s2c_kick();
+  void set_allocated_s2c_kick(::bg3se::MsgS2CKick* s2c_kick);
   void unsafe_arena_set_allocated_s2c_kick(
-      ::dse::MsgS2CKick* s2c_kick);
-  ::dse::MsgS2CKick* unsafe_arena_release_s2c_kick();
+      ::bg3se::MsgS2CKick* s2c_kick);
+  ::bg3se::MsgS2CKick* unsafe_arena_release_s2c_kick();
 
   void clear_msg();
   MsgCase msg_case() const;
-  // @@protoc_insertion_point(class_scope:dse.MessageWrapper)
+  // @@protoc_insertion_point(class_scope:bg3se.MessageWrapper)
  private:
   void set_has_post_lua();
   void set_has_s2c_reset_lua();
@@ -2034,13 +2034,13 @@ class MessageWrapper : public ::google::protobuf::MessageLite /* @@protoc_insert
   typedef void DestructorSkippable_;
   union MsgUnion {
     MsgUnion() {}
-    ::dse::MsgPostLuaMessage* post_lua_;
-    ::dse::MsgS2CResetLuaMessage* s2c_reset_lua_;
-    ::dse::MsgS2CSyncNetworkFixedStrings* s2c_sync_strings_;
-    ::dse::MsgC2SRequestNetworkFixedStrings* c2s_request_strings_;
-    ::dse::MsgC2SExtenderHello* c2s_extender_hello_;
-    ::dse::MsgS2CSyncStat* s2c_sync_stat_;
-    ::dse::MsgS2CKick* s2c_kick_;
+    ::bg3se::MsgPostLuaMessage* post_lua_;
+    ::bg3se::MsgS2CResetLuaMessage* s2c_reset_lua_;
+    ::bg3se::MsgS2CSyncNetworkFixedStrings* s2c_sync_strings_;
+    ::bg3se::MsgC2SRequestNetworkFixedStrings* c2s_request_strings_;
+    ::bg3se::MsgC2SExtenderHello* c2s_extender_hello_;
+    ::bg3se::MsgS2CSyncStat* s2c_sync_stat_;
+    ::bg3se::MsgS2CKick* s2c_kick_;
   } msg_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   ::google::protobuf::uint32 _oneof_case_[1];
@@ -2063,20 +2063,20 @@ inline void MsgPostLuaMessage::clear_channel_name() {
   channel_name_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& MsgPostLuaMessage::channel_name() const {
-  // @@protoc_insertion_point(field_get:dse.MsgPostLuaMessage.channel_name)
+  // @@protoc_insertion_point(field_get:bg3se.MsgPostLuaMessage.channel_name)
   return channel_name_.Get();
 }
 inline void MsgPostLuaMessage::set_channel_name(const ::std::string& value) {
   
   channel_name_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.MsgPostLuaMessage.channel_name)
+  // @@protoc_insertion_point(field_set:bg3se.MsgPostLuaMessage.channel_name)
 }
 #if LANG_CXX11
 inline void MsgPostLuaMessage::set_channel_name(::std::string&& value) {
   
   channel_name_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.MsgPostLuaMessage.channel_name)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.MsgPostLuaMessage.channel_name)
 }
 #endif
 inline void MsgPostLuaMessage::set_channel_name(const char* value) {
@@ -2084,22 +2084,22 @@ inline void MsgPostLuaMessage::set_channel_name(const char* value) {
   
   channel_name_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.MsgPostLuaMessage.channel_name)
+  // @@protoc_insertion_point(field_set_char:bg3se.MsgPostLuaMessage.channel_name)
 }
 inline void MsgPostLuaMessage::set_channel_name(const char* value,
     size_t size) {
   
   channel_name_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.MsgPostLuaMessage.channel_name)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.MsgPostLuaMessage.channel_name)
 }
 inline ::std::string* MsgPostLuaMessage::mutable_channel_name() {
   
-  // @@protoc_insertion_point(field_mutable:dse.MsgPostLuaMessage.channel_name)
+  // @@protoc_insertion_point(field_mutable:bg3se.MsgPostLuaMessage.channel_name)
   return channel_name_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* MsgPostLuaMessage::release_channel_name() {
-  // @@protoc_insertion_point(field_release:dse.MsgPostLuaMessage.channel_name)
+  // @@protoc_insertion_point(field_release:bg3se.MsgPostLuaMessage.channel_name)
   
   return channel_name_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -2111,10 +2111,10 @@ inline void MsgPostLuaMessage::set_allocated_channel_name(::std::string* channel
   }
   channel_name_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), channel_name,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.MsgPostLuaMessage.channel_name)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.MsgPostLuaMessage.channel_name)
 }
 inline ::std::string* MsgPostLuaMessage::unsafe_arena_release_channel_name() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.MsgPostLuaMessage.channel_name)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.MsgPostLuaMessage.channel_name)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return channel_name_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -2130,7 +2130,7 @@ inline void MsgPostLuaMessage::unsafe_arena_set_allocated_channel_name(
   }
   channel_name_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       channel_name, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.MsgPostLuaMessage.channel_name)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.MsgPostLuaMessage.channel_name)
 }
 
 // string payload = 2;
@@ -2138,20 +2138,20 @@ inline void MsgPostLuaMessage::clear_payload() {
   payload_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& MsgPostLuaMessage::payload() const {
-  // @@protoc_insertion_point(field_get:dse.MsgPostLuaMessage.payload)
+  // @@protoc_insertion_point(field_get:bg3se.MsgPostLuaMessage.payload)
   return payload_.Get();
 }
 inline void MsgPostLuaMessage::set_payload(const ::std::string& value) {
   
   payload_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.MsgPostLuaMessage.payload)
+  // @@protoc_insertion_point(field_set:bg3se.MsgPostLuaMessage.payload)
 }
 #if LANG_CXX11
 inline void MsgPostLuaMessage::set_payload(::std::string&& value) {
   
   payload_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.MsgPostLuaMessage.payload)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.MsgPostLuaMessage.payload)
 }
 #endif
 inline void MsgPostLuaMessage::set_payload(const char* value) {
@@ -2159,22 +2159,22 @@ inline void MsgPostLuaMessage::set_payload(const char* value) {
   
   payload_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.MsgPostLuaMessage.payload)
+  // @@protoc_insertion_point(field_set_char:bg3se.MsgPostLuaMessage.payload)
 }
 inline void MsgPostLuaMessage::set_payload(const char* value,
     size_t size) {
   
   payload_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.MsgPostLuaMessage.payload)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.MsgPostLuaMessage.payload)
 }
 inline ::std::string* MsgPostLuaMessage::mutable_payload() {
   
-  // @@protoc_insertion_point(field_mutable:dse.MsgPostLuaMessage.payload)
+  // @@protoc_insertion_point(field_mutable:bg3se.MsgPostLuaMessage.payload)
   return payload_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* MsgPostLuaMessage::release_payload() {
-  // @@protoc_insertion_point(field_release:dse.MsgPostLuaMessage.payload)
+  // @@protoc_insertion_point(field_release:bg3se.MsgPostLuaMessage.payload)
   
   return payload_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -2186,10 +2186,10 @@ inline void MsgPostLuaMessage::set_allocated_payload(::std::string* payload) {
   }
   payload_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), payload,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.MsgPostLuaMessage.payload)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.MsgPostLuaMessage.payload)
 }
 inline ::std::string* MsgPostLuaMessage::unsafe_arena_release_payload() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.MsgPostLuaMessage.payload)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.MsgPostLuaMessage.payload)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return payload_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -2205,7 +2205,7 @@ inline void MsgPostLuaMessage::unsafe_arena_set_allocated_payload(
   }
   payload_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       payload, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.MsgPostLuaMessage.payload)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.MsgPostLuaMessage.payload)
 }
 
 // -------------------------------------------------------------------
@@ -2217,13 +2217,13 @@ inline void MsgS2CResetLuaMessage::clear_bootstrap_scripts() {
   bootstrap_scripts_ = false;
 }
 inline bool MsgS2CResetLuaMessage::bootstrap_scripts() const {
-  // @@protoc_insertion_point(field_get:dse.MsgS2CResetLuaMessage.bootstrap_scripts)
+  // @@protoc_insertion_point(field_get:bg3se.MsgS2CResetLuaMessage.bootstrap_scripts)
   return bootstrap_scripts_;
 }
 inline void MsgS2CResetLuaMessage::set_bootstrap_scripts(bool value) {
   
   bootstrap_scripts_ = value;
-  // @@protoc_insertion_point(field_set:dse.MsgS2CResetLuaMessage.bootstrap_scripts)
+  // @@protoc_insertion_point(field_set:bg3se.MsgS2CResetLuaMessage.bootstrap_scripts)
 }
 
 // -------------------------------------------------------------------
@@ -2238,64 +2238,64 @@ inline void MsgS2CSyncNetworkFixedStrings::clear_network_string() {
   network_string_.Clear();
 }
 inline const ::std::string& MsgS2CSyncNetworkFixedStrings::network_string(int index) const {
-  // @@protoc_insertion_point(field_get:dse.MsgS2CSyncNetworkFixedStrings.network_string)
+  // @@protoc_insertion_point(field_get:bg3se.MsgS2CSyncNetworkFixedStrings.network_string)
   return network_string_.Get(index);
 }
 inline ::std::string* MsgS2CSyncNetworkFixedStrings::mutable_network_string(int index) {
-  // @@protoc_insertion_point(field_mutable:dse.MsgS2CSyncNetworkFixedStrings.network_string)
+  // @@protoc_insertion_point(field_mutable:bg3se.MsgS2CSyncNetworkFixedStrings.network_string)
   return network_string_.Mutable(index);
 }
 inline void MsgS2CSyncNetworkFixedStrings::set_network_string(int index, const ::std::string& value) {
-  // @@protoc_insertion_point(field_set:dse.MsgS2CSyncNetworkFixedStrings.network_string)
+  // @@protoc_insertion_point(field_set:bg3se.MsgS2CSyncNetworkFixedStrings.network_string)
   network_string_.Mutable(index)->assign(value);
 }
 #if LANG_CXX11
 inline void MsgS2CSyncNetworkFixedStrings::set_network_string(int index, ::std::string&& value) {
-  // @@protoc_insertion_point(field_set:dse.MsgS2CSyncNetworkFixedStrings.network_string)
+  // @@protoc_insertion_point(field_set:bg3se.MsgS2CSyncNetworkFixedStrings.network_string)
   network_string_.Mutable(index)->assign(std::move(value));
 }
 #endif
 inline void MsgS2CSyncNetworkFixedStrings::set_network_string(int index, const char* value) {
   GOOGLE_DCHECK(value != NULL);
   network_string_.Mutable(index)->assign(value);
-  // @@protoc_insertion_point(field_set_char:dse.MsgS2CSyncNetworkFixedStrings.network_string)
+  // @@protoc_insertion_point(field_set_char:bg3se.MsgS2CSyncNetworkFixedStrings.network_string)
 }
 inline void MsgS2CSyncNetworkFixedStrings::set_network_string(int index, const char* value, size_t size) {
   network_string_.Mutable(index)->assign(
     reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:dse.MsgS2CSyncNetworkFixedStrings.network_string)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.MsgS2CSyncNetworkFixedStrings.network_string)
 }
 inline ::std::string* MsgS2CSyncNetworkFixedStrings::add_network_string() {
-  // @@protoc_insertion_point(field_add_mutable:dse.MsgS2CSyncNetworkFixedStrings.network_string)
+  // @@protoc_insertion_point(field_add_mutable:bg3se.MsgS2CSyncNetworkFixedStrings.network_string)
   return network_string_.Add();
 }
 inline void MsgS2CSyncNetworkFixedStrings::add_network_string(const ::std::string& value) {
   network_string_.Add()->assign(value);
-  // @@protoc_insertion_point(field_add:dse.MsgS2CSyncNetworkFixedStrings.network_string)
+  // @@protoc_insertion_point(field_add:bg3se.MsgS2CSyncNetworkFixedStrings.network_string)
 }
 #if LANG_CXX11
 inline void MsgS2CSyncNetworkFixedStrings::add_network_string(::std::string&& value) {
   network_string_.Add(std::move(value));
-  // @@protoc_insertion_point(field_add:dse.MsgS2CSyncNetworkFixedStrings.network_string)
+  // @@protoc_insertion_point(field_add:bg3se.MsgS2CSyncNetworkFixedStrings.network_string)
 }
 #endif
 inline void MsgS2CSyncNetworkFixedStrings::add_network_string(const char* value) {
   GOOGLE_DCHECK(value != NULL);
   network_string_.Add()->assign(value);
-  // @@protoc_insertion_point(field_add_char:dse.MsgS2CSyncNetworkFixedStrings.network_string)
+  // @@protoc_insertion_point(field_add_char:bg3se.MsgS2CSyncNetworkFixedStrings.network_string)
 }
 inline void MsgS2CSyncNetworkFixedStrings::add_network_string(const char* value, size_t size) {
   network_string_.Add()->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_add_pointer:dse.MsgS2CSyncNetworkFixedStrings.network_string)
+  // @@protoc_insertion_point(field_add_pointer:bg3se.MsgS2CSyncNetworkFixedStrings.network_string)
 }
 inline const ::google::protobuf::RepeatedPtrField< ::std::string>&
 MsgS2CSyncNetworkFixedStrings::network_string() const {
-  // @@protoc_insertion_point(field_list:dse.MsgS2CSyncNetworkFixedStrings.network_string)
+  // @@protoc_insertion_point(field_list:bg3se.MsgS2CSyncNetworkFixedStrings.network_string)
   return network_string_;
 }
 inline ::google::protobuf::RepeatedPtrField< ::std::string>*
 MsgS2CSyncNetworkFixedStrings::mutable_network_string() {
-  // @@protoc_insertion_point(field_mutable_list:dse.MsgS2CSyncNetworkFixedStrings.network_string)
+  // @@protoc_insertion_point(field_mutable_list:bg3se.MsgS2CSyncNetworkFixedStrings.network_string)
   return &network_string_;
 }
 
@@ -2312,13 +2312,13 @@ inline void MsgC2SExtenderHello::clear_version() {
   version_ = 0u;
 }
 inline ::google::protobuf::uint32 MsgC2SExtenderHello::version() const {
-  // @@protoc_insertion_point(field_get:dse.MsgC2SExtenderHello.version)
+  // @@protoc_insertion_point(field_get:bg3se.MsgC2SExtenderHello.version)
   return version_;
 }
 inline void MsgC2SExtenderHello::set_version(::google::protobuf::uint32 value) {
   
   version_ = value;
-  // @@protoc_insertion_point(field_set:dse.MsgC2SExtenderHello.version)
+  // @@protoc_insertion_point(field_set:bg3se.MsgC2SExtenderHello.version)
 }
 
 // -------------------------------------------------------------------
@@ -2330,13 +2330,13 @@ inline void StatRequirement::clear_requirement() {
   requirement_ = 0;
 }
 inline ::google::protobuf::int32 StatRequirement::requirement() const {
-  // @@protoc_insertion_point(field_get:dse.StatRequirement.requirement)
+  // @@protoc_insertion_point(field_get:bg3se.StatRequirement.requirement)
   return requirement_;
 }
 inline void StatRequirement::set_requirement(::google::protobuf::int32 value) {
   
   requirement_ = value;
-  // @@protoc_insertion_point(field_set:dse.StatRequirement.requirement)
+  // @@protoc_insertion_point(field_set:bg3se.StatRequirement.requirement)
 }
 
 // int32 int_param = 2;
@@ -2344,13 +2344,13 @@ inline void StatRequirement::clear_int_param() {
   int_param_ = 0;
 }
 inline ::google::protobuf::int32 StatRequirement::int_param() const {
-  // @@protoc_insertion_point(field_get:dse.StatRequirement.int_param)
+  // @@protoc_insertion_point(field_get:bg3se.StatRequirement.int_param)
   return int_param_;
 }
 inline void StatRequirement::set_int_param(::google::protobuf::int32 value) {
   
   int_param_ = value;
-  // @@protoc_insertion_point(field_set:dse.StatRequirement.int_param)
+  // @@protoc_insertion_point(field_set:bg3se.StatRequirement.int_param)
 }
 
 // string string_param = 3;
@@ -2358,20 +2358,20 @@ inline void StatRequirement::clear_string_param() {
   string_param_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& StatRequirement::string_param() const {
-  // @@protoc_insertion_point(field_get:dse.StatRequirement.string_param)
+  // @@protoc_insertion_point(field_get:bg3se.StatRequirement.string_param)
   return string_param_.Get();
 }
 inline void StatRequirement::set_string_param(const ::std::string& value) {
   
   string_param_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.StatRequirement.string_param)
+  // @@protoc_insertion_point(field_set:bg3se.StatRequirement.string_param)
 }
 #if LANG_CXX11
 inline void StatRequirement::set_string_param(::std::string&& value) {
   
   string_param_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.StatRequirement.string_param)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.StatRequirement.string_param)
 }
 #endif
 inline void StatRequirement::set_string_param(const char* value) {
@@ -2379,22 +2379,22 @@ inline void StatRequirement::set_string_param(const char* value) {
   
   string_param_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.StatRequirement.string_param)
+  // @@protoc_insertion_point(field_set_char:bg3se.StatRequirement.string_param)
 }
 inline void StatRequirement::set_string_param(const char* value,
     size_t size) {
   
   string_param_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.StatRequirement.string_param)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.StatRequirement.string_param)
 }
 inline ::std::string* StatRequirement::mutable_string_param() {
   
-  // @@protoc_insertion_point(field_mutable:dse.StatRequirement.string_param)
+  // @@protoc_insertion_point(field_mutable:bg3se.StatRequirement.string_param)
   return string_param_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* StatRequirement::release_string_param() {
-  // @@protoc_insertion_point(field_release:dse.StatRequirement.string_param)
+  // @@protoc_insertion_point(field_release:bg3se.StatRequirement.string_param)
   
   return string_param_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -2406,10 +2406,10 @@ inline void StatRequirement::set_allocated_string_param(::std::string* string_pa
   }
   string_param_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), string_param,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.StatRequirement.string_param)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.StatRequirement.string_param)
 }
 inline ::std::string* StatRequirement::unsafe_arena_release_string_param() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.StatRequirement.string_param)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.StatRequirement.string_param)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return string_param_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -2425,7 +2425,7 @@ inline void StatRequirement::unsafe_arena_set_allocated_string_param(
   }
   string_param_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       string_param, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.StatRequirement.string_param)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.StatRequirement.string_param)
 }
 
 // bool negate = 4;
@@ -2433,13 +2433,13 @@ inline void StatRequirement::clear_negate() {
   negate_ = false;
 }
 inline bool StatRequirement::negate() const {
-  // @@protoc_insertion_point(field_get:dse.StatRequirement.negate)
+  // @@protoc_insertion_point(field_get:bg3se.StatRequirement.negate)
   return negate_;
 }
 inline void StatRequirement::set_negate(bool value) {
   
   negate_ = value;
-  // @@protoc_insertion_point(field_set:dse.StatRequirement.negate)
+  // @@protoc_insertion_point(field_set:bg3se.StatRequirement.negate)
 }
 
 // -------------------------------------------------------------------
@@ -2451,13 +2451,13 @@ inline void StatProperty::clear_property_context() {
   property_context_ = 0u;
 }
 inline ::google::protobuf::uint32 StatProperty::property_context() const {
-  // @@protoc_insertion_point(field_get:dse.StatProperty.property_context)
+  // @@protoc_insertion_point(field_get:bg3se.StatProperty.property_context)
   return property_context_;
 }
 inline void StatProperty::set_property_context(::google::protobuf::uint32 value) {
   
   property_context_ = value;
-  // @@protoc_insertion_point(field_set:dse.StatProperty.property_context)
+  // @@protoc_insertion_point(field_set:bg3se.StatProperty.property_context)
 }
 
 // uint32 type = 2;
@@ -2465,13 +2465,13 @@ inline void StatProperty::clear_type() {
   type_ = 0u;
 }
 inline ::google::protobuf::uint32 StatProperty::type() const {
-  // @@protoc_insertion_point(field_get:dse.StatProperty.type)
+  // @@protoc_insertion_point(field_get:bg3se.StatProperty.type)
   return type_;
 }
 inline void StatProperty::set_type(::google::protobuf::uint32 value) {
   
   type_ = value;
-  // @@protoc_insertion_point(field_set:dse.StatProperty.type)
+  // @@protoc_insertion_point(field_set:bg3se.StatProperty.type)
 }
 
 // string conditions = 3;
@@ -2479,20 +2479,20 @@ inline void StatProperty::clear_conditions() {
   conditions_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& StatProperty::conditions() const {
-  // @@protoc_insertion_point(field_get:dse.StatProperty.conditions)
+  // @@protoc_insertion_point(field_get:bg3se.StatProperty.conditions)
   return conditions_.Get();
 }
 inline void StatProperty::set_conditions(const ::std::string& value) {
   
   conditions_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.StatProperty.conditions)
+  // @@protoc_insertion_point(field_set:bg3se.StatProperty.conditions)
 }
 #if LANG_CXX11
 inline void StatProperty::set_conditions(::std::string&& value) {
   
   conditions_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.StatProperty.conditions)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.StatProperty.conditions)
 }
 #endif
 inline void StatProperty::set_conditions(const char* value) {
@@ -2500,22 +2500,22 @@ inline void StatProperty::set_conditions(const char* value) {
   
   conditions_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.StatProperty.conditions)
+  // @@protoc_insertion_point(field_set_char:bg3se.StatProperty.conditions)
 }
 inline void StatProperty::set_conditions(const char* value,
     size_t size) {
   
   conditions_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.StatProperty.conditions)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.StatProperty.conditions)
 }
 inline ::std::string* StatProperty::mutable_conditions() {
   
-  // @@protoc_insertion_point(field_mutable:dse.StatProperty.conditions)
+  // @@protoc_insertion_point(field_mutable:bg3se.StatProperty.conditions)
   return conditions_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* StatProperty::release_conditions() {
-  // @@protoc_insertion_point(field_release:dse.StatProperty.conditions)
+  // @@protoc_insertion_point(field_release:bg3se.StatProperty.conditions)
   
   return conditions_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -2527,10 +2527,10 @@ inline void StatProperty::set_allocated_conditions(::std::string* conditions) {
   }
   conditions_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), conditions,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.StatProperty.conditions)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.StatProperty.conditions)
 }
 inline ::std::string* StatProperty::unsafe_arena_release_conditions() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.StatProperty.conditions)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.StatProperty.conditions)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return conditions_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -2546,7 +2546,7 @@ inline void StatProperty::unsafe_arena_set_allocated_conditions(
   }
   conditions_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       conditions, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.StatProperty.conditions)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.StatProperty.conditions)
 }
 
 // repeated string string_params = 4;
@@ -2557,64 +2557,64 @@ inline void StatProperty::clear_string_params() {
   string_params_.Clear();
 }
 inline const ::std::string& StatProperty::string_params(int index) const {
-  // @@protoc_insertion_point(field_get:dse.StatProperty.string_params)
+  // @@protoc_insertion_point(field_get:bg3se.StatProperty.string_params)
   return string_params_.Get(index);
 }
 inline ::std::string* StatProperty::mutable_string_params(int index) {
-  // @@protoc_insertion_point(field_mutable:dse.StatProperty.string_params)
+  // @@protoc_insertion_point(field_mutable:bg3se.StatProperty.string_params)
   return string_params_.Mutable(index);
 }
 inline void StatProperty::set_string_params(int index, const ::std::string& value) {
-  // @@protoc_insertion_point(field_set:dse.StatProperty.string_params)
+  // @@protoc_insertion_point(field_set:bg3se.StatProperty.string_params)
   string_params_.Mutable(index)->assign(value);
 }
 #if LANG_CXX11
 inline void StatProperty::set_string_params(int index, ::std::string&& value) {
-  // @@protoc_insertion_point(field_set:dse.StatProperty.string_params)
+  // @@protoc_insertion_point(field_set:bg3se.StatProperty.string_params)
   string_params_.Mutable(index)->assign(std::move(value));
 }
 #endif
 inline void StatProperty::set_string_params(int index, const char* value) {
   GOOGLE_DCHECK(value != NULL);
   string_params_.Mutable(index)->assign(value);
-  // @@protoc_insertion_point(field_set_char:dse.StatProperty.string_params)
+  // @@protoc_insertion_point(field_set_char:bg3se.StatProperty.string_params)
 }
 inline void StatProperty::set_string_params(int index, const char* value, size_t size) {
   string_params_.Mutable(index)->assign(
     reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:dse.StatProperty.string_params)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.StatProperty.string_params)
 }
 inline ::std::string* StatProperty::add_string_params() {
-  // @@protoc_insertion_point(field_add_mutable:dse.StatProperty.string_params)
+  // @@protoc_insertion_point(field_add_mutable:bg3se.StatProperty.string_params)
   return string_params_.Add();
 }
 inline void StatProperty::add_string_params(const ::std::string& value) {
   string_params_.Add()->assign(value);
-  // @@protoc_insertion_point(field_add:dse.StatProperty.string_params)
+  // @@protoc_insertion_point(field_add:bg3se.StatProperty.string_params)
 }
 #if LANG_CXX11
 inline void StatProperty::add_string_params(::std::string&& value) {
   string_params_.Add(std::move(value));
-  // @@protoc_insertion_point(field_add:dse.StatProperty.string_params)
+  // @@protoc_insertion_point(field_add:bg3se.StatProperty.string_params)
 }
 #endif
 inline void StatProperty::add_string_params(const char* value) {
   GOOGLE_DCHECK(value != NULL);
   string_params_.Add()->assign(value);
-  // @@protoc_insertion_point(field_add_char:dse.StatProperty.string_params)
+  // @@protoc_insertion_point(field_add_char:bg3se.StatProperty.string_params)
 }
 inline void StatProperty::add_string_params(const char* value, size_t size) {
   string_params_.Add()->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_add_pointer:dse.StatProperty.string_params)
+  // @@protoc_insertion_point(field_add_pointer:bg3se.StatProperty.string_params)
 }
 inline const ::google::protobuf::RepeatedPtrField< ::std::string>&
 StatProperty::string_params() const {
-  // @@protoc_insertion_point(field_list:dse.StatProperty.string_params)
+  // @@protoc_insertion_point(field_list:bg3se.StatProperty.string_params)
   return string_params_;
 }
 inline ::google::protobuf::RepeatedPtrField< ::std::string>*
 StatProperty::mutable_string_params() {
-  // @@protoc_insertion_point(field_mutable_list:dse.StatProperty.string_params)
+  // @@protoc_insertion_point(field_mutable_list:bg3se.StatProperty.string_params)
   return &string_params_;
 }
 
@@ -2626,25 +2626,25 @@ inline void StatProperty::clear_int_params() {
   int_params_.Clear();
 }
 inline ::google::protobuf::int32 StatProperty::int_params(int index) const {
-  // @@protoc_insertion_point(field_get:dse.StatProperty.int_params)
+  // @@protoc_insertion_point(field_get:bg3se.StatProperty.int_params)
   return int_params_.Get(index);
 }
 inline void StatProperty::set_int_params(int index, ::google::protobuf::int32 value) {
   int_params_.Set(index, value);
-  // @@protoc_insertion_point(field_set:dse.StatProperty.int_params)
+  // @@protoc_insertion_point(field_set:bg3se.StatProperty.int_params)
 }
 inline void StatProperty::add_int_params(::google::protobuf::int32 value) {
   int_params_.Add(value);
-  // @@protoc_insertion_point(field_add:dse.StatProperty.int_params)
+  // @@protoc_insertion_point(field_add:bg3se.StatProperty.int_params)
 }
 inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
 StatProperty::int_params() const {
-  // @@protoc_insertion_point(field_list:dse.StatProperty.int_params)
+  // @@protoc_insertion_point(field_list:bg3se.StatProperty.int_params)
   return int_params_;
 }
 inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
 StatProperty::mutable_int_params() {
-  // @@protoc_insertion_point(field_mutable_list:dse.StatProperty.int_params)
+  // @@protoc_insertion_point(field_mutable_list:bg3se.StatProperty.int_params)
   return &int_params_;
 }
 
@@ -2656,25 +2656,25 @@ inline void StatProperty::clear_float_params() {
   float_params_.Clear();
 }
 inline float StatProperty::float_params(int index) const {
-  // @@protoc_insertion_point(field_get:dse.StatProperty.float_params)
+  // @@protoc_insertion_point(field_get:bg3se.StatProperty.float_params)
   return float_params_.Get(index);
 }
 inline void StatProperty::set_float_params(int index, float value) {
   float_params_.Set(index, value);
-  // @@protoc_insertion_point(field_set:dse.StatProperty.float_params)
+  // @@protoc_insertion_point(field_set:bg3se.StatProperty.float_params)
 }
 inline void StatProperty::add_float_params(float value) {
   float_params_.Add(value);
-  // @@protoc_insertion_point(field_add:dse.StatProperty.float_params)
+  // @@protoc_insertion_point(field_add:bg3se.StatProperty.float_params)
 }
 inline const ::google::protobuf::RepeatedField< float >&
 StatProperty::float_params() const {
-  // @@protoc_insertion_point(field_list:dse.StatProperty.float_params)
+  // @@protoc_insertion_point(field_list:bg3se.StatProperty.float_params)
   return float_params_;
 }
 inline ::google::protobuf::RepeatedField< float >*
 StatProperty::mutable_float_params() {
-  // @@protoc_insertion_point(field_mutable_list:dse.StatProperty.float_params)
+  // @@protoc_insertion_point(field_mutable_list:bg3se.StatProperty.float_params)
   return &float_params_;
 }
 
@@ -2686,25 +2686,25 @@ inline void StatProperty::clear_bool_params() {
   bool_params_.Clear();
 }
 inline bool StatProperty::bool_params(int index) const {
-  // @@protoc_insertion_point(field_get:dse.StatProperty.bool_params)
+  // @@protoc_insertion_point(field_get:bg3se.StatProperty.bool_params)
   return bool_params_.Get(index);
 }
 inline void StatProperty::set_bool_params(int index, bool value) {
   bool_params_.Set(index, value);
-  // @@protoc_insertion_point(field_set:dse.StatProperty.bool_params)
+  // @@protoc_insertion_point(field_set:bg3se.StatProperty.bool_params)
 }
 inline void StatProperty::add_bool_params(bool value) {
   bool_params_.Add(value);
-  // @@protoc_insertion_point(field_add:dse.StatProperty.bool_params)
+  // @@protoc_insertion_point(field_add:bg3se.StatProperty.bool_params)
 }
 inline const ::google::protobuf::RepeatedField< bool >&
 StatProperty::bool_params() const {
-  // @@protoc_insertion_point(field_list:dse.StatProperty.bool_params)
+  // @@protoc_insertion_point(field_list:bg3se.StatProperty.bool_params)
   return bool_params_;
 }
 inline ::google::protobuf::RepeatedField< bool >*
 StatProperty::mutable_bool_params() {
-  // @@protoc_insertion_point(field_mutable_list:dse.StatProperty.bool_params)
+  // @@protoc_insertion_point(field_mutable_list:bg3se.StatProperty.bool_params)
   return &bool_params_;
 }
 
@@ -2716,25 +2716,25 @@ inline void StatProperty::clear_surface_boosts() {
   surface_boosts_.Clear();
 }
 inline ::google::protobuf::int32 StatProperty::surface_boosts(int index) const {
-  // @@protoc_insertion_point(field_get:dse.StatProperty.surface_boosts)
+  // @@protoc_insertion_point(field_get:bg3se.StatProperty.surface_boosts)
   return surface_boosts_.Get(index);
 }
 inline void StatProperty::set_surface_boosts(int index, ::google::protobuf::int32 value) {
   surface_boosts_.Set(index, value);
-  // @@protoc_insertion_point(field_set:dse.StatProperty.surface_boosts)
+  // @@protoc_insertion_point(field_set:bg3se.StatProperty.surface_boosts)
 }
 inline void StatProperty::add_surface_boosts(::google::protobuf::int32 value) {
   surface_boosts_.Add(value);
-  // @@protoc_insertion_point(field_add:dse.StatProperty.surface_boosts)
+  // @@protoc_insertion_point(field_add:bg3se.StatProperty.surface_boosts)
 }
 inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
 StatProperty::surface_boosts() const {
-  // @@protoc_insertion_point(field_list:dse.StatProperty.surface_boosts)
+  // @@protoc_insertion_point(field_list:bg3se.StatProperty.surface_boosts)
   return surface_boosts_;
 }
 inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
 StatProperty::mutable_surface_boosts() {
-  // @@protoc_insertion_point(field_mutable_list:dse.StatProperty.surface_boosts)
+  // @@protoc_insertion_point(field_mutable_list:bg3se.StatProperty.surface_boosts)
   return &surface_boosts_;
 }
 
@@ -2743,20 +2743,20 @@ inline void StatProperty::clear_name() {
   name_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& StatProperty::name() const {
-  // @@protoc_insertion_point(field_get:dse.StatProperty.name)
+  // @@protoc_insertion_point(field_get:bg3se.StatProperty.name)
   return name_.Get();
 }
 inline void StatProperty::set_name(const ::std::string& value) {
   
   name_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.StatProperty.name)
+  // @@protoc_insertion_point(field_set:bg3se.StatProperty.name)
 }
 #if LANG_CXX11
 inline void StatProperty::set_name(::std::string&& value) {
   
   name_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.StatProperty.name)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.StatProperty.name)
 }
 #endif
 inline void StatProperty::set_name(const char* value) {
@@ -2764,22 +2764,22 @@ inline void StatProperty::set_name(const char* value) {
   
   name_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.StatProperty.name)
+  // @@protoc_insertion_point(field_set_char:bg3se.StatProperty.name)
 }
 inline void StatProperty::set_name(const char* value,
     size_t size) {
   
   name_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.StatProperty.name)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.StatProperty.name)
 }
 inline ::std::string* StatProperty::mutable_name() {
   
-  // @@protoc_insertion_point(field_mutable:dse.StatProperty.name)
+  // @@protoc_insertion_point(field_mutable:bg3se.StatProperty.name)
   return name_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* StatProperty::release_name() {
-  // @@protoc_insertion_point(field_release:dse.StatProperty.name)
+  // @@protoc_insertion_point(field_release:bg3se.StatProperty.name)
   
   return name_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -2791,10 +2791,10 @@ inline void StatProperty::set_allocated_name(::std::string* name) {
   }
   name_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), name,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.StatProperty.name)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.StatProperty.name)
 }
 inline ::std::string* StatProperty::unsafe_arena_release_name() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.StatProperty.name)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.StatProperty.name)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return name_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -2810,7 +2810,7 @@ inline void StatProperty::unsafe_arena_set_allocated_name(
   }
   name_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       name, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.StatProperty.name)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.StatProperty.name)
 }
 
 // -------------------------------------------------------------------
@@ -2822,20 +2822,20 @@ inline void StatPropertyList::clear_name() {
   name_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& StatPropertyList::name() const {
-  // @@protoc_insertion_point(field_get:dse.StatPropertyList.name)
+  // @@protoc_insertion_point(field_get:bg3se.StatPropertyList.name)
   return name_.Get();
 }
 inline void StatPropertyList::set_name(const ::std::string& value) {
   
   name_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.StatPropertyList.name)
+  // @@protoc_insertion_point(field_set:bg3se.StatPropertyList.name)
 }
 #if LANG_CXX11
 inline void StatPropertyList::set_name(::std::string&& value) {
   
   name_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.StatPropertyList.name)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.StatPropertyList.name)
 }
 #endif
 inline void StatPropertyList::set_name(const char* value) {
@@ -2843,22 +2843,22 @@ inline void StatPropertyList::set_name(const char* value) {
   
   name_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.StatPropertyList.name)
+  // @@protoc_insertion_point(field_set_char:bg3se.StatPropertyList.name)
 }
 inline void StatPropertyList::set_name(const char* value,
     size_t size) {
   
   name_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.StatPropertyList.name)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.StatPropertyList.name)
 }
 inline ::std::string* StatPropertyList::mutable_name() {
   
-  // @@protoc_insertion_point(field_mutable:dse.StatPropertyList.name)
+  // @@protoc_insertion_point(field_mutable:bg3se.StatPropertyList.name)
   return name_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* StatPropertyList::release_name() {
-  // @@protoc_insertion_point(field_release:dse.StatPropertyList.name)
+  // @@protoc_insertion_point(field_release:bg3se.StatPropertyList.name)
   
   return name_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -2870,10 +2870,10 @@ inline void StatPropertyList::set_allocated_name(::std::string* name) {
   }
   name_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), name,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.StatPropertyList.name)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.StatPropertyList.name)
 }
 inline ::std::string* StatPropertyList::unsafe_arena_release_name() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.StatPropertyList.name)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.StatPropertyList.name)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return name_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -2889,36 +2889,36 @@ inline void StatPropertyList::unsafe_arena_set_allocated_name(
   }
   name_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       name, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.StatPropertyList.name)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.StatPropertyList.name)
 }
 
-// repeated .dse.StatProperty properties = 2;
+// repeated .bg3se.StatProperty properties = 2;
 inline int StatPropertyList::properties_size() const {
   return properties_.size();
 }
 inline void StatPropertyList::clear_properties() {
   properties_.Clear();
 }
-inline ::dse::StatProperty* StatPropertyList::mutable_properties(int index) {
-  // @@protoc_insertion_point(field_mutable:dse.StatPropertyList.properties)
+inline ::bg3se::StatProperty* StatPropertyList::mutable_properties(int index) {
+  // @@protoc_insertion_point(field_mutable:bg3se.StatPropertyList.properties)
   return properties_.Mutable(index);
 }
-inline ::google::protobuf::RepeatedPtrField< ::dse::StatProperty >*
+inline ::google::protobuf::RepeatedPtrField< ::bg3se::StatProperty >*
 StatPropertyList::mutable_properties() {
-  // @@protoc_insertion_point(field_mutable_list:dse.StatPropertyList.properties)
+  // @@protoc_insertion_point(field_mutable_list:bg3se.StatPropertyList.properties)
   return &properties_;
 }
-inline const ::dse::StatProperty& StatPropertyList::properties(int index) const {
-  // @@protoc_insertion_point(field_get:dse.StatPropertyList.properties)
+inline const ::bg3se::StatProperty& StatPropertyList::properties(int index) const {
+  // @@protoc_insertion_point(field_get:bg3se.StatPropertyList.properties)
   return properties_.Get(index);
 }
-inline ::dse::StatProperty* StatPropertyList::add_properties() {
-  // @@protoc_insertion_point(field_add:dse.StatPropertyList.properties)
+inline ::bg3se::StatProperty* StatPropertyList::add_properties() {
+  // @@protoc_insertion_point(field_add:bg3se.StatPropertyList.properties)
   return properties_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::dse::StatProperty >&
+inline const ::google::protobuf::RepeatedPtrField< ::bg3se::StatProperty >&
 StatPropertyList::properties() const {
-  // @@protoc_insertion_point(field_list:dse.StatPropertyList.properties)
+  // @@protoc_insertion_point(field_list:bg3se.StatPropertyList.properties)
   return properties_;
 }
 
@@ -2931,13 +2931,13 @@ inline void StatIndexedProperty::clear_intval() {
   intval_ = 0;
 }
 inline ::google::protobuf::int32 StatIndexedProperty::intval() const {
-  // @@protoc_insertion_point(field_get:dse.StatIndexedProperty.intval)
+  // @@protoc_insertion_point(field_get:bg3se.StatIndexedProperty.intval)
   return intval_;
 }
 inline void StatIndexedProperty::set_intval(::google::protobuf::int32 value) {
   
   intval_ = value;
-  // @@protoc_insertion_point(field_set:dse.StatIndexedProperty.intval)
+  // @@protoc_insertion_point(field_set:bg3se.StatIndexedProperty.intval)
 }
 
 // string stringval = 2;
@@ -2945,20 +2945,20 @@ inline void StatIndexedProperty::clear_stringval() {
   stringval_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& StatIndexedProperty::stringval() const {
-  // @@protoc_insertion_point(field_get:dse.StatIndexedProperty.stringval)
+  // @@protoc_insertion_point(field_get:bg3se.StatIndexedProperty.stringval)
   return stringval_.Get();
 }
 inline void StatIndexedProperty::set_stringval(const ::std::string& value) {
   
   stringval_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.StatIndexedProperty.stringval)
+  // @@protoc_insertion_point(field_set:bg3se.StatIndexedProperty.stringval)
 }
 #if LANG_CXX11
 inline void StatIndexedProperty::set_stringval(::std::string&& value) {
   
   stringval_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.StatIndexedProperty.stringval)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.StatIndexedProperty.stringval)
 }
 #endif
 inline void StatIndexedProperty::set_stringval(const char* value) {
@@ -2966,22 +2966,22 @@ inline void StatIndexedProperty::set_stringval(const char* value) {
   
   stringval_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.StatIndexedProperty.stringval)
+  // @@protoc_insertion_point(field_set_char:bg3se.StatIndexedProperty.stringval)
 }
 inline void StatIndexedProperty::set_stringval(const char* value,
     size_t size) {
   
   stringval_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.StatIndexedProperty.stringval)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.StatIndexedProperty.stringval)
 }
 inline ::std::string* StatIndexedProperty::mutable_stringval() {
   
-  // @@protoc_insertion_point(field_mutable:dse.StatIndexedProperty.stringval)
+  // @@protoc_insertion_point(field_mutable:bg3se.StatIndexedProperty.stringval)
   return stringval_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* StatIndexedProperty::release_stringval() {
-  // @@protoc_insertion_point(field_release:dse.StatIndexedProperty.stringval)
+  // @@protoc_insertion_point(field_release:bg3se.StatIndexedProperty.stringval)
   
   return stringval_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -2993,10 +2993,10 @@ inline void StatIndexedProperty::set_allocated_stringval(::std::string* stringva
   }
   stringval_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), stringval,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.StatIndexedProperty.stringval)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.StatIndexedProperty.stringval)
 }
 inline ::std::string* StatIndexedProperty::unsafe_arena_release_stringval() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.StatIndexedProperty.stringval)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.StatIndexedProperty.stringval)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return stringval_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -3012,7 +3012,7 @@ inline void StatIndexedProperty::unsafe_arena_set_allocated_stringval(
   }
   stringval_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       stringval, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.StatIndexedProperty.stringval)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.StatIndexedProperty.stringval)
 }
 
 // -------------------------------------------------------------------
@@ -3024,20 +3024,20 @@ inline void MsgS2CSyncStat::clear_name() {
   name_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& MsgS2CSyncStat::name() const {
-  // @@protoc_insertion_point(field_get:dse.MsgS2CSyncStat.name)
+  // @@protoc_insertion_point(field_get:bg3se.MsgS2CSyncStat.name)
   return name_.Get();
 }
 inline void MsgS2CSyncStat::set_name(const ::std::string& value) {
   
   name_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.MsgS2CSyncStat.name)
+  // @@protoc_insertion_point(field_set:bg3se.MsgS2CSyncStat.name)
 }
 #if LANG_CXX11
 inline void MsgS2CSyncStat::set_name(::std::string&& value) {
   
   name_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.MsgS2CSyncStat.name)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.MsgS2CSyncStat.name)
 }
 #endif
 inline void MsgS2CSyncStat::set_name(const char* value) {
@@ -3045,22 +3045,22 @@ inline void MsgS2CSyncStat::set_name(const char* value) {
   
   name_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.MsgS2CSyncStat.name)
+  // @@protoc_insertion_point(field_set_char:bg3se.MsgS2CSyncStat.name)
 }
 inline void MsgS2CSyncStat::set_name(const char* value,
     size_t size) {
   
   name_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.MsgS2CSyncStat.name)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.MsgS2CSyncStat.name)
 }
 inline ::std::string* MsgS2CSyncStat::mutable_name() {
   
-  // @@protoc_insertion_point(field_mutable:dse.MsgS2CSyncStat.name)
+  // @@protoc_insertion_point(field_mutable:bg3se.MsgS2CSyncStat.name)
   return name_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* MsgS2CSyncStat::release_name() {
-  // @@protoc_insertion_point(field_release:dse.MsgS2CSyncStat.name)
+  // @@protoc_insertion_point(field_release:bg3se.MsgS2CSyncStat.name)
   
   return name_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -3072,10 +3072,10 @@ inline void MsgS2CSyncStat::set_allocated_name(::std::string* name) {
   }
   name_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), name,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.MsgS2CSyncStat.name)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.MsgS2CSyncStat.name)
 }
 inline ::std::string* MsgS2CSyncStat::unsafe_arena_release_name() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.MsgS2CSyncStat.name)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.MsgS2CSyncStat.name)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return name_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -3091,7 +3091,7 @@ inline void MsgS2CSyncStat::unsafe_arena_set_allocated_name(
   }
   name_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       name, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.MsgS2CSyncStat.name)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.MsgS2CSyncStat.name)
 }
 
 // sint32 level = 2;
@@ -3099,13 +3099,13 @@ inline void MsgS2CSyncStat::clear_level() {
   level_ = 0;
 }
 inline ::google::protobuf::int32 MsgS2CSyncStat::level() const {
-  // @@protoc_insertion_point(field_get:dse.MsgS2CSyncStat.level)
+  // @@protoc_insertion_point(field_get:bg3se.MsgS2CSyncStat.level)
   return level_;
 }
 inline void MsgS2CSyncStat::set_level(::google::protobuf::int32 value) {
   
   level_ = value;
-  // @@protoc_insertion_point(field_set:dse.MsgS2CSyncStat.level)
+  // @@protoc_insertion_point(field_set:bg3se.MsgS2CSyncStat.level)
 }
 
 // int32 modifier_list = 3;
@@ -3113,42 +3113,42 @@ inline void MsgS2CSyncStat::clear_modifier_list() {
   modifier_list_ = 0;
 }
 inline ::google::protobuf::int32 MsgS2CSyncStat::modifier_list() const {
-  // @@protoc_insertion_point(field_get:dse.MsgS2CSyncStat.modifier_list)
+  // @@protoc_insertion_point(field_get:bg3se.MsgS2CSyncStat.modifier_list)
   return modifier_list_;
 }
 inline void MsgS2CSyncStat::set_modifier_list(::google::protobuf::int32 value) {
   
   modifier_list_ = value;
-  // @@protoc_insertion_point(field_set:dse.MsgS2CSyncStat.modifier_list)
+  // @@protoc_insertion_point(field_set:bg3se.MsgS2CSyncStat.modifier_list)
 }
 
-// repeated .dse.StatIndexedProperty indexed_properties = 4;
+// repeated .bg3se.StatIndexedProperty indexed_properties = 4;
 inline int MsgS2CSyncStat::indexed_properties_size() const {
   return indexed_properties_.size();
 }
 inline void MsgS2CSyncStat::clear_indexed_properties() {
   indexed_properties_.Clear();
 }
-inline ::dse::StatIndexedProperty* MsgS2CSyncStat::mutable_indexed_properties(int index) {
-  // @@protoc_insertion_point(field_mutable:dse.MsgS2CSyncStat.indexed_properties)
+inline ::bg3se::StatIndexedProperty* MsgS2CSyncStat::mutable_indexed_properties(int index) {
+  // @@protoc_insertion_point(field_mutable:bg3se.MsgS2CSyncStat.indexed_properties)
   return indexed_properties_.Mutable(index);
 }
-inline ::google::protobuf::RepeatedPtrField< ::dse::StatIndexedProperty >*
+inline ::google::protobuf::RepeatedPtrField< ::bg3se::StatIndexedProperty >*
 MsgS2CSyncStat::mutable_indexed_properties() {
-  // @@protoc_insertion_point(field_mutable_list:dse.MsgS2CSyncStat.indexed_properties)
+  // @@protoc_insertion_point(field_mutable_list:bg3se.MsgS2CSyncStat.indexed_properties)
   return &indexed_properties_;
 }
-inline const ::dse::StatIndexedProperty& MsgS2CSyncStat::indexed_properties(int index) const {
-  // @@protoc_insertion_point(field_get:dse.MsgS2CSyncStat.indexed_properties)
+inline const ::bg3se::StatIndexedProperty& MsgS2CSyncStat::indexed_properties(int index) const {
+  // @@protoc_insertion_point(field_get:bg3se.MsgS2CSyncStat.indexed_properties)
   return indexed_properties_.Get(index);
 }
-inline ::dse::StatIndexedProperty* MsgS2CSyncStat::add_indexed_properties() {
-  // @@protoc_insertion_point(field_add:dse.MsgS2CSyncStat.indexed_properties)
+inline ::bg3se::StatIndexedProperty* MsgS2CSyncStat::add_indexed_properties() {
+  // @@protoc_insertion_point(field_add:bg3se.MsgS2CSyncStat.indexed_properties)
   return indexed_properties_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::dse::StatIndexedProperty >&
+inline const ::google::protobuf::RepeatedPtrField< ::bg3se::StatIndexedProperty >&
 MsgS2CSyncStat::indexed_properties() const {
-  // @@protoc_insertion_point(field_list:dse.MsgS2CSyncStat.indexed_properties)
+  // @@protoc_insertion_point(field_list:bg3se.MsgS2CSyncStat.indexed_properties)
   return indexed_properties_;
 }
 
@@ -3157,20 +3157,20 @@ inline void MsgS2CSyncStat::clear_ai_flags() {
   ai_flags_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& MsgS2CSyncStat::ai_flags() const {
-  // @@protoc_insertion_point(field_get:dse.MsgS2CSyncStat.ai_flags)
+  // @@protoc_insertion_point(field_get:bg3se.MsgS2CSyncStat.ai_flags)
   return ai_flags_.Get();
 }
 inline void MsgS2CSyncStat::set_ai_flags(const ::std::string& value) {
   
   ai_flags_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.MsgS2CSyncStat.ai_flags)
+  // @@protoc_insertion_point(field_set:bg3se.MsgS2CSyncStat.ai_flags)
 }
 #if LANG_CXX11
 inline void MsgS2CSyncStat::set_ai_flags(::std::string&& value) {
   
   ai_flags_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.MsgS2CSyncStat.ai_flags)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.MsgS2CSyncStat.ai_flags)
 }
 #endif
 inline void MsgS2CSyncStat::set_ai_flags(const char* value) {
@@ -3178,22 +3178,22 @@ inline void MsgS2CSyncStat::set_ai_flags(const char* value) {
   
   ai_flags_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.MsgS2CSyncStat.ai_flags)
+  // @@protoc_insertion_point(field_set_char:bg3se.MsgS2CSyncStat.ai_flags)
 }
 inline void MsgS2CSyncStat::set_ai_flags(const char* value,
     size_t size) {
   
   ai_flags_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.MsgS2CSyncStat.ai_flags)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.MsgS2CSyncStat.ai_flags)
 }
 inline ::std::string* MsgS2CSyncStat::mutable_ai_flags() {
   
-  // @@protoc_insertion_point(field_mutable:dse.MsgS2CSyncStat.ai_flags)
+  // @@protoc_insertion_point(field_mutable:bg3se.MsgS2CSyncStat.ai_flags)
   return ai_flags_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* MsgS2CSyncStat::release_ai_flags() {
-  // @@protoc_insertion_point(field_release:dse.MsgS2CSyncStat.ai_flags)
+  // @@protoc_insertion_point(field_release:bg3se.MsgS2CSyncStat.ai_flags)
   
   return ai_flags_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -3205,10 +3205,10 @@ inline void MsgS2CSyncStat::set_allocated_ai_flags(::std::string* ai_flags) {
   }
   ai_flags_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ai_flags,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.MsgS2CSyncStat.ai_flags)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.MsgS2CSyncStat.ai_flags)
 }
 inline ::std::string* MsgS2CSyncStat::unsafe_arena_release_ai_flags() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.MsgS2CSyncStat.ai_flags)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.MsgS2CSyncStat.ai_flags)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return ai_flags_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -3224,66 +3224,66 @@ inline void MsgS2CSyncStat::unsafe_arena_set_allocated_ai_flags(
   }
   ai_flags_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ai_flags, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.MsgS2CSyncStat.ai_flags)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.MsgS2CSyncStat.ai_flags)
 }
 
-// repeated .dse.StatRequirement requirements = 6;
+// repeated .bg3se.StatRequirement requirements = 6;
 inline int MsgS2CSyncStat::requirements_size() const {
   return requirements_.size();
 }
 inline void MsgS2CSyncStat::clear_requirements() {
   requirements_.Clear();
 }
-inline ::dse::StatRequirement* MsgS2CSyncStat::mutable_requirements(int index) {
-  // @@protoc_insertion_point(field_mutable:dse.MsgS2CSyncStat.requirements)
+inline ::bg3se::StatRequirement* MsgS2CSyncStat::mutable_requirements(int index) {
+  // @@protoc_insertion_point(field_mutable:bg3se.MsgS2CSyncStat.requirements)
   return requirements_.Mutable(index);
 }
-inline ::google::protobuf::RepeatedPtrField< ::dse::StatRequirement >*
+inline ::google::protobuf::RepeatedPtrField< ::bg3se::StatRequirement >*
 MsgS2CSyncStat::mutable_requirements() {
-  // @@protoc_insertion_point(field_mutable_list:dse.MsgS2CSyncStat.requirements)
+  // @@protoc_insertion_point(field_mutable_list:bg3se.MsgS2CSyncStat.requirements)
   return &requirements_;
 }
-inline const ::dse::StatRequirement& MsgS2CSyncStat::requirements(int index) const {
-  // @@protoc_insertion_point(field_get:dse.MsgS2CSyncStat.requirements)
+inline const ::bg3se::StatRequirement& MsgS2CSyncStat::requirements(int index) const {
+  // @@protoc_insertion_point(field_get:bg3se.MsgS2CSyncStat.requirements)
   return requirements_.Get(index);
 }
-inline ::dse::StatRequirement* MsgS2CSyncStat::add_requirements() {
-  // @@protoc_insertion_point(field_add:dse.MsgS2CSyncStat.requirements)
+inline ::bg3se::StatRequirement* MsgS2CSyncStat::add_requirements() {
+  // @@protoc_insertion_point(field_add:bg3se.MsgS2CSyncStat.requirements)
   return requirements_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::dse::StatRequirement >&
+inline const ::google::protobuf::RepeatedPtrField< ::bg3se::StatRequirement >&
 MsgS2CSyncStat::requirements() const {
-  // @@protoc_insertion_point(field_list:dse.MsgS2CSyncStat.requirements)
+  // @@protoc_insertion_point(field_list:bg3se.MsgS2CSyncStat.requirements)
   return requirements_;
 }
 
-// repeated .dse.StatRequirement memorization_requirements = 7;
+// repeated .bg3se.StatRequirement memorization_requirements = 7;
 inline int MsgS2CSyncStat::memorization_requirements_size() const {
   return memorization_requirements_.size();
 }
 inline void MsgS2CSyncStat::clear_memorization_requirements() {
   memorization_requirements_.Clear();
 }
-inline ::dse::StatRequirement* MsgS2CSyncStat::mutable_memorization_requirements(int index) {
-  // @@protoc_insertion_point(field_mutable:dse.MsgS2CSyncStat.memorization_requirements)
+inline ::bg3se::StatRequirement* MsgS2CSyncStat::mutable_memorization_requirements(int index) {
+  // @@protoc_insertion_point(field_mutable:bg3se.MsgS2CSyncStat.memorization_requirements)
   return memorization_requirements_.Mutable(index);
 }
-inline ::google::protobuf::RepeatedPtrField< ::dse::StatRequirement >*
+inline ::google::protobuf::RepeatedPtrField< ::bg3se::StatRequirement >*
 MsgS2CSyncStat::mutable_memorization_requirements() {
-  // @@protoc_insertion_point(field_mutable_list:dse.MsgS2CSyncStat.memorization_requirements)
+  // @@protoc_insertion_point(field_mutable_list:bg3se.MsgS2CSyncStat.memorization_requirements)
   return &memorization_requirements_;
 }
-inline const ::dse::StatRequirement& MsgS2CSyncStat::memorization_requirements(int index) const {
-  // @@protoc_insertion_point(field_get:dse.MsgS2CSyncStat.memorization_requirements)
+inline const ::bg3se::StatRequirement& MsgS2CSyncStat::memorization_requirements(int index) const {
+  // @@protoc_insertion_point(field_get:bg3se.MsgS2CSyncStat.memorization_requirements)
   return memorization_requirements_.Get(index);
 }
-inline ::dse::StatRequirement* MsgS2CSyncStat::add_memorization_requirements() {
-  // @@protoc_insertion_point(field_add:dse.MsgS2CSyncStat.memorization_requirements)
+inline ::bg3se::StatRequirement* MsgS2CSyncStat::add_memorization_requirements() {
+  // @@protoc_insertion_point(field_add:bg3se.MsgS2CSyncStat.memorization_requirements)
   return memorization_requirements_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::dse::StatRequirement >&
+inline const ::google::protobuf::RepeatedPtrField< ::bg3se::StatRequirement >&
 MsgS2CSyncStat::memorization_requirements() const {
-  // @@protoc_insertion_point(field_list:dse.MsgS2CSyncStat.memorization_requirements)
+  // @@protoc_insertion_point(field_list:bg3se.MsgS2CSyncStat.memorization_requirements)
   return memorization_requirements_;
 }
 
@@ -3295,94 +3295,94 @@ inline void MsgS2CSyncStat::clear_combo_categories() {
   combo_categories_.Clear();
 }
 inline const ::std::string& MsgS2CSyncStat::combo_categories(int index) const {
-  // @@protoc_insertion_point(field_get:dse.MsgS2CSyncStat.combo_categories)
+  // @@protoc_insertion_point(field_get:bg3se.MsgS2CSyncStat.combo_categories)
   return combo_categories_.Get(index);
 }
 inline ::std::string* MsgS2CSyncStat::mutable_combo_categories(int index) {
-  // @@protoc_insertion_point(field_mutable:dse.MsgS2CSyncStat.combo_categories)
+  // @@protoc_insertion_point(field_mutable:bg3se.MsgS2CSyncStat.combo_categories)
   return combo_categories_.Mutable(index);
 }
 inline void MsgS2CSyncStat::set_combo_categories(int index, const ::std::string& value) {
-  // @@protoc_insertion_point(field_set:dse.MsgS2CSyncStat.combo_categories)
+  // @@protoc_insertion_point(field_set:bg3se.MsgS2CSyncStat.combo_categories)
   combo_categories_.Mutable(index)->assign(value);
 }
 #if LANG_CXX11
 inline void MsgS2CSyncStat::set_combo_categories(int index, ::std::string&& value) {
-  // @@protoc_insertion_point(field_set:dse.MsgS2CSyncStat.combo_categories)
+  // @@protoc_insertion_point(field_set:bg3se.MsgS2CSyncStat.combo_categories)
   combo_categories_.Mutable(index)->assign(std::move(value));
 }
 #endif
 inline void MsgS2CSyncStat::set_combo_categories(int index, const char* value) {
   GOOGLE_DCHECK(value != NULL);
   combo_categories_.Mutable(index)->assign(value);
-  // @@protoc_insertion_point(field_set_char:dse.MsgS2CSyncStat.combo_categories)
+  // @@protoc_insertion_point(field_set_char:bg3se.MsgS2CSyncStat.combo_categories)
 }
 inline void MsgS2CSyncStat::set_combo_categories(int index, const char* value, size_t size) {
   combo_categories_.Mutable(index)->assign(
     reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:dse.MsgS2CSyncStat.combo_categories)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.MsgS2CSyncStat.combo_categories)
 }
 inline ::std::string* MsgS2CSyncStat::add_combo_categories() {
-  // @@protoc_insertion_point(field_add_mutable:dse.MsgS2CSyncStat.combo_categories)
+  // @@protoc_insertion_point(field_add_mutable:bg3se.MsgS2CSyncStat.combo_categories)
   return combo_categories_.Add();
 }
 inline void MsgS2CSyncStat::add_combo_categories(const ::std::string& value) {
   combo_categories_.Add()->assign(value);
-  // @@protoc_insertion_point(field_add:dse.MsgS2CSyncStat.combo_categories)
+  // @@protoc_insertion_point(field_add:bg3se.MsgS2CSyncStat.combo_categories)
 }
 #if LANG_CXX11
 inline void MsgS2CSyncStat::add_combo_categories(::std::string&& value) {
   combo_categories_.Add(std::move(value));
-  // @@protoc_insertion_point(field_add:dse.MsgS2CSyncStat.combo_categories)
+  // @@protoc_insertion_point(field_add:bg3se.MsgS2CSyncStat.combo_categories)
 }
 #endif
 inline void MsgS2CSyncStat::add_combo_categories(const char* value) {
   GOOGLE_DCHECK(value != NULL);
   combo_categories_.Add()->assign(value);
-  // @@protoc_insertion_point(field_add_char:dse.MsgS2CSyncStat.combo_categories)
+  // @@protoc_insertion_point(field_add_char:bg3se.MsgS2CSyncStat.combo_categories)
 }
 inline void MsgS2CSyncStat::add_combo_categories(const char* value, size_t size) {
   combo_categories_.Add()->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_add_pointer:dse.MsgS2CSyncStat.combo_categories)
+  // @@protoc_insertion_point(field_add_pointer:bg3se.MsgS2CSyncStat.combo_categories)
 }
 inline const ::google::protobuf::RepeatedPtrField< ::std::string>&
 MsgS2CSyncStat::combo_categories() const {
-  // @@protoc_insertion_point(field_list:dse.MsgS2CSyncStat.combo_categories)
+  // @@protoc_insertion_point(field_list:bg3se.MsgS2CSyncStat.combo_categories)
   return combo_categories_;
 }
 inline ::google::protobuf::RepeatedPtrField< ::std::string>*
 MsgS2CSyncStat::mutable_combo_categories() {
-  // @@protoc_insertion_point(field_mutable_list:dse.MsgS2CSyncStat.combo_categories)
+  // @@protoc_insertion_point(field_mutable_list:bg3se.MsgS2CSyncStat.combo_categories)
   return &combo_categories_;
 }
 
-// repeated .dse.StatPropertyList property_lists = 9;
+// repeated .bg3se.StatPropertyList property_lists = 9;
 inline int MsgS2CSyncStat::property_lists_size() const {
   return property_lists_.size();
 }
 inline void MsgS2CSyncStat::clear_property_lists() {
   property_lists_.Clear();
 }
-inline ::dse::StatPropertyList* MsgS2CSyncStat::mutable_property_lists(int index) {
-  // @@protoc_insertion_point(field_mutable:dse.MsgS2CSyncStat.property_lists)
+inline ::bg3se::StatPropertyList* MsgS2CSyncStat::mutable_property_lists(int index) {
+  // @@protoc_insertion_point(field_mutable:bg3se.MsgS2CSyncStat.property_lists)
   return property_lists_.Mutable(index);
 }
-inline ::google::protobuf::RepeatedPtrField< ::dse::StatPropertyList >*
+inline ::google::protobuf::RepeatedPtrField< ::bg3se::StatPropertyList >*
 MsgS2CSyncStat::mutable_property_lists() {
-  // @@protoc_insertion_point(field_mutable_list:dse.MsgS2CSyncStat.property_lists)
+  // @@protoc_insertion_point(field_mutable_list:bg3se.MsgS2CSyncStat.property_lists)
   return &property_lists_;
 }
-inline const ::dse::StatPropertyList& MsgS2CSyncStat::property_lists(int index) const {
-  // @@protoc_insertion_point(field_get:dse.MsgS2CSyncStat.property_lists)
+inline const ::bg3se::StatPropertyList& MsgS2CSyncStat::property_lists(int index) const {
+  // @@protoc_insertion_point(field_get:bg3se.MsgS2CSyncStat.property_lists)
   return property_lists_.Get(index);
 }
-inline ::dse::StatPropertyList* MsgS2CSyncStat::add_property_lists() {
-  // @@protoc_insertion_point(field_add:dse.MsgS2CSyncStat.property_lists)
+inline ::bg3se::StatPropertyList* MsgS2CSyncStat::add_property_lists() {
+  // @@protoc_insertion_point(field_add:bg3se.MsgS2CSyncStat.property_lists)
   return property_lists_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::dse::StatPropertyList >&
+inline const ::google::protobuf::RepeatedPtrField< ::bg3se::StatPropertyList >&
 MsgS2CSyncStat::property_lists() const {
-  // @@protoc_insertion_point(field_list:dse.MsgS2CSyncStat.property_lists)
+  // @@protoc_insertion_point(field_list:bg3se.MsgS2CSyncStat.property_lists)
   return property_lists_;
 }
 
@@ -3395,20 +3395,20 @@ inline void MsgS2CKick::clear_message() {
   message_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& MsgS2CKick::message() const {
-  // @@protoc_insertion_point(field_get:dse.MsgS2CKick.message)
+  // @@protoc_insertion_point(field_get:bg3se.MsgS2CKick.message)
   return message_.Get();
 }
 inline void MsgS2CKick::set_message(const ::std::string& value) {
   
   message_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.MsgS2CKick.message)
+  // @@protoc_insertion_point(field_set:bg3se.MsgS2CKick.message)
 }
 #if LANG_CXX11
 inline void MsgS2CKick::set_message(::std::string&& value) {
   
   message_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.MsgS2CKick.message)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.MsgS2CKick.message)
 }
 #endif
 inline void MsgS2CKick::set_message(const char* value) {
@@ -3416,22 +3416,22 @@ inline void MsgS2CKick::set_message(const char* value) {
   
   message_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.MsgS2CKick.message)
+  // @@protoc_insertion_point(field_set_char:bg3se.MsgS2CKick.message)
 }
 inline void MsgS2CKick::set_message(const char* value,
     size_t size) {
   
   message_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.MsgS2CKick.message)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.MsgS2CKick.message)
 }
 inline ::std::string* MsgS2CKick::mutable_message() {
   
-  // @@protoc_insertion_point(field_mutable:dse.MsgS2CKick.message)
+  // @@protoc_insertion_point(field_mutable:bg3se.MsgS2CKick.message)
   return message_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* MsgS2CKick::release_message() {
-  // @@protoc_insertion_point(field_release:dse.MsgS2CKick.message)
+  // @@protoc_insertion_point(field_release:bg3se.MsgS2CKick.message)
   
   return message_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -3443,10 +3443,10 @@ inline void MsgS2CKick::set_allocated_message(::std::string* message) {
   }
   message_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), message,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.MsgS2CKick.message)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.MsgS2CKick.message)
 }
 inline ::std::string* MsgS2CKick::unsafe_arena_release_message() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.MsgS2CKick.message)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.MsgS2CKick.message)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return message_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -3462,14 +3462,14 @@ inline void MsgS2CKick::unsafe_arena_set_allocated_message(
   }
   message_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       message, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.MsgS2CKick.message)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.MsgS2CKick.message)
 }
 
 // -------------------------------------------------------------------
 
 // MessageWrapper
 
-// .dse.MsgPostLuaMessage post_lua = 1;
+// .bg3se.MsgPostLuaMessage post_lua = 1;
 inline bool MessageWrapper::has_post_lua() const {
   return msg_case() == kPostLua;
 }
@@ -3484,14 +3484,14 @@ inline void MessageWrapper::clear_post_lua() {
     clear_has_msg();
   }
 }
-inline const ::dse::MsgPostLuaMessage& MessageWrapper::_internal_post_lua() const {
+inline const ::bg3se::MsgPostLuaMessage& MessageWrapper::_internal_post_lua() const {
   return *msg_.post_lua_;
 }
-inline ::dse::MsgPostLuaMessage* MessageWrapper::release_post_lua() {
-  // @@protoc_insertion_point(field_release:dse.MessageWrapper.post_lua)
+inline ::bg3se::MsgPostLuaMessage* MessageWrapper::release_post_lua() {
+  // @@protoc_insertion_point(field_release:bg3se.MessageWrapper.post_lua)
   if (has_post_lua()) {
     clear_has_msg();
-      ::dse::MsgPostLuaMessage* temp = msg_.post_lua_;
+      ::bg3se::MsgPostLuaMessage* temp = msg_.post_lua_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -3501,43 +3501,43 @@ inline ::dse::MsgPostLuaMessage* MessageWrapper::release_post_lua() {
     return NULL;
   }
 }
-inline const ::dse::MsgPostLuaMessage& MessageWrapper::post_lua() const {
-  // @@protoc_insertion_point(field_get:dse.MessageWrapper.post_lua)
+inline const ::bg3se::MsgPostLuaMessage& MessageWrapper::post_lua() const {
+  // @@protoc_insertion_point(field_get:bg3se.MessageWrapper.post_lua)
   return has_post_lua()
       ? *msg_.post_lua_
-      : *reinterpret_cast< ::dse::MsgPostLuaMessage*>(&::dse::_MsgPostLuaMessage_default_instance_);
+      : *reinterpret_cast< ::bg3se::MsgPostLuaMessage*>(&::bg3se::_MsgPostLuaMessage_default_instance_);
 }
-inline ::dse::MsgPostLuaMessage* MessageWrapper::unsafe_arena_release_post_lua() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.MessageWrapper.post_lua)
+inline ::bg3se::MsgPostLuaMessage* MessageWrapper::unsafe_arena_release_post_lua() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.MessageWrapper.post_lua)
   if (has_post_lua()) {
     clear_has_msg();
-    ::dse::MsgPostLuaMessage* temp = msg_.post_lua_;
+    ::bg3se::MsgPostLuaMessage* temp = msg_.post_lua_;
     msg_.post_lua_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void MessageWrapper::unsafe_arena_set_allocated_post_lua(::dse::MsgPostLuaMessage* post_lua) {
+inline void MessageWrapper::unsafe_arena_set_allocated_post_lua(::bg3se::MsgPostLuaMessage* post_lua) {
   clear_msg();
   if (post_lua) {
     set_has_post_lua();
     msg_.post_lua_ = post_lua;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.MessageWrapper.post_lua)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.MessageWrapper.post_lua)
 }
-inline ::dse::MsgPostLuaMessage* MessageWrapper::mutable_post_lua() {
+inline ::bg3se::MsgPostLuaMessage* MessageWrapper::mutable_post_lua() {
   if (!has_post_lua()) {
     clear_msg();
     set_has_post_lua();
-    msg_.post_lua_ = CreateMaybeMessage< ::dse::MsgPostLuaMessage >(
+    msg_.post_lua_ = CreateMaybeMessage< ::bg3se::MsgPostLuaMessage >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.MessageWrapper.post_lua)
+  // @@protoc_insertion_point(field_mutable:bg3se.MessageWrapper.post_lua)
   return msg_.post_lua_;
 }
 
-// .dse.MsgS2CResetLuaMessage s2c_reset_lua = 2;
+// .bg3se.MsgS2CResetLuaMessage s2c_reset_lua = 2;
 inline bool MessageWrapper::has_s2c_reset_lua() const {
   return msg_case() == kS2CResetLua;
 }
@@ -3552,14 +3552,14 @@ inline void MessageWrapper::clear_s2c_reset_lua() {
     clear_has_msg();
   }
 }
-inline const ::dse::MsgS2CResetLuaMessage& MessageWrapper::_internal_s2c_reset_lua() const {
+inline const ::bg3se::MsgS2CResetLuaMessage& MessageWrapper::_internal_s2c_reset_lua() const {
   return *msg_.s2c_reset_lua_;
 }
-inline ::dse::MsgS2CResetLuaMessage* MessageWrapper::release_s2c_reset_lua() {
-  // @@protoc_insertion_point(field_release:dse.MessageWrapper.s2c_reset_lua)
+inline ::bg3se::MsgS2CResetLuaMessage* MessageWrapper::release_s2c_reset_lua() {
+  // @@protoc_insertion_point(field_release:bg3se.MessageWrapper.s2c_reset_lua)
   if (has_s2c_reset_lua()) {
     clear_has_msg();
-      ::dse::MsgS2CResetLuaMessage* temp = msg_.s2c_reset_lua_;
+      ::bg3se::MsgS2CResetLuaMessage* temp = msg_.s2c_reset_lua_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -3569,43 +3569,43 @@ inline ::dse::MsgS2CResetLuaMessage* MessageWrapper::release_s2c_reset_lua() {
     return NULL;
   }
 }
-inline const ::dse::MsgS2CResetLuaMessage& MessageWrapper::s2c_reset_lua() const {
-  // @@protoc_insertion_point(field_get:dse.MessageWrapper.s2c_reset_lua)
+inline const ::bg3se::MsgS2CResetLuaMessage& MessageWrapper::s2c_reset_lua() const {
+  // @@protoc_insertion_point(field_get:bg3se.MessageWrapper.s2c_reset_lua)
   return has_s2c_reset_lua()
       ? *msg_.s2c_reset_lua_
-      : *reinterpret_cast< ::dse::MsgS2CResetLuaMessage*>(&::dse::_MsgS2CResetLuaMessage_default_instance_);
+      : *reinterpret_cast< ::bg3se::MsgS2CResetLuaMessage*>(&::bg3se::_MsgS2CResetLuaMessage_default_instance_);
 }
-inline ::dse::MsgS2CResetLuaMessage* MessageWrapper::unsafe_arena_release_s2c_reset_lua() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.MessageWrapper.s2c_reset_lua)
+inline ::bg3se::MsgS2CResetLuaMessage* MessageWrapper::unsafe_arena_release_s2c_reset_lua() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.MessageWrapper.s2c_reset_lua)
   if (has_s2c_reset_lua()) {
     clear_has_msg();
-    ::dse::MsgS2CResetLuaMessage* temp = msg_.s2c_reset_lua_;
+    ::bg3se::MsgS2CResetLuaMessage* temp = msg_.s2c_reset_lua_;
     msg_.s2c_reset_lua_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void MessageWrapper::unsafe_arena_set_allocated_s2c_reset_lua(::dse::MsgS2CResetLuaMessage* s2c_reset_lua) {
+inline void MessageWrapper::unsafe_arena_set_allocated_s2c_reset_lua(::bg3se::MsgS2CResetLuaMessage* s2c_reset_lua) {
   clear_msg();
   if (s2c_reset_lua) {
     set_has_s2c_reset_lua();
     msg_.s2c_reset_lua_ = s2c_reset_lua;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.MessageWrapper.s2c_reset_lua)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.MessageWrapper.s2c_reset_lua)
 }
-inline ::dse::MsgS2CResetLuaMessage* MessageWrapper::mutable_s2c_reset_lua() {
+inline ::bg3se::MsgS2CResetLuaMessage* MessageWrapper::mutable_s2c_reset_lua() {
   if (!has_s2c_reset_lua()) {
     clear_msg();
     set_has_s2c_reset_lua();
-    msg_.s2c_reset_lua_ = CreateMaybeMessage< ::dse::MsgS2CResetLuaMessage >(
+    msg_.s2c_reset_lua_ = CreateMaybeMessage< ::bg3se::MsgS2CResetLuaMessage >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.MessageWrapper.s2c_reset_lua)
+  // @@protoc_insertion_point(field_mutable:bg3se.MessageWrapper.s2c_reset_lua)
   return msg_.s2c_reset_lua_;
 }
 
-// .dse.MsgS2CSyncNetworkFixedStrings s2c_sync_strings = 3;
+// .bg3se.MsgS2CSyncNetworkFixedStrings s2c_sync_strings = 3;
 inline bool MessageWrapper::has_s2c_sync_strings() const {
   return msg_case() == kS2CSyncStrings;
 }
@@ -3620,14 +3620,14 @@ inline void MessageWrapper::clear_s2c_sync_strings() {
     clear_has_msg();
   }
 }
-inline const ::dse::MsgS2CSyncNetworkFixedStrings& MessageWrapper::_internal_s2c_sync_strings() const {
+inline const ::bg3se::MsgS2CSyncNetworkFixedStrings& MessageWrapper::_internal_s2c_sync_strings() const {
   return *msg_.s2c_sync_strings_;
 }
-inline ::dse::MsgS2CSyncNetworkFixedStrings* MessageWrapper::release_s2c_sync_strings() {
-  // @@protoc_insertion_point(field_release:dse.MessageWrapper.s2c_sync_strings)
+inline ::bg3se::MsgS2CSyncNetworkFixedStrings* MessageWrapper::release_s2c_sync_strings() {
+  // @@protoc_insertion_point(field_release:bg3se.MessageWrapper.s2c_sync_strings)
   if (has_s2c_sync_strings()) {
     clear_has_msg();
-      ::dse::MsgS2CSyncNetworkFixedStrings* temp = msg_.s2c_sync_strings_;
+      ::bg3se::MsgS2CSyncNetworkFixedStrings* temp = msg_.s2c_sync_strings_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -3637,43 +3637,43 @@ inline ::dse::MsgS2CSyncNetworkFixedStrings* MessageWrapper::release_s2c_sync_st
     return NULL;
   }
 }
-inline const ::dse::MsgS2CSyncNetworkFixedStrings& MessageWrapper::s2c_sync_strings() const {
-  // @@protoc_insertion_point(field_get:dse.MessageWrapper.s2c_sync_strings)
+inline const ::bg3se::MsgS2CSyncNetworkFixedStrings& MessageWrapper::s2c_sync_strings() const {
+  // @@protoc_insertion_point(field_get:bg3se.MessageWrapper.s2c_sync_strings)
   return has_s2c_sync_strings()
       ? *msg_.s2c_sync_strings_
-      : *reinterpret_cast< ::dse::MsgS2CSyncNetworkFixedStrings*>(&::dse::_MsgS2CSyncNetworkFixedStrings_default_instance_);
+      : *reinterpret_cast< ::bg3se::MsgS2CSyncNetworkFixedStrings*>(&::bg3se::_MsgS2CSyncNetworkFixedStrings_default_instance_);
 }
-inline ::dse::MsgS2CSyncNetworkFixedStrings* MessageWrapper::unsafe_arena_release_s2c_sync_strings() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.MessageWrapper.s2c_sync_strings)
+inline ::bg3se::MsgS2CSyncNetworkFixedStrings* MessageWrapper::unsafe_arena_release_s2c_sync_strings() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.MessageWrapper.s2c_sync_strings)
   if (has_s2c_sync_strings()) {
     clear_has_msg();
-    ::dse::MsgS2CSyncNetworkFixedStrings* temp = msg_.s2c_sync_strings_;
+    ::bg3se::MsgS2CSyncNetworkFixedStrings* temp = msg_.s2c_sync_strings_;
     msg_.s2c_sync_strings_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void MessageWrapper::unsafe_arena_set_allocated_s2c_sync_strings(::dse::MsgS2CSyncNetworkFixedStrings* s2c_sync_strings) {
+inline void MessageWrapper::unsafe_arena_set_allocated_s2c_sync_strings(::bg3se::MsgS2CSyncNetworkFixedStrings* s2c_sync_strings) {
   clear_msg();
   if (s2c_sync_strings) {
     set_has_s2c_sync_strings();
     msg_.s2c_sync_strings_ = s2c_sync_strings;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.MessageWrapper.s2c_sync_strings)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.MessageWrapper.s2c_sync_strings)
 }
-inline ::dse::MsgS2CSyncNetworkFixedStrings* MessageWrapper::mutable_s2c_sync_strings() {
+inline ::bg3se::MsgS2CSyncNetworkFixedStrings* MessageWrapper::mutable_s2c_sync_strings() {
   if (!has_s2c_sync_strings()) {
     clear_msg();
     set_has_s2c_sync_strings();
-    msg_.s2c_sync_strings_ = CreateMaybeMessage< ::dse::MsgS2CSyncNetworkFixedStrings >(
+    msg_.s2c_sync_strings_ = CreateMaybeMessage< ::bg3se::MsgS2CSyncNetworkFixedStrings >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.MessageWrapper.s2c_sync_strings)
+  // @@protoc_insertion_point(field_mutable:bg3se.MessageWrapper.s2c_sync_strings)
   return msg_.s2c_sync_strings_;
 }
 
-// .dse.MsgC2SRequestNetworkFixedStrings c2s_request_strings = 4;
+// .bg3se.MsgC2SRequestNetworkFixedStrings c2s_request_strings = 4;
 inline bool MessageWrapper::has_c2s_request_strings() const {
   return msg_case() == kC2SRequestStrings;
 }
@@ -3688,14 +3688,14 @@ inline void MessageWrapper::clear_c2s_request_strings() {
     clear_has_msg();
   }
 }
-inline const ::dse::MsgC2SRequestNetworkFixedStrings& MessageWrapper::_internal_c2s_request_strings() const {
+inline const ::bg3se::MsgC2SRequestNetworkFixedStrings& MessageWrapper::_internal_c2s_request_strings() const {
   return *msg_.c2s_request_strings_;
 }
-inline ::dse::MsgC2SRequestNetworkFixedStrings* MessageWrapper::release_c2s_request_strings() {
-  // @@protoc_insertion_point(field_release:dse.MessageWrapper.c2s_request_strings)
+inline ::bg3se::MsgC2SRequestNetworkFixedStrings* MessageWrapper::release_c2s_request_strings() {
+  // @@protoc_insertion_point(field_release:bg3se.MessageWrapper.c2s_request_strings)
   if (has_c2s_request_strings()) {
     clear_has_msg();
-      ::dse::MsgC2SRequestNetworkFixedStrings* temp = msg_.c2s_request_strings_;
+      ::bg3se::MsgC2SRequestNetworkFixedStrings* temp = msg_.c2s_request_strings_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -3705,43 +3705,43 @@ inline ::dse::MsgC2SRequestNetworkFixedStrings* MessageWrapper::release_c2s_requ
     return NULL;
   }
 }
-inline const ::dse::MsgC2SRequestNetworkFixedStrings& MessageWrapper::c2s_request_strings() const {
-  // @@protoc_insertion_point(field_get:dse.MessageWrapper.c2s_request_strings)
+inline const ::bg3se::MsgC2SRequestNetworkFixedStrings& MessageWrapper::c2s_request_strings() const {
+  // @@protoc_insertion_point(field_get:bg3se.MessageWrapper.c2s_request_strings)
   return has_c2s_request_strings()
       ? *msg_.c2s_request_strings_
-      : *reinterpret_cast< ::dse::MsgC2SRequestNetworkFixedStrings*>(&::dse::_MsgC2SRequestNetworkFixedStrings_default_instance_);
+      : *reinterpret_cast< ::bg3se::MsgC2SRequestNetworkFixedStrings*>(&::bg3se::_MsgC2SRequestNetworkFixedStrings_default_instance_);
 }
-inline ::dse::MsgC2SRequestNetworkFixedStrings* MessageWrapper::unsafe_arena_release_c2s_request_strings() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.MessageWrapper.c2s_request_strings)
+inline ::bg3se::MsgC2SRequestNetworkFixedStrings* MessageWrapper::unsafe_arena_release_c2s_request_strings() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.MessageWrapper.c2s_request_strings)
   if (has_c2s_request_strings()) {
     clear_has_msg();
-    ::dse::MsgC2SRequestNetworkFixedStrings* temp = msg_.c2s_request_strings_;
+    ::bg3se::MsgC2SRequestNetworkFixedStrings* temp = msg_.c2s_request_strings_;
     msg_.c2s_request_strings_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void MessageWrapper::unsafe_arena_set_allocated_c2s_request_strings(::dse::MsgC2SRequestNetworkFixedStrings* c2s_request_strings) {
+inline void MessageWrapper::unsafe_arena_set_allocated_c2s_request_strings(::bg3se::MsgC2SRequestNetworkFixedStrings* c2s_request_strings) {
   clear_msg();
   if (c2s_request_strings) {
     set_has_c2s_request_strings();
     msg_.c2s_request_strings_ = c2s_request_strings;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.MessageWrapper.c2s_request_strings)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.MessageWrapper.c2s_request_strings)
 }
-inline ::dse::MsgC2SRequestNetworkFixedStrings* MessageWrapper::mutable_c2s_request_strings() {
+inline ::bg3se::MsgC2SRequestNetworkFixedStrings* MessageWrapper::mutable_c2s_request_strings() {
   if (!has_c2s_request_strings()) {
     clear_msg();
     set_has_c2s_request_strings();
-    msg_.c2s_request_strings_ = CreateMaybeMessage< ::dse::MsgC2SRequestNetworkFixedStrings >(
+    msg_.c2s_request_strings_ = CreateMaybeMessage< ::bg3se::MsgC2SRequestNetworkFixedStrings >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.MessageWrapper.c2s_request_strings)
+  // @@protoc_insertion_point(field_mutable:bg3se.MessageWrapper.c2s_request_strings)
   return msg_.c2s_request_strings_;
 }
 
-// .dse.MsgC2SExtenderHello c2s_extender_hello = 5;
+// .bg3se.MsgC2SExtenderHello c2s_extender_hello = 5;
 inline bool MessageWrapper::has_c2s_extender_hello() const {
   return msg_case() == kC2SExtenderHello;
 }
@@ -3756,14 +3756,14 @@ inline void MessageWrapper::clear_c2s_extender_hello() {
     clear_has_msg();
   }
 }
-inline const ::dse::MsgC2SExtenderHello& MessageWrapper::_internal_c2s_extender_hello() const {
+inline const ::bg3se::MsgC2SExtenderHello& MessageWrapper::_internal_c2s_extender_hello() const {
   return *msg_.c2s_extender_hello_;
 }
-inline ::dse::MsgC2SExtenderHello* MessageWrapper::release_c2s_extender_hello() {
-  // @@protoc_insertion_point(field_release:dse.MessageWrapper.c2s_extender_hello)
+inline ::bg3se::MsgC2SExtenderHello* MessageWrapper::release_c2s_extender_hello() {
+  // @@protoc_insertion_point(field_release:bg3se.MessageWrapper.c2s_extender_hello)
   if (has_c2s_extender_hello()) {
     clear_has_msg();
-      ::dse::MsgC2SExtenderHello* temp = msg_.c2s_extender_hello_;
+      ::bg3se::MsgC2SExtenderHello* temp = msg_.c2s_extender_hello_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -3773,43 +3773,43 @@ inline ::dse::MsgC2SExtenderHello* MessageWrapper::release_c2s_extender_hello() 
     return NULL;
   }
 }
-inline const ::dse::MsgC2SExtenderHello& MessageWrapper::c2s_extender_hello() const {
-  // @@protoc_insertion_point(field_get:dse.MessageWrapper.c2s_extender_hello)
+inline const ::bg3se::MsgC2SExtenderHello& MessageWrapper::c2s_extender_hello() const {
+  // @@protoc_insertion_point(field_get:bg3se.MessageWrapper.c2s_extender_hello)
   return has_c2s_extender_hello()
       ? *msg_.c2s_extender_hello_
-      : *reinterpret_cast< ::dse::MsgC2SExtenderHello*>(&::dse::_MsgC2SExtenderHello_default_instance_);
+      : *reinterpret_cast< ::bg3se::MsgC2SExtenderHello*>(&::bg3se::_MsgC2SExtenderHello_default_instance_);
 }
-inline ::dse::MsgC2SExtenderHello* MessageWrapper::unsafe_arena_release_c2s_extender_hello() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.MessageWrapper.c2s_extender_hello)
+inline ::bg3se::MsgC2SExtenderHello* MessageWrapper::unsafe_arena_release_c2s_extender_hello() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.MessageWrapper.c2s_extender_hello)
   if (has_c2s_extender_hello()) {
     clear_has_msg();
-    ::dse::MsgC2SExtenderHello* temp = msg_.c2s_extender_hello_;
+    ::bg3se::MsgC2SExtenderHello* temp = msg_.c2s_extender_hello_;
     msg_.c2s_extender_hello_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void MessageWrapper::unsafe_arena_set_allocated_c2s_extender_hello(::dse::MsgC2SExtenderHello* c2s_extender_hello) {
+inline void MessageWrapper::unsafe_arena_set_allocated_c2s_extender_hello(::bg3se::MsgC2SExtenderHello* c2s_extender_hello) {
   clear_msg();
   if (c2s_extender_hello) {
     set_has_c2s_extender_hello();
     msg_.c2s_extender_hello_ = c2s_extender_hello;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.MessageWrapper.c2s_extender_hello)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.MessageWrapper.c2s_extender_hello)
 }
-inline ::dse::MsgC2SExtenderHello* MessageWrapper::mutable_c2s_extender_hello() {
+inline ::bg3se::MsgC2SExtenderHello* MessageWrapper::mutable_c2s_extender_hello() {
   if (!has_c2s_extender_hello()) {
     clear_msg();
     set_has_c2s_extender_hello();
-    msg_.c2s_extender_hello_ = CreateMaybeMessage< ::dse::MsgC2SExtenderHello >(
+    msg_.c2s_extender_hello_ = CreateMaybeMessage< ::bg3se::MsgC2SExtenderHello >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.MessageWrapper.c2s_extender_hello)
+  // @@protoc_insertion_point(field_mutable:bg3se.MessageWrapper.c2s_extender_hello)
   return msg_.c2s_extender_hello_;
 }
 
-// .dse.MsgS2CSyncStat s2c_sync_stat = 6;
+// .bg3se.MsgS2CSyncStat s2c_sync_stat = 6;
 inline bool MessageWrapper::has_s2c_sync_stat() const {
   return msg_case() == kS2CSyncStat;
 }
@@ -3824,14 +3824,14 @@ inline void MessageWrapper::clear_s2c_sync_stat() {
     clear_has_msg();
   }
 }
-inline const ::dse::MsgS2CSyncStat& MessageWrapper::_internal_s2c_sync_stat() const {
+inline const ::bg3se::MsgS2CSyncStat& MessageWrapper::_internal_s2c_sync_stat() const {
   return *msg_.s2c_sync_stat_;
 }
-inline ::dse::MsgS2CSyncStat* MessageWrapper::release_s2c_sync_stat() {
-  // @@protoc_insertion_point(field_release:dse.MessageWrapper.s2c_sync_stat)
+inline ::bg3se::MsgS2CSyncStat* MessageWrapper::release_s2c_sync_stat() {
+  // @@protoc_insertion_point(field_release:bg3se.MessageWrapper.s2c_sync_stat)
   if (has_s2c_sync_stat()) {
     clear_has_msg();
-      ::dse::MsgS2CSyncStat* temp = msg_.s2c_sync_stat_;
+      ::bg3se::MsgS2CSyncStat* temp = msg_.s2c_sync_stat_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -3841,43 +3841,43 @@ inline ::dse::MsgS2CSyncStat* MessageWrapper::release_s2c_sync_stat() {
     return NULL;
   }
 }
-inline const ::dse::MsgS2CSyncStat& MessageWrapper::s2c_sync_stat() const {
-  // @@protoc_insertion_point(field_get:dse.MessageWrapper.s2c_sync_stat)
+inline const ::bg3se::MsgS2CSyncStat& MessageWrapper::s2c_sync_stat() const {
+  // @@protoc_insertion_point(field_get:bg3se.MessageWrapper.s2c_sync_stat)
   return has_s2c_sync_stat()
       ? *msg_.s2c_sync_stat_
-      : *reinterpret_cast< ::dse::MsgS2CSyncStat*>(&::dse::_MsgS2CSyncStat_default_instance_);
+      : *reinterpret_cast< ::bg3se::MsgS2CSyncStat*>(&::bg3se::_MsgS2CSyncStat_default_instance_);
 }
-inline ::dse::MsgS2CSyncStat* MessageWrapper::unsafe_arena_release_s2c_sync_stat() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.MessageWrapper.s2c_sync_stat)
+inline ::bg3se::MsgS2CSyncStat* MessageWrapper::unsafe_arena_release_s2c_sync_stat() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.MessageWrapper.s2c_sync_stat)
   if (has_s2c_sync_stat()) {
     clear_has_msg();
-    ::dse::MsgS2CSyncStat* temp = msg_.s2c_sync_stat_;
+    ::bg3se::MsgS2CSyncStat* temp = msg_.s2c_sync_stat_;
     msg_.s2c_sync_stat_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void MessageWrapper::unsafe_arena_set_allocated_s2c_sync_stat(::dse::MsgS2CSyncStat* s2c_sync_stat) {
+inline void MessageWrapper::unsafe_arena_set_allocated_s2c_sync_stat(::bg3se::MsgS2CSyncStat* s2c_sync_stat) {
   clear_msg();
   if (s2c_sync_stat) {
     set_has_s2c_sync_stat();
     msg_.s2c_sync_stat_ = s2c_sync_stat;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.MessageWrapper.s2c_sync_stat)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.MessageWrapper.s2c_sync_stat)
 }
-inline ::dse::MsgS2CSyncStat* MessageWrapper::mutable_s2c_sync_stat() {
+inline ::bg3se::MsgS2CSyncStat* MessageWrapper::mutable_s2c_sync_stat() {
   if (!has_s2c_sync_stat()) {
     clear_msg();
     set_has_s2c_sync_stat();
-    msg_.s2c_sync_stat_ = CreateMaybeMessage< ::dse::MsgS2CSyncStat >(
+    msg_.s2c_sync_stat_ = CreateMaybeMessage< ::bg3se::MsgS2CSyncStat >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.MessageWrapper.s2c_sync_stat)
+  // @@protoc_insertion_point(field_mutable:bg3se.MessageWrapper.s2c_sync_stat)
   return msg_.s2c_sync_stat_;
 }
 
-// .dse.MsgS2CKick s2c_kick = 7;
+// .bg3se.MsgS2CKick s2c_kick = 7;
 inline bool MessageWrapper::has_s2c_kick() const {
   return msg_case() == kS2CKick;
 }
@@ -3892,14 +3892,14 @@ inline void MessageWrapper::clear_s2c_kick() {
     clear_has_msg();
   }
 }
-inline const ::dse::MsgS2CKick& MessageWrapper::_internal_s2c_kick() const {
+inline const ::bg3se::MsgS2CKick& MessageWrapper::_internal_s2c_kick() const {
   return *msg_.s2c_kick_;
 }
-inline ::dse::MsgS2CKick* MessageWrapper::release_s2c_kick() {
-  // @@protoc_insertion_point(field_release:dse.MessageWrapper.s2c_kick)
+inline ::bg3se::MsgS2CKick* MessageWrapper::release_s2c_kick() {
+  // @@protoc_insertion_point(field_release:bg3se.MessageWrapper.s2c_kick)
   if (has_s2c_kick()) {
     clear_has_msg();
-      ::dse::MsgS2CKick* temp = msg_.s2c_kick_;
+      ::bg3se::MsgS2CKick* temp = msg_.s2c_kick_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -3909,39 +3909,39 @@ inline ::dse::MsgS2CKick* MessageWrapper::release_s2c_kick() {
     return NULL;
   }
 }
-inline const ::dse::MsgS2CKick& MessageWrapper::s2c_kick() const {
-  // @@protoc_insertion_point(field_get:dse.MessageWrapper.s2c_kick)
+inline const ::bg3se::MsgS2CKick& MessageWrapper::s2c_kick() const {
+  // @@protoc_insertion_point(field_get:bg3se.MessageWrapper.s2c_kick)
   return has_s2c_kick()
       ? *msg_.s2c_kick_
-      : *reinterpret_cast< ::dse::MsgS2CKick*>(&::dse::_MsgS2CKick_default_instance_);
+      : *reinterpret_cast< ::bg3se::MsgS2CKick*>(&::bg3se::_MsgS2CKick_default_instance_);
 }
-inline ::dse::MsgS2CKick* MessageWrapper::unsafe_arena_release_s2c_kick() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.MessageWrapper.s2c_kick)
+inline ::bg3se::MsgS2CKick* MessageWrapper::unsafe_arena_release_s2c_kick() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.MessageWrapper.s2c_kick)
   if (has_s2c_kick()) {
     clear_has_msg();
-    ::dse::MsgS2CKick* temp = msg_.s2c_kick_;
+    ::bg3se::MsgS2CKick* temp = msg_.s2c_kick_;
     msg_.s2c_kick_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void MessageWrapper::unsafe_arena_set_allocated_s2c_kick(::dse::MsgS2CKick* s2c_kick) {
+inline void MessageWrapper::unsafe_arena_set_allocated_s2c_kick(::bg3se::MsgS2CKick* s2c_kick) {
   clear_msg();
   if (s2c_kick) {
     set_has_s2c_kick();
     msg_.s2c_kick_ = s2c_kick;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.MessageWrapper.s2c_kick)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.MessageWrapper.s2c_kick)
 }
-inline ::dse::MsgS2CKick* MessageWrapper::mutable_s2c_kick() {
+inline ::bg3se::MsgS2CKick* MessageWrapper::mutable_s2c_kick() {
   if (!has_s2c_kick()) {
     clear_msg();
     set_has_s2c_kick();
-    msg_.s2c_kick_ = CreateMaybeMessage< ::dse::MsgS2CKick >(
+    msg_.s2c_kick_ = CreateMaybeMessage< ::bg3se::MsgS2CKick >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.MessageWrapper.s2c_kick)
+  // @@protoc_insertion_point(field_mutable:bg3se.MessageWrapper.s2c_kick)
   return msg_.s2c_kick_;
 }
 
@@ -3982,7 +3982,7 @@ inline MessageWrapper::MsgCase MessageWrapper::msg_case() const {
 
 // @@protoc_insertion_point(namespace_scope)
 
-}  // namespace dse
+}  // namespace bg3se
 
 // @@protoc_insertion_point(global_scope)
 

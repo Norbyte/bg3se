@@ -2,7 +2,7 @@
 
 #include <GameDefinitions/BaseTypes.h>
 
-namespace dse
+namespace bg3se
 {
 	class GlobalFixedStrings
 	{

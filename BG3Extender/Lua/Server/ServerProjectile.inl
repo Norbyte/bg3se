@@ -1,7 +1,7 @@
 //#include <GameDefinitions/Projectile.h>
 #include <Lua/LuaBinding.h>
 
-namespace dse::lua
+namespace bg3se::lua
 {
 	/*char const* const ObjectProxy<esv::ShootProjectileHelper>::MetatableName = "esv::ShootProjectileRequest";
 

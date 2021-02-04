@@ -2,7 +2,7 @@
 
 #include "BaseTypes.h"
 
-namespace dse
+namespace bg3se
 {
 	struct Version
 	{

@@ -7,7 +7,7 @@
 #include <unordered_set>
 #include <optional>
 
-namespace dse::lua
+namespace bg3se::lua
 {
 	void PushExtFunction(lua_State * L, char const * func);
 	void PushModFunction(lua_State* L, char const* mod, char const* func);

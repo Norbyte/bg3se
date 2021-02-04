@@ -29,14 +29,14 @@ void nse_lua_report_handled_error(lua_State* L)
 		err = lua_tostring(L, -1);
 	}
 
-	auto debugger = dse::gOsirisProxy->GetLuaDebugger();
+	auto debugger = bg3se::gOsirisProxy->GetLuaDebugger();
 	if (debugger) {
 		debugger->OnLuaError(L, err);
 	}
 #endif
 }
 
-namespace dse::lua
+namespace bg3se::lua
 {
 	RegistryEntry::RegistryEntry()
 		: L_(nullptr), ref_(-1)

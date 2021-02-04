@@ -13,7 +13,7 @@
 #include "Wrappers.h"
 #include <optional>
 
-namespace dse {
+namespace bg3se {
 
 
 	class WriteAnchor
@@ -196,8 +196,6 @@ namespace dse {
 		bool FindLibraries(uint32_t gameRevision);
 		bool PostStartupFindLibraries();
 		void UpdateComponentMappings();
-		void EnableCustomStats();
-		void DisableItemFolding();
 		void Cleanup();
 		bool GetGameVersion(GameVersionInfo & version);
 
@@ -239,20 +237,10 @@ namespace dse {
 		void MapAllSymbols(bool deferred);
 		void FindTextSegment();
 
-#if defined(OSI_EOCAPP)
-		bool FindEoCApp(uint8_t const * & start, size_t & size);
-		void FindServerGlobalsEoCApp();
-		void FindEoCGlobalsEoCApp();
-		void FindGlobalStringTableEoCApp();
-#else
-		bool FindEoCPlugin(uint8_t const * & start, size_t & size);
-		void FindExportsEoCPlugin();
-		void FindServerGlobalsEoCPlugin();
-		void FindEoCGlobalsEoCPlugin();
-		void FindGlobalStringTableCoreLib();
-#endif
-
-		void FindExportsIggy();
+		bool FindBG3(uint8_t const * & start, size_t & size);
+		void FindServerGlobalsBG3();
+		void FindEoCGlobalsBG3();
+		void FindGlobalStringTableBG3();
 
 		bool IsConstStringRef(uint8_t const * ref, char const * str) const;
 		bool IsFixedStringRef(uint8_t const * ref, char const * str) const;
@@ -265,17 +253,8 @@ namespace dse {
 		size_t moduleTextSize_{ 0 };
 		uint32_t gameRevision_;
 
-#if !defined(OSI_EOCAPP)
-		HMODULE coreLib_{ NULL };
-		uint8_t const * coreLibStart_{ nullptr };
-		size_t coreLibSize_{ 0 };
-		HMODULE gameEngine_{ NULL };
-#endif
-
 		bool InitFailed{ false };
 		bool CriticalInitFailed{ false };
 		bool PostLoaded{ false };
-		bool EnabledCustomStats{ false };
-		bool EnabledCustomStatsPane{ false };
 	};
 }

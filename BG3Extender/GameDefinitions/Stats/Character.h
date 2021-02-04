@@ -4,7 +4,7 @@
 #include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/Stats/Common.h>
 
-namespace dse
+namespace bg3se
 {
 	struct IGameObject;
 

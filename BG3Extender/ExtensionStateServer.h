@@ -6,7 +6,7 @@
 
 namespace Json { class Value; }
 
-namespace dse::esv
+namespace bg3se::esv
 {/*
 	class DamageHelperPool
 	{

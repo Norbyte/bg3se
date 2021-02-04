@@ -7,7 +7,7 @@
 #include "OsirisProxy.h"
 #include <PropertyMaps.h>
 
-namespace dse
+namespace bg3se
 {
 	/*void SkillPrototypeManager::SyncSkillStat(CRPGStats_Object* object, SkillPrototype* proto)
 	{

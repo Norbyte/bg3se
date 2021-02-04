@@ -4,7 +4,7 @@
 #include <Lua/LuaBinding.h>
 #include <Lua/LuaSerializers.h>
 
-namespace dse::lua
+namespace bg3se::lua
 {
 	int LuaStatGetAttribute(lua_State* L, CRPGStats_Object* object, char const* attributeName, std::optional<int> level);
 	int LuaStatSetAttribute(lua_State* L, CRPGStats_Object* object, char const* attributeName, int valueIdx);

@@ -3,7 +3,7 @@
 #include <GameDefinitions/Stats/Item.h>
 #include <Lua/LuaSerializers.h>
 
-namespace dse::lua
+namespace bg3se::lua
 {
 	int ItemFetchStat(lua_State* L, CDivinityStats_Item* item, char const* prop)
 	{

@@ -7,12 +7,12 @@
 #include <PropertyMaps.h>
 #include <ExtensionStateServer.h>
 
-namespace dse::esv::lua
+namespace bg3se::esv::lua
 {
 	//#include <Lua/LevelIteratorFunctions.inl>
 }
 
-namespace dse::lua
+namespace bg3se::lua
 {
 	char const* const ObjectProxy<esv::Status>::MetatableName = "esv::Status";
 
@@ -52,9 +52,9 @@ namespace dse::lua
 	}
 }
 
-namespace dse::esv::lua
+namespace bg3se::esv::lua
 {
-	using namespace ::dse::lua;
+	using namespace ::bg3se::lua;
 
 	char const* const StatusHandleProxy::MetatableName = "esv::HStatus";
 
@@ -107,9 +107,9 @@ namespace dse::esv::lua
 	}
 }
 
-namespace dse::esv::lua
+namespace bg3se::esv::lua
 {
-	using namespace ::dse::lua;
+	using namespace ::bg3se::lua;
 
 	esv::Character* GetCharacter(lua_State* L, int index);
 

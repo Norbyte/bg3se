@@ -44,7 +44,7 @@ extern PROTOBUF_INTERNAL_EXPORT_protobuf_LuaDebug_2eproto ::google::protobuf::in
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_LuaDebug_2eproto ::google::protobuf::internal::SCCInfo<1> scc_info_MsgVariablesRef;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_LuaDebug_2eproto ::google::protobuf::internal::SCCInfo<2> scc_info_BkModInfoResponse;
 }  // namespace protobuf_LuaDebug_2eproto
-namespace dse {
+namespace bg3se {
 namespace lua {
 namespace dbg {
 class MsgTableKeyDefaultTypeInternal {
@@ -65,7 +65,7 @@ class MsgValueDefaultTypeInternal {
   ::google::protobuf::int64 intval_;
   float floatval_;
   ::google::protobuf::internal::ArenaStringPtr stringval_;
-  const ::dse::lua::dbg::MsgVariablesRef* variables_;
+  const ::bg3se::lua::dbg::MsgVariablesRef* variables_;
 } _MsgValue_default_instance_;
 class MsgChildValueDefaultTypeInternal {
  public:
@@ -186,43 +186,43 @@ class DebuggerToBackendDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<DebuggerToBackend>
       _instance;
-  const ::dse::lua::dbg::DbgConnectRequest* connect_;
-  const ::dse::lua::dbg::DbgUpdateSettings* updatesettings_;
-  const ::dse::lua::dbg::DbgSetBreakpoints* setbreakpoints_;
-  const ::dse::lua::dbg::DbgContinue* continue__;
-  const ::dse::lua::dbg::DbgEvaluate* evaluate_;
-  const ::dse::lua::dbg::DbgFetchMods* fetchmods_;
-  const ::dse::lua::dbg::DbgRequestSource* requestsource_;
-  const ::dse::lua::dbg::DbgGetVariables* getvariables_;
+  const ::bg3se::lua::dbg::DbgConnectRequest* connect_;
+  const ::bg3se::lua::dbg::DbgUpdateSettings* updatesettings_;
+  const ::bg3se::lua::dbg::DbgSetBreakpoints* setbreakpoints_;
+  const ::bg3se::lua::dbg::DbgContinue* continue__;
+  const ::bg3se::lua::dbg::DbgEvaluate* evaluate_;
+  const ::bg3se::lua::dbg::DbgFetchMods* fetchmods_;
+  const ::bg3se::lua::dbg::DbgRequestSource* requestsource_;
+  const ::bg3se::lua::dbg::DbgGetVariables* getvariables_;
 } _DebuggerToBackend_default_instance_;
 class BackendToDebuggerDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<BackendToDebugger>
       _instance;
-  const ::dse::lua::dbg::BkConnectResponse* connectresponse_;
-  const ::dse::lua::dbg::BkBreakpointTriggered* breakpointtriggered_;
-  const ::dse::lua::dbg::BkEvaluateResponse* evaluateresponse_;
-  const ::dse::lua::dbg::BkContextUpdated* contextupdated_;
-  const ::dse::lua::dbg::BkModInfoResponse* modinforesponse_;
-  const ::dse::lua::dbg::BkDebugOutput* debugoutput_;
-  const ::dse::lua::dbg::BkResult* results_;
-  const ::dse::lua::dbg::BkDebuggerReady* debuggerready_;
-  const ::dse::lua::dbg::BkSourceResponse* sourceresponse_;
-  const ::dse::lua::dbg::BkGetVariablesResponse* getvariablesresponse_;
+  const ::bg3se::lua::dbg::BkConnectResponse* connectresponse_;
+  const ::bg3se::lua::dbg::BkBreakpointTriggered* breakpointtriggered_;
+  const ::bg3se::lua::dbg::BkEvaluateResponse* evaluateresponse_;
+  const ::bg3se::lua::dbg::BkContextUpdated* contextupdated_;
+  const ::bg3se::lua::dbg::BkModInfoResponse* modinforesponse_;
+  const ::bg3se::lua::dbg::BkDebugOutput* debugoutput_;
+  const ::bg3se::lua::dbg::BkResult* results_;
+  const ::bg3se::lua::dbg::BkDebuggerReady* debuggerready_;
+  const ::bg3se::lua::dbg::BkSourceResponse* sourceresponse_;
+  const ::bg3se::lua::dbg::BkGetVariablesResponse* getvariablesresponse_;
 } _BackendToDebugger_default_instance_;
 }  // namespace dbg
 }  // namespace lua
-}  // namespace dse
+}  // namespace bg3se
 namespace protobuf_LuaDebug_2eproto {
 static void InitDefaultsMsgTableKey() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::lua::dbg::_MsgTableKey_default_instance_;
-    new (ptr) ::dse::lua::dbg::MsgTableKey();
+    void* ptr = &::bg3se::lua::dbg::_MsgTableKey_default_instance_;
+    new (ptr) ::bg3se::lua::dbg::MsgTableKey();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::lua::dbg::MsgTableKey::InitAsDefaultInstance();
+  ::bg3se::lua::dbg::MsgTableKey::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_MsgTableKey =
@@ -232,11 +232,11 @@ static void InitDefaultsMsgVariablesRef() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::lua::dbg::_MsgVariablesRef_default_instance_;
-    new (ptr) ::dse::lua::dbg::MsgVariablesRef();
+    void* ptr = &::bg3se::lua::dbg::_MsgVariablesRef_default_instance_;
+    new (ptr) ::bg3se::lua::dbg::MsgVariablesRef();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::lua::dbg::MsgVariablesRef::InitAsDefaultInstance();
+  ::bg3se::lua::dbg::MsgVariablesRef::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<1> scc_info_MsgVariablesRef =
@@ -247,11 +247,11 @@ static void InitDefaultsMsgValue() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::lua::dbg::_MsgValue_default_instance_;
-    new (ptr) ::dse::lua::dbg::MsgValue();
+    void* ptr = &::bg3se::lua::dbg::_MsgValue_default_instance_;
+    new (ptr) ::bg3se::lua::dbg::MsgValue();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::lua::dbg::MsgValue::InitAsDefaultInstance();
+  ::bg3se::lua::dbg::MsgValue::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<1> scc_info_MsgValue =
@@ -262,11 +262,11 @@ static void InitDefaultsMsgChildValue() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::lua::dbg::_MsgChildValue_default_instance_;
-    new (ptr) ::dse::lua::dbg::MsgChildValue();
+    void* ptr = &::bg3se::lua::dbg::_MsgChildValue_default_instance_;
+    new (ptr) ::bg3se::lua::dbg::MsgChildValue();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::lua::dbg::MsgChildValue::InitAsDefaultInstance();
+  ::bg3se::lua::dbg::MsgChildValue::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<1> scc_info_MsgChildValue =
@@ -277,11 +277,11 @@ static void InitDefaultsMsgStackFrame() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::lua::dbg::_MsgStackFrame_default_instance_;
-    new (ptr) ::dse::lua::dbg::MsgStackFrame();
+    void* ptr = &::bg3se::lua::dbg::_MsgStackFrame_default_instance_;
+    new (ptr) ::bg3se::lua::dbg::MsgStackFrame();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::lua::dbg::MsgStackFrame::InitAsDefaultInstance();
+  ::bg3se::lua::dbg::MsgStackFrame::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_MsgStackFrame =
@@ -291,11 +291,11 @@ static void InitDefaultsDbgConnectRequest() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::lua::dbg::_DbgConnectRequest_default_instance_;
-    new (ptr) ::dse::lua::dbg::DbgConnectRequest();
+    void* ptr = &::bg3se::lua::dbg::_DbgConnectRequest_default_instance_;
+    new (ptr) ::bg3se::lua::dbg::DbgConnectRequest();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::lua::dbg::DbgConnectRequest::InitAsDefaultInstance();
+  ::bg3se::lua::dbg::DbgConnectRequest::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_DbgConnectRequest =
@@ -305,11 +305,11 @@ static void InitDefaultsBkConnectResponse() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::lua::dbg::_BkConnectResponse_default_instance_;
-    new (ptr) ::dse::lua::dbg::BkConnectResponse();
+    void* ptr = &::bg3se::lua::dbg::_BkConnectResponse_default_instance_;
+    new (ptr) ::bg3se::lua::dbg::BkConnectResponse();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::lua::dbg::BkConnectResponse::InitAsDefaultInstance();
+  ::bg3se::lua::dbg::BkConnectResponse::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_BkConnectResponse =
@@ -319,11 +319,11 @@ static void InitDefaultsDbgUpdateSettings() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::lua::dbg::_DbgUpdateSettings_default_instance_;
-    new (ptr) ::dse::lua::dbg::DbgUpdateSettings();
+    void* ptr = &::bg3se::lua::dbg::_DbgUpdateSettings_default_instance_;
+    new (ptr) ::bg3se::lua::dbg::DbgUpdateSettings();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::lua::dbg::DbgUpdateSettings::InitAsDefaultInstance();
+  ::bg3se::lua::dbg::DbgUpdateSettings::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_DbgUpdateSettings =
@@ -333,11 +333,11 @@ static void InitDefaultsMsgBreakpoint() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::lua::dbg::_MsgBreakpoint_default_instance_;
-    new (ptr) ::dse::lua::dbg::MsgBreakpoint();
+    void* ptr = &::bg3se::lua::dbg::_MsgBreakpoint_default_instance_;
+    new (ptr) ::bg3se::lua::dbg::MsgBreakpoint();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::lua::dbg::MsgBreakpoint::InitAsDefaultInstance();
+  ::bg3se::lua::dbg::MsgBreakpoint::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_MsgBreakpoint =
@@ -347,11 +347,11 @@ static void InitDefaultsDbgSetBreakpoints() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::lua::dbg::_DbgSetBreakpoints_default_instance_;
-    new (ptr) ::dse::lua::dbg::DbgSetBreakpoints();
+    void* ptr = &::bg3se::lua::dbg::_DbgSetBreakpoints_default_instance_;
+    new (ptr) ::bg3se::lua::dbg::DbgSetBreakpoints();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::lua::dbg::DbgSetBreakpoints::InitAsDefaultInstance();
+  ::bg3se::lua::dbg::DbgSetBreakpoints::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<1> scc_info_DbgSetBreakpoints =
@@ -362,11 +362,11 @@ static void InitDefaultsBkBreakpointTriggered() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::lua::dbg::_BkBreakpointTriggered_default_instance_;
-    new (ptr) ::dse::lua::dbg::BkBreakpointTriggered();
+    void* ptr = &::bg3se::lua::dbg::_BkBreakpointTriggered_default_instance_;
+    new (ptr) ::bg3se::lua::dbg::BkBreakpointTriggered();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::lua::dbg::BkBreakpointTriggered::InitAsDefaultInstance();
+  ::bg3se::lua::dbg::BkBreakpointTriggered::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<1> scc_info_BkBreakpointTriggered =
@@ -377,11 +377,11 @@ static void InitDefaultsDbgContinue() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::lua::dbg::_DbgContinue_default_instance_;
-    new (ptr) ::dse::lua::dbg::DbgContinue();
+    void* ptr = &::bg3se::lua::dbg::_DbgContinue_default_instance_;
+    new (ptr) ::bg3se::lua::dbg::DbgContinue();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::lua::dbg::DbgContinue::InitAsDefaultInstance();
+  ::bg3se::lua::dbg::DbgContinue::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_DbgContinue =
@@ -391,11 +391,11 @@ static void InitDefaultsDbgEvaluate() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::lua::dbg::_DbgEvaluate_default_instance_;
-    new (ptr) ::dse::lua::dbg::DbgEvaluate();
+    void* ptr = &::bg3se::lua::dbg::_DbgEvaluate_default_instance_;
+    new (ptr) ::bg3se::lua::dbg::DbgEvaluate();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::lua::dbg::DbgEvaluate::InitAsDefaultInstance();
+  ::bg3se::lua::dbg::DbgEvaluate::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_DbgEvaluate =
@@ -405,11 +405,11 @@ static void InitDefaultsDbgGetVariables() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::lua::dbg::_DbgGetVariables_default_instance_;
-    new (ptr) ::dse::lua::dbg::DbgGetVariables();
+    void* ptr = &::bg3se::lua::dbg::_DbgGetVariables_default_instance_;
+    new (ptr) ::bg3se::lua::dbg::DbgGetVariables();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::lua::dbg::DbgGetVariables::InitAsDefaultInstance();
+  ::bg3se::lua::dbg::DbgGetVariables::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<1> scc_info_DbgGetVariables =
@@ -420,11 +420,11 @@ static void InitDefaultsBkEvaluateResponse() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::lua::dbg::_BkEvaluateResponse_default_instance_;
-    new (ptr) ::dse::lua::dbg::BkEvaluateResponse();
+    void* ptr = &::bg3se::lua::dbg::_BkEvaluateResponse_default_instance_;
+    new (ptr) ::bg3se::lua::dbg::BkEvaluateResponse();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::lua::dbg::BkEvaluateResponse::InitAsDefaultInstance();
+  ::bg3se::lua::dbg::BkEvaluateResponse::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<1> scc_info_BkEvaluateResponse =
@@ -435,11 +435,11 @@ static void InitDefaultsBkGetVariablesResponse() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::lua::dbg::_BkGetVariablesResponse_default_instance_;
-    new (ptr) ::dse::lua::dbg::BkGetVariablesResponse();
+    void* ptr = &::bg3se::lua::dbg::_BkGetVariablesResponse_default_instance_;
+    new (ptr) ::bg3se::lua::dbg::BkGetVariablesResponse();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::lua::dbg::BkGetVariablesResponse::InitAsDefaultInstance();
+  ::bg3se::lua::dbg::BkGetVariablesResponse::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<1> scc_info_BkGetVariablesResponse =
@@ -450,11 +450,11 @@ static void InitDefaultsDbgFetchMods() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::lua::dbg::_DbgFetchMods_default_instance_;
-    new (ptr) ::dse::lua::dbg::DbgFetchMods();
+    void* ptr = &::bg3se::lua::dbg::_DbgFetchMods_default_instance_;
+    new (ptr) ::bg3se::lua::dbg::DbgFetchMods();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::lua::dbg::DbgFetchMods::InitAsDefaultInstance();
+  ::bg3se::lua::dbg::DbgFetchMods::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_DbgFetchMods =
@@ -464,11 +464,11 @@ static void InitDefaultsBkContextUpdated() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::lua::dbg::_BkContextUpdated_default_instance_;
-    new (ptr) ::dse::lua::dbg::BkContextUpdated();
+    void* ptr = &::bg3se::lua::dbg::_BkContextUpdated_default_instance_;
+    new (ptr) ::bg3se::lua::dbg::BkContextUpdated();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::lua::dbg::BkContextUpdated::InitAsDefaultInstance();
+  ::bg3se::lua::dbg::BkContextUpdated::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_BkContextUpdated =
@@ -478,11 +478,11 @@ static void InitDefaultsMsgModuleInfo() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::lua::dbg::_MsgModuleInfo_default_instance_;
-    new (ptr) ::dse::lua::dbg::MsgModuleInfo();
+    void* ptr = &::bg3se::lua::dbg::_MsgModuleInfo_default_instance_;
+    new (ptr) ::bg3se::lua::dbg::MsgModuleInfo();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::lua::dbg::MsgModuleInfo::InitAsDefaultInstance();
+  ::bg3se::lua::dbg::MsgModuleInfo::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_MsgModuleInfo =
@@ -492,11 +492,11 @@ static void InitDefaultsMsgSourceFileInfo() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::lua::dbg::_MsgSourceFileInfo_default_instance_;
-    new (ptr) ::dse::lua::dbg::MsgSourceFileInfo();
+    void* ptr = &::bg3se::lua::dbg::_MsgSourceFileInfo_default_instance_;
+    new (ptr) ::bg3se::lua::dbg::MsgSourceFileInfo();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::lua::dbg::MsgSourceFileInfo::InitAsDefaultInstance();
+  ::bg3se::lua::dbg::MsgSourceFileInfo::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_MsgSourceFileInfo =
@@ -506,11 +506,11 @@ static void InitDefaultsBkModInfoResponse() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::lua::dbg::_BkModInfoResponse_default_instance_;
-    new (ptr) ::dse::lua::dbg::BkModInfoResponse();
+    void* ptr = &::bg3se::lua::dbg::_BkModInfoResponse_default_instance_;
+    new (ptr) ::bg3se::lua::dbg::BkModInfoResponse();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::lua::dbg::BkModInfoResponse::InitAsDefaultInstance();
+  ::bg3se::lua::dbg::BkModInfoResponse::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<2> scc_info_BkModInfoResponse =
@@ -522,11 +522,11 @@ static void InitDefaultsBkDebugOutput() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::lua::dbg::_BkDebugOutput_default_instance_;
-    new (ptr) ::dse::lua::dbg::BkDebugOutput();
+    void* ptr = &::bg3se::lua::dbg::_BkDebugOutput_default_instance_;
+    new (ptr) ::bg3se::lua::dbg::BkDebugOutput();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::lua::dbg::BkDebugOutput::InitAsDefaultInstance();
+  ::bg3se::lua::dbg::BkDebugOutput::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_BkDebugOutput =
@@ -536,11 +536,11 @@ static void InitDefaultsBkResult() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::lua::dbg::_BkResult_default_instance_;
-    new (ptr) ::dse::lua::dbg::BkResult();
+    void* ptr = &::bg3se::lua::dbg::_BkResult_default_instance_;
+    new (ptr) ::bg3se::lua::dbg::BkResult();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::lua::dbg::BkResult::InitAsDefaultInstance();
+  ::bg3se::lua::dbg::BkResult::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_BkResult =
@@ -550,11 +550,11 @@ static void InitDefaultsBkDebuggerReady() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::lua::dbg::_BkDebuggerReady_default_instance_;
-    new (ptr) ::dse::lua::dbg::BkDebuggerReady();
+    void* ptr = &::bg3se::lua::dbg::_BkDebuggerReady_default_instance_;
+    new (ptr) ::bg3se::lua::dbg::BkDebuggerReady();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::lua::dbg::BkDebuggerReady::InitAsDefaultInstance();
+  ::bg3se::lua::dbg::BkDebuggerReady::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_BkDebuggerReady =
@@ -564,11 +564,11 @@ static void InitDefaultsDbgRequestSource() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::lua::dbg::_DbgRequestSource_default_instance_;
-    new (ptr) ::dse::lua::dbg::DbgRequestSource();
+    void* ptr = &::bg3se::lua::dbg::_DbgRequestSource_default_instance_;
+    new (ptr) ::bg3se::lua::dbg::DbgRequestSource();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::lua::dbg::DbgRequestSource::InitAsDefaultInstance();
+  ::bg3se::lua::dbg::DbgRequestSource::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_DbgRequestSource =
@@ -578,11 +578,11 @@ static void InitDefaultsBkSourceResponse() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::lua::dbg::_BkSourceResponse_default_instance_;
-    new (ptr) ::dse::lua::dbg::BkSourceResponse();
+    void* ptr = &::bg3se::lua::dbg::_BkSourceResponse_default_instance_;
+    new (ptr) ::bg3se::lua::dbg::BkSourceResponse();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::lua::dbg::BkSourceResponse::InitAsDefaultInstance();
+  ::bg3se::lua::dbg::BkSourceResponse::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_BkSourceResponse =
@@ -592,11 +592,11 @@ static void InitDefaultsDebuggerToBackend() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::lua::dbg::_DebuggerToBackend_default_instance_;
-    new (ptr) ::dse::lua::dbg::DebuggerToBackend();
+    void* ptr = &::bg3se::lua::dbg::_DebuggerToBackend_default_instance_;
+    new (ptr) ::bg3se::lua::dbg::DebuggerToBackend();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::lua::dbg::DebuggerToBackend::InitAsDefaultInstance();
+  ::bg3se::lua::dbg::DebuggerToBackend::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<8> scc_info_DebuggerToBackend =
@@ -614,11 +614,11 @@ static void InitDefaultsBackendToDebugger() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::lua::dbg::_BackendToDebugger_default_instance_;
-    new (ptr) ::dse::lua::dbg::BackendToDebugger();
+    void* ptr = &::bg3se::lua::dbg::_BackendToDebugger_default_instance_;
+    new (ptr) ::bg3se::lua::dbg::BackendToDebugger();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::lua::dbg::BackendToDebugger::InitAsDefaultInstance();
+  ::bg3se::lua::dbg::BackendToDebugger::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<10> scc_info_BackendToDebugger =
@@ -666,7 +666,7 @@ void InitDefaults() {
 }
 
 }  // namespace protobuf_LuaDebug_2eproto
-namespace dse {
+namespace bg3se {
 namespace lua {
 namespace dbg {
 bool MsgTableKey_Type_IsValid(int value) {
@@ -847,7 +847,7 @@ MsgTableKey::MsgTableKey()
   ::google::protobuf::internal::InitSCC(
       &protobuf_LuaDebug_2eproto::scc_info_MsgTableKey.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.lua.dbg.MsgTableKey)
+  // @@protoc_insertion_point(constructor:bg3se.lua.dbg.MsgTableKey)
 }
 MsgTableKey::MsgTableKey(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -855,7 +855,7 @@ MsgTableKey::MsgTableKey(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_LuaDebug_2eproto::scc_info_MsgTableKey.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.lua.dbg.MsgTableKey)
+  // @@protoc_insertion_point(arena_constructor:bg3se.lua.dbg.MsgTableKey)
 }
 MsgTableKey::MsgTableKey(const MsgTableKey& from)
   : ::google::protobuf::MessageLite(),
@@ -869,7 +869,7 @@ MsgTableKey::MsgTableKey(const MsgTableKey& from)
   ::memcpy(&index_, &from.index_,
     static_cast<size_t>(reinterpret_cast<char*>(&type_) -
     reinterpret_cast<char*>(&index_)) + sizeof(type_));
-  // @@protoc_insertion_point(copy_constructor:dse.lua.dbg.MsgTableKey)
+  // @@protoc_insertion_point(copy_constructor:bg3se.lua.dbg.MsgTableKey)
 }
 
 void MsgTableKey::SharedCtor() {
@@ -880,7 +880,7 @@ void MsgTableKey::SharedCtor() {
 }
 
 MsgTableKey::~MsgTableKey() {
-  // @@protoc_insertion_point(destructor:dse.lua.dbg.MsgTableKey)
+  // @@protoc_insertion_point(destructor:bg3se.lua.dbg.MsgTableKey)
   SharedDtor();
 }
 
@@ -905,7 +905,7 @@ const MsgTableKey& MsgTableKey::default_instance() {
 
 
 void MsgTableKey::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.lua.dbg.MsgTableKey)
+// @@protoc_insertion_point(message_clear_start:bg3se.lua.dbg.MsgTableKey)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -927,13 +927,13 @@ bool MsgTableKey::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.lua.dbg.MsgTableKey)
+  // @@protoc_insertion_point(parse_start:bg3se.lua.dbg.MsgTableKey)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .dse.lua.dbg.MsgTableKey.Type type = 1;
+      // .bg3se.lua.dbg.MsgTableKey.Type type = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
@@ -941,7 +941,7 @@ bool MsgTableKey::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
                  input, &value)));
-          set_type(static_cast< ::dse::lua::dbg::MsgTableKey_Type >(value));
+          set_type(static_cast< ::bg3se::lua::dbg::MsgTableKey_Type >(value));
         } else {
           goto handle_unusual;
         }
@@ -971,7 +971,7 @@ bool MsgTableKey::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->key().data(), static_cast<int>(this->key().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "dse.lua.dbg.MsgTableKey.key"));
+            "bg3se.lua.dbg.MsgTableKey.key"));
         } else {
           goto handle_unusual;
         }
@@ -990,21 +990,21 @@ bool MsgTableKey::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.lua.dbg.MsgTableKey)
+  // @@protoc_insertion_point(parse_success:bg3se.lua.dbg.MsgTableKey)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.lua.dbg.MsgTableKey)
+  // @@protoc_insertion_point(parse_failure:bg3se.lua.dbg.MsgTableKey)
   return false;
 #undef DO_
 }
 
 void MsgTableKey::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.lua.dbg.MsgTableKey)
+  // @@protoc_insertion_point(serialize_start:bg3se.lua.dbg.MsgTableKey)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .dse.lua.dbg.MsgTableKey.Type type = 1;
+  // .bg3se.lua.dbg.MsgTableKey.Type type = 1;
   if (this->type() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
       1, this->type(), output);
@@ -1020,18 +1020,18 @@ void MsgTableKey::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->key().data(), static_cast<int>(this->key().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "dse.lua.dbg.MsgTableKey.key");
+      "bg3se.lua.dbg.MsgTableKey.key");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       3, this->key(), output);
   }
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.lua.dbg.MsgTableKey)
+  // @@protoc_insertion_point(serialize_end:bg3se.lua.dbg.MsgTableKey)
 }
 
 size_t MsgTableKey::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.lua.dbg.MsgTableKey)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.lua.dbg.MsgTableKey)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -1050,7 +1050,7 @@ size_t MsgTableKey::ByteSizeLong() const {
         this->index());
   }
 
-  // .dse.lua.dbg.MsgTableKey.Type type = 1;
+  // .bg3se.lua.dbg.MsgTableKey.Type type = 1;
   if (this->type() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::EnumSize(this->type());
@@ -1067,7 +1067,7 @@ void MsgTableKey::CheckTypeAndMergeFrom(
 }
 
 void MsgTableKey::MergeFrom(const MsgTableKey& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.lua.dbg.MsgTableKey)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.lua.dbg.MsgTableKey)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -1085,7 +1085,7 @@ void MsgTableKey::MergeFrom(const MsgTableKey& from) {
 }
 
 void MsgTableKey::CopyFrom(const MsgTableKey& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.lua.dbg.MsgTableKey)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.lua.dbg.MsgTableKey)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -1124,7 +1124,7 @@ void MsgTableKey::InternalSwap(MsgTableKey* other) {
 }
 
 ::std::string MsgTableKey::GetTypeName() const {
-  return "dse.lua.dbg.MsgTableKey";
+  return "bg3se.lua.dbg.MsgTableKey";
 }
 
 
@@ -1144,7 +1144,7 @@ MsgVariablesRef::MsgVariablesRef()
   ::google::protobuf::internal::InitSCC(
       &protobuf_LuaDebug_2eproto::scc_info_MsgVariablesRef.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.lua.dbg.MsgVariablesRef)
+  // @@protoc_insertion_point(constructor:bg3se.lua.dbg.MsgVariablesRef)
 }
 MsgVariablesRef::MsgVariablesRef(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -1153,7 +1153,7 @@ MsgVariablesRef::MsgVariablesRef(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_LuaDebug_2eproto::scc_info_MsgVariablesRef.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.lua.dbg.MsgVariablesRef)
+  // @@protoc_insertion_point(arena_constructor:bg3se.lua.dbg.MsgVariablesRef)
 }
 MsgVariablesRef::MsgVariablesRef(const MsgVariablesRef& from)
   : ::google::protobuf::MessageLite(),
@@ -1163,7 +1163,7 @@ MsgVariablesRef::MsgVariablesRef(const MsgVariablesRef& from)
   ::memcpy(&variableref_, &from.variableref_,
     static_cast<size_t>(reinterpret_cast<char*>(&local_) -
     reinterpret_cast<char*>(&variableref_)) + sizeof(local_));
-  // @@protoc_insertion_point(copy_constructor:dse.lua.dbg.MsgVariablesRef)
+  // @@protoc_insertion_point(copy_constructor:bg3se.lua.dbg.MsgVariablesRef)
 }
 
 void MsgVariablesRef::SharedCtor() {
@@ -1173,7 +1173,7 @@ void MsgVariablesRef::SharedCtor() {
 }
 
 MsgVariablesRef::~MsgVariablesRef() {
-  // @@protoc_insertion_point(destructor:dse.lua.dbg.MsgVariablesRef)
+  // @@protoc_insertion_point(destructor:bg3se.lua.dbg.MsgVariablesRef)
   SharedDtor();
 }
 
@@ -1197,7 +1197,7 @@ const MsgVariablesRef& MsgVariablesRef::default_instance() {
 
 
 void MsgVariablesRef::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.lua.dbg.MsgVariablesRef)
+// @@protoc_insertion_point(message_clear_start:bg3se.lua.dbg.MsgVariablesRef)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -1219,7 +1219,7 @@ bool MsgVariablesRef::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.lua.dbg.MsgVariablesRef)
+  // @@protoc_insertion_point(parse_start:bg3se.lua.dbg.MsgVariablesRef)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -1267,7 +1267,7 @@ bool MsgVariablesRef::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated .dse.lua.dbg.MsgTableKey key = 4;
+      // repeated .bg3se.lua.dbg.MsgTableKey key = 4;
       case 4: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(34u /* 34 & 0xFF */)) {
@@ -1291,17 +1291,17 @@ bool MsgVariablesRef::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.lua.dbg.MsgVariablesRef)
+  // @@protoc_insertion_point(parse_success:bg3se.lua.dbg.MsgVariablesRef)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.lua.dbg.MsgVariablesRef)
+  // @@protoc_insertion_point(parse_failure:bg3se.lua.dbg.MsgVariablesRef)
   return false;
 #undef DO_
 }
 
 void MsgVariablesRef::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.lua.dbg.MsgVariablesRef)
+  // @@protoc_insertion_point(serialize_start:bg3se.lua.dbg.MsgVariablesRef)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -1320,7 +1320,7 @@ void MsgVariablesRef::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->local(), output);
   }
 
-  // repeated .dse.lua.dbg.MsgTableKey key = 4;
+  // repeated .bg3se.lua.dbg.MsgTableKey key = 4;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->key_size()); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
@@ -1331,16 +1331,16 @@ void MsgVariablesRef::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.lua.dbg.MsgVariablesRef)
+  // @@protoc_insertion_point(serialize_end:bg3se.lua.dbg.MsgVariablesRef)
 }
 
 size_t MsgVariablesRef::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.lua.dbg.MsgVariablesRef)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.lua.dbg.MsgVariablesRef)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
 
-  // repeated .dse.lua.dbg.MsgTableKey key = 4;
+  // repeated .bg3se.lua.dbg.MsgTableKey key = 4;
   {
     unsigned int count = static_cast<unsigned int>(this->key_size());
     total_size += 1UL * count;
@@ -1383,7 +1383,7 @@ void MsgVariablesRef::CheckTypeAndMergeFrom(
 }
 
 void MsgVariablesRef::MergeFrom(const MsgVariablesRef& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.lua.dbg.MsgVariablesRef)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.lua.dbg.MsgVariablesRef)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -1402,7 +1402,7 @@ void MsgVariablesRef::MergeFrom(const MsgVariablesRef& from) {
 }
 
 void MsgVariablesRef::CopyFrom(const MsgVariablesRef& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.lua.dbg.MsgVariablesRef)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.lua.dbg.MsgVariablesRef)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -1441,7 +1441,7 @@ void MsgVariablesRef::InternalSwap(MsgVariablesRef* other) {
 }
 
 ::std::string MsgVariablesRef::GetTypeName() const {
-  return "dse.lua.dbg.MsgVariablesRef";
+  return "bg3se.lua.dbg.MsgVariablesRef";
 }
 
 
@@ -1449,7 +1449,7 @@ void MsgVariablesRef::InternalSwap(MsgVariablesRef* other) {
 
 void MsgValue::InitAsDefaultInstance() {
 }
-void MsgValue::set_allocated_variables(::dse::lua::dbg::MsgVariablesRef* variables) {
+void MsgValue::set_allocated_variables(::bg3se::lua::dbg::MsgVariablesRef* variables) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_value();
   if (variables) {
@@ -1462,7 +1462,7 @@ void MsgValue::set_allocated_variables(::dse::lua::dbg::MsgVariablesRef* variabl
     set_has_variables();
     value_.variables_ = variables;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.MsgValue.variables)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.MsgValue.variables)
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int MsgValue::kTypeIdFieldNumber;
@@ -1478,7 +1478,7 @@ MsgValue::MsgValue()
   ::google::protobuf::internal::InitSCC(
       &protobuf_LuaDebug_2eproto::scc_info_MsgValue.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.lua.dbg.MsgValue)
+  // @@protoc_insertion_point(constructor:bg3se.lua.dbg.MsgValue)
 }
 MsgValue::MsgValue(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -1486,7 +1486,7 @@ MsgValue::MsgValue(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_LuaDebug_2eproto::scc_info_MsgValue.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.lua.dbg.MsgValue)
+  // @@protoc_insertion_point(arena_constructor:bg3se.lua.dbg.MsgValue)
 }
 MsgValue::MsgValue(const MsgValue& from)
   : ::google::protobuf::MessageLite(),
@@ -1512,14 +1512,14 @@ MsgValue::MsgValue(const MsgValue& from)
       break;
     }
     case kVariables: {
-      mutable_variables()->::dse::lua::dbg::MsgVariablesRef::MergeFrom(from.variables());
+      mutable_variables()->::bg3se::lua::dbg::MsgVariablesRef::MergeFrom(from.variables());
       break;
     }
     case VALUE_NOT_SET: {
       break;
     }
   }
-  // @@protoc_insertion_point(copy_constructor:dse.lua.dbg.MsgValue)
+  // @@protoc_insertion_point(copy_constructor:bg3se.lua.dbg.MsgValue)
 }
 
 void MsgValue::SharedCtor() {
@@ -1528,7 +1528,7 @@ void MsgValue::SharedCtor() {
 }
 
 MsgValue::~MsgValue() {
-  // @@protoc_insertion_point(destructor:dse.lua.dbg.MsgValue)
+  // @@protoc_insertion_point(destructor:bg3se.lua.dbg.MsgValue)
   SharedDtor();
 }
 
@@ -1555,7 +1555,7 @@ const MsgValue& MsgValue::default_instance() {
 
 
 void MsgValue::clear_value() {
-// @@protoc_insertion_point(one_of_clear_start:dse.lua.dbg.MsgValue)
+// @@protoc_insertion_point(one_of_clear_start:bg3se.lua.dbg.MsgValue)
   switch (value_case()) {
     case kBoolval: {
       // No need to clear
@@ -1589,7 +1589,7 @@ void MsgValue::clear_value() {
 
 
 void MsgValue::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.lua.dbg.MsgValue)
+// @@protoc_insertion_point(message_clear_start:bg3se.lua.dbg.MsgValue)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -1609,13 +1609,13 @@ bool MsgValue::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.lua.dbg.MsgValue)
+  // @@protoc_insertion_point(parse_start:bg3se.lua.dbg.MsgValue)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .dse.lua.dbg.MsgValueType type_id = 1;
+      // .bg3se.lua.dbg.MsgValueType type_id = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
@@ -1623,7 +1623,7 @@ bool MsgValue::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
                  input, &value)));
-          set_type_id(static_cast< ::dse::lua::dbg::MsgValueType >(value));
+          set_type_id(static_cast< ::bg3se::lua::dbg::MsgValueType >(value));
         } else {
           goto handle_unusual;
         }
@@ -1684,14 +1684,14 @@ bool MsgValue::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->stringval().data(), static_cast<int>(this->stringval().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "dse.lua.dbg.MsgValue.stringval"));
+            "bg3se.lua.dbg.MsgValue.stringval"));
         } else {
           goto handle_unusual;
         }
         break;
       }
 
-      // .dse.lua.dbg.MsgVariablesRef variables = 6;
+      // .bg3se.lua.dbg.MsgVariablesRef variables = 6;
       case 6: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(50u /* 50 & 0xFF */)) {
@@ -1715,21 +1715,21 @@ bool MsgValue::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.lua.dbg.MsgValue)
+  // @@protoc_insertion_point(parse_success:bg3se.lua.dbg.MsgValue)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.lua.dbg.MsgValue)
+  // @@protoc_insertion_point(parse_failure:bg3se.lua.dbg.MsgValue)
   return false;
 #undef DO_
 }
 
 void MsgValue::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.lua.dbg.MsgValue)
+  // @@protoc_insertion_point(serialize_start:bg3se.lua.dbg.MsgValue)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .dse.lua.dbg.MsgValueType type_id = 1;
+  // .bg3se.lua.dbg.MsgValueType type_id = 1;
   if (this->type_id() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
       1, this->type_id(), output);
@@ -1755,12 +1755,12 @@ void MsgValue::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->stringval().data(), static_cast<int>(this->stringval().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "dse.lua.dbg.MsgValue.stringval");
+      "bg3se.lua.dbg.MsgValue.stringval");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       5, this->stringval(), output);
   }
 
-  // .dse.lua.dbg.MsgVariablesRef variables = 6;
+  // .bg3se.lua.dbg.MsgVariablesRef variables = 6;
   if (has_variables()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       6, this->_internal_variables(), output);
@@ -1768,16 +1768,16 @@ void MsgValue::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.lua.dbg.MsgValue)
+  // @@protoc_insertion_point(serialize_end:bg3se.lua.dbg.MsgValue)
 }
 
 size_t MsgValue::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.lua.dbg.MsgValue)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.lua.dbg.MsgValue)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
 
-  // .dse.lua.dbg.MsgValueType type_id = 1;
+  // .bg3se.lua.dbg.MsgValueType type_id = 1;
   if (this->type_id() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::EnumSize(this->type_id());
@@ -1808,7 +1808,7 @@ size_t MsgValue::ByteSizeLong() const {
           this->stringval());
       break;
     }
-    // .dse.lua.dbg.MsgVariablesRef variables = 6;
+    // .bg3se.lua.dbg.MsgVariablesRef variables = 6;
     case kVariables: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
@@ -1830,7 +1830,7 @@ void MsgValue::CheckTypeAndMergeFrom(
 }
 
 void MsgValue::MergeFrom(const MsgValue& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.lua.dbg.MsgValue)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.lua.dbg.MsgValue)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -1857,7 +1857,7 @@ void MsgValue::MergeFrom(const MsgValue& from) {
       break;
     }
     case kVariables: {
-      mutable_variables()->::dse::lua::dbg::MsgVariablesRef::MergeFrom(from.variables());
+      mutable_variables()->::bg3se::lua::dbg::MsgVariablesRef::MergeFrom(from.variables());
       break;
     }
     case VALUE_NOT_SET: {
@@ -1867,7 +1867,7 @@ void MsgValue::MergeFrom(const MsgValue& from) {
 }
 
 void MsgValue::CopyFrom(const MsgValue& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.lua.dbg.MsgValue)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.lua.dbg.MsgValue)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -1905,18 +1905,18 @@ void MsgValue::InternalSwap(MsgValue* other) {
 }
 
 ::std::string MsgValue::GetTypeName() const {
-  return "dse.lua.dbg.MsgValue";
+  return "bg3se.lua.dbg.MsgValue";
 }
 
 
 // ===================================================================
 
 void MsgChildValue::InitAsDefaultInstance() {
-  ::dse::lua::dbg::_MsgChildValue_default_instance_._instance.get_mutable()->value_ = const_cast< ::dse::lua::dbg::MsgValue*>(
-      ::dse::lua::dbg::MsgValue::internal_default_instance());
+  ::bg3se::lua::dbg::_MsgChildValue_default_instance_._instance.get_mutable()->value_ = const_cast< ::bg3se::lua::dbg::MsgValue*>(
+      ::bg3se::lua::dbg::MsgValue::internal_default_instance());
 }
 void MsgChildValue::unsafe_arena_set_allocated_value(
-    ::dse::lua::dbg::MsgValue* value) {
+    ::bg3se::lua::dbg::MsgValue* value) {
   if (GetArenaNoVirtual() == NULL) {
     delete value_;
   }
@@ -1926,7 +1926,7 @@ void MsgChildValue::unsafe_arena_set_allocated_value(
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.MsgChildValue.value)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.MsgChildValue.value)
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int MsgChildValue::kTypeFieldNumber;
@@ -1940,7 +1940,7 @@ MsgChildValue::MsgChildValue()
   ::google::protobuf::internal::InitSCC(
       &protobuf_LuaDebug_2eproto::scc_info_MsgChildValue.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.lua.dbg.MsgChildValue)
+  // @@protoc_insertion_point(constructor:bg3se.lua.dbg.MsgChildValue)
 }
 MsgChildValue::MsgChildValue(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -1948,7 +1948,7 @@ MsgChildValue::MsgChildValue(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_LuaDebug_2eproto::scc_info_MsgChildValue.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.lua.dbg.MsgChildValue)
+  // @@protoc_insertion_point(arena_constructor:bg3se.lua.dbg.MsgChildValue)
 }
 MsgChildValue::MsgChildValue(const MsgChildValue& from)
   : ::google::protobuf::MessageLite(),
@@ -1960,14 +1960,14 @@ MsgChildValue::MsgChildValue(const MsgChildValue& from)
       GetArenaNoVirtual());
   }
   if (from.has_value()) {
-    value_ = new ::dse::lua::dbg::MsgValue(*from.value_);
+    value_ = new ::bg3se::lua::dbg::MsgValue(*from.value_);
   } else {
     value_ = NULL;
   }
   ::memcpy(&index_, &from.index_,
     static_cast<size_t>(reinterpret_cast<char*>(&type_) -
     reinterpret_cast<char*>(&index_)) + sizeof(type_));
-  // @@protoc_insertion_point(copy_constructor:dse.lua.dbg.MsgChildValue)
+  // @@protoc_insertion_point(copy_constructor:bg3se.lua.dbg.MsgChildValue)
 }
 
 void MsgChildValue::SharedCtor() {
@@ -1978,7 +1978,7 @@ void MsgChildValue::SharedCtor() {
 }
 
 MsgChildValue::~MsgChildValue() {
-  // @@protoc_insertion_point(destructor:dse.lua.dbg.MsgChildValue)
+  // @@protoc_insertion_point(destructor:bg3se.lua.dbg.MsgChildValue)
   SharedDtor();
 }
 
@@ -2004,7 +2004,7 @@ const MsgChildValue& MsgChildValue::default_instance() {
 
 
 void MsgChildValue::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.lua.dbg.MsgChildValue)
+// @@protoc_insertion_point(message_clear_start:bg3se.lua.dbg.MsgChildValue)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -2030,13 +2030,13 @@ bool MsgChildValue::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.lua.dbg.MsgChildValue)
+  // @@protoc_insertion_point(parse_start:bg3se.lua.dbg.MsgChildValue)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .dse.lua.dbg.MsgChildValue.Type type = 1;
+      // .bg3se.lua.dbg.MsgChildValue.Type type = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
@@ -2044,7 +2044,7 @@ bool MsgChildValue::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
                  input, &value)));
-          set_type(static_cast< ::dse::lua::dbg::MsgChildValue_Type >(value));
+          set_type(static_cast< ::bg3se::lua::dbg::MsgChildValue_Type >(value));
         } else {
           goto handle_unusual;
         }
@@ -2074,14 +2074,14 @@ bool MsgChildValue::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->name().data(), static_cast<int>(this->name().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "dse.lua.dbg.MsgChildValue.name"));
+            "bg3se.lua.dbg.MsgChildValue.name"));
         } else {
           goto handle_unusual;
         }
         break;
       }
 
-      // .dse.lua.dbg.MsgValue value = 4;
+      // .bg3se.lua.dbg.MsgValue value = 4;
       case 4: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(34u /* 34 & 0xFF */)) {
@@ -2105,21 +2105,21 @@ bool MsgChildValue::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.lua.dbg.MsgChildValue)
+  // @@protoc_insertion_point(parse_success:bg3se.lua.dbg.MsgChildValue)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.lua.dbg.MsgChildValue)
+  // @@protoc_insertion_point(parse_failure:bg3se.lua.dbg.MsgChildValue)
   return false;
 #undef DO_
 }
 
 void MsgChildValue::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.lua.dbg.MsgChildValue)
+  // @@protoc_insertion_point(serialize_start:bg3se.lua.dbg.MsgChildValue)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .dse.lua.dbg.MsgChildValue.Type type = 1;
+  // .bg3se.lua.dbg.MsgChildValue.Type type = 1;
   if (this->type() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
       1, this->type(), output);
@@ -2135,12 +2135,12 @@ void MsgChildValue::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->name().data(), static_cast<int>(this->name().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "dse.lua.dbg.MsgChildValue.name");
+      "bg3se.lua.dbg.MsgChildValue.name");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       3, this->name(), output);
   }
 
-  // .dse.lua.dbg.MsgValue value = 4;
+  // .bg3se.lua.dbg.MsgValue value = 4;
   if (this->has_value()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       4, this->_internal_value(), output);
@@ -2148,11 +2148,11 @@ void MsgChildValue::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.lua.dbg.MsgChildValue)
+  // @@protoc_insertion_point(serialize_end:bg3se.lua.dbg.MsgChildValue)
 }
 
 size_t MsgChildValue::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.lua.dbg.MsgChildValue)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.lua.dbg.MsgChildValue)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -2164,7 +2164,7 @@ size_t MsgChildValue::ByteSizeLong() const {
         this->name());
   }
 
-  // .dse.lua.dbg.MsgValue value = 4;
+  // .bg3se.lua.dbg.MsgValue value = 4;
   if (this->has_value()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
@@ -2178,7 +2178,7 @@ size_t MsgChildValue::ByteSizeLong() const {
         this->index());
   }
 
-  // .dse.lua.dbg.MsgChildValue.Type type = 1;
+  // .bg3se.lua.dbg.MsgChildValue.Type type = 1;
   if (this->type() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::EnumSize(this->type());
@@ -2195,7 +2195,7 @@ void MsgChildValue::CheckTypeAndMergeFrom(
 }
 
 void MsgChildValue::MergeFrom(const MsgChildValue& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.lua.dbg.MsgChildValue)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.lua.dbg.MsgChildValue)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -2205,7 +2205,7 @@ void MsgChildValue::MergeFrom(const MsgChildValue& from) {
     set_name(from.name());
   }
   if (from.has_value()) {
-    mutable_value()->::dse::lua::dbg::MsgValue::MergeFrom(from.value());
+    mutable_value()->::bg3se::lua::dbg::MsgValue::MergeFrom(from.value());
   }
   if (from.index() != 0) {
     set_index(from.index());
@@ -2216,7 +2216,7 @@ void MsgChildValue::MergeFrom(const MsgChildValue& from) {
 }
 
 void MsgChildValue::CopyFrom(const MsgChildValue& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.lua.dbg.MsgChildValue)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.lua.dbg.MsgChildValue)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -2256,7 +2256,7 @@ void MsgChildValue::InternalSwap(MsgChildValue* other) {
 }
 
 ::std::string MsgChildValue::GetTypeName() const {
-  return "dse.lua.dbg.MsgChildValue";
+  return "bg3se.lua.dbg.MsgChildValue";
 }
 
 
@@ -2278,7 +2278,7 @@ MsgStackFrame::MsgStackFrame()
   ::google::protobuf::internal::InitSCC(
       &protobuf_LuaDebug_2eproto::scc_info_MsgStackFrame.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.lua.dbg.MsgStackFrame)
+  // @@protoc_insertion_point(constructor:bg3se.lua.dbg.MsgStackFrame)
 }
 MsgStackFrame::MsgStackFrame(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -2286,7 +2286,7 @@ MsgStackFrame::MsgStackFrame(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_LuaDebug_2eproto::scc_info_MsgStackFrame.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.lua.dbg.MsgStackFrame)
+  // @@protoc_insertion_point(arena_constructor:bg3se.lua.dbg.MsgStackFrame)
 }
 MsgStackFrame::MsgStackFrame(const MsgStackFrame& from)
   : ::google::protobuf::MessageLite(),
@@ -2310,7 +2310,7 @@ MsgStackFrame::MsgStackFrame(const MsgStackFrame& from)
   ::memcpy(&line_, &from.line_,
     static_cast<size_t>(reinterpret_cast<char*>(&scope_last_line_) -
     reinterpret_cast<char*>(&line_)) + sizeof(scope_last_line_));
-  // @@protoc_insertion_point(copy_constructor:dse.lua.dbg.MsgStackFrame)
+  // @@protoc_insertion_point(copy_constructor:bg3se.lua.dbg.MsgStackFrame)
 }
 
 void MsgStackFrame::SharedCtor() {
@@ -2323,7 +2323,7 @@ void MsgStackFrame::SharedCtor() {
 }
 
 MsgStackFrame::~MsgStackFrame() {
-  // @@protoc_insertion_point(destructor:dse.lua.dbg.MsgStackFrame)
+  // @@protoc_insertion_point(destructor:bg3se.lua.dbg.MsgStackFrame)
   SharedDtor();
 }
 
@@ -2350,7 +2350,7 @@ const MsgStackFrame& MsgStackFrame::default_instance() {
 
 
 void MsgStackFrame::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.lua.dbg.MsgStackFrame)
+// @@protoc_insertion_point(message_clear_start:bg3se.lua.dbg.MsgStackFrame)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -2374,7 +2374,7 @@ bool MsgStackFrame::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.lua.dbg.MsgStackFrame)
+  // @@protoc_insertion_point(parse_start:bg3se.lua.dbg.MsgStackFrame)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -2389,7 +2389,7 @@ bool MsgStackFrame::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->source().data(), static_cast<int>(this->source().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "dse.lua.dbg.MsgStackFrame.source"));
+            "bg3se.lua.dbg.MsgStackFrame.source"));
         } else {
           goto handle_unusual;
         }
@@ -2405,7 +2405,7 @@ bool MsgStackFrame::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->path().data(), static_cast<int>(this->path().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "dse.lua.dbg.MsgStackFrame.path"));
+            "bg3se.lua.dbg.MsgStackFrame.path"));
         } else {
           goto handle_unusual;
         }
@@ -2421,7 +2421,7 @@ bool MsgStackFrame::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->function().data(), static_cast<int>(this->function().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "dse.lua.dbg.MsgStackFrame.function"));
+            "bg3se.lua.dbg.MsgStackFrame.function"));
         } else {
           goto handle_unusual;
         }
@@ -2482,17 +2482,17 @@ bool MsgStackFrame::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.lua.dbg.MsgStackFrame)
+  // @@protoc_insertion_point(parse_success:bg3se.lua.dbg.MsgStackFrame)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.lua.dbg.MsgStackFrame)
+  // @@protoc_insertion_point(parse_failure:bg3se.lua.dbg.MsgStackFrame)
   return false;
 #undef DO_
 }
 
 void MsgStackFrame::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.lua.dbg.MsgStackFrame)
+  // @@protoc_insertion_point(serialize_start:bg3se.lua.dbg.MsgStackFrame)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -2501,7 +2501,7 @@ void MsgStackFrame::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->source().data(), static_cast<int>(this->source().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "dse.lua.dbg.MsgStackFrame.source");
+      "bg3se.lua.dbg.MsgStackFrame.source");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       1, this->source(), output);
   }
@@ -2511,7 +2511,7 @@ void MsgStackFrame::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->path().data(), static_cast<int>(this->path().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "dse.lua.dbg.MsgStackFrame.path");
+      "bg3se.lua.dbg.MsgStackFrame.path");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       2, this->path(), output);
   }
@@ -2521,7 +2521,7 @@ void MsgStackFrame::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->function().data(), static_cast<int>(this->function().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "dse.lua.dbg.MsgStackFrame.function");
+      "bg3se.lua.dbg.MsgStackFrame.function");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       3, this->function(), output);
   }
@@ -2543,11 +2543,11 @@ void MsgStackFrame::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.lua.dbg.MsgStackFrame)
+  // @@protoc_insertion_point(serialize_end:bg3se.lua.dbg.MsgStackFrame)
 }
 
 size_t MsgStackFrame::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.lua.dbg.MsgStackFrame)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.lua.dbg.MsgStackFrame)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -2605,7 +2605,7 @@ void MsgStackFrame::CheckTypeAndMergeFrom(
 }
 
 void MsgStackFrame::MergeFrom(const MsgStackFrame& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.lua.dbg.MsgStackFrame)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.lua.dbg.MsgStackFrame)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -2632,7 +2632,7 @@ void MsgStackFrame::MergeFrom(const MsgStackFrame& from) {
 }
 
 void MsgStackFrame::CopyFrom(const MsgStackFrame& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.lua.dbg.MsgStackFrame)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.lua.dbg.MsgStackFrame)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -2676,7 +2676,7 @@ void MsgStackFrame::InternalSwap(MsgStackFrame* other) {
 }
 
 ::std::string MsgStackFrame::GetTypeName() const {
-  return "dse.lua.dbg.MsgStackFrame";
+  return "bg3se.lua.dbg.MsgStackFrame";
 }
 
 
@@ -2693,7 +2693,7 @@ DbgConnectRequest::DbgConnectRequest()
   ::google::protobuf::internal::InitSCC(
       &protobuf_LuaDebug_2eproto::scc_info_DbgConnectRequest.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.lua.dbg.DbgConnectRequest)
+  // @@protoc_insertion_point(constructor:bg3se.lua.dbg.DbgConnectRequest)
 }
 DbgConnectRequest::DbgConnectRequest(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -2701,14 +2701,14 @@ DbgConnectRequest::DbgConnectRequest(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_LuaDebug_2eproto::scc_info_DbgConnectRequest.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.lua.dbg.DbgConnectRequest)
+  // @@protoc_insertion_point(arena_constructor:bg3se.lua.dbg.DbgConnectRequest)
 }
 DbgConnectRequest::DbgConnectRequest(const DbgConnectRequest& from)
   : ::google::protobuf::MessageLite(),
       _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   protocol_version_ = from.protocol_version_;
-  // @@protoc_insertion_point(copy_constructor:dse.lua.dbg.DbgConnectRequest)
+  // @@protoc_insertion_point(copy_constructor:bg3se.lua.dbg.DbgConnectRequest)
 }
 
 void DbgConnectRequest::SharedCtor() {
@@ -2716,7 +2716,7 @@ void DbgConnectRequest::SharedCtor() {
 }
 
 DbgConnectRequest::~DbgConnectRequest() {
-  // @@protoc_insertion_point(destructor:dse.lua.dbg.DbgConnectRequest)
+  // @@protoc_insertion_point(destructor:bg3se.lua.dbg.DbgConnectRequest)
   SharedDtor();
 }
 
@@ -2740,7 +2740,7 @@ const DbgConnectRequest& DbgConnectRequest::default_instance() {
 
 
 void DbgConnectRequest::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.lua.dbg.DbgConnectRequest)
+// @@protoc_insertion_point(message_clear_start:bg3se.lua.dbg.DbgConnectRequest)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -2759,7 +2759,7 @@ bool DbgConnectRequest::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.lua.dbg.DbgConnectRequest)
+  // @@protoc_insertion_point(parse_start:bg3se.lua.dbg.DbgConnectRequest)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -2791,17 +2791,17 @@ bool DbgConnectRequest::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.lua.dbg.DbgConnectRequest)
+  // @@protoc_insertion_point(parse_success:bg3se.lua.dbg.DbgConnectRequest)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.lua.dbg.DbgConnectRequest)
+  // @@protoc_insertion_point(parse_failure:bg3se.lua.dbg.DbgConnectRequest)
   return false;
 #undef DO_
 }
 
 void DbgConnectRequest::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.lua.dbg.DbgConnectRequest)
+  // @@protoc_insertion_point(serialize_start:bg3se.lua.dbg.DbgConnectRequest)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -2812,11 +2812,11 @@ void DbgConnectRequest::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.lua.dbg.DbgConnectRequest)
+  // @@protoc_insertion_point(serialize_end:bg3se.lua.dbg.DbgConnectRequest)
 }
 
 size_t DbgConnectRequest::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.lua.dbg.DbgConnectRequest)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.lua.dbg.DbgConnectRequest)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -2839,7 +2839,7 @@ void DbgConnectRequest::CheckTypeAndMergeFrom(
 }
 
 void DbgConnectRequest::MergeFrom(const DbgConnectRequest& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.lua.dbg.DbgConnectRequest)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.lua.dbg.DbgConnectRequest)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -2851,7 +2851,7 @@ void DbgConnectRequest::MergeFrom(const DbgConnectRequest& from) {
 }
 
 void DbgConnectRequest::CopyFrom(const DbgConnectRequest& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.lua.dbg.DbgConnectRequest)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.lua.dbg.DbgConnectRequest)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -2887,7 +2887,7 @@ void DbgConnectRequest::InternalSwap(DbgConnectRequest* other) {
 }
 
 ::std::string DbgConnectRequest::GetTypeName() const {
-  return "dse.lua.dbg.DbgConnectRequest";
+  return "bg3se.lua.dbg.DbgConnectRequest";
 }
 
 
@@ -2904,7 +2904,7 @@ BkConnectResponse::BkConnectResponse()
   ::google::protobuf::internal::InitSCC(
       &protobuf_LuaDebug_2eproto::scc_info_BkConnectResponse.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.lua.dbg.BkConnectResponse)
+  // @@protoc_insertion_point(constructor:bg3se.lua.dbg.BkConnectResponse)
 }
 BkConnectResponse::BkConnectResponse(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -2912,14 +2912,14 @@ BkConnectResponse::BkConnectResponse(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_LuaDebug_2eproto::scc_info_BkConnectResponse.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.lua.dbg.BkConnectResponse)
+  // @@protoc_insertion_point(arena_constructor:bg3se.lua.dbg.BkConnectResponse)
 }
 BkConnectResponse::BkConnectResponse(const BkConnectResponse& from)
   : ::google::protobuf::MessageLite(),
       _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   protocol_version_ = from.protocol_version_;
-  // @@protoc_insertion_point(copy_constructor:dse.lua.dbg.BkConnectResponse)
+  // @@protoc_insertion_point(copy_constructor:bg3se.lua.dbg.BkConnectResponse)
 }
 
 void BkConnectResponse::SharedCtor() {
@@ -2927,7 +2927,7 @@ void BkConnectResponse::SharedCtor() {
 }
 
 BkConnectResponse::~BkConnectResponse() {
-  // @@protoc_insertion_point(destructor:dse.lua.dbg.BkConnectResponse)
+  // @@protoc_insertion_point(destructor:bg3se.lua.dbg.BkConnectResponse)
   SharedDtor();
 }
 
@@ -2951,7 +2951,7 @@ const BkConnectResponse& BkConnectResponse::default_instance() {
 
 
 void BkConnectResponse::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.lua.dbg.BkConnectResponse)
+// @@protoc_insertion_point(message_clear_start:bg3se.lua.dbg.BkConnectResponse)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -2970,7 +2970,7 @@ bool BkConnectResponse::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.lua.dbg.BkConnectResponse)
+  // @@protoc_insertion_point(parse_start:bg3se.lua.dbg.BkConnectResponse)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -3002,17 +3002,17 @@ bool BkConnectResponse::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.lua.dbg.BkConnectResponse)
+  // @@protoc_insertion_point(parse_success:bg3se.lua.dbg.BkConnectResponse)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.lua.dbg.BkConnectResponse)
+  // @@protoc_insertion_point(parse_failure:bg3se.lua.dbg.BkConnectResponse)
   return false;
 #undef DO_
 }
 
 void BkConnectResponse::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.lua.dbg.BkConnectResponse)
+  // @@protoc_insertion_point(serialize_start:bg3se.lua.dbg.BkConnectResponse)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -3023,11 +3023,11 @@ void BkConnectResponse::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.lua.dbg.BkConnectResponse)
+  // @@protoc_insertion_point(serialize_end:bg3se.lua.dbg.BkConnectResponse)
 }
 
 size_t BkConnectResponse::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.lua.dbg.BkConnectResponse)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.lua.dbg.BkConnectResponse)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -3050,7 +3050,7 @@ void BkConnectResponse::CheckTypeAndMergeFrom(
 }
 
 void BkConnectResponse::MergeFrom(const BkConnectResponse& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.lua.dbg.BkConnectResponse)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.lua.dbg.BkConnectResponse)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -3062,7 +3062,7 @@ void BkConnectResponse::MergeFrom(const BkConnectResponse& from) {
 }
 
 void BkConnectResponse::CopyFrom(const BkConnectResponse& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.lua.dbg.BkConnectResponse)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.lua.dbg.BkConnectResponse)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -3098,7 +3098,7 @@ void BkConnectResponse::InternalSwap(BkConnectResponse* other) {
 }
 
 ::std::string BkConnectResponse::GetTypeName() const {
-  return "dse.lua.dbg.BkConnectResponse";
+  return "bg3se.lua.dbg.BkConnectResponse";
 }
 
 
@@ -3116,7 +3116,7 @@ DbgUpdateSettings::DbgUpdateSettings()
   ::google::protobuf::internal::InitSCC(
       &protobuf_LuaDebug_2eproto::scc_info_DbgUpdateSettings.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.lua.dbg.DbgUpdateSettings)
+  // @@protoc_insertion_point(constructor:bg3se.lua.dbg.DbgUpdateSettings)
 }
 DbgUpdateSettings::DbgUpdateSettings(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -3124,7 +3124,7 @@ DbgUpdateSettings::DbgUpdateSettings(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_LuaDebug_2eproto::scc_info_DbgUpdateSettings.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.lua.dbg.DbgUpdateSettings)
+  // @@protoc_insertion_point(arena_constructor:bg3se.lua.dbg.DbgUpdateSettings)
 }
 DbgUpdateSettings::DbgUpdateSettings(const DbgUpdateSettings& from)
   : ::google::protobuf::MessageLite(),
@@ -3133,7 +3133,7 @@ DbgUpdateSettings::DbgUpdateSettings(const DbgUpdateSettings& from)
   ::memcpy(&break_on_error_, &from.break_on_error_,
     static_cast<size_t>(reinterpret_cast<char*>(&break_on_generic_error_) -
     reinterpret_cast<char*>(&break_on_error_)) + sizeof(break_on_generic_error_));
-  // @@protoc_insertion_point(copy_constructor:dse.lua.dbg.DbgUpdateSettings)
+  // @@protoc_insertion_point(copy_constructor:bg3se.lua.dbg.DbgUpdateSettings)
 }
 
 void DbgUpdateSettings::SharedCtor() {
@@ -3143,7 +3143,7 @@ void DbgUpdateSettings::SharedCtor() {
 }
 
 DbgUpdateSettings::~DbgUpdateSettings() {
-  // @@protoc_insertion_point(destructor:dse.lua.dbg.DbgUpdateSettings)
+  // @@protoc_insertion_point(destructor:bg3se.lua.dbg.DbgUpdateSettings)
   SharedDtor();
 }
 
@@ -3167,7 +3167,7 @@ const DbgUpdateSettings& DbgUpdateSettings::default_instance() {
 
 
 void DbgUpdateSettings::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.lua.dbg.DbgUpdateSettings)
+// @@protoc_insertion_point(message_clear_start:bg3se.lua.dbg.DbgUpdateSettings)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -3188,7 +3188,7 @@ bool DbgUpdateSettings::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.lua.dbg.DbgUpdateSettings)
+  // @@protoc_insertion_point(parse_start:bg3se.lua.dbg.DbgUpdateSettings)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -3234,17 +3234,17 @@ bool DbgUpdateSettings::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.lua.dbg.DbgUpdateSettings)
+  // @@protoc_insertion_point(parse_success:bg3se.lua.dbg.DbgUpdateSettings)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.lua.dbg.DbgUpdateSettings)
+  // @@protoc_insertion_point(parse_failure:bg3se.lua.dbg.DbgUpdateSettings)
   return false;
 #undef DO_
 }
 
 void DbgUpdateSettings::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.lua.dbg.DbgUpdateSettings)
+  // @@protoc_insertion_point(serialize_start:bg3se.lua.dbg.DbgUpdateSettings)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -3260,11 +3260,11 @@ void DbgUpdateSettings::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.lua.dbg.DbgUpdateSettings)
+  // @@protoc_insertion_point(serialize_end:bg3se.lua.dbg.DbgUpdateSettings)
 }
 
 size_t DbgUpdateSettings::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.lua.dbg.DbgUpdateSettings)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.lua.dbg.DbgUpdateSettings)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -3290,7 +3290,7 @@ void DbgUpdateSettings::CheckTypeAndMergeFrom(
 }
 
 void DbgUpdateSettings::MergeFrom(const DbgUpdateSettings& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.lua.dbg.DbgUpdateSettings)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.lua.dbg.DbgUpdateSettings)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -3305,7 +3305,7 @@ void DbgUpdateSettings::MergeFrom(const DbgUpdateSettings& from) {
 }
 
 void DbgUpdateSettings::CopyFrom(const DbgUpdateSettings& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.lua.dbg.DbgUpdateSettings)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.lua.dbg.DbgUpdateSettings)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -3342,7 +3342,7 @@ void DbgUpdateSettings::InternalSwap(DbgUpdateSettings* other) {
 }
 
 ::std::string DbgUpdateSettings::GetTypeName() const {
-  return "dse.lua.dbg.DbgUpdateSettings";
+  return "bg3se.lua.dbg.DbgUpdateSettings";
 }
 
 
@@ -3360,7 +3360,7 @@ MsgBreakpoint::MsgBreakpoint()
   ::google::protobuf::internal::InitSCC(
       &protobuf_LuaDebug_2eproto::scc_info_MsgBreakpoint.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.lua.dbg.MsgBreakpoint)
+  // @@protoc_insertion_point(constructor:bg3se.lua.dbg.MsgBreakpoint)
 }
 MsgBreakpoint::MsgBreakpoint(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -3368,7 +3368,7 @@ MsgBreakpoint::MsgBreakpoint(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_LuaDebug_2eproto::scc_info_MsgBreakpoint.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.lua.dbg.MsgBreakpoint)
+  // @@protoc_insertion_point(arena_constructor:bg3se.lua.dbg.MsgBreakpoint)
 }
 MsgBreakpoint::MsgBreakpoint(const MsgBreakpoint& from)
   : ::google::protobuf::MessageLite(),
@@ -3380,7 +3380,7 @@ MsgBreakpoint::MsgBreakpoint(const MsgBreakpoint& from)
       GetArenaNoVirtual());
   }
   line_ = from.line_;
-  // @@protoc_insertion_point(copy_constructor:dse.lua.dbg.MsgBreakpoint)
+  // @@protoc_insertion_point(copy_constructor:bg3se.lua.dbg.MsgBreakpoint)
 }
 
 void MsgBreakpoint::SharedCtor() {
@@ -3389,7 +3389,7 @@ void MsgBreakpoint::SharedCtor() {
 }
 
 MsgBreakpoint::~MsgBreakpoint() {
-  // @@protoc_insertion_point(destructor:dse.lua.dbg.MsgBreakpoint)
+  // @@protoc_insertion_point(destructor:bg3se.lua.dbg.MsgBreakpoint)
   SharedDtor();
 }
 
@@ -3414,7 +3414,7 @@ const MsgBreakpoint& MsgBreakpoint::default_instance() {
 
 
 void MsgBreakpoint::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.lua.dbg.MsgBreakpoint)
+// @@protoc_insertion_point(message_clear_start:bg3se.lua.dbg.MsgBreakpoint)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -3434,7 +3434,7 @@ bool MsgBreakpoint::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.lua.dbg.MsgBreakpoint)
+  // @@protoc_insertion_point(parse_start:bg3se.lua.dbg.MsgBreakpoint)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -3449,7 +3449,7 @@ bool MsgBreakpoint::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->path().data(), static_cast<int>(this->path().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "dse.lua.dbg.MsgBreakpoint.path"));
+            "bg3se.lua.dbg.MsgBreakpoint.path"));
         } else {
           goto handle_unusual;
         }
@@ -3482,17 +3482,17 @@ bool MsgBreakpoint::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.lua.dbg.MsgBreakpoint)
+  // @@protoc_insertion_point(parse_success:bg3se.lua.dbg.MsgBreakpoint)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.lua.dbg.MsgBreakpoint)
+  // @@protoc_insertion_point(parse_failure:bg3se.lua.dbg.MsgBreakpoint)
   return false;
 #undef DO_
 }
 
 void MsgBreakpoint::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.lua.dbg.MsgBreakpoint)
+  // @@protoc_insertion_point(serialize_start:bg3se.lua.dbg.MsgBreakpoint)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -3501,7 +3501,7 @@ void MsgBreakpoint::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->path().data(), static_cast<int>(this->path().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "dse.lua.dbg.MsgBreakpoint.path");
+      "bg3se.lua.dbg.MsgBreakpoint.path");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       1, this->path(), output);
   }
@@ -3513,11 +3513,11 @@ void MsgBreakpoint::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.lua.dbg.MsgBreakpoint)
+  // @@protoc_insertion_point(serialize_end:bg3se.lua.dbg.MsgBreakpoint)
 }
 
 size_t MsgBreakpoint::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.lua.dbg.MsgBreakpoint)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.lua.dbg.MsgBreakpoint)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -3547,7 +3547,7 @@ void MsgBreakpoint::CheckTypeAndMergeFrom(
 }
 
 void MsgBreakpoint::MergeFrom(const MsgBreakpoint& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.lua.dbg.MsgBreakpoint)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.lua.dbg.MsgBreakpoint)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -3562,7 +3562,7 @@ void MsgBreakpoint::MergeFrom(const MsgBreakpoint& from) {
 }
 
 void MsgBreakpoint::CopyFrom(const MsgBreakpoint& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.lua.dbg.MsgBreakpoint)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.lua.dbg.MsgBreakpoint)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -3600,7 +3600,7 @@ void MsgBreakpoint::InternalSwap(MsgBreakpoint* other) {
 }
 
 ::std::string MsgBreakpoint::GetTypeName() const {
-  return "dse.lua.dbg.MsgBreakpoint";
+  return "bg3se.lua.dbg.MsgBreakpoint";
 }
 
 
@@ -3617,7 +3617,7 @@ DbgSetBreakpoints::DbgSetBreakpoints()
   ::google::protobuf::internal::InitSCC(
       &protobuf_LuaDebug_2eproto::scc_info_DbgSetBreakpoints.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.lua.dbg.DbgSetBreakpoints)
+  // @@protoc_insertion_point(constructor:bg3se.lua.dbg.DbgSetBreakpoints)
 }
 DbgSetBreakpoints::DbgSetBreakpoints(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -3626,21 +3626,21 @@ DbgSetBreakpoints::DbgSetBreakpoints(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_LuaDebug_2eproto::scc_info_DbgSetBreakpoints.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.lua.dbg.DbgSetBreakpoints)
+  // @@protoc_insertion_point(arena_constructor:bg3se.lua.dbg.DbgSetBreakpoints)
 }
 DbgSetBreakpoints::DbgSetBreakpoints(const DbgSetBreakpoints& from)
   : ::google::protobuf::MessageLite(),
       _internal_metadata_(NULL),
       breakpoint_(from.breakpoint_) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  // @@protoc_insertion_point(copy_constructor:dse.lua.dbg.DbgSetBreakpoints)
+  // @@protoc_insertion_point(copy_constructor:bg3se.lua.dbg.DbgSetBreakpoints)
 }
 
 void DbgSetBreakpoints::SharedCtor() {
 }
 
 DbgSetBreakpoints::~DbgSetBreakpoints() {
-  // @@protoc_insertion_point(destructor:dse.lua.dbg.DbgSetBreakpoints)
+  // @@protoc_insertion_point(destructor:bg3se.lua.dbg.DbgSetBreakpoints)
   SharedDtor();
 }
 
@@ -3664,7 +3664,7 @@ const DbgSetBreakpoints& DbgSetBreakpoints::default_instance() {
 
 
 void DbgSetBreakpoints::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.lua.dbg.DbgSetBreakpoints)
+// @@protoc_insertion_point(message_clear_start:bg3se.lua.dbg.DbgSetBreakpoints)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -3683,13 +3683,13 @@ bool DbgSetBreakpoints::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.lua.dbg.DbgSetBreakpoints)
+  // @@protoc_insertion_point(parse_start:bg3se.lua.dbg.DbgSetBreakpoints)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // repeated .dse.lua.dbg.MsgBreakpoint breakpoint = 1;
+      // repeated .bg3se.lua.dbg.MsgBreakpoint breakpoint = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
@@ -3713,21 +3713,21 @@ bool DbgSetBreakpoints::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.lua.dbg.DbgSetBreakpoints)
+  // @@protoc_insertion_point(parse_success:bg3se.lua.dbg.DbgSetBreakpoints)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.lua.dbg.DbgSetBreakpoints)
+  // @@protoc_insertion_point(parse_failure:bg3se.lua.dbg.DbgSetBreakpoints)
   return false;
 #undef DO_
 }
 
 void DbgSetBreakpoints::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.lua.dbg.DbgSetBreakpoints)
+  // @@protoc_insertion_point(serialize_start:bg3se.lua.dbg.DbgSetBreakpoints)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // repeated .dse.lua.dbg.MsgBreakpoint breakpoint = 1;
+  // repeated .bg3se.lua.dbg.MsgBreakpoint breakpoint = 1;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->breakpoint_size()); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
@@ -3738,16 +3738,16 @@ void DbgSetBreakpoints::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.lua.dbg.DbgSetBreakpoints)
+  // @@protoc_insertion_point(serialize_end:bg3se.lua.dbg.DbgSetBreakpoints)
 }
 
 size_t DbgSetBreakpoints::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.lua.dbg.DbgSetBreakpoints)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.lua.dbg.DbgSetBreakpoints)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
 
-  // repeated .dse.lua.dbg.MsgBreakpoint breakpoint = 1;
+  // repeated .bg3se.lua.dbg.MsgBreakpoint breakpoint = 1;
   {
     unsigned int count = static_cast<unsigned int>(this->breakpoint_size());
     total_size += 1UL * count;
@@ -3769,7 +3769,7 @@ void DbgSetBreakpoints::CheckTypeAndMergeFrom(
 }
 
 void DbgSetBreakpoints::MergeFrom(const DbgSetBreakpoints& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.lua.dbg.DbgSetBreakpoints)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.lua.dbg.DbgSetBreakpoints)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -3779,7 +3779,7 @@ void DbgSetBreakpoints::MergeFrom(const DbgSetBreakpoints& from) {
 }
 
 void DbgSetBreakpoints::CopyFrom(const DbgSetBreakpoints& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.lua.dbg.DbgSetBreakpoints)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.lua.dbg.DbgSetBreakpoints)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -3815,7 +3815,7 @@ void DbgSetBreakpoints::InternalSwap(DbgSetBreakpoints* other) {
 }
 
 ::std::string DbgSetBreakpoints::GetTypeName() const {
-  return "dse.lua.dbg.DbgSetBreakpoints";
+  return "bg3se.lua.dbg.DbgSetBreakpoints";
 }
 
 
@@ -3835,7 +3835,7 @@ BkBreakpointTriggered::BkBreakpointTriggered()
   ::google::protobuf::internal::InitSCC(
       &protobuf_LuaDebug_2eproto::scc_info_BkBreakpointTriggered.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.lua.dbg.BkBreakpointTriggered)
+  // @@protoc_insertion_point(constructor:bg3se.lua.dbg.BkBreakpointTriggered)
 }
 BkBreakpointTriggered::BkBreakpointTriggered(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -3844,7 +3844,7 @@ BkBreakpointTriggered::BkBreakpointTriggered(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_LuaDebug_2eproto::scc_info_BkBreakpointTriggered.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.lua.dbg.BkBreakpointTriggered)
+  // @@protoc_insertion_point(arena_constructor:bg3se.lua.dbg.BkBreakpointTriggered)
 }
 BkBreakpointTriggered::BkBreakpointTriggered(const BkBreakpointTriggered& from)
   : ::google::protobuf::MessageLite(),
@@ -3859,7 +3859,7 @@ BkBreakpointTriggered::BkBreakpointTriggered(const BkBreakpointTriggered& from)
   ::memcpy(&reason_, &from.reason_,
     static_cast<size_t>(reinterpret_cast<char*>(&context_) -
     reinterpret_cast<char*>(&reason_)) + sizeof(context_));
-  // @@protoc_insertion_point(copy_constructor:dse.lua.dbg.BkBreakpointTriggered)
+  // @@protoc_insertion_point(copy_constructor:bg3se.lua.dbg.BkBreakpointTriggered)
 }
 
 void BkBreakpointTriggered::SharedCtor() {
@@ -3870,7 +3870,7 @@ void BkBreakpointTriggered::SharedCtor() {
 }
 
 BkBreakpointTriggered::~BkBreakpointTriggered() {
-  // @@protoc_insertion_point(destructor:dse.lua.dbg.BkBreakpointTriggered)
+  // @@protoc_insertion_point(destructor:bg3se.lua.dbg.BkBreakpointTriggered)
   SharedDtor();
 }
 
@@ -3895,7 +3895,7 @@ const BkBreakpointTriggered& BkBreakpointTriggered::default_instance() {
 
 
 void BkBreakpointTriggered::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.lua.dbg.BkBreakpointTriggered)
+// @@protoc_insertion_point(message_clear_start:bg3se.lua.dbg.BkBreakpointTriggered)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -3918,13 +3918,13 @@ bool BkBreakpointTriggered::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.lua.dbg.BkBreakpointTriggered)
+  // @@protoc_insertion_point(parse_start:bg3se.lua.dbg.BkBreakpointTriggered)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .dse.lua.dbg.BkBreakpointTriggered.Reason reason = 1;
+      // .bg3se.lua.dbg.BkBreakpointTriggered.Reason reason = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
@@ -3932,14 +3932,14 @@ bool BkBreakpointTriggered::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
                  input, &value)));
-          set_reason(static_cast< ::dse::lua::dbg::BkBreakpointTriggered_Reason >(value));
+          set_reason(static_cast< ::bg3se::lua::dbg::BkBreakpointTriggered_Reason >(value));
         } else {
           goto handle_unusual;
         }
         break;
       }
 
-      // repeated .dse.lua.dbg.MsgStackFrame stack = 2;
+      // repeated .bg3se.lua.dbg.MsgStackFrame stack = 2;
       case 2: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
@@ -3951,7 +3951,7 @@ bool BkBreakpointTriggered::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.lua.dbg.DbgContext context = 3;
+      // .bg3se.lua.dbg.DbgContext context = 3;
       case 3: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(24u /* 24 & 0xFF */)) {
@@ -3959,7 +3959,7 @@ bool BkBreakpointTriggered::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
                  input, &value)));
-          set_context(static_cast< ::dse::lua::dbg::DbgContext >(value));
+          set_context(static_cast< ::bg3se::lua::dbg::DbgContext >(value));
         } else {
           goto handle_unusual;
         }
@@ -3975,7 +3975,7 @@ bool BkBreakpointTriggered::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->message().data(), static_cast<int>(this->message().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "dse.lua.dbg.BkBreakpointTriggered.message"));
+            "bg3se.lua.dbg.BkBreakpointTriggered.message"));
         } else {
           goto handle_unusual;
         }
@@ -3994,27 +3994,27 @@ bool BkBreakpointTriggered::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.lua.dbg.BkBreakpointTriggered)
+  // @@protoc_insertion_point(parse_success:bg3se.lua.dbg.BkBreakpointTriggered)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.lua.dbg.BkBreakpointTriggered)
+  // @@protoc_insertion_point(parse_failure:bg3se.lua.dbg.BkBreakpointTriggered)
   return false;
 #undef DO_
 }
 
 void BkBreakpointTriggered::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.lua.dbg.BkBreakpointTriggered)
+  // @@protoc_insertion_point(serialize_start:bg3se.lua.dbg.BkBreakpointTriggered)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .dse.lua.dbg.BkBreakpointTriggered.Reason reason = 1;
+  // .bg3se.lua.dbg.BkBreakpointTriggered.Reason reason = 1;
   if (this->reason() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
       1, this->reason(), output);
   }
 
-  // repeated .dse.lua.dbg.MsgStackFrame stack = 2;
+  // repeated .bg3se.lua.dbg.MsgStackFrame stack = 2;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->stack_size()); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
@@ -4023,7 +4023,7 @@ void BkBreakpointTriggered::SerializeWithCachedSizes(
       output);
   }
 
-  // .dse.lua.dbg.DbgContext context = 3;
+  // .bg3se.lua.dbg.DbgContext context = 3;
   if (this->context() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
       3, this->context(), output);
@@ -4034,23 +4034,23 @@ void BkBreakpointTriggered::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->message().data(), static_cast<int>(this->message().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "dse.lua.dbg.BkBreakpointTriggered.message");
+      "bg3se.lua.dbg.BkBreakpointTriggered.message");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       4, this->message(), output);
   }
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.lua.dbg.BkBreakpointTriggered)
+  // @@protoc_insertion_point(serialize_end:bg3se.lua.dbg.BkBreakpointTriggered)
 }
 
 size_t BkBreakpointTriggered::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.lua.dbg.BkBreakpointTriggered)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.lua.dbg.BkBreakpointTriggered)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
 
-  // repeated .dse.lua.dbg.MsgStackFrame stack = 2;
+  // repeated .bg3se.lua.dbg.MsgStackFrame stack = 2;
   {
     unsigned int count = static_cast<unsigned int>(this->stack_size());
     total_size += 1UL * count;
@@ -4068,13 +4068,13 @@ size_t BkBreakpointTriggered::ByteSizeLong() const {
         this->message());
   }
 
-  // .dse.lua.dbg.BkBreakpointTriggered.Reason reason = 1;
+  // .bg3se.lua.dbg.BkBreakpointTriggered.Reason reason = 1;
   if (this->reason() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::EnumSize(this->reason());
   }
 
-  // .dse.lua.dbg.DbgContext context = 3;
+  // .bg3se.lua.dbg.DbgContext context = 3;
   if (this->context() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::EnumSize(this->context());
@@ -4091,7 +4091,7 @@ void BkBreakpointTriggered::CheckTypeAndMergeFrom(
 }
 
 void BkBreakpointTriggered::MergeFrom(const BkBreakpointTriggered& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.lua.dbg.BkBreakpointTriggered)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.lua.dbg.BkBreakpointTriggered)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -4110,7 +4110,7 @@ void BkBreakpointTriggered::MergeFrom(const BkBreakpointTriggered& from) {
 }
 
 void BkBreakpointTriggered::CopyFrom(const BkBreakpointTriggered& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.lua.dbg.BkBreakpointTriggered)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.lua.dbg.BkBreakpointTriggered)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -4150,7 +4150,7 @@ void BkBreakpointTriggered::InternalSwap(BkBreakpointTriggered* other) {
 }
 
 ::std::string BkBreakpointTriggered::GetTypeName() const {
-  return "dse.lua.dbg.BkBreakpointTriggered";
+  return "bg3se.lua.dbg.BkBreakpointTriggered";
 }
 
 
@@ -4168,7 +4168,7 @@ DbgContinue::DbgContinue()
   ::google::protobuf::internal::InitSCC(
       &protobuf_LuaDebug_2eproto::scc_info_DbgContinue.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.lua.dbg.DbgContinue)
+  // @@protoc_insertion_point(constructor:bg3se.lua.dbg.DbgContinue)
 }
 DbgContinue::DbgContinue(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -4176,7 +4176,7 @@ DbgContinue::DbgContinue(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_LuaDebug_2eproto::scc_info_DbgContinue.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.lua.dbg.DbgContinue)
+  // @@protoc_insertion_point(arena_constructor:bg3se.lua.dbg.DbgContinue)
 }
 DbgContinue::DbgContinue(const DbgContinue& from)
   : ::google::protobuf::MessageLite(),
@@ -4185,7 +4185,7 @@ DbgContinue::DbgContinue(const DbgContinue& from)
   ::memcpy(&context_, &from.context_,
     static_cast<size_t>(reinterpret_cast<char*>(&action_) -
     reinterpret_cast<char*>(&context_)) + sizeof(action_));
-  // @@protoc_insertion_point(copy_constructor:dse.lua.dbg.DbgContinue)
+  // @@protoc_insertion_point(copy_constructor:bg3se.lua.dbg.DbgContinue)
 }
 
 void DbgContinue::SharedCtor() {
@@ -4195,7 +4195,7 @@ void DbgContinue::SharedCtor() {
 }
 
 DbgContinue::~DbgContinue() {
-  // @@protoc_insertion_point(destructor:dse.lua.dbg.DbgContinue)
+  // @@protoc_insertion_point(destructor:bg3se.lua.dbg.DbgContinue)
   SharedDtor();
 }
 
@@ -4219,7 +4219,7 @@ const DbgContinue& DbgContinue::default_instance() {
 
 
 void DbgContinue::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.lua.dbg.DbgContinue)
+// @@protoc_insertion_point(message_clear_start:bg3se.lua.dbg.DbgContinue)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -4240,13 +4240,13 @@ bool DbgContinue::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.lua.dbg.DbgContinue)
+  // @@protoc_insertion_point(parse_start:bg3se.lua.dbg.DbgContinue)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .dse.lua.dbg.DbgContext context = 1;
+      // .bg3se.lua.dbg.DbgContext context = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
@@ -4254,14 +4254,14 @@ bool DbgContinue::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
                  input, &value)));
-          set_context(static_cast< ::dse::lua::dbg::DbgContext >(value));
+          set_context(static_cast< ::bg3se::lua::dbg::DbgContext >(value));
         } else {
           goto handle_unusual;
         }
         break;
       }
 
-      // .dse.lua.dbg.DbgContinue.Action action = 2;
+      // .bg3se.lua.dbg.DbgContinue.Action action = 2;
       case 2: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
@@ -4269,7 +4269,7 @@ bool DbgContinue::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
                  input, &value)));
-          set_action(static_cast< ::dse::lua::dbg::DbgContinue_Action >(value));
+          set_action(static_cast< ::bg3se::lua::dbg::DbgContinue_Action >(value));
         } else {
           goto handle_unusual;
         }
@@ -4288,27 +4288,27 @@ bool DbgContinue::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.lua.dbg.DbgContinue)
+  // @@protoc_insertion_point(parse_success:bg3se.lua.dbg.DbgContinue)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.lua.dbg.DbgContinue)
+  // @@protoc_insertion_point(parse_failure:bg3se.lua.dbg.DbgContinue)
   return false;
 #undef DO_
 }
 
 void DbgContinue::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.lua.dbg.DbgContinue)
+  // @@protoc_insertion_point(serialize_start:bg3se.lua.dbg.DbgContinue)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .dse.lua.dbg.DbgContext context = 1;
+  // .bg3se.lua.dbg.DbgContext context = 1;
   if (this->context() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
       1, this->context(), output);
   }
 
-  // .dse.lua.dbg.DbgContinue.Action action = 2;
+  // .bg3se.lua.dbg.DbgContinue.Action action = 2;
   if (this->action() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
       2, this->action(), output);
@@ -4316,22 +4316,22 @@ void DbgContinue::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.lua.dbg.DbgContinue)
+  // @@protoc_insertion_point(serialize_end:bg3se.lua.dbg.DbgContinue)
 }
 
 size_t DbgContinue::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.lua.dbg.DbgContinue)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.lua.dbg.DbgContinue)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
 
-  // .dse.lua.dbg.DbgContext context = 1;
+  // .bg3se.lua.dbg.DbgContext context = 1;
   if (this->context() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::EnumSize(this->context());
   }
 
-  // .dse.lua.dbg.DbgContinue.Action action = 2;
+  // .bg3se.lua.dbg.DbgContinue.Action action = 2;
   if (this->action() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::EnumSize(this->action());
@@ -4348,7 +4348,7 @@ void DbgContinue::CheckTypeAndMergeFrom(
 }
 
 void DbgContinue::MergeFrom(const DbgContinue& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.lua.dbg.DbgContinue)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.lua.dbg.DbgContinue)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -4363,7 +4363,7 @@ void DbgContinue::MergeFrom(const DbgContinue& from) {
 }
 
 void DbgContinue::CopyFrom(const DbgContinue& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.lua.dbg.DbgContinue)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.lua.dbg.DbgContinue)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -4400,7 +4400,7 @@ void DbgContinue::InternalSwap(DbgContinue* other) {
 }
 
 ::std::string DbgContinue::GetTypeName() const {
-  return "dse.lua.dbg.DbgContinue";
+  return "bg3se.lua.dbg.DbgContinue";
 }
 
 
@@ -4419,7 +4419,7 @@ DbgEvaluate::DbgEvaluate()
   ::google::protobuf::internal::InitSCC(
       &protobuf_LuaDebug_2eproto::scc_info_DbgEvaluate.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.lua.dbg.DbgEvaluate)
+  // @@protoc_insertion_point(constructor:bg3se.lua.dbg.DbgEvaluate)
 }
 DbgEvaluate::DbgEvaluate(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -4427,7 +4427,7 @@ DbgEvaluate::DbgEvaluate(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_LuaDebug_2eproto::scc_info_DbgEvaluate.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.lua.dbg.DbgEvaluate)
+  // @@protoc_insertion_point(arena_constructor:bg3se.lua.dbg.DbgEvaluate)
 }
 DbgEvaluate::DbgEvaluate(const DbgEvaluate& from)
   : ::google::protobuf::MessageLite(),
@@ -4441,7 +4441,7 @@ DbgEvaluate::DbgEvaluate(const DbgEvaluate& from)
   ::memcpy(&context_, &from.context_,
     static_cast<size_t>(reinterpret_cast<char*>(&frame_) -
     reinterpret_cast<char*>(&context_)) + sizeof(frame_));
-  // @@protoc_insertion_point(copy_constructor:dse.lua.dbg.DbgEvaluate)
+  // @@protoc_insertion_point(copy_constructor:bg3se.lua.dbg.DbgEvaluate)
 }
 
 void DbgEvaluate::SharedCtor() {
@@ -4452,7 +4452,7 @@ void DbgEvaluate::SharedCtor() {
 }
 
 DbgEvaluate::~DbgEvaluate() {
-  // @@protoc_insertion_point(destructor:dse.lua.dbg.DbgEvaluate)
+  // @@protoc_insertion_point(destructor:bg3se.lua.dbg.DbgEvaluate)
   SharedDtor();
 }
 
@@ -4477,7 +4477,7 @@ const DbgEvaluate& DbgEvaluate::default_instance() {
 
 
 void DbgEvaluate::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.lua.dbg.DbgEvaluate)
+// @@protoc_insertion_point(message_clear_start:bg3se.lua.dbg.DbgEvaluate)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -4499,13 +4499,13 @@ bool DbgEvaluate::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.lua.dbg.DbgEvaluate)
+  // @@protoc_insertion_point(parse_start:bg3se.lua.dbg.DbgEvaluate)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .dse.lua.dbg.DbgContext context = 1;
+      // .bg3se.lua.dbg.DbgContext context = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
@@ -4513,7 +4513,7 @@ bool DbgEvaluate::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
                  input, &value)));
-          set_context(static_cast< ::dse::lua::dbg::DbgContext >(value));
+          set_context(static_cast< ::bg3se::lua::dbg::DbgContext >(value));
         } else {
           goto handle_unusual;
         }
@@ -4529,7 +4529,7 @@ bool DbgEvaluate::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->expression().data(), static_cast<int>(this->expression().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "dse.lua.dbg.DbgEvaluate.expression"));
+            "bg3se.lua.dbg.DbgEvaluate.expression"));
         } else {
           goto handle_unusual;
         }
@@ -4562,21 +4562,21 @@ bool DbgEvaluate::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.lua.dbg.DbgEvaluate)
+  // @@protoc_insertion_point(parse_success:bg3se.lua.dbg.DbgEvaluate)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.lua.dbg.DbgEvaluate)
+  // @@protoc_insertion_point(parse_failure:bg3se.lua.dbg.DbgEvaluate)
   return false;
 #undef DO_
 }
 
 void DbgEvaluate::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.lua.dbg.DbgEvaluate)
+  // @@protoc_insertion_point(serialize_start:bg3se.lua.dbg.DbgEvaluate)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .dse.lua.dbg.DbgContext context = 1;
+  // .bg3se.lua.dbg.DbgContext context = 1;
   if (this->context() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
       1, this->context(), output);
@@ -4587,7 +4587,7 @@ void DbgEvaluate::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->expression().data(), static_cast<int>(this->expression().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "dse.lua.dbg.DbgEvaluate.expression");
+      "bg3se.lua.dbg.DbgEvaluate.expression");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       2, this->expression(), output);
   }
@@ -4599,11 +4599,11 @@ void DbgEvaluate::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.lua.dbg.DbgEvaluate)
+  // @@protoc_insertion_point(serialize_end:bg3se.lua.dbg.DbgEvaluate)
 }
 
 size_t DbgEvaluate::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.lua.dbg.DbgEvaluate)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.lua.dbg.DbgEvaluate)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -4615,7 +4615,7 @@ size_t DbgEvaluate::ByteSizeLong() const {
         this->expression());
   }
 
-  // .dse.lua.dbg.DbgContext context = 1;
+  // .bg3se.lua.dbg.DbgContext context = 1;
   if (this->context() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::EnumSize(this->context());
@@ -4639,7 +4639,7 @@ void DbgEvaluate::CheckTypeAndMergeFrom(
 }
 
 void DbgEvaluate::MergeFrom(const DbgEvaluate& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.lua.dbg.DbgEvaluate)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.lua.dbg.DbgEvaluate)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -4657,7 +4657,7 @@ void DbgEvaluate::MergeFrom(const DbgEvaluate& from) {
 }
 
 void DbgEvaluate::CopyFrom(const DbgEvaluate& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.lua.dbg.DbgEvaluate)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.lua.dbg.DbgEvaluate)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -4696,7 +4696,7 @@ void DbgEvaluate::InternalSwap(DbgEvaluate* other) {
 }
 
 ::std::string DbgEvaluate::GetTypeName() const {
-  return "dse.lua.dbg.DbgEvaluate";
+  return "bg3se.lua.dbg.DbgEvaluate";
 }
 
 
@@ -4717,7 +4717,7 @@ DbgGetVariables::DbgGetVariables()
   ::google::protobuf::internal::InitSCC(
       &protobuf_LuaDebug_2eproto::scc_info_DbgGetVariables.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.lua.dbg.DbgGetVariables)
+  // @@protoc_insertion_point(constructor:bg3se.lua.dbg.DbgGetVariables)
 }
 DbgGetVariables::DbgGetVariables(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -4726,7 +4726,7 @@ DbgGetVariables::DbgGetVariables(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_LuaDebug_2eproto::scc_info_DbgGetVariables.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.lua.dbg.DbgGetVariables)
+  // @@protoc_insertion_point(arena_constructor:bg3se.lua.dbg.DbgGetVariables)
 }
 DbgGetVariables::DbgGetVariables(const DbgGetVariables& from)
   : ::google::protobuf::MessageLite(),
@@ -4736,7 +4736,7 @@ DbgGetVariables::DbgGetVariables(const DbgGetVariables& from)
   ::memcpy(&context_, &from.context_,
     static_cast<size_t>(reinterpret_cast<char*>(&local_) -
     reinterpret_cast<char*>(&context_)) + sizeof(local_));
-  // @@protoc_insertion_point(copy_constructor:dse.lua.dbg.DbgGetVariables)
+  // @@protoc_insertion_point(copy_constructor:bg3se.lua.dbg.DbgGetVariables)
 }
 
 void DbgGetVariables::SharedCtor() {
@@ -4746,7 +4746,7 @@ void DbgGetVariables::SharedCtor() {
 }
 
 DbgGetVariables::~DbgGetVariables() {
-  // @@protoc_insertion_point(destructor:dse.lua.dbg.DbgGetVariables)
+  // @@protoc_insertion_point(destructor:bg3se.lua.dbg.DbgGetVariables)
   SharedDtor();
 }
 
@@ -4770,7 +4770,7 @@ const DbgGetVariables& DbgGetVariables::default_instance() {
 
 
 void DbgGetVariables::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.lua.dbg.DbgGetVariables)
+// @@protoc_insertion_point(message_clear_start:bg3se.lua.dbg.DbgGetVariables)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -4792,13 +4792,13 @@ bool DbgGetVariables::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.lua.dbg.DbgGetVariables)
+  // @@protoc_insertion_point(parse_start:bg3se.lua.dbg.DbgGetVariables)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .dse.lua.dbg.DbgContext context = 1;
+      // .bg3se.lua.dbg.DbgContext context = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
@@ -4806,7 +4806,7 @@ bool DbgGetVariables::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
                  input, &value)));
-          set_context(static_cast< ::dse::lua::dbg::DbgContext >(value));
+          set_context(static_cast< ::bg3se::lua::dbg::DbgContext >(value));
         } else {
           goto handle_unusual;
         }
@@ -4855,7 +4855,7 @@ bool DbgGetVariables::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated .dse.lua.dbg.MsgTableKey key = 5;
+      // repeated .bg3se.lua.dbg.MsgTableKey key = 5;
       case 5: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(42u /* 42 & 0xFF */)) {
@@ -4879,21 +4879,21 @@ bool DbgGetVariables::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.lua.dbg.DbgGetVariables)
+  // @@protoc_insertion_point(parse_success:bg3se.lua.dbg.DbgGetVariables)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.lua.dbg.DbgGetVariables)
+  // @@protoc_insertion_point(parse_failure:bg3se.lua.dbg.DbgGetVariables)
   return false;
 #undef DO_
 }
 
 void DbgGetVariables::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.lua.dbg.DbgGetVariables)
+  // @@protoc_insertion_point(serialize_start:bg3se.lua.dbg.DbgGetVariables)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .dse.lua.dbg.DbgContext context = 1;
+  // .bg3se.lua.dbg.DbgContext context = 1;
   if (this->context() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
       1, this->context(), output);
@@ -4914,7 +4914,7 @@ void DbgGetVariables::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt32(4, this->local(), output);
   }
 
-  // repeated .dse.lua.dbg.MsgTableKey key = 5;
+  // repeated .bg3se.lua.dbg.MsgTableKey key = 5;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->key_size()); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
@@ -4925,16 +4925,16 @@ void DbgGetVariables::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.lua.dbg.DbgGetVariables)
+  // @@protoc_insertion_point(serialize_end:bg3se.lua.dbg.DbgGetVariables)
 }
 
 size_t DbgGetVariables::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.lua.dbg.DbgGetVariables)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.lua.dbg.DbgGetVariables)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
 
-  // repeated .dse.lua.dbg.MsgTableKey key = 5;
+  // repeated .bg3se.lua.dbg.MsgTableKey key = 5;
   {
     unsigned int count = static_cast<unsigned int>(this->key_size());
     total_size += 1UL * count;
@@ -4945,7 +4945,7 @@ size_t DbgGetVariables::ByteSizeLong() const {
     }
   }
 
-  // .dse.lua.dbg.DbgContext context = 1;
+  // .bg3se.lua.dbg.DbgContext context = 1;
   if (this->context() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::EnumSize(this->context());
@@ -4983,7 +4983,7 @@ void DbgGetVariables::CheckTypeAndMergeFrom(
 }
 
 void DbgGetVariables::MergeFrom(const DbgGetVariables& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.lua.dbg.DbgGetVariables)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.lua.dbg.DbgGetVariables)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -5005,7 +5005,7 @@ void DbgGetVariables::MergeFrom(const DbgGetVariables& from) {
 }
 
 void DbgGetVariables::CopyFrom(const DbgGetVariables& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.lua.dbg.DbgGetVariables)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.lua.dbg.DbgGetVariables)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -5045,18 +5045,18 @@ void DbgGetVariables::InternalSwap(DbgGetVariables* other) {
 }
 
 ::std::string DbgGetVariables::GetTypeName() const {
-  return "dse.lua.dbg.DbgGetVariables";
+  return "bg3se.lua.dbg.DbgGetVariables";
 }
 
 
 // ===================================================================
 
 void BkEvaluateResponse::InitAsDefaultInstance() {
-  ::dse::lua::dbg::_BkEvaluateResponse_default_instance_._instance.get_mutable()->result_ = const_cast< ::dse::lua::dbg::MsgValue*>(
-      ::dse::lua::dbg::MsgValue::internal_default_instance());
+  ::bg3se::lua::dbg::_BkEvaluateResponse_default_instance_._instance.get_mutable()->result_ = const_cast< ::bg3se::lua::dbg::MsgValue*>(
+      ::bg3se::lua::dbg::MsgValue::internal_default_instance());
 }
 void BkEvaluateResponse::unsafe_arena_set_allocated_result(
-    ::dse::lua::dbg::MsgValue* result) {
+    ::bg3se::lua::dbg::MsgValue* result) {
   if (GetArenaNoVirtual() == NULL) {
     delete result_;
   }
@@ -5066,7 +5066,7 @@ void BkEvaluateResponse::unsafe_arena_set_allocated_result(
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.lua.dbg.BkEvaluateResponse.result)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.lua.dbg.BkEvaluateResponse.result)
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int BkEvaluateResponse::kResultFieldNumber;
@@ -5078,7 +5078,7 @@ BkEvaluateResponse::BkEvaluateResponse()
   ::google::protobuf::internal::InitSCC(
       &protobuf_LuaDebug_2eproto::scc_info_BkEvaluateResponse.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.lua.dbg.BkEvaluateResponse)
+  // @@protoc_insertion_point(constructor:bg3se.lua.dbg.BkEvaluateResponse)
 }
 BkEvaluateResponse::BkEvaluateResponse(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -5086,7 +5086,7 @@ BkEvaluateResponse::BkEvaluateResponse(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_LuaDebug_2eproto::scc_info_BkEvaluateResponse.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.lua.dbg.BkEvaluateResponse)
+  // @@protoc_insertion_point(arena_constructor:bg3se.lua.dbg.BkEvaluateResponse)
 }
 BkEvaluateResponse::BkEvaluateResponse(const BkEvaluateResponse& from)
   : ::google::protobuf::MessageLite(),
@@ -5098,11 +5098,11 @@ BkEvaluateResponse::BkEvaluateResponse(const BkEvaluateResponse& from)
       GetArenaNoVirtual());
   }
   if (from.has_result()) {
-    result_ = new ::dse::lua::dbg::MsgValue(*from.result_);
+    result_ = new ::bg3se::lua::dbg::MsgValue(*from.result_);
   } else {
     result_ = NULL;
   }
-  // @@protoc_insertion_point(copy_constructor:dse.lua.dbg.BkEvaluateResponse)
+  // @@protoc_insertion_point(copy_constructor:bg3se.lua.dbg.BkEvaluateResponse)
 }
 
 void BkEvaluateResponse::SharedCtor() {
@@ -5111,7 +5111,7 @@ void BkEvaluateResponse::SharedCtor() {
 }
 
 BkEvaluateResponse::~BkEvaluateResponse() {
-  // @@protoc_insertion_point(destructor:dse.lua.dbg.BkEvaluateResponse)
+  // @@protoc_insertion_point(destructor:bg3se.lua.dbg.BkEvaluateResponse)
   SharedDtor();
 }
 
@@ -5137,7 +5137,7 @@ const BkEvaluateResponse& BkEvaluateResponse::default_instance() {
 
 
 void BkEvaluateResponse::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.lua.dbg.BkEvaluateResponse)
+// @@protoc_insertion_point(message_clear_start:bg3se.lua.dbg.BkEvaluateResponse)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -5160,13 +5160,13 @@ bool BkEvaluateResponse::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.lua.dbg.BkEvaluateResponse)
+  // @@protoc_insertion_point(parse_start:bg3se.lua.dbg.BkEvaluateResponse)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .dse.lua.dbg.MsgValue result = 1;
+      // .bg3se.lua.dbg.MsgValue result = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
@@ -5187,7 +5187,7 @@ bool BkEvaluateResponse::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->error_message().data(), static_cast<int>(this->error_message().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "dse.lua.dbg.BkEvaluateResponse.error_message"));
+            "bg3se.lua.dbg.BkEvaluateResponse.error_message"));
         } else {
           goto handle_unusual;
         }
@@ -5206,21 +5206,21 @@ bool BkEvaluateResponse::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.lua.dbg.BkEvaluateResponse)
+  // @@protoc_insertion_point(parse_success:bg3se.lua.dbg.BkEvaluateResponse)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.lua.dbg.BkEvaluateResponse)
+  // @@protoc_insertion_point(parse_failure:bg3se.lua.dbg.BkEvaluateResponse)
   return false;
 #undef DO_
 }
 
 void BkEvaluateResponse::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.lua.dbg.BkEvaluateResponse)
+  // @@protoc_insertion_point(serialize_start:bg3se.lua.dbg.BkEvaluateResponse)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .dse.lua.dbg.MsgValue result = 1;
+  // .bg3se.lua.dbg.MsgValue result = 1;
   if (this->has_result()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       1, this->_internal_result(), output);
@@ -5231,18 +5231,18 @@ void BkEvaluateResponse::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->error_message().data(), static_cast<int>(this->error_message().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "dse.lua.dbg.BkEvaluateResponse.error_message");
+      "bg3se.lua.dbg.BkEvaluateResponse.error_message");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       2, this->error_message(), output);
   }
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.lua.dbg.BkEvaluateResponse)
+  // @@protoc_insertion_point(serialize_end:bg3se.lua.dbg.BkEvaluateResponse)
 }
 
 size_t BkEvaluateResponse::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.lua.dbg.BkEvaluateResponse)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.lua.dbg.BkEvaluateResponse)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -5254,7 +5254,7 @@ size_t BkEvaluateResponse::ByteSizeLong() const {
         this->error_message());
   }
 
-  // .dse.lua.dbg.MsgValue result = 1;
+  // .bg3se.lua.dbg.MsgValue result = 1;
   if (this->has_result()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
@@ -5272,7 +5272,7 @@ void BkEvaluateResponse::CheckTypeAndMergeFrom(
 }
 
 void BkEvaluateResponse::MergeFrom(const BkEvaluateResponse& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.lua.dbg.BkEvaluateResponse)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.lua.dbg.BkEvaluateResponse)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -5282,12 +5282,12 @@ void BkEvaluateResponse::MergeFrom(const BkEvaluateResponse& from) {
     set_error_message(from.error_message());
   }
   if (from.has_result()) {
-    mutable_result()->::dse::lua::dbg::MsgValue::MergeFrom(from.result());
+    mutable_result()->::bg3se::lua::dbg::MsgValue::MergeFrom(from.result());
   }
 }
 
 void BkEvaluateResponse::CopyFrom(const BkEvaluateResponse& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.lua.dbg.BkEvaluateResponse)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.lua.dbg.BkEvaluateResponse)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -5325,7 +5325,7 @@ void BkEvaluateResponse::InternalSwap(BkEvaluateResponse* other) {
 }
 
 ::std::string BkEvaluateResponse::GetTypeName() const {
-  return "dse.lua.dbg.BkEvaluateResponse";
+  return "bg3se.lua.dbg.BkEvaluateResponse";
 }
 
 
@@ -5343,7 +5343,7 @@ BkGetVariablesResponse::BkGetVariablesResponse()
   ::google::protobuf::internal::InitSCC(
       &protobuf_LuaDebug_2eproto::scc_info_BkGetVariablesResponse.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.lua.dbg.BkGetVariablesResponse)
+  // @@protoc_insertion_point(constructor:bg3se.lua.dbg.BkGetVariablesResponse)
 }
 BkGetVariablesResponse::BkGetVariablesResponse(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -5352,7 +5352,7 @@ BkGetVariablesResponse::BkGetVariablesResponse(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_LuaDebug_2eproto::scc_info_BkGetVariablesResponse.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.lua.dbg.BkGetVariablesResponse)
+  // @@protoc_insertion_point(arena_constructor:bg3se.lua.dbg.BkGetVariablesResponse)
 }
 BkGetVariablesResponse::BkGetVariablesResponse(const BkGetVariablesResponse& from)
   : ::google::protobuf::MessageLite(),
@@ -5364,7 +5364,7 @@ BkGetVariablesResponse::BkGetVariablesResponse(const BkGetVariablesResponse& fro
     error_message_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.error_message(),
       GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(copy_constructor:dse.lua.dbg.BkGetVariablesResponse)
+  // @@protoc_insertion_point(copy_constructor:bg3se.lua.dbg.BkGetVariablesResponse)
 }
 
 void BkGetVariablesResponse::SharedCtor() {
@@ -5372,7 +5372,7 @@ void BkGetVariablesResponse::SharedCtor() {
 }
 
 BkGetVariablesResponse::~BkGetVariablesResponse() {
-  // @@protoc_insertion_point(destructor:dse.lua.dbg.BkGetVariablesResponse)
+  // @@protoc_insertion_point(destructor:bg3se.lua.dbg.BkGetVariablesResponse)
   SharedDtor();
 }
 
@@ -5397,7 +5397,7 @@ const BkGetVariablesResponse& BkGetVariablesResponse::default_instance() {
 
 
 void BkGetVariablesResponse::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.lua.dbg.BkGetVariablesResponse)
+// @@protoc_insertion_point(message_clear_start:bg3se.lua.dbg.BkGetVariablesResponse)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -5417,13 +5417,13 @@ bool BkGetVariablesResponse::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.lua.dbg.BkGetVariablesResponse)
+  // @@protoc_insertion_point(parse_start:bg3se.lua.dbg.BkGetVariablesResponse)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // repeated .dse.lua.dbg.MsgChildValue result = 1;
+      // repeated .bg3se.lua.dbg.MsgChildValue result = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
@@ -5444,7 +5444,7 @@ bool BkGetVariablesResponse::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->error_message().data(), static_cast<int>(this->error_message().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "dse.lua.dbg.BkGetVariablesResponse.error_message"));
+            "bg3se.lua.dbg.BkGetVariablesResponse.error_message"));
         } else {
           goto handle_unusual;
         }
@@ -5463,21 +5463,21 @@ bool BkGetVariablesResponse::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.lua.dbg.BkGetVariablesResponse)
+  // @@protoc_insertion_point(parse_success:bg3se.lua.dbg.BkGetVariablesResponse)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.lua.dbg.BkGetVariablesResponse)
+  // @@protoc_insertion_point(parse_failure:bg3se.lua.dbg.BkGetVariablesResponse)
   return false;
 #undef DO_
 }
 
 void BkGetVariablesResponse::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.lua.dbg.BkGetVariablesResponse)
+  // @@protoc_insertion_point(serialize_start:bg3se.lua.dbg.BkGetVariablesResponse)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // repeated .dse.lua.dbg.MsgChildValue result = 1;
+  // repeated .bg3se.lua.dbg.MsgChildValue result = 1;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->result_size()); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
@@ -5491,23 +5491,23 @@ void BkGetVariablesResponse::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->error_message().data(), static_cast<int>(this->error_message().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "dse.lua.dbg.BkGetVariablesResponse.error_message");
+      "bg3se.lua.dbg.BkGetVariablesResponse.error_message");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       2, this->error_message(), output);
   }
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.lua.dbg.BkGetVariablesResponse)
+  // @@protoc_insertion_point(serialize_end:bg3se.lua.dbg.BkGetVariablesResponse)
 }
 
 size_t BkGetVariablesResponse::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.lua.dbg.BkGetVariablesResponse)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.lua.dbg.BkGetVariablesResponse)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
 
-  // repeated .dse.lua.dbg.MsgChildValue result = 1;
+  // repeated .bg3se.lua.dbg.MsgChildValue result = 1;
   {
     unsigned int count = static_cast<unsigned int>(this->result_size());
     total_size += 1UL * count;
@@ -5536,7 +5536,7 @@ void BkGetVariablesResponse::CheckTypeAndMergeFrom(
 }
 
 void BkGetVariablesResponse::MergeFrom(const BkGetVariablesResponse& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.lua.dbg.BkGetVariablesResponse)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.lua.dbg.BkGetVariablesResponse)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -5549,7 +5549,7 @@ void BkGetVariablesResponse::MergeFrom(const BkGetVariablesResponse& from) {
 }
 
 void BkGetVariablesResponse::CopyFrom(const BkGetVariablesResponse& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.lua.dbg.BkGetVariablesResponse)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.lua.dbg.BkGetVariablesResponse)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -5587,7 +5587,7 @@ void BkGetVariablesResponse::InternalSwap(BkGetVariablesResponse* other) {
 }
 
 ::std::string BkGetVariablesResponse::GetTypeName() const {
-  return "dse.lua.dbg.BkGetVariablesResponse";
+  return "bg3se.lua.dbg.BkGetVariablesResponse";
 }
 
 
@@ -5603,7 +5603,7 @@ DbgFetchMods::DbgFetchMods()
   ::google::protobuf::internal::InitSCC(
       &protobuf_LuaDebug_2eproto::scc_info_DbgFetchMods.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.lua.dbg.DbgFetchMods)
+  // @@protoc_insertion_point(constructor:bg3se.lua.dbg.DbgFetchMods)
 }
 DbgFetchMods::DbgFetchMods(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -5611,20 +5611,20 @@ DbgFetchMods::DbgFetchMods(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_LuaDebug_2eproto::scc_info_DbgFetchMods.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.lua.dbg.DbgFetchMods)
+  // @@protoc_insertion_point(arena_constructor:bg3se.lua.dbg.DbgFetchMods)
 }
 DbgFetchMods::DbgFetchMods(const DbgFetchMods& from)
   : ::google::protobuf::MessageLite(),
       _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  // @@protoc_insertion_point(copy_constructor:dse.lua.dbg.DbgFetchMods)
+  // @@protoc_insertion_point(copy_constructor:bg3se.lua.dbg.DbgFetchMods)
 }
 
 void DbgFetchMods::SharedCtor() {
 }
 
 DbgFetchMods::~DbgFetchMods() {
-  // @@protoc_insertion_point(destructor:dse.lua.dbg.DbgFetchMods)
+  // @@protoc_insertion_point(destructor:bg3se.lua.dbg.DbgFetchMods)
   SharedDtor();
 }
 
@@ -5648,7 +5648,7 @@ const DbgFetchMods& DbgFetchMods::default_instance() {
 
 
 void DbgFetchMods::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.lua.dbg.DbgFetchMods)
+// @@protoc_insertion_point(message_clear_start:bg3se.lua.dbg.DbgFetchMods)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -5666,7 +5666,7 @@ bool DbgFetchMods::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.lua.dbg.DbgFetchMods)
+  // @@protoc_insertion_point(parse_start:bg3se.lua.dbg.DbgFetchMods)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -5679,27 +5679,27 @@ bool DbgFetchMods::MergePartialFromCodedStream(
         input, tag, &unknown_fields_stream));
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.lua.dbg.DbgFetchMods)
+  // @@protoc_insertion_point(parse_success:bg3se.lua.dbg.DbgFetchMods)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.lua.dbg.DbgFetchMods)
+  // @@protoc_insertion_point(parse_failure:bg3se.lua.dbg.DbgFetchMods)
   return false;
 #undef DO_
 }
 
 void DbgFetchMods::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.lua.dbg.DbgFetchMods)
+  // @@protoc_insertion_point(serialize_start:bg3se.lua.dbg.DbgFetchMods)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.lua.dbg.DbgFetchMods)
+  // @@protoc_insertion_point(serialize_end:bg3se.lua.dbg.DbgFetchMods)
 }
 
 size_t DbgFetchMods::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.lua.dbg.DbgFetchMods)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.lua.dbg.DbgFetchMods)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -5715,7 +5715,7 @@ void DbgFetchMods::CheckTypeAndMergeFrom(
 }
 
 void DbgFetchMods::MergeFrom(const DbgFetchMods& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.lua.dbg.DbgFetchMods)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.lua.dbg.DbgFetchMods)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -5724,7 +5724,7 @@ void DbgFetchMods::MergeFrom(const DbgFetchMods& from) {
 }
 
 void DbgFetchMods::CopyFrom(const DbgFetchMods& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.lua.dbg.DbgFetchMods)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.lua.dbg.DbgFetchMods)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -5759,7 +5759,7 @@ void DbgFetchMods::InternalSwap(DbgFetchMods* other) {
 }
 
 ::std::string DbgFetchMods::GetTypeName() const {
-  return "dse.lua.dbg.DbgFetchMods";
+  return "bg3se.lua.dbg.DbgFetchMods";
 }
 
 
@@ -5777,7 +5777,7 @@ BkContextUpdated::BkContextUpdated()
   ::google::protobuf::internal::InitSCC(
       &protobuf_LuaDebug_2eproto::scc_info_BkContextUpdated.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.lua.dbg.BkContextUpdated)
+  // @@protoc_insertion_point(constructor:bg3se.lua.dbg.BkContextUpdated)
 }
 BkContextUpdated::BkContextUpdated(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -5785,7 +5785,7 @@ BkContextUpdated::BkContextUpdated(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_LuaDebug_2eproto::scc_info_BkContextUpdated.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.lua.dbg.BkContextUpdated)
+  // @@protoc_insertion_point(arena_constructor:bg3se.lua.dbg.BkContextUpdated)
 }
 BkContextUpdated::BkContextUpdated(const BkContextUpdated& from)
   : ::google::protobuf::MessageLite(),
@@ -5794,7 +5794,7 @@ BkContextUpdated::BkContextUpdated(const BkContextUpdated& from)
   ::memcpy(&context_, &from.context_,
     static_cast<size_t>(reinterpret_cast<char*>(&status_) -
     reinterpret_cast<char*>(&context_)) + sizeof(status_));
-  // @@protoc_insertion_point(copy_constructor:dse.lua.dbg.BkContextUpdated)
+  // @@protoc_insertion_point(copy_constructor:bg3se.lua.dbg.BkContextUpdated)
 }
 
 void BkContextUpdated::SharedCtor() {
@@ -5804,7 +5804,7 @@ void BkContextUpdated::SharedCtor() {
 }
 
 BkContextUpdated::~BkContextUpdated() {
-  // @@protoc_insertion_point(destructor:dse.lua.dbg.BkContextUpdated)
+  // @@protoc_insertion_point(destructor:bg3se.lua.dbg.BkContextUpdated)
   SharedDtor();
 }
 
@@ -5828,7 +5828,7 @@ const BkContextUpdated& BkContextUpdated::default_instance() {
 
 
 void BkContextUpdated::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.lua.dbg.BkContextUpdated)
+// @@protoc_insertion_point(message_clear_start:bg3se.lua.dbg.BkContextUpdated)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -5849,13 +5849,13 @@ bool BkContextUpdated::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.lua.dbg.BkContextUpdated)
+  // @@protoc_insertion_point(parse_start:bg3se.lua.dbg.BkContextUpdated)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .dse.lua.dbg.DbgContext context = 1;
+      // .bg3se.lua.dbg.DbgContext context = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
@@ -5863,14 +5863,14 @@ bool BkContextUpdated::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
                  input, &value)));
-          set_context(static_cast< ::dse::lua::dbg::DbgContext >(value));
+          set_context(static_cast< ::bg3se::lua::dbg::DbgContext >(value));
         } else {
           goto handle_unusual;
         }
         break;
       }
 
-      // .dse.lua.dbg.BkContextUpdated.Status status = 2;
+      // .bg3se.lua.dbg.BkContextUpdated.Status status = 2;
       case 2: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
@@ -5878,7 +5878,7 @@ bool BkContextUpdated::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
                  input, &value)));
-          set_status(static_cast< ::dse::lua::dbg::BkContextUpdated_Status >(value));
+          set_status(static_cast< ::bg3se::lua::dbg::BkContextUpdated_Status >(value));
         } else {
           goto handle_unusual;
         }
@@ -5897,27 +5897,27 @@ bool BkContextUpdated::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.lua.dbg.BkContextUpdated)
+  // @@protoc_insertion_point(parse_success:bg3se.lua.dbg.BkContextUpdated)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.lua.dbg.BkContextUpdated)
+  // @@protoc_insertion_point(parse_failure:bg3se.lua.dbg.BkContextUpdated)
   return false;
 #undef DO_
 }
 
 void BkContextUpdated::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.lua.dbg.BkContextUpdated)
+  // @@protoc_insertion_point(serialize_start:bg3se.lua.dbg.BkContextUpdated)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .dse.lua.dbg.DbgContext context = 1;
+  // .bg3se.lua.dbg.DbgContext context = 1;
   if (this->context() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
       1, this->context(), output);
   }
 
-  // .dse.lua.dbg.BkContextUpdated.Status status = 2;
+  // .bg3se.lua.dbg.BkContextUpdated.Status status = 2;
   if (this->status() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
       2, this->status(), output);
@@ -5925,22 +5925,22 @@ void BkContextUpdated::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.lua.dbg.BkContextUpdated)
+  // @@protoc_insertion_point(serialize_end:bg3se.lua.dbg.BkContextUpdated)
 }
 
 size_t BkContextUpdated::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.lua.dbg.BkContextUpdated)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.lua.dbg.BkContextUpdated)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
 
-  // .dse.lua.dbg.DbgContext context = 1;
+  // .bg3se.lua.dbg.DbgContext context = 1;
   if (this->context() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::EnumSize(this->context());
   }
 
-  // .dse.lua.dbg.BkContextUpdated.Status status = 2;
+  // .bg3se.lua.dbg.BkContextUpdated.Status status = 2;
   if (this->status() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::EnumSize(this->status());
@@ -5957,7 +5957,7 @@ void BkContextUpdated::CheckTypeAndMergeFrom(
 }
 
 void BkContextUpdated::MergeFrom(const BkContextUpdated& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.lua.dbg.BkContextUpdated)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.lua.dbg.BkContextUpdated)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -5972,7 +5972,7 @@ void BkContextUpdated::MergeFrom(const BkContextUpdated& from) {
 }
 
 void BkContextUpdated::CopyFrom(const BkContextUpdated& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.lua.dbg.BkContextUpdated)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.lua.dbg.BkContextUpdated)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -6009,7 +6009,7 @@ void BkContextUpdated::InternalSwap(BkContextUpdated* other) {
 }
 
 ::std::string BkContextUpdated::GetTypeName() const {
-  return "dse.lua.dbg.BkContextUpdated";
+  return "bg3se.lua.dbg.BkContextUpdated";
 }
 
 
@@ -6029,7 +6029,7 @@ MsgModuleInfo::MsgModuleInfo()
   ::google::protobuf::internal::InitSCC(
       &protobuf_LuaDebug_2eproto::scc_info_MsgModuleInfo.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.lua.dbg.MsgModuleInfo)
+  // @@protoc_insertion_point(constructor:bg3se.lua.dbg.MsgModuleInfo)
 }
 MsgModuleInfo::MsgModuleInfo(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -6037,7 +6037,7 @@ MsgModuleInfo::MsgModuleInfo(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_LuaDebug_2eproto::scc_info_MsgModuleInfo.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.lua.dbg.MsgModuleInfo)
+  // @@protoc_insertion_point(arena_constructor:bg3se.lua.dbg.MsgModuleInfo)
 }
 MsgModuleInfo::MsgModuleInfo(const MsgModuleInfo& from)
   : ::google::protobuf::MessageLite(),
@@ -6063,7 +6063,7 @@ MsgModuleInfo::MsgModuleInfo(const MsgModuleInfo& from)
     path_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.path(),
       GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(copy_constructor:dse.lua.dbg.MsgModuleInfo)
+  // @@protoc_insertion_point(copy_constructor:bg3se.lua.dbg.MsgModuleInfo)
 }
 
 void MsgModuleInfo::SharedCtor() {
@@ -6074,7 +6074,7 @@ void MsgModuleInfo::SharedCtor() {
 }
 
 MsgModuleInfo::~MsgModuleInfo() {
-  // @@protoc_insertion_point(destructor:dse.lua.dbg.MsgModuleInfo)
+  // @@protoc_insertion_point(destructor:bg3se.lua.dbg.MsgModuleInfo)
   SharedDtor();
 }
 
@@ -6102,7 +6102,7 @@ const MsgModuleInfo& MsgModuleInfo::default_instance() {
 
 
 void MsgModuleInfo::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.lua.dbg.MsgModuleInfo)
+// @@protoc_insertion_point(message_clear_start:bg3se.lua.dbg.MsgModuleInfo)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -6124,7 +6124,7 @@ bool MsgModuleInfo::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.lua.dbg.MsgModuleInfo)
+  // @@protoc_insertion_point(parse_start:bg3se.lua.dbg.MsgModuleInfo)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -6139,7 +6139,7 @@ bool MsgModuleInfo::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->uuid().data(), static_cast<int>(this->uuid().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "dse.lua.dbg.MsgModuleInfo.uuid"));
+            "bg3se.lua.dbg.MsgModuleInfo.uuid"));
         } else {
           goto handle_unusual;
         }
@@ -6155,7 +6155,7 @@ bool MsgModuleInfo::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->name().data(), static_cast<int>(this->name().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "dse.lua.dbg.MsgModuleInfo.name"));
+            "bg3se.lua.dbg.MsgModuleInfo.name"));
         } else {
           goto handle_unusual;
         }
@@ -6171,7 +6171,7 @@ bool MsgModuleInfo::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->author().data(), static_cast<int>(this->author().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "dse.lua.dbg.MsgModuleInfo.author"));
+            "bg3se.lua.dbg.MsgModuleInfo.author"));
         } else {
           goto handle_unusual;
         }
@@ -6187,7 +6187,7 @@ bool MsgModuleInfo::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->path().data(), static_cast<int>(this->path().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "dse.lua.dbg.MsgModuleInfo.path"));
+            "bg3se.lua.dbg.MsgModuleInfo.path"));
         } else {
           goto handle_unusual;
         }
@@ -6206,17 +6206,17 @@ bool MsgModuleInfo::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.lua.dbg.MsgModuleInfo)
+  // @@protoc_insertion_point(parse_success:bg3se.lua.dbg.MsgModuleInfo)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.lua.dbg.MsgModuleInfo)
+  // @@protoc_insertion_point(parse_failure:bg3se.lua.dbg.MsgModuleInfo)
   return false;
 #undef DO_
 }
 
 void MsgModuleInfo::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.lua.dbg.MsgModuleInfo)
+  // @@protoc_insertion_point(serialize_start:bg3se.lua.dbg.MsgModuleInfo)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -6225,7 +6225,7 @@ void MsgModuleInfo::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->uuid().data(), static_cast<int>(this->uuid().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "dse.lua.dbg.MsgModuleInfo.uuid");
+      "bg3se.lua.dbg.MsgModuleInfo.uuid");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       1, this->uuid(), output);
   }
@@ -6235,7 +6235,7 @@ void MsgModuleInfo::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->name().data(), static_cast<int>(this->name().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "dse.lua.dbg.MsgModuleInfo.name");
+      "bg3se.lua.dbg.MsgModuleInfo.name");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       2, this->name(), output);
   }
@@ -6245,7 +6245,7 @@ void MsgModuleInfo::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->author().data(), static_cast<int>(this->author().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "dse.lua.dbg.MsgModuleInfo.author");
+      "bg3se.lua.dbg.MsgModuleInfo.author");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       3, this->author(), output);
   }
@@ -6255,18 +6255,18 @@ void MsgModuleInfo::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->path().data(), static_cast<int>(this->path().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "dse.lua.dbg.MsgModuleInfo.path");
+      "bg3se.lua.dbg.MsgModuleInfo.path");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       4, this->path(), output);
   }
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.lua.dbg.MsgModuleInfo)
+  // @@protoc_insertion_point(serialize_end:bg3se.lua.dbg.MsgModuleInfo)
 }
 
 size_t MsgModuleInfo::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.lua.dbg.MsgModuleInfo)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.lua.dbg.MsgModuleInfo)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -6310,7 +6310,7 @@ void MsgModuleInfo::CheckTypeAndMergeFrom(
 }
 
 void MsgModuleInfo::MergeFrom(const MsgModuleInfo& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.lua.dbg.MsgModuleInfo)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.lua.dbg.MsgModuleInfo)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -6331,7 +6331,7 @@ void MsgModuleInfo::MergeFrom(const MsgModuleInfo& from) {
 }
 
 void MsgModuleInfo::CopyFrom(const MsgModuleInfo& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.lua.dbg.MsgModuleInfo)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.lua.dbg.MsgModuleInfo)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -6374,7 +6374,7 @@ void MsgModuleInfo::InternalSwap(MsgModuleInfo* other) {
 }
 
 ::std::string MsgModuleInfo::GetTypeName() const {
-  return "dse.lua.dbg.MsgModuleInfo";
+  return "bg3se.lua.dbg.MsgModuleInfo";
 }
 
 
@@ -6391,7 +6391,7 @@ MsgSourceFileInfo::MsgSourceFileInfo()
   ::google::protobuf::internal::InitSCC(
       &protobuf_LuaDebug_2eproto::scc_info_MsgSourceFileInfo.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.lua.dbg.MsgSourceFileInfo)
+  // @@protoc_insertion_point(constructor:bg3se.lua.dbg.MsgSourceFileInfo)
 }
 MsgSourceFileInfo::MsgSourceFileInfo(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -6399,7 +6399,7 @@ MsgSourceFileInfo::MsgSourceFileInfo(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_LuaDebug_2eproto::scc_info_MsgSourceFileInfo.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.lua.dbg.MsgSourceFileInfo)
+  // @@protoc_insertion_point(arena_constructor:bg3se.lua.dbg.MsgSourceFileInfo)
 }
 MsgSourceFileInfo::MsgSourceFileInfo(const MsgSourceFileInfo& from)
   : ::google::protobuf::MessageLite(),
@@ -6410,7 +6410,7 @@ MsgSourceFileInfo::MsgSourceFileInfo(const MsgSourceFileInfo& from)
     path_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.path(),
       GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(copy_constructor:dse.lua.dbg.MsgSourceFileInfo)
+  // @@protoc_insertion_point(copy_constructor:bg3se.lua.dbg.MsgSourceFileInfo)
 }
 
 void MsgSourceFileInfo::SharedCtor() {
@@ -6418,7 +6418,7 @@ void MsgSourceFileInfo::SharedCtor() {
 }
 
 MsgSourceFileInfo::~MsgSourceFileInfo() {
-  // @@protoc_insertion_point(destructor:dse.lua.dbg.MsgSourceFileInfo)
+  // @@protoc_insertion_point(destructor:bg3se.lua.dbg.MsgSourceFileInfo)
   SharedDtor();
 }
 
@@ -6443,7 +6443,7 @@ const MsgSourceFileInfo& MsgSourceFileInfo::default_instance() {
 
 
 void MsgSourceFileInfo::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.lua.dbg.MsgSourceFileInfo)
+// @@protoc_insertion_point(message_clear_start:bg3se.lua.dbg.MsgSourceFileInfo)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -6462,7 +6462,7 @@ bool MsgSourceFileInfo::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.lua.dbg.MsgSourceFileInfo)
+  // @@protoc_insertion_point(parse_start:bg3se.lua.dbg.MsgSourceFileInfo)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -6477,7 +6477,7 @@ bool MsgSourceFileInfo::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->path().data(), static_cast<int>(this->path().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "dse.lua.dbg.MsgSourceFileInfo.path"));
+            "bg3se.lua.dbg.MsgSourceFileInfo.path"));
         } else {
           goto handle_unusual;
         }
@@ -6496,17 +6496,17 @@ bool MsgSourceFileInfo::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.lua.dbg.MsgSourceFileInfo)
+  // @@protoc_insertion_point(parse_success:bg3se.lua.dbg.MsgSourceFileInfo)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.lua.dbg.MsgSourceFileInfo)
+  // @@protoc_insertion_point(parse_failure:bg3se.lua.dbg.MsgSourceFileInfo)
   return false;
 #undef DO_
 }
 
 void MsgSourceFileInfo::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.lua.dbg.MsgSourceFileInfo)
+  // @@protoc_insertion_point(serialize_start:bg3se.lua.dbg.MsgSourceFileInfo)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -6515,18 +6515,18 @@ void MsgSourceFileInfo::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->path().data(), static_cast<int>(this->path().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "dse.lua.dbg.MsgSourceFileInfo.path");
+      "bg3se.lua.dbg.MsgSourceFileInfo.path");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       1, this->path(), output);
   }
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.lua.dbg.MsgSourceFileInfo)
+  // @@protoc_insertion_point(serialize_end:bg3se.lua.dbg.MsgSourceFileInfo)
 }
 
 size_t MsgSourceFileInfo::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.lua.dbg.MsgSourceFileInfo)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.lua.dbg.MsgSourceFileInfo)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -6549,7 +6549,7 @@ void MsgSourceFileInfo::CheckTypeAndMergeFrom(
 }
 
 void MsgSourceFileInfo::MergeFrom(const MsgSourceFileInfo& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.lua.dbg.MsgSourceFileInfo)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.lua.dbg.MsgSourceFileInfo)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -6561,7 +6561,7 @@ void MsgSourceFileInfo::MergeFrom(const MsgSourceFileInfo& from) {
 }
 
 void MsgSourceFileInfo::CopyFrom(const MsgSourceFileInfo& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.lua.dbg.MsgSourceFileInfo)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.lua.dbg.MsgSourceFileInfo)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -6598,7 +6598,7 @@ void MsgSourceFileInfo::InternalSwap(MsgSourceFileInfo* other) {
 }
 
 ::std::string MsgSourceFileInfo::GetTypeName() const {
-  return "dse.lua.dbg.MsgSourceFileInfo";
+  return "bg3se.lua.dbg.MsgSourceFileInfo";
 }
 
 
@@ -6616,7 +6616,7 @@ BkModInfoResponse::BkModInfoResponse()
   ::google::protobuf::internal::InitSCC(
       &protobuf_LuaDebug_2eproto::scc_info_BkModInfoResponse.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.lua.dbg.BkModInfoResponse)
+  // @@protoc_insertion_point(constructor:bg3se.lua.dbg.BkModInfoResponse)
 }
 BkModInfoResponse::BkModInfoResponse(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -6626,7 +6626,7 @@ BkModInfoResponse::BkModInfoResponse(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_LuaDebug_2eproto::scc_info_BkModInfoResponse.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.lua.dbg.BkModInfoResponse)
+  // @@protoc_insertion_point(arena_constructor:bg3se.lua.dbg.BkModInfoResponse)
 }
 BkModInfoResponse::BkModInfoResponse(const BkModInfoResponse& from)
   : ::google::protobuf::MessageLite(),
@@ -6634,14 +6634,14 @@ BkModInfoResponse::BkModInfoResponse(const BkModInfoResponse& from)
       module_(from.module_),
       source_(from.source_) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  // @@protoc_insertion_point(copy_constructor:dse.lua.dbg.BkModInfoResponse)
+  // @@protoc_insertion_point(copy_constructor:bg3se.lua.dbg.BkModInfoResponse)
 }
 
 void BkModInfoResponse::SharedCtor() {
 }
 
 BkModInfoResponse::~BkModInfoResponse() {
-  // @@protoc_insertion_point(destructor:dse.lua.dbg.BkModInfoResponse)
+  // @@protoc_insertion_point(destructor:bg3se.lua.dbg.BkModInfoResponse)
   SharedDtor();
 }
 
@@ -6665,7 +6665,7 @@ const BkModInfoResponse& BkModInfoResponse::default_instance() {
 
 
 void BkModInfoResponse::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.lua.dbg.BkModInfoResponse)
+// @@protoc_insertion_point(message_clear_start:bg3se.lua.dbg.BkModInfoResponse)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -6685,13 +6685,13 @@ bool BkModInfoResponse::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.lua.dbg.BkModInfoResponse)
+  // @@protoc_insertion_point(parse_start:bg3se.lua.dbg.BkModInfoResponse)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // repeated .dse.lua.dbg.MsgModuleInfo module = 1;
+      // repeated .bg3se.lua.dbg.MsgModuleInfo module = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
@@ -6703,7 +6703,7 @@ bool BkModInfoResponse::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated .dse.lua.dbg.MsgSourceFileInfo source = 2;
+      // repeated .bg3se.lua.dbg.MsgSourceFileInfo source = 2;
       case 2: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
@@ -6727,21 +6727,21 @@ bool BkModInfoResponse::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.lua.dbg.BkModInfoResponse)
+  // @@protoc_insertion_point(parse_success:bg3se.lua.dbg.BkModInfoResponse)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.lua.dbg.BkModInfoResponse)
+  // @@protoc_insertion_point(parse_failure:bg3se.lua.dbg.BkModInfoResponse)
   return false;
 #undef DO_
 }
 
 void BkModInfoResponse::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.lua.dbg.BkModInfoResponse)
+  // @@protoc_insertion_point(serialize_start:bg3se.lua.dbg.BkModInfoResponse)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // repeated .dse.lua.dbg.MsgModuleInfo module = 1;
+  // repeated .bg3se.lua.dbg.MsgModuleInfo module = 1;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->module_size()); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
@@ -6750,7 +6750,7 @@ void BkModInfoResponse::SerializeWithCachedSizes(
       output);
   }
 
-  // repeated .dse.lua.dbg.MsgSourceFileInfo source = 2;
+  // repeated .bg3se.lua.dbg.MsgSourceFileInfo source = 2;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->source_size()); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
@@ -6761,16 +6761,16 @@ void BkModInfoResponse::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.lua.dbg.BkModInfoResponse)
+  // @@protoc_insertion_point(serialize_end:bg3se.lua.dbg.BkModInfoResponse)
 }
 
 size_t BkModInfoResponse::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.lua.dbg.BkModInfoResponse)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.lua.dbg.BkModInfoResponse)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
 
-  // repeated .dse.lua.dbg.MsgModuleInfo module = 1;
+  // repeated .bg3se.lua.dbg.MsgModuleInfo module = 1;
   {
     unsigned int count = static_cast<unsigned int>(this->module_size());
     total_size += 1UL * count;
@@ -6781,7 +6781,7 @@ size_t BkModInfoResponse::ByteSizeLong() const {
     }
   }
 
-  // repeated .dse.lua.dbg.MsgSourceFileInfo source = 2;
+  // repeated .bg3se.lua.dbg.MsgSourceFileInfo source = 2;
   {
     unsigned int count = static_cast<unsigned int>(this->source_size());
     total_size += 1UL * count;
@@ -6803,7 +6803,7 @@ void BkModInfoResponse::CheckTypeAndMergeFrom(
 }
 
 void BkModInfoResponse::MergeFrom(const BkModInfoResponse& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.lua.dbg.BkModInfoResponse)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.lua.dbg.BkModInfoResponse)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -6814,7 +6814,7 @@ void BkModInfoResponse::MergeFrom(const BkModInfoResponse& from) {
 }
 
 void BkModInfoResponse::CopyFrom(const BkModInfoResponse& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.lua.dbg.BkModInfoResponse)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.lua.dbg.BkModInfoResponse)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -6851,7 +6851,7 @@ void BkModInfoResponse::InternalSwap(BkModInfoResponse* other) {
 }
 
 ::std::string BkModInfoResponse::GetTypeName() const {
-  return "dse.lua.dbg.BkModInfoResponse";
+  return "bg3se.lua.dbg.BkModInfoResponse";
 }
 
 
@@ -6869,7 +6869,7 @@ BkDebugOutput::BkDebugOutput()
   ::google::protobuf::internal::InitSCC(
       &protobuf_LuaDebug_2eproto::scc_info_BkDebugOutput.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.lua.dbg.BkDebugOutput)
+  // @@protoc_insertion_point(constructor:bg3se.lua.dbg.BkDebugOutput)
 }
 BkDebugOutput::BkDebugOutput(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -6877,7 +6877,7 @@ BkDebugOutput::BkDebugOutput(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_LuaDebug_2eproto::scc_info_BkDebugOutput.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.lua.dbg.BkDebugOutput)
+  // @@protoc_insertion_point(arena_constructor:bg3se.lua.dbg.BkDebugOutput)
 }
 BkDebugOutput::BkDebugOutput(const BkDebugOutput& from)
   : ::google::protobuf::MessageLite(),
@@ -6889,7 +6889,7 @@ BkDebugOutput::BkDebugOutput(const BkDebugOutput& from)
       GetArenaNoVirtual());
   }
   severity_ = from.severity_;
-  // @@protoc_insertion_point(copy_constructor:dse.lua.dbg.BkDebugOutput)
+  // @@protoc_insertion_point(copy_constructor:bg3se.lua.dbg.BkDebugOutput)
 }
 
 void BkDebugOutput::SharedCtor() {
@@ -6898,7 +6898,7 @@ void BkDebugOutput::SharedCtor() {
 }
 
 BkDebugOutput::~BkDebugOutput() {
-  // @@protoc_insertion_point(destructor:dse.lua.dbg.BkDebugOutput)
+  // @@protoc_insertion_point(destructor:bg3se.lua.dbg.BkDebugOutput)
   SharedDtor();
 }
 
@@ -6923,7 +6923,7 @@ const BkDebugOutput& BkDebugOutput::default_instance() {
 
 
 void BkDebugOutput::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.lua.dbg.BkDebugOutput)
+// @@protoc_insertion_point(message_clear_start:bg3se.lua.dbg.BkDebugOutput)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -6943,7 +6943,7 @@ bool BkDebugOutput::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.lua.dbg.BkDebugOutput)
+  // @@protoc_insertion_point(parse_start:bg3se.lua.dbg.BkDebugOutput)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -6958,14 +6958,14 @@ bool BkDebugOutput::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->message().data(), static_cast<int>(this->message().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "dse.lua.dbg.BkDebugOutput.message"));
+            "bg3se.lua.dbg.BkDebugOutput.message"));
         } else {
           goto handle_unusual;
         }
         break;
       }
 
-      // .dse.lua.dbg.BkDebugOutput.Severity severity = 2;
+      // .bg3se.lua.dbg.BkDebugOutput.Severity severity = 2;
       case 2: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
@@ -6973,7 +6973,7 @@ bool BkDebugOutput::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
                  input, &value)));
-          set_severity(static_cast< ::dse::lua::dbg::BkDebugOutput_Severity >(value));
+          set_severity(static_cast< ::bg3se::lua::dbg::BkDebugOutput_Severity >(value));
         } else {
           goto handle_unusual;
         }
@@ -6992,17 +6992,17 @@ bool BkDebugOutput::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.lua.dbg.BkDebugOutput)
+  // @@protoc_insertion_point(parse_success:bg3se.lua.dbg.BkDebugOutput)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.lua.dbg.BkDebugOutput)
+  // @@protoc_insertion_point(parse_failure:bg3se.lua.dbg.BkDebugOutput)
   return false;
 #undef DO_
 }
 
 void BkDebugOutput::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.lua.dbg.BkDebugOutput)
+  // @@protoc_insertion_point(serialize_start:bg3se.lua.dbg.BkDebugOutput)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -7011,12 +7011,12 @@ void BkDebugOutput::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->message().data(), static_cast<int>(this->message().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "dse.lua.dbg.BkDebugOutput.message");
+      "bg3se.lua.dbg.BkDebugOutput.message");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       1, this->message(), output);
   }
 
-  // .dse.lua.dbg.BkDebugOutput.Severity severity = 2;
+  // .bg3se.lua.dbg.BkDebugOutput.Severity severity = 2;
   if (this->severity() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
       2, this->severity(), output);
@@ -7024,11 +7024,11 @@ void BkDebugOutput::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.lua.dbg.BkDebugOutput)
+  // @@protoc_insertion_point(serialize_end:bg3se.lua.dbg.BkDebugOutput)
 }
 
 size_t BkDebugOutput::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.lua.dbg.BkDebugOutput)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.lua.dbg.BkDebugOutput)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -7040,7 +7040,7 @@ size_t BkDebugOutput::ByteSizeLong() const {
         this->message());
   }
 
-  // .dse.lua.dbg.BkDebugOutput.Severity severity = 2;
+  // .bg3se.lua.dbg.BkDebugOutput.Severity severity = 2;
   if (this->severity() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::EnumSize(this->severity());
@@ -7057,7 +7057,7 @@ void BkDebugOutput::CheckTypeAndMergeFrom(
 }
 
 void BkDebugOutput::MergeFrom(const BkDebugOutput& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.lua.dbg.BkDebugOutput)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.lua.dbg.BkDebugOutput)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -7072,7 +7072,7 @@ void BkDebugOutput::MergeFrom(const BkDebugOutput& from) {
 }
 
 void BkDebugOutput::CopyFrom(const BkDebugOutput& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.lua.dbg.BkDebugOutput)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.lua.dbg.BkDebugOutput)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -7110,7 +7110,7 @@ void BkDebugOutput::InternalSwap(BkDebugOutput* other) {
 }
 
 ::std::string BkDebugOutput::GetTypeName() const {
-  return "dse.lua.dbg.BkDebugOutput";
+  return "bg3se.lua.dbg.BkDebugOutput";
 }
 
 
@@ -7127,7 +7127,7 @@ BkResult::BkResult()
   ::google::protobuf::internal::InitSCC(
       &protobuf_LuaDebug_2eproto::scc_info_BkResult.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.lua.dbg.BkResult)
+  // @@protoc_insertion_point(constructor:bg3se.lua.dbg.BkResult)
 }
 BkResult::BkResult(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -7135,14 +7135,14 @@ BkResult::BkResult(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_LuaDebug_2eproto::scc_info_BkResult.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.lua.dbg.BkResult)
+  // @@protoc_insertion_point(arena_constructor:bg3se.lua.dbg.BkResult)
 }
 BkResult::BkResult(const BkResult& from)
   : ::google::protobuf::MessageLite(),
       _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   status_code_ = from.status_code_;
-  // @@protoc_insertion_point(copy_constructor:dse.lua.dbg.BkResult)
+  // @@protoc_insertion_point(copy_constructor:bg3se.lua.dbg.BkResult)
 }
 
 void BkResult::SharedCtor() {
@@ -7150,7 +7150,7 @@ void BkResult::SharedCtor() {
 }
 
 BkResult::~BkResult() {
-  // @@protoc_insertion_point(destructor:dse.lua.dbg.BkResult)
+  // @@protoc_insertion_point(destructor:bg3se.lua.dbg.BkResult)
   SharedDtor();
 }
 
@@ -7174,7 +7174,7 @@ const BkResult& BkResult::default_instance() {
 
 
 void BkResult::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.lua.dbg.BkResult)
+// @@protoc_insertion_point(message_clear_start:bg3se.lua.dbg.BkResult)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -7193,13 +7193,13 @@ bool BkResult::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.lua.dbg.BkResult)
+  // @@protoc_insertion_point(parse_start:bg3se.lua.dbg.BkResult)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .dse.lua.dbg.StatusCode status_code = 1;
+      // .bg3se.lua.dbg.StatusCode status_code = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
@@ -7207,7 +7207,7 @@ bool BkResult::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
                  input, &value)));
-          set_status_code(static_cast< ::dse::lua::dbg::StatusCode >(value));
+          set_status_code(static_cast< ::bg3se::lua::dbg::StatusCode >(value));
         } else {
           goto handle_unusual;
         }
@@ -7226,21 +7226,21 @@ bool BkResult::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.lua.dbg.BkResult)
+  // @@protoc_insertion_point(parse_success:bg3se.lua.dbg.BkResult)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.lua.dbg.BkResult)
+  // @@protoc_insertion_point(parse_failure:bg3se.lua.dbg.BkResult)
   return false;
 #undef DO_
 }
 
 void BkResult::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.lua.dbg.BkResult)
+  // @@protoc_insertion_point(serialize_start:bg3se.lua.dbg.BkResult)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .dse.lua.dbg.StatusCode status_code = 1;
+  // .bg3se.lua.dbg.StatusCode status_code = 1;
   if (this->status_code() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
       1, this->status_code(), output);
@@ -7248,16 +7248,16 @@ void BkResult::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.lua.dbg.BkResult)
+  // @@protoc_insertion_point(serialize_end:bg3se.lua.dbg.BkResult)
 }
 
 size_t BkResult::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.lua.dbg.BkResult)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.lua.dbg.BkResult)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
 
-  // .dse.lua.dbg.StatusCode status_code = 1;
+  // .bg3se.lua.dbg.StatusCode status_code = 1;
   if (this->status_code() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::EnumSize(this->status_code());
@@ -7274,7 +7274,7 @@ void BkResult::CheckTypeAndMergeFrom(
 }
 
 void BkResult::MergeFrom(const BkResult& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.lua.dbg.BkResult)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.lua.dbg.BkResult)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -7286,7 +7286,7 @@ void BkResult::MergeFrom(const BkResult& from) {
 }
 
 void BkResult::CopyFrom(const BkResult& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.lua.dbg.BkResult)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.lua.dbg.BkResult)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -7322,7 +7322,7 @@ void BkResult::InternalSwap(BkResult* other) {
 }
 
 ::std::string BkResult::GetTypeName() const {
-  return "dse.lua.dbg.BkResult";
+  return "bg3se.lua.dbg.BkResult";
 }
 
 
@@ -7338,7 +7338,7 @@ BkDebuggerReady::BkDebuggerReady()
   ::google::protobuf::internal::InitSCC(
       &protobuf_LuaDebug_2eproto::scc_info_BkDebuggerReady.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.lua.dbg.BkDebuggerReady)
+  // @@protoc_insertion_point(constructor:bg3se.lua.dbg.BkDebuggerReady)
 }
 BkDebuggerReady::BkDebuggerReady(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -7346,20 +7346,20 @@ BkDebuggerReady::BkDebuggerReady(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_LuaDebug_2eproto::scc_info_BkDebuggerReady.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.lua.dbg.BkDebuggerReady)
+  // @@protoc_insertion_point(arena_constructor:bg3se.lua.dbg.BkDebuggerReady)
 }
 BkDebuggerReady::BkDebuggerReady(const BkDebuggerReady& from)
   : ::google::protobuf::MessageLite(),
       _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  // @@protoc_insertion_point(copy_constructor:dse.lua.dbg.BkDebuggerReady)
+  // @@protoc_insertion_point(copy_constructor:bg3se.lua.dbg.BkDebuggerReady)
 }
 
 void BkDebuggerReady::SharedCtor() {
 }
 
 BkDebuggerReady::~BkDebuggerReady() {
-  // @@protoc_insertion_point(destructor:dse.lua.dbg.BkDebuggerReady)
+  // @@protoc_insertion_point(destructor:bg3se.lua.dbg.BkDebuggerReady)
   SharedDtor();
 }
 
@@ -7383,7 +7383,7 @@ const BkDebuggerReady& BkDebuggerReady::default_instance() {
 
 
 void BkDebuggerReady::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.lua.dbg.BkDebuggerReady)
+// @@protoc_insertion_point(message_clear_start:bg3se.lua.dbg.BkDebuggerReady)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -7401,7 +7401,7 @@ bool BkDebuggerReady::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.lua.dbg.BkDebuggerReady)
+  // @@protoc_insertion_point(parse_start:bg3se.lua.dbg.BkDebuggerReady)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -7414,27 +7414,27 @@ bool BkDebuggerReady::MergePartialFromCodedStream(
         input, tag, &unknown_fields_stream));
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.lua.dbg.BkDebuggerReady)
+  // @@protoc_insertion_point(parse_success:bg3se.lua.dbg.BkDebuggerReady)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.lua.dbg.BkDebuggerReady)
+  // @@protoc_insertion_point(parse_failure:bg3se.lua.dbg.BkDebuggerReady)
   return false;
 #undef DO_
 }
 
 void BkDebuggerReady::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.lua.dbg.BkDebuggerReady)
+  // @@protoc_insertion_point(serialize_start:bg3se.lua.dbg.BkDebuggerReady)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.lua.dbg.BkDebuggerReady)
+  // @@protoc_insertion_point(serialize_end:bg3se.lua.dbg.BkDebuggerReady)
 }
 
 size_t BkDebuggerReady::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.lua.dbg.BkDebuggerReady)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.lua.dbg.BkDebuggerReady)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -7450,7 +7450,7 @@ void BkDebuggerReady::CheckTypeAndMergeFrom(
 }
 
 void BkDebuggerReady::MergeFrom(const BkDebuggerReady& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.lua.dbg.BkDebuggerReady)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.lua.dbg.BkDebuggerReady)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -7459,7 +7459,7 @@ void BkDebuggerReady::MergeFrom(const BkDebuggerReady& from) {
 }
 
 void BkDebuggerReady::CopyFrom(const BkDebuggerReady& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.lua.dbg.BkDebuggerReady)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.lua.dbg.BkDebuggerReady)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -7494,7 +7494,7 @@ void BkDebuggerReady::InternalSwap(BkDebuggerReady* other) {
 }
 
 ::std::string BkDebuggerReady::GetTypeName() const {
-  return "dse.lua.dbg.BkDebuggerReady";
+  return "bg3se.lua.dbg.BkDebuggerReady";
 }
 
 
@@ -7511,7 +7511,7 @@ DbgRequestSource::DbgRequestSource()
   ::google::protobuf::internal::InitSCC(
       &protobuf_LuaDebug_2eproto::scc_info_DbgRequestSource.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.lua.dbg.DbgRequestSource)
+  // @@protoc_insertion_point(constructor:bg3se.lua.dbg.DbgRequestSource)
 }
 DbgRequestSource::DbgRequestSource(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -7519,7 +7519,7 @@ DbgRequestSource::DbgRequestSource(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_LuaDebug_2eproto::scc_info_DbgRequestSource.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.lua.dbg.DbgRequestSource)
+  // @@protoc_insertion_point(arena_constructor:bg3se.lua.dbg.DbgRequestSource)
 }
 DbgRequestSource::DbgRequestSource(const DbgRequestSource& from)
   : ::google::protobuf::MessageLite(),
@@ -7530,7 +7530,7 @@ DbgRequestSource::DbgRequestSource(const DbgRequestSource& from)
     name_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.name(),
       GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(copy_constructor:dse.lua.dbg.DbgRequestSource)
+  // @@protoc_insertion_point(copy_constructor:bg3se.lua.dbg.DbgRequestSource)
 }
 
 void DbgRequestSource::SharedCtor() {
@@ -7538,7 +7538,7 @@ void DbgRequestSource::SharedCtor() {
 }
 
 DbgRequestSource::~DbgRequestSource() {
-  // @@protoc_insertion_point(destructor:dse.lua.dbg.DbgRequestSource)
+  // @@protoc_insertion_point(destructor:bg3se.lua.dbg.DbgRequestSource)
   SharedDtor();
 }
 
@@ -7563,7 +7563,7 @@ const DbgRequestSource& DbgRequestSource::default_instance() {
 
 
 void DbgRequestSource::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.lua.dbg.DbgRequestSource)
+// @@protoc_insertion_point(message_clear_start:bg3se.lua.dbg.DbgRequestSource)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -7582,7 +7582,7 @@ bool DbgRequestSource::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.lua.dbg.DbgRequestSource)
+  // @@protoc_insertion_point(parse_start:bg3se.lua.dbg.DbgRequestSource)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -7597,7 +7597,7 @@ bool DbgRequestSource::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->name().data(), static_cast<int>(this->name().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "dse.lua.dbg.DbgRequestSource.name"));
+            "bg3se.lua.dbg.DbgRequestSource.name"));
         } else {
           goto handle_unusual;
         }
@@ -7616,17 +7616,17 @@ bool DbgRequestSource::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.lua.dbg.DbgRequestSource)
+  // @@protoc_insertion_point(parse_success:bg3se.lua.dbg.DbgRequestSource)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.lua.dbg.DbgRequestSource)
+  // @@protoc_insertion_point(parse_failure:bg3se.lua.dbg.DbgRequestSource)
   return false;
 #undef DO_
 }
 
 void DbgRequestSource::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.lua.dbg.DbgRequestSource)
+  // @@protoc_insertion_point(serialize_start:bg3se.lua.dbg.DbgRequestSource)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -7635,18 +7635,18 @@ void DbgRequestSource::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->name().data(), static_cast<int>(this->name().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "dse.lua.dbg.DbgRequestSource.name");
+      "bg3se.lua.dbg.DbgRequestSource.name");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       1, this->name(), output);
   }
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.lua.dbg.DbgRequestSource)
+  // @@protoc_insertion_point(serialize_end:bg3se.lua.dbg.DbgRequestSource)
 }
 
 size_t DbgRequestSource::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.lua.dbg.DbgRequestSource)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.lua.dbg.DbgRequestSource)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -7669,7 +7669,7 @@ void DbgRequestSource::CheckTypeAndMergeFrom(
 }
 
 void DbgRequestSource::MergeFrom(const DbgRequestSource& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.lua.dbg.DbgRequestSource)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.lua.dbg.DbgRequestSource)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -7681,7 +7681,7 @@ void DbgRequestSource::MergeFrom(const DbgRequestSource& from) {
 }
 
 void DbgRequestSource::CopyFrom(const DbgRequestSource& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.lua.dbg.DbgRequestSource)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.lua.dbg.DbgRequestSource)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -7718,7 +7718,7 @@ void DbgRequestSource::InternalSwap(DbgRequestSource* other) {
 }
 
 ::std::string DbgRequestSource::GetTypeName() const {
-  return "dse.lua.dbg.DbgRequestSource";
+  return "bg3se.lua.dbg.DbgRequestSource";
 }
 
 
@@ -7736,7 +7736,7 @@ BkSourceResponse::BkSourceResponse()
   ::google::protobuf::internal::InitSCC(
       &protobuf_LuaDebug_2eproto::scc_info_BkSourceResponse.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.lua.dbg.BkSourceResponse)
+  // @@protoc_insertion_point(constructor:bg3se.lua.dbg.BkSourceResponse)
 }
 BkSourceResponse::BkSourceResponse(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -7744,7 +7744,7 @@ BkSourceResponse::BkSourceResponse(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_LuaDebug_2eproto::scc_info_BkSourceResponse.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.lua.dbg.BkSourceResponse)
+  // @@protoc_insertion_point(arena_constructor:bg3se.lua.dbg.BkSourceResponse)
 }
 BkSourceResponse::BkSourceResponse(const BkSourceResponse& from)
   : ::google::protobuf::MessageLite(),
@@ -7760,7 +7760,7 @@ BkSourceResponse::BkSourceResponse(const BkSourceResponse& from)
     body_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.body(),
       GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(copy_constructor:dse.lua.dbg.BkSourceResponse)
+  // @@protoc_insertion_point(copy_constructor:bg3se.lua.dbg.BkSourceResponse)
 }
 
 void BkSourceResponse::SharedCtor() {
@@ -7769,7 +7769,7 @@ void BkSourceResponse::SharedCtor() {
 }
 
 BkSourceResponse::~BkSourceResponse() {
-  // @@protoc_insertion_point(destructor:dse.lua.dbg.BkSourceResponse)
+  // @@protoc_insertion_point(destructor:bg3se.lua.dbg.BkSourceResponse)
   SharedDtor();
 }
 
@@ -7795,7 +7795,7 @@ const BkSourceResponse& BkSourceResponse::default_instance() {
 
 
 void BkSourceResponse::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.lua.dbg.BkSourceResponse)
+// @@protoc_insertion_point(message_clear_start:bg3se.lua.dbg.BkSourceResponse)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -7815,7 +7815,7 @@ bool BkSourceResponse::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.lua.dbg.BkSourceResponse)
+  // @@protoc_insertion_point(parse_start:bg3se.lua.dbg.BkSourceResponse)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -7830,7 +7830,7 @@ bool BkSourceResponse::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->name().data(), static_cast<int>(this->name().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "dse.lua.dbg.BkSourceResponse.name"));
+            "bg3se.lua.dbg.BkSourceResponse.name"));
         } else {
           goto handle_unusual;
         }
@@ -7846,7 +7846,7 @@ bool BkSourceResponse::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->body().data(), static_cast<int>(this->body().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "dse.lua.dbg.BkSourceResponse.body"));
+            "bg3se.lua.dbg.BkSourceResponse.body"));
         } else {
           goto handle_unusual;
         }
@@ -7865,17 +7865,17 @@ bool BkSourceResponse::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.lua.dbg.BkSourceResponse)
+  // @@protoc_insertion_point(parse_success:bg3se.lua.dbg.BkSourceResponse)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.lua.dbg.BkSourceResponse)
+  // @@protoc_insertion_point(parse_failure:bg3se.lua.dbg.BkSourceResponse)
   return false;
 #undef DO_
 }
 
 void BkSourceResponse::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.lua.dbg.BkSourceResponse)
+  // @@protoc_insertion_point(serialize_start:bg3se.lua.dbg.BkSourceResponse)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -7884,7 +7884,7 @@ void BkSourceResponse::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->name().data(), static_cast<int>(this->name().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "dse.lua.dbg.BkSourceResponse.name");
+      "bg3se.lua.dbg.BkSourceResponse.name");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       1, this->name(), output);
   }
@@ -7894,18 +7894,18 @@ void BkSourceResponse::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->body().data(), static_cast<int>(this->body().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "dse.lua.dbg.BkSourceResponse.body");
+      "bg3se.lua.dbg.BkSourceResponse.body");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       2, this->body(), output);
   }
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.lua.dbg.BkSourceResponse)
+  // @@protoc_insertion_point(serialize_end:bg3se.lua.dbg.BkSourceResponse)
 }
 
 size_t BkSourceResponse::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.lua.dbg.BkSourceResponse)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.lua.dbg.BkSourceResponse)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -7935,7 +7935,7 @@ void BkSourceResponse::CheckTypeAndMergeFrom(
 }
 
 void BkSourceResponse::MergeFrom(const BkSourceResponse& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.lua.dbg.BkSourceResponse)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.lua.dbg.BkSourceResponse)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -7950,7 +7950,7 @@ void BkSourceResponse::MergeFrom(const BkSourceResponse& from) {
 }
 
 void BkSourceResponse::CopyFrom(const BkSourceResponse& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.lua.dbg.BkSourceResponse)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.lua.dbg.BkSourceResponse)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -7989,7 +7989,7 @@ void BkSourceResponse::InternalSwap(BkSourceResponse* other) {
 }
 
 ::std::string BkSourceResponse::GetTypeName() const {
-  return "dse.lua.dbg.BkSourceResponse";
+  return "bg3se.lua.dbg.BkSourceResponse";
 }
 
 
@@ -7997,7 +7997,7 @@ void BkSourceResponse::InternalSwap(BkSourceResponse* other) {
 
 void DebuggerToBackend::InitAsDefaultInstance() {
 }
-void DebuggerToBackend::set_allocated_connect(::dse::lua::dbg::DbgConnectRequest* connect) {
+void DebuggerToBackend::set_allocated_connect(::bg3se::lua::dbg::DbgConnectRequest* connect) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (connect) {
@@ -8010,9 +8010,9 @@ void DebuggerToBackend::set_allocated_connect(::dse::lua::dbg::DbgConnectRequest
     set_has_connect();
     msg_.connect_ = connect;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.DebuggerToBackend.connect)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.DebuggerToBackend.connect)
 }
-void DebuggerToBackend::set_allocated_updatesettings(::dse::lua::dbg::DbgUpdateSettings* updatesettings) {
+void DebuggerToBackend::set_allocated_updatesettings(::bg3se::lua::dbg::DbgUpdateSettings* updatesettings) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (updatesettings) {
@@ -8025,9 +8025,9 @@ void DebuggerToBackend::set_allocated_updatesettings(::dse::lua::dbg::DbgUpdateS
     set_has_updatesettings();
     msg_.updatesettings_ = updatesettings;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.DebuggerToBackend.updateSettings)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.DebuggerToBackend.updateSettings)
 }
-void DebuggerToBackend::set_allocated_setbreakpoints(::dse::lua::dbg::DbgSetBreakpoints* setbreakpoints) {
+void DebuggerToBackend::set_allocated_setbreakpoints(::bg3se::lua::dbg::DbgSetBreakpoints* setbreakpoints) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (setbreakpoints) {
@@ -8040,9 +8040,9 @@ void DebuggerToBackend::set_allocated_setbreakpoints(::dse::lua::dbg::DbgSetBrea
     set_has_setbreakpoints();
     msg_.setbreakpoints_ = setbreakpoints;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.DebuggerToBackend.setBreakpoints)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.DebuggerToBackend.setBreakpoints)
 }
-void DebuggerToBackend::set_allocated_continue_(::dse::lua::dbg::DbgContinue* continue_) {
+void DebuggerToBackend::set_allocated_continue_(::bg3se::lua::dbg::DbgContinue* continue_) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (continue_) {
@@ -8055,9 +8055,9 @@ void DebuggerToBackend::set_allocated_continue_(::dse::lua::dbg::DbgContinue* co
     set_has_continue_();
     msg_.continue__ = continue_;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.DebuggerToBackend.continue)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.DebuggerToBackend.continue)
 }
-void DebuggerToBackend::set_allocated_evaluate(::dse::lua::dbg::DbgEvaluate* evaluate) {
+void DebuggerToBackend::set_allocated_evaluate(::bg3se::lua::dbg::DbgEvaluate* evaluate) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (evaluate) {
@@ -8070,9 +8070,9 @@ void DebuggerToBackend::set_allocated_evaluate(::dse::lua::dbg::DbgEvaluate* eva
     set_has_evaluate();
     msg_.evaluate_ = evaluate;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.DebuggerToBackend.evaluate)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.DebuggerToBackend.evaluate)
 }
-void DebuggerToBackend::set_allocated_fetchmods(::dse::lua::dbg::DbgFetchMods* fetchmods) {
+void DebuggerToBackend::set_allocated_fetchmods(::bg3se::lua::dbg::DbgFetchMods* fetchmods) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (fetchmods) {
@@ -8085,9 +8085,9 @@ void DebuggerToBackend::set_allocated_fetchmods(::dse::lua::dbg::DbgFetchMods* f
     set_has_fetchmods();
     msg_.fetchmods_ = fetchmods;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.DebuggerToBackend.fetchMods)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.DebuggerToBackend.fetchMods)
 }
-void DebuggerToBackend::set_allocated_requestsource(::dse::lua::dbg::DbgRequestSource* requestsource) {
+void DebuggerToBackend::set_allocated_requestsource(::bg3se::lua::dbg::DbgRequestSource* requestsource) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (requestsource) {
@@ -8100,9 +8100,9 @@ void DebuggerToBackend::set_allocated_requestsource(::dse::lua::dbg::DbgRequestS
     set_has_requestsource();
     msg_.requestsource_ = requestsource;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.DebuggerToBackend.requestSource)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.DebuggerToBackend.requestSource)
 }
-void DebuggerToBackend::set_allocated_getvariables(::dse::lua::dbg::DbgGetVariables* getvariables) {
+void DebuggerToBackend::set_allocated_getvariables(::bg3se::lua::dbg::DbgGetVariables* getvariables) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (getvariables) {
@@ -8115,7 +8115,7 @@ void DebuggerToBackend::set_allocated_getvariables(::dse::lua::dbg::DbgGetVariab
     set_has_getvariables();
     msg_.getvariables_ = getvariables;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.DebuggerToBackend.getVariables)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.DebuggerToBackend.getVariables)
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int DebuggerToBackend::kSeqNoFieldNumber;
@@ -8135,7 +8135,7 @@ DebuggerToBackend::DebuggerToBackend()
   ::google::protobuf::internal::InitSCC(
       &protobuf_LuaDebug_2eproto::scc_info_DebuggerToBackend.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.lua.dbg.DebuggerToBackend)
+  // @@protoc_insertion_point(constructor:bg3se.lua.dbg.DebuggerToBackend)
 }
 DebuggerToBackend::DebuggerToBackend(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -8143,7 +8143,7 @@ DebuggerToBackend::DebuggerToBackend(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_LuaDebug_2eproto::scc_info_DebuggerToBackend.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.lua.dbg.DebuggerToBackend)
+  // @@protoc_insertion_point(arena_constructor:bg3se.lua.dbg.DebuggerToBackend)
 }
 DebuggerToBackend::DebuggerToBackend(const DebuggerToBackend& from)
   : ::google::protobuf::MessageLite(),
@@ -8155,42 +8155,42 @@ DebuggerToBackend::DebuggerToBackend(const DebuggerToBackend& from)
   clear_has_msg();
   switch (from.msg_case()) {
     case kConnect: {
-      mutable_connect()->::dse::lua::dbg::DbgConnectRequest::MergeFrom(from.connect());
+      mutable_connect()->::bg3se::lua::dbg::DbgConnectRequest::MergeFrom(from.connect());
       break;
     }
     case kUpdateSettings: {
-      mutable_updatesettings()->::dse::lua::dbg::DbgUpdateSettings::MergeFrom(from.updatesettings());
+      mutable_updatesettings()->::bg3se::lua::dbg::DbgUpdateSettings::MergeFrom(from.updatesettings());
       break;
     }
     case kSetBreakpoints: {
-      mutable_setbreakpoints()->::dse::lua::dbg::DbgSetBreakpoints::MergeFrom(from.setbreakpoints());
+      mutable_setbreakpoints()->::bg3se::lua::dbg::DbgSetBreakpoints::MergeFrom(from.setbreakpoints());
       break;
     }
     case kContinue: {
-      mutable_continue_()->::dse::lua::dbg::DbgContinue::MergeFrom(from.continue_());
+      mutable_continue_()->::bg3se::lua::dbg::DbgContinue::MergeFrom(from.continue_());
       break;
     }
     case kEvaluate: {
-      mutable_evaluate()->::dse::lua::dbg::DbgEvaluate::MergeFrom(from.evaluate());
+      mutable_evaluate()->::bg3se::lua::dbg::DbgEvaluate::MergeFrom(from.evaluate());
       break;
     }
     case kFetchMods: {
-      mutable_fetchmods()->::dse::lua::dbg::DbgFetchMods::MergeFrom(from.fetchmods());
+      mutable_fetchmods()->::bg3se::lua::dbg::DbgFetchMods::MergeFrom(from.fetchmods());
       break;
     }
     case kRequestSource: {
-      mutable_requestsource()->::dse::lua::dbg::DbgRequestSource::MergeFrom(from.requestsource());
+      mutable_requestsource()->::bg3se::lua::dbg::DbgRequestSource::MergeFrom(from.requestsource());
       break;
     }
     case kGetVariables: {
-      mutable_getvariables()->::dse::lua::dbg::DbgGetVariables::MergeFrom(from.getvariables());
+      mutable_getvariables()->::bg3se::lua::dbg::DbgGetVariables::MergeFrom(from.getvariables());
       break;
     }
     case MSG_NOT_SET: {
       break;
     }
   }
-  // @@protoc_insertion_point(copy_constructor:dse.lua.dbg.DebuggerToBackend)
+  // @@protoc_insertion_point(copy_constructor:bg3se.lua.dbg.DebuggerToBackend)
 }
 
 void DebuggerToBackend::SharedCtor() {
@@ -8201,7 +8201,7 @@ void DebuggerToBackend::SharedCtor() {
 }
 
 DebuggerToBackend::~DebuggerToBackend() {
-  // @@protoc_insertion_point(destructor:dse.lua.dbg.DebuggerToBackend)
+  // @@protoc_insertion_point(destructor:bg3se.lua.dbg.DebuggerToBackend)
   SharedDtor();
 }
 
@@ -8228,7 +8228,7 @@ const DebuggerToBackend& DebuggerToBackend::default_instance() {
 
 
 void DebuggerToBackend::clear_msg() {
-// @@protoc_insertion_point(one_of_clear_start:dse.lua.dbg.DebuggerToBackend)
+// @@protoc_insertion_point(one_of_clear_start:bg3se.lua.dbg.DebuggerToBackend)
   switch (msg_case()) {
     case kConnect: {
       if (GetArenaNoVirtual() == NULL) {
@@ -8287,7 +8287,7 @@ void DebuggerToBackend::clear_msg() {
 
 
 void DebuggerToBackend::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.lua.dbg.DebuggerToBackend)
+// @@protoc_insertion_point(message_clear_start:bg3se.lua.dbg.DebuggerToBackend)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -8309,7 +8309,7 @@ bool DebuggerToBackend::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.lua.dbg.DebuggerToBackend)
+  // @@protoc_insertion_point(parse_start:bg3se.lua.dbg.DebuggerToBackend)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -8343,7 +8343,7 @@ bool DebuggerToBackend::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.lua.dbg.DbgConnectRequest connect = 3;
+      // .bg3se.lua.dbg.DbgConnectRequest connect = 3;
       case 3: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
@@ -8355,7 +8355,7 @@ bool DebuggerToBackend::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.lua.dbg.DbgUpdateSettings updateSettings = 4;
+      // .bg3se.lua.dbg.DbgUpdateSettings updateSettings = 4;
       case 4: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(34u /* 34 & 0xFF */)) {
@@ -8367,7 +8367,7 @@ bool DebuggerToBackend::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.lua.dbg.DbgSetBreakpoints setBreakpoints = 5;
+      // .bg3se.lua.dbg.DbgSetBreakpoints setBreakpoints = 5;
       case 5: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(42u /* 42 & 0xFF */)) {
@@ -8379,7 +8379,7 @@ bool DebuggerToBackend::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.lua.dbg.DbgContinue continue = 6;
+      // .bg3se.lua.dbg.DbgContinue continue = 6;
       case 6: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(50u /* 50 & 0xFF */)) {
@@ -8391,7 +8391,7 @@ bool DebuggerToBackend::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.lua.dbg.DbgEvaluate evaluate = 7;
+      // .bg3se.lua.dbg.DbgEvaluate evaluate = 7;
       case 7: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(58u /* 58 & 0xFF */)) {
@@ -8403,7 +8403,7 @@ bool DebuggerToBackend::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.lua.dbg.DbgFetchMods fetchMods = 8;
+      // .bg3se.lua.dbg.DbgFetchMods fetchMods = 8;
       case 8: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(66u /* 66 & 0xFF */)) {
@@ -8415,7 +8415,7 @@ bool DebuggerToBackend::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.lua.dbg.DbgRequestSource requestSource = 9;
+      // .bg3se.lua.dbg.DbgRequestSource requestSource = 9;
       case 9: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(74u /* 74 & 0xFF */)) {
@@ -8427,7 +8427,7 @@ bool DebuggerToBackend::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.lua.dbg.DbgGetVariables getVariables = 10;
+      // .bg3se.lua.dbg.DbgGetVariables getVariables = 10;
       case 10: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(82u /* 82 & 0xFF */)) {
@@ -8451,17 +8451,17 @@ bool DebuggerToBackend::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.lua.dbg.DebuggerToBackend)
+  // @@protoc_insertion_point(parse_success:bg3se.lua.dbg.DebuggerToBackend)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.lua.dbg.DebuggerToBackend)
+  // @@protoc_insertion_point(parse_failure:bg3se.lua.dbg.DebuggerToBackend)
   return false;
 #undef DO_
 }
 
 void DebuggerToBackend::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.lua.dbg.DebuggerToBackend)
+  // @@protoc_insertion_point(serialize_start:bg3se.lua.dbg.DebuggerToBackend)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -8475,49 +8475,49 @@ void DebuggerToBackend::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->reply_seq_no(), output);
   }
 
-  // .dse.lua.dbg.DbgConnectRequest connect = 3;
+  // .bg3se.lua.dbg.DbgConnectRequest connect = 3;
   if (has_connect()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       3, this->_internal_connect(), output);
   }
 
-  // .dse.lua.dbg.DbgUpdateSettings updateSettings = 4;
+  // .bg3se.lua.dbg.DbgUpdateSettings updateSettings = 4;
   if (has_updatesettings()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       4, this->_internal_updatesettings(), output);
   }
 
-  // .dse.lua.dbg.DbgSetBreakpoints setBreakpoints = 5;
+  // .bg3se.lua.dbg.DbgSetBreakpoints setBreakpoints = 5;
   if (has_setbreakpoints()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       5, this->_internal_setbreakpoints(), output);
   }
 
-  // .dse.lua.dbg.DbgContinue continue = 6;
+  // .bg3se.lua.dbg.DbgContinue continue = 6;
   if (has_continue_()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       6, this->_internal_continue_(), output);
   }
 
-  // .dse.lua.dbg.DbgEvaluate evaluate = 7;
+  // .bg3se.lua.dbg.DbgEvaluate evaluate = 7;
   if (has_evaluate()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       7, this->_internal_evaluate(), output);
   }
 
-  // .dse.lua.dbg.DbgFetchMods fetchMods = 8;
+  // .bg3se.lua.dbg.DbgFetchMods fetchMods = 8;
   if (has_fetchmods()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       8, this->_internal_fetchmods(), output);
   }
 
-  // .dse.lua.dbg.DbgRequestSource requestSource = 9;
+  // .bg3se.lua.dbg.DbgRequestSource requestSource = 9;
   if (has_requestsource()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       9, this->_internal_requestsource(), output);
   }
 
-  // .dse.lua.dbg.DbgGetVariables getVariables = 10;
+  // .bg3se.lua.dbg.DbgGetVariables getVariables = 10;
   if (has_getvariables()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       10, this->_internal_getvariables(), output);
@@ -8525,11 +8525,11 @@ void DebuggerToBackend::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.lua.dbg.DebuggerToBackend)
+  // @@protoc_insertion_point(serialize_end:bg3se.lua.dbg.DebuggerToBackend)
 }
 
 size_t DebuggerToBackend::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.lua.dbg.DebuggerToBackend)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.lua.dbg.DebuggerToBackend)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -8549,56 +8549,56 @@ size_t DebuggerToBackend::ByteSizeLong() const {
   }
 
   switch (msg_case()) {
-    // .dse.lua.dbg.DbgConnectRequest connect = 3;
+    // .bg3se.lua.dbg.DbgConnectRequest connect = 3;
     case kConnect: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.connect_);
       break;
     }
-    // .dse.lua.dbg.DbgUpdateSettings updateSettings = 4;
+    // .bg3se.lua.dbg.DbgUpdateSettings updateSettings = 4;
     case kUpdateSettings: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.updatesettings_);
       break;
     }
-    // .dse.lua.dbg.DbgSetBreakpoints setBreakpoints = 5;
+    // .bg3se.lua.dbg.DbgSetBreakpoints setBreakpoints = 5;
     case kSetBreakpoints: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.setbreakpoints_);
       break;
     }
-    // .dse.lua.dbg.DbgContinue continue = 6;
+    // .bg3se.lua.dbg.DbgContinue continue = 6;
     case kContinue: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.continue__);
       break;
     }
-    // .dse.lua.dbg.DbgEvaluate evaluate = 7;
+    // .bg3se.lua.dbg.DbgEvaluate evaluate = 7;
     case kEvaluate: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.evaluate_);
       break;
     }
-    // .dse.lua.dbg.DbgFetchMods fetchMods = 8;
+    // .bg3se.lua.dbg.DbgFetchMods fetchMods = 8;
     case kFetchMods: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.fetchmods_);
       break;
     }
-    // .dse.lua.dbg.DbgRequestSource requestSource = 9;
+    // .bg3se.lua.dbg.DbgRequestSource requestSource = 9;
     case kRequestSource: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.requestsource_);
       break;
     }
-    // .dse.lua.dbg.DbgGetVariables getVariables = 10;
+    // .bg3se.lua.dbg.DbgGetVariables getVariables = 10;
     case kGetVariables: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
@@ -8620,7 +8620,7 @@ void DebuggerToBackend::CheckTypeAndMergeFrom(
 }
 
 void DebuggerToBackend::MergeFrom(const DebuggerToBackend& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.lua.dbg.DebuggerToBackend)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.lua.dbg.DebuggerToBackend)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -8634,35 +8634,35 @@ void DebuggerToBackend::MergeFrom(const DebuggerToBackend& from) {
   }
   switch (from.msg_case()) {
     case kConnect: {
-      mutable_connect()->::dse::lua::dbg::DbgConnectRequest::MergeFrom(from.connect());
+      mutable_connect()->::bg3se::lua::dbg::DbgConnectRequest::MergeFrom(from.connect());
       break;
     }
     case kUpdateSettings: {
-      mutable_updatesettings()->::dse::lua::dbg::DbgUpdateSettings::MergeFrom(from.updatesettings());
+      mutable_updatesettings()->::bg3se::lua::dbg::DbgUpdateSettings::MergeFrom(from.updatesettings());
       break;
     }
     case kSetBreakpoints: {
-      mutable_setbreakpoints()->::dse::lua::dbg::DbgSetBreakpoints::MergeFrom(from.setbreakpoints());
+      mutable_setbreakpoints()->::bg3se::lua::dbg::DbgSetBreakpoints::MergeFrom(from.setbreakpoints());
       break;
     }
     case kContinue: {
-      mutable_continue_()->::dse::lua::dbg::DbgContinue::MergeFrom(from.continue_());
+      mutable_continue_()->::bg3se::lua::dbg::DbgContinue::MergeFrom(from.continue_());
       break;
     }
     case kEvaluate: {
-      mutable_evaluate()->::dse::lua::dbg::DbgEvaluate::MergeFrom(from.evaluate());
+      mutable_evaluate()->::bg3se::lua::dbg::DbgEvaluate::MergeFrom(from.evaluate());
       break;
     }
     case kFetchMods: {
-      mutable_fetchmods()->::dse::lua::dbg::DbgFetchMods::MergeFrom(from.fetchmods());
+      mutable_fetchmods()->::bg3se::lua::dbg::DbgFetchMods::MergeFrom(from.fetchmods());
       break;
     }
     case kRequestSource: {
-      mutable_requestsource()->::dse::lua::dbg::DbgRequestSource::MergeFrom(from.requestsource());
+      mutable_requestsource()->::bg3se::lua::dbg::DbgRequestSource::MergeFrom(from.requestsource());
       break;
     }
     case kGetVariables: {
-      mutable_getvariables()->::dse::lua::dbg::DbgGetVariables::MergeFrom(from.getvariables());
+      mutable_getvariables()->::bg3se::lua::dbg::DbgGetVariables::MergeFrom(from.getvariables());
       break;
     }
     case MSG_NOT_SET: {
@@ -8672,7 +8672,7 @@ void DebuggerToBackend::MergeFrom(const DebuggerToBackend& from) {
 }
 
 void DebuggerToBackend::CopyFrom(const DebuggerToBackend& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.lua.dbg.DebuggerToBackend)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.lua.dbg.DebuggerToBackend)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -8711,7 +8711,7 @@ void DebuggerToBackend::InternalSwap(DebuggerToBackend* other) {
 }
 
 ::std::string DebuggerToBackend::GetTypeName() const {
-  return "dse.lua.dbg.DebuggerToBackend";
+  return "bg3se.lua.dbg.DebuggerToBackend";
 }
 
 
@@ -8719,7 +8719,7 @@ void DebuggerToBackend::InternalSwap(DebuggerToBackend* other) {
 
 void BackendToDebugger::InitAsDefaultInstance() {
 }
-void BackendToDebugger::set_allocated_connectresponse(::dse::lua::dbg::BkConnectResponse* connectresponse) {
+void BackendToDebugger::set_allocated_connectresponse(::bg3se::lua::dbg::BkConnectResponse* connectresponse) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (connectresponse) {
@@ -8732,9 +8732,9 @@ void BackendToDebugger::set_allocated_connectresponse(::dse::lua::dbg::BkConnect
     set_has_connectresponse();
     msg_.connectresponse_ = connectresponse;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.BackendToDebugger.connectResponse)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.BackendToDebugger.connectResponse)
 }
-void BackendToDebugger::set_allocated_breakpointtriggered(::dse::lua::dbg::BkBreakpointTriggered* breakpointtriggered) {
+void BackendToDebugger::set_allocated_breakpointtriggered(::bg3se::lua::dbg::BkBreakpointTriggered* breakpointtriggered) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (breakpointtriggered) {
@@ -8747,9 +8747,9 @@ void BackendToDebugger::set_allocated_breakpointtriggered(::dse::lua::dbg::BkBre
     set_has_breakpointtriggered();
     msg_.breakpointtriggered_ = breakpointtriggered;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.BackendToDebugger.breakpointTriggered)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.BackendToDebugger.breakpointTriggered)
 }
-void BackendToDebugger::set_allocated_evaluateresponse(::dse::lua::dbg::BkEvaluateResponse* evaluateresponse) {
+void BackendToDebugger::set_allocated_evaluateresponse(::bg3se::lua::dbg::BkEvaluateResponse* evaluateresponse) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (evaluateresponse) {
@@ -8762,9 +8762,9 @@ void BackendToDebugger::set_allocated_evaluateresponse(::dse::lua::dbg::BkEvalua
     set_has_evaluateresponse();
     msg_.evaluateresponse_ = evaluateresponse;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.BackendToDebugger.evaluateResponse)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.BackendToDebugger.evaluateResponse)
 }
-void BackendToDebugger::set_allocated_contextupdated(::dse::lua::dbg::BkContextUpdated* contextupdated) {
+void BackendToDebugger::set_allocated_contextupdated(::bg3se::lua::dbg::BkContextUpdated* contextupdated) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (contextupdated) {
@@ -8777,9 +8777,9 @@ void BackendToDebugger::set_allocated_contextupdated(::dse::lua::dbg::BkContextU
     set_has_contextupdated();
     msg_.contextupdated_ = contextupdated;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.BackendToDebugger.contextUpdated)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.BackendToDebugger.contextUpdated)
 }
-void BackendToDebugger::set_allocated_modinforesponse(::dse::lua::dbg::BkModInfoResponse* modinforesponse) {
+void BackendToDebugger::set_allocated_modinforesponse(::bg3se::lua::dbg::BkModInfoResponse* modinforesponse) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (modinforesponse) {
@@ -8792,9 +8792,9 @@ void BackendToDebugger::set_allocated_modinforesponse(::dse::lua::dbg::BkModInfo
     set_has_modinforesponse();
     msg_.modinforesponse_ = modinforesponse;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.BackendToDebugger.modInfoResponse)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.BackendToDebugger.modInfoResponse)
 }
-void BackendToDebugger::set_allocated_debugoutput(::dse::lua::dbg::BkDebugOutput* debugoutput) {
+void BackendToDebugger::set_allocated_debugoutput(::bg3se::lua::dbg::BkDebugOutput* debugoutput) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (debugoutput) {
@@ -8807,9 +8807,9 @@ void BackendToDebugger::set_allocated_debugoutput(::dse::lua::dbg::BkDebugOutput
     set_has_debugoutput();
     msg_.debugoutput_ = debugoutput;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.BackendToDebugger.debugOutput)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.BackendToDebugger.debugOutput)
 }
-void BackendToDebugger::set_allocated_results(::dse::lua::dbg::BkResult* results) {
+void BackendToDebugger::set_allocated_results(::bg3se::lua::dbg::BkResult* results) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (results) {
@@ -8822,9 +8822,9 @@ void BackendToDebugger::set_allocated_results(::dse::lua::dbg::BkResult* results
     set_has_results();
     msg_.results_ = results;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.BackendToDebugger.results)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.BackendToDebugger.results)
 }
-void BackendToDebugger::set_allocated_debuggerready(::dse::lua::dbg::BkDebuggerReady* debuggerready) {
+void BackendToDebugger::set_allocated_debuggerready(::bg3se::lua::dbg::BkDebuggerReady* debuggerready) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (debuggerready) {
@@ -8837,9 +8837,9 @@ void BackendToDebugger::set_allocated_debuggerready(::dse::lua::dbg::BkDebuggerR
     set_has_debuggerready();
     msg_.debuggerready_ = debuggerready;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.BackendToDebugger.debuggerReady)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.BackendToDebugger.debuggerReady)
 }
-void BackendToDebugger::set_allocated_sourceresponse(::dse::lua::dbg::BkSourceResponse* sourceresponse) {
+void BackendToDebugger::set_allocated_sourceresponse(::bg3se::lua::dbg::BkSourceResponse* sourceresponse) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (sourceresponse) {
@@ -8852,9 +8852,9 @@ void BackendToDebugger::set_allocated_sourceresponse(::dse::lua::dbg::BkSourceRe
     set_has_sourceresponse();
     msg_.sourceresponse_ = sourceresponse;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.BackendToDebugger.sourceResponse)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.BackendToDebugger.sourceResponse)
 }
-void BackendToDebugger::set_allocated_getvariablesresponse(::dse::lua::dbg::BkGetVariablesResponse* getvariablesresponse) {
+void BackendToDebugger::set_allocated_getvariablesresponse(::bg3se::lua::dbg::BkGetVariablesResponse* getvariablesresponse) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (getvariablesresponse) {
@@ -8867,7 +8867,7 @@ void BackendToDebugger::set_allocated_getvariablesresponse(::dse::lua::dbg::BkGe
     set_has_getvariablesresponse();
     msg_.getvariablesresponse_ = getvariablesresponse;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.lua.dbg.BackendToDebugger.getVariablesResponse)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.lua.dbg.BackendToDebugger.getVariablesResponse)
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int BackendToDebugger::kSeqNoFieldNumber;
@@ -8889,7 +8889,7 @@ BackendToDebugger::BackendToDebugger()
   ::google::protobuf::internal::InitSCC(
       &protobuf_LuaDebug_2eproto::scc_info_BackendToDebugger.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.lua.dbg.BackendToDebugger)
+  // @@protoc_insertion_point(constructor:bg3se.lua.dbg.BackendToDebugger)
 }
 BackendToDebugger::BackendToDebugger(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -8897,7 +8897,7 @@ BackendToDebugger::BackendToDebugger(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_LuaDebug_2eproto::scc_info_BackendToDebugger.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.lua.dbg.BackendToDebugger)
+  // @@protoc_insertion_point(arena_constructor:bg3se.lua.dbg.BackendToDebugger)
 }
 BackendToDebugger::BackendToDebugger(const BackendToDebugger& from)
   : ::google::protobuf::MessageLite(),
@@ -8909,50 +8909,50 @@ BackendToDebugger::BackendToDebugger(const BackendToDebugger& from)
   clear_has_msg();
   switch (from.msg_case()) {
     case kConnectResponse: {
-      mutable_connectresponse()->::dse::lua::dbg::BkConnectResponse::MergeFrom(from.connectresponse());
+      mutable_connectresponse()->::bg3se::lua::dbg::BkConnectResponse::MergeFrom(from.connectresponse());
       break;
     }
     case kBreakpointTriggered: {
-      mutable_breakpointtriggered()->::dse::lua::dbg::BkBreakpointTriggered::MergeFrom(from.breakpointtriggered());
+      mutable_breakpointtriggered()->::bg3se::lua::dbg::BkBreakpointTriggered::MergeFrom(from.breakpointtriggered());
       break;
     }
     case kEvaluateResponse: {
-      mutable_evaluateresponse()->::dse::lua::dbg::BkEvaluateResponse::MergeFrom(from.evaluateresponse());
+      mutable_evaluateresponse()->::bg3se::lua::dbg::BkEvaluateResponse::MergeFrom(from.evaluateresponse());
       break;
     }
     case kContextUpdated: {
-      mutable_contextupdated()->::dse::lua::dbg::BkContextUpdated::MergeFrom(from.contextupdated());
+      mutable_contextupdated()->::bg3se::lua::dbg::BkContextUpdated::MergeFrom(from.contextupdated());
       break;
     }
     case kModInfoResponse: {
-      mutable_modinforesponse()->::dse::lua::dbg::BkModInfoResponse::MergeFrom(from.modinforesponse());
+      mutable_modinforesponse()->::bg3se::lua::dbg::BkModInfoResponse::MergeFrom(from.modinforesponse());
       break;
     }
     case kDebugOutput: {
-      mutable_debugoutput()->::dse::lua::dbg::BkDebugOutput::MergeFrom(from.debugoutput());
+      mutable_debugoutput()->::bg3se::lua::dbg::BkDebugOutput::MergeFrom(from.debugoutput());
       break;
     }
     case kResults: {
-      mutable_results()->::dse::lua::dbg::BkResult::MergeFrom(from.results());
+      mutable_results()->::bg3se::lua::dbg::BkResult::MergeFrom(from.results());
       break;
     }
     case kDebuggerReady: {
-      mutable_debuggerready()->::dse::lua::dbg::BkDebuggerReady::MergeFrom(from.debuggerready());
+      mutable_debuggerready()->::bg3se::lua::dbg::BkDebuggerReady::MergeFrom(from.debuggerready());
       break;
     }
     case kSourceResponse: {
-      mutable_sourceresponse()->::dse::lua::dbg::BkSourceResponse::MergeFrom(from.sourceresponse());
+      mutable_sourceresponse()->::bg3se::lua::dbg::BkSourceResponse::MergeFrom(from.sourceresponse());
       break;
     }
     case kGetVariablesResponse: {
-      mutable_getvariablesresponse()->::dse::lua::dbg::BkGetVariablesResponse::MergeFrom(from.getvariablesresponse());
+      mutable_getvariablesresponse()->::bg3se::lua::dbg::BkGetVariablesResponse::MergeFrom(from.getvariablesresponse());
       break;
     }
     case MSG_NOT_SET: {
       break;
     }
   }
-  // @@protoc_insertion_point(copy_constructor:dse.lua.dbg.BackendToDebugger)
+  // @@protoc_insertion_point(copy_constructor:bg3se.lua.dbg.BackendToDebugger)
 }
 
 void BackendToDebugger::SharedCtor() {
@@ -8963,7 +8963,7 @@ void BackendToDebugger::SharedCtor() {
 }
 
 BackendToDebugger::~BackendToDebugger() {
-  // @@protoc_insertion_point(destructor:dse.lua.dbg.BackendToDebugger)
+  // @@protoc_insertion_point(destructor:bg3se.lua.dbg.BackendToDebugger)
   SharedDtor();
 }
 
@@ -8990,7 +8990,7 @@ const BackendToDebugger& BackendToDebugger::default_instance() {
 
 
 void BackendToDebugger::clear_msg() {
-// @@protoc_insertion_point(one_of_clear_start:dse.lua.dbg.BackendToDebugger)
+// @@protoc_insertion_point(one_of_clear_start:bg3se.lua.dbg.BackendToDebugger)
   switch (msg_case()) {
     case kConnectResponse: {
       if (GetArenaNoVirtual() == NULL) {
@@ -9061,7 +9061,7 @@ void BackendToDebugger::clear_msg() {
 
 
 void BackendToDebugger::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.lua.dbg.BackendToDebugger)
+// @@protoc_insertion_point(message_clear_start:bg3se.lua.dbg.BackendToDebugger)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -9083,7 +9083,7 @@ bool BackendToDebugger::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.lua.dbg.BackendToDebugger)
+  // @@protoc_insertion_point(parse_start:bg3se.lua.dbg.BackendToDebugger)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -9117,7 +9117,7 @@ bool BackendToDebugger::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.lua.dbg.BkConnectResponse connectResponse = 3;
+      // .bg3se.lua.dbg.BkConnectResponse connectResponse = 3;
       case 3: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
@@ -9129,7 +9129,7 @@ bool BackendToDebugger::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.lua.dbg.BkBreakpointTriggered breakpointTriggered = 4;
+      // .bg3se.lua.dbg.BkBreakpointTriggered breakpointTriggered = 4;
       case 4: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(34u /* 34 & 0xFF */)) {
@@ -9141,7 +9141,7 @@ bool BackendToDebugger::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.lua.dbg.BkEvaluateResponse evaluateResponse = 5;
+      // .bg3se.lua.dbg.BkEvaluateResponse evaluateResponse = 5;
       case 5: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(42u /* 42 & 0xFF */)) {
@@ -9153,7 +9153,7 @@ bool BackendToDebugger::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.lua.dbg.BkContextUpdated contextUpdated = 6;
+      // .bg3se.lua.dbg.BkContextUpdated contextUpdated = 6;
       case 6: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(50u /* 50 & 0xFF */)) {
@@ -9165,7 +9165,7 @@ bool BackendToDebugger::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.lua.dbg.BkModInfoResponse modInfoResponse = 7;
+      // .bg3se.lua.dbg.BkModInfoResponse modInfoResponse = 7;
       case 7: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(58u /* 58 & 0xFF */)) {
@@ -9177,7 +9177,7 @@ bool BackendToDebugger::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.lua.dbg.BkDebugOutput debugOutput = 8;
+      // .bg3se.lua.dbg.BkDebugOutput debugOutput = 8;
       case 8: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(66u /* 66 & 0xFF */)) {
@@ -9189,7 +9189,7 @@ bool BackendToDebugger::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.lua.dbg.BkResult results = 9;
+      // .bg3se.lua.dbg.BkResult results = 9;
       case 9: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(74u /* 74 & 0xFF */)) {
@@ -9201,7 +9201,7 @@ bool BackendToDebugger::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.lua.dbg.BkDebuggerReady debuggerReady = 10;
+      // .bg3se.lua.dbg.BkDebuggerReady debuggerReady = 10;
       case 10: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(82u /* 82 & 0xFF */)) {
@@ -9213,7 +9213,7 @@ bool BackendToDebugger::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.lua.dbg.BkSourceResponse sourceResponse = 11;
+      // .bg3se.lua.dbg.BkSourceResponse sourceResponse = 11;
       case 11: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(90u /* 90 & 0xFF */)) {
@@ -9225,7 +9225,7 @@ bool BackendToDebugger::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.lua.dbg.BkGetVariablesResponse getVariablesResponse = 12;
+      // .bg3se.lua.dbg.BkGetVariablesResponse getVariablesResponse = 12;
       case 12: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(98u /* 98 & 0xFF */)) {
@@ -9249,17 +9249,17 @@ bool BackendToDebugger::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.lua.dbg.BackendToDebugger)
+  // @@protoc_insertion_point(parse_success:bg3se.lua.dbg.BackendToDebugger)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.lua.dbg.BackendToDebugger)
+  // @@protoc_insertion_point(parse_failure:bg3se.lua.dbg.BackendToDebugger)
   return false;
 #undef DO_
 }
 
 void BackendToDebugger::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.lua.dbg.BackendToDebugger)
+  // @@protoc_insertion_point(serialize_start:bg3se.lua.dbg.BackendToDebugger)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -9273,61 +9273,61 @@ void BackendToDebugger::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->reply_seq_no(), output);
   }
 
-  // .dse.lua.dbg.BkConnectResponse connectResponse = 3;
+  // .bg3se.lua.dbg.BkConnectResponse connectResponse = 3;
   if (has_connectresponse()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       3, this->_internal_connectresponse(), output);
   }
 
-  // .dse.lua.dbg.BkBreakpointTriggered breakpointTriggered = 4;
+  // .bg3se.lua.dbg.BkBreakpointTriggered breakpointTriggered = 4;
   if (has_breakpointtriggered()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       4, this->_internal_breakpointtriggered(), output);
   }
 
-  // .dse.lua.dbg.BkEvaluateResponse evaluateResponse = 5;
+  // .bg3se.lua.dbg.BkEvaluateResponse evaluateResponse = 5;
   if (has_evaluateresponse()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       5, this->_internal_evaluateresponse(), output);
   }
 
-  // .dse.lua.dbg.BkContextUpdated contextUpdated = 6;
+  // .bg3se.lua.dbg.BkContextUpdated contextUpdated = 6;
   if (has_contextupdated()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       6, this->_internal_contextupdated(), output);
   }
 
-  // .dse.lua.dbg.BkModInfoResponse modInfoResponse = 7;
+  // .bg3se.lua.dbg.BkModInfoResponse modInfoResponse = 7;
   if (has_modinforesponse()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       7, this->_internal_modinforesponse(), output);
   }
 
-  // .dse.lua.dbg.BkDebugOutput debugOutput = 8;
+  // .bg3se.lua.dbg.BkDebugOutput debugOutput = 8;
   if (has_debugoutput()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       8, this->_internal_debugoutput(), output);
   }
 
-  // .dse.lua.dbg.BkResult results = 9;
+  // .bg3se.lua.dbg.BkResult results = 9;
   if (has_results()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       9, this->_internal_results(), output);
   }
 
-  // .dse.lua.dbg.BkDebuggerReady debuggerReady = 10;
+  // .bg3se.lua.dbg.BkDebuggerReady debuggerReady = 10;
   if (has_debuggerready()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       10, this->_internal_debuggerready(), output);
   }
 
-  // .dse.lua.dbg.BkSourceResponse sourceResponse = 11;
+  // .bg3se.lua.dbg.BkSourceResponse sourceResponse = 11;
   if (has_sourceresponse()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       11, this->_internal_sourceresponse(), output);
   }
 
-  // .dse.lua.dbg.BkGetVariablesResponse getVariablesResponse = 12;
+  // .bg3se.lua.dbg.BkGetVariablesResponse getVariablesResponse = 12;
   if (has_getvariablesresponse()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       12, this->_internal_getvariablesresponse(), output);
@@ -9335,11 +9335,11 @@ void BackendToDebugger::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.lua.dbg.BackendToDebugger)
+  // @@protoc_insertion_point(serialize_end:bg3se.lua.dbg.BackendToDebugger)
 }
 
 size_t BackendToDebugger::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.lua.dbg.BackendToDebugger)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.lua.dbg.BackendToDebugger)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -9359,70 +9359,70 @@ size_t BackendToDebugger::ByteSizeLong() const {
   }
 
   switch (msg_case()) {
-    // .dse.lua.dbg.BkConnectResponse connectResponse = 3;
+    // .bg3se.lua.dbg.BkConnectResponse connectResponse = 3;
     case kConnectResponse: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.connectresponse_);
       break;
     }
-    // .dse.lua.dbg.BkBreakpointTriggered breakpointTriggered = 4;
+    // .bg3se.lua.dbg.BkBreakpointTriggered breakpointTriggered = 4;
     case kBreakpointTriggered: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.breakpointtriggered_);
       break;
     }
-    // .dse.lua.dbg.BkEvaluateResponse evaluateResponse = 5;
+    // .bg3se.lua.dbg.BkEvaluateResponse evaluateResponse = 5;
     case kEvaluateResponse: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.evaluateresponse_);
       break;
     }
-    // .dse.lua.dbg.BkContextUpdated contextUpdated = 6;
+    // .bg3se.lua.dbg.BkContextUpdated contextUpdated = 6;
     case kContextUpdated: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.contextupdated_);
       break;
     }
-    // .dse.lua.dbg.BkModInfoResponse modInfoResponse = 7;
+    // .bg3se.lua.dbg.BkModInfoResponse modInfoResponse = 7;
     case kModInfoResponse: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.modinforesponse_);
       break;
     }
-    // .dse.lua.dbg.BkDebugOutput debugOutput = 8;
+    // .bg3se.lua.dbg.BkDebugOutput debugOutput = 8;
     case kDebugOutput: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.debugoutput_);
       break;
     }
-    // .dse.lua.dbg.BkResult results = 9;
+    // .bg3se.lua.dbg.BkResult results = 9;
     case kResults: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.results_);
       break;
     }
-    // .dse.lua.dbg.BkDebuggerReady debuggerReady = 10;
+    // .bg3se.lua.dbg.BkDebuggerReady debuggerReady = 10;
     case kDebuggerReady: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.debuggerready_);
       break;
     }
-    // .dse.lua.dbg.BkSourceResponse sourceResponse = 11;
+    // .bg3se.lua.dbg.BkSourceResponse sourceResponse = 11;
     case kSourceResponse: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.sourceresponse_);
       break;
     }
-    // .dse.lua.dbg.BkGetVariablesResponse getVariablesResponse = 12;
+    // .bg3se.lua.dbg.BkGetVariablesResponse getVariablesResponse = 12;
     case kGetVariablesResponse: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
@@ -9444,7 +9444,7 @@ void BackendToDebugger::CheckTypeAndMergeFrom(
 }
 
 void BackendToDebugger::MergeFrom(const BackendToDebugger& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.lua.dbg.BackendToDebugger)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.lua.dbg.BackendToDebugger)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -9458,43 +9458,43 @@ void BackendToDebugger::MergeFrom(const BackendToDebugger& from) {
   }
   switch (from.msg_case()) {
     case kConnectResponse: {
-      mutable_connectresponse()->::dse::lua::dbg::BkConnectResponse::MergeFrom(from.connectresponse());
+      mutable_connectresponse()->::bg3se::lua::dbg::BkConnectResponse::MergeFrom(from.connectresponse());
       break;
     }
     case kBreakpointTriggered: {
-      mutable_breakpointtriggered()->::dse::lua::dbg::BkBreakpointTriggered::MergeFrom(from.breakpointtriggered());
+      mutable_breakpointtriggered()->::bg3se::lua::dbg::BkBreakpointTriggered::MergeFrom(from.breakpointtriggered());
       break;
     }
     case kEvaluateResponse: {
-      mutable_evaluateresponse()->::dse::lua::dbg::BkEvaluateResponse::MergeFrom(from.evaluateresponse());
+      mutable_evaluateresponse()->::bg3se::lua::dbg::BkEvaluateResponse::MergeFrom(from.evaluateresponse());
       break;
     }
     case kContextUpdated: {
-      mutable_contextupdated()->::dse::lua::dbg::BkContextUpdated::MergeFrom(from.contextupdated());
+      mutable_contextupdated()->::bg3se::lua::dbg::BkContextUpdated::MergeFrom(from.contextupdated());
       break;
     }
     case kModInfoResponse: {
-      mutable_modinforesponse()->::dse::lua::dbg::BkModInfoResponse::MergeFrom(from.modinforesponse());
+      mutable_modinforesponse()->::bg3se::lua::dbg::BkModInfoResponse::MergeFrom(from.modinforesponse());
       break;
     }
     case kDebugOutput: {
-      mutable_debugoutput()->::dse::lua::dbg::BkDebugOutput::MergeFrom(from.debugoutput());
+      mutable_debugoutput()->::bg3se::lua::dbg::BkDebugOutput::MergeFrom(from.debugoutput());
       break;
     }
     case kResults: {
-      mutable_results()->::dse::lua::dbg::BkResult::MergeFrom(from.results());
+      mutable_results()->::bg3se::lua::dbg::BkResult::MergeFrom(from.results());
       break;
     }
     case kDebuggerReady: {
-      mutable_debuggerready()->::dse::lua::dbg::BkDebuggerReady::MergeFrom(from.debuggerready());
+      mutable_debuggerready()->::bg3se::lua::dbg::BkDebuggerReady::MergeFrom(from.debuggerready());
       break;
     }
     case kSourceResponse: {
-      mutable_sourceresponse()->::dse::lua::dbg::BkSourceResponse::MergeFrom(from.sourceresponse());
+      mutable_sourceresponse()->::bg3se::lua::dbg::BkSourceResponse::MergeFrom(from.sourceresponse());
       break;
     }
     case kGetVariablesResponse: {
-      mutable_getvariablesresponse()->::dse::lua::dbg::BkGetVariablesResponse::MergeFrom(from.getvariablesresponse());
+      mutable_getvariablesresponse()->::bg3se::lua::dbg::BkGetVariablesResponse::MergeFrom(from.getvariablesresponse());
       break;
     }
     case MSG_NOT_SET: {
@@ -9504,7 +9504,7 @@ void BackendToDebugger::MergeFrom(const BackendToDebugger& from) {
 }
 
 void BackendToDebugger::CopyFrom(const BackendToDebugger& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.lua.dbg.BackendToDebugger)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.lua.dbg.BackendToDebugger)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -9543,99 +9543,99 @@ void BackendToDebugger::InternalSwap(BackendToDebugger* other) {
 }
 
 ::std::string BackendToDebugger::GetTypeName() const {
-  return "dse.lua.dbg.BackendToDebugger";
+  return "bg3se.lua.dbg.BackendToDebugger";
 }
 
 
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace dbg
 }  // namespace lua
-}  // namespace dse
+}  // namespace bg3se
 namespace google {
 namespace protobuf {
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::lua::dbg::MsgTableKey* Arena::CreateMaybeMessage< ::dse::lua::dbg::MsgTableKey >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::lua::dbg::MsgTableKey >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::lua::dbg::MsgTableKey* Arena::CreateMaybeMessage< ::bg3se::lua::dbg::MsgTableKey >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::lua::dbg::MsgTableKey >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::lua::dbg::MsgVariablesRef* Arena::CreateMaybeMessage< ::dse::lua::dbg::MsgVariablesRef >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::lua::dbg::MsgVariablesRef >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::lua::dbg::MsgVariablesRef* Arena::CreateMaybeMessage< ::bg3se::lua::dbg::MsgVariablesRef >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::lua::dbg::MsgVariablesRef >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::lua::dbg::MsgValue* Arena::CreateMaybeMessage< ::dse::lua::dbg::MsgValue >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::lua::dbg::MsgValue >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::lua::dbg::MsgValue* Arena::CreateMaybeMessage< ::bg3se::lua::dbg::MsgValue >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::lua::dbg::MsgValue >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::lua::dbg::MsgChildValue* Arena::CreateMaybeMessage< ::dse::lua::dbg::MsgChildValue >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::lua::dbg::MsgChildValue >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::lua::dbg::MsgChildValue* Arena::CreateMaybeMessage< ::bg3se::lua::dbg::MsgChildValue >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::lua::dbg::MsgChildValue >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::lua::dbg::MsgStackFrame* Arena::CreateMaybeMessage< ::dse::lua::dbg::MsgStackFrame >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::lua::dbg::MsgStackFrame >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::lua::dbg::MsgStackFrame* Arena::CreateMaybeMessage< ::bg3se::lua::dbg::MsgStackFrame >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::lua::dbg::MsgStackFrame >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::lua::dbg::DbgConnectRequest* Arena::CreateMaybeMessage< ::dse::lua::dbg::DbgConnectRequest >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::lua::dbg::DbgConnectRequest >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::lua::dbg::DbgConnectRequest* Arena::CreateMaybeMessage< ::bg3se::lua::dbg::DbgConnectRequest >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::lua::dbg::DbgConnectRequest >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::lua::dbg::BkConnectResponse* Arena::CreateMaybeMessage< ::dse::lua::dbg::BkConnectResponse >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::lua::dbg::BkConnectResponse >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::lua::dbg::BkConnectResponse* Arena::CreateMaybeMessage< ::bg3se::lua::dbg::BkConnectResponse >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::lua::dbg::BkConnectResponse >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::lua::dbg::DbgUpdateSettings* Arena::CreateMaybeMessage< ::dse::lua::dbg::DbgUpdateSettings >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::lua::dbg::DbgUpdateSettings >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::lua::dbg::DbgUpdateSettings* Arena::CreateMaybeMessage< ::bg3se::lua::dbg::DbgUpdateSettings >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::lua::dbg::DbgUpdateSettings >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::lua::dbg::MsgBreakpoint* Arena::CreateMaybeMessage< ::dse::lua::dbg::MsgBreakpoint >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::lua::dbg::MsgBreakpoint >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::lua::dbg::MsgBreakpoint* Arena::CreateMaybeMessage< ::bg3se::lua::dbg::MsgBreakpoint >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::lua::dbg::MsgBreakpoint >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::lua::dbg::DbgSetBreakpoints* Arena::CreateMaybeMessage< ::dse::lua::dbg::DbgSetBreakpoints >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::lua::dbg::DbgSetBreakpoints >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::lua::dbg::DbgSetBreakpoints* Arena::CreateMaybeMessage< ::bg3se::lua::dbg::DbgSetBreakpoints >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::lua::dbg::DbgSetBreakpoints >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::lua::dbg::BkBreakpointTriggered* Arena::CreateMaybeMessage< ::dse::lua::dbg::BkBreakpointTriggered >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::lua::dbg::BkBreakpointTriggered >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::lua::dbg::BkBreakpointTriggered* Arena::CreateMaybeMessage< ::bg3se::lua::dbg::BkBreakpointTriggered >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::lua::dbg::BkBreakpointTriggered >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::lua::dbg::DbgContinue* Arena::CreateMaybeMessage< ::dse::lua::dbg::DbgContinue >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::lua::dbg::DbgContinue >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::lua::dbg::DbgContinue* Arena::CreateMaybeMessage< ::bg3se::lua::dbg::DbgContinue >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::lua::dbg::DbgContinue >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::lua::dbg::DbgEvaluate* Arena::CreateMaybeMessage< ::dse::lua::dbg::DbgEvaluate >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::lua::dbg::DbgEvaluate >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::lua::dbg::DbgEvaluate* Arena::CreateMaybeMessage< ::bg3se::lua::dbg::DbgEvaluate >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::lua::dbg::DbgEvaluate >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::lua::dbg::DbgGetVariables* Arena::CreateMaybeMessage< ::dse::lua::dbg::DbgGetVariables >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::lua::dbg::DbgGetVariables >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::lua::dbg::DbgGetVariables* Arena::CreateMaybeMessage< ::bg3se::lua::dbg::DbgGetVariables >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::lua::dbg::DbgGetVariables >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::lua::dbg::BkEvaluateResponse* Arena::CreateMaybeMessage< ::dse::lua::dbg::BkEvaluateResponse >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::lua::dbg::BkEvaluateResponse >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::lua::dbg::BkEvaluateResponse* Arena::CreateMaybeMessage< ::bg3se::lua::dbg::BkEvaluateResponse >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::lua::dbg::BkEvaluateResponse >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::lua::dbg::BkGetVariablesResponse* Arena::CreateMaybeMessage< ::dse::lua::dbg::BkGetVariablesResponse >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::lua::dbg::BkGetVariablesResponse >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::lua::dbg::BkGetVariablesResponse* Arena::CreateMaybeMessage< ::bg3se::lua::dbg::BkGetVariablesResponse >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::lua::dbg::BkGetVariablesResponse >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::lua::dbg::DbgFetchMods* Arena::CreateMaybeMessage< ::dse::lua::dbg::DbgFetchMods >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::lua::dbg::DbgFetchMods >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::lua::dbg::DbgFetchMods* Arena::CreateMaybeMessage< ::bg3se::lua::dbg::DbgFetchMods >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::lua::dbg::DbgFetchMods >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::lua::dbg::BkContextUpdated* Arena::CreateMaybeMessage< ::dse::lua::dbg::BkContextUpdated >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::lua::dbg::BkContextUpdated >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::lua::dbg::BkContextUpdated* Arena::CreateMaybeMessage< ::bg3se::lua::dbg::BkContextUpdated >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::lua::dbg::BkContextUpdated >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::lua::dbg::MsgModuleInfo* Arena::CreateMaybeMessage< ::dse::lua::dbg::MsgModuleInfo >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::lua::dbg::MsgModuleInfo >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::lua::dbg::MsgModuleInfo* Arena::CreateMaybeMessage< ::bg3se::lua::dbg::MsgModuleInfo >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::lua::dbg::MsgModuleInfo >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::lua::dbg::MsgSourceFileInfo* Arena::CreateMaybeMessage< ::dse::lua::dbg::MsgSourceFileInfo >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::lua::dbg::MsgSourceFileInfo >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::lua::dbg::MsgSourceFileInfo* Arena::CreateMaybeMessage< ::bg3se::lua::dbg::MsgSourceFileInfo >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::lua::dbg::MsgSourceFileInfo >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::lua::dbg::BkModInfoResponse* Arena::CreateMaybeMessage< ::dse::lua::dbg::BkModInfoResponse >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::lua::dbg::BkModInfoResponse >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::lua::dbg::BkModInfoResponse* Arena::CreateMaybeMessage< ::bg3se::lua::dbg::BkModInfoResponse >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::lua::dbg::BkModInfoResponse >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::lua::dbg::BkDebugOutput* Arena::CreateMaybeMessage< ::dse::lua::dbg::BkDebugOutput >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::lua::dbg::BkDebugOutput >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::lua::dbg::BkDebugOutput* Arena::CreateMaybeMessage< ::bg3se::lua::dbg::BkDebugOutput >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::lua::dbg::BkDebugOutput >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::lua::dbg::BkResult* Arena::CreateMaybeMessage< ::dse::lua::dbg::BkResult >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::lua::dbg::BkResult >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::lua::dbg::BkResult* Arena::CreateMaybeMessage< ::bg3se::lua::dbg::BkResult >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::lua::dbg::BkResult >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::lua::dbg::BkDebuggerReady* Arena::CreateMaybeMessage< ::dse::lua::dbg::BkDebuggerReady >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::lua::dbg::BkDebuggerReady >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::lua::dbg::BkDebuggerReady* Arena::CreateMaybeMessage< ::bg3se::lua::dbg::BkDebuggerReady >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::lua::dbg::BkDebuggerReady >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::lua::dbg::DbgRequestSource* Arena::CreateMaybeMessage< ::dse::lua::dbg::DbgRequestSource >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::lua::dbg::DbgRequestSource >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::lua::dbg::DbgRequestSource* Arena::CreateMaybeMessage< ::bg3se::lua::dbg::DbgRequestSource >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::lua::dbg::DbgRequestSource >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::lua::dbg::BkSourceResponse* Arena::CreateMaybeMessage< ::dse::lua::dbg::BkSourceResponse >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::lua::dbg::BkSourceResponse >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::lua::dbg::BkSourceResponse* Arena::CreateMaybeMessage< ::bg3se::lua::dbg::BkSourceResponse >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::lua::dbg::BkSourceResponse >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::lua::dbg::DebuggerToBackend* Arena::CreateMaybeMessage< ::dse::lua::dbg::DebuggerToBackend >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::lua::dbg::DebuggerToBackend >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::lua::dbg::DebuggerToBackend* Arena::CreateMaybeMessage< ::bg3se::lua::dbg::DebuggerToBackend >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::lua::dbg::DebuggerToBackend >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::lua::dbg::BackendToDebugger* Arena::CreateMaybeMessage< ::dse::lua::dbg::BackendToDebugger >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::lua::dbg::BackendToDebugger >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::lua::dbg::BackendToDebugger* Arena::CreateMaybeMessage< ::bg3se::lua::dbg::BackendToDebugger >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::lua::dbg::BackendToDebugger >(arena);
 }
 }  // namespace protobuf
 }  // namespace google

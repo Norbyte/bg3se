@@ -5,7 +5,7 @@
 #include <GameDefinitions/BaseUtilities.h>
 #include <GameDefinitions/BaseMemory.h>
 
-namespace dse
+namespace bg3se
 {
 	unsigned int GetNearestLowerPrime(unsigned int num);
 

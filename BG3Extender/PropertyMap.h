@@ -11,7 +11,7 @@
 
 struct lua_State;
 
-namespace dse
+namespace bg3se
 {
 	enum class PropertyType
 	{

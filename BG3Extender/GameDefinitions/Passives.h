@@ -6,7 +6,7 @@
 #include <GameDefinitions/EntitySystem.h>
 #include <GameDefinitions/Stats/Functors.h>
 
-namespace dse
+namespace bg3se
 {
 	struct Passive : public ProtectedGameObject<Passive>
 	{

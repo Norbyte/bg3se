@@ -1,6 +1,6 @@
 #include <stdafx.h>
 #include <Lua/Shared/LuaStats.h>
-#include <Lua/LuaBindingClient.h>
+#include <Lua/Client/LuaBindingClient.h>
 #include <Lua/LuaSerializers.h>
 #include <OsirisProxy.h>
 #include <ExtensionStateClient.h>
@@ -8,7 +8,7 @@
 //#include <GameDefinitions/Ai.h>
 #include "resource.h"
 
-namespace dse::lua
+namespace bg3se::lua
 {
 /*	char const* const ObjectProxy<ecl::Status>::MetatableName = "ecl::Status";
 
@@ -417,9 +417,9 @@ namespace dse::lua
 }
 
 
-namespace dse::ecl::lua
+namespace bg3se::ecl::lua
 {
-	using namespace dse::lua;
+	using namespace bg3se::lua;
 
 	void ExtensionLibraryClient::Register(lua_State * L)
 	{
@@ -1200,7 +1200,7 @@ namespace dse::ecl::lua
 	}*/
 }
 
-namespace dse::ecl
+namespace bg3se::ecl
 {
 
 	ExtensionState & ExtensionState::Get()

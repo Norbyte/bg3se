@@ -24,7 +24,7 @@ void ConfigGetInt(Json::Value& node, char const* key, uint32_t& value)
 	}
 }
 
-void LoadConfig(std::wstring const & configPath, dse::ToolConfig & config)
+void LoadConfig(std::wstring const & configPath, bg3se::ToolConfig & config)
 {
 	std::ifstream f(configPath, std::ios::in);
 	if (!f.good()) {
@@ -75,8 +75,8 @@ void LoadConfig(std::wstring const & configPath, dse::ToolConfig & config)
 
 void SetupOsirisProxy(HMODULE hModule)
 {
-	dse::gOsirisProxy = std::make_unique<dse::OsirisProxy>();
-	auto & config = dse::gOsirisProxy->GetConfig();
+	bg3se::gOsirisProxy = std::make_unique<bg3se::OsirisProxy>();
+	auto & config = bg3se::gOsirisProxy->GetConfig();
 	LoadConfig(L"OsirisExtenderSettings.json", config);
 
 	DisableThreadLibraryCalls(hModule);
@@ -86,10 +86,10 @@ void SetupOsirisProxy(HMODULE hModule)
 
 	if (config.DebugFlags == 0) {
 		// Disabled: DF_FunctionList, DF_NodeList ,DF_LogSuccessfulFacts, DF_LogFailedFacts, DB_LogFactFailures, DF_DumpDatabases, DF_DebugFacts, DF_LogRuleFailures
-		config.DebugFlags = dse::DF_DebugTrace | dse::DF_SuppressInitLog;
+		config.DebugFlags = bg3se::DF_DebugTrace | bg3se::DF_SuppressInitLog;
 	}
 
-	dse::gOsirisProxy->Initialize();
+	bg3se::gOsirisProxy->Initialize();
 
 #if 0
 	DEBUG(" ***** OsirisProxy setup completed ***** ");
@@ -121,8 +121,8 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 
 	case DLL_PROCESS_DETACH:
 		if (gDWriteWrapper) {
-			dse::gOsirisProxy->Shutdown();
-			dse::gOsirisProxy.reset();
+			bg3se::gOsirisProxy->Shutdown();
+			bg3se::gOsirisProxy.reset();
 			gDWriteWrapper.reset();
 		}
 		break;

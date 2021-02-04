@@ -5,7 +5,7 @@
 #include <GameDefinitions/EntitySystem.h>
 #include <GameDefinitions/Misc.h>
 
-namespace dse::esv
+namespace bg3se::esv
 {
 	struct Level;
 

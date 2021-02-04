@@ -6,7 +6,7 @@
 #include <fstream>
 #include <sstream>
 
-namespace dse {
+namespace bg3se {
 
 
 CustomFunction::~CustomFunction()

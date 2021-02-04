@@ -15,7 +15,7 @@
 	BackendToDebugger& name = *_msg
 #endif
 
-namespace dse::lua::dbg
+namespace bg3se::lua::dbg
 {
 	DebugMessageHandler::DebugMessageHandler(LuaDebugInterface& intf)
 		: intf_(intf)

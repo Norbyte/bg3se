@@ -5,9 +5,9 @@
 #include <regex>
 
 
-namespace dse::esv::lua
+namespace bg3se::esv::lua
 {
-	using namespace dse::lua;
+	using namespace bg3se::lua;
 
 	void LuaToOsi(lua_State * L, int i, TypedValue & tv, ValueType osiType, bool allowNil)
 	{

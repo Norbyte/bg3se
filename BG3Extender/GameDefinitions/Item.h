@@ -5,7 +5,7 @@
 #include <GameDefinitions/EntitySystem.h>
 //#include "Status.h"
 
-namespace dse
+namespace bg3se
 {
 	struct ItemTemplate;
 

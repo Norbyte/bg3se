@@ -6,7 +6,7 @@
 #include <rpcdce.h>
 #include <thread>
 
-namespace dse
+namespace bg3se
 {
 	STDString ToUTF8(WStringView s)
 	{
@@ -68,7 +68,7 @@ std::optional<UUID> ParseUuid(std::string_view s)
 
 std::optional<UUID> ParseGuidString(std::string_view nameGuid)
 {
-	if (!dse::IsValidGuidString(nameGuid.data())) {
+	if (!bg3se::IsValidGuidString(nameGuid.data())) {
 		OsiError("GUID (" << nameGuid << ") malformed!");
 		return {};
 	}
@@ -101,22 +101,22 @@ void Fail(char const * reason)
 
 void LogLuaError(std::string_view msg)
 {
-	dse::gOsirisProxy->LogLuaError(msg);
+	bg3se::gOsirisProxy->LogLuaError(msg);
 }
 
 void LogOsirisError(std::string_view msg)
 {
-	dse::gOsirisProxy->LogOsirisError(msg);
+	bg3se::gOsirisProxy->LogOsirisError(msg);
 }
 
 void LogOsirisWarning(std::string_view msg)
 {
-	dse::gOsirisProxy->LogOsirisWarning(msg);
+	bg3se::gOsirisProxy->LogOsirisWarning(msg);
 }
 
 void LogOsirisMsg(std::string_view msg)
 {
-	dse::gOsirisProxy->LogOsirisMsg(msg);
+	bg3se::gOsirisProxy->LogOsirisMsg(msg);
 }
 
 DebugConsole gConsole;
@@ -169,8 +169,8 @@ void DebugConsole::Debug(DebugMessageType type, char const* msg)
 	}
 
 #if !defined(OSI_NO_DEBUGGER)
-	if (dse::gOsirisProxy) {
-		auto debugger = dse::gOsirisProxy->GetLuaDebugger();
+	if (bg3se::gOsirisProxy) {
+		auto debugger = bg3se::gOsirisProxy->GetLuaDebugger();
 		if (debugger && debugger->IsDebuggerReady()) {
 			debugger->OnLogMessage(type, msg);
 		}
@@ -197,10 +197,10 @@ void DebugConsole::Debug(DebugMessageType type, wchar_t const* msg)
 	}
 
 #if !defined(OSI_NO_DEBUGGER)
-	if (dse::gOsirisProxy) {
-		auto debugger = dse::gOsirisProxy->GetLuaDebugger();
+	if (bg3se::gOsirisProxy) {
+		auto debugger = bg3se::gOsirisProxy->GetLuaDebugger();
 		if (debugger && debugger->IsDebuggerReady()) {
-			debugger->OnLogMessage(type, dse::ToUTF8(msg));
+			debugger->OnLogMessage(type, bg3se::ToUTF8(msg));
 		}
 	}
 #endif
@@ -222,7 +222,7 @@ void DebugConsole::ConsoleThread()
 		DEBUG("Entering server Lua console.");
 
 		bool serverContext_ = true;
-		dse::gOsirisProxy->AttachConsoleThread(serverContext_);
+		bg3se::gOsirisProxy->AttachConsoleThread(serverContext_);
 
 		while (consoleRunning_) {
 			inputEnabled_ = true;
@@ -238,14 +238,14 @@ void DebugConsole::ConsoleThread()
 			} else if (line == "server") {
 				DEBUG("Switching to server context.");
 				serverContext_ = true;
-				dse::gOsirisProxy->AttachConsoleThread(true);
+				bg3se::gOsirisProxy->AttachConsoleThread(true);
 			} else if (line == "client") {
 				DEBUG("Switching to client context.");
 				serverContext_ = false;
-				dse::gOsirisProxy->AttachConsoleThread(false);
+				bg3se::gOsirisProxy->AttachConsoleThread(false);
 			} else if (line == "reset") {
 				DEBUG("Resetting Lua states.");
-				dse::gOsirisProxy->ResetLuaState(true, true);
+				bg3se::gOsirisProxy->ResetLuaState(true, true);
 			} else if (line == "silence on") {
 				DEBUG("Silent mode ON");
 				silence = true;
@@ -261,25 +261,25 @@ void DebugConsole::ConsoleThread()
 				DEBUG("  exit - Leave console mode");
 				DEBUG("  !<cmd> <arg1> ... <argN> - Trigger Lua \"ConsoleCommand\" event with arguments cmd, arg1, ..., argN");
 			} else {
-				dse::ExtensionStateBase* state{ nullptr };
+				bg3se::ExtensionStateBase* state{ nullptr };
 				if (serverContext_) {
-					if (dse::gOsirisProxy->HasServerExtensionState()) {
-						state = &dse::esv::ExtensionState::Get();
+					if (bg3se::gOsirisProxy->HasServerExtensionState()) {
+						state = &bg3se::esv::ExtensionState::Get();
 					}
 				} else {
-					if (dse::gOsirisProxy->HasClientExtensionState()) {
-						state = &dse::ecl::ExtensionState::Get();
+					if (bg3se::gOsirisProxy->HasClientExtensionState()) {
+						state = &bg3se::ecl::ExtensionState::Get();
 					}
 				}
 
 				if (state) {
-					dse::LuaVirtualPin pin(*state);
+					bg3se::LuaVirtualPin pin(*state);
 					if (pin) {
 						if (line[0] == '!') {
-							pin->CallExt("DoConsoleCommand", 0, dse::lua::ReturnType<>{}, line.substr(1));
+							pin->CallExt("DoConsoleCommand", 0, bg3se::lua::ReturnType<>{}, line.substr(1));
 						} else {
 							auto L = pin->GetState();
-							if (luaL_loadstring(L, line.c_str()) || dse::lua::CallWithTraceback(L, 0, 0)) { // stack: errmsg
+							if (luaL_loadstring(L, line.c_str()) || bg3se::lua::CallWithTraceback(L, 0, 0)) { // stack: errmsg
 								ERR("%s", lua_tostring(L, -1));
 								lua_pop(L, 1);
 							}
@@ -319,7 +319,7 @@ void DebugConsole::Create()
 	DEBUG("*                                                                            *");
 	DEBUG("******************************************************************************");
 	DEBUG("");
-	DEBUG("BG3Ext v%d built on " __DATE__ " " __TIME__, dse::CurrentVersion);
+	DEBUG("BG3Ext v%d built on " __DATE__ " " __TIME__, bg3se::CurrentVersion);
 
 	consoleThread_ = new std::thread(&DebugConsole::ConsoleThread, this);
 	created_ = true;

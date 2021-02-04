@@ -4,7 +4,7 @@
 #include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/EntitySystem.h>
 
-namespace dse
+namespace bg3se
 {
 	struct TransformComponent : public BaseComponent
 	{

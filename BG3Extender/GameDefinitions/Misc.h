@@ -6,7 +6,7 @@
 #include "Module.h"
 #include <glm/gtc/quaternion.hpp>
 
-namespace dse
+namespace bg3se
 {
 	struct GameTime
 	{

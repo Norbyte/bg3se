@@ -5,7 +5,7 @@
 #define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers
 #define NOMINMAX
 
-#define BEGIN_NS(ns) namespace dse { namespace ns {
+#define BEGIN_NS(ns) namespace bg3se { namespace ns {
 #define END_NS }}
 
 // Windows Header Files:

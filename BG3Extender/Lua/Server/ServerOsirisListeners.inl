@@ -1,7 +1,7 @@
 #include <Lua/LuaBinding.h>
 #include <Lua/Server/ServerOsirisBinding.h>
 
-namespace dse::esv::lua
+namespace bg3se::esv::lua
 {
 	OsirisCallbackManager::OsirisCallbackManager(ExtensionState& state)
 		: state_(state)

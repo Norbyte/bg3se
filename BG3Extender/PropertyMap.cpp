@@ -2,7 +2,7 @@
 #include <PropertyMap.h>
 #include <Lua/LuaHelpers.h>
 
-namespace dse
+namespace bg3se
 {
 	PropertyMapBase::PropertyInfo const * PropertyMapBase::findProperty(FixedString const& name) const
 	{

@@ -3,7 +3,7 @@
 #include <GameDefinitions/BaseTypes.h>
 #include <GameDefinitions/Item.h>
 
-namespace dse::script {
+namespace bg3se::script {
 
 	std::optional<STDWString> GetPathForExternalIo(std::string_view scriptPath, PathRootType root);
 	std::optional<STDString> LoadExternalFile(std::string_view path, PathRootType root);

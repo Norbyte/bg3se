@@ -48,7 +48,7 @@ extern PROTOBUF_INTERNAL_EXPORT_protobuf_osidebug_2eproto ::google::protobuf::in
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_osidebug_2eproto ::google::protobuf::internal::SCCInfo<2> scc_info_BkBreakpointTriggered;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_osidebug_2eproto ::google::protobuf::internal::SCCInfo<4> scc_info_BkSyncStoryData;
 }  // namespace protobuf_osidebug_2eproto
-namespace dse {
+namespace bg3se {
 namespace osidbg {
 class MsgTypedValueDefaultTypeInternal {
  public:
@@ -207,45 +207,45 @@ class DebuggerToBackendDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<DebuggerToBackend>
       _instance;
-  const ::dse::osidbg::DbgIdentifyRequest* identify_;
-  const ::dse::osidbg::DbgSetGlobalBreakpoints* setglobalbreakpoints_;
-  const ::dse::osidbg::DbgSetBreakpoints* setbreakpoints_;
-  const ::dse::osidbg::DbgContinue* continue__;
-  const ::dse::osidbg::DbgGetDatabaseContents* getdatabasecontents_;
-  const ::dse::osidbg::DbgSyncStory* syncstory_;
-  const ::dse::osidbg::DbgEvaluate* evaluate_;
+  const ::bg3se::osidbg::DbgIdentifyRequest* identify_;
+  const ::bg3se::osidbg::DbgSetGlobalBreakpoints* setglobalbreakpoints_;
+  const ::bg3se::osidbg::DbgSetBreakpoints* setbreakpoints_;
+  const ::bg3se::osidbg::DbgContinue* continue__;
+  const ::bg3se::osidbg::DbgGetDatabaseContents* getdatabasecontents_;
+  const ::bg3se::osidbg::DbgSyncStory* syncstory_;
+  const ::bg3se::osidbg::DbgEvaluate* evaluate_;
 } _DebuggerToBackend_default_instance_;
 class BackendToDebuggerDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<BackendToDebugger>
       _instance;
-  const ::dse::osidbg::BkVersionInfoResponse* versioninfo_;
-  const ::dse::osidbg::BkBreakpointTriggered* breakpointtriggered_;
-  const ::dse::osidbg::BkResult* results_;
-  const ::dse::osidbg::BkStoryLoaded* storyloaded_;
-  const ::dse::osidbg::BkDebugSessionEnded* debugsessionended_;
-  const ::dse::osidbg::BkGlobalBreakpointTriggered* globalbreakpointtriggered_;
-  const ::dse::osidbg::BkSyncStoryData* syncstorydata_;
-  const ::dse::osidbg::BkSyncStoryFinished* syncstoryfinished_;
-  const ::dse::osidbg::BkDebugOutput* debugoutput_;
-  const ::dse::osidbg::BkBeginDatabaseContents* begindatabasecontents_;
-  const ::dse::osidbg::BkDatabaseRow* databaserow_;
-  const ::dse::osidbg::BkEndDatabaseContents* enddatabasecontents_;
-  const ::dse::osidbg::BkEvaluateRow* evaluaterow_;
-  const ::dse::osidbg::BkEvaluateFinished* evaluatefinished_;
+  const ::bg3se::osidbg::BkVersionInfoResponse* versioninfo_;
+  const ::bg3se::osidbg::BkBreakpointTriggered* breakpointtriggered_;
+  const ::bg3se::osidbg::BkResult* results_;
+  const ::bg3se::osidbg::BkStoryLoaded* storyloaded_;
+  const ::bg3se::osidbg::BkDebugSessionEnded* debugsessionended_;
+  const ::bg3se::osidbg::BkGlobalBreakpointTriggered* globalbreakpointtriggered_;
+  const ::bg3se::osidbg::BkSyncStoryData* syncstorydata_;
+  const ::bg3se::osidbg::BkSyncStoryFinished* syncstoryfinished_;
+  const ::bg3se::osidbg::BkDebugOutput* debugoutput_;
+  const ::bg3se::osidbg::BkBeginDatabaseContents* begindatabasecontents_;
+  const ::bg3se::osidbg::BkDatabaseRow* databaserow_;
+  const ::bg3se::osidbg::BkEndDatabaseContents* enddatabasecontents_;
+  const ::bg3se::osidbg::BkEvaluateRow* evaluaterow_;
+  const ::bg3se::osidbg::BkEvaluateFinished* evaluatefinished_;
 } _BackendToDebugger_default_instance_;
 }  // namespace osidbg
-}  // namespace dse
+}  // namespace bg3se
 namespace protobuf_osidebug_2eproto {
 static void InitDefaultsMsgTypedValue() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::osidbg::_MsgTypedValue_default_instance_;
-    new (ptr) ::dse::osidbg::MsgTypedValue();
+    void* ptr = &::bg3se::osidbg::_MsgTypedValue_default_instance_;
+    new (ptr) ::bg3se::osidbg::MsgTypedValue();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::osidbg::MsgTypedValue::InitAsDefaultInstance();
+  ::bg3se::osidbg::MsgTypedValue::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_MsgTypedValue =
@@ -255,11 +255,11 @@ static void InitDefaultsMsgTuple() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::osidbg::_MsgTuple_default_instance_;
-    new (ptr) ::dse::osidbg::MsgTuple();
+    void* ptr = &::bg3se::osidbg::_MsgTuple_default_instance_;
+    new (ptr) ::bg3se::osidbg::MsgTuple();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::osidbg::MsgTuple::InitAsDefaultInstance();
+  ::bg3se::osidbg::MsgTuple::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<1> scc_info_MsgTuple =
@@ -270,11 +270,11 @@ static void InitDefaultsMsgFrame() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::osidbg::_MsgFrame_default_instance_;
-    new (ptr) ::dse::osidbg::MsgFrame();
+    void* ptr = &::bg3se::osidbg::_MsgFrame_default_instance_;
+    new (ptr) ::bg3se::osidbg::MsgFrame();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::osidbg::MsgFrame::InitAsDefaultInstance();
+  ::bg3se::osidbg::MsgFrame::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<1> scc_info_MsgFrame =
@@ -285,11 +285,11 @@ static void InitDefaultsDbgIdentifyRequest() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::osidbg::_DbgIdentifyRequest_default_instance_;
-    new (ptr) ::dse::osidbg::DbgIdentifyRequest();
+    void* ptr = &::bg3se::osidbg::_DbgIdentifyRequest_default_instance_;
+    new (ptr) ::bg3se::osidbg::DbgIdentifyRequest();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::osidbg::DbgIdentifyRequest::InitAsDefaultInstance();
+  ::bg3se::osidbg::DbgIdentifyRequest::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_DbgIdentifyRequest =
@@ -299,11 +299,11 @@ static void InitDefaultsBkVersionInfoResponse() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::osidbg::_BkVersionInfoResponse_default_instance_;
-    new (ptr) ::dse::osidbg::BkVersionInfoResponse();
+    void* ptr = &::bg3se::osidbg::_BkVersionInfoResponse_default_instance_;
+    new (ptr) ::bg3se::osidbg::BkVersionInfoResponse();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::osidbg::BkVersionInfoResponse::InitAsDefaultInstance();
+  ::bg3se::osidbg::BkVersionInfoResponse::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_BkVersionInfoResponse =
@@ -313,11 +313,11 @@ static void InitDefaultsDbgSetGlobalBreakpoints() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::osidbg::_DbgSetGlobalBreakpoints_default_instance_;
-    new (ptr) ::dse::osidbg::DbgSetGlobalBreakpoints();
+    void* ptr = &::bg3se::osidbg::_DbgSetGlobalBreakpoints_default_instance_;
+    new (ptr) ::bg3se::osidbg::DbgSetGlobalBreakpoints();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::osidbg::DbgSetGlobalBreakpoints::InitAsDefaultInstance();
+  ::bg3se::osidbg::DbgSetGlobalBreakpoints::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_DbgSetGlobalBreakpoints =
@@ -327,11 +327,11 @@ static void InitDefaultsMsgBreakpoint() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::osidbg::_MsgBreakpoint_default_instance_;
-    new (ptr) ::dse::osidbg::MsgBreakpoint();
+    void* ptr = &::bg3se::osidbg::_MsgBreakpoint_default_instance_;
+    new (ptr) ::bg3se::osidbg::MsgBreakpoint();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::osidbg::MsgBreakpoint::InitAsDefaultInstance();
+  ::bg3se::osidbg::MsgBreakpoint::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_MsgBreakpoint =
@@ -341,11 +341,11 @@ static void InitDefaultsDbgSetBreakpoints() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::osidbg::_DbgSetBreakpoints_default_instance_;
-    new (ptr) ::dse::osidbg::DbgSetBreakpoints();
+    void* ptr = &::bg3se::osidbg::_DbgSetBreakpoints_default_instance_;
+    new (ptr) ::bg3se::osidbg::DbgSetBreakpoints();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::osidbg::DbgSetBreakpoints::InitAsDefaultInstance();
+  ::bg3se::osidbg::DbgSetBreakpoints::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<1> scc_info_DbgSetBreakpoints =
@@ -356,11 +356,11 @@ static void InitDefaultsBkBreakpointTriggered() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::osidbg::_BkBreakpointTriggered_default_instance_;
-    new (ptr) ::dse::osidbg::BkBreakpointTriggered();
+    void* ptr = &::bg3se::osidbg::_BkBreakpointTriggered_default_instance_;
+    new (ptr) ::bg3se::osidbg::BkBreakpointTriggered();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::osidbg::BkBreakpointTriggered::InitAsDefaultInstance();
+  ::bg3se::osidbg::BkBreakpointTriggered::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<2> scc_info_BkBreakpointTriggered =
@@ -372,11 +372,11 @@ static void InitDefaultsBkGlobalBreakpointTriggered() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::osidbg::_BkGlobalBreakpointTriggered_default_instance_;
-    new (ptr) ::dse::osidbg::BkGlobalBreakpointTriggered();
+    void* ptr = &::bg3se::osidbg::_BkGlobalBreakpointTriggered_default_instance_;
+    new (ptr) ::bg3se::osidbg::BkGlobalBreakpointTriggered();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::osidbg::BkGlobalBreakpointTriggered::InitAsDefaultInstance();
+  ::bg3se::osidbg::BkGlobalBreakpointTriggered::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_BkGlobalBreakpointTriggered =
@@ -386,11 +386,11 @@ static void InitDefaultsDbgContinue() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::osidbg::_DbgContinue_default_instance_;
-    new (ptr) ::dse::osidbg::DbgContinue();
+    void* ptr = &::bg3se::osidbg::_DbgContinue_default_instance_;
+    new (ptr) ::bg3se::osidbg::DbgContinue();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::osidbg::DbgContinue::InitAsDefaultInstance();
+  ::bg3se::osidbg::DbgContinue::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_DbgContinue =
@@ -400,11 +400,11 @@ static void InitDefaultsDbgGetDatabaseContents() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::osidbg::_DbgGetDatabaseContents_default_instance_;
-    new (ptr) ::dse::osidbg::DbgGetDatabaseContents();
+    void* ptr = &::bg3se::osidbg::_DbgGetDatabaseContents_default_instance_;
+    new (ptr) ::bg3se::osidbg::DbgGetDatabaseContents();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::osidbg::DbgGetDatabaseContents::InitAsDefaultInstance();
+  ::bg3se::osidbg::DbgGetDatabaseContents::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_DbgGetDatabaseContents =
@@ -414,11 +414,11 @@ static void InitDefaultsDbgSyncStory() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::osidbg::_DbgSyncStory_default_instance_;
-    new (ptr) ::dse::osidbg::DbgSyncStory();
+    void* ptr = &::bg3se::osidbg::_DbgSyncStory_default_instance_;
+    new (ptr) ::bg3se::osidbg::DbgSyncStory();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::osidbg::DbgSyncStory::InitAsDefaultInstance();
+  ::bg3se::osidbg::DbgSyncStory::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_DbgSyncStory =
@@ -428,11 +428,11 @@ static void InitDefaultsDbgEvaluate() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::osidbg::_DbgEvaluate_default_instance_;
-    new (ptr) ::dse::osidbg::DbgEvaluate();
+    void* ptr = &::bg3se::osidbg::_DbgEvaluate_default_instance_;
+    new (ptr) ::bg3se::osidbg::DbgEvaluate();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::osidbg::DbgEvaluate::InitAsDefaultInstance();
+  ::bg3se::osidbg::DbgEvaluate::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<1> scc_info_DbgEvaluate =
@@ -443,11 +443,11 @@ static void InitDefaultsBkResult() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::osidbg::_BkResult_default_instance_;
-    new (ptr) ::dse::osidbg::BkResult();
+    void* ptr = &::bg3se::osidbg::_BkResult_default_instance_;
+    new (ptr) ::bg3se::osidbg::BkResult();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::osidbg::BkResult::InitAsDefaultInstance();
+  ::bg3se::osidbg::BkResult::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_BkResult =
@@ -457,11 +457,11 @@ static void InitDefaultsBkStoryLoaded() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::osidbg::_BkStoryLoaded_default_instance_;
-    new (ptr) ::dse::osidbg::BkStoryLoaded();
+    void* ptr = &::bg3se::osidbg::_BkStoryLoaded_default_instance_;
+    new (ptr) ::bg3se::osidbg::BkStoryLoaded();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::osidbg::BkStoryLoaded::InitAsDefaultInstance();
+  ::bg3se::osidbg::BkStoryLoaded::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_BkStoryLoaded =
@@ -471,11 +471,11 @@ static void InitDefaultsBkDebugSessionEnded() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::osidbg::_BkDebugSessionEnded_default_instance_;
-    new (ptr) ::dse::osidbg::BkDebugSessionEnded();
+    void* ptr = &::bg3se::osidbg::_BkDebugSessionEnded_default_instance_;
+    new (ptr) ::bg3se::osidbg::BkDebugSessionEnded();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::osidbg::BkDebugSessionEnded::InitAsDefaultInstance();
+  ::bg3se::osidbg::BkDebugSessionEnded::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_BkDebugSessionEnded =
@@ -485,11 +485,11 @@ static void InitDefaultsMsgActionInfo() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::osidbg::_MsgActionInfo_default_instance_;
-    new (ptr) ::dse::osidbg::MsgActionInfo();
+    void* ptr = &::bg3se::osidbg::_MsgActionInfo_default_instance_;
+    new (ptr) ::bg3se::osidbg::MsgActionInfo();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::osidbg::MsgActionInfo::InitAsDefaultInstance();
+  ::bg3se::osidbg::MsgActionInfo::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_MsgActionInfo =
@@ -499,11 +499,11 @@ static void InitDefaultsMsgGoalInfo() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::osidbg::_MsgGoalInfo_default_instance_;
-    new (ptr) ::dse::osidbg::MsgGoalInfo();
+    void* ptr = &::bg3se::osidbg::_MsgGoalInfo_default_instance_;
+    new (ptr) ::bg3se::osidbg::MsgGoalInfo();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::osidbg::MsgGoalInfo::InitAsDefaultInstance();
+  ::bg3se::osidbg::MsgGoalInfo::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<1> scc_info_MsgGoalInfo =
@@ -514,11 +514,11 @@ static void InitDefaultsMsgDatabaseInfo() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::osidbg::_MsgDatabaseInfo_default_instance_;
-    new (ptr) ::dse::osidbg::MsgDatabaseInfo();
+    void* ptr = &::bg3se::osidbg::_MsgDatabaseInfo_default_instance_;
+    new (ptr) ::bg3se::osidbg::MsgDatabaseInfo();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::osidbg::MsgDatabaseInfo::InitAsDefaultInstance();
+  ::bg3se::osidbg::MsgDatabaseInfo::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_MsgDatabaseInfo =
@@ -528,11 +528,11 @@ static void InitDefaultsMsgNodeInfo() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::osidbg::_MsgNodeInfo_default_instance_;
-    new (ptr) ::dse::osidbg::MsgNodeInfo();
+    void* ptr = &::bg3se::osidbg::_MsgNodeInfo_default_instance_;
+    new (ptr) ::bg3se::osidbg::MsgNodeInfo();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::osidbg::MsgNodeInfo::InitAsDefaultInstance();
+  ::bg3se::osidbg::MsgNodeInfo::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_MsgNodeInfo =
@@ -542,11 +542,11 @@ static void InitDefaultsMsgRuleInfo() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::osidbg::_MsgRuleInfo_default_instance_;
-    new (ptr) ::dse::osidbg::MsgRuleInfo();
+    void* ptr = &::bg3se::osidbg::_MsgRuleInfo_default_instance_;
+    new (ptr) ::bg3se::osidbg::MsgRuleInfo();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::osidbg::MsgRuleInfo::InitAsDefaultInstance();
+  ::bg3se::osidbg::MsgRuleInfo::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<1> scc_info_MsgRuleInfo =
@@ -557,11 +557,11 @@ static void InitDefaultsBkSyncStoryData() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::osidbg::_BkSyncStoryData_default_instance_;
-    new (ptr) ::dse::osidbg::BkSyncStoryData();
+    void* ptr = &::bg3se::osidbg::_BkSyncStoryData_default_instance_;
+    new (ptr) ::bg3se::osidbg::BkSyncStoryData();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::osidbg::BkSyncStoryData::InitAsDefaultInstance();
+  ::bg3se::osidbg::BkSyncStoryData::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<4> scc_info_BkSyncStoryData =
@@ -575,11 +575,11 @@ static void InitDefaultsBkSyncStoryFinished() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::osidbg::_BkSyncStoryFinished_default_instance_;
-    new (ptr) ::dse::osidbg::BkSyncStoryFinished();
+    void* ptr = &::bg3se::osidbg::_BkSyncStoryFinished_default_instance_;
+    new (ptr) ::bg3se::osidbg::BkSyncStoryFinished();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::osidbg::BkSyncStoryFinished::InitAsDefaultInstance();
+  ::bg3se::osidbg::BkSyncStoryFinished::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_BkSyncStoryFinished =
@@ -589,11 +589,11 @@ static void InitDefaultsBkDebugOutput() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::osidbg::_BkDebugOutput_default_instance_;
-    new (ptr) ::dse::osidbg::BkDebugOutput();
+    void* ptr = &::bg3se::osidbg::_BkDebugOutput_default_instance_;
+    new (ptr) ::bg3se::osidbg::BkDebugOutput();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::osidbg::BkDebugOutput::InitAsDefaultInstance();
+  ::bg3se::osidbg::BkDebugOutput::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_BkDebugOutput =
@@ -603,11 +603,11 @@ static void InitDefaultsBkBeginDatabaseContents() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::osidbg::_BkBeginDatabaseContents_default_instance_;
-    new (ptr) ::dse::osidbg::BkBeginDatabaseContents();
+    void* ptr = &::bg3se::osidbg::_BkBeginDatabaseContents_default_instance_;
+    new (ptr) ::bg3se::osidbg::BkBeginDatabaseContents();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::osidbg::BkBeginDatabaseContents::InitAsDefaultInstance();
+  ::bg3se::osidbg::BkBeginDatabaseContents::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_BkBeginDatabaseContents =
@@ -617,11 +617,11 @@ static void InitDefaultsBkDatabaseRow() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::osidbg::_BkDatabaseRow_default_instance_;
-    new (ptr) ::dse::osidbg::BkDatabaseRow();
+    void* ptr = &::bg3se::osidbg::_BkDatabaseRow_default_instance_;
+    new (ptr) ::bg3se::osidbg::BkDatabaseRow();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::osidbg::BkDatabaseRow::InitAsDefaultInstance();
+  ::bg3se::osidbg::BkDatabaseRow::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<1> scc_info_BkDatabaseRow =
@@ -632,11 +632,11 @@ static void InitDefaultsBkEndDatabaseContents() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::osidbg::_BkEndDatabaseContents_default_instance_;
-    new (ptr) ::dse::osidbg::BkEndDatabaseContents();
+    void* ptr = &::bg3se::osidbg::_BkEndDatabaseContents_default_instance_;
+    new (ptr) ::bg3se::osidbg::BkEndDatabaseContents();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::osidbg::BkEndDatabaseContents::InitAsDefaultInstance();
+  ::bg3se::osidbg::BkEndDatabaseContents::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_BkEndDatabaseContents =
@@ -646,11 +646,11 @@ static void InitDefaultsBkEvaluateRow() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::osidbg::_BkEvaluateRow_default_instance_;
-    new (ptr) ::dse::osidbg::BkEvaluateRow();
+    void* ptr = &::bg3se::osidbg::_BkEvaluateRow_default_instance_;
+    new (ptr) ::bg3se::osidbg::BkEvaluateRow();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::osidbg::BkEvaluateRow::InitAsDefaultInstance();
+  ::bg3se::osidbg::BkEvaluateRow::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<1> scc_info_BkEvaluateRow =
@@ -661,11 +661,11 @@ static void InitDefaultsBkEvaluateFinished() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::osidbg::_BkEvaluateFinished_default_instance_;
-    new (ptr) ::dse::osidbg::BkEvaluateFinished();
+    void* ptr = &::bg3se::osidbg::_BkEvaluateFinished_default_instance_;
+    new (ptr) ::bg3se::osidbg::BkEvaluateFinished();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::osidbg::BkEvaluateFinished::InitAsDefaultInstance();
+  ::bg3se::osidbg::BkEvaluateFinished::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<0> scc_info_BkEvaluateFinished =
@@ -675,11 +675,11 @@ static void InitDefaultsDebuggerToBackend() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::osidbg::_DebuggerToBackend_default_instance_;
-    new (ptr) ::dse::osidbg::DebuggerToBackend();
+    void* ptr = &::bg3se::osidbg::_DebuggerToBackend_default_instance_;
+    new (ptr) ::bg3se::osidbg::DebuggerToBackend();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::osidbg::DebuggerToBackend::InitAsDefaultInstance();
+  ::bg3se::osidbg::DebuggerToBackend::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<7> scc_info_DebuggerToBackend =
@@ -696,11 +696,11 @@ static void InitDefaultsBackendToDebugger() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::dse::osidbg::_BackendToDebugger_default_instance_;
-    new (ptr) ::dse::osidbg::BackendToDebugger();
+    void* ptr = &::bg3se::osidbg::_BackendToDebugger_default_instance_;
+    new (ptr) ::bg3se::osidbg::BackendToDebugger();
     ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::dse::osidbg::BackendToDebugger::InitAsDefaultInstance();
+  ::bg3se::osidbg::BackendToDebugger::InitAsDefaultInstance();
 }
 
 ::google::protobuf::internal::SCCInfo<14> scc_info_BackendToDebugger =
@@ -756,7 +756,7 @@ void InitDefaults() {
 }
 
 }  // namespace protobuf_osidebug_2eproto
-namespace dse {
+namespace bg3se {
 namespace osidbg {
 bool MsgFrame_FrameType_IsValid(int value) {
   switch (value) {
@@ -999,7 +999,7 @@ MsgTypedValue::MsgTypedValue()
   ::google::protobuf::internal::InitSCC(
       &protobuf_osidebug_2eproto::scc_info_MsgTypedValue.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.osidbg.MsgTypedValue)
+  // @@protoc_insertion_point(constructor:bg3se.osidbg.MsgTypedValue)
 }
 MsgTypedValue::MsgTypedValue(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -1007,7 +1007,7 @@ MsgTypedValue::MsgTypedValue(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_osidebug_2eproto::scc_info_MsgTypedValue.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.osidbg.MsgTypedValue)
+  // @@protoc_insertion_point(arena_constructor:bg3se.osidbg.MsgTypedValue)
 }
 MsgTypedValue::MsgTypedValue(const MsgTypedValue& from)
   : ::google::protobuf::MessageLite(),
@@ -1032,7 +1032,7 @@ MsgTypedValue::MsgTypedValue(const MsgTypedValue& from)
       break;
     }
   }
-  // @@protoc_insertion_point(copy_constructor:dse.osidbg.MsgTypedValue)
+  // @@protoc_insertion_point(copy_constructor:bg3se.osidbg.MsgTypedValue)
 }
 
 void MsgTypedValue::SharedCtor() {
@@ -1041,7 +1041,7 @@ void MsgTypedValue::SharedCtor() {
 }
 
 MsgTypedValue::~MsgTypedValue() {
-  // @@protoc_insertion_point(destructor:dse.osidbg.MsgTypedValue)
+  // @@protoc_insertion_point(destructor:bg3se.osidbg.MsgTypedValue)
   SharedDtor();
 }
 
@@ -1068,7 +1068,7 @@ const MsgTypedValue& MsgTypedValue::default_instance() {
 
 
 void MsgTypedValue::clear_value() {
-// @@protoc_insertion_point(one_of_clear_start:dse.osidbg.MsgTypedValue)
+// @@protoc_insertion_point(one_of_clear_start:bg3se.osidbg.MsgTypedValue)
   switch (value_case()) {
     case kIntval: {
       // No need to clear
@@ -1092,7 +1092,7 @@ void MsgTypedValue::clear_value() {
 
 
 void MsgTypedValue::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.osidbg.MsgTypedValue)
+// @@protoc_insertion_point(message_clear_start:bg3se.osidbg.MsgTypedValue)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -1112,7 +1112,7 @@ bool MsgTypedValue::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.osidbg.MsgTypedValue)
+  // @@protoc_insertion_point(parse_start:bg3se.osidbg.MsgTypedValue)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -1171,7 +1171,7 @@ bool MsgTypedValue::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->stringval().data(), static_cast<int>(this->stringval().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "dse.osidbg.MsgTypedValue.stringval"));
+            "bg3se.osidbg.MsgTypedValue.stringval"));
         } else {
           goto handle_unusual;
         }
@@ -1190,17 +1190,17 @@ bool MsgTypedValue::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.osidbg.MsgTypedValue)
+  // @@protoc_insertion_point(parse_success:bg3se.osidbg.MsgTypedValue)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.osidbg.MsgTypedValue)
+  // @@protoc_insertion_point(parse_failure:bg3se.osidbg.MsgTypedValue)
   return false;
 #undef DO_
 }
 
 void MsgTypedValue::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.osidbg.MsgTypedValue)
+  // @@protoc_insertion_point(serialize_start:bg3se.osidbg.MsgTypedValue)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -1224,18 +1224,18 @@ void MsgTypedValue::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->stringval().data(), static_cast<int>(this->stringval().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "dse.osidbg.MsgTypedValue.stringval");
+      "bg3se.osidbg.MsgTypedValue.stringval");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       4, this->stringval(), output);
   }
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.osidbg.MsgTypedValue)
+  // @@protoc_insertion_point(serialize_end:bg3se.osidbg.MsgTypedValue)
 }
 
 size_t MsgTypedValue::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.osidbg.MsgTypedValue)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.osidbg.MsgTypedValue)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -1282,7 +1282,7 @@ void MsgTypedValue::CheckTypeAndMergeFrom(
 }
 
 void MsgTypedValue::MergeFrom(const MsgTypedValue& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.osidbg.MsgTypedValue)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.osidbg.MsgTypedValue)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -1311,7 +1311,7 @@ void MsgTypedValue::MergeFrom(const MsgTypedValue& from) {
 }
 
 void MsgTypedValue::CopyFrom(const MsgTypedValue& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.osidbg.MsgTypedValue)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.osidbg.MsgTypedValue)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -1349,7 +1349,7 @@ void MsgTypedValue::InternalSwap(MsgTypedValue* other) {
 }
 
 ::std::string MsgTypedValue::GetTypeName() const {
-  return "dse.osidbg.MsgTypedValue";
+  return "bg3se.osidbg.MsgTypedValue";
 }
 
 
@@ -1366,7 +1366,7 @@ MsgTuple::MsgTuple()
   ::google::protobuf::internal::InitSCC(
       &protobuf_osidebug_2eproto::scc_info_MsgTuple.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.osidbg.MsgTuple)
+  // @@protoc_insertion_point(constructor:bg3se.osidbg.MsgTuple)
 }
 MsgTuple::MsgTuple(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -1375,21 +1375,21 @@ MsgTuple::MsgTuple(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_osidebug_2eproto::scc_info_MsgTuple.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.osidbg.MsgTuple)
+  // @@protoc_insertion_point(arena_constructor:bg3se.osidbg.MsgTuple)
 }
 MsgTuple::MsgTuple(const MsgTuple& from)
   : ::google::protobuf::MessageLite(),
       _internal_metadata_(NULL),
       column_(from.column_) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  // @@protoc_insertion_point(copy_constructor:dse.osidbg.MsgTuple)
+  // @@protoc_insertion_point(copy_constructor:bg3se.osidbg.MsgTuple)
 }
 
 void MsgTuple::SharedCtor() {
 }
 
 MsgTuple::~MsgTuple() {
-  // @@protoc_insertion_point(destructor:dse.osidbg.MsgTuple)
+  // @@protoc_insertion_point(destructor:bg3se.osidbg.MsgTuple)
   SharedDtor();
 }
 
@@ -1413,7 +1413,7 @@ const MsgTuple& MsgTuple::default_instance() {
 
 
 void MsgTuple::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.osidbg.MsgTuple)
+// @@protoc_insertion_point(message_clear_start:bg3se.osidbg.MsgTuple)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -1432,13 +1432,13 @@ bool MsgTuple::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.osidbg.MsgTuple)
+  // @@protoc_insertion_point(parse_start:bg3se.osidbg.MsgTuple)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // repeated .dse.osidbg.MsgTypedValue column = 1;
+      // repeated .bg3se.osidbg.MsgTypedValue column = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
@@ -1462,21 +1462,21 @@ bool MsgTuple::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.osidbg.MsgTuple)
+  // @@protoc_insertion_point(parse_success:bg3se.osidbg.MsgTuple)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.osidbg.MsgTuple)
+  // @@protoc_insertion_point(parse_failure:bg3se.osidbg.MsgTuple)
   return false;
 #undef DO_
 }
 
 void MsgTuple::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.osidbg.MsgTuple)
+  // @@protoc_insertion_point(serialize_start:bg3se.osidbg.MsgTuple)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // repeated .dse.osidbg.MsgTypedValue column = 1;
+  // repeated .bg3se.osidbg.MsgTypedValue column = 1;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->column_size()); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
@@ -1487,16 +1487,16 @@ void MsgTuple::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.osidbg.MsgTuple)
+  // @@protoc_insertion_point(serialize_end:bg3se.osidbg.MsgTuple)
 }
 
 size_t MsgTuple::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.osidbg.MsgTuple)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.osidbg.MsgTuple)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
 
-  // repeated .dse.osidbg.MsgTypedValue column = 1;
+  // repeated .bg3se.osidbg.MsgTypedValue column = 1;
   {
     unsigned int count = static_cast<unsigned int>(this->column_size());
     total_size += 1UL * count;
@@ -1518,7 +1518,7 @@ void MsgTuple::CheckTypeAndMergeFrom(
 }
 
 void MsgTuple::MergeFrom(const MsgTuple& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.osidbg.MsgTuple)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.osidbg.MsgTuple)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -1528,7 +1528,7 @@ void MsgTuple::MergeFrom(const MsgTuple& from) {
 }
 
 void MsgTuple::CopyFrom(const MsgTuple& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.osidbg.MsgTuple)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.osidbg.MsgTuple)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -1564,18 +1564,18 @@ void MsgTuple::InternalSwap(MsgTuple* other) {
 }
 
 ::std::string MsgTuple::GetTypeName() const {
-  return "dse.osidbg.MsgTuple";
+  return "bg3se.osidbg.MsgTuple";
 }
 
 
 // ===================================================================
 
 void MsgFrame::InitAsDefaultInstance() {
-  ::dse::osidbg::_MsgFrame_default_instance_._instance.get_mutable()->tuple_ = const_cast< ::dse::osidbg::MsgTuple*>(
-      ::dse::osidbg::MsgTuple::internal_default_instance());
+  ::bg3se::osidbg::_MsgFrame_default_instance_._instance.get_mutable()->tuple_ = const_cast< ::bg3se::osidbg::MsgTuple*>(
+      ::bg3se::osidbg::MsgTuple::internal_default_instance());
 }
 void MsgFrame::unsafe_arena_set_allocated_tuple(
-    ::dse::osidbg::MsgTuple* tuple) {
+    ::bg3se::osidbg::MsgTuple* tuple) {
   if (GetArenaNoVirtual() == NULL) {
     delete tuple_;
   }
@@ -1585,7 +1585,7 @@ void MsgFrame::unsafe_arena_set_allocated_tuple(
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.osidbg.MsgFrame.tuple)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.osidbg.MsgFrame.tuple)
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int MsgFrame::kNodeIdFieldNumber;
@@ -1600,7 +1600,7 @@ MsgFrame::MsgFrame()
   ::google::protobuf::internal::InitSCC(
       &protobuf_osidebug_2eproto::scc_info_MsgFrame.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.osidbg.MsgFrame)
+  // @@protoc_insertion_point(constructor:bg3se.osidbg.MsgFrame)
 }
 MsgFrame::MsgFrame(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -1608,21 +1608,21 @@ MsgFrame::MsgFrame(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_osidebug_2eproto::scc_info_MsgFrame.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.osidbg.MsgFrame)
+  // @@protoc_insertion_point(arena_constructor:bg3se.osidbg.MsgFrame)
 }
 MsgFrame::MsgFrame(const MsgFrame& from)
   : ::google::protobuf::MessageLite(),
       _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   if (from.has_tuple()) {
-    tuple_ = new ::dse::osidbg::MsgTuple(*from.tuple_);
+    tuple_ = new ::bg3se::osidbg::MsgTuple(*from.tuple_);
   } else {
     tuple_ = NULL;
   }
   ::memcpy(&node_id_, &from.node_id_,
     static_cast<size_t>(reinterpret_cast<char*>(&action_index_) -
     reinterpret_cast<char*>(&node_id_)) + sizeof(action_index_));
-  // @@protoc_insertion_point(copy_constructor:dse.osidbg.MsgFrame)
+  // @@protoc_insertion_point(copy_constructor:bg3se.osidbg.MsgFrame)
 }
 
 void MsgFrame::SharedCtor() {
@@ -1632,7 +1632,7 @@ void MsgFrame::SharedCtor() {
 }
 
 MsgFrame::~MsgFrame() {
-  // @@protoc_insertion_point(destructor:dse.osidbg.MsgFrame)
+  // @@protoc_insertion_point(destructor:bg3se.osidbg.MsgFrame)
   SharedDtor();
 }
 
@@ -1657,7 +1657,7 @@ const MsgFrame& MsgFrame::default_instance() {
 
 
 void MsgFrame::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.osidbg.MsgFrame)
+// @@protoc_insertion_point(message_clear_start:bg3se.osidbg.MsgFrame)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -1682,7 +1682,7 @@ bool MsgFrame::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.osidbg.MsgFrame)
+  // @@protoc_insertion_point(parse_start:bg3se.osidbg.MsgFrame)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -1702,7 +1702,7 @@ bool MsgFrame::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.osidbg.MsgFrame.FrameType type = 2;
+      // .bg3se.osidbg.MsgFrame.FrameType type = 2;
       case 2: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
@@ -1710,14 +1710,14 @@ bool MsgFrame::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
                  input, &value)));
-          set_type(static_cast< ::dse::osidbg::MsgFrame_FrameType >(value));
+          set_type(static_cast< ::bg3se::osidbg::MsgFrame_FrameType >(value));
         } else {
           goto handle_unusual;
         }
         break;
       }
 
-      // .dse.osidbg.MsgTuple tuple = 3;
+      // .bg3se.osidbg.MsgTuple tuple = 3;
       case 3: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
@@ -1769,17 +1769,17 @@ bool MsgFrame::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.osidbg.MsgFrame)
+  // @@protoc_insertion_point(parse_success:bg3se.osidbg.MsgFrame)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.osidbg.MsgFrame)
+  // @@protoc_insertion_point(parse_failure:bg3se.osidbg.MsgFrame)
   return false;
 #undef DO_
 }
 
 void MsgFrame::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.osidbg.MsgFrame)
+  // @@protoc_insertion_point(serialize_start:bg3se.osidbg.MsgFrame)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -1788,13 +1788,13 @@ void MsgFrame::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(1, this->node_id(), output);
   }
 
-  // .dse.osidbg.MsgFrame.FrameType type = 2;
+  // .bg3se.osidbg.MsgFrame.FrameType type = 2;
   if (this->type() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
       2, this->type(), output);
   }
 
-  // .dse.osidbg.MsgTuple tuple = 3;
+  // .bg3se.osidbg.MsgTuple tuple = 3;
   if (this->has_tuple()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       3, this->_internal_tuple(), output);
@@ -1812,16 +1812,16 @@ void MsgFrame::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.osidbg.MsgFrame)
+  // @@protoc_insertion_point(serialize_end:bg3se.osidbg.MsgFrame)
 }
 
 size_t MsgFrame::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.osidbg.MsgFrame)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.osidbg.MsgFrame)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
 
-  // .dse.osidbg.MsgTuple tuple = 3;
+  // .bg3se.osidbg.MsgTuple tuple = 3;
   if (this->has_tuple()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
@@ -1835,7 +1835,7 @@ size_t MsgFrame::ByteSizeLong() const {
         this->node_id());
   }
 
-  // .dse.osidbg.MsgFrame.FrameType type = 2;
+  // .bg3se.osidbg.MsgFrame.FrameType type = 2;
   if (this->type() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::EnumSize(this->type());
@@ -1866,14 +1866,14 @@ void MsgFrame::CheckTypeAndMergeFrom(
 }
 
 void MsgFrame::MergeFrom(const MsgFrame& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.osidbg.MsgFrame)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.osidbg.MsgFrame)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
   if (from.has_tuple()) {
-    mutable_tuple()->::dse::osidbg::MsgTuple::MergeFrom(from.tuple());
+    mutable_tuple()->::bg3se::osidbg::MsgTuple::MergeFrom(from.tuple());
   }
   if (from.node_id() != 0) {
     set_node_id(from.node_id());
@@ -1890,7 +1890,7 @@ void MsgFrame::MergeFrom(const MsgFrame& from) {
 }
 
 void MsgFrame::CopyFrom(const MsgFrame& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.osidbg.MsgFrame)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.osidbg.MsgFrame)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -1930,7 +1930,7 @@ void MsgFrame::InternalSwap(MsgFrame* other) {
 }
 
 ::std::string MsgFrame::GetTypeName() const {
-  return "dse.osidbg.MsgFrame";
+  return "bg3se.osidbg.MsgFrame";
 }
 
 
@@ -1947,7 +1947,7 @@ DbgIdentifyRequest::DbgIdentifyRequest()
   ::google::protobuf::internal::InitSCC(
       &protobuf_osidebug_2eproto::scc_info_DbgIdentifyRequest.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.osidbg.DbgIdentifyRequest)
+  // @@protoc_insertion_point(constructor:bg3se.osidbg.DbgIdentifyRequest)
 }
 DbgIdentifyRequest::DbgIdentifyRequest(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -1955,14 +1955,14 @@ DbgIdentifyRequest::DbgIdentifyRequest(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_osidebug_2eproto::scc_info_DbgIdentifyRequest.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.osidbg.DbgIdentifyRequest)
+  // @@protoc_insertion_point(arena_constructor:bg3se.osidbg.DbgIdentifyRequest)
 }
 DbgIdentifyRequest::DbgIdentifyRequest(const DbgIdentifyRequest& from)
   : ::google::protobuf::MessageLite(),
       _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   protocol_version_ = from.protocol_version_;
-  // @@protoc_insertion_point(copy_constructor:dse.osidbg.DbgIdentifyRequest)
+  // @@protoc_insertion_point(copy_constructor:bg3se.osidbg.DbgIdentifyRequest)
 }
 
 void DbgIdentifyRequest::SharedCtor() {
@@ -1970,7 +1970,7 @@ void DbgIdentifyRequest::SharedCtor() {
 }
 
 DbgIdentifyRequest::~DbgIdentifyRequest() {
-  // @@protoc_insertion_point(destructor:dse.osidbg.DbgIdentifyRequest)
+  // @@protoc_insertion_point(destructor:bg3se.osidbg.DbgIdentifyRequest)
   SharedDtor();
 }
 
@@ -1994,7 +1994,7 @@ const DbgIdentifyRequest& DbgIdentifyRequest::default_instance() {
 
 
 void DbgIdentifyRequest::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.osidbg.DbgIdentifyRequest)
+// @@protoc_insertion_point(message_clear_start:bg3se.osidbg.DbgIdentifyRequest)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -2013,7 +2013,7 @@ bool DbgIdentifyRequest::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.osidbg.DbgIdentifyRequest)
+  // @@protoc_insertion_point(parse_start:bg3se.osidbg.DbgIdentifyRequest)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -2045,17 +2045,17 @@ bool DbgIdentifyRequest::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.osidbg.DbgIdentifyRequest)
+  // @@protoc_insertion_point(parse_success:bg3se.osidbg.DbgIdentifyRequest)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.osidbg.DbgIdentifyRequest)
+  // @@protoc_insertion_point(parse_failure:bg3se.osidbg.DbgIdentifyRequest)
   return false;
 #undef DO_
 }
 
 void DbgIdentifyRequest::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.osidbg.DbgIdentifyRequest)
+  // @@protoc_insertion_point(serialize_start:bg3se.osidbg.DbgIdentifyRequest)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -2066,11 +2066,11 @@ void DbgIdentifyRequest::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.osidbg.DbgIdentifyRequest)
+  // @@protoc_insertion_point(serialize_end:bg3se.osidbg.DbgIdentifyRequest)
 }
 
 size_t DbgIdentifyRequest::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.osidbg.DbgIdentifyRequest)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.osidbg.DbgIdentifyRequest)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -2093,7 +2093,7 @@ void DbgIdentifyRequest::CheckTypeAndMergeFrom(
 }
 
 void DbgIdentifyRequest::MergeFrom(const DbgIdentifyRequest& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.osidbg.DbgIdentifyRequest)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.osidbg.DbgIdentifyRequest)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -2105,7 +2105,7 @@ void DbgIdentifyRequest::MergeFrom(const DbgIdentifyRequest& from) {
 }
 
 void DbgIdentifyRequest::CopyFrom(const DbgIdentifyRequest& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.osidbg.DbgIdentifyRequest)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.osidbg.DbgIdentifyRequest)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -2141,7 +2141,7 @@ void DbgIdentifyRequest::InternalSwap(DbgIdentifyRequest* other) {
 }
 
 ::std::string DbgIdentifyRequest::GetTypeName() const {
-  return "dse.osidbg.DbgIdentifyRequest";
+  return "bg3se.osidbg.DbgIdentifyRequest";
 }
 
 
@@ -2160,7 +2160,7 @@ BkVersionInfoResponse::BkVersionInfoResponse()
   ::google::protobuf::internal::InitSCC(
       &protobuf_osidebug_2eproto::scc_info_BkVersionInfoResponse.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.osidbg.BkVersionInfoResponse)
+  // @@protoc_insertion_point(constructor:bg3se.osidbg.BkVersionInfoResponse)
 }
 BkVersionInfoResponse::BkVersionInfoResponse(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -2168,7 +2168,7 @@ BkVersionInfoResponse::BkVersionInfoResponse(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_osidebug_2eproto::scc_info_BkVersionInfoResponse.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.osidbg.BkVersionInfoResponse)
+  // @@protoc_insertion_point(arena_constructor:bg3se.osidbg.BkVersionInfoResponse)
 }
 BkVersionInfoResponse::BkVersionInfoResponse(const BkVersionInfoResponse& from)
   : ::google::protobuf::MessageLite(),
@@ -2177,7 +2177,7 @@ BkVersionInfoResponse::BkVersionInfoResponse(const BkVersionInfoResponse& from)
   ::memcpy(&protocol_version_, &from.protocol_version_,
     static_cast<size_t>(reinterpret_cast<char*>(&story_initialized_) -
     reinterpret_cast<char*>(&protocol_version_)) + sizeof(story_initialized_));
-  // @@protoc_insertion_point(copy_constructor:dse.osidbg.BkVersionInfoResponse)
+  // @@protoc_insertion_point(copy_constructor:bg3se.osidbg.BkVersionInfoResponse)
 }
 
 void BkVersionInfoResponse::SharedCtor() {
@@ -2187,7 +2187,7 @@ void BkVersionInfoResponse::SharedCtor() {
 }
 
 BkVersionInfoResponse::~BkVersionInfoResponse() {
-  // @@protoc_insertion_point(destructor:dse.osidbg.BkVersionInfoResponse)
+  // @@protoc_insertion_point(destructor:bg3se.osidbg.BkVersionInfoResponse)
   SharedDtor();
 }
 
@@ -2211,7 +2211,7 @@ const BkVersionInfoResponse& BkVersionInfoResponse::default_instance() {
 
 
 void BkVersionInfoResponse::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.osidbg.BkVersionInfoResponse)
+// @@protoc_insertion_point(message_clear_start:bg3se.osidbg.BkVersionInfoResponse)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -2232,7 +2232,7 @@ bool BkVersionInfoResponse::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.osidbg.BkVersionInfoResponse)
+  // @@protoc_insertion_point(parse_start:bg3se.osidbg.BkVersionInfoResponse)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -2292,17 +2292,17 @@ bool BkVersionInfoResponse::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.osidbg.BkVersionInfoResponse)
+  // @@protoc_insertion_point(parse_success:bg3se.osidbg.BkVersionInfoResponse)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.osidbg.BkVersionInfoResponse)
+  // @@protoc_insertion_point(parse_failure:bg3se.osidbg.BkVersionInfoResponse)
   return false;
 #undef DO_
 }
 
 void BkVersionInfoResponse::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.osidbg.BkVersionInfoResponse)
+  // @@protoc_insertion_point(serialize_start:bg3se.osidbg.BkVersionInfoResponse)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -2323,11 +2323,11 @@ void BkVersionInfoResponse::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.osidbg.BkVersionInfoResponse)
+  // @@protoc_insertion_point(serialize_end:bg3se.osidbg.BkVersionInfoResponse)
 }
 
 size_t BkVersionInfoResponse::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.osidbg.BkVersionInfoResponse)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.osidbg.BkVersionInfoResponse)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -2360,7 +2360,7 @@ void BkVersionInfoResponse::CheckTypeAndMergeFrom(
 }
 
 void BkVersionInfoResponse::MergeFrom(const BkVersionInfoResponse& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.osidbg.BkVersionInfoResponse)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.osidbg.BkVersionInfoResponse)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -2378,7 +2378,7 @@ void BkVersionInfoResponse::MergeFrom(const BkVersionInfoResponse& from) {
 }
 
 void BkVersionInfoResponse::CopyFrom(const BkVersionInfoResponse& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.osidbg.BkVersionInfoResponse)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.osidbg.BkVersionInfoResponse)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -2416,7 +2416,7 @@ void BkVersionInfoResponse::InternalSwap(BkVersionInfoResponse* other) {
 }
 
 ::std::string BkVersionInfoResponse::GetTypeName() const {
-  return "dse.osidbg.BkVersionInfoResponse";
+  return "bg3se.osidbg.BkVersionInfoResponse";
 }
 
 
@@ -2433,7 +2433,7 @@ DbgSetGlobalBreakpoints::DbgSetGlobalBreakpoints()
   ::google::protobuf::internal::InitSCC(
       &protobuf_osidebug_2eproto::scc_info_DbgSetGlobalBreakpoints.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.osidbg.DbgSetGlobalBreakpoints)
+  // @@protoc_insertion_point(constructor:bg3se.osidbg.DbgSetGlobalBreakpoints)
 }
 DbgSetGlobalBreakpoints::DbgSetGlobalBreakpoints(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -2441,14 +2441,14 @@ DbgSetGlobalBreakpoints::DbgSetGlobalBreakpoints(::google::protobuf::Arena* aren
   ::google::protobuf::internal::InitSCC(&protobuf_osidebug_2eproto::scc_info_DbgSetGlobalBreakpoints.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.osidbg.DbgSetGlobalBreakpoints)
+  // @@protoc_insertion_point(arena_constructor:bg3se.osidbg.DbgSetGlobalBreakpoints)
 }
 DbgSetGlobalBreakpoints::DbgSetGlobalBreakpoints(const DbgSetGlobalBreakpoints& from)
   : ::google::protobuf::MessageLite(),
       _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   breakpoint_mask_ = from.breakpoint_mask_;
-  // @@protoc_insertion_point(copy_constructor:dse.osidbg.DbgSetGlobalBreakpoints)
+  // @@protoc_insertion_point(copy_constructor:bg3se.osidbg.DbgSetGlobalBreakpoints)
 }
 
 void DbgSetGlobalBreakpoints::SharedCtor() {
@@ -2456,7 +2456,7 @@ void DbgSetGlobalBreakpoints::SharedCtor() {
 }
 
 DbgSetGlobalBreakpoints::~DbgSetGlobalBreakpoints() {
-  // @@protoc_insertion_point(destructor:dse.osidbg.DbgSetGlobalBreakpoints)
+  // @@protoc_insertion_point(destructor:bg3se.osidbg.DbgSetGlobalBreakpoints)
   SharedDtor();
 }
 
@@ -2480,7 +2480,7 @@ const DbgSetGlobalBreakpoints& DbgSetGlobalBreakpoints::default_instance() {
 
 
 void DbgSetGlobalBreakpoints::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.osidbg.DbgSetGlobalBreakpoints)
+// @@protoc_insertion_point(message_clear_start:bg3se.osidbg.DbgSetGlobalBreakpoints)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -2499,7 +2499,7 @@ bool DbgSetGlobalBreakpoints::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.osidbg.DbgSetGlobalBreakpoints)
+  // @@protoc_insertion_point(parse_start:bg3se.osidbg.DbgSetGlobalBreakpoints)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -2531,17 +2531,17 @@ bool DbgSetGlobalBreakpoints::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.osidbg.DbgSetGlobalBreakpoints)
+  // @@protoc_insertion_point(parse_success:bg3se.osidbg.DbgSetGlobalBreakpoints)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.osidbg.DbgSetGlobalBreakpoints)
+  // @@protoc_insertion_point(parse_failure:bg3se.osidbg.DbgSetGlobalBreakpoints)
   return false;
 #undef DO_
 }
 
 void DbgSetGlobalBreakpoints::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.osidbg.DbgSetGlobalBreakpoints)
+  // @@protoc_insertion_point(serialize_start:bg3se.osidbg.DbgSetGlobalBreakpoints)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -2552,11 +2552,11 @@ void DbgSetGlobalBreakpoints::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.osidbg.DbgSetGlobalBreakpoints)
+  // @@protoc_insertion_point(serialize_end:bg3se.osidbg.DbgSetGlobalBreakpoints)
 }
 
 size_t DbgSetGlobalBreakpoints::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.osidbg.DbgSetGlobalBreakpoints)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.osidbg.DbgSetGlobalBreakpoints)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -2579,7 +2579,7 @@ void DbgSetGlobalBreakpoints::CheckTypeAndMergeFrom(
 }
 
 void DbgSetGlobalBreakpoints::MergeFrom(const DbgSetGlobalBreakpoints& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.osidbg.DbgSetGlobalBreakpoints)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.osidbg.DbgSetGlobalBreakpoints)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -2591,7 +2591,7 @@ void DbgSetGlobalBreakpoints::MergeFrom(const DbgSetGlobalBreakpoints& from) {
 }
 
 void DbgSetGlobalBreakpoints::CopyFrom(const DbgSetGlobalBreakpoints& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.osidbg.DbgSetGlobalBreakpoints)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.osidbg.DbgSetGlobalBreakpoints)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -2627,7 +2627,7 @@ void DbgSetGlobalBreakpoints::InternalSwap(DbgSetGlobalBreakpoints* other) {
 }
 
 ::std::string DbgSetGlobalBreakpoints::GetTypeName() const {
-  return "dse.osidbg.DbgSetGlobalBreakpoints";
+  return "bg3se.osidbg.DbgSetGlobalBreakpoints";
 }
 
 
@@ -2648,7 +2648,7 @@ MsgBreakpoint::MsgBreakpoint()
   ::google::protobuf::internal::InitSCC(
       &protobuf_osidebug_2eproto::scc_info_MsgBreakpoint.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.osidbg.MsgBreakpoint)
+  // @@protoc_insertion_point(constructor:bg3se.osidbg.MsgBreakpoint)
 }
 MsgBreakpoint::MsgBreakpoint(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -2656,7 +2656,7 @@ MsgBreakpoint::MsgBreakpoint(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_osidebug_2eproto::scc_info_MsgBreakpoint.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.osidbg.MsgBreakpoint)
+  // @@protoc_insertion_point(arena_constructor:bg3se.osidbg.MsgBreakpoint)
 }
 MsgBreakpoint::MsgBreakpoint(const MsgBreakpoint& from)
   : ::google::protobuf::MessageLite(),
@@ -2665,7 +2665,7 @@ MsgBreakpoint::MsgBreakpoint(const MsgBreakpoint& from)
   ::memcpy(&node_id_, &from.node_id_,
     static_cast<size_t>(reinterpret_cast<char*>(&action_index_) -
     reinterpret_cast<char*>(&node_id_)) + sizeof(action_index_));
-  // @@protoc_insertion_point(copy_constructor:dse.osidbg.MsgBreakpoint)
+  // @@protoc_insertion_point(copy_constructor:bg3se.osidbg.MsgBreakpoint)
 }
 
 void MsgBreakpoint::SharedCtor() {
@@ -2675,7 +2675,7 @@ void MsgBreakpoint::SharedCtor() {
 }
 
 MsgBreakpoint::~MsgBreakpoint() {
-  // @@protoc_insertion_point(destructor:dse.osidbg.MsgBreakpoint)
+  // @@protoc_insertion_point(destructor:bg3se.osidbg.MsgBreakpoint)
   SharedDtor();
 }
 
@@ -2699,7 +2699,7 @@ const MsgBreakpoint& MsgBreakpoint::default_instance() {
 
 
 void MsgBreakpoint::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.osidbg.MsgBreakpoint)
+// @@protoc_insertion_point(message_clear_start:bg3se.osidbg.MsgBreakpoint)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -2720,7 +2720,7 @@ bool MsgBreakpoint::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.osidbg.MsgBreakpoint)
+  // @@protoc_insertion_point(parse_start:bg3se.osidbg.MsgBreakpoint)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -2808,17 +2808,17 @@ bool MsgBreakpoint::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.osidbg.MsgBreakpoint)
+  // @@protoc_insertion_point(parse_success:bg3se.osidbg.MsgBreakpoint)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.osidbg.MsgBreakpoint)
+  // @@protoc_insertion_point(parse_failure:bg3se.osidbg.MsgBreakpoint)
   return false;
 #undef DO_
 }
 
 void MsgBreakpoint::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.osidbg.MsgBreakpoint)
+  // @@protoc_insertion_point(serialize_start:bg3se.osidbg.MsgBreakpoint)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -2849,11 +2849,11 @@ void MsgBreakpoint::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.osidbg.MsgBreakpoint)
+  // @@protoc_insertion_point(serialize_end:bg3se.osidbg.MsgBreakpoint)
 }
 
 size_t MsgBreakpoint::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.osidbg.MsgBreakpoint)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.osidbg.MsgBreakpoint)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -2902,7 +2902,7 @@ void MsgBreakpoint::CheckTypeAndMergeFrom(
 }
 
 void MsgBreakpoint::MergeFrom(const MsgBreakpoint& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.osidbg.MsgBreakpoint)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.osidbg.MsgBreakpoint)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -2926,7 +2926,7 @@ void MsgBreakpoint::MergeFrom(const MsgBreakpoint& from) {
 }
 
 void MsgBreakpoint::CopyFrom(const MsgBreakpoint& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.osidbg.MsgBreakpoint)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.osidbg.MsgBreakpoint)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -2966,7 +2966,7 @@ void MsgBreakpoint::InternalSwap(MsgBreakpoint* other) {
 }
 
 ::std::string MsgBreakpoint::GetTypeName() const {
-  return "dse.osidbg.MsgBreakpoint";
+  return "bg3se.osidbg.MsgBreakpoint";
 }
 
 
@@ -2983,7 +2983,7 @@ DbgSetBreakpoints::DbgSetBreakpoints()
   ::google::protobuf::internal::InitSCC(
       &protobuf_osidebug_2eproto::scc_info_DbgSetBreakpoints.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.osidbg.DbgSetBreakpoints)
+  // @@protoc_insertion_point(constructor:bg3se.osidbg.DbgSetBreakpoints)
 }
 DbgSetBreakpoints::DbgSetBreakpoints(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -2992,21 +2992,21 @@ DbgSetBreakpoints::DbgSetBreakpoints(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_osidebug_2eproto::scc_info_DbgSetBreakpoints.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.osidbg.DbgSetBreakpoints)
+  // @@protoc_insertion_point(arena_constructor:bg3se.osidbg.DbgSetBreakpoints)
 }
 DbgSetBreakpoints::DbgSetBreakpoints(const DbgSetBreakpoints& from)
   : ::google::protobuf::MessageLite(),
       _internal_metadata_(NULL),
       breakpoint_(from.breakpoint_) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  // @@protoc_insertion_point(copy_constructor:dse.osidbg.DbgSetBreakpoints)
+  // @@protoc_insertion_point(copy_constructor:bg3se.osidbg.DbgSetBreakpoints)
 }
 
 void DbgSetBreakpoints::SharedCtor() {
 }
 
 DbgSetBreakpoints::~DbgSetBreakpoints() {
-  // @@protoc_insertion_point(destructor:dse.osidbg.DbgSetBreakpoints)
+  // @@protoc_insertion_point(destructor:bg3se.osidbg.DbgSetBreakpoints)
   SharedDtor();
 }
 
@@ -3030,7 +3030,7 @@ const DbgSetBreakpoints& DbgSetBreakpoints::default_instance() {
 
 
 void DbgSetBreakpoints::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.osidbg.DbgSetBreakpoints)
+// @@protoc_insertion_point(message_clear_start:bg3se.osidbg.DbgSetBreakpoints)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -3049,13 +3049,13 @@ bool DbgSetBreakpoints::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.osidbg.DbgSetBreakpoints)
+  // @@protoc_insertion_point(parse_start:bg3se.osidbg.DbgSetBreakpoints)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // repeated .dse.osidbg.MsgBreakpoint breakpoint = 1;
+      // repeated .bg3se.osidbg.MsgBreakpoint breakpoint = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
@@ -3079,21 +3079,21 @@ bool DbgSetBreakpoints::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.osidbg.DbgSetBreakpoints)
+  // @@protoc_insertion_point(parse_success:bg3se.osidbg.DbgSetBreakpoints)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.osidbg.DbgSetBreakpoints)
+  // @@protoc_insertion_point(parse_failure:bg3se.osidbg.DbgSetBreakpoints)
   return false;
 #undef DO_
 }
 
 void DbgSetBreakpoints::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.osidbg.DbgSetBreakpoints)
+  // @@protoc_insertion_point(serialize_start:bg3se.osidbg.DbgSetBreakpoints)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // repeated .dse.osidbg.MsgBreakpoint breakpoint = 1;
+  // repeated .bg3se.osidbg.MsgBreakpoint breakpoint = 1;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->breakpoint_size()); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
@@ -3104,16 +3104,16 @@ void DbgSetBreakpoints::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.osidbg.DbgSetBreakpoints)
+  // @@protoc_insertion_point(serialize_end:bg3se.osidbg.DbgSetBreakpoints)
 }
 
 size_t DbgSetBreakpoints::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.osidbg.DbgSetBreakpoints)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.osidbg.DbgSetBreakpoints)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
 
-  // repeated .dse.osidbg.MsgBreakpoint breakpoint = 1;
+  // repeated .bg3se.osidbg.MsgBreakpoint breakpoint = 1;
   {
     unsigned int count = static_cast<unsigned int>(this->breakpoint_size());
     total_size += 1UL * count;
@@ -3135,7 +3135,7 @@ void DbgSetBreakpoints::CheckTypeAndMergeFrom(
 }
 
 void DbgSetBreakpoints::MergeFrom(const DbgSetBreakpoints& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.osidbg.DbgSetBreakpoints)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.osidbg.DbgSetBreakpoints)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -3145,7 +3145,7 @@ void DbgSetBreakpoints::MergeFrom(const DbgSetBreakpoints& from) {
 }
 
 void DbgSetBreakpoints::CopyFrom(const DbgSetBreakpoints& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.osidbg.DbgSetBreakpoints)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.osidbg.DbgSetBreakpoints)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -3181,18 +3181,18 @@ void DbgSetBreakpoints::InternalSwap(DbgSetBreakpoints* other) {
 }
 
 ::std::string DbgSetBreakpoints::GetTypeName() const {
-  return "dse.osidbg.DbgSetBreakpoints";
+  return "bg3se.osidbg.DbgSetBreakpoints";
 }
 
 
 // ===================================================================
 
 void BkBreakpointTriggered::InitAsDefaultInstance() {
-  ::dse::osidbg::_BkBreakpointTriggered_default_instance_._instance.get_mutable()->query_results_ = const_cast< ::dse::osidbg::MsgTuple*>(
-      ::dse::osidbg::MsgTuple::internal_default_instance());
+  ::bg3se::osidbg::_BkBreakpointTriggered_default_instance_._instance.get_mutable()->query_results_ = const_cast< ::bg3se::osidbg::MsgTuple*>(
+      ::bg3se::osidbg::MsgTuple::internal_default_instance());
 }
 void BkBreakpointTriggered::unsafe_arena_set_allocated_query_results(
-    ::dse::osidbg::MsgTuple* query_results) {
+    ::bg3se::osidbg::MsgTuple* query_results) {
   if (GetArenaNoVirtual() == NULL) {
     delete query_results_;
   }
@@ -3202,7 +3202,7 @@ void BkBreakpointTriggered::unsafe_arena_set_allocated_query_results(
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.osidbg.BkBreakpointTriggered.query_results)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.osidbg.BkBreakpointTriggered.query_results)
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int BkBreakpointTriggered::kCallStackFieldNumber;
@@ -3216,7 +3216,7 @@ BkBreakpointTriggered::BkBreakpointTriggered()
   ::google::protobuf::internal::InitSCC(
       &protobuf_osidebug_2eproto::scc_info_BkBreakpointTriggered.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.osidbg.BkBreakpointTriggered)
+  // @@protoc_insertion_point(constructor:bg3se.osidbg.BkBreakpointTriggered)
 }
 BkBreakpointTriggered::BkBreakpointTriggered(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -3225,7 +3225,7 @@ BkBreakpointTriggered::BkBreakpointTriggered(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_osidebug_2eproto::scc_info_BkBreakpointTriggered.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.osidbg.BkBreakpointTriggered)
+  // @@protoc_insertion_point(arena_constructor:bg3se.osidbg.BkBreakpointTriggered)
 }
 BkBreakpointTriggered::BkBreakpointTriggered(const BkBreakpointTriggered& from)
   : ::google::protobuf::MessageLite(),
@@ -3233,14 +3233,14 @@ BkBreakpointTriggered::BkBreakpointTriggered(const BkBreakpointTriggered& from)
       call_stack_(from.call_stack_) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   if (from.has_query_results()) {
-    query_results_ = new ::dse::osidbg::MsgTuple(*from.query_results_);
+    query_results_ = new ::bg3se::osidbg::MsgTuple(*from.query_results_);
   } else {
     query_results_ = NULL;
   }
   ::memcpy(&query_succeeded_, &from.query_succeeded_,
     static_cast<size_t>(reinterpret_cast<char*>(&query_node_id_) -
     reinterpret_cast<char*>(&query_succeeded_)) + sizeof(query_node_id_));
-  // @@protoc_insertion_point(copy_constructor:dse.osidbg.BkBreakpointTriggered)
+  // @@protoc_insertion_point(copy_constructor:bg3se.osidbg.BkBreakpointTriggered)
 }
 
 void BkBreakpointTriggered::SharedCtor() {
@@ -3250,7 +3250,7 @@ void BkBreakpointTriggered::SharedCtor() {
 }
 
 BkBreakpointTriggered::~BkBreakpointTriggered() {
-  // @@protoc_insertion_point(destructor:dse.osidbg.BkBreakpointTriggered)
+  // @@protoc_insertion_point(destructor:bg3se.osidbg.BkBreakpointTriggered)
   SharedDtor();
 }
 
@@ -3275,7 +3275,7 @@ const BkBreakpointTriggered& BkBreakpointTriggered::default_instance() {
 
 
 void BkBreakpointTriggered::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.osidbg.BkBreakpointTriggered)
+// @@protoc_insertion_point(message_clear_start:bg3se.osidbg.BkBreakpointTriggered)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -3301,13 +3301,13 @@ bool BkBreakpointTriggered::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.osidbg.BkBreakpointTriggered)
+  // @@protoc_insertion_point(parse_start:bg3se.osidbg.BkBreakpointTriggered)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // repeated .dse.osidbg.MsgFrame call_stack = 1;
+      // repeated .bg3se.osidbg.MsgFrame call_stack = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
@@ -3319,7 +3319,7 @@ bool BkBreakpointTriggered::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.osidbg.BkBreakpointTriggered.QueryStatus query_succeeded = 2;
+      // .bg3se.osidbg.BkBreakpointTriggered.QueryStatus query_succeeded = 2;
       case 2: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
@@ -3327,14 +3327,14 @@ bool BkBreakpointTriggered::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
                  input, &value)));
-          set_query_succeeded(static_cast< ::dse::osidbg::BkBreakpointTriggered_QueryStatus >(value));
+          set_query_succeeded(static_cast< ::bg3se::osidbg::BkBreakpointTriggered_QueryStatus >(value));
         } else {
           goto handle_unusual;
         }
         break;
       }
 
-      // .dse.osidbg.MsgTuple query_results = 3;
+      // .bg3se.osidbg.MsgTuple query_results = 3;
       case 3: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
@@ -3372,21 +3372,21 @@ bool BkBreakpointTriggered::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.osidbg.BkBreakpointTriggered)
+  // @@protoc_insertion_point(parse_success:bg3se.osidbg.BkBreakpointTriggered)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.osidbg.BkBreakpointTriggered)
+  // @@protoc_insertion_point(parse_failure:bg3se.osidbg.BkBreakpointTriggered)
   return false;
 #undef DO_
 }
 
 void BkBreakpointTriggered::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.osidbg.BkBreakpointTriggered)
+  // @@protoc_insertion_point(serialize_start:bg3se.osidbg.BkBreakpointTriggered)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // repeated .dse.osidbg.MsgFrame call_stack = 1;
+  // repeated .bg3se.osidbg.MsgFrame call_stack = 1;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->call_stack_size()); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
@@ -3395,13 +3395,13 @@ void BkBreakpointTriggered::SerializeWithCachedSizes(
       output);
   }
 
-  // .dse.osidbg.BkBreakpointTriggered.QueryStatus query_succeeded = 2;
+  // .bg3se.osidbg.BkBreakpointTriggered.QueryStatus query_succeeded = 2;
   if (this->query_succeeded() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
       2, this->query_succeeded(), output);
   }
 
-  // .dse.osidbg.MsgTuple query_results = 3;
+  // .bg3se.osidbg.MsgTuple query_results = 3;
   if (this->has_query_results()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       3, this->_internal_query_results(), output);
@@ -3414,16 +3414,16 @@ void BkBreakpointTriggered::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.osidbg.BkBreakpointTriggered)
+  // @@protoc_insertion_point(serialize_end:bg3se.osidbg.BkBreakpointTriggered)
 }
 
 size_t BkBreakpointTriggered::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.osidbg.BkBreakpointTriggered)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.osidbg.BkBreakpointTriggered)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
 
-  // repeated .dse.osidbg.MsgFrame call_stack = 1;
+  // repeated .bg3se.osidbg.MsgFrame call_stack = 1;
   {
     unsigned int count = static_cast<unsigned int>(this->call_stack_size());
     total_size += 1UL * count;
@@ -3434,14 +3434,14 @@ size_t BkBreakpointTriggered::ByteSizeLong() const {
     }
   }
 
-  // .dse.osidbg.MsgTuple query_results = 3;
+  // .bg3se.osidbg.MsgTuple query_results = 3;
   if (this->has_query_results()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
         *query_results_);
   }
 
-  // .dse.osidbg.BkBreakpointTriggered.QueryStatus query_succeeded = 2;
+  // .bg3se.osidbg.BkBreakpointTriggered.QueryStatus query_succeeded = 2;
   if (this->query_succeeded() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::EnumSize(this->query_succeeded());
@@ -3465,7 +3465,7 @@ void BkBreakpointTriggered::CheckTypeAndMergeFrom(
 }
 
 void BkBreakpointTriggered::MergeFrom(const BkBreakpointTriggered& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.osidbg.BkBreakpointTriggered)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.osidbg.BkBreakpointTriggered)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -3473,7 +3473,7 @@ void BkBreakpointTriggered::MergeFrom(const BkBreakpointTriggered& from) {
 
   call_stack_.MergeFrom(from.call_stack_);
   if (from.has_query_results()) {
-    mutable_query_results()->::dse::osidbg::MsgTuple::MergeFrom(from.query_results());
+    mutable_query_results()->::bg3se::osidbg::MsgTuple::MergeFrom(from.query_results());
   }
   if (from.query_succeeded() != 0) {
     set_query_succeeded(from.query_succeeded());
@@ -3484,7 +3484,7 @@ void BkBreakpointTriggered::MergeFrom(const BkBreakpointTriggered& from) {
 }
 
 void BkBreakpointTriggered::CopyFrom(const BkBreakpointTriggered& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.osidbg.BkBreakpointTriggered)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.osidbg.BkBreakpointTriggered)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -3523,7 +3523,7 @@ void BkBreakpointTriggered::InternalSwap(BkBreakpointTriggered* other) {
 }
 
 ::std::string BkBreakpointTriggered::GetTypeName() const {
-  return "dse.osidbg.BkBreakpointTriggered";
+  return "bg3se.osidbg.BkBreakpointTriggered";
 }
 
 
@@ -3540,7 +3540,7 @@ BkGlobalBreakpointTriggered::BkGlobalBreakpointTriggered()
   ::google::protobuf::internal::InitSCC(
       &protobuf_osidebug_2eproto::scc_info_BkGlobalBreakpointTriggered.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.osidbg.BkGlobalBreakpointTriggered)
+  // @@protoc_insertion_point(constructor:bg3se.osidbg.BkGlobalBreakpointTriggered)
 }
 BkGlobalBreakpointTriggered::BkGlobalBreakpointTriggered(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -3548,14 +3548,14 @@ BkGlobalBreakpointTriggered::BkGlobalBreakpointTriggered(::google::protobuf::Are
   ::google::protobuf::internal::InitSCC(&protobuf_osidebug_2eproto::scc_info_BkGlobalBreakpointTriggered.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.osidbg.BkGlobalBreakpointTriggered)
+  // @@protoc_insertion_point(arena_constructor:bg3se.osidbg.BkGlobalBreakpointTriggered)
 }
 BkGlobalBreakpointTriggered::BkGlobalBreakpointTriggered(const BkGlobalBreakpointTriggered& from)
   : ::google::protobuf::MessageLite(),
       _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   reason_ = from.reason_;
-  // @@protoc_insertion_point(copy_constructor:dse.osidbg.BkGlobalBreakpointTriggered)
+  // @@protoc_insertion_point(copy_constructor:bg3se.osidbg.BkGlobalBreakpointTriggered)
 }
 
 void BkGlobalBreakpointTriggered::SharedCtor() {
@@ -3563,7 +3563,7 @@ void BkGlobalBreakpointTriggered::SharedCtor() {
 }
 
 BkGlobalBreakpointTriggered::~BkGlobalBreakpointTriggered() {
-  // @@protoc_insertion_point(destructor:dse.osidbg.BkGlobalBreakpointTriggered)
+  // @@protoc_insertion_point(destructor:bg3se.osidbg.BkGlobalBreakpointTriggered)
   SharedDtor();
 }
 
@@ -3587,7 +3587,7 @@ const BkGlobalBreakpointTriggered& BkGlobalBreakpointTriggered::default_instance
 
 
 void BkGlobalBreakpointTriggered::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.osidbg.BkGlobalBreakpointTriggered)
+// @@protoc_insertion_point(message_clear_start:bg3se.osidbg.BkGlobalBreakpointTriggered)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -3606,13 +3606,13 @@ bool BkGlobalBreakpointTriggered::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.osidbg.BkGlobalBreakpointTriggered)
+  // @@protoc_insertion_point(parse_start:bg3se.osidbg.BkGlobalBreakpointTriggered)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .dse.osidbg.BkGlobalBreakpointTriggered.Reason reason = 1;
+      // .bg3se.osidbg.BkGlobalBreakpointTriggered.Reason reason = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
@@ -3620,7 +3620,7 @@ bool BkGlobalBreakpointTriggered::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
                  input, &value)));
-          set_reason(static_cast< ::dse::osidbg::BkGlobalBreakpointTriggered_Reason >(value));
+          set_reason(static_cast< ::bg3se::osidbg::BkGlobalBreakpointTriggered_Reason >(value));
         } else {
           goto handle_unusual;
         }
@@ -3639,21 +3639,21 @@ bool BkGlobalBreakpointTriggered::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.osidbg.BkGlobalBreakpointTriggered)
+  // @@protoc_insertion_point(parse_success:bg3se.osidbg.BkGlobalBreakpointTriggered)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.osidbg.BkGlobalBreakpointTriggered)
+  // @@protoc_insertion_point(parse_failure:bg3se.osidbg.BkGlobalBreakpointTriggered)
   return false;
 #undef DO_
 }
 
 void BkGlobalBreakpointTriggered::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.osidbg.BkGlobalBreakpointTriggered)
+  // @@protoc_insertion_point(serialize_start:bg3se.osidbg.BkGlobalBreakpointTriggered)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .dse.osidbg.BkGlobalBreakpointTriggered.Reason reason = 1;
+  // .bg3se.osidbg.BkGlobalBreakpointTriggered.Reason reason = 1;
   if (this->reason() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
       1, this->reason(), output);
@@ -3661,16 +3661,16 @@ void BkGlobalBreakpointTriggered::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.osidbg.BkGlobalBreakpointTriggered)
+  // @@protoc_insertion_point(serialize_end:bg3se.osidbg.BkGlobalBreakpointTriggered)
 }
 
 size_t BkGlobalBreakpointTriggered::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.osidbg.BkGlobalBreakpointTriggered)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.osidbg.BkGlobalBreakpointTriggered)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
 
-  // .dse.osidbg.BkGlobalBreakpointTriggered.Reason reason = 1;
+  // .bg3se.osidbg.BkGlobalBreakpointTriggered.Reason reason = 1;
   if (this->reason() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::EnumSize(this->reason());
@@ -3687,7 +3687,7 @@ void BkGlobalBreakpointTriggered::CheckTypeAndMergeFrom(
 }
 
 void BkGlobalBreakpointTriggered::MergeFrom(const BkGlobalBreakpointTriggered& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.osidbg.BkGlobalBreakpointTriggered)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.osidbg.BkGlobalBreakpointTriggered)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -3699,7 +3699,7 @@ void BkGlobalBreakpointTriggered::MergeFrom(const BkGlobalBreakpointTriggered& f
 }
 
 void BkGlobalBreakpointTriggered::CopyFrom(const BkGlobalBreakpointTriggered& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.osidbg.BkGlobalBreakpointTriggered)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.osidbg.BkGlobalBreakpointTriggered)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -3735,7 +3735,7 @@ void BkGlobalBreakpointTriggered::InternalSwap(BkGlobalBreakpointTriggered* othe
 }
 
 ::std::string BkGlobalBreakpointTriggered::GetTypeName() const {
-  return "dse.osidbg.BkGlobalBreakpointTriggered";
+  return "bg3se.osidbg.BkGlobalBreakpointTriggered";
 }
 
 
@@ -3754,7 +3754,7 @@ DbgContinue::DbgContinue()
   ::google::protobuf::internal::InitSCC(
       &protobuf_osidebug_2eproto::scc_info_DbgContinue.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.osidbg.DbgContinue)
+  // @@protoc_insertion_point(constructor:bg3se.osidbg.DbgContinue)
 }
 DbgContinue::DbgContinue(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -3762,7 +3762,7 @@ DbgContinue::DbgContinue(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_osidebug_2eproto::scc_info_DbgContinue.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.osidbg.DbgContinue)
+  // @@protoc_insertion_point(arena_constructor:bg3se.osidbg.DbgContinue)
 }
 DbgContinue::DbgContinue(const DbgContinue& from)
   : ::google::protobuf::MessageLite(),
@@ -3771,7 +3771,7 @@ DbgContinue::DbgContinue(const DbgContinue& from)
   ::memcpy(&action_, &from.action_,
     static_cast<size_t>(reinterpret_cast<char*>(&flags_) -
     reinterpret_cast<char*>(&action_)) + sizeof(flags_));
-  // @@protoc_insertion_point(copy_constructor:dse.osidbg.DbgContinue)
+  // @@protoc_insertion_point(copy_constructor:bg3se.osidbg.DbgContinue)
 }
 
 void DbgContinue::SharedCtor() {
@@ -3781,7 +3781,7 @@ void DbgContinue::SharedCtor() {
 }
 
 DbgContinue::~DbgContinue() {
-  // @@protoc_insertion_point(destructor:dse.osidbg.DbgContinue)
+  // @@protoc_insertion_point(destructor:bg3se.osidbg.DbgContinue)
   SharedDtor();
 }
 
@@ -3805,7 +3805,7 @@ const DbgContinue& DbgContinue::default_instance() {
 
 
 void DbgContinue::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.osidbg.DbgContinue)
+// @@protoc_insertion_point(message_clear_start:bg3se.osidbg.DbgContinue)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -3826,13 +3826,13 @@ bool DbgContinue::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.osidbg.DbgContinue)
+  // @@protoc_insertion_point(parse_start:bg3se.osidbg.DbgContinue)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .dse.osidbg.DbgContinue.Action action = 1;
+      // .bg3se.osidbg.DbgContinue.Action action = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
@@ -3840,7 +3840,7 @@ bool DbgContinue::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
                  input, &value)));
-          set_action(static_cast< ::dse::osidbg::DbgContinue_Action >(value));
+          set_action(static_cast< ::bg3se::osidbg::DbgContinue_Action >(value));
         } else {
           goto handle_unusual;
         }
@@ -3887,21 +3887,21 @@ bool DbgContinue::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.osidbg.DbgContinue)
+  // @@protoc_insertion_point(parse_success:bg3se.osidbg.DbgContinue)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.osidbg.DbgContinue)
+  // @@protoc_insertion_point(parse_failure:bg3se.osidbg.DbgContinue)
   return false;
 #undef DO_
 }
 
 void DbgContinue::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.osidbg.DbgContinue)
+  // @@protoc_insertion_point(serialize_start:bg3se.osidbg.DbgContinue)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .dse.osidbg.DbgContinue.Action action = 1;
+  // .bg3se.osidbg.DbgContinue.Action action = 1;
   if (this->action() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
       1, this->action(), output);
@@ -3919,16 +3919,16 @@ void DbgContinue::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.osidbg.DbgContinue)
+  // @@protoc_insertion_point(serialize_end:bg3se.osidbg.DbgContinue)
 }
 
 size_t DbgContinue::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.osidbg.DbgContinue)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.osidbg.DbgContinue)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
 
-  // .dse.osidbg.DbgContinue.Action action = 1;
+  // .bg3se.osidbg.DbgContinue.Action action = 1;
   if (this->action() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::EnumSize(this->action());
@@ -3959,7 +3959,7 @@ void DbgContinue::CheckTypeAndMergeFrom(
 }
 
 void DbgContinue::MergeFrom(const DbgContinue& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.osidbg.DbgContinue)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.osidbg.DbgContinue)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -3977,7 +3977,7 @@ void DbgContinue::MergeFrom(const DbgContinue& from) {
 }
 
 void DbgContinue::CopyFrom(const DbgContinue& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.osidbg.DbgContinue)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.osidbg.DbgContinue)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -4015,7 +4015,7 @@ void DbgContinue::InternalSwap(DbgContinue* other) {
 }
 
 ::std::string DbgContinue::GetTypeName() const {
-  return "dse.osidbg.DbgContinue";
+  return "bg3se.osidbg.DbgContinue";
 }
 
 
@@ -4032,7 +4032,7 @@ DbgGetDatabaseContents::DbgGetDatabaseContents()
   ::google::protobuf::internal::InitSCC(
       &protobuf_osidebug_2eproto::scc_info_DbgGetDatabaseContents.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.osidbg.DbgGetDatabaseContents)
+  // @@protoc_insertion_point(constructor:bg3se.osidbg.DbgGetDatabaseContents)
 }
 DbgGetDatabaseContents::DbgGetDatabaseContents(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -4040,14 +4040,14 @@ DbgGetDatabaseContents::DbgGetDatabaseContents(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_osidebug_2eproto::scc_info_DbgGetDatabaseContents.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.osidbg.DbgGetDatabaseContents)
+  // @@protoc_insertion_point(arena_constructor:bg3se.osidbg.DbgGetDatabaseContents)
 }
 DbgGetDatabaseContents::DbgGetDatabaseContents(const DbgGetDatabaseContents& from)
   : ::google::protobuf::MessageLite(),
       _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   database_id_ = from.database_id_;
-  // @@protoc_insertion_point(copy_constructor:dse.osidbg.DbgGetDatabaseContents)
+  // @@protoc_insertion_point(copy_constructor:bg3se.osidbg.DbgGetDatabaseContents)
 }
 
 void DbgGetDatabaseContents::SharedCtor() {
@@ -4055,7 +4055,7 @@ void DbgGetDatabaseContents::SharedCtor() {
 }
 
 DbgGetDatabaseContents::~DbgGetDatabaseContents() {
-  // @@protoc_insertion_point(destructor:dse.osidbg.DbgGetDatabaseContents)
+  // @@protoc_insertion_point(destructor:bg3se.osidbg.DbgGetDatabaseContents)
   SharedDtor();
 }
 
@@ -4079,7 +4079,7 @@ const DbgGetDatabaseContents& DbgGetDatabaseContents::default_instance() {
 
 
 void DbgGetDatabaseContents::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.osidbg.DbgGetDatabaseContents)
+// @@protoc_insertion_point(message_clear_start:bg3se.osidbg.DbgGetDatabaseContents)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -4098,7 +4098,7 @@ bool DbgGetDatabaseContents::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.osidbg.DbgGetDatabaseContents)
+  // @@protoc_insertion_point(parse_start:bg3se.osidbg.DbgGetDatabaseContents)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -4130,17 +4130,17 @@ bool DbgGetDatabaseContents::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.osidbg.DbgGetDatabaseContents)
+  // @@protoc_insertion_point(parse_success:bg3se.osidbg.DbgGetDatabaseContents)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.osidbg.DbgGetDatabaseContents)
+  // @@protoc_insertion_point(parse_failure:bg3se.osidbg.DbgGetDatabaseContents)
   return false;
 #undef DO_
 }
 
 void DbgGetDatabaseContents::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.osidbg.DbgGetDatabaseContents)
+  // @@protoc_insertion_point(serialize_start:bg3se.osidbg.DbgGetDatabaseContents)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -4151,11 +4151,11 @@ void DbgGetDatabaseContents::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.osidbg.DbgGetDatabaseContents)
+  // @@protoc_insertion_point(serialize_end:bg3se.osidbg.DbgGetDatabaseContents)
 }
 
 size_t DbgGetDatabaseContents::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.osidbg.DbgGetDatabaseContents)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.osidbg.DbgGetDatabaseContents)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -4178,7 +4178,7 @@ void DbgGetDatabaseContents::CheckTypeAndMergeFrom(
 }
 
 void DbgGetDatabaseContents::MergeFrom(const DbgGetDatabaseContents& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.osidbg.DbgGetDatabaseContents)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.osidbg.DbgGetDatabaseContents)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -4190,7 +4190,7 @@ void DbgGetDatabaseContents::MergeFrom(const DbgGetDatabaseContents& from) {
 }
 
 void DbgGetDatabaseContents::CopyFrom(const DbgGetDatabaseContents& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.osidbg.DbgGetDatabaseContents)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.osidbg.DbgGetDatabaseContents)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -4226,7 +4226,7 @@ void DbgGetDatabaseContents::InternalSwap(DbgGetDatabaseContents* other) {
 }
 
 ::std::string DbgGetDatabaseContents::GetTypeName() const {
-  return "dse.osidbg.DbgGetDatabaseContents";
+  return "bg3se.osidbg.DbgGetDatabaseContents";
 }
 
 
@@ -4242,7 +4242,7 @@ DbgSyncStory::DbgSyncStory()
   ::google::protobuf::internal::InitSCC(
       &protobuf_osidebug_2eproto::scc_info_DbgSyncStory.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.osidbg.DbgSyncStory)
+  // @@protoc_insertion_point(constructor:bg3se.osidbg.DbgSyncStory)
 }
 DbgSyncStory::DbgSyncStory(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -4250,20 +4250,20 @@ DbgSyncStory::DbgSyncStory(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_osidebug_2eproto::scc_info_DbgSyncStory.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.osidbg.DbgSyncStory)
+  // @@protoc_insertion_point(arena_constructor:bg3se.osidbg.DbgSyncStory)
 }
 DbgSyncStory::DbgSyncStory(const DbgSyncStory& from)
   : ::google::protobuf::MessageLite(),
       _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  // @@protoc_insertion_point(copy_constructor:dse.osidbg.DbgSyncStory)
+  // @@protoc_insertion_point(copy_constructor:bg3se.osidbg.DbgSyncStory)
 }
 
 void DbgSyncStory::SharedCtor() {
 }
 
 DbgSyncStory::~DbgSyncStory() {
-  // @@protoc_insertion_point(destructor:dse.osidbg.DbgSyncStory)
+  // @@protoc_insertion_point(destructor:bg3se.osidbg.DbgSyncStory)
   SharedDtor();
 }
 
@@ -4287,7 +4287,7 @@ const DbgSyncStory& DbgSyncStory::default_instance() {
 
 
 void DbgSyncStory::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.osidbg.DbgSyncStory)
+// @@protoc_insertion_point(message_clear_start:bg3se.osidbg.DbgSyncStory)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -4305,7 +4305,7 @@ bool DbgSyncStory::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.osidbg.DbgSyncStory)
+  // @@protoc_insertion_point(parse_start:bg3se.osidbg.DbgSyncStory)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -4318,27 +4318,27 @@ bool DbgSyncStory::MergePartialFromCodedStream(
         input, tag, &unknown_fields_stream));
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.osidbg.DbgSyncStory)
+  // @@protoc_insertion_point(parse_success:bg3se.osidbg.DbgSyncStory)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.osidbg.DbgSyncStory)
+  // @@protoc_insertion_point(parse_failure:bg3se.osidbg.DbgSyncStory)
   return false;
 #undef DO_
 }
 
 void DbgSyncStory::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.osidbg.DbgSyncStory)
+  // @@protoc_insertion_point(serialize_start:bg3se.osidbg.DbgSyncStory)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.osidbg.DbgSyncStory)
+  // @@protoc_insertion_point(serialize_end:bg3se.osidbg.DbgSyncStory)
 }
 
 size_t DbgSyncStory::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.osidbg.DbgSyncStory)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.osidbg.DbgSyncStory)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -4354,7 +4354,7 @@ void DbgSyncStory::CheckTypeAndMergeFrom(
 }
 
 void DbgSyncStory::MergeFrom(const DbgSyncStory& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.osidbg.DbgSyncStory)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.osidbg.DbgSyncStory)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -4363,7 +4363,7 @@ void DbgSyncStory::MergeFrom(const DbgSyncStory& from) {
 }
 
 void DbgSyncStory::CopyFrom(const DbgSyncStory& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.osidbg.DbgSyncStory)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.osidbg.DbgSyncStory)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -4398,18 +4398,18 @@ void DbgSyncStory::InternalSwap(DbgSyncStory* other) {
 }
 
 ::std::string DbgSyncStory::GetTypeName() const {
-  return "dse.osidbg.DbgSyncStory";
+  return "bg3se.osidbg.DbgSyncStory";
 }
 
 
 // ===================================================================
 
 void DbgEvaluate::InitAsDefaultInstance() {
-  ::dse::osidbg::_DbgEvaluate_default_instance_._instance.get_mutable()->params_ = const_cast< ::dse::osidbg::MsgTuple*>(
-      ::dse::osidbg::MsgTuple::internal_default_instance());
+  ::bg3se::osidbg::_DbgEvaluate_default_instance_._instance.get_mutable()->params_ = const_cast< ::bg3se::osidbg::MsgTuple*>(
+      ::bg3se::osidbg::MsgTuple::internal_default_instance());
 }
 void DbgEvaluate::unsafe_arena_set_allocated_params(
-    ::dse::osidbg::MsgTuple* params) {
+    ::bg3se::osidbg::MsgTuple* params) {
   if (GetArenaNoVirtual() == NULL) {
     delete params_;
   }
@@ -4419,7 +4419,7 @@ void DbgEvaluate::unsafe_arena_set_allocated_params(
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.osidbg.DbgEvaluate.params)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.osidbg.DbgEvaluate.params)
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int DbgEvaluate::kTypeFieldNumber;
@@ -4432,7 +4432,7 @@ DbgEvaluate::DbgEvaluate()
   ::google::protobuf::internal::InitSCC(
       &protobuf_osidebug_2eproto::scc_info_DbgEvaluate.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.osidbg.DbgEvaluate)
+  // @@protoc_insertion_point(constructor:bg3se.osidbg.DbgEvaluate)
 }
 DbgEvaluate::DbgEvaluate(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -4440,21 +4440,21 @@ DbgEvaluate::DbgEvaluate(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_osidebug_2eproto::scc_info_DbgEvaluate.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.osidbg.DbgEvaluate)
+  // @@protoc_insertion_point(arena_constructor:bg3se.osidbg.DbgEvaluate)
 }
 DbgEvaluate::DbgEvaluate(const DbgEvaluate& from)
   : ::google::protobuf::MessageLite(),
       _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   if (from.has_params()) {
-    params_ = new ::dse::osidbg::MsgTuple(*from.params_);
+    params_ = new ::bg3se::osidbg::MsgTuple(*from.params_);
   } else {
     params_ = NULL;
   }
   ::memcpy(&type_, &from.type_,
     static_cast<size_t>(reinterpret_cast<char*>(&node_id_) -
     reinterpret_cast<char*>(&type_)) + sizeof(node_id_));
-  // @@protoc_insertion_point(copy_constructor:dse.osidbg.DbgEvaluate)
+  // @@protoc_insertion_point(copy_constructor:bg3se.osidbg.DbgEvaluate)
 }
 
 void DbgEvaluate::SharedCtor() {
@@ -4464,7 +4464,7 @@ void DbgEvaluate::SharedCtor() {
 }
 
 DbgEvaluate::~DbgEvaluate() {
-  // @@protoc_insertion_point(destructor:dse.osidbg.DbgEvaluate)
+  // @@protoc_insertion_point(destructor:bg3se.osidbg.DbgEvaluate)
   SharedDtor();
 }
 
@@ -4489,7 +4489,7 @@ const DbgEvaluate& DbgEvaluate::default_instance() {
 
 
 void DbgEvaluate::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.osidbg.DbgEvaluate)
+// @@protoc_insertion_point(message_clear_start:bg3se.osidbg.DbgEvaluate)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -4514,13 +4514,13 @@ bool DbgEvaluate::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.osidbg.DbgEvaluate)
+  // @@protoc_insertion_point(parse_start:bg3se.osidbg.DbgEvaluate)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .dse.osidbg.DbgEvaluate.EvalType type = 1;
+      // .bg3se.osidbg.DbgEvaluate.EvalType type = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
@@ -4528,7 +4528,7 @@ bool DbgEvaluate::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
                  input, &value)));
-          set_type(static_cast< ::dse::osidbg::DbgEvaluate_EvalType >(value));
+          set_type(static_cast< ::bg3se::osidbg::DbgEvaluate_EvalType >(value));
         } else {
           goto handle_unusual;
         }
@@ -4549,7 +4549,7 @@ bool DbgEvaluate::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.osidbg.MsgTuple params = 3;
+      // .bg3se.osidbg.MsgTuple params = 3;
       case 3: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
@@ -4573,21 +4573,21 @@ bool DbgEvaluate::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.osidbg.DbgEvaluate)
+  // @@protoc_insertion_point(parse_success:bg3se.osidbg.DbgEvaluate)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.osidbg.DbgEvaluate)
+  // @@protoc_insertion_point(parse_failure:bg3se.osidbg.DbgEvaluate)
   return false;
 #undef DO_
 }
 
 void DbgEvaluate::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.osidbg.DbgEvaluate)
+  // @@protoc_insertion_point(serialize_start:bg3se.osidbg.DbgEvaluate)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .dse.osidbg.DbgEvaluate.EvalType type = 1;
+  // .bg3se.osidbg.DbgEvaluate.EvalType type = 1;
   if (this->type() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
       1, this->type(), output);
@@ -4598,7 +4598,7 @@ void DbgEvaluate::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->node_id(), output);
   }
 
-  // .dse.osidbg.MsgTuple params = 3;
+  // .bg3se.osidbg.MsgTuple params = 3;
   if (this->has_params()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       3, this->_internal_params(), output);
@@ -4606,23 +4606,23 @@ void DbgEvaluate::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.osidbg.DbgEvaluate)
+  // @@protoc_insertion_point(serialize_end:bg3se.osidbg.DbgEvaluate)
 }
 
 size_t DbgEvaluate::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.osidbg.DbgEvaluate)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.osidbg.DbgEvaluate)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
 
-  // .dse.osidbg.MsgTuple params = 3;
+  // .bg3se.osidbg.MsgTuple params = 3;
   if (this->has_params()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
         *params_);
   }
 
-  // .dse.osidbg.DbgEvaluate.EvalType type = 1;
+  // .bg3se.osidbg.DbgEvaluate.EvalType type = 1;
   if (this->type() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::EnumSize(this->type());
@@ -4646,14 +4646,14 @@ void DbgEvaluate::CheckTypeAndMergeFrom(
 }
 
 void DbgEvaluate::MergeFrom(const DbgEvaluate& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.osidbg.DbgEvaluate)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.osidbg.DbgEvaluate)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
   if (from.has_params()) {
-    mutable_params()->::dse::osidbg::MsgTuple::MergeFrom(from.params());
+    mutable_params()->::bg3se::osidbg::MsgTuple::MergeFrom(from.params());
   }
   if (from.type() != 0) {
     set_type(from.type());
@@ -4664,7 +4664,7 @@ void DbgEvaluate::MergeFrom(const DbgEvaluate& from) {
 }
 
 void DbgEvaluate::CopyFrom(const DbgEvaluate& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.osidbg.DbgEvaluate)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.osidbg.DbgEvaluate)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -4702,7 +4702,7 @@ void DbgEvaluate::InternalSwap(DbgEvaluate* other) {
 }
 
 ::std::string DbgEvaluate::GetTypeName() const {
-  return "dse.osidbg.DbgEvaluate";
+  return "bg3se.osidbg.DbgEvaluate";
 }
 
 
@@ -4719,7 +4719,7 @@ BkResult::BkResult()
   ::google::protobuf::internal::InitSCC(
       &protobuf_osidebug_2eproto::scc_info_BkResult.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.osidbg.BkResult)
+  // @@protoc_insertion_point(constructor:bg3se.osidbg.BkResult)
 }
 BkResult::BkResult(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -4727,14 +4727,14 @@ BkResult::BkResult(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_osidebug_2eproto::scc_info_BkResult.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.osidbg.BkResult)
+  // @@protoc_insertion_point(arena_constructor:bg3se.osidbg.BkResult)
 }
 BkResult::BkResult(const BkResult& from)
   : ::google::protobuf::MessageLite(),
       _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   status_code_ = from.status_code_;
-  // @@protoc_insertion_point(copy_constructor:dse.osidbg.BkResult)
+  // @@protoc_insertion_point(copy_constructor:bg3se.osidbg.BkResult)
 }
 
 void BkResult::SharedCtor() {
@@ -4742,7 +4742,7 @@ void BkResult::SharedCtor() {
 }
 
 BkResult::~BkResult() {
-  // @@protoc_insertion_point(destructor:dse.osidbg.BkResult)
+  // @@protoc_insertion_point(destructor:bg3se.osidbg.BkResult)
   SharedDtor();
 }
 
@@ -4766,7 +4766,7 @@ const BkResult& BkResult::default_instance() {
 
 
 void BkResult::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.osidbg.BkResult)
+// @@protoc_insertion_point(message_clear_start:bg3se.osidbg.BkResult)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -4785,13 +4785,13 @@ bool BkResult::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.osidbg.BkResult)
+  // @@protoc_insertion_point(parse_start:bg3se.osidbg.BkResult)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .dse.osidbg.StatusCode status_code = 1;
+      // .bg3se.osidbg.StatusCode status_code = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
@@ -4799,7 +4799,7 @@ bool BkResult::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
                  input, &value)));
-          set_status_code(static_cast< ::dse::osidbg::StatusCode >(value));
+          set_status_code(static_cast< ::bg3se::osidbg::StatusCode >(value));
         } else {
           goto handle_unusual;
         }
@@ -4818,21 +4818,21 @@ bool BkResult::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.osidbg.BkResult)
+  // @@protoc_insertion_point(parse_success:bg3se.osidbg.BkResult)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.osidbg.BkResult)
+  // @@protoc_insertion_point(parse_failure:bg3se.osidbg.BkResult)
   return false;
 #undef DO_
 }
 
 void BkResult::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.osidbg.BkResult)
+  // @@protoc_insertion_point(serialize_start:bg3se.osidbg.BkResult)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .dse.osidbg.StatusCode status_code = 1;
+  // .bg3se.osidbg.StatusCode status_code = 1;
   if (this->status_code() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
       1, this->status_code(), output);
@@ -4840,16 +4840,16 @@ void BkResult::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.osidbg.BkResult)
+  // @@protoc_insertion_point(serialize_end:bg3se.osidbg.BkResult)
 }
 
 size_t BkResult::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.osidbg.BkResult)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.osidbg.BkResult)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
 
-  // .dse.osidbg.StatusCode status_code = 1;
+  // .bg3se.osidbg.StatusCode status_code = 1;
   if (this->status_code() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::EnumSize(this->status_code());
@@ -4866,7 +4866,7 @@ void BkResult::CheckTypeAndMergeFrom(
 }
 
 void BkResult::MergeFrom(const BkResult& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.osidbg.BkResult)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.osidbg.BkResult)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -4878,7 +4878,7 @@ void BkResult::MergeFrom(const BkResult& from) {
 }
 
 void BkResult::CopyFrom(const BkResult& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.osidbg.BkResult)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.osidbg.BkResult)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -4914,7 +4914,7 @@ void BkResult::InternalSwap(BkResult* other) {
 }
 
 ::std::string BkResult::GetTypeName() const {
-  return "dse.osidbg.BkResult";
+  return "bg3se.osidbg.BkResult";
 }
 
 
@@ -4930,7 +4930,7 @@ BkStoryLoaded::BkStoryLoaded()
   ::google::protobuf::internal::InitSCC(
       &protobuf_osidebug_2eproto::scc_info_BkStoryLoaded.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.osidbg.BkStoryLoaded)
+  // @@protoc_insertion_point(constructor:bg3se.osidbg.BkStoryLoaded)
 }
 BkStoryLoaded::BkStoryLoaded(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -4938,20 +4938,20 @@ BkStoryLoaded::BkStoryLoaded(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_osidebug_2eproto::scc_info_BkStoryLoaded.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.osidbg.BkStoryLoaded)
+  // @@protoc_insertion_point(arena_constructor:bg3se.osidbg.BkStoryLoaded)
 }
 BkStoryLoaded::BkStoryLoaded(const BkStoryLoaded& from)
   : ::google::protobuf::MessageLite(),
       _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  // @@protoc_insertion_point(copy_constructor:dse.osidbg.BkStoryLoaded)
+  // @@protoc_insertion_point(copy_constructor:bg3se.osidbg.BkStoryLoaded)
 }
 
 void BkStoryLoaded::SharedCtor() {
 }
 
 BkStoryLoaded::~BkStoryLoaded() {
-  // @@protoc_insertion_point(destructor:dse.osidbg.BkStoryLoaded)
+  // @@protoc_insertion_point(destructor:bg3se.osidbg.BkStoryLoaded)
   SharedDtor();
 }
 
@@ -4975,7 +4975,7 @@ const BkStoryLoaded& BkStoryLoaded::default_instance() {
 
 
 void BkStoryLoaded::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.osidbg.BkStoryLoaded)
+// @@protoc_insertion_point(message_clear_start:bg3se.osidbg.BkStoryLoaded)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -4993,7 +4993,7 @@ bool BkStoryLoaded::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.osidbg.BkStoryLoaded)
+  // @@protoc_insertion_point(parse_start:bg3se.osidbg.BkStoryLoaded)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -5006,27 +5006,27 @@ bool BkStoryLoaded::MergePartialFromCodedStream(
         input, tag, &unknown_fields_stream));
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.osidbg.BkStoryLoaded)
+  // @@protoc_insertion_point(parse_success:bg3se.osidbg.BkStoryLoaded)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.osidbg.BkStoryLoaded)
+  // @@protoc_insertion_point(parse_failure:bg3se.osidbg.BkStoryLoaded)
   return false;
 #undef DO_
 }
 
 void BkStoryLoaded::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.osidbg.BkStoryLoaded)
+  // @@protoc_insertion_point(serialize_start:bg3se.osidbg.BkStoryLoaded)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.osidbg.BkStoryLoaded)
+  // @@protoc_insertion_point(serialize_end:bg3se.osidbg.BkStoryLoaded)
 }
 
 size_t BkStoryLoaded::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.osidbg.BkStoryLoaded)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.osidbg.BkStoryLoaded)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -5042,7 +5042,7 @@ void BkStoryLoaded::CheckTypeAndMergeFrom(
 }
 
 void BkStoryLoaded::MergeFrom(const BkStoryLoaded& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.osidbg.BkStoryLoaded)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.osidbg.BkStoryLoaded)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -5051,7 +5051,7 @@ void BkStoryLoaded::MergeFrom(const BkStoryLoaded& from) {
 }
 
 void BkStoryLoaded::CopyFrom(const BkStoryLoaded& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.osidbg.BkStoryLoaded)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.osidbg.BkStoryLoaded)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -5086,7 +5086,7 @@ void BkStoryLoaded::InternalSwap(BkStoryLoaded* other) {
 }
 
 ::std::string BkStoryLoaded::GetTypeName() const {
-  return "dse.osidbg.BkStoryLoaded";
+  return "bg3se.osidbg.BkStoryLoaded";
 }
 
 
@@ -5102,7 +5102,7 @@ BkDebugSessionEnded::BkDebugSessionEnded()
   ::google::protobuf::internal::InitSCC(
       &protobuf_osidebug_2eproto::scc_info_BkDebugSessionEnded.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.osidbg.BkDebugSessionEnded)
+  // @@protoc_insertion_point(constructor:bg3se.osidbg.BkDebugSessionEnded)
 }
 BkDebugSessionEnded::BkDebugSessionEnded(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -5110,20 +5110,20 @@ BkDebugSessionEnded::BkDebugSessionEnded(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_osidebug_2eproto::scc_info_BkDebugSessionEnded.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.osidbg.BkDebugSessionEnded)
+  // @@protoc_insertion_point(arena_constructor:bg3se.osidbg.BkDebugSessionEnded)
 }
 BkDebugSessionEnded::BkDebugSessionEnded(const BkDebugSessionEnded& from)
   : ::google::protobuf::MessageLite(),
       _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  // @@protoc_insertion_point(copy_constructor:dse.osidbg.BkDebugSessionEnded)
+  // @@protoc_insertion_point(copy_constructor:bg3se.osidbg.BkDebugSessionEnded)
 }
 
 void BkDebugSessionEnded::SharedCtor() {
 }
 
 BkDebugSessionEnded::~BkDebugSessionEnded() {
-  // @@protoc_insertion_point(destructor:dse.osidbg.BkDebugSessionEnded)
+  // @@protoc_insertion_point(destructor:bg3se.osidbg.BkDebugSessionEnded)
   SharedDtor();
 }
 
@@ -5147,7 +5147,7 @@ const BkDebugSessionEnded& BkDebugSessionEnded::default_instance() {
 
 
 void BkDebugSessionEnded::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.osidbg.BkDebugSessionEnded)
+// @@protoc_insertion_point(message_clear_start:bg3se.osidbg.BkDebugSessionEnded)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -5165,7 +5165,7 @@ bool BkDebugSessionEnded::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.osidbg.BkDebugSessionEnded)
+  // @@protoc_insertion_point(parse_start:bg3se.osidbg.BkDebugSessionEnded)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -5178,27 +5178,27 @@ bool BkDebugSessionEnded::MergePartialFromCodedStream(
         input, tag, &unknown_fields_stream));
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.osidbg.BkDebugSessionEnded)
+  // @@protoc_insertion_point(parse_success:bg3se.osidbg.BkDebugSessionEnded)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.osidbg.BkDebugSessionEnded)
+  // @@protoc_insertion_point(parse_failure:bg3se.osidbg.BkDebugSessionEnded)
   return false;
 #undef DO_
 }
 
 void BkDebugSessionEnded::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.osidbg.BkDebugSessionEnded)
+  // @@protoc_insertion_point(serialize_start:bg3se.osidbg.BkDebugSessionEnded)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.osidbg.BkDebugSessionEnded)
+  // @@protoc_insertion_point(serialize_end:bg3se.osidbg.BkDebugSessionEnded)
 }
 
 size_t BkDebugSessionEnded::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.osidbg.BkDebugSessionEnded)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.osidbg.BkDebugSessionEnded)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -5214,7 +5214,7 @@ void BkDebugSessionEnded::CheckTypeAndMergeFrom(
 }
 
 void BkDebugSessionEnded::MergeFrom(const BkDebugSessionEnded& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.osidbg.BkDebugSessionEnded)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.osidbg.BkDebugSessionEnded)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -5223,7 +5223,7 @@ void BkDebugSessionEnded::MergeFrom(const BkDebugSessionEnded& from) {
 }
 
 void BkDebugSessionEnded::CopyFrom(const BkDebugSessionEnded& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.osidbg.BkDebugSessionEnded)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.osidbg.BkDebugSessionEnded)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -5258,7 +5258,7 @@ void BkDebugSessionEnded::InternalSwap(BkDebugSessionEnded* other) {
 }
 
 ::std::string BkDebugSessionEnded::GetTypeName() const {
-  return "dse.osidbg.BkDebugSessionEnded";
+  return "bg3se.osidbg.BkDebugSessionEnded";
 }
 
 
@@ -5277,7 +5277,7 @@ MsgActionInfo::MsgActionInfo()
   ::google::protobuf::internal::InitSCC(
       &protobuf_osidebug_2eproto::scc_info_MsgActionInfo.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.osidbg.MsgActionInfo)
+  // @@protoc_insertion_point(constructor:bg3se.osidbg.MsgActionInfo)
 }
 MsgActionInfo::MsgActionInfo(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -5285,7 +5285,7 @@ MsgActionInfo::MsgActionInfo(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_osidebug_2eproto::scc_info_MsgActionInfo.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.osidbg.MsgActionInfo)
+  // @@protoc_insertion_point(arena_constructor:bg3se.osidbg.MsgActionInfo)
 }
 MsgActionInfo::MsgActionInfo(const MsgActionInfo& from)
   : ::google::protobuf::MessageLite(),
@@ -5299,7 +5299,7 @@ MsgActionInfo::MsgActionInfo(const MsgActionInfo& from)
   ::memcpy(&arity_, &from.arity_,
     static_cast<size_t>(reinterpret_cast<char*>(&goal_id_) -
     reinterpret_cast<char*>(&arity_)) + sizeof(goal_id_));
-  // @@protoc_insertion_point(copy_constructor:dse.osidbg.MsgActionInfo)
+  // @@protoc_insertion_point(copy_constructor:bg3se.osidbg.MsgActionInfo)
 }
 
 void MsgActionInfo::SharedCtor() {
@@ -5310,7 +5310,7 @@ void MsgActionInfo::SharedCtor() {
 }
 
 MsgActionInfo::~MsgActionInfo() {
-  // @@protoc_insertion_point(destructor:dse.osidbg.MsgActionInfo)
+  // @@protoc_insertion_point(destructor:bg3se.osidbg.MsgActionInfo)
   SharedDtor();
 }
 
@@ -5335,7 +5335,7 @@ const MsgActionInfo& MsgActionInfo::default_instance() {
 
 
 void MsgActionInfo::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.osidbg.MsgActionInfo)
+// @@protoc_insertion_point(message_clear_start:bg3se.osidbg.MsgActionInfo)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -5357,7 +5357,7 @@ bool MsgActionInfo::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.osidbg.MsgActionInfo)
+  // @@protoc_insertion_point(parse_start:bg3se.osidbg.MsgActionInfo)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -5372,7 +5372,7 @@ bool MsgActionInfo::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->function().data(), static_cast<int>(this->function().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "dse.osidbg.MsgActionInfo.function"));
+            "bg3se.osidbg.MsgActionInfo.function"));
         } else {
           goto handle_unusual;
         }
@@ -5419,17 +5419,17 @@ bool MsgActionInfo::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.osidbg.MsgActionInfo)
+  // @@protoc_insertion_point(parse_success:bg3se.osidbg.MsgActionInfo)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.osidbg.MsgActionInfo)
+  // @@protoc_insertion_point(parse_failure:bg3se.osidbg.MsgActionInfo)
   return false;
 #undef DO_
 }
 
 void MsgActionInfo::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.osidbg.MsgActionInfo)
+  // @@protoc_insertion_point(serialize_start:bg3se.osidbg.MsgActionInfo)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -5438,7 +5438,7 @@ void MsgActionInfo::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->function().data(), static_cast<int>(this->function().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "dse.osidbg.MsgActionInfo.function");
+      "bg3se.osidbg.MsgActionInfo.function");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       1, this->function(), output);
   }
@@ -5455,11 +5455,11 @@ void MsgActionInfo::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.osidbg.MsgActionInfo)
+  // @@protoc_insertion_point(serialize_end:bg3se.osidbg.MsgActionInfo)
 }
 
 size_t MsgActionInfo::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.osidbg.MsgActionInfo)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.osidbg.MsgActionInfo)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -5496,7 +5496,7 @@ void MsgActionInfo::CheckTypeAndMergeFrom(
 }
 
 void MsgActionInfo::MergeFrom(const MsgActionInfo& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.osidbg.MsgActionInfo)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.osidbg.MsgActionInfo)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -5514,7 +5514,7 @@ void MsgActionInfo::MergeFrom(const MsgActionInfo& from) {
 }
 
 void MsgActionInfo::CopyFrom(const MsgActionInfo& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.osidbg.MsgActionInfo)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.osidbg.MsgActionInfo)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -5553,7 +5553,7 @@ void MsgActionInfo::InternalSwap(MsgActionInfo* other) {
 }
 
 ::std::string MsgActionInfo::GetTypeName() const {
-  return "dse.osidbg.MsgActionInfo";
+  return "bg3se.osidbg.MsgActionInfo";
 }
 
 
@@ -5573,7 +5573,7 @@ MsgGoalInfo::MsgGoalInfo()
   ::google::protobuf::internal::InitSCC(
       &protobuf_osidebug_2eproto::scc_info_MsgGoalInfo.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.osidbg.MsgGoalInfo)
+  // @@protoc_insertion_point(constructor:bg3se.osidbg.MsgGoalInfo)
 }
 MsgGoalInfo::MsgGoalInfo(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -5583,7 +5583,7 @@ MsgGoalInfo::MsgGoalInfo(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_osidebug_2eproto::scc_info_MsgGoalInfo.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.osidbg.MsgGoalInfo)
+  // @@protoc_insertion_point(arena_constructor:bg3se.osidbg.MsgGoalInfo)
 }
 MsgGoalInfo::MsgGoalInfo(const MsgGoalInfo& from)
   : ::google::protobuf::MessageLite(),
@@ -5597,7 +5597,7 @@ MsgGoalInfo::MsgGoalInfo(const MsgGoalInfo& from)
       GetArenaNoVirtual());
   }
   id_ = from.id_;
-  // @@protoc_insertion_point(copy_constructor:dse.osidbg.MsgGoalInfo)
+  // @@protoc_insertion_point(copy_constructor:bg3se.osidbg.MsgGoalInfo)
 }
 
 void MsgGoalInfo::SharedCtor() {
@@ -5606,7 +5606,7 @@ void MsgGoalInfo::SharedCtor() {
 }
 
 MsgGoalInfo::~MsgGoalInfo() {
-  // @@protoc_insertion_point(destructor:dse.osidbg.MsgGoalInfo)
+  // @@protoc_insertion_point(destructor:bg3se.osidbg.MsgGoalInfo)
   SharedDtor();
 }
 
@@ -5631,7 +5631,7 @@ const MsgGoalInfo& MsgGoalInfo::default_instance() {
 
 
 void MsgGoalInfo::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.osidbg.MsgGoalInfo)
+// @@protoc_insertion_point(message_clear_start:bg3se.osidbg.MsgGoalInfo)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -5653,7 +5653,7 @@ bool MsgGoalInfo::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.osidbg.MsgGoalInfo)
+  // @@protoc_insertion_point(parse_start:bg3se.osidbg.MsgGoalInfo)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -5682,14 +5682,14 @@ bool MsgGoalInfo::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->name().data(), static_cast<int>(this->name().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "dse.osidbg.MsgGoalInfo.name"));
+            "bg3se.osidbg.MsgGoalInfo.name"));
         } else {
           goto handle_unusual;
         }
         break;
       }
 
-      // repeated .dse.osidbg.MsgActionInfo initActions = 3;
+      // repeated .bg3se.osidbg.MsgActionInfo initActions = 3;
       case 3: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
@@ -5701,7 +5701,7 @@ bool MsgGoalInfo::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated .dse.osidbg.MsgActionInfo exitActions = 4;
+      // repeated .bg3se.osidbg.MsgActionInfo exitActions = 4;
       case 4: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(34u /* 34 & 0xFF */)) {
@@ -5725,17 +5725,17 @@ bool MsgGoalInfo::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.osidbg.MsgGoalInfo)
+  // @@protoc_insertion_point(parse_success:bg3se.osidbg.MsgGoalInfo)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.osidbg.MsgGoalInfo)
+  // @@protoc_insertion_point(parse_failure:bg3se.osidbg.MsgGoalInfo)
   return false;
 #undef DO_
 }
 
 void MsgGoalInfo::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.osidbg.MsgGoalInfo)
+  // @@protoc_insertion_point(serialize_start:bg3se.osidbg.MsgGoalInfo)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -5749,12 +5749,12 @@ void MsgGoalInfo::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->name().data(), static_cast<int>(this->name().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "dse.osidbg.MsgGoalInfo.name");
+      "bg3se.osidbg.MsgGoalInfo.name");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       2, this->name(), output);
   }
 
-  // repeated .dse.osidbg.MsgActionInfo initActions = 3;
+  // repeated .bg3se.osidbg.MsgActionInfo initActions = 3;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->initactions_size()); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
@@ -5763,7 +5763,7 @@ void MsgGoalInfo::SerializeWithCachedSizes(
       output);
   }
 
-  // repeated .dse.osidbg.MsgActionInfo exitActions = 4;
+  // repeated .bg3se.osidbg.MsgActionInfo exitActions = 4;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->exitactions_size()); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
@@ -5774,16 +5774,16 @@ void MsgGoalInfo::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.osidbg.MsgGoalInfo)
+  // @@protoc_insertion_point(serialize_end:bg3se.osidbg.MsgGoalInfo)
 }
 
 size_t MsgGoalInfo::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.osidbg.MsgGoalInfo)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.osidbg.MsgGoalInfo)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
 
-  // repeated .dse.osidbg.MsgActionInfo initActions = 3;
+  // repeated .bg3se.osidbg.MsgActionInfo initActions = 3;
   {
     unsigned int count = static_cast<unsigned int>(this->initactions_size());
     total_size += 1UL * count;
@@ -5794,7 +5794,7 @@ size_t MsgGoalInfo::ByteSizeLong() const {
     }
   }
 
-  // repeated .dse.osidbg.MsgActionInfo exitActions = 4;
+  // repeated .bg3se.osidbg.MsgActionInfo exitActions = 4;
   {
     unsigned int count = static_cast<unsigned int>(this->exitactions_size());
     total_size += 1UL * count;
@@ -5830,7 +5830,7 @@ void MsgGoalInfo::CheckTypeAndMergeFrom(
 }
 
 void MsgGoalInfo::MergeFrom(const MsgGoalInfo& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.osidbg.MsgGoalInfo)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.osidbg.MsgGoalInfo)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -5847,7 +5847,7 @@ void MsgGoalInfo::MergeFrom(const MsgGoalInfo& from) {
 }
 
 void MsgGoalInfo::CopyFrom(const MsgGoalInfo& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.osidbg.MsgGoalInfo)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.osidbg.MsgGoalInfo)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -5887,7 +5887,7 @@ void MsgGoalInfo::InternalSwap(MsgGoalInfo* other) {
 }
 
 ::std::string MsgGoalInfo::GetTypeName() const {
-  return "dse.osidbg.MsgGoalInfo";
+  return "bg3se.osidbg.MsgGoalInfo";
 }
 
 
@@ -5905,7 +5905,7 @@ MsgDatabaseInfo::MsgDatabaseInfo()
   ::google::protobuf::internal::InitSCC(
       &protobuf_osidebug_2eproto::scc_info_MsgDatabaseInfo.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.osidbg.MsgDatabaseInfo)
+  // @@protoc_insertion_point(constructor:bg3se.osidbg.MsgDatabaseInfo)
 }
 MsgDatabaseInfo::MsgDatabaseInfo(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -5914,7 +5914,7 @@ MsgDatabaseInfo::MsgDatabaseInfo(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_osidebug_2eproto::scc_info_MsgDatabaseInfo.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.osidbg.MsgDatabaseInfo)
+  // @@protoc_insertion_point(arena_constructor:bg3se.osidbg.MsgDatabaseInfo)
 }
 MsgDatabaseInfo::MsgDatabaseInfo(const MsgDatabaseInfo& from)
   : ::google::protobuf::MessageLite(),
@@ -5922,7 +5922,7 @@ MsgDatabaseInfo::MsgDatabaseInfo(const MsgDatabaseInfo& from)
       argumenttype_(from.argumenttype_) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   id_ = from.id_;
-  // @@protoc_insertion_point(copy_constructor:dse.osidbg.MsgDatabaseInfo)
+  // @@protoc_insertion_point(copy_constructor:bg3se.osidbg.MsgDatabaseInfo)
 }
 
 void MsgDatabaseInfo::SharedCtor() {
@@ -5930,7 +5930,7 @@ void MsgDatabaseInfo::SharedCtor() {
 }
 
 MsgDatabaseInfo::~MsgDatabaseInfo() {
-  // @@protoc_insertion_point(destructor:dse.osidbg.MsgDatabaseInfo)
+  // @@protoc_insertion_point(destructor:bg3se.osidbg.MsgDatabaseInfo)
   SharedDtor();
 }
 
@@ -5954,7 +5954,7 @@ const MsgDatabaseInfo& MsgDatabaseInfo::default_instance() {
 
 
 void MsgDatabaseInfo::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.osidbg.MsgDatabaseInfo)
+// @@protoc_insertion_point(message_clear_start:bg3se.osidbg.MsgDatabaseInfo)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -5974,7 +5974,7 @@ bool MsgDatabaseInfo::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.osidbg.MsgDatabaseInfo)
+  // @@protoc_insertion_point(parse_start:bg3se.osidbg.MsgDatabaseInfo)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -6025,17 +6025,17 @@ bool MsgDatabaseInfo::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.osidbg.MsgDatabaseInfo)
+  // @@protoc_insertion_point(parse_success:bg3se.osidbg.MsgDatabaseInfo)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.osidbg.MsgDatabaseInfo)
+  // @@protoc_insertion_point(parse_failure:bg3se.osidbg.MsgDatabaseInfo)
   return false;
 #undef DO_
 }
 
 void MsgDatabaseInfo::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.osidbg.MsgDatabaseInfo)
+  // @@protoc_insertion_point(serialize_start:bg3se.osidbg.MsgDatabaseInfo)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -6057,11 +6057,11 @@ void MsgDatabaseInfo::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.osidbg.MsgDatabaseInfo)
+  // @@protoc_insertion_point(serialize_end:bg3se.osidbg.MsgDatabaseInfo)
 }
 
 size_t MsgDatabaseInfo::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.osidbg.MsgDatabaseInfo)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.osidbg.MsgDatabaseInfo)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -6100,7 +6100,7 @@ void MsgDatabaseInfo::CheckTypeAndMergeFrom(
 }
 
 void MsgDatabaseInfo::MergeFrom(const MsgDatabaseInfo& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.osidbg.MsgDatabaseInfo)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.osidbg.MsgDatabaseInfo)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -6113,7 +6113,7 @@ void MsgDatabaseInfo::MergeFrom(const MsgDatabaseInfo& from) {
 }
 
 void MsgDatabaseInfo::CopyFrom(const MsgDatabaseInfo& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.osidbg.MsgDatabaseInfo)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.osidbg.MsgDatabaseInfo)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -6150,7 +6150,7 @@ void MsgDatabaseInfo::InternalSwap(MsgDatabaseInfo* other) {
 }
 
 ::std::string MsgDatabaseInfo::GetTypeName() const {
-  return "dse.osidbg.MsgDatabaseInfo";
+  return "bg3se.osidbg.MsgDatabaseInfo";
 }
 
 
@@ -6169,7 +6169,7 @@ MsgNodeInfo::MsgNodeInfo()
   ::google::protobuf::internal::InitSCC(
       &protobuf_osidebug_2eproto::scc_info_MsgNodeInfo.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.osidbg.MsgNodeInfo)
+  // @@protoc_insertion_point(constructor:bg3se.osidbg.MsgNodeInfo)
 }
 MsgNodeInfo::MsgNodeInfo(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -6177,7 +6177,7 @@ MsgNodeInfo::MsgNodeInfo(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_osidebug_2eproto::scc_info_MsgNodeInfo.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.osidbg.MsgNodeInfo)
+  // @@protoc_insertion_point(arena_constructor:bg3se.osidbg.MsgNodeInfo)
 }
 MsgNodeInfo::MsgNodeInfo(const MsgNodeInfo& from)
   : ::google::protobuf::MessageLite(),
@@ -6191,7 +6191,7 @@ MsgNodeInfo::MsgNodeInfo(const MsgNodeInfo& from)
   ::memcpy(&id_, &from.id_,
     static_cast<size_t>(reinterpret_cast<char*>(&type_) -
     reinterpret_cast<char*>(&id_)) + sizeof(type_));
-  // @@protoc_insertion_point(copy_constructor:dse.osidbg.MsgNodeInfo)
+  // @@protoc_insertion_point(copy_constructor:bg3se.osidbg.MsgNodeInfo)
 }
 
 void MsgNodeInfo::SharedCtor() {
@@ -6202,7 +6202,7 @@ void MsgNodeInfo::SharedCtor() {
 }
 
 MsgNodeInfo::~MsgNodeInfo() {
-  // @@protoc_insertion_point(destructor:dse.osidbg.MsgNodeInfo)
+  // @@protoc_insertion_point(destructor:bg3se.osidbg.MsgNodeInfo)
   SharedDtor();
 }
 
@@ -6227,7 +6227,7 @@ const MsgNodeInfo& MsgNodeInfo::default_instance() {
 
 
 void MsgNodeInfo::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.osidbg.MsgNodeInfo)
+// @@protoc_insertion_point(message_clear_start:bg3se.osidbg.MsgNodeInfo)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -6249,7 +6249,7 @@ bool MsgNodeInfo::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.osidbg.MsgNodeInfo)
+  // @@protoc_insertion_point(parse_start:bg3se.osidbg.MsgNodeInfo)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -6292,7 +6292,7 @@ bool MsgNodeInfo::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->name().data(), static_cast<int>(this->name().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "dse.osidbg.MsgNodeInfo.name"));
+            "bg3se.osidbg.MsgNodeInfo.name"));
         } else {
           goto handle_unusual;
         }
@@ -6311,17 +6311,17 @@ bool MsgNodeInfo::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.osidbg.MsgNodeInfo)
+  // @@protoc_insertion_point(parse_success:bg3se.osidbg.MsgNodeInfo)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.osidbg.MsgNodeInfo)
+  // @@protoc_insertion_point(parse_failure:bg3se.osidbg.MsgNodeInfo)
   return false;
 #undef DO_
 }
 
 void MsgNodeInfo::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.osidbg.MsgNodeInfo)
+  // @@protoc_insertion_point(serialize_start:bg3se.osidbg.MsgNodeInfo)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -6340,18 +6340,18 @@ void MsgNodeInfo::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->name().data(), static_cast<int>(this->name().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "dse.osidbg.MsgNodeInfo.name");
+      "bg3se.osidbg.MsgNodeInfo.name");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       3, this->name(), output);
   }
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.osidbg.MsgNodeInfo)
+  // @@protoc_insertion_point(serialize_end:bg3se.osidbg.MsgNodeInfo)
 }
 
 size_t MsgNodeInfo::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.osidbg.MsgNodeInfo)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.osidbg.MsgNodeInfo)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -6388,7 +6388,7 @@ void MsgNodeInfo::CheckTypeAndMergeFrom(
 }
 
 void MsgNodeInfo::MergeFrom(const MsgNodeInfo& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.osidbg.MsgNodeInfo)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.osidbg.MsgNodeInfo)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -6406,7 +6406,7 @@ void MsgNodeInfo::MergeFrom(const MsgNodeInfo& from) {
 }
 
 void MsgNodeInfo::CopyFrom(const MsgNodeInfo& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.osidbg.MsgNodeInfo)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.osidbg.MsgNodeInfo)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -6445,7 +6445,7 @@ void MsgNodeInfo::InternalSwap(MsgNodeInfo* other) {
 }
 
 ::std::string MsgNodeInfo::GetTypeName() const {
-  return "dse.osidbg.MsgNodeInfo";
+  return "bg3se.osidbg.MsgNodeInfo";
 }
 
 
@@ -6463,7 +6463,7 @@ MsgRuleInfo::MsgRuleInfo()
   ::google::protobuf::internal::InitSCC(
       &protobuf_osidebug_2eproto::scc_info_MsgRuleInfo.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.osidbg.MsgRuleInfo)
+  // @@protoc_insertion_point(constructor:bg3se.osidbg.MsgRuleInfo)
 }
 MsgRuleInfo::MsgRuleInfo(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -6472,7 +6472,7 @@ MsgRuleInfo::MsgRuleInfo(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_osidebug_2eproto::scc_info_MsgRuleInfo.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.osidbg.MsgRuleInfo)
+  // @@protoc_insertion_point(arena_constructor:bg3se.osidbg.MsgRuleInfo)
 }
 MsgRuleInfo::MsgRuleInfo(const MsgRuleInfo& from)
   : ::google::protobuf::MessageLite(),
@@ -6480,7 +6480,7 @@ MsgRuleInfo::MsgRuleInfo(const MsgRuleInfo& from)
       actions_(from.actions_) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   node_id_ = from.node_id_;
-  // @@protoc_insertion_point(copy_constructor:dse.osidbg.MsgRuleInfo)
+  // @@protoc_insertion_point(copy_constructor:bg3se.osidbg.MsgRuleInfo)
 }
 
 void MsgRuleInfo::SharedCtor() {
@@ -6488,7 +6488,7 @@ void MsgRuleInfo::SharedCtor() {
 }
 
 MsgRuleInfo::~MsgRuleInfo() {
-  // @@protoc_insertion_point(destructor:dse.osidbg.MsgRuleInfo)
+  // @@protoc_insertion_point(destructor:bg3se.osidbg.MsgRuleInfo)
   SharedDtor();
 }
 
@@ -6512,7 +6512,7 @@ const MsgRuleInfo& MsgRuleInfo::default_instance() {
 
 
 void MsgRuleInfo::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.osidbg.MsgRuleInfo)
+// @@protoc_insertion_point(message_clear_start:bg3se.osidbg.MsgRuleInfo)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -6532,7 +6532,7 @@ bool MsgRuleInfo::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.osidbg.MsgRuleInfo)
+  // @@protoc_insertion_point(parse_start:bg3se.osidbg.MsgRuleInfo)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -6552,7 +6552,7 @@ bool MsgRuleInfo::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated .dse.osidbg.MsgActionInfo actions = 2;
+      // repeated .bg3se.osidbg.MsgActionInfo actions = 2;
       case 2: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
@@ -6576,17 +6576,17 @@ bool MsgRuleInfo::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.osidbg.MsgRuleInfo)
+  // @@protoc_insertion_point(parse_success:bg3se.osidbg.MsgRuleInfo)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.osidbg.MsgRuleInfo)
+  // @@protoc_insertion_point(parse_failure:bg3se.osidbg.MsgRuleInfo)
   return false;
 #undef DO_
 }
 
 void MsgRuleInfo::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.osidbg.MsgRuleInfo)
+  // @@protoc_insertion_point(serialize_start:bg3se.osidbg.MsgRuleInfo)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -6595,7 +6595,7 @@ void MsgRuleInfo::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(1, this->node_id(), output);
   }
 
-  // repeated .dse.osidbg.MsgActionInfo actions = 2;
+  // repeated .bg3se.osidbg.MsgActionInfo actions = 2;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->actions_size()); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
@@ -6606,16 +6606,16 @@ void MsgRuleInfo::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.osidbg.MsgRuleInfo)
+  // @@protoc_insertion_point(serialize_end:bg3se.osidbg.MsgRuleInfo)
 }
 
 size_t MsgRuleInfo::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.osidbg.MsgRuleInfo)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.osidbg.MsgRuleInfo)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
 
-  // repeated .dse.osidbg.MsgActionInfo actions = 2;
+  // repeated .bg3se.osidbg.MsgActionInfo actions = 2;
   {
     unsigned int count = static_cast<unsigned int>(this->actions_size());
     total_size += 1UL * count;
@@ -6644,7 +6644,7 @@ void MsgRuleInfo::CheckTypeAndMergeFrom(
 }
 
 void MsgRuleInfo::MergeFrom(const MsgRuleInfo& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.osidbg.MsgRuleInfo)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.osidbg.MsgRuleInfo)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -6657,7 +6657,7 @@ void MsgRuleInfo::MergeFrom(const MsgRuleInfo& from) {
 }
 
 void MsgRuleInfo::CopyFrom(const MsgRuleInfo& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.osidbg.MsgRuleInfo)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.osidbg.MsgRuleInfo)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -6694,7 +6694,7 @@ void MsgRuleInfo::InternalSwap(MsgRuleInfo* other) {
 }
 
 ::std::string MsgRuleInfo::GetTypeName() const {
-  return "dse.osidbg.MsgRuleInfo";
+  return "bg3se.osidbg.MsgRuleInfo";
 }
 
 
@@ -6714,7 +6714,7 @@ BkSyncStoryData::BkSyncStoryData()
   ::google::protobuf::internal::InitSCC(
       &protobuf_osidebug_2eproto::scc_info_BkSyncStoryData.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.osidbg.BkSyncStoryData)
+  // @@protoc_insertion_point(constructor:bg3se.osidbg.BkSyncStoryData)
 }
 BkSyncStoryData::BkSyncStoryData(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -6726,7 +6726,7 @@ BkSyncStoryData::BkSyncStoryData(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_osidebug_2eproto::scc_info_BkSyncStoryData.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.osidbg.BkSyncStoryData)
+  // @@protoc_insertion_point(arena_constructor:bg3se.osidbg.BkSyncStoryData)
 }
 BkSyncStoryData::BkSyncStoryData(const BkSyncStoryData& from)
   : ::google::protobuf::MessageLite(),
@@ -6736,14 +6736,14 @@ BkSyncStoryData::BkSyncStoryData(const BkSyncStoryData& from)
       node_(from.node_),
       rule_(from.rule_) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  // @@protoc_insertion_point(copy_constructor:dse.osidbg.BkSyncStoryData)
+  // @@protoc_insertion_point(copy_constructor:bg3se.osidbg.BkSyncStoryData)
 }
 
 void BkSyncStoryData::SharedCtor() {
 }
 
 BkSyncStoryData::~BkSyncStoryData() {
-  // @@protoc_insertion_point(destructor:dse.osidbg.BkSyncStoryData)
+  // @@protoc_insertion_point(destructor:bg3se.osidbg.BkSyncStoryData)
   SharedDtor();
 }
 
@@ -6767,7 +6767,7 @@ const BkSyncStoryData& BkSyncStoryData::default_instance() {
 
 
 void BkSyncStoryData::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.osidbg.BkSyncStoryData)
+// @@protoc_insertion_point(message_clear_start:bg3se.osidbg.BkSyncStoryData)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -6789,13 +6789,13 @@ bool BkSyncStoryData::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.osidbg.BkSyncStoryData)
+  // @@protoc_insertion_point(parse_start:bg3se.osidbg.BkSyncStoryData)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // repeated .dse.osidbg.MsgGoalInfo goal = 1;
+      // repeated .bg3se.osidbg.MsgGoalInfo goal = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
@@ -6807,7 +6807,7 @@ bool BkSyncStoryData::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated .dse.osidbg.MsgDatabaseInfo database = 2;
+      // repeated .bg3se.osidbg.MsgDatabaseInfo database = 2;
       case 2: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
@@ -6819,7 +6819,7 @@ bool BkSyncStoryData::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated .dse.osidbg.MsgNodeInfo node = 3;
+      // repeated .bg3se.osidbg.MsgNodeInfo node = 3;
       case 3: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
@@ -6831,7 +6831,7 @@ bool BkSyncStoryData::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated .dse.osidbg.MsgRuleInfo rule = 4;
+      // repeated .bg3se.osidbg.MsgRuleInfo rule = 4;
       case 4: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(34u /* 34 & 0xFF */)) {
@@ -6855,21 +6855,21 @@ bool BkSyncStoryData::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.osidbg.BkSyncStoryData)
+  // @@protoc_insertion_point(parse_success:bg3se.osidbg.BkSyncStoryData)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.osidbg.BkSyncStoryData)
+  // @@protoc_insertion_point(parse_failure:bg3se.osidbg.BkSyncStoryData)
   return false;
 #undef DO_
 }
 
 void BkSyncStoryData::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.osidbg.BkSyncStoryData)
+  // @@protoc_insertion_point(serialize_start:bg3se.osidbg.BkSyncStoryData)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // repeated .dse.osidbg.MsgGoalInfo goal = 1;
+  // repeated .bg3se.osidbg.MsgGoalInfo goal = 1;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->goal_size()); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
@@ -6878,7 +6878,7 @@ void BkSyncStoryData::SerializeWithCachedSizes(
       output);
   }
 
-  // repeated .dse.osidbg.MsgDatabaseInfo database = 2;
+  // repeated .bg3se.osidbg.MsgDatabaseInfo database = 2;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->database_size()); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
@@ -6887,7 +6887,7 @@ void BkSyncStoryData::SerializeWithCachedSizes(
       output);
   }
 
-  // repeated .dse.osidbg.MsgNodeInfo node = 3;
+  // repeated .bg3se.osidbg.MsgNodeInfo node = 3;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->node_size()); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
@@ -6896,7 +6896,7 @@ void BkSyncStoryData::SerializeWithCachedSizes(
       output);
   }
 
-  // repeated .dse.osidbg.MsgRuleInfo rule = 4;
+  // repeated .bg3se.osidbg.MsgRuleInfo rule = 4;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->rule_size()); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
@@ -6907,16 +6907,16 @@ void BkSyncStoryData::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.osidbg.BkSyncStoryData)
+  // @@protoc_insertion_point(serialize_end:bg3se.osidbg.BkSyncStoryData)
 }
 
 size_t BkSyncStoryData::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.osidbg.BkSyncStoryData)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.osidbg.BkSyncStoryData)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
 
-  // repeated .dse.osidbg.MsgGoalInfo goal = 1;
+  // repeated .bg3se.osidbg.MsgGoalInfo goal = 1;
   {
     unsigned int count = static_cast<unsigned int>(this->goal_size());
     total_size += 1UL * count;
@@ -6927,7 +6927,7 @@ size_t BkSyncStoryData::ByteSizeLong() const {
     }
   }
 
-  // repeated .dse.osidbg.MsgDatabaseInfo database = 2;
+  // repeated .bg3se.osidbg.MsgDatabaseInfo database = 2;
   {
     unsigned int count = static_cast<unsigned int>(this->database_size());
     total_size += 1UL * count;
@@ -6938,7 +6938,7 @@ size_t BkSyncStoryData::ByteSizeLong() const {
     }
   }
 
-  // repeated .dse.osidbg.MsgNodeInfo node = 3;
+  // repeated .bg3se.osidbg.MsgNodeInfo node = 3;
   {
     unsigned int count = static_cast<unsigned int>(this->node_size());
     total_size += 1UL * count;
@@ -6949,7 +6949,7 @@ size_t BkSyncStoryData::ByteSizeLong() const {
     }
   }
 
-  // repeated .dse.osidbg.MsgRuleInfo rule = 4;
+  // repeated .bg3se.osidbg.MsgRuleInfo rule = 4;
   {
     unsigned int count = static_cast<unsigned int>(this->rule_size());
     total_size += 1UL * count;
@@ -6971,7 +6971,7 @@ void BkSyncStoryData::CheckTypeAndMergeFrom(
 }
 
 void BkSyncStoryData::MergeFrom(const BkSyncStoryData& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.osidbg.BkSyncStoryData)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.osidbg.BkSyncStoryData)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -6984,7 +6984,7 @@ void BkSyncStoryData::MergeFrom(const BkSyncStoryData& from) {
 }
 
 void BkSyncStoryData::CopyFrom(const BkSyncStoryData& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.osidbg.BkSyncStoryData)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.osidbg.BkSyncStoryData)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -7023,7 +7023,7 @@ void BkSyncStoryData::InternalSwap(BkSyncStoryData* other) {
 }
 
 ::std::string BkSyncStoryData::GetTypeName() const {
-  return "dse.osidbg.BkSyncStoryData";
+  return "bg3se.osidbg.BkSyncStoryData";
 }
 
 
@@ -7039,7 +7039,7 @@ BkSyncStoryFinished::BkSyncStoryFinished()
   ::google::protobuf::internal::InitSCC(
       &protobuf_osidebug_2eproto::scc_info_BkSyncStoryFinished.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.osidbg.BkSyncStoryFinished)
+  // @@protoc_insertion_point(constructor:bg3se.osidbg.BkSyncStoryFinished)
 }
 BkSyncStoryFinished::BkSyncStoryFinished(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -7047,20 +7047,20 @@ BkSyncStoryFinished::BkSyncStoryFinished(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_osidebug_2eproto::scc_info_BkSyncStoryFinished.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.osidbg.BkSyncStoryFinished)
+  // @@protoc_insertion_point(arena_constructor:bg3se.osidbg.BkSyncStoryFinished)
 }
 BkSyncStoryFinished::BkSyncStoryFinished(const BkSyncStoryFinished& from)
   : ::google::protobuf::MessageLite(),
       _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  // @@protoc_insertion_point(copy_constructor:dse.osidbg.BkSyncStoryFinished)
+  // @@protoc_insertion_point(copy_constructor:bg3se.osidbg.BkSyncStoryFinished)
 }
 
 void BkSyncStoryFinished::SharedCtor() {
 }
 
 BkSyncStoryFinished::~BkSyncStoryFinished() {
-  // @@protoc_insertion_point(destructor:dse.osidbg.BkSyncStoryFinished)
+  // @@protoc_insertion_point(destructor:bg3se.osidbg.BkSyncStoryFinished)
   SharedDtor();
 }
 
@@ -7084,7 +7084,7 @@ const BkSyncStoryFinished& BkSyncStoryFinished::default_instance() {
 
 
 void BkSyncStoryFinished::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.osidbg.BkSyncStoryFinished)
+// @@protoc_insertion_point(message_clear_start:bg3se.osidbg.BkSyncStoryFinished)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -7102,7 +7102,7 @@ bool BkSyncStoryFinished::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.osidbg.BkSyncStoryFinished)
+  // @@protoc_insertion_point(parse_start:bg3se.osidbg.BkSyncStoryFinished)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -7115,27 +7115,27 @@ bool BkSyncStoryFinished::MergePartialFromCodedStream(
         input, tag, &unknown_fields_stream));
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.osidbg.BkSyncStoryFinished)
+  // @@protoc_insertion_point(parse_success:bg3se.osidbg.BkSyncStoryFinished)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.osidbg.BkSyncStoryFinished)
+  // @@protoc_insertion_point(parse_failure:bg3se.osidbg.BkSyncStoryFinished)
   return false;
 #undef DO_
 }
 
 void BkSyncStoryFinished::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.osidbg.BkSyncStoryFinished)
+  // @@protoc_insertion_point(serialize_start:bg3se.osidbg.BkSyncStoryFinished)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.osidbg.BkSyncStoryFinished)
+  // @@protoc_insertion_point(serialize_end:bg3se.osidbg.BkSyncStoryFinished)
 }
 
 size_t BkSyncStoryFinished::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.osidbg.BkSyncStoryFinished)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.osidbg.BkSyncStoryFinished)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -7151,7 +7151,7 @@ void BkSyncStoryFinished::CheckTypeAndMergeFrom(
 }
 
 void BkSyncStoryFinished::MergeFrom(const BkSyncStoryFinished& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.osidbg.BkSyncStoryFinished)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.osidbg.BkSyncStoryFinished)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -7160,7 +7160,7 @@ void BkSyncStoryFinished::MergeFrom(const BkSyncStoryFinished& from) {
 }
 
 void BkSyncStoryFinished::CopyFrom(const BkSyncStoryFinished& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.osidbg.BkSyncStoryFinished)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.osidbg.BkSyncStoryFinished)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -7195,7 +7195,7 @@ void BkSyncStoryFinished::InternalSwap(BkSyncStoryFinished* other) {
 }
 
 ::std::string BkSyncStoryFinished::GetTypeName() const {
-  return "dse.osidbg.BkSyncStoryFinished";
+  return "bg3se.osidbg.BkSyncStoryFinished";
 }
 
 
@@ -7212,7 +7212,7 @@ BkDebugOutput::BkDebugOutput()
   ::google::protobuf::internal::InitSCC(
       &protobuf_osidebug_2eproto::scc_info_BkDebugOutput.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.osidbg.BkDebugOutput)
+  // @@protoc_insertion_point(constructor:bg3se.osidbg.BkDebugOutput)
 }
 BkDebugOutput::BkDebugOutput(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -7220,7 +7220,7 @@ BkDebugOutput::BkDebugOutput(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_osidebug_2eproto::scc_info_BkDebugOutput.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.osidbg.BkDebugOutput)
+  // @@protoc_insertion_point(arena_constructor:bg3se.osidbg.BkDebugOutput)
 }
 BkDebugOutput::BkDebugOutput(const BkDebugOutput& from)
   : ::google::protobuf::MessageLite(),
@@ -7231,7 +7231,7 @@ BkDebugOutput::BkDebugOutput(const BkDebugOutput& from)
     message_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.message(),
       GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(copy_constructor:dse.osidbg.BkDebugOutput)
+  // @@protoc_insertion_point(copy_constructor:bg3se.osidbg.BkDebugOutput)
 }
 
 void BkDebugOutput::SharedCtor() {
@@ -7239,7 +7239,7 @@ void BkDebugOutput::SharedCtor() {
 }
 
 BkDebugOutput::~BkDebugOutput() {
-  // @@protoc_insertion_point(destructor:dse.osidbg.BkDebugOutput)
+  // @@protoc_insertion_point(destructor:bg3se.osidbg.BkDebugOutput)
   SharedDtor();
 }
 
@@ -7264,7 +7264,7 @@ const BkDebugOutput& BkDebugOutput::default_instance() {
 
 
 void BkDebugOutput::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.osidbg.BkDebugOutput)
+// @@protoc_insertion_point(message_clear_start:bg3se.osidbg.BkDebugOutput)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -7283,7 +7283,7 @@ bool BkDebugOutput::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.osidbg.BkDebugOutput)
+  // @@protoc_insertion_point(parse_start:bg3se.osidbg.BkDebugOutput)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -7298,7 +7298,7 @@ bool BkDebugOutput::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->message().data(), static_cast<int>(this->message().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "dse.osidbg.BkDebugOutput.message"));
+            "bg3se.osidbg.BkDebugOutput.message"));
         } else {
           goto handle_unusual;
         }
@@ -7317,17 +7317,17 @@ bool BkDebugOutput::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.osidbg.BkDebugOutput)
+  // @@protoc_insertion_point(parse_success:bg3se.osidbg.BkDebugOutput)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.osidbg.BkDebugOutput)
+  // @@protoc_insertion_point(parse_failure:bg3se.osidbg.BkDebugOutput)
   return false;
 #undef DO_
 }
 
 void BkDebugOutput::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.osidbg.BkDebugOutput)
+  // @@protoc_insertion_point(serialize_start:bg3se.osidbg.BkDebugOutput)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -7336,18 +7336,18 @@ void BkDebugOutput::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->message().data(), static_cast<int>(this->message().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "dse.osidbg.BkDebugOutput.message");
+      "bg3se.osidbg.BkDebugOutput.message");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       1, this->message(), output);
   }
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.osidbg.BkDebugOutput)
+  // @@protoc_insertion_point(serialize_end:bg3se.osidbg.BkDebugOutput)
 }
 
 size_t BkDebugOutput::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.osidbg.BkDebugOutput)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.osidbg.BkDebugOutput)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -7370,7 +7370,7 @@ void BkDebugOutput::CheckTypeAndMergeFrom(
 }
 
 void BkDebugOutput::MergeFrom(const BkDebugOutput& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.osidbg.BkDebugOutput)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.osidbg.BkDebugOutput)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -7382,7 +7382,7 @@ void BkDebugOutput::MergeFrom(const BkDebugOutput& from) {
 }
 
 void BkDebugOutput::CopyFrom(const BkDebugOutput& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.osidbg.BkDebugOutput)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.osidbg.BkDebugOutput)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -7419,7 +7419,7 @@ void BkDebugOutput::InternalSwap(BkDebugOutput* other) {
 }
 
 ::std::string BkDebugOutput::GetTypeName() const {
-  return "dse.osidbg.BkDebugOutput";
+  return "bg3se.osidbg.BkDebugOutput";
 }
 
 
@@ -7436,7 +7436,7 @@ BkBeginDatabaseContents::BkBeginDatabaseContents()
   ::google::protobuf::internal::InitSCC(
       &protobuf_osidebug_2eproto::scc_info_BkBeginDatabaseContents.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.osidbg.BkBeginDatabaseContents)
+  // @@protoc_insertion_point(constructor:bg3se.osidbg.BkBeginDatabaseContents)
 }
 BkBeginDatabaseContents::BkBeginDatabaseContents(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -7444,14 +7444,14 @@ BkBeginDatabaseContents::BkBeginDatabaseContents(::google::protobuf::Arena* aren
   ::google::protobuf::internal::InitSCC(&protobuf_osidebug_2eproto::scc_info_BkBeginDatabaseContents.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.osidbg.BkBeginDatabaseContents)
+  // @@protoc_insertion_point(arena_constructor:bg3se.osidbg.BkBeginDatabaseContents)
 }
 BkBeginDatabaseContents::BkBeginDatabaseContents(const BkBeginDatabaseContents& from)
   : ::google::protobuf::MessageLite(),
       _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   database_id_ = from.database_id_;
-  // @@protoc_insertion_point(copy_constructor:dse.osidbg.BkBeginDatabaseContents)
+  // @@protoc_insertion_point(copy_constructor:bg3se.osidbg.BkBeginDatabaseContents)
 }
 
 void BkBeginDatabaseContents::SharedCtor() {
@@ -7459,7 +7459,7 @@ void BkBeginDatabaseContents::SharedCtor() {
 }
 
 BkBeginDatabaseContents::~BkBeginDatabaseContents() {
-  // @@protoc_insertion_point(destructor:dse.osidbg.BkBeginDatabaseContents)
+  // @@protoc_insertion_point(destructor:bg3se.osidbg.BkBeginDatabaseContents)
   SharedDtor();
 }
 
@@ -7483,7 +7483,7 @@ const BkBeginDatabaseContents& BkBeginDatabaseContents::default_instance() {
 
 
 void BkBeginDatabaseContents::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.osidbg.BkBeginDatabaseContents)
+// @@protoc_insertion_point(message_clear_start:bg3se.osidbg.BkBeginDatabaseContents)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -7502,7 +7502,7 @@ bool BkBeginDatabaseContents::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.osidbg.BkBeginDatabaseContents)
+  // @@protoc_insertion_point(parse_start:bg3se.osidbg.BkBeginDatabaseContents)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -7534,17 +7534,17 @@ bool BkBeginDatabaseContents::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.osidbg.BkBeginDatabaseContents)
+  // @@protoc_insertion_point(parse_success:bg3se.osidbg.BkBeginDatabaseContents)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.osidbg.BkBeginDatabaseContents)
+  // @@protoc_insertion_point(parse_failure:bg3se.osidbg.BkBeginDatabaseContents)
   return false;
 #undef DO_
 }
 
 void BkBeginDatabaseContents::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.osidbg.BkBeginDatabaseContents)
+  // @@protoc_insertion_point(serialize_start:bg3se.osidbg.BkBeginDatabaseContents)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -7555,11 +7555,11 @@ void BkBeginDatabaseContents::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.osidbg.BkBeginDatabaseContents)
+  // @@protoc_insertion_point(serialize_end:bg3se.osidbg.BkBeginDatabaseContents)
 }
 
 size_t BkBeginDatabaseContents::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.osidbg.BkBeginDatabaseContents)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.osidbg.BkBeginDatabaseContents)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -7582,7 +7582,7 @@ void BkBeginDatabaseContents::CheckTypeAndMergeFrom(
 }
 
 void BkBeginDatabaseContents::MergeFrom(const BkBeginDatabaseContents& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.osidbg.BkBeginDatabaseContents)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.osidbg.BkBeginDatabaseContents)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -7594,7 +7594,7 @@ void BkBeginDatabaseContents::MergeFrom(const BkBeginDatabaseContents& from) {
 }
 
 void BkBeginDatabaseContents::CopyFrom(const BkBeginDatabaseContents& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.osidbg.BkBeginDatabaseContents)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.osidbg.BkBeginDatabaseContents)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -7630,7 +7630,7 @@ void BkBeginDatabaseContents::InternalSwap(BkBeginDatabaseContents* other) {
 }
 
 ::std::string BkBeginDatabaseContents::GetTypeName() const {
-  return "dse.osidbg.BkBeginDatabaseContents";
+  return "bg3se.osidbg.BkBeginDatabaseContents";
 }
 
 
@@ -7648,7 +7648,7 @@ BkDatabaseRow::BkDatabaseRow()
   ::google::protobuf::internal::InitSCC(
       &protobuf_osidebug_2eproto::scc_info_BkDatabaseRow.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.osidbg.BkDatabaseRow)
+  // @@protoc_insertion_point(constructor:bg3se.osidbg.BkDatabaseRow)
 }
 BkDatabaseRow::BkDatabaseRow(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -7657,7 +7657,7 @@ BkDatabaseRow::BkDatabaseRow(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_osidebug_2eproto::scc_info_BkDatabaseRow.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.osidbg.BkDatabaseRow)
+  // @@protoc_insertion_point(arena_constructor:bg3se.osidbg.BkDatabaseRow)
 }
 BkDatabaseRow::BkDatabaseRow(const BkDatabaseRow& from)
   : ::google::protobuf::MessageLite(),
@@ -7665,7 +7665,7 @@ BkDatabaseRow::BkDatabaseRow(const BkDatabaseRow& from)
       row_(from.row_) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   database_id_ = from.database_id_;
-  // @@protoc_insertion_point(copy_constructor:dse.osidbg.BkDatabaseRow)
+  // @@protoc_insertion_point(copy_constructor:bg3se.osidbg.BkDatabaseRow)
 }
 
 void BkDatabaseRow::SharedCtor() {
@@ -7673,7 +7673,7 @@ void BkDatabaseRow::SharedCtor() {
 }
 
 BkDatabaseRow::~BkDatabaseRow() {
-  // @@protoc_insertion_point(destructor:dse.osidbg.BkDatabaseRow)
+  // @@protoc_insertion_point(destructor:bg3se.osidbg.BkDatabaseRow)
   SharedDtor();
 }
 
@@ -7697,7 +7697,7 @@ const BkDatabaseRow& BkDatabaseRow::default_instance() {
 
 
 void BkDatabaseRow::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.osidbg.BkDatabaseRow)
+// @@protoc_insertion_point(message_clear_start:bg3se.osidbg.BkDatabaseRow)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -7717,7 +7717,7 @@ bool BkDatabaseRow::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.osidbg.BkDatabaseRow)
+  // @@protoc_insertion_point(parse_start:bg3se.osidbg.BkDatabaseRow)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -7737,7 +7737,7 @@ bool BkDatabaseRow::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated .dse.osidbg.MsgTuple row = 2;
+      // repeated .bg3se.osidbg.MsgTuple row = 2;
       case 2: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
@@ -7761,17 +7761,17 @@ bool BkDatabaseRow::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.osidbg.BkDatabaseRow)
+  // @@protoc_insertion_point(parse_success:bg3se.osidbg.BkDatabaseRow)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.osidbg.BkDatabaseRow)
+  // @@protoc_insertion_point(parse_failure:bg3se.osidbg.BkDatabaseRow)
   return false;
 #undef DO_
 }
 
 void BkDatabaseRow::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.osidbg.BkDatabaseRow)
+  // @@protoc_insertion_point(serialize_start:bg3se.osidbg.BkDatabaseRow)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -7780,7 +7780,7 @@ void BkDatabaseRow::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(1, this->database_id(), output);
   }
 
-  // repeated .dse.osidbg.MsgTuple row = 2;
+  // repeated .bg3se.osidbg.MsgTuple row = 2;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->row_size()); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
@@ -7791,16 +7791,16 @@ void BkDatabaseRow::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.osidbg.BkDatabaseRow)
+  // @@protoc_insertion_point(serialize_end:bg3se.osidbg.BkDatabaseRow)
 }
 
 size_t BkDatabaseRow::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.osidbg.BkDatabaseRow)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.osidbg.BkDatabaseRow)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
 
-  // repeated .dse.osidbg.MsgTuple row = 2;
+  // repeated .bg3se.osidbg.MsgTuple row = 2;
   {
     unsigned int count = static_cast<unsigned int>(this->row_size());
     total_size += 1UL * count;
@@ -7829,7 +7829,7 @@ void BkDatabaseRow::CheckTypeAndMergeFrom(
 }
 
 void BkDatabaseRow::MergeFrom(const BkDatabaseRow& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.osidbg.BkDatabaseRow)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.osidbg.BkDatabaseRow)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -7842,7 +7842,7 @@ void BkDatabaseRow::MergeFrom(const BkDatabaseRow& from) {
 }
 
 void BkDatabaseRow::CopyFrom(const BkDatabaseRow& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.osidbg.BkDatabaseRow)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.osidbg.BkDatabaseRow)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -7879,7 +7879,7 @@ void BkDatabaseRow::InternalSwap(BkDatabaseRow* other) {
 }
 
 ::std::string BkDatabaseRow::GetTypeName() const {
-  return "dse.osidbg.BkDatabaseRow";
+  return "bg3se.osidbg.BkDatabaseRow";
 }
 
 
@@ -7896,7 +7896,7 @@ BkEndDatabaseContents::BkEndDatabaseContents()
   ::google::protobuf::internal::InitSCC(
       &protobuf_osidebug_2eproto::scc_info_BkEndDatabaseContents.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.osidbg.BkEndDatabaseContents)
+  // @@protoc_insertion_point(constructor:bg3se.osidbg.BkEndDatabaseContents)
 }
 BkEndDatabaseContents::BkEndDatabaseContents(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -7904,14 +7904,14 @@ BkEndDatabaseContents::BkEndDatabaseContents(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_osidebug_2eproto::scc_info_BkEndDatabaseContents.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.osidbg.BkEndDatabaseContents)
+  // @@protoc_insertion_point(arena_constructor:bg3se.osidbg.BkEndDatabaseContents)
 }
 BkEndDatabaseContents::BkEndDatabaseContents(const BkEndDatabaseContents& from)
   : ::google::protobuf::MessageLite(),
       _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   database_id_ = from.database_id_;
-  // @@protoc_insertion_point(copy_constructor:dse.osidbg.BkEndDatabaseContents)
+  // @@protoc_insertion_point(copy_constructor:bg3se.osidbg.BkEndDatabaseContents)
 }
 
 void BkEndDatabaseContents::SharedCtor() {
@@ -7919,7 +7919,7 @@ void BkEndDatabaseContents::SharedCtor() {
 }
 
 BkEndDatabaseContents::~BkEndDatabaseContents() {
-  // @@protoc_insertion_point(destructor:dse.osidbg.BkEndDatabaseContents)
+  // @@protoc_insertion_point(destructor:bg3se.osidbg.BkEndDatabaseContents)
   SharedDtor();
 }
 
@@ -7943,7 +7943,7 @@ const BkEndDatabaseContents& BkEndDatabaseContents::default_instance() {
 
 
 void BkEndDatabaseContents::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.osidbg.BkEndDatabaseContents)
+// @@protoc_insertion_point(message_clear_start:bg3se.osidbg.BkEndDatabaseContents)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -7962,7 +7962,7 @@ bool BkEndDatabaseContents::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.osidbg.BkEndDatabaseContents)
+  // @@protoc_insertion_point(parse_start:bg3se.osidbg.BkEndDatabaseContents)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
@@ -7994,17 +7994,17 @@ bool BkEndDatabaseContents::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.osidbg.BkEndDatabaseContents)
+  // @@protoc_insertion_point(parse_success:bg3se.osidbg.BkEndDatabaseContents)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.osidbg.BkEndDatabaseContents)
+  // @@protoc_insertion_point(parse_failure:bg3se.osidbg.BkEndDatabaseContents)
   return false;
 #undef DO_
 }
 
 void BkEndDatabaseContents::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.osidbg.BkEndDatabaseContents)
+  // @@protoc_insertion_point(serialize_start:bg3se.osidbg.BkEndDatabaseContents)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -8015,11 +8015,11 @@ void BkEndDatabaseContents::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.osidbg.BkEndDatabaseContents)
+  // @@protoc_insertion_point(serialize_end:bg3se.osidbg.BkEndDatabaseContents)
 }
 
 size_t BkEndDatabaseContents::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.osidbg.BkEndDatabaseContents)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.osidbg.BkEndDatabaseContents)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -8042,7 +8042,7 @@ void BkEndDatabaseContents::CheckTypeAndMergeFrom(
 }
 
 void BkEndDatabaseContents::MergeFrom(const BkEndDatabaseContents& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.osidbg.BkEndDatabaseContents)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.osidbg.BkEndDatabaseContents)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -8054,7 +8054,7 @@ void BkEndDatabaseContents::MergeFrom(const BkEndDatabaseContents& from) {
 }
 
 void BkEndDatabaseContents::CopyFrom(const BkEndDatabaseContents& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.osidbg.BkEndDatabaseContents)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.osidbg.BkEndDatabaseContents)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -8090,7 +8090,7 @@ void BkEndDatabaseContents::InternalSwap(BkEndDatabaseContents* other) {
 }
 
 ::std::string BkEndDatabaseContents::GetTypeName() const {
-  return "dse.osidbg.BkEndDatabaseContents";
+  return "bg3se.osidbg.BkEndDatabaseContents";
 }
 
 
@@ -8107,7 +8107,7 @@ BkEvaluateRow::BkEvaluateRow()
   ::google::protobuf::internal::InitSCC(
       &protobuf_osidebug_2eproto::scc_info_BkEvaluateRow.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.osidbg.BkEvaluateRow)
+  // @@protoc_insertion_point(constructor:bg3se.osidbg.BkEvaluateRow)
 }
 BkEvaluateRow::BkEvaluateRow(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -8116,21 +8116,21 @@ BkEvaluateRow::BkEvaluateRow(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_osidebug_2eproto::scc_info_BkEvaluateRow.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.osidbg.BkEvaluateRow)
+  // @@protoc_insertion_point(arena_constructor:bg3se.osidbg.BkEvaluateRow)
 }
 BkEvaluateRow::BkEvaluateRow(const BkEvaluateRow& from)
   : ::google::protobuf::MessageLite(),
       _internal_metadata_(NULL),
       row_(from.row_) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  // @@protoc_insertion_point(copy_constructor:dse.osidbg.BkEvaluateRow)
+  // @@protoc_insertion_point(copy_constructor:bg3se.osidbg.BkEvaluateRow)
 }
 
 void BkEvaluateRow::SharedCtor() {
 }
 
 BkEvaluateRow::~BkEvaluateRow() {
-  // @@protoc_insertion_point(destructor:dse.osidbg.BkEvaluateRow)
+  // @@protoc_insertion_point(destructor:bg3se.osidbg.BkEvaluateRow)
   SharedDtor();
 }
 
@@ -8154,7 +8154,7 @@ const BkEvaluateRow& BkEvaluateRow::default_instance() {
 
 
 void BkEvaluateRow::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.osidbg.BkEvaluateRow)
+// @@protoc_insertion_point(message_clear_start:bg3se.osidbg.BkEvaluateRow)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -8173,13 +8173,13 @@ bool BkEvaluateRow::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.osidbg.BkEvaluateRow)
+  // @@protoc_insertion_point(parse_start:bg3se.osidbg.BkEvaluateRow)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // repeated .dse.osidbg.MsgTuple row = 1;
+      // repeated .bg3se.osidbg.MsgTuple row = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
@@ -8203,21 +8203,21 @@ bool BkEvaluateRow::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.osidbg.BkEvaluateRow)
+  // @@protoc_insertion_point(parse_success:bg3se.osidbg.BkEvaluateRow)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.osidbg.BkEvaluateRow)
+  // @@protoc_insertion_point(parse_failure:bg3se.osidbg.BkEvaluateRow)
   return false;
 #undef DO_
 }
 
 void BkEvaluateRow::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.osidbg.BkEvaluateRow)
+  // @@protoc_insertion_point(serialize_start:bg3se.osidbg.BkEvaluateRow)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // repeated .dse.osidbg.MsgTuple row = 1;
+  // repeated .bg3se.osidbg.MsgTuple row = 1;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->row_size()); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
@@ -8228,16 +8228,16 @@ void BkEvaluateRow::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.osidbg.BkEvaluateRow)
+  // @@protoc_insertion_point(serialize_end:bg3se.osidbg.BkEvaluateRow)
 }
 
 size_t BkEvaluateRow::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.osidbg.BkEvaluateRow)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.osidbg.BkEvaluateRow)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
 
-  // repeated .dse.osidbg.MsgTuple row = 1;
+  // repeated .bg3se.osidbg.MsgTuple row = 1;
   {
     unsigned int count = static_cast<unsigned int>(this->row_size());
     total_size += 1UL * count;
@@ -8259,7 +8259,7 @@ void BkEvaluateRow::CheckTypeAndMergeFrom(
 }
 
 void BkEvaluateRow::MergeFrom(const BkEvaluateRow& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.osidbg.BkEvaluateRow)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.osidbg.BkEvaluateRow)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -8269,7 +8269,7 @@ void BkEvaluateRow::MergeFrom(const BkEvaluateRow& from) {
 }
 
 void BkEvaluateRow::CopyFrom(const BkEvaluateRow& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.osidbg.BkEvaluateRow)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.osidbg.BkEvaluateRow)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -8305,7 +8305,7 @@ void BkEvaluateRow::InternalSwap(BkEvaluateRow* other) {
 }
 
 ::std::string BkEvaluateRow::GetTypeName() const {
-  return "dse.osidbg.BkEvaluateRow";
+  return "bg3se.osidbg.BkEvaluateRow";
 }
 
 
@@ -8323,7 +8323,7 @@ BkEvaluateFinished::BkEvaluateFinished()
   ::google::protobuf::internal::InitSCC(
       &protobuf_osidebug_2eproto::scc_info_BkEvaluateFinished.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.osidbg.BkEvaluateFinished)
+  // @@protoc_insertion_point(constructor:bg3se.osidbg.BkEvaluateFinished)
 }
 BkEvaluateFinished::BkEvaluateFinished(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -8331,7 +8331,7 @@ BkEvaluateFinished::BkEvaluateFinished(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_osidebug_2eproto::scc_info_BkEvaluateFinished.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.osidbg.BkEvaluateFinished)
+  // @@protoc_insertion_point(arena_constructor:bg3se.osidbg.BkEvaluateFinished)
 }
 BkEvaluateFinished::BkEvaluateFinished(const BkEvaluateFinished& from)
   : ::google::protobuf::MessageLite(),
@@ -8340,7 +8340,7 @@ BkEvaluateFinished::BkEvaluateFinished(const BkEvaluateFinished& from)
   ::memcpy(&result_code_, &from.result_code_,
     static_cast<size_t>(reinterpret_cast<char*>(&query_succeeded_) -
     reinterpret_cast<char*>(&result_code_)) + sizeof(query_succeeded_));
-  // @@protoc_insertion_point(copy_constructor:dse.osidbg.BkEvaluateFinished)
+  // @@protoc_insertion_point(copy_constructor:bg3se.osidbg.BkEvaluateFinished)
 }
 
 void BkEvaluateFinished::SharedCtor() {
@@ -8350,7 +8350,7 @@ void BkEvaluateFinished::SharedCtor() {
 }
 
 BkEvaluateFinished::~BkEvaluateFinished() {
-  // @@protoc_insertion_point(destructor:dse.osidbg.BkEvaluateFinished)
+  // @@protoc_insertion_point(destructor:bg3se.osidbg.BkEvaluateFinished)
   SharedDtor();
 }
 
@@ -8374,7 +8374,7 @@ const BkEvaluateFinished& BkEvaluateFinished::default_instance() {
 
 
 void BkEvaluateFinished::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.osidbg.BkEvaluateFinished)
+// @@protoc_insertion_point(message_clear_start:bg3se.osidbg.BkEvaluateFinished)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -8395,13 +8395,13 @@ bool BkEvaluateFinished::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.osidbg.BkEvaluateFinished)
+  // @@protoc_insertion_point(parse_start:bg3se.osidbg.BkEvaluateFinished)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .dse.osidbg.StatusCode result_code = 1;
+      // .bg3se.osidbg.StatusCode result_code = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
@@ -8409,7 +8409,7 @@ bool BkEvaluateFinished::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
                  input, &value)));
-          set_result_code(static_cast< ::dse::osidbg::StatusCode >(value));
+          set_result_code(static_cast< ::bg3se::osidbg::StatusCode >(value));
         } else {
           goto handle_unusual;
         }
@@ -8442,21 +8442,21 @@ bool BkEvaluateFinished::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.osidbg.BkEvaluateFinished)
+  // @@protoc_insertion_point(parse_success:bg3se.osidbg.BkEvaluateFinished)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.osidbg.BkEvaluateFinished)
+  // @@protoc_insertion_point(parse_failure:bg3se.osidbg.BkEvaluateFinished)
   return false;
 #undef DO_
 }
 
 void BkEvaluateFinished::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.osidbg.BkEvaluateFinished)
+  // @@protoc_insertion_point(serialize_start:bg3se.osidbg.BkEvaluateFinished)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .dse.osidbg.StatusCode result_code = 1;
+  // .bg3se.osidbg.StatusCode result_code = 1;
   if (this->result_code() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
       1, this->result_code(), output);
@@ -8469,16 +8469,16 @@ void BkEvaluateFinished::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.osidbg.BkEvaluateFinished)
+  // @@protoc_insertion_point(serialize_end:bg3se.osidbg.BkEvaluateFinished)
 }
 
 size_t BkEvaluateFinished::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.osidbg.BkEvaluateFinished)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.osidbg.BkEvaluateFinished)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
 
-  // .dse.osidbg.StatusCode result_code = 1;
+  // .bg3se.osidbg.StatusCode result_code = 1;
   if (this->result_code() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::EnumSize(this->result_code());
@@ -8500,7 +8500,7 @@ void BkEvaluateFinished::CheckTypeAndMergeFrom(
 }
 
 void BkEvaluateFinished::MergeFrom(const BkEvaluateFinished& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.osidbg.BkEvaluateFinished)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.osidbg.BkEvaluateFinished)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -8515,7 +8515,7 @@ void BkEvaluateFinished::MergeFrom(const BkEvaluateFinished& from) {
 }
 
 void BkEvaluateFinished::CopyFrom(const BkEvaluateFinished& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.osidbg.BkEvaluateFinished)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.osidbg.BkEvaluateFinished)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -8552,7 +8552,7 @@ void BkEvaluateFinished::InternalSwap(BkEvaluateFinished* other) {
 }
 
 ::std::string BkEvaluateFinished::GetTypeName() const {
-  return "dse.osidbg.BkEvaluateFinished";
+  return "bg3se.osidbg.BkEvaluateFinished";
 }
 
 
@@ -8560,7 +8560,7 @@ void BkEvaluateFinished::InternalSwap(BkEvaluateFinished* other) {
 
 void DebuggerToBackend::InitAsDefaultInstance() {
 }
-void DebuggerToBackend::set_allocated_identify(::dse::osidbg::DbgIdentifyRequest* identify) {
+void DebuggerToBackend::set_allocated_identify(::bg3se::osidbg::DbgIdentifyRequest* identify) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (identify) {
@@ -8573,9 +8573,9 @@ void DebuggerToBackend::set_allocated_identify(::dse::osidbg::DbgIdentifyRequest
     set_has_identify();
     msg_.identify_ = identify;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.osidbg.DebuggerToBackend.identify)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.osidbg.DebuggerToBackend.identify)
 }
-void DebuggerToBackend::set_allocated_setglobalbreakpoints(::dse::osidbg::DbgSetGlobalBreakpoints* setglobalbreakpoints) {
+void DebuggerToBackend::set_allocated_setglobalbreakpoints(::bg3se::osidbg::DbgSetGlobalBreakpoints* setglobalbreakpoints) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (setglobalbreakpoints) {
@@ -8588,9 +8588,9 @@ void DebuggerToBackend::set_allocated_setglobalbreakpoints(::dse::osidbg::DbgSet
     set_has_setglobalbreakpoints();
     msg_.setglobalbreakpoints_ = setglobalbreakpoints;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.osidbg.DebuggerToBackend.setGlobalBreakpoints)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.osidbg.DebuggerToBackend.setGlobalBreakpoints)
 }
-void DebuggerToBackend::set_allocated_setbreakpoints(::dse::osidbg::DbgSetBreakpoints* setbreakpoints) {
+void DebuggerToBackend::set_allocated_setbreakpoints(::bg3se::osidbg::DbgSetBreakpoints* setbreakpoints) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (setbreakpoints) {
@@ -8603,9 +8603,9 @@ void DebuggerToBackend::set_allocated_setbreakpoints(::dse::osidbg::DbgSetBreakp
     set_has_setbreakpoints();
     msg_.setbreakpoints_ = setbreakpoints;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.osidbg.DebuggerToBackend.setBreakpoints)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.osidbg.DebuggerToBackend.setBreakpoints)
 }
-void DebuggerToBackend::set_allocated_continue_(::dse::osidbg::DbgContinue* continue_) {
+void DebuggerToBackend::set_allocated_continue_(::bg3se::osidbg::DbgContinue* continue_) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (continue_) {
@@ -8618,9 +8618,9 @@ void DebuggerToBackend::set_allocated_continue_(::dse::osidbg::DbgContinue* cont
     set_has_continue_();
     msg_.continue__ = continue_;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.osidbg.DebuggerToBackend.continue)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.osidbg.DebuggerToBackend.continue)
 }
-void DebuggerToBackend::set_allocated_getdatabasecontents(::dse::osidbg::DbgGetDatabaseContents* getdatabasecontents) {
+void DebuggerToBackend::set_allocated_getdatabasecontents(::bg3se::osidbg::DbgGetDatabaseContents* getdatabasecontents) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (getdatabasecontents) {
@@ -8633,9 +8633,9 @@ void DebuggerToBackend::set_allocated_getdatabasecontents(::dse::osidbg::DbgGetD
     set_has_getdatabasecontents();
     msg_.getdatabasecontents_ = getdatabasecontents;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.osidbg.DebuggerToBackend.getDatabaseContents)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.osidbg.DebuggerToBackend.getDatabaseContents)
 }
-void DebuggerToBackend::set_allocated_syncstory(::dse::osidbg::DbgSyncStory* syncstory) {
+void DebuggerToBackend::set_allocated_syncstory(::bg3se::osidbg::DbgSyncStory* syncstory) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (syncstory) {
@@ -8648,9 +8648,9 @@ void DebuggerToBackend::set_allocated_syncstory(::dse::osidbg::DbgSyncStory* syn
     set_has_syncstory();
     msg_.syncstory_ = syncstory;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.osidbg.DebuggerToBackend.syncStory)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.osidbg.DebuggerToBackend.syncStory)
 }
-void DebuggerToBackend::set_allocated_evaluate(::dse::osidbg::DbgEvaluate* evaluate) {
+void DebuggerToBackend::set_allocated_evaluate(::bg3se::osidbg::DbgEvaluate* evaluate) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (evaluate) {
@@ -8663,7 +8663,7 @@ void DebuggerToBackend::set_allocated_evaluate(::dse::osidbg::DbgEvaluate* evalu
     set_has_evaluate();
     msg_.evaluate_ = evaluate;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.osidbg.DebuggerToBackend.evaluate)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.osidbg.DebuggerToBackend.evaluate)
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int DebuggerToBackend::kIdentifyFieldNumber;
@@ -8682,7 +8682,7 @@ DebuggerToBackend::DebuggerToBackend()
   ::google::protobuf::internal::InitSCC(
       &protobuf_osidebug_2eproto::scc_info_DebuggerToBackend.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.osidbg.DebuggerToBackend)
+  // @@protoc_insertion_point(constructor:bg3se.osidbg.DebuggerToBackend)
 }
 DebuggerToBackend::DebuggerToBackend(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -8690,7 +8690,7 @@ DebuggerToBackend::DebuggerToBackend(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_osidebug_2eproto::scc_info_DebuggerToBackend.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.osidbg.DebuggerToBackend)
+  // @@protoc_insertion_point(arena_constructor:bg3se.osidbg.DebuggerToBackend)
 }
 DebuggerToBackend::DebuggerToBackend(const DebuggerToBackend& from)
   : ::google::protobuf::MessageLite(),
@@ -8702,38 +8702,38 @@ DebuggerToBackend::DebuggerToBackend(const DebuggerToBackend& from)
   clear_has_msg();
   switch (from.msg_case()) {
     case kIdentify: {
-      mutable_identify()->::dse::osidbg::DbgIdentifyRequest::MergeFrom(from.identify());
+      mutable_identify()->::bg3se::osidbg::DbgIdentifyRequest::MergeFrom(from.identify());
       break;
     }
     case kSetGlobalBreakpoints: {
-      mutable_setglobalbreakpoints()->::dse::osidbg::DbgSetGlobalBreakpoints::MergeFrom(from.setglobalbreakpoints());
+      mutable_setglobalbreakpoints()->::bg3se::osidbg::DbgSetGlobalBreakpoints::MergeFrom(from.setglobalbreakpoints());
       break;
     }
     case kSetBreakpoints: {
-      mutable_setbreakpoints()->::dse::osidbg::DbgSetBreakpoints::MergeFrom(from.setbreakpoints());
+      mutable_setbreakpoints()->::bg3se::osidbg::DbgSetBreakpoints::MergeFrom(from.setbreakpoints());
       break;
     }
     case kContinue: {
-      mutable_continue_()->::dse::osidbg::DbgContinue::MergeFrom(from.continue_());
+      mutable_continue_()->::bg3se::osidbg::DbgContinue::MergeFrom(from.continue_());
       break;
     }
     case kGetDatabaseContents: {
-      mutable_getdatabasecontents()->::dse::osidbg::DbgGetDatabaseContents::MergeFrom(from.getdatabasecontents());
+      mutable_getdatabasecontents()->::bg3se::osidbg::DbgGetDatabaseContents::MergeFrom(from.getdatabasecontents());
       break;
     }
     case kSyncStory: {
-      mutable_syncstory()->::dse::osidbg::DbgSyncStory::MergeFrom(from.syncstory());
+      mutable_syncstory()->::bg3se::osidbg::DbgSyncStory::MergeFrom(from.syncstory());
       break;
     }
     case kEvaluate: {
-      mutable_evaluate()->::dse::osidbg::DbgEvaluate::MergeFrom(from.evaluate());
+      mutable_evaluate()->::bg3se::osidbg::DbgEvaluate::MergeFrom(from.evaluate());
       break;
     }
     case MSG_NOT_SET: {
       break;
     }
   }
-  // @@protoc_insertion_point(copy_constructor:dse.osidbg.DebuggerToBackend)
+  // @@protoc_insertion_point(copy_constructor:bg3se.osidbg.DebuggerToBackend)
 }
 
 void DebuggerToBackend::SharedCtor() {
@@ -8744,7 +8744,7 @@ void DebuggerToBackend::SharedCtor() {
 }
 
 DebuggerToBackend::~DebuggerToBackend() {
-  // @@protoc_insertion_point(destructor:dse.osidbg.DebuggerToBackend)
+  // @@protoc_insertion_point(destructor:bg3se.osidbg.DebuggerToBackend)
   SharedDtor();
 }
 
@@ -8771,7 +8771,7 @@ const DebuggerToBackend& DebuggerToBackend::default_instance() {
 
 
 void DebuggerToBackend::clear_msg() {
-// @@protoc_insertion_point(one_of_clear_start:dse.osidbg.DebuggerToBackend)
+// @@protoc_insertion_point(one_of_clear_start:bg3se.osidbg.DebuggerToBackend)
   switch (msg_case()) {
     case kIdentify: {
       if (GetArenaNoVirtual() == NULL) {
@@ -8824,7 +8824,7 @@ void DebuggerToBackend::clear_msg() {
 
 
 void DebuggerToBackend::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.osidbg.DebuggerToBackend)
+// @@protoc_insertion_point(message_clear_start:bg3se.osidbg.DebuggerToBackend)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -8846,13 +8846,13 @@ bool DebuggerToBackend::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.osidbg.DebuggerToBackend)
+  // @@protoc_insertion_point(parse_start:bg3se.osidbg.DebuggerToBackend)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .dse.osidbg.DbgIdentifyRequest identify = 1;
+      // .bg3se.osidbg.DbgIdentifyRequest identify = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
@@ -8864,7 +8864,7 @@ bool DebuggerToBackend::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.osidbg.DbgSetGlobalBreakpoints setGlobalBreakpoints = 2;
+      // .bg3se.osidbg.DbgSetGlobalBreakpoints setGlobalBreakpoints = 2;
       case 2: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
@@ -8876,7 +8876,7 @@ bool DebuggerToBackend::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.osidbg.DbgSetBreakpoints setBreakpoints = 3;
+      // .bg3se.osidbg.DbgSetBreakpoints setBreakpoints = 3;
       case 3: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
@@ -8888,7 +8888,7 @@ bool DebuggerToBackend::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.osidbg.DbgContinue continue = 4;
+      // .bg3se.osidbg.DbgContinue continue = 4;
       case 4: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(34u /* 34 & 0xFF */)) {
@@ -8900,7 +8900,7 @@ bool DebuggerToBackend::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.osidbg.DbgGetDatabaseContents getDatabaseContents = 5;
+      // .bg3se.osidbg.DbgGetDatabaseContents getDatabaseContents = 5;
       case 5: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(42u /* 42 & 0xFF */)) {
@@ -8940,7 +8940,7 @@ bool DebuggerToBackend::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.osidbg.DbgSyncStory syncStory = 8;
+      // .bg3se.osidbg.DbgSyncStory syncStory = 8;
       case 8: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(66u /* 66 & 0xFF */)) {
@@ -8952,7 +8952,7 @@ bool DebuggerToBackend::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.osidbg.DbgEvaluate evaluate = 9;
+      // .bg3se.osidbg.DbgEvaluate evaluate = 9;
       case 9: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(74u /* 74 & 0xFF */)) {
@@ -8976,45 +8976,45 @@ bool DebuggerToBackend::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.osidbg.DebuggerToBackend)
+  // @@protoc_insertion_point(parse_success:bg3se.osidbg.DebuggerToBackend)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.osidbg.DebuggerToBackend)
+  // @@protoc_insertion_point(parse_failure:bg3se.osidbg.DebuggerToBackend)
   return false;
 #undef DO_
 }
 
 void DebuggerToBackend::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.osidbg.DebuggerToBackend)
+  // @@protoc_insertion_point(serialize_start:bg3se.osidbg.DebuggerToBackend)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .dse.osidbg.DbgIdentifyRequest identify = 1;
+  // .bg3se.osidbg.DbgIdentifyRequest identify = 1;
   if (has_identify()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       1, this->_internal_identify(), output);
   }
 
-  // .dse.osidbg.DbgSetGlobalBreakpoints setGlobalBreakpoints = 2;
+  // .bg3se.osidbg.DbgSetGlobalBreakpoints setGlobalBreakpoints = 2;
   if (has_setglobalbreakpoints()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       2, this->_internal_setglobalbreakpoints(), output);
   }
 
-  // .dse.osidbg.DbgSetBreakpoints setBreakpoints = 3;
+  // .bg3se.osidbg.DbgSetBreakpoints setBreakpoints = 3;
   if (has_setbreakpoints()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       3, this->_internal_setbreakpoints(), output);
   }
 
-  // .dse.osidbg.DbgContinue continue = 4;
+  // .bg3se.osidbg.DbgContinue continue = 4;
   if (has_continue_()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       4, this->_internal_continue_(), output);
   }
 
-  // .dse.osidbg.DbgGetDatabaseContents getDatabaseContents = 5;
+  // .bg3se.osidbg.DbgGetDatabaseContents getDatabaseContents = 5;
   if (has_getdatabasecontents()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       5, this->_internal_getdatabasecontents(), output);
@@ -9030,13 +9030,13 @@ void DebuggerToBackend::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(7, this->reply_seq_no(), output);
   }
 
-  // .dse.osidbg.DbgSyncStory syncStory = 8;
+  // .bg3se.osidbg.DbgSyncStory syncStory = 8;
   if (has_syncstory()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       8, this->_internal_syncstory(), output);
   }
 
-  // .dse.osidbg.DbgEvaluate evaluate = 9;
+  // .bg3se.osidbg.DbgEvaluate evaluate = 9;
   if (has_evaluate()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       9, this->_internal_evaluate(), output);
@@ -9044,11 +9044,11 @@ void DebuggerToBackend::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.osidbg.DebuggerToBackend)
+  // @@protoc_insertion_point(serialize_end:bg3se.osidbg.DebuggerToBackend)
 }
 
 size_t DebuggerToBackend::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.osidbg.DebuggerToBackend)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.osidbg.DebuggerToBackend)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -9068,49 +9068,49 @@ size_t DebuggerToBackend::ByteSizeLong() const {
   }
 
   switch (msg_case()) {
-    // .dse.osidbg.DbgIdentifyRequest identify = 1;
+    // .bg3se.osidbg.DbgIdentifyRequest identify = 1;
     case kIdentify: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.identify_);
       break;
     }
-    // .dse.osidbg.DbgSetGlobalBreakpoints setGlobalBreakpoints = 2;
+    // .bg3se.osidbg.DbgSetGlobalBreakpoints setGlobalBreakpoints = 2;
     case kSetGlobalBreakpoints: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.setglobalbreakpoints_);
       break;
     }
-    // .dse.osidbg.DbgSetBreakpoints setBreakpoints = 3;
+    // .bg3se.osidbg.DbgSetBreakpoints setBreakpoints = 3;
     case kSetBreakpoints: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.setbreakpoints_);
       break;
     }
-    // .dse.osidbg.DbgContinue continue = 4;
+    // .bg3se.osidbg.DbgContinue continue = 4;
     case kContinue: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.continue__);
       break;
     }
-    // .dse.osidbg.DbgGetDatabaseContents getDatabaseContents = 5;
+    // .bg3se.osidbg.DbgGetDatabaseContents getDatabaseContents = 5;
     case kGetDatabaseContents: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.getdatabasecontents_);
       break;
     }
-    // .dse.osidbg.DbgSyncStory syncStory = 8;
+    // .bg3se.osidbg.DbgSyncStory syncStory = 8;
     case kSyncStory: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.syncstory_);
       break;
     }
-    // .dse.osidbg.DbgEvaluate evaluate = 9;
+    // .bg3se.osidbg.DbgEvaluate evaluate = 9;
     case kEvaluate: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
@@ -9132,7 +9132,7 @@ void DebuggerToBackend::CheckTypeAndMergeFrom(
 }
 
 void DebuggerToBackend::MergeFrom(const DebuggerToBackend& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.osidbg.DebuggerToBackend)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.osidbg.DebuggerToBackend)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -9146,31 +9146,31 @@ void DebuggerToBackend::MergeFrom(const DebuggerToBackend& from) {
   }
   switch (from.msg_case()) {
     case kIdentify: {
-      mutable_identify()->::dse::osidbg::DbgIdentifyRequest::MergeFrom(from.identify());
+      mutable_identify()->::bg3se::osidbg::DbgIdentifyRequest::MergeFrom(from.identify());
       break;
     }
     case kSetGlobalBreakpoints: {
-      mutable_setglobalbreakpoints()->::dse::osidbg::DbgSetGlobalBreakpoints::MergeFrom(from.setglobalbreakpoints());
+      mutable_setglobalbreakpoints()->::bg3se::osidbg::DbgSetGlobalBreakpoints::MergeFrom(from.setglobalbreakpoints());
       break;
     }
     case kSetBreakpoints: {
-      mutable_setbreakpoints()->::dse::osidbg::DbgSetBreakpoints::MergeFrom(from.setbreakpoints());
+      mutable_setbreakpoints()->::bg3se::osidbg::DbgSetBreakpoints::MergeFrom(from.setbreakpoints());
       break;
     }
     case kContinue: {
-      mutable_continue_()->::dse::osidbg::DbgContinue::MergeFrom(from.continue_());
+      mutable_continue_()->::bg3se::osidbg::DbgContinue::MergeFrom(from.continue_());
       break;
     }
     case kGetDatabaseContents: {
-      mutable_getdatabasecontents()->::dse::osidbg::DbgGetDatabaseContents::MergeFrom(from.getdatabasecontents());
+      mutable_getdatabasecontents()->::bg3se::osidbg::DbgGetDatabaseContents::MergeFrom(from.getdatabasecontents());
       break;
     }
     case kSyncStory: {
-      mutable_syncstory()->::dse::osidbg::DbgSyncStory::MergeFrom(from.syncstory());
+      mutable_syncstory()->::bg3se::osidbg::DbgSyncStory::MergeFrom(from.syncstory());
       break;
     }
     case kEvaluate: {
-      mutable_evaluate()->::dse::osidbg::DbgEvaluate::MergeFrom(from.evaluate());
+      mutable_evaluate()->::bg3se::osidbg::DbgEvaluate::MergeFrom(from.evaluate());
       break;
     }
     case MSG_NOT_SET: {
@@ -9180,7 +9180,7 @@ void DebuggerToBackend::MergeFrom(const DebuggerToBackend& from) {
 }
 
 void DebuggerToBackend::CopyFrom(const DebuggerToBackend& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.osidbg.DebuggerToBackend)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.osidbg.DebuggerToBackend)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -9219,7 +9219,7 @@ void DebuggerToBackend::InternalSwap(DebuggerToBackend* other) {
 }
 
 ::std::string DebuggerToBackend::GetTypeName() const {
-  return "dse.osidbg.DebuggerToBackend";
+  return "bg3se.osidbg.DebuggerToBackend";
 }
 
 
@@ -9227,7 +9227,7 @@ void DebuggerToBackend::InternalSwap(DebuggerToBackend* other) {
 
 void BackendToDebugger::InitAsDefaultInstance() {
 }
-void BackendToDebugger::set_allocated_versioninfo(::dse::osidbg::BkVersionInfoResponse* versioninfo) {
+void BackendToDebugger::set_allocated_versioninfo(::bg3se::osidbg::BkVersionInfoResponse* versioninfo) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (versioninfo) {
@@ -9240,9 +9240,9 @@ void BackendToDebugger::set_allocated_versioninfo(::dse::osidbg::BkVersionInfoRe
     set_has_versioninfo();
     msg_.versioninfo_ = versioninfo;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.osidbg.BackendToDebugger.versionInfo)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.osidbg.BackendToDebugger.versionInfo)
 }
-void BackendToDebugger::set_allocated_breakpointtriggered(::dse::osidbg::BkBreakpointTriggered* breakpointtriggered) {
+void BackendToDebugger::set_allocated_breakpointtriggered(::bg3se::osidbg::BkBreakpointTriggered* breakpointtriggered) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (breakpointtriggered) {
@@ -9255,9 +9255,9 @@ void BackendToDebugger::set_allocated_breakpointtriggered(::dse::osidbg::BkBreak
     set_has_breakpointtriggered();
     msg_.breakpointtriggered_ = breakpointtriggered;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.osidbg.BackendToDebugger.breakpointTriggered)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.osidbg.BackendToDebugger.breakpointTriggered)
 }
-void BackendToDebugger::set_allocated_results(::dse::osidbg::BkResult* results) {
+void BackendToDebugger::set_allocated_results(::bg3se::osidbg::BkResult* results) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (results) {
@@ -9270,9 +9270,9 @@ void BackendToDebugger::set_allocated_results(::dse::osidbg::BkResult* results) 
     set_has_results();
     msg_.results_ = results;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.osidbg.BackendToDebugger.results)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.osidbg.BackendToDebugger.results)
 }
-void BackendToDebugger::set_allocated_storyloaded(::dse::osidbg::BkStoryLoaded* storyloaded) {
+void BackendToDebugger::set_allocated_storyloaded(::bg3se::osidbg::BkStoryLoaded* storyloaded) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (storyloaded) {
@@ -9285,9 +9285,9 @@ void BackendToDebugger::set_allocated_storyloaded(::dse::osidbg::BkStoryLoaded* 
     set_has_storyloaded();
     msg_.storyloaded_ = storyloaded;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.osidbg.BackendToDebugger.storyLoaded)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.osidbg.BackendToDebugger.storyLoaded)
 }
-void BackendToDebugger::set_allocated_debugsessionended(::dse::osidbg::BkDebugSessionEnded* debugsessionended) {
+void BackendToDebugger::set_allocated_debugsessionended(::bg3se::osidbg::BkDebugSessionEnded* debugsessionended) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (debugsessionended) {
@@ -9300,9 +9300,9 @@ void BackendToDebugger::set_allocated_debugsessionended(::dse::osidbg::BkDebugSe
     set_has_debugsessionended();
     msg_.debugsessionended_ = debugsessionended;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.osidbg.BackendToDebugger.debugSessionEnded)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.osidbg.BackendToDebugger.debugSessionEnded)
 }
-void BackendToDebugger::set_allocated_globalbreakpointtriggered(::dse::osidbg::BkGlobalBreakpointTriggered* globalbreakpointtriggered) {
+void BackendToDebugger::set_allocated_globalbreakpointtriggered(::bg3se::osidbg::BkGlobalBreakpointTriggered* globalbreakpointtriggered) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (globalbreakpointtriggered) {
@@ -9315,9 +9315,9 @@ void BackendToDebugger::set_allocated_globalbreakpointtriggered(::dse::osidbg::B
     set_has_globalbreakpointtriggered();
     msg_.globalbreakpointtriggered_ = globalbreakpointtriggered;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.osidbg.BackendToDebugger.globalBreakpointTriggered)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.osidbg.BackendToDebugger.globalBreakpointTriggered)
 }
-void BackendToDebugger::set_allocated_syncstorydata(::dse::osidbg::BkSyncStoryData* syncstorydata) {
+void BackendToDebugger::set_allocated_syncstorydata(::bg3se::osidbg::BkSyncStoryData* syncstorydata) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (syncstorydata) {
@@ -9330,9 +9330,9 @@ void BackendToDebugger::set_allocated_syncstorydata(::dse::osidbg::BkSyncStoryDa
     set_has_syncstorydata();
     msg_.syncstorydata_ = syncstorydata;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.osidbg.BackendToDebugger.syncStoryData)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.osidbg.BackendToDebugger.syncStoryData)
 }
-void BackendToDebugger::set_allocated_syncstoryfinished(::dse::osidbg::BkSyncStoryFinished* syncstoryfinished) {
+void BackendToDebugger::set_allocated_syncstoryfinished(::bg3se::osidbg::BkSyncStoryFinished* syncstoryfinished) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (syncstoryfinished) {
@@ -9345,9 +9345,9 @@ void BackendToDebugger::set_allocated_syncstoryfinished(::dse::osidbg::BkSyncSto
     set_has_syncstoryfinished();
     msg_.syncstoryfinished_ = syncstoryfinished;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.osidbg.BackendToDebugger.syncStoryFinished)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.osidbg.BackendToDebugger.syncStoryFinished)
 }
-void BackendToDebugger::set_allocated_debugoutput(::dse::osidbg::BkDebugOutput* debugoutput) {
+void BackendToDebugger::set_allocated_debugoutput(::bg3se::osidbg::BkDebugOutput* debugoutput) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (debugoutput) {
@@ -9360,9 +9360,9 @@ void BackendToDebugger::set_allocated_debugoutput(::dse::osidbg::BkDebugOutput* 
     set_has_debugoutput();
     msg_.debugoutput_ = debugoutput;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.osidbg.BackendToDebugger.debugOutput)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.osidbg.BackendToDebugger.debugOutput)
 }
-void BackendToDebugger::set_allocated_begindatabasecontents(::dse::osidbg::BkBeginDatabaseContents* begindatabasecontents) {
+void BackendToDebugger::set_allocated_begindatabasecontents(::bg3se::osidbg::BkBeginDatabaseContents* begindatabasecontents) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (begindatabasecontents) {
@@ -9375,9 +9375,9 @@ void BackendToDebugger::set_allocated_begindatabasecontents(::dse::osidbg::BkBeg
     set_has_begindatabasecontents();
     msg_.begindatabasecontents_ = begindatabasecontents;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.osidbg.BackendToDebugger.beginDatabaseContents)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.osidbg.BackendToDebugger.beginDatabaseContents)
 }
-void BackendToDebugger::set_allocated_databaserow(::dse::osidbg::BkDatabaseRow* databaserow) {
+void BackendToDebugger::set_allocated_databaserow(::bg3se::osidbg::BkDatabaseRow* databaserow) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (databaserow) {
@@ -9390,9 +9390,9 @@ void BackendToDebugger::set_allocated_databaserow(::dse::osidbg::BkDatabaseRow* 
     set_has_databaserow();
     msg_.databaserow_ = databaserow;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.osidbg.BackendToDebugger.databaseRow)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.osidbg.BackendToDebugger.databaseRow)
 }
-void BackendToDebugger::set_allocated_enddatabasecontents(::dse::osidbg::BkEndDatabaseContents* enddatabasecontents) {
+void BackendToDebugger::set_allocated_enddatabasecontents(::bg3se::osidbg::BkEndDatabaseContents* enddatabasecontents) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (enddatabasecontents) {
@@ -9405,9 +9405,9 @@ void BackendToDebugger::set_allocated_enddatabasecontents(::dse::osidbg::BkEndDa
     set_has_enddatabasecontents();
     msg_.enddatabasecontents_ = enddatabasecontents;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.osidbg.BackendToDebugger.endDatabaseContents)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.osidbg.BackendToDebugger.endDatabaseContents)
 }
-void BackendToDebugger::set_allocated_evaluaterow(::dse::osidbg::BkEvaluateRow* evaluaterow) {
+void BackendToDebugger::set_allocated_evaluaterow(::bg3se::osidbg::BkEvaluateRow* evaluaterow) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (evaluaterow) {
@@ -9420,9 +9420,9 @@ void BackendToDebugger::set_allocated_evaluaterow(::dse::osidbg::BkEvaluateRow* 
     set_has_evaluaterow();
     msg_.evaluaterow_ = evaluaterow;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.osidbg.BackendToDebugger.evaluateRow)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.osidbg.BackendToDebugger.evaluateRow)
 }
-void BackendToDebugger::set_allocated_evaluatefinished(::dse::osidbg::BkEvaluateFinished* evaluatefinished) {
+void BackendToDebugger::set_allocated_evaluatefinished(::bg3se::osidbg::BkEvaluateFinished* evaluatefinished) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
   if (evaluatefinished) {
@@ -9435,7 +9435,7 @@ void BackendToDebugger::set_allocated_evaluatefinished(::dse::osidbg::BkEvaluate
     set_has_evaluatefinished();
     msg_.evaluatefinished_ = evaluatefinished;
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.osidbg.BackendToDebugger.evaluateFinished)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.osidbg.BackendToDebugger.evaluateFinished)
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int BackendToDebugger::kVersionInfoFieldNumber;
@@ -9461,7 +9461,7 @@ BackendToDebugger::BackendToDebugger()
   ::google::protobuf::internal::InitSCC(
       &protobuf_osidebug_2eproto::scc_info_BackendToDebugger.base);
   SharedCtor();
-  // @@protoc_insertion_point(constructor:dse.osidbg.BackendToDebugger)
+  // @@protoc_insertion_point(constructor:bg3se.osidbg.BackendToDebugger)
 }
 BackendToDebugger::BackendToDebugger(::google::protobuf::Arena* arena)
   : ::google::protobuf::MessageLite(),
@@ -9469,7 +9469,7 @@ BackendToDebugger::BackendToDebugger(::google::protobuf::Arena* arena)
   ::google::protobuf::internal::InitSCC(&protobuf_osidebug_2eproto::scc_info_BackendToDebugger.base);
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:dse.osidbg.BackendToDebugger)
+  // @@protoc_insertion_point(arena_constructor:bg3se.osidbg.BackendToDebugger)
 }
 BackendToDebugger::BackendToDebugger(const BackendToDebugger& from)
   : ::google::protobuf::MessageLite(),
@@ -9481,66 +9481,66 @@ BackendToDebugger::BackendToDebugger(const BackendToDebugger& from)
   clear_has_msg();
   switch (from.msg_case()) {
     case kVersionInfo: {
-      mutable_versioninfo()->::dse::osidbg::BkVersionInfoResponse::MergeFrom(from.versioninfo());
+      mutable_versioninfo()->::bg3se::osidbg::BkVersionInfoResponse::MergeFrom(from.versioninfo());
       break;
     }
     case kBreakpointTriggered: {
-      mutable_breakpointtriggered()->::dse::osidbg::BkBreakpointTriggered::MergeFrom(from.breakpointtriggered());
+      mutable_breakpointtriggered()->::bg3se::osidbg::BkBreakpointTriggered::MergeFrom(from.breakpointtriggered());
       break;
     }
     case kResults: {
-      mutable_results()->::dse::osidbg::BkResult::MergeFrom(from.results());
+      mutable_results()->::bg3se::osidbg::BkResult::MergeFrom(from.results());
       break;
     }
     case kStoryLoaded: {
-      mutable_storyloaded()->::dse::osidbg::BkStoryLoaded::MergeFrom(from.storyloaded());
+      mutable_storyloaded()->::bg3se::osidbg::BkStoryLoaded::MergeFrom(from.storyloaded());
       break;
     }
     case kDebugSessionEnded: {
-      mutable_debugsessionended()->::dse::osidbg::BkDebugSessionEnded::MergeFrom(from.debugsessionended());
+      mutable_debugsessionended()->::bg3se::osidbg::BkDebugSessionEnded::MergeFrom(from.debugsessionended());
       break;
     }
     case kGlobalBreakpointTriggered: {
-      mutable_globalbreakpointtriggered()->::dse::osidbg::BkGlobalBreakpointTriggered::MergeFrom(from.globalbreakpointtriggered());
+      mutable_globalbreakpointtriggered()->::bg3se::osidbg::BkGlobalBreakpointTriggered::MergeFrom(from.globalbreakpointtriggered());
       break;
     }
     case kSyncStoryData: {
-      mutable_syncstorydata()->::dse::osidbg::BkSyncStoryData::MergeFrom(from.syncstorydata());
+      mutable_syncstorydata()->::bg3se::osidbg::BkSyncStoryData::MergeFrom(from.syncstorydata());
       break;
     }
     case kSyncStoryFinished: {
-      mutable_syncstoryfinished()->::dse::osidbg::BkSyncStoryFinished::MergeFrom(from.syncstoryfinished());
+      mutable_syncstoryfinished()->::bg3se::osidbg::BkSyncStoryFinished::MergeFrom(from.syncstoryfinished());
       break;
     }
     case kDebugOutput: {
-      mutable_debugoutput()->::dse::osidbg::BkDebugOutput::MergeFrom(from.debugoutput());
+      mutable_debugoutput()->::bg3se::osidbg::BkDebugOutput::MergeFrom(from.debugoutput());
       break;
     }
     case kBeginDatabaseContents: {
-      mutable_begindatabasecontents()->::dse::osidbg::BkBeginDatabaseContents::MergeFrom(from.begindatabasecontents());
+      mutable_begindatabasecontents()->::bg3se::osidbg::BkBeginDatabaseContents::MergeFrom(from.begindatabasecontents());
       break;
     }
     case kDatabaseRow: {
-      mutable_databaserow()->::dse::osidbg::BkDatabaseRow::MergeFrom(from.databaserow());
+      mutable_databaserow()->::bg3se::osidbg::BkDatabaseRow::MergeFrom(from.databaserow());
       break;
     }
     case kEndDatabaseContents: {
-      mutable_enddatabasecontents()->::dse::osidbg::BkEndDatabaseContents::MergeFrom(from.enddatabasecontents());
+      mutable_enddatabasecontents()->::bg3se::osidbg::BkEndDatabaseContents::MergeFrom(from.enddatabasecontents());
       break;
     }
     case kEvaluateRow: {
-      mutable_evaluaterow()->::dse::osidbg::BkEvaluateRow::MergeFrom(from.evaluaterow());
+      mutable_evaluaterow()->::bg3se::osidbg::BkEvaluateRow::MergeFrom(from.evaluaterow());
       break;
     }
     case kEvaluateFinished: {
-      mutable_evaluatefinished()->::dse::osidbg::BkEvaluateFinished::MergeFrom(from.evaluatefinished());
+      mutable_evaluatefinished()->::bg3se::osidbg::BkEvaluateFinished::MergeFrom(from.evaluatefinished());
       break;
     }
     case MSG_NOT_SET: {
       break;
     }
   }
-  // @@protoc_insertion_point(copy_constructor:dse.osidbg.BackendToDebugger)
+  // @@protoc_insertion_point(copy_constructor:bg3se.osidbg.BackendToDebugger)
 }
 
 void BackendToDebugger::SharedCtor() {
@@ -9551,7 +9551,7 @@ void BackendToDebugger::SharedCtor() {
 }
 
 BackendToDebugger::~BackendToDebugger() {
-  // @@protoc_insertion_point(destructor:dse.osidbg.BackendToDebugger)
+  // @@protoc_insertion_point(destructor:bg3se.osidbg.BackendToDebugger)
   SharedDtor();
 }
 
@@ -9578,7 +9578,7 @@ const BackendToDebugger& BackendToDebugger::default_instance() {
 
 
 void BackendToDebugger::clear_msg() {
-// @@protoc_insertion_point(one_of_clear_start:dse.osidbg.BackendToDebugger)
+// @@protoc_insertion_point(one_of_clear_start:bg3se.osidbg.BackendToDebugger)
   switch (msg_case()) {
     case kVersionInfo: {
       if (GetArenaNoVirtual() == NULL) {
@@ -9673,7 +9673,7 @@ void BackendToDebugger::clear_msg() {
 
 
 void BackendToDebugger::Clear() {
-// @@protoc_insertion_point(message_clear_start:dse.osidbg.BackendToDebugger)
+// @@protoc_insertion_point(message_clear_start:bg3se.osidbg.BackendToDebugger)
   ::google::protobuf::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -9695,13 +9695,13 @@ bool BackendToDebugger::MergePartialFromCodedStream(
       unknown_fields_setter.buffer());
   ::google::protobuf::io::CodedOutputStream unknown_fields_stream(
       &unknown_fields_output, false);
-  // @@protoc_insertion_point(parse_start:dse.osidbg.BackendToDebugger)
+  // @@protoc_insertion_point(parse_start:bg3se.osidbg.BackendToDebugger)
   for (;;) {
     ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(16383u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .dse.osidbg.BkVersionInfoResponse versionInfo = 1;
+      // .bg3se.osidbg.BkVersionInfoResponse versionInfo = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
@@ -9713,7 +9713,7 @@ bool BackendToDebugger::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.osidbg.BkBreakpointTriggered breakpointTriggered = 2;
+      // .bg3se.osidbg.BkBreakpointTriggered breakpointTriggered = 2;
       case 2: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
@@ -9725,7 +9725,7 @@ bool BackendToDebugger::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.osidbg.BkResult results = 4;
+      // .bg3se.osidbg.BkResult results = 4;
       case 4: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(34u /* 34 & 0xFF */)) {
@@ -9737,7 +9737,7 @@ bool BackendToDebugger::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.osidbg.BkStoryLoaded storyLoaded = 5;
+      // .bg3se.osidbg.BkStoryLoaded storyLoaded = 5;
       case 5: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(42u /* 42 & 0xFF */)) {
@@ -9749,7 +9749,7 @@ bool BackendToDebugger::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.osidbg.BkDebugSessionEnded debugSessionEnded = 6;
+      // .bg3se.osidbg.BkDebugSessionEnded debugSessionEnded = 6;
       case 6: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(50u /* 50 & 0xFF */)) {
@@ -9761,7 +9761,7 @@ bool BackendToDebugger::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.osidbg.BkGlobalBreakpointTriggered globalBreakpointTriggered = 7;
+      // .bg3se.osidbg.BkGlobalBreakpointTriggered globalBreakpointTriggered = 7;
       case 7: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(58u /* 58 & 0xFF */)) {
@@ -9801,7 +9801,7 @@ bool BackendToDebugger::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.osidbg.BkSyncStoryData syncStoryData = 10;
+      // .bg3se.osidbg.BkSyncStoryData syncStoryData = 10;
       case 10: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(82u /* 82 & 0xFF */)) {
@@ -9813,7 +9813,7 @@ bool BackendToDebugger::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.osidbg.BkSyncStoryFinished syncStoryFinished = 11;
+      // .bg3se.osidbg.BkSyncStoryFinished syncStoryFinished = 11;
       case 11: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(90u /* 90 & 0xFF */)) {
@@ -9825,7 +9825,7 @@ bool BackendToDebugger::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.osidbg.BkDebugOutput debugOutput = 12;
+      // .bg3se.osidbg.BkDebugOutput debugOutput = 12;
       case 12: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(98u /* 98 & 0xFF */)) {
@@ -9837,7 +9837,7 @@ bool BackendToDebugger::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.osidbg.BkBeginDatabaseContents beginDatabaseContents = 13;
+      // .bg3se.osidbg.BkBeginDatabaseContents beginDatabaseContents = 13;
       case 13: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(106u /* 106 & 0xFF */)) {
@@ -9849,7 +9849,7 @@ bool BackendToDebugger::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.osidbg.BkDatabaseRow databaseRow = 14;
+      // .bg3se.osidbg.BkDatabaseRow databaseRow = 14;
       case 14: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(114u /* 114 & 0xFF */)) {
@@ -9861,7 +9861,7 @@ bool BackendToDebugger::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.osidbg.BkEndDatabaseContents endDatabaseContents = 15;
+      // .bg3se.osidbg.BkEndDatabaseContents endDatabaseContents = 15;
       case 15: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(122u /* 122 & 0xFF */)) {
@@ -9873,7 +9873,7 @@ bool BackendToDebugger::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.osidbg.BkEvaluateRow evaluateRow = 16;
+      // .bg3se.osidbg.BkEvaluateRow evaluateRow = 16;
       case 16: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(130u /* 130 & 0xFF */)) {
@@ -9885,7 +9885,7 @@ bool BackendToDebugger::MergePartialFromCodedStream(
         break;
       }
 
-      // .dse.osidbg.BkEvaluateFinished evaluateFinished = 17;
+      // .bg3se.osidbg.BkEvaluateFinished evaluateFinished = 17;
       case 17: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(138u /* 138 & 0xFF */)) {
@@ -9909,51 +9909,51 @@ bool BackendToDebugger::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:dse.osidbg.BackendToDebugger)
+  // @@protoc_insertion_point(parse_success:bg3se.osidbg.BackendToDebugger)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:dse.osidbg.BackendToDebugger)
+  // @@protoc_insertion_point(parse_failure:bg3se.osidbg.BackendToDebugger)
   return false;
 #undef DO_
 }
 
 void BackendToDebugger::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:dse.osidbg.BackendToDebugger)
+  // @@protoc_insertion_point(serialize_start:bg3se.osidbg.BackendToDebugger)
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .dse.osidbg.BkVersionInfoResponse versionInfo = 1;
+  // .bg3se.osidbg.BkVersionInfoResponse versionInfo = 1;
   if (has_versioninfo()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       1, this->_internal_versioninfo(), output);
   }
 
-  // .dse.osidbg.BkBreakpointTriggered breakpointTriggered = 2;
+  // .bg3se.osidbg.BkBreakpointTriggered breakpointTriggered = 2;
   if (has_breakpointtriggered()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       2, this->_internal_breakpointtriggered(), output);
   }
 
-  // .dse.osidbg.BkResult results = 4;
+  // .bg3se.osidbg.BkResult results = 4;
   if (has_results()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       4, this->_internal_results(), output);
   }
 
-  // .dse.osidbg.BkStoryLoaded storyLoaded = 5;
+  // .bg3se.osidbg.BkStoryLoaded storyLoaded = 5;
   if (has_storyloaded()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       5, this->_internal_storyloaded(), output);
   }
 
-  // .dse.osidbg.BkDebugSessionEnded debugSessionEnded = 6;
+  // .bg3se.osidbg.BkDebugSessionEnded debugSessionEnded = 6;
   if (has_debugsessionended()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       6, this->_internal_debugsessionended(), output);
   }
 
-  // .dse.osidbg.BkGlobalBreakpointTriggered globalBreakpointTriggered = 7;
+  // .bg3se.osidbg.BkGlobalBreakpointTriggered globalBreakpointTriggered = 7;
   if (has_globalbreakpointtriggered()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       7, this->_internal_globalbreakpointtriggered(), output);
@@ -9969,49 +9969,49 @@ void BackendToDebugger::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(9, this->reply_seq_no(), output);
   }
 
-  // .dse.osidbg.BkSyncStoryData syncStoryData = 10;
+  // .bg3se.osidbg.BkSyncStoryData syncStoryData = 10;
   if (has_syncstorydata()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       10, this->_internal_syncstorydata(), output);
   }
 
-  // .dse.osidbg.BkSyncStoryFinished syncStoryFinished = 11;
+  // .bg3se.osidbg.BkSyncStoryFinished syncStoryFinished = 11;
   if (has_syncstoryfinished()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       11, this->_internal_syncstoryfinished(), output);
   }
 
-  // .dse.osidbg.BkDebugOutput debugOutput = 12;
+  // .bg3se.osidbg.BkDebugOutput debugOutput = 12;
   if (has_debugoutput()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       12, this->_internal_debugoutput(), output);
   }
 
-  // .dse.osidbg.BkBeginDatabaseContents beginDatabaseContents = 13;
+  // .bg3se.osidbg.BkBeginDatabaseContents beginDatabaseContents = 13;
   if (has_begindatabasecontents()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       13, this->_internal_begindatabasecontents(), output);
   }
 
-  // .dse.osidbg.BkDatabaseRow databaseRow = 14;
+  // .bg3se.osidbg.BkDatabaseRow databaseRow = 14;
   if (has_databaserow()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       14, this->_internal_databaserow(), output);
   }
 
-  // .dse.osidbg.BkEndDatabaseContents endDatabaseContents = 15;
+  // .bg3se.osidbg.BkEndDatabaseContents endDatabaseContents = 15;
   if (has_enddatabasecontents()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       15, this->_internal_enddatabasecontents(), output);
   }
 
-  // .dse.osidbg.BkEvaluateRow evaluateRow = 16;
+  // .bg3se.osidbg.BkEvaluateRow evaluateRow = 16;
   if (has_evaluaterow()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       16, this->_internal_evaluaterow(), output);
   }
 
-  // .dse.osidbg.BkEvaluateFinished evaluateFinished = 17;
+  // .bg3se.osidbg.BkEvaluateFinished evaluateFinished = 17;
   if (has_evaluatefinished()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessage(
       17, this->_internal_evaluatefinished(), output);
@@ -10019,11 +10019,11 @@ void BackendToDebugger::SerializeWithCachedSizes(
 
   output->WriteRaw((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).data(),
                    static_cast<int>((::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size()));
-  // @@protoc_insertion_point(serialize_end:dse.osidbg.BackendToDebugger)
+  // @@protoc_insertion_point(serialize_end:bg3se.osidbg.BackendToDebugger)
 }
 
 size_t BackendToDebugger::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:dse.osidbg.BackendToDebugger)
+// @@protoc_insertion_point(message_byte_size_start:bg3se.osidbg.BackendToDebugger)
   size_t total_size = 0;
 
   total_size += (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()).size();
@@ -10043,98 +10043,98 @@ size_t BackendToDebugger::ByteSizeLong() const {
   }
 
   switch (msg_case()) {
-    // .dse.osidbg.BkVersionInfoResponse versionInfo = 1;
+    // .bg3se.osidbg.BkVersionInfoResponse versionInfo = 1;
     case kVersionInfo: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.versioninfo_);
       break;
     }
-    // .dse.osidbg.BkBreakpointTriggered breakpointTriggered = 2;
+    // .bg3se.osidbg.BkBreakpointTriggered breakpointTriggered = 2;
     case kBreakpointTriggered: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.breakpointtriggered_);
       break;
     }
-    // .dse.osidbg.BkResult results = 4;
+    // .bg3se.osidbg.BkResult results = 4;
     case kResults: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.results_);
       break;
     }
-    // .dse.osidbg.BkStoryLoaded storyLoaded = 5;
+    // .bg3se.osidbg.BkStoryLoaded storyLoaded = 5;
     case kStoryLoaded: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.storyloaded_);
       break;
     }
-    // .dse.osidbg.BkDebugSessionEnded debugSessionEnded = 6;
+    // .bg3se.osidbg.BkDebugSessionEnded debugSessionEnded = 6;
     case kDebugSessionEnded: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.debugsessionended_);
       break;
     }
-    // .dse.osidbg.BkGlobalBreakpointTriggered globalBreakpointTriggered = 7;
+    // .bg3se.osidbg.BkGlobalBreakpointTriggered globalBreakpointTriggered = 7;
     case kGlobalBreakpointTriggered: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.globalbreakpointtriggered_);
       break;
     }
-    // .dse.osidbg.BkSyncStoryData syncStoryData = 10;
+    // .bg3se.osidbg.BkSyncStoryData syncStoryData = 10;
     case kSyncStoryData: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.syncstorydata_);
       break;
     }
-    // .dse.osidbg.BkSyncStoryFinished syncStoryFinished = 11;
+    // .bg3se.osidbg.BkSyncStoryFinished syncStoryFinished = 11;
     case kSyncStoryFinished: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.syncstoryfinished_);
       break;
     }
-    // .dse.osidbg.BkDebugOutput debugOutput = 12;
+    // .bg3se.osidbg.BkDebugOutput debugOutput = 12;
     case kDebugOutput: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.debugoutput_);
       break;
     }
-    // .dse.osidbg.BkBeginDatabaseContents beginDatabaseContents = 13;
+    // .bg3se.osidbg.BkBeginDatabaseContents beginDatabaseContents = 13;
     case kBeginDatabaseContents: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.begindatabasecontents_);
       break;
     }
-    // .dse.osidbg.BkDatabaseRow databaseRow = 14;
+    // .bg3se.osidbg.BkDatabaseRow databaseRow = 14;
     case kDatabaseRow: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.databaserow_);
       break;
     }
-    // .dse.osidbg.BkEndDatabaseContents endDatabaseContents = 15;
+    // .bg3se.osidbg.BkEndDatabaseContents endDatabaseContents = 15;
     case kEndDatabaseContents: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.enddatabasecontents_);
       break;
     }
-    // .dse.osidbg.BkEvaluateRow evaluateRow = 16;
+    // .bg3se.osidbg.BkEvaluateRow evaluateRow = 16;
     case kEvaluateRow: {
       total_size += 2 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           *msg_.evaluaterow_);
       break;
     }
-    // .dse.osidbg.BkEvaluateFinished evaluateFinished = 17;
+    // .bg3se.osidbg.BkEvaluateFinished evaluateFinished = 17;
     case kEvaluateFinished: {
       total_size += 2 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
@@ -10156,7 +10156,7 @@ void BackendToDebugger::CheckTypeAndMergeFrom(
 }
 
 void BackendToDebugger::MergeFrom(const BackendToDebugger& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:dse.osidbg.BackendToDebugger)
+// @@protoc_insertion_point(class_specific_merge_from_start:bg3se.osidbg.BackendToDebugger)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::google::protobuf::uint32 cached_has_bits = 0;
@@ -10170,59 +10170,59 @@ void BackendToDebugger::MergeFrom(const BackendToDebugger& from) {
   }
   switch (from.msg_case()) {
     case kVersionInfo: {
-      mutable_versioninfo()->::dse::osidbg::BkVersionInfoResponse::MergeFrom(from.versioninfo());
+      mutable_versioninfo()->::bg3se::osidbg::BkVersionInfoResponse::MergeFrom(from.versioninfo());
       break;
     }
     case kBreakpointTriggered: {
-      mutable_breakpointtriggered()->::dse::osidbg::BkBreakpointTriggered::MergeFrom(from.breakpointtriggered());
+      mutable_breakpointtriggered()->::bg3se::osidbg::BkBreakpointTriggered::MergeFrom(from.breakpointtriggered());
       break;
     }
     case kResults: {
-      mutable_results()->::dse::osidbg::BkResult::MergeFrom(from.results());
+      mutable_results()->::bg3se::osidbg::BkResult::MergeFrom(from.results());
       break;
     }
     case kStoryLoaded: {
-      mutable_storyloaded()->::dse::osidbg::BkStoryLoaded::MergeFrom(from.storyloaded());
+      mutable_storyloaded()->::bg3se::osidbg::BkStoryLoaded::MergeFrom(from.storyloaded());
       break;
     }
     case kDebugSessionEnded: {
-      mutable_debugsessionended()->::dse::osidbg::BkDebugSessionEnded::MergeFrom(from.debugsessionended());
+      mutable_debugsessionended()->::bg3se::osidbg::BkDebugSessionEnded::MergeFrom(from.debugsessionended());
       break;
     }
     case kGlobalBreakpointTriggered: {
-      mutable_globalbreakpointtriggered()->::dse::osidbg::BkGlobalBreakpointTriggered::MergeFrom(from.globalbreakpointtriggered());
+      mutable_globalbreakpointtriggered()->::bg3se::osidbg::BkGlobalBreakpointTriggered::MergeFrom(from.globalbreakpointtriggered());
       break;
     }
     case kSyncStoryData: {
-      mutable_syncstorydata()->::dse::osidbg::BkSyncStoryData::MergeFrom(from.syncstorydata());
+      mutable_syncstorydata()->::bg3se::osidbg::BkSyncStoryData::MergeFrom(from.syncstorydata());
       break;
     }
     case kSyncStoryFinished: {
-      mutable_syncstoryfinished()->::dse::osidbg::BkSyncStoryFinished::MergeFrom(from.syncstoryfinished());
+      mutable_syncstoryfinished()->::bg3se::osidbg::BkSyncStoryFinished::MergeFrom(from.syncstoryfinished());
       break;
     }
     case kDebugOutput: {
-      mutable_debugoutput()->::dse::osidbg::BkDebugOutput::MergeFrom(from.debugoutput());
+      mutable_debugoutput()->::bg3se::osidbg::BkDebugOutput::MergeFrom(from.debugoutput());
       break;
     }
     case kBeginDatabaseContents: {
-      mutable_begindatabasecontents()->::dse::osidbg::BkBeginDatabaseContents::MergeFrom(from.begindatabasecontents());
+      mutable_begindatabasecontents()->::bg3se::osidbg::BkBeginDatabaseContents::MergeFrom(from.begindatabasecontents());
       break;
     }
     case kDatabaseRow: {
-      mutable_databaserow()->::dse::osidbg::BkDatabaseRow::MergeFrom(from.databaserow());
+      mutable_databaserow()->::bg3se::osidbg::BkDatabaseRow::MergeFrom(from.databaserow());
       break;
     }
     case kEndDatabaseContents: {
-      mutable_enddatabasecontents()->::dse::osidbg::BkEndDatabaseContents::MergeFrom(from.enddatabasecontents());
+      mutable_enddatabasecontents()->::bg3se::osidbg::BkEndDatabaseContents::MergeFrom(from.enddatabasecontents());
       break;
     }
     case kEvaluateRow: {
-      mutable_evaluaterow()->::dse::osidbg::BkEvaluateRow::MergeFrom(from.evaluaterow());
+      mutable_evaluaterow()->::bg3se::osidbg::BkEvaluateRow::MergeFrom(from.evaluaterow());
       break;
     }
     case kEvaluateFinished: {
-      mutable_evaluatefinished()->::dse::osidbg::BkEvaluateFinished::MergeFrom(from.evaluatefinished());
+      mutable_evaluatefinished()->::bg3se::osidbg::BkEvaluateFinished::MergeFrom(from.evaluatefinished());
       break;
     }
     case MSG_NOT_SET: {
@@ -10232,7 +10232,7 @@ void BackendToDebugger::MergeFrom(const BackendToDebugger& from) {
 }
 
 void BackendToDebugger::CopyFrom(const BackendToDebugger& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:dse.osidbg.BackendToDebugger)
+// @@protoc_insertion_point(class_specific_copy_from_start:bg3se.osidbg.BackendToDebugger)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -10271,110 +10271,110 @@ void BackendToDebugger::InternalSwap(BackendToDebugger* other) {
 }
 
 ::std::string BackendToDebugger::GetTypeName() const {
-  return "dse.osidbg.BackendToDebugger";
+  return "bg3se.osidbg.BackendToDebugger";
 }
 
 
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace osidbg
-}  // namespace dse
+}  // namespace bg3se
 namespace google {
 namespace protobuf {
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::osidbg::MsgTypedValue* Arena::CreateMaybeMessage< ::dse::osidbg::MsgTypedValue >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::osidbg::MsgTypedValue >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::osidbg::MsgTypedValue* Arena::CreateMaybeMessage< ::bg3se::osidbg::MsgTypedValue >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::osidbg::MsgTypedValue >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::osidbg::MsgTuple* Arena::CreateMaybeMessage< ::dse::osidbg::MsgTuple >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::osidbg::MsgTuple >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::osidbg::MsgTuple* Arena::CreateMaybeMessage< ::bg3se::osidbg::MsgTuple >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::osidbg::MsgTuple >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::osidbg::MsgFrame* Arena::CreateMaybeMessage< ::dse::osidbg::MsgFrame >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::osidbg::MsgFrame >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::osidbg::MsgFrame* Arena::CreateMaybeMessage< ::bg3se::osidbg::MsgFrame >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::osidbg::MsgFrame >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::osidbg::DbgIdentifyRequest* Arena::CreateMaybeMessage< ::dse::osidbg::DbgIdentifyRequest >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::osidbg::DbgIdentifyRequest >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::osidbg::DbgIdentifyRequest* Arena::CreateMaybeMessage< ::bg3se::osidbg::DbgIdentifyRequest >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::osidbg::DbgIdentifyRequest >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::osidbg::BkVersionInfoResponse* Arena::CreateMaybeMessage< ::dse::osidbg::BkVersionInfoResponse >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::osidbg::BkVersionInfoResponse >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::osidbg::BkVersionInfoResponse* Arena::CreateMaybeMessage< ::bg3se::osidbg::BkVersionInfoResponse >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::osidbg::BkVersionInfoResponse >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::osidbg::DbgSetGlobalBreakpoints* Arena::CreateMaybeMessage< ::dse::osidbg::DbgSetGlobalBreakpoints >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::osidbg::DbgSetGlobalBreakpoints >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::osidbg::DbgSetGlobalBreakpoints* Arena::CreateMaybeMessage< ::bg3se::osidbg::DbgSetGlobalBreakpoints >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::osidbg::DbgSetGlobalBreakpoints >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::osidbg::MsgBreakpoint* Arena::CreateMaybeMessage< ::dse::osidbg::MsgBreakpoint >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::osidbg::MsgBreakpoint >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::osidbg::MsgBreakpoint* Arena::CreateMaybeMessage< ::bg3se::osidbg::MsgBreakpoint >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::osidbg::MsgBreakpoint >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::osidbg::DbgSetBreakpoints* Arena::CreateMaybeMessage< ::dse::osidbg::DbgSetBreakpoints >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::osidbg::DbgSetBreakpoints >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::osidbg::DbgSetBreakpoints* Arena::CreateMaybeMessage< ::bg3se::osidbg::DbgSetBreakpoints >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::osidbg::DbgSetBreakpoints >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::osidbg::BkBreakpointTriggered* Arena::CreateMaybeMessage< ::dse::osidbg::BkBreakpointTriggered >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::osidbg::BkBreakpointTriggered >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::osidbg::BkBreakpointTriggered* Arena::CreateMaybeMessage< ::bg3se::osidbg::BkBreakpointTriggered >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::osidbg::BkBreakpointTriggered >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::osidbg::BkGlobalBreakpointTriggered* Arena::CreateMaybeMessage< ::dse::osidbg::BkGlobalBreakpointTriggered >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::osidbg::BkGlobalBreakpointTriggered >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::osidbg::BkGlobalBreakpointTriggered* Arena::CreateMaybeMessage< ::bg3se::osidbg::BkGlobalBreakpointTriggered >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::osidbg::BkGlobalBreakpointTriggered >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::osidbg::DbgContinue* Arena::CreateMaybeMessage< ::dse::osidbg::DbgContinue >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::osidbg::DbgContinue >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::osidbg::DbgContinue* Arena::CreateMaybeMessage< ::bg3se::osidbg::DbgContinue >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::osidbg::DbgContinue >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::osidbg::DbgGetDatabaseContents* Arena::CreateMaybeMessage< ::dse::osidbg::DbgGetDatabaseContents >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::osidbg::DbgGetDatabaseContents >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::osidbg::DbgGetDatabaseContents* Arena::CreateMaybeMessage< ::bg3se::osidbg::DbgGetDatabaseContents >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::osidbg::DbgGetDatabaseContents >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::osidbg::DbgSyncStory* Arena::CreateMaybeMessage< ::dse::osidbg::DbgSyncStory >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::osidbg::DbgSyncStory >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::osidbg::DbgSyncStory* Arena::CreateMaybeMessage< ::bg3se::osidbg::DbgSyncStory >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::osidbg::DbgSyncStory >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::osidbg::DbgEvaluate* Arena::CreateMaybeMessage< ::dse::osidbg::DbgEvaluate >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::osidbg::DbgEvaluate >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::osidbg::DbgEvaluate* Arena::CreateMaybeMessage< ::bg3se::osidbg::DbgEvaluate >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::osidbg::DbgEvaluate >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::osidbg::BkResult* Arena::CreateMaybeMessage< ::dse::osidbg::BkResult >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::osidbg::BkResult >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::osidbg::BkResult* Arena::CreateMaybeMessage< ::bg3se::osidbg::BkResult >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::osidbg::BkResult >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::osidbg::BkStoryLoaded* Arena::CreateMaybeMessage< ::dse::osidbg::BkStoryLoaded >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::osidbg::BkStoryLoaded >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::osidbg::BkStoryLoaded* Arena::CreateMaybeMessage< ::bg3se::osidbg::BkStoryLoaded >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::osidbg::BkStoryLoaded >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::osidbg::BkDebugSessionEnded* Arena::CreateMaybeMessage< ::dse::osidbg::BkDebugSessionEnded >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::osidbg::BkDebugSessionEnded >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::osidbg::BkDebugSessionEnded* Arena::CreateMaybeMessage< ::bg3se::osidbg::BkDebugSessionEnded >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::osidbg::BkDebugSessionEnded >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::osidbg::MsgActionInfo* Arena::CreateMaybeMessage< ::dse::osidbg::MsgActionInfo >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::osidbg::MsgActionInfo >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::osidbg::MsgActionInfo* Arena::CreateMaybeMessage< ::bg3se::osidbg::MsgActionInfo >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::osidbg::MsgActionInfo >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::osidbg::MsgGoalInfo* Arena::CreateMaybeMessage< ::dse::osidbg::MsgGoalInfo >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::osidbg::MsgGoalInfo >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::osidbg::MsgGoalInfo* Arena::CreateMaybeMessage< ::bg3se::osidbg::MsgGoalInfo >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::osidbg::MsgGoalInfo >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::osidbg::MsgDatabaseInfo* Arena::CreateMaybeMessage< ::dse::osidbg::MsgDatabaseInfo >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::osidbg::MsgDatabaseInfo >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::osidbg::MsgDatabaseInfo* Arena::CreateMaybeMessage< ::bg3se::osidbg::MsgDatabaseInfo >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::osidbg::MsgDatabaseInfo >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::osidbg::MsgNodeInfo* Arena::CreateMaybeMessage< ::dse::osidbg::MsgNodeInfo >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::osidbg::MsgNodeInfo >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::osidbg::MsgNodeInfo* Arena::CreateMaybeMessage< ::bg3se::osidbg::MsgNodeInfo >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::osidbg::MsgNodeInfo >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::osidbg::MsgRuleInfo* Arena::CreateMaybeMessage< ::dse::osidbg::MsgRuleInfo >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::osidbg::MsgRuleInfo >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::osidbg::MsgRuleInfo* Arena::CreateMaybeMessage< ::bg3se::osidbg::MsgRuleInfo >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::osidbg::MsgRuleInfo >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::osidbg::BkSyncStoryData* Arena::CreateMaybeMessage< ::dse::osidbg::BkSyncStoryData >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::osidbg::BkSyncStoryData >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::osidbg::BkSyncStoryData* Arena::CreateMaybeMessage< ::bg3se::osidbg::BkSyncStoryData >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::osidbg::BkSyncStoryData >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::osidbg::BkSyncStoryFinished* Arena::CreateMaybeMessage< ::dse::osidbg::BkSyncStoryFinished >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::osidbg::BkSyncStoryFinished >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::osidbg::BkSyncStoryFinished* Arena::CreateMaybeMessage< ::bg3se::osidbg::BkSyncStoryFinished >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::osidbg::BkSyncStoryFinished >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::osidbg::BkDebugOutput* Arena::CreateMaybeMessage< ::dse::osidbg::BkDebugOutput >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::osidbg::BkDebugOutput >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::osidbg::BkDebugOutput* Arena::CreateMaybeMessage< ::bg3se::osidbg::BkDebugOutput >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::osidbg::BkDebugOutput >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::osidbg::BkBeginDatabaseContents* Arena::CreateMaybeMessage< ::dse::osidbg::BkBeginDatabaseContents >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::osidbg::BkBeginDatabaseContents >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::osidbg::BkBeginDatabaseContents* Arena::CreateMaybeMessage< ::bg3se::osidbg::BkBeginDatabaseContents >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::osidbg::BkBeginDatabaseContents >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::osidbg::BkDatabaseRow* Arena::CreateMaybeMessage< ::dse::osidbg::BkDatabaseRow >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::osidbg::BkDatabaseRow >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::osidbg::BkDatabaseRow* Arena::CreateMaybeMessage< ::bg3se::osidbg::BkDatabaseRow >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::osidbg::BkDatabaseRow >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::osidbg::BkEndDatabaseContents* Arena::CreateMaybeMessage< ::dse::osidbg::BkEndDatabaseContents >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::osidbg::BkEndDatabaseContents >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::osidbg::BkEndDatabaseContents* Arena::CreateMaybeMessage< ::bg3se::osidbg::BkEndDatabaseContents >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::osidbg::BkEndDatabaseContents >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::osidbg::BkEvaluateRow* Arena::CreateMaybeMessage< ::dse::osidbg::BkEvaluateRow >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::osidbg::BkEvaluateRow >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::osidbg::BkEvaluateRow* Arena::CreateMaybeMessage< ::bg3se::osidbg::BkEvaluateRow >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::osidbg::BkEvaluateRow >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::osidbg::BkEvaluateFinished* Arena::CreateMaybeMessage< ::dse::osidbg::BkEvaluateFinished >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::osidbg::BkEvaluateFinished >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::osidbg::BkEvaluateFinished* Arena::CreateMaybeMessage< ::bg3se::osidbg::BkEvaluateFinished >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::osidbg::BkEvaluateFinished >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::osidbg::DebuggerToBackend* Arena::CreateMaybeMessage< ::dse::osidbg::DebuggerToBackend >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::osidbg::DebuggerToBackend >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::osidbg::DebuggerToBackend* Arena::CreateMaybeMessage< ::bg3se::osidbg::DebuggerToBackend >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::osidbg::DebuggerToBackend >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::dse::osidbg::BackendToDebugger* Arena::CreateMaybeMessage< ::dse::osidbg::BackendToDebugger >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::dse::osidbg::BackendToDebugger >(arena);
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::bg3se::osidbg::BackendToDebugger* Arena::CreateMaybeMessage< ::bg3se::osidbg::BackendToDebugger >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::bg3se::osidbg::BackendToDebugger >(arena);
 }
 }  // namespace protobuf
 }  // namespace google

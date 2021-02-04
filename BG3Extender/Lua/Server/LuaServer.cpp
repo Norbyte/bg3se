@@ -14,12 +14,12 @@
 #include <GameDefinitions/Components/Boosts.h>
 #include <GameDefinitions/ResourceDefinitions.h>
 
-namespace dse::esv::lua
+namespace bg3se::esv::lua
 {
 //#include <Lua/LevelIteratorFunctions.inl>
 }
 
-namespace dse::lua
+namespace bg3se::lua
 {
 #include <Lua/Shared/LuaShared.inl>
 }
@@ -35,9 +35,9 @@ namespace dse::lua
 
 
 
-namespace dse::esv::lua
+namespace bg3se::esv::lua
 {
-	using namespace dse::lua;
+	using namespace bg3se::lua;
 
 
 	/*
@@ -1142,7 +1142,7 @@ namespace dse::esv::lua
 	}
 }
 
-namespace dse::esv
+namespace bg3se::esv
 {
 
 	ExtensionState & ExtensionState::Get()
@@ -1174,7 +1174,7 @@ namespace dse::esv
 		dynamicStats_.clear();
 		persistentStats_.clear();
 		cachedPersistentVars_.clear();
-		dse::ExtensionStateBase::OnGameSessionLoading();
+		bg3se::ExtensionStateBase::OnGameSessionLoading();
 	}
 
 	void ExtensionState::Reset()

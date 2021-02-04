@@ -22,29 +22,29 @@ struct ExcludedSymbol
 // Wrapper frames are included in the stack trace for any server/client worker thread crash,
 // so we have to filter them to make sure that we don't receive a report for every (unrelated) game crash.
 static const ExcludedSymbol ExcludedSymbols[] = {
-	/*{&decltype(dse::LibraryManager::esv__ActionMachine__SetState)::CallToTrampoline, 0x120},
-	{&decltype(dse::LibraryManager::esv__ActionMachine__ResetState)::CallToTrampoline, 0x120},
-	{&decltype(dse::LibraryManager::esv__CombineManager__ExecuteCombination)::CallToTrampoline, 0x120},
-	{&decltype(dse::LibraryManager::esv__ProjectileHelpers__ShootProjectile)::CallToTrampoline, 0x120},
-	{&decltype(dse::LibraryManager::esv__Projectile__Explode)::CallToTrampoline, 0x120},
-	{&decltype(dse::LibraryManager::UIObjectManager__CreateUIObject)::CallToTrampoline, 0x120},
-	{&decltype(dse::OsirisWrappers::FileReader__ctor)::CallToTrampoline, 0x120},
-	{&decltype(dse::OsirisWrappers::ClientGameStateWorkerStart)::CallToTrampoline, 0x120},
-	{&decltype(dse::OsirisWrappers::ServerGameStateWorkerStart)::CallToTrampoline, 0x120},
-	{&decltype(dse::OsirisWrappers::Event)::CallToTrampoline, 0x120},
-	{&decltype(dse::OsirisWrappers::Call)::CallToTrampoline, 0x120},
-	{&decltype(dse::OsirisWrappers::Query)::CallToTrampoline, 0x120},
-	{&decltype(dse::OsirisWrappers::RuleActionCall)::CallToTrampoline, 0x120},
-	{&dse::esv::CustomFunctionLibrary::OnShootProjectile, 0x120},
-	{&dse::NodeVMTWrapper::s_WrappedIsValid, 0x100},
-	{&dse::NodeVMTWrapper::s_WrappedPushDownTuple, 0x100},
-	{&dse::NodeVMTWrapper::s_WrappedPushDownTupleDelete, 0x100},
-	{&dse::NodeVMTWrapper::s_WrappedInsertTuple, 0x100},
-	{&dse::NodeVMTWrapper::s_WrappedDeleteTuple, 0x100},
-	{&dse::NodeVMTWrapper::s_WrappedCallQuery, 0x100},
-	{&dse::ecl::lua::UIObjectFunctionCallCapture, 0x120},*/
-	{&dse::CustomFunctionInjector::StaticCallWrapper, 0x120},
-	{&dse::CustomFunctionInjector::StaticQueryWrapper, 0x120}
+	/*{&decltype(bg3se::LibraryManager::esv__ActionMachine__SetState)::CallToTrampoline, 0x120},
+	{&decltype(bg3se::LibraryManager::esv__ActionMachine__ResetState)::CallToTrampoline, 0x120},
+	{&decltype(bg3se::LibraryManager::esv__CombineManager__ExecuteCombination)::CallToTrampoline, 0x120},
+	{&decltype(bg3se::LibraryManager::esv__ProjectileHelpers__ShootProjectile)::CallToTrampoline, 0x120},
+	{&decltype(bg3se::LibraryManager::esv__Projectile__Explode)::CallToTrampoline, 0x120},
+	{&decltype(bg3se::LibraryManager::UIObjectManager__CreateUIObject)::CallToTrampoline, 0x120},
+	{&decltype(bg3se::OsirisWrappers::FileReader__ctor)::CallToTrampoline, 0x120},
+	{&decltype(bg3se::OsirisWrappers::ClientGameStateWorkerStart)::CallToTrampoline, 0x120},
+	{&decltype(bg3se::OsirisWrappers::ServerGameStateWorkerStart)::CallToTrampoline, 0x120},
+	{&decltype(bg3se::OsirisWrappers::Event)::CallToTrampoline, 0x120},
+	{&decltype(bg3se::OsirisWrappers::Call)::CallToTrampoline, 0x120},
+	{&decltype(bg3se::OsirisWrappers::Query)::CallToTrampoline, 0x120},
+	{&decltype(bg3se::OsirisWrappers::RuleActionCall)::CallToTrampoline, 0x120},
+	{&bg3se::esv::CustomFunctionLibrary::OnShootProjectile, 0x120},
+	{&bg3se::NodeVMTWrapper::s_WrappedIsValid, 0x100},
+	{&bg3se::NodeVMTWrapper::s_WrappedPushDownTuple, 0x100},
+	{&bg3se::NodeVMTWrapper::s_WrappedPushDownTupleDelete, 0x100},
+	{&bg3se::NodeVMTWrapper::s_WrappedInsertTuple, 0x100},
+	{&bg3se::NodeVMTWrapper::s_WrappedDeleteTuple, 0x100},
+	{&bg3se::NodeVMTWrapper::s_WrappedCallQuery, 0x100},
+	{&bg3se::ecl::lua::UIObjectFunctionCallCapture, 0x120},*/
+	{&bg3se::CustomFunctionInjector::StaticCallWrapper, 0x120},
+	{&bg3se::CustomFunctionInjector::StaticQueryWrapper, 0x120}
 };
 
 class CrashReporter

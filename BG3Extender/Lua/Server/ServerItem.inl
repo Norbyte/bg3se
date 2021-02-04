@@ -1,7 +1,7 @@
 #include <GameDefinitions/Item.h>
 #include <Lua/LuaBinding.h>
 
-namespace dse::lua
+namespace bg3se::lua
 {
 	char const* const ObjectProxy<esv::Item>::MetatableName = "esv::Item";
 
@@ -244,9 +244,9 @@ namespace dse::lua
 	}*/
 }
 
-namespace dse::esv::lua
+namespace bg3se::esv::lua
 {
-	using namespace dse::lua;
+	using namespace bg3se::lua;
 
 	/*char const* const ItemConstructor::MetatableName = "ItemConstructor";
 
@@ -289,9 +289,9 @@ namespace dse::esv::lua
 	}*/
 }
 
-namespace dse::esv::lua
+namespace bg3se::esv::lua
 {
-	using namespace dse::lua;
+	using namespace bg3se::lua;
 
 	int GetItem(lua_State* L)
 	{

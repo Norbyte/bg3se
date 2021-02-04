@@ -2,7 +2,7 @@
 #include "GlobalFixedStrings.h"
 #include "ExtensionHelpers.h"
 
-namespace dse
+namespace bg3se
 {
 	void GlobalFixedStrings::Initialize()
 	{

@@ -3,7 +3,7 @@
 #include <GameDefinitions/BaseTypes.h>
 #include <GameDefinitions/Enumerations.h>
 
-namespace dse
+namespace bg3se
 {
 	struct GameRandom
 	{

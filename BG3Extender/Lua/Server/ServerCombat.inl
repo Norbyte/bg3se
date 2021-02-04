@@ -1,9 +1,9 @@
 //#include <GameDefinitions/Combat.h>
 #include <Lua/LuaBinding.h>
 
-namespace dse::esv::lua
+namespace bg3se::esv::lua
 {
-	using namespace dse::lua;
+	using namespace bg3se::lua;
 
 	/*char const * const TurnManagerCombatProxy::MetatableName = "esv::TurnManager::Combat";
 
@@ -223,9 +223,9 @@ namespace dse::esv::lua
 	}*/
 }
 
-namespace dse::esv::lua
+namespace bg3se::esv::lua
 {
-	using namespace dse::lua;
+	using namespace bg3se::lua;
 
 	int GetCombat(lua_State* L)
 	{

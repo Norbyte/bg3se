@@ -8,7 +8,7 @@
 #include <unordered_set>
 #include <optional>
 
-namespace dse
+namespace bg3se
 {
 	struct CRPGStats_Object;
 	struct SpellPrototype;
@@ -16,7 +16,7 @@ namespace dse
 	struct CDivinityStats_Item;
 }
 
-namespace dse::lua
+namespace bg3se::lua
 {
 	class StatsProxy : public Userdata<StatsProxy>, public Indexable, public NewIndexable, public Pushable<PushPolicy::Unbind>
 	{

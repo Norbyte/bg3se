@@ -44,7 +44,7 @@ struct TableStruct {
   static const ::google::protobuf::uint32 offsets[];
 };
 }  // namespace protobuf_osidebug_2eproto
-namespace dse {
+namespace bg3se {
 namespace osidbg {
 class BackendToDebugger;
 class BackendToDebuggerDefaultTypeInternal;
@@ -143,44 +143,44 @@ class MsgTypedValue;
 class MsgTypedValueDefaultTypeInternal;
 extern MsgTypedValueDefaultTypeInternal _MsgTypedValue_default_instance_;
 }  // namespace osidbg
-}  // namespace dse
+}  // namespace bg3se
 namespace google {
 namespace protobuf {
-template<> ::dse::osidbg::BackendToDebugger* Arena::CreateMaybeMessage<::dse::osidbg::BackendToDebugger>(Arena*);
-template<> ::dse::osidbg::BkBeginDatabaseContents* Arena::CreateMaybeMessage<::dse::osidbg::BkBeginDatabaseContents>(Arena*);
-template<> ::dse::osidbg::BkBreakpointTriggered* Arena::CreateMaybeMessage<::dse::osidbg::BkBreakpointTriggered>(Arena*);
-template<> ::dse::osidbg::BkDatabaseRow* Arena::CreateMaybeMessage<::dse::osidbg::BkDatabaseRow>(Arena*);
-template<> ::dse::osidbg::BkDebugOutput* Arena::CreateMaybeMessage<::dse::osidbg::BkDebugOutput>(Arena*);
-template<> ::dse::osidbg::BkDebugSessionEnded* Arena::CreateMaybeMessage<::dse::osidbg::BkDebugSessionEnded>(Arena*);
-template<> ::dse::osidbg::BkEndDatabaseContents* Arena::CreateMaybeMessage<::dse::osidbg::BkEndDatabaseContents>(Arena*);
-template<> ::dse::osidbg::BkEvaluateFinished* Arena::CreateMaybeMessage<::dse::osidbg::BkEvaluateFinished>(Arena*);
-template<> ::dse::osidbg::BkEvaluateRow* Arena::CreateMaybeMessage<::dse::osidbg::BkEvaluateRow>(Arena*);
-template<> ::dse::osidbg::BkGlobalBreakpointTriggered* Arena::CreateMaybeMessage<::dse::osidbg::BkGlobalBreakpointTriggered>(Arena*);
-template<> ::dse::osidbg::BkResult* Arena::CreateMaybeMessage<::dse::osidbg::BkResult>(Arena*);
-template<> ::dse::osidbg::BkStoryLoaded* Arena::CreateMaybeMessage<::dse::osidbg::BkStoryLoaded>(Arena*);
-template<> ::dse::osidbg::BkSyncStoryData* Arena::CreateMaybeMessage<::dse::osidbg::BkSyncStoryData>(Arena*);
-template<> ::dse::osidbg::BkSyncStoryFinished* Arena::CreateMaybeMessage<::dse::osidbg::BkSyncStoryFinished>(Arena*);
-template<> ::dse::osidbg::BkVersionInfoResponse* Arena::CreateMaybeMessage<::dse::osidbg::BkVersionInfoResponse>(Arena*);
-template<> ::dse::osidbg::DbgContinue* Arena::CreateMaybeMessage<::dse::osidbg::DbgContinue>(Arena*);
-template<> ::dse::osidbg::DbgEvaluate* Arena::CreateMaybeMessage<::dse::osidbg::DbgEvaluate>(Arena*);
-template<> ::dse::osidbg::DbgGetDatabaseContents* Arena::CreateMaybeMessage<::dse::osidbg::DbgGetDatabaseContents>(Arena*);
-template<> ::dse::osidbg::DbgIdentifyRequest* Arena::CreateMaybeMessage<::dse::osidbg::DbgIdentifyRequest>(Arena*);
-template<> ::dse::osidbg::DbgSetBreakpoints* Arena::CreateMaybeMessage<::dse::osidbg::DbgSetBreakpoints>(Arena*);
-template<> ::dse::osidbg::DbgSetGlobalBreakpoints* Arena::CreateMaybeMessage<::dse::osidbg::DbgSetGlobalBreakpoints>(Arena*);
-template<> ::dse::osidbg::DbgSyncStory* Arena::CreateMaybeMessage<::dse::osidbg::DbgSyncStory>(Arena*);
-template<> ::dse::osidbg::DebuggerToBackend* Arena::CreateMaybeMessage<::dse::osidbg::DebuggerToBackend>(Arena*);
-template<> ::dse::osidbg::MsgActionInfo* Arena::CreateMaybeMessage<::dse::osidbg::MsgActionInfo>(Arena*);
-template<> ::dse::osidbg::MsgBreakpoint* Arena::CreateMaybeMessage<::dse::osidbg::MsgBreakpoint>(Arena*);
-template<> ::dse::osidbg::MsgDatabaseInfo* Arena::CreateMaybeMessage<::dse::osidbg::MsgDatabaseInfo>(Arena*);
-template<> ::dse::osidbg::MsgFrame* Arena::CreateMaybeMessage<::dse::osidbg::MsgFrame>(Arena*);
-template<> ::dse::osidbg::MsgGoalInfo* Arena::CreateMaybeMessage<::dse::osidbg::MsgGoalInfo>(Arena*);
-template<> ::dse::osidbg::MsgNodeInfo* Arena::CreateMaybeMessage<::dse::osidbg::MsgNodeInfo>(Arena*);
-template<> ::dse::osidbg::MsgRuleInfo* Arena::CreateMaybeMessage<::dse::osidbg::MsgRuleInfo>(Arena*);
-template<> ::dse::osidbg::MsgTuple* Arena::CreateMaybeMessage<::dse::osidbg::MsgTuple>(Arena*);
-template<> ::dse::osidbg::MsgTypedValue* Arena::CreateMaybeMessage<::dse::osidbg::MsgTypedValue>(Arena*);
+template<> ::bg3se::osidbg::BackendToDebugger* Arena::CreateMaybeMessage<::bg3se::osidbg::BackendToDebugger>(Arena*);
+template<> ::bg3se::osidbg::BkBeginDatabaseContents* Arena::CreateMaybeMessage<::bg3se::osidbg::BkBeginDatabaseContents>(Arena*);
+template<> ::bg3se::osidbg::BkBreakpointTriggered* Arena::CreateMaybeMessage<::bg3se::osidbg::BkBreakpointTriggered>(Arena*);
+template<> ::bg3se::osidbg::BkDatabaseRow* Arena::CreateMaybeMessage<::bg3se::osidbg::BkDatabaseRow>(Arena*);
+template<> ::bg3se::osidbg::BkDebugOutput* Arena::CreateMaybeMessage<::bg3se::osidbg::BkDebugOutput>(Arena*);
+template<> ::bg3se::osidbg::BkDebugSessionEnded* Arena::CreateMaybeMessage<::bg3se::osidbg::BkDebugSessionEnded>(Arena*);
+template<> ::bg3se::osidbg::BkEndDatabaseContents* Arena::CreateMaybeMessage<::bg3se::osidbg::BkEndDatabaseContents>(Arena*);
+template<> ::bg3se::osidbg::BkEvaluateFinished* Arena::CreateMaybeMessage<::bg3se::osidbg::BkEvaluateFinished>(Arena*);
+template<> ::bg3se::osidbg::BkEvaluateRow* Arena::CreateMaybeMessage<::bg3se::osidbg::BkEvaluateRow>(Arena*);
+template<> ::bg3se::osidbg::BkGlobalBreakpointTriggered* Arena::CreateMaybeMessage<::bg3se::osidbg::BkGlobalBreakpointTriggered>(Arena*);
+template<> ::bg3se::osidbg::BkResult* Arena::CreateMaybeMessage<::bg3se::osidbg::BkResult>(Arena*);
+template<> ::bg3se::osidbg::BkStoryLoaded* Arena::CreateMaybeMessage<::bg3se::osidbg::BkStoryLoaded>(Arena*);
+template<> ::bg3se::osidbg::BkSyncStoryData* Arena::CreateMaybeMessage<::bg3se::osidbg::BkSyncStoryData>(Arena*);
+template<> ::bg3se::osidbg::BkSyncStoryFinished* Arena::CreateMaybeMessage<::bg3se::osidbg::BkSyncStoryFinished>(Arena*);
+template<> ::bg3se::osidbg::BkVersionInfoResponse* Arena::CreateMaybeMessage<::bg3se::osidbg::BkVersionInfoResponse>(Arena*);
+template<> ::bg3se::osidbg::DbgContinue* Arena::CreateMaybeMessage<::bg3se::osidbg::DbgContinue>(Arena*);
+template<> ::bg3se::osidbg::DbgEvaluate* Arena::CreateMaybeMessage<::bg3se::osidbg::DbgEvaluate>(Arena*);
+template<> ::bg3se::osidbg::DbgGetDatabaseContents* Arena::CreateMaybeMessage<::bg3se::osidbg::DbgGetDatabaseContents>(Arena*);
+template<> ::bg3se::osidbg::DbgIdentifyRequest* Arena::CreateMaybeMessage<::bg3se::osidbg::DbgIdentifyRequest>(Arena*);
+template<> ::bg3se::osidbg::DbgSetBreakpoints* Arena::CreateMaybeMessage<::bg3se::osidbg::DbgSetBreakpoints>(Arena*);
+template<> ::bg3se::osidbg::DbgSetGlobalBreakpoints* Arena::CreateMaybeMessage<::bg3se::osidbg::DbgSetGlobalBreakpoints>(Arena*);
+template<> ::bg3se::osidbg::DbgSyncStory* Arena::CreateMaybeMessage<::bg3se::osidbg::DbgSyncStory>(Arena*);
+template<> ::bg3se::osidbg::DebuggerToBackend* Arena::CreateMaybeMessage<::bg3se::osidbg::DebuggerToBackend>(Arena*);
+template<> ::bg3se::osidbg::MsgActionInfo* Arena::CreateMaybeMessage<::bg3se::osidbg::MsgActionInfo>(Arena*);
+template<> ::bg3se::osidbg::MsgBreakpoint* Arena::CreateMaybeMessage<::bg3se::osidbg::MsgBreakpoint>(Arena*);
+template<> ::bg3se::osidbg::MsgDatabaseInfo* Arena::CreateMaybeMessage<::bg3se::osidbg::MsgDatabaseInfo>(Arena*);
+template<> ::bg3se::osidbg::MsgFrame* Arena::CreateMaybeMessage<::bg3se::osidbg::MsgFrame>(Arena*);
+template<> ::bg3se::osidbg::MsgGoalInfo* Arena::CreateMaybeMessage<::bg3se::osidbg::MsgGoalInfo>(Arena*);
+template<> ::bg3se::osidbg::MsgNodeInfo* Arena::CreateMaybeMessage<::bg3se::osidbg::MsgNodeInfo>(Arena*);
+template<> ::bg3se::osidbg::MsgRuleInfo* Arena::CreateMaybeMessage<::bg3se::osidbg::MsgRuleInfo>(Arena*);
+template<> ::bg3se::osidbg::MsgTuple* Arena::CreateMaybeMessage<::bg3se::osidbg::MsgTuple>(Arena*);
+template<> ::bg3se::osidbg::MsgTypedValue* Arena::CreateMaybeMessage<::bg3se::osidbg::MsgTypedValue>(Arena*);
 }  // namespace protobuf
 }  // namespace google
-namespace dse {
+namespace bg3se {
 namespace osidbg {
 
 enum MsgFrame_FrameType {
@@ -331,7 +331,7 @@ const int StatusCode_ARRAYSIZE = StatusCode_MAX + 1;
 
 // ===================================================================
 
-class MsgTypedValue : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.osidbg.MsgTypedValue) */ {
+class MsgTypedValue : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.osidbg.MsgTypedValue) */ {
  public:
   MsgTypedValue();
   virtual ~MsgTypedValue();
@@ -487,7 +487,7 @@ class MsgTypedValue : public ::google::protobuf::MessageLite /* @@protoc_inserti
 
   void clear_value();
   ValueCase value_case() const;
-  // @@protoc_insertion_point(class_scope:dse.osidbg.MsgTypedValue)
+  // @@protoc_insertion_point(class_scope:bg3se.osidbg.MsgTypedValue)
  private:
   void set_has_intval();
   void set_has_floatval();
@@ -514,7 +514,7 @@ class MsgTypedValue : public ::google::protobuf::MessageLite /* @@protoc_inserti
 };
 // -------------------------------------------------------------------
 
-class MsgTuple : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.osidbg.MsgTuple) */ {
+class MsgTuple : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.osidbg.MsgTuple) */ {
  public:
   MsgTuple();
   virtual ~MsgTuple();
@@ -611,32 +611,32 @@ class MsgTuple : public ::google::protobuf::MessageLite /* @@protoc_insertion_po
 
   // accessors -------------------------------------------------------
 
-  // repeated .dse.osidbg.MsgTypedValue column = 1;
+  // repeated .bg3se.osidbg.MsgTypedValue column = 1;
   int column_size() const;
   void clear_column();
   static const int kColumnFieldNumber = 1;
-  ::dse::osidbg::MsgTypedValue* mutable_column(int index);
-  ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgTypedValue >*
+  ::bg3se::osidbg::MsgTypedValue* mutable_column(int index);
+  ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgTypedValue >*
       mutable_column();
-  const ::dse::osidbg::MsgTypedValue& column(int index) const;
-  ::dse::osidbg::MsgTypedValue* add_column();
-  const ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgTypedValue >&
+  const ::bg3se::osidbg::MsgTypedValue& column(int index) const;
+  ::bg3se::osidbg::MsgTypedValue* add_column();
+  const ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgTypedValue >&
       column() const;
 
-  // @@protoc_insertion_point(class_scope:dse.osidbg.MsgTuple)
+  // @@protoc_insertion_point(class_scope:bg3se.osidbg.MsgTuple)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
   template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgTypedValue > column_;
+  ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgTypedValue > column_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_osidebug_2eproto::TableStruct;
 };
 // -------------------------------------------------------------------
 
-class MsgFrame : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.osidbg.MsgFrame) */ {
+class MsgFrame : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.osidbg.MsgFrame) */ {
  public:
   MsgFrame();
   virtual ~MsgFrame();
@@ -760,20 +760,20 @@ class MsgFrame : public ::google::protobuf::MessageLite /* @@protoc_insertion_po
 
   // accessors -------------------------------------------------------
 
-  // .dse.osidbg.MsgTuple tuple = 3;
+  // .bg3se.osidbg.MsgTuple tuple = 3;
   bool has_tuple() const;
   void clear_tuple();
   static const int kTupleFieldNumber = 3;
   private:
-  const ::dse::osidbg::MsgTuple& _internal_tuple() const;
+  const ::bg3se::osidbg::MsgTuple& _internal_tuple() const;
   public:
-  const ::dse::osidbg::MsgTuple& tuple() const;
-  ::dse::osidbg::MsgTuple* release_tuple();
-  ::dse::osidbg::MsgTuple* mutable_tuple();
-  void set_allocated_tuple(::dse::osidbg::MsgTuple* tuple);
+  const ::bg3se::osidbg::MsgTuple& tuple() const;
+  ::bg3se::osidbg::MsgTuple* release_tuple();
+  ::bg3se::osidbg::MsgTuple* mutable_tuple();
+  void set_allocated_tuple(::bg3se::osidbg::MsgTuple* tuple);
   void unsafe_arena_set_allocated_tuple(
-      ::dse::osidbg::MsgTuple* tuple);
-  ::dse::osidbg::MsgTuple* unsafe_arena_release_tuple();
+      ::bg3se::osidbg::MsgTuple* tuple);
+  ::bg3se::osidbg::MsgTuple* unsafe_arena_release_tuple();
 
   // uint32 node_id = 1;
   void clear_node_id();
@@ -781,11 +781,11 @@ class MsgFrame : public ::google::protobuf::MessageLite /* @@protoc_insertion_po
   ::google::protobuf::uint32 node_id() const;
   void set_node_id(::google::protobuf::uint32 value);
 
-  // .dse.osidbg.MsgFrame.FrameType type = 2;
+  // .bg3se.osidbg.MsgFrame.FrameType type = 2;
   void clear_type();
   static const int kTypeFieldNumber = 2;
-  ::dse::osidbg::MsgFrame_FrameType type() const;
-  void set_type(::dse::osidbg::MsgFrame_FrameType value);
+  ::bg3se::osidbg::MsgFrame_FrameType type() const;
+  void set_type(::bg3se::osidbg::MsgFrame_FrameType value);
 
   // uint32 goal_id = 4;
   void clear_goal_id();
@@ -799,14 +799,14 @@ class MsgFrame : public ::google::protobuf::MessageLite /* @@protoc_insertion_po
   ::google::protobuf::uint32 action_index() const;
   void set_action_index(::google::protobuf::uint32 value);
 
-  // @@protoc_insertion_point(class_scope:dse.osidbg.MsgFrame)
+  // @@protoc_insertion_point(class_scope:bg3se.osidbg.MsgFrame)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
   template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::dse::osidbg::MsgTuple* tuple_;
+  ::bg3se::osidbg::MsgTuple* tuple_;
   ::google::protobuf::uint32 node_id_;
   int type_;
   ::google::protobuf::uint32 goal_id_;
@@ -816,7 +816,7 @@ class MsgFrame : public ::google::protobuf::MessageLite /* @@protoc_insertion_po
 };
 // -------------------------------------------------------------------
 
-class DbgIdentifyRequest : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.osidbg.DbgIdentifyRequest) */ {
+class DbgIdentifyRequest : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.osidbg.DbgIdentifyRequest) */ {
  public:
   DbgIdentifyRequest();
   virtual ~DbgIdentifyRequest();
@@ -919,7 +919,7 @@ class DbgIdentifyRequest : public ::google::protobuf::MessageLite /* @@protoc_in
   ::google::protobuf::uint32 protocol_version() const;
   void set_protocol_version(::google::protobuf::uint32 value);
 
-  // @@protoc_insertion_point(class_scope:dse.osidbg.DbgIdentifyRequest)
+  // @@protoc_insertion_point(class_scope:bg3se.osidbg.DbgIdentifyRequest)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -932,7 +932,7 @@ class DbgIdentifyRequest : public ::google::protobuf::MessageLite /* @@protoc_in
 };
 // -------------------------------------------------------------------
 
-class BkVersionInfoResponse : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.osidbg.BkVersionInfoResponse) */ {
+class BkVersionInfoResponse : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.osidbg.BkVersionInfoResponse) */ {
  public:
   BkVersionInfoResponse();
   virtual ~BkVersionInfoResponse();
@@ -1047,7 +1047,7 @@ class BkVersionInfoResponse : public ::google::protobuf::MessageLite /* @@protoc
   bool story_initialized() const;
   void set_story_initialized(bool value);
 
-  // @@protoc_insertion_point(class_scope:dse.osidbg.BkVersionInfoResponse)
+  // @@protoc_insertion_point(class_scope:bg3se.osidbg.BkVersionInfoResponse)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -1062,7 +1062,7 @@ class BkVersionInfoResponse : public ::google::protobuf::MessageLite /* @@protoc
 };
 // -------------------------------------------------------------------
 
-class DbgSetGlobalBreakpoints : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.osidbg.DbgSetGlobalBreakpoints) */ {
+class DbgSetGlobalBreakpoints : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.osidbg.DbgSetGlobalBreakpoints) */ {
  public:
   DbgSetGlobalBreakpoints();
   virtual ~DbgSetGlobalBreakpoints();
@@ -1200,7 +1200,7 @@ class DbgSetGlobalBreakpoints : public ::google::protobuf::MessageLite /* @@prot
   ::google::protobuf::uint32 breakpoint_mask() const;
   void set_breakpoint_mask(::google::protobuf::uint32 value);
 
-  // @@protoc_insertion_point(class_scope:dse.osidbg.DbgSetGlobalBreakpoints)
+  // @@protoc_insertion_point(class_scope:bg3se.osidbg.DbgSetGlobalBreakpoints)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -1213,7 +1213,7 @@ class DbgSetGlobalBreakpoints : public ::google::protobuf::MessageLite /* @@prot
 };
 // -------------------------------------------------------------------
 
-class MsgBreakpoint : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.osidbg.MsgBreakpoint) */ {
+class MsgBreakpoint : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.osidbg.MsgBreakpoint) */ {
  public:
   MsgBreakpoint();
   virtual ~MsgBreakpoint();
@@ -1369,7 +1369,7 @@ class MsgBreakpoint : public ::google::protobuf::MessageLite /* @@protoc_inserti
   ::google::protobuf::int32 action_index() const;
   void set_action_index(::google::protobuf::int32 value);
 
-  // @@protoc_insertion_point(class_scope:dse.osidbg.MsgBreakpoint)
+  // @@protoc_insertion_point(class_scope:bg3se.osidbg.MsgBreakpoint)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -1386,7 +1386,7 @@ class MsgBreakpoint : public ::google::protobuf::MessageLite /* @@protoc_inserti
 };
 // -------------------------------------------------------------------
 
-class DbgSetBreakpoints : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.osidbg.DbgSetBreakpoints) */ {
+class DbgSetBreakpoints : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.osidbg.DbgSetBreakpoints) */ {
  public:
   DbgSetBreakpoints();
   virtual ~DbgSetBreakpoints();
@@ -1483,32 +1483,32 @@ class DbgSetBreakpoints : public ::google::protobuf::MessageLite /* @@protoc_ins
 
   // accessors -------------------------------------------------------
 
-  // repeated .dse.osidbg.MsgBreakpoint breakpoint = 1;
+  // repeated .bg3se.osidbg.MsgBreakpoint breakpoint = 1;
   int breakpoint_size() const;
   void clear_breakpoint();
   static const int kBreakpointFieldNumber = 1;
-  ::dse::osidbg::MsgBreakpoint* mutable_breakpoint(int index);
-  ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgBreakpoint >*
+  ::bg3se::osidbg::MsgBreakpoint* mutable_breakpoint(int index);
+  ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgBreakpoint >*
       mutable_breakpoint();
-  const ::dse::osidbg::MsgBreakpoint& breakpoint(int index) const;
-  ::dse::osidbg::MsgBreakpoint* add_breakpoint();
-  const ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgBreakpoint >&
+  const ::bg3se::osidbg::MsgBreakpoint& breakpoint(int index) const;
+  ::bg3se::osidbg::MsgBreakpoint* add_breakpoint();
+  const ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgBreakpoint >&
       breakpoint() const;
 
-  // @@protoc_insertion_point(class_scope:dse.osidbg.DbgSetBreakpoints)
+  // @@protoc_insertion_point(class_scope:bg3se.osidbg.DbgSetBreakpoints)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
   template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgBreakpoint > breakpoint_;
+  ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgBreakpoint > breakpoint_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_osidebug_2eproto::TableStruct;
 };
 // -------------------------------------------------------------------
 
-class BkBreakpointTriggered : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.osidbg.BkBreakpointTriggered) */ {
+class BkBreakpointTriggered : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.osidbg.BkBreakpointTriggered) */ {
  public:
   BkBreakpointTriggered();
   virtual ~BkBreakpointTriggered();
@@ -1622,38 +1622,38 @@ class BkBreakpointTriggered : public ::google::protobuf::MessageLite /* @@protoc
 
   // accessors -------------------------------------------------------
 
-  // repeated .dse.osidbg.MsgFrame call_stack = 1;
+  // repeated .bg3se.osidbg.MsgFrame call_stack = 1;
   int call_stack_size() const;
   void clear_call_stack();
   static const int kCallStackFieldNumber = 1;
-  ::dse::osidbg::MsgFrame* mutable_call_stack(int index);
-  ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgFrame >*
+  ::bg3se::osidbg::MsgFrame* mutable_call_stack(int index);
+  ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgFrame >*
       mutable_call_stack();
-  const ::dse::osidbg::MsgFrame& call_stack(int index) const;
-  ::dse::osidbg::MsgFrame* add_call_stack();
-  const ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgFrame >&
+  const ::bg3se::osidbg::MsgFrame& call_stack(int index) const;
+  ::bg3se::osidbg::MsgFrame* add_call_stack();
+  const ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgFrame >&
       call_stack() const;
 
-  // .dse.osidbg.MsgTuple query_results = 3;
+  // .bg3se.osidbg.MsgTuple query_results = 3;
   bool has_query_results() const;
   void clear_query_results();
   static const int kQueryResultsFieldNumber = 3;
   private:
-  const ::dse::osidbg::MsgTuple& _internal_query_results() const;
+  const ::bg3se::osidbg::MsgTuple& _internal_query_results() const;
   public:
-  const ::dse::osidbg::MsgTuple& query_results() const;
-  ::dse::osidbg::MsgTuple* release_query_results();
-  ::dse::osidbg::MsgTuple* mutable_query_results();
-  void set_allocated_query_results(::dse::osidbg::MsgTuple* query_results);
+  const ::bg3se::osidbg::MsgTuple& query_results() const;
+  ::bg3se::osidbg::MsgTuple* release_query_results();
+  ::bg3se::osidbg::MsgTuple* mutable_query_results();
+  void set_allocated_query_results(::bg3se::osidbg::MsgTuple* query_results);
   void unsafe_arena_set_allocated_query_results(
-      ::dse::osidbg::MsgTuple* query_results);
-  ::dse::osidbg::MsgTuple* unsafe_arena_release_query_results();
+      ::bg3se::osidbg::MsgTuple* query_results);
+  ::bg3se::osidbg::MsgTuple* unsafe_arena_release_query_results();
 
-  // .dse.osidbg.BkBreakpointTriggered.QueryStatus query_succeeded = 2;
+  // .bg3se.osidbg.BkBreakpointTriggered.QueryStatus query_succeeded = 2;
   void clear_query_succeeded();
   static const int kQuerySucceededFieldNumber = 2;
-  ::dse::osidbg::BkBreakpointTriggered_QueryStatus query_succeeded() const;
-  void set_query_succeeded(::dse::osidbg::BkBreakpointTriggered_QueryStatus value);
+  ::bg3se::osidbg::BkBreakpointTriggered_QueryStatus query_succeeded() const;
+  void set_query_succeeded(::bg3se::osidbg::BkBreakpointTriggered_QueryStatus value);
 
   // uint32 query_node_id = 4;
   void clear_query_node_id();
@@ -1661,15 +1661,15 @@ class BkBreakpointTriggered : public ::google::protobuf::MessageLite /* @@protoc
   ::google::protobuf::uint32 query_node_id() const;
   void set_query_node_id(::google::protobuf::uint32 value);
 
-  // @@protoc_insertion_point(class_scope:dse.osidbg.BkBreakpointTriggered)
+  // @@protoc_insertion_point(class_scope:bg3se.osidbg.BkBreakpointTriggered)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
   template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgFrame > call_stack_;
-  ::dse::osidbg::MsgTuple* query_results_;
+  ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgFrame > call_stack_;
+  ::bg3se::osidbg::MsgTuple* query_results_;
   int query_succeeded_;
   ::google::protobuf::uint32 query_node_id_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
@@ -1677,7 +1677,7 @@ class BkBreakpointTriggered : public ::google::protobuf::MessageLite /* @@protoc
 };
 // -------------------------------------------------------------------
 
-class BkGlobalBreakpointTriggered : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.osidbg.BkGlobalBreakpointTriggered) */ {
+class BkGlobalBreakpointTriggered : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.osidbg.BkGlobalBreakpointTriggered) */ {
  public:
   BkGlobalBreakpointTriggered();
   virtual ~BkGlobalBreakpointTriggered();
@@ -1791,13 +1791,13 @@ class BkGlobalBreakpointTriggered : public ::google::protobuf::MessageLite /* @@
 
   // accessors -------------------------------------------------------
 
-  // .dse.osidbg.BkGlobalBreakpointTriggered.Reason reason = 1;
+  // .bg3se.osidbg.BkGlobalBreakpointTriggered.Reason reason = 1;
   void clear_reason();
   static const int kReasonFieldNumber = 1;
-  ::dse::osidbg::BkGlobalBreakpointTriggered_Reason reason() const;
-  void set_reason(::dse::osidbg::BkGlobalBreakpointTriggered_Reason value);
+  ::bg3se::osidbg::BkGlobalBreakpointTriggered_Reason reason() const;
+  void set_reason(::bg3se::osidbg::BkGlobalBreakpointTriggered_Reason value);
 
-  // @@protoc_insertion_point(class_scope:dse.osidbg.BkGlobalBreakpointTriggered)
+  // @@protoc_insertion_point(class_scope:bg3se.osidbg.BkGlobalBreakpointTriggered)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -1810,7 +1810,7 @@ class BkGlobalBreakpointTriggered : public ::google::protobuf::MessageLite /* @@
 };
 // -------------------------------------------------------------------
 
-class DbgContinue : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.osidbg.DbgContinue) */ {
+class DbgContinue : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.osidbg.DbgContinue) */ {
  public:
   DbgContinue();
   virtual ~DbgContinue();
@@ -1945,11 +1945,11 @@ class DbgContinue : public ::google::protobuf::MessageLite /* @@protoc_insertion
 
   // accessors -------------------------------------------------------
 
-  // .dse.osidbg.DbgContinue.Action action = 1;
+  // .bg3se.osidbg.DbgContinue.Action action = 1;
   void clear_action();
   static const int kActionFieldNumber = 1;
-  ::dse::osidbg::DbgContinue_Action action() const;
-  void set_action(::dse::osidbg::DbgContinue_Action value);
+  ::bg3se::osidbg::DbgContinue_Action action() const;
+  void set_action(::bg3se::osidbg::DbgContinue_Action value);
 
   // uint32 breakpoint_mask = 2;
   void clear_breakpoint_mask();
@@ -1963,7 +1963,7 @@ class DbgContinue : public ::google::protobuf::MessageLite /* @@protoc_insertion
   ::google::protobuf::uint32 flags() const;
   void set_flags(::google::protobuf::uint32 value);
 
-  // @@protoc_insertion_point(class_scope:dse.osidbg.DbgContinue)
+  // @@protoc_insertion_point(class_scope:bg3se.osidbg.DbgContinue)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -1978,7 +1978,7 @@ class DbgContinue : public ::google::protobuf::MessageLite /* @@protoc_insertion
 };
 // -------------------------------------------------------------------
 
-class DbgGetDatabaseContents : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.osidbg.DbgGetDatabaseContents) */ {
+class DbgGetDatabaseContents : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.osidbg.DbgGetDatabaseContents) */ {
  public:
   DbgGetDatabaseContents();
   virtual ~DbgGetDatabaseContents();
@@ -2081,7 +2081,7 @@ class DbgGetDatabaseContents : public ::google::protobuf::MessageLite /* @@proto
   ::google::protobuf::uint32 database_id() const;
   void set_database_id(::google::protobuf::uint32 value);
 
-  // @@protoc_insertion_point(class_scope:dse.osidbg.DbgGetDatabaseContents)
+  // @@protoc_insertion_point(class_scope:bg3se.osidbg.DbgGetDatabaseContents)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -2094,7 +2094,7 @@ class DbgGetDatabaseContents : public ::google::protobuf::MessageLite /* @@proto
 };
 // -------------------------------------------------------------------
 
-class DbgSyncStory : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.osidbg.DbgSyncStory) */ {
+class DbgSyncStory : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.osidbg.DbgSyncStory) */ {
  public:
   DbgSyncStory();
   virtual ~DbgSyncStory();
@@ -2191,7 +2191,7 @@ class DbgSyncStory : public ::google::protobuf::MessageLite /* @@protoc_insertio
 
   // accessors -------------------------------------------------------
 
-  // @@protoc_insertion_point(class_scope:dse.osidbg.DbgSyncStory)
+  // @@protoc_insertion_point(class_scope:bg3se.osidbg.DbgSyncStory)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -2203,7 +2203,7 @@ class DbgSyncStory : public ::google::protobuf::MessageLite /* @@protoc_insertio
 };
 // -------------------------------------------------------------------
 
-class DbgEvaluate : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.osidbg.DbgEvaluate) */ {
+class DbgEvaluate : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.osidbg.DbgEvaluate) */ {
  public:
   DbgEvaluate();
   virtual ~DbgEvaluate();
@@ -2319,26 +2319,26 @@ class DbgEvaluate : public ::google::protobuf::MessageLite /* @@protoc_insertion
 
   // accessors -------------------------------------------------------
 
-  // .dse.osidbg.MsgTuple params = 3;
+  // .bg3se.osidbg.MsgTuple params = 3;
   bool has_params() const;
   void clear_params();
   static const int kParamsFieldNumber = 3;
   private:
-  const ::dse::osidbg::MsgTuple& _internal_params() const;
+  const ::bg3se::osidbg::MsgTuple& _internal_params() const;
   public:
-  const ::dse::osidbg::MsgTuple& params() const;
-  ::dse::osidbg::MsgTuple* release_params();
-  ::dse::osidbg::MsgTuple* mutable_params();
-  void set_allocated_params(::dse::osidbg::MsgTuple* params);
+  const ::bg3se::osidbg::MsgTuple& params() const;
+  ::bg3se::osidbg::MsgTuple* release_params();
+  ::bg3se::osidbg::MsgTuple* mutable_params();
+  void set_allocated_params(::bg3se::osidbg::MsgTuple* params);
   void unsafe_arena_set_allocated_params(
-      ::dse::osidbg::MsgTuple* params);
-  ::dse::osidbg::MsgTuple* unsafe_arena_release_params();
+      ::bg3se::osidbg::MsgTuple* params);
+  ::bg3se::osidbg::MsgTuple* unsafe_arena_release_params();
 
-  // .dse.osidbg.DbgEvaluate.EvalType type = 1;
+  // .bg3se.osidbg.DbgEvaluate.EvalType type = 1;
   void clear_type();
   static const int kTypeFieldNumber = 1;
-  ::dse::osidbg::DbgEvaluate_EvalType type() const;
-  void set_type(::dse::osidbg::DbgEvaluate_EvalType value);
+  ::bg3se::osidbg::DbgEvaluate_EvalType type() const;
+  void set_type(::bg3se::osidbg::DbgEvaluate_EvalType value);
 
   // uint32 node_id = 2;
   void clear_node_id();
@@ -2346,14 +2346,14 @@ class DbgEvaluate : public ::google::protobuf::MessageLite /* @@protoc_insertion
   ::google::protobuf::uint32 node_id() const;
   void set_node_id(::google::protobuf::uint32 value);
 
-  // @@protoc_insertion_point(class_scope:dse.osidbg.DbgEvaluate)
+  // @@protoc_insertion_point(class_scope:bg3se.osidbg.DbgEvaluate)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
   template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::dse::osidbg::MsgTuple* params_;
+  ::bg3se::osidbg::MsgTuple* params_;
   int type_;
   ::google::protobuf::uint32 node_id_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
@@ -2361,7 +2361,7 @@ class DbgEvaluate : public ::google::protobuf::MessageLite /* @@protoc_insertion
 };
 // -------------------------------------------------------------------
 
-class BkResult : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.osidbg.BkResult) */ {
+class BkResult : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.osidbg.BkResult) */ {
  public:
   BkResult();
   virtual ~BkResult();
@@ -2458,13 +2458,13 @@ class BkResult : public ::google::protobuf::MessageLite /* @@protoc_insertion_po
 
   // accessors -------------------------------------------------------
 
-  // .dse.osidbg.StatusCode status_code = 1;
+  // .bg3se.osidbg.StatusCode status_code = 1;
   void clear_status_code();
   static const int kStatusCodeFieldNumber = 1;
-  ::dse::osidbg::StatusCode status_code() const;
-  void set_status_code(::dse::osidbg::StatusCode value);
+  ::bg3se::osidbg::StatusCode status_code() const;
+  void set_status_code(::bg3se::osidbg::StatusCode value);
 
-  // @@protoc_insertion_point(class_scope:dse.osidbg.BkResult)
+  // @@protoc_insertion_point(class_scope:bg3se.osidbg.BkResult)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -2477,7 +2477,7 @@ class BkResult : public ::google::protobuf::MessageLite /* @@protoc_insertion_po
 };
 // -------------------------------------------------------------------
 
-class BkStoryLoaded : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.osidbg.BkStoryLoaded) */ {
+class BkStoryLoaded : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.osidbg.BkStoryLoaded) */ {
  public:
   BkStoryLoaded();
   virtual ~BkStoryLoaded();
@@ -2574,7 +2574,7 @@ class BkStoryLoaded : public ::google::protobuf::MessageLite /* @@protoc_inserti
 
   // accessors -------------------------------------------------------
 
-  // @@protoc_insertion_point(class_scope:dse.osidbg.BkStoryLoaded)
+  // @@protoc_insertion_point(class_scope:bg3se.osidbg.BkStoryLoaded)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -2586,7 +2586,7 @@ class BkStoryLoaded : public ::google::protobuf::MessageLite /* @@protoc_inserti
 };
 // -------------------------------------------------------------------
 
-class BkDebugSessionEnded : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.osidbg.BkDebugSessionEnded) */ {
+class BkDebugSessionEnded : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.osidbg.BkDebugSessionEnded) */ {
  public:
   BkDebugSessionEnded();
   virtual ~BkDebugSessionEnded();
@@ -2683,7 +2683,7 @@ class BkDebugSessionEnded : public ::google::protobuf::MessageLite /* @@protoc_i
 
   // accessors -------------------------------------------------------
 
-  // @@protoc_insertion_point(class_scope:dse.osidbg.BkDebugSessionEnded)
+  // @@protoc_insertion_point(class_scope:bg3se.osidbg.BkDebugSessionEnded)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -2695,7 +2695,7 @@ class BkDebugSessionEnded : public ::google::protobuf::MessageLite /* @@protoc_i
 };
 // -------------------------------------------------------------------
 
-class MsgActionInfo : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.osidbg.MsgActionInfo) */ {
+class MsgActionInfo : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.osidbg.MsgActionInfo) */ {
  public:
   MsgActionInfo();
   virtual ~MsgActionInfo();
@@ -2827,7 +2827,7 @@ class MsgActionInfo : public ::google::protobuf::MessageLite /* @@protoc_inserti
   ::google::protobuf::int32 goal_id() const;
   void set_goal_id(::google::protobuf::int32 value);
 
-  // @@protoc_insertion_point(class_scope:dse.osidbg.MsgActionInfo)
+  // @@protoc_insertion_point(class_scope:bg3se.osidbg.MsgActionInfo)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -2842,7 +2842,7 @@ class MsgActionInfo : public ::google::protobuf::MessageLite /* @@protoc_inserti
 };
 // -------------------------------------------------------------------
 
-class MsgGoalInfo : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.osidbg.MsgGoalInfo) */ {
+class MsgGoalInfo : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.osidbg.MsgGoalInfo) */ {
  public:
   MsgGoalInfo();
   virtual ~MsgGoalInfo();
@@ -2939,28 +2939,28 @@ class MsgGoalInfo : public ::google::protobuf::MessageLite /* @@protoc_insertion
 
   // accessors -------------------------------------------------------
 
-  // repeated .dse.osidbg.MsgActionInfo initActions = 3;
+  // repeated .bg3se.osidbg.MsgActionInfo initActions = 3;
   int initactions_size() const;
   void clear_initactions();
   static const int kInitActionsFieldNumber = 3;
-  ::dse::osidbg::MsgActionInfo* mutable_initactions(int index);
-  ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgActionInfo >*
+  ::bg3se::osidbg::MsgActionInfo* mutable_initactions(int index);
+  ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgActionInfo >*
       mutable_initactions();
-  const ::dse::osidbg::MsgActionInfo& initactions(int index) const;
-  ::dse::osidbg::MsgActionInfo* add_initactions();
-  const ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgActionInfo >&
+  const ::bg3se::osidbg::MsgActionInfo& initactions(int index) const;
+  ::bg3se::osidbg::MsgActionInfo* add_initactions();
+  const ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgActionInfo >&
       initactions() const;
 
-  // repeated .dse.osidbg.MsgActionInfo exitActions = 4;
+  // repeated .bg3se.osidbg.MsgActionInfo exitActions = 4;
   int exitactions_size() const;
   void clear_exitactions();
   static const int kExitActionsFieldNumber = 4;
-  ::dse::osidbg::MsgActionInfo* mutable_exitactions(int index);
-  ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgActionInfo >*
+  ::bg3se::osidbg::MsgActionInfo* mutable_exitactions(int index);
+  ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgActionInfo >*
       mutable_exitactions();
-  const ::dse::osidbg::MsgActionInfo& exitactions(int index) const;
-  ::dse::osidbg::MsgActionInfo* add_exitactions();
-  const ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgActionInfo >&
+  const ::bg3se::osidbg::MsgActionInfo& exitactions(int index) const;
+  ::bg3se::osidbg::MsgActionInfo* add_exitactions();
+  const ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgActionInfo >&
       exitactions() const;
 
   // string name = 2;
@@ -2992,15 +2992,15 @@ class MsgGoalInfo : public ::google::protobuf::MessageLite /* @@protoc_insertion
   ::google::protobuf::uint32 id() const;
   void set_id(::google::protobuf::uint32 value);
 
-  // @@protoc_insertion_point(class_scope:dse.osidbg.MsgGoalInfo)
+  // @@protoc_insertion_point(class_scope:bg3se.osidbg.MsgGoalInfo)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
   template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgActionInfo > initactions_;
-  ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgActionInfo > exitactions_;
+  ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgActionInfo > initactions_;
+  ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgActionInfo > exitactions_;
   ::google::protobuf::internal::ArenaStringPtr name_;
   ::google::protobuf::uint32 id_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
@@ -3008,7 +3008,7 @@ class MsgGoalInfo : public ::google::protobuf::MessageLite /* @@protoc_insertion
 };
 // -------------------------------------------------------------------
 
-class MsgDatabaseInfo : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.osidbg.MsgDatabaseInfo) */ {
+class MsgDatabaseInfo : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.osidbg.MsgDatabaseInfo) */ {
  public:
   MsgDatabaseInfo();
   virtual ~MsgDatabaseInfo();
@@ -3123,7 +3123,7 @@ class MsgDatabaseInfo : public ::google::protobuf::MessageLite /* @@protoc_inser
   ::google::protobuf::uint32 id() const;
   void set_id(::google::protobuf::uint32 value);
 
-  // @@protoc_insertion_point(class_scope:dse.osidbg.MsgDatabaseInfo)
+  // @@protoc_insertion_point(class_scope:bg3se.osidbg.MsgDatabaseInfo)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -3138,7 +3138,7 @@ class MsgDatabaseInfo : public ::google::protobuf::MessageLite /* @@protoc_inser
 };
 // -------------------------------------------------------------------
 
-class MsgNodeInfo : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.osidbg.MsgNodeInfo) */ {
+class MsgNodeInfo : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.osidbg.MsgNodeInfo) */ {
  public:
   MsgNodeInfo();
   virtual ~MsgNodeInfo();
@@ -3270,7 +3270,7 @@ class MsgNodeInfo : public ::google::protobuf::MessageLite /* @@protoc_insertion
   ::google::protobuf::uint32 type() const;
   void set_type(::google::protobuf::uint32 value);
 
-  // @@protoc_insertion_point(class_scope:dse.osidbg.MsgNodeInfo)
+  // @@protoc_insertion_point(class_scope:bg3se.osidbg.MsgNodeInfo)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -3285,7 +3285,7 @@ class MsgNodeInfo : public ::google::protobuf::MessageLite /* @@protoc_insertion
 };
 // -------------------------------------------------------------------
 
-class MsgRuleInfo : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.osidbg.MsgRuleInfo) */ {
+class MsgRuleInfo : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.osidbg.MsgRuleInfo) */ {
  public:
   MsgRuleInfo();
   virtual ~MsgRuleInfo();
@@ -3382,16 +3382,16 @@ class MsgRuleInfo : public ::google::protobuf::MessageLite /* @@protoc_insertion
 
   // accessors -------------------------------------------------------
 
-  // repeated .dse.osidbg.MsgActionInfo actions = 2;
+  // repeated .bg3se.osidbg.MsgActionInfo actions = 2;
   int actions_size() const;
   void clear_actions();
   static const int kActionsFieldNumber = 2;
-  ::dse::osidbg::MsgActionInfo* mutable_actions(int index);
-  ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgActionInfo >*
+  ::bg3se::osidbg::MsgActionInfo* mutable_actions(int index);
+  ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgActionInfo >*
       mutable_actions();
-  const ::dse::osidbg::MsgActionInfo& actions(int index) const;
-  ::dse::osidbg::MsgActionInfo* add_actions();
-  const ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgActionInfo >&
+  const ::bg3se::osidbg::MsgActionInfo& actions(int index) const;
+  ::bg3se::osidbg::MsgActionInfo* add_actions();
+  const ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgActionInfo >&
       actions() const;
 
   // uint32 node_id = 1;
@@ -3400,21 +3400,21 @@ class MsgRuleInfo : public ::google::protobuf::MessageLite /* @@protoc_insertion
   ::google::protobuf::uint32 node_id() const;
   void set_node_id(::google::protobuf::uint32 value);
 
-  // @@protoc_insertion_point(class_scope:dse.osidbg.MsgRuleInfo)
+  // @@protoc_insertion_point(class_scope:bg3se.osidbg.MsgRuleInfo)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
   template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgActionInfo > actions_;
+  ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgActionInfo > actions_;
   ::google::protobuf::uint32 node_id_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_osidebug_2eproto::TableStruct;
 };
 // -------------------------------------------------------------------
 
-class BkSyncStoryData : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.osidbg.BkSyncStoryData) */ {
+class BkSyncStoryData : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.osidbg.BkSyncStoryData) */ {
  public:
   BkSyncStoryData();
   virtual ~BkSyncStoryData();
@@ -3511,71 +3511,71 @@ class BkSyncStoryData : public ::google::protobuf::MessageLite /* @@protoc_inser
 
   // accessors -------------------------------------------------------
 
-  // repeated .dse.osidbg.MsgGoalInfo goal = 1;
+  // repeated .bg3se.osidbg.MsgGoalInfo goal = 1;
   int goal_size() const;
   void clear_goal();
   static const int kGoalFieldNumber = 1;
-  ::dse::osidbg::MsgGoalInfo* mutable_goal(int index);
-  ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgGoalInfo >*
+  ::bg3se::osidbg::MsgGoalInfo* mutable_goal(int index);
+  ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgGoalInfo >*
       mutable_goal();
-  const ::dse::osidbg::MsgGoalInfo& goal(int index) const;
-  ::dse::osidbg::MsgGoalInfo* add_goal();
-  const ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgGoalInfo >&
+  const ::bg3se::osidbg::MsgGoalInfo& goal(int index) const;
+  ::bg3se::osidbg::MsgGoalInfo* add_goal();
+  const ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgGoalInfo >&
       goal() const;
 
-  // repeated .dse.osidbg.MsgDatabaseInfo database = 2;
+  // repeated .bg3se.osidbg.MsgDatabaseInfo database = 2;
   int database_size() const;
   void clear_database();
   static const int kDatabaseFieldNumber = 2;
-  ::dse::osidbg::MsgDatabaseInfo* mutable_database(int index);
-  ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgDatabaseInfo >*
+  ::bg3se::osidbg::MsgDatabaseInfo* mutable_database(int index);
+  ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgDatabaseInfo >*
       mutable_database();
-  const ::dse::osidbg::MsgDatabaseInfo& database(int index) const;
-  ::dse::osidbg::MsgDatabaseInfo* add_database();
-  const ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgDatabaseInfo >&
+  const ::bg3se::osidbg::MsgDatabaseInfo& database(int index) const;
+  ::bg3se::osidbg::MsgDatabaseInfo* add_database();
+  const ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgDatabaseInfo >&
       database() const;
 
-  // repeated .dse.osidbg.MsgNodeInfo node = 3;
+  // repeated .bg3se.osidbg.MsgNodeInfo node = 3;
   int node_size() const;
   void clear_node();
   static const int kNodeFieldNumber = 3;
-  ::dse::osidbg::MsgNodeInfo* mutable_node(int index);
-  ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgNodeInfo >*
+  ::bg3se::osidbg::MsgNodeInfo* mutable_node(int index);
+  ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgNodeInfo >*
       mutable_node();
-  const ::dse::osidbg::MsgNodeInfo& node(int index) const;
-  ::dse::osidbg::MsgNodeInfo* add_node();
-  const ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgNodeInfo >&
+  const ::bg3se::osidbg::MsgNodeInfo& node(int index) const;
+  ::bg3se::osidbg::MsgNodeInfo* add_node();
+  const ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgNodeInfo >&
       node() const;
 
-  // repeated .dse.osidbg.MsgRuleInfo rule = 4;
+  // repeated .bg3se.osidbg.MsgRuleInfo rule = 4;
   int rule_size() const;
   void clear_rule();
   static const int kRuleFieldNumber = 4;
-  ::dse::osidbg::MsgRuleInfo* mutable_rule(int index);
-  ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgRuleInfo >*
+  ::bg3se::osidbg::MsgRuleInfo* mutable_rule(int index);
+  ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgRuleInfo >*
       mutable_rule();
-  const ::dse::osidbg::MsgRuleInfo& rule(int index) const;
-  ::dse::osidbg::MsgRuleInfo* add_rule();
-  const ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgRuleInfo >&
+  const ::bg3se::osidbg::MsgRuleInfo& rule(int index) const;
+  ::bg3se::osidbg::MsgRuleInfo* add_rule();
+  const ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgRuleInfo >&
       rule() const;
 
-  // @@protoc_insertion_point(class_scope:dse.osidbg.BkSyncStoryData)
+  // @@protoc_insertion_point(class_scope:bg3se.osidbg.BkSyncStoryData)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
   template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgGoalInfo > goal_;
-  ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgDatabaseInfo > database_;
-  ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgNodeInfo > node_;
-  ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgRuleInfo > rule_;
+  ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgGoalInfo > goal_;
+  ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgDatabaseInfo > database_;
+  ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgNodeInfo > node_;
+  ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgRuleInfo > rule_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_osidebug_2eproto::TableStruct;
 };
 // -------------------------------------------------------------------
 
-class BkSyncStoryFinished : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.osidbg.BkSyncStoryFinished) */ {
+class BkSyncStoryFinished : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.osidbg.BkSyncStoryFinished) */ {
  public:
   BkSyncStoryFinished();
   virtual ~BkSyncStoryFinished();
@@ -3672,7 +3672,7 @@ class BkSyncStoryFinished : public ::google::protobuf::MessageLite /* @@protoc_i
 
   // accessors -------------------------------------------------------
 
-  // @@protoc_insertion_point(class_scope:dse.osidbg.BkSyncStoryFinished)
+  // @@protoc_insertion_point(class_scope:bg3se.osidbg.BkSyncStoryFinished)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -3684,7 +3684,7 @@ class BkSyncStoryFinished : public ::google::protobuf::MessageLite /* @@protoc_i
 };
 // -------------------------------------------------------------------
 
-class BkDebugOutput : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.osidbg.BkDebugOutput) */ {
+class BkDebugOutput : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.osidbg.BkDebugOutput) */ {
  public:
   BkDebugOutput();
   virtual ~BkDebugOutput();
@@ -3804,7 +3804,7 @@ class BkDebugOutput : public ::google::protobuf::MessageLite /* @@protoc_inserti
   void unsafe_arena_set_allocated_message(
       ::std::string* message);
 
-  // @@protoc_insertion_point(class_scope:dse.osidbg.BkDebugOutput)
+  // @@protoc_insertion_point(class_scope:bg3se.osidbg.BkDebugOutput)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -3817,7 +3817,7 @@ class BkDebugOutput : public ::google::protobuf::MessageLite /* @@protoc_inserti
 };
 // -------------------------------------------------------------------
 
-class BkBeginDatabaseContents : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.osidbg.BkBeginDatabaseContents) */ {
+class BkBeginDatabaseContents : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.osidbg.BkBeginDatabaseContents) */ {
  public:
   BkBeginDatabaseContents();
   virtual ~BkBeginDatabaseContents();
@@ -3920,7 +3920,7 @@ class BkBeginDatabaseContents : public ::google::protobuf::MessageLite /* @@prot
   ::google::protobuf::uint32 database_id() const;
   void set_database_id(::google::protobuf::uint32 value);
 
-  // @@protoc_insertion_point(class_scope:dse.osidbg.BkBeginDatabaseContents)
+  // @@protoc_insertion_point(class_scope:bg3se.osidbg.BkBeginDatabaseContents)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -3933,7 +3933,7 @@ class BkBeginDatabaseContents : public ::google::protobuf::MessageLite /* @@prot
 };
 // -------------------------------------------------------------------
 
-class BkDatabaseRow : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.osidbg.BkDatabaseRow) */ {
+class BkDatabaseRow : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.osidbg.BkDatabaseRow) */ {
  public:
   BkDatabaseRow();
   virtual ~BkDatabaseRow();
@@ -4030,16 +4030,16 @@ class BkDatabaseRow : public ::google::protobuf::MessageLite /* @@protoc_inserti
 
   // accessors -------------------------------------------------------
 
-  // repeated .dse.osidbg.MsgTuple row = 2;
+  // repeated .bg3se.osidbg.MsgTuple row = 2;
   int row_size() const;
   void clear_row();
   static const int kRowFieldNumber = 2;
-  ::dse::osidbg::MsgTuple* mutable_row(int index);
-  ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgTuple >*
+  ::bg3se::osidbg::MsgTuple* mutable_row(int index);
+  ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgTuple >*
       mutable_row();
-  const ::dse::osidbg::MsgTuple& row(int index) const;
-  ::dse::osidbg::MsgTuple* add_row();
-  const ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgTuple >&
+  const ::bg3se::osidbg::MsgTuple& row(int index) const;
+  ::bg3se::osidbg::MsgTuple* add_row();
+  const ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgTuple >&
       row() const;
 
   // uint32 database_id = 1;
@@ -4048,21 +4048,21 @@ class BkDatabaseRow : public ::google::protobuf::MessageLite /* @@protoc_inserti
   ::google::protobuf::uint32 database_id() const;
   void set_database_id(::google::protobuf::uint32 value);
 
-  // @@protoc_insertion_point(class_scope:dse.osidbg.BkDatabaseRow)
+  // @@protoc_insertion_point(class_scope:bg3se.osidbg.BkDatabaseRow)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
   template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgTuple > row_;
+  ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgTuple > row_;
   ::google::protobuf::uint32 database_id_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_osidebug_2eproto::TableStruct;
 };
 // -------------------------------------------------------------------
 
-class BkEndDatabaseContents : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.osidbg.BkEndDatabaseContents) */ {
+class BkEndDatabaseContents : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.osidbg.BkEndDatabaseContents) */ {
  public:
   BkEndDatabaseContents();
   virtual ~BkEndDatabaseContents();
@@ -4165,7 +4165,7 @@ class BkEndDatabaseContents : public ::google::protobuf::MessageLite /* @@protoc
   ::google::protobuf::uint32 database_id() const;
   void set_database_id(::google::protobuf::uint32 value);
 
-  // @@protoc_insertion_point(class_scope:dse.osidbg.BkEndDatabaseContents)
+  // @@protoc_insertion_point(class_scope:bg3se.osidbg.BkEndDatabaseContents)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -4178,7 +4178,7 @@ class BkEndDatabaseContents : public ::google::protobuf::MessageLite /* @@protoc
 };
 // -------------------------------------------------------------------
 
-class BkEvaluateRow : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.osidbg.BkEvaluateRow) */ {
+class BkEvaluateRow : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.osidbg.BkEvaluateRow) */ {
  public:
   BkEvaluateRow();
   virtual ~BkEvaluateRow();
@@ -4275,32 +4275,32 @@ class BkEvaluateRow : public ::google::protobuf::MessageLite /* @@protoc_inserti
 
   // accessors -------------------------------------------------------
 
-  // repeated .dse.osidbg.MsgTuple row = 1;
+  // repeated .bg3se.osidbg.MsgTuple row = 1;
   int row_size() const;
   void clear_row();
   static const int kRowFieldNumber = 1;
-  ::dse::osidbg::MsgTuple* mutable_row(int index);
-  ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgTuple >*
+  ::bg3se::osidbg::MsgTuple* mutable_row(int index);
+  ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgTuple >*
       mutable_row();
-  const ::dse::osidbg::MsgTuple& row(int index) const;
-  ::dse::osidbg::MsgTuple* add_row();
-  const ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgTuple >&
+  const ::bg3se::osidbg::MsgTuple& row(int index) const;
+  ::bg3se::osidbg::MsgTuple* add_row();
+  const ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgTuple >&
       row() const;
 
-  // @@protoc_insertion_point(class_scope:dse.osidbg.BkEvaluateRow)
+  // @@protoc_insertion_point(class_scope:bg3se.osidbg.BkEvaluateRow)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
   template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgTuple > row_;
+  ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgTuple > row_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_osidebug_2eproto::TableStruct;
 };
 // -------------------------------------------------------------------
 
-class BkEvaluateFinished : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.osidbg.BkEvaluateFinished) */ {
+class BkEvaluateFinished : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.osidbg.BkEvaluateFinished) */ {
  public:
   BkEvaluateFinished();
   virtual ~BkEvaluateFinished();
@@ -4397,11 +4397,11 @@ class BkEvaluateFinished : public ::google::protobuf::MessageLite /* @@protoc_in
 
   // accessors -------------------------------------------------------
 
-  // .dse.osidbg.StatusCode result_code = 1;
+  // .bg3se.osidbg.StatusCode result_code = 1;
   void clear_result_code();
   static const int kResultCodeFieldNumber = 1;
-  ::dse::osidbg::StatusCode result_code() const;
-  void set_result_code(::dse::osidbg::StatusCode value);
+  ::bg3se::osidbg::StatusCode result_code() const;
+  void set_result_code(::bg3se::osidbg::StatusCode value);
 
   // bool query_succeeded = 2;
   void clear_query_succeeded();
@@ -4409,7 +4409,7 @@ class BkEvaluateFinished : public ::google::protobuf::MessageLite /* @@protoc_in
   bool query_succeeded() const;
   void set_query_succeeded(bool value);
 
-  // @@protoc_insertion_point(class_scope:dse.osidbg.BkEvaluateFinished)
+  // @@protoc_insertion_point(class_scope:bg3se.osidbg.BkEvaluateFinished)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
@@ -4423,7 +4423,7 @@ class BkEvaluateFinished : public ::google::protobuf::MessageLite /* @@protoc_in
 };
 // -------------------------------------------------------------------
 
-class DebuggerToBackend : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.osidbg.DebuggerToBackend) */ {
+class DebuggerToBackend : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.osidbg.DebuggerToBackend) */ {
  public:
   DebuggerToBackend();
   virtual ~DebuggerToBackend();
@@ -4543,114 +4543,114 @@ class DebuggerToBackend : public ::google::protobuf::MessageLite /* @@protoc_ins
   ::google::protobuf::uint32 reply_seq_no() const;
   void set_reply_seq_no(::google::protobuf::uint32 value);
 
-  // .dse.osidbg.DbgIdentifyRequest identify = 1;
+  // .bg3se.osidbg.DbgIdentifyRequest identify = 1;
   bool has_identify() const;
   void clear_identify();
   static const int kIdentifyFieldNumber = 1;
   private:
-  const ::dse::osidbg::DbgIdentifyRequest& _internal_identify() const;
+  const ::bg3se::osidbg::DbgIdentifyRequest& _internal_identify() const;
   public:
-  const ::dse::osidbg::DbgIdentifyRequest& identify() const;
-  ::dse::osidbg::DbgIdentifyRequest* release_identify();
-  ::dse::osidbg::DbgIdentifyRequest* mutable_identify();
-  void set_allocated_identify(::dse::osidbg::DbgIdentifyRequest* identify);
+  const ::bg3se::osidbg::DbgIdentifyRequest& identify() const;
+  ::bg3se::osidbg::DbgIdentifyRequest* release_identify();
+  ::bg3se::osidbg::DbgIdentifyRequest* mutable_identify();
+  void set_allocated_identify(::bg3se::osidbg::DbgIdentifyRequest* identify);
   void unsafe_arena_set_allocated_identify(
-      ::dse::osidbg::DbgIdentifyRequest* identify);
-  ::dse::osidbg::DbgIdentifyRequest* unsafe_arena_release_identify();
+      ::bg3se::osidbg::DbgIdentifyRequest* identify);
+  ::bg3se::osidbg::DbgIdentifyRequest* unsafe_arena_release_identify();
 
-  // .dse.osidbg.DbgSetGlobalBreakpoints setGlobalBreakpoints = 2;
+  // .bg3se.osidbg.DbgSetGlobalBreakpoints setGlobalBreakpoints = 2;
   bool has_setglobalbreakpoints() const;
   void clear_setglobalbreakpoints();
   static const int kSetGlobalBreakpointsFieldNumber = 2;
   private:
-  const ::dse::osidbg::DbgSetGlobalBreakpoints& _internal_setglobalbreakpoints() const;
+  const ::bg3se::osidbg::DbgSetGlobalBreakpoints& _internal_setglobalbreakpoints() const;
   public:
-  const ::dse::osidbg::DbgSetGlobalBreakpoints& setglobalbreakpoints() const;
-  ::dse::osidbg::DbgSetGlobalBreakpoints* release_setglobalbreakpoints();
-  ::dse::osidbg::DbgSetGlobalBreakpoints* mutable_setglobalbreakpoints();
-  void set_allocated_setglobalbreakpoints(::dse::osidbg::DbgSetGlobalBreakpoints* setglobalbreakpoints);
+  const ::bg3se::osidbg::DbgSetGlobalBreakpoints& setglobalbreakpoints() const;
+  ::bg3se::osidbg::DbgSetGlobalBreakpoints* release_setglobalbreakpoints();
+  ::bg3se::osidbg::DbgSetGlobalBreakpoints* mutable_setglobalbreakpoints();
+  void set_allocated_setglobalbreakpoints(::bg3se::osidbg::DbgSetGlobalBreakpoints* setglobalbreakpoints);
   void unsafe_arena_set_allocated_setglobalbreakpoints(
-      ::dse::osidbg::DbgSetGlobalBreakpoints* setglobalbreakpoints);
-  ::dse::osidbg::DbgSetGlobalBreakpoints* unsafe_arena_release_setglobalbreakpoints();
+      ::bg3se::osidbg::DbgSetGlobalBreakpoints* setglobalbreakpoints);
+  ::bg3se::osidbg::DbgSetGlobalBreakpoints* unsafe_arena_release_setglobalbreakpoints();
 
-  // .dse.osidbg.DbgSetBreakpoints setBreakpoints = 3;
+  // .bg3se.osidbg.DbgSetBreakpoints setBreakpoints = 3;
   bool has_setbreakpoints() const;
   void clear_setbreakpoints();
   static const int kSetBreakpointsFieldNumber = 3;
   private:
-  const ::dse::osidbg::DbgSetBreakpoints& _internal_setbreakpoints() const;
+  const ::bg3se::osidbg::DbgSetBreakpoints& _internal_setbreakpoints() const;
   public:
-  const ::dse::osidbg::DbgSetBreakpoints& setbreakpoints() const;
-  ::dse::osidbg::DbgSetBreakpoints* release_setbreakpoints();
-  ::dse::osidbg::DbgSetBreakpoints* mutable_setbreakpoints();
-  void set_allocated_setbreakpoints(::dse::osidbg::DbgSetBreakpoints* setbreakpoints);
+  const ::bg3se::osidbg::DbgSetBreakpoints& setbreakpoints() const;
+  ::bg3se::osidbg::DbgSetBreakpoints* release_setbreakpoints();
+  ::bg3se::osidbg::DbgSetBreakpoints* mutable_setbreakpoints();
+  void set_allocated_setbreakpoints(::bg3se::osidbg::DbgSetBreakpoints* setbreakpoints);
   void unsafe_arena_set_allocated_setbreakpoints(
-      ::dse::osidbg::DbgSetBreakpoints* setbreakpoints);
-  ::dse::osidbg::DbgSetBreakpoints* unsafe_arena_release_setbreakpoints();
+      ::bg3se::osidbg::DbgSetBreakpoints* setbreakpoints);
+  ::bg3se::osidbg::DbgSetBreakpoints* unsafe_arena_release_setbreakpoints();
 
-  // .dse.osidbg.DbgContinue continue = 4;
+  // .bg3se.osidbg.DbgContinue continue = 4;
   bool has_continue_() const;
   void clear_continue_();
   static const int kContinueFieldNumber = 4;
   private:
-  const ::dse::osidbg::DbgContinue& _internal_continue_() const;
+  const ::bg3se::osidbg::DbgContinue& _internal_continue_() const;
   public:
-  const ::dse::osidbg::DbgContinue& continue_() const;
-  ::dse::osidbg::DbgContinue* release_continue_();
-  ::dse::osidbg::DbgContinue* mutable_continue_();
-  void set_allocated_continue_(::dse::osidbg::DbgContinue* continue_);
+  const ::bg3se::osidbg::DbgContinue& continue_() const;
+  ::bg3se::osidbg::DbgContinue* release_continue_();
+  ::bg3se::osidbg::DbgContinue* mutable_continue_();
+  void set_allocated_continue_(::bg3se::osidbg::DbgContinue* continue_);
   void unsafe_arena_set_allocated_continue_(
-      ::dse::osidbg::DbgContinue* continue_);
-  ::dse::osidbg::DbgContinue* unsafe_arena_release_continue_();
+      ::bg3se::osidbg::DbgContinue* continue_);
+  ::bg3se::osidbg::DbgContinue* unsafe_arena_release_continue_();
 
-  // .dse.osidbg.DbgGetDatabaseContents getDatabaseContents = 5;
+  // .bg3se.osidbg.DbgGetDatabaseContents getDatabaseContents = 5;
   bool has_getdatabasecontents() const;
   void clear_getdatabasecontents();
   static const int kGetDatabaseContentsFieldNumber = 5;
   private:
-  const ::dse::osidbg::DbgGetDatabaseContents& _internal_getdatabasecontents() const;
+  const ::bg3se::osidbg::DbgGetDatabaseContents& _internal_getdatabasecontents() const;
   public:
-  const ::dse::osidbg::DbgGetDatabaseContents& getdatabasecontents() const;
-  ::dse::osidbg::DbgGetDatabaseContents* release_getdatabasecontents();
-  ::dse::osidbg::DbgGetDatabaseContents* mutable_getdatabasecontents();
-  void set_allocated_getdatabasecontents(::dse::osidbg::DbgGetDatabaseContents* getdatabasecontents);
+  const ::bg3se::osidbg::DbgGetDatabaseContents& getdatabasecontents() const;
+  ::bg3se::osidbg::DbgGetDatabaseContents* release_getdatabasecontents();
+  ::bg3se::osidbg::DbgGetDatabaseContents* mutable_getdatabasecontents();
+  void set_allocated_getdatabasecontents(::bg3se::osidbg::DbgGetDatabaseContents* getdatabasecontents);
   void unsafe_arena_set_allocated_getdatabasecontents(
-      ::dse::osidbg::DbgGetDatabaseContents* getdatabasecontents);
-  ::dse::osidbg::DbgGetDatabaseContents* unsafe_arena_release_getdatabasecontents();
+      ::bg3se::osidbg::DbgGetDatabaseContents* getdatabasecontents);
+  ::bg3se::osidbg::DbgGetDatabaseContents* unsafe_arena_release_getdatabasecontents();
 
-  // .dse.osidbg.DbgSyncStory syncStory = 8;
+  // .bg3se.osidbg.DbgSyncStory syncStory = 8;
   bool has_syncstory() const;
   void clear_syncstory();
   static const int kSyncStoryFieldNumber = 8;
   private:
-  const ::dse::osidbg::DbgSyncStory& _internal_syncstory() const;
+  const ::bg3se::osidbg::DbgSyncStory& _internal_syncstory() const;
   public:
-  const ::dse::osidbg::DbgSyncStory& syncstory() const;
-  ::dse::osidbg::DbgSyncStory* release_syncstory();
-  ::dse::osidbg::DbgSyncStory* mutable_syncstory();
-  void set_allocated_syncstory(::dse::osidbg::DbgSyncStory* syncstory);
+  const ::bg3se::osidbg::DbgSyncStory& syncstory() const;
+  ::bg3se::osidbg::DbgSyncStory* release_syncstory();
+  ::bg3se::osidbg::DbgSyncStory* mutable_syncstory();
+  void set_allocated_syncstory(::bg3se::osidbg::DbgSyncStory* syncstory);
   void unsafe_arena_set_allocated_syncstory(
-      ::dse::osidbg::DbgSyncStory* syncstory);
-  ::dse::osidbg::DbgSyncStory* unsafe_arena_release_syncstory();
+      ::bg3se::osidbg::DbgSyncStory* syncstory);
+  ::bg3se::osidbg::DbgSyncStory* unsafe_arena_release_syncstory();
 
-  // .dse.osidbg.DbgEvaluate evaluate = 9;
+  // .bg3se.osidbg.DbgEvaluate evaluate = 9;
   bool has_evaluate() const;
   void clear_evaluate();
   static const int kEvaluateFieldNumber = 9;
   private:
-  const ::dse::osidbg::DbgEvaluate& _internal_evaluate() const;
+  const ::bg3se::osidbg::DbgEvaluate& _internal_evaluate() const;
   public:
-  const ::dse::osidbg::DbgEvaluate& evaluate() const;
-  ::dse::osidbg::DbgEvaluate* release_evaluate();
-  ::dse::osidbg::DbgEvaluate* mutable_evaluate();
-  void set_allocated_evaluate(::dse::osidbg::DbgEvaluate* evaluate);
+  const ::bg3se::osidbg::DbgEvaluate& evaluate() const;
+  ::bg3se::osidbg::DbgEvaluate* release_evaluate();
+  ::bg3se::osidbg::DbgEvaluate* mutable_evaluate();
+  void set_allocated_evaluate(::bg3se::osidbg::DbgEvaluate* evaluate);
   void unsafe_arena_set_allocated_evaluate(
-      ::dse::osidbg::DbgEvaluate* evaluate);
-  ::dse::osidbg::DbgEvaluate* unsafe_arena_release_evaluate();
+      ::bg3se::osidbg::DbgEvaluate* evaluate);
+  ::bg3se::osidbg::DbgEvaluate* unsafe_arena_release_evaluate();
 
   void clear_msg();
   MsgCase msg_case() const;
-  // @@protoc_insertion_point(class_scope:dse.osidbg.DebuggerToBackend)
+  // @@protoc_insertion_point(class_scope:bg3se.osidbg.DebuggerToBackend)
  private:
   void set_has_identify();
   void set_has_setglobalbreakpoints();
@@ -4671,13 +4671,13 @@ class DebuggerToBackend : public ::google::protobuf::MessageLite /* @@protoc_ins
   ::google::protobuf::uint32 reply_seq_no_;
   union MsgUnion {
     MsgUnion() {}
-    ::dse::osidbg::DbgIdentifyRequest* identify_;
-    ::dse::osidbg::DbgSetGlobalBreakpoints* setglobalbreakpoints_;
-    ::dse::osidbg::DbgSetBreakpoints* setbreakpoints_;
-    ::dse::osidbg::DbgContinue* continue__;
-    ::dse::osidbg::DbgGetDatabaseContents* getdatabasecontents_;
-    ::dse::osidbg::DbgSyncStory* syncstory_;
-    ::dse::osidbg::DbgEvaluate* evaluate_;
+    ::bg3se::osidbg::DbgIdentifyRequest* identify_;
+    ::bg3se::osidbg::DbgSetGlobalBreakpoints* setglobalbreakpoints_;
+    ::bg3se::osidbg::DbgSetBreakpoints* setbreakpoints_;
+    ::bg3se::osidbg::DbgContinue* continue__;
+    ::bg3se::osidbg::DbgGetDatabaseContents* getdatabasecontents_;
+    ::bg3se::osidbg::DbgSyncStory* syncstory_;
+    ::bg3se::osidbg::DbgEvaluate* evaluate_;
   } msg_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   ::google::protobuf::uint32 _oneof_case_[1];
@@ -4686,7 +4686,7 @@ class DebuggerToBackend : public ::google::protobuf::MessageLite /* @@protoc_ins
 };
 // -------------------------------------------------------------------
 
-class BackendToDebugger : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:dse.osidbg.BackendToDebugger) */ {
+class BackendToDebugger : public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:bg3se.osidbg.BackendToDebugger) */ {
  public:
   BackendToDebugger();
   virtual ~BackendToDebugger();
@@ -4813,219 +4813,219 @@ class BackendToDebugger : public ::google::protobuf::MessageLite /* @@protoc_ins
   ::google::protobuf::uint32 reply_seq_no() const;
   void set_reply_seq_no(::google::protobuf::uint32 value);
 
-  // .dse.osidbg.BkVersionInfoResponse versionInfo = 1;
+  // .bg3se.osidbg.BkVersionInfoResponse versionInfo = 1;
   bool has_versioninfo() const;
   void clear_versioninfo();
   static const int kVersionInfoFieldNumber = 1;
   private:
-  const ::dse::osidbg::BkVersionInfoResponse& _internal_versioninfo() const;
+  const ::bg3se::osidbg::BkVersionInfoResponse& _internal_versioninfo() const;
   public:
-  const ::dse::osidbg::BkVersionInfoResponse& versioninfo() const;
-  ::dse::osidbg::BkVersionInfoResponse* release_versioninfo();
-  ::dse::osidbg::BkVersionInfoResponse* mutable_versioninfo();
-  void set_allocated_versioninfo(::dse::osidbg::BkVersionInfoResponse* versioninfo);
+  const ::bg3se::osidbg::BkVersionInfoResponse& versioninfo() const;
+  ::bg3se::osidbg::BkVersionInfoResponse* release_versioninfo();
+  ::bg3se::osidbg::BkVersionInfoResponse* mutable_versioninfo();
+  void set_allocated_versioninfo(::bg3se::osidbg::BkVersionInfoResponse* versioninfo);
   void unsafe_arena_set_allocated_versioninfo(
-      ::dse::osidbg::BkVersionInfoResponse* versioninfo);
-  ::dse::osidbg::BkVersionInfoResponse* unsafe_arena_release_versioninfo();
+      ::bg3se::osidbg::BkVersionInfoResponse* versioninfo);
+  ::bg3se::osidbg::BkVersionInfoResponse* unsafe_arena_release_versioninfo();
 
-  // .dse.osidbg.BkBreakpointTriggered breakpointTriggered = 2;
+  // .bg3se.osidbg.BkBreakpointTriggered breakpointTriggered = 2;
   bool has_breakpointtriggered() const;
   void clear_breakpointtriggered();
   static const int kBreakpointTriggeredFieldNumber = 2;
   private:
-  const ::dse::osidbg::BkBreakpointTriggered& _internal_breakpointtriggered() const;
+  const ::bg3se::osidbg::BkBreakpointTriggered& _internal_breakpointtriggered() const;
   public:
-  const ::dse::osidbg::BkBreakpointTriggered& breakpointtriggered() const;
-  ::dse::osidbg::BkBreakpointTriggered* release_breakpointtriggered();
-  ::dse::osidbg::BkBreakpointTriggered* mutable_breakpointtriggered();
-  void set_allocated_breakpointtriggered(::dse::osidbg::BkBreakpointTriggered* breakpointtriggered);
+  const ::bg3se::osidbg::BkBreakpointTriggered& breakpointtriggered() const;
+  ::bg3se::osidbg::BkBreakpointTriggered* release_breakpointtriggered();
+  ::bg3se::osidbg::BkBreakpointTriggered* mutable_breakpointtriggered();
+  void set_allocated_breakpointtriggered(::bg3se::osidbg::BkBreakpointTriggered* breakpointtriggered);
   void unsafe_arena_set_allocated_breakpointtriggered(
-      ::dse::osidbg::BkBreakpointTriggered* breakpointtriggered);
-  ::dse::osidbg::BkBreakpointTriggered* unsafe_arena_release_breakpointtriggered();
+      ::bg3se::osidbg::BkBreakpointTriggered* breakpointtriggered);
+  ::bg3se::osidbg::BkBreakpointTriggered* unsafe_arena_release_breakpointtriggered();
 
-  // .dse.osidbg.BkResult results = 4;
+  // .bg3se.osidbg.BkResult results = 4;
   bool has_results() const;
   void clear_results();
   static const int kResultsFieldNumber = 4;
   private:
-  const ::dse::osidbg::BkResult& _internal_results() const;
+  const ::bg3se::osidbg::BkResult& _internal_results() const;
   public:
-  const ::dse::osidbg::BkResult& results() const;
-  ::dse::osidbg::BkResult* release_results();
-  ::dse::osidbg::BkResult* mutable_results();
-  void set_allocated_results(::dse::osidbg::BkResult* results);
+  const ::bg3se::osidbg::BkResult& results() const;
+  ::bg3se::osidbg::BkResult* release_results();
+  ::bg3se::osidbg::BkResult* mutable_results();
+  void set_allocated_results(::bg3se::osidbg::BkResult* results);
   void unsafe_arena_set_allocated_results(
-      ::dse::osidbg::BkResult* results);
-  ::dse::osidbg::BkResult* unsafe_arena_release_results();
+      ::bg3se::osidbg::BkResult* results);
+  ::bg3se::osidbg::BkResult* unsafe_arena_release_results();
 
-  // .dse.osidbg.BkStoryLoaded storyLoaded = 5;
+  // .bg3se.osidbg.BkStoryLoaded storyLoaded = 5;
   bool has_storyloaded() const;
   void clear_storyloaded();
   static const int kStoryLoadedFieldNumber = 5;
   private:
-  const ::dse::osidbg::BkStoryLoaded& _internal_storyloaded() const;
+  const ::bg3se::osidbg::BkStoryLoaded& _internal_storyloaded() const;
   public:
-  const ::dse::osidbg::BkStoryLoaded& storyloaded() const;
-  ::dse::osidbg::BkStoryLoaded* release_storyloaded();
-  ::dse::osidbg::BkStoryLoaded* mutable_storyloaded();
-  void set_allocated_storyloaded(::dse::osidbg::BkStoryLoaded* storyloaded);
+  const ::bg3se::osidbg::BkStoryLoaded& storyloaded() const;
+  ::bg3se::osidbg::BkStoryLoaded* release_storyloaded();
+  ::bg3se::osidbg::BkStoryLoaded* mutable_storyloaded();
+  void set_allocated_storyloaded(::bg3se::osidbg::BkStoryLoaded* storyloaded);
   void unsafe_arena_set_allocated_storyloaded(
-      ::dse::osidbg::BkStoryLoaded* storyloaded);
-  ::dse::osidbg::BkStoryLoaded* unsafe_arena_release_storyloaded();
+      ::bg3se::osidbg::BkStoryLoaded* storyloaded);
+  ::bg3se::osidbg::BkStoryLoaded* unsafe_arena_release_storyloaded();
 
-  // .dse.osidbg.BkDebugSessionEnded debugSessionEnded = 6;
+  // .bg3se.osidbg.BkDebugSessionEnded debugSessionEnded = 6;
   bool has_debugsessionended() const;
   void clear_debugsessionended();
   static const int kDebugSessionEndedFieldNumber = 6;
   private:
-  const ::dse::osidbg::BkDebugSessionEnded& _internal_debugsessionended() const;
+  const ::bg3se::osidbg::BkDebugSessionEnded& _internal_debugsessionended() const;
   public:
-  const ::dse::osidbg::BkDebugSessionEnded& debugsessionended() const;
-  ::dse::osidbg::BkDebugSessionEnded* release_debugsessionended();
-  ::dse::osidbg::BkDebugSessionEnded* mutable_debugsessionended();
-  void set_allocated_debugsessionended(::dse::osidbg::BkDebugSessionEnded* debugsessionended);
+  const ::bg3se::osidbg::BkDebugSessionEnded& debugsessionended() const;
+  ::bg3se::osidbg::BkDebugSessionEnded* release_debugsessionended();
+  ::bg3se::osidbg::BkDebugSessionEnded* mutable_debugsessionended();
+  void set_allocated_debugsessionended(::bg3se::osidbg::BkDebugSessionEnded* debugsessionended);
   void unsafe_arena_set_allocated_debugsessionended(
-      ::dse::osidbg::BkDebugSessionEnded* debugsessionended);
-  ::dse::osidbg::BkDebugSessionEnded* unsafe_arena_release_debugsessionended();
+      ::bg3se::osidbg::BkDebugSessionEnded* debugsessionended);
+  ::bg3se::osidbg::BkDebugSessionEnded* unsafe_arena_release_debugsessionended();
 
-  // .dse.osidbg.BkGlobalBreakpointTriggered globalBreakpointTriggered = 7;
+  // .bg3se.osidbg.BkGlobalBreakpointTriggered globalBreakpointTriggered = 7;
   bool has_globalbreakpointtriggered() const;
   void clear_globalbreakpointtriggered();
   static const int kGlobalBreakpointTriggeredFieldNumber = 7;
   private:
-  const ::dse::osidbg::BkGlobalBreakpointTriggered& _internal_globalbreakpointtriggered() const;
+  const ::bg3se::osidbg::BkGlobalBreakpointTriggered& _internal_globalbreakpointtriggered() const;
   public:
-  const ::dse::osidbg::BkGlobalBreakpointTriggered& globalbreakpointtriggered() const;
-  ::dse::osidbg::BkGlobalBreakpointTriggered* release_globalbreakpointtriggered();
-  ::dse::osidbg::BkGlobalBreakpointTriggered* mutable_globalbreakpointtriggered();
-  void set_allocated_globalbreakpointtriggered(::dse::osidbg::BkGlobalBreakpointTriggered* globalbreakpointtriggered);
+  const ::bg3se::osidbg::BkGlobalBreakpointTriggered& globalbreakpointtriggered() const;
+  ::bg3se::osidbg::BkGlobalBreakpointTriggered* release_globalbreakpointtriggered();
+  ::bg3se::osidbg::BkGlobalBreakpointTriggered* mutable_globalbreakpointtriggered();
+  void set_allocated_globalbreakpointtriggered(::bg3se::osidbg::BkGlobalBreakpointTriggered* globalbreakpointtriggered);
   void unsafe_arena_set_allocated_globalbreakpointtriggered(
-      ::dse::osidbg::BkGlobalBreakpointTriggered* globalbreakpointtriggered);
-  ::dse::osidbg::BkGlobalBreakpointTriggered* unsafe_arena_release_globalbreakpointtriggered();
+      ::bg3se::osidbg::BkGlobalBreakpointTriggered* globalbreakpointtriggered);
+  ::bg3se::osidbg::BkGlobalBreakpointTriggered* unsafe_arena_release_globalbreakpointtriggered();
 
-  // .dse.osidbg.BkSyncStoryData syncStoryData = 10;
+  // .bg3se.osidbg.BkSyncStoryData syncStoryData = 10;
   bool has_syncstorydata() const;
   void clear_syncstorydata();
   static const int kSyncStoryDataFieldNumber = 10;
   private:
-  const ::dse::osidbg::BkSyncStoryData& _internal_syncstorydata() const;
+  const ::bg3se::osidbg::BkSyncStoryData& _internal_syncstorydata() const;
   public:
-  const ::dse::osidbg::BkSyncStoryData& syncstorydata() const;
-  ::dse::osidbg::BkSyncStoryData* release_syncstorydata();
-  ::dse::osidbg::BkSyncStoryData* mutable_syncstorydata();
-  void set_allocated_syncstorydata(::dse::osidbg::BkSyncStoryData* syncstorydata);
+  const ::bg3se::osidbg::BkSyncStoryData& syncstorydata() const;
+  ::bg3se::osidbg::BkSyncStoryData* release_syncstorydata();
+  ::bg3se::osidbg::BkSyncStoryData* mutable_syncstorydata();
+  void set_allocated_syncstorydata(::bg3se::osidbg::BkSyncStoryData* syncstorydata);
   void unsafe_arena_set_allocated_syncstorydata(
-      ::dse::osidbg::BkSyncStoryData* syncstorydata);
-  ::dse::osidbg::BkSyncStoryData* unsafe_arena_release_syncstorydata();
+      ::bg3se::osidbg::BkSyncStoryData* syncstorydata);
+  ::bg3se::osidbg::BkSyncStoryData* unsafe_arena_release_syncstorydata();
 
-  // .dse.osidbg.BkSyncStoryFinished syncStoryFinished = 11;
+  // .bg3se.osidbg.BkSyncStoryFinished syncStoryFinished = 11;
   bool has_syncstoryfinished() const;
   void clear_syncstoryfinished();
   static const int kSyncStoryFinishedFieldNumber = 11;
   private:
-  const ::dse::osidbg::BkSyncStoryFinished& _internal_syncstoryfinished() const;
+  const ::bg3se::osidbg::BkSyncStoryFinished& _internal_syncstoryfinished() const;
   public:
-  const ::dse::osidbg::BkSyncStoryFinished& syncstoryfinished() const;
-  ::dse::osidbg::BkSyncStoryFinished* release_syncstoryfinished();
-  ::dse::osidbg::BkSyncStoryFinished* mutable_syncstoryfinished();
-  void set_allocated_syncstoryfinished(::dse::osidbg::BkSyncStoryFinished* syncstoryfinished);
+  const ::bg3se::osidbg::BkSyncStoryFinished& syncstoryfinished() const;
+  ::bg3se::osidbg::BkSyncStoryFinished* release_syncstoryfinished();
+  ::bg3se::osidbg::BkSyncStoryFinished* mutable_syncstoryfinished();
+  void set_allocated_syncstoryfinished(::bg3se::osidbg::BkSyncStoryFinished* syncstoryfinished);
   void unsafe_arena_set_allocated_syncstoryfinished(
-      ::dse::osidbg::BkSyncStoryFinished* syncstoryfinished);
-  ::dse::osidbg::BkSyncStoryFinished* unsafe_arena_release_syncstoryfinished();
+      ::bg3se::osidbg::BkSyncStoryFinished* syncstoryfinished);
+  ::bg3se::osidbg::BkSyncStoryFinished* unsafe_arena_release_syncstoryfinished();
 
-  // .dse.osidbg.BkDebugOutput debugOutput = 12;
+  // .bg3se.osidbg.BkDebugOutput debugOutput = 12;
   bool has_debugoutput() const;
   void clear_debugoutput();
   static const int kDebugOutputFieldNumber = 12;
   private:
-  const ::dse::osidbg::BkDebugOutput& _internal_debugoutput() const;
+  const ::bg3se::osidbg::BkDebugOutput& _internal_debugoutput() const;
   public:
-  const ::dse::osidbg::BkDebugOutput& debugoutput() const;
-  ::dse::osidbg::BkDebugOutput* release_debugoutput();
-  ::dse::osidbg::BkDebugOutput* mutable_debugoutput();
-  void set_allocated_debugoutput(::dse::osidbg::BkDebugOutput* debugoutput);
+  const ::bg3se::osidbg::BkDebugOutput& debugoutput() const;
+  ::bg3se::osidbg::BkDebugOutput* release_debugoutput();
+  ::bg3se::osidbg::BkDebugOutput* mutable_debugoutput();
+  void set_allocated_debugoutput(::bg3se::osidbg::BkDebugOutput* debugoutput);
   void unsafe_arena_set_allocated_debugoutput(
-      ::dse::osidbg::BkDebugOutput* debugoutput);
-  ::dse::osidbg::BkDebugOutput* unsafe_arena_release_debugoutput();
+      ::bg3se::osidbg::BkDebugOutput* debugoutput);
+  ::bg3se::osidbg::BkDebugOutput* unsafe_arena_release_debugoutput();
 
-  // .dse.osidbg.BkBeginDatabaseContents beginDatabaseContents = 13;
+  // .bg3se.osidbg.BkBeginDatabaseContents beginDatabaseContents = 13;
   bool has_begindatabasecontents() const;
   void clear_begindatabasecontents();
   static const int kBeginDatabaseContentsFieldNumber = 13;
   private:
-  const ::dse::osidbg::BkBeginDatabaseContents& _internal_begindatabasecontents() const;
+  const ::bg3se::osidbg::BkBeginDatabaseContents& _internal_begindatabasecontents() const;
   public:
-  const ::dse::osidbg::BkBeginDatabaseContents& begindatabasecontents() const;
-  ::dse::osidbg::BkBeginDatabaseContents* release_begindatabasecontents();
-  ::dse::osidbg::BkBeginDatabaseContents* mutable_begindatabasecontents();
-  void set_allocated_begindatabasecontents(::dse::osidbg::BkBeginDatabaseContents* begindatabasecontents);
+  const ::bg3se::osidbg::BkBeginDatabaseContents& begindatabasecontents() const;
+  ::bg3se::osidbg::BkBeginDatabaseContents* release_begindatabasecontents();
+  ::bg3se::osidbg::BkBeginDatabaseContents* mutable_begindatabasecontents();
+  void set_allocated_begindatabasecontents(::bg3se::osidbg::BkBeginDatabaseContents* begindatabasecontents);
   void unsafe_arena_set_allocated_begindatabasecontents(
-      ::dse::osidbg::BkBeginDatabaseContents* begindatabasecontents);
-  ::dse::osidbg::BkBeginDatabaseContents* unsafe_arena_release_begindatabasecontents();
+      ::bg3se::osidbg::BkBeginDatabaseContents* begindatabasecontents);
+  ::bg3se::osidbg::BkBeginDatabaseContents* unsafe_arena_release_begindatabasecontents();
 
-  // .dse.osidbg.BkDatabaseRow databaseRow = 14;
+  // .bg3se.osidbg.BkDatabaseRow databaseRow = 14;
   bool has_databaserow() const;
   void clear_databaserow();
   static const int kDatabaseRowFieldNumber = 14;
   private:
-  const ::dse::osidbg::BkDatabaseRow& _internal_databaserow() const;
+  const ::bg3se::osidbg::BkDatabaseRow& _internal_databaserow() const;
   public:
-  const ::dse::osidbg::BkDatabaseRow& databaserow() const;
-  ::dse::osidbg::BkDatabaseRow* release_databaserow();
-  ::dse::osidbg::BkDatabaseRow* mutable_databaserow();
-  void set_allocated_databaserow(::dse::osidbg::BkDatabaseRow* databaserow);
+  const ::bg3se::osidbg::BkDatabaseRow& databaserow() const;
+  ::bg3se::osidbg::BkDatabaseRow* release_databaserow();
+  ::bg3se::osidbg::BkDatabaseRow* mutable_databaserow();
+  void set_allocated_databaserow(::bg3se::osidbg::BkDatabaseRow* databaserow);
   void unsafe_arena_set_allocated_databaserow(
-      ::dse::osidbg::BkDatabaseRow* databaserow);
-  ::dse::osidbg::BkDatabaseRow* unsafe_arena_release_databaserow();
+      ::bg3se::osidbg::BkDatabaseRow* databaserow);
+  ::bg3se::osidbg::BkDatabaseRow* unsafe_arena_release_databaserow();
 
-  // .dse.osidbg.BkEndDatabaseContents endDatabaseContents = 15;
+  // .bg3se.osidbg.BkEndDatabaseContents endDatabaseContents = 15;
   bool has_enddatabasecontents() const;
   void clear_enddatabasecontents();
   static const int kEndDatabaseContentsFieldNumber = 15;
   private:
-  const ::dse::osidbg::BkEndDatabaseContents& _internal_enddatabasecontents() const;
+  const ::bg3se::osidbg::BkEndDatabaseContents& _internal_enddatabasecontents() const;
   public:
-  const ::dse::osidbg::BkEndDatabaseContents& enddatabasecontents() const;
-  ::dse::osidbg::BkEndDatabaseContents* release_enddatabasecontents();
-  ::dse::osidbg::BkEndDatabaseContents* mutable_enddatabasecontents();
-  void set_allocated_enddatabasecontents(::dse::osidbg::BkEndDatabaseContents* enddatabasecontents);
+  const ::bg3se::osidbg::BkEndDatabaseContents& enddatabasecontents() const;
+  ::bg3se::osidbg::BkEndDatabaseContents* release_enddatabasecontents();
+  ::bg3se::osidbg::BkEndDatabaseContents* mutable_enddatabasecontents();
+  void set_allocated_enddatabasecontents(::bg3se::osidbg::BkEndDatabaseContents* enddatabasecontents);
   void unsafe_arena_set_allocated_enddatabasecontents(
-      ::dse::osidbg::BkEndDatabaseContents* enddatabasecontents);
-  ::dse::osidbg::BkEndDatabaseContents* unsafe_arena_release_enddatabasecontents();
+      ::bg3se::osidbg::BkEndDatabaseContents* enddatabasecontents);
+  ::bg3se::osidbg::BkEndDatabaseContents* unsafe_arena_release_enddatabasecontents();
 
-  // .dse.osidbg.BkEvaluateRow evaluateRow = 16;
+  // .bg3se.osidbg.BkEvaluateRow evaluateRow = 16;
   bool has_evaluaterow() const;
   void clear_evaluaterow();
   static const int kEvaluateRowFieldNumber = 16;
   private:
-  const ::dse::osidbg::BkEvaluateRow& _internal_evaluaterow() const;
+  const ::bg3se::osidbg::BkEvaluateRow& _internal_evaluaterow() const;
   public:
-  const ::dse::osidbg::BkEvaluateRow& evaluaterow() const;
-  ::dse::osidbg::BkEvaluateRow* release_evaluaterow();
-  ::dse::osidbg::BkEvaluateRow* mutable_evaluaterow();
-  void set_allocated_evaluaterow(::dse::osidbg::BkEvaluateRow* evaluaterow);
+  const ::bg3se::osidbg::BkEvaluateRow& evaluaterow() const;
+  ::bg3se::osidbg::BkEvaluateRow* release_evaluaterow();
+  ::bg3se::osidbg::BkEvaluateRow* mutable_evaluaterow();
+  void set_allocated_evaluaterow(::bg3se::osidbg::BkEvaluateRow* evaluaterow);
   void unsafe_arena_set_allocated_evaluaterow(
-      ::dse::osidbg::BkEvaluateRow* evaluaterow);
-  ::dse::osidbg::BkEvaluateRow* unsafe_arena_release_evaluaterow();
+      ::bg3se::osidbg::BkEvaluateRow* evaluaterow);
+  ::bg3se::osidbg::BkEvaluateRow* unsafe_arena_release_evaluaterow();
 
-  // .dse.osidbg.BkEvaluateFinished evaluateFinished = 17;
+  // .bg3se.osidbg.BkEvaluateFinished evaluateFinished = 17;
   bool has_evaluatefinished() const;
   void clear_evaluatefinished();
   static const int kEvaluateFinishedFieldNumber = 17;
   private:
-  const ::dse::osidbg::BkEvaluateFinished& _internal_evaluatefinished() const;
+  const ::bg3se::osidbg::BkEvaluateFinished& _internal_evaluatefinished() const;
   public:
-  const ::dse::osidbg::BkEvaluateFinished& evaluatefinished() const;
-  ::dse::osidbg::BkEvaluateFinished* release_evaluatefinished();
-  ::dse::osidbg::BkEvaluateFinished* mutable_evaluatefinished();
-  void set_allocated_evaluatefinished(::dse::osidbg::BkEvaluateFinished* evaluatefinished);
+  const ::bg3se::osidbg::BkEvaluateFinished& evaluatefinished() const;
+  ::bg3se::osidbg::BkEvaluateFinished* release_evaluatefinished();
+  ::bg3se::osidbg::BkEvaluateFinished* mutable_evaluatefinished();
+  void set_allocated_evaluatefinished(::bg3se::osidbg::BkEvaluateFinished* evaluatefinished);
   void unsafe_arena_set_allocated_evaluatefinished(
-      ::dse::osidbg::BkEvaluateFinished* evaluatefinished);
-  ::dse::osidbg::BkEvaluateFinished* unsafe_arena_release_evaluatefinished();
+      ::bg3se::osidbg::BkEvaluateFinished* evaluatefinished);
+  ::bg3se::osidbg::BkEvaluateFinished* unsafe_arena_release_evaluatefinished();
 
   void clear_msg();
   MsgCase msg_case() const;
-  // @@protoc_insertion_point(class_scope:dse.osidbg.BackendToDebugger)
+  // @@protoc_insertion_point(class_scope:bg3se.osidbg.BackendToDebugger)
  private:
   void set_has_versioninfo();
   void set_has_breakpointtriggered();
@@ -5053,20 +5053,20 @@ class BackendToDebugger : public ::google::protobuf::MessageLite /* @@protoc_ins
   ::google::protobuf::uint32 reply_seq_no_;
   union MsgUnion {
     MsgUnion() {}
-    ::dse::osidbg::BkVersionInfoResponse* versioninfo_;
-    ::dse::osidbg::BkBreakpointTriggered* breakpointtriggered_;
-    ::dse::osidbg::BkResult* results_;
-    ::dse::osidbg::BkStoryLoaded* storyloaded_;
-    ::dse::osidbg::BkDebugSessionEnded* debugsessionended_;
-    ::dse::osidbg::BkGlobalBreakpointTriggered* globalbreakpointtriggered_;
-    ::dse::osidbg::BkSyncStoryData* syncstorydata_;
-    ::dse::osidbg::BkSyncStoryFinished* syncstoryfinished_;
-    ::dse::osidbg::BkDebugOutput* debugoutput_;
-    ::dse::osidbg::BkBeginDatabaseContents* begindatabasecontents_;
-    ::dse::osidbg::BkDatabaseRow* databaserow_;
-    ::dse::osidbg::BkEndDatabaseContents* enddatabasecontents_;
-    ::dse::osidbg::BkEvaluateRow* evaluaterow_;
-    ::dse::osidbg::BkEvaluateFinished* evaluatefinished_;
+    ::bg3se::osidbg::BkVersionInfoResponse* versioninfo_;
+    ::bg3se::osidbg::BkBreakpointTriggered* breakpointtriggered_;
+    ::bg3se::osidbg::BkResult* results_;
+    ::bg3se::osidbg::BkStoryLoaded* storyloaded_;
+    ::bg3se::osidbg::BkDebugSessionEnded* debugsessionended_;
+    ::bg3se::osidbg::BkGlobalBreakpointTriggered* globalbreakpointtriggered_;
+    ::bg3se::osidbg::BkSyncStoryData* syncstorydata_;
+    ::bg3se::osidbg::BkSyncStoryFinished* syncstoryfinished_;
+    ::bg3se::osidbg::BkDebugOutput* debugoutput_;
+    ::bg3se::osidbg::BkBeginDatabaseContents* begindatabasecontents_;
+    ::bg3se::osidbg::BkDatabaseRow* databaserow_;
+    ::bg3se::osidbg::BkEndDatabaseContents* enddatabasecontents_;
+    ::bg3se::osidbg::BkEvaluateRow* evaluaterow_;
+    ::bg3se::osidbg::BkEvaluateFinished* evaluatefinished_;
   } msg_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   ::google::protobuf::uint32 _oneof_case_[1];
@@ -5089,13 +5089,13 @@ inline void MsgTypedValue::clear_type_id() {
   type_id_ = 0u;
 }
 inline ::google::protobuf::uint32 MsgTypedValue::type_id() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.MsgTypedValue.type_id)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.MsgTypedValue.type_id)
   return type_id_;
 }
 inline void MsgTypedValue::set_type_id(::google::protobuf::uint32 value) {
   
   type_id_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.MsgTypedValue.type_id)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.MsgTypedValue.type_id)
 }
 
 // int64 intval = 2;
@@ -5112,7 +5112,7 @@ inline void MsgTypedValue::clear_intval() {
   }
 }
 inline ::google::protobuf::int64 MsgTypedValue::intval() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.MsgTypedValue.intval)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.MsgTypedValue.intval)
   if (has_intval()) {
     return value_.intval_;
   }
@@ -5124,7 +5124,7 @@ inline void MsgTypedValue::set_intval(::google::protobuf::int64 value) {
     set_has_intval();
   }
   value_.intval_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.MsgTypedValue.intval)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.MsgTypedValue.intval)
 }
 
 // float floatval = 3;
@@ -5141,7 +5141,7 @@ inline void MsgTypedValue::clear_floatval() {
   }
 }
 inline float MsgTypedValue::floatval() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.MsgTypedValue.floatval)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.MsgTypedValue.floatval)
   if (has_floatval()) {
     return value_.floatval_;
   }
@@ -5153,7 +5153,7 @@ inline void MsgTypedValue::set_floatval(float value) {
     set_has_floatval();
   }
   value_.floatval_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.MsgTypedValue.floatval)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.MsgTypedValue.floatval)
 }
 
 // string stringval = 4;
@@ -5171,7 +5171,7 @@ inline void MsgTypedValue::clear_stringval() {
   }
 }
 inline const ::std::string& MsgTypedValue::stringval() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.MsgTypedValue.stringval)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.MsgTypedValue.stringval)
   if (has_stringval()) {
     return value_.stringval_.Get();
   }
@@ -5185,11 +5185,11 @@ inline void MsgTypedValue::set_stringval(const ::std::string& value) {
   }
   value_.stringval_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.osidbg.MsgTypedValue.stringval)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.MsgTypedValue.stringval)
 }
 #if LANG_CXX11
 inline void MsgTypedValue::set_stringval(::std::string&& value) {
-  // @@protoc_insertion_point(field_set:dse.osidbg.MsgTypedValue.stringval)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.MsgTypedValue.stringval)
   if (!has_stringval()) {
     clear_value();
     set_has_stringval();
@@ -5197,7 +5197,7 @@ inline void MsgTypedValue::set_stringval(::std::string&& value) {
   }
   value_.stringval_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.osidbg.MsgTypedValue.stringval)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.osidbg.MsgTypedValue.stringval)
 }
 #endif
 inline void MsgTypedValue::set_stringval(const char* value) {
@@ -5209,7 +5209,7 @@ inline void MsgTypedValue::set_stringval(const char* value) {
   }
   value_.stringval_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.osidbg.MsgTypedValue.stringval)
+  // @@protoc_insertion_point(field_set_char:bg3se.osidbg.MsgTypedValue.stringval)
 }
 inline void MsgTypedValue::set_stringval(const char* value,
                              size_t size) {
@@ -5222,7 +5222,7 @@ inline void MsgTypedValue::set_stringval(const char* value,
       &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size),
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.osidbg.MsgTypedValue.stringval)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.osidbg.MsgTypedValue.stringval)
 }
 inline ::std::string* MsgTypedValue::mutable_stringval() {
   if (!has_stringval()) {
@@ -5232,10 +5232,10 @@ inline ::std::string* MsgTypedValue::mutable_stringval() {
   }
   return value_.stringval_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.MsgTypedValue.stringval)
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.MsgTypedValue.stringval)
 }
 inline ::std::string* MsgTypedValue::release_stringval() {
-  // @@protoc_insertion_point(field_release:dse.osidbg.MsgTypedValue.stringval)
+  // @@protoc_insertion_point(field_release:bg3se.osidbg.MsgTypedValue.stringval)
   if (has_stringval()) {
     clear_has_value();
     return value_.stringval_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -5254,10 +5254,10 @@ inline void MsgTypedValue::set_allocated_stringval(::std::string* stringval) {
     value_.stringval_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), stringval,
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_set_allocated:dse.osidbg.MsgTypedValue.stringval)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.osidbg.MsgTypedValue.stringval)
 }
 inline ::std::string* MsgTypedValue::unsafe_arena_release_stringval() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.osidbg.MsgTypedValue.stringval)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.osidbg.MsgTypedValue.stringval)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   if (has_stringval()) {
     clear_has_value();
@@ -5277,7 +5277,7 @@ inline void MsgTypedValue::unsafe_arena_set_allocated_stringval(::std::string* s
     set_has_stringval();
     value_.stringval_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), stringval, GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.osidbg.MsgTypedValue.stringval)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.osidbg.MsgTypedValue.stringval)
 }
 
 inline bool MsgTypedValue::has_value() const {
@@ -5293,33 +5293,33 @@ inline MsgTypedValue::ValueCase MsgTypedValue::value_case() const {
 
 // MsgTuple
 
-// repeated .dse.osidbg.MsgTypedValue column = 1;
+// repeated .bg3se.osidbg.MsgTypedValue column = 1;
 inline int MsgTuple::column_size() const {
   return column_.size();
 }
 inline void MsgTuple::clear_column() {
   column_.Clear();
 }
-inline ::dse::osidbg::MsgTypedValue* MsgTuple::mutable_column(int index) {
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.MsgTuple.column)
+inline ::bg3se::osidbg::MsgTypedValue* MsgTuple::mutable_column(int index) {
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.MsgTuple.column)
   return column_.Mutable(index);
 }
-inline ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgTypedValue >*
+inline ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgTypedValue >*
 MsgTuple::mutable_column() {
-  // @@protoc_insertion_point(field_mutable_list:dse.osidbg.MsgTuple.column)
+  // @@protoc_insertion_point(field_mutable_list:bg3se.osidbg.MsgTuple.column)
   return &column_;
 }
-inline const ::dse::osidbg::MsgTypedValue& MsgTuple::column(int index) const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.MsgTuple.column)
+inline const ::bg3se::osidbg::MsgTypedValue& MsgTuple::column(int index) const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.MsgTuple.column)
   return column_.Get(index);
 }
-inline ::dse::osidbg::MsgTypedValue* MsgTuple::add_column() {
-  // @@protoc_insertion_point(field_add:dse.osidbg.MsgTuple.column)
+inline ::bg3se::osidbg::MsgTypedValue* MsgTuple::add_column() {
+  // @@protoc_insertion_point(field_add:bg3se.osidbg.MsgTuple.column)
   return column_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgTypedValue >&
+inline const ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgTypedValue >&
 MsgTuple::column() const {
-  // @@protoc_insertion_point(field_list:dse.osidbg.MsgTuple.column)
+  // @@protoc_insertion_point(field_list:bg3se.osidbg.MsgTuple.column)
   return column_;
 }
 
@@ -5332,30 +5332,30 @@ inline void MsgFrame::clear_node_id() {
   node_id_ = 0u;
 }
 inline ::google::protobuf::uint32 MsgFrame::node_id() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.MsgFrame.node_id)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.MsgFrame.node_id)
   return node_id_;
 }
 inline void MsgFrame::set_node_id(::google::protobuf::uint32 value) {
   
   node_id_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.MsgFrame.node_id)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.MsgFrame.node_id)
 }
 
-// .dse.osidbg.MsgFrame.FrameType type = 2;
+// .bg3se.osidbg.MsgFrame.FrameType type = 2;
 inline void MsgFrame::clear_type() {
   type_ = 0;
 }
-inline ::dse::osidbg::MsgFrame_FrameType MsgFrame::type() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.MsgFrame.type)
-  return static_cast< ::dse::osidbg::MsgFrame_FrameType >(type_);
+inline ::bg3se::osidbg::MsgFrame_FrameType MsgFrame::type() const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.MsgFrame.type)
+  return static_cast< ::bg3se::osidbg::MsgFrame_FrameType >(type_);
 }
-inline void MsgFrame::set_type(::dse::osidbg::MsgFrame_FrameType value) {
+inline void MsgFrame::set_type(::bg3se::osidbg::MsgFrame_FrameType value) {
   
   type_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.MsgFrame.type)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.MsgFrame.type)
 }
 
-// .dse.osidbg.MsgTuple tuple = 3;
+// .bg3se.osidbg.MsgTuple tuple = 3;
 inline bool MsgFrame::has_tuple() const {
   return this != internal_default_instance() && tuple_ != NULL;
 }
@@ -5365,42 +5365,42 @@ inline void MsgFrame::clear_tuple() {
   }
   tuple_ = NULL;
 }
-inline const ::dse::osidbg::MsgTuple& MsgFrame::_internal_tuple() const {
+inline const ::bg3se::osidbg::MsgTuple& MsgFrame::_internal_tuple() const {
   return *tuple_;
 }
-inline const ::dse::osidbg::MsgTuple& MsgFrame::tuple() const {
-  const ::dse::osidbg::MsgTuple* p = tuple_;
-  // @@protoc_insertion_point(field_get:dse.osidbg.MsgFrame.tuple)
-  return p != NULL ? *p : *reinterpret_cast<const ::dse::osidbg::MsgTuple*>(
-      &::dse::osidbg::_MsgTuple_default_instance_);
+inline const ::bg3se::osidbg::MsgTuple& MsgFrame::tuple() const {
+  const ::bg3se::osidbg::MsgTuple* p = tuple_;
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.MsgFrame.tuple)
+  return p != NULL ? *p : *reinterpret_cast<const ::bg3se::osidbg::MsgTuple*>(
+      &::bg3se::osidbg::_MsgTuple_default_instance_);
 }
-inline ::dse::osidbg::MsgTuple* MsgFrame::release_tuple() {
-  // @@protoc_insertion_point(field_release:dse.osidbg.MsgFrame.tuple)
+inline ::bg3se::osidbg::MsgTuple* MsgFrame::release_tuple() {
+  // @@protoc_insertion_point(field_release:bg3se.osidbg.MsgFrame.tuple)
   
-  ::dse::osidbg::MsgTuple* temp = tuple_;
+  ::bg3se::osidbg::MsgTuple* temp = tuple_;
   if (GetArenaNoVirtual() != NULL) {
     temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
   }
   tuple_ = NULL;
   return temp;
 }
-inline ::dse::osidbg::MsgTuple* MsgFrame::unsafe_arena_release_tuple() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.osidbg.MsgFrame.tuple)
+inline ::bg3se::osidbg::MsgTuple* MsgFrame::unsafe_arena_release_tuple() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.osidbg.MsgFrame.tuple)
   
-  ::dse::osidbg::MsgTuple* temp = tuple_;
+  ::bg3se::osidbg::MsgTuple* temp = tuple_;
   tuple_ = NULL;
   return temp;
 }
-inline ::dse::osidbg::MsgTuple* MsgFrame::mutable_tuple() {
+inline ::bg3se::osidbg::MsgTuple* MsgFrame::mutable_tuple() {
   
   if (tuple_ == NULL) {
-    auto* p = CreateMaybeMessage<::dse::osidbg::MsgTuple>(GetArenaNoVirtual());
+    auto* p = CreateMaybeMessage<::bg3se::osidbg::MsgTuple>(GetArenaNoVirtual());
     tuple_ = p;
   }
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.MsgFrame.tuple)
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.MsgFrame.tuple)
   return tuple_;
 }
-inline void MsgFrame::set_allocated_tuple(::dse::osidbg::MsgTuple* tuple) {
+inline void MsgFrame::set_allocated_tuple(::bg3se::osidbg::MsgTuple* tuple) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   if (message_arena == NULL) {
     delete tuple_;
@@ -5417,7 +5417,7 @@ inline void MsgFrame::set_allocated_tuple(::dse::osidbg::MsgTuple* tuple) {
     
   }
   tuple_ = tuple;
-  // @@protoc_insertion_point(field_set_allocated:dse.osidbg.MsgFrame.tuple)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.osidbg.MsgFrame.tuple)
 }
 
 // uint32 goal_id = 4;
@@ -5425,13 +5425,13 @@ inline void MsgFrame::clear_goal_id() {
   goal_id_ = 0u;
 }
 inline ::google::protobuf::uint32 MsgFrame::goal_id() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.MsgFrame.goal_id)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.MsgFrame.goal_id)
   return goal_id_;
 }
 inline void MsgFrame::set_goal_id(::google::protobuf::uint32 value) {
   
   goal_id_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.MsgFrame.goal_id)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.MsgFrame.goal_id)
 }
 
 // uint32 action_index = 5;
@@ -5439,13 +5439,13 @@ inline void MsgFrame::clear_action_index() {
   action_index_ = 0u;
 }
 inline ::google::protobuf::uint32 MsgFrame::action_index() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.MsgFrame.action_index)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.MsgFrame.action_index)
   return action_index_;
 }
 inline void MsgFrame::set_action_index(::google::protobuf::uint32 value) {
   
   action_index_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.MsgFrame.action_index)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.MsgFrame.action_index)
 }
 
 // -------------------------------------------------------------------
@@ -5457,13 +5457,13 @@ inline void DbgIdentifyRequest::clear_protocol_version() {
   protocol_version_ = 0u;
 }
 inline ::google::protobuf::uint32 DbgIdentifyRequest::protocol_version() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.DbgIdentifyRequest.protocol_version)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.DbgIdentifyRequest.protocol_version)
   return protocol_version_;
 }
 inline void DbgIdentifyRequest::set_protocol_version(::google::protobuf::uint32 value) {
   
   protocol_version_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.DbgIdentifyRequest.protocol_version)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.DbgIdentifyRequest.protocol_version)
 }
 
 // -------------------------------------------------------------------
@@ -5475,13 +5475,13 @@ inline void BkVersionInfoResponse::clear_protocol_version() {
   protocol_version_ = 0u;
 }
 inline ::google::protobuf::uint32 BkVersionInfoResponse::protocol_version() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BkVersionInfoResponse.protocol_version)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BkVersionInfoResponse.protocol_version)
   return protocol_version_;
 }
 inline void BkVersionInfoResponse::set_protocol_version(::google::protobuf::uint32 value) {
   
   protocol_version_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.BkVersionInfoResponse.protocol_version)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.BkVersionInfoResponse.protocol_version)
 }
 
 // bool story_loaded = 2;
@@ -5489,13 +5489,13 @@ inline void BkVersionInfoResponse::clear_story_loaded() {
   story_loaded_ = false;
 }
 inline bool BkVersionInfoResponse::story_loaded() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BkVersionInfoResponse.story_loaded)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BkVersionInfoResponse.story_loaded)
   return story_loaded_;
 }
 inline void BkVersionInfoResponse::set_story_loaded(bool value) {
   
   story_loaded_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.BkVersionInfoResponse.story_loaded)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.BkVersionInfoResponse.story_loaded)
 }
 
 // bool story_initialized = 4;
@@ -5503,13 +5503,13 @@ inline void BkVersionInfoResponse::clear_story_initialized() {
   story_initialized_ = false;
 }
 inline bool BkVersionInfoResponse::story_initialized() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BkVersionInfoResponse.story_initialized)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BkVersionInfoResponse.story_initialized)
   return story_initialized_;
 }
 inline void BkVersionInfoResponse::set_story_initialized(bool value) {
   
   story_initialized_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.BkVersionInfoResponse.story_initialized)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.BkVersionInfoResponse.story_initialized)
 }
 
 // -------------------------------------------------------------------
@@ -5521,13 +5521,13 @@ inline void DbgSetGlobalBreakpoints::clear_breakpoint_mask() {
   breakpoint_mask_ = 0u;
 }
 inline ::google::protobuf::uint32 DbgSetGlobalBreakpoints::breakpoint_mask() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.DbgSetGlobalBreakpoints.breakpoint_mask)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.DbgSetGlobalBreakpoints.breakpoint_mask)
   return breakpoint_mask_;
 }
 inline void DbgSetGlobalBreakpoints::set_breakpoint_mask(::google::protobuf::uint32 value) {
   
   breakpoint_mask_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.DbgSetGlobalBreakpoints.breakpoint_mask)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.DbgSetGlobalBreakpoints.breakpoint_mask)
 }
 
 // -------------------------------------------------------------------
@@ -5539,13 +5539,13 @@ inline void MsgBreakpoint::clear_node_id() {
   node_id_ = 0u;
 }
 inline ::google::protobuf::uint32 MsgBreakpoint::node_id() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.MsgBreakpoint.node_id)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.MsgBreakpoint.node_id)
   return node_id_;
 }
 inline void MsgBreakpoint::set_node_id(::google::protobuf::uint32 value) {
   
   node_id_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.MsgBreakpoint.node_id)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.MsgBreakpoint.node_id)
 }
 
 // uint32 breakpoint_mask = 2;
@@ -5553,13 +5553,13 @@ inline void MsgBreakpoint::clear_breakpoint_mask() {
   breakpoint_mask_ = 0u;
 }
 inline ::google::protobuf::uint32 MsgBreakpoint::breakpoint_mask() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.MsgBreakpoint.breakpoint_mask)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.MsgBreakpoint.breakpoint_mask)
   return breakpoint_mask_;
 }
 inline void MsgBreakpoint::set_breakpoint_mask(::google::protobuf::uint32 value) {
   
   breakpoint_mask_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.MsgBreakpoint.breakpoint_mask)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.MsgBreakpoint.breakpoint_mask)
 }
 
 // uint32 goal_id = 3;
@@ -5567,13 +5567,13 @@ inline void MsgBreakpoint::clear_goal_id() {
   goal_id_ = 0u;
 }
 inline ::google::protobuf::uint32 MsgBreakpoint::goal_id() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.MsgBreakpoint.goal_id)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.MsgBreakpoint.goal_id)
   return goal_id_;
 }
 inline void MsgBreakpoint::set_goal_id(::google::protobuf::uint32 value) {
   
   goal_id_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.MsgBreakpoint.goal_id)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.MsgBreakpoint.goal_id)
 }
 
 // bool is_init_action = 4;
@@ -5581,13 +5581,13 @@ inline void MsgBreakpoint::clear_is_init_action() {
   is_init_action_ = false;
 }
 inline bool MsgBreakpoint::is_init_action() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.MsgBreakpoint.is_init_action)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.MsgBreakpoint.is_init_action)
   return is_init_action_;
 }
 inline void MsgBreakpoint::set_is_init_action(bool value) {
   
   is_init_action_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.MsgBreakpoint.is_init_action)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.MsgBreakpoint.is_init_action)
 }
 
 // int32 action_index = 5;
@@ -5595,46 +5595,46 @@ inline void MsgBreakpoint::clear_action_index() {
   action_index_ = 0;
 }
 inline ::google::protobuf::int32 MsgBreakpoint::action_index() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.MsgBreakpoint.action_index)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.MsgBreakpoint.action_index)
   return action_index_;
 }
 inline void MsgBreakpoint::set_action_index(::google::protobuf::int32 value) {
   
   action_index_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.MsgBreakpoint.action_index)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.MsgBreakpoint.action_index)
 }
 
 // -------------------------------------------------------------------
 
 // DbgSetBreakpoints
 
-// repeated .dse.osidbg.MsgBreakpoint breakpoint = 1;
+// repeated .bg3se.osidbg.MsgBreakpoint breakpoint = 1;
 inline int DbgSetBreakpoints::breakpoint_size() const {
   return breakpoint_.size();
 }
 inline void DbgSetBreakpoints::clear_breakpoint() {
   breakpoint_.Clear();
 }
-inline ::dse::osidbg::MsgBreakpoint* DbgSetBreakpoints::mutable_breakpoint(int index) {
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.DbgSetBreakpoints.breakpoint)
+inline ::bg3se::osidbg::MsgBreakpoint* DbgSetBreakpoints::mutable_breakpoint(int index) {
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.DbgSetBreakpoints.breakpoint)
   return breakpoint_.Mutable(index);
 }
-inline ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgBreakpoint >*
+inline ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgBreakpoint >*
 DbgSetBreakpoints::mutable_breakpoint() {
-  // @@protoc_insertion_point(field_mutable_list:dse.osidbg.DbgSetBreakpoints.breakpoint)
+  // @@protoc_insertion_point(field_mutable_list:bg3se.osidbg.DbgSetBreakpoints.breakpoint)
   return &breakpoint_;
 }
-inline const ::dse::osidbg::MsgBreakpoint& DbgSetBreakpoints::breakpoint(int index) const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.DbgSetBreakpoints.breakpoint)
+inline const ::bg3se::osidbg::MsgBreakpoint& DbgSetBreakpoints::breakpoint(int index) const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.DbgSetBreakpoints.breakpoint)
   return breakpoint_.Get(index);
 }
-inline ::dse::osidbg::MsgBreakpoint* DbgSetBreakpoints::add_breakpoint() {
-  // @@protoc_insertion_point(field_add:dse.osidbg.DbgSetBreakpoints.breakpoint)
+inline ::bg3se::osidbg::MsgBreakpoint* DbgSetBreakpoints::add_breakpoint() {
+  // @@protoc_insertion_point(field_add:bg3se.osidbg.DbgSetBreakpoints.breakpoint)
   return breakpoint_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgBreakpoint >&
+inline const ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgBreakpoint >&
 DbgSetBreakpoints::breakpoint() const {
-  // @@protoc_insertion_point(field_list:dse.osidbg.DbgSetBreakpoints.breakpoint)
+  // @@protoc_insertion_point(field_list:bg3se.osidbg.DbgSetBreakpoints.breakpoint)
   return breakpoint_;
 }
 
@@ -5642,51 +5642,51 @@ DbgSetBreakpoints::breakpoint() const {
 
 // BkBreakpointTriggered
 
-// repeated .dse.osidbg.MsgFrame call_stack = 1;
+// repeated .bg3se.osidbg.MsgFrame call_stack = 1;
 inline int BkBreakpointTriggered::call_stack_size() const {
   return call_stack_.size();
 }
 inline void BkBreakpointTriggered::clear_call_stack() {
   call_stack_.Clear();
 }
-inline ::dse::osidbg::MsgFrame* BkBreakpointTriggered::mutable_call_stack(int index) {
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.BkBreakpointTriggered.call_stack)
+inline ::bg3se::osidbg::MsgFrame* BkBreakpointTriggered::mutable_call_stack(int index) {
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.BkBreakpointTriggered.call_stack)
   return call_stack_.Mutable(index);
 }
-inline ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgFrame >*
+inline ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgFrame >*
 BkBreakpointTriggered::mutable_call_stack() {
-  // @@protoc_insertion_point(field_mutable_list:dse.osidbg.BkBreakpointTriggered.call_stack)
+  // @@protoc_insertion_point(field_mutable_list:bg3se.osidbg.BkBreakpointTriggered.call_stack)
   return &call_stack_;
 }
-inline const ::dse::osidbg::MsgFrame& BkBreakpointTriggered::call_stack(int index) const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BkBreakpointTriggered.call_stack)
+inline const ::bg3se::osidbg::MsgFrame& BkBreakpointTriggered::call_stack(int index) const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BkBreakpointTriggered.call_stack)
   return call_stack_.Get(index);
 }
-inline ::dse::osidbg::MsgFrame* BkBreakpointTriggered::add_call_stack() {
-  // @@protoc_insertion_point(field_add:dse.osidbg.BkBreakpointTriggered.call_stack)
+inline ::bg3se::osidbg::MsgFrame* BkBreakpointTriggered::add_call_stack() {
+  // @@protoc_insertion_point(field_add:bg3se.osidbg.BkBreakpointTriggered.call_stack)
   return call_stack_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgFrame >&
+inline const ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgFrame >&
 BkBreakpointTriggered::call_stack() const {
-  // @@protoc_insertion_point(field_list:dse.osidbg.BkBreakpointTriggered.call_stack)
+  // @@protoc_insertion_point(field_list:bg3se.osidbg.BkBreakpointTriggered.call_stack)
   return call_stack_;
 }
 
-// .dse.osidbg.BkBreakpointTriggered.QueryStatus query_succeeded = 2;
+// .bg3se.osidbg.BkBreakpointTriggered.QueryStatus query_succeeded = 2;
 inline void BkBreakpointTriggered::clear_query_succeeded() {
   query_succeeded_ = 0;
 }
-inline ::dse::osidbg::BkBreakpointTriggered_QueryStatus BkBreakpointTriggered::query_succeeded() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BkBreakpointTriggered.query_succeeded)
-  return static_cast< ::dse::osidbg::BkBreakpointTriggered_QueryStatus >(query_succeeded_);
+inline ::bg3se::osidbg::BkBreakpointTriggered_QueryStatus BkBreakpointTriggered::query_succeeded() const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BkBreakpointTriggered.query_succeeded)
+  return static_cast< ::bg3se::osidbg::BkBreakpointTriggered_QueryStatus >(query_succeeded_);
 }
-inline void BkBreakpointTriggered::set_query_succeeded(::dse::osidbg::BkBreakpointTriggered_QueryStatus value) {
+inline void BkBreakpointTriggered::set_query_succeeded(::bg3se::osidbg::BkBreakpointTriggered_QueryStatus value) {
   
   query_succeeded_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.BkBreakpointTriggered.query_succeeded)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.BkBreakpointTriggered.query_succeeded)
 }
 
-// .dse.osidbg.MsgTuple query_results = 3;
+// .bg3se.osidbg.MsgTuple query_results = 3;
 inline bool BkBreakpointTriggered::has_query_results() const {
   return this != internal_default_instance() && query_results_ != NULL;
 }
@@ -5696,42 +5696,42 @@ inline void BkBreakpointTriggered::clear_query_results() {
   }
   query_results_ = NULL;
 }
-inline const ::dse::osidbg::MsgTuple& BkBreakpointTriggered::_internal_query_results() const {
+inline const ::bg3se::osidbg::MsgTuple& BkBreakpointTriggered::_internal_query_results() const {
   return *query_results_;
 }
-inline const ::dse::osidbg::MsgTuple& BkBreakpointTriggered::query_results() const {
-  const ::dse::osidbg::MsgTuple* p = query_results_;
-  // @@protoc_insertion_point(field_get:dse.osidbg.BkBreakpointTriggered.query_results)
-  return p != NULL ? *p : *reinterpret_cast<const ::dse::osidbg::MsgTuple*>(
-      &::dse::osidbg::_MsgTuple_default_instance_);
+inline const ::bg3se::osidbg::MsgTuple& BkBreakpointTriggered::query_results() const {
+  const ::bg3se::osidbg::MsgTuple* p = query_results_;
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BkBreakpointTriggered.query_results)
+  return p != NULL ? *p : *reinterpret_cast<const ::bg3se::osidbg::MsgTuple*>(
+      &::bg3se::osidbg::_MsgTuple_default_instance_);
 }
-inline ::dse::osidbg::MsgTuple* BkBreakpointTriggered::release_query_results() {
-  // @@protoc_insertion_point(field_release:dse.osidbg.BkBreakpointTriggered.query_results)
+inline ::bg3se::osidbg::MsgTuple* BkBreakpointTriggered::release_query_results() {
+  // @@protoc_insertion_point(field_release:bg3se.osidbg.BkBreakpointTriggered.query_results)
   
-  ::dse::osidbg::MsgTuple* temp = query_results_;
+  ::bg3se::osidbg::MsgTuple* temp = query_results_;
   if (GetArenaNoVirtual() != NULL) {
     temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
   }
   query_results_ = NULL;
   return temp;
 }
-inline ::dse::osidbg::MsgTuple* BkBreakpointTriggered::unsafe_arena_release_query_results() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.osidbg.BkBreakpointTriggered.query_results)
+inline ::bg3se::osidbg::MsgTuple* BkBreakpointTriggered::unsafe_arena_release_query_results() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.osidbg.BkBreakpointTriggered.query_results)
   
-  ::dse::osidbg::MsgTuple* temp = query_results_;
+  ::bg3se::osidbg::MsgTuple* temp = query_results_;
   query_results_ = NULL;
   return temp;
 }
-inline ::dse::osidbg::MsgTuple* BkBreakpointTriggered::mutable_query_results() {
+inline ::bg3se::osidbg::MsgTuple* BkBreakpointTriggered::mutable_query_results() {
   
   if (query_results_ == NULL) {
-    auto* p = CreateMaybeMessage<::dse::osidbg::MsgTuple>(GetArenaNoVirtual());
+    auto* p = CreateMaybeMessage<::bg3se::osidbg::MsgTuple>(GetArenaNoVirtual());
     query_results_ = p;
   }
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.BkBreakpointTriggered.query_results)
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.BkBreakpointTriggered.query_results)
   return query_results_;
 }
-inline void BkBreakpointTriggered::set_allocated_query_results(::dse::osidbg::MsgTuple* query_results) {
+inline void BkBreakpointTriggered::set_allocated_query_results(::bg3se::osidbg::MsgTuple* query_results) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   if (message_arena == NULL) {
     delete query_results_;
@@ -5748,7 +5748,7 @@ inline void BkBreakpointTriggered::set_allocated_query_results(::dse::osidbg::Ms
     
   }
   query_results_ = query_results;
-  // @@protoc_insertion_point(field_set_allocated:dse.osidbg.BkBreakpointTriggered.query_results)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.osidbg.BkBreakpointTriggered.query_results)
 }
 
 // uint32 query_node_id = 4;
@@ -5756,49 +5756,49 @@ inline void BkBreakpointTriggered::clear_query_node_id() {
   query_node_id_ = 0u;
 }
 inline ::google::protobuf::uint32 BkBreakpointTriggered::query_node_id() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BkBreakpointTriggered.query_node_id)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BkBreakpointTriggered.query_node_id)
   return query_node_id_;
 }
 inline void BkBreakpointTriggered::set_query_node_id(::google::protobuf::uint32 value) {
   
   query_node_id_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.BkBreakpointTriggered.query_node_id)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.BkBreakpointTriggered.query_node_id)
 }
 
 // -------------------------------------------------------------------
 
 // BkGlobalBreakpointTriggered
 
-// .dse.osidbg.BkGlobalBreakpointTriggered.Reason reason = 1;
+// .bg3se.osidbg.BkGlobalBreakpointTriggered.Reason reason = 1;
 inline void BkGlobalBreakpointTriggered::clear_reason() {
   reason_ = 0;
 }
-inline ::dse::osidbg::BkGlobalBreakpointTriggered_Reason BkGlobalBreakpointTriggered::reason() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BkGlobalBreakpointTriggered.reason)
-  return static_cast< ::dse::osidbg::BkGlobalBreakpointTriggered_Reason >(reason_);
+inline ::bg3se::osidbg::BkGlobalBreakpointTriggered_Reason BkGlobalBreakpointTriggered::reason() const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BkGlobalBreakpointTriggered.reason)
+  return static_cast< ::bg3se::osidbg::BkGlobalBreakpointTriggered_Reason >(reason_);
 }
-inline void BkGlobalBreakpointTriggered::set_reason(::dse::osidbg::BkGlobalBreakpointTriggered_Reason value) {
+inline void BkGlobalBreakpointTriggered::set_reason(::bg3se::osidbg::BkGlobalBreakpointTriggered_Reason value) {
   
   reason_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.BkGlobalBreakpointTriggered.reason)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.BkGlobalBreakpointTriggered.reason)
 }
 
 // -------------------------------------------------------------------
 
 // DbgContinue
 
-// .dse.osidbg.DbgContinue.Action action = 1;
+// .bg3se.osidbg.DbgContinue.Action action = 1;
 inline void DbgContinue::clear_action() {
   action_ = 0;
 }
-inline ::dse::osidbg::DbgContinue_Action DbgContinue::action() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.DbgContinue.action)
-  return static_cast< ::dse::osidbg::DbgContinue_Action >(action_);
+inline ::bg3se::osidbg::DbgContinue_Action DbgContinue::action() const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.DbgContinue.action)
+  return static_cast< ::bg3se::osidbg::DbgContinue_Action >(action_);
 }
-inline void DbgContinue::set_action(::dse::osidbg::DbgContinue_Action value) {
+inline void DbgContinue::set_action(::bg3se::osidbg::DbgContinue_Action value) {
   
   action_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.DbgContinue.action)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.DbgContinue.action)
 }
 
 // uint32 breakpoint_mask = 2;
@@ -5806,13 +5806,13 @@ inline void DbgContinue::clear_breakpoint_mask() {
   breakpoint_mask_ = 0u;
 }
 inline ::google::protobuf::uint32 DbgContinue::breakpoint_mask() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.DbgContinue.breakpoint_mask)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.DbgContinue.breakpoint_mask)
   return breakpoint_mask_;
 }
 inline void DbgContinue::set_breakpoint_mask(::google::protobuf::uint32 value) {
   
   breakpoint_mask_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.DbgContinue.breakpoint_mask)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.DbgContinue.breakpoint_mask)
 }
 
 // uint32 flags = 3;
@@ -5820,13 +5820,13 @@ inline void DbgContinue::clear_flags() {
   flags_ = 0u;
 }
 inline ::google::protobuf::uint32 DbgContinue::flags() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.DbgContinue.flags)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.DbgContinue.flags)
   return flags_;
 }
 inline void DbgContinue::set_flags(::google::protobuf::uint32 value) {
   
   flags_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.DbgContinue.flags)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.DbgContinue.flags)
 }
 
 // -------------------------------------------------------------------
@@ -5838,13 +5838,13 @@ inline void DbgGetDatabaseContents::clear_database_id() {
   database_id_ = 0u;
 }
 inline ::google::protobuf::uint32 DbgGetDatabaseContents::database_id() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.DbgGetDatabaseContents.database_id)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.DbgGetDatabaseContents.database_id)
   return database_id_;
 }
 inline void DbgGetDatabaseContents::set_database_id(::google::protobuf::uint32 value) {
   
   database_id_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.DbgGetDatabaseContents.database_id)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.DbgGetDatabaseContents.database_id)
 }
 
 // -------------------------------------------------------------------
@@ -5855,18 +5855,18 @@ inline void DbgGetDatabaseContents::set_database_id(::google::protobuf::uint32 v
 
 // DbgEvaluate
 
-// .dse.osidbg.DbgEvaluate.EvalType type = 1;
+// .bg3se.osidbg.DbgEvaluate.EvalType type = 1;
 inline void DbgEvaluate::clear_type() {
   type_ = 0;
 }
-inline ::dse::osidbg::DbgEvaluate_EvalType DbgEvaluate::type() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.DbgEvaluate.type)
-  return static_cast< ::dse::osidbg::DbgEvaluate_EvalType >(type_);
+inline ::bg3se::osidbg::DbgEvaluate_EvalType DbgEvaluate::type() const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.DbgEvaluate.type)
+  return static_cast< ::bg3se::osidbg::DbgEvaluate_EvalType >(type_);
 }
-inline void DbgEvaluate::set_type(::dse::osidbg::DbgEvaluate_EvalType value) {
+inline void DbgEvaluate::set_type(::bg3se::osidbg::DbgEvaluate_EvalType value) {
   
   type_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.DbgEvaluate.type)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.DbgEvaluate.type)
 }
 
 // uint32 node_id = 2;
@@ -5874,16 +5874,16 @@ inline void DbgEvaluate::clear_node_id() {
   node_id_ = 0u;
 }
 inline ::google::protobuf::uint32 DbgEvaluate::node_id() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.DbgEvaluate.node_id)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.DbgEvaluate.node_id)
   return node_id_;
 }
 inline void DbgEvaluate::set_node_id(::google::protobuf::uint32 value) {
   
   node_id_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.DbgEvaluate.node_id)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.DbgEvaluate.node_id)
 }
 
-// .dse.osidbg.MsgTuple params = 3;
+// .bg3se.osidbg.MsgTuple params = 3;
 inline bool DbgEvaluate::has_params() const {
   return this != internal_default_instance() && params_ != NULL;
 }
@@ -5893,42 +5893,42 @@ inline void DbgEvaluate::clear_params() {
   }
   params_ = NULL;
 }
-inline const ::dse::osidbg::MsgTuple& DbgEvaluate::_internal_params() const {
+inline const ::bg3se::osidbg::MsgTuple& DbgEvaluate::_internal_params() const {
   return *params_;
 }
-inline const ::dse::osidbg::MsgTuple& DbgEvaluate::params() const {
-  const ::dse::osidbg::MsgTuple* p = params_;
-  // @@protoc_insertion_point(field_get:dse.osidbg.DbgEvaluate.params)
-  return p != NULL ? *p : *reinterpret_cast<const ::dse::osidbg::MsgTuple*>(
-      &::dse::osidbg::_MsgTuple_default_instance_);
+inline const ::bg3se::osidbg::MsgTuple& DbgEvaluate::params() const {
+  const ::bg3se::osidbg::MsgTuple* p = params_;
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.DbgEvaluate.params)
+  return p != NULL ? *p : *reinterpret_cast<const ::bg3se::osidbg::MsgTuple*>(
+      &::bg3se::osidbg::_MsgTuple_default_instance_);
 }
-inline ::dse::osidbg::MsgTuple* DbgEvaluate::release_params() {
-  // @@protoc_insertion_point(field_release:dse.osidbg.DbgEvaluate.params)
+inline ::bg3se::osidbg::MsgTuple* DbgEvaluate::release_params() {
+  // @@protoc_insertion_point(field_release:bg3se.osidbg.DbgEvaluate.params)
   
-  ::dse::osidbg::MsgTuple* temp = params_;
+  ::bg3se::osidbg::MsgTuple* temp = params_;
   if (GetArenaNoVirtual() != NULL) {
     temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
   }
   params_ = NULL;
   return temp;
 }
-inline ::dse::osidbg::MsgTuple* DbgEvaluate::unsafe_arena_release_params() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.osidbg.DbgEvaluate.params)
+inline ::bg3se::osidbg::MsgTuple* DbgEvaluate::unsafe_arena_release_params() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.osidbg.DbgEvaluate.params)
   
-  ::dse::osidbg::MsgTuple* temp = params_;
+  ::bg3se::osidbg::MsgTuple* temp = params_;
   params_ = NULL;
   return temp;
 }
-inline ::dse::osidbg::MsgTuple* DbgEvaluate::mutable_params() {
+inline ::bg3se::osidbg::MsgTuple* DbgEvaluate::mutable_params() {
   
   if (params_ == NULL) {
-    auto* p = CreateMaybeMessage<::dse::osidbg::MsgTuple>(GetArenaNoVirtual());
+    auto* p = CreateMaybeMessage<::bg3se::osidbg::MsgTuple>(GetArenaNoVirtual());
     params_ = p;
   }
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.DbgEvaluate.params)
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.DbgEvaluate.params)
   return params_;
 }
-inline void DbgEvaluate::set_allocated_params(::dse::osidbg::MsgTuple* params) {
+inline void DbgEvaluate::set_allocated_params(::bg3se::osidbg::MsgTuple* params) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   if (message_arena == NULL) {
     delete params_;
@@ -5945,25 +5945,25 @@ inline void DbgEvaluate::set_allocated_params(::dse::osidbg::MsgTuple* params) {
     
   }
   params_ = params;
-  // @@protoc_insertion_point(field_set_allocated:dse.osidbg.DbgEvaluate.params)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.osidbg.DbgEvaluate.params)
 }
 
 // -------------------------------------------------------------------
 
 // BkResult
 
-// .dse.osidbg.StatusCode status_code = 1;
+// .bg3se.osidbg.StatusCode status_code = 1;
 inline void BkResult::clear_status_code() {
   status_code_ = 0;
 }
-inline ::dse::osidbg::StatusCode BkResult::status_code() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BkResult.status_code)
-  return static_cast< ::dse::osidbg::StatusCode >(status_code_);
+inline ::bg3se::osidbg::StatusCode BkResult::status_code() const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BkResult.status_code)
+  return static_cast< ::bg3se::osidbg::StatusCode >(status_code_);
 }
-inline void BkResult::set_status_code(::dse::osidbg::StatusCode value) {
+inline void BkResult::set_status_code(::bg3se::osidbg::StatusCode value) {
   
   status_code_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.BkResult.status_code)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.BkResult.status_code)
 }
 
 // -------------------------------------------------------------------
@@ -5983,20 +5983,20 @@ inline void MsgActionInfo::clear_function() {
   function_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& MsgActionInfo::function() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.MsgActionInfo.function)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.MsgActionInfo.function)
   return function_.Get();
 }
 inline void MsgActionInfo::set_function(const ::std::string& value) {
   
   function_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.osidbg.MsgActionInfo.function)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.MsgActionInfo.function)
 }
 #if LANG_CXX11
 inline void MsgActionInfo::set_function(::std::string&& value) {
   
   function_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.osidbg.MsgActionInfo.function)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.osidbg.MsgActionInfo.function)
 }
 #endif
 inline void MsgActionInfo::set_function(const char* value) {
@@ -6004,22 +6004,22 @@ inline void MsgActionInfo::set_function(const char* value) {
   
   function_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.osidbg.MsgActionInfo.function)
+  // @@protoc_insertion_point(field_set_char:bg3se.osidbg.MsgActionInfo.function)
 }
 inline void MsgActionInfo::set_function(const char* value,
     size_t size) {
   
   function_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.osidbg.MsgActionInfo.function)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.osidbg.MsgActionInfo.function)
 }
 inline ::std::string* MsgActionInfo::mutable_function() {
   
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.MsgActionInfo.function)
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.MsgActionInfo.function)
   return function_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* MsgActionInfo::release_function() {
-  // @@protoc_insertion_point(field_release:dse.osidbg.MsgActionInfo.function)
+  // @@protoc_insertion_point(field_release:bg3se.osidbg.MsgActionInfo.function)
   
   return function_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -6031,10 +6031,10 @@ inline void MsgActionInfo::set_allocated_function(::std::string* function) {
   }
   function_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), function,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.osidbg.MsgActionInfo.function)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.osidbg.MsgActionInfo.function)
 }
 inline ::std::string* MsgActionInfo::unsafe_arena_release_function() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.osidbg.MsgActionInfo.function)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.osidbg.MsgActionInfo.function)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return function_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -6050,7 +6050,7 @@ inline void MsgActionInfo::unsafe_arena_set_allocated_function(
   }
   function_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       function, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.osidbg.MsgActionInfo.function)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.osidbg.MsgActionInfo.function)
 }
 
 // uint32 arity = 2;
@@ -6058,13 +6058,13 @@ inline void MsgActionInfo::clear_arity() {
   arity_ = 0u;
 }
 inline ::google::protobuf::uint32 MsgActionInfo::arity() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.MsgActionInfo.arity)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.MsgActionInfo.arity)
   return arity_;
 }
 inline void MsgActionInfo::set_arity(::google::protobuf::uint32 value) {
   
   arity_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.MsgActionInfo.arity)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.MsgActionInfo.arity)
 }
 
 // int32 goal_id = 3;
@@ -6072,13 +6072,13 @@ inline void MsgActionInfo::clear_goal_id() {
   goal_id_ = 0;
 }
 inline ::google::protobuf::int32 MsgActionInfo::goal_id() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.MsgActionInfo.goal_id)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.MsgActionInfo.goal_id)
   return goal_id_;
 }
 inline void MsgActionInfo::set_goal_id(::google::protobuf::int32 value) {
   
   goal_id_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.MsgActionInfo.goal_id)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.MsgActionInfo.goal_id)
 }
 
 // -------------------------------------------------------------------
@@ -6090,13 +6090,13 @@ inline void MsgGoalInfo::clear_id() {
   id_ = 0u;
 }
 inline ::google::protobuf::uint32 MsgGoalInfo::id() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.MsgGoalInfo.id)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.MsgGoalInfo.id)
   return id_;
 }
 inline void MsgGoalInfo::set_id(::google::protobuf::uint32 value) {
   
   id_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.MsgGoalInfo.id)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.MsgGoalInfo.id)
 }
 
 // string name = 2;
@@ -6104,20 +6104,20 @@ inline void MsgGoalInfo::clear_name() {
   name_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& MsgGoalInfo::name() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.MsgGoalInfo.name)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.MsgGoalInfo.name)
   return name_.Get();
 }
 inline void MsgGoalInfo::set_name(const ::std::string& value) {
   
   name_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.osidbg.MsgGoalInfo.name)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.MsgGoalInfo.name)
 }
 #if LANG_CXX11
 inline void MsgGoalInfo::set_name(::std::string&& value) {
   
   name_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.osidbg.MsgGoalInfo.name)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.osidbg.MsgGoalInfo.name)
 }
 #endif
 inline void MsgGoalInfo::set_name(const char* value) {
@@ -6125,22 +6125,22 @@ inline void MsgGoalInfo::set_name(const char* value) {
   
   name_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.osidbg.MsgGoalInfo.name)
+  // @@protoc_insertion_point(field_set_char:bg3se.osidbg.MsgGoalInfo.name)
 }
 inline void MsgGoalInfo::set_name(const char* value,
     size_t size) {
   
   name_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.osidbg.MsgGoalInfo.name)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.osidbg.MsgGoalInfo.name)
 }
 inline ::std::string* MsgGoalInfo::mutable_name() {
   
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.MsgGoalInfo.name)
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.MsgGoalInfo.name)
   return name_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* MsgGoalInfo::release_name() {
-  // @@protoc_insertion_point(field_release:dse.osidbg.MsgGoalInfo.name)
+  // @@protoc_insertion_point(field_release:bg3se.osidbg.MsgGoalInfo.name)
   
   return name_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -6152,10 +6152,10 @@ inline void MsgGoalInfo::set_allocated_name(::std::string* name) {
   }
   name_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), name,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.osidbg.MsgGoalInfo.name)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.osidbg.MsgGoalInfo.name)
 }
 inline ::std::string* MsgGoalInfo::unsafe_arena_release_name() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.osidbg.MsgGoalInfo.name)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.osidbg.MsgGoalInfo.name)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return name_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -6171,66 +6171,66 @@ inline void MsgGoalInfo::unsafe_arena_set_allocated_name(
   }
   name_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       name, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.osidbg.MsgGoalInfo.name)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.osidbg.MsgGoalInfo.name)
 }
 
-// repeated .dse.osidbg.MsgActionInfo initActions = 3;
+// repeated .bg3se.osidbg.MsgActionInfo initActions = 3;
 inline int MsgGoalInfo::initactions_size() const {
   return initactions_.size();
 }
 inline void MsgGoalInfo::clear_initactions() {
   initactions_.Clear();
 }
-inline ::dse::osidbg::MsgActionInfo* MsgGoalInfo::mutable_initactions(int index) {
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.MsgGoalInfo.initActions)
+inline ::bg3se::osidbg::MsgActionInfo* MsgGoalInfo::mutable_initactions(int index) {
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.MsgGoalInfo.initActions)
   return initactions_.Mutable(index);
 }
-inline ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgActionInfo >*
+inline ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgActionInfo >*
 MsgGoalInfo::mutable_initactions() {
-  // @@protoc_insertion_point(field_mutable_list:dse.osidbg.MsgGoalInfo.initActions)
+  // @@protoc_insertion_point(field_mutable_list:bg3se.osidbg.MsgGoalInfo.initActions)
   return &initactions_;
 }
-inline const ::dse::osidbg::MsgActionInfo& MsgGoalInfo::initactions(int index) const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.MsgGoalInfo.initActions)
+inline const ::bg3se::osidbg::MsgActionInfo& MsgGoalInfo::initactions(int index) const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.MsgGoalInfo.initActions)
   return initactions_.Get(index);
 }
-inline ::dse::osidbg::MsgActionInfo* MsgGoalInfo::add_initactions() {
-  // @@protoc_insertion_point(field_add:dse.osidbg.MsgGoalInfo.initActions)
+inline ::bg3se::osidbg::MsgActionInfo* MsgGoalInfo::add_initactions() {
+  // @@protoc_insertion_point(field_add:bg3se.osidbg.MsgGoalInfo.initActions)
   return initactions_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgActionInfo >&
+inline const ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgActionInfo >&
 MsgGoalInfo::initactions() const {
-  // @@protoc_insertion_point(field_list:dse.osidbg.MsgGoalInfo.initActions)
+  // @@protoc_insertion_point(field_list:bg3se.osidbg.MsgGoalInfo.initActions)
   return initactions_;
 }
 
-// repeated .dse.osidbg.MsgActionInfo exitActions = 4;
+// repeated .bg3se.osidbg.MsgActionInfo exitActions = 4;
 inline int MsgGoalInfo::exitactions_size() const {
   return exitactions_.size();
 }
 inline void MsgGoalInfo::clear_exitactions() {
   exitactions_.Clear();
 }
-inline ::dse::osidbg::MsgActionInfo* MsgGoalInfo::mutable_exitactions(int index) {
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.MsgGoalInfo.exitActions)
+inline ::bg3se::osidbg::MsgActionInfo* MsgGoalInfo::mutable_exitactions(int index) {
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.MsgGoalInfo.exitActions)
   return exitactions_.Mutable(index);
 }
-inline ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgActionInfo >*
+inline ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgActionInfo >*
 MsgGoalInfo::mutable_exitactions() {
-  // @@protoc_insertion_point(field_mutable_list:dse.osidbg.MsgGoalInfo.exitActions)
+  // @@protoc_insertion_point(field_mutable_list:bg3se.osidbg.MsgGoalInfo.exitActions)
   return &exitactions_;
 }
-inline const ::dse::osidbg::MsgActionInfo& MsgGoalInfo::exitactions(int index) const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.MsgGoalInfo.exitActions)
+inline const ::bg3se::osidbg::MsgActionInfo& MsgGoalInfo::exitactions(int index) const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.MsgGoalInfo.exitActions)
   return exitactions_.Get(index);
 }
-inline ::dse::osidbg::MsgActionInfo* MsgGoalInfo::add_exitactions() {
-  // @@protoc_insertion_point(field_add:dse.osidbg.MsgGoalInfo.exitActions)
+inline ::bg3se::osidbg::MsgActionInfo* MsgGoalInfo::add_exitactions() {
+  // @@protoc_insertion_point(field_add:bg3se.osidbg.MsgGoalInfo.exitActions)
   return exitactions_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgActionInfo >&
+inline const ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgActionInfo >&
 MsgGoalInfo::exitactions() const {
-  // @@protoc_insertion_point(field_list:dse.osidbg.MsgGoalInfo.exitActions)
+  // @@protoc_insertion_point(field_list:bg3se.osidbg.MsgGoalInfo.exitActions)
   return exitactions_;
 }
 
@@ -6243,13 +6243,13 @@ inline void MsgDatabaseInfo::clear_id() {
   id_ = 0u;
 }
 inline ::google::protobuf::uint32 MsgDatabaseInfo::id() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.MsgDatabaseInfo.id)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.MsgDatabaseInfo.id)
   return id_;
 }
 inline void MsgDatabaseInfo::set_id(::google::protobuf::uint32 value) {
   
   id_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.MsgDatabaseInfo.id)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.MsgDatabaseInfo.id)
 }
 
 // repeated uint32 argumentType = 2;
@@ -6260,25 +6260,25 @@ inline void MsgDatabaseInfo::clear_argumenttype() {
   argumenttype_.Clear();
 }
 inline ::google::protobuf::uint32 MsgDatabaseInfo::argumenttype(int index) const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.MsgDatabaseInfo.argumentType)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.MsgDatabaseInfo.argumentType)
   return argumenttype_.Get(index);
 }
 inline void MsgDatabaseInfo::set_argumenttype(int index, ::google::protobuf::uint32 value) {
   argumenttype_.Set(index, value);
-  // @@protoc_insertion_point(field_set:dse.osidbg.MsgDatabaseInfo.argumentType)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.MsgDatabaseInfo.argumentType)
 }
 inline void MsgDatabaseInfo::add_argumenttype(::google::protobuf::uint32 value) {
   argumenttype_.Add(value);
-  // @@protoc_insertion_point(field_add:dse.osidbg.MsgDatabaseInfo.argumentType)
+  // @@protoc_insertion_point(field_add:bg3se.osidbg.MsgDatabaseInfo.argumentType)
 }
 inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
 MsgDatabaseInfo::argumenttype() const {
-  // @@protoc_insertion_point(field_list:dse.osidbg.MsgDatabaseInfo.argumentType)
+  // @@protoc_insertion_point(field_list:bg3se.osidbg.MsgDatabaseInfo.argumentType)
   return argumenttype_;
 }
 inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
 MsgDatabaseInfo::mutable_argumenttype() {
-  // @@protoc_insertion_point(field_mutable_list:dse.osidbg.MsgDatabaseInfo.argumentType)
+  // @@protoc_insertion_point(field_mutable_list:bg3se.osidbg.MsgDatabaseInfo.argumentType)
   return &argumenttype_;
 }
 
@@ -6291,13 +6291,13 @@ inline void MsgNodeInfo::clear_id() {
   id_ = 0u;
 }
 inline ::google::protobuf::uint32 MsgNodeInfo::id() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.MsgNodeInfo.id)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.MsgNodeInfo.id)
   return id_;
 }
 inline void MsgNodeInfo::set_id(::google::protobuf::uint32 value) {
   
   id_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.MsgNodeInfo.id)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.MsgNodeInfo.id)
 }
 
 // uint32 type = 2;
@@ -6305,13 +6305,13 @@ inline void MsgNodeInfo::clear_type() {
   type_ = 0u;
 }
 inline ::google::protobuf::uint32 MsgNodeInfo::type() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.MsgNodeInfo.type)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.MsgNodeInfo.type)
   return type_;
 }
 inline void MsgNodeInfo::set_type(::google::protobuf::uint32 value) {
   
   type_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.MsgNodeInfo.type)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.MsgNodeInfo.type)
 }
 
 // string name = 3;
@@ -6319,20 +6319,20 @@ inline void MsgNodeInfo::clear_name() {
   name_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& MsgNodeInfo::name() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.MsgNodeInfo.name)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.MsgNodeInfo.name)
   return name_.Get();
 }
 inline void MsgNodeInfo::set_name(const ::std::string& value) {
   
   name_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.osidbg.MsgNodeInfo.name)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.MsgNodeInfo.name)
 }
 #if LANG_CXX11
 inline void MsgNodeInfo::set_name(::std::string&& value) {
   
   name_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.osidbg.MsgNodeInfo.name)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.osidbg.MsgNodeInfo.name)
 }
 #endif
 inline void MsgNodeInfo::set_name(const char* value) {
@@ -6340,22 +6340,22 @@ inline void MsgNodeInfo::set_name(const char* value) {
   
   name_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.osidbg.MsgNodeInfo.name)
+  // @@protoc_insertion_point(field_set_char:bg3se.osidbg.MsgNodeInfo.name)
 }
 inline void MsgNodeInfo::set_name(const char* value,
     size_t size) {
   
   name_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.osidbg.MsgNodeInfo.name)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.osidbg.MsgNodeInfo.name)
 }
 inline ::std::string* MsgNodeInfo::mutable_name() {
   
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.MsgNodeInfo.name)
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.MsgNodeInfo.name)
   return name_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* MsgNodeInfo::release_name() {
-  // @@protoc_insertion_point(field_release:dse.osidbg.MsgNodeInfo.name)
+  // @@protoc_insertion_point(field_release:bg3se.osidbg.MsgNodeInfo.name)
   
   return name_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -6367,10 +6367,10 @@ inline void MsgNodeInfo::set_allocated_name(::std::string* name) {
   }
   name_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), name,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.osidbg.MsgNodeInfo.name)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.osidbg.MsgNodeInfo.name)
 }
 inline ::std::string* MsgNodeInfo::unsafe_arena_release_name() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.osidbg.MsgNodeInfo.name)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.osidbg.MsgNodeInfo.name)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return name_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -6386,7 +6386,7 @@ inline void MsgNodeInfo::unsafe_arena_set_allocated_name(
   }
   name_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       name, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.osidbg.MsgNodeInfo.name)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.osidbg.MsgNodeInfo.name)
 }
 
 // -------------------------------------------------------------------
@@ -6398,42 +6398,42 @@ inline void MsgRuleInfo::clear_node_id() {
   node_id_ = 0u;
 }
 inline ::google::protobuf::uint32 MsgRuleInfo::node_id() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.MsgRuleInfo.node_id)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.MsgRuleInfo.node_id)
   return node_id_;
 }
 inline void MsgRuleInfo::set_node_id(::google::protobuf::uint32 value) {
   
   node_id_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.MsgRuleInfo.node_id)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.MsgRuleInfo.node_id)
 }
 
-// repeated .dse.osidbg.MsgActionInfo actions = 2;
+// repeated .bg3se.osidbg.MsgActionInfo actions = 2;
 inline int MsgRuleInfo::actions_size() const {
   return actions_.size();
 }
 inline void MsgRuleInfo::clear_actions() {
   actions_.Clear();
 }
-inline ::dse::osidbg::MsgActionInfo* MsgRuleInfo::mutable_actions(int index) {
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.MsgRuleInfo.actions)
+inline ::bg3se::osidbg::MsgActionInfo* MsgRuleInfo::mutable_actions(int index) {
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.MsgRuleInfo.actions)
   return actions_.Mutable(index);
 }
-inline ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgActionInfo >*
+inline ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgActionInfo >*
 MsgRuleInfo::mutable_actions() {
-  // @@protoc_insertion_point(field_mutable_list:dse.osidbg.MsgRuleInfo.actions)
+  // @@protoc_insertion_point(field_mutable_list:bg3se.osidbg.MsgRuleInfo.actions)
   return &actions_;
 }
-inline const ::dse::osidbg::MsgActionInfo& MsgRuleInfo::actions(int index) const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.MsgRuleInfo.actions)
+inline const ::bg3se::osidbg::MsgActionInfo& MsgRuleInfo::actions(int index) const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.MsgRuleInfo.actions)
   return actions_.Get(index);
 }
-inline ::dse::osidbg::MsgActionInfo* MsgRuleInfo::add_actions() {
-  // @@protoc_insertion_point(field_add:dse.osidbg.MsgRuleInfo.actions)
+inline ::bg3se::osidbg::MsgActionInfo* MsgRuleInfo::add_actions() {
+  // @@protoc_insertion_point(field_add:bg3se.osidbg.MsgRuleInfo.actions)
   return actions_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgActionInfo >&
+inline const ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgActionInfo >&
 MsgRuleInfo::actions() const {
-  // @@protoc_insertion_point(field_list:dse.osidbg.MsgRuleInfo.actions)
+  // @@protoc_insertion_point(field_list:bg3se.osidbg.MsgRuleInfo.actions)
   return actions_;
 }
 
@@ -6441,123 +6441,123 @@ MsgRuleInfo::actions() const {
 
 // BkSyncStoryData
 
-// repeated .dse.osidbg.MsgGoalInfo goal = 1;
+// repeated .bg3se.osidbg.MsgGoalInfo goal = 1;
 inline int BkSyncStoryData::goal_size() const {
   return goal_.size();
 }
 inline void BkSyncStoryData::clear_goal() {
   goal_.Clear();
 }
-inline ::dse::osidbg::MsgGoalInfo* BkSyncStoryData::mutable_goal(int index) {
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.BkSyncStoryData.goal)
+inline ::bg3se::osidbg::MsgGoalInfo* BkSyncStoryData::mutable_goal(int index) {
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.BkSyncStoryData.goal)
   return goal_.Mutable(index);
 }
-inline ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgGoalInfo >*
+inline ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgGoalInfo >*
 BkSyncStoryData::mutable_goal() {
-  // @@protoc_insertion_point(field_mutable_list:dse.osidbg.BkSyncStoryData.goal)
+  // @@protoc_insertion_point(field_mutable_list:bg3se.osidbg.BkSyncStoryData.goal)
   return &goal_;
 }
-inline const ::dse::osidbg::MsgGoalInfo& BkSyncStoryData::goal(int index) const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BkSyncStoryData.goal)
+inline const ::bg3se::osidbg::MsgGoalInfo& BkSyncStoryData::goal(int index) const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BkSyncStoryData.goal)
   return goal_.Get(index);
 }
-inline ::dse::osidbg::MsgGoalInfo* BkSyncStoryData::add_goal() {
-  // @@protoc_insertion_point(field_add:dse.osidbg.BkSyncStoryData.goal)
+inline ::bg3se::osidbg::MsgGoalInfo* BkSyncStoryData::add_goal() {
+  // @@protoc_insertion_point(field_add:bg3se.osidbg.BkSyncStoryData.goal)
   return goal_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgGoalInfo >&
+inline const ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgGoalInfo >&
 BkSyncStoryData::goal() const {
-  // @@protoc_insertion_point(field_list:dse.osidbg.BkSyncStoryData.goal)
+  // @@protoc_insertion_point(field_list:bg3se.osidbg.BkSyncStoryData.goal)
   return goal_;
 }
 
-// repeated .dse.osidbg.MsgDatabaseInfo database = 2;
+// repeated .bg3se.osidbg.MsgDatabaseInfo database = 2;
 inline int BkSyncStoryData::database_size() const {
   return database_.size();
 }
 inline void BkSyncStoryData::clear_database() {
   database_.Clear();
 }
-inline ::dse::osidbg::MsgDatabaseInfo* BkSyncStoryData::mutable_database(int index) {
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.BkSyncStoryData.database)
+inline ::bg3se::osidbg::MsgDatabaseInfo* BkSyncStoryData::mutable_database(int index) {
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.BkSyncStoryData.database)
   return database_.Mutable(index);
 }
-inline ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgDatabaseInfo >*
+inline ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgDatabaseInfo >*
 BkSyncStoryData::mutable_database() {
-  // @@protoc_insertion_point(field_mutable_list:dse.osidbg.BkSyncStoryData.database)
+  // @@protoc_insertion_point(field_mutable_list:bg3se.osidbg.BkSyncStoryData.database)
   return &database_;
 }
-inline const ::dse::osidbg::MsgDatabaseInfo& BkSyncStoryData::database(int index) const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BkSyncStoryData.database)
+inline const ::bg3se::osidbg::MsgDatabaseInfo& BkSyncStoryData::database(int index) const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BkSyncStoryData.database)
   return database_.Get(index);
 }
-inline ::dse::osidbg::MsgDatabaseInfo* BkSyncStoryData::add_database() {
-  // @@protoc_insertion_point(field_add:dse.osidbg.BkSyncStoryData.database)
+inline ::bg3se::osidbg::MsgDatabaseInfo* BkSyncStoryData::add_database() {
+  // @@protoc_insertion_point(field_add:bg3se.osidbg.BkSyncStoryData.database)
   return database_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgDatabaseInfo >&
+inline const ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgDatabaseInfo >&
 BkSyncStoryData::database() const {
-  // @@protoc_insertion_point(field_list:dse.osidbg.BkSyncStoryData.database)
+  // @@protoc_insertion_point(field_list:bg3se.osidbg.BkSyncStoryData.database)
   return database_;
 }
 
-// repeated .dse.osidbg.MsgNodeInfo node = 3;
+// repeated .bg3se.osidbg.MsgNodeInfo node = 3;
 inline int BkSyncStoryData::node_size() const {
   return node_.size();
 }
 inline void BkSyncStoryData::clear_node() {
   node_.Clear();
 }
-inline ::dse::osidbg::MsgNodeInfo* BkSyncStoryData::mutable_node(int index) {
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.BkSyncStoryData.node)
+inline ::bg3se::osidbg::MsgNodeInfo* BkSyncStoryData::mutable_node(int index) {
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.BkSyncStoryData.node)
   return node_.Mutable(index);
 }
-inline ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgNodeInfo >*
+inline ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgNodeInfo >*
 BkSyncStoryData::mutable_node() {
-  // @@protoc_insertion_point(field_mutable_list:dse.osidbg.BkSyncStoryData.node)
+  // @@protoc_insertion_point(field_mutable_list:bg3se.osidbg.BkSyncStoryData.node)
   return &node_;
 }
-inline const ::dse::osidbg::MsgNodeInfo& BkSyncStoryData::node(int index) const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BkSyncStoryData.node)
+inline const ::bg3se::osidbg::MsgNodeInfo& BkSyncStoryData::node(int index) const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BkSyncStoryData.node)
   return node_.Get(index);
 }
-inline ::dse::osidbg::MsgNodeInfo* BkSyncStoryData::add_node() {
-  // @@protoc_insertion_point(field_add:dse.osidbg.BkSyncStoryData.node)
+inline ::bg3se::osidbg::MsgNodeInfo* BkSyncStoryData::add_node() {
+  // @@protoc_insertion_point(field_add:bg3se.osidbg.BkSyncStoryData.node)
   return node_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgNodeInfo >&
+inline const ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgNodeInfo >&
 BkSyncStoryData::node() const {
-  // @@protoc_insertion_point(field_list:dse.osidbg.BkSyncStoryData.node)
+  // @@protoc_insertion_point(field_list:bg3se.osidbg.BkSyncStoryData.node)
   return node_;
 }
 
-// repeated .dse.osidbg.MsgRuleInfo rule = 4;
+// repeated .bg3se.osidbg.MsgRuleInfo rule = 4;
 inline int BkSyncStoryData::rule_size() const {
   return rule_.size();
 }
 inline void BkSyncStoryData::clear_rule() {
   rule_.Clear();
 }
-inline ::dse::osidbg::MsgRuleInfo* BkSyncStoryData::mutable_rule(int index) {
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.BkSyncStoryData.rule)
+inline ::bg3se::osidbg::MsgRuleInfo* BkSyncStoryData::mutable_rule(int index) {
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.BkSyncStoryData.rule)
   return rule_.Mutable(index);
 }
-inline ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgRuleInfo >*
+inline ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgRuleInfo >*
 BkSyncStoryData::mutable_rule() {
-  // @@protoc_insertion_point(field_mutable_list:dse.osidbg.BkSyncStoryData.rule)
+  // @@protoc_insertion_point(field_mutable_list:bg3se.osidbg.BkSyncStoryData.rule)
   return &rule_;
 }
-inline const ::dse::osidbg::MsgRuleInfo& BkSyncStoryData::rule(int index) const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BkSyncStoryData.rule)
+inline const ::bg3se::osidbg::MsgRuleInfo& BkSyncStoryData::rule(int index) const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BkSyncStoryData.rule)
   return rule_.Get(index);
 }
-inline ::dse::osidbg::MsgRuleInfo* BkSyncStoryData::add_rule() {
-  // @@protoc_insertion_point(field_add:dse.osidbg.BkSyncStoryData.rule)
+inline ::bg3se::osidbg::MsgRuleInfo* BkSyncStoryData::add_rule() {
+  // @@protoc_insertion_point(field_add:bg3se.osidbg.BkSyncStoryData.rule)
   return rule_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgRuleInfo >&
+inline const ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgRuleInfo >&
 BkSyncStoryData::rule() const {
-  // @@protoc_insertion_point(field_list:dse.osidbg.BkSyncStoryData.rule)
+  // @@protoc_insertion_point(field_list:bg3se.osidbg.BkSyncStoryData.rule)
   return rule_;
 }
 
@@ -6574,20 +6574,20 @@ inline void BkDebugOutput::clear_message() {
   message_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline const ::std::string& BkDebugOutput::message() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BkDebugOutput.message)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BkDebugOutput.message)
   return message_.Get();
 }
 inline void BkDebugOutput::set_message(const ::std::string& value) {
   
   message_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:dse.osidbg.BkDebugOutput.message)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.BkDebugOutput.message)
 }
 #if LANG_CXX11
 inline void BkDebugOutput::set_message(::std::string&& value) {
   
   message_.SetLite(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_rvalue:dse.osidbg.BkDebugOutput.message)
+  // @@protoc_insertion_point(field_set_rvalue:bg3se.osidbg.BkDebugOutput.message)
 }
 #endif
 inline void BkDebugOutput::set_message(const char* value) {
@@ -6595,22 +6595,22 @@ inline void BkDebugOutput::set_message(const char* value) {
   
   message_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:dse.osidbg.BkDebugOutput.message)
+  // @@protoc_insertion_point(field_set_char:bg3se.osidbg.BkDebugOutput.message)
 }
 inline void BkDebugOutput::set_message(const char* value,
     size_t size) {
   
   message_.SetLite(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:dse.osidbg.BkDebugOutput.message)
+  // @@protoc_insertion_point(field_set_pointer:bg3se.osidbg.BkDebugOutput.message)
 }
 inline ::std::string* BkDebugOutput::mutable_message() {
   
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.BkDebugOutput.message)
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.BkDebugOutput.message)
   return message_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
 inline ::std::string* BkDebugOutput::release_message() {
-  // @@protoc_insertion_point(field_release:dse.osidbg.BkDebugOutput.message)
+  // @@protoc_insertion_point(field_release:bg3se.osidbg.BkDebugOutput.message)
   
   return message_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -6622,10 +6622,10 @@ inline void BkDebugOutput::set_allocated_message(::std::string* message) {
   }
   message_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), message,
       GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:dse.osidbg.BkDebugOutput.message)
+  // @@protoc_insertion_point(field_set_allocated:bg3se.osidbg.BkDebugOutput.message)
 }
 inline ::std::string* BkDebugOutput::unsafe_arena_release_message() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.osidbg.BkDebugOutput.message)
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.osidbg.BkDebugOutput.message)
   GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
   
   return message_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
@@ -6641,7 +6641,7 @@ inline void BkDebugOutput::unsafe_arena_set_allocated_message(
   }
   message_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       message, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.osidbg.BkDebugOutput.message)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.osidbg.BkDebugOutput.message)
 }
 
 // -------------------------------------------------------------------
@@ -6653,13 +6653,13 @@ inline void BkBeginDatabaseContents::clear_database_id() {
   database_id_ = 0u;
 }
 inline ::google::protobuf::uint32 BkBeginDatabaseContents::database_id() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BkBeginDatabaseContents.database_id)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BkBeginDatabaseContents.database_id)
   return database_id_;
 }
 inline void BkBeginDatabaseContents::set_database_id(::google::protobuf::uint32 value) {
   
   database_id_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.BkBeginDatabaseContents.database_id)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.BkBeginDatabaseContents.database_id)
 }
 
 // -------------------------------------------------------------------
@@ -6671,42 +6671,42 @@ inline void BkDatabaseRow::clear_database_id() {
   database_id_ = 0u;
 }
 inline ::google::protobuf::uint32 BkDatabaseRow::database_id() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BkDatabaseRow.database_id)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BkDatabaseRow.database_id)
   return database_id_;
 }
 inline void BkDatabaseRow::set_database_id(::google::protobuf::uint32 value) {
   
   database_id_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.BkDatabaseRow.database_id)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.BkDatabaseRow.database_id)
 }
 
-// repeated .dse.osidbg.MsgTuple row = 2;
+// repeated .bg3se.osidbg.MsgTuple row = 2;
 inline int BkDatabaseRow::row_size() const {
   return row_.size();
 }
 inline void BkDatabaseRow::clear_row() {
   row_.Clear();
 }
-inline ::dse::osidbg::MsgTuple* BkDatabaseRow::mutable_row(int index) {
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.BkDatabaseRow.row)
+inline ::bg3se::osidbg::MsgTuple* BkDatabaseRow::mutable_row(int index) {
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.BkDatabaseRow.row)
   return row_.Mutable(index);
 }
-inline ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgTuple >*
+inline ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgTuple >*
 BkDatabaseRow::mutable_row() {
-  // @@protoc_insertion_point(field_mutable_list:dse.osidbg.BkDatabaseRow.row)
+  // @@protoc_insertion_point(field_mutable_list:bg3se.osidbg.BkDatabaseRow.row)
   return &row_;
 }
-inline const ::dse::osidbg::MsgTuple& BkDatabaseRow::row(int index) const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BkDatabaseRow.row)
+inline const ::bg3se::osidbg::MsgTuple& BkDatabaseRow::row(int index) const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BkDatabaseRow.row)
   return row_.Get(index);
 }
-inline ::dse::osidbg::MsgTuple* BkDatabaseRow::add_row() {
-  // @@protoc_insertion_point(field_add:dse.osidbg.BkDatabaseRow.row)
+inline ::bg3se::osidbg::MsgTuple* BkDatabaseRow::add_row() {
+  // @@protoc_insertion_point(field_add:bg3se.osidbg.BkDatabaseRow.row)
   return row_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgTuple >&
+inline const ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgTuple >&
 BkDatabaseRow::row() const {
-  // @@protoc_insertion_point(field_list:dse.osidbg.BkDatabaseRow.row)
+  // @@protoc_insertion_point(field_list:bg3se.osidbg.BkDatabaseRow.row)
   return row_;
 }
 
@@ -6719,46 +6719,46 @@ inline void BkEndDatabaseContents::clear_database_id() {
   database_id_ = 0u;
 }
 inline ::google::protobuf::uint32 BkEndDatabaseContents::database_id() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BkEndDatabaseContents.database_id)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BkEndDatabaseContents.database_id)
   return database_id_;
 }
 inline void BkEndDatabaseContents::set_database_id(::google::protobuf::uint32 value) {
   
   database_id_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.BkEndDatabaseContents.database_id)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.BkEndDatabaseContents.database_id)
 }
 
 // -------------------------------------------------------------------
 
 // BkEvaluateRow
 
-// repeated .dse.osidbg.MsgTuple row = 1;
+// repeated .bg3se.osidbg.MsgTuple row = 1;
 inline int BkEvaluateRow::row_size() const {
   return row_.size();
 }
 inline void BkEvaluateRow::clear_row() {
   row_.Clear();
 }
-inline ::dse::osidbg::MsgTuple* BkEvaluateRow::mutable_row(int index) {
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.BkEvaluateRow.row)
+inline ::bg3se::osidbg::MsgTuple* BkEvaluateRow::mutable_row(int index) {
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.BkEvaluateRow.row)
   return row_.Mutable(index);
 }
-inline ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgTuple >*
+inline ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgTuple >*
 BkEvaluateRow::mutable_row() {
-  // @@protoc_insertion_point(field_mutable_list:dse.osidbg.BkEvaluateRow.row)
+  // @@protoc_insertion_point(field_mutable_list:bg3se.osidbg.BkEvaluateRow.row)
   return &row_;
 }
-inline const ::dse::osidbg::MsgTuple& BkEvaluateRow::row(int index) const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BkEvaluateRow.row)
+inline const ::bg3se::osidbg::MsgTuple& BkEvaluateRow::row(int index) const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BkEvaluateRow.row)
   return row_.Get(index);
 }
-inline ::dse::osidbg::MsgTuple* BkEvaluateRow::add_row() {
-  // @@protoc_insertion_point(field_add:dse.osidbg.BkEvaluateRow.row)
+inline ::bg3se::osidbg::MsgTuple* BkEvaluateRow::add_row() {
+  // @@protoc_insertion_point(field_add:bg3se.osidbg.BkEvaluateRow.row)
   return row_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::dse::osidbg::MsgTuple >&
+inline const ::google::protobuf::RepeatedPtrField< ::bg3se::osidbg::MsgTuple >&
 BkEvaluateRow::row() const {
-  // @@protoc_insertion_point(field_list:dse.osidbg.BkEvaluateRow.row)
+  // @@protoc_insertion_point(field_list:bg3se.osidbg.BkEvaluateRow.row)
   return row_;
 }
 
@@ -6766,18 +6766,18 @@ BkEvaluateRow::row() const {
 
 // BkEvaluateFinished
 
-// .dse.osidbg.StatusCode result_code = 1;
+// .bg3se.osidbg.StatusCode result_code = 1;
 inline void BkEvaluateFinished::clear_result_code() {
   result_code_ = 0;
 }
-inline ::dse::osidbg::StatusCode BkEvaluateFinished::result_code() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BkEvaluateFinished.result_code)
-  return static_cast< ::dse::osidbg::StatusCode >(result_code_);
+inline ::bg3se::osidbg::StatusCode BkEvaluateFinished::result_code() const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BkEvaluateFinished.result_code)
+  return static_cast< ::bg3se::osidbg::StatusCode >(result_code_);
 }
-inline void BkEvaluateFinished::set_result_code(::dse::osidbg::StatusCode value) {
+inline void BkEvaluateFinished::set_result_code(::bg3se::osidbg::StatusCode value) {
   
   result_code_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.BkEvaluateFinished.result_code)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.BkEvaluateFinished.result_code)
 }
 
 // bool query_succeeded = 2;
@@ -6785,20 +6785,20 @@ inline void BkEvaluateFinished::clear_query_succeeded() {
   query_succeeded_ = false;
 }
 inline bool BkEvaluateFinished::query_succeeded() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BkEvaluateFinished.query_succeeded)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BkEvaluateFinished.query_succeeded)
   return query_succeeded_;
 }
 inline void BkEvaluateFinished::set_query_succeeded(bool value) {
   
   query_succeeded_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.BkEvaluateFinished.query_succeeded)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.BkEvaluateFinished.query_succeeded)
 }
 
 // -------------------------------------------------------------------
 
 // DebuggerToBackend
 
-// .dse.osidbg.DbgIdentifyRequest identify = 1;
+// .bg3se.osidbg.DbgIdentifyRequest identify = 1;
 inline bool DebuggerToBackend::has_identify() const {
   return msg_case() == kIdentify;
 }
@@ -6813,14 +6813,14 @@ inline void DebuggerToBackend::clear_identify() {
     clear_has_msg();
   }
 }
-inline const ::dse::osidbg::DbgIdentifyRequest& DebuggerToBackend::_internal_identify() const {
+inline const ::bg3se::osidbg::DbgIdentifyRequest& DebuggerToBackend::_internal_identify() const {
   return *msg_.identify_;
 }
-inline ::dse::osidbg::DbgIdentifyRequest* DebuggerToBackend::release_identify() {
-  // @@protoc_insertion_point(field_release:dse.osidbg.DebuggerToBackend.identify)
+inline ::bg3se::osidbg::DbgIdentifyRequest* DebuggerToBackend::release_identify() {
+  // @@protoc_insertion_point(field_release:bg3se.osidbg.DebuggerToBackend.identify)
   if (has_identify()) {
     clear_has_msg();
-      ::dse::osidbg::DbgIdentifyRequest* temp = msg_.identify_;
+      ::bg3se::osidbg::DbgIdentifyRequest* temp = msg_.identify_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -6830,43 +6830,43 @@ inline ::dse::osidbg::DbgIdentifyRequest* DebuggerToBackend::release_identify() 
     return NULL;
   }
 }
-inline const ::dse::osidbg::DbgIdentifyRequest& DebuggerToBackend::identify() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.DebuggerToBackend.identify)
+inline const ::bg3se::osidbg::DbgIdentifyRequest& DebuggerToBackend::identify() const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.DebuggerToBackend.identify)
   return has_identify()
       ? *msg_.identify_
-      : *reinterpret_cast< ::dse::osidbg::DbgIdentifyRequest*>(&::dse::osidbg::_DbgIdentifyRequest_default_instance_);
+      : *reinterpret_cast< ::bg3se::osidbg::DbgIdentifyRequest*>(&::bg3se::osidbg::_DbgIdentifyRequest_default_instance_);
 }
-inline ::dse::osidbg::DbgIdentifyRequest* DebuggerToBackend::unsafe_arena_release_identify() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.osidbg.DebuggerToBackend.identify)
+inline ::bg3se::osidbg::DbgIdentifyRequest* DebuggerToBackend::unsafe_arena_release_identify() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.osidbg.DebuggerToBackend.identify)
   if (has_identify()) {
     clear_has_msg();
-    ::dse::osidbg::DbgIdentifyRequest* temp = msg_.identify_;
+    ::bg3se::osidbg::DbgIdentifyRequest* temp = msg_.identify_;
     msg_.identify_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void DebuggerToBackend::unsafe_arena_set_allocated_identify(::dse::osidbg::DbgIdentifyRequest* identify) {
+inline void DebuggerToBackend::unsafe_arena_set_allocated_identify(::bg3se::osidbg::DbgIdentifyRequest* identify) {
   clear_msg();
   if (identify) {
     set_has_identify();
     msg_.identify_ = identify;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.osidbg.DebuggerToBackend.identify)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.osidbg.DebuggerToBackend.identify)
 }
-inline ::dse::osidbg::DbgIdentifyRequest* DebuggerToBackend::mutable_identify() {
+inline ::bg3se::osidbg::DbgIdentifyRequest* DebuggerToBackend::mutable_identify() {
   if (!has_identify()) {
     clear_msg();
     set_has_identify();
-    msg_.identify_ = CreateMaybeMessage< ::dse::osidbg::DbgIdentifyRequest >(
+    msg_.identify_ = CreateMaybeMessage< ::bg3se::osidbg::DbgIdentifyRequest >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.DebuggerToBackend.identify)
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.DebuggerToBackend.identify)
   return msg_.identify_;
 }
 
-// .dse.osidbg.DbgSetGlobalBreakpoints setGlobalBreakpoints = 2;
+// .bg3se.osidbg.DbgSetGlobalBreakpoints setGlobalBreakpoints = 2;
 inline bool DebuggerToBackend::has_setglobalbreakpoints() const {
   return msg_case() == kSetGlobalBreakpoints;
 }
@@ -6881,14 +6881,14 @@ inline void DebuggerToBackend::clear_setglobalbreakpoints() {
     clear_has_msg();
   }
 }
-inline const ::dse::osidbg::DbgSetGlobalBreakpoints& DebuggerToBackend::_internal_setglobalbreakpoints() const {
+inline const ::bg3se::osidbg::DbgSetGlobalBreakpoints& DebuggerToBackend::_internal_setglobalbreakpoints() const {
   return *msg_.setglobalbreakpoints_;
 }
-inline ::dse::osidbg::DbgSetGlobalBreakpoints* DebuggerToBackend::release_setglobalbreakpoints() {
-  // @@protoc_insertion_point(field_release:dse.osidbg.DebuggerToBackend.setGlobalBreakpoints)
+inline ::bg3se::osidbg::DbgSetGlobalBreakpoints* DebuggerToBackend::release_setglobalbreakpoints() {
+  // @@protoc_insertion_point(field_release:bg3se.osidbg.DebuggerToBackend.setGlobalBreakpoints)
   if (has_setglobalbreakpoints()) {
     clear_has_msg();
-      ::dse::osidbg::DbgSetGlobalBreakpoints* temp = msg_.setglobalbreakpoints_;
+      ::bg3se::osidbg::DbgSetGlobalBreakpoints* temp = msg_.setglobalbreakpoints_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -6898,43 +6898,43 @@ inline ::dse::osidbg::DbgSetGlobalBreakpoints* DebuggerToBackend::release_setglo
     return NULL;
   }
 }
-inline const ::dse::osidbg::DbgSetGlobalBreakpoints& DebuggerToBackend::setglobalbreakpoints() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.DebuggerToBackend.setGlobalBreakpoints)
+inline const ::bg3se::osidbg::DbgSetGlobalBreakpoints& DebuggerToBackend::setglobalbreakpoints() const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.DebuggerToBackend.setGlobalBreakpoints)
   return has_setglobalbreakpoints()
       ? *msg_.setglobalbreakpoints_
-      : *reinterpret_cast< ::dse::osidbg::DbgSetGlobalBreakpoints*>(&::dse::osidbg::_DbgSetGlobalBreakpoints_default_instance_);
+      : *reinterpret_cast< ::bg3se::osidbg::DbgSetGlobalBreakpoints*>(&::bg3se::osidbg::_DbgSetGlobalBreakpoints_default_instance_);
 }
-inline ::dse::osidbg::DbgSetGlobalBreakpoints* DebuggerToBackend::unsafe_arena_release_setglobalbreakpoints() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.osidbg.DebuggerToBackend.setGlobalBreakpoints)
+inline ::bg3se::osidbg::DbgSetGlobalBreakpoints* DebuggerToBackend::unsafe_arena_release_setglobalbreakpoints() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.osidbg.DebuggerToBackend.setGlobalBreakpoints)
   if (has_setglobalbreakpoints()) {
     clear_has_msg();
-    ::dse::osidbg::DbgSetGlobalBreakpoints* temp = msg_.setglobalbreakpoints_;
+    ::bg3se::osidbg::DbgSetGlobalBreakpoints* temp = msg_.setglobalbreakpoints_;
     msg_.setglobalbreakpoints_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void DebuggerToBackend::unsafe_arena_set_allocated_setglobalbreakpoints(::dse::osidbg::DbgSetGlobalBreakpoints* setglobalbreakpoints) {
+inline void DebuggerToBackend::unsafe_arena_set_allocated_setglobalbreakpoints(::bg3se::osidbg::DbgSetGlobalBreakpoints* setglobalbreakpoints) {
   clear_msg();
   if (setglobalbreakpoints) {
     set_has_setglobalbreakpoints();
     msg_.setglobalbreakpoints_ = setglobalbreakpoints;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.osidbg.DebuggerToBackend.setGlobalBreakpoints)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.osidbg.DebuggerToBackend.setGlobalBreakpoints)
 }
-inline ::dse::osidbg::DbgSetGlobalBreakpoints* DebuggerToBackend::mutable_setglobalbreakpoints() {
+inline ::bg3se::osidbg::DbgSetGlobalBreakpoints* DebuggerToBackend::mutable_setglobalbreakpoints() {
   if (!has_setglobalbreakpoints()) {
     clear_msg();
     set_has_setglobalbreakpoints();
-    msg_.setglobalbreakpoints_ = CreateMaybeMessage< ::dse::osidbg::DbgSetGlobalBreakpoints >(
+    msg_.setglobalbreakpoints_ = CreateMaybeMessage< ::bg3se::osidbg::DbgSetGlobalBreakpoints >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.DebuggerToBackend.setGlobalBreakpoints)
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.DebuggerToBackend.setGlobalBreakpoints)
   return msg_.setglobalbreakpoints_;
 }
 
-// .dse.osidbg.DbgSetBreakpoints setBreakpoints = 3;
+// .bg3se.osidbg.DbgSetBreakpoints setBreakpoints = 3;
 inline bool DebuggerToBackend::has_setbreakpoints() const {
   return msg_case() == kSetBreakpoints;
 }
@@ -6949,14 +6949,14 @@ inline void DebuggerToBackend::clear_setbreakpoints() {
     clear_has_msg();
   }
 }
-inline const ::dse::osidbg::DbgSetBreakpoints& DebuggerToBackend::_internal_setbreakpoints() const {
+inline const ::bg3se::osidbg::DbgSetBreakpoints& DebuggerToBackend::_internal_setbreakpoints() const {
   return *msg_.setbreakpoints_;
 }
-inline ::dse::osidbg::DbgSetBreakpoints* DebuggerToBackend::release_setbreakpoints() {
-  // @@protoc_insertion_point(field_release:dse.osidbg.DebuggerToBackend.setBreakpoints)
+inline ::bg3se::osidbg::DbgSetBreakpoints* DebuggerToBackend::release_setbreakpoints() {
+  // @@protoc_insertion_point(field_release:bg3se.osidbg.DebuggerToBackend.setBreakpoints)
   if (has_setbreakpoints()) {
     clear_has_msg();
-      ::dse::osidbg::DbgSetBreakpoints* temp = msg_.setbreakpoints_;
+      ::bg3se::osidbg::DbgSetBreakpoints* temp = msg_.setbreakpoints_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -6966,43 +6966,43 @@ inline ::dse::osidbg::DbgSetBreakpoints* DebuggerToBackend::release_setbreakpoin
     return NULL;
   }
 }
-inline const ::dse::osidbg::DbgSetBreakpoints& DebuggerToBackend::setbreakpoints() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.DebuggerToBackend.setBreakpoints)
+inline const ::bg3se::osidbg::DbgSetBreakpoints& DebuggerToBackend::setbreakpoints() const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.DebuggerToBackend.setBreakpoints)
   return has_setbreakpoints()
       ? *msg_.setbreakpoints_
-      : *reinterpret_cast< ::dse::osidbg::DbgSetBreakpoints*>(&::dse::osidbg::_DbgSetBreakpoints_default_instance_);
+      : *reinterpret_cast< ::bg3se::osidbg::DbgSetBreakpoints*>(&::bg3se::osidbg::_DbgSetBreakpoints_default_instance_);
 }
-inline ::dse::osidbg::DbgSetBreakpoints* DebuggerToBackend::unsafe_arena_release_setbreakpoints() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.osidbg.DebuggerToBackend.setBreakpoints)
+inline ::bg3se::osidbg::DbgSetBreakpoints* DebuggerToBackend::unsafe_arena_release_setbreakpoints() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.osidbg.DebuggerToBackend.setBreakpoints)
   if (has_setbreakpoints()) {
     clear_has_msg();
-    ::dse::osidbg::DbgSetBreakpoints* temp = msg_.setbreakpoints_;
+    ::bg3se::osidbg::DbgSetBreakpoints* temp = msg_.setbreakpoints_;
     msg_.setbreakpoints_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void DebuggerToBackend::unsafe_arena_set_allocated_setbreakpoints(::dse::osidbg::DbgSetBreakpoints* setbreakpoints) {
+inline void DebuggerToBackend::unsafe_arena_set_allocated_setbreakpoints(::bg3se::osidbg::DbgSetBreakpoints* setbreakpoints) {
   clear_msg();
   if (setbreakpoints) {
     set_has_setbreakpoints();
     msg_.setbreakpoints_ = setbreakpoints;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.osidbg.DebuggerToBackend.setBreakpoints)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.osidbg.DebuggerToBackend.setBreakpoints)
 }
-inline ::dse::osidbg::DbgSetBreakpoints* DebuggerToBackend::mutable_setbreakpoints() {
+inline ::bg3se::osidbg::DbgSetBreakpoints* DebuggerToBackend::mutable_setbreakpoints() {
   if (!has_setbreakpoints()) {
     clear_msg();
     set_has_setbreakpoints();
-    msg_.setbreakpoints_ = CreateMaybeMessage< ::dse::osidbg::DbgSetBreakpoints >(
+    msg_.setbreakpoints_ = CreateMaybeMessage< ::bg3se::osidbg::DbgSetBreakpoints >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.DebuggerToBackend.setBreakpoints)
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.DebuggerToBackend.setBreakpoints)
   return msg_.setbreakpoints_;
 }
 
-// .dse.osidbg.DbgContinue continue = 4;
+// .bg3se.osidbg.DbgContinue continue = 4;
 inline bool DebuggerToBackend::has_continue_() const {
   return msg_case() == kContinue;
 }
@@ -7017,14 +7017,14 @@ inline void DebuggerToBackend::clear_continue_() {
     clear_has_msg();
   }
 }
-inline const ::dse::osidbg::DbgContinue& DebuggerToBackend::_internal_continue_() const {
+inline const ::bg3se::osidbg::DbgContinue& DebuggerToBackend::_internal_continue_() const {
   return *msg_.continue__;
 }
-inline ::dse::osidbg::DbgContinue* DebuggerToBackend::release_continue_() {
-  // @@protoc_insertion_point(field_release:dse.osidbg.DebuggerToBackend.continue)
+inline ::bg3se::osidbg::DbgContinue* DebuggerToBackend::release_continue_() {
+  // @@protoc_insertion_point(field_release:bg3se.osidbg.DebuggerToBackend.continue)
   if (has_continue_()) {
     clear_has_msg();
-      ::dse::osidbg::DbgContinue* temp = msg_.continue__;
+      ::bg3se::osidbg::DbgContinue* temp = msg_.continue__;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -7034,43 +7034,43 @@ inline ::dse::osidbg::DbgContinue* DebuggerToBackend::release_continue_() {
     return NULL;
   }
 }
-inline const ::dse::osidbg::DbgContinue& DebuggerToBackend::continue_() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.DebuggerToBackend.continue)
+inline const ::bg3se::osidbg::DbgContinue& DebuggerToBackend::continue_() const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.DebuggerToBackend.continue)
   return has_continue_()
       ? *msg_.continue__
-      : *reinterpret_cast< ::dse::osidbg::DbgContinue*>(&::dse::osidbg::_DbgContinue_default_instance_);
+      : *reinterpret_cast< ::bg3se::osidbg::DbgContinue*>(&::bg3se::osidbg::_DbgContinue_default_instance_);
 }
-inline ::dse::osidbg::DbgContinue* DebuggerToBackend::unsafe_arena_release_continue_() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.osidbg.DebuggerToBackend.continue)
+inline ::bg3se::osidbg::DbgContinue* DebuggerToBackend::unsafe_arena_release_continue_() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.osidbg.DebuggerToBackend.continue)
   if (has_continue_()) {
     clear_has_msg();
-    ::dse::osidbg::DbgContinue* temp = msg_.continue__;
+    ::bg3se::osidbg::DbgContinue* temp = msg_.continue__;
     msg_.continue__ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void DebuggerToBackend::unsafe_arena_set_allocated_continue_(::dse::osidbg::DbgContinue* continue_) {
+inline void DebuggerToBackend::unsafe_arena_set_allocated_continue_(::bg3se::osidbg::DbgContinue* continue_) {
   clear_msg();
   if (continue_) {
     set_has_continue_();
     msg_.continue__ = continue_;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.osidbg.DebuggerToBackend.continue)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.osidbg.DebuggerToBackend.continue)
 }
-inline ::dse::osidbg::DbgContinue* DebuggerToBackend::mutable_continue_() {
+inline ::bg3se::osidbg::DbgContinue* DebuggerToBackend::mutable_continue_() {
   if (!has_continue_()) {
     clear_msg();
     set_has_continue_();
-    msg_.continue__ = CreateMaybeMessage< ::dse::osidbg::DbgContinue >(
+    msg_.continue__ = CreateMaybeMessage< ::bg3se::osidbg::DbgContinue >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.DebuggerToBackend.continue)
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.DebuggerToBackend.continue)
   return msg_.continue__;
 }
 
-// .dse.osidbg.DbgGetDatabaseContents getDatabaseContents = 5;
+// .bg3se.osidbg.DbgGetDatabaseContents getDatabaseContents = 5;
 inline bool DebuggerToBackend::has_getdatabasecontents() const {
   return msg_case() == kGetDatabaseContents;
 }
@@ -7085,14 +7085,14 @@ inline void DebuggerToBackend::clear_getdatabasecontents() {
     clear_has_msg();
   }
 }
-inline const ::dse::osidbg::DbgGetDatabaseContents& DebuggerToBackend::_internal_getdatabasecontents() const {
+inline const ::bg3se::osidbg::DbgGetDatabaseContents& DebuggerToBackend::_internal_getdatabasecontents() const {
   return *msg_.getdatabasecontents_;
 }
-inline ::dse::osidbg::DbgGetDatabaseContents* DebuggerToBackend::release_getdatabasecontents() {
-  // @@protoc_insertion_point(field_release:dse.osidbg.DebuggerToBackend.getDatabaseContents)
+inline ::bg3se::osidbg::DbgGetDatabaseContents* DebuggerToBackend::release_getdatabasecontents() {
+  // @@protoc_insertion_point(field_release:bg3se.osidbg.DebuggerToBackend.getDatabaseContents)
   if (has_getdatabasecontents()) {
     clear_has_msg();
-      ::dse::osidbg::DbgGetDatabaseContents* temp = msg_.getdatabasecontents_;
+      ::bg3se::osidbg::DbgGetDatabaseContents* temp = msg_.getdatabasecontents_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -7102,43 +7102,43 @@ inline ::dse::osidbg::DbgGetDatabaseContents* DebuggerToBackend::release_getdata
     return NULL;
   }
 }
-inline const ::dse::osidbg::DbgGetDatabaseContents& DebuggerToBackend::getdatabasecontents() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.DebuggerToBackend.getDatabaseContents)
+inline const ::bg3se::osidbg::DbgGetDatabaseContents& DebuggerToBackend::getdatabasecontents() const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.DebuggerToBackend.getDatabaseContents)
   return has_getdatabasecontents()
       ? *msg_.getdatabasecontents_
-      : *reinterpret_cast< ::dse::osidbg::DbgGetDatabaseContents*>(&::dse::osidbg::_DbgGetDatabaseContents_default_instance_);
+      : *reinterpret_cast< ::bg3se::osidbg::DbgGetDatabaseContents*>(&::bg3se::osidbg::_DbgGetDatabaseContents_default_instance_);
 }
-inline ::dse::osidbg::DbgGetDatabaseContents* DebuggerToBackend::unsafe_arena_release_getdatabasecontents() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.osidbg.DebuggerToBackend.getDatabaseContents)
+inline ::bg3se::osidbg::DbgGetDatabaseContents* DebuggerToBackend::unsafe_arena_release_getdatabasecontents() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.osidbg.DebuggerToBackend.getDatabaseContents)
   if (has_getdatabasecontents()) {
     clear_has_msg();
-    ::dse::osidbg::DbgGetDatabaseContents* temp = msg_.getdatabasecontents_;
+    ::bg3se::osidbg::DbgGetDatabaseContents* temp = msg_.getdatabasecontents_;
     msg_.getdatabasecontents_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void DebuggerToBackend::unsafe_arena_set_allocated_getdatabasecontents(::dse::osidbg::DbgGetDatabaseContents* getdatabasecontents) {
+inline void DebuggerToBackend::unsafe_arena_set_allocated_getdatabasecontents(::bg3se::osidbg::DbgGetDatabaseContents* getdatabasecontents) {
   clear_msg();
   if (getdatabasecontents) {
     set_has_getdatabasecontents();
     msg_.getdatabasecontents_ = getdatabasecontents;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.osidbg.DebuggerToBackend.getDatabaseContents)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.osidbg.DebuggerToBackend.getDatabaseContents)
 }
-inline ::dse::osidbg::DbgGetDatabaseContents* DebuggerToBackend::mutable_getdatabasecontents() {
+inline ::bg3se::osidbg::DbgGetDatabaseContents* DebuggerToBackend::mutable_getdatabasecontents() {
   if (!has_getdatabasecontents()) {
     clear_msg();
     set_has_getdatabasecontents();
-    msg_.getdatabasecontents_ = CreateMaybeMessage< ::dse::osidbg::DbgGetDatabaseContents >(
+    msg_.getdatabasecontents_ = CreateMaybeMessage< ::bg3se::osidbg::DbgGetDatabaseContents >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.DebuggerToBackend.getDatabaseContents)
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.DebuggerToBackend.getDatabaseContents)
   return msg_.getdatabasecontents_;
 }
 
-// .dse.osidbg.DbgSyncStory syncStory = 8;
+// .bg3se.osidbg.DbgSyncStory syncStory = 8;
 inline bool DebuggerToBackend::has_syncstory() const {
   return msg_case() == kSyncStory;
 }
@@ -7153,14 +7153,14 @@ inline void DebuggerToBackend::clear_syncstory() {
     clear_has_msg();
   }
 }
-inline const ::dse::osidbg::DbgSyncStory& DebuggerToBackend::_internal_syncstory() const {
+inline const ::bg3se::osidbg::DbgSyncStory& DebuggerToBackend::_internal_syncstory() const {
   return *msg_.syncstory_;
 }
-inline ::dse::osidbg::DbgSyncStory* DebuggerToBackend::release_syncstory() {
-  // @@protoc_insertion_point(field_release:dse.osidbg.DebuggerToBackend.syncStory)
+inline ::bg3se::osidbg::DbgSyncStory* DebuggerToBackend::release_syncstory() {
+  // @@protoc_insertion_point(field_release:bg3se.osidbg.DebuggerToBackend.syncStory)
   if (has_syncstory()) {
     clear_has_msg();
-      ::dse::osidbg::DbgSyncStory* temp = msg_.syncstory_;
+      ::bg3se::osidbg::DbgSyncStory* temp = msg_.syncstory_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -7170,43 +7170,43 @@ inline ::dse::osidbg::DbgSyncStory* DebuggerToBackend::release_syncstory() {
     return NULL;
   }
 }
-inline const ::dse::osidbg::DbgSyncStory& DebuggerToBackend::syncstory() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.DebuggerToBackend.syncStory)
+inline const ::bg3se::osidbg::DbgSyncStory& DebuggerToBackend::syncstory() const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.DebuggerToBackend.syncStory)
   return has_syncstory()
       ? *msg_.syncstory_
-      : *reinterpret_cast< ::dse::osidbg::DbgSyncStory*>(&::dse::osidbg::_DbgSyncStory_default_instance_);
+      : *reinterpret_cast< ::bg3se::osidbg::DbgSyncStory*>(&::bg3se::osidbg::_DbgSyncStory_default_instance_);
 }
-inline ::dse::osidbg::DbgSyncStory* DebuggerToBackend::unsafe_arena_release_syncstory() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.osidbg.DebuggerToBackend.syncStory)
+inline ::bg3se::osidbg::DbgSyncStory* DebuggerToBackend::unsafe_arena_release_syncstory() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.osidbg.DebuggerToBackend.syncStory)
   if (has_syncstory()) {
     clear_has_msg();
-    ::dse::osidbg::DbgSyncStory* temp = msg_.syncstory_;
+    ::bg3se::osidbg::DbgSyncStory* temp = msg_.syncstory_;
     msg_.syncstory_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void DebuggerToBackend::unsafe_arena_set_allocated_syncstory(::dse::osidbg::DbgSyncStory* syncstory) {
+inline void DebuggerToBackend::unsafe_arena_set_allocated_syncstory(::bg3se::osidbg::DbgSyncStory* syncstory) {
   clear_msg();
   if (syncstory) {
     set_has_syncstory();
     msg_.syncstory_ = syncstory;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.osidbg.DebuggerToBackend.syncStory)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.osidbg.DebuggerToBackend.syncStory)
 }
-inline ::dse::osidbg::DbgSyncStory* DebuggerToBackend::mutable_syncstory() {
+inline ::bg3se::osidbg::DbgSyncStory* DebuggerToBackend::mutable_syncstory() {
   if (!has_syncstory()) {
     clear_msg();
     set_has_syncstory();
-    msg_.syncstory_ = CreateMaybeMessage< ::dse::osidbg::DbgSyncStory >(
+    msg_.syncstory_ = CreateMaybeMessage< ::bg3se::osidbg::DbgSyncStory >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.DebuggerToBackend.syncStory)
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.DebuggerToBackend.syncStory)
   return msg_.syncstory_;
 }
 
-// .dse.osidbg.DbgEvaluate evaluate = 9;
+// .bg3se.osidbg.DbgEvaluate evaluate = 9;
 inline bool DebuggerToBackend::has_evaluate() const {
   return msg_case() == kEvaluate;
 }
@@ -7221,14 +7221,14 @@ inline void DebuggerToBackend::clear_evaluate() {
     clear_has_msg();
   }
 }
-inline const ::dse::osidbg::DbgEvaluate& DebuggerToBackend::_internal_evaluate() const {
+inline const ::bg3se::osidbg::DbgEvaluate& DebuggerToBackend::_internal_evaluate() const {
   return *msg_.evaluate_;
 }
-inline ::dse::osidbg::DbgEvaluate* DebuggerToBackend::release_evaluate() {
-  // @@protoc_insertion_point(field_release:dse.osidbg.DebuggerToBackend.evaluate)
+inline ::bg3se::osidbg::DbgEvaluate* DebuggerToBackend::release_evaluate() {
+  // @@protoc_insertion_point(field_release:bg3se.osidbg.DebuggerToBackend.evaluate)
   if (has_evaluate()) {
     clear_has_msg();
-      ::dse::osidbg::DbgEvaluate* temp = msg_.evaluate_;
+      ::bg3se::osidbg::DbgEvaluate* temp = msg_.evaluate_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -7238,39 +7238,39 @@ inline ::dse::osidbg::DbgEvaluate* DebuggerToBackend::release_evaluate() {
     return NULL;
   }
 }
-inline const ::dse::osidbg::DbgEvaluate& DebuggerToBackend::evaluate() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.DebuggerToBackend.evaluate)
+inline const ::bg3se::osidbg::DbgEvaluate& DebuggerToBackend::evaluate() const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.DebuggerToBackend.evaluate)
   return has_evaluate()
       ? *msg_.evaluate_
-      : *reinterpret_cast< ::dse::osidbg::DbgEvaluate*>(&::dse::osidbg::_DbgEvaluate_default_instance_);
+      : *reinterpret_cast< ::bg3se::osidbg::DbgEvaluate*>(&::bg3se::osidbg::_DbgEvaluate_default_instance_);
 }
-inline ::dse::osidbg::DbgEvaluate* DebuggerToBackend::unsafe_arena_release_evaluate() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.osidbg.DebuggerToBackend.evaluate)
+inline ::bg3se::osidbg::DbgEvaluate* DebuggerToBackend::unsafe_arena_release_evaluate() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.osidbg.DebuggerToBackend.evaluate)
   if (has_evaluate()) {
     clear_has_msg();
-    ::dse::osidbg::DbgEvaluate* temp = msg_.evaluate_;
+    ::bg3se::osidbg::DbgEvaluate* temp = msg_.evaluate_;
     msg_.evaluate_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void DebuggerToBackend::unsafe_arena_set_allocated_evaluate(::dse::osidbg::DbgEvaluate* evaluate) {
+inline void DebuggerToBackend::unsafe_arena_set_allocated_evaluate(::bg3se::osidbg::DbgEvaluate* evaluate) {
   clear_msg();
   if (evaluate) {
     set_has_evaluate();
     msg_.evaluate_ = evaluate;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.osidbg.DebuggerToBackend.evaluate)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.osidbg.DebuggerToBackend.evaluate)
 }
-inline ::dse::osidbg::DbgEvaluate* DebuggerToBackend::mutable_evaluate() {
+inline ::bg3se::osidbg::DbgEvaluate* DebuggerToBackend::mutable_evaluate() {
   if (!has_evaluate()) {
     clear_msg();
     set_has_evaluate();
-    msg_.evaluate_ = CreateMaybeMessage< ::dse::osidbg::DbgEvaluate >(
+    msg_.evaluate_ = CreateMaybeMessage< ::bg3se::osidbg::DbgEvaluate >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.DebuggerToBackend.evaluate)
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.DebuggerToBackend.evaluate)
   return msg_.evaluate_;
 }
 
@@ -7279,13 +7279,13 @@ inline void DebuggerToBackend::clear_seq_no() {
   seq_no_ = 0u;
 }
 inline ::google::protobuf::uint32 DebuggerToBackend::seq_no() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.DebuggerToBackend.seq_no)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.DebuggerToBackend.seq_no)
   return seq_no_;
 }
 inline void DebuggerToBackend::set_seq_no(::google::protobuf::uint32 value) {
   
   seq_no_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.DebuggerToBackend.seq_no)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.DebuggerToBackend.seq_no)
 }
 
 // uint32 reply_seq_no = 7;
@@ -7293,13 +7293,13 @@ inline void DebuggerToBackend::clear_reply_seq_no() {
   reply_seq_no_ = 0u;
 }
 inline ::google::protobuf::uint32 DebuggerToBackend::reply_seq_no() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.DebuggerToBackend.reply_seq_no)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.DebuggerToBackend.reply_seq_no)
   return reply_seq_no_;
 }
 inline void DebuggerToBackend::set_reply_seq_no(::google::protobuf::uint32 value) {
   
   reply_seq_no_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.DebuggerToBackend.reply_seq_no)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.DebuggerToBackend.reply_seq_no)
 }
 
 inline bool DebuggerToBackend::has_msg() const {
@@ -7315,7 +7315,7 @@ inline DebuggerToBackend::MsgCase DebuggerToBackend::msg_case() const {
 
 // BackendToDebugger
 
-// .dse.osidbg.BkVersionInfoResponse versionInfo = 1;
+// .bg3se.osidbg.BkVersionInfoResponse versionInfo = 1;
 inline bool BackendToDebugger::has_versioninfo() const {
   return msg_case() == kVersionInfo;
 }
@@ -7330,14 +7330,14 @@ inline void BackendToDebugger::clear_versioninfo() {
     clear_has_msg();
   }
 }
-inline const ::dse::osidbg::BkVersionInfoResponse& BackendToDebugger::_internal_versioninfo() const {
+inline const ::bg3se::osidbg::BkVersionInfoResponse& BackendToDebugger::_internal_versioninfo() const {
   return *msg_.versioninfo_;
 }
-inline ::dse::osidbg::BkVersionInfoResponse* BackendToDebugger::release_versioninfo() {
-  // @@protoc_insertion_point(field_release:dse.osidbg.BackendToDebugger.versionInfo)
+inline ::bg3se::osidbg::BkVersionInfoResponse* BackendToDebugger::release_versioninfo() {
+  // @@protoc_insertion_point(field_release:bg3se.osidbg.BackendToDebugger.versionInfo)
   if (has_versioninfo()) {
     clear_has_msg();
-      ::dse::osidbg::BkVersionInfoResponse* temp = msg_.versioninfo_;
+      ::bg3se::osidbg::BkVersionInfoResponse* temp = msg_.versioninfo_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -7347,43 +7347,43 @@ inline ::dse::osidbg::BkVersionInfoResponse* BackendToDebugger::release_versioni
     return NULL;
   }
 }
-inline const ::dse::osidbg::BkVersionInfoResponse& BackendToDebugger::versioninfo() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BackendToDebugger.versionInfo)
+inline const ::bg3se::osidbg::BkVersionInfoResponse& BackendToDebugger::versioninfo() const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BackendToDebugger.versionInfo)
   return has_versioninfo()
       ? *msg_.versioninfo_
-      : *reinterpret_cast< ::dse::osidbg::BkVersionInfoResponse*>(&::dse::osidbg::_BkVersionInfoResponse_default_instance_);
+      : *reinterpret_cast< ::bg3se::osidbg::BkVersionInfoResponse*>(&::bg3se::osidbg::_BkVersionInfoResponse_default_instance_);
 }
-inline ::dse::osidbg::BkVersionInfoResponse* BackendToDebugger::unsafe_arena_release_versioninfo() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.osidbg.BackendToDebugger.versionInfo)
+inline ::bg3se::osidbg::BkVersionInfoResponse* BackendToDebugger::unsafe_arena_release_versioninfo() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.osidbg.BackendToDebugger.versionInfo)
   if (has_versioninfo()) {
     clear_has_msg();
-    ::dse::osidbg::BkVersionInfoResponse* temp = msg_.versioninfo_;
+    ::bg3se::osidbg::BkVersionInfoResponse* temp = msg_.versioninfo_;
     msg_.versioninfo_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void BackendToDebugger::unsafe_arena_set_allocated_versioninfo(::dse::osidbg::BkVersionInfoResponse* versioninfo) {
+inline void BackendToDebugger::unsafe_arena_set_allocated_versioninfo(::bg3se::osidbg::BkVersionInfoResponse* versioninfo) {
   clear_msg();
   if (versioninfo) {
     set_has_versioninfo();
     msg_.versioninfo_ = versioninfo;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.osidbg.BackendToDebugger.versionInfo)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.osidbg.BackendToDebugger.versionInfo)
 }
-inline ::dse::osidbg::BkVersionInfoResponse* BackendToDebugger::mutable_versioninfo() {
+inline ::bg3se::osidbg::BkVersionInfoResponse* BackendToDebugger::mutable_versioninfo() {
   if (!has_versioninfo()) {
     clear_msg();
     set_has_versioninfo();
-    msg_.versioninfo_ = CreateMaybeMessage< ::dse::osidbg::BkVersionInfoResponse >(
+    msg_.versioninfo_ = CreateMaybeMessage< ::bg3se::osidbg::BkVersionInfoResponse >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.BackendToDebugger.versionInfo)
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.BackendToDebugger.versionInfo)
   return msg_.versioninfo_;
 }
 
-// .dse.osidbg.BkBreakpointTriggered breakpointTriggered = 2;
+// .bg3se.osidbg.BkBreakpointTriggered breakpointTriggered = 2;
 inline bool BackendToDebugger::has_breakpointtriggered() const {
   return msg_case() == kBreakpointTriggered;
 }
@@ -7398,14 +7398,14 @@ inline void BackendToDebugger::clear_breakpointtriggered() {
     clear_has_msg();
   }
 }
-inline const ::dse::osidbg::BkBreakpointTriggered& BackendToDebugger::_internal_breakpointtriggered() const {
+inline const ::bg3se::osidbg::BkBreakpointTriggered& BackendToDebugger::_internal_breakpointtriggered() const {
   return *msg_.breakpointtriggered_;
 }
-inline ::dse::osidbg::BkBreakpointTriggered* BackendToDebugger::release_breakpointtriggered() {
-  // @@protoc_insertion_point(field_release:dse.osidbg.BackendToDebugger.breakpointTriggered)
+inline ::bg3se::osidbg::BkBreakpointTriggered* BackendToDebugger::release_breakpointtriggered() {
+  // @@protoc_insertion_point(field_release:bg3se.osidbg.BackendToDebugger.breakpointTriggered)
   if (has_breakpointtriggered()) {
     clear_has_msg();
-      ::dse::osidbg::BkBreakpointTriggered* temp = msg_.breakpointtriggered_;
+      ::bg3se::osidbg::BkBreakpointTriggered* temp = msg_.breakpointtriggered_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -7415,43 +7415,43 @@ inline ::dse::osidbg::BkBreakpointTriggered* BackendToDebugger::release_breakpoi
     return NULL;
   }
 }
-inline const ::dse::osidbg::BkBreakpointTriggered& BackendToDebugger::breakpointtriggered() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BackendToDebugger.breakpointTriggered)
+inline const ::bg3se::osidbg::BkBreakpointTriggered& BackendToDebugger::breakpointtriggered() const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BackendToDebugger.breakpointTriggered)
   return has_breakpointtriggered()
       ? *msg_.breakpointtriggered_
-      : *reinterpret_cast< ::dse::osidbg::BkBreakpointTriggered*>(&::dse::osidbg::_BkBreakpointTriggered_default_instance_);
+      : *reinterpret_cast< ::bg3se::osidbg::BkBreakpointTriggered*>(&::bg3se::osidbg::_BkBreakpointTriggered_default_instance_);
 }
-inline ::dse::osidbg::BkBreakpointTriggered* BackendToDebugger::unsafe_arena_release_breakpointtriggered() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.osidbg.BackendToDebugger.breakpointTriggered)
+inline ::bg3se::osidbg::BkBreakpointTriggered* BackendToDebugger::unsafe_arena_release_breakpointtriggered() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.osidbg.BackendToDebugger.breakpointTriggered)
   if (has_breakpointtriggered()) {
     clear_has_msg();
-    ::dse::osidbg::BkBreakpointTriggered* temp = msg_.breakpointtriggered_;
+    ::bg3se::osidbg::BkBreakpointTriggered* temp = msg_.breakpointtriggered_;
     msg_.breakpointtriggered_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void BackendToDebugger::unsafe_arena_set_allocated_breakpointtriggered(::dse::osidbg::BkBreakpointTriggered* breakpointtriggered) {
+inline void BackendToDebugger::unsafe_arena_set_allocated_breakpointtriggered(::bg3se::osidbg::BkBreakpointTriggered* breakpointtriggered) {
   clear_msg();
   if (breakpointtriggered) {
     set_has_breakpointtriggered();
     msg_.breakpointtriggered_ = breakpointtriggered;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.osidbg.BackendToDebugger.breakpointTriggered)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.osidbg.BackendToDebugger.breakpointTriggered)
 }
-inline ::dse::osidbg::BkBreakpointTriggered* BackendToDebugger::mutable_breakpointtriggered() {
+inline ::bg3se::osidbg::BkBreakpointTriggered* BackendToDebugger::mutable_breakpointtriggered() {
   if (!has_breakpointtriggered()) {
     clear_msg();
     set_has_breakpointtriggered();
-    msg_.breakpointtriggered_ = CreateMaybeMessage< ::dse::osidbg::BkBreakpointTriggered >(
+    msg_.breakpointtriggered_ = CreateMaybeMessage< ::bg3se::osidbg::BkBreakpointTriggered >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.BackendToDebugger.breakpointTriggered)
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.BackendToDebugger.breakpointTriggered)
   return msg_.breakpointtriggered_;
 }
 
-// .dse.osidbg.BkResult results = 4;
+// .bg3se.osidbg.BkResult results = 4;
 inline bool BackendToDebugger::has_results() const {
   return msg_case() == kResults;
 }
@@ -7466,14 +7466,14 @@ inline void BackendToDebugger::clear_results() {
     clear_has_msg();
   }
 }
-inline const ::dse::osidbg::BkResult& BackendToDebugger::_internal_results() const {
+inline const ::bg3se::osidbg::BkResult& BackendToDebugger::_internal_results() const {
   return *msg_.results_;
 }
-inline ::dse::osidbg::BkResult* BackendToDebugger::release_results() {
-  // @@protoc_insertion_point(field_release:dse.osidbg.BackendToDebugger.results)
+inline ::bg3se::osidbg::BkResult* BackendToDebugger::release_results() {
+  // @@protoc_insertion_point(field_release:bg3se.osidbg.BackendToDebugger.results)
   if (has_results()) {
     clear_has_msg();
-      ::dse::osidbg::BkResult* temp = msg_.results_;
+      ::bg3se::osidbg::BkResult* temp = msg_.results_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -7483,43 +7483,43 @@ inline ::dse::osidbg::BkResult* BackendToDebugger::release_results() {
     return NULL;
   }
 }
-inline const ::dse::osidbg::BkResult& BackendToDebugger::results() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BackendToDebugger.results)
+inline const ::bg3se::osidbg::BkResult& BackendToDebugger::results() const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BackendToDebugger.results)
   return has_results()
       ? *msg_.results_
-      : *reinterpret_cast< ::dse::osidbg::BkResult*>(&::dse::osidbg::_BkResult_default_instance_);
+      : *reinterpret_cast< ::bg3se::osidbg::BkResult*>(&::bg3se::osidbg::_BkResult_default_instance_);
 }
-inline ::dse::osidbg::BkResult* BackendToDebugger::unsafe_arena_release_results() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.osidbg.BackendToDebugger.results)
+inline ::bg3se::osidbg::BkResult* BackendToDebugger::unsafe_arena_release_results() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.osidbg.BackendToDebugger.results)
   if (has_results()) {
     clear_has_msg();
-    ::dse::osidbg::BkResult* temp = msg_.results_;
+    ::bg3se::osidbg::BkResult* temp = msg_.results_;
     msg_.results_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void BackendToDebugger::unsafe_arena_set_allocated_results(::dse::osidbg::BkResult* results) {
+inline void BackendToDebugger::unsafe_arena_set_allocated_results(::bg3se::osidbg::BkResult* results) {
   clear_msg();
   if (results) {
     set_has_results();
     msg_.results_ = results;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.osidbg.BackendToDebugger.results)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.osidbg.BackendToDebugger.results)
 }
-inline ::dse::osidbg::BkResult* BackendToDebugger::mutable_results() {
+inline ::bg3se::osidbg::BkResult* BackendToDebugger::mutable_results() {
   if (!has_results()) {
     clear_msg();
     set_has_results();
-    msg_.results_ = CreateMaybeMessage< ::dse::osidbg::BkResult >(
+    msg_.results_ = CreateMaybeMessage< ::bg3se::osidbg::BkResult >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.BackendToDebugger.results)
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.BackendToDebugger.results)
   return msg_.results_;
 }
 
-// .dse.osidbg.BkStoryLoaded storyLoaded = 5;
+// .bg3se.osidbg.BkStoryLoaded storyLoaded = 5;
 inline bool BackendToDebugger::has_storyloaded() const {
   return msg_case() == kStoryLoaded;
 }
@@ -7534,14 +7534,14 @@ inline void BackendToDebugger::clear_storyloaded() {
     clear_has_msg();
   }
 }
-inline const ::dse::osidbg::BkStoryLoaded& BackendToDebugger::_internal_storyloaded() const {
+inline const ::bg3se::osidbg::BkStoryLoaded& BackendToDebugger::_internal_storyloaded() const {
   return *msg_.storyloaded_;
 }
-inline ::dse::osidbg::BkStoryLoaded* BackendToDebugger::release_storyloaded() {
-  // @@protoc_insertion_point(field_release:dse.osidbg.BackendToDebugger.storyLoaded)
+inline ::bg3se::osidbg::BkStoryLoaded* BackendToDebugger::release_storyloaded() {
+  // @@protoc_insertion_point(field_release:bg3se.osidbg.BackendToDebugger.storyLoaded)
   if (has_storyloaded()) {
     clear_has_msg();
-      ::dse::osidbg::BkStoryLoaded* temp = msg_.storyloaded_;
+      ::bg3se::osidbg::BkStoryLoaded* temp = msg_.storyloaded_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -7551,43 +7551,43 @@ inline ::dse::osidbg::BkStoryLoaded* BackendToDebugger::release_storyloaded() {
     return NULL;
   }
 }
-inline const ::dse::osidbg::BkStoryLoaded& BackendToDebugger::storyloaded() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BackendToDebugger.storyLoaded)
+inline const ::bg3se::osidbg::BkStoryLoaded& BackendToDebugger::storyloaded() const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BackendToDebugger.storyLoaded)
   return has_storyloaded()
       ? *msg_.storyloaded_
-      : *reinterpret_cast< ::dse::osidbg::BkStoryLoaded*>(&::dse::osidbg::_BkStoryLoaded_default_instance_);
+      : *reinterpret_cast< ::bg3se::osidbg::BkStoryLoaded*>(&::bg3se::osidbg::_BkStoryLoaded_default_instance_);
 }
-inline ::dse::osidbg::BkStoryLoaded* BackendToDebugger::unsafe_arena_release_storyloaded() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.osidbg.BackendToDebugger.storyLoaded)
+inline ::bg3se::osidbg::BkStoryLoaded* BackendToDebugger::unsafe_arena_release_storyloaded() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.osidbg.BackendToDebugger.storyLoaded)
   if (has_storyloaded()) {
     clear_has_msg();
-    ::dse::osidbg::BkStoryLoaded* temp = msg_.storyloaded_;
+    ::bg3se::osidbg::BkStoryLoaded* temp = msg_.storyloaded_;
     msg_.storyloaded_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void BackendToDebugger::unsafe_arena_set_allocated_storyloaded(::dse::osidbg::BkStoryLoaded* storyloaded) {
+inline void BackendToDebugger::unsafe_arena_set_allocated_storyloaded(::bg3se::osidbg::BkStoryLoaded* storyloaded) {
   clear_msg();
   if (storyloaded) {
     set_has_storyloaded();
     msg_.storyloaded_ = storyloaded;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.osidbg.BackendToDebugger.storyLoaded)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.osidbg.BackendToDebugger.storyLoaded)
 }
-inline ::dse::osidbg::BkStoryLoaded* BackendToDebugger::mutable_storyloaded() {
+inline ::bg3se::osidbg::BkStoryLoaded* BackendToDebugger::mutable_storyloaded() {
   if (!has_storyloaded()) {
     clear_msg();
     set_has_storyloaded();
-    msg_.storyloaded_ = CreateMaybeMessage< ::dse::osidbg::BkStoryLoaded >(
+    msg_.storyloaded_ = CreateMaybeMessage< ::bg3se::osidbg::BkStoryLoaded >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.BackendToDebugger.storyLoaded)
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.BackendToDebugger.storyLoaded)
   return msg_.storyloaded_;
 }
 
-// .dse.osidbg.BkDebugSessionEnded debugSessionEnded = 6;
+// .bg3se.osidbg.BkDebugSessionEnded debugSessionEnded = 6;
 inline bool BackendToDebugger::has_debugsessionended() const {
   return msg_case() == kDebugSessionEnded;
 }
@@ -7602,14 +7602,14 @@ inline void BackendToDebugger::clear_debugsessionended() {
     clear_has_msg();
   }
 }
-inline const ::dse::osidbg::BkDebugSessionEnded& BackendToDebugger::_internal_debugsessionended() const {
+inline const ::bg3se::osidbg::BkDebugSessionEnded& BackendToDebugger::_internal_debugsessionended() const {
   return *msg_.debugsessionended_;
 }
-inline ::dse::osidbg::BkDebugSessionEnded* BackendToDebugger::release_debugsessionended() {
-  // @@protoc_insertion_point(field_release:dse.osidbg.BackendToDebugger.debugSessionEnded)
+inline ::bg3se::osidbg::BkDebugSessionEnded* BackendToDebugger::release_debugsessionended() {
+  // @@protoc_insertion_point(field_release:bg3se.osidbg.BackendToDebugger.debugSessionEnded)
   if (has_debugsessionended()) {
     clear_has_msg();
-      ::dse::osidbg::BkDebugSessionEnded* temp = msg_.debugsessionended_;
+      ::bg3se::osidbg::BkDebugSessionEnded* temp = msg_.debugsessionended_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -7619,43 +7619,43 @@ inline ::dse::osidbg::BkDebugSessionEnded* BackendToDebugger::release_debugsessi
     return NULL;
   }
 }
-inline const ::dse::osidbg::BkDebugSessionEnded& BackendToDebugger::debugsessionended() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BackendToDebugger.debugSessionEnded)
+inline const ::bg3se::osidbg::BkDebugSessionEnded& BackendToDebugger::debugsessionended() const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BackendToDebugger.debugSessionEnded)
   return has_debugsessionended()
       ? *msg_.debugsessionended_
-      : *reinterpret_cast< ::dse::osidbg::BkDebugSessionEnded*>(&::dse::osidbg::_BkDebugSessionEnded_default_instance_);
+      : *reinterpret_cast< ::bg3se::osidbg::BkDebugSessionEnded*>(&::bg3se::osidbg::_BkDebugSessionEnded_default_instance_);
 }
-inline ::dse::osidbg::BkDebugSessionEnded* BackendToDebugger::unsafe_arena_release_debugsessionended() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.osidbg.BackendToDebugger.debugSessionEnded)
+inline ::bg3se::osidbg::BkDebugSessionEnded* BackendToDebugger::unsafe_arena_release_debugsessionended() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.osidbg.BackendToDebugger.debugSessionEnded)
   if (has_debugsessionended()) {
     clear_has_msg();
-    ::dse::osidbg::BkDebugSessionEnded* temp = msg_.debugsessionended_;
+    ::bg3se::osidbg::BkDebugSessionEnded* temp = msg_.debugsessionended_;
     msg_.debugsessionended_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void BackendToDebugger::unsafe_arena_set_allocated_debugsessionended(::dse::osidbg::BkDebugSessionEnded* debugsessionended) {
+inline void BackendToDebugger::unsafe_arena_set_allocated_debugsessionended(::bg3se::osidbg::BkDebugSessionEnded* debugsessionended) {
   clear_msg();
   if (debugsessionended) {
     set_has_debugsessionended();
     msg_.debugsessionended_ = debugsessionended;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.osidbg.BackendToDebugger.debugSessionEnded)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.osidbg.BackendToDebugger.debugSessionEnded)
 }
-inline ::dse::osidbg::BkDebugSessionEnded* BackendToDebugger::mutable_debugsessionended() {
+inline ::bg3se::osidbg::BkDebugSessionEnded* BackendToDebugger::mutable_debugsessionended() {
   if (!has_debugsessionended()) {
     clear_msg();
     set_has_debugsessionended();
-    msg_.debugsessionended_ = CreateMaybeMessage< ::dse::osidbg::BkDebugSessionEnded >(
+    msg_.debugsessionended_ = CreateMaybeMessage< ::bg3se::osidbg::BkDebugSessionEnded >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.BackendToDebugger.debugSessionEnded)
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.BackendToDebugger.debugSessionEnded)
   return msg_.debugsessionended_;
 }
 
-// .dse.osidbg.BkGlobalBreakpointTriggered globalBreakpointTriggered = 7;
+// .bg3se.osidbg.BkGlobalBreakpointTriggered globalBreakpointTriggered = 7;
 inline bool BackendToDebugger::has_globalbreakpointtriggered() const {
   return msg_case() == kGlobalBreakpointTriggered;
 }
@@ -7670,14 +7670,14 @@ inline void BackendToDebugger::clear_globalbreakpointtriggered() {
     clear_has_msg();
   }
 }
-inline const ::dse::osidbg::BkGlobalBreakpointTriggered& BackendToDebugger::_internal_globalbreakpointtriggered() const {
+inline const ::bg3se::osidbg::BkGlobalBreakpointTriggered& BackendToDebugger::_internal_globalbreakpointtriggered() const {
   return *msg_.globalbreakpointtriggered_;
 }
-inline ::dse::osidbg::BkGlobalBreakpointTriggered* BackendToDebugger::release_globalbreakpointtriggered() {
-  // @@protoc_insertion_point(field_release:dse.osidbg.BackendToDebugger.globalBreakpointTriggered)
+inline ::bg3se::osidbg::BkGlobalBreakpointTriggered* BackendToDebugger::release_globalbreakpointtriggered() {
+  // @@protoc_insertion_point(field_release:bg3se.osidbg.BackendToDebugger.globalBreakpointTriggered)
   if (has_globalbreakpointtriggered()) {
     clear_has_msg();
-      ::dse::osidbg::BkGlobalBreakpointTriggered* temp = msg_.globalbreakpointtriggered_;
+      ::bg3se::osidbg::BkGlobalBreakpointTriggered* temp = msg_.globalbreakpointtriggered_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -7687,43 +7687,43 @@ inline ::dse::osidbg::BkGlobalBreakpointTriggered* BackendToDebugger::release_gl
     return NULL;
   }
 }
-inline const ::dse::osidbg::BkGlobalBreakpointTriggered& BackendToDebugger::globalbreakpointtriggered() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BackendToDebugger.globalBreakpointTriggered)
+inline const ::bg3se::osidbg::BkGlobalBreakpointTriggered& BackendToDebugger::globalbreakpointtriggered() const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BackendToDebugger.globalBreakpointTriggered)
   return has_globalbreakpointtriggered()
       ? *msg_.globalbreakpointtriggered_
-      : *reinterpret_cast< ::dse::osidbg::BkGlobalBreakpointTriggered*>(&::dse::osidbg::_BkGlobalBreakpointTriggered_default_instance_);
+      : *reinterpret_cast< ::bg3se::osidbg::BkGlobalBreakpointTriggered*>(&::bg3se::osidbg::_BkGlobalBreakpointTriggered_default_instance_);
 }
-inline ::dse::osidbg::BkGlobalBreakpointTriggered* BackendToDebugger::unsafe_arena_release_globalbreakpointtriggered() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.osidbg.BackendToDebugger.globalBreakpointTriggered)
+inline ::bg3se::osidbg::BkGlobalBreakpointTriggered* BackendToDebugger::unsafe_arena_release_globalbreakpointtriggered() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.osidbg.BackendToDebugger.globalBreakpointTriggered)
   if (has_globalbreakpointtriggered()) {
     clear_has_msg();
-    ::dse::osidbg::BkGlobalBreakpointTriggered* temp = msg_.globalbreakpointtriggered_;
+    ::bg3se::osidbg::BkGlobalBreakpointTriggered* temp = msg_.globalbreakpointtriggered_;
     msg_.globalbreakpointtriggered_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void BackendToDebugger::unsafe_arena_set_allocated_globalbreakpointtriggered(::dse::osidbg::BkGlobalBreakpointTriggered* globalbreakpointtriggered) {
+inline void BackendToDebugger::unsafe_arena_set_allocated_globalbreakpointtriggered(::bg3se::osidbg::BkGlobalBreakpointTriggered* globalbreakpointtriggered) {
   clear_msg();
   if (globalbreakpointtriggered) {
     set_has_globalbreakpointtriggered();
     msg_.globalbreakpointtriggered_ = globalbreakpointtriggered;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.osidbg.BackendToDebugger.globalBreakpointTriggered)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.osidbg.BackendToDebugger.globalBreakpointTriggered)
 }
-inline ::dse::osidbg::BkGlobalBreakpointTriggered* BackendToDebugger::mutable_globalbreakpointtriggered() {
+inline ::bg3se::osidbg::BkGlobalBreakpointTriggered* BackendToDebugger::mutable_globalbreakpointtriggered() {
   if (!has_globalbreakpointtriggered()) {
     clear_msg();
     set_has_globalbreakpointtriggered();
-    msg_.globalbreakpointtriggered_ = CreateMaybeMessage< ::dse::osidbg::BkGlobalBreakpointTriggered >(
+    msg_.globalbreakpointtriggered_ = CreateMaybeMessage< ::bg3se::osidbg::BkGlobalBreakpointTriggered >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.BackendToDebugger.globalBreakpointTriggered)
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.BackendToDebugger.globalBreakpointTriggered)
   return msg_.globalbreakpointtriggered_;
 }
 
-// .dse.osidbg.BkSyncStoryData syncStoryData = 10;
+// .bg3se.osidbg.BkSyncStoryData syncStoryData = 10;
 inline bool BackendToDebugger::has_syncstorydata() const {
   return msg_case() == kSyncStoryData;
 }
@@ -7738,14 +7738,14 @@ inline void BackendToDebugger::clear_syncstorydata() {
     clear_has_msg();
   }
 }
-inline const ::dse::osidbg::BkSyncStoryData& BackendToDebugger::_internal_syncstorydata() const {
+inline const ::bg3se::osidbg::BkSyncStoryData& BackendToDebugger::_internal_syncstorydata() const {
   return *msg_.syncstorydata_;
 }
-inline ::dse::osidbg::BkSyncStoryData* BackendToDebugger::release_syncstorydata() {
-  // @@protoc_insertion_point(field_release:dse.osidbg.BackendToDebugger.syncStoryData)
+inline ::bg3se::osidbg::BkSyncStoryData* BackendToDebugger::release_syncstorydata() {
+  // @@protoc_insertion_point(field_release:bg3se.osidbg.BackendToDebugger.syncStoryData)
   if (has_syncstorydata()) {
     clear_has_msg();
-      ::dse::osidbg::BkSyncStoryData* temp = msg_.syncstorydata_;
+      ::bg3se::osidbg::BkSyncStoryData* temp = msg_.syncstorydata_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -7755,43 +7755,43 @@ inline ::dse::osidbg::BkSyncStoryData* BackendToDebugger::release_syncstorydata(
     return NULL;
   }
 }
-inline const ::dse::osidbg::BkSyncStoryData& BackendToDebugger::syncstorydata() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BackendToDebugger.syncStoryData)
+inline const ::bg3se::osidbg::BkSyncStoryData& BackendToDebugger::syncstorydata() const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BackendToDebugger.syncStoryData)
   return has_syncstorydata()
       ? *msg_.syncstorydata_
-      : *reinterpret_cast< ::dse::osidbg::BkSyncStoryData*>(&::dse::osidbg::_BkSyncStoryData_default_instance_);
+      : *reinterpret_cast< ::bg3se::osidbg::BkSyncStoryData*>(&::bg3se::osidbg::_BkSyncStoryData_default_instance_);
 }
-inline ::dse::osidbg::BkSyncStoryData* BackendToDebugger::unsafe_arena_release_syncstorydata() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.osidbg.BackendToDebugger.syncStoryData)
+inline ::bg3se::osidbg::BkSyncStoryData* BackendToDebugger::unsafe_arena_release_syncstorydata() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.osidbg.BackendToDebugger.syncStoryData)
   if (has_syncstorydata()) {
     clear_has_msg();
-    ::dse::osidbg::BkSyncStoryData* temp = msg_.syncstorydata_;
+    ::bg3se::osidbg::BkSyncStoryData* temp = msg_.syncstorydata_;
     msg_.syncstorydata_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void BackendToDebugger::unsafe_arena_set_allocated_syncstorydata(::dse::osidbg::BkSyncStoryData* syncstorydata) {
+inline void BackendToDebugger::unsafe_arena_set_allocated_syncstorydata(::bg3se::osidbg::BkSyncStoryData* syncstorydata) {
   clear_msg();
   if (syncstorydata) {
     set_has_syncstorydata();
     msg_.syncstorydata_ = syncstorydata;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.osidbg.BackendToDebugger.syncStoryData)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.osidbg.BackendToDebugger.syncStoryData)
 }
-inline ::dse::osidbg::BkSyncStoryData* BackendToDebugger::mutable_syncstorydata() {
+inline ::bg3se::osidbg::BkSyncStoryData* BackendToDebugger::mutable_syncstorydata() {
   if (!has_syncstorydata()) {
     clear_msg();
     set_has_syncstorydata();
-    msg_.syncstorydata_ = CreateMaybeMessage< ::dse::osidbg::BkSyncStoryData >(
+    msg_.syncstorydata_ = CreateMaybeMessage< ::bg3se::osidbg::BkSyncStoryData >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.BackendToDebugger.syncStoryData)
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.BackendToDebugger.syncStoryData)
   return msg_.syncstorydata_;
 }
 
-// .dse.osidbg.BkSyncStoryFinished syncStoryFinished = 11;
+// .bg3se.osidbg.BkSyncStoryFinished syncStoryFinished = 11;
 inline bool BackendToDebugger::has_syncstoryfinished() const {
   return msg_case() == kSyncStoryFinished;
 }
@@ -7806,14 +7806,14 @@ inline void BackendToDebugger::clear_syncstoryfinished() {
     clear_has_msg();
   }
 }
-inline const ::dse::osidbg::BkSyncStoryFinished& BackendToDebugger::_internal_syncstoryfinished() const {
+inline const ::bg3se::osidbg::BkSyncStoryFinished& BackendToDebugger::_internal_syncstoryfinished() const {
   return *msg_.syncstoryfinished_;
 }
-inline ::dse::osidbg::BkSyncStoryFinished* BackendToDebugger::release_syncstoryfinished() {
-  // @@protoc_insertion_point(field_release:dse.osidbg.BackendToDebugger.syncStoryFinished)
+inline ::bg3se::osidbg::BkSyncStoryFinished* BackendToDebugger::release_syncstoryfinished() {
+  // @@protoc_insertion_point(field_release:bg3se.osidbg.BackendToDebugger.syncStoryFinished)
   if (has_syncstoryfinished()) {
     clear_has_msg();
-      ::dse::osidbg::BkSyncStoryFinished* temp = msg_.syncstoryfinished_;
+      ::bg3se::osidbg::BkSyncStoryFinished* temp = msg_.syncstoryfinished_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -7823,43 +7823,43 @@ inline ::dse::osidbg::BkSyncStoryFinished* BackendToDebugger::release_syncstoryf
     return NULL;
   }
 }
-inline const ::dse::osidbg::BkSyncStoryFinished& BackendToDebugger::syncstoryfinished() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BackendToDebugger.syncStoryFinished)
+inline const ::bg3se::osidbg::BkSyncStoryFinished& BackendToDebugger::syncstoryfinished() const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BackendToDebugger.syncStoryFinished)
   return has_syncstoryfinished()
       ? *msg_.syncstoryfinished_
-      : *reinterpret_cast< ::dse::osidbg::BkSyncStoryFinished*>(&::dse::osidbg::_BkSyncStoryFinished_default_instance_);
+      : *reinterpret_cast< ::bg3se::osidbg::BkSyncStoryFinished*>(&::bg3se::osidbg::_BkSyncStoryFinished_default_instance_);
 }
-inline ::dse::osidbg::BkSyncStoryFinished* BackendToDebugger::unsafe_arena_release_syncstoryfinished() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.osidbg.BackendToDebugger.syncStoryFinished)
+inline ::bg3se::osidbg::BkSyncStoryFinished* BackendToDebugger::unsafe_arena_release_syncstoryfinished() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.osidbg.BackendToDebugger.syncStoryFinished)
   if (has_syncstoryfinished()) {
     clear_has_msg();
-    ::dse::osidbg::BkSyncStoryFinished* temp = msg_.syncstoryfinished_;
+    ::bg3se::osidbg::BkSyncStoryFinished* temp = msg_.syncstoryfinished_;
     msg_.syncstoryfinished_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void BackendToDebugger::unsafe_arena_set_allocated_syncstoryfinished(::dse::osidbg::BkSyncStoryFinished* syncstoryfinished) {
+inline void BackendToDebugger::unsafe_arena_set_allocated_syncstoryfinished(::bg3se::osidbg::BkSyncStoryFinished* syncstoryfinished) {
   clear_msg();
   if (syncstoryfinished) {
     set_has_syncstoryfinished();
     msg_.syncstoryfinished_ = syncstoryfinished;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.osidbg.BackendToDebugger.syncStoryFinished)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.osidbg.BackendToDebugger.syncStoryFinished)
 }
-inline ::dse::osidbg::BkSyncStoryFinished* BackendToDebugger::mutable_syncstoryfinished() {
+inline ::bg3se::osidbg::BkSyncStoryFinished* BackendToDebugger::mutable_syncstoryfinished() {
   if (!has_syncstoryfinished()) {
     clear_msg();
     set_has_syncstoryfinished();
-    msg_.syncstoryfinished_ = CreateMaybeMessage< ::dse::osidbg::BkSyncStoryFinished >(
+    msg_.syncstoryfinished_ = CreateMaybeMessage< ::bg3se::osidbg::BkSyncStoryFinished >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.BackendToDebugger.syncStoryFinished)
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.BackendToDebugger.syncStoryFinished)
   return msg_.syncstoryfinished_;
 }
 
-// .dse.osidbg.BkDebugOutput debugOutput = 12;
+// .bg3se.osidbg.BkDebugOutput debugOutput = 12;
 inline bool BackendToDebugger::has_debugoutput() const {
   return msg_case() == kDebugOutput;
 }
@@ -7874,14 +7874,14 @@ inline void BackendToDebugger::clear_debugoutput() {
     clear_has_msg();
   }
 }
-inline const ::dse::osidbg::BkDebugOutput& BackendToDebugger::_internal_debugoutput() const {
+inline const ::bg3se::osidbg::BkDebugOutput& BackendToDebugger::_internal_debugoutput() const {
   return *msg_.debugoutput_;
 }
-inline ::dse::osidbg::BkDebugOutput* BackendToDebugger::release_debugoutput() {
-  // @@protoc_insertion_point(field_release:dse.osidbg.BackendToDebugger.debugOutput)
+inline ::bg3se::osidbg::BkDebugOutput* BackendToDebugger::release_debugoutput() {
+  // @@protoc_insertion_point(field_release:bg3se.osidbg.BackendToDebugger.debugOutput)
   if (has_debugoutput()) {
     clear_has_msg();
-      ::dse::osidbg::BkDebugOutput* temp = msg_.debugoutput_;
+      ::bg3se::osidbg::BkDebugOutput* temp = msg_.debugoutput_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -7891,43 +7891,43 @@ inline ::dse::osidbg::BkDebugOutput* BackendToDebugger::release_debugoutput() {
     return NULL;
   }
 }
-inline const ::dse::osidbg::BkDebugOutput& BackendToDebugger::debugoutput() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BackendToDebugger.debugOutput)
+inline const ::bg3se::osidbg::BkDebugOutput& BackendToDebugger::debugoutput() const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BackendToDebugger.debugOutput)
   return has_debugoutput()
       ? *msg_.debugoutput_
-      : *reinterpret_cast< ::dse::osidbg::BkDebugOutput*>(&::dse::osidbg::_BkDebugOutput_default_instance_);
+      : *reinterpret_cast< ::bg3se::osidbg::BkDebugOutput*>(&::bg3se::osidbg::_BkDebugOutput_default_instance_);
 }
-inline ::dse::osidbg::BkDebugOutput* BackendToDebugger::unsafe_arena_release_debugoutput() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.osidbg.BackendToDebugger.debugOutput)
+inline ::bg3se::osidbg::BkDebugOutput* BackendToDebugger::unsafe_arena_release_debugoutput() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.osidbg.BackendToDebugger.debugOutput)
   if (has_debugoutput()) {
     clear_has_msg();
-    ::dse::osidbg::BkDebugOutput* temp = msg_.debugoutput_;
+    ::bg3se::osidbg::BkDebugOutput* temp = msg_.debugoutput_;
     msg_.debugoutput_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void BackendToDebugger::unsafe_arena_set_allocated_debugoutput(::dse::osidbg::BkDebugOutput* debugoutput) {
+inline void BackendToDebugger::unsafe_arena_set_allocated_debugoutput(::bg3se::osidbg::BkDebugOutput* debugoutput) {
   clear_msg();
   if (debugoutput) {
     set_has_debugoutput();
     msg_.debugoutput_ = debugoutput;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.osidbg.BackendToDebugger.debugOutput)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.osidbg.BackendToDebugger.debugOutput)
 }
-inline ::dse::osidbg::BkDebugOutput* BackendToDebugger::mutable_debugoutput() {
+inline ::bg3se::osidbg::BkDebugOutput* BackendToDebugger::mutable_debugoutput() {
   if (!has_debugoutput()) {
     clear_msg();
     set_has_debugoutput();
-    msg_.debugoutput_ = CreateMaybeMessage< ::dse::osidbg::BkDebugOutput >(
+    msg_.debugoutput_ = CreateMaybeMessage< ::bg3se::osidbg::BkDebugOutput >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.BackendToDebugger.debugOutput)
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.BackendToDebugger.debugOutput)
   return msg_.debugoutput_;
 }
 
-// .dse.osidbg.BkBeginDatabaseContents beginDatabaseContents = 13;
+// .bg3se.osidbg.BkBeginDatabaseContents beginDatabaseContents = 13;
 inline bool BackendToDebugger::has_begindatabasecontents() const {
   return msg_case() == kBeginDatabaseContents;
 }
@@ -7942,14 +7942,14 @@ inline void BackendToDebugger::clear_begindatabasecontents() {
     clear_has_msg();
   }
 }
-inline const ::dse::osidbg::BkBeginDatabaseContents& BackendToDebugger::_internal_begindatabasecontents() const {
+inline const ::bg3se::osidbg::BkBeginDatabaseContents& BackendToDebugger::_internal_begindatabasecontents() const {
   return *msg_.begindatabasecontents_;
 }
-inline ::dse::osidbg::BkBeginDatabaseContents* BackendToDebugger::release_begindatabasecontents() {
-  // @@protoc_insertion_point(field_release:dse.osidbg.BackendToDebugger.beginDatabaseContents)
+inline ::bg3se::osidbg::BkBeginDatabaseContents* BackendToDebugger::release_begindatabasecontents() {
+  // @@protoc_insertion_point(field_release:bg3se.osidbg.BackendToDebugger.beginDatabaseContents)
   if (has_begindatabasecontents()) {
     clear_has_msg();
-      ::dse::osidbg::BkBeginDatabaseContents* temp = msg_.begindatabasecontents_;
+      ::bg3se::osidbg::BkBeginDatabaseContents* temp = msg_.begindatabasecontents_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -7959,43 +7959,43 @@ inline ::dse::osidbg::BkBeginDatabaseContents* BackendToDebugger::release_begind
     return NULL;
   }
 }
-inline const ::dse::osidbg::BkBeginDatabaseContents& BackendToDebugger::begindatabasecontents() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BackendToDebugger.beginDatabaseContents)
+inline const ::bg3se::osidbg::BkBeginDatabaseContents& BackendToDebugger::begindatabasecontents() const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BackendToDebugger.beginDatabaseContents)
   return has_begindatabasecontents()
       ? *msg_.begindatabasecontents_
-      : *reinterpret_cast< ::dse::osidbg::BkBeginDatabaseContents*>(&::dse::osidbg::_BkBeginDatabaseContents_default_instance_);
+      : *reinterpret_cast< ::bg3se::osidbg::BkBeginDatabaseContents*>(&::bg3se::osidbg::_BkBeginDatabaseContents_default_instance_);
 }
-inline ::dse::osidbg::BkBeginDatabaseContents* BackendToDebugger::unsafe_arena_release_begindatabasecontents() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.osidbg.BackendToDebugger.beginDatabaseContents)
+inline ::bg3se::osidbg::BkBeginDatabaseContents* BackendToDebugger::unsafe_arena_release_begindatabasecontents() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.osidbg.BackendToDebugger.beginDatabaseContents)
   if (has_begindatabasecontents()) {
     clear_has_msg();
-    ::dse::osidbg::BkBeginDatabaseContents* temp = msg_.begindatabasecontents_;
+    ::bg3se::osidbg::BkBeginDatabaseContents* temp = msg_.begindatabasecontents_;
     msg_.begindatabasecontents_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void BackendToDebugger::unsafe_arena_set_allocated_begindatabasecontents(::dse::osidbg::BkBeginDatabaseContents* begindatabasecontents) {
+inline void BackendToDebugger::unsafe_arena_set_allocated_begindatabasecontents(::bg3se::osidbg::BkBeginDatabaseContents* begindatabasecontents) {
   clear_msg();
   if (begindatabasecontents) {
     set_has_begindatabasecontents();
     msg_.begindatabasecontents_ = begindatabasecontents;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.osidbg.BackendToDebugger.beginDatabaseContents)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.osidbg.BackendToDebugger.beginDatabaseContents)
 }
-inline ::dse::osidbg::BkBeginDatabaseContents* BackendToDebugger::mutable_begindatabasecontents() {
+inline ::bg3se::osidbg::BkBeginDatabaseContents* BackendToDebugger::mutable_begindatabasecontents() {
   if (!has_begindatabasecontents()) {
     clear_msg();
     set_has_begindatabasecontents();
-    msg_.begindatabasecontents_ = CreateMaybeMessage< ::dse::osidbg::BkBeginDatabaseContents >(
+    msg_.begindatabasecontents_ = CreateMaybeMessage< ::bg3se::osidbg::BkBeginDatabaseContents >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.BackendToDebugger.beginDatabaseContents)
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.BackendToDebugger.beginDatabaseContents)
   return msg_.begindatabasecontents_;
 }
 
-// .dse.osidbg.BkDatabaseRow databaseRow = 14;
+// .bg3se.osidbg.BkDatabaseRow databaseRow = 14;
 inline bool BackendToDebugger::has_databaserow() const {
   return msg_case() == kDatabaseRow;
 }
@@ -8010,14 +8010,14 @@ inline void BackendToDebugger::clear_databaserow() {
     clear_has_msg();
   }
 }
-inline const ::dse::osidbg::BkDatabaseRow& BackendToDebugger::_internal_databaserow() const {
+inline const ::bg3se::osidbg::BkDatabaseRow& BackendToDebugger::_internal_databaserow() const {
   return *msg_.databaserow_;
 }
-inline ::dse::osidbg::BkDatabaseRow* BackendToDebugger::release_databaserow() {
-  // @@protoc_insertion_point(field_release:dse.osidbg.BackendToDebugger.databaseRow)
+inline ::bg3se::osidbg::BkDatabaseRow* BackendToDebugger::release_databaserow() {
+  // @@protoc_insertion_point(field_release:bg3se.osidbg.BackendToDebugger.databaseRow)
   if (has_databaserow()) {
     clear_has_msg();
-      ::dse::osidbg::BkDatabaseRow* temp = msg_.databaserow_;
+      ::bg3se::osidbg::BkDatabaseRow* temp = msg_.databaserow_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -8027,43 +8027,43 @@ inline ::dse::osidbg::BkDatabaseRow* BackendToDebugger::release_databaserow() {
     return NULL;
   }
 }
-inline const ::dse::osidbg::BkDatabaseRow& BackendToDebugger::databaserow() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BackendToDebugger.databaseRow)
+inline const ::bg3se::osidbg::BkDatabaseRow& BackendToDebugger::databaserow() const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BackendToDebugger.databaseRow)
   return has_databaserow()
       ? *msg_.databaserow_
-      : *reinterpret_cast< ::dse::osidbg::BkDatabaseRow*>(&::dse::osidbg::_BkDatabaseRow_default_instance_);
+      : *reinterpret_cast< ::bg3se::osidbg::BkDatabaseRow*>(&::bg3se::osidbg::_BkDatabaseRow_default_instance_);
 }
-inline ::dse::osidbg::BkDatabaseRow* BackendToDebugger::unsafe_arena_release_databaserow() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.osidbg.BackendToDebugger.databaseRow)
+inline ::bg3se::osidbg::BkDatabaseRow* BackendToDebugger::unsafe_arena_release_databaserow() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.osidbg.BackendToDebugger.databaseRow)
   if (has_databaserow()) {
     clear_has_msg();
-    ::dse::osidbg::BkDatabaseRow* temp = msg_.databaserow_;
+    ::bg3se::osidbg::BkDatabaseRow* temp = msg_.databaserow_;
     msg_.databaserow_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void BackendToDebugger::unsafe_arena_set_allocated_databaserow(::dse::osidbg::BkDatabaseRow* databaserow) {
+inline void BackendToDebugger::unsafe_arena_set_allocated_databaserow(::bg3se::osidbg::BkDatabaseRow* databaserow) {
   clear_msg();
   if (databaserow) {
     set_has_databaserow();
     msg_.databaserow_ = databaserow;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.osidbg.BackendToDebugger.databaseRow)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.osidbg.BackendToDebugger.databaseRow)
 }
-inline ::dse::osidbg::BkDatabaseRow* BackendToDebugger::mutable_databaserow() {
+inline ::bg3se::osidbg::BkDatabaseRow* BackendToDebugger::mutable_databaserow() {
   if (!has_databaserow()) {
     clear_msg();
     set_has_databaserow();
-    msg_.databaserow_ = CreateMaybeMessage< ::dse::osidbg::BkDatabaseRow >(
+    msg_.databaserow_ = CreateMaybeMessage< ::bg3se::osidbg::BkDatabaseRow >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.BackendToDebugger.databaseRow)
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.BackendToDebugger.databaseRow)
   return msg_.databaserow_;
 }
 
-// .dse.osidbg.BkEndDatabaseContents endDatabaseContents = 15;
+// .bg3se.osidbg.BkEndDatabaseContents endDatabaseContents = 15;
 inline bool BackendToDebugger::has_enddatabasecontents() const {
   return msg_case() == kEndDatabaseContents;
 }
@@ -8078,14 +8078,14 @@ inline void BackendToDebugger::clear_enddatabasecontents() {
     clear_has_msg();
   }
 }
-inline const ::dse::osidbg::BkEndDatabaseContents& BackendToDebugger::_internal_enddatabasecontents() const {
+inline const ::bg3se::osidbg::BkEndDatabaseContents& BackendToDebugger::_internal_enddatabasecontents() const {
   return *msg_.enddatabasecontents_;
 }
-inline ::dse::osidbg::BkEndDatabaseContents* BackendToDebugger::release_enddatabasecontents() {
-  // @@protoc_insertion_point(field_release:dse.osidbg.BackendToDebugger.endDatabaseContents)
+inline ::bg3se::osidbg::BkEndDatabaseContents* BackendToDebugger::release_enddatabasecontents() {
+  // @@protoc_insertion_point(field_release:bg3se.osidbg.BackendToDebugger.endDatabaseContents)
   if (has_enddatabasecontents()) {
     clear_has_msg();
-      ::dse::osidbg::BkEndDatabaseContents* temp = msg_.enddatabasecontents_;
+      ::bg3se::osidbg::BkEndDatabaseContents* temp = msg_.enddatabasecontents_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -8095,43 +8095,43 @@ inline ::dse::osidbg::BkEndDatabaseContents* BackendToDebugger::release_enddatab
     return NULL;
   }
 }
-inline const ::dse::osidbg::BkEndDatabaseContents& BackendToDebugger::enddatabasecontents() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BackendToDebugger.endDatabaseContents)
+inline const ::bg3se::osidbg::BkEndDatabaseContents& BackendToDebugger::enddatabasecontents() const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BackendToDebugger.endDatabaseContents)
   return has_enddatabasecontents()
       ? *msg_.enddatabasecontents_
-      : *reinterpret_cast< ::dse::osidbg::BkEndDatabaseContents*>(&::dse::osidbg::_BkEndDatabaseContents_default_instance_);
+      : *reinterpret_cast< ::bg3se::osidbg::BkEndDatabaseContents*>(&::bg3se::osidbg::_BkEndDatabaseContents_default_instance_);
 }
-inline ::dse::osidbg::BkEndDatabaseContents* BackendToDebugger::unsafe_arena_release_enddatabasecontents() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.osidbg.BackendToDebugger.endDatabaseContents)
+inline ::bg3se::osidbg::BkEndDatabaseContents* BackendToDebugger::unsafe_arena_release_enddatabasecontents() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.osidbg.BackendToDebugger.endDatabaseContents)
   if (has_enddatabasecontents()) {
     clear_has_msg();
-    ::dse::osidbg::BkEndDatabaseContents* temp = msg_.enddatabasecontents_;
+    ::bg3se::osidbg::BkEndDatabaseContents* temp = msg_.enddatabasecontents_;
     msg_.enddatabasecontents_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void BackendToDebugger::unsafe_arena_set_allocated_enddatabasecontents(::dse::osidbg::BkEndDatabaseContents* enddatabasecontents) {
+inline void BackendToDebugger::unsafe_arena_set_allocated_enddatabasecontents(::bg3se::osidbg::BkEndDatabaseContents* enddatabasecontents) {
   clear_msg();
   if (enddatabasecontents) {
     set_has_enddatabasecontents();
     msg_.enddatabasecontents_ = enddatabasecontents;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.osidbg.BackendToDebugger.endDatabaseContents)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.osidbg.BackendToDebugger.endDatabaseContents)
 }
-inline ::dse::osidbg::BkEndDatabaseContents* BackendToDebugger::mutable_enddatabasecontents() {
+inline ::bg3se::osidbg::BkEndDatabaseContents* BackendToDebugger::mutable_enddatabasecontents() {
   if (!has_enddatabasecontents()) {
     clear_msg();
     set_has_enddatabasecontents();
-    msg_.enddatabasecontents_ = CreateMaybeMessage< ::dse::osidbg::BkEndDatabaseContents >(
+    msg_.enddatabasecontents_ = CreateMaybeMessage< ::bg3se::osidbg::BkEndDatabaseContents >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.BackendToDebugger.endDatabaseContents)
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.BackendToDebugger.endDatabaseContents)
   return msg_.enddatabasecontents_;
 }
 
-// .dse.osidbg.BkEvaluateRow evaluateRow = 16;
+// .bg3se.osidbg.BkEvaluateRow evaluateRow = 16;
 inline bool BackendToDebugger::has_evaluaterow() const {
   return msg_case() == kEvaluateRow;
 }
@@ -8146,14 +8146,14 @@ inline void BackendToDebugger::clear_evaluaterow() {
     clear_has_msg();
   }
 }
-inline const ::dse::osidbg::BkEvaluateRow& BackendToDebugger::_internal_evaluaterow() const {
+inline const ::bg3se::osidbg::BkEvaluateRow& BackendToDebugger::_internal_evaluaterow() const {
   return *msg_.evaluaterow_;
 }
-inline ::dse::osidbg::BkEvaluateRow* BackendToDebugger::release_evaluaterow() {
-  // @@protoc_insertion_point(field_release:dse.osidbg.BackendToDebugger.evaluateRow)
+inline ::bg3se::osidbg::BkEvaluateRow* BackendToDebugger::release_evaluaterow() {
+  // @@protoc_insertion_point(field_release:bg3se.osidbg.BackendToDebugger.evaluateRow)
   if (has_evaluaterow()) {
     clear_has_msg();
-      ::dse::osidbg::BkEvaluateRow* temp = msg_.evaluaterow_;
+      ::bg3se::osidbg::BkEvaluateRow* temp = msg_.evaluaterow_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -8163,43 +8163,43 @@ inline ::dse::osidbg::BkEvaluateRow* BackendToDebugger::release_evaluaterow() {
     return NULL;
   }
 }
-inline const ::dse::osidbg::BkEvaluateRow& BackendToDebugger::evaluaterow() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BackendToDebugger.evaluateRow)
+inline const ::bg3se::osidbg::BkEvaluateRow& BackendToDebugger::evaluaterow() const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BackendToDebugger.evaluateRow)
   return has_evaluaterow()
       ? *msg_.evaluaterow_
-      : *reinterpret_cast< ::dse::osidbg::BkEvaluateRow*>(&::dse::osidbg::_BkEvaluateRow_default_instance_);
+      : *reinterpret_cast< ::bg3se::osidbg::BkEvaluateRow*>(&::bg3se::osidbg::_BkEvaluateRow_default_instance_);
 }
-inline ::dse::osidbg::BkEvaluateRow* BackendToDebugger::unsafe_arena_release_evaluaterow() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.osidbg.BackendToDebugger.evaluateRow)
+inline ::bg3se::osidbg::BkEvaluateRow* BackendToDebugger::unsafe_arena_release_evaluaterow() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.osidbg.BackendToDebugger.evaluateRow)
   if (has_evaluaterow()) {
     clear_has_msg();
-    ::dse::osidbg::BkEvaluateRow* temp = msg_.evaluaterow_;
+    ::bg3se::osidbg::BkEvaluateRow* temp = msg_.evaluaterow_;
     msg_.evaluaterow_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void BackendToDebugger::unsafe_arena_set_allocated_evaluaterow(::dse::osidbg::BkEvaluateRow* evaluaterow) {
+inline void BackendToDebugger::unsafe_arena_set_allocated_evaluaterow(::bg3se::osidbg::BkEvaluateRow* evaluaterow) {
   clear_msg();
   if (evaluaterow) {
     set_has_evaluaterow();
     msg_.evaluaterow_ = evaluaterow;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.osidbg.BackendToDebugger.evaluateRow)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.osidbg.BackendToDebugger.evaluateRow)
 }
-inline ::dse::osidbg::BkEvaluateRow* BackendToDebugger::mutable_evaluaterow() {
+inline ::bg3se::osidbg::BkEvaluateRow* BackendToDebugger::mutable_evaluaterow() {
   if (!has_evaluaterow()) {
     clear_msg();
     set_has_evaluaterow();
-    msg_.evaluaterow_ = CreateMaybeMessage< ::dse::osidbg::BkEvaluateRow >(
+    msg_.evaluaterow_ = CreateMaybeMessage< ::bg3se::osidbg::BkEvaluateRow >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.BackendToDebugger.evaluateRow)
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.BackendToDebugger.evaluateRow)
   return msg_.evaluaterow_;
 }
 
-// .dse.osidbg.BkEvaluateFinished evaluateFinished = 17;
+// .bg3se.osidbg.BkEvaluateFinished evaluateFinished = 17;
 inline bool BackendToDebugger::has_evaluatefinished() const {
   return msg_case() == kEvaluateFinished;
 }
@@ -8214,14 +8214,14 @@ inline void BackendToDebugger::clear_evaluatefinished() {
     clear_has_msg();
   }
 }
-inline const ::dse::osidbg::BkEvaluateFinished& BackendToDebugger::_internal_evaluatefinished() const {
+inline const ::bg3se::osidbg::BkEvaluateFinished& BackendToDebugger::_internal_evaluatefinished() const {
   return *msg_.evaluatefinished_;
 }
-inline ::dse::osidbg::BkEvaluateFinished* BackendToDebugger::release_evaluatefinished() {
-  // @@protoc_insertion_point(field_release:dse.osidbg.BackendToDebugger.evaluateFinished)
+inline ::bg3se::osidbg::BkEvaluateFinished* BackendToDebugger::release_evaluatefinished() {
+  // @@protoc_insertion_point(field_release:bg3se.osidbg.BackendToDebugger.evaluateFinished)
   if (has_evaluatefinished()) {
     clear_has_msg();
-      ::dse::osidbg::BkEvaluateFinished* temp = msg_.evaluatefinished_;
+      ::bg3se::osidbg::BkEvaluateFinished* temp = msg_.evaluatefinished_;
     if (GetArenaNoVirtual() != NULL) {
       temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
     }
@@ -8231,39 +8231,39 @@ inline ::dse::osidbg::BkEvaluateFinished* BackendToDebugger::release_evaluatefin
     return NULL;
   }
 }
-inline const ::dse::osidbg::BkEvaluateFinished& BackendToDebugger::evaluatefinished() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BackendToDebugger.evaluateFinished)
+inline const ::bg3se::osidbg::BkEvaluateFinished& BackendToDebugger::evaluatefinished() const {
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BackendToDebugger.evaluateFinished)
   return has_evaluatefinished()
       ? *msg_.evaluatefinished_
-      : *reinterpret_cast< ::dse::osidbg::BkEvaluateFinished*>(&::dse::osidbg::_BkEvaluateFinished_default_instance_);
+      : *reinterpret_cast< ::bg3se::osidbg::BkEvaluateFinished*>(&::bg3se::osidbg::_BkEvaluateFinished_default_instance_);
 }
-inline ::dse::osidbg::BkEvaluateFinished* BackendToDebugger::unsafe_arena_release_evaluatefinished() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:dse.osidbg.BackendToDebugger.evaluateFinished)
+inline ::bg3se::osidbg::BkEvaluateFinished* BackendToDebugger::unsafe_arena_release_evaluatefinished() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:bg3se.osidbg.BackendToDebugger.evaluateFinished)
   if (has_evaluatefinished()) {
     clear_has_msg();
-    ::dse::osidbg::BkEvaluateFinished* temp = msg_.evaluatefinished_;
+    ::bg3se::osidbg::BkEvaluateFinished* temp = msg_.evaluatefinished_;
     msg_.evaluatefinished_ = NULL;
     return temp;
   } else {
     return NULL;
   }
 }
-inline void BackendToDebugger::unsafe_arena_set_allocated_evaluatefinished(::dse::osidbg::BkEvaluateFinished* evaluatefinished) {
+inline void BackendToDebugger::unsafe_arena_set_allocated_evaluatefinished(::bg3se::osidbg::BkEvaluateFinished* evaluatefinished) {
   clear_msg();
   if (evaluatefinished) {
     set_has_evaluatefinished();
     msg_.evaluatefinished_ = evaluatefinished;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:dse.osidbg.BackendToDebugger.evaluateFinished)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:bg3se.osidbg.BackendToDebugger.evaluateFinished)
 }
-inline ::dse::osidbg::BkEvaluateFinished* BackendToDebugger::mutable_evaluatefinished() {
+inline ::bg3se::osidbg::BkEvaluateFinished* BackendToDebugger::mutable_evaluatefinished() {
   if (!has_evaluatefinished()) {
     clear_msg();
     set_has_evaluatefinished();
-    msg_.evaluatefinished_ = CreateMaybeMessage< ::dse::osidbg::BkEvaluateFinished >(
+    msg_.evaluatefinished_ = CreateMaybeMessage< ::bg3se::osidbg::BkEvaluateFinished >(
         GetArenaNoVirtual());
   }
-  // @@protoc_insertion_point(field_mutable:dse.osidbg.BackendToDebugger.evaluateFinished)
+  // @@protoc_insertion_point(field_mutable:bg3se.osidbg.BackendToDebugger.evaluateFinished)
   return msg_.evaluatefinished_;
 }
 
@@ -8272,13 +8272,13 @@ inline void BackendToDebugger::clear_seq_no() {
   seq_no_ = 0u;
 }
 inline ::google::protobuf::uint32 BackendToDebugger::seq_no() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BackendToDebugger.seq_no)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BackendToDebugger.seq_no)
   return seq_no_;
 }
 inline void BackendToDebugger::set_seq_no(::google::protobuf::uint32 value) {
   
   seq_no_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.BackendToDebugger.seq_no)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.BackendToDebugger.seq_no)
 }
 
 // uint32 reply_seq_no = 9;
@@ -8286,13 +8286,13 @@ inline void BackendToDebugger::clear_reply_seq_no() {
   reply_seq_no_ = 0u;
 }
 inline ::google::protobuf::uint32 BackendToDebugger::reply_seq_no() const {
-  // @@protoc_insertion_point(field_get:dse.osidbg.BackendToDebugger.reply_seq_no)
+  // @@protoc_insertion_point(field_get:bg3se.osidbg.BackendToDebugger.reply_seq_no)
   return reply_seq_no_;
 }
 inline void BackendToDebugger::set_reply_seq_no(::google::protobuf::uint32 value) {
   
   reply_seq_no_ = value;
-  // @@protoc_insertion_point(field_set:dse.osidbg.BackendToDebugger.reply_seq_no)
+  // @@protoc_insertion_point(field_set:bg3se.osidbg.BackendToDebugger.reply_seq_no)
 }
 
 inline bool BackendToDebugger::has_msg() const {
@@ -8373,20 +8373,20 @@ inline BackendToDebugger::MsgCase BackendToDebugger::msg_case() const {
 // @@protoc_insertion_point(namespace_scope)
 
 }  // namespace osidbg
-}  // namespace dse
+}  // namespace bg3se
 
 namespace google {
 namespace protobuf {
 
-template <> struct is_proto_enum< ::dse::osidbg::MsgFrame_FrameType> : ::std::true_type {};
-template <> struct is_proto_enum< ::dse::osidbg::DbgSetGlobalBreakpoints_GlobalBreakpointType> : ::std::true_type {};
-template <> struct is_proto_enum< ::dse::osidbg::MsgBreakpoint_BreakpointType> : ::std::true_type {};
-template <> struct is_proto_enum< ::dse::osidbg::BkBreakpointTriggered_QueryStatus> : ::std::true_type {};
-template <> struct is_proto_enum< ::dse::osidbg::BkGlobalBreakpointTriggered_Reason> : ::std::true_type {};
-template <> struct is_proto_enum< ::dse::osidbg::DbgContinue_Action> : ::std::true_type {};
-template <> struct is_proto_enum< ::dse::osidbg::DbgContinue_Flags> : ::std::true_type {};
-template <> struct is_proto_enum< ::dse::osidbg::DbgEvaluate_EvalType> : ::std::true_type {};
-template <> struct is_proto_enum< ::dse::osidbg::StatusCode> : ::std::true_type {};
+template <> struct is_proto_enum< ::bg3se::osidbg::MsgFrame_FrameType> : ::std::true_type {};
+template <> struct is_proto_enum< ::bg3se::osidbg::DbgSetGlobalBreakpoints_GlobalBreakpointType> : ::std::true_type {};
+template <> struct is_proto_enum< ::bg3se::osidbg::MsgBreakpoint_BreakpointType> : ::std::true_type {};
+template <> struct is_proto_enum< ::bg3se::osidbg::BkBreakpointTriggered_QueryStatus> : ::std::true_type {};
+template <> struct is_proto_enum< ::bg3se::osidbg::BkGlobalBreakpointTriggered_Reason> : ::std::true_type {};
+template <> struct is_proto_enum< ::bg3se::osidbg::DbgContinue_Action> : ::std::true_type {};
+template <> struct is_proto_enum< ::bg3se::osidbg::DbgContinue_Flags> : ::std::true_type {};
+template <> struct is_proto_enum< ::bg3se::osidbg::DbgEvaluate_EvalType> : ::std::true_type {};
+template <> struct is_proto_enum< ::bg3se::osidbg::StatusCode> : ::std::true_type {};
 
 }  // namespace protobuf
 }  // namespace google

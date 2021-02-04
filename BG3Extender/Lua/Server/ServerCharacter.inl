@@ -1,7 +1,7 @@
 #include <GameDefinitions/Character.h>
 #include <Lua/LuaBinding.h>
 
-namespace dse::lua
+namespace bg3se::lua
 {
 	char const* const ObjectProxy<esv::PlayerCustomData>::MetatableName = "esv::PlayerCustomData";
 
@@ -335,9 +335,9 @@ namespace dse::lua
 }
 
 
-namespace dse::esv::lua
+namespace bg3se::esv::lua
 {
-	using namespace dse::lua;
+	using namespace bg3se::lua;
 
 	esv::Character* GetCharacter(lua_State* L, int index)
 	{

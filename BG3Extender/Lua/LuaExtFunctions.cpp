@@ -8,7 +8,7 @@
 #include <fstream>
 #include <json/json.h>
 
-namespace dse::lua
+namespace bg3se::lua
 {
 	void JsonParse(lua_State * L, Json::Value & val);
 

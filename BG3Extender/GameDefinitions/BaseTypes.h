@@ -23,7 +23,7 @@ struct UUID
 	}
 };
 
-namespace dse
+namespace bg3se
 {
 	template <>
 	inline uint64_t Hash<UUID>(UUID const& h)
@@ -294,9 +294,9 @@ namespace dse
 
 namespace std
 {
-	template<> struct hash<dse::ObjectHandle>
+	template<> struct hash<bg3se::ObjectHandle>
 	{
-		typedef dse::ObjectHandle argument_type;
+		typedef bg3se::ObjectHandle argument_type;
 		typedef std::size_t result_type;
 
 		result_type operator()(argument_type const& fn) const noexcept
@@ -305,9 +305,9 @@ namespace std
 		}
 	};
 
-	/*template<> struct hash<dse::UserId>
+	/*template<> struct hash<bg3se::UserId>
 	{
-		typedef dse::UserId argument_type;
+		typedef bg3se::UserId argument_type;
 		typedef std::size_t result_type;
 
 		result_type operator()(argument_type const& fn) const noexcept
@@ -316,7 +316,7 @@ namespace std
 		}
 	};*/
 
-	inline ostream& operator << (ostream& out, dse::ObjectHandle const& h)
+	inline ostream& operator << (ostream& out, bg3se::ObjectHandle const& h)
 	{
 		if (h) {
 			out << "(Handle 0x" << std::hex << h.Handle << std::dec << ")";

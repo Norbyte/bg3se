@@ -10,7 +10,7 @@
 #include <glm/vec3.hpp>
 #include <GameDefinitions/BaseTypes.h>
 
-namespace dse
+namespace bg3se
 {
 
 enum class ValueType : uint32_t

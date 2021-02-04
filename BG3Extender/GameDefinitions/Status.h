@@ -6,7 +6,7 @@
 #include <GameDefinitions/Misc.h>
 #include <GameDefinitions/Hit.h>
 
-namespace dse
+namespace bg3se
 {
 	namespace esv
 	{

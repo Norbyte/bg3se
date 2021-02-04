@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <functional>
 
-namespace dse
+namespace bg3se
 {
 	struct NodeWrapOptions
 	{

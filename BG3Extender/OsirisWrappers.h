@@ -5,7 +5,7 @@
 #include <detours.h>
 #include <thread>
 
-namespace dse {
+namespace bg3se {
 
 uint8_t * ResolveRealFunctionAddress(uint8_t * Address);
 

@@ -11,7 +11,7 @@
 #include <google/protobuf/io/zero_copy_stream_impl_lite.h>
 #include <WS2tcpip.h>
 
-namespace dse
+namespace bg3se
 {
 	SocketInterface::SocketInterface(uint16_t port)
 		: port_(port)

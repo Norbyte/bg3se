@@ -6,15 +6,15 @@
 #include <GameDefinitions/BaseUtilities.h>
 #include <GameDefinitions/BaseMemory.h>
 
-namespace dse
+namespace bg3se
 {
 	using STDString = std::basic_string<char, std::char_traits<char>, GameAllocator<char>>;
 	using STDWString = std::basic_string<wchar_t, std::char_traits<wchar_t>, GameAllocator<wchar_t>>;
 	using StringView = std::string_view;
 	using WStringView = std::wstring_view;
 
-	dse::STDString ToUTF8(WStringView s);
-	dse::STDWString FromUTF8(StringView s);
+	bg3se::STDString ToUTF8(WStringView s);
+	bg3se::STDWString FromUTF8(StringView s);
 
 	struct FixedString
 	{
@@ -164,9 +164,9 @@ namespace dse
 
 namespace std
 {
-	template<> struct hash<dse::FixedString>
+	template<> struct hash<bg3se::FixedString>
 	{
-		typedef dse::FixedString argument_type;
+		typedef bg3se::FixedString argument_type;
 		typedef std::size_t result_type;
 
 		result_type operator()(argument_type const& fn) const noexcept
@@ -175,7 +175,7 @@ namespace std
 		}
 	};
 
-	inline ostream& operator << (ostream& out, dse::FixedString const& str)
+	inline ostream& operator << (ostream& out, bg3se::FixedString const& str)
 	{
 		if (str) {
 			out << str.GetString();

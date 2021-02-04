@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <GameDefinitions/Osiris.h>
 
-namespace dse
+namespace bg3se
 {
 	struct OsirisGlobals;
 

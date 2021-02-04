@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-namespace dse
+namespace bg3se
 {
 
 	// Base class for game objects that cannot be copied.

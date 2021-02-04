@@ -7,7 +7,7 @@
 #include <GameDefinitions/Stats/Item.h>
 #include <GameDefinitions/Stats/Functors.h>
 
-namespace dse
+namespace bg3se
 {
 	struct IGameObject;
 	struct SpellPrototype;

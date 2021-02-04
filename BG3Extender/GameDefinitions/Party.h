@@ -6,7 +6,7 @@
 #include <GameDefinitions/EntitySystem.h>
 #include <GameDefinitions/Stats/Functors.h>
 
-namespace dse::esv
+namespace bg3se::esv
 {
 	struct Character;
 

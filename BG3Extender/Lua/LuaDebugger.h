@@ -11,22 +11,22 @@
 
 struct lua_Debug;
 
-namespace dse
+namespace bg3se
 {
 	class ExtensionStateBase;
 }
 
-namespace dse::esv::lua
+namespace bg3se::esv::lua
 {
 	class ServerState;
 }
 
-namespace dse::ecl::lua
+namespace bg3se::ecl::lua
 {
 	class ClientState;
 }
 
-namespace dse::lua::dbg
+namespace bg3se::lua::dbg
 {
 	struct DebuggerEvaluateRequest
 	{

@@ -6,7 +6,7 @@
 #include <GameDefinitions/Status.h>
 #include <PropertyMaps.h>
 
-namespace dse
+namespace bg3se
 {
 
 #define BEGIN_PROPERTIES(map, cls) auto& propertyMap = map; \

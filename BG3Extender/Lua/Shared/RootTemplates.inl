@@ -1,7 +1,7 @@
 #include <GameDefinitions/Stats/Stats.h>
 #include <Lua/LuaSerializers.h>
 
-namespace dse::lua
+namespace bg3se::lua
 {
 	/*char const* const ObjectProxy<CombatComponentTemplate>::MetatableName = "eoc::CombatComponentTemplate";
 

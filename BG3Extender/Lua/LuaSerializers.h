@@ -3,7 +3,7 @@
 #include <Lua/LuaBinding.h>
 #include <GameDefinitions/RootTemplates.h>
 
-namespace dse::lua
+namespace bg3se::lua
 {
 	class LuaSerializer : Noncopyable<LuaSerializer>
 	{

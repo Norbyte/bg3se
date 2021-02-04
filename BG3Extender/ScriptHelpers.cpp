@@ -3,7 +3,7 @@
 #include "OsirisProxy.h"
 #include <fstream>
 
-namespace dse::script {
+namespace bg3se::script {
 
 #define SAFE_PATH_CHARS "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_./"
 

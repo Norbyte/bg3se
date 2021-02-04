@@ -1,11 +1,11 @@
 #pragma once
 
 #include "ExtensionState.h"
-#include <Lua/LuaBindingClient.h>
+#include <Lua/Client/LuaBindingClient.h>
 
 namespace Json { class Value; }
 
-namespace dse::ecl
+namespace bg3se::ecl
 {
 	class ExtensionState;
 	using LuaClientPin = LuaStatePin<ExtensionState, lua::ClientState>;

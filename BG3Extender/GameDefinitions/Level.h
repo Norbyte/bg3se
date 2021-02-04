@@ -2,7 +2,7 @@
 
 #include "BaseTypes.h"
 
-namespace dse
+namespace bg3se
 {
 	struct EntityManager;
 
@@ -104,7 +104,7 @@ namespace dse
 			Map<FixedString, Level*> Levels;
 		};
 
-		struct LevelManager : public dse::LevelManager
+		struct LevelManager : public bg3se::LevelManager
 		{
 			__int64 field_108;
 			void* VMT2;

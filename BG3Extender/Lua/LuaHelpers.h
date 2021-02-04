@@ -8,7 +8,7 @@
 
 #include <GameDefinitions/BaseTypes.h>
 
-namespace dse::lua
+namespace bg3se::lua
 {
 #if !defined(NDEBUG)
 	// Ensures that the size of the Lua stack matches the expected value.

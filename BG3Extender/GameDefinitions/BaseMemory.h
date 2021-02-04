@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <atomic>
 
-namespace dse
+namespace bg3se
 {
 	typedef void* (*EoCAllocFunc)(std::size_t size, int unused, int unused2, uint64_t align);
 	typedef void (*EoCFreeFunc)(void* ptr, int unused1, int unused2);

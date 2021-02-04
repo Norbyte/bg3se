@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by OsiInterface.rc
+// Used by BG3Extender.rc
 //
 #define RES_DLL_MAJOR_VERSION           1
 #define RES_DLL_VERSION_STRING          "1.0.0.0"

@@ -1,6 +1,6 @@
 #include <Lua/LuaBinding.h>
 
-namespace dse::lua
+namespace bg3se::lua
 {
 	int BroadcastMessage(lua_State * L)
 	{

@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-namespace dse
+namespace bg3se
 {
 	template <class T>
 	struct BitmaskInfoBase

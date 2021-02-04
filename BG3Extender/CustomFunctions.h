@@ -9,7 +9,7 @@
 #include "Utils.h"
 #include "GameDefinitions/Osiris.h"
 
-namespace dse
+namespace bg3se
 {
 	enum EoCFunctionType
 	{
@@ -72,21 +72,21 @@ namespace dse
 
 namespace std
 {
-	template<> struct hash<dse::FunctionNameAndArity>
+	template<> struct hash<bg3se::FunctionNameAndArity>
 	{
-		typedef dse::FunctionNameAndArity argument_type;
+		typedef bg3se::FunctionNameAndArity argument_type;
 		typedef std::size_t result_type;
 		result_type operator()(argument_type const& fn) const noexcept
 		{
-			result_type const h1(std::hash<dse::STDString>{}(fn.Name));
+			result_type const h1(std::hash<bg3se::STDString>{}(fn.Name));
 			result_type const h2(std::hash<uint32_t>{}(fn.Arity));
 			return h1 ^ (h2 << 1);
 		}
 	};
 
-	template<> struct hash<dse::FunctionHandle>
+	template<> struct hash<bg3se::FunctionHandle>
 	{
-		typedef dse::FunctionHandle argument_type;
+		typedef bg3se::FunctionHandle argument_type;
 		typedef std::size_t result_type;
 		result_type operator()(argument_type const& fn) const noexcept
 		{
@@ -95,7 +95,7 @@ namespace std
 	};
 }
 
-namespace dse
+namespace bg3se
 {
 	struct CustomFunctionParam
 	{

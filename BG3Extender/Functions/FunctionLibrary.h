@@ -7,13 +7,13 @@
 #include <GameDefinitions/Item.h>
 #include <GameDefinitions/Misc.h>
 
-namespace dse
+namespace bg3se
 {
 	class OsirisProxy;
 	struct UIObjectManager;
 }
 
-namespace dse::esv
+namespace bg3se::esv
 {
 	class CustomFunctionLibrary
 	{

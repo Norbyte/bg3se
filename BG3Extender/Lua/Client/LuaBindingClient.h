@@ -2,9 +2,9 @@
 
 #include <Lua/LuaBinding.h>
 
-namespace dse::ecl::lua
+namespace bg3se::ecl::lua
 {
-	using namespace dse::lua;
+	using namespace bg3se::lua;
 
 	class ExtensionLibraryClient : public ExtensionLibrary
 	{

@@ -8,7 +8,7 @@
 #include <psapi.h>
 #include <DbgHelp.h>
 
-namespace dse
+namespace bg3se
 {
 	void InitPropertyMaps();
 
@@ -356,12 +356,7 @@ namespace dse
 		gameRevision_ = gameRevision;
 		//memset(&GetStaticSymbols().CharStatsGetters, 0, sizeof(GetStaticSymbols().CharStatsGetters));
 
-#if defined(OSI_EOCAPP)
-		if (FindEoCApp(moduleStart_, moduleSize_)) {
-#else
-		if (FindEoCPlugin(moduleStart_, moduleSize_)) {
-#endif
-
+		if (FindBG3(moduleStart_, moduleSize_)) {
 			FindTextSegment();
 			MapAllSymbols(false);
 
@@ -377,24 +372,13 @@ namespace dse
 				CriticalInitFailed = true;
 			}
 
-#if defined(OSI_EOCAPP)
-			FindServerGlobalsEoCApp();
-			FindEoCGlobalsEoCApp();
-			FindGlobalStringTableEoCApp();
-#else
-			FindExportsEoCPlugin();
-			FindServerGlobalsEoCPlugin();
-			FindEoCGlobalsEoCPlugin();
-			FindGlobalStringTableCoreLib();
-#endif
+			FindServerGlobalsBG3();
+			FindEoCGlobalsBG3();
+			FindGlobalStringTableBG3();
 
 			return !CriticalInitFailed;
 		} else {
-#if defined(OSI_EOCAPP)
-			ERR("LibraryManager::FindLibraries(): Unable to locate EoCApp module.");
-#else
-			ERR("LibraryManager::FindLibraries(): Unable to locate EoCPlugin module.");
-#endif
+			ERR("LibraryManager::FindLibraries(): Unable to locate BG3 module.");
 			return false;
 		}
 	}
@@ -439,14 +423,6 @@ namespace dse
 			//sym.CharStatsGetters.WrapAll();
 
 			DetourTransactionCommit();
-			/*
-			// Temporary workaround for crash when GetMaxMP is wrapped
-			DetourTransactionBegin();
-			DetourUpdateThread(GetCurrentThread());
-			if (sym.CharStatsGetters.GetMaxMp != nullptr) {
-				sym.CharStatsGetters.WrapperMaxMp.Unwrap();
-			}
-			DetourTransactionCommit();*/
 		}
 
 		auto initEnd = std::chrono::high_resolution_clock::now();
@@ -509,8 +485,8 @@ namespace dse
 	{
 		ERR(L"STARTUP ERROR: %s", msg.c_str());
 
-		/*if (GetStaticSymbols().EoCClient == nullptr
-			|| GetStaticSymbols().EoCClientHandleError == nullptr
+		if (GetStaticSymbols().ecl__EoCClient == nullptr
+			|| GetStaticSymbols().ecl__EoCClient__HandleError == nullptr
 			|| GetStaticSymbols().EoCAlloc == nullptr) {
 			return;
 		}
@@ -537,14 +513,14 @@ namespace dse
 			} else {
 				ShowStartupMessage(msg, exitGame);
 			}
-		}*/
+		}
 	}
 
 	void LibraryManager::ShowStartupError(STDWString const & msg, bool exitGame)
 	{
 		if (!CanShowMessages()) return;
 
-		//GetStaticSymbols().EoCClientHandleError(*GetStaticSymbols().EoCClient, &msg, exitGame, &msg);
+		GetStaticSymbols().ecl__EoCClient__HandleError(*GetStaticSymbols().ecl__EoCClient, &msg, exitGame, &msg);
 	}
 
 	void LibraryManager::ShowStartupMessage(STDWString const & msg, bool exitGame)
@@ -557,19 +533,14 @@ namespace dse
 
 	bool LibraryManager::CanShowMessages()
 	{
-		return true;
-		// FIXME
-		/*
 		return GetStaticSymbols().GetClientState()
-			&& GetStaticSymbols().EoCClientHandleError != nullptr
-			&& GetStaticSymbols().EoCAlloc != nullptr;*/
+			&& GetStaticSymbols().ecl__EoCClient__HandleError != nullptr
+			&& GetStaticSymbols().EoCAlloc != nullptr;
 	}
 
 	bool LibraryManager::CanShowError()
 	{
 		return true;
-		// FIXME
-		/*
 		if (!CanShowMessages()) return false;
 
 		auto state = GetStaticSymbols().GetClientState();
@@ -577,97 +548,6 @@ namespace dse
 			|| state == ecl::GameState::Paused
 			|| state == ecl::GameState::GameMasterPause
 			|| state == ecl::GameState::Menu
-			|| state == ecl::GameState::Lobby;*/
-	}
-
-	void LibraryManager::EnableCustomStats()
-	{
-		/*if (GetStaticSymbols().UICharacterSheetHook == nullptr
-			|| GetStaticSymbols().ActivateClientSystemsHook == nullptr
-			|| GetStaticSymbols().ActivateServerSystemsHook == nullptr
-			|| GetStaticSymbols().CustomStatUIRollHook == nullptr) {
-			ERR("LibraryManager::EnableCustomStats(): Hooks not available");
-			return;
-		}
-
-		if (gOsirisProxy->HasFeatureFlag("CustomStats") && !EnabledCustomStats) {
-			{
-				uint8_t const replacement[] = { 0x90, 0x90 };
-				WriteAnchor code(GetStaticSymbols().ActivateClientSystemsHook, sizeof(replacement));
-				memcpy(code.ptr(), replacement, sizeof(replacement));
-			}
-
-			{
-				uint8_t const replacement[] = { 0x90, 0x90 };
-				WriteAnchor code(GetStaticSymbols().ActivateServerSystemsHook, sizeof(replacement));
-				memcpy(code.ptr(), replacement, sizeof(replacement));
-			}
-
-			{
-				uint8_t const replacement[] = { 0xC3 };
-				WriteAnchor code(GetStaticSymbols().CustomStatUIRollHook, sizeof(replacement));
-				memcpy(code.ptr(), replacement, sizeof(replacement));
-			}
-
-			EnabledCustomStats = true;
-		}
-
-		if (gOsirisProxy->HasFeatureFlag("CustomStats")
-			&& gOsirisProxy->HasFeatureFlag("CustomStatsPane")
-			&& !EnabledCustomStatsPane) {
-			uint8_t const replacement[] = {
-#if defined(OSI_EOCAPP)
-				0xc6, 0x45, 0xf8, 0x01
-#else
-				0xB2, 0x01, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90
-#endif
-			};
-
-			WriteAnchor code(GetStaticSymbols().UICharacterSheetHook, sizeof(replacement));
-			memcpy(code.ptr(), replacement, sizeof(replacement));
-			EnabledCustomStatsPane = true;
-		}*/
-	}
-
-	void LibraryManager::DisableItemFolding()
-	{
-		/*if (gOsirisProxy->HasFeatureFlag("DisableFolding")) {
-#if defined(OSI_EOCAPP)
-			if (GetStaticSymbols().ItemFoldDynamicAttributes != nullptr) {
-				auto p = reinterpret_cast<uint8_t *>(GetStaticSymbols().ItemFoldDynamicAttributes);
-				WriteAnchor code(p, 0x40);
-				p[0x26] = 0x90;
-				p[0x27] = 0xE9;
-				DEBUG("Dynamic item stat folding disabled.");
-			} else {
-				ERR("Could not disable item stat folding; symbol CDivinityStats_Item::FoldDynamicAttributes not mapped!");
-			}
-#else
-			DEBUG("Folding is already disabled in the editor; not patching CDivinityStats_Item::FoldDynamicAttributes");
-#endif
-		}
-
-#if defined(OSI_EOCAPP)
-		if (gOsirisProxy->GetConfig().EnableAchievements) {
-			if (GetStaticSymbols().ModuleSettingsHasCustomMods != nullptr) {
-				auto p = reinterpret_cast<uint8_t *>(GetStaticSymbols().ModuleSettingsHasCustomMods);
-				WriteAnchor code(p, 0x40);
-				p[0x0E] = 0x90;
-				p[0x0F] = 0xE9;
-
-				if (GetStaticSymbols().ModuleSettingsHasCustomModsGB5 != nullptr) {
-					auto p = reinterpret_cast<uint8_t*>(GetStaticSymbols().ModuleSettingsHasCustomModsGB5);
-					WriteAnchor code(p, 0x40);
-					p[0x32] = 0x90;
-					p[0x33] = 0xE9;
-				}
-
-				DEBUG("Modded achievements enabled.");
-			} else {
-				ERR("Could not enable achievements; symbol ls::ModuleSettings::HasCustomMods not mapped!");
-			}
-		}
-#endif
-*/
+			|| state == ecl::GameState::Lobby;
 	}
 }

@@ -6,7 +6,7 @@
 #include <psapi.h>
 
 #if defined(OSI_EOCAPP)
-namespace dse
+namespace bg3se
 {
 	/*SymbolMappingData const sSymbolLevelManager = {
 		"esv::LevelManager2",
@@ -672,21 +672,24 @@ namespace dse
 			{},
 			{"esv::CustomStatsProtocol::ProcessMsg", SymbolMappingTarget::kAbsolute, 0, STATIC_SYM(EsvCustomStatsProtocolProcessMsg)},
 		},
+		*/
 
 		{
 			"ErrorFuncs",
 			SymbolMappingData::kText, 0,
-			"48 8B 0D XX XX XX XX " // mov     rcx, cs:ecl__gEocClient
-			"4C 8D 8D 08 04 00 00 " // lea     r9, [rbp+8F8h+var_4F0]
+			"E8 ?? ?? ?? ??  " // call    ls__TranslatedString__GetTranslatedString
+			"4C 8D 4C 24 38 " // lea     r9, [rsp+68h+a1]
 			"41 B0 01 " // mov     r8b, 1
-			"48 8D 95 E8 03 00 00 " // lea     rdx, [rbp+8F8h+var_510]
+			"48 8B D0 " // mov     rdx, rax
+			"48 8B CF " // mov     rcx, rdi
 			"E8 XX XX XX XX " // call    ecl__EocClient__HandleError
-			"48 8D 8D E8 03 00 00 ", // lea     rdx, [rbp+8F8h+var_510]
+			"90 " // nop
+			"48 8D 4C 24 28 ", // lea     rcx, [rsp+68h+var_40]
 			{},
-			{"ecl::EoCClient", SymbolMappingTarget::kIndirect, 0, STATIC_SYM(EoCClient)},
-			{"ecl::EoCClient::HandleError", SymbolMappingTarget::kIndirect, 24, STATIC_SYM(EoCClientHandleError)}
+			{"ecl::EoCClient::HandleError", SymbolMappingTarget::kIndirect, 19, STATIC_SYM(ecl__EoCClient__HandleError)}
 		},
 
+		/*
 		{
 			"eoc::SkillPrototypeManager::Init",
 			SymbolMappingData::kText, 0,
@@ -1443,9 +1446,9 @@ namespace dse
 		}
 	};
 
-	bool LibraryManager::FindEoCApp(uint8_t const * & start, size_t & size)
+	bool LibraryManager::FindBG3(uint8_t const * & start, size_t & size)
 	{
-		HMODULE hEoCApp = GetModuleHandleW(L"BG3.exe");
+		HMODULE hEoCApp = GetModuleHandleW(L"bg3.exe");
 		if (hEoCApp == NULL) {
 			hEoCApp = GetModuleHandleW(L"bg3_dx11.exe");
 		}
@@ -1456,7 +1459,7 @@ namespace dse
 
 		MODULEINFO moduleInfo;
 		if (!GetModuleInformation(GetCurrentProcess(), hEoCApp, &moduleInfo, sizeof(moduleInfo))) {
-			Fail(L"Could not get module info of BG3.exe");
+			Fail(L"Could not get module info of bg3.exe/bg3_dx11.exe");
 		}
 
 		start = (uint8_t const *)moduleInfo.lpBaseOfDll;
@@ -1474,7 +1477,7 @@ namespace dse
 		}
 	}
 
-	void LibraryManager::FindServerGlobalsEoCApp()
+	void LibraryManager::FindServerGlobalsBG3()
 	{
 		/*StaticSymbols::EoCLibraryInfo const * serverLib{ nullptr };
 		auto & sym = GetStaticSymbols();
@@ -1486,7 +1489,7 @@ namespace dse
 		}
 
 		if (serverLib == nullptr) {
-			Fail("LibraryManager::FindServerGlobalsEoCApp(): Could not find esv library!");
+			Fail("LibraryManager::FindServerGlobalsBG3(): Could not find esv library!");
 			return;
 		}
 
@@ -1541,7 +1544,7 @@ namespace dse
 		}*/
 	}
 
-	void LibraryManager::FindEoCGlobalsEoCApp()
+	void LibraryManager::FindEoCGlobalsBG3()
 	{
 		/*static uint8_t const libInitSig[] = {
 			0x48, 0x89, 0x18,       // mov     [rax], rbx
@@ -1572,7 +1575,7 @@ namespace dse
 		}
 
 		if (globalsInitCode == nullptr) {
-			Fail("LibraryManager::FindEoCGlobalsEoCApp(): Could not find eoc library init function!");
+			Fail("LibraryManager::FindEoCGlobalsBG3(): Could not find eoc library init function!");
 			return;
 		}
 
@@ -1645,7 +1648,7 @@ namespace dse
 		}
 	}
 
-	void LibraryManager::FindGlobalStringTableEoCApp()
+	void LibraryManager::FindGlobalStringTableBG3()
 	{
 		/*static uint8_t const sig1[] = {
 			0xB9, 0x88, 0xFA, 0x5F, 0x00, // mov ecx, 5FFA88h
@@ -1679,7 +1682,7 @@ namespace dse
 		}
 
 		if (GetStaticSymbols().GlobalStrings == nullptr) {
-			ERR("LibraryManager::FindGlobalStringTableEoCApp(): Could not find global string table");
+			ERR("LibraryManager::FindGlobalStringTableBG3(): Could not find global string table");
 			CriticalInitFailed = true;
 		}*/
 	}

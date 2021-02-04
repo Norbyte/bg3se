@@ -5,7 +5,7 @@
 #include <GameDefinitions/Module.h>
 #include <GlobalFixedStrings.h>
 
-namespace dse
+namespace bg3se
 {
 	struct EntityWorld;
 
@@ -510,6 +510,8 @@ namespace dse
 
 		struct EoCClient
 		{
+			using HandleErrorProc = void (void* self, STDWString const* message, bool exitGame, STDWString const* a4);
+
 			__int64 field_0;
 			__int64 GameEventManagerVMT;
 			__int64 field_10;

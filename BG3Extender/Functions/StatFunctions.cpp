@@ -2,7 +2,7 @@
 #include "FunctionLibrary.h"
 #include <OsirisProxy.h>
 
-namespace dse::esv
+namespace bg3se::esv
 {
 	namespace func
 	{

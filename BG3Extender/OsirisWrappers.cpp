@@ -9,7 +9,7 @@
 #include <ctime>
 #include <psapi.h>
 
-namespace dse
+namespace bg3se
 {
 
 #define STATIC_HOOK(name) decltype(OsirisWrappers::name) * decltype(OsirisWrappers::name)::gHook;

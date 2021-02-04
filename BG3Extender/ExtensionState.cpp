@@ -5,16 +5,12 @@
 #include <fstream>
 #include "json/json.h"
 
-namespace dse
+namespace bg3se
 {
 	std::unordered_set<std::string_view> ExtensionStateBase::sAllFeatureFlags = {
 		"OsirisExtensions",
 		"Lua",
-		"CustomStats",
-		"CustomStatsPane",
-		"FormulaOverrides",
-		"Preprocessor",
-		"DisableFolding"
+		"Preprocessor"
 	};
 
 	void ExtensionStateBase::Reset()
@@ -34,7 +30,7 @@ namespace dse
 		unsigned numConfigs{ 0 };
 		for (auto const& mod : modManager->BaseModule.LoadOrderedModules) {
 			auto dir = ToUTF8(mod.Info.Directory);
-			auto configFile = "Mods/" + dir + "/OsiToolsConfig.json";
+			auto configFile = "Mods/" + dir + "/ScriptExtenderConfig.json";
 			FileReaderPin reader(configFile, PathRootType::Data);
 
 			if (reader.IsLoaded()) {
@@ -50,22 +46,16 @@ namespace dse
 
 					if (config.MinimumVersion == 0) {
 						OsiError("Module '" << ToUTF8(mod.Info.Name.c_str()) << ":");
-						OsiError("Specifying RequiredExtensionVersion in OsiToolsConfig.json is now mandatory for backwards compatibility reasons.");
-						OsiError("Mods without a RequiredExtensionVersion may stop working in v44!");
-					}
-
-					if (config.MinimumVersion != 0 && config.MinimumVersion < 42) {
-						OsiError("Module '" << ToUTF8(mod.Info.Name.c_str()) << "' uses extender version v" << config.MinimumVersion << ", which uses the old unified client/server model.");
-						OsiError("The client and server components were split in v42 to improve support for client-side features.");
-						OsiError("Please migrate to v42+!");
+						OsiError("Specifying RequiredExtenderVersion in ScriptExtenderConfig.json is mandatory.");
+						continue;
 					}
 
 					if (config.MinimumVersion >= 43
 						&& config.FeatureFlags.find("Lua") != config.FeatureFlags.end()
 						&& config.ModTable.empty()) {
 						OsiError("Module '" << ToUTF8(mod.Info.Name.c_str()) << ":");
-						OsiError("Modules using Lua must specify a ModTable in OsiToolsConfig.json when targeting v43 or later.");
-						config.ModTable = mod.Info.ModuleUUIDString.GetString();
+						OsiError("Modules using Lua must specify a ModTable in ScriptExtenderConfig.json.");
+						continue;
 					}
 
 					if (config.MinimumVersion > CurrentVersion) {
@@ -166,45 +156,7 @@ namespace dse
 
 	bool ExtensionStateBase::LoadConfig(Module const & mod, Json::Value & json, ExtensionModConfig & config)
 	{
-		bool hasLegacyFeatureFlags = false;
-
-		auto extendOsiris = GetConfigBool(json, "ExtendOsiris");
-		if (extendOsiris && *extendOsiris) {
-			config.FeatureFlags.insert("OsirisExtensions");
-			hasLegacyFeatureFlags = true;
-		}
-
-		auto lua = GetConfigBool(json, "Lua");
-		if (lua && *lua) {
-			config.FeatureFlags.insert("Lua");
-			hasLegacyFeatureFlags = true;
-		}
-
-		auto customStats = GetConfigBool(json, "UseCustomStats");
-		if (customStats && *customStats) {
-			config.FeatureFlags.insert("CustomStats");
-			hasLegacyFeatureFlags = true;
-		}
-
-		auto customStatsPane = GetConfigBool(json, "UseCustomStatsPane");
-		if (customStatsPane && *customStatsPane) {
-			config.FeatureFlags.insert("CustomStatsPane");
-			hasLegacyFeatureFlags = true;
-		}
-
-		auto formulaOverrides = GetConfigBool(json, "FormulaOverrides");
-		if (formulaOverrides && *formulaOverrides) {
-			config.FeatureFlags.insert("FormulaOverrides");
-			hasLegacyFeatureFlags = true;
-		}
-
-		auto preprocessStory = GetConfigBool(json, "PreprocessStory");
-		if (preprocessStory && *preprocessStory) {
-			config.FeatureFlags.insert("Preprocessor");
-			hasLegacyFeatureFlags = true;
-		}
-
-		auto version = GetConfigInt(json, "RequiredExtensionVersion");
+		auto version = GetConfigInt(json, "RequiredExtenderVersion");
 		if (version) {
 			config.MinimumVersion = (uint32_t)*version;
 		}
@@ -228,10 +180,6 @@ namespace dse
 					ERR("Garbage found in FeatureFlags array");
 				}
 			}
-		}
-
-		if (hasLegacyFeatureFlags) {
-			ERR("Deprecated configuration key found (ExtendOsiris, Lua, PreprocessStory, etc.); please use FeatureFlags instead");
 		}
 
 		return true;
