@@ -345,22 +345,6 @@ namespace bg3se::lua
 		return 0;
 	}
 
-	// int64 handle to double conversion hack for use in Flash external interface calls
-	// (Some of the builtin functions treat handles as double values)
-	double HandleToDouble(lua_State* L, ObjectHandle handle)
-	{
-		return *reinterpret_cast<double*>(&handle);
-	}
-
-	WrapLuaFunction(HandleToDouble)
-
-	ObjectHandle DoubleToHandle(lua_State* L, double dbl)
-	{
-		return ObjectHandle(*reinterpret_cast<int64_t*>(&dbl));
-	}
-
-	WrapLuaFunction(DoubleToHandle)
-
 	std::optional<STDString> LoadFile(lua_State* L, char const* path, std::optional<char const*> context)
 	{
 		if (!context || strcmp(*context, "user") == 0) {

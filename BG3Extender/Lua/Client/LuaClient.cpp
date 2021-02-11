@@ -958,8 +958,6 @@ namespace bg3se::ecl::lua
 			{"Print", OsiPrint},
 			{"PrintWarning", OsiPrintWarning},
 			{"PrintError", OsiPrintError},
-			{"HandleToDouble", HandleToDoubleWrapper},
-			{"DoubleToHandle", DoubleToHandleWrapper},
 
 			{"SaveFile", SaveFileWrapper},
 			{"LoadFile", LoadFileWrapper},

@@ -340,8 +340,6 @@ namespace bg3se::esv::lua
 			{"Print", OsiPrint},
 			{"PrintWarning", OsiPrintWarning},
 			{"PrintError", OsiPrintError},
-			{"HandleToDouble", HandleToDoubleWrapper},
-			{"DoubleToHandle", DoubleToHandleWrapper},
 
 			{"SaveFile", SaveFileWrapper},
 			{"LoadFile", LoadFileWrapper},

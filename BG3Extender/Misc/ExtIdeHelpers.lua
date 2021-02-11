@@ -4281,18 +4281,6 @@ function Ext.PlayerHasExtender (playerGuid) end
 --- If no debugger is connected, the function does nothing.
 function Ext.DebugBreak () end
 
---- Handle to double conversion hack for use in Flash external interface calls
---- (Some of the builtin functions treat handles as double values)
---- @param handle ObjectHandle Handle to cast
---- @return number Double handle
-function Ext.HandleToDouble (handle) end
-
---- Double to handle conversion hack for use in Flash external interface calls
---- (Some of the builtin functions treat handles as double values)
---- @param handle number Double handle to cast
---- @return ObjectHandle Handle
-function Ext.DoubleToHandle (handle) end
-
 Ext.Audio = {}
 
 --- Set audio state switch

@@ -208,8 +208,6 @@ namespace bg3se::lua
 	int OsiPrint(lua_State* L);
 	int OsiPrintWarning(lua_State* L);
 	int OsiPrintError(lua_State* L);
-	int HandleToDoubleWrapper(lua_State* L);
-	int DoubleToHandleWrapper(lua_State* L);
 	int GetCellInfo(lua_State* L);
 
 	int SaveFileWrapper(lua_State* L);
