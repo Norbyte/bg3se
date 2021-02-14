@@ -112,8 +112,7 @@ namespace bg3se::lua
 
 	inline void push(lua_State * L, FixedString const& v)
 	{
-		throw std::runtime_error("FIXME");
-		// lua_pushstring(L, v.Str);
+		lua_pushstring(L, v.GetString());
 	}
 
 	inline void push(lua_State * L, StringView v)
@@ -129,6 +128,11 @@ namespace bg3se::lua
 	inline void push(lua_State* L, ObjectHandle const& h)
 	{
 		lua_pushlightuserdata(L, (void*)h.Handle);
+	}
+
+	inline void push(lua_State* L, UUID const& u)
+	{
+		push(L, FormatUuid(u));
 	}
 
 	inline void push(lua_State* L, glm::vec3 const& v)
@@ -1020,7 +1024,7 @@ namespace bg3se::lua
 			if (val) {
 				flags |= *val;
 			} else {
-				luaL_error(L, "Label '%s' is not valid for enumeration '%s'", label.Str, EnumInfo<T>::Name);
+				luaL_error(L, "Label '%s' is not valid for enumeration '%s'", label.GetString(), EnumInfo<T>::Name);
 			}
 		}
 

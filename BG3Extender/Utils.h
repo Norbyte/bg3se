@@ -50,6 +50,7 @@ std::string ToUTF8(std::wstring_view s);
 std::wstring FromUTF8(std::string_view s);
 std::optional<UUID> ParseUuid(std::string_view s);
 std::optional<UUID> ParseGuidString(std::string_view s);
+std::string FormatUuid(UUID const& uuid);
 
 template <typename... Args>
 void Debug(DebugMessageType type, wchar_t const * fmt, Args... args)

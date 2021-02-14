@@ -168,17 +168,14 @@ namespace bg3se
 
 	bool LibraryManager::IsFixedStringRef(uint8_t const * ref, char const * str) const
 	{
-		// FIXME!
-		throw std::runtime_error("NOT IMPLEMENTED!");
-		return false;
-		/*if (ref >= moduleStart_ && ref < moduleStart_ + moduleSize_) {
+		if (ref >= moduleStart_ && ref < moduleStart_ + moduleSize_) {
 			auto fsx = (FixedString const *)ref;
-			if (*fsx && strcmp(fsx->Str, str) == 0) {
+			if (*fsx && strcmp(fsx->GetString(), str) == 0) {
 				return true;
 			}
 		}
 
-		return false;*/
+		return false;
 	}
 
 	bool LibraryManager::EvaluateSymbolCondition(SymbolMappingCondition const & cond, uint8_t const * match)

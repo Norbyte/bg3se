@@ -77,6 +77,20 @@ std::optional<UUID> ParseGuidString(std::string_view nameGuid)
 	return ParseUuid(std::string_view(guid, 36));
 }
 
+std::string FormatUuid(UUID const& uuid)
+{
+	uint8_t const* p = reinterpret_cast<uint8_t const*>(&uuid);
+	char s[100];
+	sprintf_s(s, "%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x", 
+		p[3], p[2], p[1], p[0],
+		p[5], p[4],
+		p[7], p[6],
+		p[9], p[8],
+		p[11], p[10], p[13], p[12], p[15], p[14]
+	);
+	return s;
+}
+
 [[noreturn]]
 void Fail(TCHAR const * reason)
 {
