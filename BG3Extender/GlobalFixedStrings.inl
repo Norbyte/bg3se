@@ -91,7 +91,6 @@ FS(DynamicStats);
 FS(MainWeapon);
 FS(OffHandWeapon);
 FS(NotSneaking);
-FS(Character);
 FS(Rotation);
 FS(Position);
 FS(MyGuid);
@@ -136,21 +135,25 @@ FS(DisplayName);
 
 // Status stat properties
 FS(StatusType);
-FS(StatusData);
 FS(HIT);
 FS(MADNESS);
 
 // Stat modifier types
-FS(SkillSet);
+FS(Character);
+FS(Armor);
+FS(Object);
+FS(Weapon);
+FS(SpellData);
+FS(StatusData);
+FS(PassiveData);
+
+FS(SpellSet);
 FS(EquipmentSet);
 FS(TreasureTable);
 FS(TreasureCategory);
 FS(ItemCombination);
-FS(ItemComboProperty);
-FS(CraftingPreviewData);
 FS(ItemGroup);
 FS(NameGroup);
-FS(DeltaMod);
 
 // Stat modifier value types
 FS(FixedString);
@@ -175,6 +178,11 @@ FS(NetMessage);
 FS(PlayerUpgradeAttribute);
 FS(StatsFunctorActionId);
 FS(StatsPropertyContext);
+FS(DealDamageWeaponType);
+FS(DealDamageWeaponDamageType);
+FS(ExecuteWeaponFunctorsType);
+FS(ForceFunctorOrigin);
+FS(ForceFunctorAggression);
 FS(StatGetterType);
 FS(CRPGStats_Object_Property_Type);
 FS(CRPGStats_Object_PropertyContext);

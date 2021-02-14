@@ -609,21 +609,6 @@ namespace bg3se
 		},
 
 		{
-			"UICharacterSheetHook",
-			SymbolMappingData::kText, 0,
-			"48 89 5D 60 " // mov     [rbp+0D0h+var_70], rbx
-			"0F B6 88 B0 00 00 00 " // movzx   ecx, byte ptr [rax+0B0h]
-			"41 3A CF " // cmp     cl, r15b
-			"F2 0F 11 75 08 " // movsd   [rbp+0D0h+var_C8], xmm6
-			"48 8B 4E 18 " // mov     rcx, [rsi+18h]
-			"C7 45 B0 03 00 00 00 " // mov     [rbp+0D0h+var_120], 3
-			// Replacement: c6 45 f8 01             mov    BYTE PTR [rbp-0x8],0x1
-			"0F 94 45 F8 ", // setz    [rbp+0D0h+var_D8]
-			{},
-			{"UICharacterSheetHook", SymbolMappingTarget::kAbsolute, 30, STATIC_SYM(UICharacterSheetHook)},
-		},
-
-		{
 			"ActivateEntitySystemHook",
 			SymbolMappingData::kText, 0,
 			"48 03 93 D0 00 00 00 " // add     rdx, [rbx+0D0h]
@@ -636,24 +621,6 @@ namespace bg3se
 			"48 8B CB ", // mov     rcx, rbx
 			{},
 			{"ActivateEntitySystemHook", SymbolMappingTarget::kAbsolute, 26, nullptr, &FindActivateEntitySystemEoCApp},
-		},
-
-		{
-			"CustomStatUIRollHook",
-			SymbolMappingData::kText, 0,
-			// Replacement: C3 (retn)
-			"4C 8B DC " // mov     r11, rsp
-			"48 81 EC 88 00 00 00 " // sub     rsp, 88h
-			"48 8B 05 XX XX XX XX " // mov     rax, cs:__security_cookie
-			"48 33 C4 " // xor     rax, rsp
-			"48 89 44 24 70 " // mov     [rsp+88h+var_18], rax
-			"48 8B 05 XX XX XX XX " // mov     rax, cs:?s_Ptr@PlayerManager@ls@@1PEAV12@EA
-			"49 8D 53 A8 " // lea     rdx, [r11-58h]
-			"48 8B 0D XX XX XX XX " // mov     rcx, cs:qword_142940598
-			"49 89 43 98 " // mov     [r11-68h], rax
-			"48 8D 05 ", // lea     rax, ecl__CustomStatsProtocolSomething__vftable
-			{},
-			{"CustomStatUIRollHook", SymbolMappingTarget::kAbsolute, 0, STATIC_SYM(CustomStatUIRollHook)},
 		},
 
 		{
@@ -675,9 +642,9 @@ namespace bg3se
 		*/
 
 		{
-			"ErrorFuncs",
+			"ecl::EoCClient::HandleError",
 			SymbolMappingData::kText, 0,
-			"E8 ?? ?? ?? ??  " // call    ls__TranslatedString__GetTranslatedString
+			"E8 XX XX XX XX " // call    ls__TranslatedString__GetTranslatedString
 			"4C 8D 4C 24 38 " // lea     r9, [rsp+68h+a1]
 			"41 B0 01 " // mov     r8b, 1
 			"48 8B D0 " // mov     rdx, rax
@@ -1055,56 +1022,6 @@ namespace bg3se
 		},
 
 		{
-			"ls::UIObjectManager",
-			SymbolMappingData::kText, 0,
-			"48 8B 0D XX XX XX XX " // mov     rcx, cs:qword_1429824B0
-			"4D 8B C6 " // mov     r8, r14
-			"48 81 C1 D8 00 00 00 " // add     rcx, 0D8h
-			"BA 92 00 00 00 " // mov     edx, 92h
-			"E8 XX XX XX XX ", // call    ls__UIObjectManager__RegisterUIObjectCreator
-			{},
-			{"ls::UIObjectManager", SymbolMappingTarget::kIndirect, 0, STATIC_SYM(UIObjectManager__Instance)},
-			{"ls::UIObjectManager::RegisterUIObjectCreator", SymbolMappingTarget::kIndirect, 22, STATIC_SYM(UIObjectManager__RegisterUIObjectCreator)}
-		},
-
-		{
-			"ls::UIObjectManager::CreateUIObject",
-			SymbolMappingData::kText, 0,
-			"89 44 24 20 " // mov     [rsp+40h+var_20], eax
-			"45 8D 41 94 " // lea     r8d, [r9-6Ch]
-			"E8 XX XX XX XX " // call    ls__UIObjectManager__CreateUIObject
-			"48 8B 08 " // mov     rcx, [rax]
-			"48 89 8B 10 02 00 00 ", // mov     [rbx+210h], rcx
-			{},
-			{"ls::UIObjectManager::CreateUIObject", SymbolMappingTarget::kIndirect, 8, STATIC_SYM(UIObjectManager__CreateUIObject)}
-		},
-
-		{
-			"ls::UIObjectManager::DestroyUIObject",
-			SymbolMappingData::kText, 0,
-			"48 8D 93 A8 02 00 00 " // lea     rdx, [rbx+2A8h]
-			"48 8B CF " // mov     rcx, rdi
-			"E8 XX XX XX XX " // call    ls__UIObjectManager__DestroyUIObject
-			"48 8B 05 XX XX XX XX " // mov     rax, cs:ls__ObjectHandle__Unassigned
-			"48 89 83 A8 02 00 00 " // mov     [rbx+2A8h], rax
-			"45 84 E4 ", // test    r12b, r12b
-			{},
-			{"ls::UIObjectManager::DestroyUIObject", SymbolMappingTarget::kIndirect, 10, STATIC_SYM(UIObjectManager__DestroyUIObject)}
-		},
-
-		{
-			"eoc::EoCUI::ctor",
-			SymbolMappingData::kText, 0,
-			"48 8B D9 " // mov     rbx, rcx
-			"E8 XX XX XX XX " // call    ecl__EocUI__ctor
-			"C7 83 98 01 00 00 00 00 A0 40 " // mov     dword ptr [rbx+198h], 40A00000h
-			"48 8D 8B B0 01 00 00 " // lea     rcx, [rbx+1B0h]
-			"C7 83 9C 01 00 00 FF FF FF FF ", // mov     dword ptr [rbx+19Ch], 0FFFFFFFFh
-			{},
-			{"eoc::EoCUI::ctor", SymbolMappingTarget::kIndirect, 3, STATIC_SYM(EoCUI__ctor), nullptr, &sSymbolEoCUIvftable, 0x40}
-		},
-
-		{
 			"eoc::gSpeakerManager",
 			SymbolMappingData::kText, 0,
 			"48 8B 0D XX XX XX XX " // mov     rcx, cs:eoc__gSpeakerManager
@@ -1201,19 +1118,6 @@ namespace bg3se
 			"48 8D 15 XX XX XX XX ", // lea     rdx, fs_OsirisVariableHelper
 			{SymbolMappingCondition::kFixedString, 24, "OsirisVariableHelper"},
 			{"esv::OsirisVariableHelper::SavegameVisit", SymbolMappingTarget::kAbsolute, 0, STATIC_SYM(esv__OsirisVariableHelper__SavegameVisit)}
-		},
-
-		{
-			"esv::Character::ApplyDamage < 64",
-			SymbolMappingData::kText, 0,
-			"C7 45 CB 06 00 00 00 " // mov     [rbp+57h+hitDamageInfo.AttackDirection_Enum], 6
-			"44 89 75 07 " // mov     [rbp+57h+var_50], r14d
-			"C7 45 0B 00 00 80 BF " // mov     [rbp+57h+var_4C], 0BF800000h
-			"44 89 75 0F " // mov     [rbp+57h+var_48], r14d
-			"E8 XX XX XX XX ", // call    esv__Character__ApplyDamage
-			{},
-			{"esv::Character::ApplyDamage", SymbolMappingTarget::kIndirect, 22, STATIC_SYM(esv__Character__ApplyDamage)}, {}, {},
-			{SymbolVersion::Below, 64} // Before GB5
 		},
 
 		{
@@ -1432,6 +1336,16 @@ namespace bg3se
 			{},
 			{"esv::ExecuteCharacterExtraProperties", SymbolMappingTarget::kAbsolute, -0x18, STATIC_SYM(esv__ExecuteCharacterSetExtraProperties)}
 		},*/
+
+		{
+			"RPGStats",
+			SymbolMappingData::kText, SymbolMappingData::kDeferred,
+			"48 89 87 B8 01 00 00 " // mov     [rdi+1B8h], rax
+			"48 8B 1D XX XX XX XX " // mov     rbx, cs:gRPGStats
+			"48 8D 15 XX XX XX XX ", // lea     rdx, fs_Infectious_Disease_Depth
+			{SymbolMappingCondition::kFixedString, 14, "Infectious Disease Depth"},
+			{"RPGStats", SymbolMappingTarget::kIndirect, 7, STATIC_SYM(Stats)}
+		},
 
 		{
 			"esv::SavegameManager",

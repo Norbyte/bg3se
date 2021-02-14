@@ -6,91 +6,11 @@
 #include <GameDefinitions/Osiris.h>
 #include <GameDefinitions/RootTemplates.h>
 #include <GameDefinitions/Stats/Stats.h>
+#include <GameDefinitions/Status.h>
+#include <GameDefinitions/Surface.h>
 
 namespace bg3se
 {
-	/*enum class EsvGlobalEoCApp {
-		EsvLSDialogEventManager = 0,
-		EsvStoryDialogEventManager = 1,
-		EsvStoryItemEventManager = 2,
-		EsvStoryCharacterEventManager = 3,
-		// 4
-		// 5-6 event visitor
-		// 7-8 game event visitor
-		ServerLevelManager = 9,
-		PartyManager = 10,
-		EsvCharacterFactory = 11,
-		// 12
-		EsvProjectileFactory = 13,
-		EsvEoCTriggerFactory = 14,
-		EsvItemFactory = 15,
-		EsvSkillFactory = 16,
-		EsvSkillStatePool = 17,
-		EsvInventoryFactory = 18,
-		EsvInventoryViewFactory = 19,
-		StoryImplementation = 20,
-		AlignmentFactory = 21,
-		AlignmentContainer = 22,
-		OsirisVariableHelper = 23,
-		// 24
-		OverheadTextFactory = 25,
-		SurfaceActionFactory = 26,
-		CustomBookManager = 27,
-		// 28
-		GameControl = 29,
-		// 30
-		CharacterCreationManager = 31,
-		MarkerManager = 32,
-		OsirisTaskFactory = 33,
-		EnvironmentalInfluencesPool = 34,
-		CombatFormationManager = 35,
-		DivinityStats = 36,
-		PlanManager = 37,
-		// 38
-		ActivationManager = 39
-	};
-
-	enum class EsvGlobalEoCPlugin {
-		EsvSavegameManager = 0,
-		EsvEoCServer = 1,
-		EsvCacheTemplateManager = 2,
-		EsvAiFactory = 3,
-		EsvGameObjectFactory = 4,
-		EsvLSDialogEventManager = 5,
-		EsvStoryDialogEventManager = 6,
-		EsvStoryItemEventManager = 7,
-		EsvStoryCharacterEventManager = 8,
-		// 9, 10-11, 12-13 event visitors
-		ServerLevelManager = 14,
-		PartyManager = 15,
-		EsvCharacterFactory = 16,
-		EsvProjectileFactory = 17,
-		EsvEoCTriggerFactory = 18,
-		EsvItemFactory = 19,
-		EsvSkillFactory = 20,
-		EsvSkillStatePool = 21,
-		EsvInventoryFactory = 22,
-		EsvInventoryViewFactory = 23,
-		StoryImplementation = 24,
-		AlignmentFactory = 25,
-		OsirisVariableHelper = 26,
-		// 27
-		OverheadTextFactory = 28,
-		SurfaceActionFactory = 29,
-		CustomBookManager = 30,
-		// 31
-		GameControl = 32,
-		// 33
-		CharacterCreationManager = 34,
-		MarkerManager = 35,
-		OsirisTaskFactory = 36,
-		EnvironmentalInfluencesPool = 37,
-		CombatFormationManager = 38,
-		DivinityStats = 39,
-		PlanManager = 40,
-		ActivationManager = 41
-	};*/
-
 	struct ResourceDefinitions;
 
 	struct StaticSymbols : Noncopyable<StaticSymbols>
@@ -126,9 +46,10 @@ namespace bg3se
 		esv::SurfaceActionFactory::CreateActionProc* esv__SurfaceActionFactory__CreateAction{ nullptr };
 		esv::SurfaceActionFactory::AddActionProc* esv__SurfaceActionFactory__AddAction{ nullptr };
 
+		esv::StatusMachine::CreateStatusProc* esv__StatusMachine__CreateStatus{ nullptr };
 		esv::StatusMachine::ApplyStatusProc* esv__StatusMachine__ApplyStatus{ nullptr };
 
-		GlobalStringTable const ** GlobalStrings{ nullptr };
+		/*GlobalStringTable const ** GlobalStrings{ nullptr };
 		ls__Path__GetPrefixForRoot GetPrefixForRoot{ nullptr };*/
 		/*
 		RPGStats::LoadProc RPGStats__Load{ nullptr };

@@ -386,6 +386,9 @@ namespace bg3se
 
 		struct StatusMachine
 		{
+			using CreateStatusProc = Status* (StatusMachine* self, FixedString* statusId, uint64_t statusHandle);
+			using ApplyStatusProc = Status* (StatusMachine* self, Status* status);
+
 			Status* GetStatus(ObjectHandle handle) const;
 			Status* GetStatus(NetId netId) const;
 			Status* GetStatus(FixedString const& statusId) const;
