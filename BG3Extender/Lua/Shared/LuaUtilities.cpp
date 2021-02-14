@@ -8,7 +8,7 @@
 #include <fstream>
 #include <json/json.h>
 
-namespace bg3se::lua
+namespace bg3se::lua::utils
 {
 	void JsonParse(lua_State * L, Json::Value & val);
 
@@ -274,7 +274,7 @@ namespace bg3se::lua
 	}
 
 
-	void OsiArgsToStream(lua_State * L, std::stringstream & ss)
+	void ArgsToStream(lua_State * L, std::stringstream & ss)
 	{
 		int nargs = lua_gettop(L);  /* number of arguments */
 
@@ -321,26 +321,61 @@ namespace bg3se::lua
 
 	WrapLuaFunction(MonotonicTime)
 
-	int OsiPrint(lua_State* L)
+	int Include(lua_State * L)
+	{
+		auto modGuid = luaL_checkstring(L, 1);
+		auto fileName = luaL_checkstring(L, 2);
+
+		bool replaceGlobals = !lua_isnil(L, 3);
+		auto globalsIdx = lua_gettop(L) + 1;
+
+		if (replaceGlobals) {
+			luaL_checktype(L, 3, LUA_TTABLE);
+#if LUA_VERSION_NUM > 501
+			lua_rawgeti(L, LUA_REGISTRYINDEX, LUA_RIDX_GLOBALS);
+			lua_pushvalue(L, 3);
+			lua_rawseti(L, LUA_REGISTRYINDEX, LUA_RIDX_GLOBALS);
+#endif
+		}
+
+		auto nret = gOsirisProxy->GetCurrentExtensionState()
+			->LuaLoadModScript(modGuid, fileName, true, replaceGlobals ? 3 : 0);
+
+		if (replaceGlobals) {
+#if LUA_VERSION_NUM > 501
+			lua_pushvalue(L, globalsIdx);
+			lua_rawseti(L, LUA_REGISTRYINDEX, LUA_RIDX_GLOBALS);
+			lua_remove(L, globalsIdx);
+#endif
+		}
+
+		if (nret) {
+			return *nret;
+		} else {
+			return 0;
+		}
+	}
+
+	int Print(lua_State* L)
 	{
 		std::stringstream ss;
-		OsiArgsToStream(L, ss);
+		ArgsToStream(L, ss);
 		gOsirisProxy->LogOsirisMsg(ss.str());
 		return 0;
 	}
 
-	int OsiPrintWarning(lua_State* L)
+	int PrintWarning(lua_State* L)
 	{
 		std::stringstream ss;
-		OsiArgsToStream(L, ss);
+		ArgsToStream(L, ss);
 		gOsirisProxy->LogOsirisWarning(ss.str());
 		return 0;
 	}
 
-	int OsiPrintError(lua_State* L)
+	int PrintError(lua_State* L)
 	{
 		std::stringstream ss;
-		OsiArgsToStream(L, ss);
+		ArgsToStream(L, ss);
 		gOsirisProxy->LogLuaError(ss.str());
 		return 0;
 	}
@@ -438,7 +473,7 @@ namespace bg3se::lua
 		return 1;
 	}
 
-	void LuaDebugBreak(lua_State* L)
+	void DebugBreak(lua_State* L)
 	{
 #if !defined(OSI_NO_DEBUGGER)
 		auto debugger = gOsirisProxy->GetLuaDebugger();
@@ -448,7 +483,7 @@ namespace bg3se::lua
 #endif
 	}
 
-	WrapLuaFunction(LuaDebugBreak)
+	WrapLuaFunction(DebugBreak)
 
 
 	/*int NewDamageList(lua_State * L)
@@ -794,4 +829,83 @@ namespace bg3se::lua
 	}
 
 	WrapLuaFunction(DumpStack)
+
+
+		void RegisterUtilsLib(lua_State* L)
+	{
+		static const luaL_Reg utilsLib[] = {
+			{"Version", GetExtensionVersionWrapper},
+			{"GameVersion", GetGameVersionWrapper},
+			{"MonotonicTime", MonotonicTimeWrapper},
+			{"Include", Include},
+			{"Print", Print},
+			{"PrintWarning", PrintWarning},
+			{"PrintError", PrintError},
+			{"DebugBreak", DebugBreakWrapper},
+
+			{"SaveFile", SaveFileWrapper},
+			{"LoadFile", LoadFileWrapper},
+
+			{"JsonParse", JsonParse},
+			{"JsonStringify", JsonStringify},
+
+			{"IsModLoaded", IsModLoadedWrapper},
+			{"GetModLoadOrder", GetModLoadOrder},
+			{"GetModInfo", GetModInfo},
+
+			{"IsDeveloperMode", IsDeveloperModeWrapper},
+			{"GenerateIdeHelpers", GenerateIdeHelpersWrapper},
+
+			// EXPERIMENTAL FUNCTIONS
+			{"DumpStack", DumpStackWrapper},
+			//{"DumpNetworking", DumpNetworking},
+
+			//{"GetGameState", GetGameState},
+			{"AddPathOverride", AddPathOverrideWrapper},
+			{"AddVoiceMetaData", AddVoiceMetaDataWrapper},
+			{"GetTranslatedString", GetTranslatedStringWrapper},
+			{"GetTranslatedStringFromKey", GetTranslatedStringFromKeyWrapper},
+			{"CreateTranslatedString", CreateTranslatedStringWrapper},
+			{"CreateTranslatedStringKey", CreateTranslatedStringKeyWrapper},
+			{"CreateTranslatedStringHandle", CreateTranslatedStringHandleWrapper},
+			{0,0}
+		};
+
+		lua_getglobal(L, "Ext"); // stack: Ext
+		luaL_newlib(L, utilsLib); // stack: ext, lib
+		lua_setfield(L, -2, "Utils");
+		lua_pop(L, 1);
+	}
+
+	void RegisterLocalizationLib(lua_State * L)
+	{
+		static const luaL_Reg locaLib[] = {
+			{"AddVoiceMetaData", AddVoiceMetaDataWrapper},
+			{"GetTranslatedString", GetTranslatedStringWrapper},
+			{"GetTranslatedStringFromKey", GetTranslatedStringFromKeyWrapper},
+			{"CreateTranslatedString", CreateTranslatedStringWrapper},
+			{"CreateTranslatedStringKey", CreateTranslatedStringKeyWrapper},
+			{"CreateTranslatedStringHandle", CreateTranslatedStringHandleWrapper},
+			{0,0}
+		};
+
+		lua_getglobal(L, "Ext"); // stack: Ext
+		luaL_newlib(L, locaLib); // stack: ext, lib
+		lua_setfield(L, -2, "Localization");
+		lua_pop(L, 1);
+	}
+
+	void RegisterMathLib(lua_State * L)
+	{
+		static const luaL_Reg mathLib[] = {
+			{"Random", LuaRandom},
+			{"Round", LuaRoundWrapper},
+			{0,0}
+		};
+
+		lua_getglobal(L, "Ext"); // stack: Ext
+		luaL_newlib(L, mathLib); // stack: ext, lib
+		lua_setfield(L, -2, "Math");
+		lua_pop(L, 1);
+	}
 }

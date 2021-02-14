@@ -140,6 +140,7 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
     <ClInclude Include="GameDefinitions\Components\Projectile.h" />
     <ClInclude Include="GameDefinitions\Components\Stats.h" />
     <ClInclude Include="GameDefinitions\EntityManager.h" />
+    <ClInclude Include="GameDefinitions\GameAction.h" />
     <ClInclude Include="GameDefinitions\Hit.h" />
     <ClInclude Include="GameDefinitions\Level.h" />
     <ClInclude Include="GameDefinitions\Misc.h" />
@@ -182,7 +183,6 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
     <ClInclude Include="ScriptExtensions.pb.h" />
     <ClInclude Include="ScriptHelpers.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="Surface.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Version.h" />
@@ -240,9 +240,6 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
     <ClCompile Include="Lua\LuaDebugMessages.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Lua\LuaExtFunctions.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">false</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="Lua\LuaOsiBridge.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
@@ -251,6 +248,7 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
     </ClCompile>
     <ClCompile Include="Lua\Server\LuaServer.cpp" />
     <ClCompile Include="Lua\Shared\LuaStats.cpp" />
+    <ClCompile Include="Lua\Shared\LuaUtilities.cpp" />
     <ClCompile Include="NodeHooks.cpp" />
     <ClCompile Include="osidebug.pb.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">NotUsing</PrecompiledHeader>
@@ -303,6 +301,7 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
     <None Include="Lua\Shared\LuaCharacter.inl" />
     <None Include="Lua\Shared\LuaItem.inl" />
     <None Include="Lua\Shared\LuaShared.inl" />
+    <None Include="Lua\Shared\LuaStatsFunctors.inl" />
     <None Include="Lua\Shared\RootTemplates.inl" />
     <None Include="Lua\Shared\StatAttributes.inl" />
     <None Include="Lua\Shared\StatEntries.inl" />

@@ -4,10 +4,6 @@
 
 namespace bg3se::lua
 {
-	int LuaStatGetAttribute(lua_State* L, CRPGStats_Object* object, char const* attributeName, std::optional<int> level);
-	int LuaStatSetAttribute(lua_State* L, CRPGStats_Object* object, char const* attributeName, int valueIdx);
-
-
 	char const* const ObjectProxy<CDivinityStats_Character>::MetatableName = "CDivinityStats_Character";
 
 	int CharacterFetchStat(lua_State* L, CDivinityStats_Character* stats, char const* propStr, FixedString const& prop)

@@ -35,15 +35,6 @@
     <ClCompile Include="Lua\LuaBinding.cpp">
       <Filter>Lua</Filter>
     </ClCompile>
-    <ClCompile Include="LuaDebug.pb.cc">
-      <Filter>Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="Lua\LuaDebugger.cpp">
-      <Filter>Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="Lua\LuaDebugMessages.cpp">
-      <Filter>Lua</Filter>
-    </ClCompile>
     <ClCompile Include="Lua\LuaExtFunctions.cpp">
       <Filter>Lua</Filter>
     </ClCompile>
@@ -82,6 +73,15 @@
     </ClCompile>
     <ClCompile Include="GameDefinitions\PropertyMaps.cpp">
       <Filter>GameDefinitions</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaDebug.pb.cc">
+      <Filter>Lua\Debugger</Filter>
+    </ClCompile>
+    <ClCompile Include="Lua\LuaDebugger.cpp">
+      <Filter>Lua\Debugger</Filter>
+    </ClCompile>
+    <ClCompile Include="Lua\LuaDebugMessages.cpp">
+      <Filter>Lua\Debugger</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -124,15 +124,6 @@
       <Filter>Lua\Client</Filter>
     </ClInclude>
     <ClInclude Include="Lua\LuaBinding.h">
-      <Filter>Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="LuaDebug.pb.h">
-      <Filter>Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="Lua\LuaDebugger.h">
-      <Filter>Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="Lua\LuaDebugMessages.h">
       <Filter>Lua</Filter>
     </ClInclude>
     <ClInclude Include="Lua\LuaHelpers.h">
@@ -231,9 +222,6 @@
     <ClInclude Include="GameDefinitions\RootTemplates.h">
       <Filter>GameDefinitions</Filter>
     </ClInclude>
-    <ClInclude Include="Surface.h">
-      <Filter>GameDefinitions</Filter>
-    </ClInclude>
     <ClInclude Include="GameDefinitions\Status.h">
       <Filter>GameDefinitions</Filter>
     </ClInclude>
@@ -246,6 +234,18 @@
     <ClInclude Include="GameDefinitions\Character.h">
       <Filter>GameDefinitions</Filter>
     </ClInclude>
+    <ClInclude Include="GameDefinitions\GameAction.h">
+      <Filter>GameDefinitions</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaDebug.pb.h">
+      <Filter>Lua\Debugger</Filter>
+    </ClInclude>
+    <ClInclude Include="Lua\LuaDebugger.h">
+      <Filter>Lua\Debugger</Filter>
+    </ClInclude>
+    <ClInclude Include="Lua\LuaDebugMessages.h">
+      <Filter>Lua\Debugger</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -257,7 +257,6 @@
     <None Include="..\Misc\ExtIdeHelpers.lua" />
     <None Include="cpp.hint" />
     <None Include="Exports.def" />
-    <None Include="GlobalFixedStrings.inl" />
     <None Include="LuaDebug.proto" />
     <None Include="LuaScripts\Game.Math.lua" />
     <None Include="LuaScripts\Game.Tooltip.lua" />
@@ -331,6 +330,12 @@
     <None Include="LuaScripts\BuiltinLibraryServer.lua">
       <Filter>LuaScripts</Filter>
     </None>
+    <None Include="GlobalFixedStrings.inl">
+      <Filter>GameDefinitions</Filter>
+    </None>
+    <None Include="Lua\Shared\LuaStatsFunctors.inl">
+      <Filter>Lua\Shared</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">
@@ -362,6 +367,9 @@
     </Filter>
     <Filter Include="LuaScripts">
       <UniqueIdentifier>{7e3d1d69-4254-4a02-aa81-5997dbc5c292}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lua\Debugger">
+      <UniqueIdentifier>{1219b7c1-9f8a-4459-818a-e658f5cd9fc6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

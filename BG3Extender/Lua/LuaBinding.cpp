@@ -36,6 +36,11 @@ void nse_lua_report_handled_error(lua_State* L)
 #endif
 }
 
+namespace bg3se::lua::stats
+{
+	void RestoreLevelMaps(std::unordered_set<int32_t> const&);
+}
+
 namespace bg3se::lua
 {
 	RegistryEntry::RegistryEntry()
@@ -107,6 +112,16 @@ namespace bg3se::lua
 	{
 		lua_getglobal(L, "Ext"); // stack: Ext
 		lua_getfield(L, -1, func); // stack: Ext, fn
+		lua_remove(L, -2); // stack: fn
+	}
+
+
+	void PushInternalFunction(lua_State* L, char const* func)
+	{
+		lua_getglobal(L, "Ext"); // stack: Ext
+		lua_getfield(L, -1, "_Internal"); // stack: Ext, _I
+		lua_remove(L, -2); // stack: _I
+		lua_getfield(L, -1, func); // stack: _I, fn
 		lua_remove(L, -2); // stack: fn
 	}
 
@@ -465,7 +480,6 @@ namespace bg3se::lua
 	void ExtensionLibrary::Register(lua_State * L)
 	{
 		RegisterLib(L);
-		RegisterStatsObjects(L);
 		/*ObjectProxy<CharacterTemplate>::RegisterMetatable(L);
 		ObjectProxy<ItemTemplate>::RegisterMetatable(L);
 		ObjectProxy<ProjectileTemplate>::RegisterMetatable(L);
@@ -473,41 +487,6 @@ namespace bg3se::lua
 		ObjectProxy<SurfaceTemplate>::RegisterMetatable(L);
 		ObjectProxy<eoc::AiGrid>::RegisterMetatable(L);
 		DamageList::RegisterMetatable(L);*/
-	}
-
-	int ExtensionLibrary::Include(lua_State * L)
-	{
-		auto modGuid = luaL_checkstring(L, 1);
-		auto fileName = luaL_checkstring(L, 2);
-
-		bool replaceGlobals = !lua_isnil(L, 3);
-		auto globalsIdx = lua_gettop(L) + 1;
-
-		if (replaceGlobals) {
-			luaL_checktype(L, 3, LUA_TTABLE);
-#if LUA_VERSION_NUM > 501
-			lua_rawgeti(L, LUA_REGISTRYINDEX, LUA_RIDX_GLOBALS);
-			lua_pushvalue(L, 3);
-			lua_rawseti(L, LUA_REGISTRYINDEX, LUA_RIDX_GLOBALS);
-#endif
-		}
-
-		auto nret = gOsirisProxy->GetCurrentExtensionState()
-			->LuaLoadModScript(modGuid, fileName, true, replaceGlobals ? 3 : 0);
-
-		if (replaceGlobals) {
-#if LUA_VERSION_NUM > 501
-			lua_pushvalue(L, globalsIdx);
-			lua_rawseti(L, LUA_REGISTRYINDEX, LUA_RIDX_GLOBALS);
-			lua_remove(L, globalsIdx);
-#endif
-		}
-
-		if (nret) {
-			return *nret;
-		} else {
-			return 0;
-		}
 	}
 
 
@@ -572,11 +551,9 @@ namespace bg3se::lua
 		OpenLibs();
 	}
 
-	void RestoreLevelMaps(std::unordered_set<int32_t> const &);
-
 	State::~State()
 	{
-		RestoreLevelMaps(OverriddenLevelMaps);
+		stats::RestoreLevelMaps(OverriddenLevelMaps);
 		lua_close(L);
 	}
 
@@ -658,7 +635,7 @@ namespace bg3se::lua
 	{
 		Restriction restriction(*this, RestrictAll);
 
-		PushExtFunction(L, "_GetHitChance"); // stack: fn
+		PushInternalFunction(L, "_GetHitChance"); // stack: fn
 		auto _{ PushArguments(L,
 			std::tuple{Push<ObjectProxy<CDivinityStats_Character>>(attacker),
 			Push<ObjectProxy<CDivinityStats_Character>>(target)}) };

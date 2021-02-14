@@ -139,7 +139,7 @@ namespace bg3se::lua
 		}
 	}
 
-	int GetStatEntries(lua_State* L)
+	int GetAllStats(lua_State* L)
 	{
 		StackCheck _(L, 1);
 		FixedString statType;
@@ -165,26 +165,25 @@ namespace bg3se::lua
 			FetchTreasureCategoryEntries(L, stats);
 		}
 		else /*if (statType == GFS.strItemCombination) {
-		 FetchItemComboEntries(L, stats);
-	 } else if (statType == GFS.strItemComboProperty) {
-		 FetchItemComboPropertyEntries(L, stats);
-	 } else if (statType == GFS.strCraftingPreviewData) {
-		 FetchItemComboPreviewDataEntries(L, stats);
-	 } else if (statType == GFS.strItemGroup) {
-		 FetchItemGroupEntries(L, stats);
-	 } else if (statType == GFS.strNameGroup) {
-		 FetchItemNameGroupEntries(L, stats);
-	 } else*/ if (statType == GFS.strDeltaMod) {
-		 FetchDeltaModEntries(L, stats);
-	 }
-	 else {
-		 FetchStatEntries(L, stats, statType);
-	 }
+			FetchItemComboEntries(L, stats);
+		} else if (statType == GFS.strItemComboProperty) {
+			FetchItemComboPropertyEntries(L, stats);
+		} else if (statType == GFS.strCraftingPreviewData) {
+			FetchItemComboPreviewDataEntries(L, stats);
+		} else if (statType == GFS.strItemGroup) {
+			FetchItemGroupEntries(L, stats);
+		} else if (statType == GFS.strNameGroup) {
+			FetchItemNameGroupEntries(L, stats);
+		} else if (statType == GFS.strDeltaMod) {
+		    FetchDeltaModEntries(L, stats);
+		} else*/ {
+			FetchStatEntries(L, stats, statType);
+		}
 
 		return 1;
 	}
 
-	int GetStatEntriesLoadedBefore(lua_State* L)
+	int GetStatsLoadedBefore(lua_State* L)
 	{
 		StackCheck _(L, 1);
 		auto modId = checked_get<FixedString>(L, 1);

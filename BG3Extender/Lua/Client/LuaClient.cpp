@@ -951,57 +951,6 @@ namespace bg3se::ecl::lua
 	void ExtensionLibraryClient::RegisterLib(lua_State * L)
 	{
 		static const luaL_Reg extLib[] = {
-			{"Version", GetExtensionVersionWrapper},
-			{"GameVersion", GetGameVersionWrapper},
-			{"MonotonicTime", MonotonicTimeWrapper},
-			{"Include", Include},
-			{"Print", OsiPrint},
-			{"PrintWarning", OsiPrintWarning},
-			{"PrintError", OsiPrintError},
-
-			{"SaveFile", SaveFileWrapper},
-			{"LoadFile", LoadFileWrapper},
-
-			{"JsonParse", JsonParse},
-			{"JsonStringify", JsonStringify},
-
-			{"IsModLoaded", IsModLoadedWrapper},
-			{"GetModLoadOrder", GetModLoadOrder},
-			{"GetModInfo", GetModInfo},
-
-			{"DebugBreak", LuaDebugBreakWrapper},
-
-			{"GetStatEntries", GetStatEntries},
-			{"GetStatEntriesLoadedBefore", GetStatEntriesLoadedBefore},
-			/*{"GetSkillSet", GetSkillSet},
-			{"UpdateSkillSet", UpdateSkillSet},
-			{"GetEquipmentSet", GetEquipmentSet},
-			{"UpdateEquipmentSet", UpdateEquipmentSet},
-			{"GetTreasureTable", GetTreasureTable},
-			{"UpdateTreasureTable", UpdateTreasureTable},
-			{"GetTreasureCategory", GetTreasureCategory},
-			{"UpdateTreasureCategory", UpdateTreasureCategory},
-			{"GetItemCombo", GetItemCombo},
-			{"UpdateItemCombo", UpdateItemCombo},
-			{"GetItemComboPreviewData", GetItemComboPreviewData},
-			{"UpdateItemComboPreviewData", UpdateItemComboPreviewData},
-			{"GetItemComboProperty", GetItemComboProperty},
-			{"UpdateItemComboProperty", UpdateItemComboProperty},
-			{"GetItemGroup", GetItemGroup},
-			{"GetNameGroup", GetNameGroup},*/
-
-			{"StatGetAttribute", StatGetAttribute},
-			{"StatSetAttribute", StatSetAttribute},
-			//{"StatAddCustomDescription", StatAddCustomDescriptionWrapper},
-			{"StatSetLevelScaling", StatSetLevelScaling},
-			{"GetStat", GetStat},
-			{"CreateStat", CreateStat},
-			{"SyncStat", SyncStatWrapper},
-			/*{"GetDeltaMod", GetDeltaMod},
-			{"UpdateDeltaMod", UpdateDeltaMod},*/
-			{"EnumIndexToLabel", EnumIndexToLabel},
-			{"EnumLabelToIndex", EnumLabelToIndex},
-
 			/*{"GetCharacter", GetCharacter},
 			{"GetItem", GetItem},
 			{"GetStatus", GetStatus},
@@ -1009,22 +958,9 @@ namespace bg3se::ecl::lua
 			{"NewDamageList", NewDamageList},
 			{"GetSurfaceTemplate", GetSurfaceTemplate},
 			{"OsirisIsCallable", OsirisIsCallableClientWrapper},*/
-			{"IsDeveloperMode", IsDeveloperModeWrapper},
-			{"Random", LuaRandom},
-			{"Round", LuaRoundWrapper},
 
 			// EXPERIMENTAL FUNCTIONS
 			//{"UpdateShroud", UpdateShroud},
-			{"DumpStack", DumpStackWrapper},
-
-			//{"GetGameState", GetGameState},
-			{"AddPathOverride", AddPathOverrideWrapper},
-			{"AddVoiceMetaData", AddVoiceMetaDataWrapper},
-			{"GetTranslatedString", GetTranslatedStringWrapper},
-			{"GetTranslatedStringFromKey", GetTranslatedStringFromKeyWrapper},
-			{"CreateTranslatedString", CreateTranslatedStringWrapper},
-			{"CreateTranslatedStringKey", CreateTranslatedStringKeyWrapper},
-			{"CreateTranslatedStringHandle", CreateTranslatedStringHandleWrapper},
 
 			//{"PostMessageToServer", PostMessageToServerWrapper},
 			{0,0}
@@ -1051,6 +987,11 @@ namespace bg3se::ecl::lua
 		luaL_newlib(L, soundLib); // stack: ext, lib
 		lua_setfield(L, -2, "Audio");
 		lua_pop(L, 1);*/
+
+		stats::RegisterStatsLib(L);
+		utils::RegisterUtilsLib(L);
+		utils::RegisterLocalizationLib(L);
+		utils::RegisterMathLib(L);
 	}
 
 
@@ -1069,7 +1010,7 @@ namespace bg3se::ecl::lua
 		LoadScript(gameTooltipLib, "Game.Tooltip.lua");
 
 		lua_getglobal(L, "Ext"); // stack: Ext
-		StatsExtraDataProxy::New(L); // stack: Ext, ExtraDataProxy
+		stats::StatsExtraDataProxy::New(L); // stack: Ext, ExtraDataProxy
 		lua_setfield(L, -2, "ExtraData"); // stack: Ext
 		lua_pop(L, 1); // stack: -
 

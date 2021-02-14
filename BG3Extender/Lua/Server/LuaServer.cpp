@@ -327,71 +327,44 @@ namespace bg3se::esv::lua
 		return 0;
 	}
 
+	int XTest(lua_State* L)
+	{
+		auto stats = GetStaticSymbols().Stats;
+		auto const& functors = (*stats)->StatsFunctors;
+		DealDamageFunctor* dd{ nullptr };
+
+		functors.Iterate([&dd](FixedString const& key, StatsFunctorSet* funcs) {
+			DEBUG("asdf");
+			for (auto const& fun : funcs->FunctorList) {
+				if (fun->TypeId == StatsFunctorActionId::DealDamage && fun->Cast<DealDamageFunctor>()) {
+					dd = *fun->Cast<DealDamageFunctor>();
+				}
+			}
+		});
+
+		if (dd) {
+			ObjectProxy2<DealDamageFunctor>::New(L, dd);
+			return 1;
+		}
+
+		return 0;
+	}
+
 	void ExtensionLibraryServer::RegisterLib(lua_State * L)
 	{
 		static const luaL_Reg extLib[] = {
-			{"Version", GetExtensionVersionWrapper},
-			{"GameVersion", GetGameVersionWrapper},
-			{"MonotonicTime", MonotonicTimeWrapper},
-			{"Include", Include},
 			{"NewCall", NewCall},
 			{"NewQuery", NewQuery},
 			{"NewEvent", NewEvent},
-			{"Print", OsiPrint},
-			{"PrintWarning", OsiPrintWarning},
-			{"PrintError", OsiPrintError},
 
-			{"SaveFile", SaveFileWrapper},
-			{"LoadFile", LoadFileWrapper},
-
-			{"JsonParse", JsonParse},
-			{"JsonStringify", JsonStringify},
-
-			{"IsModLoaded", IsModLoadedWrapper},
-			{"GetModLoadOrder", GetModLoadOrder},
-			{"GetModInfo", GetModInfo},
-
-			{"DebugBreak", LuaDebugBreakWrapper},
 			{"XGetByGuid", XGetByGuid},
 			{"XGetByHandle", XGetByHandle},
 			{"XDumpBoosts", XDumpBoosts},
 			{"XGetResource", XGetResource},
 			{"XGetTag", XGetTag},
+			{"XTest", XTest},
 
-			{"GetStatEntries", GetStatEntries},
-			{"GetStatEntriesLoadedBefore", GetStatEntriesLoadedBefore},
-			/*{"GetSkillSet", GetSkillSet},
-			{"UpdateSkillSet", UpdateSkillSet},
-			{"GetEquipmentSet", GetEquipmentSet},
-			{"UpdateEquipmentSet", UpdateEquipmentSet},
-			{"GetTreasureTable", GetTreasureTable},
-			{"UpdateTreasureTable", UpdateTreasureTable},
-			{"GetTreasureCategory", GetTreasureCategory},
-			{"UpdateTreasureCategory", UpdateTreasureCategory},
-			{"GetItemCombo", GetItemCombo},
-			{"UpdateItemCombo", UpdateItemCombo},
-			{"GetItemComboPreviewData", GetItemComboPreviewData},
-			{"UpdateItemComboPreviewData", UpdateItemComboPreviewData},
-			{"GetItemComboProperty", GetItemComboProperty},
-			{"UpdateItemComboProperty", UpdateItemComboProperty},
-			{"GetItemGroup", GetItemGroup},
-			{"GetNameGroup", GetNameGroup},*/
-
-			{"StatGetAttribute", StatGetAttribute},
-			{"StatSetAttribute", StatSetAttribute},
-			//{"StatAddCustomDescription", StatAddCustomDescriptionWrapper},
-			{"GetStat", GetStat},
-			{"CreateStat", CreateStat},
-			{"SyncStat", SyncStatWrapper},
-			{"StatSetPersistence", StatSetPersistenceWrapper},
-			/*{"GetDeltaMod", GetDeltaMod},
-			{"UpdateDeltaMod", UpdateDeltaMod},*/
-			{"EnumIndexToLabel", EnumIndexToLabel},
-			{"EnumLabelToIndex", EnumLabelToIndex},
-			/*{"ExecuteSkillPropertiesOnTarget", ExecuteSkillPropertiesOnTarget},
-			{"ExecuteSkillPropertiesOnPosition", ExecuteSkillPropertiesOnPosition},
-
-			{"GetSurfaceTransformRules", GetSurfaceTransformRules},
+			/*{"GetSurfaceTransformRules", GetSurfaceTransformRules},
 			{"UpdateSurfaceTransformRules", UpdateSurfaceTransformRules},
 			{"CreateSurfaceAction", CreateSurfaceAction},
 			{"ExecuteSurfaceAction", ExecuteSurfaceAction},
@@ -413,23 +386,6 @@ namespace bg3se::esv::lua
 			{"NewDamageList", NewDamageList},
 			{"GetSurfaceTemplate", GetSurfaceTemplate},
 			{"OsirisIsCallable", OsirisIsCallable},*/
-			{"IsDeveloperMode", IsDeveloperModeWrapper},
-			{"Random", LuaRandom},
-			{"Round", LuaRoundWrapper},
-			{"GenerateIdeHelpers", GenerateIdeHelpersWrapper},
-
-			// EXPERIMENTAL FUNCTIONS
-			{"DumpStack", DumpStackWrapper},
-			//{"DumpNetworking", DumpNetworking},
-
-			//{"GetGameState", GetGameState},
-			{"AddPathOverride", AddPathOverrideWrapper},
-			{"AddVoiceMetaData", AddVoiceMetaDataWrapper},
-			{"GetTranslatedString", GetTranslatedStringWrapper},
-			{"GetTranslatedStringFromKey", GetTranslatedStringFromKeyWrapper},
-			{"CreateTranslatedString", CreateTranslatedStringWrapper},
-			{"CreateTranslatedStringKey", CreateTranslatedStringKeyWrapper},
-			{"CreateTranslatedStringHandle", CreateTranslatedStringHandleWrapper},
 
 			/*{"BroadcastMessage", BroadcastMessage},
 			{"PostMessageToClient", PostMessageToClient},
@@ -442,11 +398,31 @@ namespace bg3se::esv::lua
 
 		luaL_newlib(L, extLib); // stack: lib
 		lua_setglobal(L, "Ext"); // stack: -
+
+		stats::RegisterStatsLib(L);
+		utils::RegisterUtilsLib(L);
+		utils::RegisterLocalizationLib(L);
+		utils::RegisterMathLib(L);
 	}
 
 	void ExtensionLibraryServer::Register(lua_State * L)
 	{
 		ExtensionLibrary::Register(L);
+
+		ObjectProxy2<DealDamageFunctor>::RegisterMetatable(L);
+
+		/*auto & pm = StaticLuaPropertyMap<DealDamageFunctor>::PropertyMap;
+		pm.AddProperty("DamageType", 
+			[](lua_State* L, DealDamageFunctor* obj) {
+				return LuaWrite(L, obj->Arg1_DamageType) == 1;
+			},
+			[](lua_State* L, DealDamageFunctor* obj, int index) {
+				lua_pushvalue(L, index);
+				LuaRead(L, obj->Arg1_DamageType);
+				lua_pop(L, 1);
+				return true;
+			}
+		);*/
 
 		/*ObjectProxy<esv::Status>::RegisterMetatable(L);
 		ObjectProxy<esv::Character>::RegisterMetatable(L);
@@ -486,7 +462,7 @@ namespace bg3se::esv::lua
 		LoadScript(gameTooltipLib, "Game.Tooltip.lua");
 
 		lua_getglobal(L, "Ext"); // stack: Ext
-		StatsExtraDataProxy::New(L); // stack: Ext, "ExtraData", ExtraDataProxy
+		stats::StatsExtraDataProxy::New(L); // stack: Ext, "ExtraData", ExtraDataProxy
 		lua_setfield(L, -2, "ExtraData"); // stack: Ext
 		lua_pop(L, 1); // stack: -
 		
@@ -521,7 +497,7 @@ namespace bg3se::esv::lua
 	{
 		Restriction restriction(*this, RestrictOsiris);
 
-		PushExtFunction(L, "_StatusGetEnterChance"); // stack: fn
+		PushInternalFunction(L, "_StatusGetEnterChance"); // stack: fn
 		auto _{ PushArguments(L,
 			std::tuple{Push<ObjectProxy<esv::Status>>(status)}) };
 		push(L, isEnterCheck);
@@ -614,7 +590,7 @@ namespace bg3se::esv::lua
 	void ServerState::OnStatusHitEnter(esv::StatusHit* hit, PendingHit* context)
 	{
 		StackCheck _(L, 0);
-		PushExtFunction(L, "_StatusHitEnter"); // stack: fn
+		PushInternalFunction(L, "_StatusHitEnter"); // stack: fn
 
 		StatusHandleProxy::New(L, hit->TargetHandle, hit->StatusHandle);
 
@@ -638,7 +614,7 @@ namespace bg3se::esv::lua
 		StackCheck _(L, 0);
 		Restriction restriction(*this, RestrictOsiris);
 
-		PushExtFunction(L, "_ComputeCharacterHit"); // stack: fn
+		PushInternalFunction(L, "_ComputeCharacterHit"); // stack: fn
 
 		auto luaTarget = ObjectProxy<CDivinityStats_Character>::New(L, target);
 		UnbindablePin _t(luaTarget);
@@ -727,7 +703,7 @@ namespace bg3se::esv::lua
 		StackCheck _(L, 0);
 		Restriction restriction(*this, RestrictOsiris);
 
-		PushExtFunction(L, "_BeforeCharacterApplyDamage"); // stack: fn
+		PushInternalFunction(L, "_BeforeCharacterApplyDamage"); // stack: fn
 
 		auto luaTarget = ObjectProxy<esv::Character>::New(L, target);
 		UnbindablePin _t(luaTarget);
@@ -783,7 +759,7 @@ namespace bg3se::esv::lua
 	void ServerState::OnGameStateChanged(GameState fromState, GameState toState)
 	{
 		StackCheck _(L, 0);
-		PushExtFunction(L, "_GameStateChanged"); // stack: fn
+		PushInternalFunction(L, "_GameStateChanged"); // stack: fn
 		push(L, fromState);
 		push(L, toState);
 		CheckedCall<>(L, 2, "Ext.GameStateChanged");
@@ -793,7 +769,7 @@ namespace bg3se::esv::lua
 	esv::Item* ServerState::OnGenerateTreasureItem(esv::Item* item)
 	{
 		StackCheck _(L, 0);
-		PushExtFunction(L, "_TreasureItemGenerated"); // stack: fn
+		PushInternalFunction(L, "_TreasureItemGenerated"); // stack: fn
 
 		ObjectHandle itemHandle;
 		item->GetObjectHandle(itemHandle);
@@ -835,7 +811,7 @@ namespace bg3se::esv::lua
 		esv::Character* character, uint8_t quantity, FixedString const& combinationId)
 	{
 		StackCheck _(L, 0);
-		PushExtFunction(L, "_BeforeCraftingExecuteCombination"); // stack: fn
+		PushInternalFunction(L, "_BeforeCraftingExecuteCombination"); // stack: fn
 
 		ObjectProxy<esv::Character>::New(L, character);
 		push(L, craftingStation);
@@ -874,7 +850,7 @@ namespace bg3se::esv::lua
 		esv::Character* character, uint8_t quantity, FixedString const& combinationId, bool succeeded)
 	{
 		StackCheck _(L, 0);
-		PushExtFunction(L, "_AfterCraftingExecuteCombination"); // stack: fn
+		PushInternalFunction(L, "_AfterCraftingExecuteCombination"); // stack: fn
 
 		ObjectProxy<esv::Character>::New(L, character);
 		push(L, craftingStation);
@@ -904,7 +880,7 @@ namespace bg3se::esv::lua
 	void ServerState::OnBeforeShootProjectile(ShootProjectileHelper* helper)
 	{
 		StackCheck _(L, 0);
-		PushExtFunction(L, "_OnBeforeShootProjectile");
+		PushInternalFunction(L, "_OnBeforeShootProjectile");
 		UnbindablePin _h(ObjectProxy<ShootProjectileHelper>::New(L, helper));
 
 		if (CallWithTraceback(L, 1, 0) != 0) {
@@ -917,7 +893,7 @@ namespace bg3se::esv::lua
 	void ServerState::OnShootProjectile(Projectile* projectile)
 	{
 		StackCheck _(L, 0);
-		PushExtFunction(L, "_OnShootProjectile");
+		PushInternalFunction(L, "_OnShootProjectile");
 		UnbindablePin _p(ObjectProxy<esv::Projectile>::New(L, projectile));
 
 		if (CallWithTraceback(L, 1, 0) != 0) {

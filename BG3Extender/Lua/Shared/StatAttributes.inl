@@ -6,7 +6,7 @@
 #include <GameDefinitions/Stats/Stats.h>
 #include <Lua/Shared/LuaStats.h>
 
-namespace bg3se::lua
+namespace bg3se::lua::stats
 {
 	int LuaStatGetAttribute(lua_State* L, CRPGStats_Object* object, char const* attributeName, std::optional<int> level);
 	int LuaStatSetAttribute(lua_State* L, CRPGStats_Object* object, char const* attributeName, int valueIdx);
@@ -131,20 +131,6 @@ namespace bg3se::lua
 		}
 
 		return 1;
-	}
-
-	int StatGetAttribute(lua_State* L)
-	{
-		auto statName = luaL_checkstring(L, 1);
-		auto attributeName = luaL_checkstring(L, 2);
-
-		auto object = StatFindObject(statName);
-		if (!object) {
-			push(L, nullptr);
-			return 1;
-		}
-
-		return LuaStatGetAttribute(L, object, attributeName, {});
 	}
 
 	int StatGetAttributeScaled(lua_State* L)
@@ -280,18 +266,6 @@ namespace bg3se::lua
 
 		return 0;
 	}
-
-	int StatSetAttribute(lua_State* L)
-	{
-		auto statName = luaL_checkstring(L, 1);
-		auto attributeName = luaL_checkstring(L, 2);
-
-		auto object = StatFindObject(statName);
-		if (!object) return 0;
-
-		return LuaStatSetAttribute(L, object, attributeName, 3);
-	}
-
 
 	struct CRPGStats_CustomLevelMap : public CRPGStats_LevelMap
 	{
