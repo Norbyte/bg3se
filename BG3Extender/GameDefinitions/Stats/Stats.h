@@ -454,13 +454,13 @@ namespace bg3se
 	MARK_ALLOCATABLE(CSkillSet);
 	MARK_ALLOCATABLE(CEquipmentGroup);
 	MARK_ALLOCATABLE(CEquipmentSet);
-	MARK_ALLOCATABLE(CRPGStats_DeltaModifier);
+	MARK_ALLOCATABLE(CRPGStats_DeltaModifier);*/
 	MARK_ALLOCATABLE(CRPGStats_Treasure_SubTable_Description);
 	MARK_ALLOCATABLE(CRPGStats_Treasure_SubTable_Description::Category);
 	MARK_ALLOCATABLE(CRPGStats_Treasure_Table);
 	MARK_ALLOCATABLE(CRPGStats_Treasure_Category);
 	MARK_ALLOCATABLE(CRPGStats_Treasure_Category::Item);
-	MARK_ALLOCATABLE(CNameGroupName);
+	/*MARK_ALLOCATABLE(CNameGroupName);
 	MARK_ALLOCATABLE(CNameGroup);
 	MARK_ALLOCATABLE(CNameGroupLink);
 	MARK_ALLOCATABLE(CRootGroup);
@@ -490,6 +490,18 @@ namespace bg3se
 		bool Initialized;
 	};
 
+	struct DataBuffer {};
+
+	struct ItemColor
+	{
+		uint32_t Color[3];
+	};
+
+	struct BloodType
+	{
+		FixedString Info[9];
+	};
+
 	struct RPGStats : public ProtectedGameObject<RPGStats>
 	{
 		//typedef void (*LoadProc)(RPGStats* self);
@@ -503,15 +515,15 @@ namespace bg3se
 		CNamedElementManager<CRPGStats_Treasure_Category> TreasureCategories;
 		CNamedElementManager<CRPGStats_Treasure_Table> TreasureTables;
 		CRPGStats_ItemType_Manager ItemTypes;
-		void* Unknown;
 		Map<FixedString, StatsFunctorSet*> StatsFunctors;
 		uint64_t Unkn1[4];
 		RNG Rng;
 		Map<FixedString, float>* ExtraData;
-		RefMap<FixedString, void*> Unknown3;
-		RefMap<FixedString, void*> Unknown4;
+		RefMap<FixedString, ObjectSet<void*>> Requirements;
+		RefMap<FixedString, ItemColor> ItemColors;
 		Map<FixedString, void*> TreasureGroups[4];
-		uint64_t Unknown5[6];
+		RefMap<FixedString, void*> Unknown5;
+		FixedString TreasureRarities[7];
 		Array<FixedString> FixedStrings;
 		Array<int64_t*> Int64s;
 		Array<UUID> GUIDs;
@@ -520,15 +532,15 @@ namespace bg3se
 		void* SpellSetManager;
 		void* ItemProgressionManager;
 		void* ItemCombinationManager;
-		uint64_t Unkn6;
-		FixedString FS1;
-		Map<FixedString, void*> FSMap5;
-		ObjectSet<void*> Unkn3[3];
-		Map<FixedString, void*> FSMap6;
+		void* CurrentDataBuffer;
+		FixedString CurrentDataBufferPath;
+		Map<FixedString, int32_t> DataBufferIndices;
+		ObjectSet<DataBuffer*> DataBuffers;
+		Map<FixedString, BloodType*> BloodTypes;
 		CDivinityStats* DivinityStats;
 		CRITICAL_SECTION CriticalSection;
 		void* Unkn5;
-		Array<void*> ConditionList;
+		Array<STDString> ConditionList;
 
 
 		CRPGStats_Modifier * GetModifierInfo(FixedString const& modifierListName, FixedString const& modifierName);

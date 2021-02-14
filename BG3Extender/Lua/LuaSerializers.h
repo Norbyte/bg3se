@@ -3,6 +3,13 @@
 #include <Lua/LuaBinding.h>
 #include <GameDefinitions/RootTemplates.h>
 
+namespace bg3se
+{
+	struct CRPGStats_Treasure_Table;
+	struct CRPGStats_Treasure_Category;
+	struct CRPGStats_Treasure_SubTable_Description;
+}
+
 namespace bg3se::lua
 {
 	class LuaSerializer : Noncopyable<LuaSerializer>
@@ -104,6 +111,7 @@ namespace bg3se::lua
 	inline LuaSerializer& operator << (LuaSerializer& s, FixedString& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, STDString& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, STDWString& v) { return s.Visit(v); }
+	inline LuaSerializer& operator << (LuaSerializer& s, UUID& v) { return s.Visit(v); }
 
 	template <class T, class Allocator, bool StoreSize>
 	LuaSerializer& operator << (LuaSerializer& s, ObjectSet<T, Allocator, StoreSize>& v)
@@ -203,14 +211,11 @@ namespace bg3se::lua
 
 /*	LuaSerializer& operator << (LuaSerializer& s, CEquipmentSet& v);
 	LuaSerializer& operator << (LuaSerializer& s, CEquipmentGroup& v);
-	LuaSerializer& operator << (LuaSerializer& s, CSkillSet& v);
+	LuaSerializer& operator << (LuaSerializer& s, CSkillSet& v);*/
 	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_Table& v);
 	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_SubTable_Description& v);
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_SubTable_Description::Category& v);
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_SubTable_Description::DropCount& v);
 	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_Category& v);
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_Category::Item& v);
-	LuaSerializer& operator << (LuaSerializer& s, CItemCombination& v);
+/*	LuaSerializer& operator << (LuaSerializer& s, CItemCombination& v);
 	LuaSerializer& operator << (LuaSerializer& s, CItemCombinationIngredient& v);
 	LuaSerializer& operator << (LuaSerializer& s, CItemCombinationResult& v);
 	LuaSerializer& operator << (LuaSerializer& s, CItemCombinationResult::CombinationResult& v);

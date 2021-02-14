@@ -35,7 +35,7 @@ namespace bg3se::lua
 		P(Skills);
 		s.EndObject();
 		return s;
-	}
+	}*/
 
 	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_Table& v)
 	{
@@ -47,6 +47,70 @@ namespace bg3se::lua
 		PO(UseTreasureGroupContainers, false);
 		PO(CanMerge, false);
 		P(SubTables);
+		s.EndObject();
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_SubTable_Description::Category& v)
+	{
+		auto stats = GetStaticSymbols().GetStats();
+
+		s.BeginObject();
+		PO(Frequency, 1);
+
+		if (s.IsWriting) {
+			if (v.IsTreasureTable) {
+				auto refTable = stats->TreasureTables.Find(v.Index);
+				if (refTable) {
+					s.VisitProperty("TreasureTable", refTable->Name);
+				}
+			} else {
+				auto refCategory = stats->TreasureCategories.Find(v.Index);
+				if (refCategory) {
+					s.VisitProperty("TreasureCategory", refCategory->Category);
+				}
+			}
+		} else {
+			FixedString treasureTable, treasureCategory;
+			s.VisitOptionalProperty("TreasureTable", treasureTable, GFS.strEmpty);
+			s.VisitOptionalProperty("TreasureCategory", treasureCategory, GFS.strEmpty);
+
+			if (treasureTable && treasureTable != GFS.strEmpty) {
+				auto idx = stats->TreasureTables.FindIndex(treasureTable);
+				if (idx) {
+					v.Index = *idx;
+				} else {
+					luaL_error(s.L, "Treasure table '%s' does not exist!", treasureTable.GetString());
+				}
+
+				v.IsTreasureTable = true;
+				v.IsTreasureTable2 = true;
+			} else {
+				auto idx = stats->TreasureCategories.FindIndex(treasureCategory);
+				if (idx) {
+					v.Index = *idx;
+				} else {
+					luaL_error(s.L, "Treasure category '%s' does not exist!", treasureCategory.GetString());
+				}
+
+				v.IsTreasureTable = false;
+				v.IsTreasureTable2 = false;
+			}
+		}
+
+		for (int i = 0; i < 7; i++) {
+			s.VisitOptionalProperty(stats->TreasureRarities[i].GetString(), v.Frequencies[i], (uint16_t)0);
+		}
+
+		s.EndObject();
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_SubTable_Description::DropCount& v)
+	{
+		s.BeginObject();
+		P(Chance);
+		P(Amount);
 		s.EndObject();
 		return s;
 	}
@@ -86,79 +150,6 @@ namespace bg3se::lua
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_SubTable_Description::Category& v)
-	{
-		auto stats = GetStaticSymbols().GetStats();
-
-		s.BeginObject();
-		PO(Frequency, 1);
-
-		if (s.IsWriting) {
-			if (v.IsTreasureTable) {
-				auto refTable = stats->TreasureTables.Find(v.Index);
-				if (refTable) {
-					s.VisitProperty("TreasureTable", refTable->Name);
-				}
-			} else {
-				auto refCategory = stats->TreasureCategories.Find(v.Index);
-				if (refCategory) {
-					s.VisitProperty("TreasureCategory", refCategory->Category);
-				}
-			}
-		} else {
-			FixedString treasureTable, treasureCategory;
-			s.VisitOptionalProperty("TreasureTable", treasureTable, GFS.strEmpty);
-			s.VisitOptionalProperty("TreasureCategory", treasureCategory, GFS.strEmpty);
-
-			if (treasureTable && treasureTable != GFS.strEmpty) {
-				auto idx = stats->TreasureTables.FindIndex(treasureTable);
-				if (idx) {
-					v.Index = *idx;
-				} else {
-					luaL_error(s.L, "Treasure table '%s' does not exist!", treasureTable.Str);
-				}
-
-				v.IsTreasureTable = true;
-				v.IsTreasureTable2 = true;
-			} else {
-				auto idx = stats->TreasureCategories.FindIndex(treasureCategory);
-				if (idx) {
-					v.Index = *idx;
-				} else {
-					luaL_error(s.L, "Treasure category '%s' does not exist!", treasureCategory.Str);
-				}
-
-				v.IsTreasureTable = false;
-				v.IsTreasureTable2 = false;
-			}
-		}
-
-		for (int i = 0; i < 7; i++) {
-			s.VisitOptionalProperty(stats->TreasureItemTypes[i].Str, v.Frequencies[i], (uint16_t)0);
-		}
-
-		s.EndObject();
-		return s;
-	}
-
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_SubTable_Description::DropCount& v)
-	{
-		s.BeginObject();
-		P(Chance);
-		P(Amount);
-		s.EndObject();
-		return s;
-	}
-
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_Category& v)
-	{
-		s.BeginObject();
-		P(Category);
-		P(Items);
-		s.EndObject();
-		return s;
-	}
-
 	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_Category::Item& v)
 	{
 		s.BeginObject();
@@ -174,7 +165,16 @@ namespace bg3se::lua
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, CItemCombination& v)
+	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_Category& v)
+	{
+		s.BeginObject();
+		P(Category);
+		P(Items);
+		s.EndObject();
+		return s;
+	}
+
+	/*LuaSerializer& operator << (LuaSerializer& s, CItemCombination& v)
 	{
 		s.BeginObject();
 		P(Name);
