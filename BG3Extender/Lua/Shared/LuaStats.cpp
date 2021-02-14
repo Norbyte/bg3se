@@ -53,3 +53,16 @@ namespace bg3se::lua::stats
 		RegisterStatsObjects(L);
 	}
 }
+
+namespace bg3se::lua
+{
+	void RegisterSharedLibraries(lua_State* L)
+	{
+		stats::RegisterStatsLib(L);
+		utils::RegisterUtilsLib(L);
+		utils::RegisterLocalizationLib(L);
+		utils::RegisterJsonLib(L);
+		utils::RegisterIOLib(L);
+		utils::RegisterMathLib(L);
+	}
+}

@@ -35,9 +35,6 @@
     <ClCompile Include="Lua\LuaBinding.cpp">
       <Filter>Lua</Filter>
     </ClCompile>
-    <ClCompile Include="Lua\LuaExtFunctions.cpp">
-      <Filter>Lua</Filter>
-    </ClCompile>
     <ClCompile Include="Lua\LuaOsiBridge.cpp">
       <Filter>Lua</Filter>
     </ClCompile>
@@ -82,6 +79,9 @@
     </ClCompile>
     <ClCompile Include="Lua\LuaDebugMessages.cpp">
       <Filter>Lua\Debugger</Filter>
+    </ClCompile>
+    <ClCompile Include="Lua\Shared\LuaUtilities.cpp">
+      <Filter>Lua\Shared</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -257,7 +257,6 @@
     <None Include="..\Misc\ExtIdeHelpers.lua" />
     <None Include="cpp.hint" />
     <None Include="Exports.def" />
-    <None Include="LuaDebug.proto" />
     <None Include="LuaScripts\Game.Math.lua" />
     <None Include="LuaScripts\Game.Tooltip.lua" />
     <None Include="LuaScripts\SandboxStartup.lua" />
@@ -334,6 +333,15 @@
       <Filter>GameDefinitions</Filter>
     </None>
     <None Include="Lua\Shared\LuaStatsFunctors.inl">
+      <Filter>Lua\Shared</Filter>
+    </None>
+    <None Include="LuaDebug.proto">
+      <Filter>Lua\Debugger</Filter>
+    </None>
+    <None Include="Lua\Shared\LuaJson.inl">
+      <Filter>Lua\Shared</Filter>
+    </None>
+    <None Include="Lua\Shared\LuaLocalization.inl">
       <Filter>Lua\Shared</Filter>
     </None>
   </ItemGroup>

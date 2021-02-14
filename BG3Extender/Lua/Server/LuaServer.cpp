@@ -350,12 +350,29 @@ namespace bg3se::esv::lua
 		return 0;
 	}
 
-	void ExtensionLibraryServer::RegisterLib(lua_State * L)
+	int NewCall(lua_State* L);
+	int NewQuery(lua_State* L);
+	int NewEvent(lua_State* L);
+
+	void RegisterOsirisLibrary(lua_State* L)
 	{
 		static const luaL_Reg extLib[] = {
 			{"NewCall", NewCall},
 			{"NewQuery", NewQuery},
 			{"NewEvent", NewEvent},
+			{"RegisterListener", RegisterOsirisListener},
+			{0,0}
+		};
+
+		lua_getglobal(L, "Ext"); // stack: Ext
+		luaL_newlib(L, extLib); // stack: ext, lib
+		lua_setfield(L, -2, "Osiris");
+		lua_pop(L, 1);
+	}
+
+	void ExtensionLibraryServer::RegisterLib(lua_State * L)
+	{
+		static const luaL_Reg extLib[] = {
 
 			{"XGetByGuid", XGetByGuid},
 			{"XGetByHandle", XGetByHandle},
@@ -392,17 +409,14 @@ namespace bg3se::esv::lua
 			{"PostMessageToUser", PostMessageToUser},
 			{"PlayerHasExtender", PlayerHasExtender},*/
 
-			{"RegisterOsirisListener", RegisterOsirisListener},
 			{0,0}
 		};
 
 		luaL_newlib(L, extLib); // stack: lib
 		lua_setglobal(L, "Ext"); // stack: -
 
-		stats::RegisterStatsLib(L);
-		utils::RegisterUtilsLib(L);
-		utils::RegisterLocalizationLib(L);
-		utils::RegisterMathLib(L);
+		RegisterSharedLibraries(L);
+		RegisterOsirisLibrary(L);
 	}
 
 	void ExtensionLibraryServer::Register(lua_State * L)

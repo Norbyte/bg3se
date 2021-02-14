@@ -1157,7 +1157,7 @@ namespace bg3se::esv::lua
 		}
 	}
 
-	int ExtensionLibraryServer::NewCall(lua_State * L)
+	int NewCall(lua_State * L)
 	{
 		LuaServerPin lua(ExtensionState::Get());
 		if (!lua) return luaL_error(L, "Exiting");
@@ -1180,7 +1180,7 @@ namespace bg3se::esv::lua
 		return 0;
 	}
 
-	int ExtensionLibraryServer::NewQuery(lua_State * L)
+	int NewQuery(lua_State * L)
 	{
 		LuaServerPin lua(ExtensionState::Get());
 		if (!lua) return luaL_error(L, "Exiting");
@@ -1203,7 +1203,7 @@ namespace bg3se::esv::lua
 		return 0;
 	}
 
-	int ExtensionLibraryServer::NewEvent(lua_State * L)
+	int NewEvent(lua_State * L)
 	{
 		LuaServerPin lua(ExtensionState::Get());
 		if (!lua) return luaL_error(L, "Exiting");

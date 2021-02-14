@@ -136,11 +136,7 @@ namespace bg3se::esv::lua
 		void RegisterNameResolverMetatable(lua_State * L);
 		void CreateNameResolver(lua_State * L);
 
-		static int LuaIndexResolverTable(lua_State * L);
-
-		static int NewCall(lua_State * L);
-		static int NewQuery(lua_State * L);
-		static int NewEvent(lua_State * L);
+		static int LuaIndexResolverTable(lua_State* L);
 	};
 
 	class ServerState : public State

@@ -282,7 +282,7 @@ namespace bg3se::lua::stats
 	{
 		StackCheck _(L, 1);
 		auto statName = luaL_checkstring(L, 1);
-		auto statType = checked_get<FixedString>(L, 3);
+		auto statType = checked_get<FixedString>(L, 2);
 
 		std::optional<int> level;
 		if (lua_gettop(L) >= 3 && !lua_isnil(L, 3)) {

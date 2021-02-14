@@ -120,5 +120,12 @@ namespace bg3se::lua::utils
 {
 	void RegisterUtilsLib(lua_State* L);
 	void RegisterLocalizationLib(lua_State* L);
+	void RegisterJsonLib(lua_State* L);
+	void RegisterIOLib(lua_State* L);
 	void RegisterMathLib(lua_State* L);
+}
+
+namespace bg3se::lua
+{
+	void RegisterSharedLibraries(lua_State* L);
 }

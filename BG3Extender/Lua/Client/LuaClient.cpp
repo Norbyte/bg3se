@@ -988,10 +988,7 @@ namespace bg3se::ecl::lua
 		lua_setfield(L, -2, "Audio");
 		lua_pop(L, 1);*/
 
-		stats::RegisterStatsLib(L);
-		utils::RegisterUtilsLib(L);
-		utils::RegisterLocalizationLib(L);
-		utils::RegisterMathLib(L);
+		RegisterSharedLibraries(L);
 	}
 
 

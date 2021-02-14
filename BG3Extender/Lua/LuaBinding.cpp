@@ -654,7 +654,7 @@ namespace bg3se::lua
 	{
 		Restriction restriction(*this, RestrictAll);
 
-		PushExtFunction(L, "_GetSkillDamage"); // stack: fn
+		PushInternalFunction(L, "_GetSkillDamage"); // stack: fn
 
 		auto luaSkill = SkillPrototypeProxy::New(L, skill, -1); // stack: fn, skill
 		UnbindablePin _(luaSkill);
@@ -704,7 +704,7 @@ namespace bg3se::lua
 	{
 		Restriction restriction(*this, RestrictAll);
 
-		PushExtFunction(L, "_GetSkillAPCost");
+		PushInternalFunction(L, "_GetSkillAPCost");
 
 		auto luaSkill = SkillPrototypeProxy::New(L, skill, -1);
 		UnbindablePin _(luaSkill);
