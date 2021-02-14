@@ -8,6 +8,7 @@
 namespace bg3se::esv
 {
 	struct Level;
+	struct Surface;
 
 	struct SurfaceCell
 	{
@@ -53,6 +54,8 @@ namespace bg3se::esv
 		FixedString Parent;
 		ObjectSet<SubSurface*> SubSurfaces;
 	};
+
+	struct SurfaceAction;
 
 	struct SurfaceActionVMT : ProtectedGameObject<SurfaceActionVMT>
 	{
@@ -242,4 +245,9 @@ namespace bg3se::esv
 		char field_500;
 	};
 
+	struct SurfaceActionFactory : public ObjectFactoryBase
+	{
+		using CreateActionProc = SurfaceAction * (SurfaceActionFactory* self, uint8_t surfaceType, uint64_t actionHandle);
+		using AddActionProc = void (SurfaceActionFactory* self, SurfaceAction* action);
+	};
 }

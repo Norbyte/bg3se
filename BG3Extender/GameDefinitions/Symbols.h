@@ -123,7 +123,9 @@ namespace bg3se
 		ecl::GameStateThreaded__GameStateWorker__DoWork ecl__GameStateThreaded__GameStateWorker__DoWork{ nullptr };
 		esv::GameStateThreaded__GameStateWorker__DoWork esv__GameStateThreaded__GameStateWorker__DoWork{ nullptr };
 
-		/*esv::StatusMachine::CreateStatusProc* esv__StatusMachine__CreateStatus{ nullptr };
+		esv::SurfaceActionFactory::CreateActionProc* esv__SurfaceActionFactory__CreateAction{ nullptr };
+		esv::SurfaceActionFactory::AddActionProc* esv__SurfaceActionFactory__AddAction{ nullptr };
+
 		esv::StatusMachine::ApplyStatusProc* esv__StatusMachine__ApplyStatus{ nullptr };
 
 		GlobalStringTable const ** GlobalStrings{ nullptr };
@@ -136,6 +138,7 @@ namespace bg3se
 
 		void * ModuleSettingsHasCustomMods{ nullptr };
 		RPGStats** Stats{ nullptr };
+		esv::SavegameManager** esv__SavegameManager{ nullptr };
 
 		std::map<uint8_t const *, EoCLibraryInfo> Libraries;
 
@@ -209,6 +212,17 @@ namespace bg3se
 				&& *esv__EoCServer != nullptr
 				&& (*esv__EoCServer)->EntityWorld != nullptr) {
 				return (*esv__EoCServer)->EntityWorld;
+			} else {
+				return {};
+			}
+		}
+
+		inline esv::SurfaceActionFactory* GetSurfaceActionFactory() const
+		{
+			if (esv__SavegameManager != nullptr
+				&& *esv__SavegameManager != nullptr
+				&& (*esv__SavegameManager)->ComponentFactories.Size > 21) {
+				return reinterpret_cast<esv::SurfaceActionFactory*>((*esv__SavegameManager)->ComponentFactories[21]);
 			} else {
 				return {};
 			}

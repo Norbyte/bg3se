@@ -277,7 +277,47 @@ namespace bg3se
 	typedef void(*GameStateEventManager__ExecuteGameStateChangedEvent)(void * self, GameState fromState, GameState toState);
 	typedef void(*GameStateThreaded__GameStateWorker__DoWork)(void * self);*/
 
+	struct SavegameManager : public ProtectedGameObject<SavegameManager>
+	{
+		EntityWorld* EntityWorld;
+		__int64 field_8;
+		__int64 field_10;
+		__int64 field_18;
+		__int64 field_20;
+		void* Loaders; // esv::SavegameManager::Loaders*
+		__int64 field_30;
+		int field_38;
+		int field_3C;
+		__int64 field_40;
+		__int64 field_48;
+		int field_50;
+		int field_54;
+		__int64 field_58;
+		Map<FixedString, void*> field_60;
+		STDWString field_78;
+		ObjectSet<void*> ComponentFactories;
+		BYTE field_B0;
+		char field_B1;
+		char field_B2;
+		char field_B3;
+		char field_B4;
+		char field_B5;
+		int field_B8;
+		ObjectSet<STDString> OS;
+		__int64 field_D8;
+		__int64 field_E0;
+		int field_E8;
+		Array<void*> field_F0;
+		Array<void*> field_108;
+		ScratchBuffer NewAge;
+		__int64 field_178;
+		uint8_t LevelCacheDesc[112];
+		__int64 field_1F0;
+		__int64 field_1F8;
+	};
+
 	}
+
 
 	struct FileReader : public Noncopyable<FileReader>
 	{

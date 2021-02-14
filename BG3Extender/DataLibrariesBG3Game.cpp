@@ -8,6 +8,17 @@
 #if defined(OSI_EOCAPP)
 namespace bg3se
 {
+	SymbolMappingData const sSymbolSurfaceActionFactoryAddSurfaceAction = {
+		"esv::SurfaceActionFactory::AddSurfaceAction",
+		SymbolMappingData::kCustom, 0,
+		"48 8B D3 " // mov     rdx, rbx
+		"48 8B C8 " // mov     rcx, rax
+		"E8 XX XX XX XX " // call    esv__SurfaceActionFactory__AddSurfaceAction
+		"C7 06 01 00 00 00 ", // mov     dword ptr [rsi], 1
+		{},
+		{"esv::SurfaceActionFactory::AddSurfaceAction", SymbolMappingTarget::kIndirect, 6, STATIC_SYM(esv__SurfaceActionFactory__AddAction)}
+	};
+
 	/*SymbolMappingData const sSymbolLevelManager = {
 		"esv::LevelManager2",
 		SymbolMappingData::kCustom, 0,
@@ -55,17 +66,6 @@ namespace bg3se
 		"48 8B 55 30 ", // mov     rdx, [rbp+120h+results.SummonCharacterHandle]
 		{},
 		{"esv::SummonHelpers::Summon", SymbolMappingTarget::kIndirect, 13, STATIC_SYM(SummonHelpersSummon)}
-	};
-
-	SymbolMappingData const sSymbolApplyStatus = {
-		"ApplyStatus",
-		SymbolMappingData::kCustom, 0,
-		"C7 43 2C 00 00 00 00 " // mov     dword ptr [rbx+2Ch], 0
-		"48 8B CF " // mov     rcx, rdi
-		"E8 XX XX XX XX " // call    esv__StatusMachine__ApplyStatus
-		"48 8B 7C 24 40 ", // mov     rdi, [rsp+28h+arg_10]
-		{},
-		{"esv::StatusMachine::ApplyStatus", SymbolMappingTarget::kIndirect, 10, STATIC_SYM(esv__StatusMachine__ApplyStatus)}
 	};
 
 	SymbolMappingResult FindStatusHitEoCApp2(uint8_t const * match)
@@ -523,26 +523,26 @@ namespace bg3se
 			{SymbolMappingCondition::kFixedString, 9, "SpawnObject"},
 			{"esv::SummonHelpers::Summon", SymbolMappingTarget::kAbsolute, -0x400, nullptr, nullptr, &sSymbolSummonHelpersSummon, 0x400}
 		},
+		*/
 
 		{
 			"esv::StatusMachine::CreateStatus",
 			SymbolMappingData::kText, SymbolMappingData::kDeferred,
-			"83 7A 1C 00 " // cmp     dword ptr [rdx+1Ch], 0
-			"48 8B F2 " // mov     rsi, rdx
-			"4C 8B F1 " // mov     r14, rcx
-			"0F 8E 8C 00 00 00 " // jle     short xxx
-			"4C 8B 05 XX XX XX XX " // mov     r8, cs:?Unassigned@ObjectHandle@ls@@2V12@B
-			"48 8D 15 XX XX XX XX " // lea     rdx, fs_LIFESTEAL
-			"48 89 5C 24 30 " //  mov     [rsp+28h+arg_0], rbx
-			"48 89 7C 24 40 " //  mov     [rsp+28h+arg_10], rdi
-			"48 8B B9 A0 01 00 00 " //  mov     rdi, [rcx+1A0h]
-			"48 8B CF " //  mov     rcx, rdi 
-			"E8 XX XX XX XX ", //  call    esv__StatusMachine__CreateStatus
-			{SymbolMappingCondition::kFixedString, 23, "LIFESTEAL"},
-			{"esv::StatusMachine::CreateStatus", SymbolMappingTarget::kIndirect, 50, STATIC_SYM(esv__StatusMachine__CreateStatus)},
-			{"esv::StatusMachine::ApplyStatus", SymbolMappingTarget::kAbsolute, 55, nullptr, nullptr, &sSymbolApplyStatus, 0x100},
+			"48 8D 15 XX XX XX XX " // lea     rdx, fs_STORY_FROZEN
+			"4C 8B 05 XX XX XX XX " // mov     r8, cs:qword_144D7D670
+			"48 8B CB " // mov     rcx, rbx
+			"E8 XX XX XX XX " // call    esv__StatusMachine__CreateStatus
+			"48 8B D0 " // mov     rdx, rax
+			"48 8B CB " // mov     rcx, rbx
+			"48 83 C4 20 " // add     rsp, 20h
+			"5B " // pop     rbx
+			"E9 XX XX XX XX ", //jmp     esv__StatusMachine__ApplyStatus
+			{SymbolMappingCondition::kFixedString, 0, "STORY_FROZEN"},
+			{"esv::StatusMachine::CreateStatus", SymbolMappingTarget::kIndirect, 17, STATIC_SYM(esv__StatusMachine__CreateStatus)},
+			{"esv::StatusMachine::ApplyStatus", SymbolMappingTarget::kAbsolute, 33, STATIC_SYM(esv__StatusMachine__ApplyStatus)},
 		},
 
+		/*
 		{
 			"esv::StatusHit::__vftable <64",
 			SymbolMappingData::kText, SymbolMappingData::kDeferred,
@@ -1432,6 +1432,35 @@ namespace bg3se
 			{},
 			{"esv::ExecuteCharacterExtraProperties", SymbolMappingTarget::kAbsolute, -0x18, STATIC_SYM(esv__ExecuteCharacterSetExtraProperties)}
 		},*/
+
+		{
+			"esv::SavegameManager",
+			SymbolMappingData::kText, 0,
+			"48 89 03 " // mov     [rbx], rax
+			"4C 8B CB " // mov     r9, rbx
+			"44 8B 05 XX XX XX XX " // mov     r8d, cs:esv__SurfaceActionIndex
+			"BA 15 00 00 00 " // mov     edx, 15h
+			"48 8B 0D XX XX XX XX " // mov     rcx, cs:esv__gSavegameManager
+			"E8 XX XX XX XX " // call    esv__SavegameManager__RegisterFactory
+			"90 ", // nop
+			{},
+			{"esv::SavegameManager", SymbolMappingTarget::kIndirect, 18, STATIC_SYM(esv__SavegameManager)}
+		},
+
+		{
+			"esv::SurfaceActionFactory::CreateAction",
+			SymbolMappingData::kText, 0,
+			"48 8B 0D XX XX XX XX " // mov     rcx, cs:esv__gSurfaceActionFactory
+			"49 B8 00 00 00 00 00 00 C0 FF " // mov     r8, 0FFC0000000000000h
+			"44 8B 60 08 " // mov     r12d, [rax+8]
+			"B2 02 " // mov     dl, 2
+			"F2 0F 10 30 " // movsd   xmm6, qword ptr [rax]
+			"48 89 9C 24 88 00 00 00 " // mov     [rsp+78h+arg_8], rbx
+			"E8 XX XX XX XX ", // call    esv__SurfaceActionFactory__CreateSurfaceAction
+			{},
+			{"esv::SurfaceActionFactory", SymbolMappingTarget::kAbsolute, 0, nullptr, nullptr, &sSymbolSurfaceActionFactoryAddSurfaceAction, 0x300},
+			{"esv::SurfaceActionFactory::CreateAction", SymbolMappingTarget::kIndirect, 35, STATIC_SYM(esv__SurfaceActionFactory__CreateAction)},
+		},
 
 		{
 			"eoc::gResourceDefinitions",
