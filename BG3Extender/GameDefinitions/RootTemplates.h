@@ -283,7 +283,7 @@ namespace bg3se
         OverrideableProperty<int32_t> MaxStackAmount;
         OverrideableProperty<int32_t> TreasureLevel;
         OverrideableProperty<void*> SomeTemplateInfo;
-        __int64 field_460;
+        __int64 field_460; // maybe DropSound?
         OverrideableProperty<FixedString> PickupSound;
         OverrideableProperty<FixedString> UseSound;
         OverrideableProperty<FixedString> EquipSound;
@@ -373,7 +373,7 @@ namespace bg3se
             bool OnlyOncePerTurn;
         };
 
-        uint64_t field_158[7];
+        uint64_t field_158[7]; // SurfaceTypeId, SurfaceType?
         OverrideableProperty<TranslatedString> DisplayName;
         OverrideableProperty<TranslatedString> Description;
         OverrideableProperty<FixedString> DecalMaterial;
@@ -381,12 +381,12 @@ namespace bg3se
         OverrideableProperty<uint8_t> SurfaceCategory;
         OverrideableProperty<bool> CanEnterCombat;
         OverrideableProperty<bool> AlwaysUseDefaultLifeTime;
-        OverrideableProperty<bool> DefaultLifeTime;
+        OverrideableProperty<float> DefaultLifeTime;
         OverrideableProperty<float> SurfaceGrowTimer;
         float field_1D0;
-        OverrideableProperty<bool> FadeInSpeed;
-        OverrideableProperty<bool> FadeOutSpeed;
-        OverrideableProperty<bool> FallDamageMultiplier;
+        OverrideableProperty<float> FadeInSpeed;
+        OverrideableProperty<float> FadeOutSpeed;
+        OverrideableProperty<float> FallDamageMultiplier;
         OverrideableProperty<int32_t> Seed;
         OverrideableProperty<int32_t> NormalBlendingFactor;
         OverrideableProperty<ObjectSet<VisualData>> InstanceVisual;

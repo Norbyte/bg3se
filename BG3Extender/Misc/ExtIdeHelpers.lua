@@ -3,8 +3,7 @@ ModuleUUID = "UUID"
 
 Osi = {}
 
---- From v52 onwards object handles are a type of userdata (lightuserdata) 
---- instead of integers.
+--- Object handles are a type of userdata (lightuserdata)
 --- @class ObjectHandle
 
 --- @class DamageItem
@@ -57,69 +56,31 @@ function DamageList.AggregateSameTypeDamages (self) end
 --- @return DamageItem[]
 function DamageList.ToTable (self) end
 
-
---- @class AiGrid
---- @field public OffsetX number X coordinate the grid starts at
---- @field public OffsetY number Y coordinate the grid starts at
---- @field public OffsetZ number Z coordinate the grid starts at
---- @field public GridScale number Size of each cell in the grid
---- @field public Width number Total width of the grid
---- @field public Height number Total height of the grid
-local AiGrid = {}
-
---- Scans the vicinity of the specified points for surfaces that match the specified flags.
---- Returns true if a surface was found, false otherwise.
---- @param self AiGrid
---- @param x number X coordinate of point to search
---- @param z number Z coordinate of point to search
---- @param radius number Radius to search
---- @param flags string[] AI flags to look for
---- @param bias number Height bias
---- @return boolean
-function AiGrid.SearchForCell (self, x, z, radius, flags, bias) end
-
---- Returns the contents (game objects, surfaces, etc.) of the specified cell
---- @param self AiGrid
---- @param x number X coordinate of point to search
---- @param z number Z coordinate of point to search
---- @return table
-function AiGrid.GetCellInfo (self, x, z) end
-
---- Returns the AI flags (navigation info, surface flags) of the specified cell
---- @param self AiGrid
---- @param x number X coordinate of point to search
---- @param z number Z coordinate of point to search
---- @return integer
-function AiGrid.GetAiFlags (self, x, z) end
-
---- Updates the AI flags (navigation info) of the specified cell
---- @param self AiGrid
---- @param x number X coordinate of point to search
---- @param z number Z coordinate of point to search
---- @param flags integer AI flags
-function AiGrid.SetAiFlags (self, x, z, flags) end
-
-
 --- @class CombatComponentTemplate
---- @field public Alignment string
+--- @field public Archetype string
 --- @field public CanFight boolean
---- @field public CanJoinFight boolean
+--- @field public CanJoinCombat boolean
 --- @field public CombatGroupID string
+--- @field public CombatName string
 --- @field public IsBoss boolean
+--- @field public StayInAiHints boolean
+--- @field public AiHint string
 --- @field public IsInspector boolean
 --- @field public StartCombatRange number
-local CombatComponentTemplate = {}
 
 
---- @class EoCGameObjectTemplate
+--- @class GameObjectTemplate
 --- @field public Id string
 --- @field public Name string
 --- @field public TemplateName string
+--- @field public ParentTemplateId string
 --- @field public IsGlobal boolean
 --- @field public IsDeleted boolean
+--- @field public IsForcedType boolean
 --- @field public LevelName string
---- @field public ModFolder string
 --- @field public GroupID string
+--- @field public Transform Transform
+--- @field public NonUniformScale boolean
 --- @field public VisualTemplate string
 --- @field public PhysicsTemplate string
 --- @field public CastShadow boolean
@@ -131,41 +92,62 @@ local CombatComponentTemplate = {}
 --- @field public CameraOffset number[]
 --- @field public HasParentModRelation boolean
 --- @field public HasGameplayValue boolean
---- @field public DevComment string
---- @field public AIBoundsRadius number
---- @field public AIBoundsHeight number
+--- @field public FileName string
+
+
+--- @class EoCGameObjectTemplate : GameObjectTemplate
+--- FIXME - map AIBounds
 --- @field public DisplayName string
 --- @field public Opacity number
 --- @field public Fadeable boolean
 --- @field public FadeIn boolean
 --- @field public SeeThrough boolean
+--- @field public HierarchyOnlyFade boolean
 --- @field public FadeGroup string
---- @field public GameMasterSpawnSection integer
+--- @field public FadeChildren string[]
 --- @field public GameMasterSpawnSubSection string
-local EoCGameObjectTemplate = {}
+
+
+--- @class EoCGameObjectTemplate2 : EoCGameObjectTemplate
+--- @field public CoverAmount boolean
+--- @field public CanClimbOn boolean
+--- @field public CanShootThrough boolean
+--- @field public WalkThrough boolean
+--- @field public WalkOn boolean
+--- @field public Wadable boolean
+--- @field public CanClickThrough boolean
+--- @field public IsPointerBlocker boolean
+--- @field public IsBlocker boolean
+--- @field public IsDecorative boolean
+--- @field public GenerateRunningDeepWater boolean
+--- @field public LoopSound string
+--- @field public SoundInitEvent string
+--- @field public SoundAttenuation number
+--- @field public HLOD GUID
 
 
 --- @class CharacterTemplate : EoCGameObjectTemplate
---- @field public CombatTemplate CombatComponentTemplate
+--- @field public CombatComponent CombatComponentTemplate
+--- FIXME - map ScriptConfigGlobalParameters
 --- @field public Icon string
 --- @field public Stats string
---- @field public SkillSet string
+--- @field public SpellSet string
 --- @field public Equipment string
+--- @field public Treasures string[]
+--- @field public TradeTreasures string[]
 --- @field public LightID string
---- @field public HitFX string
+--- @field public ActiveCharacterLightID string
+--- @field public BloodType string
 --- @field public DefaultDialog string
---- @field public SpeakerGroup string
+--- FIXME - map SpeakerGroupList
 --- @field public GeneratePortrait string
---- @field public WalkSpeed number
---- @field public RunSpeed number
---- @field public ClimbAttachSpeed number
---- @field public ClimbLoopSpeed number
---- @field public ClimbDetachSpeed number
+--- @field public LadderAttachSpeed number
+--- @field public LadderLoopSpeed number
+--- @field public LadderDetachSpeed number
 --- @field public CanShootThrough boolean
 --- @field public WalkThrough boolean
 --- @field public CanClimbLadders boolean
 --- @field public IsPlayer boolean
---- @field public Floating boolean
 --- @field public SpotSneakers boolean
 --- @field public CanOpenDoors boolean
 --- @field public AvoidTraps boolean
@@ -173,48 +155,85 @@ local EoCGameObjectTemplate = {}
 --- @field public HardcoreOnly boolean
 --- @field public NotHardcore boolean
 --- @field public JumpUpLadders boolean
---- @field public NoRotate boolean
 --- @field public IsHuge boolean
---- @field public EquipmentClass number
+--- @field public EquipmentRace GUID
+--- FIXME - map OnDeathActions
+--- @field public DeathRaycastMinLength number
+--- @field public DeathRaycastMaxLength number
+--- @field public DeathRaycastHeight number
+--- @field public DeathRaycastVerticalLength number
 --- @field public ExplodedResourceID string
 --- @field public ExplosionFX string
---- @field public VisualSetResourceID string
---- @field public VisualSetIndices number
+--- FIXME - map Scripts
+--- @field public AnubisConfigName string
+--- FIXME - map SkillList
+--- FIXME - map ItemList
 --- @field public TrophyID string
 --- @field public SoundInitEvent string
---- @field public SoundAttachBone string
---- @field public SoundAttenuation number
+--- @field public SoundObjectIndex integer
+--- @field public SoundAttenuation integer
+--- @field public FoleyShortResourceID string
+--- @field public FoleyMediumResourceID string
+--- @field public FoleyLongResourceID string
+--- FIXME - vocal resource IDs
+--- @field public CharacterVisualResourceID string
 --- @field public CoverAmount number
 --- @field public LevelOverride number
 --- @field public ForceUnsheathSkills boolean
 --- @field public CanBeTeleported boolean
 --- @field public ActivationGroupId string
+--- @field public PickingPhysicsTemplates string[]
 --- @field public SoftBodyCollisionTemplate string
 --- @field public RagdollTemplate string
 --- @field public DefaultState number
 --- @field public GhostTemplate string
 --- @field public IsLootable boolean
---- @field public IsEquipmentLootable boolean
---- @field public InventoryType number
---- @field public IsArenaChampion boolean
---- @field public FootstepWeight string
-local CharacterTemplate = {}
+--- @field public LightChannel integer
+--- @field public AliveInventoryType integer
+--- @field public InventoryType integer
+--- @field public Race GUID
+--- @field public Title TranslatedString
+--- @field public AnimationSetResourceID string
+--- @field public HasPlayerApprovalRating boolean
+--- @field public CanLongRest boolean
+--- @field public DisableEquipping boolean
+--- @field public WorldClimbingSpeed number
+--- @field public IsMovementEnabled boolean
+--- @field public MovementAcceleration number
+--- @field public MovementSpeedStroll number
+--- @field public MovementSpeedRun number
+--- @field public MovementSpeedSprint number
+--- @field public MovementSpeedDash number
+--- @field public MaxDashDistance number
+--- @field public MovementStepUpHeight number
+--- @field public MovementTiltToRemap string
+--- @field public TurningNodeAngle number
+--- @field public TurningNodeOffset number
+--- @field public IsSteeringEnabled boolean
+--- @field public SteeringSpeedCurveWithoutTransitions string
+--- @field public SteeringSpeedFallback number
+--- @field public IsWorldClimbingEnabled boolean
+--- @field public WorldClimbingBlendspace_DownA string
+--- @field public WorldClimbingBlendspace_DownB string
+--- @field public WorldClimbingBlendspace_DownBHeight number
+--- @field public WorldClimbingBlendspace_UpA string
+--- @field public WorldClimbingBlendspace_UpB string
+--- @field public WorldClimbingBlendspace_UpBHeight number
+--- @field public WorldClimbingHeight number
+--- @field public ProbeLookAtOffset number
+--- @field public ProbeSpineAOffset number
+--- @field public ProbeSpineBOffset number
+--- @field public ProbeTiltToOffset number
+--- @field public VFXScale number
 
 
---- @class ItemTemplate : EoCGameObjectTemplate
+--- @class ItemTemplate : EoCGameObjectTemplate2
 --- @field public CombatTemplate CombatComponentTemplate
 --- @field public Icon string
 --- @field public CanBePickedUp boolean
 --- @field public CanBeMoved boolean
---- @field public CoverAmount number
---- @field public CanShootThrough boolean
---- @field public CanClickThrough boolean
 --- @field public Destroyed boolean
---- @field public WalkThrough boolean
---- @field public WalkOn boolean
---- @field public Wadable boolean
 --- @field public IsInteractionDisabled boolean
---- @field public IsPinnedContainer boolean
 --- @field public StoryItem boolean
 --- @field public FreezeGravity boolean
 --- @field public IsKey boolean
@@ -230,45 +249,47 @@ local CharacterTemplate = {}
 --- @field public Hostile boolean
 --- @field public UseOnDistance boolean
 --- @field public UseRemotely boolean
---- @field public IsBlocker boolean
---- @field public IsPointerBlocker boolean
---- @field public ItemDisplayName boolean
+--- @field public PhysicsFollowAnimation boolean
+--- @field public ItemDisplayName string
 --- @field public Tooltip number
 --- @field public Stats string
---- @field public OnUseDescription string
+--- @field public InventoryList string[]
+--- @field public OnUseDescription TranslatedString
+--- FIXME - map Scripts, ScriptConfigGlobalParameters, ItemList
+--- @field public AnubisConfigName string
 --- @field public DefaultState string
 --- @field public Owner string
 --- @field public Key string
---- @field public HitFX string
---- @field public LockLevel number 
+--- @field public BloodType string
+--- @field public LockDC number
+--- @field public DisarmDC number
 --- @field public Amount number
 --- @field public MaxStackAmount number
 --- @field public TreasureLevel number
---- @field public DropSound string
 --- @field public PickupSound string
 --- @field public UseSound string
 --- @field public EquipSound string
 --- @field public UnequipSound string
 --- @field public InventoryMoveSound string
---- @field public LoopSound string
---- @field public SoundInitEvent string
---- @field public SoundAttachBone string
---- @field public SoundAttenuation number
+--- @field public ImpactSound string
+--- @field public SoundObjectIndex integer
+--- @field public InventoryType integer
 --- @field public Description string
 --- @field public ItemDescription string
 --- @field public Speaker string
 --- @field public AltSpeaker string
---- @field public SpeakerGroup string
---- @field public ActivationGroupId string
---- @field public Race number
---- @field public IsWall boolean
+--- @field public SpeakerGroupList string[]
 --- @field public LevelOverride number
 --- @field public Floating boolean
 --- @field public IsSourceContainer boolean
 --- @field public MeshProxy string
+--- @field public ShortHair string
+--- @field public LongHair string
 --- @field public IsPublicDomain boolean
 --- @field public AllowSummonTeleport boolean
-local ItemTemplate = {}
+--- @field public IsPortalProhibitedToPlayers boolean
+--- @field public LightChannel integer
+--- @field public EquipmentTypeID GUID
 
 
 --- @class ProjectileTemplate : EoCGameObjectTemplate
@@ -277,61 +298,84 @@ local ItemTemplate = {}
 --- @field public Acceleration number
 --- @field public CastBone string
 --- @field public ImpactFX string
+--- @field public GroundImpactFX string
 --- @field public TrailFX string
 --- @field public DestroyTrailFXOnImpact boolean
 --- @field public BeamFX string
 --- @field public PreviewPathMaterial string
 --- @field public PreviewPathImpactFX string
 --- @field public PreviewPathRadius number
---- @field public ImpactFXSize number
 --- @field public RotateImpact boolean
 --- @field public IgnoreRoof boolean
 --- @field public DetachBeam boolean
---- @field public NeedsArrowImpactSFX boolean
+--- @field public NeedsImpactSFX boolean
 --- @field public ProjectilePath boolean
 --- @field public PathShift string
 --- @field public PathRadius number
+--- @field public MinPathRadius number
+--- @field public MaxPathRadius number
 --- @field public PathMinArcDist number
 --- @field public PathMaxArcDist number
---- @field public PathRepeat number
-local ProjectileTemplate = {}
+--- @field public PathRepeat integer
 
 
 --- @class SurfaceTemplateStatus
 --- @field public StatusId string
+--- @field public ApplyTypes integer
 --- @field public Chance number
 --- @field public Duration number
---- @field public RemoveStatus boolean
---- @field public OnlyWhileMoving boolean
+--- @field public Remove boolean
 --- @field public ApplyToCharacters boolean
 --- @field public ApplyToItems boolean
 --- @field public KeepAlive boolean
 --- @field public VanishOnReapply boolean
---- @field public ForceStatus boolean
+--- @field public Force boolean
+--- @field public AffectedByRoll boolean
+--- @field public OnlyOncePerTurn boolean
+
+
+--- @class SurfaceTemplateVisual
+--- @field public Visual string
+--- @field public Height number[]
+--- @field public Rotation integer[]
+--- @field public Scale number[]
+--- @field public GridSize number
+--- @field public SpawnCell integer
+--- @field public RandomPlacement integer
+--- @field public SurfaceNeeded integer
+--- @field public SurfaceRadiusMax integer
 
 
 --- @class SurfaceTemplate : GameObjectTemplate
---- @field public SurfaceTypeId integer
---- @field public SurfaceType string
+--- FIXME - map surfaceTypeId, surfaceType
 --- @field public DisplayName string
 --- @field public Description string
 --- @field public DecalMaterial string
+--- @field public MaterialType integer
+--- @field public SurfaceCategory integer
 --- @field public CanEnterCombat boolean
 --- @field public AlwaysUseDefaultLifeTime boolean
 --- @field public DefaultLifeTime number
 --- @field public SurfaceGrowTimer number
 --- @field public FadeInSpeed number
 --- @field public FadeOutSpeed number
+--- @field public FallDamageMultiplier number
 --- @field public Seed integer
+--- @field public NormalBlendingFactor integer
+--- @field public InstanceVisual SurfaceTemplateVisual[]
+--- @field public IntroFX SurfaceTemplateVisual[]
+--- @field public FX SurfaceTemplateVisual[]
 --- @field public Statuses SurfaceTemplateStatus[]
---- @field public DamageWeapon string
 --- @field public Summon string
---- @field public DamageCharacters boolean
---- @field public DamageItems boolean
---- @field public DamageTorches boolean
 --- @field public RemoveDestroyedItems boolean
 --- @field public CanSeeThrough boolean
 --- @field public CanShootThrough boolean
+--- @field public RollConditions string
+--- @field public ObscuredStateOverride integer
+--- @field public OnEnterDistanceOverride number
+--- @field public OnMoveDistanceOverride number
+--- @field public AiPathColor number[]
+--- @field public AiPathIconFX string
 
 
 -- FIXME EclStatus
