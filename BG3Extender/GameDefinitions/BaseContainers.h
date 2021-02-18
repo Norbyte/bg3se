@@ -94,8 +94,9 @@ namespace bg3se
 
 
 	template <class TKey, class TValue>
-	struct Map : public Noncopyable<Map<TKey, TValue>>
+	class Map : public Noncopyable<Map<TKey, TValue>>
 	{
+	public:
 		struct Node
 		{
 			Node* Next{ nullptr };
@@ -103,9 +104,173 @@ namespace bg3se
 			TValue Value;
 		};
 
-		uint32_t HashSize{ 0 };
-		Node** HashTable{ nullptr };
-		uint32_t ItemCount{ 0 };
+		class Iterator
+		{
+		public:
+			Iterator(Map& map) 
+				: Node(map.HashTable), NodeListEnd(map.HashTable + map.HashSize), Element(nullptr)
+			{
+				while (Node < NodeListEnd && *Node == nullptr) {
+					Node++;
+				}
+
+				if (*Node) {
+					Element = *Node;
+				}
+			}
+			
+			Iterator(Map& map, Node** node, Node* element)
+				: Node(node), NodeListEnd(map.HashTable + map.HashSize), Element(element)
+			{}
+
+			Iterator operator ++ ()
+			{
+				Iterator it(*this);
+
+				Element = Element->Next;
+				if (Element == nullptr) {
+					do {
+						Node++;
+					} while (Node < NodeListEnd && *Node == nullptr);
+
+					if (*Node) {
+						Element = *Node;
+					}
+				}
+
+				return it;
+			}
+
+			Iterator& operator ++ (int)
+			{
+				Element = Element->Next;
+				if (Element == nullptr) {
+					do {
+						Node++;
+					} while (Node < NodeListEnd && *Node == nullptr);
+
+					if (*Node) {
+						Element = *Node;
+					}
+				}
+
+				return *this;
+			}
+
+			bool operator == (Iterator const& it)
+			{
+				return it.Node == Node && it.Element == Element;
+			}
+
+			bool operator != (Iterator const& it)
+			{
+				return it.Node != Node || it.Element != Element;
+			}
+
+			TKey & Key () const
+			{
+				return Element->Key;
+			}
+
+			TKey & Value () const
+			{
+				return Element->Value;
+			}
+
+			Node& operator * () const
+			{
+				return *Element;
+			}
+
+			Node& operator -> () const
+			{
+				return *Element;
+			}
+
+		private:
+			Node** Node, ** NodeListEnd;
+			Map<TKey, TValue>::Node* Element;
+		};
+
+		class ConstIterator
+		{
+		public:
+			ConstIterator(Map const& map)
+				: Node(map.HashTable), NodeListEnd(map.HashTable + map.HashSize), Element(nullptr)
+			{
+				while (Node < NodeListEnd && *Node == nullptr) {
+					Node++;
+				}
+
+				if (*Node) {
+					Element = *Node;
+				}
+			}
+
+			ConstIterator(Map const& map, Node* const* node, Node const* element)
+				: Node(node), NodeListEnd(map.HashTable + map.HashSize), Element(element)
+			{}
+
+			ConstIterator operator ++ ()
+			{
+				Iterator it(*this);
+
+				Element = Element->Next;
+				if (Element == nullptr) {
+					do {
+						Node++;
+					} while (Node < NodeListEnd && *Node == nullptr);
+				}
+
+				return it;
+			}
+
+			ConstIterator& operator ++ (int)
+			{
+				Element = Element->Next;
+				if (Element == nullptr) {
+					do {
+						Node++;
+					} while (Node < NodeListEnd && *Node == nullptr);
+				}
+
+				return *this;
+			}
+
+			bool operator == (Iterator const& it)
+			{
+				return it.Node == Node && it.Element == Element;
+			}
+
+			bool operator != (Iterator const& it)
+			{
+				return it.Node != Node || it.Element != Element;
+			}
+
+			TKey const& Key() const
+			{
+				return Element->Key;
+			}
+
+			TKey const& Value() const
+			{
+				return Element->Value;
+			}
+
+			Node const& operator * () const
+			{
+				return *Element;
+			}
+
+			Node const& operator -> () const
+			{
+				return *Element;
+			}
+
+		private:
+			Node* const * Node, * const * NodeListEnd;
+			Map<TKey, TValue>::Node const* Element;
+		};
 
 		Map() {}
 
@@ -236,11 +401,42 @@ namespace bg3se
 				}
 			}
 		}
+
+		Iterator begin()
+		{
+			return Iterator(*this);
+		}
+
+		Iterator end()
+		{
+			return Iterator(*this, HashTable + HashSize, nullptr);
+		}
+
+		Iterator begin() const
+		{
+			return ConstIterator(*this);
+		}
+
+		Iterator end() const
+		{
+			return ConstIterator(*this, HashTable + HashSize, nullptr);
+		}
+
+		inline uint32_t Count() const
+		{
+			return ItemCount;
+		}
+
+	private:
+		uint32_t HashSize{ 0 };
+		Node** HashTable{ nullptr };
+		uint32_t ItemCount{ 0 };
 	};
 
 	template <class TKey, class TValue>
-	struct RefMap : public Noncopyable<RefMap<TKey, TValue>>
+	class RefMap : public Noncopyable<RefMap<TKey, TValue>>
 	{
+	public:
 		struct Node
 		{
 			Node* Next{ nullptr };
@@ -416,10 +612,6 @@ namespace bg3se
 			RefMap<TKey, TValue>::Node const* Element;
 		};
 
-		uint32_t ItemCount{ 0 };
-		uint32_t HashSize{ 0 };
-		Node** HashTable{ nullptr };
-
 		RefMap(uint32_t hashSize = 31)
 			: ItemCount(0), HashSize(hashSize)
 		{
@@ -452,6 +644,11 @@ namespace bg3se
 		Iterator end() const
 		{
 			return ConstIterator(*this, HashTable + HashSize, nullptr);
+		}
+
+		inline uint32_t Count() const
+		{
+			return ItemCount;
 		}
 
 		void Clear()
@@ -535,6 +732,11 @@ namespace bg3se
 				}
 			}
 		}
+
+	private:
+		uint32_t ItemCount{ 0 };
+		uint32_t HashSize{ 0 };
+		Node** HashTable{ nullptr };
 	};
 
 
