@@ -143,6 +143,15 @@ namespace bg3se::lua
 		settable(L, 3, v.z);
 	}
 
+	inline void push(lua_State* L, glm::vec4 const& v)
+	{
+		lua_newtable(L);
+		settable(L, 1, v.x);
+		settable(L, 2, v.y);
+		settable(L, 3, v.z);
+		settable(L, 4, v.w);
+	}
+
 	inline void push(lua_State* L, glm::mat3 const& m)
 	{
 		lua_newtable(L);
@@ -398,17 +407,50 @@ namespace bg3se::lua
 		auto i = (index < 0) ? (index - 1) : index;
 		glm::vec3 val;
 		luaL_checktype(L, index, LUA_TTABLE);
+
 		push(L, 1);
 		lua_rawget(L, i);
 		val.x = checked_get<float>(L, -1);
 		lua_pop(L, 1);
+
 		push(L, 2);
 		lua_rawget(L, i);
 		val.y = checked_get<float>(L, -1);
 		lua_pop(L, 1);
+
 		push(L, 3);
 		lua_rawget(L, i);
 		val.z = checked_get<float>(L, -1);
+		lua_pop(L, 1);
+
+		return val;
+	}
+
+	template <class T, typename std::enable_if_t<std::is_same_v<T, glm::vec4>, int>* = nullptr>
+	inline glm::vec4 checked_get(lua_State* L, int index)
+	{
+		auto i = (index < 0) ? (index - 1) : index;
+		glm::vec4 val;
+		luaL_checktype(L, index, LUA_TTABLE);
+
+		push(L, 1);
+		lua_rawget(L, i);
+		val.x = checked_get<float>(L, -1);
+		lua_pop(L, 1);
+
+		push(L, 2);
+		lua_rawget(L, i);
+		val.y = checked_get<float>(L, -1);
+		lua_pop(L, 1);
+
+		push(L, 3);
+		lua_rawget(L, i);
+		val.z = checked_get<float>(L, -1);
+		lua_pop(L, 1);
+
+		push(L, 4);
+		lua_rawget(L, i);
+		val.w = checked_get<float>(L, -1);
 		lua_pop(L, 1);
 
 		return val;

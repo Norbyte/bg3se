@@ -112,9 +112,37 @@ namespace bg3se::lua
 	inline LuaSerializer& operator << (LuaSerializer& s, STDString& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, STDWString& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, UUID& v) { return s.Visit(v); }
+	inline LuaSerializer& operator << (LuaSerializer& s, glm::vec3& v) { return s.Visit(v); }
+	inline LuaSerializer& operator << (LuaSerializer& s, glm::vec4& v) { return s.Visit(v); }
+	LuaSerializer& operator << (LuaSerializer& s, TranslatedString& v);
 
 	template <class T, class Allocator, bool StoreSize>
 	LuaSerializer& operator << (LuaSerializer& s, ObjectSet<T, Allocator, StoreSize>& v)
+	{
+		s.BeginObject();
+		if (s.IsWriting) {
+			int i = 1;
+			for (auto& val : v) {
+				StackCheck _(s.L);
+				push(s.L, i++);
+				s << val;
+				lua_settable(s.L, -3);
+			}
+		} else {
+			v.Clear();
+			for (auto idx : iterate(s.L, -1)) {
+				StackCheck _(s.L);
+				T temp{};
+				s << temp;
+				v.Add(temp);
+			}
+		}
+		s.EndObject();
+		return s;
+	}
+
+	template <class T>
+	LuaSerializer& operator << (LuaSerializer& s, Array<T>& v)
 	{
 		s.BeginObject();
 		if (s.IsWriting) {
