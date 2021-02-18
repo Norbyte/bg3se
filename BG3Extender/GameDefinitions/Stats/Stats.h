@@ -542,15 +542,11 @@ namespace bg3se
 		void* Unkn5;
 		Array<STDString> ConditionList;
 
+		static bool IsFlagType(FixedString const& typeName);
 
 		CRPGStats_Modifier * GetModifierInfo(FixedString const& modifierListName, FixedString const& modifierName);
 		ModifierList * GetTypeInfo(CRPGStats_Object * object);
-		RPGEnumeration * GetAttributeInfo(CRPGStats_Object * object, FixedString const& attributeName, int & attributeIndex);
-		std::optional<char const *> GetAttributeString(CRPGStats_Object * object, FixedString const& attributeName);
-		std::optional<int> GetAttributeInt(CRPGStats_Object * object, FixedString const& attributeName);
-		std::optional<int> GetAttributeIntScaled(CRPGStats_Object * object, FixedString const& attributeName, int level);
-		bool SetAttributeString(CRPGStats_Object * object, FixedString const& attributeName, const char * value);
-		bool SetAttributeInt(CRPGStats_Object * object, FixedString const& attributeName, int32_t value);
+
 		bool ObjectExists(FixedString const& statsId, FixedString const& type);
 		std::optional<CRPGStats_Object*> CreateObject(FixedString const& name, FixedString const& type);
 		std::optional<CRPGStats_Object*> CreateObject(FixedString const& name, int32_t modifierListIndex);
@@ -558,13 +554,19 @@ namespace bg3se
 		void SyncWithPrototypeManager(CRPGStats_Object* object);
 		void BroadcastSyncAll();*/
 
-		std::optional<int64_t*> GetInt64(int attributeFlagsId);
-		int64_t* GetOrCreateInt64(int& attributeFlagsId);
+		std::optional<FixedString*> GetFixedString(int stringId);
+		FixedString* GetOrCreateFixedString(int& stringId);
+		std::optional<int64_t*> GetInt64(int int64Id);
+		int64_t* GetOrCreateInt64(int& int64Id);
+		std::optional<float*> GetFloat(int floatId);
+		float* GetOrCreateFloat(int& floatId);
+		std::optional<UUID*> GetGuid(int guidId);
+		UUID* GetOrCreateGuid(int& guidId);
+		std::optional<STDString*> GetConditions(int conditionsId);
+		STDString* GetOrCreateConditions(int& conditionsId);
 
 		std::optional<int> EnumLabelToIndex(FixedString const& enumName, char const* enumLabel);
 		FixedString EnumIndexToLabel(FixedString const& enumName, int index);
-		int GetOrCreateFixedString(const char * value);
-		std::optional<StatAttributeFlags> StringToAttributeFlags(const char * value);
 		void* BuildScriptCheckBlock(STDString const& source);
 		void* BuildScriptCheckBlockFromProperties(STDString const& source);
 	};

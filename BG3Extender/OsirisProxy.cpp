@@ -11,12 +11,6 @@
 #include <psapi.h>
 #include <regex>
 
-/*
-
-	*/
-
-
-
 
 #undef DEBUG_SERVER_CLIENT
 

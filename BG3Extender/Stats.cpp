@@ -297,11 +297,13 @@ namespace bg3se
 			&& Name != GFS.strAIFlags
 			&& Name != GFS.strRequirements
 			&& Name != GFS.strMemorizationRequirements;
+		// FIXME - UPDATE?
 	}
 
 	bool RPGEnumeration::IsStringIndexedProperty() const
 	{
 		return Name == GFS.strFixedString;
+		// FIXME - UPDATE?
 	}
 
 	CRPGStats_Modifier * ModifierList::GetAttributeInfo(FixedString const& name, int * attributeIndex) const
@@ -453,27 +455,6 @@ namespace bg3se
 		}
 	}*/
 
-	std::optional<int64_t*> RPGStats::GetInt64(int attributeFlagsId)
-	{
-		if (attributeFlagsId > 0) {
-			return Int64s[attributeFlagsId];
-		} else {
-			return {};
-		}
-	}
-
-	int64_t* RPGStats::GetOrCreateInt64(int& attributeId)
-	{
-		if (attributeId <= 0) {
-			attributeId = (int)Int64s.Size;
-			auto val = GameAlloc<int64_t>();
-			*val = (int64_t)0;
-			Int64s.Add(val);
-		}
-
-		return Int64s[attributeId];
-	}
-
 	std::optional<int> RPGStats::EnumLabelToIndex(FixedString const& enumName, char const* enumLabel)
 	{
 		auto rpgEnum = ModifierValueLists.Find(enumName);
@@ -507,6 +488,100 @@ namespace bg3se
 		}
 	}
 
+	std::optional<FixedString*> RPGStats::GetFixedString(int stringId)
+	{
+		if (stringId > 0) {
+			return &FixedStrings[stringId];
+		} else {
+			return {};
+		}
+	}
+
+	FixedString* RPGStats::GetOrCreateFixedString(int& stringId)
+	{
+		if (stringId < 0) {
+			stringId = (int)FixedStrings.Size;
+			FixedStrings.Add(FixedString{});
+		}
+
+		return &FixedStrings[stringId];
+	}
+
+	std::optional<int64_t*> RPGStats::GetInt64(int attributeId)
+	{
+		if (attributeId > 0) {
+			return Int64s[attributeId];
+		} else {
+			return {};
+		}
+	}
+
+	int64_t* RPGStats::GetOrCreateInt64(int& attributeId)
+	{
+		if (attributeId < 0) {
+			attributeId = (int)Int64s.Size;
+			auto val = GameAlloc<int64_t>();
+			*val = (int64_t)0;
+			Int64s.Add(val);
+		}
+
+		return Int64s[attributeId];
+	}
+
+	std::optional<float*> RPGStats::GetFloat(int attributeId)
+	{
+		if (attributeId > 0) {
+			return &ConstantFloats[attributeId];
+		} else {
+			return {};
+		}
+	}
+
+	float* RPGStats::GetOrCreateFloat(int& attributeId)
+	{
+		if (attributeId < 0) {
+			attributeId = (int)ConstantFloats.Size;
+			ConstantFloats.Add(.0f);
+		}
+
+		return &ConstantFloats[attributeId];
+	}
+
+	std::optional<UUID*> RPGStats::GetGuid(int attributeId)
+	{
+		if (attributeId > 0) {
+			return &GUIDs[attributeId];
+		} else {
+			return {};
+		}
+	}
+
+	UUID* RPGStats::GetOrCreateGuid(int& attributeId)
+	{
+		if (attributeId < 0) {
+			attributeId = (int)GUIDs.Size;
+			GUIDs.Add(UUID{});
+		}
+
+		return &GUIDs[attributeId];
+	}
+
+	bool RPGStats::IsFlagType(FixedString const& typeName)
+	{
+		return
+			typeName == GFS.strAttributeFlags
+			|| typeName == GFS.strSpellFlagList
+			|| typeName == GFS.strWeaponFlags
+			|| typeName == GFS.strResistanceFlags
+			|| typeName == GFS.strPassiveFlags
+			|| typeName == GFS.strProficiencyGroupFlags
+			|| typeName == GFS.strStatsFunctorContext
+			|| typeName == GFS.strStatusEvent
+			|| typeName == GFS.strStatusPropertyFlags
+			|| typeName == GFS.strStatusGroupFlags
+			|| typeName == GFS.strLineOfSightFlags;
+	}
+
 	CRPGStats_Modifier * RPGStats::GetModifierInfo(FixedString const& modifierListName, FixedString const& modifierName)
 	{
 		auto modifiers = ModifierLists.Find(modifierListName);
@@ -520,140 +595,6 @@ namespace bg3se
 	ModifierList * RPGStats::GetTypeInfo(CRPGStats_Object * object)
 	{
 		return ModifierLists.Find(object->ModifierListIndex);
-	}
-
-	RPGEnumeration * RPGStats::GetAttributeInfo(CRPGStats_Object * object, FixedString const& attributeName, int & attributeIndex)
-	{
-		auto objModifiers = ModifierLists.Find(object->ModifierListIndex);
-		if (objModifiers == nullptr) {
-			return nullptr;
-		}
-
-		auto modifierInfo = objModifiers->GetAttributeInfo(attributeName, &attributeIndex);
-		if (modifierInfo == nullptr) {
-			return nullptr;
-		}
-
-		auto typeInfo = ModifierValueLists.Find(modifierInfo->RPGEnumerationIndex);
-		return typeInfo;
-	}
-
-	std::optional<char const *> RPGStats::GetAttributeString(CRPGStats_Object * object, FixedString const& attributeName)
-	{
-		int attributeIndex;
-		auto typeInfo = GetAttributeInfo(object, attributeName, attributeIndex);
-		if (typeInfo == nullptr) {
-			return {};
-		}
-
-		auto index = object->IndexedProperties[attributeIndex];
-		if (typeInfo->Name == GFS.strFixedString) {
-			return FixedStrings[index].GetString();
-		} else if (typeInfo->Name == GFS.strAttributeFlags) {
-			auto attrFlags = GetInt64(index);
-			if (attrFlags) {
-				STDString flagsStr;
-
-				for (auto i = 0; i < 64; i++) {
-					if ((uint64_t)*(StatAttributeFlags*)*attrFlags & (1ull << i)) {
-						auto label = EnumInfo<StatAttributeFlags>::Find((StatAttributeFlags)(1ull << i));
-						if (label) {
-							if (!flagsStr.empty()) {
-								flagsStr += ';';
-							}
-
-							flagsStr += label.GetString();
-						}
-					}
-				}
-
-				return gTempStrings.Make(flagsStr);
-			} else {
-				return "";
-			}
-		} else if (typeInfo->Values.ItemCount > 0) {
-			auto enumLabel = typeInfo->Values.FindByValue(index);
-			if (enumLabel) {
-				return enumLabel->GetString();
-			} else {
-				return {};
-			}
-		}
-		else {
-			return {};
-		}
-	}
-
-	std::optional<int> RPGStats::GetAttributeInt(CRPGStats_Object * object, FixedString const& attributeName)
-	{
-		int attributeIndex;
-		auto typeInfo = GetAttributeInfo(object, attributeName, attributeIndex);
-		if (typeInfo == nullptr) {
-			return {};
-		}
-
-		auto index = object->IndexedProperties[attributeIndex];
-		if (typeInfo->Name == GFS.strConstantInt
-			|| typeInfo->Values.ItemCount > 0) {
-			return index;
-		}
-		else {
-			return {};
-		}
-	}
-
-	std::optional<int> RPGStats::GetAttributeIntScaled(CRPGStats_Object * object, FixedString const& attributeName, int level)
-	{
-		auto objModifiers = ModifierLists.Find(object->ModifierListIndex);
-		if (objModifiers == nullptr) {
-			return {};
-		}
-
-		int attributeIndex;
-		auto modifierInfo = objModifiers->GetAttributeInfo(attributeName, &attributeIndex);
-		if (modifierInfo == nullptr) {
-			return {};
-		}
-
-		auto levelMap = LevelMaps.Find(modifierInfo->LevelMapIndex);
-		auto value = object->IndexedProperties[attributeIndex];
-		if (levelMap) {
-			return (int32_t)levelMap->GetScaledValue(value, level);
-		} else {
-			return value;
-		}
-	}
-
-	int RPGStats::GetOrCreateFixedString(const char * value)
-	{
-		FixedString fs(value);
-		if (!fs) return -1;
-
-		for (uint32_t i = 0; i < FixedStrings.Size; i++) {
-			if (FixedStrings[i] == fs) {
-				return i;
-			}
-		}
-
-		FixedStrings.Add(fs);
-		return FixedStrings.Size - 1;
-	}
-
-	std::optional<StatAttributeFlags> RPGStats::StringToAttributeFlags(const char * value)
-	{
-		StatAttributeFlags flags{ 0 };
-		STDString token;
-		std::istringstream tokenStream(value);
-		while (std::getline(tokenStream, token, ';')) {
-			auto label = EnumInfo<StatAttributeFlags>::Find(token.c_str());
-			if (label) {
-				flags |= *label;
-			} else {
-				OsiError("Invalid AttributeFlag: " << token);
-			}
-		}
-
-		return flags;
 	}
 
 	void* RPGStats::BuildScriptCheckBlock(STDString const& source)
@@ -679,70 +620,6 @@ namespace bg3se
 		}
 		
 		return BuildScriptCheckBlock(updated);*/
-	}
-
-	bool RPGStats::SetAttributeString(CRPGStats_Object * object, FixedString const& attributeName, const char * value)
-	{
-		int attributeIndex;
-		auto typeInfo = GetAttributeInfo(object, attributeName, attributeIndex);
-		if (typeInfo == nullptr) {
-			OsiError("Couldn't fetch type info for " << object->Name << "." << attributeName);
-			return false;
-		}
-
-		if (typeInfo->Name == GFS.strFixedString) {
-			auto fs = GetOrCreateFixedString(value);
-			if (fs != -1) {
-				object->IndexedProperties[attributeIndex] = fs;
-			} else {
-				OsiError("Couldn't set " << object->Name << "." << attributeName << ": Unable to allocate pooled string");
-			}
-		} else if (typeInfo->Name == GFS.strAttributeFlags) {
-			auto attrFlags = (StatAttributeFlags*)GetOrCreateInt64(object->IndexedProperties[attributeIndex]);
-			auto flags = StringToAttributeFlags(value);
-			if (flags) {
-				*attrFlags = *flags;
-			}
-		} else if (typeInfo->Values.ItemCount > 0) {
-			auto enumIndex = typeInfo->Values.Find(FixedString(value));
-			if (enumIndex != nullptr) {
-				object->IndexedProperties[attributeIndex] = *enumIndex;
-			} else {
-				OsiError("Couldn't set " << object->Name << "." << attributeName << ": Value (\"" << value << "\") is not a valid enum label");
-				return false;
-			}
-		} else {
-			OsiError("Couldn't set " << object->Name << "." << attributeName << ": Inappropriate type: " << typeInfo->Name);
-			return false;
-		}
-
-		return true;
-	}
-
-	bool RPGStats::SetAttributeInt(CRPGStats_Object * object, FixedString const& attributeName, int32_t value)
-	{
-		int attributeIndex;
-		auto typeInfo = GetAttributeInfo(object, attributeName, attributeIndex);
-		if (typeInfo == nullptr) {
-			OsiError("Couldn't fetch type info for " << object->Name << "." << attributeName);
-			return false;
-		}
-
-		if (typeInfo->Name == GFS.strConstantInt) {
-			object->IndexedProperties[attributeIndex] = value;
-		} else if (typeInfo->Values.ItemCount > 0) {
-			if (value >= 0 && value < (int)typeInfo->Values.ItemCount) {
-				object->IndexedProperties[attributeIndex] = value;
-			} else {
-				OsiError("Couldn't set " << object->Name << "." << attributeName << ": Enum index (\"" << value << "\") out of range");
-				return false;
-			}
-		} else {
-			OsiError("Couldn't set " << object->Name << "." << attributeName << ": Inappropriate type: " << typeInfo->Name);
-			return false;
-		}
-
-		return true;
 	}
 
 	CRPGStats_Object * StatFindObject(char const * name)

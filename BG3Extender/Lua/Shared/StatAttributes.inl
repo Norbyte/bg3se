@@ -52,16 +52,13 @@ namespace bg3se::lua::stats
 		if (attributeFS == GFS.strLevel) {
 			push(L, object->Level);
 			return 1;
-		}
-		else if (attributeFS == GFS.strName) {
+		} else if (attributeFS == GFS.strName) {
 			push(L, object->Name);
 			return 1;
-		}
-		else if (attributeFS == GFS.strModId) {
+		} else if (attributeFS == GFS.strModId) {
 			push(L, gOsirisProxy->GetStatLoadOrderHelper().GetStatsEntryMod(object->Name));
 			return 1;
-		}
-		else if (attributeFS == GFS.strUsing) {
+		} else if (attributeFS == GFS.strUsing) {
 			if (object->Using) {
 				auto parent = stats->Objects.Find(object->Using);
 				if (parent != nullptr) {
@@ -72,8 +69,7 @@ namespace bg3se::lua::stats
 
 			push(L, nullptr);
 			return 1;
-		}
-		else /*if (attributeFS == GFS.strRequirements) {
+		} else /*if (attributeFS == GFS.strRequirements) {
 		 return LuaWrite(L, object->Requirements);
 	 } else*/ /*if (attributeFS == GFS.strMemorizationRequirements) {
 		 return LuaWrite(L, object->MemorizationRequirements);
@@ -104,30 +100,57 @@ namespace bg3se::lua::stats
 		 return 1;
 	 }*/
 
-		auto value = stats->GetAttributeString(object, attributeFS);
-		if (!value) {
-			std::optional<int> intval;
+		int attributeIndex{ -1 };
+		auto attrInfo = object->GetAttributeInfo(attributeFS, attributeIndex);
+		if (!attrInfo) {
+			OsiError("Stat object '" << object->Name << "' has no attribute named '" << attributeFS << "'");
+			push(L, nullptr);
+		}
+
+		if (attrInfo->Name == GFS.strConstantInt) {
+			std::optional<int> value;
 			if (level) {
 				if (*level == -1) {
 					*level = object->Level;
 				}
 
-				intval = stats->GetAttributeIntScaled(object, attributeFS, *level);
-			}
-			else {
-				intval = stats->GetAttributeInt(object, attributeFS);
+				value = object->GetIntScaled(attributeFS, *level);
+			} else {
+				value = object->GetInt(attributeFS);
 			}
 
-			if (!intval) {
-				OsiError("Stat object '" << object->Name << "' has no attribute named '" << attributeFS << "'");
+			if (value) {
+				push(L, *value);
+			} else {
 				push(L, nullptr);
 			}
-			else {
-				push(L, *intval);
+		} else if (attrInfo->Name == GFS.strConstantFloat) {
+			auto value = object->GetFloat(attributeFS);
+			if (value) {
+				push(L, *value);
+			} else {
+				push(L, nullptr);
 			}
-		}
-		else {
-			push(L, *value);
+		} else if (attrInfo->Name == GFS.strGuid) {
+			auto value = object->GetGuid(attributeFS);
+			if (value) {
+				push(L, *value);
+			} else {
+				push(L, nullptr);
+			}
+		} else if (attrInfo->Name == GFS.strFixedString
+			|| attrInfo->Name == GFS.strStatusIDs
+			|| RPGStats::IsFlagType(attrInfo->Name)
+			|| attrInfo->Values.Count() > 0) {
+			auto value = object->GetString(attributeFS);
+			if (value) {
+				push(L, *value);
+			} else {
+				push(L, nullptr);
+			}
+		} else {
+			OsiError("Don't know how to fetch values of type '" << attrInfo->Name << "'");
+			push(L, nullptr);
 		}
 
 		return 1;
@@ -249,16 +272,18 @@ namespace bg3se::lua::stats
 		case LUA_TSTRING:
 		{
 			auto value = luaL_checkstring(L, valueIdx);
-			stats->SetAttributeString(object, attributeFS, value);
+			object->SetString(attributeFS, value);
 			break;
 		}
 
 		case LUA_TNUMBER:
 		{
 			auto value = (int32_t)luaL_checkinteger(L, valueIdx);
-			stats->SetAttributeInt(object, attributeFS, value);
+			object->SetInt(attributeFS, value);
 			break;
 		}
+
+		// FIXME - add float, flags, etc. -- decide based on arg type
 
 		default:
 			return luaL_error(L, "Expected a string or integer attribute value.");

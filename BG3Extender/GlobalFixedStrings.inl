@@ -157,8 +157,23 @@ FS(NameGroup);
 
 // Stat modifier value types
 FS(FixedString);
-FS(AttributeFlags);
+FS(StatusIDs);
 FS(ConstantInt);
+FS(ConstantFloat);
+FS(Guid);
+
+FS(AttributeFlags);
+FS(SpellFlagList);
+FS(WeaponFlags);
+FS(ResistanceFlags);
+FS(PassiveFlags);
+FS(ProficiencyGroupFlags);
+FS(StatsFunctorContext);
+FS(StatusEvent);
+FS(StatusPropertyFlags);
+FS(StatusGroupFlags);
+FS(LineOfSightFlags);
+
 FS(Properties);
 FS(Conditions);
 

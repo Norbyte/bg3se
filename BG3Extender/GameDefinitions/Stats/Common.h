@@ -172,6 +172,21 @@ namespace bg3se
 		uint32_t StatsId{ 0 };
 		uint32_t Level{ 0 };
 
+		struct RPGEnumeration* GetAttributeInfo(FixedString const& attributeName, int& attributeIndex);
+		std::optional<STDString> GetString(FixedString const& attributeName);
+		std::optional<int> GetInt(FixedString const& attributeName);
+		std::optional<int> GetIntScaled(FixedString const& attributeName, int level);
+		std::optional<float> GetFloat(FixedString const& attributeName);
+		std::optional<int64_t> GetInt64(FixedString const& attributeName);
+		std::optional<UUID> GetGuid(FixedString const& attributeName);
+		std::optional<ObjectSet<FixedString>> GetFlags(FixedString const& attributeName);
+		bool SetString(FixedString const& attributeName, const char* value);
+		bool SetInt(FixedString const& attributeName, int32_t value);
+		bool SetFloat(FixedString const& attributeName, float value);
+		bool SetInt64(FixedString const& attributeName, int64_t value);
+		bool SetGuid(FixedString const& attributeName, UUID const& value);
+		bool SetFlags(FixedString const& attributeName, ObjectSet<STDString> const& value);
+
 		void ToProtobuf(class MsgS2CSyncStat* msg) const;
 		void FromProtobuf(MsgS2CSyncStat const& msg);
 		void BroadcastSyncMessage(bool syncDuringLoading) const;
