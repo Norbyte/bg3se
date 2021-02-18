@@ -1,26 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="CustomFunctions.cpp" />
     <ClCompile Include="DataLibraries.cpp" />
     <ClCompile Include="DataLibrariesBG3Game.cpp" />
-    <ClCompile Include="Debugger.cpp" />
-    <ClCompile Include="DebugInterface.cpp" />
-    <ClCompile Include="DebugMessages.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="DWriteWrapper.cpp" />
     <ClCompile Include="CrashReporter.cpp" />
     <ClCompile Include="ExtensionState.cpp" />
     <ClCompile Include="GlobalFixedStrings.cpp" />
-    <ClCompile Include="NodeHooks.cpp" />
-    <ClCompile Include="osidebug.pb.cc" />
-    <ClCompile Include="OsirisHelpers.cpp" />
     <ClCompile Include="OsirisProxy.cpp" />
     <ClCompile Include="OsirisWrappers.cpp" />
     <ClCompile Include="PropertyMap.cpp" />
     <ClCompile Include="ScriptExtensions.pb.cc" />
     <ClCompile Include="ScriptHelpers.cpp" />
-    <ClCompile Include="Stats.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="Lua\Shared\LuaStats.cpp">
@@ -42,22 +34,22 @@
       <Filter>Lua</Filter>
     </ClCompile>
     <ClCompile Include="Functions\FunctionLibrary.cpp">
-      <Filter>Functions</Filter>
+      <Filter>Osiris\Functions</Filter>
     </ClCompile>
     <ClCompile Include="Functions\FunctionUtilities.cpp">
-      <Filter>Functions</Filter>
+      <Filter>Osiris\Functions</Filter>
     </ClCompile>
     <ClCompile Include="Functions\LuaFunctions.cpp">
-      <Filter>Functions</Filter>
+      <Filter>Osiris\Functions</Filter>
     </ClCompile>
     <ClCompile Include="Functions\MathFunctions.cpp">
-      <Filter>Functions</Filter>
+      <Filter>Osiris\Functions</Filter>
     </ClCompile>
     <ClCompile Include="Functions\UtilityFunctions.cpp">
-      <Filter>Functions</Filter>
+      <Filter>Osiris\Functions</Filter>
     </ClCompile>
     <ClCompile Include="Functions\StatFunctions.cpp">
-      <Filter>Functions</Filter>
+      <Filter>Osiris\Functions</Filter>
     </ClCompile>
     <ClCompile Include="EntitySystem.cpp">
       <Filter>GameDefinitions</Filter>
@@ -83,22 +75,42 @@
     <ClCompile Include="Lua\Shared\LuaUtilities.cpp">
       <Filter>Lua\Shared</Filter>
     </ClCompile>
+    <ClCompile Include="Debugger.cpp">
+      <Filter>Osiris\Debugger</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugInterface.cpp">
+      <Filter>Osiris\Debugger</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugMessages.cpp">
+      <Filter>Osiris\Debugger</Filter>
+    </ClCompile>
+    <ClCompile Include="CustomFunctions.cpp">
+      <Filter>Osiris\Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeHooks.cpp">
+      <Filter>Osiris\Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="OsirisHelpers.cpp">
+      <Filter>Osiris\Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="osidebug.pb.cc">
+      <Filter>Osiris\Debugger</Filter>
+    </ClCompile>
+    <ClCompile Include="Stats.cpp">
+      <Filter>GameDefinitions\Stats</Filter>
+    </ClCompile>
+    <ClCompile Include="GameDefinitions\Stats\StatsObject.inl">
+      <Filter>GameDefinitions\Stats</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CustomFunctions.h" />
     <ClInclude Include="DataLibraries.h" />
-    <ClInclude Include="Debugger.h" />
-    <ClInclude Include="DebugInterface.h" />
-    <ClInclude Include="DebugMessages.h" />
     <ClInclude Include="DWriteWrapper.h" />
     <ClInclude Include="ExtensionHelpers.h" />
     <ClInclude Include="ExtensionState.h" />
     <ClInclude Include="ExtensionStateClient.h" />
     <ClInclude Include="ExtensionStateServer.h" />
     <ClInclude Include="GlobalFixedStrings.h" />
-    <ClInclude Include="NodeHooks.h" />
-    <ClInclude Include="osidebug.pb.h" />
-    <ClInclude Include="OsirisHelpers.h" />
     <ClInclude Include="OsirisProxy.h" />
     <ClInclude Include="OsirisWrappers.h" />
     <ClInclude Include="PropertyMap.h" />
@@ -133,7 +145,7 @@
       <Filter>Lua</Filter>
     </ClInclude>
     <ClInclude Include="Functions\FunctionLibrary.h">
-      <Filter>Functions</Filter>
+      <Filter>Osiris\Functions</Filter>
     </ClInclude>
     <ClInclude Include="GameDefinitions\Components\Boosts.h">
       <Filter>GameDefinitions\Components</Filter>
@@ -246,6 +258,27 @@
     <ClInclude Include="Lua\LuaDebugMessages.h">
       <Filter>Lua\Debugger</Filter>
     </ClInclude>
+    <ClInclude Include="Debugger.h">
+      <Filter>Osiris\Debugger</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugInterface.h">
+      <Filter>Osiris\Debugger</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugMessages.h">
+      <Filter>Osiris\Debugger</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomFunctions.h">
+      <Filter>Osiris\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeHooks.h">
+      <Filter>Osiris\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="OsirisHelpers.h">
+      <Filter>Osiris\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="osidebug.pb.h">
+      <Filter>Osiris\Debugger</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -261,7 +294,6 @@
     <None Include="LuaScripts\Game.Tooltip.lua" />
     <None Include="LuaScripts\SandboxStartup.lua" />
     <None Include="Misc\ExtIdeHelpers.lua" />
-    <None Include="osidebug.proto" />
     <None Include="ScriptExtensions.proto" />
     <None Include="Lua\Shared\LuaCharacter.inl">
       <Filter>Lua\Shared</Filter>
@@ -344,13 +376,19 @@
     <None Include="Lua\Shared\LuaLocalization.inl">
       <Filter>Lua\Shared</Filter>
     </None>
+    <None Include="osidebug.proto">
+      <Filter>Osiris\Debugger</Filter>
+    </None>
+    <None Include="Lua\Shared\LuaPropertyMapHelpers.h">
+      <Filter>Lua\Shared</Filter>
+    </None>
+    <None Include="Lua\Shared\LuaResources.inl">
+      <Filter>Lua\Shared</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">
       <UniqueIdentifier>{581518a7-1c05-452d-a105-cdbb2d439de4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Functions">
-      <UniqueIdentifier>{135d4463-ad2a-4d08-af20-09987534023e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Lua">
       <UniqueIdentifier>{1eed3983-e758-4216-975e-34f5bc26bcfb}</UniqueIdentifier>
@@ -378,6 +416,18 @@
     </Filter>
     <Filter Include="Lua\Debugger">
       <UniqueIdentifier>{1219b7c1-9f8a-4459-818a-e658f5cd9fc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Osiris">
+      <UniqueIdentifier>{edd7ed75-04bb-411a-886f-f4e5144714ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Osiris\Functions">
+      <UniqueIdentifier>{135d4463-ad2a-4d08-af20-09987534023e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Osiris\Debugger">
+      <UniqueIdentifier>{bf35057d-4647-458e-b471-3958b10b2565}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Osiris\Shared">
+      <UniqueIdentifier>{04414d2b-c64a-4e15-a91a-41ebff6ee2d3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

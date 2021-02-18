@@ -18,6 +18,7 @@ namespace bg3se::lua::stats
 #include <Lua/Shared/StatAttributes.inl>
 #include <Lua/Shared/StatMisc.inl>
 #include <Lua/Shared/LuaStatsFunctors.inl>
+#include <Lua/Shared/LuaResources.inl>
 
 #include <Lua/Shared/RootTemplates.inl>
 
@@ -59,10 +60,12 @@ namespace bg3se::lua
 	void RegisterSharedLibraries(lua_State* L)
 	{
 		stats::RegisterStatsLib(L);
+		RegisterStatsFunctors(L);
 		utils::RegisterUtilsLib(L);
 		utils::RegisterLocalizationLib(L);
 		utils::RegisterJsonLib(L);
 		utils::RegisterIOLib(L);
 		utils::RegisterMathLib(L);
+		RegisterResourceDefinitions(L);
 	}
 }

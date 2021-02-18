@@ -38,7 +38,7 @@ namespace bg3se
 	};
 
 
-	struct ActionResourceDefinition : public BaseResourceDefinition
+	struct ActionResource : public BaseResourceDefinition
 	{
 		static constexpr auto ResourceManagerType = ExtResourceManagerType::ActionResource;
 
@@ -65,14 +65,14 @@ namespace bg3se
 		int DisplayName;
 		FixedString Description;
 		UUID ProgressionTableUUID;
-		char MagicType;
-		char SoundMagicType;
-		char PrimaryAbility;
-		char SpellCastingAbility;
+		uint8_t MagicType;
+		uint8_t SoundMagicType;
+		uint8_t PrimaryAbility;
+		uint8_t SpellCastingAbility;
 		bool MustPrepareSpells;
-		char CanLearnSpells;
-		char field_4E;
-		Array<UUID> Tags_GUID;
+		bool CanLearnSpells;
+		uint8_t field_4E;
+		Array<UUID> Tags;
 		FixedString ClassEquipment;
 		int CharacterCreationPose;
 		uint8_t LearningStrategy;
@@ -141,11 +141,11 @@ namespace bg3se
 		UUID GodUUID;
 		UUID ClassUUID;
 		UUID SubClassUUID;
-		char LockClass;
+		bool LockClass;
 		UUID GlobalTemplate;
 		STDString Passives;
 		Array<UUID> field_C8;
-		Array<UUID> Tags_UUID;
+		Array<UUID> Tags;
 		uint32_t Flags;
 		STDString Overview;
 		STDString CloseUpA;
@@ -251,7 +251,7 @@ namespace bg3se
 
 		FixedString Name;
 		FixedString DisplayName;
-		float Color[4];
+		glm::vec4 Color;
 	};
 
 

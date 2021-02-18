@@ -35,7 +35,7 @@ namespace bg3se::esv
 			}
 
 			int attributeIndex;
-			auto attrInfo = stats->GetAttributeInfo(object, FixedString(attributeName), attributeIndex);
+			auto attrInfo = object->GetAttributeInfo(FixedString(attributeName), attributeIndex);
 			return attrInfo != nullptr;
 		}
 
@@ -55,7 +55,7 @@ namespace bg3se::esv
 				return false;
 			}
 
-			auto value = stats->GetAttributeInt(object, FixedString(attributeName));
+			auto value = object->GetInt(FixedString(attributeName));
 			if (!value) {
 				OsiError("Attribute '" << attributeName << "' not found on object '" << statName << "'");
 				return false;
@@ -93,13 +93,13 @@ namespace bg3se::esv
 				return false;
 			}
 
-			auto value = stats->GetAttributeString(object, FixedString(attributeName));
+			auto value = object->GetString(FixedString(attributeName));
 			if (!value) {
 				OsiError("Attribute '" << attributeName << "' not found on object '" << statName << "'");
 				return false;
 			}
 
-			args[2].String = *value;
+			args[2].String = gTempStrings.Make(*value);
 			return true;
 		}
 
