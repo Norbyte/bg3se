@@ -40,6 +40,11 @@ namespace bg3se
 			if (val) {
 				return (*val)->GetString();
 			}
+		} else if (typeInfo->Name == GFS.strConditions) {
+			auto val = GetStaticSymbols().GetStats()->GetConditions(index);
+			if (val) {
+				return **val;
+			}
 		} else if (typeInfo->Values.Count() > 0) {
 			auto enumLabel = typeInfo->Values.FindByValue(index);
 			if (enumLabel) {
@@ -199,6 +204,13 @@ namespace bg3se
 			}
 
 			return SetGuid(attributeName, *guid);
+		} else if (typeInfo->Name == GFS.strConditions) {
+			int poolIdx{ -1 };
+			auto str = stats->GetOrCreateConditions(poolIdx);
+			if (str != nullptr) {
+				*str = value;
+				IndexedProperties[attributeIndex] = poolIdx;
+			}
 		} else if (typeInfo->Values.Count() > 0) {
 			auto enumIndex = typeInfo->Values.Find(FixedString(value));
 			if (enumIndex != nullptr) {
