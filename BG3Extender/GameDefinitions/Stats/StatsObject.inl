@@ -117,7 +117,7 @@ namespace bg3se
 		}
 
 		auto index = IndexedProperties[attributeIndex];
-		if (RPGStats::IsFlagType(typeInfo->Name)) {
+		if (RPGEnumeration::IsFlagType(typeInfo->Name)) {
 			auto val = GetStaticSymbols().GetStats()->GetInt64(index);
 			if (val) {
 				return **val;
@@ -155,7 +155,7 @@ namespace bg3se
 			return {};
 		}
 
-		if (RPGStats::IsFlagType(typeInfo->Name)) {
+		if (RPGEnumeration::IsFlagType(typeInfo->Name)) {
 			auto index = IndexedProperties[attributeIndex];
 			auto flags = GetStaticSymbols().GetStats()->GetInt64(index);
 			ObjectSet<FixedString> flagSet;
@@ -191,6 +191,14 @@ namespace bg3se
 				*fs = FixedString(value);
 				IndexedProperties[attributeIndex] = poolIdx;
 			}
+		} else if (typeInfo->Name == GFS.strGuid) {
+			auto guid = ParseGuidString(value);
+			if (!guid) {
+				OsiError("Couldn't set " << Name << "." << attributeName << ": Value (\"" << value << "\") is not a valid GUID");
+				return false;
+			}
+
+			return SetGuid(attributeName, *guid);
 		} else if (typeInfo->Values.Count() > 0) {
 			auto enumIndex = typeInfo->Values.Find(FixedString(value));
 			if (enumIndex != nullptr) {
@@ -268,7 +276,7 @@ namespace bg3se
 		}
 
 		auto stats = GetStaticSymbols().GetStats();
-		if (RPGStats::IsFlagType(typeInfo->Name)) {
+		if (RPGEnumeration::IsFlagType(typeInfo->Name)) {
 			int poolIdx{ -1 };
 			auto i64 = stats->GetOrCreateInt64(poolIdx);
 			if (i64 != nullptr) {
@@ -317,7 +325,7 @@ namespace bg3se
 			return false;
 		}
 
-		if (!RPGStats::IsFlagType(typeInfo->Name)) {
+		if (!RPGEnumeration::IsFlagType(typeInfo->Name)) {
 			OsiError("Couldn't set " << Name << "." << attributeName << " to flag array: Inappropriate type: " << typeInfo->Name);
 			return false;
 		}

@@ -5,6 +5,8 @@
 
 namespace bg3se
 {
+	struct StatsFunctorSet;
+
 	struct GameRandom
 	{
 		int* FixedRollList;
@@ -154,8 +156,29 @@ namespace bg3se
 		FixedString Name;
 	};
 
+	struct CRPGStats_Requirement
+	{
+		RequirementType RequirementId;
+		int IntParam;
+		UUID TagParam;
+		bool Not;
+	};
+
+
 	struct CRPGStats_Object : public Noncopyable<CRPGStats_Object>
 	{
+		struct StatsFunctorInfo
+		{
+			FixedString Name;
+			StatsFunctorSet* Functor;
+		};
+		
+		struct RollConditionInfo
+		{
+			FixedString Name;
+			int ConditionsId;
+		};
+
 		void* VMT{ nullptr };
 		Vector<int32_t> IndexedProperties;
 		FixedString Name;
@@ -163,9 +186,10 @@ namespace bg3se
 		uint32_t Unknown2;
 		FixedString FS2;
 		struct CDivinityStats* DivStats{ nullptr };
-		uint64_t Unknown3[22];
+		VirtualMultiHashMap<FixedString, Array<StatsFunctorInfo>> StatsFunctors;
+		VirtualMultiHashMap<FixedString, Array<RollConditionInfo>> RollConditions;
 		FixedString AIFlags;
-		ObjectSet<void*, GameMemoryAllocator, true> Requirements; // CRPGStats_Requirement
+		ObjectSet<CRPGStats_Requirement, GameMemoryAllocator, true> Requirements;
 		uint64_t Unknown4[6];
 		int32_t Using{ -1 };
 		uint32_t ModifierListIndex{ 0 };

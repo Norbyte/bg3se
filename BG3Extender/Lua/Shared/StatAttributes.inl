@@ -105,6 +105,7 @@ namespace bg3se::lua::stats
 		if (!attrInfo) {
 			OsiError("Stat object '" << object->Name << "' has no attribute named '" << attributeFS << "'");
 			push(L, nullptr);
+			return 1;
 		}
 
 		if (attrInfo->Name == GFS.strConstantInt) {
@@ -138,9 +139,16 @@ namespace bg3se::lua::stats
 			} else {
 				push(L, nullptr);
 			}
+		} else if (RPGEnumeration::IsFlagType(attrInfo->Name)) {
+			auto value = object->GetFlags(attributeFS);
+			if (value) {
+				LuaWrite(L, *value);
+			} else {
+				push(L, nullptr);
+			}
 		} else if (attrInfo->Name == GFS.strFixedString
 			|| attrInfo->Name == GFS.strStatusIDs
-			|| RPGStats::IsFlagType(attrInfo->Name)
+			|| RPGEnumeration::IsFlagType(attrInfo->Name)
 			|| attrInfo->Values.Count() > 0) {
 			auto value = object->GetString(attributeFS);
 			if (value) {
@@ -241,9 +249,17 @@ namespace bg3se::lua::stats
 		}*/
 
 		auto stats = GetStaticSymbols().GetStats();
+		
+		int index;
+		auto attrInfo = object->GetAttributeInfo(attributeFS, index);
+		if (!attrInfo) {
+			LuaError("Object '" << object->Name << "' has no attribute named '" << attributeName << "'");
+			return 0;
+		}
 
-		/*int index;
-		auto attrInfo = stats->GetAttributeInfo(object, attributeFS, index);
+		auto attrType = attrInfo->GetPropertyType();
+
+		/*
 		if (attrInfo && attrInfo->Name == GFS.strConditions) {
 			auto conditions = object->ConditionList.Find(attributeFS);
 			if (conditions) {
@@ -278,15 +294,52 @@ namespace bg3se::lua::stats
 
 		case LUA_TNUMBER:
 		{
-			auto value = (int32_t)luaL_checkinteger(L, valueIdx);
-			object->SetInt(attributeFS, value);
+			switch (attrType) {
+			case RPGEnumerationType::Int64:
+				object->SetInt64(attributeFS, (int64_t)luaL_checkinteger(L, valueIdx));
+				break;
+
+			case RPGEnumerationType::Float:
+				object->SetFloat(attributeFS, (float)luaL_checknumber(L, valueIdx));
+				break;
+
+			default:
+				object->SetInt(attributeFS, (int32_t)luaL_checkinteger(L, valueIdx));
+				break;
+			}
 			break;
 		}
 
-		// FIXME - add float, flags, etc. -- decide based on arg type
+		case LUA_TTABLE:
+		{
+			switch (attrType) {
+			case RPGEnumerationType::Flags:
+			{
+				ObjectSet<STDString> flags;
+				lua_pushvalue(L, valueIdx);
+				LuaRead(L, flags);
+				lua_pop(L, 1);
+				object->SetFlags(attributeFS, flags);
+				break;
+			}
+
+			case RPGEnumerationType::StatsFunctors:
+			case RPGEnumerationType::Conditions:
+			case RPGEnumerationType::RollConditions:
+			case RPGEnumerationType::Requirements:
+				LuaError("Stats properties of type " << (unsigned)attrType << " are not yet supported!");
+				break;
+
+			default:
+				LuaError("Cannot use table value for stat properties of type " << (unsigned)attrType << "!");
+				break;
+			}
+			break;
+		}
 
 		default:
-			return luaL_error(L, "Expected a string or integer attribute value.");
+			LuaError("Lua property values of type '" << lua_typename(L, lua_type(L, valueIdx)) << "' are not supported");
+			break;
 		}
 
 		return 0;

@@ -325,6 +325,20 @@ namespace bg3se::lua
 		return ObjectHandle{ (uint64_t)lua_touserdata(L, index) };
 	}
 
+	template <>
+	inline UUID get<UUID>(lua_State* L, int index)
+	{
+		auto str = lua_tostring(L, index);
+		if (str) {
+			auto uuid = ParseGuidString(std::string_view(str, strlen(str)));
+			if (uuid) {
+				return *uuid;
+			}
+		}
+
+		return UUID{};
+	}
+
 
 	template <class T, typename std::enable_if_t<std::is_same_v<T, bool>, int> * = nullptr>
 	inline bool checked_get(lua_State * L, int index)

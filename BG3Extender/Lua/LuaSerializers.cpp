@@ -343,28 +343,28 @@ namespace bg3se::lua
 			}
 			lua_pop(s.L, 1);
 		}
-	}
+	}*/
 
 	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Requirement& v)
 	{
 		s.BeginObject();
 		s.VisitProperty("Requirement", v.RequirementId);
-		s.VisitProperty("Not", v.Negate);
+		s.VisitProperty("Not", v.Not);
 
 		if (s.IsWriting) {
 			if (v.RequirementId == RequirementType::Tag) {
-				s.VisitProperty("Param", v.StringParam);
+				s.VisitProperty("Param", v.TagParam);
 			} else {
 				s.VisitProperty("Param", v.IntParam);
 			}
 		} else {
 			if (v.RequirementId == RequirementType::Tag) {
-				auto param = getfield<char const*>(s.L, "Param");
-				s.VisitProperty("Param", v.StringParam);
+				auto param = getfield<UUID>(s.L, "Param");
+				s.VisitProperty("Param", v.TagParam);
 				v.IntParam = -1;
 			} else {
 				s.VisitProperty("Param", v.IntParam);
-				v.StringParam = FixedString{};
+				v.TagParam = UUID{};
 			}
 		}
 
@@ -372,7 +372,7 @@ namespace bg3se::lua
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, CDivinityStats_Object_Property_Data& v)
+	/*LuaSerializer& operator << (LuaSerializer& s, CDivinityStats_Object_Property_Data& v)
 	{
 		static long gIndex{ 0 };
 		auto stats = GetStaticSymbols().GetStats();

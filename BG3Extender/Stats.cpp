@@ -289,21 +289,70 @@ namespace bg3se
 			gOsirisProxy->GetNetworkManager().ServerBroadcast(msg, ReservedUserId, true);
 		}*/
 	}
+	
 
-	bool RPGEnumeration::IsIndexedProperty() const
+	bool RPGEnumeration::IsFlagType(FixedString const& typeName)
 	{
-		return Name != GFS.strProperties
-			&& Name != GFS.strConditions
-			&& Name != GFS.strAIFlags
-			&& Name != GFS.strRequirements
-			&& Name != GFS.strMemorizationRequirements;
-		// FIXME - UPDATE?
+		return
+			typeName == GFS.strAttributeFlags
+			|| typeName == GFS.strSpellFlagList
+			|| typeName == GFS.strWeaponFlags
+			|| typeName == GFS.strResistanceFlags
+			|| typeName == GFS.strPassiveFlags
+			|| typeName == GFS.strProficiencyGroupFlags
+			|| typeName == GFS.strStatsFunctorContext
+			|| typeName == GFS.strStatusEvent
+			|| typeName == GFS.strStatusPropertyFlags
+			|| typeName == GFS.strStatusGroupFlags
+			|| typeName == GFS.strLineOfSightFlags;
 	}
 
-	bool RPGEnumeration::IsStringIndexedProperty() const
+	RPGEnumerationType RPGEnumeration::GetPropertyType() const
 	{
-		return Name == GFS.strFixedString;
-		// FIXME - UPDATE?
+		if (Name == GFS.strConstantInt) {
+			return RPGEnumerationType::Int;
+		}
+		
+		if (Name == GFS.strConstantFloat) {
+			return RPGEnumerationType::Float;
+		}
+		
+		if (Name == GFS.strFixedString
+			|| Name == GFS.strStatusIDs) {
+			return RPGEnumerationType::FixedString;
+		}
+
+		if (Name == GFS.strGuid) {
+			return RPGEnumerationType::GUID;
+		}
+
+		if (Name == GFS.strStatsFunctors) {
+			return RPGEnumerationType::StatsFunctors;
+		}
+
+		if (Name == GFS.strConditions
+			|| Name == GFS.strTargetConditions
+			|| Name == GFS.strUseConditions) {
+			return RPGEnumerationType::Conditions;
+		}
+
+		if (Name == GFS.strRollConditions) {
+			return RPGEnumerationType::RollConditions;
+		}
+
+		if (Name == GFS.strRequirements) {
+			return RPGEnumerationType::Requirements;
+		}
+
+		if (Values.Count() > 0) {
+			if (IsFlagType(Name)) {
+				return RPGEnumerationType::Flags;
+			} else {
+				return RPGEnumerationType::Enumeration;
+			}
+		}
+		
+		return RPGEnumerationType::Unknown;
 	}
 
 	CRPGStats_Modifier * ModifierList::GetAttributeInfo(FixedString const& name, int * attributeIndex) const
@@ -564,22 +613,6 @@ namespace bg3se
 		}
 
 		return &GUIDs[attributeId];
-	}
-
-	bool RPGStats::IsFlagType(FixedString const& typeName)
-	{
-		return
-			typeName == GFS.strAttributeFlags
-			|| typeName == GFS.strSpellFlagList
-			|| typeName == GFS.strWeaponFlags
-			|| typeName == GFS.strResistanceFlags
-			|| typeName == GFS.strPassiveFlags
-			|| typeName == GFS.strProficiencyGroupFlags
-			|| typeName == GFS.strStatsFunctorContext
-			|| typeName == GFS.strStatusEvent
-			|| typeName == GFS.strStatusPropertyFlags
-			|| typeName == GFS.strStatusGroupFlags
-			|| typeName == GFS.strLineOfSightFlags;
 	}
 
 	CRPGStats_Modifier * RPGStats::GetModifierInfo(FixedString const& modifierListName, FixedString const& modifierName)

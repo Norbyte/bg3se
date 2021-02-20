@@ -28,13 +28,29 @@ namespace bg3se
 		uint64_t Unkn;
 	};
 
+	enum class RPGEnumerationType
+	{
+		Int,
+		Int64,
+		Float,
+		FixedString,
+		Enumeration,
+		Flags,
+		GUID,
+		StatsFunctors,
+		Conditions,
+		RollConditions,
+		Requirements,
+		Unknown
+	};
+
 	struct RPGEnumeration : public ProtectedGameObject<RPGEnumeration>
 	{
 		FixedString Name;
 		Map<FixedString, int32_t> Values;
 
-		bool IsIndexedProperty() const;
-		bool IsStringIndexedProperty() const;
+		static bool IsFlagType(FixedString const& typeName);
+		RPGEnumerationType GetPropertyType() const;
 	};
 
 	struct CRPGStats_Modifier : public ProtectedGameObject<CRPGStats_Modifier>
@@ -524,8 +540,8 @@ namespace bg3se
 		Map<FixedString, void*> TreasureGroups[4];
 		RefMap<FixedString, void*> Unknown5;
 		FixedString TreasureRarities[7];
-		Array<FixedString> FixedStrings;
-		Array<int64_t*> Int64s;
+		ObjectSet<FixedString> FixedStrings;
+		ObjectSet<int64_t*> Int64s;
 		Array<UUID> GUIDs;
 		Array<float> ConstantFloats;
 		void* EquipmentSetManager;
@@ -541,8 +557,6 @@ namespace bg3se
 		CRITICAL_SECTION CriticalSection;
 		void* Unkn5;
 		Array<STDString> ConditionList;
-
-		static bool IsFlagType(FixedString const& typeName);
 
 		CRPGStats_Modifier * GetModifierInfo(FixedString const& modifierListName, FixedString const& modifierName);
 		ModifierList * GetTypeInfo(CRPGStats_Object * object);

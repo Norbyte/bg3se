@@ -104,8 +104,6 @@ FS(Sight);
 FS(Level);
 FS(Name);
 FS(Using);
-FS(Requirements);
-FS(MemorizationRequirements);
 FS(AIFlags);
 FS(IngredientType);
 FS(IngredientTransformType);
@@ -161,6 +159,12 @@ FS(StatusIDs);
 FS(ConstantInt);
 FS(ConstantFloat);
 FS(Guid);
+FS(StatsFunctors);
+FS(Conditions);
+FS(TargetConditions);
+FS(UseConditions);
+FS(RollConditions);
+FS(Requirements);
 
 FS(AttributeFlags);
 FS(SpellFlagList);
@@ -173,9 +177,6 @@ FS(StatusEvent);
 FS(StatusPropertyFlags);
 FS(StatusGroupFlags);
 FS(LineOfSightFlags);
-
-FS(Properties);
-FS(Conditions);
 
 // Enumerations
 FS(StatusHealType);
