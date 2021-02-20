@@ -5,6 +5,7 @@
 
 namespace bg3se
 {
+	struct CRPGStats_Requirement;
 	struct CRPGStats_Treasure_Table;
 	struct CRPGStats_Treasure_Category;
 	struct CRPGStats_Treasure_SubTable_Description;
@@ -240,6 +241,7 @@ namespace bg3se::lua
 /*	LuaSerializer& operator << (LuaSerializer& s, CEquipmentSet& v);
 	LuaSerializer& operator << (LuaSerializer& s, CEquipmentGroup& v);
 	LuaSerializer& operator << (LuaSerializer& s, CSkillSet& v);*/
+	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Requirement& v);
 	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_Table& v);
 	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_SubTable_Description& v);
 	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_Category& v);
@@ -256,8 +258,6 @@ namespace bg3se::lua
 	LuaSerializer& operator << (LuaSerializer& s, CNameGroupLink& v);
 	LuaSerializer& operator << (LuaSerializer& s, CNameGroup& v);
 	LuaSerializer& operator << (LuaSerializer& s, CNameGroupName& v);
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Requirement& v);
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Requirement& v);
 	LuaSerializer& operator << (LuaSerializer& s, CDivinityStats_Object_Property_Data& v);
 	LuaSerializer& operator << (LuaSerializer& s, CDivinityStats_Object_Property_Custom& v);
 	LuaSerializer& operator << (LuaSerializer& s, CDivinityStats_Object_Property_Status& v);

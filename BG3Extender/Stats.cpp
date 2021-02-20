@@ -615,6 +615,26 @@ namespace bg3se
 		return &GUIDs[attributeId];
 	}
 
+	std::optional<STDString*> RPGStats::GetConditions(int conditionsId)
+	{
+		if (conditionsId > 0) {
+			return &ConditionList[conditionsId];
+		}
+		else {
+			return {};
+		}
+	}
+
+	STDString* RPGStats::GetOrCreateConditions(int& conditionsId)
+	{
+		if (conditionsId < 0) {
+			conditionsId = (int)ConditionList.Size;
+			ConditionList.Add(STDString{});
+		}
+
+		return &ConditionList[conditionsId];
+	}
+
 	CRPGStats_Modifier * RPGStats::GetModifierInfo(FixedString const& modifierListName, FixedString const& modifierName)
 	{
 		auto modifiers = ModifierLists.Find(modifierListName);

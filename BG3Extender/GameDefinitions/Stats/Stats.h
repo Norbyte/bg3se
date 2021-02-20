@@ -535,7 +535,7 @@ namespace bg3se
 		uint64_t Unkn1[4];
 		RNG Rng;
 		Map<FixedString, float>* ExtraData;
-		RefMap<FixedString, ObjectSet<void*>> Requirements;
+		RefMap<FixedString, ObjectSet<CRPGStats_Requirement>> Requirements;
 		RefMap<FixedString, ItemColor> ItemColors;
 		Map<FixedString, void*> TreasureGroups[4];
 		RefMap<FixedString, void*> Unknown5;

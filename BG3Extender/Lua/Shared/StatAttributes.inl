@@ -108,7 +108,9 @@ namespace bg3se::lua::stats
 			return 1;
 		}
 
-		if (attrInfo->Name == GFS.strConstantInt) {
+		switch (attrInfo->GetPropertyType()) {
+		case RPGEnumerationType::Int:
+		{
 			std::optional<int> value;
 			if (level) {
 				if (*level == -1) {
@@ -125,40 +127,78 @@ namespace bg3se::lua::stats
 			} else {
 				push(L, nullptr);
 			}
-		} else if (attrInfo->Name == GFS.strConstantFloat) {
+			break;
+		}
+
+		case RPGEnumerationType::Int64:
+		{
+			auto value = object->GetInt64(attributeFS);
+			if (value) {
+				push(L, *value);
+			} else {
+				push(L, nullptr);
+			}
+			break;
+		}
+
+		case RPGEnumerationType::Float:
+		{
 			auto value = object->GetFloat(attributeFS);
 			if (value) {
 				push(L, *value);
 			} else {
 				push(L, nullptr);
 			}
-		} else if (attrInfo->Name == GFS.strGuid) {
-			auto value = object->GetGuid(attributeFS);
-			if (value) {
-				push(L, *value);
-			} else {
-				push(L, nullptr);
-			}
-		} else if (RPGEnumeration::IsFlagType(attrInfo->Name)) {
-			auto value = object->GetFlags(attributeFS);
-			if (value) {
-				LuaWrite(L, *value);
-			} else {
-				push(L, nullptr);
-			}
-		} else if (attrInfo->Name == GFS.strFixedString
-			|| attrInfo->Name == GFS.strStatusIDs
-			|| RPGEnumeration::IsFlagType(attrInfo->Name)
-			|| attrInfo->Values.Count() > 0) {
+			break;
+		}
+
+		case RPGEnumerationType::FixedString:
+		case RPGEnumerationType::Enumeration:
+		case RPGEnumerationType::Conditions:
+		{
 			auto value = object->GetString(attributeFS);
 			if (value) {
 				push(L, *value);
 			} else {
 				push(L, nullptr);
 			}
-		} else {
+			break;
+		}
+
+		case RPGEnumerationType::GUID:
+		{
+			auto value = object->GetGuid(attributeFS);
+			if (value) {
+				push(L, *value);
+			} else {
+				push(L, nullptr);
+			}
+			break;
+		}
+
+		case RPGEnumerationType::Flags:
+		{
+			auto value = object->GetFlags(attributeFS);
+			if (value) {
+				LuaWrite(L, *value);
+			} else {
+				push(L, nullptr);
+			}
+			break;
+		}
+
+		case RPGEnumerationType::Requirements:
+		{
+			LuaWrite(L, object->Requirements);
+			break;
+		}
+
+		case RPGEnumerationType::StatsFunctors:
+		case RPGEnumerationType::RollConditions:
+		default:
 			OsiError("Don't know how to fetch values of type '" << attrInfo->Name << "'");
 			push(L, nullptr);
+			break;
 		}
 
 		return 1;
@@ -324,11 +364,19 @@ namespace bg3se::lua::stats
 			}
 
 			case RPGEnumerationType::StatsFunctors:
-			case RPGEnumerationType::Conditions:
 			case RPGEnumerationType::RollConditions:
-			case RPGEnumerationType::Requirements:
 				LuaError("Stats properties of type " << (unsigned)attrType << " are not yet supported!");
 				break;
+
+			case RPGEnumerationType::Requirements:
+			{
+				ObjectSet<CRPGStats_Requirement, GameMemoryAllocator, true> requirements;
+				lua_pushvalue(L, valueIdx);
+				LuaRead(L, requirements);
+				lua_pop(L, 1);
+				object->Requirements = requirements;
+				break;
+			}
 
 			default:
 				LuaError("Cannot use table value for stat properties of type " << (unsigned)attrType << "!");
