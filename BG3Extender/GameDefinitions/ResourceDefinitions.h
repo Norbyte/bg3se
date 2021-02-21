@@ -47,8 +47,8 @@ namespace bg3se
 		FixedString Description;
 		FixedString Error;
 		uint32_t MaxLevel;
-		uint8_t DiceType;
-		uint8_t ReplenishType;
+		uint8_t DiceType; // FIXME - map to enumeration
+		uint8_t ReplenishType; // FIXME - map to enumeration
 		bool ShowOnActionResourcePanel;
 		bool UpdatesSpellPowerLevel;
 		bool PartyActionResource;
@@ -65,17 +65,17 @@ namespace bg3se
 		int DisplayName;
 		FixedString Description;
 		UUID ProgressionTableUUID;
-		uint8_t MagicType;
-		uint8_t SoundMagicType;
-		uint8_t PrimaryAbility;
-		uint8_t SpellCastingAbility;
+		uint8_t MagicType; // FIXME - map to enumeration
+		uint8_t SoundMagicType; // FIXME - map to enumeration
+		uint8_t PrimaryAbility; // FIXME - map to enumeration
+		uint8_t SpellCastingAbility; // FIXME - map to enumeration
 		bool MustPrepareSpells;
 		bool CanLearnSpells;
 		uint8_t field_4E;
 		Array<UUID> Tags;
 		FixedString ClassEquipment;
-		int CharacterCreationPose;
-		uint8_t LearningStrategy;
+		int CharacterCreationPose; // FIXME - map to enumeration
+		uint8_t LearningStrategy; // FIXME - map to enumeration
 		uint8_t field_71;
 		int BaseHp;
 		int HpPerLevel;
@@ -89,7 +89,7 @@ namespace bg3se
 		FixedString Name;
 		STDString Description;
 		FixedString Icon;
-		uint16_t Categories;
+		uint16_t Categories; // FIXME - map to flags
 		TranslatedString DisplayName;
 		TranslatedString DisplayDescription;
 	};
@@ -193,7 +193,7 @@ namespace bg3se
 		STDString PassivesRemoved;
 		Array<UUID> field_D0;
 		STDString Boosts;
-		uint8_t ProgressionType;
+		uint8_t ProgressionType; // FIXME - map to enumeration
 		uint8_t Level;
 		bool AllowImprovement;
 		Array<UUID> SelectAbilities;
@@ -282,7 +282,7 @@ namespace bg3se
 
 	    FixedString Name;
 	    STDString Description;
-	    uint8_t Usage;
+	    uint8_t Usage; // FIXME - map to flags
 	};
 
 
