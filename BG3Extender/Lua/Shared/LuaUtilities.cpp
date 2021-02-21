@@ -483,6 +483,51 @@ namespace bg3se::lua::utils
 	WrapLuaFunction(DumpStack)
 
 
+	template <class T>
+	int GetResourceProxy(lua_State* L, UUID const& resourceGuid)
+	{
+		auto helpers = gOsirisProxy->GetServerEntityHelpers();
+		auto resourceMgr = helpers.GetResourceManager<T>();
+		if (!resourceMgr) {
+			LuaError("Resource manager not available for this resource type");
+			push(L, nullptr);
+			return 1;
+		}
+
+		auto resource = (*resourceMgr)->Resources.Find(resourceGuid);
+		if (resource) {
+			ObjectProxy2<T>::New(L, *resource);
+		} else {
+			push(L, nullptr);
+		}
+
+		return 1;
+	}
+
+	int GetResource(lua_State* L)
+	{
+		auto resourceGuid = checked_get<UUID>(L, 1);
+		auto type = checked_get<ExtResourceManagerType>(L, 2);
+
+		auto helpers = gOsirisProxy->GetServerEntityHelpers();
+		switch (type) {
+		case ActionResource::ResourceManagerType: return GetResourceProxy<ActionResource>(L, resourceGuid);
+		case ClassDescriptionResource::ResourceManagerType: return GetResourceProxy<ClassDescriptionResource>(L, resourceGuid);
+		case TagResource::ResourceManagerType: return GetResourceProxy<TagResource>(L, resourceGuid);
+		case FactionResource::ResourceManagerType: return GetResourceProxy<FactionResource>(L, resourceGuid);
+		case RaceResource::ResourceManagerType: return GetResourceProxy<RaceResource>(L, resourceGuid);
+		case OriginResource::ResourceManagerType: return GetResourceProxy<OriginResource>(L, resourceGuid);
+		case BackgroundResource::ResourceManagerType: return GetResourceProxy<BackgroundResource>(L, resourceGuid);
+		case GodResource::ResourceManagerType: return GetResourceProxy<GodResource>(L, resourceGuid);
+		case ProgressionResource::ResourceManagerType: return GetResourceProxy<ProgressionResource>(L, resourceGuid);
+
+		default:
+			LuaError("Resource type not supported: " << EnumInfo<ExtResourceManagerType>::Find(type));
+			push(L, nullptr);
+			return 1;
+		}
+	}
+
 	void RegisterUtilsLib(lua_State* L)
 	{
 		static const luaL_Reg utilsLib[] = {
@@ -501,6 +546,9 @@ namespace bg3se::lua::utils
 
 			{"IsDeveloperMode", IsDeveloperModeWrapper},
 			{"GenerateIdeHelpers", GenerateIdeHelpersWrapper},
+
+			// FIXME - move somewhere else later!
+			{"GetResource", GetResource},
 
 			// EXPERIMENTAL FUNCTIONS
 			{"DumpStack", DumpStackWrapper},
