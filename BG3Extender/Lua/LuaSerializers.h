@@ -265,6 +265,7 @@ namespace bg3se::lua
 	LuaSerializer& operator << (LuaSerializer& s, CSkillSet& v);*/
 	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Requirement& v);
 	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Object::StatsFunctorInfo& v);
+	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Object::RollConditionInfo& v);
 	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_Table& v);
 	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_SubTable_Description& v);
 	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_Category& v);

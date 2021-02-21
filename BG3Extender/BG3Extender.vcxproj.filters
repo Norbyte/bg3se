@@ -364,9 +364,6 @@
     <None Include="GlobalFixedStrings.inl">
       <Filter>GameDefinitions</Filter>
     </None>
-    <None Include="Lua\Shared\LuaStatsFunctors.inl">
-      <Filter>Lua\Shared</Filter>
-    </None>
     <None Include="LuaDebug.proto">
       <Filter>Lua\Debugger</Filter>
     </None>
@@ -382,8 +379,17 @@
     <None Include="Lua\Shared\LuaPropertyMapHelpers.h">
       <Filter>Lua\Shared</Filter>
     </None>
-    <None Include="Lua\Shared\LuaResources.inl">
+    <None Include="GameDefinitions\PropertyMaps\StatsFunctorProperties.inl">
+      <Filter>GameDefinitions\PropertyMaps</Filter>
+    </None>
+    <None Include="Lua\Shared\LuaObjectProxies.inl">
       <Filter>Lua\Shared</Filter>
+    </None>
+    <None Include="GameDefinitions\PropertyMaps\AllPropertyMaps.inl">
+      <Filter>GameDefinitions\PropertyMaps</Filter>
+    </None>
+    <None Include="GameDefinitions\PropertyMaps\ResourceDefinitions.inl">
+      <Filter>GameDefinitions\PropertyMaps</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -428,6 +434,9 @@
     </Filter>
     <Filter Include="Osiris\Shared">
       <UniqueIdentifier>{04414d2b-c64a-4e15-a91a-41ebff6ee2d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameDefinitions\PropertyMaps">
+      <UniqueIdentifier>{6fbb9ad7-3c78-463d-aa8d-05b362d99765}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

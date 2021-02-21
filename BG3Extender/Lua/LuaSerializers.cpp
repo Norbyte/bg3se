@@ -381,6 +381,29 @@ namespace bg3se::lua
 		return s;
 	}
 
+	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Object::RollConditionInfo& v)
+	{
+		s.BeginObject();
+		P(Name);
+		auto stats = GetStaticSymbols().GetStats();
+		if (s.IsWriting) {
+			auto conditions = stats->GetConditions(v.ConditionsId);
+			if (conditions) {
+				s.VisitProperty("Conditions", *conditions);
+			} else {
+				STDString conditionsStr;
+				s.VisitProperty("Conditions", conditionsStr);
+			}
+		} else {
+			int conditionsId{ -1 };
+			auto conditions = stats->GetOrCreateConditions(conditionsId);
+			s.VisitProperty("Conditions", *conditions);
+			v.ConditionsId = conditionsId;
+		}
+		s.EndObject();
+		return s;
+	}
+
 	LuaSerializer& operator << (LuaSerializer& s, StatsFunctorBase& v)
 	{
 		static long gIndex{ 0 };

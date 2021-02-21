@@ -151,7 +151,6 @@ namespace bg3se
 		return {};
 	}
 
-
 	std::optional<ObjectSet<FixedString>> CRPGStats_Object::GetFlags(FixedString const& attributeName)
 	{
 		int attributeIndex;
@@ -178,6 +177,47 @@ namespace bg3se
 
 		return {};
 	}
+
+	std::optional<Array<CRPGStats_Object::StatsFunctorInfo>> CRPGStats_Object::GetStatsFunctors(FixedString const& attributeName)
+	{
+		int attributeIndex;
+		auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
+		if (typeInfo == nullptr) {
+			return {};
+		}
+
+		if (typeInfo->Name != GFS.strStatsFunctors) {
+			return {};
+		}
+
+		auto functors = StatsFunctors.Find(attributeName);
+		if (functors) {
+			return **functors;
+		} else {
+			return {};
+		}
+	}
+
+	std::optional<Array<CRPGStats_Object::RollConditionInfo>> CRPGStats_Object::GetRollConditions(FixedString const& attributeName)
+	{
+		int attributeIndex;
+		auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
+		if (typeInfo == nullptr) {
+			return {};
+		}
+
+		if (typeInfo->Name != GFS.strRollConditions) {
+			return {};
+		}
+
+		auto conditions = RollConditions.Find(attributeName);
+		if (conditions) {
+			return **conditions;
+		} else {
+			return {};
+		}
+	}
+
 
 	bool CRPGStats_Object::SetString(FixedString const& attributeName, const char * value)
 	{
@@ -361,6 +401,42 @@ namespace bg3se
 			IndexedProperties[attributeIndex] = poolIdx;
 		}
 
+		return true;
+	}
+
+	bool CRPGStats_Object::SetStatsFunctors(FixedString const& attributeName, Array<StatsFunctorInfo> const& value)
+	{
+		int attributeIndex;
+		auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
+		if (typeInfo == nullptr) {
+			OsiError("Couldn't fetch type info for " << Name << "." << attributeName);
+			return false;
+		}
+
+		if (typeInfo->Name != GFS.strStatsFunctors) {
+			OsiError("Couldn't set " << Name << "." << attributeName << " to stats functors: Inappropriate type: " << typeInfo->Name);
+			return false;
+		}
+
+		// FIXME - StatsFunctors.Set(attributeName, value);
+		return true;
+	}
+
+	bool CRPGStats_Object::SetRollConditions(FixedString const& attributeName, Array<RollConditionInfo> const& value)
+	{
+		int attributeIndex;
+		auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
+		if (typeInfo == nullptr) {
+			OsiError("Couldn't fetch type info for " << Name << "." << attributeName);
+			return false;
+		}
+
+		if (typeInfo->Name != GFS.strRollConditions) {
+			OsiError("Couldn't set " << Name << "." << attributeName << " to stats functors: Inappropriate type: " << typeInfo->Name);
+			return false;
+		}
+
+		// FIXME - RollConditions.Set(attributeName, value);
 		return true;
 	}
 

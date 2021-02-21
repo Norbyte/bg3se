@@ -122,33 +122,21 @@ namespace bg3se::lua::stats
 				value = object->GetInt(attributeFS);
 			}
 
-			if (value) {
-				push(L, *value);
-			} else {
-				push(L, nullptr);
-			}
+			LuaWrite(L, value);
 			break;
 		}
 
 		case RPGEnumerationType::Int64:
 		{
 			auto value = object->GetInt64(attributeFS);
-			if (value) {
-				push(L, *value);
-			} else {
-				push(L, nullptr);
-			}
+			LuaWrite(L, value);
 			break;
 		}
 
 		case RPGEnumerationType::Float:
 		{
 			auto value = object->GetFloat(attributeFS);
-			if (value) {
-				push(L, *value);
-			} else {
-				push(L, nullptr);
-			}
+			LuaWrite(L, value);
 			break;
 		}
 
@@ -157,33 +145,21 @@ namespace bg3se::lua::stats
 		case RPGEnumerationType::Conditions:
 		{
 			auto value = object->GetString(attributeFS);
-			if (value) {
-				push(L, *value);
-			} else {
-				push(L, nullptr);
-			}
+			LuaWrite(L, value);
 			break;
 		}
 
 		case RPGEnumerationType::GUID:
 		{
 			auto value = object->GetGuid(attributeFS);
-			if (value) {
-				push(L, *value);
-			} else {
-				push(L, nullptr);
-			}
+			LuaWrite(L, value);
 			break;
 		}
 
 		case RPGEnumerationType::Flags:
 		{
 			auto value = object->GetFlags(attributeFS);
-			if (value) {
-				LuaWrite(L, *value);
-			} else {
-				push(L, nullptr);
-			}
+			LuaWrite(L, value);
 			break;
 		}
 
@@ -195,12 +171,18 @@ namespace bg3se::lua::stats
 
 		case RPGEnumerationType::StatsFunctors:
 		{
-			auto functors = object->StatsFunctors.Find(attributeFS);
+			auto functors = object->GetStatsFunctors(attributeFS);
 			LuaWrite(L, functors);
 			break;
 		}
 
 		case RPGEnumerationType::RollConditions:
+		{
+			auto conditions = object->GetRollConditions(attributeFS);
+			LuaWrite(L, conditions);
+			break;
+		}
+
 		default:
 			OsiError("Don't know how to fetch values of type '" << attrInfo->Name << "'");
 			push(L, nullptr);
@@ -346,20 +328,25 @@ namespace bg3se::lua::stats
 
 			case RPGEnumerationType::StatsFunctors:
 			{
-				StatsFunctorSet* functors{ nullptr };
+				Array<CRPGStats_Object::StatsFunctorInfo> functors;
 				lua_pushvalue(L, valueIdx);
 				LuaRead(L, functors);
 				lua_pop(L, 1);
 
-				if (functors) {
-					// FIXME - object->StatsFunctors = requirements;
-				}
+				object->SetStatsFunctors(attributeFS, functors);
 				break;
 			}
 
 			case RPGEnumerationType::RollConditions:
-				LuaError("Stats properties of type " << (unsigned)attrType << " are not yet supported!");
+			{
+				Array<CRPGStats_Object::RollConditionInfo> conditions;
+				lua_pushvalue(L, valueIdx);
+				LuaRead(L, conditions);
+				lua_pop(L, 1);
+
+				object->SetRollConditions(attributeFS, conditions);
 				break;
+			}
 
 			case RPGEnumerationType::Requirements:
 			{

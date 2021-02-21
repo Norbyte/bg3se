@@ -995,7 +995,7 @@ namespace bg3se
 		unsigned int Capacity{ 0 };
 		unsigned int Unknown{ 0 };
 		unsigned int Size{ 0 };
-		unsigned int Unkn{ 0 };
+		unsigned int Unknown2{ 0 };
 
 		inline Array() {}
 
@@ -1012,8 +1012,8 @@ namespace bg3se
 
 		void CopyFrom(Array const& a)
 		{
-			Unkn[0] = a.Unkn[0];
-			Unkn[1] = a.Unkn[1];
+			Unknown = a.Unknown;
+			Unknown2 = a.Unknown2;
 			Clear();
 
 			if (a.Size > 0) {

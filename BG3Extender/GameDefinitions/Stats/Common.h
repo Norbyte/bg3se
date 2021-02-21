@@ -204,12 +204,16 @@ namespace bg3se
 		std::optional<int64_t> GetInt64(FixedString const& attributeName);
 		std::optional<UUID> GetGuid(FixedString const& attributeName);
 		std::optional<ObjectSet<FixedString>> GetFlags(FixedString const& attributeName);
+		std::optional<Array<StatsFunctorInfo>> GetStatsFunctors(FixedString const& attributeName);
+		std::optional<Array<RollConditionInfo>> GetRollConditions(FixedString const& attributeName);
 		bool SetString(FixedString const& attributeName, const char* value);
 		bool SetInt(FixedString const& attributeName, int32_t value);
 		bool SetFloat(FixedString const& attributeName, float value);
 		bool SetInt64(FixedString const& attributeName, int64_t value);
 		bool SetGuid(FixedString const& attributeName, UUID const& value);
 		bool SetFlags(FixedString const& attributeName, ObjectSet<STDString> const& value);
+		bool SetStatsFunctors(FixedString const& attributeName, Array<StatsFunctorInfo> const& value);
+		bool SetRollConditions(FixedString const& attributeName, Array<RollConditionInfo> const& value);
 
 		void ToProtobuf(class MsgS2CSyncStat* msg) const;
 		void FromProtobuf(MsgS2CSyncStat const& msg);
