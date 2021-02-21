@@ -372,211 +372,407 @@ namespace bg3se::lua
 		return s;
 	}
 
-	/*LuaSerializer& operator << (LuaSerializer& s, CDivinityStats_Object_Property_Data& v)
+	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Object::StatsFunctorInfo& v)
+	{
+		s.BeginObject();
+		P(Name);
+		P(Functor);
+		s.EndObject();
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, StatsFunctorBase& v)
 	{
 		static long gIndex{ 0 };
 		auto stats = GetStaticSymbols().GetStats();
 
-		P(Context);
 		s.VisitProperty("Type", v.TypeId);
+		P(PropertyContext);
 		
 		if (s.IsWriting) {
-			if (v.Conditions) {
-				STDString name(v.Name.Str);
-				if (name[name.length() - 1] == ')') {
-					auto ifPos = name.find("_IF(");
-					if (ifPos != std::string::npos) {
-						auto condition = name.substr(ifPos + 4, name.length() - ifPos - 5);
-						setfield(s.L, "Condition", condition);
-					}
-				}
+			auto conditions = stats->GetConditions(v.StatsConditionsId);
+			if (conditions) {
+				setfield(s.L, "Condition", **conditions);
 			}
 		} else {
 			STDString name = std::to_string(gIndex++).c_str();
+			v.UniqueName = FixedString(name.c_str());
 
 			auto conditions = getfield<char const*>(s.L, "Condition");
 			if (conditions && *conditions) {
-				name += "_IF(";
-				name += conditions;
-				name += ")";
-
-				auto scriptCheckBlock = stats->BuildScriptCheckBlockFromProperties(conditions);
-				if (scriptCheckBlock) {
-					auto statConditions = GameAlloc<CDivinityStats_Condition>();
-					statConditions->ScriptCheckBlock = scriptCheckBlock;
-					statConditions->Name = MakeFixedString(name.c_str());
-					v.Conditions = statConditions;
-				}
-				else {
-					OsiWarn("Failed to parse conditions: " << conditions);
-				}
+				int conditionsId{ -1 };
+				auto cond = stats->GetOrCreateConditions(conditionsId);
+				*cond = conditions;
+			} else {
+				v.StatsConditionsId = -1;
 			}
-
-			v.Name = MakeFixedString(name.c_str());
 		}
 
+		PO(IsSelf, false);
+		PO(StoryActionId, 0);
+
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, CDivinityStats_Object_Property_Custom& v)
+	LuaSerializer& operator << (LuaSerializer& s, CustomDescriptionFunctor& v)
 	{
-		s << static_cast<CDivinityStats_Object_Property_Data&>(v);
-		s.VisitProperty("Action", v.Name);
+		s << static_cast<StatsFunctorBase&>(v);
+		P(Description);
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, CDivinityStats_Object_Property_Status& v)
+	LuaSerializer& operator << (LuaSerializer& s, ResurrectFunctor& v)
 	{
-		s << static_cast<CDivinityStats_Object_Property_Data&>(v);
-		s.VisitProperty("Action", v.Status);
-		PO(StatusChance, 100.0f);
-		PO(Duration, 1.0f);
-		auto statsId = getfield<FixedString>(s.L, "Arg3");
-		if (statsId) {
-			v.StatsId = statsId;
-		} else {
-			PO(StatsId, GFS.strEmpty);
-		}
-		PO(Arg4, -1);
-		PO(Arg5, -1);
-		PO(SurfaceBoost, false);
-		PO(SurfaceBoosts, ObjectSet<SurfaceType>{});
+		s << static_cast<StatsFunctorBase&>(v);
+		PO(Probability, 1.0f);
+		PO(HealthPercentage, 1.0f);
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, CDivinityStats_Object_Property_SurfaceChange& v)
+	LuaSerializer& operator << (LuaSerializer& s, SabotageFunctor& v)
 	{
-		s << static_cast<CDivinityStats_Object_Property_Data&>(v);
-		LuaSerializeStatsEnum(s, "Action", GFS.strSurfaceChange, v.SurfaceChange);
-		PO(SurfaceChance, 1.0f);
-		PO(Lifetime, 0.0f);
-		PO(StatusChance, 0.0f);
-		PO(Radius, -1.0f);
-		return s;
-	}
-
-	LuaSerializer& operator << (LuaSerializer& s, CDivinityStats_Object_Property_GameAction& v)
-	{
-		s << static_cast<CDivinityStats_Object_Property_Data&>(v);
-		LuaSerializeStatsEnum(s, "Action", GFS.strGameAction, v.GameAction);
-		PO(Arg1, -1.0f);
-		PO(Arg2, -1.0f);
-		PO(Arg3, GFS.strEmpty);
-		PO(Arg4, 1.0f);
-		PO(Arg5, 0.0f);
-		LuaSerializeStatsEnum(s, "StatusHealType", GFS.strStatusHealType, v.StatusHealType);
-		return s;
-	}
-
-	LuaSerializer& operator << (LuaSerializer& s, CDivinityStats_Object_Property_OsirisTask& v)
-	{
-		s << static_cast<CDivinityStats_Object_Property_Data&>(v);
-		LuaSerializeStatsEnum(s, "Action", GFS.strOsirisTask, v.OsirisTask);
-		PO(Chance, 1.0f);
-		PO(VitalityOnRevive, -1);
-		return s;
-	}
-
-	LuaSerializer& operator << (LuaSerializer& s, CDivinityStats_Object_Property_Sabotage& v)
-	{
-		s << static_cast<CDivinityStats_Object_Property_Data&>(v);
+		s << static_cast<StatsFunctorBase&>(v);
 		PO(Amount, 1);
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, CDivinityStats_Object_Property_Summon& v)
+	LuaSerializer& operator << (LuaSerializer& s, SummonFunctor& v)
 	{
-		s << static_cast<CDivinityStats_Object_Property_Data&>(v);
-		P(Template);
+		s << static_cast<StatsFunctorBase&>(v);
+		PO(MovingObject, GFS.strEmpty);
+		PO(field_24, GFS.strEmpty);
+		PO(SpawnLifetime, 6.0f);
+		PO(StatusesToApply, ObjectSet<FixedString>{});
+		PO(field_48, GFS.strEmpty);
+		// LuaSerializeStatsEnum(s, "StatusHealType", GFS.strStatusHealType, v.StatusHealType);
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, ForceFunctor& v)
+	{
+		s << static_cast<StatsFunctorBase&>(v);
+		PO(Arg0, 8.0f);
+		PO(Origin, ForceFunctorOrigin::OriginToEntity);
+		PO(Aggression, ForceFunctorAggression::Aggressive);
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, DouseFunctor& v)
+	{
+		s << static_cast<StatsFunctorBase&>(v);
+		PO(field_20, -1.0f);
+		PO(field_24, 1.0f);
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, SwapPlacesFunctor& v)
+	{
+		s << static_cast<StatsFunctorBase&>(v);
+		PO(Arg0, GFS.strEmpty);
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, EqualizeFunctor& v)
+	{
+		s << static_cast<StatsFunctorBase&>(v);
+		PO(HealType, StatusHealType::None);
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, PickupFunctor& v)
+	{
+		s << static_cast<StatsFunctorBase&>(v);
+		PO(Arg0, GFS.strEmpty);
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, CreateSurfaceFunctor& v)
+	{
+		s << static_cast<StatsFunctorBase&>(v);
+		P(SurfaceType);
+		PO(Radius, -1.0f);
+		PO(Duration, -1.0f);
+		PO(Arg4, 0.0f);
+		PO(IsControlledByConcentration, true);
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, CreateConeSurfaceFunctor& v)
+	{
+		s << static_cast<StatsFunctorBase&>(v);
+		P(Arg2);
+		PO(Arg0, -1.0f);
+		PO(Arg1, -1.0f);
+		PO(Arg3, 1.0f);
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, RemoveStatusFunctor& v)
+	{
+		s << static_cast<StatsFunctorBase&>(v);
+		P(StatusId);
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, ExecuteWeaponFunctorsFunctor& v)
+	{
+		s << static_cast<StatsFunctorBase&>(v);
+		P(Type);
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, TeleportSourceFunctor& v)
+	{
+		s << static_cast<StatsFunctorBase&>(v);
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, SetStatusDurationFunctor& v)
+	{
+		s << static_cast<StatsFunctorBase&>(v);
+		P(StatusId);
+		P(Duration);
+		PO(SetIfLonger, false);
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, UseAttackFunctor& v)
+	{
+		s << static_cast<StatsFunctorBase&>(v);
+		PO(IgnoreChecks, false);
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, BreakConcentrationFunctor& v)
+	{
+		s << static_cast<StatsFunctorBase&>(v);
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, RestoreResourceFunctor& v)
+	{
+		s << static_cast<StatsFunctorBase&>(v);
+		P(ActionResourceUUID);
+		P(Hex);
+		P(field_34);
+		// FIXME - P(LuaAmount);
+		P(Amount);
+		P(IsPercentage);
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, SpawnFunctor& v)
+	{
+		s << static_cast<StatsFunctorBase&>(v);
+		P(TemplateId);
+		PO(Arg1, GFS.strEmpty);
+		PO(StatusesToApply, ObjectSet<FixedString>{});
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, StabilizeFunctor& v)
+	{
+		s << static_cast<StatsFunctorBase&>(v);
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, UnlockFunctor& v)
+	{
+		s << static_cast<StatsFunctorBase&>(v);
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, ResetCombatTurnFunctor& v)
+	{
+		s << static_cast<StatsFunctorBase&>(v);
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, RemoveAuraByChildStatusFunctor& v)
+	{
+		s << static_cast<StatsFunctorBase&>(v);
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, ApplyStatusFunctor& v)
+	{
+		s << static_cast<StatsFunctorBase&>(v);
+		P(StatusId);
+		PO(StringParam, GFS.strEmpty);
+		// FIXME - add conditions parsing!
+		PO(StatsConditions, STDString{});
+		PO(StatsConditionsId, -1);
 		PO(Duration, 6.0f);
-		PO(IsTotem, false);
-		PO(Skill, GFS.strEmpty);
+		PO(Param1, -1);
+		PO(Param2, -1);
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, CDivinityStats_Object_Property_Force& v)
+	LuaSerializer& operator << (LuaSerializer& s, DealDamageFunctor& v)
 	{
-		s << static_cast<CDivinityStats_Object_Property_Data&>(v);
-		P(Distance);
+		s << static_cast<StatsFunctorBase&>(v);
+		P(DamageType);
+		P(WeaponType);
+		P(WeaponDamageType);
+		// FIXME - PO(Damage);
+		PO(Nonlethal, false);
+		PO(Magical, false);
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Object_Property_CustomDescription& v)
+	LuaSerializer& operator << (LuaSerializer& s, UseActionResourceFunctor& v)
 	{
-		s << static_cast<CDivinityStats_Object_Property_Data&>(v);
-		s.VisitProperty("TextLine1", v.TextLine1);
+		s << static_cast<StatsFunctorBase&>(v);
+		P(ActionResourceUUID);
+		P(ResourceIndex);
+		P(Amount);
+		P(IsPercentage);
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Object_Property_Extender& v)
+	LuaSerializer& operator << (LuaSerializer& s, CreateExplosionFunctor& v)
 	{
-		s << static_cast<CDivinityStats_Object_Property_Data&>(v);
-		s.VisitProperty("Action", v.PropertyName);
-		PO(Arg1, 100.0f);
-		PO(Arg2, 1.0f);
-		auto arg3 = getfield<FixedString>(s.L, "Arg3");
-		if (arg3) {
-			v.Arg3 = arg3;
-		}
-		else {
-			PO(Arg3, GFS.strEmpty);
-		}
-		PO(Arg4, -1);
-		PO(Arg5, -1);
+		s << static_cast<StatsFunctorBase&>(v);
+		P(SpellId);
 		return s;
 	}
 
-	void SerializeObjectProperty(LuaSerializer& s, CDivinityStats_Object_Property_Data*& v)
+	LuaSerializer& operator << (LuaSerializer& s, SurfaceChangeFunctor& v)
+	{
+		s << static_cast<StatsFunctorBase&>(v);
+		PO(Chance, 1.0f);
+		PO(field_24, 0.0f);
+		PO(field_28, 0.0f);
+		PO(field_2C, -1.0f);
+		P(SurfaceChange);
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, ApplyEquipmentStatusFunctor& v)
+	{
+		s << static_cast<StatsFunctorBase&>(v);
+		P(EquipmentSlot);
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, RegainHitPointsFunctor& v)
+	{
+		s << static_cast<StatsFunctorBase&>(v);
+		// FIXME - P(HitPoints);
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, UseSpellFunctor& v)
+	{
+		s << static_cast<StatsFunctorBase&>(v);
+		P(SpellId);
+		PO(IgnoreHasSpell, false);
+		PO(IgnoreChecks, false);
+		PO(Arg3, false);
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, ExtenderFunctor& v)
+	{
+		s << static_cast<StatsFunctorBase&>(v);
+		return s;
+	}
+
+	void SerializeObjectProperty(LuaSerializer& s, StatsFunctorBase*& v)
 	{
 		s.BeginObject();
 		if (s.IsWriting) {
 			if (!v) {
 				lua_pushnil(s.L);
 			} else {
-				#define V(type, cls) case CRPGStats_Object_Property_Type::type: \
+				#define V(cls) case cls::FunctorId: \
 					s << *static_cast<cls*>(v); \
 					break;
 
 				switch (v->TypeId) {
-					V(Custom, CDivinityStats_Object_Property_Custom)
-					V(Status, CDivinityStats_Object_Property_Status)
-					V(SurfaceChange, CDivinityStats_Object_Property_SurfaceChange)
-					V(GameAction, CDivinityStats_Object_Property_GameAction)
-					V(OsirisTask, CDivinityStats_Object_Property_OsirisTask)
-					V(Sabotage, CDivinityStats_Object_Property_Sabotage)
-					V(Summon, CDivinityStats_Object_Property_Summon)
-					V(Force, CDivinityStats_Object_Property_Force)
-					V(CustomDescription, CRPGStats_Object_Property_CustomDescription)
-					V(Extender, CRPGStats_Object_Property_Extender)
+					V(CustomDescriptionFunctor)
+					V(ResurrectFunctor)
+					V(SabotageFunctor)
+					V(SummonFunctor)
+					V(ForceFunctor)
+					V(DouseFunctor)
+					V(SwapPlacesFunctor)
+					V(EqualizeFunctor)
+					V(PickupFunctor)
+					V(CreateSurfaceFunctor)
+					V(CreateConeSurfaceFunctor)
+					V(RemoveStatusFunctor)
+					V(ExecuteWeaponFunctorsFunctor)
+					V(TeleportSourceFunctor)
+					V(SetStatusDurationFunctor)
+					V(UseAttackFunctor)
+					V(BreakConcentrationFunctor)
+					V(RestoreResourceFunctor)
+					V(SpawnFunctor)
+					V(StabilizeFunctor)
+					V(UnlockFunctor)
+					V(ResetCombatTurnFunctor)
+					V(RemoveAuraByChildStatusFunctor)
+					V(ApplyStatusFunctor)
+					V(DealDamageFunctor)
+					V(UseActionResourceFunctor)
+					V(CreateExplosionFunctor)
+					V(SurfaceChangeFunctor)
+					V(ApplyEquipmentStatusFunctor)
+					V(RegainHitPointsFunctor)
+					V(UseSpellFunctor)
+					V(ExtenderFunctor)
 
 					default:
-						ERR("Unable to serialize unknown object property type %d to Lua!", v->TypeId);
+						ERR("Unable to serialize unknown stats functor type %d to Lua!", v->TypeId);
 				}
 				#undef V
 			}
 		} else {
 			if (v == nullptr) {
-				CRPGStats_Object_Property_Type type;
+				StatsFunctorActionId type;
 				s.VisitProperty("Type", type);
-				v = GetStaticSymbols().GetStats()->ConstructProperty(type);
+				v = GetStaticSymbols().GetStats()->ConstructFunctor(type);
 			}
 
 			if (v) {
-				#define V(type, cls) case CRPGStats_Object_Property_Type::type: \
+				#define V(cls) case cls::FunctorId: \
 					s << *static_cast<cls*>(v); \
 					break;
 
 				switch (v->TypeId) {
-					V(Custom, CDivinityStats_Object_Property_Custom)
-					V(Status, CDivinityStats_Object_Property_Status)
-					V(SurfaceChange, CDivinityStats_Object_Property_SurfaceChange)
-					V(GameAction, CDivinityStats_Object_Property_GameAction)
-					V(OsirisTask, CDivinityStats_Object_Property_OsirisTask)
-					V(Sabotage, CDivinityStats_Object_Property_Sabotage)
-					V(Summon, CDivinityStats_Object_Property_Summon)
-					V(Force, CDivinityStats_Object_Property_Force)
-					V(CustomDescription, CRPGStats_Object_Property_CustomDescription)
-					V(Extender, CRPGStats_Object_Property_Extender)
+					V(CustomDescriptionFunctor)
+					V(ResurrectFunctor)
+					V(SabotageFunctor)
+					V(SummonFunctor)
+					V(ForceFunctor)
+					V(DouseFunctor)
+					V(SwapPlacesFunctor)
+					V(EqualizeFunctor)
+					V(PickupFunctor)
+					V(CreateSurfaceFunctor)
+					V(CreateConeSurfaceFunctor)
+					V(RemoveStatusFunctor)
+					V(ExecuteWeaponFunctorsFunctor)
+					V(TeleportSourceFunctor)
+					V(SetStatusDurationFunctor)
+					V(UseAttackFunctor)
+					V(BreakConcentrationFunctor)
+					V(RestoreResourceFunctor)
+					V(SpawnFunctor)
+					V(StabilizeFunctor)
+					V(UnlockFunctor)
+					V(ResetCombatTurnFunctor)
+					V(RemoveAuraByChildStatusFunctor)
+					V(ApplyStatusFunctor)
+					V(DealDamageFunctor)
+					V(UseActionResourceFunctor)
+					V(CreateExplosionFunctor)
+					V(SurfaceChangeFunctor)
+					V(ApplyEquipmentStatusFunctor)
+					V(RegainHitPointsFunctor)
+					V(UseSpellFunctor)
+					V(ExtenderFunctor)
 
 					default:
 						ERR("Unable to serialize unknown object property type %d to Lua!", v->TypeId);
@@ -587,23 +783,22 @@ namespace bg3se::lua
 		s.EndObject();
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Object_Property_List& v)
+	LuaSerializer& operator << (LuaSerializer& s, StatsFunctorSet& v)
 	{
 		s.BeginObject();
 		if (s.IsWriting) {
 			int index{ 1 };
-			v.Properties.NameHashMap.Iterate([&s, &v, &index](auto const& k, auto& idx) {
+			for (auto& functor : v.FunctorList) {
 				push(s.L, index++);
-				SerializeObjectProperty(s, v.Properties.Primitives[idx]);
+				SerializeObjectProperty(s, functor);
 				lua_settable(s.L, -3);
-			});
+			}
 		} else {
 			for (auto idx : iterate(s.L, -1)) {
-				CDivinityStats_Object_Property_Data* prop{ nullptr };
-				SerializeObjectProperty(s, prop);
-				if (prop) {
-					v.Properties.Add(prop->Name, prop);
-					v.AllPropertyContexts |= prop->Context;
+				StatsFunctorBase* functor{ nullptr };
+				SerializeObjectProperty(s, functor);
+				if (functor) {
+					v.VMT->AddOrUpdate(&v, functor);
 				}
 			}
 		}
@@ -611,66 +806,7 @@ namespace bg3se::lua
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_DeltaModifier& v)
-	{
-		auto stats = GetStaticSymbols().GetStats();
-
-		s.BeginObject();
-
-		P(ModifierType);
-		PO(SlotType, ItemSlot32::Sentinel);
-		PO(WeaponType, WeaponType::Sentinel);
-		PO(ArmorType, ArmorType::Sentinel);
-		PO(Handedness, HandednessType::Any);
-		P(Name);
-		P(BoostType);
-		PO(MinLevel, -1);
-		PO(MaxLevel, -1);
-		PO(Frequency, 1);
-
-		if (s.IsWriting) {
-			lua_newtable(s.L);
-			int index = 1;
-			for (uint32_t i = 0; i < v.BoostIndices.Size; i++) {
-				auto boost = stats->objects.Find(v.BoostIndices[i]);
-				if (boost != nullptr) {
-					push(s.L, index++);
-					lua_newtable(s.L);
-					s.VisitProperty("Boost", boost->Name);
-					s.VisitProperty("Count", v.BoostCounts[i]);
-					lua_settable(s.L, -3);
-				}
-			}
-			lua_setfield(s.L, -2, "Boosts");
-		} else {
-			v.BoostCounts.Clear();
-			v.BoostIndices.Clear();
-			lua_getfield(s.L, 1, "Boosts");
-
-			luaL_checktype(s.L, -1, LUA_TTABLE);
-			for (auto valueIndex : iterate(s.L, -1)) {
-				FixedString boost;
-				int count;
-				s.VisitProperty("Boost", boost);
-				s.VisitOptionalProperty("Count", count, 1);
-
-				auto object = stats->objects.FindIndex(boost);
-				if (object) {
-					v.BoostIndices.Add(*object);
-					v.BoostCounts.Add(count);
-				} else {
-					OsiError("DeltaMod references nonexistent boost '" << boost << "'");
-				}
-			}
-
-			lua_pop(s.L, 1);
-		}
-
-		s.EndObject();
-		return s;
-	}
-
-	LuaSerializer& operator << (LuaSerializer& s, SurfaceTemplate::StatusData& v)
+	/*LuaSerializer& operator << (LuaSerializer& s, SurfaceTemplate::StatusData& v)
 	{
 		s.BeginObject();
 		P(StatusId);

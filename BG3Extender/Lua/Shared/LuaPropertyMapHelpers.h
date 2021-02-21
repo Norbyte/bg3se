@@ -34,49 +34,4 @@ namespace bg3se::lua
 			);
 		}
 	}
-
-#define DECLARE_CLS(name) \
-	char const* const ObjectProxy2<name>::MetatableName = #name; \
-	LuaPropertyMap<name> StaticLuaPropertyMap<name>::PropertyMap
-
-#define REGISTER_CLS(name) ObjectProxy2<name>::RegisterMetatable(L)
-
-#define CLS(cls) \
-	using PM = StaticLuaPropertyMap<cls>; \
-	auto& pm = StaticLuaPropertyMap<cls>::PropertyMap
-
-#define INHERIT(base) { \
-		auto& basePm = StaticLuaPropertyMap<base>::PropertyMap; \
-		CopyProperties(basePm, pm); \
-	}
-
-#define P(prop) \
-	pm.AddProperty(#prop, \
-		[](lua_State* L, PM::ObjectType* obj) { \
-			return GenericGetProperty(L, obj->prop); \
-		}, \
-		[](lua_State* L, PM::ObjectType* obj, int index) { \
-			return GenericSetProperty(L, obj->prop, index); \
-		} \
-	)
-
-#define P_RO(prop) \
-	pm.AddProperty(#prop, \
-		[](lua_State* L, PM::ObjectType* obj) { \
-			return GenericGetProperty(L, obj->prop); \
-		}, \
-		[](lua_State* L, PM::ObjectType* obj, int index) { \
-			return false; \
-		} \
-	)
-
-#define PN(name, prop) \
-	pm.AddProperty(#name, \
-		[](lua_State* L, PM::ObjectType* obj) { \
-			return GenericGetProperty(L, obj->prop); \
-		}, \
-		[](lua_State* L, PM::ObjectType* obj, int index) { \
-			return GenericSetProperty(L, obj->prop, index); \
-		} \
-	)
 }

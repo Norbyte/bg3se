@@ -160,24 +160,3 @@ int GameObjectGetDisplayName(lua_State* L, TObject* object)
 	push(L, name.Handle.ReferenceString);
 	return 1;*/
 }
-
-template <class TObject>
-int ItemGetDeltaMods(lua_State* L)
-{
-	auto self = checked_get<ObjectProxy<TObject>*>(L, 1);
-	auto item = self->Get(L);
-	if (!item) {
-		return 0;
-	}
-
-	lua_newtable(L);
-	int32_t index{ 1 };
-	if (item->Stats != nullptr) {
-		for (auto const& boost : item->Stats->BoostNameSet) {
-			settable(L, index++, boost);
-		}
-	}
-
-	return 1;
-}
-

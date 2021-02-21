@@ -80,11 +80,6 @@ namespace bg3se::lua
 			return 1;
 		}
 
-		if (propFS == GFS.strGetDeltaMods) {
-			lua_pushcfunction(L, &ItemGetDeltaMods<esv::Item>);
-			return 1;
-		}
-
 		if (propFS == GFS.strGetGeneratedBoosts) {
 			lua_pushcfunction(L, &ItemGetGeneratedBoosts);
 			return 1;
@@ -207,11 +202,6 @@ namespace bg3se::lua
 			return 1;
 		}
 
-		if (prop == GFS.strDeltaMods) {
-			LuaWrite(L, Get(L)->DeltaMods);
-			return 1;
-		}
-
 		return GenericGetter(L, gEoCItemDefinitionPropertyMap);
 	}
 
@@ -229,13 +219,6 @@ namespace bg3se::lua
 		if (prop == GFS.strRuneBoosts) {
 			lua_pushvalue(L, 3);
 			LuaRead(L, Get(L)->RuneBoosts);
-			lua_pop(L, 1);
-			return 0;
-		}
-
-		if (prop == GFS.strDeltaMods) {
-			lua_pushvalue(L, 3);
-			LuaRead(L, Get(L)->DeltaMods);
 			lua_pop(L, 1);
 			return 0;
 		}

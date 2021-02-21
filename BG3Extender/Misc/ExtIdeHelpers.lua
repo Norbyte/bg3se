@@ -1506,11 +1506,6 @@ local EclGameObject = {}
 --- @field public DisplayName string
 local EclItem = {}
 
---- Returns all delta mods on the item
---- @param self EclItem
---- @return string[]
-function EclItem.GetDeltaMods (self) end
-
 --- Returns the GUID of all items within the inventory of the item
 --- @param self EclItem
 --- @return string[]
@@ -1706,11 +1701,6 @@ local EsvGameObject = {}
 --- @field public Stats StatItem
 local EsvItem = {}
 
---- Returns all delta mods on the item
---- @param self EsvItem
---- @return string[]
-function EsvItem.GetDeltaMods (self) end
-
 --- Returns all boosts that were added during treasure generation
 --- @param self EsvItem
 --- @return string[]
@@ -1790,7 +1780,6 @@ function EsvItem.GetStatusObjects (self) end
 --- @field public CanUseRemotely boolean
 --- @field public GenerationBoosts string[]
 --- @field public RuneBoosts string[]
---- @field public DeltaMods string[]
 local ItemDefinition = {}
 
 --- Clears item progression data (name group, level group, etc.)
@@ -2250,25 +2239,6 @@ local ModInfo = {}
 --- @class StatEquipmentSet
 --- @field public Name string
 --- @field public Groups StatEquipmentGroup[]
-
---- @class DeltaModBoost
---- @field public Boost string
---- @field public Count integer
-local DeltaModBoost = {}
-
---- @class DeltaMod
---- @field public ModifierType string
---- @field public SlotType string
---- @field public WeaponType string
---- @field public ArmorType string
---- @field public Handedness string
---- @field public Name string
---- @field public BoostType string
---- @field public MinLevel integer
---- @field public MaxLevel integer
---- @field public Frequency integer
---- @field public Boosts DeltaModBoost[]
-local DeltaMod = {}
 
 
 --- @class ItemComboIngredients
@@ -3880,17 +3850,6 @@ function Ext.GetEquipmentSet (name) end
 --- The function expects a table in the same format as the one returned by GetEquipmentSet.
 --- @param equipmentSet StatEquipmentSet
 function Ext.UpdateEquipmentSet (equipmentSet) end
-
---- Returns the specified DeltaMod or nil on failure
---- @param name string Name of delta mod
---- @param modifierType string Modifier type (Armor/Weapon)
---- @return DeltaMod
-function Ext.GetDeltaMod (name, modifierType) end
-
---- Updates all properties of the specified DeltaMod.
---- The function expects a table in the same format as the one returned by GetDeltaMod.
---- @param deltaMod DeltaMod Name of delta mod
-function Ext.UpdateDeltaMod (deltaMod) end
 
 --- Returns the specified crafting item combination or nil on failure
 --- @param name string Name of item combo

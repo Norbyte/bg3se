@@ -194,6 +194,12 @@ namespace bg3se::lua::stats
 		}
 
 		case RPGEnumerationType::StatsFunctors:
+		{
+			auto functors = object->StatsFunctors.Find(attributeFS);
+			LuaWrite(L, functors);
+			break;
+		}
+
 		case RPGEnumerationType::RollConditions:
 		default:
 			OsiError("Don't know how to fetch values of type '" << attrInfo->Name << "'");
@@ -299,31 +305,6 @@ namespace bg3se::lua::stats
 
 		auto attrType = attrInfo->GetPropertyType();
 
-		/*
-		if (attrInfo && attrInfo->Name == GFS.strConditions) {
-			auto conditions = object->ConditionList.Find(attributeFS);
-			if (conditions) {
-				auto value = luaL_checkstring(L, valueIdx);
-				auto scriptCheckBlock = stats->BuildScriptCheckBlockFromProperties(value);
-				if (scriptCheckBlock) {
-					auto statConditions = GameAlloc<CDivinityStats_Condition>();
-					statConditions->ScriptCheckBlock = scriptCheckBlock;
-					STDString name = object->Name.Str;
-					name += "_";
-					name += attributeName;
-					statConditions->Name = MakeFixedString(name.c_str());
-					*conditions = statConditions;
-				} else {
-					OsiWarn("Failed to parse conditions: " << value);
-				}
-			} else {
-				// FIXME - not implemented yet!
-				OsiWarnS("Adding new Conditions entries not implemented yet!");
-			}
-
-			return 0;
-		}*/
-
 		switch (lua_type(L, valueIdx)) {
 		case LUA_TSTRING:
 		{
@@ -364,6 +345,18 @@ namespace bg3se::lua::stats
 			}
 
 			case RPGEnumerationType::StatsFunctors:
+			{
+				StatsFunctorSet* functors{ nullptr };
+				lua_pushvalue(L, valueIdx);
+				LuaRead(L, functors);
+				lua_pop(L, 1);
+
+				if (functors) {
+					// FIXME - object->StatsFunctors = requirements;
+				}
+				break;
+			}
+
 			case RPGEnumerationType::RollConditions:
 				LuaError("Stats properties of type " << (unsigned)attrType << " are not yet supported!");
 				break;

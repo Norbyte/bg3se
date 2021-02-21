@@ -64,7 +64,6 @@ FS(GetSkills);
 FS(GetSkillInfo);
 FS(GetNearbyCharacters);
 FS(GetSummons);
-FS(GetDeltaMods);
 FS(GetGeneratedBoosts);
 FS(WalkSpeed);
 FS(RunSpeed);
@@ -72,7 +71,6 @@ FS(Construct);
 FS(ResetProgression);
 FS(GenerationBoosts);
 FS(RuneBoosts);
-FS(DeltaMods);
 
 // AI grid funcs
 FS(SearchForCell);
@@ -200,8 +198,6 @@ FS(ExecuteWeaponFunctorsType);
 FS(ForceFunctorOrigin);
 FS(ForceFunctorAggression);
 FS(StatGetterType);
-FS(CRPGStats_Object_Property_Type);
-FS(CRPGStats_Object_PropertyContext);
 FS(RequirementType);
 FS(WeaponType);
 FS(ArmorType);

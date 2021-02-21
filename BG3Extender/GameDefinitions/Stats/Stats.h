@@ -223,6 +223,8 @@ namespace bg3se
 		CEquipmentSet * ParsedEquipmentSet;
 	};
 	*/
+
+	// FIXME - most likely unused in BG3
 	struct CRPGStats_DeltaModifier : Noncopyable<CRPGStats_DeltaModifier>
 	{
 		ObjectSet<int> BoostIndices;
@@ -244,18 +246,6 @@ namespace bg3se
 
 	struct CRPGStats_DeltaModifier_List : public CNamedElementManager<CRPGStats_DeltaModifier>
 	{};
-
-	/*
-	struct CRPGStatsVMTMappings
-	{
-		bool VMTsMapped{ false };
-		void* SkillPropertiesVMT{ nullptr };
-		void* ObjectVMT{ nullptr };
-		std::unordered_map<CRPGStats_Object_Property_Type, void*> PropertyTypes;
-
-		CRPGStatsVMTMappings();
-		void MapVMTs();
-	};*/
 
 	struct CRPGStats_Treasure_SubTable_Description
 	{
@@ -466,11 +456,9 @@ namespace bg3se
 	};
 
 
-	MARK_ALLOCATABLE(CRPGStats_Object_Property_List);
 	MARK_ALLOCATABLE(CSkillSet);
 	MARK_ALLOCATABLE(CEquipmentGroup);
-	MARK_ALLOCATABLE(CEquipmentSet);
-	MARK_ALLOCATABLE(CRPGStats_DeltaModifier);*/
+	MARK_ALLOCATABLE(CEquipmentSet);*/
 	MARK_ALLOCATABLE(CRPGStats_Treasure_SubTable_Description);
 	MARK_ALLOCATABLE(CRPGStats_Treasure_SubTable_Description::Category);
 	MARK_ALLOCATABLE(CRPGStats_Treasure_Table);
@@ -521,7 +509,18 @@ namespace bg3se
 	struct RPGStats : public ProtectedGameObject<RPGStats>
 	{
 		//typedef void (*LoadProc)(RPGStats* self);
-		//typedef CDivinityStats_Object_Property_Data* (ParsePropertiesProc)(RPGStats* self, STDString* str);
+
+		struct VMTMappings
+		{
+			bool VMTsMapped{ false };
+			void* ObjectVMT{ nullptr };
+			StatsFunctorSet::BaseVMT* StatsFunctorSetVMT{ nullptr };
+			std::unordered_map<StatsFunctorActionId, StatsFunctorBase::FunctorVMT*> FunctorVMTs;
+
+			void Update();
+		};
+
+		static VMTMappings sVMTMappings;
 
 		CNamedElementManager<RPGEnumeration> ModifierValueLists;
 		CNamedElementManager<ModifierList> ModifierLists;
@@ -564,6 +563,8 @@ namespace bg3se
 		bool ObjectExists(FixedString const& statsId, FixedString const& type);
 		std::optional<CRPGStats_Object*> CreateObject(FixedString const& name, FixedString const& type);
 		std::optional<CRPGStats_Object*> CreateObject(FixedString const& name, int32_t modifierListIndex);
+		StatsFunctorSet* ConstructFunctorSet(FixedString const& propertyName);
+		StatsFunctorBase* ConstructFunctor(StatsFunctorActionId action);
 		/*void SyncObjectFromServer(MsgS2CSyncStat const& msg);
 		void SyncWithPrototypeManager(CRPGStats_Object* object);
 		void BroadcastSyncAll();*/
@@ -581,8 +582,6 @@ namespace bg3se
 
 		std::optional<int> EnumLabelToIndex(FixedString const& enumName, char const* enumLabel);
 		FixedString EnumIndexToLabel(FixedString const& enumName, int index);
-		void* BuildScriptCheckBlock(STDString const& source);
-		void* BuildScriptCheckBlockFromProperties(STDString const& source);
 	};
 
 	typedef void* (*ScriptCheckBlock__Build)(STDString const& str, ObjectSet<STDString> const& variables, int offset, int length);

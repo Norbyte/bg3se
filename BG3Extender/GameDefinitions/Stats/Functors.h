@@ -38,24 +38,24 @@ namespace bg3se
 	};
 
 
-	struct StatsFunctorSet : public ProtectedGameObject<StatsFunctorSet>
+	struct StatsFunctorSet : public Noncopyable<StatsFunctorSet>
 	{
 		struct BaseVMT
 		{
-			void* Destroy;
-			void* ClearNextIndex;
-			void* Clear;
-			void* AddOrUpdate;
+			void (*Destroy)(StatsFunctorSet*);
+			void (*ClearNextIndex)(StatsFunctorSet*);
+			void (*Clear)(StatsFunctorSet*);
+			void (*AddOrUpdate)(StatsFunctorSet*, StatsFunctorBase*);
 			StatsFunctorBase* (*GetByIndex)(StatsFunctorSet*, int64_t);
 			StatsFunctorBase* (*GetByName)(StatsFunctorSet*, FixedString const&);
-			void* field_30;
-			void* (__fastcall* GetSize)(StatsFunctorSet*);
+			void (*Unknown_30)(StatsFunctorSet*);
+			int64_t (*GetSize)(StatsFunctorSet*);
 			StatsFunctorBase* (*GetByIndex2)(StatsFunctorSet*, int64_t);
 			StatsFunctorBase* (*GetByIndex3)(StatsFunctorSet*, int64_t);
-			void* UpdateNameMap;
+			void (*UpdateNameMap)(StatsFunctorSet*);
 		};
 
-		virtual ~StatsFunctorSet() = 0;
+		/*virtual ~StatsFunctorSet() = 0;
 		virtual void ClearNextIndex() = 0;
 		virtual void Clear() = 0;
 		virtual void AddOrUpdate(StatsFunctorBase*) = 0;
@@ -65,19 +65,21 @@ namespace bg3se
 		virtual int64_t GetSize() = 0;
 		virtual StatsFunctorBase* GetByIndex2(int64_t) = 0;
 		virtual StatsFunctorBase* GetByIndex3(int64_t) = 0;
-		virtual void UpdateNameMap() = 0;
+		virtual void UpdateNameMap() = 0;*/
 
+		BaseVMT* VMT{ nullptr };
 		ObjectSet<StatsFunctorBase*> FunctorList;
-		Map<FixedString, StatsFunctorBase*> FunctorsByName_M;
-		int NextFunctorIndex;
+		Map<FixedString, StatsFunctorBase*> FunctorsByName;
+		int NextFunctorIndex{ 0 };
+		int Unknown{ 0 };
 		FixedString UniqueName;
-		FixedString UniqueName2;
 	};
 
 
+	// FIXME - use custom implementation of base VMT or use base VMT?
 	struct StatsFunctorSetImpl : public StatsFunctorSet
 	{
-		~StatsFunctorSetImpl() override;
+		/*~StatsFunctorSetImpl() override;
 		void ClearNextIndex() override;
 		void Clear() override;
 		void AddOrUpdate(StatsFunctorBase*) override;
@@ -87,7 +89,7 @@ namespace bg3se
 		int64_t GetSize() override;
 		StatsFunctorBase* GetByIndex2(int64_t) override;
 		StatsFunctorBase* GetByIndex3(int64_t) override;
-		void UpdateNameMap() override;
+		void UpdateNameMap() override;*/
 	};
 
 
@@ -125,7 +127,7 @@ namespace bg3se
 	{
 		static constexpr auto FunctorId = StatsFunctorActionId::Sabotage;
 
-		int field_20{ 1 };
+		int Amount{ 1 };
 	};
 
 	struct SummonFunctor : public StatsFunctorBase
@@ -224,14 +226,14 @@ namespace bg3se
 
 		FixedString StatusId; // Arg0
 		float Duration; // Arg1
-		bool SetIfLonger; // Arg2
+		bool SetIfLonger{ false }; // Arg2
 	};
 
 	struct UseAttackFunctor : public StatsFunctorBase
 	{
 		static constexpr auto FunctorId = StatsFunctorActionId::UseAttack;
 
-		bool IgnoreChecks; // Arg0
+		bool IgnoreChecks{ false }; // Arg0
 	};
 
 	struct BreakConcentrationFunctor : public StatsFunctorBase
@@ -245,11 +247,11 @@ namespace bg3se
 		static constexpr auto FunctorId = StatsFunctorActionId::RestoreResource;
 
 		UUID ActionResourceUUID; // Arg0
-		int Hex; // Arg2
-		int field_34;
-		LuaExpression* LuaAmount; // Arg1
-		double Amount; // Arg1
-		bool IsPercentage; // Arg1
+		int Hex{ 0 }; // Arg2
+		int field_34{ 0 };
+		LuaExpression* LuaAmount{ nullptr }; // Arg1
+		double Amount{ 0.0 }; // Arg1
+		bool IsPercentage{ false }; // Arg1
 	};
 
 	struct SpawnFunctor : public StatsFunctorBase
@@ -355,15 +357,18 @@ namespace bg3se
 
 	struct UseSpellFunctor : public StatsFunctorBase
 	{
-		uint64_t field_18;
+		static constexpr auto FunctorId = StatsFunctorActionId::UseSpell;
+
+		uint64_t field_18{ 0 };
 		FixedString SpellId; // Arg0
-		bool IgnoreHasSpell; // Arg1
-		bool IgnoreChecks; // Arg2
-		bool Arg3;
+		bool IgnoreHasSpell{ false }; // Arg1
+		bool IgnoreChecks{ false }; // Arg2
+		bool Arg3{ false };
 	};
 
 	struct ExtenderFunctor : public StatsFunctorBase
 	{
+		static constexpr auto FunctorId = StatsFunctorActionId::Extender;
 	};
 
 }

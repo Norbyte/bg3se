@@ -220,64 +220,6 @@ namespace bg3se::lua::stats
 		return LuaWrite(L, *nameGroup);
 	}*/
 
-
-	/*int GetDeltaMod(lua_State* L)
-	{
-		StackCheck _(L, 1);
-		auto name = checked_get<char const *>(L, 1);
-		auto modifierType = checked_get<char const*>(L, 2);
-
-		auto stats = GetStaticSymbols().GetStats();
-		if (stats == nullptr) {
-			OsiError("RPGStats not available");
-			push(L, nullptr);
-			return 1;
-		}
-
-		auto deltaModType = stats->DeltaMods.Find(modifierType);
-		if (deltaModType == nullptr) {
-			OsiError("Unknown DeltaMod ModifierType: " << modifierType);
-			push(L, nullptr);
-			return 1;
-		}
-
-		auto deltaMod = deltaModType->Find(name);
-		return LuaWrite(L, deltaMod);
-	}
-
-	int UpdateDeltaMod(lua_State* L)
-	{
-		StackCheck _(L, 0);
-		luaL_checktype(L, 1, LUA_TTABLE);
-		auto name = checked_getfield<char const*>(L, "Name", 1);
-		auto modifierType = checked_getfield<char const*>(L, "ModifierType", 1);
-
-		auto stats = GetStaticSymbols().GetStats();
-		if (stats == nullptr) {
-			OsiError("RPGStats not available");
-			return 0;
-		}
-
-		auto deltaModType = stats->DeltaMods.Find(modifierType);
-		if (deltaModType == nullptr) {
-			OsiError("Unknown DeltaMod ModifierType: " << modifierType);
-			return 0;
-		}
-
-		auto deltaMod = deltaModType->Find(name);
-		bool isNew = (deltaMod == nullptr);
-
-		lua_pushvalue(L, 1);
-		LuaRead(L, deltaMod);
-		lua_pop(L, 1);
-
-		if (isNew) {
-			deltaModType->Add(MakeFixedString(name), deltaMod);
-		}
-
-		return 0;
-	}*/
-
 	int GetStat(lua_State* L)
 	{
 		StackCheck _(L, 1);

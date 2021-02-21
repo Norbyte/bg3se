@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Lua/LuaBinding.h>
+#include <GameDefinitions/Stats/Common.h>
 #include <GameDefinitions/RootTemplates.h>
 
 namespace bg3se
@@ -9,6 +10,7 @@ namespace bg3se
 	struct CRPGStats_Treasure_Table;
 	struct CRPGStats_Treasure_Category;
 	struct CRPGStats_Treasure_SubTable_Description;
+	struct StatsFunctorSet;
 }
 
 namespace bg3se::lua
@@ -192,6 +194,26 @@ namespace bg3se::lua
 		return s;
 	}
 
+	template <class T>
+	LuaSerializer& operator << (LuaSerializer& s, std::optional<T>& v)
+	{
+		if (s.IsWriting) {
+			if (v) {
+				s << *v;
+			} else {
+				push(s.L, nullptr);
+			}
+		} else {
+			if (!v) {
+				v = T();
+			}
+
+			s << *v;
+		}
+
+		return s;
+	}
+
 
 	template <class T>
 	typename std::enable_if_t<std::is_pointer_v<T>, std::enable_if_t<IsAllocatable<std::remove_pointer_t<T>>::value, LuaSerializer&>> operator << (LuaSerializer& s, T& v)
@@ -242,9 +264,11 @@ namespace bg3se::lua
 	LuaSerializer& operator << (LuaSerializer& s, CEquipmentGroup& v);
 	LuaSerializer& operator << (LuaSerializer& s, CSkillSet& v);*/
 	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Requirement& v);
+	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Object::StatsFunctorInfo& v);
 	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_Table& v);
 	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_SubTable_Description& v);
 	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_Category& v);
+	LuaSerializer& operator << (LuaSerializer& s, StatsFunctorSet& v);
 /*	LuaSerializer& operator << (LuaSerializer& s, CItemCombination& v);
 	LuaSerializer& operator << (LuaSerializer& s, CItemCombinationIngredient& v);
 	LuaSerializer& operator << (LuaSerializer& s, CItemCombinationResult& v);
@@ -258,19 +282,5 @@ namespace bg3se::lua
 	LuaSerializer& operator << (LuaSerializer& s, CNameGroupLink& v);
 	LuaSerializer& operator << (LuaSerializer& s, CNameGroup& v);
 	LuaSerializer& operator << (LuaSerializer& s, CNameGroupName& v);
-	LuaSerializer& operator << (LuaSerializer& s, CDivinityStats_Object_Property_Data& v);
-	LuaSerializer& operator << (LuaSerializer& s, CDivinityStats_Object_Property_Custom& v);
-	LuaSerializer& operator << (LuaSerializer& s, CDivinityStats_Object_Property_Status& v);
-	LuaSerializer& operator << (LuaSerializer& s, CDivinityStats_Object_Property_SurfaceChange& v);
-	LuaSerializer& operator << (LuaSerializer& s, CDivinityStats_Object_Property_GameAction& v);
-	LuaSerializer& operator << (LuaSerializer& s, CDivinityStats_Object_Property_OsirisTask& v);
-	LuaSerializer& operator << (LuaSerializer& s, CDivinityStats_Object_Property_Sabotage& v);
-	LuaSerializer& operator << (LuaSerializer& s, CDivinityStats_Object_Property_Summon& v);
-	LuaSerializer& operator << (LuaSerializer& s, CDivinityStats_Object_Property_Force& v);
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Object_Property_CustomDescription& v);
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Object_Property_Extender& v);
-	void SerializeObjectProperty(LuaSerializer& s, CDivinityStats_Object_Property_Data*& v);
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Object_Property_List& v);
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_DeltaModifier& v);
 	LuaSerializer& operator << (LuaSerializer& s, SurfaceTemplate::StatusData& v);*/
 }

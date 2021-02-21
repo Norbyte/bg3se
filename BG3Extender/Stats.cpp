@@ -365,41 +365,6 @@ namespace bg3se
 			return Attributes.Find(*index);
 		}
 	}
-	/*
-	CRPGStatsVMTMappings gCRPGStatsVMTMappings;
-
-	CRPGStatsVMTMappings::CRPGStatsVMTMappings()
-	{
-		PropertyTypes = {
-			{CRPGStats_Object_Property_Type::Custom, nullptr},
-			{CRPGStats_Object_Property_Type::Status, nullptr},
-			{CRPGStats_Object_Property_Type::SurfaceChange, nullptr},
-			{CRPGStats_Object_Property_Type::GameAction, nullptr},
-			{CRPGStats_Object_Property_Type::OsirisTask, nullptr},
-			{CRPGStats_Object_Property_Type::Sabotage, nullptr},
-			{CRPGStats_Object_Property_Type::Summon, nullptr},
-			{CRPGStats_Object_Property_Type::Force, nullptr}
-		};
-	}
-	
-	void CRPGStatsVMTMappings::MapVMTs()
-	{
-		if (VMTsMapped) return;
-		auto stats = GetStaticSymbols().GetStats();
-
-		if (stats->objects.Primitives.Size > 0) {
-			ObjectVMT = stats->objects.Primitives[0]->VMT;
-		}
-
-		stats->PropertyLists.Iterate([this](auto const& k, auto const& propList) {
-			SkillPropertiesVMT = *(void**)propList;
-			for (auto prop : propList->Properties.Primitives) {
-				PropertyTypes[prop->TypeId] = *(void**)prop;
-			}
-		});
-
-		VMTsMapped = true;
-	}*/
 
 	bool RPGStats::ObjectExists(FixedString const& statsId, FixedString const& type)
 	{
@@ -650,29 +615,107 @@ namespace bg3se
 		return ModifierLists.Find(object->ModifierListIndex);
 	}
 
-	void* RPGStats::BuildScriptCheckBlock(STDString const& source)
+	RPGStats::VMTMappings RPGStats::sVMTMappings;
+
+	void RPGStats::VMTMappings::Update()
 	{
-		throw std::runtime_error("FIXME!");
-		/*auto build = GetStaticSymbols().ScriptCheckBlock__Build;
-		if (!build) {
-			OsiError("ScriptCheckBlock::Build not available!");
+		if (VMTsMapped) return;
+		auto stats = GetStaticSymbols().GetStats();
+
+		if (stats->Objects.Primitives.Size > 0) {
+			ObjectVMT = stats->Objects.Primitives[0]->VMT;
+		}
+
+		for (auto const& kv : stats->StatsFunctors) {
+			if (StatsFunctorSetVMT == nullptr) {
+				StatsFunctorSetVMT = kv.Value->VMT;
+				for (auto const& prop : kv.Value->FunctorList) {
+					auto it = FunctorVMTs.find(prop->TypeId);
+					if (it == FunctorVMTs.end()) {
+						FunctorVMTs.insert(std::make_pair(prop->TypeId, prop->VMT));
+					}
+				}
+			}
+		}
+
+		VMTsMapped = true;
+	}
+
+	StatsFunctorSet* RPGStats::ConstructFunctorSet(FixedString const& propertyName)
+	{
+		sVMTMappings.Update();
+
+		if (!sVMTMappings.StatsFunctorSetVMT) {
+			OsiError("Cannot construct functor set - VMT not mapped!");
 			return nullptr;
 		}
 
-		return build(source, ConditionsManager.Variables, 0, (int)source.size());*/
+		auto functorSet = GameAlloc<StatsFunctorSet>();
+		functorSet->VMT = sVMTMappings.StatsFunctorSetVMT;
+		functorSet->FunctorsByName.Init(31);
+		functorSet->UniqueName = propertyName;
+		return functorSet;
 	}
 
-	void* RPGStats::BuildScriptCheckBlockFromProperties(STDString const& source)
+	StatsFunctorBase* RPGStats::ConstructFunctor(StatsFunctorActionId action)
 	{
-		throw std::runtime_error("FIXME!");
-		/*STDString updated = source;
-		for (size_t i = 0; i < updated.size(); i++) {
-			if (updated[i] == ';') {
-				updated[i] = '&';
-			}
+		sVMTMappings.Update();
+		auto stats = GetStaticSymbols().GetStats();
+
+		auto vmtIt = sVMTMappings.FunctorVMTs.find(action);
+		if (vmtIt == sVMTMappings.FunctorVMTs.end()) {
+			LuaError("Unable to construct functors of this type: " << (unsigned)action << " - VMT not mapped!");
+			return nullptr;
 		}
-		
-		return BuildScriptCheckBlock(updated);*/
+
+#define V(type) case type::FunctorId: \
+		functor = GameAlloc<type>(); \
+		break;
+
+		StatsFunctorBase* functor{ nullptr };
+		switch (action) {
+			V(CustomDescriptionFunctor)
+			V(ResurrectFunctor)
+			V(SabotageFunctor)
+			V(SummonFunctor)
+			V(ForceFunctor)
+			V(DouseFunctor)
+			V(SwapPlacesFunctor)
+			V(EqualizeFunctor)
+			V(PickupFunctor)
+			V(CreateSurfaceFunctor)
+			V(CreateConeSurfaceFunctor)
+			V(RemoveStatusFunctor)
+			V(ExecuteWeaponFunctorsFunctor)
+			V(TeleportSourceFunctor)
+			V(SetStatusDurationFunctor)
+			V(UseAttackFunctor)
+			V(BreakConcentrationFunctor)
+			V(RestoreResourceFunctor)
+			V(SpawnFunctor)
+			V(StabilizeFunctor)
+			V(UnlockFunctor)
+			V(ResetCombatTurnFunctor)
+			V(RemoveAuraByChildStatusFunctor)
+			V(ApplyStatusFunctor)
+			V(DealDamageFunctor)
+			V(UseActionResourceFunctor)
+			V(CreateExplosionFunctor)
+			V(SurfaceChangeFunctor)
+			V(ApplyEquipmentStatusFunctor)
+			V(RegainHitPointsFunctor)
+			V(UseSpellFunctor)
+			V(ExtenderFunctor)
+
+		default:
+			OsiError("Unhandled stats functor action: " << (unsigned)action);
+			return nullptr;
+		}
+
+		functor->VMT = vmtIt->second;
+		functor->TypeId = action;
+
+		return functor;
 	}
 
 	CRPGStats_Object * StatFindObject(char const * name)

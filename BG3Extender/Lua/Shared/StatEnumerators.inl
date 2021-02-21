@@ -51,20 +51,6 @@ namespace bg3se::lua
 		});
 	}*/
 
-	void FetchDeltaModEntries(lua_State* L, RPGStats* stats)
-	{
-		int32_t index = 1;
-		for (auto deltaModList : stats->DeltaMods.Primitives) {
-			for (auto deltaMod : deltaModList->Primitives) {
-				push(L, index++);
-				lua_newtable(L);
-				setfield(L, "Name", deltaMod->Name);
-				setfield(L, "ModifierType", deltaMod->ModifierType);
-				lua_settable(L, -3);
-			}
-		}
-	}
-
 	/*void FetchEquipmentSetEntries(lua_State * L, RPGStats * stats)
 	{
 		int32_t index = 1;
@@ -174,8 +160,6 @@ namespace bg3se::lua
 			FetchItemGroupEntries(L, stats);
 		} else if (statType == GFS.strNameGroup) {
 			FetchItemNameGroupEntries(L, stats);
-		} else if (statType == GFS.strDeltaMod) {
-		    FetchDeltaModEntries(L, stats);
 		} else*/ {
 			FetchStatEntries(L, stats, statType);
 		}
