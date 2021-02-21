@@ -1130,6 +1130,20 @@ namespace bg3se
 		inline virtual ~VirtualArray() {};
 	};
 
+	// Special hashing needed for FixedStrings in the new hash table
+
+	template <class T>
+	uint64_t MultiHashMapHash(T const& v)
+	{
+		return Hash<T>(v);
+	}
+
+	template <>
+	inline uint64_t MultiHashMapHash<FixedString>(FixedString const& v)
+	{
+		return v.GetHash();
+	}
+
 	template <class TKey, class TValue>
 	struct MultiHashMap : public ProtectedGameObject<MultiHashMap<TKey, TValue>>
 	{
@@ -1144,7 +1158,7 @@ namespace bg3se
 		{
 			if (NumHashKeys <= 0) return -1;
 
-			auto keyIndex = HashKeys[Hash(key) % NumHashKeys];
+			auto keyIndex = HashKeys[MultiHashMapHash(key) % NumHashKeys];
 			while (keyIndex >= 0) {
 				if (Keys[keyIndex] == key) return keyIndex;
 				keyIndex = NextIds[keyIndex];

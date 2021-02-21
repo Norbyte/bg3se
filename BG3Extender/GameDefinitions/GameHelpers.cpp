@@ -70,6 +70,22 @@ namespace bg3se
 		return "";
 	}
 
+	uint32_t FixedString::GetHash() const
+	{
+		if (Index <= 0xfffffffdu) {
+			auto getter = GetStaticSymbols().ls__FixedString__GetString;
+			if (getter) {
+				auto str = getter(*this);
+				if (str) {
+					StringTableEntry const* entry = reinterpret_cast<StringTableEntry const*>(str - sizeof(StringTableEntry));
+					return entry->Hash;
+				}
+			}
+		}
+
+		return 0;
+	}
+
 	void FixedString::IncRef()
 	{
 		if (Index <= 0xfffffffdu) {

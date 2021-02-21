@@ -91,10 +91,18 @@ namespace bg3se
 		}
 
 		char const* GetString() const;
+		uint32_t GetHash() const;
 
 		uint32_t Index;
 
 	private:
+		struct StringTableEntry
+		{
+			uint32_t Hash;
+			uint32_t RefCount;
+			uint32_t Length;
+			uint32_t FixedStringId;
+		};
 
 		void IncRef();
 		void DecRef();
