@@ -629,11 +629,12 @@ namespace bg3se
 		for (auto const& kv : stats->StatsFunctors) {
 			if (StatsFunctorSetVMT == nullptr) {
 				StatsFunctorSetVMT = kv.Value->VMT;
-				for (auto const& prop : kv.Value->FunctorList) {
-					auto it = FunctorVMTs.find(prop->TypeId);
-					if (it == FunctorVMTs.end()) {
-						FunctorVMTs.insert(std::make_pair(prop->TypeId, prop->VMT));
-					}
+			}
+
+			for (auto const& prop : kv.Value->FunctorList) {
+				auto it = FunctorVMTs.find(prop->TypeId);
+				if (it == FunctorVMTs.end()) {
+					FunctorVMTs.insert(std::make_pair(prop->TypeId, prop->VMT));
 				}
 			}
 		}
