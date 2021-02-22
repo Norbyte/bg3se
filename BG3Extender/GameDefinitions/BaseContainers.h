@@ -827,15 +827,11 @@ namespace bg3se
 					*(uint64_t*)newBuf = newCapacity;
 
 					Buf = (T*)((std::ptrdiff_t)newBuf + 8);
-					for (uint32_t i = 0; i < newCapacity; i++) {
-						new (Buf + i) T();
-					}
 				}
 				else {
 					Buf = Allocator::New<T>(newCapacity);
 				}
-			}
-			else {
+			} else {
 				Buf = nullptr;
 			}
 
@@ -847,7 +843,7 @@ namespace bg3se
 			auto oldBuf = Buf;
 			RawReallocate(newCapacity);
 			for (uint32_t i = 0; i < std::min(Size, newCapacity); i++) {
-				Buf[i] = oldBuf[i];
+				new (&Buf[i]) T(oldBuf[i]);
 			}
 			FreeBuffer(oldBuf);
 		}
@@ -916,7 +912,7 @@ namespace bg3se
 				Reallocate(CapacityIncrement());
 			}
 
-			Buf[Size++] = value;
+			new (&Buf[Size++]) T(value);
 		}
 
 		void InsertAt(uint32_t index, T const& value)
@@ -955,7 +951,7 @@ namespace bg3se
 				Reallocate(CapacityIncrement());
 			}
 
-			Buf[Size++] = value;
+			new (&Buf[Size++]) T(value);
 		}
 	};
 
@@ -1070,7 +1066,7 @@ namespace bg3se
 		{
 			auto newBuf = GameAllocArray<T>(newCapacity);
 			for (uint32_t i = 0; i < std::min(Size, newCapacity); i++) {
-				newBuf[i] = Buf[i];
+				new (&newBuf[i]) T(Buf[i]);
 			}
 
 			if (Buf != nullptr) {
@@ -1087,22 +1083,7 @@ namespace bg3se
 				Reallocate(CapacityIncrement());
 			}
 
-			Buf[Size++] = value;
-		}
-
-		bool SafeAdd(T const& val)
-		{
-			if (Capacity <= Size) {
-				Reallocate(CapacityIncrement());
-			}
-
-			if (Size < Capacity) {
-				Buf[Size++] = val;
-				return true;
-			}
-			else {
-				return false;
-			}
+			new (&Buf[Size++]) T(value);
 		}
 
 		void Remove(uint32_t index)
