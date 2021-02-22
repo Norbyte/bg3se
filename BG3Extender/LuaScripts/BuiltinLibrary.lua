@@ -100,7 +100,7 @@ _I._NetMessageReceived = function (channel, payload, userId)
 	end
 end
 
-_I.Require = function (mod, path)
+Ext.Require = function (mod, path)
 	if ModuleUUID == nil then
 		error("Cannot call Ext.Require() after a module was loaded!");
 	end
@@ -124,9 +124,9 @@ _I.Require = function (mod, path)
 
 	local loaded
 	if path == nil then
-		loaded = {Ext.Include(ModuleUUID, mod, env)}
+		loaded = {Ext.Utils.Include(ModuleUUID, mod, env)}
 	else
-		loaded = {Ext.Include(mod, path, env)}
+		loaded = {Ext.Utils.Include(mod, path, env)}
 	end
 
 	_I._LoadedFiles[fullName] = loaded
@@ -161,7 +161,7 @@ _I._LoadBootstrap = function (path, modTable)
 	Mods[modTable] = env
 	
 	env._G = env
-	Ext.Include(ModuleUUID, path, env)
+	Ext.Utils.Include(ModuleUUID, path, env)
 end
 
 _I._ConsoleCommandListeners = {}
