@@ -54,7 +54,7 @@ namespace bg3se
 		STDString ResolveModScriptPath(Module const& mod, STDString const& fileName);
 
 		std::optional<int> LuaLoadExternalFile(STDString const & path);
-		// FIXME - std::optional<int> LuaLoadGameFile(FileReaderPin & reader, STDString const & scriptName, int globalsIdx = 0);
+		std::optional<int> LuaLoadGameFile(FileReaderPin & reader, STDString const & scriptName, int globalsIdx = 0);
 		std::optional<int> LuaLoadGameFile(STDString const & path, STDString const & scriptName, 
 			bool warnOnError = true, int globalsIdx = 0);
 		std::optional<int> LuaLoadModScript(STDString const & modNameGuid, STDString const & fileName, 

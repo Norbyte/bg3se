@@ -8,7 +8,7 @@
 namespace bg3se
 {
 	std::unordered_set<std::string_view> ExtensionStateBase::sAllFeatureFlags = {
-		"OsirisExtensions",
+		"Osiris",
 		"Lua",
 		"Preprocessor"
 	};
@@ -30,7 +30,7 @@ namespace bg3se
 		unsigned numConfigs{ 0 };
 		for (auto const& mod : modManager->BaseModule.LoadOrderedModules) {
 			auto dir = ToUTF8(mod.Info.Directory);
-			auto configFile = "Mods/" + dir + "/ScriptExtenderConfig.json";
+			auto configFile = "Mods/" + dir + "/ScriptExtender/Config.json";
 			FileReaderPin reader(configFile, PathRootType::Data);
 
 			if (reader.IsLoaded()) {
@@ -46,15 +46,14 @@ namespace bg3se
 
 					if (config.MinimumVersion == 0) {
 						OsiError("Module '" << ToUTF8(mod.Info.Name.c_str()) << ":");
-						OsiError("Specifying RequiredExtenderVersion in ScriptExtenderConfig.json is mandatory.");
+						OsiError("Specifying RequiredVersion in ScriptExtender/Config.json is mandatory.");
 						continue;
 					}
 
-					if (config.MinimumVersion >= 43
-						&& config.FeatureFlags.find("Lua") != config.FeatureFlags.end()
+					if (config.FeatureFlags.find("Lua") != config.FeatureFlags.end()
 						&& config.ModTable.empty()) {
 						OsiError("Module '" << ToUTF8(mod.Info.Name.c_str()) << ":");
-						OsiError("Modules using Lua must specify a ModTable in ScriptExtenderConfig.json.");
+						OsiError("Modules using Lua must specify a ModTable in ScriptExtender/Config.json.");
 						continue;
 					}
 
@@ -156,7 +155,7 @@ namespace bg3se
 
 	bool ExtensionStateBase::LoadConfig(Module const & mod, Json::Value & json, ExtensionModConfig & config)
 	{
-		auto version = GetConfigInt(json, "RequiredExtenderVersion");
+		auto version = GetConfigInt(json, "RequiredVersion");
 		if (version) {
 			config.MinimumVersion = (uint32_t)*version;
 		}
@@ -295,7 +294,7 @@ namespace bg3se
 	{
 		STDString path("Mods/");
 		path += ToUTF8(mod.Info.Directory);
-		path += "/Story/RawFiles/Lua/";
+		path += "/ScriptExtender/Lua/";
 		path += fileName;
 		return path;
 	}
@@ -324,7 +323,7 @@ namespace bg3se
 		return lua->LoadScript(s, path);
 	}
 
-	/*std::optional<int> ExtensionStateBase::LuaLoadGameFile(FileReaderPin & reader, STDString const & scriptName, int globalsIdx)
+	std::optional<int> ExtensionStateBase::LuaLoadGameFile(FileReaderPin & reader, STDString const & scriptName, int globalsIdx)
 	{
 		if (!reader.IsLoaded()) {
 			OsiErrorS("Attempted to load script from invalid file reader");
@@ -338,13 +337,12 @@ namespace bg3se
 		}
 
 		return lua->LoadScript(reader.ToString(), scriptName, globalsIdx);
-	}*/
+	}
 
 	std::optional<int> ExtensionStateBase::LuaLoadGameFile(STDString const & path, STDString const & scriptName, 
 		bool warnOnError, int globalsIdx)
 	{
-		throw std::runtime_error("FIXME!");
-		/*auto reader = GetStaticSymbols().MakeFileReader(path);
+		FileReaderPin reader(path, PathRootType::Data);
 		if (!reader.IsLoaded()) {
 			if (warnOnError) {
 				OsiError("Script file could not be opened: " << path);
@@ -362,7 +360,7 @@ namespace bg3se
 			loadedFileFullPaths_.insert(std::make_pair(scriptName, fullPath));
 		}
 
-		return result;*/
+		return result;
 	}
 
 	std::optional<int> ExtensionStateBase::LuaLoadModScript(STDString const & modNameGuid, STDString const & fileName, 
@@ -454,35 +452,16 @@ namespace bg3se
 	{
 		auto bootstrapFileName = GetBootstrapFileName();
 		auto const& sym = GetStaticSymbols();
-		STDString bootstrapPath;
 
-		auto path = ResolveModScriptPath(mod, bootstrapFileName);
-		if (sym.FileExists(path)) {
-			bootstrapPath = bootstrapFileName;
-		} else {
-			path = ResolveModScriptPath(mod, "Bootstrap.lua");
-			if (sym.FileExists(path)) {
-				bootstrapPath = "Bootstrap.lua";
-				OsiError("Module '" << ToUTF8(mod.Info.Name) << "' uses a legacy Lua bootstrap file (Bootstrap.lua)");
-				OsiError("Please migrate to separate client/server bootstrap files!");
-			}
-		}
-
-		if (!bootstrapPath.empty()) {
+		auto bootstrapPath = ResolveModScriptPath(mod, bootstrapFileName);
+		if (!bootstrapPath.empty() && sym.FileExists(bootstrapPath)) {
 			LuaVirtualPin lua(*this);
 			auto L = lua->GetState();
 			lua::push(L, mod.Info.ModuleUUIDString);
 			lua_setglobal(L, "ModuleUUID");
 
-			OsiMsg("Loading bootstrap script: " << path);
-			if (config.MinimumVersion <= 42) {
-				// <= v42: Load module directly into global table
-				throw std::runtime_error("FIXME!");
-				// LuaLoadModScript(mod.Info.ModuleUUID.Str, bootstrapPath);
-			} else {
-				// >= v43: Load module with _ENV=Mods[ModTable]
-				lua->LoadBootstrap(bootstrapPath, config.ModTable);
-			}
+			OsiMsg("Loading bootstrap script: " << bootstrapPath);
+			lua->LoadBootstrap(bootstrapFileName, config.ModTable);
 
 			lua::push(L, nullptr);
 			lua_setglobal(L, "ModuleUUID");

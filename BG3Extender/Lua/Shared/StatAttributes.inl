@@ -78,26 +78,6 @@ namespace bg3se::lua::stats
 		 return 1;
 	 } /*else if (attributeFS == GFS.strComboCategory) {
 		 return LuaWrite(L, object->ComboCategories);
-	 } else if (attributeFS == GFS.strSkillProperties || attributeFS == GFS.strExtraProperties) {
-		 auto propertyList = object->PropertyList.Find(attributeFS);
-		 if (propertyList) {
-			 return LuaWrite(L, *propertyList);
-		 } else {
-			 push(L, nullptr);
-			 return 1;
-		 }
-	 }*/
-
-	 /*int index;
-	 auto attrInfo = stats->GetAttributeInfo(object, attributeFS, index);
-	 if (attrInfo && attrInfo->Name == GFS.strConditions) {
-		 auto conditions = object->ConditionList.Find(attributeFS);
-		 if (conditions) {
-			 OsiError("Conditions property '" << attributeFS << "' is not readable");
-		 }
-
-		 push(L, nullptr);
-		 return 1;
 	 }*/
 
 		int attributeIndex{ -1 };

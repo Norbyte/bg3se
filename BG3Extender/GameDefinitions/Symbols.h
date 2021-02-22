@@ -49,10 +49,7 @@ namespace bg3se
 		esv::StatusMachine::CreateStatusProc* esv__StatusMachine__CreateStatus{ nullptr };
 		esv::StatusMachine::ApplyStatusProc* esv__StatusMachine__ApplyStatus{ nullptr };
 
-		/*GlobalStringTable const ** GlobalStrings{ nullptr };
-		ls__Path__GetPrefixForRoot GetPrefixForRoot{ nullptr };*/
-		/*
-		RPGStats::LoadProc RPGStats__Load{ nullptr };
+		/*RPGStats::LoadProc RPGStats__Load{ nullptr };
 		RPGStats::ParsePropertiesProc* RPGStats__ParseProperties{ nullptr };
 		SkillPrototypeManager** eoc__SkillPrototypeManager{ nullptr };
 		StatusPrototypeManager** eoc__StatusPrototypeManager{ nullptr };*/
@@ -75,15 +72,6 @@ namespace bg3se
 		inline StaticSymbols() {}
 		StaticSymbols(StaticSymbols const &) = delete;
 		StaticSymbols & operator = (StaticSymbols const &) = delete;
-
-		/*inline GlobalStringTable const * GetGlobalStringTable() const
-		{
-			if (GlobalStrings) {
-				return *GlobalStrings;
-			} else {
-				return nullptr;
-			}
-		}*/
 
 		inline RPGStats* GetStats() const
 		{

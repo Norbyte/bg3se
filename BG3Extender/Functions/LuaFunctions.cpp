@@ -27,45 +27,6 @@ namespace bg3se::esv
 			gOsirisProxy->ResetLuaState(resetServer, resetClient);
 		}
 
-		void OsiLuaLoad(OsiArgumentDesc const & args)
-		{
-			LuaServerPin lua(ExtensionState::Get());
-			if (!lua) {
-				OsiErrorS("Called when the Lua VM has not been initialized!");
-				return;
-			}
-
-			auto mod = args[0].String;
-			auto fileName = args[1].String;
-
-			if (strstr(fileName, "..") != nullptr) {
-				OsiErrorS("Illegal file name");
-				return;
-			}
-
-			ExtensionState::Get().LuaLoadModScript(mod, fileName);
-		}
-
-		void OsiLuaCall(OsiArgumentDesc const & args)
-		{
-			LuaServerPin lua(ExtensionState::Get());
-			if (!lua) {
-				OsiErrorS("Called when the Lua VM has not been initialized!");
-				return;
-			}
-
-			auto func = args[0].String;
-			auto numArgs = args.Count() - 1;
-			std::vector<OsiArgumentValue> luaArgs;
-			luaArgs.resize(numArgs);
-
-			for (uint32_t i = 0; i < numArgs; i++) {
-				luaArgs[i] = args[i + 1];
-			}
-
-			lua->Call(nullptr, func, luaArgs);
-		}
-
 		void OsiLuaModCall(OsiArgumentDesc const& args)
 		{
 			LuaServerPin lua(ExtensionState::Get());
@@ -109,35 +70,6 @@ namespace bg3se::esv
 		};
 
 		template <uint32_t TInParams>
-		bool OsiLuaQuery(OsiArgumentDesc & args)
-		{
-			LuaServerPin lua(ExtensionState::Get());
-			if (!lua) {
-				OsiErrorS("Called when the Lua VM has not been initialized!");
-				return false;
-			}
-
-			auto func = args[0].String;
-			auto numArgs = args.Count() - 1;
-
-			std::vector<CustomFunctionParam> signature;
-			signature.reserve(numArgs);
-			for (uint32_t i = 0; i < TInParams; i++) {
-				signature.push_back(CustomFunctionParam{
-					QueryArgNames[i], args[i + 1].TypeId, FunctionArgumentDirection::In
-				});
-			}
-
-			for (uint32_t i = 0; i < numArgs - TInParams; i++) {
-				signature.push_back(CustomFunctionParam{
-					QueryOutArgNames[i], args[i + TInParams + 1].TypeId, FunctionArgumentDirection::Out
-				});
-			}
-
-			return lua->Query(nullptr, func, nullptr, signature, *args.NextParam);
-		}
-
-		template <uint32_t TInParams>
 		bool OsiLuaModQuery(OsiArgumentDesc & args)
 		{
 			LuaServerPin lua(ExtensionState::Get());
@@ -169,37 +101,9 @@ namespace bg3se::esv
 	}
 
 	template <unsigned TInParams>
-	void RegisterLuaQueries(CustomFunctionManager & functionMgr)
-	{
-		STDString procName = "NRD_LuaQuery";
-		procName += std::to_string(TInParams);
-
-		for (uint32_t out = 0; out <= 5; out++) {
-			std::vector<CustomFunctionParam> args{
-				{ "Func", ValueType::String, FunctionArgumentDirection::In }
-			};
-
-			for (uint32_t arg = 0; arg < TInParams; arg++) {
-				args.push_back({ func::QueryArgNames[arg], ValueType::None, FunctionArgumentDirection::In });
-			}
-
-			for (uint32_t arg = 0; arg < out; arg++) {
-				args.push_back({ func::QueryOutArgNames[arg], ValueType::None, FunctionArgumentDirection::Out });
-			}
-
-			auto luaQuery = std::make_unique<CustomQuery>(
-				procName,
-				args,
-				&func::OsiLuaQuery<TInParams>
-			);
-			functionMgr.Register(std::move(luaQuery));
-		}
-	}
-
-	template <unsigned TInParams>
 	void RegisterLuaModQueries(CustomFunctionManager & functionMgr)
 	{
-		STDString procName = "NRD_ModQuery";
+		STDString procName = "NRD_LuaQuery";
 		procName += std::to_string(TInParams);
 
 		for (uint32_t out = 0; out <= 5; out++) {
@@ -248,32 +152,6 @@ namespace bg3se::esv
 		);
 		functionMgr.Register(std::move(luaReset3));
 
-		auto luaLoad = std::make_unique<CustomCall>(
-			"NRD_LuaLoad",
-			std::vector<CustomFunctionParam>{
-				{ "ModNameGuid", ValueType::GuidString, FunctionArgumentDirection::In },
-				{ "FileName", ValueType::String, FunctionArgumentDirection::In }
-			},
-			&func::OsiLuaLoad
-		);
-		functionMgr.Register(std::move(luaLoad));
-
-		for (auto i = 0; i <= 10; i++) {
-			std::vector<CustomFunctionParam> args{
-				{ "Func", ValueType::String, FunctionArgumentDirection::In }
-			};
-			for (auto arg = 0; arg < i; arg++) {
-				args.push_back({ func::QueryArgNames[arg], ValueType::None, FunctionArgumentDirection::In });
-			}
-
-			auto luaCall = std::make_unique<CustomCall>(
-				"NRD_LuaCall",
-				args,
-				&func::OsiLuaCall
-			);
-			functionMgr.Register(std::move(luaCall));
-		}
-
 		for (auto i = 0; i <= 10; i++) {
 			std::vector<CustomFunctionParam> args{
 				{ "Mod", ValueType::String, FunctionArgumentDirection::In },
@@ -284,24 +162,12 @@ namespace bg3se::esv
 			}
 
 			auto luaCall = std::make_unique<CustomCall>(
-				"NRD_ModCall",
+				"NRD_LuaCall",
 				args,
 				&func::OsiLuaModCall
 			);
 			functionMgr.Register(std::move(luaCall));
 		}
-
-		RegisterLuaQueries<0>(functionMgr);
-		RegisterLuaQueries<1>(functionMgr);
-		RegisterLuaQueries<2>(functionMgr);
-		RegisterLuaQueries<3>(functionMgr);
-		RegisterLuaQueries<4>(functionMgr);
-		RegisterLuaQueries<5>(functionMgr);
-		RegisterLuaQueries<6>(functionMgr);
-		RegisterLuaQueries<7>(functionMgr);
-		RegisterLuaQueries<8>(functionMgr);
-		RegisterLuaQueries<9>(functionMgr);
-		RegisterLuaQueries<10>(functionMgr);
 
 		RegisterLuaModQueries<0>(functionMgr);
 		RegisterLuaModQueries<1>(functionMgr);

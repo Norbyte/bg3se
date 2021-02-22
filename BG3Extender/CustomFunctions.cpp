@@ -681,7 +681,7 @@ void CustomFunctionInjector::OnCreateFile(LPCWSTR lpFileName,
 void CustomFunctionInjector::OnCloseHandle(HANDLE hFile, BOOL bSucceeded)
 {
 	if (bSucceeded && !extendingStory_ && storyHeaderFile_ != NULL && hFile == storyHeaderFile_) {
-		if (esv::ExtensionState::Get().HasFeatureFlag("OsirisExtensions")) {
+		if (esv::ExtensionState::Get().HasFeatureFlag("Osiris")) {
 			ExtendStoryHeader(storyHeaderPath_);
 		}
 
