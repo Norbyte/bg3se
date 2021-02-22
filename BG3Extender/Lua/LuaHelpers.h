@@ -370,7 +370,7 @@ namespace bg3se::lua
 	{
 		auto str = luaL_checkstring(L, index);
 		FixedString fs(str);
-		if (!fs) {
+		if (!fs && fs != GFS.strEmpty) {
 			luaL_error(L, "Argument %d: expected a valid FixedString value, got '%s'", index, str);
 			return {};
 		} else {
