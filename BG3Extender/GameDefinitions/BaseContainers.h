@@ -114,7 +114,7 @@ namespace bg3se
 					Node++;
 				}
 
-				if (*Node) {
+				if (Node < NodeListEnd && *Node) {
 					Element = *Node;
 				}
 			}
@@ -133,7 +133,7 @@ namespace bg3se
 						Node++;
 					} while (Node < NodeListEnd && *Node == nullptr);
 
-					if (*Node) {
+					if (Node < NodeListEnd && *Node) {
 						Element = *Node;
 					}
 				}
@@ -149,7 +149,7 @@ namespace bg3se
 						Node++;
 					} while (Node < NodeListEnd && *Node == nullptr);
 
-					if (*Node) {
+					if (Node < NodeListEnd && *Node) {
 						Element = *Node;
 					}
 				}
@@ -202,7 +202,7 @@ namespace bg3se
 					Node++;
 				}
 
-				if (*Node) {
+				if (Node < NodeListEnd && *Node) {
 					Element = *Node;
 				}
 			}
@@ -220,6 +220,10 @@ namespace bg3se
 					do {
 						Node++;
 					} while (Node < NodeListEnd && *Node == nullptr);
+
+					if (Node < NodeListEnd && *Node) {
+						Element = *Node;
+					}
 				}
 
 				return it;
@@ -232,6 +236,10 @@ namespace bg3se
 					do {
 						Node++;
 					} while (Node < NodeListEnd && *Node == nullptr);
+
+					if (Node < NodeListEnd && *Node) {
+						Element = *Node;
+					}
 				}
 
 				return *this;
@@ -454,7 +462,7 @@ namespace bg3se
 					Node++;
 				}
 
-				if (*Node) {
+				if (Node < NodeListEnd && *Node) {
 					Element = *Node;
 				}
 			}
@@ -473,7 +481,7 @@ namespace bg3se
 						Node++;
 					} while (Node < NodeListEnd && *Node == nullptr);
 
-					if (*Node) {
+					if (Node < NodeListEnd && *Node) {
 						Element = *Node;
 					}
 				}
@@ -489,7 +497,7 @@ namespace bg3se
 						Node++;
 					} while (Node < NodeListEnd && *Node == nullptr);
 
-					if (*Node) {
+					if (Node < NodeListEnd && *Node) {
 						Element = *Node;
 					}
 				}
@@ -542,7 +550,7 @@ namespace bg3se
 					Node++;
 				}
 
-				if (*Node) {
+				if (Node < NodeListEnd && *Node) {
 					Element = *Node;
 				}
 			}
@@ -560,6 +568,10 @@ namespace bg3se
 					do {
 						Node++;
 					} while (Node < NodeListEnd && *Node == nullptr);
+
+					if (Node < NodeListEnd && *Node) {
+						Element = *Node;
+					}
 				}
 
 				return it;
@@ -572,6 +584,10 @@ namespace bg3se
 					do {
 						Node++;
 					} while (Node < NodeListEnd && *Node == nullptr);
+
+					if (Node < NodeListEnd && *Node) {
+						Element = *Node;
+					}
 				}
 
 				return *this;
