@@ -34,6 +34,8 @@ namespace bg3se::lua::stats
 			{"CreateStat", CreateStat},
 			{"SyncStat", SyncStatWrapper},
 			{"StatSetPersistence", StatSetPersistenceWrapper},
+
+			{"GetModifierAttributes", GetModifierAttributes},
 			{"EnumIndexToLabel", EnumIndexToLabel},
 			{"EnumLabelToIndex", EnumLabelToIndex},
 
