@@ -1183,6 +1183,17 @@ namespace bg3se
 				return Values + index;
 			}
 		}
+
+		void Set(TKey const& key, TValue const& value)
+		{
+			auto index = FindIndex(key);
+			if (index == -1) {
+				// FIXME - add MultiHashMap insert support!
+				throw std::runtime_error("Not implemented yet!");
+			} else {
+				Values[index] = value;
+			}
+		}
 	};
 
 	template <class TKey, class TValue>

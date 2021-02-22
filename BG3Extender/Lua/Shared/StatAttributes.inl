@@ -123,9 +123,14 @@ namespace bg3se::lua::stats
 		case RPGEnumerationType::FixedString:
 		case RPGEnumerationType::Enumeration:
 		case RPGEnumerationType::Conditions:
+		case RPGEnumerationType::RollConditions:
 		{
 			auto value = object->GetString(attributeFS);
-			LuaWrite(L, value);
+			if (value) {
+				push(L, *value);
+			} else {
+				push(L, "");
+			}
 			break;
 		}
 
@@ -152,14 +157,11 @@ namespace bg3se::lua::stats
 		case RPGEnumerationType::StatsFunctors:
 		{
 			auto functors = object->GetStatsFunctors(attributeFS);
-			LuaWrite(L, functors);
-			break;
-		}
-
-		case RPGEnumerationType::RollConditions:
-		{
-			auto conditions = object->GetRollConditions(attributeFS);
-			LuaWrite(L, conditions);
+			if (functors && functors->Size == 1 && (*functors)[0].Name == GFS.strDefault) {
+				LuaWrite(L, (*functors)[0].Functor);
+			} else {
+				push(L, nullptr);
+			}
 			break;
 		}
 
@@ -308,23 +310,20 @@ namespace bg3se::lua::stats
 
 			case RPGEnumerationType::StatsFunctors:
 			{
-				Array<CRPGStats_Object::StatsFunctorInfo> functors;
+				StatsFunctorSet* functor = stats->ConstructFunctorSet(attributeFS);
 				lua_pushvalue(L, valueIdx);
-				LuaRead(L, functors);
+				LuaRead(L, functor);
 				lua_pop(L, 1);
+
+				Array<CRPGStats_Object::StatsFunctorInfo> functors;
+				if (functor) {
+					CRPGStats_Object::StatsFunctorInfo functorInfo;
+					functorInfo.Name = GFS.strDefault;
+					functorInfo.Functor = functor;
+					functors.Add(functorInfo);
+				}
 
 				object->SetStatsFunctors(attributeFS, functors);
-				break;
-			}
-
-			case RPGEnumerationType::RollConditions:
-			{
-				Array<CRPGStats_Object::RollConditionInfo> conditions;
-				lua_pushvalue(L, valueIdx);
-				LuaRead(L, conditions);
-				lua_pop(L, 1);
-
-				object->SetRollConditions(attributeFS, conditions);
 				break;
 			}
 
@@ -340,6 +339,28 @@ namespace bg3se::lua::stats
 
 			default:
 				LuaError("Cannot use table value for stat properties of type " << (unsigned)attrType << "!");
+				break;
+			}
+			break;
+		}
+
+		case LUA_TNIL:
+		{
+			switch (attrType) {
+			case RPGEnumerationType::Float:
+				object->SetFloat(attributeFS, {});
+				break;
+
+			case RPGEnumerationType::GUID:
+				object->SetGuid(attributeFS, {});
+				break;
+
+			case RPGEnumerationType::StatsFunctors:
+				object->SetStatsFunctors(attributeFS, {});
+				break;
+
+			default:
+				LuaError("Cannot use nil value for stat properties of type " << (unsigned)attrType << "!");
 				break;
 			}
 			break;

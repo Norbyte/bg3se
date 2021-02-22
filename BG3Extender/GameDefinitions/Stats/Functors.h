@@ -211,7 +211,7 @@ namespace bg3se
 	{
 		static constexpr auto FunctorId = StatsFunctorActionId::ExecuteWeaponFunctors;
 
-		ExecuteWeaponFunctorsType Type;
+		ExecuteWeaponFunctorsType WeaponType;
 	};
 
 	struct TeleportSourceFunctor : public StatsFunctorBase

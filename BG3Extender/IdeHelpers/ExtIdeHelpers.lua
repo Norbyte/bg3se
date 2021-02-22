@@ -3736,7 +3736,7 @@ function Ext.GameVersion () end
 
 --- Loads the specified Lua file
 --- @param modGuid string GUID of the module containing the Lua file
---- @param fileName string Path of Lua file, relative to Mods/<Mod>/Story/RawFiles/Lua
+--- @param fileName string Path of Lua file, relative to Mods/<Mod>/ScriptExtender/Lua
 function Ext.Require (modGuid, fileName) end
 
 --- Registers a function to call when an extender event is thrown

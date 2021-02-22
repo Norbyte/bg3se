@@ -40,10 +40,20 @@ namespace bg3se
 			if (val) {
 				return (*val)->GetString();
 			}
-		} else if (typeInfo->Name == GFS.strConditions) {
+		} else if (typeInfo->Name == GFS.strConditions
+			|| typeInfo->Name == GFS.strTargetConditions
+			|| typeInfo->Name == GFS.strUseConditions) {
 			auto val = GetStaticSymbols().GetStats()->GetConditions(index);
 			if (val) {
 				return **val;
+			}
+		} else if (typeInfo->Name == GFS.strRollConditions) {
+			auto rollConditions = GetRollConditions(attributeName);
+			if (rollConditions && rollConditions->Size == 1 && (*rollConditions)[0].Name == GFS.strDefault) {
+				auto val = GetStaticSymbols().GetStats()->GetConditions((*rollConditions)[0].ConditionsId);
+				if (val) {
+					return **val;
+				}
 			}
 		} else if (typeInfo->Values.Count() > 0) {
 			auto enumLabel = typeInfo->Values.FindByValue(index);
@@ -166,7 +176,7 @@ namespace bg3se
 
 			if (flags) {
 				for (auto const& kv : typeInfo->Values) {
-					if (**flags & (1ull << kv.Value)) {
+					if (**flags & (1ull << (kv.Value - 1))) {
 						flagSet.Add(kv.Key);
 					}
 				}
@@ -229,7 +239,8 @@ namespace bg3se
 		}
 
 		auto stats = GetStaticSymbols().GetStats();
-		if (typeInfo->Name == GFS.strFixedString) {
+		if (typeInfo->Name == GFS.strFixedString
+			|| typeInfo->Name == GFS.strStatusIDs) {
 			int poolIdx{ -1 };
 			auto fs = stats->GetOrCreateFixedString(poolIdx);
 			if (fs != nullptr) {
@@ -244,12 +255,30 @@ namespace bg3se
 			}
 
 			return SetGuid(attributeName, *guid);
-		} else if (typeInfo->Name == GFS.strConditions) {
+		} else if (typeInfo->Name == GFS.strConditions
+			|| typeInfo->Name == GFS.strTargetConditions
+			|| typeInfo->Name == GFS.strUseConditions) {
 			int poolIdx{ -1 };
 			auto str = stats->GetOrCreateConditions(poolIdx);
 			if (str != nullptr) {
 				*str = value;
 				IndexedProperties[attributeIndex] = poolIdx;
+			}
+		} else if (typeInfo->Name == GFS.strRollConditions) {
+			if (*value) {
+				int poolIdx{ -1 };
+				auto str = stats->GetOrCreateConditions(poolIdx);
+				if (str != nullptr) {
+					*str = value;
+					RollConditionInfo cond;
+					cond.Name = GFS.strDefault;
+					cond.ConditionsId = poolIdx;
+					Array<RollConditionInfo> conditions;
+					conditions.Add(cond);
+					SetRollConditions(attributeName, conditions);
+				}
+			} else {
+				SetRollConditions(attributeName, {});
 			}
 		} else if (typeInfo->Values.Count() > 0) {
 			auto enumIndex = typeInfo->Values.Find(FixedString(value));
@@ -293,7 +322,7 @@ namespace bg3se
 		return true;
 	}
 
-	bool CRPGStats_Object::SetFloat(FixedString const& attributeName, float value)
+	bool CRPGStats_Object::SetFloat(FixedString const& attributeName, std::optional<float> value)
 	{
 		int attributeIndex;
 		auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
@@ -304,11 +333,15 @@ namespace bg3se
 
 		auto stats = GetStaticSymbols().GetStats();
 		if (typeInfo->Name == GFS.strConstantFloat) {
-			int poolIdx{ -1 };
-			auto flt = stats->GetOrCreateFloat(poolIdx);
-			if (flt != nullptr) {
-				*flt = value;
-				IndexedProperties[attributeIndex] = poolIdx;
+			if (value) {
+				int poolIdx{ -1 };
+				auto flt = stats->GetOrCreateFloat(poolIdx);
+				if (flt != nullptr) {
+					*flt = *value;
+					IndexedProperties[attributeIndex] = poolIdx;
+				}
+			} else {
+				IndexedProperties[attributeIndex] = -1;
 			}
 		} else {
 			OsiError("Couldn't set " << Name << "." << attributeName << " to float value: Inappropriate type: " << typeInfo->Name);
@@ -343,7 +376,7 @@ namespace bg3se
 		return true;
 	}
 
-	bool CRPGStats_Object::SetGuid(FixedString const& attributeName, UUID const& value)
+	bool CRPGStats_Object::SetGuid(FixedString const& attributeName, std::optional<UUID> value)
 	{
 		int attributeIndex;
 		auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
@@ -354,11 +387,15 @@ namespace bg3se
 
 		auto stats = GetStaticSymbols().GetStats();
 		if (typeInfo->Name == GFS.strGuid) {
-			int poolIdx{ -1 };
-			auto guid = stats->GetOrCreateGuid(poolIdx);
-			if (guid != nullptr) {
-				*guid = value;
-				IndexedProperties[attributeIndex] = poolIdx;
+			if (value) {
+				int poolIdx{ -1 };
+				auto guid = stats->GetOrCreateGuid(poolIdx);
+				if (guid != nullptr) {
+					*guid = *value;
+					IndexedProperties[attributeIndex] = poolIdx;
+				}
+			} else {
+				IndexedProperties[attributeIndex] = -1;
 			}
 		} else {
 			OsiError("Couldn't set " << Name << "." << attributeName << " to GUID value: Inappropriate type: " << typeInfo->Name);
@@ -391,7 +428,7 @@ namespace bg3se
 				return false;
 			}
 
-			flags |= (1ll << *flagValue);
+			flags |= (1ll << (*flagValue - 1));
 		}
 
 		int poolIdx{ -1 };
@@ -404,7 +441,7 @@ namespace bg3se
 		return true;
 	}
 
-	bool CRPGStats_Object::SetStatsFunctors(FixedString const& attributeName, Array<StatsFunctorInfo> const& value)
+	bool CRPGStats_Object::SetStatsFunctors(FixedString const& attributeName, std::optional<Array<StatsFunctorInfo>> const& value)
 	{
 		int attributeIndex;
 		auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
@@ -418,11 +455,15 @@ namespace bg3se
 			return false;
 		}
 
-		// FIXME - StatsFunctors.Set(attributeName, value);
+		if (value) {
+			StatsFunctors.Set(attributeName, *value);
+		} else {
+			// FIXME - clearing stats functors not implemented!
+		}
 		return true;
 	}
 
-	bool CRPGStats_Object::SetRollConditions(FixedString const& attributeName, Array<RollConditionInfo> const& value)
+	bool CRPGStats_Object::SetRollConditions(FixedString const& attributeName, std::optional<Array<RollConditionInfo>> const& value)
 	{
 		int attributeIndex;
 		auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
@@ -436,7 +477,12 @@ namespace bg3se
 			return false;
 		}
 
-		// FIXME - RollConditions.Set(attributeName, value);
+		if (value) {
+			RollConditions.Set(attributeName, *value);
+		} else {
+			// FIXME - clearing roll conditions not implemented!
+		}
+
 		return true;
 	}
 

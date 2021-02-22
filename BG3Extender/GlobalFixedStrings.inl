@@ -176,6 +176,8 @@ FS(StatusPropertyFlags);
 FS(StatusGroupFlags);
 FS(LineOfSightFlags);
 
+FS(Default);
+
 // Enumerations
 FS(StatusHealType);
 FS_NAME(OsirisTask, "Osiris Task");

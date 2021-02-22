@@ -133,7 +133,7 @@ END_CLS()
 
 BEGIN_CLS(ExecuteWeaponFunctorsFunctor)
 INHERIT(StatsFunctorBase)
-P(Type)
+P(WeaponType)
 END_CLS()
 
 

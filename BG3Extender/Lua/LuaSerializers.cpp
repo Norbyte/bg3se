@@ -381,29 +381,6 @@ namespace bg3se::lua
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Object::RollConditionInfo& v)
-	{
-		s.BeginObject();
-		P(Name);
-		auto stats = GetStaticSymbols().GetStats();
-		if (s.IsWriting) {
-			auto conditions = stats->GetConditions(v.ConditionsId);
-			if (conditions) {
-				s.VisitProperty("Conditions", *conditions);
-			} else {
-				STDString conditionsStr;
-				s.VisitProperty("Conditions", conditionsStr);
-			}
-		} else {
-			int conditionsId{ -1 };
-			auto conditions = stats->GetOrCreateConditions(conditionsId);
-			s.VisitProperty("Conditions", *conditions);
-			v.ConditionsId = conditionsId;
-		}
-		s.EndObject();
-		return s;
-	}
-
 	LuaSerializer& operator << (LuaSerializer& s, StatsFunctorBase& v)
 	{
 		static long gIndex{ 0 };
@@ -416,6 +393,8 @@ namespace bg3se::lua
 			auto conditions = stats->GetConditions(v.StatsConditionsId);
 			if (conditions) {
 				setfield(s.L, "Condition", **conditions);
+			} else {
+				setfield(s.L, "Condition", "");
 			}
 		} else {
 			STDString name = std::to_string(gIndex++).c_str();
@@ -426,13 +405,14 @@ namespace bg3se::lua
 				int conditionsId{ -1 };
 				auto cond = stats->GetOrCreateConditions(conditionsId);
 				*cond = conditions;
+				v.StatsConditionsId = conditionsId;
 			} else {
 				v.StatsConditionsId = -1;
 			}
 		}
 
 		PO(IsSelf, false);
-		PO(StoryActionId, 0);
+		// PO(StoryActionId, 0); - FIXME - not sure if this is used at all
 
 		return s;
 	}
@@ -540,7 +520,7 @@ namespace bg3se::lua
 	LuaSerializer& operator << (LuaSerializer& s, ExecuteWeaponFunctorsFunctor& v)
 	{
 		s << static_cast<StatsFunctorBase&>(v);
-		P(Type);
+		P(WeaponType);
 		return s;
 	}
 
@@ -624,7 +604,15 @@ namespace bg3se::lua
 		PO(StringParam, GFS.strEmpty);
 		// FIXME - add conditions parsing!
 		PO(StatsConditions, STDString{});
-		PO(StatsConditionsId, -1);
+		if (!s.IsWriting) {
+			if (v.StatsConditions.empty()) {
+				v.StatsConditionsId = -1;
+			} else {
+				int conditionsId{ -1 };
+				auto conditions = GetStaticSymbols().GetStats()->GetOrCreateConditions(conditionsId);
+				*conditions = v.StatsConditions;
+			}
+		}
 		PO(Duration, 6.0f);
 		PO(Param1, -1);
 		PO(Param2, -1);

@@ -653,7 +653,7 @@ BEGIN_BITMASK(StatAttributeFlags, uint64_t)
 	EV(FloatingWhileMoving, 0x100000)
 END_ENUM()
 
-BEGIN_BITMASK(RequirementType, uint32_t)
+BEGIN_ENUM(RequirementType, uint32_t)
 	EV(None, 0)
 	EV(Level, 1)
 	EV(Strength, 2)

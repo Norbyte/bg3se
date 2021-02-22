@@ -430,7 +430,7 @@ namespace bg3se::lua::utils
 			auto path = GetStaticSymbols().ToPath("", PathRootType::Data);
 			path += "Mods/";
 			//path += ToUTF8(GetModManagerServer()->BaseModule.Info.Directory);
-			path += "/Story/RawFiles/Lua/OsiIdeHelpers.lua";
+			path += "/ScriptExtender/Lua/OsiIdeHelpers.lua";
 
 			std::ofstream f(path.c_str(), std::ios::out | std::ios::binary);
 			if (!f.good()) {
