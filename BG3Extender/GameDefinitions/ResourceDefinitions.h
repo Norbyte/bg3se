@@ -62,7 +62,7 @@ namespace bg3se
 
 		UUID ParentGuid;
 		FixedString Name;
-		int DisplayName;
+		FixedString DisplayName;
 		FixedString Description;
 		UUID ProgressionTableUUID;
 		uint8_t MagicType; // FIXME - map to enumeration
@@ -71,7 +71,7 @@ namespace bg3se
 		uint8_t SpellCastingAbility; // FIXME - map to enumeration
 		bool MustPrepareSpells;
 		bool CanLearnSpells;
-		uint8_t field_4E;
+		bool HasGod;
 		Array<UUID> Tags;
 		FixedString ClassEquipment;
 		int CharacterCreationPose; // FIXME - map to enumeration
@@ -299,7 +299,7 @@ namespace bg3se
 		Array<UUID> field_B0;
 		STDString Boosts;
 		Array<UUID> field_E8;
-		__int64 field_100;
+		bool CanBeTakenMultipleTimes;
 		Array<UUID> SelectAbilities;
 		Array<UUID> SelectSkills;
 		Array<UUID> SelectSpells;
@@ -321,7 +321,5 @@ namespace bg3se
 	    UUID FeatId;
 	    FixedString SelectorId;
 	    FixedString PassivePrototype;
-		uint64_t field_48;
-	    char field_50;
 	};
 }

@@ -139,7 +139,7 @@ private:
 	bool OnModuleHash(Module::HashProc* next, Module* self);
 };
 
-class EntitySystemHelpersBase
+class EntitySystemHelpersBase : public Noncopyable<EntitySystemHelpersBase>
 {
 public:
 	EntitySystemHelpersBase();
