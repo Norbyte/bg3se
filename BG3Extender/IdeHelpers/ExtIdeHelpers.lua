@@ -3802,115 +3802,18 @@ function Ext.GetModLoadOrder () end
 --- @return ModInfo
 function Ext.GetModInfo (modGuid) end
 
+Ext.Stats = {}
+
 --- Returns the list of loaded stat entries
 --- @param type string|nil Type of stat entry to fetch (StatusData, SkillData, ...)
 --- @return string[]
-function Ext.GetStatEntries (type) end
+function Ext.Stats.GetAllStats (type) end
 
 --- Returns the list of stat entries that were loaded before the specified mod
 --- @param modGuid string Mod GUID to check
 --- @param type string|nil Type of stat entry to fetch (StatusData, SkillData, ...)
 --- @return string[]
-function Ext.GetStatEntriesLoadedBefore (modId, type) end
-
---- Returns an attribute of the specified stat entry
---- @param stat string Stat entry name
---- @param attribute string Stat attribute name
---- @return any
-function Ext.StatGetAttribute (stat, attribute) end
-
---- Updates an attribute of the specified stat entry
---- @param stat string Stat entry name
---- @param attribute string Stat attribute name
---- @param value any New stat value
-function Ext.StatSetAttribute (stat, attribute, value) end
-
---- Adds a property description to the specified stat entry
---- @param stat string Stat entry name
---- @param attribute string Property list attribute name
---- @param description any Description to add
-function Ext.StatAddCustomDescription (stat, attribute, description) end
-
---- Returns all skills from the specified skill set
---- @param name string Name of skill set entry
---- @return StatSkillSet|nil
-function Ext.GetSkillSet (name) end
-
---- Updates all properties of the specified skill set.
---- The function expects a table in the same format as the one returned by GetSkillSet.
---- @param skillSet StatSkillSet
-function Ext.UpdateSkillSet (skillSet) end
-
---- Returns all equipment from the specified equipment set
---- @param name string Name of equipment set entry
---- @return StatEquipmentSet|nil
-function Ext.GetEquipmentSet (name) end
-
---- Updates all properties of the specified equipment set.
---- The function expects a table in the same format as the one returned by GetEquipmentSet.
---- @param equipmentSet StatEquipmentSet
-function Ext.UpdateEquipmentSet (equipmentSet) end
-
---- Returns the specified crafting item combination or nil on failure
---- @param name string Name of item combo
---- @return ItemCombo|nil
-function Ext.GetItemCombo (name) end
-
---- Updates all properties of the specified item combination.
---- The function expects a table in the same format as the one returned by GetItemCombo.
---- @param itemCombo ItemCombo
-function Ext.UpdateItemCombo (itemCombo) end
-
---- Returns the specified crafting preview data or nil on failure
---- @param name string Name of item combo preview data
---- @return ItemComboPreviewData|nil
-function Ext.GetItemComboPreviewData (name) end
-
---- Updates all properties of the specified item combo preview.
---- The function expects a table in the same format as the one returned by GetItemComboPreviewData.
---- @param previewData ItemComboPreviewData
-function Ext.UpdateItemComboPreviewData (previewData) end
-
---- Returns the specified crafting property or nil on failure
---- @param name string Name of item combo property
---- @return ItemComboProperty|nil
-function Ext.GetItemComboProperty (name) end
-
---- Updates all properties of the specified item combo property.
---- The function expects a table in the same format as the one returned by GetItemComboProperty.
---- @param itemComboProperty ItemComboProperty
-function Ext.UpdateItemComboProperty (itemComboProperty) end
-
---- Returns the specified treasure table or nil on failure
---- @param name string Name of treasure table
---- @return StatTreasureTable|nil
-function Ext.GetTreasureTable (name) end
-
---- Updates all properties of the specified treasure table.
---- The function expects a table in the same format as the one returned by GetTreasureTable.
---- @param treasureTable StatTreasureTable
-function Ext.UpdateTreasureTable (treasureTable) end
-
---- Returns the specified treasure category or nil on failure
---- @param name string Name of treasure category
---- @return StatTreasureCategory|nil
-function Ext.GetTreasureCategory (name) end
-
---- Updates all properties of the specified treasure category.
---- The function expects a table in the same format as the one returned by GetTreasureCategory.
---- @param name string Name of treasure category
---- @param treasureCategory StatTreasureCategory
-function Ext.UpdateTreasureCategory (name, treasureCategory) end
-
---- Returns the specified item progression item group or nil on failure
---- @param name string Name of item group
---- @return ItemGroup|nil
-function Ext.GetItemGroup (name) end
-
---- Returns the specified item progression name group or nil on failure
---- @param name string Name of name group
---- @return ItemNameGroup|nil
-function Ext.GetNameGroup (name) end
+function Ext.Stats.GetStatsLoadedBefore (modId, type) end
 
 --- Registers a new skill property that can be triggered via SkillProperties
 --- Stat syntax: data "SkillProperties" "EXT:<PROPERTY_NAME>[,<int>,<int>,<string>,<int>,<int>]"
@@ -3919,49 +3822,50 @@ function Ext.GetNameGroup (name) end
 --- Conditions for EXT: properties (i.e. "IF(COND):") are _NOT YET_ supported.
 --- @param channel string Skill property name
 --- @param defn CustomSkillProperty Event handlers for the skill property
-function Ext.RegisterSkillProperty (name, defn) end
+function Ext.Stats.RegisterSkillProperty (name, defn) end
 
 --- Replaces level scaling formula for the specified stat
 --- @param statType string Stat entry type
 --- @param attribute string Stat attribute name
 --- @param func function Replacement scaling function
-function Ext.StatSetLevelScaling (statType, attribute, func) end
+function Ext.Stats.StatSetLevelScaling (statType, attribute, func) end
 
 --- Returns the property proxy of the specified stats entry
 --- Returns level scaled values if the level parameter is not nil.
 --- @param stat string Stat entry name
+--- @param type string Stat entry type (i.e. SkillData, StatusData, etc.)
 --- @param level integer|nil Level scaling level
 --- @return StatEntryArmor|StatEntryCharacter|StatEntryObject|StatEntryPotion|StatEntryShield|StatEntrySkillData|StatEntryStatusData|StatEntryWeapon
-function Ext.GetStat (stat, level) end
+function Ext.Stats.GetStat (stat, type, level) end
 
 --- Creates a new stats entry on the server
 --- @param name string Stat entry name
 --- @param type string Stat entry type (i.e. SkillData, StatusData, etc.)
 --- @param template string|nil When not nil, all properties are copied from the specified stats entry
 --- @return StatEntryArmor|StatEntryCharacter|StatEntryObject|StatEntryPotion|StatEntryShield|StatEntrySkillData|StatEntryStatusData|StatEntryWeapon
-function Ext.CreateStat (name, type, template) end
+function Ext.Stats.CreateStat (name, type, template) end
 
 --- Synchronizes all modifications of the specified stat to all clients
 --- @param name string Stat entry name
 --- @param persist boolean|nil Persist stats entry to savegame?
-function Ext.SyncStat (name, persist) end
+function Ext.Stats.SyncStat (name, persist) end
 
 --- Toggles whether the specified stats entry should be persisted to savegames
 --- @param name string Stat entry name
 --- @param persist boolean Persist stats entry to savegame?
-function Ext.StatSetPersistence (name, persist) end
+function Ext.Stats.StatSetPersistence (name, persist) end
 
 --- Returns the textual label assigned to the specified enumeration value
 --- @param enum string Engine enumeration name
 --- @param index number Value index to look up
 --- @return string|nil
-function Ext.EnumIndexToLabel (enum, index) end
+function Ext.Stats.EnumIndexToLabel (enum, index) end
 
 --- Returns the numeric index assigned to the specified enumeration label
 --- @param enum string Engine enumeration name
 --- @param label string Value name to look for
 --- @return number|nil
-function Ext.EnumLabelToIndex (enum, label) end
+function Ext.Stats.EnumLabelToIndex (enum, label) end
 
 -- Execute the SkillProperties of the specified skill on a target character.
 --- @param skillId string Stats skill ID
@@ -3970,7 +3874,7 @@ function Ext.EnumLabelToIndex (enum, label) end
 --- @param position number[]
 --- @param propertyContext string Target|AoE|Self|SelfOnHit|SelfOnEquip
 --- @param isFromItem boolean
-function Ext.ExecuteSkillPropertiesOnTarget(skillId, attacker, target, position, propertyContext, isFromItem)
+function Ext.Stats.ExecuteSkillPropertiesOnTarget(skillId, attacker, target, position, propertyContext, isFromItem)
 
 -- Execute the SkillProperties of the specified skill on a position.
 --- @param skillId string Stats skill ID
@@ -3979,7 +3883,7 @@ function Ext.ExecuteSkillPropertiesOnTarget(skillId, attacker, target, position,
 --- @param radius number
 --- @param propertyContext string Target|AoE|Self|SelfOnHit|SelfOnEquip
 --- @param isFromItem boolean
-function Ext.ExecuteSkillPropertiesOnPosition(skillId, attacker, position, radius, propertyContext, isFromItem)
+function Ext.Stats.ExecuteSkillPropertiesOnPosition(skillId, attacker, position, radius, propertyContext, isFromItem)
 
 --- Returns the transformation rules that are applied when two neighbouring surfaces interact.
 --- @return SurfaceInteractionSet[][]
