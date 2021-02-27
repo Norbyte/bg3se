@@ -6,7 +6,7 @@
 
 namespace bg3se
 {
-	struct StatsFunctorBase
+	struct StatsFunctorBase : Noncopyable<StatsFunctorBase>
 	{
 		struct FunctorVMT
 		{
@@ -93,10 +93,15 @@ namespace bg3se
 	};
 
 
-	struct LuaExpression : public ProtectedGameObject<LuaExpression>
+	struct LuaExpressionBase
 	{
-	    Array<STDString> ExpressionParams_M;
-	    STDString Code;
+		Array<STDString> ExpressionParams;
+		STDString Code;
+	};
+
+
+	struct LuaExpression : public LuaExpressionBase
+	{
 	    int FastLock;
 	};
 
@@ -359,7 +364,6 @@ namespace bg3se
 	{
 		static constexpr auto FunctorId = StatsFunctorActionId::UseSpell;
 
-		uint64_t field_18{ 0 };
 		FixedString SpellId; // Arg0
 		bool IgnoreHasSpell{ false }; // Arg1
 		bool IgnoreChecks{ false }; // Arg2
