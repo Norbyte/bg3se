@@ -166,7 +166,7 @@ end
 
 _I._ConsoleCommandListeners = {}
 
-Ext.DoConsoleCommand = function (cmd)
+_I.DoConsoleCommand = function (cmd)
 	local params = {}
 	for param in string.gmatch(cmd, "%S+") do
 		table.insert(params, param)
