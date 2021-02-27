@@ -204,8 +204,8 @@ namespace bg3se
 		std::optional<int64_t> GetInt64(FixedString const& attributeName);
 		std::optional<UUID> GetGuid(FixedString const& attributeName);
 		std::optional<ObjectSet<FixedString>> GetFlags(FixedString const& attributeName);
-		std::optional<Array<StatsFunctorInfo>> GetStatsFunctors(FixedString const& attributeName);
-		std::optional<Array<RollConditionInfo>> GetRollConditions(FixedString const& attributeName);
+		std::optional<Array<StatsFunctorInfo>*> GetStatsFunctors(FixedString const& attributeName);
+		std::optional<Array<RollConditionInfo>*> GetRollConditions(FixedString const& attributeName);
 		bool SetString(FixedString const& attributeName, const char* value);
 		bool SetInt(FixedString const& attributeName, int32_t value);
 		bool SetFloat(FixedString const& attributeName, std::optional<float> value);

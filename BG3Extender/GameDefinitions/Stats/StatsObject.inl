@@ -49,8 +49,8 @@ namespace bg3se
 			}
 		} else if (typeInfo->Name == GFS.strRollConditions) {
 			auto rollConditions = GetRollConditions(attributeName);
-			if (rollConditions && rollConditions->Size == 1 && (*rollConditions)[0].Name == GFS.strDefault) {
-				auto val = GetStaticSymbols().GetStats()->GetConditions((*rollConditions)[0].ConditionsId);
+			if (rollConditions && (*rollConditions)->Size == 1 && (**rollConditions)[0].Name == GFS.strDefault) {
+				auto val = GetStaticSymbols().GetStats()->GetConditions((**rollConditions)[0].ConditionsId);
 				if (val) {
 					return **val;
 				}
@@ -188,7 +188,7 @@ namespace bg3se
 		return {};
 	}
 
-	std::optional<Array<CRPGStats_Object::StatsFunctorInfo>> CRPGStats_Object::GetStatsFunctors(FixedString const& attributeName)
+	std::optional<Array<CRPGStats_Object::StatsFunctorInfo>*> CRPGStats_Object::GetStatsFunctors(FixedString const& attributeName)
 	{
 		int attributeIndex;
 		auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
@@ -202,13 +202,13 @@ namespace bg3se
 
 		auto functors = StatsFunctors.Find(attributeName);
 		if (functors) {
-			return **functors;
+			return *functors;
 		} else {
 			return {};
 		}
 	}
 
-	std::optional<Array<CRPGStats_Object::RollConditionInfo>> CRPGStats_Object::GetRollConditions(FixedString const& attributeName)
+	std::optional<Array<CRPGStats_Object::RollConditionInfo>*> CRPGStats_Object::GetRollConditions(FixedString const& attributeName)
 	{
 		int attributeIndex;
 		auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
@@ -222,7 +222,7 @@ namespace bg3se
 
 		auto conditions = RollConditions.Find(attributeName);
 		if (conditions) {
-			return **conditions;
+			return *conditions;
 		} else {
 			return {};
 		}
