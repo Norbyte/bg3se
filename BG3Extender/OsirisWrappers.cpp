@@ -358,7 +358,7 @@ void OsirisWrappers::FindOsirisGlobals(FARPROC CtorProc)
 	for (uint8_t * ptr = Addr; ptr < Addr + 0x500; ptr++)
 	{
 		// Look for the instruction "mov <reg>, r14"
-		if (ptr[0] == 0x49 && ptr[1] == 0x8B && 
+		if ((ptr[0] == 0x49 || ptr[0] == 0x48) && ptr[1] == 0x8B &&
 			// Look for the instruction "mov cs:[rip + xxx], <64-bit register>"
 			ptr[3] == 0x48 && ptr[4] == 0x89 && (ptr[5] & 0xC7) == 0x05)
 		{
