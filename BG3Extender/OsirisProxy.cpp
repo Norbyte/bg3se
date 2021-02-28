@@ -818,12 +818,13 @@ void OsirisProxy::OnClientGameStateChanged(void * self, ecl::GameState fromState
 	// Check to make sure that startup is done even if the extender was loaded when the game was already in GameState::Init
 	if (toState != ecl::GameState::Unknown
 		&& toState != ecl::GameState::StartLoading
-		&& toState != ecl::GameState::InitMenu) {
+		&& toState != ecl::GameState::InitMenu
+		&& !Libraries.InitializationFailed()) {
 		// We need to initialize the function library here, as GlobalAllocator isn't available in Init().
 		std::lock_guard _(globalStateLock_);
 		Libraries.PostStartupFindLibraries();
 
-		if (!functionLibraryInitialized_) {
+		if (!Libraries.InitializationFailed() && !functionLibraryInitialized_) {
 			CustomInjector.Initialize();
 			FunctionLibrary.Register();
 			functionLibraryInitialized_ = true;

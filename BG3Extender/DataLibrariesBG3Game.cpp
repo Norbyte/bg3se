@@ -11,10 +11,10 @@ namespace bg3se
 	SymbolMappingData const sSymbolSurfaceActionFactoryAddSurfaceAction = {
 		"esv::SurfaceActionFactory::AddSurfaceAction",
 		SymbolMappingData::kCustom, 0,
-		"48 8B D3 " // mov     rdx, rbx
+		"48 8B D6 " // mov     rdx, rsi
 		"48 8B C8 " // mov     rcx, rax
 		"E8 XX XX XX XX " // call    esv__SurfaceActionFactory__AddSurfaceAction
-		"C7 06 01 00 00 00 ", // mov     dword ptr [rsi], 1
+		"44 88 77 08 ", // mov     [rdi+8], r14b
 		{},
 		{"esv::SurfaceActionFactory::AddSurfaceAction", SymbolMappingTarget::kIndirect, 6, STATIC_SYM(esv__SurfaceActionFactory__AddAction)}
 	};
@@ -396,11 +396,11 @@ namespace bg3se
 			"48 8D 4C 24 68 " // lea     rcx, [rsp+140h+var_D8]
 			"E8 XX XX XX XX " // call    ls__FileReader__ctor
 			"48 8B D0 " // mov     rdx, rax
-			"48 8D 8F 50 04 00 00 " // lea     rcx, [rdi+450h]
+			"48 8D 8F XX 04 00 00 " // lea     rcx, [rdi+4XXh]
 			"E8 XX XX XX XX " // call    xxx
 			"48 8D 4C 24 68 " // lea     rcx, [rsp+140h+var_D8]
 			"E8 XX XX XX XX " // call    ls__FileReader__dtor
-			"48 8D 8F 50 04 00 00 ", // lea     rcx, [rdi+450h] 
+			"48 8D 8F XX 04 00 00 ", // lea     rcx, [rdi+4XXh] 
 			{}, // Unconditional
 			{"ls::FileReader::FileReader", SymbolMappingTarget::kIndirect, 5, STATIC_SYM(ls__FileReader__ctor)},
 			{"ls::FileReader::~FileReader", SymbolMappingTarget::kIndirect, 30, STATIC_SYM(ls__FileReader__dtor)}
@@ -436,10 +436,10 @@ namespace bg3se
 		{
 			"EoCServer2/EoCClient2",
 			SymbolMappingData::kText, SymbolMappingData::kCritical,
-			"48 C7 83 08 02 00 00 00 00 00 00 " // mov     qword ptr [rbx+208h], 0
+			"48 C7 83 28 02 00 00 00 00 00 00 " // mov     qword ptr [rbx+228h], 0
 			"48 8B 0D XX XX XX XX " // mov     rcx, cs:ecl__gEoCClient
 			"E8 XX XX XX XX " // call    xxx
-			"48 8B 8B 00 02 00 00 " // mov     rcx, [rbx+200h]
+			"48 8B 8B 20 02 00 00 " // mov     rcx, [rbx+220h]
 			"E8 XX XX XX XX " // call    xxx
 			"48 8B 0D XX XX XX XX ", // mov     rcx, cs:esv__gEoCServer
 			{}, // Unconditional
@@ -1219,20 +1219,6 @@ namespace bg3se
 		},
 
 		{
-			"esv::SurfaceActionFactory",
-			SymbolMappingData::kText, 0,
-			"BA 01 00 00 00 " // mov     edx, 1
-			"48 8B 0D XX XX XX XX " // mov     rcx, cs:esv__gSurfaceActionFactory
-			"E8 XX XX XX XX " // call    esv__SurfaceActionFactory__CreateAction
-			"48 8B F8 " // mov     rdi, rax
-			"49 8B CF " // mov     rcx, r15
-			"8B 45 18 ", // mov     eax, [rbp+18h]
-			{},
-			{"esv::SurfaceActionFactory", SymbolMappingTarget::kIndirect, 5, STATIC_SYM(esv__SurfaceActionFactory)},
-			{"esv::SurfaceActionFactory::CreateAction", SymbolMappingTarget::kIndirect, 12, STATIC_SYM(esv__SurfaceActionFactory__CreateAction)},
-		},
-
-		{
 			"esv::TransformSurfaceAction::Init",
 			SymbolMappingData::kText, 0,
 			"4C 8D 0D XX XX XX XX " // lea     r9, xxx
@@ -1340,7 +1326,7 @@ namespace bg3se
 		{
 			"RPGStats",
 			SymbolMappingData::kText, SymbolMappingData::kDeferred,
-			"48 89 87 B8 01 00 00 " // mov     [rdi+1B8h], rax
+			"48 89 87 C8 01 00 00 " // mov     [rdi+1C8h], rax
 			"48 8B 1D XX XX XX XX " // mov     rbx, cs:gRPGStats
 			"48 8D 15 XX XX XX XX ", // lea     rdx, fs_Infectious_Disease_Depth
 			{SymbolMappingCondition::kFixedString, 14, "Infectious Disease Depth"},
@@ -1365,15 +1351,13 @@ namespace bg3se
 			"esv::SurfaceActionFactory::CreateAction",
 			SymbolMappingData::kText, 0,
 			"48 8B 0D XX XX XX XX " // mov     rcx, cs:esv__gSurfaceActionFactory
-			"49 B8 00 00 00 00 00 00 C0 FF " // mov     r8, 0FFC0000000000000h
-			"44 8B 60 08 " // mov     r12d, [rax+8]
 			"B2 02 " // mov     dl, 2
-			"F2 0F 10 30 " // movsd   xmm6, qword ptr [rax]
-			"48 89 9C 24 88 00 00 00 " // mov     [rsp+78h+arg_8], rbx
+			"4C 89 4D D0 " // [rbp+var_30], r9
+			"49 B9 00 00 00 00 00 00 C0 FF " // mov     r9, 0FFC0000000000000h
 			"E8 XX XX XX XX ", // call    esv__SurfaceActionFactory__CreateSurfaceAction
 			{},
 			{"esv::SurfaceActionFactory", SymbolMappingTarget::kAbsolute, 0, nullptr, nullptr, &sSymbolSurfaceActionFactoryAddSurfaceAction, 0x300},
-			{"esv::SurfaceActionFactory::CreateAction", SymbolMappingTarget::kIndirect, 35, STATIC_SYM(esv__SurfaceActionFactory__CreateAction)},
+			{"esv::SurfaceActionFactory::CreateAction", SymbolMappingTarget::kIndirect, 23, STATIC_SYM(esv__SurfaceActionFactory__CreateAction)},
 		},
 
 		{
