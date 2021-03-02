@@ -769,7 +769,7 @@ namespace bg3se::esv::lua
 		return false;
 	}
 
-
+	*/
 	void ServerState::OnGameStateChanged(GameState fromState, GameState toState)
 	{
 		StackCheck _(L, 0);
@@ -779,7 +779,7 @@ namespace bg3se::esv::lua
 		CheckedCall<>(L, 2, "Ext.GameStateChanged");
 	}
 
-
+	/*
 	esv::Item* ServerState::OnGenerateTreasureItem(esv::Item* item)
 	{
 		StackCheck _(L, 0);

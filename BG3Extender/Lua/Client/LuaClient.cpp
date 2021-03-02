@@ -1101,17 +1101,17 @@ namespace bg3se::ecl::lua
 			return {};
 		}
 	}
-
+	*/
 	void ClientState::OnGameStateChanged(GameState fromState, GameState toState)
 	{
 		StackCheck _(L, 0);
-		PushExtFunction(L, "_GameStateChanged"); // stack: fn
+		PushInternalFunction(L, "_GameStateChanged"); // stack: fn
 		push(L, fromState);
 		push(L, toState);
 		CheckedCall<>(L, 2, "Ext.GameStateChanged");
 	}
 
-
+	/*
 	std::optional<STDString> ClientState::GetSkillPropertyDescription(CRPGStats_Object_Property_Extender* prop)
 	{
 		StackCheck _(L, 0);

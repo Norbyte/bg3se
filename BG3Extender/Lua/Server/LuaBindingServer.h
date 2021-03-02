@@ -239,6 +239,7 @@ namespace bg3se::esv::lua
 
 		std::optional<STDString> GetModPersistentVars(STDString const& modTable);
 		void RestoreModPersistentVars(STDString const& modTable, STDString const& vars);
+		void OnGameStateChanged(GameState fromState, GameState toState);
 
 	private:
 		ExtensionLibraryServer library_;

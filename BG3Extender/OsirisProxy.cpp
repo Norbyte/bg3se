@@ -900,7 +900,7 @@ void OsirisProxy::OnClientGameStateChanged(void * self, ecl::GameState fromState
 
 	ecl::LuaClientPin lua(ecl::ExtensionState::Get());
 	if (lua) {
-		//lua->OnGameStateChanged(fromState, toState);
+		lua->OnGameStateChanged(fromState, toState);
 	}
 }
 
@@ -965,7 +965,7 @@ void OsirisProxy::OnServerGameStateChanged(void * self, esv::GameState fromState
 
 	esv::LuaServerPin lua(esv::ExtensionState::Get());
 	if (lua) {
-		//lua->OnGameStateChanged(fromState, toState);
+		lua->OnGameStateChanged(fromState, toState);
 	}
 }
 
