@@ -771,27 +771,25 @@ namespace bg3se
 			Reallocate(other.Size);
 			Size = other.Size;
 			for (uint32_t i = 0; i < other.Size; i++) {
-				Buf[i] = other.Buf[i];
+				new (Buf + i) T(other.Buf[i]);
 			}
 		}
 
 		~CompactSet()
 		{
 			if (Buf) {
-				for (uint32_t i = 0; i < Size; i++) {
-					Buf[i].~T();
-				}
-
+				Clear();
 				FreeBuffer(Buf);
 			}
 		}
 
 		CompactSet& operator = (CompactSet const& other)
 		{
+			Clear();
 			Reallocate(other.Size);
 			Size = other.Size;
 			for (uint32_t i = 0; i < other.Size; i++) {
-				Buf[i] = other.Buf[i];
+				new (Buf + i) T(other.Buf[i]);
 			}
 			return *this;
 		}
@@ -812,8 +810,7 @@ namespace bg3se
 				if (buf != nullptr) {
 					Allocator::Free((void*)((std::ptrdiff_t)buf - 8));
 				}
-			}
-			else {
+			} else {
 				if (buf != nullptr) {
 					Allocator::Free(buf);
 				}
@@ -843,9 +840,15 @@ namespace bg3se
 		{
 			auto oldBuf = Buf;
 			RawReallocate(newCapacity);
+
 			for (uint32_t i = 0; i < std::min(Size, newCapacity); i++) {
-				new (&Buf[i]) T(oldBuf[i]);
+				new (Buf + i) T(oldBuf[i]);
 			}
+
+			for (uint32_t i = 0; i < Size; i++) {
+				oldBuf[i].~T();
+			}
+
 			FreeBuffer(oldBuf);
 		}
 
@@ -860,11 +863,16 @@ namespace bg3se
 				Buf[i] = Buf[i + 1];
 			}
 
+			Buf[Size - 1].~T();
 			Size--;
 		}
 
 		void Clear()
 		{
+			for (uint32_t i = 0; i < Size; i++) {
+				Buf[i].~T();
+			}
+
 			Size = 0;
 		}
 
@@ -1017,6 +1025,14 @@ namespace bg3se
 			CopyFrom(a);
 		}
 
+		~Array()
+		{
+			if (Buf) {
+				Clear();
+				GameFree(Buf);
+			}
+		}
+
 		Array& operator =(Array const& a)
 		{
 			CopyFrom(a);
@@ -1033,7 +1049,7 @@ namespace bg3se
 				Reallocate(a.Size);
 				Size = a.Size;
 				for (uint32_t i = 0; i < Size; i++) {
-					Buf[i] = a[i];
+					new (Buf + i) T(a[i]);
 				}
 			}
 		}
@@ -1060,17 +1076,25 @@ namespace bg3se
 
 		void Clear()
 		{
+			for (uint32_t i = 0; i < Size; i++) {
+				Buf[i].~T();
+			}
+
 			Size = 0;
 		}
 
 		void Reallocate(uint32_t newCapacity)
 		{
-			auto newBuf = GameAllocArray<T>(newCapacity);
+			auto newBuf = GameMemoryAllocator::NewRaw<T>(newCapacity);
 			for (uint32_t i = 0; i < std::min(Size, newCapacity); i++) {
-				new (&newBuf[i]) T(Buf[i]);
+				new (newBuf + i) T(Buf[i]);
 			}
 
 			if (Buf != nullptr) {
+				for (uint32_t i = 0; i < Size; i++) {
+					Buf[i].~T();
+				}
+
 				GameFree(Buf);
 			}
 
@@ -1098,6 +1122,7 @@ namespace bg3se
 				Buf[i] = Buf[i + 1];
 			}
 
+			Buf[Size - 1].~T();
 			Size--;
 		}
 

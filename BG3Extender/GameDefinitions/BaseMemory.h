@@ -135,6 +135,18 @@ namespace bg3se
 		}
 
 		template <class T>
+		static T* NewRaw()
+		{
+			return reinterpret_cast<T*>(GameAllocRaw(sizeof(T)));
+		}
+
+		template <class T>
+		static T* NewRaw(std::size_t count)
+		{
+			return reinterpret_cast<T*>(GameAllocRaw(count * sizeof(T)));
+		}
+
+		template <class T>
 		static void Free(T* ptr)
 		{
 			return GameFree(ptr);
