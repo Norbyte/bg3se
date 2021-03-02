@@ -176,7 +176,7 @@ FunctionHandle CustomFunctionManager::Register(std::unique_ptr<CustomCallBase> c
 	assert(!staticRegistrationDone_);
 	RegisterSignature(call.get());
 	auto index = (uint32_t)calls_.size();
-	FunctionHandle handle{ EoCFunctionType::Call, CallClassId, index };
+	FunctionHandle handle{ EoCFunctionType::Call, CallClassId, index | CustomFunctionId };
 	call->AssignHandle(handle);
 	calls_.push_back(std::move(call));
 	return handle;
@@ -187,7 +187,7 @@ FunctionHandle CustomFunctionManager::Register(std::unique_ptr<CustomQueryBase> 
 	assert(!staticRegistrationDone_);
 	RegisterSignature(qry.get());
 	auto index = (uint32_t)queries_.size();
-	FunctionHandle handle{ EoCFunctionType::Query, QueryClassId, index };
+	FunctionHandle handle{ EoCFunctionType::Query, QueryClassId, index | CustomFunctionId };
 	qry->AssignHandle(handle);
 	queries_.push_back(std::move(qry));
 	return handle;
@@ -198,7 +198,7 @@ FunctionHandle CustomFunctionManager::Register(std::unique_ptr<CustomEvent> even
 	assert(!staticRegistrationDone_);
 	RegisterSignature(event.get());
 	auto index = (uint32_t)events_.size();
-	FunctionHandle handle{ EoCFunctionType::Event, EventClassId, index };
+	FunctionHandle handle{ EoCFunctionType::Event, EventClassId, index | CustomFunctionId };
 	event->AssignHandle(handle);
 	events_.push_back(std::move(event));
 	return handle;
@@ -209,7 +209,7 @@ std::optional<FunctionHandle> CustomFunctionManager::RegisterDynamic(std::unique
 	assert(staticRegistrationDone_);
 	uint32_t index;
 	if (RegisterDynamicSignature(call.get(), index)) {
-		FunctionHandle handle{ EoCFunctionType::Call, CallClassId, index };
+		FunctionHandle handle{ EoCFunctionType::Call, CallClassId, index | CustomFunctionId };
 		call->AssignHandle(handle);
 		calls_[index] = std::move(call);
 		return handle;
@@ -223,7 +223,7 @@ std::optional<FunctionHandle> CustomFunctionManager::RegisterDynamic(std::unique
 	assert(staticRegistrationDone_);
 	uint32_t index;
 	if (RegisterDynamicSignature(query.get(), index)) {
-		FunctionHandle handle{ EoCFunctionType::Query, QueryClassId, index };
+		FunctionHandle handle{ EoCFunctionType::Query, QueryClassId, index | CustomFunctionId };
 		query->AssignHandle(handle);
 		queries_[index] = std::move(query);
 		return handle;
@@ -237,7 +237,7 @@ std::optional<FunctionHandle> CustomFunctionManager::RegisterDynamic(std::unique
 	assert(staticRegistrationDone_);
 	uint32_t index;
 	if (RegisterDynamicSignature(event.get(), index)) {
-		FunctionHandle handle{ EoCFunctionType::Event, EventClassId, index };
+		FunctionHandle handle{ EoCFunctionType::Event, EventClassId, index | CustomFunctionId };
 		event->AssignHandle(handle);
 		events_[index] = std::move(event);
 		return handle;
@@ -315,19 +315,19 @@ CustomFunction * CustomFunctionManager::Find(FunctionNameAndArity const & signat
 
 bool CustomFunctionManager::Call(FunctionHandle handle, OsiArgumentDesc const & params)
 {
-	if (handle.classIndex() != CallClassId) {
+	if (handle.classIndex() != CallClassId || !(handle.functionIndex() & CustomFunctionId)) {
 		OsiError("Cannot call " << (uint64_t)handle << " - not a custom function!");
 		return false;
 	}
 
-	auto index = handle.functionIndex();
+	auto index = handle.functionIndex() & ~CustomFunctionId;
 	if (index >= calls_.size()) {
-		OsiError("Call index " << handle.functionIndex() << " out of bounds!");
+		OsiError("Call index " << index << " out of bounds!");
 		return false;
 	}
 
 	if (!calls_[index]) {
-		OsiError("Call index " << handle.functionIndex() << " not mapped to a custom function!");
+		OsiError("Call index " << index << " not mapped to a custom function!");
 		return false;
 	}
 
@@ -336,19 +336,19 @@ bool CustomFunctionManager::Call(FunctionHandle handle, OsiArgumentDesc const & 
 
 bool CustomFunctionManager::Query(FunctionHandle handle, OsiArgumentDesc & params)
 {
-	if (handle.classIndex() != QueryClassId) {
+	if (handle.classIndex() != QueryClassId || !(handle.functionIndex() & CustomFunctionId)) {
 		OsiError("Cannot query " << (uint64_t)handle << " - not a custom function!");
 		return false;
 	}
 
-	auto index = handle.functionIndex();
+	auto index = handle.functionIndex() & ~CustomFunctionId;
 	if (index >= queries_.size()) {
-		OsiError("Query index " << handle.functionIndex() << " out of bounds!");
+		OsiError("Query index " << index << " out of bounds!");
 		return false;
 	}
 
 	if (!queries_[index]) {
-		OsiError("Query index " << handle.functionIndex() << " not mapped to a custom function!");
+		OsiError("Query index " << index << " not mapped to a custom function!");
 		return false;
 	}
 
@@ -618,6 +618,7 @@ bool CustomFunctionInjector::StaticQueryWrapper(DivFunctions::CallProc next, uin
 bool CustomFunctionInjector::CallWrapper(DivFunctions::CallProc next, uint32_t handle, OsiArgumentDesc * params)
 {
 	auto it = osiToDivMappings_.find(handle);
+
 	if (it != osiToDivMappings_.end()) {
 		return functions_.Call(it->second, *params);
 	} else {

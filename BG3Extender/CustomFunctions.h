@@ -230,6 +230,8 @@ namespace bg3se
 		static constexpr uint32_t QueryClassId = 2;
 		static constexpr uint32_t EventClassId = 3;
 
+		static constexpr uint32_t CustomFunctionId = 0x1000000;
+
 		void BeginStaticRegistrationPhase();
 		void EndStaticRegistrationPhase();
 		void ClearDynamicEntries();
