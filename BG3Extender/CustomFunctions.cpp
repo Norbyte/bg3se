@@ -578,6 +578,12 @@ void CustomFunctionInjector::OnAfterGetFunctionMappings(void * Osiris, MappingIn
 	// FIXME - remove, move to server state load event?
 	gOsirisProxy->GetServerExtensionState().Reset();
 
+	auto mappingsPtr = (*Mappings)[0].ParamTypes;
+	uint32_t numParams = 0;
+	for (unsigned i = 0; i < *MappingCount; i++) {
+		numParams += (*Mappings)[i].NumParams;
+	}
+
 	// Remove local functions
 	auto outputIndex = 0;
 	osiToDivMappings_.clear();
@@ -595,6 +601,18 @@ void CustomFunctionInjector::OnAfterGetFunctionMappings(void * Osiris, MappingIn
 			DEBUG("Function mapping (%s): %08x --> %08x", mapping.Name, mapping.Id, (unsigned int)mapped->Handle());
 #endif
 		}
+	}
+
+	// Mappings[0].ParamTypes needs to point to the beginning of the allocated parameter buffer,
+	// as Osiris will try to free that pointer after function mapping was done. Since we can remove
+	// functions from the beginning of the mapped function list, we need to remap the parameter list buffer.
+	auto removedMappings = (*Mappings)[0].ParamTypes - mappingsPtr;
+	auto newMappings = GameAllocArray<uint8_t>(numParams);
+	memcpy(newMappings, (*Mappings)[0].ParamTypes, numParams - removedMappings);
+
+	for (unsigned i = 0; i < *MappingCount; i++) {
+		auto& mapping = (*Mappings)[i];
+		mapping.ParamTypes = newMappings + (mapping.ParamTypes - mappingsPtr) - removedMappings;
 	}
 
 	DEBUG("CustomFunctionInjector mapping phase: %d -> %d functions", *MappingCount, outputIndex);
