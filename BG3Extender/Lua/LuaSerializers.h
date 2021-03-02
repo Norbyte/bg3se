@@ -170,6 +170,31 @@ namespace bg3se::lua
 	}
 
 	template <class T>
+	LuaSerializer& operator << (LuaSerializer& s, VirtualMultiHashSet<T>& v)
+	{
+		s.BeginObject();
+		if (s.IsWriting) {
+			int i = 1;
+			for (auto& val : v) {
+				StackCheck _(s.L);
+				push(s.L, i++);
+				s << val;
+				lua_settable(s.L, -3);
+			}
+		} else {
+			v.Clear();
+			for (auto idx : iterate(s.L, -1)) {
+				StackCheck _(s.L);
+				T temp{};
+				s << temp;
+				v.Add(temp);
+			}
+		}
+		s.EndObject();
+		return s;
+	}
+
+	template <class T>
 	LuaSerializer& operator << (LuaSerializer& s, Vector<T>& v)
 	{
 		s.BeginObject();

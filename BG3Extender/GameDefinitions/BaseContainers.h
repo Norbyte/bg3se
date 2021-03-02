@@ -8,6 +8,7 @@
 namespace bg3se
 {
 	unsigned int GetNearestLowerPrime(unsigned int num);
+	unsigned int GetNearestMultiHashMapPrime(unsigned int num);
 
 	template <class T>
 	struct ContiguousIterator
@@ -1198,6 +1199,151 @@ namespace bg3se
 
 	template <class TKey, class TValue>
 	struct VirtualMultiHashMap : public MultiHashMap<TKey, TValue>
+	{
+		virtual inline void Dummy() {}
+	};
+
+	template <class T>
+	struct MultiHashSet
+	{
+		int32_t* HashKeys{ nullptr };
+		uint32_t NumHashKeys{ 0 };
+		Array<int32_t> NextIds;
+		Array<T> Keys;
+
+		MultiHashSet()
+		{}
+
+		MultiHashSet(MultiHashSet const& other)
+			: HashKeys(nullptr), NumHashKeys(other.NumHashKeys), NextIds(other.NextIds), Keys(other.Keys)
+		{
+			if (other.HashKeys) {
+				HashKeys = GameAllocArray<int>(NumHashKeys);
+				std::copy(other.HashKeys, other.HashKeys + other.NumHashKeys, HashKeys);
+			}
+		}
+
+		~MultiHashSet()
+		{
+			if (HashKeys) {
+				GameFree(HashKeys);
+			}
+		}
+
+		MultiHashSet& operator =(MultiHashSet const& other)
+		{
+			if (HashKeys) {
+				GameFree(HashKeys);
+				HashKeys = nullptr;
+			}
+
+			NextIds = other.NextIds;
+			Keys = other.Keys;
+
+			NumHashKeys = other.NumHashKeys;
+			if (other.HashKeys) {
+				HashKeys = GameAllocArray<int>(NumHashKeys);
+				std::copy(other.HashKeys, other.HashKeys + other.NumHashKeys, HashKeys);
+			}
+
+			return *this;
+		}
+
+		int FindIndex(T const& key) const
+		{
+			if (NumHashKeys == 0) return -1;
+
+			auto keyIndex = HashKeys[(uint32_t)MultiHashMapHash(key) % NumHashKeys];
+			while (keyIndex >= 0) {
+				if (Keys[keyIndex] == key) return keyIndex;
+				keyIndex = NextIds[keyIndex];
+			}
+
+			return -1;
+		}
+
+		bool Contains(T const& key) const
+		{
+			return FindIndex(key) != -1;
+		}
+
+		void Clear()
+		{
+			std::fill(HashKeys, HashKeys + NumHashKeys, -1);
+			NextIds.Clear();
+			Keys.Clear();
+		}
+
+		int Add(T const& key)
+		{
+			auto index = FindIndex(key);
+			if (index != -1) {
+				return index;
+			}
+
+			int keyIdx = (int)Keys.Size;
+			Keys.Add(key);
+			NextIds.Add(-1);
+
+			if (NumHashKeys >= Keys.Size * 2) {
+				InsertToHashMap(key, keyIdx);
+			} else {
+				ResizeHashMap(2 * (unsigned)Keys.Size);
+			}
+
+			return keyIdx;
+		}
+
+		ContiguousIterator<T> begin()
+		{
+			return Keys.begin();
+		}
+
+		ContiguousConstIterator<T> begin() const
+		{
+			return Keys.begin();
+		}
+
+		ContiguousIterator<T> end()
+		{
+			return Keys.end();
+		}
+
+		ContiguousConstIterator<T> end() const
+		{
+			return Keys.end();
+		}
+
+	private:
+		void InsertToHashMap(T const& key, int keyIdx)
+		{
+			auto bucket = (uint32_t)MultiHashMapHash(key) % NumHashKeys;
+			auto prevKeyIdx = HashKeys[bucket];
+			if (prevKeyIdx < 0) {
+				prevKeyIdx = -2 - (int)bucket;
+			}
+
+			NextIds[keyIdx] = prevKeyIdx;
+			HashKeys[bucket] = keyIdx;
+		}
+
+		void ResizeHashMap(unsigned int newSize)
+		{
+			auto numBuckets = GetNearestMultiHashMapPrime(newSize);
+			if (HashKeys) {
+				GameFree(HashKeys);
+			}
+
+			HashKeys = GameAllocArray<int32_t>(numBuckets, -1);
+			NumHashKeys = numBuckets;
+			for (unsigned k = 0; k < Keys.Size; k++) {
+				InsertToHashMap(Keys[k], k);
+			}
+		}
+	};
+
+	template <class T>
+	struct VirtualMultiHashSet : public MultiHashSet<T>
 	{
 		virtual inline void Dummy() {}
 	};
