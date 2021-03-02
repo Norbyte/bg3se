@@ -189,7 +189,7 @@ namespace bg3se
 		VirtualMultiHashMap<FixedString, Array<StatsFunctorInfo>> StatsFunctors;
 		VirtualMultiHashMap<FixedString, Array<RollConditionInfo>> RollConditions;
 		FixedString AIFlags;
-		ObjectSet<CRPGStats_Requirement, GameMemoryAllocator, true> Requirements;
+		ObjectSet<CRPGStats_Requirement> Requirements;
 		uint64_t Unknown4[6];
 		int32_t Using{ -1 };
 		uint32_t ModifierListIndex{ 0 };

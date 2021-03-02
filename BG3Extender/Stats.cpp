@@ -706,6 +706,8 @@ namespace bg3se
 			V(ApplyEquipmentStatusFunctor)
 			V(RegainHitPointsFunctor)
 			V(UseSpellFunctor)
+			V(SummonInInventoryFunctor)
+			V(SpawnInInventoryFunctor)
 			V(ExtenderFunctor)
 
 		default:

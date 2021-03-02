@@ -77,8 +77,8 @@ namespace bg3se
 			virtual bool LoseControl() = 0;
 			virtual void VMTA0() = 0;
 			virtual void VMTA8() = 0;
-			virtual void VMTB0() = 0;
 			virtual ObjectHandle* GetOwnerHandle() = 0;
+			virtual void VMTB0() = 0;
 			virtual void GetSyncData(void* msgWriter) = 0;
 			virtual void VMTC8() = 0;
 			virtual void Visit(ObjectVisitor* visitor) = 0;
@@ -109,10 +109,13 @@ namespace bg3se
 			float Strength;
 			char CauseType; // TODO - CauseType enum?
 			ObjectHandle StatusHandle;
+			ObjectHandle UnknownHandle;
 			ObjectHandle OwnerHandle;
 			ObjectSet<ObjectHandle> StatusOwner;
 			Array<ObjectHandle> SomeArray;
 			EntityHandle StatusSourceEntityHandle_M;
+			UUID StatusSourceUUID;
+			EntityHandle StatusSourceEntityHandle;
 			ObjectHandle StatusSource;
 			EntityHandle CleansedByHandle_M;
 			ObjectHandle HandleSetOnDelete;

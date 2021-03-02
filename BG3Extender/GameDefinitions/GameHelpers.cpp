@@ -240,7 +240,7 @@ namespace bg3se
 		if (ctor) {
 			Path p;
 			p.Name = path;
-			ctor(this, p, 2);
+			ctor(this, p, 2, 0);
 		}
 	}
 

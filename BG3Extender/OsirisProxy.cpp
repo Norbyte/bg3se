@@ -1163,7 +1163,7 @@ void OsirisProxy::ResetLuaState(bool resetServer, bool resetClient)
 	}
 }
 
-FileReader * OsirisProxy::OnFileReaderCreate(FileReader::CtorProc* next, FileReader * self, Path const& path, unsigned int type)
+FileReader * OsirisProxy::OnFileReaderCreate(FileReader::CtorProc* next, FileReader * self, Path const& path, unsigned int type, unsigned int unknown)
 {
 	if (!pathOverrides_.empty()) {
 		std::shared_lock lock(pathOverrideMutex_);
@@ -1176,7 +1176,7 @@ FileReader * OsirisProxy::OnFileReaderCreate(FileReader::CtorProc* next, FileRea
 			overriddenPath.Unknown = path->Unknown;
 #endif
 			lock.unlock();
-			return next(self, overriddenPath, type);
+			return next(self, overriddenPath, type, unknown);
 		}
 	}
 
@@ -1186,7 +1186,7 @@ FileReader * OsirisProxy::OnFileReaderCreate(FileReader::CtorProc* next, FileRea
 	}
 
 	DisableCrashReporting _;
-	return next(self, path, type);
+	return next(self, path, type, unknown);
 }
 
 void OsirisProxy::OnSavegameVisit(void* osirisHelpers, ObjectVisitor* visitor)
@@ -1209,7 +1209,7 @@ void OsirisProxy::PostInitLibraries()
 			hasher_.PostStartup();
 
 			using namespace std::placeholders;
-			Libraries.FileReader__ctor.SetWrapper(std::bind(&OsirisProxy::OnFileReaderCreate, this, _1, _2, _3, _4));
+			Libraries.FileReader__ctor.SetWrapper(std::bind(&OsirisProxy::OnFileReaderCreate, this, _1, _2, _3, _4, _5));
 		}
 	}
 

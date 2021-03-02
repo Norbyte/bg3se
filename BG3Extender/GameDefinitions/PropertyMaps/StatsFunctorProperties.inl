@@ -237,6 +237,32 @@ P(StatusId)
 END_CLS()
 
 
+BEGIN_CLS(SummonInInventoryFunctor)
+INHERIT(StatsFunctorBase)
+P(Arg1)
+P(Arg2)
+P(Arg3)
+P(Arg4)
+P(Arg5)
+P(Arg6)
+P(Arg7)
+P(Arg8)
+P(AdditionalArgs)
+END_CLS()
+
+
+BEGIN_CLS(SpawnInInventoryFunctor)
+INHERIT(StatsFunctorBase)
+P(Arg1)
+P(Arg2)
+P(Arg3)
+P(Arg4)
+P(Arg5)
+P(Arg6)
+P(AdditionalArgs)
+END_CLS()
+
+
 BEGIN_CLS(ExtenderFunctor)
 INHERIT(StatsFunctorBase)
 END_CLS()

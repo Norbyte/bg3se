@@ -522,7 +522,7 @@ private:
 	void OnClientGameStateWorkerExit(void* self);
 	void OnServerGameStateWorkerExit(void* self);
 	void OnSkillPrototypeManagerInit(void * self);
-	FileReader * OnFileReaderCreate(FileReader::CtorProc* next, FileReader * self, Path const& path, unsigned int type);
+	FileReader * OnFileReaderCreate(FileReader::CtorProc* next, FileReader * self, Path const& path, unsigned int type, unsigned int unknown);
 	void OnSavegameVisit(void* osirisHelpers, ObjectVisitor* visitor);
 	void PostInitLibraries();
 	void InitRuntimeLogging();

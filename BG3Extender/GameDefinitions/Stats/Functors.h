@@ -265,7 +265,7 @@ namespace bg3se
 
 		FixedString TemplateId; // Arg0
 		FixedString Arg1;
-		ObjectSet<FixedString> StatusesToApply;
+		VirtualMultiHashSet<FixedString> StatusesToApply;
 	};
 
 	struct StabilizeFunctor : public StatsFunctorBase
@@ -373,6 +373,34 @@ namespace bg3se
 	struct ExtenderFunctor : public StatsFunctorBase
 	{
 		static constexpr auto FunctorId = StatsFunctorActionId::Extender;
+	};
+
+	struct SummonInInventoryFunctor : public StatsFunctorBase
+	{
+		static constexpr auto FunctorId = StatsFunctorActionId::SummonInInventory;
+
+		FixedString Arg1;
+		FixedString Arg7;
+		float Arg2; // Duration?
+		VirtualMultiHashSet<FixedString> AdditionalArgs;
+		FixedString Arg8;
+		float Arg3;
+		bool Arg4;
+		bool Arg5;
+		bool Arg6;
+	};
+
+	struct SpawnInInventoryFunctor : public StatsFunctorBase
+	{
+		static constexpr auto FunctorId = StatsFunctorActionId::SpawnInInventory;
+
+		FixedString Arg1;
+		FixedString Arg6;
+		float Arg2;
+		bool Arg3;
+		bool Arg4;
+		bool Arg5;
+		VirtualMultiHashSet<FixedString> AdditionalArgs;
 	};
 
 }

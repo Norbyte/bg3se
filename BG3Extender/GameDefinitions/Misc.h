@@ -321,7 +321,7 @@ namespace bg3se
 
 	struct FileReader : public Noncopyable<FileReader>
 	{
-		using CtorProc = FileReader * (FileReader* self, Path const& path, unsigned int type);
+		using CtorProc = FileReader * (FileReader* self, Path const& path, unsigned int type, unsigned int unknown);
 		using DtorProc = void (FileReader* self);
 
 		FileReader(std::string_view path);

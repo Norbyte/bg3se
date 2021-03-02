@@ -329,7 +329,7 @@ namespace bg3se::lua::stats
 
 			case RPGEnumerationType::Requirements:
 			{
-				ObjectSet<CRPGStats_Requirement, GameMemoryAllocator, true> requirements;
+				ObjectSet<CRPGStats_Requirement> requirements;
 				lua_pushvalue(L, valueIdx);
 				LuaRead(L, requirements);
 				lua_pop(L, 1);

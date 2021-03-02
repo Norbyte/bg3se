@@ -391,10 +391,8 @@ namespace bg3se::lua
 		
 		if (s.IsWriting) {
 			auto conditions = stats->GetConditions(v.StatsConditionsId);
-			if (conditions) {
+			if (conditions && !(*conditions)->empty()) {
 				setfield(s.L, "Condition", **conditions);
-			} else {
-				setfield(s.L, "Condition", "");
 			}
 		} else {
 			STDString name = std::to_string(gIndex++).c_str();
@@ -569,7 +567,7 @@ namespace bg3se::lua
 		s << static_cast<StatsFunctorBase&>(v);
 		P(TemplateId);
 		PO(Arg1, GFS.strEmpty);
-		PO(StatusesToApply, ObjectSet<FixedString>{});
+		PO(StatusesToApply, VirtualMultiHashSet<FixedString>{});
 		return s;
 	}
 
@@ -683,6 +681,34 @@ namespace bg3se::lua
 		return s;
 	}
 
+	LuaSerializer& operator << (LuaSerializer& s, SummonInInventoryFunctor& v)
+	{
+		s << static_cast<StatsFunctorBase&>(v);
+		P(Arg1);
+		P(Arg7);
+		P(Arg2);
+		P(AdditionalArgs);
+		P(Arg8);
+		P(Arg3);
+		P(Arg4);
+		P(Arg5);
+		P(Arg6);
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, SpawnInInventoryFunctor& v)
+	{
+		s << static_cast<StatsFunctorBase&>(v);
+		P(Arg1);
+		P(Arg6);
+		P(Arg2);
+		P(Arg3);
+		P(Arg4);
+		P(Arg5);
+		P(AdditionalArgs);
+		return s;
+	}
+
 	LuaSerializer& operator << (LuaSerializer& s, ExtenderFunctor& v)
 	{
 		s << static_cast<StatsFunctorBase&>(v);
@@ -732,6 +758,8 @@ namespace bg3se::lua
 					V(ApplyEquipmentStatusFunctor)
 					V(RegainHitPointsFunctor)
 					V(UseSpellFunctor)
+					V(SummonInInventoryFunctor)
+					V(SpawnInInventoryFunctor)
 					V(ExtenderFunctor)
 
 					default:
@@ -783,6 +811,8 @@ namespace bg3se::lua
 					V(ApplyEquipmentStatusFunctor)
 					V(RegainHitPointsFunctor)
 					V(UseSpellFunctor)
+					V(SummonInInventoryFunctor)
+					V(SpawnInInventoryFunctor)
 					V(ExtenderFunctor)
 
 					default:

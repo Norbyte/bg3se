@@ -376,38 +376,38 @@ namespace bg3se
 
 		std::cout << "-------------------------------------------------------" << std::endl;*/
 
-		MapComponentIndices("struct eoc::ActionResourcesComponent", ExtComponentType::ActionResources);
-		MapComponentIndices("struct eoc::ArmorComponent", ExtComponentType::Armor);
-		MapComponentIndices("struct eoc::BaseHpComponent", ExtComponentType::BaseHp);
-		MapComponentIndices("struct eoc::DataComponent", ExtComponentType::Data);
-		MapComponentIndices("struct eoc::ExperienceComponent", ExtComponentType::Experience);
-		MapComponentIndices("struct eoc::HealthComponent", ExtComponentType::Health);
-		MapComponentIndices("struct eoc::PassiveComponent", ExtComponentType::Passive);
-		MapComponentIndices("struct eoc::SenseComponent", ExtComponentType::Sense);
-		MapComponentIndices("struct eoc::spell::SpellBookComponent", ExtComponentType::SpellBook);
-		MapComponentIndices("struct eoc::StatsComponent", ExtComponentType::Stats);
-		MapComponentIndices("struct eoc::StatusImmunitiesComponent", ExtComponentType::StatusImmunities);
-		MapComponentIndices("struct eoc::SurfacePathInfluencesComponent", ExtComponentType::SurfacePathInfluences);
-		MapComponentIndices("struct eoc::UseComponent", ExtComponentType::Use);
-		MapComponentIndices("struct eoc::ValueComponent", ExtComponentType::Value);
-		MapComponentIndices("struct eoc::WeaponComponent", ExtComponentType::Weapon);
-		MapComponentIndices("struct eoc::WieldingComponent", ExtComponentType::Wielding);
-		MapComponentIndices("struct eoc::CustomStatsComponent", ExtComponentType::CustomStats);
-		MapComponentIndices("struct eoc::BoostConditionComponent", ExtComponentType::BoostCondition);
-		MapComponentIndices("struct eoc::BoostsContainerComponent", ExtComponentType::BoostsContainer);
-		MapComponentIndices("struct eoc::ActionResourceConsumeMultiplierBoost", ExtComponentType::ActionResourceConsumeMultiplierBoost);
-		MapComponentIndices("struct eoc::combat::ParticipantComponent", ExtComponentType::CombatParticipant);
-		MapComponentIndices("struct eoc::GenderComponent", ExtComponentType::Gender);
-		MapComponentIndices("struct eoc::spell::SpellContainerComponent", ExtComponentType::SpellContainer);
-		MapComponentIndices("struct eoc::TagComponent", ExtComponentType::Tag);
-		MapComponentIndices("struct eoc::spell::SpellBookPrepares", ExtComponentType::SpellBookPrepares);
-		MapComponentIndices("struct eoc::combat::StateComponent", ExtComponentType::CombatState);
-		MapComponentIndices("struct eoc::TurnBasedComponent", ExtComponentType::TurnBased);
-		MapComponentIndices("struct eoc::TurnOrderComponent", ExtComponentType::TurnOrder);
-		MapComponentIndices("struct ls::TransformComponent", ExtComponentType::Transform);
-		MapComponentIndices("struct eoc::PassiveContainerComponent", ExtComponentType::PassiveContainer);
-		MapComponentIndices("struct eoc::BoostInfoComponent", ExtComponentType::BoostInfo);
-		MapComponentIndices("struct eoc::RelationComponent", ExtComponentType::Relation);
+		MapComponentIndices("eoc::ActionResourcesComponent", ExtComponentType::ActionResources);
+		MapComponentIndices("eoc::ArmorComponent", ExtComponentType::Armor);
+		MapComponentIndices("eoc::BaseHpComponent", ExtComponentType::BaseHp);
+		MapComponentIndices("eoc::DataComponent", ExtComponentType::Data);
+		MapComponentIndices("eoc::exp::ExperienceComponent", ExtComponentType::Experience);
+		MapComponentIndices("eoc::HealthComponent", ExtComponentType::Health);
+		MapComponentIndices("eoc::PassiveComponent", ExtComponentType::Passive);
+		MapComponentIndices("eoc::SenseComponent", ExtComponentType::Sense);
+		MapComponentIndices("eoc::spell::SpellBookComponent", ExtComponentType::SpellBook);
+		MapComponentIndices("eoc::StatsComponent", ExtComponentType::Stats);
+		MapComponentIndices("eoc::StatusImmunitiesComponent", ExtComponentType::StatusImmunities);
+		MapComponentIndices("eoc::SurfacePathInfluencesComponent", ExtComponentType::SurfacePathInfluences);
+		MapComponentIndices("eoc::UseComponent", ExtComponentType::Use);
+		MapComponentIndices("eoc::ValueComponent", ExtComponentType::Value);
+		MapComponentIndices("eoc::WeaponComponent", ExtComponentType::Weapon);
+		MapComponentIndices("eoc::WieldingComponent", ExtComponentType::Wielding);
+		MapComponentIndices("eoc::CustomStatsComponent", ExtComponentType::CustomStats);
+		MapComponentIndices("eoc::BoostConditionComponent", ExtComponentType::BoostCondition);
+		MapComponentIndices("eoc::BoostsContainerComponent", ExtComponentType::BoostsContainer);
+		MapComponentIndices("eoc::ActionResourceConsumeMultiplierBoostCompnent", ExtComponentType::ActionResourceConsumeMultiplierBoost);
+		MapComponentIndices("eoc::combat::ParticipantComponent", ExtComponentType::CombatParticipant);
+		MapComponentIndices("eoc::GenderComponent", ExtComponentType::Gender);
+		MapComponentIndices("eoc::spell::SpellContainerComponent", ExtComponentType::SpellContainer);
+		MapComponentIndices("eoc::TagComponent", ExtComponentType::Tag);
+		MapComponentIndices("eoc::spell::SpellBookPrepares", ExtComponentType::SpellBookPrepares);
+		MapComponentIndices("eoc::combat::StateComponent", ExtComponentType::CombatState);
+		MapComponentIndices("eoc::TurnBasedComponent", ExtComponentType::TurnBased);
+		MapComponentIndices("eoc::TurnOrderComponent", ExtComponentType::TurnOrder);
+		MapComponentIndices("ls::TransformComponent", ExtComponentType::Transform);
+		MapComponentIndices("eoc::PassiveContainerComponent", ExtComponentType::PassiveContainer);
+		MapComponentIndices("eoc::BoostInfoComponent", ExtComponentType::BoostInfo);
+		MapComponentIndices("eoc::RelationComponent", ExtComponentType::Relation);
 
 		MapResourceManagerIndex("class ls::TagManager", ExtResourceManagerType::Tag);
 		MapResourceManagerIndex("class eoc::FactionContainer", ExtResourceManagerType::Faction);
@@ -445,7 +445,7 @@ namespace bg3se
 		MapResourceManagerIndex("class eoc::ColorDefinitions", ExtResourceManagerType::ColorDefinition);
 		MapResourceManagerIndex("class ls::FlagManager", ExtResourceManagerType::Flag);
 
-#define MAP_BOOST(name) MapComponentIndices("struct eoc::" #name, ExtComponentType::name)
+#define MAP_BOOST(name) MapComponentIndices("eoc::" #name "Component", ExtComponentType::name)
 
 		MAP_BOOST(ArmorClassBoost);
 		MAP_BOOST(AbilityBoost);
@@ -501,9 +501,18 @@ namespace bg3se
 	void EntitySystemHelpersBase::MapComponentIndices(char const* componentName, ExtComponentType type)
 	{
 		STDString name(componentName);
-		name += ">(void)";
 
 		auto it = componentIndexMappings_.find(name);
+		if (it == componentIndexMappings_.end()) {
+			name = "struct " + std::string(componentName) + ">(void)";
+			it = componentIndexMappings_.find(name);
+		}
+
+		if (it == componentIndexMappings_.end()) {
+			name = "class " + std::string(componentName) + ">(void)";
+			it = componentIndexMappings_.find(name);
+		}
+
 		if (it != componentIndexMappings_.end()) {
 			componentIndices_[(unsigned)type] = it->second.ComponentIndex;
 			handleIndices_[(unsigned)type] = it->second.HandleIndex;
@@ -676,19 +685,19 @@ namespace bg3se
 	{
 		UpdateComponentMappings();
 
-		MapComponentIndices("class esv::Character", ExtComponentType::ServerCharacter);
-		MapComponentIndices("class esv::Item", ExtComponentType::ServerItem);
-		MapComponentIndices("class esv::Projectile", ExtComponentType::ServerProjectile);
-		MapComponentIndices("struct esv::OsirisTagComponent", ExtComponentType::ServerOsirisTag);
+		MapComponentIndices("esv::Character", ExtComponentType::ServerCharacter);
+		MapComponentIndices("esv::Item", ExtComponentType::ServerItem);
+		MapComponentIndices("esv::Projectile", ExtComponentType::ServerProjectile);
+		MapComponentIndices("esv::OsirisTagComponent", ExtComponentType::ServerOsirisTag);
 	}
 
 	void ClientEntitySystemHelpers::Setup()
 	{
 		UpdateComponentMappings();
 
-		MapComponentIndices("class ecl::Character", ExtComponentType::ClientCharacter);
-		MapComponentIndices("class ecl::Item", ExtComponentType::ClientItem);
-		MapComponentIndices("class ecl::Projectile", ExtComponentType::ClientProjectile);
+		MapComponentIndices("ecl::Character", ExtComponentType::ClientCharacter);
+		MapComponentIndices("ecl::Item", ExtComponentType::ClientItem);
+		MapComponentIndices("ecl::Projectile", ExtComponentType::ClientProjectile);
 	}
 
 

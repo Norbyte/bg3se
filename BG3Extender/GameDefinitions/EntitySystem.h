@@ -388,6 +388,7 @@ namespace bg3se
 			void * LobbyManagerOrigins;
 			bool field_E8;
 			void* SomeSharedServerClientObj;
+			void* field_118;
 		};
 
 		typedef void(*GameStateEventManager__ExecuteGameStateChangedEvent)(void* self, GameState fromState, GameState toState);
