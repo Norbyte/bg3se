@@ -29,8 +29,6 @@ namespace bg3se
 		{
 			void* VMT;
 			EntityManager* EntityManager;
-			Map<FixedString, ObjectSet<Item*>*> RegisteredItems;
-			Map<FixedString, ObjectSet<Item*>*> ActivatedItems;
 			FixedString CurrentLevel;
 		};
 
@@ -38,8 +36,6 @@ namespace bg3se
 		{
 			EntityManager* EntityManager;
 			ItemConversionHelpers* ItemConversionHelpers;
-			Map<FixedString, ObjectSet<Character*>*> RegisteredCharacters;
-			Map<FixedString, ObjectSet<Character*>*> ActivatedCharacters;
 		};
 
 		struct TriggerConversionHelpers : ProtectedGameObject<TriggerConversionHelpers>

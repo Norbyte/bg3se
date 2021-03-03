@@ -284,10 +284,10 @@ namespace bg3se
 
 	struct Transform
 	{
-		glm::mat4x4 Matrix[16];
-		glm::mat3x3 Rotate[9];
-		glm::vec3 Translate[3];
-		glm::vec3 Scale[3];
+		glm::mat4x4 Matrix;
+		glm::mat3x3 Rotate;
+		glm::vec3 Translate;
+		glm::vec3 Scale;
 	};
 }
 

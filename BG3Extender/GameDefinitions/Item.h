@@ -131,15 +131,14 @@ namespace bg3se
 			int field_FC;
 			ObjectHandle InUseByCharacterHandle_M;
 			int UserId_M;
-			int UserId2_M;
-			void* field_110;
+			bool field_10C;
+			int field_110;
+			void* field_118;
 			void* ItemMachine;
 			void* PlanManager;
 			void* VariableManager;
 			StatusMachine* StatusMachine;
 			FixedString VisualResourceID_M;
-			__int64 field_140;
-			__int64 field_148;
 			ObjectHandle OwnerHandle;
 			ObjectHandle OriginalOwnerCharacterHandle;
 			void* Sockets;

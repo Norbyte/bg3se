@@ -124,30 +124,22 @@ namespace bg3se
 		struct Entity
 		{
 			ObjectHandle EntityHandle;
-			__int64 field_8;
+			bool field_8;
+			uint32_t field_C;
 			Array<int16_t> SlotIndexToComponentIdMap;
 			Array<ObjectHandle> ComponentHandles;
 			Array<int16_t> ComponentIdToSlotIndexMap;
 			int NumUsedSlots;
-			int field_4C;
-			uint64_t OccupiedSlotBitmap[2];
-			__int64 field_60;
-			__int64 field_68;
-			__int64 field_70;
-			__int64 field_78;
-			__int64 field_80;
+			uint64_t OccupiedSlotBitmap[8];
 		};
 
 		struct EntityType
 		{
-			ObjectHandle* Handles;
-			uint64_t Unknown[2];
-			Entity* Entities;
-			uint64_t Unknown2[2];
-			int* HandleToIndexRemaps;
-			uint64_t Unknown3;
-			uint32_t EntityCount;
-			uint64_t Unknown4;
+			Array<ObjectHandle> Handles;
+			Array<Entity> Entities;
+			Array<int> HandleToIndexRemaps;
+			uint32_t LastAssignedEntityIndex;
+			uint32_t field_4C;
 			uint32_t* Salts; // 0x40000 salt entries
 		};
 
@@ -383,8 +375,8 @@ namespace bg3se
 			ModManager * ModManagerServer;
 			bool ShutDown;
 			EntityWorld * EntityWorld;
-			void * unknown_F0;
 			EntityManager* EntityManager;
+			void* unknown_F0;
 			void * LobbyManagerOrigins;
 			bool field_E8;
 			void* SomeSharedServerClientObj;

@@ -16,12 +16,32 @@ namespace bg3se
 		uint8_t Type;
 	};
 
+	struct LevelData
+	{
+		LevelDesc* LevelDesc;
+		void* SomeDesc;
+		LevelManager* LevelManager;
+		RefMap<FixedString, void*> field_18;
+		int LockCount;
+		int field_2C;
+		__int64 field_30;
+		__int64 field_38;
+		int field_40;
+		Array<void*> field_48;
+		Array<void*> field_60;
+		CRITICAL_SECTION CriticalSection;
+		__int64 field_A0;
+		HANDLE EventHandle1;
+		HANDLE EventHandle2;
+	};
+
+
 	struct Level : public ProtectedGameObject<Level>
 	{
 		void* VMT;
 		void* LevelManager;
 		void* LocalTemplateManager;
-		LevelDesc* LevelDesc;
+		LevelData* LevelData;
 		void* LocalTemplateManager2_M;
 		void* Scene_M;
 		void* SimplePhysXScene;
@@ -60,14 +80,8 @@ namespace bg3se
 		LevelManagerBase b;
 		void* field_88;
 		Level* CurrentLevel;
-		void* field_98;
-		void* field_A0;
-		int field_A8;
-		Array<void*> field_B0;
-		Array<void*> field_C8;
-		void* field_E0;
-		int field_E8;
-		Map<FixedString, Level*> FSMap_pLevel;
+		VirtualMultiHashMap<FixedString, Level*> LevelData;
+		Map<FixedString, Level*> Levels;
 	};
 
 
@@ -82,7 +96,6 @@ namespace bg3se
 			void* SurfaceManager;
 			void* GameActionManager;
 			void* EffectManager;
-			void* NoiseManager_M;
 			void* ShroudManager;
 			void* LightingOverrides;
 			void* AtmosphereOverrides;
@@ -91,17 +104,6 @@ namespace bg3se
 			void* TimelineSystem;
 			void* TerrainManager;
 			void* LevelCacheTemplateManager_M;
-		};
-
-		struct LevelManager
-		{
-			void* VMT;
-#if defined(OSI_EOCAPP)
-			uint64_t Unknown[15];
-#endif
-			Level* CurrentLevel;
-			VirtualMultiHashMap<FixedString, void*> LevelMetadata_M;
-			Map<FixedString, Level*> Levels;
 		};
 
 		struct LevelManager : public bg3se::LevelManager

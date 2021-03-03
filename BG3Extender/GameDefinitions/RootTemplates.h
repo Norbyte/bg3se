@@ -39,6 +39,7 @@ namespace bg3se
         void* Unknown;
         OverrideableProperty<FixedString> VisualTemplate;
         OverrideableProperty<FixedString> PhysicsTemplate;
+        OverrideableProperty<FixedString> PhysicsOpenTemplate;
         OverrideableProperty<bool> CastShadow;
         OverrideableProperty<bool> ReceiveDecal;
         OverrideableProperty<bool> AllowReceiveDecalWhenAnimated;
@@ -55,7 +56,6 @@ namespace bg3se
 
     struct EoCGameObjectTemplate : public GameObjectTemplate
     {
-        uint64_t Unknown;
         OverrideableProperty<ObjectSet<void*>> AIBounds;
         TranslatedString DisplayName;
         uint8_t _Pad10[1];
@@ -64,6 +64,7 @@ namespace bg3se
         OverrideableProperty<bool> Fadeable;
         OverrideableProperty<bool> FadeIn;
         OverrideableProperty<bool> SeeThrough;
+        OverrideableProperty<bool> CollideWithCamera;
         OverrideableProperty<bool> HierarchyOnlyFade;
         OverrideableProperty<FixedString> FadeGroup;
         ObjectSet<FixedString> FadeChildren;
@@ -87,21 +88,21 @@ namespace bg3se
         OverrideableProperty<FixedString> LoopSound;
         OverrideableProperty<FixedString> SoundInitEvent;
         OverrideableProperty<uint64_t> SoundAttenuation;
-        OverrideableProperty<GUID> HLOD;
+        OverrideableProperty<UUID> HLOD;
     };
 
     struct CombatComponentTemplate
     {
         void* VMT;
         OverrideableProperty<FixedString> Archetype;
-        OverrideableProperty<GUID> Alignment;
+        OverrideableProperty<UUID> Alignment;
         OverrideableProperty<bool> CanFight;
         OverrideableProperty<bool> CanJoinCombat;
         OverrideableProperty<FixedString> CombatGroupID;
         OverrideableProperty<STDString> CombatName;
         OverrideableProperty<bool> IsBoss;
         OverrideableProperty<bool> StayInAiHints;
-        OverrideableProperty<GUID> AiHint;
+        OverrideableProperty<UUID> AiHint;
         OverrideableProperty<bool> IsInspector;
         OverrideableProperty<bool> Unknown;
         OverrideableProperty<float> StartCombatRange;
@@ -128,6 +129,7 @@ namespace bg3se
         OverrideableProperty<float> LadderLoopSpeed;
         OverrideableProperty<float> LadderDetachSpeed;
         OverrideableProperty<bool> CanShootThrough;
+        OverrideableProperty<uint8_t> ShootThroughType;
         OverrideableProperty<bool> WalkThrough;
         OverrideableProperty<bool> CanClimbLadders;
         OverrideableProperty<bool> IsPlayer;
@@ -139,7 +141,7 @@ namespace bg3se
         OverrideableProperty<bool> NotHardcore;
         OverrideableProperty<bool> JumpUpLadders;
         OverrideableProperty<bool> IsHuge;
-        OverrideableProperty<GUID> EquipmentRace;
+        OverrideableProperty<UUID> EquipmentRace;
         OverrideableProperty<ObjectSet<void*>> OnDeathActions;
         OverrideableProperty<float> DeathRaycastMinLength;
         OverrideableProperty<float> DeathRaycastMaxLength;
@@ -192,22 +194,21 @@ namespace bg3se
         OverrideableProperty<FixedString> RagdollTemplate;
         OverrideableProperty<ObjectSet<void*>> FootStepInfos;
         OverrideableProperty<uint8_t> DefaultState;
-        OverrideableProperty<FixedString> GhostTemplate;
         OverrideableProperty<bool> IsLootable;
         OverrideableProperty<bool> IsEquipmentLootable;
         OverrideableProperty<uint8_t> LightChannel;
         OverrideableProperty<uint8_t> AliveInventoryType;
         OverrideableProperty<uint8_t> InventoryType;
-        OverrideableProperty<GUID> Race;
+        OverrideableProperty<UUID> Race;
         OverrideableProperty<TranslatedString> Title;
         OverrideableProperty<FixedString> AnimationSetResourceID;
         OverrideableProperty<bool> HasPlayerApprovalRating;
-        OverrideableProperty<bool> CanLongRest;
         OverrideableProperty<bool> DisableEquipping;
         OverrideableProperty<float> WorldClimbingSpeed;
         OverrideableProperty<bool> IsMovementEnabled;
         OverrideableProperty<float> MovementAcceleration;
         OverrideableProperty<float> MovementSpeedStroll;
+        OverrideableProperty<float> MovementSpeedWalk;
         OverrideableProperty<float> MovementSpeedRun;
         OverrideableProperty<float> MovementSpeedSprint;
         OverrideableProperty<float> MovementSpeedDash;
@@ -309,7 +310,7 @@ namespace bg3se
         OverrideableProperty<bool> AllowSummonTeleport;
         OverrideableProperty<bool> IsPortalProhibitedToPlayers;
         OverrideableProperty<uint8_t> LightChannel;
-        OverrideableProperty<GUID> EquipmentTypeID;
+        OverrideableProperty<UUID> EquipmentTypeID;
         bool SomeVersionFlag;
     };
 
@@ -347,9 +348,9 @@ namespace bg3se
         struct VisualData
         {
             FixedString Visual;
-            float Height[2];
-            int Rotation[2];
-            float Scale[2];
+            glm::vec2 Height;
+            glm::ivec2 Rotation;
+            glm::vec2 Scale;
             float GridSize;
             int SpawnCell;
             int RandomPlacement;
@@ -373,7 +374,10 @@ namespace bg3se
             bool OnlyOncePerTurn;
         };
 
-        uint64_t field_158[7]; // SurfaceTypeId, SurfaceType?
+        uint8_t SurfaceType;
+        FixedString SurfaceName;
+        uint64_t field_158[4];
+        uint32_t field_188;
         OverrideableProperty<TranslatedString> DisplayName;
         OverrideableProperty<TranslatedString> Description;
         OverrideableProperty<FixedString> DecalMaterial;
@@ -383,12 +387,11 @@ namespace bg3se
         OverrideableProperty<bool> AlwaysUseDefaultLifeTime;
         OverrideableProperty<float> DefaultLifeTime;
         OverrideableProperty<float> SurfaceGrowTimer;
-        float field_1D0;
         OverrideableProperty<float> FadeInSpeed;
         OverrideableProperty<float> FadeOutSpeed;
         OverrideableProperty<float> FallDamageMultiplier;
         OverrideableProperty<int32_t> Seed;
-        OverrideableProperty<int32_t> NormalBlendingFactor;
+        OverrideableProperty<float> NormalBlendingFactor;
         OverrideableProperty<ObjectSet<VisualData>> InstanceVisual;
         OverrideableProperty<ObjectSet<VisualData>> IntroFX;
         OverrideableProperty<ObjectSet<VisualData>> FX;
