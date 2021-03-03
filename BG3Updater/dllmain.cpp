@@ -7,6 +7,7 @@
 #include <ZipLib/ZipArchive.h>
 #include <ZipLib/ZipFile.h>
 #include "json/json.h"
+#include "Manifest.h"
 
 #include <Shlwapi.h>
 #include <Shlobj.h>
@@ -149,56 +150,6 @@ std::string trim(std::string const & s)
 	size_t last = s.find_last_not_of(" \t\r\n");
 	return s.substr(first, (last - first + 1));
 }
-
-struct Manifest
-{
-	struct Version
-	{
-		std::string Path;
-		std::string Digest;
-	};
-
-	std::unordered_map<std::string, Version> Versions;
-};
-
-class ManifestParser
-{
-public:
-	bool Parse(std::string const& json, Manifest& manifest, std::string& parseError)
-	{
-		Json::CharReaderBuilder factory;
-		Json::Value root;
-		std::string errs;
-		auto reader = factory.newCharReader();
-		if (!reader->parse(json.data(), json.data() + json.size(), &root, &errs)) {
-			parseError = errs;
-			return false;
-		}
-
-		manifest.Versions.clear();
-
-		auto versions = root["Versions"];
-		if (!versions.isArray()) {
-			parseError = "Manifest has no 'Versions' array";
-			return false;
-		}
-
-		for (auto const& ver : versions) {
-			if (!ver.isObject()) {
-				parseError = "Version info is not an object";
-				return false;
-			}
-
-			Manifest::Version version;
-			auto versionNumber = ver["Version"].asString();
-			version.Path = ver["Path"].asString();
-			version.Digest = ver["Digest"].asString();
-			manifest.Versions.insert(std::make_pair(versionNumber, version));
-		}
-
-		return true;
-	}
-};
 
 #pragma pack(push, 1)
 struct PackageSignature
