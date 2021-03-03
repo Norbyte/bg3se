@@ -197,4 +197,20 @@ namespace bg3se
 		FixedString Origin;
 	};
 
+	struct LevelComponent : public BaseComponent
+	{
+		static constexpr ExtComponentType ComponentType = ExtComponentType::Level;
+
+		FixedString LevelName;
+		EntityWorldHandle field_20;
+		bool field_28;
+	};
+
+	namespace esv
+	{
+		struct ActiveComponent : public BaseComponent
+		{
+			static constexpr ExtComponentType ComponentType = ExtComponentType::ServerActive;
+		};
+	}
 }

@@ -230,6 +230,29 @@ public:
 		}
 	}
 
+	template <class T, class Fun>
+	void IterateComponents(Fun fun)
+	{
+		auto world = GetEntityWorld();
+		if (!world) {
+			return;
+		}
+
+		auto componentIndex = GetComponentIndex(T::ComponentType);
+		if (!componentIndex) {
+			return;
+		}
+
+		auto pool = world->Components.Types[(int)*componentIndex].Pool;
+		auto size = pool->GetSize();
+		for (auto i = 0; i < size; i++) {
+			auto component = pool->GetComponentByIndex(i);
+			if (component) {
+				fun(RawComponentPtrToComponent<T>(component));
+			}
+		}
+	}
+
 	virtual EntityWorldBase* GetEntityWorld() = 0;
 
 	template <class T>

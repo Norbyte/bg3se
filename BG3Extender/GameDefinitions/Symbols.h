@@ -1,7 +1,9 @@
 #pragma once
 
 #include <GameDefinitions/Character.h>
+#include <GameDefinitions/EntityManager.h>
 #include <GameDefinitions/Item.h>
+#include <GameDefinitions/Level.h>
 #include <GameDefinitions/Misc.h>
 #include <GameDefinitions/Osiris.h>
 #include <GameDefinitions/RootTemplates.h>
@@ -132,6 +134,28 @@ namespace bg3se
 				&& *esv__SavegameManager != nullptr
 				&& (*esv__SavegameManager)->ComponentFactories.Size > 21) {
 				return reinterpret_cast<esv::SurfaceActionFactory*>((*esv__SavegameManager)->ComponentFactories[21]);
+			} else {
+				return {};
+			}
+		}
+
+		inline esv::LevelManager* GetServerLevelManager() const
+		{
+			if (esv__EoCServer != nullptr
+				&& *esv__EoCServer != nullptr
+				&& (*esv__EoCServer)->EntityManager != nullptr
+				&& (*esv__EoCServer)->EntityManager->LevelManager != nullptr) {
+				return reinterpret_cast<esv::LevelManager *>((*esv__EoCServer)->EntityManager->LevelManager);
+			} else {
+				return {};
+			}
+		}
+
+		inline FixedString GetCurrentServerLevel() const
+		{
+			auto levelMgr = GetServerLevelManager();
+			if (levelMgr && levelMgr->CurrentLevel) {
+				return levelMgr->CurrentLevel->LevelData->LevelDesc->LevelName;
 			} else {
 				return {};
 			}

@@ -401,6 +401,10 @@ namespace bg3se
 		MapComponentIndices("eoc::PassiveContainerComponent", ExtComponentType::PassiveContainer);
 		MapComponentIndices("eoc::BoostInfoComponent", ExtComponentType::BoostInfo);
 		MapComponentIndices("eoc::RelationComponent", ExtComponentType::Relation);
+		MapComponentIndices("eoc::CanInteractComponent", ExtComponentType::CanInteract);
+		MapComponentIndices("eoc::CanSpeakComponent", ExtComponentType::CanSpeak);
+		MapComponentIndices("eoc::OriginComponent", ExtComponentType::Origin);
+		MapComponentIndices("ls::LevelComponent", ExtComponentType::Level);
 
 		MapResourceManagerIndex("class ls::TagManager", ExtResourceManagerType::Tag);
 		MapResourceManagerIndex("class eoc::FactionContainer", ExtResourceManagerType::Faction);
@@ -682,6 +686,7 @@ namespace bg3se
 		MapComponentIndices("esv::Item", ExtComponentType::ServerItem);
 		MapComponentIndices("esv::Projectile", ExtComponentType::ServerProjectile);
 		MapComponentIndices("esv::OsirisTagComponent", ExtComponentType::ServerOsirisTag);
+		MapComponentIndices("esv::ActiveComponent", ExtComponentType::ServerActive);
 	}
 
 	void ClientEntitySystemHelpers::Setup()

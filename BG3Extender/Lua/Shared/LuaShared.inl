@@ -1,3 +1,5 @@
+namespace bg3se::lua
+{
 
 template <class TObject, class TStatus>
 int GameObjectGetStatus(lua_State* L)
@@ -159,4 +161,6 @@ int GameObjectGetDisplayName(lua_State* L, TObject* object)
 	object->GetDisplayName(name);
 	push(L, name.Handle.ReferenceString);
 	return 1;*/
+}
+
 }

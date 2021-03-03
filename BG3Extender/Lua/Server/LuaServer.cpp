@@ -14,16 +14,8 @@
 #include <GameDefinitions/Components/Boosts.h>
 #include <GameDefinitions/ResourceDefinitions.h>
 
-namespace bg3se::esv::lua
-{
-//#include <Lua/LevelIteratorFunctions.inl>
-}
-
-namespace bg3se::lua
-{
+#include <Lua/LevelIteratorFunctions.inl>
 #include <Lua/Shared/LuaShared.inl>
-}
-
 #include <Lua/Server/ServerCharacter.inl>
 #include <Lua/Server/ServerItem.inl>
 #include <Lua/Server/ServerStatus.inl>
@@ -176,7 +168,7 @@ namespace bg3se::esv::lua
 		auto& helpers = gOsirisProxy->GetServerEntityHelpers();
 		auto character = helpers.GetComponent<esv::Character>(s);
 		if (character) {
-			auto boostContainer = helpers.GetEntityComponent<BoostsContainerComponent>(character->Base.EntityObjectHandle);
+			auto boostContainer = helpers.GetEntityComponent<BoostsContainerComponent>(character->Base.Entity);
 
 			if (boostContainer) {
 				std::cout << "Boosts:" << std::endl;
@@ -247,7 +239,7 @@ namespace bg3se::esv::lua
 					auto ch2 = reinterpret_cast<esv::Character*>((uint64_t)comp - 8);
 					std::cout << "Found in pool " << i << std::endl;
 
-					auto entity = ch2->Base.EntityObjectHandle;
+					auto entity = ch2->Base.Entity;
 
 					auto& helpers = gOsirisProxy->GetServerEntityHelpers();
 					auto ar = helpers.GetEntityComponent<ActionResourcesComponent>(entity);
@@ -387,9 +379,9 @@ namespace bg3se::esv::lua
 			{"ExecuteSurfaceAction", ExecuteSurfaceAction},
 			{"CancelSurfaceAction", CancelSurfaceAction},*/
 
-			/*{"GetAllCharacters", GetAllCharacters},
+			{"GetAllCharacters", GetAllCharacters},
 			{"GetCharactersAroundPosition", GetCharactersAroundPosition},
-			{"GetAllItems", GetAllItems},
+			/*{"GetAllItems", GetAllItems},
 			{"GetItemsAroundPosition", GetItemsAroundPosition},
 			{"CreateItemConstructor", CreateItemConstructor},
 
