@@ -108,7 +108,7 @@ namespace bg3se
 			NetId NetID; // Part of IEoCServerObject?
 			uint64_t Flags;
 			FixedString Level;
-			EntityHandle EntityHandle;
+			EntityWorldHandle EntityHandle;
 			uint8_t Flags2;
 			uint8_t MovingCount;
 			__int64 field_58;

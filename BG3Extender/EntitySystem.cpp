@@ -200,7 +200,7 @@ namespace bg3se
 		return pool->FindComponentByNetId(netId);
 	}
 
-	EntityWorldBase::Entity* EntityWorldBase::GetEntity(ObjectHandle entityHandle, bool logError)
+	EntityWorldBase::Entity* EntityWorldBase::GetEntity(EntityHandle entityHandle, bool logError)
 	{
 		auto typeIndex = entityHandle.GetType();
 		if (typeIndex >= std::size(EntityTypes)) {
@@ -210,16 +210,9 @@ namespace bg3se
 			return nullptr;
 		}
 
-		auto const& entityTypes = EntityTypes[typeIndex];
-		if (!entityTypes.Handles) {
-			if (logError) {
-				OsiError("Entity type " << typeIndex << " has no entity pool!");
-			}
-			return nullptr;
-		}
-
+		auto& entityTypes = EntityTypes[typeIndex];
 		auto index = entityHandle.GetIndex();
-		if (index >= entityTypes.EntityCount) {
+		if (index >= entityTypes.HandleToIndexRemaps.Size) {
 			if (logError) {
 				OsiError("Entity index " << index << " too large!");
 			}
@@ -242,7 +235,7 @@ namespace bg3se
 		return &entityTypes.Entities[remap];
 	}
 
-	ObjectHandle EntityWorldBase::GetEntityComponentHandle(ObjectHandle entityHandle, ComponentTypeIndex type, bool logError)
+	ObjectHandle EntityWorldBase::GetEntityComponentHandle(EntityHandle entityHandle, ComponentTypeIndex type, bool logError)
 	{
 		auto entity = GetEntity(entityHandle, logError);
 		if (!entity) return ObjectHandle{};
@@ -265,7 +258,7 @@ namespace bg3se
 		return entity->ComponentHandles[slot];
 	}
 
-	ObjectHandle EntityWorldBase::GetEntityComponentHandle(ObjectHandle entityHandle, HandleTypeIndex type, bool logError)
+	ObjectHandle EntityWorldBase::GetEntityComponentHandle(EntityHandle entityHandle, HandleTypeIndex type, bool logError)
 	{
 		auto componentIndex = HandleIndexToComponentIndexMap.Find((int32_t)type);
 		if (!componentIndex) {
@@ -278,7 +271,7 @@ namespace bg3se
 		return GetEntityComponentHandle(entityHandle, ComponentTypeIndex(*componentIndex), logError);
 	}
 
-	BaseComponent* EntityWorldBase::GetEntityComponent(ObjectHandle entityHandle, ComponentTypeIndex type, bool logError)
+	BaseComponent* EntityWorldBase::GetEntityComponent(EntityHandle entityHandle, ComponentTypeIndex type, bool logError)
 	{
 		auto componentHandle = GetEntityComponentHandle(entityHandle, type, logError);
 		if (!componentHandle) return nullptr;
@@ -286,7 +279,7 @@ namespace bg3se
 		return GetComponent(componentHandle, type, logError);
 	}
 
-	BaseComponent* EntityWorldBase::GetEntityComponent(ObjectHandle entityHandle, HandleTypeIndex type, bool logError)
+	BaseComponent* EntityWorldBase::GetEntityComponent(EntityHandle entityHandle, HandleTypeIndex type, bool logError)
 	{
 		auto componentHandle = GetEntityComponentHandle(entityHandle, type, logError);
 		if (!componentHandle) return nullptr;
@@ -635,7 +628,7 @@ namespace bg3se
 		}
 	}
 
-	void* EntitySystemHelpersBase::GetRawEntityComponent(ObjectHandle entityHandle, ExtComponentType type, bool logError)
+	void* EntitySystemHelpersBase::GetRawEntityComponent(EntityHandle entityHandle, ExtComponentType type, bool logError)
 	{
 		auto world = GetEntityWorld();
 		if (!world) {

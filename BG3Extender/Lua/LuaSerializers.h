@@ -115,6 +115,8 @@ namespace bg3se::lua
 	inline LuaSerializer& operator << (LuaSerializer& s, STDString& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, STDWString& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, UUID& v) { return s.Visit(v); }
+	inline LuaSerializer& operator << (LuaSerializer& s, ObjectHandle& v) { return s.Visit(v); }
+	inline LuaSerializer& operator << (LuaSerializer& s, EntityHandle& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, glm::vec3& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, glm::vec4& v) { return s.Visit(v); }
 	LuaSerializer& operator << (LuaSerializer& s, TranslatedString& v);

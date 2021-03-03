@@ -30,12 +30,12 @@ namespace bg3se::esv
 	{
 		FixedString MyGuid_M;
 		NetId NetID;
-		EntityHandle MyHandle;
+		EntityWorldHandle MyHandle;
 		SurfaceType SurfaceType;
 		uint8_t Flags;
 		UUID TeamId;
-		EntityHandle field_30;
-		EntityHandle OwnerHandle;
+		EntityWorldHandle field_30;
+		EntityWorldHandle OwnerHandle;
 		float LifeTime;
 		int8_t Level;
 		uint8_t _Pad[3];
@@ -82,7 +82,7 @@ namespace bg3se::esv
 
 	struct CreateSurfaceActionBase : public SurfaceAction
 	{
-		EntityHandle Owner;
+		EntityWorldHandle Owner;
 		float Duration;
 		char IsControlledByConcentration;
 		glm::vec3 Position;
@@ -158,7 +158,7 @@ namespace bg3se::esv
 		__int64 field_4A8;
 		int field_4B0;
 		Array<SurfaceCell> SurfaceCells;
-		Array<EntityHandle> Targets;
+		Array<EntityWorldHandle> Targets;
 		Array<void*> field_4E8;
 		int64_t CurrentCellCount;
 		uint8_t Flags;
@@ -173,7 +173,7 @@ namespace bg3se::esv
 		float GrowCellPerSecond;
 		char Finished;
 		void* CellSearcher;
-		EntityHandle OwnerHandle;
+		EntityWorldHandle OwnerHandle;
 		__int64 field_58;
 		int field_60;
 		float SurfaceLifetime;
@@ -192,7 +192,7 @@ namespace bg3se::esv
 
 	struct ChangeSurfaceOnPathAction : public CreateSurfaceActionBase
 	{
-		EntityHandle FollowHandle;
+		EntityWorldHandle FollowHandle;
 		float Radius;
 		bool IsFinished;
 		Array<SurfaceCell> SurfaceCells;
@@ -217,8 +217,8 @@ namespace bg3se::esv
 		void* SkillProperties_M;
 		int CurrentGrowTimer_M;
 		Array<SurfaceCell> SurfaceCells;
-		ObjectSet<EntityHandle> Characters;
-		ObjectSet<EntityHandle> Items;
+		ObjectSet<EntityWorldHandle> Characters;
+		ObjectSet<EntityWorldHandle> Items;
 		int CurrentCellCount;
 	};
 

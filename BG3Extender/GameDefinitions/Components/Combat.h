@@ -10,7 +10,7 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::CombatParticipant;
 
-		EntityHandle CombatHandle;
+		EntityWorldHandle CombatHandle;
 		FixedString CombatGroupId;
 		int field_24;
 		__int64 field_28;
@@ -54,7 +54,7 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::TurnBased;
 
-		EntityHandle CombatHandle_M;
+		EntityWorldHandle CombatHandle_M;
 		char field_20;
 		char field_21;
 		char field_22;

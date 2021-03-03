@@ -205,8 +205,85 @@ namespace bg3se
 		}
 	};
 
+
+	struct EntityHandle
+	{
+		static constexpr uint64_t NullHandle = 0xFFC0000000000000ull;
+
+		uint64_t Handle;
+
+		inline EntityHandle()
+			: Handle(NullHandle)
+		{}
+
+		explicit inline EntityHandle(uint64_t handle)
+			: Handle(handle)
+		{}
+
+		explicit inline EntityHandle(int64_t handle)
+			: Handle((uint64_t)handle)
+		{}
+
+		inline EntityHandle(uint64_t type, uint64_t index, uint64_t salt)
+		{
+			assert(type < 0x400 && salt < 0x400000);
+			Handle = index | (salt << 32) | (type << 54);
+		}
+
+		inline EntityHandle(ObjectHandle const & oh)
+			: Handle(oh.Handle)
+		{}
+
+		inline EntityHandle& operator = (ObjectHandle const & oh)
+		{
+			Handle = oh.Handle;
+			return *this;
+		}
+
+		inline bool operator == (EntityHandle const & oh) const
+		{
+			return Handle == oh.Handle;
+		}
+
+		inline uint32_t GetType() const
+		{
+			return Handle >> 54;
+		}
+
+		inline uint32_t GetSalt() const
+		{
+			return (Handle >> 32) & 0x3fffff;
+		}
+
+		inline uint32_t GetIndex() const
+		{
+			return (uint32_t)(Handle & 0xffffffff);
+		}
+
+		explicit inline operator bool() const
+		{
+			return Handle != NullHandle;
+		}
+
+		inline bool operator !() const
+		{
+			return Handle == NullHandle;
+		}
+
+		explicit inline operator int64_t() const
+		{
+			return (int64_t)Handle;
+		}
+	};
+
 	template <>
 	inline uint64_t Hash<ObjectHandle>(ObjectHandle const& h)
+	{
+		return h.Handle;
+	}
+
+	template <>
+	inline uint64_t Hash<EntityHandle>(EntityHandle const& h)
 	{
 		return h.Handle;
 	}
@@ -319,9 +396,19 @@ namespace std
 	inline ostream& operator << (ostream& out, bg3se::ObjectHandle const& h)
 	{
 		if (h) {
-			out << "(Handle 0x" << std::hex << h.Handle << std::dec << ")";
+			out << "(Object handle 0x" << std::hex << h.Handle << std::dec << ")";
 		} else {
-			out << "(Invalid handle)";
+			out << "(Invalid object handle)";
+		}
+		return out;
+	}
+
+	inline ostream& operator << (ostream& out, bg3se::EntityHandle const& h)
+	{
+		if (h) {
+			out << "(Entity handle 0x" << std::hex << h.Handle << std::dec << ")";
+		} else {
+			out << "(Invalid entity handle)";
 		}
 		return out;
 	}

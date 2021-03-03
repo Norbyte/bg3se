@@ -220,7 +220,7 @@ public:
 	}
 
 	template <class T>
-	T* GetEntityComponent(ObjectHandle entityHandle, bool logError = true)
+	T* GetEntityComponent(EntityHandle entityHandle, bool logError = true)
 	{
 		auto component = GetRawEntityComponent(entityHandle, T::ComponentType, logError);
 		if (component) {
@@ -276,7 +276,7 @@ private:
 	void* GetRawComponent(ObjectHandle componentHandle, ExtComponentType type, bool logError);
 	void* GetRawComponent(char const* nameGuid, ExtComponentType type, bool logError);
 	void* GetRawComponent(FixedString const& guid, ExtComponentType type, bool logError);
-	void* GetRawEntityComponent(ObjectHandle entityHandle, ExtComponentType type, bool logError);
+	void* GetRawEntityComponent(EntityHandle entityHandle, ExtComponentType type, bool logError);
 	ResourceDefinitionManagerBase* GetRawResourceManager(ExtResourceManagerType type);
 };
 

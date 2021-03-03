@@ -79,7 +79,7 @@ namespace bg3se::esv
 		int field_594;
 		int field_598;
 		int field_59C;
-		EntityHandle MyEntityHandle;
+		EntityWorldHandle MyEntityHandle;
 		bool ShouldFall;
 	};
 }

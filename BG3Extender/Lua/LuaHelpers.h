@@ -130,6 +130,11 @@ namespace bg3se::lua
 		lua_pushlightuserdata(L, (void*)h.Handle);
 	}
 
+	inline void push(lua_State* L, EntityHandle const& h)
+	{
+		lua_pushlightuserdata(L, (void*)h.Handle);
+	}
+
 	inline void push(lua_State* L, UUID const& u)
 	{
 		push(L, FormatUuid(u));
@@ -326,6 +331,12 @@ namespace bg3se::lua
 	}
 
 	template <>
+	inline EntityHandle get<EntityHandle>(lua_State* L, int index)
+	{
+		return EntityHandle{ (uint64_t)lua_touserdata(L, index) };
+	}
+
+	template <>
 	inline UUID get<UUID>(lua_State* L, int index)
 	{
 		auto str = lua_tostring(L, index);
@@ -395,6 +406,13 @@ namespace bg3se::lua
 	{
 		luaL_checktype(L, index, LUA_TLIGHTUSERDATA);
 		return ObjectHandle{ (uint64_t)lua_touserdata(L, index) };
+	}
+
+	template <class T, typename std::enable_if_t<std::is_same_v<T, EntityHandle>, int>* = nullptr>
+	inline EntityHandle checked_get(lua_State* L, int index)
+	{
+		luaL_checktype(L, index, LUA_TLIGHTUSERDATA);
+		return EntityHandle{ (uint64_t)lua_touserdata(L, index) };
 	}
 
 	template <class T, typename std::enable_if_t<std::is_same_v<T, glm::vec2>, int>* = nullptr>

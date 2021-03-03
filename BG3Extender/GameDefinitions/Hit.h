@@ -80,9 +80,9 @@ namespace bg3se
 			int EffectFlags;
 			bool HitWith;
 			uint8_t Attribute;
-			EntityHandle Inflicter;
-			EntityHandle InflicterOwner;
-			EntityHandle Throwing;
+			EntityWorldHandle Inflicter;
+			EntityWorldHandle InflicterOwner;
+			EntityWorldHandle Throwing;
 			int StoryActionID;
 			ObjectSet<void*> ConditionRolls;
 			Subobj SomeSubobj;

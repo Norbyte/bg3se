@@ -177,7 +177,7 @@ namespace bg3se
 			NetId NetID; // Part of IEoCServerObject?
 			uint64_t Flags;
 			FixedString CurrentLevel;
-			EntityHandle Handle;
+			EntityWorldHandle Handle;
 			Array<uint32_t> VisibleToPeerIds;
 			CharacterTemplate* CurrentTemplate;
 			CharacterTemplate* OriginalTemplate;

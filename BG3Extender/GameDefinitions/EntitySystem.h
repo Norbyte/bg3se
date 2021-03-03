@@ -9,16 +9,16 @@ namespace bg3se
 {
 	struct EntityWorld;
 
-	struct EntityHandle
+	struct EntityWorldHandle
 	{
-		ObjectHandle Handle;
+		EntityHandle Handle;
 		EntityWorld* World;
 	};
 
 	struct BaseComponent : public ProtectedGameObject<BaseComponent>
 	{
 		void* VMT;
-		ObjectHandle EntityObjectHandle;
+		EntityHandle Entity;
 		ObjectHandle ComponentHandle;
 	};
 
@@ -219,11 +219,11 @@ namespace bg3se
 		BaseComponent* GetComponent(NetId netId, HandleTypeIndex type, bool logError = true);
 		BaseComponent* GetComponent(NetId netId, ComponentTypeIndex type, bool logError = true);
 
-		Entity* GetEntity(ObjectHandle entityHandle, bool logError = true);
-		ObjectHandle GetEntityComponentHandle(ObjectHandle entityHandle, HandleTypeIndex type, bool logError = true);
-		ObjectHandle GetEntityComponentHandle(ObjectHandle entityHandle, ComponentTypeIndex type, bool logError = true);
-		BaseComponent* GetEntityComponent(ObjectHandle entityHandle, HandleTypeIndex type, bool logError = true);
-		BaseComponent* GetEntityComponent(ObjectHandle entityHandle, ComponentTypeIndex type, bool logError = true);
+		Entity* GetEntity(EntityHandle entityHandle, bool logError = true);
+		ObjectHandle GetEntityComponentHandle(EntityHandle entityHandle, HandleTypeIndex type, bool logError = true);
+		ObjectHandle GetEntityComponentHandle(EntityHandle entityHandle, ComponentTypeIndex type, bool logError = true);
+		BaseComponent* GetEntityComponent(EntityHandle entityHandle, HandleTypeIndex type, bool logError = true);
+		BaseComponent* GetEntityComponent(EntityHandle entityHandle, ComponentTypeIndex type, bool logError = true);
 	};
 
 	struct IGameObject : public ProtectedGameObject<IGameObject>

@@ -113,11 +113,11 @@ namespace bg3se
 			ObjectHandle OwnerHandle;
 			ObjectSet<ObjectHandle> StatusOwner;
 			Array<ObjectHandle> SomeArray;
-			EntityHandle StatusSourceEntityHandle_M;
+			EntityWorldHandle StatusSourceEntityHandle_M;
 			UUID StatusSourceUUID;
-			EntityHandle StatusSourceEntityHandle;
+			EntityWorldHandle StatusSourceEntityHandle;
 			ObjectHandle StatusSource;
-			EntityHandle CleansedByHandle_M;
+			EntityWorldHandle CleansedByHandle_M;
 			ObjectHandle HandleSetOnDelete;
 			int Conditions;
 			uint16_t RemoveEvents;
@@ -214,7 +214,7 @@ namespace bg3se
 
 		struct StatusDying : public Status
 		{
-			EntityHandle Source;
+			EntityWorldHandle Source;
 			__int64 field_128;
 			ObjectHandle field_130;
 			Hit HitDescription;
@@ -326,8 +326,8 @@ namespace bg3se
 
 		struct StatusReaction : public Status
 		{
-			EntityHandle Source;
-			EntityHandle Target;
+			EntityWorldHandle Source;
+			EntityWorldHandle Target;
 			glm::vec3 TargetPosition;
 			ObjectHandle Partner;
 			bool ShowOverhead;

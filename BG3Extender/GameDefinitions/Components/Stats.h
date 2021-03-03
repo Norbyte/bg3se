@@ -97,7 +97,7 @@ namespace bg3se
 		struct EquipmentEntry
 		{
 			int field_0;
-			EntityHandle Handle;
+			EntityWorldHandle Handle;
 			char field_10;
 			char field_11;
 		};

@@ -74,7 +74,7 @@ namespace bg3se::esv
 		RefMap<FixedString, ObjectHandle> PartiesByCharacterGuid;
 		ObjectSet<Character*> CharactersInParties;
 		ObjectSet<Character*> AllCharacters;
-		EntityHandle GameMasterPartyHandle_M;
+		EntityWorldHandle GameMasterPartyHandle_M;
 		FixedString TeleportTargetID_M;
 		STDString TeleportArriveEvent_M;
 		int64_t TeleportNumRequest_M;

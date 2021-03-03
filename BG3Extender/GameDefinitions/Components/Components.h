@@ -123,7 +123,7 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Wielding;
 
-		EntityHandle Owner;
+		EntityWorldHandle Owner;
 	};
 
 	struct ActionResourceConsumeMultiplierBoost : public BaseComponent
@@ -171,7 +171,7 @@ namespace bg3se
 
 		GUID field_18;
 		GUID field_28;
-		EntityHandle field_38;
+		EntityWorldHandle field_38;
 	};
 
 	struct CanInteractComponent : public BaseComponent

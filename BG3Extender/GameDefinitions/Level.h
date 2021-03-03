@@ -49,7 +49,7 @@ namespace bg3se
 		void* SomeObject;
 		void* field_58;
 		FixedString LevelGuid;
-		ObjectHandle field_68;
+		EntityHandle LevelHandle;
 		int SomeFlag;
 		ObjectSet<void*> ActivePersistentLevelTemplates_M;
 		ObjectSet<void*> Unknown2;
