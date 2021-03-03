@@ -2,5 +2,5 @@
 
 #include <GameDefinitions/PropertyMaps/StatsFunctorProperties.inl>
 #include <GameDefinitions/PropertyMaps/ResourceDefinitions.inl>
-#include <GameDefinitions/PropertyMaps/ServerCharacter.inl>
+#include <GameDefinitions/PropertyMaps/ServerObjects.inl>
 #include <GameDefinitions/PropertyMaps/RootTemplates.inl>

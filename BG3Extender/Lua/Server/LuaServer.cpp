@@ -381,10 +381,9 @@ namespace bg3se::esv::lua
 
 			{"GetAllCharacters", GetAllCharacters},
 			{"GetCharactersAroundPosition", GetCharactersAroundPosition},
-			/*{"GetAllItems", GetAllItems},
+			{"GetAllItems", GetAllItems},
 			{"GetItemsAroundPosition", GetItemsAroundPosition},
-			{"CreateItemConstructor", CreateItemConstructor},
-			*/
+			/*{"CreateItemConstructor", CreateItemConstructor},*/
 			{"GetCharacter", GetCharacter},
 			{"GetItem", GetItem},
 			{"GetGameObject", GetGameObject},

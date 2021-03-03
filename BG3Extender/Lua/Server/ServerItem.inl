@@ -64,11 +64,6 @@ namespace bg3se::lua
 		StackCheck _(L, 1);
 		auto prop = luaL_checkstring(L, 2);
 		FixedString propFS(prop);
-		if (!propFS) {
-			OsiError("[esv::Item] has no property named '" << prop << "'");
-			push(L, nullptr);
-			return 1;
-		}
 
 		if (propFS == GFS.strGetInventoryItems) {
 			lua_pushcfunction(L, &ItemGetInventoryItems);
@@ -131,8 +126,13 @@ namespace bg3se::lua
 			return 1;
 		}
 
-		if (propFS == GFS.strRootTemplate) {
-			ObjectProxy<ItemTemplate>::New(L, item->CurrentTemplate);
+		if (propFS == GFS.strCurrentTemplate) {
+			ObjectProxy2<ItemTemplate>::New(L, item->CurrentTemplate);
+			return 1;
+		}
+
+		if (propFS == GFS.strOriginalTemplate) {
+			ObjectProxy2<ItemTemplate>::New(L, item->OriginalTemplate);
 			return 1;
 		}
 
@@ -144,22 +144,32 @@ namespace bg3se::lua
 		bool fetched = false;
 		if (item->Stats != nullptr) {
 			fetched = LuaPropertyMapGet(L, gItemStatsPropertyMap, item->Stats, propFS, false);
-		}
+		}*/
 
+		auto const& map = StaticLuaPropertyMap<esv::Item>::PropertyMap;
+		auto fetched = map.GetProperty(L, item, prop);
 		if (!fetched) {
-			fetched = LuaPropertyMapGet(L, gItemPropertyMap, item, propFS, true);
+			luaL_error(L, "Object of type 'esv::Item' has no property named '%s'", prop);
+			push(L, nullptr);
 		}
 
-		if (!fetched)*/ push(L, nullptr);
 		return 1;
 	}
 
 	int ObjectProxy<esv::Item>::NewIndex(lua_State* L)
 	{
-		return luaL_error(L, "Not implemented yet!");
+		auto item = Get(L);
+		if (!item) return 0;
 
-		/*
-		return GenericSetter(L, gItemPropertyMap);*/
+		StackCheck _(L, 0);
+		auto prop = luaL_checkstring(L, 2);
+		auto const& map = StaticLuaPropertyMap<esv::Item>::PropertyMap;
+		auto ok = map.SetProperty(L, item, prop, 3);
+		if (!ok) {
+			luaL_error(L, "Object of type 'esv::Item' has no property named '%s'", prop);
+		}
+
+		return 0;
 	}
 
 

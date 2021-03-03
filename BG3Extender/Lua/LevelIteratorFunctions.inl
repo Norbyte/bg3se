@@ -61,22 +61,18 @@ int GetAllCharacters(lua_State* L)
 int GetCharactersAroundPosition(lua_State* L)
 {
 	auto numArgs = lua_gettop(L);
-	glm::vec3 pos(
-		checked_get<float>(L, 1),
-		checked_get<float>(L, 2),
-		checked_get<float>(L, 3)
-	);
-	float distance = checked_get<float>(L, 4);
+	glm::vec3 pos = checked_get<glm::vec3>(L, 1);
+	float distance = checked_get<float>(L, 2);
 
 	bool excludeOffStage{ false };
 	bool excludeDeactivated{ false };
 
-	if (numArgs >= 5) {
-		excludeOffStage = checked_get<bool>(L, 5);
+	if (numArgs >= 3) {
+		excludeOffStage = checked_get<bool>(L, 3);
 	}
 
-	if (numArgs >= 6) {
-		excludeDeactivated = checked_get<bool>(L, 6);
+	if (numArgs >= 4) {
+		excludeDeactivated = checked_get<bool>(L, 4);
 	}
 
 	GetCharactersGeneric(L, FixedString{}, [pos, distance](esv::Character* c) {
@@ -88,9 +84,9 @@ int GetCharactersAroundPosition(lua_State* L)
 	return 1;
 }
 
-/*
+
 template <class Predicate>
-void GetItemsGeneric(lua_State* L, FixedString const& requestedLevel, Predicate pred)
+void GetItemsGeneric(lua_State* L, FixedString const& requestedLevel, Predicate pred, bool excludeOffStage, bool excludeDeactivated)
 {
 	int index{ 1 };
 
@@ -104,48 +100,72 @@ void GetItemsGeneric(lua_State* L, FixedString const& requestedLevel, Predicate 
 		}
 	}
 
-	auto& helpers = GetEoCServer()->EntityManager->ItemConversionHelpers;
-	auto items = helpers.RegisteredItems.Find(levelName);
-	if (items == nullptr) {
-		OsiError("No items registered for level: " << levelName);
-		return;
-	}
+	auto predicate = [L, levelName, pred, excludeOffStage, excludeDeactivated, &index](Item* it) {
+		if (excludeOffStage && it->HasFlag((uint64_t)ItemFlags::OffStage)) return;
 
-	for (auto item : **items) {
-		if (pred(item)) {
-			settable(L, index++, item->MyGuid);
+		auto level = gOsirisProxy->GetServerEntityHelpers().GetEntityComponent<LevelComponent>(it->Base.Entity, false);
+		if (!level || level->LevelName != levelName) return;
+
+		if (excludeDeactivated) {
+			auto active = gOsirisProxy->GetServerEntityHelpers().GetEntityComponent<esv::ActiveComponent>(it->Base.Entity, false);
+			if (!active) return;
 		}
-	}
+
+		if (!pred(it)) return;
+
+		settable(L, index++, it->GUID);
+	};
+
+	gOsirisProxy->GetServerEntityHelpers().IterateComponents<Item>(predicate);
 }
 
 int GetAllItems(lua_State* L)
 {
 	FixedString levelName;
-	if (lua_gettop(L) >= 1) {
+	bool excludeOffStage{ false };
+	bool excludeDeactivated{ false };
+
+	auto numArgs = lua_gettop(L);
+	if (numArgs >= 1) {
 		levelName = checked_get<FixedString>(L, 1);
 	}
 
-	GetItemsGeneric(L, levelName, [](esv::Item*) { return true; });
+	if (numArgs >= 2) {
+		excludeOffStage = checked_get<bool>(L, 2);
+	}
+
+	if (numArgs >= 3) {
+		excludeDeactivated = checked_get<bool>(L, 3);
+	}
+
+	GetItemsGeneric(L, levelName, [](esv::Item*) { return true; }, excludeOffStage, excludeDeactivated);
 	return 1;
 }
 
 int GetItemsAroundPosition(lua_State* L)
 {
-	glm::vec3 pos(
-		checked_get<float>(L, 1),
-		checked_get<float>(L, 2),
-		checked_get<float>(L, 3)
-	);
-	float distance = checked_get<float>(L, 4);
+	auto numArgs = lua_gettop(L);
+	glm::vec3 pos = checked_get<glm::vec3>(L, 1);
+	float distance = checked_get<float>(L, 2);
 
-	GetItemsGeneric(L, FixedString{}, [pos, distance](esv::Item* i) {
-		auto transform = gOsirisProxy->GetServerEntityHelpers().GetEntityComponent<TransformComponent>(i->Base.Entity, false);
+	bool excludeOffStage{ false };
+	bool excludeDeactivated{ false };
+
+	if (numArgs >= 3) {
+		excludeOffStage = checked_get<bool>(L, 3);
+	}
+
+	if (numArgs >= 4) {
+		excludeDeactivated = checked_get<bool>(L, 4);
+	}
+
+	GetItemsGeneric(L, FixedString{}, [pos, distance](esv::Item* it) {
+		auto transform = gOsirisProxy->GetServerEntityHelpers().GetEntityComponent<TransformComponent>(it->Base.Entity, false);
 		if (!transform) return false;
 
 		return abs(glm::length(pos - transform->Transform.Translate)) < distance;
-	});
+	}, excludeOffStage, excludeDeactivated);
 	return 1;
 }
 
-*/
 }

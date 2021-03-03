@@ -343,9 +343,6 @@
     <None Include="Lua\Server\ServerSurface.inl">
       <Filter>Lua\Server</Filter>
     </None>
-    <None Include="Lua\LevelIteratorFunctions.inl">
-      <Filter>Lua</Filter>
-    </None>
     <None Include="GameDefinitions\EngineHooks.inl">
       <Filter>GameDefinitions</Filter>
     </None>
@@ -391,10 +388,13 @@
     <None Include="GameDefinitions\PropertyMaps\ResourceDefinitions.inl">
       <Filter>GameDefinitions\PropertyMaps</Filter>
     </None>
-    <None Include="GameDefinitions\PropertyMaps\ServerCharacter.inl">
+    <None Include="GameDefinitions\PropertyMaps\RootTemplates.inl">
       <Filter>GameDefinitions\PropertyMaps</Filter>
     </None>
-    <None Include="GameDefinitions\PropertyMaps\RootTemplates.inl">
+    <None Include="Lua\LevelIteratorFunctions.inl">
+      <Filter>Lua\Shared</Filter>
+    </None>
+    <None Include="GameDefinitions\PropertyMaps\ServerObjects.inl">
       <Filter>GameDefinitions\PropertyMaps</Filter>
     </None>
   </ItemGroup>

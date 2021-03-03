@@ -104,10 +104,10 @@ namespace bg3se
 		{
 			static constexpr ExtComponentType ComponentType = ExtComponentType::ServerItem;
 
-			FixedString GUID_M; // Part of IEoCServerObject?
+			FixedString GUID; // Part of IEoCServerObject?
 			NetId NetID; // Part of IEoCServerObject?
 			uint64_t Flags;
-			FixedString Level;
+			FixedString CurrentLevel;
 			EntityWorldHandle EntityHandle;
 			uint8_t Flags2;
 			uint8_t MovingCount;

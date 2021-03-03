@@ -56,41 +56,6 @@ namespace bg3se::lua
 	*/
 
 
-	char const* const ObjectProxy<ItemTemplate>::MetatableName = "eoc::ItemTemplate";
-
-	ItemTemplate* ObjectProxy<ItemTemplate>::Get(lua_State* L)
-	{
-		if (obj_) return obj_;
-		luaL_error(L, "ItemTemplate not bound!");
-		return nullptr;
-	}
-
-	int ObjectProxy<ItemTemplate>::Index(lua_State* L)
-	{
-		return luaL_error(L, "Not implemented yet!");
-
-		/*auto obj = Get(L);
-		if (!obj) return 0;
-
-		auto prop = luaL_checkstring(L, 2);
-
-		if (strcmp(prop, "CombatTemplate") == 0) {
-			ObjectProxy<CombatComponentTemplate>::New(L, &obj->CombatComponent);
-			return 1;
-		}
-
-		auto fetched = LuaPropertyMapGet(L, gItemTemplatePropertyMap, obj, prop, true);
-		return fetched ? 1 : 0;*/
-	}
-
-	int ObjectProxy<ItemTemplate>::NewIndex(lua_State* L)
-	{
-		return luaL_error(L, "Not implemented yet!");
-
-		/*return GenericSetter(L, gItemTemplatePropertyMap);*/
-	}
-
-
 
 	/*char const* const ObjectProxy<ProjectileTemplate>::MetatableName = "eoc::ProjectileTemplate";
 
