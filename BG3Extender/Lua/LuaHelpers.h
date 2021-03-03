@@ -140,6 +140,16 @@ namespace bg3se::lua
 		push(L, FormatUuid(u));
 	}
 
+	inline void push(lua_State* L, NetId const& v)
+	{
+		push(L, v.Id);
+	}
+
+	inline void push(lua_State* L, UserId const& v)
+	{
+		push(L, v.Id);
+	}
+
 	inline void push(lua_State* L, glm::ivec2 const& v)
 	{
 		lua_newtable(L);

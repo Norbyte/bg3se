@@ -68,7 +68,7 @@ namespace bg3se
         OverrideableProperty<bool> HierarchyOnlyFade;
         OverrideableProperty<FixedString> FadeGroup;
         ObjectSet<FixedString> FadeChildren;
-        OverrideableProperty<uint32_t> GameMasterSpawnSubSection;
+        OverrideableProperty<int32_t> GameMasterSpawnSubSection;
         uint64_t Unknown4[4];
     };
 
@@ -156,8 +156,8 @@ namespace bg3se
         OverrideableProperty<ObjectSet<void*>> ItemList;
         OverrideableProperty<FixedString> TrophyID;
         OverrideableProperty<FixedString> SoundInitEvent;
-        OverrideableProperty<uint8_t> SoundObjectIndex;
-        OverrideableProperty<uint16_t> SoundAttenuation;
+        OverrideableProperty<int8_t> SoundObjectIndex;
+        OverrideableProperty<int16_t> SoundAttenuation;
         OverrideableProperty<FixedString> FoleyShortResourceID;
         OverrideableProperty<FixedString> FoleyMediumResourceID;
         OverrideableProperty<FixedString> FoleyLongResourceID;
