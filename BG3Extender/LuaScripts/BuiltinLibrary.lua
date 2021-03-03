@@ -67,6 +67,10 @@ _I._OnModuleResume = function ()
     _I._Notify("ModuleResume")
 end
 
+_I._OnResetCompleted = function ()
+    _I._Notify("ResetCompleted")
+end
+
 _I._GameStateChanged = function (...)
     _I._Notify("GameStateChanged", ...)
 end

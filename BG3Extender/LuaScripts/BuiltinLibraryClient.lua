@@ -5,6 +5,7 @@ _I._Listeners = {
 	ModuleLoading = {},
 	StatsLoaded = {},
 	ModuleResume = {},
+	ResetCompleted = {},
 	SessionLoading = {},
 	SessionLoaded = {},
 	GameStateChanged = {},

@@ -7,6 +7,7 @@ _I._Listeners = {
 	ModuleResume = {},
 	SessionLoading = {},
 	SessionLoaded = {},
+	ResetCompleted = {},
 	GameStateChanged = {},
 	GetSkillDamage = {},
 	GetSkillAPCost = {},

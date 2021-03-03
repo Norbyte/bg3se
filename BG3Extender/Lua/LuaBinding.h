@@ -263,6 +263,7 @@ namespace bg3se::lua
 		void OnModuleLoading();
 		void OnStatsLoaded();
 		void OnModuleResume();
+		void OnResetCompleted();
 
 		template <class... Ret, class... Args>
 		auto CallExt(char const * func, uint32_t restrictions, ReturnType<Ret...>, Args... args)

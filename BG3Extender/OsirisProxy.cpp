@@ -1123,6 +1123,7 @@ void OsirisProxy::ResetLuaState(bool resetServer, bool resetClient)
 				ext.OnGameSessionLoading();
 				ext.OnGameSessionLoaded();
 				ext.StoryLoaded();
+				ext.OnResetCompleted();
 			}
 		});
 		ext.LuaReset(true);
@@ -1130,7 +1131,7 @@ void OsirisProxy::ResetLuaState(bool resetServer, bool resetClient)
 
 	if (resetClient) {
 		auto server = GetEoCServer();
-		if (server && server->GameServer) {
+		if (server && server->GameServer && false /* networking not available yet! */) {
 			// Reset clients via a network message if the server is running
 			/*auto& networkMgr = gOsirisProxy->GetNetworkManager();
 			auto msg = networkMgr.GetFreeServerMessage(ReservedUserId);
@@ -1150,11 +1151,12 @@ void OsirisProxy::ResetLuaState(bool resetServer, bool resetClient)
 			auto& ext = *ClientExtState;
 			ext.AddPostResetCallback([&ext]() {
 				ext.OnModuleResume();
-				/*auto state = GetStaticSymbols().GetClientState();
+				auto state = GetStaticSymbols().GetClientState();
 				if (state && (state == ecl::GameState::Paused || state == ecl::GameState::Running || state == ecl::GameState::GameMasterPause)) {
 					ext.OnGameSessionLoading();
 					ext.OnGameSessionLoaded();
-				}*/
+					ext.OnResetCompleted();
+				}
 			});
 			ext.LuaReset(true);
 

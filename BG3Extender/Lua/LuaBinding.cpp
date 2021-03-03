@@ -776,6 +776,11 @@ namespace bg3se::lua
 		CallExt("_OnModuleResume", RestrictAll | ScopeModuleResume, ReturnType<>{});
 	}
 
+	void State::OnResetCompleted()
+	{
+		CallExt("_OnResetCompleted", 0, ReturnType<>{});
+	}
+
 	STDString State::GetBuiltinLibrary(int resourceId)
 	{
 		auto hResource = FindResource(gThisModule, MAKEINTRESOURCE(resourceId),

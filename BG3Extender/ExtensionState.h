@@ -44,6 +44,7 @@ namespace bg3se
 		void OnModuleLoading();
 		void OnStatsLoaded();
 		void OnModuleResume();
+		void OnResetCompleted();
 
 		void IncLuaRefs();
 		void DecLuaRefs();

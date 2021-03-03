@@ -238,6 +238,14 @@ namespace bg3se
 		}
 	}
 
+	void ExtensionStateBase::OnResetCompleted()
+	{
+		LuaVirtualPin lua(*this);
+		if (lua) {
+			lua->OnResetCompleted();
+		}
+	}
+
 
 	void ExtensionStateBase::IncLuaRefs()
 	{
