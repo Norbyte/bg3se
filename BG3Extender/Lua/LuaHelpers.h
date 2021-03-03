@@ -140,6 +140,20 @@ namespace bg3se::lua
 		push(L, FormatUuid(u));
 	}
 
+	inline void push(lua_State* L, glm::ivec2 const& v)
+	{
+		lua_newtable(L);
+		settable(L, 1, v.x);
+		settable(L, 2, v.y);
+	}
+
+	inline void push(lua_State* L, glm::vec2 const& v)
+	{
+		lua_newtable(L);
+		settable(L, 1, v.x);
+		settable(L, 2, v.y);
+	}
+
 	inline void push(lua_State* L, glm::vec3 const& v)
 	{
 		lua_newtable(L);
@@ -401,6 +415,18 @@ namespace bg3se::lua
 		return *uuid;
 	}
 
+	template <class T, typename std::enable_if_t<std::is_same_v<T, NetId>, int>* = nullptr>
+	inline T checked_get(lua_State* L, int index)
+	{
+		return T(luaL_checkinteger(L, index));
+	}
+
+	template <class T, typename std::enable_if_t<std::is_same_v<T, UserId>, int>* = nullptr>
+	inline T checked_get(lua_State* L, int index)
+	{
+		return T((int32_t)luaL_checkinteger(L, index));
+	}
+
 	template <class T, typename std::enable_if_t<std::is_same_v<T, ObjectHandle>, int>* = nullptr>
 	inline ObjectHandle checked_get(lua_State* L, int index)
 	{
@@ -413,6 +439,24 @@ namespace bg3se::lua
 	{
 		luaL_checktype(L, index, LUA_TLIGHTUSERDATA);
 		return EntityHandle{ (uint64_t)lua_touserdata(L, index) };
+	}
+
+	template <class T, typename std::enable_if_t<std::is_same_v<T, glm::ivec2>, int>* = nullptr>
+	inline glm::ivec2 checked_get(lua_State* L, int index)
+	{
+		auto i = (index < 0) ? (index - 1) : index;
+		glm::ivec2 val;
+		luaL_checktype(L, index, LUA_TTABLE);
+		push(L, 1);
+		lua_rawget(L, i);
+		val.x = checked_get<int32_t>(L, -1);
+		lua_pop(L, 1);
+		push(L, 2);
+		lua_rawget(L, i);
+		val.y = checked_get<int32_t>(L, -1);
+		lua_pop(L, 1);
+
+		return val;
 	}
 
 	template <class T, typename std::enable_if_t<std::is_same_v<T, glm::vec2>, int>* = nullptr>

@@ -115,11 +115,25 @@ namespace bg3se::lua
 	inline LuaSerializer& operator << (LuaSerializer& s, STDString& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, STDWString& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, UUID& v) { return s.Visit(v); }
+	inline LuaSerializer& operator << (LuaSerializer& s, NetId& v) { return s.Visit(v); }
+	inline LuaSerializer& operator << (LuaSerializer& s, UserId& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, ObjectHandle& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, EntityHandle& v) { return s.Visit(v); }
+	inline LuaSerializer& operator << (LuaSerializer& s, glm::ivec2& v) { return s.Visit(v); }
+	inline LuaSerializer& operator << (LuaSerializer& s, glm::vec2& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, glm::vec3& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, glm::vec4& v) { return s.Visit(v); }
 	LuaSerializer& operator << (LuaSerializer& s, TranslatedString& v);
+
+	template <class T>
+	LuaSerializer& operator << (LuaSerializer& s, OverrideableProperty<T>& v)
+	{
+		s << v.Value;
+		if (!s.IsWriting) {
+			v.IsOverridden = true;
+		}
+		return s;
+	}
 
 	template <class T, class Allocator, bool StoreSize>
 	LuaSerializer& operator << (LuaSerializer& s, ObjectSet<T, Allocator, StoreSize>& v)
@@ -308,6 +322,7 @@ namespace bg3se::lua
 	LuaSerializer& operator << (LuaSerializer& s, CRootGroup& v);
 	LuaSerializer& operator << (LuaSerializer& s, CNameGroupLink& v);
 	LuaSerializer& operator << (LuaSerializer& s, CNameGroup& v);
-	LuaSerializer& operator << (LuaSerializer& s, CNameGroupName& v);
-	LuaSerializer& operator << (LuaSerializer& s, SurfaceTemplate::StatusData& v);*/
+	LuaSerializer& operator << (LuaSerializer& s, CNameGroupName& v);*/
+	LuaSerializer& operator << (LuaSerializer& s, SurfaceTemplate::VisualData& v);
+	LuaSerializer& operator << (LuaSerializer& s, SurfaceTemplate::StatusData& v);
 }

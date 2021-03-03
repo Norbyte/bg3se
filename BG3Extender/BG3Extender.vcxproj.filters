@@ -391,6 +391,12 @@
     <None Include="GameDefinitions\PropertyMaps\ResourceDefinitions.inl">
       <Filter>GameDefinitions\PropertyMaps</Filter>
     </None>
+    <None Include="GameDefinitions\PropertyMaps\ServerCharacter.inl">
+      <Filter>GameDefinitions\PropertyMaps</Filter>
+    </None>
+    <None Include="GameDefinitions\PropertyMaps\RootTemplates.inl">
+      <Filter>GameDefinitions\PropertyMaps</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

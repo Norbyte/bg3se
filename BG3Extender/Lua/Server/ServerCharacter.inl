@@ -3,37 +3,6 @@
 
 namespace bg3se::lua
 {
-	char const* const ObjectProxy<esv::PlayerCustomData>::MetatableName = "esv::PlayerCustomData";
-
-	esv::PlayerCustomData* ObjectProxy<esv::PlayerCustomData>::Get(lua_State* L)
-	{
-		if (obj_) return obj_;
-		auto character = gOsirisProxy->GetServerEntityHelpers().GetComponent<esv::Character>(handle_);
-		if (character == nullptr) luaL_error(L, "Character handle invalid");
-
-		if (character->PlayerData == nullptr
-			|| !character->PlayerData->CustomData.Initialized) {
-			OsiError("Character has no player data, or custom data was not initialized.");
-			return nullptr;
-		}
-
-		return &character->PlayerData->CustomData;
-	}
-
-	int ObjectProxy<esv::PlayerCustomData>::Index(lua_State* L)
-	{
-		return luaL_error(L, "Not implemented yet!");
-
-		/*return GenericGetter(L, gPlayerCustomDataPropertyMap);*/
-	}
-
-	int ObjectProxy<esv::PlayerCustomData>::NewIndex(lua_State* L)
-	{
-		return luaL_error(L, "Not implemented yet!");
-
-		/*return GenericSetter(L, gPlayerCustomDataPropertyMap);*/
-	}
-
 	void GetInventoryItems(lua_State* L, ObjectHandle inventoryHandle)
 	{
 		luaL_error(L, "Not implemented yet!");
@@ -58,14 +27,12 @@ namespace bg3se::lua
 
 	int ServerCharacterFetchProperty(lua_State* L, esv::Character* character, FixedString const& prop)
 	{
-		return luaL_error(L, "Not implemented yet!");
-
-		/*if (prop == GFS.strPlayerCustomData) {
+		if (prop == GFS.strPlayerCustomData) {
 			if (character->PlayerData != nullptr
 				&& character->PlayerData->CustomData.Initialized) {
 				ObjectHandle handle;
 				character->GetObjectHandle(handle);
-				ObjectProxy<esv::PlayerCustomData>::New(L, handle);
+				ObjectProxy2<esv::PlayerCustomData>::New(L, &character->PlayerData->CustomData);
 				return 1;
 			} else {
 				OsiError("Character has no player data, or custom data was not initialized.");
@@ -74,7 +41,9 @@ namespace bg3se::lua
 			}
 		}
 
-		if (prop == GFS.strStats) {
+		// TODO - CurrentTemplate, OriginalTemplate, TemplateUsedForSpells, PlayerData
+
+		/*if (prop == GFS.strStats) {
 			if (character->Stats != nullptr) {
 				ObjectHandle handle;
 				character->GetObjectHandle(handle);
@@ -85,15 +54,25 @@ namespace bg3se::lua
 				push(L, nullptr);
 				return 1;
 			}
-		}
+		}*/
 
 		if (prop == GFS.strHandle) {
-			push(L, character->Base.Component.Handle);
+			push(L, character->Base.Entity);
 			return 1;
 		}
 
-		if (prop == GFS.strRootTemplate) {
-			ObjectProxy<CharacterTemplate>::New(L, character->CurrentTemplate);
+		if (prop == GFS.strCurrentTemplate) {
+			ObjectProxy2<CharacterTemplate>::New(L, character->CurrentTemplate);
+			return 1;
+		}
+
+		if (prop == GFS.strOriginalTemplate) {
+			ObjectProxy2<CharacterTemplate>::New(L, character->OriginalTemplate);
+			return 1;
+		}
+
+		if (prop == GFS.strTemplateUsedForSpells) {
+			ObjectProxy2<CharacterTemplate>::New(L, character->TemplateUsedForSpells);
 			return 1;
 		}
 
@@ -101,9 +80,14 @@ namespace bg3se::lua
 			return GameObjectGetDisplayName<esv::Character>(L, character);
 		}
 
-		auto fetched = LuaPropertyMapGet(L, gCharacterPropertyMap, character, prop, true);
-		if (!fetched) push(L, nullptr);
-		return 1;*/
+		auto const& map = StaticLuaPropertyMap<esv::Character>::PropertyMap;
+		auto fetched = map.GetProperty(L, character, prop.GetString());
+		if (!fetched) {
+			luaL_error(L, "Object of type 'esv::Character' has no property named '%s'", prop.GetString());
+			push(L, nullptr);
+		}
+
+		return 1;
 	}
 
 	esv::Character* ObjectProxy<esv::Character>::Get(lua_State* L)
@@ -299,38 +283,13 @@ namespace bg3se::lua
 
 		StackCheck _(L, 0);
 		auto prop = luaL_checkstring(L, 2);
-		FixedString propFS(prop);
-		if (!propFS) {
-			OsiError("Illegal property name: " << prop);
-			return 0;
+		auto const& map = StaticLuaPropertyMap<esv::Character>::PropertyMap;
+		auto ok = map.SetProperty(L, character, prop, 3);
+		if (!ok) {
+			luaL_error(L, "Object of type '%s' has no property named '%s'", MetatableName, prop);
 		}
 
-		return luaL_error(L, "Not implemented yet!");
-
-		/*if (propFS == GFS.strWalkSpeed) {
-			if (lua_isnil(L, 3)) {
-				character->WalkSpeedOverride = 0.0f;
-				character->Flags3 &= ~esv::CharacterFlags3::HasWalkSpeedOverride;
-			} else {
-				auto speed = checked_get<float>(L, 3);
-				character->WalkSpeedOverride = speed;
-				character->Flags3 |= esv::CharacterFlags3::HasWalkSpeedOverride;
-			}
-		} else if (propFS == GFS.strRunSpeed) {
-			if (lua_isnil(L, 3)) {
-				character->RunSpeedOverride = 0.0f;
-				character->Flags3 &= ~esv::CharacterFlags3::HasRunSpeedOverride;
-			}
-			else {
-				auto speed = checked_get<float>(L, 3);
-				character->RunSpeedOverride = speed;
-				character->Flags3 |= esv::CharacterFlags3::HasRunSpeedOverride;
-			}
-		} else {
-			return GenericSetter(L, gCharacterPropertyMap);
-		}
-
-		return 0;*/
+		return 0;
 	}
 }
 

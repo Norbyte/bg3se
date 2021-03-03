@@ -249,7 +249,9 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Lua\Server\LuaServer.cpp" />
-    <ClCompile Include="Lua\Shared\LuaStats.cpp" />
+    <ClCompile Include="Lua\Shared\LuaStats.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">/bigobj %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
     <ClCompile Include="Lua\Shared\LuaUtilities.cpp" />
     <ClCompile Include="NodeHooks.cpp" />
     <ClCompile Include="osidebug.pb.cc">
@@ -283,6 +285,8 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
     <None Include="GameDefinitions\Enumerations.inl" />
     <None Include="GameDefinitions\PropertyMaps\AllPropertyMaps.inl" />
     <None Include="GameDefinitions\PropertyMaps\ResourceDefinitions.inl" />
+    <None Include="GameDefinitions\PropertyMaps\RootTemplates.inl" />
+    <None Include="GameDefinitions\PropertyMaps\ServerCharacter.inl" />
     <None Include="GameDefinitions\PropertyMaps\StatsFunctorProperties.inl" />
     <None Include="GlobalFixedStrings.inl" />
     <None Include="LuaDebug.proto" />

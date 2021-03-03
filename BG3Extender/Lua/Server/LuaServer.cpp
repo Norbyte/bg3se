@@ -384,11 +384,11 @@ namespace bg3se::esv::lua
 			/*{"GetAllItems", GetAllItems},
 			{"GetItemsAroundPosition", GetItemsAroundPosition},
 			{"CreateItemConstructor", CreateItemConstructor},
-
+			*/
 			{"GetCharacter", GetCharacter},
 			{"GetItem", GetItem},
 			{"GetGameObject", GetGameObject},
-			{"GetStatus", GetStatus},
+			/*{"GetStatus", GetStatus},
 			{"GetCombat", GetCombat},
 			{"GetSurface", GetSurface},
 			{"GetAiGrid", GetAiGrid},
@@ -415,8 +415,6 @@ namespace bg3se::esv::lua
 	{
 		ExtensionLibrary::Register(L);
 
-		ObjectProxy2<DealDamageFunctor>::RegisterMetatable(L);
-
 		/*auto & pm = StaticLuaPropertyMap<DealDamageFunctor>::PropertyMap;
 		pm.AddProperty("DamageType", 
 			[](lua_State* L, DealDamageFunctor* obj) {
@@ -430,13 +428,12 @@ namespace bg3se::esv::lua
 			}
 		);*/
 
-		/*ObjectProxy<esv::Status>::RegisterMetatable(L);
+		/*ObjectProxy<esv::Status>::RegisterMetatable(L);*/
 		ObjectProxy<esv::Character>::RegisterMetatable(L);
-		ObjectProxy<esv::PlayerCustomData>::RegisterMetatable(L);
 		ObjectProxy<esv::Item>::RegisterMetatable(L);
-		ObjectProxy<eoc::ItemDefinition>::RegisterMetatable(L);
-		ObjectProxy<esv::Projectile>::RegisterMetatable(L);
-		ObjectProxy<esv::ShootProjectileHelper>::RegisterMetatable(L);
+		/*ObjectProxy<eoc::ItemDefinition>::RegisterMetatable(L);*/
+		//ObjectProxy<esv::Projectile>::RegisterMetatable(L);
+		/*ObjectProxy<esv::ShootProjectileHelper>::RegisterMetatable(L);
 		ObjectProxy<esv::SurfaceAction>::RegisterMetatable(L);*/
 
 		OsiFunctionNameProxy::RegisterMetatable(L);
