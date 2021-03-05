@@ -103,7 +103,7 @@ namespace bg3se
 
 		void* VMT;
 		int StatsObjectIndex;
-		int SpellTypeId;
+		SpellType SpellTypeId;
 		FixedString SpellId;
 		uint8_t SpellSchool;
 		uint64_t SpellFlags;
@@ -115,7 +115,6 @@ namespace bg3se
 		uint32_t LineOfSightFlags;
 		int Level;
 		int PowerLevel;
-		char field_34;
 		bool HasMemoryCost;
 		FixedString SpellContainerId;
 		int RechargeValuesFrom;
@@ -128,19 +127,20 @@ namespace bg3se
 		SpellPrototype* ParentPrototype;
 		ObjectSet<SpellPrototype*> ChildPrototypes;
 		Array<void*> UseCosts2;
+		Array<void*> RitualCosts2;
 		Array<void*> DualWieldingUseCosts2;
-		Array<void*> HitCosts;
+		Array<void*> CastTextEvents;
 		ObjectSet<void*> UseCosts;
 		ObjectSet<void*> DualWieldingUseCosts;
+		ObjectSet<void*> RitualCosts;
 		int VerbalIntent;
-		int field_18C;
 		Array<void*> SpellAnimationNoneMagic;
 		Array<void*> DualWieldingSpellAnimationNoneMagic;
 		FixedString PrepareEffect;
 		FixedString PrepareSound;
-		char field_1C8;
+		bool field_1F8;
 		Array<void*> AlternativeCastTextEvents;
-		char SourceLimbIndex;
+		uint8_t SourceLimbIndex;
 		Array<void*> ContainerSpells;
 
 		CRPGStats_Object* GetStats() const;
@@ -170,15 +170,12 @@ namespace bg3se
 		FixedString StatusName;
 		int StatusPropertyFlags;
 		int StatusGroups;
-		int field_1C;
 		DescriptionInfo Description;
-		int LEDEffect;
+		uint8_t LEDEffect;
 		uint8_t TickType;
-		uint8_t field_BD;
+		uint8_t Flags;
 		ObjectSet<SurfaceType>* AbsorbSurfaceTypes{ nullptr };
-		uint64_t Boosts_M;
-		int field_D0;
-		int field_D8;
+		Array<void*> Boosts;
 		int16_t RemoveEvents;
 
 		CRPGStats_Object* GetStats() const;
