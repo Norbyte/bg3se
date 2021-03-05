@@ -6,13 +6,13 @@
 
 namespace bg3se
 {
-	struct BaseResourceDefinition
+	struct GuidResourceDefinition
 	{
 		void* VMT;
 		UUID ResourceUUID;
 	};
 
-	struct ResourceDefinitionManagerBase : ProtectedGameObject<ResourceDefinitionManagerBase>
+	struct GuidResourceDefinitionManagerBase : ProtectedGameObject<GuidResourceDefinitionManagerBase>
 	{
 		void* VMT;
 		VirtualMultiHashMap<UUID, Array<UUID>> ResourceGuidsByMod;
@@ -21,7 +21,7 @@ namespace bg3se
 	};
 
 	template <class T>
-	struct ResourceDefinitionManager : public ResourceDefinitionManagerBase
+	struct GuidResourceDefinitionManager : public GuidResourceDefinitionManagerBase
 	{
 		VirtualMultiHashMap<UUID, T> Resources;
 		STDString Path;
@@ -29,16 +29,16 @@ namespace bg3se
 	};
 
 
-	struct ResourceDefinitions
+	struct GuidResourceDefinitions
 	{
 		__int64 field_0;
-		MultiHashMap<int32_t, ResourceDefinitionManagerBase*> Definitions;
-		Array<ResourceDefinitionManagerBase*> DefinitionManagers;
+		MultiHashMap<int32_t, GuidResourceDefinitionManagerBase*> Definitions;
+		Array<GuidResourceDefinitionManagerBase*> DefinitionManagers;
 		__int64 field_70;
 	};
 
 
-	struct ActionResource : public BaseResourceDefinition
+	struct ActionResource : public GuidResourceDefinition
 	{
 		static constexpr auto ResourceManagerType = ExtResourceManagerType::ActionResource;
 
@@ -56,7 +56,7 @@ namespace bg3se
 	};
 
 
-	struct ClassDescriptionResource : public BaseResourceDefinition
+	struct ClassDescriptionResource : public GuidResourceDefinition
 	{
 		static constexpr auto ResourceManagerType = ExtResourceManagerType::ClassDescription;
 
@@ -82,7 +82,7 @@ namespace bg3se
 	};
 
 
-	struct TagResource : public BaseResourceDefinition
+	struct TagResource : public GuidResourceDefinition
 	{
 		static constexpr auto ResourceManagerType = ExtResourceManagerType::Tag;
 
@@ -95,7 +95,7 @@ namespace bg3se
 	};
 
 
-	struct FactionResource : public BaseResourceDefinition
+	struct FactionResource : public GuidResourceDefinition
 	{
 		static constexpr auto ResourceManagerType = ExtResourceManagerType::Faction;
 
@@ -104,7 +104,7 @@ namespace bg3se
 	};
 
 
-	struct RaceResource : public BaseResourceDefinition
+	struct RaceResource : public GuidResourceDefinition
 	{
 		static constexpr auto ResourceManagerType = ExtResourceManagerType::Race;
 
@@ -126,7 +126,7 @@ namespace bg3se
 	};
 
 
-	struct OriginResource : public BaseResourceDefinition
+	struct OriginResource : public GuidResourceDefinition
 	{
 		static constexpr auto ResourceManagerType = ExtResourceManagerType::Origin;
 
@@ -155,7 +155,7 @@ namespace bg3se
 	};
 
 
-	struct BackgroundResource : public BaseResourceDefinition
+	struct BackgroundResource : public GuidResourceDefinition
 	{
 		static constexpr auto ResourceManagerType = ExtResourceManagerType::Background;
 
@@ -169,7 +169,7 @@ namespace bg3se
 	};
 
 
-	struct GodResource : public BaseResourceDefinition
+	struct GodResource : public GuidResourceDefinition
 	{
 		static constexpr auto ResourceManagerType = ExtResourceManagerType::God;
 
@@ -180,7 +180,7 @@ namespace bg3se
 	};
 
 
-	struct ProgressionResource : public BaseResourceDefinition
+	struct ProgressionResource : public GuidResourceDefinition
 	{
 		static constexpr auto ResourceManagerType = ExtResourceManagerType::Progression;
 
@@ -204,7 +204,7 @@ namespace bg3se
 	};
 
 
-	struct ProgressionDescriptionResource : public BaseResourceDefinition
+	struct ProgressionDescriptionResource : public GuidResourceDefinition
 	{
 		static constexpr auto ResourceManagerType = ExtResourceManagerType::ProgressionDescription;
 
@@ -221,7 +221,7 @@ namespace bg3se
 	};
 
 
-	struct GossipDefinition : public BaseResourceDefinition
+	struct GossipDefinition : public GuidResourceDefinition
 	{
 		static constexpr auto ResourceManagerType = ExtResourceManagerType::Gossip;
 
@@ -234,7 +234,7 @@ namespace bg3se
 	};
 
 
-	struct ActionResourceGroupDefinition : public BaseResourceDefinition
+	struct ActionResourceGroupDefinition : public GuidResourceDefinition
 	{
 		static constexpr auto ResourceManagerType = ExtResourceManagerType::ActionResourceGroup;
 
@@ -245,7 +245,7 @@ namespace bg3se
 	};
 
 
-	struct ColorDefinitionResource : public BaseResourceDefinition
+	struct ColorDefinitionResource : public GuidResourceDefinition
 	{
 		static constexpr auto ResourceManagerType = ExtResourceManagerType::ColorDefinition;
 
@@ -255,7 +255,7 @@ namespace bg3se
 	};
 
 
-	struct EquipmentTypeResource : public BaseResourceDefinition
+	struct EquipmentTypeResource : public GuidResourceDefinition
 	{
 		static constexpr auto ResourceManagerType = ExtResourceManagerType::EquipmentType;
 
@@ -276,7 +276,7 @@ namespace bg3se
 	};
 
 
-	struct FlagResource : public BaseResourceDefinition
+	struct FlagResource : public GuidResourceDefinition
 	{
 		static constexpr auto ResourceManagerType = ExtResourceManagerType::Flag;
 
@@ -286,7 +286,7 @@ namespace bg3se
 	};
 
 
-	struct FeatResource : public BaseResourceDefinition
+	struct FeatResource : public GuidResourceDefinition
 	{
 		static constexpr auto ResourceManagerType = ExtResourceManagerType::Feat;
 
@@ -308,7 +308,7 @@ namespace bg3se
 	};
 
 
-	struct FeatDescriptionResource : public BaseResourceDefinition
+	struct FeatDescriptionResource : public GuidResourceDefinition
 	{
 		static constexpr auto ResourceManagerType = ExtResourceManagerType::FeatDescription;
 

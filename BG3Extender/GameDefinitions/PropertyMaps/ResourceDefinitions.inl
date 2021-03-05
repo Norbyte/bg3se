@@ -1,10 +1,24 @@
-BEGIN_CLS(BaseResourceDefinition)
+BEGIN_CLS(Resource)
+P_RO(SourceFile)
+P_RO(PackageName)
+P_RO(ModName)
+P_RO(UUID)
+P_RO(Tags)
+P_RO(Name)
+P_RO(IsLocalized)
+P_RO(IsActive)
+P_RO(IsDirty)
+P_RO(IsOriginal)
+END_CLS()
+
+
+BEGIN_CLS(GuidResourceDefinition)
 P_RO(ResourceUUID)
 END_CLS()
 
 
 BEGIN_CLS(ActionResource)
-INHERIT(BaseResourceDefinition)
+INHERIT(GuidResourceDefinition)
 P(Name)
 P(DisplayName)
 P(Description)
@@ -20,7 +34,7 @@ END_CLS()
 
 
 BEGIN_CLS(ClassDescriptionResource)
-INHERIT(BaseResourceDefinition)
+INHERIT(GuidResourceDefinition)
 P(ParentGuid)
 P(Name)
 P(DisplayName)
@@ -43,7 +57,7 @@ END_CLS()
 
 
 BEGIN_CLS(TagResource)
-INHERIT(BaseResourceDefinition)
+INHERIT(GuidResourceDefinition)
 P(Name)
 P(Description)
 P(Icon)
@@ -54,14 +68,14 @@ END_CLS()
 
 
 BEGIN_CLS(FactionResource)
-INHERIT(BaseResourceDefinition)
+INHERIT(GuidResourceDefinition)
 P(Faction)
 P(ParentGuid)
 END_CLS()
 
 
 BEGIN_CLS(RaceResource)
-INHERIT(BaseResourceDefinition)
+INHERIT(GuidResourceDefinition)
 P(Name)
 P(DisplayName)
 P(Description)
@@ -81,7 +95,7 @@ END_CLS()
 
 
 BEGIN_CLS(OriginResource)
-INHERIT(BaseResourceDefinition)
+INHERIT(GuidResourceDefinition)
 P(AvailableInCharacterCreation)
 P(Name)
 P(DisplayName)
@@ -107,7 +121,7 @@ END_CLS()
 
 
 BEGIN_CLS(BackgroundResource)
-INHERIT(BaseResourceDefinition)
+INHERIT(GuidResourceDefinition)
 P(DisplayName)
 P(Description)
 P(Passives)
@@ -116,7 +130,7 @@ END_CLS()
 
 
 BEGIN_CLS(GodResource)
-INHERIT(BaseResourceDefinition)
+INHERIT(GuidResourceDefinition)
 P(Name)
 P(DisplayName)
 P(Description)
@@ -125,7 +139,7 @@ END_CLS()
 
 
 BEGIN_CLS(ProgressionResource)
-INHERIT(BaseResourceDefinition)
+INHERIT(GuidResourceDefinition)
 P(TableUUID)
 P(Name)
 P(SubClasses)
@@ -144,7 +158,7 @@ END_CLS()
 
 
 BEGIN_CLS(ProgressionDescriptionResource)
-INHERIT(BaseResourceDefinition)
+INHERIT(GuidResourceDefinition)
 P(DisplayName)
 P(Description)
 P(Hidden)
@@ -159,7 +173,7 @@ END_CLS()
 
 
 BEGIN_CLS(GossipDefinition)
-INHERIT(BaseResourceDefinition)
+INHERIT(GuidResourceDefinition)
 P(Name)
 P(Type)
 P(Priority)
@@ -170,7 +184,7 @@ END_CLS()
 
 
 BEGIN_CLS(ActionResourceGroupDefinition)
-INHERIT(BaseResourceDefinition)
+INHERIT(GuidResourceDefinition)
 P(Name)
 P(field_38)
 P(field_48)
@@ -179,7 +193,7 @@ END_CLS()
 
 
 BEGIN_CLS(ColorDefinitionResource)
-INHERIT(BaseResourceDefinition)
+INHERIT(GuidResourceDefinition)
 P(Name)
 P(DisplayName)
 P(Color)
@@ -187,7 +201,7 @@ END_CLS()
 
 
 BEGIN_CLS(EquipmentTypeResource)
-INHERIT(BaseResourceDefinition)
+INHERIT(GuidResourceDefinition)
 P(Name)
 P(WeaponType_OneHanded)
 P(WeaponType_TwoHanded)
@@ -206,7 +220,7 @@ END_CLS()
 
 
 BEGIN_CLS(FlagResource)
-INHERIT(BaseResourceDefinition)
+INHERIT(GuidResourceDefinition)
 P(Name)
 P(Description)
 P(Usage)
@@ -214,7 +228,7 @@ END_CLS()
 
 
 BEGIN_CLS(FeatResource)
-INHERIT(BaseResourceDefinition)
+INHERIT(GuidResourceDefinition)
 P(Name)
 P(Requirements)
 P(PassivesAdded)
@@ -230,7 +244,7 @@ END_CLS()
 
 
 BEGIN_CLS(FeatDescriptionResource)
-INHERIT(BaseResourceDefinition)
+INHERIT(GuidResourceDefinition)
 P(DisplayName)
 P(Description)
 P(Hidden)

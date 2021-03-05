@@ -10,6 +10,7 @@
 
 #include <Lua/Shared/LuaJson.inl>
 #include <Lua/Shared/LuaLocalization.inl>
+#include <Lua/Shared/LuaStaticDataLib.inl>
 
 namespace bg3se::lua::utils
 {
@@ -482,112 +483,6 @@ namespace bg3se::lua::utils
 
 	WrapLuaFunction(DumpStack)
 
-
-	template <class T>
-	int GetResourceProxy(lua_State* L, UUID const& resourceGuid)
-	{
-		auto& helpers = gOsirisProxy->GetServerEntityHelpers();
-		auto resourceMgr = helpers.GetResourceManager<T>();
-		if (!resourceMgr) {
-			LuaError("Resource manager not available for this resource type");
-			push(L, nullptr);
-			return 1;
-		}
-
-		auto resource = (*resourceMgr)->Resources.Find(resourceGuid);
-		if (resource) {
-			ObjectProxy2<T>::New(L, *resource);
-		} else {
-			push(L, nullptr);
-		}
-
-		return 1;
-	}
-
-	int GetResource(lua_State* L)
-	{
-		auto resourceGuid = checked_get<UUID>(L, 1);
-		auto type = checked_get<ExtResourceManagerType>(L, 2);
-
-		auto& helpers = gOsirisProxy->GetServerEntityHelpers();
-		switch (type) {
-		case ActionResource::ResourceManagerType: return GetResourceProxy<ActionResource>(L, resourceGuid);
-		case ClassDescriptionResource::ResourceManagerType: return GetResourceProxy<ClassDescriptionResource>(L, resourceGuid);
-		case TagResource::ResourceManagerType: return GetResourceProxy<TagResource>(L, resourceGuid);
-		case FactionResource::ResourceManagerType: return GetResourceProxy<FactionResource>(L, resourceGuid);
-		case RaceResource::ResourceManagerType: return GetResourceProxy<RaceResource>(L, resourceGuid);
-		case OriginResource::ResourceManagerType: return GetResourceProxy<OriginResource>(L, resourceGuid);
-		case BackgroundResource::ResourceManagerType: return GetResourceProxy<BackgroundResource>(L, resourceGuid);
-		case GodResource::ResourceManagerType: return GetResourceProxy<GodResource>(L, resourceGuid);
-		case ProgressionResource::ResourceManagerType: return GetResourceProxy<ProgressionResource>(L, resourceGuid);
-		case ProgressionDescriptionResource::ResourceManagerType: return GetResourceProxy<ProgressionDescriptionResource>(L, resourceGuid);
-		case GossipDefinition::ResourceManagerType: return GetResourceProxy<GossipDefinition>(L, resourceGuid);
-		case ActionResourceGroupDefinition::ResourceManagerType: return GetResourceProxy<ActionResourceGroupDefinition>(L, resourceGuid);
-		case ColorDefinitionResource::ResourceManagerType: return GetResourceProxy<ColorDefinitionResource>(L, resourceGuid);
-		case EquipmentTypeResource::ResourceManagerType: return GetResourceProxy<EquipmentTypeResource>(L, resourceGuid);
-		case FlagResource::ResourceManagerType: return GetResourceProxy<FlagResource>(L, resourceGuid);
-		case FeatResource::ResourceManagerType: return GetResourceProxy<FeatResource>(L, resourceGuid);
-		case FeatDescriptionResource::ResourceManagerType: return GetResourceProxy<FeatDescriptionResource>(L, resourceGuid);
-
-		default:
-			LuaError("Resource type not supported: " << EnumInfo<ExtResourceManagerType>::Find(type));
-			push(L, nullptr);
-			return 1;
-		}
-	}
-
-
-	template <class T>
-	int GetAllResourcesTyped(lua_State* L)
-	{
-		auto& helpers = gOsirisProxy->GetServerEntityHelpers();
-		auto resourceMgr = helpers.GetResourceManager<T>();
-		if (!resourceMgr) {
-			LuaError("Resource manager not available for this resource type");
-			push(L, nullptr);
-			return 1;
-		}
-
-		lua_newtable(L);
-		int i{ 1 };
-		for (auto const& k : (*resourceMgr)->Resources.Keys) {
-			settable(L, i++, k);
-		}
-
-		return 1;
-	}
-
-	int GetAllResources(lua_State* L)
-	{
-		auto type = checked_get<ExtResourceManagerType>(L, 1);
-
-		auto& helpers = gOsirisProxy->GetServerEntityHelpers();
-		switch (type) {
-		case ActionResource::ResourceManagerType: return GetAllResourcesTyped<ActionResource>(L);
-		case ClassDescriptionResource::ResourceManagerType: return GetAllResourcesTyped<ClassDescriptionResource>(L);
-		case TagResource::ResourceManagerType: return GetAllResourcesTyped<TagResource>(L);
-		case FactionResource::ResourceManagerType: return GetAllResourcesTyped<FactionResource>(L);
-		case RaceResource::ResourceManagerType: return GetAllResourcesTyped<RaceResource>(L);
-		case OriginResource::ResourceManagerType: return GetAllResourcesTyped<OriginResource>(L);
-		case BackgroundResource::ResourceManagerType: return GetAllResourcesTyped<BackgroundResource>(L);
-		case GodResource::ResourceManagerType: return GetAllResourcesTyped<GodResource>(L);
-		case ProgressionResource::ResourceManagerType: return GetAllResourcesTyped<ProgressionResource>(L);
-		case ProgressionDescriptionResource::ResourceManagerType: return GetAllResourcesTyped<ProgressionDescriptionResource>(L);
-		case GossipDefinition::ResourceManagerType: return GetAllResourcesTyped<GossipDefinition>(L);
-		case ActionResourceGroupDefinition::ResourceManagerType: return GetAllResourcesTyped<ActionResourceGroupDefinition>(L);
-		case ColorDefinitionResource::ResourceManagerType: return GetAllResourcesTyped<ColorDefinitionResource>(L);
-		case EquipmentTypeResource::ResourceManagerType: return GetAllResourcesTyped<EquipmentTypeResource>(L);
-		case FlagResource::ResourceManagerType: return GetAllResourcesTyped<FlagResource>(L);
-		case FeatResource::ResourceManagerType: return GetAllResourcesTyped<FeatResource>(L);
-		case FeatDescriptionResource::ResourceManagerType: return GetAllResourcesTyped<FeatDescriptionResource>(L);
-
-		default:
-			LuaError("Resource type not supported: " << EnumInfo<ExtResourceManagerType>::Find(type));
-			push(L, nullptr);
-			return 1;
-		}
-	}
-
 	void RegisterUtilsLib(lua_State* L)
 	{
 		static const luaL_Reg utilsLib[] = {
@@ -606,10 +501,6 @@ namespace bg3se::lua::utils
 
 			{"IsDeveloperMode", IsDeveloperModeWrapper},
 			{"GenerateIdeHelpers", GenerateIdeHelpersWrapper},
-
-			// FIXME - move somewhere else later!
-			{"GetResource", GetResource},
-			{"GetAllResources", GetAllResources},
 
 			// EXPERIMENTAL FUNCTIONS
 			{"DumpStack", DumpStackWrapper},

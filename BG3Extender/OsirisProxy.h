@@ -1,7 +1,7 @@
 #pragma once
 
 #include <GameDefinitions/Osiris.h>
-#include <GameDefinitions/ResourceDefinitions.h>
+#include <GameDefinitions/GuidResources.h>
 #include <ExtensionStateClient.h>
 #include <ExtensionStateServer.h>
 #if !defined(OSI_NO_DEBUGGER)
@@ -256,11 +256,11 @@ public:
 	virtual EntityWorldBase* GetEntityWorld() = 0;
 
 	template <class T>
-	std::optional<ResourceDefinitionManager<T>*> GetResourceManager()
+	std::optional<GuidResourceDefinitionManager<T>*> GetResourceManager()
 	{
 		auto mgr = GetRawResourceManager(T::ResourceManagerType);
 		if (mgr) {
-			return static_cast<ResourceDefinitionManager<T>*>(mgr);
+			return static_cast<GuidResourceDefinitionManager<T>*>(mgr);
 		} else {
 			return {};
 		}
@@ -300,7 +300,7 @@ private:
 	void* GetRawComponent(char const* nameGuid, ExtComponentType type, bool logError);
 	void* GetRawComponent(FixedString const& guid, ExtComponentType type, bool logError);
 	void* GetRawEntityComponent(EntityHandle entityHandle, ExtComponentType type, bool logError);
-	ResourceDefinitionManagerBase* GetRawResourceManager(ExtResourceManagerType type);
+	GuidResourceDefinitionManagerBase* GetRawResourceManager(ExtResourceManagerType type);
 };
 
 class ServerEntitySystemHelpers : public EntitySystemHelpersBase

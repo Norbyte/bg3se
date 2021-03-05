@@ -13,7 +13,8 @@
 
 namespace bg3se
 {
-	struct ResourceDefinitions;
+	struct GuidResourceDefinitions;
+	struct ResourceManager;
 
 	struct StaticSymbols : Noncopyable<StaticSymbols>
 	{
@@ -69,7 +70,8 @@ namespace bg3se
 
 		//CharacterStatsGetters CharStatsGetters;
 
-		ResourceDefinitions** ResourceDefns;
+		GuidResourceDefinitions** ResourceDefns;
+		ResourceManager** ResourceMgr;
 
 		inline StaticSymbols() {}
 		StaticSymbols(StaticSymbols const &) = delete;

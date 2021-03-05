@@ -115,6 +115,16 @@ namespace bg3se::lua
 		lua_pushstring(L, v.GetString());
 	}
 
+	inline void push(lua_State* L, STDString s)
+	{
+		lua_pushlstring(L, s.data(), s.size());
+	}
+
+	inline void push(lua_State* L, STDWString s)
+	{
+		push(L, ToUTF8(s));
+	}
+
 	inline void push(lua_State * L, StringView v)
 	{
 		lua_pushlstring(L, v.data(), v.size());
@@ -133,6 +143,11 @@ namespace bg3se::lua
 	inline void push(lua_State* L, EntityHandle const& h)
 	{
 		lua_pushlightuserdata(L, (void*)h.Handle);
+	}
+
+	inline void push(lua_State* L, Path const& p)
+	{
+		push(L, p.Name);
 	}
 
 	inline void push(lua_State* L, UUID const& u)
@@ -548,6 +563,12 @@ namespace bg3se::lua
 		return STDString(luaL_checkstring(L, index));
 	}
 
+	template <class T, typename std::enable_if_t<std::is_same_v<T, Path>, int>* = nullptr>
+	inline Path checked_get(lua_State* L, int index)
+	{
+		return Path(luaL_checkstring(L, index));
+	}
+
 	template <class T, typename std::enable_if_t<std::is_same_v<T, STDWString>, int>* = nullptr>
 	inline STDWString checked_get(lua_State* L, int index)
 	{
@@ -567,7 +588,7 @@ namespace bg3se::lua
 			if (index) {
 				return (T)*index;
 			} else {
-				luaL_error(L, "Param %d is not a valid '%s' enum label: %s", index, EnumInfo<T>::Name, val);
+				luaL_error(L, "Param '%s' is not a valid '%s' enum label: %s", val, EnumInfo<T>::Name, val);
 			}
 			break;
 		}

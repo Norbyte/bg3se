@@ -249,6 +249,8 @@ FS(SurfaceActionType);
 FS(SurfaceTransformActionType);
 FS(ESurfaceFlag);
 FS(BoostType);
+FS(SpellType);
+FS(ResourceBankType);
 
 // Savegames
 FS(ScriptExtenderSave);

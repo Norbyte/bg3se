@@ -64,6 +64,7 @@ namespace bg3se::lua
 		InitObjectProxyPropertyMaps(L);
 
 		stats::RegisterStatsLib(L);
+		utils::RegisterStaticDataLib(L);
 		utils::RegisterUtilsLib(L);
 		utils::RegisterLocalizationLib(L);
 		utils::RegisterJsonLib(L);

@@ -3,6 +3,7 @@
 #include <Lua/LuaBinding.h>
 #include <Lua/LuaSerializers.h>
 #include <Lua/Shared/LuaPropertyMapHelpers.h>
+#include <GameDefinitions/Resources.h>
 
 
 namespace bg3se::lua

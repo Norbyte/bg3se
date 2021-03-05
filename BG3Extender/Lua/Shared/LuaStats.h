@@ -119,6 +119,7 @@ namespace bg3se::lua::stats
 namespace bg3se::lua::utils
 {
 	void RegisterUtilsLib(lua_State* L);
+	void RegisterStaticDataLib(lua_State* L);
 	void RegisterLocalizationLib(lua_State* L);
 	void RegisterJsonLib(lua_State* L);
 	void RegisterIOLib(lua_State* L);

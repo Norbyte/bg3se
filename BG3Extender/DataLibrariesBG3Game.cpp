@@ -1370,6 +1370,18 @@ namespace bg3se
 			"48 0F 45 D5 ", // cmovnz  rdx, rbp
 			{},
 			{"eoc::gResourceDefinitions", SymbolMappingTarget::kIndirect, 0, STATIC_SYM(ResourceDefns)}
+		},
+
+		{
+			"eoc::gResourceManager",
+			SymbolMappingData::kText, 0,
+			"4C 8D 05 XX XX XX XX " // lea     r8, aLoadingSound ; "Loading Sound"
+			"BA 01 00 00 00 " // mov     edx, 1
+			"49 8B CF " // mov     rcx, r15
+			"41 FF D1 " // call    r9
+			"48 8B 15 XX XX XX XX ", // mov     rdx, cs:eoc__gResourceManager
+			{SymbolMappingCondition::kString, 0, "Loading Sound"},
+			{"eoc::gResourceManager", SymbolMappingTarget::kIndirect, 18, STATIC_SYM(ResourceMgr)}
 		}
 	};
 

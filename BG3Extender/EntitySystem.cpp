@@ -4,7 +4,7 @@
 #include <GameDefinitions/Symbols.h>
 #include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/EntitySystem.h>
-#include <GameDefinitions/ResourceDefinitions.h>
+#include <GameDefinitions/GuidResources.h>
 #include "OsirisProxy.h"
 
 namespace bg3se
@@ -655,7 +655,7 @@ namespace bg3se
 		}
 	}
 
-	ResourceDefinitionManagerBase* EntitySystemHelpersBase::GetRawResourceManager(ExtResourceManagerType type)
+	GuidResourceDefinitionManagerBase* EntitySystemHelpersBase::GetRawResourceManager(ExtResourceManagerType type)
 	{
 		auto index = resourceManagerIndices_[(int)type];
 		if (index == UndefinedIndex) {
