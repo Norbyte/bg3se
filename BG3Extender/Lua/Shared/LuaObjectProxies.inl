@@ -19,6 +19,7 @@ namespace bg3se::lua
 #define INHERIT(base)
 #define P(prop)
 #define P_RO(prop)
+#define P_REF(prop)
 #define PN(prop, name)
 
 #include <GameDefinitions/PropertyMaps/AllPropertyMaps.inl>
@@ -28,6 +29,7 @@ namespace bg3se::lua
 #undef INHERIT
 #undef P
 #undef P_RO
+#undef P_REF
 #undef PN
 
 
@@ -41,6 +43,7 @@ namespace bg3se::lua
 #define INHERIT(base)
 #define P(prop)
 #define P_RO(prop)
+#define P_REF(prop)
 #define PN(prop, name)
 
 #include <GameDefinitions/PropertyMaps/AllPropertyMaps.inl>
@@ -50,6 +53,7 @@ namespace bg3se::lua
 #undef INHERIT
 #undef P
 #undef P_RO
+#undef P_REF
 #undef PN
 	}
 
@@ -84,6 +88,17 @@ namespace bg3se::lua
 	pm.AddProperty(#prop, \
 		[](lua_State* L, PM::ObjectType* obj) { \
 			return GenericGetProperty(L, obj->prop); \
+		}, \
+		[](lua_State* L, PM::ObjectType* obj, int index) { \
+			return false; \
+		} \
+	);
+
+#define P_REF(prop) \
+	pm.AddProperty(#prop, \
+		[](lua_State* L, PM::ObjectType* obj) { \
+			ObjectProxy2<decltype(obj->prop)>::New(L, &obj->prop); \
+			return true; \
 		}, \
 		[](lua_State* L, PM::ObjectType* obj, int index) { \
 			return false; \

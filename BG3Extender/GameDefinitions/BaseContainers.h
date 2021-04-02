@@ -1167,67 +1167,6 @@ namespace bg3se
 		return v.GetHash();
 	}
 
-	template <class TKey, class TValue>
-	struct MultiHashMap : public ProtectedGameObject<MultiHashMap<TKey, TValue>>
-	{
-		int32_t* HashKeys;
-		int32_t NumHashKeys;
-		Array<int32_t> NextIds;
-		Array<TKey> Keys;
-		TValue* Values;
-		int32_t NumValues;
-
-		int FindIndex(TKey const& key) const
-		{
-			if (NumHashKeys <= 0) return -1;
-
-			auto keyIndex = HashKeys[MultiHashMapHash(key) % NumHashKeys];
-			while (keyIndex >= 0) {
-				if (Keys[keyIndex] == key) return keyIndex;
-				keyIndex = NextIds[keyIndex];
-			}
-
-			return -1;
-		}
-
-		std::optional<TValue const*> Find(TKey const& key) const
-		{
-			auto index = FindIndex(key);
-			if (index == -1) {
-				return {};
-			} else {
-				return Values + index;
-			}
-		}
-
-		std::optional<TValue*> Find(TKey const& key)
-		{
-			auto index = FindIndex(key);
-			if (index == -1) {
-				return {};
-			} else {
-				return Values + index;
-			}
-		}
-
-		void Set(TKey const& key, TValue const& value)
-		{
-			auto index = FindIndex(key);
-			if (index == -1) {
-				// FIXME - add MultiHashMap insert support!
-				throw std::runtime_error("Not implemented yet!");
-			} else {
-				Values[index] = value;
-			}
-		}
-	};
-
-	template <class TKey, class TValue>
-	struct VirtualMultiHashMap : public MultiHashMap<TKey, TValue>
-	{
-		virtual inline void Dummy() {}
-	};
-
 	template <class T>
 	struct MultiHashSet
 	{
@@ -1369,6 +1308,113 @@ namespace bg3se
 
 	template <class T>
 	struct VirtualMultiHashSet : public MultiHashSet<T>
+	{
+		virtual inline void Dummy() {}
+	};
+
+	template <class TKey, class TValue>
+	struct MultiHashMap : public MultiHashSet
+	{
+		TValue* Values{ nullptr };
+		int32_t NumValues{ 0 };
+
+		MultiHashMap()
+		{}
+
+		MultiHashMap(MultiHashMap const& other)
+			: MultiHashSet(other)
+		{
+			NumValues = other.NumValues;
+			if (other.Values) {
+				Values = GameAllocArray<TValue>(NumValues);
+				for (auto i = 0; i < NumValues < i++) {
+					new (Values + i) TValue(other.Values[i]);
+				}
+			}
+		}
+
+		~MultiHashMap()
+		{
+			FreeValues();
+		}
+
+		MultiHashMap& operator =(MultiHashMap const& other)
+		{
+			FreeValues();
+
+			NumValues = other.NumValues;
+			if (other.Values) {
+				Values = GameAllocArray<TValue>(NumValues);
+				for (auto i = 0; i < NumValues < i++) {
+					new (Values + i) TValue(other.Values[i]);
+				}
+			}
+
+			return *this;
+		}
+
+		std::optional<TValue const*> Find(TKey const& key) const
+		{
+			auto index = FindIndex(key);
+			if (index == -1) {
+				return {};
+			} else {
+				return Values + index;
+			}
+		}
+
+		std::optional<TValue*> Find(TKey const& key)
+		{
+			auto index = FindIndex(key);
+			if (index == -1) {
+				return {};
+			} else {
+				return Values + index;
+			}
+		}
+
+		void Set(TKey const& key, TValue const& value)
+		{
+			auto index = FindIndex(key);
+			if (index == -1) {
+				index = Add(key);
+				if (NumValues <= index) {
+
+				}
+			}
+
+			Values[index] = value;
+		}
+
+	private:
+		void ResizeValues(int32_t newSize)
+		{
+			auto numBuckets = GetNearestMultiHashMapPrime(newSize);
+			if (HashKeys) {
+				GameFree(HashKeys);
+			}
+
+			HashKeys = GameAllocArray<int32_t>(numBuckets, -1);
+			NumHashKeys = numBuckets;
+			for (unsigned k = 0; k < Keys.Size; k++) {
+				InsertToHashMap(Keys[k], k);
+			}
+		}
+
+		void FreeValues()
+		{
+			if (Values) {
+				for (auto i = 0; i < NumValues; i++) {
+					Values[i].~TValue();
+				}
+
+				GameFree(Values);
+			}
+		}
+	};
+
+	template <class TKey, class TValue>
+	struct VirtualMultiHashMap : public MultiHashMap<TKey, TValue>
 	{
 		virtual inline void Dummy() {}
 	};

@@ -60,9 +60,6 @@
     <ClCompile Include="GameDefinitions\GameHelpers.cpp">
       <Filter>GameDefinitions</Filter>
     </ClCompile>
-    <ClCompile Include="GameDefinitions\PropertyMaps.cpp">
-      <Filter>GameDefinitions</Filter>
-    </ClCompile>
     <ClCompile Include="LuaDebug.pb.cc">
       <Filter>Lua\Debugger</Filter>
     </ClCompile>
@@ -402,6 +399,9 @@
     </None>
     <None Include="Lua\Shared\LuaStaticDataLib.inl">
       <Filter>Lua\Shared</Filter>
+    </None>
+    <None Include="GameDefinitions\PropertyMaps\Hit.inl">
+      <Filter>GameDefinitions\PropertyMaps</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
