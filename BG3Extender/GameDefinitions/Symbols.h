@@ -52,6 +52,8 @@ namespace bg3se
 		esv::StatusMachine::CreateStatusProc* esv__StatusMachine__CreateStatus{ nullptr };
 		esv::StatusMachine::ApplyStatusProc* esv__StatusMachine__ApplyStatus{ nullptr };
 
+		DealDamageFunctor::ApplyDamageProc* eoc__DealDamageFunctor__ApplyDamage{ nullptr };
+
 		/*RPGStats::LoadProc RPGStats__Load{ nullptr };
 		RPGStats::ParsePropertiesProc* RPGStats__ParseProperties{ nullptr };
 		SkillPrototypeManager** eoc__SkillPrototypeManager{ nullptr };

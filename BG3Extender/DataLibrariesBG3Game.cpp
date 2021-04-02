@@ -18,6 +18,16 @@ namespace bg3se
 		{},
 		{"esv::SurfaceActionFactory::AddSurfaceAction", SymbolMappingTarget::kIndirect, 6, STATIC_SYM(esv__SurfaceActionFactory__AddAction)}
 	};
+	
+	SymbolMappingData const sSymbolDealDamageFunctorApplyDamage = {
+		"eoc::DealDamageFunctor::ApplyDamage",
+		SymbolMappingData::kCustom, 0,
+		"48 8D 8D XX XX XX XX " // lea     rcx, [rbp+3C0h+var_200]
+		"E8 XX XX XX XX " // call    eoc__DealDamageFunctor__ApplyDamage2
+		"90 ", // nop
+		{},
+		{"eoc::DealDamageFunctor::ApplyDamage", SymbolMappingTarget::kIndirect, 7, STATIC_SYM(eoc__DealDamageFunctor__ApplyDamage)}
+	};
 
 	/*SymbolMappingData const sSymbolLevelManager = {
 		"esv::LevelManager2",
@@ -726,6 +736,18 @@ namespace bg3se
 			"4C 8D 3D XX XX XX XX ", // lea     rbp, aEclGamestateth ; "ecl::GameStateThreaded::GameStateWorker::DoWork"
 			{SymbolMappingCondition::kString, 0, "ecl::GameStateThreaded::GameStateWorker::DoWork"},
 			{"ecl::GameStateThreaded::GameStateWorker::DoWork", SymbolMappingTarget::kAbsolute, -0x2F, STATIC_SYM(ecl__GameStateThreaded__GameStateWorker__DoWork)}
+		},
+
+		{
+			"eoc::DealDamageFunctor::ApplyDamage",
+			SymbolMappingData::kText, SymbolMappingData::kDeferred,
+			"48 89 45 XX " // mov     [rbp+...], rax
+			"48 8D 15 XX XX XX XX " // lea     rdx, fs_FallDamageDamageType
+			"48 8B C8 " // mov     rcx, rax
+			"E8 XX XX XX XX " // call    CRPGStats_ExtraData__Get
+			"F3 0F 2C D8 ", // cvttss2si ebx, xmm0
+			{SymbolMappingCondition::kFixedString, 4, "FallDamageDamageType"},
+			{"eoc::DealDamageFunctor::ApplyDamage", SymbolMappingTarget::kAbsolute, 0, nullptr, nullptr, &sSymbolDealDamageFunctorApplyDamage, 0x180}
 		},
 
 		/*

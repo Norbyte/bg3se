@@ -3,9 +3,12 @@
 #include <GameDefinitions/BaseTypes.h>
 #include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/Stats/Common.h>
+#include <GameDefinitions/Hit.h>
 
 namespace bg3se
 {
+	struct GuidResourceDefinitionManagerBase;
+
 	struct StatsFunctorBase : Noncopyable<StatsFunctorBase>
 	{
 		struct FunctorVMT
@@ -309,6 +312,8 @@ namespace bg3se
 	struct DealDamageFunctor : public StatsFunctorBase
 	{
 		static constexpr auto FunctorId = StatsFunctorActionId::DealDamage;
+
+		using ApplyDamageProc = NewHit* (NewHit* result, DealDamageFunctor* functor, EntityWorldHandle* casterHandle, EntityWorldHandle* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId, int storyActionId, ActionOriginator* originator, GuidResourceDefinitionManagerBase* classResourceMgr, Hit* hit, DamageSums* damageSums, HitWith hitWith);
 
 		DamageType DamageType; // Arg1
 		DealDamageWeaponType WeaponType; // Arg0

@@ -1196,6 +1196,12 @@ void OsirisProxy::OnSavegameVisit(void* osirisHelpers, ObjectVisitor* visitor)
 	savegameSerializer_.SavegameVisit(visitor);
 }
 
+NewHit* OnDealDamage(DealDamageFunctor::ApplyDamageProc* next, NewHit* result, DealDamageFunctor* functor, EntityWorldHandle* casterHandle, EntityWorldHandle* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId, int storyActionId, ActionOriginator* originator, GuidResourceDefinitionManagerBase* classResourceMgr, Hit* hit, DamageSums* damageSums, HitWith hitWith)
+{
+	auto ret = next(result, functor, casterHandle, targetHandle, position, isFromItem, spellId, storyActionId, originator, classResourceMgr, hit, damageSums, hitWith);
+	return ret;
+}
+
 void OsirisProxy::PostInitLibraries()
 {
 	std::lock_guard _(globalStateLock_);
@@ -1212,6 +1218,7 @@ void OsirisProxy::PostInitLibraries()
 
 			using namespace std::placeholders;
 			Libraries.FileReader__ctor.SetWrapper(std::bind(&OsirisProxy::OnFileReaderCreate, this, _1, _2, _3, _4, _5));
+			Libraries.DealDamageFunctor__ApplyDamage.SetWrapper(std::bind(&OnDealDamage, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14));
 		}
 	}
 

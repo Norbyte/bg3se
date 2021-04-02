@@ -6,6 +6,7 @@
 namespace bg3se
 {
 	struct StatsFunctorSet;
+	struct SpellIdWithPrototype;
 
 	struct GameRandom
 	{

@@ -35,3 +35,4 @@ HOOK_DEFN(App__OnInputEvent, App__OnInputEvent, App::VMT::OnInputEventProc, PreH
 */
 
 HOOK_DEFN(FileReader__ctor, ls__FileReader__ctor, FileReader::CtorProc, WrappableFunction)
+HOOK_DEFN(DealDamageFunctor__ApplyDamage, eoc__DealDamageFunctor__ApplyDamage, DealDamageFunctor::ApplyDamageProc, WrappableFunction)
