@@ -102,6 +102,14 @@ namespace bg3se
 			char field_11;
 		};
 
+		struct ClassInfo
+		{
+			UUID ClassUUID;
+			__int64 field_10;
+			__int64 field_18;
+			__int64 field_20;
+		};
+
 		int Abilities[8];
 		__int64 field_38;
 		__int64 field_40;
@@ -123,7 +131,7 @@ namespace bg3se
 		int field_114;
 		int Level;
 		char Flanked_M;
-		Array<uint64_t> Classes_M;
+		Array<ClassInfo> Classes;
 		uint8_t UnarmedAttackAbility;
 		uint8_t SomeAttackAbility;
 		__int64 field_140;

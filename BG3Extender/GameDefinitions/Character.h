@@ -232,7 +232,7 @@ namespace bg3se
 			char AnimType;
 			char DelayDeathCount;
 			void* DyingStatus;
-			ObjectSet<ObjectHandle> RegisteredTriggerHandles;
+			ObjectSet<FixedString> RegisteredTriggers;
 			PlayerData* PlayerData;
 			int LoseControl_M;
 			int field_474;

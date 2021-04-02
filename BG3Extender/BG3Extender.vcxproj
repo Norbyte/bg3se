@@ -284,6 +284,7 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
     <None Include="GameDefinitions\EngineHooks.inl" />
     <None Include="GameDefinitions\Enumerations.inl" />
     <None Include="GameDefinitions\PropertyMaps\AllPropertyMaps.inl" />
+    <None Include="GameDefinitions\PropertyMaps\Hit.inl" />
     <None Include="GameDefinitions\PropertyMaps\ResourceDefinitions.inl" />
     <None Include="GameDefinitions\PropertyMaps\RootTemplates.inl" />
     <None Include="GameDefinitions\PropertyMaps\ServerObjects.inl" />

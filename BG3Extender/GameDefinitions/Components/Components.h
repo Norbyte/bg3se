@@ -69,7 +69,7 @@ namespace bg3se
 		char field_40;
 		char field_41;
 		char field_42;
-		char field_43;
+		char SpellCastingAbility;
 		Array<void*> field_48;
 	};
 

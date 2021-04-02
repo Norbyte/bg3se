@@ -18,13 +18,13 @@ namespace bg3se
 			{
 				void* Destroy;
 				void* SetObjectHandle1;
-				void* CopySomeFields;
+				void* SetOldIDs;
 				void* SetMyHandle;
 				void* GetMyHandle;
 				void* GetStatusId;
 				void* GetStatusType;
-				void* VMT38;
-				void* VMT40;
+				void* SetStringParam;
+				void* SetFloatParams;
 				void* VMT48;
 				void* VMT50;
 				void* CanEnter;
@@ -38,13 +38,13 @@ namespace bg3se
 				void* LoseControl;
 				void* VMTA0;
 				void* VMTA8;
-				void* VMTB0;
 				void* GetOwnerHandle;
+				void* OnEndTurn;
 				void* GetSyncData;
 				void* VMTC8;
 				void* Visit;
 				void* VMTD8;
-				void* VMTE0;
+				void* ReevaluateHandles_M;
 				void* VMTE8;
 				void* VMTF0;
 			};
@@ -61,8 +61,8 @@ namespace bg3se
 			// 3 - Apply only the first instance; triggers combat?
 			virtual uint32_t GetStatusType() = 0;
 
-			virtual uint32_t VMT38() = 0;
-			virtual uint32_t VMT40() = 0;
+			virtual uint32_t SetStringParam() = 0;
+			virtual uint32_t SetFloatParams() = 0;
 			virtual uint32_t VMT48() = 0;
 			virtual uint32_t VMT50() = 0;
 
@@ -83,13 +83,11 @@ namespace bg3se
 			virtual void VMTC8() = 0;
 			virtual void Visit(ObjectVisitor* visitor) = 0;
 			virtual void VMTD8() = 0;
-			virtual void VMTE0() = 0;
+			virtual void ReevaluateHandles_M() = 0;
 			virtual void VMTE8() = 0;
 			virtual void VMTF0() = 0;
 
-			uint64_t field_8;
-			uint64_t field_10;
-			int field_14;
+			Array<uint64_t> field_8;
 			ObjectHandle SomeHandle;
 			ObjectHandle SomeEntityHandle_Old;
 			int SomeState;
@@ -100,7 +98,7 @@ namespace bg3se
 			NetId NetID;
 			int StoryActionID;
 			ActionOriginator Originator;
-			__int64 field_78;
+			double field_78;
 			FixedString StatusId;
 			float StartTimer;
 			float LifeTime;
@@ -115,10 +113,10 @@ namespace bg3se
 			Array<ObjectHandle> SomeArray;
 			EntityWorldHandle StatusSourceEntityHandle_M;
 			UUID StatusSourceUUID;
-			EntityWorldHandle StatusSourceEntityHandle;
-			ObjectHandle StatusSource;
+			EntityHandle StatusSourceEntityHandle;
 			EntityWorldHandle CleansedByHandle_M;
-			ObjectHandle HandleSetOnDelete;
+			ObjectHandle UnknownHandle2;
+			UUID field_110;
 			int Conditions;
 			uint16_t RemoveEvents;
 			uint8_t Flags2; // TODO - typing flags
@@ -176,13 +174,6 @@ namespace bg3se
 			bool Started_M;
 		};
 
-		struct StatusCombat : public Status
-		{
-			bool ReadyForCombat;
-			float field_124;
-			UUID OwnerTeamId;
-		};
-
 		struct StatusDestroying : public Status
 		{
 			Hit HitDescription;
@@ -205,11 +196,11 @@ namespace bg3se
 			void* OnRollsFailed;
 			void* OnSuccess;
 			void* Roll_M;
-			bool FailedRollFlag1;
-			bool FailedRollFlag2;
-			int field_1EC;
-			int FailedRolls1;
-			int FailedRolls2;
+			bool IsStable;
+			bool IsHealed;
+			int RollSuccesses;
+			int RollFailures;
+			int DamageFailures;
 		};
 
 		struct StatusDying : public Status
@@ -281,7 +272,8 @@ namespace bg3se
 				float SurfaceDistanceCheck;
 				int OnMoveCount;
 				bool FullyEntered;
-				char Inside;
+				bool Inside;
+				bool Unknown;
 			};
 
 			SurfaceLayerCheck LayerChecks[2];
@@ -320,7 +312,6 @@ namespace bg3se
 
 		struct StatusPolymorphed : public StatusBoost
 		{
-			FixedString OriginalTemplate;
 			UUID Id;
 		};
 
@@ -351,23 +342,12 @@ namespace bg3se
 
 		struct StatusSitting : public Status
 		{
-			ObjectHandle Item;
+			EntityHandle Item;
 			glm::vec3 Position;
 			int Index;
 			float field_138;
 			int TimeElapsed;
 			int Heal;
-		};
-
-		struct StatusSpirit : public Status
-		{
-			ObjectSet<ObjectHandle> Characters;
-		};
-
-		struct StatusSpiritVision : public StatusBoost
-		{
-			SomeGuidId Source_M;
-			int field_1D0;
 		};
 
 		struct StatusTeleportFalling : public Status
@@ -386,6 +366,12 @@ namespace bg3se
 			bool Success;
 			int Unlocked;
 		};
+
+		struct StatusSneaking : public StatusBoost
+		{
+		    bool ClientRequestStop;
+		};
+
 
 		struct StatusMachine
 		{

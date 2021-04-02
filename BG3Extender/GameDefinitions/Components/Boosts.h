@@ -146,11 +146,11 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::UnlockSpellBoost;
 
-	    FixedString SpellId;
-	    AbilityId Ability;
-	    UUID SomeUUID;
-		SpellChildSelectionType SpellChildSelection;
-	    SpellUnlockDurationType UnlockDuration;
+	    FixedString SpellId; // Param 1
+	    AbilityId Ability; // Param 5
+	    UUID SomeUUID; // Param 2
+		SpellChildSelectionType SpellChildSelection; // Param 3
+	    SpellUnlockDurationType UnlockDuration; // Param 4
 	};
 
 	struct SourceAdvantageBoost : public BaseComponent

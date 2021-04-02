@@ -234,6 +234,8 @@ FS(ItemSlot);
 FS(ItemSlot32);
 FS(StatCharacterFlags);
 FS(HitFlag);
+FS(HitWith);
+FS(DamageFlags);
 FS(HealEffect);
 FS(CharacterFlags);
 FS(CharacterFlags2);
