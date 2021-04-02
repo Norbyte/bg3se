@@ -225,7 +225,6 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="GameDefinitions\GameHelpers.cpp" />
-    <ClCompile Include="GameDefinitions\PropertyMaps.cpp" />
     <ClCompile Include="GameDefinitions\Stats\StatsObject.inl" />
     <ClCompile Include="GlobalFixedStrings.cpp" />
     <ClCompile Include="LuaDebug.pb.cc">
