@@ -399,7 +399,7 @@ void CustomFunctionManager::PreProcessStory(STDString const & original, STDStrin
 
 	std::size_t pos = 0;
 	while (pos < original.size()) {
-		auto next = original.find("/* [OSITOOLS_ONLY]", pos);
+		auto next = original.find("/* [EXTENDER_ONLY]", pos);
 		if (next == std::string::npos) {
 			ph1 += original.substr(pos);
 			break;
@@ -418,13 +418,13 @@ void CustomFunctionManager::PreProcessStory(STDString const & original, STDStrin
 
 	pos = 0;
 	while (pos < ph1.size()) {
-		auto next = ph1.find("// [BEGIN_NO_OSITOOLS]", pos);
+		auto next = ph1.find("// [BEGIN_NO_EXTENDER]", pos);
 		if (next == std::string::npos) {
 			postProcessed += ph1.substr(pos);
 			break;
 		}
 
-		auto end = ph1.find("// [END_NO_OSITOOLS]", next);
+		auto end = ph1.find("// [END_NO_EXTENDER]", next);
 		if (end == std::string::npos) {
 			postProcessed += ph1.substr(pos);
 			break;
