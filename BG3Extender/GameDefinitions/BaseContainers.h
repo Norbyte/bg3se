@@ -214,7 +214,7 @@ namespace bg3se
 
 			ConstIterator operator ++ ()
 			{
-				Iterator it(*this);
+				ConstIterator it(*this);
 
 				Element = Element->Next;
 				if (Element == nullptr) {
@@ -246,12 +246,12 @@ namespace bg3se
 				return *this;
 			}
 
-			bool operator == (Iterator const& it)
+			bool operator == (ConstIterator const& it)
 			{
 				return it.Node == Node && it.Element == Element;
 			}
 
-			bool operator != (Iterator const& it)
+			bool operator != (ConstIterator const& it)
 			{
 				return it.Node != Node || it.Element != Element;
 			}
@@ -421,12 +421,12 @@ namespace bg3se
 			return Iterator(*this, HashTable + HashSize, nullptr);
 		}
 
-		Iterator begin() const
+		ConstIterator begin() const
 		{
 			return ConstIterator(*this);
 		}
 
-		Iterator end() const
+		ConstIterator end() const
 		{
 			return ConstIterator(*this, HashTable + HashSize, nullptr);
 		}
@@ -562,7 +562,7 @@ namespace bg3se
 
 			ConstIterator operator ++ ()
 			{
-				Iterator it(*this);
+				ConstIterator it(*this);
 
 				Element = Element->Next;
 				if (Element == nullptr) {
@@ -594,12 +594,12 @@ namespace bg3se
 				return *this;
 			}
 
-			bool operator == (Iterator const& it)
+			bool operator == (ConstIterator const& it)
 			{
 				return it.Node == Node && it.Element == Element;
 			}
 
-			bool operator != (Iterator const& it)
+			bool operator != (ConstIterator const& it)
 			{
 				return it.Node != Node || it.Element != Element;
 			}
@@ -653,12 +653,12 @@ namespace bg3se
 			return Iterator(*this, HashTable + HashSize, nullptr);
 		}
 
-		Iterator begin() const
+		ConstIterator begin() const
 		{
 			return ConstIterator(*this);
 		}
 
-		Iterator end() const
+		ConstIterator end() const
 		{
 			return ConstIterator(*this, HashTable + HashSize, nullptr);
 		}
@@ -1313,10 +1313,108 @@ namespace bg3se
 	};
 
 	template <class TKey, class TValue>
-	struct MultiHashMap : public MultiHashSet
+	struct MultiHashMap : public MultiHashSet<TKey>
 	{
 		TValue* Values{ nullptr };
 		int32_t NumValues{ 0 };
+
+		class ConstIterator
+		{
+		public:
+			ConstIterator(MultiHashMap const* map)
+				: Map(map), Index(0)
+			{}
+			
+			ConstIterator(MultiHashMap const* map, int index)
+				: Map(map), Index(index)
+			{}
+
+			ConstIterator operator ++ ()
+			{
+				ConstIterator it(Map, Index);
+				Index++;
+				return it;
+			}
+
+			ConstIterator& operator ++ (int)
+			{
+				++Index;
+				return *this;
+			}
+
+			bool operator == (ConstIterator const& it)
+			{
+				return it.Map == Map && it.Index == Index;
+			}
+
+			bool operator != (ConstIterator const& it)
+			{
+				return it.Map != Map || it.Index != Index;
+			}
+
+			TKey const& Key() const
+			{
+				return Map->Keys[Index];
+			}
+
+			TValue const& Value() const
+			{
+				return Map->Values[Index];
+			}
+
+		private:
+			MultiHashMap const* Map;
+			int32_t Index;
+		};
+
+		class Iterator
+		{
+		public:
+			Iterator(MultiHashMap * map)
+				: Map(map), Index(0)
+			{}
+			
+			Iterator(MultiHashMap * map, int index)
+				: Map(map), Index(index)
+			{}
+
+			Iterator operator ++ ()
+			{
+				Iterator it(Map, Index);
+				Index++;
+				return it;
+			}
+
+			Iterator& operator ++ (int)
+			{
+				++Index;
+				return *this;
+			}
+
+			bool operator == (Iterator const& it)
+			{
+				return it.Map == Map && it.Index == Index;
+			}
+
+			bool operator != (Iterator const& it)
+			{
+				return it.Map != Map || it.Index != Index;
+			}
+
+			TKey & Key()
+			{
+				return Map->Keys[Index];
+			}
+
+			TValue & Value()
+			{
+				return Map->Values[Index];
+			}
+
+		private:
+			MultiHashMap* Map;
+			int32_t Index;
+		};
 
 		MultiHashMap()
 		{}
@@ -1327,7 +1425,7 @@ namespace bg3se
 			NumValues = other.NumValues;
 			if (other.Values) {
 				Values = GameAllocArray<TValue>(NumValues);
-				for (auto i = 0; i < NumValues < i++) {
+				for (auto i = 0; i < NumValues; i++) {
 					new (Values + i) TValue(other.Values[i]);
 				}
 			}
@@ -1345,7 +1443,7 @@ namespace bg3se
 			NumValues = other.NumValues;
 			if (other.Values) {
 				Values = GameAllocArray<TValue>(NumValues);
-				for (auto i = 0; i < NumValues < i++) {
+				for (auto i = 0; i < NumValues; i++) {
 					new (Values + i) TValue(other.Values[i]);
 				}
 			}
@@ -1379,32 +1477,58 @@ namespace bg3se
 			if (index == -1) {
 				index = Add(key);
 				if (NumValues <= index) {
-
+					ResizeValues(index + 1);
+					NumValues = index + 1;
 				}
 			}
 
 			Values[index] = value;
 		}
 
+		Iterator begin()
+		{
+			return Iterator(this, 0);
+		}
+
+		ConstIterator begin() const
+		{
+			return ConstIterator(this, 0);
+		}
+
+		Iterator end()
+		{
+			return Iterator(this, NumValues);
+		}
+
+		ConstIterator end() const
+		{
+			return ConstIterator(this, NumValues);
+		}
+
 	private:
 		void ResizeValues(int32_t newSize)
 		{
-			auto numBuckets = GetNearestMultiHashMapPrime(newSize);
-			if (HashKeys) {
-				GameFree(HashKeys);
+			auto newBuf = GameMemoryAllocator::NewRaw<TValue>(newSize);
+			for (int32_t i = 0; i < std::min(NumValues, newSize); i++) {
+				new (newBuf + i) TValue(Values[i]);
 			}
 
-			HashKeys = GameAllocArray<int32_t>(numBuckets, -1);
-			NumHashKeys = numBuckets;
-			for (unsigned k = 0; k < Keys.Size; k++) {
-				InsertToHashMap(Keys[k], k);
+			if (Values != nullptr) {
+				for (int32_t i = 0; i < NumValues; i++) {
+					Values[i].~TValue();
+				}
+
+				GameFree(Values);
 			}
+
+			Values = newBuf;
+			NumValues = newSize;
 		}
 
 		void FreeValues()
 		{
 			if (Values) {
-				for (auto i = 0; i < NumValues; i++) {
+				for (int32_t i = 0; i < NumValues; i++) {
 					Values[i].~TValue();
 				}
 
