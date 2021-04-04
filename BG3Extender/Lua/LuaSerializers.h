@@ -187,7 +187,7 @@ namespace bg3se::lua
 	}
 
 	template <class T>
-	LuaSerializer& operator << (LuaSerializer& s, VirtualMultiHashSet<T>& v)
+	LuaSerializer& operator << (LuaSerializer& s, MultiHashSet<T>& v)
 	{
 		s.BeginObject();
 		if (s.IsWriting) {
@@ -205,6 +205,87 @@ namespace bg3se::lua
 				T temp{};
 				s << temp;
 				v.Add(temp);
+			}
+		}
+		s.EndObject();
+		return s;
+	}
+
+	template <class TKey, class TValue>
+	LuaSerializer& operator << (LuaSerializer& s, MultiHashMap<TKey, TValue>& v)
+	{
+		s.BeginObject();
+		if (s.IsWriting) {
+			int i = 1;
+			/*for (auto& it : v) {
+				StackCheck _(s.L);
+				s << it.Key() << it.Value();
+				lua_settable(s.L, -3);
+			}*/
+			for (auto it = v.begin(); it != v.end(); ++it) {
+				StackCheck _(s.L);
+				s << it.Key();
+				s << it.Value();
+				lua_settable(s.L, -3);
+			}
+		} else {
+			v.Clear();
+			for (auto idx : iterate(s.L, -1)) {
+				StackCheck _(s.L);
+				TKey key{};
+				TValue value{};
+				s << key << value;
+				v.Set(std::move(key), std::move(value));
+			}
+		}
+		s.EndObject();
+		return s;
+	}
+
+	template <class TKey, class TValue>
+	LuaSerializer& operator << (LuaSerializer& s, RefMap<TKey, TValue>& v)
+	{
+		s.BeginObject();
+		if (s.IsWriting) {
+			int i = 1;
+			for (auto& it : v) {
+				StackCheck _(s.L);
+				s << it.Key << it.Value;
+				lua_settable(s.L, -3);
+			}
+		} else {
+			v.Clear();
+			for (auto idx : iterate(s.L, -1)) {
+				StackCheck _(s.L);
+				TKey key{};
+				TValue value{};
+				s << key << value;
+				v.Insert(std::move(key), std::move(value));
+			}
+		}
+		s.EndObject();
+		return s;
+	}
+
+	template <class TKey, class TValue>
+	LuaSerializer& operator << (LuaSerializer& s, Map<TKey, TValue>& v)
+	{
+		s.BeginObject();
+		if (s.IsWriting) {
+			int i = 1;
+			for (auto& it : v) {
+				StackCheck _(s.L);
+				s << it.Key() << it.Value();
+				lua_settable(s.L, -3);
+			}
+		} else {
+			v.Clear();
+			for (auto idx : iterate(s.L, -1)) {
+				StackCheck _(s.L);
+				TKey key{};
+				TValue value{};
+				s << key << value;
+				v.Insert(std::move(key), std::move(value));
 			}
 		}
 		s.EndObject();

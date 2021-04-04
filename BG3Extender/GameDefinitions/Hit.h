@@ -87,7 +87,7 @@ namespace bg3se
 		void* CachedStatExpression;
 		STDString StatExpression;
 		Array<int32_t> IntParams;
-		Array<void*> RollParams;
+		Array<StatsRollType0> RollParams;
 		Array<DamageType> DamageTypeParams;
 		int IntIndex;
 		int RollIndex;
