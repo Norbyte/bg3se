@@ -1,6 +1,5 @@
 #include <stdafx.h>
 #include <OsirisProxy.h>
-#include <PropertyMaps.h>
 #include <Version.h>
 #include <ScriptHelpers.h>
 #include <Lua/LuaSerializers.h>

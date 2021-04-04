@@ -4,7 +4,6 @@
 #include <Lua/LuaSerializers.h>
 #include <OsirisProxy.h>
 #include <ExtensionStateClient.h>
-#include <PropertyMaps.h>
 //#include <GameDefinitions/Ai.h>
 #include "resource.h"
 

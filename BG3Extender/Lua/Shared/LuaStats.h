@@ -2,7 +2,6 @@
 
 #include <Lua/LuaHelpers.h>
 #include <lua/LuaBinding.h>
-#include <PropertyMap.h>
 
 #include <mutex>
 #include <unordered_set>
@@ -58,18 +57,6 @@ namespace bg3se::lua::stats
 		SpellPrototype * obj_;
 		CRPGStats_Object * stats_;
 		std::optional<int> level_;
-	};
-
-	class ItemOrCharacterPushPin
-	{
-	public:
-		ItemOrCharacterPushPin(lua_State * L, CRPGStats_Object * obj);
-		~ItemOrCharacterPushPin();
-
-	private:
-		ObjectProxy<CDivinityStats_Character> * character_{ nullptr };
-		ObjectProxy<CDivinityStats_Item> * item_{ nullptr };
-		StatsProxy * object_{ nullptr };
 	};
 
 

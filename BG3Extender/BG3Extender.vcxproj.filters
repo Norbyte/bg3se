@@ -10,7 +10,6 @@
     <ClCompile Include="GlobalFixedStrings.cpp" />
     <ClCompile Include="OsirisProxy.cpp" />
     <ClCompile Include="OsirisWrappers.cpp" />
-    <ClCompile Include="PropertyMap.cpp" />
     <ClCompile Include="ScriptExtensions.pb.cc" />
     <ClCompile Include="ScriptHelpers.cpp" />
     <ClCompile Include="stdafx.cpp" />
@@ -110,8 +109,6 @@
     <ClInclude Include="GlobalFixedStrings.h" />
     <ClInclude Include="OsirisProxy.h" />
     <ClInclude Include="OsirisWrappers.h" />
-    <ClInclude Include="PropertyMap.h" />
-    <ClInclude Include="PropertyMaps.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ScriptExtensions.pb.h" />
     <ClInclude Include="ScriptHelpers.h" />

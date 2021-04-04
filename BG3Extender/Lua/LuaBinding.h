@@ -1,11 +1,15 @@
 #pragma once
 
 #include <Lua/LuaHelpers.h>
-#include <PropertyMap.h>
 
 #include <mutex>
 #include <unordered_set>
 #include <optional>
+
+namespace bg3se
+{
+	struct CRPGStats_Object;
+}
 
 namespace bg3se::lua
 {
@@ -126,76 +130,6 @@ namespace bg3se::lua
 		T * obj_;
 	};
 
-	template <class T>
-	class ObjectProxy : public Userdata<ObjectProxy<T>>, public Indexable, public NewIndexable, public Pushable<PushPolicy::Unbind>
-	{
-	public:
-		static char const * const MetatableName;
-
-		ObjectProxy(T * obj)
-			: obj_(obj), handle_()
-		{}
-
-		ObjectProxy(ObjectHandle handle)
-			: obj_(nullptr), handle_(handle)
-		{}
-
-		void Unbind()
-		{
-			obj_ = nullptr;
-		}
-
-		int Index(lua_State * L);
-		int NewIndex(lua_State * L);
-		T* Get(lua_State* L);
-
-		static T* CheckedGet(lua_State* L, int index)
-		{
-			auto self = CheckUserData(L, index);
-			auto obj = self->Get(L);
-			if (obj != nullptr) {
-				return obj;
-			} else {
-				luaL_error(L, "No object bound to object proxy of type '%s'", MetatableName);
-				return nullptr;
-			}
-		}
-
-	protected:
-		int GenericGetter(lua_State* L, PropertyMapBase const& propertyMap)
-		{
-			StackCheck _(L, 1);
-			auto obj = Get(L);
-			if (!obj) {
-				push(L, nullptr);
-				return 1;
-			}
-
-			auto prop = luaL_checkstring(L, 2);
-			auto fetched = LuaPropertyMapGet(L, propertyMap, obj, prop, true);
-			if (!fetched) {
-				push(L, nullptr);
-			}
-
-			return 1;
-		}
-
-		int GenericSetter(lua_State* L, PropertyMapBase const& propertyMap)
-		{
-			StackCheck _(L, 0);
-			auto obj = Get(L);
-			if (!obj) return 0;
-
-			auto prop = luaL_checkstring(L, 2);
-			LuaPropertyMapSet(L, 3, propertyMap, obj, prop, true);
-
-			return 0;
-		}
-
-	private:
-		T * obj_;
-		ObjectHandle handle_;
-	};
 
 	class ExtensionLibrary
 	{

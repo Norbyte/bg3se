@@ -5,7 +5,6 @@
 #include <GameDefinitions/Enumerations.h>
 #include <ScriptHelpers.h>
 #include "OsirisProxy.h"
-#include <PropertyMaps.h>
 
 namespace bg3se
 {

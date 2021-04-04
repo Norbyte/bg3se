@@ -179,8 +179,6 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
     <ClInclude Include="OsirisHelpers.h" />
     <ClInclude Include="OsirisProxy.h" />
     <ClInclude Include="OsirisWrappers.h" />
-    <ClInclude Include="PropertyMap.h" />
-    <ClInclude Include="PropertyMaps.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ScriptExtensions.pb.h" />
     <ClInclude Include="ScriptHelpers.h" />
@@ -261,7 +259,6 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
     <ClCompile Include="OsirisHelpers.cpp" />
     <ClCompile Include="OsirisProxy.cpp" />
     <ClCompile Include="OsirisWrappers.cpp" />
-    <ClCompile Include="PropertyMap.cpp" />
     <ClCompile Include="ScriptExtensions.pb.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Game Release|x64'">NotUsing</PrecompiledHeader>

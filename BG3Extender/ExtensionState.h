@@ -9,6 +9,8 @@ namespace Json { class Value; }
 
 namespace bg3se
 {
+	class FileReaderPin;
+
 	struct ExtensionModConfig
 	{
 		uint32_t MinimumVersion{ 0 };

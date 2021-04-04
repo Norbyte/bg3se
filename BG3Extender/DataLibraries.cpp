@@ -10,8 +10,6 @@
 
 namespace bg3se
 {
-	void InitPropertyMaps();
-
 #define HOOK_DEFN(name, sym, defn, hookType) decltype(LibraryManager::name) * decltype(LibraryManager::name)::gHook;
 #include <GameDefinitions/EngineHooks.inl>
 #undef HOOK_DEFN
@@ -393,7 +391,6 @@ namespace bg3se
 		if (!CriticalInitFailed) {
 			GFS.Initialize();
 			InitializeEnumerations();
-			InitPropertyMaps();
 
 			DetourTransactionBegin();
 			DetourUpdateThread(GetCurrentThread());
