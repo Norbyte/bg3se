@@ -139,33 +139,29 @@ namespace bg3se
 	};
 
 
+	inline uint64_t Hash(uint8_t v)
+	{
+		return v;
+	}
+
+	inline uint64_t Hash(uint16_t v)
+	{
+		return v;
+	}
+
+	inline uint64_t Hash(uint32_t v)
+	{
+		return v;
+	}
+
+	inline uint64_t Hash(int32_t v)
+	{
+		return v;
+	}
+
 	template <class T>
-	uint64_t Hash(T const&)
+	inline typename std::enable_if_t<std::is_enum_v<T>, uint64_t> Hash(T v)
 	{
-		static_assert(false, "Hash<T> needs to be specialized!");
-	}
-
-	template <>
-	inline uint64_t Hash<uint8_t>(uint8_t const& v)
-	{
-		return v;
-	}
-
-	template <>
-	inline uint64_t Hash<uint16_t>(uint16_t const& v)
-	{
-		return v;
-	}
-
-	template <>
-	inline uint64_t Hash<uint32_t>(uint32_t const& v)
-	{
-		return v;
-	}
-
-	template <>
-	inline uint64_t Hash<int32_t>(int32_t const& v)
-	{
-		return v;
+		return Hash(std::underlying_type_t<T>(v));
 	}
 }

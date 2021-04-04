@@ -3,7 +3,6 @@
 #include <Lua/Server/LuaBindingServer.h>
 #include <Lua/LuaSerializers.h>
 #include <OsirisProxy.h>
-#include <PropertyMaps.h>
 #include <NodeHooks.h>
 #include <ScriptHelpers.h>
 #include "resource.h"

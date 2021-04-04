@@ -25,8 +25,7 @@ struct UUID
 
 namespace bg3se
 {
-	template <>
-	inline uint64_t Hash<UUID>(UUID const& h)
+	inline uint64_t Hash(UUID const& h)
 	{
 		return h.Val[0] ^ h.Val[1];
 	}
@@ -280,14 +279,12 @@ namespace bg3se
 		}
 	};
 
-	template <>
-	inline uint64_t Hash<ObjectHandle>(ObjectHandle const& h)
+	inline uint64_t Hash(ObjectHandle const& h)
 	{
 		return h.Handle;
 	}
 
-	template <>
-	inline uint64_t Hash<EntityHandle>(EntityHandle const& h)
+	inline uint64_t Hash(EntityHandle const& h)
 	{
 		return h.Handle;
 	}

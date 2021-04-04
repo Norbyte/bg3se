@@ -1156,9 +1156,9 @@ namespace bg3se
 	// Special hashing needed for FixedStrings in the new hash table
 
 	template <class T>
-	uint64_t MultiHashMapHash(T const& v)
+	inline uint64_t MultiHashMapHash(T const& v)
 	{
-		return Hash<T>(v);
+		return Hash(v);
 	}
 
 	template <>

@@ -109,8 +109,7 @@ namespace bg3se
 	};
 
 
-	template <>
-	inline uint64_t Hash<FixedString>(FixedString const& s)
+	inline uint64_t Hash(FixedString const& s)
 	{
 		return (uint64_t)s.Index;
 	}
