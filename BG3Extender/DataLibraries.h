@@ -172,9 +172,7 @@ namespace bg3se {
 		uint32_t Flag{ 0 };
 		char const * Matcher;
 		SymbolMappingCondition Conditions;
-		SymbolMappingTarget Target1;
-		SymbolMappingTarget Target2;
-		SymbolMappingTarget Target3;
+		std::vector<SymbolMappingTarget> Targets;
 		VersionRequirement Version;
 	};
 

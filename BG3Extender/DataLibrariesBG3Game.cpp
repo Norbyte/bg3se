@@ -16,7 +16,7 @@ namespace bg3se
 		"E8 XX XX XX XX " // call    esv__SurfaceActionFactory__AddSurfaceAction
 		"44 88 77 08 ", // mov     [rdi+8], r14b
 		{},
-		{"esv::SurfaceActionFactory::AddSurfaceAction", SymbolMappingTarget::kIndirect, 6, STATIC_SYM(esv__SurfaceActionFactory__AddAction)}
+		{{"esv::SurfaceActionFactory::AddSurfaceAction", SymbolMappingTarget::kIndirect, 6, STATIC_SYM(esv__SurfaceActionFactory__AddAction)}}
 	};
 	
 	SymbolMappingData const sSymbolDealDamageFunctorApplyDamage = {
@@ -26,7 +26,7 @@ namespace bg3se
 		"E8 XX XX XX XX " // call    eoc__DealDamageFunctor__ApplyDamage2
 		"90 ", // nop
 		{},
-		{"eoc::DealDamageFunctor::ApplyDamage", SymbolMappingTarget::kIndirect, 7, STATIC_SYM(eoc__DealDamageFunctor__ApplyDamage)}
+		{{"eoc::DealDamageFunctor::ApplyDamage", SymbolMappingTarget::kIndirect, 7, STATIC_SYM(eoc__DealDamageFunctor__ApplyDamage)}}
 	};
 
 	/*SymbolMappingData const sSymbolLevelManager = {
@@ -328,7 +328,7 @@ namespace bg3se
 		"E8 XX XX XX XX " // call    ecl__GameStateEventManager__ExecuteGameStateChangedEvent
 		"48 8B 0F ", // mov     rcx, [rdi]
 		{},
-		{"ecl__GameStateEventManager__ExecuteGameStateChangedEvent", SymbolMappingTarget::kIndirect, 7, STATIC_SYM(ecl__GameStateEventManager__ExecuteGameStateChangedEvent)}
+		{{"ecl__GameStateEventManager__ExecuteGameStateChangedEvent", SymbolMappingTarget::kIndirect, 7, STATIC_SYM(ecl__GameStateEventManager__ExecuteGameStateChangedEvent)}}
 	};
 
 	SymbolMappingData const sSymbolEsvExecuteGameStateChangedEvent = {
@@ -338,7 +338,7 @@ namespace bg3se
 		"E8 XX XX XX XX " // call    esv__GameStateEventManager__ExecuteGameStateChangedEvent
 		"48 8B 4B 08 ", // mov     rcx, [rbx+8]
 		{},
-		{"esv__GameStateEventManager__ExecuteGameStateChangedEvent", SymbolMappingTarget::kIndirect, 7, STATIC_SYM(esv__GameStateEventManager__ExecuteGameStateChangedEvent)}
+		{{"esv__GameStateEventManager__ExecuteGameStateChangedEvent", SymbolMappingTarget::kIndirect, 7, STATIC_SYM(esv__GameStateEventManager__ExecuteGameStateChangedEvent)}}
 	};
 
 	SymbolMappingData const sSymbolMappings[] = {
@@ -354,8 +354,8 @@ namespace bg3se
 			"41 8D 51 FD " // lea     edx, [r9-3]
 			"E8 XX XX XX XX ", // call    ls__GlobalAllocator__AllocateInternal
 			{}, // Unconditional
-			{"EoCFree", SymbolMappingTarget::kIndirect, 0, STATIC_SYM(EoCFree)},
-			{"EoCAlloc", SymbolMappingTarget::kIndirect, 32, STATIC_SYM(EoCAlloc)}
+			{{"EoCFree", SymbolMappingTarget::kIndirect, 0, STATIC_SYM(EoCFree)},
+			{"EoCAlloc", SymbolMappingTarget::kIndirect, 32, STATIC_SYM(EoCAlloc)}}
 		},
 
 		{
@@ -366,7 +366,7 @@ namespace bg3se
 			"48 8D 4D 67 " // lea     rcx, [rbp+57h+arg_0]
 			"E8 XX XX XX XX ", // call    ls__FixedString__FromString
 			{SymbolMappingCondition::kString, 6, "VendorID"},
-			{"ls::FixedString::Create", SymbolMappingTarget::kIndirect, 17, STATIC_SYM(ls__FixedString__Create)}
+			{{"ls::FixedString::Create", SymbolMappingTarget::kIndirect, 17, STATIC_SYM(ls__FixedString__Create)}}
 		},
 
 		{
@@ -381,7 +381,7 @@ namespace bg3se
 			"48 8B 44 24 20 " // mov     rax, [rsp+38h+var_18]
 			"48 83 C4 38 ", // add     rsp, 38h
 			{},
-			{"ls::FixedString::FromString", SymbolMappingTarget::kAbsolute, 0, STATIC_SYM(ls__FixedString__GetString)}
+			{{"ls::FixedString::FromString", SymbolMappingTarget::kAbsolute, 0, STATIC_SYM(ls__FixedString__GetString)}}
 		},
 
 		{
@@ -396,8 +396,8 @@ namespace bg3se
 			"77 05 " // ja      short xxx
 			"E8 XX XX XX XX ", // call    ls__FixedString__DecRef
 			{},
-			{"ls::FixedString::IncRef", SymbolMappingTarget::kIndirect, 7, STATIC_SYM(ls__FixedString__IncRef)},
-			{"ls::FixedString::DecRef", SymbolMappingTarget::kIndirect, 19, STATIC_SYM(ls__FixedString__DecRef)}
+			{{"ls::FixedString::IncRef", SymbolMappingTarget::kIndirect, 7, STATIC_SYM(ls__FixedString__IncRef)},
+			{"ls::FixedString::DecRef", SymbolMappingTarget::kIndirect, 19, STATIC_SYM(ls__FixedString__DecRef)}}
 		},
 
 		{
@@ -412,8 +412,8 @@ namespace bg3se
 			"E8 XX XX XX XX " // call    ls__FileReader__dtor
 			"48 8D 8F XX 04 00 00 ", // lea     rcx, [rdi+4XXh] 
 			{}, // Unconditional
-			{"ls::FileReader::FileReader", SymbolMappingTarget::kIndirect, 5, STATIC_SYM(ls__FileReader__ctor)},
-			{"ls::FileReader::~FileReader", SymbolMappingTarget::kIndirect, 30, STATIC_SYM(ls__FileReader__dtor)}
+			{{"ls::FileReader::FileReader", SymbolMappingTarget::kIndirect, 5, STATIC_SYM(ls__FileReader__ctor)},
+			{"ls::FileReader::~FileReader", SymbolMappingTarget::kIndirect, 30, STATIC_SYM(ls__FileReader__dtor)}}
 		},
 
 		{
@@ -426,7 +426,7 @@ namespace bg3se
 			"48 8B FA " // mov     rdi, rdx
 			"48 8D 54 24 20 ", // lea     rdx, [rsp+48h+a2]
 			{}, // Unconditional
-			{"PathRoots", SymbolMappingTarget::kIndirect, 7, STATIC_SYM(PathRoots)}
+			{{"PathRoots", SymbolMappingTarget::kIndirect, 7, STATIC_SYM(PathRoots)}}
 		},
 
 		/*{
@@ -453,8 +453,8 @@ namespace bg3se
 			"E8 XX XX XX XX " // call    xxx
 			"48 8B 0D XX XX XX XX ", // mov     rcx, cs:esv__gEoCServer
 			{}, // Unconditional
-			{"ecl::EoCClient", SymbolMappingTarget::kIndirect, 11, STATIC_SYM(ecl__EoCClient)},
-			{"esv::EoCServer", SymbolMappingTarget::kIndirect, 35, STATIC_SYM(esv__EoCServer)}
+			{{"ecl::EoCClient", SymbolMappingTarget::kIndirect, 11, STATIC_SYM(ecl__EoCClient)},
+			{"esv::EoCServer", SymbolMappingTarget::kIndirect, 35, STATIC_SYM(esv__EoCServer)}}
 		},
 
 		/*{
@@ -548,8 +548,8 @@ namespace bg3se
 			"5B " // pop     rbx
 			"E9 XX XX XX XX ", //jmp     esv__StatusMachine__ApplyStatus
 			{SymbolMappingCondition::kFixedString, 0, "STORY_FROZEN"},
-			{"esv::StatusMachine::CreateStatus", SymbolMappingTarget::kIndirect, 17, STATIC_SYM(esv__StatusMachine__CreateStatus)},
-			{"esv::StatusMachine::ApplyStatus", SymbolMappingTarget::kAbsolute, 33, STATIC_SYM(esv__StatusMachine__ApplyStatus)},
+			{{"esv::StatusMachine::CreateStatus", SymbolMappingTarget::kIndirect, 17, STATIC_SYM(esv__StatusMachine__CreateStatus)},
+			{"esv::StatusMachine::ApplyStatus", SymbolMappingTarget::kAbsolute, 33, STATIC_SYM(esv__StatusMachine__ApplyStatus)}}
 		},
 
 		/*
@@ -663,7 +663,7 @@ namespace bg3se
 			"90 " // nop
 			"48 8D 4C 24 28 ", // lea     rcx, [rsp+68h+var_40]
 			{},
-			{"ecl::EoCClient::HandleError", SymbolMappingTarget::kIndirect, 19, STATIC_SYM(ecl__EoCClient__HandleError)}
+			{{"ecl::EoCClient::HandleError", SymbolMappingTarget::kIndirect, 19, STATIC_SYM(ecl__EoCClient__HandleError)}}
 		},
 
 		/*
@@ -711,7 +711,7 @@ namespace bg3se
 			SymbolMappingData::kText, 0,
 			"4C 8D 05 XX XX XX XX ", // lea r8, aClientStateSwa ; "CLIENT STATE SWAP - from: %s, to: %s\n"
 			{SymbolMappingCondition::kString, 0, "CLIENT STATE SWAP - from: %s, to: %s\n"},
-			{"ecl::GameStateEventManager::ExecuteGameStateChangedEvent - Initial", SymbolMappingTarget::kAbsolute, 0, nullptr, nullptr, &sSymbolEclExecuteGameStateChangedEvent, 0x80 }
+			{{"ecl::GameStateEventManager::ExecuteGameStateChangedEvent - Initial", SymbolMappingTarget::kAbsolute, 0, nullptr, nullptr, &sSymbolEclExecuteGameStateChangedEvent, 0x80 }}
 		},
 
 		{
@@ -719,7 +719,7 @@ namespace bg3se
 			SymbolMappingData::kText, 0,
 			"4C 8D 05 XX XX XX XX ", // lea     r8, aServerStateSwa ; "SERVER STATE SWAP - from: %s, to: %s\n"
 			{SymbolMappingCondition::kString, 0, "SERVER STATE SWAP - from: %s, to: %s\n"},
-			{"esv::GameStateEventManager::ExecuteGameStateChangedEvent - Initial", SymbolMappingTarget::kAbsolute, 0, nullptr, nullptr, &sSymbolEsvExecuteGameStateChangedEvent, 0x80}
+			{{"esv::GameStateEventManager::ExecuteGameStateChangedEvent - Initial", SymbolMappingTarget::kAbsolute, 0, nullptr, nullptr, &sSymbolEsvExecuteGameStateChangedEvent, 0x80}}
 		},
 
 		{
@@ -727,7 +727,7 @@ namespace bg3se
 			SymbolMappingData::kText, 0,
 			"4C 8D 3D XX XX XX XX ", // lea     rbp, aEsvGamestateth ; "esv::GameStateThreaded::GameStateWorker::DoWork"
 			{SymbolMappingCondition::kString, 0, "esv::GameStateThreaded::GameStateWorker::DoWork"},
-			{"esv::GameStateThreaded::GameStateWorker::DoWork", SymbolMappingTarget::kAbsolute, -0x39, STATIC_SYM(esv__GameStateThreaded__GameStateWorker__DoWork)}
+			{{"esv::GameStateThreaded::GameStateWorker::DoWork", SymbolMappingTarget::kAbsolute, -0x39, STATIC_SYM(esv__GameStateThreaded__GameStateWorker__DoWork)}}
 		},
 
 		{
@@ -735,7 +735,9 @@ namespace bg3se
 			SymbolMappingData::kText, 0,
 			"4C 8D 3D XX XX XX XX ", // lea     rbp, aEclGamestateth ; "ecl::GameStateThreaded::GameStateWorker::DoWork"
 			{SymbolMappingCondition::kString, 0, "ecl::GameStateThreaded::GameStateWorker::DoWork"},
-			{"ecl::GameStateThreaded::GameStateWorker::DoWork", SymbolMappingTarget::kAbsolute, -0x2F, STATIC_SYM(ecl__GameStateThreaded__GameStateWorker__DoWork)}
+			{{"ecl::GameStateThreaded::GameStateWorker::DoWork", SymbolMappingTarget::kAbsolute, -0x2F, STATIC_SYM(ecl__GameStateThreaded__GameStateWorker__DoWork)}}
+		},
+
 		},
 
 		{
@@ -747,7 +749,7 @@ namespace bg3se
 			"E8 XX XX XX XX " // call    CRPGStats_ExtraData__Get
 			"F3 0F 2C D8 ", // cvttss2si ebx, xmm0
 			{SymbolMappingCondition::kFixedString, 4, "FallDamageDamageType"},
-			{"eoc::DealDamageFunctor::ApplyDamage", SymbolMappingTarget::kAbsolute, 0, nullptr, nullptr, &sSymbolDealDamageFunctorApplyDamage, 0x180}
+			{{"eoc::DealDamageFunctor::ApplyDamage", SymbolMappingTarget::kAbsolute, 0, nullptr, nullptr, &sSymbolDealDamageFunctorApplyDamage, 0x180}}
 		},
 
 		/*
@@ -1352,7 +1354,7 @@ namespace bg3se
 			"48 8B 1D XX XX XX XX " // mov     rbx, cs:gRPGStats
 			"48 8D 15 XX XX XX XX ", // lea     rdx, fs_Infectious_Disease_Depth
 			{SymbolMappingCondition::kFixedString, 14, "Infectious Disease Depth"},
-			{"RPGStats", SymbolMappingTarget::kIndirect, 7, STATIC_SYM(Stats)}
+			{{"RPGStats", SymbolMappingTarget::kIndirect, 7, STATIC_SYM(Stats)}}
 		},
 
 		{
@@ -1366,7 +1368,7 @@ namespace bg3se
 			"E8 XX XX XX XX " // call    esv__SavegameManager__RegisterFactory
 			"90 ", // nop
 			{},
-			{"esv::SavegameManager", SymbolMappingTarget::kIndirect, 18, STATIC_SYM(esv__SavegameManager)}
+			{{"esv::SavegameManager", SymbolMappingTarget::kIndirect, 18, STATIC_SYM(esv__SavegameManager)}}
 		},
 
 		{
@@ -1378,8 +1380,8 @@ namespace bg3se
 			"49 B9 00 00 00 00 00 00 C0 FF " // mov     r9, 0FFC0000000000000h
 			"E8 XX XX XX XX ", // call    esv__SurfaceActionFactory__CreateSurfaceAction
 			{},
-			{"esv::SurfaceActionFactory", SymbolMappingTarget::kAbsolute, 0, nullptr, nullptr, &sSymbolSurfaceActionFactoryAddSurfaceAction, 0x300},
-			{"esv::SurfaceActionFactory::CreateAction", SymbolMappingTarget::kIndirect, 23, STATIC_SYM(esv__SurfaceActionFactory__CreateAction)},
+			{{"esv::SurfaceActionFactory", SymbolMappingTarget::kAbsolute, 0, nullptr, nullptr, &sSymbolSurfaceActionFactoryAddSurfaceAction, 0x300},
+			{"esv::SurfaceActionFactory::CreateAction", SymbolMappingTarget::kIndirect, 23, STATIC_SYM(esv__SurfaceActionFactory__CreateAction)}}
 		},
 
 		{
@@ -1391,7 +1393,7 @@ namespace bg3se
 			"48 8D 54 24 30 " // lea     rdx, [rsp+58h+var_28]
 			"48 0F 45 D5 ", // cmovnz  rdx, rbp
 			{},
-			{"eoc::gResourceDefinitions", SymbolMappingTarget::kIndirect, 0, STATIC_SYM(ResourceDefns)}
+			{{"eoc::gResourceDefinitions", SymbolMappingTarget::kIndirect, 0, STATIC_SYM(ResourceDefns)}}
 		},
 
 		{
@@ -1403,7 +1405,7 @@ namespace bg3se
 			"41 FF D1 " // call    r9
 			"48 8B 15 XX XX XX XX ", // mov     rdx, cs:eoc__gResourceManager
 			{SymbolMappingCondition::kString, 0, "Loading Sound"},
-			{"eoc::gResourceManager", SymbolMappingTarget::kIndirect, 18, STATIC_SYM(ResourceMgr)}
+			{{"eoc::gResourceManager", SymbolMappingTarget::kIndirect, 18, STATIC_SYM(ResourceMgr)}}
 		}
 	};
 

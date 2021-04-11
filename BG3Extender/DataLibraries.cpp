@@ -282,15 +282,17 @@ namespace bg3se
 		bool mapped = false;
 		p.Scan(memStart, memSize, [this, &mapping, &mapped](const uint8_t * match) -> std::optional<bool> {
 			if (EvaluateSymbolCondition(mapping.Conditions, match)) {
-				auto action1 = ExecSymbolMappingAction(mapping.Target1, match);
-				auto action2 = ExecSymbolMappingAction(mapping.Target2, match);
-				auto action3 = ExecSymbolMappingAction(mapping.Target3, match);
-				mapped = action1 == SymbolMappingResult::Success 
-					&& action2 == SymbolMappingResult::Success
-					&& action3 == SymbolMappingResult::Success;
-				return action1 != SymbolMappingResult::TryNext 
-					&& action2 != SymbolMappingResult::TryNext
-					&& action3 != SymbolMappingResult::TryNext;
+				bool tryNext{ false };
+				for (auto const& target : mapping.Targets) {
+					auto action = ExecSymbolMappingAction(target, match);
+					if (!mapped) {
+						mapped = (action == SymbolMappingResult::Success);
+					}
+					if (!tryNext) {
+						tryNext = (action == SymbolMappingResult::TryNext);
+					}
+				}
+				return tryNext;
 			} else {
 				return {};
 			}
