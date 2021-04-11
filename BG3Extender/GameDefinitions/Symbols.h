@@ -15,6 +15,7 @@ namespace bg3se
 {
 	struct GuidResourceDefinitions;
 	struct ResourceManager;
+	struct App;
 
 	struct StaticSymbols : Noncopyable<StaticSymbols>
 	{
@@ -62,6 +63,8 @@ namespace bg3se
 		void * ModuleSettingsHasCustomMods{ nullptr };
 		RPGStats** Stats{ nullptr };
 		esv::SavegameManager** esv__SavegameManager{ nullptr };
+
+		App** AppInstance{ nullptr };
 
 		std::map<uint8_t const *, EoCLibraryInfo> Libraries;
 

@@ -1289,19 +1289,6 @@ namespace bg3se
 		},
 
 		{
-			"App::Instance",
-			SymbolMappingData::kText, 0,
-			"48 89 45 2F " // mov     [rbp+57h+var_28], rax
-			"48 8B F1 " // mov     rsi, rcx
-			"BA 02 00 00 00 " // mov     edx, 2
-			"48 8B 0D XX XX XX XX " //  mov     rcx, cs:qword_142959A50
-			"48 8B 01 " // mov     rax, [rcx]
-			"FF 90 40 02 00 00 ", // call    qword ptr [rax+240h]
-			{},
-			{"App::Instance", SymbolMappingTarget::kIndirect, 12, STATIC_SYM(AppInstance)}
-		},
-
-		{
 			"ls::ResourceManager::Instance",
 			SymbolMappingData::kText, 0,
 			"48 3B 9F C0 00 00 00 " // cmp     rbx, [rdi+0C0h]
@@ -1346,6 +1333,18 @@ namespace bg3se
 			{},
 			{"esv::ExecuteCharacterExtraProperties", SymbolMappingTarget::kAbsolute, -0x18, STATIC_SYM(esv__ExecuteCharacterSetExtraProperties)}
 		},*/
+
+		{
+			"App::Instance",
+			SymbolMappingData::kText, 0,
+			"4C 8D 05 XX XX XX XX " // lea     r8, aEffectmanager
+			"BA 01 00 00 00 " // mov     edx, 1
+			"49 8B CF " // mov     rcx, r15
+			"FF 90 80 00 00 00 " // call    qword ptr [rax+80h]
+			"48 8B 05 XX XX XX XX ", // mov     rax, cs:gApp2
+			{SymbolMappingCondition::kString, 0, "EffectManager"},
+			{{"App::Instance", SymbolMappingTarget::kIndirect, 21, STATIC_SYM(AppInstance)}}
+		},
 
 		{
 			"RPGStats",
