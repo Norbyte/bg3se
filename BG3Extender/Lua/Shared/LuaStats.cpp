@@ -1,6 +1,5 @@
 #include <stdafx.h>
 #include <OsirisProxy.h>
-#include <PropertyMaps.h>
 #include <Lua/LuaBinding.h>
 #include <Lua/LuaSerializers.h>
 
@@ -18,8 +17,6 @@ namespace bg3se::lua::stats
 #include <Lua/Shared/StatAttributes.inl>
 #include <Lua/Shared/StatMisc.inl>
 #include <Lua/Shared/LuaObjectProxies.inl>
-
-#include <Lua/Shared/RootTemplates.inl>
 
 
 namespace bg3se::lua::stats

@@ -17,7 +17,7 @@ namespace bg3se
 
 	struct ActionOriginator
 	{
-		GUID ActionGuid;
+		UUID ActionGuid;
 		FixedString PassiveId;
 	};
 

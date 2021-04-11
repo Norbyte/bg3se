@@ -23,97 +23,18 @@ namespace bg3se::lua
 		}*/
 	}
 
-	char const* const ObjectProxy<esv::Character>::MetatableName = "esv::Character";
-
-	int ServerCharacterFetchProperty(lua_State* L, esv::Character* character, FixedString const& prop)
-	{
-		if (prop == GFS.strPlayerCustomData) {
-			if (character->PlayerData != nullptr
-				&& character->PlayerData->CustomData.Initialized) {
-				ObjectHandle handle;
-				character->GetObjectHandle(handle);
-				ObjectProxy2<esv::PlayerCustomData>::New(L, &character->PlayerData->CustomData);
-				return 1;
-			} else {
-				OsiError("Character has no player data, or custom data was not initialized.");
-				push(L, nullptr);
-				return 1;
-			}
-		}
-
-		// TODO - CurrentTemplate, OriginalTemplate, TemplateUsedForSpells, PlayerData
-
-		/*if (prop == GFS.strStats) {
-			if (character->Stats != nullptr) {
-				ObjectHandle handle;
-				character->GetObjectHandle(handle);
-				ObjectProxy<CDivinityStats_Character>::New(L, handle);
-				return 1;
-			} else {
-				OsiError("Character has no stats.");
-				push(L, nullptr);
-				return 1;
-			}
-		}*/
-
-		if (prop == GFS.strHandle) {
-			push(L, character->Base.Entity);
-			return 1;
-		}
-
-		if (prop == GFS.strCurrentTemplate) {
-			ObjectProxy2<CharacterTemplate>::New(L, character->CurrentTemplate);
-			return 1;
-		}
-
-		if (prop == GFS.strOriginalTemplate) {
-			ObjectProxy2<CharacterTemplate>::New(L, character->OriginalTemplate);
-			return 1;
-		}
-
-		if (prop == GFS.strTemplateUsedForSpells) {
-			ObjectProxy2<CharacterTemplate>::New(L, character->TemplateUsedForSpells);
-			return 1;
-		}
-
-		if (prop == GFS.strDisplayName) {
-			return GameObjectGetDisplayName<esv::Character>(L, character);
-		}
-
-		auto const& map = StaticLuaPropertyMap<esv::Character>::PropertyMap;
-		auto fetched = map.GetProperty(L, character, prop.GetString());
-		if (!fetched) {
-			luaL_error(L, "Object of type 'esv::Character' has no property named '%s'", prop.GetString());
-			push(L, nullptr);
-		}
-
-		return 1;
-	}
-
-	esv::Character* ObjectProxy<esv::Character>::Get(lua_State* L)
-	{
-		if (obj_) return obj_;
-		auto character = gOsirisProxy->GetServerEntityHelpers().GetComponent<esv::Character>(handle_);
-		if (character == nullptr) luaL_error(L, "Character handle invalid");
-		return character;
-	}
-
-	int CharacterGetInventoryItems(lua_State* L)
+	int CharacterGetInventoryItems(lua_State* L, esv::Character* self)
 	{
 		StackCheck _(L, 1);
-		auto self = checked_get<ObjectProxy<esv::Character>*>(L, 1);
-
-		GetInventoryItems(L, self->Get(L)->InventoryHandle);
-
+		GetInventoryItems(L, self->InventoryHandle);
 		return 1;
 	}
 
-	int CharacterGetNearbyCharacters(lua_State* L)
+	int CharacterGetNearbyCharacters(lua_State* L, esv::Character* self)
 	{
 		return luaL_error(L, "Not implemented yet!");
 
 		/*StackCheck _(L, 1);
-		auto self = checked_get<ObjectProxy<esv::Character>*>(L, 1);
 		auto pos = self->Get(L)->WorldPos;
 		auto distance = checked_get<float>(L, 2);
 
@@ -123,12 +44,11 @@ namespace bg3se::lua
 		return 1;*/
 	}
 
-	int CharacterGetSummons(lua_State* L)
+	int CharacterGetSummons(lua_State* L, esv::Character* self)
 	{
 		return luaL_error(L, "Not implemented yet!");
 
 		/*StackCheck _(L, 1);
-		auto self = checked_get<ObjectProxy<esv::Character>*>(L, 1);
 
 		lua_newtable(L);
 		int32_t index{ 1 };
@@ -143,12 +63,11 @@ namespace bg3se::lua
 		return 1;*/
 	}
 
-	int CharacterGetSkills(lua_State* L)
+	int CharacterGetSkills(lua_State* L, esv::Character* self)
 	{
 		return luaL_error(L, "Not implemented yet!");
 
 		/*StackCheck _(L, 1);
-		auto self = checked_get<ObjectProxy<esv::Character>*>(L, 1);
 
 		lua_newtable(L);
 		int32_t index{ 1 };
@@ -163,12 +82,11 @@ namespace bg3se::lua
 		return 1;*/
 	}
 
-	int CharacterGetSkillInfo(lua_State* L)
+	int CharacterGetSkillInfo(lua_State* L, esv::Character* self)
 	{
 		return luaL_error(L, "Not implemented yet!");
 
 		/*StackCheck _(L, 1);
-		auto self = checked_get<ObjectProxy<esv::Character>*>(L, 1);
 		auto skillId = checked_get<FixedString>(L, 2);
 
 		auto skillMgr = self->Get(L)->SkillManager;
@@ -197,99 +115,6 @@ namespace bg3se::lua
 
 		push(L, nullptr);
 		return 1;*/
-	}
-
-	int ObjectProxy<esv::Character>::Index(lua_State* L)
-	{
-		auto character = Get(L);
-		if (!character) return 0;
-
-		StackCheck _(L, 1);
-		auto prop = luaL_checkstring(L, 2);
-		FixedString propFS(prop);
-		if (!propFS) {
-			OsiError("Illegal property name: " << prop);
-			lua_pushnil(L);
-			return 1;
-		}
-
-		if (propFS == GFS.strGetInventoryItems) {
-			lua_pushcfunction(L, &CharacterGetInventoryItems);
-			return 1;
-		}
-
-		if (propFS == GFS.strGetSkills) {
-			lua_pushcfunction(L, &CharacterGetSkills);
-			return 1;
-		}
-
-		if (propFS == GFS.strGetSkillInfo) {
-			lua_pushcfunction(L, &CharacterGetSkillInfo);
-			return 1;
-		}
-
-		if (propFS == GFS.strGetNearbyCharacters) {
-			lua_pushcfunction(L, &CharacterGetNearbyCharacters);
-			return 1;
-		}
-
-		if (propFS == GFS.strGetSummons) {
-			lua_pushcfunction(L, &CharacterGetSummons);
-			return 1;
-		}
-
-		if (propFS == GFS.strHasTag) {
-			lua_pushcfunction(L, &GameObjectHasTag<esv::Character>);
-			return 1;
-		}
-
-		if (propFS == GFS.strGetTags) {
-			lua_pushcfunction(L, &GameObjectGetTags<esv::Character>);
-			return 1;
-		}
-
-		if (propFS == GFS.strGetStatus) {
-			lua_pushcfunction(L, (&GameObjectGetStatus<esv::Character, esv::Status>));
-			return 1;
-		}
-
-		if (propFS == GFS.strGetStatusByType) {
-			lua_pushcfunction(L, (&GameObjectGetStatusByType<esv::Character, esv::Status>));
-			return 1;
-		}
-
-		if (propFS == GFS.strGetStatuses) {
-			lua_pushcfunction(L, (&GameObjectGetStatuses<esv::Character>));
-			return 1;
-		}
-
-		if (propFS == GFS.strGetStatusObjects) {
-			lua_pushcfunction(L, (&GameObjectGetStatusObjects<esv::Character, esv::Status>));
-			return 1;
-		}
-
-		if (propFS == GFS.strSetScale) {
-			lua_pushcfunction(L, (&GameObjectSetScale<esv::Character>));
-			return 1;
-		}
-
-		return ServerCharacterFetchProperty(L, character, propFS);
-	}
-
-	int ObjectProxy<esv::Character>::NewIndex(lua_State* L)
-	{
-		auto character = Get(L);
-		if (!character) return 0;
-
-		StackCheck _(L, 0);
-		auto prop = luaL_checkstring(L, 2);
-		auto const& map = StaticLuaPropertyMap<esv::Character>::PropertyMap;
-		auto ok = map.SetProperty(L, character, prop, 3);
-		if (!ok) {
-			luaL_error(L, "Object of type '%s' has no property named '%s'", MetatableName, prop);
-		}
-
-		return 0;
 	}
 }
 
@@ -343,9 +168,7 @@ namespace bg3se::esv::lua
 		esv::Character* character = GetCharacter(L, 1);
 
 		if (character != nullptr) {
-			ObjectHandle handle;
-			character->GetObjectHandle(handle);
-			ObjectProxy<esv::Character>::New(L, handle);
+			ObjectProxy2<esv::Character>::New(L, character);
 			return 1;
 		} else {
 			push(L, nullptr);

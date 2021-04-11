@@ -1,6 +1,5 @@
 #include <stdafx.h>
 #include <OsirisProxy.h>
-#include <PropertyMaps.h>
 //#include <GameDefinitions/Ai.h>
 #include <GameDefinitions/RootTemplates.h>
 #include <Lua/LuaSerializers.h>

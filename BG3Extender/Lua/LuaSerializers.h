@@ -6,6 +6,7 @@
 
 namespace bg3se
 {
+	struct EntityWorldHandle;
 	struct CRPGStats_Requirement;
 	struct CRPGStats_Treasure_Table;
 	struct CRPGStats_Treasure_Category;
@@ -382,6 +383,8 @@ namespace bg3se::lua
 	}
 
 	void LuaSerializeStatsEnum(LuaSerializer& s, char const* key, FixedString const& enumName, int& v);
+
+	LuaSerializer& operator << (LuaSerializer& s, EntityWorldHandle& v);
 
 /*	LuaSerializer& operator << (LuaSerializer& s, CEquipmentSet& v);
 	LuaSerializer& operator << (LuaSerializer& s, CEquipmentGroup& v);

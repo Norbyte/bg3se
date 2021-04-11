@@ -5,9 +5,22 @@
 #include <Lua/Shared/LuaPropertyMapHelpers.h>
 #include <GameDefinitions/Resources.h>
 
+#include <Lua/Shared/LuaShared.inl>
 
 namespace bg3se::lua
 {
+
+int CharacterGetInventoryItems(lua_State* L, esv::Character* self);
+int CharacterGetNearbyCharacters(lua_State* L, esv::Character* self);
+int CharacterGetSummons(lua_State* L, esv::Character* self);
+int CharacterGetSkills(lua_State* L, esv::Character* self);
+int CharacterGetSkillInfo(lua_State* L, esv::Character* self);
+
+int ItemGetInventoryItems(lua_State* L, esv::Item* self);
+int ItemGetNearbyCharacters(lua_State* L, esv::Item* self);
+int ItemGetGeneratedBoosts(lua_State* L, esv::Item* self);
+
+int StatusGetEngineType(lua_State* L, esv::Status* self);
 
 // Lua property map and object proxy template specialization declarations
 
@@ -20,7 +33,9 @@ namespace bg3se::lua
 #define P(prop)
 #define P_RO(prop)
 #define P_REF(prop)
+#define P_REF_PTR(prop)
 #define PN(prop, name)
+#define P_FUN(prop, fun)
 
 #include <GameDefinitions/PropertyMaps/AllPropertyMaps.inl>
 
@@ -30,7 +45,9 @@ namespace bg3se::lua
 #undef P
 #undef P_RO
 #undef P_REF
+#undef P_REF_PTR
 #undef PN
+#undef P_FUN
 
 
 // Runtime Lua metatable registrations
@@ -44,7 +61,9 @@ namespace bg3se::lua
 #define P(prop)
 #define P_RO(prop)
 #define P_REF(prop)
+#define P_REF_PTR(prop)
 #define PN(prop, name)
+#define P_FUN(name, fun)
 
 #include <GameDefinitions/PropertyMaps/AllPropertyMaps.inl>
 
@@ -54,7 +73,9 @@ namespace bg3se::lua
 #undef P
 #undef P_RO
 #undef P_REF
+#undef P_REF_PTR
 #undef PN
+#undef P_FUN
 	}
 
 
@@ -105,6 +126,21 @@ namespace bg3se::lua
 		} \
 	);
 
+#define P_REF_PTR(prop) \
+	pm.AddProperty(#prop, \
+		[](lua_State* L, PM::ObjectType* obj) { \
+			if (obj->prop) { \
+				ObjectProxy2<std::remove_pointer<decltype(obj->prop)>::type>::New(L, obj->prop); \
+			} else { \
+				push(L, nullptr); \
+			} \
+			return true; \
+		}, \
+		[](lua_State* L, PM::ObjectType* obj, int index) { \
+			return false; \
+		} \
+	);
+
 #define PN(name, prop) \
 	pm.AddProperty(#name, \
 		[](lua_State* L, PM::ObjectType* obj) { \
@@ -115,6 +151,20 @@ namespace bg3se::lua
 		} \
 	);
 
+#define P_FUN(name, fun) \
+	pm.AddProperty(#name, \
+		[](lua_State* L, PM::ObjectType* obj) { \
+			lua_pushcfunction(L, [](lua_State* L) -> int { \
+				auto self = checked_get<ObjectProxy2<PM::ObjectType>*>(L, 1)->Get(L); \
+				return fun(L, self); \
+			}); \
+			return true; \
+		}, \
+		[](lua_State* L, PM::ObjectType* obj, int index) { \
+			return false; \
+		} \
+	);
+
 #include <GameDefinitions/PropertyMaps/AllPropertyMaps.inl>
 
 #undef BEGIN_CLS
@@ -122,6 +172,9 @@ namespace bg3se::lua
 #undef INHERIT
 #undef P
 #undef P_RO
+#undef P_REF
+#undef P_REF_PTR
 #undef PN
+#undef P_FUN
 	}
 }

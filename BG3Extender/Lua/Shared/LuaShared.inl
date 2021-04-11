@@ -2,22 +2,19 @@ namespace bg3se::lua
 {
 
 template <class TObject, class TStatus>
-int GameObjectGetStatus(lua_State* L)
+int GameObjectGetStatus(lua_State* L, TObject* self)
 {
-	auto self = checked_get<ObjectProxy<TObject>*>(L, 1);
 	auto statusId = luaL_checkstring(L, 2);
-
-	auto object = self->Get(L);
 	FixedString statusIdFs(statusId);
 
-	if (!object || !object->StatusMachine || !statusIdFs) {
+	if (!self->StatusMachine || !statusIdFs) {
 		return 0;
 	}
 
-	auto status = object->StatusMachine->GetStatus(statusIdFs);
+	auto status = self->StatusMachine->GetStatus(statusIdFs);
 	if (status) {
 		// FIXME - use handle based proxy
-		ObjectProxy<TStatus>::New(L, status);
+		ObjectProxy2<TStatus>::New(L, status);
 		return 1;
 	}
 	else {
@@ -26,20 +23,18 @@ int GameObjectGetStatus(lua_State* L)
 }
 
 template <class TObject, class TStatus>
-int GameObjectGetStatusByType(lua_State* L)
+int GameObjectGetStatusByType(lua_State* L, TObject* self)
 {
-	auto self = checked_get<ObjectProxy<TObject>*>(L, 1);
 	auto statusType = checked_get<StatusType>(L, 2);
 
-	auto object = self->Get(L);
-	if (!object || !object->StatusMachine) {
+	if (!self->StatusMachine) {
 		return 0;
 	}
 
-	for (auto status : object->StatusMachine->Statuses) {
+	for (auto status : self->StatusMachine->Statuses) {
 		if (status->GetStatusId() == statusType) {
 			// FIXME - use handle based proxy
-			ObjectProxy<TStatus>::New(L, status);
+			ObjectProxy2<TStatus>::New(L, status);
 			return 1;
 		}
 	}
@@ -48,18 +43,16 @@ int GameObjectGetStatusByType(lua_State* L)
 }
 
 template <class TObject>
-int GameObjectGetStatuses(lua_State* L)
+int GameObjectGetStatuses(lua_State* L, TObject* self)
 {
-	auto self = checked_get<ObjectProxy<TObject>*>(L, 1);
-	auto object = self->Get(L);
-	if (!object || !object->StatusMachine) {
+	if (!self->StatusMachine) {
 		return 0;
 	}
 
 	lua_newtable(L);
 
 	int32_t index = 1;
-	for (auto status : object->StatusMachine->Statuses) {
+	for (auto status : self->StatusMachine->Statuses) {
 		settable(L, index++, status->StatusId);
 	}
 
@@ -67,21 +60,19 @@ int GameObjectGetStatuses(lua_State* L)
 }
 
 template <class TObject, class TStatus>
-int GameObjectGetStatusObjects(lua_State* L)
+int GameObjectGetStatusObjects(lua_State* L, TObject* self)
 {
-	auto self = checked_get<ObjectProxy<TObject>*>(L, 1);
-	auto object = self->Get(L);
-	if (!object || !object->StatusMachine) {
+	if (!self->StatusMachine) {
 		return 0;
 	}
 
 	lua_newtable(L);
 
 	int32_t index = 1;
-	for (auto status : object->StatusMachine->Statuses) {
+	for (auto status : self->StatusMachine->Statuses) {
 		push(L, index++);
 		// FIXME - use handle based proxy
-		ObjectProxy<TStatus>::New(L, status);
+		ObjectProxy2<TStatus>::New(L, status);
 		lua_settable(L, -3);
 	}
 
@@ -89,14 +80,12 @@ int GameObjectGetStatusObjects(lua_State* L)
 }
 
 template <class TObject>
-int GameObjectHasTag(lua_State* L)
+int GameObjectHasTag(lua_State* L, TObject* self)
 {
 	return luaL_error(L, "Not implemented yet!");
 
-	/*auto self = checked_get<ObjectProxy<TObject>*>(L, 1);
-	auto tag = luaL_checkstring(L, 2);
+	/*auto tag = luaL_checkstring(L, 2);
 
-	auto object = self->Get(L);
 	FixedString tagFs(tag);
 
 	if (!object || !tagFs) {
@@ -109,16 +98,11 @@ int GameObjectHasTag(lua_State* L)
 }
 
 template <class TObject>
-int GameObjectGetTags(lua_State* L)
+int GameObjectGetTags(lua_State* L, TObject* self)
 {
 	return luaL_error(L, "Not implemented yet!");
 
-	/*auto self = checked_get<ObjectProxy<TObject>*>(L, 1);
-	auto character = self->Get(L);
-	if (!character) {
-		return 0;
-	}
-
+	/*
 	lua_newtable(L);
 
 	int32_t index = 1;
@@ -133,14 +117,8 @@ int GameObjectGetTags(lua_State* L)
 }
 
 template <class TObject>
-int GameObjectSetScale(lua_State* L)
+int GameObjectSetScale(lua_State* L, TObject* self)
 {
-	auto self = checked_get<ObjectProxy<TObject>*>(L, 1);
-	auto character = self->Get(L);
-	if (!character) {
-		return 0;
-	}
-
 	auto scale = checked_get<float>(L, 2);
 	// Weird things happen if scale is too large/small
 	if (scale < 0.01f || scale > 100.0f) {

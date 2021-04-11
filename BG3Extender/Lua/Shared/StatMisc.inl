@@ -1,6 +1,5 @@
 #include <stdafx.h>
 #include <OsirisProxy.h>
-#include <PropertyMaps.h>
 #include <Lua/LuaBinding.h>
 #include <Lua/LuaSerializers.h>
 #include <GameDefinitions/Stats/Stats.h>
@@ -74,10 +73,6 @@ namespace bg3se::lua::stats
 
 	void RegisterStatsObjects(lua_State* L)
 	{
-		ObjectProxy<CDivinityStats_Character>::RegisterMetatable(L);
-		ObjectProxy<CDivinityStats_CharacterDynamic>::RegisterMetatable(L);
-		ObjectProxy<CDivinityStats_Item>::RegisterMetatable(L);
-		ObjectProxy<CDivinityStats_Equipment_Attributes>::RegisterMetatable(L);
 		StatsExtraDataProxy::RegisterMetatable(L);
 		StatsProxy::RegisterMetatable(L);
 		SpellPrototypeProxy::RegisterMetatable(L);

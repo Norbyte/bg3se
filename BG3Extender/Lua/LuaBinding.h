@@ -70,6 +70,8 @@ namespace bg3se::lua
 	class ObjectProxy2 : public Userdata<ObjectProxy2<T>>, public Indexable, public NewIndexable, public Pushable<PushPolicy::Unbind>
 	{
 	public:
+		static_assert(!std::is_pointer_v<T>, "ObjectProxy template parameter should not be a pointer type!");
+
 		static char const * const MetatableName;
 
 		ObjectProxy2(T * obj) : obj_(obj)
@@ -78,6 +80,11 @@ namespace bg3se::lua
 		void Unbind()
 		{
 			obj_ = nullptr;
+		}
+
+		T* Get(lua_State* L) const
+		{
+			return obj_;
 		}
 
 		int Index(lua_State* L)

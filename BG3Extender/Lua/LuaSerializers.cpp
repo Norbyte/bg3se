@@ -15,6 +15,12 @@ namespace bg3se::lua
 		s << v.Handle.Handle;
 		return s;
 	}
+	
+	LuaSerializer& operator << (LuaSerializer& s, EntityWorldHandle& v)
+	{
+		s << v.Handle;
+		return s;
+	}
 
 	/*
 	LuaSerializer& operator << (LuaSerializer& s, CEquipmentSet& v)

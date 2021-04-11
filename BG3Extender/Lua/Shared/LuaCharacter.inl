@@ -4,8 +4,6 @@
 
 namespace bg3se::lua
 {
-	char const* const ObjectProxy<CDivinityStats_Character>::MetatableName = "CDivinityStats_Character";
-
 	int CharacterFetchStat(lua_State* L, CDivinityStats_Character* stats, char const* propStr, FixedString const& prop)
 	{
 		if (prop == GFS.strSight) {
@@ -37,7 +35,8 @@ namespace bg3se::lua
 			unsigned statIdx = 1;
 			for (auto dynamicStat : stats->DynamicStats) {
 				push(L, statIdx++);
-				ObjectProxy<CDivinityStats_CharacterDynamic>::New(L, dynamicStat);
+				// ObjectProxy2<CDivinityStats_CharacterDynamic>::New(L, dynamicStat);
+				push(L, nullptr); // FIXME
 				lua_settable(L, -3);
 			}
 
@@ -140,17 +139,6 @@ namespace bg3se::lua
 		return 0;
 	}
 
-	CDivinityStats_Character* ObjectProxy<CDivinityStats_Character>::Get(lua_State* L)
-	{
-		throw std::runtime_error("Not implemented!");
-
-		/*if (obj_) return obj_;
-		auto character = gOsirisProxy->GetServerEntityHelpers().GetComponent<esv::Character>(handle_);
-		if (character == nullptr) luaL_error(L, "Character handle invalid");
-		if (character->Stats == nullptr) luaL_error(L, "Character has no stats!");
-		return character->Stats;*/
-	}
-
 	int CharacterGetItemBySlot(lua_State* L)
 	{
 		return luaL_error(L, "Not implemented yet!");
@@ -167,11 +155,11 @@ namespace bg3se::lua
 		}*/
 	}
 
-	int ObjectProxy<CDivinityStats_Character>::Index(lua_State* L)
+	/*int ObjectProxy<CDivinityStats_Character>::Index(lua_State* L)
 	{
 		return luaL_error(L, "Not implemented yet!");
 
-		/*auto stats = Get(L);
+		auto stats = Get(L);
 		if (!stats) return 0;
 
 		auto prop = luaL_checkstring(L, 2);
@@ -182,37 +170,13 @@ namespace bg3se::lua
 			return 1;
 		}
 
-		return CharacterFetchStat(L, stats, prop, fs);*/
-	}
+		return CharacterFetchStat(L, stats, prop, fs);
+	}*/
 
-	int ObjectProxy<CDivinityStats_Character>::NewIndex(lua_State* L)
+	/*int ObjectProxy<CDivinityStats_Character>::NewIndex(lua_State* L)
 	{
 		return luaL_error(L, "Not implemented yet!");
 
-		/*return GenericSetter(L, gCharacterStatsPropertyMap);*/
-	}
-
-
-	char const* const ObjectProxy<CDivinityStats_CharacterDynamic>::MetatableName = "CharacterDynamicStat";
-
-	CDivinityStats_CharacterDynamic* ObjectProxy<CDivinityStats_CharacterDynamic>::Get(lua_State* L)
-	{
-		if (obj_) return obj_;
-		luaL_error(L, "Character stats no longer available");
-		return nullptr;
-	}
-
-	int ObjectProxy<CDivinityStats_CharacterDynamic>::Index(lua_State* L)
-	{
-		return luaL_error(L, "Not implemented yet!");
-
-		/*return GenericGetter(L, gCharacterDynamicStatPropertyMap);*/
-	}
-
-	int ObjectProxy<CDivinityStats_CharacterDynamic>::NewIndex(lua_State* L)
-	{
-		return luaL_error(L, "Not implemented yet!");
-
-		/*return GenericSetter(L, gCharacterDynamicStatPropertyMap);*/
-	}
+		return GenericSetter(L, gCharacterStatsPropertyMap);
+	}*/
 }

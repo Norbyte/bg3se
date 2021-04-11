@@ -1,5 +1,4 @@
 #include <OsirisProxy.h>
-#include <PropertyMaps.h>
 #include <GameDefinitions/Stats/Item.h>
 #include <Lua/LuaSerializers.h>
 
@@ -47,20 +46,7 @@ namespace bg3se::lua
 	}
 
 
-	char const* const ObjectProxy<CDivinityStats_Item>::MetatableName = "CDivinityStats_Item";
-
-	CDivinityStats_Item* ObjectProxy<CDivinityStats_Item>::Get(lua_State* L)
-	{
-		if (obj_) return obj_;
-		auto item = gOsirisProxy->GetServerEntityHelpers().GetComponent<esv::Item>(handle_);
-		if (item == nullptr) luaL_error(L, "Item handle invalid");
-		luaL_error(L, "Not implemented yet!"); 
-		return nullptr;
-		/*if (item->Stats == nullptr) luaL_error(L, "Item has no stats!");
-		return item->Stats;*/
-	}
-
-	int ObjectProxy<CDivinityStats_Item>::Index(lua_State* L)
+	/*int ObjectProxy<CDivinityStats_Item>::Index(lua_State* L)
 	{
 		auto stats = Get(L);
 		if (!stats) return 0;
@@ -74,11 +60,11 @@ namespace bg3se::lua
 	{
 		return luaL_error(L, "Not implemented yet!");
 
-		/*return GenericSetter(L, gItemStatsPropertyMap);*/
-	}
+		return GenericSetter(L, gItemStatsPropertyMap);
+	}*/
 
 
-	char const* const ObjectProxy<CDivinityStats_Equipment_Attributes>::MetatableName = "CDivinityStats_Equipment_Attributes";
+	/*char const* const ObjectProxy<CDivinityStats_Equipment_Attributes>::MetatableName = "CDivinityStats_Equipment_Attributes";
 
 	CDivinityStats_Equipment_Attributes* ObjectProxy<CDivinityStats_Equipment_Attributes>::Get(lua_State* L)
 	{
@@ -94,7 +80,7 @@ namespace bg3se::lua
 
 		return luaL_error(L, "Not implemented yet!");
 
-		/*return GenericGetter(L, stats->GetPropertyMap());*/
+		return GenericGetter(L, stats->GetPropertyMap());
 	}
 
 	int ObjectProxy<CDivinityStats_Equipment_Attributes>::NewIndex(lua_State* L)
@@ -104,8 +90,8 @@ namespace bg3se::lua
 
 		return luaL_error(L, "Not implemented yet!");
 
-		/*return GenericSetter(L, stats->GetPropertyMap());*/
-	}
+		return GenericSetter(L, stats->GetPropertyMap());
+	}*/
 
 
 	/*ItemOrCharacterPushPin::ItemOrCharacterPushPin(lua_State* L, CRPGStats_Object* obj)

@@ -105,7 +105,7 @@ namespace bg3se
 			float CurrentLifeTime;
 			float TurnTimer;
 			float Strength;
-			char CauseType; // TODO - CauseType enum?
+			uint8_t CauseType; // TODO - CauseType enum?
 			ObjectHandle StatusHandle;
 			ObjectHandle UnknownHandle;
 			ObjectHandle OwnerHandle;

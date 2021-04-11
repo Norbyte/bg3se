@@ -3,32 +3,18 @@
 
 namespace bg3se::lua
 {
-	char const* const ObjectProxy<esv::Item>::MetatableName = "esv::Item";
-
-	esv::Item* ObjectProxy<esv::Item>::Get(lua_State* L)
-	{
-		if (obj_) return obj_;
-		auto item = gOsirisProxy->GetServerEntityHelpers().GetComponent<esv::Item>(handle_);
-		if (item == nullptr) luaL_error(L, "Item handle invalid");
-		return item;
-	}
-
-	int ItemGetInventoryItems(lua_State* L)
+	int ItemGetInventoryItems(lua_State* L, esv::Item* self)
 	{
 		StackCheck _(L, 1);
-		auto self = checked_get<ObjectProxy<esv::Item>*>(L, 1);
-
-		GetInventoryItems(L, self->Get(L)->InventoryHandle);
-
+		GetInventoryItems(L, self->InventoryHandle);
 		return 1;
 	}
 
-	int ItemGetNearbyCharacters(lua_State* L)
+	int ItemGetNearbyCharacters(lua_State* L, esv::Item* self)
 	{
 		return luaL_error(L, "Not implemented yet!");
 
 		/*StackCheck _(L, 1);
-		auto self = checked_get<ObjectProxy<esv::Item>*>(L, 1);
 		auto pos = self->Get(L)->WorldPos;
 		auto distance = checked_get<float>(L, 2);
 
@@ -38,138 +24,18 @@ namespace bg3se::lua
 		return 1;*/
 	}
 
-	int ItemGetGeneratedBoosts(lua_State* L)
+	int ItemGetGeneratedBoosts(lua_State* L, esv::Item* self)
 	{
-		auto self = checked_get<ObjectProxy<esv::Item>*>(L, 1);
-		auto item = self->Get(L);
-		if (!item) return 0;
-
 		StackCheck _(L, 1);
 		lua_newtable(L);
 		int32_t index{ 1 };
-		if (item->Generation != nullptr) {
-			for (auto const& boost : item->Generation->Boosts) {
+		if (self->Generation != nullptr) {
+			for (auto const& boost : self->Generation->Boosts) {
 				settable(L, index++, boost);
 			}
 		}
 
 		return 1;
-	}
-
-	int ObjectProxy<esv::Item>::Index(lua_State* L)
-	{
-		auto item = Get(L);
-		if (!item) return 0;
-
-		StackCheck _(L, 1);
-		auto prop = luaL_checkstring(L, 2);
-		FixedString propFS(prop);
-
-		if (propFS == GFS.strGetInventoryItems) {
-			lua_pushcfunction(L, &ItemGetInventoryItems);
-			return 1;
-		}
-
-		if (propFS == GFS.strGetNearbyCharacters) {
-			lua_pushcfunction(L, &ItemGetNearbyCharacters);
-			return 1;
-		}
-
-		if (propFS == GFS.strGetGeneratedBoosts) {
-			lua_pushcfunction(L, &ItemGetGeneratedBoosts);
-			return 1;
-		}
-
-		if (propFS == GFS.strHasTag) {
-			lua_pushcfunction(L, &GameObjectHasTag<esv::Item>);
-			return 1;
-		}
-
-		if (propFS == GFS.strGetTags) {
-			lua_pushcfunction(L, &GameObjectGetTags<esv::Item>);
-			return 1;
-		}
-
-		if (propFS == GFS.strGetStatus) {
-			lua_pushcfunction(L, (&GameObjectGetStatus<esv::Item, esv::Status>));
-			return 1;
-		}
-
-		if (propFS == GFS.strGetStatusByType) {
-			lua_pushcfunction(L, (&GameObjectGetStatusByType<esv::Item, esv::Status>));
-			return 1;
-		}
-
-		if (propFS == GFS.strGetStatuses) {
-			lua_pushcfunction(L, (&GameObjectGetStatuses<esv::Item>));
-			return 1;
-		}
-
-		if (propFS == GFS.strGetStatusObjects) {
-			lua_pushcfunction(L, (&GameObjectGetStatusObjects<esv::Item, esv::Status>));
-			return 1;
-		}
-
-		if (propFS == GFS.strStats) {
-			if (item->Stats != nullptr) {
-				ObjectProxy<CDivinityStats_Item>::New(L, handle_);
-				return 1;
-			} else {
-				OsiError("Item has no stats.");
-				push(L, nullptr);
-				return 1;
-			}
-		}
-
-		if (propFS == GFS.strHandle) {
-			push(L, item->Base.ComponentHandle);
-			return 1;
-		}
-
-		if (propFS == GFS.strCurrentTemplate) {
-			ObjectProxy2<ItemTemplate>::New(L, item->CurrentTemplate);
-			return 1;
-		}
-
-		if (propFS == GFS.strOriginalTemplate) {
-			ObjectProxy2<ItemTemplate>::New(L, item->OriginalTemplate);
-			return 1;
-		}
-
-		if (propFS == GFS.strDisplayName) {
-			return GameObjectGetDisplayName<esv::Item>(L, item);
-		}
-
-		/* FIXME
-		bool fetched = false;
-		if (item->Stats != nullptr) {
-			fetched = LuaPropertyMapGet(L, gItemStatsPropertyMap, item->Stats, propFS, false);
-		}*/
-
-		auto const& map = StaticLuaPropertyMap<esv::Item>::PropertyMap;
-		auto fetched = map.GetProperty(L, item, prop);
-		if (!fetched) {
-			luaL_error(L, "Object of type 'esv::Item' has no property named '%s'", prop);
-			push(L, nullptr);
-		}
-
-		return 1;
-	}
-
-	int ObjectProxy<esv::Item>::NewIndex(lua_State* L)
-	{
-		auto item = Get(L);
-		if (!item) return 0;
-
-		StackCheck _(L, 0);
-		auto prop = luaL_checkstring(L, 2);
-		auto const& map = StaticLuaPropertyMap<esv::Item>::PropertyMap;
-		auto ok = map.SetProperty(L, item, prop, 3);
-		if (!ok) {
-			luaL_error(L, "Object of type 'esv::Item' has no property named '%s'", prop);
-		}
-
-		return 0;
 	}
 
 
@@ -325,9 +191,7 @@ namespace bg3se::esv::lua
 		}
 
 		if (item != nullptr) {
-			ObjectHandle handle;
-			item->GetObjectHandle(handle);
-			ObjectProxy<esv::Item>::New(L, handle);
+			ObjectProxy2<esv::Item>::New(L, item);
 		} else {
 			push(L, nullptr);
 		}

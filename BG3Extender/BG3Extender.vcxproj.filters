@@ -301,9 +301,6 @@
     <None Include="Lua\Shared\LuaShared.inl">
       <Filter>Lua\Shared</Filter>
     </None>
-    <None Include="Lua\Shared\RootTemplates.inl">
-      <Filter>Lua\Shared</Filter>
-    </None>
     <None Include="Lua\Shared\StatAttributes.inl">
       <Filter>Lua\Shared</Filter>
     </None>

@@ -1,6 +1,5 @@
 #include <stdafx.h>
 #include <OsirisProxy.h>
-#include <PropertyMaps.h>
 #include <Lua/LuaBinding.h>
 #include <Lua/LuaSerializers.h>
 #include <GameDefinitions/Stats/Stats.h>
@@ -27,15 +26,6 @@ namespace bg3se::lua::stats
 		return LuaStatSetAttribute(L, obj_, attributeName, 3);
 	}
 
-
-
-	/*CRPGStats_Object_Property_List* LuaToObjectPropertyList(lua_State* L, FixedString const& propertyName)
-	{
-		auto properties = GetStaticSymbols().GetStats()->ConstructPropertyList(propertyName);
-		LuaSerializer s(L, false);
-		s << properties;
-		return properties;
-	}*/
 
 	int LuaStatGetAttribute(lua_State* L, CRPGStats_Object* object, char const* attributeName, std::optional<int> level)
 	{
@@ -69,16 +59,10 @@ namespace bg3se::lua::stats
 
 			push(L, nullptr);
 			return 1;
-		} else /*if (attributeFS == GFS.strRequirements) {
-		 return LuaWrite(L, object->Requirements);
-	 } else*/ /*if (attributeFS == GFS.strMemorizationRequirements) {
-		 return LuaWrite(L, object->MemorizationRequirements);
-	 } else*/ if (attributeFS == GFS.strAIFlags) {
-		 push(L, object->AIFlags);
-		 return 1;
-	 } /*else if (attributeFS == GFS.strComboCategory) {
-		 return LuaWrite(L, object->ComboCategories);
-	 }*/
+		} else if (attributeFS == GFS.strAIFlags) {
+			push(L, object->AIFlags);
+			return 1;
+		}
 
 		int attributeIndex{ -1 };
 		auto attrInfo = object->GetAttributeInfo(attributeFS, attributeIndex);
@@ -213,50 +197,10 @@ namespace bg3se::lua::stats
 		if (attributeFS == GFS.strLevel) {
 			object->Level = (int32_t)luaL_checkinteger(L, valueIdx);
 			return 0;
-			/*} else if (attributeFS == GFS.strRequirements) {
-				LuaRead(L, object->Requirements);
-				return 0;*/
-				/*} else if (attributeFS == GFS.strMemorizationRequirements) {
-					LuaRead(L, object->MemorizationRequirements);
-					return 0;*/
-		}
-		else if (attributeFS == GFS.strAIFlags) {
+		} else if (attributeFS == GFS.strAIFlags) {
 			object->AIFlags = FixedString(lua_tostring(L, valueIdx));
 			return 0;
-		} /*else if (attributeFS == GFS.strComboCategory) {
-			object->ComboCategories.Clear();
-			if (lua_type(L, valueIdx) != LUA_TTABLE) {
-				OsiError("Must pass a table when setting ComboCategory");
-				return 0;
-			}
-
-			for (auto category : iterate(L, valueIdx)) {
-				auto categoryName = checked_get<char const*>(L, category);
-				object->ComboCategories.Add(MakeFixedString(categoryName));
-			}
-
-			return 0;
-		} else if (attributeFS == GFS.strSkillProperties || attributeFS == GFS.strExtraProperties) {
-			STDString name = object->Name.Str;
-			name += "_";
-			name += attributeName;
-			auto statsPropertyKey = MakeFixedString(name.c_str());
-
-			auto newList = LuaToObjectPropertyList(L, statsPropertyKey);
-			if (newList) {
-				auto propertyList = object->PropertyList.Find(ToFixedString(attributeName));
-				if (propertyList) {
-					// FIXME - add Remove() support!
-					object->PropertyList.Clear();
-					// FIXME - need to remove from stats.PropertyLists too!
-					// GameFree(*propertyList);
-				}
-
-				object->PropertyList.Insert(MakeFixedString(attributeName), newList);
-			}
-
-			return 0;
-		}*/
+		}
 
 		auto stats = GetStaticSymbols().GetStats();
 		

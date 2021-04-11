@@ -4,7 +4,6 @@
 #include <GameDefinitions/Character.h>
 #include <GameDefinitions/Status.h>
 #include <OsirisProxy.h>
-#include <PropertyMaps.h>
 #include <ExtensionStateServer.h>
 
 namespace bg3se::esv::lua
@@ -14,41 +13,10 @@ namespace bg3se::esv::lua
 
 namespace bg3se::lua
 {
-	char const* const ObjectProxy<esv::Status>::MetatableName = "esv::Status";
-
-	esv::Status* ObjectProxy<esv::Status>::Get(lua_State* L)
+	int StatusGetEngineType(lua_State* L, esv::Status* self)
 	{
-		if (obj_ == nullptr) luaL_error(L, "Status object no longer available");
-		return obj_;
-	}
-
-	int ObjectProxy<esv::Status>::Index(lua_State* L)
-	{
-		if (obj_ == nullptr) return luaL_error(L, "Status object no longer available");
-
-		StackCheck _(L, 1);
-		auto prop = luaL_checkstring(L, 2);
-
-		if (strcmp(prop, "StatusType") == 0) {
-			push(L, obj_->GetStatusId());
-			return 1;
-		}
-
-		return luaL_error(L, "Not implemented yet!");
-
-		/*auto& propertyMap = StatusToPropertyMap(obj_);
-		auto fetched = LuaPropertyMapGet(L, propertyMap, obj_, prop, true);
-		if (!fetched) push(L, nullptr);
-		return 1;*/
-	}
-
-	int ObjectProxy<esv::Status>::NewIndex(lua_State* L)
-	{
-		return luaL_error(L, "Not implemented yet!");
-
-		/*StackCheck _(L, 0);
-		auto& propertyMap = StatusToPropertyMap(obj_);
-		return GenericSetter(L, propertyMap);*/
+		push(L, self->GetStatusId());
+		return 1;
 	}
 }
 

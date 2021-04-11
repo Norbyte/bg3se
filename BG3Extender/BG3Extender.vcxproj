@@ -313,7 +313,6 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
     <None Include="Lua\Shared\LuaShared.inl" />
     <None Include="Lua\Shared\LuaObjectProxies.inl" />
     <None Include="Lua\Shared\LuaStaticDataLib.inl" />
-    <None Include="Lua\Shared\RootTemplates.inl" />
     <None Include="Lua\Shared\StatAttributes.inl" />
     <None Include="Lua\Shared\StatEntries.inl" />
     <None Include="Lua\Shared\StatEnumerators.inl" />

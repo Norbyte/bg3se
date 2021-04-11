@@ -64,12 +64,6 @@ struct ToolConfig
 #endif // defined(OSI_EXTENSION_BUILD)
 
 	bool ShowPerfWarnings{ false };
-	bool DumpNetworkStrings{ false };
-#if defined(OSI_EXTENSION_BUILD)
-	bool SyncNetworkStrings{ true };
-#else
-	bool SyncNetworkStrings{ false };
-#endif
 	uint32_t DebuggerPort{ 9999 };
 	uint32_t LuaDebuggerPort{ 9998 };
 	uint32_t DebugFlags{ 0 };

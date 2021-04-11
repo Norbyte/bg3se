@@ -428,8 +428,6 @@ namespace bg3se::esv::lua
 		);*/
 
 		/*ObjectProxy<esv::Status>::RegisterMetatable(L);*/
-		ObjectProxy<esv::Character>::RegisterMetatable(L);
-		ObjectProxy<esv::Item>::RegisterMetatable(L);
 		/*ObjectProxy<eoc::ItemDefinition>::RegisterMetatable(L);*/
 		//ObjectProxy<esv::Projectile>::RegisterMetatable(L);
 		/*ObjectProxy<esv::ShootProjectileHelper>::RegisterMetatable(L);
