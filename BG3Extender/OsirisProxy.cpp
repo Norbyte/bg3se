@@ -1202,6 +1202,11 @@ NewHit* OnDealDamage(DealDamageFunctor::ApplyDamageProc* next, NewHit* result, D
 	return ret;
 }
 
+void OnStatsFunctorExecuteType1(StatsFunctorSet::ExecuteType1Proc* next, Hit* hit, StatsFunctorSet* self, FunctorExecParamsType1* params)
+{
+	next(hit, self, params);
+}
+
 void OsirisProxy::PostInitLibraries()
 {
 	std::lock_guard _(globalStateLock_);
@@ -1219,6 +1224,7 @@ void OsirisProxy::PostInitLibraries()
 			using namespace std::placeholders;
 			Libraries.FileReader__ctor.SetWrapper(std::bind(&OsirisProxy::OnFileReaderCreate, this, _1, _2, _3, _4, _5));
 			Libraries.DealDamageFunctor__ApplyDamage.SetWrapper(std::bind(&OnDealDamage, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14));
+			Libraries.StatsFunctorSet__ExecuteType1.SetWrapper(std::bind(&OnStatsFunctorExecuteType1, _1, _2, _3, _4));
 		}
 	}
 

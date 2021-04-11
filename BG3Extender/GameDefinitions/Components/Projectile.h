@@ -40,7 +40,7 @@ namespace bg3se::esv
 		PathMover PathMover2;
 		float ExplodeRadius;
 		float field_484;
-		SomeGuidId GuidId;
+		SpellId SpellId;
 		StatsFunctorSet* PropertyListFunctor;
 		__int64 MovingObject;
 		float MovingObjectTransform[16];

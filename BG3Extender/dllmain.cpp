@@ -49,8 +49,6 @@ void LoadConfig(std::wstring const & configPath, bg3se::ToolConfig & config)
 	ConfigGetBool(root, "LogRuntime", config.LogRuntime);
 	ConfigGetBool(root, "EnableExtensions", config.EnableExtensions);
 	ConfigGetBool(root, "SendCrashReports", config.SendCrashReports);
-	ConfigGetBool(root, "DumpNetworkStrings", config.DumpNetworkStrings);
-	ConfigGetBool(root, "SyncNetworkStrings", config.SyncNetworkStrings);
 	ConfigGetBool(root, "EnableDebugger", config.EnableDebugger);
 	ConfigGetBool(root, "EnableLuaDebugger", config.EnableLuaDebugger);
 	ConfigGetBool(root, "DisableModValidation", config.DisableModValidation);

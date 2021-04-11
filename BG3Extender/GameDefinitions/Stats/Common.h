@@ -6,7 +6,7 @@
 namespace bg3se
 {
 	struct StatsFunctorSet;
-	struct SpellIdWithPrototype;
+	struct SpellPrototype;
 
 	struct GameRandom
 	{
@@ -19,6 +19,20 @@ namespace bg3se
 		int MinRoll;
 		int StepSize;
 		uint8_t field_24;
+	};
+
+	struct SpellId
+	{
+		FixedString OriginatorPrototype;
+		uint8_t _Pad[4];
+		uint8_t SourceType;
+		UUID Class;
+		FixedString Prototype;
+	};
+
+	struct SpellIdWithPrototype : public SpellId
+	{
+		SpellPrototype* SpellProto;
 	};
 
 	/*

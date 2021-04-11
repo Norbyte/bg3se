@@ -21,15 +21,6 @@ namespace bg3se
 		FixedString PassiveId;
 	};
 
-	struct SomeGuidId
-	{
-		FixedString OriginatorPrototype;
-		uint8_t _Pad[4];
-		uint8_t SourceType;
-		UUID Class;
-		FixedString Prototype;
-	};
-
 	struct DescriptionInfo
 	{
 		TranslatedString DisplayNameTS;

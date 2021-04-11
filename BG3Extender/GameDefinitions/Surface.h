@@ -108,7 +108,7 @@ namespace bg3se::esv
 		Array<SurfaceCell> SurfaceCells;
 		uint8_t SurfaceLayer;
 		uint8_t field_491;
-		SomeGuidId SomeGuidId;
+		SpellId SpellId;
 		uint16_t SurfaceConcentrationTarget;
 	};
 
@@ -149,7 +149,7 @@ namespace bg3se::esv
 
 	struct ZoneAction : public CreateSurfaceActionBase
 	{
-		SomeGuidId Originator;
+		SpellId Originator;
 		FixedString TextKey;
 		glm::vec3 Target;
 		ZoneActionParams Params;

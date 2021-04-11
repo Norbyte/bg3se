@@ -4,6 +4,7 @@
 #include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/EntitySystem.h>
 #include <GameDefinitions/Misc.h>
+#include <GameDefinitions/Stats/Common.h>
 #include <GameDefinitions/Hit.h>
 
 namespace bg3se
@@ -322,7 +323,7 @@ namespace bg3se
 			glm::vec3 TargetPosition;
 			ObjectHandle Partner;
 			bool ShowOverhead;
-			SomeGuidId Source_M;
+			SpellId Source_M;
 			bool IgnoreHasSpell;
 			bool IgnoreChecks;
 		};
@@ -354,7 +355,7 @@ namespace bg3se
 		{
 			glm::vec3 Target;
 			float ReappearTime;
-			SomeGuidId SourceInfo;
+			SpellId SourceInfo;
 			bool HasDamage;
 			bool HasDamageBeenApplied;
 		};

@@ -738,6 +738,53 @@ namespace bg3se
 			{{"ecl::GameStateThreaded::GameStateWorker::DoWork", SymbolMappingTarget::kAbsolute, -0x2F, STATIC_SYM(ecl__GameStateThreaded__GameStateWorker__DoWork)}}
 		},
 
+		{
+			"esv::PassiveSystem::ExecFunctorsBaseCtx",
+			SymbolMappingData::kText, 0,
+			"8B 8C 82 XX XX XX XX " // mov     ecx, ds:(xxx - 140000000h)[rdx+rax*4]
+			"48 03 CA " // add     rcx, rdx
+			"FF E1 " // jmp     rcx
+			"48 8D 93 B0 00 00 00 " // lea     rdx, [rbx+0B0h]
+			"48 8D 4D D0 " // lea     rcx, [rbp+370h+var_3A0]
+			"E8 XX XX XX XX " // call    xxx
+			"EB XX " // jmp     short xxx
+			"48 8D 93 B0 00 00 00 " // lea     rdx, [rbx+0B0h]
+			"48 8D 4D D0 " // lea     rcx, [rbp+370h+var_3A0]
+			"E8 XX XX XX XX " // call    xxx
+			"EB XX " // jmp     short xxx
+			"48 8D 93 B0 00 00 00 " // lea     rdx, [rbx+0B0h]
+			"48 8D 4D D0 " // lea     rcx, [rbp+370h+var_3A0]
+			"E8 XX XX XX XX " // call    xxx
+			"EB XX " // jmp     short xxx
+			"48 8D 93 B0 00 00 00 " // lea     rdx, [rbx+0B0h]
+			"48 8D 4D D0 " // lea     rcx, [rbp+370h+var_3A0]
+			"E8 XX XX XX XX " // call    xxx
+			"EB XX " // jmp     short xxx
+			"48 8D 93 B0 00 00 00 " // lea     rdx, [rbx+0B0h]
+			"48 8D 4D D0 " // lea     rcx, [rbp+370h+var_3A0]
+			"E8 XX XX XX XX " // call    xxx
+			"EB XX " // jmp     short xxx
+			"48 8D 93 B0 00 00 00 " // lea     rdx, [rbx+0B0h]
+			"48 8D 4D D0 " // lea     rcx, [rbp+370h+var_3A0]
+			"E8 XX XX XX XX " // call    xxx
+			"EB XX " // jmp     short xxx
+			"48 8D 93 B0 00 00 00 " // lea     rdx, [rbx+0B0h]
+			"48 8D 4D D0 " // lea     rcx, [rbp+370h+var_3A0]
+			"E8 XX XX XX XX " // call    xxx
+			"EB XX " // jmp     short xxx
+			"48 8D 93 B0 00 00 00 " // lea     rdx, [rbx+0B0h]
+			"48 8D 4D D0 " // lea     rcx, [rbp+370h+var_3A0]
+			"E8 XX XX XX XX " // call    xxx
+			"48 8D 4D D0 ", // lea     rcx, [rbp+370h+var_3A0]
+			{},
+			{{"eoc::StatsFunctorSet::ExecuteType1", SymbolMappingTarget::kIndirect, 23, STATIC_SYM(eoc__StatsFunctorSet__ExecuteType1)},
+			{"eoc::StatsFunctorSet::ExecuteType2", SymbolMappingTarget::kIndirect, 41, STATIC_SYM(eoc__StatsFunctorSet__ExecuteType2)},
+			{"eoc::StatsFunctorSet::ExecuteType3", SymbolMappingTarget::kIndirect, 59, STATIC_SYM(eoc__StatsFunctorSet__ExecuteType3)},
+			{"eoc::StatsFunctorSet::ExecuteType5", SymbolMappingTarget::kIndirect, 77, STATIC_SYM(eoc__StatsFunctorSet__ExecuteType5)},
+			{"eoc::StatsFunctorSet::ExecuteType6", SymbolMappingTarget::kIndirect, 95, STATIC_SYM(eoc__StatsFunctorSet__ExecuteType6)},
+			{"eoc::StatsFunctorSet::ExecuteType4", SymbolMappingTarget::kIndirect, 113, STATIC_SYM(eoc__StatsFunctorSet__ExecuteType4)},
+			{"eoc::StatsFunctorSet::ExecuteType7", SymbolMappingTarget::kIndirect, 131, STATIC_SYM(eoc__StatsFunctorSet__ExecuteType7)},
+			{"eoc::StatsFunctorSet::ExecuteType8", SymbolMappingTarget::kIndirect, 149, STATIC_SYM(eoc__StatsFunctorSet__ExecuteType8)}}
 		},
 
 		{

@@ -36,3 +36,11 @@ HOOK_DEFN(App__OnInputEvent, App__OnInputEvent, App::VMT::OnInputEventProc, PreH
 
 HOOK_DEFN(FileReader__ctor, ls__FileReader__ctor, FileReader::CtorProc, WrappableFunction)
 HOOK_DEFN(DealDamageFunctor__ApplyDamage, eoc__DealDamageFunctor__ApplyDamage, DealDamageFunctor::ApplyDamageProc, WrappableFunction)
+HOOK_DEFN(StatsFunctorSet__ExecuteType1, eoc__StatsFunctorSet__ExecuteType1, StatsFunctorSet::ExecuteType1Proc, WrappableFunction)
+HOOK_DEFN(StatsFunctorSet__ExecuteType2, eoc__StatsFunctorSet__ExecuteType2, StatsFunctorSet::ExecuteType2Proc, WrappableFunction)
+HOOK_DEFN(StatsFunctorSet__ExecuteType3, eoc__StatsFunctorSet__ExecuteType3, StatsFunctorSet::ExecuteType3Proc, WrappableFunction)
+HOOK_DEFN(StatsFunctorSet__ExecuteType4, eoc__StatsFunctorSet__ExecuteType4, StatsFunctorSet::ExecuteType4Proc, WrappableFunction)
+HOOK_DEFN(StatsFunctorSet__ExecuteType5, eoc__StatsFunctorSet__ExecuteType5, StatsFunctorSet::ExecuteType5Proc, WrappableFunction)
+HOOK_DEFN(StatsFunctorSet__ExecuteType6, eoc__StatsFunctorSet__ExecuteType6, StatsFunctorSet::ExecuteType6Proc, WrappableFunction)
+HOOK_DEFN(StatsFunctorSet__ExecuteType7, eoc__StatsFunctorSet__ExecuteType7, StatsFunctorSet::ExecuteType7Proc, WrappableFunction)
+HOOK_DEFN(StatsFunctorSet__ExecuteType8, eoc__StatsFunctorSet__ExecuteType8, StatsFunctorSet::ExecuteType8Proc, WrappableFunction)

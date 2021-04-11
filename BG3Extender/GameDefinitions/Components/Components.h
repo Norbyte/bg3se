@@ -63,7 +63,7 @@ namespace bg3se
 
 	struct SpellBookEntry
 	{
-		SomeGuidId Id;
+		SpellId Id;
 		UUID field_28;
 		__int64 field_38;
 		char field_40;
@@ -160,7 +160,7 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::SpellBookPrepares;
 
-		Array<SomeGuidId> PreparedSpells_SomeGuidId;
+		Array<SpellId> PreparedSpells;
 		VirtualMultiHashMap<int, UUID> field_30;
 		VirtualMultiHashMap<int, UUID> field_88;
 	};

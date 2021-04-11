@@ -27,7 +27,7 @@ namespace bg3se
 		StatsPropertyContext PropertyContext{ 0 };
 		int32_t StatsConditionsId{ -1 };
 		bool IsSelf{ false };
-		int StoryActionId{ 0 };
+		int32_t StoryActionId{ 0 };
 
 		template <class T>
 		std::optional<T*> Cast()
@@ -41,8 +41,111 @@ namespace bg3se
 	};
 
 
+	struct BaseFunctorExecParams
+	{
+		void* VMT{ nullptr };
+		int ParamsTypeId{ 0 }; // FIXME enum!
+		StatsPropertyContext PropertyContext{ 0 };
+		int32_t StoryActionId{ 0 };
+		ActionOriginator Originator;
+		GuidResourceDefinitionManagerBase* GuidResourceMgr{ nullptr };
+	};
+
+	struct FunctorExecParamsType1 : public BaseFunctorExecParams
+	{
+		EntityWorldHandle Caster;
+		EntityWorldHandle Target;
+		glm::vec3 Position;
+		bool IsFromItem;
+		SpellIdWithPrototype SpellId;
+		Hit Hit;
+		DamageSums DamageSums;
+		float SomeRadius;
+		HitWith HitWith;
+		__int16 Hit2Flags;
+	};
+
+	struct FunctorExecParamsType2 : public BaseFunctorExecParams
+	{
+		EntityWorldHandle Caster;
+		glm::vec3 Position;
+		float ExplodeRadius;
+		bool IsFromItem;
+		SpellIdWithPrototype SpellId;
+		Hit Hit;
+		DamageSums DamageSums;
+		float SomeRadius;
+	};
+
+	struct FunctorExecParamsType3 : public BaseFunctorExecParams
+	{
+		EntityWorldHandle Caster;
+		EntityWorldHandle Target;
+		glm::vec3 Position;
+	};
+
+	struct FunctorExecParamsType4 : public BaseFunctorExecParams
+	{
+		EntityWorldHandle Caster;
+		glm::vec3 Position;
+		SpellIdWithPrototype SpellId;
+		Hit Hit;
+		DamageSums DamageSums;
+		uint16_t Hit2_field_90;
+	};
+
+	struct FunctorExecParamsType5 : public BaseFunctorExecParams
+	{
+		EntityWorldHandle Owner_M;
+		EntityWorldHandle Target;
+		EntityWorldHandle Caster;
+		glm::vec3 Position;
+		bool IsFromItem;
+		SpellIdWithPrototype SpellId;
+		Hit Hit;
+		DamageSums DamageSums;
+		float SomeRadius;
+		uint8_t field_268;
+	};
+
+	struct FunctorExecParamsType6 : public BaseFunctorExecParams
+	{
+		EntityWorldHandle Target;
+		EntityWorldHandle TargetX;
+		EntityWorldHandle Caster;
+		glm::vec3 Position;
+		bool IsFromItem;
+		SpellIdWithPrototype SpellId;
+		Hit Hit;
+		DamageSums DamageSums;
+		float SomeRadius;
+		uint8_t field_268;
+	};
+
+	struct FunctorExecParamsType7 : public BaseFunctorExecParams
+	{
+		EntityWorldHandle Caster;
+		EntityWorldHandle Target;
+		bool SummonInInventoryFlag;
+	};
+
+	struct FunctorExecParamsType8 : public BaseFunctorExecParams
+	{
+		EntityWorldHandle Target;
+	};
+
+
 	struct StatsFunctorSet : public Noncopyable<StatsFunctorSet>
 	{
+		using ExecuteType1Proc = void (Hit * hit, StatsFunctorSet * self, FunctorExecParamsType1 * params);
+		using ExecuteType2Proc = void (Hit * hit, StatsFunctorSet * self, FunctorExecParamsType2 * params);
+		using ExecuteType3Proc = void (Hit * hit, StatsFunctorSet * self, FunctorExecParamsType3 * params);
+		using ExecuteType4Proc = void (Hit * hit, StatsFunctorSet * self, FunctorExecParamsType4 * params);
+		using ExecuteType5Proc = void (Hit * hit, StatsFunctorSet * self, FunctorExecParamsType5 * params);
+		using ExecuteType6Proc = void (Hit * hit, StatsFunctorSet * self, FunctorExecParamsType6 * params);
+		using ExecuteType7Proc = void (Hit * hit, StatsFunctorSet * self, FunctorExecParamsType7 * params);
+		using ExecuteType8Proc = void (Hit * hit, StatsFunctorSet * self, FunctorExecParamsType8 * params);
+
 		struct BaseVMT
 		{
 			void (*Destroy)(StatsFunctorSet*);

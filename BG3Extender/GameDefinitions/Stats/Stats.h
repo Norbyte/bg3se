@@ -146,12 +146,6 @@ namespace bg3se
 		CRPGStats_Object* GetStats() const;
 	};
 
-	struct SpellIdWithPrototype
-	{
-		SomeGuidId SpellId;
-		SpellPrototype* SpellProto;
-	};
-
 	struct SpellPrototypeManager : public ProtectedGameObject<SpellPrototypeManager>
 	{
 		void* VMT;

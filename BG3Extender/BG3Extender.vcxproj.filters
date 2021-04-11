@@ -370,9 +370,6 @@
     <None Include="Lua\Shared\LuaPropertyMapHelpers.h">
       <Filter>Lua\Shared</Filter>
     </None>
-    <None Include="GameDefinitions\PropertyMaps\StatsFunctorProperties.inl">
-      <Filter>GameDefinitions\PropertyMaps</Filter>
-    </None>
     <None Include="Lua\Shared\LuaObjectProxies.inl">
       <Filter>Lua\Shared</Filter>
     </None>
@@ -395,6 +392,15 @@
       <Filter>Lua\Shared</Filter>
     </None>
     <None Include="GameDefinitions\PropertyMaps\Hit.inl">
+      <Filter>GameDefinitions\PropertyMaps</Filter>
+    </None>
+    <None Include="GameDefinitions\PropertyMaps\FunctorExecParams.inl">
+      <Filter>GameDefinitions\PropertyMaps</Filter>
+    </None>
+    <None Include="GameDefinitions\PropertyMaps\Functors.inl">
+      <Filter>GameDefinitions\PropertyMaps</Filter>
+    </None>
+    <None Include="GameDefinitions\PropertyMaps\CommonTypes.inl">
       <Filter>GameDefinitions\PropertyMaps</Filter>
     </None>
   </ItemGroup>

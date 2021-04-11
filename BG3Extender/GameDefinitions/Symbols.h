@@ -55,6 +55,15 @@ namespace bg3se
 
 		DealDamageFunctor::ApplyDamageProc* eoc__DealDamageFunctor__ApplyDamage{ nullptr };
 
+		StatsFunctorSet::ExecuteType1Proc* eoc__StatsFunctorSet__ExecuteType1{ nullptr };
+		StatsFunctorSet::ExecuteType2Proc* eoc__StatsFunctorSet__ExecuteType2{ nullptr };
+		StatsFunctorSet::ExecuteType3Proc* eoc__StatsFunctorSet__ExecuteType3{ nullptr };
+		StatsFunctorSet::ExecuteType4Proc* eoc__StatsFunctorSet__ExecuteType4{ nullptr };
+		StatsFunctorSet::ExecuteType5Proc* eoc__StatsFunctorSet__ExecuteType5{ nullptr };
+		StatsFunctorSet::ExecuteType6Proc* eoc__StatsFunctorSet__ExecuteType6{ nullptr };
+		StatsFunctorSet::ExecuteType7Proc* eoc__StatsFunctorSet__ExecuteType7{ nullptr };
+		StatsFunctorSet::ExecuteType8Proc* eoc__StatsFunctorSet__ExecuteType8{ nullptr };
+
 		/*RPGStats::LoadProc RPGStats__Load{ nullptr };
 		RPGStats::ParsePropertiesProc* RPGStats__ParseProperties{ nullptr };
 		SkillPrototypeManager** eoc__SkillPrototypeManager{ nullptr };
