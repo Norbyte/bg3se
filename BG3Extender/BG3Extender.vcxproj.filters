@@ -6,7 +6,6 @@
     <ClCompile Include="CrashReporter.cpp" />
     <ClCompile Include="ExtensionState.cpp" />
     <ClCompile Include="GlobalFixedStrings.cpp" />
-    <ClCompile Include="OsirisProxy.cpp" />
     <ClCompile Include="ScriptExtensions.pb.cc" />
     <ClCompile Include="ScriptHelpers.cpp" />
     <ClCompile Include="stdafx.cpp" />
@@ -110,6 +109,7 @@
     <ClCompile Include="Osiris\Functions\UtilityFunctions.cpp">
       <Filter>Osiris\Functions</Filter>
     </ClCompile>
+    <ClCompile Include="ScriptExtender.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DWriteWrapper.h" />
@@ -118,7 +118,6 @@
     <ClInclude Include="ExtensionStateClient.h" />
     <ClInclude Include="ExtensionStateServer.h" />
     <ClInclude Include="GlobalFixedStrings.h" />
-    <ClInclude Include="OsirisProxy.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ScriptExtensions.pb.h" />
     <ClInclude Include="ScriptHelpers.h" />
@@ -301,6 +300,8 @@
       <Filter>Osiris\Functions</Filter>
     </ClInclude>
     <ClInclude Include="ExtenderConfig.h" />
+    <ClInclude Include="EntitySystemHelpers.h" />
+    <ClInclude Include="ScriptExtender.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "OsirisProxy.h"
+#include "ScriptExtender.h"
 #include "Version.h"
 #include <string>
 #include <fstream>
@@ -19,9 +19,9 @@ void ShutdownCrashReporting();
 namespace bg3se
 {
 
-std::unique_ptr<OsirisProxy> gOsirisProxy;
+std::unique_ptr<ScriptExtender> gExtender;
 
-#define STATIC_HOOK(name) decltype(OsirisProxy::name) * decltype(OsirisProxy::name)::gHook;
+#define STATIC_HOOK(name) decltype(ScriptExtender::name) * decltype(ScriptExtender::name)::gHook;
 STATIC_HOOK(clientGameStateWorkerStart_)
 STATIC_HOOK(serverGameStateWorkerStart_)
 STATIC_HOOK(clientGameStateChangedEvent_)
@@ -34,13 +34,13 @@ void LuaDebugThreadRunner(LuaDebugInterface& intf)
 }
 #endif
 
-OsirisProxy::OsirisProxy()
+ScriptExtender::ScriptExtender()
 	: osiris_(config_)/*,
 	hitProxy_(*this)*/
 {
 }
 
-void OsirisProxy::Initialize()
+void ScriptExtender::Initialize()
 {
 	if (config_.SendCrashReports) {
 		InitCrashReporting();
@@ -61,7 +61,7 @@ void OsirisProxy::Initialize()
 		ERR("Failed to retrieve game version info.");
 	}
 
-	DEBUG("OsirisProxy::Initialize: Starting");
+	DEBUG("ScriptExtender::Initialize: Starting");
 	auto initStart = std::chrono::high_resolution_clock::now();
 
 	if (Libraries.FindLibraries(gameVersion.Revision)) {
@@ -69,10 +69,10 @@ void OsirisProxy::Initialize()
 			ResetExtensionStateServer();
 			ResetExtensionStateClient();
 		} else {
-			DEBUG("OsirisProxy::Initialize: Skipped library init -- scripting extensions not enabled.");
+			DEBUG("ScriptExtender::Initialize: Skipped library init -- scripting extensions not enabled.");
 		}
 	} else {
-		ERR("OsirisProxy::Initialize: Could not load libraries; skipping scripting extension initialization.");
+		ERR("ScriptExtender::Initialize: Could not load libraries; skipping scripting extension initialization.");
 		extensionsEnabled_ = false;
 	}
 
@@ -103,19 +103,19 @@ void OsirisProxy::Initialize()
 	DetourTransactionCommit();
 
 	using namespace std::placeholders;
-	clientGameStateChangedEvent_.SetPostHook(std::bind(&OsirisProxy::OnClientGameStateChanged, this, _1, _2, _3));
-	serverGameStateChangedEvent_.SetPostHook(std::bind(&OsirisProxy::OnServerGameStateChanged, this, _1, _2, _3));
-	clientGameStateWorkerStart_.AddPreHook(std::bind(&OsirisProxy::OnClientGameStateWorkerStart, this, _1));
-	serverGameStateWorkerStart_.AddPreHook(std::bind(&OsirisProxy::OnServerGameStateWorkerStart, this, _1));
-	clientGameStateWorkerStart_.AddPostHook(std::bind(&OsirisProxy::OnClientGameStateWorkerExit, this, _1));
-	serverGameStateWorkerStart_.AddPostHook(std::bind(&OsirisProxy::OnServerGameStateWorkerExit, this, _1));
+	clientGameStateChangedEvent_.SetPostHook(std::bind(&ScriptExtender::OnClientGameStateChanged, this, _1, _2, _3));
+	serverGameStateChangedEvent_.SetPostHook(std::bind(&ScriptExtender::OnServerGameStateChanged, this, _1, _2, _3));
+	clientGameStateWorkerStart_.AddPreHook(std::bind(&ScriptExtender::OnClientGameStateWorkerStart, this, _1));
+	serverGameStateWorkerStart_.AddPreHook(std::bind(&ScriptExtender::OnServerGameStateWorkerStart, this, _1));
+	clientGameStateWorkerStart_.AddPostHook(std::bind(&ScriptExtender::OnClientGameStateWorkerExit, this, _1));
+	serverGameStateWorkerStart_.AddPostHook(std::bind(&ScriptExtender::OnServerGameStateWorkerExit, this, _1));
 
-	/*SkillPrototypeManagerInit.SetPreHook(std::bind(&OsirisProxy::OnSkillPrototypeManagerInit, this, _1));
-	Wrappers.FileReader__ctor.SetWrapper(std::bind(&OsirisProxy::OnFileReaderCreate, this, _1, _2, _3, _4));
-	Wrappers.esv__OsirisVariableHelper__SavegameVisit.SetPreHook(std::bind(&OsirisProxy::OnSavegameVisit, this, _1, _2));
-	Wrappers.TranslatedStringRepository__UnloadOverrides.SetPreHook(std::bind(&OsirisProxy::OnModuleLoadStarted, this, _1));
-	Wrappers.RPGStats__Load.AddPreHook(std::bind(&OsirisProxy::OnStatsLoadStarted, this, _1));
-	Wrappers.RPGStats__Load.AddPostHook(std::bind(&OsirisProxy::OnStatsLoadFinished, this, _1));*/
+	/*SkillPrototypeManagerInit.SetPreHook(std::bind(&ScriptExtender::OnSkillPrototypeManagerInit, this, _1));
+	Wrappers.FileReader__ctor.SetWrapper(std::bind(&ScriptExtender::OnFileReaderCreate, this, _1, _2, _3, _4));
+	Wrappers.esv__OsirisVariableHelper__SavegameVisit.SetPreHook(std::bind(&ScriptExtender::OnSavegameVisit, this, _1, _2));
+	Wrappers.TranslatedStringRepository__UnloadOverrides.SetPreHook(std::bind(&ScriptExtender::OnModuleLoadStarted, this, _1));
+	Wrappers.RPGStats__Load.AddPreHook(std::bind(&ScriptExtender::OnStatsLoadStarted, this, _1));
+	Wrappers.RPGStats__Load.AddPostHook(std::bind(&ScriptExtender::OnStatsLoadFinished, this, _1));*/
 
 #if !defined(OSI_NO_DEBUGGER)
 	if (config_.EnableLuaDebugger && luaDebuggerThread_ == nullptr) {
@@ -142,22 +142,22 @@ void OsirisProxy::Initialize()
 	}
 }
 
-void OsirisProxy::Shutdown()
+void ScriptExtender::Shutdown()
 {
-	DEBUG("OsirisProxy::Shutdown: Exiting");
+	DEBUG("ScriptExtender::Shutdown: Exiting");
 	ResetExtensionStateServer();
 	ResetExtensionStateClient();
 	Hooks.UnhookAll();
 	osiris_.Shutdown();
 }
 
-void OsirisProxy::LogLuaError(std::string_view msg)
+void ScriptExtender::LogLuaError(std::string_view msg)
 {
 	gConsole.Debug(DebugMessageType::Error, msg.data());
 	osiris_.LogError(msg);
 }
 
-void OsirisProxy::LogOsirisError(std::string_view msg)
+void ScriptExtender::LogOsirisError(std::string_view msg)
 {
 	gConsole.Debug(DebugMessageType::Error, msg.data());
 	osiris_.LogError(msg);
@@ -169,25 +169,25 @@ void OsirisProxy::LogOsirisError(std::string_view msg)
 #endif
 }
 
-void OsirisProxy::LogOsirisWarning(std::string_view msg)
+void ScriptExtender::LogOsirisWarning(std::string_view msg)
 {
 	gConsole.Debug(DebugMessageType::Warning, msg.data());
 	osiris_.LogWarning(msg);
 }
 
-void OsirisProxy::LogOsirisMsg(std::string_view msg)
+void ScriptExtender::LogOsirisMsg(std::string_view msg)
 {
 	gConsole.Debug(DebugMessageType::Osiris, msg.data());
 	osiris_.LogMessage(msg);
 }
 
 /*
-void OsirisProxy::OnStatsLoadStarted(RPGStats* mgr)
+void ScriptExtender::OnStatsLoadStarted(RPGStats* mgr)
 {
 	statLoadOrderHelper_.OnLoadStarted();
 }
 
-void OsirisProxy::OnStatsLoadFinished(RPGStats* mgr)
+void ScriptExtender::OnStatsLoadFinished(RPGStats* mgr)
 {
 	statLoadOrderHelper_.OnLoadFinished();
 	auto state = GetCurrentExtensionState();
@@ -196,13 +196,13 @@ void OsirisProxy::OnStatsLoadFinished(RPGStats* mgr)
 	}
 }*/
 
-bool OsirisProxy::HasFeatureFlag(char const * flag) const
+bool ScriptExtender::HasFeatureFlag(char const * flag) const
 {
 	return (ServerExtState && ServerExtState->HasFeatureFlag(flag))
 		|| (ClientExtState && ClientExtState->HasFeatureFlag(flag));
 }
 
-ExtensionStateBase* OsirisProxy::GetCurrentExtensionState()
+ExtensionStateBase* ScriptExtender::GetCurrentExtensionState()
 {
 	auto tid = GetCurrentThreadId();
 	if (ServerThreadIds.find(tid) != ServerThreadIds.end()) {
@@ -215,11 +215,11 @@ ExtensionStateBase* OsirisProxy::GetCurrentExtensionState()
 	}
 }
 
-void OsirisProxy::OnBaseModuleLoaded(void * self)
+void ScriptExtender::OnBaseModuleLoaded(void * self)
 {
 }
 /*
-void OsirisProxy::OnModuleLoadStarted(TranslatedStringRepository* self)
+void ScriptExtender::OnModuleLoadStarted(TranslatedStringRepository* self)
 {
 	LoadExtensionStateClient();
 	if (ClientExtState) {
@@ -301,7 +301,7 @@ void OnStatsFunctorExecuteType1(StatsFunctorSet::ExecuteType1Proc* next, Hit* hi
 	next(hit, self, params);
 }
 
-void OsirisProxy::PostStartup()
+void ScriptExtender::PostStartup()
 {
 	if (postStartupDone_) return;
 
@@ -319,7 +319,7 @@ void OsirisProxy::PostStartup()
 		hasher_.PostStartup();
 
 		using namespace std::placeholders;
-		Hooks.FileReader__ctor.SetWrapper(std::bind(&OsirisProxy::OnFileReaderCreate, this, _1, _2, _3, _4, _5));
+		Hooks.FileReader__ctor.SetWrapper(std::bind(&ScriptExtender::OnFileReaderCreate, this, _1, _2, _3, _4, _5));
 		Hooks.DealDamageFunctor__ApplyDamage.SetWrapper(std::bind(&OnDealDamage, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14));
 		Hooks.StatsFunctorSet__ExecuteType1.SetWrapper(std::bind(&OnStatsFunctorExecuteType1, _1, _2, _3, _4));
 	}
@@ -339,7 +339,7 @@ void OsirisProxy::PostStartup()
 	postStartupDone_ = true;
 }
 
-void OsirisProxy::OnClientGameStateChanged(void * self, ecl::GameState fromState, ecl::GameState toState)
+void ScriptExtender::OnClientGameStateChanged(void * self, ecl::GameState fromState, ecl::GameState toState)
 {
 	if (config_.SendCrashReports) {
 		// We need to initialize the crash reporter after the game engine has started,
@@ -360,7 +360,7 @@ void OsirisProxy::OnClientGameStateChanged(void * self, ecl::GameState fromState
 	}
 
 #if defined(DEBUG_SERVER_CLIENT)
-	DEBUG("OsirisProxy::OnClientGameStateChanged(): %s -> %s", 
+	DEBUG("ScriptExtender::OnClientGameStateChanged(): %s -> %s", 
 		ClientGameStateNames[(unsigned)fromState], ClientGameStateNames[(unsigned)toState]);
 #endif
 
@@ -372,7 +372,7 @@ void OsirisProxy::OnClientGameStateChanged(void * self, ecl::GameState fromState
 
 	switch (fromState) {
 	case ecl::GameState::LoadModule:
-		INFO("OsirisProxy::OnClientGameStateChanged(): Loaded module");
+		INFO("ScriptExtender::OnClientGameStateChanged(): Loaded module");
 		LoadExtensionStateClient();
 		break;
 
@@ -402,18 +402,18 @@ void OsirisProxy::OnClientGameStateChanged(void * self, ecl::GameState fromState
 		break;
 
 	case ecl::GameState::UnloadSession:
-		INFO("OsirisProxy::OnClientGameStateChanged(): Unloading session");
+		INFO("ScriptExtender::OnClientGameStateChanged(): Unloading session");
 		ResetExtensionStateClient();
 		break;
 
 	case ecl::GameState::LoadGMCampaign:
-		INFO("OsirisProxy::OnClientGameStateChanged(): Loading GM campaign");
+		INFO("ScriptExtender::OnClientGameStateChanged(): Loading GM campaign");
 		LoadExtensionStateClient();
 		//networkManager_.ExtendNetworkingClient();
 		break;
 
 	case ecl::GameState::LoadSession:
-		INFO("OsirisProxy::OnClientGameStateChanged(): Loading game session");
+		INFO("ScriptExtender::OnClientGameStateChanged(): Loading game session");
 		LoadExtensionStateClient();
 		//networkManager_.ExtendNetworkingClient();
 		if (ClientExtState) {
@@ -428,10 +428,10 @@ void OsirisProxy::OnClientGameStateChanged(void * self, ecl::GameState fromState
 	}
 }
 
-void OsirisProxy::OnServerGameStateChanged(void * self, esv::GameState fromState, esv::GameState toState)
+void ScriptExtender::OnServerGameStateChanged(void * self, esv::GameState fromState, esv::GameState toState)
 {
 #if defined(DEBUG_SERVER_CLIENT)
-		DEBUG("OsirisProxy::OnServerGameStateChanged(): %s -> %s", 
+		DEBUG("ScriptExtender::OnServerGameStateChanged(): %s -> %s", 
 			ServerGameStateNames[(unsigned)fromState], ServerGameStateNames[(unsigned)toState]);
 #endif
 
@@ -443,7 +443,7 @@ void OsirisProxy::OnServerGameStateChanged(void * self, esv::GameState fromState
 
 	switch (fromState) {
 	case esv::GameState::LoadModule:
-		INFO("OsirisProxy::OnServerGameStateChanged(): Loaded module");
+		INFO("ScriptExtender::OnServerGameStateChanged(): Loaded module");
 		LoadExtensionStateServer();
 		break;
 
@@ -463,7 +463,7 @@ void OsirisProxy::OnServerGameStateChanged(void * self, esv::GameState fromState
 		break;
 
 	case esv::GameState::UnloadSession:
-		INFO("OsirisProxy::OnServerGameStateChanged(): Unloading session");
+		INFO("ScriptExtender::OnServerGameStateChanged(): Unloading session");
 		ResetExtensionStateServer();
 		break;
 
@@ -472,13 +472,13 @@ void OsirisProxy::OnServerGameStateChanged(void * self, esv::GameState fromState
 		break;
 
 	case esv::GameState::LoadGMCampaign:
-		INFO("OsirisProxy::OnServerGameStateChanged(): Loading GM campaign");
+		INFO("ScriptExtender::OnServerGameStateChanged(): Loading GM campaign");
 		LoadExtensionStateServer();
 		//networkManager_.ExtendNetworkingServer();
 		break;
 
 	case esv::GameState::LoadSession:
-		INFO("OsirisProxy::OnServerGameStateChanged(): Loading game session");
+		INFO("ScriptExtender::OnServerGameStateChanged(): Loading game session");
 		LoadExtensionStateServer();
 		//networkManager_.ExtendNetworkingServer();
 		if (ServerExtState) {
@@ -493,7 +493,7 @@ void OsirisProxy::OnServerGameStateChanged(void * self, esv::GameState fromState
 	}
 }
 
-void OsirisProxy::AddClientThread(DWORD threadId)
+void ScriptExtender::AddClientThread(DWORD threadId)
 {
 	if (ClientThreadIds.find(threadId) == ClientThreadIds.end()) {
 #if defined(DEBUG_SERVER_CLIENT)
@@ -503,7 +503,7 @@ void OsirisProxy::AddClientThread(DWORD threadId)
 	}
 }
 
-void OsirisProxy::AddServerThread(DWORD threadId)
+void ScriptExtender::AddServerThread(DWORD threadId)
 {
 	if (ServerThreadIds.find(threadId) == ServerThreadIds.end()) {
 #if defined(DEBUG_SERVER_CLIENT)
@@ -513,7 +513,7 @@ void OsirisProxy::AddServerThread(DWORD threadId)
 	}
 }
 
-void OsirisProxy::RemoveClientThread(DWORD threadId)
+void ScriptExtender::RemoveClientThread(DWORD threadId)
 {
 	auto it = ClientThreadIds.find(threadId);
 	if (it != ClientThreadIds.end()) {
@@ -524,7 +524,7 @@ void OsirisProxy::RemoveClientThread(DWORD threadId)
 	}
 }
 
-void OsirisProxy::RemoveServerThread(DWORD threadId)
+void ScriptExtender::RemoveServerThread(DWORD threadId)
 {
 	auto it = ServerThreadIds.find(threadId);
 	if (it != ServerThreadIds.end()) {
@@ -535,27 +535,27 @@ void OsirisProxy::RemoveServerThread(DWORD threadId)
 	}
 }
 
-void OsirisProxy::OnClientGameStateWorkerStart(void * self)
+void ScriptExtender::OnClientGameStateWorkerStart(void * self)
 {
 	AddClientThread(GetCurrentThreadId());
 }
 
-void OsirisProxy::OnServerGameStateWorkerStart(void * self)
+void ScriptExtender::OnServerGameStateWorkerStart(void * self)
 {
 	AddServerThread(GetCurrentThreadId());
 }
 
-void OsirisProxy::OnClientGameStateWorkerExit(void* self)
+void ScriptExtender::OnClientGameStateWorkerExit(void* self)
 {
 	RemoveClientThread(GetCurrentThreadId());
 }
 
-void OsirisProxy::OnServerGameStateWorkerExit(void* self)
+void ScriptExtender::OnServerGameStateWorkerExit(void* self)
 {
 	RemoveServerThread(GetCurrentThreadId());
 }
 
-void OsirisProxy::OnSkillPrototypeManagerInit(void * self)
+void ScriptExtender::OnSkillPrototypeManagerInit(void * self)
 {
 	if (!extensionsEnabled_) return;
 
@@ -591,13 +591,13 @@ void OsirisProxy::OnSkillPrototypeManagerInit(void * self)
 	extState->OnModuleLoading();
 }
 
-void OsirisProxy::ClearPathOverrides()
+void ScriptExtender::ClearPathOverrides()
 {
 	std::unique_lock lock(pathOverrideMutex_);
 	pathOverrides_.clear();
 }
 
-void OsirisProxy::AddPathOverride(STDString const & path, STDString const & overriddenPath)
+void ScriptExtender::AddPathOverride(STDString const & path, STDString const & overriddenPath)
 {
 	auto absolutePath = GetStaticSymbols().ToPath(path, PathRootType::Data);
 	auto absoluteOverriddenPath = GetStaticSymbols().ToPath(overriddenPath, PathRootType::Data);
@@ -606,19 +606,19 @@ void OsirisProxy::AddPathOverride(STDString const & path, STDString const & over
 	pathOverrides_.insert(std::make_pair(absolutePath, absoluteOverriddenPath));
 }
 
-bool OsirisProxy::IsInServerThread() const
+bool ScriptExtender::IsInServerThread() const
 {
 	auto tid = GetCurrentThreadId();
 	return ServerThreadIds.find(tid) != ServerThreadIds.end();
 }
 
-bool OsirisProxy::IsInClientThread() const
+bool ScriptExtender::IsInClientThread() const
 {
 	auto tid = GetCurrentThreadId();
 	return ClientThreadIds.find(tid) != ClientThreadIds.end();
 }
 
-void OsirisProxy::AttachConsoleThread(bool server)
+void ScriptExtender::AttachConsoleThread(bool server)
 {
 	auto tid = GetCurrentThreadId();
 	if (server) {
@@ -636,7 +636,7 @@ void OsirisProxy::AttachConsoleThread(bool server)
 	}
 }
 
-void OsirisProxy::ResetLuaState(bool resetServer, bool resetClient)
+void ScriptExtender::ResetLuaState(bool resetServer, bool resetClient)
 {
 	if (resetServer && ServerExtState && ServerExtState->GetLua()) {
 		auto& ext = *ServerExtState;
@@ -657,7 +657,7 @@ void OsirisProxy::ResetLuaState(bool resetServer, bool resetClient)
 		auto server = GetEoCServer();
 		if (server && server->GameServer && false /* networking not available yet! */) {
 			// Reset clients via a network message if the server is running
-			/*auto& networkMgr = gOsirisProxy->GetNetworkManager();
+			/*auto& networkMgr = gExtender->GetNetworkManager();
 			auto msg = networkMgr.GetFreeServerMessage(ReservedUserId);
 			if (msg != nullptr) {
 				auto resetMsg = msg->GetMessage().mutable_s2c_reset_lua();
@@ -689,7 +689,7 @@ void OsirisProxy::ResetLuaState(bool resetServer, bool resetClient)
 	}
 }
 
-FileReader * OsirisProxy::OnFileReaderCreate(FileReader::CtorProc* next, FileReader * self, Path const& path, unsigned int type, unsigned int unknown)
+FileReader * ScriptExtender::OnFileReaderCreate(FileReader::CtorProc* next, FileReader * self, Path const& path, unsigned int type, unsigned int unknown)
 {
 	if (!pathOverrides_.empty()) {
 		std::shared_lock lock(pathOverrideMutex_);
@@ -715,12 +715,12 @@ FileReader * OsirisProxy::OnFileReaderCreate(FileReader::CtorProc* next, FileRea
 	return next(self, path, type, unknown);
 }
 
-void OsirisProxy::OnSavegameVisit(void* osirisHelpers, ObjectVisitor* visitor)
+void ScriptExtender::OnSavegameVisit(void* osirisHelpers, ObjectVisitor* visitor)
 {
 	savegameSerializer_.SavegameVisit(visitor);
 }
 
-void OsirisProxy::ResetExtensionStateServer()
+void ScriptExtender::ResetExtensionStateServer()
 {
 	std::lock_guard _(globalStateLock_);
 	ServerExtState = std::make_unique<esv::ExtensionState>();
@@ -730,7 +730,7 @@ void OsirisProxy::ResetExtensionStateServer()
 
 extern std::unordered_map<int32_t*, char*> maps;
 
-void OsirisProxy::LoadExtensionStateServer()
+void ScriptExtender::LoadExtensionStateServer()
 {
 	std::lock_guard _(globalStateLock_);
 	if (ServerExtensionLoaded) return;
@@ -747,7 +747,7 @@ void OsirisProxy::LoadExtensionStateServer()
 
 	if (extensionsEnabled_ && !Libraries.CriticalInitializationFailed()) {
 		//networkManager_.ExtendNetworkingServer();
-		DEBUG("OsirisProxy::LoadExtensionStateServer(): Re-initializing module state.");
+		DEBUG("ScriptExtender::LoadExtensionStateServer(): Re-initializing module state.");
 		osiris_.OnBaseModuleLoadedServer();
 		ServerExtState->LuaReset(true);
 	}
@@ -755,7 +755,7 @@ void OsirisProxy::LoadExtensionStateServer()
 	ServerExtensionLoaded = true;
 }
 
-void OsirisProxy::ResetExtensionStateClient()
+void ScriptExtender::ResetExtensionStateClient()
 {
 	std::lock_guard _(globalStateLock_);
 	ClientExtState = std::make_unique<ecl::ExtensionState>();
@@ -764,7 +764,7 @@ void OsirisProxy::ResetExtensionStateClient()
 	ClientExtensionLoaded = false;
 }
 
-void OsirisProxy::LoadExtensionStateClient()
+void ScriptExtender::LoadExtensionStateClient()
 {
 	std::lock_guard _(globalStateLock_);
 	if (ClientExtensionLoaded) return;
@@ -781,7 +781,7 @@ void OsirisProxy::LoadExtensionStateClient()
 
 	if (extensionsEnabled_ && !Libraries.CriticalInitializationFailed()) {
 		//networkManager_.ExtendNetworkingClient();
-		DEBUG("OsirisProxy::LoadExtensionStateClient(): Re-initializing module state.");
+		DEBUG("ScriptExtender::LoadExtensionStateClient(): Re-initializing module state.");
 		ClientExtState->LuaReset(true);
 	}
 
@@ -800,7 +800,7 @@ void SavegameSerializer::SavegameVisit(ObjectVisitor* visitor)
 				std::wstringstream ss;
 				ss << "Could not load Script Extender save data - savegame is newer than the currently installed extender!<br>";
 				ss << "Extender version v" << SavegameVersion << ", savegame version v" << version;
-				gOsirisProxy->GetLibraryManager().ShowStartupError(ss.str().c_str(), true, false);
+				gExtender->GetLibraryManager().ShowStartupError(ss.str().c_str(), true, false);
 			}
 			else {
 				Serialize(visitor, version);
@@ -826,7 +826,7 @@ void SavegameSerializer::SerializePersistentVariables(ObjectVisitor* visitor, ui
 {
 	STDString nullStr;
 	if (visitor->EnterNode(GFS.strLuaVariables, GFS.strEmpty)) {
-		auto const& configs = gOsirisProxy->GetServerExtensionState().GetConfigs();
+		auto const& configs = gExtender->GetServerExtensionState().GetConfigs();
 
 		if (visitor->IsReading()) {
 			std::unordered_map<FixedString, STDString> variables;
@@ -847,7 +847,7 @@ void SavegameSerializer::SerializePersistentVariables(ObjectVisitor* visitor, ui
 
 			RestorePersistentVariables(variables);
 		} else {
-			auto& state = gOsirisProxy->GetServerExtensionState();
+			auto& state = gExtender->GetServerExtensionState();
 			auto mods = state.GetPersistentVarMods();
 
 			for (auto const& modId : mods) {
@@ -869,7 +869,7 @@ void SavegameSerializer::SerializePersistentVariables(ObjectVisitor* visitor, ui
 
 void SavegameSerializer::RestorePersistentVariables(std::unordered_map<FixedString, STDString> const& variables)
 {
-	auto& state = gOsirisProxy->GetServerExtensionState();
+	auto& state = gExtender->GetServerExtensionState();
 	for (auto const& var : variables) {
 		state.RestoreModPersistentVars(var.first, var.second);
 	}
@@ -897,7 +897,7 @@ void SavegameSerializer::SerializeStatObjects(ObjectVisitor* visitor, uint32_t v
 				}
 			}
 		} else {
-			auto const& statIds = gOsirisProxy->GetServerExtensionState().GetPersistentStats();
+			auto const& statIds = gExtender->GetServerExtensionState().GetPersistentStats();
 
 			for (auto statId : statIds) {
 				FixedString statType;
@@ -953,8 +953,8 @@ void SavegameSerializer::RestoreStatObject(FixedString const& statId, FixedStrin
 	object->FromProtobuf(msg);
 	stats->SyncWithPrototypeManager(object);*/
 	object->BroadcastSyncMessage(true);
-	gOsirisProxy->GetServerExtensionState().MarkDynamicStat(statId);
-	gOsirisProxy->GetServerExtensionState().MarkPersistentStat(statId);
+	gExtender->GetServerExtensionState().MarkDynamicStat(statId);
+	gExtender->GetServerExtensionState().MarkPersistentStat(statId);
 }
 
 bool SavegameSerializer::SerializeStatObject(FixedString const& statId, FixedString& statType, ScratchBuffer& blob)
@@ -1060,7 +1060,7 @@ FixedString StatLoadOrderHelper::GetStatsEntryMod(FixedString statId) const
 std::vector<CRPGStats_Object*> StatLoadOrderHelper::GetStatsLoadedBefore(FixedString modId) const
 {
 	std::unordered_set<FixedString> modsLoadedBefore;
-	auto state = gOsirisProxy->GetCurrentExtensionState();
+	auto state = gExtender->GetCurrentExtensionState();
 	if (!state) return {};
 
 	bool modIdFound{ false };
@@ -1094,7 +1094,7 @@ __declspec(thread) unsigned ModuleHasher::hashDepth_{ 0 };
 void ModuleHasher::PostStartup()
 {
 	using namespace std::placeholders;
-	/*gOsirisProxy->GetLibraryManager().Module__Hash.SetWrapper(
+	/*gExtender->GetLibraryManager().Module__Hash.SetWrapper(
 		std::bind(&ModuleHasher::OnModuleHash, this, _1, _2)
 	);*/
 }

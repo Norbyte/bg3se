@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Lua/LuaDebugMessages.h"
-#include "OsirisProxy.h"
+#include "ScriptExtender.h"
 #include <lstate.h>
 #include <sstream>
 #include "resource.h"
@@ -45,16 +45,16 @@ namespace bg3se::lua::dbg
 
 	std::optional<STDString> FindLuaSourcePath(STDString const& name)
 	{
-		if (gOsirisProxy->HasServerExtensionState()) {
-			auto const& files = gOsirisProxy->GetServerExtensionState().GetLoadedFileFullPaths();
+		if (gExtender->HasServerExtensionState()) {
+			auto const& files = gExtender->GetServerExtensionState().GetLoadedFileFullPaths();
 			auto it = files.find(name);
 			if (it != files.end()) {
 				return it->second;
 			}
 		}
 
-		if (gOsirisProxy->HasClientExtensionState()) {
-			auto const& files = gOsirisProxy->GetClientExtensionState().GetLoadedFileFullPaths();
+		if (gExtender->HasClientExtensionState()) {
+			auto const& files = gExtender->GetClientExtensionState().GetLoadedFileFullPaths();
 			auto it = files.find(name);
 			if (it != files.end()) {
 				return it->second;
@@ -154,8 +154,8 @@ namespace bg3se::lua::dbg
 		ModManager* modManager{ nullptr };
 
 		std::unordered_set<STDString> paths;
-		if (gOsirisProxy->HasClientExtensionState()) {
-			auto& state = gOsirisProxy->GetClientExtensionState();
+		if (gExtender->HasClientExtensionState()) {
+			auto& state = gExtender->GetClientExtensionState();
 			for (auto const& path : state.GetLoadedFileFullPaths()) {
 				paths.insert(path.second);
 			}
@@ -164,8 +164,8 @@ namespace bg3se::lua::dbg
 			modManager = state.GetModManager();
 		}
 
-		if (gOsirisProxy->HasServerExtensionState()) {
-			auto& state = gOsirisProxy->GetServerExtensionState();
+		if (gExtender->HasServerExtensionState()) {
+			auto& state = gExtender->GetServerExtensionState();
 			for (auto const& path : state.GetLoadedFileFullPaths()) {
 				paths.insert(path.second);
 			}
@@ -286,13 +286,13 @@ namespace bg3se::lua::dbg
 
 		SendModInfo();
 
-		if (gOsirisProxy->HasServerExtensionState() && gOsirisProxy->GetServerExtensionState().GetLua()) {
+		if (gExtender->HasServerExtensionState() && gExtender->GetServerExtensionState().GetLua()) {
 			SendLuaStateUpdate(true, true);
 		} else {
 			SendLuaStateUpdate(true, false);
 		}
 
-		if (gOsirisProxy->HasClientExtensionState() && gOsirisProxy->GetClientExtensionState().GetLua()) {
+		if (gExtender->HasClientExtensionState() && gExtender->GetClientExtensionState().GetLua()) {
 			SendLuaStateUpdate(false, true);
 		} else {
 			SendLuaStateUpdate(false, false);

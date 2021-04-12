@@ -316,13 +316,13 @@ namespace bg3se::lua::stats
 			copyFrom = luaL_checkstring(L, 3);
 		}
 
-		LuaVirtualPin lua(gOsirisProxy->GetCurrentExtensionState());
+		LuaVirtualPin lua(gExtender->GetCurrentExtensionState());
 		if (lua->RestrictionFlags & State::ScopeModulePreLoad) {
 			return luaL_error(L, "Stat functions unavailable during module preload");
 		}
 
 		if (!(lua->RestrictionFlags & State::ScopeModuleLoad)) {
-			if (gOsirisProxy->IsInServerThread()) {
+			if (gExtender->IsInServerThread()) {
 				static bool syncWarningShown{ false };
 				if (!syncWarningShown) {
 					OsiWarn("Stats entres created after ModuleLoad must be synced manually; make sure that you call SyncStat() on it when you're finished!");
@@ -365,12 +365,12 @@ namespace bg3se::lua::stats
 
 		//stats->SyncWithPrototypeManager(object);
 
-		if (gOsirisProxy->IsInServerThread()) {
+		if (gExtender->IsInServerThread()) {
 			object->BroadcastSyncMessage(false);
 
-			gOsirisProxy->GetServerExtensionState().MarkDynamicStat(FixedString(statName));
+			gExtender->GetServerExtensionState().MarkDynamicStat(FixedString(statName));
 			if (persist && *persist) {
-				gOsirisProxy->GetServerExtensionState().MarkPersistentStat(FixedString(statName));
+				gExtender->GetServerExtensionState().MarkPersistentStat(FixedString(statName));
 			}
 		}
 	}
@@ -387,9 +387,9 @@ namespace bg3se::lua::stats
 		}
 
 		if (persist) {
-			gOsirisProxy->GetServerExtensionState().MarkPersistentStat(FixedString(statName));
+			gExtender->GetServerExtensionState().MarkPersistentStat(FixedString(statName));
 		} else {
-			gOsirisProxy->GetServerExtensionState().UnmarkPersistentStat(FixedString(statName));
+			gExtender->GetServerExtensionState().UnmarkPersistentStat(FixedString(statName));
 		}
 	}
 

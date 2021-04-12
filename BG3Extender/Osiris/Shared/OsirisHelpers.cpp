@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "OsirisProxy.h"
+#include "ScriptExtender.h"
 
 namespace bg3se
 {

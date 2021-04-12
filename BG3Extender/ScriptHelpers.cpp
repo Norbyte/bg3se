@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "ScriptHelpers.h"
-#include "OsirisProxy.h"
+#include "ScriptExtender.h"
 #include <fstream>
 
 namespace bg3se::script {

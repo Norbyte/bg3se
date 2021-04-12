@@ -3,7 +3,7 @@
 #include <Lua/LuaSerializers.h>
 #include <GameDefinitions/Character.h>
 #include <GameDefinitions/Status.h>
-#include <OsirisProxy.h>
+#include <ScriptExtender.h>
 #include <ExtensionStateServer.h>
 
 namespace bg3se::esv::lua
@@ -28,7 +28,7 @@ namespace bg3se::esv::lua
 
 	esv::Status* StatusHandleProxy::Get(lua_State* L)
 	{
-		auto character = gOsirisProxy->GetServerEntityHelpers().GetComponent<esv::Character>(character_);
+		auto character = gExtender->GetServerEntityHelpers().GetComponent<esv::Character>(character_);
 		if (character == nullptr) {
 			luaL_error(L, "Character handle invalid");
 			return nullptr;

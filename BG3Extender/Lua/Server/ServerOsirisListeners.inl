@@ -9,7 +9,7 @@ namespace bg3se::esv::lua
 
 	OsirisCallbackManager::~OsirisCallbackManager()
 	{
-		auto wrappers = gOsirisProxy->GetOsiris().GetVMTWrappers();
+		auto wrappers = gExtender->GetOsiris().GetVMTWrappers();
 		if (osirisHooked_ && wrappers) {
 			wrappers->InsertPreHookLua = std::function<void(Node*, TuplePtrLL*, bool)>();
 			wrappers->InsertPostHookLua = std::function<void(Node*, TuplePtrLL*, bool)>();
@@ -207,8 +207,8 @@ namespace bg3se::esv::lua
 	{
 		if (osirisHooked_) return;
 
-		gOsirisProxy->GetOsiris().HookNodeVMTs();
-		auto wrappers = gOsirisProxy->GetOsiris().GetVMTWrappers();
+		gExtender->GetOsiris().HookNodeVMTs();
+		auto wrappers = gExtender->GetOsiris().GetVMTWrappers();
 		if (wrappers) {
 			using namespace std::placeholders;
 			wrappers->InsertPreHookLua = std::bind(&OsirisCallbackManager::InsertPreHook, this, _1, _2, _3);

@@ -4,7 +4,7 @@
 #include <GameDefinitions/Symbols.h>
 #include <GameDefinitions/Enumerations.h>
 #include <ScriptHelpers.h>
-#include "OsirisProxy.h"
+#include "ScriptExtender.h"
 
 namespace bg3se
 {
@@ -274,7 +274,7 @@ namespace bg3se
 
 	void CRPGStats_Object::BroadcastSyncMessage(bool syncDuringLoading) const
 	{
-		/*auto msg = gOsirisProxy->GetNetworkManager().GetFreeServerMessage(ReservedUserId);
+		/*auto msg = gExtender->GetNetworkManager().GetFreeServerMessage(ReservedUserId);
 		if (!msg) {
 			OsiErrorS("Failed to get free message");
 			return;
@@ -283,9 +283,9 @@ namespace bg3se
 		auto& wrap = msg->GetMessage();
 		ToProtobuf(wrap.mutable_s2c_sync_stat());
 		if (syncDuringLoading) {
-			gOsirisProxy->GetNetworkManager().ServerBroadcastToConnectedPeers(msg, ReservedUserId, true);
+			gExtender->GetNetworkManager().ServerBroadcastToConnectedPeers(msg, ReservedUserId, true);
 		} else {
-			gOsirisProxy->GetNetworkManager().ServerBroadcast(msg, ReservedUserId, true);
+			gExtender->GetNetworkManager().ServerBroadcast(msg, ReservedUserId, true);
 		}*/
 	}
 	
@@ -458,7 +458,7 @@ namespace bg3se
 
 	void RPGStats::BroadcastSyncAll()
 	{
-		for (auto const& statsId : gOsirisProxy->GetServerExtensionState().GetDynamicStats()) {
+		for (auto const& statsId : gExtender->GetServerExtensionState().GetDynamicStats()) {
 			auto object = objects.Find(statsId);
 			if (!object) {
 				OsiError("Stat entry '" << statsId << "' is marked as dynamic but cannot be found! It will not be synced to the client!");

@@ -1,4 +1,4 @@
-#include <OsirisProxy.h>
+#include <ScriptExtender.h>
 #include <GameDefinitions/Stats/Item.h>
 #include <Lua/LuaSerializers.h>
 

@@ -16,7 +16,7 @@ namespace bg3se::lua
 			if (excludeCharacter == nullptr) return 0;
 		}
 
-		auto & networkMgr = gOsirisProxy->GetNetworkManager();
+		auto & networkMgr = gExtender->GetNetworkManager();
 		auto msg = networkMgr.GetFreeServerMessage(ReservedUserId);
 		if (msg != nullptr) {
 			auto postMsg = msg->GetMessage().mutable_post_lua();
@@ -36,7 +36,7 @@ namespace bg3se::lua
 
 	void PostMessageToUserInternal(UserId userId, char const* channel, char const* payload)
 	{
-		/*auto& networkMgr = gOsirisProxy->GetNetworkManager();
+		/*auto& networkMgr = gExtender->GetNetworkManager();
 		auto msg = networkMgr.GetFreeServerMessage(userId);
 		if (msg != nullptr) {
 			auto postMsg = msg->GetMessage().mutable_post_lua();
@@ -96,7 +96,7 @@ namespace bg3se::lua
 		auto character = GetEntityWorld()->GetCharacter(characterGuid);
 		if (character == nullptr || character->UserID == ReservedUserId) return 0;
 
-		auto& networkMgr = gOsirisProxy->GetNetworkManager();
+		auto& networkMgr = gExtender->GetNetworkManager();
 		bool hasExtender = networkMgr.ServerCanSendExtenderMessages(character->UserID.GetPeerId());
 		push(L, hasExtender);
 		return 1;*/

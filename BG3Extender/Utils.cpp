@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Version.h"
 #include <GameDefinitions/BaseTypes.h>
-#include <OsirisProxy.h>
+#include <ScriptExtender.h>
 #include <rpc.h>
 #include <rpcdce.h>
 #include <thread>
@@ -115,22 +115,22 @@ void Fail(char const * reason)
 
 void LogLuaError(std::string_view msg)
 {
-	bg3se::gOsirisProxy->LogLuaError(msg);
+	bg3se::gExtender->LogLuaError(msg);
 }
 
 void LogOsirisError(std::string_view msg)
 {
-	bg3se::gOsirisProxy->LogOsirisError(msg);
+	bg3se::gExtender->LogOsirisError(msg);
 }
 
 void LogOsirisWarning(std::string_view msg)
 {
-	bg3se::gOsirisProxy->LogOsirisWarning(msg);
+	bg3se::gExtender->LogOsirisWarning(msg);
 }
 
 void LogOsirisMsg(std::string_view msg)
 {
-	bg3se::gOsirisProxy->LogOsirisMsg(msg);
+	bg3se::gExtender->LogOsirisMsg(msg);
 }
 
 DebugConsole gConsole;
@@ -183,8 +183,8 @@ void DebugConsole::Debug(DebugMessageType type, char const* msg)
 	}
 
 #if !defined(OSI_NO_DEBUGGER)
-	if (bg3se::gOsirisProxy) {
-		auto debugger = bg3se::gOsirisProxy->GetLuaDebugger();
+	if (bg3se::gExtender) {
+		auto debugger = bg3se::gExtender->GetLuaDebugger();
 		if (debugger && debugger->IsDebuggerReady()) {
 			debugger->OnLogMessage(type, msg);
 		}
@@ -211,8 +211,8 @@ void DebugConsole::Debug(DebugMessageType type, wchar_t const* msg)
 	}
 
 #if !defined(OSI_NO_DEBUGGER)
-	if (bg3se::gOsirisProxy) {
-		auto debugger = bg3se::gOsirisProxy->GetLuaDebugger();
+	if (bg3se::gExtender) {
+		auto debugger = bg3se::gExtender->GetLuaDebugger();
 		if (debugger && debugger->IsDebuggerReady()) {
 			debugger->OnLogMessage(type, bg3se::ToUTF8(msg));
 		}
@@ -236,7 +236,7 @@ void DebugConsole::ConsoleThread()
 		DEBUG("Entering server Lua console.");
 
 		bool serverContext_ = true;
-		bg3se::gOsirisProxy->AttachConsoleThread(serverContext_);
+		bg3se::gExtender->AttachConsoleThread(serverContext_);
 
 		while (consoleRunning_) {
 			inputEnabled_ = true;
@@ -252,14 +252,14 @@ void DebugConsole::ConsoleThread()
 			} else if (line == "server") {
 				DEBUG("Switching to server context.");
 				serverContext_ = true;
-				bg3se::gOsirisProxy->AttachConsoleThread(true);
+				bg3se::gExtender->AttachConsoleThread(true);
 			} else if (line == "client") {
 				DEBUG("Switching to client context.");
 				serverContext_ = false;
-				bg3se::gOsirisProxy->AttachConsoleThread(false);
+				bg3se::gExtender->AttachConsoleThread(false);
 			} else if (line == "reset") {
 				DEBUG("Resetting Lua states.");
-				bg3se::gOsirisProxy->ResetLuaState(true, true);
+				bg3se::gExtender->ResetLuaState(true, true);
 			} else if (line == "silence on") {
 				DEBUG("Silent mode ON");
 				silence = true;
@@ -277,11 +277,11 @@ void DebugConsole::ConsoleThread()
 			} else {
 				bg3se::ExtensionStateBase* state{ nullptr };
 				if (serverContext_) {
-					if (bg3se::gOsirisProxy->HasServerExtensionState()) {
+					if (bg3se::gExtender->HasServerExtensionState()) {
 						state = &bg3se::esv::ExtensionState::Get();
 					}
 				} else {
-					if (bg3se::gOsirisProxy->HasClientExtensionState()) {
+					if (bg3se::gExtender->HasClientExtensionState()) {
 						state = &bg3se::ecl::ExtensionState::Get();
 					}
 				}

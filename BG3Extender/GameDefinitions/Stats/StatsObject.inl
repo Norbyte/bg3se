@@ -4,7 +4,7 @@
 #include <GameDefinitions/Symbols.h>
 #include <GameDefinitions/Enumerations.h>
 #include <ScriptHelpers.h>
-#include "OsirisProxy.h"
+#include "ScriptExtender.h"
 
 namespace bg3se
 {

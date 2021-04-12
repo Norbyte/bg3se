@@ -130,7 +130,7 @@ namespace bg3se::esv::lua
 		case LUA_TLIGHTUSERDATA:
 		{
 			auto handle = checked_get<ObjectHandle>(L, index);
-			character = gOsirisProxy->GetServerEntityHelpers().GetComponent<esv::Character>(handle);
+			character = gExtender->GetServerEntityHelpers().GetComponent<esv::Character>(handle);
 			break;
 		}
 
@@ -138,14 +138,14 @@ namespace bg3se::esv::lua
 		{
 			auto value = lua_tointeger(L, index);
 			NetId netId{ (uint32_t)value };
-			character = gOsirisProxy->GetServerEntityHelpers().GetComponent<esv::Character>(netId);
+			character = gExtender->GetServerEntityHelpers().GetComponent<esv::Character>(netId);
 			break;
 		}
 
 		case LUA_TSTRING:
 		{
 			auto guid = lua_tostring(L, index);
-			character = gOsirisProxy->GetServerEntityHelpers().GetComponent<esv::Character>(guid);
+			character = gExtender->GetServerEntityHelpers().GetComponent<esv::Character>(guid);
 			break;
 		}
 

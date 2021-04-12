@@ -1,5 +1,5 @@
 #include <stdafx.h>
-#include <OsirisProxy.h>
+#include <ScriptExtender.h>
 #include <ExtensionState.h>
 #include <Version.h>
 #include <fstream>
@@ -92,7 +92,7 @@ namespace bg3se
 			std::wstringstream msg;
 			msg << L"Module \"" << HighestVersionMod->Info.Name << "\" requires extension version "
 				<< MergedConfig.MinimumVersion << "; current version is v" << CurrentVersion;
-			gOsirisProxy->GetLibraryManager().ShowStartupError(msg.str().c_str(), false, true);
+			gExtender->GetLibraryManager().ShowStartupError(msg.str().c_str(), false, true);
 		}
 	}
 

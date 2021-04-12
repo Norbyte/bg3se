@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 #include "CustomFunctions.h"
-#include "OsirisProxy.h"
+#include "ScriptExtender.h"
 #include <fstream>
 #include <sstream>
 
@@ -37,7 +37,7 @@ bool CustomFunction::ValidateParam(CustomFunctionParam const & param, OsiArgumen
 		return true;
 	}
 
-	auto typeMap = *gOsirisProxy->GetOsiris().GetWrappers().Globals.Types;
+	auto typeMap = *gExtender->GetOsiris().GetWrappers().Globals.Types;
 	auto typeId = typeMap->ResolveAlias((uint32_t)value.TypeId);
 	auto paramTypeId = typeMap->ResolveAlias((uint32_t)param.Type);
 
@@ -508,8 +508,8 @@ void CustomFunctionInjector::ThrowEvent(FunctionHandle handle, OsiArgumentDesc *
 	if (it != divToOsiMappings_.end()) {
 		CustomEventGuard guard;
 		if (guard.CanThrowEvent()) {
-			auto osiris = gOsirisProxy->GetOsiris().GetDynamicGlobals().OsirisObject;
-			gOsirisProxy->GetOsiris().GetWrappers().Event.CallOriginal(osiris, it->second, args);
+			auto osiris = gExtender->GetOsiris().GetDynamicGlobals().OsirisObject;
+			gExtender->GetOsiris().GetWrappers().Event.CallOriginal(osiris, it->second, args);
 		} else {
 			OsiError("Maximum Osiris event depth (" << gCustomEventDepth << ") exceeded");
 		}
@@ -543,7 +543,7 @@ void CustomFunctionInjector::CreateOsirisSymbolMap(MappingInfo ** Mappings, uint
 	osiSymbols_.reserve(10000);
 
 	std::unordered_map<FunctionNameAndArity, uint32_t> symbolMap;
-	auto funcs = *gOsirisProxy->GetOsiris().GetGlobals().Functions;
+	auto funcs = *gExtender->GetOsiris().GetGlobals().Functions;
 	auto visit = [&symbolMap, this](STDString const & str, Function * func) {
 		OsiSymbolInfo symbol;
 		OsiFunctionToSymbolInfo(*func, symbol);
@@ -576,7 +576,7 @@ void CustomFunctionInjector::OnAfterGetFunctionMappings(void * Osiris, MappingIn
 {
 	CreateOsirisSymbolMap(Mappings, MappingCount);
 	// FIXME - remove, move to server state load event?
-	gOsirisProxy->GetServerExtensionState().Reset();
+	gExtender->GetServerExtensionState().Reset();
 
 	auto mappingsPtr = (*Mappings)[0].ParamTypes;
 	uint32_t numParams = 0;
@@ -623,13 +623,13 @@ void CustomFunctionInjector::OnAfterGetFunctionMappings(void * Osiris, MappingIn
 
 bool CustomFunctionInjector::StaticCallWrapper(DivFunctions::CallProc next, uint32_t handle, OsiArgumentDesc* params)
 {
-	auto& self = gOsirisProxy->GetOsiris().GetCustomFunctionInjector();
+	auto& self = gExtender->GetOsiris().GetCustomFunctionInjector();
 	return self.CallWrapper(next, handle, params);
 }
 
 bool CustomFunctionInjector::StaticQueryWrapper(DivFunctions::CallProc next, uint32_t handle, OsiArgumentDesc* params)
 {
-	auto& self = gOsirisProxy->GetOsiris().GetCustomFunctionInjector();
+	auto& self = gExtender->GetOsiris().GetCustomFunctionInjector();
 	return self.QueryWrapper(next, handle, params);
 }
 

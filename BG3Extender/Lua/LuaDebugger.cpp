@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include <Lua/LuaDebugger.h>
 #include <Lua/LuaSerializers.h>
-#include <OsirisProxy.h>
+#include <ScriptExtender.h>
 #include <lstate.h>
 #include <lapi.h>
 #include <lobject.h>
@@ -18,7 +18,7 @@ namespace bg3se::lua::dbg
 
 	void LuaHook(lua_State* L, lua_Debug* ar)
 	{
-		gOsirisProxy->GetLuaDebugger()->OnLuaHook(L, ar);
+		gExtender->GetLuaDebugger()->OnLuaHook(L, ar);
 	}
 
 	bool LuaIsUserFunction(lua_State* L, CallInfo* ci)
@@ -315,9 +315,9 @@ namespace bg3se::lua::dbg
 
 			ExtensionStateBase* state{ nullptr };
 			if (context_ == DbgContext::SERVER) {
-				state = &gOsirisProxy->GetServerExtensionState();
+				state = &gExtender->GetServerExtensionState();
 			} else {
-				state = &gOsirisProxy->GetClientExtensionState();
+				state = &gExtender->GetClientExtensionState();
 			}
 
 			auto pathIt = state->GetLoadedFileFullPaths().find(ar->source);
@@ -551,9 +551,9 @@ namespace bg3se::lua::dbg
 	ExtensionStateBase& ContextDebugger::GetExtensionState()
 	{
 		if (context_ == DbgContext::CLIENT) {
-			return gOsirisProxy->GetClientExtensionState();
+			return gExtender->GetClientExtensionState();
 		} else {
-			return gOsirisProxy->GetServerExtensionState();
+			return gExtender->GetServerExtensionState();
 		}
 	}
 
@@ -830,7 +830,7 @@ namespace bg3se::lua::dbg
 	{
 		if (!IsDebuggerReady()) return;
 
-		if (gOsirisProxy->IsInServerThread()) {
+		if (gExtender->IsInServerThread()) {
 			server_.OnLuaHook(L, ar);
 		} else {
 			client_.OnLuaHook(L, ar);
@@ -841,7 +841,7 @@ namespace bg3se::lua::dbg
 	{
 		if (!IsDebuggerReady()) return;
 
-		if (gOsirisProxy->IsInServerThread()) {
+		if (gExtender->IsInServerThread()) {
 			server_.OnLuaError(L, msg);
 		} else {
 			client_.OnLuaError(L, msg);
@@ -852,7 +852,7 @@ namespace bg3se::lua::dbg
 	{
 		if (!IsDebuggerReady()) return;
 
-		if (gOsirisProxy->IsInServerThread()) {
+		if (gExtender->IsInServerThread()) {
 			server_.OnGenericError(msg);
 		} else {
 			client_.OnGenericError(msg);
@@ -863,7 +863,7 @@ namespace bg3se::lua::dbg
 	{
 		if (!IsDebuggerReady()) return;
 
-		if (gOsirisProxy->IsInServerThread()) {
+		if (gExtender->IsInServerThread()) {
 			server_.DebugBreak(L);
 		} else {
 			client_.DebugBreak(L);

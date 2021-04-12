@@ -1,5 +1,5 @@
 #include <stdafx.h>
-#include <OsirisProxy.h>
+#include <ScriptExtender.h>
 #include "LuaBinding.h"
 #include <fstream>
 #include <regex>
@@ -11,10 +11,10 @@ namespace bg3se::esv::lua
 
 	void LuaToOsi(lua_State * L, int i, TypedValue & tv, ValueType osiType, bool allowNil)
 	{
-		auto typeMap = *gOsirisProxy->GetOsiris().GetWrappers().Globals.Types;
+		auto typeMap = *gExtender->GetOsiris().GetWrappers().Globals.Types;
 		auto typeId = typeMap->ResolveAlias((uint32_t)osiType);
 
-		tv.VMT = gOsirisProxy->GetOsiris().GetGlobals().TypedValueVMT;
+		tv.VMT = gExtender->GetOsiris().GetGlobals().TypedValueVMT;
 		tv.TypeId = (uint32_t)osiType;
 
 		auto type = lua_type(L, i);
@@ -107,7 +107,7 @@ namespace bg3se::esv::lua
 
 	void LuaToOsi(lua_State * L, int i, OsiArgumentValue & arg, ValueType osiType, bool allowNil)
 	{
-		auto typeMap = *gOsirisProxy->GetOsiris().GetWrappers().Globals.Types;
+		auto typeMap = *gExtender->GetOsiris().GetWrappers().Globals.Types;
 		auto typeId = typeMap->ResolveAlias((uint32_t)osiType);
 
 		arg.TypeId = osiType;
@@ -194,7 +194,7 @@ namespace bg3se::esv::lua
 
 	void OsiToLua(lua_State * L, OsiArgumentValue const & arg)
 	{
-		auto typeMap = *gOsirisProxy->GetOsiris().GetWrappers().Globals.Types;
+		auto typeMap = *gExtender->GetOsiris().GetWrappers().Globals.Types;
 		auto typeId = typeMap->ResolveAlias((uint32_t)arg.TypeId);
 
 		switch (typeId) {
@@ -227,7 +227,7 @@ namespace bg3se::esv::lua
 
 	void OsiToLua(lua_State * L, TypedValue const & tv)
 	{
-		auto typeMap = *gOsirisProxy->GetOsiris().GetWrappers().Globals.Types;
+		auto typeMap = *gExtender->GetOsiris().GetWrappers().Globals.Types;
 		auto typeId = typeMap->ResolveAlias((uint32_t)tv.TypeId);
 
 		switch (typeId) {
@@ -270,7 +270,7 @@ namespace bg3se::esv::lua
 
 	Function const* LookupOsiFunction(STDString const& name, uint32_t arity)
 	{
-		auto functions = gOsirisProxy->GetOsiris().GetGlobals().Functions;
+		auto functions = gExtender->GetOsiris().GetGlobals().Functions;
 		if (!functions) {
 			return nullptr;
 		}
@@ -310,7 +310,7 @@ namespace bg3se::esv::lua
 				return false;
 			}
 
-			adapter_.Manager = *gOsirisProxy->GetOsiris().GetGlobals().Adapters;
+			adapter_.Manager = *gExtender->GetOsiris().GetGlobals().Adapters;
 			adapter_.Id = adapter->Id;
 		}
 
@@ -448,7 +448,7 @@ namespace bg3se::esv::lua
 		for (auto i = 0; i < tuple.Size; i++) {
 			if (!lua_isnil(L, firstIndex + i)) {
 				auto const & v = tuple.Values[i];
-				auto typeMap = *gOsirisProxy->GetOsiris().GetWrappers().Globals.Types;
+				auto typeMap = *gExtender->GetOsiris().GetWrappers().Globals.Types;
 				auto typeId = typeMap->ResolveAlias(v.TypeId);
 
 				switch ((ValueType)typeId) {
@@ -532,7 +532,7 @@ namespace bg3se::esv::lua
 			argType = argType->Next;
 		}
 
-		gOsirisProxy->GetOsiris().GetWrappers().Call.CallWithHooks(function_->GetHandle(), funcArgs == 0 ? nullptr : args.Args());
+		gExtender->GetOsiris().GetWrappers().Call.CallWithHooks(function_->GetHandle(), funcArgs == 0 ? nullptr : args.Args());
 	}
 
 	void OsiFunction::OsiInsert(lua_State * L, bool deleteTuple)
@@ -604,7 +604,7 @@ namespace bg3se::esv::lua
 			argType = argType->Next;
 		}
 
-		bool handled = gOsirisProxy->GetOsiris().GetWrappers().Query.CallWithHooks(function_->GetHandle(), numParams == 0 ? nullptr : args.Args());
+		bool handled = gExtender->GetOsiris().GetWrappers().Query.CallWithHooks(function_->GetHandle(), numParams == 0 ? nullptr : args.Args());
 		if (outParams == 0) {
 			push(L, handled);
 			return 1;
@@ -655,7 +655,7 @@ namespace bg3se::esv::lua
 				LuaToOsi(L, inputArgIndex + 2, node->Item.Value, (ValueType)argType->Item.Type);
 				inputArgIndex++;
 			} else {
-				node->Item.Value.VMT = gOsirisProxy->GetOsiris().GetGlobals().TypedValueVMT;
+				node->Item.Value.VMT = gExtender->GetOsiris().GetGlobals().TypedValueVMT;
 				node->Item.Value.TypeId = (uint32_t)ValueType::None;
 			}
 
@@ -663,7 +663,7 @@ namespace bg3se::esv::lua
 			argType = argType->Next;
 		}
 
-		auto node = (*gOsirisProxy->GetOsiris().GetGlobals().Nodes)->Db.Start[function_->Node.Id - 1];
+		auto node = (*gExtender->GetOsiris().GetGlobals().Nodes)->Db.Start[function_->Node.Id - 1];
 		bool valid = node->IsValid(&tuple, &adapter_);
 		if (valid) {
 			if (outParams > 0) {
@@ -836,7 +836,7 @@ namespace bg3se::esv::lua
 	ValueType StringToValueType(std::string_view s)
 	{
 		auto hash = FunctionNameHash(s.data());
-		auto types = *gOsirisProxy->GetOsiris().GetWrappers().Globals.Types;
+		auto types = *gExtender->GetOsiris().GetWrappers().Globals.Types;
 		auto type = types->Find(hash, STDString(s));
 		if (type) {
 			return (*type)->Type;
@@ -1099,7 +1099,7 @@ namespace bg3se::esv::lua
 	{
 		std::stringstream ss;
 
-		auto const & sigs = gOsirisProxy->GetOsiris().GetCustomFunctionInjector().OsiSymbols();
+		auto const & sigs = gExtender->GetOsiris().GetCustomFunctionInjector().OsiSymbols();
 		for (auto const & sig : sigs) {
 			if (sig.EoCFunctionId != 0 && sig.params.size() <= 16) {
 				ss << sig.name << " = Osi." << sig.name << "\r\n";
@@ -1174,7 +1174,7 @@ namespace bg3se::esv::lua
 		RegistryEntry func(L, 1);
 		auto call = std::make_unique<CustomLuaCall>(funcName, argList, std::move(func));
 
-		auto & functionMgr = gOsirisProxy->GetOsiris().GetCustomFunctionManager();
+		auto & functionMgr = gExtender->GetOsiris().GetCustomFunctionManager();
 		functionMgr.RegisterDynamic(std::move(call));
 		
 		return 0;
@@ -1197,7 +1197,7 @@ namespace bg3se::esv::lua
 		RegistryEntry func(L, 1);
 		auto query = std::make_unique<CustomLuaQuery>(funcName, argList, std::move(func));
 
-		auto & functionMgr = gOsirisProxy->GetOsiris().GetCustomFunctionManager();
+		auto & functionMgr = gExtender->GetOsiris().GetCustomFunctionManager();
 		functionMgr.RegisterDynamic(std::move(query));
 
 		return 0;
@@ -1218,7 +1218,7 @@ namespace bg3se::esv::lua
 
 		auto customEvt = std::make_unique<CustomEvent>(funcName, argList);
 
-		auto & functionMgr = gOsirisProxy->GetOsiris().GetCustomFunctionManager();
+		auto & functionMgr = gExtender->GetOsiris().GetCustomFunctionManager();
 		functionMgr.RegisterDynamic(std::move(customEvt));
 
 		return 0;

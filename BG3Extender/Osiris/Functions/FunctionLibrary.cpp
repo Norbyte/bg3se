@@ -1,5 +1,5 @@
 #include <stdafx.h>
-#include <OsirisProxy.h>
+#include <ScriptExtender.h>
 #include <Osiris/Functions/FunctionLibrary.h>
 #include <Version.h>
 #include <ScriptHelpers.h>
@@ -14,7 +14,7 @@ namespace bg3se::esv
 		{
 			auto message = args[0].String;
 			auto wmsg = FromUTF8(message);
-			gOsirisProxy->GetLibraryManager().ShowStartupError(wmsg, false, false);
+			gExtender->GetLibraryManager().ShowStartupError(wmsg, false, false);
 		}
 
 		bool GetVersion(OsiArgumentDesc & args)

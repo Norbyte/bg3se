@@ -1,5 +1,5 @@
 #include <stdafx.h>
-#include <OsirisProxy.h>
+#include <ScriptExtender.h>
 #include "FunctionLibrary.h"
 #include <Version.h>
 
@@ -18,13 +18,13 @@ namespace bg3se::esv
 			}
 
 #if defined(OSI_EOCAPP)
-			if (!gOsirisProxy->GetConfig().DeveloperMode) {
+			if (!gExtender->GetConfig().DeveloperMode) {
 				OsiError("NRD_LuaReset is only callable in developer mode");
 				return;
 			}
 #endif
 
-			gOsirisProxy->ResetLuaState(resetServer, resetClient);
+			gExtender->ResetLuaState(resetServer, resetClient);
 		}
 
 		void OsiLuaModCall(OsiArgumentDesc const& args)

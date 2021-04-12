@@ -5,7 +5,7 @@
 #include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/EntitySystem.h>
 #include <GameDefinitions/GuidResources.h>
-#include "OsirisProxy.h"
+#include "ScriptExtender.h"
 
 namespace bg3se
 {

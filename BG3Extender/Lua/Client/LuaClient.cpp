@@ -2,7 +2,7 @@
 #include <Lua/Shared/LuaStats.h>
 #include <Lua/Client/LuaBindingClient.h>
 #include <Lua/LuaSerializers.h>
-#include <OsirisProxy.h>
+#include <ScriptExtender.h>
 #include <ExtensionStateClient.h>
 //#include <GameDefinitions/Ai.h>
 #include "resource.h"
@@ -611,7 +611,7 @@ namespace bg3se::ecl::lua
 
 	void PostMessageToServer(lua_State * L, char const* channel, char const* payload)
 	{
-		auto & networkMgr = gOsirisProxy->GetNetworkManager();
+		auto & networkMgr = gExtender->GetNetworkManager();
 		auto msg = networkMgr.GetFreeClientMessage();
 		if (msg != nullptr) {
 			auto postMsg = msg->GetMessage().mutable_post_lua();
@@ -1010,7 +1010,7 @@ namespace bg3se::ecl::lua
 		LoadScript(sandbox, "SandboxStartup.lua");
 
 #if !defined(OSI_NO_DEBUGGER)
-		auto debugger = gOsirisProxy->GetLuaDebugger();
+		auto debugger = gExtender->GetLuaDebugger();
 		if (debugger) {
 			debugger->ClientStateCreated(this);
 		}
@@ -1022,8 +1022,8 @@ namespace bg3se::ecl::lua
 		auto & sym = GetStaticSymbols();
 
 #if !defined(OSI_NO_DEBUGGER)
-		if (gOsirisProxy) {
-			auto debugger = gOsirisProxy->GetLuaDebugger();
+		if (gExtender) {
+			auto debugger = gExtender->GetLuaDebugger();
 			if (debugger) {
 				debugger->ClientStateDeleted();
 			}
@@ -1135,7 +1135,7 @@ namespace bg3se::ecl
 
 	ExtensionState & ExtensionState::Get()
 	{
-		return gOsirisProxy->GetClientExtensionState();
+		return gExtender->GetClientExtensionState();
 	}
 
 

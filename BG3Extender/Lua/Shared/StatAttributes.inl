@@ -1,5 +1,5 @@
 #include <stdafx.h>
-#include <OsirisProxy.h>
+#include <ScriptExtender.h>
 #include <Lua/LuaBinding.h>
 #include <Lua/LuaSerializers.h>
 #include <GameDefinitions/Stats/Stats.h>
@@ -46,7 +46,7 @@ namespace bg3se::lua::stats
 			push(L, object->Name);
 			return 1;
 		} else if (attributeFS == GFS.strModId) {
-			push(L, gOsirisProxy->GetStatLoadOrderHelper().GetStatsEntryMod(object->Name));
+			push(L, gExtender->GetStatLoadOrderHelper().GetStatsEntryMod(object->Name));
 			return 1;
 		} else if (attributeFS == GFS.strUsing) {
 			if (object->Using) {
@@ -175,7 +175,7 @@ namespace bg3se::lua::stats
 	int LuaStatSetAttribute(lua_State* L, CRPGStats_Object* object, char const* attributeName, int valueIdx)
 	{
 		StackCheck _(L);
-		LuaVirtualPin lua(gOsirisProxy->GetCurrentExtensionState());
+		LuaVirtualPin lua(gExtender->GetCurrentExtensionState());
 		if (lua->RestrictionFlags & State::ScopeModulePreLoad) {
 			return luaL_error(L, "Stat functions unavailable during module preload");
 		}
@@ -399,7 +399,7 @@ namespace bg3se::lua::stats
 		auto modifierName = luaL_checkstring(L, 2);
 		luaL_checktype(L, 3, LUA_TFUNCTION);
 
-		LuaVirtualPin lua(gOsirisProxy->GetCurrentExtensionState());
+		LuaVirtualPin lua(gExtender->GetCurrentExtensionState());
 		if (lua->RestrictionFlags & State::ScopeModulePreLoad) {
 			return luaL_error(L, "Stat functions unavailable during module preload");
 		}

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "DataLibraries.h"
-#include "OsirisProxy.h"
+#include "ScriptExtender.h"
 #include <GameDefinitions/Symbols.h>
 #include <functional>
 #include <psapi.h>
@@ -80,7 +80,7 @@ namespace bg3se
 
 	SymbolMappingResult FindStatusHitEoCApp2(uint8_t const * match)
 	{
-		auto & library = gOsirisProxy->GetLibraryManager();
+		auto & library = gExtender->GetLibraryManager();
 		auto moduleStart = library.GetModuleStart();
 		auto moduleSize = library.GetModuleSize();
 
@@ -119,7 +119,7 @@ namespace bg3se
 
 	SymbolMappingResult FindStatusHealEoCApp2(uint8_t const * match)
 	{
-		auto & library = gOsirisProxy->GetLibraryManager();
+		auto & library = gExtender->GetLibraryManager();
 		auto moduleStart = library.GetModuleStart();
 		auto moduleSize = library.GetModuleSize();
 
@@ -200,7 +200,7 @@ namespace bg3se
 		}
 
 		if (getters.GetBlockChance != nullptr) {
-			auto & library = gOsirisProxy->GetLibraryManager();
+			auto & library = gExtender->GetLibraryManager();
 			library.MapSymbol(sSymbolGetAbility, (uint8_t *)getters.GetDodge, 0x480);
 			library.MapSymbol(sSymbolGetTalent, (uint8_t *)getters.GetDodge, 0x480);
 		}

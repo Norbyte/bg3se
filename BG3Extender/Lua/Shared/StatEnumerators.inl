@@ -110,7 +110,7 @@ namespace bg3se::lua
 			}
 		}
 
-		auto entries = gOsirisProxy->GetStatLoadOrderHelper().GetStatsLoadedBefore(modId);
+		auto entries = gExtender->GetStatLoadOrderHelper().GetStatsLoadedBefore(modId);
 
 		int32_t index = 1;
 		for (auto object : entries) {

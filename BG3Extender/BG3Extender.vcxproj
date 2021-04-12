@@ -117,6 +117,7 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="EntitySystemHelpers.h" />
     <ClInclude Include="ExtenderConfig.h" />
     <ClInclude Include="DWriteWrapper.h" />
     <ClInclude Include="ExtensionHelpers.h" />
@@ -173,7 +174,7 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
     <ClInclude Include="Lua\Server\LuaBindingServer.h" />
     <ClInclude Include="Lua\Server\ServerOsirisBinding.h" />
     <ClInclude Include="Lua\Shared\LuaStats.h" />
-    <ClInclude Include="OsirisProxy.h" />
+    <ClInclude Include="ScriptExtender.h" />
     <ClInclude Include="Osiris\Debugger\Debugger.h" />
     <ClInclude Include="Osiris\Debugger\DebugInterface.h" />
     <ClInclude Include="Osiris\Debugger\DebugMessages.h" />
@@ -238,7 +239,7 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <ClCompile Include="Lua\Shared\LuaUtilities.cpp" />
-    <ClCompile Include="OsirisProxy.cpp" />
+    <ClCompile Include="ScriptExtender.cpp" />
     <ClCompile Include="Osiris\Debugger\Debugger.cpp" />
     <ClCompile Include="Osiris\Debugger\DebugInterface.cpp" />
     <ClCompile Include="Osiris\Debugger\DebugMessages.cpp" />

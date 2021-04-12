@@ -1,5 +1,5 @@
 #include <stdafx.h>
-#include <OsirisProxy.h>
+#include <ScriptExtender.h>
 #include <Version.h>
 #include <ScriptHelpers.h>
 #include <Lua/LuaSerializers.h>
@@ -41,7 +41,7 @@ namespace bg3se::lua::utils
 	std::optional<STDString> GetGameVersion(lua_State* L)
 	{
 		GameVersionInfo gameVersion;
-		if (gOsirisProxy->GetLibraryManager().GetGameVersion(gameVersion)) {
+		if (gExtender->GetLibraryManager().GetGameVersion(gameVersion)) {
 			std::stringstream ss;
 			ss << "v" << gameVersion.Major << "." << gameVersion.Minor << "." << gameVersion.Revision << "." << gameVersion.Build;
 			return ss.str().c_str();
@@ -77,7 +77,7 @@ namespace bg3se::lua::utils
 #endif
 		}
 
-		auto nret = gOsirisProxy->GetCurrentExtensionState()
+		auto nret = gExtender->GetCurrentExtensionState()
 			->LuaLoadModScript(modGuid, fileName, true, replaceGlobals ? 3 : 0);
 
 		if (replaceGlobals) {
@@ -99,7 +99,7 @@ namespace bg3se::lua::utils
 	{
 		std::stringstream ss;
 		ArgsToStream(L, ss);
-		gOsirisProxy->LogOsirisMsg(ss.str());
+		gExtender->LogOsirisMsg(ss.str());
 		return 0;
 	}
 
@@ -107,7 +107,7 @@ namespace bg3se::lua::utils
 	{
 		std::stringstream ss;
 		ArgsToStream(L, ss);
-		gOsirisProxy->LogOsirisWarning(ss.str());
+		gExtender->LogOsirisWarning(ss.str());
 		return 0;
 	}
 
@@ -115,7 +115,7 @@ namespace bg3se::lua::utils
 	{
 		std::stringstream ss;
 		ArgsToStream(L, ss);
-		gOsirisProxy->LogLuaError(ss.str());
+		gExtender->LogLuaError(ss.str());
 		return 0;
 	}
 
@@ -144,7 +144,7 @@ namespace bg3se::lua::utils
 	{
 		auto modUuid = NameGuidToFixedString(modNameGuid);
 		if (modUuid) {
-			auto modManager = gOsirisProxy->GetCurrentExtensionState()->GetModManager();
+			auto modManager = gExtender->GetCurrentExtensionState()->GetModManager();
 			for (auto const& mod : modManager->BaseModule.LoadOrderedModules) {
 				if (mod.Info.ModuleUUIDString == modUuid) {
 					return true;
@@ -162,7 +162,7 @@ namespace bg3se::lua::utils
 		StackCheck _(L, 1);
 		lua_newtable(L);
 
-		auto modManager = gOsirisProxy->GetCurrentExtensionState()->GetModManager();
+		auto modManager = gExtender->GetCurrentExtensionState()->GetModManager();
 		auto & mods = modManager->BaseModule.LoadOrderedModules;
 		for (uint32_t i = 0; i < mods.Size; i++) {
 			auto const & mod = mods[i];
@@ -178,7 +178,7 @@ namespace bg3se::lua::utils
 		Module const * module{ nullptr };
 		auto modUuid = NameGuidToFixedString(luaL_checkstring(L, 1));
 		if (modUuid) {
-			auto modManager = gOsirisProxy->GetCurrentExtensionState()->GetModManager();
+			auto modManager = gExtender->GetCurrentExtensionState()->GetModManager();
 			for (auto const& mod : modManager->BaseModule.LoadOrderedModules) {
 				if (mod.Info.ModuleUUIDString == modUuid) {
 					module = &mod;
@@ -215,7 +215,7 @@ namespace bg3se::lua::utils
 	void DebugBreak(lua_State* L)
 	{
 #if !defined(OSI_NO_DEBUGGER)
-		auto debugger = gOsirisProxy->GetLuaDebugger();
+		auto debugger = gExtender->GetLuaDebugger();
 		if (debugger) {
 			debugger->DebugBreak(L);
 		}
@@ -246,14 +246,14 @@ namespace bg3se::lua::utils
 
 	bool IsDeveloperMode(lua_State * L)
 	{
-		return gOsirisProxy->GetConfig().DeveloperMode;
+		return gExtender->GetConfig().DeveloperMode;
 	}
 
 	WrapLuaFunction(IsDeveloperMode)
 
 	void AddPathOverride(lua_State * L, char const* path, char const* overridePath)
 	{
-		gOsirisProxy->AddPathOverride(path, overridePath);
+		gExtender->AddPathOverride(path, overridePath);
 	}
 
 	WrapLuaFunction(AddPathOverride)
@@ -261,7 +261,7 @@ namespace bg3se::lua::utils
 	// Variation of Lua builtin math_random() with custom RNG
 	int LuaRandom(lua_State *L)
 	{
-		auto state = gOsirisProxy->GetCurrentExtensionState();
+		auto state = gExtender->GetCurrentExtensionState();
 
 		lua_Integer low, up;
 		switch (lua_gettop(L)) {  /* check number of arguments */
@@ -303,7 +303,7 @@ namespace bg3se::lua::utils
 
 	char const * OsiToLuaTypeName(ValueType type)
 	{
-		auto typeMap = *gOsirisProxy->GetOsiris().GetWrappers().Globals.Types;
+		auto typeMap = *gExtender->GetOsiris().GetWrappers().Globals.Types;
 		auto typeId = typeMap->ResolveAlias((uint32_t)type);
 
 		switch (typeId) {
@@ -332,7 +332,7 @@ namespace bg3se::lua::utils
 
 		STDString functionComment, functionDefn;
 
-		auto functions = gOsirisProxy->GetOsiris().GetGlobals().Functions;
+		auto functions = gExtender->GetOsiris().GetGlobals().Functions;
 
 		(*functions)->Iterate([&helpers, &functionComment, &functionDefn, builtinOnly](STDString const & key, Function const * func) {
 			if (builtinOnly
@@ -418,7 +418,7 @@ namespace bg3se::lua::utils
 	void GenerateIdeHelpers(lua_State * L, std::optional<bool> builtinOnly)
 	{
 #if defined(OSI_EOCAPP)
-		if (gOsirisProxy->GetConfig().DeveloperMode) {
+		if (gExtender->GetConfig().DeveloperMode) {
 #endif
 			esv::LuaServerPin lua(esv::ExtensionState::Get());
 			if (lua->RestrictionFlags & State::RestrictOsiris) {

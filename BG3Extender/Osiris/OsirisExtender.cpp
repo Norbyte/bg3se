@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include <Osiris/OsirisExtender.h>
 #include <ExtensionHelpers.h>
-#include <OsirisProxy.h>
+#include <ScriptExtender.h>
 #include <iomanip>
 
 namespace bg3se
@@ -97,7 +97,7 @@ void OsirisExtender::RestartLogging(std::wstring const & Type)
 		logType_ = Type;
 
 		if (!logFilename_.empty()) {
-			DEBUG(L"OsirisProxy::RestartLogging: Starting %s debug logging.\r\n"
+			DEBUG(L"ScriptExtender::RestartLogging: Starting %s debug logging.\r\n"
 				"\tPath=%s", Type.c_str(), logFilename_.c_str());
 		}
 	}
@@ -181,7 +181,7 @@ void OsirisExtender::OnRegisterDIVFunctions(void * Osiris, DivFunctions * Functi
 	}
 
 #if 0
-	DEBUG("OsirisProxy::OnRegisterDIVFunctions: Initializing story.");
+	DEBUG("ScriptExtender::OnRegisterDIVFunctions: Initializing story.");
 	DEBUG("\tErrorMessageProc = %p", errorMessageFunc);
 	DEBUG("\tOsirisManager = %p", Globals.Manager);
 	DEBUG("\tOsirisInterface = %p", osirisInterface);
@@ -263,9 +263,9 @@ bool OsirisExtender::CompileWrapper(std::function<bool(void *, wchar_t const *, 
 	auto ret = Next(Osiris, Path, Mode);
 
 	if (ret) {
-		DEBUG("OsirisProxy::CompileWrapper: Success.");
+		DEBUG("ScriptExtender::CompileWrapper: Success.");
 	} else {
-		ERR("OsirisProxy::CompileWrapper: Compilation FAILED.");
+		ERR("ScriptExtender::CompileWrapper: Compilation FAILED.");
 	}
 
 	if (config_.LogCompile || config_.LogFailedCompile) {
@@ -295,7 +295,7 @@ void OsirisExtender::OnAfterOsirisLoad(void * Osiris, void * Buf, int retval)
 #endif
 
 	storyLoaded_ = true; 
-	DEBUG("OsirisProxy::OnAfterOsirisLoad: %d nodes", (*wrappers_.Globals.Nodes)->Db.Size);
+	DEBUG("ScriptExtender::OnAfterOsirisLoad: %d nodes", (*wrappers_.Globals.Nodes)->Db.Size);
 
 #if !defined(OSI_NO_DEBUGGER)
 	if (debuggerThread_ != nullptr && nodeVmtWrappers_) {
@@ -305,20 +305,20 @@ void OsirisExtender::OnAfterOsirisLoad(void * Osiris, void * Buf, int retval)
 	}
 #endif
 
-	if (gOsirisProxy->HasServerExtensionState()) {
-		gOsirisProxy->GetServerExtensionState().StoryLoaded();
+	if (gExtender->HasServerExtensionState()) {
+		gExtender->GetServerExtensionState().StoryLoaded();
 	}
 }
 
 bool OsirisExtender::MergeWrapper(std::function<bool (void *, wchar_t *)> const & Next, void * Osiris, wchar_t * Src)
 {
-	DEBUG("OsirisProxy::MergeWrapper() - Started merge");
+	DEBUG("ScriptExtender::MergeWrapper() - Started merge");
 
 	auto cli = GetEoCClient();
 	auto srv = GetEoCServer();
 
-	if (gOsirisProxy->HasServerExtensionState()) {
-		gOsirisProxy->GetServerExtensionState().StorySetMerging(true);
+	if (gExtender->HasServerExtensionState()) {
+		gExtender->GetServerExtensionState().StorySetMerging(true);
 	}
 
 #if !defined(OSI_NO_DEBUGGER)
@@ -335,11 +335,11 @@ bool OsirisExtender::MergeWrapper(std::function<bool (void *, wchar_t *)> const 
 	}
 #endif
 
-	if (gOsirisProxy->HasServerExtensionState()) {
-		gOsirisProxy->GetServerExtensionState().StorySetMerging(false);
+	if (gExtender->HasServerExtensionState()) {
+		gExtender->GetServerExtensionState().StorySetMerging(false);
 	}
 
-	DEBUG("OsirisProxy::MergeWrapper() - Finished merge");
+	DEBUG("ScriptExtender::MergeWrapper() - Finished merge");
 	return retval;
 }
 

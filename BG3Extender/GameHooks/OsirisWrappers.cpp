@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "OsirisProxy.h"
+#include "ScriptExtender.h"
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -156,22 +156,22 @@ void OsirisWrappers::Shutdown()
 
 bool OsirisWrappers::CallWrapper(uint32_t FunctionId, OsiArgumentDesc * Params)
 {
-	return gOsirisProxy->GetOsiris().GetWrappers().CallOriginal(FunctionId, Params);
+	return gExtender->GetOsiris().GetWrappers().CallOriginal(FunctionId, Params);
 }
 
 bool OsirisWrappers::QueryWrapper(uint32_t FunctionId, OsiArgumentDesc * Params)
 {
-	return gOsirisProxy->GetOsiris().GetWrappers().QueryOriginal(FunctionId, Params);
+	return gExtender->GetOsiris().GetWrappers().QueryOriginal(FunctionId, Params);
 }
 
 void OsirisWrappers::ErrorWrapper(char const * Message)
 {
-	gOsirisProxy->GetOsiris().GetWrappers().ErrorOriginal(Message);
+	gExtender->GetOsiris().GetWrappers().ErrorOriginal(Message);
 }
 
 void OsirisWrappers::AssertWrapper(bool Successful, char const * Message, bool Unknown2)
 {
-	gOsirisProxy->GetOsiris().GetWrappers().AssertOriginal(Successful, Message, Unknown2);
+	gExtender->GetOsiris().GetWrappers().AssertOriginal(Successful, Message, Unknown2);
 }
 
 void * OsirisWrappers::FindRuleActionCallProc()
@@ -229,7 +229,7 @@ uint8_t * ResolveRealFunctionAddress(uint8_t * Address)
 void OsirisWrappers::FindOsirisGlobals(FARPROC CtorProc)
 {
 #if 0
-	DEBUG("OsirisProxy::FindOsirisGlobals:");
+	DEBUG("ScriptExtender::FindOsirisGlobals:");
 #endif
 	uint8_t * Addr = ResolveRealFunctionAddress((uint8_t *)CtorProc);
 
@@ -301,7 +301,7 @@ void OsirisWrappers::FindDebugFlags(FARPROC SetOptionProc)
 	}
 
 #if 0
-	DEBUG("OsirisProxy::FindDebugFlags: DebugFlags = %p", Globals.DebugFlags);
+	DEBUG("ScriptExtender::FindDebugFlags: DebugFlags = %p", Globals.DebugFlags);
 #endif
 }
 
@@ -326,7 +326,7 @@ bool OsirisWrappers::ResolveNodeVMTsInternal()
 	auto Db = *Globals.Nodes;
 
 #if 0
-	DEBUG("OsirisProxy::ResolveNodeVMTs");
+	DEBUG("ScriptExtender::ResolveNodeVMTs");
 #endif
 	std::set<NodeVMT *> VMTs;
 

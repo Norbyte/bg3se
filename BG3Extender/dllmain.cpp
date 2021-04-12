@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "DWriteWrapper.h"
 #include <ExtenderConfig.h>
-#include <OsirisProxy.h>
+#include <ScriptExtender.h>
 #include "json/json.h"
 #include <ShellAPI.h>
 #include <KnownFolders.h>
@@ -76,8 +76,8 @@ void LoadConfig(std::wstring const & configPath, ExtenderConfig & config)
 
 void SetupOsirisProxy(HMODULE hModule)
 {
-	gOsirisProxy = std::make_unique<OsirisProxy>();
-	auto & config = gOsirisProxy->GetConfig();
+	gExtender = std::make_unique<ScriptExtender>();
+	auto & config = gExtender->GetConfig();
 	LoadConfig(L"ScriptExtenderSettings.json", config);
 
 	DisableThreadLibraryCalls(hModule);
@@ -90,10 +90,10 @@ void SetupOsirisProxy(HMODULE hModule)
 		config.DebugFlags = DF_DebugTrace | DF_SuppressInitLog;
 	}
 
-	gOsirisProxy->Initialize();
+	gExtender->Initialize();
 
 #if 0
-	DEBUG(" ***** OsirisProxy setup completed ***** ");
+	DEBUG(" ***** ScriptExtender setup completed ***** ");
 #endif
 }
 
@@ -122,8 +122,8 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 
 	case DLL_PROCESS_DETACH:
 		if (gDWriteWrapper) {
-			gOsirisProxy->Shutdown();
-			gOsirisProxy.reset();
+			gExtender->Shutdown();
+			gExtender.reset();
 			gDWriteWrapper.reset();
 		}
 		break;

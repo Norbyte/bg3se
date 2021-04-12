@@ -26,7 +26,7 @@ namespace bg3se::lua
 		}*/
 
 		if (prop == GFS.strModId) {
-			push(L, gOsirisProxy->GetStatLoadOrderHelper().GetStatsEntryMod(stats->Name));
+			push(L, gExtender->GetStatLoadOrderHelper().GetStatsEntryMod(stats->Name));
 			return 1;
 		}
 

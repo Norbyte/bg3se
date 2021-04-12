@@ -1,6 +1,6 @@
 #include <stdafx.h>
 #include "FunctionLibrary.h"
-#include <OsirisProxy.h>
+#include <ScriptExtender.h>
 #include <random>
 #include <regex>
 
@@ -256,7 +256,7 @@ namespace bg3se::esv
 				auto eventArgs = OsiArgumentDesc::Create(OsiArgumentValue{ ValueType::String, eventName });
 				eventArgs->Add(OsiArgumentValue{ (int64_t)index });
 
-				gOsirisProxy->GetOsiris().GetCustomFunctionInjector().ThrowEvent(ForLoopEventHandle, eventArgs);
+				gExtender->GetOsiris().GetCustomFunctionInjector().ThrowEvent(ForLoopEventHandle, eventArgs);
 
 				delete eventArgs;
 			}
@@ -273,7 +273,7 @@ namespace bg3se::esv
 				eventArgs->Add(OsiArgumentValue{ ValueType::String, eventName });
 				eventArgs->Add(OsiArgumentValue{ (int64_t)index });
 
-				gOsirisProxy->GetOsiris().GetCustomFunctionInjector().ThrowEvent(ForLoopObjectEventHandle, eventArgs);
+				gExtender->GetOsiris().GetCustomFunctionInjector().ThrowEvent(ForLoopObjectEventHandle, eventArgs);
 
 				delete eventArgs;
 			}

@@ -1,5 +1,5 @@
 #include <stdafx.h>
-#include <OsirisProxy.h>
+#include <ScriptExtender.h>
 //#include <GameDefinitions/Ai.h>
 #include <GameDefinitions/RootTemplates.h>
 #include <Lua/LuaSerializers.h>
@@ -28,7 +28,7 @@ void nse_lua_report_handled_error(lua_State* L)
 		err = lua_tostring(L, -1);
 	}
 
-	auto debugger = bg3se::gOsirisProxy->GetLuaDebugger();
+	auto debugger = bg3se::gExtender->GetLuaDebugger();
 	if (debugger) {
 		debugger->OnLuaError(L, err);
 	}
@@ -200,7 +200,7 @@ namespace bg3se::lua
 
 		lua_setfield(L, -2, "Objects");
 
-		if (gOsirisProxy->IsInServerThread()) {
+		if (gExtender->IsInServerThread()) {
 			auto level = GetStaticSymbols().GetCurrentServerLevel();
 			if (!level || level->AiGrid != grid || !level->SurfaceManager) {
 				OsiError("Current level not available yet!");
@@ -531,7 +531,7 @@ namespace bg3se::lua
 		}
 
 #if !defined(OSI_NO_DEBUGGER)
-		auto debugger = gOsirisProxy->GetLuaDebugger();
+		auto debugger = gExtender->GetLuaDebugger();
 		if (debugger) {
 			debugger->OnLuaError(L, err);
 		}
@@ -567,7 +567,7 @@ namespace bg3se::lua
 		startupDone_ = true;
 
 #if !defined(OSI_NO_DEBUGGER)
-		auto debugger = gOsirisProxy->GetLuaDebugMessageHandler();
+		auto debugger = gExtender->GetLuaDebugMessageHandler();
 		if (debugger && debugger->IsDebuggerReady()) {
 			debugger->SendModInfo();
 		}

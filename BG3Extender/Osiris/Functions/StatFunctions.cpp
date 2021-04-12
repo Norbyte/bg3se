@@ -1,6 +1,6 @@
 #include <stdafx.h>
 #include "FunctionLibrary.h"
-#include <OsirisProxy.h>
+#include <ScriptExtender.h>
 
 namespace bg3se::esv
 {

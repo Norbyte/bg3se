@@ -1,4 +1,4 @@
-#include <OsirisProxy.h>
+#include <ScriptExtender.h>
 #include <GameDefinitions/Resources.h>
 #include <GameDefinitions/GuidResources.h>
 #include <Lua/LuaSerializers.h>
@@ -8,7 +8,7 @@ namespace bg3se::lua::utils
 	template <class T>
 	int GetGuidResourceProxy(lua_State* L, UUID const& resourceGuid)
 	{
-		auto& helpers = gOsirisProxy->GetServerEntityHelpers();
+		auto& helpers = gExtender->GetServerEntityHelpers();
 		auto resourceMgr = helpers.GetResourceManager<T>();
 		if (!resourceMgr) {
 			LuaError("Resource manager not available for this resource type");
@@ -31,7 +31,7 @@ namespace bg3se::lua::utils
 		auto resourceGuid = checked_get<UUID>(L, 1);
 		auto type = checked_get<ExtResourceManagerType>(L, 2);
 
-		auto& helpers = gOsirisProxy->GetServerEntityHelpers();
+		auto& helpers = gExtender->GetServerEntityHelpers();
 		switch (type) {
 		case ActionResource::ResourceManagerType: return GetGuidResourceProxy<ActionResource>(L, resourceGuid);
 		case ClassDescriptionResource::ResourceManagerType: return GetGuidResourceProxy<ClassDescriptionResource>(L, resourceGuid);
@@ -62,7 +62,7 @@ namespace bg3se::lua::utils
 	template <class T>
 	int GetAllGuidResourcesTyped(lua_State* L)
 	{
-		auto& helpers = gOsirisProxy->GetServerEntityHelpers();
+		auto& helpers = gExtender->GetServerEntityHelpers();
 		auto resourceMgr = helpers.GetResourceManager<T>();
 		if (!resourceMgr) {
 			LuaError("Resource manager not available for this resource type");
@@ -83,7 +83,7 @@ namespace bg3se::lua::utils
 	{
 		auto type = checked_get<ExtResourceManagerType>(L, 1);
 
-		auto& helpers = gOsirisProxy->GetServerEntityHelpers();
+		auto& helpers = gExtender->GetServerEntityHelpers();
 		switch (type) {
 		case ActionResource::ResourceManagerType: return GetAllGuidResourcesTyped<ActionResource>(L);
 		case ClassDescriptionResource::ResourceManagerType: return GetAllGuidResourcesTyped<ClassDescriptionResource>(L);

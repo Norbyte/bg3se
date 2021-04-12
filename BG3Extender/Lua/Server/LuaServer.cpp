@@ -2,7 +2,7 @@
 #include <Lua/Shared/LuaStats.h>
 #include <Lua/Server/LuaBindingServer.h>
 #include <Lua/LuaSerializers.h>
-#include <OsirisProxy.h>
+#include <ScriptExtender.h>
 #include <ScriptHelpers.h>
 #include "resource.h"
 #include <GameDefinitions/Components/Components.h>
@@ -138,7 +138,7 @@ namespace bg3se::esv::lua
 	{
 		StackCheck _(L, 1);
 		LuaServerPin lua(ExtensionState::Get());
-		bool allowed = gOsirisProxy->IsStoryLoaded()
+		bool allowed = gExtender->IsStoryLoaded()
 			&& ((lua->RestrictionFlags & State::RestrictOsiris) == 0);
 		push(L, allowed);
 		return 1;
@@ -164,7 +164,7 @@ namespace bg3se::esv::lua
 	{
 		auto s = checked_get<FixedString>(L, 1);
 
-		auto& helpers = gOsirisProxy->GetServerEntityHelpers();
+		auto& helpers = gExtender->GetServerEntityHelpers();
 		auto character = helpers.GetComponent<esv::Character>(s);
 		if (character) {
 			auto boostContainer = helpers.GetEntityComponent<BoostsContainerComponent>(character->Base.Entity);
@@ -207,7 +207,7 @@ namespace bg3se::esv::lua
 	{
 		auto s = checked_get<UUID>(L, 1);
 
-		auto rsrc = gOsirisProxy->GetServerEntityHelpers().GetResourceManager<TagResource>();
+		auto rsrc = gExtender->GetServerEntityHelpers().GetResourceManager<TagResource>();
 		if (rsrc) {
 
 			auto tag = reinterpret_cast<TagResource*>((*rsrc)->Resources.Values);
@@ -240,7 +240,7 @@ namespace bg3se::esv::lua
 
 					auto entity = ch2->Base.Entity;
 
-					auto& helpers = gOsirisProxy->GetServerEntityHelpers();
+					auto& helpers = gExtender->GetServerEntityHelpers();
 					auto ar = helpers.GetEntityComponent<ActionResourcesComponent>(entity);
 					auto armor = helpers.GetEntityComponent<ArmorComponent>(entity);
 					auto baseHp = helpers.GetEntityComponent<BaseHpComponent>(entity);
@@ -443,7 +443,7 @@ namespace bg3se::esv::lua
 
 
 	ServerState::ServerState(ExtensionState& state)
-		: identityAdapters_(gOsirisProxy->GetOsiris().GetGlobals()),
+		: identityAdapters_(gExtender->GetOsiris().GetGlobals()),
 		osirisCallbacks_(state)
 	{
 		StackCheck _(L, 0);
@@ -470,7 +470,7 @@ namespace bg3se::esv::lua
 		LoadScript(sandbox, "SandboxStartup.lua");
 
 #if !defined(OSI_NO_DEBUGGER)
-		auto debugger = gOsirisProxy->GetLuaDebugger();
+		auto debugger = gExtender->GetLuaDebugger();
 		if (debugger) {
 			debugger->ServerStateCreated(this);
 		}
@@ -479,15 +479,15 @@ namespace bg3se::esv::lua
 
 	ServerState::~ServerState()
 	{
-		if (gOsirisProxy) {
+		if (gExtender) {
 #if !defined(OSI_NO_DEBUGGER)
-			auto debugger = gOsirisProxy->GetLuaDebugger();
+			auto debugger = gExtender->GetLuaDebugger();
 			if (debugger) {
 				debugger->ServerStateDeleted();
 			}
 #endif
 
-			gOsirisProxy->GetOsiris().GetCustomFunctionManager().ClearDynamicEntries();
+			gExtender->GetOsiris().GetCustomFunctionManager().ClearDynamicEntries();
 		}
 	}
 
@@ -1120,7 +1120,7 @@ namespace bg3se::esv
 
 	ExtensionState & ExtensionState::Get()
 	{
-		return gOsirisProxy->GetServerExtensionState();
+		return gExtender->GetServerExtensionState();
 	}
 
 	lua::State * ExtensionState::GetLua()

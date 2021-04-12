@@ -1,5 +1,5 @@
 #include <stdafx.h>
-#include <OsirisProxy.h>
+#include <ScriptExtender.h>
 #include <ScriptHelpers.h>
 #include <Lua/LuaSerializers.h>
 

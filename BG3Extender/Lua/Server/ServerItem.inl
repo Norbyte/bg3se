@@ -165,7 +165,7 @@ namespace bg3se::esv::lua
 		case LUA_TLIGHTUSERDATA:
 		{
 			auto handle = checked_get<ObjectHandle>(L, 1);
-			item = gOsirisProxy->GetServerEntityHelpers().GetComponent<esv::Item>(handle);
+			item = gExtender->GetServerEntityHelpers().GetComponent<esv::Item>(handle);
 			break;
 		}
 
@@ -173,14 +173,14 @@ namespace bg3se::esv::lua
 		{
 			OsiError("Resolving integer object handles is deprecated since v52!")
 			auto handle = ObjectHandle(lua_tointeger(L, 1));
-			item = gOsirisProxy->GetServerEntityHelpers().GetComponent<esv::Item>(handle);
+			item = gExtender->GetServerEntityHelpers().GetComponent<esv::Item>(handle);
 			break;
 		}
 
 		case LUA_TSTRING:
 		{
 			auto guid = lua_tostring(L, 1);
-			item = gOsirisProxy->GetServerEntityHelpers().GetComponent<esv::Item>(guid);
+			item = gExtender->GetServerEntityHelpers().GetComponent<esv::Item>(guid);
 			break;
 		}
 

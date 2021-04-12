@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "DataLibraries.h"
 #include "ExtensionState.h"
-#include "OsirisProxy.h"
+#include "ScriptExtender.h"
 #include <GameDefinitions/Symbols.h>
 #include <string>
 #include <functional>
