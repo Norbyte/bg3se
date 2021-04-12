@@ -138,17 +138,25 @@ namespace bg3se::lua
 
 	inline void push(lua_State* L, ObjectHandle const& h)
 	{
-		lua_pushlightuserdata(L, (void*)h.Handle);
+		if (h) {
+			lua_pushlightuserdata(L, (void*)h.Handle);
+		} else {
+			lua_pushnil(L);
+		}
 	}
 
 	inline void push(lua_State* L, EntityHandle const& h)
 	{
-		lua_pushlightuserdata(L, (void*)h.Handle);
+		if (h) {
+			lua_pushlightuserdata(L, (void*)h.Handle);
+		} else {
+			lua_pushnil(L);
+		}
 	}
 
 	inline void push(lua_State* L, EntityWorldHandle const& h)
 	{
-		lua_pushlightuserdata(L, (void*)h.Handle.Handle);
+		push(L, h.Handle);
 	}
 
 	inline void push(lua_State* L, Path const& p)
@@ -372,13 +380,21 @@ namespace bg3se::lua
 	template <>
 	inline ObjectHandle get<ObjectHandle>(lua_State* L, int index)
 	{
-		return ObjectHandle{ (uint64_t)lua_touserdata(L, index) };
+		if (lua_type(L, index) == LUA_TNIL) {
+			return ObjectHandle{ ObjectHandle::NullHandle };
+		} else {
+			return ObjectHandle{ (uint64_t)lua_touserdata(L, index) };
+		}
 	}
 
 	template <>
 	inline EntityHandle get<EntityHandle>(lua_State* L, int index)
 	{
-		return EntityHandle{ (uint64_t)lua_touserdata(L, index) };
+		if (lua_type(L, index) == LUA_TNIL) {
+			return EntityHandle{ EntityHandle::NullHandle };
+		} else {
+			return EntityHandle{ (uint64_t)lua_touserdata(L, index) };
+		}
 	}
 
 	template <>
