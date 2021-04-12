@@ -5,7 +5,7 @@
 #include <cstdint>
 #include "LuaDebug.pb.h"
 #include <GameDefinitions/Module.h>
-#include "DebugInterface.h"
+#include <Osiris/Debugger/DebugInterface.h>
 
 struct lua_State;
 struct lua_Debug;

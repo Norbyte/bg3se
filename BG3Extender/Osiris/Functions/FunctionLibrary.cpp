@@ -1,6 +1,6 @@
 #include <stdafx.h>
 #include <OsirisProxy.h>
-#include <Functions/FunctionLibrary.h>
+#include <Osiris/Functions/FunctionLibrary.h>
 #include <Version.h>
 #include <ScriptHelpers.h>
 #include <fstream>
@@ -51,7 +51,7 @@ namespace bg3se::esv
 		}
 	}
 
-	CustomFunctionLibrary::CustomFunctionLibrary(OsirisProxy & osiris)
+	CustomFunctionLibrary::CustomFunctionLibrary(OsirisExtender & osiris)
 		: osiris_(osiris)
 	{}
 
@@ -117,9 +117,9 @@ namespace bg3se::esv
 		functionMgr.EndStaticRegistrationPhase();
 	}
 
-	void CustomFunctionLibrary::PostStartup()
+	void CustomFunctionLibrary::Startup()
 	{
-		if (PostLoaded) {
+		if (loaded_) {
 			return;
 		}
 
@@ -190,20 +190,6 @@ namespace bg3se::esv
 			std::bind(&CustomFunctionLibrary::OnAppInputEvent, this, _1, _2, _3)
 		);*/
 
-		PostLoaded = true;
-	}
-
-	void CustomFunctionLibrary::OnBaseModuleLoadedServer()
-	{
-		DEBUG("CustomFunctionLibrary::OnBaseModuleLoadedServer(): Re-initializing module state.");
-		auto & functionMgr = osiris_.GetCustomFunctionManager();
-		functionMgr.ClearDynamicEntries();
-		esv::ExtensionState::Get().LuaReset(true);
-	}
-
-	void CustomFunctionLibrary::OnBaseModuleLoadedClient()
-	{
-		DEBUG("CustomFunctionLibrary::OnBaseModuleLoadedClient(): Re-initializing module state.");
-		ecl::ExtensionState::Get().LuaReset(true);
+		loaded_ = true;
 	}
 }

@@ -329,18 +329,15 @@ External/
 jsoncpp-build/
 jsoncpp-master/
 
+# Compiled Protobuf files
+*.pb.cc
+*.pb.h
+LuaDebugger/DbgProtocol.cs
+
 PublishingRoot/
-D3dErr
-OsiInterface/osidebug.pb.cc
-OsiInterface/osidebug.pb.h
 Latest.zip
 LatestBuild
 PDB
-OsiInterface/ScriptExtensions.pb.h
-OsiInterface/ScriptExtensions.pb.cc
 publish.bat
 publish-release.bat
 package-signer.key
-OsiInterface/LuaDebug.pb.h
-OsiInterface/LuaDebug.pb.cc
-LuaDebugger/DbgProtocol.cs

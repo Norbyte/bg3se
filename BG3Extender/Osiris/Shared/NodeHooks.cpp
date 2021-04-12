@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "NodeHooks.h"
+#include <Osiris/Shared/NodeHooks.h>
 #include <sstream>
 #include <memory>
 #include <cassert>
@@ -27,6 +27,8 @@ namespace bg3se
 		T * region_;
 		DWORD oldProtect_;
 	};
+
+	NodeVMTWrappers * gNodeVMTWrappers{ nullptr };
 
 	NodeVMTWrapper::NodeVMTWrapper(NodeVMT * vmt, NodeWrapOptions & options)
 		: vmt_(vmt), options_(options)
@@ -141,10 +143,18 @@ namespace bg3se
 	NodeVMTWrappers::NodeVMTWrappers(NodeVMT ** vmts)
 		: vmts_(vmts)
 	{
+		assert(gNodeVMTWrappers == nullptr);
+		gNodeVMTWrappers = this;
 		for (unsigned i = 1; i < (unsigned)NodeType::Max + 1; i++) {
 			wrappers_[i] = std::make_unique<NodeVMTWrapper>(vmts_[i], VMTWrapOptions[i]);
 			vmtToTypeMap_[vmts[i]] = (NodeType)i;
 		}
+	}
+
+	NodeVMTWrappers::~NodeVMTWrappers()
+	{
+		assert(gNodeVMTWrappers == this);
+		gNodeVMTWrappers = nullptr;
 	}
 
 	NodeType NodeVMTWrappers::GetType(Node * node)
@@ -279,6 +289,4 @@ namespace bg3se
 
 		return succeeded;
 	}
-
-	std::unique_ptr<NodeVMTWrappers> gNodeVMTWrappers;
 }

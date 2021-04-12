@@ -1,6 +1,6 @@
 #pragma once
 
-#include <CustomFunctions.h>
+#include <Osiris/Shared/CustomFunctions.h>
 #include <GameDefinitions/EntitySystem.h>
 #include <GameDefinitions/Character.h>
 #include <GameDefinitions/Item.h>

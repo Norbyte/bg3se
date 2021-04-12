@@ -1,5 +1,6 @@
 #pragma once
 
+#include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/Osiris.h>
 #include "Wrappers.h"
 #include <detours.h>
@@ -30,10 +31,8 @@ public:
 	OsirisWrappers();
 
 	void Initialize();
-	void InitializeExtensions();
-	void InitializeDeferredExtensions();
-	//void InitializeNetworking(net::MessageFactory * factory);
 	void Shutdown();
+	bool ResolveNodeVMTs();
 
 	OsirisStaticGlobals Globals;
 
@@ -64,34 +63,26 @@ public:
 	POSTHOOKABLE(HANDLE(LPCWSTR, DWORD, DWORD, LPSECURITY_ATTRIBUTES, DWORD, DWORD, HANDLE), CreateFileW);
 	POSTHOOKABLE(BOOL(HANDLE), CloseHandle);
 
-	POSTHOOKABLE(void(void *, ecl::GameState, ecl::GameState), ClientGameStateChangedEvent);
-	POSTHOOKABLE(void(void *, esv::GameState, esv::GameState), ServerGameStateChangedEvent);
-	HOOKABLE(void(void *), ClientGameStateWorkerStart);
-	HOOKABLE(void(void *), ServerGameStateWorkerStart);
-	PREHOOKABLE(void(void *), SkillPrototypeManagerInit);
-	/*WRAPPABLE(FileReader * (FileReader *, Path *, unsigned int), FileReader__ctor);
-	POSTHOOKABLE(void(net::Message*, net::BitstreamSerializer*), eocnet__ClientConnectMessage__Serialize);
-	POSTHOOKABLE(void(net::Message*, net::BitstreamSerializer*), eocnet__ClientAcceptMessage__Serialize);
-	PREHOOKABLE(bool(void*, ObjectVisitor*), esv__OsirisVariableHelper__SavegameVisit);
-	PREHOOKABLE(void(TranslatedStringRepository*), TranslatedStringRepository__UnloadOverrides);
-	HOOKABLE(void(RPGStats*, char const*, uint32_t), RPGStats__Load);*/
-
 	DivFunctions::CallProc CallOriginal;
 	DivFunctions::CallProc QueryOriginal;
 	DivFunctions::ErrorMessageProc ErrorOriginal;
 	DivFunctions::AssertProc AssertOriginal;
 
+	NodeVMT* VMTs[(unsigned)NodeType::Max + 1];
+
 private:
 	HMODULE Kernel32Module{ NULL };
 	HMODULE OsirisModule{ NULL };
-	bool ExtensionsInitialized{ false };
-	bool DeferredExtensionsInitialized{ false };
-	bool NetworkingInitialized{ false };
+
+	std::optional<bool> resolvedVMTs_;
 
 	void * FindRuleActionCallProc();
 	void FindOsirisGlobals(FARPROC CtorProc);
 	void FindDebugFlags(FARPROC SetOptionProc);
 	void RegisterDIVFunctionsPreHook(void * Osiris, DivFunctions * Functions);
+	bool ResolveNodeVMTsInternal();
+
+	void SaveNodeVMT(NodeType type, NodeVMT* vmt);
 
 	static bool CallWrapper(uint32_t FunctionHandle, OsiArgumentDesc * Params);
 	static bool QueryWrapper(uint32_t FunctionHandle, OsiArgumentDesc * Params);

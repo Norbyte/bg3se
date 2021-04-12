@@ -10,7 +10,7 @@
 #include <GameDefinitions/ActionMachine.h>
 #include <GameDefinitions/TurnManager.h>*/
 #include <GameDefinitions/Symbols.h>
-#include "Wrappers.h"
+#include <GameHooks/Wrappers.h>
 #include <optional>
 
 namespace bg3se {
@@ -193,8 +193,6 @@ namespace bg3se {
 	public:
 		bool FindLibraries(uint32_t gameRevision);
 		bool PostStartupFindLibraries();
-		void UpdateComponentMappings();
-		void Cleanup();
 		bool GetGameVersion(GameVersionInfo & version);
 
 		void ShowStartupError(STDWString const & msg, bool wait, bool exitGame);
@@ -225,20 +223,13 @@ namespace bg3se {
 			return InitFailed;
 		}
 
-#define HOOK_DEFN(name, sym, defn, hookType) enum class name##Tag {}; \
-	hookType<name##Tag, defn> name;
-#include <GameDefinitions/EngineHooks.inl>
-#undef HOOK_DEFN
-
 	private:
 
 		void MapAllSymbols(bool deferred);
 		void FindTextSegment();
 
 		bool FindBG3(uint8_t const * & start, size_t & size);
-		void FindServerGlobalsBG3();
-		void FindEoCGlobalsBG3();
-		void FindGlobalStringTableBG3();
+		void FindSymbolNameRegistrations();
 
 		bool IsConstStringRef(uint8_t const * ref, char const * str) const;
 		bool IsFixedStringRef(uint8_t const * ref, char const * str) const;

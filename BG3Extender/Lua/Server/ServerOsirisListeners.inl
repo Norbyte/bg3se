@@ -9,11 +9,12 @@ namespace bg3se::esv::lua
 
 	OsirisCallbackManager::~OsirisCallbackManager()
 	{
-		if (osirisHooked_ && gNodeVMTWrappers) {
-			gNodeVMTWrappers->InsertPreHookLua = std::function<void(Node*, TuplePtrLL*, bool)>();
-			gNodeVMTWrappers->InsertPostHookLua = std::function<void(Node*, TuplePtrLL*, bool)>();
-			gNodeVMTWrappers->CallQueryPreHookLua = std::function<void(Node*, OsiArgumentDesc*)>();
-			gNodeVMTWrappers->CallQueryPostHookLua = std::function<void(Node*, OsiArgumentDesc*, bool)>();
+		auto wrappers = gOsirisProxy->GetOsiris().GetVMTWrappers();
+		if (osirisHooked_ && wrappers) {
+			wrappers->InsertPreHookLua = std::function<void(Node*, TuplePtrLL*, bool)>();
+			wrappers->InsertPostHookLua = std::function<void(Node*, TuplePtrLL*, bool)>();
+			wrappers->CallQueryPreHookLua = std::function<void(Node*, OsiArgumentDesc*)>();
+			wrappers->CallQueryPostHookLua = std::function<void(Node*, OsiArgumentDesc*, bool)>();
 		}
 	}
 
@@ -206,13 +207,14 @@ namespace bg3se::esv::lua
 	{
 		if (osirisHooked_) return;
 
-		gOsirisProxy->HookNodeVMTs();
-		if (gNodeVMTWrappers) {
+		gOsirisProxy->GetOsiris().HookNodeVMTs();
+		auto wrappers = gOsirisProxy->GetOsiris().GetVMTWrappers();
+		if (wrappers) {
 			using namespace std::placeholders;
-			gNodeVMTWrappers->InsertPreHookLua = std::bind(&OsirisCallbackManager::InsertPreHook, this, _1, _2, _3);
-			gNodeVMTWrappers->InsertPostHookLua = std::bind(&OsirisCallbackManager::InsertPostHook, this, _1, _2, _3);
-			gNodeVMTWrappers->CallQueryPreHookLua = std::bind(&OsirisCallbackManager::CallQueryPreHook, this, _1, _2);
-			gNodeVMTWrappers->CallQueryPostHookLua = std::bind(&OsirisCallbackManager::CallQueryPostHook, this, _1, _2, _3);
+			wrappers->InsertPreHookLua = std::bind(&OsirisCallbackManager::InsertPreHook, this, _1, _2, _3);
+			wrappers->InsertPostHookLua = std::bind(&OsirisCallbackManager::InsertPostHook, this, _1, _2, _3);
+			wrappers->CallQueryPreHookLua = std::bind(&OsirisCallbackManager::CallQueryPreHook, this, _1, _2);
+			wrappers->CallQueryPostHookLua = std::bind(&OsirisCallbackManager::CallQueryPostHook, this, _1, _2, _3);
 		}
 
 		osirisHooked_ = true;

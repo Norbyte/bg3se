@@ -1,15 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="DataLibraries.cpp" />
-    <ClCompile Include="DataLibrariesBG3Game.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="DWriteWrapper.cpp" />
     <ClCompile Include="CrashReporter.cpp" />
     <ClCompile Include="ExtensionState.cpp" />
     <ClCompile Include="GlobalFixedStrings.cpp" />
     <ClCompile Include="OsirisProxy.cpp" />
-    <ClCompile Include="OsirisWrappers.cpp" />
     <ClCompile Include="ScriptExtensions.pb.cc" />
     <ClCompile Include="ScriptHelpers.cpp" />
     <ClCompile Include="stdafx.cpp" />
@@ -32,24 +29,6 @@
     <ClCompile Include="Lua\LuaSerializers.cpp">
       <Filter>Lua</Filter>
     </ClCompile>
-    <ClCompile Include="Functions\FunctionLibrary.cpp">
-      <Filter>Osiris\Functions</Filter>
-    </ClCompile>
-    <ClCompile Include="Functions\FunctionUtilities.cpp">
-      <Filter>Osiris\Functions</Filter>
-    </ClCompile>
-    <ClCompile Include="Functions\LuaFunctions.cpp">
-      <Filter>Osiris\Functions</Filter>
-    </ClCompile>
-    <ClCompile Include="Functions\MathFunctions.cpp">
-      <Filter>Osiris\Functions</Filter>
-    </ClCompile>
-    <ClCompile Include="Functions\UtilityFunctions.cpp">
-      <Filter>Osiris\Functions</Filter>
-    </ClCompile>
-    <ClCompile Include="Functions\StatFunctions.cpp">
-      <Filter>Osiris\Functions</Filter>
-    </ClCompile>
     <ClCompile Include="EntitySystem.cpp">
       <Filter>GameDefinitions</Filter>
     </ClCompile>
@@ -71,36 +50,68 @@
     <ClCompile Include="Lua\Shared\LuaUtilities.cpp">
       <Filter>Lua\Shared</Filter>
     </ClCompile>
-    <ClCompile Include="Debugger.cpp">
-      <Filter>Osiris\Debugger</Filter>
-    </ClCompile>
-    <ClCompile Include="DebugInterface.cpp">
-      <Filter>Osiris\Debugger</Filter>
-    </ClCompile>
-    <ClCompile Include="DebugMessages.cpp">
-      <Filter>Osiris\Debugger</Filter>
-    </ClCompile>
-    <ClCompile Include="CustomFunctions.cpp">
-      <Filter>Osiris\Shared</Filter>
-    </ClCompile>
-    <ClCompile Include="NodeHooks.cpp">
-      <Filter>Osiris\Shared</Filter>
-    </ClCompile>
-    <ClCompile Include="OsirisHelpers.cpp">
-      <Filter>Osiris\Shared</Filter>
-    </ClCompile>
-    <ClCompile Include="osidebug.pb.cc">
-      <Filter>Osiris\Debugger</Filter>
-    </ClCompile>
     <ClCompile Include="Stats.cpp">
       <Filter>GameDefinitions\Stats</Filter>
     </ClCompile>
     <ClCompile Include="GameDefinitions\Stats\StatsObject.inl">
       <Filter>GameDefinitions\Stats</Filter>
     </ClCompile>
+    <ClCompile Include="GameHooks\DataLibraries.cpp">
+      <Filter>GameHooks</Filter>
+    </ClCompile>
+    <ClCompile Include="GameHooks\DataLibrariesBG3Game.cpp">
+      <Filter>GameHooks</Filter>
+    </ClCompile>
+    <ClCompile Include="GameHooks\OsirisWrappers.cpp">
+      <Filter>GameHooks</Filter>
+    </ClCompile>
+    <ClCompile Include="GameHooks\EngineHooks.cpp">
+      <Filter>GameHooks</Filter>
+    </ClCompile>
+    <ClCompile Include="Osiris\OsirisExtender.cpp">
+      <Filter>Osiris</Filter>
+    </ClCompile>
+    <ClCompile Include="Osiris\Debugger\Debugger.cpp">
+      <Filter>Osiris\Debugger</Filter>
+    </ClCompile>
+    <ClCompile Include="Osiris\Debugger\DebugInterface.cpp">
+      <Filter>Osiris\Debugger</Filter>
+    </ClCompile>
+    <ClCompile Include="Osiris\Debugger\DebugMessages.cpp">
+      <Filter>Osiris\Debugger</Filter>
+    </ClCompile>
+    <ClCompile Include="Osiris\Debugger\osidebug.pb.cc">
+      <Filter>Osiris\Debugger</Filter>
+    </ClCompile>
+    <ClCompile Include="Osiris\Shared\CustomFunctions.cpp">
+      <Filter>Osiris\Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="Osiris\Shared\NodeHooks.cpp">
+      <Filter>Osiris\Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="Osiris\Shared\OsirisHelpers.cpp">
+      <Filter>Osiris\Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="Osiris\Functions\FunctionLibrary.cpp">
+      <Filter>Osiris\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="Osiris\Functions\FunctionUtilities.cpp">
+      <Filter>Osiris\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="Osiris\Functions\LuaFunctions.cpp">
+      <Filter>Osiris\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="Osiris\Functions\MathFunctions.cpp">
+      <Filter>Osiris\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="Osiris\Functions\StatFunctions.cpp">
+      <Filter>Osiris\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="Osiris\Functions\UtilityFunctions.cpp">
+      <Filter>Osiris\Functions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DataLibraries.h" />
     <ClInclude Include="DWriteWrapper.h" />
     <ClInclude Include="ExtensionHelpers.h" />
     <ClInclude Include="ExtensionState.h" />
@@ -108,7 +119,6 @@
     <ClInclude Include="ExtensionStateServer.h" />
     <ClInclude Include="GlobalFixedStrings.h" />
     <ClInclude Include="OsirisProxy.h" />
-    <ClInclude Include="OsirisWrappers.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ScriptExtensions.pb.h" />
     <ClInclude Include="ScriptHelpers.h" />
@@ -116,7 +126,6 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Version.h" />
-    <ClInclude Include="Wrappers.h" />
     <ClInclude Include="Lua\Shared\LuaStats.h">
       <Filter>Lua\Shared</Filter>
     </ClInclude>
@@ -137,9 +146,6 @@
     </ClInclude>
     <ClInclude Include="Lua\LuaSerializers.h">
       <Filter>Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="Functions\FunctionLibrary.h">
-      <Filter>Osiris\Functions</Filter>
     </ClInclude>
     <ClInclude Include="GameDefinitions\Components\Boosts.h">
       <Filter>GameDefinitions\Components</Filter>
@@ -249,33 +255,52 @@
     <ClInclude Include="Lua\LuaDebugMessages.h">
       <Filter>Lua\Debugger</Filter>
     </ClInclude>
-    <ClInclude Include="Debugger.h">
-      <Filter>Osiris\Debugger</Filter>
-    </ClInclude>
-    <ClInclude Include="DebugInterface.h">
-      <Filter>Osiris\Debugger</Filter>
-    </ClInclude>
-    <ClInclude Include="DebugMessages.h">
-      <Filter>Osiris\Debugger</Filter>
-    </ClInclude>
-    <ClInclude Include="CustomFunctions.h">
-      <Filter>Osiris\Shared</Filter>
-    </ClInclude>
-    <ClInclude Include="NodeHooks.h">
-      <Filter>Osiris\Shared</Filter>
-    </ClInclude>
-    <ClInclude Include="OsirisHelpers.h">
-      <Filter>Osiris\Shared</Filter>
-    </ClInclude>
-    <ClInclude Include="osidebug.pb.h">
-      <Filter>Osiris\Debugger</Filter>
-    </ClInclude>
     <ClInclude Include="GameDefinitions\GuidResources.h">
       <Filter>GameDefinitions</Filter>
     </ClInclude>
     <ClInclude Include="GameDefinitions\Resources.h">
       <Filter>GameDefinitions</Filter>
     </ClInclude>
+    <ClInclude Include="GameHooks\DataLibraries.h">
+      <Filter>GameHooks</Filter>
+    </ClInclude>
+    <ClInclude Include="GameHooks\OsirisWrappers.h">
+      <Filter>GameHooks</Filter>
+    </ClInclude>
+    <ClInclude Include="GameHooks\Wrappers.h">
+      <Filter>GameHooks</Filter>
+    </ClInclude>
+    <ClInclude Include="GameHooks\EngineHooks.h">
+      <Filter>GameHooks</Filter>
+    </ClInclude>
+    <ClInclude Include="Osiris\OsirisExtender.h">
+      <Filter>Osiris</Filter>
+    </ClInclude>
+    <ClInclude Include="Osiris\Debugger\Debugger.h">
+      <Filter>Osiris\Debugger</Filter>
+    </ClInclude>
+    <ClInclude Include="Osiris\Debugger\DebugInterface.h">
+      <Filter>Osiris\Debugger</Filter>
+    </ClInclude>
+    <ClInclude Include="Osiris\Debugger\DebugMessages.h">
+      <Filter>Osiris\Debugger</Filter>
+    </ClInclude>
+    <ClInclude Include="Osiris\Debugger\osidebug.pb.h">
+      <Filter>Osiris\Debugger</Filter>
+    </ClInclude>
+    <ClInclude Include="Osiris\Shared\CustomFunctions.h">
+      <Filter>Osiris\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="Osiris\Shared\NodeHooks.h">
+      <Filter>Osiris\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="Osiris\Shared\OsirisHelpers.h">
+      <Filter>Osiris\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="Osiris\Functions\FunctionLibrary.h">
+      <Filter>Osiris\Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="ExtenderConfig.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -337,9 +362,6 @@
     <None Include="Lua\Server\ServerSurface.inl">
       <Filter>Lua\Server</Filter>
     </None>
-    <None Include="GameDefinitions\EngineHooks.inl">
-      <Filter>GameDefinitions</Filter>
-    </None>
     <None Include="GameDefinitions\Enumerations.inl">
       <Filter>GameDefinitions</Filter>
     </None>
@@ -363,9 +385,6 @@
     </None>
     <None Include="Lua\Shared\LuaLocalization.inl">
       <Filter>Lua\Shared</Filter>
-    </None>
-    <None Include="osidebug.proto">
-      <Filter>Osiris\Debugger</Filter>
     </None>
     <None Include="Lua\Shared\LuaPropertyMapHelpers.h">
       <Filter>Lua\Shared</Filter>
@@ -402,6 +421,12 @@
     </None>
     <None Include="GameDefinitions\PropertyMaps\CommonTypes.inl">
       <Filter>GameDefinitions\PropertyMaps</Filter>
+    </None>
+    <None Include="GameHooks\EngineHooks.inl">
+      <Filter>GameHooks</Filter>
+    </None>
+    <None Include="Osiris\Debugger\osidebug.proto">
+      <Filter>Osiris\Debugger</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -449,6 +474,9 @@
     </Filter>
     <Filter Include="GameDefinitions\PropertyMaps">
       <UniqueIdentifier>{6fbb9ad7-3c78-463d-aa8d-05b362d99765}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameHooks">
+      <UniqueIdentifier>{14f09af4-6cd3-44a0-87c9-89b451bb46f8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

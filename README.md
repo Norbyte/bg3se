@@ -1,19 +1,19 @@
-# Norbyte's Divinity Script Extender
+# Norbyte's Baldur's Gate 3 Script Extender
 
-Downloads available [>>>HERE<<<](https://github.com/Norbyte/ositools/releases/latest).
+Downloads available *SOON*.
 
 The Script Extender toolkit adds previously unavailable features to the scripting language of the game.
 
 Features:
- - Lots of new Osiris calls and queries ([API Documentation](https://github.com/Norbyte/ositools/blob/master/APIDocs.md))
- - Lua scripting ([API Documentation](https://github.com/Norbyte/ositools/blob/master/LuaAPIDocs.md))
+ - Lots of new Osiris calls and queries ([API Documentation](https://github.com/Norbyte/bg3se/blob/master/APIDocs.md))
+ - Lua scripting ([API Documentation](https://github.com/Norbyte/bg3se/blob/master/LuaAPIDocs.md))
  - Real-time debugging of Osiris code ([Usage](https://gist.github.com/Norbyte/8b7eb35cd17f799ea113636b15e1f967))
  - Significant improvements in modded game loading times
  - Debug logging of Osiris rule execution/compilation
 
 ### Configuration
 
-The following configuration variables can be set in the `OsirisExtenderSettings.json` file:
+The following configuration variables can be set in the `ScriptExtenderSettings.json` file:
 
 | Variable | Type | Description |
 |--|--|--|

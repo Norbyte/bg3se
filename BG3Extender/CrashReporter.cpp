@@ -3,7 +3,7 @@
 #include <DbgHelp.h>
 #include <psapi.h>
 #include <OsirisProxy.h>
-#include <NodeHooks.h>
+#include <Osiris/Shared/NodeHooks.h>
 
 #include <vector>
 #include <string>
@@ -27,22 +27,22 @@ static const ExcludedSymbol ExcludedSymbols[] = {
 	{&decltype(bg3se::LibraryManager::esv__CombineManager__ExecuteCombination)::CallToTrampoline, 0x120},
 	{&decltype(bg3se::LibraryManager::esv__ProjectileHelpers__ShootProjectile)::CallToTrampoline, 0x120},
 	{&decltype(bg3se::LibraryManager::esv__Projectile__Explode)::CallToTrampoline, 0x120},
-	{&decltype(bg3se::LibraryManager::UIObjectManager__CreateUIObject)::CallToTrampoline, 0x120},
-	{&decltype(bg3se::OsirisWrappers::FileReader__ctor)::CallToTrampoline, 0x120},
-	{&decltype(bg3se::OsirisWrappers::ClientGameStateWorkerStart)::CallToTrampoline, 0x120},
-	{&decltype(bg3se::OsirisWrappers::ServerGameStateWorkerStart)::CallToTrampoline, 0x120},
+	{&decltype(bg3se::LibraryManager::UIObjectManager__CreateUIObject)::CallToTrampoline, 0x120},*/
+	{&decltype(bg3se::EngineHooks::FileReader__ctor)::CallToTrampoline, 0x120},
+	{&decltype(bg3se::OsirisProxy::clientGameStateWorkerStart_)::CallToTrampoline, 0x120},
+	{&decltype(bg3se::OsirisProxy::serverGameStateWorkerStart_)::CallToTrampoline, 0x120},
 	{&decltype(bg3se::OsirisWrappers::Event)::CallToTrampoline, 0x120},
 	{&decltype(bg3se::OsirisWrappers::Call)::CallToTrampoline, 0x120},
 	{&decltype(bg3se::OsirisWrappers::Query)::CallToTrampoline, 0x120},
 	{&decltype(bg3se::OsirisWrappers::RuleActionCall)::CallToTrampoline, 0x120},
-	{&bg3se::esv::CustomFunctionLibrary::OnShootProjectile, 0x120},
+	//{&bg3se::esv::CustomFunctionLibrary::OnShootProjectile, 0x120},
 	{&bg3se::NodeVMTWrapper::s_WrappedIsValid, 0x100},
 	{&bg3se::NodeVMTWrapper::s_WrappedPushDownTuple, 0x100},
 	{&bg3se::NodeVMTWrapper::s_WrappedPushDownTupleDelete, 0x100},
 	{&bg3se::NodeVMTWrapper::s_WrappedInsertTuple, 0x100},
 	{&bg3se::NodeVMTWrapper::s_WrappedDeleteTuple, 0x100},
 	{&bg3se::NodeVMTWrapper::s_WrappedCallQuery, 0x100},
-	{&bg3se::ecl::lua::UIObjectFunctionCallCapture, 0x120},*/
+	//{&bg3se::ecl::lua::UIObjectFunctionCallCapture, 0x120},
 	{&bg3se::CustomFunctionInjector::StaticCallWrapper, 0x120},
 	{&bg3se::CustomFunctionInjector::StaticQueryWrapper, 0x120}
 };

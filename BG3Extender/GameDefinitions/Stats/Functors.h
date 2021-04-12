@@ -4,6 +4,7 @@
 #include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/Stats/Common.h>
 #include <GameDefinitions/Hit.h>
+#include <GameDefinitions/Misc.h>
 
 namespace bg3se
 {

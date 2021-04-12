@@ -256,7 +256,7 @@ namespace bg3se::esv
 				auto eventArgs = OsiArgumentDesc::Create(OsiArgumentValue{ ValueType::String, eventName });
 				eventArgs->Add(OsiArgumentValue{ (int64_t)index });
 
-				gOsirisProxy->GetCustomFunctionInjector().ThrowEvent(ForLoopEventHandle, eventArgs);
+				gOsirisProxy->GetOsiris().GetCustomFunctionInjector().ThrowEvent(ForLoopEventHandle, eventArgs);
 
 				delete eventArgs;
 			}
@@ -273,7 +273,7 @@ namespace bg3se::esv
 				eventArgs->Add(OsiArgumentValue{ ValueType::String, eventName });
 				eventArgs->Add(OsiArgumentValue{ (int64_t)index });
 
-				gOsirisProxy->GetCustomFunctionInjector().ThrowEvent(ForLoopObjectEventHandle, eventArgs);
+				gOsirisProxy->GetOsiris().GetCustomFunctionInjector().ThrowEvent(ForLoopObjectEventHandle, eventArgs);
 
 				delete eventArgs;
 			}

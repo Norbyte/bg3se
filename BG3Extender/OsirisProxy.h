@@ -1,23 +1,21 @@
 #pragma once
 
+#include <ExtenderConfig.h>
 #include <GameDefinitions/Osiris.h>
 #include <GameDefinitions/GuidResources.h>
 #include <ExtensionStateClient.h>
 #include <ExtensionStateServer.h>
 #if !defined(OSI_NO_DEBUGGER)
-#include "DebugInterface.h"
-#include "DebugMessages.h"
-#include "Debugger.h"
 #include "Lua/LuaDebugger.h"
 #include "Lua/LuaDebugMessages.h"
 #endif
-#include "OsirisWrappers.h"
-#include "CustomFunctions.h"
-#include "DataLibraries.h"
-#include "Functions/FunctionLibrary.h"
+#include <GameHooks/OsirisWrappers.h>
+#include <GameHooks/DataLibraries.h>
+#include <GameHooks/EngineHooks.h>
 //#include "NetProtocol.h"
 #include <GameDefinitions/Symbols.h>
 #include <GlobalFixedStrings.h>
+#include <Osiris/OsirisExtender.h>
 //#include <Hit.h>
 
 #include <thread>
@@ -25,51 +23,6 @@
 #include <shared_mutex>
 
 namespace bg3se {
-
-
-struct ToolConfig
-{
-#if defined(OSI_EXTENSION_BUILD)
-	bool CreateConsole{ false };
-	bool EnableDebugger{ false };
-	bool EnableLuaDebugger{ false };
-#else
-	bool CreateConsole{ true };
-	bool EnableDebugger{ true };
-	bool EnableLuaDebugger{ true };
-#endif
-
-	bool EnableExtensions{ true };
-#if defined(OSI_EOCAPP)
-	bool LogFailedCompile{ true };
-#else
-	bool LogFailedCompile{ false };
-#endif
-	bool EnableLogging{ false };
-	bool LogCompile{ false };
-	bool LogRuntime{ false };
-	bool SendCrashReports{ true };
-	bool EnableAchievements{ true };
-
-#if defined(OSI_EXTENSION_BUILD)
-	bool DisableModValidation{ true };
-#if defined(_DEBUG)
-	bool DeveloperMode{ true };
-#else
-	bool DeveloperMode{ false };
-#endif // defined(_DEBUG)
-#else
-	bool DisableModValidation{ false };
-	bool DeveloperMode{ true };
-#endif // defined(OSI_EXTENSION_BUILD)
-
-	bool ShowPerfWarnings{ false };
-	uint32_t DebuggerPort{ 9999 };
-	uint32_t LuaDebuggerPort{ 9998 };
-	uint32_t DebugFlags{ 0 };
-	std::wstring LogDirectory;
-};
-
 
 class SavegameSerializer
 {
@@ -321,7 +274,7 @@ public:
 	void Initialize();
 	void Shutdown();
 
-	inline ToolConfig & GetConfig()
+	inline ExtenderConfig & GetConfig()
 	{
 		return config_;
 	}
@@ -330,36 +283,6 @@ public:
 	void LogOsirisError(std::string_view msg);
 	void LogOsirisWarning(std::string_view msg);
 	void LogOsirisMsg(std::string_view msg);
-
-	inline OsirisStaticGlobals const & GetGlobals() const
-	{
-		return Wrappers.Globals;
-	}
-
-	inline OsirisDynamicGlobals const & GetDynamicGlobals() const
-	{
-		return DynGlobals;
-	}
-
-	inline CustomFunctionManager & GetCustomFunctionManager()
-	{
-		return CustomFunctions;
-	}
-
-	inline CustomFunctionInjector const & GetCustomFunctionInjector() const
-	{
-		return CustomInjector;
-	}
-
-	inline CustomFunctionInjector& GetCustomFunctionInjector()
-	{
-		return CustomInjector;
-	}
-
-	inline esv::CustomFunctionLibrary & GetFunctionLibrary()
-	{
-		return FunctionLibrary;
-	}
 
 	inline LibraryManager const & GetLibraryManager() const
 	{
@@ -407,26 +330,6 @@ public:
 
 	bool HasFeatureFlag(char const *) const;
 
-	inline void * GetOsirisDllStart() const
-	{
-		return Wrappers.OsirisDllStart;
-	}
-
-	inline uint32_t GetOsirisDllSize() const
-	{
-		return Wrappers.OsirisDllSize;
-	}
-
-	inline OsirisWrappers & GetWrappers()
-	{
-		return Wrappers;
-	}
-
-	inline OsirisWrappers const & GetWrappers() const
-	{
-		return Wrappers;
-	}
-
 	/*inline NetworkManager & GetNetworkManager()
 	{
 		return networkManager_;
@@ -447,9 +350,9 @@ public:
 		return clientEntityHelpers_;
 	}
 
-	inline bool IsStoryLoaded() const
+	inline OsirisExtender& GetOsiris()
 	{
-		return StoryLoaded;
+		return osiris_;
 	}
 
 	void ClearPathOverrides();
@@ -458,20 +361,21 @@ public:
 	bool IsInServerThread() const;
 	bool IsInClientThread() const;
 	void AttachConsoleThread(bool server);
-	void HookNodeVMTs();
 
-	std::wstring MakeLogFilePath(std::wstring const& Type, std::wstring const& Extension);
 	void ResetLuaState(bool resetServer, bool resetClient);
 
+	// HACK - we need to expose this so it can be added to the CrashReporter whitelist
+	enum class ClientGameStateWorkerStartTag {};
+	enum class ServerGameStateWorkerStartTag {};
+	HookableFunction<ClientGameStateWorkerStartTag, void(void*)> clientGameStateWorkerStart_;
+	HookableFunction<ServerGameStateWorkerStartTag, void(void*)> serverGameStateWorkerStart_;
+
 private:
-	OsirisWrappers Wrappers;
-	OsirisDynamicGlobals DynGlobals;
-	CustomFunctionManager CustomFunctions;
-	CustomFunctionInjector CustomInjector;
-	esv::CustomFunctionLibrary FunctionLibrary;
+	OsirisExtender osiris_;
 	std::unique_ptr<esv::ExtensionState> ServerExtState;
 	std::unique_ptr<ecl::ExtensionState> ClientExtState;
 	LibraryManager Libraries;
+	EngineHooks Hooks;
 	bool LibrariesPostInitialized{ false };
 	bool ServerExtensionLoaded{ false };
 	bool ClientExtensionLoaded{ false };
@@ -488,46 +392,23 @@ private:
 	ServerEntitySystemHelpers serverEntityHelpers_;
 	ClientEntitySystemHelpers clientEntityHelpers_;
 
-	NodeVMT * NodeVMTs[(unsigned)NodeType::Max + 1];
-	bool ResolvedNodeVMTs{ false };
-
-	void OnRegisterDIVFunctions(void *, DivFunctions *);
-	void OnInitGame(void *);
-	void OnDeleteAllData(void *, bool);
-
-	void OnError(char const * Message);
-	void OnAssert(bool Successful, char const * Message, bool Unknown2);
-	bool CompileWrapper(std::function<bool (void *, wchar_t const *, wchar_t const *)> const & Next, void * Osiris, wchar_t const * Path, wchar_t const * Mode);
-	void OnAfterOsirisLoad(void * Osiris, void * Buf, int retval);
-	bool MergeWrapper(std::function<bool(void *, wchar_t *)> const & Next, void * Osiris, wchar_t * Src);
-	void RuleActionCall(std::function<void(RuleActionNode *, void *, void *, void *, void *)> const & Next, RuleActionNode * Action, void * a1, void * a2, void * a3, void * a4);
-
-	ToolConfig config_;
+	ExtenderConfig config_;
 	bool extensionsEnabled_{ false };
-	bool functionLibraryInitialized_{ false };
+	bool postStartupDone_{ false };
 
-	std::wstring LogFilename;
-	std::wstring LogType;
-
-	bool StoryLoaded{ false };
-	std::recursive_mutex storyLoadLock_;
+	enum class ClientGameStateChangedEventTag {};
+	enum class ServerGameStateChangedEventTag {};
+	PostHookableFunction<ClientGameStateChangedEventTag, void(void*, ecl::GameState, ecl::GameState)> clientGameStateChangedEvent_;
+	PostHookableFunction<ServerGameStateChangedEventTag, void(void*, esv::GameState, esv::GameState)> serverGameStateChangedEvent_;
 
 #if !defined(OSI_NO_DEBUGGER)
-	std::thread * debuggerThread_{ nullptr };
-	std::unique_ptr<OsirisDebugInterface> debugInterface_;
-	std::unique_ptr<osidbg::DebugMessageHandler> debugMsgHandler_;
-	std::unique_ptr<osidbg::Debugger> debugger_;
-
 	std::thread* luaDebuggerThread_{ nullptr };
 	std::unique_ptr<LuaDebugInterface> luaDebugInterface_;
 	std::unique_ptr<lua::dbg::DebugMessageHandler> luaDebugMsgHandler_;
 	std::unique_ptr<lua::dbg::Debugger> luaDebugger_;
 #endif
 
-	void ResolveNodeVMTs(NodeDb * Db);
-	void SaveNodeVMT(NodeType type, NodeVMT * vmt);
-	void RestartLogging(std::wstring const & Type);
-
+	void PostStartup();
 	void OnBaseModuleLoaded(void * self);
 	/*void OnModuleLoadStarted(TranslatedStringRepository * self);
 	void OnStatsLoadStarted(RPGStats* mgr);
@@ -541,8 +422,6 @@ private:
 	void OnSkillPrototypeManagerInit(void * self);
 	FileReader * OnFileReaderCreate(FileReader::CtorProc* next, FileReader * self, Path const& path, unsigned int type, unsigned int unknown);
 	void OnSavegameVisit(void* osirisHelpers, ObjectVisitor* visitor);
-	void PostInitLibraries();
-	void InitRuntimeLogging();
 	void ResetExtensionStateServer();
 	void LoadExtensionStateServer();
 	void ResetExtensionStateClient();
@@ -552,9 +431,6 @@ private:
 	void AddServerThread(DWORD threadId);
 	void RemoveClientThread(DWORD threadId);
 	void RemoveServerThread(DWORD threadId);
-	
-	static void FlashTraceCallback(void * ctx, void * player, char const * message);
-	static void FlashWarningCallback(void * ctx, void * player, int code, char const * message);
 };
 
 extern std::unique_ptr<OsirisProxy> gOsirisProxy;

@@ -1,7 +1,6 @@
 #include "stdafx.h"
-#include "Debugger.h"
-#include "NodeHooks.h"
-#include "OsirisProxy.h"
+#include <Osiris/Debugger/Debugger.h>
+#include <OsirisProxy.h>
 #include <sstream>
 
 #if !defined(OSI_NO_DEBUGGER)
@@ -35,7 +34,7 @@ namespace bg3se::osidbg
 		auto const & nodeDb = (*globals_.Nodes)->Db;
 		for (unsigned i = 0; i < nodeDb.Size; i++) {
 			auto node = nodeDb.Start[i];
-			NodeType type = gNodeVMTWrappers->GetType(node);
+			NodeType type = gOsirisProxy->GetOsiris().GetVMTWrappers()->GetType(node);
 			if (type == NodeType::Rule) {
 				auto rule = static_cast<RuleNode *>(node);
 				AddRuleActionMappings(rule, nullptr, false, rule->Calls);
@@ -215,7 +214,7 @@ namespace bg3se::osidbg
 		if (forceBreakpointFlags_ & ContinueSkipRulePushdown) {
 			if (bpType == BreakpointType::BreakOnPushDown
 				&& bpNode != nullptr
-				&& gNodeVMTWrappers->GetType(bpNode) == NodeType::Rule) {
+				&& gOsirisProxy->GetOsiris().GetVMTWrappers()->GetType(bpNode) == NodeType::Rule) {
 				return false;
 			}
 		}
@@ -233,7 +232,7 @@ namespace bg3se::osidbg
 					&& (second.frameType == BreakpointReason::NodePushDownTuple
 						|| second.frameType == BreakpointReason::NodePushDownTupleDelete)) {
 					// Check whether the first node is a parent of the second node
-					auto secondType = gNodeVMTWrappers->GetType(second.node);
+					auto secondType = gOsirisProxy->GetOsiris().GetVMTWrappers()->GetType(second.node);
 					uint32_t parentNodeId;
 					if (secondType == NodeType::Rule || secondType == NodeType::RelOp)
 					{
@@ -309,14 +308,15 @@ namespace bg3se::osidbg
 		messageHandler_.SetDebugger(this);
 
 		using namespace std::placeholders;
-		gNodeVMTWrappers->IsValidPreHook = std::bind(&Debugger::IsValidPreHook, this, _1, _2, _3);
-		gNodeVMTWrappers->IsValidPostHook = std::bind(&Debugger::IsValidPostHook, this, _1, _2, _3, _4);
-		gNodeVMTWrappers->PushDownPreHook = std::bind(&Debugger::PushDownPreHook, this, _1, _2, _3, _4, _5);
-		gNodeVMTWrappers->PushDownPostHook = std::bind(&Debugger::PushDownPostHook, this, _1, _2, _3, _4, _5);
-		gNodeVMTWrappers->InsertPreHook = std::bind(&Debugger::InsertPreHook, this, _1, _2, _3);
-		gNodeVMTWrappers->InsertPostHook = std::bind(&Debugger::InsertPostHook, this, _1, _2, _3);
-		gNodeVMTWrappers->CallQueryPreHook = std::bind(&Debugger::CallQueryPreHook, this, _1, _2);
-		gNodeVMTWrappers->CallQueryPostHook = std::bind(&Debugger::CallQueryPostHook, this, _1, _2, _3);
+		auto& wrappers = *gOsirisProxy->GetOsiris().GetVMTWrappers();
+		wrappers.IsValidPreHook = std::bind(&Debugger::IsValidPreHook, this, _1, _2, _3);
+		wrappers.IsValidPostHook = std::bind(&Debugger::IsValidPostHook, this, _1, _2, _3, _4);
+		wrappers.PushDownPreHook = std::bind(&Debugger::PushDownPreHook, this, _1, _2, _3, _4, _5);
+		wrappers.PushDownPostHook = std::bind(&Debugger::PushDownPostHook, this, _1, _2, _3, _4, _5);
+		wrappers.InsertPreHook = std::bind(&Debugger::InsertPreHook, this, _1, _2, _3);
+		wrappers.InsertPostHook = std::bind(&Debugger::InsertPostHook, this, _1, _2, _3);
+		wrappers.CallQueryPreHook = std::bind(&Debugger::CallQueryPreHook, this, _1, _2);
+		wrappers.CallQueryPostHook = std::bind(&Debugger::CallQueryPostHook, this, _1, _2, _3);
 		DEBUG("Debugger::Debugger(): Attached to story");
 	}
 
@@ -326,15 +326,16 @@ namespace bg3se::osidbg
 		messageHandler_.SendDebugSessionEnded();
 		messageHandler_.SetDebugger(nullptr);
 
-		if (gNodeVMTWrappers) {
-			gNodeVMTWrappers->IsValidPreHook = std::function<void(Node *, VirtTupleLL *, AdapterRef *)>();
-			gNodeVMTWrappers->IsValidPostHook = std::function<void(Node *, VirtTupleLL *, AdapterRef *, bool)>();
-			gNodeVMTWrappers->PushDownPreHook = std::function<void(Node *, VirtTupleLL *, AdapterRef *, EntryPoint, bool)>();
-			gNodeVMTWrappers->PushDownPostHook = std::function<void(Node *, VirtTupleLL *, AdapterRef *, EntryPoint, bool)>();
-			gNodeVMTWrappers->InsertPreHook = std::function<void(Node *, TuplePtrLL *, bool)>();
-			gNodeVMTWrappers->InsertPostHook = std::function<void(Node *, TuplePtrLL *, bool)>();
-			gNodeVMTWrappers->CallQueryPreHook = std::function<void(Node *, OsiArgumentDesc *)>();
-			gNodeVMTWrappers->CallQueryPostHook = std::function<void(Node *, OsiArgumentDesc *, bool)>();
+		auto wrappers = gOsirisProxy->GetOsiris().GetVMTWrappers();
+		if (wrappers) {
+			wrappers->IsValidPreHook = std::function<void(Node *, VirtTupleLL *, AdapterRef *)>();
+			wrappers->IsValidPostHook = std::function<void(Node *, VirtTupleLL *, AdapterRef *, bool)>();
+			wrappers->PushDownPreHook = std::function<void(Node *, VirtTupleLL *, AdapterRef *, EntryPoint, bool)>();
+			wrappers->PushDownPostHook = std::function<void(Node *, VirtTupleLL *, AdapterRef *, EntryPoint, bool)>();
+			wrappers->InsertPreHook = std::function<void(Node *, TuplePtrLL *, bool)>();
+			wrappers->InsertPostHook = std::function<void(Node *, TuplePtrLL *, bool)>();
+			wrappers->CallQueryPreHook = std::function<void(Node *, OsiArgumentDesc *)>();
+			wrappers->CallQueryPostHook = std::function<void(Node *, OsiArgumentDesc *, bool)>();
 		}
 	}
 
@@ -850,7 +851,7 @@ namespace bg3se::osidbg
 		lastQueryDepth_ = (uint32_t)callStack_.size();
 		lastQueryResults_.queryNodeId = node->Id;
 		lastQueryResults_.succeeded = succeeded;
-		if (gNodeVMTWrappers->GetType(node) != NodeType::DivQuery
+		if (gOsirisProxy->GetOsiris().GetVMTWrappers()->GetType(node) != NodeType::DivQuery
 			&& !lastQueryResults_.results.empty()) {
 			lastQueryResults_.results.clear();
 		}

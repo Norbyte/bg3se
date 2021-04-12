@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "OsirisProxy.h"
-#include "NodeHooks.h"
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -31,17 +30,6 @@ STATIC_HOOK(Error)
 STATIC_HOOK(Assert)
 STATIC_HOOK(CreateFileW)
 STATIC_HOOK(CloseHandle)
-STATIC_HOOK(ClientGameStateChangedEvent)
-STATIC_HOOK(ServerGameStateChangedEvent)
-STATIC_HOOK(ClientGameStateWorkerStart)
-STATIC_HOOK(ServerGameStateWorkerStart)
-STATIC_HOOK(SkillPrototypeManagerInit)
-/*STATIC_HOOK(FileReader__ctor)
-STATIC_HOOK(eocnet__ClientConnectMessage__Serialize)
-STATIC_HOOK(eocnet__ClientAcceptMessage__Serialize)
-STATIC_HOOK(esv__OsirisVariableHelper__SavegameVisit)
-STATIC_HOOK(TranslatedStringRepository__UnloadOverrides)
-STATIC_HOOK(RPGStats__Load)*/
 
 
 OsirisWrappers::OsirisWrappers()
@@ -132,98 +120,6 @@ void OsirisWrappers::Initialize()
 	DetourTransactionCommit();
 }
 
-void OsirisWrappers::InitializeDeferredExtensions()
-{
-	if (DeferredExtensionsInitialized) {
-		return;
-	}
-
-	DetourTransactionBegin();
-	DetourUpdateThread(GetCurrentThread());
-
-	auto & lib = GetStaticSymbols();
-	/*if (lib.esv__OsirisVariableHelper__SavegameVisit != nullptr) {
-		esv__OsirisVariableHelper__SavegameVisit.Wrap(lib.esv__OsirisVariableHelper__SavegameVisit);
-	}*/
-
-	DetourTransactionCommit();
-
-	DeferredExtensionsInitialized = true;
-}
-
-void OsirisWrappers::InitializeExtensions()
-{
-	if (ExtensionsInitialized) {
-		return;
-	}
-
-	DetourTransactionBegin();
-	DetourUpdateThread(GetCurrentThread());
-
-	auto & lib = GetStaticSymbols();
-
-	if (lib.ecl__GameStateEventManager__ExecuteGameStateChangedEvent != nullptr) {
-		ClientGameStateChangedEvent.Wrap(lib.ecl__GameStateEventManager__ExecuteGameStateChangedEvent);
-	}
-
-	if (lib.esv__GameStateEventManager__ExecuteGameStateChangedEvent != nullptr) {
-		ServerGameStateChangedEvent.Wrap(lib.esv__GameStateEventManager__ExecuteGameStateChangedEvent);
-	}
-
-	if (lib.ecl__GameStateThreaded__GameStateWorker__DoWork != nullptr) {
-		ClientGameStateWorkerStart.Wrap(lib.ecl__GameStateThreaded__GameStateWorker__DoWork);
-	}
-
-	if (lib.esv__GameStateThreaded__GameStateWorker__DoWork != nullptr) {
-		ServerGameStateWorkerStart.Wrap(lib.esv__GameStateThreaded__GameStateWorker__DoWork);
-	}
-
-	/*
-	if (lib.SkillPrototypeManagerInit != nullptr) {
-		SkillPrototypeManagerInit.Wrap(lib.SkillPrototypeManagerInit);
-	}
-
-	if (lib.FileReaderCtor != nullptr) {
-		FileReader__ctor.Wrap(lib.FileReaderCtor);
-	}
-
-	if (lib.RPGStats__Load != nullptr) {
-		RPGStats__Load.Wrap(lib.RPGStats__Load);
-	}
-
-	if (lib.TranslatedStringRepository__UnloadOverrides != nullptr) {
-		TranslatedStringRepository__UnloadOverrides.Wrap(lib.TranslatedStringRepository__UnloadOverrides);
-	}*/
-
-	DetourTransactionCommit();
-
-	ExtensionsInitialized = true;
-}
-/*
-void OsirisWrappers::InitializeNetworking(net::MessageFactory* factory)
-{
-	if (NetworkingInitialized) {
-		return;
-	}
-
-	if (factory->MessagePools.Size <= (unsigned)NetMessage::NETMSG_CLIENT_ACCEPT) {
-		ERR("MessageFactory not initialized yet?");
-		return;
-	}
-
-	DetourTransactionBegin();
-	DetourUpdateThread(GetCurrentThread());
-
-	auto clientConnect = factory->MessagePools[(unsigned)NetMessage::NETMSG_CLIENT_CONNECT]->Template;
-	auto clientAccept = factory->MessagePools[(unsigned)NetMessage::NETMSG_CLIENT_ACCEPT]->Template;
-	eocnet__ClientConnectMessage__Serialize.Wrap((*(net::MessageVMT**)clientConnect)->Serialize);
-	eocnet__ClientAcceptMessage__Serialize.Wrap((*(net::MessageVMT**)clientAccept)->Serialize);
-
-	DetourTransactionCommit();
-
-	NetworkingInitialized = true;
-}
-*/
 void OsirisWrappers::Shutdown()
 {
 #if 0
@@ -231,20 +127,6 @@ void OsirisWrappers::Shutdown()
 #endif
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
-
-	/*esv__OsirisVariableHelper__SavegameVisit.Unwrap();
-	eocnet__ClientConnectMessage__Serialize.Unwrap();
-	eocnet__ClientAcceptMessage__Serialize.Unwrap();
-
-	ClientGameStateChangedEvent.Unwrap();
-	ServerGameStateChangedEvent.Unwrap();
-	ClientGameStateWorkerStart.Unwrap();
-	ServerGameStateWorkerStart.Unwrap();
-	SkillPrototypeManagerInit.Unwrap();
-	FileReader__ctor.Unwrap();
-	RPGStats__Load.Unwrap();
-	TranslatedStringRepository__UnloadOverrides.Unwrap();*/
-	ExtensionsInitialized = false;
 
 	RegisterDivFunctions.Unwrap();
 	InitGame.Unwrap();
@@ -274,22 +156,22 @@ void OsirisWrappers::Shutdown()
 
 bool OsirisWrappers::CallWrapper(uint32_t FunctionId, OsiArgumentDesc * Params)
 {
-	return gOsirisProxy->GetWrappers().CallOriginal(FunctionId, Params);
+	return gOsirisProxy->GetOsiris().GetWrappers().CallOriginal(FunctionId, Params);
 }
 
 bool OsirisWrappers::QueryWrapper(uint32_t FunctionId, OsiArgumentDesc * Params)
 {
-	return gOsirisProxy->GetWrappers().QueryOriginal(FunctionId, Params);
+	return gOsirisProxy->GetOsiris().GetWrappers().QueryOriginal(FunctionId, Params);
 }
 
 void OsirisWrappers::ErrorWrapper(char const * Message)
 {
-	gOsirisProxy->GetWrappers().ErrorOriginal(Message);
+	gOsirisProxy->GetOsiris().GetWrappers().ErrorOriginal(Message);
 }
 
 void OsirisWrappers::AssertWrapper(bool Successful, char const * Message, bool Unknown2)
 {
-	gOsirisProxy->GetWrappers().AssertOriginal(Successful, Message, Unknown2);
+	gOsirisProxy->GetOsiris().GetWrappers().AssertOriginal(Successful, Message, Unknown2);
 }
 
 void * OsirisWrappers::FindRuleActionCallProc()
@@ -421,6 +303,221 @@ void OsirisWrappers::FindDebugFlags(FARPROC SetOptionProc)
 #if 0
 	DEBUG("OsirisProxy::FindDebugFlags: DebugFlags = %p", Globals.DebugFlags);
 #endif
+}
+
+void OsirisWrappers::SaveNodeVMT(NodeType type, NodeVMT * vmt)
+{
+	assert(type >= NodeType::Database && type <= NodeType::Max);
+	VMTs[(unsigned)type] = vmt;
+}
+
+bool OsirisWrappers::ResolveNodeVMTs()
+{
+	if (!resolvedVMTs_ || !*resolvedVMTs_) {
+		resolvedVMTs_ = ResolveNodeVMTsInternal();
+	}
+
+	return *resolvedVMTs_;
+}
+
+
+bool OsirisWrappers::ResolveNodeVMTsInternal()
+{
+	auto Db = *Globals.Nodes;
+
+#if 0
+	DEBUG("OsirisProxy::ResolveNodeVMTs");
+#endif
+	std::set<NodeVMT *> VMTs;
+
+	for (unsigned i = 0; i < Db->Db.Size; i++) {
+		auto node = Db->Db.Start[i];
+		auto vmt = *(NodeVMT **)node;
+		VMTs.insert(vmt);
+	}
+
+	if (VMTs.size() != (unsigned)NodeType::Max) {
+		OsiErrorS("Could not locate all Osiris node VMT-s");
+		return false;
+	}
+
+	// RuleNode has a different SetLineNumber implementation
+	void * srv{ nullptr };
+	std::vector<NodeVMT *> srvA, srvB;
+	for (auto vmt : VMTs) {
+		if (srv == nullptr) {
+			srv = vmt->SetLineNumber;
+		}
+
+		if (srv == vmt->SetLineNumber) {
+			srvA.push_back(vmt);
+		} else {
+			srvB.push_back(vmt);
+		}
+	}
+
+	NodeVMT * ruleNodeVMT;
+	if (srvA.size() == 1) {
+		ruleNodeVMT = *srvA.begin();
+	} else if (srvB.size() == 1) {
+		ruleNodeVMT = *srvB.begin();
+	} else {
+		OsiErrorS("Could not locate RuleNode::__vfptr");
+		return false;
+	}
+
+#if 0
+	DEBUG("RuleNode::__vfptr is %p", ruleNodeVMT);
+#endif
+	SaveNodeVMT(NodeType::Rule, ruleNodeVMT);
+
+	// RelOpNode is the only node that has the same GetAdapter implementation
+	NodeVMT * relOpNodeVMT{ nullptr };
+	for (auto vmt : VMTs) {
+		if (vmt->GetAdapter == ruleNodeVMT->GetAdapter
+			&& vmt != ruleNodeVMT) {
+			if (relOpNodeVMT == nullptr) {
+				relOpNodeVMT = vmt;
+			} else {
+				OsiErrorS("RelOpNode::__vfptr pattern matches multiple VMT-s");
+				return false;
+			}
+		}
+	}
+
+	if (relOpNodeVMT == nullptr) {
+		OsiErrorS("Could not locate RelOpNode::__vfptr");
+		return false;
+	}
+
+#if 0
+	DEBUG("RuleNode::__vfptr is %p", relOpNodeVMT);
+#endif
+	SaveNodeVMT(NodeType::RelOp, relOpNodeVMT);
+
+	// Find And, NotAnd
+	NodeVMT * and1VMT{ nullptr }, *and2VMT{ nullptr };
+	for (auto vmt : VMTs) {
+		if (vmt->SetNextNode == ruleNodeVMT->SetNextNode
+			&& vmt->GetAdapter != ruleNodeVMT->GetAdapter) {
+			if (and1VMT == nullptr) {
+				and1VMT = vmt;
+			} else if (and2VMT == nullptr) {
+				and2VMT = vmt;
+			} else {
+				OsiErrorS("AndNode::__vfptr pattern matches multiple VMT-s");
+				return false;
+			}
+		}
+	}
+
+	if (and1VMT == nullptr || and2VMT == nullptr) {
+		OsiErrorS("Could not locate AndNode::__vfptr");
+		return false;
+	}
+
+#if 0
+	DEBUG("AndNode::__vfptr is %p and %p", and1VMT, and2VMT);
+#endif
+	// No reliable way to detect these; assume that AndNode VMT < NotAndNode VMT
+	if (and1VMT < and2VMT) {
+		SaveNodeVMT(NodeType::And, and1VMT);
+		SaveNodeVMT(NodeType::NotAnd, and2VMT);
+	} else {
+		SaveNodeVMT(NodeType::NotAnd, and1VMT);
+		SaveNodeVMT(NodeType::And, and2VMT);
+	}
+
+	// Find Query nodes
+	void * snn{ nullptr };
+	std::map<void *, std::vector<NodeVMT *>> snnMaps;
+	std::vector<NodeVMT *> * queryVMTs{ nullptr };
+	for (auto vmt : VMTs) {
+		if (snnMaps.find(vmt->SetNextNode) == snnMaps.end()) {
+			std::vector<NodeVMT *> nvmts{ vmt };
+			snnMaps.insert(std::make_pair(vmt->SetNextNode, nvmts));
+		} else {
+			snnMaps[vmt->SetNextNode].push_back(vmt);
+		}
+	}
+
+	for (auto & map : snnMaps) {
+		if (map.second.size() == 3) {
+			queryVMTs = &map.second;
+			break;
+		}
+	}
+
+	if (queryVMTs == nullptr) {
+		OsiErrorS("Could not locate all Query node VMT-s");
+		return false;
+	}
+
+	for (auto vmt : *queryVMTs) {
+		auto getName = (NodeVMT::GetQueryNameProc)vmt->GetQueryName;
+		std::string name{ getName(nullptr) };
+		if (name == "internal query") {
+#if 0
+			DEBUG("InternalQuery::__vfptr is %p", vmt);
+#endif
+			SaveNodeVMT(NodeType::InternalQuery, vmt);
+		} else if (name == "DIV query") {
+#if 0
+			DEBUG("DivQuery::__vfptr is %p", vmt);
+#endif
+			SaveNodeVMT(NodeType::DivQuery, vmt);
+		} else if (name == "Osi user query") {
+#if 0
+			DEBUG("UserQuery::__vfptr is %p", vmt);
+#endif
+			SaveNodeVMT(NodeType::UserQuery, vmt);
+		} else {
+			OsiErrorS("Unrecognized Query node VMT");
+			return false;
+		}
+	}
+
+
+	// Proc node has different IsProc() code
+	NodeVMT * procNodeVMT{ nullptr }, * databaseNodeVMT{ nullptr };
+	for (auto vmt : VMTs) {
+		if (vmt->IsProc != ruleNodeVMT->IsProc) {
+			if (procNodeVMT == nullptr) {
+				procNodeVMT = vmt;
+			} else {
+				OsiErrorS("ProcNode::__vfptr pattern matches multiple VMT-s");
+				return false;
+			}
+		}
+
+		if (vmt->IsDataNode != ruleNodeVMT->IsDataNode
+			&& vmt->IsProc == ruleNodeVMT->IsProc) {
+			if (databaseNodeVMT == nullptr) {
+				databaseNodeVMT = vmt;
+			} else {
+				OsiErrorS("DatabaseNode::__vfptr pattern matches multiple VMT-s");
+				return false;
+			}
+		}
+	}
+
+	if (procNodeVMT == nullptr) {
+		OsiErrorS("Could not locate ProcNode::__vfptr");
+		return false;
+	}
+
+	if (databaseNodeVMT == nullptr) {
+		OsiErrorS("Could not locate DatabaseNode::__vfptr");
+		return false;
+	}
+
+#if 0
+	DEBUG("ProcNode::__vfptr is %p", procNodeVMT);
+	DEBUG("DatabaseNode::__vfptr is %p", databaseNodeVMT);
+#endif
+	SaveNodeVMT(NodeType::Proc, procNodeVMT);
+	SaveNodeVMT(NodeType::Database, databaseNodeVMT);
+	return true;
 }
 
 }

@@ -1,8 +1,8 @@
 #pragma once
 
 #include <Lua/LuaBinding.h>
-#include <CustomFunctions.h>
-#include <OsirisHelpers.h>
+#include <Osiris/Shared/CustomFunctions.h>
+#include <Osiris/Shared/OsirisHelpers.h>
 
 namespace bg3se::esv
 {

@@ -10,10 +10,6 @@
 
 namespace bg3se
 {
-#define HOOK_DEFN(name, sym, defn, hookType) decltype(LibraryManager::name) * decltype(LibraryManager::name)::gHook;
-#include <GameDefinitions/EngineHooks.inl>
-#undef HOOK_DEFN
-
 	uint8_t CharToByte(char c)
 	{
 		if (c >= '0' && c <= '9') {
@@ -369,9 +365,7 @@ namespace bg3se
 				CriticalInitFailed = true;
 			}
 
-			FindServerGlobalsBG3();
-			FindEoCGlobalsBG3();
-			FindGlobalStringTableBG3();
+			FindSymbolNameRegistrations();
 
 			return !CriticalInitFailed;
 		} else {
@@ -393,32 +387,6 @@ namespace bg3se
 		if (!CriticalInitFailed) {
 			GFS.Initialize();
 			InitializeEnumerations();
-
-			DetourTransactionBegin();
-			DetourUpdateThread(GetCurrentThread());
-
-			auto& sym = GetStaticSymbols();
-
-			/*if (sym.AppInstance != nullptr && *sym.AppInstance != nullptr) {
-				sym.App__OnInputEvent = (*sym.AppInstance)->__vftable->OnInputEvent;
-			}
-
-			if (sym.StatusHealVMT != nullptr) {
-				sym.esv__Status__GetEnterChance = sym.StatusHealVMT->GetEnterChance;
-				sym.esv__StatusHeal__Enter = sym.StatusHealVMT->Enter;
-			}
-
-			if (sym.StatusHitVMT != nullptr) {
-				sym.esv__StatusHit__Enter = sym.StatusHitVMT->Enter;
-			}*/
-
-#define HOOK_DEFN(name, sym, defn, hookType) if (GetStaticSymbols().sym != nullptr) { name.Wrap(GetStaticSymbols().sym); }
-#include <GameDefinitions/EngineHooks.inl>
-#undef HOOK_DEFN
-
-			//sym.CharStatsGetters.WrapAll();
-
-			DetourTransactionCommit();
 		}
 
 		auto initEnd = std::chrono::high_resolution_clock::now();
@@ -427,18 +395,6 @@ namespace bg3se
 
 		PostLoaded = true;
 		return !CriticalInitFailed;
-	}
-
-	void LibraryManager::Cleanup()
-	{
-		DetourTransactionBegin();
-		DetourUpdateThread(GetCurrentThread());
-
-#define HOOK_DEFN(name, sym, defn, hookType) name.Unwrap();
-#include <GameDefinitions/EngineHooks.inl>
-#undef HOOK_DEFN
-
-		DetourTransactionCommit();
 	}
 
 	bool LibraryManager::GetGameVersion(GameVersionInfo & version)

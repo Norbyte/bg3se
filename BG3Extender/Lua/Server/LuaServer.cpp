@@ -3,7 +3,6 @@
 #include <Lua/Server/LuaBindingServer.h>
 #include <Lua/LuaSerializers.h>
 #include <OsirisProxy.h>
-#include <NodeHooks.h>
 #include <ScriptHelpers.h>
 #include "resource.h"
 #include <GameDefinitions/Components/Components.h>
@@ -444,7 +443,7 @@ namespace bg3se::esv::lua
 
 
 	ServerState::ServerState(ExtensionState& state)
-		: identityAdapters_(gOsirisProxy->GetGlobals()),
+		: identityAdapters_(gOsirisProxy->GetOsiris().GetGlobals()),
 		osirisCallbacks_(state)
 	{
 		StackCheck _(L, 0);
@@ -488,7 +487,7 @@ namespace bg3se::esv::lua
 			}
 #endif
 
-			gOsirisProxy->GetCustomFunctionManager().ClearDynamicEntries();
+			gOsirisProxy->GetOsiris().GetCustomFunctionManager().ClearDynamicEntries();
 		}
 	}
 

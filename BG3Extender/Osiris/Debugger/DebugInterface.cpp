@@ -1,7 +1,5 @@
 #include "stdafx.h"
-#include "DebugInterface.h"
-#include "NodeHooks.h"
-#include "OsirisProxy.h"
+#include <Osiris/Debugger/DebugInterface.h>
 
 #if !defined(OSI_NO_DEBUGGER)
 

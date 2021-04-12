@@ -42,10 +42,11 @@ namespace bg3se
 		NodeVMT originalVmt_;
 	};
 
-	class NodeVMTWrappers
+	class NodeVMTWrappers : Noncopyable<NodeVMTWrappers>
 	{
 	public:
 		NodeVMTWrappers(NodeVMT ** vmts);
+		~NodeVMTWrappers();
 
 		bool WrappedIsValid(Node * node, VirtTupleLL * tuple, AdapterRef * adapter);
 		void WrappedPushDownTuple(Node * node, VirtTupleLL * tuple, AdapterRef * adapter, EntryPoint which);
@@ -75,6 +76,4 @@ namespace bg3se
 		std::unique_ptr<NodeVMTWrapper> wrappers_[(unsigned)NodeType::Max + 1];
 		std::unordered_map<NodeVMT *, NodeType> vmtToTypeMap_;
 	};
-
-	extern std::unique_ptr<NodeVMTWrappers> gNodeVMTWrappers;
 }

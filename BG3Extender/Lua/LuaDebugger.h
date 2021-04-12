@@ -7,7 +7,6 @@
 #include "LuaDebug.pb.h"
 #include <GameDefinitions/Osiris.h>
 #include <Lua/LuaDebugMessages.h>
-#include "OsirisHelpers.h"
 
 struct lua_Debug;
 

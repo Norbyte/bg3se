@@ -303,7 +303,7 @@ namespace bg3se::lua::utils
 
 	char const * OsiToLuaTypeName(ValueType type)
 	{
-		auto typeMap = *gOsirisProxy->GetWrappers().Globals.Types;
+		auto typeMap = *gOsirisProxy->GetOsiris().GetWrappers().Globals.Types;
 		auto typeId = typeMap->ResolveAlias((uint32_t)type);
 
 		switch (typeId) {
@@ -332,7 +332,7 @@ namespace bg3se::lua::utils
 
 		STDString functionComment, functionDefn;
 
-		auto functions = gOsirisProxy->GetGlobals().Functions;
+		auto functions = gOsirisProxy->GetOsiris().GetGlobals().Functions;
 
 		(*functions)->Iterate([&helpers, &functionComment, &functionDefn, builtinOnly](STDString const & key, Function const * func) {
 			if (builtinOnly

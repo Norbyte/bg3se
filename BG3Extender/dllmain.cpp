@@ -1,12 +1,15 @@
 #include "stdafx.h"
 #include "DWriteWrapper.h"
-#include "OsirisProxy.h"
+#include <ExtenderConfig.h>
+#include <OsirisProxy.h>
 #include "json/json.h"
 #include <ShellAPI.h>
 #include <KnownFolders.h>
 #include <ShlObj.h>
 #include <sstream>
 #include <fstream>
+
+using namespace bg3se;
 
 void ConfigGetBool(Json::Value & node, char const * key, bool & value)
 {
@@ -24,7 +27,7 @@ void ConfigGetInt(Json::Value& node, char const* key, uint32_t& value)
 	}
 }
 
-void LoadConfig(std::wstring const & configPath, bg3se::ToolConfig & config)
+void LoadConfig(std::wstring const & configPath, ExtenderConfig & config)
 {
 	std::ifstream f(configPath, std::ios::in);
 	if (!f.good()) {
@@ -35,7 +38,7 @@ void LoadConfig(std::wstring const & configPath, bg3se::ToolConfig & config)
 	Json::Value root;
 	std::string errs;
 	if (!Json::parseFromStream(factory, f, &root, &errs)) {
-		std::wstring werrs = FromUTF8(errs);
+		std::wstring werrs = ::FromUTF8(errs);
 
 		std::wstringstream err;
 		err << L"Failed to load configuration file '" << configPath << "':\r\n" << werrs;
@@ -60,10 +63,10 @@ void LoadConfig(std::wstring const & configPath, bg3se::ToolConfig & config)
 	ConfigGetInt(root, "LuaDebuggerPort", config.LuaDebuggerPort);
 	ConfigGetInt(root, "DebugFlags", config.DebugFlags);
 
-	auto logDir = root["LogDirectory"];
+	auto const& logDir = root["LogDirectory"];
 	if (!logDir.isNull()) {
 		if (logDir.isString()) {
-			config.LogDirectory = FromUTF8(logDir.asString());
+			config.LogDirectory = ::FromUTF8(logDir.asString());
 		}
 		else {
 			Fail("Config option 'LogDirectory' should be a string.");
@@ -73,9 +76,9 @@ void LoadConfig(std::wstring const & configPath, bg3se::ToolConfig & config)
 
 void SetupOsirisProxy(HMODULE hModule)
 {
-	bg3se::gOsirisProxy = std::make_unique<bg3se::OsirisProxy>();
-	auto & config = bg3se::gOsirisProxy->GetConfig();
-	LoadConfig(L"OsirisExtenderSettings.json", config);
+	gOsirisProxy = std::make_unique<OsirisProxy>();
+	auto & config = gOsirisProxy->GetConfig();
+	LoadConfig(L"ScriptExtenderSettings.json", config);
 
 	DisableThreadLibraryCalls(hModule);
 	if (config.CreateConsole) {
@@ -84,10 +87,10 @@ void SetupOsirisProxy(HMODULE hModule)
 
 	if (config.DebugFlags == 0) {
 		// Disabled: DF_FunctionList, DF_NodeList ,DF_LogSuccessfulFacts, DF_LogFailedFacts, DB_LogFactFailures, DF_DumpDatabases, DF_DebugFacts, DF_LogRuleFailures
-		config.DebugFlags = bg3se::DF_DebugTrace | bg3se::DF_SuppressInitLog;
+		config.DebugFlags = DF_DebugTrace | DF_SuppressInitLog;
 	}
 
-	bg3se::gOsirisProxy->Initialize();
+	gOsirisProxy->Initialize();
 
 #if 0
 	DEBUG(" ***** OsirisProxy setup completed ***** ");
@@ -119,8 +122,8 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 
 	case DLL_PROCESS_DETACH:
 		if (gDWriteWrapper) {
-			bg3se::gOsirisProxy->Shutdown();
-			bg3se::gOsirisProxy.reset();
+			gOsirisProxy->Shutdown();
+			gOsirisProxy.reset();
 			gDWriteWrapper.reset();
 		}
 		break;

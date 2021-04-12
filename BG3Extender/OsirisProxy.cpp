@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "OsirisProxy.h"
-#include "NodeHooks.h"
 #include "Version.h"
 #include <string>
 #include <fstream>
@@ -22,13 +21,13 @@ namespace bg3se
 
 std::unique_ptr<OsirisProxy> gOsirisProxy;
 
+#define STATIC_HOOK(name) decltype(OsirisProxy::name) * decltype(OsirisProxy::name)::gHook;
+STATIC_HOOK(clientGameStateWorkerStart_)
+STATIC_HOOK(serverGameStateWorkerStart_)
+STATIC_HOOK(clientGameStateChangedEvent_)
+STATIC_HOOK(serverGameStateChangedEvent_)
 
 #if !defined(OSI_NO_DEBUGGER)
-void OsirisDebugThreadRunner(OsirisDebugInterface & intf)
-{
-	intf.Run();
-}
-
 void LuaDebugThreadRunner(LuaDebugInterface& intf)
 {
 	intf.Run();
@@ -36,8 +35,7 @@ void LuaDebugThreadRunner(LuaDebugInterface& intf)
 #endif
 
 OsirisProxy::OsirisProxy()
-	: CustomInjector(Wrappers, CustomFunctions),
-	FunctionLibrary(*this)/*,
+	: osiris_(config_)/*,
 	hitProxy_(*this)*/
 {
 }
@@ -65,20 +63,6 @@ void OsirisProxy::Initialize()
 
 	DEBUG("OsirisProxy::Initialize: Starting");
 	auto initStart = std::chrono::high_resolution_clock::now();
-	Wrappers.Initialize();
-
-	using namespace std::placeholders;
-	Wrappers.RegisterDivFunctions.AddPreHook(std::bind(&OsirisProxy::OnRegisterDIVFunctions, this, _1, _2));
-	Wrappers.InitGame.SetPreHook(std::bind(&OsirisProxy::OnInitGame, this, _1));
-	Wrappers.DeleteAllData.SetPreHook(std::bind(&OsirisProxy::OnDeleteAllData, this, _1, _2));
-	Wrappers.Error.SetPreHook(std::bind(&OsirisProxy::OnError, this, _1));
-	Wrappers.Assert.SetPreHook(std::bind(&OsirisProxy::OnAssert, this, _1, _2, _3));
-	Wrappers.Compile.SetWrapper(std::bind(&OsirisProxy::CompileWrapper, this, _1, _2, _3, _4));
-	Wrappers.Load.AddPostHook(std::bind(&OsirisProxy::OnAfterOsirisLoad, this, _1, _2, _3));
-	Wrappers.Merge.SetWrapper(std::bind(&OsirisProxy::MergeWrapper, this, _1, _2, _3));
-#if !defined(OSI_NO_DEBUGGER)
-	Wrappers.RuleActionCall.SetWrapper(std::bind(&OsirisProxy::RuleActionCall, this, _1, _2, _3, _4, _5, _6));
-#endif
 
 	if (Libraries.FindLibraries(gameVersion.Revision)) {
 		if (extensionsEnabled_) {
@@ -94,15 +78,40 @@ void OsirisProxy::Initialize()
 
 	// Wrap state change functions even if extension startup failed, otherwise
 	// we won't be able to show any startup errors
-	Wrappers.InitializeExtensions();
-	Wrappers.ClientGameStateChangedEvent.SetPostHook(std::bind(&OsirisProxy::OnClientGameStateChanged, this, _1, _2, _3));
-	Wrappers.ServerGameStateChangedEvent.SetPostHook(std::bind(&OsirisProxy::OnServerGameStateChanged, this, _1, _2, _3));
-	Wrappers.ClientGameStateWorkerStart.AddPreHook(std::bind(&OsirisProxy::OnClientGameStateWorkerStart, this, _1));
-	Wrappers.ServerGameStateWorkerStart.AddPreHook(std::bind(&OsirisProxy::OnServerGameStateWorkerStart, this, _1));
-	Wrappers.ClientGameStateWorkerStart.AddPostHook(std::bind(&OsirisProxy::OnClientGameStateWorkerExit, this, _1));
-	Wrappers.ServerGameStateWorkerStart.AddPostHook(std::bind(&OsirisProxy::OnServerGameStateWorkerExit, this, _1));
-	Wrappers.SkillPrototypeManagerInit.SetPreHook(std::bind(&OsirisProxy::OnSkillPrototypeManagerInit, this, _1));
-	/*Wrappers.FileReader__ctor.SetWrapper(std::bind(&OsirisProxy::OnFileReaderCreate, this, _1, _2, _3, _4));
+
+	auto& lib = GetStaticSymbols();
+
+	DetourTransactionBegin();
+	DetourUpdateThread(GetCurrentThread());
+
+	if (lib.ecl__GameStateEventManager__ExecuteGameStateChangedEvent != nullptr) {
+		clientGameStateChangedEvent_.Wrap(lib.ecl__GameStateEventManager__ExecuteGameStateChangedEvent);
+	}
+
+	if (lib.esv__GameStateEventManager__ExecuteGameStateChangedEvent != nullptr) {
+		serverGameStateChangedEvent_.Wrap(lib.esv__GameStateEventManager__ExecuteGameStateChangedEvent);
+	}
+
+	if (lib.ecl__GameStateThreaded__GameStateWorker__DoWork != nullptr) {
+		clientGameStateWorkerStart_.Wrap(lib.ecl__GameStateThreaded__GameStateWorker__DoWork);
+	}
+
+	if (lib.esv__GameStateThreaded__GameStateWorker__DoWork != nullptr) {
+		serverGameStateWorkerStart_.Wrap(lib.esv__GameStateThreaded__GameStateWorker__DoWork);
+	}
+
+	DetourTransactionCommit();
+
+	using namespace std::placeholders;
+	clientGameStateChangedEvent_.SetPostHook(std::bind(&OsirisProxy::OnClientGameStateChanged, this, _1, _2, _3));
+	serverGameStateChangedEvent_.SetPostHook(std::bind(&OsirisProxy::OnServerGameStateChanged, this, _1, _2, _3));
+	clientGameStateWorkerStart_.AddPreHook(std::bind(&OsirisProxy::OnClientGameStateWorkerStart, this, _1));
+	serverGameStateWorkerStart_.AddPreHook(std::bind(&OsirisProxy::OnServerGameStateWorkerStart, this, _1));
+	clientGameStateWorkerStart_.AddPostHook(std::bind(&OsirisProxy::OnClientGameStateWorkerExit, this, _1));
+	serverGameStateWorkerStart_.AddPostHook(std::bind(&OsirisProxy::OnServerGameStateWorkerExit, this, _1));
+
+	/*SkillPrototypeManagerInit.SetPreHook(std::bind(&OsirisProxy::OnSkillPrototypeManagerInit, this, _1));
+	Wrappers.FileReader__ctor.SetWrapper(std::bind(&OsirisProxy::OnFileReaderCreate, this, _1, _2, _3, _4));
 	Wrappers.esv__OsirisVariableHelper__SavegameVisit.SetPreHook(std::bind(&OsirisProxy::OnSavegameVisit, this, _1, _2));
 	Wrappers.TranslatedStringRepository__UnloadOverrides.SetPreHook(std::bind(&OsirisProxy::OnModuleLoadStarted, this, _1));
 	Wrappers.RPGStats__Load.AddPreHook(std::bind(&OsirisProxy::OnStatsLoadStarted, this, _1));
@@ -138,27 +147,20 @@ void OsirisProxy::Shutdown()
 	DEBUG("OsirisProxy::Shutdown: Exiting");
 	ResetExtensionStateServer();
 	ResetExtensionStateClient();
-	Wrappers.Shutdown();
+	Hooks.UnhookAll();
+	osiris_.Shutdown();
 }
 
 void OsirisProxy::LogLuaError(std::string_view msg)
 {
-	std::string log = "[Osiris] {E} ";
-	log += msg;
-	gConsole.Debug(DebugMessageType::Error, log.c_str());
-	if (StoryLoaded) {
-		Wrappers.AssertOriginal(false, log.c_str(), false);
-	}
+	gConsole.Debug(DebugMessageType::Error, msg.data());
+	osiris_.LogError(msg);
 }
 
 void OsirisProxy::LogOsirisError(std::string_view msg)
 {
-	std::string log = "[Osiris] {E} ";
-	log += msg;
-	gConsole.Debug(DebugMessageType::Error, log.c_str());
-	if (StoryLoaded) {
-		Wrappers.AssertOriginal(false, log.c_str(), false);
-	}
+	gConsole.Debug(DebugMessageType::Error, msg.data());
+	osiris_.LogError(msg);
 
 #if !defined(OSI_NO_DEBUGGER)
 	if (luaDebugger_) {
@@ -169,258 +171,16 @@ void OsirisProxy::LogOsirisError(std::string_view msg)
 
 void OsirisProxy::LogOsirisWarning(std::string_view msg)
 {
-	std::string log = "[Osiris] {W} ";
-	log += msg;
-	gConsole.Debug(DebugMessageType::Warning, log.c_str());
-	if (StoryLoaded) {
-		Wrappers.AssertOriginal(false, log.c_str(), false);
-	}
+	gConsole.Debug(DebugMessageType::Warning, msg.data());
+	osiris_.LogWarning(msg);
 }
 
 void OsirisProxy::LogOsirisMsg(std::string_view msg)
 {
-	std::string log = "[Osiris] ";
-	log += msg;
-	gConsole.Debug(DebugMessageType::Osiris, log.c_str());
-	if (StoryLoaded) {
-		Wrappers.AssertOriginal(false, log.c_str(), false);
-	}
+	gConsole.Debug(DebugMessageType::Osiris, msg.data());
+	osiris_.LogMessage(msg);
 }
 
-void OsirisProxy::RestartLogging(std::wstring const & Type)
-{
-	DebugFlag NewFlags = (DebugFlag)((config_.DebugFlags & 0xffff0000) | (*Wrappers.Globals.DebugFlags & 0x0000ffff));
-
-	if (LogFilename.empty() || LogType != Type) {
-		LogFilename = MakeLogFilePath(Type, L"log");
-		LogType = Type;
-
-		if (!LogFilename.empty()) {
-			DEBUG(L"OsirisProxy::RestartLogging: Starting %s debug logging.\r\n"
-				"\tPath=%s", Type.c_str(), LogFilename.c_str());
-		}
-	}
-
-	Wrappers.CloseLogFile.CallOriginal(DynGlobals.OsirisObject);
-
-	if (!LogFilename.empty()) {
-		*Wrappers.Globals.DebugFlags = NewFlags;
-		Wrappers.OpenLogFile.CallOriginal(DynGlobals.OsirisObject, LogFilename.c_str(), std::iostream::app);
-	}
-}
-
-std::wstring OsirisProxy::MakeLogFilePath(std::wstring const & Type, std::wstring const & Extension)
-{
-	if (config_.LogDirectory.empty()) {
-		config_.LogDirectory = FromUTF8(GetStaticSymbols().ToPath("/Extender Logs", PathRootType::GameStorage));
-	}
-
-	if (config_.LogDirectory.empty()) {
-		return L"";
-	}
-
-	BOOL created = CreateDirectoryW(config_.LogDirectory.c_str(), NULL);
-	if (created == FALSE) {
-		DWORD lastError = GetLastError();
-		if (lastError != ERROR_ALREADY_EXISTS) {
-			std::wstringstream err;
-			err << L"Could not create log directory '" << config_.LogDirectory << "': Error " << lastError;
-			return L"";
-		}
-	}
-
-	auto now = std::chrono::system_clock::now();
-	auto tt = std::chrono::system_clock::to_time_t(now);
-	std::tm tm;
-	gmtime_s(&tm, &tt);
-
-	std::wstringstream ss;
-	ss << config_.LogDirectory << L"\\"
-		<< Type << L" "
-		<< std::setfill(L'0')
-		<< (tm.tm_year + 1900) << L"-"
-		<< std::setw(2) << (tm.tm_mon + 1) << L"-"
-		<< std::setw(2) << tm.tm_mday << L" "
-		<< std::setw(2) << tm.tm_hour << L"-"
-		<< std::setw(2) << tm.tm_min << L"-"
-		<< std::setw(2) << tm.tm_sec << L"." << Extension;
-	return ss.str();
-}
-
-void OsirisProxy::HookNodeVMTs()
-{
-	ResolveNodeVMTs(*Wrappers.Globals.Nodes);
-
-	if (ResolvedNodeVMTs && !gNodeVMTWrappers) {
-		gNodeVMTWrappers = std::make_unique<NodeVMTWrappers>(NodeVMTs);
-	}
-}
-
-void OsirisProxy::OnRegisterDIVFunctions(void * Osiris, DivFunctions * Functions)
-{
-	// FIXME - register before OsirisWrappers!
-	StoryLoaded = false;
-	DynGlobals.OsirisObject = Osiris;
-	uint8_t * interfaceLoadPtr = nullptr;
-	// uint8_t * errorMessageFunc = ResolveRealFunctionAddress((uint8_t *)Functions->ErrorMessage);
-	uint8_t * errorMessageFunc = ResolveRealFunctionAddress((uint8_t *)Wrappers.ErrorOriginal);
-
-	// Look for TypedValue::VMT
-	uint8_t const copyCtor1[] = {
-		0x48, 0x89, 0x5C, 0x24, 0x08, // mov     [rsp+arg_0], rbx
-		0x48, 0x89, 0x74, 0x24, 0x10, // mov     [rsp+arg_8], rsi
-		0x57, // push    rdi
-		0x48, 0x83, 0xEC, 0x20, // sub     rsp, 20h
-		0x33, 0xF6, // xor     esi, esi
-		0x48, 0x8D, 0x05 // lea     rax, TypedValue::VMT
-	};
-
-	auto start = reinterpret_cast<uint8_t *>(Wrappers.OsirisDllStart);
-	auto end = start + Wrappers.OsirisDllSize - sizeof(copyCtor1);
-
-	for (auto p = start; p < end; p++) {
-		if (*p == 0x48
-			&& memcmp(copyCtor1, p, sizeof(copyCtor1)) == 0) {
-			Wrappers.Globals.TypedValueVMT = (void *)AsmResolveInstructionRef(p + 17);
-			break;
-		}
-	}
-
-	if (config_.EnableLogging) {
-		RestartLogging(L"Osiris Runtime");
-	}
-
-#if 0
-	DEBUG("OsirisProxy::OnRegisterDIVFunctions: Initializing story.");
-	DEBUG("\tErrorMessageProc = %p", errorMessageFunc);
-	DEBUG("\tOsirisManager = %p", Globals.Manager);
-	DEBUG("\tOsirisInterface = %p", osirisInterface);
-#endif
-
-#if !defined(OSI_NO_DEBUGGER)
-	// FIXME - move to DebuggerHooks
-	if (config_.EnableDebugger) {
-		if (debuggerThread_ == nullptr) {
-			DEBUG("Starting debugger server");
-			try {
-				debugInterface_ = std::make_unique<OsirisDebugInterface>(config_.DebuggerPort);
-				debugMsgHandler_ = std::make_unique<osidbg::DebugMessageHandler>(std::ref(*debugInterface_));
-				debuggerThread_ = new std::thread(std::bind(OsirisDebugThreadRunner, std::ref(*debugInterface_)));
-				DEBUG("Osiris debugger listening on 127.0.0.1:%d; DBG protocol version %d", 
-					config_.DebuggerPort, osidbg::DebugMessageHandler::ProtocolVersion);
-			} catch (std::exception & e) {
-				ERR("Osiris debugger start failed: %s", e.what());
-			}
-		}
-	}
-#endif
-}
-
-void OsirisProxy::OnInitGame(void * Osiris)
-{
-	DEBUG("OsirisProxy::OnInitGame()");
-#if !defined(OSI_NO_DEBUGGER)
-	if (debugger_) {
-		debugger_->GameInitHook();
-	}
-#endif
-}
-
-void OsirisProxy::OnDeleteAllData(void * Osiris, bool DeleteTypes)
-{
-#if !defined(OSI_NO_DEBUGGER)
-	if (debugger_) {
-		DEBUG("OsirisProxy::OnDeleteAllData()");
-		debugger_->DeleteAllDataHook();
-		debugger_.reset();
-	}
-#endif
-}
-
-void OsirisProxy::OnError(char const * Message)
-{
-	ERR("Osiris Error: %s", Message);
-}
-
-void OsirisProxy::OnAssert(bool Successful, char const * Message, bool Unknown2)
-{
-	if (!Successful) {
-		WARN("Osiris Assert: %s", Message);
-	}
-}
-
-bool OsirisProxy::CompileWrapper(std::function<bool(void *, wchar_t const *, wchar_t const *)> const & Next, void * Osiris, wchar_t const * Path, wchar_t const * Mode)
-{
-	DEBUG(L"OsirisProxy::CompileWrapper: Starting compilation of '%s'", Path);
-	auto OriginalFlags = *Wrappers.Globals.DebugFlags;
-	std::wstring storyPath;
-
-	if (extensionsEnabled_) {
-		CustomFunctions.PreProcessStory(Path);
-	}
-
-	if (config_.LogCompile || config_.LogFailedCompile) {
-		if (!config_.LogCompile) {
-			*Wrappers.Globals.DebugFlags = (DebugFlag)(OriginalFlags & ~DebugFlag::DF_CompileTrace);
-		}
-
-		RestartLogging(L"Compile");
-
-		if (config_.LogCompile) {
-			storyPath = MakeLogFilePath(L"Compile", L"div");
-			CopyFileW(Path, storyPath.c_str(), TRUE);
-		}
-	}
-
-	auto ret = Next(Osiris, Path, Mode);
-
-	if (ret) {
-		DEBUG("OsirisProxy::CompileWrapper: Success.");
-	} else {
-		ERR("OsirisProxy::CompileWrapper: Compilation FAILED.");
-	}
-
-	if (config_.LogCompile || config_.LogFailedCompile) {
-		*Wrappers.Globals.DebugFlags = OriginalFlags;
-		Wrappers.CloseLogFile.CallOriginal(DynGlobals.OsirisObject);
-
-		if (ret) {
-			if (config_.LogCompile) {
-				DeleteFileW(storyPath.c_str());
-			} else if (!LogFilename.empty()) {
-				DeleteFileW(LogFilename.c_str());
-			}
-		}
-	}
-
-	return ret;
-}
-
-void OsirisProxy::OnAfterOsirisLoad(void * Osiris, void * Buf, int retval)
-{
-	std::lock_guard _(storyLoadLock_);
-
-#if !defined(OSI_NO_DEBUGGER)
-	if (debuggerThread_ != nullptr) {
-		HookNodeVMTs();
-	}
-#endif
-
-	StoryLoaded = true; 
-	DEBUG("OsirisProxy::OnAfterOsirisLoad: %d nodes", (*Wrappers.Globals.Nodes)->Db.Size);
-
-#if !defined(OSI_NO_DEBUGGER)
-	if (debuggerThread_ != nullptr && gNodeVMTWrappers) {
-		debugger_.reset();
-		debugger_ = std::make_unique<osidbg::Debugger>(Wrappers.Globals, std::ref(*debugMsgHandler_));
-		debugger_->StoryLoaded();
-	}
-#endif
-
-	if (extensionsEnabled_) {
-		esv::ExtensionState::Get().StoryLoaded();
-	}
-}
 /*
 void OsirisProxy::OnStatsLoadStarted(RPGStats* mgr)
 {
@@ -435,283 +195,6 @@ void OsirisProxy::OnStatsLoadFinished(RPGStats* mgr)
 		state->OnStatsLoaded();
 	}
 }*/
-
-void OsirisProxy::FlashTraceCallback(void * ctx, void * player, char const * message)
-{
-	DEBUG("Flash: %s", message);
-}
-
-void OsirisProxy::FlashWarningCallback(void * ctx, void * player, int code, char const * message)
-{
-	if (code == 201 || code == 408) {
-		return;
-	}
-
-	if (code == 503) {
-		STDString errmsg(message);
-		if (errmsg.find("onEventResolution") != std::string::npos
-			|| errmsg.find("onEventResize") != std::string::npos) {
-			return;
-		}
-	}
-
-	WARN("Flash: (%d) %s", code, message);
-}
-
-bool OsirisProxy::MergeWrapper(std::function<bool (void *, wchar_t *)> const & Next, void * Osiris, wchar_t * Src)
-{
-	DEBUG("OsirisProxy::MergeWrapper() - Started merge");
-
-	auto cli = GetEoCClient();
-	auto srv = GetEoCServer();
-
-	if (ServerExtState) {
-		ServerExtState->StorySetMerging(true);
-	}
-
-#if !defined(OSI_NO_DEBUGGER)
-	if (debugger_ != nullptr) {
-		debugger_->MergeStarted();
-	}
-#endif
-
-	bool retval = Next(Osiris, Src);
-
-#if !defined(OSI_NO_DEBUGGER)
-	if (debugger_ != nullptr) {
-		debugger_->MergeFinished();
-	}
-#endif
-
-	if (ServerExtState) {
-		ServerExtState->StorySetMerging(false);
-	}
-
-	DEBUG("OsirisProxy::MergeWrapper() - Finished merge");
-	return retval;
-}
-
-void OsirisProxy::RuleActionCall(std::function<void (RuleActionNode *, void *, void *, void *, void *)> const & Next, RuleActionNode * Action, void * a1, void * a2, void * a3, void * a4)
-{
-#if !defined(OSI_NO_DEBUGGER)
-	if (debugger_ != nullptr) {
-		debugger_->RuleActionPreHook(Action);
-	}
-#endif
-
-	Next(Action, a1, a2, a3, a4);
-
-#if !defined(OSI_NO_DEBUGGER)
-	if (debugger_ != nullptr) {
-		debugger_->RuleActionPostHook(Action);
-	}
-#endif
-}
-
-void OsirisProxy::SaveNodeVMT(NodeType type, NodeVMT * vmt)
-{
-	assert(type >= NodeType::Database && type <= NodeType::Max);
-	NodeVMTs[(unsigned)type] = vmt;
-}
-
-void OsirisProxy::ResolveNodeVMTs(NodeDb * Db)
-{
-	if (ResolvedNodeVMTs) return;
-
-#if 0
-	DEBUG("OsirisProxy::ResolveNodeVMTs");
-#endif
-	std::set<NodeVMT *> VMTs;
-
-	for (unsigned i = 0; i < Db->Db.Size; i++) {
-		auto node = Db->Db.Start[i];
-		auto vmt = *(NodeVMT **)node;
-		VMTs.insert(vmt);
-	}
-
-	if (VMTs.size() != (unsigned)NodeType::Max) {
-		ERR("Could not locate all Osiris node VMT-s");
-		return;
-	}
-
-	// RuleNode has a different SetLineNumber implementation
-	void * srv{ nullptr };
-	std::vector<NodeVMT *> srvA, srvB;
-	for (auto vmt : VMTs) {
-		if (srv == nullptr) {
-			srv = vmt->SetLineNumber;
-		}
-
-		if (srv == vmt->SetLineNumber) {
-			srvA.push_back(vmt);
-		} else {
-			srvB.push_back(vmt);
-		}
-	}
-
-	NodeVMT * ruleNodeVMT;
-	if (srvA.size() == 1) {
-		ruleNodeVMT = *srvA.begin();
-	} else if (srvB.size() == 1) {
-		ruleNodeVMT = *srvB.begin();
-	} else {
-		ERR("Could not locate RuleNode::__vfptr");
-		return;
-	}
-
-#if 0
-	DEBUG("RuleNode::__vfptr is %p", ruleNodeVMT);
-#endif
-	SaveNodeVMT(NodeType::Rule, ruleNodeVMT);
-
-	// RelOpNode is the only node that has the same GetAdapter implementation
-	NodeVMT * relOpNodeVMT{ nullptr };
-	for (auto vmt : VMTs) {
-		if (vmt->GetAdapter == ruleNodeVMT->GetAdapter
-			&& vmt != ruleNodeVMT) {
-			if (relOpNodeVMT == nullptr) {
-				relOpNodeVMT = vmt;
-			} else {
-				ERR("RelOpNode::__vfptr pattern matches multiple VMT-s");
-				return;
-			}
-		}
-	}
-
-	if (relOpNodeVMT == nullptr) {
-		ERR("Could not locate RelOpNode::__vfptr");
-		return;
-	}
-
-#if 0
-	DEBUG("RuleNode::__vfptr is %p", relOpNodeVMT);
-#endif
-	SaveNodeVMT(NodeType::RelOp, relOpNodeVMT);
-
-	// Find And, NotAnd
-	NodeVMT * and1VMT{ nullptr }, *and2VMT{ nullptr };
-	for (auto vmt : VMTs) {
-		if (vmt->SetNextNode == ruleNodeVMT->SetNextNode
-			&& vmt->GetAdapter != ruleNodeVMT->GetAdapter) {
-			if (and1VMT == nullptr) {
-				and1VMT = vmt;
-			} else if (and2VMT == nullptr) {
-				and2VMT = vmt;
-			} else {
-				ERR("AndNode::__vfptr pattern matches multiple VMT-s");
-				return;
-			}
-		}
-	}
-
-	if (and1VMT == nullptr || and2VMT == nullptr) {
-		ERR("Could not locate AndNode::__vfptr");
-		return;
-	}
-
-#if 0
-	DEBUG("AndNode::__vfptr is %p and %p", and1VMT, and2VMT);
-#endif
-	// No reliable way to detect these; assume that AndNode VMT < NotAndNode VMT
-	if (and1VMT < and2VMT) {
-		SaveNodeVMT(NodeType::And, and1VMT);
-		SaveNodeVMT(NodeType::NotAnd, and2VMT);
-	} else {
-		SaveNodeVMT(NodeType::NotAnd, and1VMT);
-		SaveNodeVMT(NodeType::And, and2VMT);
-	}
-
-	// Find Query nodes
-	void * snn{ nullptr };
-	std::map<void *, std::vector<NodeVMT *>> snnMaps;
-	std::vector<NodeVMT *> * queryVMTs{ nullptr };
-	for (auto vmt : VMTs) {
-		if (snnMaps.find(vmt->SetNextNode) == snnMaps.end()) {
-			std::vector<NodeVMT *> nvmts{ vmt };
-			snnMaps.insert(std::make_pair(vmt->SetNextNode, nvmts));
-		} else {
-			snnMaps[vmt->SetNextNode].push_back(vmt);
-		}
-	}
-
-	for (auto & map : snnMaps) {
-		if (map.second.size() == 3) {
-			queryVMTs = &map.second;
-			break;
-		}
-	}
-
-	if (queryVMTs == nullptr) {
-		ERR("Could not locate all Query node VMT-s");
-		return;
-	}
-
-	for (auto vmt : *queryVMTs) {
-		auto getName = (NodeVMT::GetQueryNameProc)vmt->GetQueryName;
-		std::string name{ getName(nullptr) };
-		if (name == "internal query") {
-#if 0
-			DEBUG("InternalQuery::__vfptr is %p", vmt);
-#endif
-			SaveNodeVMT(NodeType::InternalQuery, vmt);
-		} else if (name == "DIV query") {
-#if 0
-			DEBUG("DivQuery::__vfptr is %p", vmt);
-#endif
-			SaveNodeVMT(NodeType::DivQuery, vmt);
-		} else if (name == "Osi user query") {
-#if 0
-			DEBUG("UserQuery::__vfptr is %p", vmt);
-#endif
-			SaveNodeVMT(NodeType::UserQuery, vmt);
-		} else {
-			ERR("Unrecognized Query node VMT");
-			return;
-		}
-	}
-
-
-	// Proc node has different IsProc() code
-	NodeVMT * procNodeVMT{ nullptr }, * databaseNodeVMT{ nullptr };
-	for (auto vmt : VMTs) {
-		if (vmt->IsProc != ruleNodeVMT->IsProc) {
-			if (procNodeVMT == nullptr) {
-				procNodeVMT = vmt;
-			} else {
-				ERR("ProcNode::__vfptr pattern matches multiple VMT-s");
-				return;
-			}
-		}
-
-		if (vmt->IsDataNode != ruleNodeVMT->IsDataNode
-			&& vmt->IsProc == ruleNodeVMT->IsProc) {
-			if (databaseNodeVMT == nullptr) {
-				databaseNodeVMT = vmt;
-			} else {
-				ERR("DatabaseNode::__vfptr pattern matches multiple VMT-s");
-				return;
-			}
-		}
-	}
-
-	if (procNodeVMT == nullptr) {
-		ERR("Could not locate ProcNode::__vfptr");
-		return;
-	}
-
-	if (databaseNodeVMT == nullptr) {
-		ERR("Could not locate DatabaseNode::__vfptr");
-		return;
-	}
-
-#if 0
-	DEBUG("ProcNode::__vfptr is %p", procNodeVMT);
-	DEBUG("DatabaseNode::__vfptr is %p", databaseNodeVMT);
-#endif
-	SaveNodeVMT(NodeType::Proc, procNodeVMT);
-	SaveNodeVMT(NodeType::Database, databaseNodeVMT);
-	ResolvedNodeVMTs = true;
-}
 
 bool OsirisProxy::HasFeatureFlag(char const * flag) const
 {
@@ -807,6 +290,55 @@ char const * ServerGameStateNames[] =
 	"Installation"
 };
 
+NewHit* OnDealDamage(DealDamageFunctor::ApplyDamageProc* next, NewHit* result, DealDamageFunctor* functor, EntityWorldHandle* casterHandle, EntityWorldHandle* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId, int storyActionId, ActionOriginator* originator, GuidResourceDefinitionManagerBase* classResourceMgr, Hit* hit, DamageSums* damageSums, HitWith hitWith)
+{
+	auto ret = next(result, functor, casterHandle, targetHandle, position, isFromItem, spellId, storyActionId, originator, classResourceMgr, hit, damageSums, hitWith);
+	return ret;
+}
+
+void OnStatsFunctorExecuteType1(StatsFunctorSet::ExecuteType1Proc* next, Hit* hit, StatsFunctorSet* self, FunctorExecParamsType1* params)
+{
+	next(hit, self, params);
+}
+
+void OsirisProxy::PostStartup()
+{
+	if (postStartupDone_) return;
+
+	std::lock_guard _(globalStateLock_);
+	// We need to initialize the function library here, as GlobalAllocator isn't available in Init().
+	if (!Libraries.CriticalInitializationFailed()) {
+		osiris_.Initialize();
+	}
+
+	if (Libraries.PostStartupFindLibraries()) {
+		Hooks.HookAll();
+		clientEntityHelpers_.Setup();
+		serverEntityHelpers_.Setup();
+		//hitProxy_.PostStartup();
+		hasher_.PostStartup();
+
+		using namespace std::placeholders;
+		Hooks.FileReader__ctor.SetWrapper(std::bind(&OsirisProxy::OnFileReaderCreate, this, _1, _2, _3, _4, _5));
+		Hooks.DealDamageFunctor__ApplyDamage.SetWrapper(std::bind(&OnDealDamage, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14));
+		Hooks.StatsFunctorSet__ExecuteType1.SetWrapper(std::bind(&OnStatsFunctorExecuteType1, _1, _2, _3, _4));
+	}
+
+	GameVersionInfo gameVersion;
+	if (Libraries.GetGameVersion(gameVersion) && !gameVersion.IsSupported()) {
+		std::wstringstream ss;
+		ss << L"Your game version (v" << gameVersion.Major << L"." << gameVersion.Minor << L"." << gameVersion.Revision << L"." << gameVersion.Build
+			<< L") is not supported by the Script Extender";
+		Libraries.ShowStartupError(ss.str().c_str(), true, false);
+	} else if (Libraries.CriticalInitializationFailed()) {
+		Libraries.ShowStartupError(L"A severe error has occurred during Script Extender initialization. Extension features will be unavailable.", true, false);
+	} else if (Libraries.InitializationFailed()) {
+		Libraries.ShowStartupError(L"An error has occurred during Script Extender initialization. Some extension features might be unavailable.", true, false);
+	}
+
+	postStartupDone_ = true;
+}
+
 void OsirisProxy::OnClientGameStateChanged(void * self, ecl::GameState fromState, ecl::GameState toState)
 {
 	if (config_.SendCrashReports) {
@@ -820,19 +352,11 @@ void OsirisProxy::OnClientGameStateChanged(void * self, ecl::GameState fromState
 		&& toState != ecl::GameState::StartLoading
 		&& toState != ecl::GameState::InitMenu
 		&& !Libraries.InitializationFailed()) {
-		// We need to initialize the function library here, as GlobalAllocator isn't available in Init().
-		std::lock_guard _(globalStateLock_);
-		Libraries.PostStartupFindLibraries();
-
-		if (!Libraries.InitializationFailed() && !functionLibraryInitialized_) {
-			CustomInjector.Initialize();
-			FunctionLibrary.Register();
-			functionLibraryInitialized_ = true;
-		}
+		PostStartup();
 	}
 
 	if (toState == ecl::GameState::Menu && Libraries.InitializationFailed()) {
-		PostInitLibraries();
+		PostStartup();
 	}
 
 #if defined(DEBUG_SERVER_CLIENT)
@@ -865,7 +389,7 @@ void OsirisProxy::OnClientGameStateChanged(void * self, ecl::GameState fromState
 
 	switch (toState) {
 	case ecl::GameState::LoadModule:
-		InitRuntimeLogging();
+		osiris_.InitRuntimeLogging();
 		break;
 
 	case ecl::GameState::InitNetwork:
@@ -1196,62 +720,6 @@ void OsirisProxy::OnSavegameVisit(void* osirisHelpers, ObjectVisitor* visitor)
 	savegameSerializer_.SavegameVisit(visitor);
 }
 
-NewHit* OnDealDamage(DealDamageFunctor::ApplyDamageProc* next, NewHit* result, DealDamageFunctor* functor, EntityWorldHandle* casterHandle, EntityWorldHandle* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId, int storyActionId, ActionOriginator* originator, GuidResourceDefinitionManagerBase* classResourceMgr, Hit* hit, DamageSums* damageSums, HitWith hitWith)
-{
-	auto ret = next(result, functor, casterHandle, targetHandle, position, isFromItem, spellId, storyActionId, originator, classResourceMgr, hit, damageSums, hitWith);
-	return ret;
-}
-
-void OnStatsFunctorExecuteType1(StatsFunctorSet::ExecuteType1Proc* next, Hit* hit, StatsFunctorSet* self, FunctorExecParamsType1* params)
-{
-	next(hit, self, params);
-}
-
-void OsirisProxy::PostInitLibraries()
-{
-	std::lock_guard _(globalStateLock_);
-	if (LibrariesPostInitialized) return;
-
-	if (extensionsEnabled_) {
-		if (Libraries.PostStartupFindLibraries()) {
-			clientEntityHelpers_.Setup();
-			serverEntityHelpers_.Setup();
-			Wrappers.InitializeDeferredExtensions();
-			FunctionLibrary.PostStartup();
-			//hitProxy_.PostStartup();
-			hasher_.PostStartup();
-
-			using namespace std::placeholders;
-			Libraries.FileReader__ctor.SetWrapper(std::bind(&OsirisProxy::OnFileReaderCreate, this, _1, _2, _3, _4, _5));
-			Libraries.DealDamageFunctor__ApplyDamage.SetWrapper(std::bind(&OnDealDamage, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14));
-			Libraries.StatsFunctorSet__ExecuteType1.SetWrapper(std::bind(&OnStatsFunctorExecuteType1, _1, _2, _3, _4));
-		}
-	}
-
-	GameVersionInfo gameVersion;
-	if (Libraries.GetGameVersion(gameVersion) && !gameVersion.IsSupported()) {
-		std::wstringstream ss;
-		ss << L"Your game version (v" << gameVersion.Major << L"." << gameVersion.Minor << L"." << gameVersion.Revision << L"." << gameVersion.Build
-			<< L") is not supported by the Script Extender; please upgrade to at least v3.6.54";
-		Libraries.ShowStartupError(ss.str().c_str(), true, false);
-	} else if (Libraries.CriticalInitializationFailed()) {
-		Libraries.ShowStartupError(L"A severe error has occurred during Script Extender initialization. Extension features will be unavailable.", true, false);
-	} else if (Libraries.InitializationFailed()) {
-		Libraries.ShowStartupError(L"An error has occurred during Script Extender initialization. Some extension features might be unavailable.", true, false);
-	}
-
-	LibrariesPostInitialized = true;
-}
-
-void OsirisProxy::InitRuntimeLogging()
-{
-	if (!config_.LogRuntime) return;
-
-	auto path = MakeLogFilePath(L"Extender Runtime", L"log");
-	gConsole.OpenLogFile(path);
-	DEBUG(L"Extender runtime log written to '%s'", path.c_str());
-}
-
 void OsirisProxy::ResetExtensionStateServer()
 {
 	std::lock_guard _(globalStateLock_);
@@ -1268,10 +736,7 @@ void OsirisProxy::LoadExtensionStateServer()
 	if (ServerExtensionLoaded) return;
 	
 	if (extensionsEnabled_) {
-		if (Libraries.PostStartupFindLibraries()) {
-			FunctionLibrary.PostStartup();
-			//hitProxy_.PostStartup();
-		}
+		PostStartup();
 
 		if (!ServerExtState) {
 			ResetExtensionStateServer();
@@ -1280,13 +745,11 @@ void OsirisProxy::LoadExtensionStateServer()
 		ServerExtState->LoadConfigs();
 	}
 
-	// PostInitLibraries() should be called after extension config is loaded,
-	// otherwise it won't hook functions that may be needed later on
-	PostInitLibraries();
-
 	if (extensionsEnabled_ && !Libraries.CriticalInitializationFailed()) {
 		//networkManager_.ExtendNetworkingServer();
-		FunctionLibrary.OnBaseModuleLoadedServer();
+		DEBUG("OsirisProxy::LoadExtensionStateServer(): Re-initializing module state.");
+		osiris_.OnBaseModuleLoadedServer();
+		ServerExtState->LuaReset(true);
 	}
 
 	ServerExtensionLoaded = true;
@@ -1307,10 +770,7 @@ void OsirisProxy::LoadExtensionStateClient()
 	if (ClientExtensionLoaded) return;
 
 	if (extensionsEnabled_) {
-		if (Libraries.PostStartupFindLibraries()) {
-			FunctionLibrary.PostStartup();
-			//hitProxy_.PostStartup();
-		}
+		PostStartup();
 
 		if (!ClientExtState) {
 			ResetExtensionStateClient();
@@ -1319,13 +779,10 @@ void OsirisProxy::LoadExtensionStateClient()
 		ClientExtState->LoadConfigs();
 	}
 
-	// PostInitLibraries() should be called after extension config is loaded,
-	// otherwise it won't hook functions that may be needed later on
-	PostInitLibraries();
-
 	if (extensionsEnabled_ && !Libraries.CriticalInitializationFailed()) {
 		//networkManager_.ExtendNetworkingClient();
-		FunctionLibrary.OnBaseModuleLoadedClient();
+		DEBUG("OsirisProxy::LoadExtensionStateClient(): Re-initializing module state.");
+		ClientExtState->LuaReset(true);
 	}
 
 	ClientExtensionLoaded = true;

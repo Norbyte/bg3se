@@ -4,10 +4,10 @@
 
 #include <cstdint>
 #include <concurrent_queue.h>
-#include "osidebug.pb.h"
+#include <Osiris/Debugger/osidebug.pb.h>
 #include <GameDefinitions/Osiris.h>
-#include "DebugMessages.h"
-#include "OsirisHelpers.h"
+#include <Osiris/Debugger/DebugMessages.h>
+#include <Osiris/Shared/OsirisHelpers.h>
 
 namespace bg3se::osidbg
 {

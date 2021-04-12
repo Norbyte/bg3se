@@ -1,7 +1,6 @@
 #include "stdafx.h"
-#include "DebugMessages.h"
-#include "NodeHooks.h"
-#include "OsirisProxy.h"
+#include <Osiris/Debugger/DebugMessages.h>
+#include <OsirisProxy.h>
 #include <sstream>
 
 #if !defined(OSI_NO_DEBUGGER)
@@ -289,7 +288,7 @@ namespace bg3se::osidbg
 			auto * node = nodes[i];
 			auto nodeInfo = sync->add_node();
 			nodeInfo->set_id(node->Id);
-			auto type = gNodeVMTWrappers->GetType(node);
+			auto type = gOsirisProxy->GetOsiris().GetVMTWrappers()->GetType(node);
 			nodeInfo->set_type((uint32_t)type);
 			if (node->Function != nullptr) {
 				nodeInfo->set_name(node->Function->Signature->Name);
