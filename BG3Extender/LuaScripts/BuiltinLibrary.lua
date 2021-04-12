@@ -209,7 +209,7 @@ end
 
 -- Helper for dumping variables in console
 Ext.Dump = function (val)
-	Ext.Utils.Print(Ext.Json.Stringify(val, true, true))
+	Ext.Utils.Print(Ext.Json.Stringify(val, true, true, true))
 end
 
 -- Custom skill property registration
