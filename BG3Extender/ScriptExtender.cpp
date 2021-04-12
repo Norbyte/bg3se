@@ -290,17 +290,6 @@ char const * ServerGameStateNames[] =
 	"Installation"
 };
 
-NewHit* OnDealDamage(DealDamageFunctor::ApplyDamageProc* next, NewHit* result, DealDamageFunctor* functor, EntityWorldHandle* casterHandle, EntityWorldHandle* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId, int storyActionId, ActionOriginator* originator, GuidResourceDefinitionManagerBase* classResourceMgr, Hit* hit, DamageSums* damageSums, HitWith hitWith)
-{
-	auto ret = next(result, functor, casterHandle, targetHandle, position, isFromItem, spellId, storyActionId, originator, classResourceMgr, hit, damageSums, hitWith);
-	return ret;
-}
-
-void OnStatsFunctorExecuteType1(StatsFunctorSet::ExecuteType1Proc* next, Hit* hit, StatsFunctorSet* self, FunctorExecParamsType1* params)
-{
-	next(hit, self, params);
-}
-
 void ScriptExtender::PostStartup()
 {
 	if (postStartupDone_) return;
@@ -320,8 +309,6 @@ void ScriptExtender::PostStartup()
 
 		using namespace std::placeholders;
 		Hooks.FileReader__ctor.SetWrapper(std::bind(&ScriptExtender::OnFileReaderCreate, this, _1, _2, _3, _4, _5));
-		Hooks.DealDamageFunctor__ApplyDamage.SetWrapper(std::bind(&OnDealDamage, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14));
-		Hooks.StatsFunctorSet__ExecuteType1.SetWrapper(std::bind(&OnStatsFunctorExecuteType1, _1, _2, _3, _4));
 	}
 
 	GameVersionInfo gameVersion;

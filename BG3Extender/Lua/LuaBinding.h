@@ -67,7 +67,8 @@ namespace bg3se::lua
 	};
 
 	template <class T>
-	class ObjectProxy2 : public Userdata<ObjectProxy2<T>>, public Indexable, public NewIndexable, public Pushable<PushPolicy::Unbind>
+	class ObjectProxy2 : public Userdata<ObjectProxy2<T>>, public Indexable, public NewIndexable, 
+		public Iterable, public Pushable<PushPolicy::Unbind>
 	{
 	public:
 		static_assert(!std::is_pointer_v<T>, "ObjectProxy template parameter should not be a pointer type!");
@@ -135,6 +136,45 @@ namespace bg3se::lua
 
 	private:
 		T * obj_;
+
+	protected:
+		friend Userdata<ObjectProxy2<T>>;
+
+		int Next(lua_State* L)
+		{
+			if (!obj_) return 0;
+
+			auto const& map = StaticLuaPropertyMap<T>::PropertyMap;
+			if (lua_type(L, 2) == LUA_TNIL) {
+				if (!map.Properties.empty()) {
+					StackCheck _(L, 2);
+					auto it = map.Properties.begin();
+					push(L, it->first);
+					if (!it->second.Get(L, obj_)) {
+						push(L, nullptr);
+					}
+
+					return 2;
+				}
+			} else {
+				auto key = checked_get<char const*>(L, 2);
+				auto it = map.Properties.find(key);
+				if (it != map.Properties.end()) {
+					++it;
+					if (it != map.Properties.end()) {
+						StackCheck _(L, 2);
+						push(L, it->first);
+						if (!it->second.Get(L, obj_)) {
+							push(L, nullptr);
+						}
+
+						return 2;
+					}
+				}
+			}
+
+			return 0;
+		}
 	};
 
 

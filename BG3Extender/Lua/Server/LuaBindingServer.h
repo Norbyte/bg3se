@@ -2,6 +2,7 @@
 
 #include <Lua/LuaBinding.h>
 #include <Lua/Server/ServerOsirisBinding.h>
+#include <GameDefinitions/Stats/Functors.h>
 #include <GameDefinitions/Status.h>
 #include <ExtensionHelpers.h>
 
@@ -121,7 +122,40 @@ namespace bg3se::esv::lua
 	private:
 		ObjectSet<eoc::ItemDefinition> definition_;
 	};*/
+	
+	class FunctorEventHooks
+	{
+	public:
+		FunctorEventHooks(lua::State& state);
+		~FunctorEventHooks();
 
+	private:
+		lua::State& state_;
+
+		NewHit* OnDealDamage(DealDamageFunctor::ApplyDamageProc* next, NewHit* result, DealDamageFunctor* functor, EntityWorldHandle* casterHandle,
+			EntityWorldHandle* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId, int storyActionId,
+			ActionOriginator* originator, GuidResourceDefinitionManagerBase* classResourceMgr, Hit* hit, DamageSums* damageSums, HitWith hitWith);
+
+		template <class TParams>
+		void LuaTriggerFunctorExecEvent(lua_State* L, StatsFunctorSet* self, TParams* params)
+		{
+			StackCheck _(L, 0);
+
+			PushInternalFunction(L, "_OnExecuteFunctor");
+			// FIXME - ObjectProxy2<StatsFunctorSet>::New(L, self);
+			push(L, nullptr);
+			ObjectProxy2<TParams>::New(L, params);
+
+			CheckedCall<>(L, 2, "Ext.OnExecuteFunctor");
+		}
+
+		template <class TParams, class TNext>
+		void OnFunctorExecute(TNext* next, Hit* hit, StatsFunctorSet* self, TParams* params)
+		{
+			LuaTriggerFunctorExecEvent<TParams>(state_.GetState(), self, params);
+			next(hit, self, params);
+		}
+	};
 
 	class ExtensionLibraryServer : public ExtensionLibrary
 	{
@@ -252,6 +286,7 @@ namespace bg3se::esv::lua
 		// Used to invalidate function/node pointers in Lua userdata objects
 		uint32_t generationId_{ 0 };
 		OsirisCallbackManager osirisCallbacks_;
+		FunctorEventHooks functorHooks_;
 
 		bool QueryInternal(char const* mod, char const* name, RegistryEntry * func,
 			std::vector<CustomFunctionParam> const & signature, OsiArgumentDesc & params);

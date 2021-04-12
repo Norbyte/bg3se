@@ -429,6 +429,9 @@
     <None Include="Osiris\Debugger\osidebug.proto">
       <Filter>Osiris\Debugger</Filter>
     </None>
+    <None Include="Lua\Server\FunctorEvents.inl">
+      <Filter>Lua\Server</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

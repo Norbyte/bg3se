@@ -9,6 +9,11 @@ _I._Listeners = {
 	SessionLoaded = {},
 	ResetCompleted = {},
 	GameStateChanged = {},
+
+	OnDealDamage = {},
+	OnExecuteFunctor = {},
+
+	-- FIXME - IMPLEMENT
 	GetSkillDamage = {},
 	GetSkillAPCost = {},
 	ComputeCharacterHit = {},
@@ -25,6 +30,14 @@ _I._Listeners = {
 	ProjectileHit = {},
 	GroundHit = {}
 }
+
+_I._OnDealDamage = function (...)
+    return _I._Notify("OnDealDamage", ...)
+end
+
+_I._OnExecuteFunctor = function (...)
+    return _I._Notify("OnExecuteFunctor", ...)
+end
 
 _I._GetSkillDamage = function (...)
     for i,callback in pairs(_I._Listeners.GetSkillDamage) do

@@ -297,6 +297,7 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
     <None Include="Lua\LevelIteratorFunctions.inl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">false</ExcludedFromBuild>
     </None>
+    <None Include="Lua\Server\FunctorEvents.inl" />
     <None Include="Lua\Server\ServerCharacter.inl" />
     <None Include="Lua\Server\ServerCombat.inl" />
     <None Include="Lua\Server\ServerItem.inl" />

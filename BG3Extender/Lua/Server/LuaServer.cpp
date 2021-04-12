@@ -23,6 +23,7 @@
 #include <Lua/Server/ServerCombat.inl>
 #include <Lua/Server/ServerNetwork.inl>
 #include <Lua/Server/ServerOsirisListeners.inl>
+#include <Lua/Server/FunctorEvents.inl>
 
 
 
@@ -444,7 +445,8 @@ namespace bg3se::esv::lua
 
 	ServerState::ServerState(ExtensionState& state)
 		: identityAdapters_(gExtender->GetOsiris().GetGlobals()),
-		osirisCallbacks_(state)
+		osirisCallbacks_(state),
+		functorHooks_(*this)
 	{
 		StackCheck _(L, 0);
 		identityAdapters_.UpdateAdapters();

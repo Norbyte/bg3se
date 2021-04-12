@@ -7,6 +7,7 @@
 #include <optional>
 
 #include <GameDefinitions/BaseTypes.h>
+#include <GameDefinitions/EntitySystem.h>
 
 namespace bg3se::lua
 {
@@ -143,6 +144,11 @@ namespace bg3se::lua
 	inline void push(lua_State* L, EntityHandle const& h)
 	{
 		lua_pushlightuserdata(L, (void*)h.Handle);
+	}
+
+	inline void push(lua_State* L, EntityWorldHandle const& h)
+	{
+		lua_pushlightuserdata(L, (void*)h.Handle.Handle);
 	}
 
 	inline void push(lua_State* L, Path const& p)
@@ -949,6 +955,7 @@ namespace bg3se::lua
 	class Indexable {};
 	class NewIndexable {};
 	class Lengthable {};
+	class Iterable {};
 
 	template <class T>
 	class Userdata
@@ -1018,6 +1025,37 @@ namespace bg3se::lua
 			}
 		}
 
+		static int PairsProxy(lua_State * L)
+		{
+			if constexpr (std::is_base_of_v<Iterable, T>) {
+				auto self = CheckUserData(L, 1);
+				return self->Pairs(L);
+			} else {
+				return luaL_error(L, "Not iterable!");
+			}
+		}
+
+		// Default __pairs implementation
+		int Pairs(lua_State * L)
+		{
+			StackCheck _(L, 3);
+			lua_pushcfunction(L, &NextProxy);
+			lua_pushvalue(L, 1);
+			push(L, nullptr);
+
+			return 3;
+		}
+
+		static int NextProxy(lua_State * L)
+		{
+			if constexpr (std::is_base_of_v<Iterable, T>) {
+				auto self = CheckUserData(L, 1);
+				return self->Next(L);
+			} else {
+				return luaL_error(L, "Not iterable!");
+			}
+		}
+
 		static void PopulateMetatable(lua_State * L)
 		{
 			// Add custom metatable items by overriding this in subclasses
@@ -1049,6 +1087,11 @@ namespace bg3se::lua
 			if constexpr (std::is_base_of_v<Lengthable, T>) {
 				lua_pushcfunction(L, &LengthProxy); // stack: mt, &Length
 				lua_setfield(L, -2, "__len"); // mt.__index = &Length; stack: mt
+			}
+
+			if constexpr (std::is_base_of_v<Iterable, T>) {
+				lua_pushcfunction(L, &PairsProxy); // stack: mt, &Length
+				lua_setfield(L, -2, "__pairs"); // mt.__index = &Length; stack: mt
 			}
 
 			T::PopulateMetatable(L);

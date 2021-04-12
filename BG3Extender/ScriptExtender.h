@@ -176,6 +176,11 @@ public:
 		return osiris_;
 	}
 
+	inline EngineHooks& GetEngineHooks()
+	{
+		return Hooks;
+	}
+
 	void ClearPathOverrides();
 	void AddPathOverride(STDString const & path, STDString const & overriddenPath);
 
