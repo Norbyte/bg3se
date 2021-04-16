@@ -97,70 +97,70 @@ int StatusGetEngineType(lua_State* L, esv::Status* self);
 
 #define P(prop) \
 	pm.AddProperty(#prop, \
-		[](lua_State* L, PM::ObjectType* obj) { \
-			return GenericGetProperty(L, obj->prop); \
+		[](lua_State* L, LifetimeHolder const& lifetime, PM::ObjectType* obj) { \
+			return GenericGetProperty(L, lifetime, obj->prop); \
 		}, \
-		[](lua_State* L, PM::ObjectType* obj, int index) { \
-			return GenericSetProperty(L, obj->prop, index); \
+		[](lua_State* L, LifetimeHolder const& lifetime, PM::ObjectType* obj, int index) { \
+			return GenericSetProperty(L, lifetime, obj->prop, index); \
 		} \
 	);
 
 #define P_RO(prop) \
 	pm.AddProperty(#prop, \
-		[](lua_State* L, PM::ObjectType* obj) { \
-			return GenericGetProperty(L, obj->prop); \
+		[](lua_State* L, LifetimeHolder const& lifetime, PM::ObjectType* obj) { \
+			return GenericGetProperty(L, lifetime, obj->prop); \
 		}, \
-		[](lua_State* L, PM::ObjectType* obj, int index) { \
+		[](lua_State* L, LifetimeHolder const& lifetime, PM::ObjectType* obj, int index) { \
 			return false; \
 		} \
 	);
 
 #define P_REF(prop) \
 	pm.AddProperty(#prop, \
-		[](lua_State* L, PM::ObjectType* obj) { \
-			ObjectProxy2<decltype(obj->prop)>::New(L, &obj->prop); \
+		[](lua_State* L, LifetimeHolder const& lifetime, PM::ObjectType* obj) { \
+			ObjectProxy2<decltype(obj->prop)>::New(L, &obj->prop, lifetime); \
 			return true; \
 		}, \
-		[](lua_State* L, PM::ObjectType* obj, int index) { \
+		[](lua_State* L, LifetimeHolder const& lifetime, PM::ObjectType* obj, int index) { \
 			return false; \
 		} \
 	);
 
 #define P_REF_PTR(prop) \
 	pm.AddProperty(#prop, \
-		[](lua_State* L, PM::ObjectType* obj) { \
+		[](lua_State* L, LifetimeHolder const& lifetime, PM::ObjectType* obj) { \
 			if (obj->prop) { \
-				ObjectProxy2<std::remove_pointer<decltype(obj->prop)>::type>::New(L, obj->prop); \
+				ObjectProxy2<std::remove_pointer<decltype(obj->prop)>::type>::New(L, obj->prop, lifetime); \
 			} else { \
 				push(L, nullptr); \
 			} \
 			return true; \
 		}, \
-		[](lua_State* L, PM::ObjectType* obj, int index) { \
+		[](lua_State* L, LifetimeHolder const& lifetime, PM::ObjectType* obj, int index) { \
 			return false; \
 		} \
 	);
 
 #define PN(name, prop) \
 	pm.AddProperty(#name, \
-		[](lua_State* L, PM::ObjectType* obj) { \
-			return GenericGetProperty(L, obj->prop); \
+		[](lua_State* L, LifetimeHolder const& lifetime, PM::ObjectType* obj) { \
+			return GenericGetProperty(L, lifetime, obj->prop); \
 		}, \
-		[](lua_State* L, PM::ObjectType* obj, int index) { \
-			return GenericSetProperty(L, obj->prop, index); \
+		[](lua_State* L, LifetimeHolder const& lifetime, PM::ObjectType* obj, int index) { \
+			return GenericSetProperty(L, lifetime, obj->prop, index); \
 		} \
 	);
 
 #define P_FUN(name, fun) \
 	pm.AddProperty(#name, \
-		[](lua_State* L, PM::ObjectType* obj) { \
+		[](lua_State* L, LifetimeHolder const& lifetime, PM::ObjectType* obj) { \
 			lua_pushcfunction(L, [](lua_State* L) -> int { \
 				auto self = checked_get<ObjectProxy2<PM::ObjectType>*>(L, 1)->Get(L); \
 				return fun(L, self); \
 			}); \
 			return true; \
 		}, \
-		[](lua_State* L, PM::ObjectType* obj, int index) { \
+		[](lua_State* L, LifetimeHolder const& lifetime, PM::ObjectType* obj, int index) { \
 			return false; \
 		} \
 	);

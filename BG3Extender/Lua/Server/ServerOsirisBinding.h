@@ -229,7 +229,6 @@ namespace bg3se::esv::lua
 		T * args_;
 	};
 
-
 	class OsirisCallbackManager : Noncopyable<OsirisCallbackManager>
 	{
 	public:
@@ -263,8 +262,8 @@ namespace bg3se::esv::lua
 		void CallQueryPreHook(Node* node, OsiArgumentDesc* args);
 		void CallQueryPostHook(Node* node, OsiArgumentDesc* args, bool succeeded);
 		void RunHandlers(uint64_t nodeRef, TuplePtrLL* tuple) const;
-		void RunHandler(lua_State* L, RegistryEntry const& func, TuplePtrLL* tuple) const;
+		void RunHandler(ServerState & lua, RegistryEntry const& func, TuplePtrLL* tuple) const;
 		void RunHandlers(uint64_t nodeRef, OsiArgumentDesc* tuple) const;
-		void RunHandler(lua_State* L, RegistryEntry const& func, OsiArgumentDesc* tuple) const;
+		void RunHandler(ServerState & lua, RegistryEntry const& func, OsiArgumentDesc* tuple) const;
 	};
 }

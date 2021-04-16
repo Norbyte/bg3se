@@ -6,13 +6,13 @@
 namespace bg3se::lua
 {
 	template <class T>
-	bool GenericGetProperty(lua_State* L, T const& value)
+	bool GenericGetProperty(lua_State* L, LifetimeHolder const& lifetime, T const& value)
 	{
 		return LuaWrite(L, value) == 1;
 	}
 	
 	template <class T>
-	bool GenericSetProperty(lua_State* L, T& value, int index)
+	bool GenericSetProperty(lua_State* L, LifetimeHolder const& lifetime, T& value, int index)
 	{
 		lua_pushvalue(L, index);
 		LuaRead(L, value);

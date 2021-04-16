@@ -27,10 +27,27 @@
 
 
 
+namespace bg3se::lua
+{
+	LifetimeHolder GetCurrentLifetime()
+	{
+		if (gExtender->IsInServerThread()) {
+			return esv::lua::GetServerLifetime();
+		} else {
+			return ecl::lua::GetClientLifetime();
+		}
+	}
+}
+
 namespace bg3se::esv::lua
 {
 	using namespace bg3se::lua;
 
+	LifetimeHolder GetServerLifetime()
+	{
+		assert(gExtender->IsInServerThread());
+		return esv::ExtensionState::Get().GetLua()->GetCurrentLifetime();
+	}
 
 	/*
 	* 
@@ -759,11 +776,7 @@ namespace bg3se::esv::lua
 	*/
 	void ServerState::OnGameStateChanged(GameState fromState, GameState toState)
 	{
-		StackCheck _(L, 0);
-		PushInternalFunction(L, "_GameStateChanged"); // stack: fn
-		push(L, fromState);
-		push(L, toState);
-		CheckedCall<>(L, 2, "Ext.GameStateChanged");
+		CallExt("_GameStateChanged", 0, fromState, toState);
 	}
 
 	/*
@@ -1081,15 +1094,9 @@ namespace bg3se::esv::lua
 
 	std::optional<STDString> ServerState::GetModPersistentVars(STDString const& modTable)
 	{
-		StackCheck _(L, 0);
-		Restriction restriction(*this, RestrictAll);
-
-		PushExtFunction(L, "_GetModPersistentVars");
-		push(L, modTable);
-
-		auto ret = CheckedCall<std::optional<char const*>>(L, 1, "Ext.GetModPersistentVars");
-		if (ret) {
-			return std::get<0>(*ret);
+		std::tuple<std::optional<char const*>> ret;
+		if (CallExtRet("_GetModPersistentVars", RestrictAll, ret, modTable)) {
+			return std::get<0>(ret);
 		} else {
 			return {};
 		}
@@ -1098,14 +1105,7 @@ namespace bg3se::esv::lua
 
 	void ServerState::RestoreModPersistentVars(STDString const& modTable, STDString const& vars)
 	{
-		StackCheck _(L, 0);
-		Restriction restriction(*this, RestrictAll);
-
-		PushExtFunction(L, "_RestoreModPersistentVars");
-		push(L, modTable);
-		push(L, vars);
-
-		CheckedCall<>(L, 2, "Ext.RestoreModPersistentVars");
+		CallExt("_RestoreModPersistentVars", RestrictAll, modTable, vars);
 	}
 
 

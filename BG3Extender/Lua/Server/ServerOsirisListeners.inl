@@ -44,14 +44,16 @@ namespace bg3se::esv::lua
 		LuaServerPin lua(state_);
 		if (lua) {
 			std::for_each(it.first, it.second, [&lua, this, tuple](std::pair<uint64_t, std::size_t> handler) {
-				RunHandler(lua->GetState(), subscribers_[handler.second], tuple);
+				RunHandler(lua.Get(), subscribers_[handler.second], tuple);
 			});
 		}
 	}
 
-	void OsirisCallbackManager::RunHandler(lua_State* L, RegistryEntry const& func, TuplePtrLL* tuple) const
+	void OsirisCallbackManager::RunHandler(ServerState & lua, RegistryEntry const& func, TuplePtrLL* tuple) const
 	{
+		auto L = lua.GetState();
 		StackCheck _(L, 0);
+		LifetimePin p_(lua.GetStack());
 		int32_t stackArgs = 1;
 		if (tuple != nullptr) {
 			auto node = tuple->Items.Head->Next;
@@ -103,14 +105,16 @@ namespace bg3se::esv::lua
 		LuaServerPin lua(state_);
 		if (lua) {
 			std::for_each(it.first, it.second, [&lua, this, args](std::pair<uint64_t, std::size_t> handler) {
-				RunHandler(lua->GetState(), subscribers_[handler.second], args);
+				RunHandler(lua.Get(), subscribers_[handler.second], args);
 			});
 		}
 	}
 
-	void OsirisCallbackManager::RunHandler(lua_State* L, RegistryEntry const& func, OsiArgumentDesc* args) const
+	void OsirisCallbackManager::RunHandler(ServerState & lua, RegistryEntry const& func, OsiArgumentDesc* args) const
 	{
+		auto L = lua.GetState();
 		StackCheck _(L, 0);
+		LifetimePin p_(lua.GetStack());
 		int32_t stackArgs = 1;
 		auto node = args;
 		while (node) {

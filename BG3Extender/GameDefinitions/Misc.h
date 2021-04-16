@@ -15,7 +15,7 @@ namespace bg3se
 		int32_t Ticks;
 	};
 
-	struct ActionOriginator
+	struct ActionOriginator : public HasObjectProxy
 	{
 		UUID ActionGuid;
 		FixedString PassiveId;

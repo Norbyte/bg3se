@@ -17,19 +17,14 @@ namespace bg3se
 
 namespace bg3se::lua::stats
 {
-	class StatsProxy : public Userdata<StatsProxy>, public Indexable, public NewIndexable, public Pushable<PushPolicy::Unbind>
+	class StatsProxy : public Userdata<StatsProxy>, public Indexable, public NewIndexable, public Pushable
 	{
 	public:
 		static char const * const MetatableName;
 
-		StatsProxy(CRPGStats_Object * obj, std::optional<int> level)
-			: obj_(obj), level_(level)
+		StatsProxy(CRPGStats_Object * obj, std::optional<int> level, LifetimeHolder const& lifetime)
+			: obj_(obj), level_(level), lifetime_(lifetime)
 		{}
-
-		void Unbind()
-		{
-			obj_ = nullptr;
-		}
 
 		int Index(lua_State * L);
 		int NewIndex(lua_State * L);
@@ -37,19 +32,15 @@ namespace bg3se::lua::stats
 	private:
 		CRPGStats_Object * obj_;
 		std::optional<int> level_;
+		LifetimeReference lifetime_;
 	};
 
-	class SpellPrototypeProxy : public Userdata<SpellPrototypeProxy>, public Indexable, public Pushable<PushPolicy::Unbind>
+	class SpellPrototypeProxy : public Userdata<SpellPrototypeProxy>, public Indexable, public Pushable
 	{
 	public:
 		static char const * const MetatableName;
 
-		SpellPrototypeProxy(SpellPrototype* obj, std::optional<int> level);
-
-		void Unbind()
-		{
-			obj_ = nullptr;
-		}
+		SpellPrototypeProxy(SpellPrototype* obj, std::optional<int> level, LifetimeHolder& lifetime);
 
 		int Index(lua_State * L);
 
@@ -57,11 +48,12 @@ namespace bg3se::lua::stats
 		SpellPrototype * obj_;
 		CRPGStats_Object * stats_;
 		std::optional<int> level_;
+		LifetimeReference lifetime_;
 	};
 
 
 	class StatsExtraDataProxy : public Userdata<StatsExtraDataProxy>, public Indexable, 
-		public NewIndexable, public Pushable<PushPolicy::None>
+		public NewIndexable, public Pushable
 	{
 	public:
 		static char const * const MetatableName;

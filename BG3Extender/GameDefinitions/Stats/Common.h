@@ -21,7 +21,7 @@ namespace bg3se
 		uint8_t field_24;
 	};
 
-	struct SpellId
+	struct SpellId : public HasObjectProxy
 	{
 		FixedString OriginatorPrototype;
 		uint8_t _Pad[4];

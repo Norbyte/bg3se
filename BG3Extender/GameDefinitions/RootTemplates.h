@@ -14,7 +14,7 @@ namespace bg3se
         bool IsOverridden;
     };
 
-    struct GameObjectTemplate
+    struct GameObjectTemplate : public HasObjectProxy
     {
         void* VMT;
         uint64_t Flag;

@@ -10,7 +10,7 @@ namespace bg3se
 {
 	struct GuidResourceDefinitionManagerBase;
 
-	struct StatsFunctorBase : Noncopyable<StatsFunctorBase>
+	struct StatsFunctorBase : Noncopyable<StatsFunctorBase>, public HasObjectProxy
 	{
 		struct FunctorVMT
 		{
@@ -42,7 +42,7 @@ namespace bg3se
 	};
 
 
-	struct BaseFunctorExecParams
+	struct BaseFunctorExecParams : public HasObjectProxy
 	{
 		void* VMT{ nullptr };
 		int ParamsTypeId{ 0 }; // FIXME enum!

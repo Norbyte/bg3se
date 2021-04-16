@@ -6,7 +6,7 @@
 
 namespace bg3se
 {
-	struct GuidResourceDefinition
+	struct GuidResourceDefinition : public HasObjectProxy
 	{
 		void* VMT;
 		UUID ResourceUUID;

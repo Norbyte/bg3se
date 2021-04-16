@@ -415,6 +415,12 @@ namespace bg3se::ecl::lua
 {
 	using namespace bg3se::lua;
 
+	LifetimeHolder GetClientLifetime()
+	{
+		assert(gExtender->IsInClientThread());
+		return ecl::ExtensionState::Get().GetLua()->GetCurrentLifetime();
+	}
+
 	void ExtensionLibraryClient::Register(lua_State * L)
 	{
 		ExtensionLibrary::Register(L);
@@ -1103,11 +1109,7 @@ namespace bg3se::ecl::lua
 	*/
 	void ClientState::OnGameStateChanged(GameState fromState, GameState toState)
 	{
-		StackCheck _(L, 0);
-		PushInternalFunction(L, "_GameStateChanged"); // stack: fn
-		push(L, fromState);
-		push(L, toState);
-		CheckedCall<>(L, 2, "Ext.GameStateChanged");
+		CallExt("_GameStateChanged", 0, fromState, toState);
 	}
 
 	/*

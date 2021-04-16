@@ -88,7 +88,7 @@ namespace bg3se
 	{
 		struct StatusMachine;
 
-		struct ItemGeneration
+		struct ItemGeneration : public HasObjectProxy
 		{
 			FixedString StatsId;
 			FixedString ItemType;
@@ -100,7 +100,7 @@ namespace bg3se
 		};
 
 
-		struct Item : public IEoCServerObject
+		struct Item : public IEoCServerObject, public HasObjectProxy
 		{
 			static constexpr ExtComponentType ComponentType = ExtComponentType::ServerItem;
 

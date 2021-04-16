@@ -290,8 +290,9 @@ void DebugConsole::ConsoleThread()
 					bg3se::LuaVirtualPin pin(*state);
 					if (pin) {
 						if (line[0] == '!') {
-							pin->CallExt("DoConsoleCommand", 0, bg3se::lua::ReturnType<>{}, line.substr(1));
+							pin->CallExt("DoConsoleCommand", 0, line.substr(1));
 						} else {
+							bg3se::lua::LifetimePin _(pin->GetStack());
 							auto L = pin->GetState();
 							if (luaL_loadstring(L, line.c_str()) || bg3se::lua::CallWithTraceback(L, 0, 0)) { // stack: errmsg
 								ERR("%s", lua_tostring(L, -1));

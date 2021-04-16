@@ -106,6 +106,20 @@ namespace bg3se::lua
 		return status;
 	}
 
+	// Calls Lua function.
+	// Function and arguments must be already pushed to the Lua stack.
+	// Returns false if call failed, true tuple otherwise.
+	// Function name only needed for error reporting purposes
+	bool CheckedCall(lua_State* L, int numArgs, char const* functionName)
+	{
+		if (CallWithTraceback(L, numArgs, 0) != 0) { // stack: errmsg
+			ERR("%s Lua call failed: %s", functionName, lua_tostring(L, -1));
+			lua_pop(L, 1);
+			return false;
+		}
+
+		return true;
+	}
 
 	void PushExtFunction(lua_State * L, char const * func)
 	{
@@ -541,6 +555,7 @@ namespace bg3se::lua
 	}
 
 	State::State()
+		: lifetimeStack_(lifetimePool_)
 	{
 		L = luaL_newstate();
 #if LUA_VERSION_NUM <= 501
@@ -556,9 +571,19 @@ namespace bg3se::lua
 		lua_close(L);
 	}
 
+	LifetimeHolder State::GetCurrentLifetime()
+	{
+		if (lifetimeStack_.IsEmpty()) {
+			OsiErrorS("Attempted to construct Lua object proxy while lifetime stack is empty");
+			return LifetimeHolder(lifetimePool_, nullptr);
+		} else {
+			return lifetimeStack_.GetCurrent();
+		}
+	}
+
 	void State::LoadBootstrap(STDString const& path, STDString const& modTable)
 	{
-		CallExt("_LoadBootstrap", RestrictAll, ReturnType<>{}, path, modTable);
+		CallExt("_LoadBootstrap", RestrictAll, path, modTable);
 	}
 
 	void State::FinishStartup()
@@ -620,6 +645,7 @@ namespace bg3se::lua
 #endif
 
 		/* Ask Lua to run our little script */
+		LifetimePin _(lifetimeStack_);
 		status = CallWithTraceback(L, 0, LUA_MULTRET);
 		if (status != LUA_OK) {
 			LuaError("Failed to execute script: " << lua_tostring(L, -1));
@@ -639,7 +665,7 @@ namespace bg3se::lua
 			std::tuple{Push<ObjectProxy<CDivinityStats_Character>>(attacker),
 			Push<ObjectProxy<CDivinityStats_Character>>(target)}) };
 
-		auto result = CheckedCall<std::optional<int32_t>>(L, 2, "Ext.GetHitChance");
+		auto result = CheckedLifetimeCall<std::optional<int32_t>>(2, "Ext.GetHitChance");
 		if (result) {
 			return std::get<0>(*result);
 		} else {
@@ -677,7 +703,7 @@ namespace bg3se::lua
 		push(L, level);
 		push(L, noRandomization);
 
-		auto result = CheckedCall<std::optional<DeathType>, std::optional<DamageList *>>(L, 8, "Ext.GetSkillDamage");
+		auto result = CheckedLifetimeCall<std::optional<DeathType>, std::optional<DamageList *>>(8, "Ext.GetSkillDamage");
 		if (result) {
 			auto deathType = std::get<0>(*result);
 			auto damages = std::get<1>(*result);
@@ -727,7 +753,7 @@ namespace bg3se::lua
 			push(L, nullptr);
 		}
 
-		auto result = CheckedCall<std::optional<bool>, std::optional<int>>(L, 5, "Ext.GetSkillAPCost");
+		auto result = CheckedLifetimeCall<std::optional<bool>, std::optional<int>>(5, "Ext.GetSkillAPCost");
 		if (result) {
 			auto ap = std::get<1>(*result);
 			auto elementalAffinity = std::get<0>(*result);
@@ -747,37 +773,37 @@ namespace bg3se::lua
 
 	void State::OnGameSessionLoading()
 	{
-		CallExt("_OnGameSessionLoading", RestrictAll | ScopeSessionLoad, ReturnType<>{});
+		CallExt("_OnGameSessionLoading", RestrictAll | ScopeSessionLoad);
 	}
 
 	void State::OnGameSessionLoaded()
 	{
-		CallExt("_OnGameSessionLoaded", RestrictAll, ReturnType<>{});
+		CallExt("_OnGameSessionLoaded", RestrictAll);
 	}
 
 	void State::OnModuleLoadStarted()
 	{
-		CallExt("_OnModuleLoadStarted", RestrictAll | ScopeModulePreLoad, ReturnType<>{});
+		CallExt("_OnModuleLoadStarted", RestrictAll | ScopeModulePreLoad);
 	}
 
 	void State::OnModuleLoading()
 	{
-		CallExt("_OnModuleLoading", RestrictAll | ScopeModuleLoad, ReturnType<>{});
+		CallExt("_OnModuleLoading", RestrictAll | ScopeModuleLoad);
 	}
 
 	void State::OnStatsLoaded()
 	{
-		CallExt("_OnStatsLoaded", RestrictAll | ScopeModuleLoad, ReturnType<>{});
+		CallExt("_OnStatsLoaded", RestrictAll | ScopeModuleLoad);
 	}
 
 	void State::OnModuleResume()
 	{
-		CallExt("_OnModuleResume", RestrictAll | ScopeModuleResume, ReturnType<>{});
+		CallExt("_OnModuleResume", RestrictAll | ScopeModuleResume);
 	}
 
 	void State::OnResetCompleted()
 	{
-		CallExt("_OnResetCompleted", 0, ReturnType<>{});
+		CallExt("_OnResetCompleted", 0);
 	}
 
 	STDString State::GetBuiltinLibrary(int resourceId)

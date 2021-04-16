@@ -262,77 +262,6 @@ namespace bg3se::lua
 	}
 
 
-	// Dummy pin class for values that need no special pinning/unpinning behavior
-	struct NullPin {};
-
-	template <class T>
-	inline typename std::enable_if_t<std::is_integral_v<T>, NullPin> push_pin(lua_State * L, T v)
-	{
-		push(L, v);
-		return {};
-	}
-
-	template <class T, typename std::enable_if_t<std::is_invocable_v<T, lua_State *>, int> * = nullptr>
-	inline auto push_pin(lua_State * L, T v)
-	{
-		return v(L);
-	}
-
-	// Specifies additional actions taken when the object is pushed to a Lua call
-	enum class PushPolicy
-	{
-		None,
-		// Indicates that the we should call Unbind() on the specified object after
-		// it goes out of scope (in Lua)
-		Unbind
-	};
-
-	template <PushPolicy TPolicy>
-	struct Pushable
-	{};
-
-	template <class T>
-	class UnbindablePin
-	{
-	public:
-		inline UnbindablePin(T * object)
-			: object_(object)
-		{}
-
-		inline ~UnbindablePin()
-		{
-			if (object_) object_->Unbind();
-		}
-
-		inline UnbindablePin(UnbindablePin const &) = delete;
-
-		inline UnbindablePin(UnbindablePin && other)
-			: object_(other.object_)
-		{
-			other.object_ = nullptr;
-		}
-
-		UnbindablePin & operator = (UnbindablePin const &) = delete;
-
-
-	private:
-		T * object_;
-	};
-
-#define NULL_PIN(type) inline NullPin push_pin(lua_State * L, type v) \
-	{ \
-		push(L, v); \
-		return {}; \
-	}
-
-	NULL_PIN(nullptr_t)
-	NULL_PIN(double)
-	NULL_PIN(char const *)
-	NULL_PIN(FixedString)
-	NULL_PIN(StringView)
-	NULL_PIN(WStringView)
-
-
 	template <class TValue>
 	TValue get(lua_State * L, int index = -1);
 
@@ -752,33 +681,16 @@ namespace bg3se::lua
 	}
 
 
-	template <class T, class... Args>
-	inline auto Push(Args... args)
-	{
-		return[args...](lua_State * L) {
-			auto obj = T::New(L, args...);
-			if constexpr (std::is_base_of_v<Pushable<PushPolicy::Unbind>, T>) {
-				return UnbindablePin{ obj };
-			} else {
-				return NullPin{};
-			}
-		};
-	}
-
 	// Pushes all arguments to the Lua stack and returns a pin that should
 	// be destroyed after the call
 	template <class ...Args>
-	inline auto PushArguments(lua_State * L, std::tuple<Args...> args)
+	inline void PushArguments(lua_State * L, std::tuple<Args...> args)
 	{
-		return std::apply([=](const auto &... elem)
+		std::apply([=](const auto &... elem)
 		{
-			return std::tuple{ push_pin(L, elem)... };
+			push(L, elem)...;
 		}, args);
 	}
-
-	// Helper for indicating return type of a Lua function
-	template <class... Args>
-	struct ReturnType {};
 
 	// Helper struct to allow function overloading without (real) template-dependent parameters
 	template <class>
@@ -786,89 +698,102 @@ namespace bg3se::lua
 
 	// Fetches a required return value (i.e. succeeded = false if arg doesn't exist or is nil)
 	template <class T>
-	T CheckedGetReturnValue(lua_State * L, int & index, bool & succeeded, Overload<T>)
+	void CheckedGetReturnValue(lua_State * L, int & index, T& ret, bool & succeeded)
 	{
 		auto i = index--;
 		if (lua_isnil(L, i)) {
 			ERR("Return value %d must not be missing or nil", -i);
 			succeeded = false;
-			return {};
+			ret = T{};
 		} else {
 			auto val = safe_get<T>(L, i);
-			if ((bool)val) {
-				return *val;
+			if (val.has_value()) {
+				ret = *val;
 			} else {
 				ERR("Failed to fetch return value %d, incorrect type?", -i);
 				succeeded = false;
-				return {};
+				ret = T{};
 			}
 		}
 	}
 
 	// Fetches an optional return value (i.e. succeeded = true if arg doesn't exist or is nil)
 	template <class T>
-	std::optional<T> CheckedGetReturnValue(lua_State * L, int & index, bool & succeeded, Overload<std::optional<T>>)
+	void CheckedGetReturnValue(lua_State * L, int & index, std::optional<T>& ret, bool& succeeded)
 	{
 		auto i = index--;
 		if (lua_isnil(L, i)) {
-			return {};
+			ret = {};
+			succeeded = true;
 		} else {
-			auto val = safe_get<T>(L, i);
-			if ((bool)val) {
-				return val;
+			ret = safe_get<T>(L, i);
+			if (ret.has_value()) {
+				succeeded = true;
 			} else {
 				ERR("Failed to fetch return value %d, incorrect type?", -i);
+				ret = {};
 				succeeded = false;
-				return {};
 			}
 		}
 	}
 
-	// Fetch Lua return values into a tuple
-	// Sets succeeded=false if validation of any return value failed.
-	// Tuple size *must* match lua_call nres, otherwise it'll corrupt the Lua heap!
-	template <class... Args>
-	auto CheckedGetReturnValues(lua_State * L, bool & succeeded)
+	template <class... Ret, size_t... Is>
+	inline bool CheckedGetReturnValuesInner(lua_State * L, bool& succeeded, std::tuple<Ret...>& ret, std::index_sequence<Is...>)
 	{
 		int index{ -1 };
-		return std::tuple{CheckedGetReturnValue(L, index, succeeded, Overload<Args>{})...};
+		(CheckedGetReturnValue(L, index, std::get<Is>(ret), succeeded), ...);
+		return succeeded;
 	}
 
 	// Fetch Lua return values into a tuple
-	// Returns {} if validation of any return value failed, rval tuple otherwise.
+	// Returns false if validation of any return value failed.
 	// Tuple size *must* match lua_call nres, otherwise it'll corrupt the Lua heap!
-	template <class... Args>
-	auto CheckedPopReturnValues(lua_State * L)
+	template <class... Ret>
+	bool CheckedGetReturnValues(lua_State * L, std::tuple<Ret...>& ret)
 	{
 		bool succeeded{ true };
-		auto rval = CheckedGetReturnValues<Args...>(L, succeeded);
-		lua_pop(L, (int)sizeof...(Args));
-		if (succeeded) {
-			return std::optional(rval);
-		} else {
-			return std::optional<decltype(rval)>();
-		}
+		CheckedGetReturnValuesInner(L, succeeded, ret, std::index_sequence_for<Ret...>{});
+		return succeeded;
 	}
+
+	// Fetch Lua return values into a tuple
+	// Returns false if validation of any return value failed, true tuple otherwise.
+	// Tuple size *must* match lua_call nres, otherwise it'll corrupt the Lua heap!
+	template <class... Ret>
+	auto CheckedPopReturnValues(lua_State * L, std::tuple<Ret...>& ret)
+	{
+		auto succeeded = CheckedGetReturnValues<Ret...>(L, ret);
+		lua_pop(L, (int)sizeof...(Ret));
+		return succeeded;
+	}
+
+	int CallWithTraceback(lua_State* L, int narg, int nres);
+
+	// Calls Lua function.
+	// Function and arguments must be already pushed to the Lua stack.
+	// Returns false if call failed, true tuple otherwise.
+	// Function name only needed for error reporting purposes
+	bool CheckedCall(lua_State * L, int numArgs, char const * functionName);
 
 	// Calls Lua function and fetches Lua return values into a tuple.
 	// Function and arguments must be already pushed to the Lua stack.
-	// Returns {} if call or return value fetch failed, rval tuple otherwise.
+	// Returns false if call or return value fetch failed, true tuple otherwise.
 	// Function name only needed for error reporting purposes
-	template <class... Args>
-	auto CheckedCall(lua_State * L, int numArgs, char const * functionName)
+	template <class... Ret>
+	bool CheckedCall(lua_State * L, int numArgs, std::tuple<Ret...>& ret, char const * functionName)
 	{
-		if (CallWithTraceback(L, numArgs, sizeof...(Args)) != 0) { // stack: errmsg
+		if (CallWithTraceback(L, numArgs, sizeof...(Ret)) != 0) { // stack: errmsg
 			ERR("%s Lua call failed: %s", functionName, lua_tostring(L, -1));
 			lua_pop(L, 1);
-			return decltype(CheckedPopReturnValues<Args...>(L))();
+			return false;
 		}
 
-		auto result = CheckedPopReturnValues<Args...>(L);
-		if (!result) {
+		if (!CheckedPopReturnValues<Ret...>(L, ret)) {
 			ERR("Got incorrect return values from %s", functionName);
+			return false;
 		}
 
-		return result;
+		return true;
 	}
 
 	// Overload helper for fetching a parameter for a Lua -> C++ function call
@@ -972,6 +897,7 @@ namespace bg3se::lua
 	class NewIndexable {};
 	class Lengthable {};
 	class Iterable {};
+	class Pushable {};
 
 	template <class T>
 	class Userdata

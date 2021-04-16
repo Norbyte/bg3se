@@ -616,6 +616,7 @@ namespace bg3se::lua::dbg
 		evaluator += "local result = " + req.Expression + "\r\n"
 			"return Ext.DebugEvaluate(result)";
 
+		LifetimePin _p(lua->GetStack());
 		if (luaL_loadstring(L, evaluator.c_str())) {
 			req.Response->set_error_message(lua_tostring(L, -1));
 			lua_pop(L, top - lua_gettop(L));

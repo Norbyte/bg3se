@@ -34,6 +34,8 @@ namespace bg3se
 		//~ProtectedGameObject() = delete;
 	};
 
+	// Tag for engine objects that have a Lua property map
+	struct HasObjectProxy {};
 
 	// Prevents implicit casting between aliases of integral types (eg. NetId and UserId)
 	// Goal is to prevent accidental mixups between different types

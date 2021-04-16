@@ -173,6 +173,7 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
     <ClInclude Include="Lua\LuaSerializers.h" />
     <ClInclude Include="Lua\Server\LuaBindingServer.h" />
     <ClInclude Include="Lua\Server\ServerOsirisBinding.h" />
+    <ClInclude Include="Lua\Shared\LuaLifetime.h" />
     <ClInclude Include="Lua\Shared\LuaStats.h" />
     <ClInclude Include="ScriptExtender.h" />
     <ClInclude Include="Osiris\Debugger\Debugger.h" />

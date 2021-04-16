@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Lua/LuaHelpers.h>
+#include <Lua/Shared/LuaLifetime.h>
 
 #include <mutex>
 #include <unordered_set>
@@ -16,6 +17,7 @@ namespace bg3se::lua
 	void PushExtFunction(lua_State * L, char const * func);
 	void PushInternalFunction(lua_State * L, char const * func);
 	void PushModFunction(lua_State* L, char const* mod, char const* func);
+	LifetimeHolder GetCurrentLifetime();
 
 	template <class T>
 	class LuaPropertyMap
@@ -23,31 +25,31 @@ namespace bg3se::lua
 	public:
 		struct PropertyAccessors
 		{
-			using Getter = bool(lua_State* L, T* object);
-			using Setter = bool (lua_State* L, T* object, int index);
+			using Getter = bool(lua_State* L, LifetimeHolder const& lifetime, T* object);
+			using Setter = bool (lua_State* L, LifetimeHolder const& lifetime, T* object, int index);
 
 			Getter* Get;
 			Setter* Set;
 		};
 
-		bool GetProperty(lua_State* L, T* object, STDString const& prop) const
+		bool GetProperty(lua_State* L, LifetimeHolder const& lifetime, T* object, STDString const& prop) const
 		{
 			auto it = Properties.find(prop);
 			if (it == Properties.end()) {
 				return 0;
 			}
 
-			return it->second.Get(L, object);
+			return it->second.Get(L, lifetime, object);
 		}
 
-		bool SetProperty(lua_State* L, T* object, STDString const& prop, int index) const
+		bool SetProperty(lua_State* L, LifetimeHolder const& lifetime, T* object, STDString const& prop, int index) const
 		{
 			auto it = Properties.find(prop);
 			if (it == Properties.end()) {
 				return 0;
 			}
 
-			return it->second.Set(L, object, index);
+			return it->second.Set(L, lifetime, object, index);
 		}
 
 		void AddProperty(STDString const& prop, typename PropertyAccessors::Getter* getter, typename PropertyAccessors::Setter* setter)
@@ -68,37 +70,39 @@ namespace bg3se::lua
 
 	template <class T>
 	class ObjectProxy2 : public Userdata<ObjectProxy2<T>>, public Indexable, public NewIndexable, 
-		public Iterable, public Pushable<PushPolicy::Unbind>
+		public Iterable, public Pushable
 	{
 	public:
 		static_assert(!std::is_pointer_v<T>, "ObjectProxy template parameter should not be a pointer type!");
 
 		static char const * const MetatableName;
 
-		ObjectProxy2(T * obj) : obj_(obj)
+		ObjectProxy2(T * obj) 
+			: object_(obj, GetCurrentLifetime())
 		{}
 
-		void Unbind()
-		{
-			obj_ = nullptr;
-		}
+		ObjectProxy2(T * obj, LifetimeHolder const& lifetime)
+			: object_(obj, lifetime)
+		{}
 
 		T* Get(lua_State* L) const
 		{
-			return obj_;
+			return object_.Get();
 		}
 
 		int Index(lua_State* L)
 		{
 			StackCheck _(L, 1);
-			if (!obj_) {
+			auto obj = Get(L);
+			if (!obj) {
+				luaL_error(L, "Attempted to read dead object of type '%s'", MetatableName);
 				push(L, nullptr);
 				return 1;
 			}
 
 			auto prop = luaL_checkstring(L, 2);
 			auto const& map = StaticLuaPropertyMap<T>::PropertyMap;
-			auto fetched = map.GetProperty(L, obj_, prop);
+			auto fetched = map.GetProperty(L, object_.GetLifetime(), obj, prop);
 			if (!fetched) {
 				luaL_error(L, "Object of type '%s' has no property named '%s'", MetatableName, prop);
 				push(L, nullptr);
@@ -110,11 +114,15 @@ namespace bg3se::lua
 		int NewIndex(lua_State* L)
 		{
 			StackCheck _(L, 0);
-			if (!obj_) return 0;
+			auto obj = Get(L);
+			if (!obj) {
+				luaL_error(L, "Attempted to write dead object of type '%s'", MetatableName);
+				return 0;
+			}
 
 			auto prop = luaL_checkstring(L, 2);
 			auto const& map = StaticLuaPropertyMap<T>::PropertyMap;
-			auto ok = map.SetProperty(L, obj_, prop, 3);
+			auto ok = map.SetProperty(L, object_.GetLifetime(), obj, prop, 3);
 			if (!ok) {
 				luaL_error(L, "Object of type '%s' has no property named '%s'", MetatableName, prop);
 			}
@@ -135,14 +143,15 @@ namespace bg3se::lua
 		}
 
 	private:
-		T * obj_;
+		LifetimeTrackedObject<T> object_;
 
 	protected:
 		friend Userdata<ObjectProxy2<T>>;
 
 		int Next(lua_State* L)
 		{
-			if (!obj_) return 0;
+			auto obj = Get(L);
+			if (!obj) return 0;
 
 			auto const& map = StaticLuaPropertyMap<T>::PropertyMap;
 			if (lua_type(L, 2) == LUA_TNIL) {
@@ -150,7 +159,7 @@ namespace bg3se::lua
 					StackCheck _(L, 2);
 					auto it = map.Properties.begin();
 					push(L, it->first);
-					if (!it->second.Get(L, obj_)) {
+					if (!it->second.Get(L, object_.GetLifetime(), obj)) {
 						push(L, nullptr);
 					}
 
@@ -164,7 +173,7 @@ namespace bg3se::lua
 					if (it != map.Properties.end()) {
 						StackCheck _(L, 2);
 						push(L, it->first);
-						if (!it->second.Get(L, obj_)) {
+						if (!it->second.Get(L, object_.GetLifetime(), obj)) {
 							push(L, nullptr);
 						}
 
@@ -176,6 +185,20 @@ namespace bg3se::lua
 			return 0;
 		}
 	};
+
+	template <class T>
+	inline void push_proxy(lua_State* L, LifetimeHolder const& lifetime, T const& v)
+	{
+		if constexpr (std::is_pointer_v<T> && std::is_base_of_v<HasObjectProxy, std::remove_pointer_t<T>>) {
+			if (v) {
+				ObjectProxy2<std::remove_pointer_t<T>>::New(L, v, lifetime);
+			} else {
+				lua_pushnil(L);
+			}
+		} else {
+			push(L, v);
+		}
+	}
 
 
 	class ExtensionLibrary
@@ -231,10 +254,17 @@ namespace bg3se::lua
 			return L;
 		}
 
+		inline LifetimeStack & GetStack()
+		{
+			return lifetimeStack_;
+		}
+
 		inline bool StartupDone() const
 		{
 			return startupDone_;
 		}
+
+		LifetimeHolder GetCurrentLifetime();
 
 		void FinishStartup();
 		void LoadBootstrap(STDString const& path, STDString const& modTable);
@@ -247,12 +277,27 @@ namespace bg3se::lua
 		void OnResetCompleted();
 
 		template <class... Ret, class... Args>
-		auto CallExt(char const * func, uint32_t restrictions, ReturnType<Ret...>, Args... args)
+		bool CallExtRet(char const * func, uint32_t restrictions, std::tuple<Ret...>& ret, Args... args)
 		{
+			StackCheck _(L, sizeof...(Ret));
 			Restriction restriction(*this, restrictions);
+			LifetimePin _p(lifetimeStack_);
+			auto lifetime = lifetimeStack_.GetCurrent();
 			PushInternalFunction(L, func);
-			auto _{ PushArguments(L, std::tuple{args...}) };
-			return CheckedCall<Ret...>(L, sizeof...(args), func);
+			(push_proxy(L, lifetime, args), ...);
+			return CheckedCall<Ret...>(L, sizeof...(args), ret, func);
+		}
+
+		template <class... Args>
+		bool CallExt(char const * func, uint32_t restrictions, Args... args)
+		{
+			StackCheck _(L, 0);
+			Restriction restriction(*this, restrictions);
+			LifetimePin _p(lifetimeStack_);
+			auto lifetime = lifetimeStack_.GetCurrent();
+			PushInternalFunction(L, func);
+			(push_proxy(L, lifetime, args), ...);
+			return CheckedCall(L, sizeof...(args), func);
 		}
 
 		std::optional<int> LoadScript(STDString const & script, STDString const & name = "", int globalsIdx = 0);
@@ -270,6 +315,9 @@ namespace bg3se::lua
 	protected:
 		lua_State * L;
 		bool startupDone_{ false };
+
+		LifetimePool lifetimePool_;
+		LifetimeStack lifetimeStack_;
 
 		void OpenLibs();
 	};

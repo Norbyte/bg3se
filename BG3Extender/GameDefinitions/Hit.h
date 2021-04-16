@@ -6,7 +6,7 @@
 
 namespace bg3se
 {
-	struct DamageSums
+	struct DamageSums : public HasObjectProxy
 	{
 		int TotalDamageDone;
 		int TotalHealDone;
@@ -14,20 +14,20 @@ namespace bg3se
 	};
 
 
-	struct DamagePair
+	struct DamagePair : public HasObjectProxy
 	{
 		int32_t Amount;
 		DamageType DamageType;
 	};
 
-	struct DiceValues
+	struct DiceValues : public HasObjectProxy
 	{
 		int8_t DiceValue;
 		uint8_t AmountOfDices;
 		int DiceAdditionalValue;
 	};
 
-	struct DamageModifierMetadata
+	struct DamageModifierMetadata : public HasObjectProxy
 	{
 
 		uint8_t MetadataType;
@@ -40,7 +40,7 @@ namespace bg3se
 		};
 	};
 
-	struct StatsRollRoll
+	struct StatsRollRoll : public HasObjectProxy
 	{
 		DiceValues Roll;
 		uint8_t RollType;
@@ -48,14 +48,14 @@ namespace bg3se
 		bool Disadvantage;
 	};
 
-	struct StatsRollResult
+	struct StatsRollResult : public HasObjectProxy
 	{
 		int Total;
 		int DiceTotal;
 		bool Critical;
 	};
 
-	struct StatsRollBoosts
+	struct StatsRollBoosts : public HasObjectProxy
 	{
 		int ProficiencyBonus;
 		int RollBonus;
@@ -64,7 +64,7 @@ namespace bg3se
 		VirtualMultiHashMap<SkillId, int32_t> SkillBonuses;
 	};
 
-	struct StatsRollBase
+	struct StatsRollBase : public HasObjectProxy
 	{
 		StatsRollRoll Roll;
 		StatsRollResult Result;
@@ -82,7 +82,7 @@ namespace bg3se
 		uint8_t Type;
 	};
 
-	struct StatsRollType1
+	struct StatsRollType1 : public HasObjectProxy
 	{
 		void* CachedStatExpression;
 		STDString StatExpression;
@@ -95,7 +95,7 @@ namespace bg3se
 	};
 
 
-	struct ConditionRoll
+	struct ConditionRoll : public HasObjectProxy
 	{
 		uint8_t DataType;
 		uint8_t RollType;
@@ -104,16 +104,16 @@ namespace bg3se
 	};
 
 
-	struct DamageResistance
+	struct DamageResistance : public HasObjectProxy
 	{
 		int ResistanceType;
 		DamageType DamageType;
 		int Damage;
 	};
 
-	struct Hit
+	struct Hit : public HasObjectProxy
 	{
-		struct Subobj
+		struct Subobj : public HasObjectProxy
 		{
 			RefMap<uint8_t, ObjectSet<StatsRollType0>> DamageRolls;
 			ObjectSet<DamageModifierMetadata> ModifierMetadata;

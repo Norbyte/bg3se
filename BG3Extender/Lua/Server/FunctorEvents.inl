@@ -37,23 +37,7 @@ NewHit* FunctorEventHooks::OnDealDamage(DealDamageFunctor::ApplyDamageProc* next
 	EntityWorldHandle* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId, int storyActionId, 
 	ActionOriginator* originator, GuidResourceDefinitionManagerBase* classResourceMgr, Hit* hit, DamageSums* damageSums, HitWith hitWith)
 {
-	auto L = state_.GetState();
-	StackCheck _(L, 0);
-
-	PushInternalFunction(L, "_OnDealDamage");
-	ObjectProxy2<DealDamageFunctor>::New(L, functor);
-	push(L, *casterHandle);
-	push(L, *targetHandle);
-	push(L, *position);
-	push(L, isFromItem);
-	ObjectProxy2<SpellIdWithPrototype>::New(L, spellId);
-	ObjectProxy2<ActionOriginator>::New(L, originator);
-	ObjectProxy2<Hit>::New(L, hit);
-	ObjectProxy2<DamageSums>::New(L, damageSums);
-	push(L, hitWith);
-
-	CheckedCall<>(L, 10, "Ext.OnDealDamage");
-
+	state_.CallExt("_OnDealDamage", 0, functor, *casterHandle, *targetHandle, *position, isFromItem, spellId, originator, hit, damageSums, hitWith);
 	auto ret = next(result, functor, casterHandle, targetHandle, position, isFromItem, spellId, storyActionId, originator, classResourceMgr, hit, damageSums, hitWith);
 	return ret;
 }

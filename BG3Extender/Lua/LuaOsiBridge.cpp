@@ -888,6 +888,7 @@ namespace bg3se::esv::lua
 
 		auto L = lua->GetState();
 		lua_checkstack(L, params.Count() + 1);
+		LifetimePin _(lua->GetStack());
 		handler_.Push();
 
 		auto param = &params;
@@ -943,6 +944,7 @@ namespace bg3se::esv::lua
 	{
 		auto L = GetState();
 		lua_checkstack(L, params.Count() + 1);
+		LifetimePin _(GetStack());
 
 		auto stackSize = lua_gettop(L);
 		if (func) {

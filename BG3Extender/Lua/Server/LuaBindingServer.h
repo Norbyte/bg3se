@@ -16,7 +16,9 @@ namespace bg3se::esv::lua
 {
 	using namespace ::bg3se::lua;
 
-	class StatusHandleProxy : public Userdata<StatusHandleProxy>, public Indexable, public NewIndexable, public Pushable<PushPolicy::None>
+	LifetimeHolder GetServerLifetime();
+
+	class StatusHandleProxy : public Userdata<StatusHandleProxy>, public Indexable, public NewIndexable, public Pushable
 	{
 	public:
 		static char const * const MetatableName;
@@ -137,25 +139,20 @@ namespace bg3se::esv::lua
 			ActionOriginator* originator, GuidResourceDefinitionManagerBase* classResourceMgr, Hit* hit, DamageSums* damageSums, HitWith hitWith);
 
 		template <class TParams>
-		void LuaTriggerFunctorExecEvent(lua_State* L, StatsFunctorSet* self, TParams* params)
+		void LuaTriggerFunctorExecEvent(StatsFunctorSet* self, TParams* params)
 		{
-			StackCheck _(L, 0);
-
-			PushInternalFunction(L, "_OnExecuteFunctor");
-			// FIXME - ObjectProxy2<StatsFunctorSet>::New(L, self);
-			push(L, nullptr);
-			ObjectProxy2<TParams>::New(L, params);
-
-			CheckedCall<>(L, 2, "Ext.OnExecuteFunctor");
+			// FIXME - ObjectProxy2<StatsFunctorSet>::New(L, self); instead of nullptr!
+			state_.CallExt<>("_OnExecuteFunctor", 0, nullptr, params);
 		}
 
 		template <class TParams, class TNext>
 		void OnFunctorExecute(TNext* next, Hit* hit, StatsFunctorSet* self, TParams* params)
 		{
-			LuaTriggerFunctorExecEvent<TParams>(state_.GetState(), self, params);
+			LuaTriggerFunctorExecEvent<TParams>(self, params);
 			next(hit, self, params);
 		}
 	};
+
 
 	class ExtensionLibraryServer : public ExtensionLibrary
 	{
@@ -229,6 +226,7 @@ namespace bg3se::esv::lua
 		void Call(char const* mod, char const* func, std::vector<TArg> const & args)
 		{
 			auto L = GetState();
+			LifetimePin _(GetStack());
 			lua_checkstack(L, (int)args.size() + 1);
 			auto stackSize = lua_gettop(L);
 

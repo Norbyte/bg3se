@@ -14,7 +14,10 @@ namespace bg3se::lua::stats
 
 	int StatsProxy::Index(lua_State* L)
 	{
-		if (obj_ == nullptr) return luaL_error(L, "Attempted to read property of null CRPGStats_Object object");
+		if (!lifetime_.IsAlive() || obj_ == nullptr) {
+			return luaL_error(L, "Attempted to read property of null CRPGStats_Object object");
+		}
+
 		auto attributeName = luaL_checkstring(L, 2);
 
 		return LuaStatGetAttribute(L, obj_, attributeName, level_);
@@ -22,6 +25,10 @@ namespace bg3se::lua::stats
 
 	int StatsProxy::NewIndex(lua_State* L)
 	{
+		if (!lifetime_.IsAlive() || obj_ == nullptr) {
+			return luaL_error(L, "Attempted to write property of null CRPGStats_Object object");
+		}
+
 		auto attributeName = luaL_checkstring(L, 2);
 		return LuaStatSetAttribute(L, obj_, attributeName, 3);
 	}
