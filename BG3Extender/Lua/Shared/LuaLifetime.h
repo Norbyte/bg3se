@@ -17,7 +17,9 @@ public:
 		memset(l3_, 0xff, sizeof(l3_));
 
 		auto l1buckets = Size / (PageBits * PageBits);
-		l1_[std::size(l1_) - 1] = 0xffffffffffffffffull << (PageBits - (l1buckets & (PageBits - 1)));
+		if (l1buckets % PageBits) {
+			l1_[std::size(l1_) - 1] = 0xffffffffffffffffull << (PageBits - (l1buckets & (PageBits - 1)));
+		}
 	}
 
 	~HierarchicalPoolAllocator()
@@ -261,7 +263,10 @@ public:
 	void Pop()
 	{
 		assert(!stack_.empty());
-		stack_.rbegin()->GetLifetime()->Kill();
+		auto lifetime = stack_.rbegin()->GetLifetime();
+		if (lifetime != nullptr) {
+			lifetime->Kill();
+		}
 		stack_.pop_back();
 	}
 
@@ -269,7 +274,9 @@ public:
 	{
 		assert(!stack_.empty());
 		assert(stack_.rbegin()->GetLifetime() == lifetime);
-		stack_.rbegin()->GetLifetime()->Kill();
+		if (lifetime != nullptr) {
+			lifetime->Kill();
+		}
 		stack_.pop_back();
 	}
 
