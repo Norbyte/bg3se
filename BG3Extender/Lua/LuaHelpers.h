@@ -898,6 +898,7 @@ namespace bg3se::lua
 	class Lengthable {};
 	class Iterable {};
 	class Pushable {};
+	class GarbageCollected {};
 
 	template <class T>
 	class Userdata
@@ -977,6 +978,16 @@ namespace bg3se::lua
 			}
 		}
 
+		static int GCProxy(lua_State * L)
+		{
+			if constexpr (std::is_base_of_v<GarbageCollected, T>) {
+				auto self = CheckUserData(L, 1);
+				return self->GC(L);
+			} else {
+				return luaL_error(L, "Not garbage collected!");
+			}
+		}
+
 		// Default __pairs implementation
 		int Pairs(lua_State * L)
 		{
@@ -1034,6 +1045,11 @@ namespace bg3se::lua
 			if constexpr (std::is_base_of_v<Iterable, T>) {
 				lua_pushcfunction(L, &PairsProxy); // stack: mt, &Length
 				lua_setfield(L, -2, "__pairs"); // mt.__index = &Length; stack: mt
+			}
+
+			if constexpr (std::is_base_of_v<GarbageCollected, T>) {
+				lua_pushcfunction(L, &GCProxy);
+				lua_setfield(L, -2, "__gc");
 			}
 
 			T::PopulateMetatable(L);

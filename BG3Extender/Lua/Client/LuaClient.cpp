@@ -382,7 +382,7 @@ namespace bg3se::lua
 		}
 
 		if (propFS == GFS.strRootTemplate) {
-			ObjectProxy2<ItemTemplate>::New(L, item->CurrentTemplate);
+			ObjectProxy::Make<ItemTemplate>(L, item->CurrentTemplate);
 			return 1;
 		}
 

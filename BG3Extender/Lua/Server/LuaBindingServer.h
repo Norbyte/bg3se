@@ -141,7 +141,7 @@ namespace bg3se::esv::lua
 		template <class TParams>
 		void LuaTriggerFunctorExecEvent(StatsFunctorSet* self, TParams* params)
 		{
-			// FIXME - ObjectProxy2<StatsFunctorSet>::New(L, self); instead of nullptr!
+			// FIXME - ObjectProxy::Make<StatsFunctorSet>(L, self); instead of nullptr!
 			state_.CallExt<>("_OnExecuteFunctor", 0, nullptr, params);
 		}
 

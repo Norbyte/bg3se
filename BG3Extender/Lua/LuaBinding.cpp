@@ -42,6 +42,8 @@ namespace bg3se::lua::stats
 
 namespace bg3se::lua
 {
+	char const* const ObjectProxy::MetatableName = "bg3se::Object";
+
 	RegistryEntry::RegistryEntry()
 		: L_(nullptr), ref_(-1)
 	{}

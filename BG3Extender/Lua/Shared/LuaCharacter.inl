@@ -35,7 +35,7 @@ namespace bg3se::lua
 			unsigned statIdx = 1;
 			for (auto dynamicStat : stats->DynamicStats) {
 				push(L, statIdx++);
-				// ObjectProxy2<CDivinityStats_CharacterDynamic>::New(L, dynamicStat);
+				// ObjectProxy::Make<CDivinityStats_CharacterDynamic>(L, dynamicStat);
 				push(L, nullptr); // FIXME
 				lua_settable(L, -3);
 			}

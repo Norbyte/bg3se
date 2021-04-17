@@ -110,6 +110,9 @@
       <Filter>Osiris\Functions</Filter>
     </ClCompile>
     <ClCompile Include="ScriptExtender.cpp" />
+    <ClCompile Include="Lua\Shared\LuaObjectProxy.cpp">
+      <Filter>Lua\Shared</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DWriteWrapper.h" />
@@ -303,6 +306,9 @@
     <ClInclude Include="EntitySystemHelpers.h" />
     <ClInclude Include="ScriptExtender.h" />
     <ClInclude Include="Lua\Shared\LuaLifetime.h">
+      <Filter>Lua\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="Lua\Shared\LuaObjectProxy.h">
       <Filter>Lua\Shared</Filter>
     </ClInclude>
   </ItemGroup>

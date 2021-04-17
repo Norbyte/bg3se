@@ -18,7 +18,7 @@ namespace bg3se::lua::utils
 
 		auto resource = (*resourceMgr)->Resources.Find(resourceGuid);
 		if (resource) {
-			ObjectProxy2<T>::New(L, *resource);
+			ObjectProxy::Make<T>(L, *resource, GetCurrentLifetime());
 		} else {
 			push(L, nullptr);
 		}
@@ -140,7 +140,7 @@ namespace bg3se::lua::utils
 
 		auto resource = bank->Container.Banks[(unsigned)type]->Resources.Find(resourceGuid);
 		if (resource) {
-			ObjectProxy2<Resource>::New(L, *resource);
+			ObjectProxy::Make<Resource>(L, *resource, GetCurrentLifetime());
 		} else {
 			push(L, nullptr);
 		}

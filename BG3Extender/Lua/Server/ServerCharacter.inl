@@ -168,7 +168,7 @@ namespace bg3se::esv::lua
 		esv::Character* character = GetCharacter(L, 1);
 
 		if (character != nullptr) {
-			ObjectProxy2<esv::Character>::New(L, character, GetServerLifetime());
+			ObjectProxy::Make<esv::Character>(L, character, GetServerLifetime());
 			return 1;
 		} else {
 			push(L, nullptr);

@@ -352,7 +352,7 @@ namespace bg3se::esv::lua
 		});
 
 		if (dd) {
-			ObjectProxy2<DealDamageFunctor>::New(L, dd);
+			ObjectProxy::Make<DealDamageFunctor>(L, dd, GetCurrentLifetime());
 			return 1;
 		}
 
