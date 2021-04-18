@@ -74,7 +74,7 @@ void LoadConfig(std::wstring const & configPath, ExtenderConfig & config)
 	}
 }
 
-void SetupOsirisProxy(HMODULE hModule)
+void SetupScriptExtender(HMODULE hModule)
 {
 	gExtender = std::make_unique<ScriptExtender>();
 	auto & config = gExtender->GetConfig();
@@ -97,7 +97,7 @@ void SetupOsirisProxy(HMODULE hModule)
 #endif
 }
 
-bool ShouldRunProxy()
+bool ShouldInitializeExtender()
 {
 	return GetModuleHandleW(L"bg3.exe") != NULL
 		|| GetModuleHandleW(L"bg3_dx11.exe") != NULL;
@@ -114,18 +114,18 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 	{
 	case DLL_PROCESS_ATTACH:
 		gThisModule = hModule;
-		if (ShouldRunProxy()) {
-			gDWriteWrapper = std::make_unique<DWriteWrapper>();
-			SetupOsirisProxy(hModule);
+		gDWriteWrapper = std::make_unique<DWriteWrapper>();
+		if (ShouldInitializeExtender()) {
+			SetupScriptExtender(hModule);
 		}
 		break;
 
 	case DLL_PROCESS_DETACH:
-		if (gDWriteWrapper) {
+		if (gExtender) {
 			gExtender->Shutdown();
 			gExtender.reset();
-			gDWriteWrapper.reset();
 		}
+		gDWriteWrapper.reset();
 		break;
 
 	case DLL_THREAD_ATTACH:

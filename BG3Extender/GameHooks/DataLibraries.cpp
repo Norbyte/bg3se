@@ -10,48 +10,64 @@
 
 namespace bg3se
 {
-	uint8_t CharToByte(char c)
+	std::optional<uint8_t> CharToByte(char c)
 	{
 		if (c >= '0' && c <= '9') {
 			return c - '0';
-		}
-		else if (c >= 'A' && c <= 'F') {
+		} else if (c >= 'A' && c <= 'F') {
 			return c - 'A' + 0x0A;
-		}
-		else if (c >= 'a' && c <= 'f') {
+		} else if (c >= 'a' && c <= 'f') {
 			return c - 'a' + 0x0A;
-		}
-		else {
-			Fail("Invalid hexadecimal character");
+		} else {
+			ERR("Invalid hexadecimal character: %c", c);
+			return {};
 		}
 	}
 
-	uint8_t HexByteToByte(char c1, char c2)
+	std::optional<uint8_t> HexByteToByte(char c1, char c2)
 	{
-		uint8_t hi = CharToByte(c1);
-		uint8_t lo = CharToByte(c2);
-		return (hi << 4) | lo;
+		auto hi = CharToByte(c1);
+		auto lo = CharToByte(c2);
+		if (hi && lo) {
+			return (*hi << 4) | *lo;
+		} else {
+			return {};
+		}
 	}
 
-	void Pattern::FromString(std::string_view s)
+	bool Pattern::FromString(std::string_view s)
 	{
-		if (s.size() % 3) Fail("Invalid pattern length");
-		auto len = s.size() / 3;
-		if (!len) Fail("Zero-length patterns not allowed");
-
 		pattern_.clear();
-		pattern_.reserve(len);
+		pattern_.reserve(100);
 
 		char const * c = s.data();
-		for (auto i = 0; i < len; i++) {
+		while (*c) {
+			if (*c == ' ' || *c == '\t' || *c == '\r' || *c == '\n') {
+				c++;
+				continue;
+			}
+
+			if (*c == '/') {
+				while (*c && *c != '\r' && *c != '\n') c++;
+				continue;
+			}
+
 			PatternByte b;
-			if (c[2] != ' ') Fail("Bytes must be separated by space");
-			if (c[0] == 'X' && c[1] == 'X') {
+			if (c[2] != ' ' && c[2] != '\t' && c[2] != '\r' && c[2] != '\n') {
+				ERR("Bytes must be separated by whitespace");
+				return false;
+			}
+
+			if (c[0] == '?' && c[1] == '?') {
 				b.pattern = 0;
 				b.mask = 0;
-			}
-			else {
-				b.pattern = HexByteToByte(c[0], c[1]);
+			} else {
+				auto patByte = HexByteToByte(c[0], c[1]);
+				if (!patByte) {
+					return false;
+				}
+
+				b.pattern = *patByte;
 				b.mask = 0xff;
 			}
 
@@ -59,7 +75,17 @@ namespace bg3se
 			c += 3;
 		}
 
-		if (pattern_[0].mask != 0xff) Fail("First byte of pattern must be an exact match");
+		if (pattern_.empty()) {
+			ERR("Zero-length patterns not allowed");
+			return false;
+		}
+
+		if (pattern_[0].mask != 0xff) {
+			ERR("First byte of pattern must be an exact match");
+			return false;
+		}
+
+		return true;
 	}
 
 	void Pattern::FromRaw(const char * s)
@@ -72,7 +98,7 @@ namespace bg3se
 		}
 	}
 
-	bool Pattern::MatchPattern(uint8_t const * start)
+	bool Pattern::MatchPattern(uint8_t const * start) const
 	{
 		auto p = start;
 		for (auto const & pattern : pattern_) {
@@ -84,7 +110,7 @@ namespace bg3se
 		return true;
 	}
 
-	void Pattern::ScanPrefix1(uint8_t const * start, uint8_t const * end, std::function<std::optional<bool> (uint8_t const *)> callback, bool multiple)
+	void Pattern::ScanPrefix1(uint8_t const * start, uint8_t const * end, std::function<std::optional<bool> (uint8_t const *)> callback, bool multiple) const
 	{
 		uint8_t initial = pattern_[0].pattern;
 
@@ -98,7 +124,7 @@ namespace bg3se
 		}
 	}
 
-	void Pattern::ScanPrefix2(uint8_t const * start, uint8_t const * end, std::function<std::optional<bool> (uint8_t const *)> callback, bool multiple)
+	void Pattern::ScanPrefix2(uint8_t const * start, uint8_t const * end, std::function<std::optional<bool> (uint8_t const *)> callback, bool multiple) const
 	{
 		uint16_t initial = pattern_[0].pattern
 			| (pattern_[1].pattern << 8);
@@ -113,7 +139,7 @@ namespace bg3se
 		}
 	}
 
-	void Pattern::ScanPrefix4(uint8_t const * start, uint8_t const * end, std::function<std::optional<bool> (uint8_t const *)> callback, bool multiple)
+	void Pattern::ScanPrefix4(uint8_t const * start, uint8_t const * end, std::function<std::optional<bool> (uint8_t const *)> callback, bool multiple) const
 	{
 		uint32_t initial = pattern_[0].pattern
 			| (pattern_[1].pattern << 8)
@@ -130,7 +156,7 @@ namespace bg3se
 		}
 	}
 
-	void Pattern::Scan(uint8_t const * start, size_t length, std::function<std::optional<bool> (uint8_t const *)> callback, bool multiple)
+	void Pattern::Scan(uint8_t const * start, size_t length, std::function<std::optional<bool> (uint8_t const *)> callback, bool multiple) const
 	{
 		// Check prefix length
 		auto prefixLength = 0;
@@ -178,11 +204,11 @@ namespace bg3se
 		switch (cond.Type) {
 		case SymbolMappingCondition::kString:
 			ptr = AsmResolveInstructionRef(match + cond.Offset);
-			return ptr != nullptr && IsConstStringRef(ptr, cond.String);
+			return ptr != nullptr && IsConstStringRef(ptr, cond.String.c_str());
 
 		case SymbolMappingCondition::kFixedString:
 			ptr = AsmResolveInstructionRef(match + cond.Offset);
-			return ptr != nullptr && IsFixedStringRef(ptr, cond.String);
+			return ptr != nullptr && IsFixedStringRef(ptr, cond.String.c_str());
 
 		case SymbolMappingCondition::kNone:
 		default:
@@ -214,8 +240,8 @@ namespace bg3se
 				*targetPtr = const_cast<uint8_t *>(ptr);
 			}
 
-			if (target.NextSymbol != nullptr) {
-				if (!MapSymbol(*target.NextSymbol, ptr, target.NextSymbolSeekSize)) {
+			if (!target.NextSymbol.empty()) {
+				if (!MapSymbol(mappings_[target.NextSymbol], ptr, target.NextSymbolSeekSize)) {
 					return SymbolMappingResult::Fail;
 				}
 			}
@@ -226,7 +252,7 @@ namespace bg3se
 				return SymbolMappingResult::Success;
 			}
 		} else {
-			ERR("Could not map match to symbol address while resolving '%s'", target.Name);
+			ERR("Could not map match to symbol address while resolving '%s'", target.Name.c_str());
 			return SymbolMappingResult::Fail;
 		}
 	}
@@ -247,9 +273,6 @@ namespace bg3se
 			}
 		}
 
-		Pattern p;
-		p.FromString(mapping.Matcher);
-
 		uint8_t const * memStart;
 		std::size_t memSize;
 
@@ -265,6 +288,11 @@ namespace bg3se
 			break;
 
 		case SymbolMappingData::kCustom:
+			if (customStart == nullptr) {
+				ERR("Tried to apply custom mapping '%s' with a null custom range!", mapping.Name.c_str());
+				return false;
+			}
+
 			memStart = customStart;
 			memSize = customSize;
 			break;
@@ -276,8 +304,16 @@ namespace bg3se
 		}
 
 		bool mapped = false;
-		p.Scan(memStart, memSize, [this, &mapping, &mapped](const uint8_t * match) -> std::optional<bool> {
-			if (EvaluateSymbolCondition(mapping.Conditions, match)) {
+		mapping.Pattern.Scan(memStart, memSize, [this, &mapping, &mapped](const uint8_t * match) -> std::optional<bool> {
+			bool matching{ true };
+			for (auto const& condition : mapping.Conditions) {
+				if (!EvaluateSymbolCondition(condition, match)) {
+					matching = false;
+					break;
+				}
+			}
+
+			if (matching) {
 				bool tryNext{ false };
 				for (auto const& target : mapping.Targets) {
 					auto action = ExecSymbolMappingAction(target, match);
@@ -295,7 +331,7 @@ namespace bg3se
 		});
 
 		if (!mapped && !(mapping.Flag & SymbolMappingData::kAllowFail)) {
-			ERR("No match found for mapping '%s'", mapping.Name);
+			ERR("No match found for mapping '%s'", mapping.Name.c_str());
 			InitFailed = true;
 			if (mapping.Flag & SymbolMappingData::kCritical) {
 				CriticalInitFailed = true;
@@ -310,7 +346,7 @@ namespace bg3se
 	uint8_t const * AsmResolveInstructionRef(uint8_t const * insn)
 	{
 		// Call (4b operand) instruction
-		if (insn[0] == 0xE8) {
+		if (insn[0] == 0xE8 || insn[0] == 0xE9) {
 			int32_t rel = *(int32_t const *)(insn + 1);
 			return insn + rel + 5;
 		}
@@ -348,6 +384,8 @@ namespace bg3se
 	{
 		gameRevision_ = gameRevision;
 		//memset(&GetStaticSymbols().CharStatsGetters, 0, sizeof(GetStaticSymbols().CharStatsGetters));
+
+		LoadMappings();
 
 		if (FindBG3(moduleStart_, moduleSize_)) {
 			FindTextSegment();

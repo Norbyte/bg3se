@@ -91,6 +91,29 @@ std::string FormatUuid(UUID const& uuid)
 	return s;
 }
 
+std::optional<std::string> GetResource(int resourceId)
+{
+	auto hResource = FindResource(gThisModule, MAKEINTRESOURCE(resourceId),
+		L"LUA_SCRIPT");
+
+	if (hResource) {
+		auto hGlobal = LoadResource(gThisModule, hResource);
+		if (hGlobal) {
+			auto resourceData = LockResource(hGlobal);
+			if (resourceData) {
+				DWORD resourceSize = SizeofResource(gThisModule, hResource);
+				std::string contents;
+				contents.resize(resourceSize);
+				memcpy(contents.data(), resourceData, resourceSize);
+				return contents;
+			}
+		}
+	}
+
+	ERR("Could not get bootstrap resource %d!", resourceId);
+	return {};
+}
+
 [[noreturn]]
 void Fail(TCHAR const * reason)
 {

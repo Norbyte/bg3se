@@ -84,7 +84,10 @@ namespace bg3se::lua::stats
 	int GetModifierAttributes(lua_State* L)
 	{
 		auto modifierName = checked_get<FixedString>(L, 1);
-		auto modifierList = GetStaticSymbols().GetStats()->ModifierLists.Find(modifierName);
+		auto stats = GetStaticSymbols().GetStats();
+		if (!stats) return luaL_error(L, "Stats not available");
+
+		auto modifierList = stats->ModifierLists.Find(modifierName);
 		if (!modifierList) {
 			OsiError("No such modifier list: " << modifierName);
 			push(L, nullptr);

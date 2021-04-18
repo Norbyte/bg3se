@@ -110,9 +110,7 @@
       <Filter>Osiris\Functions</Filter>
     </ClCompile>
     <ClCompile Include="ScriptExtender.cpp" />
-    <ClCompile Include="Lua\Shared\LuaObjectProxy.cpp">
-      <Filter>Lua\Shared</Filter>
-    </ClCompile>
+    <ClCompile Include="tinyxml2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DWriteWrapper.h" />
@@ -311,6 +309,7 @@
     <ClInclude Include="Lua\Shared\LuaObjectProxy.h">
       <Filter>Lua\Shared</Filter>
     </ClInclude>
+    <ClInclude Include="tinyxml2.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -491,5 +490,10 @@
     <Filter Include="GameHooks">
       <UniqueIdentifier>{14f09af4-6cd3-44a0-87c9-89b451bb46f8}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="GameHooks\BinaryMappings.xml">
+      <Filter>GameHooks</Filter>
+    </Xml>
   </ItemGroup>
 </Project>

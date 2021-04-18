@@ -810,25 +810,12 @@ namespace bg3se::lua
 
 	STDString State::GetBuiltinLibrary(int resourceId)
 	{
-		auto hResource = FindResource(gThisModule, MAKEINTRESOURCE(resourceId),
-			L"LUA_SCRIPT");
-
-		if (hResource) {
-			auto hGlobal = LoadResource(gThisModule, hResource);
-			if (hGlobal) {
-				auto resourceData = LockResource(hGlobal);
-				if (resourceData) {
-					DWORD resourceSize = SizeofResource(gThisModule, hResource);
-					STDString script;
-					script.resize(resourceSize);
-					memcpy(script.data(), resourceData, resourceSize);
-					return script;
-				}
-			}
+		auto resource = GetResource(resourceId);
+		if (resource) {
+			return STDString(resource->c_str());
+		} else {
+			return STDString();
 		}
-
-		OsiErrorS("Could not find bootstrap resource!");
-		return STDString();
 	}
 
 }

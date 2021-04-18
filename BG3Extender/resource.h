@@ -11,12 +11,13 @@
 #define IDR_LUA_SANDBOX_STARTUP         104
 #define IDR_LUA_GAME_MATH               105
 #define IDR_LUA_GAME_TOOLTIP            106
+#define IDR_BINARY_MAPPINGS             107
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        106
+#define _APS_NEXT_RESOURCE_VALUE        107
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1001
 #define _APS_NEXT_SYMED_VALUE           104

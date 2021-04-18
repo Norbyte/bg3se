@@ -13,6 +13,10 @@
 #include <GameHooks/Wrappers.h>
 #include <optional>
 
+namespace tinyxml2 {
+	class XMLElement;
+}
+
 namespace bg3se {
 
 
@@ -46,9 +50,9 @@ namespace bg3se {
 
 	struct Pattern
 	{
-		void FromString(std::string_view s);
+		bool FromString(std::string_view s);
 		void FromRaw(const char * s);
-		void Scan(uint8_t const * start, size_t length, std::function<std::optional<bool> (uint8_t const *)> callback, bool multiple = true);
+		void Scan(uint8_t const * start, size_t length, std::function<std::optional<bool> (uint8_t const *)> callback, bool multiple = true) const;
 
 	private:
 		struct PatternByte
@@ -59,10 +63,10 @@ namespace bg3se {
 
 		std::vector<PatternByte> pattern_;
 
-		bool MatchPattern(uint8_t const * start);
-		void ScanPrefix1(uint8_t const * start, uint8_t const * end, std::function<std::optional<bool> (uint8_t const *)> callback, bool multiple);
-		void ScanPrefix2(uint8_t const * start, uint8_t const * end, std::function<std::optional<bool> (uint8_t const *)> callback, bool multiple);
-		void ScanPrefix4(uint8_t const * start, uint8_t const * end, std::function<std::optional<bool> (uint8_t const *)> callback, bool multiple);
+		bool MatchPattern(uint8_t const * start) const;
+		void ScanPrefix1(uint8_t const * start, uint8_t const * end, std::function<std::optional<bool> (uint8_t const *)> callback, bool multiple) const;
+		void ScanPrefix2(uint8_t const * start, uint8_t const * end, std::function<std::optional<bool> (uint8_t const *)> callback, bool multiple) const;
+		void ScanPrefix4(uint8_t const * start, uint8_t const * end, std::function<std::optional<bool> (uint8_t const *)> callback, bool multiple) const;
 	};
 
 	uint8_t const * AsmResolveInstructionRef(uint8_t const * code);
@@ -78,7 +82,7 @@ namespace bg3se {
 
 		MatchType Type{ kNone };
 		int32_t Offset{ 0 };
-		char const * String{ nullptr };
+		std::string String;
 	};
 
 	enum class SymbolMappingResult
@@ -129,12 +133,12 @@ namespace bg3se {
 			kIndirect // Save AsmResolveIndirectRef(p + Offset)
 		};
 
-		char const * Name{ nullptr };
+		std::string Name;
 		ActionType Type{ kNone };
 		int32_t Offset{ 0 };
 		StaticSymbolRef Target;
 		HandlerProc Handler{ nullptr };
-		struct SymbolMappingData const * NextSymbol{ nullptr };
+		std::string NextSymbol;
 		int32_t NextSymbolSeekSize{ 0 };
 	};
 
@@ -167,11 +171,11 @@ namespace bg3se {
 			kAllowFail = 1 << 2, // Allow mapping to fail without throwing an error
 		};
 
-		char const * Name{ nullptr };
+		std::string Name;
 		MatchScope Scope{ SymbolMappingData::kText };
 		uint32_t Flag{ 0 };
-		char const * Matcher;
-		SymbolMappingCondition Conditions;
+		Pattern Pattern;
+		std::vector<SymbolMappingCondition> Conditions;
 		std::vector<SymbolMappingTarget> Targets;
 		VersionRequirement Version;
 	};
@@ -225,6 +229,11 @@ namespace bg3se {
 
 	private:
 
+		void LoadMappings();
+		void LoadMappingsNode(tinyxml2::XMLElement* mappings);
+		bool LoadMapping(tinyxml2::XMLElement* mapping, SymbolMappingData& sym);
+		bool LoadTarget(tinyxml2::XMLElement* ele, SymbolMappingTarget& target);
+		bool LoadCondition(tinyxml2::XMLElement* ele, SymbolMappingCondition& condition);
 		void MapAllSymbols(bool deferred);
 		void FindTextSegment();
 
@@ -235,6 +244,9 @@ namespace bg3se {
 		bool IsFixedStringRef(uint8_t const * ref, char const * str) const;
 		bool CanShowError();
 		bool CanShowMessages();
+
+		std::unordered_map<std::string, SymbolMappingData> mappings_;
+		std::unordered_map<std::string, int> staticSymbolOffsets_;
 
 		uint8_t const * moduleStart_{ nullptr };
 		size_t moduleSize_{ 0 };

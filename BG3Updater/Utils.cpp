@@ -15,7 +15,7 @@ void DebugMsg(char const * msg)
 
 uint8_t const * AsmCallToAbsoluteAddress(uint8_t const * call)
 {
-	if (call[0] != 0xE8) {
+	if (call[0] != 0xE8 && call[0] != 0xE9) {
 		return nullptr;
 	}
 

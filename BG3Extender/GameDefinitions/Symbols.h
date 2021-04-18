@@ -84,8 +84,8 @@ namespace bg3se
 
 		//CharacterStatsGetters CharStatsGetters;
 
-		GuidResourceDefinitions** ResourceDefns;
-		ResourceManager** ResourceMgr;
+		GuidResourceDefinitions** ResourceDefns{ nullptr };
+		ResourceManager** ResourceMgr{ nullptr };
 
 		inline StaticSymbols() {}
 		StaticSymbols(StaticSymbols const &) = delete;
