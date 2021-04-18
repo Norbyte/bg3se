@@ -192,7 +192,7 @@ namespace bg3se::lua
 
 	private:
 		LifetimeReference lifetime_;
-		uint8_t impl_[64];
+		uint8_t impl_[32];
 
 		ObjectProxy(LifetimeHolder const& lifetime)
 			: lifetime_(lifetime)
@@ -272,7 +272,9 @@ namespace bg3se::lua
 	template <class T>
 	inline void push_proxy(lua_State* L, LifetimeHolder const& lifetime, T const& v)
 	{
-		if constexpr (std::is_pointer_v<T> && std::is_base_of_v<HasObjectProxy, std::remove_pointer_t<T>>) {
+		if constexpr (std::is_pointer_v<T> 
+			&& (std::is_base_of_v<HasObjectProxy, std::remove_pointer_t<T>>
+				|| HasObjectProxyTag<std::remove_pointer_t<T>>::HasProxy)) {
 			if (v) {
 				ObjectProxy::Make<std::remove_pointer_t<T>>(L, v, lifetime);
 			} else {

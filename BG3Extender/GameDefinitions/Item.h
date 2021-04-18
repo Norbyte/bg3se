@@ -100,7 +100,7 @@ namespace bg3se
 		};
 
 
-		struct Item : public IEoCServerObject, public HasObjectProxy
+		struct Item : public IEoCServerObject
 		{
 			static constexpr ExtComponentType ComponentType = ExtComponentType::ServerItem;
 
@@ -198,6 +198,8 @@ namespace bg3se
 
 		using ItemHelpers__GenerateTreasureItem = Item* (RPGStats_Treasure_Object_Info* treasureInfo, int level);*/
 	}
+
+	HAS_OBJECT_PROXY(esv::Item);
 
 	namespace ecl
 	{

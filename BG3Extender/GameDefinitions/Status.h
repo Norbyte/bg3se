@@ -11,7 +11,7 @@ namespace bg3se
 {
 	namespace esv
 	{
-		struct Status : public ProtectedGameObject<Status>, public HasObjectProxy
+		struct Status : public ProtectedProxyGameObject<Status>
 		{
 			using EnterProc = bool(Status* self);
 

@@ -10,7 +10,7 @@ namespace bg3se
 {
 	struct GuidResourceDefinitionManagerBase;
 
-	struct StatsFunctorBase : Noncopyable<StatsFunctorBase>, public HasObjectProxy
+	struct StatsFunctorBase : HasObjectProxy
 	{
 		struct FunctorVMT
 		{
@@ -40,7 +40,6 @@ namespace bg3se
 			}
 		}
 	};
-
 
 	struct BaseFunctorExecParams : public HasObjectProxy
 	{

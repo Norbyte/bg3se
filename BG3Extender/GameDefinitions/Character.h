@@ -30,7 +30,7 @@ namespace bg3se
 			bool IsCustom;
 		};*/
 
-		struct PlayerCustomData : public ProtectedGameObject<PlayerCustomData>, public HasObjectProxy
+		struct PlayerCustomData : public ProtectedProxyGameObject<PlayerCustomData>
 		{
 			void* VMT;
 			bool Initialized;
@@ -144,7 +144,7 @@ namespace bg3se
 
 		struct PlayerCustomData : public eoc::PlayerCustomData {};
 
-		struct PlayerData : public ProtectedGameObject<PlayerData>, public HasObjectProxy
+		struct PlayerData : public ProtectedProxyGameObject<PlayerData>
 		{
 			ObjectHandle PlayerHandle;
 			uint64_t SkillBar;
@@ -166,7 +166,7 @@ namespace bg3se
 			char field_100;
 		};
 
-		struct Character : public IEoCServerObject, public HasObjectProxy
+		struct Character : public IEoCServerObject
 		{
 			static constexpr ExtComponentType ComponentType = ExtComponentType::ServerCharacter;
 
@@ -268,6 +268,8 @@ namespace bg3se
 			FixedString PreviousLevel;
 		};
 	}
+
+	HAS_OBJECT_PROXY(esv::Character);
 
 	namespace ecl 
 	{

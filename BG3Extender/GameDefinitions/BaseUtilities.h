@@ -34,8 +34,32 @@ namespace bg3se
 		//~ProtectedGameObject() = delete;
 	};
 
+	// Base class for game objects that are managed entirely
+	// by the game and we cannot create/copy them.
+	// Temporary hack until we have a better fix for HasObjectProxy
+	template <class T>
+	class ProtectedProxyGameObject : public HasObjectProxy
+	{
+	public:
+		ProtectedProxyGameObject(const ProtectedProxyGameObject&) = delete;
+		T& operator = (const T&) = delete;
+		ProtectedProxyGameObject(ProtectedProxyGameObject&&) = delete;
+		T& operator = (T&&) = delete;
+
+	protected:
+		ProtectedProxyGameObject() = delete;
+		//~ProtectedProxyGameObject() = delete;
+	};
+
 	// Tag for engine objects that have a Lua property map
 	struct HasObjectProxy {};
+
+	template <class T>
+	struct HasObjectProxyTag {
+		static constexpr bool HasProxy = false;
+	};
+
+#define HAS_OBJECT_PROXY(cls) template<> struct HasObjectProxyTag<cls> { static constexpr bool HasProxy = true; }
 
 	// Prevents implicit casting between aliases of integral types (eg. NetId and UserId)
 	// Goal is to prevent accidental mixups between different types
