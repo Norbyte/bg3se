@@ -495,7 +495,6 @@ namespace bg3se
 
 		struct GameStateMachine : public ProtectedGameObject<GameStateMachine>
 		{
-			uint8_t Unknown;
 			void* CurrentState;
 			GameState State;
 		};
