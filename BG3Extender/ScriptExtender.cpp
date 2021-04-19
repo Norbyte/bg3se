@@ -625,7 +625,11 @@ void ScriptExtender::AttachConsoleThread(bool server)
 
 void ScriptExtender::ResetLuaState(bool resetServer, bool resetClient)
 {
+	bool serverThread = IsInServerThread();
+
 	if (resetServer && ServerExtState && ServerExtState->GetLua()) {
+		AttachConsoleThread(true);
+
 		auto& ext = *ServerExtState;
 		ext.AddPostResetCallback([&ext]() {
 			ext.OnModuleResume();
@@ -655,11 +659,10 @@ void ScriptExtender::ResetLuaState(bool resetServer, bool resetClient)
 			}*/
 
 		} else if (ClientExtState && ClientExtState->GetLua()) {
-			bool serverThread = IsInServerThread();
-			AttachConsoleThread(false);
-
 			// Do a direct (local) reset if server is not available (main menu, etc.)
 			auto& ext = *ClientExtState;
+			AttachConsoleThread(false);
+
 			ext.AddPostResetCallback([&ext]() {
 				ext.OnModuleResume();
 				auto state = GetStaticSymbols().GetClientState();
@@ -670,10 +673,10 @@ void ScriptExtender::ResetLuaState(bool resetServer, bool resetClient)
 				}
 			});
 			ext.LuaReset(true);
-
-			AttachConsoleThread(serverThread);
 		}
 	}
+
+	AttachConsoleThread(serverThread);
 }
 
 FileReader * ScriptExtender::OnFileReaderCreate(FileReader::CtorProc* next, FileReader * self, Path const& path, unsigned int type, unsigned int unknown)

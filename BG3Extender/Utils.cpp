@@ -282,7 +282,14 @@ void DebugConsole::ConsoleThread()
 				bg3se::gExtender->AttachConsoleThread(false);
 			} else if (line == "reset") {
 				DEBUG("Resetting Lua states.");
+				// FIXME - enqueue reset job on client/server tick action to prevent race conditions
 				bg3se::gExtender->ResetLuaState(true, true);
+			} else if (line == "reset server") {
+				DEBUG("Resetting server Lua state.");
+				bg3se::gExtender->ResetLuaState(true, false);
+			} else if (line == "reset client") {
+				DEBUG("Resetting client Lua state.");
+				bg3se::gExtender->ResetLuaState(false, true);
 			} else if (line == "silence on") {
 				DEBUG("Silent mode ON");
 				silence = true;
