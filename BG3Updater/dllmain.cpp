@@ -134,7 +134,7 @@ void LoadConfigFile(std::wstring const& configPath, UpdaterConfig& config)
 	ConfigGetString(root, "UpdatePath", config.UpdatePath);
 	ConfigGetString(root, "ManifestPath", config.ManifestPath);
 	ConfigGetString(root, "UpdateChannel", config.UpdateChannel);
-#if defined(_DEBUG)
+#if defined(HAS_DEBUG_LOGGING)
 	ConfigGetBool(root, "Debug", config.Debug);
 	ConfigGetBool(root, "ValidateSignature", config.ValidateSignature);
 #endif
@@ -162,7 +162,7 @@ struct PackageSignature
 };
 #pragma pack(pop)
 
-class OsiLoader
+class ScriptExtenderUpdater
 {
 public:
 	void Launch()
@@ -370,7 +370,7 @@ public:
 
 	void InitConsole()
 	{
-#if defined(_DEBUG)
+#if defined(HAS_DEBUG_LOGGING)
 		if (!config_.Debug) return;
 
 		AllocConsole();
@@ -468,7 +468,7 @@ private:
 	}
 };
 
-std::unique_ptr<OsiLoader> gLoader;
+std::unique_ptr<ScriptExtenderUpdater> gUpdater;
 
 bool ShouldLoad()
 {
@@ -485,7 +485,7 @@ DWORD WINAPI ClientWorkerSuspenderThread(LPVOID param)
 	for (;;) {
 		auto state = gErrorUtils->GetState();
 		if (state) {
-			bool completed = gLoader->IsCompleted();
+			bool completed = gUpdater->IsCompleted();
 			if (!suspended && !completed && (*state == GameState::LoadModule || *state == GameState::Init)) {
 				DEBUG("Suspending client thread (pending update)");
 				gErrorUtils->SuspendClientThread();
@@ -516,12 +516,12 @@ DWORD WINAPI ClientWorkerSuspenderThread(LPVOID param)
 DWORD WINAPI UpdaterThread(LPVOID param)
 {
 	gErrorUtils = std::make_unique<ErrorUtils>();
-	gLoader = std::make_unique<OsiLoader>();
-	gLoader->LoadConfig();
-	gLoader->InitConsole();
+	gUpdater = std::make_unique<ScriptExtenderUpdater>();
+	gUpdater->LoadConfig();
+	gUpdater->InitConsole();
 	CreateThread(NULL, 0, &ClientWorkerSuspenderThread, NULL, 0, NULL);
 	DEBUG("Launch loader");
-	gLoader->Launch();
+	gUpdater->Launch();
 	DEBUG("Extender launcher thread exiting");
 	return 0;
 }
@@ -541,8 +541,8 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 	{
 	case DLL_PROCESS_ATTACH:
 		DisableThreadLibraryCalls(hModule);
+		gDWriteWrapper = std::make_unique<DWriteWrapper>();
 		if (ShouldLoad()) {
-			gDWriteWrapper = std::make_unique<DWriteWrapper>();
 			StartUpdaterThread();
 		}
 		break;

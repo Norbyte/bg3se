@@ -46,7 +46,7 @@ ErrorUtils::ErrorUtils()
 void ErrorUtils::ShowError(wchar_t const * msg) const
 {
 	if (!ShowErrorDialog(msg)) {
-		MessageBoxW(NULL, msg, L"Osiris Loader Error", MB_OK | MB_ICONERROR);
+		MessageBoxW(NULL, msg, L"Script Extender Updater Error", MB_OK | MB_ICONERROR);
 	}
 }
 
@@ -217,9 +217,11 @@ LONG NTAPI ErrorUtils::ThreadNameCaptureFilter(_EXCEPTION_POINTERS *ExceptionInf
 void Fail(char const * reason)
 {
 #if defined(_DEBUG)
-	DebugBreak();
+	if (IsDebuggerPresent()) {
+		DebugBreak();
+	}
 #endif
-	MessageBoxA(NULL, reason, "Osiris Loader Error", MB_OK | MB_ICONERROR);
+	MessageBoxA(NULL, reason, "Script Extender Updater Error", MB_OK | MB_ICONERROR);
 	TerminateProcess(GetCurrentProcess(), 1);
 }
 

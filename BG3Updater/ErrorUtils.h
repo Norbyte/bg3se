@@ -4,6 +4,10 @@
 #include <optional>
 #include <vector>
 
+#if defined(_DEBUG)
+#define HAS_DEBUG_LOGGING
+#endif
+
 enum class GameState : uint32_t
 {
 	Unknown = 0,
@@ -71,7 +75,7 @@ void Debug(char const * fmt, Args... args)
 	DebugMsg(buf);
 }
 
-#if defined(_DEBUG)
+#if defined(HAS_DEBUG_LOGGING)
 #define DEBUG(msg, ...) Debug(__FUNCTION__ "(): " msg, __VA_ARGS__)
 #else
 #define DEBUG(msg, ...)
