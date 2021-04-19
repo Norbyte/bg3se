@@ -1217,7 +1217,7 @@ namespace bg3se
 		{
 			if (NumHashKeys == 0) return -1;
 
-			auto keyIndex = HashKeys[(uint32_t)MultiHashMapHash(key) % NumHashKeys];
+			auto keyIndex = HashKeys[MultiHashMapHash(key) % NumHashKeys];
 			while (keyIndex >= 0) {
 				if (Keys[keyIndex] == key) return keyIndex;
 				keyIndex = NextIds[keyIndex];
@@ -1281,7 +1281,7 @@ namespace bg3se
 	private:
 		void InsertToHashMap(T const& key, int keyIdx)
 		{
-			auto bucket = (uint32_t)MultiHashMapHash(key) % NumHashKeys;
+			auto bucket = MultiHashMapHash(key) % NumHashKeys;
 			auto prevKeyIdx = HashKeys[bucket];
 			if (prevKeyIdx < 0) {
 				prevKeyIdx = -2 - (int)bucket;
