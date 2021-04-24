@@ -44,11 +44,7 @@ namespace bg3se::lua::stats
 			{0,0}
 		};
 
-		lua_getglobal(L, "Ext"); // stack: Ext
-		luaL_newlib(L, statsLib); // stack: ext, lib
-		lua_setfield(L, -2, "Stats");
-		lua_pop(L, 1);
-
+		RegisterLib(L, "Stats", statsLib);
 		RegisterStatsObjects(L);
 	}
 }

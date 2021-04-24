@@ -421,6 +421,12 @@ namespace bg3se::ecl::lua
 		return ecl::ExtensionState::Get().GetLua()->GetCurrentLifetime();
 	}
 
+	LifetimePool& GetClientLifetimePool()
+	{
+		assert(gExtender->IsInClientThread());
+		return ecl::ExtensionState::Get().GetLua()->GetLifetimePool();
+	}
+
 	void ExtensionLibraryClient::Register(lua_State * L)
 	{
 		ExtensionLibrary::Register(L);

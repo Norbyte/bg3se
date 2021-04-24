@@ -42,6 +42,9 @@ namespace bg3se
 	}
 
 	template <class T>
+	using GameUniquePtr = std::unique_ptr<T, decltype(&GameDelete<T>)>;
+
+	template <class T>
 	class GameAllocator
 	{
 	public:

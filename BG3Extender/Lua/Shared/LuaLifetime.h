@@ -136,7 +136,7 @@ private:
 	bool isAlive_;
 };
 
-class LifetimePool
+class LifetimePool : Noncopyable<LifetimePool>
 {
 public:
 	inline Lifetime* Allocate()

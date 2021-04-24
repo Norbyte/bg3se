@@ -18,7 +18,7 @@ namespace bg3se::lua::utils
 
 		auto resource = (*resourceMgr)->Resources.Find(resourceGuid);
 		if (resource) {
-			ObjectProxy::Make<T>(L, *resource, GetCurrentLifetime());
+			ObjectProxy::MakeRef<T>(L, *resource, GetCurrentLifetime());
 		} else {
 			push(L, nullptr);
 		}
@@ -140,7 +140,7 @@ namespace bg3se::lua::utils
 
 		auto resource = bank->Container.Banks[(unsigned)type]->Resources.Find(resourceGuid);
 		if (resource) {
-			ObjectProxy::Make<Resource>(L, *resource, GetCurrentLifetime());
+			ObjectProxy::MakeRef<Resource>(L, *resource, GetCurrentLifetime());
 		} else {
 			push(L, nullptr);
 		}
@@ -172,7 +172,7 @@ namespace bg3se::lua::utils
 
 	void RegisterStaticDataLib(lua_State* L)
 	{
-		static const luaL_Reg utilsLib[] = {
+		static const luaL_Reg staticDataLib[] = {
 			{"GetGuidResource", GetGuidResource},
 			{"GetAllGuidResources", GetAllGuidResources},
 
@@ -182,9 +182,6 @@ namespace bg3se::lua::utils
 			{0,0}
 		};
 
-		lua_getglobal(L, "Ext"); // stack: Ext
-		luaL_newlib(L, utilsLib); // stack: ext, lib
-		lua_setfield(L, -2, "StaticData");
-		lua_pop(L, 1);
+		RegisterLib(L, "StaticData", staticDataLib);
 	}
 }

@@ -37,6 +37,15 @@ namespace bg3se::lua
 			return ecl::lua::GetClientLifetime();
 		}
 	}
+
+	LifetimePool& GetLifetimePool()
+	{
+		if (gExtender->IsInServerThread()) {
+			return esv::lua::GetServerLifetimePool();
+		} else {
+			return ecl::lua::GetClientLifetimePool();
+		}
+	}
 }
 
 namespace bg3se::esv::lua
@@ -47,6 +56,12 @@ namespace bg3se::esv::lua
 	{
 		assert(gExtender->IsInServerThread());
 		return esv::ExtensionState::Get().GetLua()->GetCurrentLifetime();
+	}
+
+	LifetimePool& GetServerLifetimePool()
+	{
+		assert(gExtender->IsInServerThread());
+		return esv::ExtensionState::Get().GetLua()->GetLifetimePool();
 	}
 
 	/*
@@ -352,7 +367,7 @@ namespace bg3se::esv::lua
 		});
 
 		if (dd) {
-			ObjectProxy::Make<DealDamageFunctor>(L, dd, GetCurrentLifetime());
+			ObjectProxy::MakeRef<DealDamageFunctor>(L, dd, GetCurrentLifetime());
 			return 1;
 		}
 
@@ -373,10 +388,7 @@ namespace bg3se::esv::lua
 			{0,0}
 		};
 
-		lua_getglobal(L, "Ext"); // stack: Ext
-		luaL_newlib(L, extLib); // stack: ext, lib
-		lua_setfield(L, -2, "Osiris");
-		lua_pop(L, 1);
+		RegisterLib(L, "Osiris", extLib);
 	}
 
 	void ExtensionLibraryServer::RegisterLib(lua_State * L)

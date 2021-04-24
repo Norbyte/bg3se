@@ -892,6 +892,8 @@ namespace bg3se::lua
 
 	int CallWithTraceback(lua_State * L, int narg, int nres);
 
+	void RegisterLib(lua_State* L, char const* name, luaL_Reg const* lib);
+
 	class Callable {};
 	class Indexable {};
 	class NewIndexable {};

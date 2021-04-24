@@ -191,7 +191,7 @@ namespace bg3se::esv::lua
 		}
 
 		if (item != nullptr) {
-			ObjectProxy::Make<esv::Item>(L, item, GetServerLifetime());
+			ObjectProxy::MakeRef<esv::Item>(L, item, GetServerLifetime());
 		} else {
 			push(L, nullptr);
 		}

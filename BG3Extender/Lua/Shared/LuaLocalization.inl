@@ -104,9 +104,6 @@ namespace bg3se::lua::utils
 			{0,0}
 		};
 
-		lua_getglobal(L, "Ext"); // stack: Ext
-		luaL_newlib(L, locaLib); // stack: ext, lib
-		lua_setfield(L, -2, "Localization");
-		lua_pop(L, 1);
+		RegisterLib(L, "Localization", locaLib);
 	}
 }

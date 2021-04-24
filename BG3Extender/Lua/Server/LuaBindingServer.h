@@ -17,6 +17,7 @@ namespace bg3se::esv::lua
 	using namespace ::bg3se::lua;
 
 	LifetimeHolder GetServerLifetime();
+	LifetimePool& GetServerLifetimePool();
 
 	class StatusHandleProxy : public Userdata<StatusHandleProxy>, public Indexable, public NewIndexable, public Pushable
 	{

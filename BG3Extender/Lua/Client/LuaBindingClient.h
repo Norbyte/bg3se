@@ -8,6 +8,7 @@ namespace bg3se::ecl::lua
 	using namespace bg3se::lua;
 
 	LifetimeHolder GetClientLifetime();
+	LifetimePool& GetClientLifetimePool();
 
 	class ExtensionLibraryClient : public ExtensionLibrary
 	{

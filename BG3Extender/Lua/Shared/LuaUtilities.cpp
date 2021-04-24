@@ -510,10 +510,7 @@ namespace bg3se::lua::utils
 			{0,0}
 		};
 
-		lua_getglobal(L, "Ext"); // stack: Ext
-		luaL_newlib(L, utilsLib); // stack: ext, lib
-		lua_setfield(L, -2, "Utils");
-		lua_pop(L, 1);
+		RegisterLib(L, "Utils", utilsLib);
 	}
 
 	void RegisterIOLib(lua_State* L)
@@ -524,10 +521,7 @@ namespace bg3se::lua::utils
 			{0,0}
 		};
 
-		lua_getglobal(L, "Ext"); // stack: Ext
-		luaL_newlib(L, ioLib); // stack: ext, lib
-		lua_setfield(L, -2, "IO");
-		lua_pop(L, 1);
+		RegisterLib(L, "IO", ioLib);
 	}
 
 	void RegisterMathLib(lua_State * L)
@@ -538,9 +532,6 @@ namespace bg3se::lua::utils
 			{0,0}
 		};
 
-		lua_getglobal(L, "Ext"); // stack: Ext
-		luaL_newlib(L, mathLib); // stack: ext, lib
-		lua_setfield(L, -2, "Math");
-		lua_pop(L, 1);
+		RegisterLib(L, "Math", mathLib);
 	}
 }

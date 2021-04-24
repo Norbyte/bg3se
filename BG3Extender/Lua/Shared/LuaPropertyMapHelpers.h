@@ -21,7 +21,7 @@ namespace bg3se::lua
 	}
 
 	template <class T, class T2>
-	void CopyProperties(LuaPropertyMap<T> const& base, LuaPropertyMap<T2>& child)
+	void CopyProperties(LuaPropertyMap<T> const& base, LuaPropertyMap<T2>& child, STDString const& baseClsName)
 	{
 		static_assert(std::is_base_of_v<T, T2>, "Can only copy properties from base class");
 		for (auto const& prop : base.Properties) {
@@ -33,5 +33,11 @@ namespace bg3se::lua
 				reinterpret_cast<LuaPropertyMap<T2>::PropertyAccessors::Setter*>(prop.second.Set)
 			);
 		}
+
+		for (auto const& parent : base.Parents) {
+			child.Parents.push_back(parent);
+		}
+
+		child.Parents.push_back(baseClsName);
 	}
 }

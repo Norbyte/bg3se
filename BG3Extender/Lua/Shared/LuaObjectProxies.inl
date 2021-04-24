@@ -25,7 +25,7 @@ int StatusGetEngineType(lua_State* L, esv::Status* self);
 // Lua property map and object proxy template specialization declarations
 
 #define BEGIN_CLS(name) \
-	char const* const ObjectProxyImpl<name>::TypeName = #name; \
+	char const* const ObjectProxyHelpers<name>::TypeName = #name; \
 	LuaPropertyMap<name> StaticLuaPropertyMap<name>::PropertyMap;
 
 #define END_CLS()
@@ -63,7 +63,7 @@ int StatusGetEngineType(lua_State* L, esv::Status* self);
 
 #define INHERIT(base) { \
 		auto& basePm = StaticLuaPropertyMap<base>::PropertyMap; \
-		CopyProperties(basePm, pm); \
+		CopyProperties(basePm, pm, #base); \
 	}
 
 #define P(prop) \

@@ -46,6 +46,7 @@ namespace bg3se::lua
 		}
 
 		std::unordered_map<STDString, PropertyAccessors> Properties;
+		std::vector<STDString> Parents;
 	};
 
 	template <class T>
@@ -61,40 +62,22 @@ namespace bg3se::lua
 	public:
 		inline virtual ~ObjectProxyImplBase() {};
 		virtual char const* GetTypeName() const = 0;
+		virtual void* GetRaw() = 0;
 		virtual bool GetProperty(lua_State* L, char const* prop) = 0;
 		virtual bool SetProperty(lua_State* L, char const* prop, int index) = 0;
 		virtual int Next(lua_State* L, char const* key) = 0;
+		virtual bool IsA(char const* typeName) = 0;
 	};
 
 	template <class T>
-	class ObjectProxyImpl : public ObjectProxyImplBase
+	struct ObjectProxyHelpers
 	{
-	public:
-		static_assert(!std::is_pointer_v<T>, "ObjectProxyImpl template parameter should not be a pointer type!");
-
 		static char const* const TypeName;
 
-		ObjectProxyImpl(LifetimeHolder const& lifetime, T * obj)
-			: object_(obj), lifetime_(lifetime)
-		{}
-		
-		~ObjectProxyImpl() override
-		{}
-
-		T* Get() const
-		{
-			return object_;
-		}
-
-		char const* GetTypeName() const override
-		{
-			return TypeName;
-		}
-
-		bool GetProperty(lua_State* L, char const* prop) override
+		static bool GetProperty(lua_State* L, T* object, LifetimeHolder const& lifetime, char const* prop)
 		{
 			auto const& map = StaticLuaPropertyMap<T>::PropertyMap;
-			auto fetched = map.GetProperty(L, lifetime_, object_, prop);
+			auto fetched = map.GetProperty(L, lifetime, object, prop);
 			if (!fetched) {
 				luaL_error(L, "Object of type '%s' has no property named '%s'", TypeName, prop);
 				return false;
@@ -103,10 +86,10 @@ namespace bg3se::lua
 			return true;
 		}
 
-		bool SetProperty(lua_State* L, char const* prop, int index) override
+		static bool SetProperty(lua_State* L, T* object, LifetimeHolder const& lifetime, char const* prop, int index)
 		{
 			auto const& map = StaticLuaPropertyMap<T>::PropertyMap;
-			auto ok = map.SetProperty(L, lifetime_, object_, prop, index);
+			auto ok = map.SetProperty(L, lifetime, object, prop, index);
 			if (!ok) {
 				luaL_error(L, "Object of type '%s' has no property named '%s'", TypeName, prop);
 				return false;
@@ -115,7 +98,7 @@ namespace bg3se::lua
 			return true;
 		}
 
-		int Next(lua_State* L, char const* key) override
+		static int Next(lua_State* L, T* object, LifetimeHolder const& lifetime, char const* key)
 		{
 			auto const& map = StaticLuaPropertyMap<T>::PropertyMap;
 			if (key == nullptr) {
@@ -123,20 +106,21 @@ namespace bg3se::lua
 					StackCheck _(L, 2);
 					auto it = map.Properties.begin();
 					push(L, it->first);
-					if (!it->second.Get(L, lifetime_, object_)) {
+					if (!it->second.Get(L, lifetime, object)) {
 						push(L, nullptr);
 					}
 
 					return 2;
 				}
-			} else {
+			}
+			else {
 				auto it = map.Properties.find(key);
 				if (it != map.Properties.end()) {
 					++it;
 					if (it != map.Properties.end()) {
 						StackCheck _(L, 2);
 						push(L, it->first);
-						if (!it->second.Get(L, lifetime_, object_)) {
+						if (!it->second.Get(L, lifetime, object)) {
 							push(L, nullptr);
 						}
 
@@ -148,10 +132,135 @@ namespace bg3se::lua
 			return 0;
 		}
 
+		static bool IsA(char const* typeName)
+		{
+			if (strcmp(typeName, TypeName) == 0) {
+				return true;
+			}
+
+			auto const& map = StaticLuaPropertyMap<T>::PropertyMap;
+			for (auto const& parent : map.Parents) {
+				if (strcmp(parent.c_str(), typeName) == 0) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+	};
+
+	template <class T>
+	class ObjectProxyRefImpl : public ObjectProxyImplBase
+	{
+	public:
+		static_assert(!std::is_pointer_v<T>, "ObjectProxyImpl template parameter should not be a pointer type!");
+
+		ObjectProxyRefImpl(LifetimeHolder const& lifetime, T * obj)
+			: object_(obj), lifetime_(lifetime)
+		{}
+		
+		~ObjectProxyRefImpl() override
+		{}
+
+		T* Get() const
+		{
+			return object_;
+		}
+
+		void* GetRaw() override
+		{
+			return object_;
+		}
+
+		char const* GetTypeName() const override
+		{
+			return ObjectProxyHelpers<T>::TypeName;
+		}
+
+		bool GetProperty(lua_State* L, char const* prop) override
+		{
+			return ObjectProxyHelpers<T>::GetProperty(L, object_, lifetime_, prop);
+		}
+
+		bool SetProperty(lua_State* L, char const* prop, int index) override
+		{
+			return ObjectProxyHelpers<T>::SetProperty(L, object_, lifetime_, prop, index);
+		}
+
+		int Next(lua_State* L, char const* key) override
+		{
+			return ObjectProxyHelpers<T>::Next(L, object_, lifetime_, key);
+		}
+
+		bool IsA(char const* typeName) override
+		{
+			return ObjectProxyHelpers<T>::IsA(typeName);
+		}
+
 	private:
 		T* object_;
 		LifetimeHolder lifetime_;
 	};
+
+
+	// Object proxy that owns the contained object and deletes the object on GC
+	template <class T>
+	class ObjectProxyOwnerImpl : public ObjectProxyImplBase
+	{
+	public:
+		static_assert(!std::is_pointer_v<T>, "ObjectProxyImpl template parameter should not be a pointer type!");
+
+		template <class... Args>
+		ObjectProxyOwnerImpl(LifetimePool& pool, Lifetime* lifetime, Args... args)
+			: lifetime_(pool, lifetime), 
+			object_(GameAlloc<T, Args...>(std::forward(args...)), &GameDelete<T>)
+		{}
+
+		~ObjectProxyOwnerImpl() override
+		{
+			lifetime_.GetLifetime()->Kill();
+		}
+
+		T* Get() const
+		{
+			return object_.get();
+		}
+
+		void* GetRaw() override
+		{
+			return object_.get();
+		}
+
+		char const* GetTypeName() const override
+		{
+			return ObjectProxyHelpers<T>::TypeName;
+		}
+
+		bool GetProperty(lua_State* L, char const* prop) override
+		{
+			return ObjectProxyHelpers<T>::GetProperty(L, object_.get(), lifetime_.Get(), prop);
+		}
+
+		bool SetProperty(lua_State* L, char const* prop, int index) override
+		{
+			return ObjectProxyHelpers<T>::SetProperty(L, object_.get(), lifetime_.Get(), prop, index);
+		}
+
+		int Next(lua_State* L, char const* key) override
+		{
+			return ObjectProxyHelpers<T>::Next(L, object_.get(), lifetime_.Get(), key);
+		}
+
+		bool IsA(char const* typeName) override
+		{
+			return ObjectProxyHelpers<T>::IsA(typeName);
+		}
+
+	private:
+		GameUniquePtr<T> object_;
+		LifetimeReference lifetime_;
+	};
+
 
 	class ObjectProxy : private Userdata<ObjectProxy>, public Indexable, public NewIndexable, 
 		public Iterable, public Pushable, public GarbageCollected
@@ -160,9 +269,20 @@ namespace bg3se::lua
 		static char const * const MetatableName;
 
 		template <class T>
-		inline static ObjectProxyImpl<T>* Make(lua_State* L, T* object, LifetimeHolder const& lifetime)
+		inline static ObjectProxyRefImpl<T>* MakeRef(lua_State* L, T* object, LifetimeHolder const& lifetime)
 		{
-			return MakeImpl<ObjectProxyImpl<T>, T*>(L, lifetime, object);
+			static_assert(sizeof(ObjectProxyRefImpl<T>) <= sizeof(impl_), "ObjectProxy implementation object too large!");
+			auto self = New(L, lifetime);
+			return new (self->impl_) ObjectProxyRefImpl<T>(lifetime, object);
+		}
+
+		template <class T, class... Args>
+		inline static ObjectProxyOwnerImpl<T>* MakeOwner(lua_State* L, LifetimePool& pool, Args... args)
+		{
+			static_assert(sizeof(ObjectProxyOwnerImpl<T>) <= sizeof(impl_), "ObjectProxy implementation object too large!");
+			auto lifetime = pool.Allocate();
+			auto self = New(L, LifetimeHolder(pool, lifetime));
+			return new (self->impl_) ObjectProxyOwnerImpl<T>(pool, lifetime);
 		}
 
 		inline ObjectProxyImplBase* GetImpl()
@@ -182,9 +302,8 @@ namespace bg3se::lua
 				return nullptr;
 			}
 
-			auto type = GetImpl()->GetTypeName();
-			if (type == ObjectProxyImpl<T>::TypeName) {
-				return static_cast<ObjectProxyImpl<T>*>(GetImpl())->Get();
+			if (GetImpl()->IsA(ObjectProxyHelpers<T>::TypeName)) {
+				return reinterpret_cast<T*>(GetImpl()->GetRaw());
 			} else {
 				return nullptr;
 			}
@@ -192,7 +311,7 @@ namespace bg3se::lua
 
 	private:
 		LifetimeReference lifetime_;
-		uint8_t impl_[32];
+		uint8_t impl_[40];
 
 		ObjectProxy(LifetimeHolder const& lifetime)
 			: lifetime_(lifetime)
@@ -201,14 +320,6 @@ namespace bg3se::lua
 		~ObjectProxy()
 		{
 			GetImpl()->~ObjectProxyImplBase();
-		}
-
-		template <class TImpl, class... Args>
-		static TImpl* MakeImpl(lua_State* L, LifetimeHolder const& lifetime, Args... args)
-		{
-			static_assert(sizeof(TImpl) <= sizeof(impl_), "ObjectProxy implementation object too large!");
-			auto self = New(L, lifetime);
-			return new (self->impl_) TImpl(lifetime, args...);
 		}
 
 	protected:
@@ -276,7 +387,7 @@ namespace bg3se::lua
 			&& (std::is_base_of_v<HasObjectProxy, std::remove_pointer_t<T>>
 				|| HasObjectProxyTag<std::remove_pointer_t<T>>::HasProxy)) {
 			if (v) {
-				ObjectProxy::Make<std::remove_pointer_t<T>>(L, v, lifetime);
+				ObjectProxy::MakeRef<std::remove_pointer_t<T>>(L, v, lifetime);
 			} else {
 				lua_pushnil(L);
 			}
@@ -289,17 +400,17 @@ namespace bg3se::lua
 	inline T* checked_get_proxy(lua_State* L, int index)
 	{
 		auto proxy = Userdata<ObjectProxy>::CheckUserData(L, index);
-		auto type = proxy->GetImpl()->GetTypeName();
-		if (type == ObjectProxyImpl<T>::TypeName) {
+		auto const& typeName = ObjectProxyHelpers<T>::TypeName;
+		if (proxy->GetImpl()->IsA(typeName)) {
 			auto obj = proxy->Get<T>();
 			if (obj == nullptr) {
-				luaL_error(L, "Argument %d: got object of type '%s' whose lifetime has expired", index, type);
+				luaL_error(L, "Argument %d: got object of type '%s' whose lifetime has expired", index, typeName);
 				return nullptr;
 			} else {
 				return obj;
 			}
 		} else {
-			luaL_error(L, "Argument %d: expected an object of type '%s', got '%s'", index, ObjectProxyImpl<T>::TypeName, type);
+			luaL_error(L, "Argument %d: expected an object of type '%s', got '%s'", index, typeName, proxy->GetImpl()->GetTypeName());
 			return nullptr;
 		}
 	}

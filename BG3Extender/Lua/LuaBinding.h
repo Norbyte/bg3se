@@ -85,6 +85,11 @@ namespace bg3se::lua
 
 		LifetimeHolder GetCurrentLifetime();
 
+		inline LifetimePool& GetLifetimePool()
+		{
+			return lifetimePool_;
+		}
+
 		void FinishStartup();
 		void LoadBootstrap(STDString const& path, STDString const& modTable);
 		virtual void OnGameSessionLoading();

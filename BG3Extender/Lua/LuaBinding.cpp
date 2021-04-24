@@ -539,6 +539,14 @@ namespace bg3se::lua
 
 #endif
 
+	void RegisterLib(lua_State* L, char const* name, luaL_Reg const * lib)
+	{
+		lua_getglobal(L, "Ext"); // stack: Ext
+		luaL_newlib(L, lib); // stack: ext, lib
+		lua_setfield(L, -2, name);
+		lua_pop(L, 1);
+	}
+
 	int LuaPanic(lua_State * L)
 	{
 		char const* err = "(Unknown)";
