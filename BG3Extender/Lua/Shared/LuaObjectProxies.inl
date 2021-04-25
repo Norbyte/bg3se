@@ -89,7 +89,7 @@ int StatusGetEngineType(lua_State* L, esv::Status* self);
 #define P_REF(prop) \
 	pm.AddProperty(#prop, \
 		[](lua_State* L, LifetimeHolder const& lifetime, PM::ObjectType* obj) { \
-			ObjectProxy::Make<decltype(obj->prop)>(L, &obj->prop, lifetime); \
+			ObjectProxy::MakeRef<decltype(obj->prop)>(L, &obj->prop, lifetime); \
 			return true; \
 		}, \
 		[](lua_State* L, LifetimeHolder const& lifetime, PM::ObjectType* obj, int index) { \
@@ -101,7 +101,7 @@ int StatusGetEngineType(lua_State* L, esv::Status* self);
 	pm.AddProperty(#prop, \
 		[](lua_State* L, LifetimeHolder const& lifetime, PM::ObjectType* obj) { \
 			if (obj->prop) { \
-				ObjectProxy::Make<std::remove_pointer<decltype(obj->prop)>::type>(L, obj->prop, lifetime); \
+				ObjectProxy::MakeRef<std::remove_pointer<decltype(obj->prop)>::type>(L, obj->prop, lifetime); \
 			} else { \
 				push(L, nullptr); \
 			} \

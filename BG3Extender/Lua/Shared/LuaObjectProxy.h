@@ -210,10 +210,9 @@ namespace bg3se::lua
 	public:
 		static_assert(!std::is_pointer_v<T>, "ObjectProxyImpl template parameter should not be a pointer type!");
 
-		template <class... Args>
-		ObjectProxyOwnerImpl(LifetimePool& pool, Lifetime* lifetime, Args... args)
+		ObjectProxyOwnerImpl(LifetimePool& pool, Lifetime* lifetime, T* obj)
 			: lifetime_(pool, lifetime), 
-			object_(GameAlloc<T, Args...>(std::forward(args...)), &GameDelete<T>)
+			object_(obj, &GameDelete<T>)
 		{}
 
 		~ObjectProxyOwnerImpl() override
@@ -276,13 +275,23 @@ namespace bg3se::lua
 			return new (self->impl_) ObjectProxyRefImpl<T>(lifetime, object);
 		}
 
+		template <class T>
+		inline static ObjectProxyOwnerImpl<T>* MakeOwner(lua_State* L, LifetimePool& pool, T* obj)
+		{
+			static_assert(sizeof(ObjectProxyOwnerImpl<T>) <= sizeof(impl_), "ObjectProxy implementation object too large!");
+			auto lifetime = pool.Allocate();
+			auto self = New(L, LifetimeHolder(pool, lifetime));
+			return new (self->impl_) ObjectProxyOwnerImpl<T>(pool, lifetime, obj);
+		}
+
 		template <class T, class... Args>
 		inline static ObjectProxyOwnerImpl<T>* MakeOwner(lua_State* L, LifetimePool& pool, Args... args)
 		{
 			static_assert(sizeof(ObjectProxyOwnerImpl<T>) <= sizeof(impl_), "ObjectProxy implementation object too large!");
 			auto lifetime = pool.Allocate();
 			auto self = New(L, LifetimeHolder(pool, lifetime));
-			return new (self->impl_) ObjectProxyOwnerImpl<T>(pool, lifetime);
+			auto obj = GameAlloc<T, Args...>(std::forward(args)...);
+			return new (self->impl_) ObjectProxyOwnerImpl<T>(pool, lifetime, obj);
 		}
 
 		inline ObjectProxyImplBase* GetImpl()
