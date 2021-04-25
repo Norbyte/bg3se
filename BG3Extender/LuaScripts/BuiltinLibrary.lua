@@ -218,3 +218,7 @@ _I._SkillPropertyTypes = {}
 Ext.RegisterSkillProperty = function (name, proto)
 	_I._SkillPropertyTypes[name] = proto
 end
+
+-- Global helper aliases for Ext.Dump, Ext.Utils.Print
+_D = Ext.Dump
+_P = Ext.Utils.Print
