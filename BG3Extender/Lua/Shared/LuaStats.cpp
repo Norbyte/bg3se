@@ -54,7 +54,7 @@ namespace bg3se::lua
 	void RegisterSharedLibraries(lua_State* L)
 	{
 		Userdata<ObjectProxy>::RegisterMetatable(L);
-		InitObjectProxyPropertyMaps(L);
+		InitObjectProxyPropertyMaps();
 
 		stats::RegisterStatsLib(L);
 		utils::RegisterStaticDataLib(L);

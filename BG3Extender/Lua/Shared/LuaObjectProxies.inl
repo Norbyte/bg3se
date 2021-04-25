@@ -52,8 +52,10 @@ int StatusGetEngineType(lua_State* L, esv::Status* self);
 
 // Property registrations
 
-	void InitObjectProxyPropertyMaps(lua_State* L)
+	void InitObjectProxyPropertyMaps()
 	{
+		static bool initialized{ false };
+		if (initialized) return;
 
 #define BEGIN_CLS(cls) { \
 	using PM = StaticLuaPropertyMap<cls>; \
@@ -147,5 +149,7 @@ int StatusGetEngineType(lua_State* L, esv::Status* self);
 #undef P_REF_PTR
 #undef PN
 #undef P_FUN
+
+		initialized = true;
 	}
 }
