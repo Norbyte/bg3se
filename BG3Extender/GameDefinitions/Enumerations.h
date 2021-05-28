@@ -251,3 +251,19 @@ namespace bg3se
 #undef END_ENUM
 
 }
+
+
+namespace std
+{
+	template <class T>
+	inline std::enable_if_t<std::is_enum_v<T>, ostream&> operator << (ostream& out, T const& v)
+	{
+		auto label = bg3se::EnumInfo<T>::Find(v);
+		if (label) {
+			out << label.GetString();
+		} else {
+			out << "(unknown)";
+		}
+		return out;
+	}
+}

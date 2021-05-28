@@ -242,7 +242,7 @@ namespace bg3se
 
 		if ((int32_t)type >= (int32_t)entity->ComponentIdToSlotIndexMap.Size) {
 			if (logError) {
-				OsiError("Entity " << entityHandle << " has no component slot for component " << type);
+				OsiError("Entity " << Handle << " has no component slot for component " << type);
 			}
 			return {};
 		}
@@ -250,7 +250,7 @@ namespace bg3se
 		auto slot = entity->ComponentIdToSlotIndexMap[(int32_t)type];
 		if (slot == -1) {
 			if (logError) {
-				OsiError("Entity " << entityHandle << " has no component bound of type " << type);
+				OsiError("Entity " << Handle << " has no component bound of type " << type);
 			}
 			return {};
 		}
@@ -547,7 +547,7 @@ namespace bg3se
 			return world->GetComponent(netId, *componentIndex, logError);
 		} else {
 			if (logError) {
-				OsiError("No component index mapping registered for " << EnumInfo<ExtComponentType>::Find(type));
+				OsiError("No component index mapping registered for " << type);
 			}
 
 			return nullptr;
@@ -569,7 +569,7 @@ namespace bg3se
 		if (handleIndex) {
 			if ((int32_t)*handleIndex != (int32_t)componentHandle.GetType()) {
 				if (logError) {
-					OsiError("Attempted to resolve handle of type " << *handleIndex << " in a pool of type " << EnumInfo<ExtComponentType>::Find(type));
+					OsiError("Attempted to resolve handle of type " << *handleIndex << " in a pool of type " << type);
 				}
 
 				return nullptr;
@@ -579,7 +579,7 @@ namespace bg3se
 			return world->GetComponent(componentHandle, *componentIndex, logError);
 		} else {
 			if (logError) {
-				OsiError("No component index mapping registered for " << EnumInfo<ExtComponentType>::Find(type));
+				OsiError("No component index mapping registered for " << type);
 			}
 
 			return nullptr;
@@ -602,7 +602,7 @@ namespace bg3se
 			return world->GetComponent(nameGuid, *componentIndex, logError);
 		} else {
 			if (logError) {
-				OsiError("No component index mapping registered for " << EnumInfo<ExtComponentType>::Find(type));
+				OsiError("No component index mapping registered for " << type);
 			}
 
 			return nullptr;
@@ -625,7 +625,7 @@ namespace bg3se
 			return world->GetComponent(guid, *componentIndex, logError);
 		} else {
 			if (logError) {
-				OsiError("No component index mapping registered for " << EnumInfo<ExtComponentType>::Find(type));
+				OsiError("No component index mapping registered for " << type);
 			}
 
 			return nullptr;
@@ -648,7 +648,7 @@ namespace bg3se
 			return world->GetEntityComponent(entityHandle, *componentIndex, logError);
 		} else {
 			if (logError) {
-				OsiError("No component index mapping registered for " << EnumInfo<ExtComponentType>::Find(type));
+				OsiError("No component index mapping registered for " << type);
 			}
 
 			return nullptr;
@@ -659,7 +659,7 @@ namespace bg3se
 	{
 		auto index = resourceManagerIndices_[(int)type];
 		if (index == UndefinedIndex) {
-			OsiError("No resource manager index mapping registered for " << EnumInfo<ExtResourceManagerType>::Find(type));
+			OsiError("No resource manager index mapping registered for " << type);
 			return {};
 		}
 
@@ -671,7 +671,7 @@ namespace bg3se
 
 		auto res = (*defns)->Definitions.Find(index);
 		if (!res) {
-			OsiError("Resource manager missing for " << EnumInfo<ExtResourceManagerType>::Find(type));
+			OsiError("Resource manager missing for " << type);
 			return {};
 		}
 

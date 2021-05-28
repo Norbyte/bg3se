@@ -52,7 +52,7 @@ namespace bg3se::lua::utils
 		case FeatDescriptionResource::ResourceManagerType: return GetGuidResourceProxy<FeatDescriptionResource>(L, resourceGuid);
 
 		default:
-			LuaError("Resource type not supported: " << EnumInfo<ExtResourceManagerType>::Find(type));
+			LuaError("Resource type not supported: " << type);
 			push(L, nullptr);
 			return 1;
 		}
@@ -104,7 +104,7 @@ namespace bg3se::lua::utils
 		case FeatDescriptionResource::ResourceManagerType: return GetAllGuidResourcesTyped<FeatDescriptionResource>(L);
 
 		default:
-			LuaError("Resource type not supported: " << EnumInfo<ExtResourceManagerType>::Find(type));
+			LuaError("Resource type not supported: " << type);
 			push(L, nullptr);
 			return 1;
 		}
