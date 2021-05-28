@@ -10,6 +10,36 @@ class EntitySystemHelpersBase : public Noncopyable<EntitySystemHelpersBase>
 public:
 	EntitySystemHelpersBase();
 
+	inline std::optional<EntityWorldBase::ComponentTypeIndex> GetComponentIndex(STDString const& type) const
+	{
+		auto it = componentNameToIndexMappings_.find(type);
+		if (it != componentNameToIndexMappings_.end() && it->second.ComponentIndex != UndefinedIndex) {
+			return it->second.ComponentIndex;
+		} else {
+			return {};
+		}
+	}
+
+	inline std::optional<STDString> GetComponentName(EntityWorldBase::ComponentTypeIndex index) const
+	{
+		auto it = componentIndexToNameMappings_.find((int32_t)index);
+		if (it != componentIndexToNameMappings_.end()) {
+			return it->second;
+		} else {
+			return {};
+		}
+	}
+
+	inline std::optional<STDString> GetComponentName(EntityWorldBase::HandleTypeIndex index) const
+	{
+		auto it = handleIndexToNameMappings_.find((int32_t)index);
+		if (it != handleIndexToNameMappings_.end()) {
+			return it->second;
+		} else {
+			return {};
+		}
+	}
+
 	inline std::optional<EntityWorldBase::ComponentTypeIndex> GetComponentIndex(ExtComponentType type) const
 	{
 		auto idx = componentIndices_[(unsigned)type];
@@ -154,7 +184,9 @@ private:
 		EntityWorldBase::ComponentTypeIndex ComponentIndex;
 	};
 
-	std::unordered_map<STDString, IndexMappings> componentIndexMappings_;
+	std::unordered_map<STDString, IndexMappings> componentNameToIndexMappings_;
+	std::unordered_map<int32_t, STDString> componentIndexToNameMappings_;
+	std::unordered_map<int32_t, STDString> handleIndexToNameMappings_;
 	std::unordered_map<STDString, int32_t> systemIndexMappings_;
 	std::array<EntityWorldBase::ComponentTypeIndex, (int)ExtComponentType::Max> componentIndices_;
 	std::array<EntityWorldBase::HandleTypeIndex, (int)ExtComponentType::Max> handleIndices_;

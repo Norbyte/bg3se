@@ -7,12 +7,12 @@
 
 namespace bg3se
 {
-	struct EntityWorld;
+	struct EntityWorldBase;
 
 	struct EntityWorldHandle
 	{
 		EntityHandle Handle;
-		EntityWorld* World;
+		EntityWorldBase* World{ nullptr };
 	};
 
 	struct BaseComponent : public ProtectedGameObject<BaseComponent>
@@ -38,7 +38,6 @@ namespace bg3se
 			int32_t PrimitiveIndex;
 		};
 
-		uint32_t Mutex;
 		Array<ObjectEntry> Objects;
 		void* Unknown;
 		Array<uint32_t> Salts;
@@ -131,6 +130,8 @@ namespace bg3se
 			Array<int16_t> ComponentIdToSlotIndexMap;
 			int NumUsedSlots;
 			uint64_t OccupiedSlotBitmap[8];
+
+			ObjectHandle GetComponentHandle(int32_t type, bool logError);
 		};
 
 		struct EntityType

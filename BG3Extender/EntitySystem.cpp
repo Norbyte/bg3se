@@ -235,19 +235,16 @@ namespace bg3se
 		return &entityTypes.Entities[remap];
 	}
 
-	ObjectHandle EntityWorldBase::GetEntityComponentHandle(EntityHandle entityHandle, ComponentTypeIndex type, bool logError)
+	ObjectHandle EntityWorldBase::Entity::GetComponentHandle(int32_t type, bool logError)
 	{
-		auto entity = GetEntity(entityHandle, logError);
-		if (!entity) return ObjectHandle{};
-
-		if ((int32_t)type >= (int32_t)entity->ComponentIdToSlotIndexMap.Size) {
+		if (type >= (int32_t)ComponentIdToSlotIndexMap.Size) {
 			if (logError) {
 				OsiError("Entity " << Handle << " has no component slot for component " << type);
 			}
 			return {};
 		}
 
-		auto slot = entity->ComponentIdToSlotIndexMap[(int32_t)type];
+		auto slot = ComponentIdToSlotIndexMap[(int32_t)type];
 		if (slot == -1) {
 			if (logError) {
 				OsiError("Entity " << Handle << " has no component bound of type " << type);
@@ -255,7 +252,15 @@ namespace bg3se
 			return {};
 		}
 
-		return entity->ComponentHandles[slot];
+		return ComponentHandles[slot];
+	}
+
+	ObjectHandle EntityWorldBase::GetEntityComponentHandle(EntityHandle entityHandle, ComponentTypeIndex type, bool logError)
+	{
+		auto entity = GetEntity(entityHandle, logError);
+		if (!entity) return ObjectHandle{};
+
+		return entity->GetComponentHandle((int32_t)type, logError);
 	}
 
 	ObjectHandle EntityWorldBase::GetEntityComponentHandle(EntityHandle entityHandle, HandleTypeIndex type, bool logError)
@@ -300,11 +305,30 @@ namespace bg3se
 		}
 	}
 
+	STDString SimplifyComponentName(char const* name)
+	{
+		STDString key{ name };
+		if (key.length() > 6 && strncmp(key.c_str(), "class ", 6) == 0) {
+			key = key.substr(6);
+		}
+		else if (key.length() > 7 && strncmp(key.c_str(), "struct ", 7) == 0) {
+			key = key.substr(7);
+		}
+
+		if (key.length() > 7 && strncmp(key.c_str() + key.size() - 7, ">(void)", 7) == 0) {
+			key = key.substr(0, key.size() - 7);
+		}
+
+		return key;
+	}
+
 	void EntitySystemHelpersBase::UpdateComponentMappings()
 	{
 		if (initialized_) return;
 
-		componentIndexMappings_.clear();
+		componentNameToIndexMappings_.clear();
+		componentIndexToNameMappings_.clear();
+		handleIndexToNameMappings_.clear();
 		componentIndices_.fill(UndefinedIndex);
 		handleIndices_.fill(UndefinedIndex);
 		resourceManagerIndices_.fill(UndefinedIndex);
@@ -331,7 +355,7 @@ namespace bg3se
 
 		for (auto& map : mappings) {
 			if (map.second.NumIndices == 1) {
-				systemIndexMappings_.insert(std::make_pair(map.first, map.second.Indices[0]));
+				systemIndexMappings_.insert(std::make_pair(SimplifyComponentName(map.first), map.second.Indices[0]));
 			}
 
 			std::sort(map.second.Indices.begin(), map.second.Indices.end(), std::greater<int32_t>());
@@ -344,7 +368,10 @@ namespace bg3se
 						if (map.second.Indices[j] == *componentIdx) {
 							//std::cout << map.second.Indices[i] << " -> " << map.second.Indices[j] << std::endl;
 							IndexMappings indexMapping{ map.second.Indices[i], map.second.Indices[j] };
-							componentIndexMappings_.insert(std::make_pair(map.first, indexMapping));
+							auto componentName = SimplifyComponentName(map.first);
+							componentNameToIndexMappings_.insert(std::make_pair(componentName, indexMapping));
+							componentIndexToNameMappings_.insert(std::make_pair(indexMapping.ComponentIndex, componentName));
+							handleIndexToNameMappings_.insert(std::make_pair(indexMapping.HandleIndex, componentName));
 							found = true;
 						}
 					}
@@ -406,41 +433,41 @@ namespace bg3se
 		MapComponentIndices("eoc::OriginComponent", ExtComponentType::Origin);
 		MapComponentIndices("ls::LevelComponent", ExtComponentType::Level);
 
-		MapResourceManagerIndex("class ls::TagManager", ExtResourceManagerType::Tag);
-		MapResourceManagerIndex("class eoc::FactionContainer", ExtResourceManagerType::Faction);
-		MapResourceManagerIndex("class eoc::RaceManager", ExtResourceManagerType::Race);
-		MapResourceManagerIndex("class eoc::AbilityDistributionPresetManager", ExtResourceManagerType::AbilityDistributionPreset);
-		MapResourceManagerIndex("class eoc::CharacterCreationPresetManager", ExtResourceManagerType::CharacterCreationPreset);
-		MapResourceManagerIndex("class eoc::CharacterCreationSkinColorManager", ExtResourceManagerType::CharacterCreationSkinColor);
-		MapResourceManagerIndex("class eoc::CharacterCreationEyeColorManager", ExtResourceManagerType::CharacterCreationEyeColor);
-		MapResourceManagerIndex("class eoc::CharacterCreationHairColorManager", ExtResourceManagerType::CharacterCreationHairColor);
-		MapResourceManagerIndex("class eoc::CompanionPresetManager", ExtResourceManagerType::CompanionPreset);
-		MapResourceManagerIndex("class eoc::OriginManager", ExtResourceManagerType::Origin);
-		MapResourceManagerIndex("class eoc::BackgroundManager", ExtResourceManagerType::Background);
-		MapResourceManagerIndex("class eoc::GodManager", ExtResourceManagerType::God);
-		MapResourceManagerIndex("class eoc::AbilityListManager", ExtResourceManagerType::AbilityList);
-		MapResourceManagerIndex("class eoc::SkillListManager", ExtResourceManagerType::SkillList);
-		MapResourceManagerIndex("class eoc::SpellListManager", ExtResourceManagerType::SpellList);
-		MapResourceManagerIndex("class eoc::PassiveListManager", ExtResourceManagerType::PassiveList);
-		MapResourceManagerIndex("class eoc::ProgressionManager", ExtResourceManagerType::Progression);
-		MapResourceManagerIndex("class eoc::ProgressionDescriptionManager", ExtResourceManagerType::ProgressionDescription);
-		MapResourceManagerIndex("class eoc::GossipContainer", ExtResourceManagerType::Gossip);
-		MapResourceManagerIndex("class eoc::ActionResourceTypes", ExtResourceManagerType::ActionResource);
-		MapResourceManagerIndex("class eoc::ActionResourceGroupManager", ExtResourceManagerType::ActionResourceGroup);
-		MapResourceManagerIndex("class eoc::EquipmentTypes", ExtResourceManagerType::EquipmentType);
-		MapResourceManagerIndex("class eoc::VFXContainer", ExtResourceManagerType::VFX);
-		MapResourceManagerIndex("class eoc::DeathTypesContainer", ExtResourceManagerType::DeathType);
-		MapResourceManagerIndex("class eoc::CharacterCreationAppearanceMaterialManager", ExtResourceManagerType::CharacterCreationAppearanceMaterial);
-		MapResourceManagerIndex("class eoc::CharacterCreationAppearanceVisualManager", ExtResourceManagerType::CharacterCreationAppearanceVisual);
-		MapResourceManagerIndex("class eoc::CharacterCreationSharedVisualManager", ExtResourceManagerType::CharacterCreationSharedVisual);
-		MapResourceManagerIndex("class eoc::tutorial::EntriesManager", ExtResourceManagerType::TutorialEntries);
-		MapResourceManagerIndex("class eoc::FeatManager", ExtResourceManagerType::Feat);
-		MapResourceManagerIndex("class eoc::FeatDescriptionManager", ExtResourceManagerType::FeatDescription);
-		MapResourceManagerIndex("class eoc::tutorial::ModalEntriesManager", ExtResourceManagerType::TutorialModalEntries);
-		MapResourceManagerIndex("class eoc::AvailableClassSpellsManager", ExtResourceManagerType::AvailableClassSpells);
-		MapResourceManagerIndex("class eoc::ClassDescriptions", ExtResourceManagerType::ClassDescription);
-		MapResourceManagerIndex("class eoc::ColorDefinitions", ExtResourceManagerType::ColorDefinition);
-		MapResourceManagerIndex("class ls::FlagManager", ExtResourceManagerType::Flag);
+		MapResourceManagerIndex("ls::TagManager", ExtResourceManagerType::Tag);
+		MapResourceManagerIndex("eoc::FactionContainer", ExtResourceManagerType::Faction);
+		MapResourceManagerIndex("eoc::RaceManager", ExtResourceManagerType::Race);
+		MapResourceManagerIndex("eoc::AbilityDistributionPresetManager", ExtResourceManagerType::AbilityDistributionPreset);
+		MapResourceManagerIndex("eoc::CharacterCreationPresetManager", ExtResourceManagerType::CharacterCreationPreset);
+		MapResourceManagerIndex("eoc::CharacterCreationSkinColorManager", ExtResourceManagerType::CharacterCreationSkinColor);
+		MapResourceManagerIndex("eoc::CharacterCreationEyeColorManager", ExtResourceManagerType::CharacterCreationEyeColor);
+		MapResourceManagerIndex("eoc::CharacterCreationHairColorManager", ExtResourceManagerType::CharacterCreationHairColor);
+		MapResourceManagerIndex("eoc::CompanionPresetManager", ExtResourceManagerType::CompanionPreset);
+		MapResourceManagerIndex("eoc::OriginManager", ExtResourceManagerType::Origin);
+		MapResourceManagerIndex("eoc::BackgroundManager", ExtResourceManagerType::Background);
+		MapResourceManagerIndex("eoc::GodManager", ExtResourceManagerType::God);
+		MapResourceManagerIndex("eoc::AbilityListManager", ExtResourceManagerType::AbilityList);
+		MapResourceManagerIndex("eoc::SkillListManager", ExtResourceManagerType::SkillList);
+		MapResourceManagerIndex("eoc::SpellListManager", ExtResourceManagerType::SpellList);
+		MapResourceManagerIndex("eoc::PassiveListManager", ExtResourceManagerType::PassiveList);
+		MapResourceManagerIndex("eoc::ProgressionManager", ExtResourceManagerType::Progression);
+		MapResourceManagerIndex("eoc::ProgressionDescriptionManager", ExtResourceManagerType::ProgressionDescription);
+		MapResourceManagerIndex("eoc::GossipContainer", ExtResourceManagerType::Gossip);
+		MapResourceManagerIndex("eoc::ActionResourceTypes", ExtResourceManagerType::ActionResource);
+		MapResourceManagerIndex("eoc::ActionResourceGroupManager", ExtResourceManagerType::ActionResourceGroup);
+		MapResourceManagerIndex("eoc::EquipmentTypes", ExtResourceManagerType::EquipmentType);
+		MapResourceManagerIndex("eoc::VFXContainer", ExtResourceManagerType::VFX);
+		MapResourceManagerIndex("eoc::DeathTypesContainer", ExtResourceManagerType::DeathType);
+		MapResourceManagerIndex("eoc::CharacterCreationAppearanceMaterialManager", ExtResourceManagerType::CharacterCreationAppearanceMaterial);
+		MapResourceManagerIndex("eoc::CharacterCreationAppearanceVisualManager", ExtResourceManagerType::CharacterCreationAppearanceVisual);
+		MapResourceManagerIndex("eoc::CharacterCreationSharedVisualManager", ExtResourceManagerType::CharacterCreationSharedVisual);
+		MapResourceManagerIndex("eoc::tutorial::EntriesManager", ExtResourceManagerType::TutorialEntries);
+		MapResourceManagerIndex("eoc::FeatManager", ExtResourceManagerType::Feat);
+		MapResourceManagerIndex("eoc::FeatDescriptionManager", ExtResourceManagerType::FeatDescription);
+		MapResourceManagerIndex("eoc::tutorial::ModalEntriesManager", ExtResourceManagerType::TutorialModalEntries);
+		MapResourceManagerIndex("eoc::AvailableClassSpellsManager", ExtResourceManagerType::AvailableClassSpells);
+		MapResourceManagerIndex("eoc::ClassDescriptions", ExtResourceManagerType::ClassDescription);
+		MapResourceManagerIndex("eoc::ColorDefinitions", ExtResourceManagerType::ColorDefinition);
+		MapResourceManagerIndex("ls::FlagManager", ExtResourceManagerType::Flag);
 
 #define MAP_BOOST(name) MapComponentIndices("eoc::" #name "Component", ExtComponentType::name)
 
@@ -497,20 +524,8 @@ namespace bg3se
 
 	void EntitySystemHelpersBase::MapComponentIndices(char const* componentName, ExtComponentType type)
 	{
-		STDString name(componentName);
-
-		auto it = componentIndexMappings_.find(name);
-		if (it == componentIndexMappings_.end()) {
-			name = "struct " + std::string(componentName) + ">(void)";
-			it = componentIndexMappings_.find(name);
-		}
-
-		if (it == componentIndexMappings_.end()) {
-			name = "class " + std::string(componentName) + ">(void)";
-			it = componentIndexMappings_.find(name);
-		}
-
-		if (it != componentIndexMappings_.end()) {
+		auto it = componentNameToIndexMappings_.find(componentName);
+		if (it != componentNameToIndexMappings_.end()) {
 			componentIndices_[(unsigned)type] = it->second.ComponentIndex;
 			handleIndices_[(unsigned)type] = it->second.HandleIndex;
 		} else {
@@ -520,10 +535,7 @@ namespace bg3se
 
 	void EntitySystemHelpersBase::MapResourceManagerIndex(char const* componentName, ExtResourceManagerType type)
 	{
-		STDString name(componentName);
-		name += ">(void)";
-
-		auto it = systemIndexMappings_.find(name);
+		auto it = systemIndexMappings_.find(componentName);
 		if (it != systemIndexMappings_.end()) {
 			resourceManagerIndices_[(unsigned)type] = it->second;
 		} else {
