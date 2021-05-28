@@ -24,6 +24,7 @@
 #include <Lua/Server/ServerNetwork.inl>
 #include <Lua/Server/ServerOsirisListeners.inl>
 #include <Lua/Server/FunctorEvents.inl>
+#include <Lua/Server/ServerFunctors.inl>
 
 
 
