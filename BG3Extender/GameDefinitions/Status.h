@@ -109,8 +109,8 @@ namespace bg3se
 			uint8_t CauseType; // TODO - CauseType enum?
 			ObjectHandle StatusHandle;
 			ObjectHandle UnknownHandle;
-			ObjectHandle OwnerHandle;
-			ObjectSet<ObjectHandle> StatusOwner;
+			EntityHandle OwnerHandle;
+			ObjectSet<EntityHandle> StatusOwner;
 			Array<ObjectHandle> SomeArray;
 			EntityWorldHandle StatusSourceEntityHandle_M;
 			UUID StatusSourceUUID;

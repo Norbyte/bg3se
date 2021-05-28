@@ -122,7 +122,7 @@ namespace bg3se
 
 		struct Entity
 		{
-			ObjectHandle EntityHandle;
+			EntityHandle Handle;
 			bool field_8;
 			uint32_t field_C;
 			Array<int16_t> SlotIndexToComponentIdMap;

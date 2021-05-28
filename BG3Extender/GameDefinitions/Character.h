@@ -146,14 +146,14 @@ namespace bg3se
 
 		struct PlayerData : public ProtectedProxyGameObject<PlayerData>
 		{
-			ObjectHandle PlayerHandle;
+			EntityHandle PlayerHandle;
 			uint64_t SkillBar;
 			uint64_t ShapeShiftVariableManagers[10];
 			Map<FixedString, void*> ShapeShiftAttitudeMaps;
 			bool LevelUpMarker;
 			FixedString QuestSelected;
 			PlayerCustomData CustomData;
-			ObjectHandle SomeHandle;
+			EntityHandle SomeHandle;
 			ObjectSet<glm::vec3> PreviousPositions;
 			int PreviousPositionId;
 			bool HelmetOption;
@@ -191,7 +191,7 @@ namespace bg3se
 			bool NeedsUpdate;
 			bool ForceSynch;
 			int8_t field_133;
-			ObjectHandle InventoryHandle;
+			EntityHandle InventoryHandle;
 			void* MovementMachine_M;
 			void* BehaviourMachine;
 			void* ActionMachine_M;
@@ -218,15 +218,15 @@ namespace bg3se
 			UserId UserID;
 			UserId ReservedUserID;
 			int field_214;
-			ObjectHandle OwnerCharacterHandle;
-			ObjectHandle FollowCharacterHandle;
-			ObjectHandle EnemyCharacterHandle;
-			ObjectHandle SpiritCharacterHandle;
-			ObjectHandle CorpseCharacterHandle;
-			ObjectHandle ObjectHandle6;
-			ObjectSet<ObjectHandle> EnemyHandleSet;
+			EntityHandle OwnerCharacterHandle;
+			EntityHandle FollowCharacterHandle;
+			EntityHandle EnemyCharacterHandle;
+			EntityHandle SpiritCharacterHandle;
+			EntityHandle CorpseCharacterHandle;
+			EntityHandle ObjectHandle6;
+			ObjectSet<EntityHandle> EnemyHandleSet;
 			ObjectSet<void*> SurfacePathInfluenceSet;
-			ObjectSet<ObjectHandle> SummonHandleSet;
+			ObjectSet<EntityHandle> SummonHandleSet;
 			void* PlanManager;
 			float MovementAP;
 			char AnimType;
@@ -238,7 +238,7 @@ namespace bg3se
 			int field_474;
 			float MovementSpeedMultiplier;
 			float MovementSpeedMultiplier2;
-			ObjectHandle PartyHandle;
+			EntityHandle PartyHandle;
 			ObjectSet<FixedString> CreatedTemplateItems;
 			ObjectSet<FixedString> Treasures;
 			FixedString CustomTradeTreasure;
@@ -253,13 +253,13 @@ namespace bg3se
 			uint64_t DamageCounter;
 			uint64_t HealCounter;
 			uint64_t KillCounter;
-			ObjectHandle MovingCasterHandle;
+			EntityHandle MovingCasterHandle;
 			FixedString EquipmentColor;
 			FixedString ProjectileTemplate;
 			uint32_t TimeElapsed;
 			ObjectSet<UUID> PreferredAiTargetTags;
 			void* CharacterBody_M;
-			RefMap<ObjectHandle, ObjectSet<void*>> StatusesFromObjects;
+			RefMap<EntityHandle, ObjectSet<void*>> StatusesFromObjects;
 			ObjectSet<FixedString> TagsFromItems;
 			bool ReadyCheckBlocked;
 			uint8_t NumConsumables;
@@ -344,7 +344,7 @@ namespace bg3se
 			CharacterTemplate* Template;
 			CharacterTemplate* OriginalTemplate;
 			CDivinityStats_Character* Stats;
-			ObjectHandle InventoryHandle;
+			EntityHandle InventoryHandle;
 			void* MovementMachine;
 			void* ActionStateMachine;
 			void* SteeringMachine;

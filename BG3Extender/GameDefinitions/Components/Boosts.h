@@ -18,7 +18,7 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::BoostsContainer;
 
-		RefMap<uint8_t, Array<ObjectHandle>> Boosts;
+		RefMap<uint8_t, Array<EntityHandle>> Boosts;
 	};
 
 	struct BoostParameters
