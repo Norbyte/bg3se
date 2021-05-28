@@ -4,7 +4,7 @@
 BEGIN_CLS(StatsFunctorBase)
 P_RO(UniqueName)
 P_RO(TypeId)
-P_RO(PropertyContext)
+P(PropertyContext)
 P_RO(StatsConditionsId)
 // TODO - Conditions object access
 P(IsSelf)

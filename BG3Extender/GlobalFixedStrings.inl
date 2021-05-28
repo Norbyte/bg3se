@@ -196,6 +196,7 @@ FS(ComponentType);
 FS(NetMessage);
 FS(PlayerUpgradeAttribute);
 FS(StatsFunctorActionId);
+FS(FunctorExecParamsType);
 FS(StatsPropertyContext);
 FS(DealDamageWeaponType);
 FS(DealDamageWeaponDamageType);

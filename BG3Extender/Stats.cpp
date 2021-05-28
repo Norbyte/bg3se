@@ -8,6 +8,10 @@
 
 namespace bg3se
 {
+	BaseFunctorExecParams::~BaseFunctorExecParams()
+	{}
+
+
 	/*void SkillPrototypeManager::SyncSkillStat(CRPGStats_Object* object, SkillPrototype* proto)
 	{
 		auto stats = GetStaticSymbols().GetStats();

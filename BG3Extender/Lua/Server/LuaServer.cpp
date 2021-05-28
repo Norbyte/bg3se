@@ -437,6 +437,7 @@ namespace bg3se::esv::lua
 
 		RegisterSharedLibraries(L);
 		RegisterOsirisLibrary(L);
+		RegisterFunctorsLibrary(L);
 	}
 
 	void ExtensionLibraryServer::Register(lua_State * L)

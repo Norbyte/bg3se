@@ -147,7 +147,7 @@ namespace bg3se::esv::lua
 		}
 
 		template <class TParams, class TNext>
-		void OnFunctorExecute(TNext* next, Hit* hit, StatsFunctorSet* self, TParams* params)
+		void OnFunctorExecute(TNext* next, NewHit* hit, StatsFunctorSet* self, TParams* params)
 		{
 			LuaTriggerFunctorExecEvent<TParams>(self, params);
 			next(hit, self, params);

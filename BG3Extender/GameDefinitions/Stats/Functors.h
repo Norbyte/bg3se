@@ -43,8 +43,9 @@ namespace bg3se
 
 	struct BaseFunctorExecParams : public HasObjectProxy
 	{
-		void* VMT{ nullptr };
-		int ParamsTypeId{ 0 }; // FIXME enum!
+		virtual ~BaseFunctorExecParams();
+
+		FunctorExecParamsType ParamsTypeId{ 0 };
 		StatsPropertyContext PropertyContext{ 0 };
 		int32_t StoryActionId{ 0 };
 		ActionOriginator Originator;
@@ -137,14 +138,14 @@ namespace bg3se
 
 	struct StatsFunctorSet : public Noncopyable<StatsFunctorSet>
 	{
-		using ExecuteType1Proc = void (Hit * hit, StatsFunctorSet * self, FunctorExecParamsType1 * params);
-		using ExecuteType2Proc = void (Hit * hit, StatsFunctorSet * self, FunctorExecParamsType2 * params);
-		using ExecuteType3Proc = void (Hit * hit, StatsFunctorSet * self, FunctorExecParamsType3 * params);
-		using ExecuteType4Proc = void (Hit * hit, StatsFunctorSet * self, FunctorExecParamsType4 * params);
-		using ExecuteType5Proc = void (Hit * hit, StatsFunctorSet * self, FunctorExecParamsType5 * params);
-		using ExecuteType6Proc = void (Hit * hit, StatsFunctorSet * self, FunctorExecParamsType6 * params);
-		using ExecuteType7Proc = void (Hit * hit, StatsFunctorSet * self, FunctorExecParamsType7 * params);
-		using ExecuteType8Proc = void (Hit * hit, StatsFunctorSet * self, FunctorExecParamsType8 * params);
+		using ExecuteType1Proc = void (NewHit* hit, StatsFunctorSet * self, FunctorExecParamsType1 * params);
+		using ExecuteType2Proc = void (NewHit* hit, StatsFunctorSet * self, FunctorExecParamsType2 * params);
+		using ExecuteType3Proc = void (NewHit* hit, StatsFunctorSet * self, FunctorExecParamsType3 * params);
+		using ExecuteType4Proc = void (NewHit* hit, StatsFunctorSet * self, FunctorExecParamsType4 * params);
+		using ExecuteType5Proc = void (NewHit* hit, StatsFunctorSet * self, FunctorExecParamsType5 * params);
+		using ExecuteType6Proc = void (NewHit* hit, StatsFunctorSet * self, FunctorExecParamsType6 * params);
+		using ExecuteType7Proc = void (NewHit* hit, StatsFunctorSet * self, FunctorExecParamsType7 * params);
+		using ExecuteType8Proc = void (NewHit* hit, StatsFunctorSet * self, FunctorExecParamsType8 * params);
 
 		struct BaseVMT
 		{
