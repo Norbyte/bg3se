@@ -138,41 +138,42 @@ namespace bg3se
 	};
 
 
-	struct ObjectHandle
+	template <class T>
+	struct TypedHandle
 	{
 		static constexpr uint64_t NullHandle = 0xFFC0000000000000ull;
 
 		uint64_t Handle;
 
-		inline ObjectHandle()
+		inline TypedHandle()
 			: Handle(NullHandle)
 		{}
 
-		explicit inline ObjectHandle(uint64_t handle)
+		explicit inline TypedHandle(uint64_t handle)
 			: Handle(handle)
 		{}
 
-		explicit inline ObjectHandle(int64_t handle)
+		explicit inline TypedHandle(int64_t handle)
 			: Handle((uint64_t)handle)
 		{}
 
-		inline ObjectHandle(uint64_t type, uint64_t index, uint64_t salt)
+		inline TypedHandle(uint64_t type, uint64_t index, uint64_t salt)
 		{
 			assert(type < 0x400 && salt < 0x400000);
 			Handle = index | (salt << 32) | (type << 54);
 		}
 
-		inline ObjectHandle(ObjectHandle const & oh)
+		inline TypedHandle(TypedHandle const & oh)
 			: Handle(oh.Handle)
 		{}
 
-		inline ObjectHandle & operator = (ObjectHandle const & oh)
+		inline TypedHandle& operator = (TypedHandle const & oh)
 		{
 			Handle = oh.Handle;
 			return *this;
 		}
 
-		inline bool operator == (ObjectHandle const & oh) const
+		inline bool operator == (TypedHandle const & oh) const
 		{
 			return Handle == oh.Handle;
 		}
@@ -208,83 +209,14 @@ namespace bg3se
 		}
 	};
 
+	enum EntityHandleTag {};
+	enum GenericObjectHandleTag {};
 
-	struct EntityHandle
-	{
-		static constexpr uint64_t NullHandle = 0xFFC0000000000000ull;
+	using EntityHandle = TypedHandle<EntityHandleTag>;
+	using ObjectHandle = TypedHandle<GenericObjectHandleTag>;
 
-		uint64_t Handle;
-
-		inline EntityHandle()
-			: Handle(NullHandle)
-		{}
-
-		explicit inline EntityHandle(uint64_t handle)
-			: Handle(handle)
-		{}
-
-		explicit inline EntityHandle(int64_t handle)
-			: Handle((uint64_t)handle)
-		{}
-
-		inline EntityHandle(uint64_t type, uint64_t index, uint64_t salt)
-		{
-			assert(type < 0x400 && salt < 0x400000);
-			Handle = index | (salt << 32) | (type << 54);
-		}
-
-		inline EntityHandle(ObjectHandle const & oh)
-			: Handle(oh.Handle)
-		{}
-
-		inline EntityHandle& operator = (ObjectHandle const & oh)
-		{
-			Handle = oh.Handle;
-			return *this;
-		}
-
-		inline bool operator == (EntityHandle const & oh) const
-		{
-			return Handle == oh.Handle;
-		}
-
-		inline uint32_t GetType() const
-		{
-			return Handle >> 54;
-		}
-
-		inline uint32_t GetSalt() const
-		{
-			return (Handle >> 32) & 0x3fffff;
-		}
-
-		inline uint32_t GetIndex() const
-		{
-			return (uint32_t)(Handle & 0xffffffff);
-		}
-
-		explicit inline operator bool() const
-		{
-			return Handle != NullHandle;
-		}
-
-		inline bool operator !() const
-		{
-			return Handle == NullHandle;
-		}
-
-		explicit inline operator int64_t() const
-		{
-			return (int64_t)Handle;
-		}
-	};
-
-	inline uint64_t Hash(ObjectHandle const& h)
-	{
-		return h.Handle;
-	}
-
-	inline uint64_t Hash(EntityHandle const& h)
+	template <class T>
+	inline uint64_t Hash(TypedHandle<T> const& h)
 	{
 		return h.Handle;
 	}
@@ -372,9 +304,9 @@ namespace bg3se
 
 namespace std
 {
-	template<> struct hash<bg3se::ObjectHandle>
+	template<> struct hash<bg3se::EntityHandle>
 	{
-		typedef bg3se::ObjectHandle argument_type;
+		typedef bg3se::EntityHandle argument_type;
 		typedef std::size_t result_type;
 
 		result_type operator()(argument_type const& fn) const noexcept
@@ -394,7 +326,8 @@ namespace std
 		}
 	};*/
 
-	inline ostream& operator << (ostream& out, bg3se::ObjectHandle const& h)
+	template <class T>
+	inline ostream& operator << (ostream& out, bg3se::TypedHandle<T> const& h)
 	{
 		if (h) {
 			out << "(Object handle 0x" << std::hex << h.Handle << std::dec << ")";
