@@ -6,6 +6,7 @@
 #include <Lua/LuaBinding.h>
 #include "resource.h"
 #include <fstream>
+#include <lstate.h>
 
 // Callback from the Lua runtime when a handled (i.e. pcall/xpcall'd) error was thrown.
 // This is needed to capture errors for the Lua debugger, as there is no
@@ -542,7 +543,8 @@ namespace bg3se::lua
 	void RegisterLib(lua_State* L, char const* name, luaL_Reg const * lib)
 	{
 		lua_getglobal(L, "Ext"); // stack: Ext
-		luaL_newlib(L, lib); // stack: ext, lib
+		lua_createtable(L, 0, 0); // stack: ext, lib
+		luaL_setfuncs(L, lib, 0);
 		lua_setfield(L, -2, name);
 		lua_pop(L, 1);
 	}
@@ -564,10 +566,28 @@ namespace bg3se::lua
 		throw Exception(err);
 	}
 
+	void* LuaAlloc(void* ud, void* ptr, size_t osize, size_t nsize)
+	{
+		(void)ud; (void)osize;  /* not used */
+		if (nsize == 0) {
+			GameFree(ptr);
+			return NULL;
+		} else {
+			auto newBuf = GameAllocRaw(nsize);
+			if (ptr != nullptr) {
+				memcpy(newBuf, ptr, std::min(nsize, osize));
+				GameFree(ptr);
+			}
+
+			return newBuf;
+		}
+	}
+
+
 	State::State()
 		: lifetimeStack_(lifetimePool_)
 	{
-		L = luaL_newstate();
+		L = lua_newstate(LuaAlloc, this);
 #if LUA_VERSION_NUM <= 501
 		luaJIT_setmode(L, 0, LUAJIT_MODE_ENGINE | LUAJIT_MODE_ON);
 #endif
@@ -826,4 +846,8 @@ namespace bg3se::lua
 		}
 	}
 
+	State* State::FromLua(lua_State* L)
+	{
+		return reinterpret_cast<State*>(L->l_G->ud);
+	}
 }

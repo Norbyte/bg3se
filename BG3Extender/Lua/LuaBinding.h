@@ -135,6 +135,7 @@ namespace bg3se::lua
 		void OnNetMessageReceived(STDString const & channel, STDString const & payload, UserId userId);*/
 
 		static STDString GetBuiltinLibrary(int resourceId);
+		static State* FromLua(lua_State* L);
 
 	protected:
 		lua_State * L;
