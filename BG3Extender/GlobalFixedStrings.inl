@@ -248,6 +248,7 @@ FS(StatAttributeFlags);
 FS(TalentType);
 FS(SurfaceType);
 FS(SurfaceLayer);
+FS(SurfaceLayer8);
 FS(SurfaceActionType);
 FS(SurfaceTransformActionType);
 FS(ESurfaceFlag);

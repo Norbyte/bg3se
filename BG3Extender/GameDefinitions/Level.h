@@ -87,13 +87,15 @@ namespace bg3se
 
 	namespace esv
 	{
+		struct SurfaceManager;
+
 		struct Level : public EoCLevel
 		{
 			void* SightManager;
 			void* CharacterManager;
 			void* ItemManager;
 			void* ProjectileManager;
-			void* SurfaceManager;
+			SurfaceManager* SurfaceManager;
 			void* GameActionManager;
 			void* EffectManager;
 			void* ShroudManager;

@@ -48,7 +48,7 @@ namespace bg3se::esv
 		void* SurfaceManager;
 		bool NeedsSplitEvaluation;
 		int32_t OwnershipTimer;
-		char field_C8;
+		uint8_t field_C8;
 		int32_t StoryActionID;
 		ActionOriginator Originator;
 		FixedString Parent;
@@ -77,18 +77,19 @@ namespace bg3se::esv
 		Level* Level;
 		int StoryActionID;
 		ActionOriginator Originator;
-		ObjectHandle MyHandle;
+		GuidResourceDefinitionManagerBase* ClassDescriptionMgr;
+		ObjectHandle Handle;
 	};
 
 	struct CreateSurfaceActionBase : public SurfaceAction
 	{
 		EntityWorldHandle Owner;
 		float Duration;
-		char IsControlledByConcentration;
+		bool IsControlledByConcentration;
 		glm::vec3 Position;
 		SurfaceType SurfaceType;
-		ObjectHandle SurfaceHandlesByType[62];
-		Array<SurfaceCell>* SurfaceChanges[62];
+		ObjectHandle SurfaceHandlesByType[(unsigned)SurfaceType::Sentinel];
+		Array<SurfaceCell>* SurfaceChanges[(unsigned)SurfaceType::Sentinel];
 		Array<SurfaceCell>* SurfaceCellsByLayer[2];
 	};
 
@@ -106,7 +107,7 @@ namespace bg3se::esv
 		int GrowStep;
 		int CurrentCellCount;
 		Array<SurfaceCell> SurfaceCells;
-		uint8_t SurfaceLayer;
+		SurfaceLayer8 SurfaceLayer;
 		uint8_t field_491;
 		SpellId SpellId;
 		uint16_t SurfaceConcentrationTarget;
@@ -118,7 +119,7 @@ namespace bg3se::esv
 		int Step;
 		float GrowSpeed;
 		int field_454;
-		uint8_t field_458;
+		bool IsFinished;
 		bool IgnoreIrreplacableSurfaces;
 		__int64 CellAtGrow[3];
 		__int64 ClosedCells[3];
@@ -149,7 +150,7 @@ namespace bg3se::esv
 
 	struct ZoneAction : public CreateSurfaceActionBase
 	{
-		SpellId Originator;
+		SpellId Spell;
 		FixedString TextKey;
 		glm::vec3 Target;
 		ZoneActionParams Params;
@@ -167,15 +168,14 @@ namespace bg3se::esv
 	struct TransformSurfaceAction : public SurfaceAction
 	{
 		float Timer;
-		char SurfaceTransformAction;
-		char OriginSurface;
-		char SurfaceLayer;
+		uint8_t SurfaceTransformAction; // FIXME enum
+		uint8_t OriginSurface; // FIXME enum
+		SurfaceLayer8 SurfaceLayer;
 		float GrowCellPerSecond;
-		char Finished;
+		bool Finished;
 		void* CellSearcher;
 		EntityWorldHandle OwnerHandle;
-		__int64 field_58;
-		int field_60;
+		glm::vec3 Position;
 		float SurfaceLifetime;
 		RefMap<SurfaceType, ObjectHandle> SurfaceMap;
 		RefMap<SurfaceType, PrimitiveSet<SurfaceCell>> SurfaceCellMap;
@@ -229,25 +229,48 @@ namespace bg3se::esv
 		ObjectSet<glm::vec2> PolygonVertices;
 		int field_468;
 		ObjectSet<void*> DamageList;
-		char field_488;
+		uint8_t field_488;
 		__int64 field_490;
-		int field_498;
-		float field_49C;
-		int field_4A0;
-		int field_4A4;
-		int field_4A8;
-		int field_4AC;
-		int field_4B0;
+		float CurrentGrowTimer;
+		float GrowTimer;
+		glm::vec3 SomePosition;
+		int GrowStep;
+		int LastSurfaceCellCount;
 		int field_4B4;
 		Array<SurfaceCell> SurfaceCells;
 		ObjectSet<ObjectHandle> Characters;
 		ObjectSet<ObjectHandle> Items;
-		char field_500;
+		uint8_t field_500;
 	};
 
 	struct SurfaceActionFactory : public ObjectFactoryBase
 	{
-		using CreateActionProc = SurfaceAction * (SurfaceActionFactory* self, uint8_t surfaceType, uint64_t actionHandle);
-		using AddActionProc = void (SurfaceActionFactory* self, SurfaceAction* action);
+		using CreateActionProc = SurfaceAction * (SurfaceActionFactory* self, SurfaceActionType actionType, 
+			GuidResourceDefinitionManagerBase* classDefMgr, uint64_t actionHandle);
+	};
+
+	struct SurfaceManager : public ObjectFactoryBase
+	{
+		using AddActionProc = void(SurfaceManager* self, SurfaceAction* action);
+
+		struct Unkn
+		{
+			int64_t field_0[3];
+		};
+
+		int64_t field_78;
+		int64_t field_80;
+		Unkn field_88[17];
+		esv::Level* Level;
+		Array<SurfaceAction*> SurfaceActions;
+		int64_t field_240;
+		Array<Surface*> Surfaces;
+		int64_t field_260;
+		ObjectSet<void*> SurfaceConcentrationTargets;
+		int64_t field_280[16];
+		ObjectSet<void*> pAiTilePosSets;
+		RefMap<void*, void*> field_318;
+		RefMap<void*, void*> field_328;
+		int64_t field_338[10];
 	};
 }

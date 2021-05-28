@@ -4,6 +4,7 @@
 #include <Lua/LuaSerializers.h>
 #include <Lua/Shared/LuaPropertyMapHelpers.h>
 #include <GameDefinitions/Resources.h>
+#include <GameDefinitions/Surface.h>
 
 #include <Lua/Shared/LuaShared.inl>
 

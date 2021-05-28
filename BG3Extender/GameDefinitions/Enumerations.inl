@@ -1630,7 +1630,14 @@ BEGIN_ENUM(SurfaceLayer, uint32_t)
 END_ENUM()
 
 
-BEGIN_ENUM(SurfaceActionType, uint32_t)
+BEGIN_ENUM(SurfaceLayer8, uint8_t)
+	EV(Ground, 0)
+	EV(Cloud, 1)
+	EV(None, 2)
+END_ENUM()
+
+
+BEGIN_ENUM(SurfaceActionType, uint8_t)
 	EV(CreateSurfaceAction, 1)
 	EV(CreatePuddleAction, 2)
 	EV(ExtinguishFireAction, 3)

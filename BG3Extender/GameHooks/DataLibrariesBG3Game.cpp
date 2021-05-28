@@ -53,8 +53,9 @@ namespace bg3se
 		SYM_OFF(ecl__GameStateThreaded__GameStateWorker__DoWork);
 		SYM_OFF(esv__GameStateThreaded__GameStateWorker__DoWork);
 
+		SYM_OFF(esv__SurfaceActionFactory);
 		SYM_OFF(esv__SurfaceActionFactory__CreateAction);
-		SYM_OFF(esv__SurfaceActionFactory__AddAction);
+		SYM_OFF(esv__SurfaceManager__AddAction);
 
 		SYM_OFF(esv__StatusMachine__CreateStatus);
 		SYM_OFF(esv__StatusMachine__ApplyStatus);

@@ -7,3 +7,4 @@
 #include <GameDefinitions/PropertyMaps/ServerObjects.inl>
 #include <GameDefinitions/PropertyMaps/RootTemplates.inl>
 #include <GameDefinitions/PropertyMaps/Hit.inl>
+#include <GameDefinitions/PropertyMaps/SurfaceActions.inl>

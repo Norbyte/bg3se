@@ -47,8 +47,9 @@ namespace bg3se
 		ecl::GameStateThreaded__GameStateWorker__DoWork ecl__GameStateThreaded__GameStateWorker__DoWork{ nullptr };
 		esv::GameStateThreaded__GameStateWorker__DoWork esv__GameStateThreaded__GameStateWorker__DoWork{ nullptr };
 
+		esv::SurfaceActionFactory** esv__SurfaceActionFactory{ nullptr };
 		esv::SurfaceActionFactory::CreateActionProc* esv__SurfaceActionFactory__CreateAction{ nullptr };
-		esv::SurfaceActionFactory::AddActionProc* esv__SurfaceActionFactory__AddAction{ nullptr };
+		esv::SurfaceManager::AddActionProc* esv__SurfaceManager__AddAction{ nullptr };
 
 		esv::StatusMachine::CreateStatusProc* esv__StatusMachine__CreateStatus{ nullptr };
 		esv::StatusMachine::ApplyStatusProc* esv__StatusMachine__ApplyStatus{ nullptr };
@@ -146,10 +147,12 @@ namespace bg3se
 
 		inline esv::SurfaceActionFactory* GetSurfaceActionFactory() const
 		{
-			if (esv__SavegameManager != nullptr
+			/*if (esv__SavegameManager != nullptr
 				&& *esv__SavegameManager != nullptr
 				&& (*esv__SavegameManager)->ComponentFactories.Size > 21) {
-				return reinterpret_cast<esv::SurfaceActionFactory*>((*esv__SavegameManager)->ComponentFactories[21]);
+				return reinterpret_cast<esv::SurfaceActionFactory*>((*esv__SavegameManager)->ComponentFactories[21]);*/
+			if (esv__SurfaceActionFactory != nullptr) {
+				return *esv__SurfaceActionFactory;
 			} else {
 				return {};
 			}
@@ -167,7 +170,17 @@ namespace bg3se
 			}
 		}
 
-		inline FixedString GetCurrentServerLevel() const
+		inline esv::Level* GetCurrentServerLevel() const
+		{
+			auto levelMgr = GetServerLevelManager();
+			if (levelMgr) {
+				return static_cast<esv::Level*>(levelMgr->CurrentLevel);
+			} else {
+				return nullptr;
+			}
+		}
+
+		inline FixedString GetCurrentServerLevelName() const
 		{
 			auto levelMgr = GetServerLevelManager();
 			if (levelMgr && levelMgr->CurrentLevel) {

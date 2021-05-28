@@ -310,6 +310,12 @@
       <Filter>Lua\Shared</Filter>
     </ClInclude>
     <ClInclude Include="tinyxml2.h" />
+    <ClInclude Include="Lua\Shared\LuaEntityProxy.h">
+      <Filter>Lua\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="Lua\LuaUserdata.h">
+      <Filter>Lua</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -439,6 +445,15 @@
     </None>
     <None Include="Lua\Server\FunctorEvents.inl">
       <Filter>Lua\Server</Filter>
+    </None>
+    <None Include="Lua\Server\ServerFunctors.inl">
+      <Filter>Lua\Server</Filter>
+    </None>
+    <None Include="Lua\Shared\LuaEntityProxy.inl">
+      <Filter>Lua\Shared</Filter>
+    </None>
+    <None Include="GameDefinitions\PropertyMaps\SurfaceActions.inl">
+      <Filter>GameDefinitions\PropertyMaps</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

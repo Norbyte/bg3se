@@ -240,7 +240,7 @@
         </Mapping>
 
         <Mapping Name="esv::SurfaceActionFactory::AddSurfaceAction" Scope="Custom">
-            <Target Type="Indirect" Offset="6" Symbol="esv__SurfaceActionFactory__AddAction" />
+            <Target Type="Indirect" Offset="6" Symbol="esv__SurfaceManager__AddAction" />
 			48 8B D6 // mov     rdx, rsi
 			48 8B C8 // mov     rcx, rax
 			E8 ?? ?? ?? ?? // call    esv__SurfaceActionFactory__AddSurfaceAction
@@ -249,6 +249,7 @@
 
         <Mapping Name="esv::SurfaceActionFactory">
             <Target Type="Absolute" Offset="0" NextSymbol="esv::SurfaceActionFactory::AddSurfaceAction" NextSymbolSeekSize="768" />
+            <Target Type="Indirect" Offset="0" Symbol="esv__SurfaceActionFactory" />
             <Target Type="Indirect" Offset="23" Symbol="esv__SurfaceActionFactory__CreateAction" />
 			48 8B 0D ?? ?? ?? ?? // mov     rcx, cs:esv__gSurfaceActionFactory
 			B2 02 // mov     dl, 2
