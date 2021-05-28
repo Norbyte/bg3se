@@ -3,6 +3,7 @@
 #include <Lua/LuaHelpers.h>
 #include <Lua/Shared/LuaLifetime.h>
 #include <Lua/Shared/LuaObjectProxy.h>
+#include <Lua/Shared/LuaEntityProxy.h>
 
 #include <mutex>
 #include <unordered_set>
@@ -11,6 +12,7 @@
 namespace bg3se
 {
 	struct CRPGStats_Object;
+	class EntitySystemHelpersBase;
 }
 
 namespace bg3se::lua
@@ -89,6 +91,9 @@ namespace bg3se::lua
 		{
 			return lifetimePool_;
 		}
+
+		virtual EntityWorldBase* GetEntityWorld() = 0;
+		virtual EntitySystemHelpersBase* GetEntitySystemHelpers() = 0;
 
 		void FinishStartup();
 		void LoadBootstrap(STDString const& path, STDString const& modTable);

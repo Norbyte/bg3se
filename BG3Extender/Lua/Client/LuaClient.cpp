@@ -1113,6 +1113,20 @@ namespace bg3se::ecl::lua
 		}
 	}
 	*/
+
+
+	EntityWorldBase* ClientState::GetEntityWorld()
+	{
+		return GetStaticSymbols().GetClientEntityWorld();
+	}
+
+
+	EntitySystemHelpersBase* ClientState::GetEntitySystemHelpers()
+	{
+		return &gExtender->GetClientEntityHelpers();
+	}
+
+
 	void ClientState::OnGameStateChanged(GameState fromState, GameState toState)
 	{
 		CallExt("_GameStateChanged", 0, fromState, toState);

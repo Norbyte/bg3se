@@ -107,5 +107,6 @@ namespace bg3se::lua::utils
 
 namespace bg3se::lua
 {
+	void RegisterEntityProxy(lua_State* L);
 	void RegisterSharedLibraries(lua_State* L);
 }

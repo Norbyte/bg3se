@@ -56,6 +56,7 @@ namespace bg3se::lua
 		Userdata<ObjectProxy>::RegisterMetatable(L);
 		InitObjectProxyPropertyMaps();
 
+		RegisterEntityProxy(L);
 		stats::RegisterStatsLib(L);
 		utils::RegisterStaticDataLib(L);
 		utils::RegisterUtilsLib(L);

@@ -9,6 +9,7 @@
 #include <GameDefinitions/BaseTypes.h>
 #include <GameDefinitions/EntitySystem.h>
 #include <Lua/LuaUserdata.h>
+#include <Lua/Shared/LuaEntityProxy.h>
 
 namespace bg3se::lua
 {
@@ -137,23 +138,13 @@ namespace bg3se::lua
 		push(L, ToUTF8(v));
 	}
 
-	inline void push(lua_State* L, ObjectHandle const& h)
+	inline void push(lua_State* L, lua_CFunction v)
 	{
-		if (h) {
-			lua_pushlightuserdata(L, (void*)h.Handle);
-		} else {
-			lua_pushnil(L);
-		}
+		lua_pushcfunction(L, v);
 	}
 
-	inline void push(lua_State* L, EntityHandle const& h)
-	{
-		if (h) {
-			lua_pushlightuserdata(L, (void*)h.Handle);
-		} else {
-			lua_pushnil(L);
-		}
-	}
+	void push(lua_State* L, EntityHandle const& h);
+	void push(lua_State* L, ObjectHandle const& h);
 
 	inline void push(lua_State* L, EntityWorldHandle const& h)
 	{
@@ -231,7 +222,10 @@ namespace bg3se::lua
 	}
 
 	template <class T>
-	inline typename std::enable_if_t<std::is_pointer_v<T>, std::enable_if_t<!std::is_same_v<T, char const*>, std::enable_if_t<!std::is_same_v<T, char*>, void>>> push(lua_State* L, T v)
+	inline typename std::enable_if_t<std::is_pointer_v<T>, 
+		std::enable_if_t<!std::is_same_v<T, char const*>, 
+		std::enable_if_t<!std::is_same_v<T, char*>, 
+		std::enable_if_t<!std::is_same_v<T, lua_CFunction>, void>>>> push(lua_State* L, T v)
 	{
 		static_assert(false, "Can't push pointers to Lua");
 	}
@@ -308,22 +302,22 @@ namespace bg3se::lua
 	}
 
 	template <>
-	inline ObjectHandle get<ObjectHandle>(lua_State* L, int index)
-	{
-		if (lua_type(L, index) == LUA_TNIL) {
-			return ObjectHandle{ ObjectHandle::NullHandle };
-		} else {
-			return ObjectHandle{ (uint64_t)lua_touserdata(L, index) };
-		}
-	}
-
-	template <>
 	inline EntityHandle get<EntityHandle>(lua_State* L, int index)
 	{
 		if (lua_type(L, index) == LUA_TNIL) {
 			return EntityHandle{ EntityHandle::NullHandle };
 		} else {
-			return EntityHandle{ (uint64_t)lua_touserdata(L, index) };
+			return EntityProxy::CheckUserData(L, index)->Handle();
+		}
+	}
+
+	template <>
+	inline ObjectHandle get<ObjectHandle>(lua_State* L, int index)
+	{
+		if (lua_type(L, index) == LUA_TNIL) {
+			return ObjectHandle{ ObjectHandle::NullHandle };
+		} else {
+			return ObjectHandleProxy::CheckUserData(L, index)->Handle();
 		}
 	}
 
@@ -404,19 +398,21 @@ namespace bg3se::lua
 		return T((int32_t)luaL_checkinteger(L, index));
 	}
 
-	template <class T, typename std::enable_if_t<std::is_same_v<T, ObjectHandle>, int>* = nullptr>
-	inline ObjectHandle checked_get(lua_State* L, int index)
-	{
-		luaL_checktype(L, index, LUA_TLIGHTUSERDATA);
-		return ObjectHandle{ (uint64_t)lua_touserdata(L, index) };
-	}
-
 	template <class T, typename std::enable_if_t<std::is_same_v<T, EntityHandle>, int>* = nullptr>
 	inline EntityHandle checked_get(lua_State* L, int index)
 	{
-		luaL_checktype(L, index, LUA_TLIGHTUSERDATA);
-		return EntityHandle{ (uint64_t)lua_touserdata(L, index) };
+		luaL_checktype(L, index, LUA_TUSERDATA);
+		return EntityProxy::CheckUserData(L, index)->Handle();
 	}
+
+	template <class T, typename std::enable_if_t<std::is_same_v<T, ObjectHandle>, int>* = nullptr>
+	inline ObjectHandle checked_get(lua_State* L, int index)
+	{
+		luaL_checktype(L, index, LUA_TUSERDATA);
+		return ObjectHandleProxy::CheckUserData(L, index)->Handle();
+	}
+
+	ObjectHandle checked_get_handle(lua_State* L, int index, ExtComponentType type);
 
 	template <class T, typename std::enable_if_t<std::is_same_v<T, glm::ivec2>, int>* = nullptr>
 	inline glm::ivec2 checked_get(lua_State* L, int index)

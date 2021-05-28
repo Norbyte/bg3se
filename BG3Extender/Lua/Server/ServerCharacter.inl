@@ -3,7 +3,7 @@
 
 namespace bg3se::lua
 {
-	void GetInventoryItems(lua_State* L, ObjectHandle inventoryHandle)
+	void GetInventoryItems(lua_State* L, EntityHandle inventoryHandle)
 	{
 		luaL_error(L, "Not implemented yet!");
 
@@ -127,10 +127,10 @@ namespace bg3se::esv::lua
 	{
 		esv::Character* character = nullptr;
 		switch (lua_type(L, index)) {
-		case LUA_TLIGHTUSERDATA:
+		case LUA_TUSERDATA:
 		{
-			auto handle = checked_get<ObjectHandle>(L, index);
-			character = gExtender->GetServerEntityHelpers().GetComponent<esv::Character>(handle);
+			auto handle = checked_get<EntityProxy*>(L, index)->Handle();
+			character = gExtender->GetServerEntityHelpers().GetEntityComponent<esv::Character>(handle);
 			break;
 		}
 
@@ -150,7 +150,7 @@ namespace bg3se::esv::lua
 		}
 
 		default:
-			OsiError("Expected character UUID, Handle or NetId; got " << lua_typename(L, lua_type(L, 1)));
+			OsiError("Expected character UUID, Entity or NetId; got " << lua_typename(L, lua_type(L, 1)));
 			break;
 		}
 

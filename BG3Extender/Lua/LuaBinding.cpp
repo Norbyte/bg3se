@@ -43,6 +43,48 @@ namespace bg3se::lua::stats
 
 namespace bg3se::lua
 {
+	void push(lua_State* L, EntityHandle const& h)
+	{
+		if (h) {
+			auto helpers = State::FromLua(L)->GetEntitySystemHelpers();
+			EntityProxy::New(L, h, helpers);
+		} else {
+			push(L, nullptr);
+		}
+	}
+	
+	void push(lua_State* L, ObjectHandle const& h)
+	{
+		if (h) {
+			auto helpers = State::FromLua(L)->GetEntitySystemHelpers();
+			ObjectHandleProxy::New(L, h, helpers);
+		} else {
+			push(L, nullptr);
+		}
+	}
+
+	ObjectHandle checked_get_handle(lua_State* L, int index, ExtComponentType type)
+	{
+		luaL_checktype(L, index, LUA_TUSERDATA);
+		auto handle = ObjectHandleProxy::CheckUserData(L, index);
+		auto reqTypeIndex = handle->EntitySystem()->GetHandleIndex(type);
+		if (!reqTypeIndex) {
+			luaL_error(L, "No handle mapping info available for type '%s'", 
+				EnumInfo<ExtComponentType>::Find(type).GetString());
+		}
+
+		auto typeIndex = handle->Handle().GetType();
+		if ((int32_t)typeIndex != (int32_t)*reqTypeIndex) {
+			auto typeName = handle->EntitySystem()->GetComponentName(EntityWorldBase::HandleTypeIndex(typeIndex));
+			luaL_error(L, "Expected handle of type '%s', got '%s'", 
+				EnumInfo<ExtComponentType>::Find(type).GetString(),
+				typeName ? typeName->c_str() : "(UNKNOWN)"
+			);
+		}
+
+		return  handle->Handle();
+	}
+
 	char const* const ObjectProxy::MetatableName = "bg3se::Object";
 
 	RegistryEntry::RegistryEntry()

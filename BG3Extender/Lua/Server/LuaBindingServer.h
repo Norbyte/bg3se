@@ -42,7 +42,6 @@ namespace bg3se::esv::lua
 		NetId statusNetId_;
 	};
 
-
 	/*class TurnManagerCombatProxy : public Userdata<TurnManagerCombatProxy>, public Indexable, public Pushable<PushPolicy::None>
 	{
 	public:
@@ -217,6 +216,9 @@ namespace bg3se::esv::lua
 			return osirisCallbacks_;
 		}
 
+
+		EntityWorldBase* GetEntityWorld() override;
+		EntitySystemHelpersBase* GetEntitySystemHelpers() override;
 		void OnGameSessionLoading() override;
 
 		void StoryLoaded();

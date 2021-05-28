@@ -3,6 +3,7 @@
 #include <Lua/LuaBinding.h>
 #include <Lua/LuaSerializers.h>
 #include <ExtensionHelpers.h>
+#include <ScriptExtender.h>
 
 #define P(name) s.VisitProperty(#name, v.name)
 #define PO(name, default) s.VisitOptionalProperty(#name, v.name, default)
@@ -19,6 +20,10 @@ namespace bg3se::lua
 	LuaSerializer& operator << (LuaSerializer& s, EntityWorldHandle& v)
 	{
 		s << v.Handle;
+		if (v.World == nullptr && !s.IsWriting) {
+			auto state = State::FromLua(s.L);
+			v.World = state->GetEntityWorld();
+		}
 		return s;
 	}
 

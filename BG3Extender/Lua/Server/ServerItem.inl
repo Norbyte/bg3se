@@ -162,18 +162,17 @@ namespace bg3se::esv::lua
 		StackCheck _(L, 1);
 		esv::Item* item = nullptr;
 		switch (lua_type(L, 1)) {
-		case LUA_TLIGHTUSERDATA:
+		case LUA_TUSERDATA:
 		{
-			auto handle = checked_get<ObjectHandle>(L, 1);
-			item = gExtender->GetServerEntityHelpers().GetComponent<esv::Item>(handle);
+			auto handle = checked_get<EntityProxy*>(L, 1)->Handle();
+			item = gExtender->GetServerEntityHelpers().GetEntityComponent<esv::Item>(handle);
 			break;
 		}
 
 		case LUA_TNUMBER:
 		{
-			OsiError("Resolving integer object handles is deprecated since v52!")
-			auto handle = ObjectHandle(lua_tointeger(L, 1));
-			item = gExtender->GetServerEntityHelpers().GetComponent<esv::Item>(handle);
+			auto netId = NetId(lua_tointeger(L, 1));
+			item = gExtender->GetServerEntityHelpers().GetComponent<esv::Item>(netId);
 			break;
 		}
 
@@ -185,7 +184,7 @@ namespace bg3se::esv::lua
 		}
 
 		default:
-			OsiError("Expected item GUID or handle, got " << lua_typename(L, lua_type(L, 1)));
+			OsiError("Expected item GUID, Entity or NetId; got " << lua_typename(L, lua_type(L, 1)));
 			push(L, nullptr);
 			return 1;
 		}

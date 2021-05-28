@@ -52,6 +52,9 @@ namespace bg3se::ecl::lua
 			CDivinityStats_Character * character, ObjectSet<STDString> const & paramTexts, bool isFromItem);
 		std::optional<STDWString> StatusGetDescriptionParam(StatusPrototype * prototype, CRPGStats_ObjectInstance* owner,
 			CRPGStats_ObjectInstance* statusSource, ObjectSet<STDString> const & paramTexts);*/
+
+		EntityWorldBase* GetEntityWorld() override;
+		EntitySystemHelpersBase* GetEntitySystemHelpers() override;
 		void OnGameStateChanged(GameState fromState, GameState toState);
 
 	private:

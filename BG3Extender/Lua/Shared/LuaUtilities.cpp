@@ -7,6 +7,7 @@
 #include <fstream>
 #include <json/json.h>
 
+#include <Lua/Shared/LuaEntityProxy.inl>
 #include <Lua/Shared/LuaJson.inl>
 #include <Lua/Shared/LuaLocalization.inl>
 #include <Lua/Shared/LuaStaticDataLib.inl>

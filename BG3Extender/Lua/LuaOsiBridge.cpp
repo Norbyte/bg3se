@@ -55,9 +55,6 @@ namespace bg3se::esv::lua
 #else
 				tv.Value.Val.Int64 = (int64_t)lua_tonumber(L, i);
 #endif
-			} else if (type == LUA_TLIGHTUSERDATA) {
-				auto handle = get<ObjectHandle>(L, i);
-				tv.Value.Val.Int64 = (int64_t)handle.Handle;
 			} else {
 				luaL_error(L, "Number expected for argument %d, got %s", i, lua_typename(L, type));
 			}
@@ -148,10 +145,6 @@ namespace bg3se::esv::lua
 #else
 				arg.Int64 = (int64_t)lua_tonumber(L, i);
 #endif
-
-			} else if (type == LUA_TLIGHTUSERDATA) {
-				auto handle = get<ObjectHandle>(L, i);
-				arg.Int64 = (int64_t)handle.Handle;
 			} else {
 				luaL_error(L, "Number expected for argument %d, got %s", i, lua_typename(L, type));
 			}

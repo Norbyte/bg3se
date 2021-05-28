@@ -263,7 +263,7 @@ namespace bg3se::esv::lua
 	{
 		auto s = checked_get<FixedString>(L, 1);
 		auto& types = GetEoCServer()->EntityWorld->Components.Types;
-		for (auto i = 0; i < types.Size; i++) {
+		for (unsigned i = 0; i < types.Size; i++) {
 			auto pool = types[i].Pool;
 			if (pool) {
 				auto comp = pool->FindComponentByGuid(s);
@@ -1120,6 +1120,18 @@ namespace bg3se::esv::lua
 	void ServerState::RestoreModPersistentVars(STDString const& modTable, STDString const& vars)
 	{
 		CallExt("_RestoreModPersistentVars", RestrictAll, modTable, vars);
+	}
+
+
+	EntityWorldBase* ServerState::GetEntityWorld()
+	{
+		return GetStaticSymbols().GetServerEntityWorld();
+	}
+
+
+	EntitySystemHelpersBase* ServerState::GetEntitySystemHelpers()
+	{
+		return &gExtender->GetServerEntityHelpers();
 	}
 
 
