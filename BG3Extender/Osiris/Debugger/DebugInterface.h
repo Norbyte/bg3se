@@ -25,6 +25,7 @@ namespace bg3se
 		bool IsConnected() const;
 		void Run();
 		void Disconnect();
+		void Shutdown();
 
 	protected:
 		void SendProtobufMessage(uint8_t* buf, uint32_t length);

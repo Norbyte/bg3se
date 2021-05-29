@@ -37,7 +37,16 @@ namespace bg3se
 
 	SocketInterface::~SocketInterface()
 	{
-		closesocket(socket_);
+		if (socket_) {
+			closesocket(socket_);
+		}
+	}
+
+	void SocketInterface::Shutdown()
+	{
+		auto socket = socket_;
+		socket_ = 0;
+		closesocket(socket);
 	}
 
 	void SocketInterface::SetConnectHandler(
@@ -129,17 +138,19 @@ namespace bg3se
 
 	void SocketInterface::Run()
 	{
-		for (;;) {
+		while (socket_) {
 			sockaddr_in addr;
 			int addrlen = sizeof(addr);
 			clientSocket_ = accept(socket_, (sockaddr *)&addr, &addrlen);
-			DEBUG("Accepted debug connection.");
-			if (connectHandler_) {
-				connectHandler_();
-			}
+			if (clientSocket_) {
+				DEBUG("Accepted debug connection.");
+				if (connectHandler_) {
+					connectHandler_();
+				}
 
-			MessageLoop(clientSocket_);
-			Disconnect();
+				MessageLoop(clientSocket_);
+				Disconnect();
+			}
 		}
 	}
 }

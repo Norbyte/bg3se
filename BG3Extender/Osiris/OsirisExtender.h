@@ -24,6 +24,7 @@ class OsirisExtender
 {
 public:
 	OsirisExtender(ExtenderConfig & config);
+	~OsirisExtender();
 
 	void Initialize();
 	void Shutdown();
@@ -113,7 +114,7 @@ private:
 	std::recursive_mutex storyLoadLock_;
 
 #if !defined(OSI_NO_DEBUGGER)
-	std::thread * debuggerThread_{ nullptr };
+	std::unique_ptr<std::thread> debuggerThread_;
 	std::unique_ptr<OsirisDebugInterface> debugInterface_;
 	std::unique_ptr<osidbg::DebugMessageHandler> debugMsgHandler_;
 	std::unique_ptr<osidbg::Debugger> debugger_;

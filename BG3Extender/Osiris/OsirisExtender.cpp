@@ -22,6 +22,12 @@ OsirisExtender::OsirisExtender(ExtenderConfig & config)
 	functionLibrary_.Startup();
 }
 
+
+OsirisExtender::~OsirisExtender()
+{
+	Shutdown();
+}
+
 void OsirisExtender::Initialize()
 {
 	wrappers_.Initialize();
@@ -45,6 +51,18 @@ void OsirisExtender::Initialize()
 
 void OsirisExtender::Shutdown()
 {
+	if (debugger_) {
+		debugger_.reset();
+	}
+
+	if (debuggerThread_) {
+		debugInterface_->Shutdown();
+		debuggerThread_->join();
+		debugMsgHandler_.reset();
+		debugInterface_.reset();
+		debuggerThread_.reset();
+	}
+
 	wrappers_.Shutdown();
 }
 
@@ -190,12 +208,12 @@ void OsirisExtender::OnRegisterDIVFunctions(void * Osiris, DivFunctions * Functi
 #if !defined(OSI_NO_DEBUGGER)
 	// FIXME - move to DebuggerHooks
 	if (config_.EnableDebugger) {
-		if (debuggerThread_ == nullptr) {
+		if (!debuggerThread_) {
 			DEBUG("Starting debugger server");
 			try {
 				debugInterface_ = std::make_unique<OsirisDebugInterface>(config_.DebuggerPort);
 				debugMsgHandler_ = std::make_unique<osidbg::DebugMessageHandler>(std::ref(*debugInterface_));
-				debuggerThread_ = new std::thread(std::bind(OsirisDebugThreadRunner, std::ref(*debugInterface_)));
+				debuggerThread_ = std::make_unique<std::thread>(std::bind(OsirisDebugThreadRunner, std::ref(*debugInterface_)));
 				DEBUG("Osiris debugger listening on 127.0.0.1:%d; DBG protocol version %d", 
 					config_.DebuggerPort, osidbg::DebugMessageHandler::ProtocolVersion);
 			} catch (std::exception & e) {
@@ -289,7 +307,7 @@ void OsirisExtender::OnAfterOsirisLoad(void * Osiris, void * Buf, int retval)
 	std::lock_guard _(storyLoadLock_);
 
 #if !defined(OSI_NO_DEBUGGER)
-	if (debuggerThread_ != nullptr) {
+	if (debuggerThread_) {
 		HookNodeVMTs();
 	}
 #endif
@@ -298,7 +316,7 @@ void OsirisExtender::OnAfterOsirisLoad(void * Osiris, void * Buf, int retval)
 	DEBUG("ScriptExtender::OnAfterOsirisLoad: %d nodes", (*wrappers_.Globals.Nodes)->Db.Size);
 
 #if !defined(OSI_NO_DEBUGGER)
-	if (debuggerThread_ != nullptr && nodeVmtWrappers_) {
+	if (debuggerThread_ && nodeVmtWrappers_) {
 		debugger_.reset();
 		debugger_ = std::make_unique<osidbg::Debugger>(wrappers_.Globals, std::ref(*debugMsgHandler_));
 		debugger_->StoryLoaded();
