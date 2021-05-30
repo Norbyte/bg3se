@@ -130,7 +130,7 @@ public:
 	{
 		auto component = GetRawEntityComponent(entityHandle, T::ComponentType, logError);
 		if (component) {
-			return reinterpret_cast<T*>(component);
+			return RawComponentPtrToComponent<T>(component);
 		} else {
 			return nullptr;
 		}
