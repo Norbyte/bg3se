@@ -16,7 +16,7 @@ namespace bg3se
 		__int64 field_28;
 		int Flags;
 		FixedString Archetype;
-		GUID AiHint;
+		UUID AiHint;
 		int field_48;
 		char field_4C;
 		bool CombatGroupChangedFlag_M;
@@ -26,7 +26,7 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::CombatState;
 
-		GUID MyGuid;
+		UUID MyGuid;
 		__int64 field_28;
 		__int64 field_30;
 		int field_38;

@@ -12,9 +12,9 @@ namespace bg3se
 
 		int ArmorType;
 		int ArmorClass;
-		int Ability_Modifier_Cap;
-		char Armor_Class_Ability;
-		char Shield;
+		int AbilityModifierCap;
+		uint8_t ArmorClassAbility;
+		uint8_t Shield;
 	};
 
 	struct BaseHpComponent : public BaseComponent
@@ -52,7 +52,7 @@ namespace bg3se
 		int NextLevelExperience;
 		int Experience_M;
 		int SomeExperience;
-		char field_28;
+		uint8_t field_28;
 	};
 
 	struct HealthComponent : public BaseComponent
@@ -130,7 +130,7 @@ namespace bg3se
 		int ArmorType;
 		int field_114;
 		int Level;
-		char Flanked_M;
+		bool Flanked_M;
 		Array<ClassInfo> Classes;
 		uint8_t UnarmedAttackAbility;
 		uint8_t SomeAttackAbility;
@@ -149,8 +149,8 @@ namespace bg3se
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Value;
 
 		int Value;
-		char Rarity;
-		char Unique;
+		uint8_t Rarity;
+		bool Unique;
 	};
 
 	struct GenderComponent : public BaseComponent
@@ -168,10 +168,10 @@ namespace bg3se
 		RefMap<void*, void*> field_18;
 		RefMap<void*, void*> field_28;
 		float WeaponRange;
-		float Damage_Range;
+		float DamageRange;
 		__int64 WeaponFunctors;
-		int Weapon_Properties;
-		char Weapon_Group;
+		uint32_t WeaponProperties;
+		uint8_t WeaponGroup;
 		char field_4D;
 	};
 

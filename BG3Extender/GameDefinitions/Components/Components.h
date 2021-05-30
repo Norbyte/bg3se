@@ -79,6 +79,7 @@ namespace bg3se
 
 		Array<SpellBookEntry> Spells;
 	};
+
 	
 	struct SurfacePathInfluence
 	{
@@ -105,7 +106,7 @@ namespace bg3se
 		int Slot;
 		int Charges;
 		int MaxCharges;
-		char ItemUseType;
+		uint8_t ItemUseType;
 		char field_3D;
 		char field_3E;
 		char field_3F;
@@ -156,11 +157,11 @@ namespace bg3se
 		Array<UUID> Tags;
 	};
 
-	struct SpellBookPrepares : public BaseComponent
+	struct SpellBookPreparesComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::SpellBookPrepares;
 
-		Array<SpellId> PreparedSpells;
+		Array<SpellIdBase> PreparedSpells;
 		VirtualMultiHashMap<int, UUID> field_30;
 		VirtualMultiHashMap<int, UUID> field_88;
 	};
@@ -169,8 +170,8 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Relation;
 
-		GUID field_18;
-		GUID field_28;
+		UUID field_18;
+		UUID field_28;
 		EntityWorldHandle field_38;
 	};
 

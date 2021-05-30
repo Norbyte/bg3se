@@ -16,7 +16,6 @@ namespace bg3se::lua::stats
 #include <Lua/Shared/StatEnumerators.inl>
 #include <Lua/Shared/StatAttributes.inl>
 #include <Lua/Shared/StatMisc.inl>
-#include <Lua/Shared/LuaObjectProxies.inl>
 
 
 namespace bg3se::lua::stats
@@ -51,6 +50,8 @@ namespace bg3se::lua::stats
 
 namespace bg3se::lua
 {
+	void InitObjectProxyPropertyMaps();
+
 	void RegisterSharedLibraries(lua_State* L)
 	{
 		Userdata<ObjectProxy>::RegisterMetatable(L);

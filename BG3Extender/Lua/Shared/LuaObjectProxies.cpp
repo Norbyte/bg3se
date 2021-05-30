@@ -1,10 +1,23 @@
 // Shared container for all property lists
 
+#include <stdafx.h>
+
 #include <Lua/LuaBinding.h>
 #include <Lua/LuaSerializers.h>
 #include <Lua/Shared/LuaPropertyMapHelpers.h>
 #include <GameDefinitions/Resources.h>
 #include <GameDefinitions/Surface.h>
+#include <GameDefinitions/Character.h>
+#include <GameDefinitions/Item.h>
+#include <GameDefinitions/GuidResources.h>
+#include <GameDefinitions/Status.h>
+#include <GameDefinitions/Stats/Functors.h>
+#include <GameDefinitions/Components/Components.h>
+#include <GameDefinitions/Components/Boosts.h>
+#include <GameDefinitions/Components/Combat.h>
+#include <GameDefinitions/Components/Passives.h>
+#include <GameDefinitions/Components/Projectile.h>
+#include <GameDefinitions/Components/Stats.h>
 
 #include <Lua/Shared/LuaShared.inl>
 
@@ -92,7 +105,7 @@ int StatusGetEngineType(lua_State* L, esv::Status* self);
 #define P_REF(prop) \
 	pm.AddProperty(#prop, \
 		[](lua_State* L, LifetimeHolder const& lifetime, PM::ObjectType* obj) { \
-			ObjectProxy::MakeRef<decltype(obj->prop)>(L, &obj->prop, lifetime); \
+			MakeObjectRef(L, lifetime, &obj->prop); \
 			return true; \
 		}, \
 		[](lua_State* L, LifetimeHolder const& lifetime, PM::ObjectType* obj, int index) { \
@@ -104,7 +117,7 @@ int StatusGetEngineType(lua_State* L, esv::Status* self);
 	pm.AddProperty(#prop, \
 		[](lua_State* L, LifetimeHolder const& lifetime, PM::ObjectType* obj) { \
 			if (obj->prop) { \
-				ObjectProxy::MakeRef<std::remove_pointer<decltype(obj->prop)>::type>(L, obj->prop, lifetime); \
+				MakeObjectRef(L, lifetime, obj->prop); \
 			} else { \
 				push(L, nullptr); \
 			} \

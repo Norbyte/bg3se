@@ -58,7 +58,7 @@ namespace bg3se
 	struct ModuleInfo
 	{
 		FixedString ModuleUUIDString;
-		GUID ModuleUUID;
+		UUID ModuleUUID;
 		STDWString Name;
 		FixedString StartLevelName;
 		FixedString MenuLevelName;

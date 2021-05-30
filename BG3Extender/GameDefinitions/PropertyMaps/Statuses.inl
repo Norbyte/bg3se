@@ -20,7 +20,7 @@ P(CauseType)
 P_RO(StatusHandle)
 P_RO(UnknownHandle)
 P_RO(OwnerHandle)
-// P_REF(StatusOwner) // TODO - array support // RO
+P_REF(StatusOwner)
 P_RO(StatusSource)
 P_RO(StatusSourceUUID)
 P_RO(StatusSourceEntityHandle)
@@ -49,10 +49,10 @@ END_CLS()
 
 BEGIN_CLS(esv::StatusBoost)
 INHERIT(esv::StatusAura)
-// P_REF(Spell) - TODO
-// P_REF(Items) - TODO
+P_REF(Spell)
+P_REF(Items)
 P(LoseControl)
-// P_REF(ItemHandles) - TODO
+P_REF(ItemHandles)
 P(EffectTime)
 P(StackId)
 P(SourceDirection)
@@ -68,8 +68,8 @@ P(Target)
 P(Radius)
 P(Projectile)
 P_RO(TargetConditions_M) // TODO - map conditions
-// P_REF(UnknVectors)
-// P_REF(PreviousTargets)
+P_REF(UnknVectors)
+P_REF(PreviousTargets)
 END_CLS()
 
 
@@ -152,7 +152,7 @@ END_CLS()
 
 BEGIN_CLS(esv::StatusHealSharingCaster)
 INHERIT(esv::StatusBoost)
-// P(Targets)
+P_REF(Targets)
 END_CLS()
 
 

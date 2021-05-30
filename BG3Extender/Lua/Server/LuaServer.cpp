@@ -301,7 +301,7 @@ namespace bg3se::esv::lua
 					auto sc = helpers.GetEntityComponent<SpellContainerComponent>(entity);
 					auto t = helpers.GetEntityComponent<TagComponent>(entity);
 					auto ot = helpers.GetEntityComponent<OsirisTagComponent>(entity);
-					auto sbp = helpers.GetEntityComponent<SpellBookPrepares>(entity);
+					auto sbp = helpers.GetEntityComponent<SpellBookPreparesComponent>(entity);
 					auto cs = helpers.GetEntityComponent<CombatStateComponent>(entity);
 					auto tb = helpers.GetEntityComponent<TurnBasedComponent>(entity);
 					auto to = helpers.GetEntityComponent<TurnOrderComponent>(entity);
@@ -314,13 +314,13 @@ namespace bg3se::esv::lua
 								auto bi = helpers.GetEntityComponent<BoostInfoComponent>(handle);
 								auto f2c = bi->Passive.GetString();
 								auto p2 = bi->Params.field_0.GetString();
-								auto ac = helpers.GetEntityComponent<ArmorClassBoost>(handle);
-								auto ab = helpers.GetEntityComponent<AbilityBoost>(handle);
-								auto rb = helpers.GetEntityComponent<RollBonusBoost>(handle);
-								auto ad = helpers.GetEntityComponent<AdvantageBoost>(handle);
-								auto ar = helpers.GetEntityComponent<ActionResourceValueBoost>(handle);
-								auto ch = helpers.GetEntityComponent<CriticalHitBoost>(handle);
-								auto rbb = helpers.GetEntityComponent<ResistanceBoost>(handle);
+								auto ac = helpers.GetEntityComponent<ArmorClassBoostComponent>(handle);
+								auto ab = helpers.GetEntityComponent<AbilityBoostComponent>(handle);
+								auto rb = helpers.GetEntityComponent<RollBonusBoostComponent>(handle);
+								auto ad = helpers.GetEntityComponent<AdvantageBoostComponent>(handle);
+								auto ar = helpers.GetEntityComponent<ActionResourceValueBoostComponent>(handle);
+								auto ch = helpers.GetEntityComponent<CriticalHitBoostComponent>(handle);
+								auto rbb = helpers.GetEntityComponent<ResistanceBoostComponent>(handle);
 
 							}
 						}

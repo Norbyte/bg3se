@@ -6,6 +6,60 @@
 namespace bg3se::lua
 {
 	template <class T>
+	void MakeObjectRef(lua_State* L, LifetimeHolder const& lifetime, T* value)
+	{
+		ObjectProxy::MakeRef<T>(L, value, lifetime);
+	}
+
+	template <class T>
+	void MakeObjectRef(lua_State* L, LifetimeHolder const& lifetime, OverrideableProperty<T>* value)
+	{
+		MakeObjectRef(L, lifetime, &value->Value);
+	}
+
+	template <class T>
+	void MakeObjectRef(lua_State* L, LifetimeHolder const& lifetime, Array<T>* value)
+	{
+		// FIXME!
+		push(L, "Array PROXIES NOT SUPPORTED YET!");
+	}
+
+	template <class T>
+	void MakeObjectRef(lua_State* L, LifetimeHolder const& lifetime, ObjectSet<T>* value)
+	{
+		// FIXME!
+		push(L, "ObjectSet PROXIES NOT SUPPORTED YET!");
+	}
+
+	template <class TKey, class TValue>
+	void MakeObjectRef(lua_State* L, LifetimeHolder const& lifetime, Map<TKey, TValue>* value)
+	{
+		// FIXME!
+		push(L, "Map PROXIES NOT SUPPORTED YET!");
+	}
+
+	template <class TKey, class TValue>
+	void MakeObjectRef(lua_State* L, LifetimeHolder const& lifetime, RefMap<TKey, TValue>* value)
+	{
+		// FIXME!
+		push(L, "RefMap PROXIES NOT SUPPORTED YET!");
+	}
+
+	template <class TKey, class TValue>
+	void MakeObjectRef(lua_State* L, LifetimeHolder const& lifetime, MultiHashMap<TKey, TValue>* value)
+	{
+		// FIXME!
+		push(L, "MultiHashMap PROXIES NOT SUPPORTED YET!");
+	}
+
+	template <class TKey, class TValue>
+	void MakeObjectRef(lua_State* L, LifetimeHolder const& lifetime, VirtualMultiHashMap<TKey, TValue>* value)
+	{
+		// FIXME!
+		push(L, "VirtualMultiHashMap PROXIES NOT SUPPORTED YET!");
+	}
+
+	template <class T>
 	bool GenericGetProperty(lua_State* L, LifetimeHolder const& lifetime, T const& value)
 	{
 		return LuaWrite(L, value) == 1;

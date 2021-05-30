@@ -1,6 +1,17 @@
 // Property lists for stats functors
 // (anything extending StatsFunctorBase)
 
+BEGIN_CLS(LuaExpressionBase)
+P_REF(ExpressionParams)
+P(Code)
+END_CLS()
+
+
+BEGIN_CLS(LuaExpression)
+INHERIT(LuaExpressionBase)
+END_CLS()
+
+
 BEGIN_CLS(StatsFunctorBase)
 P_RO(UniqueName)
 P_RO(TypeId)

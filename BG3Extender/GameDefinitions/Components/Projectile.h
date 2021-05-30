@@ -9,30 +9,61 @@
 namespace bg3se
 {
 	struct StatsFunctorSet;
+
+	struct PathMover
+	{
+		float field_0[32];
+		float field_80;
+		int field_84;
+		int field_88;
+		int field_8C;
+		float PathOrig2[3];
+		float PathTarget2[3];
+		char PathRandom2;
+		uint32_t _Pad;
+		float PathRotateOrig[4];
+		float PathRotateTarget[4];
+		float PathOrig[3];
+		float PathTarget[3];
+		float PathInterpolateValue;
+		float PathSpeedSet;
+		float PathSpeed;
+		float PathAcceleration;
+		char PathType;
+		int PathRotationType;
+		float PathRadius;
+		float PathShift;
+		float PathMinArcDist;
+		float PathMaxArcDist;
+		__int64 PathRepeat;
+		char PathRandom;
+		char field_119;
+	};
+
 }
 
 
 namespace bg3se::esv
 {
-	struct ProjectileComponent : public BaseComponent
+	struct Projectile : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ServerProjectile;
 
 		void* TEMP_PAD;
 		FixedString field_20;
-		NetId MyNetID;
+		NetId NetID;
 		ObjectHandle Caster;
 		ObjectHandle Source;
 		ObjectHandle TargetObject;
 		ObjectHandle HitObject;
 		ObjectHandle SourceWeapon;
-		float SourcePos[3];
-		float TargetPos[3];
+		glm::vec3 SourcePosition;
+		glm::vec3 TargetPosition;
 		float PathRadius;
 		FixedString TextKey;
 		Hit Hit;
-		char DamageType;
-		char CauseType;
+		DamageType DamageType;
+		uint8_t CauseType;
 		float field_22C;
 		float HitInterpolation;
 		__int64 field_238;
@@ -43,7 +74,7 @@ namespace bg3se::esv
 		SpellId SpellId;
 		StatsFunctorSet* PropertyListFunctor;
 		__int64 MovingObject;
-		float MovingObjectTransform[16];
+		glm::mat4 MovingObjectTransform;
 		FixedString SpawnEffect;
 		bool SpawnFXOverridesImpactFX;
 		ObjectHandle EffectHandle;
@@ -70,7 +101,7 @@ namespace bg3se::esv
 		int StoryActionID;
 		ActionOriginator Originator;
 		uint64_t Flags;
-		float PrevTranslate[3];
+		glm::vec3 PreviousTranslate;
 		__int64 field_570;
 		FixedString LevelName;
 		void* ProjectileTemplate;

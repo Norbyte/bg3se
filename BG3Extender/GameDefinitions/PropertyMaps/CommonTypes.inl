@@ -9,3 +9,11 @@ END_CLS()
 BEGIN_CLS(SpellIdWithPrototype)
 INHERIT(SpellId)
 END_CLS()
+
+
+BEGIN_CLS(Transform)
+// TODO - P(Matrix)
+// TODO - P(Rotate)
+P(Translate)
+P(Scale)
+END_CLS()

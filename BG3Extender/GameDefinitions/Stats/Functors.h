@@ -200,26 +200,6 @@ namespace bg3se
 	};
 
 
-	struct LuaExpressionBase
-	{
-		Array<STDString> ExpressionParams;
-		STDString Code;
-	};
-
-
-	struct LuaExpression : public LuaExpressionBase
-	{
-	    int FastLock;
-	};
-
-	struct LuaExpressionManager : public ProtectedGameObject<LuaExpressionManager>
-	{
-	    void* VMT;
-	    RefMap<UUID, LuaExpression*> Expressions;
-	    char field_18;
-	};
-
-
 	struct CustomDescriptionFunctor : public StatsFunctorBase
 	{
 		static constexpr auto FunctorId = StatsFunctorActionId::CustomDescription;

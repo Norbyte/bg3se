@@ -5,6 +5,11 @@
 #include <GameDefinitions/EntitySystem.h>
 #include <GameDefinitions/Misc.h>
 
+namespace bg3se
+{
+	struct GuidResourceDefinitionManagerBase;
+}
+
 namespace bg3se::esv
 {
 	struct Level;

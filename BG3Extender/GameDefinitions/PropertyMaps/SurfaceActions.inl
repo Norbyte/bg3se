@@ -73,7 +73,7 @@ P(TextKey)
 P(Target)
 P_REF(Params)
 P(GrowStep)
-// P_REF(Targets) - TODO - array support
+P_REF(Targets)
 P_RO(CurrentCellCount)
 P(Flags)
 END_CLS()
@@ -119,8 +119,8 @@ P(GrowStep)
 P(DeathType)
 P(LineCheckBlock)
 // TODO - SkillProperties_M, CurrentGrowTimer_M
-//P_REF(Characters) - TODO - array support
-//P_REF(Items) - TODO - array support
+P_REF(Characters)
+P_REF(Items)
 P_RO(CurrentCellCount)
 END_CLS()
 
@@ -134,6 +134,6 @@ P(GrowTimer)
 P(SomePosition)
 P(GrowStep)
 P(LastSurfaceCellCount)
-//P_REF(Characters) - TODO - array support
-//P_REF(Items) - TODO - array support
+P_REF(Characters)
+P_REF(Items)
 END_CLS()

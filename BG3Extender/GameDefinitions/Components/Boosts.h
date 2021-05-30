@@ -3,6 +3,7 @@
 #include <GameDefinitions/BaseTypes.h>
 #include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/EntitySystem.h>
+#include <GameDefinitions/Misc.h>
 
 namespace bg3se
 {
@@ -11,7 +12,7 @@ namespace bg3se
 		static constexpr ExtComponentType ComponentType = ExtComponentType::BoostCondition;
 
 		int ConditionFlags;
-		char field_1C;
+		uint8_t field_1C;
 	};
 
 	struct BoostsContainerComponent : public BaseComponent
@@ -43,14 +44,14 @@ namespace bg3se
 		UUID field_90;
 	};
 
-	struct ArmorClassBoost : public BaseComponent
+	struct ArmorClassBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ArmorClassBoost;
 
 		int32_t AC;
 	};
 
-	struct AbilityBoost : public BaseComponent
+	struct AbilityBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::AbilityBoost;
 
@@ -59,7 +60,7 @@ namespace bg3se
 		int8_t SomeFlag; // Unused?
 	};
 
-	struct RollBonusBoost : public BaseComponent
+	struct RollBonusBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::RollBonusBoost;
 
@@ -69,7 +70,7 @@ namespace bg3se
 		SkillId Skill;
 	};
 
-	struct AdvantageBoost : public BaseComponent
+	struct AdvantageBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::AdvantageBoost;
 
@@ -80,7 +81,7 @@ namespace bg3se
 		Array<UUID> Tags;
 	};
 
-	struct ActionResourceValueBoost : public BaseComponent
+	struct ActionResourceValueBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ActionResourceValueBoost;
 
@@ -90,7 +91,7 @@ namespace bg3se
 		DiceSizeId DiceSize;
 	};
 
-	struct CriticalHitBoost : public BaseComponent
+	struct CriticalHitBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::CriticalHitBoost;
 
@@ -98,14 +99,14 @@ namespace bg3se
 		int Value;
 	};
 
-	struct AbilityFailedSavingThrowBoost : public BaseComponent
+	struct AbilityFailedSavingThrowBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::AbilityFailedSavingThrowBoost;
 
 		AbilityId Ability;
 	};
 
-	struct ResistanceBoost : public BaseComponent
+	struct ResistanceBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ResistanceBoost;
 
@@ -114,35 +115,35 @@ namespace bg3se
 	    bool IsResistantToAll;
 	};
 
-	struct WeaponDamageResistanceBoost : public BaseComponent
+	struct WeaponDamageResistanceBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::WeaponDamageResistanceBoost;
 
 		Array<DamageType> DamageTypes;
 	};
 
-	struct ProficiencyBonusOverrideBoost : public BaseComponent
+	struct ProficiencyBonusOverrideBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ProficiencyBonusOverrideBoost;
 
 		int Value;
 	};
 
-	struct JumpMaxDistanceMultiplierBoost : public BaseComponent
+	struct JumpMaxDistanceMultiplierBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::JumpMaxDistanceMultiplierBoost;
 
 	    float Amount;
 	};
 
-	struct HalveWeaponDamageBoost : public BaseComponent
+	struct HalveWeaponDamageBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::HalveWeaponDamageBoost;
 
 	    AbilityId Ability;
 	};
 
-	struct UnlockSpellBoost : public BaseComponent
+	struct UnlockSpellBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::UnlockSpellBoost;
 
@@ -153,14 +154,14 @@ namespace bg3se
 	    SpellUnlockDurationType UnlockDuration; // Param 4
 	};
 
-	struct SourceAdvantageBoost : public BaseComponent
+	struct SourceAdvantageBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::SourceAdvantageBoost;
 
 		SourceAdvantageType Type;
 	};
 
-	struct ProficiencyBonusBoost : public BaseComponent
+	struct ProficiencyBonusBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ProficiencyBonusBoost;
 
@@ -169,7 +170,7 @@ namespace bg3se
 		SkillId Skill;
 	};
 
-	struct ProficiencyBoost : public BaseComponent
+	struct ProficiencyBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ProficiencyBoost;
 
@@ -177,14 +178,14 @@ namespace bg3se
 		SkillId Skill;
 	};
 
-	struct IncreaseMaxHPBoost : public BaseComponent
+	struct IncreaseMaxHPBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::IncreaseMaxHPBoost;
 
 		LuaExpressionBase HP;
 	};
 
-	struct ActionResourceBlockBoost : public BaseComponent
+	struct ActionResourceBlockBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ActionResourceBlockBoost;
 
@@ -192,7 +193,7 @@ namespace bg3se
 	    int IntParam;
 	};
 
-	struct StatusImmunityBoost : public BaseComponent
+	struct StatusImmunityBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::StatusImmunityBoost;
 
@@ -200,35 +201,35 @@ namespace bg3se
 		Array<UUID> UnknownUUIDs;
 	};
 
-	struct UseBoosts : public BaseComponent
+	struct UseBoostsComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::UseBoosts;
 
 		Array<BoostParameters> Boosts;
 	};
 
-	struct TemporaryHPBoost : public BaseComponent
+	struct TemporaryHPBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::TemporaryHPBoost;
 
 		LuaExpressionBase HP;
 	};
 
-	struct WeightBoost : public BaseComponent
+	struct WeightBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::WeightBoost;
 
 	    int Amount;
 	};
 
-	struct FactionOverrideBoost : public BaseComponent
+	struct FactionOverrideBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::FactionOverrideBoost;
 
 	    FixedString Faction;
 	};
 
-	struct ActionResourceMultiplierBoost : public BaseComponent
+	struct ActionResourceMultiplierBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ActionResourceMultiplierBoost;
 
@@ -238,42 +239,42 @@ namespace bg3se
 		DiceSizeId DiceSize;
 	};
 
-	struct InitiativeBoost : public BaseComponent
+	struct InitiativeBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::InitiativeBoost;
 
 	    int Amount;
 	};
 
-	struct DarkvisionRangeBoost : public BaseComponent
+	struct DarkvisionRangeBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::DarkvisionRangeBoost;
 
 	    float Range;
 	};
 
-	struct DarkvisionRangeMinBoost : public BaseComponent
+	struct DarkvisionRangeMinBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::DarkvisionRangeMinBoost;
 
 		float Range;
 	};
 
-	struct DarkvisionRangeOverrideBoost : public BaseComponent
+	struct DarkvisionRangeOverrideBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::DarkvisionRangeOverrideBoost;
 
 		float Range;
 	};
 
-	struct AddTagBoost : public BaseComponent
+	struct AddTagBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::AddTagBoost;
 
 		UUID TagUUID;
 	};
 
-	struct IgnoreDamageThresholdMinBoost : public BaseComponent
+	struct IgnoreDamageThresholdMinBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::IgnoreDamageThresholdMinBoost;
 
@@ -282,7 +283,7 @@ namespace bg3se
 		int Amount;
 	};
 
-	struct SkillBoost : public BaseComponent
+	struct SkillBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::SkillBoost;
 
@@ -290,7 +291,7 @@ namespace bg3se
 		int Amount;
 	};
 
-	struct WeaponDamageBoost : public BaseComponent
+	struct WeaponDamageBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::WeaponDamageBoost;
 
@@ -300,14 +301,14 @@ namespace bg3se
 	    bool field_24;
 	};
 
-	struct NullifyAbilityBoost : public BaseComponent
+	struct NullifyAbilityBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::NullifyAbilityBoost;
 
 	    AbilityId Ability;
 	};
 
-	struct RerollBoost : public BaseComponent
+	struct RerollBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::RerollBoost;
 
@@ -316,58 +317,58 @@ namespace bg3se
 	    bool field_1A;
 	};
 
-	struct DownedStatusBoost : public BaseComponent
+	struct DownedStatusBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::DownedStatusBoost;
 
 	    FixedString StatusId;
 	};
 
-	struct WeaponEnchantmentBoost : public BaseComponent
+	struct WeaponEnchantmentBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::WeaponEnchantmentBoost;
 
 	    int Value;
 	};
 
-	struct GuaranteedChanceRollOutcomeBoost : public BaseComponent
+	struct GuaranteedChanceRollOutcomeBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::GuaranteedChanceRollOutcomeBoost;
 
 	    bool field_18;
 	};
 
-	struct AttributeBoost : public BaseComponent
+	struct AttributeBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::AttributeBoost;
 
 	    AttributeFlags AttributeFlags;
 	};
 
-	struct GameplayLightBoost : public BaseComponent
+	struct GameplayLightBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::GameplayLightBoost;
 
 	    int field_18;
-	    char field_1C;
+	    uint8_t field_1C;
 	    int field_20;
 	};
 
-	struct DualWieldingBoost : public BaseComponent
+	struct DualWieldingBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::DualWieldingBoost;
 
 	    bool field_18;
 	};
 
-	struct SavantBoost : public BaseComponent
+	struct SavantBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::SavantBoost;
 
 	    SpellSchoolId SpellSchool;
 	};
 
-	struct MinimumRollResultBoost : public BaseComponent
+	struct MinimumRollResultBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::MinimumRollResultBoost;
 
@@ -375,7 +376,7 @@ namespace bg3se
 	    int8_t Result;
 	};
 
-	struct CharacterWeaponDamageBoost : public BaseComponent
+	struct CharacterWeaponDamageBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::CharacterWeaponDamageBoost;
 
@@ -384,14 +385,14 @@ namespace bg3se
 	    DamageType DamageType;
 	};
 
-	struct ProjectileDeflectBoost : public BaseComponent
+	struct ProjectileDeflectBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ProjectileDeflectBoost;
 
 	    ProjectileTypeIds ProjectileTypes;
 	};
 
-	struct AbilityOverrideMinimumBoost : public BaseComponent
+	struct AbilityOverrideMinimumBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::AbilityOverrideMinimumBoost;
 
@@ -399,7 +400,7 @@ namespace bg3se
 		int Amount;
 	};
 
-	struct ACOverrideMinimumBoost : public BaseComponent
+	struct ACOverrideMinimumBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ACOverrideMinimumBoost;
 
@@ -407,7 +408,7 @@ namespace bg3se
 	    bool field_1C;
 	};
 
-	struct FallDamageMultiplierBoost : public BaseComponent
+	struct FallDamageMultiplierBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::FallDamageMultiplierBoost;
 

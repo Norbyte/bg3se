@@ -1,3 +1,8 @@
+namespace bg3se::esv
+{
+	struct Status;
+}
+
 namespace bg3se::lua
 {
 

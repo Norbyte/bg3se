@@ -287,7 +287,9 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
     <None Include="Exports.def" />
     <None Include="GameDefinitions\Enumerations.inl" />
     <None Include="GameDefinitions\PropertyMaps\AllPropertyMaps.inl" />
+    <None Include="GameDefinitions\PropertyMaps\BoostComponents.inl" />
     <None Include="GameDefinitions\PropertyMaps\CommonTypes.inl" />
+    <None Include="GameDefinitions\PropertyMaps\Components.inl" />
     <None Include="GameDefinitions\PropertyMaps\FunctorExecParams.inl" />
     <None Include="GameDefinitions\PropertyMaps\Hit.inl" />
     <None Include="GameDefinitions\PropertyMaps\ResourceDefinitions.inl" />
@@ -325,7 +327,9 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
     <None Include="Lua\Shared\LuaLocalization.inl" />
     <None Include="Lua\Shared\LuaPropertyMapHelpers.h" />
     <None Include="Lua\Shared\LuaShared.inl" />
-    <None Include="Lua\Shared\LuaObjectProxies.inl" />
+    <ClCompile Include="Lua\Shared\LuaObjectProxies.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">/bigobj %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
     <None Include="Lua\Shared\LuaStaticDataLib.inl" />
     <None Include="Lua\Shared\StatAttributes.inl" />
     <None Include="Lua\Shared\StatEntries.inl" />

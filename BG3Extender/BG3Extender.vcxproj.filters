@@ -111,6 +111,9 @@
     </ClCompile>
     <ClCompile Include="ScriptExtender.cpp" />
     <ClCompile Include="tinyxml2.cpp" />
+    <ClCompile Include="Lua\Shared\LuaObjectProxies.cpp">
+      <Filter>Lua\Shared</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DWriteWrapper.h" />
@@ -404,9 +407,6 @@
     <None Include="Lua\Shared\LuaPropertyMapHelpers.h">
       <Filter>Lua\Shared</Filter>
     </None>
-    <None Include="Lua\Shared\LuaObjectProxies.inl">
-      <Filter>Lua\Shared</Filter>
-    </None>
     <None Include="GameDefinitions\PropertyMaps\AllPropertyMaps.inl">
       <Filter>GameDefinitions\PropertyMaps</Filter>
     </None>
@@ -456,6 +456,12 @@
       <Filter>GameDefinitions\PropertyMaps</Filter>
     </None>
     <None Include="GameDefinitions\PropertyMaps\Statuses.inl">
+      <Filter>GameDefinitions\PropertyMaps</Filter>
+    </None>
+    <None Include="GameDefinitions\PropertyMaps\Components.inl">
+      <Filter>GameDefinitions\PropertyMaps</Filter>
+    </None>
+    <None Include="GameDefinitions\PropertyMaps\BoostComponents.inl">
       <Filter>GameDefinitions\PropertyMaps</Filter>
     </None>
   </ItemGroup>
