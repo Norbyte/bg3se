@@ -8,3 +8,4 @@
 #include <GameDefinitions/PropertyMaps/RootTemplates.inl>
 #include <GameDefinitions/PropertyMaps/Hit.inl>
 #include <GameDefinitions/PropertyMaps/SurfaceActions.inl>
+#include <GameDefinitions/PropertyMaps/Statuses.inl>

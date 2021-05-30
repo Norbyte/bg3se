@@ -455,6 +455,9 @@
     <None Include="GameDefinitions\PropertyMaps\SurfaceActions.inl">
       <Filter>GameDefinitions\PropertyMaps</Filter>
     </None>
+    <None Include="GameDefinitions\PropertyMaps\Statuses.inl">
+      <Filter>GameDefinitions\PropertyMaps</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

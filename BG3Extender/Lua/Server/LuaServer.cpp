@@ -337,7 +337,7 @@ namespace bg3se::esv::lua
 
 	int XGetByHandle(lua_State* L)
 	{
-		auto s = checked_get<ObjectHandle>(L, 1);
+		/*auto s = checked_get<EntityProxy*>(L, 1)->Handle();
 		auto& types = GetEoCServer()->EntityWorld->Components.Types;
 		for (auto i = 0; i < types.Size; i++) {
 			auto pool = types[i].Pool;
@@ -347,7 +347,7 @@ namespace bg3se::esv::lua
 					std::cout << "Found in pool " << i << std::endl;
 				}
 			}
-		}
+		}*/
 
 		return 0;
 	}
@@ -417,8 +417,7 @@ namespace bg3se::esv::lua
 			{"GetCharacter", GetCharacter},
 			{"GetItem", GetItem},
 			{"GetGameObject", GetGameObject},
-			/*{"GetStatus", GetStatus},
-			{"GetCombat", GetCombat},
+			/*{"GetCombat", GetCombat},
 			{"GetSurface", GetSurface},
 			{"GetAiGrid", GetAiGrid},
 			{"NewDamageList", NewDamageList},

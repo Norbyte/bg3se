@@ -111,12 +111,11 @@ namespace bg3se
 			ObjectHandle UnknownHandle;
 			EntityHandle OwnerHandle;
 			ObjectSet<EntityHandle> StatusOwner;
-			Array<ObjectHandle> SomeArray;
-			EntityWorldHandle StatusSourceEntityHandle_M;
+			EntityWorldHandle StatusSource;
 			UUID StatusSourceUUID;
 			EntityHandle StatusSourceEntityHandle;
-			EntityWorldHandle CleansedByHandle_M;
-			ObjectHandle UnknownHandle2;
+			EntityWorldHandle StatusSource_M;
+			EntityHandle CleansedByHandle_M;
 			UUID field_110;
 			int Conditions;
 			uint16_t RemoveEvents;
@@ -138,7 +137,7 @@ namespace bg3se
 		{
 			ObjectSet<FixedString> Spell;
 			ObjectSet<FixedString> Items;
-			char LoseControl;
+			bool LoseControl;
 			ObjectSet<ObjectHandle> ItemHandles;
 			float EffectTime;
 			FixedString StackId;
@@ -184,7 +183,7 @@ namespace bg3se
 		{
 			float CurrentFreezeTime;
 			float FreezeTime;
-			char IncapacitateFlags;
+			uint8_t IncapacitateFlags;
 			bool IncapacitationAnimationFinished;
 		};
 
@@ -225,9 +224,9 @@ namespace bg3se
 			int HealAmount;
 			int HealEffect;
 			FixedString HealEffectId;
-			char HealType;
+			uint8_t HealType; // TODO enum
 			int AbsorbSurfaceRange;
-			char TargetDependentHeal;
+			uint8_t TargetDependentHeal;
 			ObjectSet<void*> AbsorbSurfaceTypes;
 			int TargetDependentValue;
 			int TargetDependentHealAmount;
@@ -250,9 +249,9 @@ namespace bg3se
 			float TimeElapsed;
 			int HealEffect;
 			FixedString HealEffectId;
-			char SkipInitialEffect;
-			uint16_t HealingEvent;
-			uint8_t HealType;
+			bool SkipInitialEffect;
+			uint16_t HealingEvent; // TODO enum
+			uint8_t HealType; // TODO enum
 			int AbsorbSurfaceRange;
 		};
 
@@ -301,6 +300,10 @@ namespace bg3se
 			bool IsInstant;
 		};
 
+		struct StatusSummoning : public Status
+		{
+		};
+
 		struct StatusMaterial : public Status
 		{
 			FixedString MaterialUUID;
@@ -323,9 +326,13 @@ namespace bg3se
 			glm::vec3 TargetPosition;
 			ObjectHandle Partner;
 			bool ShowOverhead;
-			SpellId Source_M;
+			SpellId Spell;
 			bool IgnoreHasSpell;
 			bool IgnoreChecks;
+		};
+
+		struct StatusStoryFrozen : public Status
+		{
 		};
 
 		struct StatusRepair : public Status
@@ -351,11 +358,15 @@ namespace bg3se
 			int Heal;
 		};
 
+		struct StatusLying : public StatusSitting
+		{
+		};
+
 		struct StatusTeleportFalling : public Status
 		{
 			glm::vec3 Target;
 			float ReappearTime;
-			SpellId SourceInfo;
+			SpellId Spell;
 			bool HasDamage;
 			bool HasDamageBeenApplied;
 		};
@@ -368,9 +379,49 @@ namespace bg3se
 			int Unlocked;
 		};
 
+		struct StatusFear : public StatusBoost
+		{
+		};
+
+		struct StatusSmelly : public Status
+		{
+		};
+
+		struct StatusClean : public Status
+		{
+		};
+
 		struct StatusSneaking : public StatusBoost
 		{
 		    bool ClientRequestStop;
+		};
+
+		struct StatusWindWalker : public StatusBoost
+		{
+		};
+
+		struct StatusDecayingTouch : public StatusBoost
+		{
+		};
+
+		struct StatusUnhealable : public Status
+		{
+		};
+
+		struct StatusForceMove : public Status
+		{
+		};
+
+		struct StatusConstrained : public StatusSitting
+		{
+		};
+
+		struct StatusEffect : public Status
+		{
+		};
+
+		struct StatusDeactivated : public StatusBoost
+		{
 		};
 
 
@@ -388,9 +439,9 @@ namespace bg3se
 			ObjectHandle OwnerEntityHandle;
 			uint8_t field_18;
 			ObjectSet<Status*> NewlyAddedStatuses;
-			ObjectSet<Status*> Statuses2;
-			ObjectSet<Status*> SomeStatuses;
-			ObjectSet<Status*> Statuses;
+			ObjectSet<Status*> StackedStatuses;
+			ObjectSet<Status*> CleanseStatuses;
+			ObjectSet<Status*> UnknownStatuses;
 			__int64 field_80;
 			__int64 field_88;
 			void* SomeProc1;

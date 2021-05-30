@@ -18,6 +18,60 @@ namespace bg3se::lua
 		push(L, self->GetStatusId());
 		return 1;
 	}
+	
+
+	void LuaMakeStatusProxy(lua_State* L, esv::Status* status, LifetimeHolder const& lifetime)
+	{
+#define S(ty, cls) case StatusType::ty: ObjectProxy::MakeRef<cls>(L, static_cast<cls*>(status), lifetime); break;
+
+		switch (status->GetStatusId()) {
+			S(DYING, esv::StatusDying)
+			S(DESTROYING, esv::StatusDestroying)
+			S(HEAL, esv::StatusHeal)
+			S(KNOCKED_DOWN, esv::StatusKnockedDown)
+			S(SUMMONING, esv::StatusSummoning)
+			S(HEALING, esv::StatusHealing)
+			S(TELEPORT_FALLING, esv::StatusTeleportFalling)
+			S(BOOST, esv::StatusBoost)
+			S(REACTION, esv::StatusReaction)
+			S(STORY_FROZEN, esv::StatusStoryFrozen)
+			S(SNEAKING, esv::StatusSneaking)
+			S(UNLOCK, esv::StatusUnlock)
+			S(FEAR, esv::StatusFear)
+			S(SITTING, esv::StatusSitting)
+			S(LYING, esv::StatusLying)
+			S(SMELLY, esv::StatusSmelly)
+			S(CLEAN, esv::StatusClean)
+			S(INFECTIOUS_DISEASED, esv::StatusInfectiousDiseased)
+			S(INVISIBLE, esv::StatusInvisible)
+			S(ROTATE, esv::StatusRotate)
+			S(ENCUMBERED, esv::StatusEncumbered)
+			S(IDENTIFY, esv::StatusIdentify)
+			S(REPAIR, esv::StatusRepair)
+			S(MATERIAL, esv::StatusMaterial)
+			S(WIND_WALKER, esv::StatusWindWalker)
+			S(DECAYING_TOUCH, esv::StatusDecayingTouch)
+			S(UNHEALABLE, esv::StatusUnhealable)
+			S(FORCE_MOVE, esv::StatusForceMove)
+			S(CLIMBING, esv::StatusClimbing)
+			S(INCAPACITATED, esv::StatusIncapacitated)
+			S(INSURFACE, esv::StatusInSurface)
+			S(POLYMORPHED, esv::StatusPolymorphed)
+			S(HEAL_SHARING, esv::StatusHealSharing)
+			S(HEAL_SHARING_CASTER, esv::StatusHealSharingCaster)
+			S(ACTIVE_DEFENSE, esv::StatusActiveDefense)
+			S(CONSTRAINED, esv::StatusConstrained)
+			S(EFFECT, esv::StatusEffect)
+			S(DEACTIVATED, esv::StatusDeactivated)
+			S(DOWNED, esv::StatusDowned)
+
+		default:
+			ObjectProxy::MakeRef<esv::Status>(L, status, lifetime);
+			break;
+		}
+
+#undef S
+	}
 }
 
 namespace bg3se::esv::lua
@@ -75,67 +129,3 @@ namespace bg3se::esv::lua
 	}
 }
 
-namespace bg3se::esv::lua
-{
-	using namespace ::bg3se::lua;
-
-	esv::Character* GetCharacter(lua_State* L, int index);
-
-
-	int GetStatus(lua_State* L)
-	{
-		LuaServerPin lua(esv::ExtensionState::Get());
-		if (lua->RestrictionFlags & State::RestrictHandleConversion) {
-			return luaL_error(L, "Attempted to resolve status handle in restricted context");
-		}
-
-		esv::Character* character = GetCharacter(L, 1);
-		if (character == nullptr) return 0;
-
-		StackCheck _(L, 1);
-		esv::Status* status{ nullptr };
-		if (lua_type(L, 2) == LUA_TLIGHTUSERDATA) {
-			auto statusHandle = checked_get<ObjectHandle>(L, 2);
-			status = character->GetStatus(statusHandle);
-			if (status != nullptr) {
-				ObjectHandle characterHandle;
-				character->GetObjectHandle(characterHandle);
-				StatusHandleProxy::New(L, characterHandle, statusHandle);
-				return 1;
-			}
-
-			OsiError("Character has no status with ObjectHandle 0x" << std::hex << statusHandle.Handle);
-		} else {
-			auto index = lua_tointeger(L, 2);
-
-			// We need to keep integer status handle support since some extender Osiris events
-			// (eg. NRD_OnHit, NRD_OnPrepareHit, etc.) use these handles and Osiris doesn't support lightuserdata
-			if (index > 0xffffffff) {
-				ObjectHandle statusHandle{ index };
-				status = character->GetStatus(statusHandle);
-				if (status != nullptr) {
-					ObjectHandle characterHandle;
-					character->GetObjectHandle(characterHandle);
-					StatusHandleProxy::New(L, characterHandle, statusHandle);
-					return 1;
-				}
-
-				OsiError("Character has no status with ObjectHandle 0x" << std::hex << statusHandle.Handle);
-			} else {
-				NetId statusNetId{ (uint32_t)index };
-				status = character->GetStatus(statusNetId);
-				if (status != nullptr) {
-					ObjectHandle characterHandle;
-					character->GetObjectHandle(characterHandle);
-					StatusHandleProxy::New(L, characterHandle, statusNetId);
-					return 1;
-				}
-
-				OsiError("Character has no status with NetId 0x" << std::hex << index);
-			}
-		}
-
-		push(L, nullptr);
-		return 1;
-	}
-}

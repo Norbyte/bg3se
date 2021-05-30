@@ -505,7 +505,7 @@ namespace bg3se
 
 	esv::Status * esv::StatusMachine::GetStatus(ObjectHandle handle) const
 	{
-		for (auto status : Statuses) {
+		for (auto status : StackedStatuses) {
 			if (status->StatusHandle == handle) {
 				return status;
 			}
@@ -522,7 +522,7 @@ namespace bg3se
 
 	esv::Status* esv::StatusMachine::GetStatus(FixedString const& statusId) const
 	{
-		for (auto status : Statuses) {
+		for (auto status : StackedStatuses) {
 			if (status->StatusId == statusId) {
 				return status;
 			}

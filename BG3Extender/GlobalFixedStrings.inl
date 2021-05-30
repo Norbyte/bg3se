@@ -53,21 +53,8 @@ FS(TemplateUsedForSpells);
 FS_NAME(NullStringHandle, "ls::TranslatedStringRepository::s_HandleUnknown");
 
 // Game object funcs
-FS(HasTag);
-FS(GetTags);
-FS(GetStatus);
-FS(GetStatusByType);
-FS(GetStatuses);
-FS(GetStatusObjects);
 FS(Stats);
-FS(SetScale);
-FS(GetInventoryItems);
 FS(GetOwnerCharacter);
-FS(GetSkills);
-FS(GetSkillInfo);
-FS(GetNearbyCharacters);
-FS(GetSummons);
-FS(GetGeneratedBoosts);
 FS(WalkSpeed);
 FS(RunSpeed);
 FS(Construct);

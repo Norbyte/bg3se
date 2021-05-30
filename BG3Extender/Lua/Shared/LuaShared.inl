@@ -1,58 +1,69 @@
 namespace bg3se::lua
 {
 
+void LuaMakeStatusProxy(lua_State* L, esv::Status* status, LifetimeHolder const& lifetime);
+// TODO - void LuaMakeStatusProxy(lua_State* L, ecl::Status* status, LifetimeHolder const& lifetime);
+
 template <class TObject, class TStatus>
 int GameObjectGetStatus(lua_State* L, TObject* self)
 {
-	auto statusId = luaL_checkstring(L, 2);
-	FixedString statusIdFs(statusId);
-
-	if (!self->StatusMachine || !statusIdFs) {
-		return 0;
-	}
-
-	auto status = self->StatusMachine->GetStatus(statusIdFs);
-	if (status) {
-		// FIXME - use handle based proxy
-		ObjectProxy::MakeRef<TStatus>(L, status, GetCurrentLifetime());
+	StackCheck _(L, 1);
+	if (!self->StatusMachine) {
+		push(L, nullptr);
 		return 1;
 	}
-	else {
-		return 0;
+
+	esv::Status* status{ nullptr };
+
+	if (lua_type(L, 2) == LUA_TSTRING) {
+		auto statusId = checked_get<FixedString>(L, 2);
+		status = self->StatusMachine->GetStatus(statusId);
+	} else {
+		auto statusHandle = checked_get<ObjectHandle>(L, 2);
+		status = self->StatusMachine->GetStatus(statusHandle);
 	}
+
+	if (status) {
+		LuaMakeStatusProxy(L, status, GetCurrentLifetime());
+	} else {
+		push(L, nullptr);
+	}
+	return 1;
 }
 
 template <class TObject, class TStatus>
 int GameObjectGetStatusByType(lua_State* L, TObject* self)
 {
+	StackCheck _(L, 1);
 	auto statusType = checked_get<StatusType>(L, 2);
 
 	if (!self->StatusMachine) {
-		return 0;
+		push(L, nullptr);
+		return 1;
 	}
 
-	for (auto status : self->StatusMachine->Statuses) {
+	for (auto status : self->StatusMachine->StackedStatuses) {
 		if (status->GetStatusId() == statusType) {
-			// FIXME - use handle based proxy
-			ObjectProxy::MakeRef<TStatus>(L, status, GetCurrentLifetime());
+			LuaMakeStatusProxy(L, status, GetCurrentLifetime());
 			return 1;
 		}
 	}
 
-	return 0;
+	push(L, nullptr);
+	return 1;
 }
 
 template <class TObject>
-int GameObjectGetStatuses(lua_State* L, TObject* self)
+int GameObjectGetStatusIds(lua_State* L, TObject* self)
 {
-	if (!self->StatusMachine) {
-		return 0;
-	}
-
 	lua_newtable(L);
 
+	if (!self->StatusMachine) {
+		return 1;
+	}
+
 	int32_t index = 1;
-	for (auto status : self->StatusMachine->Statuses) {
+	for (auto status : self->StatusMachine->StackedStatuses) {
 		settable(L, index++, status->StatusId);
 	}
 
@@ -60,19 +71,18 @@ int GameObjectGetStatuses(lua_State* L, TObject* self)
 }
 
 template <class TObject, class TStatus>
-int GameObjectGetStatusObjects(lua_State* L, TObject* self)
+int GameObjectGetStatuses(lua_State* L, TObject* self)
 {
-	if (!self->StatusMachine) {
-		return 0;
-	}
-
 	lua_newtable(L);
 
+	if (!self->StatusMachine) {
+		return 1;
+	}
+
 	int32_t index = 1;
-	for (auto status : self->StatusMachine->Statuses) {
+	for (auto status : self->StatusMachine->StackedStatuses) {
 		push(L, index++);
-		// FIXME - use handle based proxy
-		ObjectProxy::MakeRef<TStatus>(L, status, GetCurrentLifetime());
+		LuaMakeStatusProxy(L, status, GetCurrentLifetime());
 		lua_settable(L, -3);
 	}
 
@@ -133,12 +143,10 @@ int GameObjectSetScale(lua_State* L, TObject* self)
 template <class TObject>
 int GameObjectGetDisplayName(lua_State* L, TObject* object)
 {
-	return luaL_error(L, "Not implemented yet!");
-
-	/*TranslatedString name;
+	TranslatedString name;
 	object->GetDisplayName(name);
 	push(L, name.Handle.ReferenceString);
-	return 1;*/
+	return 1;
 }
 
 }
