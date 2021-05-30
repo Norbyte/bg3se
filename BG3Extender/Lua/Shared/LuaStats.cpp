@@ -10,6 +10,7 @@ namespace bg3se::lua::stats
 	int LuaStatSetAttribute(lua_State* L, CRPGStats_Object* object, char const* attributeName, int valueIdx);
 }
 
+#include <Lua/Shared/LuaObjectProxy.inl>
 #include <Lua/Shared/LuaCharacter.inl>
 #include <Lua/Shared/LuaItem.inl>
 #include <Lua/Shared/StatEntries.inl>

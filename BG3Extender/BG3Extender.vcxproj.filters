@@ -464,6 +464,9 @@
     <None Include="GameDefinitions\PropertyMaps\BoostComponents.inl">
       <Filter>GameDefinitions\PropertyMaps</Filter>
     </None>
+    <None Include="Lua\Shared\LuaObjectProxy.inl">
+      <Filter>Lua\Shared</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

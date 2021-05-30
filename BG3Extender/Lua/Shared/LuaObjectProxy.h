@@ -262,7 +262,7 @@ namespace bg3se::lua
 
 
 	class ObjectProxy : private Userdata<ObjectProxy>, public Indexable, public NewIndexable, 
-		public Iterable, public Pushable, public GarbageCollected
+		public Iterable, public Stringifiable, public Pushable, public GarbageCollected
 	{
 	public:
 		static char const * const MetatableName;
@@ -334,59 +334,11 @@ namespace bg3se::lua
 	protected:
 		friend Userdata<ObjectProxy>;
 
-		int Index(lua_State* L)
-		{
-			StackCheck _(L, 1);
-			auto impl = GetImpl();
-			if (!lifetime_.IsAlive()) {
-				luaL_error(L, "Attempted to read dead object of type '%s'", impl->GetTypeName());
-				push(L, nullptr);
-				return 1;
-			}
-
-			auto prop = luaL_checkstring(L, 2);
-			if (!impl->GetProperty(L, prop)) {
-				push(L, nullptr);
-			}
-
-			return 1;
-		}
-
-		int NewIndex(lua_State* L)
-		{
-			StackCheck _(L, 0);
-			auto impl = GetImpl();
-			if (!lifetime_.IsAlive()) {
-				luaL_error(L, "Attempted to write dead object of type '%s'", impl->GetTypeName());
-				return 0;
-			}
-
-			auto prop = luaL_checkstring(L, 2);
-			impl->SetProperty(L, prop, 3);
-			return 0;
-		}
-
-		int Next(lua_State* L)
-		{
-			auto impl = GetImpl();
-			if (!lifetime_.IsAlive()) {
-				luaL_error(L, "Attempted to iterate dead object of type '%s'", impl->GetTypeName());
-				return 0;
-			}
-
-			if (lua_type(L, 2) == LUA_TNIL) {
-				return impl->Next(L, nullptr);
-			} else {
-				auto key = checked_get<char const*>(L, 2);
-				return impl->Next(L, key);
-			}
-		}
-
-		int GC(lua_State* L)
-		{
-			this->~ObjectProxy();
-			return 0;
-		}
+		int Index(lua_State* L);
+		int NewIndex(lua_State* L);
+		int Next(lua_State* L);
+		int ToString(lua_State* L);
+		int GC(lua_State* L);
 	};
 
 	template <class T>

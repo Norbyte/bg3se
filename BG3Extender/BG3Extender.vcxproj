@@ -325,6 +325,7 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
     <None Include="Lua\Shared\LuaItem.inl" />
     <None Include="Lua\Shared\LuaJson.inl" />
     <None Include="Lua\Shared\LuaLocalization.inl" />
+    <None Include="Lua\Shared\LuaObjectProxy.inl" />
     <None Include="Lua\Shared\LuaPropertyMapHelpers.h" />
     <None Include="Lua\Shared\LuaShared.inl" />
     <ClCompile Include="Lua\Shared\LuaObjectProxies.cpp">
