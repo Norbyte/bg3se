@@ -9,14 +9,29 @@ END_SE()
 
 namespace bg3se::lua
 {
-	class EntityProxy : public Userdata<EntityProxy>, public Indexable, public Pushable
+	class EntityProxy : public Userdata<EntityProxy>, public Indexable, public Stringifiable, public Pushable
 	{
 	public:
 		static char const* const MetatableName;
 
 		EntityProxy(EntityHandle const& handle, EntitySystemHelpersBase* entitySystem);
 
-		static int HasComponent(lua_State* L);
+		template <class T>
+		bool HasComponent()
+		{
+			return this->entitySystem_->GetEntityComponent<T>(handle_, false) != nullptr;
+		}
+
+		template <class T>
+		T* GetComponent()
+		{
+			return this->entitySystem_->GetEntityComponent<T>(handle_, false);
+		}
+
+		static int HasRawComponent(lua_State* L);
+		static int GetAllRawComponents(lua_State* L);
+		static int GetComponent(lua_State* L);
+		static int GetAllComponents(lua_State* L);
 		static int GetEntityType(lua_State* L);
 		static int GetSalt(lua_State* L);
 		static int GetIndex(lua_State* L);
@@ -24,6 +39,7 @@ namespace bg3se::lua
 		static void PopulateMetatable(lua_State* L);
 
 		int Index(lua_State* L);
+		int ToString(lua_State* L);
 
 		inline EntityHandle const& Handle() const
 		{
@@ -41,7 +57,7 @@ namespace bg3se::lua
 	};
 	
 
-	class ObjectHandleProxy : public Userdata<ObjectHandleProxy>, public Indexable, public Pushable
+	class ObjectHandleProxy : public Userdata<ObjectHandleProxy>, public Indexable, public Stringifiable, public Pushable
 	{
 	public:
 		static char const* const MetatableName;
@@ -55,6 +71,7 @@ namespace bg3se::lua
 		static void PopulateMetatable(lua_State* L);
 
 		int Index(lua_State* L);
+		int ToString(lua_State* L);
 
 		inline ObjectHandle const& Handle() const
 		{

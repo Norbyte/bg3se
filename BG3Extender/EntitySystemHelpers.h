@@ -40,6 +40,16 @@ public:
 		}
 	}
 
+	inline std::optional<ExtComponentType> GetComponentType(EntityWorldBase::ComponentTypeIndex index) const
+	{
+		auto it = componentIndexToTypeMappings_.find((int32_t)index);
+		if (it != componentIndexToTypeMappings_.end()) {
+			return it->second;
+		} else {
+			return {};
+		}
+	}
+
 	inline std::optional<EntityWorldBase::ComponentTypeIndex> GetComponentIndex(ExtComponentType type) const
 	{
 		auto idx = componentIndices_[(unsigned)type];
@@ -187,6 +197,7 @@ private:
 	std::unordered_map<STDString, IndexMappings> componentNameToIndexMappings_;
 	std::unordered_map<int32_t, STDString> componentIndexToNameMappings_;
 	std::unordered_map<int32_t, STDString> handleIndexToNameMappings_;
+	std::unordered_map<int32_t, ExtComponentType> componentIndexToTypeMappings_;
 	std::unordered_map<STDString, int32_t> systemIndexMappings_;
 	std::array<EntityWorldBase::ComponentTypeIndex, (int)ExtComponentType::Max> componentIndices_;
 	std::array<EntityWorldBase::HandleTypeIndex, (int)ExtComponentType::Max> handleIndices_;

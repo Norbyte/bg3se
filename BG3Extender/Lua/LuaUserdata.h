@@ -15,6 +15,7 @@ namespace bg3se::lua
 	class NewIndexable {};
 	class Lengthable {};
 	class Iterable {};
+	class Stringifiable {};
 	class Pushable {};
 	class GarbageCollected {};
 
@@ -27,8 +28,7 @@ namespace bg3se::lua
 			if (lua_type(L, index) == LUA_TUSERDATA) {
 				auto obj = luaL_testudata(L, index, T::MetatableName);
 				return reinterpret_cast<T*>(obj);
-			}
-			else {
+			} else {
 				return nullptr;
 			}
 		}
@@ -52,8 +52,7 @@ namespace bg3se::lua
 			if constexpr (std::is_base_of_v<Callable, T>) {
 				auto self = CheckUserData(L, 1);
 				return self->LuaCall(L);
-			}
-			else {
+			} else {
 				return luaL_error(L, "Not callable!");
 			}
 		}
@@ -63,8 +62,7 @@ namespace bg3se::lua
 			if constexpr (std::is_base_of_v<Indexable, T>) {
 				auto self = CheckUserData(L, 1);
 				return self->Index(L);
-			}
-			else {
+			} else {
 				return luaL_error(L, "Not indexable!");
 			}
 		}
@@ -74,8 +72,7 @@ namespace bg3se::lua
 			if constexpr (std::is_base_of_v<NewIndexable, T>) {
 				auto self = CheckUserData(L, 1);
 				return self->NewIndex(L);
-			}
-			else {
+			} else {
 				return luaL_error(L, "Not newindexable!");
 			}
 		}
@@ -85,8 +82,7 @@ namespace bg3se::lua
 			if constexpr (std::is_base_of_v<Lengthable, T>) {
 				auto self = CheckUserData(L, 1);
 				return self->Length(L);
-			}
-			else {
+			} else {
 				return luaL_error(L, "Not lengthable!");
 			}
 		}
@@ -96,9 +92,18 @@ namespace bg3se::lua
 			if constexpr (std::is_base_of_v<Iterable, T>) {
 				auto self = CheckUserData(L, 1);
 				return self->Pairs(L);
-			}
-			else {
+			} else {
 				return luaL_error(L, "Not iterable!");
+			}
+		}
+
+		static int ToStringProxy(lua_State* L)
+		{
+			if constexpr (std::is_base_of_v<Stringifiable, T>) {
+				auto self = CheckUserData(L, 1);
+				return self->ToString(L);
+			} else {
+				return luaL_error(L, "Not stringifiable!");
 			}
 		}
 
@@ -107,8 +112,7 @@ namespace bg3se::lua
 			if constexpr (std::is_base_of_v<GarbageCollected, T>) {
 				auto self = CheckUserData(L, 1);
 				return self->GC(L);
-			}
-			else {
+			} else {
 				return luaL_error(L, "Not garbage collected!");
 			}
 		}
@@ -129,8 +133,7 @@ namespace bg3se::lua
 			if constexpr (std::is_base_of_v<Iterable, T>) {
 				auto self = CheckUserData(L, 1);
 				return self->Next(L);
-			}
-			else {
+			} else {
 				return luaL_error(L, "Not iterable!");
 			}
 		}
@@ -173,6 +176,11 @@ namespace bg3se::lua
 				lua_setfield(L, -2, "__pairs"); // mt.__index = &Length; stack: mt
 			}
 
+			if constexpr (std::is_base_of_v<Stringifiable, T>) {
+				lua_pushcfunction(L, &ToStringProxy);
+				lua_setfield(L, -2, "__tostring");
+			}
+
 			if constexpr (std::is_base_of_v<GarbageCollected, T>) {
 				lua_pushcfunction(L, &GCProxy);
 				lua_setfield(L, -2, "__gc");
@@ -189,13 +197,11 @@ namespace bg3se::lua
 	{
 		if (lua_isnil(L, index)) {
 			return {};
-		}
-		else {
+		} else {
 			auto val = T::AsUserData(L, index);
 			if (val) {
 				return val;
-			}
-			else {
+			} else {
 				ERR("Expected userdata of type '%s'", T::MetatableName);
 				return {};
 			}
