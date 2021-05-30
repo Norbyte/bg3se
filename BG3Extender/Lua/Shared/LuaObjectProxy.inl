@@ -2,6 +2,34 @@
 
 namespace bg3se::lua
 {
+
+	bool GenericPropertyMap::GetRawProperty(lua_State* L, LifetimeHolder const& lifetime, void* object, STDString const& prop) const
+	{
+		auto it = Properties.find(prop);
+		if (it == Properties.end()) {
+			return 0;
+		}
+
+		return it->second.Get(L, lifetime, object, it->second.Offset);
+	}
+
+	bool GenericPropertyMap::SetRawProperty(lua_State* L, LifetimeHolder const& lifetime, void* object, STDString const& prop, int index) const
+	{
+		auto it = Properties.find(prop);
+		if (it == Properties.end()) {
+			return 0;
+		}
+
+		return it->second.Set(L, lifetime, object, index, it->second.Offset);
+	}
+
+	void GenericPropertyMap::AddRawProperty(STDString const& prop, typename RawPropertyAccessors::Getter* getter, 
+		typename RawPropertyAccessors::Setter* setter, std::size_t offset)
+	{
+		Properties.insert(std::make_pair(prop, RawPropertyAccessors{ getter, setter, offset }));
+	}
+
+
 	int ObjectProxy::Index(lua_State* L)
 	{
 		StackCheck _(L, 1);

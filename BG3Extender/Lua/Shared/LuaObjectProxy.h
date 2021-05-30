@@ -7,46 +7,65 @@ namespace bg3se::lua
 {
 	LifetimeHolder GetCurrentLifetime();
 
+	class GenericPropertyMap
+	{
+	public:
+		struct RawPropertyAccessors
+		{
+			using Getter = bool (lua_State* L, LifetimeHolder const& lifetime, void* object, std::size_t offset);
+			using Setter = bool (lua_State* L, LifetimeHolder const& lifetime, void* object, int index, std::size_t offset);
+
+			Getter* Get;
+			Setter* Set;
+			std::size_t Offset;
+		};
+
+		bool GetRawProperty(lua_State* L, LifetimeHolder const& lifetime, void* object, STDString const& prop) const;
+		bool SetRawProperty(lua_State* L, LifetimeHolder const& lifetime, void* object, STDString const& prop, int index) const;
+		void AddRawProperty(STDString const& prop, typename RawPropertyAccessors::Getter* getter, 
+			typename RawPropertyAccessors::Setter* setter, std::size_t offset);
+
+		std::unordered_map<STDString, RawPropertyAccessors> Properties;
+		std::vector<STDString> Parents;
+	};
+
 	template <class T>
-	class LuaPropertyMap
+	class LuaPropertyMap : public GenericPropertyMap
 	{
 	public:
 		struct PropertyAccessors
 		{
-			using Getter = bool (lua_State* L, LifetimeHolder const& lifetime, T* object);
-			using Setter = bool (lua_State* L, LifetimeHolder const& lifetime, T* object, int index);
-
-			Getter* Get;
-			Setter* Set;
+			using Getter = bool (lua_State* L, LifetimeHolder const& lifetime, T* object, std::size_t offset);
+			using Setter = bool (lua_State* L, LifetimeHolder const& lifetime, T* object, int index, std::size_t offset);
 		};
 
-		bool GetProperty(lua_State* L, LifetimeHolder const& lifetime, T* object, STDString const& prop) const
+		inline bool GetProperty(lua_State* L, LifetimeHolder const& lifetime, T* object, STDString const& prop) const
 		{
-			auto it = Properties.find(prop);
-			if (it == Properties.end()) {
-				return 0;
-			}
-
-			return it->second.Get(L, lifetime, object);
+			return GetRawProperty(L, lifetime, (void*)object, prop);
 		}
 
-		bool SetProperty(lua_State* L, LifetimeHolder const& lifetime, T* object, STDString const& prop, int index) const
+		inline bool SetProperty(lua_State* L, LifetimeHolder const& lifetime, T* object, STDString const& prop, int index) const
 		{
-			auto it = Properties.find(prop);
-			if (it == Properties.end()) {
-				return 0;
-			}
-
-			return it->second.Set(L, lifetime, object, index);
+			return SetRawProperty(L, lifetime, (void*)object, prop, index);
 		}
 
-		void AddProperty(STDString const& prop, typename PropertyAccessors::Getter* getter, typename PropertyAccessors::Setter* setter)
+		inline bool GetProperty(lua_State* L, LifetimeHolder const& lifetime, T* object, RawPropertyAccessors const& prop) const
 		{
-			Properties.insert(std::make_pair(prop, PropertyAccessors{ getter, setter }));
+			auto getter = (PropertyAccessors::Getter*)prop.Get;
+			return getter(L, lifetime, object, prop.Offset);
 		}
 
-		std::unordered_map<STDString, PropertyAccessors> Properties;
-		std::vector<STDString> Parents;
+		inline bool SetProperty(lua_State* L, LifetimeHolder const& lifetime, T* object, RawPropertyAccessors const& prop, int index) const
+		{
+			auto setter = (PropertyAccessors::Setter*)prop.Set;
+			return setter(L, lifetime, object, index, prop.Offset);
+		}
+
+		inline void AddProperty(STDString const& prop, typename PropertyAccessors::Getter* getter, 
+			typename PropertyAccessors::Setter* setter, std::size_t offset)
+		{
+			AddRawProperty(prop, (RawPropertyAccessors::Getter*)getter, (RawPropertyAccessors::Setter*)setter, offset);
+		}
 	};
 
 	template <class T>
@@ -106,7 +125,7 @@ namespace bg3se::lua
 					StackCheck _(L, 2);
 					auto it = map.Properties.begin();
 					push(L, it->first);
-					if (!it->second.Get(L, lifetime, object)) {
+					if (!map.GetProperty(L, lifetime, object, it->second)) {
 						push(L, nullptr);
 					}
 
@@ -120,7 +139,7 @@ namespace bg3se::lua
 					if (it != map.Properties.end()) {
 						StackCheck _(L, 2);
 						push(L, it->first);
-						if (!it->second.Get(L, lifetime, object)) {
+						if (!map.GetProperty(L, lifetime, object, it->second)) {
 							push(L, nullptr);
 						}
 

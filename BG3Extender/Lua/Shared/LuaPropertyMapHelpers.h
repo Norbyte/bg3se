@@ -60,6 +60,55 @@ namespace bg3se::lua
 	}
 
 	template <class T>
+	bool GenericGetOffsetProperty(lua_State* L, LifetimeHolder const& lifetime, void* obj, std::size_t offset)
+	{
+		auto* value = (T*)((std::uintptr_t)obj + offset);
+		return LuaWrite(L, *value) == 1;
+	}
+
+	template <class T>
+	bool GenericSetOffsetProperty(lua_State* L, LifetimeHolder const& lifetime, void* obj, int index, std::size_t offset)
+	{
+		auto* value = (T*)((std::uintptr_t)obj + offset);
+		lua_pushvalue(L, index);
+		LuaRead(L, *value);
+		lua_pop(L, 1);
+		return true;
+	}
+
+	bool SetPropertyWriteProtected(lua_State* L, LifetimeHolder const& lifetime, void* obj, int index, std::size_t offset)
+	{
+		return false;
+	}
+
+	template <class T>
+	bool GenericGetOffsetRefProperty(lua_State* L, LifetimeHolder const& lifetime, void* obj, std::size_t offset)
+	{
+		auto* value = (T*)((std::uintptr_t)obj + offset);
+		MakeObjectRef(L, lifetime, value);
+		return true;
+	}
+
+	template <class T>
+	bool GenericGetOffsetPtrProperty(lua_State* L, LifetimeHolder const& lifetime, void* obj, std::size_t offset)
+	{
+		auto* value = (T*)((std::uintptr_t)obj + offset);
+		if (*value) {
+			MakeObjectRef(L, lifetime, *value);
+		}
+		else {
+			push(L, nullptr);
+		}
+
+		return true;
+	}
+
+	bool GenericSetOffsetRefProperty(lua_State* L, LifetimeHolder const& lifetime, void* obj, int index, std::size_t offset)
+	{
+		return false;
+	}
+
+	template <class T>
 	bool GenericGetProperty(lua_State* L, LifetimeHolder const& lifetime, T const& value)
 	{
 		return LuaWrite(L, value) == 1;
@@ -74,24 +123,12 @@ namespace bg3se::lua
 		return true;
 	}
 
+	void CopyRawProperties(GenericPropertyMap const& base, GenericPropertyMap& child, STDString const& baseClsName);
+
 	template <class T, class T2>
-	void CopyProperties(LuaPropertyMap<T> const& base, LuaPropertyMap<T2>& child, STDString const& baseClsName)
+	inline void CopyProperties(LuaPropertyMap<T> const& base, LuaPropertyMap<T2>& child, STDString const& baseClsName)
 	{
 		static_assert(std::is_base_of_v<T, T2>, "Can only copy properties from base class");
-		for (auto const& prop : base.Properties) {
-			auto getter = prop.second.Get;
-			auto setter = prop.second.Set;
-			child.AddProperty(
-				prop.first,
-				reinterpret_cast<LuaPropertyMap<T2>::PropertyAccessors::Getter*>(prop.second.Get),
-				reinterpret_cast<LuaPropertyMap<T2>::PropertyAccessors::Setter*>(prop.second.Set)
-			);
-		}
-
-		for (auto const& parent : base.Parents) {
-			child.Parents.push_back(parent);
-		}
-
-		child.Parents.push_back(baseClsName);
+		CopyRawProperties(base, child, baseClsName);
 	}
 }
