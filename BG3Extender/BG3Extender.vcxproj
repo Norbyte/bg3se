@@ -178,6 +178,7 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
     <ClInclude Include="Lua\Shared\LuaEntityProxy.h" />
     <ClInclude Include="Lua\Shared\LuaLifetime.h" />
     <ClInclude Include="Lua\Shared\LuaObjectProxy.h" />
+    <ClInclude Include="Lua\Shared\LuaSetProxy.h" />
     <ClInclude Include="Lua\Shared\LuaStats.h" />
     <ClInclude Include="ScriptExtender.h" />
     <ClInclude Include="Osiris\Debugger\Debugger.h" />
@@ -329,6 +330,7 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
     <None Include="Lua\Shared\LuaLocalization.inl" />
     <None Include="Lua\Shared\LuaObjectProxy.inl" />
     <None Include="Lua\Shared\LuaPropertyMapHelpers.h" />
+    <None Include="Lua\Shared\LuaSetProxy.inl" />
     <None Include="Lua\Shared\LuaShared.inl" />
     <ClCompile Include="Lua\Shared\LuaObjectProxies.cpp">
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">/bigobj %(AdditionalOptions)</AdditionalOptions>

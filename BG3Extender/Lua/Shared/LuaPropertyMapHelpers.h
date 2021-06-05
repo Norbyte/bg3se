@@ -31,22 +31,23 @@ namespace bg3se::lua
 	template <class T>
 	void MakeObjectRef(lua_State* L, LifetimeHolder const& lifetime, ObjectSet<T>* value)
 	{
-		// FIXME!
-		push(L, "ObjectSet PROXIES NOT SUPPORTED YET!");
+		if constexpr (ByValArray<T>::Value || std::is_enum_v<T>) {
+			ArrayProxy::MakeByVal<T>(L, value, lifetime);
+		} else {
+			ArrayProxy::MakeByRef<T>(L, value, lifetime);
+		}
 	}
 
 	template <class T>
 	void MakeObjectRef(lua_State* L, LifetimeHolder const& lifetime, MultiHashSet<T>* value)
 	{
-		// FIXME!
-		push(L, "MultiHashSet PROXIES NOT SUPPORTED YET!");
+		SetProxy::Make<T>(L, value, lifetime);
 	}
 
 	template <class T>
 	void MakeObjectRef(lua_State* L, LifetimeHolder const& lifetime, VirtualMultiHashSet<T>* value)
 	{
-		// FIXME!
-		push(L, "VirtualMultiHashSet PROXIES NOT SUPPORTED YET!");
+		SetProxy::Make<T>(L, value, lifetime);
 	}
 
 	template <class TKey, class TValue>

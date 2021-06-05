@@ -4,6 +4,7 @@
 #include <Lua/Shared/LuaLifetime.h>
 #include <Lua/Shared/LuaObjectProxy.h>
 #include <Lua/Shared/LuaArrayProxy.h>
+#include <Lua/Shared/LuaSetProxy.h>
 #include <Lua/Shared/LuaEntityProxy.h>
 
 #include <mutex>

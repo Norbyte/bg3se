@@ -22,7 +22,15 @@ namespace bg3se
 	BY_VAL_ARRAY(FixedString);
 	BY_VAL_ARRAY(STDString);
 	BY_VAL_ARRAY(STDWString);
+	BY_VAL_ARRAY(Path);
 	BY_VAL_ARRAY(UUID);
+	BY_VAL_ARRAY(NetId);
+	BY_VAL_ARRAY(UserId);
+	BY_VAL_ARRAY(glm::ivec2);
+	BY_VAL_ARRAY(glm::vec2);
+	BY_VAL_ARRAY(glm::vec3);
+	BY_VAL_ARRAY(glm::vec4);
+	BY_VAL_ARRAY(glm::mat3);
 }
 
 namespace bg3se::lua
@@ -39,10 +47,9 @@ namespace bg3se::lua
 		virtual bool SetElement(lua_State* L, unsigned arrayIndex, int luaIndex) = 0;
 		virtual int Next(lua_State* L, int key) = 0;
 		virtual unsigned Length() = 0;
-		virtual bool IsA(char const* typeName) = 0;
 	};
 
-
+	
 	template <class T>
 	struct ArrayProxyHelpers
 	{
@@ -110,11 +117,6 @@ namespace bg3se::lua
 			}
 		}
 
-		bool IsA(char const* typeName) override
-		{
-			return ObjectProxyHelpers<T>::IsA(typeName);
-		}
-
 	private:
 		Array<T>* object_;
 		LifetimeHolder lifetime_;
@@ -152,7 +154,7 @@ namespace bg3se::lua
 		bool GetElement(lua_State* L, unsigned arrayIndex) override
 		{
 			if (arrayIndex >= 0 && arrayIndex < (int)object_->Size()) {
-				push(L, (*object_)[arrayIndex]);
+				LuaWrite(L, (*object_)[arrayIndex]);
 				return true;
 			} else {
 				return false;
@@ -188,6 +190,152 @@ namespace bg3se::lua
 		{
 			if (key >= -1 && key < (int)object_->Size() - 1) {
 				push(L, ++key);
+				LuaWrite(L, (*object_)[key]);
+				return 2;
+			} else {
+				return 0;
+			}
+		}
+
+	private:
+		Array<T>* object_;
+		LifetimeHolder lifetime_;
+	};
+
+
+	template <class T>
+	class ObjectSetProxyByRefImpl : public ArrayProxyImplBase
+	{
+	public:
+		static_assert(!std::is_pointer_v<T>, "ObjectSetProxyByRefImpl template parameter should not be a pointer type!");
+
+		ObjectSetProxyByRefImpl(LifetimeHolder const& lifetime, ObjectSet<T> * obj)
+			: object_(obj), lifetime_(lifetime)
+		{}
+		
+		~ObjectSetProxyByRefImpl() override
+		{}
+
+		T* Get() const
+		{
+			return object_;
+		}
+
+		void* GetRaw() override
+		{
+			return object_;
+		}
+
+		char const* GetTypeName() const override
+		{
+			return ObjectProxyHelpers<T>::TypeName;
+		}
+
+		bool GetElement(lua_State* L, unsigned arrayIndex) override
+		{
+			if (arrayIndex >= 0 && arrayIndex < (int)object_->Size) {
+				MakeObjectRef(L, lifetime_, &(*object_)[arrayIndex]);
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		bool SetElement(lua_State* L, unsigned arrayIndex, int luaIndex) override
+		{
+			// Appending/swapping elements to by-ref arrays not supported for now
+			return false;
+		}
+
+		unsigned Length() override
+		{
+			return object_->Size;
+		}
+
+		int Next(lua_State* L, int key) override
+		{
+			if (key >= -1 && key < (int)object_->Size - 1) {
+				push(L, ++key);
+				MakeObjectRef(L, lifetime_, &(*object_)[key]);
+				return 2;
+			} else {
+				return 0;
+			}
+		}
+
+	private:
+		ObjectSet<T>* object_;
+		LifetimeHolder lifetime_;
+	};
+
+
+	template <class T>
+	class ObjectSetProxyByValImpl : public ArrayProxyImplBase
+	{
+	public:
+		static_assert(!std::is_pointer_v<T>, "ObjectSetProxyByValImpl template parameter should not be a pointer type!");
+
+		ObjectSetProxyByValImpl(LifetimeHolder const& lifetime, ObjectSet<T> * obj)
+			: object_(obj), lifetime_(lifetime)
+		{}
+		
+		~ObjectSetProxyByValImpl() override
+		{}
+
+		T* Get() const
+		{
+			return object_;
+		}
+
+		void* GetRaw() override
+		{
+			return object_;
+		}
+
+		char const* GetTypeName() const override
+		{
+			return ArrayProxyHelpers<T>::TypeName;
+		}
+
+		bool GetElement(lua_State* L, unsigned arrayIndex) override
+		{
+			if (arrayIndex >= 0 && arrayIndex < (int)object_->Size) {
+				push(L, (*object_)[arrayIndex]);
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		bool SetElement(lua_State* L, unsigned arrayIndex, int luaIndex) override
+		{
+			if (arrayIndex < object_->Size) {
+				lua_pushvalue(L, luaIndex);
+				LuaRead(L, (*object_)[arrayIndex]);
+				lua_pop(L, 1);
+				return true;
+			} else if (arrayIndex == object_->Size) {
+				T val;
+				lua_pushvalue(L, luaIndex);
+				LuaRead(L, val);
+				lua_pop(L, 1);
+
+				object_->Add(val);
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		unsigned Length() override
+		{
+			return object_->Size;
+		}
+
+		int Next(lua_State* L, int key) override
+		{
+			if (key >= -1 && key < (int)object_->Size - 1) {
+				push(L, ++key);
 				push(L, (*object_)[key]);
 				return 2;
 			} else {
@@ -195,13 +343,8 @@ namespace bg3se::lua
 			}
 		}
 
-		bool IsA(char const* typeName) override
-		{
-			return strcmp(ArrayProxyHelpers<T>::TypeName, typeName) == 0;
-		}
-
 	private:
-		Array<T>* object_;
+		ObjectSet<T>* object_;
 		LifetimeHolder lifetime_;
 	};
 
@@ -221,11 +364,27 @@ namespace bg3se::lua
 		}
 
 		template <class T>
+		inline static ObjectSetProxyByRefImpl<T>* MakeByRef(lua_State* L, ObjectSet<T>* object, LifetimeHolder const& lifetime)
+		{
+			static_assert(sizeof(ObjectSetProxyByRefImpl<T>) <= sizeof(impl_), "ArrayProxy implementation object too large!");
+			auto self = New(L, lifetime);
+			return new (self->impl_) ObjectSetProxyByRefImpl<T>(lifetime, object);
+		}
+
+		template <class T>
 		inline static ArrayProxyByValImpl<T>* MakeByVal(lua_State* L, Array<T>* object, LifetimeHolder const& lifetime)
 		{
 			static_assert(sizeof(ArrayProxyByValImpl<T>) <= sizeof(impl_), "ArrayProxy implementation object too large!");
 			auto self = New(L, lifetime);
 			return new (self->impl_) ArrayProxyByValImpl<T>(lifetime, object);
+		}
+
+		template <class T>
+		inline static ObjectSetProxyByValImpl<T>* MakeByVal(lua_State* L, ObjectSet<T>* object, LifetimeHolder const& lifetime)
+		{
+			static_assert(sizeof(ObjectSetProxyByValImpl<T>) <= sizeof(impl_), "ArrayProxy implementation object too large!");
+			auto self = New(L, lifetime);
+			return new (self->impl_) ObjectSetProxyByValImpl<T>(lifetime, object);
 		}
 
 		inline ArrayProxyImplBase* GetImpl()
@@ -245,7 +404,7 @@ namespace bg3se::lua
 				return nullptr;
 			}
 
-			if (GetImpl()->IsA(ArrayProxyHelpers<T>::TypeName)) {
+			if (strcmp(ArrayProxyHelpers<T>::TypeName, GetImpl()->GetTypeName()) == 0) {
 				return reinterpret_cast<T*>(GetImpl()->GetRaw());
 			} else {
 				return nullptr;
@@ -286,16 +445,16 @@ namespace bg3se::lua
 	{
 		auto proxy = Userdata<ArrayProxy>::CheckUserData(L, index);
 		auto const& typeName = ArrayProxyHelpers<T>::TypeName;
-		if (proxy->GetImpl()->IsA(typeName)) {
+		if (strcmp(ArrayProxyHelpers<T>::TypeName, typeName) == 0) {
 			auto obj = proxy->Get<T>();
 			if (obj == nullptr) {
-				luaL_error(L, "Argument %d: got array of '%s' whose lifetime has expired", index, typeName);
+				luaL_error(L, "Argument %d: got Array<%s> whose lifetime has expired", index, typeName);
 				return nullptr;
 			} else {
 				return obj;
 			}
 		} else {
-			luaL_error(L, "Argument %d: expected an array of '%s', got '%s'", index, typeName, proxy->GetImpl()->GetTypeName());
+			luaL_error(L, "Argument %d: expected Array<%s>, got Array<%s>", index, typeName, proxy->GetImpl()->GetTypeName());
 			return nullptr;
 		}
 	}
