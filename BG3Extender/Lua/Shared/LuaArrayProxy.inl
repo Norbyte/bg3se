@@ -1,8 +1,8 @@
 #include <Lua/Shared/LuaArrayProxy.h>
 
-namespace bg3se::lua
+namespace bg3se
 {
-#define BY_VAL_ARRAY_HELPERS(ty) char const* const ArrayProxyHelpers<ty>::TypeName = #ty;
+#define BY_VAL_ARRAY_HELPERS(ty) char const* const TypeInfo<ty>::TypeName = #ty;
 
 	BY_VAL_ARRAY_HELPERS(uint8_t);
 	BY_VAL_ARRAY_HELPERS(int16_t);
@@ -29,7 +29,10 @@ namespace bg3se::lua
 	BY_VAL_ARRAY_HELPERS(glm::vec3);
 	BY_VAL_ARRAY_HELPERS(glm::vec4);
 	BY_VAL_ARRAY_HELPERS(glm::mat3);
+}
 
+namespace bg3se::lua
+{
 	char const* const ArrayProxy::MetatableName = "bg3se::Array";
 
 	int ArrayProxy::Index(lua_State* L)

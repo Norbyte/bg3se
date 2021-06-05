@@ -49,13 +49,6 @@ namespace bg3se::lua
 		virtual unsigned Length() = 0;
 	};
 
-	
-	template <class T>
-	struct ArrayProxyHelpers
-	{
-		static char const* const TypeName;
-	};
-
 
 	template <class T>
 	class ArrayProxyByRefImpl : public ArrayProxyImplBase
@@ -82,7 +75,7 @@ namespace bg3se::lua
 
 		char const* GetTypeName() const override
 		{
-			return ObjectProxyHelpers<T>::TypeName;
+			return TypeInfo<T>::TypeName;
 		}
 
 		bool GetElement(lua_State* L, unsigned arrayIndex) override
@@ -148,7 +141,7 @@ namespace bg3se::lua
 
 		char const* GetTypeName() const override
 		{
-			return ArrayProxyHelpers<T>::TypeName;
+			return TypeInfo<T>::TypeName;
 		}
 
 		bool GetElement(lua_State* L, unsigned arrayIndex) override
@@ -228,7 +221,7 @@ namespace bg3se::lua
 
 		char const* GetTypeName() const override
 		{
-			return ObjectProxyHelpers<T>::TypeName;
+			return TypeInfo<T>::TypeName;
 		}
 
 		bool GetElement(lua_State* L, unsigned arrayIndex) override
@@ -294,13 +287,13 @@ namespace bg3se::lua
 
 		char const* GetTypeName() const override
 		{
-			return ArrayProxyHelpers<T>::TypeName;
+			return TypeInfo<T>::TypeName;
 		}
 
 		bool GetElement(lua_State* L, unsigned arrayIndex) override
 		{
 			if (arrayIndex >= 0 && arrayIndex < (int)object_->Size) {
-				push(L, (*object_)[arrayIndex]);
+				LuaWrite(L, (*object_)[arrayIndex]);
 				return true;
 			} else {
 				return false;
@@ -336,7 +329,7 @@ namespace bg3se::lua
 		{
 			if (key >= -1 && key < (int)object_->Size - 1) {
 				push(L, ++key);
-				push(L, (*object_)[key]);
+				LuaWrite(L, (*object_)[key]);
 				return 2;
 			} else {
 				return 0;
@@ -404,7 +397,7 @@ namespace bg3se::lua
 				return nullptr;
 			}
 
-			if (strcmp(ArrayProxyHelpers<T>::TypeName, GetImpl()->GetTypeName()) == 0) {
+			if (strcmp(TypeInfo<T>::TypeName, GetImpl()->GetTypeName()) == 0) {
 				return reinterpret_cast<T*>(GetImpl()->GetRaw());
 			} else {
 				return nullptr;
@@ -444,8 +437,8 @@ namespace bg3se::lua
 	inline T* checked_get_array_proxy(lua_State* L, int index)
 	{
 		auto proxy = Userdata<ArrayProxy>::CheckUserData(L, index);
-		auto const& typeName = ArrayProxyHelpers<T>::TypeName;
-		if (strcmp(ArrayProxyHelpers<T>::TypeName, typeName) == 0) {
+		auto const& typeName = TypeInfo<T>::TypeName;
+		if (strcmp(proxy->GetImpl()->GetTypeName(), typeName) == 0) {
 			auto obj = proxy->Get<T>();
 			if (obj == nullptr) {
 				luaL_error(L, "Argument %d: got Array<%s> whose lifetime has expired", index, typeName);

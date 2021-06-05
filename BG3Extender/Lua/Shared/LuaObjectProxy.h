@@ -91,14 +91,12 @@ namespace bg3se::lua
 	template <class T>
 	struct ObjectProxyHelpers
 	{
-		static char const* const TypeName;
-
 		static bool GetProperty(lua_State* L, T* object, LifetimeHolder const& lifetime, char const* prop)
 		{
 			auto const& map = StaticLuaPropertyMap<T>::PropertyMap;
 			auto fetched = map.GetProperty(L, lifetime, object, prop);
 			if (!fetched) {
-				luaL_error(L, "Object of type '%s' has no property named '%s'", TypeName, prop);
+				luaL_error(L, "Object of type '%s' has no property named '%s'", TypeInfo<T>::TypeName, prop);
 				return false;
 			}
 
@@ -110,7 +108,7 @@ namespace bg3se::lua
 			auto const& map = StaticLuaPropertyMap<T>::PropertyMap;
 			auto ok = map.SetProperty(L, lifetime, object, prop, index);
 			if (!ok) {
-				luaL_error(L, "Object of type '%s' has no property named '%s'", TypeName, prop);
+				luaL_error(L, "Object of type '%s' has no property named '%s'", TypeInfo<T>::TypeName, prop);
 				return false;
 			}
 
@@ -153,7 +151,7 @@ namespace bg3se::lua
 
 		static bool IsA(char const* typeName)
 		{
-			if (strcmp(typeName, TypeName) == 0) {
+			if (strcmp(typeName, TypeInfo<T>::TypeName) == 0) {
 				return true;
 			}
 
@@ -193,7 +191,7 @@ namespace bg3se::lua
 
 		char const* GetTypeName() const override
 		{
-			return ObjectProxyHelpers<T>::TypeName;
+			return TypeInfo<T>::TypeName;
 		}
 
 		bool GetProperty(lua_State* L, char const* prop) override
@@ -251,7 +249,7 @@ namespace bg3se::lua
 
 		char const* GetTypeName() const override
 		{
-			return ObjectProxyHelpers<T>::TypeName;
+			return TypeInfo<T>::TypeName;
 		}
 
 		bool GetProperty(lua_State* L, char const* prop) override
@@ -330,7 +328,7 @@ namespace bg3se::lua
 				return nullptr;
 			}
 
-			if (GetImpl()->IsA(ObjectProxyHelpers<T>::TypeName)) {
+			if (GetImpl()->IsA(TypeInfo<T>::TypeName)) {
 				return reinterpret_cast<T*>(GetImpl()->GetRaw());
 			} else {
 				return nullptr;
@@ -380,7 +378,7 @@ namespace bg3se::lua
 	inline T* checked_get_proxy(lua_State* L, int index)
 	{
 		auto proxy = Userdata<ObjectProxy>::CheckUserData(L, index);
-		auto const& typeName = ObjectProxyHelpers<T>::TypeName;
+		auto const& typeName = TypeInfo<T>::TypeName;
 		if (proxy->GetImpl()->IsA(typeName)) {
 			auto obj = proxy->Get<T>();
 			if (obj == nullptr) {

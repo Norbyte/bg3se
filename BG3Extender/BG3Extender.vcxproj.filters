@@ -325,6 +325,9 @@
     <ClInclude Include="Lua\Shared\LuaSetProxy.h">
       <Filter>Lua\Shared</Filter>
     </ClInclude>
+    <ClInclude Include="Lua\Shared\LuaMapProxy.h">
+      <Filter>Lua\Shared</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -477,6 +480,9 @@
       <Filter>Lua\Shared</Filter>
     </None>
     <None Include="Lua\Shared\LuaSetProxy.inl">
+      <Filter>Lua\Shared</Filter>
+    </None>
+    <None Include="Lua\Shared\LuaMapProxy.inl">
       <Filter>Lua\Shared</Filter>
     </None>
   </ItemGroup>

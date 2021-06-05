@@ -51,6 +51,13 @@ namespace bg3se
 		//~ProtectedProxyGameObject() = delete;
 	};
 
+	// Helper for registering type names
+	template <class T>
+	struct TypeInfo
+	{
+		static char const* const TypeName;
+	};
+
 	// Tag for engine objects that have a Lua property map
 	struct HasObjectProxy {};
 

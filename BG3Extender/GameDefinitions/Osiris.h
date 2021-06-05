@@ -372,7 +372,7 @@ struct OsirisFunctionHandle
 	}
 };
 
-struct TypeInfo : public ProtectedGameObject<TypeInfo>
+struct OsirisTypeInfo : public ProtectedGameObject<OsirisTypeInfo>
 {
 	char const * Name;
 	ValueType Type;
@@ -1163,7 +1163,7 @@ typedef void (* RuleActionCallProc)(RuleActionNode * Action, void * a1, void * a
 using FunctionDb = TypeDb<Function>;
 using ObjectDb = TypeDb<void*>; // Unknown type
 
-struct OsiTypeDb : public TypeDb<TypeInfo>
+struct OsiTypeDb : public TypeDb<OsirisTypeInfo>
 {
 	struct AliasInfo
 	{

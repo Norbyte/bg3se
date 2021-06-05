@@ -38,24 +38,6 @@ int StatusGetEngineType(lua_State* L, esv::Status* self);
 
 
 
-#define BEGIN_BITMASK_NS(NS, T, type) char const* const ArrayProxyHelpers<NS::T>::TypeName = #T;
-#define BEGIN_ENUM_NS(NS, T, type) char const* const ArrayProxyHelpers<NS::T>::TypeName = #T;
-#define BEGIN_BITMASK(T, type) char const* const ArrayProxyHelpers<T>::TypeName = #T;
-#define BEGIN_ENUM(T, type) char const* const ArrayProxyHelpers<T>::TypeName = #T;
-#define E(label)
-#define EV(label, value)
-#define END_ENUM_NS()
-#define END_ENUM()
-#include <GameDefinitions/Enumerations.inl>
-#undef BEGIN_BITMASK_NS
-#undef BEGIN_ENUM_NS
-#undef BEGIN_BITMASK
-#undef BEGIN_ENUM
-#undef E
-#undef EV
-#undef END_ENUM_NS
-#undef END_ENUM
-
 void CopyRawProperties(GenericPropertyMap const& base, GenericPropertyMap& child, STDString const& baseClsName)
 {
 	for (auto const& prop : base.Properties) {
@@ -71,9 +53,7 @@ void CopyRawProperties(GenericPropertyMap const& base, GenericPropertyMap& child
 
 // Lua property map and object proxy template specialization declarations
 
-#define BEGIN_CLS(name) \
-	char const* const ObjectProxyHelpers<name>::TypeName = #name; \
-	LuaPropertyMap<name> StaticLuaPropertyMap<name>::PropertyMap;
+#define BEGIN_CLS(name) LuaPropertyMap<name> StaticLuaPropertyMap<name>::PropertyMap;
 
 #define END_CLS()
 #define INHERIT(base)
@@ -178,4 +158,55 @@ void CopyRawProperties(GenericPropertyMap const& base, GenericPropertyMap& child
 
 		initialized = true;
 	}
+}
+
+namespace bg3se
+{
+
+#define BEGIN_CLS(name) char const* const TypeInfo<name>::TypeName = #name;
+#define END_CLS()
+#define INHERIT(base)
+#define P(prop)
+#define P_RO(prop)
+#define P_REF(prop)
+#define P_REF_PTR(prop)
+#define PN(prop, name)
+#define P_FUN(prop, fun)
+
+#include <GameDefinitions/PropertyMaps/AllPropertyMaps.inl>
+
+#undef BEGIN_CLS
+#undef END_CLS
+#undef INHERIT
+#undef P
+#undef P_RO
+#undef P_REF
+#undef P_REF_PTR
+#undef PN
+#undef P_FUN
+
+
+#define BEGIN_BITMASK_NS(NS, T, type) char const* const TypeInfo<NS::T>::TypeName = #T;
+#define BEGIN_ENUM_NS(NS, T, type) char const* const TypeInfo<NS::T>::TypeName = #T;
+#define BEGIN_BITMASK(T, type) char const* const TypeInfo<T>::TypeName = #T;
+#define BEGIN_ENUM(T, type) char const* const TypeInfo<T>::TypeName = #T;
+#define E(label)
+#define EV(label, value)
+#define END_ENUM_NS()
+#define END_ENUM()
+#include <GameDefinitions/Enumerations.inl>
+#undef BEGIN_BITMASK_NS
+#undef BEGIN_ENUM_NS
+#undef BEGIN_BITMASK
+#undef BEGIN_ENUM
+#undef E
+#undef EV
+#undef END_ENUM_NS
+#undef END_ENUM
+
+char const* const TypeInfo<VirtualMultiHashSet<FixedString>>::TypeName = "VirtualMultiHashSet<FixedString>";
+char const* const TypeInfo<Array<HotbarContainerComponent::Bar>>::TypeName = "Array<HotbarContainerComponent::Bar>";
+char const* const TypeInfo<Array<EntityHandle>>::TypeName = "Array<EntityHandle>";
+char const* const TypeInfo<Array<ActionResourcesComponent::Amount>>::TypeName = "Array<ActionResourcesComponent::Amount>";
+
 }
