@@ -61,6 +61,14 @@ namespace bg3se
 
 #define HAS_OBJECT_PROXY(cls) template<> struct HasObjectProxyTag<cls> { static constexpr bool HasProxy = true; }
 
+	// Tag for by-ref vs by-val array behavior
+	template <class T>
+	struct ByValArray {
+		static constexpr bool Value = false;
+	};
+
+#define BY_VAL_ARRAY(cls) template<> struct ByValArray<cls> { static constexpr bool Value = true; }
+
 	// Prevents implicit casting between aliases of integral types (eg. NetId and UserId)
 	// Goal is to prevent accidental mixups between different types
 	template <class TValue, class Tag>
@@ -181,6 +189,11 @@ namespace bg3se
 	}
 
 	inline uint64_t Hash(int32_t v)
+	{
+		return v;
+	}
+
+	inline uint64_t Hash(uint64_t v)
 	{
 		return v;
 	}

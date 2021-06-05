@@ -148,7 +148,7 @@ namespace bg3se::lua::stats
 		case RPGEnumerationType::StatsFunctors:
 		{
 			auto functors = object->GetStatsFunctors(attributeFS);
-			if (functors && (*functors)->Size == 1 && (**functors)[0].Name == GFS.strDefault) {
+			if (functors && (*functors)->Size() == 1 && (**functors)[0].Name == GFS.strDefault) {
 				LuaWrite(L, (**functors)[0].Functor);
 			} else {
 				push(L, nullptr);

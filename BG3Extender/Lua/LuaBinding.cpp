@@ -85,8 +85,6 @@ namespace bg3se::lua
 		return  handle->Handle();
 	}
 
-	char const* const ObjectProxy::MetatableName = "bg3se::Object";
-
 	RegistryEntry::RegistryEntry()
 		: L_(nullptr), ref_(-1)
 	{}

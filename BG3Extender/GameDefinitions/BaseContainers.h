@@ -1010,14 +1010,16 @@ namespace bg3se
 	};
 
 	template <class T>
-	struct Array
+	struct ArrayBase
 	{
-		T* Buf{ nullptr };
-		unsigned int Capacity{ 0 };
-		unsigned int Unknown{ 0 };
-		unsigned int Size{ 0 };
-		unsigned int Unknown2{ 0 };
+		T* buf_{ nullptr };
+		unsigned int capacity_{ 0 };
+	};
 
+	template <class T>
+	class Array : private ArrayBase<T>
+	{
+	public:
 		inline Array() {}
 
 		Array(Array const& a)
@@ -1027,9 +1029,9 @@ namespace bg3se
 
 		~Array()
 		{
-			if (Buf) {
+			if (buf_) {
 				Clear();
-				GameFree(Buf);
+				GameFree(buf_);
 			}
 		}
 
@@ -1041,115 +1043,121 @@ namespace bg3se
 
 		void CopyFrom(Array const& a)
 		{
-			Unknown = a.Unknown;
-			Unknown2 = a.Unknown2;
 			Clear();
 
-			if (a.Size > 0) {
-				Reallocate(a.Size);
-				Size = a.Size;
-				for (uint32_t i = 0; i < Size; i++) {
-					new (Buf + i) T(a[i]);
+			if (a.size_ > 0) {
+				Reallocate(a.size_);
+				size_ = a.size_;
+				for (uint32_t i = 0; i < size_; i++) {
+					new (buf_ + i) T(a[i]);
 				}
 			}
 		}
 
+		inline unsigned int Size() const
+		{
+			return size_;
+		}
+
 		inline T const& operator [] (uint32_t index) const
 		{
-			return Buf[index];
+			return buf_[index];
 		}
 
 		inline T& operator [] (uint32_t index)
 		{
-			return Buf[index];
+			return buf_[index];
 		}
 
 		uint32_t CapacityIncrement() const
 		{
-			if (Capacity > 0) {
-				return 2 * Capacity;
-			}
-			else {
+			if (capacity_ > 0) {
+				return 2 * capacity_;
+			} else {
 				return 1;
 			}
 		}
 
 		void Clear()
 		{
-			for (uint32_t i = 0; i < Size; i++) {
-				Buf[i].~T();
+			for (uint32_t i = 0; i < size_; i++) {
+				buf_[i].~T();
 			}
 
-			Size = 0;
+			size_ = 0;
 		}
 
 		void Reallocate(uint32_t newCapacity)
 		{
 			auto newBuf = GameMemoryAllocator::NewRaw<T>(newCapacity);
-			for (uint32_t i = 0; i < std::min(Size, newCapacity); i++) {
-				new (newBuf + i) T(Buf[i]);
+			for (uint32_t i = 0; i < std::min(size_, newCapacity); i++) {
+				new (newBuf + i) T(buf_[i]);
 			}
 
-			if (Buf != nullptr) {
-				for (uint32_t i = 0; i < Size; i++) {
-					Buf[i].~T();
+			if (buf_ != nullptr) {
+				for (uint32_t i = 0; i < size_; i++) {
+					buf_[i].~T();
 				}
 
-				GameFree(Buf);
+				GameFree(buf_);
 			}
 
-			Buf = newBuf;
-			Capacity = newCapacity;
+			buf_ = newBuf;
+			capacity_ = newCapacity;
 		}
 
 		void Add(T const& value)
 		{
-			if (Capacity <= Size) {
+			if (capacity_ <= size_) {
 				Reallocate(CapacityIncrement());
 			}
 
-			new (&Buf[Size++]) T(value);
+			new (&buf_[size_++]) T(value);
 		}
 
 		void Remove(uint32_t index)
 		{
-			if (index >= Size) {
+			if (index >= size_) {
 				ERR("Tried to remove out-of-bounds index %d!", index);
 				return;
 			}
 
-			for (auto i = index; i < Size - 1; i++) {
-				Buf[i] = Buf[i + 1];
+			for (auto i = index; i < size_ - 1; i++) {
+				buf_[i] = buf_[i + 1];
 			}
 
-			Buf[Size - 1].~T();
-			Size--;
+			buf_[size_ - 1].~T();
+			size_--;
 		}
 
 		ContiguousIterator<T> begin()
 		{
-			return ContiguousIterator<T>(Buf);
+			return ContiguousIterator<T>(buf_);
 		}
 
 		ContiguousConstIterator<T> begin() const
 		{
-			return ContiguousConstIterator<T>(Buf);
+			return ContiguousConstIterator<T>(buf_);
 		}
 
 		ContiguousIterator<T> end()
 		{
-			return ContiguousIterator<T>(Buf + Size);
+			return ContiguousIterator<T>(buf_ + size_);
 		}
 
 		ContiguousConstIterator<T> end() const
 		{
-			return ContiguousConstIterator<T>(Buf + Size);
+			return ContiguousConstIterator<T>(buf_ + size_);
 		}
+
+	private:
+		unsigned int size_{ 0 };
 	};
 
 	template <class T>
-	struct VirtualArray : public Array<T>
+	class VirtualArray : public Array<T>
 	{
+	public:
 		inline virtual ~VirtualArray() {};
 	};
 
@@ -1245,14 +1253,14 @@ namespace bg3se
 				return index;
 			}
 
-			int keyIdx = (int)Keys.Size;
+			int keyIdx = (int)Keys.Size();
 			Keys.Add(key);
 			NextIds.Add(-1);
 
-			if (NumHashKeys >= Keys.Size * 2) {
+			if (NumHashKeys >= Keys.Size() * 2) {
 				InsertToHashMap(key, keyIdx);
 			} else {
-				ResizeHashMap(2 * (unsigned)Keys.Size);
+				ResizeHashMap(2 * (unsigned)Keys.Size());
 			}
 
 			return keyIdx;
@@ -1300,7 +1308,7 @@ namespace bg3se
 
 			HashKeys = GameAllocArray<int32_t>(numBuckets, -1);
 			NumHashKeys = numBuckets;
-			for (unsigned k = 0; k < Keys.Size; k++) {
+			for (unsigned k = 0; k < Keys.Size(); k++) {
 				InsertToHashMap(Keys[k], k);
 			}
 		}

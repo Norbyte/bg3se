@@ -263,7 +263,7 @@ namespace bg3se::esv::lua
 	{
 		auto s = checked_get<FixedString>(L, 1);
 		auto& types = GetEoCServer()->EntityWorld->Components.Types;
-		for (unsigned i = 0; i < types.Size; i++) {
+		for (unsigned i = 0; i < types.Size(); i++) {
 			auto pool = types[i].Pool;
 			if (pool) {
 				auto comp = pool->FindComponentByGuid(s);

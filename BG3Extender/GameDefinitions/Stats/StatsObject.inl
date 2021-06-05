@@ -48,7 +48,7 @@ namespace bg3se
 			}
 		} else if (typeInfo->Name == GFS.strRollConditions) {
 			auto rollConditions = GetRollConditions(attributeName);
-			if (rollConditions && (*rollConditions)->Size == 1 && (**rollConditions)[0].Name == GFS.strDefault) {
+			if (rollConditions && (*rollConditions)->Size() == 1 && (**rollConditions)[0].Name == GFS.strDefault) {
 				auto val = GetStaticSymbols().GetStats()->GetConditions((**rollConditions)[0].ConditionsId);
 				if (val) {
 					return **val;

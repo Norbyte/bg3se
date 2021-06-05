@@ -319,6 +319,9 @@
     <ClInclude Include="Lua\LuaUserdata.h">
       <Filter>Lua</Filter>
     </ClInclude>
+    <ClInclude Include="Lua\Shared\LuaArrayProxy.h">
+      <Filter>Lua\Shared</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -465,6 +468,9 @@
       <Filter>GameDefinitions\PropertyMaps</Filter>
     </None>
     <None Include="Lua\Shared\LuaObjectProxy.inl">
+      <Filter>Lua\Shared</Filter>
+    </None>
+    <None Include="Lua\Shared\LuaArrayProxy.inl">
       <Filter>Lua\Shared</Filter>
     </None>
   </ItemGroup>

@@ -38,6 +38,24 @@ int StatusGetEngineType(lua_State* L, esv::Status* self);
 
 
 
+#define BEGIN_BITMASK_NS(NS, T, type) char const* const ArrayProxyHelpers<NS::T>::TypeName = #T;
+#define BEGIN_ENUM_NS(NS, T, type) char const* const ArrayProxyHelpers<NS::T>::TypeName = #T;
+#define BEGIN_BITMASK(T, type) char const* const ArrayProxyHelpers<T>::TypeName = #T;
+#define BEGIN_ENUM(T, type) char const* const ArrayProxyHelpers<T>::TypeName = #T;
+#define E(label)
+#define EV(label, value)
+#define END_ENUM_NS()
+#define END_ENUM()
+#include <GameDefinitions/Enumerations.inl>
+#undef BEGIN_BITMASK_NS
+#undef BEGIN_ENUM_NS
+#undef BEGIN_BITMASK
+#undef BEGIN_ENUM
+#undef E
+#undef EV
+#undef END_ENUM_NS
+#undef END_ENUM
+
 void CopyRawProperties(GenericPropertyMap const& base, GenericPropertyMap& child, STDString const& baseClsName)
 {
 	for (auto const& prop : base.Properties) {

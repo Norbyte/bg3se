@@ -2,6 +2,7 @@
 
 #include <Lua/LuaBinding.h>
 #include <Lua/LuaSerializers.h>
+#include <GameDefinitions/RootTemplates.h>
 
 namespace bg3se::lua
 {
@@ -20,8 +21,11 @@ namespace bg3se::lua
 	template <class T>
 	void MakeObjectRef(lua_State* L, LifetimeHolder const& lifetime, Array<T>* value)
 	{
-		// FIXME!
-		push(L, "Array PROXIES NOT SUPPORTED YET!");
+		if constexpr (ByValArray<T>::Value || std::is_enum_v<T>) {
+			ArrayProxy::MakeByVal<T>(L, value, lifetime);
+		} else {
+			ArrayProxy::MakeByRef<T>(L, value, lifetime);
+		}
 	}
 
 	template <class T>
@@ -29,6 +33,20 @@ namespace bg3se::lua
 	{
 		// FIXME!
 		push(L, "ObjectSet PROXIES NOT SUPPORTED YET!");
+	}
+
+	template <class T>
+	void MakeObjectRef(lua_State* L, LifetimeHolder const& lifetime, MultiHashSet<T>* value)
+	{
+		// FIXME!
+		push(L, "MultiHashSet PROXIES NOT SUPPORTED YET!");
+	}
+
+	template <class T>
+	void MakeObjectRef(lua_State* L, LifetimeHolder const& lifetime, VirtualMultiHashSet<T>* value)
+	{
+		// FIXME!
+		push(L, "VirtualMultiHashSet PROXIES NOT SUPPORTED YET!");
 	}
 
 	template <class TKey, class TValue>
@@ -76,7 +94,7 @@ namespace bg3se::lua
 		return true;
 	}
 
-	bool SetPropertyWriteProtected(lua_State* L, LifetimeHolder const& lifetime, void* obj, int index, std::size_t offset)
+	inline bool SetPropertyWriteProtected(lua_State* L, LifetimeHolder const& lifetime, void* obj, int index, std::size_t offset)
 	{
 		return false;
 	}
@@ -103,7 +121,7 @@ namespace bg3se::lua
 		return true;
 	}
 
-	bool GenericSetOffsetRefProperty(lua_State* L, LifetimeHolder const& lifetime, void* obj, int index, std::size_t offset)
+	inline bool GenericSetOffsetRefProperty(lua_State* L, LifetimeHolder const& lifetime, void* obj, int index, std::size_t offset)
 	{
 		return false;
 	}

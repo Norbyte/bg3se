@@ -557,7 +557,7 @@ namespace bg3se
 	float* RPGStats::GetOrCreateFloat(int& attributeId)
 	{
 		if (attributeId < 0) {
-			attributeId = (int)ConstantFloats.Size;
+			attributeId = (int)ConstantFloats.Size();
 			ConstantFloats.Add(.0f);
 		}
 
@@ -576,7 +576,7 @@ namespace bg3se
 	UUID* RPGStats::GetOrCreateGuid(int& attributeId)
 	{
 		if (attributeId < 0) {
-			attributeId = (int)GUIDs.Size;
+			attributeId = (int)GUIDs.Size();
 			GUIDs.Add(UUID{});
 		}
 
@@ -596,7 +596,7 @@ namespace bg3se
 	STDString* RPGStats::GetOrCreateConditions(int& conditionsId)
 	{
 		if (conditionsId < 0) {
-			conditionsId = (int)ConditionList.Size;
+			conditionsId = (int)ConditionList.Size();
 			ConditionList.Add(STDString{});
 		}
 

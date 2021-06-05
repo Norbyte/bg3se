@@ -11,6 +11,7 @@ namespace bg3se::lua::stats
 }
 
 #include <Lua/Shared/LuaObjectProxy.inl>
+#include <Lua/Shared/LuaArrayProxy.inl>
 #include <Lua/Shared/LuaCharacter.inl>
 #include <Lua/Shared/LuaItem.inl>
 #include <Lua/Shared/StatEntries.inl>
@@ -56,6 +57,7 @@ namespace bg3se::lua
 	void RegisterSharedLibraries(lua_State* L)
 	{
 		Userdata<ObjectProxy>::RegisterMetatable(L);
+		Userdata<ArrayProxy>::RegisterMetatable(L);
 		InitObjectProxyPropertyMaps();
 
 		RegisterEntityProxy(L);

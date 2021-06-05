@@ -30,6 +30,8 @@ namespace bg3se::lua
 	}
 
 
+	char const* const ObjectProxy::MetatableName = "bg3se::Object";
+
 	int ObjectProxy::Index(lua_State* L)
 	{
 		StackCheck _(L, 1);

@@ -17,7 +17,7 @@ namespace bg3se
 		}
 
 		auto index = handle.GetIndex();
-		if (index >= Objects.Size) {
+		if (index >= Objects.Size()) {
 			return nullptr;
 		}
 
@@ -38,7 +38,7 @@ namespace bg3se
 		if (!netId) return nullptr;
 
 		auto index = netId.GetIndex();
-		if (index >= NetIdSalts.Size
+		if (index >= NetIdSalts.Size()
 			|| netId.GetSalt() != NetIdSalts[(uint32_t)index]) {
 			return nullptr;
 		}
@@ -212,7 +212,7 @@ namespace bg3se
 
 		auto& entityTypes = EntityTypes[typeIndex];
 		auto index = entityHandle.GetIndex();
-		if (index >= entityTypes.HandleToIndexRemaps.Size) {
+		if (index >= entityTypes.HandleToIndexRemaps.Size()) {
 			if (logError) {
 				OsiError("Entity index " << index << " too large!");
 			}
@@ -237,7 +237,7 @@ namespace bg3se
 
 	ObjectHandle EntityWorldBase::Entity::GetComponentHandle(int32_t type, bool logError)
 	{
-		if (type >= (int32_t)ComponentIdToSlotIndexMap.Size) {
+		if (type >= (int32_t)ComponentIdToSlotIndexMap.Size()) {
 			if (logError) {
 				OsiError("Entity " << Handle << " has no component slot for component " << type);
 			}
