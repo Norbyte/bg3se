@@ -38,6 +38,16 @@ namespace bg3se::lua
 		}
 	}
 
+	template <class T, int Size>
+	void MakeObjectRef(lua_State* L, LifetimeHolder const& lifetime, std::array<T, Size>* value)
+	{
+		if constexpr (ByValArray<T>::Value || std::is_enum_v<T>) {
+			ArrayProxy::MakeByVal<T, Size>(L, value, lifetime);
+		} else {
+			ArrayProxy::MakeByRef<T, Size>(L, value, lifetime);
+		}
+	}
+
 	template <class T>
 	void MakeObjectRef(lua_State* L, LifetimeHolder const& lifetime, MultiHashSet<T>* value)
 	{

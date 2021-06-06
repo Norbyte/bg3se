@@ -156,7 +156,7 @@ namespace bg3se::lua
 
 		bool SetElement(lua_State* L, unsigned arrayIndex, int luaIndex) override
 		{
-			if (arrayIndex < object_->Size()) {
+			if (arrayIndex >= 0 && arrayIndex < object_->Size()) {
 				lua_pushvalue(L, luaIndex);
 				LuaRead(L, (*object_)[arrayIndex]);
 				lua_pop(L, 1);
@@ -302,7 +302,7 @@ namespace bg3se::lua
 
 		bool SetElement(lua_State* L, unsigned arrayIndex, int luaIndex) override
 		{
-			if (arrayIndex < object_->Size) {
+			if (arrayIndex >= 0 && arrayIndex < object_->Size) {
 				lua_pushvalue(L, luaIndex);
 				LuaRead(L, (*object_)[arrayIndex]);
 				lua_pop(L, 1);
@@ -342,6 +342,144 @@ namespace bg3se::lua
 	};
 
 
+	template <class T, int Size>
+	class StdArrayProxyByRefImpl : public ArrayProxyImplBase
+	{
+	public:
+		static_assert(!std::is_pointer_v<T>, "StdArrayProxyByRefImpl template parameter should not be a pointer type!");
+
+		StdArrayProxyByRefImpl(LifetimeHolder const& lifetime, std::array<T, Size> * obj)
+			: object_(obj), lifetime_(lifetime)
+		{}
+		
+		~StdArrayProxyByRefImpl() override
+		{}
+
+		T* Get() const
+		{
+			return object_;
+		}
+
+		void* GetRaw() override
+		{
+			return object_;
+		}
+
+		char const* GetTypeName() const override
+		{
+			return TypeInfo<T>::TypeName;
+		}
+
+		bool GetElement(lua_State* L, unsigned arrayIndex) override
+		{
+			if (arrayIndex >= 0 && arrayIndex < Size) {
+				MakeObjectRef(L, lifetime_, &(*object_)[arrayIndex]);
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		bool SetElement(lua_State* L, unsigned arrayIndex, int luaIndex) override
+		{
+			// Appending/swapping elements to by-ref arrays not supported for now
+			return false;
+		}
+
+		unsigned Length() override
+		{
+			return Size;
+		}
+
+		int Next(lua_State* L, int key) override
+		{
+			if (key >= -1 && key < Size - 1) {
+				push(L, ++key);
+				MakeObjectRef(L, lifetime_, &(*object_)[key]);
+				return 2;
+			} else {
+				return 0;
+			}
+		}
+
+	private:
+		std::array<T, Size>* object_;
+		LifetimeHolder lifetime_;
+	};
+
+
+	template <class T, int Size>
+	class StdArrayProxyByValImpl : public ArrayProxyImplBase
+	{
+	public:
+		static_assert(!std::is_pointer_v<T>, "StdArrayProxyByValImpl template parameter should not be a pointer type!");
+
+		StdArrayProxyByValImpl(LifetimeHolder const& lifetime, std::array<T, Size> * obj)
+			: object_(obj), lifetime_(lifetime)
+		{}
+		
+		~StdArrayProxyByValImpl() override
+		{}
+
+		T* Get() const
+		{
+			return object_;
+		}
+
+		void* GetRaw() override
+		{
+			return object_;
+		}
+
+		char const* GetTypeName() const override
+		{
+			return TypeInfo<T>::TypeName;
+		}
+
+		bool GetElement(lua_State* L, unsigned arrayIndex) override
+		{
+			if (arrayIndex >= 0 && arrayIndex < Size) {
+				LuaWrite(L, (*object_)[arrayIndex]);
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		bool SetElement(lua_State* L, unsigned arrayIndex, int luaIndex) override
+		{
+			if (arrayIndex >= 0 && arrayIndex < Size) {
+				lua_pushvalue(L, luaIndex);
+				LuaRead(L, (*object_)[arrayIndex]);
+				lua_pop(L, 1);
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		unsigned Length() override
+		{
+			return Size;
+		}
+
+		int Next(lua_State* L, int key) override
+		{
+			if (key >= -1 && key < Size - 1) {
+				push(L, ++key);
+				LuaWrite(L, (*object_)[key]);
+				return 2;
+			} else {
+				return 0;
+			}
+		}
+
+	private:
+		std::array<T, Size>* object_;
+		LifetimeHolder lifetime_;
+	};
+
+
 	class ArrayProxy : private Userdata<ArrayProxy>, public Indexable, public NewIndexable,
 		public Iterable, public Stringifiable, public Pushable, public GarbageCollected
 	{
@@ -351,7 +489,7 @@ namespace bg3se::lua
 		template <class T>
 		inline static ArrayProxyByRefImpl<T>* MakeByRef(lua_State* L, Array<T>* object, LifetimeHolder const& lifetime)
 		{
-			static_assert(sizeof(ArrayProxyByRefImpl<T>) <= sizeof(impl_), "ArrayProxy implementation object too large!");
+			static_assert(sizeof(ArrayProxyByRefImpl<T>) <= sizeof(impl_), "ArrayProxyByRefImpl implementation object too large!");
 			auto self = New(L, lifetime);
 			return new (self->impl_) ArrayProxyByRefImpl<T>(lifetime, object);
 		}
@@ -359,15 +497,23 @@ namespace bg3se::lua
 		template <class T>
 		inline static ObjectSetProxyByRefImpl<T>* MakeByRef(lua_State* L, ObjectSet<T>* object, LifetimeHolder const& lifetime)
 		{
-			static_assert(sizeof(ObjectSetProxyByRefImpl<T>) <= sizeof(impl_), "ArrayProxy implementation object too large!");
+			static_assert(sizeof(ObjectSetProxyByRefImpl<T>) <= sizeof(impl_), "ObjectSetProxyByRefImpl implementation object too large!");
 			auto self = New(L, lifetime);
 			return new (self->impl_) ObjectSetProxyByRefImpl<T>(lifetime, object);
+		}
+
+		template <class T, int Size>
+		inline static StdArrayProxyByRefImpl<T, Size>* MakeByRef(lua_State* L, std::array<T, Size>* object, LifetimeHolder const& lifetime)
+		{
+			static_assert(sizeof(StdArrayProxyByRefImpl<T, Size>) <= sizeof(impl_), "StdArrayProxyByRefImpl implementation object too large!");
+			auto self = New(L, lifetime);
+			return new (self->impl_) StdArrayProxyByRefImpl<T, Size>(lifetime, object);
 		}
 
 		template <class T>
 		inline static ArrayProxyByValImpl<T>* MakeByVal(lua_State* L, Array<T>* object, LifetimeHolder const& lifetime)
 		{
-			static_assert(sizeof(ArrayProxyByValImpl<T>) <= sizeof(impl_), "ArrayProxy implementation object too large!");
+			static_assert(sizeof(ArrayProxyByValImpl<T>) <= sizeof(impl_), "ArrayProxyByValImpl implementation object too large!");
 			auto self = New(L, lifetime);
 			return new (self->impl_) ArrayProxyByValImpl<T>(lifetime, object);
 		}
@@ -375,9 +521,17 @@ namespace bg3se::lua
 		template <class T>
 		inline static ObjectSetProxyByValImpl<T>* MakeByVal(lua_State* L, ObjectSet<T>* object, LifetimeHolder const& lifetime)
 		{
-			static_assert(sizeof(ObjectSetProxyByValImpl<T>) <= sizeof(impl_), "ArrayProxy implementation object too large!");
+			static_assert(sizeof(ObjectSetProxyByValImpl<T>) <= sizeof(impl_), "ObjectSetProxyByValImpl implementation object too large!");
 			auto self = New(L, lifetime);
 			return new (self->impl_) ObjectSetProxyByValImpl<T>(lifetime, object);
+		}
+
+		template <class T, int Size>
+		inline static StdArrayProxyByValImpl<T, Size>* MakeByVal(lua_State* L, std::array<T, Size>* object, LifetimeHolder const& lifetime)
+		{
+			static_assert(sizeof(StdArrayProxyByValImpl<T, Size>) <= sizeof(impl_), "StdArrayProxyByValImpl implementation object too large!");
+			auto self = New(L, lifetime);
+			return new (self->impl_) StdArrayProxyByValImpl<T, Size>(lifetime, object);
 		}
 
 		inline ArrayProxyImplBase* GetImpl()
