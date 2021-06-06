@@ -305,36 +305,49 @@ void DebugConsole::ConsoleThread()
 				DEBUG("  exit - Leave console mode");
 				DEBUG("  !<cmd> <arg1> ... <argN> - Trigger Lua \"ConsoleCommand\" event with arguments cmd, arg1, ..., argN");
 			} else {
-				bg3se::ExtensionStateBase* state{ nullptr };
+				std::mutex mutex;
+				std::condition_variable completion;
+				bool completed = false;
+
+				auto task = [line, &completion, &mutex, &completed]() {
+					std::unique_lock<std::mutex> lk(mutex);
+					auto state = bg3se::gExtender->GetCurrentExtensionState();
+
+					if (!state) {
+						ERR("Extensions not initialized!");
+						return;
+					}
+
+					bg3se::LuaVirtualPin pin(*state);
+					if (!pin) {
+						ERR("Lua state not initialized!");
+						return;
+					}
+
+					if (line[0] == '!') {
+						pin->CallExt("DoConsoleCommand", 0, line.substr(1));
+					} else {
+						bg3se::lua::LifetimePin _(pin->GetStack());
+						auto L = pin->GetState();
+						if (luaL_loadstring(L, line.c_str()) || bg3se::lua::CallWithTraceback(L, 0, 0)) { // stack: errmsg
+							ERR("%s", lua_tostring(L, -1));
+							lua_pop(L, 1);
+						}
+					}
+
+					completed = true;
+					lk.unlock();
+					completion.notify_one();
+				};
+
 				if (serverContext_) {
-					if (bg3se::gExtender->HasServerExtensionState()) {
-						state = &bg3se::esv::ExtensionState::Get();
-					}
+					bg3se::gExtender->EnqueueServerTask(task);
 				} else {
-					if (bg3se::gExtender->HasClientExtensionState()) {
-						state = &bg3se::ecl::ExtensionState::Get();
-					}
+					bg3se::gExtender->EnqueueClientTask(task);
 				}
 
-				if (state) {
-					bg3se::LuaVirtualPin pin(*state);
-					if (pin) {
-						if (line[0] == '!') {
-							pin->CallExt("DoConsoleCommand", 0, line.substr(1));
-						} else {
-							bg3se::lua::LifetimePin _(pin->GetStack());
-							auto L = pin->GetState();
-							if (luaL_loadstring(L, line.c_str()) || bg3se::lua::CallWithTraceback(L, 0, 0)) { // stack: errmsg
-								ERR("%s", lua_tostring(L, -1));
-								lua_pop(L, 1);
-							}
-						}
-					} else {
-						ERR("Lua state not initialized!");
-					}
-				} else {
-					ERR("Extensions not initialized!");
-				}
+				std::unique_lock<std::mutex> lk(mutex);
+				completion.wait(lk, [&completed] { return completed; });
 			}
 		}
 

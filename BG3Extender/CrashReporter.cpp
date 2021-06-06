@@ -31,6 +31,8 @@ static const ExcludedSymbol ExcludedSymbols[] = {
 	{&decltype(bg3se::EngineHooks::FileReader__ctor)::CallToTrampoline, 0x120},
 	{&decltype(bg3se::ScriptExtender::clientGameStateWorkerStart_)::CallToTrampoline, 0x120},
 	{&decltype(bg3se::ScriptExtender::serverGameStateWorkerStart_)::CallToTrampoline, 0x120},
+	{&decltype(bg3se::ScriptExtender::clientGameStateMachineUpdate_)::CallToTrampoline, 0x120},
+	{&decltype(bg3se::ScriptExtender::serverGameStateMachineUpdate_)::CallToTrampoline, 0x120},
 	{&decltype(bg3se::OsirisWrappers::Event)::CallToTrampoline, 0x120},
 	{&decltype(bg3se::OsirisWrappers::Call)::CallToTrampoline, 0x120},
 	{&decltype(bg3se::OsirisWrappers::Query)::CallToTrampoline, 0x120},

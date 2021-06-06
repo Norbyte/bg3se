@@ -7,6 +7,13 @@
 
 namespace bg3se
 {
+	struct GameTime
+	{
+		double Time;
+		float DeltaTime;
+		int32_t Ticks;
+	};
+
 	struct EntityWorldBase;
 
 	struct EntityWorldHandle
@@ -386,6 +393,7 @@ namespace bg3se
 
 		typedef void(*GameStateEventManager__ExecuteGameStateChangedEvent)(void* self, GameState fromState, GameState toState);
 		typedef void(*GameStateThreaded__GameStateWorker__DoWork)(void* self);
+		typedef void(*GameStateMachine__Update)(void* self, GameTime* time);
 
 		/*
 		EntityWorld* GetEntityWorld();*/

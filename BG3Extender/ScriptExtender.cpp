@@ -26,6 +26,8 @@ STATIC_HOOK(clientGameStateWorkerStart_)
 STATIC_HOOK(serverGameStateWorkerStart_)
 STATIC_HOOK(clientGameStateChangedEvent_)
 STATIC_HOOK(serverGameStateChangedEvent_)
+STATIC_HOOK(clientGameStateMachineUpdate_)
+STATIC_HOOK(serverGameStateMachineUpdate_)
 
 #if !defined(OSI_NO_DEBUGGER)
 void LuaDebugThreadRunner(LuaDebugInterface& intf)
@@ -100,6 +102,14 @@ void ScriptExtender::Initialize()
 		serverGameStateWorkerStart_.Wrap(lib.esv__GameStateThreaded__GameStateWorker__DoWork);
 	}
 
+	if (lib.esv__GameStateMachine__Update != nullptr) {
+		serverGameStateMachineUpdate_.Wrap(lib.esv__GameStateMachine__Update);
+	}
+
+	if (lib.ecl__GameStateMachine__Update != nullptr) {
+		clientGameStateMachineUpdate_.Wrap(lib.ecl__GameStateMachine__Update);
+	}
+
 	DetourTransactionCommit();
 
 	using namespace std::placeholders;
@@ -109,6 +119,8 @@ void ScriptExtender::Initialize()
 	serverGameStateWorkerStart_.AddPreHook(std::bind(&ScriptExtender::OnServerGameStateWorkerStart, this, _1));
 	clientGameStateWorkerStart_.AddPostHook(std::bind(&ScriptExtender::OnClientGameStateWorkerExit, this, _1));
 	serverGameStateWorkerStart_.AddPostHook(std::bind(&ScriptExtender::OnServerGameStateWorkerExit, this, _1));
+	clientGameStateMachineUpdate_.AddPostHook(std::bind(&ScriptExtender::OnClientUpdate, this, _1, _2));
+	serverGameStateMachineUpdate_.AddPostHook(std::bind(&ScriptExtender::OnServerUpdate, this, _1, _2));
 
 	/*SkillPrototypeManagerInit.SetPreHook(std::bind(&ScriptExtender::OnSkillPrototypeManagerInit, this, _1));
 	Wrappers.FileReader__ctor.SetWrapper(std::bind(&ScriptExtender::OnFileReaderCreate, this, _1, _2, _3, _4));
@@ -540,6 +552,32 @@ void ScriptExtender::OnClientGameStateWorkerExit(void* self)
 void ScriptExtender::OnServerGameStateWorkerExit(void* self)
 {
 	RemoveServerThread(GetCurrentThreadId());
+}
+
+void ScriptExtender::EnqueueClientTask(std::function<void()> fun)
+{
+	clientThreadTasks_.push(fun);
+}
+
+void ScriptExtender::EnqueueServerTask(std::function<void()> fun)
+{
+	serverThreadTasks_.push(fun);
+}
+
+void ScriptExtender::OnClientUpdate(void* self, GameTime* time)
+{
+	std::function<void()> fun;
+	while (clientThreadTasks_.try_pop(fun)) {
+		fun();
+	}
+}
+
+void ScriptExtender::OnServerUpdate(void* self, GameTime* time)
+{
+	std::function<void()> fun;
+	while (serverThreadTasks_.try_pop(fun)) {
+		fun();
+	}
 }
 
 void ScriptExtender::OnSkillPrototypeManagerInit(void * self)

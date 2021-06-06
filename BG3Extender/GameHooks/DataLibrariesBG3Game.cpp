@@ -52,6 +52,8 @@ namespace bg3se
 		SYM_OFF(esv__GameStateEventManager__ExecuteGameStateChangedEvent);
 		SYM_OFF(ecl__GameStateThreaded__GameStateWorker__DoWork);
 		SYM_OFF(esv__GameStateThreaded__GameStateWorker__DoWork);
+		SYM_OFF(ecl__GameStateMachine__Update);
+		SYM_OFF(esv__GameStateMachine__Update);
 
 		SYM_OFF(esv__SurfaceActionFactory);
 		SYM_OFF(esv__SurfaceActionFactory__CreateAction);
@@ -178,10 +180,9 @@ namespace bg3se
 		auto targetNode = mapping->FirstChildElement("Target");
 		while (targetNode != nullptr) {
 			SymbolMappingTarget target;
-			if (!LoadTarget(targetNode, target)) {
-				return false;
+			if (LoadTarget(targetNode, target)) {
+				sym.Targets.push_back(target);
 			}
-			sym.Targets.push_back(target);
 			targetNode = targetNode->NextSiblingElement("Target");
 		}
 

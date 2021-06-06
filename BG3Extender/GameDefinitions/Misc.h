@@ -8,13 +8,6 @@
 
 namespace bg3se
 {
-	struct GameTime
-	{
-		double Time;
-		float DeltaTime;
-		int32_t Ticks;
-	};
-
 	struct ActionOriginator : public HasObjectProxy
 	{
 		UUID ActionGuid;

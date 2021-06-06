@@ -22,6 +22,7 @@
 #include <thread>
 #include <mutex>
 #include <shared_mutex>
+#include <ppl.h>
 
 namespace bg3se {
 
@@ -190,11 +191,18 @@ public:
 
 	void ResetLuaState(bool resetServer, bool resetClient);
 
+	void EnqueueClientTask(std::function<void()> fun);
+	void EnqueueServerTask(std::function<void()> fun);
+
 	// HACK - we need to expose this so it can be added to the CrashReporter whitelist
 	enum class ClientGameStateWorkerStartTag {};
 	enum class ServerGameStateWorkerStartTag {};
+	enum class ClientGameStateMachcineUpdateTag {};
+	enum class ServerGameStateMachcineUpdateTag {};
 	HookableFunction<ClientGameStateWorkerStartTag, void(void*)> clientGameStateWorkerStart_;
 	HookableFunction<ServerGameStateWorkerStartTag, void(void*)> serverGameStateWorkerStart_;
+	HookableFunction<ClientGameStateMachcineUpdateTag, void(void*, GameTime*)> clientGameStateMachineUpdate_;
+	HookableFunction<ServerGameStateMachcineUpdateTag, void(void*, GameTime*)> serverGameStateMachineUpdate_;
 
 private:
 	OsirisExtender osiris_;
@@ -217,6 +225,8 @@ private:
 	ModuleHasher hasher_;
 	ServerEntitySystemHelpers serverEntityHelpers_;
 	ClientEntitySystemHelpers clientEntityHelpers_;
+	concurrency::concurrent_queue<std::function<void()>> clientThreadTasks_;
+	concurrency::concurrent_queue<std::function<void()>> serverThreadTasks_;
 
 	ExtenderConfig config_;
 	bool extensionsEnabled_{ false };
@@ -245,6 +255,8 @@ private:
 	void OnServerGameStateWorkerStart(void * self);
 	void OnClientGameStateWorkerExit(void* self);
 	void OnServerGameStateWorkerExit(void* self);
+	void OnClientUpdate(void* self, GameTime* time);
+	void OnServerUpdate(void* self, GameTime* time);
 	void OnSkillPrototypeManagerInit(void * self);
 	FileReader * OnFileReaderCreate(FileReader::CtorProc* next, FileReader * self, Path const& path, unsigned int type, unsigned int unknown);
 	void OnSavegameVisit(void* osirisHelpers, ObjectVisitor* visitor);

@@ -116,9 +116,18 @@
 			48 8B 0F // mov     rcx, [rdi]
         </Mapping>
 
+        <Mapping Name="ecl::GameStateMachine::Update" Scope="Custom" Critical="true">
+            <Target Type="Absolute" Offset="0" Symbol="ecl__GameStateMachine__Update" />
+      48 89 5C 24 10 // mov     [rsp+arg_8], rbx
+      55 // push    rbp
+      56 // push    rsi
+      57 // push    rdi
+        </Mapping>
+
         <Mapping Name="ecl::GameStateEventManager::ExecuteGameStateChangedEvent - Initial" Critical="true">
             <Condition Type="String" Offset="0" Value="CLIENT STATE SWAP - from: %s, to: %s&#10;" />
             <Target Type="Absolute" Offset="0" NextSymbol="ecl::GameStateEventManager::ExecuteGameStateChangedEvent" NextSymbolSeekSize="128" />
+          <Target Type="Absolute" Offset="-512" NextSymbol="ecl::GameStateMachine::Update" NextSymbolSeekSize="512" />
 			4C 8D 05 ?? ?? ?? ?? // lea r8, aClientStateSwa ; "CLIENT STATE SWAP - from: %s, to: %s\n"
         </Mapping>
 
@@ -129,9 +138,16 @@
 			48 8B 4B 08 // mov     rcx, [rbx+8]
         </Mapping>
 
+        <Mapping Name="esv::GameStateMachine::Update" Scope="Custom" Critical="true">
+            <Target Type="Absolute" Offset="0" Symbol="esv__GameStateMachine__Update" />
+      41 57 // push    r15
+      48 81 EC 90 00 00 00 // sub     rsp, 90h
+        </Mapping>
+
         <Mapping Name="esv::GameStateEventManager::ExecuteGameStateChangedEvent - Initial" Critical="true">
             <Condition Type="String" Offset="0" Value="SERVER STATE SWAP - from: %s, to: %s&#10;" />
             <Target Type="Absolute" Offset="0" NextSymbol="esv::GameStateEventManager::ExecuteGameStateChangedEvent" NextSymbolSeekSize="128" />
+            <Target Type="Absolute" Offset="-400" NextSymbol="esv::GameStateMachine::Update" NextSymbolSeekSize="400" />
 			4C 8D 05 ?? ?? ?? ?? // lea r8, aServerStateSwa ; "SERVER STATE SWAP - from: %s, to: %s\n"
         </Mapping>
 
