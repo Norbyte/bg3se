@@ -485,6 +485,9 @@
     <None Include="Lua\Shared\LuaMapProxy.inl">
       <Filter>Lua\Shared</Filter>
     </None>
+    <None Include="GameDefinitions\Components\AllComponentTypes.inl">
+      <Filter>GameDefinitions\Components</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

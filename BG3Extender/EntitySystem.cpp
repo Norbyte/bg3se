@@ -330,6 +330,7 @@ namespace bg3se
 		componentIndexToNameMappings_.clear();
 		handleIndexToNameMappings_.clear();
 		componentIndexToTypeMappings_.clear();
+		handleIndexToTypeMappings_.clear();
 		componentIndices_.fill(UndefinedIndex);
 		handleIndices_.fill(UndefinedIndex);
 		resourceManagerIndices_.fill(UndefinedIndex);
@@ -609,6 +610,7 @@ namespace bg3se
 			componentIndices_[(unsigned)type] = it->second.ComponentIndex;
 			handleIndices_[(unsigned)type] = it->second.HandleIndex;
 			componentIndexToTypeMappings_.insert(std::make_pair((int32_t)it->second.ComponentIndex, type));
+			handleIndexToTypeMappings_.insert(std::make_pair((int32_t)it->second.HandleIndex, type));
 		} else {
 			OsiWarn("Could not find index for component: " << componentName);
 		}

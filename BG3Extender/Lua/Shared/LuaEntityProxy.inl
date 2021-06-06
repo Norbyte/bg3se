@@ -78,6 +78,22 @@ namespace bg3se::lua
 		}
 	}
 
+	template <class T>
+	void PushComponentType(lua_State* L, EntitySystemHelpersBase* helpers, ObjectHandle const& handle, 
+		LifetimeHolder const& lifetime, bool logError)
+	{
+		auto component = helpers->GetComponent<T>(handle, false);
+		if (component) {
+			ObjectProxy::MakeRef<T>(L, component, lifetime);
+		} else {
+			if (logError) {
+				OsiError("Couldn't get component of type " << T::ComponentType);
+			}
+
+			push(L, nullptr);
+		}
+	}
+
 #define T(cls) \
 	case cls::ComponentType: \
 	{ \
@@ -89,203 +105,30 @@ namespace bg3se::lua
 		LifetimeHolder const& lifetime, bool logError)
 	{
 		switch (componentType) {
-			T(ActionResourcesComponent)
-			T(ArmorComponent)
-			T(BaseHpComponent)
-			T(DataComponent)
-			T(ExperienceComponent)
-			T(HealthComponent)
-			T(PassiveComponent)
-			T(SenseComponent)
-			T(SpellBookComponent)
-			T(StatsComponent)
-			T(StatusImmunitiesComponent)
-			T(SurfacePathInfluencesComponent)
-			T(UseComponent)
-			T(ValueComponent)
-			T(WeaponComponent)
-			T(WieldingComponent)
-			T(CustomStatsComponent)
-			T(BoostConditionComponent)
-			T(BoostsContainerComponent)
-			// T(ActionResourceConsumeMultiplierBoostComponent)
-			T(CombatParticipantComponent)
-			T(GenderComponent)
-			T(SpellContainerComponent)
-			T(TagComponent)
-			T(SpellBookPreparesComponent)
 
-			T(CombatStateComponent)
-			T(TurnBasedComponent)
-			T(TurnOrderComponent)
-			T(TransformComponent)
-			T(PassiveContainerComponent)
-			T(BoostInfoComponent)
-			T(RelationComponent)
-			T(CanInteractComponent)
-			T(CanSpeakComponent)
-			T(OriginComponent)
-			T(LevelComponent)
+#include <GameDefinitions/Components/AllComponentTypes.inl>
 
+		default:
+			OsiError("Don't know how to push component type: " << componentType);
+			break;
+		}
+	}
 
-			T(BackgroundComponent)
-			T(GodComponent)
-			T(LevelUpComponent)
-			T(PlayerPrepareSpellComponent)
-			T(CCPrepareSpellComponent)
-			T(SpellCastComponent)
-			T(FloatingComponent)
-			T(VoiceComponent)
-			T(CustomIconComponent)
-			T(CharacterCreationStatsComponent)
-			T(DisarmableComponent)
-			T(ShortRestComponent)
-			T(IsSummonComponent)
-			T(SummonContainerComponent)
-			T(StealthComponent)
-			T(IsGlobalComponent)
-			T(SavegameComponent)
-			T(DisabledEquipmentComponent)
-			T(LootingStateComponent)
-			T(LootComponent)
-			T(LockComponent)
-			T(SummonLifetimeComponent)
-			T(InvisibilityComponent)
-			T(IconComponent)
-			T(HotbarContainerComponent)
-			T(OriginTagComponent)
-			T(OriginPassivesComponent)
-			T(GodTagComponent)
-			T(ClassTagComponent)
-			T(BackgroundTagComponent)
-			T(BackgroundPassivesComponent)
-			T(GlobalShortRestDisabledComponent)
-			T(GlobalLongRestDisabledComponent)
-			T(StoryShortRestDisabledComponent)
-			T(FleeCapabilityComponent)
-			T(CanDoRestComponent)
-			T(ItemBoostsComponent)
-			T(ActiveCharacterLightComponent)
-			T(AnimationSetComponent)
-			T(AnimationBlueprintComponent)
-			T(CanModifyHealthComponent)
-			T(AddedSpellsComponent)
-			T(AvailableLevelComponent)
-			T(CanBeLootedComponent)
-			T(CanDoActionsComponent)
-			T(CanMoveComponent)
-			T(CanSenseComponent)
-			T(ConcentrationComponent)
-			T(DarknessComponent)
-			T(DualWieldingComponent)
-			T(GameObjectVisualComponent)
-			T(InventorySlotComponent)
-			T(SpellBookCooldowns)
-			T(DisplayNameComponent)
-			T(EquipableComponent)
-			T(GameplayLightComponent)
-			T(ProgressionContainerComponent)
-			T(RaceComponent)
-			T(SightComponent)
-			T(CanTravelComponent)
-			T(CanBeInInventoryComponent)
-			T(MovementComponent)
-			T(ObjectInteractionComponent)
-			T(PathingComponent)
-			T(SteeringComponent)
-			T(CanDeflectProjectilesComponent)
-			T(LearnedSpells)
-			T(SpellAiConditions)
-			T(ActiveSkeletonSlotsComponent)
-			T(NetComponent)
-			T(PhysicsComponent)
+#undef T
 
+#define T(cls) \
+	case cls::ComponentType: \
+	{ \
+		PushComponentType<cls>(L, helpers, handle, lifetime, logError); \
+		break; \
+	}
 
-			T(RecruitedByComponent)
-			T(GameTimerComponent)
-			T(ExperienceGaveOutComponent)
-			T(ReplicationDependencyComponent)
-			T(IsUnsummoningComponent)
-			T(FleeBlockedComponent)
-			T(ActivationGroupContainerComponent)
-			T(AnubisTagComponent)
-			T(DialogTagComponent)
-			T(DisplayNameListComponent)
-			T(IconListComponent)
-			T(PlanTagComponent)
-			T(RaceTagComponent)
-			T(TemplateTagComponent)
-			T(ToggledPassivesComponent)
-			T(BoostTagComponent)
-			T(TriggerStateComponent)
-			T(SafePositionComponent)
-			T(AnubisExecutorComponent)
-			T(DetachedBoostComponent)
+	void PushComponent(lua_State* L, EntitySystemHelpersBase* helpers, ObjectHandle const& handle, ExtComponentType componentType,
+		LifetimeHolder const& lifetime, bool logError)
+	{
+		switch (componentType) {
 
-			T(StaticPhysicsComponent)
-			T(AnubisComponent)
-
-
-			T(esv::Character)
-			T(esv::Item)
-			T(esv::Projectile)
-			T(OsirisTagComponent)
-			T(esv::ActiveComponent)
-
-			/*
-			TODO - client not supported yet!
-			T(ecl::Character)
-			T(ecl::Item)
-			T(ecl::Projectile)*/
-
-			// Boost components
-			T(ArmorClassBoostComponent)
-			T(AbilityBoostComponent)
-			T(RollBonusBoostComponent)
-			T(AdvantageBoostComponent)
-			T(ActionResourceValueBoostComponent)
-			T(CriticalHitBoostComponent)
-			T(AbilityFailedSavingThrowBoostComponent)
-			T(ResistanceBoostComponent)
-			T(WeaponDamageResistanceBoostComponent)
-			T(ProficiencyBonusOverrideBoostComponent)
-			T(JumpMaxDistanceMultiplierBoostComponent)
-			T(HalveWeaponDamageBoostComponent)
-			T(UnlockSpellBoostComponent)
-			T(SourceAdvantageBoostComponent)
-			T(ProficiencyBonusBoostComponent)
-			T(ProficiencyBoostComponent)
-			T(IncreaseMaxHPBoostComponent)
-			T(ActionResourceBlockBoostComponent)
-			T(StatusImmunityBoostComponent)
-			T(UseBoostsComponent)
-			T(TemporaryHPBoostComponent)
-			T(WeightBoostComponent)
-			T(FactionOverrideBoostComponent)
-			T(ActionResourceMultiplierBoostComponent)
-			T(InitiativeBoostComponent)
-			T(DarkvisionRangeBoostComponent)
-			T(DarkvisionRangeMinBoostComponent)
-			T(DarkvisionRangeOverrideBoostComponent)
-			T(AddTagBoostComponent)
-			T(IgnoreDamageThresholdMinBoostComponent)
-			T(SkillBoostComponent)
-			T(WeaponDamageBoostComponent)
-			T(NullifyAbilityBoostComponent)
-			T(RerollBoostComponent)
-			T(DownedStatusBoostComponent)
-			T(WeaponEnchantmentBoostComponent)
-			T(GuaranteedChanceRollOutcomeBoostComponent)
-			T(AttributeBoostComponent)
-			T(GameplayLightBoostComponent)
-			T(DualWieldingBoostComponent)
-			T(SavantBoostComponent)
-			T(MinimumRollResultBoostComponent)
-			T(CharacterWeaponDamageBoostComponent)
-			T(ProjectileDeflectBoostComponent)
-			T(AbilityOverrideMinimumBoostComponent)
-			T(ACOverrideMinimumBoostComponent)
-			T(FallDamageMultiplierBoostComponent)
+#include <GameDefinitions/Components/AllComponentTypes.inl>
 
 		default:
 			OsiError("Don't know how to push component type: " << componentType);
@@ -309,6 +152,11 @@ namespace bg3se::lua
 		StackCheck _(L, 1);
 		auto self = checked_get<EntityProxy*>(L, 1);
 
+		bool warnOnMissing = false;
+		if (lua_gettop(L) >= 2) {
+			warnOnMissing = checked_get<bool>(L, 2);
+		}
+
 		lua_newtable(L);
 
 		auto entity = self->entitySystem_->GetEntityWorld()->GetEntity(self->handle_);
@@ -323,6 +171,11 @@ namespace bg3se::lua
 						push(L, type);
 						PushComponent(L, self->entitySystem_, self->handle_, *type, GetCurrentLifetime(), true);
 						lua_settable(L, -3);
+					} else if (warnOnMissing) {
+						auto name = self->entitySystem_->GetComponentName((EntityWorldBase::ComponentTypeIndex)componentIdx);
+						if (name) {
+							OsiWarn("No model found for component: " << *name);
+						}
 					}
 				}
 			}
@@ -451,6 +304,21 @@ namespace bg3se::lua
 		return 1;
 	}
 
+	int ObjectHandleProxy::GetComponent(lua_State* L)
+	{
+		StackCheck _(L, 1);
+		auto self = checked_get<ObjectHandleProxy*>(L, 1);
+		auto componentType = self->entitySystem_->GetComponentType((EntityWorldBase::HandleTypeIndex)self->handle_.GetType());
+		if (componentType) {
+			PushComponent(L, self->entitySystem_, self->handle_, *componentType, GetCurrentLifetime(), false);
+		} else {
+			OsiError("No component model exists for this component type");
+			push(L, nullptr);
+		}
+
+		return 1;
+	}
+
 	void ObjectHandleProxy::PopulateMetatable(lua_State* L)
 	{
 		lua_newtable(L);
@@ -467,6 +335,9 @@ namespace bg3se::lua
 		push(L, &ObjectHandleProxy::GetIndex);
 		lua_setfield(L, -2, "GetIndex");
 
+		push(L, &ObjectHandleProxy::GetComponent);
+		lua_setfield(L, -2, "Get");
+
 		lua_setfield(L, -2, "__index");
 	}
 
@@ -479,8 +350,21 @@ namespace bg3se::lua
 	int ObjectHandleProxy::ToString(lua_State* L)
 	{
 		StackCheck _(L, 1);
-		char entityName[100];
-		sprintf_s(entityName, "Object (%016llx)", handle_.Handle);
+
+		std::optional<STDString> componentName;
+		if (gExtender->IsInServerThread()) {
+			componentName = gExtender->GetServerEntityHelpers().GetComponentName((EntityWorldBase::HandleTypeIndex)handle_.GetType());
+		} else {
+			componentName = gExtender->GetClientEntityHelpers().GetComponentName((EntityWorldBase::HandleTypeIndex)handle_.GetType());
+		}
+
+		char entityName[200];
+		if (componentName) {
+			_snprintf_s(entityName, std::size(entityName) - 1, "%s Object (%016llx)", componentName->c_str(), handle_.Handle);
+		} else {
+			_snprintf_s(entityName, std::size(entityName) - 1, "Object (%016llx)", handle_.Handle);
+		}
+
 		push(L, entityName);
 		return 1;
 	}

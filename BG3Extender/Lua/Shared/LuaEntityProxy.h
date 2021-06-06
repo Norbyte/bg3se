@@ -68,6 +68,7 @@ namespace bg3se::lua
 		static int GetTypeName(lua_State* L);
 		static int GetSalt(lua_State* L);
 		static int GetIndex(lua_State* L);
+		static int GetComponent(lua_State* L);
 		static void PopulateMetatable(lua_State* L);
 
 		int Index(lua_State* L);
