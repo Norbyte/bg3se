@@ -134,6 +134,17 @@ namespace bg3se::lua::utils
 				auto key = lua_tostring(L, -1);
 				arr[key] = val;
 				lua_pop(L, 1);
+			} else if (lua_type(L, -2) == LUA_TUSERDATA && stringifyInternalTypes) {
+				int top = lua_gettop(L);
+				lua_getglobal(L, "tostring");  /* function to be called */
+				lua_pushvalue(L, -3);   /* value to print */
+				lua_call(L, 1, 1);
+				const char* key = lua_tostring(L, -1);  /* get result */
+				if (key) {
+					arr[key] = val;
+				}
+				int top2 = lua_gettop(L);
+				lua_pop(L, 1);  /* pop result */
 			} else {
 				throw std::runtime_error("Can only stringify string or number table keys");
 			}
