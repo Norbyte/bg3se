@@ -19,7 +19,7 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::BoostsContainer;
 
-		RefMap<uint8_t, Array<EntityHandle>> Boosts;
+		RefMap<BoostType, Array<EntityHandle>> Boosts;
 	};
 
 	struct BoostParameters
@@ -37,9 +37,9 @@ namespace bg3se
 		ObjectHandle field_20;
 		uint32_t Flags_M;
 		FixedString Passive;
-		ObjectHandle Cause_M;
+		EntityHandle Cause_M;
 		int64_t field_38;
-		ObjectHandle OwnerEntity;
+		EntityHandle OwnerEntity;
 		BoostParameters Params;
 		UUID field_90;
 	};

@@ -177,14 +177,14 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::CanInteract;
 
-	     uint32_t Flags;
+		uint16_t Flags;
 	};
 
 	struct CanSpeakComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::CanSpeak;
 
-		uint32_t Flags;
+		uint16_t Flags;
 	};
 
 	struct OriginComponent : public BaseComponent

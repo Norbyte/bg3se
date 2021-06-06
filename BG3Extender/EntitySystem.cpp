@@ -492,6 +492,7 @@ namespace bg3se
 		MapComponentIndices("eoc::EquipableComponent", ExtComponentType::Equipable);
 		MapComponentIndices("eoc::GameplayLightComponent", ExtComponentType::GameplayLight);
 		MapComponentIndices("eoc::ProgressionContainerComponent", ExtComponentType::ProgressionContainer);
+		MapComponentIndices("eoc::progression::MetaComponent", ExtComponentType::ProgressionMeta);
 		MapComponentIndices("eoc::RaceComponent", ExtComponentType::Race);
 		MapComponentIndices("eoc::SightComponent", ExtComponentType::Sight);
 		MapComponentIndices("eoc::CanTravelComponent", ExtComponentType::CanTravel);
@@ -506,6 +507,10 @@ namespace bg3se
 		MapComponentIndices("ls::ActiveSkeletonSlotsComponent", ExtComponentType::ActiveSkeletonSlots);
 		MapComponentIndices("ls::NetComponent", ExtComponentType::Net);
 		MapComponentIndices("ls::PhysicsComponent", ExtComponentType::Physics);
+		MapComponentIndices("eoc::ftb::ParticipantComponent", ExtComponentType::FTBParticipant);
+		MapComponentIndices("eoc::unsheath::InfoComponent", ExtComponentType::UnsheathInfo);
+		MapComponentIndices("eoc::approval::Ratings", ExtComponentType::ApprovalRatings);
+		MapComponentIndices("eoc::character_creation::AppearanceComponent", ExtComponentType::CharacterCreationAppearance);
 
 
 		MapResourceManagerIndex("ls::TagManager", ExtResourceManagerType::Tag);
@@ -791,6 +796,11 @@ namespace bg3se
 		MapComponentIndices("esv::SafePositionComponent", ExtComponentType::ServerSafePosition);
 		MapComponentIndices("esv::AnubisExecutorComponent", ExtComponentType::ServerAnubisExecutor);
 		MapComponentIndices("esv::DetachedBoostComponent", ExtComponentType::ServerDetachedBoost);
+		MapComponentIndices("esv::LeaderComponent", ExtComponentType::ServerLeader);
+		MapComponentIndices("esv::BreadcrumbComponent", ExtComponentType::ServerBreadcrumb);
+		MapComponentIndices("esv::death::DelayDeathCauseComponent", ExtComponentType::ServerDelayDeathCause);
+		MapComponentIndices("esv::pickpocket::PickpocketComponent", ExtComponentType::ServerPickpocket);
+		MapComponentIndices("esv::ReplicationDependencyOwnerComponent", ExtComponentType::ServerReplicationDependencyOwner);
 
 		MapComponentIndices("ls::StaticPhysicsComponent", ExtComponentType::StaticPhysics);
 		MapComponentIndices("ls::anubis::Component", ExtComponentType::Anubis);

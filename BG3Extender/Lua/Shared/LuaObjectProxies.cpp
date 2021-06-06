@@ -208,5 +208,7 @@ char const* const TypeInfo<VirtualMultiHashSet<FixedString>>::TypeName = "Virtua
 char const* const TypeInfo<Array<HotbarContainerComponent::Bar>>::TypeName = "Array<HotbarContainerComponent::Bar>";
 char const* const TypeInfo<Array<EntityHandle>>::TypeName = "Array<EntityHandle>";
 char const* const TypeInfo<Array<ActionResourcesComponent::Amount>>::TypeName = "Array<ActionResourcesComponent::Amount>";
+char const* const TypeInfo<ObjectSet<StatsRollType0>>::TypeName = "ObjectSet<StatsRollType0>";
+char const* const TypeInfo<Array<DiceValues>>::TypeName = "Array<DiceValues>";
 
 }

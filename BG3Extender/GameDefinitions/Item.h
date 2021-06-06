@@ -124,7 +124,7 @@ namespace bg3se
 			CRPGStats_Object* StatsFromName;
 			ItemGeneration* Generation;
 			EntityHandle InventoryHandle;
-			EntityHandle ParentHandle;
+			ObjectHandle ParentHandle;
 			int Amount;
 			int Vitality;
 			int Armor;
@@ -139,8 +139,8 @@ namespace bg3se
 			void* VariableManager;
 			StatusMachine* StatusMachine;
 			FixedString VisualResourceID_M;
-			EntityHandle OwnerHandle;
-			EntityHandle OriginalOwnerCharacterHandle;
+			ObjectHandle OwnerHandle;
+			ObjectHandle OriginalOwnerCharacterHandle;
 			void* Sockets;
 			__int64 field_168;
 			FixedString ItemType;

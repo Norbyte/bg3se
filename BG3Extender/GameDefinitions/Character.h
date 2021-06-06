@@ -227,14 +227,14 @@ namespace bg3se
 			ObjectSet<EntityHandle> SummonHandleSet;
 			void* field_188;
 			FixedString field_190;
-			ObjectSet<EntityHandle> field_198;
+			ObjectSet<ObjectHandle> field_198;
 			ObjectSet<FixedString> RegisteredTriggers;
 			PlayerData* PlayerData;
 			int LoseControl_M;
 			int field_474;
 			float MovementSpeedMultiplier;
 			float MovementSpeedMultiplier2;
-			EntityHandle PartyHandle;
+			ObjectHandle PartyHandle;
 			ObjectSet<FixedString> CreatedTemplateItems;
 			ObjectSet<FixedString> Treasures;
 			FixedString CustomTradeTreasure;

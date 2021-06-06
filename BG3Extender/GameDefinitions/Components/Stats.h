@@ -148,8 +148,8 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Weapon;
 
-		RefMap<uint8_t, DiceValues> Rolls;
-		RefMap<uint8_t*, DiceValues> Rolls2;
+		RefMap<AbilityId, Array<DiceValues>> Rolls;
+		RefMap<AbilityId, Array<DiceValues>> Rolls2;
 		float WeaponRange;
 		float DamageRange;
 		__int64 WeaponFunctors;
@@ -172,45 +172,93 @@ namespace bg3se
 		UUID God;
 	};
 
-	struct LevelUpDataInner4
-	{
-		uint8_t field_0;
-		UUID field_8;
-		UUID field_18;
-		int field_28;
-		__int64 field_30;
-		UUID field_38;
-		Array<FixedString> Array_FS;
-		__int64 field_60;
-		__int64 field_68;
-		__int64 field_70;
-		__int64 field_78;
-		__int64 field_80;
-	};
 
-
-	struct LevelUpData2
+	struct LevelUpUpgrades
 	{
-		Array<LevelUpDataInner4> field_0;
-		Array<LevelUpDataInner4> field_18;
-		Array<LevelUpDataInner4> field_30;
+		struct AbilityData
+		{
+			uint8_t field_0;
+			UUID Feat;
+			UUID Class;
+			int field_28;
+			int field_2C;
+			int field_30;
+			UUID Ability;
+			Array<uint8_t> Array_b8;
+			STDString field_60;
+			int field_80;
+		};
+		
+		struct SkillData
+		{
+			uint8_t field_0;
+			UUID field_8;
+			UUID field_18;
+			int field_28;
+			int field_2C;
+			int field_30;
+			UUID Skill;
+			Array<uint8_t> Array_b8;
+			STDString field_60;
+			int field_80;
+		};
+		
+		struct SpellData
+		{
+			struct StringPair
+			{
+				FixedString A;
+				FixedString B;
+			};
+
+			uint8_t field_0;
+			UUID Race;
+			UUID field_18;
+			int field_28;
+			int field_2C;
+			int field_30;
+			UUID Spell;
+			Array<FixedString> Array_FS;
+			Array<StringPair> Array_FS2;
+			STDString field_78;
+		};
+		
+		struct LevelUpDataInner4
+		{
+			uint8_t field_0;
+			UUID field_8;
+			UUID Class;
+			int field_28;
+			int field_2C;
+			int field_30;
+			UUID field_38;
+			Array<FixedString> Array_FS;
+			STDString field_60;
+			int field_80;
+		};
+
+		Array<AbilityData> Abilities;
+		Array<SkillData> Skills;
+		Array<SpellData> Spells;
 		Array<LevelUpDataInner4> field_48;
 	};
 
+	struct LevelUpData3
+	{
+		FixedString field_0;
+		uint8_t field_4;
+		uint64_t _Pad;
+		UUID field_10;
+	};
 
 	struct LevelUpData
 	{
-		UUID field_0;
-		__int64 field_10;
-		__int64 field_18;
-		__int64 field_20;
-		__int64 field_28;
-		__int64 field_30;
-		__int64 field_38;
-		__int64 field_40;
-		__int64 field_48;
-		LevelUpData2 field_50;
-		Array<uint64_t> field_B0;
+		UUID Class;
+		UUID SubClass;
+		UUID Feat;
+		std::array<int, 7> field_30;
+		LevelUpUpgrades Upgrades;
+		Array<LevelUpData3> field_B0;
 	};
 
 
@@ -604,6 +652,62 @@ namespace bg3se
 		Array<EntityHandle> Boosts;
 	};
 
+	struct LeaderComponent : public BaseComponent
+	{
+		static constexpr ExtComponentType ComponentType = ExtComponentType::ServerLeader;
+
+		VirtualMultiHashSet<EntityHandle> Followers_M;
+	};
+
+	struct BreadcrumbComponent : public BaseComponent
+	{
+		static constexpr ExtComponentType ComponentType = ExtComponentType::ServerBreadcrumb;
+
+		struct Element
+		{
+			int field_0;
+			uint8_t field_4;
+			glm::vec3 field_8;
+			glm::vec3 field_14;
+		};
+
+		std::array<Element, 8> field_18;
+		glm::vec3 field_118;
+	};
+
+
+	struct DelayDeathCauseComponent : public BaseComponent
+	{
+		static constexpr ExtComponentType ComponentType = ExtComponentType::ServerDelayDeathCause;
+
+		int DelayCount;
+		int Blocked_M;
+	};
+
+
+	struct PickpocketComponent : public BaseComponent
+	{
+		static constexpr ExtComponentType ComponentType = ExtComponentType::ServerPickpocket;
+
+		struct PickpocketEntry
+		{
+			EntityHandle field_0;
+			EntityHandle field_8;
+			int field_10;
+			bool field_14;
+			EntityHandle field_18;
+		};
+
+		Array<PickpocketEntry> field_18;
+	};
+
+	struct ReplicationDependencyOwnerComponent : public BaseComponent
+	{
+		static constexpr ExtComponentType ComponentType = ExtComponentType::ServerReplicationDependencyOwner;
+
+		Array<EntityHandle> Dependents;
+	};
+
 	/// <summary>
 	/// //////////////////////////////////////// END SERVER
 	/// </summary>
@@ -756,7 +860,7 @@ namespace bg3se
 			FixedString SpellId;
 			UUID field_8;
 			uint64_t field_18;
-			uint64_t field_20;
+			EntityHandle field_20;
 			uint8_t field_28;
 			uint8_t field_29;
 			UUID SomeUUID;
@@ -923,8 +1027,22 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ProgressionContainer;
 
-		Array<uint64_t> field_18;
+		Array<Array<EntityHandle>> Progressions;
 	};
+
+	struct ProgressionMetaComponent : public BaseComponent
+	{
+		static constexpr ExtComponentType ComponentType = ExtComponentType::ProgressionMeta;
+
+		uint8_t field_18;
+		UUID Progression;
+		UUID Race;
+		int field_40;
+		uint8_t field_44;
+		int field_48;
+		EntityHandle Owner;
+	};
+
 
 	struct RaceComponent : public BaseComponent
 	{
@@ -963,7 +1081,7 @@ namespace bg3se
 		float field_18;
 		float field_1C;
 		float field_20;
-		int field_24;
+		float field_24;
 		int field_28;
 		int field_2C;
 	};
@@ -1113,6 +1231,52 @@ namespace bg3se
 		__int64 field_D0;
 		__int64 field_D8;
 		SomeSharedServerClientObjId2 field_E0;*/
+	};
+
+	struct FTBParticipantComponent : public BaseComponent
+	{
+		static constexpr ExtComponentType ComponentType = ExtComponentType::FTBParticipant;
+
+		EntityHandle field_18;
+	};
+
+
+	struct UnsheathInfoComponent : public BaseComponent
+	{
+		static constexpr ExtComponentType ComponentType = ExtComponentType::UnsheathInfo;
+
+		uint8_t field_18;
+		uint8_t field_19;
+		uint8_t field_1A;
+		uint8_t field_1B;
+	};
+
+
+	struct ApprovalRatingsComponent : public BaseComponent
+	{
+		static constexpr ExtComponentType ComponentType = ExtComponentType::ApprovalRatings;
+
+		VirtualMultiHashMap<EntityHandle, int> Ratings;
+		VirtualMultiHashSet<UUID> field_70;
+	};
+
+
+	struct CharacterCreationAppearanceComponent : public BaseComponent
+	{
+		static constexpr ExtComponentType ComponentType = ExtComponentType::CharacterCreationAppearance;
+
+		struct AppearanceElement
+		{
+			UUID Material;
+			UUID Color;
+			float field_20;
+		};
+
+		Array<UUID> Visuals;
+		Array<AppearanceElement> Elements;
+		UUID SkinColor;
+		UUID EyeColor;
+		UUID field_68;
 	};
 
 }
