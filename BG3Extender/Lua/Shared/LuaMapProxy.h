@@ -210,6 +210,203 @@ namespace bg3se::lua
 		LifetimeHolder lifetime_;
 	};
 
+	
+	template <class TKey, class TValue>
+	class RefMapByRefProxyImpl : public MapProxyImplBase
+	{
+	public:
+		static_assert(!std::is_pointer_v<TKey>, "RefMapByRefProxyImpl template parameter should not be a pointer type!");
+		static_assert(!std::is_pointer_v<TValue>, "RefMapByRefProxyImpl template parameter should not be a pointer type!");
+
+		RefMapByRefProxyImpl(LifetimeHolder const& lifetime, RefMap<TKey, TValue> * obj)
+			: object_(obj), lifetime_(lifetime)
+		{}
+		
+		~RefMapByRefProxyImpl() override
+		{}
+
+		void* GetRaw() override
+		{
+			return object_;
+		}
+
+		char const* GetKeyTypeName() const override
+		{
+			return TypeInfo<TKey>::TypeName;
+		}
+
+		char const* GetValueTypeName() const override
+		{
+			return TypeInfo<TValue>::TypeName;
+		}
+
+		bool GetValue(lua_State* L, int luaKeyIndex) override
+		{
+			TKey key;
+			lua_pushvalue(L, luaKeyIndex);
+			LuaRead(L, key);
+			lua_pop(L, 1);
+
+			auto value = object_->Find(key);
+			if (value) {
+				MakeObjectRef(L, lifetime_, value);
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		bool SetValue(lua_State* L, int luaKeyIndex, int luaValueIndex) override
+		{
+			return false;
+		}
+
+		unsigned Length() override
+		{
+			return object_->Count();
+		}
+
+		int Next(lua_State* L, int luaKeyIndex) override
+		{
+			if (lua_type(L, luaKeyIndex) == LUA_TNIL) {
+				auto it = object_->begin();
+				if (it != object_->end()) {
+					LuaWrite(L, it.Key());
+					MakeObjectRef(L, lifetime_, &it.Value());
+					return 2;
+				}
+			} else {
+				TKey key;
+				lua_pushvalue(L, luaKeyIndex);
+				LuaRead(L, key);
+				lua_pop(L, 1);
+
+				auto it = object_->FindIterator(key);
+				if (it != object_->end()) {
+					it++;
+					if (it != object_->end()) {
+						LuaWrite(L, it.Key());
+						MakeObjectRef(L, lifetime_, &it.Value());
+						return 2;
+					}
+				}
+			}
+
+			return 0;
+		}
+
+	private:
+		RefMap<TKey, TValue>* object_;
+		LifetimeHolder lifetime_;
+	};
+
+	
+	template <class TKey, class TValue>
+	class RefMapByValProxyImpl : public MapProxyImplBase
+	{
+	public:
+		static_assert(!std::is_pointer_v<TKey>, "RefMapByValProxyImpl template parameter should not be a pointer type!");
+		static_assert(!std::is_pointer_v<TValue>, "RefMapByValProxyImpl template parameter should not be a pointer type!");
+
+		RefMapByValProxyImpl(LifetimeHolder const& lifetime, RefMap<TKey, TValue> * obj)
+			: object_(obj), lifetime_(lifetime)
+		{}
+		
+		~RefMapByValProxyImpl() override
+		{}
+
+		void* GetRaw() override
+		{
+			return object_;
+		}
+
+		char const* GetKeyTypeName() const override
+		{
+			return TypeInfo<TKey>::TypeName;
+		}
+
+		char const* GetValueTypeName() const override
+		{
+			return TypeInfo<TValue>::TypeName;
+		}
+
+		bool GetValue(lua_State* L, int luaKeyIndex) override
+		{
+			TKey key;
+			lua_pushvalue(L, luaKeyIndex);
+			LuaRead(L, key);
+			lua_pop(L, 1);
+
+			auto value = object_->Find(key);
+			if (value) {
+				LuaWrite(L, *value);
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		bool SetValue(lua_State* L, int luaKeyIndex, int luaValueIndex) override
+		{
+			TKey key;
+			lua_pushvalue(L, luaKeyIndex);
+			LuaRead(L, key);
+			lua_pop(L, 1);
+
+			if (lua_type(L, luaValueIndex) == LUA_TNIL) {
+				// FIXME - add support for remove() in refmaps!
+				// object_->Remove(key);
+			} else {
+				TValue value;
+				lua_pushvalue(L, luaValueIndex);
+				LuaRead(L, value);
+				lua_pop(L, 1);
+
+				*object_->Insert(key) = value;
+			}
+
+			return true;
+		}
+
+		unsigned Length() override
+		{
+			return object_->Count();
+		}
+
+		int Next(lua_State* L, int luaKeyIndex) override
+		{
+			if (lua_type(L, luaKeyIndex) == LUA_TNIL) {
+				auto it = object_->begin();
+				if (it != object_->end()) {
+					LuaWrite(L, it.Key());
+					LuaWrite(L, it.Value());
+					return 2;
+				}
+			} else {
+				TKey key;
+				lua_pushvalue(L, luaKeyIndex);
+				LuaRead(L, key);
+				lua_pop(L, 1);
+
+				auto it = object_->FindIterator(key);
+				if (it != object_->end()) {
+					it++;
+					if (it != object_->end()) {
+						LuaWrite(L, it.Key());
+						LuaWrite(L, it.Value());
+						return 2;
+					}
+				}
+			}
+
+			return 0;
+		}
+
+	private:
+		RefMap<TKey, TValue>* object_;
+		LifetimeHolder lifetime_;
+	};
+
 
 	class MapProxy : private Userdata<MapProxy>, public Indexable, public NewIndexable,
 		public Iterable, public Stringifiable, public Pushable, public GarbageCollected
@@ -231,6 +428,22 @@ namespace bg3se::lua
 			static_assert(sizeof(MultiHashMapByValProxyImpl<TKey, TValue>) <= sizeof(impl_), "MultiHashMapByValProxyImpl implementation object too large!");
 			auto self = New(L, lifetime);
 			return new (self->impl_) MultiHashMapByValProxyImpl<TKey, TValue>(lifetime, object);
+		}
+
+		template <class TKey, class TValue>
+		inline static RefMapByRefProxyImpl<TKey, TValue>* MakeByRef(lua_State* L, RefMap<TKey, TValue>* object, LifetimeHolder const& lifetime)
+		{
+			static_assert(sizeof(RefMapByRefProxyImpl<TKey, TValue>) <= sizeof(impl_), "RefMapByRefProxyImpl implementation object too large!");
+			auto self = New(L, lifetime);
+			return new (self->impl_) RefMapByRefProxyImpl<TKey, TValue>(lifetime, object);
+		}
+
+		template <class TKey, class TValue>
+		inline static RefMapByValProxyImpl<TKey, TValue>* MakeByVal(lua_State* L, RefMap<TKey, TValue>* object, LifetimeHolder const& lifetime)
+		{
+			static_assert(sizeof(RefMapByValProxyImpl<TKey, TValue>) <= sizeof(impl_), "RefMapByValProxyImpl implementation object too large!");
+			auto self = New(L, lifetime);
+			return new (self->impl_) RefMapByValProxyImpl<TKey, TValue>(lifetime, object);
 		}
 
 		inline MapProxyImplBase* GetImpl()
@@ -261,6 +474,26 @@ namespace bg3se::lua
 			}
 			
 			return dynamic_cast<MultiHashMapByValProxyImpl<TKey, TValue>*>(GetImpl());
+		}
+
+		template <class TKey, class TValue>
+		RefMapByRefProxyImpl<TKey, TValue>* GetByRefRefMap()
+		{
+			if (!lifetime_.IsAlive()) {
+				return nullptr;
+			}
+			
+			return dynamic_cast<RefMapByRefProxyImpl<TKey, TValue>*>(GetImpl());
+		}
+
+		template <class TKey, class TValue>
+		RefMapByValProxyImpl<TKey, TValue>* GetByValRefMap()
+		{
+			if (!lifetime_.IsAlive()) {
+				return nullptr;
+			}
+			
+			return dynamic_cast<RefMapByValProxyImpl<TKey, TValue>*>(GetImpl());
 		}
 
 	private:

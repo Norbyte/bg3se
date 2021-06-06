@@ -70,8 +70,13 @@ namespace bg3se::lua
 	template <class TKey, class TValue>
 	void MakeObjectRef(lua_State* L, LifetimeHolder const& lifetime, RefMap<TKey, TValue>* value)
 	{
-		// FIXME!
-		push(L, "RefMap PROXIES NOT SUPPORTED YET!");
+		static_assert(ByValArray<TKey>::Value || std::is_enum_v<TKey>, "HashMap key is a type that we cannot serialize by-value?");
+
+		if constexpr (ByValArray<TValue>::Value || std::is_enum_v<TValue>) {
+			MapProxy::MakeByVal<TKey, TValue>(L, value, lifetime);
+		} else {
+			MapProxy::MakeByRef<TKey, TValue>(L, value, lifetime);
+		}
 	}
 
 	template <class TKey, class TValue>
