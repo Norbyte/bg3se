@@ -62,7 +62,15 @@ namespace bg3se
 		if (Index <= 0xfffffffdu) {
 			auto getter = GetStaticSymbols().ls__FixedString__GetString;
 			if (getter) {
+#if defined(_DEBUG)
+				__try {
+					return getter(*this);
+				} __except (EXCEPTION_EXECUTE_HANDLER) {
+					return "<<< EXCEPTION THROWN WHILE READING STRING >>>";
+				}
+#else
 				return getter(*this);
+#endif
 			}
 		}
 

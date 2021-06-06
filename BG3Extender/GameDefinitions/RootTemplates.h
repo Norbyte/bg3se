@@ -87,7 +87,7 @@ namespace bg3se
         OverrideableProperty<bool> GenerateRunningDeepWater;
         OverrideableProperty<FixedString> LoopSound;
         OverrideableProperty<FixedString> SoundInitEvent;
-        OverrideableProperty<uint64_t> SoundAttenuation;
+        OverrideableProperty<int16_t> SoundAttenuation;
         OverrideableProperty<UUID> HLOD;
     };
 
@@ -374,7 +374,7 @@ namespace bg3se
             bool OnlyOncePerTurn;
         };
 
-        uint8_t SurfaceType;
+        SurfaceType SurfaceType;
         FixedString SurfaceName;
         uint64_t field_158[4];
         uint32_t field_188;

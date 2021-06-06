@@ -407,7 +407,7 @@ namespace bg3se::esv::lua
 		case SurfaceActionType::CreateSurfaceAction:
 		{
 			auto act = static_cast<esv::CreateSurfaceAction*>(action);
-			act->CurrentCellCount = act->SurfaceCells.Size;
+			act->CurrentCellCount = act->SurfaceCells.Size();
 			break;
 		}
 		case SurfaceActionType::CreatePuddleAction:
@@ -425,7 +425,7 @@ namespace bg3se::esv::lua
 		case SurfaceActionType::ZoneAction:
 		{
 			auto act = static_cast<esv::ZoneAction*>(action);
-			act->CurrentCellCount = act->SurfaceCells.Size;
+			act->CurrentCellCount = act->SurfaceCells.Size();
 			break;
 		}
 		case SurfaceActionType::ChangeSurfaceOnPathAction:
@@ -437,13 +437,13 @@ namespace bg3se::esv::lua
 		case SurfaceActionType::RectangleSurfaceAction:
 		{
 			auto act = static_cast<esv::RectangleSurfaceAction*>(action);
-			act->CurrentCellCount = act->SurfaceCells.Size;
+			act->CurrentCellCount = act->SurfaceCells.Size();
 			break;
 		}
 		case SurfaceActionType::PolygonSurfaceAction:
 		{
 			auto act = static_cast<esv::PolygonSurfaceAction*>(action);
-			act->LastSurfaceCellCount = act->SurfaceCells.Size;
+			act->LastSurfaceCellCount = act->SurfaceCells.Size();
 			break;
 		}
 		case SurfaceActionType::TransformSurfaceAction:

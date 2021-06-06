@@ -211,9 +211,9 @@ namespace bg3se::esv::lua
 						std::cout << EnumInfo<BoostType>::Find(boost->Type)
 							<< " Flags=" << boost->Flags_M
 							<< " Passive=" << boost->Passive.GetString()
-							<< " Arg1=" << boost->Params.field_0.GetString()
-							<< " Arg2=" << boost->Params.field_8
-							<< " Arg3=" << boost->Params.field_28
+							<< " Arg1=" << boost->Params.Boost.GetString()
+							<< " Arg2=" << boost->Params.Params
+							<< " Arg3=" << boost->Params.Params2
 							<< std::endl;
 
 					}
@@ -313,7 +313,7 @@ namespace bg3se::esv::lua
 							for (auto handle : boostSet.Value) {
 								auto bi = helpers.GetEntityComponent<BoostInfoComponent>(handle);
 								auto f2c = bi->Passive.GetString();
-								auto p2 = bi->Params.field_0.GetString();
+								auto p2 = bi->Params.Boost.GetString();
 								auto ac = helpers.GetEntityComponent<ArmorClassBoostComponent>(handle);
 								auto ab = helpers.GetEntityComponent<AbilityBoostComponent>(handle);
 								auto rb = helpers.GetEntityComponent<RollBonusBoostComponent>(handle);

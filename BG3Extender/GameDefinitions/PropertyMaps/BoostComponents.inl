@@ -12,9 +12,9 @@ END_CLS()
 
 
 BEGIN_CLS(BoostParameters)
-P(field_0)
-P(field_8)
-P(field_28)
+P(Boost)
+P(Params)
+P(Params2)
 END_CLS()
 
 
@@ -125,7 +125,7 @@ P(SpellId)
 P(Ability)
 P(SomeUUID)
 P(SpellChildSelection)
-P(UnlockDuration)
+P(CooldownType)
 END_CLS()
 
 

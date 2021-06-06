@@ -24,9 +24,9 @@ namespace bg3se
 
 	struct BoostParameters
 	{
-		FixedString field_0;
-		STDString field_8;
-		STDString field_28;
+		FixedString Boost;
+		STDString Params;
+		STDString Params2;
 	};
 
 	struct BoostInfoComponent : public BaseComponent
@@ -151,7 +151,7 @@ namespace bg3se
 	    AbilityId Ability; // Param 5
 	    UUID SomeUUID; // Param 2
 		SpellChildSelectionType SpellChildSelection; // Param 3
-	    SpellUnlockDurationType UnlockDuration; // Param 4
+		SpellCooldownType CooldownType; // Param 4
 	};
 
 	struct SourceAdvantageBoostComponent : public BaseComponent

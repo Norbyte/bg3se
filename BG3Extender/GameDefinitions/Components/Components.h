@@ -3,6 +3,7 @@
 #include <GameDefinitions/BaseTypes.h>
 #include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/EntitySystem.h>
+#include <GameDefinitions/Components/Boosts.h>
 
 namespace bg3se
 {
@@ -10,9 +11,10 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Transform;
 
-		__int64 field_18;
+		float field_18;
+		float field_1C;
 		Transform Transform;
-		int field_9C;
+		float field_9C;
 	};
 
 	struct ActionResourcesComponent : public BaseComponent
@@ -21,35 +23,22 @@ namespace bg3se
 
 		struct Amount
 		{
-			UUID field_0;
+			struct SubAmount
+			{
+				double Amount;
+				double Multiplier;
+			};
+
+			UUID ResourceUUID;
 			int ResourceId;
-			double Amount1;
-			double Amount2;
-			__int64 field_28;
-			__int64 field_30;
-			__int64 field_38;
-			__int64 field_40;
-			__int64 field_48;
-			__int64 field_50;
-			__int64 field_58;
-			__int64 field_60;
-			__int64 field_68;
-			__int64 field_70;
-			__int64 field_78;
-			__int64 field_80;
-			__int64 field_88;
-			__int64 field_90;
-			__int64 field_98;
+			double Amount;
+			double Multiplier;
+			std::array<SubAmount, 7> SubAmounts;
+			bool SubAmountsValid;
 		};
 
 
-		struct Amounts
-		{
-			Array<Amount> Amounts;
-		};
-
-
-		VirtualMultiHashMap<UUID, Amounts> Resources;
+		VirtualMultiHashMap<UUID, Array<Amount>> Resources;
 	};
 
 	struct SenseComponent : public BaseComponent
@@ -64,13 +53,13 @@ namespace bg3se
 	struct SpellBookEntry
 	{
 		SpellId Id;
-		UUID field_28;
+		UUID SpellUUID;
 		__int64 field_38;
-		char field_40;
-		char field_41;
-		char field_42;
-		char SpellCastingAbility;
-		Array<void*> field_48;
+		SpellCooldownType CooldownType;
+		uint8_t field_41;
+		uint8_t field_42;
+		AbilityId SpellCastingAbility;
+		Array<void*> InnerEntries;
 	};
 
 	struct SpellBookComponent : public BaseComponent
@@ -83,8 +72,8 @@ namespace bg3se
 	
 	struct SurfacePathInfluence
 	{
-		uint8_t SurfaceType;
-		uint8_t SurfaceTypeFlag;
+		SurfaceType SurfaceType;
+		bool IsCloud;
 		int Influence;
 	};
 
@@ -99,32 +88,28 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Use;
 
-		__int64 field_18;
+		__int64 field_18_PTR;
 		int field_20;
 		int field_24;
 		__int64 field_28;
-		int Slot;
 		int Charges;
 		int MaxCharges;
 		uint8_t ItemUseType;
-		char field_3D;
-		char field_3E;
-		char field_3F;
-		__int64 field_40;
-		int field_48;
-		int field_4C;
-		__int64 field_50;
-		__int64 field_58;
-		int field_60;
-		int field_64;
-		__int64 field_68;
+		uint8_t field_39;
+		uint8_t ItemComboFlag1;
+		uint8_t ItemComboFlag2;
+		uint8_t ItemUseType_M;
+		uint8_t field_3D;
+		uint8_t field_3E;
+		uint8_t field_3F;
+		Array<BoostParameters> Boosts;
 	};
 
 	struct WieldingComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Wielding;
 
-		EntityWorldHandle Owner;
+		EntityHandle Owner;
 	};
 
 	struct ActionResourceConsumeMultiplierBoost : public BaseComponent
@@ -132,7 +117,7 @@ namespace bg3se
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ActionResourceConsumeMultiplierBoost;
 
 		UUID ResourceUUID;
-		int field_28;
+		int Multiplier;
 		__int64 field_30;
 	};
 
@@ -140,7 +125,20 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::SpellContainer;
 
-		Array<void*> Spells;
+		struct Spell
+		{
+			SpellIdBase SpellId;
+			EntityHandle ItemHandle;
+			SpellChildSelectionType SelectionType;
+			uint8_t field_29;
+			UUID SpellUUID;
+			AbilityId SpellCastingAbility;
+			SpellCooldownType CooldownType;
+			FixedString field_44;
+			uint8_t field_48;
+		};
+
+		Array<Spell> Spells;
 	};
 
 	struct TagComponent : public BaseComponent
@@ -162,8 +160,8 @@ namespace bg3se
 		static constexpr ExtComponentType ComponentType = ExtComponentType::SpellBookPrepares;
 
 		Array<SpellIdBase> PreparedSpells;
-		VirtualMultiHashMap<int, UUID> field_30;
-		VirtualMultiHashMap<int, UUID> field_88;
+		VirtualMultiHashMap<UUID, int> field_30;
+		VirtualMultiHashMap<UUID, int> field_88;
 	};
 
 	struct RelationComponent : public BaseComponent
@@ -172,7 +170,7 @@ namespace bg3se
 
 		UUID field_18;
 		UUID field_28;
-		EntityWorldHandle field_38;
+		EntityHandle field_38;
 	};
 
 	struct CanInteractComponent : public BaseComponent
@@ -193,8 +191,7 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Origin;
 
-		__int64 field_18;
-		__int64 field_20;
+		UUID field_18;
 		FixedString Origin;
 	};
 
@@ -203,7 +200,7 @@ namespace bg3se
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Level;
 
 		FixedString LevelName;
-		EntityWorldHandle field_20;
+		EntityHandle field_20;
 		bool field_28;
 	};
 

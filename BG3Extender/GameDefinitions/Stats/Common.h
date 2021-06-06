@@ -25,16 +25,16 @@ namespace bg3se
 	{
 		FixedString OriginatorPrototype;
 		uint8_t _Pad[4];
-		uint8_t SourceType;
-		UUID Class;
+		SpellSourceType SourceType;
+		UUID ProgressionSource;
 	};
 
 	struct SpellId : public HasObjectProxy
 	{
 		FixedString OriginatorPrototype;
 		uint8_t _Pad[4];
-		uint8_t SourceType;
-		UUID Class;
+		SpellSourceType SourceType;
+		UUID ProgressionSource;
 		FixedString Prototype;
 	};
 
@@ -205,8 +205,7 @@ namespace bg3se
 		void* VMT{ nullptr };
 		Vector<int32_t> IndexedProperties;
 		FixedString Name;
-		uint64_t Unknown;
-		uint32_t Unknown2;
+		TranslatedString Unknown;
 		FixedString FS2;
 		struct CDivinityStats* DivStats{ nullptr };
 		VirtualMultiHashMap<FixedString, Array<StatsFunctorInfo>> StatsFunctors;

@@ -1,7 +1,14 @@
+BEGIN_CLS(SpellIdBase)
+P(OriginatorPrototype)
+P(SourceType)
+P(ProgressionSource)
+END_CLS()
+
+
 BEGIN_CLS(SpellId)
 P(OriginatorPrototype)
 P(SourceType)
-P(Class)
+P(ProgressionSource)
 P(Prototype)
 END_CLS()
 

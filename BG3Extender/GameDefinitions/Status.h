@@ -88,7 +88,7 @@ namespace bg3se
 			virtual void VMTE8() = 0;
 			virtual void VMTF0() = 0;
 
-			Array<uint64_t> field_8;
+			Array<ObjectHandle> field_8;
 			ObjectHandle SomeHandle;
 			ObjectHandle SomeEntityHandle_Old;
 			int SomeState;

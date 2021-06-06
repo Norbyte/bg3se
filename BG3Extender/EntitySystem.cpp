@@ -434,6 +434,80 @@ namespace bg3se
 		MapComponentIndices("eoc::OriginComponent", ExtComponentType::Origin);
 		MapComponentIndices("ls::LevelComponent", ExtComponentType::Level);
 
+
+		MapComponentIndices("eoc::BackgroundComponent", ExtComponentType::Background);
+		MapComponentIndices("eoc::GodComponent", ExtComponentType::God);
+		MapComponentIndices("eoc::LevelUpComponent", ExtComponentType::LevelUp);
+		MapComponentIndices("eoc::spell::PlayerPrepareSpellComponent", ExtComponentType::PlayerPrepareSpell);
+		MapComponentIndices("eoc::spell::CCPrepareSpellComponent", ExtComponentType::CCPrepareSpell);
+		MapComponentIndices("eoc::spell::CastComponent", ExtComponentType::SpellCast);
+		MapComponentIndices("eoc::FloatingComponent", ExtComponentType::Floating);
+		MapComponentIndices("eoc::VoiceComponent", ExtComponentType::Voice);
+		MapComponentIndices("eoc::CustomIconComponent", ExtComponentType::CustomIcon);
+		MapComponentIndices("eoc::CharacterCreationStatsComponent", ExtComponentType::CharacterCreationStats);
+		MapComponentIndices("eoc::DisarmableComponent", ExtComponentType::Disarmable);
+		MapComponentIndices("eoc::rest::ShortRestComponent", ExtComponentType::ShortRest);
+		MapComponentIndices("eoc::summon::IsSummonComponent", ExtComponentType::IsSummon);
+		MapComponentIndices("eoc::summon::ContainerComponent", ExtComponentType::SummonContainer);
+		MapComponentIndices("eoc::StealthComponent", ExtComponentType::Stealth);
+		MapComponentIndices("ls::IsGlobalComponent", ExtComponentType::IsGlobal);
+		MapComponentIndices("ls::SavegameComponent", ExtComponentType::Savegame);
+		MapComponentIndices("eoc::DisabledEquipmentComponent", ExtComponentType::DisabledEquipment);
+		MapComponentIndices("eoc::LootingStateComponent", ExtComponentType::LootingState);
+		MapComponentIndices("eoc::LootComponent", ExtComponentType::Loot);
+		MapComponentIndices("eoc::lock::LockComponent", ExtComponentType::Lock);
+		MapComponentIndices("eoc::summon::LifetimeComponent", ExtComponentType::SummonLifetime);
+		MapComponentIndices("eoc::InvisibilityComponent", ExtComponentType::Invisibility);
+		MapComponentIndices("eoc::IconComponent", ExtComponentType::Icon);
+		MapComponentIndices("eoc::hotbar::ContainerComponent", ExtComponentType::HotbarContainer);
+		MapComponentIndices("eoc::OriginTagComponent", ExtComponentType::OriginTag);
+		MapComponentIndices("eoc::OriginPassivesComponent", ExtComponentType::OriginPassives);
+		MapComponentIndices("eoc::GodTagComponent", ExtComponentType::GodTag);
+		MapComponentIndices("eoc::ClassTagComponent", ExtComponentType::ClassTag);
+		MapComponentIndices("eoc::BackgroundTagComponent", ExtComponentType::BackgroundTag);
+		MapComponentIndices("eoc::BackgroundPassivesComponent", ExtComponentType::BackgroundPassives);
+		MapComponentIndices("eoc::GlobalShortRestDisabledComponent", ExtComponentType::GlobalShortRestDisabled);
+		MapComponentIndices("eoc::GlobalLongRestDisabledComponent", ExtComponentType::GlobalLongRestDisabled);
+		MapComponentIndices("eoc::StoryShortRestDisabledComponent", ExtComponentType::StoryShortRestDisabled);
+		MapComponentIndices("eoc::FleeCapabilityComponent", ExtComponentType::FleeCapability);
+		MapComponentIndices("eoc::CanDoRestComponent", ExtComponentType::CanDoRest);
+		MapComponentIndices("eoc::ItemBoostsComponent", ExtComponentType::ItemBoosts);
+		MapComponentIndices("eoc::light::ActiveCharacterLightComponent", ExtComponentType::ActiveCharacterLight);
+		MapComponentIndices("ls::AnimationSetComponent", ExtComponentType::AnimationSet);
+		MapComponentIndices("ls::AnimationBlueprintComponent", ExtComponentType::AnimationBlueprint);
+		MapComponentIndices("eoc::CanModifyHealthComponent", ExtComponentType::CanModifyHealth);
+		MapComponentIndices("eoc::spell::AddedSpellsComponent", ExtComponentType::AddedSpells);
+		MapComponentIndices("eoc::exp::AvailableLevelComponent", ExtComponentType::AvailableLevel);
+		MapComponentIndices("eoc::CanBeLootedComponent", ExtComponentType::CanBeLooted);
+		MapComponentIndices("eoc::CanDoActionsComponent", ExtComponentType::CanDoActions);
+		MapComponentIndices("eoc::CanMoveComponent", ExtComponentType::CanMove);
+		MapComponentIndices("eoc::CanSenseComponent", ExtComponentType::CanSense);
+		MapComponentIndices("eoc::ConcentrationComponent", ExtComponentType::Concentration);
+		MapComponentIndices("eoc::DarknessComponent", ExtComponentType::Darkness);
+		MapComponentIndices("eoc::DualWieldingComponent", ExtComponentType::DualWielding);
+		MapComponentIndices("eoc::GameObjectVisualComponent", ExtComponentType::GameObjectVisual);
+		MapComponentIndices("eoc::InventorySlotComponent", ExtComponentType::InventorySlot);
+		MapComponentIndices("eoc::spell::SpellBookCooldowns", ExtComponentType::SpellBookCooldowns);
+		MapComponentIndices("eoc::DisplayNameComponent", ExtComponentType::DisplayName);
+		MapComponentIndices("eoc::EquipableComponent", ExtComponentType::Equipable);
+		MapComponentIndices("eoc::GameplayLightComponent", ExtComponentType::GameplayLight);
+		MapComponentIndices("eoc::ProgressionContainerComponent", ExtComponentType::ProgressionContainer);
+		MapComponentIndices("eoc::RaceComponent", ExtComponentType::Race);
+		MapComponentIndices("eoc::SightComponent", ExtComponentType::Sight);
+		MapComponentIndices("eoc::CanTravelComponent", ExtComponentType::CanTravel);
+		MapComponentIndices("eoc::CanBeInInventoryComponent", ExtComponentType::CanBeInInventory);
+		MapComponentIndices("eoc::MovementComponent", ExtComponentType::Movement);
+		MapComponentIndices("eoc::ObjectInteractionComponent", ExtComponentType::ObjectInteraction);
+		MapComponentIndices("eoc::PathingComponent", ExtComponentType::Pathing);
+		MapComponentIndices("eoc::SteeringComponent", ExtComponentType::Steering);
+		MapComponentIndices("eoc::CanDeflectProjectilesComponent", ExtComponentType::CanDeflectProjectiles);
+		MapComponentIndices("eoc::spell::LearnedSpells", ExtComponentType::LearnedSpells);
+		MapComponentIndices("eoc::spell::SpellAiConditions", ExtComponentType::SpellAiConditions);
+		MapComponentIndices("ls::ActiveSkeletonSlotsComponent", ExtComponentType::ActiveSkeletonSlots);
+		MapComponentIndices("ls::NetComponent", ExtComponentType::Net);
+		MapComponentIndices("ls::PhysicsComponent", ExtComponentType::Physics);
+
+
 		MapResourceManagerIndex("ls::TagManager", ExtResourceManagerType::Tag);
 		MapResourceManagerIndex("eoc::FactionContainer", ExtResourceManagerType::Faction);
 		MapResourceManagerIndex("eoc::RaceManager", ExtResourceManagerType::Race);
@@ -696,6 +770,31 @@ namespace bg3se
 	{
 		UpdateComponentMappings();
 
+
+		MapComponentIndices("esv::recruit::RecruitedByComponent", ExtComponentType::ServerRecruitedBy);
+		MapComponentIndices("esv::GameTimerComponent", ExtComponentType::ServerGameTimer);
+		MapComponentIndices("esv::exp::ExperienceGaveOutComponent", ExtComponentType::ServerExperienceGaveOut);
+		MapComponentIndices("esv::ReplicationDependencyComponent", ExtComponentType::ServerReplicationDependency);
+		MapComponentIndices("esv::summon::IsUnsummoningComponent", ExtComponentType::ServerIsUnsummoning);
+		MapComponentIndices("esv::combat::FleeBlockedComponent", ExtComponentType::ServerFleeBlocked);
+		MapComponentIndices("esv::ActivationGroupContainerComponent", ExtComponentType::ServerActivationGroupContainer);
+		MapComponentIndices("esv::AnubisTagComponent", ExtComponentType::ServerAnubisTag);
+		MapComponentIndices("esv::DialogTagComponent", ExtComponentType::ServerDialogTag);
+		MapComponentIndices("esv::DisplayNameListComponent", ExtComponentType::ServerDisplayNameList);
+		MapComponentIndices("esv::IconListComponent", ExtComponentType::ServerIconList);
+		MapComponentIndices("esv::PlanTagComponent", ExtComponentType::ServerPlanTag);
+		MapComponentIndices("esv::RaceTagComponent", ExtComponentType::ServerRaceTag);
+		MapComponentIndices("esv::TemplateTagComponent", ExtComponentType::ServerTemplateTag);
+		MapComponentIndices("esv::ToggledPassivesComponent", ExtComponentType::ServerToggledPassives);
+		MapComponentIndices("esv::BoostTagComponent", ExtComponentType::ServerBoostTag);
+		MapComponentIndices("esv::TriggerStateComponent", ExtComponentType::ServerTriggerState);
+		MapComponentIndices("esv::SafePositionComponent", ExtComponentType::ServerSafePosition);
+		MapComponentIndices("esv::AnubisExecutorComponent", ExtComponentType::ServerAnubisExecutor);
+		MapComponentIndices("esv::DetachedBoostComponent", ExtComponentType::ServerDetachedBoost);
+
+		MapComponentIndices("ls::StaticPhysicsComponent", ExtComponentType::StaticPhysics);
+		MapComponentIndices("ls::anubis::Component", ExtComponentType::Anubis);
+
 		MapComponentIndices("esv::Character", ExtComponentType::ServerCharacter);
 		MapComponentIndices("esv::Item", ExtComponentType::ServerItem);
 		MapComponentIndices("esv::Projectile", ExtComponentType::ServerProjectile);
@@ -706,6 +805,8 @@ namespace bg3se
 	void ClientEntitySystemHelpers::Setup()
 	{
 		UpdateComponentMappings();
+
+		MapComponentIndices("ls::VisualComponent", ExtComponentType::Visual);
 
 		MapComponentIndices("ecl::Character", ExtComponentType::ClientCharacter);
 		MapComponentIndices("ecl::Item", ExtComponentType::ClientItem);

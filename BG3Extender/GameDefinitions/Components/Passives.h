@@ -20,12 +20,9 @@ namespace bg3se
 
 		int field_18;
 		FixedString PassiveId;
-		__int64 field_20;
-		__int64 field_28;
-		__int64 field_30;
-		int field_38;
-		int field_3C;
-		int field_40;
+		ObjectHandle field_20;
+		ObjectHandle field_28;
+		Array<uint64_t> array_unkn2;
 		RefMap<void*, void*> field_48;
 		uint8_t StatsFunctorContext;
 		int field_5C;
