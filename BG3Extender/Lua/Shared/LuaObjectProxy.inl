@@ -1,4 +1,5 @@
 #include <Lua/Shared/LuaObjectProxy.h>
+#include <GameDefinitions/EntitySystem.h>
 
 namespace bg3se::lua
 {
@@ -97,6 +98,64 @@ namespace bg3se::lua
 	int ObjectProxy::GC(lua_State* L)
 	{
 		this->~ObjectProxy();
+		return 0;
+	}
+
+
+	int ComponentGetReplicationFlags(lua_State* L, BaseComponent* self)
+	{
+		uint32_t qword{ 0 };
+		if (lua_gettop(L) > 1) {
+			qword = checked_get<uint32_t>(L, 2);
+		}
+
+		auto helpers = gExtender->GetCurrentExtensionState()->GetLua()->GetEntitySystemHelpers();
+		auto flags = helpers->GetReplicationFlags(*self);
+		if (flags) {
+			if (qword < flags->NumQwords()) {
+				push(L, flags->GetBuf()[qword]);
+			} else {
+				push(L, 0ull);
+			}
+		} else {
+			push(L, 0ull);
+		}
+
+		return 1;
+	}
+
+	void ComponentSetReplicationFlag(BaseComponent* component, uint32_t qword, uint64_t flags)
+	{
+		auto helpers = gExtender->GetCurrentExtensionState()->GetLua()->GetEntitySystemHelpers();
+		auto curReplicationFlags = helpers->GetOrCreateReplicationFlags(*component);
+		if (curReplicationFlags) {
+			curReplicationFlags->EnsureSize((qword + 1) * 64);
+			bool changed = (curReplicationFlags->GetBuf()[qword] & flags) != flags;
+			curReplicationFlags->GetBuf()[qword] |= flags;
+			if (changed) {
+				helpers->NotifyReplicationFlagsDirtied();
+			}
+		} else {
+			OsiError("Couldn't add entity notification?");
+		}
+	}
+
+	int ComponentSetReplicationFlag(lua_State* L, BaseComponent* self)
+	{
+		auto flags = checked_get<uint64_t>(L, 2);
+
+		uint32_t qword{ 0 };
+		if (lua_gettop(L) > 2) {
+			qword = checked_get<uint32_t>(L, 3);
+		}
+
+		ComponentSetReplicationFlag(self, qword, flags);
+		return 0;
+	}
+
+	int ComponentReplicate(lua_State* L, BaseComponent* self)
+	{
+		ComponentSetReplicationFlag(self, 0, 0xffffffffffffffffull);
 		return 0;
 	}
 }

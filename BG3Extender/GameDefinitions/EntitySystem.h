@@ -126,6 +126,9 @@ namespace bg3se
 		// Component type index, registered statically during game startup
 		enum class ComponentTypeIndexTag {};
 		using ComponentTypeIndex = TypedIntegral<int32_t, ComponentTypeIndexTag>;
+		// Replication pool type index, registered statically during game startup
+		enum class ReplicationTypeIndexTag {};
+		using ReplicationTypeIndex = TypedIntegral<int32_t, ReplicationTypeIndexTag>;
 
 		struct Entity
 		{
@@ -199,8 +202,14 @@ namespace bg3se
 			Array<SystemType> Systems;
 		};
 
+		struct ComponentReplication
+		{
+			Array<VirtualMultiHashMap<EntityHandle, BitSet<>>> ComponentPools;
+			bool Dirty;
+		};
+
 		void* UnknownB1;
-		void* UnknownB2;
+		ComponentReplication* Replication;
 		uint32_t EnterCount;
 		uint32_t CurrentThreadId;
 		void* Unknown;

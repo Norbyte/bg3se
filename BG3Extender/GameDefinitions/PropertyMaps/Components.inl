@@ -2,6 +2,10 @@
 BEGIN_CLS(BaseComponent)
 P_RO(Entity)
 P_RO(ComponentHandle)
+
+P_FUN(GetReplicationFlags, ComponentGetReplicationFlags)
+P_FUN(SetReplicationFlag, ComponentSetReplicationFlag)
+P_FUN(Replicate, ComponentReplicate)
 END_CLS()
 
 

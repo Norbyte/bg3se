@@ -24,6 +24,10 @@
 namespace bg3se::lua
 {
 
+int ComponentGetReplicationFlags(lua_State* L, BaseComponent* self);
+int ComponentSetReplicationFlag(lua_State* L, BaseComponent* self);
+int ComponentReplicate(lua_State* L, BaseComponent* self);
+
 int CharacterGetInventoryItems(lua_State* L, esv::Character* self);
 int CharacterGetNearbyCharacters(lua_State* L, esv::Character* self);
 int CharacterGetSummons(lua_State* L, esv::Character* self);

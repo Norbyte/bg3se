@@ -7,6 +7,14 @@
 #include <GameDefinitions/GuidResources.h>
 #include "ScriptExtender.h"
 
+#undef DEBUG_INDEX_MAPPINGS
+
+#if defined(DEBUG_INDEX_MAPPINGS)
+#define DEBUG_IDX(x) std::cout << x << std::endl
+#else
+#define DEBUG_IDX(x)
+#endif
+
 namespace bg3se
 {
 	BaseComponent* ObjectFactoryBase::Get(ObjectHandle handle) const
@@ -322,6 +330,78 @@ namespace bg3se
 		return key;
 	}
 
+	BitSet<>* EntitySystemHelpersBase::GetReplicationFlags(EntityHandle const& entity, EntityWorldBase::ReplicationTypeIndex replicationType)
+	{
+		auto world = GetEntityWorld();
+		if (!world || !world->Replication) return nullptr;
+
+		auto& pools = world->Replication->ComponentPools;
+		auto typeId = (int)replicationType;
+		if (typeId >= (int)pools.Size()) {
+			OsiError("Attempted to fetch replication list for component " << entity << ", but replication pool size is " << pools.Size() << "!");
+			return nullptr;
+		}
+
+		auto& pool = pools[typeId];
+		auto syncFlags = pool.Find(entity);
+		if (syncFlags) {
+			return *syncFlags;
+		} else {
+			return nullptr;
+		}
+	}
+
+	BitSet<>* EntitySystemHelpersBase::GetReplicationFlags(BaseComponent const& component)
+	{
+		auto typeIdx = GetReplicationTypeIndex((EntityWorldBase::HandleTypeIndex)component.ComponentHandle.GetType());
+		if (!typeIdx) {
+			OsiError("Couldn't find replication type for component handle " << component.ComponentHandle);
+			return nullptr;
+		}
+
+		return GetReplicationFlags(component.Entity, *typeIdx);
+	}
+
+	BitSet<>* EntitySystemHelpersBase::GetOrCreateReplicationFlags(EntityHandle const& entity, EntityWorldBase::ReplicationTypeIndex replicationType)
+	{
+		auto world = GetEntityWorld();
+		if (!world || !world->Replication) return nullptr;
+
+		auto& pools = world->Replication->ComponentPools;
+		auto typeId = (int)replicationType;
+		if (typeId >= (int)pools.Size()) {
+			OsiError("Attempted to fetch replication list for component " << entity << ", but replication pool size is " << pools.Size() << "!");
+			return nullptr;
+		}
+
+		auto& pool = pools[typeId];
+		auto syncFlags = pool.Find(entity);
+		if (syncFlags) {
+			return *syncFlags;
+		}
+
+		return pool.Set(entity, BitSet<>());
+	}
+
+	BitSet<>* EntitySystemHelpersBase::GetOrCreateReplicationFlags(BaseComponent const& component)
+	{
+		auto typeIdx = GetReplicationTypeIndex((EntityWorldBase::HandleTypeIndex)component.ComponentHandle.GetType());
+		if (!typeIdx) {
+			OsiError("Couldn't find replication type for component handle " << component.ComponentHandle);
+			return nullptr;
+		}
+
+		return GetOrCreateReplicationFlags(component.Entity, *typeIdx);
+	}
+
+	void EntitySystemHelpersBase::NotifyReplicationFlagsDirtied()
+	{
+		auto world = GetEntityWorld();
+		if (!world || !world->Replication) return;
+
+		world->Replication->Dirty = true;
+	}
+
 	void EntitySystemHelpersBase::UpdateComponentMappings()
 	{
 		if (initialized_) return;
@@ -331,6 +411,7 @@ namespace bg3se
 		handleIndexToNameMappings_.clear();
 		componentIndexToTypeMappings_.clear();
 		handleIndexToTypeMappings_.clear();
+		handleIndexToComponentMappings_.clear();
 		componentIndices_.fill(UndefinedIndex);
 		handleIndices_.fill(UndefinedIndex);
 		resourceManagerIndices_.fill(UndefinedIndex);
@@ -361,42 +442,55 @@ namespace bg3se
 			}
 
 			std::sort(map.second.Indices.begin(), map.second.Indices.end(), std::greater<int32_t>());
-			//std::cout << "\t" << map.first << ": " << std::endl;
+			DEBUG_IDX("\t" << map.first << ": ");
 			for (std::size_t i = 0; i < map.second.NumIndices - 1; i++) {
 				auto componentIdx = entityWorld->HandleIndexToComponentIndexMap.Find(map.second.Indices[i]);
 				if (componentIdx) {
 					bool found{ false };
 					for (std::size_t j = i + 1; j < map.second.NumIndices; j++) {
 						if (map.second.Indices[j] == *componentIdx) {
-							//std::cout << map.second.Indices[i] << " -> " << map.second.Indices[j] << std::endl;
+							DEBUG_IDX(map.second.Indices[i] << " -> " << map.second.Indices[j]);
 							IndexMappings indexMapping{ map.second.Indices[i], map.second.Indices[j] };
 							auto componentName = SimplifyComponentName(map.first);
 							componentNameToIndexMappings_.insert(std::make_pair(componentName, indexMapping));
 							componentIndexToNameMappings_.insert(std::make_pair(indexMapping.ComponentIndex, componentName));
 							handleIndexToNameMappings_.insert(std::make_pair(indexMapping.HandleIndex, componentName));
+
+							if (map.second.NumIndices == 3) {
+								int syncIdx;
+								if (i != 0 && j != 0) {
+									syncIdx = 0;
+								} else if (i != 1 && j != 1) {
+									syncIdx = 1;
+								} else {
+									syncIdx = 2;
+								}
+
+								handleIndexToReplicationTypeMappings_.insert(std::make_pair(indexMapping.HandleIndex, map.second.Indices[syncIdx]));
+							}
+
 							found = true;
 						}
 					}
 
 					if (!found) {
-						//std::cout << map.second.Indices[i] << ": No valid mapping" << std::endl;
+						DEBUG_IDX(map.second.Indices[i] << ": No valid mapping");
 					}
 				} else {
-					//std::cout << map.second.Indices[i] << ": Handle type not registered" << std::endl;
+					DEBUG_IDX(map.second.Indices[i] << ": Handle type not registered");
 				}
 			}
 		}
 
-		/*std::cout << "COMPONENT MAPPINGS:" << std::endl;
+#if defined(DEBUG_INDEX_MAPPINGS)
+		DEBUG_IDX("COMPONENT MAPPINGS:");
 
-		for (auto const& map : componentIndexMappings_) {
-			if (map.second.ComponentIndex != UndefinedIndex) {
-				auto name = map.first.substr(6, map.first.size() - 6 - 7);
-				std::cout << "\t" << name << ": Handle " << map.second.HandleIndex << ", Component " << map.second.ComponentIndex << std::endl;
-			}
+		for (auto const& map : componentNameToIndexMappings_) {
+			DEBUG_IDX("\t" << map.first << ": Handle " << map.second.HandleIndex << ", Component " << map.second.ComponentIndex);
 		}
 
-		std::cout << "-------------------------------------------------------" << std::endl;*/
+		DEBUG_IDX("-------------------------------------------------------");
+#endif
 
 		MapComponentIndices("eoc::ActionResourcesComponent", ExtComponentType::ActionResources);
 		MapComponentIndices("eoc::ArmorComponent", ExtComponentType::Armor);
@@ -611,6 +705,7 @@ namespace bg3se
 			handleIndices_[(unsigned)type] = it->second.HandleIndex;
 			componentIndexToTypeMappings_.insert(std::make_pair((int32_t)it->second.ComponentIndex, type));
 			handleIndexToTypeMappings_.insert(std::make_pair((int32_t)it->second.HandleIndex, type));
+			handleIndexToComponentMappings_.insert(std::make_pair((int32_t)it->second.HandleIndex, (int32_t)it->second.ComponentIndex));
 		} else {
 			OsiWarn("Could not find index for component: " << componentName);
 		}

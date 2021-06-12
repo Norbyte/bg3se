@@ -60,6 +60,16 @@ public:
 		}
 	}
 
+	inline std::optional<EntityWorldBase::ComponentTypeIndex> GetComponentIndex(EntityWorldBase::HandleTypeIndex index) const
+	{
+		auto it = handleIndexToComponentMappings_.find((int32_t)index);
+		if (it != handleIndexToComponentMappings_.end()) {
+			return EntityWorldBase::ComponentTypeIndex(it->second);
+		} else {
+			return {};
+		}
+	}
+
 	inline std::optional<EntityWorldBase::ComponentTypeIndex> GetComponentIndex(ExtComponentType type) const
 	{
 		auto idx = componentIndices_[(unsigned)type];
@@ -77,6 +87,16 @@ public:
 			return idx;
 		}
 		else {
+			return {};
+		}
+	}
+
+	inline std::optional<EntityWorldBase::ReplicationTypeIndex> GetReplicationTypeIndex(EntityWorldBase::HandleTypeIndex index) const
+	{
+		auto it = handleIndexToReplicationTypeMappings_.find((int32_t)index);
+		if (it != handleIndexToReplicationTypeMappings_.end()) {
+			return EntityWorldBase::ReplicationTypeIndex(it->second);
+		} else {
 			return {};
 		}
 	}
@@ -182,6 +202,12 @@ public:
 		}
 	}
 
+	BitSet<> * GetReplicationFlags(EntityHandle const& entity, EntityWorldBase::ReplicationTypeIndex replicationType);
+	BitSet<> * GetReplicationFlags(BaseComponent const& component);
+	BitSet<> * GetOrCreateReplicationFlags(EntityHandle const& entity, EntityWorldBase::ReplicationTypeIndex replicationType);
+	BitSet<> * GetOrCreateReplicationFlags(BaseComponent const& component);
+	void NotifyReplicationFlagsDirtied();
+
 protected:
 	static constexpr int32_t UndefinedIndex{ -1 };
 
@@ -209,6 +235,8 @@ private:
 	std::unordered_map<int32_t, STDString> handleIndexToNameMappings_;
 	std::unordered_map<int32_t, ExtComponentType> componentIndexToTypeMappings_;
 	std::unordered_map<int32_t, ExtComponentType> handleIndexToTypeMappings_;
+	std::unordered_map<int32_t, int32_t> handleIndexToComponentMappings_;
+	std::unordered_map<int32_t, int32_t> handleIndexToReplicationTypeMappings_;
 	std::unordered_map<STDString, int32_t> systemIndexMappings_;
 	std::array<EntityWorldBase::ComponentTypeIndex, (int)ExtComponentType::Max> componentIndices_;
 	std::array<EntityWorldBase::HandleTypeIndex, (int)ExtComponentType::Max> handleIndices_;

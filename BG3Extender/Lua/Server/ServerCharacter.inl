@@ -26,7 +26,7 @@ namespace bg3se::lua
 	int CharacterGetInventoryItems(lua_State* L, esv::Character* self)
 	{
 		StackCheck _(L, 1);
-		GetInventoryItems(L, self->InventoryHandle);
+		// FIXME! -- GetInventoryItems(L, self->InventoryHandle);
 		return 1;
 	}
 

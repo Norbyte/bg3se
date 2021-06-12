@@ -147,6 +147,14 @@ namespace bg3se::lua
 		return 1;
 	}
 
+	int EntityProxy::GetComponents(lua_State* L)
+	{
+		StackCheck _(L, 1);
+		auto self = checked_get<EntityProxy*>(L, 1);
+		EntityComponentsProxy::New(L, self->handle_, self->entitySystem_);
+		return 1;
+	}
+
 	int EntityProxy::GetAllComponents(lua_State* L)
 	{
 		StackCheck _(L, 1);
@@ -231,6 +239,9 @@ namespace bg3se::lua
 		push(L, &EntityProxy::GetComponent);
 		lua_setfield(L, -2, "GetComponent");
 
+		push(L, &EntityProxy::GetComponents);
+		lua_setfield(L, -2, "GetComponents");
+
 		push(L, &EntityProxy::GetAllComponents);
 		lua_setfield(L, -2, "GetAllComponents");
 
@@ -256,6 +267,31 @@ namespace bg3se::lua
 	}
 
 	int EntityProxy::ToString(lua_State* L)
+	{
+		StackCheck _(L, 1);
+		char entityName[100];
+		sprintf_s(entityName, "Entity (%016llx)", handle_.Handle);
+		push(L, entityName);
+		return 1;
+	}
+
+
+	char const* const EntityComponentsProxy::MetatableName = "EntityComponentsProxy";
+
+	EntityComponentsProxy::EntityComponentsProxy(EntityHandle const& handle, EntitySystemHelpersBase* entitySystem)
+		: handle_(handle), entitySystem_(entitySystem)
+	{}
+
+	int EntityComponentsProxy::Index(lua_State* L)
+	{
+		StackCheck _(L, 1);
+		auto self = checked_get<EntityComponentsProxy*>(L, 1);
+		auto componentType = checked_get<ExtComponentType>(L, 2);
+		PushComponent(L, self->entitySystem_, self->handle_, componentType, GetCurrentLifetime(), false);
+		return 1;
+	}
+
+	int EntityComponentsProxy::ToString(lua_State* L)
 	{
 		StackCheck _(L, 1);
 		char entityName[100];
@@ -373,6 +409,7 @@ namespace bg3se::lua
 	void RegisterEntityProxy(lua_State* L)
 	{
 		EntityProxy::RegisterMetatable(L);
+		EntityComponentsProxy::RegisterMetatable(L);
 		ObjectHandleProxy::RegisterMetatable(L);
 	}
 }
