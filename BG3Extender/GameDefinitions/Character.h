@@ -146,7 +146,7 @@ namespace bg3se
 
 		struct PlayerData : public ProtectedProxyGameObject<PlayerData>
 		{
-			EntityHandle PlayerHandle;
+			ObjectHandle PlayerHandle;
 			uint64_t SkillBar;
 			uint64_t ShapeShiftVariableManagers[10];
 			Map<FixedString, void*> ShapeShiftAttitudeMaps;
@@ -191,7 +191,7 @@ namespace bg3se
 			bool NeedsUpdate;
 			bool ForceSynch;
 			int8_t field_133;
-			EntityHandle InventoryHandle;
+			ObjectHandle InventoryHandle;
 			void* MovementMachine_M;
 			void* BehaviourMachine;
 			void* ActionMachine_M;
@@ -227,7 +227,7 @@ namespace bg3se
 			ObjectSet<EntityHandle> SummonHandleSet;
 			void* field_188;
 			FixedString field_190;
-			ObjectSet<ObjectHandle> field_198;
+			ObjectSet<ObjectHandle> RegisteredTriggerHandles;
 			ObjectSet<FixedString> RegisteredTriggers;
 			PlayerData* PlayerData;
 			int LoseControl_M;
@@ -340,7 +340,7 @@ namespace bg3se
 			CharacterTemplate* Template;
 			CharacterTemplate* OriginalTemplate;
 			CDivinityStats_Character* Stats;
-			EntityHandle InventoryHandle;
+			ObjectHandle InventoryHandle;
 			void* MovementMachine;
 			void* ActionStateMachine;
 			void* SteeringMachine;

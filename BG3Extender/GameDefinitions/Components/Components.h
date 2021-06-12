@@ -26,13 +26,13 @@ namespace bg3se
 			struct SubAmount
 			{
 				double Amount;
-				double Multiplier;
+				double MaxAmount;
 			};
 
 			UUID ResourceUUID;
 			int ResourceId;
 			double Amount;
-			double Multiplier;
+			double MaxAmount;
 			std::array<SubAmount, 7> SubAmounts;
 			bool SubAmountsValid;
 		};

@@ -124,7 +124,7 @@ namespace bg3se
 			CRPGStats_Object* StatsFromName;
 			ItemGeneration* Generation;
 			EntityHandle InventoryHandle;
-			ObjectHandle ParentHandle;
+			EntityHandle ParentHandle;
 			int Amount;
 			int Vitality;
 			int Armor;

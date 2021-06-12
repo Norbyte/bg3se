@@ -487,7 +487,7 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ServerRecruitedBy;
 
-		ObjectHandle RecruitedBy;
+		EntityHandle RecruitedBy;
 	};
 
 	struct GameTimerComponent : public BaseComponent

@@ -27,65 +27,57 @@ namespace bg3se
 		static constexpr ExtComponentType ComponentType = ExtComponentType::CombatState;
 
 		UUID MyGuid;
-		__int64 field_28;
-		__int64 field_30;
-		int field_38;
-		__int64 field_40;
-		int field_48;
-		__declspec(align(8)) int field_50;
-		__int64 field_58;
-		int field_60;
-		__declspec(align(8)) int field_68;
-		__int64 field_70;
-		int field_78;
-		Array<ObjectHandle> CharacterHandles;
-		__int64 field_98;
-		__int64 field_A0;
-		FixedString field_A8;
-		char field_AC;
-		int field_B0;
-		__int64 field_B8;
-		int field_C0;
-		__declspec(align(8)) int field_C8;
-		__declspec(align(8)) char field_D0;
+		VirtualMultiHashMap<EntityHandle, int32_t> Initiatives;
+		Array<EntityHandle> Participants;
+		EntityHandle field_98;
+		EntityHandle field_A0;
+		FixedString Level;
+		uint8_t field_AC;
+		float field_B0;
+		Array<EntityHandle> field_B8;
+		uint8_t field_D0;
 	};
 
 	struct TurnBasedComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::TurnBased;
-
-		EntityHandle CombatHandle_M;
-		char field_20;
-		char field_21;
-		char field_22;
-		char field_23;
-		char field_24;
-		int field_28;
-		char field_2C;
-		int field_30;
-		char field_34;
-		__declspec(align(4)) char field_38;
-		char field_39;
-		__declspec(align(8)) UUID field_40;
+		
+		uint8_t field_18;
+		uint8_t field_19;
+		uint8_t field_1A;
+		int field_1C;
+		uint8_t field_20;
+		uint8_t field_21;
+		int field_24;
+		uint8_t field_28;
+		int field_2C;
+		uint8_t field_30;
+		UUID field_38;
 	};
 
 	struct TurnOrderComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::TurnOrder;
 
-		struct Participant
+		struct ParticipantHandleInfo
 		{
-			Array<ObjectHandle> Handles;
-			__int64 field_18;
-			__int64 field_20;
-			__int64 field_28;
-			__int64 field_30;
+			EntityHandle Entity;
+			int32_t Initiative;
 		};
 
-		Array<int> TurnOrderIndices;
+		struct Participant
+		{
+			Array<ParticipantHandleInfo> Handles;
+			UUID Participant;
+			uint32_t field_28;
+			int32_t Initiative;
+			uint8_t field_30;
+		};
+
+		Array<uint64_t> TurnOrderIndices;
 		Array<Participant> Participants;
-		Array<void*> field_48;
-		Array<void*> field_60;
+		Array<uint64_t> TurnOrderIndices2;
+		Array<Participant> Participants2;
 		int field_78;
 		int field_7C;
 	};
