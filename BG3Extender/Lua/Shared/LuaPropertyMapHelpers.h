@@ -6,6 +6,8 @@
 
 namespace bg3se::lua
 {
+	extern bool EnableWriteProtectedWrites;
+
 	template <class T>
 	void MakeObjectRef(lua_State* L, LifetimeHolder const& lifetime, T* value)
 	{
@@ -118,6 +120,17 @@ namespace bg3se::lua
 		LuaRead(L, *value);
 		lua_pop(L, 1);
 		return true;
+	}
+
+	template <class T>
+	bool GenericSetOffsetWriteProtectedProperty(lua_State* L, LifetimeHolder const& lifetime, void* obj, int index, std::size_t offset)
+	{
+		if (EnableWriteProtectedWrites) {
+			return GenericSetOffsetProperty<T>(L, lifetime, obj, index, offset);
+		} else {
+			OsiError("Attempted to set a write-protected property");
+			return false;
+		}
 	}
 
 	inline bool SetPropertyWriteProtected(lua_State* L, LifetimeHolder const& lifetime, void* obj, int index, std::size_t offset)

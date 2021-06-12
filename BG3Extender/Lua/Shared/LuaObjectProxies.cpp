@@ -80,6 +80,11 @@ void CopyRawProperties(GenericPropertyMap const& base, GenericPropertyMap& child
 #undef PN
 #undef P_FUN
 
+#if defined(DEBUG)
+bool EnableWriteProtectedWrites{ true };
+#else
+bool EnableWriteProtectedWrites{ false };
+#endif
 
 // Property registrations
 
@@ -109,7 +114,7 @@ void CopyRawProperties(GenericPropertyMap const& base, GenericPropertyMap& child
 #define P_RO(prop) \
 	pm.AddRawProperty(#prop, \
 		&(GenericGetOffsetProperty<decltype(PM::ObjectType::prop)>), \
-		&SetPropertyWriteProtected, \
+		&(GenericSetOffsetWriteProtectedProperty<decltype(PM::ObjectType::prop)>), \
 		offsetof(PM::ObjectType, prop) \
 	);
 
