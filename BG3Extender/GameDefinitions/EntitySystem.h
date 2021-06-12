@@ -243,7 +243,7 @@ namespace bg3se
 		BaseComponent* GetEntityComponent(EntityHandle entityHandle, ComponentTypeIndex type, bool logError = true);
 	};
 
-	struct IGameObject : public ProtectedGameObject<IGameObject>
+	struct IGameObject : public BaseComponent
 	{
 		virtual ~IGameObject() = 0;
 		virtual void HandleTextKeyEvent() = 0;
@@ -283,8 +283,6 @@ namespace bg3se
 		virtual FixedString& GetParentUUID_M() = 0;
 		virtual FixedString& GetCurrentLevel() = 0;
 		virtual void SetCurrentLevel(FixedString const& fs) = 0;
-
-		BaseComponent Base;
 	};
 
 	/*struct IEocClientObject : public IGameObject

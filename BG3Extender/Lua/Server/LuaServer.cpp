@@ -201,7 +201,7 @@ namespace bg3se::esv::lua
 		auto& helpers = gExtender->GetServerEntityHelpers();
 		auto character = helpers.GetComponent<esv::Character>(s);
 		if (character) {
-			auto boostContainer = helpers.GetEntityComponent<BoostsContainerComponent>(character->Base.Entity);
+			auto boostContainer = helpers.GetEntityComponent<BoostsContainerComponent>(character->Entity);
 
 			if (boostContainer) {
 				std::cout << "Boosts:" << std::endl;
@@ -272,7 +272,7 @@ namespace bg3se::esv::lua
 					auto ch2 = reinterpret_cast<esv::Character*>((uint64_t)comp - 8);
 					std::cout << "Found in pool " << i << std::endl;
 
-					auto entity = ch2->Base.Entity;
+					auto entity = ch2->Entity;
 
 					auto& helpers = gExtender->GetServerEntityHelpers();
 					auto ar = helpers.GetEntityComponent<ActionResourcesComponent>(entity);

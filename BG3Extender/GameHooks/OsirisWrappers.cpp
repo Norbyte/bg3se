@@ -125,7 +125,8 @@ void OsirisWrappers::Shutdown()
 #if 0
 	DEBUG("OsirisWrappers::Shutdown: Unregistering hooks");
 #endif
-	DetourTransactionBegin();
+	// Temporarily disabled until we figure out why detour detach fails
+	/*DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
 
 	RegisterDivFunctions.Unwrap();
@@ -148,7 +149,7 @@ void OsirisWrappers::Shutdown()
 	CreateFileW.Unwrap();
 	CloseHandle.Unwrap();
 
-	DetourTransactionCommit();
+	DetourTransactionCommit();*/
 
 	FreeModule(Kernel32Module);
 	FreeModule(OsirisModule);

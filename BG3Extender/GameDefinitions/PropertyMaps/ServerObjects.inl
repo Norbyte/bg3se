@@ -29,6 +29,7 @@ END_CLS()
 
 
 BEGIN_CLS(esv::Character)
+INHERIT(BaseComponent)
 // Properties
 P_RO(GUID)
 P_RO(NetID)
@@ -107,6 +108,7 @@ END_CLS()
 
 
 BEGIN_CLS(esv::Item)
+INHERIT(BaseComponent)
 P_RO(GUID)
 P_RO(NetID)
 P_RO(Flags)
