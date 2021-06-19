@@ -1,7 +1,7 @@
 #include "stdafx.h"
-#include "DWriteWrapper.h"
-#include <ExtenderConfig.h>
-#include <ScriptExtender.h>
+#include <Extender/Shared/DWriteWrapper.h>
+#include <Extender/Shared/ExtenderConfig.h>
+#include <Extender/ScriptExtender.h>
 #include "json/json.h"
 #include <ShellAPI.h>
 #include <KnownFolders.h>

@@ -1,15 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="DWriteWrapper.cpp" />
-    <ClCompile Include="CrashReporter.cpp" />
-    <ClCompile Include="ExtensionState.cpp" />
-    <ClCompile Include="GlobalFixedStrings.cpp" />
-    <ClCompile Include="ScriptExtensions.pb.cc" />
-    <ClCompile Include="ScriptHelpers.cpp" />
-    <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="Utils.cpp" />
     <ClCompile Include="Lua\Shared\LuaStats.cpp">
       <Filter>Lua\Shared</Filter>
     </ClCompile>
@@ -28,17 +19,8 @@
     <ClCompile Include="Lua\LuaSerializers.cpp">
       <Filter>Lua</Filter>
     </ClCompile>
-    <ClCompile Include="EntitySystem.cpp">
-      <Filter>GameDefinitions</Filter>
-    </ClCompile>
-    <ClCompile Include="Enumerations.cpp">
-      <Filter>GameDefinitions</Filter>
-    </ClCompile>
     <ClCompile Include="GameDefinitions\GameHelpers.cpp">
       <Filter>GameDefinitions</Filter>
-    </ClCompile>
-    <ClCompile Include="LuaDebug.pb.cc">
-      <Filter>Lua\Debugger</Filter>
     </ClCompile>
     <ClCompile Include="Lua\LuaDebugger.cpp">
       <Filter>Lua\Debugger</Filter>
@@ -48,9 +30,6 @@
     </ClCompile>
     <ClCompile Include="Lua\Shared\LuaUtilities.cpp">
       <Filter>Lua\Shared</Filter>
-    </ClCompile>
-    <ClCompile Include="Stats.cpp">
-      <Filter>GameDefinitions\Stats</Filter>
     </ClCompile>
     <ClCompile Include="GameDefinitions\Stats\StatsObject.inl">
       <Filter>GameDefinitions\Stats</Filter>
@@ -109,26 +88,55 @@
     <ClCompile Include="Osiris\Functions\UtilityFunctions.cpp">
       <Filter>Osiris\Functions</Filter>
     </ClCompile>
-    <ClCompile Include="ScriptExtender.cpp" />
-    <ClCompile Include="tinyxml2.cpp" />
     <ClCompile Include="Lua\Shared\LuaObjectProxies.cpp">
       <Filter>Lua\Shared</Filter>
     </ClCompile>
+    <ClCompile Include="GameDefinitions\Enumerations.cpp">
+      <Filter>GameDefinitions</Filter>
+    </ClCompile>
+    <ClCompile Include="GameDefinitions\EntitySystem.cpp">
+      <Filter>GameDefinitions</Filter>
+    </ClCompile>
+    <ClCompile Include="Extender\Shared\CrashReporter.cpp">
+      <Filter>Extender\Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="Extender\Shared\dllmain.cpp">
+      <Filter>Extender\Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="Extender\Shared\DWriteWrapper.cpp">
+      <Filter>Extender\Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="Extender\Shared\ExtensionState.cpp">
+      <Filter>Extender\Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="Extender\Shared\ScriptExtensions.pb.cc">
+      <Filter>Extender\Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="Extender\Shared\ScriptHelpers.cpp">
+      <Filter>Extender\Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="Extender\Shared\tinyxml2.cpp">
+      <Filter>Extender\Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="Extender\Shared\Utils.cpp">
+      <Filter>Extender\Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="Extender\ScriptExtender.cpp">
+      <Filter>Extender</Filter>
+    </ClCompile>
+    <ClCompile Include="GameDefinitions\GlobalFixedStrings.cpp">
+      <Filter>GameDefinitions</Filter>
+    </ClCompile>
+    <ClCompile Include="GameDefinitions\Stats\Stats.cpp">
+      <Filter>GameDefinitions\Stats</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="Lua\LuaDebug.pb.cc">
+      <Filter>Lua\Debugger</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DWriteWrapper.h" />
-    <ClInclude Include="ExtensionHelpers.h" />
-    <ClInclude Include="ExtensionState.h" />
-    <ClInclude Include="ExtensionStateClient.h" />
-    <ClInclude Include="ExtensionStateServer.h" />
-    <ClInclude Include="GlobalFixedStrings.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="ScriptExtensions.pb.h" />
-    <ClInclude Include="ScriptHelpers.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="targetver.h" />
-    <ClInclude Include="Utils.h" />
-    <ClInclude Include="Version.h" />
     <ClInclude Include="Lua\Shared\LuaStats.h">
       <Filter>Lua\Shared</Filter>
     </ClInclude>
@@ -249,9 +257,6 @@
     <ClInclude Include="GameDefinitions\GameAction.h">
       <Filter>GameDefinitions</Filter>
     </ClInclude>
-    <ClInclude Include="LuaDebug.pb.h">
-      <Filter>Lua\Debugger</Filter>
-    </ClInclude>
     <ClInclude Include="Lua\LuaDebugger.h">
       <Filter>Lua\Debugger</Filter>
     </ClInclude>
@@ -303,16 +308,12 @@
     <ClInclude Include="Osiris\Functions\FunctionLibrary.h">
       <Filter>Osiris\Functions</Filter>
     </ClInclude>
-    <ClInclude Include="ExtenderConfig.h" />
-    <ClInclude Include="EntitySystemHelpers.h" />
-    <ClInclude Include="ScriptExtender.h" />
     <ClInclude Include="Lua\Shared\LuaLifetime.h">
       <Filter>Lua\Shared</Filter>
     </ClInclude>
     <ClInclude Include="Lua\Shared\LuaObjectProxy.h">
       <Filter>Lua\Shared</Filter>
     </ClInclude>
-    <ClInclude Include="tinyxml2.h" />
     <ClInclude Include="Lua\Shared\LuaEntityProxy.h">
       <Filter>Lua\Shared</Filter>
     </ClInclude>
@@ -327,6 +328,49 @@
     </ClInclude>
     <ClInclude Include="Lua\Shared\LuaMapProxy.h">
       <Filter>Lua\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="Extender\Shared\DWriteWrapper.h">
+      <Filter>Extender\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="Extender\Shared\ExtenderConfig.h">
+      <Filter>Extender\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="Extender\Shared\ExtensionHelpers.h">
+      <Filter>Extender\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="Extender\Shared\ExtensionState.h">
+      <Filter>Extender\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="Extender\Shared\ScriptExtensions.pb.h">
+      <Filter>Extender\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="Extender\Shared\ScriptHelpers.h">
+      <Filter>Extender\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="Extender\Shared\tinyxml2.h">
+      <Filter>Extender\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="Extender\Shared\Utils.h">
+      <Filter>Extender\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="Extender\Client\ExtensionStateClient.h">
+      <Filter>Extender\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="Extender\Server\ExtensionStateServer.h">
+      <Filter>Extender\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\EntitySystemHelpers.h">
+      <Filter>GameDefinitions</Filter>
+    </ClInclude>
+    <ClInclude Include="Extender\ScriptExtender.h">
+      <Filter>Extender</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\GlobalFixedStrings.h">
+      <Filter>GameDefinitions</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Lua\LuaDebug.pb.h">
+      <Filter>Lua\Debugger</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -343,7 +387,6 @@
     <None Include="LuaScripts\Game.Tooltip.lua" />
     <None Include="LuaScripts\SandboxStartup.lua" />
     <None Include="Misc\ExtIdeHelpers.lua" />
-    <None Include="ScriptExtensions.proto" />
     <None Include="Lua\Shared\LuaCharacter.inl">
       <Filter>Lua\Shared</Filter>
     </None>
@@ -403,9 +446,6 @@
     </None>
     <None Include="GlobalFixedStrings.inl">
       <Filter>GameDefinitions</Filter>
-    </None>
-    <None Include="LuaDebug.proto">
-      <Filter>Lua\Debugger</Filter>
     </None>
     <None Include="Lua\Shared\LuaJson.inl">
       <Filter>Lua\Shared</Filter>
@@ -488,6 +528,15 @@
     <None Include="GameDefinitions\Components\AllComponentTypes.inl">
       <Filter>GameDefinitions\Components</Filter>
     </None>
+    <None Include="Extender\Shared\ScriptExtensions.proto">
+      <Filter>Extender\Shared</Filter>
+    </None>
+    <None Include="GameDefinitions\GlobalFixedStrings.inl">
+      <Filter>GameDefinitions</Filter>
+    </None>
+    <None Include="Lua\LuaDebug.proto">
+      <Filter>Lua\Debugger</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">
@@ -537,6 +586,18 @@
     </Filter>
     <Filter Include="GameHooks">
       <UniqueIdentifier>{14f09af4-6cd3-44a0-87c9-89b451bb46f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Extender">
+      <UniqueIdentifier>{0a9c41bc-dec7-458a-a733-71ed00e2f8aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Extender\Client">
+      <UniqueIdentifier>{9852f05b-9588-4826-b896-bd911519038a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Extender\Server">
+      <UniqueIdentifier>{24aa4557-ac8e-46a8-8bbe-9534d6236784}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Extender\Shared">
+      <UniqueIdentifier>{8d810c88-e46d-4d2b-b3c9-8e509f417228}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

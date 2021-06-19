@@ -1,5 +1,5 @@
 #include <stdafx.h>
-#include <ScriptExtender.h>
+#include <Extender/ScriptExtender.h>
 #include "LuaBinding.h"
 #include <fstream>
 #include <regex>

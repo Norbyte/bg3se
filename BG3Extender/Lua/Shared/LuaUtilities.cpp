@@ -1,7 +1,7 @@
 #include <stdafx.h>
-#include <ScriptExtender.h>
+#include <Extender/ScriptExtender.h>
 #include <Version.h>
-#include <ScriptHelpers.h>
+#include <Extender/Shared/ScriptHelpers.h>
 #include <Lua/LuaSerializers.h>
 
 #include <fstream>

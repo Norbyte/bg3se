@@ -4,8 +4,9 @@
 
 #include <cstdint>
 #include <WinSock2.h>
-#include "osidebug.pb.h"
-#include "LuaDebug.pb.h"
+
+#include <Osiris/Debugger/osidebug.pb.h>
+#include <Lua/LuaDebug.pb.h>
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/io/zero_copy_stream.h>
 #include <google/protobuf/io/zero_copy_stream_impl_lite.h>

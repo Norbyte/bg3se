@@ -1,10 +1,10 @@
 #include <stdafx.h>
+#include <resource.h>
 #include <Lua/Shared/LuaStats.h>
 #include <Lua/Server/LuaBindingServer.h>
 #include <Lua/LuaSerializers.h>
-#include <ScriptExtender.h>
-#include <ScriptHelpers.h>
-#include "resource.h"
+#include <Extender/ScriptExtender.h>
+#include <Extender/Shared/ScriptHelpers.h>
 #include <GameDefinitions/Components/Components.h>
 #include <GameDefinitions/Components/Combat.h>
 #include <GameDefinitions/Components/Passives.h>

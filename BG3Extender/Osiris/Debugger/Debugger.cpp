@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include <Osiris/Debugger/Debugger.h>
-#include <ScriptExtender.h>
+#include <Extender/ScriptExtender.h>
 #include <sstream>
 
 #if !defined(OSI_NO_DEBUGGER)

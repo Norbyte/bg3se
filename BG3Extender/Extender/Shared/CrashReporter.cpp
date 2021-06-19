@@ -2,7 +2,7 @@
 
 #include <DbgHelp.h>
 #include <psapi.h>
-#include <ScriptExtender.h>
+#include <Extender/ScriptExtender.h>
 #include <Osiris/Shared/NodeHooks.h>
 
 #include <vector>

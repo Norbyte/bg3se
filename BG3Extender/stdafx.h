@@ -23,4 +23,5 @@
 #include <functional>
 #include <thread>
 
-#include "Utils.h"
+#include <Extender/Shared/Utils.h>
+#include <GameDefinitions/BaseTypes.h>

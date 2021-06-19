@@ -77,9 +77,9 @@
       <Command>copy /Y "$(TargetPath)" "C:\Program Files (x86)\Steam\steamapps\common\Baldurs Gate 3\bin\DWrite.dll"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender osidebug.proto
-rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender LuaDebug.proto
-rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender ScriptExtensions.proto</Command>
+      <Command>$(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Osiris\Debugger Osiris\Debugger\osidebug.proto
+$(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Lua Lua\LuaDebug.proto
+$(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Extender\Shared Extender\Shared\ScriptExtensions.proto</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Game Release|x64'">
@@ -109,21 +109,26 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
       <AdditionalDependencies>LuaLib.lib;ws2_32.lib;Rpcrt4.lib;libprotobuf-lite.lib;detours.lib;jsoncpp.lib;dbghelp.lib;version.lib;winhttp.lib;comctl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender ScriptExtensions.proto
-rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender LuaDebug.proto</Command>
+      <Command>$(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Osiris\Debugger Osiris\Debugger\osidebug.proto
+$(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Lua Lua\LuaDebug.proto
+$(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Extender\Shared Extender\Shared\ScriptExtensions.proto</Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>copy /Y "$(TargetPath)" "C:\Program Files (x86)\Steam\steamapps\common\Baldurs Gate 3\bin\DWrite.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="EntitySystemHelpers.h" />
-    <ClInclude Include="ExtenderConfig.h" />
-    <ClInclude Include="DWriteWrapper.h" />
-    <ClInclude Include="ExtensionHelpers.h" />
-    <ClInclude Include="ExtensionState.h" />
-    <ClInclude Include="ExtensionStateClient.h" />
-    <ClInclude Include="ExtensionStateServer.h" />
+    <ClInclude Include="Extender\Client\ExtensionStateClient.h" />
+    <ClInclude Include="Extender\ScriptExtender.h" />
+    <ClInclude Include="Extender\Server\ExtensionStateServer.h" />
+    <ClInclude Include="Extender\Shared\DWriteWrapper.h" />
+    <ClInclude Include="Extender\Shared\ExtenderConfig.h" />
+    <ClInclude Include="Extender\Shared\ExtensionHelpers.h" />
+    <ClInclude Include="Extender\Shared\ExtensionState.h" />
+    <ClInclude Include="Extender\Shared\ScriptExtensions.pb.h" />
+    <ClInclude Include="Extender\Shared\ScriptHelpers.h" />
+    <ClInclude Include="Extender\Shared\tinyxml2.h" />
+    <ClInclude Include="Extender\Shared\Utils.h" />
     <ClInclude Include="GameDefinitions\BaseContainers.h" />
     <ClInclude Include="GameDefinitions\BaseMemory.h" />
     <ClInclude Include="GameDefinitions\BaseString.h" />
@@ -137,7 +142,9 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
     <ClInclude Include="GameDefinitions\Components\Projectile.h" />
     <ClInclude Include="GameDefinitions\Components\Stats.h" />
     <ClInclude Include="GameDefinitions\EntityManager.h" />
+    <ClInclude Include="GameDefinitions\EntitySystemHelpers.h" />
     <ClInclude Include="GameDefinitions\GameAction.h" />
+    <ClInclude Include="GameDefinitions\GlobalFixedStrings.h" />
     <ClInclude Include="GameDefinitions\Hit.h" />
     <ClInclude Include="GameDefinitions\Level.h" />
     <ClInclude Include="GameDefinitions\Misc.h" />
@@ -163,10 +170,9 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
     <ClInclude Include="GameHooks\EngineHooks.h" />
     <ClInclude Include="GameHooks\OsirisWrappers.h" />
     <ClInclude Include="GameHooks\Wrappers.h" />
-    <ClInclude Include="GlobalFixedStrings.h" />
-    <ClInclude Include="LuaDebug.pb.h" />
     <ClInclude Include="Lua\Client\LuaBindingClient.h" />
     <ClInclude Include="Lua\LuaBinding.h" />
+    <ClInclude Include="Lua\LuaDebug.pb.h" />
     <ClInclude Include="Lua\LuaDebugger.h" />
     <ClInclude Include="Lua\LuaDebugMessages.h" />
     <ClInclude Include="Lua\LuaHelpers.h" />
@@ -181,7 +187,6 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
     <ClInclude Include="Lua\Shared\LuaObjectProxy.h" />
     <ClInclude Include="Lua\Shared\LuaSetProxy.h" />
     <ClInclude Include="Lua\Shared\LuaStats.h" />
-    <ClInclude Include="ScriptExtender.h" />
     <ClInclude Include="Osiris\Debugger\Debugger.h" />
     <ClInclude Include="Osiris\Debugger\DebugInterface.h" />
     <ClInclude Include="Osiris\Debugger\DebugMessages.h" />
@@ -192,43 +197,41 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
     <ClInclude Include="Osiris\Shared\NodeHooks.h" />
     <ClInclude Include="Osiris\Shared\OsirisHelpers.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="ScriptExtensions.pb.h" />
-    <ClInclude Include="ScriptHelpers.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="targetver.h" />
-    <ClInclude Include="tinyxml2.h" />
-    <ClInclude Include="Utils.h" />
-    <ClInclude Include="Version.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="dllmain.cpp">
-      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">false</CompileAsManaged>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">
-      </PrecompiledHeader>
-      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Game Release|x64'">false</CompileAsManaged>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Game Release|x64'">
-      </PrecompiledHeader>
+    <ClCompile Include="Extender\ScriptExtender.cpp" />
+    <ClCompile Include="Extender\Shared\CrashReporter.cpp" />
+    <ClCompile Include="Extender\Shared\dllmain.cpp" />
+    <ClCompile Include="Extender\Shared\DWriteWrapper.cpp" />
+    <ClCompile Include="Extender\Shared\ExtensionState.cpp" />
+    <ClCompile Include="Extender\Shared\ScriptExtensions.pb.cc">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Game Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="DWriteWrapper.cpp" />
-    <ClCompile Include="CrashReporter.cpp" />
-    <ClCompile Include="EntitySystem.cpp" />
-    <ClCompile Include="Enumerations.cpp" />
-    <ClCompile Include="ExtensionState.cpp" />
+    <ClCompile Include="Extender\Shared\ScriptHelpers.cpp" />
+    <ClCompile Include="Extender\Shared\tinyxml2.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Game Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Extender\Shared\Utils.cpp" />
+    <ClCompile Include="GameDefinitions\EntitySystem.cpp" />
+    <ClCompile Include="GameDefinitions\Enumerations.cpp" />
     <ClCompile Include="GameDefinitions\GameHelpers.cpp" />
+    <ClCompile Include="GameDefinitions\GlobalFixedStrings.cpp" />
+    <ClCompile Include="GameDefinitions\Stats\Stats.cpp" />
     <ClCompile Include="GameDefinitions\Stats\StatsObject.inl" />
     <ClCompile Include="GameHooks\DataLibraries.cpp" />
     <ClCompile Include="GameHooks\DataLibrariesBG3Game.cpp" />
     <ClCompile Include="GameHooks\EngineHooks.cpp" />
     <ClCompile Include="GameHooks\OsirisWrappers.cpp" />
-    <ClCompile Include="GlobalFixedStrings.cpp" />
-    <ClCompile Include="LuaDebug.pb.cc">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Game Release|x64'">NotUsing</PrecompiledHeader>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">false</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="Lua\Client\LuaClient.cpp" />
     <ClCompile Include="Lua\LuaBinding.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Lua\LuaDebug.pb.cc">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Game Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Lua\LuaDebugger.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">false</ExcludedFromBuild>
@@ -247,7 +250,6 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <ClCompile Include="Lua\Shared\LuaUtilities.cpp" />
-    <ClCompile Include="ScriptExtender.cpp" />
     <ClCompile Include="Osiris\Debugger\Debugger.cpp" />
     <ClCompile Include="Osiris\Debugger\DebugInterface.cpp" />
     <ClCompile Include="Osiris\Debugger\DebugMessages.cpp" />
@@ -265,21 +267,10 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
     <ClCompile Include="Osiris\Shared\CustomFunctions.cpp" />
     <ClCompile Include="Osiris\Shared\NodeHooks.cpp" />
     <ClCompile Include="Osiris\Shared\OsirisHelpers.cpp" />
-    <ClCompile Include="ScriptExtensions.pb.cc">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Game Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="ScriptHelpers.cpp" />
-    <ClCompile Include="Stats.cpp" />
     <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Game Release|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="tinyxml2.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Game Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\APIDocs.md" />
@@ -288,8 +279,10 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
     <None Include="..\Misc\ExtIdeHelpers.lua" />
     <None Include="cpp.hint" />
     <None Include="Exports.def" />
+    <None Include="Extender\Shared\ScriptExtensions.proto" />
     <None Include="GameDefinitions\Components\AllComponentTypes.inl" />
     <None Include="GameDefinitions\Enumerations.inl" />
+    <None Include="GameDefinitions\GlobalFixedStrings.inl" />
     <None Include="GameDefinitions\PropertyMaps\AllPropertyMaps.inl" />
     <None Include="GameDefinitions\PropertyMaps\BoostComponents.inl" />
     <None Include="GameDefinitions\PropertyMaps\CommonTypes.inl" />
@@ -304,7 +297,6 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
     <None Include="GameDefinitions\PropertyMaps\SurfaceActions.inl" />
     <None Include="GameHooks\EngineHooks.inl" />
     <None Include="GlobalFixedStrings.inl" />
-    <None Include="LuaDebug.proto" />
     <None Include="LuaScripts\BuiltinLibrary.lua" />
     <None Include="LuaScripts\BuiltinLibraryClient.lua" />
     <None Include="LuaScripts\BuiltinLibraryServer.lua" />
@@ -314,6 +306,7 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
     <None Include="Lua\LevelIteratorFunctions.inl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">false</ExcludedFromBuild>
     </None>
+    <None Include="Lua\LuaDebug.proto" />
     <None Include="Lua\Server\FunctorEvents.inl" />
     <None Include="Lua\Server\ServerCharacter.inl" />
     <None Include="Lua\Server\ServerCombat.inl" />
@@ -345,7 +338,6 @@ rem $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(Soluti
     <None Include="Lua\Shared\StatMisc.inl" />
     <None Include="Misc\ExtIdeHelpers.lua" />
     <None Include="Osiris\Debugger\osidebug.proto" />
-    <None Include="ScriptExtensions.proto" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

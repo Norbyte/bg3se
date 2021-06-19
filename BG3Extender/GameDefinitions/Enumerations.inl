@@ -876,6 +876,7 @@ BEGIN_ENUM(RollTypeId, uint8_t)
 	EV(Damage, 11)
 	EV(MeleeOffHandWeaponAttack, 12)
 	EV(RangedOffHandWeaponAttack, 13)
+	EV(Sentinel, 14)
 END_ENUM()
 
 BEGIN_ENUM(SpellSchoolId, uint8_t)

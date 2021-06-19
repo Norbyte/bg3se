@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Lua/LuaDebugMessages.h"
-#include "ScriptExtender.h"
+#include <Extender/ScriptExtender.h>
 #include <lstate.h>
 #include <sstream>
 #include "resource.h"

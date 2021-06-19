@@ -3,8 +3,8 @@
 #include <GameDefinitions/BaseTypes.h>
 #include <GameDefinitions/Symbols.h>
 #include <GameDefinitions/Enumerations.h>
-#include <ScriptHelpers.h>
-#include "ScriptExtender.h"
+#include <Extender/Shared/ScriptHelpers.h>
+#include <Extender/ScriptExtender.h>
 
 namespace bg3se
 {

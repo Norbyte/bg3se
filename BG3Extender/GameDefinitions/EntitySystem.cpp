@@ -5,7 +5,7 @@
 #include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/EntitySystem.h>
 #include <GameDefinitions/GuidResources.h>
-#include "ScriptExtender.h"
+#include <Extender/ScriptExtender.h>
 
 #undef DEBUG_INDEX_MAPPINGS
 

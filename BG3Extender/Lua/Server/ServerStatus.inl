@@ -3,8 +3,8 @@
 #include <Lua/LuaSerializers.h>
 #include <GameDefinitions/Character.h>
 #include <GameDefinitions/Status.h>
-#include <ScriptExtender.h>
-#include <ExtensionStateServer.h>
+#include <Extender/ScriptExtender.h>
+#include <Extender/Server/ExtensionStateServer.h>
 
 namespace bg3se::esv::lua
 {

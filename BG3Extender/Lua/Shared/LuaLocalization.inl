@@ -1,6 +1,6 @@
 #include <stdafx.h>
-#include <ScriptExtender.h>
-#include <ScriptHelpers.h>
+#include <Extender/ScriptExtender.h>
+#include <Extender/Shared/ScriptHelpers.h>
 #include <Lua/LuaSerializers.h>
 
 namespace bg3se::lua::utils

@@ -1,22 +1,22 @@
 #pragma once
 
-#include <ExtenderConfig.h>
+#include <Extender/Shared/ExtenderConfig.h>
 #include <GameDefinitions/Osiris.h>
 #include <GameDefinitions/GuidResources.h>
-#include <ExtensionStateClient.h>
-#include <ExtensionStateServer.h>
+#include <Extender/Client/ExtensionStateClient.h>
+#include <Extender/Server/ExtensionStateServer.h>
 #if !defined(OSI_NO_DEBUGGER)
-#include "Lua/LuaDebugger.h"
-#include "Lua/LuaDebugMessages.h"
+#include <Lua/LuaDebugger.h>
+#include <Lua/LuaDebugMessages.h>
 #endif
 #include <GameHooks/OsirisWrappers.h>
 #include <GameHooks/DataLibraries.h>
 #include <GameHooks/EngineHooks.h>
 //#include "NetProtocol.h"
 #include <GameDefinitions/Symbols.h>
-#include <GlobalFixedStrings.h>
+#include <GameDefinitions/GlobalFixedStrings.h>
 #include <Osiris/OsirisExtender.h>
-#include <EntitySystemHelpers.h>
+#include <GameDefinitions/EntitySystemHelpers.h>
 //#include <Hit.h>
 
 #include <thread>

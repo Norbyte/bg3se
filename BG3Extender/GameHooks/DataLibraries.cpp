@@ -1,7 +1,7 @@
 #include "stdafx.h"
-#include "DataLibraries.h"
-#include "ExtensionState.h"
-#include "ScriptExtender.h"
+#include <GameHooks/DataLibraries.h>
+#include <Extender/Shared/ExtensionState.h>
+#include <Extender/ScriptExtender.h>
 #include <GameDefinitions/Symbols.h>
 #include <string>
 #include <functional>

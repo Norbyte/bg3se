@@ -4,7 +4,7 @@
 #include <GameDefinitions/Symbols.h>
 #include <GameDefinitions/Enumerations.h>
 //#include <GameDefinitions/Ai.h>
-#include "ScriptExtender.h"
+#include <Extender/ScriptExtender.h>
 
 namespace bg3se
 {

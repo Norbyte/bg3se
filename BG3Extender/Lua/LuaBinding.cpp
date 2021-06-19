@@ -1,5 +1,5 @@
 #include <stdafx.h>
-#include <ScriptExtender.h>
+#include <Extender/ScriptExtender.h>
 //#include <GameDefinitions/Ai.h>
 #include <GameDefinitions/RootTemplates.h>
 #include <Lua/LuaSerializers.h>

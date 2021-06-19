@@ -2,8 +2,8 @@
 #include <GameDefinitions/Symbols.h>
 #include <Lua/LuaBinding.h>
 #include <Lua/LuaSerializers.h>
-#include <ExtensionHelpers.h>
-#include <ScriptExtender.h>
+#include <Extender/Shared/ExtensionHelpers.h>
+#include <Extender/ScriptExtender.h>
 
 #define P(name) s.VisitProperty(#name, v.name)
 #define PO(name, default) s.VisitOptionalProperty(#name, v.name, default)

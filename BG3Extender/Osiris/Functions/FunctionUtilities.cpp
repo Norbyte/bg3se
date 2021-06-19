@@ -1,6 +1,6 @@
 #include <stdafx.h>
 #include "FunctionLibrary.h"
-#include <ScriptExtender.h>
+#include <Extender/ScriptExtender.h>
 #include <GameDefinitions/Symbols.h>
 
 namespace bg3se

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ExtensionState.h"
+#include <Extender/Shared/ExtensionState.h>
 #include <Lua/Server/LuaBindingServer.h>
 //#include <Hit.h>
 

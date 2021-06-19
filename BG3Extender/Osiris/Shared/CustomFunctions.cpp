@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 #include "CustomFunctions.h"
-#include "ScriptExtender.h"
+#include <Extender/ScriptExtender.h>
 #include <fstream>
 #include <sstream>
 

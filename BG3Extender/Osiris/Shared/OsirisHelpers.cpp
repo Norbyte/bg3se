@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "ScriptExtender.h"
+#include <Extender/ScriptExtender.h>
 
 namespace bg3se
 {

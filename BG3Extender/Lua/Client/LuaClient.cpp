@@ -2,8 +2,8 @@
 #include <Lua/Shared/LuaStats.h>
 #include <Lua/Client/LuaBindingClient.h>
 #include <Lua/LuaSerializers.h>
-#include <ScriptExtender.h>
-#include <ExtensionStateClient.h>
+#include <Extender/ScriptExtender.h>
+#include <Extender/Client/ExtensionStateClient.h>
 //#include <GameDefinitions/Ai.h>
 #include "resource.h"
 

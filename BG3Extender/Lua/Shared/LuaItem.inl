@@ -1,4 +1,4 @@
-#include <ScriptExtender.h>
+#include <Extender/ScriptExtender.h>
 #include <GameDefinitions/Stats/Item.h>
 #include <Lua/LuaSerializers.h>
 

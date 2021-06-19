@@ -1,6 +1,6 @@
 #include <stdafx.h>
-#include <ScriptExtender.h>
-#include <ExtensionState.h>
+#include <Extender/ScriptExtender.h>
+#include <Extender/Shared/ExtensionState.h>
 #include <Version.h>
 #include <fstream>
 #include "json/json.h"

@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "ScriptExtender.h"
+#include <Extender/ScriptExtender.h>
 #include <string>
 #include <fstream>
 #include <sstream>

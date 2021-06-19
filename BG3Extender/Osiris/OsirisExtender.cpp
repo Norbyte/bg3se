@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include <Osiris/OsirisExtender.h>
-#include <ExtensionHelpers.h>
-#include <ScriptExtender.h>
+#include <Extender/Shared/ExtensionHelpers.h>
+#include <Extender/ScriptExtender.h>
 #include <iomanip>
 
 namespace bg3se

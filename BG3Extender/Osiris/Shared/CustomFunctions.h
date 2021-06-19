@@ -6,8 +6,8 @@
 #include <unordered_map>
 #include <functional>
 
-#include "Utils.h"
-#include "GameDefinitions/Osiris.h"
+#include <Extender/Shared/Utils.h>
+#include <GameDefinitions/Osiris.h>
 
 namespace bg3se
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ExtenderConfig.h>
+#include <Extender/Shared/ExtenderConfig.h>
 #include <GameDefinitions/Osiris.h>
 #if !defined(OSI_NO_DEBUGGER)
 #include <Osiris/Debugger/DebugInterface.h>
@@ -13,7 +13,7 @@
 #include <Osiris/Functions/FunctionLibrary.h>
 #include <GameHooks/DataLibraries.h>
 #include <GameDefinitions/Symbols.h>
-#include <GlobalFixedStrings.h>
+#include <GameDefinitions/GlobalFixedStrings.h>
 
 #include <thread>
 

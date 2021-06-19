@@ -2,7 +2,7 @@
 
 #include <GameDefinitions/BaseTypes.h>
 #include <GameDefinitions/Enumerations.h>
-#include <ExtensionHelpers.h>
+#include <Extender/Shared/ExtensionHelpers.h>
 
 namespace bg3se
 {

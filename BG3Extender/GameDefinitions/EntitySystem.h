@@ -3,7 +3,7 @@
 #include <GameDefinitions/BaseTypes.h>
 #include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/Module.h>
-#include <GlobalFixedStrings.h>
+#include <GameDefinitions/GlobalFixedStrings.h>
 
 namespace bg3se
 {

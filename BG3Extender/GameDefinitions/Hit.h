@@ -43,7 +43,7 @@ namespace bg3se
 	struct StatsRollRoll : public HasObjectProxy
 	{
 		DiceValues Roll;
-		uint8_t RollType;
+		RollTypeId RollType;
 		bool Advantage;
 		bool Disadvantage;
 	};
@@ -98,7 +98,7 @@ namespace bg3se
 	struct ConditionRoll : public HasObjectProxy
 	{
 		uint8_t DataType;
-		uint8_t RollType;
+		RollTypeId RollType; // Maybe?
 		StatsRollType0 Roll;
 		int Difficulty;
 	};

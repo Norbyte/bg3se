@@ -1,11 +1,11 @@
 #include "stdafx.h"
-#include "DataLibraries.h"
-#include "ScriptExtender.h"
 #include "resource.h"
+#include <GameHooks/DataLibraries.h>
+#include <Extender/ScriptExtender.h>
 #include <GameDefinitions/Symbols.h>
 #include <functional>
 #include <psapi.h>
-#include <tinyxml2.h>
+#include <Extender/Shared/tinyxml2.h>
 
 #if defined(OSI_EOCAPP)
 namespace bg3se

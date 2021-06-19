@@ -1,6 +1,6 @@
 #include "stdafx.h"
-#include "GlobalFixedStrings.h"
-#include "ExtensionHelpers.h"
+#include <GameDefinitions/GlobalFixedStrings.h>
+#include <Extender/Shared/ExtensionHelpers.h>
 
 namespace bg3se
 {

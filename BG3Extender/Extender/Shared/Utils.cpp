@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Version.h"
 #include <GameDefinitions/BaseTypes.h>
-#include <ScriptExtender.h>
+#include <Extender/ScriptExtender.h>
 #include <rpc.h>
 #include <rpcdce.h>
 #include <thread>

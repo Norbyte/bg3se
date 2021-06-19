@@ -4,7 +4,7 @@
 #include <Lua/Server/ServerOsirisBinding.h>
 #include <GameDefinitions/Stats/Functors.h>
 #include <GameDefinitions/Status.h>
-#include <ExtensionHelpers.h>
+#include <Extender/Shared/ExtensionHelpers.h>
 
 namespace bg3se::esv
 {

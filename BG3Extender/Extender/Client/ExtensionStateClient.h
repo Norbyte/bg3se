@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ExtensionState.h"
+#include <Extender/Shared/ExtensionState.h>
 #include <Lua/Client/LuaBindingClient.h>
 
 namespace Json { class Value; }
