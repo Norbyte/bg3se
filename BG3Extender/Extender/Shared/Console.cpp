@@ -219,6 +219,9 @@ void DebugConsole::Create()
 		SetConsoleOutputCP(CP_UTF8);
 	}
 
+	auto hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleMode(hStdout, ENABLE_PROCESSED_OUTPUT | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+
 	FILE * outputStream;
 	freopen_s(&outputStream, "CONOUT$", "w", stdout);
 	FILE* inputStream;
