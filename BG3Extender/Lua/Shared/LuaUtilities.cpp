@@ -304,7 +304,7 @@ namespace bg3se::lua::utils
 
 	char const * OsiToLuaTypeName(ValueType type)
 	{
-		auto typeMap = *gExtender->GetOsiris().GetWrappers().Globals.Types;
+		auto typeMap = *gExtender->GetServer().Osiris().GetWrappers().Globals.Types;
 		auto typeId = typeMap->ResolveAlias((uint32_t)type);
 
 		switch (typeId) {
@@ -333,7 +333,7 @@ namespace bg3se::lua::utils
 
 		STDString functionComment, functionDefn;
 
-		auto functions = gExtender->GetOsiris().GetGlobals().Functions;
+		auto functions = gExtender->GetServer().Osiris().GetGlobals().Functions;
 
 		(*functions)->Iterate([&helpers, &functionComment, &functionDefn, builtinOnly](STDString const & key, Function const * func) {
 			if (builtinOnly
@@ -483,6 +483,30 @@ namespace bg3se::lua::utils
 
 	WrapLuaFunction(DumpStack)
 
+	int GetCommandLineParams(lua_State* L)
+	{
+		auto cmdLine = ToUTF8(GetCommandLineW());
+		
+		lua_newtable(L);
+		int index{ 1 };
+
+		std::size_t pos{ 0 };
+		while (pos < cmdLine.size()) {
+			auto next = cmdLine.find(' ', pos);
+			if (next == std::string::npos) {
+				next = cmdLine.size();
+			}
+
+			auto arg = cmdLine.substr(pos, next - pos);
+			if (arg.size() > 5 && arg.substr(0, 5) == "-ext:") {
+				settable(L, index++, arg.substr(5));
+			}
+			pos = next + 1;
+		}
+
+		return 1;
+	}
+
 	void RegisterUtilsLib(lua_State* L)
 	{
 		static const luaL_Reg utilsLib[] = {
@@ -501,6 +525,7 @@ namespace bg3se::lua::utils
 
 			{"IsDeveloperMode", IsDeveloperModeWrapper},
 			{"GenerateIdeHelpers", GenerateIdeHelpersWrapper},
+			{"GetCommandLineParams", GetCommandLineParams},
 
 			// EXPERIMENTAL FUNCTIONS
 			{"DumpStack", DumpStackWrapper},

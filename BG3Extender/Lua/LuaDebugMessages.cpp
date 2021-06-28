@@ -45,16 +45,16 @@ namespace bg3se::lua::dbg
 
 	std::optional<STDString> FindLuaSourcePath(STDString const& name)
 	{
-		if (gExtender->HasServerExtensionState()) {
-			auto const& files = gExtender->GetServerExtensionState().GetLoadedFileFullPaths();
+		if (gExtender->GetServer().HasExtensionState()) {
+			auto const& files = gExtender->GetServer().GetExtensionState().GetLoadedFileFullPaths();
 			auto it = files.find(name);
 			if (it != files.end()) {
 				return it->second;
 			}
 		}
 
-		if (gExtender->HasClientExtensionState()) {
-			auto const& files = gExtender->GetClientExtensionState().GetLoadedFileFullPaths();
+		if (gExtender->GetClient().HasExtensionState()) {
+			auto const& files = gExtender->GetClient().GetExtensionState().GetLoadedFileFullPaths();
 			auto it = files.find(name);
 			if (it != files.end()) {
 				return it->second;
@@ -154,8 +154,8 @@ namespace bg3se::lua::dbg
 		ModManager* modManager{ nullptr };
 
 		std::unordered_set<STDString> paths;
-		if (gExtender->HasClientExtensionState()) {
-			auto& state = gExtender->GetClientExtensionState();
+		if (gExtender->GetClient().HasExtensionState()) {
+			auto& state = gExtender->GetClient().GetExtensionState();
 			for (auto const& path : state.GetLoadedFileFullPaths()) {
 				paths.insert(path.second);
 			}
@@ -164,8 +164,8 @@ namespace bg3se::lua::dbg
 			modManager = state.GetModManager();
 		}
 
-		if (gExtender->HasServerExtensionState()) {
-			auto& state = gExtender->GetServerExtensionState();
+		if (gExtender->GetServer().HasExtensionState()) {
+			auto& state = gExtender->GetServer().GetExtensionState();
 			for (auto const& path : state.GetLoadedFileFullPaths()) {
 				paths.insert(path.second);
 			}
@@ -286,13 +286,13 @@ namespace bg3se::lua::dbg
 
 		SendModInfo();
 
-		if (gExtender->HasServerExtensionState() && gExtender->GetServerExtensionState().GetLua()) {
+		if (gExtender->GetServer().HasExtensionState() && gExtender->GetServer().GetExtensionState().GetLua()) {
 			SendLuaStateUpdate(true, true);
 		} else {
 			SendLuaStateUpdate(true, false);
 		}
 
-		if (gExtender->HasClientExtensionState() && gExtender->GetClientExtensionState().GetLua()) {
+		if (gExtender->GetClient().HasExtensionState() && gExtender->GetClient().GetExtensionState().GetLua()) {
 			SendLuaStateUpdate(false, true);
 		} else {
 			SendLuaStateUpdate(false, false);

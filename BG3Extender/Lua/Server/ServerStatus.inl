@@ -82,7 +82,7 @@ namespace bg3se::esv::lua
 
 	esv::Status* StatusHandleProxy::Get(lua_State* L)
 	{
-		auto character = gExtender->GetServerEntityHelpers().GetComponent<esv::Character>(character_);
+		auto character = gExtender->GetServer().GetEntityHelpers().GetComponent<esv::Character>(character_);
 		if (character == nullptr) {
 			luaL_error(L, "Character handle invalid");
 			return nullptr;
@@ -130,12 +130,12 @@ namespace bg3se::esv::lua
 
 	esv::StatusMachine* GetEntityStatusMachine(EntityHandle const& entity)
 	{
-		auto character = gExtender->GetServerEntityHelpers().GetEntityComponent<Character>(entity, false);
+		auto character = gExtender->GetServer().GetEntityHelpers().GetEntityComponent<Character>(entity, false);
 		if (character != nullptr) {
 			return character->StatusMachine;
 		}
 
-		auto item = gExtender->GetServerEntityHelpers().GetEntityComponent<Item>(entity, false);
+		auto item = gExtender->GetServer().GetEntityHelpers().GetEntityComponent<Item>(entity, false);
 		if (item != nullptr) {
 			return item->StatusMachine;
 		}

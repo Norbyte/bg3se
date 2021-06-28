@@ -30,6 +30,8 @@ OsirisExtender::~OsirisExtender()
 
 void OsirisExtender::Initialize()
 {
+	if (initialized_) return;
+
 	wrappers_.Initialize();
 
 	using namespace std::placeholders;
@@ -47,10 +49,13 @@ void OsirisExtender::Initialize()
 
 	injector_.Initialize();
 	functionLibrary_.Register();
+	initialized_ = true;
 }
 
 void OsirisExtender::Shutdown()
 {
+	if (!initialized_) return;
+
 	if (debugger_) {
 		debugger_.reset();
 	}
@@ -64,6 +69,7 @@ void OsirisExtender::Shutdown()
 	}
 
 	wrappers_.Shutdown();
+	initialized_ = false;
 }
 
 void OsirisExtender::OnBaseModuleLoadedServer()
@@ -323,8 +329,8 @@ void OsirisExtender::OnAfterOsirisLoad(void * Osiris, void * Buf, int retval)
 	}
 #endif
 
-	if (gExtender->HasServerExtensionState()) {
-		gExtender->GetServerExtensionState().StoryLoaded();
+	if (gExtender->GetServer().HasExtensionState()) {
+		gExtender->GetServer().GetExtensionState().StoryLoaded();
 	}
 }
 
@@ -335,8 +341,8 @@ bool OsirisExtender::MergeWrapper(std::function<bool (void *, wchar_t *)> const 
 	auto cli = GetEoCClient();
 	auto srv = GetEoCServer();
 
-	if (gExtender->HasServerExtensionState()) {
-		gExtender->GetServerExtensionState().StorySetMerging(true);
+	if (gExtender->GetServer().HasExtensionState()) {
+		gExtender->GetServer().GetExtensionState().StorySetMerging(true);
 	}
 
 #if !defined(OSI_NO_DEBUGGER)
@@ -353,8 +359,8 @@ bool OsirisExtender::MergeWrapper(std::function<bool (void *, wchar_t *)> const 
 	}
 #endif
 
-	if (gExtender->HasServerExtensionState()) {
-		gExtender->GetServerExtensionState().StorySetMerging(false);
+	if (gExtender->GetServer().HasExtensionState()) {
+		gExtender->GetServer().GetExtensionState().StorySetMerging(false);
 	}
 
 	DEBUG("ScriptExtender::MergeWrapper() - Finished merge");

@@ -417,14 +417,14 @@ namespace bg3se::ecl::lua
 
 	LifetimeHolder GetClientLifetime()
 	{
-		assert(gExtender->IsInClientThread());
-		return ecl::ExtensionState::Get().GetLua()->GetCurrentLifetime();
+		assert(gExtender->GetClient().IsInClientThread());
+		return ExtensionState::Get().GetLua()->GetCurrentLifetime();
 	}
 
 	LifetimePool& GetClientLifetimePool()
 	{
-		assert(gExtender->IsInClientThread());
-		return ecl::ExtensionState::Get().GetLua()->GetLifetimePool();
+		assert(gExtender->GetClient().IsInClientThread());
+		return ExtensionState::Get().GetLua()->GetLifetimePool();
 	}
 
 	void ExtensionLibraryClient::Register(lua_State * L)
@@ -1123,7 +1123,7 @@ namespace bg3se::ecl::lua
 
 	EntitySystemHelpersBase* ClientState::GetEntitySystemHelpers()
 	{
-		return &gExtender->GetClientEntityHelpers();
+		return &gExtender->GetClient().GetEntityHelpers();
 	}
 
 
@@ -1157,7 +1157,7 @@ namespace bg3se::ecl
 
 	ExtensionState & ExtensionState::Get()
 	{
-		return gExtender->GetClientExtensionState();
+		return gExtender->GetClient().GetExtensionState();
 	}
 
 

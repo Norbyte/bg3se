@@ -165,21 +165,21 @@ namespace bg3se::esv::lua
 		case LUA_TUSERDATA:
 		{
 			auto handle = checked_get<EntityProxy*>(L, 1)->Handle();
-			item = gExtender->GetServerEntityHelpers().GetEntityComponent<esv::Item>(handle);
+			item = gExtender->GetServer().GetEntityHelpers().GetEntityComponent<esv::Item>(handle);
 			break;
 		}
 
 		case LUA_TNUMBER:
 		{
 			auto netId = NetId(lua_tointeger(L, 1));
-			item = gExtender->GetServerEntityHelpers().GetComponent<esv::Item>(netId);
+			item = gExtender->GetServer().GetEntityHelpers().GetComponent<esv::Item>(netId);
 			break;
 		}
 
 		case LUA_TSTRING:
 		{
 			auto guid = lua_tostring(L, 1);
-			item = gExtender->GetServerEntityHelpers().GetComponent<esv::Item>(guid);
+			item = gExtender->GetServer().GetEntityHelpers().GetComponent<esv::Item>(guid);
 			break;
 		}
 

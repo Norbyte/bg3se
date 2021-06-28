@@ -119,14 +119,21 @@ $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(SolutionDi
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Extender\Client\ExtensionStateClient.h" />
+    <ClInclude Include="Extender\Client\ScriptExtenderClient.h" />
     <ClInclude Include="Extender\ScriptExtender.h" />
     <ClInclude Include="Extender\Server\ExtensionStateServer.h" />
+    <ClInclude Include="Extender\Server\ScriptExtenderServer.h" />
+    <ClInclude Include="Extender\Shared\Console.h" />
     <ClInclude Include="Extender\Shared\DWriteWrapper.h" />
     <ClInclude Include="Extender\Shared\ExtenderConfig.h" />
     <ClInclude Include="Extender\Shared\ExtensionHelpers.h" />
     <ClInclude Include="Extender\Shared\ExtensionState.h" />
+    <ClInclude Include="Extender\Shared\ModuleHasher.h" />
+    <ClInclude Include="Extender\Shared\SavegameSerializer.h" />
+    <ClInclude Include="Extender\Shared\ScriptExtenderBase.h" />
     <ClInclude Include="Extender\Shared\ScriptExtensions.pb.h" />
     <ClInclude Include="Extender\Shared\ScriptHelpers.h" />
+    <ClInclude Include="Extender\Shared\StatLoadOrderHelper.h" />
     <ClInclude Include="Extender\Shared\tinyxml2.h" />
     <ClInclude Include="Extender\Shared\Utils.h" />
     <ClInclude Include="GameDefinitions\BaseContainers.h" />
@@ -200,7 +207,10 @@ $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(SolutionDi
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Extender\Client\ScriptExtenderClient.cpp" />
     <ClCompile Include="Extender\ScriptExtender.cpp" />
+    <ClCompile Include="Extender\Server\ScriptExtenderServer.cpp" />
+    <ClCompile Include="Extender\Shared\Console.cpp" />
     <ClCompile Include="Extender\Shared\CrashReporter.cpp" />
     <ClCompile Include="Extender\Shared\dllmain.cpp" />
     <ClCompile Include="Extender\Shared\DWriteWrapper.cpp" />
@@ -279,7 +289,11 @@ $(SolutionDir)\External\x64-windows\tools\protobuf\protoc --cpp_out=$(SolutionDi
     <None Include="..\Misc\ExtIdeHelpers.lua" />
     <None Include="cpp.hint" />
     <None Include="Exports.def" />
+    <None Include="Extender\Shared\ModuleHasher.inl" />
+    <None Include="Extender\Shared\SavegameSerializer.inl" />
     <None Include="Extender\Shared\ScriptExtensions.proto" />
+    <None Include="Extender\Shared\StatLoadOrderHelper.inl" />
+    <None Include="Extender\Shared\ThreadedExtenderState.inl" />
     <None Include="GameDefinitions\Components\AllComponentTypes.inl" />
     <None Include="GameDefinitions\Enumerations.inl" />
     <None Include="GameDefinitions\GlobalFixedStrings.inl" />

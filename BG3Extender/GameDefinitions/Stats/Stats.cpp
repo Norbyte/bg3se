@@ -462,7 +462,7 @@ namespace bg3se
 
 	void RPGStats::BroadcastSyncAll()
 	{
-		for (auto const& statsId : gExtender->GetServerExtensionState().GetDynamicStats()) {
+		for (auto const& statsId : gExtender->GetServer().GetExtensionState().GetDynamicStats()) {
 			auto object = objects.Find(statsId);
 			if (!object) {
 				OsiError("Stat entry '" << statsId << "' is marked as dynamic but cannot be found! It will not be synced to the client!");

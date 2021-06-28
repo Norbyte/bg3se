@@ -95,6 +95,7 @@ private:
 	CustomFunctionManager customFunctions_;
 	CustomFunctionInjector injector_;
 	esv::CustomFunctionLibrary functionLibrary_;
+	bool initialized_{ false };
 
 	void OnRegisterDIVFunctions(void *, DivFunctions *);
 	void OnInitGame(void *);

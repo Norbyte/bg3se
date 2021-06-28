@@ -288,7 +288,7 @@ namespace bg3se::osidbg
 			auto * node = nodes[i];
 			auto nodeInfo = sync->add_node();
 			nodeInfo->set_id(node->Id);
-			auto type = gExtender->GetOsiris().GetVMTWrappers()->GetType(node);
+			auto type = gExtender->GetServer().Osiris().GetVMTWrappers()->GetType(node);
 			nodeInfo->set_type((uint32_t)type);
 			if (node->Function != nullptr) {
 				nodeInfo->set_name(node->Function->Signature->Name);

@@ -296,7 +296,7 @@ namespace bg3se::esv::lua
 			return nullptr;
 		}
 
-		auto resourceMgr = gExtender->GetServerEntityHelpers().GetResourceManager<ClassDescriptionResource>();
+		auto resourceMgr = gExtender->GetServer().GetEntityHelpers().GetResourceManager<ClassDescriptionResource>();
 		if (!resourceMgr) {
 			OsiError("ClassDescriptionResource resource manager not available");
 			return nullptr;

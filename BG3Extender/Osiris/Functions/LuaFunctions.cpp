@@ -23,8 +23,17 @@ namespace bg3se::esv
 				return;
 			}
 #endif
+			
+			if (resetServer) {
+				// We're running in the server thread, queuing a task here would trigger a deadlock
+				gExtender->GetServer().ResetLuaState();
+			}
 
-			gExtender->ResetLuaState(resetServer, resetClient);
+			if (resetClient) {
+				gExtender->GetClient().SubmitTaskAndWait([]() {
+					gExtender->GetClient().ResetLuaState();
+				});
+			}
 		}
 
 		void OsiLuaModCall(OsiArgumentDesc const& args)

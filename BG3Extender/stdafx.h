@@ -20,8 +20,11 @@
 #include <cassert>
 #include <optional>
 #include <unordered_map>
+#include <unordered_set>
 #include <functional>
 #include <thread>
+#include <mutex>
+#include <shared_mutex>
 
 #include <Extender/Shared/Utils.h>
 #include <GameDefinitions/BaseTypes.h>

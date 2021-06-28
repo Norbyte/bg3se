@@ -134,6 +134,15 @@
     <ClCompile Include="Lua\LuaDebug.pb.cc">
       <Filter>Lua\Debugger</Filter>
     </ClCompile>
+    <ClCompile Include="Extender\Server\ScriptExtenderServer.cpp">
+      <Filter>Extender\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="Extender\Client\ScriptExtenderClient.cpp">
+      <Filter>Extender\Client</Filter>
+    </ClCompile>
+    <ClCompile Include="Extender\Shared\Console.cpp">
+      <Filter>Extender\Shared</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -372,6 +381,27 @@
     <ClInclude Include="Lua\LuaDebug.pb.h">
       <Filter>Lua\Debugger</Filter>
     </ClInclude>
+    <ClInclude Include="Extender\Shared\ModuleHasher.h">
+      <Filter>Extender\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="Extender\Shared\StatLoadOrderHelper.h">
+      <Filter>Extender\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="Extender\Shared\SavegameSerializer.h">
+      <Filter>Extender\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="Extender\Client\ScriptExtenderClient.h">
+      <Filter>Extender\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="Extender\Server\ScriptExtenderServer.h">
+      <Filter>Extender\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="Extender\Shared\Console.h">
+      <Filter>Extender\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="Extender\Shared\ScriptExtenderBase.h">
+      <Filter>Extender\Shared</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -536,6 +566,18 @@
     </None>
     <None Include="Lua\LuaDebug.proto">
       <Filter>Lua\Debugger</Filter>
+    </None>
+    <None Include="Extender\Shared\ModuleHasher.inl">
+      <Filter>Extender\Shared</Filter>
+    </None>
+    <None Include="Extender\Shared\StatLoadOrderHelper.inl">
+      <Filter>Extender\Shared</Filter>
+    </None>
+    <None Include="Extender\Shared\SavegameSerializer.inl">
+      <Filter>Extender\Shared</Filter>
+    </None>
+    <None Include="Extender\Shared\ThreadedExtenderState.inl">
+      <Filter>Extender\Shared</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

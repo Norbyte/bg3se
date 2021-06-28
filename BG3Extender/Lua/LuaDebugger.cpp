@@ -315,9 +315,9 @@ namespace bg3se::lua::dbg
 
 			ExtensionStateBase* state{ nullptr };
 			if (context_ == DbgContext::SERVER) {
-				state = &gExtender->GetServerExtensionState();
+				state = &gExtender->GetServer().GetExtensionState();
 			} else {
-				state = &gExtender->GetClientExtensionState();
+				state = &gExtender->GetClient().GetExtensionState();
 			}
 
 			auto pathIt = state->GetLoadedFileFullPaths().find(ar->source);
@@ -551,9 +551,9 @@ namespace bg3se::lua::dbg
 	ExtensionStateBase& ContextDebugger::GetExtensionState()
 	{
 		if (context_ == DbgContext::CLIENT) {
-			return gExtender->GetClientExtensionState();
+			return gExtender->GetClient().GetExtensionState();
 		} else {
-			return gExtender->GetServerExtensionState();
+			return gExtender->GetServer().GetExtensionState();
 		}
 	}
 
@@ -831,7 +831,7 @@ namespace bg3se::lua::dbg
 	{
 		if (!IsDebuggerReady()) return;
 
-		if (gExtender->IsInServerThread()) {
+		if (gExtender->GetServer().IsInServerThread()) {
 			server_.OnLuaHook(L, ar);
 		} else {
 			client_.OnLuaHook(L, ar);
@@ -842,7 +842,7 @@ namespace bg3se::lua::dbg
 	{
 		if (!IsDebuggerReady()) return;
 
-		if (gExtender->IsInServerThread()) {
+		if (gExtender->GetServer().IsInServerThread()) {
 			server_.OnLuaError(L, msg);
 		} else {
 			client_.OnLuaError(L, msg);
@@ -853,7 +853,7 @@ namespace bg3se::lua::dbg
 	{
 		if (!IsDebuggerReady()) return;
 
-		if (gExtender->IsInServerThread()) {
+		if (gExtender->GetServer().IsInServerThread()) {
 			server_.OnGenericError(msg);
 		} else {
 			client_.OnGenericError(msg);
@@ -864,7 +864,7 @@ namespace bg3se::lua::dbg
 	{
 		if (!IsDebuggerReady()) return;
 
-		if (gExtender->IsInServerThread()) {
+		if (gExtender->GetServer().IsInServerThread()) {
 			server_.DebugBreak(L);
 		} else {
 			client_.DebugBreak(L);

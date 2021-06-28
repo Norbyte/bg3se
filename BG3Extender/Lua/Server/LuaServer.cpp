@@ -32,7 +32,7 @@ namespace bg3se::lua
 {
 	LifetimeHolder GetCurrentLifetime()
 	{
-		if (gExtender->IsInServerThread()) {
+		if (gExtender->GetServer().IsInServerThread()) {
 			return esv::lua::GetServerLifetime();
 		} else {
 			return ecl::lua::GetClientLifetime();
@@ -41,7 +41,7 @@ namespace bg3se::lua
 
 	LifetimePool& GetLifetimePool()
 	{
-		if (gExtender->IsInServerThread()) {
+		if (gExtender->GetServer().IsInServerThread()) {
 			return esv::lua::GetServerLifetimePool();
 		} else {
 			return ecl::lua::GetClientLifetimePool();
@@ -55,13 +55,13 @@ namespace bg3se::esv::lua
 
 	LifetimeHolder GetServerLifetime()
 	{
-		assert(gExtender->IsInServerThread());
+		assert(gExtender->GetServer().IsInServerThread());
 		return esv::ExtensionState::Get().GetLua()->GetCurrentLifetime();
 	}
 
 	LifetimePool& GetServerLifetimePool()
 	{
-		assert(gExtender->IsInServerThread());
+		assert(gExtender->GetServer().IsInServerThread());
 		return esv::ExtensionState::Get().GetLua()->GetLifetimePool();
 	}
 
@@ -198,7 +198,7 @@ namespace bg3se::esv::lua
 	{
 		auto s = checked_get<FixedString>(L, 1);
 
-		auto& helpers = gExtender->GetServerEntityHelpers();
+		auto& helpers = gExtender->GetServer().GetEntityHelpers();
 		auto character = helpers.GetComponent<esv::Character>(s);
 		if (character) {
 			auto boostContainer = helpers.GetEntityComponent<BoostsContainerComponent>(character->Entity);
@@ -241,7 +241,7 @@ namespace bg3se::esv::lua
 	{
 		auto s = checked_get<UUID>(L, 1);
 
-		auto rsrc = gExtender->GetServerEntityHelpers().GetResourceManager<TagResource>();
+		auto rsrc = gExtender->GetServer().GetEntityHelpers().GetResourceManager<TagResource>();
 		if (rsrc) {
 
 			auto tag = reinterpret_cast<TagResource*>((*rsrc)->Resources.Values);
@@ -274,7 +274,7 @@ namespace bg3se::esv::lua
 
 					auto entity = ch2->Entity;
 
-					auto& helpers = gExtender->GetServerEntityHelpers();
+					auto& helpers = gExtender->GetServer().GetEntityHelpers();
 					auto ar = helpers.GetEntityComponent<ActionResourcesComponent>(entity);
 					auto armor = helpers.GetEntityComponent<ArmorComponent>(entity);
 					auto baseHp = helpers.GetEntityComponent<BaseHpComponent>(entity);
@@ -475,7 +475,7 @@ namespace bg3se::esv::lua
 
 
 	ServerState::ServerState(ExtensionState& state)
-		: identityAdapters_(gExtender->GetOsiris().GetGlobals()),
+		: identityAdapters_(gExtender->GetServer().Osiris().GetGlobals()),
 		osirisCallbacks_(state),
 		functorHooks_(*this)
 	{
@@ -520,7 +520,7 @@ namespace bg3se::esv::lua
 			}
 #endif
 
-			gExtender->GetOsiris().GetCustomFunctionManager().ClearDynamicEntries();
+			gExtender->GetServer().Osiris().GetCustomFunctionManager().ClearDynamicEntries();
 		}
 	}
 
@@ -1131,7 +1131,7 @@ namespace bg3se::esv::lua
 
 	EntitySystemHelpersBase* ServerState::GetEntitySystemHelpers()
 	{
-		return &gExtender->GetServerEntityHelpers();
+		return &gExtender->GetServer().GetEntityHelpers();
 	}
 
 
@@ -1148,7 +1148,7 @@ namespace bg3se::esv
 
 	ExtensionState & ExtensionState::Get()
 	{
-		return gExtender->GetServerExtensionState();
+		return gExtender->GetServer().GetExtensionState();
 	}
 
 	lua::State * ExtensionState::GetLua()

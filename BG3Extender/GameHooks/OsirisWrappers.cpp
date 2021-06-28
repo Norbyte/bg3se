@@ -157,22 +157,22 @@ void OsirisWrappers::Shutdown()
 
 bool OsirisWrappers::CallWrapper(uint32_t FunctionId, OsiArgumentDesc * Params)
 {
-	return gExtender->GetOsiris().GetWrappers().CallOriginal(FunctionId, Params);
+	return gExtender->GetServer().Osiris().GetWrappers().CallOriginal(FunctionId, Params);
 }
 
 bool OsirisWrappers::QueryWrapper(uint32_t FunctionId, OsiArgumentDesc * Params)
 {
-	return gExtender->GetOsiris().GetWrappers().QueryOriginal(FunctionId, Params);
+	return gExtender->GetServer().Osiris().GetWrappers().QueryOriginal(FunctionId, Params);
 }
 
 void OsirisWrappers::ErrorWrapper(char const * Message)
 {
-	gExtender->GetOsiris().GetWrappers().ErrorOriginal(Message);
+	gExtender->GetServer().Osiris().GetWrappers().ErrorOriginal(Message);
 }
 
 void OsirisWrappers::AssertWrapper(bool Successful, char const * Message, bool Unknown2)
 {
-	gExtender->GetOsiris().GetWrappers().AssertOriginal(Successful, Message, Unknown2);
+	gExtender->GetServer().Osiris().GetWrappers().AssertOriginal(Successful, Message, Unknown2);
 }
 
 void * OsirisWrappers::FindRuleActionCallProc()

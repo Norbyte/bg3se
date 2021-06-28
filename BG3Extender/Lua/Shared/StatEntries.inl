@@ -322,7 +322,7 @@ namespace bg3se::lua::stats
 		}
 
 		if (!(lua->RestrictionFlags & State::ScopeModuleLoad)) {
-			if (gExtender->IsInServerThread()) {
+			if (gExtender->GetServer().IsInServerThread()) {
 				static bool syncWarningShown{ false };
 				if (!syncWarningShown) {
 					OsiWarn("Stats entres created after ModuleLoad must be synced manually; make sure that you call SyncStat() on it when you're finished!");
@@ -365,12 +365,12 @@ namespace bg3se::lua::stats
 
 		//stats->SyncWithPrototypeManager(object);
 
-		if (gExtender->IsInServerThread()) {
+		if (gExtender->GetServer().IsInServerThread()) {
 			object->BroadcastSyncMessage(false);
 
-			gExtender->GetServerExtensionState().MarkDynamicStat(FixedString(statName));
+			gExtender->GetServer().GetExtensionState().MarkDynamicStat(FixedString(statName));
 			if (persist && *persist) {
-				gExtender->GetServerExtensionState().MarkPersistentStat(FixedString(statName));
+				gExtender->GetServer().GetExtensionState().MarkPersistentStat(FixedString(statName));
 			}
 		}
 	}
@@ -387,9 +387,9 @@ namespace bg3se::lua::stats
 		}
 
 		if (persist) {
-			gExtender->GetServerExtensionState().MarkPersistentStat(FixedString(statName));
+			gExtender->GetServer().GetExtensionState().MarkPersistentStat(FixedString(statName));
 		} else {
-			gExtender->GetServerExtensionState().UnmarkPersistentStat(FixedString(statName));
+			gExtender->GetServer().GetExtensionState().UnmarkPersistentStat(FixedString(statName));
 		}
 	}
 

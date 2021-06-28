@@ -388,10 +388,10 @@ namespace bg3se::lua
 		StackCheck _(L, 1);
 
 		std::optional<STDString> componentName;
-		if (gExtender->IsInServerThread()) {
-			componentName = gExtender->GetServerEntityHelpers().GetComponentName((EntityWorldBase::HandleTypeIndex)handle_.GetType());
+		if (gExtender->GetServer().IsInServerThread()) {
+			componentName = gExtender->GetServer().GetEntityHelpers().GetComponentName((EntityWorldBase::HandleTypeIndex)handle_.GetType());
 		} else {
-			componentName = gExtender->GetClientEntityHelpers().GetComponentName((EntityWorldBase::HandleTypeIndex)handle_.GetType());
+			componentName = gExtender->GetClient().GetEntityHelpers().GetComponentName((EntityWorldBase::HandleTypeIndex)handle_.GetType());
 		}
 
 		char entityName[200];

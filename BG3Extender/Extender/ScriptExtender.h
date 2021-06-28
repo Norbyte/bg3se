@@ -3,8 +3,10 @@
 #include <Extender/Shared/ExtenderConfig.h>
 #include <GameDefinitions/Osiris.h>
 #include <GameDefinitions/GuidResources.h>
-#include <Extender/Client/ExtensionStateClient.h>
-#include <Extender/Server/ExtensionStateServer.h>
+#include <Extender/Client/ScriptExtenderClient.h>
+#include <Extender/Server/ScriptExtenderServer.h>
+#include <Extender/Shared/StatLoadOrderHelper.h>
+#include <Extender/Shared/SavegameSerializer.h>
 #if !defined(OSI_NO_DEBUGGER)
 #include <Lua/LuaDebugger.h>
 #include <Lua/LuaDebugMessages.h>
@@ -13,10 +15,6 @@
 #include <GameHooks/DataLibraries.h>
 #include <GameHooks/EngineHooks.h>
 //#include "NetProtocol.h"
-#include <GameDefinitions/Symbols.h>
-#include <GameDefinitions/GlobalFixedStrings.h>
-#include <Osiris/OsirisExtender.h>
-#include <GameDefinitions/EntitySystemHelpers.h>
 //#include <Hit.h>
 
 #include <thread>
@@ -26,67 +24,6 @@
 
 namespace bg3se {
 
-class SavegameSerializer
-{
-public:
-	void SavegameVisit(ObjectVisitor* visitor);
-
-private:
-	void Serialize(ObjectVisitor* visitor, uint32_t version);
-	void SerializePersistentVariables(ObjectVisitor* visitor, uint32_t version);
-	void RestorePersistentVariables(std::unordered_map<FixedString, STDString> const&);
-	void SerializeStatObjects(ObjectVisitor* visitor, uint32_t version);
-	void RestoreStatObject(FixedString const& statId, FixedString const& statType, ScratchBuffer const& blob);
-	bool SerializeStatObject(FixedString const& statId, FixedString& statType, ScratchBuffer& blob);
-};
-
-class StatLoadOrderHelper
-{
-public:
-	void OnLoadStarted();
-	void OnLoadFinished();
-	void OnStatFileOpened();
-	void OnStatFileOpened(Path const& path);
-	void UpdateModDirectoryMap();
-
-	FixedString GetStatsEntryMod(FixedString statId) const;
-	std::vector<CRPGStats_Object*> GetStatsLoadedBefore(FixedString modId) const;
-
-private:
-	struct StatsEntryModMapping
-	{
-		FixedString Mod;
-		void* PreParseBuf;
-	};
-
-	std::shared_mutex modMapMutex_;
-	std::unordered_map<STDString, FixedString> modDirectoryToModMap_;
-	std::unordered_map<FixedString, StatsEntryModMapping> statsEntryToModMap_;
-	FixedString statLastTxtMod_;
-	bool loadingStats_{ false };
-};
-
-class ModuleHasher
-{
-public:
-	void PostStartup();
-	void ClearCaches();
-
-	bool isHashing() const
-	{
-		return hashDepth_ > 0;
-	}
-
-private:
-	std::vector<Module*> hashStack_;
-	std::unordered_map<FixedString, STDString> hashCache_;
-	std::recursive_mutex mutex_;
-	static __declspec(thread) unsigned hashDepth_;
-
-	bool FetchHashFromCache(Module& mod);
-	void UpdateDependencyHashes(Module& mod);
-	bool OnModuleHash(Module::HashProc* next, Module* self);
-};
 
 class ScriptExtender
 {
@@ -94,6 +31,7 @@ public:
 	ScriptExtender();
 
 	void Initialize();
+	void PostStartup();
 	void Shutdown();
 
 	inline ExtenderConfig & GetConfig()
@@ -130,24 +68,14 @@ public:
 
 	ExtensionStateBase* GetCurrentExtensionState();
 
-	inline bool HasServerExtensionState() const
+	inline esv::ScriptExtender & GetServer()
 	{
-		return (bool)ServerExtState;
+		return server_;
 	}
 
-	inline esv::ExtensionState & GetServerExtensionState()
+	inline ecl::ScriptExtender & GetClient()
 	{
-		return *ServerExtState;
-	}
-
-	inline bool HasClientExtensionState() const
-	{
-		return (bool)ClientExtState;
-	}
-
-	inline ecl::ExtensionState & GetClientExtensionState()
-	{
-		return *ClientExtState;
+		return client_;
 	}
 
 	bool HasFeatureFlag(char const *) const;
@@ -162,21 +90,6 @@ public:
 		return statLoadOrderHelper_;
 	}
 
-	inline ServerEntitySystemHelpers& GetServerEntityHelpers()
-	{
-		return serverEntityHelpers_;
-	}
-
-	inline ClientEntitySystemHelpers& GetClientEntityHelpers()
-	{
-		return clientEntityHelpers_;
-	}
-
-	inline OsirisExtender& GetOsiris()
-	{
-		return osiris_;
-	}
-
 	inline EngineHooks& GetEngineHooks()
 	{
 		return Hooks;
@@ -185,36 +98,12 @@ public:
 	void ClearPathOverrides();
 	void AddPathOverride(STDString const & path, STDString const & overriddenPath);
 
-	bool IsInServerThread() const;
-	bool IsInClientThread() const;
-	void AttachConsoleThread(bool server);
-
-	void ResetLuaState(bool resetServer, bool resetClient);
-
-	void EnqueueClientTask(std::function<void()> fun);
-	void EnqueueServerTask(std::function<void()> fun);
-
-	// HACK - we need to expose this so it can be added to the CrashReporter whitelist
-	enum class ClientGameStateWorkerStartTag {};
-	enum class ServerGameStateWorkerStartTag {};
-	enum class ClientGameStateMachcineUpdateTag {};
-	enum class ServerGameStateMachcineUpdateTag {};
-	HookableFunction<ClientGameStateWorkerStartTag, void(void*)> clientGameStateWorkerStart_;
-	HookableFunction<ServerGameStateWorkerStartTag, void(void*)> serverGameStateWorkerStart_;
-	HookableFunction<ClientGameStateMachcineUpdateTag, void(void*, GameTime*)> clientGameStateMachineUpdate_;
-	HookableFunction<ServerGameStateMachcineUpdateTag, void(void*, GameTime*)> serverGameStateMachineUpdate_;
-
 private:
-	OsirisExtender osiris_;
-	std::unique_ptr<esv::ExtensionState> ServerExtState;
-	std::unique_ptr<ecl::ExtensionState> ClientExtState;
+	esv::ScriptExtender server_;
+	ecl::ScriptExtender client_;
 	LibraryManager Libraries;
 	EngineHooks Hooks;
 	bool LibrariesPostInitialized{ false };
-	bool ServerExtensionLoaded{ false };
-	bool ClientExtensionLoaded{ false };
-	std::unordered_set<DWORD> ClientThreadIds;
-	std::unordered_set<DWORD> ServerThreadIds;
 	std::recursive_mutex globalStateLock_;
 	//NetworkManager networkManager_;
 	std::shared_mutex pathOverrideMutex_;
@@ -222,20 +111,10 @@ private:
 	SavegameSerializer savegameSerializer_;
 	StatLoadOrderHelper statLoadOrderHelper_;
 	//esv::HitProxy hitProxy_;
-	ModuleHasher hasher_;
-	ServerEntitySystemHelpers serverEntityHelpers_;
-	ClientEntitySystemHelpers clientEntityHelpers_;
-	concurrency::concurrent_queue<std::function<void()>> clientThreadTasks_;
-	concurrency::concurrent_queue<std::function<void()>> serverThreadTasks_;
 
 	ExtenderConfig config_;
 	bool extensionsEnabled_{ false };
 	bool postStartupDone_{ false };
-
-	enum class ClientGameStateChangedEventTag {};
-	enum class ServerGameStateChangedEventTag {};
-	PostHookableFunction<ClientGameStateChangedEventTag, void(void*, ecl::GameState, ecl::GameState)> clientGameStateChangedEvent_;
-	PostHookableFunction<ServerGameStateChangedEventTag, void(void*, esv::GameState, esv::GameState)> serverGameStateChangedEvent_;
 
 #if !defined(OSI_NO_DEBUGGER)
 	std::thread* luaDebuggerThread_{ nullptr };
@@ -244,31 +123,13 @@ private:
 	std::unique_ptr<lua::dbg::Debugger> luaDebugger_;
 #endif
 
-	void PostStartup();
 	void OnBaseModuleLoaded(void * self);
 	/*void OnModuleLoadStarted(TranslatedStringRepository * self);
 	void OnStatsLoadStarted(RPGStats* mgr);
 	void OnStatsLoadFinished(RPGStats* mgr);*/
-	void OnClientGameStateChanged(void * self, ecl::GameState fromState, ecl::GameState toState);
-	void OnServerGameStateChanged(void * self, esv::GameState fromState, esv::GameState toState);
-	void OnClientGameStateWorkerStart(void * self);
-	void OnServerGameStateWorkerStart(void * self);
-	void OnClientGameStateWorkerExit(void* self);
-	void OnServerGameStateWorkerExit(void* self);
-	void OnClientUpdate(void* self, GameTime* time);
-	void OnServerUpdate(void* self, GameTime* time);
 	void OnSkillPrototypeManagerInit(void * self);
 	FileReader * OnFileReaderCreate(FileReader::CtorProc* next, FileReader * self, Path const& path, unsigned int type, unsigned int unknown);
 	void OnSavegameVisit(void* osirisHelpers, ObjectVisitor* visitor);
-	void ResetExtensionStateServer();
-	void LoadExtensionStateServer();
-	void ResetExtensionStateClient();
-	void LoadExtensionStateClient();
-
-	void AddClientThread(DWORD threadId);
-	void AddServerThread(DWORD threadId);
-	void RemoveClientThread(DWORD threadId);
-	void RemoveServerThread(DWORD threadId);
 };
 
 extern std::unique_ptr<ScriptExtender> gExtender;
