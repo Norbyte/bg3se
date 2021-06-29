@@ -37,7 +37,7 @@ public:
 		return *extensionState_;
 	}
 
-	inline ClientEntitySystemHelpers& GetEntityHelpers()
+	inline ServerEntitySystemHelpers& GetEntityHelpers()
 	{
 		return entityHelpers_;
 	}
@@ -62,7 +62,7 @@ private:
 	OsirisExtender osiris_;
 	std::unique_ptr<ExtensionState> extensionState_;
 	bool extensionLoaded_{ false };
-	ClientEntitySystemHelpers entityHelpers_;
+	ServerEntitySystemHelpers entityHelpers_;
 
 	enum class GameStateChangedEventTag {};
 	PostHookableFunction<GameStateChangedEventTag, void(void*, GameState, GameState)> gameStateChangedEvent_;
