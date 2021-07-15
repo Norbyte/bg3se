@@ -120,6 +120,27 @@ namespace bg3se::lua::utils
 		return 0;
 	}
 
+	int IsTableLike(lua_State* L)
+	{
+		bool isTable = 
+			lua_type(L, 1) == LUA_TTABLE
+			|| Userdata<ArrayProxy>::AsUserData(L, 1) != nullptr
+			|| Userdata<MapProxy>::AsUserData(L, 1) != nullptr;
+		push(L, isTable);
+		return 1;
+	}
+
+	int IsIterable(lua_State* L)
+	{
+		bool isTable = 
+			lua_type(L, 1) == LUA_TTABLE
+			|| Userdata<ObjectProxy>::AsUserData(L, 1) != nullptr
+			|| Userdata<ArrayProxy>::AsUserData(L, 1) != nullptr
+			|| Userdata<MapProxy>::AsUserData(L, 1) != nullptr;
+		push(L, isTable);
+		return 1;
+	}
+
 	std::optional<STDString> LoadFile(lua_State* L, char const* path, std::optional<char const*> context)
 	{
 		if (!context || strcmp(*context, "user") == 0) {
@@ -518,6 +539,8 @@ namespace bg3se::lua::utils
 			{"PrintWarning", PrintWarning},
 			{"PrintError", PrintError},
 			{"DebugBreak", DebugBreakWrapper},
+			{"IsTableLike", IsTableLike},
+			{"IsIterable", IsIterable},
 
 			{"IsModLoaded", IsModLoadedWrapper},
 			{"GetModLoadOrder", GetModLoadOrder},
