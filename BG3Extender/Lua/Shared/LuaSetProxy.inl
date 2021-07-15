@@ -37,6 +37,20 @@ namespace bg3se::lua
 		return 0;
 	}
 
+	int SetProxy::Length(lua_State* L)
+	{
+		StackCheck _(L, 1);
+		auto impl = GetImpl();
+		if (!lifetime_.IsAlive()) {
+			luaL_error(L, "Attempted to get length of dead Set<%s>", impl->GetTypeName());
+			push(L, nullptr);
+			return 1;
+		}
+
+		push(L, impl->Length());
+		return 1;
+	}
+
 	int SetProxy::Next(lua_State* L)
 	{
 		auto impl = GetImpl();

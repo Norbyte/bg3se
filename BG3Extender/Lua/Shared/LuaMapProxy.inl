@@ -34,6 +34,20 @@ namespace bg3se::lua
 		return 0;
 	}
 
+	int MapProxy::Length(lua_State* L)
+	{
+		StackCheck _(L, 1);
+		auto impl = GetImpl();
+		if (!lifetime_.IsAlive()) {
+			luaL_error(L, "Attempted to get length of dead Map<%s, %s>", impl->GetKeyTypeName(), impl->GetValueTypeName());
+			push(L, nullptr);
+			return 1;
+		}
+
+		push(L, impl->Length());
+		return 1;
+	}
+
 	int MapProxy::Next(lua_State* L)
 	{
 		auto impl = GetImpl();

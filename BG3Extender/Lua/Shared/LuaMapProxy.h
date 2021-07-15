@@ -409,7 +409,7 @@ namespace bg3se::lua
 
 
 	class MapProxy : private Userdata<MapProxy>, public Indexable, public NewIndexable,
-		public Iterable, public Stringifiable, public Pushable, public GarbageCollected
+		public Lengthable, public Iterable, public Stringifiable, public Pushable, public GarbageCollected
 	{
 	public:
 		static char const * const MetatableName;
@@ -514,6 +514,7 @@ namespace bg3se::lua
 
 		int Index(lua_State* L);
 		int NewIndex(lua_State* L);
+		int Length(lua_State* L);
 		int Next(lua_State* L);
 		int ToString(lua_State* L);
 		int GC(lua_State* L);
