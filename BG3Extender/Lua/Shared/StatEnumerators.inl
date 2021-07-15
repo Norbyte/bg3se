@@ -11,30 +11,6 @@ namespace bg3se::lua
 		}
 	}
 
-	void FetchItemComboEntries(lua_State* L, RPGStats* stats)
-	{
-		int32_t index = 1;
-		for (auto itemCombo : stats->ItemCombinationManager->Primitives) {
-			settable(L, index++, itemCombo->Name);
-		}
-	}
-
-	void FetchItemComboPropertyEntries(lua_State* L, RPGStats* stats)
-	{
-		int32_t index = 1;
-		stats->ItemCombinationManager->ComboProperties.Iterate([L, &index](FixedString const& key, CItemCombinationProperty const*) {
-			settable(L, index++, key);
-		});
-	}
-
-	void FetchItemComboPreviewDataEntries(lua_State* L, RPGStats* stats)
-	{
-		int32_t index = 1;
-		stats->ItemCombinationManager->PreviewData.Iterate([L, &index](FixedString const& key, CItemCombinationPreviewData const*) {
-			settable(L, index++, key);
-		});
-	}
-
 	void FetchItemGroupEntries(lua_State* L, RPGStats* stats)
 	{
 		int32_t index = 1;
@@ -150,13 +126,7 @@ namespace bg3se::lua
 		else if (statType == GFS.strTreasureCategory) {
 			FetchTreasureCategoryEntries(L, stats);
 		}
-		else /*if (statType == GFS.strItemCombination) {
-			FetchItemComboEntries(L, stats);
-		} else if (statType == GFS.strItemComboProperty) {
-			FetchItemComboPropertyEntries(L, stats);
-		} else if (statType == GFS.strCraftingPreviewData) {
-			FetchItemComboPreviewDataEntries(L, stats);
-		} else if (statType == GFS.strItemGroup) {
+		else /*if (statType == GFS.strItemGroup) {
 			FetchItemGroupEntries(L, stats);
 		} else if (statType == GFS.strNameGroup) {
 			FetchItemNameGroupEntries(L, stats);

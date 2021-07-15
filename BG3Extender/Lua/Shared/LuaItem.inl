@@ -42,7 +42,7 @@ namespace bg3se::lua
 			return 1;
 		}*/
 
-		return stats::LuaStatGetAttribute(L, item, prop, {});
+		return stats::LuaStatGetAttribute(L, item, FixedString(prop), {});
 	}
 
 

@@ -395,14 +395,7 @@ namespace bg3se::lua
 	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_SubTable_Description& v);
 	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_Category& v);
 	LuaSerializer& operator << (LuaSerializer& s, StatsFunctorSet& v);
-/*	LuaSerializer& operator << (LuaSerializer& s, CItemCombination& v);
-	LuaSerializer& operator << (LuaSerializer& s, CItemCombinationIngredient& v);
-	LuaSerializer& operator << (LuaSerializer& s, CItemCombinationResult& v);
-	LuaSerializer& operator << (LuaSerializer& s, CItemCombinationResult::CombinationResult& v);
-	LuaSerializer& operator << (LuaSerializer& s, CItemCombinationPreviewData& v);
-	LuaSerializer& operator << (LuaSerializer& s, CItemCombinationProperty& v);
-	LuaSerializer& operator << (LuaSerializer& s, CItemCombinationProperty::ItemCombinationPropertyEntry& v);
-	LuaSerializer& operator << (LuaSerializer& s, CItemGroup& v);
+/*	LuaSerializer& operator << (LuaSerializer& s, CItemGroup& v);
 	LuaSerializer& operator << (LuaSerializer& s, CLevelGroup& v);
 	LuaSerializer& operator << (LuaSerializer& s, CRootGroup& v);
 	LuaSerializer& operator << (LuaSerializer& s, CNameGroupLink& v);

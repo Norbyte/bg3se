@@ -3,6 +3,7 @@
 #include <GameDefinitions/BaseTypes.h>
 #include <GameDefinitions/Symbols.h>
 #include <GameDefinitions/Enumerations.h>
+#include <GameDefinitions/Stats/Stats.h>
 #include <Extender/Shared/ScriptHelpers.h>
 #include <Extender/ScriptExtender.h>
 

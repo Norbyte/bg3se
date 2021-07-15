@@ -137,7 +137,6 @@ FS(SpellSet);
 FS(EquipmentSet);
 FS(TreasureTable);
 FS(TreasureCategory);
-FS(ItemCombination);
 FS(ItemGroup);
 FS(NameGroup);
 

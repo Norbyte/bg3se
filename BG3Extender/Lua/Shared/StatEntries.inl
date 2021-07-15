@@ -118,93 +118,7 @@ namespace bg3se::lua::stats
 		return 0;
 	}
 
-	/*int GetItemCombo(lua_State* L)
-	{
-		auto comboName = luaL_checkstring(L, 1);
-		auto combo = GetStaticSymbols().GetStats()->ItemCombinationManager->Find(comboName);
-		return LuaWrite(L, *combo);
-	}
-
-	int UpdateItemCombo(lua_State* L)
-	{
-		StackCheck _(L);
-		luaL_checktype(L, 1, LUA_TTABLE);
-		auto name = checked_getfield<FixedString>(L, "Name", 1);
-
-		auto stats = GetStaticSymbols().GetStats();
-		auto combo = stats->ItemCombinationManager->Find(name);
-		bool isNew = (combo == nullptr);
-
-		lua_pushvalue(L, 1);
-		LuaRead(L, combo);
-		lua_pop(L, 1);
-
-		if (isNew) {
-			stats->ItemCombinationManager->Add(name, combo);
-		}
-
-		return 0;
-	}
-
-	int GetItemComboPreviewData(lua_State* L)
-	{
-		auto comboName = ToFixedString(luaL_checkstring(L, 1));
-		auto preview = GetStaticSymbols().GetStats()->ItemCombinationManager->PreviewData.Find(comboName);
-		return LuaWrite(L, *preview);
-	}
-
-	int UpdateItemComboPreviewData(lua_State* L)
-	{
-		StackCheck _(L);
-		luaL_checktype(L, 1, LUA_TTABLE);
-		auto name = checked_getfield<FixedString>(L, "Name", 1);
-
-		auto stats = GetStaticSymbols().GetStats();
-		auto existing = stats->ItemCombinationManager->PreviewData.Find(name);
-		CItemCombinationPreviewData* previewData = existing ? *existing : nullptr;
-		bool isNew = (previewData == nullptr);
-
-		lua_pushvalue(L, 1);
-		LuaRead(L, previewData);
-		lua_pop(L, 1);
-
-		if (isNew) {
-			stats->ItemCombinationManager->PreviewData.Insert(name, previewData);
-		}
-
-		return 0;
-	}
-
-	int GetItemComboProperty(lua_State* L)
-	{
-		auto propertyName = ToFixedString(luaL_checkstring(L, 1));
-		auto prop = GetStaticSymbols().GetStats()->ItemCombinationManager->ComboProperties.Find(propertyName);
-		return LuaWrite(L, *prop);
-	}
-
-	int UpdateItemComboProperty(lua_State* L)
-	{
-		StackCheck _(L);
-		luaL_checktype(L, 1, LUA_TTABLE);
-		auto name = checked_getfield<FixedString>(L, "Name", 1);
-
-		auto stats = GetStaticSymbols().GetStats();
-		auto existing = stats->ItemCombinationManager->ComboProperties.Find(name);
-		CItemCombinationProperty* comboProperty = existing ? *existing : nullptr;
-		bool isNew = (comboProperty == nullptr);
-
-		lua_pushvalue(L, 1);
-		LuaRead(L, comboProperty);
-		lua_pop(L, 1);
-
-		if (isNew) {
-			stats->ItemCombinationManager->ComboProperties.Insert(name, comboProperty);
-		}
-
-		return 0;
-	}
-
-
+	/*
 	int GetItemGroup(lua_State* L)
 	{
 		auto name = ToFixedString(luaL_checkstring(L, 1));
@@ -252,7 +166,6 @@ namespace bg3se::lua::stats
 			return GetTreasureCategory(L, statName);
 		} else if (statType == GFS.strSpellSet
 			|| statType == GFS.strEquipmentSet
-			|| statType == GFS.strItemCombination
 			|| statType == GFS.strItemGroup
 			|| statType == GFS.strNameGroup) {
 			LuaError("Stat type '" << statType << "' not implemented yet!");
