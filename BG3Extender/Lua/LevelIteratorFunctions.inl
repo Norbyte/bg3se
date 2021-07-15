@@ -29,7 +29,7 @@ void GetCharactersGeneric(lua_State* L, FixedString const& requestedLevel, Predi
 
 		if (!pred(ch)) return;
 
-		settable(L, index++, ch->GUID);
+		settable(L, index++, ch->Entity);
 	};
 
 	gExtender->GetServer().GetEntityHelpers().IterateComponents<Character>(predicate);
@@ -113,7 +113,7 @@ void GetItemsGeneric(lua_State* L, FixedString const& requestedLevel, Predicate 
 
 		if (!pred(it)) return;
 
-		settable(L, index++, it->GUID);
+		settable(L, index++, it->Entity);
 	};
 
 	gExtender->GetServer().GetEntityHelpers().IterateComponents<Item>(predicate);

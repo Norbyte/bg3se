@@ -3,8 +3,8 @@ local GUID_LAEZEL = "58a69333-40bf-8358-1d17-fff240d7fb12"
 function TestCharacterEnumeration()
     local chars = Ext.GetAllCharacters()
     local found = false
-    for i,guid in ipairs(chars) do
-        if guid == GUID_LAEZEL then
+    for i,entity in ipairs(chars) do
+        if entity.ServerCharacter.GUID == GUID_LAEZEL then
             found = true
         end
     end
@@ -31,7 +31,7 @@ end
 
 
 function TestCharacterProperties()
-    local c = Ext.GetCharacter(GUID_LAEZEL)
+    local c = Ext.GetCharacter(GUID_LAEZEL).ServerCharacter
 
     AssertEquals(c.GUID, GUID_LAEZEL)
     Assert(type(c.NetID) == "number" and c.NetID > 0)
@@ -74,7 +74,7 @@ end
 
 
 function TestCharacterTemplateProperties()
-    local t = Ext.GetCharacter(GUID_LAEZEL).CurrentTemplate
+    local t = Ext.GetCharacter(GUID_LAEZEL).ServerCharacter.CurrentTemplate
 
     local cc = t.CombatComponent
     AssertEquals(cc.Archetype, "melee")

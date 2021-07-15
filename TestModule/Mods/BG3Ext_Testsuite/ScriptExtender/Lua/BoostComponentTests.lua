@@ -1,18 +1,18 @@
 local GUID_LAEZEL = "58a69333-40bf-8358-1d17-fff240d7fb12"
 
 function TestBoostComponent(boostType, index, boostComponent, expect)
-    local boosts = Ext.GetCharacter(GUID_LAEZEL).Entity:GetComponent("BoostsContainer")
+    local boosts = Ext.GetCharacter(GUID_LAEZEL).BoostsContainer
     local boost = boosts.Boosts[boostType][index]
-    local component = boost:GetComponent(boostComponent)
+    local component = boost[boostComponent]
 
     -- FIXME - add ==, ~= operator for entities, component handles
-    -- expect.Entity = ch.Entity
+    -- expect.Entity = ch
     AssertEqualsProperties(expect, component)
 end
 
 
 function TestBoostDump()
-    local boosts = Ext.GetCharacter(GUID_LAEZEL).Entity:GetComponent("BoostsContainer")
+    local boosts = Ext.GetCharacter(GUID_LAEZEL).BoostsContainer
     for ty,boosts in pairs(boosts.Boosts) do
         for i,boost in ipairs(boosts) do
             Ext.Json.Stringify(boost:GetAllComponents(), true, true)
@@ -25,7 +25,7 @@ function TestBoostInfoComponent()
     local expect = {
         -- FIXME - Cause_M = "Entity (03000001000000ac)",
         Flags_M = 1,
-        -- FIXME - OwnerEntity = Ext.GetCharacter(GUID_LAEZEL).Entity",
+        -- FIXME - OwnerEntity = Ext.GetCharacter(GUID_LAEZEL)",
         Params = {
                 Boost = "Disadvantage",
                 Params = "Skill,Stealth",
@@ -57,7 +57,7 @@ end
 
 function TestBoostServerReplicationDependencyComponent()
     local expect = {
-        -- FIXME - Dependency = Ext.GetCharacter(GUID_LAEZEL).Entity
+        -- FIXME - Dependency = Ext.GetCharacter(GUID_LAEZEL)
     }
     
     TestBoostComponent("Advantage", 1, "ServerReplicationDependency", expect)

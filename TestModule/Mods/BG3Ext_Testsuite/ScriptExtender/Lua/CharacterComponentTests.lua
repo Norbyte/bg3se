@@ -2,17 +2,17 @@ local GUID_LAEZEL = "58a69333-40bf-8358-1d17-fff240d7fb12"
 
 function TestComponentGeneric(componentName, expect)
     local ch = Ext.GetCharacter(GUID_LAEZEL)
-    local component = ch.Entity:GetComponent(componentName)
+    local component = ch[componentName]
 
     -- FIXME - add ==, ~= operator for entities, component handles
-    -- expect.Entity = ch.Entity
+    -- expect.Entity = ch
     AssertEqualsProperties(expect, component)
 end
 
 function TestCharacterComponentDump()
     local c = Ext.GetCharacter(GUID_LAEZEL)
 
-    Ext.Json.Stringify(c.Entity:GetAllComponents(), true, true)
+    Ext.Json.Stringify(c:GetAllComponents(), true, true)
 end
 
 
@@ -282,7 +282,7 @@ function TestHotbarContainerComponent()
         }
     }
     
-    local component = Ext.GetCharacter(GUID_LAEZEL).Entity:GetComponent("HotbarContainer")
+    local component = Ext.GetCharacter(GUID_LAEZEL).HotbarContainer
     local hotbarElement = component.Containers.DefaultBarContainer[1].Elements[2]
 
     AssertEqualsProperties(expect, hotbarElement)
@@ -515,7 +515,7 @@ function TestSpellBookComponent()
         field_42 = 0
     }
     
-    local component = Ext.GetCharacter(GUID_LAEZEL).Entity:GetComponent("SpellBook")
+    local component = Ext.GetCharacter(GUID_LAEZEL).SpellBook
     local spell = component.Spells[1]
 
     AssertEqualsProperties(expect, spell)
@@ -530,7 +530,7 @@ function TestSpellBookPreparesComponent()
         SourceType = "SpellSet"
     }
     
-    local component = Ext.GetCharacter(GUID_LAEZEL).Entity:GetComponent("SpellBookPrepares")
+    local component = Ext.GetCharacter(GUID_LAEZEL).SpellBookPrepares
     local spell = component.PreparedSpells[1]
 
     AssertEqualsProperties(expect, spell)
@@ -555,7 +555,7 @@ function TestSpellContainerComponent()
         field_48 = 0
     }
     
-    local component = Ext.GetCharacter(GUID_LAEZEL).Entity:GetComponent("SpellContainer")
+    local component = Ext.GetCharacter(GUID_LAEZEL).SpellContainer
     local spell = component.Spells[2]
 
     AssertEqualsProperties(expect, spell)
@@ -629,8 +629,8 @@ function TestStatsComponent()
     TestComponentGeneric("Stats", expect)
 
     -- Check item handle validity
-    local stats = Ext.GetCharacter(GUID_LAEZEL).Entity:GetComponent("Stats")
-    local wpn = stats.Equipment.MeleeMainWeapon.ItemHandle:GetComponent("Data")
+    local stats = Ext.GetCharacter(GUID_LAEZEL).Stats
+    local wpn = stats.Equipment.MeleeMainWeapon.ItemHandle.Data
     AssertEquals(wpn.StatsId, "WPN_Longsword")
 end
 
@@ -653,7 +653,7 @@ function TestSurfacePathInfluencesComponent()
         SurfaceType = "BloodElectrified"
     }
     
-    local component = Ext.GetCharacter(GUID_LAEZEL).Entity:GetComponent("SurfacePathInfluences")
+    local component = Ext.GetCharacter(GUID_LAEZEL).SurfacePathInfluences
     local influence = component.PathInfluences[1]
 
     AssertEqualsProperties(expect, influence)

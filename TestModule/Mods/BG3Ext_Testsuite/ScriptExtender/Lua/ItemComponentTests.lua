@@ -1,17 +1,17 @@
 local GUID_LAEZEL = "58a69333-40bf-8358-1d17-fff240d7fb12"
 
 function TestItemComponentGeneric(componentName, expect)
-    local stats = Ext.GetCharacter(GUID_LAEZEL).Entity:GetComponent("Stats")
+    local stats = Ext.GetCharacter(GUID_LAEZEL).Stats
     local it = stats.Equipment.MeleeMainWeapon.ItemHandle
-    local component = it:GetComponent(componentName)
+    local component = it[componentName]
 
     -- FIXME - add ==, ~= operator for entities, component handles
-    -- expect.Entity = ch.Entity
+    -- expect.Entity = ch
     AssertEqualsProperties(expect, component)
 end
 
 function TestItemComponentDump()
-    local stats = Ext.GetCharacter(GUID_LAEZEL).Entity:GetComponent("Stats")
+    local stats = Ext.GetCharacter(GUID_LAEZEL).Stats
     local it = stats.Equipment.MeleeMainWeapon.ItemHandle
 
     Ext.Json.Stringify(it:GetAllComponents(), true, true)
@@ -190,7 +190,7 @@ end
 function TestItemWieldingComponent()
     local expect = {
         -- FIXME - entity equality operator
-        -- Owner = Ext.GetCharacter(GUID_LAEZEL).Entity
+        -- Owner = Ext.GetCharacter(GUID_LAEZEL)
     }
     
     TestItemComponentGeneric("Wielding", expect)
@@ -232,9 +232,9 @@ end
 
 
 function TestItemTemplate()
-    local stats = Ext.GetCharacter(GUID_LAEZEL).Entity:GetComponent("Stats")
+    local stats = Ext.GetCharacter(GUID_LAEZEL).Stats
     local it = stats.Equipment.MeleeMainWeapon.ItemHandle
-    local template = it:GetComponent("ServerItem").CurrentTemplate
+    local template = it.ServerItem.CurrentTemplate
     
     local expect = {
         AllowReceiveDecalWhenAnimated = false,
