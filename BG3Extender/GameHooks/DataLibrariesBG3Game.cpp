@@ -85,6 +85,7 @@ namespace bg3se
 
 		SYM_OFF(ResourceDefns);
 		SYM_OFF(ResourceMgr);
+		SYM_OFF(GlobalSwitches);
 
 		auto xml = GetResource(IDR_BINARY_MAPPINGS);
 		if (!xml) {
@@ -192,7 +193,8 @@ namespace bg3se
 			if (!LoadCondition(conditionNode, condition)) {
 				return false;
 			}
-			if (condition.Type == SymbolMappingCondition::kFixedString) {
+			if (condition.Type == SymbolMappingCondition::kFixedString
+				|| condition.Type == SymbolMappingCondition::kFixedStringIndirect) {
 				sym.Flag |= SymbolMappingData::kDeferred;
 			}
 			sym.Conditions.push_back(condition);
@@ -255,6 +257,8 @@ namespace bg3se
 			condition.Type = SymbolMappingCondition::kString;
 		} else if (strcmp(type, "FixedString") == 0) {
 			condition.Type = SymbolMappingCondition::kFixedString;
+		} else if (strcmp(type, "FixedStringIndirect") == 0) {
+			condition.Type = SymbolMappingCondition::kFixedStringIndirect;
 		} else {
 			ERR("Unsupported condition type: %s", type);
 			return false;

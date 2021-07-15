@@ -376,83 +376,6 @@ namespace bg3se
 	};
 
 
-	struct CItemCombinationProperty
-	{
-		struct ItemCombinationPropertyEntry
-		{
-			FixedString ObjectId;
-			IngredientType IngredientType;
-			FixedString Result;
-		};
-
-
-		FixedString Name;
-		FixedString PreviewIcon;
-		FixedString PreviewTooltip;
-		ObjectSet<ItemCombinationPropertyEntry> Entries;
-	};
-
-
-	struct CItemCombinationPreviewData
-	{
-		FixedString Name;
-		FixedString Type;
-		FixedString StatsId;
-		FixedString Tooltip;
-		FixedString Icon;
-	};
-
-
-	struct CItemCombinationIngredient
-	{
-		FixedString Object;
-		IngredientType IngredientType;
-		IngredientTransformType Transform;
-		ItemDataRarity ItemRarity;
-	};
-
-
-	struct CItemCombinationResult
-	{
-		struct CombinationResult
-		{
-			FixedString Result;
-			FixedString Boost;
-			int ResultAmount;
-		};
-
-
-		ObjectSet<CombinationResult> Results;
-		AbilityType Requirement;
-		int ReqLevel;
-		FixedString PreviewStatsId;
-		FixedString PreviewIcon;
-		FixedString PreviewTooltip;
-		FixedString Name;
-	};
-
-
-	struct CItemCombination
-	{
-		FixedString Name;
-		ObjectSet<CItemCombinationIngredient> Ingredients;
-		ObjectSet<CItemCombinationResult> Results;
-		RecipeCategory RecipeCategory;
-		CraftingStationType CraftingStation;
-		bool AutoLevel;
-	};
-
-
-	struct CItemCombinationManager : public CNamedElementManager<CItemCombination>
-	{
-		CItemCombination* CurrentItemCombo;
-		CItemCombinationPreviewData* CurrentPreviewData;
-		CItemCombinationProperty* CurrentComboProperties;
-		RefMap<FixedString, CItemCombinationPreviewData*> PreviewData;
-		RefMap<FixedString, CItemCombinationProperty*> ComboProperties;
-	};
-
-
 	MARK_ALLOCATABLE(CSkillSet);
 	MARK_ALLOCATABLE(CEquipmentGroup);
 	MARK_ALLOCATABLE(CEquipmentSet);*/
@@ -467,12 +390,6 @@ namespace bg3se
 	MARK_ALLOCATABLE(CRootGroup);
 	MARK_ALLOCATABLE(CLevelGroup);
 	MARK_ALLOCATABLE(CItemGroup);
-	MARK_ALLOCATABLE(CItemCombinationProperty);
-	MARK_ALLOCATABLE(CItemCombinationPreviewData);
-	MARK_ALLOCATABLE(CItemCombinationIngredient);
-	MARK_ALLOCATABLE(CItemCombinationResult);
-	MARK_ALLOCATABLE(CItemCombinationResult::CombinationResult);
-	MARK_ALLOCATABLE(CItemCombination);
 
 
 	extern CRPGStatsVMTMappings gCRPGStatsVMTMappings;

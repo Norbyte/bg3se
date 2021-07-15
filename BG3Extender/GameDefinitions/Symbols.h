@@ -85,10 +85,10 @@ namespace bg3se
 		CrtAllocFunc CrtAlloc{ nullptr };
 		CrtFreeFunc CrtFree{ nullptr };
 
-		//CharacterStatsGetters CharStatsGetters;
-
 		GuidResourceDefinitions** ResourceDefns{ nullptr };
 		ResourceManager** ResourceMgr{ nullptr };
+
+		GlobalSwitches** GlobalSwitches{ nullptr };
 
 		inline StaticSymbols() {}
 		StaticSymbols(StaticSymbols const &) = delete;

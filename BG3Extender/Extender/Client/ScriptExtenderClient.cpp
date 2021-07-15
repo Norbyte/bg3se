@@ -153,6 +153,18 @@ void ScriptExtender::OnGameStateChanged(void * self, GameState fromState, GameSt
 		ResetExtensionState();
 		break;
 
+	case GameState::LoadModule:
+		if (gExtender->GetConfig().DisableModValidation) {
+			auto globals = GetStaticSymbols().GlobalSwitches;
+			if (globals && *globals) {
+				(*globals)->EnableHashing = false;
+				INFO("Disabled mod validation");
+			} else {
+				ERR("Could not disable mod validation - GlobalSwitches not available!");
+			}
+		}
+		break;
+
 	case GameState::LoadGMCampaign:
 		INFO("ecl::ScriptExtender::OnGameStateChanged(): Loading GM campaign");
 		LoadExtensionState();

@@ -78,6 +78,7 @@ namespace bg3se {
 			kNone,
 			kString, // Match string
 			kFixedString, // Match a FixedString reference
+			kFixedStringIndirect // Match a pointer to a FixedString reference
 		};
 
 		MatchType Type{ kNone };
@@ -242,6 +243,7 @@ namespace bg3se {
 
 		bool IsConstStringRef(uint8_t const * ref, char const * str) const;
 		bool IsFixedStringRef(uint8_t const * ref, char const * str) const;
+		bool IsIndirectFixedStringRef(uint8_t const * ref, char const * str) const;
 		bool CanShowError();
 		bool CanShowMessages();
 

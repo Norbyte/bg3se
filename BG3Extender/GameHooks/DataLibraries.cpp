@@ -198,6 +198,20 @@ namespace bg3se
 		return false;
 	}
 
+	bool LibraryManager::IsIndirectFixedStringRef(uint8_t const * ref, char const * str) const
+	{
+		if (ref >= moduleStart_ && ref < moduleStart_ + moduleSize_) {
+			auto fsx = (FixedString const * const *)ref;
+			if (*fsx && (uint8_t*)*fsx >= moduleStart_ && (uint8_t*)*fsx < moduleStart_ + moduleSize_) {
+				if (**fsx && strcmp((*fsx)->GetString(), str) == 0) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
 	bool LibraryManager::EvaluateSymbolCondition(SymbolMappingCondition const & cond, uint8_t const * match)
 	{
 		uint8_t const * ptr{ nullptr };
@@ -209,6 +223,10 @@ namespace bg3se
 		case SymbolMappingCondition::kFixedString:
 			ptr = AsmResolveInstructionRef(match + cond.Offset);
 			return ptr != nullptr && IsFixedStringRef(ptr, cond.String.c_str());
+
+		case SymbolMappingCondition::kFixedStringIndirect:
+			ptr = AsmResolveInstructionRef(match + cond.Offset);
+			return ptr != nullptr && IsIndirectFixedStringRef(ptr, cond.String.c_str());
 
 		case SymbolMappingCondition::kNone:
 		default:
