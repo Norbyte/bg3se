@@ -141,6 +141,10 @@ FS(ItemCombination);
 FS(ItemGroup);
 FS(NameGroup);
 
+// Stat proxy functions
+FS(Sync);
+FS(SetPersistence);
+
 // Stat modifier value types
 FS(FixedString);
 FS(StatusIDs);

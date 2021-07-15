@@ -7,10 +7,50 @@
 
 namespace bg3se::lua::stats
 {
-	int LuaStatGetAttribute(lua_State* L, CRPGStats_Object* object, char const* attributeName, std::optional<int> level);
-	int LuaStatSetAttribute(lua_State* L, CRPGStats_Object* object, char const* attributeName, int valueIdx);
-
 	char const* const StatsProxy::MetatableName = "CRPGStats_Object";
+
+
+	int StatsProxy::Sync(lua_State* L)
+	{
+		auto self = StatsProxy::CheckUserData(L, 1);
+		bool persist{ true };
+		if (lua_gettop(L) >= 2) {
+			persist = checked_get<bool>(L, 2);
+		}
+
+		auto stats = GetStaticSymbols().GetStats();
+		auto object = self->Get();
+
+		// FIXME SYNC
+		//stats->SyncWithPrototypeManager(object);
+
+		if (gExtender->GetServer().IsInServerThread()) {
+			object->BroadcastSyncMessage(false);
+
+			gExtender->GetServer().GetExtensionState().MarkDynamicStat(object->Name);
+			if (persist) {
+				gExtender->GetServer().GetExtensionState().MarkPersistentStat(object->Name);
+			}
+		}
+
+		return 0;
+	}
+
+	int StatsProxy::SetPersistence(lua_State* L)
+	{
+		auto self = StatsProxy::CheckUserData(L, 1);
+		bool persist = checked_get<bool>(L, 2);
+
+		auto object = self->Get();
+
+		if (persist) {
+			gExtender->GetServer().GetExtensionState().MarkPersistentStat(object->Name);
+		} else {
+			gExtender->GetServer().GetExtensionState().UnmarkPersistentStat(object->Name);
+		}
+
+		return 0;
+	}
 
 	int StatsProxy::Index(lua_State* L)
 	{
@@ -18,7 +58,17 @@ namespace bg3se::lua::stats
 			return luaL_error(L, "Attempted to read property of null CRPGStats_Object object");
 		}
 
-		auto attributeName = luaL_checkstring(L, 2);
+		FixedString attributeName{ luaL_checkstring(L, 2) };
+
+		if (attributeName == GFS.strSync) {
+			push(L, &StatsProxy::Sync);
+			return 1;
+		}
+		
+		if (attributeName == GFS.strSetPersistence) {
+			push(L, &StatsProxy::SetPersistence);
+			return 1;
+		}
 
 		return LuaStatGetAttribute(L, obj_, attributeName, level_);
 	}
@@ -30,32 +80,31 @@ namespace bg3se::lua::stats
 		}
 
 		auto attributeName = luaL_checkstring(L, 2);
-		return LuaStatSetAttribute(L, obj_, attributeName, 3);
+		return LuaStatSetAttribute(L, obj_, FixedString(attributeName), 3);
 	}
 
 
-	int LuaStatGetAttribute(lua_State* L, CRPGStats_Object* object, char const* attributeName, std::optional<int> level)
+	int LuaStatGetAttribute(lua_State* L, CRPGStats_Object* object, FixedString const& attributeName, std::optional<int> level)
 	{
 		StackCheck _(L, 1);
 		auto stats = GetStaticSymbols().GetStats();
 
-		FixedString attributeFS(attributeName);
-		if (!attributeFS) {
-			OsiError("Invalid stats attribute name: " << attributeName);
+		if (!attributeName) {
+			OsiError("Missing stats attribute name?");
 			push(L, nullptr);
 			return 1;
 		}
 
-		if (attributeFS == GFS.strLevel) {
+		if (attributeName == GFS.strLevel) {
 			push(L, object->Level);
 			return 1;
-		} else if (attributeFS == GFS.strName) {
+		} else if (attributeName == GFS.strName) {
 			push(L, object->Name);
 			return 1;
-		} else if (attributeFS == GFS.strModId) {
+		} else if (attributeName == GFS.strModId) {
 			push(L, gExtender->GetStatLoadOrderHelper().GetStatsEntryMod(object->Name));
 			return 1;
-		} else if (attributeFS == GFS.strUsing) {
+		} else if (attributeName == GFS.strUsing) {
 			if (object->Using) {
 				auto parent = stats->Objects.Find(object->Using);
 				if (parent != nullptr) {
@@ -66,15 +115,15 @@ namespace bg3se::lua::stats
 
 			push(L, nullptr);
 			return 1;
-		} else if (attributeFS == GFS.strAIFlags) {
+		} else if (attributeName == GFS.strAIFlags) {
 			push(L, object->AIFlags);
 			return 1;
 		}
 
 		int attributeIndex{ -1 };
-		auto attrInfo = object->GetAttributeInfo(attributeFS, attributeIndex);
+		auto attrInfo = object->GetAttributeInfo(attributeName, attributeIndex);
 		if (!attrInfo) {
-			OsiError("Stat object '" << object->Name << "' has no attribute named '" << attributeFS << "'");
+			OsiError("Stat object '" << object->Name << "' has no attribute named '" << attributeName << "'");
 			push(L, nullptr);
 			return 1;
 		}
@@ -88,9 +137,9 @@ namespace bg3se::lua::stats
 					*level = object->Level;
 				}
 
-				value = object->GetIntScaled(attributeFS, *level);
+				value = object->GetIntScaled(attributeName, *level);
 			} else {
-				value = object->GetInt(attributeFS);
+				value = object->GetInt(attributeName);
 			}
 
 			LuaWrite(L, value);
@@ -99,14 +148,14 @@ namespace bg3se::lua::stats
 
 		case RPGEnumerationType::Int64:
 		{
-			auto value = object->GetInt64(attributeFS);
+			auto value = object->GetInt64(attributeName);
 			LuaWrite(L, value);
 			break;
 		}
 
 		case RPGEnumerationType::Float:
 		{
-			auto value = object->GetFloat(attributeFS);
+			auto value = object->GetFloat(attributeName);
 			LuaWrite(L, value);
 			break;
 		}
@@ -116,7 +165,7 @@ namespace bg3se::lua::stats
 		case RPGEnumerationType::Conditions:
 		case RPGEnumerationType::RollConditions:
 		{
-			auto value = object->GetString(attributeFS);
+			auto value = object->GetString(attributeName);
 			if (value) {
 				push(L, *value);
 			} else {
@@ -127,14 +176,14 @@ namespace bg3se::lua::stats
 
 		case RPGEnumerationType::GUID:
 		{
-			auto value = object->GetGuid(attributeFS);
+			auto value = object->GetGuid(attributeName);
 			LuaWrite(L, value);
 			break;
 		}
 
 		case RPGEnumerationType::Flags:
 		{
-			auto value = object->GetFlags(attributeFS);
+			auto value = object->GetFlags(attributeName);
 			LuaWrite(L, value);
 			break;
 		}
@@ -147,7 +196,7 @@ namespace bg3se::lua::stats
 
 		case RPGEnumerationType::StatsFunctors:
 		{
-			auto functors = object->GetStatsFunctors(attributeFS);
+			auto functors = object->GetStatsFunctors(attributeName);
 			if (functors && (*functors)->Size() == 1 && (**functors)[0].Name == GFS.strDefault) {
 				LuaWrite(L, (**functors)[0].Functor);
 			} else {
@@ -165,6 +214,7 @@ namespace bg3se::lua::stats
 		return 1;
 	}
 
+	// FIXME - REMOVE!
 	int StatGetAttributeScaled(lua_State* L)
 	{
 		auto statName = luaL_checkstring(L, 1);
@@ -176,10 +226,10 @@ namespace bg3se::lua::stats
 			return 1;
 		}
 
-		return LuaStatGetAttribute(L, object, attributeName, {});
+		return LuaStatGetAttribute(L, object, FixedString(attributeName), {});
 	}
 
-	int LuaStatSetAttribute(lua_State* L, CRPGStats_Object* object, char const* attributeName, int valueIdx)
+	int LuaStatSetAttribute(lua_State* L, CRPGStats_Object* object, FixedString const& attributeName, int valueIdx)
 	{
 		StackCheck _(L);
 		LuaVirtualPin lua(gExtender->GetCurrentExtensionState());
@@ -190,21 +240,15 @@ namespace bg3se::lua::stats
 		if (!(lua->RestrictionFlags & State::ScopeModuleLoad)) {
 			static bool syncWarningShown{ false };
 			if (!syncWarningShown) {
-				OsiWarn("Stats edited after ModuleLoad must be synced manually; make sure that you call SyncStat() on it when you're finished!");
+				OsiWarn("Stats edited after ModuleLoad must be synced manually; make sure that you call Sync() on it when you're finished!");
 				syncWarningShown = true;
 			}
 		}
 
-		FixedString attributeFS(attributeName);
-		if (!attributeFS) {
-			OsiError("Invalid stats attribute name: " << attributeName);
-			return 0;
-		}
-
-		if (attributeFS == GFS.strLevel) {
+		if (attributeName == GFS.strLevel) {
 			object->Level = (int32_t)luaL_checkinteger(L, valueIdx);
 			return 0;
-		} else if (attributeFS == GFS.strAIFlags) {
+		} else if (attributeName == GFS.strAIFlags) {
 			object->AIFlags = FixedString(lua_tostring(L, valueIdx));
 			return 0;
 		}
@@ -212,7 +256,7 @@ namespace bg3se::lua::stats
 		auto stats = GetStaticSymbols().GetStats();
 		
 		int index;
-		auto attrInfo = object->GetAttributeInfo(attributeFS, index);
+		auto attrInfo = object->GetAttributeInfo(attributeName, index);
 		if (!attrInfo) {
 			LuaError("Object '" << object->Name << "' has no attribute named '" << attributeName << "'");
 			return 0;
@@ -224,7 +268,7 @@ namespace bg3se::lua::stats
 		case LUA_TSTRING:
 		{
 			auto value = luaL_checkstring(L, valueIdx);
-			object->SetString(attributeFS, value);
+			object->SetString(attributeName, value);
 			break;
 		}
 
@@ -232,15 +276,15 @@ namespace bg3se::lua::stats
 		{
 			switch (attrType) {
 			case RPGEnumerationType::Int64:
-				object->SetInt64(attributeFS, (int64_t)luaL_checkinteger(L, valueIdx));
+				object->SetInt64(attributeName, (int64_t)luaL_checkinteger(L, valueIdx));
 				break;
 
 			case RPGEnumerationType::Float:
-				object->SetFloat(attributeFS, (float)luaL_checknumber(L, valueIdx));
+				object->SetFloat(attributeName, (float)luaL_checknumber(L, valueIdx));
 				break;
 
 			default:
-				object->SetInt(attributeFS, (int32_t)luaL_checkinteger(L, valueIdx));
+				object->SetInt(attributeName, (int32_t)luaL_checkinteger(L, valueIdx));
 				break;
 			}
 			break;
@@ -255,13 +299,13 @@ namespace bg3se::lua::stats
 				lua_pushvalue(L, valueIdx);
 				LuaRead(L, flags);
 				lua_pop(L, 1);
-				object->SetFlags(attributeFS, flags);
+				object->SetFlags(attributeName, flags);
 				break;
 			}
 
 			case RPGEnumerationType::StatsFunctors:
 			{
-				StatsFunctorSet* functor = stats->ConstructFunctorSet(attributeFS);
+				StatsFunctorSet* functor = stats->ConstructFunctorSet(attributeName);
 				lua_pushvalue(L, valueIdx);
 				LuaRead(L, functor);
 				lua_pop(L, 1);
@@ -274,7 +318,7 @@ namespace bg3se::lua::stats
 					functors.Add(functorInfo);
 				}
 
-				object->SetStatsFunctors(attributeFS, functors);
+				object->SetStatsFunctors(attributeName, functors);
 				break;
 			}
 
@@ -299,15 +343,15 @@ namespace bg3se::lua::stats
 		{
 			switch (attrType) {
 			case RPGEnumerationType::Float:
-				object->SetFloat(attributeFS, {});
+				object->SetFloat(attributeName, {});
 				break;
 
 			case RPGEnumerationType::GUID:
-				object->SetGuid(attributeFS, {});
+				object->SetGuid(attributeName, {});
 				break;
 
 			case RPGEnumerationType::StatsFunctors:
-				object->SetStatsFunctors(attributeFS, {});
+				object->SetStatsFunctors(attributeName, {});
 				break;
 
 			default:

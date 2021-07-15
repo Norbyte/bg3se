@@ -7,10 +7,6 @@
 
 namespace bg3se::lua::stats
 {
-	int LuaStatGetAttribute(lua_State* L, CRPGStats_Object* object, char const* attributeName, std::optional<int> level);
-	int LuaStatSetAttribute(lua_State* L, CRPGStats_Object* object, char const* attributeName, int valueIdx);
-
-
 	char const* const SpellPrototypeProxy::MetatableName = "eoc::SpellPrototype";
 
 	SpellPrototypeProxy::SpellPrototypeProxy(SpellPrototype* obj, std::optional<int> level, LifetimeHolder& lifetime)
@@ -25,9 +21,9 @@ namespace bg3se::lua::stats
 			return luaL_error(L, "Attempted to read property of null spell prototype");
 		}
 
-		auto attributeName = luaL_checkstring(L, 2);
+		FixedString attributeName{ luaL_checkstring(L, 2) };
 
-		if (strcmp(attributeName, "Level") == 0) {
+		if (attributeName == GFS.strLevel) {
 			push(L, obj_->Level);
 			return 1;
 		}

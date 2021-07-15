@@ -182,6 +182,6 @@ namespace bg3se::lua
 
 namespace bg3se::lua::stats
 {
-	int LuaStatGetAttribute(lua_State* L, CRPGStats_Object* object, char const* attributeName, std::optional<int> level);
-	int LuaStatSetAttribute(lua_State* L, CRPGStats_Object* object, char const* attributeName, int valueIdx);
+	int LuaStatGetAttribute(lua_State* L, CRPGStats_Object* object, FixedString const& attributeName, std::optional<int> level);
+	int LuaStatSetAttribute(lua_State* L, CRPGStats_Object* object, FixedString const& attributeName, int valueIdx);
 }

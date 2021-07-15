@@ -2,14 +2,6 @@
 #include <Extender/ScriptExtender.h>
 #include <Lua/LuaBinding.h>
 #include <Lua/LuaSerializers.h>
-
-namespace bg3se::lua::stats
-{
-	// TODO - remove?
-	int LuaStatGetAttribute(lua_State* L, CRPGStats_Object* object, char const* attributeName, std::optional<int> level);
-	int LuaStatSetAttribute(lua_State* L, CRPGStats_Object* object, char const* attributeName, int valueIdx);
-}
-
 #include <Lua/Shared/LuaObjectProxy.inl>
 #include <Lua/Shared/LuaArrayProxy.inl>
 #include <Lua/Shared/LuaSetProxy.inl>
@@ -32,8 +24,6 @@ namespace bg3se::lua::stats
 
 			{"GetStat", GetStat},
 			{"CreateStat", CreateStat},
-			{"SyncStat", SyncStatWrapper},
-			{"StatSetPersistence", StatSetPersistenceWrapper},
 
 			{"GetModifierAttributes", GetModifierAttributes},
 			{"EnumIndexToLabel", EnumIndexToLabel},

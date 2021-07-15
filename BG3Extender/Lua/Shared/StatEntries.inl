@@ -325,7 +325,7 @@ namespace bg3se::lua::stats
 			if (gExtender->GetServer().IsInServerThread()) {
 				static bool syncWarningShown{ false };
 				if (!syncWarningShown) {
-					OsiWarn("Stats entres created after ModuleLoad must be synced manually; make sure that you call SyncStat() on it when you're finished!");
+					OsiWarn("Stats entres created after ModuleLoad must be synced manually; make sure that you call Sync() on it when you're finished!");
 					syncWarningShown = true;
 				}
 			}
@@ -353,45 +353,4 @@ namespace bg3se::lua::stats
 		StatsProxy::New(L, *object, -1, GetCurrentLifetime());
 		return 1;
 	}
-
-	void SyncStat(lua_State* L, char const* statName, std::optional<bool> persist)
-	{
-		auto stats = GetStaticSymbols().GetStats();
-		auto object = stats->Objects.Find(FixedString(statName));
-		if (!object) {
-			OsiError("Cannot sync nonexistent stat: " << statName);
-			return;
-		}
-
-		//stats->SyncWithPrototypeManager(object);
-
-		if (gExtender->GetServer().IsInServerThread()) {
-			object->BroadcastSyncMessage(false);
-
-			gExtender->GetServer().GetExtensionState().MarkDynamicStat(FixedString(statName));
-			if (persist && *persist) {
-				gExtender->GetServer().GetExtensionState().MarkPersistentStat(FixedString(statName));
-			}
-		}
-	}
-
-	WrapLuaFunction(SyncStat)
-
-	void StatSetPersistence(lua_State* L, char const* statName, bool persist)
-	{
-		auto stats = GetStaticSymbols().GetStats();
-		auto object = stats->Objects.Find(FixedString(statName));
-		if (!object) {
-			OsiError("Cannot set persistence for nonexistent stat: " << statName);
-			return;
-		}
-
-		if (persist) {
-			gExtender->GetServer().GetExtensionState().MarkPersistentStat(FixedString(statName));
-		} else {
-			gExtender->GetServer().GetExtensionState().UnmarkPersistentStat(FixedString(statName));
-		}
-	}
-
-	WrapLuaFunction(StatSetPersistence)
 }

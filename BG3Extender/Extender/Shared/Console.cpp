@@ -170,6 +170,8 @@ void DebugConsole::ConsoleThread()
 				DEBUG("Anything typed in will be executed as Lua code except the following special commands:");
 				DEBUG("  server - Switch to server context");
 				DEBUG("  client - Switch to client context");
+				DEBUG("  reset client - Reset client Lua state");
+				DEBUG("  reset server - Reset server Lua state");
 				DEBUG("  reset - Reset client and server Lua states");
 				DEBUG("  silence <on|off> - Enable/disable silent mode (log output when in input mode)");
 				DEBUG("  exit - Leave console mode");

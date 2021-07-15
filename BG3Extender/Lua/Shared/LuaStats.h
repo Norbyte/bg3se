@@ -29,10 +29,18 @@ namespace bg3se::lua::stats
 		int Index(lua_State * L);
 		int NewIndex(lua_State * L);
 
+		inline CRPGStats_Object* Get() const
+		{
+			return obj_;
+		}
+
 	private:
 		CRPGStats_Object * obj_;
 		std::optional<int> level_;
 		LifetimeReference lifetime_;
+
+		static int Sync(lua_State* L);
+		static int SetPersistence(lua_State* L);
 	};
 
 	class SpellPrototypeProxy : public Userdata<SpellPrototypeProxy>, public Indexable, public Pushable
