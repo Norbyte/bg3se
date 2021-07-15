@@ -9,6 +9,16 @@ P_FUN(Replicate, ComponentReplicate)
 END_CLS()
 
 
+BEGIN_CLS(IGameObject)
+P_RO(Entity)
+P_RO(ComponentHandle)
+
+P_FUN(GetReplicationFlags, ComponentGetReplicationFlags)
+P_FUN(SetReplicationFlag, ComponentSetReplicationFlag)
+P_FUN(Replicate, ComponentReplicate)
+END_CLS()
+
+
 BEGIN_CLS(TransformComponent)
 INHERIT(BaseComponent)
 P_REF(Transform)
