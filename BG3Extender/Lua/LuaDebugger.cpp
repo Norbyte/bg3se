@@ -50,7 +50,7 @@ namespace bg3se::lua::dbg
 		return depth;
 	}
 
-	void ObjectHandleToProtobuf(ObjectHandle const& handle, MsgValue* value)
+	void ComponentHandleToProtobuf(ComponentHandle const& handle, MsgValue* value)
 	{
 		value->set_type_id(MsgValueType::OBJECT_HANDLE);
 		value->set_intval((int)handle.Handle);
@@ -87,7 +87,7 @@ namespace bg3se::lua::dbg
 			value->set_boolval(lua_toboolean(L, idx));
 			break;
 		case LUA_TLIGHTUSERDATA:
-			ObjectHandleToProtobuf(ObjectHandle((uint64_t)lua_touserdata(L, idx)), value);
+			ComponentHandleToProtobuf(ComponentHandle((uint64_t)lua_touserdata(L, idx)), value);
 			break;
 		case LUA_TNUMBER:
 			value->set_type_id(MsgValueType::FLOAT);

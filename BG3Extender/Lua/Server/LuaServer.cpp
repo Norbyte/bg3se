@@ -115,8 +115,8 @@ namespace bg3se::esv::lua
 			return 0;
 		}
 
-		ObjectHandle attackerHandle;
-		attacker->GetObjectHandle(attackerHandle);
+		ComponentHandle attackerHandle;
+		attacker->GetComponentHandle(attackerHandle);
 		ObjectSet<esv::Character*> targets;
 		targets.Add(target);
 
@@ -161,8 +161,8 @@ namespace bg3se::esv::lua
 			return 0;
 		}
 
-		ObjectHandle attackerHandle;
-		attacker->GetObjectHandle(attackerHandle);
+		ComponentHandle attackerHandle;
+		attacker->GetComponentHandle(attackerHandle);
 
 		exec(*skillProperties, attackerHandle.Handle, &position, radius, propertyContext, isFromItem, skillProto, nullptr);
 		return 0;
@@ -729,7 +729,7 @@ namespace bg3se::esv::lua
 		return ok;
 	}
 
-	bool ServerState::OnCharacterApplyDamage(esv::Character* target, HitDamageInfo& hit, ObjectHandle attackerHandle,
+	bool ServerState::OnCharacterApplyDamage(esv::Character* target, HitDamageInfo& hit, ComponentHandle attackerHandle,
 			CauseType causeType, glm::vec3& impactDirection, PendingHit* context)
 	{
 		StackCheck _(L, 0);
@@ -799,8 +799,8 @@ namespace bg3se::esv::lua
 		StackCheck _(L, 0);
 		PushInternalFunction(L, "_TreasureItemGenerated"); // stack: fn
 
-		ObjectHandle itemHandle;
-		item->GetObjectHandle(itemHandle);
+		ComponentHandle itemHandle;
+		item->GetComponentHandle(itemHandle);
 		ObjectProxy<esv::Item>::New(L, itemHandle);
 
 		if (CallWithTraceback(L, 1, 1) != 0) { // stack: succeeded
@@ -835,7 +835,7 @@ namespace bg3se::esv::lua
 	}
 
 
-	bool ServerState::OnBeforeCraftingExecuteCombination(CraftingStationType craftingStation, ObjectSet<ObjectHandle> const& ingredients,
+	bool ServerState::OnBeforeCraftingExecuteCombination(CraftingStationType craftingStation, ObjectSet<ComponentHandle> const& ingredients,
 		esv::Character* character, uint8_t quantity, FixedString const& combinationId)
 	{
 		StackCheck _(L, 0);
@@ -874,7 +874,7 @@ namespace bg3se::esv::lua
 	}
 
 
-	void ServerState::OnAfterCraftingExecuteCombination(CraftingStationType craftingStation, ObjectSet<ObjectHandle> const& ingredients,
+	void ServerState::OnAfterCraftingExecuteCombination(CraftingStationType craftingStation, ObjectSet<ComponentHandle> const& ingredients,
 		esv::Character* character, uint8_t quantity, FixedString const& combinationId, bool succeeded)
 	{
 		StackCheck _(L, 0);
@@ -930,7 +930,7 @@ namespace bg3se::esv::lua
 		}
 	}
 
-	void PushGameObject(lua_State* L, ObjectHandle handle)
+	void PushGameObject(lua_State* L, ComponentHandle handle)
 	{
 		if (!handle) {
 			push(L, nullptr);
@@ -958,7 +958,7 @@ namespace bg3se::esv::lua
 	}
 
 
-	void ServerState::OnProjectileHit(Projectile* projectile, ObjectHandle const& hitObject, glm::vec3 const& position)
+	void ServerState::OnProjectileHit(Projectile* projectile, ComponentHandle const& hitObject, glm::vec3 const& position)
 	{
 		StackCheck _(L, 0);
 		PushExtFunction(L, "_OnProjectileHit");
@@ -974,7 +974,7 @@ namespace bg3se::esv::lua
 	}
 
 
-	void ServerState::OnExecutePropertyDataOnGroundHit(glm::vec3& position, ObjectHandle casterHandle, DamagePairList* damageList)
+	void ServerState::OnExecutePropertyDataOnGroundHit(glm::vec3& position, ComponentHandle casterHandle, DamagePairList* damageList)
 	{
 		StackCheck _(L, 0);
 		PushExtFunction(L, "_OnGroundHit");
@@ -993,8 +993,8 @@ namespace bg3se::esv::lua
 	}
 
 
-	void ServerState::ExecutePropertyDataOnTarget(CRPGStats_Object_Property_Extender* prop, ObjectHandle attackerHandle,
-		ObjectHandle target, glm::vec3 const& impactOrigin, bool isFromItem, SkillPrototype * skillProto,
+	void ServerState::ExecutePropertyDataOnTarget(CRPGStats_Object_Property_Extender* prop, ComponentHandle attackerHandle,
+		ComponentHandle target, glm::vec3 const& impactOrigin, bool isFromItem, SkillPrototype * skillProto,
 		HitDamageInfo const* damageInfo)
 	{
 		StackCheck _(L, 0);
@@ -1027,7 +1027,7 @@ namespace bg3se::esv::lua
 	}
 
 
-	void ServerState::ExecutePropertyDataOnPosition(CRPGStats_Object_Property_Extender* prop, ObjectHandle attackerHandle,
+	void ServerState::ExecutePropertyDataOnPosition(CRPGStats_Object_Property_Extender* prop, ComponentHandle attackerHandle,
 		glm::vec3 const& position, float areaRadius, bool isFromItem, SkillPrototype * skillPrototype,
 		HitDamageInfo const* damageInfo)
 	{

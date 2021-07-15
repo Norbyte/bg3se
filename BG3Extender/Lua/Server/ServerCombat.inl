@@ -199,8 +199,8 @@ namespace bg3se::esv::lua
 		} else if (strcmp(prop, "Character") == 0) {
 			auto character = team->EntityWrapper.GetCharacter();
 			if (character != nullptr) {
-				ObjectHandle handle;
-				character->GetObjectHandle(handle);
+				ComponentHandle handle;
+				character->GetComponentHandle(handle);
 				ObjectProxy<esv::Character>::New(L, handle);
 			} else {
 				push(L, nullptr);
@@ -208,8 +208,8 @@ namespace bg3se::esv::lua
 		} else if (strcmp(prop, "Item") == 0) {
 			auto item = team->EntityWrapper.GetItem();
 			if (item != nullptr) {
-				ObjectHandle handle;
-				item->GetObjectHandle(handle);
+				ComponentHandle handle;
+				item->GetComponentHandle(handle);
 				ObjectProxy<esv::Item>::New(L, handle);
 			} else {
 				push(L, nullptr);

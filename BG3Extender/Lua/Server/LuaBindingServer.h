@@ -24,11 +24,11 @@ namespace bg3se::esv::lua
 	public:
 		static char const * const MetatableName;
 
-		inline StatusHandleProxy(ObjectHandle character, ObjectHandle status)
+		inline StatusHandleProxy(ComponentHandle character, ComponentHandle status)
 			: character_(character), statusHandle_(status)
 		{}
 
-		inline StatusHandleProxy(ObjectHandle character, NetId status)
+		inline StatusHandleProxy(ComponentHandle character, NetId status)
 			: character_(character), statusNetId_(status)
 		{}
 
@@ -37,8 +37,8 @@ namespace bg3se::esv::lua
 		esv::Status* Get(lua_State* L);
 
 	private:
-		ObjectHandle character_;
-		ObjectHandle statusHandle_;
+		ComponentHandle character_;
+		ComponentHandle statusHandle_;
 		NetId statusNetId_;
 	};
 

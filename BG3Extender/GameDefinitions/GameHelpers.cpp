@@ -445,7 +445,7 @@ namespace bg3se
 		GameDelete(this);
 	}
 
-	void esv::ProxyProjectileHit::OnHit(glm::vec3 const& position, ObjectHandle const& hitObject, Projectile* projectile)
+	void esv::ProxyProjectileHit::OnHit(glm::vec3 const& position, ComponentHandle const& hitObject, Projectile* projectile)
 	{
 		if (WrappedHit) {
 			DisableCrashReporting _;
@@ -494,7 +494,7 @@ namespace bg3se
 		}
 	}
 
-	PendingStatus * PendingStatuses::Find(ObjectHandle owner, ObjectHandle handle)
+	PendingStatus * PendingStatuses::Find(ComponentHandle owner, ComponentHandle handle)
 	{
 		auto it = statuses_.find(handle);
 		if (it != statuses_.end()) {
@@ -511,7 +511,7 @@ namespace bg3se
 		}
 	}*/
 
-	esv::Status * esv::StatusMachine::GetStatus(ObjectHandle handle) const
+	esv::Status * esv::StatusMachine::GetStatus(ComponentHandle handle) const
 	{
 		for (auto status : StackedStatuses) {
 			if (status->StatusHandle == handle) {
@@ -567,7 +567,7 @@ namespace bg3se
 	}*/
 
 
-	esv::Status * esv::Character::GetStatus(ObjectHandle statusHandle/*, bool returnPending*/) const
+	esv::Status * esv::Character::GetStatus(ComponentHandle statusHandle/*, bool returnPending*/) const
 	{
 		if (StatusMachine == nullptr) {
 			return nullptr;
@@ -580,8 +580,8 @@ namespace bg3se
 
 		/* FIXME
 		if (returnPending) {
-			ObjectHandle ownerHandle;
-			this->GetObjectHandle(ownerHandle);
+			ComponentHandle ownerHandle;
+			this->GetComponentHandle(ownerHandle);
 
 			auto pendingStatus = ExtensionState::Get().PendingStatuses.Find(ownerHandle, statusHandle);
 			if (pendingStatus != nullptr) {
@@ -602,7 +602,7 @@ namespace bg3se
 		return StatusMachine->GetStatus(netId);
 	}
 
-	/*esv::Status * esv::Item::GetStatus(ObjectHandle statusHandle, bool returnPending) const
+	/*esv::Status * esv::Item::GetStatus(ComponentHandle statusHandle, bool returnPending) const
 	{
 		if (StatusMachine == nullptr) {
 			return nullptr;
@@ -614,8 +614,8 @@ namespace bg3se
 		}
 
 		if (returnPending) {
-			ObjectHandle ownerHandle;
-			this->GetObjectHandle(ownerHandle);
+			ComponentHandle ownerHandle;
+			this->GetComponentHandle(ownerHandle);
 
 			auto pendingStatus = ExtensionState::Get().PendingStatuses.Find(ownerHandle, statusHandle);
 			if (pendingStatus != nullptr) {
@@ -635,7 +635,7 @@ namespace bg3se
 		return StatusMachine->GetStatus(netId);
 	}
 
-	ecl::Status* ecl::Character::GetStatus(ObjectHandle statusHandle) const
+	ecl::Status* ecl::Character::GetStatus(ComponentHandle statusHandle) const
 	{
 		if (StatusMachine == nullptr) {
 			return nullptr;
@@ -879,12 +879,12 @@ namespace bg3se
 		return GetStaticSymbols().EoCUI__vftable->Destroy(this, a1);
 	}
 
-	void UIObject::SetHandle(ObjectHandle * a1)
+	void UIObject::SetHandle(ComponentHandle * a1)
 	{
 		return GetStaticSymbols().EoCUI__vftable->SetHandle(this, a1);
 	}
 
-	ObjectHandle * UIObject::GetHandle(ObjectHandle * a1)
+	ComponentHandle * UIObject::GetHandle(ComponentHandle * a1)
 	{
 		return GetStaticSymbols().EoCUI__vftable->GetHandle(this, a1);
 	}
@@ -1054,12 +1054,12 @@ namespace bg3se
 		return GetStaticSymbols().EoCUI__vftable->GetCharacter(this);
 	}
 
-	bool UIObject::SetPlayerHandle(ObjectHandle * handle)
+	bool UIObject::SetPlayerHandle(ComponentHandle * handle)
 	{
 		return GetStaticSymbols().EoCUI__vftable->SetPlayerHandle(this, handle);
 	}
 
-	ObjectHandle * UIObject::GetPlayerHandle(ObjectHandle * handle)
+	ComponentHandle * UIObject::GetPlayerHandle(ComponentHandle * handle)
 	{
 		return GetStaticSymbols().EoCUI__vftable->GetPlayerHandle(this, handle);
 	}

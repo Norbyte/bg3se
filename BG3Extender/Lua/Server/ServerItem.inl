@@ -215,7 +215,7 @@ namespace bg3se::esv::lua
 		switch (lua_type(L, 1)) {
 		case LUA_TLIGHTUSERDATA:
 		{
-			auto handle = checked_get<ObjectHandle>(L, 1);
+			auto handle = checked_get<ComponentHandle>(L, 1);
 			if (handle) {
 				switch ((ObjectType)handle.GetType()) {
 				case ObjectType::ServerCharacter:
@@ -242,7 +242,7 @@ namespace bg3se::esv::lua
 		case LUA_TNUMBER:
 		{
 			OsiError("Resolving integer object handles is deprecated since v52!")
-			auto handle = ObjectHandle(lua_tointeger(L, 1));
+			auto handle = ComponentHandle(lua_tointeger(L, 1));
 			if (handle) {
 				switch ((ObjectType)handle.GetType()) {
 				case ObjectType::ServerCharacter:
@@ -281,18 +281,18 @@ namespace bg3se::esv::lua
 		}
 
 		if (item != nullptr) {
-			ObjectHandle handle;
-			item->GetObjectHandle(handle);
+			ComponentHandle handle;
+			item->GetComponentHandle(handle);
 			ObjectProxy<esv::Item>::New(L, handle);
 			return 1;
 		} else if (character != nullptr) {
-			ObjectHandle handle;
-			character->GetObjectHandle(handle);
+			ComponentHandle handle;
+			character->GetComponentHandle(handle);
 			ObjectProxy<esv::Character>::New(L, handle);
 			return 1;
 		} else if (projectile != nullptr) {
-			ObjectHandle handle;
-			projectile->GetObjectHandle(handle);
+			ComponentHandle handle;
+			projectile->GetComponentHandle(handle);
 			ObjectProxy<esv::Projectile>::New(L, handle);
 			return 1;
 		} else {

@@ -26,7 +26,7 @@ namespace bg3se
 		__declspec(align(8)) int field_28;
 		__declspec(align(8)) int StoryActionID;
 		__declspec(align(8)) ls::ActionOriginator Originator;
-		ObjectHandle MyHandle_M;
+		ComponentHandle MyHandle_M;
 		char field_58;
 		char Active;
 		char Dirty;

@@ -23,8 +23,8 @@ namespace bg3se
 	namespace esv
 	{
 		/*esv::TurnBasedProtocol* GetTurnBasedProtocol();
-		esv::Inventory* FindInventoryByHandle(ObjectHandle const& handle, bool logError = true);
-		esv::GameAction* FindGameActionByHandle(ObjectHandle const& handle);
+		esv::Inventory* FindInventoryByHandle(ComponentHandle const& handle, bool logError = true);
+		esv::GameAction* FindGameActionByHandle(ComponentHandle const& handle);
 
 		PropertyMapBase & StatusToPropertyMap(esv::Status * status);
 
@@ -59,7 +59,7 @@ namespace bg3se
 				HT_PrepareHitEvent = 1
 			};
 
-			ObjectHandle Handle;
+			ComponentHandle Handle;
 			esv::Character * Source{ nullptr };
 			IEoCServerObject * Target{ nullptr };
 
@@ -113,6 +113,6 @@ namespace bg3se
 
 	namespace ecl
 	{
-		//ecl::Inventory* FindInventoryByHandle(ObjectHandle const& handle, bool logError = true);
+		//ecl::Inventory* FindInventoryByHandle(ComponentHandle const& handle, bool logError = true);
 	}
 }

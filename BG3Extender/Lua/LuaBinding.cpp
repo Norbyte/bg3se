@@ -53,20 +53,20 @@ namespace bg3se::lua
 		}
 	}
 	
-	void push(lua_State* L, ObjectHandle const& h)
+	void push(lua_State* L, ComponentHandle const& h)
 	{
 		if (h) {
 			auto helpers = State::FromLua(L)->GetEntitySystemHelpers();
-			ObjectHandleProxy::New(L, h, helpers);
+			ComponentHandleProxy::New(L, h, helpers);
 		} else {
 			push(L, nullptr);
 		}
 	}
 
-	ObjectHandle checked_get_handle(lua_State* L, int index, ExtComponentType type)
+	ComponentHandle checked_get_handle(lua_State* L, int index, ExtComponentType type)
 	{
 		luaL_checktype(L, index, LUA_TUSERDATA);
-		auto handle = ObjectHandleProxy::CheckUserData(L, index);
+		auto handle = ComponentHandleProxy::CheckUserData(L, index);
 		auto reqTypeIndex = handle->EntitySystem()->GetHandleIndex(type);
 		if (!reqTypeIndex) {
 			luaL_error(L, "No handle mapping info available for type '%s'", 
@@ -249,8 +249,8 @@ namespace bg3se::lua
 		if (meta != nullptr) {
 			int32_t aiIdx = 1;
 			for (auto ai : meta->Ai) {
-				ObjectHandle handle;
-				ai->GameObject->GetObjectHandle(handle);
+				ComponentHandle handle;
+				ai->GameObject->GetComponentHandle(handle);
 				settable(L, aiIdx++, handle);
 			}
 		}

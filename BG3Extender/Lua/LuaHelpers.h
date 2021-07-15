@@ -144,7 +144,7 @@ namespace bg3se::lua
 	}
 
 	void push(lua_State* L, EntityHandle const& h);
-	void push(lua_State* L, ObjectHandle const& h);
+	void push(lua_State* L, ComponentHandle const& h);
 
 	inline void push(lua_State* L, EntityWorldHandle const& h)
 	{
@@ -312,12 +312,12 @@ namespace bg3se::lua
 	}
 
 	template <>
-	inline ObjectHandle get<ObjectHandle>(lua_State* L, int index)
+	inline ComponentHandle get<ComponentHandle>(lua_State* L, int index)
 	{
 		if (lua_type(L, index) == LUA_TNIL) {
-			return ObjectHandle{ ObjectHandle::NullHandle };
+			return ComponentHandle{ ComponentHandle::NullHandle };
 		} else {
-			return ObjectHandleProxy::CheckUserData(L, index)->Handle();
+			return ComponentHandleProxy::CheckUserData(L, index)->Handle();
 		}
 	}
 
@@ -405,14 +405,14 @@ namespace bg3se::lua
 		return EntityProxy::CheckUserData(L, index)->Handle();
 	}
 
-	template <class T, typename std::enable_if_t<std::is_same_v<T, ObjectHandle>, int>* = nullptr>
-	inline ObjectHandle checked_get(lua_State* L, int index)
+	template <class T, typename std::enable_if_t<std::is_same_v<T, ComponentHandle>, int>* = nullptr>
+	inline ComponentHandle checked_get(lua_State* L, int index)
 	{
 		luaL_checktype(L, index, LUA_TUSERDATA);
-		return ObjectHandleProxy::CheckUserData(L, index)->Handle();
+		return ComponentHandleProxy::CheckUserData(L, index)->Handle();
 	}
 
-	ObjectHandle checked_get_handle(lua_State* L, int index, ExtComponentType type);
+	ComponentHandle checked_get_handle(lua_State* L, int index, ExtComponentType type);
 
 	template <class T, typename std::enable_if_t<std::is_same_v<T, glm::ivec2>, int>* = nullptr>
 	inline glm::ivec2 checked_get(lua_State* L, int index)

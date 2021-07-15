@@ -86,7 +86,7 @@ namespace bg3se::lua
 
 	char const* const ObjectProxy<ecl::Character>::MetatableName = "ecl::Character";
 
-	void ClientGetInventoryItems(lua_State* L, ObjectHandle inventoryHandle)
+	void ClientGetInventoryItems(lua_State* L, ComponentHandle inventoryHandle)
 	{
 		lua_newtable(L);
 
@@ -111,8 +111,8 @@ namespace bg3se::lua
 				// Always false on the client for some reason
 				//&& character->PlayerData->CustomData.Initialized
 				) {
-				ObjectHandle handle;
-				character->GetObjectHandle(handle);
+				ComponentHandle handle;
+				character->GetComponentHandle(handle);
 				ObjectProxy<ecl::PlayerCustomData>::New(L, handle);
 			} else {
 				OsiError("Character has no player data, or custom data was not initialized.");
@@ -444,9 +444,9 @@ namespace bg3se::ecl::lua
 		switch (lua_type(L, index)) {
 		case LUA_TLIGHTUSERDATA:
 		{
-			auto handle = checked_get<ObjectHandle>(L, index);
+			auto handle = checked_get<ComponentHandle>(L, index);
 			if (handle.GetType() == (uint32_t)ObjectType::ServerCharacter) {
-				OsiError("Attempted to resolve server ObjectHandle on the client");
+				OsiError("Attempted to resolve server ComponentHandle on the client");
 			}
 			else {
 				character = GetEntityWorld()->GetCharacter(handle);
@@ -459,9 +459,9 @@ namespace bg3se::ecl::lua
 			auto value = lua_tointeger(L, index);
 			if (value > 0xffffffff) {
 				OsiError("Resolving integer object handles is deprecated since v52!")
-				ObjectHandle handle{ value };
+				ComponentHandle handle{ value };
 				if (handle.GetType() == (uint32_t)ObjectType::ServerCharacter) {
-					OsiError("Attempted to resolve server ObjectHandle on the client");
+					OsiError("Attempted to resolve server ComponentHandle on the client");
 				} else {
 					character = GetEntityWorld()->GetCharacter(handle);
 				}
@@ -495,8 +495,8 @@ namespace bg3se::ecl::lua
 		ecl::Character* character = GetCharacter(L, 1);
 
 		if (character != nullptr) {
-			ObjectHandle handle;
-			character->GetObjectHandle(handle);
+			ComponentHandle handle;
+			character->GetComponentHandle(handle);
 			ObjectProxy<ecl::Character>::New(L, handle);
 		} else {
 			push(L, nullptr);
@@ -514,9 +514,9 @@ namespace bg3se::ecl::lua
 		switch (lua_type(L, 1)) {
 		case LUA_TLIGHTUSERDATA:
 		{
-			auto handle = checked_get<ObjectHandle>(L, 1);
+			auto handle = checked_get<ComponentHandle>(L, 1);
 			if (handle.GetType() == (uint32_t)ObjectType::ServerItem) {
-				OsiError("Attempted to resolve server ObjectHandle on the client");
+				OsiError("Attempted to resolve server ComponentHandle on the client");
 			} else {
 				item = GetEntityWorld()->GetItem(handle);
 			}
@@ -527,9 +527,9 @@ namespace bg3se::ecl::lua
 		{
 			auto value = lua_tointeger(L, 1);
 			if (value > 0xffffffff) {
-				ObjectHandle handle{ value };
+				ComponentHandle handle{ value };
 				if (handle.GetType() == (uint32_t)ObjectType::ServerItem) {
-					OsiError("Attempted to resolve server ObjectHandle on the client");
+					OsiError("Attempted to resolve server ComponentHandle on the client");
 				} else {
 					item = GetEntityWorld()->GetItem(handle);
 				}
@@ -553,8 +553,8 @@ namespace bg3se::ecl::lua
 		}
 
 		if (item != nullptr) {
-			ObjectHandle handle;
-			item->GetObjectHandle(handle);
+			ComponentHandle handle;
+			item->GetComponentHandle(handle);
 			ObjectProxy<ecl::Item>::New(L, handle);
 		} else {
 			push(L, nullptr);
@@ -573,25 +573,25 @@ namespace bg3se::ecl::lua
 
 		ecl::Status* status;
 		if (lua_type(L, 2) == LUA_TLIGHTUSERDATA) {
-			auto statusHandle = checked_get<ObjectHandle>(L, 2);
+			auto statusHandle = checked_get<ComponentHandle>(L, 2);
 			status = character->GetStatus(statusHandle);
 
 			if (status != nullptr) {
-				ObjectHandle characterHandle;
-				character->GetObjectHandle(characterHandle);
+				ComponentHandle characterHandle;
+				character->GetComponentHandle(characterHandle);
 				StatusHandleProxy::New(L, characterHandle, statusHandle);
 				return 1;
 			}
 
-			OsiError("Character has no status with ObjectHandle 0x" << std::hex << statusHandle.Handle);
+			OsiError("Character has no status with ComponentHandle 0x" << std::hex << statusHandle.Handle);
 		} else {
 			auto index = lua_tointeger(L, 2);
 			NetId statusNetId{ (uint32_t)index };
 			status = character->GetStatus(statusNetId);
 
 			if (status != nullptr) {
-				ObjectHandle characterHandle;
-				character->GetObjectHandle(characterHandle);
+				ComponentHandle characterHandle;
+				character->GetComponentHandle(characterHandle);
 				StatusHandleProxy::New(L, characterHandle, statusNetId);
 				return 1;
 			}
@@ -773,7 +773,7 @@ namespace bg3se::ecl::lua
 
 		case LUA_TLIGHTUSERDATA:
 		{
-			auto handle = checked_get<ObjectHandle>(L, idx);
+			auto handle = checked_get<ComponentHandle>(L, idx);
 			if (handle.GetType() == (uint32_t)ObjectType::ClientCharacter) {
 				auto character = GetEntityWorld()->GetCharacter(handle);
 				if (character) {

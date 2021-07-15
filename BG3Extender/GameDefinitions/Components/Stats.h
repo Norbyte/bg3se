@@ -367,7 +367,7 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::IsSummon;
 
-		ObjectHandle Owner_M;
+		ComponentHandle Owner_M;
 	};
 
 	struct SummonContainerComponent : public BaseComponent
@@ -375,8 +375,8 @@ namespace bg3se
 		static constexpr ExtComponentType ComponentType = ExtComponentType::SummonContainer;
 
 		VirtualMultiHashMap<FixedString, Array<EntityHandle>> field_18;
-		VirtualMultiHashSet<ObjectHandle> Characters;
-		VirtualMultiHashSet<ObjectHandle> Items;
+		VirtualMultiHashSet<ComponentHandle> Characters;
+		VirtualMultiHashSet<ComponentHandle> Items;
 	};
 
 	struct StealthComponent : public BaseComponent
@@ -398,7 +398,7 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Savegame;
 
-		ObjectHandle field_18;
+		ComponentHandle field_18;
 	};
 
 	struct DisabledEquipmentComponent : public BaseComponent
@@ -1090,7 +1090,7 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ObjectInteraction;
 
-		Array<ObjectHandle> field_18;
+		Array<ComponentHandle> field_18;
 	};
 
 	struct StaticPhysicsComponent : public BaseComponent

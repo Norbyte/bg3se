@@ -18,7 +18,7 @@ namespace bg3se
 			struct VMT
 			{
 				void* Destroy;
-				void* SetObjectHandle1;
+				void* SetComponentHandle1;
 				void* SetOldIDs;
 				void* SetMyHandle;
 				void* GetMyHandle;
@@ -51,10 +51,10 @@ namespace bg3se
 			};
 
 			virtual ~Status() = 0;
-			virtual void SetObjectHandle1(ObjectHandle Handle) = 0;
+			virtual void SetComponentHandle1(ComponentHandle Handle) = 0;
 			virtual void CopySomeFields() = 0;
-			virtual void SetMyHandle(ObjectHandle Handle) = 0;
-			virtual void GetMyHandle(ObjectHandle* Handle) = 0;
+			virtual void SetMyHandle(ComponentHandle Handle) = 0;
+			virtual void GetMyHandle(ComponentHandle* Handle) = 0;
 			virtual StatusType GetStatusId() = 0;
 			// 0 - Stackable
 			// 1 - Apply only the first instance, discard new ones
@@ -78,7 +78,7 @@ namespace bg3se
 			virtual bool LoseControl() = 0;
 			virtual void VMTA0() = 0;
 			virtual void VMTA8() = 0;
-			virtual ObjectHandle* GetOwnerHandle() = 0;
+			virtual ComponentHandle* GetOwnerHandle() = 0;
 			virtual void VMTB0() = 0;
 			virtual void GetSyncData(void* msgWriter) = 0;
 			virtual void VMTC8() = 0;
@@ -88,12 +88,12 @@ namespace bg3se
 			virtual void VMTE8() = 0;
 			virtual void VMTF0() = 0;
 
-			Array<ObjectHandle> field_8;
-			ObjectHandle SomeHandle;
-			ObjectHandle SomeEntityHandle_Old;
+			Array<ComponentHandle> field_8;
+			ComponentHandle SomeHandle;
+			ComponentHandle SomeEntityHandle_Old;
 			int SomeState;
 			FixedString StatusID_Old;
-			ObjectHandle field_38;
+			ComponentHandle field_38;
 			NetId NetID_Old;
 			FixedString field_48;
 			NetId NetID;
@@ -107,8 +107,8 @@ namespace bg3se
 			float TurnTimer;
 			float Strength;
 			uint8_t CauseType; // TODO - CauseType enum?
-			ObjectHandle StatusHandle;
-			ObjectHandle UnknownHandle;
+			ComponentHandle StatusHandle;
+			ComponentHandle UnknownHandle;
 			EntityHandle OwnerHandle;
 			ObjectSet<EntityHandle> StatusOwner;
 			EntityWorldHandle StatusSource;
@@ -138,7 +138,7 @@ namespace bg3se
 			ObjectSet<FixedString> Spell;
 			ObjectSet<FixedString> Items;
 			bool LoseControl;
-			ObjectSet<ObjectHandle> ItemHandles;
+			ObjectSet<ComponentHandle> ItemHandles;
 			float EffectTime;
 			FixedString StackId;
 			glm::vec3 SourceDirection;
@@ -149,12 +149,12 @@ namespace bg3se
 		{
 			int Charges;
 			glm::vec3 TargetPos;
-			ObjectHandle Target;
+			ComponentHandle Target;
 			float Radius;
 			FixedString Projectile;
 			int TargetConditions_M;
 			ObjectSet<glm::vec3> UnknVectors;
-			ObjectSet<ObjectHandle> PreviousTargets;
+			ObjectSet<ComponentHandle> PreviousTargets;
 		};
 
 		struct StatusClimbing : public Status
@@ -165,7 +165,7 @@ namespace bg3se
 			glm::vec3 MoveDirection_M;
 			int field_13C;
 			__int64 field_140;
-			ObjectHandle Item;
+			ComponentHandle Item;
 			FixedString Level;
 			uint8_t Status;
 			bool Direction;
@@ -207,7 +207,7 @@ namespace bg3se
 		{
 			EntityWorldHandle Source;
 			__int64 field_128;
-			ObjectHandle field_130;
+			ComponentHandle field_130;
 			Hit HitDescription;
 			UUID Combat;
 			uint8_t DyingFlags;
@@ -234,13 +234,13 @@ namespace bg3se
 
 		struct StatusHealSharing : public StatusBoost
 		{
-			ObjectHandle Caster;
+			ComponentHandle Caster;
 		};
 
 		struct StatusHealSharingCaster : public StatusBoost
 		{
-			Array<ObjectHandle> Targets;
-			VirtualMultiHashMap<ObjectHandle, ObjectHandle> field_1C0;
+			Array<ComponentHandle> Targets;
+			VirtualMultiHashMap<ComponentHandle, ComponentHandle> field_1C0;
 		};
 		
 		struct StatusHealing : public StatusBoost
@@ -259,7 +259,7 @@ namespace bg3se
 		{
 			int Level;
 			int Identified;
-			ObjectHandle Identifier;
+			ComponentHandle Identifier;
 		};
 
 		struct StatusInSurface : public Status
@@ -286,7 +286,7 @@ namespace bg3se
 			int InfectiousDiseaseDepth;
 			float InfectTimer;
 			float InfectiousDiseaseRadius;
-			ObjectHandle Target;
+			ComponentHandle Target;
 		};
 
 		struct StatusInvisible : public StatusBoost
@@ -324,7 +324,7 @@ namespace bg3se
 			EntityWorldHandle Source;
 			EntityWorldHandle Target;
 			glm::vec3 TargetPosition;
-			ObjectHandle Partner;
+			ComponentHandle Partner;
 			bool ShowOverhead;
 			SpellId Spell;
 			bool IgnoreHasSpell;
@@ -339,7 +339,7 @@ namespace bg3se
 		{
 			int Level;
 			int Repaired;
-			ObjectHandle Repairer;
+			ComponentHandle Repairer;
 		};
 
 		struct StatusRotate : public Status
@@ -373,7 +373,7 @@ namespace bg3se
 
 		struct StatusUnlock : public Status
 		{
-			ObjectHandle Source;
+			ComponentHandle Source;
 			FixedString field_128;
 			bool Success;
 			int Unlocked;
@@ -430,13 +430,13 @@ namespace bg3se
 			using CreateStatusProc = Status* (StatusMachine* self, FixedString* statusId, uint64_t statusHandle);
 			using ApplyStatusProc = Status* (StatusMachine* self, Status* status);
 
-			Status* GetStatus(ObjectHandle handle) const;
+			Status* GetStatus(ComponentHandle handle) const;
 			Status* GetStatus(NetId netId) const;
 			Status* GetStatus(FixedString const& statusId) const;
 
 			void* VMT;
-			ObjectHandle OwnerHandle;
-			ObjectHandle OwnerEntityHandle;
+			ComponentHandle OwnerHandle;
+			ComponentHandle OwnerEntityHandle;
 			uint8_t field_18;
 			ObjectSet<Status*> NewlyAddedStatuses;
 			ObjectSet<Status*> StackedStatuses;

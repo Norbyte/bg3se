@@ -14,7 +14,7 @@ namespace bg3se::esv
 	{
 		ObjectSet<Character*> Characters;
 		ObjectSet<void*> field_18;
-		ObjectSet<ObjectHandle> UnknownHandles;
+		ObjectSet<ComponentHandle> UnknownHandles;
 	};
 
 
@@ -31,17 +31,17 @@ namespace bg3se::esv
 		void* VMT;
 		FixedString GUID;
 		NetId NetID;
-		ObjectHandle Handle;
+		ComponentHandle Handle;
 		ObjectSet<Character*> Players;
 		ObjectSet<Character*> Characters;
 		ObjectSet<PartyGroup*> Groups;
 		ObjectSet<int> field_68;
 		ObjectSet<int> field_80;
 		ObjectSet<FixedString> field_98;
-		RefMap<ObjectHandle, PartyNPCData> NPCData;
-		ObjectSet<ObjectHandle> InventoryViews_M;
+		RefMap<ComponentHandle, PartyNPCData> NPCData;
+		ObjectSet<ComponentHandle> InventoryViews_M;
 		ObjectSet<FixedString> OS_FS2;
-		ObjectSet<ObjectHandle> OS_OH2;
+		ObjectSet<ComponentHandle> OS_OH2;
 		__int64 field_F8;
 		__int64 field_100;
 		__int64 field_108;
@@ -71,7 +71,7 @@ namespace bg3se::esv
 		__int64 field_168;
 		__int64 field_170;
 		__int64 field_178;
-		RefMap<FixedString, ObjectHandle> PartiesByCharacterGuid;
+		RefMap<FixedString, ComponentHandle> PartiesByCharacterGuid;
 		ObjectSet<Character*> CharactersInParties;
 		ObjectSet<Character*> AllCharacters;
 		EntityWorldHandle GameMasterPartyHandle_M;

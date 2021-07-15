@@ -56,12 +56,12 @@ namespace bg3se::lua
 	};
 
 
-	class ObjectHandleProxy : public Userdata<ObjectHandleProxy>, public Indexable, public Stringifiable, public Pushable
+	class ComponentHandleProxy : public Userdata<ComponentHandleProxy>, public Indexable, public Stringifiable, public Pushable
 	{
 	public:
 		static char const* const MetatableName;
 
-		ObjectHandleProxy(ObjectHandle const& handle, EntitySystemHelpersBase* entitySystem);
+		ComponentHandleProxy(ComponentHandle const& handle, EntitySystemHelpersBase* entitySystem);
 
 		static int GetType(lua_State* L);
 		static int GetTypeName(lua_State* L);
@@ -73,7 +73,7 @@ namespace bg3se::lua
 		int Index(lua_State* L);
 		int ToString(lua_State* L);
 
-		inline ObjectHandle const& Handle() const
+		inline ComponentHandle const& Handle() const
 		{
 			return handle_;
 		}
@@ -84,7 +84,7 @@ namespace bg3se::lua
 		}
 
 	private:
-		ObjectHandle handle_;
+		ComponentHandle handle_;
 		EntitySystemHelpersBase* entitySystem_;
 	};
 

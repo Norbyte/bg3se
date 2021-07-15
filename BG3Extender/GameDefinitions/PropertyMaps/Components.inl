@@ -1,7 +1,7 @@
 
 BEGIN_CLS(BaseComponent)
 P_RO(Entity)
-P_RO(ComponentHandle)
+P_RO(Handle)
 
 P_FUN(GetReplicationFlags, ComponentGetReplicationFlags)
 P_FUN(SetReplicationFlag, ComponentSetReplicationFlag)
@@ -11,7 +11,7 @@ END_CLS()
 
 BEGIN_CLS(IGameObject)
 P_RO(Entity)
-P_RO(ComponentHandle)
+P_RO(Handle)
 
 P_FUN(GetReplicationFlags, ComponentGetReplicationFlags)
 P_FUN(SetReplicationFlag, ComponentSetReplicationFlag)

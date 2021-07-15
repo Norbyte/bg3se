@@ -14,7 +14,7 @@ namespace bg3se
 	BY_VAL_ARRAY_HELPERS(float);
 	BY_VAL_ARRAY_HELPERS(double);
 	BY_VAL_ARRAY_HELPERS(bool);
-	BY_VAL_ARRAY_HELPERS(ObjectHandle);
+	BY_VAL_ARRAY_HELPERS(ComponentHandle);
 	BY_VAL_ARRAY_HELPERS(EntityHandle);
 	BY_VAL_ARRAY_HELPERS(EntityWorldHandle);
 	BY_VAL_ARRAY_HELPERS(FixedString);

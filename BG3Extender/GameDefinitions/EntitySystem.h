@@ -25,14 +25,16 @@ namespace bg3se
 	struct BaseComponent : public ProtectedGameObject<BaseComponent>
 	{
 		void* VMT;
+		// Handle of the entity this component belongs to
 		EntityHandle Entity;
-		ObjectHandle ComponentHandle;
+		// Handle of the current component
+		ComponentHandle Handle;
 	};
 
 	struct ObjectFactoryBase : public ProtectedGameObject<ObjectFactoryBase>
 	{
-		virtual ObjectHandle* ReevaluateHandle(ObjectHandle& handle) = 0;
-		virtual ObjectHandle* GetFreeHandle(ObjectHandle& handle) = 0;
+		virtual ComponentHandle* ReevaluateHandle(ComponentHandle& handle) = 0;
+		virtual ComponentHandle* GetFreeHandle(ComponentHandle& handle) = 0;
 		virtual bool IsFreeIndex(uint32_t index) = 0;
 		virtual bool IsReservedIndex(uint32_t index) = 0;
 		virtual uint64_t ReserveIndex(uint32_t index) = 0;
@@ -53,7 +55,7 @@ namespace bg3se
 		uint8_t Unknown3;
 		uint32_t Unknown4;
 
-		BaseComponent* Get(ObjectHandle handle) const;
+		BaseComponent* Get(ComponentHandle handle) const;
 	};
 
 
@@ -82,27 +84,27 @@ namespace bg3se
 	struct ComponentPoolBase : public ProtectedGameObject<ComponentPoolBase>
 	{
 		virtual void Destroy() = 0;
-		virtual bool DestroyComponent(ObjectHandle const& handle) = 0;
+		virtual bool DestroyComponent(ComponentHandle const& handle) = 0;
 		virtual void CreateComponent() = 0;
 		virtual void ForceComponent() = 0;
-		virtual BaseComponent* FindComponentByHandle(ObjectHandle const& handle) = 0;
-		virtual BaseComponent* TryFindComponentByHandle(ObjectHandle const& handle) = 0;
+		virtual BaseComponent* FindComponentByHandle(ComponentHandle const& handle) = 0;
+		virtual BaseComponent* TryFindComponentByHandle(ComponentHandle const& handle) = 0;
 		virtual BaseComponent* FindComponentByGuid(FixedString const& guid) = 0;
 		virtual bool MoveComponentByGuid(FixedString const& guid, void* component) = 0;
 		virtual BaseComponent* FindComponentByNetId(NetId const& netId) = 0;
 		virtual uint64_t GetSize() = 0;
 		virtual BaseComponent* GetComponentByIndex(uint64_t index) = 0;
-		virtual ObjectHandle& GetFreeHandle(ObjectHandle& handle) = 0;
-		virtual bool IsReservedHandle(ObjectHandle const& handle) = 0;
-		virtual void ReserveHandle(ObjectHandle const& handle) = 0;
-		virtual void UnreserveHandle(ObjectHandle const& handle) = 0;
-		virtual bool IsFreeHandle(ObjectHandle const& handle) = 0;
+		virtual ComponentHandle& GetFreeHandle(ComponentHandle& handle) = 0;
+		virtual bool IsReservedHandle(ComponentHandle const& handle) = 0;
+		virtual void ReserveHandle(ComponentHandle const& handle) = 0;
+		virtual void UnreserveHandle(ComponentHandle const& handle) = 0;
+		virtual bool IsFreeHandle(ComponentHandle const& handle) = 0;
 	};
 
 	template <class T>
 	struct ComponentPool : public ComponentPoolBase
 	{
-		inline T* GetComponentByHandle(ObjectHandle const& handle)
+		inline T* GetComponentByHandle(ComponentHandle const& handle)
 		{
 			return reinterpret_cast<T*>(FindComponentByHandle(handle));
 		}
@@ -136,17 +138,17 @@ namespace bg3se
 			bool field_8;
 			uint32_t field_C;
 			Array<int16_t> SlotIndexToComponentIdMap;
-			Array<ObjectHandle> ComponentHandles;
+			Array<ComponentHandle> ComponentHandles;
 			Array<int16_t> ComponentIdToSlotIndexMap;
 			int NumUsedSlots;
 			uint64_t OccupiedSlotBitmap[8];
 
-			ObjectHandle GetComponentHandle(int32_t type, bool logError);
+			ComponentHandle GetComponentHandle(int32_t type, bool logError);
 		};
 
 		struct EntityType
 		{
-			Array<ObjectHandle> Handles;
+			Array<ComponentHandle> Handles;
 			Array<Entity> Entities;
 			Array<int> HandleToIndexRemaps;
 			uint32_t LastAssignedEntityIndex;
@@ -226,9 +228,9 @@ namespace bg3se
 
 		ComponentPoolBase* GetComponentPool(HandleTypeIndex handleType, bool logError = true);
 		ComponentPoolBase* GetComponentPool(ComponentTypeIndex handleType, bool logError = true);
-		BaseComponent* GetComponent(ObjectHandle componentHandle, bool logError = true);
-		BaseComponent* GetComponent(ObjectHandle componentHandle, HandleTypeIndex type, bool logError = true);
-		BaseComponent* GetComponent(ObjectHandle componentHandle, ComponentTypeIndex type, bool logError = true);
+		BaseComponent* GetComponent(ComponentHandle componentHandle, bool logError = true);
+		BaseComponent* GetComponent(ComponentHandle componentHandle, HandleTypeIndex type, bool logError = true);
+		BaseComponent* GetComponent(ComponentHandle componentHandle, ComponentTypeIndex type, bool logError = true);
 		BaseComponent* GetComponent(char const* nameGuid, HandleTypeIndex type, bool logError = true);
 		BaseComponent* GetComponent(char const* nameGuid, ComponentTypeIndex type, bool logError = true);
 		BaseComponent* GetComponent(FixedString const& guid, HandleTypeIndex type, bool logError = true);
@@ -237,8 +239,8 @@ namespace bg3se
 		BaseComponent* GetComponent(NetId netId, ComponentTypeIndex type, bool logError = true);
 
 		Entity* GetEntity(EntityHandle entityHandle, bool logError = true);
-		ObjectHandle GetEntityComponentHandle(EntityHandle entityHandle, HandleTypeIndex type, bool logError = true);
-		ObjectHandle GetEntityComponentHandle(EntityHandle entityHandle, ComponentTypeIndex type, bool logError = true);
+		ComponentHandle GetEntityComponentHandle(EntityHandle entityHandle, HandleTypeIndex type, bool logError = true);
+		ComponentHandle GetEntityComponentHandle(EntityHandle entityHandle, ComponentTypeIndex type, bool logError = true);
 		BaseComponent* GetEntityComponent(EntityHandle entityHandle, HandleTypeIndex type, bool logError = true);
 		BaseComponent* GetEntityComponent(EntityHandle entityHandle, ComponentTypeIndex type, bool logError = true);
 	};
@@ -248,8 +250,8 @@ namespace bg3se
 		virtual ~IGameObject() = 0;
 		virtual void HandleTextKeyEvent() = 0;
 		virtual uint64_t Ret5() = 0;
-		virtual void SetObjectHandle(ObjectHandle Handle) = 0;
-		virtual void GetObjectHandle(ObjectHandle& Handle) const = 0;
+		virtual void SetComponentHandle(ComponentHandle Handle) = 0;
+		virtual void GetComponentHandle(ComponentHandle& Handle) const = 0;
 		virtual void SetGuid(FixedString const& fs) = 0;
 		virtual FixedString* GetGuid() const = 0;
 		virtual void SetNetId(NetId netId) = 0;
@@ -259,7 +261,7 @@ namespace bg3se
 		virtual void SetGlobal(bool isGlobal) = 0;
 		virtual bool IsGlobal() const = 0;
 		virtual uint32_t GetComponentType() = 0;
-		virtual void* GetEntityObjectByHandle(ObjectHandle handle) = 0;
+		virtual void* GetEntityObjectByHandle(ComponentHandle handle) = 0;
 		virtual void* GetUnknownHandle() = 0;
 		virtual STDWString* GetName() = 0;
 		virtual void SetFlags(uint64_t flag) = 0;
@@ -421,7 +423,7 @@ namespace bg3se
 				}
 			}
 
-			inline Character* GetCharacter(ObjectHandle handle, bool logError = true)
+			inline Character* GetCharacter(ComponentHandle handle, bool logError = true)
 			{
 				auto component = GetComponent(ComponentType::Character, ObjectType::ClientCharacter, handle, logError);
 				if (component != nullptr) {
@@ -454,7 +456,7 @@ namespace bg3se
 				}
 			}
 
-			inline Item* GetItem(ObjectHandle handle, bool logError = true)
+			inline Item* GetItem(ComponentHandle handle, bool logError = true)
 			{
 				auto component = GetComponent(ComponentType::Item, ObjectType::ClientItem, handle, logError);
 				if (component != nullptr) {
@@ -476,7 +478,7 @@ namespace bg3se
 				}
 			}
 
-			inline eoc::CustomStatsComponent* GetCustomStatsComponentByEntityHandle(ObjectHandle entityHandle)
+			inline eoc::CustomStatsComponent* GetCustomStatsComponentByEntityHandle(ComponentHandle entityHandle)
 			{
 				return (eoc::CustomStatsComponent*)GetComponentByEntityHandle(ComponentType::CustomStats, entityHandle);
 			}*/

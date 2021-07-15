@@ -98,8 +98,8 @@ namespace bg3se::lua
 
 		if (stats->Character != nullptr) {
 			if (prop == GFS.strCharacter) {
-				ObjectHandle handle;
-				stats->Character->GetObjectHandle(handle);
+				ComponentHandle handle;
+				stats->Character->GetComponentHandle(handle);
 				if (handle.GetType() == (uint32_t)ObjectType::ClientCharacter) {
 					ObjectProxy<ecl::Character>::New(L, handle);
 				}

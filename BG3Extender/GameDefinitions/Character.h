@@ -103,10 +103,10 @@ namespace bg3se
 			FixedString UnknownFS;
 			NetId NetID;
 			SkillInfo Info;
-			ObjectSet<ObjectHandle> CauseList;
-			ObjectHandle UnknownHandle;
+			ObjectSet<ComponentHandle> CauseList;
+			ComponentHandle UnknownHandle;
 			uint32_t Unknown1;
-			ObjectHandle OwnerHandle;
+			ComponentHandle OwnerHandle;
 			FixedString SkillId;
 			float ActiveCooldown;
 			bool IsActivated;
@@ -121,7 +121,7 @@ namespace bg3se
 		struct SkillManager : public ProtectedGameObject<SkillManager>
 		{
 			void * FreeSkillState;
-			ObjectHandle OwnerHandle;
+			ComponentHandle OwnerHandle;
 			Map<FixedString, Skill *> Skills;
 			RefMap<FixedString, uint32_t> TimeItemAddedToSkillManager;
 			bool IsLoading;
@@ -139,14 +139,14 @@ namespace bg3se
 
 			ItemType Type;
 			FixedString SkillOrStatId;
-			ObjectHandle ItemHandle;
+			ComponentHandle ItemHandle;
 		};*/
 
 		struct PlayerCustomData : public eoc::PlayerCustomData {};
 
 		struct PlayerData : public ProtectedProxyGameObject<PlayerData>
 		{
-			ObjectHandle PlayerHandle;
+			ComponentHandle PlayerHandle;
 			uint64_t SkillBar;
 			uint64_t ShapeShiftVariableManagers[10];
 			Map<FixedString, void*> ShapeShiftAttitudeMaps;
@@ -170,7 +170,7 @@ namespace bg3se
 		{
 			static constexpr ExtComponentType ComponentType = ExtComponentType::ServerCharacter;
 
-			Status* GetStatus(ObjectHandle statusHandle) const;
+			Status* GetStatus(ComponentHandle statusHandle) const;
 			Status* GetStatus(NetId handle) const;
 
 			FixedString GUID; // Part of IEoCServerObject?
@@ -191,7 +191,7 @@ namespace bg3se
 			bool NeedsUpdate;
 			bool ForceSynch;
 			int8_t field_133;
-			ObjectHandle InventoryHandle;
+			ComponentHandle InventoryHandle;
 			void* MovementMachine_M;
 			void* BehaviourMachine;
 			void* ActionMachine_M;
@@ -227,14 +227,14 @@ namespace bg3se
 			ObjectSet<EntityHandle> SummonHandleSet;
 			void* field_188;
 			FixedString field_190;
-			ObjectSet<ObjectHandle> RegisteredTriggerHandles;
+			ObjectSet<ComponentHandle> RegisteredTriggerHandles;
 			ObjectSet<FixedString> RegisteredTriggers;
 			PlayerData* PlayerData;
 			int LoseControl_M;
 			int field_474;
 			float MovementSpeedMultiplier;
 			float MovementSpeedMultiplier2;
-			ObjectHandle PartyHandle;
+			ComponentHandle PartyHandle;
 			ObjectSet<FixedString> CreatedTemplateItems;
 			ObjectSet<FixedString> Treasures;
 			FixedString CustomTradeTreasure;
@@ -313,7 +313,7 @@ namespace bg3se
 
 		struct Character : public IEocClientObject
 		{
-			Status* GetStatus(ObjectHandle statusHandle) const;
+			Status* GetStatus(ComponentHandle statusHandle) const;
 			Status* GetStatus(NetId handle) const;
 
 			glm::vec3 WorldPos; // Saved
@@ -340,7 +340,7 @@ namespace bg3se
 			CharacterTemplate* Template;
 			CharacterTemplate* OriginalTemplate;
 			CDivinityStats_Character* Stats;
-			ObjectHandle InventoryHandle;
+			ComponentHandle InventoryHandle;
 			void* MovementMachine;
 			void* ActionStateMachine;
 			void* SteeringMachine;
@@ -355,14 +355,14 @@ namespace bg3se
 			int field_100;
 			__int64 field_108;
 			void* CharacterBody;
-			ObjectHandle OwnerCharacterHandle;
-			ObjectHandle OH3;
-			ObjectHandle CorpseCharacterHandle;
-			ObjectHandle OH5;
+			ComponentHandle OwnerCharacterHandle;
+			ComponentHandle OH3;
+			ComponentHandle CorpseCharacterHandle;
+			ComponentHandle OH5;
 			int field_138;
-			ObjectHandle HighlightCircleEffect;
-			ObjectHandle OH7;
-			ObjectHandle ViewConeEffectHandle;
+			ComponentHandle HighlightCircleEffect;
+			ComponentHandle OH7;
+			ComponentHandle ViewConeEffectHandle;
 			__int64 field_158;
 			__int64 field_160;
 			ecl::PlayerData* PlayerData;
@@ -392,8 +392,8 @@ namespace bg3se
 			__int64 field_248;
 			float field_250;
 			SoundObjectId SoundObjectHandles[3];
-			ObjectHandle OH9;
-			ObjectHandle FollowCharacterHandle;
+			ComponentHandle OH9;
+			ComponentHandle FollowCharacterHandle;
 			char PickpocketNLootingFlags;
 			char Flags2;
 			int Flags3;
@@ -402,7 +402,7 @@ namespace bg3se
 			TranslatedString* DisplayNameOverride;
 			TranslatedString StoryDisplayName;
 			TranslatedString OriginalDisplayName;
-			ObjectHandle TalkingIconEffect;
+			ComponentHandle TalkingIconEffect;
 			float field_3F0;
 			int SoundBoneIndex;
 			int field_3F8;
@@ -421,12 +421,12 @@ namespace bg3se
 			__int64 field_468;
 			__int64 field_470;
 			__int64 field_478;
-			ObjectHandle OH13;
+			ComponentHandle OH13;
 			FixedString Archetype;
 			FixedString FS3;
 			int field_498;
 			char field_49C;
-			ObjectSet<ObjectHandle> ObjectHandles;
+			ObjectSet<ComponentHandle> ObjectHandles;
 			Map<FixedString, void*> field_4C0;
 			__int64 field_4D8;
 			__int64 field_4E0;

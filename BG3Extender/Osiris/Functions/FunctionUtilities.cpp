@@ -103,7 +103,7 @@ namespace bg3se
 			return nullptr;
 		}
 
-		IEoCServerObject* EntityWorld::GetGameObject(ObjectHandle handle, bool logError)
+		IEoCServerObject* EntityWorld::GetGameObject(ComponentHandle handle, bool logError)
 		{
 			if (!handle) {
 				return nullptr;

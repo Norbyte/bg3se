@@ -210,10 +210,10 @@ namespace bg3se
 	};
 
 	enum EntityHandleTag {};
-	enum GenericObjectHandleTag {};
+	enum GenericComponentHandleTag {};
 
 	using EntityHandle = TypedHandle<EntityHandleTag>;
-	using ObjectHandle = TypedHandle<GenericObjectHandleTag>;
+	using ComponentHandle = TypedHandle<GenericComponentHandleTag>;
 
 	template <class T>
 	inline uint64_t Hash(TypedHandle<T> const& h)
@@ -256,7 +256,7 @@ namespace bg3se
 		virtual void VisitWCharT2() = 0;
 		virtual void VisitCharArray() = 0;
 		virtual void VisitCharArray2() = 0;
-		virtual void VisitObjectHandle(FixedString const&, void*, void const*) = 0;
+		virtual void VisitComponentHandle(FixedString const&, void*, void const*) = 0;
 		virtual void VisitQuaternion(FixedString const&, float&, float const&) = 0;
 		virtual void VisitMatrix4x3(FixedString const&, float&, float const&) = 0;
 		virtual void VisitMatrix3x4(FixedString const&, float&, float const&) = 0;

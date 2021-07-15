@@ -13,8 +13,8 @@ namespace bg3se::esv
 	public:
 		void Clear();
 		DamageHelpers * Create();
-		bool Destroy(ObjectHandle handle);
-		DamageHelpers * Get(ObjectHandle handle) const;
+		bool Destroy(ComponentHandle handle);
+		DamageHelpers * Get(ComponentHandle handle) const;
 
 	private:
 		std::unordered_map<uint32_t, std::unique_ptr<DamageHelpers>> helpers_;

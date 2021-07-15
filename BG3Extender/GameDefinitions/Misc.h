@@ -274,13 +274,13 @@ namespace bg3se
 
 	/*struct SummonHelperResults
 	{
-		ObjectHandle SummonHandle;
+		ComponentHandle SummonHandle;
 		uint32_t Unknown{ 0 };
 	};
 
 	struct SummonHelperSummonArgs
 	{
-		ObjectHandle OwnerCharacterHandle;
+		ComponentHandle OwnerCharacterHandle;
 		FixedString GameObjectTemplateFS;
 		FixedString Level;
 		glm::vec3 Position{ .0f };

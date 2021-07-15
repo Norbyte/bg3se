@@ -34,7 +34,7 @@ namespace bg3se
 		static constexpr ExtComponentType ComponentType = ExtComponentType::BoostInfo;
 
 		BoostType Type;
-		ObjectHandle field_20;
+		ComponentHandle field_20;
 		uint32_t Flags_M;
 		FixedString Passive;
 		EntityHandle Cause_M;

@@ -24,7 +24,7 @@ int GameObjectGetStatus(lua_State* L, TObject* self)
 		auto statusId = checked_get<FixedString>(L, 2);
 		status = self->StatusMachine->GetStatus(statusId);
 	} else {
-		auto statusHandle = checked_get<ObjectHandle>(L, 2);
+		auto statusHandle = checked_get<ComponentHandle>(L, 2);
 		status = self->StatusMachine->GetStatus(statusHandle);
 	}
 

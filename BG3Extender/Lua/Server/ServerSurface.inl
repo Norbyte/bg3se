@@ -162,7 +162,7 @@ namespace bg3se::esv::lua
 			return luaL_error(L, "Attempted to resolve item handle in restricted context");
 		}
 
-		auto handle = checked_get<ObjectHandle>(L, 1);
+		auto handle = checked_get<ComponentHandle>(L, 1);
 
 		auto level = GetStaticSymbols().GetCurrentServerLevel();
 		if (!level || !level->SurfaceManager) {
@@ -302,7 +302,7 @@ namespace bg3se::esv::lua
 			return nullptr;
 		}
 
-		auto action = sym.esv__SurfaceActionFactory__CreateAction(factory, type, *resourceMgr, ObjectHandle::NullHandle);
+		auto action = sym.esv__SurfaceActionFactory__CreateAction(factory, type, *resourceMgr, ComponentHandle::NullHandle);
 		if (!action) {
 			OsiError("Couldn't create surface action for some reason.");
 			return nullptr;
@@ -387,7 +387,7 @@ namespace bg3se::esv::lua
 	int CancelSurfaceAction(lua_State* L)
 	{
 		StackCheck _(L, 0);
-		auto handle = checked_get<ObjectHandle>(L, 1);
+		auto handle = checked_get<ComponentHandle>(L, 1);
 		
 		auto factory = GetStaticSymbols().GetSurfaceActionFactory();
 		if (!factory) {

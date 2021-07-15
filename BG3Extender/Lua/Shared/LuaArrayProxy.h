@@ -16,7 +16,7 @@ namespace bg3se
 	BY_VAL_ARRAY(float);
 	BY_VAL_ARRAY(double);
 	BY_VAL_ARRAY(bool);
-	BY_VAL_ARRAY(ObjectHandle);
+	BY_VAL_ARRAY(ComponentHandle);
 	BY_VAL_ARRAY(EntityHandle);
 	BY_VAL_ARRAY(EntityWorldHandle);
 	BY_VAL_ARRAY(FixedString);

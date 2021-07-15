@@ -188,7 +188,7 @@ FS_NAME(GameAction, "Game Action");
 FS_NAME(SurfaceChange, "Surface Change");
 FS_NAME(CustomProperties, "Custom Properties");
 FS(PathRootType);
-FS(ObjectHandleType);
+FS(ComponentHandleType);
 FS(ExtComponentType);
 FS(ExtResourceManagerType);
 FS(GameState);

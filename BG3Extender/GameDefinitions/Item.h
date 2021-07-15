@@ -139,8 +139,8 @@ namespace bg3se
 			void* VariableManager;
 			StatusMachine* StatusMachine;
 			FixedString VisualResourceID_M;
-			ObjectHandle OwnerHandle;
-			ObjectHandle OriginalOwnerCharacterHandle;
+			ComponentHandle OwnerHandle;
+			ComponentHandle OriginalOwnerCharacterHandle;
 			void* Sockets;
 			__int64 field_168;
 			FixedString ItemType;
@@ -186,13 +186,13 @@ namespace bg3se
 
 		struct CombineManager : public ProtectedGameObject<CombineManager>
 		{
-			using ExecuteCombinationProc = bool (esv::CombineManager* self, CraftingStationType craftingStation, ObjectSet<ObjectHandle>* ingredientHandles, esv::Character* character, uint8_t quantity, char openUI, FixedString* combinationId);
+			using ExecuteCombinationProc = bool (esv::CombineManager* self, CraftingStationType craftingStation, ObjectSet<ComponentHandle>* ingredientHandles, esv::Character* character, uint8_t quantity, char openUI, FixedString* combinationId);
 
 			void* VMT;
 			uint64_t field_8;
 			ObjectSet<CRPGStats_Object*> IngredientStats;
 			ObjectSet<Item*> Ingredients;
-			ObjectSet<ObjectHandle> ObjectHandles;
+			ObjectSet<ComponentHandle> ComponentHandles;
 			ObjectSet<Item*> Items2;
 		};
 
@@ -229,14 +229,14 @@ namespace bg3se
 			int field_80;
 			void* ItemMachine;
 			StatusMachine* StatusMachine;
-			ObjectHandle InUseByCharacterHandle;
+			ComponentHandle InUseByCharacterHandle;
 			int InUseByUserId;
 			FixedString KeyName;
 			__int64 field_B0;
-			ObjectHandle OH5;
+			ComponentHandle OH5;
 			STDWString* CachedItemDescription;
 			STDWString* WString2;
-			ObjectHandle OH4;
+			ComponentHandle OH4;
 			void * Sockets;
 			__int64 field_E0;
 			ObjectSet<FixedString> Tags;
@@ -263,21 +263,21 @@ namespace bg3se
 			FixedString GUID;
 			NetId NetID;
 			PrimitiveSet<uint16_t> PeerIDClassNames;
-			ObjectHandle OwnerCharacterHandleUI;
+			ComponentHandle OwnerCharacterHandleUI;
 			uint8_t field_40;
 			uint8_t field_41;
 			uint8_t EquipmentSlots;
-			ObjectHandle ParentHandle;
+			ComponentHandle ParentHandle;
 			int field_50;
 			int field_54;
 			uint8_t Flags;
 			uint8_t field_59;
-			ObjectSet<ObjectHandle> ItemsBySlot;
+			ObjectSet<ComponentHandle> ItemsBySlot;
 			RefMap<int, void*>* Views; // <int, InventoryView*>
-			ObjectSet<ObjectHandle> UpdateViews;
+			ObjectSet<ComponentHandle> UpdateViews;
 			RefMap<int, void*>* OfferedAmounts;
-			RefMap<ObjectHandle, void*>* BuyBackAmounts;
-			ObjectSet<ObjectHandle> HandleSet3;
+			RefMap<ComponentHandle, void*>* BuyBackAmounts;
+			ObjectSet<ComponentHandle> HandleSet3;
 		};*/
 	}
 }

@@ -17,7 +17,7 @@
 
 namespace bg3se
 {
-	BaseComponent* ObjectFactoryBase::Get(ObjectHandle handle) const
+	BaseComponent* ObjectFactoryBase::Get(ComponentHandle handle) const
 	{
 		// FIXME - check TypeIndex in callers!
 		if (!handle /*|| handle.GetType() != TypeIndex*/) {
@@ -79,7 +79,7 @@ namespace bg3se
 		return Components.Types[(int32_t)componentType].Pool;
 	}
 
-	BaseComponent* EntityWorldBase::GetComponent(ObjectHandle componentHandle, bool logError)
+	BaseComponent* EntityWorldBase::GetComponent(ComponentHandle componentHandle, bool logError)
 	{
 		if (!componentHandle) {
 			return nullptr;
@@ -91,7 +91,7 @@ namespace bg3se
 		return pool->FindComponentByHandle(componentHandle);
 	}
 
-	BaseComponent* EntityWorldBase::GetComponent(ObjectHandle componentHandle, HandleTypeIndex type, bool logError)
+	BaseComponent* EntityWorldBase::GetComponent(ComponentHandle componentHandle, HandleTypeIndex type, bool logError)
 	{
 		if (!componentHandle) {
 			return nullptr;
@@ -107,7 +107,7 @@ namespace bg3se
 		return GetComponent(componentHandle, logError);
 	}
 
-	BaseComponent* EntityWorldBase::GetComponent(ObjectHandle componentHandle, ComponentTypeIndex type, bool logError)
+	BaseComponent* EntityWorldBase::GetComponent(ComponentHandle componentHandle, ComponentTypeIndex type, bool logError)
 	{
 		if (!componentHandle) {
 			return nullptr;
@@ -243,7 +243,7 @@ namespace bg3se
 		return &entityTypes.Entities[remap];
 	}
 
-	ObjectHandle EntityWorldBase::Entity::GetComponentHandle(int32_t type, bool logError)
+	ComponentHandle EntityWorldBase::Entity::GetComponentHandle(int32_t type, bool logError)
 	{
 		if (type >= (int32_t)ComponentIdToSlotIndexMap.Size()) {
 			if (logError) {
@@ -263,15 +263,15 @@ namespace bg3se
 		return ComponentHandles[slot];
 	}
 
-	ObjectHandle EntityWorldBase::GetEntityComponentHandle(EntityHandle entityHandle, ComponentTypeIndex type, bool logError)
+	ComponentHandle EntityWorldBase::GetEntityComponentHandle(EntityHandle entityHandle, ComponentTypeIndex type, bool logError)
 	{
 		auto entity = GetEntity(entityHandle, logError);
-		if (!entity) return ObjectHandle{};
+		if (!entity) return ComponentHandle{};
 
 		return entity->GetComponentHandle((int32_t)type, logError);
 	}
 
-	ObjectHandle EntityWorldBase::GetEntityComponentHandle(EntityHandle entityHandle, HandleTypeIndex type, bool logError)
+	ComponentHandle EntityWorldBase::GetEntityComponentHandle(EntityHandle entityHandle, HandleTypeIndex type, bool logError)
 	{
 		auto componentIndex = HandleIndexToComponentIndexMap.Find((int32_t)type);
 		if (!componentIndex) {
@@ -353,9 +353,9 @@ namespace bg3se
 
 	BitSet<>* EntitySystemHelpersBase::GetReplicationFlags(BaseComponent const& component)
 	{
-		auto typeIdx = GetReplicationTypeIndex((EntityWorldBase::HandleTypeIndex)component.ComponentHandle.GetType());
+		auto typeIdx = GetReplicationTypeIndex((EntityWorldBase::HandleTypeIndex)component.Handle.GetType());
 		if (!typeIdx) {
-			OsiError("Couldn't find replication type for component handle " << component.ComponentHandle);
+			OsiError("Couldn't find replication type for component handle " << component.Handle);
 			return nullptr;
 		}
 
@@ -385,9 +385,9 @@ namespace bg3se
 
 	BitSet<>* EntitySystemHelpersBase::GetOrCreateReplicationFlags(BaseComponent const& component)
 	{
-		auto typeIdx = GetReplicationTypeIndex((EntityWorldBase::HandleTypeIndex)component.ComponentHandle.GetType());
+		auto typeIdx = GetReplicationTypeIndex((EntityWorldBase::HandleTypeIndex)component.Handle.GetType());
 		if (!typeIdx) {
-			OsiError("Couldn't find replication type for component handle " << component.ComponentHandle);
+			OsiError("Couldn't find replication type for component handle " << component.Handle);
 			return nullptr;
 		}
 
@@ -744,7 +744,7 @@ namespace bg3se
 		}
 	}
 
-	void* EntitySystemHelpersBase::GetRawComponent(ObjectHandle componentHandle, ExtComponentType type, bool logError)
+	void* EntitySystemHelpersBase::GetRawComponent(ComponentHandle componentHandle, ExtComponentType type, bool logError)
 	{
 		auto world = GetEntityWorld();
 		if (!world) {
