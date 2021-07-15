@@ -144,6 +144,16 @@ FS(NameGroup);
 FS(Sync);
 FS(SetPersistence);
 
+// Entity proxy functions
+FS(HasRawComponent);
+FS(GetAllRawComponents);
+FS(GetComponent);
+FS(GetAllComponents);
+FS(GetEntityType);
+FS(GetSalt);
+FS(GetIndex);
+FS(IsAlive);
+
 // Stat modifier value types
 FS(FixedString);
 FS(StatusIDs);

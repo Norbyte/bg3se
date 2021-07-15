@@ -31,13 +31,11 @@ namespace bg3se::lua
 		static int HasRawComponent(lua_State* L);
 		static int GetAllRawComponents(lua_State* L);
 		static int GetComponent(lua_State* L);
-		static int GetComponents(lua_State* L);
 		static int GetAllComponents(lua_State* L);
 		static int GetEntityType(lua_State* L);
 		static int GetSalt(lua_State* L);
 		static int GetIndex(lua_State* L);
 		static int IsAlive(lua_State* L);
-		static void PopulateMetatable(lua_State* L);
 
 		int Index(lua_State* L);
 		int ToString(lua_State* L);
@@ -56,33 +54,7 @@ namespace bg3se::lua
 		EntityHandle handle_;
 		EntitySystemHelpersBase* entitySystem_;
 	};
-	
-	
-	class EntityComponentsProxy : public Userdata<EntityComponentsProxy>, public Indexable, public Stringifiable, public Pushable
-	{
-	public:
-		static char const* const MetatableName;
 
-		EntityComponentsProxy(EntityHandle const& handle, EntitySystemHelpersBase* entitySystem);
-
-		int Index(lua_State* L);
-		int ToString(lua_State* L);
-
-		inline EntityHandle const& Handle() const
-		{
-			return handle_;
-		}
-
-		inline EntitySystemHelpersBase* EntitySystem() const
-		{
-			return entitySystem_;
-		}
-
-	private:
-		EntityHandle handle_;
-		EntitySystemHelpersBase* entitySystem_;
-	};
-	
 
 	class ObjectHandleProxy : public Userdata<ObjectHandleProxy>, public Indexable, public Stringifiable, public Pushable
 	{

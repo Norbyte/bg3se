@@ -147,14 +147,6 @@ namespace bg3se::lua
 		return 1;
 	}
 
-	int EntityProxy::GetComponents(lua_State* L)
-	{
-		StackCheck _(L, 1);
-		auto self = checked_get<EntityProxy*>(L, 1);
-		EntityComponentsProxy::New(L, self->handle_, self->entitySystem_);
-		return 1;
-	}
-
 	int EntityProxy::GetAllComponents(lua_State* L)
 	{
 		StackCheck _(L, 1);
@@ -226,72 +218,64 @@ namespace bg3se::lua
 		return 1;
 	}
 
-	void EntityProxy::PopulateMetatable(lua_State* L)
-	{
-		lua_newtable(L);
-
-		push(L, &EntityProxy::HasRawComponent);
-		lua_setfield(L, -2, "HasRawComponent");
-
-		push(L, &EntityProxy::GetAllRawComponents);
-		lua_setfield(L, -2, "GetAllRawComponents");
-
-		push(L, &EntityProxy::GetComponent);
-		lua_setfield(L, -2, "GetComponent");
-
-		push(L, &EntityProxy::GetComponents);
-		lua_setfield(L, -2, "GetComponents");
-
-		push(L, &EntityProxy::GetAllComponents);
-		lua_setfield(L, -2, "GetAllComponents");
-
-		push(L, &EntityProxy::GetEntityType);
-		lua_setfield(L, -2, "GetEntityType");
-
-		push(L, &EntityProxy::GetSalt);
-		lua_setfield(L, -2, "GetSalt");
-
-		push(L, &EntityProxy::GetIndex);
-		lua_setfield(L, -2, "GetIndex");
-
-		push(L, &EntityProxy::IsAlive);
-		lua_setfield(L, -2, "IsAlive");
-
-		lua_setfield(L, -2, "__index");
-	}
-
 	int EntityProxy::Index(lua_State* L)
 	{
-		OsiError("Should not get here!");
-		return 0;
+		StackCheck _(L, 1);
+		auto self = checked_get<EntityProxy*>(L, 1);
+		auto key = checked_get<FixedString>(L, 2);
+
+		if (key == GFS.strHasRawComponent) {
+			push(L, &EntityProxy::HasRawComponent);
+			return 1;
+		}
+
+		if (key == GFS.strGetAllRawComponents) {
+			push(L, &EntityProxy::GetAllRawComponents);
+			return 1;
+		}
+
+		if (key == GFS.strGetComponent) {
+			push(L, &EntityProxy::GetComponent);
+			return 1;
+		}
+
+		if (key == GFS.strGetAllComponents) {
+			push(L, &EntityProxy::GetAllComponents);
+			return 1;
+		}
+
+		if (key == GFS.strGetEntityType) {
+			push(L, &EntityProxy::GetEntityType);
+			return 1;
+		}
+
+		if (key == GFS.strGetSalt) {
+			push(L, &EntityProxy::GetSalt);
+			return 1;
+		}
+
+		if (key == GFS.strGetIndex) {
+			push(L, &EntityProxy::GetIndex);
+			return 1;
+		}
+
+		if (key == GFS.strIsAlive) {
+			push(L, &EntityProxy::IsAlive);
+			return 1;
+		}
+
+		auto componentType = EnumInfo<ExtComponentType>::Find(key);
+		if (componentType) {
+			PushComponent(L, self->entitySystem_, self->handle_, *componentType, GetCurrentLifetime(), false);
+		} else {
+			auto componentTypeName = checked_get<char const*>(L, 2);
+			luaL_error(L, "Not a valid EntityProxy method or component type: %s", componentTypeName);
+		}
+
+		return 1;
 	}
 
 	int EntityProxy::ToString(lua_State* L)
-	{
-		StackCheck _(L, 1);
-		char entityName[100];
-		sprintf_s(entityName, "Entity (%016llx)", handle_.Handle);
-		push(L, entityName);
-		return 1;
-	}
-
-
-	char const* const EntityComponentsProxy::MetatableName = "EntityComponentsProxy";
-
-	EntityComponentsProxy::EntityComponentsProxy(EntityHandle const& handle, EntitySystemHelpersBase* entitySystem)
-		: handle_(handle), entitySystem_(entitySystem)
-	{}
-
-	int EntityComponentsProxy::Index(lua_State* L)
-	{
-		StackCheck _(L, 1);
-		auto self = checked_get<EntityComponentsProxy*>(L, 1);
-		auto componentType = checked_get<ExtComponentType>(L, 2);
-		PushComponent(L, self->entitySystem_, self->handle_, componentType, GetCurrentLifetime(), false);
-		return 1;
-	}
-
-	int EntityComponentsProxy::ToString(lua_State* L)
 	{
 		StackCheck _(L, 1);
 		char entityName[100];
@@ -409,7 +393,6 @@ namespace bg3se::lua
 	void RegisterEntityProxy(lua_State* L)
 	{
 		EntityProxy::RegisterMetatable(L);
-		EntityComponentsProxy::RegisterMetatable(L);
 		ObjectHandleProxy::RegisterMetatable(L);
 	}
 }
