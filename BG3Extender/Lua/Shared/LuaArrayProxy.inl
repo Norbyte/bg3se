@@ -91,7 +91,7 @@ namespace bg3se::lua
 		}
 
 		if (lua_type(L, 2) == LUA_TNIL) {
-			return impl->Next(L, -1);
+			return impl->Next(L, 0);
 		} else {
 			auto key = checked_get<int>(L, 2);
 			return impl->Next(L, key);

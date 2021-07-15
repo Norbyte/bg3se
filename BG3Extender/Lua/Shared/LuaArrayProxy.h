@@ -80,8 +80,8 @@ namespace bg3se::lua
 
 		bool GetElement(lua_State* L, unsigned arrayIndex) override
 		{
-			if (arrayIndex >= 0 && arrayIndex < (int)object_->Size()) {
-				MakeObjectRef(L, lifetime_, &(*object_)[arrayIndex]);
+			if (arrayIndex > 0 && arrayIndex <= (int)object_->Size()) {
+				MakeObjectRef(L, lifetime_, &(*object_)[arrayIndex - 1]);
 				return true;
 			} else {
 				return false;
@@ -101,9 +101,9 @@ namespace bg3se::lua
 
 		int Next(lua_State* L, int key) override
 		{
-			if (key >= -1 && key < (int)object_->Size() - 1) {
+			if (key >= 0 && key < (int)object_->Size()) {
 				push(L, ++key);
-				MakeObjectRef(L, lifetime_, &(*object_)[key]);
+				MakeObjectRef(L, lifetime_, &(*object_)[key - 1]);
 				return 2;
 			} else {
 				return 0;
@@ -146,8 +146,8 @@ namespace bg3se::lua
 
 		bool GetElement(lua_State* L, unsigned arrayIndex) override
 		{
-			if (arrayIndex >= 0 && arrayIndex < (int)object_->Size()) {
-				LuaWrite(L, (*object_)[arrayIndex]);
+			if (arrayIndex > 0 && arrayIndex <= object_->Size()) {
+				LuaWrite(L, (*object_)[arrayIndex - 1]);
 				return true;
 			} else {
 				return false;
@@ -156,12 +156,12 @@ namespace bg3se::lua
 
 		bool SetElement(lua_State* L, unsigned arrayIndex, int luaIndex) override
 		{
-			if (arrayIndex >= 0 && arrayIndex < object_->Size()) {
+			if (arrayIndex > 0 && arrayIndex <= object_->Size()) {
 				lua_pushvalue(L, luaIndex);
-				LuaRead(L, (*object_)[arrayIndex]);
+				LuaRead(L, (*object_)[arrayIndex - 1]);
 				lua_pop(L, 1);
 				return true;
-			} else if (arrayIndex == object_->Size()) {
+			} else if (arrayIndex == object_->Size() + 1) {
 				T val;
 				lua_pushvalue(L, luaIndex);
 				LuaRead(L, val);
@@ -181,9 +181,9 @@ namespace bg3se::lua
 
 		int Next(lua_State* L, int key) override
 		{
-			if (key >= -1 && key < (int)object_->Size() - 1) {
+			if (key >= 0 && key < (int)object_->Size()) {
 				push(L, ++key);
-				LuaWrite(L, (*object_)[key]);
+				LuaWrite(L, (*object_)[key - 1]);
 				return 2;
 			} else {
 				return 0;
@@ -226,8 +226,8 @@ namespace bg3se::lua
 
 		bool GetElement(lua_State* L, unsigned arrayIndex) override
 		{
-			if (arrayIndex >= 0 && arrayIndex < (int)object_->Size) {
-				MakeObjectRef(L, lifetime_, &(*object_)[arrayIndex]);
+			if (arrayIndex > 0 && arrayIndex <= object_->Size) {
+				MakeObjectRef(L, lifetime_, &(*object_)[arrayIndex - 1]);
 				return true;
 			} else {
 				return false;
@@ -247,9 +247,9 @@ namespace bg3se::lua
 
 		int Next(lua_State* L, int key) override
 		{
-			if (key >= -1 && key < (int)object_->Size - 1) {
+			if (key >= 0 && key < (int)object_->Size) {
 				push(L, ++key);
-				MakeObjectRef(L, lifetime_, &(*object_)[key]);
+				MakeObjectRef(L, lifetime_, &(*object_)[key - 1]);
 				return 2;
 			} else {
 				return 0;
@@ -292,8 +292,8 @@ namespace bg3se::lua
 
 		bool GetElement(lua_State* L, unsigned arrayIndex) override
 		{
-			if (arrayIndex >= 0 && arrayIndex < (int)object_->Size) {
-				LuaWrite(L, (*object_)[arrayIndex]);
+			if (arrayIndex > 0 && arrayIndex <= object_->Size) {
+				LuaWrite(L, (*object_)[arrayIndex - 1]);
 				return true;
 			} else {
 				return false;
@@ -302,12 +302,12 @@ namespace bg3se::lua
 
 		bool SetElement(lua_State* L, unsigned arrayIndex, int luaIndex) override
 		{
-			if (arrayIndex >= 0 && arrayIndex < object_->Size) {
+			if (arrayIndex > 0 && arrayIndex <= object_->Size) {
 				lua_pushvalue(L, luaIndex);
-				LuaRead(L, (*object_)[arrayIndex]);
+				LuaRead(L, (*object_)[arrayIndex - 1]);
 				lua_pop(L, 1);
 				return true;
-			} else if (arrayIndex == object_->Size) {
+			} else if (arrayIndex == object_->Size + 1) {
 				T val;
 				lua_pushvalue(L, luaIndex);
 				LuaRead(L, val);
@@ -327,9 +327,9 @@ namespace bg3se::lua
 
 		int Next(lua_State* L, int key) override
 		{
-			if (key >= -1 && key < (int)object_->Size - 1) {
+			if (key >= 0 && key < (int)object_->Size) {
 				push(L, ++key);
-				LuaWrite(L, (*object_)[key]);
+				LuaWrite(L, (*object_)[key - 1]);
 				return 2;
 			} else {
 				return 0;
@@ -372,8 +372,8 @@ namespace bg3se::lua
 
 		bool GetElement(lua_State* L, unsigned arrayIndex) override
 		{
-			if (arrayIndex >= 0 && arrayIndex < Size) {
-				MakeObjectRef(L, lifetime_, &(*object_)[arrayIndex]);
+			if (arrayIndex > 0 && arrayIndex <= Size) {
+				MakeObjectRef(L, lifetime_, &(*object_)[arrayIndex - 1]);
 				return true;
 			} else {
 				return false;
@@ -393,9 +393,9 @@ namespace bg3se::lua
 
 		int Next(lua_State* L, int key) override
 		{
-			if (key >= -1 && key < Size - 1) {
+			if (key >= 0 && key < Size) {
 				push(L, ++key);
-				MakeObjectRef(L, lifetime_, &(*object_)[key]);
+				MakeObjectRef(L, lifetime_, &(*object_)[key - 1]);
 				return 2;
 			} else {
 				return 0;
@@ -438,8 +438,8 @@ namespace bg3se::lua
 
 		bool GetElement(lua_State* L, unsigned arrayIndex) override
 		{
-			if (arrayIndex >= 0 && arrayIndex < Size) {
-				LuaWrite(L, (*object_)[arrayIndex]);
+			if (arrayIndex > 0 && arrayIndex <= Size) {
+				LuaWrite(L, (*object_)[arrayIndex - 1]);
 				return true;
 			} else {
 				return false;
@@ -448,9 +448,9 @@ namespace bg3se::lua
 
 		bool SetElement(lua_State* L, unsigned arrayIndex, int luaIndex) override
 		{
-			if (arrayIndex >= 0 && arrayIndex < Size) {
+			if (arrayIndex > 0 && arrayIndex <= Size) {
 				lua_pushvalue(L, luaIndex);
-				LuaRead(L, (*object_)[arrayIndex]);
+				LuaRead(L, (*object_)[arrayIndex - 1]);
 				lua_pop(L, 1);
 				return true;
 			} else {
@@ -465,9 +465,9 @@ namespace bg3se::lua
 
 		int Next(lua_State* L, int key) override
 		{
-			if (key >= -1 && key < Size - 1) {
+			if (key >= 0 && key < Size) {
 				push(L, ++key);
-				LuaWrite(L, (*object_)[key]);
+				LuaWrite(L, (*object_)[key - 1]);
 				return 2;
 			} else {
 				return 0;
@@ -481,7 +481,7 @@ namespace bg3se::lua
 
 
 	class ArrayProxy : private Userdata<ArrayProxy>, public Indexable, public NewIndexable,
-		public Iterable, public Stringifiable, public Pushable, public GarbageCollected
+		public Lengthable, public Iterable, public Stringifiable, public Pushable, public GarbageCollected
 	{
 	public:
 		static char const * const MetatableName;
@@ -576,6 +576,7 @@ namespace bg3se::lua
 
 		int Index(lua_State* L);
 		int NewIndex(lua_State* L);
+		int Length(lua_State* L);
 		int Next(lua_State* L);
 		int ToString(lua_State* L);
 		int GC(lua_State* L);
