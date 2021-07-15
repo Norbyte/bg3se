@@ -1,6 +1,7 @@
 Ext.Require("TestHelpers.lua")
 Ext.Require("ResourceTests.lua")
 Ext.Require("StatTests.lua")
+Ext.Require("ComponentTests.lua")
 Ext.Require("CharacterTests.lua")
 Ext.Require("CharacterComponentTests.lua")
 Ext.Require("ItemComponentTests.lua")
@@ -70,6 +71,9 @@ function RunTestSuite()
 
         "TestResourceEnumeration",
         "TestResourceLayout",
+
+        "TestEntityFunctions",
+        "TestComponentFunctions",
         
         "TestCharacterEnumeration",
         "TestCharacterProperties",

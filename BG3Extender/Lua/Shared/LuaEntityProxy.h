@@ -29,7 +29,7 @@ namespace bg3se::lua
 		}
 
 		static int HasRawComponent(lua_State* L);
-		static int GetAllRawComponents(lua_State* L);
+		static int GetComponentHandles(lua_State* L);
 		static int GetComponent(lua_State* L);
 		static int GetAllComponents(lua_State* L);
 		static int GetEntityType(lua_State* L);

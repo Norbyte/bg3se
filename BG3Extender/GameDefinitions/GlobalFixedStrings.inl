@@ -146,7 +146,7 @@ FS(SetPersistence);
 
 // Entity proxy functions
 FS(HasRawComponent);
-FS(GetAllRawComponents);
+FS(GetComponentHandles);
 FS(GetComponent);
 FS(GetAllComponents);
 FS(GetEntityType);

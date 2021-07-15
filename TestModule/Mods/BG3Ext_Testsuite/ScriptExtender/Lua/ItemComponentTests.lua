@@ -119,11 +119,11 @@ end
 function TestItemStatusImmunitiesComponent()
     local expect = {
         PersonalStatusImmunities = {
-            BLEEDING = "00000000-0000-0000-0000-0000ffffffff",
-            BURNING = "00000000-ffff-ffff-0000-000000000000",
-            DEAF = "00000000-ffff-ffff-0000-000000000000",
-            SG_Condition = "00000000-ffff-ffff-0000-0000ffffffff",
-            SILENCED = "00000000-0000-0000-0000-0000ffffffff"
+            BLEEDING = "00000000-0000-0000-0000-000000000000",
+            BURNING = "00000000-0000-0000-0000-000000000000",
+            DEAF = "00000000-0000-0000-0000-000000000000",
+            SG_Condition = "00000000-0000-0000-0000-000000000000",
+            SILENCED = "00000000-0000-0000-0000-000000000000"
         }
     }
     

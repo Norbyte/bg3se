@@ -34,13 +34,12 @@ namespace bg3se::lua
 		return 1;
 	}
 
-	int EntityProxy::GetAllRawComponents(lua_State* L)
+	int EntityProxy::GetComponentHandles(lua_State* L)
 	{
 		StackCheck _(L, 1);
 		auto self = checked_get<EntityProxy*>(L, 1);
 
 		lua_newtable(L);
-		int idx{ 1 };
 
 		auto entity = self->entitySystem_->GetEntityWorld()->GetEntity(self->handle_);
 		if (entity) {
@@ -50,11 +49,11 @@ namespace bg3se::lua
 					auto componentIdx = entity->SlotIndexToComponentIdMap[i];
 					auto name = self->entitySystem_->GetComponentName((EntityWorldBase::ComponentTypeIndex)componentIdx);
 
-					push(L, idx++);
-					lua_newtable(L);
-					settable(L, "Type", name);
-					settable(L, "Handle", componentHandle);
-					lua_settable(L, -3);
+					if (name) {
+						push(L, *name);
+						push(L, componentHandle);
+						lua_settable(L, -3);
+					}
 				}
 			}
 		}
@@ -229,8 +228,8 @@ namespace bg3se::lua
 			return 1;
 		}
 
-		if (key == GFS.strGetAllRawComponents) {
-			push(L, &EntityProxy::GetAllRawComponents);
+		if (key == GFS.strGetComponentHandles) {
+			push(L, &EntityProxy::GetComponentHandles);
 			return 1;
 		}
 

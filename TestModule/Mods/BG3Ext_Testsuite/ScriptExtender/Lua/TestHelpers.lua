@@ -17,6 +17,13 @@ function AssertEquals(value, expectation)
     end
 end
 
+function AssertType(value, expectation)
+    local ty = type(value)
+    if ty ~= expectation then
+        error("Expressions type not equal: expected " .. expectation .. " , got " .. ty)
+    end
+end
+
 function AssertEqualsFloat(value, expectation)
     if math.abs(expectation - value) > 0.00001 then
         error("Expressions not equal: expected " .. expectation .. " , got " .. value)
