@@ -9,6 +9,8 @@ P_FUN(Replicate, ComponentReplicate)
 END_CLS()
 
 
+// TEMPORARY WORKAROUND
+/*
 BEGIN_CLS(IGameObject)
 P_RO(Entity)
 P_RO(Handle)
@@ -17,6 +19,7 @@ P_FUN(GetReplicationFlags, ComponentGetReplicationFlags)
 P_FUN(SetReplicationFlag, ComponentSetReplicationFlag)
 P_FUN(Replicate, ComponentReplicate)
 END_CLS()
+*/
 
 
 BEGIN_CLS(TransformComponent)
@@ -25,7 +28,7 @@ P_REF(Transform)
 END_CLS()
 
 
-BEGIN_CLS(SenseComponent)
+BEGIN_CLS(HearingComponent)
 INHERIT(BaseComponent)
 P(Sight)
 P(Hearing)

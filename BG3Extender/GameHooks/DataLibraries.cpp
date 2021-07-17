@@ -489,9 +489,9 @@ namespace bg3se
 		return true;
 	}
 
-	void LibraryManager::ShowStartupError(STDWString const & msg, bool wait, bool exitGame)
+	void LibraryManager::ShowStartupError(STDString const & msg, bool wait, bool exitGame)
 	{
-		ERR(L"STARTUP ERROR: %s", msg.c_str());
+		ERR("STARTUP ERROR: %s", msg.c_str());
 
 		if (GetStaticSymbols().ecl__EoCClient == nullptr
 			|| GetStaticSymbols().ecl__EoCClient__HandleError == nullptr
@@ -510,7 +510,7 @@ namespace bg3se
 				if (retries < 1200) {
 					ShowStartupError(msg, exitGame);
 				} else {
-					MessageBoxW(NULL, msg.c_str(), L"Script Extender Error", 
+					MessageBoxA(NULL, msg.c_str(), "Script Extender Error", 
 						MB_OK | MB_ICONERROR | MB_TASKMODAL | MB_SETFOREGROUND);
 				}
 			});
@@ -524,14 +524,14 @@ namespace bg3se
 		}
 	}
 
-	void LibraryManager::ShowStartupError(STDWString const & msg, bool exitGame)
+	void LibraryManager::ShowStartupError(STDString const & msg, bool exitGame)
 	{
 		if (!CanShowMessages()) return;
 
 		GetStaticSymbols().ecl__EoCClient__HandleError(*GetStaticSymbols().ecl__EoCClient, &msg, exitGame, &msg);
 	}
 
-	void LibraryManager::ShowStartupMessage(STDWString const & msg, bool exitGame)
+	void LibraryManager::ShowStartupMessage(STDString const & msg, bool exitGame)
 	{
 		// Don't show progress if we're already in a loaded state, as it'll show a message box instead
 		if (CanShowError()) return;
@@ -554,7 +554,6 @@ namespace bg3se
 		auto state = GetStaticSymbols().GetClientState();
 		return state == ecl::GameState::Running
 			|| state == ecl::GameState::Paused
-			|| state == ecl::GameState::GameMasterPause
 			|| state == ecl::GameState::Menu
 			|| state == ecl::GameState::Lobby;
 	}

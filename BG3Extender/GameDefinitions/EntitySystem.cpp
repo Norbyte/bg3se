@@ -17,7 +17,7 @@
 
 namespace bg3se
 {
-	BaseComponent* ObjectFactoryBase::Get(ComponentHandle handle) const
+	void* ComponentFactoryBase::FindByHandle(ComponentHandle handle) const
 	{
 		// FIXME - check TypeIndex in callers!
 		if (!handle /*|| handle.GetType() != TypeIndex*/) {
@@ -25,7 +25,7 @@ namespace bg3se
 		}
 
 		auto index = handle.GetIndex();
-		if (index >= Objects.Size()) {
+		if (index >= ComponentsByHandleIndex.Size()) {
 			return nullptr;
 		}
 
@@ -33,15 +33,29 @@ namespace bg3se
 			return nullptr;
 		}
 
-		auto& entry = Objects[index];
-		if (entry.Object != nullptr && (std::uintptr_t)entry.Object != 0xDEC1A551F1EDDEEDul) {
-			return entry.Object;
+		auto& entry = ComponentsByHandleIndex[index];
+		if (entry.Component != nullptr && (std::uintptr_t)entry.Component != 0xDEC1A551F1EDDEEDul) {
+			return entry.Component;
 		} else {
 			return nullptr;
 		}
 	}
 
-	BaseComponent* NetworkObjectFactoryBase::FindByNetId(NetId netId) const
+
+	void* NetworkComponentFactoryBase::FindByGuid(FixedString const& guid) const
+	{
+		if (!guid) return nullptr;
+
+		auto component = Guids.Find(guid);
+		if (component) {
+			return *component;
+		} else {
+			return nullptr;
+		}
+	}
+
+
+	void* NetworkComponentFactoryBase::FindByNetId(NetId netId) const
 	{
 		if (!netId) return nullptr;
 
@@ -57,6 +71,16 @@ namespace bg3se
 		} else {
 			return nullptr;
 		}
+	}
+
+
+	void* NetworkComponentFactoryBase::FindByIndex(uint32_t index) const
+	{
+		if (index < 0 || index > Components.Size) {
+			return nullptr;
+		}
+
+		return Components[index];
 	}
 
 
@@ -79,7 +103,7 @@ namespace bg3se
 		return Components.Types[(int32_t)componentType].Pool;
 	}
 
-	BaseComponent* EntityWorldBase::GetComponent(ComponentHandle componentHandle, bool logError)
+	void* EntityWorldBase::GetComponent(ComponentHandle componentHandle, bool logError)
 	{
 		if (!componentHandle) {
 			return nullptr;
@@ -88,10 +112,10 @@ namespace bg3se
 		auto pool = GetComponentPool(HandleTypeIndex(componentHandle.GetType()), logError);
 		if (!pool) return nullptr;
 
-		return pool->FindComponentByHandle(componentHandle);
+		return pool->Factory.FindByHandle(componentHandle);
 	}
 
-	BaseComponent* EntityWorldBase::GetComponent(ComponentHandle componentHandle, HandleTypeIndex type, bool logError)
+	void* EntityWorldBase::GetComponent(ComponentHandle componentHandle, HandleTypeIndex type, bool logError)
 	{
 		if (!componentHandle) {
 			return nullptr;
@@ -107,7 +131,7 @@ namespace bg3se
 		return GetComponent(componentHandle, logError);
 	}
 
-	BaseComponent* EntityWorldBase::GetComponent(ComponentHandle componentHandle, ComponentTypeIndex type, bool logError)
+	void* EntityWorldBase::GetComponent(ComponentHandle componentHandle, ComponentTypeIndex type, bool logError)
 	{
 		if (!componentHandle) {
 			return nullptr;
@@ -124,7 +148,7 @@ namespace bg3se
 		return GetComponent(componentHandle, logError);
 	}
 
-	BaseComponent* EntityWorldBase::GetComponent(char const* nameGuid, HandleTypeIndex type, bool logError)
+	void* EntityWorldBase::GetComponent(char const* nameGuid, HandleTypeIndex type, bool logError)
 	{
 		if (nameGuid == nullptr) {
 			OsiError("Attempted to look up component with null name!");
@@ -140,7 +164,7 @@ namespace bg3se
 		return GetComponent(fs, type, logError);
 	}
 
-	BaseComponent* EntityWorldBase::GetComponent(char const* nameGuid, ComponentTypeIndex type, bool logError)
+	void* EntityWorldBase::GetComponent(char const* nameGuid, ComponentTypeIndex type, bool logError)
 	{
 		if (nameGuid == nullptr) {
 			OsiError("Attempted to look up component with null name!");
@@ -156,7 +180,7 @@ namespace bg3se
 		return GetComponent(fs, type, logError);
 	}
 
-	BaseComponent* EntityWorldBase::GetComponent(FixedString const& guid, HandleTypeIndex type, bool logError)
+	void* EntityWorldBase::GetComponent(FixedString const& guid, HandleTypeIndex type, bool logError)
 	{
 		if (!guid) {
 			OsiError("Attempted to look up component with null GUID!");
@@ -166,10 +190,10 @@ namespace bg3se
 		auto pool = GetComponentPool(type, logError);
 		if (!pool) return nullptr;
 
-		return pool->FindComponentByGuid(guid);
+		return pool->Factory.FindByGuid(guid);
 	}
 
-	BaseComponent* EntityWorldBase::GetComponent(FixedString const& guid, ComponentTypeIndex type, bool logError)
+	void* EntityWorldBase::GetComponent(FixedString const& guid, ComponentTypeIndex type, bool logError)
 	{
 		if (!guid) {
 			OsiError("Attempted to look up component with null GUID!");
@@ -179,10 +203,10 @@ namespace bg3se
 		auto pool = GetComponentPool(type, logError);
 		if (!pool) return nullptr;
 
-		return pool->FindComponentByGuid(guid);
+		return pool->Factory.FindByGuid(guid);
 	}
 
-	BaseComponent* EntityWorldBase::GetComponent(NetId netId, HandleTypeIndex type, bool logError)
+	void* EntityWorldBase::GetComponent(NetId netId, HandleTypeIndex type, bool logError)
 	{
 		if (!netId) {
 			OsiError("Attempted to look up component with null NetId!");
@@ -192,10 +216,10 @@ namespace bg3se
 		auto pool = GetComponentPool(type, logError);
 		if (!pool) return nullptr;
 
-		return pool->FindComponentByNetId(netId);
+		return pool->Factory.FindByNetId(netId);
 	}
 
-	BaseComponent* EntityWorldBase::GetComponent(NetId netId, ComponentTypeIndex type, bool logError)
+	void* EntityWorldBase::GetComponent(NetId netId, ComponentTypeIndex type, bool logError)
 	{
 		if (!netId) {
 			OsiError("Attempted to look up component with null NetId!");
@@ -205,7 +229,7 @@ namespace bg3se
 		auto pool = GetComponentPool(type, logError);
 		if (!pool) return nullptr;
 
-		return pool->FindComponentByNetId(netId);
+		return pool->Factory.FindByNetId(netId);
 	}
 
 	EntityWorldBase::Entity* EntityWorldBase::GetEntity(EntityHandle entityHandle, bool logError)
@@ -284,7 +308,7 @@ namespace bg3se
 		return GetEntityComponentHandle(entityHandle, ComponentTypeIndex(*componentIndex), logError);
 	}
 
-	BaseComponent* EntityWorldBase::GetEntityComponent(EntityHandle entityHandle, ComponentTypeIndex type, bool logError)
+	void* EntityWorldBase::GetEntityComponent(EntityHandle entityHandle, ComponentTypeIndex type, bool logError)
 	{
 		auto componentHandle = GetEntityComponentHandle(entityHandle, type, logError);
 		if (!componentHandle) return nullptr;
@@ -292,7 +316,7 @@ namespace bg3se
 		return GetComponent(componentHandle, type, logError);
 	}
 
-	BaseComponent* EntityWorldBase::GetEntityComponent(EntityHandle entityHandle, HandleTypeIndex type, bool logError)
+	void* EntityWorldBase::GetEntityComponent(EntityHandle entityHandle, HandleTypeIndex type, bool logError)
 	{
 		auto componentHandle = GetEntityComponentHandle(entityHandle, type, logError);
 		if (!componentHandle) return nullptr;
@@ -499,8 +523,8 @@ namespace bg3se
 		MapComponentIndices("eoc::exp::ExperienceComponent", ExtComponentType::Experience);
 		MapComponentIndices("eoc::HealthComponent", ExtComponentType::Health);
 		MapComponentIndices("eoc::PassiveComponent", ExtComponentType::Passive);
-		MapComponentIndices("eoc::SenseComponent", ExtComponentType::Sense);
-		MapComponentIndices("eoc::spell::SpellBookComponent", ExtComponentType::SpellBook);
+		MapComponentIndices("eoc::HearingComponent", ExtComponentType::Hearing);
+		MapComponentIndices("eoc::spell::BookComponent", ExtComponentType::SpellBook);
 		MapComponentIndices("eoc::StatsComponent", ExtComponentType::Stats);
 		MapComponentIndices("eoc::StatusImmunitiesComponent", ExtComponentType::StatusImmunities);
 		MapComponentIndices("eoc::SurfacePathInfluencesComponent", ExtComponentType::SurfacePathInfluences);
@@ -514,9 +538,9 @@ namespace bg3se
 		MapComponentIndices("eoc::ActionResourceConsumeMultiplierBoostCompnent", ExtComponentType::ActionResourceConsumeMultiplierBoost);
 		MapComponentIndices("eoc::combat::ParticipantComponent", ExtComponentType::CombatParticipant);
 		MapComponentIndices("eoc::GenderComponent", ExtComponentType::Gender);
-		MapComponentIndices("eoc::spell::SpellContainerComponent", ExtComponentType::SpellContainer);
+		MapComponentIndices("eoc::spell::ContainerComponent", ExtComponentType::SpellContainer);
 		MapComponentIndices("eoc::TagComponent", ExtComponentType::Tag);
-		MapComponentIndices("eoc::spell::SpellBookPrepares", ExtComponentType::SpellBookPrepares);
+		MapComponentIndices("eoc::spell::BookPreparesComponent", ExtComponentType::SpellBookPrepares);
 		MapComponentIndices("eoc::combat::StateComponent", ExtComponentType::CombatState);
 		MapComponentIndices("eoc::TurnBasedComponent", ExtComponentType::TurnBased);
 		MapComponentIndices("eoc::TurnOrderComponent", ExtComponentType::TurnOrder);
@@ -582,14 +606,14 @@ namespace bg3se
 		MapComponentIndices("eoc::DualWieldingComponent", ExtComponentType::DualWielding);
 		MapComponentIndices("eoc::GameObjectVisualComponent", ExtComponentType::GameObjectVisual);
 		MapComponentIndices("eoc::InventorySlotComponent", ExtComponentType::InventorySlot);
-		MapComponentIndices("eoc::spell::SpellBookCooldowns", ExtComponentType::SpellBookCooldowns);
+		MapComponentIndices("eoc::spell::BookCooldownsComponent", ExtComponentType::SpellBookCooldowns);
 		MapComponentIndices("eoc::DisplayNameComponent", ExtComponentType::DisplayName);
 		MapComponentIndices("eoc::EquipableComponent", ExtComponentType::Equipable);
 		MapComponentIndices("eoc::GameplayLightComponent", ExtComponentType::GameplayLight);
 		MapComponentIndices("eoc::ProgressionContainerComponent", ExtComponentType::ProgressionContainer);
 		MapComponentIndices("eoc::progression::MetaComponent", ExtComponentType::ProgressionMeta);
 		MapComponentIndices("eoc::RaceComponent", ExtComponentType::Race);
-		MapComponentIndices("eoc::SightComponent", ExtComponentType::Sight);
+		MapComponentIndices("eoc::sight::ReplicatedDataComponent", ExtComponentType::Sight);
 		MapComponentIndices("eoc::CanTravelComponent", ExtComponentType::CanTravel);
 		MapComponentIndices("eoc::CanBeInInventoryComponent", ExtComponentType::CanBeInInventory);
 		MapComponentIndices("eoc::MovementComponent", ExtComponentType::Movement);
@@ -597,8 +621,8 @@ namespace bg3se
 		MapComponentIndices("eoc::PathingComponent", ExtComponentType::Pathing);
 		MapComponentIndices("eoc::SteeringComponent", ExtComponentType::Steering);
 		MapComponentIndices("eoc::CanDeflectProjectilesComponent", ExtComponentType::CanDeflectProjectiles);
-		MapComponentIndices("eoc::spell::LearnedSpells", ExtComponentType::LearnedSpells);
-		MapComponentIndices("eoc::spell::SpellAiConditions", ExtComponentType::SpellAiConditions);
+		MapComponentIndices("eoc::spell::LearnedSpellsComponent", ExtComponentType::LearnedSpells);
+		MapComponentIndices("eoc::spell::AiConditionsComponent", ExtComponentType::SpellAiConditions);
 		MapComponentIndices("ls::ActiveSkeletonSlotsComponent", ExtComponentType::ActiveSkeletonSlots);
 		MapComponentIndices("ls::NetComponent", ExtComponentType::Net);
 		MapComponentIndices("ls::PhysicsComponent", ExtComponentType::Physics);
@@ -887,7 +911,7 @@ namespace bg3se
 		MapComponentIndices("esv::PlanTagComponent", ExtComponentType::ServerPlanTag);
 		MapComponentIndices("esv::RaceTagComponent", ExtComponentType::ServerRaceTag);
 		MapComponentIndices("esv::TemplateTagComponent", ExtComponentType::ServerTemplateTag);
-		MapComponentIndices("esv::ToggledPassivesComponent", ExtComponentType::ServerToggledPassives);
+		MapComponentIndices("esv::passive::ToggledPassivesComponent", ExtComponentType::ServerToggledPassives);
 		MapComponentIndices("esv::BoostTagComponent", ExtComponentType::ServerBoostTag);
 		MapComponentIndices("esv::TriggerStateComponent", ExtComponentType::ServerTriggerState);
 		MapComponentIndices("esv::SafePositionComponent", ExtComponentType::ServerSafePosition);

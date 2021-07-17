@@ -19,7 +19,6 @@ char const * GameStateNames[] =
 	"Exit",
 	"LoadLevel",
 	"LoadModule",
-	"LoadGMCampaign",
 	"LoadSession",
 	"UnloadLevel",
 	"UnloadModule",
@@ -29,10 +28,8 @@ char const * GameStateNames[] =
 	"Running",
 	"Save",
 	"Disconnect",
-	"GameMasterPause",
 	"BuildStory",
-	"ReloadStory",
-	"Installation"
+	"ReloadStory"
 };
 
 ScriptExtender::ScriptExtender(ExtenderConfig& config)
@@ -127,12 +124,6 @@ void ScriptExtender::OnGameStateChanged(void * self, GameState fromState, GameSt
 		//networkManager_.ExtendNetworkingServer();
 		break;
 
-	case GameState::LoadGMCampaign:
-		INFO("esv::ScriptExtender::OnGameStateChanged(): Loading GM campaign");
-		LoadExtensionState();
-		//networkManager_.ExtendNetworkingServer();
-		break;
-
 	case GameState::LoadSession:
 		INFO("esv::ScriptExtender::OnGameStateChanged(): Loading game session");
 		LoadExtensionState();
@@ -178,7 +169,7 @@ void ScriptExtender::ResetLuaState()
 		ext->AddPostResetCallback([ext]() {
 			ext->OnModuleResume();
 			auto state = GetStaticSymbols().GetServerState();
-			if (state && (state == GameState::Paused || state == GameState::Running || state == GameState::GameMasterPause)) {
+			if (state && (state == GameState::Paused || state == GameState::Running)) {
 				ext->OnGameSessionLoading();
 				ext->OnGameSessionLoaded();
 				ext->StoryLoaded();

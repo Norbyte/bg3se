@@ -395,7 +395,7 @@ namespace bg3se::esv::lua
 			return 0;
 		}
 
-		auto xaction = factory->Get(handle);
+		auto xaction = factory->FindByHandle(handle);
 		if (!xaction) {
 			OsiWarn("No surface action found with handle " << std::hex << handle.Handle << "; maybe it already expired?");
 			return 0;

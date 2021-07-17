@@ -299,7 +299,7 @@ namespace bg3se
         OverrideableProperty<TranslatedString> UnknownDescription;
         OverrideableProperty<FixedString> Speaker;
         OverrideableProperty<FixedString> AltSpeaker;
-        ObjectSet<STDWString> SpeakerGroupList;
+        ObjectSet<STDString> SpeakerGroupList;
         OverrideableProperty<int32_t> LevelOverride;
         OverrideableProperty<bool> IsSourceContainer;
         OverrideableProperty<FixedString> MeshProxy;

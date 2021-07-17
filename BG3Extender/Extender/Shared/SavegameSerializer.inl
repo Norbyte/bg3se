@@ -10,7 +10,7 @@ void SavegameSerializer::SavegameVisit(ObjectVisitor* visitor)
 		if (visitor->IsReading()) {
 			if (version > SavegameVersion) {
 				ERR("Savegame version too new! Extender version %d, savegame version %d; savegame data will not be loaded!", SavegameVersion, version);
-				std::wstringstream ss;
+				std::stringstream ss;
 				ss << "Could not load Script Extender save data - savegame is newer than the currently installed extender!<br>";
 				ss << "Extender version v" << SavegameVersion << ", savegame version v" << version;
 				gExtender->GetLibraryManager().ShowStartupError(ss.str().c_str(), true, false);

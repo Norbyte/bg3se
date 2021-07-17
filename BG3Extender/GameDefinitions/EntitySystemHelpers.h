@@ -104,9 +104,9 @@ public:
 	template <class T>
 	T* RawComponentPtrToComponent(void* ptr)
 	{
-		if constexpr (std::is_same_v<T, esv::Character> || std::is_same_v<T, esv::Item>) {
+		/*if constexpr (std::is_same_v<T, esv::Character> || std::is_same_v<T, esv::Item>) {
 			return reinterpret_cast<T*>((uintptr_t)ptr - 8);
-		}
+		}*/
 
 		return reinterpret_cast<T*>(ptr);
 	}
@@ -182,7 +182,7 @@ public:
 		auto pool = world->Components.Types[(int)*componentIndex].Pool;
 		auto size = pool->GetSize();
 		for (auto i = 0; i < size; i++) {
-			auto component = pool->GetComponentByIndex(i);
+			auto component = pool->Factory.FindByIndex(i);
 			if (component) {
 				fun(RawComponentPtrToComponent<T>(component));
 			}

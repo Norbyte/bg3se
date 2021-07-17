@@ -52,7 +52,7 @@ namespace bg3se::lua::dbg
 
 	void ComponentHandleToProtobuf(ComponentHandle const& handle, MsgValue* value)
 	{
-		value->set_type_id(MsgValueType::OBJECT_HANDLE);
+		value->set_type_id(MsgValueType::COMPONENT_HANDLE);
 		value->set_intval((int)handle.Handle);
 
 		if (!handle) {

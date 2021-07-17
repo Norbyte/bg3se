@@ -27,7 +27,7 @@ namespace bg3se::lua
 	void GenericPropertyMap::AddRawProperty(STDString const& prop, typename RawPropertyAccessors::Getter* getter, 
 		typename RawPropertyAccessors::Setter* setter, std::size_t offset)
 	{
-		Properties.insert(std::make_pair(prop, RawPropertyAccessors{ getter, setter, offset }));
+		Properties.insert(std::make_pair(prop, RawPropertyAccessors{ prop, getter, setter, offset }));
 	}
 
 

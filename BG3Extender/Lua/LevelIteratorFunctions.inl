@@ -19,17 +19,17 @@ void GetCharactersGeneric(lua_State* L, FixedString const& requestedLevel, Predi
 	auto predicate = [L, levelName, pred, excludeOffStage, excludeDeactivated, &index](Character* ch) {
 		if (excludeOffStage && ch->HasFlag((uint64_t)CharacterFlags::OffStage)) return;
 
-		auto level = gExtender->GetServer().GetEntityHelpers().GetEntityComponent<LevelComponent>(ch->Entity, false);
+		auto level = gExtender->GetServer().GetEntityHelpers().GetEntityComponent<LevelComponent>(ch->Base.Entity, false);
 		if (!level || level->LevelName != levelName) return;
 		
 		if (excludeDeactivated) {
-			auto active = gExtender->GetServer().GetEntityHelpers().GetEntityComponent<esv::ActiveComponent>(ch->Entity, false);
+			auto active = gExtender->GetServer().GetEntityHelpers().GetEntityComponent<esv::ActiveComponent>(ch->Base.Entity, false);
 			if (!active) return;
 		}
 
 		if (!pred(ch)) return;
 
-		settable(L, index++, ch->Entity);
+		settable(L, index++, ch->Base.Entity);
 	};
 
 	gExtender->GetServer().GetEntityHelpers().IterateComponents<Character>(predicate);
@@ -76,7 +76,7 @@ int GetCharactersAroundPosition(lua_State* L)
 	}
 
 	GetCharactersGeneric(L, FixedString{}, [pos, distance](esv::Character* c) {
-		auto transform = gExtender->GetServer().GetEntityHelpers().GetEntityComponent<TransformComponent>(c->Entity, false);
+		auto transform = gExtender->GetServer().GetEntityHelpers().GetEntityComponent<TransformComponent>(c->Base.Entity, false);
 		if (!transform) return false;
 
 		return abs(glm::length(pos - transform->Transform.Translate)) < distance;
@@ -103,17 +103,17 @@ void GetItemsGeneric(lua_State* L, FixedString const& requestedLevel, Predicate 
 	auto predicate = [L, levelName, pred, excludeOffStage, excludeDeactivated, &index](Item* it) {
 		if (excludeOffStage && it->HasFlag((uint64_t)ItemFlags::OffStage)) return;
 
-		auto level = gExtender->GetServer().GetEntityHelpers().GetEntityComponent<LevelComponent>(it->Entity, false);
+		auto level = gExtender->GetServer().GetEntityHelpers().GetEntityComponent<LevelComponent>(it->Base.Entity, false);
 		if (!level || level->LevelName != levelName) return;
 
 		if (excludeDeactivated) {
-			auto active = gExtender->GetServer().GetEntityHelpers().GetEntityComponent<esv::ActiveComponent>(it->Entity, false);
+			auto active = gExtender->GetServer().GetEntityHelpers().GetEntityComponent<esv::ActiveComponent>(it->Base.Entity, false);
 			if (!active) return;
 		}
 
 		if (!pred(it)) return;
 
-		settable(L, index++, it->Entity);
+		settable(L, index++, it->Base.Entity);
 	};
 
 	gExtender->GetServer().GetEntityHelpers().IterateComponents<Item>(predicate);
@@ -160,7 +160,7 @@ int GetItemsAroundPosition(lua_State* L)
 	}
 
 	GetItemsGeneric(L, FixedString{}, [pos, distance](esv::Item* it) {
-		auto transform = gExtender->GetServer().GetEntityHelpers().GetEntityComponent<TransformComponent>(it->Entity, false);
+		auto transform = gExtender->GetServer().GetEntityHelpers().GetEntityComponent<TransformComponent>(it->Base.Entity, false);
 		if (!transform) return false;
 
 		return abs(glm::length(pos - transform->Transform.Translate)) < distance;

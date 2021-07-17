@@ -207,8 +207,7 @@ namespace bg3se
 	bool LibraryManager::LoadTarget(tinyxml2::XMLElement* ele, SymbolMappingTarget& target)
 	{
 		auto name = ele->Attribute("Name");
-		if (!name) name = "(Unnamed)";
-		target.Name = name;
+		if (name) target.Name = name;
 
 		auto type = ele->Attribute("Type");
 		if (strcmp(type, "Absolute") == 0) {
@@ -247,6 +246,15 @@ namespace bg3se
 				return false;
 			}
 		}
+
+		if (target.Name.empty()) {
+			if (staticSymbol) {
+				target.Name = staticSymbol;
+			} else {
+				target.Name = "(Unnamed)";
+			}
+		}
+
 		return true;
 	}
 

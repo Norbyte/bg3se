@@ -339,7 +339,7 @@ namespace bg3se
 		UUID Race;
 		UUID SubRace;
 		__int64 field_38;
-		STDWString Name;
+		STDString Name;
 		__int64 field_60;
 		uint32_t field_68;
 		uint32_t field_6C;
@@ -560,7 +560,7 @@ namespace bg3se
 		TranslatedString NameKey;
 		float Unknown;
 		int Unknown2;
-		STDWString Name;
+		STDString Name;
 	};
 
 	struct DisplayNameListComponent : public BaseComponent
@@ -1001,7 +1001,7 @@ namespace bg3se
 
 		TranslatedString NameKey;
 		TranslatedString UnknownKey;
-		STDWString Name;
+		STDString Name;
 	};
 
 	struct EquipableComponent : public BaseComponent

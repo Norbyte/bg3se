@@ -22,7 +22,7 @@ function TestEntityFunctions()
     AssertType(char:GetAllComponents().Transform, "userdata")
     AssertType(char.Transform, "userdata")
     
-    AssertEquals(char:GetEntityType(), 10)
+    AssertEquals(char:GetEntityType(), 11)
 
     -- GetSalt and GetIndex have no deterministic outputs
 end
@@ -32,7 +32,7 @@ function TestComponentFunctions()
     local comp = char.Transform.Handle
 
     AssertEquals(comp:GetTypeName(), "ls::TransformComponent")
-    AssertEquals(comp:GetType(), 526)
+    AssertEquals(comp:GetType(), 701)
 
     AssertType(comp:Get(), "userdata")
 

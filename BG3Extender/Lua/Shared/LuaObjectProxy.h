@@ -15,6 +15,7 @@ namespace bg3se::lua
 			using Getter = bool (lua_State* L, LifetimeHolder const& lifetime, void* object, std::size_t offset);
 			using Setter = bool (lua_State* L, LifetimeHolder const& lifetime, void* object, int index, std::size_t offset);
 
+			STDString Name;
 			Getter* Get;
 			Setter* Set;
 			std::size_t Offset;
@@ -25,6 +26,7 @@ namespace bg3se::lua
 		void AddRawProperty(STDString const& prop, typename RawPropertyAccessors::Getter* getter, 
 			typename RawPropertyAccessors::Setter* setter, std::size_t offset);
 
+		STDString Name;
 		std::unordered_map<STDString, RawPropertyAccessors> Properties;
 		std::vector<STDString> Parents;
 	};

@@ -95,7 +95,8 @@ bool EnableWriteProtectedWrites{ false };
 
 #define BEGIN_CLS(cls) { \
 	using PM = StaticLuaPropertyMap<cls>; \
-	auto& pm = StaticLuaPropertyMap<cls>::PropertyMap;
+	auto& pm = StaticLuaPropertyMap<cls>::PropertyMap; \
+	pm.Name = #cls;
 
 #define END_CLS() }
 

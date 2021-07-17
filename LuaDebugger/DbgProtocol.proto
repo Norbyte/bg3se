@@ -31,7 +31,7 @@ enum MsgValueType {
   USERDATA = 7;
   THREAD = 8;
   UNKNOWN = 9;
-  OBJECT_HANDLE = 10;
+  COMPONENT_HANDLE = 10;
   NONE = 11;
 }
 

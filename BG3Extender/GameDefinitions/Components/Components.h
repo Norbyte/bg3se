@@ -41,9 +41,9 @@ namespace bg3se
 		VirtualMultiHashMap<UUID, Array<Amount>> Resources;
 	};
 
-	struct SenseComponent : public BaseComponent
+	struct HearingComponent : public BaseComponent
 	{
-		static constexpr ExtComponentType ComponentType = ExtComponentType::Sense;
+		static constexpr ExtComponentType ComponentType = ExtComponentType::Hearing;
 
 		float Sight;
 		float Hearing;

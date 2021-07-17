@@ -201,7 +201,6 @@ namespace bg3se
 			void* FallbackController;
 			void* NetworkController_M;
 			void* OsirisController;
-			void* ScriptController;
 			void* GameplayController;
 			StatusMachine* StatusMachine;
 			void* SkillManager_M;
@@ -212,12 +211,10 @@ namespace bg3se
 			void** pCurrentTemplate_MAYBE;
 			int Dialog;
 			bool IsDialogAiControlled;
-			float LifeTime;
 			float TurnTimer;
 			float TriggerTrapsTimer;
 			UserId UserID;
 			UserId ReservedUserID;
-			int field_214;
 			EntityHandle OwnerCharacterHandle;
 			EntityHandle FollowCharacterHandle;
 			EntityHandle EnemyCharacterHandle;
@@ -227,7 +224,8 @@ namespace bg3se
 			ObjectSet<EntityHandle> SummonHandleSet;
 			void* field_188;
 			FixedString field_190;
-			ObjectSet<ComponentHandle> RegisteredTriggerHandles;
+			// ObjectSet<ComponentHandle> RegisteredTriggerHandles;
+			uint64_t field_198[2];
 			ObjectSet<FixedString> RegisteredTriggers;
 			PlayerData* PlayerData;
 			int LoseControl_M;

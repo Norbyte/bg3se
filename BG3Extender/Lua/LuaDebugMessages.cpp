@@ -185,9 +185,9 @@ namespace bg3se::lua::dbg
 				if (mod != nullptr) {
 					auto modInfo = info->add_module();
 					modInfo->set_uuid(config.first.GetString());
-					modInfo->set_name(ToUTF8(mod->Info.Name).c_str());
-					modInfo->set_author(ToUTF8(mod->Info.Author).c_str());
-					modInfo->set_path(ToUTF8(mod->Info.Directory).c_str());
+					modInfo->set_name(mod->Info.Name.c_str());
+					modInfo->set_author(mod->Info.Author.c_str());
+					modInfo->set_path(mod->Info.Directory.c_str());
 				}
 				
 			}

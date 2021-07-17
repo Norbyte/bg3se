@@ -200,9 +200,9 @@ namespace bg3se {
 		bool PostStartupFindLibraries();
 		bool GetGameVersion(GameVersionInfo & version);
 
-		void ShowStartupError(STDWString const & msg, bool wait, bool exitGame);
-		void ShowStartupError(STDWString const & msg, bool exitGame);
-		void ShowStartupMessage(STDWString const & msg, bool exitGame);
+		void ShowStartupError(STDString const & msg, bool wait, bool exitGame);
+		void ShowStartupError(STDString const & msg, bool exitGame);
+		void ShowStartupMessage(STDString const & msg, bool exitGame);
 
 		bool EvaluateSymbolCondition(SymbolMappingCondition const & cond, uint8_t const * match);
 		SymbolMappingResult ExecSymbolMappingAction(SymbolMappingTarget const & target, uint8_t const * match);

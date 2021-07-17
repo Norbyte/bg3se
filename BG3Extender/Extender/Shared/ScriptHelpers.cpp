@@ -93,7 +93,7 @@ bool SaveExternalFile(std::string_view path, PathRootType root, std::string_view
 	return true;
 }
 
-bool GetTranslatedString(char const* handle, STDWString& translated)
+bool GetTranslatedString(char const* handle, STDString& translated)
 {
 	throw std::runtime_error("FIXME!");
 	/*auto repo = GetStaticSymbols().GetTranslatedStringRepository();
@@ -166,7 +166,7 @@ bool CreateTranslatedStringKey(FixedString const& key, FixedString const& handle
 	return true;*/
 }
 
-bool CreateTranslatedString(FixedString const& handle, STDWString const& string)
+bool CreateTranslatedString(FixedString const& handle, STDString const& string)
 {
 	throw std::runtime_error("FIXME!");
 	/*auto repo = GetStaticSymbols().GetTranslatedStringRepository();

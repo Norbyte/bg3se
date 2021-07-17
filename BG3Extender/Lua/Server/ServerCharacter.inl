@@ -168,7 +168,7 @@ namespace bg3se::esv::lua
 		esv::Character* character = GetCharacter(L, 1);
 
 		if (character != nullptr) {
-			push(L, character->Entity);
+			push(L, character->Base.Entity);
 			return 1;
 		} else {
 			push(L, nullptr);

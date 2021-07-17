@@ -24,55 +24,54 @@ namespace bg3se
 
 	struct BaseComponent : public ProtectedGameObject<BaseComponent>
 	{
-		void* VMT;
 		// Handle of the entity this component belongs to
 		EntityHandle Entity;
 		// Handle of the current component
 		ComponentHandle Handle;
 	};
 
-	struct ObjectFactoryBase : public ProtectedGameObject<ObjectFactoryBase>
+	struct ComponentFactoryBase : public ProtectedGameObject<ComponentFactoryBase>
 	{
-		virtual ComponentHandle* ReevaluateHandle(ComponentHandle& handle) = 0;
-		virtual ComponentHandle* GetFreeHandle(ComponentHandle& handle) = 0;
-		virtual bool IsFreeIndex(uint32_t index) = 0;
-		virtual bool IsReservedIndex(uint32_t index) = 0;
-		virtual uint64_t ReserveIndex(uint32_t index) = 0;
-		virtual uint64_t UnreserveIndex(uint32_t index) = 0;
-		virtual void Destroy() = 0;
+		// Hack - default implementation provided for typing purposes
+		inline virtual ComponentHandle* ReevaluateHandle(ComponentHandle& handle) {}
+		inline virtual ComponentHandle* GetFreeHandle(ComponentHandle& handle) {}
+		inline virtual bool IsFreeIndex(uint32_t index) { return false; }
+		inline virtual bool IsReservedIndex(uint32_t index) { return false; }
+		inline virtual uint64_t ReserveIndex(uint32_t index) { return 0; }
+		inline virtual uint64_t UnreserveIndex(uint32_t index) { return 0; }
+		inline virtual void Destroy() {}
 
-		struct ObjectEntry
+		struct ComponentEntry
 		{
-			BaseComponent* Object;
-			int32_t PrimitiveIndex;
+			BaseComponent* Component;
+			int32_t ObjectIndex;
 		};
 
-		Array<ObjectEntry> Objects;
-		void* Unknown;
-		Array<uint32_t> Salts;
+		uint32_t Mutex;
+		Array<ComponentEntry> ComponentsByHandleIndex;
+		VirtualArray<uint32_t> Salts;
 		ObjectSet<uint32_t> FreeSlotIndices;
-		ObjectSet<BaseComponent*> Primitives;
+		ObjectSet<void*> Components;
 		uint8_t Unknown3;
 		uint32_t Unknown4;
 
-		BaseComponent* Get(ComponentHandle handle) const;
+		void* FindByHandle(ComponentHandle handle) const;
 	};
 
 
-	struct NetworkObjectFactoryBase : public ObjectFactoryBase
+	struct NetworkComponentFactoryBase : public ComponentFactoryBase
 	{
-		Map<FixedString, BaseComponent*> GuidToObject;
-		Map<uint16_t, BaseComponent*> InUseNetIds;
-		Map<uint16_t, void *> FreeNetIds;
-		Set<uint32_t> Unknown4;
-		uint64_t Unknown5[2];
-		uint32_t NumFreeNetIDs;
-		void* Unknown6;
-		Array<uint16_t> NetIdSalts;
-		uint64_t NextFreeNetIndex;
-		bool CanCreateNetIDs;
+		Map<FixedString, void*> Guids;
+		Map<uint64_t, void*> InUseNetIds;
+		VirtualMultiHashSet<uint64_t> FreeNetIds;
+		VirtualArray<uint16_t> NetIdSalts;
+		uint64_t NextFreeNetId;
+		char CanCreateNetIDs;
+		char field_113[5];
 
-		BaseComponent* FindByNetId(NetId netId) const;
+		void* FindByGuid(FixedString const& guid) const;
+		void* FindByNetId(NetId netId) const;
+		void* FindByIndex(uint32_t index) const;
 	};
 
 	struct BaseComponentProcessingSystem
@@ -85,38 +84,39 @@ namespace bg3se
 	{
 		virtual void Destroy() = 0;
 		virtual bool DestroyComponent(ComponentHandle const& handle) = 0;
-		virtual void CreateComponent() = 0;
-		virtual void ForceComponent() = 0;
-		virtual BaseComponent* FindComponentByHandle(ComponentHandle const& handle) = 0;
-		virtual BaseComponent* TryFindComponentByHandle(ComponentHandle const& handle) = 0;
-		virtual BaseComponent* FindComponentByGuid(FixedString const& guid) = 0;
-		virtual bool MoveComponentByGuid(FixedString const& guid, void* component) = 0;
-		virtual BaseComponent* FindComponentByNetId(NetId const& netId) = 0;
-		virtual uint64_t GetSize() = 0;
-		virtual BaseComponent* GetComponentByIndex(uint64_t index) = 0;
+		virtual bool ForceComponent(ComponentHandle const& handle) = 0;
+		virtual BaseComponent* ForceComponentGuid(FixedString const& guid, FixedString const& guid2) = 0;
+		virtual int GetSize() = 0;
 		virtual ComponentHandle& GetFreeHandle(ComponentHandle& handle) = 0;
 		virtual bool IsReservedHandle(ComponentHandle const& handle) = 0;
-		virtual void ReserveHandle(ComponentHandle const& handle) = 0;
 		virtual void UnreserveHandle(ComponentHandle const& handle) = 0;
-		virtual bool IsFreeHandle(ComponentHandle const& handle) = 0;
+		virtual void UnreserveHandle2(ComponentHandle const& handle) = 0;
+		virtual bool IsValidHandle(ComponentHandle const& handle) = 0;
+
+		NetworkComponentFactoryBase Factory;
 	};
 
 	template <class T>
 	struct ComponentPool : public ComponentPoolBase
 	{
-		inline T* GetComponentByHandle(ComponentHandle const& handle)
+		inline T* GetComponentByIndex(uint32_t index) const
 		{
-			return reinterpret_cast<T*>(FindComponentByHandle(handle));
+			return reinterpret_cast<T*>(Factory.FindByIndex(index));
+		}
+		
+		inline T* GetComponentByHandle(ComponentHandle const& handle) const
+		{
+			return reinterpret_cast<T*>(Factory.FindByHandle(handle));
 		}
 
-		inline T* GetComponentByGuid(FixedString const& guid)
+		inline T* GetComponentByGuid(FixedString const& guid) const
 		{
-			return reinterpret_cast<T*>(FindComponentByGuid(guid));
+			return reinterpret_cast<T*>(Factory.FindByGuid(guid));
 		}
 
-		inline T* GetComponentByNetId(NetId const& netId)
+		inline T* GetComponentByNetId(NetId const& netId) const
 		{
-			return reinterpret_cast<T*>(FindComponentByNetId(netId));
+			return reinterpret_cast<T*>(Factory.FindByNetId(netId));
 		}
 	};
 
@@ -141,7 +141,7 @@ namespace bg3se
 			Array<ComponentHandle> ComponentHandles;
 			Array<int16_t> ComponentIdToSlotIndexMap;
 			int NumUsedSlots;
-			uint64_t OccupiedSlotBitmap[8];
+			uint64_t OccupiedSlotBitmap[12];
 
 			ComponentHandle GetComponentHandle(int32_t type, bool logError);
 		};
@@ -161,16 +161,9 @@ namespace bg3se
 			ComponentPoolBase* Pool;
 			ComponentTypeIndex ComponentIndex;
 			HandleTypeIndex HandleIndex;
+			bool field_10;
 			ObjectSet<int32_t> DependentComponentIndices;
 			ObjectSet<int32_t> DependencyComponentIndices;
-			uint64_t Funcs1[4];
-			EntityWorldBase* EntityWorld;
-			void* UnknownObject;
-			uint64_t Unknown1[2];
-			uint64_t Funcs2[4];
-			EntityWorldBase* EntityWorld2;
-			void* UnknownObject2;
-			uint64_t Unknown2[2];
 		};
 
 
@@ -228,24 +221,24 @@ namespace bg3se
 
 		ComponentPoolBase* GetComponentPool(HandleTypeIndex handleType, bool logError = true);
 		ComponentPoolBase* GetComponentPool(ComponentTypeIndex handleType, bool logError = true);
-		BaseComponent* GetComponent(ComponentHandle componentHandle, bool logError = true);
-		BaseComponent* GetComponent(ComponentHandle componentHandle, HandleTypeIndex type, bool logError = true);
-		BaseComponent* GetComponent(ComponentHandle componentHandle, ComponentTypeIndex type, bool logError = true);
-		BaseComponent* GetComponent(char const* nameGuid, HandleTypeIndex type, bool logError = true);
-		BaseComponent* GetComponent(char const* nameGuid, ComponentTypeIndex type, bool logError = true);
-		BaseComponent* GetComponent(FixedString const& guid, HandleTypeIndex type, bool logError = true);
-		BaseComponent* GetComponent(FixedString const& guid, ComponentTypeIndex type, bool logError = true);
-		BaseComponent* GetComponent(NetId netId, HandleTypeIndex type, bool logError = true);
-		BaseComponent* GetComponent(NetId netId, ComponentTypeIndex type, bool logError = true);
+		void* GetComponent(ComponentHandle componentHandle, bool logError = true);
+		void* GetComponent(ComponentHandle componentHandle, HandleTypeIndex type, bool logError = true);
+		void* GetComponent(ComponentHandle componentHandle, ComponentTypeIndex type, bool logError = true);
+		void* GetComponent(char const* nameGuid, HandleTypeIndex type, bool logError = true);
+		void* GetComponent(char const* nameGuid, ComponentTypeIndex type, bool logError = true);
+		void* GetComponent(FixedString const& guid, HandleTypeIndex type, bool logError = true);
+		void* GetComponent(FixedString const& guid, ComponentTypeIndex type, bool logError = true);
+		void* GetComponent(NetId netId, HandleTypeIndex type, bool logError = true);
+		void* GetComponent(NetId netId, ComponentTypeIndex type, bool logError = true);
 
 		Entity* GetEntity(EntityHandle entityHandle, bool logError = true);
 		ComponentHandle GetEntityComponentHandle(EntityHandle entityHandle, HandleTypeIndex type, bool logError = true);
 		ComponentHandle GetEntityComponentHandle(EntityHandle entityHandle, ComponentTypeIndex type, bool logError = true);
-		BaseComponent* GetEntityComponent(EntityHandle entityHandle, HandleTypeIndex type, bool logError = true);
-		BaseComponent* GetEntityComponent(EntityHandle entityHandle, ComponentTypeIndex type, bool logError = true);
+		void* GetEntityComponent(EntityHandle entityHandle, HandleTypeIndex type, bool logError = true);
+		void* GetEntityComponent(EntityHandle entityHandle, ComponentTypeIndex type, bool logError = true);
 	};
 
-	struct IGameObject : public BaseComponent
+	struct IGameObject : public ProtectedGameObject<IGameObject>
 	{
 		virtual ~IGameObject() = 0;
 		virtual void HandleTextKeyEvent() = 0;
@@ -263,7 +256,7 @@ namespace bg3se
 		virtual uint32_t GetComponentType() = 0;
 		virtual void* GetEntityObjectByHandle(ComponentHandle handle) = 0;
 		virtual void* GetUnknownHandle() = 0;
-		virtual STDWString* GetName() = 0;
+		virtual STDString* GetName() = 0;
 		virtual void SetFlags(uint64_t flag) = 0;
 		virtual void ClearFlags(uint64_t flag) = 0;
 		virtual bool HasFlag(uint64_t flag) const = 0;
@@ -285,6 +278,9 @@ namespace bg3se
 		virtual FixedString& GetParentUUID_M() = 0;
 		virtual FixedString& GetCurrentLevel() = 0;
 		virtual void SetCurrentLevel(FixedString const& fs) = 0;
+
+		void* VMT2;
+		BaseComponent Base;
 	};
 
 	/*struct IEocClientObject : public IGameObject
@@ -395,7 +391,6 @@ namespace bg3se
 			EntityManager* EntityManager;
 			void* unknown_F0;
 			void * LobbyManagerOrigins;
-			bool field_E8;
 			void* SomeSharedServerClientObj;
 			void* field_118;
 		};
@@ -520,7 +515,7 @@ namespace bg3se
 
 		struct EoCClient
 		{
-			using HandleErrorProc = void (void* self, STDWString const* message, bool exitGame, STDWString const* a4);
+			using HandleErrorProc = void (void* self, STDString const* message, bool exitGame, STDString const* a4);
 
 			__int64 field_0;
 			__int64 GameEventManagerVMT;
@@ -559,7 +554,7 @@ namespace bg3se
 			ScratchBuffer ScratchBuf;
 			ModManager* ModManager;
 			__int64 ChatManager;
-			STDWString CurrentHost_M;
+			STDString CurrentHost_M;
 			int field_190;
 			EntityWorld* EntityWorld;
 			__int64 field_1A0;

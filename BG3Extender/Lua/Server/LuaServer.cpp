@@ -201,7 +201,7 @@ namespace bg3se::esv::lua
 		auto& helpers = gExtender->GetServer().GetEntityHelpers();
 		auto character = helpers.GetComponent<esv::Character>(s);
 		if (character) {
-			auto boostContainer = helpers.GetEntityComponent<BoostsContainerComponent>(character->Entity);
+			auto boostContainer = helpers.GetEntityComponent<BoostsContainerComponent>(character->Base.Entity);
 
 			if (boostContainer) {
 				std::cout << "Boosts:" << std::endl;
@@ -266,13 +266,13 @@ namespace bg3se::esv::lua
 		for (unsigned i = 0; i < types.Size(); i++) {
 			auto pool = types[i].Pool;
 			if (pool) {
-				auto comp = pool->FindComponentByGuid(s);
+				auto comp = pool->Factory.FindByGuid(s);
 				if (comp) {
 					auto ch = reinterpret_cast<esv::Character*>(comp);
 					auto ch2 = reinterpret_cast<esv::Character*>((uint64_t)comp - 8);
 					std::cout << "Found in pool " << i << std::endl;
 
-					auto entity = ch2->Entity;
+					auto entity = ch2->Base.Entity;
 
 					auto& helpers = gExtender->GetServer().GetEntityHelpers();
 					auto ar = helpers.GetEntityComponent<ActionResourcesComponent>(entity);
@@ -282,7 +282,7 @@ namespace bg3se::esv::lua
 					auto exp = helpers.GetEntityComponent<ExperienceComponent>(entity);
 					auto health = helpers.GetEntityComponent<HealthComponent>(entity);
 					auto passive = helpers.GetEntityComponent<PassiveComponent>(entity);
-					auto sense = helpers.GetEntityComponent<SenseComponent>(entity);
+					auto sense = helpers.GetEntityComponent<HearingComponent>(entity);
 					auto spells = helpers.GetEntityComponent<SpellBookComponent>(entity);
 					auto stats = helpers.GetEntityComponent<StatsComponent>(entity);
 					auto immun = helpers.GetEntityComponent<StatusImmunitiesComponent>(entity);

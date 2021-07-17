@@ -248,13 +248,13 @@ namespace bg3se::esv
 		uint8_t field_500;
 	};
 
-	struct SurfaceActionFactory : public ObjectFactoryBase
+	struct SurfaceActionFactory : public ComponentFactoryBase
 	{
 		using CreateActionProc = SurfaceAction * (SurfaceActionFactory* self, SurfaceActionType actionType, 
 			GuidResourceDefinitionManagerBase* classDefMgr, uint64_t actionHandle);
 	};
 
-	struct SurfaceManager : public ObjectFactoryBase
+	struct SurfaceManager : public ComponentFactoryBase
 	{
 		using AddActionProc = void(SurfaceManager* self, SurfaceAction* action);
 

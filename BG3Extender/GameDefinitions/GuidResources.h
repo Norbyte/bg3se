@@ -47,6 +47,7 @@ namespace bg3se
 		FixedString Description;
 		FixedString Error;
 		uint32_t MaxLevel;
+		double MaxValue;
 		uint8_t DiceType; // FIXME - map to enumeration
 		uint8_t ReplenishType; // FIXME - map to enumeration
 		bool ShowOnActionResourcePanel;
@@ -74,7 +75,7 @@ namespace bg3se
 		bool HasGod;
 		Array<UUID> Tags;
 		FixedString ClassEquipment;
-		int CharacterCreationPose; // FIXME - map to enumeration
+		FixedString CharacterCreationPose;
 		uint8_t LearningStrategy; // FIXME - map to enumeration
 		uint8_t field_71;
 		int BaseHp;

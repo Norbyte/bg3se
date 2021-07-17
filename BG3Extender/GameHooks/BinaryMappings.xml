@@ -19,7 +19,7 @@
             <Target Name="ls::FixedString::Create" Type="Indirect" Offset="17" Symbol="ls__FixedString__Create" />
             41 B8 FF FF FF FF // mov     r8d, 0FFFFFFFFh
             48 8D 15 ?? ?? ?? ?? // lea     rdx, aVendorid
-            48 8D 4D 67 // lea     rcx, [rbp+57h+arg_0]
+            48 8D 4D ?? // lea     rcx, [rbp+XX]
             E8 ?? ?? ?? ?? // call    ls__FixedString__FromString
         </Mapping>
 
@@ -27,8 +27,8 @@
             <Target Name="ls::FixedString::FromString" Type="Absolute" Offset="0" Symbol="ls__FixedString__GetString" />
             48 83 EC 38 // sub     rsp, 38h
             8B 11 // mov     edx, [rcx]
-            83 FA FD // cmp     edx, 0FFFFFFFDh
-            77 14 // ja      short xxx
+            83 FA FF // cmp     edx, 0FFFFFFFFh
+            74 14 // ja      short xxx
             48 8D 4C 24 20 // lea     rcx, [rsp+38h+var_18]
             E8 ?? ?? ?? ?? // call    ls__FixedString__GetStringValue
             48 8B 44 24 20 // mov     rax, [rsp+38h+var_18]
@@ -38,13 +38,13 @@
         <Mapping Name="ls::FixedString::DecRef" Critical="true">
             <Target Name="ls::FixedString::IncRef" Type="Indirect" Offset="7" Symbol="ls__FixedString__IncRef" />
             <Target Name="ls::FixedString::DecRef" Type="Indirect" Offset="19" Symbol="ls__FixedString__DecRef" />
-            83 FF FE // cmp     edi, 0FFFFFFFEh
-            73 09 // jnb     short xxx
+            83 FF FF // cmp     edi, 0FFFFFFFEh
+            74 09 // jnb     short xxx
             8B CF // mov     ecx, edi
             E8 ?? ?? ?? ?? // call    ls__FixedString__AddRef
             8B 0B // mov     ecx, [rbx]
-            83 F9 FD // cmp     ecx, 0FFFFFFFDh
-            77 05 // ja      short xxx
+            83 F9 FF // cmp     ecx, 0FFFFFFFDh
+            74 05 // ja      short xxx
             E8 ?? ?? ?? ?? // call    ls__FixedString__DecRef
         </Mapping>
 
@@ -72,23 +72,24 @@
         </Mapping>
 
         <Mapping Name="EoCServer2/EoCClient2" Critical="true">
-            <Target Name="ecl::EoCClient" Type="Indirect" Offset="11" Symbol="ecl__EoCClient" />
-            <Target Name="esv::EoCServer" Type="Indirect" Offset="35" Symbol="esv__EoCServer" />
-            48 C7 83 28 02 00 00 00 00 00 00 // mov     qword ptr [rbx+228h], 0
+            <Target Name="ecl::EoCClient" Type="Indirect" Offset="7" Symbol="ecl__EoCClient" />
+            <Target Name="esv::EoCServer" Type="Indirect" Offset="31" Symbol="esv__EoCServer" />
+            48 89 B3 48 02 00 00 // mov     qword ptr [rbx+248h], 0
             48 8B 0D ?? ?? ?? ?? // mov     rcx, cs:ecl__gEoCClient
             E8 ?? ?? ?? ?? // call    xxx
-            48 8B 8B 20 02 00 00 // mov     rcx, [rbx+220h]
+            48 8B 8B 40 02 00 00 // mov     rcx, [rbx+240h]
             E8 ?? ?? ?? ?? // call    xxx
             48 8B 0D ?? ?? ?? ?? // mov     rcx, cs:esv__gEoCServer
         </Mapping>
 
         <Mapping Name="esv::StatusMachine::CreateStatus" Critical="true">
             <Condition Type="FixedString" Offset="0" Value="STORY_FROZEN" />
-            <Target Name="esv::StatusMachine::CreateStatus" Type="Indirect" Offset="17" Symbol="esv__StatusMachine__CreateStatus" />
-            <Target Name="esv::StatusMachine::ApplyStatus" Type="Indirect" Offset="33" Symbol="esv__StatusMachine__ApplyStatus" />
+            <Target Name="esv::StatusMachine::CreateStatus" Type="Indirect" Offset="20" Symbol="esv__StatusMachine__CreateStatus" />
+            <Target Name="esv::StatusMachine::ApplyStatus" Type="Indirect" Offset="36" Symbol="esv__StatusMachine__ApplyStatus" />
             48 8D 15 ?? ?? ?? ?? // lea     rdx, fs_STORY_FROZEN
             4C 8B 05 ?? ?? ?? ?? // mov     r8, cs:qword_144D7D670
             48 8B CB // mov     rcx, rbx
+            45 33 C9 // xor     r9d, r9d
             E8 ?? ?? ?? ?? // call    esv__StatusMachine__CreateStatus
             48 8B D0 // mov     rdx, rax
             48 8B CB // mov     rcx, rbx
@@ -164,82 +165,105 @@
         </Mapping>
 
         <Mapping Name="esv::PassiveSystem::ExecFunctorsBaseCtx">
-            <Target Type="Indirect" Offset="23" Symbol="eoc__StatsFunctorSet__ExecuteType1" />
-            <Target Type="Indirect" Offset="41" Symbol="eoc__StatsFunctorSet__ExecuteType2" />
-            <Target Type="Indirect" Offset="59" Symbol="eoc__StatsFunctorSet__ExecuteType3" />
-            <Target Type="Indirect" Offset="77" Symbol="eoc__StatsFunctorSet__ExecuteType5" />
-            <Target Type="Indirect" Offset="95" Symbol="eoc__StatsFunctorSet__ExecuteType6" />
-            <Target Type="Indirect" Offset="113" Symbol="eoc__StatsFunctorSet__ExecuteType4" />
-            <Target Type="Indirect" Offset="131" Symbol="eoc__StatsFunctorSet__ExecuteType7" />
-            <Target Type="Indirect" Offset="149" Symbol="eoc__StatsFunctorSet__ExecuteType8" />
-            8B 8C 82 ?? ?? ?? ?? // mov     ecx, ds:(x?? - 140000000h)[rdx+rax*4]
-            48 03 CA // add     rcx, rdx
-            FF E1 // jmp     rcx
-            48 8D 93 B0 00 00 00 // lea     rdx, [rbx+0B0h]
-            48 8D 4D D0 // lea     rcx, [rbp+370h+var_3A0]
+            <Target Type="Indirect" Offset="0" Symbol="eoc__StatsFunctorSet__ExecuteType1" />
+            <Target Type="Indirect" Offset="32" Symbol="eoc__StatsFunctorSet__ExecuteType2" />
+            <Target Type="Indirect" Offset="64" Symbol="eoc__StatsFunctorSet__ExecuteType3" />
+            <Target Type="Indirect" Offset="96" Symbol="eoc__StatsFunctorSet__ExecuteType4" />
+            <Target Type="Indirect" Offset="125" Symbol="eoc__StatsFunctorSet__ExecuteType5" />
+            <Target Type="Indirect" Offset="154" Symbol="eoc__StatsFunctorSet__ExecuteType6" />
+            <Target Type="Indirect" Offset="183" Symbol="eoc__StatsFunctorSet__ExecuteType7" />
+            E8 ?? ?? ?? ?? // call    eoc__FunctorList__ExecuteType0
+            E9 ?? ?? 00 00 // jmp     xxx
+
+            3C 01 // cmp     al, 1
+            75 ?? // jnz     short xxx
+            48 8D 97 B0 00 00 00 // lea     rdx, [rdi+0B0h]
+            4D 8D 45 08 // lea     r8, [r13+8]
+            48 8D 8D 80 00 00 00 // lea     rcx, [rbp+460h+hit]
+            E8 ?? ?? ?? ?? // call    xxx
+            E9 ?? ?? ?? ?? // jmp     xxx
+
+            3C 02 // cmp     al, 2
+            75 ?? // jnz     short xxx
+            48 8D 97 B0 00 00 00 // lea     rdx, [rdi+0B0h]
+            4D 8D 45 08 // lea     r8, [r13+8]
+            48 8D 8D 80 00 00 00 // lea     rcx, [rbp+460h+hit]
+            E8 ?? ?? ?? ?? // call    xxx
+            E9 ?? ?? ?? ?? // jmp     xxx
+
+            3C 03 // cmp     al, 3
+            75 ?? // jnz     short xxx
+            48 8D 97 B0 00 00 00 // lea     rdx, [rdi+0B0h]
+            4D 8D 45 08 // lea     r8, [r13+8]
+            48 8D 8D 80 00 00 00 // lea     rcx, [rbp+460h+hit]
             E8 ?? ?? ?? ?? // call    xxx
             EB ?? // jmp     short xxx
-            48 8D 93 B0 00 00 00 // lea     rdx, [rbx+0B0h]
-            48 8D 4D D0 // lea     rcx, [rbp+370h+var_3A0]
+
+            3C 04 // cmp     al, 4
+            75 ?? // jnz     short xxx
+            48 8D 97 B0 00 00 00 // lea     rdx, [rdi+0B0h]
+            4D 8D 45 08 // lea     r8, [r13+8]
+            48 8D 8D 80 00 00 00 // lea     rcx, [rbp+460h+hit]
             E8 ?? ?? ?? ?? // call    xxx
             EB ?? // jmp     short xxx
-            48 8D 93 B0 00 00 00 // lea     rdx, [rbx+0B0h]
-            48 8D 4D D0 // lea     rcx, [rbp+370h+var_3A0]
+
+            3C 05 // cmp     al, 5
+            75 ?? // jnz     short xxx
+            48 8D 97 B0 00 00 00 // lea     rdx, [rdi+0B0h]
+            4D 8D 45 08 // lea     r8, [r13+8]
+            48 8D 8D 80 00 00 00 // lea     rcx, [rbp+460h+hit]
             E8 ?? ?? ?? ?? // call    xxx
             EB ?? // jmp     short xxx
-            48 8D 93 B0 00 00 00 // lea     rdx, [rbx+0B0h]
-            48 8D 4D D0 // lea     rcx, [rbp+370h+var_3A0]
+
+            3C 06 // cmp     al, 6
+            75 ?? // jnz     short xxx
+            48 8D 97 B0 00 00 00 // lea     rdx, [rdi+0B0h]
+            4D 8D 45 08 // lea     r8, [r13+8]
+            48 8D 8D 80 00 00 00 // lea     rcx, [rbp+460h+hit]
             E8 ?? ?? ?? ?? // call    xxx
             EB ?? // jmp     short xxx
-            48 8D 93 B0 00 00 00 // lea     rdx, [rbx+0B0h]
-            48 8D 4D D0 // lea     rcx, [rbp+370h+var_3A0]
+
+            3C 07 // cmp     al, 7
+            75 ?? // jnz     short xxx
+            48 8D 97 B0 00 00 00 // lea     rdx, [rdi+0B0h]
+            4D 8D 45 08 // lea     r8, [r13+8]
+            48 8D 8D 80 00 00 00 // lea     rcx, [rbp+460h+hit]
             E8 ?? ?? ?? ?? // call    xxx
-            EB ?? // jmp     short xxx
-            48 8D 93 B0 00 00 00 // lea     rdx, [rbx+0B0h]
-            48 8D 4D D0 // lea     rcx, [rbp+370h+var_3A0]
-            E8 ?? ?? ?? ?? // call    xxx
-            EB ?? // jmp     short xxx
-            48 8D 93 B0 00 00 00 // lea     rdx, [rbx+0B0h]
-            48 8D 4D D0 // lea     rcx, [rbp+370h+var_3A0]
-            E8 ?? ?? ?? ?? // call    xxx
-            EB ?? // jmp     short xxx
-            48 8D 93 B0 00 00 00 // lea     rdx, [rbx+0B0h]
-            48 8D 4D D0 // lea     rcx, [rbp+370h+var_3A0]
-            E8 ?? ?? ?? ?? // call    xxx
-            48 8D 4D D0 // lea     rcx, [rbp+370h+var_3A0]
+
+            48 8D 8D 80 00 00 00 // lea     rcx, [rbp+460h+hit]
         </Mapping>
 
         <Mapping Name="eoc::DealDamageFunctor::ApplyDamage" Scope="Custom">
             <Target Type="Indirect" Offset="7" Symbol="eoc__DealDamageFunctor__ApplyDamage" />
-            48 8D 8D ?? ?? ?? ?? // lea     rcx, [rbp+3C0h+var_200]
+            48 8D 8D ?? ?? 00 00 // lea     rcx, [rbp+420h+var_230]
             E8 ?? ?? ?? ?? // call    eoc__DealDamageFunctor__ApplyDamage2
             90 // nop
         </Mapping>
 
         <Mapping Name="eoc::DealDamageFunctor::ApplyDamage Outer">
-            <Condition Type="FixedString" Offset="4" Value="FallDamageDamageType" />
+            <Condition Type="FixedString" Offset="0" Value="FallDamageDamageType" />
             <Target Type="Absolute" Offset="0" NextSymbol="eoc::DealDamageFunctor::ApplyDamage" NextSymbolSeekSize="384" />
-            48 89 45 ?? // mov     [rbp+...], rax
             48 8D 15 ?? ?? ?? ?? // lea     rdx, fs_FallDamageDamageType
-            48 8B C8 // mov     rcx, rax
+            48 8B 89 48 02 00 00 // mov     rcx, [rcx+248h]
             E8 ?? ?? ?? ?? // call    CRPGStats_ExtraData__Get
-            F3 0F 2C D8 // cvttss2si ebx, xmm0
+            F3 0F 2C C0 // cvttss2si eax, xmm0
+            88 45 35 // mov     [rbp+420h+var_3F0.DamageType], al
         </Mapping>
 
         <Mapping Name="App::Instance">
             <Condition Type="String" Offset="0" Value="EffectManager" />
-            <Target Type="Indirect" Offset="21" Symbol="AppInstance" />
+            <Target Type="Indirect" Offset="18" Symbol="AppInstance" />
             4C 8D 05 ?? ?? ?? ?? // lea     r8, aEffectmanager
             BA 01 00 00 00 // mov     edx, 1
-            49 8B CF // mov     rcx, r15
-            FF 90 80 00 00 00 // call    qword ptr [rax+80h]
+            48 8B CE // mov     rcx, r15
+            FF 50 78 // call    qword ptr [rax+80h]
             48 8B 05 ?? ?? ?? ?? // mov     rax, cs:gApp2
         </Mapping>
 
         <Mapping Name="RPGStats">
             <Condition Type="FixedString" Offset="14" Value="Infectious Disease Depth" />
             <Target Type="Indirect" Offset="7" Symbol="Stats" />
-            48 89 87 C8 01 00 00 // mov     [rdi+1C8h], rax
+            48 89 87 90 01 00 00 // mov     [rdi+190h], rax
             48 8B 1D ?? ?? ?? ?? // mov     rbx, cs:gRPGStats
             48 8D 15 ?? ?? ?? ?? // lea     rdx, fs_Infectious_Disease_Depth
         </Mapping>
@@ -257,20 +281,21 @@
 
         <Mapping Name="esv::SurfaceActionFactory::AddSurfaceAction" Scope="Custom">
             <Target Type="Indirect" Offset="6" Symbol="esv__SurfaceManager__AddAction" />
-            48 8B D6 // mov     rdx, rsi
+            49 8B D6 //  mov     rdx, r14
             48 8B C8 // mov     rcx, rax
             E8 ?? ?? ?? ?? // call    esv__SurfaceActionFactory__AddSurfaceAction
-            44 88 77 08 // mov     [rdi+8], r14b
+            88 5E 08 // mov     [rsi+8], bl
         </Mapping>
 
         <Mapping Name="esv::SurfaceActionFactory">
             <Target Type="Absolute" Offset="0" NextSymbol="esv::SurfaceActionFactory::AddSurfaceAction" NextSymbolSeekSize="768" />
             <Target Type="Indirect" Offset="0" Symbol="esv__SurfaceActionFactory" />
-            <Target Type="Indirect" Offset="23" Symbol="esv__SurfaceActionFactory__CreateAction" />
+            <Target Type="Indirect" Offset="27" Symbol="esv__SurfaceActionFactory__CreateAction" />
             48 8B 0D ?? ?? ?? ?? // mov     rcx, cs:esv__gSurfaceActionFactory
-            B2 02 // mov     dl, 2
-            4C 89 4D D0 // [rbp+var_30], r9
-            49 B9 00 00 00 00 00 00 C0 FF // mov     r9, 0FFC0000000000000h
+            48 BB 00 00 00 00 00 00 C0 FF // mov     rbx, 0FFC0000000000000h
+            44 8B C0 // mov     r8d, eax
+            48 89 5C 24 20 // mov     [rsp+60h+var_40], rbx
+            B2 01 // mov     dl, 1
             E8 ?? ?? ?? ?? // call    esv__SurfaceActionFactory__CreateSurfaceAction
         </Mapping>
 
@@ -294,13 +319,12 @@
         </Mapping>
 
         <Mapping Name="ls::GlobalSwitches">
-            <Condition Type="FixedStringIndirect" Offset="5" Value="ShowSubtitles" />
-            <Target Type="Indirect" Offset="24" Symbol="GlobalSwitches" />
-            C6 44 24 50 00 // mov     byte ptr [rsp+88h+Src], 0
+            <Condition Type="FixedStringIndirect" Offset="19" Value="ShowSubtitles" />
+            <Target Type="Indirect" Offset="12" Symbol="GlobalSwitches" />
+            48 8B 8E F0 01 00 00 // mov     rcx, [rsi+1F0h]
+            E8 ?? ?? ?? ?? // call    xxx
+            48 8B 0D ?? ?? ?? ?? // mov     rcx, cs:ls__gGlobalSwitches
             48 8B 15 ?? ?? ?? ?? // mov     rdx, cs:pffs_ShowSubtitles
-            48 8B 8E E0 01 00 00 // mov     rcx, [rsi+1E0h]
-            E8 ?? ?? ?? ?? // call    sub_144508DE0
-            48 8B 0D ?? ?? ?? ?? // mov     rcx, cs:gGlobalSwitches
         </Mapping>
     </Mappings>
 </BinaryMappings>

@@ -190,7 +190,7 @@ namespace bg3se::esv::lua
 		}
 
 		if (item != nullptr) {
-			push(L, item->Entity);
+			push(L, item->Base.Entity);
 		} else {
 			push(L, nullptr);
 		}

@@ -7,43 +7,44 @@ namespace bg3se
 	struct Version
 	{
 		inline Version() : Ver(0) {}
-		inline Version(uint32_t ver) : Ver(ver) {}
-		inline Version(uint32_t minor, uint32_t major, uint32_t revision, uint32_t build)
-			: Ver(((major & 0xf) << 28) + ((minor & 0xf) << 24) + ((revision & 0xff) << 16) + (build & 0xffff))
+		inline Version(uint64_t ver) : Ver(ver) {}
+		// TODO - figure out how 
+		inline Version(uint64_t minor, uint64_t major, uint64_t revision, uint64_t build)
+			: Ver(((major & 0x1ff) << 55) + ((minor & 0x1ff) << 46) + ((revision & 0xffffff) << 28) + (build & 0xfffffff))
 		{}
 
-		inline uint32_t Major() const
+		inline uint64_t Major() const
 		{
-			return Ver >> 28;
+			return Ver >> 55;
 		}
 
-		inline uint32_t Minor() const
+		inline uint64_t Minor() const
 		{
-			return (Ver >> 24) & 0xf;
+			return (Ver >> 46) & 0x1ff;
 		}
 
-		inline uint32_t Revision() const
+		inline uint64_t Revision() const
 		{
-			return (Ver >> 16) & 0xff;
+			return (Ver >> 28) & 0xffffff;
 		}
 
-		inline uint32_t Build() const
+		inline uint64_t Build() const
 		{
-			return Ver & 0xffff;
+			return Ver & 0xfffffff;
 		}
 
-		uint32_t Ver;
+		uint64_t Ver;
 	};
 
 
 	struct ModuleShortDesc
 	{
 		FixedString ModuleUUID;
-		STDWString Name;
+		STDString Name;
 		Version ModVersion;
 		Version PublishVersion;
 		STDString MD5;
-		STDWString Folder;
+		STDString Folder;
 	};
 
 	struct ModuleSettings : public ProtectedGameObject<ModuleSettings>
@@ -59,7 +60,7 @@ namespace bg3se
 	{
 		FixedString ModuleUUIDString;
 		UUID ModuleUUID;
-		STDWString Name;
+		STDString Name;
 		FixedString StartLevelName;
 		FixedString MenuLevelName;
 		FixedString LobbyLevelName;
@@ -69,11 +70,11 @@ namespace bg3se
 		Version ModVersion{ 0 };
 		Version PublishVersion{ 0 };
 		STDString Hash;
-		STDWString Directory;
+		STDString Directory;
 		ObjectSet<void*> Scripts; // ScriptDataList*
-		STDWString Author;
-		STDWString Description;
-		ObjectSet<STDWString, GameMemoryAllocator, true> Tags;
+		STDString Author;
+		STDString Description;
+		ObjectSet<STDString, GameMemoryAllocator, true> Tags;
 		uint8_t NumPlayers{ 4 };
 		FixedString GMTemplate;
 		ObjectSet<FixedString, GameMemoryAllocator, true> TargetModes;

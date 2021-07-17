@@ -29,9 +29,9 @@ namespace bg3se::lua::utils
 
 	STDString GetTranslatedString(lua_State* L, char const* translatedStringKey, std::optional<char const*> fallbackText)
 	{
-		STDWString translated;
+		STDString translated;
 		if (script::GetTranslatedString(translatedStringKey, translated)) {
-			return ToUTF8(translated);
+			return translated;
 		} else {
 			return fallbackText ? *fallbackText : "";
 		}
@@ -62,8 +62,7 @@ namespace bg3se::lua::utils
 		FixedString handle(handleStr.c_str());
 
 		if (script::CreateTranslatedStringKey(key, handle)) {
-			STDWString str(FromUTF8(value));
-			if (script::CreateTranslatedString(handle, str)) {
+			if (script::CreateTranslatedString(handle, value)) {
 				return handleStr;
 			}
 		}
@@ -86,8 +85,7 @@ namespace bg3se::lua::utils
 	{
 		FixedString handle(handleStr);
 
-		STDWString str(FromUTF8(value));
-		return script::CreateTranslatedString(handle, str);
+		return script::CreateTranslatedString(handle, value);
 	}
 
 	WrapLuaFunction(CreateTranslatedStringHandle)

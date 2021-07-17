@@ -13,8 +13,7 @@ namespace bg3se::esv
 		void ShowErrorMessage(OsiArgumentDesc const & args)
 		{
 			auto message = args[0].String;
-			auto wmsg = FromUTF8(message);
-			gExtender->GetLibraryManager().ShowStartupError(wmsg, false, false);
+			gExtender->GetLibraryManager().ShowStartupError(message, false, false);
 		}
 
 		bool GetVersion(OsiArgumentDesc & args)

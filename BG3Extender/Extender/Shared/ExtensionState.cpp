@@ -29,7 +29,7 @@ namespace bg3se
 
 		unsigned numConfigs{ 0 };
 		for (auto const& mod : modManager->BaseModule.LoadOrderedModules) {
-			auto dir = ToUTF8(mod.Info.Directory);
+			auto dir = mod.Info.Directory;
 			auto configFile = "Mods/" + dir + "/ScriptExtender/Config.json";
 			FileReaderPin reader(configFile, PathRootType::Data);
 
@@ -41,24 +41,24 @@ namespace bg3se
 						featureFlags << flag << " ";
 					}
 
-					INFO(L"Configuration for '%s':\r\n\tMinVersion %d; Feature flags: %s", mod.Info.Name.c_str(),
-						config.MinimumVersion, FromUTF8(featureFlags.str()).c_str());
+					INFO("Configuration for '%s':\r\n\tMinVersion %d; Feature flags: %s", mod.Info.Name.c_str(),
+						config.MinimumVersion, featureFlags.str());
 
 					if (config.MinimumVersion == 0) {
-						OsiError("Module '" << ToUTF8(mod.Info.Name.c_str()) << ":");
+						OsiError("Module '" << mod.Info.Name << ":");
 						OsiError("Specifying RequiredVersion in ScriptExtender/Config.json is mandatory.");
 						continue;
 					}
 
 					if (config.FeatureFlags.find("Lua") != config.FeatureFlags.end()
 						&& config.ModTable.empty()) {
-						OsiError("Module '" << ToUTF8(mod.Info.Name.c_str()) << ":");
+						OsiError("Module '" << mod.Info.Name << ":");
 						OsiError("Modules using Lua must specify a ModTable in ScriptExtender/Config.json.");
 						continue;
 					}
 
 					if (config.MinimumVersion > CurrentVersion) {
-						OsiError("Module '" << ToUTF8(mod.Info.Name.c_str()) << " is targeting version v" << config.MinimumVersion << " that doesn't exist!");
+						OsiError("Module '" << mod.Info.Name << " is targeting version v" << config.MinimumVersion << " that doesn't exist!");
 					}
 
 					if (config.MinimumVersion != 0 && config.MinimumVersion > MergedConfig.MinimumVersion) {
@@ -89,8 +89,8 @@ namespace bg3se
 		}
 
 		if (CurrentVersion < MergedConfig.MinimumVersion && HighestVersionMod != nullptr) {
-			std::wstringstream msg;
-			msg << L"Module \"" << HighestVersionMod->Info.Name << "\" requires extension version "
+			std::stringstream msg;
+			msg << "Module \"" << HighestVersionMod->Info.Name << "\" requires extension version "
 				<< MergedConfig.MinimumVersion << "; current version is v" << CurrentVersion;
 			gExtender->GetLibraryManager().ShowStartupError(msg.str().c_str(), false, true);
 		}
@@ -104,7 +104,7 @@ namespace bg3se
 		Json::Value root;
 		std::string errs;
 		if (!reader->parse(configText.c_str(), configText.c_str() + configText.size(), &root, &errs)) {
-			OsiError("Unable to parse configuration for mod '" << ToUTF8(mod.Info.Name) << "': " << errs);
+			OsiError("Unable to parse configuration for mod '" << mod.Info.Name << "': " << errs);
 			return false;
 		}
 
@@ -301,7 +301,7 @@ namespace bg3se
 	STDString ExtensionStateBase::ResolveModScriptPath(Module const& mod, STDString const& fileName)
 	{
 		STDString path("Mods/");
-		path += ToUTF8(mod.Info.Directory);
+		path += mod.Info.Directory;
 		path += "/ScriptExtender/Lua/";
 		path += fileName;
 		return path;
@@ -382,7 +382,7 @@ namespace bg3se
 
 		auto path = ResolveModScriptPath(*mod, fileName);
 
-		STDString scriptName = ToUTF8(mod->Info.Directory);
+		STDString scriptName = mod->Info.Directory;
 		if (scriptName.length() > 37) {
 			// Strip GUID from end of dir
 			scriptName = scriptName.substr(0, scriptName.length() - 37);

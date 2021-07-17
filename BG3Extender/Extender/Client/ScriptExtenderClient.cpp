@@ -27,7 +27,6 @@ char const * GameStateNames[] =
 	"LoadLevel",
 	"LoadModule",
 	"LoadSession",
-	"LoadGMCampaign",
 	"UnloadLevel",
 	"UnloadModule",
 	"UnloadSession",
@@ -42,11 +41,12 @@ char const * GameStateNames[] =
 	"StartServer",
 	"Movie",
 	"Installation",
-	"GameMasterPause",
 	"ModReceiving",
 	"Lobby",
 	"BuildStory",
-	"LoadLoca"
+	"UNKNOWN_30",
+	"UNKNOWN_31",
+	"AnalyticsSessionEnd"
 };
 
 ScriptExtender::ScriptExtender()
@@ -165,12 +165,6 @@ void ScriptExtender::OnGameStateChanged(void * self, GameState fromState, GameSt
 		}
 		break;
 
-	case GameState::LoadGMCampaign:
-		INFO("ecl::ScriptExtender::OnGameStateChanged(): Loading GM campaign");
-		LoadExtensionState();
-		//networkManager_.ExtendNetworkingClient();
-		break;
-
 	case GameState::LoadSession:
 		INFO("ecl::ScriptExtender::OnClientGameStateChanged(): Loading game session");
 		LoadExtensionState();
@@ -231,7 +225,7 @@ void ScriptExtender::ResetLuaState()
 		ext->AddPostResetCallback([ext]() {
 			ext->OnModuleResume();
 			auto state = GetStaticSymbols().GetClientState();
-			if (state && (state == GameState::Paused || state == GameState::Running || state == GameState::GameMasterPause)) {
+			if (state && (state == GameState::Paused || state == GameState::Running)) {
 				ext->OnGameSessionLoading();
 				ext->OnGameSessionLoaded();
 				ext->OnResetCompleted();

@@ -214,14 +214,14 @@ void ScriptExtender::PostStartup()
 
 	GameVersionInfo gameVersion;
 	if (Libraries.GetGameVersion(gameVersion) && !gameVersion.IsSupported()) {
-		std::wstringstream ss;
-		ss << L"Your game version (v" << gameVersion.Major << L"." << gameVersion.Minor << L"." << gameVersion.Revision << L"." << gameVersion.Build
-			<< L") is not supported by the Script Extender";
+		std::stringstream ss;
+		ss << "Your game version (v" << gameVersion.Major << L"." << gameVersion.Minor << L"." << gameVersion.Revision << L"." << gameVersion.Build
+			<< ") is not supported by the Script Extender";
 		Libraries.ShowStartupError(ss.str().c_str(), true, false);
 	} else if (Libraries.CriticalInitializationFailed()) {
-		Libraries.ShowStartupError(L"A severe error has occurred during Script Extender initialization. Extension features will be unavailable.", true, false);
+		Libraries.ShowStartupError("A severe error has occurred during Script Extender initialization. Extension features will be unavailable.", true, false);
 	} else if (Libraries.InitializationFailed()) {
-		Libraries.ShowStartupError(L"An error has occurred during Script Extender initialization. Some extension features might be unavailable.", true, false);
+		Libraries.ShowStartupError("An error has occurred during Script Extender initialization. Some extension features might be unavailable.", true, false);
 	}
 
 	postStartupDone_ = true;
@@ -245,14 +245,14 @@ void ScriptExtender::OnSkillPrototypeManagerInit(void * self)
 		return;
 	}
 
-	STDWString loadMsg = L"Loading ";
+	STDString loadMsg = "Loading ";
 	loadMsg += modManager->BaseModule.Info.Name;
-	loadMsg += L" (Script Extender v";
-	loadMsg += std::to_wstring(CurrentVersion);
+	loadMsg += " (Script Extender v";
+	loadMsg += std::to_string(CurrentVersion);
 #if defined(_DEBUG)
-	loadMsg += L" Devel";
+	loadMsg += " Devel";
 #endif
-	loadMsg += L")";
+	loadMsg += ")";
 	Libraries.ShowStartupMessage(loadMsg, false);
 	
 	if (server_.IsInServerThread()) {

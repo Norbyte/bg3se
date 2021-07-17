@@ -57,7 +57,7 @@ namespace bg3se::esv
 	};
 
 
-	struct PartyManager : public NetworkObjectFactoryBase
+	struct PartyManager : public NetworkComponentFactoryBase
 	{
 		// FIXME - 2 fields before factory!
 		void* VMT;

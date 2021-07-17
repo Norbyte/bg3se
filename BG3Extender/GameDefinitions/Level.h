@@ -11,7 +11,7 @@ namespace bg3se
 		void* VMT;
 		FixedString LevelName;
 		FixedString UniqueKey;
-		STDWString CustomDisplayLevelName;
+		STDString CustomDisplayLevelName;
 		ObjectSet<Path> Paths;
 		uint8_t Type;
 	};
@@ -116,7 +116,7 @@ namespace bg3se
 			ObjectSet<void*> SomeRegistrations;
 			FixedString field_138;
 			int field_13C;
-			STDWString field_140;
+			STDString field_140;
 		};
 	}
 }
