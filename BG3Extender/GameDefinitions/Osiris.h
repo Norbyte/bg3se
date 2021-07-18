@@ -665,15 +665,15 @@ public:
 	virtual ~TupleVec() {};
 
 	// Ptr to (&TypedValueList->Values)
-	TypedValue * Values;
-	uint8_t Size;
+	TypedValue * Values{ nullptr };
+	uint8_t Size{ 0 };
 	uint8_t __Padding[7];
-	uint32_t Unknown;
+	uint32_t Unknown{ 0 };
 };
 
 struct TuplePtrLL
 {
-	void * VMT;
+	void* VMT{ nullptr };
 	List<TypedValue *> Items;
 };
 
@@ -681,7 +681,6 @@ struct TupleLL
 {
 	struct Item
 	{
-		uint8_t Index;
 		TypedValue Value;
 	};
 
@@ -702,7 +701,6 @@ struct Database : public ProtectedGameObject<Database>
 	uint64_t B;
 	SomeDbItem Items[16];
 	uint64_t C;
-	uint64_t D;
 	void * FactsVMT;
 	List<TupleVec> Facts;
 	Vector<uint32_t> ParamTypes;

@@ -643,7 +643,6 @@ namespace bg3se::esv::lua
 		for (uint32_t i = 0; i < numParams; i++) {
 			auto node = nodes.Args() + i + 1;
 			args.Insert(node, prev);
-			node->Item.Index = i;
 			if (!function_->Signature->OutParamList.isOutParam(i)) {
 				LuaToOsi(L, inputArgIndex + 2, node->Item.Value, (ValueType)argType->Item.Type);
 				inputArgIndex++;

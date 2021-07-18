@@ -172,7 +172,7 @@ namespace bg3se::esv::lua
 	{
 		auto func = LookupOsiFunction(sig.name, sig.arity);
 		if (func == nullptr) {
-			// OsiWarn("Couldn't register Osiris subscriber for " << sig.name << "/" << sig.arity << ": Symbol not found in story.");
+			OsiWarn("Couldn't register Osiris subscriber for " << sig.name << "/" << sig.arity << ": Symbol not found in story.");
 			return;
 		}
 

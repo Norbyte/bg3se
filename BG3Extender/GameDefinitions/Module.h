@@ -20,17 +20,17 @@ namespace bg3se
 
 		inline uint64_t Minor() const
 		{
-			return (Ver >> 46) & 0x1ff;
+			return (Ver >> 47) & 0xff;
 		}
 
 		inline uint64_t Revision() const
 		{
-			return (Ver >> 28) & 0xffffff;
+			return (Ver >> 31) & 0x7ffff;
 		}
 
 		inline uint64_t Build() const
 		{
-			return Ver & 0xfffffff;
+			return Ver & 0x7fffffffull;
 		}
 
 		uint64_t Ver;
