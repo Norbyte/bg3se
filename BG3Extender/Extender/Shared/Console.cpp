@@ -95,9 +95,26 @@ void DebugConsole::Debug(DebugMessageType type, wchar_t const* msg)
 void DebugConsole::SubmitTaskAndWait(bool server, std::function<void()> task)
 {
 	if (server) {
-		gExtender->GetServer().SubmitTaskAndWait(task);
+		auto state = GetStaticSymbols().GetServerState();
+		if (!state) {
+			ERR("Cannot queue server commands when the server state machine is not initialized");
+		} else if (*state == esv::GameState::Paused || *state == esv::GameState::Running) {
+			gExtender->GetServer().SubmitTaskAndWait(task);
+		} else {
+			ERR("Cannot queue server commands in game state %s", EnumInfo<esv::GameState>::Find(*state).GetString());
+		}
 	} else {
-		gExtender->GetClient().SubmitTaskAndWait(task);
+		auto state = GetStaticSymbols().GetClientState();
+		if (!state) {
+			ERR("Cannot queue client commands when the client state machine is not initialized");
+		} else if (*state == ecl::GameState::Menu 
+			|| *state == ecl::GameState::Lobby 
+			|| *state == ecl::GameState::Paused 
+			|| *state == ecl::GameState::Running) {
+			gExtender->GetClient().SubmitTaskAndWait(task);
+		} else {
+			ERR("Cannot queue client commands in game state %s", EnumInfo<ecl::GameState>::Find(*state).GetString());
+		}
 	}
 }
 
