@@ -222,10 +222,8 @@ namespace bg3se
 			ObjectSet<EntityHandle> EnemyHandleSet;
 			Array<void*> SurfacePathInfluenceSet;
 			ObjectSet<EntityHandle> SummonHandleSet;
-			void* field_188;
 			FixedString field_190;
-			// ObjectSet<ComponentHandle> RegisteredTriggerHandles;
-			uint64_t field_198[2];
+			ObjectSet<ComponentHandle> RegisteredTriggerHandles;
 			ObjectSet<FixedString> RegisteredTriggers;
 			PlayerData* PlayerData;
 			int LoseControl_M;

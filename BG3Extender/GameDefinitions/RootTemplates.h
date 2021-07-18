@@ -14,10 +14,10 @@ namespace bg3se
         bool IsOverridden;
     };
 
+
     struct GameObjectTemplate : public HasObjectProxy
     {
         void* VMT;
-        uint64_t Flag;
         OverrideableProperty<uint32_t> Flags;
         void* Tags;
         FixedString Id;
@@ -32,10 +32,8 @@ namespace bg3se
         FixedString LevelName;
         uint8_t _Pad[4];
         OverrideableProperty<uint32_t> GroupID;
-        uint64_t field_68;
+        __int64 field_68;
         Transform Transform;
-        uint8_t _Pad2[4];
-        bool NonUniformScale;
         void* Unknown;
         OverrideableProperty<FixedString> VisualTemplate;
         OverrideableProperty<FixedString> PhysicsTemplate;
@@ -50,9 +48,10 @@ namespace bg3se
         bool HasParentModRelation;
         bool Unknown2;
         uint8_t _Pad3[6];
-        bool HasGameplayValue;
+        OverrideableProperty<bool> HasGameplayValue;
         STDString FileName;
     };
+
 
     struct EoCGameObjectTemplate : public GameObjectTemplate
     {
@@ -67,10 +66,9 @@ namespace bg3se
         OverrideableProperty<bool> CollideWithCamera;
         OverrideableProperty<bool> HierarchyOnlyFade;
         OverrideableProperty<FixedString> FadeGroup;
-        ObjectSet<FixedString> FadeChildren;
-        OverrideableProperty<int32_t> GameMasterSpawnSubSection;
-        uint64_t Unknown4[4];
+        OverrideableProperty<ObjectSet<FixedString>> FadeChildren;
     };
+
 
     struct EoCGameObjectTemplate2 : public EoCGameObjectTemplate
     {
@@ -89,7 +87,10 @@ namespace bg3se
         OverrideableProperty<FixedString> SoundInitEvent;
         OverrideableProperty<int16_t> SoundAttenuation;
         OverrideableProperty<UUID> HLOD;
-    };
+        OverrideableProperty<uint8_t> ShootThroughType;
+        OverrideableProperty<bool> CanShineThrough;
+    }; 
+
 
     struct CombatComponentTemplate
     {
@@ -109,6 +110,7 @@ namespace bg3se
         bool Unknown2;
     };
 
+
     struct CharacterTemplate : public EoCGameObjectTemplate
     {
         CombatComponentTemplate CombatComponent;
@@ -117,17 +119,17 @@ namespace bg3se
         OverrideableProperty<FixedString> Stats;
         OverrideableProperty<FixedString> SpellSet;
         OverrideableProperty<FixedString> Equipment;
+        OverrideableProperty<ObjectSet<UUID>> EquipmentTypes;
         OverrideableProperty<ObjectSet<FixedString>> Treasures;
         OverrideableProperty<ObjectSet<FixedString>> TradeTreasures;
         OverrideableProperty<FixedString> LightID;
         OverrideableProperty<FixedString> ActiveCharacterLightID;
         OverrideableProperty<FixedString> BloodType;
         OverrideableProperty<FixedString> DefaultDialog;
-        void* SpeakerGroupList;
+        VirtualMultiHashSet<UUID>* SpeakerGroupList;
         OverrideableProperty<STDString> GeneratePortrait;
-        OverrideableProperty<float> LadderAttachSpeed;
+        OverrideableProperty<float> LadderAttachOffset;
         OverrideableProperty<float> LadderLoopSpeed;
-        OverrideableProperty<float> LadderDetachSpeed;
         OverrideableProperty<bool> CanShootThrough;
         OverrideableProperty<uint8_t> ShootThroughType;
         OverrideableProperty<bool> WalkThrough;
@@ -140,7 +142,6 @@ namespace bg3se
         OverrideableProperty<bool> HardcoreOnly;
         OverrideableProperty<bool> NotHardcore;
         OverrideableProperty<bool> JumpUpLadders;
-        OverrideableProperty<bool> IsHuge;
         OverrideableProperty<UUID> EquipmentRace;
         OverrideableProperty<ObjectSet<void*>> OnDeathActions;
         OverrideableProperty<float> DeathRaycastMinLength;
@@ -150,12 +151,14 @@ namespace bg3se
         int field_3D8;
         OverrideableProperty<FixedString> ExplodedResourceID;
         OverrideableProperty<FixedString> ExplosionFX;
-        OverrideableProperty<ObjectSet<void*>> Scripts;
         OverrideableProperty<FixedString> AnubisConfigName;
         OverrideableProperty<ObjectSet<void*>> SkillList;
         OverrideableProperty<ObjectSet<void*>> ItemList;
+        OverrideableProperty<ObjectSet<void*>> StatusList;
         OverrideableProperty<FixedString> TrophyID;
         OverrideableProperty<FixedString> SoundInitEvent;
+        OverrideableProperty<FixedString> SoundMovementStartEvent;
+        OverrideableProperty<FixedString> SoundMovementStopEvent;
         OverrideableProperty<int8_t> SoundObjectIndex;
         OverrideableProperty<int16_t> SoundAttenuation;
         OverrideableProperty<FixedString> FoleyShortResourceID;
@@ -167,11 +170,15 @@ namespace bg3se
         OverrideableProperty<FixedString> VocalAttackResourceID;
         OverrideableProperty<FixedString> VocalAwakeResourceID;
         OverrideableProperty<FixedString> VocalBoredResourceID;
+        OverrideableProperty<FixedString> VocalBuffResourceID;
         OverrideableProperty<FixedString> VocalDeathResourceID;
         OverrideableProperty<FixedString> VocalDodgeResourceID;
         OverrideableProperty<FixedString> VocalEffortsResourceID;
         OverrideableProperty<FixedString> VocalExhaustedResourceID;
         OverrideableProperty<FixedString> VocalFallResourceID;
+        OverrideableProperty<FixedString> VocalIdle1ResourceID;
+        OverrideableProperty<FixedString> VocalIdle2ResourceID;
+        OverrideableProperty<FixedString> VocalIdle3ResourceID;
         OverrideableProperty<FixedString> VocalInitiativeResourceID;
         OverrideableProperty<FixedString> VocalLaughterResourceID;
         OverrideableProperty<FixedString> VocalPainResourceID;
@@ -205,6 +212,7 @@ namespace bg3se
         OverrideableProperty<bool> HasPlayerApprovalRating;
         OverrideableProperty<bool> DisableEquipping;
         OverrideableProperty<float> WorldClimbingSpeed;
+        OverrideableProperty<bool> UseStandAtDestination;
         OverrideableProperty<bool> IsMovementEnabled;
         OverrideableProperty<float> MovementAcceleration;
         OverrideableProperty<float> MovementSpeedStroll;
@@ -233,12 +241,14 @@ namespace bg3se
         OverrideableProperty<float> ProbeSpineBOffset;
         OverrideableProperty<float> ProbeTiltToOffset;
         OverrideableProperty<float> VFXScale;
+        OverrideableProperty<FixedString> LadderBlendspace_Attach_Up;
+        OverrideableProperty<FixedString> LadderBlendspace_Detach_Down;
+        OverrideableProperty<FixedString> LadderBlendspace_Detach_Up;
     };
 
 
     struct ItemTemplate : public EoCGameObjectTemplate2
     {
-        __int64 field_238;
         CombatComponentTemplate CombatComponent;
         OverrideableProperty<FixedString> Icon;
         OverrideableProperty<bool> CanBePickedUp;
@@ -253,7 +263,6 @@ namespace bg3se
         OverrideableProperty<bool> IsSurfaceBlocker;
         OverrideableProperty<bool> IsSurfaceCloudBlocker;
         OverrideableProperty<bool> TreasureOnDestroy;
-        OverrideableProperty<bool> IsHuge;
         OverrideableProperty<bool> HardcoreOnly;
         OverrideableProperty<bool> NotHardcore;
         OverrideableProperty<bool> UsePartyLevelForTreasureLevel;
@@ -262,8 +271,7 @@ namespace bg3se
         OverrideableProperty<bool> UseOnDistance;
         OverrideableProperty<bool> UseRemotely;
         OverrideableProperty<bool> PhysicsFollowAnimation;
-        OverrideableProperty<FixedString> UnknownDisplayName;
-        __int64 field_310;
+        OverrideableProperty<TranslatedString> UnknownDisplayName;
         OverrideableProperty<uint32_t> Tooltip;
         OverrideableProperty<FixedString> Stats;
         OverrideableProperty<ObjectSet<FixedString>> InventoryList;
@@ -271,9 +279,11 @@ namespace bg3se
         OverrideableProperty<ObjectSet<void*>> OnDestroyActions;
         OverrideableProperty<TranslatedString> OnUseDescription;
         OverrideableProperty<ObjectSet<void*>> Scripts;
+        OverrideableProperty<VirtualMultiHashMap<FixedString, void*>> ScriptOverrides;
         OverrideableProperty<ObjectSet<void*>> ScriptConfigGlobalParameters;
         OverrideableProperty<FixedString> AnubisConfigName;
         OverrideableProperty<ObjectSet<void*>> ItemList;
+        OverrideableProperty<ObjectSet<void*>> StatusList;
         OverrideableProperty<FixedString> DefaultState;
         OverrideableProperty<FixedString> Owner;
         OverrideableProperty<FixedString> Key;
@@ -284,22 +294,24 @@ namespace bg3se
         OverrideableProperty<int32_t> MaxStackAmount;
         OverrideableProperty<int32_t> TreasureLevel;
         OverrideableProperty<void*> SomeTemplateInfo;
-        __int64 field_460; // maybe DropSound?
+        OverrideableProperty<FixedString> DropSound;
         OverrideableProperty<FixedString> PickupSound;
         OverrideableProperty<FixedString> UseSound;
         OverrideableProperty<FixedString> EquipSound;
         OverrideableProperty<FixedString> UnequipSound;
         OverrideableProperty<FixedString> InventoryMoveSound;
         OverrideableProperty<FixedString> ImpactSound;
+        OverrideableProperty<FixedString> PhysicsCollisionSound;
         OverrideableProperty<uint8_t> SoundObjectIndex;
-        char field_49A;
-        char field_49B;
+        OverrideableProperty<uint8_t> BloodSurfaceType;
         OverrideableProperty<uint8_t> InventoryType;
         OverrideableProperty<TranslatedString> Description;
         OverrideableProperty<TranslatedString> UnknownDescription;
-        OverrideableProperty<FixedString> Speaker;
-        OverrideableProperty<FixedString> AltSpeaker;
-        ObjectSet<STDString> SpeakerGroupList;
+        VirtualMultiHashSet<UUID>* SpeakerGroupList;
+        VirtualMultiHashSet<UUID>* InteractionFilterList;
+        OverrideableProperty<uint8_t> InteractionFilterType;
+        OverrideableProperty<FixedString> ActivationGroupId;
+        OverrideableProperty<int32_t> Race;
         OverrideableProperty<int32_t> LevelOverride;
         OverrideableProperty<bool> IsSourceContainer;
         OverrideableProperty<FixedString> MeshProxy;
@@ -312,6 +324,7 @@ namespace bg3se
         OverrideableProperty<uint8_t> LightChannel;
         OverrideableProperty<UUID> EquipmentTypeID;
         bool SomeVersionFlag;
+        OverrideableProperty<ObjectSet<FixedString>> AttachedRoomTriggerList;
     };
 
 
@@ -392,10 +405,10 @@ namespace bg3se
         OverrideableProperty<float> FallDamageMultiplier;
         OverrideableProperty<int32_t> Seed;
         OverrideableProperty<float> NormalBlendingFactor;
-        OverrideableProperty<ObjectSet<VisualData>> InstanceVisual;
-        OverrideableProperty<ObjectSet<VisualData>> IntroFX;
-        OverrideableProperty<ObjectSet<VisualData>> FX;
-        OverrideableProperty<ObjectSet<StatusData>> Statuses;
+        Array<VisualData> InstanceVisual;
+        Array<VisualData> IntroFX;
+        Array<VisualData> FX;
+        Array<StatusData> Statuses;
         OverrideableProperty<FixedString> Summon;
         OverrideableProperty<bool> RemoveDestroyedItems;
         OverrideableProperty<bool> CanSeeThrough;

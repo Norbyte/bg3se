@@ -112,7 +112,7 @@ function RunTestSuite()
         "TestPathingComponent",
         "TestRaceComponent",
         "TestRelationComponent",
-        "TestSenseComponent",
+        "TestHearingComponent",
         "TestServerDisplayNameListComponent",
         "TestServerExperienceGaveOutComponent",
         "TestServerIconListComponent",

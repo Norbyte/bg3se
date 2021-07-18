@@ -33,7 +33,7 @@ function TestBoostInfoComponent()
         },
         Passive = "",
         Type = "Advantage",
-        field_20 = null,
+        field_18 = null,
         field_38 = -1,
         field_90 = "00000000-0000-0000-0000-000000000000"
     }

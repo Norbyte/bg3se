@@ -117,8 +117,8 @@ namespace bg3se
 			int field_68;
 			ItemTemplate* CurrentTemplate;
 			ItemTemplate* OriginalTemplate;
-			STDWString CustomDescription2;
-			STDWString CustomDescription;
+			STDString CustomDescription2;
+			STDString CustomDescription;
 			FixedString StatsId;
 			CDivinityStats_Item* Stats;
 			CRPGStats_Object* StatsFromName;
@@ -133,7 +133,6 @@ namespace bg3se
 			int UserId_M;
 			bool field_10C;
 			int field_110;
-			void* field_118;
 			void* ItemMachine;
 			void* PlanManager;
 			void* VariableManager;

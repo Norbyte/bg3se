@@ -185,7 +185,7 @@ end
 
 function TestDataComponent()
     local expect = {
-        Flags = 0,
+        Flags = 524288,
         StatsId = "POC_Player_Fighter",
         StepsType = 0,
         Weight_M = 45.0
@@ -213,7 +213,7 @@ function TestDualWieldingComponent()
         field_1A = 0,
         field_1B = 0,
         field_1D = 0,
-        field_1E = 1
+        field_1E = 0
     }
     
     TestComponentGeneric("DualWielding", expect)
@@ -370,25 +370,14 @@ function TestRelationComponent()
 end
 
 
-function TestSenseComponent()
+function TestHearingComponent()
     local expect = {
         FOV = 90.0,
         Hearing = 18.0,
-        Sight = 18.5
+        Sight = 18.0
     }
     
-    TestComponentGeneric("Sense", expect)
-end
-
-
-function TestSenseComponent()
-    local expect = {
-        FOV = 90.0,
-        Hearing = 18.0,
-        Sight = 18.5
-    }
-    
-    TestComponentGeneric("Sense", expect)
+    TestComponentGeneric("Hearing", expect)
 end
 
 
@@ -421,7 +410,7 @@ function TestServerIconListComponent()
         Icons = {
             {
                 Icon = "1088f4ee-579b-b49e-72cc-7ecc5fc5be79-EQ_Laezel_(Icon_Githyanki_Female)",
-                field_4  = 2185232388
+                -- field_4  = 2185232388 ???
             }
         },
         field_30 = 1
@@ -565,7 +554,10 @@ end
 function TestStatsComponent()
     local expect = {
         Abilities = {
-            1, 0, 17, 13, 14, 11, 12, 8
+            0, 17, 13, 14, 11, 12, 8
+        },
+        AbilityModifiers = {
+            0, 3, 1, 2, 0, 1, -1
         },
         ArmorType = 0,
         ArmorType_Breast = 9,
@@ -603,26 +595,18 @@ function TestStatsComponent()
             }
         },
         Flanked = false,
-        IsRanged = 1,
         Level = 1,
-        MaxCarryWeight = 170000,
         ProficiencyBonus = 2,
         RangedAttackAbility = "Dexterity",
-        Size = 1,
         Skills = {
-            -1, -1, -1, -1, -1, 1, 1, 1, 0, 0,
-            0, 0, 0, 3, 1, 1, 1, 1
+            -1, -1, -1, -1, 1, 1, 1, 0, 0,
+            0, 0, 0, 3, 1, 1, 1, 1, 1
         },
         SpellCastingAbility = "Intelligence",
         SpellDC = 10,
         UnarmedAttackAbility = "Strength",
-        WeaponActionDC = 4,
-        field_38 = 0,
-        field_3C = 5,
-        field_40 = 1,
-        field_44 = 4,
-        field_48 = 0,
-        field_4C = 1,
+        WeaponActionDC = 3,
+        field_10 = 1,
         field_AC = 0
     }
     

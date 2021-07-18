@@ -43,24 +43,66 @@ namespace bg3se::lua
 
 		inline bool GetProperty(lua_State* L, LifetimeHolder const& lifetime, T* object, STDString const& prop) const
 		{
+#if defined(_DEBUG)
+			__try {
+				return GetRawProperty(L, lifetime, (void*)object, prop);
+			}
+			__except (EXCEPTION_EXECUTE_HANDLER) {
+				ERR("Exception while reading property %s.%s", Name.c_str(), prop.c_str());
+				return false;
+			}
+#else
 			return GetRawProperty(L, lifetime, (void*)object, prop);
+#endif
 		}
 
 		inline bool SetProperty(lua_State* L, LifetimeHolder const& lifetime, T* object, STDString const& prop, int index) const
 		{
+#if defined(_DEBUG)
+			__try {
+				return SetRawProperty(L, lifetime, (void*)object, prop, index);
+			}
+			__except (EXCEPTION_EXECUTE_HANDLER) {
+				ERR("Exception while writing property %s.%s", Name.c_str(), prop.c_str());
+				return false;
+			}
+#else
 			return SetRawProperty(L, lifetime, (void*)object, prop, index);
+#endif
 		}
 
 		inline bool GetProperty(lua_State* L, LifetimeHolder const& lifetime, T* object, RawPropertyAccessors const& prop) const
 		{
 			auto getter = (PropertyAccessors::Getter*)prop.Get;
+
+#if defined(_DEBUG)
+			__try {
+				return getter(L, lifetime, object, prop.Offset);
+			}
+			__except (EXCEPTION_EXECUTE_HANDLER) {
+				ERR("Exception while reading property %s.%s", Name.c_str(), prop.Name.c_str());
+				return false;
+			}
+#else
 			return getter(L, lifetime, object, prop.Offset);
+#endif
 		}
 
 		inline bool SetProperty(lua_State* L, LifetimeHolder const& lifetime, T* object, RawPropertyAccessors const& prop, int index) const
 		{
 			auto setter = (PropertyAccessors::Setter*)prop.Set;
+
+#if defined(_DEBUG)
+			__try {
+				return setter(L, lifetime, object, index, prop.Offset);
+			}
+			__except (EXCEPTION_EXECUTE_HANDLER) {
+				ERR("Exception while writing property %s.%s", Name.c_str(), prop.Name.c_str());
+				return false;
+			}
+#else
 			return setter(L, lifetime, object, index, prop.Offset);
+#endif
 		}
 
 		inline void AddProperty(STDString const& prop, typename PropertyAccessors::Getter* getter, 

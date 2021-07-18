@@ -40,7 +40,7 @@ namespace bg3se
 		float Weight_M;
 		FixedString StatsId;
 		uint32_t Flags;
-		float field_24;
+		uint32_t field_24;
 		uint64_t field_28;
 		int StepsType;
 	};
@@ -93,22 +93,15 @@ namespace bg3se
 			int32_t Unknown;
 		};
 
-		std::array<int, 8> Abilities;
-		int field_38;
-		int field_3C;
-		int field_40;
-		int field_44;
-		int field_48;
-		int field_4C;
+		int field_10;
+		std::array<int, 7> Abilities;
+		std::array<int, 7> AbilityModifiers;
 		std::array<int, 18> Skills;
-		int32_t Size;
 		AbilityId SpellCastingAbility;
 		int SpellDC;
 		int WeaponActionDC;
 		int ProficiencyBonus;
 		int field_AC;
-		int MaxCarryWeight;
-		uint8_t IsRanged;
 		VirtualMultiHashMap<ItemSlot32, EquipmentEntry> Equipment;
 		int ArmorType;
 		int ArmorType_Breast;
@@ -117,7 +110,6 @@ namespace bg3se
 		Array<ClassInfo> Classes;
 		AbilityId UnarmedAttackAbility;
 		AbilityId RangedAttackAbility;
-		void* field_140;
 	};
 
 	struct StatusImmunitiesComponent : public BaseComponent
@@ -643,13 +635,6 @@ namespace bg3se
 		__int64 field_20;
 		uint8_t field_28;
 		uint8_t field_29;
-	};
-
-	struct DetachedBoostComponent : public BaseComponent
-	{
-		static constexpr ExtComponentType ComponentType = ExtComponentType::ServerDetachedBoost;
-
-		Array<EntityHandle> Boosts;
 	};
 
 	struct LeaderComponent : public BaseComponent

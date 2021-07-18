@@ -11,8 +11,6 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Transform;
 
-		float field_18;
-		float field_1C;
 		Transform Transform;
 		float field_9C;
 	};

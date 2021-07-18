@@ -916,7 +916,6 @@ namespace bg3se
 		MapComponentIndices("esv::TriggerStateComponent", ExtComponentType::ServerTriggerState);
 		MapComponentIndices("esv::SafePositionComponent", ExtComponentType::ServerSafePosition);
 		MapComponentIndices("esv::AnubisExecutorComponent", ExtComponentType::ServerAnubisExecutor);
-		MapComponentIndices("esv::DetachedBoostComponent", ExtComponentType::ServerDetachedBoost);
 		MapComponentIndices("esv::LeaderComponent", ExtComponentType::ServerLeader);
 		MapComponentIndices("esv::BreadcrumbComponent", ExtComponentType::ServerBreadcrumb);
 		MapComponentIndices("esv::death::DelayDeathCauseComponent", ExtComponentType::ServerDelayDeathCause);
