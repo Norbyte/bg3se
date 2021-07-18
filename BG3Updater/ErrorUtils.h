@@ -86,14 +86,14 @@ class ErrorUtils
 public:
 	ErrorUtils();
 
-	void ShowError(wchar_t const * msg) const;
+	void ShowError(char const * msg) const;
 	std::optional<GameState> GetState() const;
 
 	void SuspendClientThread() const;
 	void ResumeClientThread() const;
 
 private:
-	typedef void(*EoCClient__HandleError)(void * self, std::wstring const& message, bool exitGame, std::wstring const& a4);
+	typedef void(*EoCClient__HandleError)(void * self, std::string const& message, bool exitGame, std::string const& a4);
 
 	struct ThreadInfo
 	{
@@ -113,8 +113,8 @@ private:
 	void FindErrorFuncs();
 	bool CanShowError() const;
 
-	bool ShowErrorDialog(wchar_t const * msg) const;
-	void ClientHandleError(wchar_t const * msg, bool exitGame) const;
+	bool ShowErrorDialog(char const * msg) const;
+	void ClientHandleError(char const * msg, bool exitGame) const;
 
 	ThreadInfo const * FindClientThread() const;
 	static LONG NTAPI ThreadNameCaptureFilter(_EXCEPTION_POINTERS *ExceptionInfo);

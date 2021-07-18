@@ -174,8 +174,7 @@ public:
 		if (!updated && !ExtenderDLLExists()) {
 			DEBUG("Update failed; reason: %s", reason.c_str());
 			completed_ = true;
-			auto msg = FromUTF8(reason);
-			gErrorUtils->ShowError(msg.c_str());
+			gErrorUtils->ShowError(reason.c_str());
 			return;
 		}
 
@@ -193,9 +192,9 @@ public:
 		if (handle == NULL) {
 			auto errc = GetLastError();
 			DEBUG("Extension load failed; error code %d", errc);
-			std::wstring errmsg = L"Script Extender DLL load failed.\r\n"
+			std::string errmsg = "Script Extender DLL load failed.\r\n"
 				"Error code: ";
-			errmsg += std::to_wstring(errc);
+			errmsg += std::to_string(errc);
 			gErrorUtils->ShowError(errmsg.c_str());
 		}
 	}
@@ -374,7 +373,16 @@ public:
 		if (!config_.Debug) return;
 
 		AllocConsole();
-		SetConsoleTitleW(L"Script Extender Updater Debug Console");
+		SetConsoleTitleW(L"BG3 Script Extender Debug Console");
+
+		if (IsValidCodePage(CP_UTF8)) {
+			SetConsoleCP(CP_UTF8);
+			SetConsoleOutputCP(CP_UTF8);
+		}
+
+		auto hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+		SetConsoleMode(hStdout, ENABLE_PROCESSED_OUTPUT | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+
 		FILE* reopenedStream;
 		freopen_s(&reopenedStream, "CONOUT$", "w", stdout);
 #endif

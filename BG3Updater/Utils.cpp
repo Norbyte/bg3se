@@ -43,14 +43,14 @@ ErrorUtils::ErrorUtils()
 	}
 }
 
-void ErrorUtils::ShowError(wchar_t const * msg) const
+void ErrorUtils::ShowError(char const * msg) const
 {
 	if (!ShowErrorDialog(msg)) {
-		MessageBoxW(NULL, msg, L"Script Extender Updater Error", MB_OK | MB_ICONERROR);
+		MessageBoxA(NULL, msg, "Script Extender Updater Error", MB_OK | MB_ICONERROR);
 	}
 }
 
-bool ErrorUtils::ShowErrorDialog(wchar_t const * msg) const
+bool ErrorUtils::ShowErrorDialog(char const * msg) const
 {
 	if (EoCClient == nullptr
 		|| EoCClientHandleError == nullptr) {
@@ -71,13 +71,13 @@ bool ErrorUtils::ShowErrorDialog(wchar_t const * msg) const
 	return true;
 }
 
-void ErrorUtils::ClientHandleError(wchar_t const * msg, bool exitGame) const
+void ErrorUtils::ClientHandleError(char const * msg, bool exitGame) const
 {
 	if (EoCClientHandleError == nullptr) return;
 
-	std::wstring filtered(msg);
-	for (auto pos = filtered.find(L"\r\n"); pos != std::wstring::npos; pos = filtered.find(L"\r\n")) {
-		filtered.replace(filtered.begin() + pos, filtered.begin() + pos + 2, L"<br>");
+	std::string filtered(msg);
+	for (auto pos = filtered.find("\r\n"); pos != std::wstring::npos; pos = filtered.find("\r\n")) {
+		filtered.replace(filtered.begin() + pos, filtered.begin() + pos + 2, "<br>");
 	}
 
 	EoCClientHandleError(*EoCClient, filtered, exitGame, filtered);
@@ -166,7 +166,7 @@ void ErrorUtils::SuspendClientThread() const
 			SuspendThread(hThread);
 			CloseHandle(hThread);
 			// The error handler only displays a status message during the loading screen
-			ClientHandleError(L"Checking for Script Extender updates", false);
+			ClientHandleError("Checking for Script Extender updates", false);
 		}
 	} else {
 		DEBUG("Could not suspend client thread (thread not found!)");
