@@ -85,8 +85,8 @@ The following features are accepted in `FeatureFlags`:
 | Value| Meaning |
 |--|--|
 | `Lua` | Enables Lua scripting |
-| `Osiris` | Enables Osiris (Story) extension functions (see [Osiris API Documentation](https://github.com/Norbyte/bg3se/blob/master/Docs/Osiris.md)) |
-| `Preprocessor` | Enables the use of preprocessor definitions in Story scripts. (See [Preprocessor](https://github.com/Norbyte/bg3se/blob/master/Docs/Osiris.md#preprocessor)) |
+| `Osiris` | Enables Osiris (Story) extension functions (see [Osiris Functions](#osiris-functions)) |
+| `Preprocessor` | Enables the use of preprocessor definitions in Story scripts. (See [Osiris Preprocessor](#osiris-preprocessor)) |
 
 
 <a id="ea-notes"></a>
@@ -834,36 +834,27 @@ Returns whether the entity has a component with the given engine type (native C+
 
 Example:
 ```lua
-local char = Ext.GetCharacter(GetHostCharacter()).Entity
-_D(char:HasRawComponent("TODO CLASS NAME"))
+local char = Ext.GetCharacter(GetHostCharacter())
+_D(char:HasRawComponent("ls::TransformComponent"))
 -- Prints:
--- false
+-- true
 ```
 
 
-### Entity:GetAllRawComponents() : string[]
+### Entity:GetComponentHandles() : string[]
 
 Returns all engine component types (native C++ class names) that the entity has.
 
 Example:
 ```lua
-local char = Ext.GetCharacter(GetHostCharacter()).Entity
+local char = Ext.GetCharacter(GetHostCharacter())
 _D(char:GetAllRawComponents())
 -- Prints:
--- [[ TODO ]]
-```
-
-
-### Entity:GetAllRawComponents() : string[]
-
-Returns all engine component types (native C++ class names) that are attached to the entity.
-
-Example:
-```lua
-local char = Ext.GetCharacter(GetHostCharacter()).Entity
-_D(char:GetAllRawComponents())
--- Prints:
--- [[ TODO ]]
+-- {
+--      "eoc::ActionResourcesComponent" : "eoc::ActionResourcesComponent Object (1c4000010000039e)",
+--      "eoc::BackgroundComponent" : "eoc::BackgroundComponent Object (1e000001000003ff)",
+--      "eoc::BackgroundPassivesComponent" : "eoc::BackgroundPassivesComponent Object (66c00001000003ff)",
+-- ...
 ```
 
 
@@ -875,10 +866,15 @@ Returns all components that are attached to the entity.
 
 Example:
 ```lua
-local entity = Ext.GetCharacter(GetHostCharacter()).Entity
+local entity = Ext.GetCharacter(GetHostCharacter())
 _D(entity:GetAllRawComponents())
 -- Prints:
--- [[ TODO ]]
+-- {
+--      "ActionResources" :
+--      {
+--              "Entity" : "Entity (02c0000100000180)",
+--              "GetReplicationFlags" : "function: 00007FFDE482D5E0",
+-- ...
 ```
 
 
@@ -893,11 +889,24 @@ Eg. to check if the entity is a character, an `entity:GetComponent("ServerCharac
 
 Example:
 ```lua
-local entity = Ext.GetCharacter(GetHostCharacter()).Entity
+local entity = Ext.GetCharacter(GetHostCharacter())
 _D(entity:GetComponent("DisplayName"))
 -- Prints:
--- [[ TODO ]]
+-- {
+--      "Entity" : "Entity (02c0000100000180)",
+--      "Name" : "Tav",
+--      "NameKey" : "ResStr_669727657",
+-- ...
 ```
+
+The `__index` metamethod of the Entity object is a shorthand for `GetComponent`:
+```lua
+local entity = Ext.GetCharacter(GetHostCharacter())
+-- The two below are equivalent
+local displayName = entity:GetComponent("DisplayName")
+local displayName = entity.DisplayName
+```
+
 
 ### Entity:IsAlive() : boolean
 
@@ -1832,12 +1841,12 @@ local str = Ext.GetTranslatedString("h17edbbb2g9444g4c79g9409gdb8eb5731c7c", "[1
 
 #### Ext.Utils.AddPathOverride(originalPath, newPath)
 
-Redirects file access from `originalPath` to `newPath`. This is useful for overriding built-in files or resources that are otherwise not moddable, eg. UI Flash files.
+Redirects file access from `originalPath` to `newPath`. This is useful for overriding built-in files or resources that are otherwise not moddable.
 Make sure that the override is added as early as possible (preferably in `ModuleLoading`), as adding path overrides after the game has already loaded the resource has no effect.
 
 Example:
 ```lua
-Ext.AddPathOverride("Public/Game/GUI/enemyHealthBar.swf", "Public/YourMod/GUI/enemyHealthBar.swf")
+Ext.AddPathOverride("Public/Game/GUI/Assets/Buttons/BigBtn_d.DDS", "Public/YourMod/GUI/Assets/Buttons/BigBtn_d.DDS")
 ```
 
 #### Ext.PlayerHasExtender(playerGuid)
@@ -1935,11 +1944,11 @@ The purpose of this event is to allow adding filesystem-level hooks using `Ext.A
 
 ### ModuleLoading
 
-`ModuleLoading` is thrown after the stats manager has finished loading; this callback is deprecated and `StatsLoaded` should be used instead.
+`ModuleLoading` is thrown after the stats manager has finished loading.
 
 ### SessionLoading
 
-`SessionLoading` is thrown when the the engine has started setting up a game session (i.e. new game, loading a savegame or joining a multiplayer game). Stat overrides that use Lua callbacks (`Ext.StatSetLevelScaling`) and custom UI (`Ext.CreateUI`, `Ext.RegisterUICall`, `Ext.RegisterUIInvokeListener`, etc.) should be set up here.
+`SessionLoading` is thrown when the the engine has started setting up a game session (i.e. new game, loading a savegame or joining a multiplayer game).
 
 ### SessionLoaded
 
