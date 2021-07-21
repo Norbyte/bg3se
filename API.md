@@ -558,19 +558,19 @@ When the optional parameter `type` is specified, it'll only return stats with th
 
 Creates a new stats entry. 
 If a stat object with the same name already exists, the specified modifier type is invalid or the specified template doesn't exist, the function returns `nil`.
-After all stat properties were initialized, the stats entry must be synchronized by calling `SyncStat()`. 
+After all stat properties were initialized, the stats entry must be synchronized by calling `stat:Sync()`. 
 
  - `name` is the name of stats entry to create; it should be globally unique
  - `type` is the stats entry type (eg. `SkillData`, `StatusData`, `Weapon`, etc.)
  - If the `template` parameter is not null, stats properties are copied from the template entry to the newly created entry
- - If the entry was created on the server, `SyncStat()` will replicate the stats entry to all clients. If the entry was created on the client, `SyncStat()` will only update it locally.
+ - If the entry was created on the server, `stat:Sync()` will replicate the stats entry to all clients. If the entry was created on the client, `stat:Sync()` will only update it locally.
 
 Example:
 ```lua
 local stat = Ext.Stats.CreateStat("NRD_Dynamic_Skill", "SkillData", "Rain_Water")
 stat.RainEffect = "RS3_FX_Environment_Rain_Fire_01"
 stat.SurfaceType = "Fire"
-Ext.Stats.SyncStat("NRD_Dynamic_Skill")
+stat:Sync()
 ```
 
 ### Ext.Stats.GetStat(stat, type, [level]): StatEntry
@@ -592,10 +592,10 @@ for i,name in pairs(Ext.Stats.GetAllStats("SkillData")) do
 end
 ```
 
-### StatEntry:Sync(persist: bool)
+### StatEntry:Sync([persist: bool])
 
 Synchronizes the changes made to the specified stats entry to each client.
-`SyncStat` must be called each time a stats entry is modified dynamically (after `ModuleLoading`/`StatsLoaded`) to ensure that the host and all clients see the same properties.
+`Sync()` must be called each time a stats entry is modified dynamically (after `ModuleLoading`/`StatsLoaded`) to ensure that the host and all clients see the same properties.
 The optional `persist` attribute determines whether the stats entry is persistent, i.e. if it will be written to savegames. If not specified, the `persist` parameter defaults to `true`.
 
 ### StatEntry:SetPersistence(persist: bool) <sup>S</sup>
