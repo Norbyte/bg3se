@@ -100,9 +100,12 @@ static void pushfuncname (lua_State *L, lua_Debug *ar) {
     lua_pushfstring(L, "%s '%s'", ar->namewhat, ar->name);  /* use it */
   else if (*ar->what == 'm')  /* main? */
       lua_pushliteral(L, "main chunk");
-  else if (*ar->what != 'C')  /* for Lua functions, use <file:line> */
-    lua_pushfstring(L, "function <%s:%d>", ar->short_src, ar->linedefined);
-  else  /* nothing left... */
+  else if (*ar->what != 'C') { /* for Lua functions, use <file:line> */
+    if (ar->source)
+      lua_pushfstring(L, "function <%s:%d>", ar->source, ar->linedefined);
+    else
+      lua_pushfstring(L, "function <%s:%d>", ar->short_src, ar->linedefined);
+  } else  /* nothing left... */
     lua_pushliteral(L, "?");
 }
 
@@ -139,7 +142,12 @@ LUALIB_API void luaL_traceback (lua_State *L, lua_State *L1,
     }
     else {
       lua_getinfo(L1, "Slnt", &ar);
-      lua_pushfstring(L, "\n\t%s:", ar.short_src);
+      if (strcmp(ar.short_src, "[C]") == 0)
+        lua_pushfstring(L, "\n\t[C++ Code]:");
+      else if (ar.source)
+        lua_pushfstring(L, "\n\t%s:", ar.source);
+      else
+        lua_pushfstring(L, "\n\t%s:", ar.short_src);
       if (ar.currentline > 0)
         lua_pushfstring(L, "%d:", ar.currentline);
       lua_pushliteral(L, " in ");

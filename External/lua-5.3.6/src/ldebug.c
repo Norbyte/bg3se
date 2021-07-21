@@ -637,9 +637,11 @@ const char *luaG_addinfo (lua_State *L, const char *msg, TString *src,
   return luaO_pushfstring(L, "%s:%d: %s", buff, line, msg);
 }
 
+void nse_lua_report_handled_error(lua_State* L);
 
 l_noret luaG_errormsg (lua_State *L) {
   if (L->errfunc != 0) {  /* is there an error handling function? */
+    nse_lua_report_handled_error(L);
     StkId errfunc = restorestack(L, L->errfunc);
     setobjs2s(L, L->top, L->top - 1);  /* move argument */
     setobjs2s(L, L->top - 1, errfunc);  /* push function */
