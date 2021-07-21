@@ -445,8 +445,7 @@ namespace bg3se
 		CNamedElementManager<CRPGStats_Treasure_Table> TreasureTables;
 		CRPGStats_ItemType_Manager ItemTypes;
 		Map<FixedString, StatsFunctorSet*> StatsFunctors;
-		uint64_t Unkn1[4];
-		RNG Rng;
+		uint64_t Unkn1[5];
 		Map<FixedString, float>* ExtraData;
 		RefMap<FixedString, ObjectSet<CRPGStats_Requirement>> Requirements;
 		RefMap<FixedString, ItemColor> ItemColors;
