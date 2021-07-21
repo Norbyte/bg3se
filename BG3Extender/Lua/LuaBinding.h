@@ -43,6 +43,8 @@ namespace bg3se::lua
 	class State : Noncopyable<State>
 	{
 	public:
+		static_assert(LUA_EXTRASPACE >= sizeof(State*), "Should have enough extra space in Lua for state ptr");
+
 		enum RestrictionFlag
 		{
 			// Disable Osiris calls

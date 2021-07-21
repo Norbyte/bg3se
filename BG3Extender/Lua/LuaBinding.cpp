@@ -627,7 +627,8 @@ namespace bg3se::lua
 	State::State()
 		: lifetimeStack_(lifetimePool_)
 	{
-		L = lua_newstate(LuaAlloc, this);
+		L = lua_newstate(LuaAlloc, nullptr);
+		*reinterpret_cast<State**>(lua_getextraspace(L)) = this;
 #if LUA_VERSION_NUM <= 501
 		luaJIT_setmode(L, 0, LUAJIT_MODE_ENGINE | LUAJIT_MODE_ON);
 #endif
@@ -888,6 +889,6 @@ namespace bg3se::lua
 
 	State* State::FromLua(lua_State* L)
 	{
-		return reinterpret_cast<State*>(L->l_G->ud);
+		return *reinterpret_cast<State**>(lua_getextraspace(L));
 	}
 }
