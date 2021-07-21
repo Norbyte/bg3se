@@ -98,7 +98,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>$(SolutionDir)\External\x64-windows\tools\protobuf\protoc.exe --proto_path=$(ProjectDir) --csharp_out=$(ProjectDir) DbgProtocol.proto
+    <PreBuildEvent>$(SolutionDir)\External\protobuf\tools\protobuf\protoc.exe --proto_path=$(ProjectDir) --csharp_out=$(ProjectDir) DbgProtocol.proto
 </PreBuildEvent>
   </PropertyGroup>
 </Project>
