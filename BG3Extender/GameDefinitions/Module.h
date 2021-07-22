@@ -8,9 +8,8 @@ namespace bg3se
 	{
 		inline Version() : Ver(0) {}
 		inline Version(uint64_t ver) : Ver(ver) {}
-		// TODO - figure out how 
 		inline Version(uint64_t minor, uint64_t major, uint64_t revision, uint64_t build)
-			: Ver(((major & 0x1ff) << 55) + ((minor & 0x1ff) << 46) + ((revision & 0xffffff) << 28) + (build & 0xfffffff))
+			: Ver(((major & 0x1ffull) << 55) | ((minor & 0x1ffull) << 47) | ((revision & 0x7ffffull) << 31) | (build & 0x7fffffffull))
 		{}
 
 		inline uint64_t Major() const
