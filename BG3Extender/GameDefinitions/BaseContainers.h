@@ -1400,6 +1400,16 @@ namespace bg3se
 				return Map->Values[Index];
 			}
 
+			ConstIterator& operator * ()
+			{
+				return *this;
+			}
+
+			ConstIterator* operator -> ()
+			{
+				return *this;
+			}
+
 		private:
 			MultiHashMap const* Map;
 			int32_t Index;
@@ -1439,14 +1449,24 @@ namespace bg3se
 				return it.Map != Map || it.Index != Index;
 			}
 
-			TKey & Key()
+			TKey & Key() const
 			{
 				return Map->Keys[Index];
 			}
 
-			TValue & Value()
+			TValue & Value() const
 			{
 				return Map->Values[Index];
+			}
+
+			Iterator& operator * ()
+			{
+				return *this;
+			}
+
+			Iterator* operator -> ()
+			{
+				return *this;
 			}
 
 		private:
