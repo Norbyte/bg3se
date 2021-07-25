@@ -331,10 +331,7 @@ namespace bg3se::lua
 
 			auto conditions = getfield<char const*>(s.L, "Condition");
 			if (conditions && *conditions) {
-				int conditionsId{ -1 };
-				auto cond = stats->GetOrCreateConditions(conditionsId);
-				*cond = conditions;
-				v.StatsConditionsId = conditionsId;
+				v.StatsConditionsId = stats->GetOrCreateConditions(conditions);
 			} else {
 				v.StatsConditionsId = -1;
 			}
@@ -534,13 +531,7 @@ namespace bg3se::lua
 		// FIXME - add conditions parsing!
 		PO(StatsConditions, STDString{});
 		if (!s.IsWriting) {
-			if (v.StatsConditions.empty()) {
-				v.StatsConditionsId = -1;
-			} else {
-				int conditionsId{ -1 };
-				auto conditions = GetStaticSymbols().GetStats()->GetOrCreateConditions(conditionsId);
-				*conditions = v.StatsConditions;
-			}
+			v.StatsConditionsId = GetStaticSymbols().GetStats()->GetOrCreateConditions(v.StatsConditions);
 		}
 		PO(Duration, 6.0f);
 		PO(Param1, -1);

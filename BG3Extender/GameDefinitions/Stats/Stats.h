@@ -491,7 +491,7 @@ namespace bg3se
 		std::optional<UUID*> GetGuid(int guidId);
 		UUID* GetOrCreateGuid(int& guidId);
 		std::optional<STDString*> GetConditions(int conditionsId);
-		STDString* GetOrCreateConditions(int& conditionsId);
+		int GetOrCreateConditions(STDString const& conditions);
 
 		std::optional<int> EnumLabelToIndex(FixedString const& enumName, char const* enumLabel);
 		FixedString EnumIndexToLabel(FixedString const& enumName, int index);

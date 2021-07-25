@@ -587,20 +587,25 @@ namespace bg3se
 	{
 		if (conditionsId > 0) {
 			return &ConditionList[conditionsId];
-		}
-		else {
+		} else {
 			return {};
 		}
 	}
 
-	STDString* RPGStats::GetOrCreateConditions(int& conditionsId)
+	int RPGStats::GetOrCreateConditions(STDString const& conditions)
 	{
-		if (conditionsId < 0) {
-			conditionsId = (int)ConditionList.Size();
-			ConditionList.Add(STDString{});
+		if (conditions.empty()) {
+			return -1;
 		}
 
-		return &ConditionList[conditionsId];
+		for (unsigned i = 0; i < ConditionList.Size(); i++) {
+			if (ConditionList[i] == conditions) {
+				return (int)i;
+			}
+		}
+
+		ConditionList.Add(conditions);
+		return (int)ConditionList.Size() - 1;
 	}
 
 	CRPGStats_Modifier * RPGStats::GetModifierInfo(FixedString const& modifierListName, FixedString const& modifierName)

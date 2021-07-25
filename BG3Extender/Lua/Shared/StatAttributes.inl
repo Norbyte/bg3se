@@ -163,7 +163,6 @@ namespace bg3se::lua::stats
 		case RPGEnumerationType::FixedString:
 		case RPGEnumerationType::Enumeration:
 		case RPGEnumerationType::Conditions:
-		case RPGEnumerationType::RollConditions:
 		{
 			auto value = object->GetString(attributeName);
 			if (value) {
@@ -191,6 +190,23 @@ namespace bg3se::lua::stats
 		case RPGEnumerationType::Requirements:
 		{
 			LuaWrite(L, object->Requirements);
+			break;
+		}
+
+		case RPGEnumerationType::RollConditions:
+		{
+			auto conditions = object->GetRollConditions(attributeName);
+			if (conditions && *conditions) {
+				lua_newtable(L);
+				for (auto const& cond : **conditions) {
+					auto condition = stats->GetConditions(cond.ConditionsId);
+					if (condition && *condition) {
+						settable(L, cond.Name, **condition);
+					}
+				}
+			} else {
+				push(L, nullptr);
+			}
 			break;
 		}
 
@@ -300,6 +316,28 @@ namespace bg3se::lua::stats
 				LuaRead(L, flags);
 				lua_pop(L, 1);
 				object->SetFlags(attributeName, flags);
+				break;
+			}
+
+			case RPGEnumerationType::RollConditions:
+			{
+				VirtualMultiHashMap<FixedString, STDString> rolls;
+				lua_pushvalue(L, valueIdx);
+				LuaRead(L, rolls);
+				lua_pop(L, 1);
+
+				Array<CRPGStats_Object::RollConditionInfo> conditions;
+				for (auto const& kv : rolls) {
+					auto conditionsId = stats->GetOrCreateConditions(kv.Value());
+					if (conditionsId >= 0) {
+						CRPGStats_Object::RollConditionInfo roll;
+						roll.Name = kv.Key();
+						roll.ConditionsId = conditionsId;
+						conditions.Add(roll);
+					}
+				}
+
+				object->SetRollConditions(attributeName, conditions);
 				break;
 			}
 

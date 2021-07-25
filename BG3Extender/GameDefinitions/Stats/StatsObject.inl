@@ -258,24 +258,20 @@ namespace bg3se
 		} else if (typeInfo->Name == GFS.strConditions
 			|| typeInfo->Name == GFS.strTargetConditions
 			|| typeInfo->Name == GFS.strUseConditions) {
-			int poolIdx{ -1 };
-			auto str = stats->GetOrCreateConditions(poolIdx);
-			if (str != nullptr) {
-				*str = value;
-				IndexedProperties[attributeIndex] = poolIdx;
-			}
+			auto index = stats->GetOrCreateConditions(value);
+			IndexedProperties[attributeIndex] = index;
 		} else if (typeInfo->Name == GFS.strRollConditions) {
 			if (*value) {
-				int poolIdx{ -1 };
-				auto str = stats->GetOrCreateConditions(poolIdx);
-				if (str != nullptr) {
-					*str = value;
+				auto index = stats->GetOrCreateConditions(value);
+				if (index >= 0) {
 					RollConditionInfo cond;
 					cond.Name = GFS.strDefault;
-					cond.ConditionsId = poolIdx;
+					cond.ConditionsId = index;
 					Array<RollConditionInfo> conditions;
 					conditions.Add(cond);
 					SetRollConditions(attributeName, conditions);
+				} else {
+					SetRollConditions(attributeName, {});
 				}
 			} else {
 				SetRollConditions(attributeName, {});
