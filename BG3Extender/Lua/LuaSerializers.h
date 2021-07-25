@@ -235,7 +235,10 @@ namespace bg3se::lua
 				StackCheck _(s.L);
 				TKey key{};
 				TValue value{};
-				s << key << value;
+				lua_pushvalue(s.L, -2);
+				s << key;
+				lua_pop(s.L, 1);
+				s << value;
 				v.Set(std::move(key), std::move(value));
 			}
 		}
@@ -260,7 +263,10 @@ namespace bg3se::lua
 				StackCheck _(s.L);
 				TKey key{};
 				TValue value{};
-				s << key << value;
+				lua_pushvalue(s.L, -2);
+				s << key;
+				lua_pop(s.L, 1);
+				s << value;
 				v.Insert(std::move(key), std::move(value));
 			}
 		}
@@ -285,7 +291,10 @@ namespace bg3se::lua
 				StackCheck _(s.L);
 				TKey key{};
 				TValue value{};
-				s << key << value;
+				lua_pushvalue(s.L, -2);
+				s << key;
+				lua_pop(s.L, 1);
+				s << value;
 				v.Insert(std::move(key), std::move(value));
 			}
 		}
