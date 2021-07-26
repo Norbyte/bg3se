@@ -12,98 +12,35 @@ namespace bg3se
 	{}
 
 
-	/*void SkillPrototypeManager::SyncSkillStat(CRPGStats_Object* object, SkillPrototype* proto)
+	bool SpellPrototypeManager::SyncStat(CRPGStats_Object* object, SpellPrototype* proto)
 	{
-		auto stats = GetStaticSymbols().GetStats();
-		proto->Ability = *stats->GetAttributeInt(object, GFS.strAbility);
-		proto->Tier = *stats->GetAttributeInt(object, GFS.strTier);
-		proto->Requirement = *stats->GetAttributeInt(object, GFS.strRequirement);
-		proto->Level = *stats->GetAttributeInt(object, GFS.strLevel);
-		proto->Icon = ToFixedString(*stats->GetAttributeString(object, GFS.strIcon));
-		proto->MagicCost = *stats->GetAttributeInt(object, GFS.strMagicCost);
-		proto->MemoryCost = *stats->GetAttributeInt(object, GFS.strMemoryCost);
-		proto->ActionPoints = *stats->GetAttributeInt(object, GFS.strActionPoints);
-		proto->Cooldown = *stats->GetAttributeInt(object, GFS.strCooldown) * 6.0f;
-		proto->CooldownReduction = *stats->GetAttributeInt(object, GFS.strCooldownReduction) / 100.0f;
-		proto->ChargeDuration = *stats->GetAttributeInt(object, GFS.strChargeDuration) * 6.0f;
-
-		auto displayNameKey = ToFixedString(*stats->GetAttributeString(object, GFS.strDisplayName));
-		TranslatedString displayName;
-		if (script::GetTranslatedStringFromKey(displayNameKey, displayName)) {
-			proto->DisplayName = displayName.Handle.ReferenceString;
+		auto sync = GetStaticSymbols().eoc__SpellPrototype__Init;
+		if (!sync) {
+			OsiError("eoc::SpellPrototype::Init not mapped!");
+			return false;
 		}
 
-		STDString aiFlags = object->AIFlags.Str;
-		proto->AiFlags = (AIFlags)0;
-		if (aiFlags.find("CanNotUse") != STDString::npos) proto->AiFlags |= AIFlags::CanNotUse;
-		if (aiFlags.find("IgnoreSelf") != STDString::npos) proto->AiFlags |= AIFlags::IgnoreSelf;
-		if (aiFlags.find("IgnoreDebuff") != STDString::npos) proto->AiFlags |= AIFlags::IgnoreDebuff;
-		if (aiFlags.find("IgnoreBuff") != STDString::npos) proto->AiFlags |= AIFlags::IgnoreBuff;
-		if (aiFlags.find("StatusIsSecondary") != STDString::npos) proto->AiFlags |= AIFlags::StatusIsSecondary;
-		if (aiFlags.find("IgnoreControl") != STDString::npos) proto->AiFlags |= AIFlags::IgnoreControl;
-		if (aiFlags.find("CanNotTargetFrozen") != STDString::npos) proto->AiFlags |= AIFlags::CanNotTargetFrozen;
+		sync(proto, object->Name);
+		return true;
 	}
 
-	void SkillPrototypeManager::SyncSkillStat(CRPGStats_Object* object)
+
+	void SpellPrototypeManager::SyncStat(CRPGStats_Object* object)
 	{
 		auto stats = GetStaticSymbols().GetStats();
-		auto skillTypeFs = stats->GetAttributeString(object, GFS.strSkillType);
-		if (!skillTypeFs || !*skillTypeFs) {
-			OsiError("Skill stats object has no SkillType?");
-			return;
-		}
-
-		// Cone is an alias of Zone, but is not part of the SkillType enum
-		std::optional<SkillType> skillType;
-		if (strcmp(*skillTypeFs, "Cone") == 0) {
-			skillType = SkillType::Zone;
-		} else {
-			skillType = EnumInfo<SkillType>::Find(*skillTypeFs);
-		}
-
-		if (!skillType) {
-			OsiError("Unsupported SkillType: " << *skillTypeFs);
-			return;
-		}
-
-		auto pProto = Prototypes.Find(object->Name);
+		auto pProto = Spells.Find(object->Name);
 		if (pProto == nullptr) {
-			auto proto = GameAlloc<SkillPrototype>();
-			proto->RPGStatsObjectIndex = object->Handle;
-			proto->SkillTypeId = *skillType;
-			proto->SkillId = object->Name;
-			proto->RootSkillPrototype = nullptr;
-			SyncSkillStat(object, proto);
-
-			Prototypes.Insert(proto->SkillId, proto);
-			PrototypeNames.Add(proto->SkillId);
-
-			auto lv1Proto = GameAlloc<SkillPrototype>();
-			*lv1Proto = *proto;
-
-			STDString lv1Name = proto->SkillId.Str;
-			lv1Name += "_-1";
-			lv1Proto->SkillId = MakeFixedString(lv1Name.c_str());
-			lv1Proto->Level = -1;
-
-			proto->ChildPrototypes.Add(lv1Proto);
-			lv1Proto->RootSkillPrototype = proto;
-
-			Prototypes.Insert(lv1Proto->SkillId, lv1Proto);
-			PrototypeNames.Add(lv1Proto->SkillId);
-		} else {
-			SyncSkillStat(object, *pProto);
-
-			STDString lv1Name = (*pProto)->SkillId.Str;
-			lv1Name += "_-1";
-			auto lv1Proto = Prototypes.Find(MakeFixedString(lv1Name.c_str()));
-			if (lv1Proto) {
-				SyncSkillStat(object, *lv1Proto);
+			auto proto = GameAlloc<SpellPrototype>();
+			if (SyncStat(object, proto)) {
+				Spells.Set(proto->SpellId, proto);
+				SpellNames.Add(proto->SpellId);
 			}
+		} else {
+			SyncStat(object, **pProto);
 		}
 	}
 
-	void StatusPrototypeManager::SyncStatusStat(CRPGStats_Object* object)
+	/*void StatusPrototypeManager::SyncStatusStat(CRPGStats_Object* object)
 	{
 		auto stats = GetStaticSymbols().GetStats();
 		auto statusTypeFs = stats->GetAttributeString(object, GFS.strStatusType);
@@ -442,25 +379,26 @@ namespace bg3se
 			(*newObject)->FromProtobuf(msg);
 			SyncWithPrototypeManager(*newObject);
 		}
-	}
+	}*/
 
 	void RPGStats::SyncWithPrototypeManager(CRPGStats_Object* object)
 	{
-		auto modifier = modifierList.Find(object->ModifierListIndex);
-		if (modifier->Name == GFS.strSkillData) {
-			auto skillProtoMgr = GetStaticSymbols().eoc__SkillPrototypeManager;
-			if (skillProtoMgr && *skillProtoMgr) {
-				(*skillProtoMgr)->SyncSkillStat(object);
+		auto modifier = ModifierLists.Find(object->ModifierListIndex);
+		if (modifier->Name == GFS.strSpellData) {
+			auto spellProtoMgr = GetStaticSymbols().eoc__SpellPrototypeManager;
+			if (spellProtoMgr && *spellProtoMgr) {
+				(*spellProtoMgr)->SyncStat(object);
 			}
 		} else if (modifier->Name == GFS.strStatusData) {
-			auto statusProtoMgr = GetStaticSymbols().eoc__StatusPrototypeManager;
+			ERR("FIXME - RPGStats::SyncWithPrototypeManager() not yet implemented for statuses!");
+			/*auto statusProtoMgr = GetStaticSymbols().eoc__StatusPrototypeManager;
 			if (statusProtoMgr && *statusProtoMgr) {
 				(*statusProtoMgr)->SyncStatusStat(object);
-			}
+			}*/
 		}
 	}
 
-	void RPGStats::BroadcastSyncAll()
+	/*void RPGStats::BroadcastSyncAll()
 	{
 		for (auto const& statsId : gExtender->GetServer().GetExtensionState().GetDynamicStats()) {
 			auto object = objects.Find(statsId);

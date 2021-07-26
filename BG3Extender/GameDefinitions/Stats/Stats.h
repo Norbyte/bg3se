@@ -91,7 +91,7 @@ namespace bg3se
 		uint64_t Unknown;
 	};
 
-	struct SpellPrototype : public ProtectedGameObject<SpellPrototype>
+	struct SpellPrototype : public Noncopyable<SpellPrototype>
 	{
 		/*using FormatDescriptionParamProc = void(SkillPrototype* skillPrototype, CDivinityStats_Character* tgtCharStats,
 			eoc::Text* eocText, int paramIndex, bool isFromItem, float xmm9_4_0, FixedString* paramText,
@@ -101,7 +101,8 @@ namespace bg3se
 			CRPGStats_ObjectInstance* attackerStats, bool isFromItem, bool stealthed, float* attackerPosition,
 			float* targetPosition, DeathType* pDeathType, int level, bool noRandomization);*/
 
-		void* VMT;
+		using InitProc = void(SpellPrototype* self, FixedString const& spellId);
+
 		int StatsObjectIndex;
 		SpellType SpellTypeId;
 		FixedString SpellId;
@@ -153,8 +154,8 @@ namespace bg3se
 		Array<FixedString> SpellNames;
 		bool Initialized;
 
-		/*void SyncSpellStat(CRPGStats_Object* object);
-		void SyncSpellStat(CRPGStats_Object* object, SpellPrototype* proto);*/
+		void SyncStat(CRPGStats_Object* object);
+		bool SyncStat(CRPGStats_Object* object, SpellPrototype* proto);
 	};
 
 
@@ -478,9 +479,9 @@ namespace bg3se
 		std::optional<CRPGStats_Object*> CreateObject(FixedString const& name, int32_t modifierListIndex);
 		StatsFunctorSet* ConstructFunctorSet(FixedString const& propertyName);
 		StatsFunctorBase* ConstructFunctor(StatsFunctorActionId action);
-		/*void SyncObjectFromServer(MsgS2CSyncStat const& msg);
+		/*void SyncObjectFromServer(MsgS2CSyncStat const& msg);*/
 		void SyncWithPrototypeManager(CRPGStats_Object* object);
-		void BroadcastSyncAll();*/
+		/*void BroadcastSyncAll();*/
 
 		std::optional<FixedString*> GetFixedString(int stringId);
 		FixedString* GetOrCreateFixedString(int& stringId);

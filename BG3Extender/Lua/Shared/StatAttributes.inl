@@ -21,8 +21,7 @@ namespace bg3se::lua::stats
 		auto stats = GetStaticSymbols().GetStats();
 		auto object = self->Get();
 
-		// FIXME SYNC
-		//stats->SyncWithPrototypeManager(object);
+		stats->SyncWithPrototypeManager(object);
 
 		if (gExtender->GetServer().IsInServerThread()) {
 			object->BroadcastSyncMessage(false);

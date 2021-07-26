@@ -321,10 +321,36 @@
         <Mapping Name="ls::GlobalSwitches">
             <Condition Type="FixedStringIndirect" Offset="19" Value="ShowSubtitles" />
             <Target Type="Indirect" Offset="12" Symbol="GlobalSwitches" />
-            48 8B 8E F0 01 00 00 // mov     rcx, [rsi+1F0h]
+            48 8B 8E F0 01 00 00 // mov     [rsp-8+arg_10], rbx
             E8 ?? ?? ?? ?? // call    xxx
             48 8B 0D ?? ?? ?? ?? // mov     rcx, cs:ls__gGlobalSwitches
             48 8B 15 ?? ?? ?? ?? // mov     rdx, cs:pffs_ShowSubtitles
         </Mapping>
+
+      <Mapping Name="eoc::SpellPrototype::Init" Scope="Custom">
+        <Target Type="Absolute" Offset="0" Symbol="eoc__SpellPrototype__Init" />
+        48 89 5C 24 18 // mov     [rsp-8+arg_10], rbx
+        55 // push    rbp
+      </Mapping>
+
+      <Mapping Name="eoc::SpellPrototype::Init Outer">
+        <Condition Type="FixedStringIndirect" Offset="6" Value="SpellSchool" />
+        <Target Type="Absolute" Offset="-256" NextSymbol="eoc::SpellPrototype::Init" NextSymbolSeekSize="256" />
+        41 B8 FF FF FF FF // mov     r8d, 0FFFFFFFFh
+        48 8B 15 ?? ?? ?? ?? // lea     rdx, fs_SpellSchool
+        48 8B C8 // mov     rcx, rax
+        E8 ?? ?? ?? ?? // call    CRPGStats::etModifierInt
+        41 88 46 0C // mov     [r14+0Ch], al
+      </Mapping>
+
+      <Mapping Name="eoc::gSpellPrototypeManager">
+        <Condition Type="String" Offset="0" Value="Spells" />
+        <Target Type="Indirect" Offset="18" Symbol="eoc__SpellPrototypeManager" />
+        4C 8D 05 ?? ?? ?? ?? // lea     r8, str_Spells
+        BA 01 00 00 00 // mov     edx, 1
+        49 8B CF // mov     rcx, r15
+        FF 50 78 // call    qword ptr [rax+78h]
+        48 8B 0D ?? ?? ?? ?? // mov     rcx, cs:eoc__gSpellManager
+      </Mapping>
     </Mappings>
 </BinaryMappings>

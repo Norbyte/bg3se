@@ -104,9 +104,7 @@ FS(SkillProperties);
 FS(ExtraProperties);
 FS(Lifetime);
 
-// Skill stat properties
-FS(SkillType);
-FS(SkillData);
+// Spell stat properties
 FS(Ability);
 FS(Tier);
 FS(Requirement);

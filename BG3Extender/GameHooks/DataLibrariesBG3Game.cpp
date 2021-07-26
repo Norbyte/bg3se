@@ -59,6 +59,9 @@ namespace bg3se
 		SYM_OFF(esv__SurfaceActionFactory__CreateAction);
 		SYM_OFF(esv__SurfaceManager__AddAction);
 
+		SYM_OFF(eoc__SpellPrototypeManager);
+		SYM_OFF(eoc__SpellPrototype__Init);
+
 		SYM_OFF(esv__StatusMachine__CreateStatus);
 		SYM_OFF(esv__StatusMachine__ApplyStatus);
 

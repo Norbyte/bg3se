@@ -53,6 +53,9 @@ namespace bg3se
 		esv::SurfaceActionFactory::CreateActionProc* esv__SurfaceActionFactory__CreateAction{ nullptr };
 		esv::SurfaceManager::AddActionProc* esv__SurfaceManager__AddAction{ nullptr };
 
+		SpellPrototypeManager** eoc__SpellPrototypeManager{ nullptr };
+		SpellPrototype::InitProc* eoc__SpellPrototype__Init{ nullptr };
+
 		esv::StatusMachine::CreateStatusProc* esv__StatusMachine__CreateStatus{ nullptr };
 		esv::StatusMachine::ApplyStatusProc* esv__StatusMachine__ApplyStatus{ nullptr };
 
