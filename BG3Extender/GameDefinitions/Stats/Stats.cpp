@@ -20,6 +20,18 @@ namespace bg3se
 			return false;
 		}
 
+		proto->UseCosts2.Clear();
+		proto->RitualCosts2.Clear();
+		proto->DualWieldingUseCosts2.Clear();
+		proto->CastTextEvents.Clear();
+		proto->UseCosts.Clear();
+		proto->DualWieldingUseCosts.Clear();
+		proto->RitualCosts.Clear();
+		proto->SpellAnimationNoneMagic.Clear();
+		proto->DualWieldingSpellAnimationNoneMagic.Clear();
+		proto->AlternativeCastTextEvents.Clear();
+		proto->ContainerSpells.Clear();
+
 		sync(proto, object->Name);
 		return true;
 	}
