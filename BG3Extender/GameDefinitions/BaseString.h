@@ -117,21 +117,65 @@ namespace bg3se
 
 	struct GlobalStringTable : public ProtectedGameObject<GlobalStringTable>
 	{
-		struct Entry
+		struct StringEntry
 		{
-			const char* StringPtrs[10];
-			Entry* Next;
-			uint32_t StringPtrItems;
-			uint32_t Unused;
-
-			uint32_t Count() const;
-			char const* Get(uint32_t i) const;
+			int Hash;
+			int FastLock;
+			int Length;
+			int Id;
+			char Str[1];
 		};
 
-		Entry HashTable[65521];
+		struct SubTable
+		{
+			struct Element
+			{
+				uint64_t field_0[8];
+			}; 
 
-		const char* Find(char const* s, uint64_t length) const;
-		static uint32_t Hash(char const* s, uint64_t length);
+			Element field_0[64];
+			__int64 field_1000[17];
+			__int64 EntrySize;
+			int EntriesPerBucket;
+			__int64 field_1098[21];
+			StringEntry** PoolPtr;
+			__int64 field_1148[15];
+			CRITICAL_SECTION CriticalSection;
+			__int64 field_11E8[3];
+		};
+
+		struct MainTable
+		{
+			SubTable::Element SomeTable[64];
+			__int64 field_1000;
+			__int64 field_1008;
+			__int64 field_1010;
+			__int64 field_1018;
+			__int64 field_1020;
+			__int64 field_1028;
+			__int64 field_1030;
+			__int64 field_1038;
+			HANDLE EventHandle;
+			__int64 field_1048;
+			__int64 field_1050;
+			__int64 field_1058;
+			__int64 field_1060;
+			__int64 field_1068;
+			__int64 field_1070;
+			__int64 field_1078;
+			GlobalStringTable* StringTable;
+			__int64 field_1088;
+			__int64 field_1090;
+			__int64 field_1098;
+			__int64 field_10A0;
+			__int64 field_10A8;
+			__int64 field_10B0;
+			__int64 field_10B8;
+			uint32_t field_10C0[65535];
+		};
+
+		SubTable SubTables[11];
+		MainTable Main;
 	};
 
 	struct ScratchBuffer : public Noncopyable<ScratchBuffer>

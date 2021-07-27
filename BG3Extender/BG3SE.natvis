@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+  <Type Name="bg3se::FixedString">
+    <DisplayString Condition="Index == 0xffffffff">(null)</DisplayString>
+    <DisplayString Condition="Index != 0xffffffff">{((bg3se::GlobalStringTable::StringEntry*)((char*)(*bg3se::gStaticSymbols->ls__gGlobalStringTable)->SubTables[(Index >> 2) &amp; 0xF].PoolPtr[(Index >> 6) &amp; 0x3FFF] + (*bg3se::gStaticSymbols->ls__gGlobalStringTable)->SubTables[(Index >> 2) &amp; 0xF].EntrySize * (Index >> 20)))->Str,na}</DisplayString>
+  </Type>
+  
+  <Type Name="bg3se::Array&lt;*&gt;">
+    <Intrinsic Name="size" Expression="size_" />
+    <Intrinsic Name="capacity" Expression="capacity_" />
+    <DisplayString>{{ size={size_} }}</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">size_</Item>
+      <Item Name="[capacity]" ExcludeView="simple">capacity_</Item>
+      <ArrayItems>
+        <Size>size_</Size>
+        <ValuePointer>buf_</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+  
+  <Type Name="bg3se::VirtualMultiHashSet&lt;*&gt;">
+    <Intrinsic Name="size" Expression="Keys.size_" />
+    <Intrinsic Name="capacity" Expression="Keys.capacity_" />
+    <DisplayString>{{ size={Keys.size_} }}</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">Keys.size_</Item>
+      <Item Name="[capacity]" ExcludeView="simple">Keys.capacity_</Item>
+      <ArrayItems>
+        <Size>Keys.size_</Size>
+        <ValuePointer>Keys.buf_</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="bg3se::VirtualMultiHashMap&lt;*&gt;">
+    <Intrinsic Name="size" Expression="Keys.size_" />
+    <Intrinsic Name="capacity" Expression="Keys.capacity_" />
+    <DisplayString>{{ size={Keys.size_} }}</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">Keys.size_</Item>
+      <Item Name="[capacity]" ExcludeView="simple">Keys.capacity_</Item>
+      <Item Name="[Keys]" ExcludeView="simple">Keys</Item>
+      <Item Name="[Values]" ExcludeView="simple">Values</Item>
+    </Expand>
+  </Type>
+  
+  <Type Name="bg3se::ObjectSet&lt;*&gt;">
+    <Intrinsic Name="size" Expression="Size" />
+    <Intrinsic Name="capacity" Expression="Capacity" />
+    <DisplayString>{{ size={Size} }}</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">Size</Item>
+      <Item Name="[capacity]" ExcludeView="simple">Capacity</Item>
+      <ArrayItems>
+        <Size>Size</Size>
+        <ValuePointer>Buf</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+</AutoVisualizer>

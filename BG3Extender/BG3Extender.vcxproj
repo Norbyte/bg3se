@@ -361,6 +361,9 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
   <ItemGroup>
     <Xml Include="GameHooks\BinaryMappings.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="BG3SE.natvis" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

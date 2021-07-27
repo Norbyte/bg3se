@@ -23,6 +23,12 @@
             E8 ?? ?? ?? ?? // call    ls__FixedString__FromString
         </Mapping>
 
+        <Mapping Name="ls::gGlobalStringTable">
+            <Target Name="ls::FixedString::FromString" Type="Indirect" Offset="0" Symbol="ls__gGlobalStringTable" />
+            48 8B 0D ?? ?? ?? ?? // mov     rcx, cs:ls__gGlobalStringTable
+            48 81 C1 00 C6 00 00 // add     rcx, 0C600h
+        </Mapping>
+
         <Mapping Name="ls::FixedString::GetString" Critical="true">
             <Target Name="ls::FixedString::FromString" Type="Absolute" Offset="0" Symbol="ls__FixedString__GetString" />
             48 83 EC 38 // sub     rsp, 38h
@@ -38,6 +44,7 @@
         <Mapping Name="ls::FixedString::DecRef" Critical="true">
             <Target Name="ls::FixedString::IncRef" Type="Indirect" Offset="7" Symbol="ls__FixedString__IncRef" />
             <Target Name="ls::FixedString::DecRef" Type="Indirect" Offset="19" Symbol="ls__FixedString__DecRef" />
+            <Target Type="Indirect" Offset="19" NextSymbol="ls::gGlobalStringTable" NextSymbolSeekSize="64" />
             83 FF FF // cmp     edi, 0FFFFFFFEh
             74 09 // jnb     short xxx
             8B CF // mov     ecx, edi

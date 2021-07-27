@@ -39,6 +39,7 @@ namespace bg3se
 		SYM_OFF(ls__FixedString__GetString);
 		SYM_OFF(ls__FixedString__IncRef);
 		SYM_OFF(ls__FixedString__DecRef);
+		SYM_OFF(ls__gGlobalStringTable);
 
 		SYM_OFF(ls__FileReader__ctor);
 		SYM_OFF(ls__FileReader__dtor);

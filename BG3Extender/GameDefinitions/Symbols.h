@@ -32,6 +32,7 @@ namespace bg3se
 		FixedString::GetStringProc* ls__FixedString__GetString{ nullptr };
 		FixedString::IncRefProc* ls__FixedString__IncRef{ nullptr };
 		FixedString::DecRefProc* ls__FixedString__DecRef{ nullptr };
+		GlobalStringTable** ls__gGlobalStringTable{ nullptr };
 
 		FileReader::CtorProc* ls__FileReader__ctor{ nullptr };
 		FileReader::DtorProc* ls__FileReader__dtor{ nullptr };
@@ -200,5 +201,6 @@ namespace bg3se
 		bool FileExists(StringView path, PathRootType root = PathRootType::Data, bool canonicalize = true) const;
 	};
 
+	extern StaticSymbols* gStaticSymbols;
 	StaticSymbols & GetStaticSymbols();
 }

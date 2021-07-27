@@ -8,10 +8,15 @@
 
 namespace bg3se
 {
+	StaticSymbols* gStaticSymbols{ nullptr };
+
 	StaticSymbols & GetStaticSymbols()
 	{
-		static auto sSymbols = new StaticSymbols();
-		return *sSymbols;
+		if (gStaticSymbols == nullptr) {
+			gStaticSymbols = new StaticSymbols();
+		}
+
+		return *gStaticSymbols;
 	}
 
 	void* MSVCMemoryAllocator::Alloc(std::size_t size)
@@ -337,86 +342,6 @@ namespace bg3se
 		param.PlaceholderOffset = -1;
 		param.PlaceholderSize = -1;
 	}*/
-
-	uint32_t murmur3_32(const uint8_t* key, size_t len, uint32_t seed)
-	{
-		uint32_t h = seed;
-		if (len > 3) {
-			size_t i = len >> 2;
-			do {
-				uint32_t k;
-				memcpy(&k, key, sizeof(uint32_t));
-				key += sizeof(uint32_t);
-				k *= 0xcc9e2d51;
-				k = (k << 15) | (k >> 17);
-				k *= 0x1b873593;
-				h ^= k;
-				h = (h << 13) | (h >> 19);
-				h = h * 5 + 0xe6546b64;
-			} while (--i);
-		}
-		if (len & 3) {
-			size_t i = len & 3;
-			uint32_t k = 0;
-			do {
-				k <<= 8;
-				k |= key[i - 1];
-			} while (--i);
-			k *= 0xcc9e2d51;
-			k = (k << 15) | (k >> 17);
-			k *= 0x1b873593;
-			h ^= k;
-		}
-		h ^= len;
-		h ^= h >> 16;
-		h *= 0x85ebca6b;
-		h ^= h >> 13;
-		h *= 0xc2b2ae35;
-		h ^= h >> 16;
-		return h;
-	}
-
-	uint32_t GlobalStringTable::Entry::Count() const
-	{
-		if (Next) {
-			return StringPtrItems + Next->Count();
-		}
-		else {
-			return StringPtrItems;
-		}
-	}
-
-	char const * GlobalStringTable::Entry::Get(uint32_t i) const
-	{
-		if (i < StringPtrItems) {
-			return StringPtrs[i];
-		}
-		else {
-			return Next->Get(i - StringPtrItems);
-		}
-	}
-
-	const char * GlobalStringTable::Find(char const * s, uint64_t length) const
-	{
-		/*auto const & entry = HashTable[Hash(s, length)];
-		auto numItems = entry.Count();
-		for (uint32_t i = 0; i < numItems; i++) {
-			const char * str = entry.Get(i);
-			if (str) {
-				auto metadata = reinterpret_cast<FixedString::Metadata*>(const_cast<char*>(str - 0x10));
-				if (metadata->Length == length && memcmp(s, str, length) == 0) {
-					return str;
-				}
-			}
-		}*/
-
-		return nullptr;
-	}
-
-	uint32_t GlobalStringTable::Hash(char const * s, uint64_t length)
-	{
-		return murmur3_32((const uint8_t *)s, length, 0) % 0xFFF1;
-	}
 
 	Module const * ModManager::FindModByNameGuid(char const * nameGuid) const
 	{

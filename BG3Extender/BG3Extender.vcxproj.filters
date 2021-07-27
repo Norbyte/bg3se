@@ -647,4 +647,7 @@
       <Filter>GameHooks</Filter>
     </Xml>
   </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="BG3SE.natvis" />
+  </ItemGroup>
 </Project>
