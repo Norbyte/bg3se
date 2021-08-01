@@ -666,6 +666,8 @@ namespace bg3se
 			V(UseSpellFunctor)
 			V(SummonInInventoryFunctor)
 			V(SpawnInInventoryFunctor)
+			V(RemoveUniqueStatusFunctor)
+			V(DisarmWeaponFunctor)
 			V(ExtenderFunctor)
 
 		default:

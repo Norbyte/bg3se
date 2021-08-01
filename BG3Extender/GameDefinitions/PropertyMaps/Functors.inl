@@ -19,7 +19,8 @@ P(PropertyContext)
 P_RO(StatsConditionsId)
 // TODO - Conditions object access
 P(IsSelf)
-P_RO(StoryActionId)
+P(IsSwap)
+P(StoryActionId)
 END_CLS()
 
 
@@ -34,9 +35,11 @@ INHERIT(StatsFunctorBase)
 P(StatusId)
 P(StringParam)
 P_RO(StatsConditions) // TODO - later write support for Conditions + StatsConditionsId
-P(Duration)
 P(Param1)
 P(Param2)
+// TODO - Duration expression!
+// P(Arg2_DurationLuaExpression) 
+P(HasParam6)
 END_CLS()
 
 
@@ -66,10 +69,10 @@ END_CLS()
 BEGIN_CLS(SummonFunctor)
 INHERIT(StatsFunctorBase)
 P(MovingObject)
-P(field_24)
+P(Arg2)
 P(SpawnLifetime)
 P(StatusesToApply)
-P(field_48)
+P(Arg3)
 END_CLS()
 
 
@@ -139,6 +142,7 @@ P(WeaponDamageType)
 // TODO - Damage expression access
 P(Nonlethal)
 P(Magical)
+P(field_34)
 END_CLS()
 
 
@@ -271,6 +275,17 @@ P(Arg4)
 P(Arg5)
 P(Arg6)
 P(AdditionalArgs)
+END_CLS()
+
+
+BEGIN_CLS(RemoveUniqueStatusFunctor)
+INHERIT(StatsFunctorBase)
+P(StatusId)
+END_CLS()
+
+
+BEGIN_CLS(DisarmWeaponFunctor)
+INHERIT(StatsFunctorBase)
 END_CLS()
 
 

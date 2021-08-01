@@ -338,6 +338,7 @@ namespace bg3se::lua
 		}
 
 		PO(IsSelf, false);
+		PO(IsSwap, false);
 		// PO(StoryActionId, 0); - FIXME - not sure if this is used at all
 
 		return s;
@@ -369,10 +370,10 @@ namespace bg3se::lua
 	{
 		s << static_cast<StatsFunctorBase&>(v);
 		PO(MovingObject, GFS.strEmpty);
-		PO(field_24, GFS.strEmpty);
+		PO(Arg2, GFS.strEmpty);
 		PO(SpawnLifetime, 6.0f);
 		PO(StatusesToApply, ObjectSet<FixedString>{});
-		PO(field_48, GFS.strEmpty);
+		PO(Arg3, GFS.strEmpty);
 		// LuaSerializeStatsEnum(s, "StatusHealType", GFS.strStatusHealType, v.StatusHealType);
 		return s;
 	}
@@ -520,6 +521,7 @@ namespace bg3se::lua
 	LuaSerializer& operator << (LuaSerializer& s, RemoveAuraByChildStatusFunctor& v)
 	{
 		s << static_cast<StatsFunctorBase&>(v);
+		P(StatusId);
 		return s;
 	}
 
@@ -533,9 +535,10 @@ namespace bg3se::lua
 		if (!s.IsWriting) {
 			v.StatsConditionsId = GetStaticSymbols().GetStats()->GetOrCreateConditions(v.StatsConditions);
 		}
-		PO(Duration, 6.0f);
 		PO(Param1, -1);
 		PO(Param2, -1);
+		// FIXME - duration Lua expression!
+		PO(HasParam6, false);
 		return s;
 	}
 
@@ -548,6 +551,7 @@ namespace bg3se::lua
 		// FIXME - PO(Damage);
 		PO(Nonlethal, false);
 		PO(Magical, false);
+		PO(field_34, 0);
 		return s;
 	}
 
@@ -631,6 +635,19 @@ namespace bg3se::lua
 		return s;
 	}
 
+	LuaSerializer& operator << (LuaSerializer& s, RemoveUniqueStatusFunctor& v)
+	{
+		s << static_cast<StatsFunctorBase&>(v);
+		P(StatusId);
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, DisarmWeaponFunctor& v)
+	{
+		s << static_cast<StatsFunctorBase&>(v);
+		return s;
+	}
+
 	LuaSerializer& operator << (LuaSerializer& s, ExtenderFunctor& v)
 	{
 		s << static_cast<StatsFunctorBase&>(v);
@@ -682,6 +699,8 @@ namespace bg3se::lua
 					V(UseSpellFunctor)
 					V(SummonInInventoryFunctor)
 					V(SpawnInInventoryFunctor)
+					V(RemoveUniqueStatusFunctor)
+					V(DisarmWeaponFunctor)
 					V(ExtenderFunctor)
 
 					default:
@@ -735,6 +754,8 @@ namespace bg3se::lua
 					V(UseSpellFunctor)
 					V(SummonInInventoryFunctor)
 					V(SpawnInInventoryFunctor)
+					V(RemoveUniqueStatusFunctor)
+					V(DisarmWeaponFunctor)
 					V(ExtenderFunctor)
 
 					default:

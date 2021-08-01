@@ -28,6 +28,7 @@ namespace bg3se
 		StatsPropertyContext PropertyContext{ 0 };
 		int32_t StatsConditionsId{ -1 };
 		bool IsSelf{ false };
+		bool IsSwap{ false };
 		int32_t StoryActionId{ 0 };
 
 		template <class T>
@@ -227,10 +228,10 @@ namespace bg3se
 		static constexpr auto FunctorId = StatsFunctorActionId::Summon;
 
 		FixedString MovingObject; // Arg1
-		FixedString field_24;
+		FixedString Arg2;
 		float SpawnLifetime{ 6.0f };
 		ObjectSet<FixedString> StatusesToApply;
-		FixedString field_48;
+		FixedString Arg3;
 	};
 
 	struct ForceFunctor : public StatsFunctorBase
@@ -388,9 +389,10 @@ namespace bg3se
 		FixedString StringParam; // Arg3
 		STDString StatsConditions; // Arg6
 		int StatsConditionsId{ -1 }; // Arg6
-		float Duration{ 6.0 }; // Arg2
-		int Param1{ -1 }; // Arg4
-		int Param2{ -1 }; // Arg5
+		int Param1{ -1 }; // Arg5
+		int Param2{ -1 }; // ???
+		void* Arg2_DurationLuaExpression{ nullptr }; // Arg2
+		bool HasParam6{ false };
 	};
 
 	struct DealDamageFunctor : public StatsFunctorBase
@@ -405,6 +407,7 @@ namespace bg3se
 		LuaExpression* Damage;
 		bool Nonlethal; // Arg3
 		bool Magical; // Arg2
+		int32_t field_34; // Arg5
 	};
 
 	struct UseActionResourceFunctor : public StatsFunctorBase
@@ -490,6 +493,18 @@ namespace bg3se
 		bool Arg4;
 		bool Arg5;
 		VirtualMultiHashSet<FixedString> AdditionalArgs;
+	};
+
+	struct RemoveUniqueStatusFunctor : public StatsFunctorBase
+	{
+		static constexpr auto FunctorId = StatsFunctorActionId::RemoveUniqueStatus;
+
+		FixedString StatusId; // Arg0
+	};
+
+	struct DisarmWeaponFunctor : public StatsFunctorBase
+	{
+		static constexpr auto FunctorId = StatsFunctorActionId::DisarmWeapon;
 	};
 
 }

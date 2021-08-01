@@ -54,6 +54,8 @@ namespace bg3se::esv::lua
 			V(RemoveAuraByChildStatus)
 			V(SummonInInventory)
 			V(SpawnInInventory)
+			V(RemoveUniqueStatus)
+			V(DisarmWeapon)
 			V(Extender)
 
 		default:
