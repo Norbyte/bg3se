@@ -28,6 +28,11 @@ namespace bg3se
 		proto->AlternativeCastTextEvents.Clear();
 		proto->ContainerSpells.Clear();
 
+		proto->SpellFlags = 0;
+		proto->LineOfSightFlags = 0;
+		proto->WeaponTypes = 0;
+		proto->AiFlags = 0;
+
 		sync(proto, object->Name);
 		return true;
 	}
