@@ -5,6 +5,7 @@
 #include <GameDefinitions/Stats/Functors.h>
 #include <GameDefinitions/Status.h>
 #include <Extender/Shared/ExtensionHelpers.h>
+#include <Lua/Shared/LuaStats.h>
 
 namespace bg3se::esv
 {
@@ -139,17 +140,23 @@ namespace bg3se::esv::lua
 			ActionOriginator* originator, GuidResourceDefinitionManagerBase* classResourceMgr, Hit* hit, DamageSums* damageSums, HitWith hitWith);
 
 		template <class TParams>
-		void LuaTriggerFunctorExecEvent(StatsFunctorSet* self, TParams* params)
+		void LuaTriggerFunctorPreExecEvent(StatsFunctorSet* self, TParams* params)
 		{
-			// FIXME - ObjectProxy::Make<StatsFunctorSet>(L, self); instead of nullptr!
-			state_.CallExt<>("_OnExecuteFunctor", 0, nullptr, params);
+			state_.CallExt<>("_OnExecuteFunctor", 0, self, params);
+		}
+
+		template <class TParams>
+		void LuaTriggerFunctorPostExecEvent(StatsFunctorSet* self, TParams* params, NewHit* hit)
+		{
+			state_.CallExt<>("_OnAfterExecuteFunctor", 0, self, params, hit);
 		}
 
 		template <class TParams, class TNext>
 		void OnFunctorExecute(TNext* next, NewHit* hit, StatsFunctorSet* self, TParams* params)
 		{
-			LuaTriggerFunctorExecEvent<TParams>(self, params);
+			LuaTriggerFunctorPreExecEvent<TParams>(self, params);
 			next(hit, self, params);
+			LuaTriggerFunctorPostExecEvent<TParams>(self, params, hit);
 		}
 	};
 

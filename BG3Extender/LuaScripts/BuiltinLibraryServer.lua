@@ -12,6 +12,7 @@ _I._Listeners = {
 
 	OnDealDamage = {},
 	OnExecuteFunctor = {},
+	OnAfterExecuteFunctor = {},
 
 	-- FIXME - IMPLEMENT
 	GetSkillDamage = {},
@@ -37,6 +38,10 @@ end
 
 _I._OnExecuteFunctor = function (...)
     return _I._Notify("OnExecuteFunctor", ...)
+end
+
+_I._OnAfterExecuteFunctor = function (...)
+    return _I._Notify("OnAfterExecuteFunctor", ...)
 end
 
 _I._GetSkillDamage = function (...)

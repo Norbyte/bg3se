@@ -8,10 +8,6 @@
 
 namespace bg3se
 {
-	BaseFunctorExecParams::~BaseFunctorExecParams()
-	{}
-
-
 	bool SpellPrototypeManager::SyncStat(CRPGStats_Object* object, SpellPrototype* proto)
 	{
 		auto sync = GetStaticSymbols().eoc__SpellPrototype__Init;

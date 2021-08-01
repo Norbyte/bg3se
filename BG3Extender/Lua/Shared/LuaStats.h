@@ -70,6 +70,31 @@ namespace bg3se::lua::stats
 		int NewIndex(lua_State * L);
 	};
 
+
+	class StatsFunctorSetProxy : public ArrayProxyImplBase
+	{
+	public:
+		StatsFunctorSetProxy(LifetimeHolder const& lifetime, StatsFunctorSet* obj);
+		~StatsFunctorSetProxy() override;
+
+		inline StatsFunctorSet* Get() const
+		{
+			return object_;
+		}
+
+		void* GetRaw() override;
+		char const* GetTypeName() const override;
+		bool GetElement(lua_State* L, unsigned arrayIndex) override;
+		bool SetElement(lua_State* L, unsigned arrayIndex, int luaIndex) override;
+		unsigned Length() override;
+		int Next(lua_State* L, int key) override;
+
+	private:
+		StatsFunctorSet* object_;
+		LifetimeHolder lifetime_;
+	};
+
+
 	/*
 	class DamageList : public Userdata<DamageList>, public Pushable<PushPolicy::None>
 	{
@@ -115,6 +140,11 @@ namespace bg3se::lua::utils
 
 namespace bg3se::lua
 {
+	inline void push(lua_State* L, StatsFunctorSet* v)
+	{
+		ArrayProxy::MakeImplByRef<stats::StatsFunctorSetProxy>(L, GetCurrentLifetime(), v);
+	}
+
 	void RegisterEntityProxy(lua_State* L);
 	void RegisterSharedLibraries(lua_State* L);
 }

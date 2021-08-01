@@ -52,28 +52,36 @@ namespace bg3se
 	{
 		int Total;
 		int DiceTotal;
+		int DiscardedDiceTotal;
 		bool Critical;
 	};
 
-	struct StatsRollBoosts : public HasObjectProxy
+	struct ResolvedRollBonus : public HasObjectProxy
+{
+		uint8_t DiceSetType;
+		uint8_t NumDice;
+		int ResolvedRollBonus;
+	};
+
+	struct StatsRollMetadata : public HasObjectProxy
 	{
 		int ProficiencyBonus;
 		int RollBonus;
-		int ThrownDamage;
 		VirtualMultiHashMap<AbilityId, int32_t> AbilityBoosts;
 		VirtualMultiHashMap<SkillId, int32_t> SkillBonuses;
+		bool AutoSkillCheckFail;
+		bool AutoAbilityCheckFail;
+		bool AutoAbilitySavingThrowFail;
+		bool HasCustomMetadata;
+		bool IsCritical;
+		Array<ResolvedRollBonus> ResolvedRollBonuses;
 	};
 
 	struct StatsRollBase : public HasObjectProxy
 	{
 		StatsRollRoll Roll;
 		StatsRollResult Result;
-		StatsRollBoosts Boosts;
-		bool AutoSkillCheckFail;
-		bool AutoAbilityCheckFail;
-		bool AutoAbilitySavingThrowFail;
-		bool HasCustomMetadata;
-		bool IsCritical;
+		StatsRollMetadata Metadata;
 	};
 
 
@@ -128,12 +136,12 @@ namespace bg3se
 		};
 
 		int TotalDamageDone;
-		int TotalDamagePerceived;
 		DeathType DeathType;
 		DamageType DamageType;
 		CauseType CauseType;
 		glm::vec3 ImpactPosition;
 		glm::vec3 ImpactDirection;
+		float ImpactForce;
 		int ArmorAbsorption;
 		int LifeSteal;
 		DamageFlags EffectFlags;
@@ -148,12 +156,14 @@ namespace bg3se
 		Subobj SomeSubobj;
 		uint8_t SpellAttackType;
 		FixedString SpellId;
+		int32_t field_180;
+		EntityHandle field_188;
+		uint8_t field_190;
 		uint8_t SpellSchool;
 		int SpellLevel;
 		int SpellPowerLevel;
 		int TotalHealDone;
-		bool InstantKill;
-		bool FirstAttack;
+		uint8_t HitDescFlags;
 		ObjectSet<DamagePair> DamageList;
 	};
 

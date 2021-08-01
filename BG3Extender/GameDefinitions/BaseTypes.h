@@ -10,7 +10,7 @@
 #define UUID_DEFINED
 struct UUID
 {
-	uint64_t Val[2];
+	uint64_t Val[2]{ 0 };
 
 	inline bool operator ==(UUID const& o) const
 	{

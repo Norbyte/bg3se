@@ -486,6 +486,14 @@ namespace bg3se::lua
 	public:
 		static char const * const MetatableName;
 
+		template <class TImpl, class... Args>
+		inline static TImpl* MakeImplByRef(lua_State* L, LifetimeHolder const& lifetime, Args... args)
+		{
+			static_assert(sizeof(TImpl) <= sizeof(impl_), "ArrayProxy implementation object too large!");
+			auto self = New(L, lifetime);
+			return new (self->impl_) TImpl(lifetime, args...);
+		}
+
 		template <class T>
 		inline static ArrayProxyByRefImpl<T>* MakeByRef(lua_State* L, Array<T>* object, LifetimeHolder const& lifetime)
 		{

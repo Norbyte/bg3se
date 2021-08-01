@@ -44,13 +44,12 @@ namespace bg3se
 
 	struct BaseFunctorExecParams : public HasObjectProxy
 	{
-		virtual ~BaseFunctorExecParams();
-
 		FunctorExecParamsType ParamsTypeId{ 0 };
 		StatsPropertyContext PropertyContext{ 0 };
 		int32_t StoryActionId{ 0 };
 		ActionOriginator Originator;
 		GuidResourceDefinitionManagerBase* GuidResourceMgr{ nullptr };
+		uint64_t Unkn{ 0 };
 	};
 
 	struct FunctorExecParamsType1 : public BaseFunctorExecParams
@@ -64,7 +63,9 @@ namespace bg3se
 		DamageSums DamageSums;
 		float SomeRadius;
 		HitWith HitWith;
-		__int16 Hit2Flags;
+		int16_t Hit2Flags;
+		FixedString field_26C;
+		char field_270;
 	};
 
 	struct FunctorExecParamsType2 : public BaseFunctorExecParams
@@ -122,12 +123,20 @@ namespace bg3se
 		DamageSums DamageSums;
 		float SomeRadius;
 		uint8_t field_268;
+		int field_25C;
 	};
 
 	struct FunctorExecParamsType7 : public BaseFunctorExecParams
 	{
 		EntityWorldHandle Caster;
+		EntityWorldHandle Caster2;
 		EntityWorldHandle Target;
+		glm::vec3 Position;
+		bool IsFromItem;
+		SpellIdWithPrototype SpellId;
+		Hit Hit;
+		DamageSums DamageSums;
+		float SomeRadius;
 		bool SummonInInventoryFlag;
 	};
 
@@ -318,7 +327,7 @@ namespace bg3se
 		static constexpr auto FunctorId = StatsFunctorActionId::SetStatusDuration;
 
 		FixedString StatusId; // Arg0
-		float Duration; // Arg1
+		float Duration{ 6.0f }; // Arg1
 		bool SetIfLonger{ false }; // Arg2
 	};
 
@@ -401,13 +410,13 @@ namespace bg3se
 
 		using ApplyDamageProc = NewHit* (NewHit* result, DealDamageFunctor* functor, EntityWorldHandle* casterHandle, EntityWorldHandle* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId, int storyActionId, ActionOriginator* originator, GuidResourceDefinitionManagerBase* classResourceMgr, Hit* hit, DamageSums* damageSums, HitWith hitWith);
 
-		DamageType DamageType; // Arg1
-		DealDamageWeaponType WeaponType; // Arg0
-		DealDamageWeaponDamageType WeaponDamageType; // Arg1
-		LuaExpression* Damage;
-		bool Nonlethal; // Arg3
-		bool Magical; // Arg2
-		int32_t field_34; // Arg5
+		DamageType DamageType{ DamageType::None }; // Arg1
+		DealDamageWeaponType WeaponType{ DealDamageWeaponType::None }; // Arg0
+		DealDamageWeaponDamageType WeaponDamageType{ DealDamageWeaponDamageType::None }; // Arg1
+		LuaExpression* Damage{ nullptr };
+		bool Nonlethal{ false }; // Arg3
+		bool Magical{ false }; // Arg2
+		int32_t field_34{ 0 }; // Arg5
 	};
 
 	struct UseActionResourceFunctor : public StatsFunctorBase
@@ -415,9 +424,9 @@ namespace bg3se
 		static constexpr auto FunctorId = StatsFunctorActionId::UseActionResource;
 
 	    UUID ActionResourceUUID; // Arg0
-	    double Amount; // Arg1
-	    int ResourceIndex; // Arg2
-	    bool IsPercentage; // Arg1
+		double Amount{ 0.0 }; // Arg1
+		int ResourceIndex{ 0 }; // Arg2
+		bool IsPercentage{ false }; // Arg1
 	};
 
 	struct CreateExplosionFunctor : public StatsFunctorBase
@@ -435,21 +444,21 @@ namespace bg3se
 		float field_24{ 0.0f };
 		float field_28{ 0.0f };	
 		float field_2C{ -1.0f };
-		SurfaceChange SurfaceChange;
+		SurfaceChange SurfaceChange{ SurfaceChange::None };
 	};
 
 	struct ApplyEquipmentStatusFunctor : public ApplyStatusFunctor
 	{
 		static constexpr auto FunctorId = StatsFunctorActionId::ApplyEquipmentStatus;
 
-		ItemSlot32 EquipmentSlot;
+		ItemSlot32 EquipmentSlot{ ItemSlot32::MainWeapon };
 	};
 
 	struct RegainHitPointsFunctor : public StatsFunctorBase
 	{
 		static constexpr auto FunctorId = StatsFunctorActionId::RegainHitPoints;
 
-		LuaExpression* HitPoints;
+		LuaExpression* HitPoints{ nullptr };
 	};
 
 	struct UseSpellFunctor : public StatsFunctorBase
@@ -473,13 +482,13 @@ namespace bg3se
 
 		FixedString Arg1;
 		FixedString Arg7;
-		float Arg2; // Duration?
+		float Arg2{ 0.0f }; // Duration?
 		VirtualMultiHashSet<FixedString> AdditionalArgs;
 		FixedString Arg8;
-		float Arg3;
-		bool Arg4;
-		bool Arg5;
-		bool Arg6;
+		float Arg3{ 0.0f };
+		bool Arg4{ false };
+		bool Arg5{ false };
+		bool Arg6{ false };
 	};
 
 	struct SpawnInInventoryFunctor : public StatsFunctorBase
@@ -488,10 +497,10 @@ namespace bg3se
 
 		FixedString Arg1;
 		FixedString Arg6;
-		float Arg2;
-		bool Arg3;
-		bool Arg4;
-		bool Arg5;
+		float Arg2{ 0.0f };
+		bool Arg3{ false };
+		bool Arg4{ false };
+		bool Arg5{ false };
 		VirtualMultiHashSet<FixedString> AdditionalArgs;
 	};
 
