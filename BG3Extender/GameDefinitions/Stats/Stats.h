@@ -114,6 +114,7 @@ namespace bg3se
 		uint8_t SpellHitAnimationType;
 		uint8_t SpellAnimationIntentType;
 		uint32_t LineOfSightFlags;
+		uint32_t SpellCategoryFlags;
 		int Level;
 		int PowerLevel;
 		bool HasMemoryCost;

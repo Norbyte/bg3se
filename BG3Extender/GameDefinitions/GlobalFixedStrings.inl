@@ -176,6 +176,7 @@ FS(StatusEvent);
 FS(StatusPropertyFlags);
 FS(StatusGroupFlags);
 FS(LineOfSightFlags);
+FS(SpellCategoryFlags);
 
 FS(Default);
 

@@ -50,14 +50,29 @@ namespace bg3se
 
 	struct SpellBookEntry
 	{
+		struct InnerEntry
+		{
+			__int64 field_0;
+			__int64 field_8;
+			__int64 field_10;
+			__int64 field_18;
+			__int64 field_20;
+			__int64 field_28;
+			__int64 field_30;
+			__int64 field_38;
+			__int64 field_40;
+			__int64 field_48;
+		};
+
 		SpellId Id;
 		UUID SpellUUID;
-		__int64 field_38;
+		int32_t field_38;
+		int32_t field_3C;
 		SpellCooldownType CooldownType;
 		uint8_t field_41;
 		uint8_t field_42;
 		AbilityId SpellCastingAbility;
-		Array<void*> InnerEntries;
+		Array<InnerEntry> InnerEntries;
 	};
 
 	struct SpellBookComponent : public BaseComponent

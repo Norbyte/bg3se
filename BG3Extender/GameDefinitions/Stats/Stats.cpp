@@ -30,6 +30,7 @@ namespace bg3se
 
 		proto->SpellFlags = 0;
 		proto->LineOfSightFlags = 0;
+		proto->SpellCategoryFlags = 0;
 		proto->WeaponTypes = 0;
 		proto->AiFlags = 0;
 
@@ -257,7 +258,8 @@ namespace bg3se
 			|| typeName == GFS.strStatusEvent
 			|| typeName == GFS.strStatusPropertyFlags
 			|| typeName == GFS.strStatusGroupFlags
-			|| typeName == GFS.strLineOfSightFlags;
+			|| typeName == GFS.strLineOfSightFlags
+			|| typeName == GFS.strSpellCategoryFlags;
 	}
 
 	RPGEnumerationType RPGEnumeration::GetPropertyType() const
