@@ -8,23 +8,25 @@
 
 namespace bg3se
 {
-	struct Passive : public ProtectedGameObject<Passive>
+	struct Passive : public Noncopyable<Passive>
 	{
-		int Properties;
+		using InitProc = void (Passive* self, CRPGStats_Object* stats);
+
+		uint32_t Properties;
 		FixedString Name;
 		DescriptionInfo DescriptionInfo;
 		FixedString ToggleOnEffect;
 		FixedString ToggleOffEffect;
-		int StatsFunctorContext;
+		uint32_t StatsFunctorContext;
 		int ConditionsIndex;
 		StatsFunctorSetImpl StatsFunctors;
 		StatsFunctorSetImpl ToggleOnFunctors;
 		StatsFunctorSetImpl ToggleOffFunctors;
-		int BoostContext;
+		FixedString ToggleGroup;
+		uint32_t ToggleOffContext;
+		uint32_t BoostContext;
 		int BoostConditionsIndex;
-		Array<void*> Boosts;
-		__int64 field_1A8;
-		__int64 field_1B0;
+		Array<UUID> Boosts;
 	};
 
 
@@ -32,6 +34,9 @@ namespace bg3se
 	{
 		void* VMT;
 		RefMap<FixedString, Passive> Passives;
-		__int64 field_18;
+		bool Initialized;
+
+		void SyncStat(CRPGStats_Object* object);
+		bool SyncStat(CRPGStats_Object* object, Passive* proto);
 	};
 }

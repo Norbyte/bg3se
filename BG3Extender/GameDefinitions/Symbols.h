@@ -8,6 +8,7 @@
 #include <GameDefinitions/Osiris.h>
 #include <GameDefinitions/RootTemplates.h>
 #include <GameDefinitions/Stats/Stats.h>
+#include <GameDefinitions/Passives.h>
 #include <GameDefinitions/Status.h>
 #include <GameDefinitions/Surface.h>
 
@@ -56,6 +57,12 @@ namespace bg3se
 
 		SpellPrototypeManager** eoc__SpellPrototypeManager{ nullptr };
 		SpellPrototype::InitProc* eoc__SpellPrototype__Init{ nullptr };
+
+		StatusPrototypeManager** eoc__StatusPrototypeManager{ nullptr };
+		StatusPrototype::InitProc* eoc__StatusPrototype__Init{ nullptr };
+
+		PassiveManager** eoc__PassiveManager{ nullptr };
+		Passive::InitProc* eoc__Passive__Init{ nullptr };
 
 		esv::StatusMachine::CreateStatusProc* esv__StatusMachine__CreateStatus{ nullptr };
 		esv::StatusMachine::ApplyStatusProc* esv__StatusMachine__ApplyStatus{ nullptr };

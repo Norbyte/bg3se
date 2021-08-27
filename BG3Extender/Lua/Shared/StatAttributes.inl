@@ -370,7 +370,7 @@ namespace bg3se::lua::stats
 			}
 
 			default:
-				LuaError("Cannot use table value for stat properties of type " << (unsigned)attrType << "!");
+				LuaError("Cannot use table value for stat property " << attributeName << " of type " << (unsigned)attrType << "!");
 				break;
 			}
 			break;
@@ -392,7 +392,7 @@ namespace bg3se::lua::stats
 				break;
 
 			default:
-				LuaError("Cannot use nil value for stat properties of type " << (unsigned)attrType << "!");
+				LuaError("Cannot use nil value for stat property " << attributeName << " of type " << (unsigned)attrType << "!");
 				break;
 			}
 			break;

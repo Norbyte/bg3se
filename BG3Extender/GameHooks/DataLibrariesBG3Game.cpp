@@ -63,6 +63,12 @@ namespace bg3se
 		SYM_OFF(eoc__SpellPrototypeManager);
 		SYM_OFF(eoc__SpellPrototype__Init);
 
+		SYM_OFF(eoc__StatusPrototypeManager);
+		SYM_OFF(eoc__StatusPrototype__Init);
+
+		SYM_OFF(eoc__PassiveManager);
+		SYM_OFF(eoc__Passive__Init);
+
 		SYM_OFF(esv__StatusMachine__CreateStatus);
 		SYM_OFF(esv__StatusMachine__ApplyStatus);
 

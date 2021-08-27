@@ -12,10 +12,6 @@ namespace bg3se
 	struct IGameObject;
 	struct SpellPrototype;
 
-	/*
-	typedef void (* eoc__SpellPrototypeManager__Init)(void * self);
-	*/
-
 	struct CDivinityStats : public ProtectedGameObject<CDivinityStats>
 	{
 		void * VMT;
@@ -160,25 +156,23 @@ namespace bg3se
 	};
 
 
-	struct StatusPrototype : public ProtectedGameObject<StatusPrototype>
+	struct StatusPrototype : public Noncopyable<StatusPrototype>
 	{
-		/*using FormatDescriptionParamProc = void (StatusPrototype *prototype, CRPGStats_ObjectInstance* owner,
-			CRPGStats_ObjectInstance* statusSource, float multiplier, eoc::Text * text, int paramIndex,
-			FixedString * param, ObjectSet<STDString> * paramSet);*/
+		using InitProc = void (StatusPrototype* self, FixedString const& statusId, uint8_t flags);
 
-		void* VMT{ nullptr };
 		int StatsObjectIndex{ -1 };
 		StatusType StatusId;
 		FixedString StatusName;
-		int StatusPropertyFlags;
-		int StatusGroups;
+		uint32_t StatusPropertyFlags;
+		uint32_t StatusGroups;
 		DescriptionInfo Description;
 		uint8_t LEDEffect;
 		uint8_t TickType;
 		uint8_t Flags;
 		ObjectSet<SurfaceType>* AbsorbSurfaceTypes{ nullptr };
-		Array<void*> Boosts;
+		Array<UUID> Boosts;
 		int16_t RemoveEvents;
+		uint8_t HitAnimationType;
 
 		CRPGStats_Object* GetStats() const;
 	};
@@ -186,11 +180,11 @@ namespace bg3se
 	struct StatusPrototypeManager : public ProtectedGameObject<StatusPrototypeManager>
 	{
 		void* VMT;
-		Map<FixedString, StatusPrototype*> Prototypes;
-		Array<FixedString> PrototypeNames;
+		Map<FixedString, StatusPrototype*> Statuses;
 		bool Initialized;
 
-		// void SyncStatusStat(CRPGStats_Object* object);
+		void SyncStat(CRPGStats_Object* object);
+		bool SyncStat(CRPGStats_Object* object, StatusPrototype* proto);
 	};
 
 	/*

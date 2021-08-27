@@ -350,6 +350,33 @@
         41 88 46 0C // mov     [r14+0Ch], al
       </Mapping>
 
+      <Mapping Name="eoc::StatusPrototype::Init">
+        <Condition Type="FixedString" Offset="10" Value="DESTROYING" />
+        <Target Type="Indirect" Offset="20" Symbol="eoc__StatusPrototype__Init" />
+        C7 47 04 02 00 00 00 // mov     dword ptr [rdi+4], 2
+        41 B0 01 // mov     r8b, 1
+        48 8D 15 ?? ?? ?? ?? // lea     rdx, fs_DESTROYING
+        48 8B CF // mov     rcx, rdi
+        E8 ?? ?? ?? ?? // call    eoc__StatusPrototype__Init
+      </Mapping>
+
+      <Mapping Name="eoc::Passive::Init" Scope="Custom">
+        <Target Type="Absolute" Offset="0" Symbol="eoc__Passive__Init" />
+        48 89 5C 24 10 // mov     [rsp+arg_8], rbx
+        48 89 6C 24 18 // mov     [rsp+arg_10], rbp
+      </Mapping>
+
+      <Mapping Name="eoc::Passive::Init Outer">
+        <Condition Type="FixedStringIndirect" Offset="12" Value="ToggleOnEffect" />
+        <Target Type="Absolute" Offset="-128" NextSymbol="eoc::Passive::Init" NextSymbolSeekSize="128" />
+        48 8D 4B 08 // lea     rcx, [rbx+8]
+        48 8B D5 // mov     rdx, rbp
+        E8 ?? ?? ?? ?? // call    eoc__DescriptionInfo__FromStats
+        48 8B 15 ?? ?? ?? ?? // mov     rdx, cs:pffs_ToggleOnEffect
+        48 8B CD // mov     rcx, rbp
+        E8 ?? ?? ?? ?? // call    CRPGStats_Object__GetModifierString
+      </Mapping>
+
       <Mapping Name="eoc::gSpellPrototypeManager">
         <Condition Type="String" Offset="0" Value="Spells" />
         <Target Type="Indirect" Offset="18" Symbol="eoc__SpellPrototypeManager" />
@@ -358,6 +385,26 @@
         49 8B CF // mov     rcx, r15
         FF 50 78 // call    qword ptr [rax+78h]
         48 8B 0D ?? ?? ?? ?? // mov     rcx, cs:eoc__gSpellManager
+      </Mapping>
+
+      <Mapping Name="eoc::gStatusPrototypeManager">
+        <Condition Type="String" Offset="0" Value="Statuses" />
+        <Target Type="Indirect" Offset="18" Symbol="eoc__StatusPrototypeManager" />
+        4C 8D 05 ?? ?? ?? ?? // lea     r8, str_Statuses
+        BA 01 00 00 00 // mov     edx, 1
+        49 8B CF // mov     rcx, r15
+        FF 50 78 // call    qword ptr [rax+78h]
+        48 8B 0D ?? ?? ?? ?? // mov     rcx, cs:eoc__gStatusPrototypeManager
+      </Mapping>
+
+      <Mapping Name="eoc::gPassiveManager">
+        <Condition Type="String" Offset="0" Value="Passives" />
+        <Target Type="Indirect" Offset="18" Symbol="eoc__PassiveManager" />
+        4C 8D 05 ?? ?? ?? ?? // lea     r8, str_Passives
+        BA 01 00 00 00 // mov     edx, 1
+        49 8B CF // mov     rcx, r15
+        FF 50 78 // call    qword ptr [rax+78h]
+        48 8B 0D ?? ?? ?? ?? // mov     rcx, cs:eoc__gPassiveManager
       </Mapping>
     </Mappings>
 </BinaryMappings>

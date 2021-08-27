@@ -43,7 +43,7 @@ namespace bg3se
 	{
 		auto stats = GetStaticSymbols().GetStats();
 		auto pProto = Spells.Find(object->Name);
-		if (pProto == nullptr) {
+		if (!pProto) {
 			auto proto = GameAlloc<SpellPrototype>();
 			if (SyncStat(object, proto)) {
 				Spells.Set(proto->SpellId, proto);
@@ -54,58 +54,72 @@ namespace bg3se
 		}
 	}
 
-	/*void StatusPrototypeManager::SyncStatusStat(CRPGStats_Object* object)
+	bool StatusPrototypeManager::SyncStat(CRPGStats_Object* object, StatusPrototype* proto)
 	{
-		auto stats = GetStaticSymbols().GetStats();
-		auto statusTypeFs = stats->GetAttributeString(object, GFS.strStatusType);
-		if (!statusTypeFs || !*statusTypeFs) {
-			OsiError("Status stats object has no StatusType?");
-			return;
+		auto sync = GetStaticSymbols().eoc__StatusPrototype__Init;
+		if (!sync) {
+			OsiError("eoc::StatusPrototype::Init not mapped!");
+			return false;
 		}
 
-		auto statusType = EnumInfo<StatusType>::Find(*statusTypeFs);
-		if (!statusType) {
-			OsiError("Unsupported StatusType: " << *statusTypeFs);
-			return;
-		}
+		proto->StatusPropertyFlags = 0;
+		proto->StatusGroups = 0;
+		proto->Flags = 0;
+		proto->RemoveEvents = 0;
+		proto->Boosts.Clear();
 
-		StatusPrototype* proto;
-		auto pProto = Prototypes.Find(object->Name);
-		if (pProto == nullptr) {
-			auto hitProto = Prototypes.Find(GFS.strHIT);
-			if (!hitProto) {
-				OsiError("Couldn't sync new status entry - missing HIT status!");
-				return;
-			}
-
-			proto = GameAlloc<StatusPrototype>();
-			proto->VMT = (*hitProto)->VMT;
-			proto->RPGStatsObjectIndex = object->Handle;
-			proto->StatusId = *statusType;
-			proto->StatusName = object->Name;
-			proto->HasStats = false;
-
-			Prototypes.Insert(proto->StatusName, proto);
-			PrototypeNames.Add(proto->StatusName);
-		} else {
-			proto = *pProto;
-		}
-
-		if (proto->HasStats) {
-			OsiError("Cannot sync stats of builtin status " << proto->StatusName);
-			return;
-		}
-
-		auto displayNameKey = ToFixedString(*stats->GetAttributeString(object, GFS.strDisplayName));
-		TranslatedString displayName;
-		if (script::GetTranslatedStringFromKey(displayNameKey, displayName)) {
-			proto->DisplayName = displayName;
-		}
-
-		proto->Icon = ToFixedString(*stats->GetAttributeString(object, GFS.strIcon));
-		// FIXME - AbsorbSurfaceType
+		sync(proto, object->Name, 1);
+		return true;
 	}
 
+
+	void StatusPrototypeManager::SyncStat(CRPGStats_Object* object)
+	{
+		auto stats = GetStaticSymbols().GetStats();
+		auto pProto = Statuses.Find(object->Name);
+		if (!pProto) {
+			auto proto = GameAlloc<StatusPrototype>();
+			if (SyncStat(object, proto)) {
+				Statuses.Insert(proto->StatusName, proto);
+			}
+		}
+		else {
+			SyncStat(object, *pProto);
+		}
+	}
+
+	bool PassiveManager::SyncStat(CRPGStats_Object* object, Passive* proto)
+	{
+		auto sync = GetStaticSymbols().eoc__Passive__Init;
+		if (!sync) {
+			OsiError("eoc::Passive::Init not mapped!");
+			return false;
+		}
+
+		proto->Properties = 0;
+		proto->StatsFunctorContext = 0;
+		proto->ToggleOffContext = 0;
+		proto->BoostContext = 0;
+		proto->Boosts.Clear();
+
+		sync(proto, object);
+		return true;
+	}
+
+
+	void PassiveManager::SyncStat(CRPGStats_Object* object)
+	{
+		auto stats = GetStaticSymbols().GetStats();
+		auto pProto = Passives.Find(object->Name);
+		if (!pProto) {
+			auto proto = Passives.Insert(object->Name);
+			SyncStat(object, proto);
+		} else {
+			SyncStat(object, pProto);
+		}
+	}
+
+	/*
 	void CRPGStats_Requirement::ToProtobuf(StatRequirement* msg) const
 	{
 		msg->set_requirement((int32_t)RequirementId);
@@ -405,11 +419,15 @@ namespace bg3se
 				(*spellProtoMgr)->SyncStat(object);
 			}
 		} else if (modifier->Name == GFS.strStatusData) {
-			ERR("FIXME - RPGStats::SyncWithPrototypeManager() not yet implemented for statuses!");
-			/*auto statusProtoMgr = GetStaticSymbols().eoc__StatusPrototypeManager;
+			auto statusProtoMgr = GetStaticSymbols().eoc__StatusPrototypeManager;
 			if (statusProtoMgr && *statusProtoMgr) {
-				(*statusProtoMgr)->SyncStatusStat(object);
-			}*/
+				(*statusProtoMgr)->SyncStat(object);
+			}
+		} else if (modifier->Name == GFS.strPassiveData) {
+			auto passiveMgr = GetStaticSymbols().eoc__PassiveManager;
+			if (passiveMgr && *passiveMgr) {
+				(*passiveMgr)->SyncStat(object);
+			}
 		}
 	}
 
