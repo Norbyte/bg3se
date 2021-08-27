@@ -64,7 +64,7 @@ namespace bg3se
 
 	char const* FixedString::GetString() const
 	{
-		if (Index <= 0xfffffffdu) {
+		if (Index != 0xffffffffu) {
 			auto getter = GetStaticSymbols().ls__FixedString__GetString;
 			if (getter) {
 #if defined(_DEBUG)
@@ -84,12 +84,12 @@ namespace bg3se
 
 	uint32_t FixedString::GetHash() const
 	{
-		if (Index <= 0xfffffffdu) {
+		if (Index != 0xffffffffu) {
 			auto getter = GetStaticSymbols().ls__FixedString__GetString;
 			if (getter) {
 				auto str = getter(*this);
 				if (str) {
-					StringTableEntry const* entry = reinterpret_cast<StringTableEntry const*>(str - sizeof(StringTableEntry));
+					auto entry = reinterpret_cast<GlobalStringTable::StringEntryHeader const*>(str - sizeof(GlobalStringTable::StringEntryHeader));
 					return entry->Hash;
 				}
 			}
@@ -100,7 +100,7 @@ namespace bg3se
 
 	void FixedString::IncRef()
 	{
-		if (Index <= 0xfffffffdu) {
+		if (Index != 0xffffffffu) {
 			auto incRef = GetStaticSymbols().ls__FixedString__IncRef;
 			if (incRef) {
 				incRef(Index);
@@ -110,7 +110,7 @@ namespace bg3se
 
 	void FixedString::DecRef()
 	{
-		if (Index <= 0xfffffffdu) {
+		if (Index != 0xffffffffu) {
 			auto decRef = GetStaticSymbols().ls__FixedString__DecRef;
 			if (decRef) {
 				decRef(Index);

@@ -82,12 +82,12 @@ namespace bg3se
 
 		inline bool operator !() const
 		{
-			return Index > 0xfffffffdu;
+			return Index == 0xffffffffu;
 		}
 
 		inline explicit operator bool() const
 		{
-			return Index <= 0xfffffffdu;
+			return Index != 0xffffffffu;
 		}
 
 		char const* GetString() const;
@@ -96,14 +96,6 @@ namespace bg3se
 		uint32_t Index;
 
 	private:
-		struct StringTableEntry
-		{
-			uint32_t Hash;
-			uint32_t RefCount;
-			uint32_t Length;
-			uint32_t FixedStringId;
-		};
-
 		void IncRef();
 		void DecRef();
 	};
@@ -117,12 +109,17 @@ namespace bg3se
 
 	struct GlobalStringTable : public ProtectedGameObject<GlobalStringTable>
 	{
-		struct StringEntry
+		struct StringEntryHeader
 		{
-			int Hash;
-			int FastLock;
-			int Length;
-			int Id;
+			uint32_t Hash;
+			uint32_t FastLock;
+			uint32_t Length;
+			uint32_t Id;
+			uint64_t SlotIndex;
+		};
+
+		struct StringEntry : public StringEntryHeader
+		{
 			char Str[1];
 		};
 
