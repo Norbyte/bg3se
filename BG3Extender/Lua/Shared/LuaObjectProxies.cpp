@@ -45,14 +45,14 @@ int StatusGetEngineType(lua_State* L, esv::Status* self);
 void CopyRawProperties(GenericPropertyMap const& base, GenericPropertyMap& child, STDString const& baseClsName)
 {
 	for (auto const& prop : base.Properties) {
-		child.AddRawProperty(prop.first, prop.second.Get, prop.second.Set, prop.second.Offset);
+		child.AddRawProperty(prop.first.GetString(), prop.second.Get, prop.second.Set, prop.second.Offset);
 	}
 
 	for (auto const& parent : base.Parents) {
 		child.Parents.push_back(parent);
 	}
 
-	child.Parents.push_back(baseClsName);
+	child.Parents.push_back(FixedString(baseClsName));
 }
 
 // Lua property map and object proxy template specialization declarations
@@ -96,7 +96,7 @@ bool EnableWriteProtectedWrites{ false };
 #define BEGIN_CLS(cls) { \
 	using PM = StaticLuaPropertyMap<cls>; \
 	auto& pm = StaticLuaPropertyMap<cls>::PropertyMap; \
-	pm.Name = #cls;
+	pm.Name = FixedString(#cls);
 
 #define END_CLS() }
 

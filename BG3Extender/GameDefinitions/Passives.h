@@ -12,20 +12,20 @@ namespace bg3se
 	{
 		using InitProc = void (Passive* self, CRPGStats_Object* stats);
 
-		uint32_t Properties;
+		uint32_t Properties{ 0 };
 		FixedString Name;
 		DescriptionInfo DescriptionInfo;
 		FixedString ToggleOnEffect;
 		FixedString ToggleOffEffect;
-		uint32_t StatsFunctorContext;
-		int ConditionsIndex;
+		uint32_t StatsFunctorContext{ 0 };
+		int ConditionsIndex{ -1 };
 		StatsFunctorSetImpl StatsFunctors;
 		StatsFunctorSetImpl ToggleOnFunctors;
 		StatsFunctorSetImpl ToggleOffFunctors;
 		FixedString ToggleGroup;
-		uint32_t ToggleOffContext;
-		uint32_t BoostContext;
-		int BoostConditionsIndex;
+		uint32_t ToggleOffContext{ 0 };
+		uint32_t BoostContext{ 0 };
+		int BoostConditionsIndex{ -1 };
 		Array<UUID> Boosts;
 	};
 

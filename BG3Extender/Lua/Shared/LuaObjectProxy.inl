@@ -4,7 +4,7 @@
 namespace bg3se::lua
 {
 
-	bool GenericPropertyMap::GetRawProperty(lua_State* L, LifetimeHolder const& lifetime, void* object, STDString const& prop) const
+	bool GenericPropertyMap::GetRawProperty(lua_State* L, LifetimeHolder const& lifetime, void* object, FixedString const& prop) const
 	{
 		auto it = Properties.find(prop);
 		if (it == Properties.end()) {
@@ -14,7 +14,7 @@ namespace bg3se::lua
 		return it->second.Get(L, lifetime, object, it->second.Offset);
 	}
 
-	bool GenericPropertyMap::SetRawProperty(lua_State* L, LifetimeHolder const& lifetime, void* object, STDString const& prop, int index) const
+	bool GenericPropertyMap::SetRawProperty(lua_State* L, LifetimeHolder const& lifetime, void* object, FixedString const& prop, int index) const
 	{
 		auto it = Properties.find(prop);
 		if (it == Properties.end()) {
@@ -24,10 +24,11 @@ namespace bg3se::lua
 		return it->second.Set(L, lifetime, object, index, it->second.Offset);
 	}
 
-	void GenericPropertyMap::AddRawProperty(STDString const& prop, typename RawPropertyAccessors::Getter* getter, 
+	void GenericPropertyMap::AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter,
 		typename RawPropertyAccessors::Setter* setter, std::size_t offset)
 	{
-		Properties.insert(std::make_pair(prop, RawPropertyAccessors{ prop, getter, setter, offset }));
+		auto key = FixedString(prop);
+		Properties.insert(std::make_pair(key, RawPropertyAccessors{ key, getter, setter, offset }));
 	}
 
 
@@ -43,7 +44,7 @@ namespace bg3se::lua
 			return 1;
 		}
 
-		auto prop = luaL_checkstring(L, 2);
+		auto prop = checked_get<FixedString>(L, 2);
 		if (!impl->GetProperty(L, prop)) {
 			push(L, nullptr);
 		}
@@ -60,7 +61,7 @@ namespace bg3se::lua
 			return 0;
 		}
 
-		auto prop = luaL_checkstring(L, 2);
+		auto prop = checked_get<FixedString>(L, 2);
 		impl->SetProperty(L, prop, 3);
 		return 0;
 	}
@@ -74,9 +75,9 @@ namespace bg3se::lua
 		}
 
 		if (lua_type(L, 2) == LUA_TNIL) {
-			return impl->Next(L, nullptr);
+			return impl->Next(L, FixedString{});
 		} else {
-			auto key = checked_get<char const*>(L, 2);
+			auto key = checked_get<FixedString>(L, 2);
 			return impl->Next(L, key);
 		}
 	}
@@ -86,9 +87,9 @@ namespace bg3se::lua
 		StackCheck _(L, 1);
 		char entityName[200];
 		if (lifetime_.IsAlive()) {
-			_snprintf_s(entityName, std::size(entityName) - 1, "%s (%p)", GetImpl()->GetTypeName(), GetImpl()->GetRaw());
+			_snprintf_s(entityName, std::size(entityName) - 1, "%s (%p)", GetImpl()->GetTypeName().GetString(), GetImpl()->GetRaw());
 		} else {
-			_snprintf_s(entityName, std::size(entityName) - 1, "%s (%p, DEAD)", GetImpl()->GetTypeName(), GetImpl()->GetRaw());
+			_snprintf_s(entityName, std::size(entityName) - 1, "%s (%p, DEAD)", GetImpl()->GetTypeName().GetString(), GetImpl()->GetRaw());
 		}
 
 		push(L, entityName);
