@@ -5,8 +5,7 @@
 #include <iomanip>
 
 
-HttpFetcher::HttpFetcher(std::wstring const& host)
-	: host_(host)
+HttpFetcher::HttpFetcher()
 {}
 
 HttpFetcher::~HttpFetcher()
@@ -28,13 +27,10 @@ void HttpFetcher::LogError(CURL* curl, CURLcode result)
 	DEBUG("Updater error: %s", lastError_.c_str());
 }
 
-bool HttpFetcher::Fetch(wchar_t const * path, std::vector<uint8_t> & response)
+bool HttpFetcher::Fetch(std::string const& url, std::vector<uint8_t> & response)
 {
 	auto curl = curl_easy_init();
-	std::wstring url = L"https://";
-	url += host_;
-	url += path;
-	curl_easy_setopt(curl, CURLOPT_URL, ToUTF8(url).c_str());
+	curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 	curl_easy_setopt(curl, CURLOPT_NOBODY, 0);
 	curl_easy_setopt(curl, CURLOPT_HEADER, 0);
 	curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1);

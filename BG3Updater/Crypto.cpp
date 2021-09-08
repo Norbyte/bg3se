@@ -50,29 +50,12 @@ bool CryptoUtils::EccSign(uint8_t* data, size_t len, uint8_t* privateKey, uint8_
 	return uECC_sign(privateKey, digest, sizeof(digest), signature, uECC_secp256r1()) == TC_CRYPTO_SUCCESS;
 }
 
-bool CryptoUtils::ReadFile(std::wstring const& path, std::vector<char>& contents)
-{
-	std::ifstream f(path.c_str(), std::ios::in | std::ios::binary);
-	if (!f.good()) {
-		return false;
-	}
-
-	f.seekg(0, std::ios::end);
-	auto len = f.tellg();
-	contents.resize(len);
-
-	f.seekg(0, std::ios::beg);
-	f.read(contents.data(), len);
-	f.close();
-	return true;
-}
-
 bool CryptoUtils::SignFile(std::wstring const& zipPath, std::wstring const& privateKeyPath)
 {
-	std::vector<char> contents;
-	std::vector<char> key;
-	if (!ReadFile(zipPath, contents)) return false;
-	if (!ReadFile(privateKeyPath, key)) return false;
+	std::vector<uint8_t> contents;
+	std::vector<uint8_t> key;
+	if (!LoadFile(zipPath, contents)) return false;
+	if (!LoadFile(privateKeyPath, key)) return false;
 
 	if (key.size() != NUM_ECC_BYTES) return false;
 
@@ -80,8 +63,7 @@ bool CryptoUtils::SignFile(std::wstring const& zipPath, std::wstring const& priv
 	memset(&sig, 0, sizeof(sig));
 	sig.Magic = PackageSignature::MAGIC_V1;
 
-	if (!EccSign(reinterpret_cast<uint8_t*>(contents.data()), contents.size(),
-		reinterpret_cast<uint8_t*>(key.data()), sig.EccSignature)) {
+	if (!EccSign(contents.data(), contents.size(), key.data(), sig.EccSignature)) {
 		return false;
 	}
 
@@ -89,13 +71,7 @@ bool CryptoUtils::SignFile(std::wstring const& zipPath, std::wstring const& priv
 	contents.resize(contentLength + sizeof(sig));
 	memcpy(contents.data() + contentLength, &sig, sizeof(sig));
 
-	std::ofstream of(zipPath.c_str(), std::ios::out | std::ios::binary);
-	if (!of.good()) {
-		return false;
-	}
-
-	of.write(contents.data(), contents.size());
-	return true;
+	return SaveFile(zipPath, contents);
 }
 
 bool CryptoUtils::GenerateKeys(std::wstring const& privateKeyPath)
@@ -121,22 +97,27 @@ bool CryptoUtils::GenerateKeys(std::wstring const& privateKeyPath)
 	return true;
 }
 
+bool CryptoUtils::GetFileSignature(std::wstring const& path, PackageSignature& signature)
+{
+	std::vector<uint8_t> contents;
+	if (!LoadFile(path, contents)) return false;
+
+	if (contents.size() < sizeof(PackageSignature)) return false;
+
+	auto sig = reinterpret_cast<PackageSignature*>(contents.data() + contents.size() - sizeof(PackageSignature));
+	if (sig->Magic != PackageSignature::MAGIC_V1) return false;
+
+	signature = *sig;
+	return true;
+}
+
 bool CryptoUtils::VerifySignedFile(std::wstring const& zipPath, std::string& reason)
 {
-	std::vector<char> contents;
-	std::ifstream f(zipPath.c_str(), std::ios::in | std::ios::binary);
-	if (!f.good()) {
+	std::vector<uint8_t> contents;
+	if (!LoadFile(zipPath, contents)) {
 		reason = "Script Extender update failed:\r\nUnable to open update package";
 		return false;
 	}
-
-	f.seekg(0, std::ios::end);
-	auto len = f.tellg();
-	contents.resize(len);
-
-	f.seekg(0, std::ios::beg);
-	f.read(contents.data(), len);
-	f.close();
 
 	if (contents.size() < sizeof(PackageSignature)) {
 		reason = "Script Extender update failed:\r\nUpdate package not cryptographically signed.";

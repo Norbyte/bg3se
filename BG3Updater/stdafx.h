@@ -13,6 +13,7 @@
 #include <windows.h>
 
 #include <string>
+#include <vector>
 
 [[noreturn]]
 void Fail(char const * reason);
@@ -20,13 +21,18 @@ void Fail(char const * reason);
 std::string ToUTF8(std::wstring const & s);
 std::wstring FromUTF8(std::string const & s);
 
+bool TryCreateDirectory(std::wstring const& path);
+bool SaveFile(std::wstring const& path, std::vector<uint8_t> const& body);
+bool SaveFile(std::wstring const& path, std::string const& body);
+bool LoadFile(std::wstring const& path, std::vector<uint8_t>& body);
+bool LoadFile(std::wstring const& path, std::string& body);
+
 struct UpdaterConfig
 {
-	std::wstring UpdateHost;
-	std::wstring UpdatePath;
-	std::wstring ManifestPath;
-	std::wstring UpdateChannel;
-	std::wstring ExtensionPath;
+	std::string ManifestURL;
+	std::string ManifestName;
+	std::string UpdateChannel;
+	std::wstring CachePath;
 	bool Debug;
 	bool ValidateSignature;
 };

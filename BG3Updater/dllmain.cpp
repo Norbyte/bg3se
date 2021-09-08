@@ -21,10 +21,10 @@
 #include <iomanip>
 #include <unordered_map>
 
-#define UPDATER_HOST L"d7ueajfc8twst.cloudfront.net"
-#define UPDATER_PATH_PREFIX L"/Channels/"
-#define UPDATER_MANIFEST_PATH L"/Manifest.json"
-#define UPDATER_CHANNEL L"Release"
+#define UPDATER_MANIFEST_URL "https://dzh4fh4qphx4q.cloudfront.net/Channels/"
+#define UPDATER_MANIFEST_NAME "Manifest2.json"
+#define UPDATER_CHANNEL "Release"
+#define APP_DLL L"BG3ScriptExtender.dll"
 
 extern "C" {
 
@@ -35,7 +35,7 @@ int default_CSPRNG(uint8_t* dest, unsigned int size)
 
 }
 
-std::optional<std::wstring> GetGameVersion()
+std::optional<VersionNumber> GetGameVersion()
 {
 	HMODULE hGameModule = GetModuleHandleW(L"bg3.exe");
 	if (hGameModule == NULL) {
@@ -61,8 +61,7 @@ std::optional<std::wstring> GetGameVersion()
 	VS_FIXEDFILEINFO* fixedFileInfo;
 	if (VerQueryValue(pResCopy, L"\\", (LPVOID*)&fixedFileInfo, &verLength) != TRUE) return {};
 
-	wchar_t version[100];
-	swprintf_s(version, L"v%d.%d.%d.%d",
+	VersionNumber version(
 		HIWORD(fixedFileInfo->dwFileVersionMS),
 		LOWORD(fixedFileInfo->dwFileVersionMS),
 		HIWORD(fixedFileInfo->dwFileVersionLS),
@@ -89,7 +88,15 @@ void ConfigGetString(Json::Value& node, char const* key, std::wstring& value)
 	}
 }
 
-std::wstring GetDefaultExtensionPath()
+void ConfigGetString(Json::Value& node, char const* key, std::string& value)
+{
+	auto configVar = node[key];
+	if (!configVar.isNull() && configVar.isString()) {
+		value = configVar.asString();
+	}
+}
+
+std::wstring GetDefaultCachePath()
 {
 	TCHAR appDataPath[MAX_PATH];
 	if (!SUCCEEDED(SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, appDataPath)))
@@ -102,11 +109,10 @@ std::wstring GetDefaultExtensionPath()
 
 void LoadConfigFile(std::wstring const& configPath, UpdaterConfig& config)
 {
-	config.UpdateHost = UPDATER_HOST;
-	config.UpdatePath = UPDATER_PATH_PREFIX;
-	config.ManifestPath = UPDATER_MANIFEST_PATH;
+	config.ManifestURL = UPDATER_MANIFEST_URL;
+	config.ManifestName = UPDATER_MANIFEST_NAME;
 	config.UpdateChannel = UPDATER_CHANNEL;
-	config.ExtensionPath = GetDefaultExtensionPath();
+	config.CachePath = GetDefaultCachePath();
 #if defined(_DEBUG)
 	config.Debug = true;
 #else
@@ -130,10 +136,10 @@ void LoadConfigFile(std::wstring const& configPath, UpdaterConfig& config)
 		Fail(ToUTF8(err.str()).c_str());
 	}
 
-	ConfigGetString(root, "UpdateHost", config.UpdateHost);
-	ConfigGetString(root, "UpdatePath", config.UpdatePath);
-	ConfigGetString(root, "ManifestPath", config.ManifestPath);
+	ConfigGetString(root, "ManifestURL", config.ManifestURL);
+	ConfigGetString(root, "ManifestName", config.ManifestName);
 	ConfigGetString(root, "UpdateChannel", config.UpdateChannel);
+	ConfigGetString(root, "CachePath", config.CachePath);
 #if defined(HAS_DEBUG_LOGGING)
 	ConfigGetBool(root, "Debug", config.Debug);
 	ConfigGetBool(root, "ValidateSignature", config.ValidateSignature);
@@ -151,72 +157,119 @@ std::string trim(std::string const & s)
 	return s.substr(first, (last - first + 1));
 }
 
-#pragma pack(push, 1)
-struct PackageSignature
-{
-	static constexpr uint32_t MAGIC_V1 = 'BGS1';
 
-	uint32_t Magic;
-	uint8_t EccSignature[64];
-	uint8_t Unused[192];
-};
-#pragma pack(pop)
-
-class ScriptExtenderUpdater
+class CachedResource
 {
 public:
-	void Launch()
-	{
-		UpdatePaths();
-		std::string reason;
-		bool updated = TryToUpdate(reason);
+	CachedResource(std::wstring const& cachePath, Manifest::Resource const& resource, Manifest::ResourceVersion const& version)
+		: cachePath_(cachePath), resource_(resource), version_(version)
+	{}
 
-		if (!updated && !ExtenderDLLExists()) {
-			DEBUG("Update failed; reason: %s", reason.c_str());
-			completed_ = true;
-			gErrorUtils->ShowError(reason.c_str());
-			return;
+	std::wstring GetResourceLocalPath() const
+	{
+		return cachePath_ + L"\\" + FromUTF8(resource_.Name);
+	}
+
+	std::wstring TryCreateLocalResourceCacheDirectory()
+	{
+		auto path = GetResourceLocalPath();
+		TryCreateDirectory(path);
+		return path;
+	}
+
+	std::wstring GetLocalPath() const
+	{
+		return GetResourceLocalPath() + L"\\" + FromUTF8(version_.Version.ToString()) + L"_" + FromUTF8(version_.Digest);
+	}
+
+	std::wstring GetLocalPackagePath() const
+	{
+		return GetLocalPath() + L".package";
+	}
+
+	std::wstring TryCreateLocalCacheDirectory()
+	{
+		TryCreateLocalResourceCacheDirectory();
+		auto path = GetLocalPath();
+		TryCreateDirectory(path);
+		return path;
+	}
+
+	bool UpdateLocalPackage(std::vector<uint8_t> const& contents, std::string& reason)
+	{
+		TryCreateLocalResourceCacheDirectory();
+		auto packagePath = GetLocalPackagePath();
+		DEBUG("Saving update package to: %s", ToUTF8(packagePath).c_str());
+
+		// Check if any of the files are currently in use by the game.
+		// The shell Zip API won't tell us if it failed to overwrite one of the files, so we need to 
+		// check beforehand that the files are writeable.
+		if (!AreDllsWriteable()) {
+			return false;
 		}
 
-		// Make sure that we can load dependencies from the extension directory
-		// (protobuf, etc.)
-		DEBUG("SetDllDirectoryW(%s)", ToUTF8(extensionPath_).c_str());
-		SetDllDirectoryW(extensionPath_.c_str());
+		auto tempPath = packagePath + L".tmp";
+		if (!SaveFile(tempPath, contents)) {
+			DEBUG("Unable to write package temp file: %s", ToUTF8(tempPath).c_str());
+			reason = "Script Extender update failed:\r\n";
+			reason += std::string("Failed to write file ") + ToUTF8(tempPath);
+			return false;
+		}
 
-		DEBUG("Loading extension: %s", ToUTF8(dllPath_).c_str());
-		HMODULE handle = LoadLibraryW(dllPath_.c_str());
-		// Wait a bit for extender startup to complete
-		Sleep(300);
-		completed_ = true;
+		if (!CryptoUtils::VerifySignedFile(tempPath, reason)) {
+			DEBUG("Unable to verify package signature: %s", reason.c_str());
+			return false;
+		}
 
-		if (handle == NULL) {
-			auto errc = GetLastError();
-			DEBUG("Extension load failed; error code %d", errc);
-			std::string errmsg = "Script Extender DLL load failed.\r\n"
-				"Error code: ";
-			errmsg += std::to_string(errc);
-			gErrorUtils->ShowError(errmsg.c_str());
+		if (!MoveFileExW(tempPath.c_str(), packagePath.c_str(), MOVEFILE_REPLACE_EXISTING)) {
+			DEBUG("Failed to move package file %s", packagePath.c_str());
+			reason = "Script Extender update failed:\r\n";
+			reason += std::string("Failed to move file ") + ToUTF8(packagePath);
+			return false;
+		}
+
+
+		std::string unzipReason;
+		auto cachePath = TryCreateLocalCacheDirectory();
+		DEBUG("Unpacking update to %s", ToUTF8(cachePath).c_str());
+		if (UnzipPackage(packagePath, cachePath, reason)) {
+			return true;
+		} else {
+			DEBUG("Unzipping failed: %s", reason.c_str());
+			return false;
 		}
 	}
 
+	bool RemoveLocalPackage()
+	{
+		TryCreateLocalResourceCacheDirectory();
+		auto packagePath = GetLocalPackagePath();
+		DEBUG("Removing local package: %s", ToUTF8(packagePath).c_str());
+		auto localPath = GetLocalPath();
+		bool ok = DeleteLocalCacheFromZip(packagePath, localPath);
+		DeleteFileW(packagePath.c_str());
+		return ok;
+	}
+
+	bool ExtenderDLLExists()
+	{
+		auto dllPath = GetLocalPath() + L"\\" + APP_DLL;
+		return PathFileExists(dllPath.c_str());
+	}
+
+private:
+	std::wstring cachePath_;
+	Manifest::Resource const& resource_;
+	Manifest::ResourceVersion const& version_;
+
 	bool AreDllsWriteable()
 	{
-		auto eocAppPath = extensionPath_ + L"\\OsiExtenderEoCApp.dll";
-		if (PathFileExistsW(eocAppPath.c_str())) {
+		auto dllPath = GetLocalPath() + L"\\" + APP_DLL;
+		if (PathFileExistsW(dllPath.c_str())) {
 			std::ofstream f;
-			f.open(eocAppPath.c_str(), std::ios::out | std::ios::app, _SH_DENYRW);
+			f.open(dllPath.c_str(), std::ios::out | std::ios::app, _SH_DENYRW);
 			if (!f.good()) {
-				DEBUG("OsiExtenderEoCApp.dll not writeable, skipping update.");
-				return false;
-			}
-		}
-
-		auto eocPluginPath = extensionPath_ + L"\\OsiExtenderEoCPlugin.dll";
-		if (PathFileExistsW(eocPluginPath.c_str())) {
-			std::ofstream f;
-			f.open(eocPluginPath.c_str(), std::ios::out | std::ios::app, _SH_DENYRW);
-			if (!f.good()) {
-				DEBUG("OsiExtenderEoCPlugin.dll not writeable, skipping update.");
+				DEBUG("Extender DLL not writeable, skipping update.");
 				return false;
 			}
 		}
@@ -225,7 +278,7 @@ public:
 		return true;
 	}
 
-	bool UnzipPackage(std::wstring const& zipPath, std::wstring const& extensionPath, std::string& reason)
+	bool UnzipPackage(std::wstring const& zipPath, std::wstring const& resourcePath, std::string& reason)
 	{
 		auto archive = ZipFile::Open(zipPath);
 		if (!archive) {
@@ -239,8 +292,8 @@ public:
 
 			DEBUG("Extracting: %s", entry->GetFullName().c_str());
 
-			auto outPath = extensionPath + L"\\" + FromUTF8(entry->GetFullName());
-			auto tempPath = extensionPath + L"\\extract.tmp";
+			auto outPath = resourcePath + L"\\" + FromUTF8(entry->GetFullName());
+			auto tempPath = resourcePath + L"\\extract.tmp";
 			std::ofstream f(tempPath.c_str(), std::ios::out | std::ios::binary);
 			if (!f.good()) {
 				DEBUG("Failed to open %s for extraction", entry->GetFullName().c_str());
@@ -271,7 +324,7 @@ public:
 			f.close();
 
 			if (!MoveFileExW(tempPath.c_str(), outPath.c_str(), MOVEFILE_REPLACE_EXISTING)) {
-				DEBUG("Failed to write file %s", entry->GetFullName().c_str());
+				DEBUG("Failed to move file %s", entry->GetFullName().c_str());
 				reason = "Script Extender update failed:\r\n";
 				reason += std::string("Failed to update file ") + entry->GetFullName();
 				break;
@@ -281,85 +334,370 @@ public:
 		return true;
 	}
 
-	bool TryToUpdate(std::string & reason)
+	bool DeleteLocalCacheFromZip(std::wstring const& zipPath, std::wstring const& resourcePath)
 	{
-		HttpFetcher fetcher(config_.UpdateHost);
+		auto archive = ZipFile::Open(zipPath);
+		if (!archive) {
+			return false;
+		}
 
-		std::wstring manifestUrl = config_.UpdatePath + config_.UpdateChannel + config_.ManifestPath;
+		auto entries = archive->GetEntriesCount();
+		for (auto i = 0; i < entries; i++) {
+			auto entry = archive->GetEntry(i);
 
-		DEBUG("Fetching manifest");
+			DEBUG("Deleting local file: %s", entry->GetFullName().c_str());
+			auto extractedPath = resourcePath + L"\\" + FromUTF8(entry->GetFullName());
+			DeleteFileW(extractedPath.c_str());
+		}
+
+		return true;
+	}
+};
+
+
+class ResourceCacheRepository
+{
+public:
+	ResourceCacheRepository(std::wstring const& path)
+		: path_(path)
+	{
+		DEBUG("ResourceCache path: %s", ToUTF8(path).c_str());
+		LoadManifest(GetCachedManifestPath());
+	}
+
+	std::wstring GetCachedManifestPath() const
+	{
+		return path_ + L"\\Manifest2.json";
+	}
+
+	bool LoadManifest(std::wstring const& path)
+	{
+		std::string manifestText;
+		DEBUG("Loading cache manifest: %s", ToUTF8(path).c_str());
+		if (LoadFile(path, manifestText)) {
+			ManifestSerializer parser;
+			std::string parseError;
+			auto result = parser.Parse(manifestText, manifest_, parseError);
+			if (result == ManifestParseResult::Successful) {
+				DEBUG("Cache manifest load OK.");
+				return true;
+			} else {
+				DEBUG("Cache manifest parse failed: %d", result);
+				manifest_.Resources.clear();
+				return false;
+			}
+		}
+
+		DEBUG("Cache manifest load failed.");
+		return false;
+	}
+
+	bool SaveManifest(std::wstring const& path)
+	{
+		manifest_.ManifestVersion = Manifest::CurrentVersion;
+
+		ManifestSerializer parser;
+		std::string manifestText = parser.Stringify(manifest_);
+
+		DEBUG("Saving cache manifest: %s", ToUTF8(path).c_str());
+		return SaveFile(path, manifestText);
+	}
+
+	bool ResourceExists(std::string const& name, Manifest::ResourceVersion const& version) const
+	{
+		auto resource = manifest_.Resources.find(name);
+		if (resource == manifest_.Resources.end()) {
+			return false;
+		}
+
+		auto found = resource->second.ResourceVersions.find(version.Digest);
+		if (found == resource->second.ResourceVersions.end()) {
+			return false;
+		}
+
+		return HasLocalCopy(resource->second, found->second);
+	}
+
+	bool UpdateLocalPackage(Manifest::Resource const& resource, Manifest::ResourceVersion const& version, std::vector<uint8_t> const& contents, std::string& reason)
+	{
+		DEBUG("Updating local copy of resource %s, digest %s", resource.Name.c_str(), version.Digest.c_str());
+		CachedResource res(path_, resource, version);
+		if (res.UpdateLocalPackage(contents, reason)) {
+			AddResourceToManifest(resource, version);
+			if (!SaveManifest(GetCachedManifestPath())) {
+				reason = "Script Extender update failed:\r\n";
+				reason += std::string("Failed to write manifest file ") + ToUTF8(GetCachedManifestPath());
+				return false;
+			} else {
+				return true;
+			}
+		} else {
+			return false;
+		}
+	}
+
+	bool RemoveLocalPackage(Manifest::Resource const& resource, Manifest::ResourceVersion const& version)
+	{
+		auto resIt = manifest_.Resources.find(resource.Name);
+		if (resIt == manifest_.Resources.end()) {
+			return false;
+		}
+
+		auto verIt = resIt->second.ResourceVersions.find(version.Digest);
+		if (verIt == resIt->second.ResourceVersions.end()) {
+			return false;
+		}
+
+		DEBUG("Removing local copy of resource %s, digest %s", resource.Name.c_str(), version.Digest.c_str());
+
+		CachedResource res(path_, resource, version);
+		res.RemoveLocalPackage();
+		resIt->second.ResourceVersions.erase(verIt);
+		return true;
+	}
+
+	std::optional<std::wstring> FindResourcePath(std::string const& name, VersionNumber const& gameVersion)
+	{
+		auto resource = manifest_.Resources.find(name);
+		if (resource == manifest_.Resources.end()) {
+			return {};
+		}
+
+		auto ver = resource->second.FindResourceVersion(gameVersion);
+		if (!ver) {
+			return {};
+		}
+
+		CachedResource res(path_, resource->second, *ver);
+		if (res.ExtenderDLLExists()) {
+			return res.GetLocalPath();
+		} else {
+			return {};
+		}
+	}
+
+private:
+	std::wstring path_;
+	Manifest manifest_;
+
+	bool HasLocalCopy(Manifest::Resource const& resource, Manifest::ResourceVersion const& version) const
+	{
+		CachedResource res(path_, resource, version);
+		return res.ExtenderDLLExists();
+	}
+
+	void AddResourceToManifest(Manifest::Resource const& resource, Manifest::ResourceVersion const& version)
+	{
+		auto resIt = manifest_.Resources.find(resource.Name);
+		if (resIt == manifest_.Resources.end()) {
+			Manifest::Resource res;
+			res.Name = resource.Name;
+			manifest_.Resources.insert(std::make_pair(res.Name, res));
+			resIt = manifest_.Resources.find(resource.Name);
+		}
+
+		AddVersionToResource(resIt->second, version);
+	}
+
+	void AddVersionToResource(Manifest::Resource& resource, Manifest::ResourceVersion const& version)
+	{
+		Manifest::ResourceVersion ver{ version };
+		ver.URL = "";
+
+		auto it = resource.ResourceVersions.find(version.Digest);
+		if (it == resource.ResourceVersions.end()) {
+			resource.ResourceVersions.insert(std::make_pair(ver.Digest, ver));
+		} else {
+			it->second = ver;
+		}
+	}
+};
+
+class ManifestFetcher
+{
+public:
+	ManifestFetcher(UpdaterConfig const& config)
+		: config_(config)
+	{}
+	
+	bool Fetch(Manifest& manifest, std::string& reason)
+	{
+		HttpFetcher fetcher;
+		std::string manifestUrl = config_.ManifestURL + config_.UpdateChannel + "/" + config_.ManifestName;
+
+		DEBUG("Fetching manifest from: %s", manifestUrl.c_str());
 		std::vector<uint8_t> manifestBinary;
-		if (!fetcher.Fetch(manifestUrl.c_str(), manifestBinary)) {
+		if (!fetcher.Fetch(manifestUrl, manifestBinary)) {
 			reason = "Failed to check for Script Extender updates. Make sure you're connected to the internet and try again.\r\n";
 			reason += fetcher.GetLastError();
 			return false;
 		}
 
-		std::string manifestStr((char *)manifestBinary.data(), (char *)manifestBinary.data() + manifestBinary.size());
-		DEBUG("Server returned manifest: %s", manifestStr.c_str());
-		ManifestParser parser;
-		Manifest manifest;
+		std::string manifestStr((char*)manifestBinary.data(), (char*)manifestBinary.data() + manifestBinary.size());
+		if (Parse(manifestStr, manifest, reason)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	bool Parse(std::string const& manifestStr, Manifest& manifest, std::string& reason)
+	{
+		ManifestSerializer parser;
 		std::string parseError;
-		if (!parser.Parse(manifestStr, manifest, parseError)) {
+		auto result = parser.Parse(manifestStr, manifest, parseError);
+		if (result == ManifestParseResult::Failed) {
 			reason = "Failed to check for Script Extender updates:\r\nUnable to parse manifest: ";
 			reason += parseError;
 			return false;
 		}
 
-		auto version = manifest.Versions.find(ToUTF8(gameVersion_));
-		if (version == manifest.Versions.end()) {
-			reason = "Failed to check for Script Extender updates:\r\nScript extender not available for game version ";
-			reason += ToUTF8(gameVersion_);
+		if (result == ManifestParseResult::UpdateRequired) {
+			reason = "Failed to check for Script Extender updates:\r\nUnable to parse manifest: ";
 			return false;
 		}
 
-		DEBUG("Selected version for update: %s / %s", version->second.Path.c_str(), version->second.Digest.c_str());
+		return true;
+	}
 
-		auto digest = ReadCurrentDigest();
-		DEBUG("Current digest is: %s", digest.c_str());
-		if (digest == version->second.Digest) {
-			DEBUG("Extender already up to date.");
+private:
+	UpdaterConfig const& config_;
+};
+
+
+
+class ResourceUpdater
+{
+public:
+	ResourceUpdater(UpdaterConfig const& config, ResourceCacheRepository& cache)
+		: config_(config), cache_(cache)
+	{}
+
+	bool Update(Manifest const& manifest, std::string const& resourceName, VersionNumber const& gameVersion, std::string& reason)
+	{
+		DEBUG("Starting fetch for resource: %s", resourceName.c_str());
+		auto resIt = manifest.Resources.find(resourceName);
+		if (resIt == manifest.Resources.end()) {
+			reason = "Failed to check for Script Extender updates:\r\nNo manifest entry found for resource: ";
+			reason += resourceName;
+			return false;
+		}
+
+		auto version = resIt->second.FindResourceVersion(gameVersion);
+		if (!version) {
+			reason = "Failed to check for Script Extender updates:\r\nScript extender not available for game version v";
+			reason += gameVersion.ToString();
+			return false;
+		}
+
+		if (cache_.ResourceExists(resIt->first, *version)) {
+			DEBUG("Resource already cached locally, skipping update: Version %s, Digest %s", version->Version.ToString().c_str(), version->Digest.c_str());
 			return true;
 		}
 
-		auto packagePath = ToUTF8(config_.UpdatePath + config_.UpdateChannel) + "/" + version->second.Path;
-		DEBUG("Fetching update package: %s", packagePath.c_str());
-		std::vector<uint8_t> response;
-		if (!fetcher.Fetch(FromUTF8(packagePath).c_str(), response)) {
+		DEBUG("Selected version for update: Version %s, Digest %s", version->Version.ToString().c_str(), version->Digest.c_str());
+		DEBUG("Fetch fromn URL: %s", version->URL.c_str());
+		return Update(resIt->second, *version, reason);
+	}
+
+	
+	bool Update(Manifest::Resource const& resource, Manifest::ResourceVersion const& version, std::string & reason)
+	{
+		if (version.Revoked) {
 			reason = "Failed to download Script Extender update package.\r\n";
-			reason += "Path: ";
-			reason += packagePath;
-			reason += "\r\n";
+			reason += "Attempted to download unavailable resource version.";
+			return false;
+		}
+
+		HttpFetcher fetcher;
+		DEBUG("Fetching update package: %s", version.URL.c_str());
+		std::vector<uint8_t> response;
+		if (!fetcher.Fetch(version.URL, response)) {
+			reason = "Failed to download Script Extender update package.\r\n";
 			reason += fetcher.GetLastError();
+			reason += "\r\n";
+			reason += "URL: ";
+			reason += version.URL;
 			return false;
 		}
 
-		auto zipPath = extensionPath_ + L"\\Package.zip";
-		DEBUG("Saving update to: %s", ToUTF8(zipPath).c_str());
-		SaveFile(zipPath, response);
+		return cache_.UpdateLocalPackage(resource, version, response, reason);
+	}
 
-		// Check if any of the files are currently in use by the game.
-		// The shell Zip API won't tell us if it failed to overwrite one of the files, so we need to 
-		// check beforehand that the files are writeable.
-		if (!AreDllsWriteable()) {
-			return true;
+private:
+	UpdaterConfig const& config_;
+	ResourceCacheRepository& cache_;
+};
+
+class ScriptExtenderUpdater
+{
+public:
+	void Launch()
+	{
+		UpdatePaths();
+		cache_ = std::make_unique<ResourceCacheRepository>(config_.CachePath);
+
+		std::string updateReason;
+		bool updated = TryToUpdate(updateReason);
+
+		auto resourcePath = cache_->FindResourcePath("ScriptExtender", gameVersion_);
+
+		if (updated && !resourcePath) {
+			updated = false;
+			updateReason = "Failed to initialize Script Extender:\r\nNo cached package available for game version v";
+			updateReason += gameVersion_.ToString();
 		}
 
-		if (!CryptoUtils::VerifySignedFile(zipPath, reason)) {
-			DEBUG("Unable to verify package signature: %s", reason.c_str());
-			return false;
+		if (!updated) {
+			DEBUG("Update failed; reason: %s", updateReason.c_str());
+			completed_ = true;
+			gErrorUtils->ShowError(updateReason.c_str());
 		}
-		
-		std::string unzipReason;
-		DEBUG("Unpacking update to %s", ToUTF8(extensionPath_).c_str());
-		if (UnzipPackage(zipPath, extensionPath_, reason)) {
-			DEBUG("Saving updated ETag");
-			SaveDigest(version->second.Digest);
-			return true;
+
+		if (resourcePath) {
+			// Make sure that we can load dependencies from the extension directory
+			// (protobuf, etc.)
+			DEBUG("SetDllDirectoryW(%s)", ToUTF8(*resourcePath).c_str());
+			SetDllDirectoryW(resourcePath->c_str());
+
+			auto dllPath = *resourcePath + L"\\" + APP_DLL;
+			DEBUG("Loading extender DLL: %s", ToUTF8(dllPath).c_str());
+			HMODULE handle = LoadLibraryW(dllPath.c_str());
+			// Wait a bit for extender startup to complete
+			Sleep(300);
+			completed_ = true;
+
+			if (handle == NULL) {
+				auto errc = GetLastError();
+				DEBUG("Extender DLL load failed; error code %d", errc);
+				std::string errmsg = "Failed to load Script Extender library.\r\n"
+					"LoadLibrary() returned error code ";
+				errmsg += std::to_string(errc);
+				gErrorUtils->ShowError(errmsg.c_str());
+			}
 		} else {
-			DEBUG("Unzipping failed: %s", reason.c_str());
+			completed_ = true;
+		}
+	}
+	
+	bool TryToUpdate(std::string & reason)
+	{
+		Manifest manifest;
+		ManifestFetcher manifestFetcher(config_);
+		if (!manifestFetcher.Fetch(manifest, reason)) {
 			return false;
 		}
+
+		for (auto const& res : manifest.Resources) {
+			for (auto const& ver : res.second.ResourceVersions) {
+				if (ver.second.Revoked) {
+					cache_->RemoveLocalPackage(res.second, ver.second);
+				}
+			}
+		}
+
+		ResourceUpdater updater(config_, *cache_);
+		return updater.Update(manifest, "ScriptExtender", gameVersion_, reason);
 	}
 
 	inline bool IsCompleted() const
@@ -394,85 +732,25 @@ public:
 	}
 
 private:
-	std::wstring extensionPath_;
-	std::wstring dllPath_;
-	std::wstring gameVersion_;
+	VersionNumber gameVersion_;
 	UpdaterConfig config_;
+	std::unique_ptr<ResourceCacheRepository> cache_;
 	bool completed_{ false };
-
-	bool ExtenderDLLExists()
-	{
-		return PathFileExists(dllPath_.c_str());
-	}
-
-	std::string ReadCurrentDigest()
-	{
-		if (!ExtenderDLLExists()) {
-			// Force update if extension DLL is missing
-			return "";
-		}
-
-		auto digestPath = extensionPath_ + L"\\.digest";
-		std::ifstream f(digestPath, std::ios::binary | std::ios::in);
-		if (!f.good()) {
-			return "";
-		}
-
-		f.seekg(0, std::ios::end);
-		auto size = f.tellg();
-		f.seekg(0, std::ios::beg);
-
-		std::string s;
-		s.resize(size);
-		f.read(s.data(), size);
-		DEBUG("Digest loaded: %s", s.c_str());
-		return s;
-	}
-
-	void SaveDigest(std::string const & digest)
-	{
-		auto etagPath = extensionPath_ + L"\\.digest";
-		std::ofstream f(etagPath, std::ios::binary | std::ios::out);
-		if (!f.good()) {
-			return;
-		}
-
-		f.write(digest.c_str(), digest.size());
-	}
-
-	void SaveFile(std::wstring const & path, std::vector<uint8_t> const & body)
-	{
-		std::ofstream f(path, std::ios::binary | std::ios::out);
-		if (!f.good()) {
-			return;
-		}
-
-		f.write(reinterpret_cast<char const *>(body.data()), body.size());
-	}
 
 	void UpdatePaths()
 	{
-		auto rootDir = config_.ExtensionPath;
-		if (!PathFileExistsW(rootDir.c_str())) {
-			CreateDirectoryW(rootDir.c_str(), NULL);
+		auto cacheDir = config_.CachePath;
+		if (!PathFileExistsW(cacheDir.c_str())) {
+			CreateDirectoryW(cacheDir.c_str(), NULL);
 		}
 
 		auto version = GetGameVersion();
 		if (version) {
 			gameVersion_ = *version;
-		} else {
-			gameVersion_ = L"Unknown Version";
 		}
 
-		extensionPath_ = rootDir + L"\\" + gameVersion_;
-		if (!PathFileExistsW(extensionPath_.c_str())) {
-			CreateDirectoryW(extensionPath_.c_str(), NULL);
-		}
-
-		dllPath_ = extensionPath_ + L"\\BG3ScriptExtender.dll";
-
-		DEBUG("DLL path: %s", ToUTF8(dllPath_).c_str());
-		DEBUG("Update channel: %s", ToUTF8(config_.UpdateChannel).c_str());
+		DEBUG("Cache path: %s", ToUTF8(cacheDir).c_str());
+		DEBUG("Update channel: %s", config_.UpdateChannel.c_str());
 	}
 };
 

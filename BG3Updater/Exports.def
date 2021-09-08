@@ -1,4 +1,4 @@
-LIBRARY DWriteWrapper
+LIBRARY BG3Updater
 
 EXPORTS
 	DWriteCreateFactory=WrappedDWriteCreateFactory @1

@@ -7,10 +7,10 @@
 class HttpFetcher
 {
 public:
-	HttpFetcher(std::wstring const& host);
+	HttpFetcher();
 	~HttpFetcher();
 
-	bool Fetch(wchar_t const * path, std::vector<uint8_t> & response);
+	bool Fetch(std::string const& url, std::vector<uint8_t> & response);
 
 	inline std::string const & GetLastError() const
 	{
@@ -18,7 +18,6 @@ public:
 	}
 
 private:
-	std::wstring host_;
 	std::string lastError_;
 	std::vector<uint8_t> lastResponse_;
 

@@ -184,6 +184,7 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="DWriteWrapper.cpp" />
     <ClCompile Include="HttpFetcher.cpp" />
+    <ClCompile Include="Manifest.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

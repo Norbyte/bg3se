@@ -4,6 +4,7 @@
 #include <atlbase.h>
 #include <psapi.h>
 #include <iostream>
+#include <fstream>
 
 void DebugMsg(char const * msg)
 {
@@ -243,4 +244,67 @@ std::wstring FromUTF8(std::string const & s)
 	converted.resize(size);
 	MultiByteToWideChar(CP_UTF8, 0, s.c_str(), (int)s.size(), converted.data(), (int)converted.size());
 	return converted;
+}
+
+bool TryCreateDirectory(std::wstring const& path)
+{
+	if (!PathFileExistsW(path.c_str())) {
+		return CreateDirectoryW(path.c_str(), NULL) == TRUE;
+	} else {
+		return true;
+	}
+}
+
+bool SaveFile(std::wstring const& path, std::vector<uint8_t> const& body)
+{
+	std::ofstream f(path, std::ios::binary | std::ios::out);
+	if (!f.good()) {
+		return false;
+	}
+
+	f.write(reinterpret_cast<char const*>(body.data()), body.size());
+	return f.good();
+}
+
+bool SaveFile(std::wstring const& path, std::string const& body)
+{
+	std::ofstream f(path, std::ios::binary | std::ios::out);
+	if (!f.good()) {
+		return false;
+	}
+
+	f.write(body.data(), body.size());
+	return f.good();
+}
+
+bool LoadFile(std::wstring const& path, std::vector<uint8_t>& body)
+{
+	std::ifstream f(path, std::ios::in | std::ios::binary);
+	if (f.good()) {
+		f.seekg(0, std::ios::end);
+		auto size = f.tellg();
+		f.seekg(0, std::ios::beg);
+
+		body.resize(size);
+		f.read(reinterpret_cast<char*>(body.data()), size);
+		return f.good();
+	}
+
+	return false;
+}
+
+bool LoadFile(std::wstring const& path, std::string& body)
+{
+	std::ifstream f(path, std::ios::in | std::ios::binary);
+	if (f.good()) {
+		f.seekg(0, std::ios::end);
+		auto size = f.tellg();
+		f.seekg(0, std::ios::beg);
+
+		body.resize(size);
+		f.read(body.data(), size);
+		return f.good();
+	}
+
+	return false;
 }

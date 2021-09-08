@@ -24,5 +24,8 @@
     <ClCompile Include="..\BG3Updater\Utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\BG3Updater\Manifest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

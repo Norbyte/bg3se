@@ -3,78 +3,120 @@
 #include <string>
 #include <sstream>
 #include <unordered_map>
+#include <algorithm>
+#include <optional>
 #include "json/json.h"
+
+struct VersionNumber
+{
+	inline VersionNumber()
+		: Minor(0), Major(0), Revision(0), Build(0)
+	{}
+
+	inline VersionNumber(int32_t minor, int32_t major, int32_t revision, int32_t build)
+		: Minor(minor), Major(major), Revision(revision), Build(build)
+	{}
+
+	inline static std::optional<VersionNumber> FromString(char const* versionNumber)
+	{
+		VersionNumber ver;
+		if (sscanf_s(versionNumber, "%d.%d.%d.%d", &ver.Minor, &ver.Major, &ver.Revision, &ver.Build) == 4) {
+			return ver;
+		} else {
+			return {};
+		}
+	}
+
+	inline std::string ToString() const
+	{
+		char ver[100];
+		sprintf_s(ver, "%d.%d.%d.%d", Minor, Major, Revision, Build);
+		return ver;
+	}
+
+	inline bool operator > (VersionNumber const& o) const
+	{
+		return Major > o.Major ||
+			(Major == o.Major && Minor > o.Minor) ||
+			(Major == o.Major && Minor == o.Minor && Revision > o.Revision) ||
+			(Major == o.Major && Minor == o.Minor && Revision == o.Revision && Build > o.Build);
+	}
+
+	inline bool operator < (VersionNumber const& o) const
+	{
+		return Major < o.Major ||
+			(Major == o.Major && Minor < o.Minor) ||
+			(Major == o.Major && Minor == o.Minor && Revision < o.Revision) ||
+			(Major == o.Major && Minor == o.Minor && Revision == o.Revision && Build < o.Build);
+	}
+
+	inline bool operator == (VersionNumber const& o) const
+	{
+		return Major == o.Major 
+			&& Minor == o.Minor 
+			&& Revision == o.Revision 
+			&& Build == o.Build;
+	}
+
+	inline bool operator != (VersionNumber const& o) const
+	{
+		return Major != o.Major 
+			|| Minor != o.Minor 
+			|| Revision != o.Revision 
+			|| Build != o.Build;
+	}
+
+	int32_t Minor, Major, Revision, Build;
+};
+
+enum class ManifestParseResult
+{
+	Successful,
+	Failed,
+	UpdateRequired
+};
 
 struct Manifest
 {
-	struct Version
+	static constexpr int32_t CurrentVersion = 1;
+
+	struct ResourceVersion
 	{
-		std::string Path;
+		std::string URL;
 		std::string Digest;
+		VersionNumber Version;
+		std::optional<VersionNumber> MinGameVersion, MaxGameVersion;
+		uint64_t BuildDate{ 0 };
+		bool Revoked{ false };
+
+		bool UpdatePackageMetadata(std::wstring const& path);
+		bool UpdateDLLMetadata(std::wstring const& path);
 	};
 
-	std::unordered_map<std::string, Version> Versions;
+	struct Resource
+	{
+		std::string Name;
+		std::unordered_map<std::string, ResourceVersion> ResourceVersions;
+
+		std::optional<Manifest::ResourceVersion> FindResourceVersion(VersionNumber const& gameVersion) const;
+	};
+
+	int32_t ManifestVersion;
+	std::unordered_map<std::string, Resource> Resources;
 };
 
-class ManifestParser
+class ManifestSerializer
 {
 public:
-	bool Parse(std::string const& json, Manifest& manifest, std::string& parseError)
-	{
-		Json::CharReaderBuilder factory;
-		Json::Value root;
-		std::string errs;
-		auto reader = factory.newCharReader();
-		if (!reader->parse(json.data(), json.data() + json.size(), &root, &errs)) {
-			parseError = errs;
-			return false;
-		}
+	ManifestParseResult Parse(std::string const& json, Manifest& manifest, std::string& parseError);
+	std::string Stringify(Manifest& manifest);
 
-		manifest.Versions.clear();
-
-		auto versions = root["Versions"];
-		if (!versions.isArray()) {
-			parseError = "Manifest has no 'Versions' array";
-			return false;
-		}
-
-		for (auto const& ver : versions) {
-			if (!ver.isObject()) {
-				parseError = "Version info is not an object";
-				return false;
-			}
-
-			Manifest::Version version;
-			auto versionNumber = ver["Version"].asString();
-			version.Path = ver["Path"].asString();
-			version.Digest = ver["Digest"].asString();
-			manifest.Versions.insert(std::make_pair(versionNumber, version));
-		}
-
-		return true;
-	}
-
-	std::string Write(Manifest& manifest)
-	{
-		Json::Value manifests(Json::arrayValue);
-		for (auto const& ver : manifest.Versions) {
-			Json::Value jsonManifest(Json::objectValue);
-			jsonManifest["Version"] = ver.first;
-			jsonManifest["Path"] = ver.second.Path;
-			jsonManifest["Digest"] = ver.second.Digest;
-			manifests.append(jsonManifest);
-		}
-
-		Json::Value root(Json::objectValue);
-		root["Versions"] = manifests;
-
-		Json::StreamWriterBuilder builder;
-		builder["commentStyle"] = "None";
-		builder["indentation"] = "    ";
-		std::unique_ptr<Json::StreamWriter> writer(builder.newStreamWriter());
-		std::ostringstream os;
-		writer->write(root, &os);
-		return os.str();
-	}
+private:
+	bool Parse(Json::Value const& node, Manifest& manifest, std::string& parseError);
+	bool ParseResource(Json::Value const& node, Manifest::Resource& resource, std::string& parseError);
+	bool ParseVersion(Json::Value const& node, Manifest::ResourceVersion& version, std::string& parseError);
 };
 
+
+std::optional<VersionNumber> GetFileVersion(std::wstring const& path);
+std::optional<std::string> GetFileDigest(std::wstring const& path);
