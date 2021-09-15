@@ -132,18 +132,19 @@ namespace bg3se::lua::stats
 #define END_ENUM_NS()
 #define END_ENUM()
 
+// TODO - this solution has subpar performance
 #define BEGIN_ENUM_NS(NS, T, type) \
-	if (enumName == GFS.str##T) { \
+	if (strcmp(enumName, #T) == 0) { \
 		return EnumIndexToLabel<NS::T>(L, (NS::T)index); \
 	}
 #define BEGIN_ENUM(T, type) \
-	if (enumName == GFS.str##T) { \
+	if (strcmp(enumName, #T) == 0) { \
 		return EnumIndexToLabel<T>(L, (T)index); \
 	}
 
 	int EnumIndexToLabel(lua_State* L)
 	{
-		auto enumName = checked_get<FixedString>(L, 1);
+		auto enumName = checked_get<char const*>(L, 1);
 		auto index = checked_get<int>(L, 2);
 
 #include <GameDefinitions/Enumerations.inl>
@@ -175,19 +176,20 @@ namespace bg3se::lua::stats
 #undef BEGIN_ENUM_NS
 #undef BEGIN_ENUM
 
+	// TODO - this solution has subpar performance
 #define BEGIN_ENUM_NS(NS, T, type) \
-	if (enumName == GFS.str##T) { \
+	if (strcmp(enumName, #T) == 0) { \
 		return EnumLabelToIndex<NS::T>(L, label); \
 	}
 #define BEGIN_ENUM(T, type) \
-	if (enumName == GFS.str##T) { \
+	if (strcmp(enumName, #T) == 0) { \
 		return EnumLabelToIndex<T>(L, label); \
 	}
 
 
 	int EnumLabelToIndex(lua_State* L)
 	{
-		auto enumName = checked_get<FixedString>(L, 1);
+		auto enumName = checked_get<char const*>(L, 1);
 		auto label = checked_get<char const*>(L, 2);
 
 #include <GameDefinitions/Enumerations.inl>

@@ -6,10 +6,10 @@ namespace bg3se::lua
 {
 	int CharacterFetchStat(lua_State* L, CDivinityStats_Character* stats, char const* propStr, FixedString const& prop)
 	{
-		if (prop == GFS.strSight) {
+		/*if (prop == GFS.strSight) {
 			push(L, stats->Sight);
 			return 1;
-		}
+		}*/
 
 		/* FIXME
 		std::optional<int32_t> dynamicStat;
@@ -25,12 +25,12 @@ namespace bg3se::lua
 			return 1;
 		}*/
 
-		if (prop == GFS.strModId) {
+		/*if (prop == GFS.strModId) {
 			push(L, gExtender->GetStatLoadOrderHelper().GetStatsEntryMod(stats->Name));
 			return 1;
-		}
+		}*/
 
-		if (prop == GFS.strDynamicStats) {
+		/*if (prop == GFS.strDynamicStats) {
 			lua_newtable(L);
 			unsigned statIdx = 1;
 			for (auto dynamicStat : stats->DynamicStats) {
@@ -41,7 +41,7 @@ namespace bg3se::lua
 			}
 
 			return 1;
-		}
+		}*/
 
 		/* FIXME
 		if (prop == GFS.strMainWeapon) {
@@ -78,10 +78,10 @@ namespace bg3se::lua
 			}
 		}*/
 
-		if (prop == GFS.strNotSneaking) {
+		/*if (prop == GFS.strNotSneaking) {
 			push(L, (bool)(stats->Flags & StatCharacterFlags::IsSneaking));
 			return 1;
-		}
+		}*/
 
 		/* FIXME
 		auto abilityId = EnumInfo<AbilityType>::Find(prop);
