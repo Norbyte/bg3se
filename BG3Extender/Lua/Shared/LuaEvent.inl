@@ -18,9 +18,9 @@ namespace bg3se::lua
 
 		if (prop == GFS.strName) {
 			push(L, eventName_);
-		} else if(prop == GFS.strReadOnly) {
+		} else if (prop == GFS.strReadOnly) {
 			push(L, !writeable_);
-		} else if(prop == GFS.strCanPreventAction) {
+		} else if (prop == GFS.strCanPreventAction) {
 			push(L, !canPreventAction_);
 		} else if (!impl->GetProperty(L, lifetime_.Get(), prop)) {
 			push(L, nullptr);

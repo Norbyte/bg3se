@@ -8,79 +8,177 @@ _I._LoadedFiles = {}
 _I._EVAL_ROOTS_ = {}
 Mods = {}
 
-_I._Notify = function (event, ...)
-    for i,callback in pairs(_I._Listeners[event]) do
-        local status, err = xpcall(callback, debug.traceback, ...)
-        if not status then
-            Ext.Utils.PrintError("Error during " .. event .. ": ", err)
+local SubscribableEvent = {}
+
+function SubscribableEvent:New(name)
+	local o = {
+		First = nil,
+		NextIndex = 1,
+		Name = name
+	}
+	setmetatable(o, self)
+    self.__index = self
+    return o
+end
+
+function SubscribableEvent:Subscribe(handler, opts)
+	opts = opts or {}
+	local index = self.NextIndex
+	self.NextIndex = self.NextIndex + 1
+
+	local sub = {
+		Handler = handler,
+		Index = index,
+		Priority = opts.Priority or 100,
+		Options = opts
+	}
+
+	self:DoSubscribe(sub)
+	return index
+end
+
+function SubscribableEvent:DoSubscribeBefore(node, sub)
+	sub.Prev = node.Prev
+	sub.Next = node
+	
+	Ext.Utils.Print("DoSubscribeBefore prev is", node.Prev)
+	if node.Prev ~= nil then
+		node.Prev.Next = sub
+	else
+		self.First = sub
+	end
+
+	node.Prev = sub
+end
+
+function SubscribableEvent:DoSubscribe(sub)
+	if self.First == nil then 
+		self.First = sub
+		return
+	end
+
+	local cur = self.First
+	local last
+
+	while cur ~= nil do
+		last = cur
+		if sub.Priority > cur.Priority then
+			self:DoSubscribeBefore(cur, sub)
+			return
+		end
+
+		cur = cur.Next
+	end
+
+	last.Next = sub
+	sub.Prev = last
+end
+
+function SubscribableEvent:RemoveNode(node)
+	if node.Prev ~= nil then
+		node.Prev.Next = node.Next
+	end
+
+	if node.Next ~= nil then
+		node.Next.Prev = node.Prev
+	end
+
+	node.Prev = nil
+	node.Next = nil
+end
+
+function SubscribableEvent:Unsubscribe(handlerIndex)
+	local cur = self.First
+	while cur ~= nil do
+		if cur.Index == handlerIndex then
+			self:RemoveNode(cur)
+			return true
+		end
+
+		cur = cur.Next
+	end
+	
+	Ext.Utils.PrintWarning("Attempted to remove subscriber ID " .. handlerIndex .. " for event '" .. self.Name .. "', but no such subscriber exists (maybe it was removed already?)")
+	return false
+end
+
+function SubscribableEvent:Throw(event)
+	local cur = self.First
+	while cur ~= nil do
+		Ext.Utils.Print("xpcall", cur.Handler, event)
+        local ok, result = xpcall(cur.Handler, debug.traceback, event)
+        if not ok then
+            Ext.Utils.PrintError("Error while dispatching event " .. self.Name .. ": ", result)
         end
-    end
+
+		cur = cur.Next
+	end
 end
 
-_I._EngineCallback1 = function (event, ...)
-    for i,callback in pairs(_I._Listeners[event]) do
-        local status, result = xpcall(callback, debug.traceback, ...)
-        if status then
-			if result ~= nil then
-				return result
-			end
-		else
-            Ext.Utils.PrintError("Error during " .. event .. ": ", result)
-        end
-    end
+local MissingSubscribableEvent = {}
+
+function MissingSubscribableEvent:New(name)
+	local o = {
+		Name = name
+	}
+	setmetatable(o, self)
+    self.__index = self
+    return o
 end
 
-_I._EngineCallback2 = function (event, ...)
-    for i,callback in pairs(_I._Listeners[event]) do
-        local status, result1, result2 = xpcall(callback, debug.traceback, ...)
-        if status then
-			if result1 ~= nil then
-				return result1, result2
-			end
-		else
-            Ext.Utils.PrintError("Error during " .. event .. ": ", result1)
-        end
-    end
+function MissingSubscribableEvent:Subscribe(handler, opts)
+    Ext.Utils.PrintError("Attempted to subscribe to nonexistent event: " .. self.Name)
 end
 
-_I._OnGameSessionLoading = function ()
-    _I._Notify("SessionLoading")
+function MissingSubscribableEvent:Unsubscribe(handlerIndex)
+    Ext.Utils.PrintError("Attempted to unsubscribe from nonexistent event: " .. self.Name)
 end
 
-_I._OnGameSessionLoaded = function ()
-    _I._Notify("SessionLoaded")
+function MissingSubscribableEvent:Throw(event)
+    Ext.Utils.PrintError("Attempted to throw nonexistent event: " .. self.Name)
 end
 
-_I._OnModuleLoadStarted = function ()
-    _I._Notify("ModuleLoadStarted")
+_I._Events = {}
+
+Ext.Events = {}
+setmetatable(Ext.Events, {
+	__index = function (self, event)
+		return _I._Events[event] or MissingSubscribableEvent:New(event)
+	end,
+
+	__newindex = function (self, k, v)
+		error("Cannot write to Ext.Events directly!")
+	end
+})
+
+_I._ThrowEvent = function (event)
+	Ext.Events[event.Name]:Throw(event)
 end
 
-_I._OnModuleLoading = function ()
-    _I._Notify("ModuleLoading")
+_I._RegisterEngineEvent = function (event)
+	_I._Events[event] = SubscribableEvent:New(event)
 end
 
-_I._OnStatsLoaded = function ()
-    _I._Notify("StatsLoaded")
+_I._CallLegacyEvent = function (fn, event)
+	if event.Name == "GameStateChanged" then
+		fn(event.FromState, event.ToState)
+	else
+		fn()
+	end
 end
 
-_I._OnModuleResume = function ()
-    _I._Notify("ModuleResume")
+_I._DoStartup = function ()
+	for i,ev in pairs(_I._PublishedEvents) do
+		_I._RegisterEngineEvent(ev)
+	end
 end
 
-_I._OnResetCompleted = function ()
-    _I._Notify("ResetCompleted")
-end
+Ext.RegisterListener = function (type, fn)
+	Ext.Utils.PrintError("Ext.RegisterListener() is deprecated! Use Ext.Events.<X>:Subscribe() instead!")
 
-_I._GameStateChanged = function (...)
-    _I._Notify("GameStateChanged", ...)
-end
-
-_I._GetHitChance = function (...)
-    return _I._EngineCallback1("GetHitChance", ...)
-end
-
-_I._GetSkillAPCost = function (...)
-    return _I._EngineCallback2("GetSkillAPCost", ...)
+	Ext.Events[type]:Subscribe(function (event) 
+		_I._CallLegacyEvent(fn, event)
+	end)
 end
 
 _I._NetListeners = {}
@@ -210,13 +308,6 @@ end
 -- Helper for dumping variables in console
 Ext.Dump = function (val)
 	Ext.Utils.Print(Ext.Json.Stringify(val, true, true, true))
-end
-
--- Custom skill property registration
-_I._SkillPropertyTypes = {}
-
-Ext.RegisterSkillProperty = function (name, proto)
-	_I._SkillPropertyTypes[name] = proto
 end
 
 -- Global helper aliases for Ext.Dump, Ext.Utils.Print
