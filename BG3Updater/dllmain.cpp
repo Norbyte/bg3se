@@ -35,6 +35,34 @@ int default_CSPRNG(uint8_t* dest, unsigned int size)
 
 }
 
+enum class ErrorCategory
+{
+	General,
+	ManifestFetch,
+	UpdateDownload,
+	LocalUpdate,
+	UpdateRequired
+};
+
+struct ErrorReason
+{
+	std::string Message;
+	ErrorCategory Category{ ErrorCategory::General };
+	CURLcode CurlResult{ CURLE_OK };
+
+	bool IsInternetIssue() const
+	{
+		return
+			CurlResult == CURLE_COULDNT_RESOLVE_PROXY
+			|| CurlResult == CURLE_COULDNT_RESOLVE_HOST
+			|| CurlResult == CURLE_COULDNT_CONNECT
+			|| CurlResult == CURLE_WEIRD_SERVER_REPLY
+			|| CurlResult == CURLE_OPERATION_TIMEDOUT
+			|| CurlResult == CURLE_SSL_CONNECT_ERROR
+			|| CurlResult == CURLE_SEND_ERROR
+			|| CurlResult == CURLE_RECV_ERROR;
+	}
+};
 
 HMODULE GetExeHandle()
 {
@@ -527,7 +555,7 @@ public:
 		: config_(config)
 	{}
 	
-	bool Fetch(Manifest& manifest, std::string& reason)
+	bool Fetch(Manifest& manifest, ErrorReason& reason)
 	{
 		HttpFetcher fetcher;
 		std::string manifestUrl = config_.ManifestURL + config_.UpdateChannel + "/" + config_.ManifestName;
@@ -535,32 +563,34 @@ public:
 		DEBUG("Fetching manifest from: %s", manifestUrl.c_str());
 		std::vector<uint8_t> manifestBinary;
 		if (!fetcher.Fetch(manifestUrl, manifestBinary)) {
-			reason = "Failed to check for Script Extender updates. Make sure you're connected to the internet and try again.\r\n";
-			reason += fetcher.GetLastError();
+			reason.Category = ErrorCategory::ManifestFetch;
+			reason.Message = "Unable to download ";
+			reason.Message += manifestUrl;
+			reason.Message += "\r\n";
+			reason.Message += fetcher.GetLastError();
+			reason.CurlResult = fetcher.GetLastResultCode();
 			return false;
 		}
 
 		std::string manifestStr((char*)manifestBinary.data(), (char*)manifestBinary.data() + manifestBinary.size());
-		if (Parse(manifestStr, manifest, reason)) {
-			return true;
-		}
-
-		return false;
+		return Parse(manifestStr, manifest, reason);
 	}
 
-	bool Parse(std::string const& manifestStr, Manifest& manifest, std::string& reason)
+	bool Parse(std::string const& manifestStr, Manifest& manifest, ErrorReason& reason)
 	{
 		ManifestSerializer parser;
 		std::string parseError;
 		auto result = parser.Parse(manifestStr, manifest, parseError);
 		if (result == ManifestParseResult::Failed) {
-			reason = "Failed to check for Script Extender updates:\r\nUnable to parse manifest: ";
-			reason += parseError;
+			reason.Category = ErrorCategory::General;
+			reason.Message = "Unable to parse manifest: ";
+			reason.Message += parseError;
 			return false;
 		}
 
 		if (result == ManifestParseResult::UpdateRequired) {
-			reason = "Failed to check for Script Extender updates:\r\nUnable to parse manifest: ";
+			reason.Category = ErrorCategory::UpdateRequired;
+			reason.Message = "Unable to parse manifest - update required.";
 			return false;
 		}
 
@@ -580,20 +610,20 @@ public:
 		: config_(config), cache_(cache)
 	{}
 
-	bool Update(Manifest const& manifest, std::string const& resourceName, VersionNumber const& gameVersion, std::string& reason)
+	bool Update(Manifest const& manifest, std::string const& resourceName, VersionNumber const& gameVersion, ErrorReason& reason)
 	{
 		DEBUG("Starting fetch for resource: %s", resourceName.c_str());
 		auto resIt = manifest.Resources.find(resourceName);
 		if (resIt == manifest.Resources.end()) {
-			reason = "Failed to check for Script Extender updates:\r\nNo manifest entry found for resource: ";
-			reason += resourceName;
+			reason.Message = "No manifest entry found for resource: ";
+			reason.Message += resourceName;
 			return false;
 		}
 
 		auto version = resIt->second.FindResourceVersion(gameVersion);
 		if (!version) {
-			reason = "Failed to check for Script Extender updates:\r\nScript extender not available for game version v";
-			reason += gameVersion.ToString();
+			reason.Message = "Script extender not available for game version v";
+			reason.Message += gameVersion.ToString();
 			return false;
 		}
 
@@ -608,11 +638,11 @@ public:
 	}
 
 	
-	bool Update(Manifest::Resource const& resource, Manifest::ResourceVersion const& version, std::string & reason)
+	bool Update(Manifest::Resource const& resource, Manifest::ResourceVersion const& version, ErrorReason& reason)
 	{
 		if (version.Revoked) {
-			reason = "Failed to download Script Extender update package.\r\n";
-			reason += "Attempted to download unavailable resource version.";
+			reason.Category = ErrorCategory::UpdateDownload;
+			reason.Message = "Attempted to download unavailable resource version.";
 			return false;
 		}
 
@@ -620,15 +650,21 @@ public:
 		DEBUG("Fetching update package: %s", version.URL.c_str());
 		std::vector<uint8_t> response;
 		if (!fetcher.Fetch(version.URL, response)) {
-			reason = "Failed to download Script Extender update package.\r\n";
-			reason += fetcher.GetLastError();
-			reason += "\r\n";
-			reason += "URL: ";
-			reason += version.URL;
+			reason.Category = ErrorCategory::UpdateDownload;
+			reason.Message = fetcher.GetLastError();
+			reason.Message += "\r\n";
+			reason.Message += "URL: ";
+			reason.Message += version.URL;
+			reason.CurlResult = fetcher.GetLastResultCode();
 			return false;
 		}
 
-		return cache_.UpdateLocalPackage(resource, version, response, reason);
+		if (cache_.UpdateLocalPackage(resource, version, response, reason.Message)) {
+			return true;
+		} else {
+			reason.Category = ErrorCategory::LocalUpdate;
+			return false;
+		}
 	}
 
 private:
@@ -644,21 +680,51 @@ public:
 		UpdatePaths();
 		cache_ = std::make_unique<ResourceCacheRepository>(config_.CachePath);
 
-		std::string updateReason;
+		ErrorReason updateReason;
 		bool updated = TryToUpdate(updateReason);
 
 		auto resourcePath = cache_->FindResourcePath("ScriptExtender", gameVersion_);
 
 		if (updated && !resourcePath) {
 			updated = false;
-			updateReason = "Failed to initialize Script Extender:\r\nNo cached package available for game version v";
-			updateReason += gameVersion_.ToString();
+			updateReason.Message = "No cached package available for game version v";
+			updateReason.Message += gameVersion_.ToString();
 		}
 
 		if (!updated) {
-			DEBUG("Update failed; reason: %s", updateReason.c_str());
+			DEBUG("Update failed; reason category %d, message: %s", updateReason.Category, updateReason.Message.c_str());
 			completed_ = true;
-			gErrorUtils->ShowError(updateReason.c_str());
+
+			std::string message;
+			switch (updateReason.Category) {
+			case ErrorCategory::UpdateDownload:
+				if (updateReason.IsInternetIssue()) {
+					message = std::string("Failed to download Script Extender update package. Make sure you're connected to the internet and try again.\r\n") + updateReason.Message;
+				} else {
+					message = std::string("Failed to download Script Extender update package:\r\n") + updateReason.Message;
+				}
+				break;
+
+			case ErrorCategory::LocalUpdate:
+				message = std::string("Failed to apply Script Extender update:\r\n") + updateReason.Message;
+				break;
+
+			case ErrorCategory::UpdateRequired:
+				message = "Failed to check for Script Extender updates:\r\nThe Script Extender launcher is too old and must be re-downloaded.";
+				break;
+
+			case ErrorCategory::General:
+			case ErrorCategory::ManifestFetch:
+			default:
+				if (updateReason.IsInternetIssue()) {
+					message = std::string("Failed to check for Script Extender updates. Make sure you're connected to the internet and try again.\r\n") + updateReason.Message;
+				} else {
+					message = std::string("Failed to check for Script Extender updates:\r\n") + updateReason.Message;
+				}
+				break;
+			}
+
+			gErrorUtils->ShowError(message.c_str());
 		}
 
 		if (resourcePath) {
@@ -687,7 +753,7 @@ public:
 		}
 	}
 	
-	bool TryToUpdate(std::string & reason)
+	bool TryToUpdate(ErrorReason& reason)
 	{
 		Manifest manifest;
 		ManifestFetcher manifestFetcher(config_);

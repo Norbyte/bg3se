@@ -16,9 +16,9 @@ void HttpFetcher::LogError(CURL* curl, CURLcode result)
 	std::stringstream ss;
 
 	if (result == CURLE_HTTP_RETURNED_ERROR) {
-		long httpCode = 0;
-		curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &httpCode);
-		ss << "HTTP error " << httpCode;
+		lastHttpCode_ = 0;
+		curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &lastHttpCode_);
+		ss << "HTTP error " << lastHttpCode_;
 	} else {
 		ss << "(" << result << ") " << curl_easy_strerror(result);
 	}
@@ -40,14 +40,14 @@ bool HttpFetcher::Fetch(std::string const& url, std::vector<uint8_t> & response)
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
 	lastResponse_.clear();
 
-	auto result = curl_easy_perform(curl);
-	if (result != CURLE_OK) {
-		LogError(curl, result);
+	lastResult_ = curl_easy_perform(curl);
+	if (lastResult_ != CURLE_OK) {
+		LogError(curl, lastResult_);
 	}
 
 	curl_easy_cleanup(curl);
 	response = lastResponse_;
-	return (result == CURLE_OK);
+	return (lastResult_ == CURLE_OK);
 }
 
 size_t HttpFetcher::WriteFunc(char* contents, size_t size, size_t nmemb, HttpFetcher* self)
