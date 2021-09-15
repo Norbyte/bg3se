@@ -330,33 +330,30 @@ namespace bg3se::lua
 		template <class T>
 		inline static ObjectProxyRefImpl<T>* MakeRef(lua_State* L, T* object, LifetimeHolder const& lifetime)
 		{
-			static_assert(sizeof(ObjectProxyRefImpl<T>) <= sizeof(impl_), "ObjectProxy implementation object too large!");
-			auto self = New(L, lifetime);
-			return new (self->impl_) ObjectProxyRefImpl<T>(lifetime, object);
+			auto self = NewWithExtraData(L, sizeof(ObjectProxyRefImpl<T>), lifetime);
+			return new (self->GetImpl()) ObjectProxyRefImpl<T>(lifetime, object);
 		}
 
 		template <class T>
 		inline static ObjectProxyOwnerImpl<T>* MakeOwner(lua_State* L, LifetimePool& pool, T* obj)
 		{
-			static_assert(sizeof(ObjectProxyOwnerImpl<T>) <= sizeof(impl_), "ObjectProxy implementation object too large!");
 			auto lifetime = pool.Allocate();
-			auto self = New(L, LifetimeHolder(pool, lifetime));
-			return new (self->impl_) ObjectProxyOwnerImpl<T>(pool, lifetime, obj);
+			auto self = NewWithExtraData(L, sizeof(ObjectProxyOwnerImpl<T>), LifetimeHolder(pool, lifetime));
+			return new (self->GetImpl()) ObjectProxyOwnerImpl<T>(pool, lifetime, obj);
 		}
 
 		template <class T, class... Args>
 		inline static ObjectProxyOwnerImpl<T>* MakeOwner(lua_State* L, LifetimePool& pool, Args... args)
 		{
-			static_assert(sizeof(ObjectProxyOwnerImpl<T>) <= sizeof(impl_), "ObjectProxy implementation object too large!");
 			auto lifetime = pool.Allocate();
-			auto self = New(L, LifetimeHolder(pool, lifetime));
+			auto self = NewWithExtraData(L, sizeof(ObjectProxyOwnerImpl<T>), LifetimeHolder(pool, lifetime));
 			auto obj = GameAlloc<T, Args...>(std::forward(args)...);
-			return new (self->impl_) ObjectProxyOwnerImpl<T>(pool, lifetime, obj);
+			return new (self->GetImpl()) ObjectProxyOwnerImpl<T>(pool, lifetime, obj);
 		}
 
 		inline ObjectProxyImplBase* GetImpl()
 		{
-			return reinterpret_cast<ObjectProxyImplBase*>(impl_);
+			return reinterpret_cast<ObjectProxyImplBase*>(this + 1);
 		}
 
 		inline bool IsAlive() const
@@ -380,7 +377,6 @@ namespace bg3se::lua
 
 	private:
 		LifetimeReference lifetime_;
-		uint8_t impl_[40];
 
 		ObjectProxy(LifetimeHolder const& lifetime)
 			: lifetime_(lifetime)

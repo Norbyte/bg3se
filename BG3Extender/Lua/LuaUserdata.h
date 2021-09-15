@@ -47,6 +47,15 @@ namespace bg3se::lua
 			return obj;
 		}
 
+		template <class... Args>
+		static T* NewWithExtraData(lua_State* L, std::size_t extraDataSize, Args... args)
+		{
+			auto obj = reinterpret_cast<T*>(lua_newuserdata(L, extraDataSize + sizeof(T)));
+			new (obj) T(std::forward<Args>(args)...);
+			luaL_setmetatable(L, T::MetatableName);
+			return obj;
+		}
+
 		static int CallProxy(lua_State* L)
 		{
 			if constexpr (std::is_base_of_v<Callable, T>) {

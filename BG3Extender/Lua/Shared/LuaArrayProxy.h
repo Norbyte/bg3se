@@ -489,62 +489,49 @@ namespace bg3se::lua
 		template <class TImpl, class... Args>
 		inline static TImpl* MakeImplByRef(lua_State* L, LifetimeHolder const& lifetime, Args... args)
 		{
-			static_assert(sizeof(TImpl) <= sizeof(impl_), "ArrayProxy implementation object too large!");
-			auto self = New(L, lifetime);
-			return new (self->impl_) TImpl(lifetime, args...);
+			auto self = NewWithExtraData(L, sizeof(TImpl), lifetime);
+			return new (self->GetImpl()) TImpl(lifetime, args...);
 		}
 
 		template <class T>
 		inline static ArrayProxyByRefImpl<T>* MakeByRef(lua_State* L, Array<T>* object, LifetimeHolder const& lifetime)
 		{
-			static_assert(sizeof(ArrayProxyByRefImpl<T>) <= sizeof(impl_), "ArrayProxyByRefImpl implementation object too large!");
-			auto self = New(L, lifetime);
-			return new (self->impl_) ArrayProxyByRefImpl<T>(lifetime, object);
+			return MakeImplByRef<ArrayProxyByRefImpl<T>>(L, lifetime, object);
 		}
 
 		template <class T>
 		inline static ObjectSetProxyByRefImpl<T>* MakeByRef(lua_State* L, ObjectSet<T>* object, LifetimeHolder const& lifetime)
 		{
-			static_assert(sizeof(ObjectSetProxyByRefImpl<T>) <= sizeof(impl_), "ObjectSetProxyByRefImpl implementation object too large!");
-			auto self = New(L, lifetime);
-			return new (self->impl_) ObjectSetProxyByRefImpl<T>(lifetime, object);
+			return MakeImplByRef<ObjectSetProxyByRefImpl<T>>(L, lifetime, object);
 		}
 
 		template <class T, int Size>
 		inline static StdArrayProxyByRefImpl<T, Size>* MakeByRef(lua_State* L, std::array<T, Size>* object, LifetimeHolder const& lifetime)
 		{
-			static_assert(sizeof(StdArrayProxyByRefImpl<T, Size>) <= sizeof(impl_), "StdArrayProxyByRefImpl implementation object too large!");
-			auto self = New(L, lifetime);
-			return new (self->impl_) StdArrayProxyByRefImpl<T, Size>(lifetime, object);
+			return MakeImplByRef<StdArrayProxyByRefImpl<T, Size>>(L, lifetime, object);
 		}
 
 		template <class T>
 		inline static ArrayProxyByValImpl<T>* MakeByVal(lua_State* L, Array<T>* object, LifetimeHolder const& lifetime)
 		{
-			static_assert(sizeof(ArrayProxyByValImpl<T>) <= sizeof(impl_), "ArrayProxyByValImpl implementation object too large!");
-			auto self = New(L, lifetime);
-			return new (self->impl_) ArrayProxyByValImpl<T>(lifetime, object);
+			return MakeImplByRef<ArrayProxyByValImpl<T>>(L, lifetime, object);
 		}
 
 		template <class T>
 		inline static ObjectSetProxyByValImpl<T>* MakeByVal(lua_State* L, ObjectSet<T>* object, LifetimeHolder const& lifetime)
 		{
-			static_assert(sizeof(ObjectSetProxyByValImpl<T>) <= sizeof(impl_), "ObjectSetProxyByValImpl implementation object too large!");
-			auto self = New(L, lifetime);
-			return new (self->impl_) ObjectSetProxyByValImpl<T>(lifetime, object);
+			return MakeImplByRef<ObjectSetProxyByValImpl<T>>(L, lifetime, object);
 		}
 
 		template <class T, int Size>
 		inline static StdArrayProxyByValImpl<T, Size>* MakeByVal(lua_State* L, std::array<T, Size>* object, LifetimeHolder const& lifetime)
 		{
-			static_assert(sizeof(StdArrayProxyByValImpl<T, Size>) <= sizeof(impl_), "StdArrayProxyByValImpl implementation object too large!");
-			auto self = New(L, lifetime);
-			return new (self->impl_) StdArrayProxyByValImpl<T, Size>(lifetime, object);
+			return MakeImplByRef<StdArrayProxyByValImpl<T, Size>>(L, lifetime, object);
 		}
 
 		inline ArrayProxyImplBase* GetImpl()
 		{
-			return reinterpret_cast<ArrayProxyImplBase*>(impl_);
+			return reinterpret_cast<ArrayProxyImplBase*>(this + 1);
 		}
 
 		inline bool IsAlive() const
@@ -568,7 +555,6 @@ namespace bg3se::lua
 
 	private:
 		LifetimeReference lifetime_;
-		uint8_t impl_[40];
 
 		ArrayProxy(LifetimeHolder const& lifetime)
 			: lifetime_(lifetime)

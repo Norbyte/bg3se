@@ -417,38 +417,34 @@ namespace bg3se::lua
 		template <class TKey, class TValue>
 		inline static MultiHashMapByRefProxyImpl<TKey, TValue>* MakeByRef(lua_State* L, MultiHashMap<TKey, TValue>* object, LifetimeHolder const& lifetime)
 		{
-			static_assert(sizeof(MultiHashMapByRefProxyImpl<TKey, TValue>) <= sizeof(impl_), "MultiHashMapByRefProxyImpl implementation object too large!");
-			auto self = New(L, lifetime);
-			return new (self->impl_) MultiHashMapByRefProxyImpl<TKey, TValue>(lifetime, object);
+			auto self = NewWithExtraData(L, sizeof(MultiHashMapByRefProxyImpl<TKey, TValue>), lifetime);
+			return new (self->GetImpl()) MultiHashMapByRefProxyImpl<TKey, TValue>(lifetime, object);
 		}
 
 		template <class TKey, class TValue>
 		inline static MultiHashMapByValProxyImpl<TKey, TValue>* MakeByVal(lua_State* L, MultiHashMap<TKey, TValue>* object, LifetimeHolder const& lifetime)
 		{
-			static_assert(sizeof(MultiHashMapByValProxyImpl<TKey, TValue>) <= sizeof(impl_), "MultiHashMapByValProxyImpl implementation object too large!");
-			auto self = New(L, lifetime);
-			return new (self->impl_) MultiHashMapByValProxyImpl<TKey, TValue>(lifetime, object);
+			auto self = NewWithExtraData(L, sizeof(MultiHashMapByValProxyImpl<TKey, TValue>), lifetime);
+			return new (self->GetImpl()) MultiHashMapByValProxyImpl<TKey, TValue>(lifetime, object);
 		}
 
 		template <class TKey, class TValue>
 		inline static RefMapByRefProxyImpl<TKey, TValue>* MakeByRef(lua_State* L, RefMap<TKey, TValue>* object, LifetimeHolder const& lifetime)
 		{
-			static_assert(sizeof(RefMapByRefProxyImpl<TKey, TValue>) <= sizeof(impl_), "RefMapByRefProxyImpl implementation object too large!");
-			auto self = New(L, lifetime);
-			return new (self->impl_) RefMapByRefProxyImpl<TKey, TValue>(lifetime, object);
+			auto self = NewWithExtraData(L, sizeof(RefMapByRefProxyImpl<TKey, TValue>), lifetime);
+			return new (self->GetImpl()) RefMapByRefProxyImpl<TKey, TValue>(lifetime, object);
 		}
 
 		template <class TKey, class TValue>
 		inline static RefMapByValProxyImpl<TKey, TValue>* MakeByVal(lua_State* L, RefMap<TKey, TValue>* object, LifetimeHolder const& lifetime)
 		{
-			static_assert(sizeof(RefMapByValProxyImpl<TKey, TValue>) <= sizeof(impl_), "RefMapByValProxyImpl implementation object too large!");
-			auto self = New(L, lifetime);
-			return new (self->impl_) RefMapByValProxyImpl<TKey, TValue>(lifetime, object);
+			auto self = NewWithExtraData(L, sizeof(RefMapByValProxyImpl<TKey, TValue>), lifetime);
+			return new (self->GetImpl()) RefMapByValProxyImpl<TKey, TValue>(lifetime, object);
 		}
 
 		inline MapProxyImplBase* GetImpl()
 		{
-			return reinterpret_cast<MapProxyImplBase*>(impl_);
+			return reinterpret_cast<MapProxyImplBase*>(this + 1);
 		}
 
 		inline bool IsAlive() const
@@ -498,7 +494,6 @@ namespace bg3se::lua
 
 	private:
 		LifetimeReference lifetime_;
-		uint8_t impl_[40];
 
 		MapProxy(LifetimeHolder const& lifetime)
 			: lifetime_(lifetime)

@@ -115,14 +115,13 @@ namespace bg3se::lua
 		template <class T>
 		inline static MultiHashSetProxyImpl<T>* Make(lua_State* L, MultiHashSet<T>* object, LifetimeHolder const& lifetime)
 		{
-			static_assert(sizeof(MultiHashSetProxyImpl<T>) <= sizeof(impl_), "SetProxy implementation object too large!");
-			auto self = New(L, lifetime);
-			return new (self->impl_) MultiHashSetProxyImpl<T>(lifetime, object);
+			auto self = NewWithExtraData(L, sizeof(MultiHashSetProxyImpl<T>), lifetime);
+			return new (self->GetImpl()) MultiHashSetProxyImpl<T>(lifetime, object);
 		}
 
 		inline SetProxyImplBase* GetImpl()
 		{
-			return reinterpret_cast<SetProxyImplBase*>(impl_);
+			return reinterpret_cast<SetProxyImplBase*>(this + 1);
 		}
 
 		inline bool IsAlive() const
@@ -146,7 +145,6 @@ namespace bg3se::lua
 
 	private:
 		LifetimeReference lifetime_;
-		uint8_t impl_[40];
 
 		SetProxy(LifetimeHolder const& lifetime)
 			: lifetime_(lifetime)
