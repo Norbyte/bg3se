@@ -35,13 +35,20 @@ int default_CSPRNG(uint8_t* dest, unsigned int size)
 
 }
 
-std::optional<VersionNumber> GetGameVersion()
+
+HMODULE GetExeHandle()
 {
 	HMODULE hGameModule = GetModuleHandleW(L"bg3.exe");
 	if (hGameModule == NULL) {
 		hGameModule = GetModuleHandleW(L"bg3_dx11.exe");
 	}
 
+	return hGameModule;
+}
+
+std::optional<VersionNumber> GetGameVersion()
+{
+	HMODULE hGameModule = GetExeHandle();
 	if (hGameModule == NULL) {
 		return {};
 	}
@@ -728,12 +735,24 @@ public:
 
 	void LoadConfig()
 	{
-		LoadConfigFile(L"ScriptExtenderUpdaterConfig.json", config_);
+		HMODULE hGameModule = GetExeHandle();
+		if (hGameModule != NULL) {
+			exeDir_.resize(MAX_PATH);
+			DWORD modulePathSize = GetModuleFileNameW(hGameModule, exeDir_.data(), (DWORD)exeDir_.size());
+			exeDir_.resize(modulePathSize);
+			auto sep = exeDir_.find_last_of(L'\\');
+			if (sep != std::string::npos) {
+				exeDir_ = exeDir_.substr(0, sep);
+			}
+		}
+		
+		LoadConfigFile(exeDir_ + L"\\ScriptExtenderUpdaterConfig.json", config_);
 	}
 
 private:
 	VersionNumber gameVersion_;
 	UpdaterConfig config_;
+	std::wstring exeDir_;
 	std::unique_ptr<ResourceCacheRepository> cache_;
 	bool completed_{ false };
 
@@ -758,8 +777,7 @@ std::unique_ptr<ScriptExtenderUpdater> gUpdater;
 
 bool ShouldLoad()
 {
-	return GetModuleHandleW(L"bg3.exe") != NULL
-		|| GetModuleHandleW(L"bg3_dx11.exe") != NULL;
+	return GetExeHandle() != NULL;
 }
 
 // This thread is responsible for polling and suspending/resuming
