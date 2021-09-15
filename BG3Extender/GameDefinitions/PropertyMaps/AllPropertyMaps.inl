@@ -11,3 +11,4 @@
 #include <GameDefinitions/PropertyMaps/Hit.inl>
 #include <GameDefinitions/PropertyMaps/SurfaceActions.inl>
 #include <GameDefinitions/PropertyMaps/Statuses.inl>
+#include <GameDefinitions/PropertyMaps/Events.inl>

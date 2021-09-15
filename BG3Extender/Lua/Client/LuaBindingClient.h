@@ -10,6 +10,12 @@ namespace bg3se::ecl::lua
 	LifetimeHolder GetClientLifetime();
 	LifetimePool& GetClientLifetimePool();
 
+	struct GameStateChangeEventParams
+	{
+		ecl::GameState FromState;
+		ecl::GameState ToState;
+	};
+
 	class ExtensionLibraryClient : public ExtensionLibrary
 	{
 	public:

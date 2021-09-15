@@ -1129,8 +1129,10 @@ namespace bg3se::ecl::lua
 
 	void ClientState::OnGameStateChanged(GameState fromState, GameState toState)
 	{
-		CallExt("_GameStateChanged", 0, fromState, toState);
+		GameStateChangeEventParams params{ fromState, toState };
+		ThrowEvent("GameStateChanged", params, false, 0, ReadOnlyEvent{});
 	}
+
 
 	/*
 	std::optional<STDString> ClientState::GetSkillPropertyDescription(CRPGStats_Object_Property_Extender* prop)

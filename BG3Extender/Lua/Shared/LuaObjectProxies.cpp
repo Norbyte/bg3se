@@ -5,6 +5,9 @@
 #include <Lua/LuaBinding.h>
 #include <Lua/LuaSerializers.h>
 #include <Lua/Shared/LuaPropertyMapHelpers.h>
+#include <Lua/Shared/LuaEvent.h>
+#include <Lua/Server/LuaBindingServer.h>
+#include <Lua/Client/LuaBindingClient.h>
 #include <GameDefinitions/Resources.h>
 #include <GameDefinitions/Surface.h>
 #include <GameDefinitions/Character.h>

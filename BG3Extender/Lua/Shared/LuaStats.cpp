@@ -6,6 +6,7 @@
 #include <Lua/Shared/LuaArrayProxy.inl>
 #include <Lua/Shared/LuaSetProxy.inl>
 #include <Lua/Shared/LuaMapProxy.inl>
+#include <Lua/Shared/LuaEvent.inl>
 #include <Lua/Shared/LuaCharacter.inl>
 #include <Lua/Shared/LuaItem.inl>
 #include <Lua/Shared/StatEntries.inl>
@@ -153,6 +154,7 @@ namespace bg3se::lua
 		Userdata<ArrayProxy>::RegisterMetatable(L);
 		Userdata<SetProxy>::RegisterMetatable(L);
 		Userdata<MapProxy>::RegisterMetatable(L);
+		Userdata<EventObject>::RegisterMetatable(L);
 		InitObjectProxyPropertyMaps();
 
 		RegisterEntityProxy(L);

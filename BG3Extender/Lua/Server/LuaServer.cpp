@@ -790,7 +790,8 @@ namespace bg3se::esv::lua
 	*/
 	void ServerState::OnGameStateChanged(GameState fromState, GameState toState)
 	{
-		CallExt("_GameStateChanged", 0, fromState, toState);
+		GameStateChangeEventParams params{ fromState, toState };
+		ThrowEvent("GameStateChanged", params, false, 0, ReadOnlyEvent{});
 	}
 
 	/*

@@ -402,6 +402,9 @@
     <ClInclude Include="Extender\Shared\ScriptExtenderBase.h">
       <Filter>Extender\Shared</Filter>
     </ClInclude>
+    <ClInclude Include="Lua\Shared\LuaEvent.h">
+      <Filter>Lua\Shared</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -578,6 +581,12 @@
     </None>
     <None Include="Extender\Shared\ThreadedExtenderState.inl">
       <Filter>Extender\Shared</Filter>
+    </None>
+    <None Include="Lua\Shared\LuaEvent.inl">
+      <Filter>Lua\Shared</Filter>
+    </None>
+    <None Include="GameDefinitions\PropertyMaps\Events.inl">
+      <Filter>GameDefinitions\PropertyMaps</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

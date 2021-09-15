@@ -37,8 +37,20 @@ NewHit* FunctorEventHooks::OnDealDamage(DealDamageFunctor::ApplyDamageProc* next
 	EntityWorldHandle* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId, int storyActionId, 
 	ActionOriginator* originator, GuidResourceDefinitionManagerBase* classResourceMgr, Hit* hit, DamageSums* damageSums, uint64_t* unknownThothParam, HitWith hitWith)
 {
-	state_.CallExt("_OnDealDamage", 0, functor, *casterHandle, *targetHandle, *position, isFromItem, spellId, originator, hit, damageSums, hitWith);
-	auto ret = next(result, functor, casterHandle, targetHandle, position, isFromItem, spellId, storyActionId, originator, classResourceMgr, hit, damageSums, hitWith);
+	DealDamageEvent evt;
+	evt.Functor = functor;
+	evt.Caster = *casterHandle;
+	evt.Target = *targetHandle;
+	evt.Position = *position;
+	evt.IsFromItem = isFromItem;
+	evt.SpellId = spellId;
+	evt.StoryActionId = storyActionId;
+	evt.Originator = originator;
+	evt.Hit = hit;
+	evt.DamageSums = damageSums;
+	evt.HitWith = hitWith;
+	state_.ThrowEvent("DealDamage", evt, false, 0, ReadOnlyEvent{});
+
 	auto ret = next(result, functor, casterHandle, targetHandle, position, isFromItem, spellId, storyActionId, originator, classResourceMgr, hit, damageSums, unknownThothParam, hitWith);
 	return ret;
 }

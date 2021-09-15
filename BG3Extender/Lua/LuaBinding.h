@@ -6,6 +6,7 @@
 #include <Lua/Shared/LuaArrayProxy.h>
 #include <Lua/Shared/LuaSetProxy.h>
 #include <Lua/Shared/LuaMapProxy.h>
+#include <Lua/Shared/LuaEvent.h>
 #include <Lua/Shared/LuaEntityProxy.h>
 
 #include <mutex>
@@ -132,6 +133,31 @@ namespace bg3se::lua
 			PushInternalFunction(L, func);
 			(push_proxy(L, lifetime, args), ...);
 			return CheckedCall(L, sizeof...(args), func);
+		}
+
+		template <class TEvent, class TReadWrite>
+		bool ThrowEvent(char const* eventName, TEvent& evt, bool canPreventAction, uint32_t restrictions, TReadWrite)
+		{
+			auto stackSize = lua_gettop(L);
+
+			try {
+				StackCheck _(L, 0);
+				Restriction restriction(*this, restrictions);
+				LifetimePin _p(lifetimeStack_);
+				PushInternalFunction(L, "_ThrowEvent");
+				EventObject::Make(L, lifetimeStack_.GetCurrent().pool, eventName, evt, canPreventAction, TReadWrite{});
+				return CheckedCall(L, 1, "_ThrowEvent");
+			} catch (Exception &) {
+				auto stackRemaining = lua_gettop(L) - stackSize;
+				if (stackRemaining > 0) {
+					LuaError("Failed to dispatch event '" << eventName << "': " << lua_tostring(L, -1));
+					lua_pop(L, stackRemaining);
+				} else {
+					LuaError("Internal error while dispatching event '" << eventName << "'");
+				}
+
+				return false;
+			}
 		}
 
 		std::optional<int> LoadScript(STDString const & script, STDString const & name = "", int globalsIdx = 0);

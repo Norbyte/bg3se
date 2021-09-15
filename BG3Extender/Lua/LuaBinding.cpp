@@ -175,7 +175,7 @@ namespace bg3se::lua
 	void PushInternalFunction(lua_State* L, char const* func)
 	{
 		lua_getglobal(L, "Ext"); // stack: Ext
-		lua_getfield(L, -1, "_Internal"); // stack: Ext, _I
+		lua_getfield(L, -1, "_Internal"); // stack: Ext, _Internal
 		lua_remove(L, -2); // stack: _I
 		lua_getfield(L, -1, func); // stack: _I, fn
 		lua_remove(L, -2); // stack: fn
@@ -844,37 +844,37 @@ namespace bg3se::lua
 
 	void State::OnGameSessionLoading()
 	{
-		CallExt("_OnGameSessionLoading", RestrictAll | ScopeSessionLoad);
+		ThrowEvent<EmptyEventParams>("GameSessionLoading", EmptyEventParams{}, false, RestrictAll | ScopeSessionLoad, ReadOnlyEvent{});
 	}
 
 	void State::OnGameSessionLoaded()
 	{
-		CallExt("_OnGameSessionLoaded", RestrictAll);
+		ThrowEvent<EmptyEventParams>("GameSessionLoaded", EmptyEventParams{}, false, RestrictAll, ReadOnlyEvent{});
 	}
 
 	void State::OnModuleLoadStarted()
 	{
-		CallExt("_OnModuleLoadStarted", RestrictAll | ScopeModulePreLoad);
+		ThrowEvent<EmptyEventParams>("ModuleLoadStarted", EmptyEventParams{}, false, RestrictAll | ScopeModulePreLoad, ReadOnlyEvent{});
 	}
 
 	void State::OnModuleLoading()
 	{
-		CallExt("_OnModuleLoading", RestrictAll | ScopeModuleLoad);
+		ThrowEvent<EmptyEventParams>("ModuleLoading", EmptyEventParams{}, false, RestrictAll | ScopeModuleLoad, ReadOnlyEvent{});
 	}
 
 	void State::OnStatsLoaded()
 	{
-		CallExt("_OnStatsLoaded", RestrictAll | ScopeModuleLoad);
+		ThrowEvent<EmptyEventParams>("StatsLoaded", EmptyEventParams{}, false, RestrictAll | ScopeModuleLoad, ReadOnlyEvent{});
 	}
 
 	void State::OnModuleResume()
 	{
-		CallExt("_OnModuleResume", RestrictAll | ScopeModuleResume);
+		ThrowEvent<EmptyEventParams>("ModuleResume", EmptyEventParams{}, false, RestrictAll | ScopeModuleResume, ReadOnlyEvent{});
 	}
 
 	void State::OnResetCompleted()
 	{
-		CallExt("_OnResetCompleted", 0);
+		ThrowEvent<EmptyEventParams>("ResetCompleted", EmptyEventParams{}, false, 0, ReadOnlyEvent{});
 	}
 
 	STDString State::GetBuiltinLibrary(int resourceId)

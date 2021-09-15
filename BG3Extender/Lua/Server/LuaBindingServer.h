@@ -20,6 +20,12 @@ namespace bg3se::esv::lua
 	LifetimeHolder GetServerLifetime();
 	LifetimePool& GetServerLifetimePool();
 
+	struct GameStateChangeEventParams
+	{
+		esv::GameState FromState;
+		esv::GameState ToState;
+	};
+
 	class StatusHandleProxy : public Userdata<StatusHandleProxy>, public Indexable, public NewIndexable, public Pushable
 	{
 	public:
@@ -125,6 +131,24 @@ namespace bg3se::esv::lua
 	private:
 		ObjectSet<eoc::ItemDefinition> definition_;
 	};*/
+
+	struct DealDamageEvent
+	{
+		// TODO - only available after hit! 
+		// NewHit* Result;
+		DealDamageFunctor* Functor;
+		EntityWorldHandle Caster;
+		EntityWorldHandle Target;
+		glm::vec3 Position;
+		bool IsFromItem;
+		SpellIdWithPrototype* SpellId;
+		int StoryActionId;
+		ActionOriginator* Originator;
+		Hit* Hit;
+		DamageSums* DamageSums;
+		uint64_t* UnknownThothParam;
+		HitWith HitWith;
+	};
 	
 	class FunctorEventHooks
 	{

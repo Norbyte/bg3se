@@ -191,6 +191,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <ClInclude Include="Lua\Server\ServerOsirisBinding.h" />
     <ClInclude Include="Lua\Shared\LuaArrayProxy.h" />
     <ClInclude Include="Lua\Shared\LuaEntityProxy.h" />
+    <ClInclude Include="Lua\Shared\LuaEvent.h" />
     <ClInclude Include="Lua\Shared\LuaLifetime.h" />
     <ClInclude Include="Lua\Shared\LuaMapProxy.h" />
     <ClInclude Include="Lua\Shared\LuaObjectProxy.h" />
@@ -303,6 +304,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <None Include="GameDefinitions\PropertyMaps\BoostComponents.inl" />
     <None Include="GameDefinitions\PropertyMaps\CommonTypes.inl" />
     <None Include="GameDefinitions\PropertyMaps\Components.inl" />
+    <None Include="GameDefinitions\PropertyMaps\Events.inl" />
     <None Include="GameDefinitions\PropertyMaps\FunctorExecParams.inl" />
     <None Include="GameDefinitions\PropertyMaps\Hit.inl" />
     <None Include="GameDefinitions\PropertyMaps\ResourceDefinitions.inl" />
@@ -336,6 +338,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <None Include="Lua\Shared\LuaArrayProxy.inl" />
     <None Include="Lua\Shared\LuaCharacter.inl" />
     <None Include="Lua\Shared\LuaEntityProxy.inl" />
+    <None Include="Lua\Shared\LuaEvent.inl" />
     <None Include="Lua\Shared\LuaItem.inl" />
     <None Include="Lua\Shared\LuaJson.inl" />
     <None Include="Lua\Shared\LuaLocalization.inl" />
