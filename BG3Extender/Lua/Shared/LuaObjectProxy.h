@@ -140,7 +140,7 @@ namespace bg3se::lua
 			auto const& map = StaticLuaPropertyMap<T>::PropertyMap;
 			auto fetched = map.GetProperty(L, lifetime, object, prop);
 			if (!fetched) {
-				luaL_error(L, "Object of type '%s' has no property named '%s'", TypeInfo<T>::TypeName, prop);
+				luaL_error(L, "Object of type '%s' has no property named '%s'", TypeInfo<T>::TypeName, prop.GetString());
 				return false;
 			}
 
@@ -152,7 +152,7 @@ namespace bg3se::lua
 			auto const& map = StaticLuaPropertyMap<T>::PropertyMap;
 			auto ok = map.SetProperty(L, lifetime, object, prop, index);
 			if (!ok) {
-				luaL_error(L, "Object of type '%s' has no property named '%s'", TypeInfo<T>::TypeName, prop);
+				luaL_error(L, "Object of type '%s' has no property named '%s'", TypeInfo<T>::TypeName, prop.GetString());
 				return false;
 			}
 
