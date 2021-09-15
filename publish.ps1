@@ -13,7 +13,8 @@ $CloudFrontDistributionID = "E300IVONTDEMJX"
 
 $S3ManifestPath = "Manifest2.json"
 
-$PublishingRoot = "PublishingRoot"
+$PublishingRoot = Join-Path "PublishingRoot" "$Channel"
+$PDBRoot = Join-Path "PDB" "$Channel"
 $RootPath = (Get-Location).Path
 $ManifestPath = Join-Path $RootPath "$PublishingRoot\Manifest2.json"
 $PackagePath = Join-Path $RootPath "$PublishingRoot\Latest.zip"
@@ -66,7 +67,7 @@ function Build-Release
 {
 	Build-Extender
 	Create-Update-Package "Latest.zip"
-	Archive-Build "PDB\Latest"
+	Archive-Build "$PDBRoot\Latest"
 
 	Remove-Item $PackagePath -ErrorAction SilentlyContinue
 	Move-Item Latest.zip $PackagePath
@@ -80,7 +81,7 @@ Build-Release
 x64\Release\UpdateSigner.exe update-manifest "$ManifestPath" ScriptExtender "$PackagePath" "$DllPath" $GameMinVersion $GameMaxVersion "$CloudFrontRootURL/Packages/"
 $DigestPath = (x64\Release\UpdateSigner.exe compute-path "$PackagePath" "$DllPath")
 
-Archive-Build "PDB\$DigestPath"
+Archive-Build "$PDBRoot\$DigestPath"
 
 Write-Output "Build completed."
 Write-Output "."
