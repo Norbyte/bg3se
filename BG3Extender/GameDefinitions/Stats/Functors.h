@@ -408,7 +408,10 @@ namespace bg3se
 	{
 		static constexpr auto FunctorId = StatsFunctorActionId::DealDamage;
 
-		using ApplyDamageProc = NewHit* (NewHit* result, DealDamageFunctor* functor, EntityWorldHandle* casterHandle, EntityWorldHandle* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId, int storyActionId, ActionOriginator* originator, GuidResourceDefinitionManagerBase* classResourceMgr, Hit* hit, DamageSums* damageSums, HitWith hitWith);
+		using ApplyDamageProc = NewHit * (NewHit* result, DealDamageFunctor* functor, EntityWorldHandle* casterHandle, 
+			EntityWorldHandle* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId, 
+			int storyActionId, ActionOriginator* originator, GuidResourceDefinitionManagerBase* classResourceMgr, 
+			Hit* hit, DamageSums* damageSums, uint64_t* unknownThothParam, HitWith hitWith);
 
 		DamageType DamageType{ DamageType::None }; // Arg1
 		DealDamageWeaponType WeaponType{ DealDamageWeaponType::None }; // Arg0

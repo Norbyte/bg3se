@@ -8,7 +8,7 @@ FunctorEventHooks::FunctorEventHooks(lua::State& state)
 {
 	auto& hooks = gExtender->GetEngineHooks();
 	using namespace std::placeholders;
-	//hooks.DealDamageFunctor__ApplyDamage.SetWrapper(std::bind(&FunctorEventHooks::OnDealDamage, this, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14));
+	hooks.DealDamageFunctor__ApplyDamage.SetWrapper(std::bind(&FunctorEventHooks::OnDealDamage, this, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15));
 	hooks.StatsFunctorSet__ExecuteType1.SetWrapper(std::bind(&FunctorEventHooks::OnFunctorExecute<FunctorExecParamsType1, StatsFunctorSet::ExecuteType1Proc>, this, _1, _2, _3, _4));
 	hooks.StatsFunctorSet__ExecuteType2.SetWrapper(std::bind(&FunctorEventHooks::OnFunctorExecute<FunctorExecParamsType2, StatsFunctorSet::ExecuteType2Proc>, this, _1, _2, _3, _4));
 	hooks.StatsFunctorSet__ExecuteType3.SetWrapper(std::bind(&FunctorEventHooks::OnFunctorExecute<FunctorExecParamsType3, StatsFunctorSet::ExecuteType3Proc>, this, _1, _2, _3, _4));
@@ -22,7 +22,7 @@ FunctorEventHooks::FunctorEventHooks(lua::State& state)
 FunctorEventHooks::~FunctorEventHooks()
 {
 	auto& hooks = gExtender->GetEngineHooks();
-	//hooks.DealDamageFunctor__ApplyDamage.ClearHook();
+	hooks.DealDamageFunctor__ApplyDamage.ClearHook();
 	hooks.StatsFunctorSet__ExecuteType1.ClearHook();
 	hooks.StatsFunctorSet__ExecuteType2.ClearHook();
 	hooks.StatsFunctorSet__ExecuteType3.ClearHook();
@@ -35,10 +35,11 @@ FunctorEventHooks::~FunctorEventHooks()
 
 NewHit* FunctorEventHooks::OnDealDamage(DealDamageFunctor::ApplyDamageProc* next, NewHit* result, DealDamageFunctor* functor, EntityWorldHandle* casterHandle,
 	EntityWorldHandle* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId, int storyActionId, 
-	ActionOriginator* originator, GuidResourceDefinitionManagerBase* classResourceMgr, Hit* hit, DamageSums* damageSums, HitWith hitWith)
+	ActionOriginator* originator, GuidResourceDefinitionManagerBase* classResourceMgr, Hit* hit, DamageSums* damageSums, uint64_t* unknownThothParam, HitWith hitWith)
 {
 	state_.CallExt("_OnDealDamage", 0, functor, *casterHandle, *targetHandle, *position, isFromItem, spellId, originator, hit, damageSums, hitWith);
 	auto ret = next(result, functor, casterHandle, targetHandle, position, isFromItem, spellId, storyActionId, originator, classResourceMgr, hit, damageSums, hitWith);
+	auto ret = next(result, functor, casterHandle, targetHandle, position, isFromItem, spellId, storyActionId, originator, classResourceMgr, hit, damageSums, unknownThothParam, hitWith);
 	return ret;
 }
 

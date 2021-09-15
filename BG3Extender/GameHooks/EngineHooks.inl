@@ -35,8 +35,7 @@ HOOK_DEFN(App__OnInputEvent, App__OnInputEvent, App::VMT::OnInputEventProc, PreH
 */
 
 HOOK_DEFN(FileReader__ctor, ls__FileReader__ctor, FileReader::CtorProc, WrappableFunction)
-// FIXME - disabled until signature is mapped
-//HOOK_DEFN(DealDamageFunctor__ApplyDamage, eoc__DealDamageFunctor__ApplyDamage, DealDamageFunctor::ApplyDamageProc, WrappableFunction)
+HOOK_DEFN(DealDamageFunctor__ApplyDamage, eoc__DealDamageFunctor__ApplyDamage, DealDamageFunctor::ApplyDamageProc, WrappableFunction)
 HOOK_DEFN(StatsFunctorSet__ExecuteType1, eoc__StatsFunctorSet__ExecuteType1, StatsFunctorSet::ExecuteType1Proc, WrappableFunction)
 HOOK_DEFN(StatsFunctorSet__ExecuteType2, eoc__StatsFunctorSet__ExecuteType2, StatsFunctorSet::ExecuteType2Proc, WrappableFunction)
 HOOK_DEFN(StatsFunctorSet__ExecuteType3, eoc__StatsFunctorSet__ExecuteType3, StatsFunctorSet::ExecuteType3Proc, WrappableFunction)
