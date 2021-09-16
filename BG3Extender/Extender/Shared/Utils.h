@@ -5,12 +5,6 @@
 #include <string>
 #include <GameDefinitions/BaseTypes.h>
 
-#define BEGIN_SE() namespace bg3se {
-#define END_SE() }
-
-#define BEGIN_NS(ns) namespace bg3se::ns {
-#define END_NS() }
-
 namespace std
 {
 	class thread;

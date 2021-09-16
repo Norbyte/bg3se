@@ -10,9 +10,9 @@ _I._PublishedEvents = {
 	"ResetCompleted",
 	"GameStateChanged",
 
-	"OnDealDamage",
-	"OnExecuteFunctor",
-	"OnAfterExecuteFunctor"
+	"DealDamage",
+	"ExecuteFunctor",
+	"AfterExecuteFunctor"
 }
 
 Ext.IsClient = function ()

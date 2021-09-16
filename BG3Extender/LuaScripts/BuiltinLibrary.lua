@@ -41,7 +41,6 @@ function SubscribableEvent:DoSubscribeBefore(node, sub)
 	sub.Prev = node.Prev
 	sub.Next = node
 	
-	Ext.Utils.Print("DoSubscribeBefore prev is", node.Prev)
 	if node.Prev ~= nil then
 		node.Prev.Next = sub
 	else
@@ -105,7 +104,6 @@ end
 function SubscribableEvent:Throw(event)
 	local cur = self.First
 	while cur ~= nil do
-		Ext.Utils.Print("xpcall", cur.Handler, event)
         local ok, result = xpcall(cur.Handler, debug.traceback, event)
         if not ok then
             Ext.Utils.PrintError("Error while dispatching event " .. self.Name .. ": ", result)

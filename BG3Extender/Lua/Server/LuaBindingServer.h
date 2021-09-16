@@ -149,6 +149,19 @@ namespace bg3se::esv::lua
 		uint64_t* UnknownThothParam;
 		HitWith HitWith;
 	};
+
+	struct ExecuteFunctorEventParams
+	{
+		StatsFunctorSet* Functor;
+		BaseFunctorExecParams* Params;
+	};
+
+	struct AfterExecuteFunctorEventParams
+	{
+		StatsFunctorSet* Functor;
+		BaseFunctorExecParams* Params;
+		NewHit* Hit;
+	};
 	
 	class FunctorEventHooks
 	{
@@ -166,13 +179,15 @@ namespace bg3se::esv::lua
 		template <class TParams>
 		void LuaTriggerFunctorPreExecEvent(StatsFunctorSet* self, TParams* params)
 		{
-			state_.CallExt<>("_OnExecuteFunctor", 0, self, params);
+			ExecuteFunctorEventParams evt{ self, params };
+			state_.ThrowEvent("ExecuteFunctor", evt, false, 0, WriteableEvent{});
 		}
 
 		template <class TParams>
 		void LuaTriggerFunctorPostExecEvent(StatsFunctorSet* self, TParams* params, NewHit* hit)
 		{
-			state_.CallExt<>("_OnAfterExecuteFunctor", 0, self, params, hit);
+			AfterExecuteFunctorEventParams evt{ self, params, hit };
+			state_.ThrowEvent("AfterExecuteFunctor", evt, false, 0, WriteableEvent{});
 		}
 
 		template <class TParams, class TNext>

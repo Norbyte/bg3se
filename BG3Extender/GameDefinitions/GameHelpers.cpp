@@ -1061,3 +1061,31 @@ namespace bg3se
 		return AiMetaData[tile->AiMetaDataIndex];
 	}*/
 }
+
+BEGIN_NS(lua)
+
+template <>
+void MakeObjectRef<BaseFunctorExecParams>(lua_State* L, LifetimeHolder const& lifetime, BaseFunctorExecParams* value)
+{
+#define V(type) case FunctorExecParamsType::type: \
+			ObjectProxy::MakeRef(L, static_cast<FunctorExecParams##type*>(value), lifetime); break;
+
+	switch (value->ParamsTypeId) {
+		V(Type1)
+		V(Type2)
+		V(Type3)
+		V(Type4)
+		V(Type5)
+		V(Type6)
+		V(Type7)
+		V(Type8)
+
+	default:
+		ObjectProxy::MakeRef(L, value, lifetime);
+		break;
+	}
+
+#undef V
+}
+
+END_NS()

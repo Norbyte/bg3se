@@ -520,3 +520,10 @@ namespace bg3se
 	};
 
 }
+
+BEGIN_NS(lua)
+
+	template <>
+	void MakeObjectRef<BaseFunctorExecParams>(lua_State* L, LifetimeHolder const& lifetime, BaseFunctorExecParams* value);
+
+END_NS()

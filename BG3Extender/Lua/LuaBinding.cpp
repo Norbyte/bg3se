@@ -844,12 +844,12 @@ namespace bg3se::lua
 
 	void State::OnGameSessionLoading()
 	{
-		ThrowEvent<EmptyEventParams>("GameSessionLoading", EmptyEventParams{}, false, RestrictAll | ScopeSessionLoad, ReadOnlyEvent{});
+		ThrowEvent<EmptyEventParams>("SessionLoading", EmptyEventParams{}, false, RestrictAll | ScopeSessionLoad, ReadOnlyEvent{});
 	}
 
 	void State::OnGameSessionLoaded()
 	{
-		ThrowEvent<EmptyEventParams>("GameSessionLoaded", EmptyEventParams{}, false, RestrictAll, ReadOnlyEvent{});
+		ThrowEvent<EmptyEventParams>("SessionLoaded", EmptyEventParams{}, false, RestrictAll, ReadOnlyEvent{});
 	}
 
 	void State::OnModuleLoadStarted()

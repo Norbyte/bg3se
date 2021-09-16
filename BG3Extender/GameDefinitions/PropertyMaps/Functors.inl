@@ -1,6 +1,12 @@
 // Property lists for stats functors
 // (anything extending StatsFunctorBase)
 
+BEGIN_CLS(StatsFunctorSet)
+// TODO - make functor list
+P_RO(NextFunctorIndex)
+P_RO(UniqueName)
+END_CLS()
+
 BEGIN_CLS(LuaExpressionBase)
 P_REF(ExpressionParams)
 P(Code)

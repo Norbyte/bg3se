@@ -347,3 +347,15 @@ namespace std
 		return out;
 	}
 }
+
+// Forward declarations for custom Lua serializers
+struct lua_State;
+
+BEGIN_NS(lua)
+
+class LifetimeHolder;
+
+template <class T>
+void MakeObjectRef(lua_State* L, LifetimeHolder const& lifetime, T* value);
+
+END_NS()
