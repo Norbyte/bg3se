@@ -2,6 +2,9 @@
 // Microsoft Visual C++ generated include file.
 // Used by Resources.rc
 
+#define UPDATER_DLL_MAJOR_VERSION 3
+#define UPDATER_DLL_VERSION_STRING "3.0.0.0"
+
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
