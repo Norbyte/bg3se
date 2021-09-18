@@ -61,16 +61,38 @@ uint32_t OsiTypeHash(char const* str)
 	return hash;
 }
 
-void CustomFunction::GenerateHeader(std::stringstream & ss) const
+std::unordered_map<ValueType, STDString> ConstructOsiTypeMap()
 {
-	switch (handle_.type()) {
-	case EoCFunctionType::Call: ss << "call "; break;
-	case EoCFunctionType::Query: ss << "query "; break;
-	case EoCFunctionType::Event: ss << "event "; break;
-	default: throw new std::runtime_error("EoC function not supported");
-	}
+	std::unordered_map<ValueType, STDString> types;
+	types.insert(std::make_pair(ValueType::None, "STRING")); // "ANY" type passed from Osiris as string
+	types.insert(std::make_pair(ValueType::Integer, "INTEGER")); // "ANY" type passed from Osiris as string
+	types.insert(std::make_pair(ValueType::Integer64, "INTEGER64")); // "ANY" type passed from Osiris as string
+	types.insert(std::make_pair(ValueType::Real, "REAL")); // "ANY" type passed from Osiris as string
+	types.insert(std::make_pair(ValueType::String, "STRING")); // "ANY" type passed from Osiris as string
 
+	auto const& globals = gExtender->GetServer().Osiris().GetGlobals();
+	(*globals.Types)->Iterate([&types](STDString const& key, OsirisTypeInfo const& type) {
+		types.insert(std::make_pair((ValueType)type.TypeId, key));
+	});
+
+	return types;
+}
+
+char const* OsiFunctionTypeToString(EoCFunctionType type)
+{
+	switch (type) {
+	case EoCFunctionType::Call: return "call";
+	case EoCFunctionType::Query: return "query";
+	case EoCFunctionType::Event: return "event";
+	default: throw new std::runtime_error("EoC function type not supported");
+	}
+}
+
+void CustomFunction::GenerateHeader(std::stringstream & ss, std::unordered_map<ValueType, STDString>& typeMap) const
+{
+	ss << OsiFunctionTypeToString(handle_.type()) << " ";
 	ss << name_ << "(";
+
 	for (unsigned i = 0; i < params_.size(); i++) {
 		if (i > 0) {
 			ss << ", ";
@@ -85,30 +107,7 @@ void CustomFunction::GenerateHeader(std::stringstream & ss) const
 			}
 		}
 
-		switch (param.Type) {
-		case ValueType::None: ss << "(STRING)"; break; // "ANY" type passed from Osiris as string
-		case ValueType::Integer: ss << "(INTEGER)"; break;
-		case ValueType::Integer64: ss << "(INTEGER64)"; break;
-		case ValueType::Real: ss << "(REAL)"; break;
-		case ValueType::String: ss << "(STRING)"; break;
-		case ValueType::GuidString: ss << "(GUIDSTRING)"; break;
-		case ValueType::Character: ss << "(CHARACTER)"; break;
-		case ValueType::Item: ss << "(ITEM)"; break;
-		case ValueType::Trigger: ss << "(TRIGGER)"; break;
-		case ValueType::Spline: ss << "(SPLINE)"; break;
-		case ValueType::LevelTemplate: ss << "(LEVELTEMPLATE)"; break;
-		case ValueType::DialogResource: ss << "(DIALOGRESOURCE)"; break;
-		case ValueType::EffectResource: ss << "(EFFECTRESOURCE)"; break;
-		case ValueType::VoiceBarkResource: ss << "(VOICEBARKRESOURCE)"; break;
-		case ValueType::Animation: ss << "(ANIMATION)"; break;
-		case ValueType::Tag: ss << "(TAG)"; break;
-		case ValueType::Flag: ss << "(FLAG)"; break;
-		case ValueType::Faction: ss << "(FACTION)"; break;
-		case ValueType::TimelineResource: ss << "(TIMELINERESOURCE)"; break;
-		default: throw new std::runtime_error("Type not supported");
-		}
-
-		ss << "_" << param.Name;
+		ss << '(' << typeMap[param.Type] << ")_" << param.Name;
 	}
 
 	ss << ") (" << (unsigned)handle_.type() << "," << handle_.classIndex() << "," << handle_.functionIndex() << ",1)\r\n";
@@ -368,23 +367,24 @@ void CustomFunctionManager::RegisterSignature(CustomFunction * func)
 
 STDString CustomFunctionManager::GenerateHeaders() const
 {
+	auto typeMap = ConstructOsiTypeMap();
 	std::stringstream ss;
 
 	for (auto const & call : calls_) {
 		if (call) {
-			call->GenerateHeader(ss);
+			call->GenerateHeader(ss, typeMap);
 		}
 	}
 
 	for (auto const & query : queries_) {
 		if (query) {
-			query->GenerateHeader(ss);
+			query->GenerateHeader(ss, typeMap);
 		}
 	}
 
 	for (auto const & event : events_) {
 		if (event) {
-			event->GenerateHeader(ss);
+			event->GenerateHeader(ss, typeMap);
 		}
 	}
 

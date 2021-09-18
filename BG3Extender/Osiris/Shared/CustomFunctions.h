@@ -141,7 +141,7 @@ namespace bg3se
 		}
 
 		bool ValidateArgs(OsiArgumentDesc const & params) const;
-		void GenerateHeader(std::stringstream & ss) const;
+		void GenerateHeader(std::stringstream & ss, std::unordered_map<ValueType, STDString>& typeMap) const;
 
 	private:
 		STDString name_;
@@ -334,4 +334,7 @@ namespace bg3se
 			HANDLE hFile);
 		void OnCloseHandle(HANDLE hFile, BOOL bSucceeded);
 	};
+
+	char const* OsiFunctionTypeToString(EoCFunctionType type);
+	std::unordered_map<ValueType, STDString> ConstructOsiTypeMap();
 }

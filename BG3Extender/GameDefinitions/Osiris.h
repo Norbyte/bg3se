@@ -20,20 +20,7 @@ enum class ValueType : uint32_t
 	Integer64 = 2,
 	Real = 3,
 	String = 4,
-	GuidString = 5,
-	Character = 6,
-	Item = 7,
-	Trigger = 8,
-	Spline = 9,
-	LevelTemplate = 10,
-	DialogResource = 11,
-	EffectResource = 12,
-	VoiceBarkResource = 13,
-	Animation = 14,
-	Tag = 15,
-	Flag = 16,
-	Faction = 17,
-	TimelineResource = 18,
+	GuidString = 5, // NOTE - this is now an alias of String!
 	Undefined = 0x7f
 };
 
@@ -93,7 +80,6 @@ struct OsiArgumentValue
 			break;
 
 		case ValueType::String:
-		case ValueType::GuidString:
 		default:
 			String = v.String;
 			break;
@@ -124,7 +110,6 @@ struct OsiArgumentValue
 			return std::to_string(Float);
 
 		case ValueType::String:
-		case ValueType::GuidString:
 			return String ? String : "";
 
 		default:
@@ -372,16 +357,10 @@ struct OsirisFunctionHandle
 	}
 };
 
-struct OsirisTypeInfo : public ProtectedGameObject<OsirisTypeInfo>
+struct OsirisTypeInfo
 {
-	char const * Name;
-	ValueType Type;
+	uint16_t TypeId;
 	uint16_t Alias;
-	uint32_t Unknown;
-	uint64_t SizeInBytes;
-	uint64_t Unknown2;
-	void * TypeFunc1;
-	void * TypeFunc2;
 };
 
 struct FixedStringMap
@@ -564,11 +543,11 @@ struct TypeDb : public ProtectedGameObject<TypeDb<TValue>>
 {
 	struct HashSlot
 	{
-		TMap<STDString, TValue*, TypeDbLess> NodeMap;
+		TMap<STDString, TValue, TypeDbLess> NodeMap;
 		void * Unknown;
 	};
 
-	TValue ** Find(uint32_t hash, STDString const & key)
+	TValue * Find(uint32_t hash, STDString const & key)
 	{
 		auto & bucket = Hash[hash % 0x3FF];
 		return bucket.NodeMap.Find(key);
@@ -1158,7 +1137,7 @@ typedef int (* COsirisDeleteAllDataProc)(void * Osiris, bool DeleteTypes);
 typedef int (* COsirisReadHeaderProc)(void * Osiris, void * OsiSmartBuf, unsigned __int8 * MajorVersion, unsigned __int8 * MinorVersion, unsigned __int8 * BigEndian, unsigned __int8 * Unused, char * StoryFileVersion, unsigned int * DebugFlags);
 typedef void (* RuleActionCallProc)(RuleActionNode * Action, void * a1, void * a2, void * a3, void * a4);
 
-using FunctionDb = TypeDb<Function>;
+using FunctionDb = TypeDb<Function*>;
 using ObjectDb = TypeDb<void*>; // Unknown type
 
 struct OsiTypeDb : public TypeDb<OsirisTypeInfo>
@@ -1174,7 +1153,7 @@ struct OsiTypeDb : public TypeDb<OsirisTypeInfo>
 
 	ValueType ResolveAlias(uint32_t typeId)
 	{
-		while (typeId > (uint32_t)ValueType::GuidString && typeId != (uint32_t)ValueType::Undefined) {
+		while (typeId > (uint32_t)ValueType::String && typeId != (uint32_t)ValueType::Undefined) {
 			typeId = Aliases[typeId].AliasTypeId;
 		}
 

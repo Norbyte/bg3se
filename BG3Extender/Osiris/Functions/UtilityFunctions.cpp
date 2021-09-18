@@ -269,7 +269,7 @@ namespace bg3se::esv
 			auto count = args[2].Int32;
 
 			for (int32_t index = 0; index < count; index++) {
-				auto eventArgs = OsiArgumentDesc::Create(OsiArgumentValue{ ValueType::GuidString, objectGuid });
+				auto eventArgs = OsiArgumentDesc::Create(OsiArgumentValue{ ValueType::String, objectGuid });
 				eventArgs->Add(OsiArgumentValue{ ValueType::String, eventName });
 				eventArgs->Add(OsiArgumentValue{ (int64_t)index });
 
@@ -389,7 +389,7 @@ namespace bg3se::esv
 			"NRD_GuidString",
 			std::vector<CustomFunctionParam>{
 				{ "String", ValueType::String, FunctionArgumentDirection::In },
-				{ "Result", ValueType::GuidString, FunctionArgumentDirection::Out }
+				{ "Result", ValueType::String, FunctionArgumentDirection::Out }
 			},
 			&func::StringToGuidString
 		);
@@ -428,7 +428,7 @@ namespace bg3se::esv
 		auto startLoop2 = std::make_unique<CustomCall>(
 			"NRD_ForLoop",
 			std::vector<CustomFunctionParam>{
-				{ "Object", ValueType::GuidString, FunctionArgumentDirection::In },
+				{ "Object", ValueType::String, FunctionArgumentDirection::In },
 				{ "Event", ValueType::String, FunctionArgumentDirection::In },
 				{ "Count", ValueType::Integer, FunctionArgumentDirection::In },
 			},
@@ -448,7 +448,7 @@ namespace bg3se::esv
 		auto forLoopObjectEvent = std::make_unique<CustomEvent>(
 			"NRD_Loop",
 			std::vector<CustomFunctionParam>{
-				{ "Object", ValueType::GuidString, FunctionArgumentDirection::In },
+				{ "Object", ValueType::String, FunctionArgumentDirection::In },
 				{ "Event", ValueType::String, FunctionArgumentDirection::In },
 				{ "Num", ValueType::Integer, FunctionArgumentDirection::In },
 			}

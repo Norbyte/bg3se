@@ -339,9 +339,6 @@ namespace bg3se::lua::utils
 		case ValueType::String:
 			return "string";
 
-		case ValueType::GuidString:
-			return "string GUID";
-
 		default:
 			return "any";
 		}

@@ -77,7 +77,6 @@ namespace bg3se::esv::lua
 			break;
 
 		case ValueType::String:
-		case ValueType::GuidString:
 			if (type != LUA_TSTRING) {
 				luaL_error(L, "String expected for argument %d, got %s", i, lua_typename(L, type));
 			}
@@ -168,7 +167,6 @@ namespace bg3se::esv::lua
 			break;
 
 		case ValueType::String:
-		case ValueType::GuidString:
 			if (type != LUA_TSTRING) {
 				luaL_error(L, "String expected for argument %d, got %s", i, lua_typename(L, type));
 			}
@@ -208,7 +206,6 @@ namespace bg3se::esv::lua
 			break;
 
 		case ValueType::String:
-		case ValueType::GuidString:
 			push(L, arg.String);
 			break;
 
@@ -241,7 +238,6 @@ namespace bg3se::esv::lua
 			break;
 
 		case ValueType::String:
-		case ValueType::GuidString:
 			push(L, tv.Value.Val.String);
 			break;
 
@@ -472,6 +468,7 @@ namespace bg3se::esv::lua
 					break;
 				}
 
+				// TODO - is this still how GUIDSTRING alias comparison works in BG3?
 				case ValueType::GuidString:
 				{
 					auto str = lua_tostring(L, firstIndex + i);
@@ -831,38 +828,11 @@ namespace bg3se::esv::lua
 		auto types = *gExtender->GetServer().Osiris().GetWrappers().Globals.Types;
 		auto type = types->Find(hash, STDString(s));
 		if (type) {
-			return (*type)->Type;
+			return (ValueType)type->TypeId;
 		} else {
 			OsiError("Unknown Osiris value type: " << s.data());
 			return ValueType::None;
 		}
-
-		/*if (s == "INTEGER") {
-			return ValueType::Integer;
-		} else if (s == "INTEGER") {
-			return ValueType::Integer;
-		} else if (s == "INTEGER64") {
-			return ValueType::Integer64;
-		} else if (s == "REAL") {
-			return ValueType::Real;
-		} else if (s == "STRING") {
-			return ValueType::String;
-		} else if (s == "GUIDSTRING") {
-			return ValueType::GuidString;
-		} else if (s == "CHARACTERGUID") {
-			return ValueType::CharacterGuid;
-		} else if (s == "ITEMGUID") {
-			return ValueType::ItemGuid;
-		} else if (s == "TRIGGERGUID") {
-			return ValueType::TriggerGuid;
-		} else if (s == "SPLINEGUID") {
-			return ValueType::SplineGuid;
-		} else if (s == "LEVELTEMPLATEGUID") {
-			return ValueType::LevelTemplateGuid;
-		} else {
-			OsiError("Unknown Osiris value type: " << s.data());
-			return ValueType::None;
-		}*/
 	}
 
 

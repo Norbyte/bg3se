@@ -546,7 +546,6 @@ namespace bg3se::osidbg
 			break;
 
 		case ValueType::String:
-		case ValueType::GuidString:
 		default:
 			tv.Value.Val.String = _strdup(msg.stringval().c_str());
 			break;
@@ -604,17 +603,11 @@ namespace bg3se::osidbg
 
 	bool AreTypesCompatible(uint32_t type1, uint32_t type2)
 	{
-		if (type1 > (uint32_t)ValueType::GuidString)
-		{
-			type1 = (uint32_t)ValueType::GuidString;
-		}
+		auto const& types = *gExtender->GetServer().Osiris().GetGlobals().Types;
+		auto alias1 = types->ResolveAlias(type1);
+		auto alias2 = types->ResolveAlias(type2);
 
-		if (type2 > (uint32_t)ValueType::GuidString)
-		{
-			type2 = (uint32_t)ValueType::GuidString;
-		}
-
-		return type1 == type2;
+		return alias1 == alias2;
 	}
 
 	ResultCode Debugger::EvaluateInServerThread(uint32_t seq, EvalType type, uint32_t nodeId, MsgTuple const & params,
