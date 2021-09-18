@@ -448,7 +448,7 @@ namespace bg3se::lua::utils
 
 			auto path = GetStaticSymbols().ToPath("", PathRootType::Data);
 			path += "Mods/";
-			//path += ToUTF8(GetModManagerServer()->BaseModule.Info.Directory);
+			path += gExtender->GetCurrentExtensionState()->GetModManager()->BaseModule.Info.Directory;
 			path += "/ScriptExtender/Lua/OsiIdeHelpers.lua";
 
 			std::ofstream f(path.c_str(), std::ios::out | std::ios::binary);
@@ -466,6 +466,92 @@ namespace bg3se::lua::utils
 	}
 
 	WrapLuaFunction(GenerateIdeHelpers)
+
+	STDString GenerateOsiFunctionList()
+	{
+		STDString functionList;
+		functionList.reserve(0x20000);
+
+		STDString functionDefn;
+
+		auto const& globals = gExtender->GetServer().Osiris().GetGlobals();
+		auto typeMap = ConstructOsiTypeMap();
+
+		(*globals.Functions)->Iterate([&functionList, &functionDefn, &typeMap](STDString const & key, Function const * func) {
+			if (func->Type != FunctionType::Event
+				&& func->Type != FunctionType::Call
+				&& func->Type != FunctionType::Query
+				&& func->Type != FunctionType::SysCall
+				&& func->Type != FunctionType::SysQuery) {
+				return;
+			}
+
+			functionDefn.clear();
+			switch (func->Type) {
+			case FunctionType::Event: functionDefn += "event "; break;
+			case FunctionType::Call: functionDefn += "call "; break;
+			case FunctionType::Query: functionDefn += "query "; break;
+			case FunctionType::SysCall: functionDefn += "syscall "; break;
+			case FunctionType::SysQuery: functionDefn += "sysquery "; break;
+			}
+
+			functionDefn += func->Signature->Name;
+			functionDefn += "(";
+
+			auto const& outParams = func->Signature->OutParamList;
+			auto types = func->Signature->Params->Params.Head;
+			for (auto i = 0; i < func->Signature->Params->Params.Size; i++) {
+				types = types->Next;
+
+				if (outParams.isOutParam(i)) {
+					functionDefn += "[out]";
+				}
+
+				functionDefn += typeMap[(ValueType)types->Item.Type];
+				if (i < func->Signature->Params->Params.Size - 1) {
+					functionDefn += ", ";
+				}
+			}
+
+			functionDefn += ")\r\n";
+			functionList += functionDefn;
+		});
+
+		return functionList;
+	}
+
+	void GenerateOsiFunctionList(lua_State * L)
+	{
+#if defined(OSI_EOCAPP)
+		if (gExtender->GetConfig().DeveloperMode) {
+#endif
+			esv::LuaServerPin lua(esv::ExtensionState::Get());
+			if (lua->RestrictionFlags & State::RestrictOsiris) {
+				luaL_error(L, "GenerateOsiFunctionList() can only be called when Osiris is available");
+			}
+
+			auto helpers = GenerateOsiFunctionList();
+
+			auto path = GetStaticSymbols().ToPath("", PathRootType::Data);
+			path += "Mods/";
+			path += gExtender->GetCurrentExtensionState()->GetModManager()->BaseModule.Info.Directory;
+			path += "/ScriptExtender/OsiFunctionList.txt";
+
+			std::ofstream f(path.c_str(), std::ios::out | std::ios::binary);
+			if (!f.good()) {
+				OsiError("Could not open file to save IDE helpers: '" << path << "'");
+				return;
+			}
+
+			f.write(helpers.c_str(), helpers.size());
+#if defined(OSI_EOCAPP)
+		} else {
+			OsiError("GenerateOsiFunctionList() only supported in developer mode");
+		}
+#endif
+	}
+
+	WrapLuaFunction(GenerateOsiFunctionList)
 
 	void DumpStack(lua_State* L)
 	{
@@ -545,6 +631,7 @@ namespace bg3se::lua::utils
 
 			{"IsDeveloperMode", IsDeveloperModeWrapper},
 			{"GenerateIdeHelpers", GenerateIdeHelpersWrapper},
+			{"GenerateOsiFunctionList", GenerateOsiFunctionListWrapper},
 			{"GetCommandLineParams", GetCommandLineParams},
 
 			// EXPERIMENTAL FUNCTIONS
