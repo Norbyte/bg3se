@@ -1630,7 +1630,7 @@ BEGIN_ENUM(BoostType, uint8_t)
 	EV(CannotBeDisarme, 0x4F)
 	EV(MovementSpeedLimit, 0x50)
 	EV(NonLethal, 0x51)
-	EV(UnlockSpellVarian, 0x52)
+	EV(UnlockSpellVariant, 0x52)
 END_ENUM()
 
 BEGIN_ENUM(GameActionType, int)

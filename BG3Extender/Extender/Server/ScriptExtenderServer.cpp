@@ -43,28 +43,30 @@ void ScriptExtender::Initialize()
 
 	auto& lib = GetStaticSymbols();
 
-	DetourTransactionBegin();
-	DetourUpdateThread(GetCurrentThread());
+	if (!gExtender->GetLibraryManager().CriticalInitializationFailed()) {
+		DetourTransactionBegin();
+		DetourUpdateThread(GetCurrentThread());
 
-	if (lib.esv__GameStateEventManager__ExecuteGameStateChangedEvent != nullptr) {
-		gameStateChangedEvent_.Wrap(lib.esv__GameStateEventManager__ExecuteGameStateChangedEvent);
+		if (lib.esv__GameStateEventManager__ExecuteGameStateChangedEvent != nullptr) {
+			gameStateChangedEvent_.Wrap(lib.esv__GameStateEventManager__ExecuteGameStateChangedEvent);
+		}
+
+		if (lib.esv__GameStateThreaded__GameStateWorker__DoWork != nullptr) {
+			gameStateWorkerStart_.Wrap(lib.esv__GameStateThreaded__GameStateWorker__DoWork);
+		}
+
+		if (lib.esv__GameStateMachine__Update != nullptr) {
+			//gameStateMachineUpdate_.Wrap(lib.esv__GameStateMachine__Update);
+		}
+
+		DetourTransactionCommit();
+
+		using namespace std::placeholders;
+		gameStateChangedEvent_.SetPostHook(std::bind(&ScriptExtender::OnGameStateChanged, this, _1, _2, _3));
+		gameStateWorkerStart_.AddPreHook(std::bind(&ScriptExtender::OnGameStateWorkerStart, this, _1));
+		gameStateWorkerStart_.AddPostHook(std::bind(&ScriptExtender::OnGameStateWorkerExit, this, _1));
+		gameStateMachineUpdate_.AddPostHook(std::bind(&ScriptExtender::OnUpdate, this, _1, _2));
 	}
-
-	if (lib.esv__GameStateThreaded__GameStateWorker__DoWork != nullptr) {
-		gameStateWorkerStart_.Wrap(lib.esv__GameStateThreaded__GameStateWorker__DoWork);
-	}
-
-	if (lib.esv__GameStateMachine__Update != nullptr) {
-		gameStateMachineUpdate_.Wrap(lib.esv__GameStateMachine__Update);
-	}
-
-	DetourTransactionCommit();
-
-	using namespace std::placeholders;
-	gameStateChangedEvent_.SetPostHook(std::bind(&ScriptExtender::OnGameStateChanged, this, _1, _2, _3));
-	gameStateWorkerStart_.AddPreHook(std::bind(&ScriptExtender::OnGameStateWorkerStart, this, _1));
-	gameStateWorkerStart_.AddPostHook(std::bind(&ScriptExtender::OnGameStateWorkerExit, this, _1));
-	gameStateMachineUpdate_.AddPostHook(std::bind(&ScriptExtender::OnUpdate, this, _1, _2));
 }
 
 void ScriptExtender::Shutdown()
