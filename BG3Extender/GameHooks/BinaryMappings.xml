@@ -55,17 +55,22 @@
             E8 ?? ?? ?? ?? // call    ls__FixedString__DecRef
         </Mapping>
 
+        <!-- Sig: mov rax, cs:pffs_lsx -->
         <Mapping Name="ls::FileReader::FileReader" Critical="true">
             <Target Name="ls::FileReader::FileReader" Type="Indirect" Offset="5" Symbol="ls__FileReader__ctor" />
-            <Target Name="ls::FileReader::~FileReader" Type="Indirect" Offset="30" Symbol="ls__FileReader__dtor" />
-            48 8D 4C 24 68 // lea     rcx, [rsp+140h+var_D8]
+            <Target Name="ls::FileReader::~FileReader" Type="Indirect" Offset="38" Symbol="ls__FileReader__dtor" />
+            48 8D 4C 24 30 // lea     rcx, [rsp+0C8h+var_98]
             E8 ?? ?? ?? ?? // call    ls__FileReader__ctor
-            48 8B D0 // mov     rdx, rax
-            48 8D 8F ?? 04 00 00 // lea     rcx, [rdi+4XXh]
+            90 // nop
+            4C 8B CE // mov     r9, rsi
+            4C 8D 44 24 30 // lea     r8, [rsp+0C8h+var_98]
+            48 8B D7 // mov     rdx, rdi
+            48 8B CB // mov     rcx, rbx
             E8 ?? ?? ?? ?? // call    xxx
-            48 8D 4C 24 68 // lea     rcx, [rsp+140h+var_D8]
+            0F B6 D8 // movzx   ebx, al
+            48 8D 4C 24 30 // lea     rcx, [rsp+0C8h+var_98]
             E8 ?? ?? ?? ?? // call    ls__FileReader__dtor
-            48 8D 8F ?? 04 00 00 // lea     rcx, [rdi+4XXh] 
+            0F B6 C3 // movzx   eax, bl
         </Mapping>
 
         <Mapping Name="PathRoots" Critical="true">
@@ -78,29 +83,31 @@
             48 8D 54 24 20 // lea     rdx, [rsp+48h+a2]
         </Mapping>
 
+        <!-- Sig: reference to strings "gr2", "lsm" -->
         <Mapping Name="EoCServer2/EoCClient2" Critical="true">
             <Target Name="ecl::EoCClient" Type="Indirect" Offset="7" Symbol="ecl__EoCClient" />
             <Target Name="esv::EoCServer" Type="Indirect" Offset="31" Symbol="esv__EoCServer" />
-            48 89 B3 48 02 00 00 // mov     qword ptr [rbx+248h], 0
+            48 89 B3 38 02 00 00 // mov     qword ptr [rbx+238h], 0
             48 8B 0D ?? ?? ?? ?? // mov     rcx, cs:ecl__gEoCClient
             E8 ?? ?? ?? ?? // call    xxx
-            48 8B 8B 40 02 00 00 // mov     rcx, [rbx+240h]
+            48 8B 8B 30 02 00 00 // mov     rcx, [rbx+230h]
             E8 ?? ?? ?? ?? // call    xxx
             48 8B 0D ?? ?? ?? ?? // mov     rcx, cs:esv__gEoCServer
         </Mapping>
 
         <Mapping Name="esv::StatusMachine::CreateStatus" Critical="true">
             <Condition Type="FixedString" Offset="0" Value="STORY_FROZEN" />
-            <Target Name="esv::StatusMachine::CreateStatus" Type="Indirect" Offset="20" Symbol="esv__StatusMachine__CreateStatus" />
-            <Target Name="esv::StatusMachine::ApplyStatus" Type="Indirect" Offset="36" Symbol="esv__StatusMachine__ApplyStatus" />
+            <Target Name="esv::StatusMachine::CreateStatus" Type="Indirect" Offset="25" Symbol="esv__StatusMachine__CreateStatus" />
+            <Target Name="esv::StatusMachine::ApplyStatus" Type="Indirect" Offset="41" Symbol="esv__StatusMachine__ApplyStatus" />
             48 8D 15 ?? ?? ?? ?? // lea     rdx, fs_STORY_FROZEN
             4C 8B 05 ?? ?? ?? ?? // mov     r8, cs:qword_144D7D670
             48 8B CB // mov     rcx, rbx
             45 33 C9 // xor     r9d, r9d
+            C6 44 24 20 00 // mov     [rsp+38h+var_18], 0
             E8 ?? ?? ?? ?? // call    esv__StatusMachine__CreateStatus
             48 8B D0 // mov     rdx, rax
             48 8B CB // mov     rcx, rbx
-            48 83 C4 20 // add     rsp, 20h
+            48 83 C4 30 // add     rsp, 30h
             5B // pop     rbx
             E9 ?? ?? ?? ?? // jmp     esv__StatusMachine__ApplyStatus
         </Mapping>
@@ -126,17 +133,17 @@
 
         <Mapping Name="ecl::GameStateMachine::Update" Scope="Custom" Critical="true">
             <Target Type="Absolute" Offset="0" Symbol="ecl__GameStateMachine__Update" />
-      48 89 5C 24 10 // mov     [rsp+arg_8], rbx
-      55 // push    rbp
-      56 // push    rsi
-      57 // push    rdi
+            48 89 5C 24 10 // mov     [rsp+arg_8], rbx
+            55 // push    rbp
+            56 // push    rsi
+            57 // push    rdi
         </Mapping>
 
         <Mapping Name="ecl::GameStateEventManager::ExecuteGameStateChangedEvent - Initial" Critical="true">
-            <Condition Type="String" Offset="0" Value="CLIENT STATE SWAP - from: %s, to: %s&#10;" />
+            <Condition Type="String" Offset="0" Value="CLIENT STATE SWAP - from: %s, to: %s" />
             <Target Type="Absolute" Offset="0" NextSymbol="ecl::GameStateEventManager::ExecuteGameStateChangedEvent" NextSymbolSeekSize="128" />
-          <Target Type="Absolute" Offset="-512" NextSymbol="ecl::GameStateMachine::Update" NextSymbolSeekSize="512" />
-            4C 8D 05 ?? ?? ?? ?? // lea r8, aClientStateSwa ; "CLIENT STATE SWAP - from: %s, to: %s\n"
+            <Target Type="Absolute" Offset="-640" NextSymbol="ecl::GameStateMachine::Update" NextSymbolSeekSize="640" />
+            4C 8D 05 ?? ?? ?? ?? // lea r8, aClientStateSwa ; "CLIENT STATE SWAP - from: %s, to: %s"
         </Mapping>
 
         <Mapping Name="esv::GameStateEventManager::ExecuteGameStateChangedEvent" Scope="Custom" Critical="true">
@@ -148,8 +155,10 @@
 
         <Mapping Name="esv::GameStateMachine::Update" Scope="Custom" Critical="true">
             <Target Type="Absolute" Offset="0" Symbol="esv__GameStateMachine__Update" />
-      41 57 // push    r15
-      48 81 EC 90 00 00 00 // sub     rsp, 90h
+            48 89 5C 24 10 // mov     [rsp+arg_8], rbx
+            55 // push    rbp
+            56 // push    rsi
+            57 // push    rdi
         </Mapping>
 
         <Mapping Name="esv::GameStateEventManager::ExecuteGameStateChangedEvent - Initial" Critical="true">
@@ -159,85 +168,97 @@
             4C 8D 05 ?? ?? ?? ?? // lea r8, aServerStateSwa ; "SERVER STATE SWAP - from: %s, to: %s\n"
         </Mapping>
 
-        <Mapping Name="esv::GameStateThreaded::GameStateWorker::DoWork" Critical="true">
+        <Mapping Name="esv::GameStateThreaded::GameStateWorker::DoWork" Scope="Custom" Critical="true">
+            <Target Type="Absolute" Offset="0" Symbol="esv__GameStateThreaded__GameStateWorker__DoWork" />
+            40 55 // push    rbp
+            53 // push    rbx
+            56 // push    rsi
+        </Mapping>
+
+        <Mapping Name="esv::GameStateThreaded::GameStateWorker::DoWork - Outer" Critical="true">
             <Condition Type="String" Offset="0" Value="esv::GameStateThreaded::GameStateWorker::DoWork" />
-            <Target Type="Absolute" Offset="-57" Symbol="esv__GameStateThreaded__GameStateWorker__DoWork" />
+            <Target Type="Absolute" Offset="-80" extSymbol="esv::GameStateThreaded::GameStateWorker::DoWork" NextSymbolSeekSize="80" />
             4C 8D 3D ?? ?? ?? ?? // lea     rbp, aEsvGamestateth ; "esv::GameStateThreaded::GameStateWorker::DoWork"
         </Mapping>
 
-        <Mapping Name="ecl::GameStateThreaded::GameStateWorker::DoWork" Critical="true">
+        <Mapping Name="ecl::GameStateThreaded::GameStateWorker::DoWork" Scope="Custom" Critical="true">
+            <Target Type="Absolute" Offset="0" Symbol="ecl__GameStateThreaded__GameStateWorker__DoWork" />
+            40 55 // push    rbp
+            53 // push    rbx
+            56 // push    rsi
+        </Mapping>
+
+        <Mapping Name="ecl::GameStateThreaded::GameStateWorker::DoWork - Outer" Critical="true">
             <Condition Type="String" Offset="0" Value="ecl::GameStateThreaded::GameStateWorker::DoWork" />
-            <Target Type="Absolute" Offset="-47" Symbol="ecl__GameStateThreaded__GameStateWorker__DoWork" />
+            <Target Type="Absolute" Offset="-80" extSymbol="ecl::GameStateThreaded::GameStateWorker::DoWork" NextSymbolSeekSize="80" />
             4C 8D 3D ?? ?? ?? ?? // lea     rbp, aEclGamestateth ; "ecl::GameStateThreaded::GameStateWorker::DoWork"
         </Mapping>
 
+        <!--
+            Sig: Only caller to eoc::FunctorList::ExecuteType8
+            - ExecuteType8 refs fs_Surface_Type
+        -->
         <Mapping Name="esv::PassiveSystem::ExecFunctorsBaseCtx">
-            <Target Type="Indirect" Offset="0" Symbol="eoc__StatsFunctorSet__ExecuteType1" />
-            <Target Type="Indirect" Offset="32" Symbol="eoc__StatsFunctorSet__ExecuteType2" />
-            <Target Type="Indirect" Offset="64" Symbol="eoc__StatsFunctorSet__ExecuteType3" />
-            <Target Type="Indirect" Offset="96" Symbol="eoc__StatsFunctorSet__ExecuteType4" />
-            <Target Type="Indirect" Offset="125" Symbol="eoc__StatsFunctorSet__ExecuteType5" />
-            <Target Type="Indirect" Offset="154" Symbol="eoc__StatsFunctorSet__ExecuteType6" />
-            <Target Type="Indirect" Offset="183" Symbol="eoc__StatsFunctorSet__ExecuteType7" />
-            E8 ?? ?? ?? ?? // call    eoc__FunctorList__ExecuteType0
+            <Target Type="Indirect" Offset="15" Symbol="eoc__StatsFunctorSet__ExecuteType1" />
+            <Target Type="Indirect" Offset="34" Symbol="eoc__StatsFunctorSet__ExecuteType2" />
+            <Target Type="Indirect" Offset="53" Symbol="eoc__StatsFunctorSet__ExecuteType3" />
+            <Target Type="Indirect" Offset="72" Symbol="eoc__StatsFunctorSet__ExecuteType4" />
+            <Target Type="Indirect" Offset="91" Symbol="eoc__StatsFunctorSet__ExecuteType5" />
+            <Target Type="Indirect" Offset="110" Symbol="eoc__StatsFunctorSet__ExecuteType6" />
+            <Target Type="Indirect" Offset="129" Symbol="eoc__StatsFunctorSet__ExecuteType7" />
+            <Target Type="Indirect" Offset="148" Symbol="eoc__StatsFunctorSet__ExecuteType8" />
+            4C 03 C8 // add     r9, rax
+            41 ?? ??  // jmp     xxx
+
+            4D 8B C2 // mov     r8, r10
+            49 8B D3 // mov     rdx, r11
+            48 8B CF // mov     rcx, rdi
+            E8 ?? ?? ?? ?? // call    eoc__FunctorList__xxx
             E9 ?? ?? 00 00 // jmp     xxx
 
-            3C 01 // cmp     al, 1
-            75 ?? // jnz     short xxx
-            48 8D 97 B0 00 00 00 // lea     rdx, [rdi+0B0h]
-            4D 8D 45 08 // lea     r8, [r13+8]
-            48 8D 8D 80 00 00 00 // lea     rcx, [rbp+460h+hit]
-            E8 ?? ?? ?? ?? // call    xxx
-            E9 ?? ?? ?? ?? // jmp     xxx
+            4D 8B C2 // mov     r8, r10
+            49 8B D3 // mov     rdx, r11
+            48 8B CF // mov     rcx, rdi
+            E8 ?? ?? ?? ?? // call    eoc__FunctorList__xxx
+            E9 ?? ?? 00 00 // jmp     xxx
 
-            3C 02 // cmp     al, 2
-            75 ?? // jnz     short xxx
-            48 8D 97 B0 00 00 00 // lea     rdx, [rdi+0B0h]
-            4D 8D 45 08 // lea     r8, [r13+8]
-            48 8D 8D 80 00 00 00 // lea     rcx, [rbp+460h+hit]
-            E8 ?? ?? ?? ?? // call    xxx
-            E9 ?? ?? ?? ?? // jmp     xxx
+            4D 8B C2 // mov     r8, r10
+            49 8B D3 // mov     rdx, r11
+            48 8B CF // mov     rcx, rdi
+            E8 ?? ?? ?? ?? // call    eoc__FunctorList__xxx
+            E9 ?? ?? 00 00 // jmp     xxx
 
-            3C 03 // cmp     al, 3
-            75 ?? // jnz     short xxx
-            48 8D 97 B0 00 00 00 // lea     rdx, [rdi+0B0h]
-            4D 8D 45 08 // lea     r8, [r13+8]
-            48 8D 8D 80 00 00 00 // lea     rcx, [rbp+460h+hit]
-            E8 ?? ?? ?? ?? // call    xxx
-            EB ?? // jmp     short xxx
+            4D 8B C2 // mov     r8, r10
+            49 8B D3 // mov     rdx, r11
+            48 8B CF // mov     rcx, rdi
+            E8 ?? ?? ?? ?? // call    eoc__FunctorList__xxx
+            E9 ?? ?? 00 00 // jmp     xxx
 
-            3C 04 // cmp     al, 4
-            75 ?? // jnz     short xxx
-            48 8D 97 B0 00 00 00 // lea     rdx, [rdi+0B0h]
-            4D 8D 45 08 // lea     r8, [r13+8]
-            48 8D 8D 80 00 00 00 // lea     rcx, [rbp+460h+hit]
-            E8 ?? ?? ?? ?? // call    xxx
-            EB ?? // jmp     short xxx
+            4D 8B C2 // mov     r8, r10
+            49 8B D3 // mov     rdx, r11
+            48 8B CF // mov     rcx, rdi
+            E8 ?? ?? ?? ?? // call    eoc__FunctorList__xxx
+            E9 ?? ?? 00 00 // jmp     xxx
 
-            3C 05 // cmp     al, 5
-            75 ?? // jnz     short xxx
-            48 8D 97 B0 00 00 00 // lea     rdx, [rdi+0B0h]
-            4D 8D 45 08 // lea     r8, [r13+8]
-            48 8D 8D 80 00 00 00 // lea     rcx, [rbp+460h+hit]
-            E8 ?? ?? ?? ?? // call    xxx
-            EB ?? // jmp     short xxx
+            4D 8B C2 // mov     r8, r10
+            49 8B D3 // mov     rdx, r11
+            48 8B CF // mov     rcx, rdi
+            E8 ?? ?? ?? ?? // call    eoc__FunctorList__xxx
+            E9 ?? ?? 00 00 // jmp     xxx
 
-            3C 06 // cmp     al, 6
-            75 ?? // jnz     short xxx
-            48 8D 97 B0 00 00 00 // lea     rdx, [rdi+0B0h]
-            4D 8D 45 08 // lea     r8, [r13+8]
-            48 8D 8D 80 00 00 00 // lea     rcx, [rbp+460h+hit]
-            E8 ?? ?? ?? ?? // call    xxx
-            EB ?? // jmp     short xxx
+            4D 8B C2 // mov     r8, r10
+            49 8B D3 // mov     rdx, r11
+            48 8B CF // mov     rcx, rdi
+            E8 ?? ?? ?? ?? // call    eoc__FunctorList__xxx
+            E9 ?? ?? 00 00 // jmp     xxx
 
-            3C 07 // cmp     al, 7
-            75 ?? // jnz     short xxx
-            48 8D 97 B0 00 00 00 // lea     rdx, [rdi+0B0h]
-            4D 8D 45 08 // lea     r8, [r13+8]
-            48 8D 8D 80 00 00 00 // lea     rcx, [rbp+460h+hit]
-            E8 ?? ?? ?? ?? // call    xxx
+            4D 8B C2 // mov     r8, r10
+            49 8B D3 // mov     rdx, r11
+            48 8B CF // mov     rcx, rdi
+            E8 ?? ?? ?? ?? // call    eoc__FunctorList__xxx
+            E9 ?? ?? 00 00 // jmp     xxx
 
-            48 8D 8D 80 00 00 00 // lea     rcx, [rbp+460h+hit]
+            48 8D 4C ?? ?? // lea     rcx, [rsp+238h+var_1D8]
         </Mapping>
 
         <Mapping Name="eoc::DealDamageFunctor::ApplyDamage" Scope="Custom">
@@ -251,10 +272,11 @@
             <Condition Type="FixedString" Offset="0" Value="FallDamageDamageType" />
             <Target Type="Absolute" Offset="0" NextSymbol="eoc::DealDamageFunctor::ApplyDamage" NextSymbolSeekSize="384" />
             48 8D 15 ?? ?? ?? ?? // lea     rdx, fs_FallDamageDamageType
-            48 8B 89 48 02 00 00 // mov     rcx, [rcx+248h]
+            48 8B 88 48 02 00 00 // mov     rcx, [rax+248h]
             E8 ?? ?? ?? ?? // call    CRPGStats_ExtraData__Get
             F3 0F 2C C0 // cvttss2si eax, xmm0
-            88 45 35 // mov     [rbp+420h+var_3F0.DamageType], al
+            88 45 ?? // mov     [rbp+450h+var_40B], al
+            44 0F B6 C0 // movzx   r8d, al
         </Mapping>
 
         <Mapping Name="App::Instance">
@@ -270,7 +292,7 @@
         <Mapping Name="RPGStats">
             <Condition Type="FixedString" Offset="14" Value="Infectious Disease Depth" />
             <Target Type="Indirect" Offset="7" Symbol="Stats" />
-            48 89 87 90 01 00 00 // mov     [rdi+190h], rax
+            48 89 87 ?? 01 00 00 // mov     [rdi+1XXh], rax
             48 8B 1D ?? ?? ?? ?? // mov     rbx, cs:gRPGStats
             48 8D 15 ?? ?? ?? ?? // lea     rdx, fs_Infectious_Disease_Depth
         </Mapping>
@@ -325,7 +347,8 @@
             48 8B 15 ?? ?? ?? ?? // mov     rdx, cs:eoc__gResourceManager
         </Mapping>
 
-        <Mapping Name="ls::GlobalSwitches">
+        <!-- TODO - disabled temporarily; we don't use it right now anyway -->
+        <Mapping Name="ls::GlobalSwitches" AllowFail="true">
             <Condition Type="FixedStringIndirect" Offset="19" Value="ShowSubtitles" />
             <Target Type="Indirect" Offset="12" Symbol="GlobalSwitches" />
             48 8B 8E F0 01 00 00 // mov     [rsp-8+arg_10], rbx
@@ -370,10 +393,10 @@
         <Condition Type="FixedStringIndirect" Offset="12" Value="ToggleOnEffect" />
         <Target Type="Absolute" Offset="-128" NextSymbol="eoc::Passive::Init" NextSymbolSeekSize="128" />
         48 8D 4B 08 // lea     rcx, [rbx+8]
-        48 8B D5 // mov     rdx, rbp
+        49 8B D5 // mov     rdx, r13
         E8 ?? ?? ?? ?? // call    eoc__DescriptionInfo__FromStats
         48 8B 15 ?? ?? ?? ?? // mov     rdx, cs:pffs_ToggleOnEffect
-        48 8B CD // mov     rcx, rbp
+        49 8B CD // mov     rcx, r13
         E8 ?? ?? ?? ?? // call    CRPGStats_Object__GetModifierString
       </Mapping>
 

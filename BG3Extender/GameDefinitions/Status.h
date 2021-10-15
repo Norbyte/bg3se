@@ -427,7 +427,7 @@ namespace bg3se
 
 		struct StatusMachine
 		{
-			using CreateStatusProc = Status* (StatusMachine* self, FixedString* statusId, uint64_t statusHandle);
+			using CreateStatusProc = Status* (StatusMachine* self, FixedString* statusId, uint64_t statusHandle, bool unkn1, bool unkn2);
 			using ApplyStatusProc = Status* (StatusMachine* self, Status* status);
 
 			Status* GetStatus(ComponentHandle handle) const;

@@ -349,7 +349,8 @@ namespace bg3se
 		});
 
 		if (!mapped && !(mapping.Flag & SymbolMappingData::kAllowFail)) {
-			ERR("No match found for mapping '%s'", mapping.Name.c_str());
+			ERR("No match found for mapping '%s' %s", mapping.Name.c_str(),
+				(mapping.Flag & SymbolMappingData::kCritical) ? "[CRITICAL]" : "");
 			InitFailed = true;
 			if (mapping.Flag & SymbolMappingData::kCritical) {
 				CriticalInitFailed = true;
@@ -548,7 +549,6 @@ namespace bg3se
 
 	bool LibraryManager::CanShowError()
 	{
-		return true;
 		if (!CanShowMessages()) return false;
 
 		auto state = GetStaticSymbols().GetClientState();

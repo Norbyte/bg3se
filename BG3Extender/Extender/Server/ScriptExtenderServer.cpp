@@ -56,7 +56,7 @@ void ScriptExtender::Initialize()
 		}
 
 		if (lib.esv__GameStateMachine__Update != nullptr) {
-			//gameStateMachineUpdate_.Wrap(lib.esv__GameStateMachine__Update);
+			gameStateMachineUpdate_.Wrap(lib.esv__GameStateMachine__Update);
 		}
 
 		DetourTransactionCommit();
