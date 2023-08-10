@@ -7,7 +7,7 @@
 #include <fstream>
 #include <json/json.h>
 
-#include <Lua/Shared/LuaEntityProxy.inl>
+#include <Lua/Shared/Proxies/LuaEntityProxy.inl>
 #include <Lua/Shared/LuaJson.inl>
 #include <Lua/Shared/LuaLocalization.inl>
 #include <Lua/Shared/LuaStaticDataLib.inl>
@@ -186,7 +186,7 @@ namespace bg3se::lua::utils
 
 		auto modManager = gExtender->GetCurrentExtensionState()->GetModManager();
 		auto & mods = modManager->BaseModule.LoadOrderedModules;
-		for (uint32_t i = 0; i < mods.Size; i++) {
+		for (uint32_t i = 0; i < mods.Size(); i++) {
 			auto const & mod = mods[i];
 			settable(L, i + 1, mod.Info.ModuleUUIDString.GetString());
 		}
@@ -211,7 +211,7 @@ namespace bg3se::lua::utils
 
 		if (module != nullptr) {
 			lua_newtable(L);
-			setfield(L, "UUID", module->Info.ModuleUUIDString);
+			setfield(L, "Guid", module->Info.ModuleUUIDString);
 			setfield(L, "Name", module->Info.Name);
 			setfield(L, "Version", module->Info.ModVersion.Ver);
 			setfield(L, "PublishVersion", module->Info.PublishVersion.Ver);
@@ -222,7 +222,7 @@ namespace bg3se::lua::utils
 			
 			lua_newtable(L);
 			auto & dependents = module->DependentModules;
-			for (uint32_t i = 0; i < dependents.Size; i++) {
+			for (uint32_t i = 0; i < dependents.Size(); i++) {
 				auto const & mod = dependents[i];
 				settable(L, i + 1, mod.Info.ModuleUUIDString);
 			}
@@ -255,7 +255,7 @@ namespace bg3se::lua::utils
 
 	int GetSurfaceTemplate(lua_State* L)
 	{
-		auto surfaceType = checked_get<SurfaceType>(L, 1);
+		auto surfaceType = get<SurfaceType>(L, 1);
 		auto tmpl = GetStaticSymbols().GetSurfaceTemplate(surfaceType);
 		if (tmpl != nullptr) {
 			ObjectProxy<SurfaceTemplate>::New(L, tmpl);
@@ -337,6 +337,7 @@ namespace bg3se::lua::utils
 			return "number";
 
 		case ValueType::String:
+		case ValueType::GuidString:
 			return "string";
 
 		default:
@@ -353,7 +354,7 @@ namespace bg3se::lua::utils
 
 		auto functions = gExtender->GetServer().Osiris().GetGlobals().Functions;
 
-		(*functions)->Iterate([&helpers, &functionComment, &functionDefn, builtinOnly](STDString const & key, Function const * func) {
+		/*for (auto const& kv : (*functions)->Hash) {
 			if (builtinOnly
 				&& func->Type != FunctionType::Event
 				&& func->Type != FunctionType::Call
@@ -429,7 +430,7 @@ namespace bg3se::lua::utils
 				helpers += functionComment;
 				helpers += functionDefn;
 			}
-		});
+		});*/
 
 		return helpers;
 	}
@@ -477,7 +478,7 @@ namespace bg3se::lua::utils
 		auto const& globals = gExtender->GetServer().Osiris().GetGlobals();
 		auto typeMap = ConstructOsiTypeMap();
 
-		(*globals.Functions)->Iterate([&functionList, &functionDefn, &typeMap](STDString const & key, Function const * func) {
+		/*(*globals.Functions)->Iterate([&functionList, &functionDefn, &typeMap](OsiString const& key, Function const* func) {
 			if (func->Type != FunctionType::Event
 				&& func->Type != FunctionType::Call
 				&& func->Type != FunctionType::Query
@@ -515,7 +516,7 @@ namespace bg3se::lua::utils
 
 			functionDefn += ")\r\n";
 			functionList += functionDefn;
-		});
+		});*/
 
 		return functionList;
 	}
@@ -594,10 +595,10 @@ namespace bg3se::lua::utils
 		lua_newtable(L);
 		int index{ 1 };
 
-		std::size_t pos{ 0 };
+		STDString::size_type pos{ 0 };
 		while (pos < cmdLine.size()) {
 			auto next = cmdLine.find(' ', pos);
-			if (next == std::string::npos) {
+			if (next == STDString::npos) {
 				next = cmdLine.size();
 			}
 

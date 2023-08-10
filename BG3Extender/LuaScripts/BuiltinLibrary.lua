@@ -171,14 +171,6 @@ _I._DoStartup = function ()
 	end
 end
 
-Ext.RegisterListener = function (type, fn)
-	Ext.Utils.PrintError("Ext.RegisterListener() is deprecated! Use Ext.Events.<X>:Subscribe() instead!")
-
-	Ext.Events[type]:Subscribe(function (event) 
-		_I._CallLegacyEvent(fn, event)
-	end)
-end
-
 _I._NetListeners = {}
 
 _I.RegisterNetListener = function (channel, fn)

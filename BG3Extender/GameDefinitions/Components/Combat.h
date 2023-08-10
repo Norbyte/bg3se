@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GameDefinitions/BaseTypes.h>
+#include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/EntitySystem.h>
 
@@ -16,7 +16,7 @@ namespace bg3se
 		__int64 field_28;
 		int Flags;
 		FixedString Archetype;
-		UUID AiHint;
+		Guid AiHint;
 		int field_48;
 		char field_4C;
 		bool CombatGroupChangedFlag_M;
@@ -26,7 +26,7 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::CombatState;
 
-		UUID MyGuid;
+		Guid MyGuid;
 		VirtualMultiHashMap<EntityHandle, int32_t> Initiatives;
 		Array<EntityHandle> Participants;
 		EntityHandle field_98;
@@ -52,7 +52,7 @@ namespace bg3se
 		uint8_t field_28;
 		int field_2C;
 		uint8_t field_30;
-		UUID field_38;
+		Guid field_38;
 	};
 
 	struct TurnOrderComponent : public BaseComponent
@@ -68,7 +68,7 @@ namespace bg3se
 		struct Participant
 		{
 			Array<ParticipantHandleInfo> Handles;
-			UUID Participant;
+			Guid Participant;
 			uint32_t field_28;
 			int32_t Initiative;
 			uint8_t field_30;

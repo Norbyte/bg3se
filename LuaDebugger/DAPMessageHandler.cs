@@ -46,7 +46,7 @@ namespace NSE.DebuggerFrontend
 
     public class ModuleInfo
     {
-        public string UUID;
+        public string Guid;
         public string Name;
         public string Author;
         public string Path;
@@ -314,7 +314,7 @@ namespace NSE.DebuggerFrontend
         {
             Modules = msg.Module.Select(mod => new ModuleInfo
             {
-                UUID = mod.Uuid,
+                Guid = mod.Uuid,
                 Name = mod.Name,
                 Author = mod.Author,
                 Path = mod.Path
@@ -754,7 +754,7 @@ namespace NSE.DebuggerFrontend
                 var mod = Modules[i];
                 reply.modules.Add(new DAPModule
                 {
-                    id = mod.UUID,
+                    id = mod.Guid,
                     name = mod.Name,
                     path = mod.Path
                 });

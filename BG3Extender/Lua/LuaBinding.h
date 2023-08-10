@@ -2,12 +2,12 @@
 
 #include <Lua/LuaHelpers.h>
 #include <Lua/Shared/LuaLifetime.h>
-#include <Lua/Shared/LuaObjectProxy.h>
-#include <Lua/Shared/LuaArrayProxy.h>
-#include <Lua/Shared/LuaSetProxy.h>
-#include <Lua/Shared/LuaMapProxy.h>
+#include <Lua/Shared/Proxies/LuaObjectProxy.h>
+#include <Lua/Shared/Proxies/LuaArrayProxy.h>
+#include <Lua/Shared/Proxies/LuaSetProxy.h>
+#include <Lua/Shared/Proxies/LuaMapProxy.h>
 #include <Lua/Shared/LuaEvent.h>
-#include <Lua/Shared/LuaEntityProxy.h>
+#include <Lua/Shared/Proxies/LuaEntityProxy.h>
 
 #include <mutex>
 #include <unordered_set>
@@ -115,7 +115,7 @@ namespace bg3se::lua
 		bool CallExtRet(char const * func, uint32_t restrictions, std::tuple<Ret...>& ret, Args... args)
 		{
 			StackCheck _(L, sizeof...(Ret));
-			Restriction restriction(*this, restrictions);
+			// FIXME - Restriction restriction(*this, restrictions);
 			LifetimePin _p(lifetimeStack_);
 			auto lifetime = lifetimeStack_.GetCurrent();
 			PushInternalFunction(L, func);
@@ -127,7 +127,7 @@ namespace bg3se::lua
 		bool CallExt(char const * func, uint32_t restrictions, Args... args)
 		{
 			StackCheck _(L, 0);
-			Restriction restriction(*this, restrictions);
+			// FIXME - Restriction restriction(*this, restrictions);
 			LifetimePin _p(lifetimeStack_);
 			auto lifetime = lifetimeStack_.GetCurrent();
 			PushInternalFunction(L, func);
@@ -142,7 +142,7 @@ namespace bg3se::lua
 
 			try {
 				StackCheck _(L, 0);
-				Restriction restriction(*this, restrictions);
+				// FIXME - Restriction restriction(*this, restrictions);
 				LifetimePin _p(lifetimeStack_);
 				PushInternalFunction(L, "_ThrowEvent");
 				EventObject::Make(L, lifetimeStack_.GetCurrent().pool, eventName, evt, canPreventAction, TReadWrite{});

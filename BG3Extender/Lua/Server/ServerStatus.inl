@@ -147,9 +147,9 @@ namespace bg3se::esv::lua
 	{
 		StackCheck _(L, 1);
 
-		auto gameObj = checked_get<EntityProxy*>(L, 1);
-		auto statusId = checked_get<FixedString>(L, 2);
-		float lifeTime = checked_get<float>(L, 3);
+		auto gameObj = get<EntityProxy*>(L, 1);
+		auto statusId = get<FixedString>(L, 2);
+		float lifeTime = get<float>(L, 3);
 
 		StatusMachine* statusMachine = GetEntityStatusMachine(gameObj->Handle());
 		if (!statusMachine) {

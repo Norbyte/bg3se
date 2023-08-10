@@ -206,11 +206,11 @@ namespace bg3se::lua
 	int AiGridSearchForCell(lua_State* L)
 	{
 		auto grid = ObjectProxy<eoc::AiGrid>::CheckedGet(L, 1);
-		auto x = checked_get<float>(L, 2);
-		auto z = checked_get<float>(L, 3);
-		auto radius = checked_get<float>(L, 4);
+		auto x = get<float>(L, 2);
+		auto z = get<float>(L, 3);
+		auto radius = get<float>(L, 4);
 		auto flags = checked_get_flags<ESurfaceFlag>(L, 5);
-		auto bias = checked_get<float>(L, 6);
+		auto bias = get<float>(L, 6);
 
 		auto search = GetStaticSymbols().eoc__AiGrid__SearchForCell;
 		if (!search) {
@@ -226,8 +226,8 @@ namespace bg3se::lua
 	int AiGridGetCellInfo(lua_State* L)
 	{
 		auto grid = ObjectProxy<eoc::AiGrid>::CheckedGet(L, 1);
-		auto x = checked_get<float>(L, 2);
-		auto z = checked_get<float>(L, 3);
+		auto x = get<float>(L, 2);
+		auto z = get<float>(L, 3);
 
 		auto cell = grid->GetCell(glm::vec2(x, z));
 		if (!cell) {
@@ -280,8 +280,8 @@ namespace bg3se::lua
 	int AiGridGetAiFlags(lua_State* L)
 	{
 		auto grid = ObjectProxy<eoc::AiGrid>::CheckedGet(L, 1);
-		auto x = checked_get<float>(L, 2);
-		auto z = checked_get<float>(L, 3);
+		auto x = get<float>(L, 2);
+		auto z = get<float>(L, 3);
 
 		auto cell = grid->GetCell(glm::vec2(x, z));
 		if (!cell) {
@@ -299,9 +299,9 @@ namespace bg3se::lua
 		constexpr uint64_t UpdateFlags = 5;
 
 		auto grid = ObjectProxy<eoc::AiGrid>::CheckedGet(L, 1);
-		auto x = checked_get<float>(L, 2);
-		auto z = checked_get<float>(L, 3);
-		auto flags = checked_get<uint64_t>(L, 4);
+		auto x = get<float>(L, 2);
+		auto z = get<float>(L, 3);
+		auto flags = get<uint64_t>(L, 4);
 
 		auto cell = grid->GetCell(glm::vec2(x, z));
 		if (!cell) {
@@ -318,7 +318,7 @@ namespace bg3se::lua
 		auto grid = Get(L);
 		if (!grid) return 0;
 
-		auto prop = checked_get<FixedString>(L, 2);
+		auto prop = get<FixedString>(L, 2);
 
 		if (prop == GFS.strSearchForCell) {
 			lua_pushcfunction(L, &AiGridSearchForCell);
@@ -416,7 +416,7 @@ namespace bg3se::lua
 	int DamageList::GetByType(lua_State * L)
 	{
 		auto self = DamageList::CheckUserData(L, 1);
-		auto damageType = checked_get<DamageType>(L, 2);
+		auto damageType = get<DamageType>(L, 2);
 
 		int32_t amount = 0;
 		for (auto const& dmg : self->damages_) {
@@ -432,7 +432,7 @@ namespace bg3se::lua
 	int DamageList::Add(lua_State * L)
 	{
 		auto self = DamageList::CheckUserData(L, 1);
-		auto damageType = checked_get<DamageType>(L, 2);
+		auto damageType = get<DamageType>(L, 2);
 		auto amount = (int32_t)luaL_checkinteger(L, 3);
 
 		self->damages_.AddDamage(damageType, amount);
@@ -444,7 +444,7 @@ namespace bg3se::lua
 	{
 		auto self = DamageList::CheckUserData(L, 1);
 		if (lua_gettop(L) >= 2) {
-			auto damageType = checked_get<DamageType>(L, 2);
+			auto damageType = get<DamageType>(L, 2);
 			self->damages_.ClearDamage(damageType);
 		} else {
 			self->damages_.Clear();
@@ -480,7 +480,7 @@ namespace bg3se::lua
 	int DamageList::ConvertDamageType(lua_State * L)
 	{
 		auto self = DamageList::CheckUserData(L, 1);
-		auto damageType = checked_get<DamageType>(L, 2);
+		auto damageType = get<DamageType>(L, 2);
 
 		int32_t totalDamage = 0;
 		for (auto const& dmg : self->damages_) {
@@ -844,42 +844,49 @@ namespace bg3se::lua
 
 	void State::OnGameSessionLoading()
 	{
-		ThrowEvent<EmptyEventParams>("SessionLoading", EmptyEventParams{}, false, RestrictAll | ScopeSessionLoad, ReadOnlyEvent{});
+		EmptyEventParams params;
+		ThrowEvent<EmptyEventParams>("SessionLoading", params, false, RestrictAll | ScopeSessionLoad, ReadOnlyEvent{});
 	}
 
 	void State::OnGameSessionLoaded()
 	{
-		ThrowEvent<EmptyEventParams>("SessionLoaded", EmptyEventParams{}, false, RestrictAll, ReadOnlyEvent{});
+		EmptyEventParams params;
+		ThrowEvent<EmptyEventParams>("SessionLoaded", params, false, RestrictAll, ReadOnlyEvent{});
 	}
 
 	void State::OnModuleLoadStarted()
 	{
-		ThrowEvent<EmptyEventParams>("ModuleLoadStarted", EmptyEventParams{}, false, RestrictAll | ScopeModulePreLoad, ReadOnlyEvent{});
+		EmptyEventParams params;
+		ThrowEvent<EmptyEventParams>("ModuleLoadStarted", params, false, RestrictAll | ScopeModulePreLoad, ReadOnlyEvent{});
 	}
 
 	void State::OnModuleLoading()
 	{
-		ThrowEvent<EmptyEventParams>("ModuleLoading", EmptyEventParams{}, false, RestrictAll | ScopeModuleLoad, ReadOnlyEvent{});
+		EmptyEventParams params;
+		ThrowEvent<EmptyEventParams>("ModuleLoading", params, false, RestrictAll | ScopeModuleLoad, ReadOnlyEvent{});
 	}
 
 	void State::OnStatsLoaded()
 	{
-		ThrowEvent<EmptyEventParams>("StatsLoaded", EmptyEventParams{}, false, RestrictAll | ScopeModuleLoad, ReadOnlyEvent{});
+		EmptyEventParams params;
+		ThrowEvent<EmptyEventParams>("StatsLoaded", params, false, RestrictAll | ScopeModuleLoad, ReadOnlyEvent{});
 	}
 
 	void State::OnModuleResume()
 	{
-		ThrowEvent<EmptyEventParams>("ModuleResume", EmptyEventParams{}, false, RestrictAll | ScopeModuleResume, ReadOnlyEvent{});
+		EmptyEventParams params;
+		ThrowEvent<EmptyEventParams>("ModuleResume", params, false, RestrictAll | ScopeModuleResume, ReadOnlyEvent{});
 	}
 
 	void State::OnResetCompleted()
 	{
-		ThrowEvent<EmptyEventParams>("ResetCompleted", EmptyEventParams{}, false, 0, ReadOnlyEvent{});
+		EmptyEventParams params;
+		ThrowEvent<EmptyEventParams>("ResetCompleted", params, false, 0, ReadOnlyEvent{});
 	}
 
 	STDString State::GetBuiltinLibrary(int resourceId)
 	{
-		auto resource = GetResource(resourceId);
+		auto resource = GetExeResource(resourceId);
 		if (resource) {
 			return STDString(resource->c_str());
 		} else {

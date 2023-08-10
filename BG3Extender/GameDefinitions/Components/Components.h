@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GameDefinitions/BaseTypes.h>
+#include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/EntitySystem.h>
 #include <GameDefinitions/Components/Boosts.h>
@@ -27,7 +27,7 @@ namespace bg3se
 				double MaxAmount;
 			};
 
-			UUID ResourceUUID;
+			Guid ResourceUUID;
 			int ResourceId;
 			double Amount;
 			double MaxAmount;
@@ -36,7 +36,7 @@ namespace bg3se
 		};
 
 
-		VirtualMultiHashMap<UUID, Array<Amount>> Resources;
+		VirtualMultiHashMap<Guid, Array<Amount>> Resources;
 	};
 
 	struct HearingComponent : public BaseComponent
@@ -65,7 +65,7 @@ namespace bg3se
 		};
 
 		SpellId Id;
-		UUID SpellUUID;
+		Guid SpellUUID;
 		int32_t field_38;
 		int32_t field_3C;
 		SpellCooldownType CooldownType;
@@ -129,7 +129,7 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ActionResourceConsumeMultiplierBoost;
 
-		UUID ResourceUUID;
+		Guid ResourceUUID;
 		int Multiplier;
 		__int64 field_30;
 	};
@@ -144,7 +144,7 @@ namespace bg3se
 			EntityHandle ItemHandle;
 			SpellChildSelectionType SelectionType;
 			uint8_t field_29;
-			UUID SpellUUID;
+			Guid SpellUUID;
 			AbilityId SpellCastingAbility;
 			SpellCooldownType CooldownType;
 			FixedString field_44;
@@ -158,14 +158,14 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Tag;
 
-		Array<UUID> Tags;
+		Array<Guid> Tags;
 	};
 
 	struct OsirisTagComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ServerOsirisTag;
 
-		Array<UUID> Tags;
+		Array<Guid> Tags;
 	};
 
 	struct SpellBookPreparesComponent : public BaseComponent
@@ -173,16 +173,16 @@ namespace bg3se
 		static constexpr ExtComponentType ComponentType = ExtComponentType::SpellBookPrepares;
 
 		Array<SpellIdBase> PreparedSpells;
-		VirtualMultiHashMap<UUID, int> field_30;
-		VirtualMultiHashMap<UUID, int> field_88;
+		VirtualMultiHashMap<Guid, int> field_30;
+		VirtualMultiHashMap<Guid, int> field_88;
 	};
 
 	struct RelationComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Relation;
 
-		UUID field_18;
-		UUID field_28;
+		Guid field_18;
+		Guid field_28;
 		EntityHandle field_38;
 	};
 
@@ -204,7 +204,7 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Origin;
 
-		UUID field_18;
+		Guid field_18;
 		FixedString Origin;
 	};
 

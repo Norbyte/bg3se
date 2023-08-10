@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GameDefinitions/BaseTypes.h>
+#include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/EntitySystem.h>
 
@@ -87,8 +87,8 @@ namespace bg3se
 
 		struct ClassInfo
 		{
-			UUID Class;
-			UUID SubClass;
+			Guid Class;
+			Guid SubClass;
 			int32_t Priority;
 			int32_t Unknown;
 		};
@@ -116,7 +116,7 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::StatusImmunities;
 
-		VirtualMultiHashMap<FixedString, UUID> PersonalStatusImmunities;
+		VirtualMultiHashMap<FixedString, Guid> PersonalStatusImmunities;
 	};
 
 	struct ValueComponent : public BaseComponent
@@ -154,14 +154,14 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Background;
 
-		UUID Background;
+		Guid Background;
 	};
 	
 	struct GodComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::God;
 
-		UUID God;
+		Guid God;
 	};
 
 
@@ -170,12 +170,12 @@ namespace bg3se
 		struct AbilityData
 		{
 			uint8_t field_0;
-			UUID Feat;
-			UUID Class;
+			Guid Feat;
+			Guid Class;
 			int field_28;
 			int field_2C;
 			int field_30;
-			UUID Ability;
+			Guid Ability;
 			Array<uint8_t> Array_b8;
 			STDString field_60;
 			int field_80;
@@ -184,12 +184,12 @@ namespace bg3se
 		struct SkillData
 		{
 			uint8_t field_0;
-			UUID field_8;
-			UUID field_18;
+			Guid field_8;
+			Guid field_18;
 			int field_28;
 			int field_2C;
 			int field_30;
-			UUID Skill;
+			Guid Skill;
 			Array<uint8_t> Array_b8;
 			STDString field_60;
 			int field_80;
@@ -204,12 +204,12 @@ namespace bg3se
 			};
 
 			uint8_t field_0;
-			UUID Race;
-			UUID field_18;
+			Guid Race;
+			Guid field_18;
 			int field_28;
 			int field_2C;
 			int field_30;
-			UUID Spell;
+			Guid Spell;
 			Array<FixedString> Array_FS;
 			Array<StringPair> Array_FS2;
 			STDString field_78;
@@ -218,12 +218,12 @@ namespace bg3se
 		struct LevelUpDataInner4
 		{
 			uint8_t field_0;
-			UUID field_8;
-			UUID Class;
+			Guid field_8;
+			Guid Class;
 			int field_28;
 			int field_2C;
 			int field_30;
-			UUID field_38;
+			Guid field_38;
 			Array<FixedString> Array_FS;
 			STDString field_60;
 			int field_80;
@@ -240,14 +240,14 @@ namespace bg3se
 		FixedString field_0;
 		uint8_t field_4;
 		uint64_t _Pad;
-		UUID field_10;
+		Guid field_10;
 	};
 
 	struct LevelUpData
 	{
-		UUID Class;
-		UUID SubClass;
-		UUID Feat;
+		Guid Class;
+		Guid SubClass;
+		Guid Feat;
 		std::array<int, 7> field_30;
 		LevelUpUpgrades Upgrades;
 		Array<LevelUpData3> field_B0;
@@ -270,7 +270,7 @@ namespace bg3se
 			FixedString field_0;
 			int32_t field_4;
 			uint8_t field_8;
-			UUID field_10;
+			Guid field_10;
 		};
 
 
@@ -314,7 +314,7 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Voice;
 
-		UUID Voice;
+		Guid Voice;
 	};
 
 	struct CustomIconComponent : public BaseComponent
@@ -328,8 +328,8 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::CharacterCreationStats;
 
-		UUID Race;
-		UUID SubRace;
+		Guid Race;
+		Guid SubRace;
 		__int64 field_38;
 		STDString Name;
 		__int64 field_60;
@@ -537,14 +537,14 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ServerAnubisTag;
 
-		Array<UUID> Tags;
+		Array<Guid> Tags;
 	};
 
 	struct DialogTagComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ServerDialogTag;
 
-		Array<UUID> Tags;
+		Array<Guid> Tags;
 	};
 
 	struct DisplayName
@@ -581,21 +581,21 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ServerPlanTag;
 
-		Array<UUID> Tags;
+		Array<Guid> Tags;
 	};
 
 	struct RaceTagComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ServerRaceTag;
 
-		Array<UUID> Tags;
+		Array<Guid> Tags;
 	};
 
 	struct TemplateTagComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ServerTemplateTag;
 
-		Array<UUID> Tags;
+		Array<Guid> Tags;
 	};
 
 	struct ToggledPassivesComponent : public BaseComponent
@@ -609,14 +609,14 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ServerBoostTag;
 
-		Array<UUID> Tags;
+		Array<Guid> Tags;
 	};
 
 	struct TriggerStateComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ServerTriggerState;
 
-		VirtualMultiHashSet<UUID> Triggers;
+		VirtualMultiHashSet<Guid> Triggers;
 	};
 
 	struct SafePositionComponent : public BaseComponent
@@ -702,7 +702,7 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::OriginTag;
 
-		Array<UUID> Tags;
+		Array<Guid> Tags;
 	};
 
 	struct PassiveInfo
@@ -722,21 +722,21 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::GodTag;
 
-		Array<UUID> Tags;
+		Array<Guid> Tags;
 	};
 
 	struct ClassTagComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ClassTag;
 
-		Array<UUID> Tags;
+		Array<Guid> Tags;
 	};
 
 	struct BackgroundTagComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::BackgroundTag;
 
-		Array<UUID> Tags;
+		Array<Guid> Tags;
 	};
 
 	struct BackgroundPassivesComponent : public BaseComponent
@@ -843,12 +843,12 @@ namespace bg3se
 		struct SpellInfo
 		{
 			FixedString SpellId;
-			UUID field_8;
+			Guid field_8;
 			uint64_t field_18;
 			EntityHandle field_20;
 			uint8_t field_28;
 			uint8_t field_29;
-			UUID SomeUUID;
+			Guid SomeUUID;
 			uint8_t field_40;
 			uint8_t Cooldown;
 			FixedString field_44;
@@ -993,7 +993,7 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Equipable;
 
-		UUID field_18;
+		Guid field_18;
 		int Slot_M;
 	};
 
@@ -1020,8 +1020,8 @@ namespace bg3se
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ProgressionMeta;
 
 		uint8_t field_18;
-		UUID Progression;
-		UUID Race;
+		Guid Progression;
+		Guid Race;
 		int field_40;
 		uint8_t field_44;
 		int field_48;
@@ -1033,7 +1033,7 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Race;
 
-		UUID Race;
+		Guid Race;
 	};
 
 	struct SightComponent : public BaseComponent
@@ -1138,7 +1138,7 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::LearnedSpells;
 
-		VirtualMultiHashMap<UUID, VirtualMultiHashSet<FixedString>> field_18;
+		VirtualMultiHashMap<Guid, VirtualMultiHashSet<FixedString>> field_18;
 		VirtualMultiHashSet<uint8_t> field_70;
 	};
 
@@ -1242,7 +1242,7 @@ namespace bg3se
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ApprovalRatings;
 
 		VirtualMultiHashMap<EntityHandle, int> Ratings;
-		VirtualMultiHashSet<UUID> field_70;
+		VirtualMultiHashSet<Guid> field_70;
 	};
 
 
@@ -1252,16 +1252,15 @@ namespace bg3se
 
 		struct AppearanceElement
 		{
-			UUID Material;
-			UUID Color;
+			Guid Material;
+			Guid Color;
 			float field_20;
 		};
 
-		Array<UUID> Visuals;
+		Array<Guid> Visuals;
 		Array<AppearanceElement> Elements;
-		UUID SkinColor;
-		UUID EyeColor;
-		UUID field_68;
+		Guid SkinColor;
+		Guid EyeColor;
+		Guid field_68;
 	};
-
 }

@@ -74,7 +74,7 @@ namespace bg3se::lua
 		return luaL_error(L, "Not implemented yet!");
 
 		/*StackCheck _(L, 0);
-		auto userId = checked_get<int>(L, 1);
+		auto userId = get<int>(L, 1);
 		auto channel = luaL_checkstring(L, 2);
 		auto payload = luaL_checkstring(L, 3);
 

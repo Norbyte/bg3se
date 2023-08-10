@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GameDefinitions/BaseTypes.h>
+#include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/EntitySystem.h>
 /*
@@ -249,7 +249,7 @@ namespace bg3se
 			FixedString EquipmentColor;
 			FixedString ProjectileTemplate;
 			uint32_t TimeElapsed;
-			ObjectSet<UUID> PreferredAiTargetTags;
+			ObjectSet<Guid> PreferredAiTargetTags;
 			void* CharacterBody_M;
 			RefMap<EntityHandle, ObjectSet<void*>> StatusesFromObjects;
 			ObjectSet<FixedString> TagsFromItems;

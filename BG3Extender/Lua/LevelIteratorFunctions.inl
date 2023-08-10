@@ -43,15 +43,15 @@ int GetAllCharacters(lua_State* L)
 
 	auto numArgs = lua_gettop(L);
 	if (numArgs >= 1) {
-		levelName = checked_get<FixedString>(L, 1);
+		levelName = get<FixedString>(L, 1);
 	}
 	
 	if (numArgs >= 2) {
-		excludeOffStage = checked_get<bool>(L, 2);
+		excludeOffStage = get<bool>(L, 2);
 	}
 	
 	if (numArgs >= 3) {
-		excludeDeactivated = checked_get<bool>(L, 3);
+		excludeDeactivated = get<bool>(L, 3);
 	}
 
 	GetCharactersGeneric(L, levelName, [](esv::Character*) { return true; }, excludeOffStage, excludeDeactivated);
@@ -61,18 +61,18 @@ int GetAllCharacters(lua_State* L)
 int GetCharactersAroundPosition(lua_State* L)
 {
 	auto numArgs = lua_gettop(L);
-	glm::vec3 pos = checked_get<glm::vec3>(L, 1);
-	float distance = checked_get<float>(L, 2);
+	glm::vec3 pos = get<glm::vec3>(L, 1);
+	float distance = get<float>(L, 2);
 
 	bool excludeOffStage{ false };
 	bool excludeDeactivated{ false };
 
 	if (numArgs >= 3) {
-		excludeOffStage = checked_get<bool>(L, 3);
+		excludeOffStage = get<bool>(L, 3);
 	}
 
 	if (numArgs >= 4) {
-		excludeDeactivated = checked_get<bool>(L, 4);
+		excludeDeactivated = get<bool>(L, 4);
 	}
 
 	GetCharactersGeneric(L, FixedString{}, [pos, distance](esv::Character* c) {
@@ -127,15 +127,15 @@ int GetAllItems(lua_State* L)
 
 	auto numArgs = lua_gettop(L);
 	if (numArgs >= 1) {
-		levelName = checked_get<FixedString>(L, 1);
+		levelName = get<FixedString>(L, 1);
 	}
 
 	if (numArgs >= 2) {
-		excludeOffStage = checked_get<bool>(L, 2);
+		excludeOffStage = get<bool>(L, 2);
 	}
 
 	if (numArgs >= 3) {
-		excludeDeactivated = checked_get<bool>(L, 3);
+		excludeDeactivated = get<bool>(L, 3);
 	}
 
 	GetItemsGeneric(L, levelName, [](esv::Item*) { return true; }, excludeOffStage, excludeDeactivated);
@@ -145,18 +145,18 @@ int GetAllItems(lua_State* L)
 int GetItemsAroundPosition(lua_State* L)
 {
 	auto numArgs = lua_gettop(L);
-	glm::vec3 pos = checked_get<glm::vec3>(L, 1);
-	float distance = checked_get<float>(L, 2);
+	glm::vec3 pos = get<glm::vec3>(L, 1);
+	float distance = get<float>(L, 2);
 
 	bool excludeOffStage{ false };
 	bool excludeDeactivated{ false };
 
 	if (numArgs >= 3) {
-		excludeOffStage = checked_get<bool>(L, 3);
+		excludeOffStage = get<bool>(L, 3);
 	}
 
 	if (numArgs >= 4) {
-		excludeDeactivated = checked_get<bool>(L, 4);
+		excludeDeactivated = get<bool>(L, 4);
 	}
 
 	GetItemsGeneric(L, FixedString{}, [pos, distance](esv::Item* it) {

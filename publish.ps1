@@ -20,7 +20,7 @@ $ManifestPath = Join-Path $RootPath "$PublishingRoot\Manifest2.json"
 $PackagePath = Join-Path $RootPath "$PublishingRoot\Latest.zip"
 $DllPath = Join-Path $RootPath "x64\Game Release\BG3ScriptExtender.dll"
 
-$GameMinVersion = "4.1.122.4125"
+$GameMinVersion = "4.36.35.601"
 $GameMaxVersion = "-"
 
 function Build-Extender

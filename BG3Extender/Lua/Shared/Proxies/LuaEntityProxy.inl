@@ -1,4 +1,4 @@
-#include <Lua/Shared/LuaEntityProxy.h>
+#include <Lua/Shared/Proxies/LuaEntityProxy.h>
 #include <GameDefinitions/Character.h>
 #include <GameDefinitions/Item.h>
 #include <GameDefinitions/Components/Components.h>
@@ -19,8 +19,8 @@ namespace bg3se::lua
 	int EntityProxy::HasRawComponent(lua_State* L)
 	{
 		StackCheck _(L, 1);
-		auto self = checked_get<EntityProxy*>(L, 1);
-		auto componentType = checked_get<char const*>(L, 2);
+		auto self = get<EntityProxy*>(L, 1);
+		auto componentType = get<char const*>(L, 2);
 		auto componentIdx = self->entitySystem_->GetComponentIndex(componentType);
 		if (componentIdx) {
 			auto world = self->entitySystem_->GetEntityWorld();
@@ -37,7 +37,7 @@ namespace bg3se::lua
 	int EntityProxy::GetComponentHandles(lua_State* L)
 	{
 		StackCheck _(L, 1);
-		auto self = checked_get<EntityProxy*>(L, 1);
+		auto self = get<EntityProxy*>(L, 1);
 
 		lua_newtable(L);
 
@@ -140,8 +140,8 @@ namespace bg3se::lua
 	int EntityProxy::GetComponent(lua_State* L)
 	{
 		StackCheck _(L, 1);
-		auto self = checked_get<EntityProxy*>(L, 1);
-		auto componentType = checked_get<ExtComponentType>(L, 2);
+		auto self = get<EntityProxy*>(L, 1);
+		auto componentType = get<ExtComponentType>(L, 2);
 		PushComponent(L, self->entitySystem_, self->handle_, componentType, GetCurrentLifetime(), false);
 		return 1;
 	}
@@ -149,11 +149,11 @@ namespace bg3se::lua
 	int EntityProxy::GetAllComponents(lua_State* L)
 	{
 		StackCheck _(L, 1);
-		auto self = checked_get<EntityProxy*>(L, 1);
+		auto self = get<EntityProxy*>(L, 1);
 
 		bool warnOnMissing = false;
 		if (lua_gettop(L) >= 2) {
-			warnOnMissing = checked_get<bool>(L, 2);
+			warnOnMissing = get<bool>(L, 2);
 		}
 
 		lua_newtable(L);
@@ -186,7 +186,7 @@ namespace bg3se::lua
 	int EntityProxy::GetEntityType(lua_State* L)
 	{
 		StackCheck _(L, 1);
-		auto self = checked_get<EntityProxy*>(L, 1);
+		auto self = get<EntityProxy*>(L, 1);
 		push(L, self->handle_.GetType());
 		return 1;
 	}
@@ -194,7 +194,7 @@ namespace bg3se::lua
 	int EntityProxy::GetSalt(lua_State* L)
 	{
 		StackCheck _(L, 1);
-		auto self = checked_get<EntityProxy*>(L, 1);
+		auto self = get<EntityProxy*>(L, 1);
 		push(L, self->handle_.GetSalt());
 		return 1;
 	}
@@ -202,7 +202,7 @@ namespace bg3se::lua
 	int EntityProxy::GetIndex(lua_State* L)
 	{
 		StackCheck _(L, 1);
-		auto self = checked_get<EntityProxy*>(L, 1);
+		auto self = get<EntityProxy*>(L, 1);
 		push(L, self->handle_.GetIndex());
 		return 1;
 	}
@@ -210,7 +210,7 @@ namespace bg3se::lua
 	int EntityProxy::IsAlive(lua_State* L)
 	{
 		StackCheck _(L, 1);
-		auto self = checked_get<EntityProxy*>(L, 1);
+		auto self = get<EntityProxy*>(L, 1);
 		auto world = self->entitySystem_->GetEntityWorld();
 		auto entity = world->GetEntity(self->handle_, false);
 		push(L, entity != nullptr);
@@ -220,8 +220,8 @@ namespace bg3se::lua
 	int EntityProxy::Index(lua_State* L)
 	{
 		StackCheck _(L, 1);
-		auto self = checked_get<EntityProxy*>(L, 1);
-		auto key = checked_get<FixedString>(L, 2);
+		auto self = get<EntityProxy*>(L, 1);
+		auto key = get<FixedString>(L, 2);
 
 		if (key == GFS.strHasRawComponent) {
 			push(L, &EntityProxy::HasRawComponent);
@@ -267,7 +267,7 @@ namespace bg3se::lua
 		if (componentType) {
 			PushComponent(L, self->entitySystem_, self->handle_, *componentType, GetCurrentLifetime(), false);
 		} else {
-			auto componentTypeName = checked_get<char const*>(L, 2);
+			auto componentTypeName = get<char const*>(L, 2);
 			luaL_error(L, "Not a valid EntityProxy method or component type: %s", componentTypeName);
 		}
 
@@ -283,6 +283,21 @@ namespace bg3se::lua
 		return 1;
 	}
 
+	EntityHandle do_get(lua_State* L, int index, Overload<EntityHandle>)
+	{
+		if (lua_type(L, index) == LUA_TNIL) {
+			return EntityHandle{ EntityHandle::NullHandle };
+		} else {
+			return EntityProxy::CheckUserData(L, index)->Handle();
+		}
+	}
+
+	EntityProxy* do_get(lua_State* L, int index, Overload<EntityProxy*>)
+	{
+		luaL_checktype(L, index, LUA_TUSERDATA);
+		return EntityProxy::CheckUserData(L, index);
+	}
+
 
 	char const* const ComponentHandleProxy::MetatableName = "ComponentHandleProxy";
 
@@ -293,7 +308,7 @@ namespace bg3se::lua
 	int ComponentHandleProxy::GetType(lua_State* L)
 	{
 		StackCheck _(L, 1);
-		auto self = checked_get<ComponentHandleProxy*>(L, 1);
+		auto self = get<ComponentHandleProxy*>(L, 1);
 		push(L, self->handle_.GetType());
 		return 1;
 	}
@@ -301,7 +316,7 @@ namespace bg3se::lua
 	int ComponentHandleProxy::GetTypeName(lua_State* L)
 	{
 		StackCheck _(L, 1);
-		auto self = checked_get<ComponentHandleProxy*>(L, 1);
+		auto self = get<ComponentHandleProxy*>(L, 1);
 		auto name = self->entitySystem_->GetComponentName(EntityWorldBase::HandleTypeIndex(self->handle_.GetType()));
 		push(L, name);
 		return 1;
@@ -310,7 +325,7 @@ namespace bg3se::lua
 	int ComponentHandleProxy::GetSalt(lua_State* L)
 	{
 		StackCheck _(L, 1);
-		auto self = checked_get<ComponentHandleProxy*>(L, 1);
+		auto self = get<ComponentHandleProxy*>(L, 1);
 		push(L, self->handle_.GetSalt());
 		return 1;
 	}
@@ -318,7 +333,7 @@ namespace bg3se::lua
 	int ComponentHandleProxy::GetIndex(lua_State* L)
 	{
 		StackCheck _(L, 1);
-		auto self = checked_get<ComponentHandleProxy*>(L, 1);
+		auto self = get<ComponentHandleProxy*>(L, 1);
 		push(L, self->handle_.GetIndex());
 		return 1;
 	}
@@ -326,7 +341,7 @@ namespace bg3se::lua
 	int ComponentHandleProxy::GetComponent(lua_State* L)
 	{
 		StackCheck _(L, 1);
-		auto self = checked_get<ComponentHandleProxy*>(L, 1);
+		auto self = get<ComponentHandleProxy*>(L, 1);
 		auto componentType = self->entitySystem_->GetComponentType((EntityWorldBase::HandleTypeIndex)self->handle_.GetType());
 		if (componentType) {
 			PushComponent(L, self->entitySystem_, self->handle_, *componentType, GetCurrentLifetime(), false);
@@ -388,6 +403,20 @@ namespace bg3se::lua
 		return 1;
 	}
 
+	ComponentHandle do_get(lua_State* L, int index, Overload<ComponentHandle>)
+	{
+		if (lua_type(L, index) == LUA_TNIL) {
+			return ComponentHandle{ ComponentHandle::NullHandle };
+		} else {
+			return ComponentHandleProxy::CheckUserData(L, index)->Handle();
+		}
+	}
+
+	ComponentHandleProxy* do_get(lua_State* L, int index, Overload<ComponentHandleProxy*>)
+	{
+		luaL_checktype(L, index, LUA_TUSERDATA);
+		return ComponentHandleProxy::CheckUserData(L, index);
+	}
 
 	void RegisterEntityProxy(lua_State* L)
 	{

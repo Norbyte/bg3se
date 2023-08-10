@@ -36,7 +36,7 @@ namespace bg3se::lua
 
 		/*StackCheck _(L, 1);
 		auto pos = self->Get(L)->WorldPos;
-		auto distance = checked_get<float>(L, 2);
+		auto distance = get<float>(L, 2);
 
 		esv::lua::GetCharactersGeneric(L, FixedString{}, [pos, distance](esv::Character* c) {
 			return abs(glm::length(pos - c->WorldPos)) < distance;
@@ -87,7 +87,7 @@ namespace bg3se::lua
 		return luaL_error(L, "Not implemented yet!");
 
 		/*StackCheck _(L, 1);
-		auto skillId = checked_get<FixedString>(L, 2);
+		auto skillId = get<FixedString>(L, 2);
 
 		auto skillMgr = self->Get(L)->SkillManager;
 		if (skillMgr != nullptr) {
@@ -129,7 +129,7 @@ namespace bg3se::esv::lua
 		switch (lua_type(L, index)) {
 		case LUA_TUSERDATA:
 		{
-			auto handle = checked_get<EntityProxy*>(L, index)->Handle();
+			auto handle = get<EntityProxy*>(L, index)->Handle();
 			character = gExtender->GetServer().GetEntityHelpers().GetEntityComponent<esv::Character>(handle);
 			break;
 		}
@@ -150,7 +150,7 @@ namespace bg3se::esv::lua
 		}
 
 		default:
-			OsiError("Expected character UUID, Entity or NetId; got " << lua_typename(L, lua_type(L, 1)));
+			OsiError("Expected character Guid, Entity or NetId; got " << lua_typename(L, lua_type(L, 1)));
 			break;
 		}
 

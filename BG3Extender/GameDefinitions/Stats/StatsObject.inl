@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include <GameDefinitions/BaseTypes.h>
+#include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/Symbols.h>
 #include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/Stats/Stats.h>
@@ -55,10 +55,10 @@ namespace bg3se
 					return **val;
 				}
 			}
-		} else if (typeInfo->Values.Count() > 0) {
-			auto enumLabel = typeInfo->Values.FindByValue(index);
-			if (enumLabel) {
-				return enumLabel->GetString();
+		} else if (typeInfo->Values.size() > 0) {
+			auto enumLabel = typeInfo->Values.find_by_value(index);
+			if (enumLabel != typeInfo->Values.end()) {
+				return enumLabel.Key().GetString();
 			}
 		}
 
@@ -74,7 +74,7 @@ namespace bg3se
 		}
 
 		if (typeInfo->Name == GFS.strConstantInt
-			|| typeInfo->Values.Count() > 0) {
+			|| typeInfo->Values.size() > 0) {
 			return IndexedProperties[attributeIndex];
 		} else {
 			return {};
@@ -142,7 +142,7 @@ namespace bg3se
 		return {};
 	}
 
-	std::optional<UUID> CRPGStats_Object::GetGuid(FixedString const& attributeName)
+	std::optional<Guid> CRPGStats_Object::GetGuid(FixedString const& attributeName)
 	{
 		int attributeIndex;
 		auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
@@ -248,7 +248,7 @@ namespace bg3se
 				IndexedProperties[attributeIndex] = poolIdx;
 			}
 		} else if (typeInfo->Name == GFS.strGuid) {
-			auto guid = ParseGuidString(value);
+			auto guid = Guid::ParseGuidString(value);
 			if (!guid) {
 				OsiError("Couldn't set " << Name << "." << attributeName << ": Value (\"" << value << "\") is not a valid GUID");
 				return false;
@@ -276,10 +276,10 @@ namespace bg3se
 			} else {
 				SetRollConditions(attributeName, {});
 			}
-		} else if (typeInfo->Values.Count() > 0) {
-			auto enumIndex = typeInfo->Values.Find(FixedString(value));
-			if (enumIndex != nullptr) {
-				IndexedProperties[attributeIndex] = *enumIndex;
+		} else if (typeInfo->Values.size() > 0) {
+			auto enumIndex = typeInfo->Values.find(FixedString(value));
+			if (enumIndex != typeInfo->Values.end()) {
+				IndexedProperties[attributeIndex] = enumIndex.Value();
 			} else {
 				OsiError("Couldn't set " << Name << "." << attributeName << ": Value (\"" << value << "\") is not a valid enum label");
 				return false;
@@ -303,8 +303,8 @@ namespace bg3se
 
 		if (typeInfo->Name == GFS.strConstantInt) {
 			IndexedProperties[attributeIndex] = value;
-		} else if (typeInfo->Values.Count() > 0) {
-			if (value >= 0 && value < (int)typeInfo->Values.Count()) {
+		} else if (typeInfo->Values.size() > 0) {
+			if (value >= 0 && value < (int)typeInfo->Values.size()) {
 				IndexedProperties[attributeIndex] = value;
 			} else {
 				OsiError("Couldn't set " << Name << "." << attributeName << ": Enum index (\"" << value << "\") out of range");
@@ -372,7 +372,7 @@ namespace bg3se
 		return true;
 	}
 
-	bool CRPGStats_Object::SetGuid(FixedString const& attributeName, std::optional<UUID> value)
+	bool CRPGStats_Object::SetGuid(FixedString const& attributeName, std::optional<Guid> value)
 	{
 		int attributeIndex;
 		auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);

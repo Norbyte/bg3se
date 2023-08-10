@@ -6,7 +6,7 @@
 #include <concurrent_queue.h>
 #include "LuaDebug.pb.h"
 #include <GameDefinitions/Osiris.h>
-#include <Lua/LuaDebugMessages.h>
+#include <Lua/Debugger/LuaDebugMessages.h>
 
 struct lua_Debug;
 

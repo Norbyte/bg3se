@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GameDefinitions/BaseTypes.h>
+#include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/Misc.h>
 #include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/EntitySystem.h>
@@ -26,7 +26,7 @@ namespace bg3se
 		uint32_t ToggleOffContext{ 0 };
 		uint32_t BoostContext{ 0 };
 		int BoostConditionsIndex{ -1 };
-		Array<UUID> Boosts;
+		Array<Guid> Boosts;
 	};
 
 

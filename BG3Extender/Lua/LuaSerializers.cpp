@@ -8,6 +8,7 @@
 #define P(name) s.VisitProperty(#name, v.name)
 #define PO(name, default) s.VisitOptionalProperty(#name, v.name, default)
 
+
 namespace bg3se::lua
 {
 	LuaSerializer& operator << (LuaSerializer& s, TranslatedString& v)
@@ -290,12 +291,12 @@ namespace bg3se::lua
 			}
 		} else {
 			if (v.RequirementId == RequirementType::Tag) {
-				auto param = getfield<UUID>(s.L, "Param");
+				auto param = checked_getfield<Guid>(s.L, "Param");
 				s.VisitProperty("Param", v.TagParam);
 				v.IntParam = -1;
 			} else {
 				s.VisitProperty("Param", v.IntParam);
-				v.TagParam = UUID{};
+				v.TagParam = Guid{};
 			}
 		}
 
@@ -329,7 +330,7 @@ namespace bg3se::lua
 			STDString name = std::to_string(gIndex++).c_str();
 			v.UniqueName = FixedString(name.c_str());
 
-			auto conditions = getfield<char const*>(s.L, "Condition");
+			auto conditions = checked_getfield<char const*>(s.L, "Condition");
 			if (conditions && *conditions) {
 				v.StatsConditionsId = stats->GetOrCreateConditions(conditions);
 			} else {
@@ -787,6 +788,12 @@ namespace bg3se::lua
 			}
 		}
 		s.EndObject();
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, StatsFunctorSet* v)
+	{
+		s << *v;
 		return s;
 	}
 

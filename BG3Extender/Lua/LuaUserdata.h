@@ -6,7 +6,8 @@
 #include <lauxlib.h>
 #include <optional>
 
-#include <GameDefinitions/BaseTypes.h>
+#include <GameDefinitions/Base/Base.h>
+#include <Lua/LuaHelpers.h>
 
 namespace bg3se::lua
 {
@@ -217,15 +218,8 @@ namespace bg3se::lua
 		}
 	}
 
-	template <class T, typename std::enable_if_t<std::is_base_of_v<Userdata<std::remove_pointer_t<T>>, std::remove_pointer_t<T>>, int>* = nullptr>
-	inline std::optional<T> safe_get(lua_State* L, int index)
-	{
-		return safe_get_userdata<std::remove_pointer_t<T>>(L, index);
-	}
-
-
-	template <class T, typename std::enable_if_t<std::is_base_of_v<Userdata<std::remove_pointer_t<T>>, std::remove_pointer_t<T>>, int>* = nullptr>
-	inline T checked_get(lua_State* L, int index)
+	template <class T>
+	inline typename std::enable_if_t<std::is_base_of_v<Userdata<std::remove_pointer_t<T>>, std::remove_pointer_t<T>>, T> do_get(lua_State* L, int index, Overload<T>)
 	{
 		return std::remove_pointer_t<T>::CheckUserData(L, index);
 	}

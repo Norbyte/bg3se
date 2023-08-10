@@ -65,13 +65,14 @@ std::unordered_map<ValueType, STDString> ConstructOsiTypeMap()
 {
 	std::unordered_map<ValueType, STDString> types;
 	types.insert(std::make_pair(ValueType::None, "STRING")); // "ANY" type passed from Osiris as string
-	types.insert(std::make_pair(ValueType::Integer, "INTEGER")); // "ANY" type passed from Osiris as string
-	types.insert(std::make_pair(ValueType::Integer64, "INTEGER64")); // "ANY" type passed from Osiris as string
-	types.insert(std::make_pair(ValueType::Real, "REAL")); // "ANY" type passed from Osiris as string
-	types.insert(std::make_pair(ValueType::String, "STRING")); // "ANY" type passed from Osiris as string
+	types.insert(std::make_pair(ValueType::Integer, "INTEGER"));
+	types.insert(std::make_pair(ValueType::Integer64, "INTEGER64"));
+	types.insert(std::make_pair(ValueType::Real, "REAL"));
+	types.insert(std::make_pair(ValueType::String, "STRING"));
+	types.insert(std::make_pair(ValueType::GuidString, "GUIDSTRING"));
 
 	auto const& globals = gExtender->GetServer().Osiris().GetGlobals();
-	(*globals.Types)->Iterate([&types](STDString const& key, OsirisTypeInfo const& type) {
+	(*globals.Types)->Iterate([&types](OsiString const& key, OsirisTypeInfo const& type) {
 		types.insert(std::make_pair((ValueType)type.TypeId, key));
 	});
 
@@ -397,16 +398,16 @@ void CustomFunctionManager::PreProcessStory(STDString const & original, STDStrin
 	ph1.reserve(original.size());
 	postProcessed.reserve(original.size());
 
-	std::size_t pos = 0;
+	STDString::size_type pos = 0;
 	while (pos < original.size()) {
 		auto next = original.find("/* [EXTENDER_ONLY]", pos);
-		if (next == std::string::npos) {
+		if (next == STDString::npos) {
 			ph1 += original.substr(pos);
 			break;
 		}
 
 		auto end = original.find("*/", next);
-		if (end == std::string::npos) {
+		if (end == STDString::npos) {
 			ph1 += original.substr(pos);
 			break;
 		}
@@ -419,13 +420,13 @@ void CustomFunctionManager::PreProcessStory(STDString const & original, STDStrin
 	pos = 0;
 	while (pos < ph1.size()) {
 		auto next = ph1.find("// [BEGIN_NO_EXTENDER]", pos);
-		if (next == std::string::npos) {
+		if (next == STDString::npos) {
 			postProcessed += ph1.substr(pos);
 			break;
 		}
 
 		auto end = ph1.find("// [END_NO_EXTENDER]", next);
-		if (end == std::string::npos) {
+		if (end == STDString::npos) {
 			postProcessed += ph1.substr(pos);
 			break;
 		}
@@ -445,15 +446,15 @@ void CustomFunctionManager::PreProcessStory(wchar_t const * path)
 		if (!f.good()) return;
 
 		f.seekg(0, std::ios::end);
-		original.resize(f.tellg());
+		original.resize((uint32_t)f.tellg());
 		f.seekg(0, std::ios::beg);
 		f.read(original.data(), original.size());
 	}
 
 	// Clear compile trace flags to avoid large compile traces
 	auto debugPos = original.find("option compile_trace\r\n");
-	if (debugPos != std::string::npos) {
-		for (std::size_t i = debugPos; i < debugPos + 20; i++) {
+	if (debugPos != STDString::npos) {
+		for (STDString::size_type i = debugPos; i < debugPos + 20; i++) {
 			original[i] = ' ';
 		}
 	}
@@ -479,12 +480,11 @@ CustomFunctionInjector::CustomFunctionInjector(OsirisWrappers & wrappers, Custom
 
 void CustomFunctionInjector::Initialize()
 {
-	using namespace std::placeholders;
-	wrappers_.GetFunctionMappings.SetPostHook(std::bind(&CustomFunctionInjector::OnAfterGetFunctionMappings, this, _1, _2, _3));
+	wrappers_.GetFunctionMappings.SetPostHook(&CustomFunctionInjector::OnAfterGetFunctionMappings, this);
 	wrappers_.Call.SetWrapper(&CustomFunctionInjector::StaticCallWrapper);
 	wrappers_.Query.SetWrapper(&CustomFunctionInjector::StaticQueryWrapper);
-	wrappers_.CreateFileW.SetPostHook(std::bind(&CustomFunctionInjector::OnCreateFile, this, _1, _2, _3, _4, _5, _6, _7, _8));
-	wrappers_.CloseHandle.SetPostHook(std::bind(&CustomFunctionInjector::OnCloseHandle, this, _1, _2));
+	wrappers_.CreateFileW.SetPostHook(&CustomFunctionInjector::OnCreateFile, this);
+	wrappers_.CloseHandle.SetPostHook(&CustomFunctionInjector::OnCloseHandle, this);
 }
 
 unsigned gCustomEventDepth{ 0 };
@@ -544,7 +544,7 @@ void CustomFunctionInjector::CreateOsirisSymbolMap(MappingInfo ** Mappings, uint
 
 	std::unordered_map<FunctionNameAndArity, uint32_t> symbolMap;
 	auto funcs = *gExtender->GetServer().Osiris().GetGlobals().Functions;
-	auto visit = [&symbolMap, this](STDString const & str, Function * func) {
+	auto visit = [&symbolMap, this](OsiString const & str, Function * func) {
 		OsiSymbolInfo symbol;
 		OsiFunctionToSymbolInfo(*func, symbol);
 

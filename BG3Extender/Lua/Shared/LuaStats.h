@@ -2,6 +2,7 @@
 
 #include <Lua/LuaHelpers.h>
 #include <lua/LuaBinding.h>
+#include <GameDefinitions/Stats/Functors.h>
 
 #include <mutex>
 #include <unordered_set>

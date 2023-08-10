@@ -8,8 +8,8 @@
 #include <Extender/Shared/StatLoadOrderHelper.h>
 #include <Extender/Shared/SavegameSerializer.h>
 #if !defined(OSI_NO_DEBUGGER)
-#include <Lua/LuaDebugger.h>
-#include <Lua/LuaDebugMessages.h>
+#include <Lua/Debugger/LuaDebugger.h>
+#include <Lua/Debugger/LuaDebugMessages.h>
 #endif
 #include <GameHooks/OsirisWrappers.h>
 #include <GameHooks/DataLibraries.h>

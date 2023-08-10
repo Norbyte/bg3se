@@ -2,10 +2,11 @@
 #include <Extender/ScriptExtender.h>
 #include <Lua/LuaBinding.h>
 #include <Lua/LuaSerializers.h>
-#include <Lua/Shared/LuaObjectProxy.inl>
-#include <Lua/Shared/LuaArrayProxy.inl>
-#include <Lua/Shared/LuaSetProxy.inl>
-#include <Lua/Shared/LuaMapProxy.inl>
+#include <Lua/Shared/Proxies/LuaPropertyMapHelpers.h>
+#include <Lua/Shared/Proxies/LuaObjectProxy.inl>
+#include <Lua/Shared/Proxies/LuaArrayProxy.inl>
+#include <Lua/Shared/Proxies/LuaSetProxy.inl>
+#include <Lua/Shared/Proxies/LuaMapProxy.inl>
 #include <Lua/Shared/LuaEvent.inl>
 #include <Lua/Shared/LuaCharacter.inl>
 #include <Lua/Shared/LuaItem.inl>

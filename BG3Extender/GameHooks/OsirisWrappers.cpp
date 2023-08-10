@@ -33,10 +33,7 @@ STATIC_HOOK(CloseHandle)
 
 
 OsirisWrappers::OsirisWrappers()
-{
-	using namespace std::placeholders;
-	RegisterDivFunctions.AddPreHook(std::bind(&OsirisWrappers::RegisterDIVFunctionsPreHook, this, _1, _2));
-}
+{}
 
 void OsirisWrappers::RegisterDIVFunctionsPreHook(void * Osiris, DivFunctions * Functions)
 {
@@ -99,7 +96,7 @@ void OsirisWrappers::Initialize()
 
 	RegisterDivFunctions.Wrap(OsirisModule, "?RegisterDIVFunctions@COsiris@@QEAAXPEAUTOsirisInitFunction@@@Z");
 	InitGame.Wrap(OsirisModule, "?InitGame@COsiris@@QEAA_NXZ");
-	DeleteAllData.Wrap(OsirisModule, "?DeleteAllData@COsiris@@QEAAX_N@Z");
+	DeleteAllData.Wrap(OsirisModule, "?DeleteAllData@COsiris@@IEAAX_N@Z");
 	GetFunctionMappings.Wrap(OsirisModule, "?GetFunctionMappings@COsiris@@QEAAXPEAPEAUMappingInfo@@PEAI@Z");
 	OpenLogFile.Wrap(OsirisModule, "?OpenLogFile@COsiris@@QEAA_NPEB_WH@Z");
 	CloseLogFile.Wrap(OsirisModule, "?CloseLogFile@COsiris@@QEAAXXZ");
@@ -235,7 +232,7 @@ void OsirisWrappers::FindOsirisGlobals(FARPROC CtorProc)
 	uint8_t * Addr = ResolveRealFunctionAddress((uint8_t *)CtorProc);
 
 	// Try to find pointers of Osiris globals
-	const unsigned NumGlobals = 8;
+	const unsigned NumGlobals = 9;
 	uint8_t * globals[NumGlobals];
 	unsigned foundGlobals = 0;
 	for (uint8_t * ptr = Addr; ptr < Addr + 0x500; ptr++)
@@ -259,12 +256,13 @@ void OsirisWrappers::FindOsirisGlobals(FARPROC CtorProc)
 
 	Globals.Variables = (VariableDb **)globals[0];
 	Globals.Types = (OsiTypeDb **)globals[1];
-	Globals.Functions = (FunctionDb **)globals[2];
-	Globals.Objects = (ObjectDb **)globals[3];
-	Globals.Goals = (GoalDb **)globals[4];
-	Globals.Adapters = (AdapterDb **)globals[5];
-	Globals.Databases = (DatabaseDb **)globals[6];
-	Globals.Nodes = (NodeDb **)globals[7];
+	Globals.Enums = (EnumDb**)globals[2];
+	Globals.Functions = (FunctionDb **)globals[3];
+	Globals.Objects = (ObjectDb **)globals[4];
+	Globals.Goals = (GoalDb **)globals[5];
+	Globals.Adapters = (AdapterDb **)globals[6];
+	Globals.Databases = (DatabaseDb **)globals[7];
+	Globals.Nodes = (NodeDb **)globals[8];
 
 #if 0
 	DEBUG("\tVariables = %p", Globals.Variables);
@@ -332,7 +330,7 @@ bool OsirisWrappers::ResolveNodeVMTsInternal()
 	std::set<NodeVMT *> VMTs;
 
 	for (unsigned i = 0; i < Db->Db.Size; i++) {
-		auto node = Db->Db.Start[i];
+		auto node = Db->Db.Elements[i];
 		auto vmt = *(NodeVMT **)node;
 		VMTs.insert(vmt);
 	}

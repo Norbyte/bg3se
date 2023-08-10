@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include <GameDefinitions/BaseTypes.h>
+#include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/Symbols.h>
 #include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/EntitySystem.h>
@@ -46,9 +46,9 @@ namespace bg3se
 	{
 		if (!guid) return nullptr;
 
-		auto component = Guids.Find(guid);
-		if (component) {
-			return *component;
+		auto component = Guids.find(guid);
+		if (component != Guids.end()) {
+			return component.Value();
 		} else {
 			return nullptr;
 		}
@@ -65,9 +65,9 @@ namespace bg3se
 			return nullptr;
 		}
 
-		auto object = InUseNetIds.Find((uint32_t)index);
-		if (object != nullptr) {
-			return *object;
+		auto object = InUseNetIds.find((uint32_t)index);
+		if (object != InUseNetIds.end()) {
+			return object.Value();
 		} else {
 			return nullptr;
 		}
@@ -86,8 +86,8 @@ namespace bg3se
 
 	ComponentPoolBase* EntityWorldBase::GetComponentPool(HandleTypeIndex handleType, bool logError)
 	{
-		auto componentIdx = HandleIndexToComponentIndexMap.Find((int32_t)handleType);
-		if (!componentIdx) {
+		auto componentIdx = HandleIndexToComponentIndexMap.find((int32_t)handleType);
+		if (!componentIdx == HandleIndexToComponentIndexMap.end()) {
 			if (logError) {
 				OsiError("No component type registered for handle type " << handleType << "!");
 			}
@@ -95,7 +95,7 @@ namespace bg3se
 			return nullptr;
 		}
 
-		return Components.Types[*componentIdx].Pool;
+		return Components.Types[componentIdx.Value()].Pool;
 	}
 
 	ComponentPoolBase* EntityWorldBase::GetComponentPool(ComponentTypeIndex componentType, bool logError)
@@ -297,15 +297,15 @@ namespace bg3se
 
 	ComponentHandle EntityWorldBase::GetEntityComponentHandle(EntityHandle entityHandle, HandleTypeIndex type, bool logError)
 	{
-		auto componentIndex = HandleIndexToComponentIndexMap.Find((int32_t)type);
-		if (!componentIndex) {
+		auto componentIndex = HandleIndexToComponentIndexMap.find((int32_t)type);
+		if (componentIndex == HandleIndexToComponentIndexMap.end()) {
 			if (logError) {
 				OsiError("No component index mapping registered for handle type " << (int32_t)type);
 			}
 			return {};
 		}
 
-		return GetEntityComponentHandle(entityHandle, ComponentTypeIndex(*componentIndex), logError);
+		return GetEntityComponentHandle(entityHandle, ComponentTypeIndex(componentIndex.Value()), logError);
 	}
 
 	void* EntityWorldBase::GetEntityComponent(EntityHandle entityHandle, ComponentTypeIndex type, bool logError)
@@ -468,11 +468,11 @@ namespace bg3se
 			std::sort(map.second.Indices.begin(), map.second.Indices.end(), std::greater<int32_t>());
 			DEBUG_IDX("\t" << map.first << ": ");
 			for (std::size_t i = 0; i < map.second.NumIndices - 1; i++) {
-				auto componentIdx = entityWorld->HandleIndexToComponentIndexMap.Find(map.second.Indices[i]);
-				if (componentIdx) {
+				auto componentIdx = entityWorld->HandleIndexToComponentIndexMap.find(map.second.Indices[i]);
+				if (componentIdx != entityWorld->HandleIndexToComponentIndexMap.end()) {
 					bool found{ false };
 					for (std::size_t j = i + 1; j < map.second.NumIndices; j++) {
-						if (map.second.Indices[j] == *componentIdx) {
+						if (map.second.Indices[j] == componentIdx.Value()) {
 							DEBUG_IDX(map.second.Indices[i] << " -> " << map.second.Indices[j]);
 							IndexMappings indexMapping{ map.second.Indices[i], map.second.Indices[j] };
 							auto componentName = SimplifyComponentName(map.first);
@@ -894,6 +894,7 @@ namespace bg3se
 
 	void ServerEntitySystemHelpers::Setup()
 	{
+		return;
 		UpdateComponentMappings();
 
 
@@ -934,6 +935,7 @@ namespace bg3se
 
 	void ClientEntitySystemHelpers::Setup()
 	{
+		return;
 		UpdateComponentMappings();
 
 		MapComponentIndices("ls::VisualComponent", ExtComponentType::Visual);

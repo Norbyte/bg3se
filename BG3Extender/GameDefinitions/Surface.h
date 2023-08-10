@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GameDefinitions/BaseTypes.h>
+#include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/EntitySystem.h>
 #include <GameDefinitions/Misc.h>
@@ -38,7 +38,7 @@ namespace bg3se::esv
 		EntityWorldHandle MyHandle;
 		SurfaceType SurfaceType;
 		uint8_t Flags;
-		UUID TeamId;
+		Guid TeamId;
 		EntityWorldHandle field_30;
 		EntityWorldHandle OwnerHandle;
 		float LifeTime;

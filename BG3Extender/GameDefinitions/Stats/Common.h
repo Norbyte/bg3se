@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GameDefinitions/BaseTypes.h>
+#include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/Enumerations.h>
 
 namespace bg3se
@@ -26,7 +26,7 @@ namespace bg3se
 		FixedString OriginatorPrototype;
 		uint8_t _Pad[4];
 		SpellSourceType SourceType;
-		UUID ProgressionSource;
+		Guid ProgressionSource;
 	};
 
 	struct SpellId : public HasObjectProxy
@@ -34,7 +34,7 @@ namespace bg3se
 		FixedString OriginatorPrototype;
 		uint8_t _Pad[4];
 		SpellSourceType SourceType;
-		UUID ProgressionSource;
+		Guid ProgressionSource;
 		FixedString Prototype;
 	};
 
@@ -85,14 +85,14 @@ namespace bg3se
 
 		void Add(FixedString const& name, T* elem)
 		{
-			NameHashMap.Insert(name, Primitives.Size);
+			NameHashMap.insert(name, Primitives.Size);
 			Primitives.Add(elem);
 			NextHandle++;
 		}
 
 		std::optional<int> FindIndex(char const * str) const
 		{
-			auto fs = ToFixedString(str);
+			FixedString fs{ str };
 			if (fs) {
 				return FindIndex(fs);
 			} else {
@@ -102,9 +102,9 @@ namespace bg3se
 
 		std::optional<int> FindIndex(FixedString const& str) const
 		{
-			auto ptr = NameHashMap.Find(str);
-			if (ptr != nullptr) {
-				return (int)*ptr;
+			auto ptr = NameHashMap.find(str);
+			if (ptr != NameHashMap.end()) {
+				return (int)ptr.Value();
 			} else {
 				return {};
 			}
@@ -131,9 +131,9 @@ namespace bg3se
 
 		T * Find(FixedString const& str) const
 		{
-			auto ptr = NameHashMap.Find(str);
-			if (ptr != nullptr) {
-				return Primitives.Buf[*ptr];
+			auto ptr = NameHashMap.find(str);
+			if (ptr != NameHashMap.end()) {
+				return Primitives.Buf[ptr.Value()];
 			} else {
 				return nullptr;
 			}
@@ -183,7 +183,7 @@ namespace bg3se
 	{
 		RequirementType RequirementId;
 		int IntParam;
-		UUID TagParam;
+		Guid TagParam;
 		bool Not;
 	};
 
@@ -224,7 +224,7 @@ namespace bg3se
 		std::optional<int> GetIntScaled(FixedString const& attributeName, int level);
 		std::optional<float> GetFloat(FixedString const& attributeName);
 		std::optional<int64_t> GetInt64(FixedString const& attributeName);
-		std::optional<UUID> GetGuid(FixedString const& attributeName);
+		std::optional<Guid> GetGuid(FixedString const& attributeName);
 		std::optional<ObjectSet<FixedString>> GetFlags(FixedString const& attributeName);
 		std::optional<Array<StatsFunctorInfo>*> GetStatsFunctors(FixedString const& attributeName);
 		std::optional<Array<RollConditionInfo>*> GetRollConditions(FixedString const& attributeName);
@@ -232,7 +232,7 @@ namespace bg3se
 		bool SetInt(FixedString const& attributeName, int32_t value);
 		bool SetFloat(FixedString const& attributeName, std::optional<float> value);
 		bool SetInt64(FixedString const& attributeName, int64_t value);
-		bool SetGuid(FixedString const& attributeName, std::optional<UUID> value);
+		bool SetGuid(FixedString const& attributeName, std::optional<Guid> value);
 		bool SetFlags(FixedString const& attributeName, ObjectSet<STDString> const& value);
 		bool SetStatsFunctors(FixedString const& attributeName, std::optional<Array<StatsFunctorInfo>> const& value);
 		bool SetRollConditions(FixedString const& attributeName, std::optional<Array<RollConditionInfo>> const& value);

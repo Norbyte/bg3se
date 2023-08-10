@@ -16,7 +16,7 @@ namespace bg3se::lua
 
 		/*StackCheck _(L, 1);
 		auto pos = self->Get(L)->WorldPos;
-		auto distance = checked_get<float>(L, 2);
+		auto distance = get<float>(L, 2);
 
 		esv::lua::GetCharactersGeneric(L, FixedString{}, [pos, distance](esv::Character* c) {
 			return abs(glm::length(pos - c->WorldPos)) < distance;
@@ -62,7 +62,7 @@ namespace bg3se::lua
 	int ObjectProxy<eoc::ItemDefinition>::Index(lua_State* L)
 	{
 		StackCheck _(L, 1);
-		auto prop = checked_get<FixedString>(L, 2);
+		auto prop = get<FixedString>(L, 2);
 		if (prop == GFS.strResetProgression) {
 			lua_pushcfunction(L, &ItemDefinitionResetProgression);
 			return 1;
@@ -84,7 +84,7 @@ namespace bg3se::lua
 	int ObjectProxy<eoc::ItemDefinition>::NewIndex(lua_State* L)
 	{
 		StackCheck _(L, 0);
-		auto prop = checked_get<FixedString>(L, 2);
+		auto prop = get<FixedString>(L, 2);
 		if (prop == GFS.strGenerationBoosts) {
 			lua_pushvalue(L, 3);
 			LuaRead(L, Get(L)->GenerationBoosts);
@@ -127,7 +127,7 @@ namespace bg3se::esv::lua
 	{
 		StackCheck _(L, 1);
 		if (lua_type(L, 2) == LUA_TSTRING) {
-			auto func = checked_get<FixedString>(L, 2);
+			auto func = get<FixedString>(L, 2);
 			if (func == GFS.strConstruct) {
 				lua_pushcfunction(L, &ItemConstructorConstructItem);
 				return 1;
@@ -137,7 +137,7 @@ namespace bg3se::esv::lua
 			push(L, nullptr);
 			return 1;
 		} else {
-			auto idx = checked_get<int>(L, 2);
+			auto idx = get<int>(L, 2);
 			if (idx < 1 || idx > (int)definition_.Size) {
 				return luaL_error(L, "Clone set only has %d elements", definition_.Size);
 			}
@@ -164,7 +164,7 @@ namespace bg3se::esv::lua
 		switch (lua_type(L, 1)) {
 		case LUA_TUSERDATA:
 		{
-			auto handle = checked_get<EntityProxy*>(L, 1)->Handle();
+			auto handle = get<EntityProxy*>(L, 1)->Handle();
 			item = gExtender->GetServer().GetEntityHelpers().GetEntityComponent<esv::Item>(handle);
 			break;
 		}
@@ -215,7 +215,7 @@ namespace bg3se::esv::lua
 		switch (lua_type(L, 1)) {
 		case LUA_TLIGHTUSERDATA:
 		{
-			auto handle = checked_get<ComponentHandle>(L, 1);
+			auto handle = get<ComponentHandle>(L, 1);
 			if (handle) {
 				switch ((ObjectType)handle.GetType()) {
 				case ObjectType::ServerCharacter:
@@ -310,7 +310,7 @@ namespace bg3se::esv::lua
 		StackCheck _(L, 1);
 		auto type = lua_type(L, 1);
 		if (type == LUA_TSTRING) {
-			auto templateGuid = checked_get<char const*>(L, 1);
+			auto templateGuid = get<char const*>(L, 1);
 			auto constructor = ItemConstructor::New(L);
 			if (!script::CreateItemDefinition(templateGuid, constructor->Get())) {
 				lua_pop(L, 1);
@@ -320,7 +320,7 @@ namespace bg3se::esv::lua
 			auto item = ObjectProxy<esv::Item>::CheckedGet(L, 1);
 			bool recursive{ false };
 			if (lua_gettop(L) > 1) {
-				recursive = checked_get<bool>(L, 2);
+				recursive = get<bool>(L, 2);
 			}
 
 			auto constructor = ItemConstructor::New(L);

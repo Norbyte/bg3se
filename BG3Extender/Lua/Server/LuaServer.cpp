@@ -82,12 +82,12 @@ namespace bg3se::esv::lua
 	int ExecuteSkillPropertiesOnTarget(lua_State* L)
 	{
 		StackCheck _(L, 0);
-		auto skillId = checked_get<FixedString>(L, 1);
+		auto skillId = get<FixedString>(L, 1);
 		auto attacker = GetCharacter(L, 2);
 		auto target = GetCharacter(L, 3);
-		auto position = checked_get<glm::vec3>(L, 4);
-		auto propertyContext = checked_get<CRPGStats_Object_PropertyContext>(L, 5);
-		auto isFromItem = checked_get<bool>(L, 6);
+		auto position = get<glm::vec3>(L, 4);
+		auto propertyContext = get<CRPGStats_Object_PropertyContext>(L, 5);
+		auto isFromItem = get<bool>(L, 6);
 
 		SkillPrototype* skillProto{ nullptr };
 		auto skillProtoMgr = GetStaticSymbols().eoc__SkillPrototypeManager;
@@ -128,12 +128,12 @@ namespace bg3se::esv::lua
 	int ExecuteSkillPropertiesOnPosition(lua_State* L)
 	{
 		StackCheck _(L, 0);
-		auto skillId = checked_get<FixedString>(L, 1);
+		auto skillId = get<FixedString>(L, 1);
 		auto attacker = GetCharacter(L, 2);
-		auto position = checked_get<glm::vec3>(L, 3);
-		auto radius = checked_get<float>(L, 4);
-		auto propertyContext = checked_get<CRPGStats_Object_PropertyContext>(L, 5);
-		auto isFromItem = checked_get<bool>(L, 6);
+		auto position = get<glm::vec3>(L, 3);
+		auto radius = get<float>(L, 4);
+		auto propertyContext = get<CRPGStats_Object_PropertyContext>(L, 5);
+		auto isFromItem = get<bool>(L, 6);
 
 		SkillPrototype* skillProto{ nullptr };
 		auto skillProtoMgr = GetStaticSymbols().eoc__SkillPrototypeManager;
@@ -196,7 +196,7 @@ namespace bg3se::esv::lua
 
 	int XDumpBoosts(lua_State* L)
 	{
-		auto s = checked_get<FixedString>(L, 1);
+		auto s = get<FixedString>(L, 1);
 
 		auto& helpers = gExtender->GetServer().GetEntityHelpers();
 		auto character = helpers.GetComponent<esv::Character>(s);
@@ -226,7 +226,7 @@ namespace bg3se::esv::lua
 
 	int XGetResource(lua_State* L)
 	{
-		auto s = checked_get<FixedString>(L, 1);
+		auto s = get<FixedString>(L, 1);
 
 		auto rsrc = GetStaticSymbols().ResourceDefns;
 		if (rsrc && *rsrc) {
@@ -239,12 +239,12 @@ namespace bg3se::esv::lua
 
 	int XGetTag(lua_State* L)
 	{
-		auto s = checked_get<UUID>(L, 1);
+		auto s = get<Guid>(L, 1);
 
 		auto rsrc = gExtender->GetServer().GetEntityHelpers().GetResourceManager<TagResource>();
 		if (rsrc) {
 
-			auto tag = reinterpret_cast<TagResource*>((*rsrc)->Resources.Values);
+			auto tag = reinterpret_cast<TagResource*>((*rsrc)->Resources.Values.begin().get());
 			std::cout << tag->Name.GetString() << std::endl;
 			std::cout << tag->Icon.GetString() << std::endl;
 
@@ -261,7 +261,7 @@ namespace bg3se::esv::lua
 
 	int XGetByGuid(lua_State* L)
 	{
-		auto s = checked_get<FixedString>(L, 1);
+		auto s = get<FixedString>(L, 1);
 		auto& types = GetEoCServer()->EntityWorld->Components.Types;
 		for (unsigned i = 0; i < types.Size(); i++) {
 			auto pool = types[i].Pool;
@@ -337,7 +337,7 @@ namespace bg3se::esv::lua
 
 	int XGetByHandle(lua_State* L)
 	{
-		/*auto s = checked_get<EntityProxy*>(L, 1)->Handle();
+		/*auto s = get<EntityProxy*>(L, 1)->Handle();
 		auto& types = GetEoCServer()->EntityWorld->Components.Types;
 		for (auto i = 0; i < types.Size; i++) {
 			auto pool = types[i].Pool;
@@ -358,14 +358,14 @@ namespace bg3se::esv::lua
 		auto const& functors = (*stats)->StatsFunctors;
 		DealDamageFunctor* dd{ nullptr };
 
-		functors.Iterate([&dd](FixedString const& key, StatsFunctorSet* funcs) {
+		for (auto const& kv : functors) {
 			DEBUG("asdf");
-			for (auto const& fun : funcs->FunctorList) {
+			for (auto const& fun : kv.Value->FunctorList) {
 				if (fun->TypeId == StatsFunctorActionId::DealDamage && fun->Cast<DealDamageFunctor>()) {
 					dd = *fun->Cast<DealDamageFunctor>();
 				}
 			}
-		});
+		}
 
 		if (dd) {
 			ObjectProxy::MakeRef<DealDamageFunctor>(L, dd, GetCurrentLifetime());
@@ -488,10 +488,6 @@ namespace bg3se::esv::lua
 		LoadScript(baseLib, "BuiltinLibrary.lua");
 		auto serverLib = GetBuiltinLibrary(IDR_LUA_BUILTIN_LIBRARY_SERVER);
 		LoadScript(serverLib, "BuiltinLibraryServer.lua");
-		auto gameMathLib = GetBuiltinLibrary(IDR_LUA_GAME_MATH);
-		LoadScript(gameMathLib, "Game.Math.lua");
-		auto gameTooltipLib = GetBuiltinLibrary(IDR_LUA_GAME_TOOLTIP);
-		LoadScript(gameTooltipLib, "Game.Tooltip.lua");
 
 		lua_getglobal(L, "Ext"); // stack: Ext
 		stats::StatsExtraDataProxy::New(L); // stack: Ext, "ExtraData", ExtraDataProxy
@@ -1165,7 +1161,7 @@ namespace bg3se::esv
 	{
 		auto server = GetEoCServer();
 		if (server) {
-			return server->ModManagerServer;
+			return &server->ModManager;
 		} else {
 			return nullptr;
 		}

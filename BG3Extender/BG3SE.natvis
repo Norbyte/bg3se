@@ -5,6 +5,18 @@
     <DisplayString Condition="Index != 0xffffffff">{((bg3se::GlobalStringTable::StringEntry*)((char*)(*bg3se::gStaticSymbols->ls__gGlobalStringTable)->SubTables[Index &amp; 0xF].PoolPtr[(Index >> 4) &amp; 0xFFFF] + (*bg3se::gStaticSymbols->ls__gGlobalStringTable)->SubTables[Index &amp; 0xF].EntrySize * (Index >> 20)))->Str,na}</DisplayString>
   </Type>
   
+  <Type Name="bg3se::StaticArray&lt;*&gt;">
+    <Intrinsic Name="size" Expression="size_" />
+    <DisplayString>{{ size={size_} }}</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">size_</Item>
+      <ArrayItems>
+        <Size>size_</Size>
+        <ValuePointer>buf_</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+  
   <Type Name="bg3se::Array&lt;*&gt;">
     <Intrinsic Name="size" Expression="size_" />
     <Intrinsic Name="capacity" Expression="capacity_" />
@@ -19,13 +31,11 @@
     </Expand>
   </Type>
   
-  <Type Name="bg3se::VirtualMultiHashSet&lt;*&gt;">
+  <Type Name="bg3se::MultiHashSet&lt;*&gt;">
     <Intrinsic Name="size" Expression="Keys.size_" />
-    <Intrinsic Name="capacity" Expression="Keys.capacity_" />
     <DisplayString>{{ size={Keys.size_} }}</DisplayString>
     <Expand>
       <Item Name="[size]" ExcludeView="simple">Keys.size_</Item>
-      <Item Name="[capacity]" ExcludeView="simple">Keys.capacity_</Item>
       <ArrayItems>
         <Size>Keys.size_</Size>
         <ValuePointer>Keys.buf_</ValuePointer>
@@ -33,13 +43,11 @@
     </Expand>
   </Type>
 
-  <Type Name="bg3se::VirtualMultiHashMap&lt;*&gt;">
+  <Type Name="bg3se::MultiHashMap&lt;*&gt;">
     <Intrinsic Name="size" Expression="Keys.size_" />
-    <Intrinsic Name="capacity" Expression="Keys.capacity_" />
     <DisplayString>{{ size={Keys.size_} }}</DisplayString>
     <Expand>
       <Item Name="[size]" ExcludeView="simple">Keys.size_</Item>
-      <Item Name="[capacity]" ExcludeView="simple">Keys.capacity_</Item>
       <Item Name="[Keys]" ExcludeView="simple">Keys</Item>
       <Item Name="[Values]" ExcludeView="simple">Values</Item>
     </Expand>

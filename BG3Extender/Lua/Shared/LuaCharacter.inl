@@ -143,8 +143,8 @@ namespace bg3se::lua
 	{
 		return luaL_error(L, "Not implemented yet!");
 
-		/*auto self = checked_get<ObjectProxy<CDivinityStats_Character>*>(L, 1);
-		auto slot = checked_get<ItemSlot>(L, 2);
+		/*auto self = get<ObjectProxy<CDivinityStats_Character>*>(L, 1);
+		auto slot = get<ItemSlot>(L, 2);
 
 		auto item = self->Get(L)->GetItemBySlot(slot, true);
 		if (item != nullptr) {

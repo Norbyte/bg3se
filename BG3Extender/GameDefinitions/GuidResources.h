@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GameDefinitions/BaseTypes.h>
+#include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/EntitySystem.h>
 
@@ -9,13 +9,13 @@ namespace bg3se
 	struct GuidResourceDefinition : public HasObjectProxy
 	{
 		void* VMT;
-		UUID ResourceUUID;
+		Guid ResourceUUID;
 	};
 
 	struct GuidResourceDefinitionManagerBase : ProtectedGameObject<GuidResourceDefinitionManagerBase>
 	{
 		void* VMT;
-		VirtualMultiHashMap<UUID, Array<UUID>> ResourceGuidsByMod;
+		VirtualMultiHashMap<Guid, Array<Guid>> ResourceGuidsByMod;
 		FixedString field_60;
 		FixedString LSXResourceNodeName;
 	};
@@ -23,7 +23,7 @@ namespace bg3se
 	template <class T>
 	struct GuidResourceDefinitionManager : public GuidResourceDefinitionManagerBase
 	{
-		VirtualMultiHashMap<UUID, T> Resources;
+		VirtualMultiHashMap<Guid, T> Resources;
 		STDString Path;
 		RefMap<FixedString, void*> field_E0;
 	};
@@ -61,11 +61,11 @@ namespace bg3se
 	{
 		static constexpr auto ResourceManagerType = ExtResourceManagerType::ClassDescription;
 
-		UUID ParentGuid;
+		Guid ParentGuid;
 		FixedString Name;
 		FixedString DisplayName;
 		FixedString Description;
-		UUID ProgressionTableUUID;
+		Guid ProgressionTableUUID;
 		uint8_t MagicType; // FIXME - map to enumeration
 		uint8_t SoundMagicType; // FIXME - map to enumeration
 		uint8_t PrimaryAbility; // FIXME - map to enumeration
@@ -73,7 +73,7 @@ namespace bg3se
 		bool MustPrepareSpells;
 		bool CanLearnSpells;
 		bool HasGod;
-		Array<UUID> Tags;
+		Array<Guid> Tags;
 		FixedString ClassEquipment;
 		FixedString CharacterCreationPose;
 		uint8_t LearningStrategy; // FIXME - map to enumeration
@@ -101,7 +101,7 @@ namespace bg3se
 		static constexpr auto ResourceManagerType = ExtResourceManagerType::Faction;
 
 		FixedString Faction;
-		UUID ParentGuid;
+		Guid ParentGuid;
 	};
 
 
@@ -112,18 +112,18 @@ namespace bg3se
 		FixedString Name;
 		FixedString DisplayName;
 		FixedString Description;
-		UUID ParentGuid;
-		Array<UUID> Tags;
-		UUID ProgressionTableUUID;
+		Guid ParentGuid;
+		Array<Guid> Tags;
+		Guid ProgressionTableUUID;
 		FixedString RaceSoundSwitch;
-		Array<UUID> HairColors;
-		Array<UUID> SkinColors;
-		Array<UUID> EyeColors;
-		Array<UUID> TattooColors;
-		Array<UUID> MakeupColors;
-		Array<UUID> Visuals;
-		Array<UUID> Gods;
-		Array<UUID> ExcludedGods;
+		Array<Guid> HairColors;
+		Array<Guid> SkinColors;
+		Array<Guid> EyeColors;
+		Array<Guid> TattooColors;
+		Array<Guid> MakeupColors;
+		Array<Guid> Visuals;
+		Array<Guid> Gods;
+		Array<Guid> ExcludedGods;
 	};
 
 
@@ -136,23 +136,23 @@ namespace bg3se
 		FixedString DisplayName;
 		FixedString Description;
 		uint8_t Gender;
-		UUID RaceUUID;
-		UUID SubRaceUUID;
-		UUID BackgroundUUID;
-		UUID GodUUID;
-		UUID ClassUUID;
-		UUID SubClassUUID;
+		Guid RaceUUID;
+		Guid SubRaceUUID;
+		Guid BackgroundUUID;
+		Guid GodUUID;
+		Guid ClassUUID;
+		Guid SubClassUUID;
 		bool LockClass;
-		UUID GlobalTemplate;
+		Guid GlobalTemplate;
 		STDString Passives;
-		Array<UUID> field_C8;
-		Array<UUID> Tags;
+		Array<Guid> field_C8;
+		Array<Guid> Tags;
 		uint32_t Flags;
 		STDString Overview;
 		STDString CloseUpA;
 		STDString CloseUpB;
 		FixedString ClassEquipmentOverride;
-		UUID VoiceTableUUID;
+		Guid VoiceTableUUID;
 	};
 
 
@@ -166,7 +166,7 @@ namespace bg3se
 		__int64 field_40;
 		__int64 field_48;
 		__int64 field_50;
-		Array<UUID> Tags;
+		Array<Guid> Tags;
 	};
 
 
@@ -177,7 +177,7 @@ namespace bg3se
 		FixedString Name;
 		FixedString DisplayName;
 		FixedString Description;
-		Array<UUID> Tags;
+		Array<Guid> Tags;
 	};
 
 
@@ -185,23 +185,23 @@ namespace bg3se
 	{
 		static constexpr auto ResourceManagerType = ExtResourceManagerType::Progression;
 
-		UUID TableUUID;
+		Guid TableUUID;
 		STDString Name;
-		Array<UUID> SubClasses;
-		Array<UUID> field_60;
+		Array<Guid> SubClasses;
+		Array<Guid> field_60;
 		STDString PassivesAdded;
-		Array<UUID> field_98;
+		Array<Guid> field_98;
 		STDString PassivesRemoved;
-		Array<UUID> field_D0;
+		Array<Guid> field_D0;
 		STDString Boosts;
 		uint8_t ProgressionType; // FIXME - map to enumeration
 		uint8_t Level;
 		bool AllowImprovement;
-		Array<UUID> SelectAbilities;
-		Array<UUID> SelectSkills;
-		Array<UUID> SelectSpells;
-		Array<UUID> SelectPassives;
-		Array<UUID> AddSpells;
+		Array<Guid> SelectAbilities;
+		Array<Guid> SelectSkills;
+		Array<Guid> SelectSpells;
+		Array<Guid> SelectPassives;
+		Array<Guid> AddSpells;
 	};
 
 
@@ -215,8 +215,8 @@ namespace bg3se
 		FixedString ExactMatch;
 		FixedString Type;
 		FixedString ParamMatch;
-		UUID ProgressionId;
-		UUID ProgressionTableId;
+		Guid ProgressionId;
+		Guid ProgressionTableId;
 		FixedString SelectorId;
 		FixedString PassivePrototype;
 	};
@@ -229,9 +229,9 @@ namespace bg3se
 		FixedString Name;
 		FixedString Type;
 		int Priority;
-		Array<UUID> ConditionFlags;
-		Array<UUID> ResultFlags;
-		UUID DialogUUID;
+		Array<Guid> ConditionFlags;
+		Array<Guid> ResultFlags;
+		Guid DialogUUID;
 	};
 
 
@@ -242,7 +242,7 @@ namespace bg3se
 		STDString Name;
 		TranslatedString field_38;
 		TranslatedString field_48;
-		Array<UUID> ActionResourceDefinitions;
+		Array<Guid> ActionResourceDefinitions;
 	};
 
 
@@ -293,19 +293,19 @@ namespace bg3se
 
 		FixedString Name;
 		STDString Requirements;
-		Array<UUID> field_40;
+		Array<Guid> field_40;
 		STDString PassivesAdded;
-		Array<UUID> field_78;
+		Array<Guid> field_78;
 		STDString PassivesRemoved;
-		Array<UUID> field_B0;
+		Array<Guid> field_B0;
 		STDString Boosts;
-		Array<UUID> field_E8;
+		Array<Guid> field_E8;
 		bool CanBeTakenMultipleTimes;
-		Array<UUID> SelectAbilities;
-		Array<UUID> SelectSkills;
-		Array<UUID> SelectSpells;
-		Array<UUID> SelectPassives;
-		Array<UUID> AddSpells;
+		Array<Guid> SelectAbilities;
+		Array<Guid> SelectSkills;
+		Array<Guid> SelectSpells;
+		Array<Guid> SelectPassives;
+		Array<Guid> AddSpells;
 	};
 
 
@@ -319,7 +319,7 @@ namespace bg3se
 	    FixedString ExactMatch;
 	    FixedString Type;
 	    FixedString ParamMatch;
-	    UUID FeatId;
+	    Guid FeatId;
 	    FixedString SelectorId;
 	    FixedString PassivePrototype;
 	};

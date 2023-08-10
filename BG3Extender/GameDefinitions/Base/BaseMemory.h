@@ -5,16 +5,11 @@
 
 namespace bg3se
 {
-	typedef void* (*EoCAllocFunc)(std::size_t size, int unused, int unused2, uint64_t align);
-	typedef void (*EoCFreeFunc)(void* ptr, int unused1, int unused2);
-
-	typedef void* (*CrtAllocFunc)(std::size_t size);
-	typedef void (*CrtFreeFunc)(void* ptr);
+	using ls__GlobalAllocator__AllocProc = void* (std::size_t size, int pool, int unused2, uint64_t alignment);
+	using ls__GlobalAllocator__FreeProc = void (void* ptr);
 
 	void* GameAllocRaw(std::size_t size);
 	void GameFree(void*);
-	void* CrtAllocRaw(std::size_t size);
-	void CrtFree(void*);
 
 	template <class T, class ...Args>
 	T* GameAlloc(Args... args)
@@ -49,10 +44,33 @@ namespace bg3se
 	{
 	public:
 		using value_type = T;
+		using size_type = uint32_t;
+		using difference_type = int64_t;
 
 		inline GameAllocator() noexcept {}
 		template <class U>
 		inline GameAllocator(GameAllocator<U> const&) noexcept {}
+
+		inline T* allocate(std::size_t cnt)
+		{
+			return reinterpret_cast<T*>(GameAllocRaw(cnt * sizeof(T)));
+		}
+
+		inline void deallocate(T* p, std::size_t cnt) noexcept
+		{
+			GameFree(p);
+		}
+	};
+
+	template <class T>
+	class GameStdAllocator
+	{
+	public:
+		using value_type = T;
+
+		inline GameStdAllocator() noexcept {}
+		template <class U>
+		inline GameStdAllocator(GameStdAllocator<U> const&) noexcept {}
 
 		inline T* allocate(std::size_t cnt)
 		{
@@ -100,22 +118,14 @@ namespace bg3se
 
 	// Identifies types that can be allocated by us (using the game allocator)
 	template <class>
-	std::false_type AllocatableImpl(...);
+	std::false_type IsAllocatable(...);
 
 #define MARK_ALLOCATABLE(ty) template <class T> \
-		std::true_type AllocatableImpl(T*)
+	std::true_type IsAllocatable(T*)
 
-	template <class T>
-	struct IsAllocatable : decltype(AllocatableImpl<T>(nullptr))
-	{};
 
-#if defined(OSI_EOCAPP)
 	template <class T>
 	using Vector = std::vector<T, GameAllocator<T>>;
-#else
-	template <class T>
-	using Vector = std::vector<T, MSVCAllocator<T>>;
-#endif
 
 
 	struct GameMemoryAllocator
@@ -159,35 +169,6 @@ namespace bg3se
 		static void FreeArray(T* ptr)
 		{
 			return GameFree(ptr);
-		}
-	};
-
-	struct MSVCMemoryAllocator
-	{
-		static void* Alloc(std::size_t size);
-
-		template <class T>
-		static T* New()
-		{
-			return (T*)CrtAllocRaw(sizeof(T));
-		}
-
-		template <class T>
-		static T* New(std::size_t count)
-		{
-			return (T*)CrtAllocRaw(sizeof(T) * count);
-		}
-
-		template <class T>
-		static void Free(T* ptr)
-		{
-			CrtFree(ptr);
-		}
-
-		template <class T>
-		static void FreeArray(T* ptr)
-		{
-			CrtFree(ptr);
 		}
 	};
 }

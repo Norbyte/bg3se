@@ -10,176 +10,11 @@
 #include <GameDefinitions/ActionMachine.h>
 #include <GameDefinitions/TurnManager.h>*/
 #include <GameDefinitions/Symbols.h>
+#include <GameHooks/SymbolMapper.h>
 #include <GameHooks/Wrappers.h>
 #include <optional>
 
-namespace tinyxml2 {
-	class XMLElement;
-}
-
 namespace bg3se {
-
-
-	class WriteAnchor
-	{
-	public:
-		inline WriteAnchor(uint8_t const * ptr, std::size_t size)
-			: ptr_(const_cast<uint8_t *>(ptr)),
-			size_(size)
-		{
-			BOOL succeeded = VirtualProtect((LPVOID)ptr_, size_, PAGE_READWRITE, &oldProtect_);
-			if (!succeeded) Fail("VirtualProtect() failed");
-		}
-
-		inline ~WriteAnchor()
-		{
-			BOOL succeeded = VirtualProtect((LPVOID)ptr_, size_, oldProtect_, &oldProtect_);
-			if (!succeeded) Fail("VirtualProtect() failed");
-		}
-
-		inline uint8_t * ptr()
-		{
-			return ptr_;
-		}
-
-	private:
-		uint8_t * ptr_;
-		std::size_t size_;
-		DWORD oldProtect_;
-	};
-
-	struct Pattern
-	{
-		bool FromString(std::string_view s);
-		void FromRaw(const char * s);
-		void Scan(uint8_t const * start, size_t length, std::function<std::optional<bool> (uint8_t const *)> callback, bool multiple = true) const;
-
-	private:
-		struct PatternByte
-		{
-			uint8_t pattern;
-			uint8_t mask;
-		};
-
-		std::vector<PatternByte> pattern_;
-
-		bool MatchPattern(uint8_t const * start) const;
-		void ScanPrefix1(uint8_t const * start, uint8_t const * end, std::function<std::optional<bool> (uint8_t const *)> callback, bool multiple) const;
-		void ScanPrefix2(uint8_t const * start, uint8_t const * end, std::function<std::optional<bool> (uint8_t const *)> callback, bool multiple) const;
-		void ScanPrefix4(uint8_t const * start, uint8_t const * end, std::function<std::optional<bool> (uint8_t const *)> callback, bool multiple) const;
-	};
-
-	uint8_t const * AsmResolveInstructionRef(uint8_t const * code);
-
-	struct SymbolMappingCondition
-	{
-		enum MatchType
-		{
-			kNone,
-			kString, // Match string
-			kFixedString, // Match a FixedString reference
-			kFixedStringIndirect // Match a pointer to a FixedString reference
-		};
-
-		MatchType Type{ kNone };
-		int32_t Offset{ 0 };
-		std::string String;
-	};
-
-	enum class SymbolMappingResult
-	{
-		Success,
-		Fail,
-		TryNext
-	};
-
-	struct StaticSymbolRef
-	{
-		std::ptrdiff_t Offset;
-		void ** TargetPtr;
-
-		inline StaticSymbolRef()
-			: Offset(-1), TargetPtr(nullptr)
-		{}
-
-		inline StaticSymbolRef(void ** ptr)
-			: Offset(-1), TargetPtr(ptr)
-		{}
-
-		explicit inline StaticSymbolRef(std::ptrdiff_t offset)
-			: Offset(offset), TargetPtr(nullptr)
-		{}
-
-		inline void ** Get() const
-		{
-			if (Offset != -1) {
-				return (void **)((uint8_t *)&GetStaticSymbols() + Offset);
-			} else {
-				return TargetPtr;
-			}
-		}
-	};
-
-	#define STATIC_SYM(name) StaticSymbolRef(offsetof(StaticSymbols, name))
-	#define CHAR_GETTER_SYM(name) StaticSymbolRef(offsetof(StaticSymbols, CharStatsGetters) + offsetof(CharacterStatsGetters, name))
-
-	struct SymbolMappingTarget
-	{
-		typedef SymbolMappingResult (* HandlerProc)(uint8_t const *);
-
-		enum ActionType
-		{
-			kNone,
-			kAbsolute, // Save absolute value (p + Offset)
-			kIndirect // Save AsmResolveIndirectRef(p + Offset)
-		};
-
-		std::string Name;
-		ActionType Type{ kNone };
-		int32_t Offset{ 0 };
-		StaticSymbolRef Target;
-		HandlerProc Handler{ nullptr };
-		std::string NextSymbol;
-		int32_t NextSymbolSeekSize{ 0 };
-	};
-
-	enum class SymbolVersion
-	{
-		None,
-		Below,
-		AboveOrEqual
-	};
-
-	struct SymbolMappingData
-	{
-		struct VersionRequirement
-		{
-			SymbolVersion Type{ SymbolVersion::None };
-			uint32_t Revision{ 0 };
-		};
-
-		enum MatchScope
-		{
-			kBinary, // Full binary
-			kText, // .text segment of binary
-			kCustom // Custom scope (specified as scan parameter)
-		};
-
-		enum Flags : uint32_t
-		{
-			kCritical = 1 << 0, // Mapping failure causes a critical error
-			kDeferred = 1 << 1, // Perform mapping after fixed string pool was loaded
-			kAllowFail = 1 << 2, // Allow mapping to fail without throwing an error
-		};
-
-		std::string Name;
-		MatchScope Scope{ SymbolMappingData::kText };
-		uint32_t Flag{ 0 };
-		Pattern Pattern;
-		std::vector<SymbolMappingCondition> Conditions;
-		std::vector<SymbolMappingTarget> Targets;
-		VersionRequirement Version;
-	};
 
 	struct GameVersionInfo
 	{
@@ -187,36 +22,26 @@ namespace bg3se {
 
 		inline bool IsSupported() const
 		{
-			// We need v4.1.99 or later for game
-			return (Major == 4 && Minor > 1)
-				|| (Major == 4 && Minor == 1 && Revision >= 99);
+			// We need v4.36 or later for game
+			return (Major == 4 && Minor >= 36);
 		}
 	};
 
 	class LibraryManager
 	{
 	public:
+		LibraryManager();
 		bool FindLibraries(uint32_t gameRevision);
 		bool PostStartupFindLibraries();
+		void ApplyCodePatches();
 		bool GetGameVersion(GameVersionInfo & version);
 
 		void ShowStartupError(STDString const & msg, bool wait, bool exitGame);
 		void ShowStartupError(STDString const & msg, bool exitGame);
 		void ShowStartupMessage(STDString const & msg, bool exitGame);
 
-		bool EvaluateSymbolCondition(SymbolMappingCondition const & cond, uint8_t const * match);
-		SymbolMappingResult ExecSymbolMappingAction(SymbolMappingTarget const & target, uint8_t const * match);
-		bool MapSymbol(SymbolMappingData const & mapping, uint8_t const * customStart, std::size_t customSize);
-
-		inline uint8_t const * GetModuleStart() const
-		{
-			return moduleStart_;
-		}
-
-		inline size_t GetModuleSize() const
-		{
-			return moduleSize_;
-		}
+		bool ApplyCodePatch(std::string const& mapping);
+		bool UndoCodePatch(std::string const& mapping);
 
 		inline bool CriticalInitializationFailed() const
 		{
@@ -228,36 +53,33 @@ namespace bg3se {
 			return InitFailed;
 		}
 
+		inline SymbolMapper& Mapper()
+		{
+			return symbolMapper_;
+		}
+
 	private:
-
-		void LoadMappings();
-		void LoadMappingsNode(tinyxml2::XMLElement* mappings);
-		bool LoadMapping(tinyxml2::XMLElement* mapping, SymbolMappingData& sym);
-		bool LoadTarget(tinyxml2::XMLElement* ele, SymbolMappingTarget& target);
-		bool LoadCondition(tinyxml2::XMLElement* ele, SymbolMappingCondition& condition);
-		void MapAllSymbols(bool deferred);
-		void FindTextSegment();
-
-		bool FindBG3(uint8_t const * & start, size_t & size);
+		void PreRegisterLibraries(SymbolMappingLoader& loader);
+		void RegisterLibraries(SymbolMapper& mapper);
+		void RegisterSymbols();
+		bool BindApp();
+		bool FindBG3();
 		void FindSymbolNameRegistrations();
+		HMODULE GetAppHandle();
 
-		bool IsConstStringRef(uint8_t const * ref, char const * str) const;
-		bool IsFixedStringRef(uint8_t const * ref, char const * str) const;
-		bool IsIndirectFixedStringRef(uint8_t const * ref, char const * str) const;
 		bool CanShowError();
 		bool CanShowMessages();
 
-		std::unordered_map<std::string, SymbolMappingData> mappings_;
-		std::unordered_map<std::string, int> staticSymbolOffsets_;
+		bool ApplyPatch(SymbolMappings::Patch& patch);
+		bool UndoPatch(SymbolMappings::Patch& patch);
 
-		uint8_t const * moduleStart_{ nullptr };
-		size_t moduleSize_{ 0 };
-		uint8_t const * moduleTextStart_{ nullptr };
-		size_t moduleTextSize_{ 0 };
-		uint32_t gameRevision_;
+		SymbolMappings mappings_;
+		SymbolMapper symbolMapper_;
+		SymbolMapper::ModuleInfo appModule_;
 
 		bool InitFailed{ false };
 		bool CriticalInitFailed{ false };
 		bool PostLoaded{ false };
+		bool EnabledCustomStats{ false };
 	};
 }

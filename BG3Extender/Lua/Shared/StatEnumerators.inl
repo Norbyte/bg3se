@@ -106,7 +106,7 @@ namespace bg3se::lua
 		StackCheck _(L, 1);
 		FixedString statType;
 		if (lua_gettop(L) >= 1 && !lua_isnil(L, 1)) {
-			statType = checked_get<FixedString>(L, 1);
+			statType = get<FixedString>(L, 1);
 		}
 
 		lua_newtable(L);
@@ -140,10 +140,10 @@ namespace bg3se::lua
 	int GetStatsLoadedBefore(lua_State* L)
 	{
 		StackCheck _(L, 1);
-		auto modId = checked_get<FixedString>(L, 1);
+		auto modId = get<FixedString>(L, 1);
 		FixedString statType;
 		if (lua_gettop(L) >= 2 && !lua_isnil(L, 2)) {
-			statType = checked_get<FixedString>(L, 2);
+			statType = get<FixedString>(L, 2);
 		}
 
 		lua_newtable(L);

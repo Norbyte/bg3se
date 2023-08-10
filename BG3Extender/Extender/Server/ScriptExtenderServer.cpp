@@ -4,7 +4,6 @@
 
 #define STATIC_HOOK(name) decltype(bg3se::esv::ScriptExtender::name) * decltype(bg3se::esv::ScriptExtender::name)::gHook;
 STATIC_HOOK(gameStateWorkerStart_)
-STATIC_HOOK(gameStateChangedEvent_)
 STATIC_HOOK(gameStateMachineUpdate_)
 
 
@@ -47,10 +46,6 @@ void ScriptExtender::Initialize()
 		DetourTransactionBegin();
 		DetourUpdateThread(GetCurrentThread());
 
-		if (lib.esv__GameStateEventManager__ExecuteGameStateChangedEvent != nullptr) {
-			gameStateChangedEvent_.Wrap(lib.esv__GameStateEventManager__ExecuteGameStateChangedEvent);
-		}
-
 		if (lib.esv__GameStateThreaded__GameStateWorker__DoWork != nullptr) {
 			gameStateWorkerStart_.Wrap(lib.esv__GameStateThreaded__GameStateWorker__DoWork);
 		}
@@ -61,11 +56,8 @@ void ScriptExtender::Initialize()
 
 		DetourTransactionCommit();
 
-		using namespace std::placeholders;
-		gameStateChangedEvent_.SetPostHook(std::bind(&ScriptExtender::OnGameStateChanged, this, _1, _2, _3));
-		gameStateWorkerStart_.AddPreHook(std::bind(&ScriptExtender::OnGameStateWorkerStart, this, _1));
-		gameStateWorkerStart_.AddPostHook(std::bind(&ScriptExtender::OnGameStateWorkerExit, this, _1));
-		gameStateMachineUpdate_.AddPostHook(std::bind(&ScriptExtender::OnUpdate, this, _1, _2));
+		gameStateWorkerStart_.SetWrapper(&ScriptExtender::GameStateWorkerWrapper, this);
+		gameStateMachineUpdate_.SetPostHook(&ScriptExtender::OnUpdate, this);
 	}
 }
 
@@ -142,13 +134,10 @@ void ScriptExtender::OnGameStateChanged(void * self, GameState fromState, GameSt
 	}
 }
 
-void ScriptExtender::OnGameStateWorkerStart(void * self)
+void ScriptExtender::GameStateWorkerWrapper(void (* wrapped)(void *), void* self)
 {
 	AddThread(GetCurrentThreadId());
-}
-
-void ScriptExtender::OnGameStateWorkerExit(void* self)
-{
+	wrapped(self);
 	RemoveThread(GetCurrentThreadId());
 }
 

@@ -71,7 +71,7 @@ bool SaveExternalFile(std::string_view path, PathRootType root, std::string_view
 	if (!absolutePath) return false;
 
 	auto dirEnd = absolutePath->find_last_of('/');
-	if (dirEnd == std::string::npos) return false;
+	if (dirEnd == STDWString::npos) return false;
 
 	auto storageDir = absolutePath->substr(0, dirEnd);
 	BOOL created = CreateDirectoryW(storageDir.c_str(), NULL);

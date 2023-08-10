@@ -4,19 +4,29 @@
 
 namespace bg3se
 {
-	template <class T>
-	struct BitmaskInfoBase
-	{
-		static std::vector<FixedString> Labels;
-		static Map<FixedString, T> Values;
+	// Type used to store enumeration and bitmask values internally.
+	// Must be a superset of all enum/bitmask types used ingame.
+	using EnumUnderlyingType = uint64_t;
 
-		static void Init(unsigned sizeHint)
+	template <class T>
+	struct BitmaskInfoStore
+	{
+		Vector<FixedString> Labels;
+		Map<FixedString, T> Values;
+		T AllowedFlags{ 0 };
+		FixedString EnumName;
+		FixedString LuaName;
+		int RegistryIndex{ -1 };
+
+		BitmaskInfoStore(unsigned sizeHint, FixedString const& enumName, FixedString const& luaName)
 		{
 			Labels.reserve(sizeHint);
-			Values.Init(GetNearestLowerPrime(sizeHint));
+			Values.ResizeHashtable(GetNearestLowerPrime(sizeHint));
+			EnumName = enumName;
+			LuaName = luaName;
 		}
 
-		static void __declspec(noinline) Add(T val, char const* label)
+		void __declspec(noinline) Add(T val, char const* label)
 		{
 			DWORD index;
 			if (_BitScanForward64(&index, (uint64_t)val)) {
@@ -28,32 +38,27 @@ namespace bg3se
 			if (Labels.size() <= index) {
 				Labels.resize(index + 1);
 			}
-
+			
 			FixedString fs(label);
 			Labels[index] = fs;
-			Values.Insert(fs, val);
+			Values.insert(std::move(fs), val);
+			AllowedFlags |= val;
 		}
 
-		static std::optional<T> Find(FixedString const& name)
+		std::optional<T> Find(FixedString const& name) const
 		{
-			auto val = Values.Find(name);
+			auto val = Values.find(name);
 			if (!val) {
 				return {};
 			} else {
-				return *val;
+				return val.Value();
 			}
 		}
 
-		static std::optional<T> Find(char const* name)
-		{
-			// TODO - remove when all refs are gone
-			return Find(FixedString(name));
-		}
-
-		static FixedString Find(T val)
+		FixedString Find(T val) const
 		{
 			DWORD index;
-			if (_BitScanForward64(&index, (uint64_t)val)) {
+			if (_BitScanForward64(&index, val)) {
 				index++;
 			} else {
 				index = 0;
@@ -68,18 +73,55 @@ namespace bg3se
 	};
 
 	template <class T>
-	struct EnumInfoBase
+	struct BitmaskInfoBase
 	{
-		static std::vector<FixedString> Labels;
-		static Map<FixedString, T> Values;
+		using UnderlyingType = EnumUnderlyingType;
+		static BitmaskInfoStore<UnderlyingType>* Store;
 
-		static void Init(unsigned sizeHint)
+		static void Init(unsigned sizeHint, char const* enumName, char const* luaName)
 		{
-			Labels.reserve(sizeHint);
-			Values.Init(GetNearestLowerPrime(sizeHint));
+			Store = GameAlloc<BitmaskInfoStore<UnderlyingType>>(sizeHint, FixedString(enumName), FixedString(luaName));
 		}
 
-		static void __declspec(noinline) Add(T val, char const* label)
+		static void Add(T val, char const* label)
+		{
+			Store->Add((UnderlyingType)val, label);
+		}
+
+		static std::optional<T> Find(FixedString const& name)
+		{
+			auto val = Store->Find(name);
+			if (!val) {
+				return {};
+			} else {
+				return (T)*val;
+			}
+		}
+
+		static FixedString Find(T val)
+		{
+			return Store->Find((UnderlyingType)val);
+		}
+	};
+
+	template <class T>
+	struct EnumInfoStore
+	{
+		Vector<FixedString> Labels;
+		Map<FixedString, T> Values;
+		FixedString EnumName;
+		FixedString LuaName;
+		int RegistryIndex{ -1 };
+
+		EnumInfoStore(unsigned sizeHint, FixedString const& enumName, FixedString const& luaName)
+		{
+			Labels.reserve(sizeHint);
+			Values.ResizeHashtable(GetNearestLowerPrime(sizeHint));
+			EnumName = enumName;
+			LuaName = luaName;
+		}
+
+		void __declspec(noinline) Add(T val, char const* label)
 		{
 			FixedString fs(label);
 			auto index = static_cast<uint32_t>(val);
@@ -89,33 +131,58 @@ namespace bg3se
 			}
 
 			Labels[index] = fs;
-			Values.Insert(fs, val);
+			Values.insert(std::move(fs), val);
+		}
+
+		std::optional<T> Find(FixedString const& name) const
+		{
+			auto val = Values.find(name);
+			if (val != Values.end()) {
+				return (T)val.Value();
+			} else {
+				return {};
+			}
+		}
+
+		FixedString Find(T val) const
+		{
+			if (val >= Labels.size()) {
+				return FixedString{};
+			}
+
+			return Labels[(uint32_t)val];
+		}
+	};
+
+	template <class T>
+	struct EnumInfoBase
+	{
+		using UnderlyingType = EnumUnderlyingType;
+		static EnumInfoStore<UnderlyingType>* Store;
+
+		static void Init(unsigned sizeHint, char const* enumName, char const* luaName)
+		{
+			Store = GameAlloc<EnumInfoStore<UnderlyingType>>(sizeHint, FixedString(enumName), FixedString(luaName));
+		}
+
+		static void Add(T val, char const* label)
+		{
+			Store->Add((UnderlyingType)val, label);
 		}
 
 		static std::optional<T> Find(FixedString const& name)
 		{
-			auto val = Values.Find(name);
-			if (!val) {
-				return {};
+			auto val = Store->Find(name);
+			if (val) {
+				return (T)*val;
 			} else {
-				return *val;
+				return {};
 			}
-		}
-
-		static std::optional<T> Find(char const* name)
-		{
-			// TODO - remove when all refs are gone
-			return Find(FixedString(name));
 		}
 
 		static FixedString Find(T val)
 		{
-			auto v = (uint32_t)val;
-			if (v >= Labels.size()) {
-				return FixedString{};
-			}
-
-			return Labels[v];
+			return Store->Find((UnderlyingType)val);
 		}
 	};
 
@@ -125,6 +192,26 @@ namespace bg3se
 	struct EnumInfo
 	{
 		static_assert(EnumInfoFakeDep<T>::value, "EnumInfo not implemented for this type!");
+	};
+
+	struct EnumRegistry
+	{
+		static EnumRegistry& Get();
+
+		Map<FixedString, EnumInfoStore<EnumUnderlyingType>*> EnumsByName;
+		ObjectSet<EnumInfoStore<EnumUnderlyingType>*> EnumsById;
+
+		void Register(EnumInfoStore<EnumUnderlyingType>* ei);
+	};
+
+	struct BitmaskRegistry
+	{
+		static BitmaskRegistry& Get();
+
+		Map<FixedString, BitmaskInfoStore<EnumUnderlyingType>*> BitfieldsByName;
+		ObjectSet<BitmaskInfoStore<EnumUnderlyingType>*> BitfieldsById;
+
+		void Register(BitmaskInfoStore<EnumUnderlyingType>* ei);
 	};
 
 	#define MAKE_ENUM_INFO(T, size) \
@@ -141,34 +228,40 @@ namespace bg3se
 	constexpr bool IsBitmaskV = IsBitmask<T>::value;
 
 	template <class T>
-	typename std::enable_if_t<IsBitmaskV<T>, T> operator | (T lhs, T rhs)
+	constexpr typename std::enable_if_t<IsBitmaskV<T>, T> operator | (T lhs, T rhs)
 	{
 		using underlying = std::underlying_type_t<T>;
 		return static_cast<T>(static_cast<underlying>(lhs) | static_cast<underlying>(rhs));
 	}
 
 	template <class T>
-	typename std::enable_if_t<IsBitmaskV<T>, T> operator & (T lhs, T rhs)
+	constexpr typename std::enable_if_t<IsBitmaskV<T>, T> operator & (T lhs, T rhs)
 	{
 		using underlying = std::underlying_type_t<T>;
 		return static_cast<T>(static_cast<underlying>(lhs) & static_cast<underlying>(rhs));
 	}
 
 	template <class T>
-	typename std::enable_if_t<IsBitmaskV<T>, T> operator ^ (T lhs, T rhs)
+	constexpr typename std::enable_if_t<IsBitmaskV<T>, T> operator ^ (T lhs, T rhs)
 	{
 		using underlying = std::underlying_type_t<T>;
 		return static_cast<T>(static_cast<underlying>(lhs) ^ static_cast<underlying>(rhs));
 	}
 
 	template <class T>
-	typename std::enable_if_t<IsBitmaskV<T>, T> operator ~ (T v)
+	constexpr typename std::enable_if_t<IsBitmaskV<T>, T> operator ~ (T v)
 	{
 		return static_cast<T>(~static_cast<std::underlying_type_t<T>>(v));
 	}
 
 	template <class T>
-	typename std::enable_if_t<IsBitmaskV<T>, T> operator |= (T& lhs, T rhs)
+	constexpr typename std::enable_if_t<IsBitmaskV<T>, bool> operator ! (T v)
+	{
+		return !static_cast<std::underlying_type_t<T>>(v);
+	}
+
+	template <class T>
+	constexpr typename std::enable_if_t<IsBitmaskV<T>, T> operator |= (T& lhs, T rhs)
 	{
 		using underlying = std::underlying_type_t<T>;
 		lhs = static_cast<T>(static_cast<underlying>(lhs) | static_cast<underlying>(rhs));
@@ -176,7 +269,7 @@ namespace bg3se
 	}
 
 	template <class T>
-	typename std::enable_if_t<IsBitmaskV<T>, T> operator &= (T& lhs, T rhs)
+	constexpr typename std::enable_if_t<IsBitmaskV<T>, T> operator &= (T& lhs, T rhs)
 	{
 		using underlying = std::underlying_type_t<T>;
 		lhs = static_cast<T>(static_cast<underlying>(lhs) & static_cast<underlying>(rhs));
@@ -184,7 +277,7 @@ namespace bg3se
 	}
 
 	template <class T>
-	typename std::enable_if_t<IsBitmaskV<T>, T> operator ^= (T& lhs, T rhs)
+	constexpr typename std::enable_if_t<IsBitmaskV<T>, T> operator ^= (T& lhs, T rhs)
 	{
 		using underlying = std::underlying_type_t<T>;
 		lhs = static_cast<T>(static_cast<underlying>(lhs) ^ static_cast<underlying>(rhs));
@@ -193,9 +286,9 @@ namespace bg3se
 
 	void InitializeEnumerations();
 
-#define BEGIN_BITMASK_NS(NS, T, type) namespace NS { \
+#define BEGIN_BITMASK_NS(NS, T, luaName, type) namespace NS { \
 	enum class T : type {
-#define BEGIN_ENUM_NS(NS, T, type) namespace NS { \
+#define BEGIN_ENUM_NS(NS, T, luaName, type) namespace NS { \
 	enum class T : type {
 #define BEGIN_BITMASK(T, type) enum class T : type {
 #define BEGIN_ENUM(T, type) enum class T : type {
@@ -214,14 +307,14 @@ namespace bg3se
 #undef END_ENUM
 
 
-#define BEGIN_BITMASK_NS(NS, T, type) \
+#define BEGIN_BITMASK_NS(NS, T, luaName, type) \
 	template<> struct IsBitmask<NS::T> { \
 		static const bool value = true; \
 	}; \
 	template <> struct EnumInfo<NS::T> : public BitmaskInfoBase<NS::T> { \
 		static constexpr char const * Name = #T; \
 	};
-#define BEGIN_ENUM_NS(NS, T, type) \
+#define BEGIN_ENUM_NS(NS, T, luaName, type) \
 	template <> struct EnumInfo<NS::T> : public EnumInfoBase<NS::T> { \
 		static constexpr char const* Name = #T; \
 	};

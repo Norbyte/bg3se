@@ -26,6 +26,7 @@ public:
 	void Initialize();
 	void PostStartup();
 	void Shutdown();
+	void OnGameStateChanged(void* self, GameState fromState, GameState toState);
 
 	inline bool HasExtensionState() const
 	{
@@ -54,9 +55,9 @@ public:
 
 	// HACK - we need to expose this so it can be added to the CrashReporter whitelist
 	enum class GameStateWorkerStartTag {};
-	enum class GameStateMachcineUpdateTag {};
-	HookableFunction<GameStateWorkerStartTag, void(void*)> gameStateWorkerStart_;
-	HookableFunction<GameStateMachcineUpdateTag, void(void*, GameTime*)> gameStateMachineUpdate_;
+	enum class GameStateMachineUpdateTag {};
+	WrappableFunction<GameStateWorkerStartTag, void(void*)> gameStateWorkerStart_;
+	WrappableFunction<GameStateMachineUpdateTag, void(void*, GameTime*)> gameStateMachineUpdate_;
 
 private:
 	OsirisExtender osiris_;
@@ -64,16 +65,11 @@ private:
 	bool extensionLoaded_{ false };
 	ServerEntitySystemHelpers entityHelpers_;
 
-	enum class GameStateChangedEventTag {};
-	PostHookableFunction<GameStateChangedEventTag, void(void*, GameState, GameState)> gameStateChangedEvent_;
-
 	void OnBaseModuleLoaded(void * self);
 	/*void OnModuleLoadStarted(TranslatedStringRepository * self);
 	void OnStatsLoadStarted(RPGStats* mgr);
 	void OnStatsLoadFinished(RPGStats* mgr);*/
-	void OnGameStateChanged(void * self, GameState fromState, GameState toState);
-	void OnGameStateWorkerStart(void * self);
-	void OnGameStateWorkerExit(void* self);
+	void GameStateWorkerWrapper(void (* wrapped)(void*), void * self);
 	void OnUpdate(void* self, GameTime* time);
 };
 

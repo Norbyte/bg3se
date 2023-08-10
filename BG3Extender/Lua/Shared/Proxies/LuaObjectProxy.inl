@@ -1,4 +1,4 @@
-#include <Lua/Shared/LuaObjectProxy.h>
+#include <Lua/Shared/Proxies/LuaObjectProxy.h>
 #include <GameDefinitions/EntitySystem.h>
 
 namespace bg3se::lua
@@ -44,7 +44,7 @@ namespace bg3se::lua
 			return 1;
 		}
 
-		auto prop = checked_get<FixedString>(L, 2);
+		auto prop = get<FixedString>(L, 2);
 		if (!impl->GetProperty(L, prop)) {
 			push(L, nullptr);
 		}
@@ -61,7 +61,7 @@ namespace bg3se::lua
 			return 0;
 		}
 
-		auto prop = checked_get<FixedString>(L, 2);
+		auto prop = get<FixedString>(L, 2);
 		impl->SetProperty(L, prop, 3);
 		return 0;
 	}
@@ -77,7 +77,7 @@ namespace bg3se::lua
 		if (lua_type(L, 2) == LUA_TNIL) {
 			return impl->Next(L, FixedString{});
 		} else {
-			auto key = checked_get<FixedString>(L, 2);
+			auto key = get<FixedString>(L, 2);
 			return impl->Next(L, key);
 		}
 	}
@@ -107,7 +107,7 @@ namespace bg3se::lua
 	{
 		uint32_t qword{ 0 };
 		if (lua_gettop(L) > 1) {
-			qword = checked_get<uint32_t>(L, 2);
+			qword = get<uint32_t>(L, 2);
 		}
 
 		auto helpers = gExtender->GetCurrentExtensionState()->GetLua()->GetEntitySystemHelpers();
@@ -143,11 +143,11 @@ namespace bg3se::lua
 
 	int ComponentSetReplicationFlag(lua_State* L, BaseComponent* self)
 	{
-		auto flags = checked_get<uint64_t>(L, 2);
+		auto flags = get<uint64_t>(L, 2);
 
 		uint32_t qword{ 0 };
 		if (lua_gettop(L) > 2) {
-			qword = checked_get<uint32_t>(L, 3);
+			qword = get<uint32_t>(L, 3);
 		}
 
 		ComponentSetReplicationFlag(self, qword, flags);

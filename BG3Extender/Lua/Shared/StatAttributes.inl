@@ -15,7 +15,7 @@ namespace bg3se::lua::stats
 		auto self = StatsProxy::CheckUserData(L, 1);
 		bool persist{ true };
 		if (lua_gettop(L) >= 2) {
-			persist = checked_get<bool>(L, 2);
+			persist = get<bool>(L, 2);
 		}
 
 		auto stats = GetStaticSymbols().GetStats();
@@ -38,7 +38,7 @@ namespace bg3se::lua::stats
 	int StatsProxy::SetPersistence(lua_State* L)
 	{
 		auto self = StatsProxy::CheckUserData(L, 1);
-		bool persist = checked_get<bool>(L, 2);
+		bool persist = get<bool>(L, 2);
 
 		auto object = self->Get();
 

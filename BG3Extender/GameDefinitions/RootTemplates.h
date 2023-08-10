@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GameDefinitions/BaseTypes.h>
+#include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/Enumerations.h>
 
 namespace bg3se
@@ -86,7 +86,7 @@ namespace bg3se
         OverrideableProperty<FixedString> LoopSound;
         OverrideableProperty<FixedString> SoundInitEvent;
         OverrideableProperty<int16_t> SoundAttenuation;
-        OverrideableProperty<UUID> HLOD;
+        OverrideableProperty<Guid> HLOD;
         OverrideableProperty<uint8_t> ShootThroughType;
         OverrideableProperty<bool> CanShineThrough;
     }; 
@@ -96,14 +96,14 @@ namespace bg3se
     {
         void* VMT;
         OverrideableProperty<FixedString> Archetype;
-        OverrideableProperty<UUID> Alignment;
+        OverrideableProperty<Guid> Alignment;
         OverrideableProperty<bool> CanFight;
         OverrideableProperty<bool> CanJoinCombat;
         OverrideableProperty<FixedString> CombatGroupID;
         OverrideableProperty<STDString> CombatName;
         OverrideableProperty<bool> IsBoss;
         OverrideableProperty<bool> StayInAiHints;
-        OverrideableProperty<UUID> AiHint;
+        OverrideableProperty<Guid> AiHint;
         OverrideableProperty<bool> IsInspector;
         OverrideableProperty<bool> Unknown;
         OverrideableProperty<float> StartCombatRange;
@@ -119,14 +119,14 @@ namespace bg3se
         OverrideableProperty<FixedString> Stats;
         OverrideableProperty<FixedString> SpellSet;
         OverrideableProperty<FixedString> Equipment;
-        OverrideableProperty<ObjectSet<UUID>> EquipmentTypes;
+        OverrideableProperty<ObjectSet<Guid>> EquipmentTypes;
         OverrideableProperty<ObjectSet<FixedString>> Treasures;
         OverrideableProperty<ObjectSet<FixedString>> TradeTreasures;
         OverrideableProperty<FixedString> LightID;
         OverrideableProperty<FixedString> ActiveCharacterLightID;
         OverrideableProperty<FixedString> BloodType;
         OverrideableProperty<FixedString> DefaultDialog;
-        VirtualMultiHashSet<UUID>* SpeakerGroupList;
+        VirtualMultiHashSet<Guid>* SpeakerGroupList;
         OverrideableProperty<STDString> GeneratePortrait;
         OverrideableProperty<float> LadderAttachOffset;
         OverrideableProperty<float> LadderLoopSpeed;
@@ -142,7 +142,7 @@ namespace bg3se
         OverrideableProperty<bool> HardcoreOnly;
         OverrideableProperty<bool> NotHardcore;
         OverrideableProperty<bool> JumpUpLadders;
-        OverrideableProperty<UUID> EquipmentRace;
+        OverrideableProperty<Guid> EquipmentRace;
         OverrideableProperty<ObjectSet<void*>> OnDeathActions;
         OverrideableProperty<float> DeathRaycastMinLength;
         OverrideableProperty<float> DeathRaycastMaxLength;
@@ -206,7 +206,7 @@ namespace bg3se
         OverrideableProperty<uint8_t> LightChannel;
         OverrideableProperty<uint8_t> AliveInventoryType;
         OverrideableProperty<uint8_t> InventoryType;
-        OverrideableProperty<UUID> Race;
+        OverrideableProperty<Guid> Race;
         OverrideableProperty<TranslatedString> Title;
         OverrideableProperty<FixedString> AnimationSetResourceID;
         OverrideableProperty<bool> HasPlayerApprovalRating;
@@ -307,8 +307,8 @@ namespace bg3se
         OverrideableProperty<uint8_t> InventoryType;
         OverrideableProperty<TranslatedString> Description;
         OverrideableProperty<TranslatedString> UnknownDescription;
-        VirtualMultiHashSet<UUID>* SpeakerGroupList;
-        VirtualMultiHashSet<UUID>* InteractionFilterList;
+        VirtualMultiHashSet<Guid>* SpeakerGroupList;
+        VirtualMultiHashSet<Guid>* InteractionFilterList;
         OverrideableProperty<uint8_t> InteractionFilterType;
         OverrideableProperty<FixedString> ActivationGroupId;
         OverrideableProperty<int32_t> Race;
@@ -322,7 +322,7 @@ namespace bg3se
         OverrideableProperty<bool> AllowSummonTeleport;
         OverrideableProperty<bool> IsPortalProhibitedToPlayers;
         OverrideableProperty<uint8_t> LightChannel;
-        OverrideableProperty<UUID> EquipmentTypeID;
+        OverrideableProperty<Guid> EquipmentTypeID;
         bool SomeVersionFlag;
         OverrideableProperty<ObjectSet<FixedString>> AttachedRoomTriggerList;
     };

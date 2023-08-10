@@ -100,7 +100,7 @@ namespace bg3se::lua::stats
 	int UpdateTreasureCategory(lua_State* L)
 	{
 		StackCheck _(L);
-		auto name = checked_get<FixedString>(L, 1);
+		auto name = get<FixedString>(L, 1);
 		luaL_checktype(L, 2, LUA_TTABLE);
 
 		auto stats = GetStaticSymbols().GetStats();
@@ -138,7 +138,7 @@ namespace bg3se::lua::stats
 	{
 		StackCheck _(L, 1);
 		auto statName = luaL_checkstring(L, 1);
-		auto statType = checked_get<FixedString>(L, 2);
+		auto statType = get<FixedString>(L, 2);
 
 		std::optional<int> level;
 		if (lua_gettop(L) >= 3 && !lua_isnil(L, 3)) {
@@ -198,7 +198,7 @@ namespace bg3se::lua::stats
 		obj->Level = copyFromObject->Level;
 		obj->AIFlags = copyFromObject->AIFlags;
 
-		for (size_t i = 0; i < obj->IndexedProperties.size(); i++) {
+		for (uint32_t i = 0; i < obj->IndexedProperties.size(); i++) {
 			obj->IndexedProperties[i] = copyFromObject->IndexedProperties[i];
 		}
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GameDefinitions/BaseTypes.h>
+#include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/EntitySystem.h>
 #include <synchapi.h>
@@ -13,7 +13,7 @@ namespace bg3se
 		Path SourceFile;
 		FixedString PackageName;
 		FixedString ModName;
-		FixedString UUID;
+		FixedString Guid;
 		VirtualArray<FixedString> Tags;
 		STDString Name;
 		bool IsLocalized;

@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Lua/LuaDebugMessages.h"
+#include <Lua/Debugger/LuaDebugMessages.h>
 #include <Extender/ScriptExtender.h>
 #include <lstate.h>
 #include <sstream>
@@ -395,10 +395,6 @@ namespace bg3se::lua::dbg
 			resourceId = IDR_LUA_BUILTIN_LIBRARY_CLIENT;
 		} else if (req.name() == "BuiltinLibraryServer.lua") {
 			resourceId = IDR_LUA_BUILTIN_LIBRARY_SERVER;
-		} else if (req.name() == "Game.Math.lua") {
-			resourceId = IDR_LUA_GAME_MATH;
-		} else if (req.name() == "Game.Tooltip.lua") {
-			resourceId = IDR_LUA_GAME_TOOLTIP;
 		}
 
 		if (resourceId) {

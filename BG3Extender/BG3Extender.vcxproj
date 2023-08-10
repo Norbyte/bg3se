@@ -21,13 +21,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Game Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -56,12 +56,12 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>GOOGLE_PROTOBUF_NO_RTTI;_DEBUG;_WINDOWS;_USRDLL;OSI_EOCAPP;OSIINTERFACE_EXPORTS;_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_ITERATOR_DEBUG_LEVEL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_SILENCE_CXX20_IS_POD_DEPRECATION_WARNING;_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS;GOOGLE_PROTOBUF_NO_RTTI;_DEBUG;_WINDOWS;_USRDLL;OSI_EOCAPP;OSIINTERFACE_EXPORTS;_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_ITERATOR_DEBUG_LEVEL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)\External\protobuf\include;$(SolutionDir)\External\glm;$(SolutionDir)\External\Detours\include;$(SolutionDir)\External\lua-5.3.6\src;$(SolutionDir)\External\jsoncpp-master\include;$(ProjectDir)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <DisableSpecificWarnings>4251</DisableSpecificWarnings>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <SupportJustMyCode>false</SupportJustMyCode>
@@ -78,9 +78,9 @@
 rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\steamapps\common\Baldurs Gate 3\Data\"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>$(SolutionDir)\External\protobuf\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Osiris\Debugger Osiris\Debugger\osidebug.proto
-$(SolutionDir)\External\protobuf\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Lua Lua\LuaDebug.proto
-$(SolutionDir)\External\protobuf\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Extender\Shared Extender\Shared\ScriptExtensions.proto</Command>
+      <Command>rem $(SolutionDir)\External\protobuf\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Osiris\Debugger Osiris\Debugger\osidebug.proto
+rem $(SolutionDir)\External\protobuf\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Lua\Debugger Lua\Debugger\LuaDebug.proto
+rem $(SolutionDir)\External\protobuf\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Extender\Shared Extender\Shared\ScriptExtensions.proto</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Game Release|x64'">
@@ -90,12 +90,12 @@ $(SolutionDir)\External\protobuf\tools\protobuf\protoc --cpp_out=$(SolutionDir)\
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;OSI_EOCAPP;OSIINTERFACE_EXPORTS;OSI_EXTENSION_BUILD;_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_SILENCE_CXX20_IS_POD_DEPRECATION_WARNING;_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS;NDEBUG;_WINDOWS;_USRDLL;OSI_EOCAPP;OSIINTERFACE_EXPORTS;OSI_EXTENSION_BUILD;_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(SolutionDir)\External\protobuf\include;$(SolutionDir)\External\glm;$(SolutionDir)\External\Detours\include;$(SolutionDir)\External\lua-5.3.6\src;$(SolutionDir)\External\jsoncpp-master\include;$(ProjectDir)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4251</DisableSpecificWarnings>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
@@ -138,11 +138,13 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <ClInclude Include="Extender\Shared\StatLoadOrderHelper.h" />
     <ClInclude Include="Extender\Shared\tinyxml2.h" />
     <ClInclude Include="Extender\Shared\Utils.h" />
-    <ClInclude Include="GameDefinitions\BaseContainers.h" />
-    <ClInclude Include="GameDefinitions\BaseMemory.h" />
-    <ClInclude Include="GameDefinitions\BaseString.h" />
-    <ClInclude Include="GameDefinitions\BaseTypes.h" />
-    <ClInclude Include="GameDefinitions\BaseUtilities.h" />
+    <ClInclude Include="GameDefinitions\Base\Base.h" />
+    <ClInclude Include="GameDefinitions\Base\BaseArray.h" />
+    <ClInclude Include="GameDefinitions\Base\BaseMap.h" />
+    <ClInclude Include="GameDefinitions\Base\BaseMemory.h" />
+    <ClInclude Include="GameDefinitions\Base\BaseString.h" />
+    <ClInclude Include="GameDefinitions\Base\BaseTypes.h" />
+    <ClInclude Include="GameDefinitions\Base\BaseUtilities.h" />
     <ClInclude Include="GameDefinitions\Character.h" />
     <ClInclude Include="GameDefinitions\Components\Boosts.h" />
     <ClInclude Include="GameDefinitions\Components\Combat.h" />
@@ -178,25 +180,27 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <ClInclude Include="GameHooks\DataLibraries.h" />
     <ClInclude Include="GameHooks\EngineHooks.h" />
     <ClInclude Include="GameHooks\OsirisWrappers.h" />
+    <ClInclude Include="GameHooks\SymbolMapper.h" />
     <ClInclude Include="GameHooks\Wrappers.h" />
     <ClInclude Include="Lua\Client\LuaBindingClient.h" />
+    <ClInclude Include="Lua\Debugger\LuaDebug.pb.h" />
+    <ClInclude Include="Lua\Debugger\LuaDebugger.h" />
+    <ClInclude Include="Lua\Debugger\LuaDebugMessages.h" />
     <ClInclude Include="Lua\LuaBinding.h" />
-    <ClInclude Include="Lua\LuaDebug.pb.h" />
-    <ClInclude Include="Lua\LuaDebugger.h" />
-    <ClInclude Include="Lua\LuaDebugMessages.h" />
     <ClInclude Include="Lua\LuaHelpers.h" />
     <ClInclude Include="Lua\LuaSerializers.h" />
     <ClInclude Include="Lua\LuaUserdata.h" />
     <ClInclude Include="Lua\Server\LuaBindingServer.h" />
     <ClInclude Include="Lua\Server\ServerOsirisBinding.h" />
-    <ClInclude Include="Lua\Shared\LuaArrayProxy.h" />
-    <ClInclude Include="Lua\Shared\LuaEntityProxy.h" />
     <ClInclude Include="Lua\Shared\LuaEvent.h" />
     <ClInclude Include="Lua\Shared\LuaLifetime.h" />
-    <ClInclude Include="Lua\Shared\LuaMapProxy.h" />
-    <ClInclude Include="Lua\Shared\LuaObjectProxy.h" />
-    <ClInclude Include="Lua\Shared\LuaSetProxy.h" />
     <ClInclude Include="Lua\Shared\LuaStats.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaArrayProxy.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaEntityProxy.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaMapProxy.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaObjectProxy.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaPropertyMapHelpers.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaSetProxy.h" />
     <ClInclude Include="Osiris\Debugger\Debugger.h" />
     <ClInclude Include="Osiris\Debugger\DebugInterface.h" />
     <ClInclude Include="Osiris\Debugger\DebugMessages.h" />
@@ -228,6 +232,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Game Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Extender\Shared\Utils.cpp" />
+    <ClCompile Include="GameDefinitions\Base\Base.cpp" />
     <ClCompile Include="GameDefinitions\EntitySystem.cpp" />
     <ClCompile Include="GameDefinitions\Enumerations.cpp" />
     <ClCompile Include="GameDefinitions\GameHelpers.cpp" />
@@ -238,18 +243,15 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <ClCompile Include="GameHooks\DataLibrariesBG3Game.cpp" />
     <ClCompile Include="GameHooks\EngineHooks.cpp" />
     <ClCompile Include="GameHooks\OsirisWrappers.cpp" />
+    <ClCompile Include="GameHooks\SymbolMapper.cpp" />
     <ClCompile Include="Lua\Client\LuaClient.cpp" />
-    <ClCompile Include="Lua\LuaBinding.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="Lua\LuaDebug.pb.cc">
+    <ClCompile Include="Lua\Debugger\LuaDebug.pb.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Game Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Lua\LuaDebugger.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="Lua\LuaDebugMessages.cpp">
+    <ClCompile Include="Lua\Debugger\LuaDebugger.cpp" />
+    <ClCompile Include="Lua\Debugger\LuaDebugMessages.cpp" />
+    <ClCompile Include="Lua\LuaBinding.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Lua\LuaOsiBridge.cpp">
@@ -259,10 +261,12 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Lua\Server\LuaServer.cpp" />
+    <ClCompile Include="Lua\Shared\LuaInternalHelpers.cpp" />
     <ClCompile Include="Lua\Shared\LuaStats.cpp">
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <ClCompile Include="Lua\Shared\LuaUtilities.cpp" />
+    <ClCompile Include="Lua\Shared\Proxies\LuaObjectProxies.cpp" />
     <ClCompile Include="Osiris\Debugger\Debugger.cpp" />
     <ClCompile Include="Osiris\Debugger\DebugInterface.cpp" />
     <ClCompile Include="Osiris\Debugger\DebugMessages.cpp" />
@@ -321,10 +325,10 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <None Include="LuaScripts\Game.Math.lua" />
     <None Include="LuaScripts\Game.Tooltip.lua" />
     <None Include="LuaScripts\SandboxStartup.lua" />
+    <None Include="Lua\Debugger\LuaDebug.proto" />
     <None Include="Lua\LevelIteratorFunctions.inl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">false</ExcludedFromBuild>
     </None>
-    <None Include="Lua\LuaDebug.proto" />
     <None Include="Lua\Server\FunctorEvents.inl" />
     <None Include="Lua\Server\ServerCharacter.inl" />
     <None Include="Lua\Server\ServerCombat.inl" />
@@ -335,22 +339,18 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <None Include="Lua\Server\ServerProjectile.inl" />
     <None Include="Lua\Server\ServerStatus.inl" />
     <None Include="Lua\Server\ServerSurface.inl" />
-    <None Include="Lua\Shared\LuaArrayProxy.inl" />
     <None Include="Lua\Shared\LuaCharacter.inl" />
-    <None Include="Lua\Shared\LuaEntityProxy.inl" />
     <None Include="Lua\Shared\LuaEvent.inl" />
     <None Include="Lua\Shared\LuaItem.inl" />
     <None Include="Lua\Shared\LuaJson.inl" />
     <None Include="Lua\Shared\LuaLocalization.inl" />
-    <None Include="Lua\Shared\LuaMapProxy.inl" />
-    <None Include="Lua\Shared\LuaObjectProxy.inl" />
-    <None Include="Lua\Shared\LuaPropertyMapHelpers.h" />
-    <None Include="Lua\Shared\LuaSetProxy.inl" />
     <None Include="Lua\Shared\LuaShared.inl" />
-    <ClCompile Include="Lua\Shared\LuaObjectProxies.cpp">
-      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">/bigobj %(AdditionalOptions)</AdditionalOptions>
-    </ClCompile>
     <None Include="Lua\Shared\LuaStaticDataLib.inl" />
+    <None Include="Lua\Shared\Proxies\LuaArrayProxy.inl" />
+    <None Include="Lua\Shared\Proxies\LuaEntityProxy.inl" />
+    <None Include="Lua\Shared\Proxies\LuaMapProxy.inl" />
+    <None Include="Lua\Shared\Proxies\LuaObjectProxy.inl" />
+    <None Include="Lua\Shared\Proxies\LuaSetProxy.inl" />
     <None Include="Lua\Shared\StatAttributes.inl" />
     <None Include="Lua\Shared\StatEntries.inl" />
     <None Include="Lua\Shared\StatEnumerators.inl" />

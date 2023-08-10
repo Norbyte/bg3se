@@ -10,6 +10,12 @@ STATIC_HOOK(gameStateMachineUpdate_)
 #include <Extender/Shared/ThreadedExtenderState.inl>
 #include <Extender/Shared/ModuleHasher.inl>
 
+BEGIN_SE()
+
+void InitCrashReporting();
+
+END_SE()
+
 BEGIN_NS(ecl)
 
 char const * GameStateNames[] =
@@ -79,11 +85,9 @@ void ScriptExtender::Initialize()
 
 	DetourTransactionCommit();
 
-	using namespace std::placeholders;
-	gameStateChangedEvent_.SetPostHook(std::bind(&ScriptExtender::OnGameStateChanged, this, _1, _2, _3));
-	gameStateWorkerStart_.AddPreHook(std::bind(&ScriptExtender::OnGameStateWorkerStart, this, _1));
-	gameStateWorkerStart_.AddPostHook(std::bind(&ScriptExtender::OnGameStateWorkerExit, this, _1));
-	gameStateMachineUpdate_.AddPostHook(std::bind(&ScriptExtender::OnUpdate, this, _1, _2));
+	gameStateChangedEvent_.SetPostHook(&ScriptExtender::OnGameStateChanged, this);
+	gameStateWorkerStart_.SetWrapper(&ScriptExtender::GameStateWorkerWrapper, this);
+	gameStateMachineUpdate_.SetPostHook(&ScriptExtender::OnUpdate, this);
 }
 
 void ScriptExtender::Shutdown()
@@ -99,16 +103,22 @@ void ScriptExtender::PostStartup()
 
 void ScriptExtender::OnGameStateChanged(void * self, GameState fromState, GameState toState)
 {
+	if (self != *GetStaticSymbols().ecl__gGameStateEventManager) {
+		gExtender->GetServer().OnGameStateChanged(self, (esv::GameState)fromState, (esv::GameState)toState);
+		return;
+	}
+
+	if (gExtender->GetConfig().SendCrashReports) {
+		// We need to initialize the crash reporter after the game engine has started,
+		// otherwise the game will overwrite the top level exception filter
+		InitCrashReporting();
+	}
+
 	// Check to make sure that startup is done even if the extender was loaded when the game was already in GameState::Init
 	if (toState != GameState::Unknown
 		&& toState != GameState::StartLoading
 		&& toState != GameState::InitMenu
-		&& !gExtender->GetLibraryManager().InitializationFailed()) {
-		gExtender->PostStartup();
-	}
-
-	if (toState == GameState::Menu 
-		&& gExtender->GetLibraryManager().InitializationFailed()) {
+		&& !gExtender->GetLibraryManager().CriticalInitializationFailed()) {
 		gExtender->PostStartup();
 	}
 
@@ -181,13 +191,10 @@ void ScriptExtender::OnGameStateChanged(void * self, GameState fromState, GameSt
 	}
 }
 
-void ScriptExtender::OnGameStateWorkerStart(void * self)
+void ScriptExtender::GameStateWorkerWrapper(void (*wrapped)(void*), void* self)
 {
 	AddThread(GetCurrentThreadId());
-}
-
-void ScriptExtender::OnGameStateWorkerExit(void* self)
-{
+	wrapped(self);
 	RemoveThread(GetCurrentThreadId());
 }
 
@@ -252,7 +259,7 @@ void ScriptExtender::LoadExtensionState()
 		ResetExtensionState();
 	}
 
-	extensionState_->LoadConfigs();
+	//extensionState_->LoadConfigs();
 
 	if (!gExtender->GetLibraryManager().CriticalInitializationFailed()) {
 		//networkManager_.ExtendNetworkingClient();

@@ -34,7 +34,7 @@ namespace bg3se::lua
 				push(L, v);
 			} else {
 				StackCheck _(L);
-				v = checked_get<T>(L, -1);
+				v = get<T>(L, -1);
 			}
 
 			return *this;
@@ -116,7 +116,7 @@ namespace bg3se::lua
 	inline LuaSerializer& operator << (LuaSerializer& s, STDString& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, STDWString& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, Path& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, UUID& v) { return s.Visit(v); }
+	inline LuaSerializer& operator << (LuaSerializer& s, Guid& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, NetId& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, UserId& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, ComponentHandle& v) { return s.Visit(v); }
@@ -126,6 +126,27 @@ namespace bg3se::lua
 	inline LuaSerializer& operator << (LuaSerializer& s, glm::vec3& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, glm::vec4& v) { return s.Visit(v); }
 	LuaSerializer& operator << (LuaSerializer& s, TranslatedString& v);
+	
+
+	LuaSerializer& operator << (LuaSerializer& s, EntityWorldHandle& v);
+/*	LuaSerializer& operator << (LuaSerializer& s, CEquipmentSet& v);
+	LuaSerializer& operator << (LuaSerializer& s, CEquipmentGroup& v);
+	LuaSerializer& operator << (LuaSerializer& s, CSkillSet& v);*/
+	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Requirement& v);
+	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Object::StatsFunctorInfo& v);
+	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_Table& v);
+	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_SubTable_Description& v);
+	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_Category& v);
+	LuaSerializer& operator << (LuaSerializer& s, StatsFunctorSet& v);
+	LuaSerializer& operator << (LuaSerializer& s, StatsFunctorSet* v);
+/*	LuaSerializer& operator << (LuaSerializer& s, CItemGroup& v);
+	LuaSerializer& operator << (LuaSerializer& s, CLevelGroup& v);
+	LuaSerializer& operator << (LuaSerializer& s, CRootGroup& v);
+	LuaSerializer& operator << (LuaSerializer& s, CNameGroupLink& v);
+	LuaSerializer& operator << (LuaSerializer& s, CNameGroup& v);
+	LuaSerializer& operator << (LuaSerializer& s, CNameGroupName& v);*/
+	LuaSerializer& operator << (LuaSerializer& s, SurfaceTemplate::VisualData& v);
+	LuaSerializer& operator << (LuaSerializer& s, SurfaceTemplate::StatusData& v);
 
 	template <class T>
 	LuaSerializer& operator << (LuaSerializer& s, OverrideableProperty<T>& v)
@@ -258,7 +279,7 @@ namespace bg3se::lua
 				lua_settable(s.L, -3);
 			}
 		} else {
-			v.Clear();
+			v.clear();
 			for (auto idx : iterate(s.L, -1)) {
 				StackCheck _(s.L);
 				TKey key{};
@@ -267,7 +288,7 @@ namespace bg3se::lua
 				s << key;
 				lua_pop(s.L, 1);
 				s << value;
-				v.Insert(std::move(key), std::move(value));
+				v.insert(std::move(key), std::move(value));
 			}
 		}
 		s.EndObject();
@@ -347,9 +368,9 @@ namespace bg3se::lua
 		return s;
 	}
 
-
+	
 	template <class T>
-	typename std::enable_if_t<std::is_pointer_v<T>, std::enable_if_t<IsAllocatable<std::remove_pointer_t<T>>::value, LuaSerializer&>> operator << (LuaSerializer& s, T& v)
+	typename std::enable_if_t<std::is_pointer_v<T>, LuaSerializer&> operator << (LuaSerializer& s, T& v)
 	{
 		if (s.IsWriting) {
 			if (v == nullptr) {
@@ -358,11 +379,15 @@ namespace bg3se::lua
 				s << *v;
 			}
 		} else {
-			if (v == nullptr) {
-				v = GameAlloc<std::remove_pointer_t<T>>();
+			if constexpr (decltype(IsAllocatable<std::remove_pointer_t<T>>(nullptr))::value) {
+				if (v == nullptr) {
+					v = GameAlloc<std::remove_pointer_t<T>>();
+				}
 			}
 
-			s << *v;
+			if (v != nullptr) {
+				s << *v;
+			}
 		}
 
 		return s;
@@ -376,40 +401,21 @@ namespace bg3se::lua
 			if (s.IsWriting) {
 				push(s.L, v);
 			} else {
-				v = checked_get<T>(s.L, -1);
+				v = get<T>(s.L, -1);
 			}
 		} else if constexpr (std::is_base_of_v<BitmaskInfoBase<T>, EnumInfo<T>>) {
 			if (s.IsWriting) {
-				push_flags(s.L, v);
+				push_bitfield(s.L, v);
 			} else {
-				v = checked_get_flags<T>(s.L, -1);
+				v = get<T>(s.L, -1);
 			}
 		} else {
-			static_assert(false, "Cannot serialize an enumeration that has no EnumInfo!");
+			//static_assert(false, "Cannot serialize an enumeration that has no EnumInfo!");
+			assert(false && *v);
 		}
 
 		return s;
 	}
 
 	void LuaSerializeStatsEnum(LuaSerializer& s, char const* key, FixedString const& enumName, int& v);
-
-	LuaSerializer& operator << (LuaSerializer& s, EntityWorldHandle& v);
-
-/*	LuaSerializer& operator << (LuaSerializer& s, CEquipmentSet& v);
-	LuaSerializer& operator << (LuaSerializer& s, CEquipmentGroup& v);
-	LuaSerializer& operator << (LuaSerializer& s, CSkillSet& v);*/
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Requirement& v);
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Object::StatsFunctorInfo& v);
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_Table& v);
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_SubTable_Description& v);
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_Category& v);
-	LuaSerializer& operator << (LuaSerializer& s, StatsFunctorSet& v);
-/*	LuaSerializer& operator << (LuaSerializer& s, CItemGroup& v);
-	LuaSerializer& operator << (LuaSerializer& s, CLevelGroup& v);
-	LuaSerializer& operator << (LuaSerializer& s, CRootGroup& v);
-	LuaSerializer& operator << (LuaSerializer& s, CNameGroupLink& v);
-	LuaSerializer& operator << (LuaSerializer& s, CNameGroup& v);
-	LuaSerializer& operator << (LuaSerializer& s, CNameGroupName& v);*/
-	LuaSerializer& operator << (LuaSerializer& s, SurfaceTemplate::VisualData& v);
-	LuaSerializer& operator << (LuaSerializer& s, SurfaceTemplate::StatusData& v);
 }

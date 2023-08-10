@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GameDefinitions/BaseTypes.h>
+#include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/Module.h>
 #include <GameDefinitions/GlobalFixedStrings.h>
@@ -370,29 +370,40 @@ namespace bg3se
 
 		struct EoCServer
 		{
-			void* EoC;
-			uint64_t GameTime_M[2];
-			ScratchBuffer ScratchBuffer1;
-			ScratchString ScratchString2;
-			FixedString FS1;
-			FixedString CurrentLevel;
-			FixedString FS3;
-			FixedString FSGUID4;
-			GameStateMachine * StateMachine;
-			void * GameServer;
-			void * field_88;
-			void * GlobalRandom;
-			void * ItemCombinationManager;
-			void * CombineManager;
-			void * field_D0;
-			ModManager * ModManagerServer;
-			bool ShutDown;
-			EntityWorld * EntityWorld;
-			EntityManager* EntityManager;
-			void* unknown_F0;
-			void * LobbyManagerOrigins;
-			void* SomeSharedServerClientObj;
-			void* field_118;
+			char field_0;
+			__int64 field_8;
+			__int64 field_10;
+			__int64 field_18;
+			__int64 field_20;
+			__int64 field_28;
+			__int64 field_30;
+			__int64 field_38;
+			__int64 field_40;
+			__int64 field_48;
+			__int64 field_50;
+			__int64 field_58;
+			__int64 field_60;
+			__int64 field_68;
+			ScratchString field_70;
+			FixedString field_90;
+			FixedString field_94;
+			FixedString field_98;
+			FixedString field_9C;
+			GameStateMachine* GameStateMachine;
+			__int64 GameServer;
+			__int64 field_B0;
+			int Rand1;
+			int Rand2;
+			__int64 GlobalRandom;
+			__int64 ConditionManager;
+			ModManager ModManager;
+			char field_280;
+			EntityWorld* EntityWorld;
+			__int64 field_290;
+			__int64 LobbyManager;
+			char field_2A0;
+			__int64 field_2A8;
+			__int64 field_2B0;
 		};
 
 		typedef void(*GameStateEventManager__ExecuteGameStateChangedEvent)(void* self, GameState fromState, GameState toState);
@@ -515,53 +526,54 @@ namespace bg3se
 
 		struct EoCClient
 		{
-			using HandleErrorProc = void (void* self, STDString const* message, bool exitGame, STDString const* a4);
+			using HandleErrorProc = void (void* self, TranslatedString const& message, bool exitGame, TranslatedString const& a4);
 
-			__int64 field_0;
-			__int64 GameEventManagerVMT;
-			__int64 field_10;
-			__int64 NetEventManagerVMT;
-			__int64 field_20;
+			__int64 VMT;
 			__int64 VMT2;
+			__int64 field_10;
 			__int64 VMT3;
+			__int64 field_20;
+			__int64 VMT4;
+			__int64 VMT5;
 			__int64 field_38;
-			__int64 field_40;
-			int field_48;
-			int unkn;
-			int field_50;
-			__int64 field_58;
-			GameStateMachine * GameStateMachine;
+			Array<void*> field_40;
+			__int64 field_50;
+			Array<void*> field_58;
 			__int64 field_68;
-			__int64 field_70;
-			__int64 field_78;
+			Array<void*> field_70;
 			__int64 field_80;
-			__int64 field_88;
-			FixedString field_90;
-			FixedString field_94;
-			FixedString field_98;
-			FixedString CurrentSaveGameGUID;
-			bool IsLoading;
-			bool IsLoading2;
+			GameStateMachine* GameStateMachine;
+			void* GameClient;
+			void* field_98;
+			__int64 field_A0;
 			__int64 field_A8;
 			__int64 field_B0;
-			__int64 field_B8;
-			bool field_C0;
-			__int64 field_C8;
+			FixedString FS1;
+			FixedString LevelName;
+			FixedString SomeGUID;
+			FixedString FS_CurrentSaveGameGUID;
+			char IsLoading;
+			char IsLoading2;
+			char field_CA;
 			__int64 field_D0;
 			__int64 field_D8;
-			bool field_E0;
-			ScratchString ScratchStr;
-			ScratchBuffer ScratchBuf;
+			char field_E0;
+			__int64 field_E8;
+			__int64 field_F0;
+			char field_F8;
+			ScratchString field_100;
 			ModManager* ModManager;
-			__int64 ChatManager;
-			STDString CurrentHost_M;
-			int field_190;
+			__int64 field_128;
+			TranslatedString LastError;
+			int field_140;
+			int field_144;
+			int field_148;
 			EntityWorld* EntityWorld;
-			__int64 field_1A0;
-			__int64 field_1A8;
-			RefMap<int, void*> field_1B0;
-			__int64 SomeSharedServerClientObj;
-			__int64 field_1C8[0x60];
+			__int64 EntityManager_M;
+			__int64 field_160;
+			int field_168;
+			int field_16C;
+			// etc.
 		};
 
 		/*

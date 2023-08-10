@@ -1,42 +1,12 @@
 #pragma once
 
-#include <GameDefinitions/BaseUtilities.h>
-#include <GameDefinitions/BaseMemory.h>
-#include <GameDefinitions/BaseString.h>
-#include <GameDefinitions/BaseContainers.h>
-
 #include <glm/glm.hpp>
-
-#define UUID_DEFINED
-struct UUID
-{
-	uint64_t Val[2]{ 0 };
-
-	inline bool operator ==(UUID const& o) const
-	{
-		return Val[0] == o.Val[0] && Val[1] == o.Val[1];
-	}
-
-	inline bool operator !=(UUID const& o) const
-	{
-		return Val[0] != o.Val[0] || Val[1] != o.Val[1];
-	}
-};
+#include <glm/gtc/quaternion.hpp>
 
 namespace bg3se
 {
-	inline uint64_t Hash(UUID const& h)
-	{
-		return h.Val[0] ^ h.Val[1];
-	}
-
-#if defined(OSI_EOCAPP)
 	template <class T>
 	using Vector = std::vector<T, GameAllocator<T>>;
-#else
-	template <class T>
-	using Vector = std::vector<T, MSVCAllocator<T>>;
-#endif
 
 	using Vector3 = glm::vec3;
 
@@ -129,7 +99,23 @@ namespace bg3se
 	{
 		FixedString Handle;
 		uint16_t Version{ 0 };
+
+		inline bool operator == (RuntimeStringHandle const& fs) const
+		{
+			return Handle == fs.Handle;
+		}
+
+		inline bool operator != (RuntimeStringHandle const& fs) const
+		{
+			return Handle != fs.Handle;
+		}
 	};
+
+	template <>
+	inline uint64_t MultiHashMapHash<RuntimeStringHandle>(RuntimeStringHandle const& v)
+	{
+		return MultiHashMapHash(v.Handle);
+	}
 
 	struct TranslatedString
 	{
@@ -347,15 +333,3 @@ namespace std
 		return out;
 	}
 }
-
-// Forward declarations for custom Lua serializers
-struct lua_State;
-
-BEGIN_NS(lua)
-
-class LifetimeHolder;
-
-template <class T>
-void MakeObjectRef(lua_State* L, LifetimeHolder const& lifetime, T* value);
-
-END_NS()

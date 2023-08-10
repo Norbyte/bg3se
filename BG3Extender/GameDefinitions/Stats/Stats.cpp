@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include <GameDefinitions/BaseTypes.h>
+#include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/Symbols.h>
 #include <GameDefinitions/Enumerations.h>
 #include <Extender/Shared/ScriptHelpers.h>
@@ -76,15 +76,15 @@ namespace bg3se
 	void StatusPrototypeManager::SyncStat(CRPGStats_Object* object)
 	{
 		auto stats = GetStaticSymbols().GetStats();
-		auto pProto = Statuses.Find(object->Name);
-		if (!pProto) {
+		auto pProto = Statuses.find(object->Name);
+		if (pProto == Statuses.end()) {
 			auto proto = GameAlloc<StatusPrototype>();
 			if (SyncStat(object, proto)) {
-				Statuses.Insert(proto->StatusName, proto);
+				Statuses.insert(proto->StatusName, proto);
 			}
 		}
 		else {
-			SyncStat(object, *pProto);
+			SyncStat(object, pProto.Value());
 		}
 	}
 
@@ -109,14 +109,14 @@ namespace bg3se
 
 	void PassiveManager::SyncStat(CRPGStats_Object* object)
 	{
-		auto stats = GetStaticSymbols().GetStats();
-		auto pProto = Passives.Find(object->Name);
-		if (!pProto) {
-			auto proto = Passives.Insert(object->Name);
+		/*auto stats = GetStaticSymbols().GetStats();
+		auto pProto = Passives.find(object->Name);
+		if (pProto == Passives.end()) {
+			auto proto = Passives.insert(object->Name);
 			SyncStat(object, proto);
 		} else {
-			SyncStat(object, pProto);
-		}
+			SyncStat(object, pProto.Value());
+		}*/
 	}
 
 	/*
@@ -313,7 +313,7 @@ namespace bg3se
 			return RPGEnumerationType::Requirements;
 		}
 
-		if (Values.Count() > 0) {
+		if (Values.size() > 0) {
 			if (IsFlagType(Name)) {
 				return RPGEnumerationType::Flags;
 			} else {
@@ -451,11 +451,11 @@ namespace bg3se
 			return {};
 		}
 
-		auto index = rpgEnum->Values.Find(FixedString(enumLabel));
-		if (index == nullptr) {
+		auto index = rpgEnum->Values.find(FixedString(enumLabel));
+		if (index == rpgEnum->Values.end()) {
 			return {};
 		} else {
-			return *index;
+			return index.Value();
 		}
 	}
 
@@ -467,9 +467,9 @@ namespace bg3se
 			return FixedString{};
 		}
 
-		auto value = rpgEnum->Values.FindByValue(index);
-		if (value) {
-			return *value;
+		auto value = rpgEnum->Values.find_by_value(index);
+		if (value != rpgEnum->Values.end()) {
+			return value.Key();
 		}
 		else {
 			return FixedString{};
@@ -535,7 +535,7 @@ namespace bg3se
 		return &ConstantFloats[attributeId];
 	}
 
-	std::optional<UUID*> RPGStats::GetGuid(int attributeId)
+	std::optional<Guid*> RPGStats::GetGuid(int attributeId)
 	{
 		if (attributeId > 0) {
 			return &GUIDs[attributeId];
@@ -544,11 +544,11 @@ namespace bg3se
 		}
 	}
 
-	UUID* RPGStats::GetOrCreateGuid(int& attributeId)
+	Guid* RPGStats::GetOrCreateGuid(int& attributeId)
 	{
 		if (attributeId < 0) {
 			attributeId = (int)GUIDs.Size();
-			GUIDs.Add(UUID{});
+			GUIDs.Add(Guid{});
 		}
 
 		return &GUIDs[attributeId];
@@ -632,7 +632,7 @@ namespace bg3se
 
 		auto functorSet = GameAlloc<StatsFunctorSet>();
 		functorSet->VMT = sVMTMappings.StatsFunctorSetVMT;
-		functorSet->FunctorsByName.Init(31);
+		functorSet->FunctorsByName.ResizeHashtable(31);
 		functorSet->UniqueName = propertyName;
 		return functorSet;
 	}

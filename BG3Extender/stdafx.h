@@ -27,4 +27,4 @@
 #include <shared_mutex>
 
 #include <Extender/Shared/Utils.h>
-#include <GameDefinitions/BaseTypes.h>
+#include <GameDefinitions/Base/Base.h>

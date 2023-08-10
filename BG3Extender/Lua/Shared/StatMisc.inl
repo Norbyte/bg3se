@@ -40,9 +40,9 @@ namespace bg3se::lua::stats
 		if (stats == nullptr || stats->ExtraData == nullptr) return luaL_error(L, "Stats not available");
 
 		auto key = luaL_checkstring(L, 2);
-		auto extraData = stats->ExtraData->Find(FixedString(key));
-		if (extraData != nullptr) {
-			push(L, *extraData);
+		auto extraData = stats->ExtraData->find(FixedString(key));
+		if (extraData != stats->ExtraData->end()) {
+			push(L, extraData.Value());
 		}
 		else {
 			push(L, nullptr);
@@ -57,10 +57,10 @@ namespace bg3se::lua::stats
 		if (stats == nullptr || stats->ExtraData == nullptr) return luaL_error(L, "Stats not available");
 
 		auto key = luaL_checkstring(L, 2);
-		auto value = checked_get<float>(L, 3);
-		auto extraData = stats->ExtraData->Find(FixedString(key));
-		if (extraData != nullptr) {
-			*extraData = value;
+		auto value = get<float>(L, 3);
+		auto extraData = stats->ExtraData->find(FixedString(key));
+		if (extraData != stats->ExtraData->end()) {
+			extraData.Value() = value;
 		}
 		else {
 			LuaError("Cannot set nonexistent ExtraData value '" << key << "'");
@@ -79,7 +79,7 @@ namespace bg3se::lua::stats
 
 	int GetModifierAttributes(lua_State* L)
 	{
-		auto modifierName = checked_get<FixedString>(L, 1);
+		auto modifierName = get<FixedString>(L, 1);
 		auto stats = GetStaticSymbols().GetStats();
 		if (!stats) return luaL_error(L, "Stats not available");
 
@@ -115,7 +115,7 @@ namespace bg3se::lua::stats
 	template <class T>
 	int EnumLabelToIndex(lua_State* L, char const* label)
 	{
-		auto index = EnumInfo<T>::Find(label);
+		auto index = EnumInfo<T>::Find(FixedString(label));
 		if (index) {
 			push(L, *index);
 		} else {
@@ -125,7 +125,7 @@ namespace bg3se::lua::stats
 		return 1;
 	}
 
-#define BEGIN_BITMASK_NS(NS, T, type)
+#define BEGIN_BITMASK_NS(NS, T, luaName, type)
 #define BEGIN_BITMASK(T, type)
 #define E(label)
 #define EV(label, value)
@@ -133,7 +133,7 @@ namespace bg3se::lua::stats
 #define END_ENUM()
 
 // TODO - this solution has subpar performance
-#define BEGIN_ENUM_NS(NS, T, type) \
+#define BEGIN_ENUM_NS(NS, T, luaName, type) \
 	if (strcmp(enumName, #T) == 0) { \
 		return EnumIndexToLabel<NS::T>(L, (NS::T)index); \
 	}
@@ -144,19 +144,19 @@ namespace bg3se::lua::stats
 
 	int EnumIndexToLabel(lua_State* L)
 	{
-		auto enumName = checked_get<char const*>(L, 1);
-		auto index = checked_get<int>(L, 2);
+		auto enumName = get<char const*>(L, 1);
+		auto index = get<int>(L, 2);
 
 #include <GameDefinitions/Enumerations.inl>
 
 		auto valueList = GetStaticSymbols().GetStats()->ModifierValueLists.Find(enumName);
 		if (valueList) {
 			std::optional<FixedString> value;
-			valueList->Values.Iterate([&value, index](auto const& k, auto const& idx) {
-				if (idx == index) {
-					value = k;
+			for (auto const& kv : valueList->Values) {
+				if (kv.Value  == index) {
+					value = kv.Key;
 				}
-			});
+			}
 
 			if (value) {
 				push(L, *value);
@@ -177,7 +177,7 @@ namespace bg3se::lua::stats
 #undef BEGIN_ENUM
 
 	// TODO - this solution has subpar performance
-#define BEGIN_ENUM_NS(NS, T, type) \
+#define BEGIN_ENUM_NS(NS, T, luaName, type) \
 	if (strcmp(enumName, #T) == 0) { \
 		return EnumLabelToIndex<NS::T>(L, label); \
 	}
@@ -189,17 +189,17 @@ namespace bg3se::lua::stats
 
 	int EnumLabelToIndex(lua_State* L)
 	{
-		auto enumName = checked_get<char const*>(L, 1);
-		auto label = checked_get<char const*>(L, 2);
+		auto enumName = get<char const*>(L, 1);
+		auto label = get<char const*>(L, 2);
 
 #include <GameDefinitions/Enumerations.inl>
 
 		auto valueList = GetStaticSymbols().GetStats()->ModifierValueLists.Find(enumName);
 		if (valueList) {
-			auto value = valueList->Values.Find(FixedString(label));
+			auto value = valueList->Values.find(FixedString(label));
 
-			if (value) {
-				push(L, *value);
+			if (value != valueList->Values.end()) {
+				push(L, value.Value());
 				return 1;
 			} else {
 				OsiError("Enumeration '" << enumName << "' has no label named '" << label << "'");

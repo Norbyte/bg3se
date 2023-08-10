@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GameDefinitions/BaseTypes.h>
+#include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/EntitySystem.h>
 #include <GameDefinitions/Misc.h>
@@ -72,7 +72,7 @@ namespace bg3se
 			virtual bool Enter() = 0;
 			virtual bool Resume() = 0;
 			virtual void Update(GameTime* time) = 0;
-			virtual void Tick(UUID* combatUuid, float deltaTime) = 0;
+			virtual void Tick(Guid* combatUuid, float deltaTime) = 0;
 			virtual void Exit() = 0;
 			virtual void VMT90() = 0;
 			virtual bool LoseControl() = 0;
@@ -112,11 +112,11 @@ namespace bg3se
 			EntityHandle OwnerHandle;
 			ObjectSet<EntityHandle> StatusOwner;
 			EntityWorldHandle StatusSource;
-			UUID StatusSourceUUID;
+			Guid StatusSourceUUID;
 			EntityHandle StatusSourceEntityHandle;
 			EntityWorldHandle StatusSource_M;
 			EntityHandle CleansedByHandle_M;
-			UUID field_110;
+			Guid field_110;
 			int Conditions;
 			uint16_t RemoveEvents;
 			uint8_t Flags2; // TODO - typing flags
@@ -209,7 +209,7 @@ namespace bg3se
 			__int64 field_128;
 			ComponentHandle field_130;
 			Hit HitDescription;
-			UUID Combat;
+			Guid Combat;
 			uint8_t DyingFlags;
 		};
 
@@ -316,7 +316,7 @@ namespace bg3se
 
 		struct StatusPolymorphed : public StatusBoost
 		{
-			UUID Id;
+			Guid Id;
 		};
 
 		struct StatusReaction : public Status

@@ -58,4 +58,9 @@ bool ThreadedExtenderState::IsInThread() const
 	return threadIds_.find(tid) != threadIds_.end();
 }
 
+bool ThreadedExtenderState::IsInThread(DWORD threadId) const
+{
+	return threadIds_.find(threadId) != threadIds_.end();
+}
+
 END_SE()

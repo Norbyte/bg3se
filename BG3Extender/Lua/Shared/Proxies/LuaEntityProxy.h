@@ -1,7 +1,8 @@
 #pragma once
 
-#include <GameDefinitions/BaseTypes.h>
+#include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/EntitySystem.h>
+#include <GameDefinitions/EntitySystemHelpers.h>
 
 BEGIN_SE()
 class EntitySystemHelpersBase;

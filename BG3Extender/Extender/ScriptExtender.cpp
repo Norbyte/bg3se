@@ -15,11 +15,11 @@
 
 #undef DEBUG_SERVER_CLIENT
 
-void InitCrashReporting();
-void ShutdownCrashReporting();
-
 namespace bg3se
 {
+
+void InitCrashReporting();
+void ShutdownCrashReporting();
 
 std::unique_ptr<ScriptExtender> gExtender;
 
@@ -206,16 +206,14 @@ void ScriptExtender::PostStartup()
 		Hooks.HookAll();
 		server_.PostStartup();
 		client_.PostStartup();
-		//hitProxy_.PostStartup();
 
-		using namespace std::placeholders;
-		Hooks.FileReader__ctor.SetWrapper(std::bind(&ScriptExtender::OnFileReaderCreate, this, _1, _2, _3, _4, _5));
+		Hooks.FileReader__ctor.SetWrapper(&ScriptExtender::OnFileReaderCreate, this);
 	}
 
 	GameVersionInfo gameVersion;
 	if (Libraries.GetGameVersion(gameVersion) && !gameVersion.IsSupported()) {
 		std::stringstream ss;
-		ss << "Your game version (v" << gameVersion.Major << L"." << gameVersion.Minor << L"." << gameVersion.Revision << L"." << gameVersion.Build
+		ss << "Your game version (v" << gameVersion.Major << "." << gameVersion.Minor << "." << gameVersion.Revision << "." << gameVersion.Build
 			<< ") is not supported by the Script Extender";
 		Libraries.ShowStartupError(ss.str().c_str(), true, false);
 	} else if (Libraries.CriticalInitializationFailed()) {

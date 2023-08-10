@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GameDefinitions/BaseTypes.h>
+#include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/EntitySystem.h>
 #include <GameDefinitions/Misc.h>
@@ -42,7 +42,7 @@ namespace bg3se
 		int64_t field_38;
 		EntityHandle OwnerEntity;
 		BoostParameters Params;
-		UUID field_90;
+		Guid field_90;
 	};
 
 	struct ArmorClassBoostComponent : public BaseComponent
@@ -79,14 +79,14 @@ namespace bg3se
 		AdvantageBoostType Type;
 		AbilityId Ability;
 		SkillId Skill;
-		Array<UUID> Tags;
+		Array<Guid> Tags;
 	};
 
 	struct ActionResourceValueBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ActionResourceValueBoost;
 
-		UUID ResourceUUID;
+		Guid ResourceUUID;
 		int Amount2;
 		double Amount;
 		DiceSizeId DiceSize;
@@ -150,7 +150,7 @@ namespace bg3se
 
 	    FixedString SpellId; // Param 1
 	    AbilityId Ability; // Param 5
-	    UUID SomeUUID; // Param 2
+	    Guid SomeUUID; // Param 2
 		SpellChildSelectionType SpellChildSelection; // Param 3
 		SpellCooldownType CooldownType; // Param 4
 	};
@@ -190,7 +190,7 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ActionResourceBlockBoost;
 
-	    UUID ResourceUUID;
+	    Guid ResourceUUID;
 	    int IntParam;
 	};
 
@@ -199,7 +199,7 @@ namespace bg3se
 		static constexpr ExtComponentType ComponentType = ExtComponentType::StatusImmunityBoost;
 
 		FixedString StatusID;
-		Array<UUID> UnknownUUIDs;
+		Array<Guid> UnknownUUIDs;
 	};
 
 	struct UseBoostsComponent : public BaseComponent
@@ -234,7 +234,7 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ActionResourceMultiplierBoost;
 
-	    UUID ResourceUUID;
+	    Guid ResourceUUID;
 	    int IntParam2;
 	    int IntParam;
 		DiceSizeId DiceSize;
@@ -272,7 +272,7 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::AddTagBoost;
 
-		UUID TagUUID;
+		Guid TagUUID;
 	};
 
 	struct IgnoreDamageThresholdMinBoostComponent : public BaseComponent

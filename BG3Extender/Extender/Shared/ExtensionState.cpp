@@ -318,7 +318,7 @@ namespace bg3se
 		f.seekg(0, std::ios::end);
 		auto length = f.tellg();
 		f.seekg(0, std::ios::beg);
-		STDString s(length, '\0');
+		STDString s((uint32_t)length, '\0');
 		f.read(const_cast<char *>(s.data()), length);
 		f.close();
 

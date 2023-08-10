@@ -1,8 +1,8 @@
 #pragma once
 
 #include <Lua/LuaHelpers.h>
+#include <Lua/LuaSerializers.h>
 #include <Lua/Shared/LuaLifetime.h>
-#include <Lua/Shared/LuaPropertyMapHelpers.h>
 
 namespace bg3se::lua
 {
@@ -167,6 +167,23 @@ namespace bg3se::lua
 	};
 
 	template <class T>
+	struct IsSetLike { static constexpr bool Value = false; };
+
+	template <class TK>
+	struct IsSetLike<MultiHashSet<TK>>
+	{ 
+		static constexpr bool Value = true;
+		using TKey = TK;
+	};
+
+	template <class TK>
+	struct IsSetLike<VirtualMultiHashSet<TK>>
+	{ 
+		static constexpr bool Value = true;
+		using TKey = TK;
+	};
+
+	template <class T>
 	inline void push_set_proxy(lua_State* L, LifetimeHolder const& lifetime, T* v)
 	{
 		SetProxy::Make<T>(L, v, lifetime);
@@ -177,7 +194,7 @@ namespace bg3se::lua
 	{
 		auto proxy = Userdata<SetProxy>::CheckUserData(L, index);
 		auto const& typeName = TypeInfo<T>::TypeName;
-		if (strcmp(GetImpl()->GetTypeName(), typeName) == 0) {
+		if (strcmp(proxy->GetImpl()->GetTypeName(), typeName) == 0) {
 			auto obj = proxy->Get<T>();
 			if (obj == nullptr) {
 				luaL_error(L, "Argument %d: got Set<%s> whose lifetime has expired", index, typeName);

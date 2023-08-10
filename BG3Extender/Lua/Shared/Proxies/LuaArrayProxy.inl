@@ -1,4 +1,4 @@
-#include <Lua/Shared/LuaArrayProxy.h>
+#include <Lua/Shared/Proxies/LuaArrayProxy.h>
 
 namespace bg3se
 {
@@ -21,7 +21,7 @@ namespace bg3se
 	BY_VAL_ARRAY_HELPERS(STDString);
 	BY_VAL_ARRAY_HELPERS(STDWString);
 	BY_VAL_ARRAY_HELPERS(Path);
-	BY_VAL_ARRAY_HELPERS(UUID);
+	BY_VAL_ARRAY_HELPERS(Guid);
 	BY_VAL_ARRAY_HELPERS(NetId);
 	BY_VAL_ARRAY_HELPERS(UserId);
 	BY_VAL_ARRAY_HELPERS(glm::ivec2);
@@ -45,7 +45,7 @@ namespace bg3se::lua
 			return 1;
 		}
 
-		auto index = checked_get<int>(L, 2);
+		auto index = get<int>(L, 2);
 		// TODO - integer range check?
 		if (!impl->GetElement(L, index)) {
 			push(L, nullptr);
@@ -63,7 +63,7 @@ namespace bg3se::lua
 			return 0;
 		}
 
-		auto index = checked_get<int>(L, 2);
+		auto index = get<int>(L, 2);
 		impl->SetElement(L, index, 3);
 		return 0;
 	}
@@ -93,7 +93,7 @@ namespace bg3se::lua
 		if (lua_type(L, 2) == LUA_TNIL) {
 			return impl->Next(L, 0);
 		} else {
-			auto key = checked_get<int>(L, 2);
+			auto key = get<int>(L, 2);
 			return impl->Next(L, key);
 		}
 	}

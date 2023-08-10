@@ -1,37 +1,41 @@
 #pragma once
 
 #include <Lua/LuaHelpers.h>
+#include <Lua/LuaSerializers.h>
 #include <Lua/Shared/LuaLifetime.h>
-#include <Lua/Shared/LuaPropertyMapHelpers.h>
 
-namespace bg3se
-{
-	BY_VAL_ARRAY(uint8_t);
-	BY_VAL_ARRAY(int16_t);
-	BY_VAL_ARRAY(uint16_t);
-	BY_VAL_ARRAY(int32_t);
-	BY_VAL_ARRAY(uint32_t);
-	BY_VAL_ARRAY(int64_t);
-	BY_VAL_ARRAY(uint64_t);
-	BY_VAL_ARRAY(float);
-	BY_VAL_ARRAY(double);
-	BY_VAL_ARRAY(bool);
-	BY_VAL_ARRAY(ComponentHandle);
-	BY_VAL_ARRAY(EntityHandle);
-	BY_VAL_ARRAY(EntityWorldHandle);
-	BY_VAL_ARRAY(FixedString);
-	BY_VAL_ARRAY(STDString);
-	BY_VAL_ARRAY(STDWString);
-	BY_VAL_ARRAY(Path);
-	BY_VAL_ARRAY(UUID);
-	BY_VAL_ARRAY(NetId);
-	BY_VAL_ARRAY(UserId);
-	BY_VAL_ARRAY(glm::ivec2);
-	BY_VAL_ARRAY(glm::vec2);
-	BY_VAL_ARRAY(glm::vec3);
-	BY_VAL_ARRAY(glm::vec4);
-	BY_VAL_ARRAY(glm::mat3);
-}
+BEGIN_SE()
+
+BY_VAL(uint8_t);
+BY_VAL(int16_t);
+BY_VAL(uint16_t);
+BY_VAL(int32_t);
+BY_VAL(uint32_t);
+BY_VAL(int64_t);
+BY_VAL(uint64_t);
+BY_VAL(float);
+BY_VAL(double);
+BY_VAL(bool);
+BY_VAL(ComponentHandle);
+BY_VAL(EntityHandle);
+BY_VAL(EntityWorldHandle);
+BY_VAL(FixedString);
+BY_VAL(STDString);
+BY_VAL(STDWString);
+BY_VAL(Guid);
+BY_VAL(Path);
+BY_VAL(NetId);
+BY_VAL(UserId);
+BY_VAL(glm::ivec2);
+BY_VAL(glm::vec2);
+BY_VAL(glm::vec3);
+BY_VAL(glm::vec4);
+BY_VAL(glm::mat3);
+BY_VAL(glm::mat3x4);
+BY_VAL(glm::mat4x3);
+BY_VAL(glm::mat4);
+
+END_SE()
 
 namespace bg3se::lua
 {
@@ -575,6 +579,27 @@ namespace bg3se::lua
 		int ToString(lua_State* L);
 		int GC(lua_State* L);
 	};
+
+	template <class T>
+	struct IsArrayLike { static constexpr bool Value = false; };
+
+	template <class T>
+	struct IsArrayLike<Array<T>> { static constexpr bool Value = true; using TElement = T; };
+
+	template <class T>
+	struct IsArrayLike<StaticArray<T>> { static constexpr bool Value = true; using TElement = T; };
+
+	template <class T>
+	struct IsArrayLike<Vector<T>> { static constexpr bool Value = true; using TElement = T; };
+
+	template <class T, class Allocator, bool StoreSize>
+	struct IsArrayLike<Set<T, Allocator, StoreSize>> { static constexpr bool Value = true; using TElement = T; };
+
+	template <class T, class Allocator, bool StoreSize>
+	struct IsArrayLike<ObjectSet<T, Allocator, StoreSize>> { static constexpr bool Value = true; using TElement = T; };
+
+	template <class T, size_t Size>
+	struct IsArrayLike<std::array<T, Size>> { static constexpr bool Value = true; using TElement = T; };
 
 	template <class T>
 	inline void push_array_ref_proxy(lua_State* L, LifetimeHolder const& lifetime, T* v)

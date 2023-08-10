@@ -22,7 +22,7 @@ namespace bg3se::lua
 	int ObjectProxy<esv::Surface>::Index(lua_State* L)
 	{
 		auto surface = Get(L);
-		auto prop = checked_get<char const*>(L, 2);
+		auto prop = get<char const*>(L, 2);
 
 		if (strcmp(prop, "RootTemplate") == 0) {
 			auto tmpl = GetStaticSymbols().GetSurfaceTemplate(surface->SurfaceType);
@@ -132,7 +132,7 @@ namespace bg3se::lua
 				act->PolygonVertices.Clear();
 				luaL_checktype(L, 3, LUA_TTABLE);
 				for (auto idx : iterate(L, 3)) {
-					auto vec2 = checked_get<glm::vec2>(L, idx);
+					auto vec2 = get<glm::vec2>(L, idx);
 					act->PolygonVertices.Add(vec2);
 				}
 			} else {
@@ -162,7 +162,7 @@ namespace bg3se::esv::lua
 			return luaL_error(L, "Attempted to resolve item handle in restricted context");
 		}
 
-		auto handle = checked_get<ComponentHandle>(L, 1);
+		auto handle = get<ComponentHandle>(L, 1);
 
 		auto level = GetStaticSymbols().GetCurrentServerLevel();
 		if (!level || !level->SurfaceManager) {
@@ -268,7 +268,7 @@ namespace bg3se::esv::lua
 
 		luaL_checktype(L, 1, LUA_TTABLE);
 		for (auto idx : iterate(L, 1)) {
-			auto surfaceType = checked_get<SurfaceType>(L, idx - 1);
+			auto surfaceType = get<SurfaceType>(L, idx - 1);
 			auto& surfaceRules = interactions->SurfaceTypes[(unsigned)surfaceType].Interactions;
 
 			luaL_checktype(L, -1, LUA_TTABLE);
@@ -334,7 +334,7 @@ namespace bg3se::esv::lua
 	int LuaCreateSurfaceAction(lua_State* L)
 	{
 		StackCheck _(L, 1);
-		auto type = checked_get<SurfaceActionType>(L, 1);
+		auto type = get<SurfaceActionType>(L, 1);
 
 		auto action = CreateSurfaceAction(type);
 		if (action) {
@@ -387,7 +387,7 @@ namespace bg3se::esv::lua
 	int CancelSurfaceAction(lua_State* L)
 	{
 		StackCheck _(L, 0);
-		auto handle = checked_get<ComponentHandle>(L, 1);
+		auto handle = get<ComponentHandle>(L, 1);
 		
 		auto factory = GetStaticSymbols().GetSurfaceActionFactory();
 		if (!factory) {

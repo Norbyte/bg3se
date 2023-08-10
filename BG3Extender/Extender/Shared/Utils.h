@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <GameDefinitions/BaseTypes.h>
+#include <GameDefinitions/Base/Base.h>
 
 namespace std
 {
@@ -25,9 +25,6 @@ extern HMODULE gThisModule;
 
 std::string ToUTF8(std::wstring_view s);
 std::wstring FromUTF8(std::string_view s);
-std::optional<UUID> ParseUuid(std::string_view s);
-std::optional<UUID> ParseGuidString(std::string_view s);
-std::string FormatUuid(UUID const& uuid);
 
 template <typename... Args>
 void Debug(DebugMessageType type, wchar_t const * fmt, Args... args)
@@ -101,7 +98,9 @@ void LogOsirisError(std::string_view msg);
 void LogOsirisWarning(std::string_view msg);
 void LogOsirisMsg(std::string_view msg);
 
-std::optional<std::string> GetResource(int resourceId);
+std::optional<std::string> GetExeResource(int resourceId);
+
+BEGIN_SE()
 
 extern std::atomic<uint32_t> gDisableCrashReportingCount;
 
@@ -120,3 +119,5 @@ struct DisableCrashReporting
 	DisableCrashReporting(DisableCrashReporting const&) = delete;
 	DisableCrashReporting& operator = (DisableCrashReporting const&) = delete;
 };
+
+END_SE()

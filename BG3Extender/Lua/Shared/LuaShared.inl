@@ -21,10 +21,10 @@ int GameObjectGetStatus(lua_State* L, TObject* self)
 	esv::Status* status{ nullptr };
 
 	if (lua_type(L, 2) == LUA_TSTRING) {
-		auto statusId = checked_get<FixedString>(L, 2);
+		auto statusId = get<FixedString>(L, 2);
 		status = self->StatusMachine->GetStatus(statusId);
 	} else {
-		auto statusHandle = checked_get<ComponentHandle>(L, 2);
+		auto statusHandle = get<ComponentHandle>(L, 2);
 		status = self->StatusMachine->GetStatus(statusHandle);
 	}
 
@@ -40,7 +40,7 @@ template <class TObject, class TStatus>
 int GameObjectGetStatusByType(lua_State* L, TObject* self)
 {
 	StackCheck _(L, 1);
-	auto statusType = checked_get<StatusType>(L, 2);
+	auto statusType = get<StatusType>(L, 2);
 
 	if (!self->StatusMachine) {
 		push(L, nullptr);
@@ -134,12 +134,12 @@ int GameObjectGetTags(lua_State* L, TObject* self)
 template <class TObject>
 int GameObjectSetScale(lua_State* L, TObject* self)
 {
-	auto scale = checked_get<float>(L, 2);
+	auto scale = get<float>(L, 2);
 	// Weird things happen if scale is too large/small
 	if (scale < 0.01f || scale > 100.0f) {
 		OsiError("Scale must be between 0.01 and 100")
 	} else {
-		character->SetScale(scale);
+		self->SetScale(scale);
 	}
 
 	return 0;
@@ -150,7 +150,7 @@ int GameObjectGetDisplayName(lua_State* L, TObject* object)
 {
 	TranslatedString name;
 	object->GetDisplayName(name);
-	push(L, name.Handle.ReferenceString);
+	push(L, name.Handle.Handle);
 	return 1;
 }
 

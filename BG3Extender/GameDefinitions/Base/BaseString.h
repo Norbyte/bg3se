@@ -3,9 +3,6 @@
 #include <cstdint>
 #include <string>
 
-#include <GameDefinitions/BaseUtilities.h>
-#include <GameDefinitions/BaseMemory.h>
-
 namespace bg3se
 {
 	using STDString = std::basic_string<char, std::char_traits<char>, GameAllocator<char>>;
@@ -13,13 +10,14 @@ namespace bg3se
 	using StringView = std::string_view;
 	using WStringView = std::wstring_view;
 
-	bg3se::STDString ToUTF8(WStringView s);
-	bg3se::STDWString FromUTF8(StringView s);
+	STDString ToUTF8(WStringView s);
+	STDWString FromUTF8(StringView s);
+	std::wstring FromStdUTF8(StringView s);
 
 	struct FixedString
 	{
-		using CreateProc = FixedString * (FixedString&, char const* str, int length);
-		using GetStringProc = char const* (FixedString const&);
+		using CreateFromStringProc = uint32_t (StringView const&);
+		using GetStringProc = StringView * (StringView&, uint32_t index);
 		using IncRefProc = void(uint32_t index);
 		using DecRefProc = void(uint32_t index);
 
@@ -29,7 +27,7 @@ namespace bg3se
 			: Index(NullIndex)
 		{}
 
-		explicit FixedString(std::string_view str);
+		explicit FixedString(StringView str);
 		explicit FixedString(char const* str);
 
 		inline FixedString(FixedString const& fs)
@@ -208,6 +206,30 @@ namespace bg3se
 		bool Unkn1{ false };
 		bool Unkn2{ false };
 	};
+
+	struct Guid
+	{
+		uint64_t Val[2]{ 0 };
+
+		inline bool operator ==(Guid const& o) const
+		{
+			return Val[0] == o.Val[0] && Val[1] == o.Val[1];
+		}
+
+		inline bool operator !=(Guid const& o) const
+		{
+			return Val[0] != o.Val[0] || Val[1] != o.Val[1];
+		}
+
+		STDString Print() const;
+		static std::optional<Guid> Parse(StringView s);
+		static std::optional<Guid> ParseGuidString(StringView nameGuid);
+	};
+
+	inline uint64_t Hash(Guid const& h)
+	{
+		return h.Val[0] ^ h.Val[1];
+	}
 }
 
 namespace std

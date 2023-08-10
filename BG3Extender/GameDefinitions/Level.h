@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BaseTypes.h"
+#include <GameDefinitions/Base/Base.h>
 
 namespace bg3se
 {

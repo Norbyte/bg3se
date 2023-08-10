@@ -4,7 +4,7 @@
 
 #include <Lua/LuaBinding.h>
 #include <Lua/LuaSerializers.h>
-#include <Lua/Shared/LuaPropertyMapHelpers.h>
+#include <Lua/Shared/Proxies/LuaPropertyMapHelpers.h>
 #include <Lua/Shared/LuaEvent.h>
 #include <Lua/Server/LuaBindingServer.h>
 #include <Lua/Client/LuaBindingClient.h>
@@ -199,8 +199,8 @@ namespace bg3se
 #undef P_FUN
 
 
-#define BEGIN_BITMASK_NS(NS, T, type) char const* const TypeInfo<NS::T>::TypeName = #T;
-#define BEGIN_ENUM_NS(NS, T, type) char const* const TypeInfo<NS::T>::TypeName = #T;
+#define BEGIN_BITMASK_NS(NS, T, luaName, type) char const* const TypeInfo<NS::T>::TypeName = #T;
+#define BEGIN_ENUM_NS(NS, T, luaName, type) char const* const TypeInfo<NS::T>::TypeName = #T;
 #define BEGIN_BITMASK(T, type) char const* const TypeInfo<T>::TypeName = #T;
 #define BEGIN_ENUM(T, type) char const* const TypeInfo<T>::TypeName = #T;
 #define E(label)

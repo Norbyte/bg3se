@@ -16,7 +16,7 @@ namespace bg3se
 
 		auto const & adapterDb = (*globals_.Adapters)->Db;
 		for (unsigned i = 0; i < adapterDb.Size; i++) {
-			auto adapter = adapterDb.Start[i];
+			auto adapter = adapterDb.Elements[i];
 			TryAddAdapter(adapter);
 		}
 	}
@@ -43,7 +43,7 @@ namespace bg3se
 		if (adapter->Constants.Data.Items.Size > 0) return;
 
 		for (size_t i = 0; i < adapter->VarToColumnMapCount; i++) {
-			if (i != adapter->ColumnToVarMaps[i]) return;
+			if (i != adapter->ColumnToVarMaps[(uint32_t)i]) return;
 		}
 
 		adapters_[(uint8_t)adapter->VarToColumnMapCount] = adapter;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BaseTypes.h"
+#include <GameDefinitions/Base/Base.h>
 
 namespace bg3se
 {
@@ -42,7 +42,7 @@ namespace bg3se
 		STDString Name;
 		Version ModVersion;
 		Version PublishVersion;
-		STDString MD5;
+		STDString Hash;
 		STDString Folder;
 	};
 
@@ -51,14 +51,14 @@ namespace bg3se
 		using ValidateProc = int(ModuleSettings& self, ModuleSettings& host, ObjectSet<ModuleShortDesc>& mismatches);
 
 		void *VMT;
-		ObjectSet<ModuleShortDesc> Mods;
-		ObjectSet<FixedString> ModOrder;
+		Array<ModuleShortDesc> Mods;
+		Array<FixedString> ModOrder;
 	};
 
 	struct ModuleInfo
 	{
 		FixedString ModuleUUIDString;
-		UUID ModuleUUID;
+		Guid ModuleUUID;
 		STDString Name;
 		FixedString StartLevelName;
 		FixedString MenuLevelName;
@@ -70,13 +70,12 @@ namespace bg3se
 		Version PublishVersion{ 0 };
 		STDString Hash;
 		STDString Directory;
-		ObjectSet<void*> Scripts; // ScriptDataList*
+		Array<void*> Scripts; // ScriptDataList*
 		STDString Author;
 		STDString Description;
-		ObjectSet<STDString, GameMemoryAllocator, true> Tags;
+		Array<STDString> Tags;
 		uint8_t NumPlayers{ 4 };
-		FixedString GMTemplate;
-		ObjectSet<FixedString, GameMemoryAllocator, true> TargetModes;
+		Array<FixedString> TargetModes;
 		FixedString ModuleType;
 	};
 
@@ -86,15 +85,13 @@ namespace bg3se
 
 		void* VMT{ nullptr };
 		ModuleInfo Info;
-		ObjectSet<Module, GameMemoryAllocator, true> LoadOrderedModules;
-		ObjectSet<Module, GameMemoryAllocator, true> ContainedModules;
-		ObjectSet<Module, GameMemoryAllocator, true> DependentModules;
-		ObjectSet<Module, GameMemoryAllocator, true> AddonModules;
+		Array<Module> LoadOrderedModules;
+		Array<Module> ContainedModules;
+		Array<Module> DependentModules;
+		Array<Module> AddonModules;
 		bool HasValidHash{ true };
 		bool UsesLsfFormat{ false };
 		bool FinishedLoading{ false };
-		uint64_t DataHashList[3]{ 0 };
-		bool BFSReset_M{ false };
 	};
 
 	struct ModManager : public ProtectedGameObject<ModManager>
@@ -102,9 +99,10 @@ namespace bg3se
 		typedef void (*CollectAvailableMods)(ObjectSet<Module, GameMemoryAllocator, true>& mods);
 
 		void * VMT;
-		uint64_t Unknown[4];
+		uint64_t Unknown;
+		Array<void*> Unknowns;
 		Module BaseModule;
-		uint64_t Unknown2;
+		uint8_t Flag;
 		ObjectSet<Module, GameMemoryAllocator, true> AvailableMods;
 		ModuleSettings Settings;
 

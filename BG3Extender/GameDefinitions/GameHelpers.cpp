@@ -1,8 +1,9 @@
 #include "stdafx.h"
 
-#include <GameDefinitions/BaseTypes.h>
+#include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/Symbols.h>
 #include <GameDefinitions/Enumerations.h>
+#include <Lua/Shared/Proxies/LuaPropertyMapHelpers.h>
 //#include <GameDefinitions/Ai.h>
 #include <Extender/ScriptExtender.h>
 
@@ -19,63 +20,51 @@ namespace bg3se
 		return *gStaticSymbols;
 	}
 
-	void* MSVCMemoryAllocator::Alloc(std::size_t size)
-	{
-		return GetStaticSymbols().CrtAlloc(size);
-	}
-
 	void * GameAllocRaw(std::size_t size)
 	{
-		return GetStaticSymbols().EoCAlloc(size, 5, 0, 8);
+		return GetStaticSymbols().ls__GlobalAllocator__Alloc(size, 5, 0, 8);
 	}
 
 	void GameFree(void * ptr)
 	{
-		GetStaticSymbols().EoCFree(ptr, 7, 0);
+		GetStaticSymbols().ls__GlobalAllocator__Free(ptr);
 	}
 
-	void* CrtAllocRaw(std::size_t size)
-	{
-		return GetStaticSymbols().CrtAlloc(size);
-	}
-
-	void CrtFree(void* ptr)
-	{
-		GetStaticSymbols().CrtFree(ptr);
-	}
-
-	FixedString::FixedString(std::string_view str)
+	FixedString::FixedString(StringView str)
 		: Index(NullIndex)
 	{
-		auto create = GetStaticSymbols().ls__FixedString__Create;
+		auto create = GetStaticSymbols().ls__FixedString__CreateFromString;
 		if (create) {
-			create(*this, str.data(), (int)str.length());
+			Index = create(str);
 		}
 	}
 
 	FixedString::FixedString(char const* str)
 		: Index(NullIndex)
 	{
-		auto create = GetStaticSymbols().ls__FixedString__Create;
+		auto create = GetStaticSymbols().ls__FixedString__CreateFromString;
 		if (create) {
-			create(*this, str, -1);
+			Index = create(StringView(str, strlen(str)));
 		}
 	}
 
 	char const* FixedString::GetString() const
 	{
-		if (Index != 0xffffffffu) {
+		if (Index != NullIndex) {
 			auto getter = GetStaticSymbols().ls__FixedString__GetString;
 			if (getter) {
+				StringView sv;
 #if defined(_DEBUG)
 				__try {
-					return getter(*this);
+					getter(sv, Index);
 				} __except (EXCEPTION_EXECUTE_HANDLER) {
 					return "<<< EXCEPTION THROWN WHILE READING STRING >>>";
 				}
 #else
-				return getter(*this);
+				getter(sv, Index);
 #endif
+
+				return sv.data();
 			}
 		}
 
@@ -84,12 +73,13 @@ namespace bg3se
 
 	uint32_t FixedString::GetHash() const
 	{
-		if (Index != 0xffffffffu) {
+		if (Index != NullIndex) {
 			auto getter = GetStaticSymbols().ls__FixedString__GetString;
 			if (getter) {
-				auto str = getter(*this);
-				if (str) {
-					auto entry = reinterpret_cast<GlobalStringTable::StringEntryHeader const*>(str - sizeof(GlobalStringTable::StringEntryHeader));
+				StringView sv;
+				getter(sv, Index);
+				if (sv.data()) {
+					auto entry = reinterpret_cast<GlobalStringTable::StringEntryHeader const*>(sv.data() - sizeof(GlobalStringTable::StringEntryHeader));
 					return entry->Hash;
 				}
 			}
@@ -100,7 +90,7 @@ namespace bg3se
 
 	void FixedString::IncRef()
 	{
-		if (Index != 0xffffffffu) {
+		if (Index != NullIndex) {
 			auto incRef = GetStaticSymbols().ls__FixedString__IncRef;
 			if (incRef) {
 				incRef(Index);
@@ -110,7 +100,7 @@ namespace bg3se
 
 	void FixedString::DecRef()
 	{
-		if (Index != 0xffffffffu) {
+		if (Index != NullIndex) {
 			auto decRef = GetStaticSymbols().ls__FixedString__DecRef;
 			if (decRef) {
 				decRef(Index);
@@ -200,6 +190,35 @@ namespace bg3se
 		return MultiHashMapPrimes[std::size(MultiHashMapPrimes) - 1];
 	}
 
+	EnumRegistry& EnumRegistry::Get()
+	{
+		static EnumRegistry reg;
+		return reg;
+	}
+
+	void EnumRegistry::Register(EnumInfoStore<EnumUnderlyingType>* ei)
+	{
+		assert(EnumsByName.find(ei->EnumName) == EnumsByName.end());
+		EnumsByName.insert(ei->EnumName, ei);
+		ei->RegistryIndex = (int32_t)EnumsById.Size;
+		EnumsById.Add(ei);
+	}
+
+
+	BitmaskRegistry& BitmaskRegistry::Get()
+	{
+		static BitmaskRegistry reg;
+		return reg;
+	}
+	
+	void BitmaskRegistry::Register(BitmaskInfoStore<EnumUnderlyingType>* ei)
+	{
+		assert(BitfieldsByName.find(ei->EnumName) == BitfieldsByName.end());
+		BitfieldsByName.insert(ei->EnumName, ei);
+		ei->RegistryIndex = (int32_t)BitfieldsById.Size;
+		BitfieldsById.Add(ei);
+	}
+
 	/*
 	FIXME
 	RuntimeStringHandle::RuntimeStringHandle()
@@ -209,7 +228,7 @@ namespace bg3se
 
 	void StaticSymbols::CanonicalizePath(STDString & path) const
 	{
-		if (path.find('\\') != std::string::npos) {
+		if (path.find('\\') != STDString::npos) {
 			WARN("Path contains backslashes: \"%s\"; canonical paths should only contain forward slashes.", path.c_str());
 		}
 
@@ -218,7 +237,7 @@ namespace bg3se
 
 	STDString StaticSymbols::ToPath(StringView path, PathRootType root, bool canonicalize) const
 	{
-		if (PathRoots == nullptr) {
+		if (ls__PathRoots == nullptr) {
 			ERR("LibraryManager::ToPath(): Path root API not available!");
 			return "";
 		}
@@ -228,7 +247,7 @@ namespace bg3se
 			CanonicalizePath(canonicalPath);
 		}
 
-		auto rootPath = PathRoots[(unsigned)root];
+		auto rootPath = ls__PathRoots[(unsigned)root];
 		if (rootPath == nullptr) {
 			ERR("StaticSymbols::ToPath(): Path roots not initialized!");
 			return "";
@@ -271,7 +290,7 @@ namespace bg3se
 
 	FileReaderPin::FileReaderPin(std::string_view path, PathRootType root, bool canonicalize)
 	{
-		auto roots = GetStaticSymbols().PathRoots;
+		auto roots = GetStaticSymbols().ls__PathRoots;
 		if (roots == nullptr) {
 			OsiErrorS("Path roots not available!");
 			return;
@@ -292,7 +311,7 @@ namespace bg3se
 		}
 
 		STDString contents;
-		contents.resize(Size());
+		contents.resize((uint32_t)Size());
 		memcpy(contents.data(), Buf(), Size());
 		return contents;
 	}
@@ -1064,11 +1083,10 @@ namespace bg3se
 
 BEGIN_NS(lua)
 
-template <>
-void MakeObjectRef<BaseFunctorExecParams>(lua_State* L, LifetimeHolder const& lifetime, BaseFunctorExecParams* value)
+void LuaPolymorphic<BaseFunctorExecParams>::MakeRef(lua_State* L, BaseFunctorExecParams* value, LifetimeHolder const& lifetime)
 {
 #define V(type) case FunctorExecParamsType::type: \
-			ObjectProxy::MakeRef(L, static_cast<FunctorExecParams##type*>(value), lifetime); break;
+			MakeDirectObjectRef(L, lifetime, static_cast<FunctorExecParams##type*>(value)); break;
 
 	switch (value->ParamsTypeId) {
 		V(Type1)
@@ -1081,7 +1099,7 @@ void MakeObjectRef<BaseFunctorExecParams>(lua_State* L, LifetimeHolder const& li
 		V(Type8)
 
 	default:
-		ObjectProxy::MakeRef(L, value, lifetime);
+		MakeDirectObjectRef(L, lifetime, value);
 		break;
 	}
 

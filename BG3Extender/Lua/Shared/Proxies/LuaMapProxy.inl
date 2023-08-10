@@ -1,4 +1,4 @@
-#include <Lua/Shared/LuaMapProxy.h>
+#include <Lua/Shared/Proxies/LuaMapProxy.h>
 
 namespace bg3se::lua
 {

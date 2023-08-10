@@ -29,7 +29,7 @@ namespace bg3se
 			uint32_t refs;
 		};
 
-		FixedString::CreateProc* ls__FixedString__Create{ nullptr };
+		FixedString::CreateFromStringProc* ls__FixedString__CreateFromString{ nullptr };
 		FixedString::GetStringProc* ls__FixedString__GetString{ nullptr };
 		FixedString::IncRefProc* ls__FixedString__IncRef{ nullptr };
 		FixedString::DecRefProc* ls__FixedString__DecRef{ nullptr };
@@ -37,15 +37,17 @@ namespace bg3se
 
 		FileReader::CtorProc* ls__FileReader__ctor{ nullptr };
 		FileReader::DtorProc* ls__FileReader__dtor{ nullptr };
-		STDString** PathRoots{ nullptr };
+		STDString** ls__PathRoots{ nullptr };
 
 		ecl::EoCClient** ecl__EoCClient{ nullptr };
 		esv::EoCServer** esv__EoCServer{ nullptr };
 
 		ecl::EoCClient::HandleErrorProc* ecl__EoCClient__HandleError{ nullptr };
 
+		TranslatedStringRepository** ls__gTranslatedStringRepository{ nullptr };
+
+		void** ecl__gGameStateEventManager{ nullptr };
 		ecl::GameStateEventManager__ExecuteGameStateChangedEvent ecl__GameStateEventManager__ExecuteGameStateChangedEvent{ nullptr };
-		esv::GameStateEventManager__ExecuteGameStateChangedEvent esv__GameStateEventManager__ExecuteGameStateChangedEvent{ nullptr };
 		ecl::GameStateThreaded__GameStateWorker__DoWork ecl__GameStateThreaded__GameStateWorker__DoWork{ nullptr };
 		esv::GameStateThreaded__GameStateWorker__DoWork esv__GameStateThreaded__GameStateWorker__DoWork{ nullptr };
 		esv::GameStateMachine__Update ecl__GameStateMachine__Update{ nullptr };
@@ -83,7 +85,6 @@ namespace bg3se
 		SkillPrototypeManager** eoc__SkillPrototypeManager{ nullptr };
 		StatusPrototypeManager** eoc__StatusPrototypeManager{ nullptr };*/
 
-		void * ModuleSettingsHasCustomMods{ nullptr };
 		RPGStats** Stats{ nullptr };
 		esv::SavegameManager** esv__SavegameManager{ nullptr };
 
@@ -91,10 +92,8 @@ namespace bg3se
 
 		std::map<uint8_t const *, EoCLibraryInfo> Libraries;
 
-		EoCAllocFunc EoCAlloc{ nullptr };
-		EoCFreeFunc EoCFree{ nullptr };
-		CrtAllocFunc CrtAlloc{ nullptr };
-		CrtFreeFunc CrtFree{ nullptr };
+		ls__GlobalAllocator__AllocProc* ls__GlobalAllocator__Alloc{ nullptr };
+		ls__GlobalAllocator__FreeProc* ls__GlobalAllocator__Free{ nullptr };
 
 		GuidResourceDefinitions** ResourceDefns{ nullptr };
 		ResourceManager** ResourceMgr{ nullptr };
@@ -129,8 +128,8 @@ namespace bg3se
 		{
 			if (esv__EoCServer != nullptr
 				&& *esv__EoCServer != nullptr
-				&& (*esv__EoCServer)->StateMachine != nullptr) {
-				return (*esv__EoCServer)->StateMachine->State;
+				&& (*esv__EoCServer)->GameStateMachine != nullptr) {
+				return (*esv__EoCServer)->GameStateMachine->State;
 			} else {
 				return {};
 			}
@@ -173,14 +172,15 @@ namespace bg3se
 
 		inline esv::LevelManager* GetServerLevelManager() const
 		{
-			if (esv__EoCServer != nullptr
+			/*if (esv__EoCServer != nullptr
 				&& *esv__EoCServer != nullptr
 				&& (*esv__EoCServer)->EntityManager != nullptr
 				&& (*esv__EoCServer)->EntityManager->LevelManager != nullptr) {
 				return reinterpret_cast<esv::LevelManager *>((*esv__EoCServer)->EntityManager->LevelManager);
 			} else {
 				return {};
-			}
+			}*/
+			return nullptr;
 		}
 
 		inline esv::Level* GetCurrentServerLevel() const

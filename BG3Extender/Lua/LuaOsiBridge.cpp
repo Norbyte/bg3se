@@ -77,6 +77,7 @@ namespace bg3se::esv::lua
 			break;
 
 		case ValueType::String:
+		case ValueType::GuidString:
 			if (type != LUA_TSTRING) {
 				luaL_error(L, "String expected for argument %d, got %s", i, lua_typename(L, type));
 			}
@@ -167,6 +168,7 @@ namespace bg3se::esv::lua
 			break;
 
 		case ValueType::String:
+		case ValueType::GuidString:
 			if (type != LUA_TSTRING) {
 				luaL_error(L, "String expected for argument %d, got %s", i, lua_typename(L, type));
 			}
@@ -206,6 +208,7 @@ namespace bg3se::esv::lua
 			break;
 
 		case ValueType::String:
+		case ValueType::GuidString:
 			push(L, arg.String);
 			break;
 
@@ -238,6 +241,7 @@ namespace bg3se::esv::lua
 			break;
 
 		case ValueType::String:
+		case ValueType::GuidString:
 			push(L, tv.Value.Val.String);
 			break;
 
@@ -264,7 +268,7 @@ namespace bg3se::esv::lua
 			return nullptr;
 		}
 
-		STDString sig(name);
+		OsiString sig(name);
 		sig += "/";
 		sig += std::to_string(arity);
 
@@ -652,7 +656,7 @@ namespace bg3se::esv::lua
 			argType = argType->Next;
 		}
 
-		auto node = (*gExtender->GetServer().Osiris().GetGlobals().Nodes)->Db.Start[function_->Node.Id - 1];
+		auto node = (*gExtender->GetServer().Osiris().GetGlobals().Nodes)->Db.Elements[function_->Node.Id - 1];
 		bool valid = node->IsValid(&tuple, &adapter_);
 		if (valid) {
 			if (outParams > 0) {
@@ -826,7 +830,7 @@ namespace bg3se::esv::lua
 	{
 		auto hash = FunctionNameHash(s.data());
 		auto types = *gExtender->GetServer().Osiris().GetWrappers().Globals.Types;
-		auto type = types->Find(hash, STDString(s));
+		auto type = types->Find(hash, OsiString(s));
 		if (type) {
 			return (ValueType)type->TypeId;
 		} else {
@@ -1081,7 +1085,7 @@ namespace bg3se::esv::lua
 	{
 		CustomFunctionParam parsed;
 
-		std::smatch paramMatch;
+		std::match_results<STDString::const_iterator> paramMatch;
 		if (!std::regex_match(param, paramMatch, isQuery ? inOutParamRe : inParamRe)) {
 			luaL_error(L, "Parameter string malformed: %s", param.c_str());
 		}

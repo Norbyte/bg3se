@@ -162,7 +162,7 @@ namespace bg3se::lua
 	int ClientCharacterGetInventoryItems(lua_State* L)
 	{
 		StackCheck _(L, 1);
-		auto self = checked_get<ObjectProxy<ecl::Character>*>(L, 1);
+		auto self = get<ObjectProxy<ecl::Character>*>(L, 1);
 
 		ClientGetInventoryItems(L, self->Get(L)->InventoryHandle);
 
@@ -172,8 +172,8 @@ namespace bg3se::lua
 	int ClientCharacterGetItemBySlot(lua_State* L)
 	{
 		StackCheck _(L, 1);
-		auto self = checked_get<ObjectProxy<ecl::Character>*>(L, 1);
-		auto slot = (uint32_t)checked_get<ItemSlot32>(L, 2);
+		auto self = get<ObjectProxy<ecl::Character>*>(L, 1);
+		auto slot = (uint32_t)get<ItemSlot32>(L, 2);
 
 		auto inventory = ecl::FindInventoryByHandle(self->Get(L)->InventoryHandle);
 		if (inventory != nullptr && slot < inventory->ItemsBySlot.Size) {
@@ -271,7 +271,7 @@ namespace bg3se::lua
 	int ClientItemGetInventoryItems(lua_State* L)
 	{
 		StackCheck _(L, 1);
-		auto self = checked_get<ObjectProxy<ecl::Item>*>(L, 1);
+		auto self = get<ObjectProxy<ecl::Item>*>(L, 1);
 
 		ClientGetInventoryItems(L, self->Get(L)->InventoryHandle);
 
@@ -281,7 +281,7 @@ namespace bg3se::lua
 	int ItemGetOwnerCharacter(lua_State* L)
 	{
 		StackCheck _(L, 1);
-		auto self = checked_get<ObjectProxy<ecl::Item>*>(L, 1);
+		auto self = get<ObjectProxy<ecl::Item>*>(L, 1);
 
 		auto inventory = ecl::FindInventoryByHandle(self->Get(L)->InventoryParentHandle);
 
@@ -444,7 +444,7 @@ namespace bg3se::ecl::lua
 		switch (lua_type(L, index)) {
 		case LUA_TLIGHTUSERDATA:
 		{
-			auto handle = checked_get<ComponentHandle>(L, index);
+			auto handle = get<ComponentHandle>(L, index);
 			if (handle.GetType() == (uint32_t)ObjectType::ServerCharacter) {
 				OsiError("Attempted to resolve server ComponentHandle on the client");
 			}
@@ -480,7 +480,7 @@ namespace bg3se::ecl::lua
 		}
 
 		default:
-			OsiError("Expected character UUID, Handle or NetId");
+			OsiError("Expected character Guid, Handle or NetId");
 			break;
 		}
 
@@ -514,7 +514,7 @@ namespace bg3se::ecl::lua
 		switch (lua_type(L, 1)) {
 		case LUA_TLIGHTUSERDATA:
 		{
-			auto handle = checked_get<ComponentHandle>(L, 1);
+			auto handle = get<ComponentHandle>(L, 1);
 			if (handle.GetType() == (uint32_t)ObjectType::ServerItem) {
 				OsiError("Attempted to resolve server ComponentHandle on the client");
 			} else {
@@ -548,7 +548,7 @@ namespace bg3se::ecl::lua
 		}
 
 		default:
-			OsiError("Expected item UUID, Handle or NetId; got " << lua_typename(L, lua_type(L, 1)));
+			OsiError("Expected item Guid, Handle or NetId; got " << lua_typename(L, lua_type(L, 1)));
 			return 0;
 		}
 
@@ -573,7 +573,7 @@ namespace bg3se::ecl::lua
 
 		ecl::Status* status;
 		if (lua_type(L, 2) == LUA_TLIGHTUSERDATA) {
-			auto statusHandle = checked_get<ComponentHandle>(L, 2);
+			auto statusHandle = get<ComponentHandle>(L, 2);
 			status = character->GetStatus(statusHandle);
 
 			if (status != nullptr) {
@@ -697,10 +697,10 @@ namespace bg3se::ecl::lua
 	int UpdateShroud(lua_State* L)
 	{
 		StackCheck _(L, 0);
-		auto x = checked_get<float>(L, 1);
-		auto y = checked_get<float>(L, 2);
-		auto layer = checked_get<ShroudType>(L, 3);
-		auto value = checked_get<int>(L, 4);
+		auto x = get<float>(L, 1);
+		auto y = get<float>(L, 2);
+		auto layer = get<ShroudType>(L, 3);
+		auto value = get<int>(L, 4);
 
 		if (value < 0 || value > 255) {
 			OsiError("Can only set shroud cell values between 0 and 255");
@@ -746,7 +746,7 @@ namespace bg3se::ecl::lua
 
 		case LUA_TSTRING:
 		{
-			auto name = checked_get<char const*>(L, idx);
+			auto name = get<char const*>(L, idx);
 			if (strcmp(name, "Global") == 0) {
 				return 0xffffffffffffffffull;
 			} else if (strcmp(name, "Music") == 0) {
@@ -773,7 +773,7 @@ namespace bg3se::ecl::lua
 
 		case LUA_TLIGHTUSERDATA:
 		{
-			auto handle = checked_get<ComponentHandle>(L, idx);
+			auto handle = get<ComponentHandle>(L, idx);
 			if (handle.GetType() == (uint32_t)ObjectType::ClientCharacter) {
 				auto character = GetEntityWorld()->GetCharacter(handle);
 				if (character) {
@@ -796,8 +796,8 @@ namespace bg3se::ecl::lua
 	int SetSwitch(lua_State* L)
 	{
 		auto soundObject = GetSoundObjectId(L, 1);
-		auto switchGroup = checked_get<char const*>(L, 2);
-		auto state = checked_get<char const*>(L, 3);
+		auto switchGroup = get<char const*>(L, 2);
+		auto state = get<char const*>(L, 3);
 
 		if (!soundObject) {
 			push(L, false);
@@ -811,8 +811,8 @@ namespace bg3se::ecl::lua
 
 	int SetState(lua_State* L)
 	{
-		auto stateGroup = checked_get<char const*>(L, 1);
-		auto state = checked_get<char const*>(L, 2);
+		auto stateGroup = get<char const*>(L, 1);
+		auto state = get<char const*>(L, 2);
 
 		if (!GetSoundManager()) {
 			push(L, false);
@@ -827,8 +827,8 @@ namespace bg3se::ecl::lua
 	int SetRTPC(lua_State* L)
 	{
 		auto soundObject = GetSoundObjectId(L, 1);
-		auto rtpcName = checked_get<char const*>(L, 2);
-		auto value = checked_get<float>(L, 3);
+		auto rtpcName = get<char const*>(L, 2);
+		auto value = get<float>(L, 3);
 
 		if (!soundObject) {
 			push(L, false);
@@ -843,7 +843,7 @@ namespace bg3se::ecl::lua
 	int GetRTPC(lua_State* L)
 	{
 		auto soundObject = GetSoundObjectId(L, 1);
-		auto rtpcName = checked_get<char const*>(L, 2);
+		auto rtpcName = get<char const*>(L, 2);
 
 		if (!soundObject) {
 			push(L, nullptr);
@@ -858,7 +858,7 @@ namespace bg3se::ecl::lua
 	int ResetRTPC(lua_State* L)
 	{
 		auto soundObject = GetSoundObjectId(L, 1);
-		auto rtpcName = checked_get<char const*>(L, 2);
+		auto rtpcName = get<char const*>(L, 2);
 
 		if (!soundObject) {
 			push(L, false);
@@ -914,10 +914,10 @@ namespace bg3se::ecl::lua
 	int PostEvent(lua_State* L)
 	{
 		auto soundObject = GetSoundObjectId(L, 1);
-		auto eventName = checked_get<char const*>(L, 2);
+		auto eventName = get<char const*>(L, 2);
 		float positionSec = 0.0f;
 		if (lua_gettop(L) > 2) {
-			positionSec = checked_get<float>(L, 3);
+			positionSec = get<float>(L, 3);
 		}
 
 		if (!soundObject) {
@@ -933,9 +933,9 @@ namespace bg3se::ecl::lua
 	int PlayExternalSound(lua_State* L)
 	{
 		auto soundObject = GetSoundObjectId(L, 1);
-		auto eventName = checked_get<char const*>(L, 2);
-		auto path = checked_get<char const*>(L, 3);
-		auto codecId = checked_get<unsigned int>(L, 4);
+		auto eventName = get<char const*>(L, 2);
+		auto path = get<char const*>(L, 3);
+		auto codecId = get<unsigned int>(L, 4);
 
 		if (!soundObject) {
 			push(L, false);
@@ -1007,10 +1007,6 @@ namespace bg3se::ecl::lua
 		LoadScript(baseLib, "BuiltinLibrary.lua");
 		auto clientLib = GetBuiltinLibrary(IDR_LUA_BUILTIN_LIBRARY_CLIENT);
 		LoadScript(clientLib, "BuiltinLibraryClient.lua");
-		auto gameMathLib = GetBuiltinLibrary(IDR_LUA_GAME_MATH);
-		LoadScript(gameMathLib, "Game.Math.lua");
-		auto gameTooltipLib = GetBuiltinLibrary(IDR_LUA_GAME_TOOLTIP);
-		LoadScript(gameTooltipLib, "Game.Tooltip.lua");
 
 		lua_getglobal(L, "Ext"); // stack: Ext
 		stats::StatsExtraDataProxy::New(L); // stack: Ext, ExtraDataProxy

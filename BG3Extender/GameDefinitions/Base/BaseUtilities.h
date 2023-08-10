@@ -11,6 +11,10 @@
 namespace bg3se
 {
 
+	// Helper struct to allow function overloading without (real) template-dependent parameters
+	template <class>
+	struct Overload {};
+
 	// Base class for game objects that cannot be copied.
 	template <class T>
 	class Noncopyable
@@ -40,6 +44,9 @@ namespace bg3se
 		//~ProtectedGameObject() = delete;
 	};
 
+	// Tag for engine objects that have a Lua property map
+	struct HasObjectProxy {};
+
 	// Base class for game objects that are managed entirely
 	// by the game and we cannot create/copy them.
 	// Temporary hack until we have a better fix for HasObjectProxy
@@ -64,9 +71,6 @@ namespace bg3se
 		static char const* const TypeName;
 	};
 
-	// Tag for engine objects that have a Lua property map
-	struct HasObjectProxy {};
-
 	template <class T>
 	struct HasObjectProxyTag {
 		static constexpr bool HasProxy = false;
@@ -74,13 +78,14 @@ namespace bg3se
 
 #define HAS_OBJECT_PROXY(cls) template<> struct HasObjectProxyTag<cls> { static constexpr bool HasProxy = true; }
 
-	// Tag for by-ref vs by-val array behavior
+	// Tag indicating whether a specific type should be handled as a value (by-val) 
+	// or as an object via an object/array proxy (by-ref)
 	template <class T>
-	struct ByValArray {
-		static constexpr bool Value = false;
+	struct ByVal {
+		static constexpr bool Value = std::is_integral_v<T> || std::is_floating_point_v<T> || std::is_enum_v<T>;
 	};
 
-#define BY_VAL_ARRAY(cls) template<> struct ByValArray<cls> { static constexpr bool Value = true; }
+#define BY_VAL(cls) template<> struct ByVal<cls> { static constexpr bool Value = true; }
 
 	// Prevents implicit casting between aliases of integral types (eg. NetId and UserId)
 	// Goal is to prevent accidental mixups between different types
@@ -217,3 +222,36 @@ namespace bg3se
 		return Hash(std::underlying_type_t<T>(v));
 	}
 }
+
+BEGIN_NS(lua)
+
+// Indicates that a type should be pushed through the polymorphic MakeObjectRef()
+// implementation, since there are separate property maps for the different subclasses
+template <class T>
+struct LuaPolymorphic {
+	static constexpr bool IsPolymorphic = false;
+};
+
+#define LUA_POLYMORPHIC(cls) \
+	template <> \
+	struct LuaPolymorphic<cls> { \
+		static constexpr bool IsPolymorphic = true; \
+		static void MakeRef(lua_State* L, cls* value, LifetimeHolder const& lifetime); \
+	};
+
+
+// Indicates that the type is not bound to the normal lifetime scoping rules
+// and has infinite lifetime
+template <class T>
+struct LuaLifetimeInfo {
+	static constexpr bool HasInfiniteLifetime = false;
+};
+
+#define LUA_INFINITE_LIFETIME(cls) \
+	template <> \
+	struct LuaLifetimeInfo<cls> { \
+		static constexpr bool HasInfiniteLifetime = true; \
+	};
+
+
+END_NS()

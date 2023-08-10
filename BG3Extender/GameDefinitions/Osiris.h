@@ -8,12 +8,17 @@
 #include <string>
 #include <cassert>
 #include <glm/vec3.hpp>
-#include <GameDefinitions/BaseTypes.h>
+#include <GameDefinitions/Base/Base.h>
 
 namespace bg3se
 {
 
-enum class ValueType : uint32_t
+// Osiris strings still use 64-bit size fields, unlike game strings that are 32-bit
+using OsiString = std::basic_string<char, std::char_traits<char>, GameStdAllocator<char>>;
+template <class T> using OsiVector = std::vector<T, GameStdAllocator<T>>;
+template <class T> using OsiList = std::list<T, GameStdAllocator<T>>;
+
+enum class ValueType : uint16_t
 {
 	None = 0,
 	Integer = 1,
@@ -80,6 +85,7 @@ struct OsiArgumentValue
 			break;
 
 		case ValueType::String:
+		case ValueType::GuidString:
 		default:
 			String = v.String;
 			break;
@@ -110,6 +116,7 @@ struct OsiArgumentValue
 			return std::to_string(Float);
 
 		case ValueType::String:
+		case ValueType::GuidString:
 			return String ? String : "";
 
 		default:
@@ -390,16 +397,14 @@ struct VariableDb : public ProtectedGameObject<VariableDb>
 	uint32_t NumVariables;
 	uint8_t __Padding[4];
 	uint16_t b;
-	VariableItem2 * VarsStart;
-	VariableItem2 * VarsPtr;
-	VariableItem2 * VarsEnd;
+	OsiVector<VariableItem2> Vars;
 };
 
 template <class T>
-struct TArray
+struct OsiSequentialArray
 {
 	uint32_t Size;
-	T * Start, *End, *BufEnd;
+	OsiVector<T> Elements;
 };
 
 template <class T>
@@ -532,7 +537,7 @@ struct TMap
 
 struct TypeDbLess
 {
-	bool operator ()(STDString const & a, STDString const & b) const
+	bool operator ()(OsiString const & a, OsiString const & b) const
 	{
 		return _stricmp(a.c_str(), b.c_str()) < 0;
 	}
@@ -543,11 +548,11 @@ struct TypeDb : public ProtectedGameObject<TypeDb<TValue>>
 {
 	struct HashSlot
 	{
-		TMap<STDString, TValue, TypeDbLess> NodeMap;
+		TMap<OsiString, TValue, TypeDbLess> NodeMap;
 		void * Unknown;
 	};
 
-	TValue * Find(uint32_t hash, STDString const & key)
+	TValue * Find(uint32_t hash, OsiString const & key)
 	{
 		auto & bucket = Hash[hash % 0x3FF];
 		return bucket.NodeMap.Find(key);
@@ -566,6 +571,16 @@ struct TypeDb : public ProtectedGameObject<TypeDb<TValue>>
 	uint32_t NumItems;
 };
 
+struct EnumDb
+{
+	float field_0;
+	TMap<OsiString, void*, TypeDbLess> Tree;
+	__int64 field_10;
+	Vector<void*> Enums;
+	__int64 field_30;
+	__int64 field_38;
+};
+
 struct SomeDbItem
 {
 	uint64_t Unknown;
@@ -580,25 +595,11 @@ union Value
 	char * String;
 };
 
-struct String
-{
-	union {
-		char Buf[16];
-		char * Ptr;
-	};
-	uint64_t Length;
-	uint64_t BufferLength;
-
-	inline String()
-		: Ptr(nullptr), Length(0), BufferLength(15)
-	{}
-};
-
 struct RawValue
 {
 	Value Val;
 	uint32_t Unknown{ 0 };
-	String Str;
+	OsiString Str;
 };
 
 class TypedValue
@@ -622,7 +623,7 @@ public:
 
 	void * VMT{ nullptr };
 
-	uint32_t TypeId{ 0 };
+	uint16_t TypeId{ 0 };
 	RawValue Value;
 };
 
@@ -717,22 +718,24 @@ struct Goal : public ProtectedGameObject<Goal>
 	uint32_t Id;
 	char const * Name;
 	uint32_t SubGoalCombination;
-	TArray<uint32_t> ParentGoals;
-	TArray<uint32_t> SubGoals;
+	void* ParentGoalsVMT;
+	OsiList<uint32_t> ParentGoals;
+	void* SubGoalsVMT;
+	OsiList<uint32_t> SubGoals;
 	uint8_t Flags;
-};
-
-struct GoalDb
-{
-	void * Unknown[2047];
-	uint32_t Count;
-	TMap<uint32_t, Goal *> Goals;
 };
 
 template <class T>
 struct TypedDb
 {
-	TArray<T *> Db;
+	OsiSequentialArray<T *> Db;
+};
+
+struct GoalDb : public TypeDb<Goal*>
+{
+	uint32_t Unknown;
+	TMap<uint32_t, Goal*> Goals;
+	void* Unknown2;
 };
 
 class VirtTupleLL;
@@ -764,7 +767,7 @@ struct Ref
 			return nullptr;
 		}
 
-		return Manager->Db.Start[Id - 1];
+		return Manager->Db.Elements[Id - 1];
 	}
 };
 
@@ -789,7 +792,7 @@ public:
 
 struct FunctionParamDesc
 {
-	uint32_t Type;
+	uint16_t Type;
 	uint32_t Unknown;
 };
 
@@ -1151,9 +1154,9 @@ struct OsiTypeDb : public TypeDb<OsirisTypeInfo>
 	AliasInfo* Aliases;
 	uint64_t c, d;
 
-	ValueType ResolveAlias(uint32_t typeId)
+	ValueType ResolveAlias(uint16_t typeId)
 	{
-		while (typeId > (uint32_t)ValueType::String && typeId != (uint32_t)ValueType::Undefined) {
+		while (typeId > (uint16_t)ValueType::GuidString && typeId != (uint16_t)ValueType::Undefined) {
 			typeId = Aliases[typeId].AliasTypeId;
 		}
 
@@ -1165,6 +1168,7 @@ struct OsirisStaticGlobals
 {
 	VariableDb ** Variables{ nullptr };
 	OsiTypeDb ** Types{ nullptr };
+	EnumDb ** Enums{ nullptr };
 	FunctionDb ** Functions{ nullptr };
 	ObjectDb ** Objects{ nullptr };
 	GoalDb ** Goals{ nullptr };

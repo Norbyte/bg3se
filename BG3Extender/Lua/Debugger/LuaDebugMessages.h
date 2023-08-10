@@ -3,7 +3,7 @@
 #if !defined(OSI_NO_DEBUGGER)
 
 #include <cstdint>
-#include "LuaDebug.pb.h"
+#include <Lua/Debugger/LuaDebug.pb.h>
 #include <GameDefinitions/Module.h>
 #include <Osiris/Debugger/DebugInterface.h>
 

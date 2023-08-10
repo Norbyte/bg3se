@@ -1,10 +1,11 @@
 #pragma once
 
-#include <GameDefinitions/BaseTypes.h>
+#include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/Stats/Common.h>
 #include <GameDefinitions/Hit.h>
 #include <GameDefinitions/Misc.h>
+#include <Lua/LuaHelpers.h>
 
 namespace bg3se
 {
@@ -34,7 +35,7 @@ namespace bg3se
 		template <class T>
 		std::optional<T*> Cast()
 		{
-			if (TypeId == typename T::FunctorId) {
+			if (TypeId == T::FunctorId) {
 				return static_cast<T*>(this);
 			} else {
 				return {};
@@ -348,7 +349,7 @@ namespace bg3se
 	{
 		static constexpr auto FunctorId = StatsFunctorActionId::RestoreResource;
 
-		UUID ActionResourceUUID; // Arg0
+		Guid ActionResourceUUID; // Arg0
 		int Hex{ 0 }; // Arg2
 		int field_34{ 0 };
 		LuaExpression* LuaAmount{ nullptr }; // Arg1
@@ -426,7 +427,7 @@ namespace bg3se
 	{
 		static constexpr auto FunctorId = StatsFunctorActionId::UseActionResource;
 
-	    UUID ActionResourceUUID; // Arg0
+	    Guid ActionResourceUUID; // Arg0
 		double Amount{ 0.0 }; // Arg1
 		int ResourceIndex{ 0 }; // Arg2
 		bool IsPercentage{ false }; // Arg1
@@ -523,7 +524,7 @@ namespace bg3se
 
 BEGIN_NS(lua)
 
-	template <>
-	void MakeObjectRef<BaseFunctorExecParams>(lua_State* L, LifetimeHolder const& lifetime, BaseFunctorExecParams* value);
+LUA_POLYMORPHIC(BaseFunctorExecParams)
 
 END_NS()
+

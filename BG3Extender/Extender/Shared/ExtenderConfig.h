@@ -18,15 +18,12 @@ struct ExtenderConfig
 #endif
 
 	bool EnableExtensions{ true };
-#if defined(OSI_EOCAPP)
 	bool LogFailedCompile{ true };
-#else
-	bool LogFailedCompile{ false };
-#endif
 	bool EnableLogging{ false };
 	bool LogCompile{ false };
 	bool LogRuntime{ false };
 	bool SendCrashReports{ true };
+	bool ForceCrashReporting{ false };
 	bool EnableAchievements{ true };
 
 #if defined(OSI_EXTENSION_BUILD)

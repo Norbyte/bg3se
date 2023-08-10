@@ -14,7 +14,7 @@ namespace bg3se::lua
 			return 1;
 		}
 
-		auto prop = checked_get<FixedString>(L, 2);
+		auto prop = get<FixedString>(L, 2);
 
 		if (prop == GFS.strName) {
 			push(L, eventName_);
@@ -38,7 +38,7 @@ namespace bg3se::lua
 			return 0;
 		}
 
-		auto prop = checked_get<FixedString>(L, 2);
+		auto prop = get<FixedString>(L, 2);
 		if (writeable_) {
 			impl->SetProperty(L, lifetime_.Get(), prop, 3);
 		} else {
@@ -61,7 +61,7 @@ namespace bg3se::lua
 		if (lua_type(L, 2) == LUA_TNIL) {
 			return impl->Next(L, lifetime_.Get(), FixedString{});
 		} else {
-			auto key = checked_get<FixedString>(L, 2);
+			auto key = get<FixedString>(L, 2);
 			return impl->Next(L, lifetime_.Get(), key);
 		}
 	}

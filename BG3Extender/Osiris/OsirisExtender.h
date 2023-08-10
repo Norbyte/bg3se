@@ -103,10 +103,10 @@ private:
 
 	void OnError(char const * Message);
 	void OnAssert(bool Successful, char const * Message, bool Unknown2);
-	bool CompileWrapper(std::function<bool (void *, wchar_t const *, wchar_t const *)> const & Next, void * Osiris, wchar_t const * Path, wchar_t const * Mode);
+	bool CompileWrapper(bool (*next)(void*, wchar_t const*, wchar_t const*), void * Osiris, wchar_t const * Path, wchar_t const * Mode);
 	void OnAfterOsirisLoad(void * Osiris, void * Buf, int retval);
-	bool MergeWrapper(std::function<bool(void *, wchar_t *)> const & Next, void * Osiris, wchar_t * Src);
-	void RuleActionCall(std::function<void(RuleActionNode *, void *, void *, void *, void *)> const & Next, RuleActionNode * Action, void * a1, void * a2, void * a3, void * a4);
+	bool MergeWrapper(bool (*next)(void *, wchar_t *), void * Osiris, wchar_t * Src);
+	void RuleActionCall(void (*next)(RuleActionNode *, void *, void *, void *, void *), RuleActionNode * Action, void * a1, void * a2, void * a3, void * a4);
 
 	std::wstring logFilename_;
 	std::wstring logType_;

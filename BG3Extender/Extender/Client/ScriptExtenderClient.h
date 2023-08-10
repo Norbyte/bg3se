@@ -52,8 +52,10 @@ public:
 	// HACK - we need to expose this so it can be added to the CrashReporter whitelist
 	enum class GameStateWorkerStartTag {};
 	enum class GameStateMachcineUpdateTag {};
-	HookableFunction<GameStateWorkerStartTag, void(void*)> gameStateWorkerStart_;
-	HookableFunction<GameStateMachcineUpdateTag, void(void*, GameTime*)> gameStateMachineUpdate_;
+	enum class GameStateChangedEventTag {};
+	WrappableFunction<GameStateWorkerStartTag, void(void*)> gameStateWorkerStart_;
+	WrappableFunction<GameStateMachcineUpdateTag, void(void*, GameTime*)> gameStateMachineUpdate_;
+	WrappableFunction<GameStateChangedEventTag, void(void*, GameState, GameState)> gameStateChangedEvent_;
 
 private:
 	std::unique_ptr<ExtensionState> extensionState_;
@@ -61,16 +63,12 @@ private:
 	ClientEntitySystemHelpers entityHelpers_;
 	ModuleHasher hasher_;
 
-	enum class GameStateChangedEventTag {};
-	PostHookableFunction<GameStateChangedEventTag, void(void*, GameState, GameState)> gameStateChangedEvent_;
-
 	void OnBaseModuleLoaded(void * self);
 	/*void OnModuleLoadStarted(TranslatedStringRepository * self);
 	void OnStatsLoadStarted(RPGStats* mgr);
 	void OnStatsLoadFinished(RPGStats* mgr);*/
 	void OnGameStateChanged(void * self, GameState fromState, GameState toState);
-	void OnGameStateWorkerStart(void * self);
-	void OnGameStateWorkerExit(void* self);
+	void GameStateWorkerWrapper(void (*wrapped)(void*), void* self);
 	void OnUpdate(void* self, GameTime* time);
 };
 

@@ -57,7 +57,7 @@ namespace bg3se::esv
 				auto replace = StringFormatReplacements[argIndex];
 
 				for (;;) {
-					std::size_t pos = StringFmtTemp.find(replace);
+					STDString::size_type pos = StringFmtTemp.find(replace);
 					if (pos != STDString::npos) {
 						StringFmtTemp = StringFmtTemp.substr(0, pos) + STDString(arg->Value.ToString())
 							+ StringFmtTemp.substr(pos + 3);
@@ -82,19 +82,19 @@ namespace bg3se::esv
 			auto & output = args[3];
 
 			if (from < 0) {
-				if (-from <= StringFmtTemp.size()) {
+				if (-from <= (int)StringFmtTemp.size()) {
 					from = (int)StringFmtTemp.size() + from;
 				} else {
 					from = 0;
 				}
-			} else if (from > StringFmtTemp.size()) {
+			} else if (from > (int)StringFmtTemp.size()) {
 				from = (int)StringFmtTemp.size();
 			}
 
 			auto availableLength = (int)StringFmtTemp.size() - from;
 			if (length < 0) {
 				int to;
-				if (-length <= StringFmtTemp.size()) {
+				if (-length <= (int)StringFmtTemp.size()) {
 					to = (int)StringFmtTemp.size() + length;
 				} else {
 					to = 0;
@@ -111,8 +111,8 @@ namespace bg3se::esv
 				length = availableLength;
 			}
 
-			if (from >= 0 && from <= StringFmtTemp.size()
-				&& length >= 0 && length + from <= StringFmtTemp.size()) {
+			if (from >= 0 && from <= (int)StringFmtTemp.size()
+				&& length >= 0 && length + from <= (int)StringFmtTemp.size()) {
 				StringFmtTemp = StringFmtTemp.substr(from, length);
 				output.Set(StringFmtTemp.c_str());
 				return true;

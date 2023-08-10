@@ -6,7 +6,7 @@
 namespace bg3se::lua::utils
 {
 	template <class T>
-	int GetGuidResourceProxy(lua_State* L, UUID const& resourceGuid)
+	int GetGuidResourceProxy(lua_State* L, Guid const& resourceGuid)
 	{
 		auto& helpers = gExtender->GetServer().GetEntityHelpers();
 		auto resourceMgr = helpers.GetResourceManager<T>();
@@ -28,8 +28,8 @@ namespace bg3se::lua::utils
 
 	int GetGuidResource(lua_State* L)
 	{
-		auto resourceGuid = checked_get<UUID>(L, 1);
-		auto type = checked_get<ExtResourceManagerType>(L, 2);
+		auto resourceGuid = get<Guid>(L, 1);
+		auto type = get<ExtResourceManagerType>(L, 2);
 
 		auto& helpers = gExtender->GetServer().GetEntityHelpers();
 		switch (type) {
@@ -81,7 +81,7 @@ namespace bg3se::lua::utils
 
 	int GetAllGuidResources(lua_State* L)
 	{
-		auto type = checked_get<ExtResourceManagerType>(L, 1);
+		auto type = get<ExtResourceManagerType>(L, 1);
 
 		auto& helpers = gExtender->GetServer().GetEntityHelpers();
 		switch (type) {
@@ -118,7 +118,7 @@ namespace bg3se::lua::utils
 			return nullptr;
 		}
 
-		if ((*resMgr)->ResourceBanks[0]->Packages.Count() > 0) {
+		if ((*resMgr)->ResourceBanks[0]->Packages.size() > 0) {
 			return (*resMgr)->ResourceBanks[0];
 		} else {
 			return (*resMgr)->ResourceBanks[1];
@@ -128,8 +128,8 @@ namespace bg3se::lua::utils
 	
 	int GetResource(lua_State* L)
 	{
-		auto resourceGuid = checked_get<FixedString>(L, 1);
-		auto type = checked_get<ResourceBankType>(L, 2);
+		auto resourceGuid = get<FixedString>(L, 1);
+		auto type = get<ResourceBankType>(L, 2);
 
 		auto bank = GetCurrentResourceBank();
 		if (!bank) {
@@ -138,9 +138,9 @@ namespace bg3se::lua::utils
 			return 1;
 		}
 
-		auto resource = bank->Container.Banks[(unsigned)type]->Resources.Find(resourceGuid);
-		if (resource) {
-			ObjectProxy::MakeRef<Resource>(L, *resource, GetCurrentLifetime());
+		auto resource = bank->Container.Banks[(unsigned)type]->Resources.find(resourceGuid);
+		if (resource != bank->Container.Banks[(unsigned)type]->Resources.end()) {
+			ObjectProxy::MakeRef<Resource>(L, resource.Value(), GetCurrentLifetime());
 		} else {
 			push(L, nullptr);
 		}
@@ -151,7 +151,7 @@ namespace bg3se::lua::utils
 
 	int GetAllResources(lua_State* L)
 	{
-		auto type = checked_get<ResourceBankType>(L, 1);
+		auto type = get<ResourceBankType>(L, 1);
 
 		auto bank = GetCurrentResourceBank();
 		if (!bank) {

@@ -33,7 +33,7 @@ namespace bg3se::osidbg
 
 		auto const & nodeDb = (*globals_.Nodes)->Db;
 		for (unsigned i = 0; i < nodeDb.Size; i++) {
-			auto node = nodeDb.Start[i];
+			auto node = nodeDb.Elements[i];
 			NodeType type = gExtender->GetServer().Osiris().GetVMTWrappers()->GetType(node);
 			if (type == NodeType::Rule) {
 				auto rule = static_cast<RuleNode *>(node);
@@ -42,7 +42,7 @@ namespace bg3se::osidbg
 		}
 
 		auto const & goalDb = (*globals_.Goals);
-		for (unsigned i = 0; i < goalDb->Count; i++) {
+		for (unsigned i = 0; i < goalDb->NumItems; i++) {
 			auto goal = goalDb->Goals.Find(i + 1);
 			AddRuleActionMappings(nullptr, *goal, true, (*goal)->InitCalls);
 			AddRuleActionMappings(nullptr, *goal, false, (*goal)->ExitCalls);
@@ -97,7 +97,7 @@ namespace bg3se::osidbg
 			return ResultCode::InvalidNodeId;
 		}
 
-		if (goalId > (*globals_.Goals)->Count) {
+		if (goalId > (*globals_.Goals)->NumItems) {
 			WARN("Debugger::AddBreakpoint(): Tried to set on nonexistent goal ID %d", nodeId);
 			return ResultCode::InvalidGoalId;
 		}
@@ -411,7 +411,7 @@ namespace bg3se::osidbg
 			return ResultCode::NotInPause;
 		}
 
-		auto & db = dbs.Start[databaseId - 1];
+		auto & db = dbs.Elements[databaseId - 1];
 		auto const & facts = db->Facts;
 		auto head = facts.Head;
 		auto current = head->Next;
@@ -496,21 +496,21 @@ namespace bg3se::osidbg
 	void Debugger::SyncStory()
 	{
 		auto const & goalDb = (*globals_.Goals);
-		for (unsigned i = 0; i < goalDb->Count; i++) {
+		for (unsigned i = 0; i < goalDb->NumItems; i++) {
 			auto goal = goalDb->Goals.Find(i + 1);
 			messageHandler_.SendSyncStory(*goal);
 		}
 
-		auto const & databaseDb = (*globals_.Databases)->Db;
+		auto & databaseDb = (*globals_.Databases)->Db;
 		for (unsigned i = 0; i < databaseDb.Size; i += 100) {
 			uint32_t numDatabases = std::min<uint32_t>(databaseDb.Size - i, 100);
-			messageHandler_.SendSyncStory(&databaseDb.Start[i], numDatabases);
+			messageHandler_.SendSyncStory(&databaseDb.Elements[i], numDatabases);
 		}
 
-		auto const & nodeDb = (*globals_.Nodes)->Db;
+		auto & nodeDb = (*globals_.Nodes)->Db;
 		for (unsigned i = 0; i < nodeDb.Size; i += 100) {
 			uint32_t numNodes = std::min<uint32_t>(nodeDb.Size - i, 100);
-			messageHandler_.SendSyncStory(&nodeDb.Start[i], numNodes);
+			messageHandler_.SendSyncStory(&nodeDb.Elements[i], numNodes);
 		}
 	}
 
@@ -546,6 +546,7 @@ namespace bg3se::osidbg
 			break;
 
 		case ValueType::String:
+		case ValueType::GuidString:
 		default:
 			tv.Value.Val.String = _strdup(msg.stringval().c_str());
 			break;
@@ -620,7 +621,7 @@ namespace bg3se::osidbg
 			return ResultCode::InvalidNodeId;
 		}
 
-		auto node = (*globals_.Nodes)->Db.Start[nodeId - 1];
+		auto node = (*globals_.Nodes)->Db.Elements[nodeId - 1];
 		if (node->Function == nullptr) {
 			WARN("Debugger::EvaluateInServerThread(): Node has no function!");
 			return ResultCode::NotCallable;

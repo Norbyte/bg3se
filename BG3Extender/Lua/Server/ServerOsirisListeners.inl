@@ -260,9 +260,9 @@ namespace bg3se::esv::lua
 	int RegisterOsirisListener(lua_State* L)
 	{
 		StackCheck _(L, 0);
-		auto name = checked_get<char const*>(L, 1);
-		auto arity = checked_get<int>(L, 2);
-		auto typeName = checked_get<char const*>(L, 3);
+		auto name = get<char const*>(L, 1);
+		auto arity = get<int>(L, 2);
+		auto typeName = get<char const*>(L, 3);
 		luaL_checktype(L, 4, LUA_TFUNCTION);
 
 		OsirisHookSignature::HookType type;

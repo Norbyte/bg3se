@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GameDefinitions/BaseTypes.h>
+#include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/Stats/Common.h>
 #include <GameDefinitions/Stats/Character.h>
@@ -170,7 +170,7 @@ namespace bg3se
 		uint8_t TickType;
 		uint8_t Flags;
 		ObjectSet<SurfaceType>* AbsorbSurfaceTypes{ nullptr };
-		Array<UUID> Boosts;
+		Array<Guid> Boosts;
 		int16_t RemoveEvents;
 		uint8_t HitAnimationType;
 
@@ -450,7 +450,7 @@ namespace bg3se
 		FixedString TreasureRarities[7];
 		ObjectSet<FixedString> FixedStrings;
 		ObjectSet<int64_t*> Int64s;
-		Array<UUID> GUIDs;
+		Array<Guid> GUIDs;
 		Array<float> ConstantFloats;
 		void* EquipmentSetManager;
 		void* SpellSetManager;
@@ -484,8 +484,8 @@ namespace bg3se
 		int64_t* GetOrCreateInt64(int& int64Id);
 		std::optional<float*> GetFloat(int floatId);
 		float* GetOrCreateFloat(int& floatId);
-		std::optional<UUID*> GetGuid(int guidId);
-		UUID* GetOrCreateGuid(int& guidId);
+		std::optional<Guid*> GetGuid(int guidId);
+		Guid* GetOrCreateGuid(int& guidId);
 		std::optional<STDString*> GetConditions(int conditionsId);
 		int GetOrCreateConditions(STDString const& conditions);
 

@@ -28,10 +28,10 @@ namespace bg3se
 	ModManager * GetModManagerServer()
 	{
 		auto server = GetEoCServer();
-		if (server == nullptr || server->ModManagerServer == nullptr) {
+		if (server == nullptr) {
 			return nullptr;
 		} else {
-			return server->ModManagerServer;
+			return &server->ModManager;
 		}
 	}
 

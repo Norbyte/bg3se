@@ -9,7 +9,7 @@ namespace bg3se::esv::lua
 	{
 		StackCheck _(L, 1);
 
-		auto type = checked_get<StatsFunctorActionId>(L, 1);
+		auto type = get<StatsFunctorActionId>(L, 1);
 		auto& pool = GetServerLifetimePool();
 
 		auto functor = GetStaticSymbols().GetStats()->ConstructFunctor(type);
@@ -72,7 +72,7 @@ namespace bg3se::esv::lua
 	{
 		StackCheck _(L, 1);
 
-		auto type = checked_get<FunctorExecParamsType>(L, 1);
+		auto type = get<FunctorExecParamsType>(L, 1);
 		auto& pool = GetServerLifetimePool();
 
 #define V(ty) case FunctorExecParamsType::ty: { \
