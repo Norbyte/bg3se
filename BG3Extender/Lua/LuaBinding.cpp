@@ -624,8 +624,11 @@ namespace bg3se::lua
 	}
 
 
-	State::State()
-		: lifetimeStack_(lifetimePool_)
+	State::State(bool isServer)
+		: lifetimeStack_(lifetimePool_),
+		globalLifetime_(lifetimePool_.Allocate())
+		//variableManager_(isServer ? gExtender->GetServer().GetExtensionState().GetUserVariables() : gExtender->GetClient().GetExtensionState().GetUserVariables(), isServer),
+		//modVariableManager_(isServer ? gExtender->GetServer().GetExtensionState().GetModVariables() : gExtender->GetClient().GetExtensionState().GetModVariables(), isServer)
 	{
 		L = lua_newstate(LuaAlloc, nullptr);
 		*reinterpret_cast<State**>(lua_getextraspace(L)) = this;
@@ -638,15 +641,27 @@ namespace bg3se::lua
 
 	State::~State()
 	{
-		stats::RestoreLevelMaps(OverriddenLevelMaps);
+		lifetimePool_.Release(globalLifetime_);
 		lua_close(L);
 	}
 
-	LifetimeHolder State::GetCurrentLifetime()
+	void State::Shutdown()
+	{
+		//stats::RestoreLevelMaps(IsClient());
+		//variableManager_.Invalidate();
+		//modVariableManager_.Invalidate();
+	}
+
+	State* State::FromLua(lua_State* L)
+	{
+		return *reinterpret_cast<State**>(lua_getextraspace(L));
+	}
+
+	LifetimeHandle State::GetCurrentLifetime()
 	{
 		if (lifetimeStack_.IsEmpty()) {
 			OsiErrorS("Attempted to construct Lua object proxy while lifetime stack is empty");
-			return LifetimeHolder(lifetimePool_, nullptr);
+			return LifetimeHandle{};
 		} else {
 			return lifetimeStack_.GetCurrent();
 		}
@@ -716,7 +731,7 @@ namespace bg3se::lua
 #endif
 
 		/* Ask Lua to run our little script */
-		LifetimePin _(lifetimeStack_);
+		LifetimeStackPin _(lifetimeStack_);
 		status = CallWithTraceback(L, 0, LUA_MULTRET);
 		if (status != LUA_OK) {
 			LuaError("Failed to execute script: " << lua_tostring(L, -1));
@@ -726,116 +741,6 @@ namespace bg3se::lua
 
 		return lua_gettop(L) - top;
 	}
-
-	/*std::optional<int32_t> State::GetHitChance(CDivinityStats_Character * attacker, CDivinityStats_Character * target)
-	{
-		Restriction restriction(*this, RestrictAll);
-
-		PushInternalFunction(L, "_GetHitChance"); // stack: fn
-		auto _{ PushArguments(L,
-			std::tuple{Push<ObjectProxy<CDivinityStats_Character>>(attacker),
-			Push<ObjectProxy<CDivinityStats_Character>>(target)}) };
-
-		auto result = CheckedLifetimeCall<std::optional<int32_t>>(2, "Ext.GetHitChance");
-		if (result) {
-			return std::get<0>(*result);
-		} else {
-			return {};
-		}
-	}
-
-	bool State::GetSkillDamage(SkillPrototype * skill, DamagePairList * damageList,
-		CRPGStats_ObjectInstance *attacker, bool isFromItem, bool stealthed, float * attackerPosition,
-		float * targetPosition, DeathType * pDeathType, int level, bool noRandomization)
-	{
-		Restriction restriction(*this, RestrictAll);
-
-		PushInternalFunction(L, "_GetSkillDamage"); // stack: fn
-
-		auto luaSkill = SkillPrototypeProxy::New(L, skill, -1); // stack: fn, skill
-		UnbindablePin _(luaSkill);
-		ItemOrCharacterPushPin _a(L, attacker);
-
-		push(L, isFromItem);
-		push(L, stealthed);
-		
-		// Push attacker position
-		lua_newtable(L);
-		settable(L, 1, attackerPosition[0]);
-		settable(L, 2, attackerPosition[1]);
-		settable(L, 3, attackerPosition[2]);
-
-		// Push target position
-		lua_newtable(L);
-		settable(L, 1, targetPosition[0]);
-		settable(L, 2, targetPosition[1]);
-		settable(L, 3, targetPosition[2]);
-
-		push(L, level);
-		push(L, noRandomization);
-
-		auto result = CheckedLifetimeCall<std::optional<DeathType>, std::optional<DamageList *>>(8, "Ext.GetSkillDamage");
-		if (result) {
-			auto deathType = std::get<0>(*result);
-			auto damages = std::get<1>(*result);
-
-			if (deathType && damages) {
-				if (pDeathType) {
-					*pDeathType = *deathType;
-				}
-
-				for (auto const& dmg : (*damages)->Get()) {
-					damageList->AddDamage(dmg.DamageType, dmg.Amount);
-				}
-
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	std::optional<std::pair<int, bool>> State::GetSkillAPCost(SkillPrototype* skill, CDivinityStats_Character* character, eoc::AiGrid* aiGrid,
-		glm::vec3* position, float* radius)
-	{
-		Restriction restriction(*this, RestrictAll);
-
-		PushInternalFunction(L, "_GetSkillAPCost");
-
-		auto luaSkill = SkillPrototypeProxy::New(L, skill, -1);
-		UnbindablePin _(luaSkill);
-		ItemOrCharacterPushPin _ch(L, character);
-
-		if (aiGrid != nullptr) {
-			ObjectProxy<eoc::AiGrid>::New(L, aiGrid);
-		} else {
-			push(L, nullptr);
-		}
-
-		if (position != nullptr) {
-			push(L, *position);
-		} else {
-			push(L, nullptr);
-		}
-
-		if (radius != nullptr) {
-			push(L, *radius);
-		} else {
-			push(L, nullptr);
-		}
-
-		auto result = CheckedLifetimeCall<std::optional<bool>, std::optional<int>>(5, "Ext.GetSkillAPCost");
-		if (result) {
-			auto ap = std::get<1>(*result);
-			auto elementalAffinity = std::get<0>(*result);
-
-			if (ap && elementalAffinity) {
-				return std::make_pair(*ap, *elementalAffinity);
-			}
-		}
-
-		return {};
-	}*/
 
 	/*void State::OnNetMessageReceived(STDString const & channel, STDString const & payload, UserId userId)
 	{
@@ -878,10 +783,34 @@ namespace bg3se::lua
 		ThrowEvent<EmptyEventParams>("ModuleResume", params, false, RestrictAll | ScopeModuleResume, ReadOnlyEvent{});
 	}
 
+	void State::OnLevelLoading()
+	{
+		// FIXME - no variable manager yet!
+		//variableManager_.Invalidate();
+		//modVariableManager_.Invalidate();
+	}
+
 	void State::OnResetCompleted()
 	{
 		EmptyEventParams params;
 		ThrowEvent<EmptyEventParams>("ResetCompleted", params, false, 0, ReadOnlyEvent{});
+	}
+
+	void State::OnUpdate(GameTime const& time)
+	{
+		TickEventParams params{ .Time = time };
+		ThrowEvent<TickEventParams>("Tick", params, false, 0, ReadOnlyEvent{});
+
+		lua_gc(L, LUA_GCSTEP, 10);
+		// FIXME - no variable manager yet!
+		//variableManager_.Flush();
+		//modVariableManager_.Flush();
+	}
+
+	void State::OnStatsStructureLoaded()
+	{
+		EmptyEventParams params;
+		ThrowEvent<EmptyEventParams>("StatsStructureLoaded", params, false, 0, ReadOnlyEvent{});
 	}
 
 	STDString State::GetBuiltinLibrary(int resourceId)
@@ -892,10 +821,5 @@ namespace bg3se::lua
 		} else {
 			return STDString();
 		}
-	}
-
-	State* State::FromLua(lua_State* L)
-	{
-		return *reinterpret_cast<State**>(lua_getextraspace(L));
 	}
 }

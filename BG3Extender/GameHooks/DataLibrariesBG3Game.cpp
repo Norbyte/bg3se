@@ -120,7 +120,7 @@ namespace bg3se
 
 		SYM_OFF(ResourceDefns);
 		SYM_OFF(ResourceMgr);
-		SYM_OFF(GlobalSwitches);
+		SYM_OFF(ls__GlobalSwitches);
 	}
 
 	void LibraryManager::FindSymbolNameRegistrations()

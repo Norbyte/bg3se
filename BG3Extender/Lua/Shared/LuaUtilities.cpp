@@ -63,10 +63,10 @@ namespace bg3se::lua::utils
 
 	int Include(lua_State * L)
 	{
-		auto modGuid = luaL_checkstring(L, 1);
-		auto fileName = luaL_checkstring(L, 2);
+		auto modGuid = get<std::optional<STDString>>(L, 1);
+		auto fileName = get<STDString>(L, 2);
 
-		bool replaceGlobals = !lua_isnil(L, 3);
+		bool replaceGlobals = lua_gettop(L) > 2 && !lua_isnil(L, 3);
 		auto globalsIdx = lua_gettop(L) + 1;
 
 		if (replaceGlobals) {
@@ -78,8 +78,14 @@ namespace bg3se::lua::utils
 #endif
 		}
 
-		auto nret = gExtender->GetCurrentExtensionState()
-			->LuaLoadModScript(modGuid, fileName, true, replaceGlobals ? 3 : 0);
+		std::optional<int> nret;
+		if (modGuid) {
+			nret = gExtender->GetCurrentExtensionState()
+				->LuaLoadModScript(*modGuid, fileName, true, replaceGlobals ? 3 : 0);
+		} else {
+			nret = gExtender->GetCurrentExtensionState()
+				->LuaLoadFile(fileName, "", true, replaceGlobals ? 3 : 0);
+		}
 
 		if (replaceGlobals) {
 #if LUA_VERSION_NUM > 501

@@ -415,7 +415,7 @@ namespace bg3se::ecl::lua
 {
 	using namespace bg3se::lua;
 
-	LifetimeHolder GetClientLifetime()
+	LifetimeHandle GetClientLifetime()
 	{
 		assert(gExtender->GetClient().IsInClientThread());
 		return ExtensionState::Get().GetLua()->GetCurrentLifetime();
@@ -999,31 +999,8 @@ namespace bg3se::ecl::lua
 
 
 	ClientState::ClientState()
-	{
-		StackCheck _(L, 0);
-		library_.Register(L);
-
-		auto baseLib = GetBuiltinLibrary(IDR_LUA_BUILTIN_LIBRARY);
-		LoadScript(baseLib, "BuiltinLibrary.lua");
-		auto clientLib = GetBuiltinLibrary(IDR_LUA_BUILTIN_LIBRARY_CLIENT);
-		LoadScript(clientLib, "BuiltinLibraryClient.lua");
-
-		lua_getglobal(L, "Ext"); // stack: Ext
-		stats::StatsExtraDataProxy::New(L); // stack: Ext, ExtraDataProxy
-		lua_setfield(L, -2, "ExtraData"); // stack: Ext
-		lua_pop(L, 1); // stack: -
-
-		// Ext is not writeable after loading SandboxStartup!
-		auto sandbox = GetBuiltinLibrary(IDR_LUA_SANDBOX_STARTUP);
-		LoadScript(sandbox, "SandboxStartup.lua");
-
-#if !defined(OSI_NO_DEBUGGER)
-		auto debugger = gExtender->GetLuaDebugger();
-		if (debugger) {
-			debugger->ClientStateCreated(this);
-		}
-#endif
-	}
+		: State(false)
+	{}
 
 	ClientState::~ClientState()
 	{
@@ -1039,76 +1016,39 @@ namespace bg3se::ecl::lua
 #endif
 	}
 
-	/*std::optional<STDWString> ClientState::SkillGetDescriptionParam(SkillPrototype * prototype,
-		CDivinityStats_Character * character, ObjectSet<STDString> const & paramTexts, bool isFromItem)
+	void ClientState::Initialize()
 	{
 		StackCheck _(L, 0);
-		Restriction restriction(*this, RestrictAll);
+		library_.Register(L);
 
-		auto skill = prototype->GetStats();
-		if (skill == nullptr) {
-			return {};
+		gExtender->GetClient().GetExtensionState().LuaLoadBuiltinFile("ClientStartup.lua");
+		/*
+		lua_getglobal(L, "Ext"); // stack: Ext
+		StatsExtraDataProxy::New(L); // stack: Ext, ExtraDataProxy
+		lua_setfield(L, -2, "ExtraData"); // stack: Ext
+		lua_pop(L, 1); // stack: -
+		*/
+
+		// Ext is not writeable after loading SandboxStartup!
+		gExtender->GetClient().GetExtensionState().LuaLoadBuiltinFile("SandboxStartup.lua");
+
+#if !defined(OSI_NO_DEBUGGER)
+		auto debugger = gExtender->GetLuaDebugger();
+		if (debugger) {
+			debugger->ClientStateCreated(this);
 		}
-
-		PushExtFunction(L, "_SkillGetDescriptionParam"); // stack: fn
-
-		auto _a{ PushArguments(L,
-			std::tuple{Push<SkillPrototypeProxy>(prototype, std::optional<int32_t>()),
-			Push<ObjectProxy<CDivinityStats_Character>>(character)}) };
-		push(L, isFromItem);
-
-		for (auto const& paramText : paramTexts) {
-			push(L, paramText); // stack: fn, skill, character, params...
-		}
-
-		auto result = CheckedCall<std::optional<char const *>>(L, 3 + paramTexts.Size, "Ext.SkillGetDescriptionParam");
-		if (result) {
-			auto description = std::get<0>(*result);
-			if (description) {
-				return FromUTF8(*description);
-			} else {
-				return {};
-			}
-		} else {
-			return {};
-		}
+#endif
 	}
 
-
-	std::optional<STDWString> ClientState::StatusGetDescriptionParam(StatusPrototype * prototype, CRPGStats_ObjectInstance* owner,
-		CRPGStats_ObjectInstance* statusSource, ObjectSet<STDString> const & paramTexts)
+	bool ClientState::IsClient()
 	{
-		StackCheck _(L, 0);
-		Restriction restriction(*this, RestrictAll);
-
-		auto status = prototype->GetStats();
-		if (status == nullptr) {
-			return {};
-		}
-
-		PushExtFunction(L, "_StatusGetDescriptionParam"); // stack: fn
-
-		auto luaStatus = Push<StatsProxy>(status, std::optional<int32_t>())(L);
-		ItemOrCharacterPushPin luaSource(L, statusSource);
-		ItemOrCharacterPushPin luaOwner(L, owner);
-
-		for (auto const& paramText : paramTexts) {
-			push(L, paramText); // stack: fn, status, srcCharacter, character, params...
-		}
-
-		auto result = CheckedCall<std::optional<char const *>>(L, 3 + paramTexts.Size, "Ext.StatusGetDescriptionParam");
-		if (result) {
-			auto description = std::get<0>(*result);
-			if (description) {
-				return FromUTF8(*description);
-			} else {
-				return {};
-			}
-		} else {
-			return {};
-		}
+		return true;
 	}
-	*/
+
+	void ClientState::OnUpdate(GameTime const& time)
+	{
+		State::OnUpdate(time);
+	}
 
 
 	EntityWorldBase* ClientState::GetEntityWorld()
@@ -1128,79 +1068,4 @@ namespace bg3se::ecl::lua
 		GameStateChangeEventParams params{ fromState, toState };
 		ThrowEvent("GameStateChanged", params, false, 0, ReadOnlyEvent{});
 	}
-
-
-	/*
-	std::optional<STDString> ClientState::GetSkillPropertyDescription(CRPGStats_Object_Property_Extender* prop)
-	{
-		StackCheck _(L, 0);
-		Restriction restriction(*this, RestrictAll);
-
-		PushExtFunction(L, "_GetSkillPropertyDescription"); // stack: fn
-		LuaSerializer serializer(L, true);
-		auto propRef = static_cast<CDivinityStats_Object_Property_Data*>(prop);
-		SerializeObjectProperty(serializer, propRef);
-
-		auto result = CheckedCall<std::optional<char const*>>(L, 1, "Ext.GetSkillPropertyDescription");
-		if (result) {
-			return std::get<0>(*result);
-		} else {
-			return {};
-		}
-	}*/
-}
-
-namespace bg3se::ecl
-{
-
-	ExtensionState & ExtensionState::Get()
-	{
-		return gExtender->GetClient().GetExtensionState();
-	}
-
-
-	lua::State * ExtensionState::GetLua()
-	{
-		if (Lua) {
-			return Lua.get();
-		} else {
-			return nullptr;
-		}
-	}
-
-	ModManager * ExtensionState::GetModManager()
-	{
-		auto client = GetEoCClient();
-		if (client) {
-			return client->ModManager;
-		} else {
-			return nullptr;
-		}
-	}
-
-	void ExtensionState::DoLuaReset()
-	{
-		Lua.reset();
-		Lua = std::make_unique<lua::ClientState>();
-	}
-
-	void ExtensionState::LuaStartup()
-	{
-		ExtensionStateBase::LuaStartup();
-
-		/*LuaClientPin lua(*this);
-		auto gameState = GetStaticSymbols().GetClientState();
-		if (gameState
-			&& (*gameState == GameState::LoadLevel
-				|| (*gameState == GameState::LoadModule && WasStatLoadTriggered())
-				|| *gameState == GameState::LoadSession
-				|| *gameState == GameState::LoadGMCampaign
-				|| *gameState == GameState::Paused
-				|| *gameState == GameState::PrepareRunning
-				|| *gameState == GameState::Running
-				|| *gameState == GameState::GameMasterPause)) {
-			lua->OnModuleResume();
-		}*/
-	}
-
 }

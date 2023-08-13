@@ -7,7 +7,7 @@ namespace bg3se::ecl::lua
 {
 	using namespace bg3se::lua;
 
-	LifetimeHolder GetClientLifetime();
+	LifetimeHandle GetClientLifetime();
 	LifetimePool& GetClientLifetimePool();
 
 	struct GameStateChangeEventParams
@@ -54,10 +54,9 @@ namespace bg3se::ecl::lua
 		ClientState();
 		~ClientState();
 
-		/*std::optional<STDWString> SkillGetDescriptionParam(SkillPrototype * prototype,
-			CDivinityStats_Character * character, ObjectSet<STDString> const & paramTexts, bool isFromItem);
-		std::optional<STDWString> StatusGetDescriptionParam(StatusPrototype * prototype, CRPGStats_ObjectInstance* owner,
-			CRPGStats_ObjectInstance* statusSource, ObjectSet<STDString> const & paramTexts);*/
+		void Initialize() override;
+		bool IsClient() override;
+		void OnUpdate(GameTime const& time) override;
 
 		EntityWorldBase* GetEntityWorld() override;
 		EntitySystemHelpersBase* GetEntitySystemHelpers() override;

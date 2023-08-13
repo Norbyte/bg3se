@@ -11,9 +11,9 @@ namespace bg3se::lua
 	public:
 		inline virtual ~EventObjectParamsImplBase() {};
 		virtual char const* GetTypeName() const = 0;
-		virtual bool GetProperty(lua_State* L, LifetimeHolder const& lifetime, FixedString const& prop) = 0;
-		virtual bool SetProperty(lua_State* L, LifetimeHolder const& lifetime, FixedString const& prop, int index) = 0;
-		virtual int Next(lua_State* L, LifetimeHolder const& lifetime, FixedString const& key) = 0;
+		virtual bool GetProperty(lua_State* L, LifetimeHandle const& lifetime, FixedString const& prop) = 0;
+		virtual bool SetProperty(lua_State* L, LifetimeHandle const& lifetime, FixedString const& prop, int index) = 0;
+		virtual int Next(lua_State* L, LifetimeHandle const& lifetime, FixedString const& key) = 0;
 	};
 
 	enum class WriteableEvent {};
@@ -40,17 +40,17 @@ namespace bg3se::lua
 			return TypeInfo<TParams>::TypeName;
 		}
 
-		bool GetProperty(lua_State* L, LifetimeHolder const& lifetime, FixedString const& prop) override
+		bool GetProperty(lua_State* L, LifetimeHandle const& lifetime, FixedString const& prop) override
 		{
 			return ObjectProxyHelpers<TParams>::GetProperty(L, &params_, lifetime, prop);
 		}
 
-		bool SetProperty(lua_State* L, LifetimeHolder const& lifetime, FixedString const& prop, int index) override
+		bool SetProperty(lua_State* L, LifetimeHandle const& lifetime, FixedString const& prop, int index) override
 		{
 			return ObjectProxyHelpers<TParams>::SetProperty(L, &params_, lifetime, prop, index);
 		}
 
-		int Next(lua_State* L, LifetimeHolder const& lifetime, FixedString const& key) override
+		int Next(lua_State* L, LifetimeHandle const& lifetime, FixedString const& key) override
 		{
 			return ObjectProxyHelpers<TParams>::Next(L, &params_, lifetime, key);
 		}
@@ -67,20 +67,18 @@ namespace bg3se::lua
 		static char const* const MetatableName;
 
 		template <class TParams>
-		inline static EventObjectParamsImpl<TParams>* Make(lua_State* L, LifetimePool& pool, char const* eventName,
+		inline static EventObjectParamsImpl<TParams>* Make(lua_State* L, LifetimeHandle const& lifetime, char const* eventName,
 			TParams& eventParams, bool canPreventAction, WriteableEvent)
 		{
-			auto lifetime = pool.Allocate();
-			auto self = NewWithExtraData(L, sizeof(EventObjectParamsImpl<TParams>), LifetimeHolder(pool, lifetime), eventName, canPreventAction, true);
+			auto self = NewWithExtraData(L, sizeof(EventObjectParamsImpl<TParams>), lifetime, eventName, canPreventAction, true);
 			return new (self->GetImpl()) EventObjectParamsImpl<TParams>(eventParams);
 		}
 
 		template <class TParams>
-		inline static EventObjectParamsImpl<TParams>* Make(lua_State* L, LifetimePool& pool, char const* eventName, 
+		inline static EventObjectParamsImpl<TParams>* Make(lua_State* L, LifetimeHandle const& lifetime, char const* eventName, 
 			TParams const& eventParams, bool canPreventAction, ReadOnlyEvent)
 		{
-			auto lifetime = pool.Allocate();
-			auto self = NewWithExtraData(L, sizeof(EventObjectParamsImpl<TParams>), LifetimeHolder(pool, lifetime), eventName, canPreventAction, false);
+			auto self = NewWithExtraData(L, sizeof(EventObjectParamsImpl<TParams>), lifetime, eventName, canPreventAction, false);
 			return new (self->GetImpl()) EventObjectParamsImpl<TParams>(const_cast<TParams &>(eventParams));
 		}
 
@@ -91,15 +89,15 @@ namespace bg3se::lua
 			return reinterpret_cast<EventObjectParamsImplBase*>(this + 1);
 		}
 
-		inline bool IsAlive() const
+		inline bool IsAlive(lua_State* L) const
 		{
-			return lifetime_.IsAlive();
+			return lifetime_.IsAlive(L);
 		}
 
 		template <class TParams>
-		TParams* Get()
+		TParams* Get(lua_State* L)
 		{
-			if (!lifetime_.IsAlive()) {
+			if (!lifetime_.IsAlive(L)) {
 				return nullptr;
 			}
 
@@ -111,12 +109,12 @@ namespace bg3se::lua
 		}
 
 	private:
-		LifetimeReference lifetime_;
+		LifetimeHandle lifetime_;
 		char const* eventName_;
 		bool canPreventAction_;
 		bool writeable_;
 
-		EventObject(LifetimeHolder const& lifetime, char const* eventName, bool canPreventAction, bool writeable)
+		EventObject(LifetimeHandle const& lifetime, char const* eventName, bool canPreventAction, bool writeable)
 			: lifetime_(lifetime), eventName_(eventName), canPreventAction_(canPreventAction), writeable_(writeable)
 		{}
 

@@ -20,7 +20,7 @@ namespace bg3se::lua
 	}
 	
 
-	void LuaMakeStatusProxy(lua_State* L, esv::Status* status, LifetimeHolder const& lifetime)
+	void LuaMakeStatusProxy(lua_State* L, esv::Status* status, LifetimeHandle const& lifetime)
 	{
 #define S(ty, cls) case StatusType::ty: ObjectProxy::MakeRef<cls>(L, static_cast<cls*>(status), lifetime); break;
 

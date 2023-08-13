@@ -6,7 +6,7 @@
 
 namespace bg3se::lua
 {
-	LifetimeHolder GetCurrentLifetime();
+	LifetimeHandle GetCurrentLifetime();
 
 	class SetProxyImplBase
 	{
@@ -28,7 +28,7 @@ namespace bg3se::lua
 	public:
 		static_assert(!std::is_pointer_v<T>, "MultiHashSetProxyImpl template parameter should not be a pointer type!");
 
-		MultiHashSetProxyImpl(LifetimeHolder const& lifetime, MultiHashSet<T> * obj)
+		MultiHashSetProxyImpl(LifetimeHandle const& lifetime, MultiHashSet<T> * obj)
 			: object_(obj), lifetime_(lifetime)
 		{}
 		
@@ -102,7 +102,7 @@ namespace bg3se::lua
 
 	private:
 		MultiHashSet<T>* object_;
-		LifetimeHolder lifetime_;
+		LifetimeHandle lifetime_;
 	};
 
 
@@ -113,7 +113,7 @@ namespace bg3se::lua
 		static char const * const MetatableName;
 
 		template <class T>
-		inline static MultiHashSetProxyImpl<T>* Make(lua_State* L, MultiHashSet<T>* object, LifetimeHolder const& lifetime)
+		inline static MultiHashSetProxyImpl<T>* Make(lua_State* L, MultiHashSet<T>* object, LifetimeHandle const& lifetime)
 		{
 			auto self = NewWithExtraData(L, sizeof(MultiHashSetProxyImpl<T>), lifetime);
 			return new (self->GetImpl()) MultiHashSetProxyImpl<T>(lifetime, object);
@@ -124,29 +124,29 @@ namespace bg3se::lua
 			return reinterpret_cast<SetProxyImplBase*>(this + 1);
 		}
 
-		inline bool IsAlive() const
+		inline bool IsAlive(lua_State* L) const
 		{
-			return lifetime_.IsAlive();
+			return lifetime_.IsAlive(L);
 		}
 
 		template <class T>
-		T* Get()
+		T* Get(lua_State* L)
 		{
-			if (!lifetime_.IsAlive()) {
+			if (!lifetime_.IsAlive(L)) {
 				return nullptr;
 			}
 			
 			if (strcmp(GetImpl()->GetTypeName(), TypeInfo<T>::TypeName) == 0) {
-				return reinterpret_cast<T*>(GetImpl()->GetRaw());
+				return reinterpret_cast<T*>(GetImpl()->GetRaw(L));
 			} else {
 				return nullptr;
 			}
 		}
 
 	private:
-		LifetimeReference lifetime_;
+		LifetimeHandle lifetime_;
 
-		SetProxy(LifetimeHolder const& lifetime)
+		SetProxy(LifetimeHandle const& lifetime)
 			: lifetime_(lifetime)
 		{}
 
@@ -184,7 +184,7 @@ namespace bg3se::lua
 	};
 
 	template <class T>
-	inline void push_set_proxy(lua_State* L, LifetimeHolder const& lifetime, T* v)
+	inline void push_set_proxy(lua_State* L, LifetimeHandle const& lifetime, T* v)
 	{
 		SetProxy::Make<T>(L, v, lifetime);
 	}

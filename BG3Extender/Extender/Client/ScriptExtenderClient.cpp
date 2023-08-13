@@ -50,19 +50,18 @@ char const * GameStateNames[] =
 	"ModReceiving",
 	"Lobby",
 	"BuildStory",
-	"UNKNOWN_30",
-	"UNKNOWN_31",
+	"GeneratePsoCache",
+	"LoadPsoCache",
 	"AnalyticsSessionEnd"
 };
 
-ScriptExtender::ScriptExtender()
+ScriptExtender::ScriptExtender(ExtenderConfig& config)
+	: config_(config)
 {
 }
 
 void ScriptExtender::Initialize()
 {
-	ResetExtensionState();
-
 	// Wrap state change functions even if extension startup failed, otherwise
 	// we won't be able to show any startup errors
 
@@ -98,7 +97,29 @@ void ScriptExtender::Shutdown()
 
 void ScriptExtender::PostStartup()
 {
+	if (postStartupDone_) return;
+
 	entityHelpers_.Setup();
+	postStartupDone_ = true;
+}
+
+bool IsLoadingState(GameState state)
+{
+	return state == GameState::Init
+		|| state == GameState::InitMenu
+		|| state == GameState::InitNetwork
+		|| state == GameState::InitConnection
+		|| state == GameState::LoadMenu
+		|| state == GameState::SwapLevel
+		|| state == GameState::LoadLevel
+		|| state == GameState::LoadModule
+		|| state == GameState::LoadSession
+		|| state == GameState::UnloadLevel
+		|| state == GameState::UnloadModule
+		|| state == GameState::UnloadSession
+		|| state == GameState::PrepareRunning
+		|| state == GameState::Installation
+		|| state == GameState::ModReceiving;
 }
 
 void ScriptExtender::OnGameStateChanged(void * self, GameState fromState, GameState toState)
@@ -119,8 +140,24 @@ void ScriptExtender::OnGameStateChanged(void * self, GameState fromState, GameSt
 		&& toState != GameState::StartLoading
 		&& toState != GameState::InitMenu
 		&& !gExtender->GetLibraryManager().CriticalInitializationFailed()) {
+		// We need to initialize the function library here, as GlobalAllocator isn't available in Init().
 		gExtender->PostStartup();
 	}
+
+	if (toState == GameState::Menu
+		&& gExtender->GetLibraryManager().InitializationFailed()) {
+		gExtender->PostStartup();
+	}
+
+	// FIXME - EnableModuleHashing flag not currently mapped
+	/*if (toState == GameState::LoadModule && config_.DisableModValidation) {
+		if (GetStaticSymbols().GetGlobalSwitches()) {
+			GetStaticSymbols().GetGlobalSwitches()->EnableModuleHashing = false;
+			INFO("Disabled module hashing");
+		} else {
+			WARN("Could not disable mod hashing - GlobalSwitches not mapped");
+		}
+	}*/
 
 #if defined(DEBUG_SERVER_CLIENT)
 	DEBUG("ecl::ScriptExtender::OnGameStateChanged(): %s -> %s", 
@@ -131,10 +168,23 @@ void ScriptExtender::OnGameStateChanged(void * self, GameState fromState, GameSt
 		AddThread(GetCurrentThreadId());
 	}
 
+	if (gExtender->WasInitialized()) {
+		if (IsLoadingState(toState)) {
+			UpdateClientProgress(EnumInfo<GameState>::Find(toState).GetString());
+		} else {
+			UpdateClientProgress("");
+		}
+	}
+
 	switch (fromState) {
 	case GameState::LoadModule:
 		INFO("ecl::ScriptExtender::OnGameStateChanged(): Loaded module");
-		LoadExtensionState();
+		LoadExtensionState(ExtensionStateContext::Game);
+		break;
+
+	// Initialize client state when exiting from a game and returning to menu
+	case GameState::LoadMenu:
+		LoadExtensionState(ExtensionStateContext::Game);
 		break;
 
 	case GameState::LoadSession:
@@ -149,6 +199,10 @@ void ScriptExtender::OnGameStateChanged(void * self, GameState fromState, GameSt
 	}
 
 	switch (toState) {
+	case GameState::Init:
+		ResetExtensionState();
+		break;
+
 	case GameState::InitNetwork:
 	case GameState::Disconnect:
 		//networkManager_.ClientReset();
@@ -164,30 +218,30 @@ void ScriptExtender::OnGameStateChanged(void * self, GameState fromState, GameSt
 		break;
 
 	case GameState::LoadModule:
-		if (gExtender->GetConfig().DisableModValidation) {
-			auto globals = GetStaticSymbols().GlobalSwitches;
-			if (globals && *globals) {
-				(*globals)->EnableHashing = false;
-				INFO("Disabled mod validation");
-			} else {
-				ERR("Could not disable mod validation - GlobalSwitches not available!");
-			}
-		}
+		gExtender->InitRuntimeLogging();
 		break;
 
 	case GameState::LoadSession:
 		INFO("ecl::ScriptExtender::OnClientGameStateChanged(): Loading game session");
-		LoadExtensionState();
+		LoadExtensionState(ExtensionStateContext::Game);
 		//networkManager_.ExtendNetworkingClient();
 		if (extensionState_) {
 			extensionState_->OnGameSessionLoading();
 		}
 		break;
+
+	case GameState::LoadLevel:
+		if (extensionState_ && extensionState_->GetLua()) {
+			extensionState_->GetLua()->OnLevelLoading();
+		}
+		break;
 	}
 
-	LuaClientPin lua(ExtensionState::Get());
-	if (lua) {
-		lua->OnGameStateChanged(fromState, toState);
+	if (extensionState_) {
+		LuaClientPin lua(*extensionState_);
+		if (lua) {
+			lua->OnGameStateChanged(fromState, toState);
+		}
 	}
 }
 
@@ -201,6 +255,36 @@ void ScriptExtender::GameStateWorkerWrapper(void (*wrapped)(void*), void* self)
 void ScriptExtender::OnUpdate(void* self, GameTime* time)
 {
 	RunPendingTasks();
+	if (extensionState_) {
+		extensionState_->OnUpdate(*time);
+	}
+}
+
+void ScriptExtender::OnIncLocalProgress(void* self, int progress, char const* state)
+{
+	if (strcmp(state, "EffectManager") != 0) {
+		UpdateClientProgress(state);
+	}
+	else {
+		UpdateClientProgress("");
+	}
+}
+
+void ScriptExtender::UpdateServerProgress(STDString const& status)
+{
+	serverStatus_ = status;
+	ShowLoadingProgress();
+}
+
+void ScriptExtender::UpdateClientProgress(STDString const& status)
+{
+	clientStatus_ = status;
+	ShowLoadingProgress();
+}
+
+void ScriptExtender::ShowLoadingProgress()
+{
+	// FIXME - not supported for now
 }
 
 bool ScriptExtender::IsInClientThread() const
@@ -210,26 +294,10 @@ bool ScriptExtender::IsInClientThread() const
 
 void ScriptExtender::ResetLuaState()
 {
-	auto server = GetEoCServer();
-	if (server && server->GameServer && false /* networking not available yet! */) {
-		// Reset clients via a network message if the server is running
-		/*auto& networkMgr = gExtender->GetNetworkManager();
-		auto msg = networkMgr.GetFreeServerMessage(ReservedUserId);
-		if (msg != nullptr) {
-			auto resetMsg = msg->GetMessage().mutable_s2c_reset_lua();
-			resetMsg->set_bootstrap_scripts(true);
-			networkMgr.ServerBroadcast(msg, ReservedUserId);
-		} else {
-			OsiErrorS("Could not get free message!");
-		}*/
-
-	} else if (extensionState_ && extensionState_->GetLua()) {
-		bool serverThread = !IsInClientThread();
-
-		// Do a direct (local) reset if server is not available (main menu, etc.)
+	if (extensionState_ && extensionState_->GetLua()) {
 		auto ext = extensionState_.get();
 
-		ext->AddPostResetCallback([ext]() {
+		ext->AddPostResetCallback([&ext]() {
 			ext->OnModuleResume();
 			auto state = GetStaticSymbols().GetClientState();
 			if (state && (state == GameState::Paused || state == GameState::Running)) {
@@ -246,12 +314,15 @@ void ScriptExtender::ResetExtensionState()
 {
 	extensionState_ = std::make_unique<ExtensionState>();
 	extensionState_->Reset();
+	gExtender->ClearPathOverrides();
 	extensionLoaded_ = false;
 }
 
-void ScriptExtender::LoadExtensionState()
+void ScriptExtender::LoadExtensionState(ExtensionStateContext ctx)
 {
-	if (extensionLoaded_) return;
+	if (extensionLoaded_ && (!extensionState_ || ctx == extensionState_->Context())) {
+		return;
+	}
 
 	PostStartup();
 
@@ -259,12 +330,13 @@ void ScriptExtender::LoadExtensionState()
 		ResetExtensionState();
 	}
 
-	//extensionState_->LoadConfigs();
+	extensionState_->LoadConfigs();
 
 	if (!gExtender->GetLibraryManager().CriticalInitializationFailed()) {
+		OsiMsg("Initializing client with target context " << ContextToString(ctx));
+		gExtender->GetLibraryManager().ApplyCodePatches();
 		//networkManager_.ExtendNetworkingClient();
-		DEBUG("ecl::ScriptExtender::LoadExtensionStateClient(): Re-initializing module state.");
-		extensionState_->LuaReset(true);
+		extensionState_->LuaReset(ctx, true);
 	}
 
 	extensionLoaded_ = true;

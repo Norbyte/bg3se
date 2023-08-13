@@ -11,11 +11,10 @@
 #include <Lua/Debugger/LuaDebugger.h>
 #include <Lua/Debugger/LuaDebugMessages.h>
 #endif
+#include <Lua/Shared/LuaBundle.h>
 #include <GameHooks/OsirisWrappers.h>
 #include <GameHooks/DataLibraries.h>
 #include <GameHooks/EngineHooks.h>
-//#include "NetProtocol.h"
-//#include <Hit.h>
 
 #include <thread>
 #include <mutex>
@@ -34,6 +33,11 @@ public:
 	void PostStartup();
 	void Shutdown();
 
+	inline bool WasInitialized() const
+	{
+		return postStartupDone_;
+	}
+
 	inline ExtenderConfig & GetConfig()
 	{
 		return config_;
@@ -43,6 +47,16 @@ public:
 	void LogOsirisError(std::string_view msg);
 	void LogOsirisWarning(std::string_view msg);
 	void LogOsirisMsg(std::string_view msg);
+
+	inline esv::ScriptExtender& GetServer()
+	{
+		return server_;
+	}
+
+	inline ecl::ScriptExtender& GetClient()
+	{
+		return client_;
+	}
 
 	inline LibraryManager const & GetLibraryManager() const
 	{
@@ -68,22 +82,7 @@ public:
 
 	ExtensionStateBase* GetCurrentExtensionState();
 
-	inline esv::ScriptExtender & GetServer()
-	{
-		return server_;
-	}
-
-	inline ecl::ScriptExtender & GetClient()
-	{
-		return client_;
-	}
-
 	bool HasFeatureFlag(char const *) const;
-
-	/*inline NetworkManager & GetNetworkManager()
-	{
-		return networkManager_;
-	}*/
 
 	inline StatLoadOrderHelper& GetStatLoadOrderHelper()
 	{
@@ -95,8 +94,17 @@ public:
 		return Hooks;
 	}
 
+	inline lua::LuaBundle& GetLuaBuiltinBundle()
+	{
+		return luaBuiltinBundle_;
+	}
+
 	void ClearPathOverrides();
 	void AddPathOverride(STDString const & path, STDString const & overriddenPath);
+	std::optional<STDString> GetPathOverride(STDString const& path);
+
+	std::wstring MakeLogFilePath(std::wstring const& Type, std::wstring const& Extension);
+	void InitRuntimeLogging();
 
 private:
 	esv::ScriptExtender server_;
@@ -105,12 +113,11 @@ private:
 	EngineHooks Hooks;
 	bool LibrariesPostInitialized{ false };
 	std::recursive_mutex globalStateLock_;
-	//NetworkManager networkManager_;
 	std::shared_mutex pathOverrideMutex_;
 	std::unordered_map<STDString, STDString> pathOverrides_;
 	SavegameSerializer savegameSerializer_;
 	StatLoadOrderHelper statLoadOrderHelper_;
-	//esv::HitProxy hitProxy_;
+	lua::LuaBundle luaBuiltinBundle_;
 
 	ExtenderConfig config_;
 	bool extensionsEnabled_{ false };
@@ -124,9 +131,8 @@ private:
 #endif
 
 	void OnBaseModuleLoaded(void * self);
-	/*void OnModuleLoadStarted(TranslatedStringRepository * self);
-	void OnStatsLoadStarted(RPGStats* mgr);
-	void OnStatsLoadFinished(RPGStats* mgr);*/
+	void OnModuleLoadStarted(TranslatedStringRepository* self);
+	void OnStatsLoad(RPGStats::LoadProc* wrapped, RPGStats* mgr, ObjectSet<STDString>* paths);
 	void OnSkillPrototypeManagerInit(void * self);
 	FileReader * OnFileReaderCreate(FileReader::CtorProc* next, FileReader * self, Path const& path, unsigned int type, unsigned int unknown);
 	void OnSavegameVisit(void* osirisHelpers, ObjectVisitor* visitor);

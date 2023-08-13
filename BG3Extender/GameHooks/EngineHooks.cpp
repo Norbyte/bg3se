@@ -5,7 +5,7 @@
 namespace bg3se
 {
 
-#define HOOK_DEFN(name, sym, defn, hookType) decltype(EngineHooks::name) * decltype(EngineHooks::name)::gHook;
+#define HOOK_DEFN(name, sym, defn) decltype(EngineHooks::name) * decltype(EngineHooks::name)::gHook;
 #include <GameHooks/EngineHooks.inl>
 #undef HOOK_DEFN
 
@@ -20,7 +20,7 @@ void EngineHooks::HookAll()
 		sym.App__OnInputEvent = (*sym.AppInstance)->__vftable->OnInputEvent;
 	}*/
 
-#define HOOK_DEFN(name, sym, defn, hookType) if (GetStaticSymbols().sym != nullptr) { name.Wrap(GetStaticSymbols().sym); }
+#define HOOK_DEFN(name, sym, defn) if (GetStaticSymbols().sym != nullptr) { name.Wrap(GetStaticSymbols().sym); }
 #include <GameHooks/EngineHooks.inl>
 #undef HOOK_DEFN
 
@@ -34,7 +34,7 @@ void EngineHooks::UnhookAll()
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
 
-#define HOOK_DEFN(name, sym, defn, hookType) name.Unwrap();
+#define HOOK_DEFN(name, sym, defn) name.Unwrap();
 #include <GameHooks/EngineHooks.inl>
 #undef HOOK_DEFN
 

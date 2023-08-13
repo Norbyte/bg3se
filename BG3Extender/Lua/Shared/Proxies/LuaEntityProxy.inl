@@ -63,7 +63,7 @@ namespace bg3se::lua
 
 	template <class T>
 	void PushComponentType(lua_State* L, EntitySystemHelpersBase* helpers, EntityHandle const& handle, 
-		LifetimeHolder const& lifetime, bool logError)
+		LifetimeHandle const& lifetime, bool logError)
 	{
 		auto component = helpers->GetEntityComponent<T>(handle, false);
 		if (component) {
@@ -79,7 +79,7 @@ namespace bg3se::lua
 
 	template <class T>
 	void PushComponentType(lua_State* L, EntitySystemHelpersBase* helpers, ComponentHandle const& handle, 
-		LifetimeHolder const& lifetime, bool logError)
+		LifetimeHandle const& lifetime, bool logError)
 	{
 		auto component = helpers->GetComponent<T>(handle, false);
 		if (component) {
@@ -101,7 +101,7 @@ namespace bg3se::lua
 	}
 
 	void PushComponent(lua_State* L, EntitySystemHelpersBase* helpers, EntityHandle const& handle, ExtComponentType componentType,
-		LifetimeHolder const& lifetime, bool logError)
+		LifetimeHandle const& lifetime, bool logError)
 	{
 		switch (componentType) {
 
@@ -123,7 +123,7 @@ namespace bg3se::lua
 	}
 
 	void PushComponent(lua_State* L, EntitySystemHelpersBase* helpers, ComponentHandle const& handle, ExtComponentType componentType,
-		LifetimeHolder const& lifetime, bool logError)
+		LifetimeHandle const& lifetime, bool logError)
 	{
 		switch (componentType) {
 

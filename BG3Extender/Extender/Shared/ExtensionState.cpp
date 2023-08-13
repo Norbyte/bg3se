@@ -13,6 +13,27 @@ namespace bg3se
 		"Preprocessor"
 	};
 
+	char const* sContextNames[] = {
+		"Uninitialized",
+		"Game",
+		"Load"
+	};
+
+	static_assert(std::size(sContextNames) == (unsigned)ExtensionStateContext::Max + 1);
+
+	char const* ContextToString(ExtensionStateContext ctx)
+	{
+		return sContextNames[(unsigned)ctx];
+	}
+
+	ExtensionStateBase::ExtensionStateBase(bool isServer)
+		/* : userVariables_(isServer),
+		modVariables_(isServer)*/
+	{}
+
+	ExtensionStateBase::~ExtensionStateBase()
+	{}
+
 	void ExtensionStateBase::Reset()
 	{
 		time_t tm;
@@ -31,7 +52,7 @@ namespace bg3se
 		for (auto const& mod : modManager->BaseModule.LoadOrderedModules) {
 			auto dir = mod.Info.Directory;
 			auto configFile = "Mods/" + dir + "/ScriptExtender/Config.json";
-			FileReaderPin reader(configFile, PathRootType::Data);
+			auto reader = GetStaticSymbols().MakeFileReader(configFile);
 
 			if (reader.IsLoaded()) {
 				ExtensionModConfig config;
@@ -50,15 +71,14 @@ namespace bg3se
 						continue;
 					}
 
-					if (config.FeatureFlags.find("Lua") != config.FeatureFlags.end()
-						&& config.ModTable.empty()) {
+					if (config.ModTable.empty()) {
 						OsiError("Module '" << mod.Info.Name << ":");
-						OsiError("Modules using Lua must specify a ModTable in ScriptExtender/Config.json.");
+						OsiError("Module must specify a ModTable in ScriptExtender/Config.json.");
 						continue;
 					}
 
 					if (config.MinimumVersion > CurrentVersion) {
-						OsiError("Module '" << mod.Info.Name << " is targeting version v" << config.MinimumVersion << " that doesn't exist!");
+						OsiError("Module '" << mod.Info.Name << " is targeting version v" << config.MinimumVersion << " that' doesn't exist's more recent than the current version!");
 					}
 
 					if (config.MinimumVersion != 0 && config.MinimumVersion > MergedConfig.MinimumVersion) {
@@ -246,6 +266,17 @@ namespace bg3se
 		}
 	}
 
+	void ExtensionStateBase::OnUpdate(GameTime const& time)
+	{
+		LuaVirtualPin lua(*this);
+		if (lua) {
+			lua->OnUpdate(time);
+		}
+
+		// userVariables_.Update();
+		// modVariables_.Update();
+	}
+
 
 	void ExtensionStateBase::IncLuaRefs()
 	{
@@ -262,6 +293,12 @@ namespace bg3se
 		if (luaRefs_ == 0 && LuaPendingDelete) {
 			LuaResetInternal();
 		}
+	}
+
+	void ExtensionStateBase::LuaReset(ExtensionStateContext nextContext, bool startup)
+	{
+		nextContext_ = nextContext;
+		LuaReset(startup);
 	}
 
 	void ExtensionStateBase::LuaReset(bool startup)
@@ -350,7 +387,7 @@ namespace bg3se
 	std::optional<int> ExtensionStateBase::LuaLoadGameFile(STDString const & path, STDString const & scriptName, 
 		bool warnOnError, int globalsIdx)
 	{
-		FileReaderPin reader(path, PathRootType::Data);
+		auto reader = GetStaticSymbols().MakeFileReader(path);
 		if (!reader.IsLoaded()) {
 			if (warnOnError) {
 				OsiError("Script file could not be opened: " << path);
@@ -392,9 +429,45 @@ namespace bg3se
 		return LuaLoadGameFile(path, scriptName, warnOnError, globalsIdx);
 	}
 
+	std::optional<int> ExtensionStateBase::LuaLoadBuiltinFile(STDString const & path, bool warnOnError, int globalsIdx)
+	{
+		auto file = gExtender->GetLuaBuiltinBundle().GetResource(path);
+		if (!file) {
+			if (warnOnError) {
+				OsiError("Builtin Lua script file could not be opened: " << path);
+			}
+			return {};
+		}
+
+		LuaVirtualPin lua(*this);
+		if (!lua) {
+			OsiErrorS("Called when the Lua VM has not been initialized!");
+			return {};
+		}
+
+		auto scriptName = STDString("builtin://") + path;
+		return lua->LoadScript(*file, scriptName, globalsIdx);
+	}
+
+	std::optional<int> ExtensionStateBase::LuaLoadFile(STDString const & path, STDString const & scriptName, 
+		bool warnOnError, int globalsIdx)
+	{
+		if (path.starts_with("builtin://")) {
+			return LuaLoadBuiltinFile(path.substr(10), warnOnError, globalsIdx);
+		} else {
+			return LuaLoadGameFile(path, scriptName, warnOnError, globalsIdx);
+		}
+	}
+
 	void ExtensionStateBase::LuaResetInternal()
 	{
 		std::lock_guard _(luaMutex_);
+		if (gExtender->GetClient().IsInClientThread()) {
+			gExtender->GetClient().UpdateClientProgress("Lua Init");
+		} else {
+			gExtender->GetClient().UpdateServerProgress("Lua Init");
+		}
+
 		assert(LuaPendingDelete);
 		assert(luaRefs_ == 0);
 
@@ -448,7 +521,19 @@ namespace bg3se
 			if (configIt != modConfigs_.end()) {
 				auto const & config = configIt->second;
 				if (config.FeatureFlags.find("Lua") != config.FeatureFlags.end()) {
-					LuaLoadBootstrap(config, mod);
+					if (gExtender->GetClient().IsInClientThread()) {
+						gExtender->GetClient().UpdateClientProgress(mod.Info.Name);
+					} else {
+						gExtender->GetClient().UpdateServerProgress(mod.Info.Name);
+					}
+
+					if (context_ == ExtensionStateContext::Game) {
+						LuaLoadGameBootstrap(config, mod);
+					} else if (context_ == ExtensionStateContext::Load) {
+						LuaLoadPreinitBootstrap(config, mod);
+					} else {
+						ERR("Bootstrap request with Uninitialized extension context?");
+					}
 				}
 			}
 		}
@@ -456,7 +541,7 @@ namespace bg3se
 		lua->FinishStartup();
 	}
 
-	void ExtensionStateBase::LuaLoadBootstrap(ExtensionModConfig const& config, Module const& mod)
+	void ExtensionStateBase::LuaLoadGameBootstrap(ExtensionModConfig const& config, Module const& mod)
 	{
 		auto bootstrapFileName = GetBootstrapFileName();
 		auto const& sym = GetStaticSymbols();
@@ -474,5 +559,37 @@ namespace bg3se
 			lua::push(L, nullptr);
 			lua_setglobal(L, "ModuleUUID");
 		}
+	}
+
+	void ExtensionStateBase::LuaLoadPreinitBootstrap(ExtensionModConfig const& config, Module const& mod)
+	{
+		// Mods before v58 can't have support for preinit Lua code
+		if (config.MinimumVersion < 58) {
+			return;
+		}
+
+		auto bootstrapFileName = "BootstrapModule.lua";
+		auto const& sym = GetStaticSymbols();
+
+		auto path = ResolveModScriptPath(mod, bootstrapFileName);
+		if (!sym.FileExists(path)) {
+			return;
+		}
+
+		LuaVirtualPin lua(*this);
+		auto L = lua->GetState();
+		lua::push(L, mod.Info.ModuleUUID);
+		lua_setglobal(L, "ModuleUUID");
+
+		OsiMsg("Loading preinit bootstrap script: " << path);
+		lua->LoadBootstrap(bootstrapFileName, config.ModTable);
+
+		lua::push(L, nullptr);
+		lua_setglobal(L, "ModuleUUID");
+	}
+
+	ExtensionStateBase* GetCurrentExtensionState()
+	{
+		return gExtender->GetCurrentExtensionState();
 	}
 }

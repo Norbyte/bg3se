@@ -1,10 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30330.147
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33122.133
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BG3Extender", "BG3Extender\BG3Extender.vcxproj", "{4723A102-E4DE-4874-BED7-6DA4EC2D0C80}"
 	ProjectSection(ProjectDependencies) = postProject
+		{73CA7CC2-15C4-4883-8DD2-55A8F77EC8A1} = {73CA7CC2-15C4-4883-8DD2-55A8F77EC8A1}
+		{E6B4C00D-0231-4177-B365-6B3DF1669F85} = {E6B4C00D-0231-4177-B365-6B3DF1669F85}
 		{EBEA8609-CD90-4009-A619-1B28DD2BE833} = {EBEA8609-CD90-4009-A619-1B28DD2BE833}
 	EndProjectSection
 EndProject
@@ -25,6 +27,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UpdateSigner", "UpdateSigne
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LuaDebugger", "LuaDebugger\LuaDebugger.csproj", "{31E71543-CBCF-43BB-AF77-D210D548118E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ResourceBundler", "ResourceBundler\ResourceBundler.vcxproj", "{E6B4C00D-0231-4177-B365-6B3DF1669F85}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -60,6 +64,10 @@ Global
 		{31E71543-CBCF-43BB-AF77-D210D548118E}.Game Debug|x64.Build.0 = Debug|Any CPU
 		{31E71543-CBCF-43BB-AF77-D210D548118E}.Game Release|x64.ActiveCfg = Release|Any CPU
 		{31E71543-CBCF-43BB-AF77-D210D548118E}.Game Release|x64.Build.0 = Release|Any CPU
+		{E6B4C00D-0231-4177-B365-6B3DF1669F85}.Game Debug|x64.ActiveCfg = Debug|x64
+		{E6B4C00D-0231-4177-B365-6B3DF1669F85}.Game Debug|x64.Build.0 = Debug|x64
+		{E6B4C00D-0231-4177-B365-6B3DF1669F85}.Game Release|x64.ActiveCfg = Release|x64
+		{E6B4C00D-0231-4177-B365-6B3DF1669F85}.Game Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

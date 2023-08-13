@@ -55,18 +55,8 @@ namespace bg3se
 		void WrappedDeleteTuple(Node * node, TuplePtrLL * tuple);
 		bool WrappedCallQuery(Node * node, OsiArgumentDesc * args);
 
-		std::function<void (Node *, VirtTupleLL *, AdapterRef *)> IsValidPreHook;
-		std::function<void (Node *, VirtTupleLL *, AdapterRef *, bool)> IsValidPostHook;
-		std::function<void (Node *, VirtTupleLL *, AdapterRef *, EntryPoint, bool)> PushDownPreHook;
-		std::function<void (Node *, VirtTupleLL *, AdapterRef *, EntryPoint, bool)> PushDownPostHook;
-		std::function<void (Node *, TuplePtrLL *, bool)> InsertPreHook;
-		std::function<void (Node *, TuplePtrLL *, bool)> InsertPreHookLua;
-		std::function<void (Node *, TuplePtrLL *, bool)> InsertPostHook;
-		std::function<void (Node *, TuplePtrLL *, bool)> InsertPostHookLua;
-		std::function<void(Node *, OsiArgumentDesc *)> CallQueryPreHook;
-		std::function<void(Node *, OsiArgumentDesc *)> CallQueryPreHookLua;
-		std::function<void(Node *, OsiArgumentDesc *, bool)> CallQueryPostHook;
-		std::function<void(Node *, OsiArgumentDesc *, bool)> CallQueryPostHookLua;
+		osidbg::Debugger* DebuggerAttachment{ nullptr };
+		esv::lua::OsirisCallbackManager* OsirisCallbacksAttachment{ nullptr };
 
 		NodeType GetType(Node * node);
 		NodeVMTWrapper & GetWrapper(Node * node);

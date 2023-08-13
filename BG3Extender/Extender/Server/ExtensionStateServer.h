@@ -2,36 +2,19 @@
 
 #include <Extender/Shared/ExtensionState.h>
 #include <Lua/Server/LuaBindingServer.h>
-//#include <Hit.h>
 
 namespace Json { class Value; }
 
 namespace bg3se::esv
-{/*
-	class DamageHelperPool
-	{
-	public:
-		void Clear();
-		DamageHelpers * Create();
-		bool Destroy(ComponentHandle handle);
-		DamageHelpers * Get(ComponentHandle handle) const;
-
-	private:
-		std::unordered_map<uint32_t, std::unique_ptr<DamageHelpers>> helpers_;
-		uint32_t nextHelperId_{ 0 };
-	};*/
-
+{
 	class ExtensionState;
 	using LuaServerPin = LuaStatePin<ExtensionState, lua::ServerState>;
 
 	class ExtensionState : public ExtensionStateBase
 	{
 	public:
-		/*DamageHelperPool DamageHelpers;
-		PendingHitManager PendingHits;
-		PendingStatuses PendingStatuses;
-		std::unique_ptr<ObjectSet<eoc::ItemDefinition>> PendingItemClone;
-		std::unique_ptr<ShootProjectileApiHelper> ProjectileHelper;*/
+		ExtensionState();
+		~ExtensionState() override;
 
 		void Reset() override;
 		lua::State * GetLua() override;

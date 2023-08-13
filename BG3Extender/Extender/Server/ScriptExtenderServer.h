@@ -50,8 +50,10 @@ public:
 
 	bool IsInServerThread() const;
 	void ResetLuaState();
+	bool RequestResetClientLuaState();
 	void ResetExtensionState();
-	void LoadExtensionState();
+	void LoadExtensionState(ExtensionStateContext ctx);
+	void OnSavegameVisit(ObjectVisitor* visitor);
 
 	// HACK - we need to expose this so it can be added to the CrashReporter whitelist
 	enum class GameStateWorkerStartTag {};
@@ -63,12 +65,10 @@ private:
 	OsirisExtender osiris_;
 	std::unique_ptr<ExtensionState> extensionState_;
 	bool extensionLoaded_{ false };
+	bool postStartupDone_{ false };
 	ServerEntitySystemHelpers entityHelpers_;
 
 	void OnBaseModuleLoaded(void * self);
-	/*void OnModuleLoadStarted(TranslatedStringRepository * self);
-	void OnStatsLoadStarted(RPGStats* mgr);
-	void OnStatsLoadFinished(RPGStats* mgr);*/
 	void GameStateWorkerWrapper(void (* wrapped)(void*), void * self);
 	void OnUpdate(void* self, GameTime* time);
 };

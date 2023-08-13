@@ -124,31 +124,7 @@ namespace bg3se::esv
 
 		using namespace std::placeholders;
 
-		/*osiris_.GetLibraryManager().UIObjectManager__CreateUIObject.SetPostHook(
-			std::bind(&CustomFunctionLibrary::OnCreateUIObject, this, _1, _2, _3, _4, _5, _6, _7, _8)
-		);
-		osiris_.GetLibraryManager().esv__Status__GetEnterChanceHook.SetWrapper(
-			std::bind(&CustomFunctionLibrary::OnStatusGetEnterChance, this, _1, _2, _3)
-		);
-		osiris_.GetLibraryManager().esv__StatusHeal__Enter.SetPreHook(
-			std::bind(&CustomFunctionLibrary::OnStatusHealEnter, this, _1)
-		);
-		osiris_.GetLibraryManager().esv__ActionMachine__SetState.AddPreHook(
-			std::bind(&CustomFunctionLibrary::OnBeforeActionMachineSetState, this, _1, _2, _3, _4, _5, _6)
-		);
-		osiris_.GetLibraryManager().esv__ActionMachine__SetState.AddPostHook(
-			std::bind(&CustomFunctionLibrary::OnActionMachineSetState, this, _1, _2, _3, _4, _5, _6, _7)
-		);
-		osiris_.GetLibraryManager().esv__ActionMachine__ResetState.SetPreHook(
-			std::bind(&CustomFunctionLibrary::OnActionMachineResetState, this, _1, _2)
-		);
-		osiris_.GetLibraryManager().esv__ProjectileHelpers__ShootProjectile.SetWrapper(
-			std::bind(&CustomFunctionLibrary::OnShootProjectile, _1, _2)
-		);
-		osiris_.GetLibraryManager().esv__Projectile__Explode.SetPreHook(
-			std::bind(&CustomFunctionLibrary::OnProjectileExplode, this, _1)
-		);
-
+		/*
 		osiris_.GetLibraryManager().RPGStats__ParseProperties.SetWrapper(
 			std::bind(&CustomFunctionLibrary::OnParseSkillProperties, this, _1, _2, _3)
 		);
@@ -160,27 +136,6 @@ namespace bg3se::esv
 		);
 		osiris_.GetLibraryManager().StatusPrototype__FormatDescriptionParam.SetWrapper(
 			std::bind(&CustomFunctionLibrary::OnStatusFormatDescriptionParam, this, _1, _2, _3, _4, _5, _6, _7, _8, _9)
-		);
-		osiris_.GetLibraryManager().esv__TurnManager__UpdateTurnOrder.SetPostHook(
-			std::bind(&CustomFunctionLibrary::OnUpdateTurnOrder, this, _1, _2)
-		);
-		osiris_.GetLibraryManager().esv__ItemHelpers__GenerateTreasureItem.SetWrapper(
-			std::bind(&CustomFunctionLibrary::OnGenerateTreasureItem, this, _1, _2, _3)
-		);
-		osiris_.GetLibraryManager().esv__CombineManager__ExecuteCombination.SetWrapper(
-			std::bind(&CustomFunctionLibrary::OnCraftingExecuteCombination, this, _1, _2, _3, _4, _5, _6, _7, _8)
-		);
-		osiris_.GetLibraryManager().esv__ExecutePropertyDataOnGroundHit.SetPostHook(
-			std::bind(&CustomFunctionLibrary::OnExecutePropertyDataOnGroundHit, this, _1, _2, _3, _4, _5)
-		);
-		osiris_.GetLibraryManager().esv__ExecutePropertyDataOnPositionOnly.SetPostHook(
-			std::bind(&CustomFunctionLibrary::OnExecutePropertyDataOnPositionOnly, this, _1, _2, _3, _4, _5, _6, _7, _8)
-		);
-		osiris_.GetLibraryManager().esv__ExecuteCharacterSetExtraProperties.SetPostHook(
-			std::bind(&CustomFunctionLibrary::OnExecuteCharacterSetExtraProperties, this, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12)
-		);
-		GetStaticSymbols().CharStatsGetters.WrapperHitChance.SetWrapper(
-			std::bind(&CustomFunctionLibrary::OnGetHitChance, this, _1, _2, _3)
 		);
 		osiris_.GetLibraryManager().esv__LoadProtocol__HandleModuleLoaded.SetWrapper(
 			std::bind(&CustomFunctionLibrary::OnPeerModuleLoaded, this, _1, _2, _3, _4)

@@ -80,8 +80,8 @@ namespace bg3se
 		StatsFunctorSet::ExecuteType7Proc* eoc__StatsFunctorSet__ExecuteType7{ nullptr };
 		StatsFunctorSet::ExecuteType8Proc* eoc__StatsFunctorSet__ExecuteType8{ nullptr };
 
-		/*RPGStats::LoadProc RPGStats__Load{ nullptr };
-		RPGStats::ParsePropertiesProc* RPGStats__ParseProperties{ nullptr };
+		RPGStats::LoadProc* RPGStats__Load{ nullptr };
+		/*RPGStats::ParsePropertiesProc* RPGStats__ParseProperties{nullptr};
 		SkillPrototypeManager** eoc__SkillPrototypeManager{ nullptr };
 		StatusPrototypeManager** eoc__StatusPrototypeManager{ nullptr };*/
 
@@ -98,11 +98,58 @@ namespace bg3se
 		GuidResourceDefinitions** ResourceDefns{ nullptr };
 		ResourceManager** ResourceMgr{ nullptr };
 
-		GlobalSwitches** GlobalSwitches{ nullptr };
+		GlobalSwitches** ls__GlobalSwitches{ nullptr };
 
 		inline StaticSymbols() {}
 		StaticSymbols(StaticSymbols const &) = delete;
 		StaticSymbols & operator = (StaticSymbols const &) = delete;
+
+		inline GlobalSwitches * GetGlobalSwitches() const
+		{
+			if (ls__GlobalSwitches && *ls__GlobalSwitches) {
+				return *ls__GlobalSwitches;
+			} else {
+				return nullptr;
+			}
+		}
+
+		inline ecl::EoCClient * GetEoCClient() const
+		{
+			if (ecl__EoCClient == nullptr || *ecl__EoCClient == nullptr) {
+				return nullptr;
+			} else {
+				return *ecl__EoCClient;
+			}
+		}
+
+		inline esv::EoCServer* GetEoCServer() const
+		{
+			if (esv__EoCServer == nullptr || *esv__EoCServer == nullptr) {
+				return nullptr;
+			} else {
+				return *esv__EoCServer;
+			}
+		}
+
+		inline ModManager* GetModManagerClient() const
+		{
+			auto client = GetEoCClient();
+			if (client == nullptr || client->ModManager == nullptr) {
+				return nullptr;
+			} else {
+				return client->ModManager;
+			}
+		}
+
+		inline ModManager* GetModManagerServer() const
+		{
+			auto server = GetEoCServer();
+			if (server == nullptr) {
+				return nullptr;
+			} else {
+				return &server->ModManager;
+			}
+		}
 
 		inline RPGStats* GetStats() const
 		{
@@ -205,9 +252,17 @@ namespace bg3se
 
 		void CanonicalizePath(STDString & path) const;
 		STDString ToPath(StringView path, PathRootType root, bool canonicalize = true) const;
+		FileReaderPin MakeFileReader(StringView path, PathRootType root = PathRootType::Data, bool canonicalize = true) const;
+		void DestroyFileReader(FileReader* reader);
 		bool FileExists(StringView path, PathRootType root = PathRootType::Data, bool canonicalize = true) const;
 	};
 
 	extern StaticSymbols* gStaticSymbols;
-	StaticSymbols & GetStaticSymbols();
+
+	void InitStaticSymbols();
+
+	inline StaticSymbols& GetStaticSymbols()
+	{
+		return *gStaticSymbols;
+	}
 }

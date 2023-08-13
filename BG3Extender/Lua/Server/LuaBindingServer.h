@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Lua/LuaBinding.h>
-#include <Lua/Server/ServerOsirisBinding.h>
+#include <Lua/Server/LuaOsirisBinding.h>
 #include <GameDefinitions/Stats/Functors.h>
 #include <GameDefinitions/Status.h>
 #include <Extender/Shared/ExtensionHelpers.h>
@@ -17,7 +17,7 @@ namespace bg3se::esv::lua
 {
 	using namespace ::bg3se::lua;
 
-	LifetimeHolder GetServerLifetime();
+	LifetimeHandle GetServerLifetime();
 	LifetimePool& GetServerLifetimePool();
 
 	struct GameStateChangeEventParams
@@ -222,60 +222,25 @@ namespace bg3se::esv::lua
 		ServerState(ExtensionState& state);
 		~ServerState();
 
-		ServerState(ServerState const &) = delete;
-		ServerState(ServerState &&) = delete;
-		ServerState & operator = (ServerState const &) = delete;
-		ServerState & operator = (ServerState &&) = delete;
+		void Initialize() override;
+		bool IsClient() override;
 
-		inline uint32_t GenerationId() const
+		inline OsirisBinding& Osiris()
 		{
-			return generationId_;
+			return osiris_;
 		}
 
-		inline IdentityAdapterMap & GetIdentityAdapterMap()
-		{
-			return identityAdapters_;
-		}
-
-		inline OsiArgumentPool<OsiArgumentDesc> & GetArgumentDescPool()
-		{
-			return argDescPool_;
-		}
-
-		inline OsiArgumentPool<TypedValue> & GetTypedValuePool()
-		{
-			return tvPool_;
-		}
-
-		inline OsiArgumentPool<ListNode<TypedValue *>> & GetTypedValueNodePool()
-		{
-			return tvNodePool_;
-		}
-
-		inline OsiArgumentPool<ListNode<TupleLL::Item>> & GetTupleNodePool()
-		{
-			return tupleNodePool_;
-		}
-
-		inline OsirisCallbackManager& GetOsirisCallbacks()
-		{
-			return osirisCallbacks_;
-		}
-
+		void OnGameSessionLoading() override;
+		void StoryFunctionMappingsUpdated();
 
 		EntityWorldBase* GetEntityWorld() override;
 		EntitySystemHelpersBase* GetEntitySystemHelpers() override;
-		void OnGameSessionLoading() override;
-
-		void StoryLoaded();
-		void StoryFunctionMappingsUpdated();
-		void StorySetMerging(bool isMerging);
 
 		template <class TArg>
 		void Call(char const* mod, char const* func, std::vector<TArg> const & args)
 		{
 			auto L = GetState();
-			LifetimePin _(GetStack());
+			LifetimeStackPin _(GetStack());
 			lua_checkstack(L, (int)args.size() + 1);
 			auto stackSize = lua_gettop(L);
 
@@ -315,24 +280,16 @@ namespace bg3se::esv::lua
 			}
 		}
 
-		bool Query(char const* mod, char const* name, RegistryEntry * func,
-			std::vector<CustomFunctionParam> const & signature, OsiArgumentDesc & params);
-
 		std::optional<STDString> GetModPersistentVars(STDString const& modTable);
 		void RestoreModPersistentVars(STDString const& modTable, STDString const& vars);
 		void OnGameStateChanged(GameState fromState, GameState toState);
 
+		bool Query(char const* mod, char const* name, RegistryEntry * func,
+			std::vector<CustomFunctionParam> const & signature, OsiArgumentDesc & params);
+
 	private:
 		ExtensionLibraryServer library_;
-		OsiArgumentPool<OsiArgumentDesc> argDescPool_;
-		OsiArgumentPool<TypedValue> tvPool_;
-		OsiArgumentPool<ListNode<TypedValue *>> tvNodePool_;
-		OsiArgumentPool<ListNode<TupleLL::Item>> tupleNodePool_;
-		IdentityAdapterMap identityAdapters_;
-		// ID of current story instance.
-		// Used to invalidate function/node pointers in Lua userdata objects
-		uint32_t generationId_{ 0 };
-		OsirisCallbackManager osirisCallbacks_;
+		OsirisBinding osiris_;
 		FunctorEventHooks functorHooks_;
 
 		bool QueryInternal(char const* mod, char const* name, RegistryEntry * func,

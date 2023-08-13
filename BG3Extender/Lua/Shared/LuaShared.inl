@@ -6,8 +6,8 @@ namespace bg3se::esv
 namespace bg3se::lua
 {
 
-void LuaMakeStatusProxy(lua_State* L, esv::Status* status, LifetimeHolder const& lifetime);
-// TODO - void LuaMakeStatusProxy(lua_State* L, ecl::Status* status, LifetimeHolder const& lifetime);
+void LuaMakeStatusProxy(lua_State* L, esv::Status* status, LifetimeHandle const& lifetime);
+// TODO - void LuaMakeStatusProxy(lua_State* L, ecl::Status* status, LifetimeHandle const& lifetime);
 
 template <class TObject, class TStatus>
 int GameObjectGetStatus(lua_State* L, TObject* self)

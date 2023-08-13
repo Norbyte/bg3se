@@ -7,6 +7,7 @@ namespace bg3se
 {
 	struct StatsFunctorSet;
 	struct SpellPrototype;
+	struct RPGEnumeration;
 
 	struct GameRandom
 	{
@@ -218,7 +219,7 @@ namespace bg3se
 		uint32_t StatsId{ 0 };
 		uint32_t Level{ 0 };
 
-		struct RPGEnumeration* GetAttributeInfo(FixedString const& attributeName, int& attributeIndex);
+		RPGEnumeration* GetAttributeInfo(FixedString const& attributeName, int& attributeIndex);
 		std::optional<STDString> GetString(FixedString const& attributeName);
 		std::optional<int> GetInt(FixedString const& attributeName);
 		std::optional<int> GetIntScaled(FixedString const& attributeName, int level);

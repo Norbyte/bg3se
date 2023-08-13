@@ -53,7 +53,7 @@ namespace bg3se::lua::stats
 
 	int StatsProxy::Index(lua_State* L)
 	{
-		if (!lifetime_.IsAlive() || obj_ == nullptr) {
+		if (!lifetime_.IsAlive(L) || obj_ == nullptr) {
 			return luaL_error(L, "Attempted to read property of null CRPGStats_Object object");
 		}
 
@@ -74,7 +74,7 @@ namespace bg3se::lua::stats
 
 	int StatsProxy::NewIndex(lua_State* L)
 	{
-		if (!lifetime_.IsAlive() || obj_ == nullptr) {
+		if (!lifetime_.IsAlive(L) || obj_ == nullptr) {
 			return luaL_error(L, "Attempted to write property of null CRPGStats_Object object");
 		}
 

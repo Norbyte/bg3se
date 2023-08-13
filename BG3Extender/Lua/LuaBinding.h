@@ -24,7 +24,7 @@ namespace bg3se::lua
 	void PushExtFunction(lua_State * L, char const * func);
 	void PushInternalFunction(lua_State * L, char const * func);
 	void PushModFunction(lua_State* L, char const* mod, char const* func);
-	LifetimeHolder GetCurrentLifetime();
+	LifetimeHandle GetCurrentLifetime();
 
 	class ExtensionLibrary
 	{
@@ -68,13 +68,15 @@ namespace bg3se::lua
 		uint32_t RestrictionFlags{ 0 };
 		std::unordered_set<int32_t> OverriddenLevelMaps;
 
-		State();
+		State(bool isServer);
 		~State();
 
 		State(State const &) = delete;
 		State(State &&) = delete;
 		State & operator = (State const &) = delete;
 		State & operator = (State &&) = delete;
+
+		static State* FromLua(lua_State* L);
 
 		inline lua_State * GetState()
 		{
@@ -91,12 +93,21 @@ namespace bg3se::lua
 			return startupDone_;
 		}
 
-		LifetimeHolder GetCurrentLifetime();
+		LifetimeHandle GetCurrentLifetime();
+
+		inline LifetimeHandle GetGlobalLifetime()
+		{
+			return globalLifetime_;
+		}
 
 		inline LifetimePool& GetLifetimePool()
 		{
 			return lifetimePool_;
 		}
+
+		virtual void Initialize() = 0;
+		virtual void Shutdown();
+		virtual bool IsClient() = 0;
 
 		virtual EntityWorldBase* GetEntityWorld() = 0;
 		virtual EntitySystemHelpersBase* GetEntitySystemHelpers() = 0;
@@ -109,14 +120,17 @@ namespace bg3se::lua
 		void OnModuleLoading();
 		void OnStatsLoaded();
 		void OnModuleResume();
+		void OnLevelLoading();
 		void OnResetCompleted();
+		virtual void OnUpdate(GameTime const& time);
+		void OnStatsStructureLoaded();
 
 		template <class... Ret, class... Args>
 		bool CallExtRet(char const * func, uint32_t restrictions, std::tuple<Ret...>& ret, Args... args)
 		{
 			StackCheck _(L, sizeof...(Ret));
 			// FIXME - Restriction restriction(*this, restrictions);
-			LifetimePin _p(lifetimeStack_);
+			LifetimeStackPin _p(lifetimeStack_);
 			auto lifetime = lifetimeStack_.GetCurrent();
 			PushInternalFunction(L, func);
 			(push_proxy(L, lifetime, args), ...);
@@ -128,7 +142,7 @@ namespace bg3se::lua
 		{
 			StackCheck _(L, 0);
 			// FIXME - Restriction restriction(*this, restrictions);
-			LifetimePin _p(lifetimeStack_);
+			LifetimeStackPin _p(lifetimeStack_);
 			auto lifetime = lifetimeStack_.GetCurrent();
 			PushInternalFunction(L, func);
 			(push_proxy(L, lifetime, args), ...);
@@ -143,9 +157,9 @@ namespace bg3se::lua
 			try {
 				StackCheck _(L, 0);
 				// FIXME - Restriction restriction(*this, restrictions);
-				LifetimePin _p(lifetimeStack_);
+				LifetimeStackPin _p(lifetimeStack_);
 				PushInternalFunction(L, "_ThrowEvent");
-				EventObject::Make(L, lifetimeStack_.GetCurrent().pool, eventName, evt, canPreventAction, TReadWrite{});
+				EventObject::Make(L, _p.GetLifetime(), eventName, evt, canPreventAction, TReadWrite{});
 				return CheckedCall(L, 1, "_ThrowEvent");
 			} catch (Exception &) {
 				auto stackRemaining = lua_gettop(L) - stackSize;
@@ -162,16 +176,9 @@ namespace bg3se::lua
 
 		std::optional<int> LoadScript(STDString const & script, STDString const & name = "", int globalsIdx = 0);
 
-		/*std::optional<int32_t> GetHitChance(CDivinityStats_Character * attacker, CDivinityStats_Character * target);
-		bool GetSkillDamage(SkillPrototype * self, DamagePairList * damageList,
-			CRPGStats_ObjectInstance *attackerStats, bool isFromItem, bool stealthed, float * attackerPosition,
-			float * targetPosition, DeathType * pDeathType, int level, bool noRandomization);
-		std::optional<std::pair<int, bool>> GetSkillAPCost(SkillPrototype* skill, CDivinityStats_Character* character, eoc::AiGrid* aiGrid,
-			glm::vec3* position, float* radius);
-		void OnNetMessageReceived(STDString const & channel, STDString const & payload, UserId userId);*/
+		/*void OnNetMessageReceived(STDString const & channel, STDString const & payload, UserId userId);*/
 
 		static STDString GetBuiltinLibrary(int resourceId);
-		static State* FromLua(lua_State* L);
 
 	protected:
 		lua_State * L;
@@ -179,6 +186,7 @@ namespace bg3se::lua
 
 		LifetimePool lifetimePool_;
 		LifetimeStack lifetimeStack_;
+		LifetimeHandle globalLifetime_;
 
 		void OpenLibs();
 	};
@@ -206,6 +214,16 @@ namespace bg3se::lua
 
 	/*int NewDamageList(lua_State* L);
 	int GetSurfaceTemplate(lua_State* L);*/
+
+	struct DoConsoleCommandEventParams
+	{
+		STDString Command;
+	};
+
+	struct TickEventParams
+	{
+		GameTime Time;
+	};
 }
 
 namespace bg3se::lua::stats

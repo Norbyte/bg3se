@@ -18,7 +18,7 @@
 
 namespace bg3se::lua::stats
 {
-	void PushStatsFunctor(lua_State* L, LifetimeHolder const& lifetime, StatsFunctorBase* functor)
+	void PushStatsFunctor(lua_State* L, LifetimeHandle const& lifetime, StatsFunctorBase* functor)
 	{
 #define V(cls) case cls::FunctorId: \
 		MakeObjectRef(L, lifetime, static_cast<cls*>(functor)); \
@@ -70,7 +70,7 @@ namespace bg3se::lua::stats
 #undef V
 	}
 
-	StatsFunctorSetProxy::StatsFunctorSetProxy(LifetimeHolder const& lifetime, StatsFunctorSet* obj)
+	StatsFunctorSetProxy::StatsFunctorSetProxy(LifetimeHandle const& lifetime, StatsFunctorSet* obj)
 		: object_(obj), lifetime_(lifetime)
 	{}
 

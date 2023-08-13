@@ -23,9 +23,6 @@ enum class DebugMessageType
 
 extern HMODULE gThisModule;
 
-std::string ToUTF8(std::wstring_view s);
-std::wstring FromUTF8(std::string_view s);
-
 template <typename... Args>
 void Debug(DebugMessageType type, wchar_t const * fmt, Args... args)
 {

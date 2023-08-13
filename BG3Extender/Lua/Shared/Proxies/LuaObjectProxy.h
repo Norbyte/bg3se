@@ -6,15 +6,15 @@
 
 namespace bg3se::lua
 {
-	LifetimeHolder GetCurrentLifetime();
+	LifetimeHandle GetCurrentLifetime();
 
 	class GenericPropertyMap
 	{
 	public:
 		struct RawPropertyAccessors
 		{
-			using Getter = bool (lua_State* L, LifetimeHolder const& lifetime, void* object, std::size_t offset);
-			using Setter = bool (lua_State* L, LifetimeHolder const& lifetime, void* object, int index, std::size_t offset);
+			using Getter = bool (lua_State* L, LifetimeHandle const& lifetime, void* object, std::size_t offset);
+			using Setter = bool (lua_State* L, LifetimeHandle const& lifetime, void* object, int index, std::size_t offset);
 
 			FixedString Name;
 			Getter* Get;
@@ -22,8 +22,8 @@ namespace bg3se::lua
 			std::size_t Offset;
 		};
 
-		bool GetRawProperty(lua_State* L, LifetimeHolder const& lifetime, void* object, FixedString const& prop) const;
-		bool SetRawProperty(lua_State* L, LifetimeHolder const& lifetime, void* object, FixedString const& prop, int index) const;
+		bool GetRawProperty(lua_State* L, LifetimeHandle const& lifetime, void* object, FixedString const& prop) const;
+		bool SetRawProperty(lua_State* L, LifetimeHandle const& lifetime, void* object, FixedString const& prop, int index) const;
 		void AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter,
 			typename RawPropertyAccessors::Setter* setter, std::size_t offset);
 
@@ -38,11 +38,11 @@ namespace bg3se::lua
 	public:
 		struct PropertyAccessors
 		{
-			using Getter = bool (lua_State* L, LifetimeHolder const& lifetime, T* object, std::size_t offset);
-			using Setter = bool (lua_State* L, LifetimeHolder const& lifetime, T* object, int index, std::size_t offset);
+			using Getter = bool (lua_State* L, LifetimeHandle const& lifetime, T* object, std::size_t offset);
+			using Setter = bool (lua_State* L, LifetimeHandle const& lifetime, T* object, int index, std::size_t offset);
 		};
 
-		inline bool GetProperty(lua_State* L, LifetimeHolder const& lifetime, T* object, FixedString const& prop) const
+		inline bool GetProperty(lua_State* L, LifetimeHandle const& lifetime, T* object, FixedString const& prop) const
 		{
 #if defined(_DEBUG)
 			__try {
@@ -57,7 +57,7 @@ namespace bg3se::lua
 #endif
 		}
 
-		inline bool SetProperty(lua_State* L, LifetimeHolder const& lifetime, T* object, FixedString const& prop, int index) const
+		inline bool SetProperty(lua_State* L, LifetimeHandle const& lifetime, T* object, FixedString const& prop, int index) const
 		{
 #if defined(_DEBUG)
 			__try {
@@ -72,7 +72,7 @@ namespace bg3se::lua
 #endif
 		}
 
-		inline bool GetProperty(lua_State* L, LifetimeHolder const& lifetime, T* object, RawPropertyAccessors const& prop) const
+		inline bool GetProperty(lua_State* L, LifetimeHandle const& lifetime, T* object, RawPropertyAccessors const& prop) const
 		{
 			auto getter = (typename PropertyAccessors::Getter*)prop.Get;
 
@@ -89,7 +89,7 @@ namespace bg3se::lua
 #endif
 		}
 
-		inline bool SetProperty(lua_State* L, LifetimeHolder const& lifetime, T* object, RawPropertyAccessors const& prop, int index) const
+		inline bool SetProperty(lua_State* L, LifetimeHandle const& lifetime, T* object, RawPropertyAccessors const& prop, int index) const
 		{
 			auto setter = (typename PropertyAccessors::Setter*)prop.Set;
 
@@ -126,7 +126,7 @@ namespace bg3se::lua
 	public:
 		inline virtual ~ObjectProxyImplBase() {};
 		virtual FixedString const& GetTypeName() const = 0;
-		virtual void* GetRaw() = 0;
+		virtual void* GetRaw(lua_State* L) = 0;
 		virtual bool GetProperty(lua_State* L, FixedString const& prop) = 0;
 		virtual bool SetProperty(lua_State* L, FixedString const& prop, int index) = 0;
 		virtual int Next(lua_State* L, FixedString const& key) = 0;
@@ -136,7 +136,7 @@ namespace bg3se::lua
 	template <class T>
 	struct ObjectProxyHelpers
 	{
-		static bool GetProperty(lua_State* L, T* object, LifetimeHolder const& lifetime, FixedString const& prop)
+		static bool GetProperty(lua_State* L, T* object, LifetimeHandle const& lifetime, FixedString const& prop)
 		{
 			auto const& map = StaticLuaPropertyMap<T>::PropertyMap;
 			auto fetched = map.GetProperty(L, lifetime, object, prop);
@@ -148,7 +148,7 @@ namespace bg3se::lua
 			return true;
 		}
 
-		static bool SetProperty(lua_State* L, T* object, LifetimeHolder const& lifetime, FixedString const& prop, int index)
+		static bool SetProperty(lua_State* L, T* object, LifetimeHandle const& lifetime, FixedString const& prop, int index)
 		{
 			auto const& map = StaticLuaPropertyMap<T>::PropertyMap;
 			auto ok = map.SetProperty(L, lifetime, object, prop, index);
@@ -160,7 +160,7 @@ namespace bg3se::lua
 			return true;
 		}
 
-		static int Next(lua_State* L, T* object, LifetimeHolder const& lifetime, FixedString const& key)
+		static int Next(lua_State* L, T* object, LifetimeHandle const& lifetime, FixedString const& key)
 		{
 			auto const& map = StaticLuaPropertyMap<T>::PropertyMap;
 			if (!key) {
@@ -216,7 +216,7 @@ namespace bg3se::lua
 	public:
 		static_assert(!std::is_pointer_v<T>, "ObjectProxyImpl template parameter should not be a pointer type!");
 
-		ObjectProxyRefImpl(LifetimeHolder const& lifetime, T * obj)
+		ObjectProxyRefImpl(LifetimeHandle const& lifetime, T * obj)
 			: object_(obj), lifetime_(lifetime)
 		{}
 		
@@ -228,7 +228,7 @@ namespace bg3se::lua
 			return object_;
 		}
 
-		void* GetRaw() override
+		void* GetRaw(lua_State* L) override
 		{
 			return object_;
 		}
@@ -260,7 +260,7 @@ namespace bg3se::lua
 
 	private:
 		T* object_;
-		LifetimeHolder lifetime_;
+		LifetimeHandle lifetime_;
 	};
 
 
@@ -271,22 +271,20 @@ namespace bg3se::lua
 	public:
 		static_assert(!std::is_pointer_v<T>, "ObjectProxyImpl template parameter should not be a pointer type!");
 
-		ObjectProxyOwnerImpl(LifetimePool& pool, Lifetime* lifetime, T* obj)
-			: lifetime_(pool, lifetime), 
+		ObjectProxyOwnerImpl(lua_State* L, LifetimeHandle const& lifetime, T* obj)
+			: lifetime_(L, lifetime), 
 			object_(obj, &GameDelete<T>)
 		{}
 
 		~ObjectProxyOwnerImpl() override
-		{
-			lifetime_.GetLifetime()->Kill();
-		}
+		{}
 
 		T* Get() const
 		{
 			return object_.get();
 		}
 
-		void* GetRaw() override
+		void* GetRaw(lua_State* L) override
 		{
 			return object_.get();
 		}
@@ -298,17 +296,17 @@ namespace bg3se::lua
 
 		bool GetProperty(lua_State* L, FixedString const& prop) override
 		{
-			return ObjectProxyHelpers<T>::GetProperty(L, object_.get(), lifetime_.Get(), prop);
+			return ObjectProxyHelpers<T>::GetProperty(L, object_.get(), lifetime_, prop);
 		}
 
 		bool SetProperty(lua_State* L, FixedString const& prop, int index) override
 		{
-			return ObjectProxyHelpers<T>::SetProperty(L, object_.get(), lifetime_.Get(), prop, index);
+			return ObjectProxyHelpers<T>::SetProperty(L, object_.get(), lifetime_, prop, index);
 		}
 
 		int Next(lua_State* L, FixedString const& key) override
 		{
-			return ObjectProxyHelpers<T>::Next(L, object_.get(), lifetime_.Get(), key);
+			return ObjectProxyHelpers<T>::Next(L, object_.get(), lifetime_, key);
 		}
 
 		bool IsA(FixedString const& typeName) override
@@ -318,7 +316,7 @@ namespace bg3se::lua
 
 	private:
 		GameUniquePtr<T> object_;
-		LifetimeReference lifetime_;
+		LifetimeOwnerPin lifetime_;
 	};
 
 
@@ -329,7 +327,7 @@ namespace bg3se::lua
 		static char const * const MetatableName;
 
 		template <class T>
-		inline static ObjectProxyRefImpl<T>* MakeRef(lua_State* L, T* object, LifetimeHolder const& lifetime)
+		inline static ObjectProxyRefImpl<T>* MakeRef(lua_State* L, T* object, LifetimeHandle const& lifetime)
 		{
 			auto self = NewWithExtraData(L, sizeof(ObjectProxyRefImpl<T>), lifetime);
 			return new (self->GetImpl()) ObjectProxyRefImpl<T>(lifetime, object);
@@ -339,17 +337,17 @@ namespace bg3se::lua
 		inline static ObjectProxyOwnerImpl<T>* MakeOwner(lua_State* L, LifetimePool& pool, T* obj)
 		{
 			auto lifetime = pool.Allocate();
-			auto self = NewWithExtraData(L, sizeof(ObjectProxyOwnerImpl<T>), LifetimeHolder(pool, lifetime));
-			return new (self->GetImpl()) ObjectProxyOwnerImpl<T>(pool, lifetime, obj);
+			auto self = NewWithExtraData(L, sizeof(ObjectProxyOwnerImpl<T>), lifetime);
+			return new (self->GetImpl()) ObjectProxyOwnerImpl<T>(L, lifetime, obj);
 		}
 
 		template <class T, class... Args>
 		inline static ObjectProxyOwnerImpl<T>* MakeOwner(lua_State* L, LifetimePool& pool, Args... args)
 		{
 			auto lifetime = pool.Allocate();
-			auto self = NewWithExtraData(L, sizeof(ObjectProxyOwnerImpl<T>), LifetimeHolder(pool, lifetime));
+			auto self = NewWithExtraData(L, sizeof(ObjectProxyOwnerImpl<T>), lifetime);
 			auto obj = GameAlloc<T, Args...>(std::forward(args)...);
-			return new (self->GetImpl()) ObjectProxyOwnerImpl<T>(pool, lifetime, obj);
+			return new (self->GetImpl()) ObjectProxyOwnerImpl<T>(L, lifetime, obj);
 		}
 
 		inline ObjectProxyImplBase* GetImpl()
@@ -357,29 +355,38 @@ namespace bg3se::lua
 			return reinterpret_cast<ObjectProxyImplBase*>(this + 1);
 		}
 
-		inline bool IsAlive() const
+		inline bool IsAlive(lua_State* L) const
 		{
-			return lifetime_.IsAlive();
+			return lifetime_.IsAlive(L);
+		}
+
+		inline void* GetRaw(lua_State* L)
+		{
+			if (!lifetime_.IsAlive(L)) {
+				return nullptr;
+			}
+
+			return GetImpl()->GetRaw(L);
 		}
 
 		template <class T>
-		T* Get()
+		T* Get(lua_State* L)
 		{
-			if (!lifetime_.IsAlive()) {
+			if (!lifetime_.IsAlive(L)) {
 				return nullptr;
 			}
 
 			if (GetImpl()->IsA(StaticLuaPropertyMap<T>::PropertyMap.Name)) {
-				return reinterpret_cast<T*>(GetImpl()->GetRaw());
+				return reinterpret_cast<T*>(GetImpl()->GetRaw(L));
 			} else {
 				return nullptr;
 			}
 		}
 
 	private:
-		LifetimeReference lifetime_;
+		LifetimeHandle lifetime_;
 
-		ObjectProxy(LifetimeHolder const& lifetime)
+		ObjectProxy(LifetimeHandle const& lifetime)
 			: lifetime_(lifetime)
 		{}
 
@@ -399,7 +406,7 @@ namespace bg3se::lua
 	};
 
 	template <class T>
-	inline void push_proxy(lua_State* L, LifetimeHolder const& lifetime, T const& v)
+	inline void push_proxy(lua_State* L, LifetimeHandle const& lifetime, T const& v)
 	{
 		if constexpr (std::is_pointer_v<T> 
 			&& (std::is_base_of_v<HasObjectProxy, std::remove_pointer_t<T>>
@@ -420,7 +427,7 @@ namespace bg3se::lua
 		auto proxy = Userdata<ObjectProxy>::CheckUserData(L, index);
 		auto const& typeName = StaticLuaPropertyMap<T>::PropertyMap.Name;
 		if (proxy->GetImpl()->IsA(typeName)) {
-			auto obj = proxy->Get<T>();
+			auto obj = proxy->Get<T>(L);
 			if (obj == nullptr) {
 				luaL_error(L, "Argument %d: got object of type '%s' whose lifetime has expired", index, typeName.GetString());
 				return nullptr;

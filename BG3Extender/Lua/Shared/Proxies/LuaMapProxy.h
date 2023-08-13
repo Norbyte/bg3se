@@ -6,7 +6,7 @@
 
 namespace bg3se::lua
 {
-	LifetimeHolder GetCurrentLifetime();
+	LifetimeHandle GetCurrentLifetime();
 
 	class MapProxyImplBase
 	{
@@ -29,7 +29,7 @@ namespace bg3se::lua
 		static_assert(!std::is_pointer_v<TKey>, "MultiHashMapByRefProxyImpl template parameter should not be a pointer type!");
 		static_assert(!std::is_pointer_v<TValue>, "MultiHashMapByRefProxyImpl template parameter should not be a pointer type!");
 
-		MultiHashMapByRefProxyImpl(LifetimeHolder const& lifetime, MultiHashMap<TKey, TValue> * obj)
+		MultiHashMapByRefProxyImpl(LifetimeHandle const& lifetime, MultiHashMap<TKey, TValue> * obj)
 			: object_(obj), lifetime_(lifetime)
 		{}
 		
@@ -104,7 +104,7 @@ namespace bg3se::lua
 
 	private:
 		MultiHashMap<TKey, TValue>* object_;
-		LifetimeHolder lifetime_;
+		LifetimeHandle lifetime_;
 	};
 
 	
@@ -115,7 +115,7 @@ namespace bg3se::lua
 		static_assert(!std::is_pointer_v<TKey>, "MultiHashMapByValProxyImpl template parameter should not be a pointer type!");
 		static_assert(!std::is_pointer_v<TValue>, "MultiHashMapByValProxyImpl template parameter should not be a pointer type!");
 
-		MultiHashMapByValProxyImpl(LifetimeHolder const& lifetime, MultiHashMap<TKey, TValue> * obj)
+		MultiHashMapByValProxyImpl(LifetimeHandle const& lifetime, MultiHashMap<TKey, TValue> * obj)
 			: object_(obj), lifetime_(lifetime)
 		{}
 		
@@ -207,7 +207,7 @@ namespace bg3se::lua
 
 	private:
 		MultiHashMap<TKey, TValue>* object_;
-		LifetimeHolder lifetime_;
+		LifetimeHandle lifetime_;
 	};
 
 	
@@ -218,7 +218,7 @@ namespace bg3se::lua
 		static_assert(!std::is_pointer_v<TKey>, "RefMapByRefProxyImpl template parameter should not be a pointer type!");
 		static_assert(!std::is_pointer_v<TValue>, "RefMapByRefProxyImpl template parameter should not be a pointer type!");
 
-		RefMapByRefProxyImpl(LifetimeHolder const& lifetime, MapBase<TInternals> * obj)
+		RefMapByRefProxyImpl(LifetimeHandle const& lifetime, MapBase<TInternals> * obj)
 			: object_(obj), lifetime_(lifetime)
 		{}
 		
@@ -297,7 +297,7 @@ namespace bg3se::lua
 
 	private:
 		MapBase<TInternals>* object_;
-		LifetimeHolder lifetime_;
+		LifetimeHandle lifetime_;
 	};
 
 	
@@ -308,7 +308,7 @@ namespace bg3se::lua
 		static_assert(!std::is_pointer_v<TKey>, "RefMapByValProxyImpl template parameter should not be a pointer type!");
 		static_assert(!std::is_pointer_v<TValue>, "RefMapByValProxyImpl template parameter should not be a pointer type!");
 
-		RefMapByValProxyImpl(LifetimeHolder const& lifetime, MapBase<TInternals>* obj)
+		RefMapByValProxyImpl(LifetimeHandle const& lifetime, MapBase<TInternals>* obj)
 			: object_(obj), lifetime_(lifetime)
 		{}
 		
@@ -404,7 +404,7 @@ namespace bg3se::lua
 
 	private:
 		MapBase<TInternals>* object_;
-		LifetimeHolder lifetime_;
+		LifetimeHandle lifetime_;
 	};
 
 
@@ -415,42 +415,42 @@ namespace bg3se::lua
 		static char const * const MetatableName;
 
 		template <class TKey, class TValue>
-		inline static MultiHashMapByRefProxyImpl<TKey, TValue>* MakeByRef(lua_State* L, MultiHashMap<TKey, TValue>* object, LifetimeHolder const& lifetime)
+		inline static MultiHashMapByRefProxyImpl<TKey, TValue>* MakeByRef(lua_State* L, MultiHashMap<TKey, TValue>* object, LifetimeHandle const& lifetime)
 		{
 			auto self = NewWithExtraData(L, sizeof(MultiHashMapByRefProxyImpl<TKey, TValue>), lifetime);
 			return new (self->GetImpl()) MultiHashMapByRefProxyImpl<TKey, TValue>(lifetime, object);
 		}
 
 		template <class TKey, class TValue>
-		inline static MultiHashMapByValProxyImpl<TKey, TValue>* MakeByVal(lua_State* L, MultiHashMap<TKey, TValue>* object, LifetimeHolder const& lifetime)
+		inline static MultiHashMapByValProxyImpl<TKey, TValue>* MakeByVal(lua_State* L, MultiHashMap<TKey, TValue>* object, LifetimeHandle const& lifetime)
 		{
 			auto self = NewWithExtraData(L, sizeof(MultiHashMapByValProxyImpl<TKey, TValue>), lifetime);
 			return new (self->GetImpl()) MultiHashMapByValProxyImpl<TKey, TValue>(lifetime, object);
 		}
 
 		template <class TKey, class TValue>
-		inline static RefMapByRefProxyImpl<TKey, TValue, RefMapInternals<TKey, TValue>>* MakeByRef(lua_State* L, RefMap<TKey, TValue>* object, LifetimeHolder const& lifetime)
+		inline static RefMapByRefProxyImpl<TKey, TValue, RefMapInternals<TKey, TValue>>* MakeByRef(lua_State* L, RefMap<TKey, TValue>* object, LifetimeHandle const& lifetime)
 		{
 			auto self = NewWithExtraData(L, sizeof(RefMapByRefProxyImpl<TKey, TValue, RefMapInternals<TKey, TValue>>), lifetime);
 			return new (self->GetImpl()) RefMapByRefProxyImpl<TKey, TValue, RefMapInternals<TKey, TValue>>(lifetime, object);
 		}
 
 		template <class TKey, class TValue>
-		inline static RefMapByValProxyImpl<TKey, TValue, RefMapInternals<TKey, TValue>>* MakeByVal(lua_State* L, RefMap<TKey, TValue>* object, LifetimeHolder const& lifetime)
+		inline static RefMapByValProxyImpl<TKey, TValue, RefMapInternals<TKey, TValue>>* MakeByVal(lua_State* L, RefMap<TKey, TValue>* object, LifetimeHandle const& lifetime)
 		{
 			auto self = NewWithExtraData(L, sizeof(RefMapByValProxyImpl<TKey, TValue, RefMapInternals<TKey, TValue>>), lifetime);
 			return new (self->GetImpl()) RefMapByValProxyImpl<TKey, TValue, RefMapInternals<TKey, TValue>>(lifetime, object);
 		}
 
 		template <class TKey, class TValue>
-		inline static RefMapByRefProxyImpl<TKey, TValue, MapInternals<TKey, TValue>>* MakeByRef(lua_State* L, Map<TKey, TValue>* object, LifetimeHolder const& lifetime)
+		inline static RefMapByRefProxyImpl<TKey, TValue, MapInternals<TKey, TValue>>* MakeByRef(lua_State* L, Map<TKey, TValue>* object, LifetimeHandle const& lifetime)
 		{
 			auto self = NewWithExtraData(L, sizeof(RefMapByRefProxyImpl<TKey, TValue, MapInternals<TKey, TValue>>), lifetime);
 			return new (self->GetImpl()) RefMapByRefProxyImpl<TKey, TValue, MapInternals<TKey, TValue>>(lifetime, object);
 		}
 
 		template <class TKey, class TValue>
-		inline static RefMapByValProxyImpl<TKey, TValue, MapInternals<TKey, TValue>>* MakeByVal(lua_State* L, Map<TKey, TValue>* object, LifetimeHolder const& lifetime)
+		inline static RefMapByValProxyImpl<TKey, TValue, MapInternals<TKey, TValue>>* MakeByVal(lua_State* L, Map<TKey, TValue>* object, LifetimeHandle const& lifetime)
 		{
 			auto self = NewWithExtraData(L, sizeof(RefMapByValProxyImpl<TKey, TValue, MapInternals<TKey, TValue>>), lifetime);
 			return new (self->GetImpl()) RefMapByValProxyImpl<TKey, TValue, MapInternals<TKey, TValue>>(lifetime, object);
@@ -461,15 +461,15 @@ namespace bg3se::lua
 			return reinterpret_cast<MapProxyImplBase*>(this + 1);
 		}
 
-		inline bool IsAlive() const
+		inline bool IsAlive(lua_State* L) const
 		{
-			return lifetime_.IsAlive();
+			return lifetime_.IsAlive(L);
 		}
 
 		template <class TKey, class TValue>
-		MultiHashMapByRefProxyImpl<TKey, TValue>* GetByRefMultiHashMap()
+		MultiHashMapByRefProxyImpl<TKey, TValue>* GetByRefMultiHashMap(lua_State* L)
 		{
-			if (!lifetime_.IsAlive()) {
+			if (!lifetime_.IsAlive(L)) {
 				return nullptr;
 			}
 			
@@ -477,9 +477,9 @@ namespace bg3se::lua
 		}
 
 		template <class TKey, class TValue>
-		MultiHashMapByValProxyImpl<TKey, TValue>* GetByValMultiHashMap()
+		MultiHashMapByValProxyImpl<TKey, TValue>* GetByValMultiHashMap(lua_State* L)
 		{
-			if (!lifetime_.IsAlive()) {
+			if (!lifetime_.IsAlive(L)) {
 				return nullptr;
 			}
 			
@@ -487,9 +487,9 @@ namespace bg3se::lua
 		}
 
 		template <class TKey, class TValue>
-		RefMapByRefProxyImpl<TKey, TValue, RefMapInternals<TKey, TValue>>* GetByRefRefMap()
+		RefMapByRefProxyImpl<TKey, TValue, RefMapInternals<TKey, TValue>>* GetByRefRefMap(lua_State* L)
 		{
-			if (!lifetime_.IsAlive()) {
+			if (!lifetime_.IsAlive(L)) {
 				return nullptr;
 			}
 			
@@ -497,9 +497,9 @@ namespace bg3se::lua
 		}
 
 		template <class TKey, class TValue>
-		RefMapByValProxyImpl<TKey, TValue, RefMapInternals<TKey, TValue>>* GetByValRefMap()
+		RefMapByValProxyImpl<TKey, TValue, RefMapInternals<TKey, TValue>>* GetByValRefMap(lua_State* L)
 		{
-			if (!lifetime_.IsAlive()) {
+			if (!lifetime_.IsAlive(L)) {
 				return nullptr;
 			}
 			
@@ -507,9 +507,9 @@ namespace bg3se::lua
 		}
 
 	private:
-		LifetimeReference lifetime_;
+		LifetimeHandle lifetime_;
 
-		MapProxy(LifetimeHolder const& lifetime)
+		MapProxy(LifetimeHandle const& lifetime)
 			: lifetime_(lifetime)
 		{}
 
@@ -565,7 +565,7 @@ namespace bg3se::lua
 	};
 
 	template <class T>
-	inline void push_map_proxy_by_ref(lua_State* L, LifetimeHolder const& lifetime, T* v)
+	inline void push_map_proxy_by_ref(lua_State* L, LifetimeHandle const& lifetime, T* v)
 	{
 		MapProxy::MakeByRef<T>(L, v, lifetime);
 	}

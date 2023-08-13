@@ -145,14 +145,14 @@ bool EnableWriteProtectedWrites{ false };
 
 #define P_FUN(name, fun) \
 	pm.AddProperty(#name, \
-		[](lua_State* L, LifetimeHolder const& lifetime, PM::ObjectType* obj, std::size_t offset) { \
+		[](lua_State* L, LifetimeHandle const& lifetime, PM::ObjectType* obj, std::size_t offset) { \
 			lua_pushcfunction(L, [](lua_State* L) -> int { \
 				auto self = checked_get_proxy<PM::ObjectType>(L, 1); \
 				return fun(L, self); \
 			}); \
 			return true; \
 		}, \
-		[](lua_State* L, LifetimeHolder const& lifetime, PM::ObjectType* obj, int index, std::size_t offset) { \
+		[](lua_State* L, LifetimeHandle const& lifetime, PM::ObjectType* obj, int index, std::size_t offset) { \
 			return false; \
 		}, 0 \
 	);

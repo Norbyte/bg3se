@@ -1,8 +1,7 @@
 #include "stdafx.h"
 #include <Osiris/Shared/NodeHooks.h>
-#include <sstream>
-#include <memory>
-#include <cassert>
+#include <Osiris/Debugger/Debugger.h>
+#include <Lua/Server/LuaOsirisBinding.h>
 
 namespace bg3se
 {
@@ -176,14 +175,14 @@ namespace bg3se
 	{
 		auto & wrapper = GetWrapper(node);
 
-		if (IsValidPreHook) {
-			IsValidPreHook(node, tuple, adapter);
+		if (DebuggerAttachment) {
+			DebuggerAttachment->IsValidPreHook(node, tuple, adapter);
 		}
 
 		bool succeeded = wrapper.WrappedIsValid(node, tuple, adapter);
 
-		if (IsValidPostHook) {
-			IsValidPostHook(node, tuple, adapter, succeeded);
+		if (DebuggerAttachment) {
+			DebuggerAttachment->IsValidPostHook(node, tuple, adapter, succeeded);
 		}
 
 		return succeeded;
@@ -193,14 +192,14 @@ namespace bg3se
 	{
 		auto & wrapper = GetWrapper(node);
 
-		if (PushDownPreHook) {
-			PushDownPreHook(node, tuple, adapter, which, false);
+		if (DebuggerAttachment) {
+			DebuggerAttachment->PushDownPreHook(node, tuple, adapter, which, false);
 		}
 
 		wrapper.WrappedPushDownTuple(node, tuple, adapter, which);
 
-		if (PushDownPostHook) {
-			PushDownPostHook(node, tuple, adapter, which, false);
+		if (DebuggerAttachment) {
+			DebuggerAttachment->PushDownPostHook(node, tuple, adapter, which, false);
 		}
 	}
 
@@ -208,14 +207,14 @@ namespace bg3se
 	{
 		auto & wrapper = GetWrapper(node);
 
-		if (PushDownPreHook) {
-			PushDownPreHook(node, tuple, adapter, which, true);
+		if (DebuggerAttachment) {
+			DebuggerAttachment->PushDownPreHook(node, tuple, adapter, which, true);
 		}
 
 		wrapper.WrappedPushDownTupleDelete(node, tuple, adapter, which);
 
-		if (PushDownPostHook) {
-			PushDownPostHook(node, tuple, adapter, which, true);
+		if (DebuggerAttachment) {
+			DebuggerAttachment->PushDownPostHook(node, tuple, adapter, which, true);
 		}
 	}
 
@@ -223,22 +222,22 @@ namespace bg3se
 	{
 		auto & wrapper = GetWrapper(node);
 
-		if (InsertPreHook) {
-			InsertPreHook(node, tuple, false);
+		if (DebuggerAttachment) {
+			DebuggerAttachment->InsertPreHook(node, tuple, false);
 		}
 
-		if (InsertPreHookLua) {
-			InsertPreHookLua(node, tuple, false);
+		if (OsirisCallbacksAttachment) {
+			OsirisCallbacksAttachment->InsertPreHook(node, tuple, false);
 		}
 
 		wrapper.WrappedInsertTuple(node, tuple);
 
-		if (InsertPostHook) {
-			InsertPostHook(node, tuple, false);
+		if (DebuggerAttachment) {
+			DebuggerAttachment->InsertPostHook(node, tuple, false);
 		}
 
-		if (InsertPostHookLua) {
-			InsertPostHookLua(node, tuple, false);
+		if (OsirisCallbacksAttachment) {
+			OsirisCallbacksAttachment->InsertPostHook(node, tuple, false);
 		}
 	}
 
@@ -246,22 +245,14 @@ namespace bg3se
 	{
 		auto & wrapper = GetWrapper(node);
 
-		if (InsertPreHook) {
-			InsertPreHook(node, tuple, true);
-		}
-
-		if (InsertPreHookLua) {
-			InsertPreHookLua(node, tuple, true);
+		if (DebuggerAttachment) {
+			DebuggerAttachment->InsertPreHook(node, tuple, true);
 		}
 
 		wrapper.WrappedDeleteTuple(node, tuple);
 
-		if (InsertPostHook) {
-			InsertPostHook(node, tuple, true);
-		}
-
-		if (InsertPostHookLua) {
-			InsertPostHookLua(node, tuple, true);
+		if (DebuggerAttachment) {
+			DebuggerAttachment->InsertPostHook(node, tuple, true);
 		}
 	}
 
@@ -269,22 +260,22 @@ namespace bg3se
 	{
 		auto & wrapper = GetWrapper(node);
 
-		if (CallQueryPreHook) {
-			CallQueryPreHook(node, args);
+		if (DebuggerAttachment) {
+			DebuggerAttachment->CallQueryPreHook(node, args);
 		}
-		
-		if (CallQueryPreHookLua) {
-			CallQueryPreHookLua(node, args);
+
+		if (OsirisCallbacksAttachment) {
+			OsirisCallbacksAttachment->CallQueryPreHook(node, args);
 		}
 
 		bool succeeded = wrapper.WrappedCallQuery(node, args);
 
-		if (CallQueryPostHook) {
-			CallQueryPostHook(node, args, succeeded);
+		if (DebuggerAttachment) {
+			DebuggerAttachment->CallQueryPostHook(node, args, succeeded);
 		}
 
-		if (CallQueryPostHookLua) {
-			CallQueryPostHookLua(node, args, succeeded);
+		if (OsirisCallbacksAttachment) {
+			OsirisCallbacksAttachment->CallQueryPostHook(node, args, succeeded);
 		}
 
 		return succeeded;

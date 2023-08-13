@@ -39,7 +39,7 @@ END_SE()
 
 namespace bg3se::lua
 {
-	LifetimeHolder GetCurrentLifetime();
+	LifetimeHandle GetCurrentLifetime();
 
 	class ArrayProxyImplBase
 	{
@@ -60,7 +60,7 @@ namespace bg3se::lua
 	public:
 		static_assert(!std::is_pointer_v<T>, "ArrayProxyByRefImpl template parameter should not be a pointer type!");
 
-		ArrayProxyByRefImpl(LifetimeHolder const& lifetime, Array<T> * obj)
+		ArrayProxyByRefImpl(LifetimeHandle const& lifetime, Array<T> * obj)
 			: object_(obj), lifetime_(lifetime)
 		{}
 		
@@ -116,7 +116,7 @@ namespace bg3se::lua
 
 	private:
 		Array<T>* object_;
-		LifetimeHolder lifetime_;
+		LifetimeHandle lifetime_;
 	};
 
 
@@ -126,7 +126,7 @@ namespace bg3se::lua
 	public:
 		static_assert(!std::is_pointer_v<T>, "ArrayProxyByValImpl template parameter should not be a pointer type!");
 
-		ArrayProxyByValImpl(LifetimeHolder const& lifetime, Array<T> * obj)
+		ArrayProxyByValImpl(LifetimeHandle const& lifetime, Array<T> * obj)
 			: object_(obj), lifetime_(lifetime)
 		{}
 		
@@ -196,7 +196,7 @@ namespace bg3se::lua
 
 	private:
 		Array<T>* object_;
-		LifetimeHolder lifetime_;
+		LifetimeHandle lifetime_;
 	};
 
 
@@ -206,7 +206,7 @@ namespace bg3se::lua
 	public:
 		static_assert(!std::is_pointer_v<T>, "ObjectSetProxyByRefImpl template parameter should not be a pointer type!");
 
-		ObjectSetProxyByRefImpl(LifetimeHolder const& lifetime, ObjectSet<T> * obj)
+		ObjectSetProxyByRefImpl(LifetimeHandle const& lifetime, ObjectSet<T> * obj)
 			: object_(obj), lifetime_(lifetime)
 		{}
 		
@@ -262,7 +262,7 @@ namespace bg3se::lua
 
 	private:
 		ObjectSet<T>* object_;
-		LifetimeHolder lifetime_;
+		LifetimeHandle lifetime_;
 	};
 
 
@@ -272,7 +272,7 @@ namespace bg3se::lua
 	public:
 		static_assert(!std::is_pointer_v<T>, "ObjectSetProxyByValImpl template parameter should not be a pointer type!");
 
-		ObjectSetProxyByValImpl(LifetimeHolder const& lifetime, ObjectSet<T> * obj)
+		ObjectSetProxyByValImpl(LifetimeHandle const& lifetime, ObjectSet<T> * obj)
 			: object_(obj), lifetime_(lifetime)
 		{}
 		
@@ -342,7 +342,7 @@ namespace bg3se::lua
 
 	private:
 		ObjectSet<T>* object_;
-		LifetimeHolder lifetime_;
+		LifetimeHandle lifetime_;
 	};
 
 
@@ -352,7 +352,7 @@ namespace bg3se::lua
 	public:
 		static_assert(!std::is_pointer_v<T>, "StdArrayProxyByRefImpl template parameter should not be a pointer type!");
 
-		StdArrayProxyByRefImpl(LifetimeHolder const& lifetime, std::array<T, Size> * obj)
+		StdArrayProxyByRefImpl(LifetimeHandle const& lifetime, std::array<T, Size> * obj)
 			: object_(obj), lifetime_(lifetime)
 		{}
 		
@@ -408,7 +408,7 @@ namespace bg3se::lua
 
 	private:
 		std::array<T, Size>* object_;
-		LifetimeHolder lifetime_;
+		LifetimeHandle lifetime_;
 	};
 
 
@@ -418,7 +418,7 @@ namespace bg3se::lua
 	public:
 		static_assert(!std::is_pointer_v<T>, "StdArrayProxyByValImpl template parameter should not be a pointer type!");
 
-		StdArrayProxyByValImpl(LifetimeHolder const& lifetime, std::array<T, Size> * obj)
+		StdArrayProxyByValImpl(LifetimeHandle const& lifetime, std::array<T, Size> * obj)
 			: object_(obj), lifetime_(lifetime)
 		{}
 		
@@ -480,7 +480,7 @@ namespace bg3se::lua
 
 	private:
 		std::array<T, Size>* object_;
-		LifetimeHolder lifetime_;
+		LifetimeHandle lifetime_;
 	};
 
 
@@ -491,44 +491,44 @@ namespace bg3se::lua
 		static char const * const MetatableName;
 
 		template <class TImpl, class... Args>
-		inline static TImpl* MakeImplByRef(lua_State* L, LifetimeHolder const& lifetime, Args... args)
+		inline static TImpl* MakeImplByRef(lua_State* L, LifetimeHandle const& lifetime, Args... args)
 		{
 			auto self = NewWithExtraData(L, sizeof(TImpl), lifetime);
 			return new (self->GetImpl()) TImpl(lifetime, args...);
 		}
 
 		template <class T>
-		inline static ArrayProxyByRefImpl<T>* MakeByRef(lua_State* L, Array<T>* object, LifetimeHolder const& lifetime)
+		inline static ArrayProxyByRefImpl<T>* MakeByRef(lua_State* L, Array<T>* object, LifetimeHandle const& lifetime)
 		{
 			return MakeImplByRef<ArrayProxyByRefImpl<T>>(L, lifetime, object);
 		}
 
 		template <class T>
-		inline static ObjectSetProxyByRefImpl<T>* MakeByRef(lua_State* L, ObjectSet<T>* object, LifetimeHolder const& lifetime)
+		inline static ObjectSetProxyByRefImpl<T>* MakeByRef(lua_State* L, ObjectSet<T>* object, LifetimeHandle const& lifetime)
 		{
 			return MakeImplByRef<ObjectSetProxyByRefImpl<T>>(L, lifetime, object);
 		}
 
 		template <class T, int Size>
-		inline static StdArrayProxyByRefImpl<T, Size>* MakeByRef(lua_State* L, std::array<T, Size>* object, LifetimeHolder const& lifetime)
+		inline static StdArrayProxyByRefImpl<T, Size>* MakeByRef(lua_State* L, std::array<T, Size>* object, LifetimeHandle const& lifetime)
 		{
 			return MakeImplByRef<StdArrayProxyByRefImpl<T, Size>>(L, lifetime, object);
 		}
 
 		template <class T>
-		inline static ArrayProxyByValImpl<T>* MakeByVal(lua_State* L, Array<T>* object, LifetimeHolder const& lifetime)
+		inline static ArrayProxyByValImpl<T>* MakeByVal(lua_State* L, Array<T>* object, LifetimeHandle const& lifetime)
 		{
 			return MakeImplByRef<ArrayProxyByValImpl<T>>(L, lifetime, object);
 		}
 
 		template <class T>
-		inline static ObjectSetProxyByValImpl<T>* MakeByVal(lua_State* L, ObjectSet<T>* object, LifetimeHolder const& lifetime)
+		inline static ObjectSetProxyByValImpl<T>* MakeByVal(lua_State* L, ObjectSet<T>* object, LifetimeHandle const& lifetime)
 		{
 			return MakeImplByRef<ObjectSetProxyByValImpl<T>>(L, lifetime, object);
 		}
 
 		template <class T, int Size>
-		inline static StdArrayProxyByValImpl<T, Size>* MakeByVal(lua_State* L, std::array<T, Size>* object, LifetimeHolder const& lifetime)
+		inline static StdArrayProxyByValImpl<T, Size>* MakeByVal(lua_State* L, std::array<T, Size>* object, LifetimeHandle const& lifetime)
 		{
 			return MakeImplByRef<StdArrayProxyByValImpl<T, Size>>(L, lifetime, object);
 		}
@@ -538,29 +538,29 @@ namespace bg3se::lua
 			return reinterpret_cast<ArrayProxyImplBase*>(this + 1);
 		}
 
-		inline bool IsAlive() const
+		inline bool IsAlive(lua_State* L) const
 		{
-			return lifetime_.IsAlive();
+			return lifetime_.IsAlive(L);
 		}
 
 		template <class T>
-		T* Get()
+		T* Get(lua_State* L)
 		{
-			if (!lifetime_.IsAlive()) {
+			if (!lifetime_.IsAlive(L)) {
 				return nullptr;
 			}
 
 			if (strcmp(TypeInfo<T>::TypeName, GetImpl()->GetTypeName()) == 0) {
-				return reinterpret_cast<T*>(GetImpl()->GetRaw());
+				return reinterpret_cast<T*>(GetImpl()->GetRaw(L));
 			} else {
 				return nullptr;
 			}
 		}
 
 	private:
-		LifetimeReference lifetime_;
+		LifetimeHandle lifetime_;
 
-		ArrayProxy(LifetimeHolder const& lifetime)
+		ArrayProxy(LifetimeHandle const& lifetime)
 			: lifetime_(lifetime)
 		{}
 
@@ -602,7 +602,7 @@ namespace bg3se::lua
 	struct IsArrayLike<std::array<T, Size>> { static constexpr bool Value = true; using TElement = T; };
 
 	template <class T>
-	inline void push_array_ref_proxy(lua_State* L, LifetimeHolder const& lifetime, T* v)
+	inline void push_array_ref_proxy(lua_State* L, LifetimeHandle const& lifetime, T* v)
 	{
 		ArrayProxy::MakeByRef<T>(L, v, lifetime);
 	}

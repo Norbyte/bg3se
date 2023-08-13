@@ -24,3 +24,10 @@ BEGIN_CLS(Transform)
 P(Translate)
 P(Scale)
 END_CLS()
+
+
+BEGIN_CLS(GameTime)
+P_RO(Time)
+P_RO(DeltaTime)
+P_RO(Ticks)
+END_CLS()

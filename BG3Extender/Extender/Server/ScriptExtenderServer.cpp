@@ -38,8 +38,6 @@ ScriptExtender::ScriptExtender(ExtenderConfig& config)
 
 void ScriptExtender::Initialize()
 {
-	ResetExtensionState();
-
 	auto& lib = GetStaticSymbols();
 
 	if (!gExtender->GetLibraryManager().CriticalInitializationFailed()) {
@@ -69,12 +67,30 @@ void ScriptExtender::Shutdown()
 
 void ScriptExtender::PostStartup()
 {
+	if (postStartupDone_) return;
+
 	// We need to initialize the function library here, as GlobalAllocator isn't available in Init().
 	if (!gExtender->GetLibraryManager().CriticalInitializationFailed()) {
 		osiris_.Initialize();
 	}
 
 	entityHelpers_.Setup();
+
+	postStartupDone_ = true;
+}
+
+bool IsLoadingState(GameState state)
+{
+	return state == GameState::Init
+		|| state == GameState::LoadLevel
+		|| state == GameState::LoadModule
+		|| state == GameState::LoadSession
+		|| state == GameState::UnloadLevel
+		|| state == GameState::UnloadModule
+		|| state == GameState::UnloadSession
+		|| state == GameState::Sync
+		|| state == GameState::BuildStory
+		|| state == GameState::ReloadStory;
 }
 
 void ScriptExtender::OnGameStateChanged(void * self, GameState fromState, GameState toState)
@@ -91,8 +107,7 @@ void ScriptExtender::OnGameStateChanged(void * self, GameState fromState, GameSt
 	switch (fromState) {
 	case GameState::LoadModule:
 		INFO("esv::ScriptExtender::OnGameStateChanged(): Loaded module");
-		LoadExtensionState();
-		osiris_.InitRuntimeLogging();
+		LoadExtensionState(ExtensionStateContext::Game);
 		break;
 
 	case GameState::LoadSession:
@@ -120,17 +135,34 @@ void ScriptExtender::OnGameStateChanged(void * self, GameState fromState, GameSt
 
 	case GameState::LoadSession:
 		INFO("esv::ScriptExtender::OnGameStateChanged(): Loading game session");
-		LoadExtensionState();
+		LoadExtensionState(ExtensionStateContext::Game);
 		//networkManager_.ExtendNetworkingServer();
 		if (extensionState_) {
 			extensionState_->OnGameSessionLoading();
 		}
 		break;
+
+	case GameState::LoadLevel:
+		if (extensionState_ && extensionState_->GetLua()) {
+			extensionState_->GetLua()->OnLevelLoading();
+		}
+		break;
 	}
 
-	LuaServerPin lua(ExtensionState::Get());
-	if (lua) {
-		lua->OnGameStateChanged(fromState, toState);
+	if (gExtender->WasInitialized()) {
+		if (IsLoadingState(toState)) {
+			gExtender->GetClient().UpdateServerProgress(EnumInfo<GameState>::Find(toState).GetString());
+		}
+		else {
+			gExtender->GetClient().UpdateServerProgress("");
+		}
+	}
+
+	if (extensionState_) {
+		LuaServerPin lua(*extensionState_);
+		if (lua) {
+			lua->OnGameStateChanged(fromState, toState);
+		}
 	}
 }
 
@@ -144,6 +176,9 @@ void ScriptExtender::GameStateWorkerWrapper(void (* wrapped)(void *), void* self
 void ScriptExtender::OnUpdate(void* self, GameTime* time)
 {
 	RunPendingTasks();
+	if (extensionState_) {
+		extensionState_->OnUpdate(*time);
+	}
 }
 
 bool ScriptExtender::IsInServerThread() const
@@ -171,6 +206,12 @@ void ScriptExtender::ResetLuaState()
 	}
 }
 
+bool ScriptExtender::RequestResetClientLuaState()
+{
+	// FIXME - networking not supported yet
+	return false;
+}
+
 void ScriptExtender::ResetExtensionState()
 {
 	extensionState_ = std::make_unique<ExtensionState>();
@@ -178,12 +219,12 @@ void ScriptExtender::ResetExtensionState()
 	extensionLoaded_ = false;
 }
 
-extern std::unordered_map<int32_t*, char*> maps;
-
-void ScriptExtender::LoadExtensionState()
+void ScriptExtender::LoadExtensionState(ExtensionStateContext ctx)
 {
-	if (extensionLoaded_) return;
-	
+	if (extensionLoaded_ && (!extensionState_ || ctx == extensionState_->Context())) {
+		return;
+	}
+
 	PostStartup();
 
 	if (!extensionState_) {
@@ -193,10 +234,11 @@ void ScriptExtender::LoadExtensionState()
 	extensionState_->LoadConfigs();
 
 	if (!gExtender->GetLibraryManager().CriticalInitializationFailed()) {
+		OsiMsg("Initializing server with target context " << ContextToString(ctx));
+		gExtender->GetLibraryManager().ApplyCodePatches();
 		//networkManager_.ExtendNetworkingServer();
-		DEBUG("esv::ScriptExtender::LoadExtensionState(): Re-initializing module state.");
-		osiris_.OnBaseModuleLoadedServer();
-		extensionState_->LuaReset(true);
+		osiris_.GetCustomFunctionManager().ClearDynamicEntries();
+		extensionState_->LuaReset(ctx, true);
 	}
 
 	extensionLoaded_ = true;

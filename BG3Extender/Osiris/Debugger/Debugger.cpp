@@ -1,5 +1,6 @@
-#include "stdafx.h"
+#include <stdafx.h>
 #include <Osiris/Debugger/Debugger.h>
+#include <Osiris/Shared/NodeHooks.h>
 #include <Extender/ScriptExtender.h>
 #include <sstream>
 
@@ -34,7 +35,8 @@ namespace bg3se::osidbg
 		auto const & nodeDb = (*globals_.Nodes)->Db;
 		for (unsigned i = 0; i < nodeDb.Size; i++) {
 			auto node = nodeDb.Elements[i];
-			NodeType type = gExtender->GetServer().Osiris().GetVMTWrappers()->GetType(node);
+			auto wrappers = gExtender->GetServer().Osiris().GetVMTWrappers();
+			NodeType type = wrappers->GetType(node);
 			if (type == NodeType::Rule) {
 				auto rule = static_cast<RuleNode *>(node);
 				AddRuleActionMappings(rule, nullptr, false, rule->Calls);
@@ -197,7 +199,7 @@ namespace bg3se::osidbg
 		return ((uint64_t)BreakpointItemType::BP_GoalExit << 56) | ((uint64_t)actionIndex << 32) | goalId;
 	}
 
-	bool BreakpointManager::ForcedBreakpointConditionsSatisfied(std::vector<CallStackFrame> const & stack, 
+	bool BreakpointManager::ForcedBreakpointConditionsSatisfied(Vector<CallStackFrame> const & stack,
 		Node * bpNode, BreakpointType bpType)
 	{
 		// Check if the current frame type is one we can break on
@@ -212,9 +214,10 @@ namespace bg3se::osidbg
 
 		// Skip rule pushdown frames (avoids unnecessary additional single-stepping frame)
 		if (forceBreakpointFlags_ & ContinueSkipRulePushdown) {
+			auto wrappers = gExtender->GetServer().Osiris().GetVMTWrappers();
 			if (bpType == BreakpointType::BreakOnPushDown
 				&& bpNode != nullptr
-				&& gExtender->GetServer().Osiris().GetVMTWrappers()->GetType(bpNode) == NodeType::Rule) {
+				&& wrappers->GetType(bpNode) == NodeType::Rule) {
 				return false;
 			}
 		}
@@ -223,7 +226,7 @@ namespace bg3se::osidbg
 		if (forceBreakpointFlags_ & ContinueSkipDbPropagation) {
 			// Look for a likely database propagation signature in the call stack
 			// (an Insert/Delete frame followed by a Pushdown frame)
-			for (auto i = 0; i < stack.size() - 1; i++) {
+			for (uint32_t i = 0; i < stack.size() - 1; i++) {
 				auto & first = stack[i];
 				auto & second = stack[i + 1];
 
@@ -232,7 +235,8 @@ namespace bg3se::osidbg
 					&& (second.frameType == BreakpointReason::NodePushDownTuple
 						|| second.frameType == BreakpointReason::NodePushDownTupleDelete)) {
 					// Check whether the first node is a parent of the second node
-					auto secondType = gExtender->GetServer().Osiris().GetVMTWrappers()->GetType(second.node);
+					auto wrappers = gExtender->GetServer().Osiris().GetVMTWrappers();
+					auto secondType = wrappers->GetType(second.node);
 					uint32_t parentNodeId;
 					if (secondType == NodeType::Rule || secondType == NodeType::RelOp)
 					{
@@ -259,7 +263,7 @@ namespace bg3se::osidbg
 		return true;
 	}
 
-	bool BreakpointManager::ShouldTriggerBreakpoint(std::vector<CallStackFrame> const & stack, Node * bpNode, 
+	bool BreakpointManager::ShouldTriggerBreakpoint(Vector<CallStackFrame> const & stack, Node * bpNode,
 		uint64_t bpNodeId, BreakpointType bpType, GlobalBreakpointType globalBpType)
 	{
 		if (debuggingDisabled_) {
@@ -307,16 +311,8 @@ namespace bg3se::osidbg
 
 		messageHandler_.SetDebugger(this);
 
-		using namespace std::placeholders;
-		auto& wrappers = *gExtender->GetServer().Osiris().GetVMTWrappers();
-		wrappers.IsValidPreHook = std::bind(&Debugger::IsValidPreHook, this, _1, _2, _3);
-		wrappers.IsValidPostHook = std::bind(&Debugger::IsValidPostHook, this, _1, _2, _3, _4);
-		wrappers.PushDownPreHook = std::bind(&Debugger::PushDownPreHook, this, _1, _2, _3, _4, _5);
-		wrappers.PushDownPostHook = std::bind(&Debugger::PushDownPostHook, this, _1, _2, _3, _4, _5);
-		wrappers.InsertPreHook = std::bind(&Debugger::InsertPreHook, this, _1, _2, _3);
-		wrappers.InsertPostHook = std::bind(&Debugger::InsertPostHook, this, _1, _2, _3);
-		wrappers.CallQueryPreHook = std::bind(&Debugger::CallQueryPreHook, this, _1, _2);
-		wrappers.CallQueryPostHook = std::bind(&Debugger::CallQueryPostHook, this, _1, _2, _3);
+		auto wrappers = gExtender->GetServer().Osiris().GetVMTWrappers();
+		wrappers->DebuggerAttachment = this;
 		DEBUG("Debugger::Debugger(): Attached to story");
 	}
 
@@ -328,14 +324,7 @@ namespace bg3se::osidbg
 
 		auto wrappers = gExtender->GetServer().Osiris().GetVMTWrappers();
 		if (wrappers) {
-			wrappers->IsValidPreHook = std::function<void(Node *, VirtTupleLL *, AdapterRef *)>();
-			wrappers->IsValidPostHook = std::function<void(Node *, VirtTupleLL *, AdapterRef *, bool)>();
-			wrappers->PushDownPreHook = std::function<void(Node *, VirtTupleLL *, AdapterRef *, EntryPoint, bool)>();
-			wrappers->PushDownPostHook = std::function<void(Node *, VirtTupleLL *, AdapterRef *, EntryPoint, bool)>();
-			wrappers->InsertPreHook = std::function<void(Node *, TuplePtrLL *, bool)>();
-			wrappers->InsertPostHook = std::function<void(Node *, TuplePtrLL *, bool)>();
-			wrappers->CallQueryPreHook = std::function<void(Node *, OsiArgumentDesc *)>();
-			wrappers->CallQueryPostHook = std::function<void(Node *, OsiArgumentDesc *, bool)>();
+			wrappers->DebuggerAttachment = nullptr;
 		}
 	}
 
@@ -501,13 +490,13 @@ namespace bg3se::osidbg
 			messageHandler_.SendSyncStory(*goal);
 		}
 
-		auto & databaseDb = (*globals_.Databases)->Db;
+		auto const & databaseDb = (*globals_.Databases)->Db;
 		for (unsigned i = 0; i < databaseDb.Size; i += 100) {
 			uint32_t numDatabases = std::min<uint32_t>(databaseDb.Size - i, 100);
 			messageHandler_.SendSyncStory(&databaseDb.Elements[i], numDatabases);
 		}
 
-		auto & nodeDb = (*globals_.Nodes)->Db;
+		auto const & nodeDb = (*globals_.Nodes)->Db;
 		for (unsigned i = 0; i < nodeDb.Size; i += 100) {
 			uint32_t numNodes = std::min<uint32_t>(nodeDb.Size - i, 100);
 			messageHandler_.SendSyncStory(&nodeDb.Elements[i], numNodes);
@@ -604,11 +593,17 @@ namespace bg3se::osidbg
 
 	bool AreTypesCompatible(uint32_t type1, uint32_t type2)
 	{
-		auto const& types = *gExtender->GetServer().Osiris().GetGlobals().Types;
-		auto alias1 = types->ResolveAlias(type1);
-		auto alias2 = types->ResolveAlias(type2);
+		if (type1 > (uint32_t)ValueType::GuidString)
+		{
+			type1 = (uint32_t)ValueType::GuidString;
+		}
 
-		return alias1 == alias2;
+		if (type2 > (uint32_t)ValueType::GuidString)
+		{
+			type2 = (uint32_t)ValueType::GuidString;
+		}
+
+		return type1 == type2;
 	}
 
 	ResultCode Debugger::EvaluateInServerThread(uint32_t seq, EvalType type, uint32_t nodeId, MsgTuple const & params,
@@ -844,7 +839,8 @@ namespace bg3se::osidbg
 		lastQueryDepth_ = (uint32_t)callStack_.size();
 		lastQueryResults_.queryNodeId = node->Id;
 		lastQueryResults_.succeeded = succeeded;
-		if (gExtender->GetServer().Osiris().GetVMTWrappers()->GetType(node) != NodeType::DivQuery
+		auto wrappers = gExtender->GetServer().Osiris().GetVMTWrappers();
+		if (wrappers->GetType(node) != NodeType::DivQuery
 			&& !lastQueryResults_.results.empty()) {
 			lastQueryResults_.results.clear();
 		}

@@ -9,6 +9,7 @@ _I._PublishedEvents = {
 	"SessionLoaded",
 	"ResetCompleted",
 	"GameStateChanged",
+	"Tick",
 
 	"DealDamage",
 	"ExecuteFunctor",

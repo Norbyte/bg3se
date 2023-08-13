@@ -12,10 +12,6 @@
 
 BEGIN_NS(lua)
 
-class LifetimeHolder;
-class EntityProxy;
-class ComponentHandleProxy;
-
 #if !defined(NDEBUG)
 // Ensures that the size of the Lua stack matches the expected value.
 // Since there are no built-in checks in Lua function boundaries, an incorrect push

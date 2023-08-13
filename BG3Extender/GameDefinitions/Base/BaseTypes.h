@@ -1,5 +1,10 @@
 #pragma once
 
+#include <array>
+#include <string>
+#include <cassert>
+#include <optional>
+#include <atomic>
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 

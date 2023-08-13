@@ -3,31 +3,41 @@
 #include <Extender/Shared/ExtensionState.h>
 #include <Lua/Client/LuaBindingClient.h>
 
-namespace Json { class Value; }
+BEGIN_NS(ecl)
 
-namespace bg3se::ecl
+using LuaClientPin = LuaStatePin<ExtensionState, lua::ClientState>;
+
+class ExtensionState : public ExtensionStateBase
 {
-	class ExtensionState;
-	using LuaClientPin = LuaStatePin<ExtensionState, lua::ClientState>;
+public:
+	static ExtensionState & Get();
 
-	class ExtensionState : public ExtensionStateBase
+	ExtensionState();
+	~ExtensionState() override;
+
+	lua::State * GetLua() override;
+	ModManager * GetModManager() override;
+
+	lua::ClientState* GetClientLua()
 	{
-	public:
-		static ExtensionState & Get();
-
-		lua::State * GetLua() override;
-		ModManager * GetModManager() override;
-
-		inline char const * GetBootstrapFileName() override
-		{
-			return "BootstrapClient.lua";
+		if (Lua) {
+			return Lua.get();
+		} else {
+			return nullptr;
 		}
+	}
 
-	protected:
-		friend LuaStatePin<ExtensionState, lua::ClientState>;
-		std::unique_ptr<lua::ClientState> Lua;;
+	inline char const * GetBootstrapFileName() override
+	{
+		return "BootstrapClient.lua";
+	}
 
-		void DoLuaReset() override;
-		void LuaStartup() override;
-	};
-}
+protected:
+	friend LuaStatePin<ExtensionState, lua::ClientState>;
+	std::unique_ptr<lua::ClientState> Lua;;
+
+	void DoLuaReset() override;
+	void LuaStartup() override;
+};
+
+END_NS()

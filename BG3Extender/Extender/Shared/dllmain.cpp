@@ -27,6 +27,14 @@ void ConfigGetInt(Json::Value& node, char const* key, uint32_t& value)
 	}
 }
 
+void ConfigGet(Json::Value& node, char const* key, std::wstring& value)
+{
+	auto configVar = node[key];
+	if (!configVar.isNull() && configVar.isString()) {
+		value = FromStdUTF8(StringView(configVar.asString()));
+	}
+}
+
 void LoadConfig(std::wstring const & configPath, ExtenderConfig & config)
 {
 	std::ifstream f(configPath, std::ios::in);
@@ -38,7 +46,7 @@ void LoadConfig(std::wstring const & configPath, ExtenderConfig & config)
 	Json::Value root;
 	std::string errs;
 	if (!Json::parseFromStream(factory, f, &root, &errs)) {
-		std::wstring werrs = ::FromUTF8(errs);
+		std::wstring werrs = FromStdUTF8(errs);
 
 		std::wstringstream err;
 		err << L"Failed to load configuration file '" << configPath << "':\r\n" << werrs;
@@ -46,6 +54,7 @@ void LoadConfig(std::wstring const & configPath, ExtenderConfig & config)
 	}
 
 	ConfigGetBool(root, "CreateConsole", config.CreateConsole);
+	ConfigGetBool(root, "DefaultToClientConsole", config.DefaultToClientConsole);
 	ConfigGetBool(root, "EnableLogging", config.EnableLogging);
 	ConfigGetBool(root, "LogCompile", config.LogCompile);
 	ConfigGetBool(root, "LogFailedCompile", config.LogFailedCompile);
@@ -57,6 +66,7 @@ void LoadConfig(std::wstring const & configPath, ExtenderConfig & config)
 	ConfigGetBool(root, "EnableLuaDebugger", config.EnableLuaDebugger);
 	ConfigGetBool(root, "DisableModValidation", config.DisableModValidation);
 	ConfigGetBool(root, "DeveloperMode", config.DeveloperMode);
+	ConfigGetBool(root, "ClearOnReset", config.ClearOnReset);
 	ConfigGetBool(root, "ShowPerfWarnings", config.ShowPerfWarnings);
 	ConfigGetBool(root, "EnableAchievements", config.EnableAchievements);
 
@@ -64,15 +74,8 @@ void LoadConfig(std::wstring const & configPath, ExtenderConfig & config)
 	ConfigGetInt(root, "LuaDebuggerPort", config.LuaDebuggerPort);
 	ConfigGetInt(root, "DebugFlags", config.DebugFlags);
 
-	auto const& logDir = root["LogDirectory"];
-	if (!logDir.isNull()) {
-		if (logDir.isString()) {
-			config.LogDirectory = ::FromUTF8(logDir.asString());
-		}
-		else {
-			Fail("Config option 'LogDirectory' should be a string.");
-		}
-	}
+	ConfigGet(root, "LogDirectory", config.LogDirectory);
+	ConfigGet(root, "LuaBuiltinResourceDirectory", config.LuaBuiltinResourceDirectory);
 }
 
 void SetupScriptExtender(HMODULE hModule)

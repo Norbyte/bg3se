@@ -366,26 +366,29 @@ namespace bg3se
 
 	}
 
+	enum class FileType
+	{
+		Unknown,
+		MemBuffer,
+		MemoryMapped
+	};
 
 	struct FileReader : public Noncopyable<FileReader>
 	{
 		using CtorProc = FileReader * (FileReader* self, Path const& path, unsigned int type, unsigned int unknown);
 		using DtorProc = void (FileReader* self);
 
-		FileReader(std::string_view path);
-		~FileReader();
-
-		bool IsLoaded;
-		void * ScratchBufPtr;
-		void * MemBuffer;
-		uint64_t FileSize;
-		int FileHandle;
-		int FileHandle2;
+		bool IsLoaded{ false };
+		void* DataPtr{ nullptr };
+		void* ReadPtr{ nullptr };
+		uint64_t FileSize{ 0 };
+		uint64_t FileHandle{ 0 };
+		uint64_t FileHandle2{ 0 };
 		uint64_t ScratchBuffer;
 		uint64_t G;
 		int H;
 		uint64_t I;
-		int FileType;
+		FileType Type{ FileType::Unknown };
 		void * FileObject;
 		uint64_t _Fill[16];
 	};
@@ -393,8 +396,9 @@ namespace bg3se
 	class FileReaderPin
 	{
 	public:
-		FileReaderPin(std::string_view path);
-		FileReaderPin(std::string_view path, PathRootType root, bool canonicalize = true);
+		inline FileReaderPin(FileReader * reader)
+			: reader_(reader)
+		{}
 
 		~FileReaderPin();
 
@@ -404,21 +408,21 @@ namespace bg3se
 
 		inline FileReaderPin(FileReaderPin && other) noexcept
 		{
-			reader_.swap(other.reader_);
+			reader_ = other.reader_;
 			if (&other != this) {
-				other.reader_.reset();
+				other.reader_ = nullptr;
 			}
 		}
 
 		bool IsLoaded() const
 		{
-			return reader_ && reader_->IsLoaded;
+			return reader_ != nullptr && reader_->IsLoaded;
 		}
 
 		void * Buf() const
 		{
 			if (IsLoaded()) {
-				return reader_->ScratchBufPtr;
+				return reader_->DataPtr;
 			} else {
 				return nullptr;
 			}
@@ -436,11 +440,8 @@ namespace bg3se
 		STDString ToString() const;
 
 	private:
-		std::unique_ptr<FileReader> reader_;
+		FileReader * reader_;
 	};
-
-	/*
-	typedef StringView * (* ls__Path__GetPrefixForRoot)(StringView * path, unsigned int rootType);*/
 
 	class TempStrings
 	{

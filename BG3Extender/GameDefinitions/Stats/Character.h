@@ -108,30 +108,5 @@ namespace bg3se
 		int32_t MaxSummons;
 		int32_t BaseMaxSummons;
 		int32_t MaxMpOverride;
-
-		/*std::optional<int32_t> GetStat(FixedString const& name, bool excludeBoosts);
-		std::optional<int32_t> GetHitChance(CDivinityStats_Character* target);
-		bool HasTalent(TalentType talent, bool excludeBoosts);
-		int32_t GetAbility(AbilityType ability, bool excludeBoosts);
-		CDivinityStats_Item* GetItemBySlot(ItemSlot slot, bool mustBeEquipped);
-		CDivinityStats_Item* GetMainWeapon();
-		CDivinityStats_Item* GetOffHandWeapon();
-		int32_t GetPhysicalResistance(bool excludeBoosts);
-		int32_t GetPiercingResistance(bool excludeBoosts);
-		int32_t GetMagicResistance(bool excludeBoosts);
-		int32_t GetCorrosiveResistance(bool excludeBoosts);
-		int32_t GetDamageBoost();
-		bool IsBoostActive(uint32_t conditionsMask);*/
 	};
-
-	/*
-typedef int32_t (CDivinityStats_Character__GetStat)(CDivinityStats_Character * self, bool baseStats);
-typedef int32_t (CDivinityStats_Character__GetStatNoBoosts)(CDivinityStats_Character * self);
-typedef int32_t (CDivinityStats_Character__GetStatWithBoosts)(CDivinityStats_Character * self, bool baseStats, bool excludeBoosts);
-typedef int32_t (CDivinityStats_Character__GetStatWithInit)(CDivinityStats_Character * self, bool baseStats, int32_t initialValue);
-typedef float (CDivinityStats_Character__GetStatHearing)(CDivinityStats_Character * self, CDivinityStats_Character * other, bool baseStats);
-typedef int32_t (CDivinityStats_Character__GetHitChance)(CDivinityStats_Character * attacker, CDivinityStats_Character * target);
-typedef bool (CDivinityStats_Character__GetTalent)(CDivinityStats_Character * self, TalentType talentId, char excludeBoosts);
-typedef int32_t (CDivinityStats_Character__GetAbility)(CDivinityStats_Character * self, AbilityType abilityId, char excludeBoosts, char noLoneWolfBonus);
-*/
 }

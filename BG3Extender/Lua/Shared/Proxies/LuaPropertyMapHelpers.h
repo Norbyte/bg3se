@@ -9,7 +9,7 @@ namespace bg3se::lua
 	extern bool EnableWriteProtectedWrites;
 
 	template <class T>
-	inline void MakeObjectRef(lua_State* L, LifetimeHolder const& lifetime, T* value)
+	inline void MakeObjectRef(lua_State* L, LifetimeHandle const& lifetime, T* value)
 	{
 		if (value == nullptr) {
 			push(L, nullptr);
@@ -51,7 +51,7 @@ namespace bg3se::lua
 	}
 
 	template <class T>
-	inline void MakeDirectObjectRef(lua_State* L, LifetimeHolder const& lifetime, T* value)
+	inline void MakeDirectObjectRef(lua_State* L, LifetimeHandle const& lifetime, T* value)
 	{
 		if (value == nullptr) {
 			push(L, nullptr);
@@ -63,7 +63,7 @@ namespace bg3se::lua
 	}
 
 	template <class T>
-	inline auto MakeObjectRef(lua_State* L, LifetimeHolder const& lifetime, OverrideableProperty<T>* value)
+	inline auto MakeObjectRef(lua_State* L, LifetimeHandle const& lifetime, OverrideableProperty<T>* value)
 	{
 		return MakeObjectRef(L, lifetime, &value->Value);
 	}
@@ -76,14 +76,14 @@ namespace bg3se::lua
 
 
 	template <class T>
-	bool GenericGetOffsetProperty(lua_State* L, LifetimeHolder const& lifetime, void* obj, std::size_t offset)
+	bool GenericGetOffsetProperty(lua_State* L, LifetimeHandle const& lifetime, void* obj, std::size_t offset)
 	{
 		auto* value = (T*)((std::uintptr_t)obj + offset);
 		return LuaWrite(L, *value) == 1;
 	}
 
 	template <class T>
-	bool GenericSetOffsetProperty(lua_State* L, LifetimeHolder const& lifetime, void* obj, int index, std::size_t offset)
+	bool GenericSetOffsetProperty(lua_State* L, LifetimeHandle const& lifetime, void* obj, int index, std::size_t offset)
 	{
 		auto* value = (T*)((std::uintptr_t)obj + offset);
 		lua_pushvalue(L, index);
@@ -93,7 +93,7 @@ namespace bg3se::lua
 	}
 
 	template <class T>
-	bool GenericSetOffsetWriteProtectedProperty(lua_State* L, LifetimeHolder const& lifetime, void* obj, int index, std::size_t offset)
+	bool GenericSetOffsetWriteProtectedProperty(lua_State* L, LifetimeHandle const& lifetime, void* obj, int index, std::size_t offset)
 	{
 		if (EnableWriteProtectedWrites) {
 			return GenericSetOffsetProperty<T>(L, lifetime, obj, index, offset);
@@ -103,13 +103,13 @@ namespace bg3se::lua
 		}
 	}
 
-	inline bool SetPropertyWriteProtected(lua_State* L, LifetimeHolder const& lifetime, void* obj, int index, std::size_t offset)
+	inline bool SetPropertyWriteProtected(lua_State* L, LifetimeHandle const& lifetime, void* obj, int index, std::size_t offset)
 	{
 		return false;
 	}
 
 	template <class T>
-	bool GenericGetOffsetRefProperty(lua_State* L, LifetimeHolder const& lifetime, void* obj, std::size_t offset)
+	bool GenericGetOffsetRefProperty(lua_State* L, LifetimeHandle const& lifetime, void* obj, std::size_t offset)
 	{
 		auto* value = (T*)((std::uintptr_t)obj + offset);
 		MakeObjectRef(L, lifetime, value);
@@ -117,7 +117,7 @@ namespace bg3se::lua
 	}
 
 	template <class T>
-	bool GenericGetOffsetPtrProperty(lua_State* L, LifetimeHolder const& lifetime, void* obj, std::size_t offset)
+	bool GenericGetOffsetPtrProperty(lua_State* L, LifetimeHandle const& lifetime, void* obj, std::size_t offset)
 	{
 		auto* value = (T*)((std::uintptr_t)obj + offset);
 		if (*value) {
@@ -130,19 +130,19 @@ namespace bg3se::lua
 		return true;
 	}
 
-	inline bool GenericSetOffsetRefProperty(lua_State* L, LifetimeHolder const& lifetime, void* obj, int index, std::size_t offset)
+	inline bool GenericSetOffsetRefProperty(lua_State* L, LifetimeHandle const& lifetime, void* obj, int index, std::size_t offset)
 	{
 		return false;
 	}
 
 	template <class T>
-	bool GenericGetProperty(lua_State* L, LifetimeHolder const& lifetime, T const& value)
+	bool GenericGetProperty(lua_State* L, LifetimeHandle const& lifetime, T const& value)
 	{
 		return LuaWrite(L, value) == 1;
 	}
 	
 	template <class T>
-	bool GenericSetProperty(lua_State* L, LifetimeHolder const& lifetime, T& value, int index)
+	bool GenericSetProperty(lua_State* L, LifetimeHandle const& lifetime, T& value, int index)
 	{
 		lua_pushvalue(L, index);
 		LuaRead(L, value);

@@ -11,6 +11,14 @@ P_RO(FromState)
 P_RO(ToState)
 END_CLS()
 
+BEGIN_CLS(lua::TickEventParams)
+P_REF(Time)
+END_CLS()
+
+BEGIN_CLS(esv::lua::DoConsoleCommandEventParams)
+P_RO(Command)
+END_CLS()
+
 BEGIN_CLS(esv::lua::DealDamageEvent)
 P_REF_PTR(Functor)
 P(Caster)

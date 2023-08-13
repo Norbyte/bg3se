@@ -76,7 +76,7 @@ namespace bg3se::osidbg
 		}
 	}
 
-	void MakeMsgTuple(MsgTuple & msgTuple, std::vector<OsiArgumentValue> const & tuple)
+	void MakeMsgTuple(MsgTuple & msgTuple, Vector<OsiArgumentValue> const & tuple)
 	{
 		for (auto const & val : tuple) {
 			auto column = msgTuple.add_column();
@@ -138,7 +138,7 @@ namespace bg3se::osidbg
 		}
 	}
 
-	void MakeMsgCallStack(BkBreakpointTriggered & msg, std::vector<CallStackFrame> const & callStack)
+	void MakeMsgCallStack(BkBreakpointTriggered & msg, Vector<CallStackFrame> const & callStack)
 	{
 		for (auto const & frame : callStack) {
 			auto msgFrame = msg.add_call_stack();
@@ -162,7 +162,7 @@ namespace bg3se::osidbg
 		}
 	}
 
-	void DebugMessageHandler::SendBreakpointTriggered(std::vector<CallStackFrame> const & callStack,
+	void DebugMessageHandler::SendBreakpointTriggered(Vector<CallStackFrame> const & callStack,
 		QueryResultInfo const * results)
 	{
 		auto const & lastFrame = *callStack.rbegin();
@@ -261,12 +261,12 @@ namespace bg3se::osidbg
 		DEBUG(" <-- BkSyncStoryData(Goal #%d)", goal->Id);
 	}
 
-	void DebugMessageHandler::SendSyncStory(Database ** databases, uint32_t count)
+	void DebugMessageHandler::SendSyncStory(Database * const * databases, uint32_t count)
 	{
 		BackendToDebugger msg;
 		auto sync = msg.mutable_syncstorydata();
 		for (uint32_t i = 0; i < count; i++) {
-			auto * db = databases[i];
+			auto db = databases[i];
 			auto dbInfo = sync->add_database();
 			dbInfo->set_id(db->DatabaseId);
 			auto numParams = db->NumParams;
@@ -280,12 +280,12 @@ namespace bg3se::osidbg
 		DEBUG(" <-- BkSyncStoryData(%d databases)", count);
 	}
 
-	void DebugMessageHandler::SendSyncStory(Node ** nodes, uint32_t count)
+	void DebugMessageHandler::SendSyncStory(Node * const * nodes, uint32_t count)
 	{
 		BackendToDebugger msg;
 		auto sync = msg.mutable_syncstorydata();
 		for (uint32_t i = 0; i < count; i++) {
-			auto * node = nodes[i];
+			auto node = nodes[i];
 			auto nodeInfo = sync->add_node();
 			nodeInfo->set_id(node->Id);
 			auto type = gExtender->GetServer().Osiris().GetVMTWrappers()->GetType(node);

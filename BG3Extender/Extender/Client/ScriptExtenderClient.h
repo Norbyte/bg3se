@@ -18,7 +18,7 @@ BEGIN_NS(ecl)
 class ScriptExtender : public ThreadedExtenderState
 {
 public:
-	ScriptExtender();
+	ScriptExtender(ExtenderConfig& config);
 
 	void Initialize();
 	void PostStartup();
@@ -47,7 +47,10 @@ public:
 	bool IsInClientThread() const;
 	void ResetLuaState();
 	void ResetExtensionState();
-	void LoadExtensionState();
+	void LoadExtensionState(ExtensionStateContext ctx);
+
+	void UpdateServerProgress(STDString const& status);
+	void UpdateClientProgress(STDString const& status);
 
 	// HACK - we need to expose this so it can be added to the CrashReporter whitelist
 	enum class GameStateWorkerStartTag {};
@@ -58,18 +61,21 @@ public:
 	WrappableFunction<GameStateChangedEventTag, void(void*, GameState, GameState)> gameStateChangedEvent_;
 
 private:
+	ExtenderConfig& config_;
 	std::unique_ptr<ExtensionState> extensionState_;
 	bool extensionLoaded_{ false };
+	bool postStartupDone_{ false };
 	ClientEntitySystemHelpers entityHelpers_;
 	ModuleHasher hasher_;
+	STDString serverStatus_;
+	STDString clientStatus_;
 
 	void OnBaseModuleLoaded(void * self);
-	/*void OnModuleLoadStarted(TranslatedStringRepository * self);
-	void OnStatsLoadStarted(RPGStats* mgr);
-	void OnStatsLoadFinished(RPGStats* mgr);*/
 	void OnGameStateChanged(void * self, GameState fromState, GameState toState);
 	void GameStateWorkerWrapper(void (*wrapped)(void*), void* self);
 	void OnUpdate(void* self, GameTime* time);
+	void OnIncLocalProgress(void* self, int progress, char const* state);
+	void ShowLoadingProgress();
 };
 
 END_NS()

@@ -8,7 +8,7 @@ namespace bg3se::lua
 	{
 		StackCheck _(L, 1);
 		auto impl = GetImpl();
-		if (!lifetime_.IsAlive()) {
+		if (!lifetime_.IsAlive(L)) {
 			luaL_error(L, "Attempted to read dead Map<%s, %s>", impl->GetKeyTypeName(), impl->GetValueTypeName());
 			push(L, nullptr);
 			return 1;
@@ -25,7 +25,7 @@ namespace bg3se::lua
 	{
 		StackCheck _(L, 0);
 		auto impl = GetImpl();
-		if (!lifetime_.IsAlive()) {
+		if (!lifetime_.IsAlive(L)) {
 			luaL_error(L, "Attempted to write dead Map<%s, %s>", impl->GetKeyTypeName(), impl->GetValueTypeName());
 			return 0;
 		}
@@ -38,7 +38,7 @@ namespace bg3se::lua
 	{
 		StackCheck _(L, 1);
 		auto impl = GetImpl();
-		if (!lifetime_.IsAlive()) {
+		if (!lifetime_.IsAlive(L)) {
 			luaL_error(L, "Attempted to get length of dead Map<%s, %s>", impl->GetKeyTypeName(), impl->GetValueTypeName());
 			push(L, nullptr);
 			return 1;
@@ -51,7 +51,7 @@ namespace bg3se::lua
 	int MapProxy::Next(lua_State* L)
 	{
 		auto impl = GetImpl();
-		if (!lifetime_.IsAlive()) {
+		if (!lifetime_.IsAlive(L)) {
 			luaL_error(L, "Attempted to iterate dead Map<%s, %s>", impl->GetKeyTypeName(), impl->GetValueTypeName());
 			return 0;
 		}
@@ -64,7 +64,7 @@ namespace bg3se::lua
 		StackCheck _(L, 1);
 		char entityName[200];
 		auto impl = GetImpl();
-		if (lifetime_.IsAlive()) {
+		if (lifetime_.IsAlive(L)) {
 			_snprintf_s(entityName, std::size(entityName) - 1, "Map<%s, %s> (%p)", 
 				impl->GetKeyTypeName(), impl->GetValueTypeName(), GetImpl()->GetRaw());
 		} else {

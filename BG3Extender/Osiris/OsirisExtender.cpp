@@ -118,7 +118,7 @@ void OsirisExtender::RestartLogging(std::wstring const & Type)
 	DebugFlag NewFlags = (DebugFlag)((*wrappers_.Globals.DebugFlags & 0x0000ffff) | (config_.DebugFlags & 0xffff0000));
 
 	if (logFilename_.empty() || logType_ != Type) {
-		logFilename_ = MakeLogFilePath(Type, L"log");
+		logFilename_ = gExtender->MakeLogFilePath(Type, L"log");
 		logType_ = Type;
 
 		if (!logFilename_.empty()) {
@@ -133,44 +133,6 @@ void OsirisExtender::RestartLogging(std::wstring const & Type)
 		*wrappers_.Globals.DebugFlags = NewFlags;
 		wrappers_.OpenLogFile.CallOriginal(dynamicGlobals_.OsirisObject, logFilename_.c_str(), std::iostream::app);
 	}
-}
-
-std::wstring OsirisExtender::MakeLogFilePath(std::wstring const & Type, std::wstring const & Extension)
-{
-	if (config_.LogDirectory.empty()) {
-		config_.LogDirectory = FromUTF8(GetStaticSymbols().ToPath("/Extender Logs", PathRootType::GameStorage));
-	}
-
-	if (config_.LogDirectory.empty()) {
-		return L"";
-	}
-
-	BOOL created = CreateDirectoryW(config_.LogDirectory.c_str(), NULL);
-	if (created == FALSE) {
-		DWORD lastError = GetLastError();
-		if (lastError != ERROR_ALREADY_EXISTS) {
-			std::wstringstream err;
-			err << L"Could not create log directory '" << config_.LogDirectory << "': Error " << lastError;
-			return L"";
-		}
-	}
-
-	auto now = std::chrono::system_clock::now();
-	auto tt = std::chrono::system_clock::to_time_t(now);
-	std::tm tm;
-	gmtime_s(&tm, &tt);
-
-	std::wstringstream ss;
-	ss << config_.LogDirectory << L"\\"
-		<< Type << L" "
-		<< std::setfill(L'0')
-		<< (tm.tm_year + 1900) << L"-"
-		<< std::setw(2) << (tm.tm_mon + 1) << L"-"
-		<< std::setw(2) << tm.tm_mday << L" "
-		<< std::setw(2) << tm.tm_hour << L"-"
-		<< std::setw(2) << tm.tm_min << L"-"
-		<< std::setw(2) << tm.tm_sec << L"." << Extension;
-	return ss.str();
 }
 
 void OsirisExtender::OnRegisterDIVFunctions(void * Osiris, DivFunctions * Functions)
@@ -281,7 +243,7 @@ bool OsirisExtender::CompileWrapper(bool (* next)(void *, wchar_t const *, wchar
 		RestartLogging(L"Compile");
 
 		if (config_.LogCompile) {
-			storyPath = MakeLogFilePath(L"Compile", L"div");
+			storyPath = gExtender->MakeLogFilePath(L"Compile", L"div");
 			CopyFileW(Path, storyPath.c_str(), TRUE);
 		}
 	}
@@ -390,7 +352,7 @@ void OsirisExtender::InitRuntimeLogging()
 {
 	if (!config_.LogRuntime) return;
 
-	auto path = MakeLogFilePath(L"Extender Runtime", L"log");
+	auto path = gExtender->MakeLogFilePath(L"Extender Runtime", L"log");
 	gConsole.OpenLogFile(path);
 	DEBUG(L"Extender runtime log written to '%s'", path.c_str());
 }

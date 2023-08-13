@@ -380,30 +380,15 @@ namespace bg3se::lua::dbg
 		// Check for a loaded Lua file from mods
 		auto path = FindLuaSourcePath(req.name().c_str());
 		if (path) {
-			FileReaderPin reader(*path);
-			if (reader.IsLoaded()) {
+			auto reader = GetStaticSymbols().MakeFileReader(*path);
+			if (!reader.IsLoaded()) {
+				LuaError("Script file could not be opened: " << *path);
+			} else {
 				SendSourceResponse(seq, req.name().c_str(), reader.ToString());
 				return;
 			}
 		}
 
-		// Check for builtins
-		int resourceId{ 0 };
-		if (req.name() == "BuiltinLibrary.lua") {
-			resourceId = IDR_LUA_BUILTIN_LIBRARY;
-		} else if (req.name() == "BuiltinLibraryClient.lua") {
-			resourceId = IDR_LUA_BUILTIN_LIBRARY_CLIENT;
-		} else if (req.name() == "BuiltinLibraryServer.lua") {
-			resourceId = IDR_LUA_BUILTIN_LIBRARY_SERVER;
-		}
-
-		if (resourceId) {
-			auto body = State::GetBuiltinLibrary(resourceId);
-			SendSourceResponse(seq, req.name().c_str(), body);
-			return;
-		}
-
-		LuaError("Script file could not be opened: " << *path);
 		SendResult(seq, ResultCode::NoSuchFile);
 	}
 

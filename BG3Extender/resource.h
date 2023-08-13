@@ -5,21 +5,24 @@
 #define RES_DLL_MAJOR_VERSION           1
 #define RES_DLL_VERSION_STRING          "1.0.0.0"
 
-#define IDR_LUA_BUILTIN_LIBRARY         101
-#define IDR_LUA_BUILTIN_LIBRARY_SERVER  102
-#define IDR_LUA_BUILTIN_LIBRARY_CLIENT  103
-#define IDR_LUA_SANDBOX_STARTUP         104
-#define IDR_LUA_GAME_MATH               105
-#define IDR_LUA_GAME_TOOLTIP            106
+#define IDR_LUA_BUILTIN_BUNDLE          101
 #define IDR_BINARY_MAPPINGS             107
+
+#if defined(USE_GAME_SYMBOL_TABLE)
+#define IDR_SYMBOL_TABLE_GAME           109
+#endif
+
+#if defined(USE_DBG_SYMBOL_TABLE)
+#define IDR_SYMBOL_TABLE_EXTENDER       110
+#endif
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        107
+#define _APS_NEXT_RESOURCE_VALUE        111
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1001
-#define _APS_NEXT_SYMED_VALUE           104
+#define _APS_NEXT_SYMED_VALUE           111
 #endif
 #endif

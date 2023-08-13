@@ -9,17 +9,6 @@
 
 namespace bg3se
 {
-	StaticSymbols* gStaticSymbols{ nullptr };
-
-	StaticSymbols & GetStaticSymbols()
-	{
-		if (gStaticSymbols == nullptr) {
-			gStaticSymbols = new StaticSymbols();
-		}
-
-		return *gStaticSymbols;
-	}
-
 	void * GameAllocRaw(std::size_t size)
 	{
 		return GetStaticSymbols().ls__GlobalAllocator__Alloc(size, 5, 0, 8);
@@ -226,6 +215,13 @@ namespace bg3se
 		Handle = GFS.strNullStringHandle;
 	}*/
 
+	StaticSymbols* gStaticSymbols{ nullptr };
+
+	void InitStaticSymbols()
+	{
+		gStaticSymbols = new StaticSymbols();
+	}
+
 	void StaticSymbols::CanonicalizePath(STDString & path) const
 	{
 		if (path.find('\\') != STDString::npos) {
@@ -258,50 +254,43 @@ namespace bg3se
 		return absolutePath;
 	}
 
+	FileReaderPin StaticSymbols::MakeFileReader(StringView path, PathRootType root, bool canonicalize) const
+	{
+		if (ls__PathRoots == nullptr || ls__FileReader__ctor == nullptr) {
+			ERR("StaticSymbols::MakeFileReader(): File reader API not available!");
+			return FileReaderPin(nullptr);
+		}
+
+		auto absolutePath = ToPath(path, root, canonicalize);
+
+		Path lsPath;
+		lsPath.Name = absolutePath;
+
+		auto reader = GameAlloc<FileReader>();
+		ls__FileReader__ctor(reader, lsPath, 2, 0);
+		return FileReaderPin(reader);
+	}
+
+	void StaticSymbols::DestroyFileReader(FileReader* reader)
+	{
+		if (ls__FileReader__dtor != nullptr) {
+			ls__FileReader__dtor(reader);
+		}
+	}
+
 	bool StaticSymbols::FileExists(StringView path, PathRootType root, bool canonicalize) const
 	{
 		// TODO - implement using proper FS file exists call
-		FileReaderPin reader(path, root, canonicalize);
+		auto reader = MakeFileReader(path, root, canonicalize);
 		return reader.IsLoaded();
 	}
 
-	FileReader::FileReader(std::string_view path)
-	{
-		auto ctor = GetStaticSymbols().ls__FileReader__ctor;
-		if (ctor) {
-			Path p;
-			p.Name = path;
-			ctor(this, p, 2, 0);
-		}
-	}
-
-	FileReader::~FileReader()
-	{
-		auto dtor = GetStaticSymbols().ls__FileReader__dtor;
-		if (dtor) {
-			dtor(this);
-		}
-	}
-
-	FileReaderPin::FileReaderPin(std::string_view path)
-		: reader_(std::make_unique<FileReader>(path))
-	{
-	}
-
-	FileReaderPin::FileReaderPin(std::string_view path, PathRootType root, bool canonicalize)
-	{
-		auto roots = GetStaticSymbols().ls__PathRoots;
-		if (roots == nullptr) {
-			OsiErrorS("Path roots not available!");
-			return;
-		}
-
-		auto absolutePath = GetStaticSymbols().ToPath(path, root, canonicalize);
-		reader_ = std::make_unique<FileReader>(absolutePath);
-	}
-
 	FileReaderPin::~FileReaderPin()
-	{}
+	{
+		if (reader_ != nullptr) {
+			GetStaticSymbols().DestroyFileReader(reader_);
+		}
+	}
 
 	STDString FileReaderPin::ToString() const
 	{
@@ -1083,7 +1072,7 @@ namespace bg3se
 
 BEGIN_NS(lua)
 
-void LuaPolymorphic<BaseFunctorExecParams>::MakeRef(lua_State* L, BaseFunctorExecParams* value, LifetimeHolder const& lifetime)
+void LuaPolymorphic<BaseFunctorExecParams>::MakeRef(lua_State* L, BaseFunctorExecParams* value, LifetimeHandle const& lifetime)
 {
 #define V(type) case FunctorExecParamsType::type: \
 			MakeDirectObjectRef(L, lifetime, static_cast<FunctorExecParams##type*>(value)); break;

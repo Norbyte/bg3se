@@ -122,15 +122,6 @@ private:
 #endif
 
 	void RestartLogging(std::wstring const & Type);
-	std::wstring MakeLogFilePath(std::wstring const& Type, std::wstring const& Extension);
-
-	void OnBaseModuleLoaded(void * self);
-	/*void OnModuleLoadStarted(TranslatedStringRepository * self);
-	void OnStatsLoadStarted(RPGStats* mgr);
-	void OnStatsLoadFinished(RPGStats* mgr);*/
-	void OnClientGameStateChanged(void * self, ecl::GameState fromState, ecl::GameState toState);
-	void OnServerGameStateChanged(void * self, esv::GameState fromState, esv::GameState toState);
-	void PostInitLibraries();
 };
 
 }

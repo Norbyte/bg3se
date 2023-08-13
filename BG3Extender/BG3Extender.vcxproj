@@ -80,7 +80,8 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <PreBuildEvent>
       <Command>rem $(SolutionDir)\External\protobuf\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Osiris\Debugger Osiris\Debugger\osidebug.proto
 rem $(SolutionDir)\External\protobuf\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Lua\Debugger Lua\Debugger\LuaDebug.proto
-rem $(SolutionDir)\External\protobuf\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Extender\Shared Extender\Shared\ScriptExtensions.proto</Command>
+rem $(SolutionDir)\External\protobuf\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Extender\Shared Extender\Shared\ScriptExtensions.proto
+$(SolutionDir)x64\Debug\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(ProjectDir)Lua.bundle"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Game Release|x64'">
@@ -112,7 +113,8 @@ rem $(SolutionDir)\External\protobuf\tools\protobuf\protoc --cpp_out=$(SolutionD
     <PreBuildEvent>
       <Command>$(SolutionDir)\External\protobuf\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Osiris\Debugger Osiris\Debugger\osidebug.proto
 $(SolutionDir)\External\protobuf\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Lua Lua\LuaDebug.proto
-$(SolutionDir)\External\protobuf\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Extender\Shared Extender\Shared\ScriptExtensions.proto</Command>
+$(SolutionDir)\External\protobuf\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Extender\Shared Extender\Shared\ScriptExtensions.proto
+$(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(ProjectDir)Lua.bundle"</Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>copy /Y "$(TargetPath)" "C:\Program Files (x86)\Steam\steamapps\common\Baldurs Gate 3\bin\DWrite.dll"
@@ -145,6 +147,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\Base\BaseString.h" />
     <ClInclude Include="GameDefinitions\Base\BaseTypes.h" />
     <ClInclude Include="GameDefinitions\Base\BaseUtilities.h" />
+    <ClInclude Include="GameDefinitions\Base\ForwardDeclarations.h" />
     <ClInclude Include="GameDefinitions\Character.h" />
     <ClInclude Include="GameDefinitions\Components\Boosts.h" />
     <ClInclude Include="GameDefinitions\Components\Combat.h" />
@@ -191,7 +194,8 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <ClInclude Include="Lua\LuaSerializers.h" />
     <ClInclude Include="Lua\LuaUserdata.h" />
     <ClInclude Include="Lua\Server\LuaBindingServer.h" />
-    <ClInclude Include="Lua\Server\ServerOsirisBinding.h" />
+    <ClInclude Include="Lua\Server\LuaOsirisBinding.h" />
+    <ClInclude Include="Lua\Shared\LuaBundle.h" />
     <ClInclude Include="Lua\Shared\LuaEvent.h" />
     <ClInclude Include="Lua\Shared\LuaLifetime.h" />
     <ClInclude Include="Lua\Shared\LuaStats.h" />
@@ -214,6 +218,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Extender\Client\ExtensionStateClient.cpp" />
     <ClCompile Include="Extender\Client\ScriptExtenderClient.cpp" />
     <ClCompile Include="Extender\ScriptExtender.cpp" />
     <ClCompile Include="Extender\Server\ScriptExtenderServer.cpp" />
@@ -260,7 +265,9 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <ClCompile Include="Lua\LuaSerializers.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Lua\Server\LuaOsirisBinding.cpp" />
     <ClCompile Include="Lua\Server\LuaServer.cpp" />
+    <ClCompile Include="Lua\Shared\LuaBundle.cpp" />
     <ClCompile Include="Lua\Shared\LuaInternalHelpers.cpp" />
     <ClCompile Include="Lua\Shared\LuaStats.cpp">
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">/bigobj %(AdditionalOptions)</AdditionalOptions>
@@ -322,9 +329,12 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <None Include="LuaScripts\BuiltinLibrary.lua" />
     <None Include="LuaScripts\BuiltinLibraryClient.lua" />
     <None Include="LuaScripts\BuiltinLibraryServer.lua" />
+    <None Include="LuaScripts\ClientStartup.lua" />
     <None Include="LuaScripts\Game.Math.lua" />
     <None Include="LuaScripts\Game.Tooltip.lua" />
+    <None Include="LuaScripts\Libs\Event.lua" />
     <None Include="LuaScripts\SandboxStartup.lua" />
+    <None Include="LuaScripts\ServerStartup.lua" />
     <None Include="Lua\Debugger\LuaDebug.proto" />
     <None Include="Lua\LevelIteratorFunctions.inl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">false</ExcludedFromBuild>
@@ -335,7 +345,6 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <None Include="Lua\Server\ServerFunctors.inl" />
     <None Include="Lua\Server\ServerItem.inl" />
     <None Include="Lua\Server\ServerNetwork.inl" />
-    <None Include="Lua\Server\ServerOsirisListeners.inl" />
     <None Include="Lua\Server\ServerProjectile.inl" />
     <None Include="Lua\Server\ServerStatus.inl" />
     <None Include="Lua\Server\ServerSurface.inl" />

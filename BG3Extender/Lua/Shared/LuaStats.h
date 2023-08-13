@@ -23,7 +23,7 @@ namespace bg3se::lua::stats
 	public:
 		static char const * const MetatableName;
 
-		StatsProxy(CRPGStats_Object * obj, std::optional<int> level, LifetimeHolder const& lifetime)
+		StatsProxy(CRPGStats_Object * obj, std::optional<int> level, LifetimeHandle const& lifetime)
 			: obj_(obj), level_(level), lifetime_(lifetime)
 		{}
 
@@ -38,7 +38,7 @@ namespace bg3se::lua::stats
 	private:
 		CRPGStats_Object * obj_;
 		std::optional<int> level_;
-		LifetimeReference lifetime_;
+		LifetimeHandle lifetime_;
 
 		static int Sync(lua_State* L);
 		static int SetPersistence(lua_State* L);
@@ -49,7 +49,7 @@ namespace bg3se::lua::stats
 	public:
 		static char const * const MetatableName;
 
-		SpellPrototypeProxy(SpellPrototype* obj, std::optional<int> level, LifetimeHolder& lifetime);
+		SpellPrototypeProxy(SpellPrototype* obj, std::optional<int> level, LifetimeHandle& lifetime);
 
 		int Index(lua_State * L);
 
@@ -57,7 +57,7 @@ namespace bg3se::lua::stats
 		SpellPrototype * obj_;
 		CRPGStats_Object * stats_;
 		std::optional<int> level_;
-		LifetimeReference lifetime_;
+		LifetimeHandle lifetime_;
 	};
 
 
@@ -75,7 +75,7 @@ namespace bg3se::lua::stats
 	class StatsFunctorSetProxy : public ArrayProxyImplBase
 	{
 	public:
-		StatsFunctorSetProxy(LifetimeHolder const& lifetime, StatsFunctorSet* obj);
+		StatsFunctorSetProxy(LifetimeHandle const& lifetime, StatsFunctorSet* obj);
 		~StatsFunctorSetProxy() override;
 
 		inline StatsFunctorSet* Get() const
@@ -92,7 +92,7 @@ namespace bg3se::lua::stats
 
 	private:
 		StatsFunctorSet* object_;
-		LifetimeHolder lifetime_;
+		LifetimeHandle lifetime_;
 	};
 
 

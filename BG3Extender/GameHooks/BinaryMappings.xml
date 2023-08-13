@@ -406,7 +406,7 @@
         <!-- TODO - disabled temporarily; we don't use it right now anyway -->
         <Mapping Name="ls::GlobalSwitches" AllowFail="true">
             <Condition Type="FixedStringIndirect" Offset="19" Value="ShowSubtitles" />
-            <Target Type="Indirect" Offset="12" Symbol="GlobalSwitches" />
+            <Target Type="Indirect" Offset="12" Symbol="ls__GlobalSwitches" />
             48 8B 8E F0 01 00 00 // mov     [rsp-8+arg_10], rbx
             E8 ?? ?? ?? ?? // call    xxx
             48 8B 0D ?? ?? ?? ?? // mov     rcx, cs:ls__gGlobalSwitches

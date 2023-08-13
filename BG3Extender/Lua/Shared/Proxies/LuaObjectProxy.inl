@@ -4,7 +4,7 @@
 namespace bg3se::lua
 {
 
-	bool GenericPropertyMap::GetRawProperty(lua_State* L, LifetimeHolder const& lifetime, void* object, FixedString const& prop) const
+	bool GenericPropertyMap::GetRawProperty(lua_State* L, LifetimeHandle const& lifetime, void* object, FixedString const& prop) const
 	{
 		auto it = Properties.find(prop);
 		if (it == Properties.end()) {
@@ -14,7 +14,7 @@ namespace bg3se::lua
 		return it->second.Get(L, lifetime, object, it->second.Offset);
 	}
 
-	bool GenericPropertyMap::SetRawProperty(lua_State* L, LifetimeHolder const& lifetime, void* object, FixedString const& prop, int index) const
+	bool GenericPropertyMap::SetRawProperty(lua_State* L, LifetimeHandle const& lifetime, void* object, FixedString const& prop, int index) const
 	{
 		auto it = Properties.find(prop);
 		if (it == Properties.end()) {
@@ -38,7 +38,7 @@ namespace bg3se::lua
 	{
 		StackCheck _(L, 1);
 		auto impl = GetImpl();
-		if (!lifetime_.IsAlive()) {
+		if (!lifetime_.IsAlive(L)) {
 			luaL_error(L, "Attempted to read dead object of type '%s'", impl->GetTypeName());
 			push(L, nullptr);
 			return 1;
@@ -56,7 +56,7 @@ namespace bg3se::lua
 	{
 		StackCheck _(L, 0);
 		auto impl = GetImpl();
-		if (!lifetime_.IsAlive()) {
+		if (!lifetime_.IsAlive(L)) {
 			luaL_error(L, "Attempted to write dead object of type '%s'", impl->GetTypeName());
 			return 0;
 		}
@@ -69,7 +69,7 @@ namespace bg3se::lua
 	int ObjectProxy::Next(lua_State* L)
 	{
 		auto impl = GetImpl();
-		if (!lifetime_.IsAlive()) {
+		if (!lifetime_.IsAlive(L)) {
 			luaL_error(L, "Attempted to iterate dead object of type '%s'", impl->GetTypeName());
 			return 0;
 		}
@@ -86,10 +86,10 @@ namespace bg3se::lua
 	{
 		StackCheck _(L, 1);
 		char entityName[200];
-		if (lifetime_.IsAlive()) {
-			_snprintf_s(entityName, std::size(entityName) - 1, "%s (%p)", GetImpl()->GetTypeName().GetString(), GetImpl()->GetRaw());
+		if (lifetime_.IsAlive(L)) {
+			_snprintf_s(entityName, std::size(entityName) - 1, "%s (%p)", GetImpl()->GetTypeName().GetString(), GetImpl()->GetRaw(L));
 		} else {
-			_snprintf_s(entityName, std::size(entityName) - 1, "%s (%p, DEAD)", GetImpl()->GetTypeName().GetString(), GetImpl()->GetRaw());
+			_snprintf_s(entityName, std::size(entityName) - 1, "%s (%p, DEAD)", GetImpl()->GetTypeName().GetString(), GetImpl()->GetRaw(L));
 		}
 
 		push(L, entityName);

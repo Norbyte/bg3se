@@ -152,6 +152,15 @@
     <ClCompile Include="Lua\Shared\LuaInternalHelpers.cpp">
       <Filter>Lua\Shared</Filter>
     </ClCompile>
+    <ClCompile Include="Lua\Shared\LuaBundle.cpp">
+      <Filter>Lua\Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="Extender\Client\ExtensionStateClient.cpp">
+      <Filter>Extender\Client</Filter>
+    </ClCompile>
+    <ClCompile Include="Lua\Server\LuaOsirisBinding.cpp">
+      <Filter>Lua\Server</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -159,9 +168,6 @@
       <Filter>Lua\Shared</Filter>
     </ClInclude>
     <ClInclude Include="Lua\Server\LuaBindingServer.h">
-      <Filter>Lua\Server</Filter>
-    </ClInclude>
-    <ClInclude Include="Lua\Server\ServerOsirisBinding.h">
       <Filter>Lua\Server</Filter>
     </ClInclude>
     <ClInclude Include="Lua\Client\LuaBindingClient.h">
@@ -426,6 +432,15 @@
     <ClInclude Include="GameDefinitions\Base\BaseArray.h">
       <Filter>GameDefinitions\Base</Filter>
     </ClInclude>
+    <ClInclude Include="Lua\Shared\LuaBundle.h">
+      <Filter>Lua\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\Base\ForwardDeclarations.h">
+      <Filter>GameDefinitions\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Lua\Server\LuaOsirisBinding.h">
+      <Filter>Lua\Server</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -472,9 +487,6 @@
       <Filter>Lua\Server</Filter>
     </None>
     <None Include="Lua\Server\ServerNetwork.inl">
-      <Filter>Lua\Server</Filter>
-    </None>
-    <None Include="Lua\Server\ServerOsirisListeners.inl">
       <Filter>Lua\Server</Filter>
     </None>
     <None Include="Lua\Server\ServerStatus.inl">
@@ -606,6 +618,15 @@
     <None Include="Lua\Debugger\LuaDebug.proto">
       <Filter>Lua\Debugger</Filter>
     </None>
+    <None Include="LuaScripts\ClientStartup.lua">
+      <Filter>LuaScripts</Filter>
+    </None>
+    <None Include="LuaScripts\ServerStartup.lua">
+      <Filter>LuaScripts</Filter>
+    </None>
+    <None Include="LuaScripts\Libs\Event.lua">
+      <Filter>LuaScripts\Libs</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">
@@ -670,6 +691,9 @@
     </Filter>
     <Filter Include="Lua\Shared\Proxies">
       <UniqueIdentifier>{6c61b745-f848-467d-88b5-3092d23783fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LuaScripts\Libs">
+      <UniqueIdentifier>{ee328742-1ce8-4156-982b-e4fc302887a0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

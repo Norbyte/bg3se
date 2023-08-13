@@ -22,7 +22,6 @@
 #include <Lua/Server/ServerSurface.inl>
 #include <Lua/Server/ServerCombat.inl>
 #include <Lua/Server/ServerNetwork.inl>
-#include <Lua/Server/ServerOsirisListeners.inl>
 #include <Lua/Server/FunctorEvents.inl>
 #include <Lua/Server/ServerFunctors.inl>
 
@@ -30,7 +29,7 @@
 
 namespace bg3se::lua
 {
-	LifetimeHolder GetCurrentLifetime()
+	LifetimeHandle GetCurrentLifetime()
 	{
 		if (gExtender->GetServer().IsInServerThread()) {
 			return esv::lua::GetServerLifetime();
@@ -53,7 +52,7 @@ namespace bg3se::esv::lua
 {
 	using namespace bg3se::lua;
 
-	LifetimeHolder GetServerLifetime()
+	LifetimeHandle GetServerLifetime()
 	{
 		assert(gExtender->GetServer().IsInServerThread());
 		return esv::ExtensionState::Get().GetLua()->GetCurrentLifetime();
@@ -374,17 +373,37 @@ namespace bg3se::esv::lua
 
 		return 0;
 	}
+	
 
-	int NewCall(lua_State* L);
-	int NewQuery(lua_State* L);
-	int NewEvent(lua_State* L);
+	int RegisterOsirisListener(lua_State* L)
+	{
+		auto name = get<STDString>(L, 1);
+		auto arity = get<int>(L, 2);
+		auto typeName = get<char const*>(L, 3);
+		luaL_checktype(L, 4, LUA_TFUNCTION);
+
+		OsirisHookSignature::HookType type;
+		if (strcmp(typeName, "before") == 0) {
+			type = OsirisHookSignature::BeforeTrigger;
+		} else if (strcmp(typeName, "after") == 0) {
+			type = OsirisHookSignature::AfterTrigger;
+		} else if (strcmp(typeName, "beforeDelete") == 0) {
+			type = OsirisHookSignature::BeforeDeleteTrigger;
+		} else if (strcmp(typeName, "afterDelete") == 0) {
+			type = OsirisHookSignature::AfterDeleteTrigger;
+		} else {
+			luaL_error(L, "Hook type must be 'before', 'beforeDelete', 'after' or 'afterDelete'");
+		}
+
+		LuaServerPin lua(ExtensionState::Get());
+		RegistryEntry handler(L, 4);
+		lua->Osiris().GetOsirisCallbacks().Subscribe(name, arity, type, std::move(handler));
+		return 0;
+	}
 
 	void RegisterOsirisLibrary(lua_State* L)
 	{
 		static const luaL_Reg extLib[] = {
-			{"NewCall", NewCall},
-			{"NewQuery", NewQuery},
-			{"NewEvent", NewEvent},
 			{"RegisterListener", RegisterOsirisListener},
 			{0,0}
 		};
@@ -475,36 +494,10 @@ namespace bg3se::esv::lua
 
 
 	ServerState::ServerState(ExtensionState& state)
-		: identityAdapters_(gExtender->GetServer().Osiris().GetGlobals()),
-		osirisCallbacks_(state),
+		: State(true),
+		osiris_(state),
 		functorHooks_(*this)
-	{
-		StackCheck _(L, 0);
-		identityAdapters_.UpdateAdapters();
-
-		library_.Register(L);
-
-		auto baseLib = GetBuiltinLibrary(IDR_LUA_BUILTIN_LIBRARY);
-		LoadScript(baseLib, "BuiltinLibrary.lua");
-		auto serverLib = GetBuiltinLibrary(IDR_LUA_BUILTIN_LIBRARY_SERVER);
-		LoadScript(serverLib, "BuiltinLibraryServer.lua");
-
-		lua_getglobal(L, "Ext"); // stack: Ext
-		stats::StatsExtraDataProxy::New(L); // stack: Ext, "ExtraData", ExtraDataProxy
-		lua_setfield(L, -2, "ExtraData"); // stack: Ext
-		lua_pop(L, 1); // stack: -
-		
-		// Ext is not writeable after loading SandboxStartup!
-		auto sandbox = GetBuiltinLibrary(IDR_LUA_SANDBOX_STARTUP);
-		LoadScript(sandbox, "SandboxStartup.lua");
-
-#if !defined(OSI_NO_DEBUGGER)
-		auto debugger = gExtender->GetLuaDebugger();
-		if (debugger) {
-			debugger->ServerStateCreated(this);
-		}
-#endif
-	}
+	{}
 
 	ServerState::~ServerState()
 	{
@@ -516,591 +509,46 @@ namespace bg3se::esv::lua
 			}
 #endif
 
+			// FIXME - HANDLE IN SERVER LOGIC!
 			gExtender->GetServer().Osiris().GetCustomFunctionManager().ClearDynamicEntries();
 		}
 	}
 
-
-	/*std::optional<int32_t> ServerState::StatusGetEnterChance(esv::Status * status, bool isEnterCheck)
+	bool ServerState::IsClient()
 	{
-		Restriction restriction(*this, RestrictOsiris);
-
-		PushInternalFunction(L, "_StatusGetEnterChance"); // stack: fn
-		auto _{ PushArguments(L,
-			std::tuple{Push<ObjectProxy<esv::Status>>(status)}) };
-		push(L, isEnterCheck);
-
-		auto result = CheckedCall<std::optional<int32_t>>(L, 2, "Ext.StatusGetEnterChance");
-		if (result) {
-			return std::get<0>(*result);
-		} else {
-			return {};
-		}
-	}
-
-
-	void PushHit(lua_State* L, HitDamageInfo const& hit)
-	{
-		lua_newtable(L);
-		setfield(L, "Equipment", hit.Equipment);
-		setfield(L, "TotalDamageDone", hit.TotalDamage);
-		setfield(L, "DamageDealt", hit.DamageDealt);
-		setfield(L, "DeathType", hit.DeathType);
-		setfield(L, "DamageType", hit.DamageType);
-		setfield(L, "AttackDirection", hit.AttackDirection);
-		setfield(L, "ArmorAbsorption", hit.ArmorAbsorption);
-		setfield(L, "LifeSteal", hit.LifeSteal);
-		setfield(L, "EffectFlags", (int64_t)hit.EffectFlags);
-		setfield(L, "HitWithWeapon", hit.HitWithWeapon);
-
-		auto luaDamageList = DamageList::New(L);
-		for (auto const& dmg : hit.DamageList) {
-			luaDamageList->Get().SafeAdd(dmg);
-		}
-		
-		lua_setfield(L, -2, "DamageList");
-	}
-
-	bool PopHit(lua_State* L, HitDamageInfo& hit, int index)
-	{
-		luaL_checktype(L, index, LUA_TTABLE);
-		hit.Equipment = checked_getfield<uint32_t>(L, "Equipment", index);
-		hit.TotalDamage = checked_getfield<int32_t>(L, "TotalDamageDone", index);
-		hit.DamageDealt = checked_getfield<int32_t>(L, "DamageDealt", index);
-		hit.DeathType = checked_getfield<DeathType>(L, "DeathType", index);
-		hit.DamageType = checked_getfield<DamageType>(L, "DamageType", index);
-		hit.AttackDirection = checked_getfield<uint32_t>(L, "AttackDirection", index);
-		hit.ArmorAbsorption = checked_getfield<int32_t>(L, "ArmorAbsorption", index);
-		hit.LifeSteal = checked_getfield<int32_t>(L, "LifeSteal", index);
-		hit.HitWithWeapon = checked_getfield<bool>(L, "HitWithWeapon", index);
-		hit.EffectFlags = (HitFlag)checked_getfield<uint32_t>(L, "EffectFlags", index);
-
-		lua_getfield(L, index, "DamageList");
-		auto damageList = DamageList::AsUserData(L, -1);
-		lua_pop(L, 1);
-
-		if (damageList == nullptr) {
-			OsiErrorS("Missing 'DamageList' in Hit table");
-			return false;
-		} else {
-			hit.DamageList.Clear();
-			for (auto const& dmg : damageList->Get()) {
-				hit.DamageList.AddDamage(dmg.DamageType, dmg.Amount);
-			}
-			return true;
-		}
-	}
-
-	void PushPendingHit(lua_State* L, PendingHit const& hit)
-	{
-		lua_newtable(L);
-		setfield(L, "HitId", hit.Id);
-
-		if (hit.CapturedCharacterHit) {
-			ObjectProxy<CDivinityStats_Item>::New(L, hit.WeaponStats);
-			lua_setfield(L, -2, "Weapon");
-			PushHit(L, hit.CharacterHit);
-			lua_setfield(L, -2, "Hit");
-			setfield(L, "HitType", hit.HitType);
-			setfield(L, "NoHitRoll", hit.NoHitRoll);
-			setfield(L, "ProcWindWalker", hit.ProcWindWalker);
-			setfield(L, "ForceReduceDurability", hit.ForceReduceDurability);
-			setfield(L, "HighGround", hit.HighGround);
-			setfield(L, "CriticalRoll", hit.CriticalRoll);
-		}
-
-		if (hit.Status) {
-			StatusHandleProxy::New(L, hit.Status->TargetHandle, hit.Status->StatusHandle);
-			lua_setfield(L, -2, "HitStatus");
-		}
-	}
-
-	void ServerState::OnStatusHitEnter(esv::StatusHit* hit, PendingHit* context)
-	{
-		StackCheck _(L, 0);
-		PushInternalFunction(L, "_StatusHitEnter"); // stack: fn
-
-		StatusHandleProxy::New(L, hit->TargetHandle, hit->StatusHandle);
-
-		if (context) {
-			PushPendingHit(L, *context);
-		} else {
-			lua_newtable(L);
-		}
-
-		if (CallWithTraceback(L, 2, 0) != 0) { // stack: succeeded
-			LuaError("StatusHitEnter handler failed: " << lua_tostring(L, -1));
-			lua_pop(L, 1);
-		}
-	}
-
-	bool ServerState::ComputeCharacterHit(CDivinityStats_Character * target,
-		CDivinityStats_Character *attacker, CDivinityStats_Item *weapon, DamagePairList *damageList,
-		HitType hitType, bool noHitRoll, bool forceReduceDurability, HitDamageInfo *hit,
-		CRPGStats_Object_Property_List *skillProperties, HighGroundBonus highGroundFlag, CriticalRoll criticalRoll)
-	{
-		StackCheck _(L, 0);
-		Restriction restriction(*this, RestrictOsiris);
-
-		PushInternalFunction(L, "_ComputeCharacterHit"); // stack: fn
-
-		auto luaTarget = ObjectProxy<CDivinityStats_Character>::New(L, target);
-		UnbindablePin _t(luaTarget);
-		ItemOrCharacterPushPin luaAttacker(L, attacker);
-
-		ObjectProxy<CDivinityStats_Item> * luaWeapon = nullptr;
-		if (weapon != nullptr) {
-			luaWeapon = ObjectProxy<CDivinityStats_Item>::New(L, weapon);
-		} else {
-			lua_pushnil(L);
-		}
-		UnbindablePin _2(luaWeapon);
-
-		auto luaDamageList = DamageList::New(L);
-		for (auto const& dmg : *damageList) {
-			luaDamageList->Get().SafeAdd(dmg);
-		}
-
-		push(L, hitType);
-		push(L, noHitRoll);
-		push(L, forceReduceDurability);
-
-		PushHit(L, *hit);
-
-		auto alwaysBackstab = skillProperties != nullptr
-			&& skillProperties->Properties.Find(ToFixedString("AlwaysBackstab")) != nullptr;
-		push(L, alwaysBackstab);
-
-		push(L, highGroundFlag);
-		push(L, criticalRoll);
-
-		if (CallWithTraceback(L, 11, 1) != 0) { // stack: succeeded
-			LuaError("ComputeCharacterHit handler failed: " << lua_tostring(L, -1));
-			lua_pop(L, 1);
-			return false;
-		}
-
-		int isnil = lua_isnil(L, -1);
-
-		bool ok;
-		if (isnil) {
-			ok = false;
-		} else if (lua_type(L, -1) == LUA_TTABLE) {
-			lua_getfield(L, -1, "EffectFlags");
-			auto effectFlags = lua_tointeger(L, -1);
-			lua_pop(L, 1);
-			lua_getfield(L, -1, "TotalDamageDone");
-			auto totalDamageDone = lua_tointeger(L, -1);
-			lua_pop(L, 1);
-			lua_getfield(L, -1, "ArmorAbsorption");
-			auto armorAbsorption = lua_tointeger(L, -1);
-			lua_pop(L, 1);
-			lua_getfield(L, -1, "LifeSteal");
-			auto lifeSteal = lua_tointeger(L, -1);
-			lua_pop(L, 1);
-			lua_getfield(L, -1, "DamageList");
-			auto damageList = DamageList::AsUserData(L, -1);
-			lua_pop(L, 1);
-
-			if (damageList == nullptr) {
-				OsiErrorS("Missing 'DamageList' in table returned from ComputeCharacterHit");
-				ok = false;
-			} else {
-				hit->EffectFlags = (HitFlag)effectFlags;
-				hit->TotalDamage = (int32_t)totalDamageDone;
-				hit->ArmorAbsorption = (int32_t)armorAbsorption;
-				hit->LifeSteal = (int32_t)lifeSteal;
-				hit->DamageList.Clear();
-				for (auto const& dmg : damageList->Get()) {
-					hit->DamageList.AddDamage(dmg.DamageType, dmg.Amount);
-				}
-				ok = true;
-			}
-		} else {
-			OsiErrorS("ComputeCharacterHit must return a table");
-			ok = false;
-		}
-
-		lua_pop(L, 1); // stack: -
-		return ok;
-	}
-
-	bool ServerState::OnCharacterApplyDamage(esv::Character* target, HitDamageInfo& hit, ComponentHandle attackerHandle,
-			CauseType causeType, glm::vec3& impactDirection, PendingHit* context)
-	{
-		StackCheck _(L, 0);
-		Restriction restriction(*this, RestrictOsiris);
-
-		PushInternalFunction(L, "_BeforeCharacterApplyDamage"); // stack: fn
-
-		auto luaTarget = ObjectProxy<esv::Character>::New(L, target);
-		UnbindablePin _t(luaTarget);
-
-		CRPGStats_Object* attacker{ nullptr };
-		if (attackerHandle) {
-			auto attackerChar = GetEntityWorld()->GetCharacter(attackerHandle, false);
-			if (attackerChar) {
-				attacker = attackerChar->Stats;
-			} else {
-				auto attackerItem = GetEntityWorld()->GetItem(attackerHandle, false);
-				if (attackerItem) {
-					attacker = attackerItem->Stats;
-				} else {
-					OsiError("Could not resolve attacker handle: " << std::hex << attackerHandle.Handle);
-				}
-			}
-		}
-
-		ItemOrCharacterPushPin luaAttacker(L, attacker);
-
-		PushHit(L, hit);
-
-		push(L, causeType);
-		push(L, impactDirection); // stack: fn, target, attacker, hit, causeType, impactDirection
-
-		if (context) {
-			PushPendingHit(L, *context);
-		} else {
-			lua_newtable(L);
-		}
-
-		if (CallWithTraceback(L, 6, 1) != 0) { // stack: succeeded
-			LuaError("BeforeCharacterApplyDamage handler failed: " << lua_tostring(L, -1));
-			lua_pop(L, 1);
-			return false;
-		}
-
-		int top = lua_gettop(L);
-		try {
-			PopHit(L, hit, -1);
-		}
-		catch (Exception& e) {
-			lua_settop(L, top);
-			OsiError("Exception thrown during BeforeCharacterApplyDamage processing: " << e.what());
-		}
-
-		lua_pop(L, 1); // stack: -
 		return false;
 	}
 
-	*/
+	void ServerState::Initialize()
+	{
+		StackCheck _(L, 0);
+
+		library_.Register(L);
+
+		gExtender->GetServer().GetExtensionState().LuaLoadBuiltinFile("ServerStartup.lua");
+		/*
+		lua_getglobal(L, "Ext"); // stack: Ext
+		StatsExtraDataProxy::New(L); // stack: Ext, "ExtraData", ExtraDataProxy
+		lua_setfield(L, -2, "ExtraData"); // stack: Ext
+		lua_pop(L, 1); // stack: -
+		*/
+		// Ext is not writeable after loading SandboxStartup!
+		gExtender->GetServer().GetExtensionState().LuaLoadBuiltinFile("SandboxStartup.lua");
+
+#if !defined(OSI_NO_DEBUGGER)
+		auto debugger = gExtender->GetLuaDebugger();
+		if (debugger) {
+			debugger->ServerStateCreated(this);
+		}
+#endif
+	}
+
+
 	void ServerState::OnGameStateChanged(GameState fromState, GameState toState)
 	{
 		GameStateChangeEventParams params{ fromState, toState };
 		ThrowEvent("GameStateChanged", params, false, 0, ReadOnlyEvent{});
 	}
-
-	/*
-	esv::Item* ServerState::OnGenerateTreasureItem(esv::Item* item)
-	{
-		StackCheck _(L, 0);
-		PushInternalFunction(L, "_TreasureItemGenerated"); // stack: fn
-
-		ComponentHandle itemHandle;
-		item->GetComponentHandle(itemHandle);
-		ObjectProxy<esv::Item>::New(L, itemHandle);
-
-		if (CallWithTraceback(L, 1, 1) != 0) { // stack: succeeded
-			LuaError("TreasureItemGenerated handler failed: " << lua_tostring(L, -1));
-			lua_pop(L, 1);
-			return item;
-		}
-
-		auto returnItem = ObjectProxy<esv::Item>::AsUserData(L, -1);
-		lua_pop(L, 1);
-
-		if (!returnItem) {
-			return item;
-		}
-
-		auto returnObj = returnItem->Get(L);
-		if (!returnObj) {
-			return item;
-		}
-
-		if (returnObj->ParentInventoryHandle) {
-			OsiError("TreasureItemGenerated must return an item that's not already in an inventory");
-			return item;
-		}
-
-		if (!returnObj->CurrentLevel || returnObj->CurrentLevel.Str[0]) {
-			OsiError("TreasureItemGenerated must return an item that's not in the level");
-			return item;
-		}
-
-		return returnObj;
-	}
-
-
-	bool ServerState::OnBeforeCraftingExecuteCombination(CraftingStationType craftingStation, ObjectSet<ComponentHandle> const& ingredients,
-		esv::Character* character, uint8_t quantity, FixedString const& combinationId)
-	{
-		StackCheck _(L, 0);
-		PushInternalFunction(L, "_BeforeCraftingExecuteCombination"); // stack: fn
-
-		ObjectProxy<esv::Character>::New(L, character);
-		push(L, craftingStation);
-
-		lua_newtable(L);
-		int32_t index = 1;
-		for (auto ingredientHandle : ingredients) {
-			auto ingredient = GetEntityWorld()->GetItem(ingredientHandle);
-			if (ingredient) {
-				push(L, index);
-				ObjectProxy<esv::Item>::New(L, ingredient);
-				lua_settable(L, -3);
-			}
-		}
-
-		push(L, quantity);
-		push(L, combinationId);
-
-		if (CallWithTraceback(L, 5, 1) != 0) { // stack: succeeded
-			LuaError("BeforeCraftingExecuteCombination handler failed: " << lua_tostring(L, -1));
-			lua_pop(L, 1);
-			return false;
-		}
-
-		auto processed = get<bool>(L, -1);
-		lua_pop(L, 1);
-		if (processed) {
-			return processed;
-		} else {
-			return false;
-		}
-	}
-
-
-	void ServerState::OnAfterCraftingExecuteCombination(CraftingStationType craftingStation, ObjectSet<ComponentHandle> const& ingredients,
-		esv::Character* character, uint8_t quantity, FixedString const& combinationId, bool succeeded)
-	{
-		StackCheck _(L, 0);
-		PushInternalFunction(L, "_AfterCraftingExecuteCombination"); // stack: fn
-
-		ObjectProxy<esv::Character>::New(L, character);
-		push(L, craftingStation);
-
-		lua_newtable(L);
-		int32_t index = 1;
-		for (auto ingredientHandle : ingredients) {
-			auto ingredient = GetEntityWorld()->GetItem(ingredientHandle, false);
-			if (ingredient) {
-				push(L, index);
-				ObjectProxy<esv::Item>::New(L, ingredient);
-				lua_settable(L, -3);
-			}
-		}
-
-		push(L, quantity);
-		push(L, combinationId);
-		push(L, succeeded);
-
-		if (CallWithTraceback(L, 6, 0) != 0) { // stack: succeeded
-			LuaError("AfterCraftingExecuteCombination handler failed: " << lua_tostring(L, -1));
-			lua_pop(L, 1);
-		}
-	}
-
-
-	void ServerState::OnBeforeShootProjectile(ShootProjectileHelper* helper)
-	{
-		StackCheck _(L, 0);
-		PushInternalFunction(L, "_OnBeforeShootProjectile");
-		UnbindablePin _h(ObjectProxy<ShootProjectileHelper>::New(L, helper));
-
-		if (CallWithTraceback(L, 1, 0) != 0) {
-			LuaError("OnBeforeShootProjectile handler failed: " << lua_tostring(L, -1));
-			lua_pop(L, 1);
-		}
-	}
-
-
-	void ServerState::OnShootProjectile(Projectile* projectile)
-	{
-		StackCheck _(L, 0);
-		PushInternalFunction(L, "_OnShootProjectile");
-		UnbindablePin _p(ObjectProxy<esv::Projectile>::New(L, projectile));
-
-		if (CallWithTraceback(L, 1, 0) != 0) {
-			LuaError("OnShootProjectile handler failed: " << lua_tostring(L, -1));
-			lua_pop(L, 1);
-		}
-	}
-
-	void PushGameObject(lua_State* L, ComponentHandle handle)
-	{
-		if (!handle) {
-			push(L, nullptr);
-			return;
-		}
-
-		switch (handle.GetType()) {
-		case (uint32_t)ObjectType::ServerCharacter:
-			ObjectProxy<esv::Character>::New(L, handle);
-			break;
-
-		case (uint32_t)ObjectType::ServerItem:
-			ObjectProxy<esv::Item>::New(L, handle);
-			break;
-
-		case (uint32_t)ObjectType::ServerProjectile:
-			ObjectProxy<esv::Projectile>::New(L, handle);
-			break;
-
-		default:
-			push(L, nullptr);
-			LuaError("Don't know how to push handle of type " << handle.GetType());
-			break;
-		}
-	}
-
-
-	void ServerState::OnProjectileHit(Projectile* projectile, ComponentHandle const& hitObject, glm::vec3 const& position)
-	{
-		StackCheck _(L, 0);
-		PushExtFunction(L, "_OnProjectileHit");
-		UnbindablePin _p(ObjectProxy<esv::Projectile>::New(L, projectile));
-
-		PushGameObject(L, hitObject);
-		push(L, position);
-
-		if (CallWithTraceback(L, 3, 0) != 0) {
-			LuaError("OnProjectileHit handler failed: " << lua_tostring(L, -1));
-			lua_pop(L, 1);
-		}
-	}
-
-
-	void ServerState::OnExecutePropertyDataOnGroundHit(glm::vec3& position, ComponentHandle casterHandle, DamagePairList* damageList)
-	{
-		StackCheck _(L, 0);
-		PushExtFunction(L, "_OnGroundHit");
-
-		PushGameObject(L, casterHandle);
-		push(L, position);
-		auto dmgList = DamageList::New(L);
-		if (damageList) {
-			dmgList->Get().CopyFrom(*damageList);
-		}
-
-		if (CallWithTraceback(L, 3, 0) != 0) {
-			LuaError("GroundHit handler failed: " << lua_tostring(L, -1));
-			lua_pop(L, 1);
-		}
-	}
-
-
-	void ServerState::ExecutePropertyDataOnTarget(CRPGStats_Object_Property_Extender* prop, ComponentHandle attackerHandle,
-		ComponentHandle target, glm::vec3 const& impactOrigin, bool isFromItem, SkillPrototype * skillProto,
-		HitDamageInfo const* damageInfo)
-	{
-		StackCheck _(L, 0);
-		PushExtFunction(L, "_ExecutePropertyDataOnTarget");
-
-		LuaSerializer serializer(L, true);
-		auto propRef = static_cast<CDivinityStats_Object_Property_Data*>(prop);
-		SerializeObjectProperty(serializer, propRef);
-		PushGameObject(L, attackerHandle);
-		PushGameObject(L, target);
-		push(L, impactOrigin);
-		push(L, isFromItem);
-
-		if (skillProto) {
-			SkillPrototypeProxy::New(L, skillProto, -1);
-		} else {
-			push(L, nullptr);
-		}
-
-		if (damageInfo) {
-			PushHit(L, *damageInfo);
-		} else {
-			push(L, nullptr);
-		}
-
-		if (CallWithTraceback(L, 7, 0) != 0) {
-			LuaError("ExecutePropertyDataOnTarget handler failed: " << lua_tostring(L, -1));
-			lua_pop(L, 1);
-		}
-	}
-
-
-	void ServerState::ExecutePropertyDataOnPosition(CRPGStats_Object_Property_Extender* prop, ComponentHandle attackerHandle,
-		glm::vec3 const& position, float areaRadius, bool isFromItem, SkillPrototype * skillPrototype,
-		HitDamageInfo const* damageInfo)
-	{
-		StackCheck _(L, 0);
-		PushExtFunction(L, "_ExecutePropertyDataOnPosition");
-
-		LuaSerializer serializer(L, true);
-		auto propRef = static_cast<CDivinityStats_Object_Property_Data*>(prop);
-		SerializeObjectProperty(serializer, propRef);
-		PushGameObject(L, attackerHandle);
-		push(L, position);
-		push(L, areaRadius);
-		push(L, isFromItem);
-
-		if (skillPrototype) {
-			SkillPrototypeProxy::New(L, skillPrototype, -1);
-		} else {
-			push(L, nullptr);
-		}
-
-		if (damageInfo) {
-			PushHit(L, *damageInfo);
-		} else {
-			push(L, nullptr);
-		}
-
-		if (CallWithTraceback(L, 7, 0) != 0) {
-			LuaError("ExecutePropertyDataOnPosition handler failed: " << lua_tostring(L, -1));
-			lua_pop(L, 1);
-		}
-	}
-
-
-	bool ServerState::OnUpdateTurnOrder(esv::TurnManager * self, uint8_t combatId)
-	{
-		StackCheck _(L, 0);
-		Restriction restriction(*this, RestrictOsiris);
-
-		auto turnMgr = GetEntityWorld()->GetTurnManager();
-		if (!turnMgr) {
-			OsiErrorS("Couldn't fetch turn manager");
-			return false;
-		}
-
-		auto combat = turnMgr->Combats.Find(combatId);
-		if (combat == nullptr) {
-			OsiError("No combat found with ID " << (unsigned)combatId);
-			return false;
-		}
-
-		PushExtFunction(L, "_CalculateTurnOrder"); // stack: fn
-
-		TurnManagerCombatProxy::New(L, combatId); // stack: fn, combat
-		CombatTeamListToLua(L, combat->NextRoundTeams);
-
-		if (CallWithTraceback(L, 2, 1) != 0) { // stack: retval
-			LuaError("OnUpdateTurnOrder handler failed: " << lua_tostring(L, -1));
-			lua_pop(L, 1);
-			return false;
-		}
-
-		int isnil = lua_isnil(L, -1);
-
-		bool ok = false;
-		if (!isnil) {
-			try {
-				UpdateTurnOrder(L, combatId, -1, combat->NextRoundTeams, combat->NextTurnChangeNotificationTeamIds);
-				ok = true;
-			} catch (Exception &) {
-				OsiError("UpdateTurnOrder failed");
-			}
-		}
-
-		lua_pop(L, 1); // stack: -
-		return ok;
-	}*/
 
 
 	std::optional<STDString> ServerState::GetModPersistentVars(STDString const& modTable)
@@ -1134,9 +582,15 @@ namespace bg3se::esv::lua
 
 	void ServerState::OnGameSessionLoading()
 	{
-		identityAdapters_.UpdateAdapters();
+		osiris_.GetIdentityAdapterMap().UpdateAdapters();
 
 		State::OnGameSessionLoading();
+	}
+
+	void ServerState::StoryFunctionMappingsUpdated()
+	{
+		auto helpers = library_.GenerateOsiHelpers();
+		LoadScript(helpers, "bootstrapper");
 	}
 }
 
@@ -1146,6 +600,15 @@ namespace bg3se::esv
 	ExtensionState & ExtensionState::Get()
 	{
 		return gExtender->GetServer().GetExtensionState();
+	}
+
+	ExtensionState::ExtensionState()
+		: ExtensionStateBase(true)
+	{}
+
+	ExtensionState::~ExtensionState()
+	{
+		if (Lua) Lua->Shutdown();
 	}
 
 	lua::State * ExtensionState::GetLua()
@@ -1178,14 +641,18 @@ namespace bg3se::esv
 	void ExtensionState::Reset()
 	{
 		ExtensionStateBase::Reset();
-		//DamageHelpers.Clear();
 	}
 
 	void ExtensionState::DoLuaReset()
 	{
+		if (Lua) Lua->Shutdown();
 		Lua.reset();
+
+		context_ = nextContext_;
 		Lua = std::make_unique<lua::ServerState>(*this);
-		Lua->StoryFunctionMappingsUpdated();
+		LuaStatePin<ExtensionState, lua::ServerState> pin(*this);
+		pin->Initialize();
+		pin->StoryFunctionMappingsUpdated();
 	}
 
 	void ExtensionState::LuaStartup()
@@ -1193,18 +660,16 @@ namespace bg3se::esv
 		ExtensionStateBase::LuaStartup();
 
 		LuaServerPin lua(*this);
-		/*auto gameState = GetStaticSymbols().GetServerState();
+		auto gameState = GetStaticSymbols().GetServerState();
 		if (gameState
 			&& (*gameState == esv::GameState::LoadLevel
 				|| (*gameState == esv::GameState::LoadModule && WasStatLoadTriggered())
-				|| *gameState == esv::GameState::LoadGMCampaign
 				|| *gameState == esv::GameState::LoadSession
 				|| *gameState == esv::GameState::Sync
 				|| *gameState == esv::GameState::Paused
-				|| *gameState == esv::GameState::Running
-				|| *gameState == esv::GameState::GameMasterPause)) {
+				|| *gameState == esv::GameState::Running)) {
 			lua->OnModuleResume();
-		}*/
+		}
 	}
 
 	void ExtensionState::MarkPersistentStat(FixedString const& statId)
@@ -1298,7 +763,7 @@ namespace bg3se::esv
 		DEBUG("ExtensionStateServer::StoryLoaded()");
 		LuaServerPin lua(*this);
 		if (lua) {
-			lua->StoryLoaded();
+			lua->Osiris().StoryLoaded();
 		}
 	}
 
@@ -1314,7 +779,7 @@ namespace bg3se::esv
 	{
 		LuaServerPin lua(*this);
 		if (lua) {
-			lua->StorySetMerging(isMerging);
+			lua->Osiris().StorySetMerging(isMerging);
 		}
 	}
 }

@@ -9,7 +9,7 @@ namespace bg3se::lua::stats
 {
 	char const* const SpellPrototypeProxy::MetatableName = "eoc::SpellPrototype";
 
-	SpellPrototypeProxy::SpellPrototypeProxy(SpellPrototype* obj, std::optional<int> level, LifetimeHolder& lifetime)
+	SpellPrototypeProxy::SpellPrototypeProxy(SpellPrototype* obj, std::optional<int> level, LifetimeHandle& lifetime)
 		: obj_(obj), level_(level), lifetime_(lifetime)
 	{
 		stats_ = obj->GetStats();
@@ -17,7 +17,7 @@ namespace bg3se::lua::stats
 
 	int SpellPrototypeProxy::Index(lua_State* L)
 	{
-		if (!lifetime_.IsAlive() || stats_ == nullptr) {
+		if (!lifetime_.IsAlive(L) || stats_ == nullptr) {
 			return luaL_error(L, "Attempted to read property of null spell prototype");
 		}
 

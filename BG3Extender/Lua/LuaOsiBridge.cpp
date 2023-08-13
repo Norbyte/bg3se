@@ -1,19 +1,56 @@
 #include <stdafx.h>
 #include <Extender/ScriptExtender.h>
-#include "LuaBinding.h"
+#include <Lua/LuaBinding.h>
 #include <fstream>
-#include <regex>
 
 
 namespace bg3se::esv::lua
 {
 	using namespace bg3se::lua;
 
+	int64_t LuaToInt(lua_State* L, int i, int type)
+	{
+		if (type == LUA_TNUMBER) {
+#if LUA_VERSION_NUM > 501
+			if (lua_isinteger(L, i)) {
+				return (int64_t)lua_tointeger(L, i);
+			} else {
+				return (int64_t)lua_tonumber(L, i);
+			}
+#else
+			return (int64_t)lua_tonumber(L, i);
+#endif
+		} else if (type == LUA_TLIGHTUSERDATA) {
+			auto handle = get<ComponentHandle>(L, i);
+			return (int64_t)handle.Handle;
+		} else {
+			luaL_error(L, "Number expected for argument %d, got %s", i, lua_typename(L, type));
+		}
+
+		return 0;
+	}
+
+	char * LuaToString(lua_State* L, int i, int type, char* reuseString)
+	{
+		if (type == LUA_TSTRING) {
+			if (reuseString != nullptr) {
+				size_t len;
+				auto s = lua_tolstring(L, i, &len);
+				strncpy_s(reuseString, 0x100, s, len);
+				return reuseString;
+			} else {
+				// TODO - not sure if we're the owners of the string or the TypedValue is
+				return _strdup(lua_tostring(L, i));
+			}
+		} else {
+			luaL_error(L, "String expected for argument %d, got %s", i, lua_typename(L, type));
+		}
+
+		return nullptr;
+	}
+
 	void LuaToOsi(lua_State * L, int i, TypedValue & tv, ValueType osiType, bool allowNil)
 	{
-		auto typeMap = *gExtender->GetServer().Osiris().GetWrappers().Globals.Types;
-		auto typeId = typeMap->ResolveAlias((uint32_t)osiType);
-
 		tv.VMT = gExtender->GetServer().Osiris().GetGlobals().TypedValueVMT;
 		tv.TypeId = (uint32_t)osiType;
 
@@ -23,41 +60,13 @@ namespace bg3se::esv::lua
 			return;
 		}
 
-		switch ((ValueType)typeId) {
+		switch (osiType) {
 		case ValueType::Integer:
-			if (type == LUA_TNUMBER) {
-#if LUA_VERSION_NUM > 501
-				if (lua_isinteger(L, i)) {
-					tv.Value.Val.Int32 = (int32_t)lua_tointeger(L, i);
-				} else {
-					tv.Value.Val.Int32 = (int32_t)lua_tonumber(L, i);
-				}
-#else
-				tv.Value.Val.Int32 = (int32_t)lua_tonumber(L, i);
-#endif
-			} else if (type == LUA_TBOOLEAN) {
-				// Convert Lua booleans to 0/1 in Osiris
-				tv.Value.Val.Int32 = (int32_t)lua_toboolean(L, i);
-			} else {
-				luaL_error(L, "Number expected for argument %d, got %s", i, lua_typename(L, type));
-			}
-
+			tv.Value.Val.Int32 = (int32_t)LuaToInt(L, i, type);
 			break;
 
 		case ValueType::Integer64:
-			if (type == LUA_TNUMBER) {
-#if LUA_VERSION_NUM > 501
-				if (lua_isinteger(L, i)) {
-					tv.Value.Val.Int64 = (int64_t)lua_tointeger(L, i);
-				} else {
-					tv.Value.Val.Int64 = (int64_t)lua_tonumber(L, i);
-				}
-#else
-				tv.Value.Val.Int64 = (int64_t)lua_tonumber(L, i);
-#endif
-			} else {
-				luaL_error(L, "Number expected for argument %d, got %s", i, lua_typename(L, type));
-			}
+			tv.Value.Val.Int64 = (int64_t)LuaToInt(L, i, type);
 			break;
 
 		case ValueType::Real:
@@ -78,15 +87,7 @@ namespace bg3se::esv::lua
 
 		case ValueType::String:
 		case ValueType::GuidString:
-			if (type != LUA_TSTRING) {
-				luaL_error(L, "String expected for argument %d, got %s", i, lua_typename(L, type));
-			}
-
-			// TODO - not sure if we're the owners of the string or the TypedValue is
-			tv.Value.Val.String = _strdup(lua_tostring(L, i));
-			if (tv.Value.Val.String == nullptr) {
-				luaL_error(L, "Could not cast argument %d to string", i);
-			}
+			tv.Value.Val.String = LuaToString(L, i, type, nullptr);
 			break;
 
 		default:
@@ -102,11 +103,8 @@ namespace bg3se::esv::lua
 		return tv;
 	}
 
-	void LuaToOsi(lua_State * L, int i, OsiArgumentValue & arg, ValueType osiType, bool allowNil)
+	void LuaToOsi(lua_State * L, int i, OsiArgumentValue & arg, ValueType osiType, bool allowNil, bool reuseStrings)
 	{
-		auto typeMap = *gExtender->GetServer().Osiris().GetWrappers().Globals.Types;
-		auto typeId = typeMap->ResolveAlias((uint32_t)osiType);
-
 		arg.TypeId = osiType;
 		auto type = lua_type(L, i);
 		if (allowNil && type == LUA_TNIL) {
@@ -114,41 +112,13 @@ namespace bg3se::esv::lua
 			return;
 		}
 
-		switch ((ValueType)typeId) {
+		switch (osiType) {
 		case ValueType::Integer:
-			if (type == LUA_TNUMBER) {
-#if LUA_VERSION_NUM > 501
-				if (lua_isinteger(L, i)) {
-					arg.Int32 = (int32_t)lua_tointeger(L, i);
-				} else {
-					arg.Int32 = (int32_t)lua_tonumber(L, i);
-				}
-#else
-				arg.Int32 = (int32_t)lua_tonumber(L, i);
-#endif
-			} else if (type == LUA_TBOOLEAN) {
-				// Convert Lua booleans to 0/1 in Osiris
-				arg.Int32 = (int32_t)lua_toboolean(L, i);
-			} else {
-				luaL_error(L, "Number expected for argument %d, got %s", i, lua_typename(L, type));
-			}
+			arg.Int32 = (int32_t)LuaToInt(L, i, type);
 			break;
 
 		case ValueType::Integer64:
-			if (type == LUA_TNUMBER) {
-#if LUA_VERSION_NUM > 501
-				if (lua_isinteger(L, i)) {
-					arg.Int64 = (int64_t)lua_tointeger(L, i);
-				} else {
-					arg.Int64 = (int64_t)lua_tonumber(L, i);
-				}
-#else
-				arg.Int64 = (int64_t)lua_tonumber(L, i);
-#endif
-			} else {
-				luaL_error(L, "Number expected for argument %d, got %s", i, lua_typename(L, type));
-			}
-
+			arg.Int64 = (int64_t)LuaToInt(L, i, type);
 			break;
 
 		case ValueType::Real:
@@ -169,13 +139,10 @@ namespace bg3se::esv::lua
 
 		case ValueType::String:
 		case ValueType::GuidString:
-			if (type != LUA_TSTRING) {
-				luaL_error(L, "String expected for argument %d, got %s", i, lua_typename(L, type));
-			}
-
-			arg.String = lua_tostring(L, i);
-			if (arg.String == nullptr) {
-				luaL_error(L, "Could not cast argument %d to string", i);
+			if (reuseStrings) {
+				arg.String = LuaToString(L, i, type, const_cast<char*>(arg.String));
+			} else {
+				arg.String = LuaToString(L, i, type, nullptr);
 			}
 			break;
 
@@ -187,10 +154,7 @@ namespace bg3se::esv::lua
 
 	void OsiToLua(lua_State * L, OsiArgumentValue const & arg)
 	{
-		auto typeMap = *gExtender->GetServer().Osiris().GetWrappers().Globals.Types;
-		auto typeId = typeMap->ResolveAlias((uint32_t)arg.TypeId);
-
-		switch (typeId) {
+		switch (arg.TypeId) {
 		case ValueType::None:
 			lua_pushnil(L);
 			break;
@@ -220,10 +184,7 @@ namespace bg3se::esv::lua
 
 	void OsiToLua(lua_State * L, TypedValue const & tv)
 	{
-		auto typeMap = *gExtender->GetServer().Osiris().GetWrappers().Globals.Types;
-		auto typeId = typeMap->ResolveAlias((uint32_t)tv.TypeId);
-
-		switch (typeId) {
+		switch ((ValueType)tv.TypeId) {
 		case ValueType::None:
 			lua_pushnil(L);
 			break;
@@ -296,7 +257,7 @@ namespace bg3se::esv::lua
 			|| (func->Type == FunctionType::Database && func->Node.Get() && !func->Node.Get()->IsDataNode())) {
 
 			auto numArgs = func->Signature->Params->Params.Size;
-			auto adapter = state.GetIdentityAdapterMap().FindAdapter((uint8_t)numArgs);
+			auto adapter = state.Osiris().GetIdentityAdapterMap().FindAdapter((uint8_t)numArgs);
 			if (adapter == nullptr) {
 				OsiError("Couldn't bind query '" << func->Signature->Name 
 					<< "': No identity adapter found for arity " << numArgs);
@@ -436,15 +397,35 @@ namespace bg3se::esv::lua
 		return 0;
 	}
 
+	int OsiFunction::LuaDeferredNotification(lua_State * L)
+	{
+		if (function_ == nullptr) {
+			return luaL_error(L, "Attempted to call an unbound Osiris function");
+		}
+
+		int numArgs = lua_gettop(L);
+		if (numArgs < 1) {
+			return luaL_error(L, "Called Osi function without 'self' argument?");
+		}
+
+		if (state_->RestrictionFlags & State::RestrictOsiris) {
+			return luaL_error(L, "Attempted to call Osiris function in restricted context");
+		}
+
+		if (function_->Type == FunctionType::Event) {
+			OsiDeferredNotification(L);
+			return 0;
+		} else {
+			return luaL_error(L, "Cannot queue deferred events on function of type %d", function_->Type);
+		}
+	}
+
 	bool OsiFunction::MatchTuple(lua_State * L, int firstIndex, TupleVec const & tuple)
 	{
 		for (auto i = 0; i < tuple.Size; i++) {
 			if (!lua_isnil(L, firstIndex + i)) {
 				auto const & v = tuple.Values[i];
-				auto typeMap = *gExtender->GetServer().Osiris().GetWrappers().Globals.Types;
-				auto typeId = typeMap->ResolveAlias(v.TypeId);
-
-				switch ((ValueType)typeId) {
+				switch ((ValueType)v.TypeId) {
 				case ValueType::Integer:
 					if (v.Value.Val.Int32 != lua_tointeger(L, firstIndex + i)) {
 						return false;
@@ -472,7 +453,6 @@ namespace bg3se::esv::lua
 					break;
 				}
 
-				// TODO - is this still how GUIDSTRING alias comparison works in BG3?
 				case ValueType::GuidString:
 				{
 					auto str = lua_tostring(L, firstIndex + i);
@@ -515,7 +495,7 @@ namespace bg3se::esv::lua
 				function_->Signature->Name, funcArgs, numArgs - 1);
 		}
 
-		OsiArgumentListPin<OsiArgumentDesc> args(state_->GetArgumentDescPool(), (uint32_t)funcArgs);
+		OsiArgumentListPin<OsiArgumentDesc> args(state_->Osiris().GetArgumentDescPool(), (uint32_t)funcArgs);
 		auto argType = function_->Signature->Params->Params.Head->Next;
 		for (uint32_t i = 0; i < funcArgs; i++) {
 			auto arg = args.Args() + i;
@@ -527,6 +507,44 @@ namespace bg3se::esv::lua
 		}
 
 		gExtender->GetServer().Osiris().GetWrappers().Call.CallWithHooks(function_->GetHandle(), funcArgs == 0 ? nullptr : args.Args());
+	}
+
+	void OsiFunction::OsiDeferredNotification(lua_State * L)
+	{
+		/*auto funcArgs = function_->Signature->Params->Params.Size;
+		int numArgs = lua_gettop(L);
+		if (numArgs - 1 != funcArgs) {
+			luaL_error(L, "Incorrect number of arguments for '%s'; expected %d, got %d",
+				function_->Signature->Name, funcArgs, numArgs - 1);
+			return;
+		}
+
+		auto story = GetStaticSymbols().GetStoryImplementation();
+		if (story == nullptr || story->Manager == nullptr) {
+			luaL_error(L, "Called when Osiris is not yet initialized");
+			return;
+		}
+
+		auto key = function_->Key;
+		if (key[0] != 3 || key[1] != 0 || key[2] >= story->Manager->Functions.size() || key[3] != 1) {
+			luaL_error(L, "No engine function found with this Osiris function ID");
+		}
+
+		auto func = story->Manager->Functions[key[2]];
+		if (func->FunctionType != 3) {
+			luaL_error(L, "Attempted to defer notification on something that is not an event");
+		}
+
+		auto notification = static_cast<osi::OsirisNotification*>(func);
+
+		auto arg = notification->ArgumentDescs;
+		for (uint32_t i = 0; i < funcArgs; i++) {
+			LuaToOsi(L, i + 2, arg->Value, (ValueType)arg->Value.TypeId, false, true);
+			arg = arg->NextParam;
+		}
+
+		story->Manager->QueueNotification(notification);*/
+		OsiError("FIXME: OsiDeferredNotification not implemented yet!");
 	}
 
 	void OsiFunction::OsiInsert(lua_State * L, bool deleteTuple)
@@ -542,8 +560,8 @@ namespace bg3se::esv::lua
 			luaL_error(L, "Function has no node");
 		}
 
-		OsiArgumentListPin<TypedValue> tvs(state_->GetTypedValuePool(), (uint32_t)funcArgs);
-		OsiArgumentListPin<ListNode<TypedValue *>> nodes(state_->GetTypedValueNodePool(), (uint32_t)funcArgs + 1);
+		OsiArgumentListPin<TypedValue> tvs(state_->Osiris().GetTypedValuePool(), (uint32_t)funcArgs);
+		OsiArgumentListPin<ListNode<TypedValue *>> nodes(state_->Osiris().GetTypedValueNodePool(), (uint32_t)funcArgs + 1);
 
 		TuplePtrLL tuple;
 		auto & args = tuple.Items;
@@ -580,7 +598,7 @@ namespace bg3se::esv::lua
 				function_->Signature->Name, inParams, numArgs - 1);
 		}
 
-		OsiArgumentListPin<OsiArgumentDesc> args(state_->GetArgumentDescPool(), (uint32_t)numParams);
+		OsiArgumentListPin<OsiArgumentDesc> args(state_->Osiris().GetArgumentDescPool(), (uint32_t)numParams);
 		auto argType = function_->Signature->Params->Params.Head->Next;
 		uint32_t inputArg = 2;
 		for (uint32_t i = 0; i < numParams; i++) {
@@ -631,7 +649,7 @@ namespace bg3se::esv::lua
 				function_->Signature->Name, inParams, numArgs - 1);
 		}
 
-		OsiArgumentListPin<ListNode<TupleLL::Item>> nodes(state_->GetTupleNodePool(), (uint32_t)numParams + 1);
+		OsiArgumentListPin<ListNode<TupleLL::Item>> nodes(state_->Osiris().GetTupleNodePool(), (uint32_t)numParams + 1);
 
 		VirtTupleLL tuple;
 		
@@ -704,11 +722,14 @@ namespace bg3se::esv::lua
 		lua_pushcfunction(L, &LuaDelete);
 		lua_setfield(L, -2, "Delete");
 
+		lua_pushcfunction(L, &LuaDeferredNotification);
+		lua_setfield(L, -2, "Defer");
+
 		lua_setfield(L, -2, "__index");
 	}
 
 	OsiFunctionNameProxy::OsiFunctionNameProxy(STDString const & name, ServerState & state)
-		: name_(name), state_(state), generationId_(state_.GenerationId())
+		: name_(name), state_(state), generationId_(state_.Osiris().GenerationId())
 	{}
 
 	void OsiFunctionNameProxy::UnbindAll()
@@ -723,10 +744,10 @@ namespace bg3se::esv::lua
 			return false;
 		}
 
-		if (generationId_ != state_.GenerationId()) {
+		if (generationId_ != state_.Osiris().GenerationId()) {
 			// Clear cached functions if story was reloaded
 			UnbindAll();
-			generationId_ = state_.GenerationId();
+			generationId_ = state_.Osiris().GenerationId();
 		}
 
 		return true;
@@ -785,6 +806,22 @@ namespace bg3se::esv::lua
 		return func->LuaDelete(L);
 	}
 
+	int OsiFunctionNameProxy::LuaDeferredNotification(lua_State * L)
+	{
+		auto self = OsiFunctionNameProxy::CheckUserData(L, 1);
+		if (!self->BeforeCall(L)) return 1;
+
+		auto arity = (uint32_t)lua_gettop(L) - 1;
+
+		auto func = self->TryGetFunction(arity);
+		if (func == nullptr) {
+			return luaL_error(L, "No function named '%s' exists that can be called with %d parameters.",
+				self->name_.c_str(), arity);
+		}
+
+		return func->LuaDeferredNotification(L);
+	}
+
 	OsiFunction * OsiFunctionNameProxy::TryGetFunction(uint32_t arity)
 	{
 		if (functions_.size() > arity
@@ -826,19 +863,6 @@ namespace bg3se::esv::lua
 		}
 	}
 
-	ValueType StringToValueType(std::string_view s)
-	{
-		auto hash = FunctionNameHash(s.data());
-		auto types = *gExtender->GetServer().Osiris().GetWrappers().Globals.Types;
-		auto type = types->Find(hash, OsiString(s));
-		if (type) {
-			return (ValueType)type->TypeId;
-		} else {
-			OsiError("Unknown Osiris value type: " << s.data());
-			return ValueType::None;
-		}
-	}
-
 
 	bool CustomLuaCall::Call(OsiArgumentDesc const & params)
 	{
@@ -854,7 +878,7 @@ namespace bg3se::esv::lua
 
 		auto L = lua->GetState();
 		lua_checkstack(L, params.Count() + 1);
-		LifetimePin _(lua->GetStack());
+		LifetimeStackPin _(lua->GetStack());
 		handler_.Push();
 
 		auto param = &params;
@@ -910,7 +934,7 @@ namespace bg3se::esv::lua
 	{
 		auto L = GetState();
 		lua_checkstack(L, params.Count() + 1);
-		LifetimePin _(GetStack());
+		LifetimeStackPin _(GetStack());
 
 		auto stackSize = lua_gettop(L);
 		if (func) {
@@ -1067,7 +1091,7 @@ namespace bg3se::esv::lua
 	{
 		std::stringstream ss;
 
-		auto const & sigs = gExtender->GetServer().Osiris().GetCustomFunctionInjector().OsiSymbols();
+		auto const& sigs = gExtender->GetServer().Osiris().GetCustomFunctionInjector().OsiSymbols();
 		for (auto const & sig : sigs) {
 			if (sig.EoCFunctionId != 0 && sig.params.size() <= 16) {
 				ss << sig.name << " = Osi." << sig.name << "\r\n";
@@ -1075,142 +1099,5 @@ namespace bg3se::esv::lua
 		}
 
 		return STDString(ss.str());
-	}
-
-
-	const std::regex inOutParamRe("^\\s*(\\[(in|out)\\])?\\(([A-Z0-9]+)\\)(_[a-zA-Z0-9]+)\\s*$");
-	const std::regex inParamRe("^\\s*\\(([A-Z0-9]+)\\)(_[a-zA-Z0-9]+)\\s*$");
-
-	CustomFunctionParam ParseCustomFunctionParam(lua_State * L, STDString const & param, bool isQuery)
-	{
-		CustomFunctionParam parsed;
-
-		std::match_results<STDString::const_iterator> paramMatch;
-		if (!std::regex_match(param, paramMatch, isQuery ? inOutParamRe : inParamRe)) {
-			luaL_error(L, "Parameter string malformed: %s", param.c_str());
-		}
-
-		if (isQuery && paramMatch[2].matched) {
-			auto dir = paramMatch[2].str();
-			if (dir == "in") {
-				parsed.Dir = FunctionArgumentDirection::In;
-			} else if (dir == "out") {
-				parsed.Dir = FunctionArgumentDirection::Out;
-			} else {
-				luaL_error(L, "Invalid parameter direction: %s", dir.c_str());
-			}
-		} else {
-			parsed.Dir = FunctionArgumentDirection::In;
-		}
-
-		auto type = paramMatch[isQuery ? 3 : 1].str();
-		parsed.Type = StringToValueType(type);
-		if (parsed.Type == ValueType::None) {
-			luaL_error(L, "Unsupported parameter type: %s", type.c_str());
-		}
-
-		parsed.Name = paramMatch[isQuery ? 4 : 2].str().substr(1);
-		return parsed;
-	}
-
-	void ParseCustomFunctionParams(lua_State * L, char const * s, 
-		std::vector<CustomFunctionParam> & params, bool isQuery)
-	{
-		STDString param;
-		std::istringstream paramStream(s);
-
-		while (std::getline(paramStream, param, ',')) {
-			auto parsedParam = ParseCustomFunctionParam(L, param, isQuery);
-			params.push_back(parsedParam);
-		}
-	}
-
-	int NewCall(lua_State * L)
-	{
-		LuaServerPin lua(ExtensionState::Get());
-		if (!lua) return luaL_error(L, "Exiting");
-
-		if (lua->StartupDone()) return luaL_error(L, "Attempted to register call after Lua startup phase");
-
-		luaL_checktype(L, 1, LUA_TFUNCTION);
-		auto funcName = luaL_checkstring(L, 2);
-		auto args = luaL_checkstring(L, 3);
-
-		std::vector<CustomFunctionParam> argList;
-		ParseCustomFunctionParams(L, args, argList, false);
-
-		RegistryEntry func(L, 1);
-		auto call = std::make_unique<CustomLuaCall>(funcName, argList, std::move(func));
-
-		auto & functionMgr = gExtender->GetServer().Osiris().GetCustomFunctionManager();
-		functionMgr.RegisterDynamic(std::move(call));
-		
-		return 0;
-	}
-
-	int NewQuery(lua_State * L)
-	{
-		LuaServerPin lua(ExtensionState::Get());
-		if (!lua) return luaL_error(L, "Exiting");
-
-		if (lua->StartupDone()) return luaL_error(L, "Attempted to register query after Lua startup phase");
-
-		luaL_checktype(L, 1, LUA_TFUNCTION);
-		auto funcName = luaL_checkstring(L, 2);
-		auto args = luaL_checkstring(L, 3);
-
-		std::vector<CustomFunctionParam> argList;
-		ParseCustomFunctionParams(L, args, argList, true);
-
-		RegistryEntry func(L, 1);
-		auto query = std::make_unique<CustomLuaQuery>(funcName, argList, std::move(func));
-
-		auto & functionMgr = gExtender->GetServer().Osiris().GetCustomFunctionManager();
-		functionMgr.RegisterDynamic(std::move(query));
-
-		return 0;
-	}
-
-	int NewEvent(lua_State * L)
-	{
-		LuaServerPin lua(ExtensionState::Get());
-		if (!lua) return luaL_error(L, "Exiting");
-
-		if (lua->StartupDone()) return luaL_error(L, "Attempted to register event after Lua startup phase");
-
-		auto funcName = luaL_checkstring(L, 1);
-		auto args = luaL_checkstring(L, 2);
-
-		std::vector<CustomFunctionParam> argList;
-		ParseCustomFunctionParams(L, args, argList, false);
-
-		auto customEvt = std::make_unique<CustomEvent>(funcName, argList);
-
-		auto & functionMgr = gExtender->GetServer().Osiris().GetCustomFunctionManager();
-		functionMgr.RegisterDynamic(std::move(customEvt));
-
-		return 0;
-	}
-
-	void ServerState::StoryLoaded()
-	{
-		generationId_++;
-		identityAdapters_.UpdateAdapters();
-		if (!identityAdapters_.HasAllAdapters()) {
-			OsiWarn("Not all identity adapters are available - some queries may not work!");
-		}
-
-		osirisCallbacks_.StoryLoaded();
-	}
-
-	void ServerState::StoryFunctionMappingsUpdated()
-	{
-		auto helpers = library_.GenerateOsiHelpers();
-		LoadScript(helpers, "bootstrapper");
-	}
-
-	void ServerState::StorySetMerging(bool isMerging)
-	{
-		osirisCallbacks_.StorySetMerging(isMerging);
 	}
 }

@@ -15,6 +15,28 @@
 
 BEGIN_NS(lua)
 
+Lifetime* LifetimeHandle::GetLifetime(lua_State* L) const
+{
+	auto& pool = State::FromLua(L)->GetLifetimePool();
+	return pool.Get(*this);
+}
+
+LifetimeStackPin::LifetimeStackPin(lua_State* L)
+	: LifetimeStackPin(State::FromLua(L)->GetStack())
+{}
+
+StaticLifetimeStackPin::StaticLifetimeStackPin(lua_State* L, LifetimeHandle lifetime)
+	: StaticLifetimeStackPin(State::FromLua(L)->GetStack(), lifetime)
+{}
+
+LifetimeOwnerPin::LifetimeOwnerPin(lua_State* L)
+	: LifetimeOwnerPin(State::FromLua(L)->GetLifetimePool())
+{}
+
+LifetimeOwnerPin::LifetimeOwnerPin(lua_State* L, LifetimeHandle const& lifetime)
+	: LifetimeOwnerPin(State::FromLua(L)->GetLifetimePool(), lifetime)
+{}
+
 TValue* lua_index2addr(lua_State* L, int idx)
 {
 	CallInfo* ci = L->ci;
