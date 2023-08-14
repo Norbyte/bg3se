@@ -1,59 +1,14 @@
 #pragma once
 
-#include <memory>
-#include <optional>
-#include <vector>
+#include <GameDefinitions/EntitySystem.h>
+#include <GameDefinitions/Symbols.h>
+#include <GameHooks/SymbolMapper.h>
 
 #if defined(_DEBUG)
 #define HAS_DEBUG_LOGGING
 #endif
 
-enum class GameState : uint32_t
-{
-	Unknown = 0,
-	Init,
-	InitMenu,
-	InitNetwork,
-	InitConnection,
-	Idle,
-	LoadMenu,
-	Menu,
-	Exit,
-	SwapLevel,
-	LoadLevel = 10,
-	LoadModule,
-	LoadSession,
-	LoadGMCampaign,
-	UnloadLevel,
-	UnloadModule,
-	UnloadSession,
-	Paused,
-	PrepareRunning,
-	Running,
-	Disconnect = 20,
-	Join,
-	StartLoading,
-	StopLoading,
-	StartServer,
-	Movie,
-	Installation,
-	GameMasterPause,
-	ModReceiving,
-	Lobby = 30,
-	BuildStory
-};
-
-struct EoCClientState
-{
-	uint8_t Unkn[16];
-	GameState State;
-};
-
-struct eclEoCClient
-{
-	uint8_t Unkn[0x60];
-	EoCClientState ** State;
-};
+BEGIN_SE()
 
 struct THREADNAME_INFO
 {
@@ -62,7 +17,6 @@ struct THREADNAME_INFO
 	DWORD dwThreadID; // Thread ID (-1=caller thread).
 	DWORD dwFlags; // Reserved for future use, must be zero.
 };
-
 
 void DebugMsg(char const *);
 
@@ -77,17 +31,21 @@ void Debug(char const * fmt, Args... args)
 
 #if defined(HAS_DEBUG_LOGGING)
 #define DEBUG(msg, ...) Debug(__FUNCTION__ "(): " msg, __VA_ARGS__)
+#define ERR(msg, ...) Debug(__FUNCTION__ "(): " msg, __VA_ARGS__)
 #else
 #define DEBUG(msg, ...)
+#define ERR(msg, ...)
 #endif
 
-class ErrorUtils
+class GameHelpers
 {
 public:
-	ErrorUtils();
+	GameHelpers();
+
+	void Initialize();
 
 	void ShowError(char const * msg) const;
-	std::optional<GameState> GetState() const;
+	std::optional<ecl::GameState> GetState() const;
 
 	void SuspendClientThread() const;
 	void ResumeClientThread() const;
@@ -106,11 +64,10 @@ private:
 	std::size_t moduleSize_{ 0 };
 	std::vector<ThreadInfo> threads_;
 
-	eclEoCClient ** EoCClient{ nullptr };
-	EoCClient__HandleError EoCClientHandleError{ nullptr };
+	SymbolMappings mappings_;
+	SymbolMapper symbolMapper_;
+	SymbolMapper::ModuleInfo appModule_;
 
-	bool FindModule();
-	void FindErrorFuncs();
 	bool CanShowError() const;
 
 	bool ShowErrorDialog(char const * msg) const;
@@ -120,4 +77,8 @@ private:
 	static LONG NTAPI ThreadNameCaptureFilter(_EXCEPTION_POINTERS *ExceptionInfo);
 };
 
-extern std::unique_ptr<ErrorUtils> gErrorUtils;
+std::optional<std::string> GetExeResource(int resourceId);
+
+extern std::unique_ptr<GameHelpers> gGameHelpers;
+
+END_SE()

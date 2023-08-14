@@ -227,7 +227,7 @@ namespace bg3se
 		// Create a new entry in the string repository text pool
 		auto& texts = (*GetStaticSymbols().ls__gTranslatedStringRepository)->TranslatedStrings[0];
 		auto tskRef = texts->Texts.Find(ts.Handle);
-		auto str = new STDString(msg);
+		auto str = GameAlloc<STDString>(msg);
 		texts->Strings.Add(str);
 
 		// Update reference to new string

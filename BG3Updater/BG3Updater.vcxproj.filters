@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Crypto.cpp" />
+    <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="DWriteWrapper.cpp" />
+    <ClCompile Include="HttpFetcher.cpp" />
+    <ClCompile Include="Manifest.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="..\BG3Extender\Extender\Shared\tinyxml2.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="..\BG3Extender\GameDefinitions\Base\Base.cpp">
+      <Filter>GameDefinitions</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Crypto.h" />
+    <ClInclude Include="DWriteWrapper.h" />
+    <ClInclude Include="HttpFetcher.h" />
+    <ClInclude Include="Manifest.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="GameDefinitions\Symbols.h">
+      <Filter>GameDefinitions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\BG3Extender\Extender\Shared\tinyxml2.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resources.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Exports.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="GameDefinitions">
+      <UniqueIdentifier>{d6509763-f365-4ab2-807e-043927c87527}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared">
+      <UniqueIdentifier>{ac8aae2a-b48a-447c-b55a-ebf863fc8fb6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="UpdaterBinaryMappings.xml" />
+  </ItemGroup>
+</Project>

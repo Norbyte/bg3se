@@ -7,20 +7,24 @@
 #include <optional>
 #include "json/json.h"
 
+BEGIN_SE()
+
+struct UpdaterConfig;
+
 struct VersionNumber
 {
 	inline VersionNumber()
-		: Minor(0), Major(0), Revision(0), Build(0)
+		: Major(0), Minor(0), Revision(0), Build(0)
 	{}
 
-	inline VersionNumber(int32_t minor, int32_t major, int32_t revision, int32_t build)
-		: Minor(minor), Major(major), Revision(revision), Build(build)
+	inline VersionNumber(int32_t major, int32_t minor, int32_t revision, int32_t build)
+		: Major(major), Minor(minor), Revision(revision), Build(build)
 	{}
 
 	inline static std::optional<VersionNumber> FromString(char const* versionNumber)
 	{
 		VersionNumber ver;
-		if (sscanf_s(versionNumber, "%d.%d.%d.%d", &ver.Minor, &ver.Major, &ver.Revision, &ver.Build) == 4) {
+		if (sscanf_s(versionNumber, "%d.%d.%d.%d", &ver.Major, &ver.Minor, &ver.Revision, &ver.Build) == 4) {
 			return ver;
 		} else {
 			return {};
@@ -30,7 +34,7 @@ struct VersionNumber
 	inline std::string ToString() const
 	{
 		char ver[100];
-		sprintf_s(ver, "%d.%d.%d.%d", Minor, Major, Revision, Build);
+		sprintf_s(ver, "%d.%d.%d.%d", Major, Minor, Revision, Build);
 		return ver;
 	}
 
@@ -66,7 +70,7 @@ struct VersionNumber
 			|| Build != o.Build;
 	}
 
-	int32_t Minor, Major, Revision, Build;
+	int32_t Major, Minor, Revision, Build;
 };
 
 enum class ManifestParseResult
@@ -98,7 +102,10 @@ struct Manifest
 		std::string Name;
 		std::unordered_map<std::string, ResourceVersion> ResourceVersions;
 
-		std::optional<Manifest::ResourceVersion> FindResourceVersion(VersionNumber const& gameVersion) const;
+		std::optional<Manifest::ResourceVersion> FindResourceVersionWithOverrides(VersionNumber const& gameVersion,
+			UpdaterConfig const& config) const;
+		std::optional<Manifest::ResourceVersion> FindResourceVersion(VersionNumber const& gameVersion,
+			std::optional<VersionNumber> resourceVersion) const;
 	};
 
 	int32_t ManifestVersion;
@@ -120,3 +127,5 @@ private:
 
 std::optional<VersionNumber> GetFileVersion(std::wstring const& path);
 std::optional<std::string> GetFileDigest(std::wstring const& path);
+
+END_SE()

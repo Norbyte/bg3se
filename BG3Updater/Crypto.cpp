@@ -1,11 +1,11 @@
-#include "stdafx.h"
+#include <stdafx.h>
 
 #include "Crypto.h"
-
-#include <vector>
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+
+BEGIN_SE()
 
 static uint8_t UpdaterPublicKey[2 * NUM_ECC_BYTES] = { 
 	0x50, 0x54, 0x01, 0xc8, 0xba, 0xc2, 0xbd, 0xd9, 0xcb, 0xbd, 0x34, 0xd7, 0x7d, 0xe1, 0xdb, 0x53, 
@@ -137,3 +137,5 @@ bool CryptoUtils::VerifySignedFile(std::wstring const& zipPath, std::string& rea
 
 	return true;
 }
+
+END_SE()

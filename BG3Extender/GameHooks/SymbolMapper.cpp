@@ -1,6 +1,5 @@
 #include <stdafx.h>
 #include <GameHooks/SymbolMapper.h>
-#include <Extender/Shared/ExtensionState.h>
 #include <GameDefinitions/Symbols.h>
 #include <string>
 #include <functional>

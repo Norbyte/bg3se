@@ -4,6 +4,8 @@
 #include <string>
 #include <curl/curl.h>
 
+BEGIN_SE()
+
 class HttpFetcher
 {
 public:
@@ -31,3 +33,5 @@ private:
 	void LogError(CURL* curl, CURLcode result);
 	static size_t WriteFunc(char* contents, size_t size, size_t nmemb, HttpFetcher* self);
 };
+
+END_SE()

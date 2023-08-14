@@ -1,8 +1,8 @@
 #pragma once
 
-#include <GameHooks/Wrappers.h>
 #include <optional>
 #include <unordered_set>
+#include <functional>
 
 namespace tinyxml2 {
 	class XMLDocument;

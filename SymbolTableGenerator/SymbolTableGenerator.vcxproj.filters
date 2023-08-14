@@ -13,31 +13,10 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\Base">
-      <UniqueIdentifier>{8f0ce232-e05e-4afb-b2ec-183b0c3fddbe}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="UpdateSigner.cpp">
+    <ClCompile Include="SymbolTableGenerator.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\BG3Updater\Crypto.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\BG3Updater\Utils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\BG3Updater\Manifest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\BG3Extender\GameDefinitions\Base\Base.cpp">
-      <Filter>Source Files\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="..\BG3Extender\GameHooks\SymbolMapper.cpp">
-      <Filter>Source Files\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="..\BG3Extender\Extender\Shared\tinyxml2.cpp">
-      <Filter>Source Files\Base</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

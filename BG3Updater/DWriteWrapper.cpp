@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "DWriteWrapper.h"
-#include "ErrorUtils.h"
+#include "GameHelpers.h"
+
+BEGIN_SE()
 
 std::unique_ptr<DWriteWrapper> gDWriteWrapper;
 
@@ -37,10 +39,12 @@ HRESULT DWriteWrapper::DWriteCreateFactory(DWRITE_FACTORY_TYPE factoryType, REFI
 	return CreateFactory(factoryType, iid, factory);
 }
 
+END_SE()
+
 extern "C"
 {
 	HRESULT WINAPI WrappedDWriteCreateFactory(DWRITE_FACTORY_TYPE factoryType, REFIID iid, IUnknown** factory)
 	{
-		return gDWriteWrapper->DWriteCreateFactory(factoryType, iid, factory);
+		return bg3se::gDWriteWrapper->DWriteCreateFactory(factoryType, iid, factory);
 	}
 }

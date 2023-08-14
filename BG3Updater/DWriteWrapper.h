@@ -3,6 +3,8 @@
 #include <dwrite.h>
 #include <memory>
 
+BEGIN_SE()
+
 class DWriteWrapper
 {
 public:
@@ -19,3 +21,5 @@ private:
 };
 
 extern std::unique_ptr<DWriteWrapper> gDWriteWrapper;
+
+END_SE()

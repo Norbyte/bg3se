@@ -13,7 +13,15 @@
 #include <windows.h>
 
 #include <string>
+#include <memory>
+#include <optional>
+#include <sstream>
 #include <vector>
+
+#include <GameDefinitions/Base/Base.h>
+#include <GameDefinitions/Enumerations.h>
+
+BEGIN_SE()
 
 [[noreturn]]
 void Fail(char const * reason);
@@ -32,7 +40,18 @@ struct UpdaterConfig
 	std::string ManifestURL;
 	std::string ManifestName;
 	std::string UpdateChannel;
+	std::string TargetVersion;
+	std::string TargetResourceDigest;
 	std::wstring CachePath;
 	bool Debug;
 	bool ValidateSignature;
+	bool DisableUpdates;
 };
+
+#define OsiError(msg) (void)0
+
+extern HMODULE gThisModule;
+
+END_SE()
+
+#include <GameHelpers.h>

@@ -81,8 +81,6 @@ namespace NSE.DebuggerFrontend
         private AsyncProtobufClient DbgClient;
         public DebuggerClient DbgCli;
         private DAPCustomConfiguration Config;
-        // Is the backend debugger initialized? (i.e. did we leave the configuration phase?)
-        private bool Initialized = false;
         private ThreadState ServerState;
         private ThreadState ClientState;
         private List<ModuleInfo> Modules;
@@ -369,7 +367,6 @@ namespace NSE.DebuggerFrontend
             DbgCli.SendUpdateSettings(Config.breakOnError, Config.breakOnGenericError);
 
             SendOutput("console", "Debugger backend ready\r\n");
-            Initialized = true;
 
             var initializedEvt = new DAPInitializedEvent();
             Stream.SendEvent("initialized", initializedEvt);

@@ -308,6 +308,9 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <None Include="Extender\Shared\ScriptExtensions.proto" />
     <None Include="Extender\Shared\StatLoadOrderHelper.inl" />
     <None Include="Extender\Shared\ThreadedExtenderState.inl" />
+    <None Include="GameDefinitions\Base\BaseMap.inl" />
+    <None Include="GameDefinitions\Base\BaseMemory.inl" />
+    <None Include="GameDefinitions\Base\BaseString.inl" />
     <None Include="GameDefinitions\Components\AllComponentTypes.inl" />
     <None Include="GameDefinitions\Enumerations.inl" />
     <None Include="GameDefinitions\GlobalFixedStrings.inl" />

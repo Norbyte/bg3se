@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 
 #include <tinycrypt/constants.h>
 #include <tinycrypt/ecc.h>
@@ -7,9 +6,10 @@
 #include <tinycrypt/ecc_dsa.h>
 #include <tinycrypt/sha256.h>
 
-#include <vector>
 #include <iostream>
 #include <fstream>
+
+BEGIN_SE()
 
 #pragma pack(push, 1)
 struct PackageSignature
@@ -37,3 +37,4 @@ public:
 	static bool VerifySignedFile(std::wstring const& zipPath, std::string& reason);
 };
 
+END_SE()

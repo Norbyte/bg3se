@@ -352,3 +352,4 @@ publish.bat
 publish-release.bat
 package-signer.key
 TestModule/Mods/BG3Ext_Testsuite/.vscode/settings.json
+*.symtab

@@ -1,10 +1,22 @@
-#include "stdafx.h"
-#include "ErrorUtils.h"
+#include <stdafx.h>
+#include "GameHelpers.h"
+#include <GameDefinitions/Symbols.h>
 
 #include <atlbase.h>
 #include <psapi.h>
 #include <iostream>
 #include <fstream>
+
+std::wstring FromStdUTF8(std::string_view s)
+{
+	int size = MultiByteToWideChar(CP_UTF8, 0, s.data(), (int)s.size(), NULL, 0);
+	std::wstring converted;
+	converted.resize(size);
+	MultiByteToWideChar(CP_UTF8, 0, s.data(), (int)s.size(), converted.data(), (int)converted.size());
+	return converted;
+}
+
+BEGIN_SE()
 
 void DebugMsg(char const * msg)
 {
@@ -14,57 +26,101 @@ void DebugMsg(char const * msg)
 	std::cout.flush();
 }
 
-uint8_t const * AsmCallToAbsoluteAddress(uint8_t const * call)
+std::optional<std::string> GetExeResource(int resourceId)
 {
-	if (call[0] != 0xE8 && call[0] != 0xE9) {
-		return nullptr;
+	auto hResource = FindResource(gThisModule, MAKEINTRESOURCE(resourceId), L"SCRIPT_EXTENDER");
+
+	if (hResource) {
+		auto hGlobal = LoadResource(gThisModule, hResource);
+		if (hGlobal) {
+			auto resourceData = LockResource(hGlobal);
+			if (resourceData) {
+				DWORD resourceSize = SizeofResource(gThisModule, hResource);
+				std::string contents;
+				contents.resize(resourceSize);
+				memcpy(contents.data(), resourceData, resourceSize);
+				return contents;
+			}
+		}
 	}
 
-	int32_t rel = *(int32_t const *)(call + 1);
-	return call + rel + 5;
+	ERR("Could not get bootstrap resource %d!", resourceId);
+	return {};
 }
 
-uint8_t const * AsmLeaToAbsoluteAddress(uint8_t const * lea)
-{
-	if ((lea[0] != 0x48 && lea[0] != 0x4C) || (lea[1] != 0x8D && lea[1] != 0x8B)) {
-		return nullptr;
-	}
+StaticSymbols* gStaticSymbols{ nullptr };
 
-	int32_t rel = *(int32_t const *)(lea + 3);
-	return lea + rel + 7;
+void InitStaticSymbols()
+{
+	gStaticSymbols = new StaticSymbols();
 }
 
-std::unique_ptr<ErrorUtils> gErrorUtils;
+std::unique_ptr<GameHelpers> gGameHelpers;
 
-ErrorUtils::ErrorUtils()
+GameHelpers::GameHelpers()
+	: symbolMapper_(mappings_)
 {
-	if (FindModule()) {
-		FindErrorFuncs();
+	InitStaticSymbols();
+}
+
+#define SYM_OFF(name) mappings_.StaticSymbols.insert(std::make_pair(#name, SymbolMappings::StaticSymbol{ (int)offsetof(StaticSymbols, name) }))
+
+void GameHelpers::Initialize()
+{
+	SymbolMappingLoader loader(mappings_);
+	loader.AddKnownModule("Main");
+
+	SYM_OFF(ls__GlobalAllocator__Alloc);
+	SYM_OFF(ls__GlobalAllocator__Free);
+
+	SYM_OFF(ls__FixedString__CreateFromString);
+	SYM_OFF(ls__FixedString__GetString);
+	SYM_OFF(ls__FixedString__IncRef);
+	SYM_OFF(ls__FixedString__DecRef);
+	SYM_OFF(ls__gGlobalStringTable);
+
+	SYM_OFF(ecl__EoCClient);
+	SYM_OFF(ecl__EoCClient__HandleError);
+	SYM_OFF(ls__gTranslatedStringRepository);
+
+	if (loader.LoadBuiltinMappings()) {
+		if (GetModuleHandleW(L"bg3.exe") != NULL) {
+			symbolMapper_.AddModule("Main", L"bg3.exe");
+		} else {
+			symbolMapper_.AddModule("Main", L"bg3_dx11.exe");
+		}
+
+		symbolMapper_.MapAllSymbols(false);
 		AddVectoredExceptionHandler(1, &ThreadNameCaptureFilter);
 	}
 }
 
-void ErrorUtils::ShowError(char const * msg) const
+void GameHelpers::ShowError(char const * msg) const
 {
 	if (!ShowErrorDialog(msg)) {
 		MessageBoxA(NULL, msg, "Script Extender Updater Error", MB_OK | MB_ICONERROR);
 	}
 }
 
-bool ErrorUtils::ShowErrorDialog(char const * msg) const
+bool GameHelpers::ShowErrorDialog(char const * msg) const
 {
-	if (EoCClient == nullptr
-		|| EoCClientHandleError == nullptr) {
+	auto client = GetStaticSymbols().GetEoCClient();
+	if (client == nullptr
+		|| GetStaticSymbols().ecl__EoCClient__HandleError == nullptr
+		|| GetStaticSymbols().ls__GlobalAllocator__Alloc == nullptr
+		|| GetStaticSymbols().ls__GlobalAllocator__Free == nullptr
+		|| GetStaticSymbols().ls__FixedString__CreateFromString == nullptr
+		|| GetStaticSymbols().ls__gTranslatedStringRepository == nullptr) {
 		return false;
 	}
 
 	unsigned retries{ 0 };
-	while (!CanShowError() && retries < 600) {
+	while (!CanShowError() && retries < 3000) {
 		Sleep(100);
 		retries++;
 	}
 
-	if (retries >= 600) {
+	if (retries >= 3000) {
 		return false;
 	}
 
@@ -72,93 +128,47 @@ bool ErrorUtils::ShowErrorDialog(char const * msg) const
 	return true;
 }
 
-void ErrorUtils::ClientHandleError(char const * msg, bool exitGame) const
+void GameHelpers::ClientHandleError(char const * msg, bool exitGame) const
 {
-	if (EoCClientHandleError == nullptr) return;
-
 	std::string filtered(msg);
 	for (auto pos = filtered.find("\r\n"); pos != std::wstring::npos; pos = filtered.find("\r\n")) {
 		filtered.replace(filtered.begin() + pos, filtered.begin() + pos + 2, "<br>");
 	}
 
-	EoCClientHandleError(*EoCClient, filtered, exitGame, filtered);
+	// Abuse a deprecated string key for displaying custom text
+	TranslatedString ts;
+	ts.Handle.Handle = FixedString("h11018635g3003g46c6g8013g4630abe55cad");
+	ts.Handle.Version = 1;
+	ts.ArgumentString.Handle = FixedString("ls::TranslatedStringRepository::s_HandleUnknown");
+
+	// Create a new entry in the string repository text pool
+	auto& texts = (*GetStaticSymbols().ls__gTranslatedStringRepository)->TranslatedStrings[0];
+	auto tskRef = texts->Texts.Find(ts.Handle);
+	auto str = GameAlloc<STDString>(msg);
+	texts->Strings.Add(str);
+
+	// Update reference to new string
+	**tskRef = StringView(*str);
+
+	GetStaticSymbols().ecl__EoCClient__HandleError(*GetStaticSymbols().ecl__EoCClient, ts, exitGame, ts);
 }
 
-bool ErrorUtils::CanShowError() const
+bool GameHelpers::CanShowError() const
 {
 	auto state = GetState();
 	return state
-		&& (*state == GameState::Running
-		|| *state == GameState::Paused
-		|| *state == GameState::GameMasterPause
-		|| *state == GameState::Menu
-		|| *state == GameState::Lobby);
+		&& (*state == ecl::GameState::Running
+		|| *state == ecl::GameState::Paused
+		|| *state == ecl::GameState::Menu
+		|| *state == ecl::GameState::Lobby);
 }
 
-std::optional<GameState> ErrorUtils::GetState() const
+std::optional<ecl::GameState> GameHelpers::GetState() const
 {
-	if (EoCClient == nullptr
-		|| *EoCClient == nullptr
-		|| (*EoCClient)->State == nullptr
-		|| *(*EoCClient)->State == nullptr
-		|| EoCClientHandleError == nullptr) {
-		return {};
-	}
-
-	return (*(*EoCClient)->State)->State;
+	return GetStaticSymbols().GetClientState();
 }
 
-bool ErrorUtils::FindModule()
-{
-	eocApp_ = GetModuleHandleW(L"bg3.exe");
-	if (eocApp_ == NULL) {
-		eocApp_ = GetModuleHandleW(L"bg3_dx11.exe");
-	}
-	if (eocApp_ == NULL) {
-		return false;
-	}
-
-	MODULEINFO moduleInfo;
-	if (!GetModuleInformation(GetCurrentProcess(), eocApp_, &moduleInfo, sizeof(moduleInfo))) {
-		return false;
-	}
-
-	moduleStart_ = (uint8_t const *)moduleInfo.lpBaseOfDll;
-	moduleSize_ = moduleInfo.SizeOfImage;
-	return true;
-}
-
-void ErrorUtils::FindErrorFuncs()
-{
-	uint8_t const fragment1[] = { 
-		0x90, // nop 
-		0x45, 0x33, 0xC0, // xor     r8d, r8d
-		0x33, 0xD2, // xor     edx, edx
-		0x48, 0x8D, 0x4C, 0x24, 0x28, // lea     rcx, [rsp+78h+var_50]
-		0xE8 // call    ls__TranslatedString__GetTranslatedString
-	};
-
-	uint8_t const fragment2[] = {
-		0x4C, 0x8D, 0x4C, 0x24, 0x38, // lea     r9, [rsp+78h+a1]
-		0x45, 0x33, 0xC0, // xor     r8d, r8d
-		0x48, 0x8B, 0xD0, // mov     rdx, rax
-		0x48, 0x8B, 0xCB, // mov     rcx, rbx
-		0xE8 // call    ecl__EocClient__HandleError
-	};
-
-	auto moduleEnd = moduleStart_ + moduleSize_;
-	for (auto p = moduleStart_; p < moduleEnd; p++) {
-		if (*p == 0x90 && p[1] == 0x45 && p[2] == 0x33
-			&& memcmp(p, fragment1, sizeof(fragment1)) == 0
-			&& memcmp(p + 0x10, fragment2, sizeof(fragment2)) == 0) {
-			EoCClient = (eclEoCClient **)AsmLeaToAbsoluteAddress(p - 0x18);
-			EoCClientHandleError = (EoCClient__HandleError)AsmCallToAbsoluteAddress(p + 0x1E);
-			break;
-		}
-	}
-}
-
-void ErrorUtils::SuspendClientThread() const
+void GameHelpers::SuspendClientThread() const
 {
 	auto thread = FindClientThread();
 	if (thread != nullptr) {
@@ -174,7 +184,7 @@ void ErrorUtils::SuspendClientThread() const
 	}
 }
 
-void ErrorUtils::ResumeClientThread() const
+void GameHelpers::ResumeClientThread() const
 {
 	auto thread = FindClientThread();
 	if (thread != nullptr) {
@@ -188,7 +198,7 @@ void ErrorUtils::ResumeClientThread() const
 	}
 }
 
-ErrorUtils::ThreadInfo const * ErrorUtils::FindClientThread() const
+GameHelpers::ThreadInfo const * GameHelpers::FindClientThread() const
 {
 	for (auto const & it : threads_) {
 		if (it.Name == "ClientInit" || it.Name == "ClientLoadModule") {
@@ -199,7 +209,7 @@ ErrorUtils::ThreadInfo const * ErrorUtils::FindClientThread() const
 	return nullptr;
 }
 
-LONG NTAPI ErrorUtils::ThreadNameCaptureFilter(_EXCEPTION_POINTERS *ExceptionInfo)
+LONG NTAPI GameHelpers::ThreadNameCaptureFilter(_EXCEPTION_POINTERS *ExceptionInfo)
 {
 	if (ExceptionInfo->ExceptionRecord->ExceptionCode == 0x406D1388) {
 		auto info = reinterpret_cast<THREADNAME_INFO *>(&ExceptionInfo->ExceptionRecord->ExceptionInformation);
@@ -207,7 +217,7 @@ LONG NTAPI ErrorUtils::ThreadNameCaptureFilter(_EXCEPTION_POINTERS *ExceptionInf
 			ThreadInfo thread;
 			thread.ThreadId = info->dwThreadID;
 			thread.Name = info->szName;
-			gErrorUtils->threads_.push_back(thread);
+			gGameHelpers->threads_.push_back(thread);
 		}
 	}
 
@@ -308,3 +318,5 @@ bool LoadFile(std::wstring const& path, std::string& body)
 
 	return false;
 }
+
+END_SE()

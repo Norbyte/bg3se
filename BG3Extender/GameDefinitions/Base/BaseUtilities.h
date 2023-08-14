@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <cassert>
 
 #define BEGIN_SE() namespace bg3se {
 #define END_SE() }

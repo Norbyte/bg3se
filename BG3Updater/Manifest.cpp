@@ -1,6 +1,8 @@
-#include "stdafx.h"
+#include <stdafx.h>
 #include "Manifest.h"
 #include "Crypto.h"
+
+BEGIN_SE()
 
 std::optional<VersionNumber> GetFileVersion(std::wstring const& path)
 {
@@ -88,13 +90,37 @@ bool Manifest::ResourceVersion::UpdateDLLMetadata(std::wstring const& path)
 	return true;
 }
 
-std::optional<Manifest::ResourceVersion> Manifest::Resource::FindResourceVersion(VersionNumber const& gameVersion) const
+
+std::optional<Manifest::ResourceVersion> Manifest::Resource::FindResourceVersionWithOverrides(VersionNumber const& gameVersion,
+	UpdaterConfig const& config) const
+{
+	std::optional<Manifest::ResourceVersion> version;
+	if (!config.TargetResourceDigest.empty()) {
+		auto found = ResourceVersions.find(config.TargetResourceDigest);
+		if (found != ResourceVersions.end()) {
+			return found->second;
+		} else {
+			return {};
+		}
+	}
+
+	if (!config.TargetVersion.empty()) {
+		auto resourceVersion = VersionNumber::FromString(config.TargetVersion.c_str());
+		return FindResourceVersion(gameVersion, resourceVersion);
+	}
+
+	return FindResourceVersion(gameVersion, {});
+}
+
+std::optional<Manifest::ResourceVersion> Manifest::Resource::FindResourceVersion(VersionNumber const& gameVersion,
+	std::optional<VersionNumber> resourceVersion) const
 {
 	std::vector<ResourceVersion> availableVersions;
 	for (auto const& ver : ResourceVersions) {
 		if (!ver.second.Revoked
-			&& !(ver.second.MinGameVersion && ver.second.MinGameVersion > gameVersion)
-			&& !(ver.second.MaxGameVersion && ver.second.MaxGameVersion < gameVersion)) {
+			&& (!resourceVersion || ver.second.Version == *resourceVersion)
+			&& !(ver.second.MinGameVersion && *ver.second.MinGameVersion > gameVersion)
+			&& !(ver.second.MaxGameVersion && *ver.second.MaxGameVersion < gameVersion)) {
 			availableVersions.push_back(ver.second);
 		}
 	}
@@ -289,3 +315,5 @@ std::string ManifestSerializer::Stringify(Manifest& manifest)
 	writer->write(root, &os);
 	return os.str();
 }
+
+END_SE()

@@ -1,6 +1,11 @@
 #include <stdafx.h>
 #include <GameDefinitions/Base/Base.h>
+#include <GameDefinitions/Symbols.h>
 #include <combaseapi.h>
+
+#include <GameDefinitions/Base/BaseMemory.inl>
+#include <GameDefinitions/Base/BaseString.inl>
+#include <GameDefinitions/Base/BaseMap.inl>
 
 BEGIN_SE()
 

@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "HttpFetcher.h"
-#include "ErrorUtils.h"
-#include <sstream>
+#include "GameHelpers.h"
 #include <iomanip>
 
+BEGIN_SE()
 
 HttpFetcher::HttpFetcher()
 {}
@@ -20,7 +20,7 @@ void HttpFetcher::LogError(CURL* curl, CURLcode result)
 		curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &lastHttpCode_);
 		ss << "HTTP error " << lastHttpCode_;
 	} else {
-		ss << "(" << result << ") " << curl_easy_strerror(result);
+		ss << "(" << (long)result << ") " << curl_easy_strerror(result);
 	}
 
 	lastError_ = ss.str();
@@ -58,3 +58,4 @@ size_t HttpFetcher::WriteFunc(char* contents, size_t size, size_t nmemb, HttpFet
 	return size * nmemb;
 }
 
+END_SE()

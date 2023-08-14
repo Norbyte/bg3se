@@ -627,6 +627,15 @@
     <None Include="LuaScripts\Libs\Event.lua">
       <Filter>LuaScripts\Libs</Filter>
     </None>
+    <None Include="GameDefinitions\Base\BaseString.inl">
+      <Filter>GameDefinitions\Base</Filter>
+    </None>
+    <None Include="GameDefinitions\Base\BaseMemory.inl">
+      <Filter>GameDefinitions\Base</Filter>
+    </None>
+    <None Include="GameDefinitions\Base\BaseMap.inl">
+      <Filter>GameDefinitions\Base</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

@@ -2,38 +2,41 @@
 
 #include "DWriteWrapper.h"
 #include "HttpFetcher.h"
-#include "ErrorUtils.h"
+#include "GameHelpers.h"
 #include "Crypto.h"
 #include <ZipLib/ZipArchive.h>
 #include <ZipLib/ZipFile.h>
 #include "json/json.h"
 #include "Manifest.h"
+#include <GameDefinitions/Symbols.h>
 
 #include <Shlwapi.h>
 #include <Shlobj.h>
 
-#include <vector>
 #include <thread>
-#include <string>
 #include <iostream>
 #include <fstream>
-#include <sstream>
 #include <iomanip>
 #include <unordered_map>
 
-#define UPDATER_MANIFEST_URL "https://dzh4fh4qphx4q.cloudfront.net/Channels/"
-#define UPDATER_MANIFEST_NAME "Manifest2.json"
+#define UPDATER_MANIFEST_URL "https://d3u76crhadhyzl.cloudfront.net/Channels/"
+#define UPDATER_MANIFEST_NAME "Manifest.json"
 #define UPDATER_CHANNEL "Release"
-#define APP_DLL L"BG3ScriptExtender.dll"
+#define UPDATER_CHANNEL_GAME ""
+#define UPDATER_CHANNEL_EDITOR "Editor"
+#define GAME_DLL L"BG3ScriptExtender.dll"
+#define EDITOR_DLL L"BG3EditorScriptExtender.dll"
 
 extern "C" {
 
 int default_CSPRNG(uint8_t* dest, unsigned int size)
 {
-	Fail("Signature verifier should not call CSPRNG");
+	bg3se::Fail("Signature verifier should not call CSPRNG");
 }
 
 }
+
+BEGIN_SE()
 
 enum class ErrorCategory
 {
@@ -72,6 +75,13 @@ HMODULE GetExeHandle()
 	}
 
 	return hGameModule;
+}
+
+bool IsInEditor()
+{
+	// FIXME - editor not released yet!
+	return false;
+	// return GetModuleHandleW(L"DivinityEngine2.exe") != NULL;
 }
 
 std::optional<VersionNumber> GetGameVersion()
@@ -154,6 +164,7 @@ void LoadConfigFile(std::wstring const& configPath, UpdaterConfig& config)
 	config.Debug = false;
 #endif
 	config.ValidateSignature = true;
+	config.DisableUpdates = false;
 
 	std::ifstream f(configPath, std::ios::in);
 	if (!f.good()) {
@@ -174,11 +185,14 @@ void LoadConfigFile(std::wstring const& configPath, UpdaterConfig& config)
 	ConfigGetString(root, "ManifestURL", config.ManifestURL);
 	ConfigGetString(root, "ManifestName", config.ManifestName);
 	ConfigGetString(root, "UpdateChannel", config.UpdateChannel);
+	ConfigGetString(root, "TargetVersion", config.TargetVersion);
+	ConfigGetString(root, "TargetResourceDigest", config.TargetResourceDigest);
 	ConfigGetString(root, "CachePath", config.CachePath);
 #if defined(HAS_DEBUG_LOGGING)
 	ConfigGetBool(root, "Debug", config.Debug);
 	ConfigGetBool(root, "ValidateSignature", config.ValidateSignature);
 #endif
+	ConfigGetBool(root, "DisableUpdates", config.DisableUpdates);
 }
 
 std::string trim(std::string const & s)
@@ -271,6 +285,7 @@ public:
 			return true;
 		} else {
 			DEBUG("Unzipping failed: %s", reason.c_str());
+			DeleteFileW(packagePath.c_str());
 			return false;
 		}
 	}
@@ -286,9 +301,18 @@ public:
 		return ok;
 	}
 
+	std::wstring GetAppDllPath()
+	{
+		if (IsInEditor()) {
+			return GetLocalPath() + L"\\" + EDITOR_DLL;
+		} else {
+			return GetLocalPath() + L"\\" + GAME_DLL;
+		}
+	}
+
 	bool ExtenderDLLExists()
 	{
-		auto dllPath = GetLocalPath() + L"\\" + APP_DLL;
+		auto dllPath = GetAppDllPath();
 		return PathFileExists(dllPath.c_str());
 	}
 
@@ -299,7 +323,7 @@ private:
 
 	bool AreDllsWriteable()
 	{
-		auto dllPath = GetLocalPath() + L"\\" + APP_DLL;
+		auto dllPath = GetAppDllPath();
 		if (PathFileExistsW(dllPath.c_str())) {
 			std::ofstream f;
 			f.open(dllPath.c_str(), std::ios::out | std::ios::app, _SH_DENYRW);
@@ -321,6 +345,8 @@ private:
 			return false;
 		}
 
+		bool failed{ false };
+
 		auto entries = archive->GetEntriesCount();
 		for (auto i = 0; i < entries; i++) {
 			auto entry = archive->GetEntry(i);
@@ -334,6 +360,7 @@ private:
 				DEBUG("Failed to open %s for extraction", entry->GetFullName().c_str());
 				reason = "Script Extender update failed:\r\n";
 				reason += std::string("Failed to open file ") + entry->GetFullName() + " for extraction";
+				failed = true;
 				break;
 			}
 
@@ -342,6 +369,7 @@ private:
 				DEBUG("Failed to decompress %s", entry->GetFullName().c_str());
 				reason = "Script Extender update failed:\r\n";
 				reason += std::string("Failed to decompress file ") + entry->GetFullName();
+				failed = true;
 				break;
 			}
 
@@ -362,11 +390,22 @@ private:
 				DEBUG("Failed to move file %s", entry->GetFullName().c_str());
 				reason = "Script Extender update failed:\r\n";
 				reason += std::string("Failed to update file ") + entry->GetFullName();
+				failed = true;
 				break;
 			}
 		}
 
-		return true;
+		if (failed) {
+			auto entries = archive->GetEntriesCount();
+			for (auto i = 0; i < entries; i++) {
+				auto entry = archive->GetEntry(i);
+				DEBUG("Removing: %s", entry->GetFullName().c_str());
+				auto outPath = resourcePath + L"\\" + FromUTF8(entry->GetFullName());
+				DeleteFileW(outPath.c_str());
+			}
+		}
+
+		return !failed;
 	}
 
 	bool DeleteLocalCacheFromZip(std::wstring const& zipPath, std::wstring const& resourcePath)
@@ -393,8 +432,8 @@ private:
 class ResourceCacheRepository
 {
 public:
-	ResourceCacheRepository(std::wstring const& path)
-		: path_(path)
+	ResourceCacheRepository(UpdaterConfig const& config, std::wstring const& path)
+		: config_(config), path_(path)
 	{
 		DEBUG("ResourceCache path: %s", ToUTF8(path).c_str());
 		LoadManifest(GetCachedManifestPath());
@@ -402,7 +441,7 @@ public:
 
 	std::wstring GetCachedManifestPath() const
 	{
-		return path_ + L"\\Manifest2.json";
+		return path_ + L"\\Manifest-" + FromUTF8(config_.UpdateChannel) + L".json";
 	}
 
 	bool LoadManifest(std::wstring const& path)
@@ -498,7 +537,7 @@ public:
 			return {};
 		}
 
-		auto ver = resource->second.FindResourceVersion(gameVersion);
+		auto ver = resource->second.FindResourceVersionWithOverrides(gameVersion, config_);
 		if (!ver) {
 			return {};
 		}
@@ -511,7 +550,28 @@ public:
 		}
 	}
 
+	std::optional<std::wstring> FindResourceDllPath(std::string const& name, VersionNumber const& gameVersion)
+	{
+		auto resource = manifest_.Resources.find(name);
+		if (resource == manifest_.Resources.end()) {
+			return {};
+		}
+
+		auto ver = resource->second.FindResourceVersionWithOverrides(gameVersion, config_);
+		if (!ver) {
+			return {};
+		}
+
+		CachedResource res(path_, resource->second, *ver);
+		if (res.ExtenderDLLExists()) {
+			return res.GetAppDllPath();
+		} else {
+			return {};
+		}
+	}
+
 private:
+	UpdaterConfig const& config_;
 	std::wstring path_;
 	Manifest manifest_;
 
@@ -564,9 +624,7 @@ public:
 		std::vector<uint8_t> manifestBinary;
 		if (!fetcher.Fetch(manifestUrl, manifestBinary)) {
 			reason.Category = ErrorCategory::ManifestFetch;
-			reason.Message = "Unable to download ";
-			reason.Message += manifestUrl;
-			reason.Message += "\r\n";
+			reason.Message = "Unable to download manifest: ";
 			reason.Message += fetcher.GetLastError();
 			reason.CurlResult = fetcher.GetLastResultCode();
 			return false;
@@ -620,10 +678,18 @@ public:
 			return false;
 		}
 
-		auto version = resIt->second.FindResourceVersion(gameVersion);
+		auto version = resIt->second.FindResourceVersionWithOverrides(gameVersion, config_);
 		if (!version) {
-			reason.Message = "Script extender not available for game version v";
-			reason.Message += gameVersion.ToString();
+			if (!config_.TargetResourceDigest.empty()) {
+				reason.Message = "Script extender digest not found in manifest: ";
+				reason.Message += config_.TargetResourceDigest;
+			} else if (!config_.TargetVersion.empty()) {
+				reason.Message = "Script extender version not found in manifest: ";
+				reason.Message += config_.TargetVersion;
+			} else {
+				reason.Message = "Script extender not available for game version v";
+				reason.Message += gameVersion.ToString();
+			}
 			return false;
 		}
 
@@ -651,10 +717,8 @@ public:
 		std::vector<uint8_t> response;
 		if (!fetcher.Fetch(version.URL, response)) {
 			reason.Category = ErrorCategory::UpdateDownload;
-			reason.Message = fetcher.GetLastError();
-			reason.Message += "\r\n";
-			reason.Message += "URL: ";
-			reason.Message += version.URL;
+			reason.Message = "Unable to download package: ";
+			reason.Message += fetcher.GetLastError();
 			reason.CurlResult = fetcher.GetLastResultCode();
 			return false;
 		}
@@ -678,10 +742,15 @@ public:
 	void Launch()
 	{
 		UpdatePaths();
-		cache_ = std::make_unique<ResourceCacheRepository>(config_.CachePath);
+		cache_ = std::make_unique<ResourceCacheRepository>(config_, config_.CachePath);
 
 		ErrorReason updateReason;
-		bool updated = TryToUpdate(updateReason);
+		bool updated;
+		if (!config_.DisableUpdates) {
+			updated = TryToUpdate(updateReason);
+		} else {
+			updated = true;
+		}
 
 		auto resourcePath = cache_->FindResourcePath("ScriptExtender", gameVersion_);
 
@@ -691,17 +760,17 @@ public:
 			updateReason.Message += gameVersion_.ToString();
 		}
 
+		std::string message;
 		if (!updated) {
 			DEBUG("Update failed; reason category %d, message: %s", updateReason.Category, updateReason.Message.c_str());
 			completed_ = true;
 
-			std::string message;
 			switch (updateReason.Category) {
 			case ErrorCategory::UpdateDownload:
 				if (updateReason.IsInternetIssue()) {
 					message = std::string("Failed to download Script Extender update package. Make sure you're connected to the internet and try again.\r\n") + updateReason.Message;
 				} else {
-					message = std::string("Failed to download Script Extender update package:\r\n") + updateReason.Message;
+					message = std::string("Failed to download Script Extender update package.\r\n") + updateReason.Message;
 				}
 				break;
 
@@ -717,39 +786,35 @@ public:
 			case ErrorCategory::ManifestFetch:
 			default:
 				if (updateReason.IsInternetIssue()) {
-					message = std::string("Failed to check for Script Extender updates. Make sure you're connected to the internet and try again.\r\n") + updateReason.Message;
+					message = std::string("Script Extender update failed; make sure you're connected to the internet and try again.\r\n") + updateReason.Message;
 				} else {
-					message = std::string("Failed to check for Script Extender updates:\r\n") + updateReason.Message;
+					message = std::string("Script Extender update failed.\r\n") + updateReason.Message;
 				}
 				break;
 			}
-
-			gErrorUtils->ShowError(message.c_str());
 		}
 
 		if (resourcePath) {
-			// Make sure that we can load dependencies from the extension directory
-			// (protobuf, etc.)
-			DEBUG("SetDllDirectoryW(%s)", ToUTF8(*resourcePath).c_str());
-			SetDllDirectoryW(resourcePath->c_str());
-
-			auto dllPath = *resourcePath + L"\\" + APP_DLL;
-			DEBUG("Loading extender DLL: %s", ToUTF8(dllPath).c_str());
-			HMODULE handle = LoadLibraryW(dllPath.c_str());
+			auto dllPath = cache_->FindResourceDllPath("ScriptExtender", gameVersion_);
+			DEBUG("Loading extender DLL: %s", ToUTF8(*dllPath).c_str());
+			HMODULE handle = LoadLibraryExW(dllPath->c_str(), NULL, LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR | LOAD_LIBRARY_SEARCH_APPLICATION_DIR);
 			// Wait a bit for extender startup to complete
 			Sleep(300);
 			completed_ = true;
 
-			if (handle == NULL) {
+			if (handle == NULL && !message.empty()) {
 				auto errc = GetLastError();
 				DEBUG("Extender DLL load failed; error code %d", errc);
-				std::string errmsg = "Failed to load Script Extender library.\r\n"
+				message = "Failed to load Script Extender library.\r\n"
 					"LoadLibrary() returned error code ";
-				errmsg += std::to_string(errc);
-				gErrorUtils->ShowError(errmsg.c_str());
+				message += std::to_string(errc);
 			}
 		} else {
 			completed_ = true;
+		}
+
+		if (!message.empty()) {
+			gGameHelpers->ShowError(message.c_str());
 		}
 	}
 	
@@ -813,6 +878,12 @@ public:
 		}
 		
 		LoadConfigFile(exeDir_ + L"\\ScriptExtenderUpdaterConfig.json", config_);
+
+		if (IsInEditor()) {
+			config_.UpdateChannel += UPDATER_CHANNEL_EDITOR;
+		} else {
+			config_.UpdateChannel += UPDATER_CHANNEL_GAME;
+		}
 	}
 
 private:
@@ -853,31 +924,31 @@ DWORD WINAPI ClientWorkerSuspenderThread(LPVOID param)
 {
 	bool suspended{ false };
 	for (;;) {
-		auto state = gErrorUtils->GetState();
+		auto state = gGameHelpers->GetState();
 		if (state) {
 			bool completed = gUpdater->IsCompleted();
-			if (!suspended && !completed && (*state == GameState::LoadModule || *state == GameState::Init)) {
+			if (!suspended && !completed && (*state == ecl::GameState::LoadModule || *state == ecl::GameState::Init)) {
 				DEBUG("Suspending client thread (pending update)");
-				gErrorUtils->SuspendClientThread();
+				gGameHelpers->SuspendClientThread();
 				suspended = true;
 			}
 
 			if (completed) {
 				if (suspended) {
 					DEBUG("Resuming client thread");
-					gErrorUtils->ResumeClientThread();
+					gGameHelpers->ResumeClientThread();
 				}
 				break;
 			}
 
-			if (*state == GameState::Menu) {
+			if (*state == ecl::GameState::Menu) {
 				// No update takes place once we reach the menu, exit thread
 				break;
 			}
 		}
 
 		Sleep(1);
-		}
+	}
 
 	DEBUG("Client suspend worker exiting");
 	return 0;
@@ -885,10 +956,11 @@ DWORD WINAPI ClientWorkerSuspenderThread(LPVOID param)
 
 DWORD WINAPI UpdaterThread(LPVOID param)
 {
-	gErrorUtils = std::make_unique<ErrorUtils>();
+	gGameHelpers = std::make_unique<GameHelpers>();
 	gUpdater = std::make_unique<ScriptExtenderUpdater>();
 	gUpdater->LoadConfig();
 	gUpdater->InitConsole();
+	gGameHelpers->Initialize();
 	CreateThread(NULL, 0, &ClientWorkerSuspenderThread, NULL, 0, NULL);
 	DEBUG("Launch loader");
 	gUpdater->Launch();
@@ -901,6 +973,14 @@ void StartUpdaterThread()
 	CreateThread(NULL, 0, &UpdaterThread, NULL, 0, NULL);
 }
 
+extern std::unique_ptr<DWriteWrapper> gDWriteWrapper;
+HMODULE gThisModule{ NULL };
+
+END_SE()
+
+extern "C" {
+
+using namespace bg3se;
 
 BOOL APIENTRY DllMain(HMODULE hModule,
 	DWORD  ul_reason_for_call,
@@ -910,8 +990,10 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 	switch (ul_reason_for_call)
 	{
 	case DLL_PROCESS_ATTACH:
+		gThisModule = hModule;
 		DisableThreadLibraryCalls(hModule);
 		gDWriteWrapper = std::make_unique<DWriteWrapper>();
+
 		if (ShouldLoad()) {
 			StartUpdaterThread();
 		}
@@ -930,3 +1012,4 @@ BOOL APIENTRY DllMain(HMODULE hModule,
     return TRUE;
 }
 
+}
