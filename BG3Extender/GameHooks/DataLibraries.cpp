@@ -75,7 +75,13 @@ namespace bg3se
 
 	void LibraryManager::ApplyCodePatches()
 	{
-		// ApplyCodePatch("ecl::ShroudManager::InitObjects");
+		if (gExtender->GetConfig().EnableAchievements) {
+			if (ApplyCodePatch("ls::ModuleSettings::IsModded")) {
+				DEBUG("Modded achievements enabled.");
+			} else {
+				ERR("Couldn't enable modded achievements (symbol not mapped)");
+			}
+		}
 	}
 
 

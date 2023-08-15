@@ -227,6 +227,20 @@
             <Target Type="Absolute" Offset="-80" NextSymbol="ecl::GameStateThreaded::GameStateWorker::DoWork" NextSymbolSeekSize="80" />
         </Mapping>
 
+        <Mapping Name="ls::ModuleSettings::IsModded" AllowFail="true">
+          48 89 5c 24 08 // mov     [rsp+arg_0], rbx
+          8b 59 14 // mov     ebx, [rcx+14h]
+          45 33 db // xor     r11d, r11d
+          48 85 db // test    rbx, rbx
+          @ref 74 43 // jz      short loc_143215A93
+          4c 8b 51 08 // mov     r10, [rcx+8]
+          @str 8b 0d ?? ?? ?? ?? // mov     ecx, cs:stru_1457873D0.ID
+          <Condition Type="FixedString" Offset="@str" Value="991c9c7a-fb80-40cb-8f0d-b92d4e80e9b1" />
+          <Patch Type="Absolute" Offset="@ref">
+            EB 43
+          </Patch>
+        </Mapping>
+
         <!--
             Sig: Only caller to eoc::FunctorList::ExecuteType8
             - ExecuteType8 refs fs_Surface_Type

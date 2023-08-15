@@ -63,7 +63,6 @@ namespace bg3se {
 		void RegisterLibraries(SymbolMapper& mapper);
 		void RegisterSymbols();
 		bool BindApp();
-		bool FindBG3();
 		void FindSymbolNameRegistrations();
 		HMODULE GetAppHandle();
 

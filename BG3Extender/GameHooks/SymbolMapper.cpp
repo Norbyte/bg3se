@@ -973,6 +973,12 @@ uint8_t const * AsmResolveInstructionRef(uint8_t const * insn)
 		return insn + rel + 5;
 	}
 
+	// MOV to 32-bit register (4b operand) instruction
+	if (insn[0] == 0x8B && (insn[1] < 0x20)) {
+		int32_t rel = *(int32_t const *)(insn + 2);
+		return insn + rel + 6;
+	}
+
 	// MOV/LEA (4b operand) instruction
 	if ((insn[0] == 0x48 || insn[0] == 0x4C) && (insn[1] == 0x8D || insn[1] == 0x8B || insn[1] == 0x89)) {
 		int32_t rel = *(int32_t const *)(insn + 3);
