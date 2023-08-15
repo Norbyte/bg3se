@@ -8,6 +8,11 @@ namespace bg3se::esv::lua
 {
 	using namespace bg3se::lua;
 
+	ValueType GetBaseType(ValueType type)
+	{
+		return (*gExtender->GetServer().Osiris().GetGlobals().Types)->ResolveAlias((uint16_t)type);
+	}
+
 	int64_t LuaToInt(lua_State* L, int i, int type)
 	{
 		if (type == LUA_TNUMBER) {
@@ -60,7 +65,7 @@ namespace bg3se::esv::lua
 			return;
 		}
 
-		switch (osiType) {
+		switch (GetBaseType(osiType)) {
 		case ValueType::Integer:
 			tv.Value.Val.Int32 = (int32_t)LuaToInt(L, i, type);
 			break;
@@ -112,7 +117,7 @@ namespace bg3se::esv::lua
 			return;
 		}
 
-		switch (osiType) {
+		switch (GetBaseType(osiType)) {
 		case ValueType::Integer:
 			arg.Int32 = (int32_t)LuaToInt(L, i, type);
 			break;
@@ -154,7 +159,7 @@ namespace bg3se::esv::lua
 
 	void OsiToLua(lua_State * L, OsiArgumentValue const & arg)
 	{
-		switch (arg.TypeId) {
+		switch (GetBaseType(arg.TypeId)) {
 		case ValueType::None:
 			lua_pushnil(L);
 			break;
@@ -184,7 +189,7 @@ namespace bg3se::esv::lua
 
 	void OsiToLua(lua_State * L, TypedValue const & tv)
 	{
-		switch ((ValueType)tv.TypeId) {
+		switch (GetBaseType((ValueType)tv.TypeId)) {
 		case ValueType::None:
 			lua_pushnil(L);
 			break;
