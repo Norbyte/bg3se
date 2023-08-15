@@ -1,0 +1,5 @@
+{
+    "RequiredVersion": 1,
+	"ModTable": "ExtenderSampleMod",
+	"FeatureFlags": ["Lua"]
+}
