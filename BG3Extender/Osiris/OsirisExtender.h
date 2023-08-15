@@ -33,6 +33,8 @@ public:
 	void HookNodeVMTs();
 	void InitRuntimeLogging();
 
+	void BindCallbackManager(esv::lua::OsirisCallbackManager* mgr);
+
 	void LogError(std::string_view msg);
 	void LogWarning(std::string_view msg);
 	void LogMessage(std::string_view msg);
@@ -95,6 +97,7 @@ private:
 	CustomFunctionManager customFunctions_;
 	CustomFunctionInjector injector_;
 	esv::CustomFunctionLibrary functionLibrary_;
+	esv::lua::OsirisCallbackManager* osirisCallbacksAttachment_{ nullptr };
 	bool initialized_{ false };
 
 	void OnRegisterDIVFunctions(void *, DivFunctions *);
@@ -106,6 +109,7 @@ private:
 	bool CompileWrapper(bool (*next)(void*, wchar_t const*, wchar_t const*), void * Osiris, wchar_t const * Path, wchar_t const * Mode);
 	void OnAfterOsirisLoad(void * Osiris, void * Buf, int retval);
 	bool MergeWrapper(bool (*next)(void *, wchar_t *), void * Osiris, wchar_t * Src);
+	ReturnCode OnEvent(ReturnCode(*next)(void*, uint32_t, OsiArgumentDesc*), void*, uint32_t, OsiArgumentDesc*);
 	void RuleActionCall(void (*next)(RuleActionNode *, void *, void *, void *, void *), RuleActionNode * Action, void * a1, void * a2, void * a3, void * a4);
 
 	std::wstring logFilename_;

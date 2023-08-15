@@ -243,7 +243,8 @@ namespace bg3se::esv::lua
 		if (func == nullptr
 			|| ((*func)->Node.Id == 0
 				&& (*func)->Type != FunctionType::Call
-				&& (*func)->Type != FunctionType::Query)) {
+				&& (*func)->Type != FunctionType::Query
+				&& (*func)->Type != FunctionType::Event)) {
 			return nullptr;
 		}
 

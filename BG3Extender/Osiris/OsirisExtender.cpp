@@ -44,6 +44,7 @@ void OsirisExtender::Initialize()
 	wrappers_.Compile.SetWrapper(&OsirisExtender::CompileWrapper, this);
 	wrappers_.Load.SetPostHook(&OsirisExtender::OnAfterOsirisLoad, this);
 	wrappers_.Merge.SetWrapper(&OsirisExtender::MergeWrapper, this);
+	wrappers_.Event.SetWrapper(&OsirisExtender::OnEvent, this);
 #if !defined(OSI_NO_DEBUGGER)
 	wrappers_.RuleActionCall.SetWrapper(&OsirisExtender::RuleActionCall, this);
 #endif
@@ -331,6 +332,22 @@ bool OsirisExtender::MergeWrapper(bool (*next)(void*, wchar_t*), void * Osiris, 
 	return retval;
 }
 
+ReturnCode OsirisExtender::OnEvent(ReturnCode(*next)(void*, uint32_t, OsiArgumentDesc*), void* self, uint32_t functionId, OsiArgumentDesc* args)
+{
+	auto fun = (*wrappers_.Globals.Functions)->FindById(functionId);
+	if (fun && osirisCallbacksAttachment_ != nullptr) {
+		osirisCallbacksAttachment_->EventPreHook(*fun, args);
+	}
+
+	auto ret = next(self, functionId, args);
+
+	if (fun && osirisCallbacksAttachment_ != nullptr) {
+		osirisCallbacksAttachment_->EventPostHook(*fun, args);
+	}
+
+	return ret;
+}
+
 void OsirisExtender::RuleActionCall(void (*next)(RuleActionNode*, void*, void*, void*, void*), RuleActionNode * Action, void * a1, void * a2, void * a3, void * a4)
 {
 #if !defined(OSI_NO_DEBUGGER)
@@ -355,6 +372,14 @@ void OsirisExtender::InitRuntimeLogging()
 	auto path = gExtender->MakeLogFilePath(L"Extender Runtime", L"log");
 	gConsole.OpenLogFile(path);
 	DEBUG(L"Extender runtime log written to '%s'", path.c_str());
+}
+
+void OsirisExtender::BindCallbackManager(esv::lua::OsirisCallbackManager* mgr)
+{
+	osirisCallbacksAttachment_ = mgr;
+	if (nodeVmtWrappers_) {
+		nodeVmtWrappers_->OsirisCallbacksAttachment = mgr;
+	}
 }
 
 }

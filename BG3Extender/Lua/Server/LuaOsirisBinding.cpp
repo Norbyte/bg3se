@@ -10,9 +10,8 @@ OsirisCallbackManager::OsirisCallbackManager(ExtensionState& state)
 
 OsirisCallbackManager::~OsirisCallbackManager()
 {
-	auto wrappers = gExtender->GetServer().Osiris().GetVMTWrappers();
-	if (osirisHooked_ && wrappers) {
-		wrappers->OsirisCallbacksAttachment = nullptr;
+	if (osirisHooked_) {
+		gExtender->GetServer().Osiris().BindCallbackManager(nullptr);
 	}
 }
 
@@ -170,7 +169,7 @@ void OsirisCallbackManager::RegisterNodeHandler(OsirisHookSignature const& sig, 
 {
 	auto func = LookupOsiFunction(sig.name, sig.arity);
 	if (func == nullptr) {
-		// OsiWarn("Couldn't register Osiris subscriber for " << sig.name << "/" << sig.arity << ": Symbol not found in story.");
+		OsiWarn("Couldn't register Osiris subscriber for " << sig.name << "/" << sig.arity << ": Symbol not found in story.");
 		return;
 	}
 
@@ -180,8 +179,8 @@ void OsirisCallbackManager::RegisterNodeHandler(OsirisHookSignature const& sig, 
 	}
 
 	if (
-		// Functions that aren't mapped to a node cannot be hooked
-		func->Node.Get() == nullptr
+		// Functions that aren't mapped to a node cannot be hooked, with the exception of events
+		(func->Type != FunctionType::Event && func->Node.Get() == nullptr)
 		|| (
 			func->Type != FunctionType::Event
 			&& func->Type != FunctionType::Query
@@ -194,12 +193,26 @@ void OsirisCallbackManager::RegisterNodeHandler(OsirisHookSignature const& sig, 
 		return;
 	}
 
-	uint64_t nodeRef = func->Node.Id;
-	if (sig.type == OsirisHookSignature::AfterTrigger || sig.type == OsirisHookSignature::AfterDeleteTrigger) {
-		nodeRef |= AfterTriggerNodeRef;
-	}
-	if (sig.type == OsirisHookSignature::BeforeDeleteTrigger || sig.type == OsirisHookSignature::AfterDeleteTrigger) {
-		nodeRef |= DeleteTriggerNodeRef;
+	uint64_t nodeRef;
+
+	if (func->Type == FunctionType::Event) {
+		nodeRef = func->OsiFunctionId;
+		if (sig.type == OsirisHookSignature::BeforeTrigger) {
+			nodeRef |= BeforeEventNodeRef;
+		} else if (sig.type == OsirisHookSignature::AfterTrigger) {
+			nodeRef |= AfterEventNodeRef;
+		} else {
+			OsiWarn("Couldn't register Osiris subscriber for " << sig.name << "/" << sig.arity << ": Delete triggers not supported on events.");
+			return;
+		}
+	} else {
+		nodeRef = func->Node.Id;
+		if (sig.type == OsirisHookSignature::AfterTrigger || sig.type == OsirisHookSignature::AfterDeleteTrigger) {
+			nodeRef |= AfterTriggerNodeRef;
+		}
+		if (sig.type == OsirisHookSignature::BeforeDeleteTrigger || sig.type == OsirisHookSignature::AfterDeleteTrigger) {
+			nodeRef |= DeleteTriggerNodeRef;
+		}
 	}
 
 	nodeSubscriberRefs_.insert(std::make_pair(nodeRef, handlerId));
@@ -210,10 +223,7 @@ void OsirisCallbackManager::HookOsiris()
 	if (osirisHooked_) return;
 
 	gExtender->GetServer().Osiris().HookNodeVMTs();
-	auto wrappers = gExtender->GetServer().Osiris().GetVMTWrappers();
-	if (wrappers) {
-		wrappers->OsirisCallbacksAttachment = this;
-	}
+	gExtender->GetServer().Osiris().BindCallbackManager(this);
 
 	osirisHooked_ = true;
 }
@@ -249,6 +259,17 @@ void OsirisCallbackManager::CallQueryPostHook(Node* node, OsiArgumentDesc* args,
 	RunHandlers(nodeRef, args);
 }
 
+void OsirisCallbackManager::EventPreHook(Function* node, OsiArgumentDesc* args)
+{
+	uint64_t nodeRef = node->OsiFunctionId | BeforeEventNodeRef;
+	RunHandlers(nodeRef, args);
+}
+
+void OsirisCallbackManager::EventPostHook(Function* node, OsiArgumentDesc* args)
+{
+	uint64_t nodeRef = node->OsiFunctionId | AfterEventNodeRef;
+	RunHandlers(nodeRef, args);
+}
 
 
 

@@ -1140,7 +1140,27 @@ typedef int (* COsirisDeleteAllDataProc)(void * Osiris, bool DeleteTypes);
 typedef int (* COsirisReadHeaderProc)(void * Osiris, void * OsiSmartBuf, unsigned __int8 * MajorVersion, unsigned __int8 * MinorVersion, unsigned __int8 * BigEndian, unsigned __int8 * Unused, char * StoryFileVersion, unsigned int * DebugFlags);
 typedef void (* RuleActionCallProc)(RuleActionNode * Action, void * a1, void * a2, void * a3, void * a4);
 
-using FunctionDb = TypeDb<Function*>;
+struct FunctionDb : public TypeDb<Function*>
+{
+	struct FunctionIdHashSlot
+	{
+		TMap<uint32_t, Function*> NodeMap;
+		void* Unknown;
+	};
+
+	Function** FindById(uint32_t id)
+	{
+		auto& bucket = FunctionIdHash[id % 0x3FF];
+		return bucket.NodeMap.Find(id);
+	}
+
+	FunctionIdHashSlot FunctionIdHash[1023];
+	TMap<uint32_t, uint32_t> AllFunctionIds;
+	void* U1;
+	uint32_t U2;
+	void* U3[8];
+};
+
 using ObjectDb = TypeDb<void*>; // Unknown type
 
 struct OsiTypeDb : public TypeDb<OsirisTypeInfo>
