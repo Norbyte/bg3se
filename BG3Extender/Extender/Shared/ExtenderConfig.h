@@ -27,6 +27,8 @@ struct ExtenderConfig
 	bool SendCrashReports{ true };
 	bool ForceCrashReporting{ false };
 	bool EnableAchievements{ true };
+	bool DisableStoryMerge{ true };
+	bool DisableStoryPatching{ false };
 
 #if defined(OSI_EXTENSION_BUILD)
 	bool DisableModValidation{ true };

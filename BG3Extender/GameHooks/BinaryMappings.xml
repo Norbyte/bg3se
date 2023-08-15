@@ -241,6 +241,21 @@
           </Patch>
         </Mapping>
 
+        <Mapping Name="esv::SavegamePostVisit_DisableStoryMerge" AllowFail="true">
+          48 8d 4d 10 // lea     rcx, [rbp+3A0h+var_390]
+          e8 ?? ?? ?? ?? // call    ls__Module__GetAddonModules
+          4c 8d 45 e0 // lea     r8, [rbp+3A0h+var_3C0]
+          48 8b d6 // mov     rdx, rsi
+          49 8b cc // mov     rcx, r12
+          83 78 0c 00 // cmp     dword ptr [rax+0Ch], 0
+          @ref 0f 85 ?? ?? ?? ?? // jnz     loc_144359278
+          e8 ?? ?? ?? ?? // call    sub_141088470
+          84 c0 // test    al, al
+          <Patch Type="Absolute" Offset="@ref">
+            90 90 90 90 90 90
+          </Patch>
+        </Mapping>
+
         <!--
             Sig: Only caller to eoc::FunctorList::ExecuteType8
             - ExecuteType8 refs fs_Surface_Type
@@ -417,14 +432,18 @@
         </Mapping>
         -->
 
-        <!-- TODO - disabled temporarily; we don't use it right now anyway -->
-        <Mapping Name="ls::GlobalSwitches" AllowFail="true">
-            <Condition Type="FixedStringIndirect" Offset="19" Value="ShowSubtitles" />
-            <Target Type="Indirect" Offset="12" Symbol="ls__GlobalSwitches" />
-            48 8B 8E F0 01 00 00 // mov     [rsp-8+arg_10], rbx
-            E8 ?? ?? ?? ?? // call    xxx
-            48 8B 0D ?? ?? ?? ?? // mov     rcx, cs:ls__gGlobalSwitches
-            48 8B 15 ?? ?? ?? ?? // mov     rdx, cs:pffs_ShowSubtitles
+        <Mapping Name="ls::GlobalSwitches">
+          48 89 5c 24 08 // mov     [rsp+arg_0], rbx
+          48 89 6c 24 10 // mov     [rsp+arg_8], rbp
+          48 89 74 24 18 // mov     [rsp+arg_10], rsi
+          57 // push    rdi
+          48 83 ec 20 // sub     rsp, 20h
+          @ref1 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:ls__gGlobalSwitches
+          48 8b ea // mov     rbp, rdx
+          @ref2 48 8b 15 ?? ?? ?? ?? // mov     rdx, cs:pfs_UseEndTurnFallback
+          48 8b f1 // mov     rsi, rcx
+          <Condition Type="FixedStringIndirect" Offset="@ref2" Value="UseEndTurnFallback" />
+          <Target Type="Indirect" Offset="@ref1" Symbol="ls__GlobalSwitches" />
         </Mapping>
 
       <!--

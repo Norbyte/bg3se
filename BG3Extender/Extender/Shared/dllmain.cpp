@@ -69,6 +69,8 @@ void LoadConfig(std::wstring const & configPath, ExtenderConfig & config)
 	ConfigGetBool(root, "ClearOnReset", config.ClearOnReset);
 	ConfigGetBool(root, "ShowPerfWarnings", config.ShowPerfWarnings);
 	ConfigGetBool(root, "EnableAchievements", config.EnableAchievements);
+	ConfigGetBool(root, "DisableStoryMerge", config.DisableStoryMerge);
+	ConfigGetBool(root, "DisableStoryPatching", config.DisableStoryPatching);
 
 	ConfigGetInt(root, "DebuggerPort", config.DebuggerPort);
 	ConfigGetInt(root, "LuaDebuggerPort", config.LuaDebuggerPort);

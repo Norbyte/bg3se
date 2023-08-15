@@ -82,6 +82,14 @@ namespace bg3se
 				ERR("Couldn't enable modded achievements (symbol not mapped)");
 			}
 		}
+
+		if (gExtender->GetConfig().DisableStoryMerge) {
+			ApplyCodePatch("esv::SavegamePostVisit_DisableStoryMerge");
+		}
+
+		if (gExtender->GetConfig().DisableStoryPatching && GetStaticSymbols().ls__GlobalSwitches) {
+			(*GetStaticSymbols().ls__GlobalSwitches)->DisableStoryPatching = true;
+		}
 	}
 
 
@@ -126,7 +134,11 @@ namespace bg3se
 
 	bool LibraryManager::ApplyPatch(SymbolMappings::Patch& patch)
 	{
-		if (patch.WasApplied || patch.ResolvedRef == nullptr) {
+		if (patch.WasApplied) {
+			return true;
+		}
+		
+		if (patch.ResolvedRef == nullptr) {
 			return false;
 		}
 

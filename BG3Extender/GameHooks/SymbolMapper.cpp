@@ -923,7 +923,7 @@ bool SymbolMapper::MapSymbol(SymbolMappings::Mapping & mapping, uint8_t const * 
 		}
 	});
 
-	if (!mapped && !(mapping.Flag & SymbolMappings::Mapping::kAllowFail)) {
+	if (!mapped) {
 		if (!hasMatches) {
 			ERR("No match found for mapping '%s' %s", mapping.Name.c_str(),
 				(mapping.Flag & SymbolMappings::Mapping::kCritical) ? "[CRITICAL]" : "");
@@ -932,9 +932,11 @@ bool SymbolMapper::MapSymbol(SymbolMappings::Mapping & mapping, uint8_t const * 
 				(mapping.Flag & SymbolMappings::Mapping::kCritical) ? "[CRITICAL]" : "");
 		}
 
-		hasFailedMappings_ = true;
-		if (mapping.Flag & SymbolMappings::Mapping::kCritical) {
-			hasFailedCriticalMappings_ = true;
+		if (!(mapping.Flag & SymbolMappings::Mapping::kAllowFail)) {
+			hasFailedMappings_ = true;
+			if (mapping.Flag & SymbolMappings::Mapping::kCritical) {
+				hasFailedCriticalMappings_ = true;
+			}
 		}
 	}
 
