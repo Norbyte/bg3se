@@ -9,7 +9,8 @@ _I._PublishedEvents = {
 	"SessionLoaded",
 	"ResetCompleted",
 	"GameStateChanged",
-	"Tick"
+	"Tick",
+	"DoConsoleCommand"
 }
 
 Ext.IsClient = function ()

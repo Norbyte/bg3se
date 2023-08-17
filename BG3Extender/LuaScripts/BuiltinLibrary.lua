@@ -146,3 +146,4 @@ end
 -- Global helper aliases for Ext.Dump, Ext.Utils.Print
 _D = Ext.Dump
 _P = Ext.Utils.Print
+Print = Ext.Utils.Print

@@ -10,6 +10,7 @@ _I._PublishedEvents = {
 	"ResetCompleted",
 	"GameStateChanged",
 	"Tick",
+	"DoConsoleCommand",
 
 	"DealDamage",
 	"ExecuteFunctor",
