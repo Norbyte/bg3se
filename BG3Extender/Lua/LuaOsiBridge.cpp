@@ -431,7 +431,7 @@ namespace bg3se::esv::lua
 		for (auto i = 0; i < tuple.Size; i++) {
 			if (!lua_isnil(L, firstIndex + i)) {
 				auto const & v = tuple.Values[i];
-				switch ((ValueType)v.TypeId) {
+				switch (GetBaseType((ValueType)v.TypeId)) {
 				case ValueType::Integer:
 					if (v.Value.Val.Int32 != lua_tointeger(L, firstIndex + i)) {
 						return false;
