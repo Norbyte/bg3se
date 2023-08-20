@@ -165,7 +165,7 @@ namespace bg3se::esv::lua
 		case LUA_TUSERDATA:
 		{
 			auto handle = get<EntityProxy*>(L, 1)->Handle();
-			item = gExtender->GetServer().GetEntityHelpers().GetEntityComponent<esv::Item>(handle);
+			item = gExtender->GetServer().GetEntityHelpers().GetComponent<esv::Item>(handle);
 			break;
 		}
 

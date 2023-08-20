@@ -109,7 +109,7 @@ namespace bg3se::lua
 		virtual void Shutdown();
 		virtual bool IsClient() = 0;
 
-		virtual EntityWorldBase* GetEntityWorld() = 0;
+		virtual EntityWorld* GetEntityWorld() = 0;
 		virtual EntitySystemHelpersBase* GetEntitySystemHelpers() = 0;
 
 		void FinishStartup();

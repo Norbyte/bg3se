@@ -110,7 +110,8 @@ namespace bg3se::lua
 			qword = get<uint32_t>(L, 2);
 		}
 
-		auto helpers = gExtender->GetCurrentExtensionState()->GetLua()->GetEntitySystemHelpers();
+		ERR("FIXME");
+		/*auto helpers = gExtender->GetCurrentExtensionState()->GetLua()->GetEntitySystemHelpers();
 		auto flags = helpers->GetReplicationFlags(*self);
 		if (flags) {
 			if (qword < flags->NumQwords()) {
@@ -120,14 +121,16 @@ namespace bg3se::lua
 			}
 		} else {
 			push(L, 0ull);
-		}
+		}*/
 
+		push(L, 0ull);
 		return 1;
 	}
 
 	void ComponentSetReplicationFlag(BaseComponent* component, uint32_t qword, uint64_t flags)
 	{
-		auto helpers = gExtender->GetCurrentExtensionState()->GetLua()->GetEntitySystemHelpers();
+		ERR("FIXME");
+		/*auto helpers = gExtender->GetCurrentExtensionState()->GetLua()->GetEntitySystemHelpers();
 		auto curReplicationFlags = helpers->GetOrCreateReplicationFlags(*component);
 		if (curReplicationFlags) {
 			curReplicationFlags->EnsureSize((qword + 1) * 64);
@@ -138,7 +141,7 @@ namespace bg3se::lua
 			}
 		} else {
 			OsiError("Couldn't add entity notification?");
-		}
+		}*/
 	}
 
 	int ComponentSetReplicationFlag(lua_State* L, BaseComponent* self)

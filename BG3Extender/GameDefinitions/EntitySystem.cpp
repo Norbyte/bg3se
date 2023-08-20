@@ -17,314 +17,80 @@
 
 namespace bg3se
 {
-	void* ComponentFactoryBase::FindByHandle(ComponentHandle handle) const
+	void* EntityWorld::Entity::GetComponent(EntityHandle entityHandle, EntityWorld::ComponentTypeIndex type) const
 	{
-		// FIXME - check TypeIndex in callers!
-		if (!handle /*|| handle.GetType() != TypeIndex*/) {
-			return nullptr;
-		}
-
-		auto index = handle.GetIndex();
-		if (index >= ComponentsByHandleIndex.Size()) {
-			return nullptr;
-		}
-
-		if (Salts[index] != handle.GetSalt()) {
-			return nullptr;
-		}
-
-		auto& entry = ComponentsByHandleIndex[index];
-		if (entry.Component != nullptr && (std::uintptr_t)entry.Component != 0xDEC1A551F1EDDEEDul) {
-			return entry.Component;
-		} else {
-			return nullptr;
-		}
-	}
-
-
-	void* NetworkComponentFactoryBase::FindByGuid(FixedString const& guid) const
-	{
-		if (!guid) return nullptr;
-
-		auto component = Guids.find(guid);
-		if (component != Guids.end()) {
-			return component.Value();
-		} else {
-			return nullptr;
-		}
-	}
-
-
-	void* NetworkComponentFactoryBase::FindByNetId(NetId netId) const
-	{
-		if (!netId) return nullptr;
-
-		auto index = netId.GetIndex();
-		if (index >= NetIdSalts.Size()
-			|| netId.GetSalt() != NetIdSalts[(uint32_t)index]) {
-			return nullptr;
-		}
-
-		auto object = InUseNetIds.find((uint32_t)index);
-		if (object != InUseNetIds.end()) {
-			return object.Value();
-		} else {
-			return nullptr;
-		}
-	}
-
-
-	void* NetworkComponentFactoryBase::FindByIndex(uint32_t index) const
-	{
-		if (index < 0 || index > Components.Size) {
-			return nullptr;
-		}
-
-		return Components[index];
-	}
-
-
-	ComponentPoolBase* EntityWorldBase::GetComponentPool(HandleTypeIndex handleType, bool logError)
-	{
-		auto componentIdx = HandleIndexToComponentIndexMap.find((int32_t)handleType);
-		if (!componentIdx == HandleIndexToComponentIndexMap.end()) {
-			if (logError) {
-				OsiError("No component type registered for handle type " << handleType << "!");
+		auto componentBucket = ComponentBuckets.Find(entityHandle.Handle);
+		if (componentBucket) {
+			auto compIndex = ComponentTypeToIndex.Find((uint16_t)type.Value());
+			if (compIndex) {
+				return Components[(*componentBucket)->A]->Pool[**compIndex].Components[(*componentBucket)->B];
 			}
-
-			return nullptr;
 		}
 
-		return Components.Types[componentIdx.Value()].Pool;
+		return nullptr;
 	}
-
-	ComponentPoolBase* EntityWorldBase::GetComponentPool(ComponentTypeIndex componentType, bool logError)
+	
+	void* EntityWorld::GetComponent(EntityHandle entityHandle, ComponentTypeIndex type)
 	{
-		return Components.Types[(int32_t)componentType].Pool;
+		auto entity = GetEntity(entityHandle);
+		if (entity != nullptr) {
+			return entity->GetComponent(entityHandle, type);
+		}
+
+		return nullptr;
 	}
-
-	void* EntityWorldBase::GetComponent(ComponentHandle componentHandle, bool logError)
+	
+	void* EntityWorld::GetComponent(char const* nameGuid, ComponentTypeIndex type)
 	{
-		if (!componentHandle) {
-			return nullptr;
-		}
-
-		auto pool = GetComponentPool(HandleTypeIndex(componentHandle.GetType()), logError);
-		if (!pool) return nullptr;
-
-		return pool->Factory.FindByHandle(componentHandle);
-	}
-
-	void* EntityWorldBase::GetComponent(ComponentHandle componentHandle, HandleTypeIndex type, bool logError)
-	{
-		if (!componentHandle) {
-			return nullptr;
-		}
-
-		if (componentHandle.GetType() != (int32_t)type) {
-			if (logError) {
-				OsiError("Attempted to resolve handle of type " << componentHandle.GetType() << " in pool of type " << (int32_t)type);
-			}
-			return nullptr;
-		}
-
-		return GetComponent(componentHandle, logError);
-	}
-
-	void* EntityWorldBase::GetComponent(ComponentHandle componentHandle, ComponentTypeIndex type, bool logError)
-	{
-		if (!componentHandle) {
-			return nullptr;
-		}
-
-		auto const& componentInfo = Components.Types[(int32_t)type];
-		if (componentHandle.GetType() != (int32_t)componentInfo.HandleIndex) {
-			if (logError) {
-				OsiError("Attempted to resolve handle of type " << componentHandle.GetType() << " in pool of type " << (int32_t)componentInfo.HandleIndex);
-			}
-			return nullptr;
-		}
-
-		return GetComponent(componentHandle, logError);
-	}
-
-	void* EntityWorldBase::GetComponent(char const* nameGuid, HandleTypeIndex type, bool logError)
-	{
-		if (nameGuid == nullptr) {
-			OsiError("Attempted to look up component with null name!");
-			return nullptr;
-		}
-
 		auto fs = NameGuidToFixedString(nameGuid);
 		if (!fs) {
 			OsiError("Could not map GUID '" << nameGuid << "' to FixedString");
 			return nullptr;
 		}
 
-		return GetComponent(fs, type, logError);
+		return GetComponent(fs, type);
 	}
 
-	void* EntityWorldBase::GetComponent(char const* nameGuid, ComponentTypeIndex type, bool logError)
+	void* EntityWorld::GetComponent(FixedString const& guid, ComponentTypeIndex type)
 	{
-		if (nameGuid == nullptr) {
-			OsiError("Attempted to look up component with null name!");
-			return nullptr;
-		}
-
-		auto fs = NameGuidToFixedString(nameGuid);
-		if (!fs) {
-			OsiError("Could not map GUID '" << nameGuid << "' to FixedString");
-			return nullptr;
-		}
-
-		return GetComponent(fs, type, logError);
+		ERR("FIXME!");
+		return nullptr;
 	}
 
-	void* EntityWorldBase::GetComponent(FixedString const& guid, HandleTypeIndex type, bool logError)
+	bool EntityWorld::IsValid(EntityHandle entityHandle) const
 	{
-		if (!guid) {
-			OsiError("Attempted to look up component with null GUID!");
-			return nullptr;
-		}
-
-		auto pool = GetComponentPool(type, logError);
-		if (!pool) return nullptr;
-
-		return pool->Factory.FindByGuid(guid);
-	}
-
-	void* EntityWorldBase::GetComponent(FixedString const& guid, ComponentTypeIndex type, bool logError)
-	{
-		if (!guid) {
-			OsiError("Attempted to look up component with null GUID!");
-			return nullptr;
-		}
-
-		auto pool = GetComponentPool(type, logError);
-		if (!pool) return nullptr;
-
-		return pool->Factory.FindByGuid(guid);
-	}
-
-	void* EntityWorldBase::GetComponent(NetId netId, HandleTypeIndex type, bool logError)
-	{
-		if (!netId) {
-			OsiError("Attempted to look up component with null NetId!");
-			return nullptr;
-		}
-
-		auto pool = GetComponentPool(type, logError);
-		if (!pool) return nullptr;
-
-		return pool->Factory.FindByNetId(netId);
-	}
-
-	void* EntityWorldBase::GetComponent(NetId netId, ComponentTypeIndex type, bool logError)
-	{
-		if (!netId) {
-			OsiError("Attempted to look up component with null NetId!");
-			return nullptr;
-		}
-
-		auto pool = GetComponentPool(type, logError);
-		if (!pool) return nullptr;
-
-		return pool->Factory.FindByNetId(netId);
-	}
-
-	EntityWorldBase::Entity* EntityWorldBase::GetEntity(EntityHandle entityHandle, bool logError)
-	{
-		auto typeIndex = entityHandle.GetType();
-		if (typeIndex >= std::size(EntityTypes)) {
-			if (logError) {
-				OsiError("Entity type index " << typeIndex << " too large!");
+		if (entityHandle.GetType() < 0x40) {
+			auto salts = (*EntitySalts)[entityHandle.GetType()];
+			if (entityHandle.GetIndex() < salts.NumElements) {
+				auto salt = salts.Buckets[entityHandle.GetIndex() >> salts.BitsPerBucket][entityHandle.GetIndex() & ((1 << salts.BitsPerBucket) - 1)];
+				return salt.Salt == entityHandle.GetSalt() && salt.Index == entityHandle.GetIndex();
 			}
+		}
+
+		return false;
+	}
+
+	EntityWorld::Entity* EntityWorld::EntityStore::GetEntity(EntityHandle entityHandle) const
+	{
+		auto& componentSalts = Salts.Buckets[entityHandle.GetType()];
+		if (entityHandle.GetIndex() < componentSalts.NumElements) {
+			auto salt = componentSalts.Buckets[entityHandle.GetIndex() >> componentSalts.BitsPerBucket][entityHandle.GetIndex() & ((1 << componentSalts.BitsPerBucket) - 1)];
+			if (salt.Salt == entityHandle.GetSalt()) {
+				return Entities[salt.EntityIndex];
+			}
+		}
+
+		return nullptr;
+	}
+
+	EntityWorld::Entity* EntityWorld::GetEntity(EntityHandle entityHandle) const
+	{
+		if (!IsValid(entityHandle)) {
 			return nullptr;
 		}
 
-		auto& entityTypes = EntityTypes[typeIndex];
-		auto index = entityHandle.GetIndex();
-		if (index >= entityTypes.HandleToIndexRemaps.Size()) {
-			if (logError) {
-				OsiError("Entity index " << index << " too large!");
-			}
-			return nullptr;
-		}
-
-		auto remap = entityTypes.HandleToIndexRemaps[index];
-		if (remap == -1) {
-			return nullptr;
-		}
-
-		auto salt = entityHandle.GetSalt();
-		if (salt != entityTypes.Handles[remap].GetSalt()) {
-			if (logError) {
-				OsiError("Salt mismatch on index " << index << "; " << salt << " != " << entityTypes.Handles[remap].GetSalt());
-			}
-			return nullptr;
-		}
-
-		return &entityTypes.Entities[remap];
+		return Entities->GetEntity(entityHandle);
 	}
-
-	ComponentHandle EntityWorldBase::Entity::GetComponentHandle(int32_t type, bool logError)
-	{
-		if (type >= (int32_t)ComponentIdToSlotIndexMap.Size()) {
-			if (logError) {
-				OsiError("Entity " << Handle << " has no component slot for component " << type);
-			}
-			return {};
-		}
-
-		auto slot = ComponentIdToSlotIndexMap[(int32_t)type];
-		if (slot == -1) {
-			if (logError) {
-				OsiError("Entity " << Handle << " has no component bound of type " << type);
-			}
-			return {};
-		}
-
-		return ComponentHandles[slot];
-	}
-
-	ComponentHandle EntityWorldBase::GetEntityComponentHandle(EntityHandle entityHandle, ComponentTypeIndex type, bool logError)
-	{
-		auto entity = GetEntity(entityHandle, logError);
-		if (!entity) return ComponentHandle{};
-
-		return entity->GetComponentHandle((int32_t)type, logError);
-	}
-
-	ComponentHandle EntityWorldBase::GetEntityComponentHandle(EntityHandle entityHandle, HandleTypeIndex type, bool logError)
-	{
-		auto componentIndex = HandleIndexToComponentIndexMap.find((int32_t)type);
-		if (componentIndex == HandleIndexToComponentIndexMap.end()) {
-			if (logError) {
-				OsiError("No component index mapping registered for handle type " << (int32_t)type);
-			}
-			return {};
-		}
-
-		return GetEntityComponentHandle(entityHandle, ComponentTypeIndex(componentIndex.Value()), logError);
-	}
-
-	void* EntityWorldBase::GetEntityComponent(EntityHandle entityHandle, ComponentTypeIndex type, bool logError)
-	{
-		auto componentHandle = GetEntityComponentHandle(entityHandle, type, logError);
-		if (!componentHandle) return nullptr;
-
-		return GetComponent(componentHandle, type, logError);
-	}
-
-	void* EntityWorldBase::GetEntityComponent(EntityHandle entityHandle, HandleTypeIndex type, bool logError)
-	{
-		auto componentHandle = GetEntityComponentHandle(entityHandle, type, logError);
-		if (!componentHandle) return nullptr;
-
-		return GetComponent(componentHandle, type, logError);
-	}
-
-
 
 	EntitySystemHelpersBase::EntitySystemHelpersBase()
 		: componentIndices_{ UndefinedIndex }, handleIndices_{ UndefinedIndex }, resourceManagerIndices_{ UndefinedIndex }
@@ -354,12 +120,13 @@ namespace bg3se
 		return key;
 	}
 
-	BitSet<>* EntitySystemHelpersBase::GetReplicationFlags(EntityHandle const& entity, EntityWorldBase::ReplicationTypeIndex replicationType)
+	BitSet<>* EntitySystemHelpersBase::GetReplicationFlags(EntityHandle const& entity, EntityWorld::ComponentTypeIndex type)
 	{
 		auto world = GetEntityWorld();
 		if (!world || !world->Replication) return nullptr;
 
-		auto& pools = world->Replication->ComponentPools;
+		return nullptr;
+		/*auto& pools = world->Replication->ComponentPools;
 		auto typeId = (int)replicationType;
 		if (typeId >= (int)pools.Size()) {
 			OsiError("Attempted to fetch replication list for component " << entity << ", but replication pool size is " << pools.Size() << "!");
@@ -372,26 +139,16 @@ namespace bg3se
 			return *syncFlags;
 		} else {
 			return nullptr;
-		}
+		}*/
 	}
 
-	BitSet<>* EntitySystemHelpersBase::GetReplicationFlags(BaseComponent const& component)
-	{
-		auto typeIdx = GetReplicationTypeIndex((EntityWorldBase::HandleTypeIndex)component.Handle.GetType());
-		if (!typeIdx) {
-			OsiError("Couldn't find replication type for component handle " << component.Handle);
-			return nullptr;
-		}
-
-		return GetReplicationFlags(component.Entity, *typeIdx);
-	}
-
-	BitSet<>* EntitySystemHelpersBase::GetOrCreateReplicationFlags(EntityHandle const& entity, EntityWorldBase::ReplicationTypeIndex replicationType)
+	BitSet<>* EntitySystemHelpersBase::GetOrCreateReplicationFlags(EntityHandle const& entity, EntityWorld::ComponentTypeIndex replicationType)
 	{
 		auto world = GetEntityWorld();
 		if (!world || !world->Replication) return nullptr;
 
-		auto& pools = world->Replication->ComponentPools;
+		return nullptr;
+		/*auto& pools = world->Replication->ComponentPools;
 		auto typeId = (int)replicationType;
 		if (typeId >= (int)pools.Size()) {
 			OsiError("Attempted to fetch replication list for component " << entity << ", but replication pool size is " << pools.Size() << "!");
@@ -404,18 +161,7 @@ namespace bg3se
 			return *syncFlags;
 		}
 
-		return pool.Set(entity, BitSet<>());
-	}
-
-	BitSet<>* EntitySystemHelpersBase::GetOrCreateReplicationFlags(BaseComponent const& component)
-	{
-		auto typeIdx = GetReplicationTypeIndex((EntityWorldBase::HandleTypeIndex)component.Handle.GetType());
-		if (!typeIdx) {
-			OsiError("Couldn't find replication type for component handle " << component.Handle);
-			return nullptr;
-		}
-
-		return GetOrCreateReplicationFlags(component.Entity, *typeIdx);
+		return pool.Set(entity, BitSet<>());*/
 	}
 
 	void EntitySystemHelpersBase::NotifyReplicationFlagsDirtied()
@@ -445,7 +191,7 @@ namespace bg3se
 			return;
 		}
 
-		auto const& symbolMaps = GetStaticSymbols().SymbolIdToNameMaps;
+		/*auto const& symbolMaps = GetStaticSymbols().SymbolIdToNameMaps;
 
 		std::unordered_map<char const*, ComponentIndexMappings> mappings;
 		for (auto const& mapping : symbolMaps) {
@@ -716,7 +462,7 @@ namespace bg3se
 		MAP_BOOST(ProjectileDeflectBoost);
 		MAP_BOOST(AbilityOverrideMinimumBoost);
 		MAP_BOOST(ACOverrideMinimumBoost);
-		MAP_BOOST(FallDamageMultiplierBoost);
+		MAP_BOOST(FallDamageMultiplierBoost);*/
 
 		initialized_ = true;
 	}
@@ -727,9 +473,9 @@ namespace bg3se
 		if (it != componentNameToIndexMappings_.end()) {
 			componentIndices_[(unsigned)type] = it->second.ComponentIndex;
 			handleIndices_[(unsigned)type] = it->second.HandleIndex;
-			componentIndexToTypeMappings_.insert(std::make_pair((int32_t)it->second.ComponentIndex, type));
-			handleIndexToTypeMappings_.insert(std::make_pair((int32_t)it->second.HandleIndex, type));
-			handleIndexToComponentMappings_.insert(std::make_pair((int32_t)it->second.HandleIndex, (int32_t)it->second.ComponentIndex));
+			componentIndexToTypeMappings_.insert(std::make_pair((int16_t)it->second.ComponentIndex, type));
+			handleIndexToTypeMappings_.insert(std::make_pair((int16_t)it->second.HandleIndex, type));
+			handleIndexToComponentMappings_.insert(std::make_pair((int16_t)it->second.HandleIndex, (int16_t)it->second.ComponentIndex));
 		} else {
 			OsiWarn("Could not find index for component: " << componentName);
 		}
@@ -745,126 +491,47 @@ namespace bg3se
 		}
 	}
 
-	void* EntitySystemHelpersBase::GetRawComponent(NetId netId, ExtComponentType type, bool logError)
+	void* EntitySystemHelpersBase::GetRawComponent(char const* nameGuid, ExtComponentType type)
 	{
 		auto world = GetEntityWorld();
 		if (!world) {
-			if (logError) {
-				OsiError("EntityWorld not initialized yet!");
-			}
-
 			return nullptr;
 		}
 
 		auto componentIndex = GetComponentIndex(type);
 		if (componentIndex) {
-			return world->GetComponent(netId, *componentIndex, logError);
+			return world->GetComponent(nameGuid, *componentIndex);
 		} else {
-			if (logError) {
-				OsiError("No component index mapping registered for " << type);
-			}
-
 			return nullptr;
 		}
 	}
 
-	void* EntitySystemHelpersBase::GetRawComponent(ComponentHandle componentHandle, ExtComponentType type, bool logError)
+	void* EntitySystemHelpersBase::GetRawComponent(FixedString const& guid, ExtComponentType type)
 	{
 		auto world = GetEntityWorld();
 		if (!world) {
-			if (logError) {
-				OsiError("EntityWorld not initialized yet!");
-			}
-
-			return nullptr;
-		}
-
-		auto handleIndex = GetHandleIndex(type);
-		if (handleIndex) {
-			if ((int32_t)*handleIndex != (int32_t)componentHandle.GetType()) {
-				if (logError) {
-					OsiError("Attempted to resolve handle of type " << *handleIndex << " in a pool of type " << type);
-				}
-
-				return nullptr;
-			}
-
-			auto componentIndex = GetComponentIndex(type);
-			return world->GetComponent(componentHandle, *componentIndex, logError);
-		} else {
-			if (logError) {
-				OsiError("No component index mapping registered for " << type);
-			}
-
-			return nullptr;
-		}
-	}
-
-	void* EntitySystemHelpersBase::GetRawComponent(char const* nameGuid, ExtComponentType type, bool logError)
-	{
-		auto world = GetEntityWorld();
-		if (!world) {
-			if (logError) {
-				OsiError("EntityWorld not initialized yet!");
-			}
-
 			return nullptr;
 		}
 
 		auto componentIndex = GetComponentIndex(type);
 		if (componentIndex) {
-			return world->GetComponent(nameGuid, *componentIndex, logError);
+			return world->GetComponent(guid, *componentIndex);
 		} else {
-			if (logError) {
-				OsiError("No component index mapping registered for " << type);
-			}
-
 			return nullptr;
 		}
 	}
 
-	void* EntitySystemHelpersBase::GetRawComponent(FixedString const& guid, ExtComponentType type, bool logError)
+	void* EntitySystemHelpersBase::GetRawEntityComponent(EntityHandle entityHandle, ExtComponentType type)
 	{
 		auto world = GetEntityWorld();
 		if (!world) {
-			if (logError) {
-				OsiError("EntityWorld not initialized yet!");
-			}
-
 			return nullptr;
 		}
 
 		auto componentIndex = GetComponentIndex(type);
 		if (componentIndex) {
-			return world->GetComponent(guid, *componentIndex, logError);
+			return world->GetComponent(entityHandle, *componentIndex);
 		} else {
-			if (logError) {
-				OsiError("No component index mapping registered for " << type);
-			}
-
-			return nullptr;
-		}
-	}
-
-	void* EntitySystemHelpersBase::GetRawEntityComponent(EntityHandle entityHandle, ExtComponentType type, bool logError)
-	{
-		auto world = GetEntityWorld();
-		if (!world) {
-			if (logError) {
-				OsiError("EntityWorld not initialized yet!");
-			}
-
-			return nullptr;
-		}
-
-		auto componentIndex = GetComponentIndex(type);
-		if (componentIndex) {
-			return world->GetEntityComponent(entityHandle, *componentIndex, logError);
-		} else {
-			if (logError) {
-				OsiError("No component index mapping registered for " << type);
-			}
-
 			return nullptr;
 		}
 	}
@@ -947,12 +614,12 @@ namespace bg3se
 
 
 
-	EntityWorldBase* ServerEntitySystemHelpers::GetEntityWorld()
+	EntityWorld* ServerEntitySystemHelpers::GetEntityWorld()
 	{
 		return GetStaticSymbols().GetServerEntityWorld();
 	}
 
-	EntityWorldBase* ClientEntitySystemHelpers::GetEntityWorld()
+	EntityWorld* ClientEntitySystemHelpers::GetEntityWorld()
 	{
 		return GetStaticSymbols().GetClientEntityWorld();
 	}

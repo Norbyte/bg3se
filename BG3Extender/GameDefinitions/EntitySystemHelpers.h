@@ -10,7 +10,7 @@ class EntitySystemHelpersBase : public Noncopyable<EntitySystemHelpersBase>
 public:
 	EntitySystemHelpersBase();
 
-	inline std::optional<EntityWorldBase::ComponentTypeIndex> GetComponentIndex(STDString const& type) const
+	inline std::optional<EntityWorld::ComponentTypeIndex> GetComponentIndex(STDString const& type) const
 	{
 		auto it = componentNameToIndexMappings_.find(type);
 		if (it != componentNameToIndexMappings_.end() && it->second.ComponentIndex != UndefinedIndex) {
@@ -20,9 +20,9 @@ public:
 		}
 	}
 
-	inline std::optional<STDString> GetComponentName(EntityWorldBase::ComponentTypeIndex index) const
+	inline std::optional<STDString> GetComponentName(EntityWorld::ComponentTypeIndex index) const
 	{
-		auto it = componentIndexToNameMappings_.find((int32_t)index);
+		auto it = componentIndexToNameMappings_.find((int16_t)index);
 		if (it != componentIndexToNameMappings_.end()) {
 			return it->second;
 		} else {
@@ -30,9 +30,9 @@ public:
 		}
 	}
 
-	inline std::optional<STDString> GetComponentName(EntityWorldBase::HandleTypeIndex index) const
+	inline std::optional<STDString> GetComponentName(EntityWorld::HandleTypeIndex index) const
 	{
-		auto it = handleIndexToNameMappings_.find((int32_t)index);
+		auto it = handleIndexToNameMappings_.find((int16_t)index);
 		if (it != handleIndexToNameMappings_.end()) {
 			return it->second;
 		} else {
@@ -40,9 +40,9 @@ public:
 		}
 	}
 
-	inline std::optional<ExtComponentType> GetComponentType(EntityWorldBase::ComponentTypeIndex index) const
+	inline std::optional<ExtComponentType> GetComponentType(EntityWorld::ComponentTypeIndex index) const
 	{
-		auto it = componentIndexToTypeMappings_.find((int32_t)index);
+		auto it = componentIndexToTypeMappings_.find((int16_t)index);
 		if (it != componentIndexToTypeMappings_.end()) {
 			return it->second;
 		} else {
@@ -50,9 +50,9 @@ public:
 		}
 	}
 
-	inline std::optional<ExtComponentType> GetComponentType(EntityWorldBase::HandleTypeIndex index) const
+	inline std::optional<ExtComponentType> GetComponentType(EntityWorld::HandleTypeIndex index) const
 	{
-		auto it = handleIndexToTypeMappings_.find((int32_t)index);
+		auto it = handleIndexToTypeMappings_.find((int16_t)index);
 		if (it != handleIndexToTypeMappings_.end()) {
 			return it->second;
 		} else {
@@ -60,17 +60,17 @@ public:
 		}
 	}
 
-	inline std::optional<EntityWorldBase::ComponentTypeIndex> GetComponentIndex(EntityWorldBase::HandleTypeIndex index) const
+	inline std::optional<EntityWorld::ComponentTypeIndex> GetComponentIndex(EntityWorld::HandleTypeIndex index) const
 	{
-		auto it = handleIndexToComponentMappings_.find((int32_t)index);
+		auto it = handleIndexToComponentMappings_.find((int16_t)index);
 		if (it != handleIndexToComponentMappings_.end()) {
-			return EntityWorldBase::ComponentTypeIndex(it->second);
+			return EntityWorld::ComponentTypeIndex(it->second);
 		} else {
 			return {};
 		}
 	}
 
-	inline std::optional<EntityWorldBase::ComponentTypeIndex> GetComponentIndex(ExtComponentType type) const
+	inline std::optional<EntityWorld::ComponentTypeIndex> GetComponentIndex(ExtComponentType type) const
 	{
 		auto idx = componentIndices_[(unsigned)type];
 		if (idx != UndefinedIndex) {
@@ -80,23 +80,13 @@ public:
 		}
 	}
 
-	std::optional<EntityWorldBase::HandleTypeIndex> GetHandleIndex(ExtComponentType type) const
+	std::optional<EntityWorld::HandleTypeIndex> GetHandleIndex(ExtComponentType type) const
 	{
 		auto idx = handleIndices_[(unsigned)type];
 		if (idx != -1) {
 			return idx;
 		}
 		else {
-			return {};
-		}
-	}
-
-	inline std::optional<EntityWorldBase::ReplicationTypeIndex> GetReplicationTypeIndex(EntityWorldBase::HandleTypeIndex index) const
-	{
-		auto it = handleIndexToReplicationTypeMappings_.find((int32_t)index);
-		if (it != handleIndexToReplicationTypeMappings_.end()) {
-			return EntityWorldBase::ReplicationTypeIndex(it->second);
-		} else {
 			return {};
 		}
 	}
@@ -112,9 +102,9 @@ public:
 	}
 
 	template <class T>
-	T* GetComponent(ComponentHandle componentHandle, bool logError = true)
+	T* GetComponent(char const* nameGuid)
 	{
-		auto component = GetRawComponent(componentHandle, T::ComponentType, logError);
+		auto component = GetRawComponent(nameGuid, T::ComponentType);
 		if (component) {
 			return RawComponentPtrToComponent<T>(component);
 		} else {
@@ -123,9 +113,9 @@ public:
 	}
 
 	template <class T>
-	T* GetComponent(char const* nameGuid, bool logError = true)
+	T* GetComponent(FixedString const& guid)
 	{
-		auto component = GetRawComponent(nameGuid, T::ComponentType, logError);
+		auto component = GetRawComponent(guid, T::ComponentType);
 		if (component) {
 			return RawComponentPtrToComponent<T>(component);
 		} else {
@@ -134,9 +124,9 @@ public:
 	}
 
 	template <class T>
-	T* GetComponent(FixedString const& guid, bool logError = true)
+	T* GetComponent(EntityHandle entityHandle)
 	{
-		auto component = GetRawComponent(guid, T::ComponentType, logError);
+		auto component = GetRawEntityComponent(entityHandle, T::ComponentType);
 		if (component) {
 			return RawComponentPtrToComponent<T>(component);
 		} else {
@@ -145,25 +135,10 @@ public:
 	}
 
 	template <class T>
-	T* GetComponent(NetId netId, bool logError = true)
+	T* GetComponent(NetId netId)
 	{
-		auto component = GetRawComponent(netId, T::ComponentType, logError);
-		if (component) {
-			return RawComponentPtrToComponent<T>(component);
-		} else {
-			return nullptr;
-		}
-	}
-
-	template <class T>
-	T* GetEntityComponent(EntityHandle entityHandle, bool logError = true)
-	{
-		auto component = GetRawEntityComponent(entityHandle, T::ComponentType, logError);
-		if (component) {
-			return RawComponentPtrToComponent<T>(component);
-		} else {
-			return nullptr;
-		}
+		ERR("FIXME");
+		return nullptr;
 	}
 
 	template <class T, class Fun>
@@ -189,7 +164,7 @@ public:
 		}
 	}
 
-	virtual EntityWorldBase* GetEntityWorld() = 0;
+	virtual EntityWorld* GetEntityWorld() = 0;
 
 	template <class T>
 	std::optional<GuidResourceDefinitionManager<T>*> GetResourceManager()
@@ -202,10 +177,8 @@ public:
 		}
 	}
 
-	BitSet<> * GetReplicationFlags(EntityHandle const& entity, EntityWorldBase::ReplicationTypeIndex replicationType);
-	BitSet<> * GetReplicationFlags(BaseComponent const& component);
-	BitSet<> * GetOrCreateReplicationFlags(EntityHandle const& entity, EntityWorldBase::ReplicationTypeIndex replicationType);
-	BitSet<> * GetOrCreateReplicationFlags(BaseComponent const& component);
+	BitSet<> * GetReplicationFlags(EntityHandle const& entity, EntityWorld::ComponentTypeIndex replicationType);
+	BitSet<> * GetOrCreateReplicationFlags(EntityHandle const& entity, EntityWorld::ComponentTypeIndex replicationType);
 	void NotifyReplicationFlagsDirtied();
 
 protected:
@@ -226,28 +199,25 @@ private:
 	
 	struct IndexMappings
 	{
-		EntityWorldBase::HandleTypeIndex HandleIndex;
-		EntityWorldBase::ComponentTypeIndex ComponentIndex;
+		EntityWorld::HandleTypeIndex HandleIndex;
+		EntityWorld::ComponentTypeIndex ComponentIndex;
 	};
 
 	std::unordered_map<STDString, IndexMappings> componentNameToIndexMappings_;
-	std::unordered_map<int32_t, STDString> componentIndexToNameMappings_;
-	std::unordered_map<int32_t, STDString> handleIndexToNameMappings_;
-	std::unordered_map<int32_t, ExtComponentType> componentIndexToTypeMappings_;
-	std::unordered_map<int32_t, ExtComponentType> handleIndexToTypeMappings_;
-	std::unordered_map<int32_t, int32_t> handleIndexToComponentMappings_;
-	std::unordered_map<int32_t, int32_t> handleIndexToReplicationTypeMappings_;
+	std::unordered_map<int16_t, STDString> componentIndexToNameMappings_;
+	std::unordered_map<int16_t, STDString> handleIndexToNameMappings_;
+	std::unordered_map<int16_t, ExtComponentType> componentIndexToTypeMappings_;
+	std::unordered_map<int16_t, ExtComponentType> handleIndexToTypeMappings_;
+	std::unordered_map<int16_t, int16_t> handleIndexToComponentMappings_;
 	std::unordered_map<STDString, int32_t> systemIndexMappings_;
-	std::array<EntityWorldBase::ComponentTypeIndex, (int)ExtComponentType::Max> componentIndices_;
-	std::array<EntityWorldBase::HandleTypeIndex, (int)ExtComponentType::Max> handleIndices_;
+	std::array<EntityWorld::ComponentTypeIndex, (int)ExtComponentType::Max> componentIndices_;
+	std::array<EntityWorld::HandleTypeIndex, (int)ExtComponentType::Max> handleIndices_;
 	std::array<int32_t, (int)ExtResourceManagerType::Max> resourceManagerIndices_;
 	bool initialized_{ false };
 
-	void* GetRawComponent(NetId netId, ExtComponentType type, bool logError);
-	void* GetRawComponent(ComponentHandle componentHandle, ExtComponentType type, bool logError);
-	void* GetRawComponent(char const* nameGuid, ExtComponentType type, bool logError);
-	void* GetRawComponent(FixedString const& guid, ExtComponentType type, bool logError);
-	void* GetRawEntityComponent(EntityHandle entityHandle, ExtComponentType type, bool logError);
+	void* GetRawComponent(char const* nameGuid, ExtComponentType type);
+	void* GetRawComponent(FixedString const& guid, ExtComponentType type);
+	void* GetRawEntityComponent(EntityHandle entityHandle, ExtComponentType type);
 	GuidResourceDefinitionManagerBase* GetRawResourceManager(ExtResourceManagerType type);
 };
 
@@ -256,7 +226,7 @@ class ServerEntitySystemHelpers : public EntitySystemHelpersBase
 public:
 	void Setup();
 
-	EntityWorldBase* GetEntityWorld() override;
+	EntityWorld* GetEntityWorld() override;
 };
 
 class ClientEntitySystemHelpers : public EntitySystemHelpersBase
@@ -264,7 +234,7 @@ class ClientEntitySystemHelpers : public EntitySystemHelpersBase
 public:
 	void Setup();
 
-	EntityWorldBase* GetEntityWorld() override;
+	EntityWorld* GetEntityWorld() override;
 };
 
 END_SE()

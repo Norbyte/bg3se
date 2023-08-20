@@ -31,11 +31,11 @@ namespace bg3se::esv::lua
 	public:
 		static char const * const MetatableName;
 
-		inline StatusHandleProxy(ComponentHandle character, ComponentHandle status)
+		inline StatusHandleProxy(EntityHandle character, ComponentHandle status)
 			: character_(character), statusHandle_(status)
 		{}
 
-		inline StatusHandleProxy(ComponentHandle character, NetId status)
+		inline StatusHandleProxy(EntityHandle character, NetId status)
 			: character_(character), statusNetId_(status)
 		{}
 
@@ -44,7 +44,7 @@ namespace bg3se::esv::lua
 		esv::Status* Get(lua_State* L);
 
 	private:
-		ComponentHandle character_;
+		EntityHandle character_;
 		ComponentHandle statusHandle_;
 		NetId statusNetId_;
 	};
@@ -233,7 +233,7 @@ namespace bg3se::esv::lua
 		void OnGameSessionLoading() override;
 		void StoryFunctionMappingsUpdated();
 
-		EntityWorldBase* GetEntityWorld() override;
+		EntityWorld* GetEntityWorld() override;
 		EntitySystemHelpersBase* GetEntitySystemHelpers() override;
 
 		template <class TArg>

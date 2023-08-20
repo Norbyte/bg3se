@@ -29,7 +29,7 @@ END_CLS()
 
 
 BEGIN_CLS(esv::Character)
-P_REF(Base)
+// P_REF(Base)
 // Properties
 P_RO(GUID)
 P_RO(NetID)
@@ -107,7 +107,7 @@ END_CLS()
 
 
 BEGIN_CLS(esv::Item)
-P_REF(Base)
+// P_REF(Base)
 P_RO(GUID)
 P_RO(NetID)
 P_RO(Flags)

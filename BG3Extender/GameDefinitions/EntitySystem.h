@@ -14,228 +14,379 @@ namespace bg3se
 		int32_t Ticks;
 	};
 
-	struct EntityWorldBase;
+	struct EntityWorld;
 
 	struct EntityWorldHandle
 	{
 		EntityHandle Handle;
-		EntityWorldBase* World{ nullptr };
+		EntityWorld* World{ nullptr };
 	};
 
-	struct BaseComponent : public ProtectedGameObject<BaseComponent>
+	struct CriticalSection : public CRITICAL_SECTION
 	{
-		// Handle of the entity this component belongs to
+		__int64 field_28;
+		__int64 field_30;
+	};
+
+	struct BaseComponent
+	{
+		// FIXME - not sure if this even exists anymore
 		EntityHandle Entity;
-		// Handle of the current component
-		ComponentHandle Handle;
 	};
 
-	struct ComponentFactoryBase : public ProtectedGameObject<ComponentFactoryBase>
-	{
-		// Hack - default implementation provided for typing purposes
-		inline virtual ComponentHandle* ReevaluateHandle(ComponentHandle& handle) {}
-		inline virtual ComponentHandle* GetFreeHandle(ComponentHandle& handle) {}
-		inline virtual bool IsFreeIndex(uint32_t index) { return false; }
-		inline virtual bool IsReservedIndex(uint32_t index) { return false; }
-		inline virtual uint64_t ReserveIndex(uint32_t index) { return 0; }
-		inline virtual uint64_t UnreserveIndex(uint32_t index) { return 0; }
-		inline virtual void Destroy() {}
-
-		struct ComponentEntry
-		{
-			BaseComponent* Component;
-			int32_t ObjectIndex;
-		};
-
-		uint32_t Mutex;
-		Array<ComponentEntry> ComponentsByHandleIndex;
-		VirtualArray<uint32_t> Salts;
-		ObjectSet<uint32_t> FreeSlotIndices;
-		ObjectSet<void*> Components;
-		uint8_t Unknown3;
-		uint32_t Unknown4;
-
-		void* FindByHandle(ComponentHandle handle) const;
-	};
-
-
-	struct NetworkComponentFactoryBase : public ComponentFactoryBase
-	{
-		Map<FixedString, void*> Guids;
-		Map<uint64_t, void*> InUseNetIds;
-		VirtualMultiHashSet<uint64_t> FreeNetIds;
-		VirtualArray<uint16_t> NetIdSalts;
-		uint64_t NextFreeNetId;
-		char CanCreateNetIDs;
-		char field_113[5];
-
-		void* FindByGuid(FixedString const& guid) const;
-		void* FindByNetId(NetId netId) const;
-		void* FindByIndex(uint32_t index) const;
-	};
-
-	struct BaseComponentProcessingSystem
-	{
-		void * VMT;
-		void * field_8;
-	};
-
-	struct ComponentPoolBase : public ProtectedGameObject<ComponentPoolBase>
-	{
-		virtual void Destroy() = 0;
-		virtual bool DestroyComponent(ComponentHandle const& handle) = 0;
-		virtual bool ForceComponent(ComponentHandle const& handle) = 0;
-		virtual BaseComponent* ForceComponentGuid(FixedString const& guid, FixedString const& guid2) = 0;
-		virtual int GetSize() = 0;
-		virtual ComponentHandle& GetFreeHandle(ComponentHandle& handle) = 0;
-		virtual bool IsReservedHandle(ComponentHandle const& handle) = 0;
-		virtual void UnreserveHandle(ComponentHandle const& handle) = 0;
-		virtual void UnreserveHandle2(ComponentHandle const& handle) = 0;
-		virtual bool IsValidHandle(ComponentHandle const& handle) = 0;
-
-		NetworkComponentFactoryBase Factory;
-	};
-
-	template <class T>
-	struct ComponentPool : public ComponentPoolBase
-	{
-		inline T* GetComponentByIndex(uint32_t index) const
-		{
-			return reinterpret_cast<T*>(Factory.FindByIndex(index));
-		}
-		
-		inline T* GetComponentByHandle(ComponentHandle const& handle) const
-		{
-			return reinterpret_cast<T*>(Factory.FindByHandle(handle));
-		}
-
-		inline T* GetComponentByGuid(FixedString const& guid) const
-		{
-			return reinterpret_cast<T*>(Factory.FindByGuid(guid));
-		}
-
-		inline T* GetComponentByNetId(NetId const& netId) const
-		{
-			return reinterpret_cast<T*>(Factory.FindByNetId(netId));
-		}
-	};
-
-	struct EntityWorldBase : public ProtectedGameObject<EntityWorldBase>
+	struct EntityWorld : public ProtectedGameObject<EntityWorld>
 	{
 		// Handle type index, registered statically during game startup
+		// FIXME - delete all ComponentHandle logic!
 		enum class HandleTypeIndexTag {};
-		using HandleTypeIndex = TypedIntegral<int32_t, HandleTypeIndexTag>;
+		using HandleTypeIndex = TypedIntegral<int16_t, HandleTypeIndexTag>;
 		// Component type index, registered statically during game startup
 		enum class ComponentTypeIndexTag {};
-		using ComponentTypeIndex = TypedIntegral<int32_t, ComponentTypeIndexTag>;
-		// Replication pool type index, registered statically during game startup
-		enum class ReplicationTypeIndexTag {};
-		using ReplicationTypeIndex = TypedIntegral<int32_t, ReplicationTypeIndexTag>;
+		using ComponentTypeIndex = TypedIntegral<int16_t, ComponentTypeIndexTag>;
 
-		struct Entity
+		struct UpdateInfo
 		{
-			EntityHandle Handle;
-			bool field_8;
-			uint32_t field_C;
-			Array<int16_t> SlotIndexToComponentIdMap;
-			Array<ComponentHandle> ComponentHandles;
-			Array<int16_t> ComponentIdToSlotIndexMap;
-			int NumUsedSlots;
-			uint64_t OccupiedSlotBitmap[12];
-
-			ComponentHandle GetComponentHandle(int32_t type, bool logError);
-		};
-
-		struct EntityType
-		{
-			Array<ComponentHandle> Handles;
-			Array<Entity> Entities;
-			Array<int> HandleToIndexRemaps;
-			uint32_t LastAssignedEntityIndex;
-			uint32_t field_4C;
-			uint32_t* Salts; // 0x40000 salt entries
+			__int64 field_50;
+			__int64 field_58;
+			__int64 field_60;
+			__int64 field_68;
+			__int64 field_70;
+			__int64 field_78;
+			__int64 field_80;
+			__int64 field_88;
+			__int64 field_90;
+			__int64 field_98;
+			__int64 field_A0;
+			__int64 field_A8;
+			__int64 field_B0;
+			__int64 field_B8;
+			__int64 field_C0;
+			__int64 field_C8;
+			__int64 field_D0;
+			__int64 field_D8;
+			__int64 field_E0;
+			__int64 field_E8;
+			__int64 field_F0;
+			__int64 field_F8;
+			__int64 field_100;
+			__int64 field_108;
+			__int64 field_110;
+			__int64 field_118;
+			__int64 field_120;
 		};
 
 		struct ComponentType
 		{
-			ComponentPoolBase* Pool;
-			ComponentTypeIndex ComponentIndex;
-			HandleTypeIndex HandleIndex;
-			bool field_10;
-			ObjectSet<int32_t> DependentComponentIndices;
-			ObjectSet<int32_t> DependencyComponentIndices;
+			__int16 field_0;
+			int field_4;
+			BYTE field_8;
+			char field_9;
+			char field_A;
+			bool QueryFlags[4];
+			uint16_t field_10;
+			__int16 field_12;
+			void* DtorProc;
+			Array<int16_t> DependentComponentIndices;
+			Array<int16_t> DependencyComponentIndices;
 		};
 
+		struct QueryManager
+		{
+			Array<void*> Queries;
+			Array<int16_t> field_10;
+			Array<int16_t> field_20;
+			Array<int16_t> field_30;
+			Array<int16_t> field_40;
+			Array<int16_t> field_50;
+			Array<int16_t> field_60;
+		};
 
 		struct ComponentRegistry
 		{
-			uint64_t Bitmask[2];
+			BitSet<> Bitmask;
 			Array<ComponentType> Types;
-		};
-
-		struct ComponentTypeInfo
-		{
-			void* VMT;
-			ComponentRegistry* ComponentRegistry;
-			EntityWorldBase* EntityWorld;
-			ComponentTypeIndex ComponentIndex;
 		};
 
 		struct SystemType
 		{
+			using ID = uint32_t;
+
 			void* System;
 			int32_t SystemIndex0;
 			int32_t SystemIndex1;
-			bool Unknown;
-			void* SomeCallback;
-			ObjectSet<int32_t> DependentSystemIndices;
+			__int16 field_10;
+			char field_12;
+			void* SomeProc1;
+			__int64 field_20;
+			void* SomeProc2;
+			MultiHashSet<SystemType::ID> DependencySystems;
+			MultiHashSet<SystemType::ID> DependentSystems;
+			MultiHashSet<uint32_t> HandleMappings2;
+			MultiHashSet<uint32_t> HandleMappings;
 		};
 
 		struct SystemRegistry
 		{
-			uint64_t Unknown;
+			void* VMT;
 			Array<SystemType> Systems;
+			uint32_t Unknown;
+			uint32_t GrowSize;
 		};
 
 		struct ComponentReplication
 		{
-			Array<VirtualMultiHashMap<EntityHandle, BitSet<>>> ComponentPools;
+			Array<MultiHashMap<EntityHandle, BitSet<>>> ComponentPools;
 			bool Dirty;
 		};
 
-		void* UnknownB1;
+		struct EntityTypeSalts
+		{
+			struct Entry
+			{
+				int Index;
+				int Salt;
+			};
+
+			Entry** Buckets;
+			uint32_t NumElements;
+			uint16_t NumBuckets;
+			uint16_t BitsPerBucket;
+			__int64 field_10;
+			int field_18;
+			__int64 field_20;
+			__int64 field_28;
+			__int64 field_30;
+			__int64 field_38;
+		};
+		
+		struct Entity
+		{
+			struct ComponentEntry
+			{
+				__int16 Index;
+				__int16 ComponentTypeId;
+				char field_4;
+				char field_5;
+				void* DtorProc;
+			};
+			
+			struct ComponentBucket
+			{
+				__int16 A;
+				__int16 B;
+			};
+			
+			struct ComponentPoolEntry
+			{
+				void** Components;
+				void* B;
+			};
+			
+			struct EntityComponentPool
+			{
+				ComponentPoolEntry Pool[256];
+			};
+
+
+			uint64_t field_0[30];
+			__int64 field_F0;
+			uint16_t* SomeListBuf_2b;
+			ComponentEntry* ComponentDtors;
+			__int16 TypeId;
+			__int16 field_10A;
+			__int16 SomeListSize;
+			char field_10E;
+			char field_10F;
+			char field_110;
+			Array<EntityComponentPool*> Components;
+			Array<void*> field_128;
+			BitSet<> field_138;
+			int field_148;
+			Array<void*> field_150;
+			MultiHashMap<uint16_t, uint8_t> ComponentTypeToIndex;
+			MultiHashMap<uint64_t, ComponentBucket> ComponentBuckets;
+			MultiHashMap<uint64_t, uint64_t> field_1E0;
+			MultiHashMap<uint64_t, uint64_t> field_220;
+			Array<void*> field_260;
+			Array<void*> field_270;
+			MultiHashMap<uint16_t, void*> Components_u16_Unk;
+			char field_2C0;
+			__int64 field_2C8;
+			uint64_t field_2D0[4];
+			Array<int16_t> field_2F0;
+			Array<int16_t> field_300;
+			uint64_t field_310[38];
+			Array<void*> field_440;
+			uint64_t field_450[38];
+
+			void* GetComponent(EntityHandle entityHandle, ComponentTypeIndex type) const;
+		};
+
+
+		struct EntityStore
+		{
+			struct TypeSalts
+			{
+				struct Entry
+				{
+					int Salt;
+					uint16_t EntityIndex;
+				};
+
+				Entry** Buckets;
+				uint32_t NumElements;
+				uint16_t NumBuckets;
+				uint16_t BitsPerBucket;
+			};
+
+			struct SaltMap
+			{
+				std::array<TypeSalts, 0x40> Buckets;
+				uint32_t Size;
+			};
+
+			Array<Entity*> Entities;
+			MultiHashMap<uint64_t, uint16_t> TypeHashToEntityIndex;
+			SaltMap Salts;
+			MultiHashMap<uint64_t, uint64_t> field_458;
+			BitSet<> UsedTypeIndices;
+			ComponentRegistry* ComponentRegistry;
+			QueryManager* Queries;
+
+			Entity* GetEntity(EntityHandle entityHandle) const;
+		};
+
+		struct SomeStore
+		{
+			struct Elem
+			{
+				__int64 field_0;
+				int field_8;
+				int field_C;
+			};
+
+			__int64 FastLock;
+			__int64 FastLock2;
+			CRITICAL_SECTION field_10;
+			Elem field_38[2];
+		};
+
+		struct ComponentOps
+		{
+			__int64 VMT;
+			__int64 field_8;
+			__int64 field_10;
+			__int64 field_18;
+			__int64 field_20;
+			__int16 TypeId;
+		};
+
+		struct ComponentPool2
+		{
+			Array<void*> Components;
+			void* UpdateProc;
+			uint64_t field_18;
+			SomeStore* Store;
+			int SomeHandle;
+			WORD field_2C;
+			int16_t ComponentTypeId;
+			void* DtorProc;
+		};
+
+		struct ComponentRegistryEntry1
+		{
+			void* VMT;
+			__int64 field_8;
+			Array<void*> field_10;
+			__int64 field_20;
+			Array<void*> field_28;
+		};
+
+		struct EntityComponentsEntity
+		{
+			uint64_t ComponentTypeIdMask[30];
+			uint64_t ComponentUpdateFlags1[30];
+			uint64_t ComponentUpdateFlags2[30];
+			uint64_t field_2D0[8];
+			__int64 field_310;
+			__int64 field_318;
+			Array<uint64_t> ComponentHandles;
+			Array<uint64_t> field_330;
+			int Flags;
+			int field_344;
+			__int64 field_348;
+		};
+
+		struct EntityComponents
+		{
+			struct SparseHashMap
+			{
+				BitSet<> SetValues;
+				Array<int16_t> NextIds;
+				Array<int16_t> Keys;
+				Array<ComponentPool2*> Values;
+			};
+
+			MultiHashMap<EntityHandle, EntityComponentsEntity*> Entities;
+			SparseHashMap ComponentPools;
+			char field_80;
+			MultiHashMap<uint16_t, MultiHashMap<uint64_t, void*>> ComponentsByType;
+			MultiHashMap<uint16_t, MultiHashMap<uint64_t, void*>> ComponentsByType2;
+			void* field_108;
+			void* field_110;
+			Array<void*>* ComponentTypes;
+			SomeStore* SomeStore;
+			EntityWorld* EntityWorld;
+			EntityTypeSalts* Salts;
+			__int64 field_128;
+		};
+
+
 		ComponentReplication* Replication;
-		uint32_t EnterCount;
-		uint32_t CurrentThreadId;
-		void* Unknown;
-		EntityType EntityTypes[64];
-		uint64_t Unknown2[1];
-		ComponentRegistry Components;
+		ComponentRegistry ComponentRegistry_;
 		SystemRegistry Systems;
-		uint64_t Unknown3[3];
-		ObjectSet<void*> SystemsToUpdate;
-		RefMap<int32_t, int32_t> HandleIndexToComponentIndexMap;
-		VirtualArray<void*> ComponentTypeRegistryMap;
-		uint64_t Unknown4[2];
-		Array<ComponentTypeInfo*> ComponentTypeInfos;
+		__int64 field_48;
+		UpdateInfo UpdateInfos;
+		__int64 field_128;
+		__int64 field_130;
+		__int64 field_138;
+		uint64_t GameTime[3];
+		void*  ECSUpdateBatch;
+		int field_160;
+		__int64 field_168;
+		Array<void*> field_170;
+		Array<ComponentRegistryEntry1*> ComponentTypes;
+		bool field_190;
+		bool NeedsUpdate;
+		bool field_192;
+		bool field_193;
+		QueryManager Queries;
+		std::array<EntityTypeSalts, 0x40>* EntitySalts;
+		EntityStore* Entities;
+		SomeStore field_218;
+		__int64 field_270;
+		MultiHashMap<uint64_t, uint64_t> field_278;
+		Array<void*> field_2B8;
+		Array<ComponentOps*> ComponentOpsList;
+		ScratchString Scratch;
+		void* UpdateBatches;
+		CriticalSection CS;
+		int field_338;
+		EntityComponents* Components;
+		__int64 field_348;
+		__int64 field_350;
+		__int64 field_358;
+		__int64 field_360;
+		__int64 field_368;
+		__int64 field_370;
+		__int64 field_378;
 
-		ComponentPoolBase* GetComponentPool(HandleTypeIndex handleType, bool logError = true);
-		ComponentPoolBase* GetComponentPool(ComponentTypeIndex handleType, bool logError = true);
-		void* GetComponent(ComponentHandle componentHandle, bool logError = true);
-		void* GetComponent(ComponentHandle componentHandle, HandleTypeIndex type, bool logError = true);
-		void* GetComponent(ComponentHandle componentHandle, ComponentTypeIndex type, bool logError = true);
-		void* GetComponent(char const* nameGuid, HandleTypeIndex type, bool logError = true);
-		void* GetComponent(char const* nameGuid, ComponentTypeIndex type, bool logError = true);
-		void* GetComponent(FixedString const& guid, HandleTypeIndex type, bool logError = true);
-		void* GetComponent(FixedString const& guid, ComponentTypeIndex type, bool logError = true);
-		void* GetComponent(NetId netId, HandleTypeIndex type, bool logError = true);
-		void* GetComponent(NetId netId, ComponentTypeIndex type, bool logError = true);
+		void* GetComponent(EntityHandle entityHandle, ComponentTypeIndex type);
+		void* GetComponent(char const* nameGuid, ComponentTypeIndex type);
+		void* GetComponent(FixedString const& guid, ComponentTypeIndex type);
 
-		Entity* GetEntity(EntityHandle entityHandle, bool logError = true);
-		ComponentHandle GetEntityComponentHandle(EntityHandle entityHandle, HandleTypeIndex type, bool logError = true);
-		ComponentHandle GetEntityComponentHandle(EntityHandle entityHandle, ComponentTypeIndex type, bool logError = true);
-		void* GetEntityComponent(EntityHandle entityHandle, HandleTypeIndex type, bool logError = true);
-		void* GetEntityComponent(EntityHandle entityHandle, ComponentTypeIndex type, bool logError = true);
+		Entity* GetEntity(EntityHandle entityHandle) const;
+		bool IsValid(EntityHandle entityHandle) const;
 	};
 
 	struct IGameObject : public ProtectedGameObject<IGameObject>
@@ -280,7 +431,6 @@ namespace bg3se
 		virtual void SetCurrentLevel(FixedString const& fs) = 0;
 
 		void* VMT2;
-		BaseComponent Base;
 	};
 
 	/*struct IEocClientObject : public IGameObject
@@ -321,16 +471,13 @@ namespace bg3se
 		virtual void SetTemplateId(uint8_t templateType, FixedString const& templateId) = 0;
 		virtual void* GetSomeTransformValue() = 0;
 		virtual void SetSomeTransformValue(void* unknown) = 0;
+
+		BaseComponent Base;
 	};
 
 	namespace esv
 	{
 		struct EntityManager;
-
-		struct EntityWorld : public EntityWorldBase // <ComponentType>
-		{
-			
-		};
 
 		/*
 		struct CharacterFactory : public NetworkObjectFactory<esv::Character, (uint32_t)ObjectType::ServerCharacter>
@@ -416,8 +563,6 @@ namespace bg3se
 
 	namespace ecl
 	{
-		struct EntityWorld : public EntityWorldBase // <ComponentType>
-		{
 			/*inline Character* GetCharacter(char const* nameGuid, bool logError = true)
 			{
 				auto component = GetComponent(ComponentType::Character, nameGuid, logError);
@@ -488,7 +633,6 @@ namespace bg3se
 			{
 				return (eoc::CustomStatsComponent*)GetComponentByEntityHandle(ComponentType::CustomStats, entityHandle);
 			}*/
-		};
 
 
 		/*

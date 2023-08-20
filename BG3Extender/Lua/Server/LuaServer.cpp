@@ -200,13 +200,13 @@ namespace bg3se::esv::lua
 		auto& helpers = gExtender->GetServer().GetEntityHelpers();
 		auto character = helpers.GetComponent<esv::Character>(s);
 		if (character) {
-			auto boostContainer = helpers.GetEntityComponent<BoostsContainerComponent>(character->Base.Entity);
+			auto boostContainer = helpers.GetComponent<BoostsContainerComponent>(character->Base.Entity);
 
 			if (boostContainer) {
 				std::cout << "Boosts:" << std::endl;
 				for (auto const& boostSet : boostContainer->Boosts) {
 					for (auto boostHandle : boostSet.Value) {
-						auto boost = helpers.GetEntityComponent<BoostInfoComponent>(boostHandle);
+						auto boost = helpers.GetComponent<BoostInfoComponent>(boostHandle);
 						std::cout << EnumInfo<BoostType>::Find(boost->Type)
 							<< " Flags=" << boost->Flags_M
 							<< " Passive=" << boost->Passive.GetString()
@@ -260,7 +260,7 @@ namespace bg3se::esv::lua
 
 	int XGetByGuid(lua_State* L)
 	{
-		auto s = get<FixedString>(L, 1);
+		/*auto s = get<FixedString>(L, 1);
 		auto& types = GetEoCServer()->EntityWorld->Components.Types;
 		for (unsigned i = 0; i < types.Size(); i++) {
 			auto pool = types[i].Pool;
@@ -328,7 +328,7 @@ namespace bg3se::esv::lua
 					return 0;
 				}
 			}
-		}
+		}*/
 
 		std::cout << "NOTFOUND!" << std::endl;
 		return 0;
@@ -353,8 +353,8 @@ namespace bg3se::esv::lua
 
 	int XTest(lua_State* L)
 	{
-		auto stats = GetStaticSymbols().Stats;
-		auto const& functors = (*stats)->StatsFunctors;
+		auto stats = GetStaticSymbols().GetStats();
+		auto const& functors = stats->StatsFunctors;
 		DealDamageFunctor* dd{ nullptr };
 
 		for (auto const& kv : functors) {
@@ -568,7 +568,7 @@ namespace bg3se::esv::lua
 	}
 
 
-	EntityWorldBase* ServerState::GetEntityWorld()
+	EntityWorld* ServerState::GetEntityWorld()
 	{
 		return GetStaticSymbols().GetServerEntityWorld();
 	}

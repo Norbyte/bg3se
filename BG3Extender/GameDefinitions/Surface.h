@@ -248,7 +248,7 @@ namespace bg3se::esv
 		uint8_t field_500;
 	};
 
-	struct SurfaceActionFactory : public ComponentFactoryBase
+	/*struct SurfaceActionFactory : public ComponentFactoryBase
 	{
 		using CreateActionProc = SurfaceAction * (SurfaceActionFactory* self, SurfaceActionType actionType, 
 			GuidResourceDefinitionManagerBase* classDefMgr, uint64_t actionHandle);
@@ -277,5 +277,5 @@ namespace bg3se::esv
 		RefMap<void*, void*> field_318;
 		RefMap<void*, void*> field_328;
 		int64_t field_338[10];
-	};
+	};*/
 }

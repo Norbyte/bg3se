@@ -20,13 +20,13 @@ namespace bg3se::lua
 		template <class T>
 		bool HasComponent()
 		{
-			return this->entitySystem_->GetEntityComponent<T>(handle_, false) != nullptr;
+			return this->entitySystem_->GetComponent<T>(handle_) != nullptr;
 		}
 
 		template <class T>
 		T* GetComponent()
 		{
-			return this->entitySystem_->GetEntityComponent<T>(handle_, false);
+			return this->entitySystem_->GetComponent<T>(handle_);
 		}
 
 		static int HasRawComponent(lua_State* L);

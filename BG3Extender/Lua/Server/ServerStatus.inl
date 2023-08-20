@@ -130,12 +130,12 @@ namespace bg3se::esv::lua
 
 	esv::StatusMachine* GetEntityStatusMachine(EntityHandle const& entity)
 	{
-		auto character = gExtender->GetServer().GetEntityHelpers().GetEntityComponent<Character>(entity, false);
+		auto character = gExtender->GetServer().GetEntityHelpers().GetComponent<Character>(entity);
 		if (character != nullptr) {
 			return character->StatusMachine;
 		}
 
-		auto item = gExtender->GetServer().GetEntityHelpers().GetEntityComponent<Item>(entity, false);
+		auto item = gExtender->GetServer().GetEntityHelpers().GetComponent<Item>(entity);
 		if (item != nullptr) {
 			return item->StatusMachine;
 		}

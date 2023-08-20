@@ -45,7 +45,6 @@ namespace esv
 	struct Level;
 	struct Status;
 	struct StatusMachine;
-	struct EntityWorld;
 	class ExtensionState;
 
 	namespace lua

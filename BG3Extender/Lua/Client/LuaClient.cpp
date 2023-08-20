@@ -1051,7 +1051,7 @@ namespace bg3se::ecl::lua
 	}
 
 
-	EntityWorldBase* ClientState::GetEntityWorld()
+	EntityWorld* ClientState::GetEntityWorld()
 	{
 		return GetStaticSymbols().GetClientEntityWorld();
 	}

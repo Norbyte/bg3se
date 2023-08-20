@@ -289,7 +289,7 @@ namespace bg3se::esv::lua
 
 	SurfaceAction* CreateSurfaceAction(SurfaceActionType type)
 	{
-		auto const& sym = GetStaticSymbols();
+		/*auto const& sym = GetStaticSymbols();
 		auto factory = sym.GetSurfaceActionFactory();
 		if (!factory || !sym.esv__SurfaceActionFactory__CreateAction) {
 			OsiError("esv::SurfaceActionFactory not mapped!");
@@ -308,7 +308,8 @@ namespace bg3se::esv::lua
 			return nullptr;
 		}
 
-		return action;
+		return action;*/
+		return nullptr;
 	}
 
 #define TY(cls) case SurfaceActionType::cls: ObjectProxy::MakeRef<esv::cls>(L, static_cast<esv::cls*>(action), GetServerLifetime()); break;
@@ -348,7 +349,7 @@ namespace bg3se::esv::lua
 
 	int LuaExecuteSurfaceAction(lua_State* L)
 	{
-		StackCheck _(L, 0);
+		/*StackCheck _(L, 0);
 		auto action = checked_get_proxy<SurfaceAction>(L, 1);
 		if (!action) {
 			OsiError("Attempted to execute surface action more than once!");
@@ -372,21 +373,21 @@ namespace bg3se::esv::lua
 		if (action->VMT->GetTypeId(action) == SurfaceActionType::TransformSurfaceAction) {
 			OsiError("TransformSurfaceAction not supported yet!");
 			return 0;
-			/*FIXME
+			/x*FIXME
 			auto transform = static_cast<TransformSurfaceAction*>(action);
 			GetStaticSymbols().esv__TransformSurfaceAction__Init(
 				transform, transform->SurfaceTransformAction, transform->SurfaceLayer, transform->OriginSurface
 			);
-			*/
+			*x/
 		}
 
-		exec(level->SurfaceManager, action);
+		exec(level->SurfaceManager, action);*/
 		return 0;
 	}
 
 	int CancelSurfaceAction(lua_State* L)
 	{
-		StackCheck _(L, 0);
+		/*StackCheck _(L, 0);
 		auto handle = get<ComponentHandle>(L, 1);
 		
 		auto factory = GetStaticSymbols().GetSurfaceActionFactory();
@@ -454,7 +455,7 @@ namespace bg3se::esv::lua
 		}
 		default:
 			OsiError("CancelSurfaceAction() not implemented for this surface action type!");
-		}
+		}*/
 
 		return 0;
 	}

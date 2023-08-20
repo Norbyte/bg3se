@@ -53,9 +53,9 @@ namespace bg3se
 		esv::GameStateMachine__Update ecl__GameStateMachine__Update{ nullptr };
 		esv::GameStateMachine__Update esv__GameStateMachine__Update{ nullptr };
 
-		esv::SurfaceActionFactory** esv__SurfaceActionFactory{ nullptr };
+		/*esv::SurfaceActionFactory** esv__SurfaceActionFactory{nullptr};
 		esv::SurfaceActionFactory::CreateActionProc* esv__SurfaceActionFactory__CreateAction{ nullptr };
-		esv::SurfaceManager::AddActionProc* esv__SurfaceManager__AddAction{ nullptr };
+		esv::SurfaceManager::AddActionProc* esv__SurfaceManager__AddAction{ nullptr };*/
 
 		SpellPrototypeManager** eoc__SpellPrototypeManager{ nullptr };
 		SpellPrototype::InitProc* eoc__SpellPrototype__Init{ nullptr };
@@ -85,7 +85,7 @@ namespace bg3se
 		SkillPrototypeManager** eoc__SkillPrototypeManager{ nullptr };
 		StatusPrototypeManager** eoc__StatusPrototypeManager{ nullptr };*/
 
-		RPGStats** Stats{ nullptr };
+		RPGStats** gRPGStats{ nullptr };
 		esv::SavegameManager** esv__SavegameManager{ nullptr };
 
 		App** AppInstance{ nullptr };
@@ -153,8 +153,8 @@ namespace bg3se
 
 		inline RPGStats* GetStats() const
 		{
-			if (Stats && *Stats) {
-				return *Stats;
+			if (gRPGStats && *gRPGStats) {
+				return *gRPGStats;
 			} else {
 				return nullptr;
 			}
@@ -182,7 +182,7 @@ namespace bg3se
 			}
 		}
 
-		inline ecl::EntityWorld* GetClientEntityWorld() const
+		inline EntityWorld* GetClientEntityWorld() const
 		{
 			if (ecl__EoCClient != nullptr
 				&& *ecl__EoCClient != nullptr
@@ -193,7 +193,7 @@ namespace bg3se
 			}
 		}
 
-		inline esv::EntityWorld* GetServerEntityWorld() const
+		inline EntityWorld* GetServerEntityWorld() const
 		{
 			if (esv__EoCServer != nullptr
 				&& *esv__EoCServer != nullptr
@@ -204,18 +204,14 @@ namespace bg3se
 			}
 		}
 
-		inline esv::SurfaceActionFactory* GetSurfaceActionFactory() const
+		/*inline esv::SurfaceActionFactory* GetSurfaceActionFactory() const
 		{
-			/*if (esv__SavegameManager != nullptr
-				&& *esv__SavegameManager != nullptr
-				&& (*esv__SavegameManager)->ComponentFactories.Size > 21) {
-				return reinterpret_cast<esv::SurfaceActionFactory*>((*esv__SavegameManager)->ComponentFactories[21]);*/
 			if (esv__SurfaceActionFactory != nullptr) {
 				return *esv__SurfaceActionFactory;
 			} else {
 				return {};
 			}
-		}
+		}*/
 
 		inline esv::LevelManager* GetServerLevelManager() const
 		{

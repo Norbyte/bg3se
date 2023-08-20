@@ -94,12 +94,12 @@ public:
 
 	ContiguousConstIterator operator + (int n) const
 	{
-		return ContiguousIterator(ptr_ + n);
+		return ContiguousConstIterator(ptr_ + n);
 	}
 
 	ContiguousConstIterator operator - (int n) const
 	{
-		return ContiguousIterator(ptr_ - n);
+		return ContiguousConstIterator(ptr_ - n);
 	}
 
 	T const& operator * () const

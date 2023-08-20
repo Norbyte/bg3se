@@ -365,15 +365,20 @@
             90 // nop
         </Mapping>
 
-      <!--
-
         <Mapping Name="RPGStats">
-            <Condition Type="FixedString" Offset="14" Value="Infectious Disease Depth" />
-            <Target Type="Indirect" Offset="7" Symbol="Stats" />
-            48 89 87 ?? 01 00 00 // mov     [rdi+1XXh], rax
-            48 8B 1D ?? ?? ?? ?? // mov     rbx, cs:gRPGStats
-            48 8D 15 ?? ?? ?? ?? // lea     rdx, fs_Infectious_Disease_Depth
+          8b 78 18 // mov     edi, [rax+18h]
+          @ref1 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:gRPGStats
+          48 85 c0 // test    rax, rax
+          74 1e // jz      short loc_1408795F5
+          48 8b 88 88 02 00 00 // mov     rcx, [rax+288h]
+          48 85 c9 // test    rcx, rcx
+          74 12 // jz      short loc_1408795F5
+          @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, fs_WisdomTierHigh
+          <Condition Type="FixedString" Offset="@str1" Value="WisdomTierHigh" />
+          <Target Type="Indirect" Offset="@ref1" Symbol="gRPGStats" />
         </Mapping>
+
+      <!--
 
       <Mapping Name="esv::StatusMachine::CreateStatus">
         <Condition Type="FixedString" Offset="0" Value="STORY_FROZEN" />
