@@ -47,6 +47,10 @@ namespace bg3se
 		CriticalInitFailed = CriticalInitFailed || symbolMapper_.HasFailedCriticalMappings();
 		InitFailed = InitFailed || symbolMapper_.HasFailedMappings();
 
+		if (!CriticalInitFailed) {
+			ApplyCodePatch("KillLauncher");
+		}
+
 		return !CriticalInitFailed;
 	}
 
