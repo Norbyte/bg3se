@@ -378,6 +378,93 @@
           <Target Type="Indirect" Offset="@ref1" Symbol="gRPGStats" />
         </Mapping>
 
+      <!-- NOTE: Adjust LibraryManager::BindECSIndex after changing this -->
+      <Mapping Name="ecs::StaticIDRegistrant" AllowFail="true">
+        @ref1 c7 05 ?? ?? ?? ?? ff ff ff 7f // mov     cs:ecl__CharacterID, 7FFFFFFFh
+        48 83 c4 40 // add     rsp, 40h
+        5b // pop     rbx
+        c3 // retn
+        48 8d 0d ?? ?? ?? ?? // lea     rcx, dword_14564DF98
+        @ref2 e8 ?? ?? ?? ?? // call    _Init_thread_header
+        83 3d ?? ?? ?? ?? FF // cmp     cs:dword_14564DF98, 0FFFFFFFFh
+        75 a2 // jnz     short loc_14005A287
+        @str1 48 8d 05 ?? ?? ?? ?? // lea     rax, xxx
+        48 89 44 24 20 // mov     qword ptr [rsp+48h+var_28], rax
+        c7 44 24 28 ?? ?? ?? ?? // mov     dword ptr [rsp+48h+var_28+8], 4Fh ; 'O'
+        0f 28 44 24 20 // movaps  xmm0, [rsp+48h+var_28]
+        66 0f 7f 44 24 20 // movdqa  [rsp+48h+var_28], xmm0
+        48 8d 54 24 20 // lea     rdx, [rsp+48h+var_28]
+        48 8d 0d ?? ?? ?? ?? // lea     rcx, stru_14564DF80; Src
+        @ref3 e8 ?? ?? ?? ?? // call    ls__ComponentNameFromSymbolName
+        <Target Type="Absolute" Offset="@ref1" EngineCallback="BindECSIndex" />
+      </Mapping>
+
+      <!-- NOTE: Adjust LibraryManager::BindECSStaticStringConstructor after changing this -->
+      <Mapping Name="ecs::StaticStringConstructor" AllowFail="true">
+        @ref1 48 8b c3 // mov     rax, rbx
+        48 83 c4 30 // add     rsp, 30h
+        5b // pop     rbx
+        c3 // retn
+        48 8d 0d ?? ?? ?? ?? // lea     rcx, dword_1456673FC
+        e8 ?? ?? ?? ?? // call    _Init_thread_header
+        83 3d ?? ?? ?? ?? FF // cmp     cs:dword_1456673FC, 0FFFFFFFFh
+        75 d3 // jnz     short loc_1407CAACD
+        @str1 48 8d 05 ?? ?? ?? ?? // lea     rax, aClassLsStringv_54
+        48 89 44 24 20 // mov     [rsp+38h+var_18.Str], rax
+        c7 44 24 28 ?? ?? ?? ?? // mov     [rsp+38h+var_18.Length], 60h ; '`'
+        0f 28 44 24 20 // movaps  xmm0, xmmword ptr [rsp+38h+var_18.Str]
+        66 0f 7f 44 24 20 // movdqa  xmmword ptr [rsp+38h+var_18.Str], xmm0
+        <Target Type="Absolute" Offset="@ref1" EngineCallback="BindECSStaticStringConstructor" />
+      </Mapping>
+
+      <!-- NOTE: Adjust LibraryManager::BindECSStaticRegistrant after changing this -->
+      <Mapping Name="ecs::StaticIDRegistrant2" AllowFail="true">
+        48 8d 4c 24 20 // lea     rcx, [rsp+38h+var_18]
+        48 89 05 ?? ?? ?? ?? // mov     cs:qword_14566E5F8, rax
+        @ref1 e8 ?? ?? ?? ?? // call    ls__SV__xxx
+        0f 10 00 // movups  xmm0, xmmword ptr [rax]
+        48 8b 05 ?? ?? ?? ?? // mov     rax, cs:qword_145645E88
+        48 89 05 ?? ?? ?? ?? // mov     cs:qword_14566E610, rax
+        48 8d 05 ?? ?? ?? ?? // lea     rax, qword_14566E5F8
+        48 89 05 ?? ?? ?? ?? // mov     cs:qword_145645E88, rax
+        0f 11 05 ?? ?? ?? ?? // movups  cs:xmmword_14566E600, xmm0
+        @ref2 c7 05 ?? ?? ?? ?? ff ff ff 7f // mov     cs:xxxID, 7FFFFFFFh
+        48 83 c4 38 // add     rsp, 38h
+        c3 // retn
+        <Target Type="Absolute" Offset="@ref1" EngineCallback="BindECSStaticRegistrant" />
+      </Mapping>
+
+      <Mapping Name="ecs::ComponentReplicationIDRef" AllowFail="true">
+        4c 8d 4c 24 ?? // lea     r9, [rsp+120h+a2]; a4
+        @ref1 44 8b 05 ?? ?? ?? ?? // mov     r8d, cs:eoc__inventory__StackComponentID; a3
+        48 8b 54 24 ?? // mov     rdx, [rsp+120h+var_C0]; a2
+        48 8b 4c 24 ?? // mov     rcx, [rsp+120h+var_E0]; this
+        e8 ?? ?? ?? ?? // call    ecs__ComponentReplication__RequestSync
+        <Target Type="Absolute" Offset="@ref1" EngineCallback="BindComponentReplicationIDRef" />
+      </Mapping>
+
+      <Mapping Name="ecs::ComponentIDRef" AllowFail="true">
+        @ref1 44 0f b7 0d ?? ?? ?? ?? // movzx   r9d, word ptr cs:xxxID
+        48 8d 54 24 20 // lea     rdx, [rsp+48h+var_28]
+        48 8b 89 40 03 00 00 // mov     rcx, [rcx+340h]
+        be ff 7f 00 00 // mov     esi, 7FFFh
+        66 44 23 ce // and     r9w, si
+        e8 ?? ?? ?? ?? // call    ecs__EntityComponents__TryGet
+        <Target Type="Absolute" Offset="@ref1" EngineCallback="BindComponentIDRef" />
+      </Mapping>
+
+      <Mapping Name="ecs::ComponentIDRef2" AllowFail="true">
+        8b 10 // mov     edx, [rax]
+        @ref1 0f b7 05 ?? ?? ?? ?? // movzx   eax, word ptr cs:eoc__SightRangeAdditiveBoostComponentID2
+        66 23 c1 // and     ax, cx
+        89 54 24 ?? // mov     [rsp+88h+var_50], edx
+        48 8b cf // mov     rcx, rdi
+        66 89 44 24 20 // mov     [rsp+88h+var_68], ax
+        48 8d 54 24 ?? // lea     rdx, [rsp+88h+var_48]
+        e8 ?? ?? ?? ?? // call    sub_14368B390
+        <Target Type="Absolute" Offset="@ref1" EngineCallback="BindComponentIDRef2" />
+      </Mapping>
+
       <Mapping Name="KillLauncher" AllowFail="true">
         @ref1 ff 15 ?? ?? ?? ?? // call    cs:SteamAPI_RestartAppIfNecessary
         84 c0 // test    al, al

@@ -63,7 +63,12 @@ namespace bg3se {
 		void RegisterLibraries(SymbolMapper& mapper);
 		void RegisterSymbols();
 		bool BindApp();
-		void FindSymbolNameRegistrations();
+		SymbolMapper::MappingResult BindECSIndex(uint8_t const*);
+		SymbolMapper::MappingResult BindECSStaticStringConstructor(uint8_t const*);
+		SymbolMapper::MappingResult BindECSStaticRegistrant(uint8_t const*);
+		SymbolMapper::MappingResult BindComponentReplicationIDRef(uint8_t const*);
+		SymbolMapper::MappingResult BindComponentIDRef(uint8_t const*);
+		SymbolMapper::MappingResult BindComponentIDRef2(uint8_t const*);
 		HMODULE GetAppHandle();
 
 		bool CanShowError();

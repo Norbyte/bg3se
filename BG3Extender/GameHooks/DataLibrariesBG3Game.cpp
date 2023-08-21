@@ -25,7 +25,77 @@ namespace bg3se
 			mapper.AddModule("Main", L"bg3_dx11.exe");
 		}
 
-		// mapper.AddEngineCallback("FindLibraries", &FindLibrariesEoCApp);
+		mapper.AddEngineCallback("BindECSIndex", std::bind(&LibraryManager::BindECSIndex, this, std::placeholders::_1));
+		mapper.AddEngineCallback("BindECSStaticStringConstructor", std::bind(&LibraryManager::BindECSStaticStringConstructor, this, std::placeholders::_1));
+		mapper.AddEngineCallback("BindECSStaticRegistrant", std::bind(&LibraryManager::BindECSStaticRegistrant, this, std::placeholders::_1));
+		mapper.AddEngineCallback("BindComponentReplicationIDRef", std::bind(&LibraryManager::BindComponentReplicationIDRef, this, std::placeholders::_1));
+		mapper.AddEngineCallback("BindComponentIDRef", std::bind(&LibraryManager::BindComponentIDRef, this, std::placeholders::_1));
+		mapper.AddEngineCallback("BindComponentIDRef2", std::bind(&LibraryManager::BindComponentIDRef2, this, std::placeholders::_1));
+	}
+
+	SymbolMapper::MappingResult LibraryManager::BindECSIndex(uint8_t const* ptr)
+	{
+		auto indexPtr = (int32_t*)AsmResolveInstructionRef(ptr);
+		auto namePtr = (char const*)AsmResolveInstructionRef(ptr + 0x25);
+		GetStaticSymbols().IndexSymbolToNameMaps.insert(std::make_pair(indexPtr, IndexSymbolInfo{ namePtr, IndexSymbolType::None }));
+		return SymbolMapper::MappingResult::TryNext;
+	}
+
+	SymbolMapper::MappingResult LibraryManager::BindECSStaticStringConstructor(uint8_t const* ptr)
+	{
+		auto funcPtr = ptr - 0x3C;
+		auto namePtr = (char const*)AsmResolveInstructionRef(ptr + 30);
+		GetStaticSymbols().StaticStringRegistrantMaps.insert(std::make_pair(funcPtr, namePtr));
+		return SymbolMapper::MappingResult::TryNext;
+	}
+
+	SymbolMapper::MappingResult LibraryManager::BindECSStaticRegistrant(uint8_t const* ptr)
+	{
+		auto funcPtr = AsmResolveInstructionRef(ptr);
+		auto indexPtr = (int32_t*)AsmResolveInstructionRef(ptr + 43);
+
+		auto nameIt = GetStaticSymbols().StaticStringRegistrantMaps.find(funcPtr);
+		if (nameIt != GetStaticSymbols().StaticStringRegistrantMaps.end()) {
+			GetStaticSymbols().IndexSymbolToNameMaps.insert(std::make_pair(indexPtr, IndexSymbolInfo{ nameIt->second, IndexSymbolType::None }));
+		}
+
+		return SymbolMapper::MappingResult::TryNext;
+	}
+
+	SymbolMapper::MappingResult LibraryManager::BindComponentReplicationIDRef(uint8_t const* ptr)
+	{
+		auto indexPtr = (int32_t*)AsmResolveInstructionRef(ptr);
+
+		auto indexIt = GetStaticSymbols().IndexSymbolToNameMaps.find(indexPtr);
+		if (indexIt != GetStaticSymbols().IndexSymbolToNameMaps.end()) {
+			indexIt->second.type = IndexSymbolType::Replication;
+		}
+
+		return SymbolMapper::MappingResult::TryNext;
+	}
+
+	SymbolMapper::MappingResult LibraryManager::BindComponentIDRef(uint8_t const* ptr)
+	{
+		auto indexPtr = (int32_t*)AsmResolveInstructionRef(ptr);
+
+		auto indexIt = GetStaticSymbols().IndexSymbolToNameMaps.find(indexPtr);
+		if (indexIt != GetStaticSymbols().IndexSymbolToNameMaps.end()) {
+			indexIt->second.type = IndexSymbolType::Component;
+		}
+
+		return SymbolMapper::MappingResult::TryNext;
+	}
+
+	SymbolMapper::MappingResult LibraryManager::BindComponentIDRef2(uint8_t const* ptr)
+	{
+		auto indexPtr = (int32_t*)AsmResolveInstructionRef(ptr);
+
+		auto indexIt = GetStaticSymbols().IndexSymbolToNameMaps.find(indexPtr);
+		if (indexIt != GetStaticSymbols().IndexSymbolToNameMaps.end()) {
+			indexIt->second.type = IndexSymbolType::Component;
+		}
+
+		return SymbolMapper::MappingResult::TryNext;
 	}
 
 	bool LibraryManager::BindApp()
@@ -121,42 +191,5 @@ namespace bg3se
 		SYM_OFF(ResourceDefns);
 		SYM_OFF(ResourceMgr);
 		SYM_OFF(ls__GlobalSwitches);
-	}
-
-	void LibraryManager::FindSymbolNameRegistrations()
-	{
-		static uint8_t const sig1[] = {
-			0x48, 0x8B, 0x0C, 0xC8,
-			0x8B, 0x04, 0x0A,
-			0x39, 0x05
-		};
-
-		static uint8_t const sig2[] = {
-			0xC7, 0x44, 0x24, 0x28
-		};
-
-		static uint8_t const sig3[] = {
-			0x48, 0x89, 0x44, 0x24, 0x20
-		};
-
-		uint8_t const * p = (uint8_t const *)appModule_.ModuleTextStart;
-		uint8_t const * moduleEnd = p + appModule_.ModuleTextSize;
-
-		auto& maps = GetStaticSymbols().SymbolIdToNameMaps;
-		for (; p < moduleEnd - 100; p++) {
-			if (*(uint64_t*)p == *(uint64_t*)&sig1[0]
-				&& *(uint32_t*)(p + 22) == *(uint32_t*)&sig2[0]
-				&& *(uint32_t*)(p + 44) == *(uint32_t*)&sig3[0]
-				&& memcmp(p, sig1, sizeof(sig1)) == 0) {
-
-				int32_t rel = *(int32_t*)(p + 23 - 5);
-				uint8_t const* registrantObj = p + rel + 20 + 7 - 5;
-
-				int32_t relName = *(int32_t*)(p + 45 - 5);
-				uint8_t const* relNamePtr = p + relName + 42 + 7 - 5;
-
-				maps.insert(std::make_pair((int32_t*)registrantObj, (char*)relNamePtr));
-			}
-		}
 	}
 }

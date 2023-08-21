@@ -204,6 +204,7 @@ struct SymbolMappings
 	};
 
 	std::unordered_map<std::string, Mapping> Mappings;
+	std::vector<Mapping*> OrderedMappings;
 	std::unordered_map<std::string, DllImport> DllImports;
 	std::unordered_map<std::string, StaticSymbol> StaticSymbols;
 };

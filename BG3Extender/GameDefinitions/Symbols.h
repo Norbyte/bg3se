@@ -11,6 +11,7 @@
 #include <GameDefinitions/Passives.h>
 #include <GameDefinitions/Status.h>
 #include <GameDefinitions/Surface.h>
+#include <GameDefinitions/EntitySystemHelpers.h>
 
 namespace bg3se
 {
@@ -20,7 +21,8 @@ namespace bg3se
 
 	struct StaticSymbols : Noncopyable<StaticSymbols>
 	{
-		std::unordered_map<int32_t*, char*> SymbolIdToNameMaps;
+		std::unordered_map<int32_t*, IndexSymbolInfo> IndexSymbolToNameMaps;
+		std::unordered_map<void const*, char const*> StaticStringRegistrantMaps;
 
 		struct EoCLibraryInfo
 		{

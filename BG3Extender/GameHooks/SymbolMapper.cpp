@@ -322,7 +322,8 @@ bool SymbolMappingLoader::LoadMappingsNode(tinyxml2::XMLElement* mappingsNode)
 					ERR("Duplicate mapping name: %s", sym.Name.c_str());
 				}
 
-				mappings_.Mappings.insert(std::make_pair(sym.Name, sym));
+				auto it = mappings_.Mappings.insert(std::make_pair(sym.Name, sym));
+				mappings_.OrderedMappings.push_back(&it.first->second);
 			} else {
 				ERR("Failed to parse mapping '%s'; mapping discarded", sym.Name.c_str());
 			}
@@ -982,7 +983,19 @@ uint8_t const * AsmResolveInstructionRef(uint8_t const * insn)
 	}
 
 	// MOV/LEA (4b operand) instruction
-	if ((insn[0] == 0x48 || insn[0] == 0x4C) && (insn[1] == 0x8D || insn[1] == 0x8B || insn[1] == 0x89)) {
+	if ((insn[0] == 0x44 || insn[0] == 0x48 || insn[0] == 0x4C) && (insn[1] == 0x8D || insn[1] == 0x8B || insn[1] == 0x89)) {
+		int32_t rel = *(int32_t const *)(insn + 3);
+		return insn + rel + 7;
+	}
+
+	// MOVZX (4b operand) instruction
+	if (insn[0] == 0x44 && insn[1] == 0x0F && insn[2] == 0xB7) {
+		int32_t rel = *(int32_t const *)(insn + 4);
+		return insn + rel + 8;
+	}
+
+	// MOVZX (4b operand) instruction
+	if (insn[0] == 0x0F && insn[1] == 0xB7) {
 		int32_t rel = *(int32_t const *)(insn + 3);
 		return insn + rel + 7;
 	}
@@ -991,6 +1004,12 @@ uint8_t const * AsmResolveInstructionRef(uint8_t const * insn)
 	if (insn[0] == 0x48 && insn[1] == 0x3B && (insn[2] & 0x0F) == 0x0D) {
 		int32_t rel = *(int32_t const *)(insn + 3);
 		return insn + rel + 7;
+	}
+
+	// MOV cs:xxx, <imm4> instruction
+	if (insn[0] == 0xc7 && insn[1] == 0x05) {
+		int32_t rel = *(int32_t const *)(insn + 2);
+		return insn + rel + 10;
 	}
 
 	ERR("AsmResolveInstructionRef(): Not a supported CALL, MOV, LEA or CMP instruction at %p", insn);
@@ -1041,10 +1060,10 @@ void SymbolMapper::AddEngineCallback(std::string const& name, std::function<Mapp
 
 void SymbolMapper::MapAllSymbols(bool deferred)
 {
-	for (auto& mapping : mappings_.Mappings) {
-		if (mapping.second.Scope != SymbolMappings::MatchScope::kCustom
-			&& deferred == ((mapping.second.Flag & SymbolMappings::Mapping::kDeferred) != 0)) {
-			MapSymbol(mapping.second, nullptr, 0);
+	for (auto mapping : mappings_.OrderedMappings) {
+		if (mapping->Scope != SymbolMappings::MatchScope::kCustom
+			&& deferred == ((mapping->Flag & SymbolMappings::Mapping::kDeferred) != 0)) {
+			MapSymbol(*mapping, nullptr, 0);
 		}
 	}
 

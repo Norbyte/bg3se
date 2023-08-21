@@ -23,7 +23,8 @@ namespace bg3se
 		if (componentBucket) {
 			auto compIndex = ComponentTypeToIndex.Find((uint16_t)type.Value());
 			if (compIndex) {
-				return Components[(*componentBucket)->A]->Pool[**compIndex].Components[(*componentBucket)->B];
+				auto& pool = Components[(*componentBucket)->A]->Pool[**compIndex];
+				return pool.Components[(*componentBucket)->B];
 			}
 		}
 
@@ -34,7 +35,26 @@ namespace bg3se
 	{
 		auto entity = GetEntity(entityHandle);
 		if (entity != nullptr) {
-			return entity->GetComponent(entityHandle, type);
+			auto component = entity->GetComponent(entityHandle, type);
+			if (component != nullptr) {
+				return component;
+			}
+		}
+
+		auto compPool = Components->ComponentsByType.Find((int16_t)type);
+		if (compPool) {
+			auto transientRef = (*compPool)->Find(entityHandle.Handle);
+			if (transientRef) {
+				return **transientRef;
+			}
+		}
+
+		auto compPool2 = Components->ComponentsByType2.Find((int16_t)type);
+		if (compPool2) {
+			auto transientRef = (*compPool2)->Find(entityHandle.Handle);
+			if (transientRef) {
+				return **transientRef;
+			}
 		}
 
 		return nullptr;
@@ -96,16 +116,41 @@ namespace bg3se
 		: componentIndices_{ UndefinedIndex }, handleIndices_{ UndefinedIndex }, resourceManagerIndices_{ UndefinedIndex }
 	{}
 
-	void EntitySystemHelpersBase::ComponentIndexMappings::Add(int32_t index)
+	void EntitySystemHelpersBase::ComponentIndexMappings::Add(int32_t index, IndexSymbolType type)
 	{
-		if (NumIndices < Indices.size()) {
-			Indices[NumIndices++] = index;
+
+		switch (type) {
+		case IndexSymbolType::Replication:
+			assert(ReplicationIndex == -1);
+			ReplicationIndex = index;
+			break;
+			
+		case IndexSymbolType::Handle:
+			assert(HandleIndex == -1);
+			HandleIndex = index;
+			break;
+			
+		case IndexSymbolType::Component:
+			assert(ComponentIndex == -1);
+			ComponentIndex = index;
+			break;
+
+		default:
+			assert(NumIndices < Indices.size());
+			if (NumIndices < Indices.size()) {
+				Indices[NumIndices++] = index;
+			}
+			break;
 		}
 	}
 
 	STDString SimplifyComponentName(char const* name)
 	{
 		STDString key{ name };
+		if (key.length() > 52 && strncmp(key.c_str(), "class ls::_StringView<char> __cdecl ls::GetTypeName<", 52) == 0) {
+			key = key.substr(52);
+		}
+
 		if (key.length() > 6 && strncmp(key.c_str(), "class ", 6) == 0) {
 			key = key.substr(6);
 		}
@@ -172,6 +217,69 @@ namespace bg3se
 		world->Replication->Dirty = true;
 	}
 
+	void EntitySystemHelpersBase::UpdateComponentMapping(char const* name, ComponentIndexMappings& mapping)
+	{
+		if (mapping.NumIndices == 1
+			&& mapping.ReplicationIndex == -1
+			&& mapping.HandleIndex == -1
+			&& mapping.ComponentIndex == -1) {
+			systemIndexMappings_.insert(std::make_pair(SimplifyComponentName(name), mapping.Indices[0]));
+			return;
+		}
+
+		std::sort(mapping.Indices.begin(), mapping.Indices.begin() + mapping.NumIndices, std::less<int32_t>());
+		DEBUG_IDX("\t" << name << ": ");
+
+		auto totalIndices = mapping.NumIndices
+			+ ((mapping.ReplicationIndex != -1) ? 1 : 0)
+			+ ((mapping.HandleIndex != -1) ? 1 : 0)
+			+ ((mapping.ComponentIndex != -1) ? 1 : 0);
+
+		if (totalIndices == 1) {
+			assert(mapping.ReplicationIndex == -1);
+			assert(mapping.HandleIndex == -1);
+
+			if (mapping.ComponentIndex == -1) {
+				mapping.ComponentIndex = mapping.Indices[0];
+			}
+		} else if (totalIndices == 2) {
+			// Only HandleIndex and ComponentIndex, no replication
+			assert(mapping.ReplicationIndex == -1);
+			assert(mapping.HandleIndex == -1);
+
+			unsigned nextIndex{ 0 };
+			if (mapping.ComponentIndex == -1) {
+				mapping.ComponentIndex = mapping.Indices[nextIndex++];
+			}
+
+			mapping.HandleIndex = mapping.Indices[nextIndex++];
+		} else if (totalIndices == 3) {
+			unsigned nextIndex{ 0 };
+
+			if (mapping.ReplicationIndex == -1) {
+				mapping.ReplicationIndex = mapping.Indices[nextIndex++];
+			}
+
+			if (mapping.ComponentIndex == -1) {
+				mapping.ComponentIndex = mapping.Indices[nextIndex++];
+			}
+
+			if (mapping.HandleIndex == -1) {
+				mapping.HandleIndex = mapping.Indices[nextIndex++];
+			}
+		} else {
+			WARN("Component with strange configuration: %s", name);
+			return;
+		}
+
+		DEBUG_IDX("Repl " << mapping.ReplicationIndex << ", Handle " << mapping.HandleIndex << ", Comp " << mapping.ComponentIndex);
+		IndexMappings indexMapping{ mapping.HandleIndex, mapping.ComponentIndex };
+		auto componentName = SimplifyComponentName(name);
+		componentNameToIndexMappings_.insert(std::make_pair(componentName, indexMapping));
+		componentIndexToNameMappings_.insert(std::make_pair(indexMapping.ComponentIndex, componentName));
+		handleIndexToNameMappings_.insert(std::make_pair(indexMapping.HandleIndex, componentName));
+	}
+
 	void EntitySystemHelpersBase::UpdateComponentMappings()
 	{
 		if (initialized_) return;
@@ -191,65 +299,23 @@ namespace bg3se
 			return;
 		}
 
-		/*auto const& symbolMaps = GetStaticSymbols().SymbolIdToNameMaps;
+		auto const& symbolMaps = GetStaticSymbols().IndexSymbolToNameMaps;
 
 		std::unordered_map<char const*, ComponentIndexMappings> mappings;
 		for (auto const& mapping : symbolMaps) {
-			auto it = mappings.find(mapping.second);
+			auto it = mappings.find(mapping.second.name);
 			if (it == mappings.end()) {
 				ComponentIndexMappings newMapping;
 				std::fill(newMapping.Indices.begin(), newMapping.Indices.end(), UndefinedIndex);
-				newMapping.Add(*mapping.first);
-				mappings.insert(std::make_pair(mapping.second, newMapping));
+				newMapping.Add(*mapping.first, mapping.second.type);
+				mappings.insert(std::make_pair(mapping.second.name, newMapping));
 			} else {
-				it->second.Add(*mapping.first);
+				it->second.Add(*mapping.first, mapping.second.type);
 			}
 		}
 
 		for (auto& map : mappings) {
-			if (map.second.NumIndices == 1) {
-				systemIndexMappings_.insert(std::make_pair(SimplifyComponentName(map.first), map.second.Indices[0]));
-			}
-
-			std::sort(map.second.Indices.begin(), map.second.Indices.end(), std::greater<int32_t>());
-			DEBUG_IDX("\t" << map.first << ": ");
-			for (std::size_t i = 0; i < map.second.NumIndices - 1; i++) {
-				auto componentIdx = entityWorld->HandleIndexToComponentIndexMap.find(map.second.Indices[i]);
-				if (componentIdx != entityWorld->HandleIndexToComponentIndexMap.end()) {
-					bool found{ false };
-					for (std::size_t j = i + 1; j < map.second.NumIndices; j++) {
-						if (map.second.Indices[j] == componentIdx.Value()) {
-							DEBUG_IDX(map.second.Indices[i] << " -> " << map.second.Indices[j]);
-							IndexMappings indexMapping{ map.second.Indices[i], map.second.Indices[j] };
-							auto componentName = SimplifyComponentName(map.first);
-							componentNameToIndexMappings_.insert(std::make_pair(componentName, indexMapping));
-							componentIndexToNameMappings_.insert(std::make_pair(indexMapping.ComponentIndex, componentName));
-							handleIndexToNameMappings_.insert(std::make_pair(indexMapping.HandleIndex, componentName));
-
-							if (map.second.NumIndices == 3) {
-								int syncIdx;
-								if (i != 0 && j != 0) {
-									syncIdx = 0;
-								} else if (i != 1 && j != 1) {
-									syncIdx = 1;
-								} else {
-									syncIdx = 2;
-								}
-
-								handleIndexToReplicationTypeMappings_.insert(std::make_pair(indexMapping.HandleIndex, map.second.Indices[syncIdx]));
-							}
-
-							found = true;
-						}
-					}
-
-					if (!found) {
-						DEBUG_IDX(map.second.Indices[i] << ": No valid mapping");
-					}
-				} else {
-					DEBUG_IDX(map.second.Indices[i] << ": Handle type not registered");
-				}
-			}
+			UpdateComponentMapping(map.first, map.second);
 		}
 
 #if defined(DEBUG_INDEX_MAPPINGS)
@@ -462,7 +528,7 @@ namespace bg3se
 		MAP_BOOST(ProjectileDeflectBoost);
 		MAP_BOOST(AbilityOverrideMinimumBoost);
 		MAP_BOOST(ACOverrideMinimumBoost);
-		MAP_BOOST(FallDamageMultiplierBoost);*/
+		MAP_BOOST(FallDamageMultiplierBoost);
 
 		initialized_ = true;
 	}
@@ -561,7 +627,6 @@ namespace bg3se
 
 	void ServerEntitySystemHelpers::Setup()
 	{
-		return;
 		UpdateComponentMappings();
 
 
@@ -602,7 +667,6 @@ namespace bg3se
 
 	void ClientEntitySystemHelpers::Setup()
 	{
-		return;
 		UpdateComponentMappings();
 
 		MapComponentIndices("ls::VisualComponent", ExtComponentType::Visual);

@@ -5,6 +5,20 @@
 
 BEGIN_SE()
 
+enum class IndexSymbolType
+{
+	None,
+	Replication,
+	Handle,
+	Component
+};
+
+struct IndexSymbolInfo
+{
+	char const* name;
+	IndexSymbolType type;
+};
+
 class EntitySystemHelpersBase : public Noncopyable<EntitySystemHelpersBase>
 {
 public:
@@ -191,10 +205,13 @@ protected:
 private:
 	struct ComponentIndexMappings
 	{
+		int32_t ReplicationIndex{ -1 };
+		int32_t HandleIndex{ -1 };
+		int32_t ComponentIndex{ -1 };
 		std::array<int32_t, 4> Indices;
 		std::size_t NumIndices{ 0 };
 
-		void Add(int32_t index);
+		void Add(int32_t index, IndexSymbolType type);
 	};
 	
 	struct IndexMappings
@@ -215,6 +232,7 @@ private:
 	std::array<int32_t, (int)ExtResourceManagerType::Max> resourceManagerIndices_;
 	bool initialized_{ false };
 
+	void UpdateComponentMapping(char const* name, ComponentIndexMappings& mapping);
 	void* GetRawComponent(char const* nameGuid, ExtComponentType type);
 	void* GetRawComponent(FixedString const& guid, ExtComponentType type);
 	void* GetRawEntityComponent(EntityHandle entityHandle, ExtComponentType type);
