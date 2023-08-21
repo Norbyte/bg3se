@@ -880,8 +880,9 @@ bool SymbolMapper::MapSymbol(SymbolMappings::Mapping & mapping, uint8_t const * 
 #endif
 
 	bool mapped = false,
-		hasMatches = false;
-	mapping.Pattern.Scan(memStart, memSize, [this, &mapping, &mapped, &hasMatches](const uint8_t * match) -> Pattern::ScanAction {
+		hasMatches = false,
+		hasCallbacks = false;
+	mapping.Pattern.Scan(memStart, memSize, [this, &mapping, &mapped, &hasMatches, &hasCallbacks](const uint8_t * match) -> Pattern::ScanAction {
 		bool matching{ true };
 		for (auto const& condition : mapping.Conditions) {
 			if (!EvaluateSymbolCondition(condition, match)) {
@@ -904,6 +905,7 @@ bool SymbolMapper::MapSymbol(SymbolMappings::Mapping & mapping, uint8_t const * 
 					: ((action == MappingResult::TryNext) ? "TryNext" : "Fail"));
 #endif
 
+				hasCallbacks = hasCallbacks || (action == MappingResult::Success) || (action == MappingResult::TryNext);
 				if (!mapped) {
 					mapped = (action == MappingResult::Success);
 				}
@@ -928,7 +930,7 @@ bool SymbolMapper::MapSymbol(SymbolMappings::Mapping & mapping, uint8_t const * 
 		if (!hasMatches) {
 			ERR("No match found for mapping '%s' %s", mapping.Name.c_str(),
 				(mapping.Flag & SymbolMappings::Mapping::kCritical) ? "[CRITICAL]" : "");
-		} else {
+		} else if (!hasCallbacks || !(mapping.Flag & SymbolMappings::Mapping::kAllowFail)) {
 			ERR("Target mapping action did not succeed for mapping '%s' %s", mapping.Name.c_str(),
 				(mapping.Flag & SymbolMappings::Mapping::kCritical) ? "[CRITICAL]" : "");
 		}
