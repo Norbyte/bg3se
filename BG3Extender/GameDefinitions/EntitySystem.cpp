@@ -41,7 +41,7 @@ namespace bg3se
 			}
 		}
 
-		auto compPool = Components->ComponentsByType.Find((int16_t)type);
+		auto compPool = Components->ComponentsByType.Find((uint16_t)type);
 		if (compPool) {
 			auto transientRef = (*compPool)->Find(entityHandle.Handle);
 			if (transientRef) {
@@ -49,7 +49,7 @@ namespace bg3se
 			}
 		}
 
-		auto compPool2 = Components->ComponentsByType2.Find((int16_t)type);
+		auto compPool2 = Components->ComponentsByType2.Find((uint16_t)type);
 		if (compPool2) {
 			auto transientRef = (*compPool2)->Find(entityHandle.Handle);
 			if (transientRef) {
@@ -113,7 +113,7 @@ namespace bg3se
 	}
 
 	EntitySystemHelpersBase::EntitySystemHelpersBase()
-		: componentIndices_{ UndefinedIndex }, handleIndices_{ UndefinedIndex }, resourceManagerIndices_{ UndefinedIndex }
+		: componentIndices_{ EntityWorld::UndefinedComponent }, handleIndices_{ EntityWorld::UndefinedHandle }, resourceManagerIndices_{ UndefinedIndex }
 	{}
 
 	void EntitySystemHelpersBase::ComponentIndexMappings::Add(int32_t index, IndexSymbolType type)
@@ -273,7 +273,7 @@ namespace bg3se
 		}
 
 		DEBUG_IDX("Repl " << mapping.ReplicationIndex << ", Handle " << mapping.HandleIndex << ", Comp " << mapping.ComponentIndex);
-		IndexMappings indexMapping{ mapping.HandleIndex, mapping.ComponentIndex };
+		IndexMappings indexMapping{ (uint16_t)mapping.HandleIndex, (uint16_t)mapping.ComponentIndex };
 		auto componentName = SimplifyComponentName(name);
 		componentNameToIndexMappings_.insert(std::make_pair(componentName, indexMapping));
 		componentIndexToNameMappings_.insert(std::make_pair(indexMapping.ComponentIndex, componentName));
@@ -539,11 +539,12 @@ namespace bg3se
 		if (it != componentNameToIndexMappings_.end()) {
 			componentIndices_[(unsigned)type] = it->second.ComponentIndex;
 			handleIndices_[(unsigned)type] = it->second.HandleIndex;
-			componentIndexToTypeMappings_.insert(std::make_pair((int16_t)it->second.ComponentIndex, type));
-			handleIndexToTypeMappings_.insert(std::make_pair((int16_t)it->second.HandleIndex, type));
-			handleIndexToComponentMappings_.insert(std::make_pair((int16_t)it->second.HandleIndex, (int16_t)it->second.ComponentIndex));
+			componentIndexToTypeMappings_.insert(std::make_pair(it->second.ComponentIndex, type));
+			handleIndexToTypeMappings_.insert(std::make_pair(it->second.HandleIndex, type));
+			handleIndexToComponentMappings_.insert(std::make_pair(it->second.HandleIndex, it->second.ComponentIndex));
 		} else {
-			OsiWarn("Could not find index for component: " << componentName);
+			// FIXME - disabled until we map the new component list
+			// OsiWarn("Could not find index for component: " << componentName);
 		}
 	}
 
@@ -553,7 +554,8 @@ namespace bg3se
 		if (it != systemIndexMappings_.end()) {
 			resourceManagerIndices_[(unsigned)type] = it->second;
 		} else {
-			OsiWarn("Could not find index for resource manager: " << componentName);
+			// FIXME - disabled until we map the new resource managers
+			// OsiWarn("Could not find index for resource manager: " << componentName);
 		}
 	}
 

@@ -256,3 +256,18 @@ struct LuaLifetimeInfo {
 
 
 END_NS()
+
+namespace std
+{
+	template<class UnderlyingType, class Tag> 
+	struct hash<bg3se::TypedIntegral<UnderlyingType, Tag>>
+	{
+		typedef bg3se::TypedIntegral<UnderlyingType, Tag> argument_type;
+		typedef std::size_t result_type;
+
+		result_type operator()(argument_type const& v) const noexcept
+		{
+			return std::hash<UnderlyingType>{}(v.Value());
+		}
+	};
+}

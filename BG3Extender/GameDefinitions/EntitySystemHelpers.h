@@ -36,7 +36,7 @@ public:
 
 	inline std::optional<STDString> GetComponentName(EntityWorld::ComponentTypeIndex index) const
 	{
-		auto it = componentIndexToNameMappings_.find((int16_t)index);
+		auto it = componentIndexToNameMappings_.find(index);
 		if (it != componentIndexToNameMappings_.end()) {
 			return it->second;
 		} else {
@@ -46,7 +46,7 @@ public:
 
 	inline std::optional<STDString> GetComponentName(EntityWorld::HandleTypeIndex index) const
 	{
-		auto it = handleIndexToNameMappings_.find((int16_t)index);
+		auto it = handleIndexToNameMappings_.find(index);
 		if (it != handleIndexToNameMappings_.end()) {
 			return it->second;
 		} else {
@@ -56,7 +56,7 @@ public:
 
 	inline std::optional<ExtComponentType> GetComponentType(EntityWorld::ComponentTypeIndex index) const
 	{
-		auto it = componentIndexToTypeMappings_.find((int16_t)index);
+		auto it = componentIndexToTypeMappings_.find(index);
 		if (it != componentIndexToTypeMappings_.end()) {
 			return it->second;
 		} else {
@@ -66,7 +66,7 @@ public:
 
 	inline std::optional<ExtComponentType> GetComponentType(EntityWorld::HandleTypeIndex index) const
 	{
-		auto it = handleIndexToTypeMappings_.find((int16_t)index);
+		auto it = handleIndexToTypeMappings_.find(index);
 		if (it != handleIndexToTypeMappings_.end()) {
 			return it->second;
 		} else {
@@ -76,7 +76,7 @@ public:
 
 	inline std::optional<EntityWorld::ComponentTypeIndex> GetComponentIndex(EntityWorld::HandleTypeIndex index) const
 	{
-		auto it = handleIndexToComponentMappings_.find((int16_t)index);
+		auto it = handleIndexToComponentMappings_.find(index);
 		if (it != handleIndexToComponentMappings_.end()) {
 			return EntityWorld::ComponentTypeIndex(it->second);
 		} else {
@@ -221,11 +221,11 @@ private:
 	};
 
 	std::unordered_map<STDString, IndexMappings> componentNameToIndexMappings_;
-	std::unordered_map<int16_t, STDString> componentIndexToNameMappings_;
-	std::unordered_map<int16_t, STDString> handleIndexToNameMappings_;
-	std::unordered_map<int16_t, ExtComponentType> componentIndexToTypeMappings_;
-	std::unordered_map<int16_t, ExtComponentType> handleIndexToTypeMappings_;
-	std::unordered_map<int16_t, int16_t> handleIndexToComponentMappings_;
+	std::unordered_map<EntityWorld::ComponentTypeIndex, STDString> componentIndexToNameMappings_;
+	std::unordered_map<EntityWorld::HandleTypeIndex, STDString> handleIndexToNameMappings_;
+	std::unordered_map<EntityWorld::ComponentTypeIndex, ExtComponentType> componentIndexToTypeMappings_;
+	std::unordered_map<EntityWorld::HandleTypeIndex, ExtComponentType> handleIndexToTypeMappings_;
+	std::unordered_map<EntityWorld::HandleTypeIndex, EntityWorld::ComponentTypeIndex> handleIndexToComponentMappings_;
 	std::unordered_map<STDString, int32_t> systemIndexMappings_;
 	std::array<EntityWorld::ComponentTypeIndex, (int)ExtComponentType::Max> componentIndices_;
 	std::array<EntityWorld::HandleTypeIndex, (int)ExtComponentType::Max> handleIndices_;

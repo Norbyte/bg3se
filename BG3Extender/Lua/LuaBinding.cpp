@@ -74,7 +74,7 @@ namespace bg3se::lua
 		}
 
 		auto typeIndex = handle->Handle().GetType();
-		if ((int16_t)typeIndex != (int16_t)*reqTypeIndex) {
+		if ((uint16_t)typeIndex != (uint16_t)*reqTypeIndex) {
 			auto typeName = handle->EntitySystem()->GetComponentName(EntityWorld::HandleTypeIndex(typeIndex));
 			luaL_error(L, "Expected handle of type '%s', got '%s'", 
 				EnumInfo<ExtComponentType>::Find(type).GetString(),
