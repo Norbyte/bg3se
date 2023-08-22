@@ -11,6 +11,8 @@
 
 namespace bg3se::lua
 {
+	using namespace bg3se::stats;
+
 	LuaSerializer& operator << (LuaSerializer& s, TranslatedString& v)
 	{
 		// TODO - is this enough?
@@ -57,7 +59,7 @@ namespace bg3se::lua
 		return s;
 	}*/
 
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_Table& v)
+	LuaSerializer& operator << (LuaSerializer& s, TreasureTable& v)
 	{
 		s.BeginObject();
 		P(Name);
@@ -71,7 +73,7 @@ namespace bg3se::lua
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_SubTable_Description::Category& v)
+	LuaSerializer& operator << (LuaSerializer& s, TreasureSubTable::Category& v)
 	{
 		auto stats = GetStaticSymbols().GetStats();
 
@@ -126,7 +128,7 @@ namespace bg3se::lua
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_SubTable_Description::DropCount& v)
+	LuaSerializer& operator << (LuaSerializer& s, TreasureSubTable::DropCount& v)
 	{
 		s.BeginObject();
 		P(Chance);
@@ -135,7 +137,7 @@ namespace bg3se::lua
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_SubTable_Description& v)
+	LuaSerializer& operator << (LuaSerializer& s, TreasureSubTable& v)
 	{
 		s.BeginObject();
 		P(TotalCount);
@@ -146,22 +148,22 @@ namespace bg3se::lua
 
 		if (!s.IsWriting) {
 			v.TotalFrequency = 0;
-			v.CategoryFrequencies.Reallocate(v.Categories.Size);
-			for (uint32_t i = 0; i < v.Categories.Size; i++) {
+			v.CategoryFrequencies.Reallocate(v.Categories.Size());
+			for (uint32_t i = 0; i < v.Categories.Size(); i++) {
 				v.CategoryFrequencies[i] = v.Categories[i]->Frequency;
 				v.TotalFrequency += v.Categories[i]->Frequency;
 			}
 
 			// Allow negative TotalCount if there are no DropCounts, since a negative value indicates a "guaranteed" drop
-			if (v.DropCounts.Size > 0 || v.TotalCount > 0) {
+			if (v.DropCounts.Size() > 0 || v.TotalCount > 0) {
 				v.TotalCount = 0;
-				for (uint32_t i = 0; i < v.DropCounts.Size; i++) {
+				for (uint32_t i = 0; i < v.DropCounts.Size(); i++) {
 					v.TotalCount += v.DropCounts[i].Amount;
 				}
 			}
 
-			v.Amounts.Reallocate(v.DropCounts.Size);
-			for (uint32_t i = 0; i < v.DropCounts.Size; i++) {
+			v.Amounts.Reallocate(v.DropCounts.Size());
+			for (uint32_t i = 0; i < v.DropCounts.Size(); i++) {
 				v.Amounts[i] = v.DropCounts[i].Amount;
 			}
 		}
@@ -170,7 +172,7 @@ namespace bg3se::lua
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_Category::Item& v)
+	LuaSerializer& operator << (LuaSerializer& s, TreasureCategory::Item& v)
 	{
 		s.BeginObject();
 		P(Name);
@@ -185,7 +187,7 @@ namespace bg3se::lua
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_Category& v)
+	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::TreasureCategory& v)
 	{
 		s.BeginObject();
 		P(Category);
@@ -277,7 +279,7 @@ namespace bg3se::lua
 		}
 	}*/
 
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Requirement& v)
+	LuaSerializer& operator << (LuaSerializer& s, Requirement& v)
 	{
 		s.BeginObject();
 		s.VisitProperty("Requirement", v.RequirementId);
@@ -304,7 +306,7 @@ namespace bg3se::lua
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Object::StatsFunctorInfo& v)
+	LuaSerializer& operator << (LuaSerializer& s, Object::FunctorInfo& v)
 	{
 		s.BeginObject();
 		P(Name);
@@ -313,7 +315,7 @@ namespace bg3se::lua
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, StatsFunctorBase& v)
+	LuaSerializer& operator << (LuaSerializer& s, Functor& v)
 	{
 		static long gIndex{ 0 };
 		auto stats = GetStaticSymbols().GetStats();
@@ -347,14 +349,14 @@ namespace bg3se::lua
 
 	LuaSerializer& operator << (LuaSerializer& s, CustomDescriptionFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		P(Description);
 		return s;
 	}
 
 	LuaSerializer& operator << (LuaSerializer& s, ResurrectFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		PO(Probability, 1.0f);
 		PO(HealthPercentage, 1.0f);
 		return s;
@@ -362,14 +364,14 @@ namespace bg3se::lua
 
 	LuaSerializer& operator << (LuaSerializer& s, SabotageFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		PO(Amount, 1);
 		return s;
 	}
 
 	LuaSerializer& operator << (LuaSerializer& s, SummonFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		PO(MovingObject, GFS.strEmpty);
 		PO(Arg2, GFS.strEmpty);
 		PO(SpawnLifetime, 6.0f);
@@ -381,7 +383,7 @@ namespace bg3se::lua
 
 	LuaSerializer& operator << (LuaSerializer& s, ForceFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		PO(Arg0, 8.0f);
 		PO(Origin, ForceFunctorOrigin::OriginToEntity);
 		PO(Aggression, ForceFunctorAggression::Aggressive);
@@ -390,7 +392,7 @@ namespace bg3se::lua
 
 	LuaSerializer& operator << (LuaSerializer& s, DouseFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		PO(field_20, -1.0f);
 		PO(field_24, 1.0f);
 		return s;
@@ -398,28 +400,28 @@ namespace bg3se::lua
 
 	LuaSerializer& operator << (LuaSerializer& s, SwapPlacesFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		PO(Arg0, GFS.strEmpty);
 		return s;
 	}
 
 	LuaSerializer& operator << (LuaSerializer& s, EqualizeFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		PO(HealType, StatusHealType::None);
 		return s;
 	}
 
 	LuaSerializer& operator << (LuaSerializer& s, PickupFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		PO(Arg0, GFS.strEmpty);
 		return s;
 	}
 
 	LuaSerializer& operator << (LuaSerializer& s, CreateSurfaceFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		P(SurfaceType);
 		PO(Radius, -1.0f);
 		PO(Duration, -1.0f);
@@ -430,7 +432,7 @@ namespace bg3se::lua
 
 	LuaSerializer& operator << (LuaSerializer& s, CreateConeSurfaceFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		P(Arg2);
 		PO(Arg0, -1.0f);
 		PO(Arg1, -1.0f);
@@ -440,27 +442,27 @@ namespace bg3se::lua
 
 	LuaSerializer& operator << (LuaSerializer& s, RemoveStatusFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		P(StatusId);
 		return s;
 	}
 
 	LuaSerializer& operator << (LuaSerializer& s, ExecuteWeaponFunctorsFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		P(WeaponType);
 		return s;
 	}
 
 	LuaSerializer& operator << (LuaSerializer& s, TeleportSourceFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		return s;
 	}
 
 	LuaSerializer& operator << (LuaSerializer& s, SetStatusDurationFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		P(StatusId);
 		P(Duration);
 		PO(SetIfLonger, false);
@@ -469,20 +471,20 @@ namespace bg3se::lua
 
 	LuaSerializer& operator << (LuaSerializer& s, UseAttackFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		PO(IgnoreChecks, false);
 		return s;
 	}
 
 	LuaSerializer& operator << (LuaSerializer& s, BreakConcentrationFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		return s;
 	}
 
 	LuaSerializer& operator << (LuaSerializer& s, RestoreResourceFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		P(ActionResourceUUID);
 		P(Hex);
 		P(field_34);
@@ -494,7 +496,7 @@ namespace bg3se::lua
 
 	LuaSerializer& operator << (LuaSerializer& s, SpawnFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		P(TemplateId);
 		PO(Arg1, GFS.strEmpty);
 		PO(StatusesToApply, VirtualMultiHashSet<FixedString>{});
@@ -503,32 +505,32 @@ namespace bg3se::lua
 
 	LuaSerializer& operator << (LuaSerializer& s, StabilizeFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		return s;
 	}
 
 	LuaSerializer& operator << (LuaSerializer& s, UnlockFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		return s;
 	}
 
 	LuaSerializer& operator << (LuaSerializer& s, ResetCombatTurnFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		return s;
 	}
 
 	LuaSerializer& operator << (LuaSerializer& s, RemoveAuraByChildStatusFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		P(StatusId);
 		return s;
 	}
 
 	LuaSerializer& operator << (LuaSerializer& s, ApplyStatusFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		P(StatusId);
 		PO(StringParam, GFS.strEmpty);
 		// FIXME - add conditions parsing!
@@ -545,7 +547,7 @@ namespace bg3se::lua
 
 	LuaSerializer& operator << (LuaSerializer& s, DealDamageFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		P(DamageType);
 		P(WeaponType);
 		P(WeaponDamageType);
@@ -558,7 +560,7 @@ namespace bg3se::lua
 
 	LuaSerializer& operator << (LuaSerializer& s, UseActionResourceFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		P(ActionResourceUUID);
 		P(ResourceIndex);
 		P(Amount);
@@ -568,14 +570,14 @@ namespace bg3se::lua
 
 	LuaSerializer& operator << (LuaSerializer& s, CreateExplosionFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		P(SpellId);
 		return s;
 	}
 
 	LuaSerializer& operator << (LuaSerializer& s, SurfaceChangeFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		PO(Chance, 1.0f);
 		PO(field_24, 0.0f);
 		PO(field_28, 0.0f);
@@ -586,21 +588,21 @@ namespace bg3se::lua
 
 	LuaSerializer& operator << (LuaSerializer& s, ApplyEquipmentStatusFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		P(EquipmentSlot);
 		return s;
 	}
 
 	LuaSerializer& operator << (LuaSerializer& s, RegainHitPointsFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		// FIXME - P(HitPoints);
 		return s;
 	}
 
 	LuaSerializer& operator << (LuaSerializer& s, UseSpellFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		P(SpellId);
 		PO(IgnoreHasSpell, false);
 		PO(IgnoreChecks, false);
@@ -610,7 +612,7 @@ namespace bg3se::lua
 
 	LuaSerializer& operator << (LuaSerializer& s, SummonInInventoryFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		P(Arg1);
 		P(Arg7);
 		P(Arg2);
@@ -625,7 +627,7 @@ namespace bg3se::lua
 
 	LuaSerializer& operator << (LuaSerializer& s, SpawnInInventoryFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		P(Arg1);
 		P(Arg6);
 		P(Arg2);
@@ -638,24 +640,24 @@ namespace bg3se::lua
 
 	LuaSerializer& operator << (LuaSerializer& s, RemoveUniqueStatusFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		P(StatusId);
 		return s;
 	}
 
 	LuaSerializer& operator << (LuaSerializer& s, DisarmWeaponFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		return s;
 	}
 
 	LuaSerializer& operator << (LuaSerializer& s, ExtenderFunctor& v)
 	{
-		s << static_cast<StatsFunctorBase&>(v);
+		s << static_cast<Functor&>(v);
 		return s;
 	}
 
-	void SerializeObjectProperty(LuaSerializer& s, StatsFunctorBase*& v)
+	void SerializeObjectProperty(LuaSerializer& s, Functor*& v)
 	{
 		s.BeginObject();
 		if (s.IsWriting) {
@@ -768,19 +770,19 @@ namespace bg3se::lua
 		s.EndObject();
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, StatsFunctorSet& v)
+	LuaSerializer& operator << (LuaSerializer& s, Functors& v)
 	{
 		s.BeginObject();
 		if (s.IsWriting) {
 			int index{ 1 };
-			for (auto& functor : v.FunctorList) {
+			for (auto& functor : v.Functors) {
 				push(s.L, index++);
 				SerializeObjectProperty(s, functor);
 				lua_settable(s.L, -3);
 			}
 		} else {
 			for (auto idx : iterate(s.L, -1)) {
-				StatsFunctorBase* functor{ nullptr };
+				Functor* functor{ nullptr };
 				SerializeObjectProperty(s, functor);
 				if (functor) {
 					v.VMT->AddOrUpdate(&v, functor);
@@ -791,7 +793,7 @@ namespace bg3se::lua
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, StatsFunctorSet* v)
+	LuaSerializer& operator << (LuaSerializer& s, Functors* v)
 	{
 		s << *v;
 		return s;

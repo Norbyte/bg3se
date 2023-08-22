@@ -2,17 +2,8 @@
 
 #include <Lua/LuaBinding.h>
 #include <GameDefinitions/Stats/Common.h>
+#include <GameDefinitions/Stats/Stats.h>
 #include <GameDefinitions/RootTemplates.h>
-
-namespace bg3se
-{
-	struct EntityWorldHandle;
-	struct CRPGStats_Requirement;
-	struct CRPGStats_Treasure_Table;
-	struct CRPGStats_Treasure_Category;
-	struct CRPGStats_Treasure_SubTable_Description;
-	struct StatsFunctorSet;
-}
 
 namespace bg3se::lua
 {
@@ -132,13 +123,13 @@ namespace bg3se::lua
 /*	LuaSerializer& operator << (LuaSerializer& s, CEquipmentSet& v);
 	LuaSerializer& operator << (LuaSerializer& s, CEquipmentGroup& v);
 	LuaSerializer& operator << (LuaSerializer& s, CSkillSet& v);*/
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Requirement& v);
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Object::StatsFunctorInfo& v);
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_Table& v);
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_SubTable_Description& v);
-	LuaSerializer& operator << (LuaSerializer& s, CRPGStats_Treasure_Category& v);
-	LuaSerializer& operator << (LuaSerializer& s, StatsFunctorSet& v);
-	LuaSerializer& operator << (LuaSerializer& s, StatsFunctorSet* v);
+	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::Requirement& v);
+	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::Object::FunctorInfo& v);
+	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::TreasureTable& v);
+	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::TreasureSubTable& v);
+	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::TreasureCategory& v);
+	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::Functors& v);
+	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::Functors* v);
 /*	LuaSerializer& operator << (LuaSerializer& s, CItemGroup& v);
 	LuaSerializer& operator << (LuaSerializer& s, CLevelGroup& v);
 	LuaSerializer& operator << (LuaSerializer& s, CRootGroup& v);

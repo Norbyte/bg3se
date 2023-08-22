@@ -178,7 +178,7 @@ namespace bg3se::lua::stats
 		}
 	}
 
-	bool CopyStats(CRPGStats_Object* obj, char const* copyFrom)
+	bool CopyStats(stats::Object* obj, char const* copyFrom)
 	{
 		auto stats = GetStaticSymbols().GetStats();
 		auto copyFromObject = stats->Objects.Find(FixedString(copyFrom));
@@ -195,13 +195,13 @@ namespace bg3se::lua::stats
 			return false;
 		}
 
-		obj->Level = copyFromObject->Level;
 		obj->AIFlags = copyFromObject->AIFlags;
 
 		for (uint32_t i = 0; i < obj->IndexedProperties.size(); i++) {
 			obj->IndexedProperties[i] = copyFromObject->IndexedProperties[i];
 		}
 
+		// FIXME
 		/*copyFromObject->PropertyList.Iterate([obj](auto const& key, auto propertyList) {
 			// TODO - is reusing property list objects allowed?
 			obj->PropertyList.Insert(key, propertyList);

@@ -32,7 +32,7 @@ namespace bg3se::lua::stats
 	}
 
 
-	char const* const StatsExtraDataProxy::MetatableName = "CRPGStats_ExtraData";
+	char const* const StatsExtraDataProxy::MetatableName = "stats::ExtraData";
 
 	int StatsExtraDataProxy::Index(lua_State* L)
 	{
@@ -75,28 +75,6 @@ namespace bg3se::lua::stats
 		StatsExtraDataProxy::RegisterMetatable(L);
 		StatsProxy::RegisterMetatable(L);
 		SpellPrototypeProxy::RegisterMetatable(L);
-	}
-
-	int GetModifierAttributes(lua_State* L)
-	{
-		auto modifierName = get<FixedString>(L, 1);
-		auto stats = GetStaticSymbols().GetStats();
-		if (!stats) return luaL_error(L, "Stats not available");
-
-		auto modifierList = stats->ModifierLists.Find(modifierName);
-		if (!modifierList) {
-			OsiError("No such modifier list: " << modifierName);
-			push(L, nullptr);
-			return 1;
-		}
-
-		lua_newtable(L);
-		for (auto const& modifier : modifierList->Attributes.Primitives) {
-			auto enumeration = GetStaticSymbols().GetStats()->ModifierValueLists.Find(modifier->RPGEnumerationIndex);
-			settable(L, modifier->Name, enumeration->Name);
-		}
-
-		return 1;
 	}
 
 	template <class T>

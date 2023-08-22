@@ -38,6 +38,23 @@ struct LocalTemplateManager;
 struct GlobalCacheTemplateManager;
 struct LevelCacheTemplateManager;
 
+struct GuidResourceDefinition;
+struct GuidResourceDefinitionManagerBase;
+
+namespace stats
+{
+	struct Modifier;
+	struct ModifierList;
+	struct Requirement;
+	struct Functors;
+	struct SpellPrototype;
+	struct RPGEnumeration;
+	struct Object;
+	struct TreasureTable;
+	struct TreasureSubTable;
+	struct TreasureCategory;
+}
+
 namespace esv
 {
 	struct Item;

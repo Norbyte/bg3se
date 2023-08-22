@@ -18,7 +18,7 @@ namespace bg3se::esv::lua
 			return 1;
 		}
 
-#define V(type) case StatsFunctorActionId::type: ObjectProxy::MakeOwner<type##Functor>(L, pool, static_cast<type##Functor*>(functor)); break;
+#define V(type) case StatsFunctorActionId::type: ObjectProxy::MakeOwner<bg3se::stats::type##Functor>(L, pool, static_cast<bg3se::stats::type##Functor*>(functor)); break;
 
 		switch (type) {
 			V(CustomDescription)
@@ -76,7 +76,7 @@ namespace bg3se::esv::lua
 		auto& pool = GetServerLifetimePool();
 
 #define V(ty) case FunctorExecParamsType::ty: { \
-			auto params = ObjectProxy::MakeOwner<FunctorExecParams##ty>(L, pool); \
+			auto params = ObjectProxy::MakeOwner<bg3se::stats::FunctorExecParams##ty>(L, pool); \
 			params->Get()->ParamsTypeId = type; \
 			break; }
 
@@ -103,8 +103,8 @@ namespace bg3se::esv::lua
 	int ExecuteFunctor(lua_State* L)
 	{
 		StackCheck _(L, 1);
-		auto functor = checked_get_proxy<StatsFunctorBase>(L, 1);
-		auto params = checked_get_proxy<BaseFunctorExecParams>(L, 2);
+		auto functor = checked_get_proxy<bg3se::stats::Functor>(L, 1);
+		auto params = checked_get_proxy<bg3se::stats::BaseFunctorExecParams>(L, 2);
 		auto& pool = GetServerLifetimePool();
 
 		auto hit = ObjectProxy::MakeOwner<NewHit>(L, pool)->Get();
@@ -112,8 +112,8 @@ namespace bg3se::esv::lua
 		functorSet->VMT->AddOrUpdate(functorSet, functor);
 
 #define V(type) case FunctorExecParamsType::type: \
-			GetStaticSymbols().eoc__StatsFunctorSet__Execute##type(hit, \
-				functorSet, static_cast<FunctorExecParams##type*>(params)); break;
+			GetStaticSymbols().stats__Functors__Execute##type(hit, \
+				functorSet, static_cast<bg3se::stats::FunctorExecParams##type*>(params)); break;
 
 		switch (params->ParamsTypeId) {
 			V(Type1)

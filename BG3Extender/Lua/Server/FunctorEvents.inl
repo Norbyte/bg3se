@@ -7,32 +7,32 @@ FunctorEventHooks::FunctorEventHooks(lua::State& state)
 	: state_(state)
 {
 	auto& hooks = gExtender->GetEngineHooks();
-	hooks.DealDamageFunctor__ApplyDamage.SetWrapper(&FunctorEventHooks::OnDealDamage, this);
-	hooks.StatsFunctorSet__ExecuteType1.SetWrapper(&FunctorEventHooks::OnFunctorExecute<FunctorExecParamsType1, StatsFunctorSet::ExecuteType1Proc>, this);
-	hooks.StatsFunctorSet__ExecuteType2.SetWrapper(&FunctorEventHooks::OnFunctorExecute<FunctorExecParamsType2, StatsFunctorSet::ExecuteType2Proc>, this);
-	hooks.StatsFunctorSet__ExecuteType3.SetWrapper(&FunctorEventHooks::OnFunctorExecute<FunctorExecParamsType3, StatsFunctorSet::ExecuteType3Proc>, this);
-	hooks.StatsFunctorSet__ExecuteType4.SetWrapper(&FunctorEventHooks::OnFunctorExecute<FunctorExecParamsType4, StatsFunctorSet::ExecuteType4Proc>, this);
-	hooks.StatsFunctorSet__ExecuteType5.SetWrapper(&FunctorEventHooks::OnFunctorExecute<FunctorExecParamsType5, StatsFunctorSet::ExecuteType5Proc>, this);
-	hooks.StatsFunctorSet__ExecuteType6.SetWrapper(&FunctorEventHooks::OnFunctorExecute<FunctorExecParamsType6, StatsFunctorSet::ExecuteType6Proc>, this);
-	hooks.StatsFunctorSet__ExecuteType7.SetWrapper(&FunctorEventHooks::OnFunctorExecute<FunctorExecParamsType7, StatsFunctorSet::ExecuteType7Proc>, this);
-	hooks.StatsFunctorSet__ExecuteType8.SetWrapper(&FunctorEventHooks::OnFunctorExecute<FunctorExecParamsType8, StatsFunctorSet::ExecuteType8Proc>, this);
+	hooks.stats__DealDamageFunctor__ApplyDamage.SetWrapper(&FunctorEventHooks::OnDealDamage, this);
+	hooks.stats__Functors__ExecuteType1.SetWrapper(&FunctorEventHooks::OnFunctorExecute<bg3se::stats::FunctorExecParamsType1, bg3se::stats::Functors::ExecuteType1Proc>, this);
+	hooks.stats__Functors__ExecuteType2.SetWrapper(&FunctorEventHooks::OnFunctorExecute<bg3se::stats::FunctorExecParamsType2, bg3se::stats::Functors::ExecuteType2Proc>, this);
+	hooks.stats__Functors__ExecuteType3.SetWrapper(&FunctorEventHooks::OnFunctorExecute<bg3se::stats::FunctorExecParamsType3, bg3se::stats::Functors::ExecuteType3Proc>, this);
+	hooks.stats__Functors__ExecuteType4.SetWrapper(&FunctorEventHooks::OnFunctorExecute<bg3se::stats::FunctorExecParamsType4, bg3se::stats::Functors::ExecuteType4Proc>, this);
+	hooks.stats__Functors__ExecuteType5.SetWrapper(&FunctorEventHooks::OnFunctorExecute<bg3se::stats::FunctorExecParamsType5, bg3se::stats::Functors::ExecuteType5Proc>, this);
+	hooks.stats__Functors__ExecuteType6.SetWrapper(&FunctorEventHooks::OnFunctorExecute<bg3se::stats::FunctorExecParamsType6, bg3se::stats::Functors::ExecuteType6Proc>, this);
+	hooks.stats__Functors__ExecuteType7.SetWrapper(&FunctorEventHooks::OnFunctorExecute<bg3se::stats::FunctorExecParamsType7, bg3se::stats::Functors::ExecuteType7Proc>, this);
+	hooks.stats__Functors__ExecuteType8.SetWrapper(&FunctorEventHooks::OnFunctorExecute<bg3se::stats::FunctorExecParamsType8, bg3se::stats::Functors::ExecuteType8Proc>, this);
 }
 
 FunctorEventHooks::~FunctorEventHooks()
 {
 	auto& hooks = gExtender->GetEngineHooks();
-	hooks.DealDamageFunctor__ApplyDamage.ClearHook();
-	hooks.StatsFunctorSet__ExecuteType1.ClearHook();
-	hooks.StatsFunctorSet__ExecuteType2.ClearHook();
-	hooks.StatsFunctorSet__ExecuteType3.ClearHook();
-	hooks.StatsFunctorSet__ExecuteType4.ClearHook();
-	hooks.StatsFunctorSet__ExecuteType5.ClearHook();
-	hooks.StatsFunctorSet__ExecuteType6.ClearHook();
-	hooks.StatsFunctorSet__ExecuteType7.ClearHook();
-	hooks.StatsFunctorSet__ExecuteType8.ClearHook();
+	hooks.stats__DealDamageFunctor__ApplyDamage.ClearHook();
+	hooks.stats__Functors__ExecuteType1.ClearHook();
+	hooks.stats__Functors__ExecuteType2.ClearHook();
+	hooks.stats__Functors__ExecuteType3.ClearHook();
+	hooks.stats__Functors__ExecuteType4.ClearHook();
+	hooks.stats__Functors__ExecuteType5.ClearHook();
+	hooks.stats__Functors__ExecuteType6.ClearHook();
+	hooks.stats__Functors__ExecuteType7.ClearHook();
+	hooks.stats__Functors__ExecuteType8.ClearHook();
 }
 
-NewHit* FunctorEventHooks::OnDealDamage(DealDamageFunctor::ApplyDamageProc* next, NewHit* result, DealDamageFunctor* functor, EntityWorldHandle* casterHandle,
+NewHit* FunctorEventHooks::OnDealDamage(bg3se::stats::DealDamageFunctor::ApplyDamageProc* next, NewHit* result, bg3se::stats::DealDamageFunctor* functor, EntityWorldHandle* casterHandle,
 	EntityWorldHandle* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId, int storyActionId, 
 	ActionOriginator* originator, GuidResourceDefinitionManagerBase* classResourceMgr, Hit* hit, DamageSums* damageSums, uint64_t* unknownThothParam, HitWith hitWith)
 {

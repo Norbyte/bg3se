@@ -637,13 +637,9 @@ namespace bg3se
 		uint64_t FileSize{ 0 };
 		uint64_t FileHandle{ 0 };
 		uint64_t FileHandle2{ 0 };
-		uint64_t ScratchBuffer;
-		uint64_t G;
-		int H;
-		uint64_t I;
+		ScratchBuffer Buffer;
 		FileType Type{ FileType::Unknown };
 		void * FileObject;
-		uint64_t _Fill[16];
 	};
 
 	class FileReaderPin

@@ -1,6 +1,6 @@
 #include <Extender/Shared/StatLoadOrderHelper.h>
 
-BEGIN_SE()
+BEGIN_NS(stats)
 
 void StatLoadOrderHelper::OnLoadStarted()
 {
@@ -79,7 +79,7 @@ FixedString StatLoadOrderHelper::GetStatsEntryMod(FixedString statId) const
 	}
 }
 
-std::vector<CRPGStats_Object*> StatLoadOrderHelper::GetStatsLoadedBefore(FixedString modId) const
+std::vector<Object*> StatLoadOrderHelper::GetStatsLoadedBefore(FixedString modId) const
 {
 	std::unordered_set<FixedString> modsLoadedBefore;
 	auto state = gExtender->GetCurrentExtensionState();
@@ -99,7 +99,7 @@ std::vector<CRPGStats_Object*> StatLoadOrderHelper::GetStatsLoadedBefore(FixedSt
 		return {};
 	}
 
-	std::vector<CRPGStats_Object*> statsLoadedBefore;
+	std::vector<Object*> statsLoadedBefore;
 	auto stats = GetStaticSymbols().GetStats();
 	for (auto const& object : stats->Objects.Primitives) {
 		auto statEntryMod = GetStatsEntryMod(object->Name);
@@ -112,4 +112,4 @@ std::vector<CRPGStats_Object*> StatLoadOrderHelper::GetStatsLoadedBefore(FixedSt
 }
 
 
-END_SE()
+END_NS()

@@ -179,7 +179,7 @@ std::wstring ScriptExtender::MakeLogFilePath(std::wstring const & Type, std::wst
 	return ss.str();
 }
 
-void ScriptExtender::OnStatsLoad(RPGStats::LoadProc* wrapped, RPGStats* mgr, ObjectSet<STDString>* paths)
+void ScriptExtender::OnStatsLoad(stats::RPGStats::LoadProc* wrapped, stats::RPGStats* mgr, ObjectSet<STDString>* paths)
 {
 	statLoadOrderHelper_.OnLoadStarted();
 

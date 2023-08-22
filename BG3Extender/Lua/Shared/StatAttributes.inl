@@ -7,7 +7,7 @@
 
 namespace bg3se::lua::stats
 {
-	char const* const StatsProxy::MetatableName = "CRPGStats_Object";
+	char const* const StatsProxy::MetatableName = "stats::Object";
 
 
 	int StatsProxy::Sync(lua_State* L)
@@ -54,7 +54,7 @@ namespace bg3se::lua::stats
 	int StatsProxy::Index(lua_State* L)
 	{
 		if (!lifetime_.IsAlive(L) || obj_ == nullptr) {
-			return luaL_error(L, "Attempted to read property of null CRPGStats_Object object");
+			return luaL_error(L, "Attempted to read property of null stats::Object object");
 		}
 
 		FixedString attributeName{ luaL_checkstring(L, 2) };
@@ -75,7 +75,7 @@ namespace bg3se::lua::stats
 	int StatsProxy::NewIndex(lua_State* L)
 	{
 		if (!lifetime_.IsAlive(L) || obj_ == nullptr) {
-			return luaL_error(L, "Attempted to write property of null CRPGStats_Object object");
+			return luaL_error(L, "Attempted to write property of null stats::Object object");
 		}
 
 		auto attributeName = luaL_checkstring(L, 2);
@@ -83,7 +83,7 @@ namespace bg3se::lua::stats
 	}
 
 
-	int LuaStatGetAttribute(lua_State* L, CRPGStats_Object* object, FixedString const& attributeName, std::optional<int> level)
+	int LuaStatGetAttribute(lua_State* L, stats::Object* object, FixedString const& attributeName, std::optional<int> level)
 	{
 		StackCheck _(L, 1);
 		auto stats = GetStaticSymbols().GetStats();
@@ -94,10 +94,7 @@ namespace bg3se::lua::stats
 			return 1;
 		}
 
-		if (attributeName == GFS.strLevel) {
-			push(L, object->Level);
-			return 1;
-		} else if (attributeName == GFS.strName) {
+		if (attributeName == GFS.strName) {
 			push(L, object->Name);
 			return 1;
 		} else if (attributeName == GFS.strModId) {
@@ -130,17 +127,7 @@ namespace bg3se::lua::stats
 		switch (attrInfo->GetPropertyType()) {
 		case RPGEnumerationType::Int:
 		{
-			std::optional<int> value;
-			if (level) {
-				if (*level == -1) {
-					*level = object->Level;
-				}
-
-				value = object->GetIntScaled(attributeName, *level);
-			} else {
-				value = object->GetInt(attributeName);
-			}
-
+			auto value = object->GetInt(attributeName);
 			LuaWrite(L, value);
 			break;
 		}
@@ -211,7 +198,7 @@ namespace bg3se::lua::stats
 
 		case RPGEnumerationType::StatsFunctors:
 		{
-			auto functors = object->GetStatsFunctors(attributeName);
+			auto functors = object->GetFunctors(attributeName);
 			if (functors && (*functors)->Size() == 1 && (**functors)[0].Name == GFS.strDefault) {
 				LuaWrite(L, (**functors)[0].Functor);
 			} else {
@@ -244,7 +231,7 @@ namespace bg3se::lua::stats
 		return LuaStatGetAttribute(L, object, FixedString(attributeName), {});
 	}
 
-	int LuaStatSetAttribute(lua_State* L, CRPGStats_Object* object, FixedString const& attributeName, int valueIdx)
+	int LuaStatSetAttribute(lua_State* L, stats::Object* object, FixedString const& attributeName, int valueIdx)
 	{
 		StackCheck _(L);
 		LuaVirtualPin lua(gExtender->GetCurrentExtensionState());
@@ -260,10 +247,7 @@ namespace bg3se::lua::stats
 			}
 		}
 
-		if (attributeName == GFS.strLevel) {
-			object->Level = (int32_t)luaL_checkinteger(L, valueIdx);
-			return 0;
-		} else if (attributeName == GFS.strAIFlags) {
+		if (attributeName == GFS.strAIFlags) {
 			object->AIFlags = FixedString(lua_tostring(L, valueIdx));
 			return 0;
 		}
@@ -310,7 +294,7 @@ namespace bg3se::lua::stats
 			switch (attrType) {
 			case RPGEnumerationType::Flags:
 			{
-				ObjectSet<STDString> flags;
+				Array<STDString> flags;
 				lua_pushvalue(L, valueIdx);
 				LuaRead(L, flags);
 				lua_pop(L, 1);
@@ -325,11 +309,11 @@ namespace bg3se::lua::stats
 				LuaRead(L, rolls);
 				lua_pop(L, 1);
 
-				Array<CRPGStats_Object::RollConditionInfo> conditions;
+				Array<stats::Object::RollCondition> conditions;
 				for (auto const& kv : rolls) {
 					auto conditionsId = stats->GetOrCreateConditions(kv.Value());
 					if (conditionsId >= 0) {
-						CRPGStats_Object::RollConditionInfo roll;
+						stats::Object::RollCondition roll;
 						roll.Name = kv.Key();
 						roll.ConditionsId = conditionsId;
 						conditions.Add(roll);
@@ -342,26 +326,26 @@ namespace bg3se::lua::stats
 
 			case RPGEnumerationType::StatsFunctors:
 			{
-				StatsFunctorSet* functor = stats->ConstructFunctorSet(attributeName);
+				Functors* functor = stats->ConstructFunctorSet(attributeName);
 				lua_pushvalue(L, valueIdx);
 				LuaRead(L, functor);
 				lua_pop(L, 1);
 
-				Array<CRPGStats_Object::StatsFunctorInfo> functors;
+				Array<stats::Object::FunctorInfo> functors;
 				if (functor) {
-					CRPGStats_Object::StatsFunctorInfo functorInfo;
+					stats::Object::FunctorInfo functorInfo;
 					functorInfo.Name = GFS.strDefault;
 					functorInfo.Functor = functor;
 					functors.Add(functorInfo);
 				}
 
-				object->SetStatsFunctors(attributeName, functors);
+				object->SetFunctors(attributeName, functors);
 				break;
 			}
 
 			case RPGEnumerationType::Requirements:
 			{
-				ObjectSet<CRPGStats_Requirement> requirements;
+				Array<stats::Requirement> requirements;
 				lua_pushvalue(L, valueIdx);
 				LuaRead(L, requirements);
 				lua_pop(L, 1);
@@ -388,7 +372,7 @@ namespace bg3se::lua::stats
 				break;
 
 			case RPGEnumerationType::StatsFunctors:
-				object->SetStatsFunctors(attributeName, {});
+				object->SetFunctors(attributeName, {});
 				break;
 
 			default:
@@ -405,133 +389,4 @@ namespace bg3se::lua::stats
 
 		return 0;
 	}
-
-	struct CRPGStats_CustomLevelMap : public CRPGStats_LevelMap
-	{
-		RegistryEntry Function;
-		CRPGStats_LevelMap* OriginalLevelMap{ nullptr };
-
-		CRPGStats_CustomLevelMap() {}
-		~CRPGStats_CustomLevelMap() override {}
-
-		void SetModifierList(int modifierListIndex, int modifierIndex) override
-		{
-			OsiError("Not supported!");
-		}
-
-		void SetModifierList(FixedString const& modifierListName, FixedString const& modifierName) override
-		{
-			OsiError("Not supported!");
-		}
-
-		int64_t GetScaledValue(int attributeValue, int level) override
-		{
-			auto value = LuaGetScaledValue(attributeValue, level);
-			if (value) {
-				return *value;
-			}
-			else {
-				return OriginalLevelMap->GetScaledValue(attributeValue, level);
-			}
-		}
-
-		std::optional<int64_t> LuaGetScaledValue(int attributeValue, int level)
-		{
-			// GetScaledValue must always use the client pin, as the override function is
-			// reigstered from the client state
-			ecl::LuaClientPin pin(ecl::ExtensionState::Get());
-			if (!pin) return {};
-
-			Restriction restriction(*pin, State::RestrictAll);
-
-			auto L = pin->GetState();
-			Function.Push();
-
-			push(L, attributeValue);
-			push(L, level);
-
-			if (lua_pcall(L, 2, 1, 0) != 0) { // stack: retval
-				OsiError("Level scaled value fetch failed: " << lua_tostring(L, -1));
-				lua_pop(L, 1);
-				return {};
-			}
-
-			if (lua_type(L, -1) != LUA_TNUMBER) {
-				OsiErrorS("Level scaled fetcher returned non-numeric value");
-				return {};
-			}
-
-			auto value = lua_tointeger(L, -1);
-			lua_pop(L, 1); // stack: -
-			return value;
-		}
-	};
-
-	void RestoreLevelMaps(std::unordered_set<int32_t> const& levelMapIds)
-	{
-		auto& levelMaps = GetStaticSymbols().GetStats()->LevelMaps.Primitives;
-		for (auto levelMapIndex : levelMapIds) {
-			auto levelMap = static_cast<CRPGStats_CustomLevelMap*>(levelMaps.Buf[levelMapIndex]);
-			levelMaps.Buf[levelMapIndex] = levelMap->OriginalLevelMap;
-		}
-
-		if (!levelMapIds.empty()) {
-			OsiWarn("Restored " << levelMapIds.size() << " level map overrides (Lua VM deleted)");
-		}
-	}
-
-	int StatSetLevelScaling(lua_State* L)
-	{
-		StackCheck _(L);
-		auto modifierListName = luaL_checkstring(L, 1);
-		auto modifierName = luaL_checkstring(L, 2);
-		luaL_checktype(L, 3, LUA_TFUNCTION);
-
-		LuaVirtualPin lua(gExtender->GetCurrentExtensionState());
-		if (lua->RestrictionFlags & State::ScopeModulePreLoad) {
-			return luaL_error(L, "Stat functions unavailable during module preload");
-		}
-
-		if (!(lua->RestrictionFlags & (State::ScopeModuleLoad | State::ScopeModuleResume))) {
-			return luaL_error(L, "StatSetLevelScaling() can only be called during module load/resume");
-		}
-
-		auto stats = GetStaticSymbols().GetStats();
-		auto modifier = stats->GetModifierInfo(FixedString(modifierListName), FixedString(modifierName));
-		if (modifier == nullptr) {
-			OsiError("Modifier list '" << modifierListName << "' or modifier '" << modifierName << "' does not exist!");
-			return 0;
-		}
-
-		if (modifier->LevelMapIndex == -1) {
-			OsiError("Modifier list '" << modifierListName << "', modifier '" << modifierName << "' is not level scaled!");
-			return 0;
-		}
-
-		CRPGStats_LevelMap* originalLevelMap;
-		auto currentLevelMap = stats->LevelMaps.Find(modifier->LevelMapIndex);
-
-		auto it = lua->OverriddenLevelMaps.find(modifier->LevelMapIndex);
-		if (it != lua->OverriddenLevelMaps.end()) {
-			auto overridden = static_cast<CRPGStats_CustomLevelMap*>(currentLevelMap);
-			originalLevelMap = overridden->OriginalLevelMap;
-		}
-		else {
-			originalLevelMap = currentLevelMap;
-		}
-
-		auto levelMap = GameAlloc<CRPGStats_CustomLevelMap>();
-		levelMap->ModifierListIndex = originalLevelMap->ModifierListIndex;
-		levelMap->ModifierIndex = originalLevelMap->ModifierIndex;
-		levelMap->RPGEnumerationIndex = originalLevelMap->RPGEnumerationIndex;
-		levelMap->Name = originalLevelMap->Name;
-		levelMap->Function = RegistryEntry(L, 3);
-		levelMap->OriginalLevelMap = originalLevelMap;
-
-		stats->LevelMaps.Primitives.Buf[modifier->LevelMapIndex] = levelMap;
-		lua->OverriddenLevelMaps.insert(modifier->LevelMapIndex);
-
-		return 0;
-	}
-
 }

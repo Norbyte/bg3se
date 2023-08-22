@@ -84,7 +84,7 @@ public:
 
 	bool HasFeatureFlag(char const *) const;
 
-	inline StatLoadOrderHelper& GetStatLoadOrderHelper()
+	inline stats::StatLoadOrderHelper& GetStatLoadOrderHelper()
 	{
 		return statLoadOrderHelper_;
 	}
@@ -116,7 +116,7 @@ private:
 	std::shared_mutex pathOverrideMutex_;
 	std::unordered_map<STDString, STDString> pathOverrides_;
 	SavegameSerializer savegameSerializer_;
-	StatLoadOrderHelper statLoadOrderHelper_;
+	stats::StatLoadOrderHelper statLoadOrderHelper_;
 	lua::LuaBundle luaBuiltinBundle_;
 
 	ExtenderConfig config_;
@@ -132,7 +132,7 @@ private:
 
 	void OnBaseModuleLoaded(void * self);
 	void OnModuleLoadStarted(TranslatedStringRepository* self);
-	void OnStatsLoad(RPGStats::LoadProc* wrapped, RPGStats* mgr, ObjectSet<STDString>* paths);
+	void OnStatsLoad(stats::RPGStats::LoadProc* wrapped, stats::RPGStats* mgr, ObjectSet<STDString>* paths);
 	void OnSkillPrototypeManagerInit(void * self);
 	FileReader * OnFileReaderCreate(FileReader::CtorProc* next, FileReader * self, Path const& path, unsigned int type, unsigned int unknown);
 	void OnSavegameVisit(void* osirisHelpers, ObjectVisitor* visitor);

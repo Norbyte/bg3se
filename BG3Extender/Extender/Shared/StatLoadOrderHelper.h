@@ -4,7 +4,7 @@
 #include <GameDefinitions/Stats/Stats.h>
 #include <shared_mutex>
 
-BEGIN_SE()
+BEGIN_NS(stats)
 
 class StatLoadOrderHelper
 {
@@ -16,7 +16,7 @@ public:
 	void UpdateModDirectoryMap();
 
 	FixedString GetStatsEntryMod(FixedString statId) const;
-	std::vector<CRPGStats_Object*> GetStatsLoadedBefore(FixedString modId) const;
+	std::vector<Object*> GetStatsLoadedBefore(FixedString modId) const;
 
 private:
 	struct StatsEntryModMapping
@@ -32,4 +32,4 @@ private:
 	bool loadingStats_{ false };
 };
 
-END_SE()
+END_NS()

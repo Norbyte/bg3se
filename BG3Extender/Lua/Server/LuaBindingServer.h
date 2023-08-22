@@ -136,7 +136,7 @@ namespace bg3se::esv::lua
 	{
 		// TODO - only available after hit! 
 		// NewHit* Result;
-		DealDamageFunctor* Functor;
+		bg3se::stats::DealDamageFunctor* Functor;
 		EntityWorldHandle Caster;
 		EntityWorldHandle Target;
 		glm::vec3 Position;
@@ -152,14 +152,14 @@ namespace bg3se::esv::lua
 
 	struct ExecuteFunctorEventParams
 	{
-		StatsFunctorSet* Functor;
-		BaseFunctorExecParams* Params;
+		bg3se::stats::Functors* Functor;
+		bg3se::stats::BaseFunctorExecParams* Params;
 	};
 
 	struct AfterExecuteFunctorEventParams
 	{
-		StatsFunctorSet* Functor;
-		BaseFunctorExecParams* Params;
+		bg3se::stats::Functors* Functor;
+		bg3se::stats::BaseFunctorExecParams* Params;
 		NewHit* Hit;
 	};
 	
@@ -172,26 +172,26 @@ namespace bg3se::esv::lua
 	private:
 		lua::State& state_;
 
-		NewHit* OnDealDamage(DealDamageFunctor::ApplyDamageProc* next, NewHit* result, DealDamageFunctor* functor, EntityWorldHandle* casterHandle,
+		NewHit* OnDealDamage(bg3se::stats::DealDamageFunctor::ApplyDamageProc* next, NewHit* result, bg3se::stats::DealDamageFunctor* functor, EntityWorldHandle* casterHandle,
 			EntityWorldHandle* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId, int storyActionId,
 			ActionOriginator* originator, GuidResourceDefinitionManagerBase* classResourceMgr, Hit* hit, DamageSums* damageSums, uint64_t* unknownThothParam, HitWith hitWith);
 
 		template <class TParams>
-		void LuaTriggerFunctorPreExecEvent(StatsFunctorSet* self, TParams* params)
+		void LuaTriggerFunctorPreExecEvent(bg3se::stats::Functors* self, TParams* params)
 		{
 			ExecuteFunctorEventParams evt{ self, params };
 			state_.ThrowEvent("ExecuteFunctor", evt, false, 0, WriteableEvent{});
 		}
 
 		template <class TParams>
-		void LuaTriggerFunctorPostExecEvent(StatsFunctorSet* self, TParams* params, NewHit* hit)
+		void LuaTriggerFunctorPostExecEvent(bg3se::stats::Functors* self, TParams* params, NewHit* hit)
 		{
 			AfterExecuteFunctorEventParams evt{ self, params, hit };
 			state_.ThrowEvent("AfterExecuteFunctor", evt, false, 0, WriteableEvent{});
 		}
 
 		template <class TParams, class TNext>
-		void OnFunctorExecute(TNext* next, NewHit* hit, StatsFunctorSet* self, TParams* params)
+		void OnFunctorExecute(TNext* next, NewHit* hit, bg3se::stats::Functors* self, TParams* params)
 		{
 			LuaTriggerFunctorPreExecEvent<TParams>(self, params);
 			next(hit, self, params);

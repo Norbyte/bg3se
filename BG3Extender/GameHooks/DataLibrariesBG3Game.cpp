@@ -170,16 +170,16 @@ namespace bg3se
 		SYM_OFF(esv__StatusMachine__CreateStatus);
 		SYM_OFF(esv__StatusMachine__ApplyStatus);
 
-		SYM_OFF(eoc__DealDamageFunctor__ApplyDamage);
+		SYM_OFF(stats__DealDamageFunctor__ApplyDamage);
 
-		SYM_OFF(eoc__StatsFunctorSet__ExecuteType1);
-		SYM_OFF(eoc__StatsFunctorSet__ExecuteType2);
-		SYM_OFF(eoc__StatsFunctorSet__ExecuteType3);
-		SYM_OFF(eoc__StatsFunctorSet__ExecuteType4);
-		SYM_OFF(eoc__StatsFunctorSet__ExecuteType5);
-		SYM_OFF(eoc__StatsFunctorSet__ExecuteType6);
-		SYM_OFF(eoc__StatsFunctorSet__ExecuteType7);
-		SYM_OFF(eoc__StatsFunctorSet__ExecuteType8);
+		SYM_OFF(stats__Functors__ExecuteType1);
+		SYM_OFF(stats__Functors__ExecuteType2);
+		SYM_OFF(stats__Functors__ExecuteType3);
+		SYM_OFF(stats__Functors__ExecuteType4);
+		SYM_OFF(stats__Functors__ExecuteType5);
+		SYM_OFF(stats__Functors__ExecuteType6);
+		SYM_OFF(stats__Functors__ExecuteType7);
+		SYM_OFF(stats__Functors__ExecuteType8);
 
 		SYM_OFF(gRPGStats);
 		SYM_OFF(esv__SavegameManager);

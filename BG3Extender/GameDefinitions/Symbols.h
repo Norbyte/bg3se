@@ -59,35 +59,35 @@ namespace bg3se
 		esv::SurfaceActionFactory::CreateActionProc* esv__SurfaceActionFactory__CreateAction{ nullptr };
 		esv::SurfaceManager::AddActionProc* esv__SurfaceManager__AddAction{ nullptr };*/
 
-		SpellPrototypeManager** eoc__SpellPrototypeManager{ nullptr };
-		SpellPrototype::InitProc* eoc__SpellPrototype__Init{ nullptr };
+		stats::SpellPrototypeManager** eoc__SpellPrototypeManager{ nullptr };
+		stats::SpellPrototype::InitProc* eoc__SpellPrototype__Init{ nullptr };
 
-		StatusPrototypeManager** eoc__StatusPrototypeManager{ nullptr };
-		StatusPrototype::InitProc* eoc__StatusPrototype__Init{ nullptr };
+		stats::StatusPrototypeManager** eoc__StatusPrototypeManager{ nullptr };
+		stats::StatusPrototype::InitProc* eoc__StatusPrototype__Init{ nullptr };
 
-		PassiveManager** eoc__PassiveManager{ nullptr };
-		Passive::InitProc* eoc__Passive__Init{ nullptr };
+		stats::PassiveManager** eoc__PassiveManager{ nullptr };
+		stats::Passive::InitProc* eoc__Passive__Init{ nullptr };
 
 		esv::StatusMachine::CreateStatusProc* esv__StatusMachine__CreateStatus{ nullptr };
 		esv::StatusMachine::ApplyStatusProc* esv__StatusMachine__ApplyStatus{ nullptr };
 
-		DealDamageFunctor::ApplyDamageProc* eoc__DealDamageFunctor__ApplyDamage{ nullptr };
+		stats::DealDamageFunctor::ApplyDamageProc* stats__DealDamageFunctor__ApplyDamage{ nullptr };
 
-		StatsFunctorSet::ExecuteType1Proc* eoc__StatsFunctorSet__ExecuteType1{ nullptr };
-		StatsFunctorSet::ExecuteType2Proc* eoc__StatsFunctorSet__ExecuteType2{ nullptr };
-		StatsFunctorSet::ExecuteType3Proc* eoc__StatsFunctorSet__ExecuteType3{ nullptr };
-		StatsFunctorSet::ExecuteType4Proc* eoc__StatsFunctorSet__ExecuteType4{ nullptr };
-		StatsFunctorSet::ExecuteType5Proc* eoc__StatsFunctorSet__ExecuteType5{ nullptr };
-		StatsFunctorSet::ExecuteType6Proc* eoc__StatsFunctorSet__ExecuteType6{ nullptr };
-		StatsFunctorSet::ExecuteType7Proc* eoc__StatsFunctorSet__ExecuteType7{ nullptr };
-		StatsFunctorSet::ExecuteType8Proc* eoc__StatsFunctorSet__ExecuteType8{ nullptr };
+		stats::Functors::ExecuteType1Proc* stats__Functors__ExecuteType1{ nullptr };
+		stats::Functors::ExecuteType2Proc* stats__Functors__ExecuteType2{ nullptr };
+		stats::Functors::ExecuteType3Proc* stats__Functors__ExecuteType3{ nullptr };
+		stats::Functors::ExecuteType4Proc* stats__Functors__ExecuteType4{ nullptr };
+		stats::Functors::ExecuteType5Proc* stats__Functors__ExecuteType5{ nullptr };
+		stats::Functors::ExecuteType6Proc* stats__Functors__ExecuteType6{ nullptr };
+		stats::Functors::ExecuteType7Proc* stats__Functors__ExecuteType7{ nullptr };
+		stats::Functors::ExecuteType8Proc* stats__Functors__ExecuteType8{ nullptr };
 
-		RPGStats::LoadProc* RPGStats__Load{ nullptr };
+		stats::RPGStats::LoadProc* RPGStats__Load{ nullptr };
 		/*RPGStats::ParsePropertiesProc* RPGStats__ParseProperties{nullptr};
 		SkillPrototypeManager** eoc__SkillPrototypeManager{ nullptr };
 		StatusPrototypeManager** eoc__StatusPrototypeManager{ nullptr };*/
 
-		RPGStats** gRPGStats{ nullptr };
+		stats::RPGStats** gRPGStats{ nullptr };
 		esv::SavegameManager** esv__SavegameManager{ nullptr };
 
 		App** AppInstance{ nullptr };
@@ -153,7 +153,7 @@ namespace bg3se
 			}
 		}
 
-		inline RPGStats* GetStats() const
+		inline stats::RPGStats* GetStats() const
 		{
 			if (gRPGStats && *gRPGStats) {
 				return *gRPGStats;

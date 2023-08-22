@@ -13,12 +13,6 @@
 #include <unordered_set>
 #include <optional>
 
-namespace bg3se
-{
-	struct CRPGStats_Object;
-	class EntitySystemHelpersBase;
-}
-
 namespace bg3se::lua
 {
 	void PushExtFunction(lua_State * L, char const * func);
@@ -228,6 +222,6 @@ namespace bg3se::lua
 
 namespace bg3se::lua::stats
 {
-	int LuaStatGetAttribute(lua_State* L, CRPGStats_Object* object, FixedString const& attributeName, std::optional<int> level);
-	int LuaStatSetAttribute(lua_State* L, CRPGStats_Object* object, FixedString const& attributeName, int valueIdx);
+	int LuaStatGetAttribute(lua_State* L, bg3se::stats::Object* object, FixedString const& attributeName, std::optional<int> level);
+	int LuaStatSetAttribute(lua_State* L, bg3se::stats::Object* object, FixedString const& attributeName, int valueIdx);
 }

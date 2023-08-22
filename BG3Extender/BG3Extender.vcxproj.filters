@@ -206,16 +206,10 @@
     <ClInclude Include="GameDefinitions\Stats\Stats.h">
       <Filter>GameDefinitions\Stats</Filter>
     </ClInclude>
-    <ClInclude Include="GameDefinitions\Stats\Character.h">
-      <Filter>GameDefinitions\Stats</Filter>
-    </ClInclude>
     <ClInclude Include="GameDefinitions\Stats\Common.h">
       <Filter>GameDefinitions\Stats</Filter>
     </ClInclude>
     <ClInclude Include="GameDefinitions\Stats\Functors.h">
-      <Filter>GameDefinitions\Stats</Filter>
-    </ClInclude>
-    <ClInclude Include="GameDefinitions\Stats\Item.h">
       <Filter>GameDefinitions\Stats</Filter>
     </ClInclude>
     <ClInclude Include="GameDefinitions\EntitySystem.h">
@@ -456,12 +450,6 @@
     <None Include="LuaScripts\Game.Tooltip.lua" />
     <None Include="LuaScripts\SandboxStartup.lua" />
     <None Include="Misc\ExtIdeHelpers.lua" />
-    <None Include="Lua\Shared\LuaCharacter.inl">
-      <Filter>Lua\Shared</Filter>
-    </None>
-    <None Include="Lua\Shared\LuaItem.inl">
-      <Filter>Lua\Shared</Filter>
-    </None>
     <None Include="Lua\Shared\LuaShared.inl">
       <Filter>Lua\Shared</Filter>
     </None>

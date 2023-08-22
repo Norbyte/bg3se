@@ -1,7 +1,7 @@
 // Property lists for stats functors
-// (anything extending StatsFunctorBase)
+// (anything extending Functor)
 
-BEGIN_CLS(StatsFunctorSet)
+BEGIN_CLS(stats::Functors)
 // TODO - make functor list
 P_RO(NextFunctorIndex)
 P_RO(UniqueName)
@@ -18,7 +18,7 @@ INHERIT(LuaExpressionBase)
 END_CLS()
 
 
-BEGIN_CLS(StatsFunctorBase)
+BEGIN_CLS(stats::Functor)
 P_RO(UniqueName)
 P_RO(TypeId)
 P(PropertyContext)
@@ -30,14 +30,14 @@ P(StoryActionId)
 END_CLS()
 
 
-BEGIN_CLS(CustomDescriptionFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::CustomDescriptionFunctor)
+INHERIT(stats::Functor)
 P(Description)
 END_CLS()
 
 
-BEGIN_CLS(ApplyStatusFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::ApplyStatusFunctor)
+INHERIT(stats::Functor)
 P(StatusId)
 P(StringParam)
 P_RO(StatsConditions) // TODO - later write support for Conditions + StatsConditionsId
@@ -49,8 +49,8 @@ P(HasParam6)
 END_CLS()
 
 
-BEGIN_CLS(SurfaceChangeFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::SurfaceChangeFunctor)
+INHERIT(stats::Functor)
 P(Chance)
 P(field_24)
 P(field_28)
@@ -59,21 +59,21 @@ P(SurfaceChange)
 END_CLS()
 
 
-BEGIN_CLS(ResurrectFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::ResurrectFunctor)
+INHERIT(stats::Functor)
 P(Probability)
 P(HealthPercentage)
 END_CLS()
 
 
-BEGIN_CLS(SabotageFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::SabotageFunctor)
+INHERIT(stats::Functor)
 P(Amount)
 END_CLS()
 
 
-BEGIN_CLS(SummonFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::SummonFunctor)
+INHERIT(stats::Functor)
 P(MovingObject)
 P(Arg2)
 P(SpawnLifetime)
@@ -82,41 +82,41 @@ P(Arg3)
 END_CLS()
 
 
-BEGIN_CLS(ForceFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::ForceFunctor)
+INHERIT(stats::Functor)
 P(Arg0)
 P(Origin)
 P(Aggression)
 END_CLS()
 
 
-BEGIN_CLS(DouseFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::DouseFunctor)
+INHERIT(stats::Functor)
 P(field_20)
 P(field_24)
 END_CLS()
 
 
-BEGIN_CLS(SwapPlacesFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::SwapPlacesFunctor)
+INHERIT(stats::Functor)
 P(Arg0)
 END_CLS()
 
 
-BEGIN_CLS(EqualizeFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::EqualizeFunctor)
+INHERIT(stats::Functor)
 P(HealType)
 END_CLS()
 
 
-BEGIN_CLS(PickupFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::PickupFunctor)
+INHERIT(stats::Functor)
 P(Arg0)
 END_CLS()
 
 
-BEGIN_CLS(CreateSurfaceFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::CreateSurfaceFunctor)
+INHERIT(stats::Functor)
 P(SurfaceType)
 P(Radius)
 P(Arg4)
@@ -125,8 +125,8 @@ P(IsControlledByConcentration)
 END_CLS()
 
 
-BEGIN_CLS(CreateConeSurfaceFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::CreateConeSurfaceFunctor)
+INHERIT(stats::Functor)
 P(Arg2)
 P(Arg0)
 P(Arg1)
@@ -134,14 +134,14 @@ P(Arg3)
 END_CLS()
 
 
-BEGIN_CLS(RemoveStatusFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::RemoveStatusFunctor)
+INHERIT(stats::Functor)
 P(StatusId)
 END_CLS()
 
 
-BEGIN_CLS(DealDamageFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::DealDamageFunctor)
+INHERIT(stats::Functor)
 P(DamageType)
 P(WeaponType)
 P(WeaponDamageType)
@@ -152,33 +152,33 @@ P(field_34)
 END_CLS()
 
 
-BEGIN_CLS(ExecuteWeaponFunctorsFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::ExecuteWeaponFunctorsFunctor)
+INHERIT(stats::Functor)
 P(WeaponType)
 END_CLS()
 
 
-BEGIN_CLS(RegainHitPointsFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::RegainHitPointsFunctor)
+INHERIT(stats::Functor)
 // TODO - lua expr --  P(HitPoints)
 END_CLS()
 
 
-BEGIN_CLS(TeleportSourceFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::TeleportSourceFunctor)
+INHERIT(stats::Functor)
 END_CLS()
 
 
-BEGIN_CLS(SetStatusDurationFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::SetStatusDurationFunctor)
+INHERIT(stats::Functor)
 P(StatusId)
 P(Duration)
 P(SetIfLonger)
 END_CLS()
 
 
-BEGIN_CLS(UseSpellFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::UseSpellFunctor)
+INHERIT(stats::Functor)
 P(SpellId)
 P(IgnoreHasSpell)
 P(IgnoreChecks)
@@ -186,8 +186,8 @@ P(Arg3)
 END_CLS()
 
 
-BEGIN_CLS(UseActionResourceFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::UseActionResourceFunctor)
+INHERIT(stats::Functor)
 P(ActionResourceUUID)
 P(Amount)
 P(ResourceIndex)
@@ -195,31 +195,31 @@ P(IsPercentage)
 END_CLS()
 
 
-BEGIN_CLS(UseAttackFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::UseAttackFunctor)
+INHERIT(stats::Functor)
 P(IgnoreChecks)
 END_CLS()
 
 
-BEGIN_CLS(CreateExplosionFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::CreateExplosionFunctor)
+INHERIT(stats::Functor)
 P(SpellId)
 END_CLS()
 
 
-BEGIN_CLS(BreakConcentrationFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::BreakConcentrationFunctor)
+INHERIT(stats::Functor)
 END_CLS()
 
 
-BEGIN_CLS(ApplyEquipmentStatusFunctor)
-INHERIT(ApplyStatusFunctor)
+BEGIN_CLS(stats::ApplyEquipmentStatusFunctor)
+INHERIT(stats::ApplyStatusFunctor)
 P(EquipmentSlot)
 END_CLS()
 
 
-BEGIN_CLS(RestoreResourceFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::RestoreResourceFunctor)
+INHERIT(stats::Functor)
 P(ActionResourceUUID)
 P(Hex)
 P(field_34)
@@ -229,37 +229,37 @@ P(IsPercentage)
 END_CLS()
 
 
-BEGIN_CLS(SpawnFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::SpawnFunctor)
+INHERIT(stats::Functor)
 P(TemplateId)
 P(Arg1)
 P(StatusesToApply)
 END_CLS()
 
 
-BEGIN_CLS(StabilizeFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::StabilizeFunctor)
+INHERIT(stats::Functor)
 END_CLS()
 
 
-BEGIN_CLS(UnlockFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::UnlockFunctor)
+INHERIT(stats::Functor)
 END_CLS()
 
 
-BEGIN_CLS(ResetCombatTurnFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::ResetCombatTurnFunctor)
+INHERIT(stats::Functor)
 END_CLS()
 
 
-BEGIN_CLS(RemoveAuraByChildStatusFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::RemoveAuraByChildStatusFunctor)
+INHERIT(stats::Functor)
 P(StatusId)
 END_CLS()
 
 
-BEGIN_CLS(SummonInInventoryFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::SummonInInventoryFunctor)
+INHERIT(stats::Functor)
 P(Arg1)
 P(Arg2)
 P(Arg3)
@@ -272,8 +272,8 @@ P(AdditionalArgs)
 END_CLS()
 
 
-BEGIN_CLS(SpawnInInventoryFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::SpawnInInventoryFunctor)
+INHERIT(stats::Functor)
 P(Arg1)
 P(Arg2)
 P(Arg3)
@@ -284,18 +284,18 @@ P(AdditionalArgs)
 END_CLS()
 
 
-BEGIN_CLS(RemoveUniqueStatusFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::RemoveUniqueStatusFunctor)
+INHERIT(stats::Functor)
 P(StatusId)
 END_CLS()
 
 
-BEGIN_CLS(DisarmWeaponFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::DisarmWeaponFunctor)
+INHERIT(stats::Functor)
 END_CLS()
 
 
-BEGIN_CLS(ExtenderFunctor)
-INHERIT(StatsFunctorBase)
+BEGIN_CLS(stats::ExtenderFunctor)
+INHERIT(stats::Functor)
 END_CLS()
 

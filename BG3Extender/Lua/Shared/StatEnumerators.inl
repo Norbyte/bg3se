@@ -3,6 +3,8 @@
 
 namespace bg3se::lua
 {
+	using namespace bg3se::stats;
+
 	/*void FetchSkillSetEntries(lua_State * L, RPGStats * stats)
 	{
 		int32_t index = 1;

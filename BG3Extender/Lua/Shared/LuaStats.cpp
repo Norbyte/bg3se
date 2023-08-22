@@ -8,8 +8,6 @@
 #include <Lua/Shared/Proxies/LuaSetProxy.inl>
 #include <Lua/Shared/Proxies/LuaMapProxy.inl>
 #include <Lua/Shared/LuaEvent.inl>
-#include <Lua/Shared/LuaCharacter.inl>
-#include <Lua/Shared/LuaItem.inl>
 #include <Lua/Shared/StatEntries.inl>
 #include <Lua/Shared/StatEnumerators.inl>
 #include <Lua/Shared/StatAttributes.inl>
@@ -18,7 +16,7 @@
 
 namespace bg3se::lua::stats
 {
-	void PushStatsFunctor(lua_State* L, LifetimeHandle const& lifetime, StatsFunctorBase* functor)
+	void PushStatsFunctor(lua_State* L, LifetimeHandle const& lifetime, Functor* functor)
 	{
 #define V(cls) case cls::FunctorId: \
 		MakeObjectRef(L, lifetime, static_cast<cls*>(functor)); \
@@ -70,48 +68,48 @@ namespace bg3se::lua::stats
 #undef V
 	}
 
-	StatsFunctorSetProxy::StatsFunctorSetProxy(LifetimeHandle const& lifetime, StatsFunctorSet* obj)
+	FunctorsProxy::FunctorsProxy(LifetimeHandle const& lifetime, Functors* obj)
 		: object_(obj), lifetime_(lifetime)
 	{}
 
-	StatsFunctorSetProxy::~StatsFunctorSetProxy()
+	FunctorsProxy::~FunctorsProxy()
 	{}
 
-	void* StatsFunctorSetProxy::GetRaw()
+	void* FunctorsProxy::GetRaw()
 	{
 		return object_;
 	}
 
-	char const* StatsFunctorSetProxy::GetTypeName() const
+	char const* FunctorsProxy::GetTypeName() const
 	{
 		return "StatsFunctorSet";
 	}
 
-	bool StatsFunctorSetProxy::GetElement(lua_State* L, unsigned arrayIndex)
+	bool FunctorsProxy::GetElement(lua_State* L, unsigned arrayIndex)
 	{
-		if (object_ != nullptr && arrayIndex > 0 && arrayIndex <= object_->FunctorList.Size) {
-			PushStatsFunctor(L, lifetime_, object_->FunctorList[arrayIndex - 1]);
+		if (object_ != nullptr && arrayIndex > 0 && arrayIndex <= object_->Functors.Size()) {
+			PushStatsFunctor(L, lifetime_, object_->Functors[arrayIndex - 1]);
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	bool StatsFunctorSetProxy::SetElement(lua_State* L, unsigned arrayIndex, int luaIndex)
+	bool FunctorsProxy::SetElement(lua_State* L, unsigned arrayIndex, int luaIndex)
 	{
 		return false;
 	}
 
-	unsigned StatsFunctorSetProxy::Length()
+	unsigned FunctorsProxy::Length()
 	{
-		return object_ != nullptr ? object_->FunctorList.Size : 0;
+		return object_ != nullptr ? object_->Functors.Size() : 0;
 	}
 
-	int StatsFunctorSetProxy::Next(lua_State* L, int key)
+	int FunctorsProxy::Next(lua_State* L, int key)
 	{
-		if (object_ != nullptr && key >= 0 && key < (int)object_->FunctorList.Size) {
+		if (object_ != nullptr && key >= 0 && key < (int)object_->Functors.Size()) {
 			push(L, ++key);
-			PushStatsFunctor(L, lifetime_, object_->FunctorList[key - 1]);
+			PushStatsFunctor(L, lifetime_, object_->Functors[key - 1]);
 			return 2;
 		} else {
 			return 0;
@@ -128,7 +126,6 @@ namespace bg3se::lua::stats
 			{"GetStat", GetStat},
 			{"CreateStat", CreateStat},
 
-			{"GetModifierAttributes", GetModifierAttributes},
 			{"EnumIndexToLabel", EnumIndexToLabel},
 			{"EnumLabelToIndex", EnumLabelToIndex},
 

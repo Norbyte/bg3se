@@ -177,25 +177,22 @@ namespace bg3se
 
 	struct ScratchBuffer : public Noncopyable<ScratchBuffer>
 	{
-		struct Guts
-		{
-			char field_0;
-			char field_1;
-			__int16 field_2;
-			int field_4;
-			__int64 field_8;
-			__int64 field_10;
-			__int64 field_18;
-		};
-
-
+		uint8_t State_M{ 0 };
+		uint8_t field_1{ 0 };
+		uint16_t MemoryAlignment{ 1 };
+		uint32_t MultipleOf{ 1 };
 		void* Buffer{ nullptr };
-		uint32_t ReadSize{ 0 };
-		uint32_t Size{ 0 };
-		uint32_t WritePosition{ 0 };
-		uint32_t ReadPosition{ 0 };
-		Guts Guts_;
-		uint64_t Unkn[4]{ 0 };
+		uint64_t Size{ 0 };
+		bool HasBuffer2{ false };
+		bool field_19{ false };
+		int field_1C{ 0 };
+		uint8_t* Buffer2{ nullptr };
+		void* field_28{ nullptr };
+		void* ReadPointer{ nullptr };
+		void* ReadBuffer{ nullptr };
+		void* ReadEnd_M{ nullptr };
+		void* field_48{ nullptr };
+		uint64_t Size2{ 0 };
 	};
 
 	struct ScratchString : public Noncopyable<ScratchString>

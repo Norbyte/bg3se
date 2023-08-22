@@ -172,10 +172,8 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\GuidResources.h" />
     <ClInclude Include="GameDefinitions\Resources.h" />
     <ClInclude Include="GameDefinitions\RootTemplates.h" />
-    <ClInclude Include="GameDefinitions\Stats\Character.h" />
     <ClInclude Include="GameDefinitions\Stats\Common.h" />
     <ClInclude Include="GameDefinitions\Stats\Functors.h" />
-    <ClInclude Include="GameDefinitions\Stats\Item.h" />
     <ClInclude Include="GameDefinitions\Stats\Stats.h" />
     <ClInclude Include="GameDefinitions\Status.h" />
     <ClInclude Include="GameDefinitions\Surface.h" />
@@ -351,9 +349,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <None Include="Lua\Server\ServerProjectile.inl" />
     <None Include="Lua\Server\ServerStatus.inl" />
     <None Include="Lua\Server\ServerSurface.inl" />
-    <None Include="Lua\Shared\LuaCharacter.inl" />
     <None Include="Lua\Shared\LuaEvent.inl" />
-    <None Include="Lua\Shared\LuaItem.inl" />
     <None Include="Lua\Shared\LuaJson.inl" />
     <None Include="Lua\Shared\LuaLocalization.inl" />
     <None Include="Lua\Shared\LuaShared.inl" />

@@ -902,10 +902,10 @@ namespace bg3se
 
 BEGIN_NS(lua)
 
-void LuaPolymorphic<BaseFunctorExecParams>::MakeRef(lua_State* L, BaseFunctorExecParams* value, LifetimeHandle const& lifetime)
+void LuaPolymorphic<stats::BaseFunctorExecParams>::MakeRef(lua_State* L, stats::BaseFunctorExecParams* value, LifetimeHandle const& lifetime)
 {
 #define V(type) case FunctorExecParamsType::type: \
-			MakeDirectObjectRef(L, lifetime, static_cast<FunctorExecParams##type*>(value)); break;
+			MakeDirectObjectRef(L, lifetime, static_cast<stats::FunctorExecParams##type*>(value)); break;
 
 	switch (value->ParamsTypeId) {
 		V(Type1)

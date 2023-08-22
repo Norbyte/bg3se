@@ -81,9 +81,6 @@ namespace bg3se
 		};*/
 	}
 
-	struct CDivinityStats_Item;
-	struct CRPGStats_Object;
-
 	namespace esv
 	{
 		struct StatusMachine;
@@ -120,8 +117,8 @@ namespace bg3se
 			STDString CustomDescription2;
 			STDString CustomDescription;
 			FixedString StatsId;
-			CDivinityStats_Item* Stats;
-			CRPGStats_Object* StatsFromName;
+			void* Stats;
+			void* StatsFromName;
 			ItemGeneration* Generation;
 			EntityHandle InventoryHandle;
 			EntityHandle ParentHandle;
@@ -189,7 +186,7 @@ namespace bg3se
 
 			void* VMT;
 			uint64_t field_8;
-			ObjectSet<CRPGStats_Object*> IngredientStats;
+			ObjectSet<Object*> IngredientStats;
 			ObjectSet<Item*> Ingredients;
 			ObjectSet<ComponentHandle> ComponentHandles;
 			ObjectSet<Item*> Items2;
@@ -220,7 +217,7 @@ namespace bg3se
 			ItemTemplate* CurrentTemplate;
 			CDivinityStats_Item* Stats;
 			FixedString StatsId;
-			CRPGStats_Object* StatsFromName;
+			Object* StatsFromName;
 			EntityHandle InventoryHandle;
 			EntityHandle InventoryParentHandle;
 			int16_t CurrentSlot;

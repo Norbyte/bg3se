@@ -85,7 +85,7 @@ namespace bg3se::esv::lua
 		auto attacker = GetCharacter(L, 2);
 		auto target = GetCharacter(L, 3);
 		auto position = get<glm::vec3>(L, 4);
-		auto propertyContext = get<CRPGStats_Object_PropertyContext>(L, 5);
+		auto propertyContext = get<stats::Object::PropertyContext>(L, 5);
 		auto isFromItem = get<bool>(L, 6);
 
 		SkillPrototype* skillProto{ nullptr };
@@ -131,7 +131,7 @@ namespace bg3se::esv::lua
 		auto attacker = GetCharacter(L, 2);
 		auto position = get<glm::vec3>(L, 3);
 		auto radius = get<float>(L, 4);
-		auto propertyContext = get<CRPGStats_Object_PropertyContext>(L, 5);
+		auto propertyContext = get<stats::Object::PropertyContext>(L, 5);
 		auto isFromItem = get<bool>(L, 6);
 
 		SkillPrototype* skillProto{ nullptr };
@@ -355,19 +355,19 @@ namespace bg3se::esv::lua
 	{
 		auto stats = GetStaticSymbols().GetStats();
 		auto const& functors = stats->StatsFunctors;
-		DealDamageFunctor* dd{ nullptr };
+		bg3se::stats::DealDamageFunctor* dd{ nullptr };
 
 		for (auto const& kv : functors) {
 			DEBUG("asdf");
-			for (auto const& fun : kv.Value->FunctorList) {
-				if (fun->TypeId == StatsFunctorActionId::DealDamage && fun->Cast<DealDamageFunctor>()) {
-					dd = *fun->Cast<DealDamageFunctor>();
+			for (auto const& fun : kv.Value->Functors) {
+				if (fun->TypeId == StatsFunctorActionId::DealDamage && fun->Cast<bg3se::stats::DealDamageFunctor>()) {
+					dd = *fun->Cast<bg3se::stats::DealDamageFunctor>();
 				}
 			}
 		}
 
 		if (dd) {
-			ObjectProxy::MakeRef<DealDamageFunctor>(L, dd, GetCurrentLifetime());
+			ObjectProxy::MakeRef<bg3se::stats::DealDamageFunctor>(L, dd, GetCurrentLifetime());
 			return 1;
 		}
 
