@@ -177,12 +177,15 @@ std::optional<Array<Object::FunctorInfo>*> Object::GetFunctors(FixedString const
 		return {};
 	}
 
-	auto functors = Functors.Find(attributeName);
+	OsiErrorS("Temporarily disabled until functors are mapped");
+	return {};
+
+	/*auto functors = Functors.Find(attributeName);
 	if (functors) {
 		return *functors;
 	} else {
 		return {};
-	}
+	}*/
 }
 
 std::optional<Array<Object::RollCondition>*> Object::GetRollConditions(FixedString const& attributeName)
@@ -428,6 +431,8 @@ bool Object::SetFunctors(FixedString const& attributeName, std::optional<Array<F
 		return false;
 	}
 
+	OsiErrorS("Temporarily disabled until functors are mapped");
+	return false;
 	if (value) {
 		Functors.Set(attributeName, *value);
 	} else {
