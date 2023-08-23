@@ -228,6 +228,7 @@ struct ResurrectFunctor : public Functor
 
 	float Probability{ 1.0f }; // Arg0
 	float HealthPercentage{ 1.0f }; // Arg1
+	ResurrectFlags Flags{ 0 };
 };
 
 struct SabotageFunctor : public Functor
@@ -244,17 +245,23 @@ struct SummonFunctor : public Functor
 	FixedString MovingObject; // Arg1
 	FixedString Arg2;
 	float SpawnLifetime{ 6.0f };
-	ObjectSet<FixedString> StatusesToApply;
-	FixedString Arg3;
+	uint8_t LifetimeType{ 0 };
+	MultiHashSet<FixedString> StatusesToApply;
+	FixedString Arg4;
+	bool Arg3;
+	bool Arg9;
 };
 
 struct ForceFunctor : public Functor
 {
 	static constexpr auto FunctorType = FunctorId::Force;
 
-	float Arg0{ 8.0f }; // Arg0
+	FixedString Distance; // Arg0
 	ForceFunctorOrigin Origin{ ForceFunctorOrigin::OriginToEntity }; // Arg1
 	ForceFunctorAggression Aggression{ ForceFunctorAggression::Aggressive }; // Arg2
+	LuaExpression* Unkn{ nullptr };
+	bool Arg3{ false };
+	bool Arg4{ false };
 };
 
 struct DouseFunctor : public Functor
@@ -269,7 +276,9 @@ struct SwapPlacesFunctor : public Functor
 {
 	static constexpr auto FunctorType = FunctorId::SwapPlaces;
 
-	FixedString Arg0;
+	FixedString Animation; // Arg0
+	bool Arg1{ false };
+	bool Arg2{ false };
 };
 
 struct EqualizeFunctor : public Functor
@@ -295,6 +304,7 @@ struct CreateSurfaceFunctor : public Functor
 	float Arg4{ 0.0f };
 	float Duration{ -1.0f }; //Arg1
 	bool IsControlledByConcentration{ true }; // Arg3
+	bool Arg5{ false };
 };
 
 struct CreateConeSurfaceFunctor : public Functor
@@ -304,7 +314,8 @@ struct CreateConeSurfaceFunctor : public Functor
 	FixedString Arg2;
 	float Arg0{ -1.0f };
 	float Arg1{ -1.0f };
-	float Arg3{ 1.0f };
+	bool Arg3{ false };
+	bool field_55{ false };
 };
 
 struct RemoveStatusFunctor : public Functor
@@ -325,6 +336,8 @@ struct TeleportSourceFunctor : public Functor
 {
 	static constexpr auto FunctorType = FunctorId::TeleportSource;
 
+	bool Arg1{ false };
+	bool Arg2{ false };
 };
 
 struct SetStatusDurationFunctor : public Functor
@@ -368,6 +381,7 @@ struct SpawnFunctor : public Functor
 	FixedString TemplateId; // Arg0
 	FixedString Arg1;
 	VirtualMultiHashSet<FixedString> StatusesToApply;
+	bool Arg6{ false };
 };
 
 struct StabilizeFunctor : public Functor
@@ -403,8 +417,9 @@ struct ApplyStatusFunctor : public Functor
 	FixedString StringParam; // Arg3
 	STDString StatsConditions; // Arg6
 	int StatsConditionsId{ -1 }; // Arg6
-	int Param1{ -1 }; // Arg5
-	int Param2{ -1 }; // ???
+	int Param5{ -1 }; // Arg5
+	int Param6{ -1 }; // ???
+	bool Param8{ false };
 	void* Arg2_DurationLuaExpression{ nullptr }; // Arg2
 	bool HasParam6{ false };
 };
@@ -435,6 +450,7 @@ struct UseActionResourceFunctor : public Functor
 	double Amount{ 0.0 }; // Arg1
 	int ResourceIndex{ 0 }; // Arg2
 	bool IsPercentage{ false }; // Arg1
+	bool Arg3{ false }; // Arg3
 };
 
 struct CreateExplosionFunctor : public Functor
@@ -459,7 +475,7 @@ struct ApplyEquipmentStatusFunctor : public ApplyStatusFunctor
 {
 	static constexpr auto FunctorType = FunctorId::ApplyEquipmentStatus;
 
-	ItemSlot32 EquipmentSlot{ ItemSlot32::MainWeapon };
+	StatsItemSlot EquipmentSlot{ StatsItemSlot::MainWeapon };
 };
 
 struct RegainHitPointsFunctor : public Functor
@@ -467,6 +483,7 @@ struct RegainHitPointsFunctor : public Functor
 	static constexpr auto FunctorType = FunctorId::RegainHitPoints;
 
 	LuaExpression* HitPoints{ nullptr };
+	ResurrectFlags Flags{ 0 };
 };
 
 struct UseSpellFunctor : public Functor
@@ -477,6 +494,7 @@ struct UseSpellFunctor : public Functor
 	bool IgnoreHasSpell{ false }; // Arg1
 	bool IgnoreChecks{ false }; // Arg2
 	bool Arg3{ false };
+	Guid Arg4;
 };
 
 struct ExtenderFunctor : public Functor
@@ -489,14 +507,16 @@ struct SummonInInventoryFunctor : public Functor
 	static constexpr auto FunctorType = FunctorId::SummonInInventory;
 
 	FixedString Arg1;
-	FixedString Arg7;
-	float Arg2{ 0.0f }; // Duration?
-	VirtualMultiHashSet<FixedString> AdditionalArgs;
+	FixedString Arg8;
+	float Duration{ 0.0f }; // Arg2
+	uint8_t DurationType{ 0 };
+	MultiHashSet<FixedString> AdditionalArgs;
 	FixedString Arg8;
 	float Arg3{ 0.0f };
 	bool Arg4{ false };
 	bool Arg5{ false };
 	bool Arg6{ false };
+	bool Arg7{ false };
 };
 
 struct SpawnInInventoryFunctor : public Functor
