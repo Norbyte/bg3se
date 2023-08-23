@@ -77,6 +77,28 @@ namespace bg3se::lua::stats
 		SpellPrototypeProxy::RegisterMetatable(L);
 	}
 
+	int GetModifierAttributes(lua_State* L)
+	{
+		auto modifierName = get<FixedString>(L, 1);
+		auto stats = GetStaticSymbols().GetStats();
+		if (!stats) return luaL_error(L, "Stats not available");
+
+		auto modifierList = stats->ModifierLists.Find(modifierName);
+		if (!modifierList) {
+			OsiError("No such modifier list: " << modifierName);
+			push(L, nullptr);
+			return 1;
+		}
+
+		lua_newtable(L);
+		for (auto const& modifier : modifierList->Attributes.Primitives) {
+			auto enumeration = GetStaticSymbols().GetStats()->ModifierValueLists.Find(modifier->EnumerationIndex);
+			settable(L, modifier->Name, enumeration->Name);
+		}
+
+		return 1;
+	}
+
 	template <class T>
 	int EnumIndexToLabel(lua_State* L, T index)
 	{

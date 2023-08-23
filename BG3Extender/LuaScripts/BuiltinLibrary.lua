@@ -143,6 +143,19 @@ Ext.Dump = function (val)
 	Ext.Utils.Print(Ext.Json.Stringify(val, true, true, true))
 end
 
+Ext.Utils.LoadTestLibrary = function ()
+	local env = {}
+	env._G = env
+	setmetatable(env, {__index = _G})
+	Ext.Test = env
+
+	if Ext.IsServer() then
+		Ext.Utils.Include(nil, "builtin://Tests/ServerTestRunner.lua", env)
+	else
+		Ext.Utils.Include(nil, "builtin://Tests/ClientTestRunner.lua", env)
+	end
+end
+
 -- Global helper aliases for Ext.Dump, Ext.Utils.Print
 _D = Ext.Dump
 _P = Ext.Utils.Print

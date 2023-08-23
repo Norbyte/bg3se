@@ -126,6 +126,7 @@ namespace bg3se::lua::stats
 			{"GetStat", GetStat},
 			{"CreateStat", CreateStat},
 
+			{"GetModifierAttributes", GetModifierAttributes},
 			{"EnumIndexToLabel", EnumIndexToLabel},
 			{"EnumLabelToIndex", EnumLabelToIndex},
 

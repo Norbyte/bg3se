@@ -3,7 +3,7 @@ local extMetatable = {
 	__index = Ext,
     
     __newindex = function (t, k, v)
-		Ext.PrintError("Couldn't set Ext." .. k .. ": Please avoid extending the Ext table - it is dangerous and may break compatibility!")
+		Ext.Utils.PrintError("Couldn't set Ext." .. k .. ": Please avoid extending the Ext table - it is dangerous and may break compatibility!")
 	end
 }
 
