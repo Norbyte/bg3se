@@ -692,6 +692,9 @@ namespace bg3se
 		FileReader * reader_;
 	};
 
+	using CoreLibInitProc = void (void*);
+	using AppUpdatePathsProc = void (void*);
+
 	class TempStrings
 	{
 	public:

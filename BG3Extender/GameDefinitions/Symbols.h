@@ -40,6 +40,8 @@ namespace bg3se
 		FileReader::CtorProc* ls__FileReader__ctor{ nullptr };
 		FileReader::DtorProc* ls__FileReader__dtor{ nullptr };
 		STDString** ls__PathRoots{ nullptr };
+		CoreLibInitProc* CoreLibSDM__Init{ nullptr };
+		AppUpdatePathsProc* App__UpdatePaths{ nullptr };
 
 		ecl::EoCClient** ecl__EoCClient{ nullptr };
 		esv::EoCServer** esv__EoCServer{ nullptr };

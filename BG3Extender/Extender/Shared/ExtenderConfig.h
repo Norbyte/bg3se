@@ -49,6 +49,7 @@ struct ExtenderConfig
 	uint32_t DebugFlags{ 0 };
 	std::wstring LogDirectory;
 	std::wstring LuaBuiltinResourceDirectory;
+	std::string CustomProfile;
 };
 
 }

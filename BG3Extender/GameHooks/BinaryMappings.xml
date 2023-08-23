@@ -110,6 +110,28 @@
           <Target Type="Indirect" Offset="@ref1" Symbol="ls__PathRoots" />
         </Mapping>
 
+        <Mapping Name="CoreLibSDM::Init">
+          @ref1 e8 ?? ?? ?? ?? // call    xxx
+          @str1 48 8d 0d ?? ?? ?? ?? // lea     rcx, aCreatingApp; "Creating App\n"
+          ff 15 ?? ?? ?? ?? // call    cs:OutputDebugStringA
+          b9 ?? ?? 00 00 // mov     ecx, 1C0h; Size
+          <Condition Type="String" Offset="@str1" Value="Creating App&#10;" />
+          <Target Type="Indirect" Offset="@ref1" Symbol="CoreLibSDM__Init" />
+        </Mapping>
+
+        <Mapping Name="App::UpdatePaths">
+          @ref1 e8 ?? ?? ?? ?? // call    App__UpdatePaths
+          @ref2 48 8d 15 ?? ?? ?? ?? // lea     rdx, Locale; Locale
+          33 c9 // xor     ecx, ecx; Category
+          @ref3 ff 15 ?? ?? ?? ?? // call    cs:_wsetlocale
+          b9 fc ff ff ff // mov     ecx, 0FFFFFFFCh; CodePage
+          @ref4 ff 15 ?? ?? ?? ?? // call    cs:_setmbcp
+          @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, str_C; "C"
+          b9 04 00 00 00 // mov     ecx, 4; Category
+          <Condition Type="String" Offset="@str1" Value="C" />
+          <Target Type="Indirect" Offset="@ref1" Symbol="App__UpdatePaths" />
+        </Mapping>
+
         <!-- Sig: reference to strings "gr2", "lsm" -->
         <Mapping Name="EoCServer2/EoCClient2" Critical="true">
           89 44 24 50 // mov     [rsp+48h+arg_0], eax

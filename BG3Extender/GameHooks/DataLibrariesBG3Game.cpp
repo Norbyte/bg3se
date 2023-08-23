@@ -141,6 +141,8 @@ namespace bg3se
 		SYM_OFF(ls__FileReader__ctor);
 		SYM_OFF(ls__FileReader__dtor);
 		SYM_OFF(ls__PathRoots);
+		SYM_OFF(CoreLibSDM__Init);
+		SYM_OFF(App__UpdatePaths);
 
 		SYM_OFF(ecl__EoCClient);
 		SYM_OFF(esv__EoCServer);

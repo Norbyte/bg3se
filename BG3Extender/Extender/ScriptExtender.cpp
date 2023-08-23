@@ -22,6 +22,9 @@ namespace bg3se
 void InitCrashReporting();
 void ShutdownCrashReporting();
 
+decltype(ScriptExtender::CoreLibInit)* decltype(ScriptExtender::CoreLibInit)::gHook;
+decltype(ScriptExtender::AppUpdatePaths)* decltype(ScriptExtender::AppUpdatePaths)::gHook;
+
 std::unique_ptr<ScriptExtender> gExtender;
 
 #if !defined(OSI_NO_DEBUGGER)
@@ -71,12 +74,20 @@ void ScriptExtender::Initialize()
 	server_.Initialize();
 	client_.Initialize();
 
-	/*SkillPrototypeManagerInit.SetPreHook(std::bind(&ScriptExtender::OnSkillPrototypeManagerInit, this, _1));
-	Wrappers.FileReader__ctor.SetWrapper(std::bind(&ScriptExtender::OnFileReaderCreate, this, _1, _2, _3, _4));
-	Wrappers.esv__OsirisVariableHelper__SavegameVisit.SetPreHook(std::bind(&ScriptExtender::OnSavegameVisit, this, _1, _2));
-	Wrappers.TranslatedStringRepository__UnloadOverrides.SetPreHook(std::bind(&ScriptExtender::OnModuleLoadStarted, this, _1));
-	Wrappers.RPGStats__Load.AddPreHook(std::bind(&ScriptExtender::OnStatsLoadStarted, this, _1));
-	Wrappers.RPGStats__Load.AddPostHook(std::bind(&ScriptExtender::OnStatsLoadFinished, this, _1));*/
+	DetourTransactionBegin();
+	DetourUpdateThread(GetCurrentThread());
+
+	if (GetStaticSymbols().CoreLibSDM__Init != nullptr) {
+		CoreLibInit.Wrap(GetStaticSymbols().CoreLibSDM__Init);
+		CoreLibInit.SetPostHook(&ScriptExtender::OnCoreLibInit, this);
+	}
+
+	if (GetStaticSymbols().App__UpdatePaths != nullptr) {
+		AppUpdatePaths.Wrap(GetStaticSymbols().App__UpdatePaths);
+		AppUpdatePaths.SetPostHook(&ScriptExtender::OnAppUpdatePaths, this);
+	}
+
+	DetourTransactionCommit();
 
 #if !defined(OSI_NO_DEBUGGER)
 	if (config_.EnableLuaDebugger && luaDebuggerThread_ == nullptr) {
@@ -230,6 +241,21 @@ ExtensionStateBase* ScriptExtender::GetCurrentExtensionState()
 			return &client_.GetExtensionState();
 		} else {
 			return nullptr;
+		}
+	}
+}
+
+void ScriptExtender::OnCoreLibInit(void * self)
+{
+	PostStartup();
+}
+
+void ScriptExtender::OnAppUpdatePaths(void * self)
+{
+	if (!config_.CustomProfile.empty()) {
+		auto& gameLocalPath = GetStaticSymbols().ls__PathRoots[4];
+		if (gameLocalPath->ends_with("Baldur's Gate 3")) {
+			*gameLocalPath = gameLocalPath->substr(0, gameLocalPath->size() - 15) + config_.CustomProfile.c_str();
 		}
 	}
 }

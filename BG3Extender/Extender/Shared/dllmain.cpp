@@ -27,6 +27,14 @@ void ConfigGetInt(Json::Value& node, char const* key, uint32_t& value)
 	}
 }
 
+void ConfigGet(Json::Value& node, char const* key, std::string& value)
+{
+	auto configVar = node[key];
+	if (!configVar.isNull() && configVar.isString()) {
+		value = configVar.asString();
+	}
+}
+
 void ConfigGet(Json::Value& node, char const* key, std::wstring& value)
 {
 	auto configVar = node[key];
@@ -78,6 +86,7 @@ void LoadConfig(std::wstring const & configPath, ExtenderConfig & config)
 
 	ConfigGet(root, "LogDirectory", config.LogDirectory);
 	ConfigGet(root, "LuaBuiltinResourceDirectory", config.LuaBuiltinResourceDirectory);
+	ConfigGet(root, "CustomProfile", config.CustomProfile);
 }
 
 void SetupScriptExtender(HMODULE hModule)

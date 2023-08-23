@@ -106,6 +106,11 @@ public:
 	std::wstring MakeLogFilePath(std::wstring const& Type, std::wstring const& Extension);
 	void InitRuntimeLogging();
 
+	enum class CoreLibInitTag {};
+	WrappableFunction<CoreLibInitTag, CoreLibInitProc> CoreLibInit;
+	enum class AppUpdatePathsTag {};
+	WrappableFunction<AppUpdatePathsTag, AppUpdatePathsProc> AppUpdatePaths;
+
 private:
 	esv::ScriptExtender server_;
 	ecl::ScriptExtender client_;
@@ -130,6 +135,8 @@ private:
 	std::unique_ptr<lua::dbg::Debugger> luaDebugger_;
 #endif
 
+	void OnCoreLibInit(void * self);
+	void OnAppUpdatePaths(void * self);
 	void OnBaseModuleLoaded(void * self);
 	void OnModuleLoadStarted(TranslatedStringRepository* self);
 	void OnStatsLoad(stats::RPGStats::LoadProc* wrapped, stats::RPGStats* mgr, ObjectSet<STDString>* paths);
