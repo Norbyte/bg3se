@@ -340,8 +340,6 @@ namespace bg3se::lua
 			}
 		}
 
-		PO(IsSelf, false);
-		PO(IsSwap, false);
 		// PO(StoryActionId, 0); - FIXME - not sure if this is used at all
 
 		return s;
@@ -664,7 +662,7 @@ namespace bg3se::lua
 			if (!v) {
 				lua_pushnil(s.L);
 			} else {
-				#define V(cls) case cls::FunctorId: \
+				#define V(cls) case cls::FunctorType: \
 					s << *static_cast<cls*>(v); \
 					break;
 
@@ -713,13 +711,13 @@ namespace bg3se::lua
 			}
 		} else {
 			if (v == nullptr) {
-				StatsFunctorActionId type;
+				FunctorId type;
 				s.VisitProperty("Type", type);
 				v = GetStaticSymbols().GetStats()->ConstructFunctor(type);
 			}
 
 			if (v) {
-				#define V(cls) case cls::FunctorId: \
+				#define V(cls) case cls::FunctorType: \
 					s << *static_cast<cls*>(v); \
 					break;
 

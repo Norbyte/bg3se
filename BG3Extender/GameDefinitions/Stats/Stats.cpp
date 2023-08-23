@@ -637,7 +637,7 @@ Functors* RPGStats::ConstructFunctorSet(FixedString const& propertyName)
 	return functorSet;
 }
 
-Functor* RPGStats::ConstructFunctor(StatsFunctorActionId action)
+Functor* RPGStats::ConstructFunctor(FunctorId action)
 {
 	sVMTMappings.Update();
 	auto stats = GetStaticSymbols().GetStats();
@@ -648,7 +648,7 @@ Functor* RPGStats::ConstructFunctor(StatsFunctorActionId action)
 		return nullptr;
 	}
 
-#define V(type) case type::FunctorId: \
+#define V(type) case type::FunctorType: \
 	functor = GameAlloc<type>(); \
 	break;
 

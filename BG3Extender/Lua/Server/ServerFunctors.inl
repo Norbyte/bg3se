@@ -9,7 +9,7 @@ namespace bg3se::esv::lua
 	{
 		StackCheck _(L, 1);
 
-		auto type = get<StatsFunctorActionId>(L, 1);
+		auto type = get<bg3se::stats::FunctorId>(L, 1);
 		auto& pool = GetServerLifetimePool();
 
 		auto functor = GetStaticSymbols().GetStats()->ConstructFunctor(type);
@@ -18,7 +18,7 @@ namespace bg3se::esv::lua
 			return 1;
 		}
 
-#define V(type) case StatsFunctorActionId::type: ObjectProxy::MakeOwner<bg3se::stats::type##Functor>(L, pool, static_cast<bg3se::stats::type##Functor*>(functor)); break;
+#define V(type) case bg3se::stats::FunctorId::type: ObjectProxy::MakeOwner<bg3se::stats::type##Functor>(L, pool, static_cast<bg3se::stats::type##Functor*>(functor)); break;
 
 		switch (type) {
 			V(CustomDescription)

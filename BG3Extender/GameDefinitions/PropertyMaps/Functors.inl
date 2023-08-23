@@ -17,16 +17,21 @@ BEGIN_CLS(LuaExpression)
 INHERIT(LuaExpressionBase)
 END_CLS()
 
+BEGIN_CLS(stats::Functor::RollCondition)
+P_RO(Type)
+// TODO - Conditions object access
+P_RO(ConditionId)
+END_CLS()
 
 BEGIN_CLS(stats::Functor)
 P_RO(UniqueName)
-P_RO(TypeId)
-P(PropertyContext)
-P_RO(StatsConditionsId)
+P_REF(RollConditions)
 // TODO - Conditions object access
-P(IsSelf)
-P(IsSwap)
-P(StoryActionId)
+P_RO(StatsConditionsId)
+// P_BITMASK(PropertyContext)
+P(ObserverType)
+P_RO(TypeId)
+// P_BITMASK(Flags)
 END_CLS()
 
 

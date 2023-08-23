@@ -371,7 +371,7 @@ struct RPGStats : public ProtectedGameObject<RPGStats>
 		bool VMTsMapped{ false };
 		void* ObjectVMT{ nullptr };
 		Functors::BaseVMT* StatsFunctorSetVMT{ nullptr };
-		std::unordered_map<StatsFunctorActionId, Functor::FunctorVMT*> FunctorVMTs;
+		std::unordered_map<FunctorId, Functor::FunctorVMT*> FunctorVMTs;
 
 		void Update();
 	};
@@ -422,7 +422,7 @@ struct RPGStats : public ProtectedGameObject<RPGStats>
 	std::optional<Object*> CreateObject(FixedString const& name, FixedString const& type);
 	std::optional<Object*> CreateObject(FixedString const& name, int32_t modifierListIndex);
 	Functors* ConstructFunctorSet(FixedString const& propertyName);
-	Functor* ConstructFunctor(StatsFunctorActionId action);
+	Functor* ConstructFunctor(FunctorId action);
 	/*void SyncObjectFromServer(MsgS2CSyncStat const& msg);*/
 	void SyncWithPrototypeManager(Object* object);
 	/*void BroadcastSyncAll();*/

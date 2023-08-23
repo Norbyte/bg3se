@@ -360,7 +360,7 @@ namespace bg3se::esv::lua
 		for (auto const& kv : functors) {
 			DEBUG("asdf");
 			for (auto const& fun : kv.Value->Functors) {
-				if (fun->TypeId == StatsFunctorActionId::DealDamage && fun->Cast<bg3se::stats::DealDamageFunctor>()) {
+				if (fun->TypeId == bg3se::stats::FunctorId::DealDamage && fun->Cast<bg3se::stats::DealDamageFunctor>()) {
 					dd = *fun->Cast<bg3se::stats::DealDamageFunctor>();
 				}
 			}

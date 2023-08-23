@@ -15,25 +15,31 @@ struct Functor : HasObjectProxy
 	{
 		void* Destroy;
 		void* ParseParams;
-		void* GetDescription;
-		void* GetDescription2;
-		void* GetTooltipText;
 		void* Clone;
+	};
+
+	struct RollCondition
+	{
+		RollType Type;
+		int32_t ConditionId{ -1 };
 	};
 
 	FunctorVMT* VMT{ nullptr };
 	FixedString UniqueName;
-	StatsFunctorActionId TypeId{ StatsFunctorActionId::CustomDescription };
-	StatsPropertyContext PropertyContext{ 0 };
+	uint64_t Unknown1{ 0 };
+	uint64_t Unknown2{ 0 };
+	Array<RollCondition> RollConditions;
 	int32_t StatsConditionsId{ -1 };
-	bool IsSelf{ false };
-	bool IsSwap{ false };
-	int32_t StoryActionId{ 0 };
+	PropertyContext PropertyContext{ 0 };
+	uint32_t field_40{ 0 };
+	ObserverType ObserverType{ ObserverType::None };
+	FunctorId TypeId{ FunctorId::CustomDescription };
+	FunctorFlags Flags{ 0 };
 
 	template <class T>
 	std::optional<T*> Cast()
 	{
-		if (TypeId == T::FunctorId) {
+		if (TypeId == T::FunctorType) {
 			return static_cast<T*>(this);
 		} else {
 			return {};
@@ -44,7 +50,7 @@ struct Functor : HasObjectProxy
 struct BaseFunctorExecParams : public HasObjectProxy
 {
 	FunctorExecParamsType ParamsTypeId{ 0 };
-	StatsPropertyContext PropertyContext{ 0 };
+	PropertyContext PropertyContext{ 0 };
 	int32_t StoryActionId{ 0 };
 	ActionOriginator Originator;
 	GuidResourceDefinitionManagerBase* GuidResourceMgr{ nullptr };
@@ -211,14 +217,14 @@ struct StatsFunctorSetImpl : public Functors
 
 struct CustomDescriptionFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::CustomDescription;
+	static constexpr auto FunctorType = FunctorId::CustomDescription;
 
 	FixedString Description; // Arg0
 };
 
 struct ResurrectFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::Resurrect;
+	static constexpr auto FunctorType = FunctorId::Resurrect;
 
 	float Probability{ 1.0f }; // Arg0
 	float HealthPercentage{ 1.0f }; // Arg1
@@ -226,14 +232,14 @@ struct ResurrectFunctor : public Functor
 
 struct SabotageFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::Sabotage;
+	static constexpr auto FunctorType = FunctorId::Sabotage;
 
 	int Amount{ 1 };
 };
 
 struct SummonFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::Summon;
+	static constexpr auto FunctorType = FunctorId::Summon;
 
 	FixedString MovingObject; // Arg1
 	FixedString Arg2;
@@ -244,7 +250,7 @@ struct SummonFunctor : public Functor
 
 struct ForceFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::Force;
+	static constexpr auto FunctorType = FunctorId::Force;
 
 	float Arg0{ 8.0f }; // Arg0
 	ForceFunctorOrigin Origin{ ForceFunctorOrigin::OriginToEntity }; // Arg1
@@ -253,7 +259,7 @@ struct ForceFunctor : public Functor
 
 struct DouseFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::Douse;
+	static constexpr auto FunctorType = FunctorId::Douse;
 
 	float field_20{ -1.0f };
 	float field_24{ 1.0f };
@@ -261,28 +267,28 @@ struct DouseFunctor : public Functor
 
 struct SwapPlacesFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::SwapPlaces;
+	static constexpr auto FunctorType = FunctorId::SwapPlaces;
 
 	FixedString Arg0;
 };
 
 struct EqualizeFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::Equalize;
+	static constexpr auto FunctorType = FunctorId::Equalize;
 
 	StatusHealType HealType{ StatusHealType::None }; // Arg0
 };
 
 struct PickupFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::Pickup;
+	static constexpr auto FunctorType = FunctorId::Pickup;
 
 	FixedString Arg0;
 };
 
 struct CreateSurfaceFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::CreateSurface;
+	static constexpr auto FunctorType = FunctorId::CreateSurface;
 
 	FixedString SurfaceType; // Arg2 - SurfaceType or DamageType
 	float Radius{ -1.0f }; // Arg0
@@ -293,7 +299,7 @@ struct CreateSurfaceFunctor : public Functor
 
 struct CreateConeSurfaceFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::CreateConeSurface;
+	static constexpr auto FunctorType = FunctorId::CreateConeSurface;
 
 	FixedString Arg2;
 	float Arg0{ -1.0f };
@@ -303,27 +309,27 @@ struct CreateConeSurfaceFunctor : public Functor
 
 struct RemoveStatusFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::RemoveStatus;
+	static constexpr auto FunctorType = FunctorId::RemoveStatus;
 
 	FixedString StatusId; // Arg0
 };
 
 struct ExecuteWeaponFunctorsFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::ExecuteWeaponFunctors;
+	static constexpr auto FunctorType = FunctorId::ExecuteWeaponFunctors;
 
 	ExecuteWeaponFunctorsType WeaponType;
 };
 
 struct TeleportSourceFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::TeleportSource;
+	static constexpr auto FunctorType = FunctorId::TeleportSource;
 
 };
 
 struct SetStatusDurationFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::SetStatusDuration;
+	static constexpr auto FunctorType = FunctorId::SetStatusDuration;
 
 	FixedString StatusId; // Arg0
 	float Duration{ 6.0f }; // Arg1
@@ -332,20 +338,20 @@ struct SetStatusDurationFunctor : public Functor
 
 struct UseAttackFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::UseAttack;
+	static constexpr auto FunctorType = FunctorId::UseAttack;
 
 	bool IgnoreChecks{ false }; // Arg0
 };
 
 struct BreakConcentrationFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::BreakConcentration;
+	static constexpr auto FunctorType = FunctorId::BreakConcentration;
 
 };
 
 struct RestoreResourceFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::RestoreResource;
+	static constexpr auto FunctorType = FunctorId::RestoreResource;
 
 	Guid ActionResourceUUID; // Arg0
 	int Hex{ 0 }; // Arg2
@@ -357,7 +363,7 @@ struct RestoreResourceFunctor : public Functor
 
 struct SpawnFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::Spawn;
+	static constexpr auto FunctorType = FunctorId::Spawn;
 
 	FixedString TemplateId; // Arg0
 	FixedString Arg1;
@@ -366,32 +372,32 @@ struct SpawnFunctor : public Functor
 
 struct StabilizeFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::Stabilize;
+	static constexpr auto FunctorType = FunctorId::Stabilize;
 
 };
 
 struct UnlockFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::Unlock;
+	static constexpr auto FunctorType = FunctorId::Unlock;
 
 };
 
 struct ResetCombatTurnFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::ResetCombatTurn;
+	static constexpr auto FunctorType = FunctorId::ResetCombatTurn;
 
 };
 
 struct RemoveAuraByChildStatusFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::RemoveAuraByChildStatus;
+	static constexpr auto FunctorType = FunctorId::RemoveAuraByChildStatus;
 
 	FixedString StatusId; // Arg0
 };
 
 struct ApplyStatusFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::ApplyStatus;
+	static constexpr auto FunctorType = FunctorId::ApplyStatus;
 
 	FixedString StatusId; // Arg0
 	FixedString StringParam; // Arg3
@@ -405,7 +411,7 @@ struct ApplyStatusFunctor : public Functor
 
 struct DealDamageFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::DealDamage;
+	static constexpr auto FunctorType = FunctorId::DealDamage;
 
 	using ApplyDamageProc = NewHit * (NewHit* result, DealDamageFunctor* functor, EntityWorldHandle* casterHandle, 
 		EntityWorldHandle* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId, 
@@ -423,7 +429,7 @@ struct DealDamageFunctor : public Functor
 
 struct UseActionResourceFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::UseActionResource;
+	static constexpr auto FunctorType = FunctorId::UseActionResource;
 
 	Guid ActionResourceUUID; // Arg0
 	double Amount{ 0.0 }; // Arg1
@@ -433,14 +439,14 @@ struct UseActionResourceFunctor : public Functor
 
 struct CreateExplosionFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::CreateExplosion;
+	static constexpr auto FunctorType = FunctorId::CreateExplosion;
 
 	FixedString SpellId; // Arg0
 };
 
 struct SurfaceChangeFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::SurfaceChange;
+	static constexpr auto FunctorType = FunctorId::SurfaceChange;
 
 	float Chance{ 1.0f };
 	float field_24{ 0.0f };
@@ -451,21 +457,21 @@ struct SurfaceChangeFunctor : public Functor
 
 struct ApplyEquipmentStatusFunctor : public ApplyStatusFunctor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::ApplyEquipmentStatus;
+	static constexpr auto FunctorType = FunctorId::ApplyEquipmentStatus;
 
 	ItemSlot32 EquipmentSlot{ ItemSlot32::MainWeapon };
 };
 
 struct RegainHitPointsFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::RegainHitPoints;
+	static constexpr auto FunctorType = FunctorId::RegainHitPoints;
 
 	LuaExpression* HitPoints{ nullptr };
 };
 
 struct UseSpellFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::UseSpell;
+	static constexpr auto FunctorType = FunctorId::UseSpell;
 
 	FixedString SpellId; // Arg0
 	bool IgnoreHasSpell{ false }; // Arg1
@@ -475,12 +481,12 @@ struct UseSpellFunctor : public Functor
 
 struct ExtenderFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::Extender;
+	static constexpr auto FunctorType = FunctorId::Extender;
 };
 
 struct SummonInInventoryFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::SummonInInventory;
+	static constexpr auto FunctorType = FunctorId::SummonInInventory;
 
 	FixedString Arg1;
 	FixedString Arg7;
@@ -495,7 +501,7 @@ struct SummonInInventoryFunctor : public Functor
 
 struct SpawnInInventoryFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::SpawnInInventory;
+	static constexpr auto FunctorType = FunctorId::SpawnInInventory;
 
 	FixedString Arg1;
 	FixedString Arg6;
@@ -508,14 +514,14 @@ struct SpawnInInventoryFunctor : public Functor
 
 struct RemoveUniqueStatusFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::RemoveUniqueStatus;
+	static constexpr auto FunctorType = FunctorId::RemoveUniqueStatus;
 
 	FixedString StatusId; // Arg0
 };
 
 struct DisarmWeaponFunctor : public Functor
 {
-	static constexpr auto FunctorId = StatsFunctorActionId::DisarmWeapon;
+	static constexpr auto FunctorType = FunctorId::DisarmWeapon;
 };
 
 END_NS()
