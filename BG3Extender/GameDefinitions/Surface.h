@@ -217,7 +217,7 @@ namespace bg3se::esv
 		float MaxHeight;
 		int GrowStep;
 		ObjectSet<void*> DamageList;
-		DeathType DeathType;
+		stats::DeathType DeathType;
 		uint64_t LineCheckBlock;
 		void* SkillProperties_M;
 		int CurrentGrowTimer_M;

@@ -136,7 +136,7 @@ namespace bg3se
 		};
 
 		int TotalDamageDone;
-		DeathType DeathType;
+		stats::DeathType DeathType;
 		DamageType DamageType;
 		CauseType CauseType;
 		glm::vec3 ImpactPosition;

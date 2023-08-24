@@ -475,7 +475,7 @@ struct ApplyEquipmentStatusFunctor : public ApplyStatusFunctor
 {
 	static constexpr auto FunctorType = FunctorId::ApplyEquipmentStatus;
 
-	StatsItemSlot EquipmentSlot{ StatsItemSlot::MainWeapon };
+	StatsItemSlot EquipmentSlot{ StatsItemSlot::MainHand };
 };
 
 struct RegainHitPointsFunctor : public Functor
@@ -511,7 +511,7 @@ struct SummonInInventoryFunctor : public Functor
 	float Duration{ 0.0f }; // Arg2
 	uint8_t DurationType{ 0 };
 	MultiHashSet<FixedString> AdditionalArgs;
-	FixedString Arg8;
+	FixedString Arg9;
 	float Arg3{ 0.0f };
 	bool Arg4{ false };
 	bool Arg5{ false };
@@ -543,6 +543,206 @@ struct DisarmWeaponFunctor : public Functor
 {
 	static constexpr auto FunctorType = FunctorId::DisarmWeapon;
 };
+
+struct SwitchDeathTypeFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::SwitchDeathType;
+
+	DeathType DeathType;
+};
+
+struct TriggerRandomCastFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::TriggerRandomCast;
+
+	bool Arg1;
+	float Arg2;
+	Array<FixedString> RandomCastOutcomes;
+};
+
+struct GainTemporaryHitPointsFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::GainTemporaryHitPoints;
+
+	LuaExpressionBase* HitPointsExpression;
+};
+
+struct FireProjectileFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::FireProjectile;
+
+	FixedString Arg1;
+};
+
+struct ShortRestFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::ShortRest;
+};
+
+struct CreateZoneFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::CreateZone;
+
+	ZoneShape Shape; // Arg1
+	FixedString Arg4;
+	float Arg2;
+	float Duration; // Arg3
+	bool Arg5;
+};
+
+struct DoTeleportFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::DoTeleport;
+
+	float Arg1;
+};
+
+struct RegainTemporaryHitPointsFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::RegainTemporaryHitPoints;
+
+	LuaExpression* HitPoints;
+};
+
+struct RemoveStatusByLevelFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::RemoveStatusByLevel;
+
+	struct NameOrStatusGroup
+	{
+		~NameOrStatusGroup()
+		{
+			if (!IsStatusGroup) {
+				String.~FixedString();
+			}
+		}
+
+		union {
+			FixedString String;
+			StatusGroup SG;
+		};
+		bool IsStatusGroup;
+	};
+
+	NameOrStatusGroup SG; // Arg1
+	bool HasArg1;
+	bool Arg2;
+	AbilityId Ability; // Arg3
+	bool HasAbility;
+};
+
+struct SurfaceClearLayerFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::SurfaceClearLayer;
+
+	MultiHashSet<SurfaceLayer8> Layers;
+};
+
+struct UnsummonFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::Unsummon;
+};
+
+struct CreateWallFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::CreateWall;
+};
+
+struct CounterspellFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::Counterspell;
+};
+
+struct AdjustRollFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::AdjustRoll;
+
+	LuaExpressionBase* Expression; // Arg1
+	RollAdjustmentType Type; // Arg2
+	DamageType DamageType; // Arg2
+};
+
+struct SpawnExtraProjectilesFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::SpawnExtraProjectiles;
+
+	FixedString Arg1;
+};
+
+struct KillFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::Kill;
+};
+
+struct TutorialEventFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::TutorialEvent;
+
+	Guid Event;
+};
+
+struct DropFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::Drop;
+
+	FixedString Arg1;
+};
+
+struct ResetCooldownsFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::ResetCooldowns;
+
+	SpellCooldownType CooldownType;
+};
+
+struct SetRollFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::SetRoll;
+
+	int Arg1;
+	RollAdjustmentType Type; // Arg2
+	DamageType DamageType; // Arg2
+};
+
+struct SetDamageResistanceFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::SetDamageResistance;
+
+	DamageType DamageType; // Arg1
+};
+
+struct SetRerollFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::SetReroll;
+
+	uint8_t Arg1;
+	bool Arg2;
+};
+
+struct SetAdvantageFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::SetAdvantage;
+};
+
+struct SetDisadvantageFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::SetDisadvantage;
+};
+
+struct MaximizeRollFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::MaximizeRoll;
+
+	DamageType DamageType;
+};
+
+struct CameraWaitFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::CameraWait;
+
+	float Arg1;
+};
+
 
 END_NS()
 
