@@ -77,6 +77,7 @@ void LoadConfig(std::wstring const & configPath, ExtenderConfig & config)
 	ConfigGetBool(root, "ClearOnReset", config.ClearOnReset);
 	ConfigGetBool(root, "ShowPerfWarnings", config.ShowPerfWarnings);
 	ConfigGetBool(root, "EnableAchievements", config.EnableAchievements);
+	ConfigGetBool(root, "DisableLauncher", config.DisableLauncher);
 	ConfigGetBool(root, "DisableStoryMerge", config.DisableStoryMerge);
 	ConfigGetBool(root, "DisableStoryPatching", config.DisableStoryPatching);
 
