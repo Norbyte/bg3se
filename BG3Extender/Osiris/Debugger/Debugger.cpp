@@ -558,6 +558,7 @@ namespace bg3se::osidbg
 			prev->Next = item;
 
 			auto & param = msg.column()[i];
+			item->Item.Index = i;
 			MsgToValue(param, item->Item.Value, tvVmt);
 
 			prev = item;

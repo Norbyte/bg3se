@@ -32,8 +32,6 @@ void OsirisExtender::Initialize()
 {
 	if (initialized_) return;
 
-	SetUnhandledExceptionFilter(0);
-
 	wrappers_.Initialize();
 
 	wrappers_.RegisterDivFunctions.SetPreHook(&OsirisExtender::OnRegisterDIVFunctions, this);

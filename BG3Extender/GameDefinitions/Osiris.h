@@ -661,6 +661,7 @@ struct TupleLL
 {
 	struct Item
 	{
+		uint8_t Index;
 		TypedValue Value;
 	};
 
