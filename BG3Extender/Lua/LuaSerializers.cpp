@@ -20,7 +20,7 @@ namespace bg3se::lua
 		return s;
 	}
 	
-	LuaSerializer& operator << (LuaSerializer& s, EntityWorldHandle& v)
+	LuaSerializer& operator << (LuaSerializer& s, ecs::EntityRef& v)
 	{
 		s << v.Handle;
 		if (v.World == nullptr && !s.IsWriting) {
