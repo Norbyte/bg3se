@@ -357,6 +357,7 @@ void ScriptExtender::PostStartup()
 	std::lock_guard _(globalStateLock_);
 	// We need to initialize the function library here, as GlobalAllocator isn't available in Init().
 	if (Libraries.PostStartupFindLibraries()) {
+		lua::RegisterLibraries();
 		TypeInformationRepository::GetInstance().Initialize();
 
 		// FIXME - savegame hooks not yet added

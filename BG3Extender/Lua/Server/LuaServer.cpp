@@ -1,6 +1,7 @@
 #include <stdafx.h>
 #include <resource.h>
 #include <Lua/Shared/LuaStats.h>
+#include <Lua/Shared/LuaModule.h>
 #include <Lua/Server/LuaBindingServer.h>
 #include <Lua/LuaSerializers.h>
 #include <Extender/ScriptExtender.h>
@@ -454,10 +455,9 @@ namespace bg3se::esv::lua
 		luaL_newlib(L, extLib); // stack: lib
 		lua_setglobal(L, "Ext"); // stack: -
 
-		RegisterSharedLibraries(L);
+		RegisterSharedMetatables(L);
 		RegisterOsirisLibrary(L);
-		RegisterFunctorsLibrary(L);
-		RegisterSurfaceLibrary(L);
+		gModuleRegistry.ConstructState(L, ModuleRole::Server);
 	}
 
 	void ExtensionLibraryServer::Register(lua_State * L)

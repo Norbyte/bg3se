@@ -3,15 +3,6 @@
 #include <Lua/LuaBinding.h>
 #include <Lua/LuaSerializers.h>
 #include <Lua/Shared/Proxies/LuaPropertyMapHelpers.h>
-#include <Lua/Shared/Proxies/LuaObjectProxy.inl>
-#include <Lua/Shared/Proxies/LuaArrayProxy.inl>
-#include <Lua/Shared/Proxies/LuaSetProxy.inl>
-#include <Lua/Shared/Proxies/LuaMapProxy.inl>
-#include <Lua/Shared/LuaEvent.inl>
-#include <Lua/Shared/StatEntries.inl>
-#include <Lua/Shared/StatEnumerators.inl>
-#include <Lua/Shared/StatAttributes.inl>
-#include <Lua/Shared/StatMisc.inl>
 
 
 namespace bg3se::lua::stats
@@ -114,55 +105,5 @@ namespace bg3se::lua::stats
 		} else {
 			return 0;
 		}
-	}
-
-
-	void RegisterStatsLib(lua_State* L)
-	{
-		static const luaL_Reg statsLib[] = {
-			{"GetAllStats", GetAllStats},
-			{"GetStatsLoadedBefore", GetStatsLoadedBefore},
-
-			{"GetStat", GetStat},
-			{"CreateStat", CreateStat},
-
-			{"GetModifierAttributes", GetModifierAttributes},
-			{"EnumIndexToLabel", EnumIndexToLabel},
-			{"EnumLabelToIndex", EnumLabelToIndex},
-
-			{"UpdateTreasureTable", UpdateTreasureTable},
-			{"UpdateTreasureCategory", UpdateTreasureCategory},
-
-			/*{"ExecuteSkillPropertiesOnTarget", ExecuteSkillPropertiesOnTarget},
-			{"ExecuteSkillPropertiesOnPosition", ExecuteSkillPropertiesOnPosition},*/
-			{0,0}
-		};
-
-		RegisterLib(L, "Stats", statsLib);
-		RegisterStatsObjects(L);
-	}
-}
-
-namespace bg3se::lua
-{
-	void InitObjectProxyPropertyMaps();
-
-	void RegisterSharedLibraries(lua_State* L)
-	{
-		Userdata<ObjectProxy>::RegisterMetatable(L);
-		Userdata<ArrayProxy>::RegisterMetatable(L);
-		Userdata<SetProxy>::RegisterMetatable(L);
-		Userdata<MapProxy>::RegisterMetatable(L);
-		Userdata<EventObject>::RegisterMetatable(L);
-		InitObjectProxyPropertyMaps();
-
-		RegisterEntityProxy(L);
-		stats::RegisterStatsLib(L);
-		utils::RegisterStaticDataLib(L);
-		utils::RegisterUtilsLib(L);
-		utils::RegisterLocalizationLib(L);
-		utils::RegisterJsonLib(L);
-		utils::RegisterIOLib(L);
-		utils::RegisterMathLib(L);
 	}
 }

@@ -1,6 +1,7 @@
 #include <stdafx.h>
 #include <Lua/Shared/LuaStats.h>
 #include <Lua/Client/LuaBindingClient.h>
+#include <Lua/Shared/LuaModule.h>
 #include <Lua/LuaSerializers.h>
 #include <Extender/ScriptExtender.h>
 #include <Extender/Client/ExtensionStateClient.h>
@@ -994,7 +995,8 @@ namespace bg3se::ecl::lua
 		lua_setfield(L, -2, "Audio");
 		lua_pop(L, 1);*/
 
-		RegisterSharedLibraries(L);
+		RegisterSharedMetatables(L);
+		gModuleRegistry.ConstructState(L, ModuleRole::Client);
 	}
 
 

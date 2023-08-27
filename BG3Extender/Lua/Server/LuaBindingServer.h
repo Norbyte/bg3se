@@ -7,6 +7,13 @@
 #include <Extender/Shared/ExtensionHelpers.h>
 #include <Lua/Shared/LuaStats.h>
 
+BEGIN_NS(lua)
+
+void RegisterLibraries();
+void RegisterSharedMetatables(lua_State* L);
+
+END_NS()
+
 namespace bg3se::esv
 {
 	struct PendingHit;
