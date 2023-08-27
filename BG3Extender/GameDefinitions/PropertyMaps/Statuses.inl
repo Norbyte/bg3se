@@ -37,7 +37,7 @@ P_RO(TickType)
 P_RO(Flags3)
 P_RO(SomeFlags)
 
-P_FUN(GetEngineType, StatusGetEngineType)
+//P_FUN(GetEngineType, StatusGetEngineType)
 END_CLS()
 
 
@@ -78,7 +78,6 @@ INHERIT(esv::Status)
 P_RO(MoveDirection_M)
 P_RO(Item)
 P_RO(Level)
-P_RO(Status)
 P_RO(Status)
 P_RO(Direction)
 P_RO(JumpUpLadders_M)

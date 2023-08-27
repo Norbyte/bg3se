@@ -15,7 +15,7 @@ namespace bg3se::lua
 
 	LuaSerializer& operator << (LuaSerializer& s, TranslatedString& v)
 	{
-		// TODO - is this enough?
+		//  FIXME - migrate TranslatedStrings to by-ref types later
 		s << v.Handle.Handle;
 		return s;
 	}
@@ -315,41 +315,6 @@ namespace bg3se::lua
 			}
 		}
 
-		s.EndObject();
-		return s;
-	}
-
-	LuaSerializer& operator << (LuaSerializer& s, SurfaceTemplate::VisualData& v)
-	{
-		s.BeginObject();
-		P(Visual);
-		P(Height);
-		P(Rotation);
-		P(Scale);
-		P(GridSize);
-		P(SpawnCell);
-		P(RandomPlacement);
-		P(SurfaceNeeded);
-		P(SurfaceRadiusMax);
-		s.EndObject();
-		return s;
-	}
-
-	LuaSerializer& operator << (LuaSerializer& s, SurfaceTemplate::StatusData& v)
-	{
-		s.BeginObject();
-		P(StatusId);
-		PO(ApplyTypes, (uint8_t)0);
-		PO(Chance, 1.0f);
-		PO(Duration, 6.0f);
-		PO(Remove, false);
-		PO(ApplyToCharacters, true);
-		PO(ApplyToItems, true);
-		PO(KeepAlive, true);
-		PO(VanishOnApply, false);
-		PO(Force, false);
-		PO(AffectedByRoll, false);
-		PO(OnlyOncePerTurn, false);
 		s.EndObject();
 		return s;
 	}

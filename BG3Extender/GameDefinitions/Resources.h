@@ -14,7 +14,7 @@ namespace bg3se
 		FixedString PackageName;
 		FixedString ModName;
 		FixedString Guid;
-		VirtualArray<FixedString> Tags;
+		Array<FixedString> Tags;
 		STDString Name;
 		bool IsLocalized;
 		bool IsActive;

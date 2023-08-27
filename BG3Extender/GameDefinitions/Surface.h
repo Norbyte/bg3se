@@ -133,10 +133,10 @@ namespace bg3se::esv
 
 	struct ExtinguishFireAction : public CreateSurfaceActionBase
 	{
-		glm::vec3 Position;
+		glm::vec3 ExtinguishPosition;
 		float Radius;
 		float Percentage;
-		float GrowTimer;
+		float ExtinguishGrowTimer;
 		float Step;
 		Array<void*> field_468;
 		__int64 SomeFixedArray[3];

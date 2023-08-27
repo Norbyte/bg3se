@@ -380,7 +380,7 @@ struct SpawnFunctor : public Functor
 
 	FixedString TemplateId; // Arg0
 	FixedString Arg1;
-	VirtualMultiHashSet<FixedString> StatusesToApply;
+	MultiHashSet<FixedString> StatusesToApply;
 	bool Arg6{ false };
 };
 
@@ -529,7 +529,7 @@ struct SpawnInInventoryFunctor : public Functor
 	bool Arg3{ false };
 	bool Arg4{ false };
 	bool Arg5{ false };
-	VirtualMultiHashSet<FixedString> AdditionalArgs;
+	MultiHashSet<FixedString> AdditionalArgs;
 };
 
 struct RemoveUniqueStatusFunctor : public Functor

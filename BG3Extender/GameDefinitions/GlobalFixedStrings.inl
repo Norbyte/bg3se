@@ -80,3 +80,7 @@ FS(StatObject);
 FS(StatId);
 FS(StatType);
 FS(Blob);
+
+// IO context types
+FS(user);
+FS(data);

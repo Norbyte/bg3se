@@ -116,7 +116,13 @@ namespace bg3se::lua
 	inline LuaSerializer& operator << (LuaSerializer& s, glm::vec2& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, glm::vec3& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, glm::vec4& v) { return s.Visit(v); }
-	LuaSerializer& operator << (LuaSerializer& s, TranslatedString& v);
+	inline LuaSerializer& operator << (LuaSerializer& s, glm::quat& v) { return s.Visit(v); }
+	inline LuaSerializer& operator << (LuaSerializer& s, glm::mat3& v) { return s.Visit(v); }
+	inline LuaSerializer& operator << (LuaSerializer& s, glm::mat3x4& v) { return s.Visit(v); }
+	inline LuaSerializer& operator << (LuaSerializer& s, glm::mat4x3& v) { return s.Visit(v); }
+	inline LuaSerializer& operator << (LuaSerializer& s, glm::mat4& v) { return s.Visit(v); }
+	inline LuaSerializer& operator << (LuaSerializer& s, Version& v) { return s.Visit(v); }
+
 	inline LuaSerializer& operator << (LuaSerializer& s, Ref& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, RegistryEntry& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, PersistentRef& v) { return s.Visit(v); }
@@ -124,6 +130,7 @@ namespace bg3se::lua
 	
 
 	LuaSerializer& operator << (LuaSerializer& s, ecs::EntityRef& v);
+	LuaSerializer& operator << (LuaSerializer& s, TranslatedString& v);
 	LuaSerializer& operator << (LuaSerializer& s, TypeInformationRef& v);
 /*	LuaSerializer& operator << (LuaSerializer& s, CEquipmentSet& v);
 	LuaSerializer& operator << (LuaSerializer& s, CEquipmentGroup& v);
@@ -138,8 +145,6 @@ namespace bg3se::lua
 	LuaSerializer& operator << (LuaSerializer& s, CNameGroupLink& v);
 	LuaSerializer& operator << (LuaSerializer& s, CNameGroup& v);
 	LuaSerializer& operator << (LuaSerializer& s, CNameGroupName& v);*/
-	LuaSerializer& operator << (LuaSerializer& s, SurfaceTemplate::VisualData& v);
-	LuaSerializer& operator << (LuaSerializer& s, SurfaceTemplate::StatusData& v);
 
 	template <class T>
 	LuaSerializer& operator << (LuaSerializer& s, OverrideableProperty<T>& v)

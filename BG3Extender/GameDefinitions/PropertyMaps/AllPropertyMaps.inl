@@ -12,3 +12,14 @@
 #include <GameDefinitions/PropertyMaps/SurfaceActions.inl>
 #include <GameDefinitions/PropertyMaps/Statuses.inl>
 #include <GameDefinitions/PropertyMaps/Events.inl>
+#include <GameDefinitions/PropertyMaps/Mod.inl>
+
+// WIP - not exported yet!
+BEGIN_CLS(GlobalSwitches)
+END_CLS()
+
+BEGIN_CLS(stats::TreasureTable)
+END_CLS()
+
+BEGIN_CLS(stats::RPGStats)
+END_CLS()
