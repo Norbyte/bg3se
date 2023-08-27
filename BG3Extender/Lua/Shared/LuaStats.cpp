@@ -19,7 +19,7 @@ namespace bg3se::lua::stats
 	void PushStatsFunctor(lua_State* L, LifetimeHandle const& lifetime, Functor* functor)
 	{
 #define V(cls) case cls::FunctorType: \
-		MakeObjectRef(L, lifetime, static_cast<cls*>(functor)); \
+		MakeObjectRef(L, static_cast<cls*>(functor), lifetime); \
 		break;
 
 		switch (functor->TypeId) {

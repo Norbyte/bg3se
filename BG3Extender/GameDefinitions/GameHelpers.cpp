@@ -905,7 +905,7 @@ BEGIN_NS(lua)
 void LuaPolymorphic<stats::BaseFunctorExecParams>::MakeRef(lua_State* L, stats::BaseFunctorExecParams* value, LifetimeHandle const& lifetime)
 {
 #define V(type) case FunctorExecParamsType::type: \
-			MakeDirectObjectRef(L, lifetime, static_cast<stats::FunctorExecParams##type*>(value)); break;
+			MakeDirectObjectRef(L, static_cast<stats::FunctorExecParams##type*>(value), lifetime); break;
 
 	switch (value->ParamsTypeId) {
 		V(Type1)
@@ -918,7 +918,7 @@ void LuaPolymorphic<stats::BaseFunctorExecParams>::MakeRef(lua_State* L, stats::
 		V(Type8)
 
 	default:
-		MakeDirectObjectRef(L, lifetime, value);
+		MakeDirectObjectRef(L, value, lifetime);
 		break;
 	}
 

@@ -215,6 +215,104 @@ namespace bg3se
 	{
 		return Hash(std::underlying_type_t<T>(v));
 	}
+
+	// Return type indicating that Lua return values are pushed to the stack by the function
+	struct UserReturn
+	{
+		inline UserReturn(int n)
+			: num(n)
+		{}
+
+		inline operator int() const
+		{
+			return num;
+		}
+
+		int num;
+	};
+
+	// Return type indicating that the return value should be passed to Lua LuaWrite(), i.e. the value should be serialized
+	template <class T>
+	struct ByValReturn
+	{
+		inline ByValReturn()
+			: Object(nullptr)
+		{}
+	
+		inline ByValReturn(T* obj)
+			: Object(obj)
+		{}
+
+		inline operator T*() const
+		{
+			return Object;
+		}
+
+		T* Object;
+	};
+
+	// Return type indicating that the return value should be passed to Lua using an object proxy
+	template <class T>
+	struct RefReturn
+	{
+		inline RefReturn()
+			: Object(nullptr)
+		{}
+	
+		inline RefReturn(T* obj)
+			: Object(obj)
+		{}
+
+		inline operator T*() const
+		{
+			return Object;
+		}
+
+		T* Object;
+	};
+
+	// Parameter type indicating that the value should be passed from Lua using an object proxy
+	template <class T>
+	struct ProxyParam
+	{
+		inline ProxyParam()
+			: Object(nullptr)
+		{}
+	
+		inline ProxyParam(T* obj)
+			: Object(obj)
+		{}
+
+		inline operator T*() const
+		{
+			return Object;
+		}
+
+		inline T* operator ->() const
+		{
+			return Object;
+		}
+
+		T* Object;
+	};
+
+	template <class T>
+	struct OverrideableProperty
+	{
+		using Type = T;
+
+		T Value;
+		bool IsOverridden;
+	};
+
+	enum PropertyOperationResult
+	{
+		Success,
+		NoSuchProperty,
+		ReadOnly,
+		UnsupportedType,
+		Unknown
+	};
 }
 
 BEGIN_NS(lua)

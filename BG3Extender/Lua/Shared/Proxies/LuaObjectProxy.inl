@@ -3,35 +3,6 @@
 
 namespace bg3se::lua
 {
-
-	bool GenericPropertyMap::GetRawProperty(lua_State* L, LifetimeHandle const& lifetime, void* object, FixedString const& prop) const
-	{
-		auto it = Properties.find(prop);
-		if (it == Properties.end()) {
-			return 0;
-		}
-
-		return it->second.Get(L, lifetime, object, it->second.Offset);
-	}
-
-	bool GenericPropertyMap::SetRawProperty(lua_State* L, LifetimeHandle const& lifetime, void* object, FixedString const& prop, int index) const
-	{
-		auto it = Properties.find(prop);
-		if (it == Properties.end()) {
-			return 0;
-		}
-
-		return it->second.Set(L, lifetime, object, index, it->second.Offset);
-	}
-
-	void GenericPropertyMap::AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter,
-		typename RawPropertyAccessors::Setter* setter, std::size_t offset)
-	{
-		auto key = FixedString(prop);
-		Properties.insert(std::make_pair(key, RawPropertyAccessors{ key, getter, setter, offset }));
-	}
-
-
 	char const* const ObjectProxy::MetatableName = "bg3se::Object";
 
 	int ObjectProxy::Index(lua_State* L)
@@ -100,6 +71,33 @@ namespace bg3se::lua
 	{
 		this->~ObjectProxy();
 		return 0;
+	}
+
+	void* ObjectProxy::GetRaw(lua_State* L, int index, FixedString const& typeName)
+	{
+		auto proxy = Userdata<ObjectProxy>::CheckUserData(L, index);
+		if (proxy->GetImpl()->IsA(typeName)) {
+			auto obj = proxy->GetRaw(L);
+			if (obj == nullptr) {
+				luaL_error(L, "Argument %d: got object of type '%s' whose lifetime has expired", index, typeName.GetString());
+				return nullptr;
+			} else {
+				return obj;
+			}
+		} else {
+			luaL_error(L, "Argument %d: expected an object of type '%s', got '%s'", index, typeName.GetString(), proxy->GetImpl()->GetTypeName());
+			return nullptr;
+		}
+	}
+
+	void* ObjectProxy::TryGetRaw(lua_State* L, int index, FixedString const& typeName)
+	{
+		auto proxy = Userdata<ObjectProxy>::AsUserData(L, index);
+		if (proxy && proxy->GetImpl()->IsA(typeName)) {
+			return proxy->GetRaw(L);
+		} else {
+			return nullptr;
+		}
 	}
 
 

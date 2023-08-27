@@ -5,16 +5,6 @@
 
 namespace bg3se
 {
-    template <class T>
-    struct OverrideableProperty
-    {
-        using Type = T;
-
-        T Value;
-        bool IsOverridden;
-    };
-
-
     struct GameObjectTemplate : public HasObjectProxy
     {
         void* VMT;

@@ -3,123 +3,11 @@
 #include <Lua/LuaHelpers.h>
 #include <Lua/LuaUserdata.h>
 #include <Lua/Shared/LuaLifetime.h>
+#include <Lua/Shared/Proxies/LuaPropertyMap.h>
 
 namespace bg3se::lua
 {
 	LifetimeHandle GetCurrentLifetime();
-
-	class GenericPropertyMap
-	{
-	public:
-		struct RawPropertyAccessors
-		{
-			using Getter = bool (lua_State* L, LifetimeHandle const& lifetime, void* object, std::size_t offset);
-			using Setter = bool (lua_State* L, LifetimeHandle const& lifetime, void* object, int index, std::size_t offset);
-
-			FixedString Name;
-			Getter* Get;
-			Setter* Set;
-			std::size_t Offset;
-		};
-
-		bool GetRawProperty(lua_State* L, LifetimeHandle const& lifetime, void* object, FixedString const& prop) const;
-		bool SetRawProperty(lua_State* L, LifetimeHandle const& lifetime, void* object, FixedString const& prop, int index) const;
-		void AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter,
-			typename RawPropertyAccessors::Setter* setter, std::size_t offset);
-
-		FixedString Name;
-		std::unordered_map<FixedString, RawPropertyAccessors> Properties;
-		std::vector<FixedString> Parents;
-	};
-
-	template <class T>
-	class LuaPropertyMap : public GenericPropertyMap
-	{
-	public:
-		struct PropertyAccessors
-		{
-			using Getter = bool (lua_State* L, LifetimeHandle const& lifetime, T* object, std::size_t offset);
-			using Setter = bool (lua_State* L, LifetimeHandle const& lifetime, T* object, int index, std::size_t offset);
-		};
-
-		inline bool GetProperty(lua_State* L, LifetimeHandle const& lifetime, T* object, FixedString const& prop) const
-		{
-#if defined(_DEBUG)
-			__try {
-				return GetRawProperty(L, lifetime, (void*)object, prop);
-			}
-			__except (EXCEPTION_EXECUTE_HANDLER) {
-				ERR("Exception while reading property %s.%s", Name.GetString(), prop.GetString());
-				return false;
-			}
-#else
-			return GetRawProperty(L, lifetime, (void*)object, prop);
-#endif
-		}
-
-		inline bool SetProperty(lua_State* L, LifetimeHandle const& lifetime, T* object, FixedString const& prop, int index) const
-		{
-#if defined(_DEBUG)
-			__try {
-				return SetRawProperty(L, lifetime, (void*)object, prop, index);
-			}
-			__except (EXCEPTION_EXECUTE_HANDLER) {
-				ERR("Exception while writing property %s.%s", Name.GetString(), prop.GetString());
-				return false;
-			}
-#else
-			return SetRawProperty(L, lifetime, (void*)object, prop, index);
-#endif
-		}
-
-		inline bool GetProperty(lua_State* L, LifetimeHandle const& lifetime, T* object, RawPropertyAccessors const& prop) const
-		{
-			auto getter = (typename PropertyAccessors::Getter*)prop.Get;
-
-#if defined(_DEBUG)
-			__try {
-				return getter(L, lifetime, object, prop.Offset);
-			}
-			__except (EXCEPTION_EXECUTE_HANDLER) {
-				ERR("Exception while reading property %s.%s", Name.GetString(), prop.Name.GetString());
-				return false;
-			}
-#else
-			return getter(L, lifetime, object, prop.Offset);
-#endif
-		}
-
-		inline bool SetProperty(lua_State* L, LifetimeHandle const& lifetime, T* object, RawPropertyAccessors const& prop, int index) const
-		{
-			auto setter = (typename PropertyAccessors::Setter*)prop.Set;
-
-#if defined(_DEBUG)
-			__try {
-				return setter(L, lifetime, object, index, prop.Offset);
-			}
-			__except (EXCEPTION_EXECUTE_HANDLER) {
-				ERR("Exception while writing property %s.%s", Name.GetString(), prop.Name.GetString());
-				return false;
-			}
-#else
-			return setter(L, lifetime, object, index, prop.Offset);
-#endif
-		}
-
-		inline void AddProperty(char const* prop, typename PropertyAccessors::Getter* getter,
-			typename PropertyAccessors::Setter* setter, std::size_t offset)
-		{
-			AddRawProperty(prop, (RawPropertyAccessors::Getter*)getter, (RawPropertyAccessors::Setter*)setter, offset);
-		}
-	};
-
-	template <class T>
-	struct StaticLuaPropertyMap
-	{
-		using ObjectType = T;
-
-		static LuaPropertyMap<T> PropertyMap;
-	};
 
 	class ObjectProxyImplBase
 	{
@@ -369,6 +257,9 @@ namespace bg3se::lua
 			return GetImpl()->GetRaw(L);
 		}
 
+		static void* GetRaw(lua_State* L, int index, FixedString const& typeName);
+		static void* TryGetRaw(lua_State* L, int index, FixedString const& typeName);
+
 		template <class T>
 		T* Get(lua_State* L)
 		{
@@ -381,6 +272,22 @@ namespace bg3se::lua
 			} else {
 				return nullptr;
 			}
+		}
+
+		template <class T>
+		inline static T* Get(lua_State* L, int index)
+		{
+			auto const& typeName = StaticLuaPropertyMap<T>::PropertyMap.Name;
+			auto obj = GetRaw(L, index, typeName);
+			return reinterpret_cast<T*>(obj);
+		}
+
+		template <class T>
+		inline static T* TryGet(lua_State* L, int index)
+		{
+			auto const& typeName = StaticLuaPropertyMap<T>::PropertyMap.Name;
+			auto obj = TryGetRaw(L, index, typeName);
+			return reinterpret_cast<T*>(obj);
 		}
 
 	private:

@@ -34,6 +34,7 @@ BY_VAL(glm::mat3);
 BY_VAL(glm::mat3x4);
 BY_VAL(glm::mat4x3);
 BY_VAL(glm::mat4);
+BY_VAL(TypeInformationRef);
 
 END_SE()
 

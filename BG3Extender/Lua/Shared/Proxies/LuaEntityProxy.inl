@@ -7,6 +7,7 @@
 #include <GameDefinitions/Components/Projectile.h>
 #include <GameDefinitions/Components/Stats.h>
 #include <GameDefinitions/Components/Boosts.h>
+#include <Extender/ScriptExtender.h>
 
 namespace bg3se::lua
 {
