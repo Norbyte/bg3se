@@ -226,7 +226,7 @@ namespace bg3se::esv::lua
 	class ServerState : public State
 	{
 	public:
-		ServerState(ExtensionState& state);
+		ServerState(ExtensionState& state, uint32_t generationId);
 		~ServerState();
 
 		void Initialize() override;

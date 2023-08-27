@@ -85,45 +85,6 @@ namespace bg3se::lua
 		return  handle->Handle();
 	}
 
-	RegistryEntry::RegistryEntry()
-		: L_(nullptr), ref_(-1)
-	{}
-
-	RegistryEntry::RegistryEntry(lua_State * L, int index)
-		: L_(L)
-	{
-		lua_pushvalue(L, index);
-		ref_ = luaL_ref(L, LUA_REGISTRYINDEX);
-	}
-
-	RegistryEntry::~RegistryEntry()
-	{
-		if (ref_ != -1) {
-			luaL_unref(L_, LUA_REGISTRYINDEX, ref_);
-		}
-	}
-
-	RegistryEntry::RegistryEntry(RegistryEntry && other)
-		: L_(other.L_), ref_(other.ref_)
-	{
-		other.ref_ = -1;
-	}
-
-	RegistryEntry & RegistryEntry::operator = (RegistryEntry && other)
-	{
-		L_ = other.L_;
-		ref_ = other.ref_;
-		other.ref_ = -1;
-		return *this;
-	}
-
-	void RegistryEntry::Push() const
-	{
-		assert(ref_ != -1);
-		lua_rawgeti(L_, LUA_REGISTRYINDEX, ref_);
-	}
-
-
 	int TracebackHandler(lua_State * L)
 	{
 		const char *msg = lua_tostring(L, 1);
@@ -623,9 +584,14 @@ namespace bg3se::lua
 		}
 	}
 
+	LifetimeHandle GetCurrentLifetime(lua_State* L)
+	{
+		return State::FromLua(L)->GetCurrentLifetime();
+	}
 
-	State::State(bool isServer)
-		: lifetimeStack_(lifetimePool_),
+	State::State(uint32_t generationId, bool isServer)
+		: generationId_(generationId),
+		lifetimeStack_(lifetimePool_),
 		globalLifetime_(lifetimePool_.Allocate())
 		//variableManager_(isServer ? gExtender->GetServer().GetExtensionState().GetUserVariables() : gExtender->GetClient().GetExtensionState().GetUserVariables(), isServer),
 		//modVariableManager_(isServer ? gExtender->GetServer().GetExtensionState().GetModVariables() : gExtender->GetClient().GetExtensionState().GetModVariables(), isServer)

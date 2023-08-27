@@ -10,7 +10,7 @@ namespace bg3se::ecl::lua
 	LifetimeHandle GetClientLifetime();
 	LifetimePool& GetClientLifetimePool();
 
-	struct GameStateChangeEventParams
+	struct GameStateChangeEvent : public EventBase
 	{
 		ecl::GameState FromState;
 		ecl::GameState ToState;
@@ -51,7 +51,7 @@ namespace bg3se::ecl::lua
 	class ClientState : public State
 	{
 	public:
-		ClientState();
+		ClientState(uint32_t generationId);
 		~ClientState();
 
 		void Initialize() override;

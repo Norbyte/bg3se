@@ -9,7 +9,7 @@
 #include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/CommonTypes.h>
-#include <GameDefinitions/EntitySystem.h>
+#include <Lua/Shared/LuaReference.h>
 
 BEGIN_NS(lua)
 
@@ -258,6 +258,10 @@ void push(lua_State* L, glm::mat3 const& m);
 void push(lua_State* L, glm::mat3x4 const& m);
 void push(lua_State* L, glm::mat4x3 const& m);
 void push(lua_State* L, glm::mat4 const& m);
+void push(lua_State* L, Ref const& v);
+void push(lua_State* L, PersistentRef const& v);
+void push(lua_State* L, RegistryEntry const& v);
+void push(lua_State* L, PersistentRegistryEntry const& v);
 
 void assign(lua_State* L, int idx, glm::vec2 const& v);
 void assign(lua_State* L, int idx, glm::vec3 const& v);
@@ -388,6 +392,11 @@ typename std::enable_if_t<std::is_enum_v<T>, T> do_get(lua_State * L, int index,
 	}
 }
 
+Ref do_get(lua_State* L, int index, Overload<Ref>);
+RegistryEntry do_get(lua_State* L, int index, Overload<RegistryEntry>);
+PersistentRef do_get(lua_State* L, int index, Overload<PersistentRef>);
+PersistentRegistryEntry do_get(lua_State* L, int index, Overload<PersistentRegistryEntry>);
+
 template <class TValue>
 TValue checked_getfield(lua_State* L, char const* k, int index = -1)
 {
@@ -471,13 +480,13 @@ inline typename std::optional<T> do_get(lua_State* L, int index, Overload<std::o
 
 // Overload helper for fetching a parameter for a Lua -> C++ function call
 template <class T>
-inline T checked_get_param(lua_State* L, int i, Overload<T>)
+inline T get_param(lua_State* L, int i, Overload<T>)
 {
 	return get<T>(L, i);
 }
 
 template <class T>
-inline std::optional<T> checked_get_param(lua_State* L, int i, Overload<std::optional<T>>)
+inline std::optional<T> get_param(lua_State* L, int i, Overload<std::optional<T>>)
 {
 	if (lua_gettop(L) < i || lua_isnil(L, i)) {
 		return {};
@@ -749,32 +758,6 @@ int LuaCallWrapper(lua_State* L, R(*fun)(lua_State* L, Args... args))
 	{ \
 		return LuaCallWrapper(L, fun); \
 	}
-
-
-	class RegistryEntry
-	{
-	public:
-		RegistryEntry();
-		RegistryEntry(lua_State * L, int index);
-		~RegistryEntry();
-
-		RegistryEntry(RegistryEntry const &) = delete;
-		RegistryEntry(RegistryEntry &&);
-
-		RegistryEntry & operator = (RegistryEntry const &) = delete;
-		RegistryEntry & operator = (RegistryEntry &&);
-
-		explicit inline operator bool() const
-		{
-			return ref_ != -1;
-		}
-
-		void Push() const;
-
-	private:
-		lua_State * L_;
-		int ref_;
-	};
 
 	int CallWithTraceback(lua_State * L, int narg, int nres);
 

@@ -998,8 +998,8 @@ namespace bg3se::ecl::lua
 	}
 
 
-	ClientState::ClientState()
-		: State(false)
+	ClientState::ClientState(uint32_t generationId)
+		: State(generationId, false)
 	{}
 
 	ClientState::~ClientState()

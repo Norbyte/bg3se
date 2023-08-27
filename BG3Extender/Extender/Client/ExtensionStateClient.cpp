@@ -40,7 +40,7 @@ void ExtensionState::DoLuaReset()
 
 	context_ = nextContext_;
 	assert(context_ != ExtensionStateContext::Uninitialized);
-	Lua = std::make_unique<lua::ClientState>();
+	Lua = std::make_unique<lua::ClientState>(nextGenerationId_++);
 	Lua->Initialize();
 }
 

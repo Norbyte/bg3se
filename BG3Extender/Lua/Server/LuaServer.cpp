@@ -493,8 +493,8 @@ namespace bg3se::esv::lua
 	}
 
 
-	ServerState::ServerState(ExtensionState& state)
-		: State(true),
+	ServerState::ServerState(ExtensionState& state, uint32_t generationId)
+		: State(generationId, true),
 		osiris_(state),
 		functorHooks_(*this)
 	{}
@@ -652,7 +652,7 @@ namespace bg3se::esv
 		Lua.reset();
 
 		context_ = nextContext_;
-		Lua = std::make_unique<lua::ServerState>(*this);
+		Lua = std::make_unique<lua::ServerState>(*this, nextGenerationId_++);
 		LuaStatePin<ExtensionState, lua::ServerState> pin(*this);
 		pin->Initialize();
 		pin->StoryFunctionMappingsUpdated();

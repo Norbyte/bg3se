@@ -8,6 +8,7 @@
 #include <Lua/Shared/Proxies/LuaMapProxy.h>
 #include <Lua/Shared/Proxies/LuaEvent.h>
 #include <Lua/Shared/Proxies/LuaEntityProxy.h>
+#include <Lua/Shared/Proxies/LuaPropertyMapHelpers.h>
 
 #include <mutex>
 #include <unordered_set>
@@ -62,7 +63,7 @@ namespace bg3se::lua
 		uint32_t RestrictionFlags{ 0 };
 		std::unordered_set<int32_t> OverriddenLevelMaps;
 
-		State(bool isServer);
+		State(uint32_t generationId, bool isServer);
 		~State();
 
 		State(State const &) = delete;
@@ -75,6 +76,11 @@ namespace bg3se::lua
 		inline lua_State * GetState()
 		{
 			return L;
+		}
+
+		inline uint32_t GetGenerationId()
+		{
+			return generationId_;
 		}
 
 		inline LifetimeStack & GetStack()
@@ -163,6 +169,7 @@ namespace bg3se::lua
 	protected:
 		lua_State * L;
 		bool startupDone_{ false };
+		uint32_t generationId_;
 
 		LifetimePool lifetimePool_;
 		LifetimeStack lifetimeStack_;
@@ -196,7 +203,7 @@ namespace bg3se::lua
 	/*int NewDamageList(lua_State* L);
 	int GetSurfaceTemplate(lua_State* L);*/
 
-	struct DoConsoleCommandEventParams
+	struct DoConsoleCommandEvent : public EventBase
 	{
 		STDString Command;
 	};

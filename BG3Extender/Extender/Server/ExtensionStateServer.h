@@ -57,6 +57,7 @@ namespace bg3se::esv
 		std::unordered_set<FixedString> dynamicStats_;
 		std::unordered_set<FixedString> persistentStats_;
 		std::unordered_map<FixedString, STDString> cachedPersistentVars_;
+		uint32_t nextGenerationId_{ 1 };
 
 		void DoLuaReset() override;
 		void LuaStartup() override;

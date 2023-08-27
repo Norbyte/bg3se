@@ -462,7 +462,7 @@ void push(lua_State* L, glm::mat4 const& m)
 	set_raw(tab, m);
 }
 
-/*void push(lua_State* L, Ref const& v)
+void push(lua_State* L, Ref const& v)
 {
 	v.Push(L);
 }
@@ -470,18 +470,19 @@ void push(lua_State* L, glm::mat4 const& m)
 void push(lua_State* L, PersistentRef const& v)
 {
 	v.Push(L);
-}*/
+}
 
 void push(lua_State* L, RegistryEntry const& v)
 {
 	if (v) {
 		v.Push();
-	} else {
+	}
+	else {
 		lua_pushnil(L);
 	}
 }
 
-/*void push(lua_State* L, PersistentRegistryEntry const& v)
+void push(lua_State* L, PersistentRegistryEntry const& v)
 {
 	if (!v.TryPush(L)) {
 		lua_pushnil(L);
@@ -491,13 +492,13 @@ void push(lua_State* L, RegistryEntry const& v)
 Ref do_get(lua_State* L, int index, Overload<Ref>)
 {
 	return Ref(L, index);
-}*/
+}
 
 RegistryEntry do_get(lua_State* L, int index, Overload<RegistryEntry>)
 {
 	return RegistryEntry(L, index);
 }
-/*
+
 PersistentRef do_get(lua_State* L, int index, Overload<PersistentRef>)
 {
 	return PersistentRef(L, index);
@@ -507,7 +508,7 @@ PersistentRegistryEntry do_get(lua_State* L, int index, Overload<PersistentRegis
 {
 	return PersistentRegistryEntry(L, index);
 }
-*/
+
 void assign(lua_State* L, int idx, glm::vec2 const& v)
 {
 	auto tab = lua_get_array_n(L, idx, 2);
