@@ -6,7 +6,7 @@
 #include <Lua/Shared/Proxies/LuaArrayProxy.h>
 #include <Lua/Shared/Proxies/LuaSetProxy.h>
 #include <Lua/Shared/Proxies/LuaMapProxy.h>
-#include <Lua/Shared/LuaEvent.h>
+#include <Lua/Shared/Proxies/LuaEvent.h>
 #include <Lua/Shared/Proxies/LuaEntityProxy.h>
 
 #include <mutex>
@@ -143,29 +143,15 @@ namespace bg3se::lua
 			return CheckedCall(L, sizeof...(args), func);
 		}
 
-		template <class TEvent, class TReadWrite>
-		bool ThrowEvent(char const* eventName, TEvent& evt, bool canPreventAction, uint32_t restrictions, TReadWrite)
+		template <class TEvent>
+		EventResult ThrowEvent(char const* eventName, TEvent& evt, bool canPreventAction = false, uint32_t restrictions = 0)
 		{
-			auto stackSize = lua_gettop(L);
-
-			try {
-				StackCheck _(L, 0);
-				// FIXME - Restriction restriction(*this, restrictions);
-				LifetimeStackPin _p(lifetimeStack_);
-				PushInternalFunction(L, "_ThrowEvent");
-				EventObject::Make(L, _p.GetLifetime(), eventName, evt, canPreventAction, TReadWrite{});
-				return CheckedCall(L, 1, "_ThrowEvent");
-			} catch (Exception &) {
-				auto stackRemaining = lua_gettop(L) - stackSize;
-				if (stackRemaining > 0) {
-					LuaError("Failed to dispatch event '" << eventName << "': " << lua_tostring(L, -1));
-					lua_pop(L, stackRemaining);
-				} else {
-					LuaError("Internal error while dispatching event '" << eventName << "'");
-				}
-
-				return false;
-			}
+			static_assert(std::is_base_of_v<EventBase, TEvent>, "Event object must be a descendant of EventBase");
+			StackCheck _(L, 0);
+			LifetimeStackPin _p(GetStack());
+			PushInternalFunction(L, "_ThrowEvent");
+			MakeObjectRef(L, &evt, GetCurrentLifetime());
+			return DispatchEvent(evt, eventName, canPreventAction, restrictions);
 		}
 
 		std::optional<int> LoadScript(STDString const & script, STDString const & name = "", int globalsIdx = 0);
@@ -183,6 +169,7 @@ namespace bg3se::lua
 		LifetimeHandle globalLifetime_;
 
 		void OpenLibs();
+		EventResult DispatchEvent(EventBase& evt, char const* eventName, bool canPreventAction, uint32_t restrictions);
 	};
 
 	class Restriction
@@ -214,7 +201,7 @@ namespace bg3se::lua
 		STDString Command;
 	};
 
-	struct TickEventParams
+	struct TickEvent : public EventBase
 	{
 		GameTime Time;
 	};

@@ -432,6 +432,15 @@
     <ClInclude Include="Lua\Server\LuaOsirisBinding.h">
       <Filter>Lua\Server</Filter>
     </ClInclude>
+    </ClInclude>
+    <ClInclude Include="Lua\Shared\Proxies\LuaEvent.h">
+      <Filter>Lua\Shared\Proxies</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefinitions\Base\BaseTypeInformation.h">
+      <Filter>GameDefinitions\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Lua\Shared\LuaTraits.h">
+      <Filter>Lua\Shared</Filter>
     <ClInclude Include="GameDefinitions\GameState.h" />
     <ClInclude Include="GameDefinitions\CommonTypes.h" />
   </ItemGroup>

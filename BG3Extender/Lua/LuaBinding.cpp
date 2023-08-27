@@ -749,38 +749,38 @@ namespace bg3se::lua
 
 	void State::OnGameSessionLoading()
 	{
-		EmptyEventParams params;
-		ThrowEvent<EmptyEventParams>("SessionLoading", params, false, RestrictAll | ScopeSessionLoad, ReadOnlyEvent{});
+		EmptyEvent params;
+		ThrowEvent("SessionLoading", params, false, RestrictAll | ScopeSessionLoad);
 	}
 
 	void State::OnGameSessionLoaded()
 	{
-		EmptyEventParams params;
-		ThrowEvent<EmptyEventParams>("SessionLoaded", params, false, RestrictAll, ReadOnlyEvent{});
+		EmptyEvent params;
+		ThrowEvent("SessionLoaded", params, false, RestrictAll);
 	}
 
 	void State::OnModuleLoadStarted()
 	{
-		EmptyEventParams params;
-		ThrowEvent<EmptyEventParams>("ModuleLoadStarted", params, false, RestrictAll | ScopeModulePreLoad, ReadOnlyEvent{});
+		EmptyEvent params;
+		ThrowEvent("ModuleLoadStarted", params, false, RestrictAll | ScopeModulePreLoad);
 	}
 
 	void State::OnModuleLoading()
 	{
-		EmptyEventParams params;
-		ThrowEvent<EmptyEventParams>("ModuleLoading", params, false, RestrictAll | ScopeModuleLoad, ReadOnlyEvent{});
+		EmptyEvent params;
+		ThrowEvent("ModuleLoading", params, false, RestrictAll | ScopeModuleLoad);
 	}
 
 	void State::OnStatsLoaded()
 	{
-		EmptyEventParams params;
-		ThrowEvent<EmptyEventParams>("StatsLoaded", params, false, RestrictAll | ScopeModuleLoad, ReadOnlyEvent{});
+		EmptyEvent params;
+		ThrowEvent("StatsLoaded", params, false, RestrictAll | ScopeModuleLoad);
 	}
 
 	void State::OnModuleResume()
 	{
-		EmptyEventParams params;
-		ThrowEvent<EmptyEventParams>("ModuleResume", params, false, RestrictAll | ScopeModuleResume, ReadOnlyEvent{});
+		EmptyEvent params;
+		ThrowEvent("ModuleResume", params, false, RestrictAll | ScopeModuleResume);
 	}
 
 	void State::OnLevelLoading()
@@ -792,14 +792,14 @@ namespace bg3se::lua
 
 	void State::OnResetCompleted()
 	{
-		EmptyEventParams params;
-		ThrowEvent<EmptyEventParams>("ResetCompleted", params, false, 0, ReadOnlyEvent{});
+		EmptyEvent params;
+		ThrowEvent("ResetCompleted", params, false, 0);
 	}
 
 	void State::OnUpdate(GameTime const& time)
 	{
-		TickEventParams params{ .Time = time };
-		ThrowEvent<TickEventParams>("Tick", params, false, 0, ReadOnlyEvent{});
+		TickEvent params{ .Time = time };
+		ThrowEvent("Tick", params, false, 0);
 
 		lua_gc(L, LUA_GCSTEP, 10);
 		// FIXME - no variable manager yet!
@@ -809,8 +809,8 @@ namespace bg3se::lua
 
 	void State::OnStatsStructureLoaded()
 	{
-		EmptyEventParams params;
-		ThrowEvent<EmptyEventParams>("StatsStructureLoaded", params, false, 0, ReadOnlyEvent{});
+		EmptyEvent params;
+		ThrowEvent("StatsStructureLoaded", params, false, 0);
 	}
 
 	STDString State::GetBuiltinLibrary(int resourceId)
@@ -820,6 +820,38 @@ namespace bg3se::lua
 			return STDString(resource->c_str());
 		} else {
 			return STDString();
+		}
+	}
+
+	EventResult State::DispatchEvent(EventBase& evt, char const* eventName, bool canPreventAction, uint32_t restrictions)
+	{
+		auto stackSize = lua_gettop(L) - 2;
+
+		try {
+			Restriction restriction(*this, restrictions);
+			evt.Name = FixedString(eventName);
+			evt.CanPreventAction = canPreventAction;
+
+			if (!CheckedCall(L, 1, "_ThrowEvent")) {
+				return EventResult::Failed;
+			}
+
+			if (evt.ActionPrevented) {
+				return EventResult::ActionPrevented;
+			} else {
+				return EventResult::Successful;
+			}
+		} catch (Exception&) {
+			auto stackRemaining = lua_gettop(L) - stackSize;
+			if (stackRemaining > 0) {
+				LuaError("Failed to dispatch event '" << eventName << "': " << lua_tostring(L, -1));
+				lua_pop(L, stackRemaining);
+			}
+			else {
+				LuaError("Internal error while dispatching event '" << eventName << "'");
+			}
+
+			return EventResult::Failed;
 		}
 	}
 }

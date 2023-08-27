@@ -1,3 +1,5 @@
+#include <Lua/Shared/LuaModule.h>
+
 BEGIN_SE()
 
 TypeInformation const& TypeInformationRef::Get() const
@@ -159,16 +161,18 @@ void TypeInformationRepository::Initialize()
 	RegisterStaticType<Path>("Path", LuaTypeId::String);
 	RegisterStaticType<NetId>("NetId", LuaTypeId::Integer);
 	RegisterStaticType<UserId>("UserId", LuaTypeId::Integer);
+	// FIXME - revisit typing for handles later!
 	RegisterStaticType<ComponentHandle>("ComponentHandle", LuaTypeId::Integer);
 	RegisterStaticType<EntityHandle>("EntityHandle", LuaTypeId::Integer);
+	RegisterStaticType<ecs::EntityRef>("EntityRef", LuaTypeId::Integer);
 	RegisterStaticType<char const*>("CString", LuaTypeId::String);
 	RegisterStaticType<Guid>("Guid", LuaTypeId::String);
 	//RegisterStaticType<TemplateHandle>("TemplateHandle", LuaTypeId::Integer);
 	RegisterStaticType<lua::Ref>("Ref", LuaTypeId::Any);
 	RegisterStaticType<lua::RegistryEntry>("RegistryEntry", LuaTypeId::Any);
-	//RegisterStaticType<lua::PersistentRef>("PersistentRef", LuaTypeId::Any);
-	//RegisterStaticType<lua::PersistentRegistryEntry>("PersistentRegistryEntry", LuaTypeId::Any);
-	//RegisterStaticType<UserReturn>("UserReturn", LuaTypeId::Any);
+	RegisterStaticType<lua::PersistentRef>("PersistentRef", LuaTypeId::Any);
+	RegisterStaticType<lua::PersistentRegistryEntry>("PersistentRegistryEntry", LuaTypeId::Any);
+	RegisterStaticType<UserReturn>("UserReturn", LuaTypeId::Any);
 
 	auto& ivec2 = RegisterStaticType<glm::ivec2>("ivec2", LuaTypeId::Array);
 	ivec2.ElementType = GetStaticTypeInfo(Overload<int32_t>{});
@@ -197,9 +201,9 @@ void TypeInformationRepository::Initialize()
 	auto& typeRef = RegisterStaticType<TypeInformationRef>("TypeInformationRef", LuaTypeId::Object);
 	typeRef.ParentType = GetStaticTypeInfo(Overload<TypeInformation>{});
 
-	//RegisterObjectProxyTypeInformation();
+	RegisterObjectProxyTypeInformation();
 
-	//lua::gModuleRegistry.RegisterTypeInformation();
+	lua::gModuleRegistry.RegisterTypeInformation();
 
 	for (auto& type : types_) {
 		type.Value->DeferredInitialize();

@@ -1,17 +1,6 @@
 local _I = Ext._Internal
 
-_I._PublishedEvents = {
-	"ModuleLoadStarted",
-	"ModuleLoading",
-	"StatsLoaded",
-	"ModuleResume",
-	"SessionLoading",
-	"SessionLoaded",
-	"ResetCompleted",
-	"GameStateChanged",
-	"Tick",
-	"DoConsoleCommand"
-}
+_I._PublishedEvents = {}
 
 Ext.IsClient = function ()
 	return true

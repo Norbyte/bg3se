@@ -1065,7 +1065,10 @@ namespace bg3se::ecl::lua
 
 	void ClientState::OnGameStateChanged(GameState fromState, GameState toState)
 	{
-		GameStateChangeEventParams params{ fromState, toState };
-		ThrowEvent("GameStateChanged", params, false, 0, ReadOnlyEvent{});
+		GameStateChangeEvent params{ 
+			.FromState = fromState, 
+			.ToState = toState
+		};
+		ThrowEvent("GameStateChanged", params, false, 0);
 	}
 }

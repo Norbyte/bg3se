@@ -20,7 +20,7 @@ namespace bg3se::esv::lua
 	LifetimeHandle GetServerLifetime();
 	LifetimePool& GetServerLifetimePool();
 
-	struct GameStateChangeEventParams
+	struct GameStateChangeEvent : public EventBase
 	{
 		esv::GameState FromState;
 		esv::GameState ToState;
@@ -132,7 +132,7 @@ namespace bg3se::esv::lua
 		ObjectSet<eoc::ItemDefinition> definition_;
 	};*/
 
-	struct DealDamageEvent
+	struct DealDamageEvent : public EventBase
 	{
 		// TODO - only available after hit! 
 		// NewHit* Result;
@@ -150,13 +150,13 @@ namespace bg3se::esv::lua
 		HitWith HitWith;
 	};
 
-	struct ExecuteFunctorEventParams
+	struct ExecuteFunctorEvent : public EventBase
 	{
 		bg3se::stats::Functors* Functor;
 		bg3se::stats::BaseFunctorExecParams* Params;
 	};
 
-	struct AfterExecuteFunctorEventParams
+	struct AfterExecuteFunctorEvent : public EventBase
 	{
 		bg3se::stats::Functors* Functor;
 		bg3se::stats::BaseFunctorExecParams* Params;
@@ -179,15 +179,22 @@ namespace bg3se::esv::lua
 		template <class TParams>
 		void LuaTriggerFunctorPreExecEvent(bg3se::stats::Functors* self, TParams* params)
 		{
-			ExecuteFunctorEventParams evt{ self, params };
-			state_.ThrowEvent("ExecuteFunctor", evt, false, 0, WriteableEvent{});
+			ExecuteFunctorEvent evt{ 
+				.Functor = self, 
+				.Params = params 
+			};
+			state_.ThrowEvent("ExecuteFunctor", evt, false, 0);
 		}
 
 		template <class TParams>
 		void LuaTriggerFunctorPostExecEvent(bg3se::stats::Functors* self, TParams* params, NewHit* hit)
 		{
-			AfterExecuteFunctorEventParams evt{ self, params, hit };
-			state_.ThrowEvent("AfterExecuteFunctor", evt, false, 0, WriteableEvent{});
+			AfterExecuteFunctorEvent evt{ 
+				.Functor = self, 
+				.Params = params, 
+				.Hit = hit
+			};
+			state_.ThrowEvent("AfterExecuteFunctor", evt, false, 0);
 		}
 
 		template <class TParams, class TNext>

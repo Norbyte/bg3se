@@ -6,7 +6,9 @@ function SubscribableEvent:New(name)
 	local o = {
 		First = nil,
 		NextIndex = 1,
-		Name = name
+		Name = name,
+		PendingDeletions = {},
+		EnterCount = 0
 	}
 	setmetatable(o, self)
     self.__index = self
@@ -22,6 +24,7 @@ function SubscribableEvent:Subscribe(handler, opts)
 		Handler = handler,
 		Index = index,
 		Priority = opts.Priority or 100,
+		Once = opts.Once or false,
 		Options = opts
 	}
 
@@ -74,35 +77,71 @@ function SubscribableEvent:RemoveNode(node)
 		node.Next.Prev = node.Prev
 	end
 
+	if self.First == node then
+		self.First = node.Next
+	end
+
 	node.Prev = nil
 	node.Next = nil
 end
 
 function SubscribableEvent:Unsubscribe(handlerIndex)
+	if self.EnterCount == 0 then
+		self:DoUnsubscribe(handlerIndex)
+	else
+		table.insert(self.PendingDeletions, handlerIndex)
+	end
+end
+
+function SubscribableEvent:DoUnsubscribe(handlerIndex)
 	local cur = self.First
 	while cur ~= nil do
 		if cur.Index == handlerIndex then
 			self:RemoveNode(cur)
-			return true
+			return
 		end
 
 		cur = cur.Next
 	end
 	
-	Ext.Utils.PrintWarning("Attempted to remove subscriber ID " .. handlerIndex .. " for event '" .. self.Name .. "', but no such subscriber exists (maybe it was removed already?)")
-	return false
+	Ext.PrintWarning("Attempted to remove subscriber ID " .. handlerIndex .. " for event '" .. self.Name .. "', but no such subscriber exists (maybe it was removed already?)")
+end
+
+function SubscribableEvent:ProcessUnsubscriptions()
+	if self.EnterCount == 0 and #self.PendingDeletions > 0 then
+		for i,handlerIndex in pairs(self.PendingDeletions) do
+			self:DoUnsubscribe(handlerIndex)
+		end
+
+		self.PendingDeletions = {}
+	end
 end
 
 function SubscribableEvent:Throw(event)
+	self.EnterCount = self.EnterCount + 1
+
 	local cur = self.First
 	while cur ~= nil do
+		if event.Stopped then
+			break
+		end
+
         local ok, result = xpcall(cur.Handler, debug.traceback, event)
         if not ok then
             Ext.Utils.PrintError("Error while dispatching event " .. self.Name .. ": ", result)
         end
 
-		cur = cur.Next
+		if cur.Once then
+			local last = cur
+			cur = last.Next
+			self:RemoveNode(last)
+		else
+			cur = cur.Next
+		end
 	end
+
+	self.EnterCount = self.EnterCount - 1
+	self:ProcessUnsubscriptions()
 end
 
 local MissingSubscribableEvent = {}
@@ -147,4 +186,75 @@ end
 
 _I._RegisterEngineEvent = function (event)
 	_I._Events[event] = SubscribableEvent:New(event)
+end
+
+
+_I._RegisterEvents = function ()
+	_I._RegisterEngineEvent("NetMessageReceived")
+	
+	for i,ev in pairs(_I._PublishedSharedEvents) do
+		_I._RegisterEngineEvent(ev)
+	end
+	
+	for i,ev in pairs(_I._PublishedEvents) do
+		_I._RegisterEngineEvent(ev)
+	end
+
+	-- Support for Ext.RegisterConsoleCommand()
+	Ext.Events.DoConsoleCommand:Subscribe(function (e)
+		_I.DoConsoleCommand(e.Command)
+	end)
+
+	-- Support for Ext.RegisterNetListener()
+	Ext.Events.NetMessageReceived:Subscribe(function (e)
+		_I._NetMessageReceived(e.Channel, e.Payload, e.UserID)
+	end)
+end
+
+_I._NetListeners = {}
+
+Ext.RegisterNetListener = function (channel, fn)
+	if _I._NetListeners[channel] == nil then
+		_I._NetListeners[channel] = {}
+	end
+
+	table.insert(_I._NetListeners[channel], fn)
+end
+
+_I._NetMessageReceived = function (channel, payload, userId)
+	if _I._NetListeners[channel] ~= nil then
+		for i,callback in pairs(_I._NetListeners[channel]) do
+			local ok, err = xpcall(callback, debug.traceback, channel, payload, userId)
+			if not ok then
+				Ext.Utils.PrintError("Error during NetMessageReceived: ", err)
+			end
+		end
+	end
+end
+
+_I._ConsoleCommandListeners = {}
+
+_I.DoConsoleCommand = function (cmd)
+	local params = {}
+	for param in string.gmatch(cmd, "%S+") do
+		table.insert(params, param)
+	end
+
+	local listeners = _I._ConsoleCommandListeners[params[1]]
+	if listeners ~= nil then
+		for i,callback in pairs(listeners) do
+			local status, result = xpcall(callback, debug.traceback, table.unpack(params))
+			if not status then
+				Ext.Utils.PrintError("Error during console command callback: ", result)
+			end
+		end
+	end
+end
+
+Ext.RegisterConsoleCommand = function (cmd, fn)
+	if _I._ConsoleCommandListeners[cmd] == nil then
+		_I._ConsoleCommandListeners[cmd] = {}
+	end
+
+	table.insert(_I._ConsoleCommandListeners[cmd], fn)
 end

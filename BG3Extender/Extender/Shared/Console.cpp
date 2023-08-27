@@ -202,9 +202,9 @@ void DebugConsole::ExecLuaCommand(std::string const& cmd)
 		}
 
 		if (cmd[0] == '!') {
-			lua::DoConsoleCommandEventParams params;
+			lua::DoConsoleCommandEvent params;
 			params.Command = cmd.substr(1);
-			pin->ThrowEvent<lua::DoConsoleCommandEventParams>("DoConsoleCommand", params, false, 0, lua::ReadOnlyEvent{});
+			pin->ThrowEvent("DoConsoleCommand", params, false);
 		} else {
 			lua::StaticLifetimeStackPin _(pin->GetStack(), pin->GetGlobalLifetime());
 			auto L = pin->GetState();

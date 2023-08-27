@@ -48,7 +48,7 @@ NewHit* FunctorEventHooks::OnDealDamage(bg3se::stats::DealDamageFunctor::ApplyDa
 	evt.Hit = hit;
 	evt.DamageSums = damageSums;
 	evt.HitWith = hitWith;
-	state_.ThrowEvent("DealDamage", evt, false, 0, ReadOnlyEvent{});
+	state_.ThrowEvent("DealDamage", evt, false, 0);
 
 	auto ret = next(result, functor, casterHandle, targetHandle, position, isFromItem, spellId, storyActionId, originator, classResourceMgr, hit, damageSums, unknownThothParam, hitWith);
 	return ret;

@@ -8,20 +8,21 @@ _I._LoadedFiles = {}
 _I._EVAL_ROOTS_ = {}
 Mods = {}
 
+_I._PublishedSharedEvents = {
+	"ModuleLoadStarted",
+	"ModuleLoading",
+	"StatsLoaded",
+	"ModuleResume",
+	"SessionLoading",
+	"SessionLoaded",
+	"GameStateChanged",
+	"ResetCompleted",
+	"DoConsoleCommand",
+	"Tick"
+}
+
 _I._DoStartup = function ()
-	for i,ev in pairs(_I._PublishedEvents) do
-		_I._RegisterEngineEvent(ev)
-	end
-end
-
-_I._NetListeners = {}
-
-_I.RegisterNetListener = function (channel, fn)
-	if _I._NetListeners[channel] == nil then
-		_I._NetListeners[channel] = {}
-	end
-
-	table.insert(_I._NetListeners[channel], fn)
+	_I._RegisterEvents()
 end
 
 _I._NetMessageReceived = function (channel, payload, userId)
@@ -97,33 +98,6 @@ _I._LoadBootstrap = function (path, modTable)
 	
 	env._G = env
 	Ext.Utils.Include(ModuleUUID, path, env)
-end
-
-_I._ConsoleCommandListeners = {}
-
-_I.DoConsoleCommand = function (cmd)
-	local params = {}
-	for param in string.gmatch(cmd, "%S+") do
-		table.insert(params, param)
-	end
-
-	local listeners = _I._ConsoleCommandListeners[params[1]]
-	if listeners ~= nil then
-		for i,callback in pairs(listeners) do
-			local status, result = xpcall(callback, debug.traceback, table.unpack(params))
-			if not status then
-				Ext.Utils.PrintError("Error during console command callback: ", result)
-			end
-		end
-	end
-end
-
-Ext.RegisterConsoleCommand = function (cmd, fn)
-	if _I._ConsoleCommandListeners[cmd] == nil then
-		_I._ConsoleCommandListeners[cmd] = {}
-	end
-
-	table.insert(_I._ConsoleCommandListeners[cmd], fn)
 end
 
 -- Used by the Lua debug adapter to store intermediate evaluation results.

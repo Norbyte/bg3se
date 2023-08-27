@@ -684,4 +684,9 @@ EnumUnderlyingType get_bitfield_value(lua_State* L, int index, BitmaskInfoStore<
 	return flags;
 }
 
+uint32_t get_generation_id(lua_State* L)
+{
+	return State::FromLua(L)->GetGenerationId();
+}
+
 END_NS()
