@@ -318,6 +318,18 @@ void ScriptExtender::AddPathOverride(STDString const & path, STDString const & o
 	pathOverrides_.insert(std::make_pair(absolutePath, absoluteOverriddenPath));
 }
 
+std::optional<STDString> ScriptExtender::GetPathOverride(STDString const & path)
+{
+	auto absolutePath = GetStaticSymbols().ToPath(path, PathRootType::Data);
+
+	std::unique_lock lock(pathOverrideMutex_);
+	auto it = pathOverrides_.find(absolutePath);
+	if (it != pathOverrides_.end()) {
+		return it->second;
+	} else {
+		return {};
+	}
+}
 
 FileReader * ScriptExtender::OnFileReaderCreate(FileReader::CtorProc* next, FileReader * self, Path const& path, unsigned int type, unsigned int unknown)
 {

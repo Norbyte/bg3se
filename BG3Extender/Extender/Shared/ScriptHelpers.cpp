@@ -5,7 +5,7 @@
 
 namespace bg3se::script {
 
-#define SAFE_PATH_CHARS "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_./"
+#define SAFE_PATH_CHARS "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_./ "
 
 bool IsSafeRelativePath(STDString const& path)
 {
@@ -37,8 +37,7 @@ std::optional<STDWString> GetPathForExternalIo(std::string_view scriptPath, Path
 
 std::optional<STDString> LoadExternalFile(std::string_view path, PathRootType root)
 {
-	throw std::runtime_error("FIXME!");
-	/*if (!IsSafeRelativePath(STDString(path))) {
+	if (!IsSafeRelativePath(STDString(path))) {
 		return {};
 	}
 
@@ -55,14 +54,14 @@ std::optional<STDString> LoadExternalFile(std::string_view path, PathRootType ro
 		if (f.good()) {
 			STDString body;
 			f.seekg(0, std::ios::end);
-			body.resize(f.tellg());
+			body.resize((unsigned)f.tellg());
 			f.seekg(0, std::ios::beg);
 			f.read(body.data(), body.size());
 			return body;
 		}
 	}
 
-	return {};*/
+	return {};
 }
 
 bool SaveExternalFile(std::string_view path, PathRootType root, std::string_view contents)
@@ -71,7 +70,7 @@ bool SaveExternalFile(std::string_view path, PathRootType root, std::string_view
 	if (!absolutePath) return false;
 
 	auto dirEnd = absolutePath->find_last_of('/');
-	if (dirEnd == STDWString::npos) return false;
+	if (dirEnd == std::string::npos) return false;
 
 	auto storageDir = absolutePath->substr(0, dirEnd);
 	BOOL created = CreateDirectoryW(storageDir.c_str(), NULL);

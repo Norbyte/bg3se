@@ -702,7 +702,7 @@ Functor* RPGStats::ConstructFunctor(FunctorId action)
 	return functor;
 }
 
-Object * StatFindObject(char const * name)
+Object * StatFindObject(char const * name, bool warnOnError)
 {
 	auto stats = GetStaticSymbols().GetStats();
 	if (stats == nullptr) {
@@ -712,7 +712,9 @@ Object * StatFindObject(char const * name)
 
 	auto object = stats->Objects.Find(name);
 	if (object == nullptr) {
-		OsiError("Stat object '" << name << "' does not exist");
+		if (warnOnError) {
+			OsiError("Stat object '" << name << "' does not exist");
+		}
 		return nullptr;
 	}
 

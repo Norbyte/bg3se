@@ -32,11 +32,11 @@ struct RPGEnumeration : public ProtectedGameObject<RPGEnumeration>
 	RPGEnumerationType GetPropertyType() const;
 };
 
-struct Modifier : public ProtectedGameObject<Modifier>
+struct Modifier : public Noncopyable<Modifier>
 {
-	int32_t EnumerationIndex;
-	int32_t LevelMapIndex;
-	int32_t UnknownZero;
+	int32_t EnumerationIndex{ -1 };
+	int32_t LevelMapIndex{ -1 };
+	int32_t UnknownZero{ 0 };
 	FixedString Name;
 };
 
@@ -442,7 +442,7 @@ struct RPGStats : public ProtectedGameObject<RPGStats>
 	FixedString EnumIndexToLabel(FixedString const& enumName, int index);
 };
 
-Object * StatFindObject(char const * name);
+Object * StatFindObject(char const * name, bool warnOnError = true);
 Object * StatFindObject(int index);
 
 END_NS()
