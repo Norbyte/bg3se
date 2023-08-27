@@ -56,6 +56,152 @@ namespace bg3se::lua
 
 
 	template <class T>
+	class VectorProxyByRefImpl : public ArrayProxyImplBase
+	{
+	public:
+		static_assert(!std::is_pointer_v<T>, "ArrayProxyByRefImpl template parameter should not be a pointer type!");
+
+		VectorProxyByRefImpl(LifetimeHandle const& lifetime, Array<T> * obj)
+			: object_(obj), lifetime_(lifetime)
+		{}
+		
+		~VectorProxyByRefImpl() override
+		{}
+
+		T* Get() const
+		{
+			return object_;
+		}
+
+		void* GetRaw() override
+		{
+			return object_;
+		}
+
+		char const* GetTypeName() const override
+		{
+			return GetTypeInfo<T>().TypeName.GetString();
+		}
+
+		bool GetElement(lua_State* L, unsigned arrayIndex) override
+		{
+			if (arrayIndex > 0 && arrayIndex <= (int)object_->size()) {
+				MakeObjectRef(L, &(*object_)[arrayIndex - 1], lifetime_);
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		bool SetElement(lua_State* L, unsigned arrayIndex, int luaIndex) override
+		{
+			// Appending/swapping elements to by-ref arrays not supported for now
+			return false;
+		}
+
+		unsigned Length() override
+		{
+			return object_->size();
+		}
+
+		int Next(lua_State* L, int key) override
+		{
+			if (key >= 0 && key < (int)object_->size()) {
+				push(L, ++key);
+				MakeObjectRef(L, &(*object_)[key - 1], lifetime_);
+				return 2;
+			} else {
+				return 0;
+			}
+		}
+
+	private:
+		std::vector<T>* object_;
+		LifetimeHandle lifetime_;
+	};
+
+
+	template <class T>
+	class VectorProxyByValImpl : public ArrayProxyImplBase
+	{
+	public:
+		static_assert(!std::is_pointer_v<T>, "VectorProxyByValImpl template parameter should not be a pointer type!");
+
+		VectorProxyByValImpl(LifetimeHandle const& lifetime, Array<T> * obj)
+			: object_(obj), lifetime_(lifetime)
+		{}
+		
+		~VectorProxyByValImpl() override
+		{}
+
+		T* Get() const
+		{
+			return object_;
+		}
+
+		void* GetRaw() override
+		{
+			return object_;
+		}
+
+		char const* GetTypeName() const override
+		{
+			return GetTypeInfo<T>().TypeName.GetString();
+		}
+
+		bool GetElement(lua_State* L, unsigned arrayIndex) override
+		{
+			if (arrayIndex > 0 && arrayIndex <= object_->size()) {
+				LuaWrite(L, (*object_)[arrayIndex - 1]);
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		bool SetElement(lua_State* L, unsigned arrayIndex, int luaIndex) override
+		{
+			if (arrayIndex > 0 && arrayIndex <= object_->size()) {
+				lua_pushvalue(L, luaIndex);
+				LuaRead(L, (*object_)[arrayIndex - 1]);
+				lua_pop(L, 1);
+				return true;
+			} else if (arrayIndex == object_->size() + 1) {
+				T val;
+				lua_pushvalue(L, luaIndex);
+				LuaRead(L, val);
+				lua_pop(L, 1);
+
+				object_->push_back(val);
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		unsigned Length() override
+		{
+			return object_->size();
+		}
+
+		int Next(lua_State* L, int key) override
+		{
+			if (key >= 0 && key < (int)object_->size()) {
+				push(L, ++key);
+				LuaWrite(L, (*object_)[key - 1]);
+				return 2;
+			} else {
+				return 0;
+			}
+		}
+
+	private:
+		std::vector<T>* object_;
+		LifetimeHandle lifetime_;
+	};
+
+
+	template <class T>
 	class ArrayProxyByRefImpl : public ArrayProxyImplBase
 	{
 	public:
@@ -517,6 +663,12 @@ namespace bg3se::lua
 		}
 
 		template <class T>
+		inline static VectorProxyByRefImpl<T>* MakeByRef(lua_State* L, std::vector<T>* object, LifetimeHandle const& lifetime)
+		{
+			return MakeImplByRef<VectorProxyByRefImpl<T>>(L, lifetime, object);
+		}
+
+		template <class T>
 		inline static ArrayProxyByValImpl<T>* MakeByVal(lua_State* L, Array<T>* object, LifetimeHandle const& lifetime)
 		{
 			return MakeImplByRef<ArrayProxyByValImpl<T>>(L, lifetime, object);
@@ -532,6 +684,12 @@ namespace bg3se::lua
 		inline static StdArrayProxyByValImpl<T, Size>* MakeByVal(lua_State* L, std::array<T, Size>* object, LifetimeHandle const& lifetime)
 		{
 			return MakeImplByRef<StdArrayProxyByValImpl<T, Size>>(L, lifetime, object);
+		}
+
+		template <class T>
+		inline static VectorProxyByValImpl<T>* MakeByVal(lua_State* L, std::vector<T>* object, LifetimeHandle const& lifetime)
+		{
+			return MakeImplByRef<VectorProxyByValImpl<T>>(L, lifetime, object);
 		}
 
 		inline ArrayProxyImplBase* GetImpl()
@@ -601,6 +759,9 @@ namespace bg3se::lua
 
 	template <class T, size_t Size>
 	struct IsArrayLike<std::array<T, Size>> { static constexpr bool Value = true; using TElement = T; };
+
+	template <class T>
+	struct IsArrayLike<std::vector<T>> { static constexpr bool Value = true; using TElement = T; };
 
 	template <class T>
 	inline void push_array_ref_proxy(lua_State* L, LifetimeHandle const& lifetime, T* v)
