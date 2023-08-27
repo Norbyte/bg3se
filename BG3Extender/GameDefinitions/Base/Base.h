@@ -6,4 +6,5 @@
 #include <GameDefinitions/Base/BaseArray.h>
 #include <GameDefinitions/Base/BaseMap.h>
 #include <GameDefinitions/Base/BaseTypes.h>
+#include <GameDefinitions/Base/BaseTypeInformation.h>
 #include <GameDefinitions/Base/ForwardDeclarations.h>

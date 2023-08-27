@@ -6,6 +6,7 @@
 #include <GameDefinitions/Base/BaseMemory.inl>
 #include <GameDefinitions/Base/BaseString.inl>
 #include <GameDefinitions/Base/BaseMap.inl>
+#include <GameDefinitions/Base/TypeInformation.inl>
 
 BEGIN_SE()
 

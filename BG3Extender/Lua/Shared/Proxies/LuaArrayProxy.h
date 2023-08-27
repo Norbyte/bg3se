@@ -79,13 +79,13 @@ namespace bg3se::lua
 
 		char const* GetTypeName() const override
 		{
-			return TypeInfo<T>::TypeName;
+			return GetTypeInfo<T>().TypeName.GetString();
 		}
 
 		bool GetElement(lua_State* L, unsigned arrayIndex) override
 		{
 			if (arrayIndex > 0 && arrayIndex <= (int)object_->Size()) {
-				MakeObjectRef(L, lifetime_, &(*object_)[arrayIndex - 1]);
+				MakeObjectRef(L, &(*object_)[arrayIndex - 1], lifetime_);
 				return true;
 			} else {
 				return false;
@@ -107,7 +107,7 @@ namespace bg3se::lua
 		{
 			if (key >= 0 && key < (int)object_->Size()) {
 				push(L, ++key);
-				MakeObjectRef(L, lifetime_, &(*object_)[key - 1]);
+				MakeObjectRef(L, &(*object_)[key - 1], lifetime_);
 				return 2;
 			} else {
 				return 0;
@@ -145,7 +145,7 @@ namespace bg3se::lua
 
 		char const* GetTypeName() const override
 		{
-			return TypeInfo<T>::TypeName;
+			return GetTypeInfo<T>().TypeName.GetString();
 		}
 
 		bool GetElement(lua_State* L, unsigned arrayIndex) override
@@ -225,13 +225,13 @@ namespace bg3se::lua
 
 		char const* GetTypeName() const override
 		{
-			return TypeInfo<T>::TypeName;
+			return GetTypeInfo<T>().TypeName.GetString();
 		}
 
 		bool GetElement(lua_State* L, unsigned arrayIndex) override
 		{
 			if (arrayIndex > 0 && arrayIndex <= object_->Size) {
-				MakeObjectRef(L, lifetime_, &(*object_)[arrayIndex - 1]);
+				MakeObjectRef(L, &(*object_)[arrayIndex - 1], lifetime_);
 				return true;
 			} else {
 				return false;
@@ -253,7 +253,7 @@ namespace bg3se::lua
 		{
 			if (key >= 0 && key < (int)object_->Size) {
 				push(L, ++key);
-				MakeObjectRef(L, lifetime_, &(*object_)[key - 1]);
+				MakeObjectRef(L, &(*object_)[key - 1], lifetime_);
 				return 2;
 			} else {
 				return 0;
@@ -291,7 +291,7 @@ namespace bg3se::lua
 
 		char const* GetTypeName() const override
 		{
-			return TypeInfo<T>::TypeName;
+			return GetTypeInfo<T>().TypeName.GetString();
 		}
 
 		bool GetElement(lua_State* L, unsigned arrayIndex) override
@@ -371,13 +371,13 @@ namespace bg3se::lua
 
 		char const* GetTypeName() const override
 		{
-			return TypeInfo<T>::TypeName;
+			return GetTypeInfo<T>().TypeName.GetString();
 		}
 
 		bool GetElement(lua_State* L, unsigned arrayIndex) override
 		{
 			if (arrayIndex > 0 && arrayIndex <= Size) {
-				MakeObjectRef(L, lifetime_, &(*object_)[arrayIndex - 1]);
+				MakeObjectRef(L, &(*object_)[arrayIndex - 1], lifetime_);
 				return true;
 			} else {
 				return false;
@@ -399,7 +399,7 @@ namespace bg3se::lua
 		{
 			if (key >= 0 && key < Size) {
 				push(L, ++key);
-				MakeObjectRef(L, lifetime_, &(*object_)[key - 1]);
+				MakeObjectRef(L, &(*object_)[key - 1], lifetime_);
 				return 2;
 			} else {
 				return 0;
@@ -437,7 +437,7 @@ namespace bg3se::lua
 
 		char const* GetTypeName() const override
 		{
-			return TypeInfo<T>::TypeName;
+			return GetTypeInfo<T>().TypeName.GetString();
 		}
 
 		bool GetElement(lua_State* L, unsigned arrayIndex) override
@@ -550,7 +550,7 @@ namespace bg3se::lua
 				return nullptr;
 			}
 
-			if (strcmp(TypeInfo<T>::TypeName, GetImpl()->GetTypeName()) == 0) {
+			if (strcmp(GetTypeInfo<T>().TypeName.GetString(), GetImpl()->GetTypeName()) == 0) {
 				return reinterpret_cast<T*>(GetImpl()->GetRaw(L));
 			} else {
 				return nullptr;
@@ -611,7 +611,7 @@ namespace bg3se::lua
 	inline T* checked_get_array_proxy(lua_State* L, int index)
 	{
 		auto proxy = Userdata<ArrayProxy>::CheckUserData(L, index);
-		auto const& typeName = TypeInfo<T>::TypeName;
+		auto const& typeName = GetTypeInfo<T>().TypeName.GetString();
 		if (strcmp(proxy->GetImpl()->GetTypeName(), typeName) == 0) {
 			auto obj = proxy->Get<T>();
 			if (obj == nullptr) {

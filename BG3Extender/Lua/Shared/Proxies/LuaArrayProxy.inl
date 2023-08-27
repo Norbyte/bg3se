@@ -1,36 +1,5 @@
 #include <Lua/Shared/Proxies/LuaArrayProxy.h>
 
-namespace bg3se
-{
-#define BY_VAL_ARRAY_HELPERS(ty) char const* const TypeInfo<ty>::TypeName = #ty;
-
-	BY_VAL_ARRAY_HELPERS(uint8_t);
-	BY_VAL_ARRAY_HELPERS(int16_t);
-	BY_VAL_ARRAY_HELPERS(uint16_t);
-	BY_VAL_ARRAY_HELPERS(int32_t);
-	BY_VAL_ARRAY_HELPERS(uint32_t);
-	BY_VAL_ARRAY_HELPERS(int64_t);
-	BY_VAL_ARRAY_HELPERS(uint64_t);
-	BY_VAL_ARRAY_HELPERS(float);
-	BY_VAL_ARRAY_HELPERS(double);
-	BY_VAL_ARRAY_HELPERS(bool);
-	BY_VAL_ARRAY_HELPERS(ComponentHandle);
-	BY_VAL_ARRAY_HELPERS(EntityHandle);
-	BY_VAL_ARRAY_HELPERS(ecs::EntityRef);
-	BY_VAL_ARRAY_HELPERS(FixedString);
-	BY_VAL_ARRAY_HELPERS(STDString);
-	BY_VAL_ARRAY_HELPERS(STDWString);
-	BY_VAL_ARRAY_HELPERS(Path);
-	BY_VAL_ARRAY_HELPERS(Guid);
-	BY_VAL_ARRAY_HELPERS(NetId);
-	BY_VAL_ARRAY_HELPERS(UserId);
-	BY_VAL_ARRAY_HELPERS(glm::ivec2);
-	BY_VAL_ARRAY_HELPERS(glm::vec2);
-	BY_VAL_ARRAY_HELPERS(glm::vec3);
-	BY_VAL_ARRAY_HELPERS(glm::vec4);
-	BY_VAL_ARRAY_HELPERS(glm::mat3);
-}
-
 namespace bg3se::lua
 {
 	char const* const ArrayProxy::MetatableName = "bg3se::Array";

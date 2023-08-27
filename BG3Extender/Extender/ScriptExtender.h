@@ -12,6 +12,7 @@
 #include <Lua/Debugger/LuaDebugMessages.h>
 #endif
 #include <Lua/Shared/LuaBundle.h>
+#include <Lua/Shared/Proxies/LuaCppClass.h>
 #include <GameHooks/OsirisWrappers.h>
 #include <GameHooks/DataLibraries.h>
 #include <GameHooks/EngineHooks.h>
@@ -99,6 +100,11 @@ public:
 		return luaBuiltinBundle_;
 	}
 
+	inline lua::CppPropertyMapManager& GetPropertyMapManager()
+	{
+		return propertyMapManager_;
+	}
+
 	void ClearPathOverrides();
 	void AddPathOverride(STDString const & path, STDString const & overriddenPath);
 	std::optional<STDString> GetPathOverride(STDString const& path);
@@ -123,6 +129,7 @@ private:
 	SavegameSerializer savegameSerializer_;
 	stats::StatLoadOrderHelper statLoadOrderHelper_;
 	lua::LuaBundle luaBuiltinBundle_;
+	lua::CppPropertyMapManager propertyMapManager_;
 
 	ExtenderConfig config_;
 	bool extensionsEnabled_{ false };
