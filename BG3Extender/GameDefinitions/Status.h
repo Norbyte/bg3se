@@ -111,10 +111,10 @@ namespace bg3se
 			ComponentHandle UnknownHandle;
 			EntityHandle OwnerHandle;
 			ObjectSet<EntityHandle> StatusOwner;
-			EntityWorldHandle StatusSource;
+			ecs::EntityRef StatusSource;
 			Guid StatusSourceUUID;
 			EntityHandle StatusSourceEntityHandle;
-			EntityWorldHandle StatusSource_M;
+			ecs::EntityRef StatusSource_M;
 			EntityHandle CleansedByHandle_M;
 			Guid field_110;
 			int Conditions;
@@ -205,7 +205,7 @@ namespace bg3se
 
 		struct StatusDying : public Status
 		{
-			EntityWorldHandle Source;
+			ecs::EntityRef Source;
 			__int64 field_128;
 			ComponentHandle field_130;
 			Hit HitDescription;
@@ -321,8 +321,8 @@ namespace bg3se
 
 		struct StatusReaction : public Status
 		{
-			EntityWorldHandle Source;
-			EntityWorldHandle Target;
+			ecs::EntityRef Source;
+			ecs::EntityRef Target;
 			glm::vec3 TargetPosition;
 			ComponentHandle Partner;
 			bool ShowOverhead;

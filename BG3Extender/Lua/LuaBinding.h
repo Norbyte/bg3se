@@ -103,8 +103,8 @@ namespace bg3se::lua
 		virtual void Shutdown();
 		virtual bool IsClient() = 0;
 
-		virtual EntityWorld* GetEntityWorld() = 0;
-		virtual EntitySystemHelpersBase* GetEntitySystemHelpers() = 0;
+		virtual ecs::EntityWorld* GetEntityWorld() = 0;
+		virtual ecs::EntitySystemHelpersBase* GetEntitySystemHelpers() = 0;
 
 		void FinishStartup();
 		void LoadBootstrap(STDString const& path, STDString const& modTable);

@@ -125,7 +125,7 @@ namespace bg3se
 			}
 		}*/
 
-		EntityWorld* GetEntityWorld()
+		ecs::EntityWorld* GetEntityWorld()
 		{
 			auto server = GetEoCServer();
 			if (server == nullptr) {

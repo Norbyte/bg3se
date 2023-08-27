@@ -21,7 +21,7 @@ namespace bg3se
 
 	struct StaticSymbols : Noncopyable<StaticSymbols>
 	{
-		std::unordered_map<int32_t*, IndexSymbolInfo> IndexSymbolToNameMaps;
+		std::unordered_map<int32_t*, ecs::IndexSymbolInfo> IndexSymbolToNameMaps;
 		std::unordered_map<void const*, char const*> StaticStringRegistrantMaps;
 
 		struct EoCLibraryInfo
@@ -54,7 +54,7 @@ namespace bg3se
 		ecl::GameStateEventManager__ExecuteGameStateChangedEvent ecl__GameStateEventManager__ExecuteGameStateChangedEvent{ nullptr };
 		ecl::GameStateThreaded__GameStateWorker__DoWork ecl__GameStateThreaded__GameStateWorker__DoWork{ nullptr };
 		esv::GameStateThreaded__GameStateWorker__DoWork esv__GameStateThreaded__GameStateWorker__DoWork{ nullptr };
-		esv::GameStateMachine__Update ecl__GameStateMachine__Update{ nullptr };
+		ecl::GameStateMachine__Update ecl__GameStateMachine__Update{ nullptr };
 		esv::GameStateMachine__Update esv__GameStateMachine__Update{ nullptr };
 
 		/*esv::SurfaceActionFactory** esv__SurfaceActionFactory{nullptr};
@@ -186,7 +186,7 @@ namespace bg3se
 			}
 		}
 
-		inline EntityWorld* GetClientEntityWorld() const
+		inline ecs::EntityWorld* GetClientEntityWorld() const
 		{
 			if (ecl__EoCClient != nullptr
 				&& *ecl__EoCClient != nullptr
@@ -197,7 +197,7 @@ namespace bg3se
 			}
 		}
 
-		inline EntityWorld* GetServerEntityWorld() const
+		inline ecs::EntityWorld* GetServerEntityWorld() const
 		{
 			if (esv__EoCServer != nullptr
 				&& *esv__EoCServer != nullptr

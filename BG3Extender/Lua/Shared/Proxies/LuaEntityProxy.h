@@ -4,10 +4,6 @@
 #include <GameDefinitions/EntitySystem.h>
 #include <GameDefinitions/EntitySystemHelpers.h>
 
-BEGIN_SE()
-class EntitySystemHelpersBase;
-END_SE()
-
 namespace bg3se::lua
 {
 	class EntityProxy : public Userdata<EntityProxy>, public Indexable, public Stringifiable, public Pushable
@@ -15,7 +11,7 @@ namespace bg3se::lua
 	public:
 		static char const* const MetatableName;
 
-		EntityProxy(EntityHandle const& handle, EntitySystemHelpersBase* entitySystem);
+		EntityProxy(EntityHandle const& handle, ecs::EntitySystemHelpersBase* entitySystem);
 
 		template <class T>
 		bool HasComponent()
@@ -46,14 +42,14 @@ namespace bg3se::lua
 			return handle_;
 		}
 
-		inline EntitySystemHelpersBase* EntitySystem() const
+		inline ecs::EntitySystemHelpersBase* EntitySystem() const
 		{
 			return entitySystem_;
 		}
 
 	private:
 		EntityHandle handle_;
-		EntitySystemHelpersBase* entitySystem_;
+		ecs::EntitySystemHelpersBase* entitySystem_;
 	};
 
 
@@ -62,7 +58,7 @@ namespace bg3se::lua
 	public:
 		static char const* const MetatableName;
 
-		ComponentHandleProxy(ComponentHandle const& handle, EntitySystemHelpersBase* entitySystem);
+		ComponentHandleProxy(ComponentHandle const& handle, ecs::EntitySystemHelpersBase* entitySystem);
 
 		static int GetType(lua_State* L);
 		static int GetTypeName(lua_State* L);
@@ -79,14 +75,14 @@ namespace bg3se::lua
 			return handle_;
 		}
 
-		inline EntitySystemHelpersBase* EntitySystem() const
+		inline ecs::EntitySystemHelpersBase* EntitySystem() const
 		{
 			return entitySystem_;
 		}
 
 	private:
 		ComponentHandle handle_;
-		EntitySystemHelpersBase* entitySystem_;
+		ecs::EntitySystemHelpersBase* entitySystem_;
 	};
 
 }

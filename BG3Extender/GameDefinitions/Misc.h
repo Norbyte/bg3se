@@ -574,13 +574,11 @@ namespace bg3se
 		bool MapToAiGrid{ true };
 	};
 
-	typedef void(*SummonHelpers__Summon)(SummonHelperResults * Results, SummonHelperSummonArgs * Args);
-	typedef void(*GameStateEventManager__ExecuteGameStateChangedEvent)(void * self, GameState fromState, GameState toState);
-	typedef void(*GameStateThreaded__GameStateWorker__DoWork)(void * self);*/
+	typedef void(*SummonHelpers__Summon)(SummonHelperResults * Results, SummonHelperSummonArgs * Args);*/
 
 	struct SavegameManager : public ProtectedGameObject<SavegameManager>
 	{
-		EntityWorld* EntityWorld;
+		ecs::EntityWorld* EntityWorld;
 		__int64 field_8;
 		__int64 field_10;
 		__int64 field_18;

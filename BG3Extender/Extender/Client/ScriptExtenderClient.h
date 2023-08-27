@@ -34,7 +34,7 @@ public:
 		return *extensionState_;
 	}
 
-	inline ClientEntitySystemHelpers& GetEntityHelpers()
+	inline ecs::ClientEntitySystemHelpers& GetEntityHelpers()
 	{
 		return entityHelpers_;
 	}
@@ -65,7 +65,7 @@ private:
 	std::unique_ptr<ExtensionState> extensionState_;
 	bool extensionLoaded_{ false };
 	bool postStartupDone_{ false };
-	ClientEntitySystemHelpers entityHelpers_;
+	ecs::ClientEntitySystemHelpers entityHelpers_;
 	ModuleHasher hasher_;
 	STDString serverStatus_;
 	STDString clientStatus_;

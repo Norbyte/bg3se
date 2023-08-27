@@ -1051,13 +1051,13 @@ namespace bg3se::ecl::lua
 	}
 
 
-	EntityWorld* ClientState::GetEntityWorld()
+	ecs::EntityWorld* ClientState::GetEntityWorld()
 	{
 		return GetStaticSymbols().GetClientEntityWorld();
 	}
 
 
-	EntitySystemHelpersBase* ClientState::GetEntitySystemHelpers()
+	ecs::EntitySystemHelpersBase* ClientState::GetEntitySystemHelpers()
 	{
 		return &gExtender->GetClient().GetEntityHelpers();
 	}

@@ -5,14 +5,13 @@
 namespace bg3se
 {
 	struct LevelManager;
-	struct EntityWorld;
 
 	struct EntityManager : public ProtectedGameObject<EntityManager>
 	{
 		void* VMT;
 		LevelManager* LevelManager;
 		Map<FixedString, void*> field_10;
-		EntityWorld* EntityWorld;
+		ecs::EntityWorld* EntityWorld;
 		FixedString FS1;
 		uint64_t Unknown[3];
 	};

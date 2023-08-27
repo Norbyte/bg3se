@@ -59,8 +59,8 @@ struct BaseFunctorExecParams : public HasObjectProxy
 
 struct FunctorExecParamsType1 : public BaseFunctorExecParams
 {
-	EntityWorldHandle Caster;
-	EntityWorldHandle Target;
+	ecs::EntityRef Caster;
+	ecs::EntityRef Target;
 	glm::vec3 Position;
 	bool IsFromItem;
 	SpellIdWithPrototype SpellId;
@@ -75,7 +75,7 @@ struct FunctorExecParamsType1 : public BaseFunctorExecParams
 
 struct FunctorExecParamsType2 : public BaseFunctorExecParams
 {
-	EntityWorldHandle Caster;
+	ecs::EntityRef Caster;
 	glm::vec3 Position;
 	float ExplodeRadius;
 	bool IsFromItem;
@@ -87,14 +87,14 @@ struct FunctorExecParamsType2 : public BaseFunctorExecParams
 
 struct FunctorExecParamsType3 : public BaseFunctorExecParams
 {
-	EntityWorldHandle Caster;
-	EntityWorldHandle Target;
+	ecs::EntityRef Caster;
+	ecs::EntityRef Target;
 	glm::vec3 Position;
 };
 
 struct FunctorExecParamsType4 : public BaseFunctorExecParams
 {
-	EntityWorldHandle Caster;
+	ecs::EntityRef Caster;
 	glm::vec3 Position;
 	SpellIdWithPrototype SpellId;
 	Hit Hit;
@@ -104,9 +104,9 @@ struct FunctorExecParamsType4 : public BaseFunctorExecParams
 
 struct FunctorExecParamsType5 : public BaseFunctorExecParams
 {
-	EntityWorldHandle Owner_M;
-	EntityWorldHandle Target;
-	EntityWorldHandle Caster;
+	ecs::EntityRef Owner_M;
+	ecs::EntityRef Target;
+	ecs::EntityRef Caster;
 	glm::vec3 Position;
 	bool IsFromItem;
 	SpellIdWithPrototype SpellId;
@@ -118,9 +118,9 @@ struct FunctorExecParamsType5 : public BaseFunctorExecParams
 
 struct FunctorExecParamsType6 : public BaseFunctorExecParams
 {
-	EntityWorldHandle Target;
-	EntityWorldHandle TargetX;
-	EntityWorldHandle Caster;
+	ecs::EntityRef Target;
+	ecs::EntityRef TargetX;
+	ecs::EntityRef Caster;
 	glm::vec3 Position;
 	bool IsFromItem;
 	SpellIdWithPrototype SpellId;
@@ -133,9 +133,9 @@ struct FunctorExecParamsType6 : public BaseFunctorExecParams
 
 struct FunctorExecParamsType7 : public BaseFunctorExecParams
 {
-	EntityWorldHandle Caster;
-	EntityWorldHandle Caster2;
-	EntityWorldHandle Target;
+	ecs::EntityRef Caster;
+	ecs::EntityRef Caster2;
+	ecs::EntityRef Target;
 	glm::vec3 Position;
 	bool IsFromItem;
 	SpellIdWithPrototype SpellId;
@@ -147,7 +147,7 @@ struct FunctorExecParamsType7 : public BaseFunctorExecParams
 
 struct FunctorExecParamsType8 : public BaseFunctorExecParams
 {
-	EntityWorldHandle Target;
+	ecs::EntityRef Target;
 };
 
 
@@ -428,8 +428,8 @@ struct DealDamageFunctor : public Functor
 {
 	static constexpr auto FunctorType = FunctorId::DealDamage;
 
-	using ApplyDamageProc = NewHit * (NewHit* result, DealDamageFunctor* functor, EntityWorldHandle* casterHandle, 
-		EntityWorldHandle* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId, 
+	using ApplyDamageProc = NewHit * (NewHit* result, DealDamageFunctor* functor, ecs::EntityRef* casterHandle, 
+		ecs::EntityRef* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId, 
 		int storyActionId, ActionOriginator* originator, GuidResourceDefinitionManagerBase* classResourceMgr, 
 		Hit* hit, DamageSums* damageSums, uint64_t* unknownThothParam, HitWith hitWith);
 

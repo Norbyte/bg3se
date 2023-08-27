@@ -41,6 +41,12 @@ struct LevelCacheTemplateManager;
 struct GuidResourceDefinition;
 struct GuidResourceDefinitionManagerBase;
 
+namespace ecs
+{
+	struct EntityRef;
+	struct EntityWorld;
+}
+
 namespace stats
 {
 	struct Modifier;

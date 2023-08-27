@@ -137,8 +137,8 @@ namespace bg3se::esv::lua
 		// TODO - only available after hit! 
 		// NewHit* Result;
 		bg3se::stats::DealDamageFunctor* Functor;
-		EntityWorldHandle Caster;
-		EntityWorldHandle Target;
+		ecs::EntityRef Caster;
+		ecs::EntityRef Target;
 		glm::vec3 Position;
 		bool IsFromItem;
 		SpellIdWithPrototype* SpellId;
@@ -172,8 +172,8 @@ namespace bg3se::esv::lua
 	private:
 		lua::State& state_;
 
-		NewHit* OnDealDamage(bg3se::stats::DealDamageFunctor::ApplyDamageProc* next, NewHit* result, bg3se::stats::DealDamageFunctor* functor, EntityWorldHandle* casterHandle,
-			EntityWorldHandle* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId, int storyActionId,
+		NewHit* OnDealDamage(bg3se::stats::DealDamageFunctor::ApplyDamageProc* next, NewHit* result, bg3se::stats::DealDamageFunctor* functor, ecs::EntityRef* casterHandle,
+			ecs::EntityRef* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId, int storyActionId,
 			ActionOriginator* originator, GuidResourceDefinitionManagerBase* classResourceMgr, Hit* hit, DamageSums* damageSums, uint64_t* unknownThothParam, HitWith hitWith);
 
 		template <class TParams>
@@ -233,8 +233,8 @@ namespace bg3se::esv::lua
 		void OnGameSessionLoading() override;
 		void StoryFunctionMappingsUpdated();
 
-		EntityWorld* GetEntityWorld() override;
-		EntitySystemHelpersBase* GetEntitySystemHelpers() override;
+		ecs::EntityWorld* GetEntityWorld() override;
+		ecs::EntitySystemHelpersBase* GetEntitySystemHelpers() override;
 
 		template <class TArg>
 		void Call(char const* mod, char const* func, std::vector<TArg> const & args)

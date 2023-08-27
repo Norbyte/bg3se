@@ -145,10 +145,12 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\Base\BaseMap.h" />
     <ClInclude Include="GameDefinitions\Base\BaseMemory.h" />
     <ClInclude Include="GameDefinitions\Base\BaseString.h" />
+    <ClInclude Include="GameDefinitions\Base\BaseTypeInformation.h" />
     <ClInclude Include="GameDefinitions\Base\BaseTypes.h" />
     <ClInclude Include="GameDefinitions\Base\BaseUtilities.h" />
     <ClInclude Include="GameDefinitions\Base\ForwardDeclarations.h" />
     <ClInclude Include="GameDefinitions\Character.h" />
+    <ClInclude Include="GameDefinitions\CommonTypes.h" />
     <ClInclude Include="GameDefinitions\Components\Boosts.h" />
     <ClInclude Include="GameDefinitions\Components\Combat.h" />
     <ClInclude Include="GameDefinitions\Components\Components.h" />
@@ -158,6 +160,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\EntityManager.h" />
     <ClInclude Include="GameDefinitions\EntitySystemHelpers.h" />
     <ClInclude Include="GameDefinitions\GameAction.h" />
+    <ClInclude Include="GameDefinitions\GameState.h" />
     <ClInclude Include="GameDefinitions\GlobalFixedStrings.h" />
     <ClInclude Include="GameDefinitions\Hit.h" />
     <ClInclude Include="GameDefinitions\Level.h" />
@@ -187,6 +190,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <ClInclude Include="Lua\Debugger\LuaDebug.pb.h" />
     <ClInclude Include="Lua\Debugger\LuaDebugger.h" />
     <ClInclude Include="Lua\Debugger\LuaDebugMessages.h" />
+    <ClInclude Include="Lua\Libs\LibraryRegistrationHelpers.h" />
     <ClInclude Include="Lua\LuaBinding.h" />
     <ClInclude Include="Lua\LuaHelpers.h" />
     <ClInclude Include="Lua\LuaSerializers.h" />
@@ -194,11 +198,12 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <ClInclude Include="Lua\Server\LuaBindingServer.h" />
     <ClInclude Include="Lua\Server\LuaOsirisBinding.h" />
     <ClInclude Include="Lua\Shared\LuaBundle.h" />
-    <ClInclude Include="Lua\Shared\LuaEvent.h" />
     <ClInclude Include="Lua\Shared\LuaLifetime.h" />
     <ClInclude Include="Lua\Shared\LuaStats.h" />
+    <ClInclude Include="Lua\Shared\LuaTraits.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaArrayProxy.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaEntityProxy.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaEvent.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaMapProxy.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaObjectProxy.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaPropertyMapHelpers.h" />
@@ -295,10 +300,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\APIDocs.md" />
     <None Include="..\CHANGELOG.md" />
-    <None Include="..\LuaAPIDocs.md" />
-    <None Include="..\Misc\ExtIdeHelpers.lua" />
     <None Include="cpp.hint" />
     <None Include="Exports.def" />
     <None Include="Extender\Shared\ModuleHasher.inl" />
@@ -309,6 +311,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <None Include="GameDefinitions\Base\BaseMap.inl" />
     <None Include="GameDefinitions\Base\BaseMemory.inl" />
     <None Include="GameDefinitions\Base\BaseString.inl" />
+    <None Include="GameDefinitions\Base\TypeInformation.inl" />
     <None Include="GameDefinitions\Components\AllComponentTypes.inl" />
     <None Include="GameDefinitions\Enumerations.inl" />
     <None Include="GameDefinitions\GlobalFixedStrings.inl" />
@@ -340,6 +343,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <None Include="Lua\LevelIteratorFunctions.inl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">false</ExcludedFromBuild>
     </None>
+    <None Include="Lua\Libs\Types.inl" />
     <None Include="Lua\Server\FunctorEvents.inl" />
     <None Include="Lua\Server\ServerCharacter.inl" />
     <None Include="Lua\Server\ServerCombat.inl" />
@@ -349,13 +353,13 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <None Include="Lua\Server\ServerProjectile.inl" />
     <None Include="Lua\Server\ServerStatus.inl" />
     <None Include="Lua\Server\ServerSurface.inl" />
-    <None Include="Lua\Shared\LuaEvent.inl" />
     <None Include="Lua\Shared\LuaJson.inl" />
     <None Include="Lua\Shared\LuaLocalization.inl" />
     <None Include="Lua\Shared\LuaShared.inl" />
     <None Include="Lua\Shared\LuaStaticDataLib.inl" />
     <None Include="Lua\Shared\Proxies\LuaArrayProxy.inl" />
     <None Include="Lua\Shared\Proxies\LuaEntityProxy.inl" />
+    <None Include="Lua\Shared\Proxies\LuaEvent.inl" />
     <None Include="Lua\Shared\Proxies\LuaMapProxy.inl" />
     <None Include="Lua\Shared\Proxies\LuaObjectProxy.inl" />
     <None Include="Lua\Shared\Proxies\LuaSetProxy.inl" />

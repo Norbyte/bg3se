@@ -37,7 +37,7 @@ namespace bg3se
 	{
 		auto indexPtr = (int32_t*)AsmResolveInstructionRef(ptr);
 		auto namePtr = (char const*)AsmResolveInstructionRef(ptr + 0x25);
-		GetStaticSymbols().IndexSymbolToNameMaps.insert(std::make_pair(indexPtr, IndexSymbolInfo{ namePtr, IndexSymbolType::None }));
+		GetStaticSymbols().IndexSymbolToNameMaps.insert(std::make_pair(indexPtr, ecs::IndexSymbolInfo{ namePtr, ecs::IndexSymbolType::None }));
 		return SymbolMapper::MappingResult::TryNext;
 	}
 
@@ -56,7 +56,7 @@ namespace bg3se
 
 		auto nameIt = GetStaticSymbols().StaticStringRegistrantMaps.find(funcPtr);
 		if (nameIt != GetStaticSymbols().StaticStringRegistrantMaps.end()) {
-			GetStaticSymbols().IndexSymbolToNameMaps.insert(std::make_pair(indexPtr, IndexSymbolInfo{ nameIt->second, IndexSymbolType::None }));
+			GetStaticSymbols().IndexSymbolToNameMaps.insert(std::make_pair(indexPtr, ecs::IndexSymbolInfo{ nameIt->second, ecs::IndexSymbolType::None }));
 		}
 
 		return SymbolMapper::MappingResult::TryNext;
@@ -68,7 +68,7 @@ namespace bg3se
 
 		auto indexIt = GetStaticSymbols().IndexSymbolToNameMaps.find(indexPtr);
 		if (indexIt != GetStaticSymbols().IndexSymbolToNameMaps.end()) {
-			indexIt->second.type = IndexSymbolType::Replication;
+			indexIt->second.type = ecs::IndexSymbolType::Replication;
 		}
 
 		return SymbolMapper::MappingResult::TryNext;
@@ -80,7 +80,7 @@ namespace bg3se
 
 		auto indexIt = GetStaticSymbols().IndexSymbolToNameMaps.find(indexPtr);
 		if (indexIt != GetStaticSymbols().IndexSymbolToNameMaps.end()) {
-			indexIt->second.type = IndexSymbolType::Component;
+			indexIt->second.type = ecs::IndexSymbolType::Component;
 		}
 
 		return SymbolMapper::MappingResult::TryNext;
@@ -92,7 +92,7 @@ namespace bg3se
 
 		auto indexIt = GetStaticSymbols().IndexSymbolToNameMaps.find(indexPtr);
 		if (indexIt != GetStaticSymbols().IndexSymbolToNameMaps.end()) {
-			indexIt->second.type = IndexSymbolType::Component;
+			indexIt->second.type = ecs::IndexSymbolType::Component;
 		}
 
 		return SymbolMapper::MappingResult::TryNext;

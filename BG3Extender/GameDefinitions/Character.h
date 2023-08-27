@@ -2,7 +2,7 @@
 
 #include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/Enumerations.h>
-#include <GameDefinitions/EntitySystem.h>
+#include <GameDefinitions/GameState.h>
 /*
 #include "Status.h"
 #include "ActionMachine.h"
@@ -177,7 +177,7 @@ namespace bg3se
 			NetId NetID; // Part of IEoCServerObject?
 			uint64_t Flags;
 			FixedString CurrentLevel;
-			EntityWorldHandle Handle;
+			ecs::EntityRef Handle;
 			Array<uint32_t> VisibleToPeerIds;
 			CharacterTemplate* CurrentTemplate;
 			CharacterTemplate* OriginalTemplate;

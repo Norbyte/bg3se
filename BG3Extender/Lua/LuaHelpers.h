@@ -8,6 +8,7 @@
 
 #include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/Enumerations.h>
+#include <GameDefinitions/CommonTypes.h>
 #include <GameDefinitions/EntitySystem.h>
 
 BEGIN_NS(lua)

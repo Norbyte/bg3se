@@ -568,13 +568,13 @@ namespace bg3se::esv::lua
 	}
 
 
-	EntityWorld* ServerState::GetEntityWorld()
+	ecs::EntityWorld* ServerState::GetEntityWorld()
 	{
 		return GetStaticSymbols().GetServerEntityWorld();
 	}
 
 
-	EntitySystemHelpersBase* ServerState::GetEntitySystemHelpers()
+	ecs::EntitySystemHelpersBase* ServerState::GetEntitySystemHelpers()
 	{
 		return &gExtender->GetServer().GetEntityHelpers();
 	}

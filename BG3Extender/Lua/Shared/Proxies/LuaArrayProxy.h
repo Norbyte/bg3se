@@ -18,7 +18,7 @@ BY_VAL(double);
 BY_VAL(bool);
 BY_VAL(ComponentHandle);
 BY_VAL(EntityHandle);
-BY_VAL(EntityWorldHandle);
+BY_VAL(ecs::EntityRef);
 BY_VAL(FixedString);
 BY_VAL(STDString);
 BY_VAL(STDWString);

@@ -372,9 +372,6 @@
     <ClInclude Include="Extender\Shared\ScriptExtenderBase.h">
       <Filter>Extender\Shared</Filter>
     </ClInclude>
-    <ClInclude Include="Lua\Shared\LuaEvent.h">
-      <Filter>Lua\Shared</Filter>
-    </ClInclude>
     <ClInclude Include="GameHooks\SymbolMapper.h">
       <Filter>GameHooks</Filter>
     </ClInclude>
@@ -435,15 +432,14 @@
     <ClInclude Include="Lua\Server\LuaOsirisBinding.h">
       <Filter>Lua\Server</Filter>
     </ClInclude>
+    <ClInclude Include="GameDefinitions\GameState.h" />
+    <ClInclude Include="GameDefinitions\CommonTypes.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\APIDocs.md" />
     <None Include="..\CHANGELOG.md" />
-    <None Include="..\LuaAPIDocs.md" />
-    <None Include="..\Misc\ExtIdeHelpers.lua" />
     <None Include="cpp.hint" />
     <None Include="Exports.def" />
     <None Include="LuaScripts\Game.Math.lua" />
@@ -582,9 +578,6 @@
     <None Include="Extender\Shared\ThreadedExtenderState.inl">
       <Filter>Extender\Shared</Filter>
     </None>
-    <None Include="Lua\Shared\LuaEvent.inl">
-      <Filter>Lua\Shared</Filter>
-    </None>
     <None Include="GameDefinitions\PropertyMaps\Events.inl">
       <Filter>GameDefinitions\PropertyMaps</Filter>
     </None>
@@ -623,6 +616,9 @@
     </None>
     <None Include="GameDefinitions\Base\BaseMap.inl">
       <Filter>GameDefinitions\Base</Filter>
+    </None>
+    <None Include="Lua\Shared\Proxies\LuaEvent.inl">
+      <Filter>Lua\Shared\Proxies</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -691,6 +687,9 @@
     </Filter>
     <Filter Include="LuaScripts\Libs">
       <UniqueIdentifier>{ee328742-1ce8-4156-982b-e4fc302887a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lua\Libs">
+      <UniqueIdentifier>{df29b9d6-11ba-4176-bca4-e4f140b52584}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -38,7 +38,7 @@ public:
 		return *extensionState_;
 	}
 
-	inline ServerEntitySystemHelpers& GetEntityHelpers()
+	inline ecs::ServerEntitySystemHelpers& GetEntityHelpers()
 	{
 		return entityHelpers_;
 	}
@@ -66,7 +66,7 @@ private:
 	std::unique_ptr<ExtensionState> extensionState_;
 	bool extensionLoaded_{ false };
 	bool postStartupDone_{ false };
-	ServerEntitySystemHelpers entityHelpers_;
+	ecs::ServerEntitySystemHelpers entityHelpers_;
 
 	void OnBaseModuleLoaded(void * self);
 	void GameStateWorkerWrapper(void (* wrapped)(void*), void * self);

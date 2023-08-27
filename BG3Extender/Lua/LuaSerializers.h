@@ -119,17 +119,14 @@ namespace bg3se::lua
 	LuaSerializer& operator << (LuaSerializer& s, TranslatedString& v);
 	
 
-	LuaSerializer& operator << (LuaSerializer& s, EntityWorldHandle& v);
+	LuaSerializer& operator << (LuaSerializer& s, ecs::EntityRef& v);
 /*	LuaSerializer& operator << (LuaSerializer& s, CEquipmentSet& v);
 	LuaSerializer& operator << (LuaSerializer& s, CEquipmentGroup& v);
 	LuaSerializer& operator << (LuaSerializer& s, CSkillSet& v);*/
 	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::Requirement& v);
-	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::Object::FunctorInfo& v);
 	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::TreasureTable& v);
 	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::TreasureSubTable& v);
 	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::TreasureCategory& v);
-	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::Functors& v);
-	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::Functors* v);
 /*	LuaSerializer& operator << (LuaSerializer& s, CItemGroup& v);
 	LuaSerializer& operator << (LuaSerializer& s, CLevelGroup& v);
 	LuaSerializer& operator << (LuaSerializer& s, CRootGroup& v);

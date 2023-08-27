@@ -12,7 +12,7 @@ namespace bg3se::lua
 {
 	char const* const EntityProxy::MetatableName = "EntityProxy";
 
-	EntityProxy::EntityProxy(EntityHandle const& handle, EntitySystemHelpersBase* entitySystem)
+	EntityProxy::EntityProxy(EntityHandle const& handle, ecs::EntitySystemHelpersBase* entitySystem)
 		: handle_(handle), entitySystem_(entitySystem)
 	{}
 
@@ -61,7 +61,7 @@ namespace bg3se::lua
 	}
 
 	template <class T>
-	void PushComponentType(lua_State* L, EntitySystemHelpersBase* helpers, EntityHandle const& handle, 
+	void PushComponentType(lua_State* L, ecs::EntitySystemHelpersBase* helpers, EntityHandle const& handle,
 		LifetimeHandle const& lifetime)
 	{
 		auto component = helpers->GetComponent<T>(handle);
@@ -79,7 +79,7 @@ namespace bg3se::lua
 		break; \
 	}
 
-	void PushComponent(lua_State* L, EntitySystemHelpersBase* helpers, EntityHandle const& handle, ExtComponentType componentType,
+	void PushComponent(lua_State* L, ecs::EntitySystemHelpersBase* helpers, EntityHandle const& handle, ExtComponentType componentType,
 		LifetimeHandle const& lifetime)
 	{
 		switch (componentType) {
@@ -258,7 +258,7 @@ namespace bg3se::lua
 
 	char const* const ComponentHandleProxy::MetatableName = "ComponentHandleProxy";
 
-	ComponentHandleProxy::ComponentHandleProxy(ComponentHandle const& handle, EntitySystemHelpersBase* entitySystem)
+	ComponentHandleProxy::ComponentHandleProxy(ComponentHandle const& handle, ecs::EntitySystemHelpersBase* entitySystem)
 		: handle_(handle), entitySystem_(entitySystem)
 	{}
 
@@ -274,7 +274,7 @@ namespace bg3se::lua
 	{
 		StackCheck _(L, 1);
 		auto self = get<ComponentHandleProxy*>(L, 1);
-		auto name = self->entitySystem_->GetComponentName(EntityWorld::HandleTypeIndex(self->handle_.GetType()));
+		auto name = self->entitySystem_->GetComponentName(ecs::HandleTypeIndex(self->handle_.GetType()));
 		push(L, name);
 		return 1;
 	}
@@ -299,7 +299,7 @@ namespace bg3se::lua
 	{
 		StackCheck _(L, 1);
 		auto self = get<ComponentHandleProxy*>(L, 1);
-		auto componentType = self->entitySystem_->GetComponentType((EntityWorld::HandleTypeIndex)self->handle_.GetType());
+		auto componentType = self->entitySystem_->GetComponentType((ecs::HandleTypeIndex)self->handle_.GetType());
 		if (componentType) {
 			// PushComponent(L, self->entitySystem_, self->handle_, *componentType, GetCurrentLifetime());
 			ERR("FIXME");
@@ -346,9 +346,9 @@ namespace bg3se::lua
 
 		std::optional<STDString> componentName;
 		if (gExtender->GetServer().IsInServerThread()) {
-			componentName = gExtender->GetServer().GetEntityHelpers().GetComponentName((EntityWorld::HandleTypeIndex)handle_.GetType());
+			componentName = gExtender->GetServer().GetEntityHelpers().GetComponentName((ecs::HandleTypeIndex)handle_.GetType());
 		} else {
-			componentName = gExtender->GetClient().GetEntityHelpers().GetComponentName((EntityWorld::HandleTypeIndex)handle_.GetType());
+			componentName = gExtender->GetClient().GetEntityHelpers().GetComponentName((ecs::HandleTypeIndex)handle_.GetType());
 		}
 
 		char entityName[200];

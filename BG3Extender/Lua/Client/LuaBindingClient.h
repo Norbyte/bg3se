@@ -58,8 +58,8 @@ namespace bg3se::ecl::lua
 		bool IsClient() override;
 		void OnUpdate(GameTime const& time) override;
 
-		EntityWorld* GetEntityWorld() override;
-		EntitySystemHelpersBase* GetEntitySystemHelpers() override;
+		ecs::EntityWorld* GetEntityWorld() override;
+		ecs::EntitySystemHelpersBase* GetEntitySystemHelpers() override;
 		void OnGameStateChanged(GameState fromState, GameState toState);
 
 	private:
