@@ -47,7 +47,7 @@ namespace bg3se::lua
 
 		char const* GetTypeName() const override
 		{
-			return TypeInfo<T>::TypeName;
+			return GetTypeInfo<T>().TypeName.GetString();
 		}
 
 		bool HasElement(lua_State* L, int luaIndex) override
@@ -136,7 +136,7 @@ namespace bg3se::lua
 				return nullptr;
 			}
 			
-			if (strcmp(GetImpl()->GetTypeName(), TypeInfo<T>::TypeName) == 0) {
+			if (strcmp(GetImpl()->GetTypeName(), GetTypeInfo<T>().TypeName.GetString()) == 0) {
 				return reinterpret_cast<T*>(GetImpl()->GetRaw(L));
 			} else {
 				return nullptr;
@@ -193,7 +193,7 @@ namespace bg3se::lua
 	inline T* checked_get_set_proxy(lua_State* L, int index)
 	{
 		auto proxy = Userdata<SetProxy>::CheckUserData(L, index);
-		auto const& typeName = TypeInfo<T>::TypeName;
+		auto const& typeName = GetTypeInfo<T>().TypeName.GetString();
 		if (strcmp(proxy->GetImpl()->GetTypeName(), typeName) == 0) {
 			auto obj = proxy->Get<T>();
 			if (obj == nullptr) {

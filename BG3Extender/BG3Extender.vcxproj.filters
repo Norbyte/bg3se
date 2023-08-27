@@ -22,9 +22,6 @@
     <ClCompile Include="GameDefinitions\GameHelpers.cpp">
       <Filter>GameDefinitions</Filter>
     </ClCompile>
-    <ClCompile Include="Lua\Shared\LuaUtilities.cpp">
-      <Filter>Lua\Shared</Filter>
-    </ClCompile>
     <ClCompile Include="GameDefinitions\Stats\StatsObject.inl">
       <Filter>GameDefinitions\Stats</Filter>
     </ClCompile>
@@ -161,6 +158,7 @@
     <ClCompile Include="Lua\Server\LuaOsirisBinding.cpp">
       <Filter>Lua\Server</Filter>
     </ClCompile>
+    <ClCompile Include="Lua\Shared\Proxies\LuaTypeInformation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -443,6 +441,7 @@
       <Filter>Lua\Shared</Filter>
     <ClInclude Include="GameDefinitions\GameState.h" />
     <ClInclude Include="GameDefinitions\CommonTypes.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaCppClass.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -629,6 +628,12 @@
     <None Include="Lua\Shared\Proxies\LuaEvent.inl">
       <Filter>Lua\Shared\Proxies</Filter>
     </None>
+    <None Include="GameDefinitions\Base\TypeInformation.inl">
+      <Filter>GameDefinitions\Base</Filter>
+    </None>
+    <None Include="Lua\Shared\LuaReference.h" />
+    <None Include="Lua\Shared\Proxies\LuaCppClass.inl" />
+    <None Include="Lua\Shared\LuaReference.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

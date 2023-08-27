@@ -34,7 +34,7 @@ END_CLS()
 
 
 BEGIN_CLS(TypeInformation)
-/*P_RO(TypeName)
+P_RO(TypeName)
 P_RO(Kind)
 P_RO(NativeName)
 P_RO(KeyType)
@@ -49,5 +49,5 @@ P_REF(Params)
 P_RO(VarargParams)
 P_RO(VarargsReturn)
 P_RO(IsBuiltin)
-P_RO(ModuleRole)*/
+P_RO(ModuleRole)
 END_CLS()

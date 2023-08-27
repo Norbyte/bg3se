@@ -2,6 +2,8 @@
 
 #include <GameDefinitions/Enumerations.h>
 
+struct lua_State;
+
 BEGIN_SE()
 
 struct TypeInformation;
@@ -60,8 +62,8 @@ struct TypeInformation
 	Map<FixedString, TypeInformation> Methods;
 	bool HasWildcardProperties{ false };
 	Map<FixedString, uint64_t> EnumValues;
-	Vector<TypeInformationRef> ReturnValues;
-	Vector<TypeInformationRef> Params;
+	Array<TypeInformationRef> ReturnValues;
+	Array<TypeInformationRef> Params;
 	bool VarargParams{ false };
 	bool VarargsReturn{ false };
 	bool IsBuiltin{ false };
@@ -130,6 +132,18 @@ inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overl
 	return &MakeDeferredArrayType<T>;
 }
 
+template <class T>
+inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<MultiHashSet<T>>)
+{
+	return &MakeDeferredSetType<T>;
+}
+
+template <class T>
+inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<VirtualMultiHashSet<T>>)
+{
+	return &MakeDeferredSetType<T>;
+}
+
 template <class TKey, class TValue>
 inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<Map<TKey, TValue>>)
 {
@@ -138,6 +152,18 @@ inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overl
 
 template <class TKey, class TValue>
 inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<RefMap<TKey, TValue>>)
+{
+	return &MakeDeferredMapType<TKey, TValue>;
+}
+
+template <class TKey, class TValue>
+inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<MultiHashMap<TKey, TValue>>)
+{
+	return &MakeDeferredMapType<TKey, TValue>;
+}
+
+template <class TKey, class TValue>
+inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<VirtualMultiHashMap<TKey, TValue>>)
 {
 	return &MakeDeferredMapType<TKey, TValue>;
 }
@@ -181,13 +207,13 @@ StaticTypeInformation& GetStaticTypeInfo(Overload<T>)
 	}
 }
 
-/*template <class T>
+template <class T>
 StaticTypeInformation& GetStaticTypeInfo(Overload<OverrideableProperty<T>>)
 {
 	return GetStaticTypeInfo(Overload<T>{});
-}*/
+}
 
-/*template <class T>
+template <class T>
 StaticTypeInformation& GetStaticTypeInfo(Overload<RefReturn<T>>)
 {
 	return GetStaticTypeInfo(Overload<T>{});
@@ -203,7 +229,7 @@ template <class T>
 StaticTypeInformation& GetStaticTypeInfo(Overload<ProxyParam<T>>)
 {
 	return GetStaticTypeInfo(Overload<T>{});
-}*/
+}
 
 template <class T>
 TypeInformation const& GetTypeInfo()
@@ -280,6 +306,15 @@ TypeInformation* MakeDeferredArrayType()
 	return ty;
 }
 
+template <class T>
+TypeInformation* MakeDeferredSetType()
+{
+	auto ty = GameAlloc<TypeInformation>();
+	ty->Kind = LuaTypeId::Set;
+	ty->ElementType = GetStaticTypeInfo(Overload<T>{});
+	return ty;
+}
+
 template <class TKey, class TValue>
 TypeInformation* MakeDeferredMapType()
 {
@@ -305,12 +340,12 @@ inline void AddFunctionReturnType(TypeInformation& ty, Overload<void>)
 	// No return value, nothing to do
 }
 
-/*template <>
+template <>
 inline void AddFunctionReturnType(TypeInformation& ty, Overload<UserReturn>)
 {
 	// User defined number of return types and values
 	ty.VarargsReturn = true;
-}*/
+}
 
 template <class T>
 inline void AddFunctionParamType(TypeInformation& ty, Overload<T>)
@@ -328,13 +363,13 @@ void ConstructFunctionSignature(TypeInformation& sig, R (T::*)(Args...))
 }
 
 // Pointer to member function with Lua state parameter
-/*template <class R, class T, class... Args>
+template <class R, class T, class... Args>
 void ConstructFunctionSignature(TypeInformation& sig, R (T::*)(lua_State* L, Args...))
 {
 	sig.Kind = LuaTypeId::Function;
 	AddFunctionReturnType(sig, Overload<R>{});
 	(AddFunctionParamType(sig, Overload<Args>{}), ...);
-}*/
+}
 
 // Unbound function without Lua state parameter
 template <class R, class... Args>
@@ -346,12 +381,12 @@ void ConstructFunctionSignature(TypeInformation& sig, R (*)(Args...))
 }
 
 // Unbound function with Lua state parameter
-/*template <class R, class... Args>
+template <class R, class... Args>
 void ConstructFunctionSignature(TypeInformation& sig, R (*)(lua_State* L, Args...))
 {
 	sig.Kind = LuaTypeId::Function;
 	AddFunctionReturnType(sig, Overload<R>{});
 	(AddFunctionParamType(sig, Overload<Args>{}), ...);
-}*/
+}
 
 END_SE()

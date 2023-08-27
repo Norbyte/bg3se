@@ -43,12 +43,12 @@ namespace bg3se::lua
 
 		char const* GetKeyTypeName() const override
 		{
-			return TypeInfo<TKey>::TypeName;
+			return GetTypeInfo<TKey>().TypeName.GetString();
 		}
 
 		char const* GetValueTypeName() const override
 		{
-			return TypeInfo<TValue>::TypeName;
+			return GetTypeInfo<TValue>().TypeName.GetString();
 		}
 
 		bool GetValue(lua_State* L, int luaKeyIndex) override
@@ -60,7 +60,7 @@ namespace bg3se::lua
 
 			auto value = object_->Find(key);
 			if (value) {
-				MakeObjectRef(L, lifetime_, *value);
+				MakeObjectRef(L, *value, lifetime_);
 				return true;
 			} else {
 				return false;
@@ -82,7 +82,7 @@ namespace bg3se::lua
 			if (lua_type(L, luaKeyIndex) == LUA_TNIL) {
 				if (object_->Keys.Size() > 0) {
 					LuaWrite(L, object_->Keys[0]);
-					MakeObjectRef(L, lifetime_, &object_->Values[0]);
+					MakeObjectRef(L, &object_->Values[0], lifetime_);
 					return 2;
 				}
 			} else {
@@ -94,7 +94,7 @@ namespace bg3se::lua
 				auto index = object_->FindIndex(key);
 				if (index != -1 && index < (int)object_->Keys.Size() - 1) {
 					LuaWrite(L, object_->Keys[index + 1]);
-					MakeObjectRef(L, lifetime_, &object_->Values[index + 1]);
+					MakeObjectRef(L, &object_->Values[index + 1], lifetime_);
 					return 2;
 				}
 			}
@@ -129,12 +129,12 @@ namespace bg3se::lua
 
 		char const* GetKeyTypeName() const override
 		{
-			return TypeInfo<TKey>::TypeName;
+			return GetTypeInfo<TKey>().TypeName.GetString();
 		}
 
 		char const* GetValueTypeName() const override
 		{
-			return TypeInfo<TValue>::TypeName;
+			return GetTypeInfo<TValue>().TypeName.GetString();
 		}
 
 		bool GetValue(lua_State* L, int luaKeyIndex) override
@@ -232,12 +232,12 @@ namespace bg3se::lua
 
 		char const* GetKeyTypeName() const override
 		{
-			return TypeInfo<TKey>::TypeName;
+			return GetTypeInfo<TKey>().TypeName.GetString();
 		}
 
 		char const* GetValueTypeName() const override
 		{
-			return TypeInfo<TValue>::TypeName;
+			return GetTypeInfo<TValue>().TypeName.GetString();
 		}
 
 		bool GetValue(lua_State* L, int luaKeyIndex) override
@@ -249,7 +249,7 @@ namespace bg3se::lua
 
 			auto value = object_->find(key);
 			if (value != object_->end()) {
-				MakeObjectRef(L, lifetime_, &value.Value());
+				MakeObjectRef(L, &value.Value(), lifetime_);
 				return true;
 			} else {
 				return false;
@@ -272,7 +272,7 @@ namespace bg3se::lua
 				auto it = object_->begin();
 				if (it != object_->end()) {
 					LuaWrite(L, it.Key());
-					MakeObjectRef(L, lifetime_, &it.Value());
+					MakeObjectRef(L, &it.Value(), lifetime_);
 					return 2;
 				}
 			} else {
@@ -286,7 +286,7 @@ namespace bg3se::lua
 					it++;
 					if (it != object_->end()) {
 						LuaWrite(L, it.Key());
-						MakeObjectRef(L, lifetime_, &it.Value());
+						MakeObjectRef(L, &it.Value(), lifetime_);
 						return 2;
 					}
 				}
@@ -322,12 +322,12 @@ namespace bg3se::lua
 
 		char const* GetKeyTypeName() const override
 		{
-			return TypeInfo<TKey>::TypeName;
+			return GetTypeInfo<TKey>().TypeName.GetString();
 		}
 
 		char const* GetValueTypeName() const override
 		{
-			return TypeInfo<TValue>::TypeName;
+			return GetTypeInfo<TValue>().TypeName.GetString();
 		}
 
 		bool GetValue(lua_State* L, int luaKeyIndex) override
@@ -574,8 +574,8 @@ namespace bg3se::lua
 	inline MultiHashMapByValProxyImpl<TKey, TValue>* checked_get_map_proxy(lua_State* L, int index)
 	{
 		auto proxy = Userdata<MapProxy>::CheckUserData(L, index);
-		auto const& keyTypeName = TypeInfo<TKey>::TypeName;
-		auto const& valueTypeName = TypeInfo<TValue>::TypeName;
+		auto const& keyTypeName = GetTypeInfo<TKey>().TypeName.GetString();
+		auto const& valueTypeName = GetTypeInfo<TValue>().TypeName.GetString();
 		if (strcmp(proxy->GetImpl()->GetKeyTypeName(), keyTypeName) == 0
 			&& strcmp(proxy->GetImpl()->GetValueTypeName(), valueTypeName) == 0) {
 			auto obj = proxy->GetByValMultiHashMap<TKey, TValue>();

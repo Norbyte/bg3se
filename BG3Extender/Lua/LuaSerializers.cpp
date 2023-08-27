@@ -19,6 +19,19 @@ namespace bg3se::lua
 		s << v.Handle.Handle;
 		return s;
 	}
+
+	LuaSerializer& operator << (LuaSerializer& s, TypeInformationRef& v)
+	{
+		if (s.IsWriting) {
+			if (v) {
+				MakeObjectRef(s.L, v.GetStatic()->Type);
+			} else {
+				push(s.L, nullptr);
+			}
+		}
+
+		return s;
+	}
 	
 	LuaSerializer& operator << (LuaSerializer& s, ecs::EntityRef& v)
 	{

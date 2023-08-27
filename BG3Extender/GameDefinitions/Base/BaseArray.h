@@ -592,6 +592,15 @@ public:
 		new (&buf_[size_++]) T(value);
 	}
 
+	void push_back(T const& value)
+	{
+		if (capacity_ <= size_) {
+			Reallocate(CapacityIncrement());
+		}
+
+		new (&buf_[size_++]) T(value);
+	}
+
 	void Remove(uint32_t index)
 	{
 		assert(index < size_);
@@ -628,13 +637,6 @@ private:
 	T* buf_{ nullptr };
 	unsigned int capacity_{ 0 };
 	unsigned int size_{ 0 };
-};
-
-template <class T>
-class VirtualArray : public Array<T>
-{
-public:
-	inline virtual ~VirtualArray() {};
 };
 
 END_SE()

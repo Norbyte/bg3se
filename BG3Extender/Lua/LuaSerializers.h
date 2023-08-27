@@ -124,6 +124,7 @@ namespace bg3se::lua
 	
 
 	LuaSerializer& operator << (LuaSerializer& s, ecs::EntityRef& v);
+	LuaSerializer& operator << (LuaSerializer& s, TypeInformationRef& v);
 /*	LuaSerializer& operator << (LuaSerializer& s, CEquipmentSet& v);
 	LuaSerializer& operator << (LuaSerializer& s, CEquipmentGroup& v);
 	LuaSerializer& operator << (LuaSerializer& s, CSkillSet& v);*/

@@ -65,13 +65,6 @@ namespace bg3se
 		//~ProtectedProxyGameObject() = delete;
 	};
 
-	// Helper for registering type names
-	template <class T>
-	struct TypeInfo
-	{
-		static char const* const TypeName;
-	};
-
 	template <class T>
 	struct HasObjectProxyTag {
 		static constexpr bool HasProxy = false;

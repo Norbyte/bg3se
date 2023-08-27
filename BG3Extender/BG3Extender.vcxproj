@@ -278,6 +278,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     </ClCompile>
     <ClCompile Include="Lua\Shared\LuaUtilities.cpp" />
     <ClCompile Include="Lua\Shared\Proxies\LuaObjectProxies.cpp" />
+    <ClCompile Include="Lua\Shared\Proxies\LuaTypeInformation.cpp" />
     <ClCompile Include="Osiris\Debugger\Debugger.cpp" />
     <ClCompile Include="Osiris\Debugger\DebugInterface.cpp" />
     <ClCompile Include="Osiris\Debugger\DebugMessages.cpp" />
@@ -330,7 +331,6 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <None Include="GameDefinitions\PropertyMaps\Statuses.inl" />
     <None Include="GameDefinitions\PropertyMaps\SurfaceActions.inl" />
     <None Include="GameHooks\EngineHooks.inl" />
-    <None Include="GlobalFixedStrings.inl" />
     <None Include="LuaScripts\BuiltinLibrary.lua" />
     <None Include="LuaScripts\BuiltinLibraryClient.lua" />
     <None Include="LuaScripts\BuiltinLibraryServer.lua" />
@@ -356,9 +356,12 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <None Include="Lua\Server\ServerSurface.inl" />
     <None Include="Lua\Shared\LuaJson.inl" />
     <None Include="Lua\Shared\LuaLocalization.inl" />
+    <None Include="Lua\Shared\LuaReference.h" />
+    <None Include="Lua\Shared\LuaReference.inl" />
     <None Include="Lua\Shared\LuaShared.inl" />
     <None Include="Lua\Shared\LuaStaticDataLib.inl" />
     <None Include="Lua\Shared\Proxies\LuaArrayProxy.inl" />
+    <None Include="Lua\Shared\Proxies\LuaCppClass.inl" />
     <None Include="Lua\Shared\Proxies\LuaEntityProxy.inl" />
     <None Include="Lua\Shared\Proxies\LuaEvent.inl" />
     <None Include="Lua\Shared\Proxies\LuaMapProxy.inl" />
