@@ -15,8 +15,15 @@
     * [PROCs](#o2l_procs)
     * [User Queries](#o2l_qrys)
     * [Databases](#o2l_dbs)
+ - [General Lua Rules](#lua-general)
+    * [Object Scopes](#lua-scopes)
+    * [Object Behavior](#lua-objects)
+    * [Parameter Passing](#lua-parameters)
+    * [Events](#lua-events)
  - [Utility functions](#ext-utility)
  - [JSON Support](#json-support)
+ - [Mod Info](#mod-info)
+ - [Math Library](#math)
  - [Engine Events](#engine-events)
 
 
@@ -104,7 +111,7 @@ function OnSessionLoaded()
     Ext.Print(PersistentVars['Test'])
 end
 
-Ext.RegisterListener("SessionLoaded", OnSessionLoaded)
+Ext.Events.SessionLoaded:Subscribe("SessionLoaded", OnSessionLoaded)
 ```
 
 
@@ -133,6 +140,150 @@ Anything else typed in the console will be executed as Lua code in the current c
 The console has full access to the underlying Lua state, i.e. server console commands can also call builtin/custom Osiris functions, so Osiris calls like `AddExplorationExperience(GetHostCharacter(), 100)` are possible using the console.
 Variables can be used just like in Lua, i.e. variable in one command can later on be used in another console command. Be careful, console code runs in global context, so make sure console variable names don't conflict with globals (i.e. `Mods`, `Ext`, etc.)! Don't use `local` for console variables, since the lifetime of the local will be one console command. (Each console command is technically a separate chunk).
 
+
+<a id="lua-general"></a>
+## General Lua Rules
+
+<a id="lua-scopes"></a>
+### Object Scopes
+
+Previously, a `userdata` (game object passed from the extender to Lua, i.e. `Character`, `Status`, etc.) returned from an API call or passed via a parameter was valid for an infinite duration. This meant that the object could be accessed anytime, potentially well after the actual object in the engine was destroyed, leading to strange crashes. The extender before v56 tried to work around this by storing object handles instead of the actual object in the `userdata`, which meant that each time a property was accessed on an object, it had to resolve the handle, which is a very slow operation. Example:
+
+```lua
+s = Ext.GetCharacter(...).Stats
+-- These 2 reads cause the character and stats component to be fetched via their handle twice. 
+-- If you do anything thats is stats-intensive, it may cause up to 100+ entity fetches
+local wf = s.WarriorLore
+local lr = s.RangerLore
+```
+
+Example of possible crash:
+```lua
+local hit
+Ext.RegisterListener("StatusHitEnter", function (status, ...) 
+    hit = status
+end)
+
+Ext.RegisterListener("ProjectileHit", function (...) 
+    -- Status might get deleted beforehand
+    -- POSSIBLE CRASH!
+    local dmg = hit.Hit.TotalDamageDealt
+end)
+```
+
+To fix these issues, most `userdata` types are now bound to their enclosing *extender scope*. Since the engine always deletes game objects at the end of the game loop, it is guaranteed that eg. a Status or Character won't disappear during a Lua call, but they may be gone afterwards. To rectify this, "smuggling" objects outside of listeners is no longer allowed. Example:
+
+```lua
+local hit
+
+Ext.Events.StatusHitEnter:Subscribe(function (event) 
+    hit = event.Hit
+end)
+
+Ext.Events.ProjectileHit:Subscribe(function (event) 
+    -- Throws "Attempted to read object of type 'esv::StatusHit' whose lifetime has expired"
+    local dmg = hit.Hit.TotalDamageDealt
+end)
+```
+
+This rule also applies to objects you fetch manually during a listener:
+
+```lua
+local ch
+
+Ext.Events.StatusHitEnter:Subscribe(function (event) 
+    ch = Ext.GetCharacter(event.Hit.OwnerHandle)
+end)
+
+Ext.Events.ProjectileHit:Subscribe(function (event) 
+    -- Throws "Attempted to read object of type 'esv::Character' whose lifetime has expired"
+    local name = ch.DisplayName
+end)
+```
+
+Subproperties inherit the lifetime of their parent object, eg. if you keep a copy of the permament boosts (`local boosts = character.Stats.DynamicStats[2]`), its lifetime will expire at the same time as the characters'.
+
+This ensures that no potentially deleted objects are not accessed in risky contexts.
+
+
+<a id="lua-objects"></a>
+### Object Behavior
+
+Attempting to read or write properties that don't exist on an object class now lead to a Lua error:
+```lua
+local ch = Ext.GetCharacter(...)
+-- Object of type 'esv::Character' has no property named 'Shield'
+Ext.Print(ch.Shield)
+```
+
+The properties and methods of all engine objects can be read using iteration (metatables now support `__pairs`):
+```lua
+local ch = Ext.GetCharacter(...)
+for property, value in pairs(ch) do
+    Ext.Print(property, value)
+end
+```
+
+Stringifying an engine object returns its class and instance ID (i.e. metatables now support `__tostring`):
+```lua
+-- Prints "esv::Character (00007FF43B4F6600)"
+Ext.Print(tostring(Ext.GetCharacter(CharacterGetHostCharacter())))
+```
+
+Equality checks on engine objects return whether the two references point to the _same_ object:
+```lua
+-- Prints whether the current player character is the red prince
+Ext.Print(Ext.GetCharacter(CharacterGetHostCharacter()) == Ext.GetCharacter("a26a1efb-cdc8-4cf3-a7b2-b2f9544add6f"))
+```
+
+Array-like engine objects support iteration via `ipairs()` and their length can be read using the `#` operator (i.e. the `__len` and `__pairs` metamethods are now supported):
+```lua
+local tags = _C().Tags
+Ext.Print("Number of tags: ", #tags)
+for i, tag in ipairs(tags) do
+    Ext.Print(i, tag)
+end
+```
+
+<a id="lua-parameters"></a>
+### Parameter Passing
+
+ - Numeric enum values and numeric bitmask values passed to API calls are validated; a Lua error is thrown if an unsupported enum label or bitfield value is passed.
+   
+ - All bitmask parameters (eg. `PropertyContext`) support passing numeric values, strings and tables to specify the flags, i.e. the allowed ways to pass bitmasks are:
+    - Integer (i.e. `3` means "Target and AoE" for `PropertyContext`)
+    - String (i.e. `"Target"`) - note that this only supports passing a single value!
+    - Table (i.e. `{"Target", "AoE"}`)
+
+<a id="lua-events"></a>
+## Events
+
+Subscribing to engine events can be done through the `Ext.Events` table.
+
+Example:
+```lua
+Ext.Events.GameStateChanged:Subscribe(function (e)
+    Ext.Print("State change from " .. e.FromState .. " to " .. e.ToState)
+end)
+```
+
+The `Subscribe()` method accepts an optional options table that contains additional settings:
+```lua
+Ext.Events.GameStateChanged:Subscribe(handler, {
+    Priority = 50,
+    Once = true
+})
+```
+
+The `Priority` setting determines the order in which subscribers are called; subscribers with lower priority are called first. The default priority is 100.
+If the `Once` flag is set, the event is only triggered once and the handler is automatically unsubscribed after the first call.
+
+The `Subscribe()` method returns a handler index that can be used to cancel the subscription later on:
+```lua
+local handlerId = Ext.Events.GameStateChanged:Subscribe(handler)
+...
+Ext.Events.GameStateChanged:Unsubscribe(handlerId)
+```
 
 ## Calling Osiris from Lua <sup>S</sup>
 
@@ -231,7 +382,7 @@ Osi.DB_GiveTemplateFromNpcToPlayerDialogEvent:Delete("CON_Drink_Cup_A_Tea_080d0e
 <a id="l2o_captures"></a>
 ### Capturing Events/Calls
 
-The `Ext.Ext.Osiris.RegisterListener(name, arity, event, handler)` function registers a listener that is called in response to Osiris events.
+The `Ext.Osiris.RegisterListener(name, arity, event, handler)` function registers a listener that is called in response to Osiris events.
 It currently supports capturing events, built-in queries, databases, user-defined PROCs and user-defined QRYs. Capture support for built-in calls will be added in a later version.
 
 Parameters: 
@@ -287,6 +438,14 @@ local endTime = Ext.MonotonicTime()
 Ext.Print("Took: " .. tostring(endTime - startTime) .. " ms")
 ```
 
+### Helper functions
+
+Some helper functions were added to aid in development. (Please note that using them in mod code is not recommended, they are designed for developer use only.)
+
+ - `_D()`: Equivalent to `Ext.Utils.Dump()`, an utility function for dumping an expression to console; supports hierarchical dumping of tables and userdata (engine) objects
+ - `_P()`: Equivalent to `Ext.Print()`
+
+
 ## JSON Support
 
 Two functions are provided for parsing and building JSON documents, `Ext.Json.Parse` and `Ext.Json.Stringify`.
@@ -337,6 +496,213 @@ Expected output:
 ab
 ```
 
+ - The `Stringify` function accepts an optional settings table `Stringify(value, [options])`. `options` is a table that supports the following keys:
+   - `Beautify` (bool) - Generate human-readable JSON (i.e. add indents and linebreaks to the output)
+   - `StringifyInternalTypes` (bool) - Save engine types (handles, coroutines, etc.) as strings instead of throwing an error
+   - `IterateUserdata` (bool) - Dump engine objects similarly to tables instead of throwing an error
+      - NOTE: Due to the nature of these objects, neither internal types nor userdata types can be unserialized from a JSON; parsing a JSON with userdata objects will return them as normal tables
+    - `AvoidRecursion` (bool) - If an userdata or table is seen multiple times, further instances will be serialized as `"*RECURSION*"`; this is helpful when dumping objects
+    - `MaxDepth` (int) - Maximum iteration depth
+
+Example:
+```lua
+Ext.Json.Stringify(val, {
+    Beautify = true,
+    MaxDepth = 4
+})
+```
+
+<a id="mod-info"></a>
+## Mod Info
+
+### IsModLoaded(modGuid)
+
+Returns whether the module with the specified GUID is loaded.
+
+Example:
+```lua
+if (Ext.Mod.IsModLoaded("5cc23efe-f451-c414-117d-b68fbc53d32d"))
+    _P("Mod loaded")
+end
+```
+
+### GetLoadOrder()
+
+Returns the list of loaded module UUIDs in the order they're loaded in.
+
+### GetModInfo(modGuid)
+
+Returns detailed information about the specified (loaded) module.
+Example:
+```lua
+local loadOrder = Ext.Mod.GetLoadOrder()
+for k,uuid in pairs(loadOrder) do
+    local mod = Ext.Mod.GetModInfo(uuid)
+    _D(mod)
+end
+```
+
+<a id="math"></a>
+## Math library
+
+The extender math library `Ext.Math` contains following functions:
+
+##### Add(a: any, b: any)
+
+Adds the two operands. All math types (number/vec3/vec4/mat3x3/mat4x4) are supported. Mixing different operand types works in if a reasonable implementation is available (eg. `number + vec3`).
+
+##### Sub(a: any, b: any)
+
+Subtracts the two operands. All math types (number/vec3/vec4/mat3x3/mat4x4) are supported. Mixing different operand types works in if a reasonable implementation is available (eg. `vec3 - number`).
+
+##### Mul(a: any, b: any)
+
+Multiplies the two operands. All math types (number/vec3/vec4/mat3x3/mat4x4) are supported. Mixing different operand types works in if a reasonable implementation is available (eg. `mat3x3 * vec3`).
+
+##### Div(a: any, b: any)
+
+Divides the two operands. All math types (number/vec3/vec4/mat3x3/mat4x4) are supported.
+
+##### vec3|vec4 Reflect(I: vec3|vec4, N: vec3|vec4)
+
+For the incident vector `I` and surface orientation `N`, returns the reflection direction: `result = I - 2.0 * dot(N, I) * N`.
+
+##### float Angle(a: vec3|vec4, b: vec3|vec4)
+
+Returns the absolute angle between two vectors. Parameters need to be normalized.
+
+##### vec3 Cross(x: vec3, y: vec3)
+
+Returns the cross product of x and y.
+
+##### float Distance(p0: vec3, p1: vec3)
+
+Returns the distance between p0 and p1, i.e., `length(p0 - p1)`.
+
+##### float Dot(x: vec3, y: vec3)
+
+Returns the dot product of x and y.
+
+##### float Length(x: vec3|vec4)
+
+Returns the length of x, i.e., `sqrt(x * x)`.
+
+##### vec3|vec4 Normalize(x: vec3|vec4)
+
+Returns a vector in the same direction as x but with length of 1.
+
+##### float Determinant(x: mat3|mat4)
+
+Return the determinant of a matrix.
+
+##### mat3|mat4 Inverse(x: mat3|mat4)
+
+Return the inverse of a matrix.
+
+##### mat3|mat4 Transpose(x: mat3|mat4)
+
+Returns the transposed matrix of `x`.
+
+##### mat3|mat4 OuterProduct(c: vec3|vec4, r: vec3|vec4)
+
+Treats the first parameter `c` as a column vector and the second parameter `r` as a row vector and does a linear algebraic matrix multiply `c * r`.
+
+##### void Rotate(m: mat3|mat4, angle: float, axis: vec4)
+
+Builds a rotation matrix created from an axis of 3 scalars and an angle expressed in radians.
+
+##### void Translate(m: mat4, translation: vec3)
+
+Transforms a matrix with a translation 4 * 4 matrix created from a vector of 3 components.
+
+##### void Scale(m: mat4, translation: vec3)
+
+Transforms a matrix with a scale 4 * 4 matrix created from a vector of 3 components.
+
+##### mat4 BuildRotation4(v: vec3, angle: float)
+
+Builds a rotation 4 * 4 matrix created from an axis of 3 scalars and an angle expressed in radians.
+
+##### mat3 BuildRotation3(v: vec3, angle: float)
+
+Builds a rotation 3 * 3 matrix created from an axis of 3 scalars and an angle expressed in radians.
+
+##### mat4 BuildTranslation(v: vec3)
+
+Builds a translation 4 * 4 matrix created from a vector of 3 components.
+
+##### mat4 BuildScale(v: vec3)
+
+Builds a scale 4 * 4 matrix created from 3 scalars.
+
+##### vec3 ExtractEulerAngles(m: mat3|mat4)
+
+Extracts the `(X * Y * Z)` Euler angles from the rotation matrix M.
+
+##### mat4 BuildFromEulerAngles4(angles: vec3)
+
+Creates a 3D 4 * 4 homogeneous rotation matrix from euler angles `(X * Y * Z)`.
+
+##### mat3 BuildFromEulerAngles3(angles: vec3)
+
+Creates a 3D 3 * 3 homogeneous rotation matrix from euler angles `(X * Y * Z)`.
+
+##### void Decompose(m: mat4, scale: vec3, yawPitchRoll: vec3, translation: vec3)
+
+Decomposes a model matrix to translations, rotation and scale components.
+
+##### float ExtractAxisAngle(m: mat3|mat4, axis: vec3)
+
+Decomposes a model matrix to translations, rotation and scale components.
+
+##### mat3 BuildFromAxisAngle3(axis: vec3, angle: float)
+##### mat4 BuildFromAxisAngle4(axis: vec3, angle: float)
+
+Build a matrix from axis and angle.
+
+##### vec3|vec4 Perpendicular(x: vec3|vec4, normal: vec3|vec4)
+
+Projects `x` on a perpendicular axis of `normal`.
+
+##### vec3|vec4 Project(x: vec3|vec4, normal: vec3|vec4)
+
+Projects `x` on `normal`.
+
+##### float Fract(x: float)
+
+Return `x - floor(x).`
+
+##### float Trunc(x: float)
+
+Returns a value equal to the nearest integer to x whose absolute value is not larger than the absolute value of x.
+
+##### float Sign(x: float)
+
+Returns 1.0 if `x > 0`, 0.0 if `x == 0`, or -1.0 if `x < 0`.
+
+##### float Clamp(val: float, minVal: float, maxVal: float)
+
+Returns `min(max(x, minVal), maxVal)` for each component in x using the floating-point values minVal and maxVal.
+
+##### float Lerp(x: float, y: float, a: float)
+
+Returns `x * (1.0 - a) + y * a`, i.e., the linear blend of x and y using the floating-point value a.
+
+##### float Acos(x: float)
+
+Arc cosine. Returns an angle whose sine is x.
+
+##### float Asin(x: float)
+
+Arc sine. Returns an angle whose sine is x.
+
+##### float Atan(y_over_x: float)
+
+ Arc tangent. Returns an angle whose tangent is `y_over_x`.
+
+##### float Atan2(x: float, y: float)
+
+Arc tangent. Returns an angle whose tangent is `y / x`. The signs of x and y are used to determine what quadrant the angle is in.
 
 <a id="engine-events"></a>
 # Engine Events
@@ -375,5 +741,9 @@ The `GameStateChanged` event indicates that the server/client game state changed
 
 ### Tick
 
-The `Tick` event is thrown after each game engine tick.
+The `Tick` event is thrown after each game engine tick on both the client and the server. Server logic runs at ~30hz, so this event is thrown roughly every 33ms.
+    -  The `Ext.OnNextTick(fun)` helper registers a handler that is only called on the next tick and is unregistered afterwards
 
+### OnResetCompleted
+
+Thrown when a console `reset` command or an `NRD_LuaReset` Osiris call completes.
