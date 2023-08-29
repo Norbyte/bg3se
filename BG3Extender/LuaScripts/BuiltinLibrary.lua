@@ -113,8 +113,30 @@ Ext.DebugEvaluate = function (retval)
 end
 
 -- Helper for dumping variables in console
+Ext.DumpExport = function (val)
+	local opts = {
+		Beautify = true,
+		StringifyInternalTypes = true,
+		IterateUserdata = true,
+		AvoidRecursion = true
+	}
+	return Ext.Json.Stringify(val, opts)
+end
+
 Ext.Dump = function (val)
-	Ext.Utils.Print(Ext.Json.Stringify(val, true, true, true))
+	Ext.Utils.Print(Ext.DumpExport(val))
+end
+
+Ext.DumpShallow = function (val)
+	local opts = {
+		Beautify = true,
+		StringifyInternalTypes = true,
+		IterateUserdata = true,
+		AvoidRecursion = true,
+		LimitDepth = 1,
+		LimitArrayElements = 3
+	}
+	Ext.Utils.Print(Ext.Json.Stringify(val, opts))
 end
 
 Ext.Utils.LoadTestLibrary = function ()
@@ -130,7 +152,12 @@ Ext.Utils.LoadTestLibrary = function ()
 	end
 end
 
+Ext.OnNextTick = function (fun)
+	Ext.Events.Tick:Subscribe(fun, {Once = true})
+end
+
 -- Global helper aliases for Ext.Dump, Ext.Utils.Print
 _D = Ext.Dump
+_DS = Ext.DumpShallow
 _P = Ext.Utils.Print
 Print = Ext.Utils.Print
