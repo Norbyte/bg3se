@@ -10,8 +10,8 @@
 #include <GameDefinitions/ActionMachine.h>
 #include <GameDefinitions/TurnManager.h>*/
 #include <GameDefinitions/Symbols.h>
-#include <GameHooks/SymbolMapper.h>
-#include <GameHooks/Wrappers.h>
+#include <CoreLib/SymbolMapper.h>
+#include <CoreLib/Wrappers.h>
 #include <optional>
 
 namespace bg3se {

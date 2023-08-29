@@ -2,7 +2,7 @@
 
 #include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/Osiris.h>
-#include "Wrappers.h"
+#include <CoreLib/Wrappers.h>
 #include <detours.h>
 #include <thread>
 

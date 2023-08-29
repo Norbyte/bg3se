@@ -3,12 +3,11 @@
 #include "DWriteWrapper.h"
 #include "HttpFetcher.h"
 #include "GameHelpers.h"
-#include "Crypto.h"
+#include <CoreLib/Crypto.h>
 #include <ZipLib/ZipArchive.h>
 #include <ZipLib/ZipFile.h>
 #include "json/json.h"
 #include "Manifest.h"
-#include <GameDefinitions/Symbols.h>
 
 #include <Shlwapi.h>
 #include <Shlobj.h>
@@ -129,7 +128,7 @@ void ConfigGetString(Json::Value& node, char const* key, std::wstring& value)
 {
 	auto configVar = node[key];
 	if (!configVar.isNull() && configVar.isString()) {
-		value = FromUTF8(configVar.asString());
+		value = FromStdUTF8(configVar.asString());
 	}
 }
 
@@ -175,11 +174,11 @@ void LoadConfigFile(std::wstring const& configPath, UpdaterConfig& config)
 	Json::Value root;
 	std::string errs;
 	if (!Json::parseFromStream(factory, f, &root, &errs)) {
-		std::wstring werrs = FromUTF8(errs);
+		std::wstring werrs = FromStdUTF8(errs);
 
 		std::wstringstream err;
 		err << L"Failed to load configuration file '" << configPath << "':\r\n" << werrs;
-		Fail(ToUTF8(err.str()).c_str());
+		Fail(ToStdUTF8(err.str()).c_str());
 	}
 
 	ConfigGetString(root, "ManifestURL", config.ManifestURL);
@@ -216,7 +215,7 @@ public:
 
 	std::wstring GetResourceLocalPath() const
 	{
-		return cachePath_ + L"\\" + FromUTF8(resource_.Name);
+		return cachePath_ + L"\\" + FromStdUTF8(resource_.Name);
 	}
 
 	std::wstring TryCreateLocalResourceCacheDirectory()
@@ -228,7 +227,7 @@ public:
 
 	std::wstring GetLocalPath() const
 	{
-		return GetResourceLocalPath() + L"\\" + FromUTF8(version_.Version.ToString()) + L"_" + FromUTF8(version_.Digest);
+		return GetResourceLocalPath() + L"\\" + FromStdUTF8(version_.Version.ToString()) + L"_" + FromStdUTF8(version_.Digest);
 	}
 
 	std::wstring GetLocalPackagePath() const
@@ -248,7 +247,7 @@ public:
 	{
 		TryCreateLocalResourceCacheDirectory();
 		auto packagePath = GetLocalPackagePath();
-		DEBUG("Saving update package to: %s", ToUTF8(packagePath).c_str());
+		DEBUG("Saving update package to: %s", ToStdUTF8(packagePath).c_str());
 
 		// Check if any of the files are currently in use by the game.
 		// The shell Zip API won't tell us if it failed to overwrite one of the files, so we need to 
@@ -259,9 +258,9 @@ public:
 
 		auto tempPath = packagePath + L".tmp";
 		if (!SaveFile(tempPath, contents)) {
-			DEBUG("Unable to write package temp file: %s", ToUTF8(tempPath).c_str());
+			DEBUG("Unable to write package temp file: %s", ToStdUTF8(tempPath).c_str());
 			reason = "Script Extender update failed:\r\n";
-			reason += std::string("Failed to write file ") + ToUTF8(tempPath);
+			reason += std::string("Failed to write file ") + ToStdUTF8(tempPath);
 			return false;
 		}
 
@@ -273,14 +272,14 @@ public:
 		if (!MoveFileExW(tempPath.c_str(), packagePath.c_str(), MOVEFILE_REPLACE_EXISTING)) {
 			DEBUG("Failed to move package file %s", packagePath.c_str());
 			reason = "Script Extender update failed:\r\n";
-			reason += std::string("Failed to move file ") + ToUTF8(packagePath);
+			reason += std::string("Failed to move file ") + ToStdUTF8(packagePath);
 			return false;
 		}
 
 
 		std::string unzipReason;
 		auto cachePath = TryCreateLocalCacheDirectory();
-		DEBUG("Unpacking update to %s", ToUTF8(cachePath).c_str());
+		DEBUG("Unpacking update to %s", ToStdUTF8(cachePath).c_str());
 		if (UnzipPackage(packagePath, cachePath, reason)) {
 			return true;
 		} else {
@@ -294,7 +293,7 @@ public:
 	{
 		TryCreateLocalResourceCacheDirectory();
 		auto packagePath = GetLocalPackagePath();
-		DEBUG("Removing local package: %s", ToUTF8(packagePath).c_str());
+		DEBUG("Removing local package: %s", ToStdUTF8(packagePath).c_str());
 		auto localPath = GetLocalPath();
 		bool ok = DeleteLocalCacheFromZip(packagePath, localPath);
 		DeleteFileW(packagePath.c_str());
@@ -353,7 +352,7 @@ private:
 
 			DEBUG("Extracting: %s", entry->GetFullName().c_str());
 
-			auto outPath = resourcePath + L"\\" + FromUTF8(entry->GetFullName());
+			auto outPath = resourcePath + L"\\" + FromStdUTF8(entry->GetFullName());
 			auto tempPath = resourcePath + L"\\extract.tmp";
 			std::ofstream f(tempPath.c_str(), std::ios::out | std::ios::binary);
 			if (!f.good()) {
@@ -400,7 +399,7 @@ private:
 			for (auto i = 0; i < entries; i++) {
 				auto entry = archive->GetEntry(i);
 				DEBUG("Removing: %s", entry->GetFullName().c_str());
-				auto outPath = resourcePath + L"\\" + FromUTF8(entry->GetFullName());
+				auto outPath = resourcePath + L"\\" + FromStdUTF8(entry->GetFullName());
 				DeleteFileW(outPath.c_str());
 			}
 		}
@@ -420,7 +419,7 @@ private:
 			auto entry = archive->GetEntry(i);
 
 			DEBUG("Deleting local file: %s", entry->GetFullName().c_str());
-			auto extractedPath = resourcePath + L"\\" + FromUTF8(entry->GetFullName());
+			auto extractedPath = resourcePath + L"\\" + FromStdUTF8(entry->GetFullName());
 			DeleteFileW(extractedPath.c_str());
 		}
 
@@ -435,19 +434,19 @@ public:
 	ResourceCacheRepository(UpdaterConfig const& config, std::wstring const& path)
 		: config_(config), path_(path)
 	{
-		DEBUG("ResourceCache path: %s", ToUTF8(path).c_str());
+		DEBUG("ResourceCache path: %s", ToStdUTF8(path).c_str());
 		LoadManifest(GetCachedManifestPath());
 	}
 
 	std::wstring GetCachedManifestPath() const
 	{
-		return path_ + L"\\Manifest-" + FromUTF8(config_.UpdateChannel) + L".json";
+		return path_ + L"\\Manifest-" + FromStdUTF8(config_.UpdateChannel) + L".json";
 	}
 
 	bool LoadManifest(std::wstring const& path)
 	{
 		std::string manifestText;
-		DEBUG("Loading cache manifest: %s", ToUTF8(path).c_str());
+		DEBUG("Loading cache manifest: %s", ToStdUTF8(path).c_str());
 		if (LoadFile(path, manifestText)) {
 			ManifestSerializer parser;
 			std::string parseError;
@@ -473,7 +472,7 @@ public:
 		ManifestSerializer parser;
 		std::string manifestText = parser.Stringify(manifest_);
 
-		DEBUG("Saving cache manifest: %s", ToUTF8(path).c_str());
+		DEBUG("Saving cache manifest: %s", ToStdUTF8(path).c_str());
 		return SaveFile(path, manifestText);
 	}
 
@@ -500,7 +499,7 @@ public:
 			AddResourceToManifest(resource, version);
 			if (!SaveManifest(GetCachedManifestPath())) {
 				reason = "Script Extender update failed:\r\n";
-				reason += std::string("Failed to write manifest file ") + ToUTF8(GetCachedManifestPath());
+				reason += std::string("Failed to write manifest file ") + ToStdUTF8(GetCachedManifestPath());
 				return false;
 			} else {
 				return true;
@@ -796,7 +795,7 @@ public:
 
 		if (resourcePath) {
 			auto dllPath = cache_->FindResourceDllPath("ScriptExtender", gameVersion_);
-			DEBUG("Loading extender DLL: %s", ToUTF8(*dllPath).c_str());
+			DEBUG("Loading extender DLL: %s", ToStdUTF8(*dllPath).c_str());
 			HMODULE handle = LoadLibraryExW(dllPath->c_str(), NULL, LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR | LOAD_LIBRARY_SEARCH_APPLICATION_DIR);
 			// Wait a bit for extender startup to complete
 			Sleep(300);
@@ -845,23 +844,11 @@ public:
 
 	void InitConsole()
 	{
-#if defined(HAS_DEBUG_LOGGING)
 		if (!config_.Debug) return;
 
-		AllocConsole();
+		gCoreLibPlatformInterface.GlobalConsole->Create();
+		gCoreLibPlatformInterface.GlobalConsole->EnableOutput(true);
 		SetConsoleTitleW(L"BG3 Script Extender Debug Console");
-
-		if (IsValidCodePage(CP_UTF8)) {
-			SetConsoleCP(CP_UTF8);
-			SetConsoleOutputCP(CP_UTF8);
-		}
-
-		auto hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
-		SetConsoleMode(hStdout, ENABLE_PROCESSED_OUTPUT | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
-
-		FILE* reopenedStream;
-		freopen_s(&reopenedStream, "CONOUT$", "w", stdout);
-#endif
 	}
 
 	void LoadConfig()
@@ -905,7 +892,7 @@ private:
 			gameVersion_ = *version;
 		}
 
-		DEBUG("Cache path: %s", ToUTF8(cacheDir).c_str());
+		DEBUG("Cache path: %s", ToStdUTF8(cacheDir).c_str());
 		DEBUG("Update channel: %s", config_.UpdateChannel.c_str());
 	}
 };
@@ -974,7 +961,6 @@ void StartUpdaterThread()
 }
 
 extern std::unique_ptr<DWriteWrapper> gDWriteWrapper;
-HMODULE gThisModule{ NULL };
 
 END_SE()
 
@@ -990,7 +976,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 	switch (ul_reason_for_call)
 	{
 	case DLL_PROCESS_ATTACH:
-		gThisModule = hModule;
+		gCoreLibPlatformInterface.ThisModule = hModule;
 		DisableThreadLibraryCalls(hModule);
 		gDWriteWrapper = std::make_unique<DWriteWrapper>();
 

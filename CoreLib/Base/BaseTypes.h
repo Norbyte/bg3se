@@ -100,34 +100,7 @@ namespace bg3se
 #endif
 	};
 
-	struct RuntimeStringHandle
-	{
-		FixedString Handle;
-		uint16_t Version{ 0 };
-
-		inline bool operator == (RuntimeStringHandle const& fs) const
-		{
-			return Handle == fs.Handle;
-		}
-
-		inline bool operator != (RuntimeStringHandle const& fs) const
-		{
-			return Handle != fs.Handle;
-		}
-	};
-
-	template <>
-	inline uint64_t MultiHashMapHash<RuntimeStringHandle>(RuntimeStringHandle const& v)
-	{
-		return MultiHashMapHash(v.Handle);
-	}
-
-	struct TranslatedString
-	{
-		RuntimeStringHandle Handle;
-		RuntimeStringHandle ArgumentString;
-	};
-
+	struct TranslatedString;
 
 	template <class T>
 	struct TypedHandle

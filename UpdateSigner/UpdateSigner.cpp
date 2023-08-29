@@ -1,17 +1,10 @@
 #include <stdafx.h>
-
-#include <iostream>
-#include "../BG3Updater/Crypto.h"
+#include <CoreLib/Crypto.h>
+#include <CoreLib/Console.h>
 #include "../BG3Updater/Manifest.h"
 #include <wincrypt.h>
 
 BEGIN_SE()
-
-std::string ToUTF8(std::wstring const& s);
-std::wstring FromUTF8(std::string const& s);
-bool SaveFile(std::wstring const& path, std::string const& body);
-bool LoadFile(std::wstring const& path, std::vector<uint8_t>& body);
-bool LoadFile(std::wstring const& path, std::string& body);
 
 HCRYPTPROV hCryptProv;
 
@@ -31,10 +24,10 @@ int UpdateManifest(int argc, char** argv)
         return 1;
     }
 
-    auto manifestPath = FromUTF8(std::string(argv[2]));
+    auto manifestPath = FromStdUTF8(std::string(argv[2]));
     auto resource = std::string(argv[3]);
-    auto packagePath = FromUTF8(std::string(argv[4]));
-    auto dllPath = FromUTF8(std::string(argv[5]));
+    auto packagePath = FromStdUTF8(std::string(argv[4]));
+    auto dllPath = FromStdUTF8(std::string(argv[5]));
     auto minVersion = std::string(argv[6]);
     auto maxVersion = std::string(argv[7]);
     auto rootUrl = std::string(argv[8]);
@@ -126,8 +119,8 @@ int ComputePathDigest(int argc, char** argv)
         return 1;
     }
 
-    auto packagePath = FromUTF8(std::string(argv[2]));
-    auto dllPath = FromUTF8(std::string(argv[3]));
+    auto packagePath = FromStdUTF8(std::string(argv[2]));
+    auto dllPath = FromStdUTF8(std::string(argv[3]));
     auto digest = GetFileDigest(packagePath);
     if (!digest) {
         std::cout << "Failed to load package file: " << ToUTF8(packagePath) << std::endl;
@@ -159,7 +152,7 @@ int SignerMain(int argc, char** argv)
 	}
 
     if (strcmp(argv[1], "genkey") == 0) {
-        auto path = FromUTF8(std::string(argv[2]));
+        auto path = FromStdUTF8(std::string(argv[2]));
         if (CryptoUtils::GenerateKeys(path)) {
             std::cout << "Key written to " << argv[2] << std::endl;
             return 0;
@@ -170,8 +163,8 @@ int SignerMain(int argc, char** argv)
     }
 
     if (strcmp(argv[1], "sign") == 0) {
-        auto keyPath = FromUTF8(std::string(argv[2]));
-        auto filePath = FromUTF8(std::string(argv[3]));
+        auto keyPath = FromStdUTF8(std::string(argv[2]));
+        auto filePath = FromStdUTF8(std::string(argv[3]));
 
         PackageSignature sig;
         if (CryptoUtils::GetFileSignature(filePath, sig)) {
@@ -189,7 +182,7 @@ int SignerMain(int argc, char** argv)
     }
 
     if (strcmp(argv[1], "verify") == 0) {
-        auto filePath = FromUTF8(std::string(argv[2]));
+        auto filePath = FromStdUTF8(std::string(argv[2]));
         std::string reason;
         if (CryptoUtils::VerifySignedFile(filePath, reason)) {
             std::cout << "Successfully verified file " << argv[2] << std::endl;
@@ -211,8 +204,6 @@ int SignerMain(int argc, char** argv)
     std::cout << "Unknown command" << std::endl;
     return 2;
 }
-
-HMODULE gThisModule{ NULL };
 
 END_SE()
 

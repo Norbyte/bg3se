@@ -98,7 +98,7 @@ void SetupScriptExtender(HMODULE hModule)
 
 	DisableThreadLibraryCalls(hModule);
 	if (config.CreateConsole) {
-		gConsole.Create();
+		gCoreLibPlatformInterface.GlobalConsole->Create();
 	}
 
 	if (config.DebugFlags == 0) {
@@ -119,8 +119,6 @@ bool ShouldInitializeExtender()
 		|| GetModuleHandleW(L"bg3_dx11.exe") != NULL;
 }
 
-HMODULE gThisModule{ NULL };
-
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
                        LPVOID lpReserved
@@ -129,7 +127,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 	switch (ul_reason_for_call)
 	{
 	case DLL_PROCESS_ATTACH:
-		gThisModule = hModule;
+		bg3se::gCoreLibPlatformInterface.ThisModule = hModule;
 		gDWriteWrapper = std::make_unique<DWriteWrapper>();
 		if (ShouldInitializeExtender()) {
 			SetupScriptExtender(hModule);

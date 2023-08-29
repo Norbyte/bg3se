@@ -7,9 +7,20 @@
 #include <functional>
 #include <psapi.h>
 #include <DbgHelp.h>
+#include "resource.h"
 
 namespace bg3se
 {
+	void* BG3Alloc(std::size_t size)
+	{
+		return GetStaticSymbols().ls__GlobalAllocator__Alloc(size, 2, 0, 8);
+	}
+
+	void BG3Free(void* ptr)
+	{
+		GetStaticSymbols().ls__GlobalAllocator__Free(ptr);
+	}
+
 	LibraryManager::LibraryManager()
 		: symbolMapper_(mappings_)
 	{}
@@ -20,7 +31,7 @@ namespace bg3se
 
 		SymbolMappingLoader loader(mappings_);
 		PreRegisterLibraries(loader);
-		if (!loader.LoadBuiltinMappings()) {
+		if (!loader.LoadBuiltinMappings(IDR_BINARY_MAPPINGS)) {
 			ERR("Failed to load symbol mapping table");
 			CriticalInitFailed = true;
 		}
@@ -50,6 +61,15 @@ namespace bg3se
 		if (gExtender->GetConfig().DisableLauncher && !CriticalInitFailed) {
 			ApplyCodePatch("KillLauncher");
 		}
+
+		auto const& sym = GetStaticSymbols();
+		gCoreLibPlatformInterface.Alloc = &BG3Alloc;
+		gCoreLibPlatformInterface.Free = &BG3Free;
+		gCoreLibPlatformInterface.ls__FixedString__CreateFromString = sym.ls__FixedString__CreateFromString;
+		gCoreLibPlatformInterface.ls__FixedString__GetString = sym.ls__FixedString__GetString;
+		gCoreLibPlatformInterface.ls__FixedString__IncRef = sym.ls__FixedString__IncRef;
+		gCoreLibPlatformInterface.ls__FixedString__DecRef = sym.ls__FixedString__DecRef;
+		gCoreLibPlatformInterface.ls__gGlobalStringTable = sym.ls__gGlobalStringTable;
 
 		return !CriticalInitFailed;
 	}

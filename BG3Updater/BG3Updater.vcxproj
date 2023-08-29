@@ -93,12 +93,12 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)\BG3Updater;$(SolutionDir)\External\curl\include;$(SolutionDir)\External\ziplib\Source;$(SolutionDir)\External\tinycrypt\lib\include;$(SolutionDir)\External\jsoncpp-master\include;$(SolutionDir)\BG3Extender;$(SolutionDir)\External\glm</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\BG3Updater;$(SolutionDir)\External\curl\include;$(SolutionDir)\External\ziplib\Source;$(SolutionDir)\External\tinycrypt\lib\include;$(SolutionDir)\External\jsoncpp-master\include;$(SolutionDir)\BG3Extender;$(SolutionDir)\External\glm</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>version.lib;jsoncpp.lib;TinyCrypt.lib;Rpcrt4.lib;dbghelp.lib;ZipLib.lib;bzip2.lib;lzma.lib;zlib.lib;libcurl_a.lib;Normaliz.lib;Wldap32.lib;ws2_32.lib;Crypt32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>CoreLib.lib;version.lib;jsoncpp.lib;TinyCrypt.lib;Rpcrt4.lib;dbghelp.lib;ZipLib.lib;bzip2.lib;lzma.lib;zlib.lib;libcurl_a.lib;Normaliz.lib;Wldap32.lib;ws2_32.lib;Crypt32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>Exports.def</ModuleDefinitionFile>
       <AdditionalLibraryDirectories>$(SolutionDir)\External\curl\lib;$(SolutionDir)\External\ziplib\Bin\x64\Debug;$(SolutionDir)$(Platform)\$(Configuration);$(SolutionDir)\External\jsoncpp-build\src\lib_json\Debug</AdditionalLibraryDirectories>
     </Link>
@@ -154,7 +154,7 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <AdditionalIncludeDirectories>$(SolutionDir)\BG3Updater;$(SolutionDir)\External\curl\include;$(SolutionDir)\External\ziplib\Source;$(SolutionDir)\External\tinycrypt\lib\include;$(SolutionDir)\External\jsoncpp-master\include;$(SolutionDir)\BG3Extender;$(SolutionDir)\External\glm</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\BG3Updater;$(SolutionDir)\External\curl\include;$(SolutionDir)\External\ziplib\Source;$(SolutionDir)\External\tinycrypt\lib\include;$(SolutionDir)\External\jsoncpp-master\include;$(SolutionDir)\BG3Extender;$(SolutionDir)\External\glm</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -162,7 +162,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>Exports.def</ModuleDefinitionFile>
-      <AdditionalDependencies>version.lib;jsoncpp.lib;TinyCrypt.lib;Rpcrt4.lib;dbghelp.lib;ZipLib.lib;bzip2.lib;lzma.lib;zlib.lib;libcurl_a.lib;Normaliz.lib;Wldap32.lib;ws2_32.lib;Crypt32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>CoreLib.lib;version.lib;jsoncpp.lib;TinyCrypt.lib;Rpcrt4.lib;dbghelp.lib;ZipLib.lib;bzip2.lib;lzma.lib;zlib.lib;libcurl_a.lib;Normaliz.lib;Wldap32.lib;ws2_32.lib;Crypt32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\External\curl\lib;$(SolutionDir)\External\ziplib\Bin\x64\Release;$(SolutionDir)$(Platform)\$(Configuration);$(SolutionDir)\External\jsoncpp-build\src\lib_json\Release</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -170,25 +170,16 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\BG3Extender\Extender\Shared\tinyxml2.h" />
-    <ClInclude Include="Crypto.h" />
     <ClInclude Include="DWriteWrapper.h" />
-    <ClInclude Include="GameDefinitions\Symbols.h" />
     <ClInclude Include="GameHelpers.h" />
     <ClInclude Include="HttpFetcher.h" />
     <ClInclude Include="Manifest.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="UpdaterSymbols.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\BG3Extender\Extender\Shared\tinyxml2.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="..\BG3Extender\GameDefinitions\Base\Base.cpp" />
-    <ClCompile Include="..\BG3Extender\GameHooks\SymbolMapper.cpp" />
-    <ClCompile Include="Crypto.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="DWriteWrapper.cpp" />
     <ClCompile Include="HttpFetcher.cpp" />

@@ -6,7 +6,7 @@
 #include <Extender/Shared/ModuleHasher.h>
 #include <GameDefinitions/Symbols.h>
 #include <GameDefinitions/EntitySystemHelpers.h>
-#include <GameHooks/Wrappers.h>
+#include <CoreLib/Wrappers.h>
 
 #include <thread>
 #include <mutex>

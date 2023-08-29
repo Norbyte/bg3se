@@ -1,15 +1,9 @@
 #include "stdafx.h"
 #include <Extender/ScriptExtender.h>
+#include <Extender/Shared/Console.h>
 #include "Version.h"
 #include "resource.h"
-#include <string>
-#include <fstream>
-#include <sstream>
 #include <iomanip>
-#include <chrono>
-#include <ctime>
-#include <psapi.h>
-#include <regex>
 
 #include <Extender/Shared/StatLoadOrderHelper.inl>
 #include <Extender/Shared/SavegameSerializer.inl>
@@ -38,6 +32,7 @@ ScriptExtender::ScriptExtender()
 	: server_(config_),
 	client_(config_)
 {
+	gCoreLibPlatformInterface.GlobalConsole = new DebugConsole();
 }
 
 void ScriptExtender::Initialize()
@@ -124,13 +119,13 @@ void ScriptExtender::Shutdown()
 
 void ScriptExtender::LogLuaError(std::string_view msg)
 {
-	gConsole.Debug(DebugMessageType::Error, msg.data());
+	gCoreLibPlatformInterface.GlobalConsole->Print(DebugMessageType::Error, msg.data());
 	server_.Osiris().LogError(msg);
 }
 
 void ScriptExtender::LogOsirisError(std::string_view msg)
 {
-	gConsole.Debug(DebugMessageType::Error, msg.data());
+	gCoreLibPlatformInterface.GlobalConsole->Print(DebugMessageType::Error, msg.data());
 	server_.Osiris().LogError(msg);
 
 #if !defined(OSI_NO_DEBUGGER)
@@ -142,13 +137,13 @@ void ScriptExtender::LogOsirisError(std::string_view msg)
 
 void ScriptExtender::LogOsirisWarning(std::string_view msg)
 {
-	gConsole.Debug(DebugMessageType::Warning, msg.data());
+	gCoreLibPlatformInterface.GlobalConsole->Print(DebugMessageType::Warning, msg.data());
 	server_.Osiris().LogWarning(msg);
 }
 
 void ScriptExtender::LogOsirisMsg(std::string_view msg)
 {
-	gConsole.Debug(DebugMessageType::Osiris, msg.data());
+	gCoreLibPlatformInterface.GlobalConsole->Print(DebugMessageType::Osiris, msg.data());
 	server_.Osiris().LogMessage(msg);
 }
 
@@ -407,7 +402,7 @@ void ScriptExtender::InitRuntimeLogging()
 	if (!config_.LogRuntime) return;
 
 	auto path = MakeLogFilePath(L"Extender Runtime", L"log");
-	gConsole.OpenLogFile(path);
+	gCoreLibPlatformInterface.GlobalConsole->OpenLogFile(path);
 	DEBUG(L"Extender runtime log written to '%s'", path.c_str());
 }
 

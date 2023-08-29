@@ -1,10 +1,6 @@
 #pragma once
 
-#include <GameDefinitions/Base/BaseUtilities.h>
-#include <GameDefinitions/Base/BaseMemory.h>
-#include <GameDefinitions/Base/BaseString.h>
-#include <GameDefinitions/Base/BaseArray.h>
-#include <GameDefinitions/Base/BaseMap.h>
-#include <GameDefinitions/Base/BaseTypes.h>
+#include <CoreLib/Base/Base.h>
 #include <GameDefinitions/Base/BaseTypeInformation.h>
 #include <GameDefinitions/Base/ForwardDeclarations.h>
+#include <GameDefinitions/TranslatedString.h>

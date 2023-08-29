@@ -153,7 +153,7 @@ public:
 			}
 		}
 
-		if (GetModuleInformation(GetCurrentProcess(), gThisModule, &moduleInfo, sizeof(moduleInfo))) {
+		if (GetModuleInformation(GetCurrentProcess(), gCoreLibPlatformInterface.ThisModule, &moduleInfo, sizeof(moduleInfo))) {
 			extenderStart_ = (uint8_t*)moduleInfo.lpBaseOfDll;
 			extenderEnd_ = extenderStart_ + moduleInfo.SizeOfImage;
 		}
@@ -450,7 +450,7 @@ public:
 
 		void * moduleStart, * moduleEnd;
 		MODULEINFO moduleInfo;
-		if (!GetModuleInformation(GetCurrentProcess(), gThisModule, &moduleInfo, sizeof(moduleInfo))) {
+		if (!GetModuleInformation(GetCurrentProcess(), gCoreLibPlatformInterface.ThisModule, &moduleInfo, sizeof(moduleInfo))) {
 			return false;
 		}
 
@@ -488,7 +488,7 @@ public:
 	{
 		std::wstring crashReporterPath;
 		crashReporterPath.resize(1024);
-		DWORD length = GetModuleFileName(gThisModule, crashReporterPath.data(), (DWORD)crashReporterPath.size());
+		DWORD length = GetModuleFileName(gCoreLibPlatformInterface.ThisModule, crashReporterPath.data(), (DWORD)crashReporterPath.size());
 		// Module not found
 		if (length == 0) return;
 		crashReporterPath.resize(length);

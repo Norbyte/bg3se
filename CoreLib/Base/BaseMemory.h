@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <atomic>
+#include <vector>
 
 namespace bg3se
 {

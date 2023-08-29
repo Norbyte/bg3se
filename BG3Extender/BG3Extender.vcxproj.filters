@@ -128,9 +128,6 @@
     <ClCompile Include="Extender\Shared\Console.cpp">
       <Filter>Extender\Shared</Filter>
     </ClCompile>
-    <ClCompile Include="GameHooks\SymbolMapper.cpp">
-      <Filter>GameHooks</Filter>
-    </ClCompile>
     <ClCompile Include="Lua\Shared\Proxies\LuaObjectProxies.cpp">
       <Filter>Lua\Shared\Proxies</Filter>
     </ClCompile>
@@ -271,9 +268,6 @@
     <ClInclude Include="GameHooks\OsirisWrappers.h">
       <Filter>GameHooks</Filter>
     </ClInclude>
-    <ClInclude Include="GameHooks\Wrappers.h">
-      <Filter>GameHooks</Filter>
-    </ClInclude>
     <ClInclude Include="GameHooks\EngineHooks.h">
       <Filter>GameHooks</Filter>
     </ClInclude>
@@ -371,25 +365,7 @@
     <ClInclude Include="Extender\Shared\ScriptExtenderBase.h">
       <Filter>Extender\Shared</Filter>
     </ClInclude>
-    <ClInclude Include="GameHooks\SymbolMapper.h">
-      <Filter>GameHooks</Filter>
-    </ClInclude>
     <ClInclude Include="GameDefinitions\Base\Base.h">
-      <Filter>GameDefinitions\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="GameDefinitions\Base\BaseMap.h">
-      <Filter>GameDefinitions\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="GameDefinitions\Base\BaseMemory.h">
-      <Filter>GameDefinitions\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="GameDefinitions\Base\BaseString.h">
-      <Filter>GameDefinitions\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="GameDefinitions\Base\BaseTypes.h">
-      <Filter>GameDefinitions\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="GameDefinitions\Base\BaseUtilities.h">
       <Filter>GameDefinitions\Base</Filter>
     </ClInclude>
     <ClInclude Include="Lua\Shared\Proxies\LuaArrayProxy.h">
@@ -419,9 +395,6 @@
     <ClInclude Include="Lua\Debugger\LuaDebugMessages.h">
       <Filter>Lua\Debugger</Filter>
     </ClInclude>
-    <ClInclude Include="GameDefinitions\Base\BaseArray.h">
-      <Filter>GameDefinitions\Base</Filter>
-    </ClInclude>
     <ClInclude Include="Lua\Shared\LuaBundle.h">
       <Filter>Lua\Shared</Filter>
     </ClInclude>
@@ -450,6 +423,7 @@
     <ClInclude Include="Lua\Shared\Proxies\LuaPropertyMap.h" />
     <ClInclude Include="Lua\Shared\LuaModule.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaCppClass.h" />
+    <ClInclude Include="GameDefinitions\TranslatedString.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -611,15 +585,6 @@
     </None>
     <None Include="LuaScripts\Libs\Event.lua">
       <Filter>LuaScripts\Libs</Filter>
-    </None>
-    <None Include="GameDefinitions\Base\BaseString.inl">
-      <Filter>GameDefinitions\Base</Filter>
-    </None>
-    <None Include="GameDefinitions\Base\BaseMemory.inl">
-      <Filter>GameDefinitions\Base</Filter>
-    </None>
-    <None Include="GameDefinitions\Base\BaseMap.inl">
-      <Filter>GameDefinitions\Base</Filter>
     </None>
     <None Include="Lua\Shared\Proxies\LuaEvent.inl">
       <Filter>Lua\Shared\Proxies</Filter>

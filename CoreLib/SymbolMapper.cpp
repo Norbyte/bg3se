@@ -1,12 +1,10 @@
-#include <stdafx.h>
-#include <GameHooks/SymbolMapper.h>
-#include <GameDefinitions/Symbols.h>
+#include "stdafx.h"
+#include <CoreLib/SymbolMapper.h>
 #include <string>
 #include <functional>
 #include <psapi.h>
 #include <DbgHelp.h>
-#include <Extender/Shared/tinyxml2.h>
-#include "resource.h"
+#include <CoreLib/tinyxml2.h>
 
 #undef DEBUG_MAPPINGS
 
@@ -15,7 +13,7 @@ BEGIN_SE()
 void** StaticSymbolRef::Get() const
 {
 	if (Offset != -1) {
-		return (void **)((uint8_t *)&GetStaticSymbols() + Offset);
+		return (void **)((uint8_t *)gCoreLibPlatformInterface.StaticSymbols + Offset);
 	} else {
 		return TargetPtr;
 	}
@@ -277,9 +275,9 @@ void SymbolMappingLoader::AddKnownModule(std::string const& name)
 	knownModules_.insert(name);
 }
 
-bool SymbolMappingLoader::LoadBuiltinMappings()
+bool SymbolMappingLoader::LoadBuiltinMappings(int resourceId)
 {
-	auto xml = GetExeResource(IDR_BINARY_MAPPINGS);
+	auto xml = GetExeResource(resourceId);
 
 	if (!xml) {
 		ERR("Couldn't load binary mappings resource");

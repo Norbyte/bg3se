@@ -1,55 +1,14 @@
 #pragma once
 
-#include <iostream>
-#include <fstream>
-#include <string>
 #include <GameDefinitions/Base/Base.h>
+#include <CoreLib/Utils.h>
 
 namespace std
 {
 	class thread;
 }
 
-enum class DebugMessageType
-{
-	Debug,
-	Info,
-	Osiris,
-	Warning,
-	Error
-};
-
-#include <Extender/Shared/Console.h>
-
-extern HMODULE gThisModule;
-
-template <typename... Args>
-void Debug(DebugMessageType type, wchar_t const * fmt, Args... args)
-{
-	wchar_t buf[1024];
-	_snwprintf_s(buf, std::size(buf), _TRUNCATE, fmt, args...);
-	bg3se::gConsole.Debug(type, buf);
-}
-
-template <typename... Args>
-void Debug(DebugMessageType type, char const * fmt, Args... args)
-{
-	char buf[1024];
-	_snprintf_s(buf, std::size(buf), _TRUNCATE, fmt, args...);
-	bg3se::gConsole.Debug(type, buf);
-}
-
-#define DEBUG(msg, ...) ::Debug(DebugMessageType::Debug, msg, __VA_ARGS__)
-#define INFO(msg, ...) ::Debug(DebugMessageType::Info, msg, __VA_ARGS__)
-#define WARN(msg, ...) ::Debug(DebugMessageType::Warning, msg, __VA_ARGS__)
-#define ERR(msg, ...) ::Debug(DebugMessageType::Error, msg, __VA_ARGS__)
-
-[[noreturn]]
-void Fail(TCHAR const * reason);
-
-[[noreturn]]
-void Fail(char const * reason);
-
+BEGIN_SE()
 
 #if !defined(OSI_NO_DEBUG_LOG)
 #define LuaError(msg) { \
@@ -94,10 +53,6 @@ void LogLuaError(std::string_view msg);
 void LogOsirisError(std::string_view msg);
 void LogOsirisWarning(std::string_view msg);
 void LogOsirisMsg(std::string_view msg);
-
-std::optional<std::string> GetExeResource(int resourceId);
-
-BEGIN_SE()
 
 extern std::atomic<uint32_t> gDisableCrashReportingCount;
 

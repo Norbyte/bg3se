@@ -1,8 +1,6 @@
-#include <stdafx.h>
+#include "stdafx.h"
 
-#include "Crypto.h"
-#include <iostream>
-#include <fstream>
+#include <CoreLib/Crypto.h>
 #include <iomanip>
 
 BEGIN_SE()

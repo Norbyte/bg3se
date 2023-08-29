@@ -19,13 +19,13 @@ public:
 		size_(size)
 	{
 		BOOL succeeded = VirtualProtect((LPVOID)ptr_, size_, PAGE_EXECUTE_READWRITE, &oldProtect_);
-		if (!succeeded) Fail("VirtualProtect() failed");
+		assert(succeeded);
 	}
 
 	inline ~WriteAnchor()
 	{
 		BOOL succeeded = VirtualProtect((LPVOID)ptr_, size_, oldProtect_, &oldProtect_);
-		if (!succeeded) Fail("VirtualProtect() failed");
+		assert(succeeded);
 	}
 
 	inline uint8_t * ptr()
@@ -217,7 +217,7 @@ public:
 	{}
 
 	void AddKnownModule(std::string const& name);
-	bool LoadBuiltinMappings();
+	bool LoadBuiltinMappings(int resourceId);
 	bool LoadMappings(tinyxml2::XMLDocument* doc);
 
 private:

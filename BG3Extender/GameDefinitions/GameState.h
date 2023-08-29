@@ -136,7 +136,7 @@ struct GameStateMachine : public ProtectedGameObject<GameStateMachine>
 	uint32_t WriteStateIdx;
 };
 
-struct EoCServer
+struct EoCServer : public ProtectedGameObject<EoCServer>
 {
 	char field_0;
 	__int64 field_8;
@@ -189,8 +189,8 @@ struct GameStateMachine : public ProtectedGameObject<GameStateMachine>
 	GameState State;
 };
 		
-
-struct EoCClient
+// Also update SimplifiedEoCClient in BG3Updater when changing this!
+struct EoCClient : public ProtectedGameObject<EoCClient>
 {
 	using HandleErrorProc = void (void* self, TranslatedString const& message, bool exitGame, TranslatedString const& a4);
 

@@ -3,9 +3,6 @@
 #include <cstdint>
 #include <string>
 
-std::string ToStdUTF8(std::wstring_view s);
-std::wstring FromStdUTF8(std::string_view s);
-
 namespace bg3se
 {
 	using STDString = std::basic_string<char, std::char_traits<char>, GameAllocator<char>>;
@@ -13,6 +10,8 @@ namespace bg3se
 	using StringView = std::string_view;
 	using WStringView = std::wstring_view;
 
+	std::string ToStdUTF8(std::wstring_view s);
+	std::wstring FromStdUTF8(std::string_view s);
 	STDString ToUTF8(WStringView s);
 	STDWString FromUTF8(StringView s);
 

@@ -50,6 +50,7 @@ namespace bg3se
 	void InitStaticSymbols()
 	{
 		gStaticSymbols = new StaticSymbols();
+		gCoreLibPlatformInterface.StaticSymbols = gStaticSymbols;
 	}
 
 	void StaticSymbols::CanonicalizePath(STDString & path) const

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GameHooks/Wrappers.h>
+#include <CoreLib/Wrappers.h>
 #include <GameDefinitions/Stats/Functors.h>
 #include <GameDefinitions/Stats/Stats.h>
 #include <GameDefinitions/Misc.h>

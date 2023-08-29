@@ -2,6 +2,8 @@
 
 #include <cstdint>
 #include <cassert>
+#include <type_traits>
+#include <iostream>
 
 #define BEGIN_SE() namespace bg3se {
 #define END_SE() }
@@ -11,7 +13,6 @@
 
 namespace bg3se
 {
-
 	// Helper struct to allow function overloading without (real) template-dependent parameters
 	template <class>
 	struct Overload {};
@@ -312,6 +313,15 @@ namespace bg3se
 		ReadOnly,
 		UnsupportedType,
 		Unknown
+	};
+
+	enum class DebugMessageType
+	{
+		Debug,
+		Info,
+		Osiris,
+		Warning,
+		Error
 	};
 }
 

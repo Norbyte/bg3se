@@ -1,4 +1,5 @@
 #include <Extender/Shared/StatLoadOrderHelper.h>
+#include <regex>
 
 BEGIN_NS(stats)
 

@@ -368,7 +368,7 @@ void OsirisExtender::InitRuntimeLogging()
 	if (!config_.LogRuntime) return;
 
 	auto path = gExtender->MakeLogFilePath(L"Extender Runtime", L"log");
-	gConsole.OpenLogFile(path);
+	gCoreLibPlatformInterface.GlobalConsole->OpenLogFile(path);
 	DEBUG(L"Extender runtime log written to '%s'", path.c_str());
 }
 

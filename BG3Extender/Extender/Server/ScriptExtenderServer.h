@@ -9,7 +9,7 @@
 #include <GameDefinitions/Symbols.h>
 #include <Osiris/OsirisExtender.h>
 #include <GameDefinitions/EntitySystemHelpers.h>
-#include <GameHooks/Wrappers.h>
+#include <CoreLib/Wrappers.h>
 
 #include <thread>
 #include <mutex>

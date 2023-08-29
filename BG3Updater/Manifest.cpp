@@ -1,6 +1,6 @@
 #include <stdafx.h>
 #include "Manifest.h"
-#include "Crypto.h"
+#include <CoreLib/Crypto.h>
 
 BEGIN_SE()
 

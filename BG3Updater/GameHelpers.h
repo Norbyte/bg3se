@@ -1,8 +1,8 @@
 #pragma once
 
-#include <GameDefinitions/EntitySystem.h>
-#include <GameDefinitions/Symbols.h>
-#include <GameHooks/SymbolMapper.h>
+#include <CoreLib/SymbolMapper.h>
+#include <BG3Extender/GameDefinitions/Enumerations.h>
+#include "UpdaterSymbols.h"
 
 #if defined(_DEBUG)
 #define HAS_DEBUG_LOGGING
@@ -18,25 +18,6 @@ struct THREADNAME_INFO
 	DWORD dwFlags; // Reserved for future use, must be zero.
 };
 
-void DebugMsg(char const *);
-
-template <typename... Args>
-void Debug(char const * fmt, Args... args)
-{
-	char buf[1024];
-	int length = sprintf_s(buf, 1024 - 1, fmt, args...);
-	buf[length++] = 0;
-	DebugMsg(buf);
-}
-
-#if defined(HAS_DEBUG_LOGGING)
-#define DEBUG(msg, ...) Debug(__FUNCTION__ "(): " msg, __VA_ARGS__)
-#define ERR(msg, ...) Debug(__FUNCTION__ "(): " msg, __VA_ARGS__)
-#else
-#define DEBUG(msg, ...)
-#define ERR(msg, ...)
-#endif
-
 class GameHelpers
 {
 public:
@@ -49,6 +30,11 @@ public:
 
 	void SuspendClientThread() const;
 	void ResumeClientThread() const;
+
+	UpdaterSymbols const& Symbols() const
+	{
+		return symbols_;
+	}
 
 private:
 	typedef void(*EoCClient__HandleError)(void * self, std::string const& message, bool exitGame, std::string const& a4);
@@ -64,6 +50,8 @@ private:
 	std::size_t moduleSize_{ 0 };
 	std::vector<ThreadInfo> threads_;
 
+	UpdaterSymbols symbols_;
+
 	SymbolMappings mappings_;
 	SymbolMapper symbolMapper_;
 	SymbolMapper::ModuleInfo appModule_;
@@ -71,7 +59,7 @@ private:
 	bool CanShowError() const;
 
 	bool ShowErrorDialog(char const * msg) const;
-	void ClientHandleError(char const * msg, bool exitGame) const;
+	bool ClientHandleError(char const * msg, bool exitGame) const;
 
 	ThreadInfo const * FindClientThread() const;
 	static LONG NTAPI ThreadNameCaptureFilter(_EXCEPTION_POINTERS *ExceptionInfo);
