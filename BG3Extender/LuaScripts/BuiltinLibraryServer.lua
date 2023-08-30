@@ -34,13 +34,13 @@ end
 _I._DoStartup()
 
 -- Test runner helper
-if Ext.Utils.IsDeveloperMode() then
+if Ext.Debug.IsDeveloperMode() then
 	Ext.Utils.LoadTestLibrary()
 	Ext.Events.GameStateChanged:Subscribe(function (e)
 		if e.ToState == "Running" then
 			local args = Ext.Utils.GetCommandLineParams()
 			for i,arg in pairs(args) do
-				if arg == "test" then
+				if arg == "-ext:servertest" then
 					Ext.Test.RunTests()
 				end
 			end
