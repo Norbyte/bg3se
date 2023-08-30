@@ -301,11 +301,11 @@ namespace bg3se::lua
 			int i = 1;
 			for (auto& it : v) {
 				StackCheck _(s.L);
-				s << it.Key() << it.Value();
+				s << it.Key << it.Value;
 				lua_settable(s.L, -3);
 			}
 		} else {
-			v.Clear();
+			v.clear();
 			for (auto idx : iterate(s.L, -1)) {
 				StackCheck _(s.L);
 				TKey key{};
@@ -314,7 +314,7 @@ namespace bg3se::lua
 				s << key;
 				lua_pop(s.L, 1);
 				s << value;
-				v.Insert(std::move(key), std::move(value));
+				v.insert(std::move(key), std::move(value));
 			}
 		}
 		s.EndObject();
