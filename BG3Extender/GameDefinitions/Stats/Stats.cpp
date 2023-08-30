@@ -313,6 +313,10 @@ RPGEnumerationType RPGEnumeration::GetPropertyType() const
 		return RPGEnumerationType::Requirements;
 	}
 
+	if (Name == GFS.strTranslatedString) {
+		return RPGEnumerationType::TranslatedString;
+	}
+
 	if (Values.size() > 0) {
 		if (IsFlagType(Name)) {
 			return RPGEnumerationType::Flags;
@@ -552,6 +556,25 @@ Guid* RPGStats::GetOrCreateGuid(int& attributeId)
 	}
 
 	return &GUIDs[attributeId];
+}
+
+std::optional<TranslatedString*> RPGStats::GetTranslatedString(int attributeId)
+{
+	if (attributeId > 0) {
+		return &TranslatedStrings[attributeId];
+	} else {
+		return {};
+	}
+}
+
+TranslatedString* RPGStats::GetOrCreateTranslatedString(int& attributeId)
+{
+	if (attributeId < 0) {
+		attributeId = (int)TranslatedStrings.Size();
+		TranslatedStrings.Add(TranslatedString{});
+	}
+
+	return &TranslatedStrings[attributeId];
 }
 
 std::optional<STDString*> RPGStats::GetConditions(int conditionsId)

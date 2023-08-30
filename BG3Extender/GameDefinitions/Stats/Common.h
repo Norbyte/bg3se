@@ -151,6 +151,7 @@ struct Object : public Noncopyable<Object>
 	std::optional<float> GetFloat(FixedString const& attributeName);
 	std::optional<int64_t> GetInt64(FixedString const& attributeName);
 	std::optional<Guid> GetGuid(FixedString const& attributeName);
+	std::optional<TranslatedString> GetTranslatedString(FixedString const& attributeName);
 	std::optional<Array<FixedString>> GetFlags(FixedString const& attributeName);
 	std::optional<Array<FunctorInfo>*> GetFunctors(FixedString const& attributeName);
 	std::optional<Array<RollCondition>*> GetRollConditions(FixedString const& attributeName);
@@ -159,6 +160,7 @@ struct Object : public Noncopyable<Object>
 	bool SetFloat(FixedString const& attributeName, std::optional<float> value);
 	bool SetInt64(FixedString const& attributeName, int64_t value);
 	bool SetGuid(FixedString const& attributeName, std::optional<Guid> value);
+	bool SetTranslatedString(FixedString const& attributeName, std::optional<TranslatedString> value);
 	bool SetFlags(FixedString const& attributeName, Array<STDString> const& value);
 	bool SetFunctors(FixedString const& attributeName, std::optional<Array<FunctorInfo>> const& value);
 	bool SetRollConditions(FixedString const& attributeName, std::optional<Array<RollCondition>> const& value);

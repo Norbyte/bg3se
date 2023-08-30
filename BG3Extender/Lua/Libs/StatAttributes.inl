@@ -179,6 +179,13 @@ namespace bg3se::lua::stats
 			break;
 		}
 
+		case RPGEnumerationType::TranslatedString:
+		{
+			auto value = object->GetTranslatedString(attributeName);
+			LuaWrite(L, value);
+			break;
+		}
+
 		case RPGEnumerationType::RollConditions:
 		{
 			auto conditions = object->GetRollConditions(attributeName);
@@ -353,6 +360,16 @@ namespace bg3se::lua::stats
 				break;
 			}
 
+			case RPGEnumerationType::TranslatedString:
+			{
+				TranslatedString ts;
+				lua_pushvalue(L, valueIdx);
+				LuaRead(L, ts);
+				lua_pop(L, 1);
+				object->SetTranslatedString(attributeName, ts);
+				break;
+			}
+
 			default:
 				LuaError("Cannot use table value for stat property " << attributeName << " of type " << (unsigned)attrType << "!");
 				break;
@@ -369,6 +386,10 @@ namespace bg3se::lua::stats
 
 			case RPGEnumerationType::GUID:
 				object->SetGuid(attributeName, {});
+				break;
+
+			case RPGEnumerationType::TranslatedString:
+				object->SetTranslatedString(attributeName, {});
 				break;
 
 			case RPGEnumerationType::StatsFunctors:

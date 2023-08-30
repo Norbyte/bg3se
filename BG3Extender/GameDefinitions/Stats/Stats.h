@@ -20,6 +20,7 @@ enum class RPGEnumerationType
 	Conditions,
 	RollConditions,
 	Requirements,
+	TranslatedString,
 	Unknown
 };
 
@@ -436,6 +437,8 @@ struct RPGStats : public ProtectedGameObject<RPGStats>
 	float* GetOrCreateFloat(int& floatId);
 	std::optional<Guid*> GetGuid(int guidId);
 	Guid* GetOrCreateGuid(int& guidId);
+	std::optional<TranslatedString*> GetTranslatedString(int tsId);
+	TranslatedString* GetOrCreateTranslatedString(int& tsId);
 	std::optional<STDString*> GetConditions(int conditionsId);
 	int GetOrCreateConditions(STDString const& conditions);
 

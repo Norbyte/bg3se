@@ -138,6 +138,25 @@ std::optional<Guid> Object::GetGuid(FixedString const& attributeName)
 	return {};
 }
 
+std::optional<TranslatedString> Object::GetTranslatedString(FixedString const& attributeName)
+{
+	int attributeIndex;
+	auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
+	if (typeInfo == nullptr) {
+		return {};
+	}
+
+	auto index = IndexedProperties[attributeIndex];
+	if (typeInfo->Name == GFS.strTranslatedString) {
+		auto val = GetStaticSymbols().GetStats()->GetTranslatedString(index);
+		if (val) {
+			return **val;
+		}
+	}
+
+	return {};
+}
+
 std::optional<Array<FixedString>> Object::GetFlags(FixedString const& attributeName)
 {
 	int attributeIndex;
@@ -227,6 +246,7 @@ bool Object::SetString(FixedString const& attributeName, const char * value)
 			*fs = FixedString(value);
 			IndexedProperties[attributeIndex] = poolIdx;
 		}
+
 	} else if (typeInfo->Name == GFS.strGuid) {
 		auto guid = Guid::ParseGuidString(value);
 		if (!guid) {
@@ -235,11 +255,19 @@ bool Object::SetString(FixedString const& attributeName, const char * value)
 		}
 
 		return SetGuid(attributeName, *guid);
+
 	} else if (typeInfo->Name == GFS.strConditions
 		|| typeInfo->Name == GFS.strTargetConditions
 		|| typeInfo->Name == GFS.strUseConditions) {
 		auto index = stats->GetOrCreateConditions(value);
 		IndexedProperties[attributeIndex] = index;
+
+	} else if (typeInfo->Name == GFS.strTranslatedString) {
+		int stringIdx{ -1 };
+		auto ts = stats->GetOrCreateTranslatedString(stringIdx);
+		*ts = TranslatedString::FromString(value);
+		IndexedProperties[attributeIndex] = stringIdx;
+
 	} else if (typeInfo->Name == GFS.strRollConditions) {
 		if (*value) {
 			auto index = stats->GetOrCreateConditions(value);
@@ -256,6 +284,7 @@ bool Object::SetString(FixedString const& attributeName, const char * value)
 		} else {
 			SetRollConditions(attributeName, {});
 		}
+
 	} else if (typeInfo->Values.size() > 0) {
 		auto enumIndex = typeInfo->Values.find(FixedString(value));
 		if (enumIndex != typeInfo->Values.end()) {
@@ -264,6 +293,7 @@ bool Object::SetString(FixedString const& attributeName, const char * value)
 			OsiError("Couldn't set " << Name << "." << attributeName << ": Value (\"" << value << "\") is not a valid enum label");
 			return false;
 		}
+
 	} else {
 		OsiError("Couldn't set " << Name << "." << attributeName << " to string value: Inappropriate type: " << typeInfo->Name);
 		return false;
@@ -375,6 +405,35 @@ bool Object::SetGuid(FixedString const& attributeName, std::optional<Guid> value
 		}
 	} else {
 		OsiError("Couldn't set " << Name << "." << attributeName << " to GUID value: Inappropriate type: " << typeInfo->Name);
+		return false;
+	}
+
+	return true;
+}
+
+bool Object::SetTranslatedString(FixedString const& attributeName, std::optional<TranslatedString> value)
+{
+	int attributeIndex;
+	auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
+	if (typeInfo == nullptr) {
+		OsiError("Couldn't fetch type info for " << Name << "." << attributeName);
+		return false;
+	}
+
+	auto stats = GetStaticSymbols().GetStats();
+	if (typeInfo->Name == GFS.strTranslatedString) {
+		if (value) {
+			int poolIdx{ -1 };
+			auto ts = stats->GetOrCreateTranslatedString(poolIdx);
+			if (ts != nullptr) {
+				*ts = *value;
+				IndexedProperties[attributeIndex] = poolIdx;
+			}
+		} else {
+			IndexedProperties[attributeIndex] = -1;
+		}
+	} else {
+		OsiError("Couldn't set " << Name << "." << attributeName << " to TranslatedString value: Inappropriate type: " << typeInfo->Name);
 		return false;
 	}
 

@@ -48,6 +48,7 @@ FS(TargetConditions);
 FS(UseConditions);
 FS(RollConditions);
 FS(Requirements);
+FS(TranslatedString);
 
 FS(AttributeFlags);
 FS(SpellFlagList);

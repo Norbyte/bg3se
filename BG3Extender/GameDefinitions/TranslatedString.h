@@ -30,6 +30,8 @@ struct TranslatedString
 {
 	RuntimeStringHandle Handle;
 	RuntimeStringHandle ArgumentString;
+
+	static TranslatedString FromString(StringView const& sv);
 };
 
 struct TranslatedStringRepository : public ProtectedGameObject<TranslatedStringRepository>
