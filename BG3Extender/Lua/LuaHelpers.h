@@ -401,7 +401,7 @@ template <class TValue>
 TValue checked_getfield(lua_State* L, char const* k, int index = -1)
 {
 	lua_getfield(L, index, k);
-	TValue val = get<TValue>(L, -1);
+	TValue val = do_get(L, -1, Overload<TValue>{});
 	lua_pop(L, 1);
 	return val;
 }
@@ -482,7 +482,7 @@ inline typename std::optional<T> do_get(lua_State* L, int index, Overload<std::o
 template <class T>
 inline T get_param(lua_State* L, int i, Overload<T>)
 {
-	return get<T>(L, i);
+	return do_get(L, i, Overload<T>{});
 }
 
 template <class T>
@@ -491,7 +491,7 @@ inline std::optional<T> get_param(lua_State* L, int i, Overload<std::optional<T>
 	if (lua_gettop(L) < i || lua_isnil(L, i)) {
 		return {};
 	} else {
-		return get<T>(L, i);
+		return do_get(L, i, Overload<T>{});
 	}
 }
 
@@ -503,7 +503,7 @@ inline T checked_get_flags(lua_State* L, int index)
 	luaL_checktype(L, index, LUA_TTABLE);
 	T flags = (T)0;
 	for (auto idx : iterate(L, index)) {
-		auto label = get<FixedString>(L, idx);
+		auto label = do_get(L, idx, Overload<FixedString>{});
 		auto val = EnumInfo<T>::Find(label);
 		if (val) {
 			flags |= *val;

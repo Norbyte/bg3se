@@ -87,6 +87,9 @@ TypeInformation* MakeDeferredOptionalType();
 template <class T>
 TypeInformation* MakeDeferredArrayType();
 
+template <class T>
+TypeInformation* MakeDeferredSetType();
+
 template <class TKey, class TValue>
 TypeInformation* MakeDeferredMapType();
 
