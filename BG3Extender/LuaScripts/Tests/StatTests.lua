@@ -1,5 +1,5 @@
 function TestStatAttributes()
-    local character = Ext.Stats.GetStat("MindFlayer", "Character")
+    local character = Ext.Stats.Get("MindFlayer")
 
     -- ConstantInt test
     AssertEquals(character.Vitality, 71)
@@ -36,7 +36,7 @@ function TestStatAttributes()
     --character['Proficiency Group'] = {}
     --AssertEquals(character['Proficiency Group'], {})
 
-    local weapon = Ext.Stats.GetStat("WPN_Sling", "Weapon")
+    local weapon = Ext.Stats.Get("WPN_Sling")
 
     -- ConstantFloat test
     AssertEquals(weapon.ValueScale, 0.5)
@@ -56,14 +56,14 @@ function TestStatAttributes()
     AssertEquals(weapon.BoostsOnEquipMainHand, "")
 
     -- RollConditions test
-    local spell1 = Ext.Stats.GetStat("Target_Claws_IntellectDevourer", "SpellData")
+    local spell1 = Ext.Stats.Get("Target_Claws_IntellectDevourer")
     AssertEquals(spell1.SpellRoll, "Attack(AttackType.MeleeUnarmedAttack)")
     spell1.SpellRoll = "Attack(TEST)"
     AssertEquals(spell1.SpellRoll, "Attack(TEST)")
     spell1.SpellRoll = ""
     -- FIXME - AssertEquals(spell1.SpellRoll, "")
 
-    local spell2 = Ext.Stats.GetStat("Target_FindFamiliar_Cat_Ritual", "SpellData")
+    local spell2 = Ext.Stats.Get("Target_FindFamiliar_Cat_Ritual")
     local requirements2 = {
         {
             Not = true,
@@ -86,7 +86,7 @@ function TestStatAttributes()
     spell2.Requirements = {}
     AssertEquals(spell2.Requirements, {})
 
-    local spell4 = Ext.Stats.GetStat("Target_TripAttack", "SpellData")
+    local spell4 = Ext.Stats.Get("Target_TripAttack")
     AssertEquals(spell4.TargetConditions, "Character() and not Self()")
     spell4.TargetConditions = "TEST"
     AssertEquals(spell4.TargetConditions, "TEST")
@@ -94,7 +94,7 @@ function TestStatAttributes()
     AssertEquals(spell4.TargetConditions, "")
 
     -- StatsFunctors test
-    local spell5 = Ext.Stats.GetStat("Target_Curse_Gnoll", "SpellData")
+    local spell5 = Ext.Stats.Get("Target_Curse_Gnoll")
     local functors1 = { -- ApplyStatus(GNOLL_CURSE,100,2)
         {
             Duration = 12.0,
@@ -140,14 +140,14 @@ function TestStatAttributeReassignment()
     }
 
     for i,modifierList in ipairs(modifierLists) do
-        local stats = Ext.Stats.GetAllStats(modifierList)
+        local stats = Ext.Stats.GetStats(modifierList)
         local attributes = Ext.Stats.GetModifierAttributes(modifierList)
 
         -- MemorizationRequirements is a buggy/nonexistent property in Modifiers.txt
         attributes.MemorizationRequirements = nil
 
         for j,statName in ipairs(stats) do
-            local stat = Ext.Stats.GetStat(statName, modifierList)
+            local stat = Ext.Stats.Get(statName)
             for attribute,type in pairs(attributes) do
                 local value = stat[attribute]
                 stat[attribute] = value

@@ -77,149 +77,28 @@ namespace bg3se::lua::stats
 		SpellPrototypeProxy::RegisterMetatable(L);
 	}
 
-	int GetModifierAttributes(lua_State* L)
+
+	Map<FixedString, FixedString> GetModifierAttributes(FixedString const& modifierName)
 	{
-		auto modifierName = get<FixedString>(L, 1);
 		auto stats = GetStaticSymbols().GetStats();
-		if (!stats) return luaL_error(L, "Stats not available");
+		if (!stats) {
+			OsiError("Stats not available");
+			return {};
+		}
 
 		auto modifierList = stats->ModifierLists.Find(modifierName);
 		if (!modifierList) {
 			OsiError("No such modifier list: " << modifierName);
-			push(L, nullptr);
-			return 1;
+			return {};
 		}
 
-		lua_newtable(L);
+		Map<FixedString, FixedString> modifiers;
 		for (auto const& modifier : modifierList->Attributes.Primitives) {
 			auto enumeration = GetStaticSymbols().GetStats()->ModifierValueLists.Find(modifier->EnumerationIndex);
-			settable(L, modifier->Name, enumeration->Name);
+			modifiers.insert(modifier->Name, enumeration->Name);
 		}
 
-		return 1;
+		return modifiers;
 	}
-
-	template <class T>
-	int EnumIndexToLabel(lua_State* L, T index)
-	{
-		auto label = EnumInfo<T>::Find(index);
-		if (label) {
-			push(L, label);
-		} else {
-			push(L, nullptr);
-		}
-
-		return 1;
-	}
-
-	template <class T>
-	int EnumLabelToIndex(lua_State* L, char const* label)
-	{
-		auto index = EnumInfo<T>::Find(FixedString(label));
-		if (index) {
-			push(L, *index);
-		} else {
-			push(L, nullptr);
-		}
-
-		return 1;
-	}
-
-#define BEGIN_BITMASK_NS(NS, T, luaName, type)
-#define BEGIN_BITMASK(T, type)
-#define E(label)
-#define EV(label, value)
-#define END_ENUM_NS()
-#define END_ENUM()
-
-// TODO - this solution has subpar performance
-#define BEGIN_ENUM_NS(NS, T, luaName, type) \
-	if (strcmp(enumName, #T) == 0) { \
-		return EnumIndexToLabel<NS::T>(L, (NS::T)index); \
-	}
-#define BEGIN_ENUM(T, type) \
-	if (strcmp(enumName, #T) == 0) { \
-		return EnumIndexToLabel<T>(L, (T)index); \
-	}
-
-	int EnumIndexToLabel(lua_State* L)
-	{
-		auto enumName = get<char const*>(L, 1);
-		auto index = get<int>(L, 2);
-
-#include <GameDefinitions/Enumerations.inl>
-
-		auto valueList = GetStaticSymbols().GetStats()->ModifierValueLists.Find(enumName);
-		if (valueList) {
-			std::optional<FixedString> value;
-			for (auto const& kv : valueList->Values) {
-				if (kv.Value  == index) {
-					value = kv.Key;
-				}
-			}
-
-			if (value) {
-				push(L, *value);
-				return 1;
-			} else {
-				OsiError("Enumeration '" << enumName << "' has no label with index " << index);
-				push(L, nullptr);
-				return 1;
-			}
-		}
-
-		OsiError("No such enumeration: " << enumName);
-		push(L, nullptr);
-		return 1;
-	}
-
-#undef BEGIN_ENUM_NS
-#undef BEGIN_ENUM
-
-	// TODO - this solution has subpar performance
-#define BEGIN_ENUM_NS(NS, T, luaName, type) \
-	if (strcmp(enumName, #T) == 0) { \
-		return EnumLabelToIndex<NS::T>(L, label); \
-	}
-#define BEGIN_ENUM(T, type) \
-	if (strcmp(enumName, #T) == 0) { \
-		return EnumLabelToIndex<T>(L, label); \
-	}
-
-
-	int EnumLabelToIndex(lua_State* L)
-	{
-		auto enumName = get<char const*>(L, 1);
-		auto label = get<char const*>(L, 2);
-
-#include <GameDefinitions/Enumerations.inl>
-
-		auto valueList = GetStaticSymbols().GetStats()->ModifierValueLists.Find(enumName);
-		if (valueList) {
-			auto value = valueList->Values.find(FixedString(label));
-
-			if (value != valueList->Values.end()) {
-				push(L, value.Value());
-				return 1;
-			} else {
-				OsiError("Enumeration '" << enumName << "' has no label named '" << label << "'");
-				push(L, nullptr);
-				return 1;
-			}
-		}
-
-		OsiError("No such enumeration: " << enumName);
-		push(L, nullptr);
-		return 1;
-	}
-
-#undef BEGIN_BITMASK_NS
-#undef BEGIN_ENUM_NS
-#undef BEGIN_BITMASK
-#undef BEGIN_ENUM
-#undef E
-#undef EV
-#undef END_ENUM_NS
-#undef END_ENUM
 
 }

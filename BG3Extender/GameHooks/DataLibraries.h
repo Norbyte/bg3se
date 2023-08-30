@@ -40,6 +40,7 @@ namespace bg3se {
 		void ShowStartupError(STDString const & msg, bool exitGame);
 		void ShowStartupMessage(STDString const & msg, bool exitGame);
 
+		bool WasPatchApplied(std::string const& mapping);
 		bool ApplyCodePatch(std::string const& mapping);
 		bool UndoCodePatch(std::string const& mapping);
 

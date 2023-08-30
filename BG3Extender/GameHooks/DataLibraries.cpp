@@ -99,7 +99,7 @@ namespace bg3se
 
 	void LibraryManager::ApplyCodePatches()
 	{
-		if (gExtender->GetConfig().EnableAchievements) {
+		if (gExtender->GetConfig().EnableAchievements && !WasPatchApplied("ls::ModuleSettings::IsModded")) {
 			if (ApplyCodePatch("ls::ModuleSettings::IsModded")) {
 				DEBUG("Modded achievements enabled.");
 			} else {
@@ -116,6 +116,21 @@ namespace bg3se
 		}
 	}
 
+	bool LibraryManager::WasPatchApplied(std::string const& mapping)
+	{
+		auto it = mappings_.Mappings.find(mapping);
+		if (it == mappings_.Mappings.end()) {
+			ERR("Cannot apply patch - no such mapping: '%s'", mapping.c_str());
+			return false;
+		}
+
+		bool applied = false;
+		for (auto& patch : it->second.Patches) {
+			applied = patch.WasApplied || applied;
+		}
+
+		return applied;
+	}
 
 	bool LibraryManager::ApplyCodePatch(std::string const& mapping)
 	{

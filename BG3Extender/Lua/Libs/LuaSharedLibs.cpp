@@ -7,9 +7,9 @@
 #include <Lua/Libs/Json.inl>
 #include <Lua/Libs/Math.inl>
 #include <Lua/Libs/Mod.inl>
-#include <Lua/Libs/Stats.inl>
 #include <Lua/Libs/StatAttributes.inl>
 #include <Lua/Libs/StatMisc.inl>
+#include <Lua/Libs/Stats.inl>
 #include <Lua/Libs/Types.inl>
 #include <Lua/Libs/Utils.inl>
 

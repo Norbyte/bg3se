@@ -161,16 +161,14 @@ Array<FixedString> FetchStatEntriesBefore(RPGStats* stats, FixedString const& mo
 /// The following types are supported:  `StatusData`, `SkillData`, `Armor`, `Shield`, `Weapon`, `Potion`, `Character`, `Object`, `SkillSet`, `EquipmentSet`, `TreasureTable`, `ItemCombination`, `ItemComboProperty`, `CraftingPreviewData`, `ItemGroup`, `NameGroup`, `DeltaMod`
 /// </summary>
 /// <lua_export>GetStats</lua_export>
-/// <lua_legacy>Ext.GetStatEntries</lua_legacy>
 /// <param name="statType">Type of stat to fetch</param>
 /// <returns></returns>
-UserReturn GetStats(lua_State * L, std::optional<FixedString> statType)
+Array<FixedString> GetStats(std::optional<FixedString> statType)
 {
 	auto stats = GetStaticSymbols().GetStats();
 	if (stats == nullptr) {
 		OsiError("RPGStats not available");
-		push(L, nullptr);
-		return 1;
+		return {};
 	}
 
 	Array<FixedString> names;
@@ -198,9 +196,7 @@ UserReturn GetStats(lua_State * L, std::optional<FixedString> statType)
 		names = FetchStatEntries(stats, *statType);
 	}
 
-	LuaWrite(L, names);
-
-	return 1;
+	return names;
 }
 
 /// <summary>
@@ -659,52 +655,27 @@ void SetPersistence(FixedString const& statName, bool persist)
 	}
 }
 
-template <class T>
-int TypedEnumIndexToLabel(lua_State* L, T index)
+std::optional<FixedString> EnumIndexToLabel(FixedString const& enumName, int index)
 {
-	auto label = EnumInfo<T>::Find(index);
-	if (label) {
-		push(L, label);
-	} else {
-		push(L, nullptr);
+	auto enumInfo = EnumRegistry::Get().EnumsByName.find(enumName);
+	if (enumInfo != EnumRegistry::Get().EnumsByName.end()) {
+		auto value = enumInfo.Value()->Find((EnumUnderlyingType)index);
+		if (value) {
+			return value;
+		} else {
+			return {};
+		}
 	}
-
-	return 1;
-}
-
-template <class T>
-int TypedEnumLabelToIndex(lua_State* L, FixedString const& label)
-{
-	auto index = EnumInfo<T>::Find(label);
-	if (index) {
-		push(L, (typename EnumInfo<T>::UnderlyingType)*index);
-	} else {
-		push(L, nullptr);
+	
+	auto bitfieldInfo = BitmaskRegistry::Get().BitfieldsByName.find(enumName);
+	if (bitfieldInfo != BitmaskRegistry::Get().BitfieldsByName.end()) {
+		auto value = bitfieldInfo.Value()->Find((EnumUnderlyingType)index);
+		if (value) {
+			return value;
+		} else {
+			return {};
+		}
 	}
-
-	return 1;
-}
-
-#define BEGIN_BITMASK_NS(NS, T, luaName, type)
-#define BEGIN_BITMASK(T, type)
-#define E(label)
-#define EV(label, value)
-#define END_ENUM_NS()
-#define END_ENUM()
-
-// TODO - this solution has subpar performance
-#define BEGIN_ENUM_NS(NS, T, luaName, type) \
-if (strcmp(enumName.GetString(), #luaName) == 0) { \
-	return TypedEnumIndexToLabel<NS::T>(L, (NS::T)index); \
-}
-#define BEGIN_ENUM(T, type) \
-if (strcmp(enumName.GetString(), #T) == 0) { \
-	return TypedEnumIndexToLabel<T>(L, (T)index); \
-}
-
-UserReturn EnumIndexToLabel(lua_State* L, FixedString const& enumName, int index)
-{
-#include <GameDefinitions/Enumerations.inl>
 
 	auto valueList = GetStaticSymbols().GetStats()->ModifierValueLists.Find(enumName);
 	if (valueList) {
@@ -716,65 +687,54 @@ UserReturn EnumIndexToLabel(lua_State* L, FixedString const& enumName, int index
 		}
 
 		if (value) {
-			push(L, *value);
-			return 1;
+			return value;
 		} else {
 			OsiError("Enumeration '" << enumName << "' has no label with index " << index);
-			push(L, nullptr);
-			return 1;
+			return {};
 		}
 	}
 
 	OsiError("No such enumeration: " << enumName);
-	push(L, nullptr);
-	return 1;
+	return {};
 }
 
-#undef BEGIN_ENUM_NS
-#undef BEGIN_ENUM
-	
-// TODO - this solution has subpar performance
-#define BEGIN_ENUM_NS(NS, T, luaName, type) \
-if (strcmp(enumName.GetString(), #luaName) == 0) { \
-	return TypedEnumLabelToIndex<NS::T>(L, label); \
-}
-#define BEGIN_ENUM(T, type) \
-if (strcmp(enumName.GetString(), #T) == 0) { \
-	return TypedEnumLabelToIndex<T>(L, label); \
-}
-
-
-UserReturn EnumLabelToIndex(lua_State* L, FixedString const& enumName, FixedString const& label)
+std::optional<int64_t> EnumLabelToIndex(FixedString const& enumName, FixedString const& label)
 {
-#include <GameDefinitions/Enumerations.inl>
+	auto enumInfo = EnumRegistry::Get().EnumsByName.find(enumName);
+	if (enumInfo != EnumRegistry::Get().EnumsByName.end()) {
+		auto key = enumInfo.Value()->Find(label);
+		if (key) {
+			return (int64_t)* key;
+		} else {
+			return {};
+		}
+	}
+	
+	auto bitfieldInfo = BitmaskRegistry::Get().BitfieldsByName.find(enumName);
+	if (bitfieldInfo != BitmaskRegistry::Get().BitfieldsByName.end()) {
+		auto key = bitfieldInfo.Value()->Find(label);
+		if (key) {
+			return (int64_t)*key;
+		} else {
+			return {};
+		}
+	}
 
 	auto valueList = GetStaticSymbols().GetStats()->ModifierValueLists.Find(enumName);
 	if (valueList) {
 		auto value = valueList->Values.find(FixedString(label));
 
 		if (value) {
-			push(L, value.Value());
-			return 1;
+			return value.Value();
 		} else {
 			OsiError("Enumeration '" << enumName << "' has no label named '" << label << "'");
-			push(L, nullptr);
-			return 1;
+			return {};
 		}
 	}
 
 	OsiError("No such enumeration: " << enumName);
-	push(L, nullptr);
-	return 1;
+	return {};
 }
-
-#undef BEGIN_BITMASK_NS
-#undef BEGIN_ENUM_NS
-#undef BEGIN_BITMASK
-#undef BEGIN_ENUM
-#undef E
-#undef EV
-#undef END_ENUM_NS
-#undef END_ENUM
 
 
 bool AddAttribute(FixedString const& modifierList, FixedString const& modifierName, FixedString const& typeName)
@@ -837,6 +797,7 @@ void RegisterStatsLib()
 	DECLARE_MODULE(Stats, Both)
 	BEGIN_MODULE()
 	MODULE_FUNCTION(GetStatsManager)
+	MODULE_FUNCTION(GetModifierAttributes)
 	MODULE_FUNCTION(GetStats)
 	MODULE_FUNCTION(GetStatsLoadedBefore)
 	MODULE_FUNCTION(Get)
