@@ -22,32 +22,31 @@ void StatLoadOrderHelper::UpdateModDirectoryMap()
 	std::unique_lock _(modMapMutex_);
 	modDirectoryToModMap_.clear();
 
-	/*auto modManager = GetModManagerClient();
+	auto modManager = gExtender->GetCurrentExtensionState()->GetModManager();
 	if (modManager) {
 		for (auto const& mod : modManager->BaseModule.LoadOrderedModules) {
-			auto directory = ToUTF8(mod.Info.Directory);
-			modDirectoryToModMap_.insert(std::make_pair(directory, mod.Info.ModuleUUID));
+			modDirectoryToModMap_.insert(std::make_pair(mod.Info.Directory, mod.Info.ModuleUUIDString));
 		}
-	}*/
+	}
 }
 
 void StatLoadOrderHelper::OnStatFileOpened()
 {
-	/*auto stats = GetStaticSymbols().GetStats();
+	auto stats = GetStaticSymbols().GetStats();
 	auto const& bufs = stats->PreParsedDataBufferMap;
-	bufs.Iterate([this, stats](auto const& key, auto const& preParseBufIdx) {
-		auto preParseBuf = stats->PreParsedDataBuffers[(uint32_t)preParseBufIdx];
-		auto entry = statsEntryToModMap_.find(key);
+	for (auto const& kv : bufs) {
+		auto preParseBuf = stats->PreParsedDataBuffers[(uint32_t)kv.Value];
+		auto entry = statsEntryToModMap_.find(kv.Key);
 		if (entry == statsEntryToModMap_.end()) {
 			StatsEntryModMapping mapping;
 			mapping.Mod = statLastTxtMod_;
 			mapping.PreParseBuf = preParseBuf;
-			statsEntryToModMap_.insert(std::make_pair(key, mapping));
+			statsEntryToModMap_.insert(std::make_pair(kv.Key, mapping));
 		} else if (entry->second.PreParseBuf != preParseBuf) {
 			entry->second.Mod = statLastTxtMod_;
 			entry->second.PreParseBuf = preParseBuf;
 		}
-	});*/
+	}
 }
 
 static std::regex sStatPathRegex(".*/Public/(.*)/Stats/Generated/.*.txt$");

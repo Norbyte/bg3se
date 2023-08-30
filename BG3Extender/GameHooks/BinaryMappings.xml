@@ -400,6 +400,39 @@
           <Target Type="Indirect" Offset="@ref1" Symbol="gRPGStats" />
         </Mapping>
 
+        <Mapping Name="RPGStats::ParseStructureFolder" Scope="Custom">
+          49 8d 4d 60 // lea     rcx, [r13+60h]
+          48 8b 01 // mov     rax, [rcx]
+          ff 50 08 // call    qword ptr [rax+8]
+          49 8b 45 00 // mov     rax, [r13+0]
+          49 8b cd // mov     rcx, r13
+          ff 50 08 // call    qword ptr [rax+8]
+          48 8b d3 // mov     rdx, rbx
+          49 8b cd // mov     rcx, r13
+          @ref1 e8 ?? ?? ?? ?? // call    RPGStats__ParseStructureFolder
+          <Target Type="Indirect" Offset="@ref1" Symbol="RPGStats__ParseStructureFolder" />
+        </Mapping>
+
+        <Mapping Name="RPGStats::Load">
+          48 89 5c 24 10 // mov     [rsp+arg_8], rbx
+          55 // push    rbp
+          56 // push    rsi
+          57 // push    rdi
+          41 54 // push    r12
+          41 55 // push    r13
+          41 56 // push    r14
+          41 57 // push    r15
+          48 83 ec 20 // sub     rsp, 20h
+          48 8b da // mov     rbx, rdx
+          4c 8b e9 // mov     r13, rcx
+          48 8d 81 e8 03 00 00 // lea     rax, [rcx+3E8h]
+          48 89 44 24 70 // mov     [rsp+58h+arg_10], rax
+          33 ff // xor     edi, edi
+          0f 1f 84 00 00 00 00 00 // nop     dword ptr [rax+rax+00000000h]
+          <Target Type="Absolute" Offset="0" Symbol="RPGStats__Load" />
+          <Target Type="Absolute" Offset="0" NextSymbol="RPGStats::ParseStructureFolder" NextSymbolSeekSize="0x180" />
+        </Mapping>
+
       <!-- NOTE: Adjust LibraryManager::BindECSIndex after changing this -->
       <Mapping Name="ecs::StaticIDRegistrant" AllowFail="true">
         @ref1 c7 05 ?? ?? ?? ?? ff ff ff 7f // mov     cs:ecl__CharacterID, 7FFFFFFFh

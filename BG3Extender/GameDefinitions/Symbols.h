@@ -84,12 +84,13 @@ namespace bg3se
 		stats::Functors::ExecuteType7Proc* stats__Functors__ExecuteType7{ nullptr };
 		stats::Functors::ExecuteType8Proc* stats__Functors__ExecuteType8{ nullptr };
 
+		stats::RPGStats** gRPGStats{ nullptr };
 		stats::RPGStats::LoadProc* RPGStats__Load{ nullptr };
+		stats::RPGStats::ParseStructureFolderProc* RPGStats__ParseStructureFolder{ nullptr };
 		/*RPGStats::ParsePropertiesProc* RPGStats__ParseProperties{nullptr};
 		SkillPrototypeManager** eoc__SkillPrototypeManager{ nullptr };
 		StatusPrototypeManager** eoc__StatusPrototypeManager{ nullptr };*/
 
-		stats::RPGStats** gRPGStats{ nullptr };
 		esv::SavegameManager** esv__SavegameManager{ nullptr };
 
 		App** AppInstance{ nullptr };

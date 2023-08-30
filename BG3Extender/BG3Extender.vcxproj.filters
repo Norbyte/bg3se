@@ -157,6 +157,7 @@
     </ClCompile>
     <ClCompile Include="Lua\Libs\LuaSharedLibs.cpp" />
     <ClCompile Include="Lua\Shared\Proxies\LuaTypeInformation.cpp" />
+    <ClCompile Include="Extender\Shared\Hooks.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -424,6 +425,7 @@
     <ClInclude Include="Lua\Shared\LuaModule.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaCppClass.h" />
     <ClInclude Include="GameDefinitions\TranslatedString.h" />
+    <ClInclude Include="Extender\Shared\Hooks.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

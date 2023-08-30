@@ -185,29 +185,24 @@ std::wstring ScriptExtender::MakeLogFilePath(std::wstring const & Type, std::wst
 	return ss.str();
 }
 
-void ScriptExtender::OnStatsLoad(stats::RPGStats::LoadProc* wrapped, stats::RPGStats* mgr, ObjectSet<STDString>* paths)
+void ScriptExtender::OnStatsLoad(stats::RPGStats::LoadProc* wrapped, stats::RPGStats* mgr, Array<STDString>* paths)
 {
-	statLoadOrderHelper_.OnLoadStarted();
+	// Stats load is scheduled from the client on the shared worker pool
+	client_.AddThread(GetCurrentThreadId());
 
-	if (client_.IsInClientThread()) {
-		client_.LoadExtensionState(ExtensionStateContext::Load);
-	} else if (server_.IsInServerThread()) {
-		server_.LoadExtensionState(ExtensionStateContext::Load);
-	}
+	statLoadOrderHelper_.OnLoadStarted();
+	client_.LoadExtensionState(ExtensionStateContext::Load);
 
 	wrapped(mgr, paths);
 
 	statLoadOrderHelper_.OnLoadFinished();
-	if (client_.IsInClientThread()) {
-		client_.LoadExtensionState(ExtensionStateContext::Game);
-	} else if (server_.IsInServerThread()) {
-		server_.LoadExtensionState(ExtensionStateContext::Game);
+	client_.LoadExtensionState(ExtensionStateContext::Game);
+
+	if (client_.HasExtensionState()) {
+		client_.GetExtensionState().OnStatsLoaded();
 	}
 
-	auto state = GetCurrentExtensionState();
-	if (state) {
-		state->OnStatsLoaded();
-	}
+	client_.RemoveThread(GetCurrentThreadId());
 }
 
 bool ScriptExtender::HasFeatureFlag(char const * flag) const

@@ -34,6 +34,7 @@ HOOK_DEFN(Module__Hash, Module__Hash, Module::HashProc, WrappableFunction)
 HOOK_DEFN(App__OnInputEvent, App__OnInputEvent, App::VMT::OnInputEventProc, PreHookableFunction)
 */
 HOOK_DEFN(RPGStats__Load, RPGStats__Load, stats::RPGStats::LoadProc)
+HOOK_DEFN(RPGStats__ParseStructureFolder, RPGStats__ParseStructureFolder, stats::RPGStats::ParseStructureFolderProc)
 
 HOOK_DEFN(FileReader__ctor, ls__FileReader__ctor, FileReader::CtorProc)
 HOOK_DEFN(stats__DealDamageFunctor__ApplyDamage, stats__DealDamageFunctor__ApplyDamage, stats::DealDamageFunctor::ApplyDamageProc)

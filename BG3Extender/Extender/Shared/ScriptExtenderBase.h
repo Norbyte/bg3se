@@ -10,6 +10,8 @@ BEGIN_SE()
 class ThreadedExtenderState
 {
 public:
+	void AddThread(DWORD threadId);
+	void RemoveThread(DWORD threadId);
 	bool IsInThread() const;
 	bool IsInThread(DWORD threadId) const;
 	std::unordered_set<DWORD> const& GetThreadIds() const
@@ -22,8 +24,6 @@ public:
 
 protected:
 	void RunPendingTasks();
-	void AddThread(DWORD threadId);
-	void RemoveThread(DWORD threadId);
 
 private:
 	std::unordered_set<DWORD> threadIds_;

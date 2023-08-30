@@ -184,6 +184,9 @@ namespace bg3se
 		SYM_OFF(stats__Functors__ExecuteType8);
 
 		SYM_OFF(gRPGStats);
+		SYM_OFF(RPGStats__Load);
+		SYM_OFF(RPGStats__ParseStructureFolder);
+
 		SYM_OFF(esv__SavegameManager);
 		SYM_OFF(AppInstance);
 

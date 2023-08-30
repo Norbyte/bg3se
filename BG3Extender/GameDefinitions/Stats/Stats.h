@@ -345,7 +345,7 @@ struct RNG
 	bool Initialized;
 };
 
-struct DataBuffer
+struct PreParsedDataBuffer
 {
 	ScratchString Buf;
 	FixedString Name;
@@ -364,7 +364,8 @@ struct BloodType
 
 struct RPGStats : public ProtectedGameObject<RPGStats>
 {
-	using LoadProc = void(RPGStats* self, ObjectSet<STDString>* paths);
+	using LoadProc = void(RPGStats* self, Array<STDString>* paths);
+	using ParseStructureFolderProc = void(RPGStats* self, Array<STDString>* paths);
 
 	struct VMTMappings
 	{
@@ -404,8 +405,8 @@ struct RPGStats : public ProtectedGameObject<RPGStats>
 	void* ItemCombinationManager;
 	void* CurrentDataBuffer;
 	FixedString CurrentDataBufferPath;
-	Map<FixedString, int32_t> DataBufferIndices;
-	Array<DataBuffer*> DataBuffers;
+	Map<FixedString, int32_t> PreParsedDataBufferMap;
+	Array<PreParsedDataBuffer*> PreParsedDataBuffers;
 	Map<FixedString, BloodType*> BloodTypes;
 	bool field_3E0;
 	bool field_3E1;
