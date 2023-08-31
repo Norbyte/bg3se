@@ -14,7 +14,7 @@ struct SimplifiedEoCClient : public ProtectedGameObject<SimplifiedEoCClient>
 {
 	using HandleErrorProc = void(void* self, TranslatedString const& message, bool exitGame, TranslatedString const& a4);
 
-	uint8_t _Unmapped[0x88];
+	uint8_t _Unmapped[0xA0];
 	SimplifiedGameStateMachine* GameStateMachine;
 };
 
@@ -52,7 +52,8 @@ struct UpdaterSymbols : Noncopyable<UpdaterSymbols>
 	{
 		if (ecl__EoCClient != nullptr
 			&& *ecl__EoCClient != nullptr
-			&& (*ecl__EoCClient)->GameStateMachine != nullptr) {
+			&& (*ecl__EoCClient)->GameStateMachine != nullptr
+			&& !IsBadReadPtr((*ecl__EoCClient)->GameStateMachine, sizeof(SimplifiedGameStateMachine))) {
 			return (*ecl__EoCClient)->GameStateMachine->State;
 		} else {
 			return {};

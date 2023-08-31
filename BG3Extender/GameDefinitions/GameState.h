@@ -208,6 +208,8 @@ struct EoCClient : public ProtectedGameObject<EoCClient>
 	__int64 field_68;
 	Array<void*> field_70;
 	__int64 field_80;
+	Array<void*> field_70X;
+	__int64 field_80X;
 	GameStateMachine* GameStateMachine;
 	void* GameClient;
 	void* field_98;

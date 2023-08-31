@@ -368,7 +368,7 @@
         <Mapping Name="App::Instance">
           @str1 48 8d 0d ?? ?? ?? ?? // lea     rcx, aCreatingApp; "Creating App\n"
           @ref1 ff 15 ?? ?? ?? ?? // call    cs:OutputDebugStringA
-          b9 c0 01 00 00 // mov     ecx, 1C0h; Size
+          b9 ?? 01 00 00 // mov     ecx, 1C0h; Size
           @ref2 ff 15 ?? ?? ?? ?? // call    cs:__imp_malloc
           48 8b c8 // mov     rcx, rax
           @ref3 48 89 05 ?? ?? ?? ?? // mov     cs:ls__gApp, rax
@@ -428,7 +428,6 @@
           48 8d 81 e8 03 00 00 // lea     rax, [rcx+3E8h]
           48 89 44 24 70 // mov     [rsp+58h+arg_10], rax
           33 ff // xor     edi, edi
-          0f 1f 84 00 00 00 00 00 // nop     dword ptr [rax+rax+00000000h]
           <Target Type="Absolute" Offset="0" Symbol="RPGStats__Load" />
           <Target Type="Absolute" Offset="0" NextSymbol="RPGStats::ParseStructureFolder" NextSymbolSeekSize="0x180" />
         </Mapping>
