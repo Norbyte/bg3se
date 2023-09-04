@@ -192,6 +192,7 @@ ManifestParseResult ManifestSerializer::Parse(std::string const& json, Manifest&
 	}
 
 	manifest.Notice = root["Notice"].asString();
+	manifest.NoMatchingVersionNotice = root["NoMatchingVersionNotice"].asString();
 
 	if (Parse(root, manifest, parseError)) {
 		return ManifestParseResult::Successful;
@@ -341,6 +342,10 @@ std::string ManifestSerializer::Stringify(Manifest& manifest)
 
 	if (!manifest.Notice.empty()) {
 		root["Notice"] = manifest.Notice;
+	}
+
+	if (!manifest.NoMatchingVersionNotice.empty()) {
+		root["NoMatchingVersionNotice"] = manifest.NoMatchingVersionNotice;
 	}
 
 	root["Resources"] = resources;

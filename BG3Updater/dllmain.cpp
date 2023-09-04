@@ -18,7 +18,7 @@
 #include <iomanip>
 #include <unordered_map>
 
-#define UPDATER_MANIFEST_URL "https://d3u76crhadhyzl.cloudfront.net/Channels/"
+#define UPDATER_MANIFEST_URL "https://bg3se-updates.norbyte.dev/Channels/"
 #define UPDATER_MANIFEST_NAME "Manifest.json"
 #define UPDATER_CHANNEL "Release"
 #define UPDATER_CHANNEL_GAME ""
@@ -823,8 +823,13 @@ public:
 
 		if (updated && !resourcePath) {
 			updated = false;
-			updateReason.Message = "No cached package available for game version v";
-			updateReason.Message += gameVersion_.ToString();
+
+			if (updateManifest_ && !updateManifest_->NoMatchingVersionNotice.empty()) {
+				updateReason.Message = updateManifest_->NoMatchingVersionNotice;
+			} else {
+				updateReason.Message = "No cached package available for game version v";
+				updateReason.Message += gameVersion_.ToString();
+			}
 		}
 
 		std::string message;

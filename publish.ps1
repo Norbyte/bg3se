@@ -10,7 +10,7 @@ $EditorChannel = $Channel + "Editor"
 $S3Bucket = "nb-stor"
 $S3RootPath = "bg3-updater-v3/Channels"
 $CloudFrontRootPath = "/Channels"
-$CloudFrontRootURL = "https://d3u76crhadhyzl.cloudfront.net/Channels"
+$CloudFrontRootURL = "https://bg3se-updates.norbyte.dev/Channels"
 $CloudFrontDistributionID = "EVZRUV2YONUZF"
 
 $S3ManifestPath = "Manifest.json"

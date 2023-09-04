@@ -114,6 +114,7 @@ struct Manifest
 	int32_t ManifestVersion;
 	int32_t ManifestMinorVersion;
 	std::string Notice;
+	std::string NoMatchingVersionNotice;
 	std::unordered_map<std::string, Resource> Resources;
 };
 
