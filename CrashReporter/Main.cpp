@@ -7,7 +7,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_ LPWSTR    lpCmdLine,
                      _In_ int       nCmdShow)
 {
-	CrashReporter reporter(GetCommandLineW());
+	CrashReporter reporter(lpCmdLine);
 	reporter.Report();
 
     return 0;

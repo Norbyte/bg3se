@@ -6,7 +6,9 @@
 
 namespace bg3se {
 
-	extern std::unordered_set<void*> gRegisteredTrampolines;
+	void const* ResolveRealFunctionAddress(void const* ptr);
+
+	extern std::unordered_set<void const *> gRegisteredTrampolines;
 
 	template <typename T>
 	class WrappedFunction;
@@ -66,12 +68,12 @@ namespace bg3se {
 			}
 		}
 
-		inline R operator ()(Params... Args) const
+		__forceinline R operator ()(Params... Args) const
 		{
 			return FuncTrampoline(std::forward<Params>(Args)...);
 		}
 
-		inline FuncType GetTrampoline() const
+		__forceinline FuncType GetTrampoline() const
 		{
 			return FuncTrampoline;
 		}
@@ -182,7 +184,8 @@ namespace bg3se {
 				throw std::runtime_error("Function already wrapped");
 			}
 
-			gRegisteredTrampolines.insert(&NoContextHook);
+			gRegisteredTrampolines.insert(ResolveRealFunctionAddress(&NoContextHook));
+			gRegisteredTrampolines.insert(ResolveRealFunctionAddress(wrapper));
 			hook_ = &NoContextHook;
 			func_ = wrapper;
 			context_ = nullptr;
@@ -195,6 +198,7 @@ namespace bg3se {
 				throw std::runtime_error("Function already wrapped");
 			}
 
+			gRegisteredTrampolines.insert(ResolveRealFunctionAddress(wrapper));
 			hook_ = reinterpret_cast<HookFuncType*>(wrapper);
 			func_ = nullptr;
 			context_ = context;
@@ -208,6 +212,7 @@ namespace bg3se {
 			}
 
 			auto fun = MethodPtrHelpers<TContext, R (BaseFuncType*, Params...)>::ToFunction(wrapper);
+			gRegisteredTrampolines.insert(ResolveRealFunctionAddress(fun));
 			hook_ = reinterpret_cast<HookFuncType*>(fun);
 			func_ = nullptr;
 			context_ = context;
@@ -220,7 +225,7 @@ namespace bg3se {
 				throw std::runtime_error("Function already wrapped");
 			}
 
-			gRegisteredTrampolines.insert(&StaticPreHook);
+			gRegisteredTrampolines.insert(ResolveRealFunctionAddress(&StaticPreHook));
 			hook_ = &StaticPreHook;
 			func_ = MethodPtrHelpers<TContext, void (Params...)>::ToFunction(wrapper);
 			context_ = context;
@@ -233,7 +238,7 @@ namespace bg3se {
 				throw std::runtime_error("Function already wrapped");
 			}
 
-			gRegisteredTrampolines.insert(&StaticPostHook);
+			gRegisteredTrampolines.insert(ResolveRealFunctionAddress(&StaticPostHook));
 			hook_ = &StaticPostHook;
 			if constexpr (std::is_same_v<R, void>) {
 				func_ = MethodPtrHelpers<TContext, void(Params...)>::ToFunction(wrapper);
@@ -255,12 +260,12 @@ namespace bg3se {
 			return hook_ != nullptr;
 		}
 
-		inline R CallOriginal(Params... Args) const
+		__forceinline R CallOriginal(Params... Args) const
 		{
 			return wrapped_(std::forward<Params>(Args)...);
 		}
 
-		inline R CallWithHooks(Params... Args) const
+		__forceinline R CallWithHooks(Params... Args) const
 		{
 			if (hook_) {
 				return hook_(context_, this->wrapped_.GetTrampoline(), std::forward<Params>(Args)...);

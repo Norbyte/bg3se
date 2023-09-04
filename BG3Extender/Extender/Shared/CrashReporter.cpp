@@ -12,11 +12,19 @@
 #include <fstream>
 #include <iomanip>
 
+#undef DEBUG_CRASH_REPORTER
+
+#if defined(DEBUG_CRASH_REPORTER)
+#define CRASHDBG(...) INFO(__VA_ARGS__)
+#else
+#define CRASHDBG(...) 
+#endif
+
 BEGIN_SE()
 
 std::atomic<uint32_t> gDisableCrashReportingCount{ 0 };
 
-std::unordered_set<void*> gRegisteredTrampolines;
+std::unordered_set<void const *> gRegisteredTrampolines;
 
 struct ExcludedSymbol
 {
@@ -128,8 +136,14 @@ class BacktraceDumper
 {
 public:
 	// Show at most 12 lines to avoid flooding the crash reporter dialog
+#if !defined(DEBUG_CRASH_REPORTER)
 	static constexpr unsigned MaxBacktraceLines = 12;
 	static constexpr unsigned MaxLuaBacktraceLines = 12;
+#else
+	static constexpr unsigned MaxBacktraceLines = 32;
+	static constexpr unsigned MaxLuaBacktraceLines = 32;
+#endif
+
 	void* Backtrace[32];
 	WORD BacktraceSize;
 	DWORD CrashThreadId;
@@ -246,6 +260,7 @@ public:
 			}
 		}
 
+		CRASHDBG("Backtrace:\r\n%s\r\n", backtrace.str().c_str());
 		return backtrace.str();
 	}
 
@@ -297,6 +312,7 @@ public:
 			}
 		}
 
+		CRASHDBG("Lua Backtrace:\r\n%s\r\n", bt.str().c_str());
 		return bt.str();
 	}
 
@@ -343,10 +359,13 @@ public:
 	{
 		if (Initialized) return;
 
+		gRegisteredTrampolines.insert(ResolveRealFunctionAddress(&CrashReporter::IsExtensionRelatedCrash));
+		gRegisteredTrampolines.insert(ResolveRealFunctionAddress(&CrashReporter::OnUnhandledException));
 		PrevExceptionFilter = SetUnhandledExceptionFilter(&OnUnhandledException);
 		PrevTerminateHandler = std::set_terminate(&OnTerminate);
 		Dumper.Initialize();
 		Initialized = true;
+		CRASHDBG("Enabled crash reporting");
 	}
 
 	static void Shutdown()
@@ -358,6 +377,7 @@ public:
 		PrevExceptionFilter = nullptr;
 		PrevTerminateHandler = nullptr;
 		Initialized = false;
+		CRASHDBG("Disabled crash reporting");
 	}
 
 	static std::wstring GetMiniDumpPath()
@@ -369,6 +389,7 @@ public:
 		tempPath.resize(tempPathLen - 1);
 
 		tempPath += L"\\OsiExtMiniDump.dmp";
+		CRASHDBG("Writing minidump to: %s", ToStdUTF8(tempPath).c_str());
 		return tempPath;
 	}
 	
@@ -440,17 +461,16 @@ public:
 	// noinline needed to ensure that the error handler stack is always 2 levels deep
 	static __declspec(noinline) bool IsExtensionRelatedCrash()
 	{
-		if (gExtender->GetConfig().ForceCrashReporting) {
-			return true;
-		}
-
+		CRASHDBG("IsExtensionRelatedCrash() - checking frames");
 		if (gDisableCrashReportingCount > 0) {
+			CRASHDBG("gDisableCrashReportingCount > 0 --> false");
 			return false;
 		}
 
 		void * moduleStart, * moduleEnd;
 		MODULEINFO moduleInfo;
 		if (!GetModuleInformation(GetCurrentProcess(), gCoreLibPlatformInterface.ThisModule, &moduleInfo, sizeof(moduleInfo))) {
+			CRASHDBG("No module info found for extender --> false");
 			return false;
 		}
 
@@ -458,12 +478,20 @@ public:
 		moduleEnd = (uint8_t *)moduleStart + moduleInfo.SizeOfImage;
 
 		Dumper.SnapshotThread();
+
+		// We need to collect backtrace even if ForceCrashReporting is set
+		if (gExtender->GetConfig().ForceCrashReporting) {
+			CRASHDBG("ForceCrashReporting --> true");
+			return true;
+		}
+
 		for (auto i = 0; i < Dumper.BacktraceSize; i++) {
 			if (Dumper.Backtrace[i] >= moduleStart && Dumper.Backtrace[i] < moduleEnd) {
 				bool excluded = false;
 				for (auto const & sym : ExcludedSymbols) {
 					if (Dumper.Backtrace[i] >= sym.Ptr && Dumper.Backtrace[i] < (uint8_t *)sym.Ptr + sym.Size) {
 						excluded = true;
+						CRASHDBG("Exclude %p: Whitelisted region (%p .. %p)", Dumper.Backtrace[i], sym.Ptr, (uint8_t*)sym.Ptr + sym.Size);
 						break;
 					}
 				}
@@ -471,16 +499,21 @@ public:
 				for (auto const& trampoline : gRegisteredTrampolines) {
 					if (Dumper.Backtrace[i] >= trampoline && Dumper.Backtrace[i] < (uint8_t*)trampoline + 0x120) {
 						excluded = true;
+						CRASHDBG("Exclude %p: Whitelisted trampoline (%p .. %p)", Dumper.Backtrace[i], trampoline, (uint8_t*)trampoline + 0x120);
 						break;
 					}
 				}
 
 				if (!excluded) {
+					CRASHDBG("Frame %p in extender --> true", Dumper.Backtrace[i]);
 					return true;
 				}
+			} else {
+				CRASHDBG("Exclude %p: Not in extender module", Dumper.Backtrace[i]);
 			}
 		}
 
+		CRASHDBG("No eligible frames found --> false");
 		return false;
 	}
 
@@ -504,7 +537,10 @@ public:
 		PROCESS_INFORMATION pi;
 		ZeroMemory(&pi, sizeof(pi));
 
-		if (!CreateProcessW(crashReporterPath.c_str(), miniDumpPath.data(), NULL, NULL, FALSE, 0,
+		auto cmdline = std::wstring(L"CrashReporter.exe ") + miniDumpPath;
+
+		CRASHDBG("Launch crash reporter: %s", ToStdUTF8(crashReporterPath).c_str());
+		if (!CreateProcessW(crashReporterPath.c_str(), cmdline.data(), NULL, NULL, FALSE, 0,
 			NULL, NULL, &si, &pi)) {
 			return;
 		}
@@ -539,9 +575,14 @@ public:
 
 		std::wstring btPath = dumpPath;
 		btPath += L".bt";
+
+		CRASHDBG("BT path: %s", ToStdUTF8(btPath).c_str());
+		CRASHDBG("BT contents:\r\n%s\r\n", bt.c_str());
+
 		std::ofstream f(btPath.c_str(), std::ios::out | std::ios::binary);
 		if (f.good()) {
 			f.write(bt.data(), bt.size());
+			CRASHDBG("BT write OK.");
 		}
 	}
 
@@ -554,6 +595,9 @@ public:
 			LaunchCrashReporter(dumpPath);
 		}
 
+#if defined(DEBUG_CRASH_REPORTER)
+		MessageBoxW(NULL, L"CrashReporterThread done", L"", MB_OK | MB_ICONERROR | MB_APPLMODAL);
+#endif
 		ExitProcess(1);
 		return 0;
 	}
@@ -576,8 +620,14 @@ public:
 			LaunchCrashReporterThread(exceptionInfo);
 			return EXCEPTION_EXECUTE_HANDLER;
 		} else if (PrevExceptionFilter != nullptr) {
+#if defined(DEBUG_CRASH_REPORTER)
+			MessageBoxW(NULL, L"OnUnhandledException: Nothing to report - PrevExceptionFilter", L"", MB_OK | MB_APPLMODAL);
+#endif
 			return PrevExceptionFilter(exceptionInfo);
 		} else {
+#if defined(DEBUG_CRASH_REPORTER)
+			MessageBoxW(NULL, L"OnUnhandledException: Nothing to report", L"", MB_OK | MB_APPLMODAL);
+#endif
 			return EXCEPTION_CONTINUE_SEARCH;
 		}
 	}
@@ -586,8 +636,13 @@ public:
 	{
 		if (IsExtensionRelatedCrash()) {
 			LaunchCrashReporterThread(nullptr);
-		} else if (PrevTerminateHandler) {
-			PrevTerminateHandler();
+		} else {
+#if defined(DEBUG_CRASH_REPORTER)
+			MessageBoxW(NULL, L"OnTerminate: Nothing to report", L"", MB_OK | MB_APPLMODAL);
+#endif
+			if (PrevTerminateHandler) {
+				PrevTerminateHandler();
+			}
 		}
 	}
 };

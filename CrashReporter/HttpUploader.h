@@ -1,28 +1,36 @@
 #pragma once
 
-#include <winhttp.h>
 #include <vector>
 #include <string>
+#include <curl/curl.h>
 
 class HttpUploader
 {
 public:
-	HttpUploader(wchar_t const * host);
+	HttpUploader();
 	~HttpUploader();
 
-	bool Upload(wchar_t const * path, std::vector<uint8_t> const & request, std::vector<uint8_t> & response);
+	bool Upload(std::string const& url, std::vector<uint8_t> const & request, std::vector<uint8_t> & response);
 
-	inline std::string const & GetLastError() const
+	inline CURLcode GetLastResultCode() const
+	{
+		return lastResult_;
+	}
+
+	inline std::string const& GetLastError() const
 	{
 		return lastError_;
 	}
 
 private:
-	HINTERNET session_{ NULL };
-	HINTERNET httpSession_{ NULL };
 	std::string lastError_;
+	std::vector<uint8_t> payload_;
+	std::size_t payloadPos_{ 0 };
+	std::vector<uint8_t> lastResponse_;
+	long lastHttpCode_{ 0 };
+	CURLcode lastResult_{ CURLE_OK };
 
-	void LogError(char const * activity);
-	bool SendRequest(HINTERNET request, wchar_t const * path, std::vector<uint8_t> const & payload);
-	bool FetchBody(HINTERNET request, std::vector<uint8_t> & response);
+	void LogError(CURL* curl, CURLcode result);
+	static size_t WriteFunc(char* contents, size_t size, size_t nmemb, HttpUploader* self);
+	static size_t ReadFunc(char* contents, size_t size, size_t nmemb, HttpUploader* self);
 };

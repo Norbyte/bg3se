@@ -4,125 +4,72 @@
 #include <iomanip>
 
 
-HttpUploader::HttpUploader(wchar_t const * host)
-{
-	session_ = WinHttpOpen(L"BG3SE/1.0", WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
-		WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
-	if (session_ == NULL) {
-		LogError("WinHttpOpen");
-		return;
-	}
-
-	httpSession_ = WinHttpConnect(session_, host, INTERNET_DEFAULT_HTTPS_PORT, 0);
-	if (httpSession_ == NULL) {
-		LogError("WinHttpConnect");
-		return;
-	}
-}
+HttpUploader::HttpUploader()
+{}
 
 HttpUploader::~HttpUploader()
-{
-	if (httpSession_ != NULL) WinHttpCloseHandle(httpSession_);
-	if (session_ != NULL) WinHttpCloseHandle(session_);
-}
+{}
 
 
-void HttpUploader::LogError(char const * activity)
+void HttpUploader::LogError(CURL* curl, CURLcode result)
 {
-	auto lastError = ::GetLastError();
 	std::stringstream ss;
-	ss << activity << " returned error 0x" << std::hex << std::setw(8) << std::setfill('0') << lastError;
+
+	if (result == CURLE_HTTP_RETURNED_ERROR) {
+		lastHttpCode_ = 0;
+		curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &lastHttpCode_);
+		ss << "HTTP error " << lastHttpCode_;
+	} else {
+		ss << "(" << (long)result << ") " << curl_easy_strerror(result);
+	}
+
 	lastError_ = ss.str();
 }
 
-bool HttpUploader::Upload(wchar_t const * path, std::vector<uint8_t> const & payload, std::vector<uint8_t> & response)
+bool HttpUploader::Upload(std::string const& url, std::vector<uint8_t> const & payload, std::vector<uint8_t> & response)
 {
-	if (httpSession_ == NULL) {
-		return false;
+	auto curl = curl_easy_init();
+	curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+	curl_easy_setopt(curl, CURLOPT_NOBODY, 0);
+	curl_easy_setopt(curl, CURLOPT_HEADER, 0);
+	curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1);
+	//curl_easy_setopt(curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+
+	curl_easy_setopt(curl, CURLOPT_UPLOAD, 1);
+	curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE, (curl_off_t)payload.size());
+	curl_easy_setopt(curl, CURLOPT_READFUNCTION, &ReadFunc);
+	curl_easy_setopt(curl, CURLOPT_READDATA, this);
+
+	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &WriteFunc);
+	curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
+
+	lastResponse_.clear();
+	payload_ = payload;
+	payloadPos_ = 0;
+
+	lastResult_ = curl_easy_perform(curl);
+	if (lastResult_ != CURLE_OK) {
+		LogError(curl, lastResult_);
 	}
 
-	auto request = WinHttpOpenRequest(httpSession_, L"POST", path, NULL,
-		WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, WINHTTP_FLAG_SECURE);
-	if (request == NULL) {
-		LogError("WinHttpOpenRequest for content fetch");
-		return false;
-	}
-
-	bool result = false;
-	if (SendRequest(request, path, payload)) {
-		result = FetchBody(request, response);
-	}
-
-	WinHttpCloseHandle(request);
-	return result;
+	curl_easy_cleanup(curl);
+	response = lastResponse_;
+	return (lastResult_ == CURLE_OK);
 }
 
-bool HttpUploader::SendRequest(HINTERNET request, wchar_t const * path, std::vector<uint8_t> const & payload)
+size_t HttpUploader::WriteFunc(char* contents, size_t size, size_t nmemb, HttpUploader* self)
 {
-	LPCWSTR additionalHeaders = L"Content-Type: application/octet-stream\r\n";
-	auto sent = WinHttpSendRequest(request, WINHTTP_NO_ADDITIONAL_HEADERS, -1l,
-		const_cast<uint8_t *>(payload.data()), (DWORD)payload.size(), (DWORD)payload.size(), NULL);
-	if (sent != TRUE) {
-		LogError("WinHttpSendRequest");
-		return false;
-	}
-
-	auto recvdHeaders = WinHttpReceiveResponse(request, NULL);
-	if (recvdHeaders != TRUE) {
-		LogError("WinHttpReceiveResponse");
-		return false;
-	}
-
-	wchar_t statusCode[4];
-	DWORD statusCodeLength = sizeof(statusCode);
-	auto gotStatus = WinHttpQueryHeaders(request, WINHTTP_QUERY_STATUS_CODE,
-		WINHTTP_HEADER_NAME_BY_INDEX, statusCode, &statusCodeLength, 0);
-	if (gotStatus != TRUE) {
-		LogError("WinHttpQueryHeaders for status code");
-		return false;
-	}
-
-	if (wcscmp(statusCode, L"200") != 0) {
-		lastError_ = "Server returned status code ";
-		lastError_ += ToUTF8(statusCode);
-		return false;
-	}
-
-	return true;
+	auto pos = self->lastResponse_.size();
+	self->lastResponse_.resize(self->lastResponse_.size() + size * nmemb);
+	memcpy(self->lastResponse_.data() + pos, contents, size * nmemb);
+	return size * nmemb;
 }
 
-bool HttpUploader::FetchBody(HINTERNET request, std::vector<uint8_t> & response)
+size_t HttpUploader::ReadFunc(char* contents, size_t size, size_t nmemb, HttpUploader* self)
 {
-	wchar_t contentLengthStr[32];
-	DWORD contentLengthLength = sizeof(contentLengthStr);
-	auto gotLength = WinHttpQueryHeaders(request, WINHTTP_QUERY_CONTENT_LENGTH,
-		NULL, contentLengthStr, &contentLengthLength, 0);
-	if (gotLength != TRUE) {
-		LogError("WinHttpQueryHeaders for length");
-		return false;
-	}
-
-	auto contentLength = (uint32_t)std::stoi(contentLengthStr);
-	if (contentLength > 0x1000000) {
-		lastError_ = "HTTP response body too long";
-		return false;
-	}
-
-	response.resize(contentLength);
-	DWORD totalBytesRead = 0;
-
-	while (totalBytesRead < contentLength) {
-		DWORD bytesToRead = contentLength - totalBytesRead;
-		DWORD bytesRead = 0;
-		auto readBytes = WinHttpReadData(request, response.data() + totalBytesRead,
-			bytesToRead, &bytesRead);
-		if (readBytes != TRUE) {
-			LogError("WinHttpReadData");
-			return false;
-		}
-
-		totalBytesRead += bytesRead;
-	}
-
-	return true;
+	auto pos = self->payloadPos_;
+	auto bytesToReturn = min(self->payload_.size() - pos, size * nmemb);
+	memcpy(contents, self->payload_.data() + pos, bytesToReturn);
+	self->payloadPos_ += bytesToReturn;
+	return bytesToReturn;
 }

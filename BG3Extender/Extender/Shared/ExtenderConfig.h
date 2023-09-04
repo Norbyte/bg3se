@@ -24,7 +24,7 @@ struct ExtenderConfig
 	bool EnableLogging{ false };
 	bool LogCompile{ false };
 	bool LogRuntime{ false };
-	bool SendCrashReports{ false };
+	bool SendCrashReports{ true };
 	bool ForceCrashReporting{ false };
 	bool EnableAchievements{ true };
 	bool DisableLauncher{ false };

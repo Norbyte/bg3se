@@ -32,7 +32,8 @@ std::wstring FromUTF8(std::string const & s)
 }
 
 CrashReporter::CrashReporter(std::wstring const & miniDumpPath)
-	: miniDumpPath_(miniDumpPath)
+	: miniDumpPath_(miniDumpPath),
+	backtracePath_(miniDumpPath + L".bt")
 {}
 
 DWORD WINAPI CrashReporter::MinidumpUploaderThread(LPVOID lpThreadParameter)
@@ -51,9 +52,9 @@ DWORD WINAPI CrashReporter::MinidumpUploaderThread(LPVOID lpThreadParameter)
 	std::vector<uint8_t> response;
 	std::string errorReason;
 	std::string dumpId;
-	HttpUploader uploader(L"osicrashreports.norbyte.dev");
+	HttpUploader uploader;
 
-	bool succeeded = uploader.Upload(L"/submit.php", crashDump, response);
+	bool succeeded = uploader.Upload("https://osicrashreports.norbyte.dev/submit.php?game=bg3", crashDump, response);
 	if (succeeded) {
 		if (response.size() < 4 || memcmp(response.data(), "OK:", 3) != 0) {
 			errorReason = "Server returned illegible response";
@@ -80,8 +81,31 @@ DWORD WINAPI CrashReporter::MinidumpUploaderThread(LPVOID lpThreadParameter)
 	return 0;
 }
 
+std::string CrashReporter::GetBacktrace()
+{
+	std::ifstream f(backtracePath_, std::ios::in | std::ios::binary);
+	if (!f.good()) return {};
+	std::string bt;
+	f.seekg(0, std::ios::end);
+	auto btSize = f.tellg();
+	bt.resize(btSize);
+	f.seekg(0, std::ios::beg);
+	f.read(bt.data(), btSize);
+	return bt;
+}
+
 bool CrashReporter::ShowUploadConfirmationDialog()
 {
+	std::wstring confirmationText = L"Would you like to send the crash information to the Script Extender team?\r\n"
+		"Additional details about what went wrong can help to create a solution.\r\n"
+		"No information besides the crash dump will be uploaded.";
+
+	auto bt = GetBacktrace();
+	if (!bt.empty()) {
+		confirmationText += L"\r\n\r\nBacktrace:\r\n";
+		confirmationText += FromUTF8(bt);
+	}
+
 	TASKDIALOG_BUTTON buttons[2];
 	memset(&buttons, 0, sizeof(buttons));
 	buttons[0].nButtonID = IDYES;
@@ -97,9 +121,7 @@ bool CrashReporter::ShowUploadConfirmationDialog()
 
 	config.pszWindowTitle = L"Script Extender Crash";
 	config.pszMainInstruction = L"The game has unexpectedly crashed.";
-	config.pszContent = L"Would you like to send the crash information to the Script Extender team?\r\n"
-		"Additional details about what went wrong can help to create a solution.\r\n"
-		"No information besides the crash dump will be uploaded.";
+	config.pszContent = confirmationText.c_str();
 	config.pszMainIcon = TD_WARNING_ICON;
 
 	config.cButtons = 2;

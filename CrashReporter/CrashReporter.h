@@ -11,10 +11,12 @@ public:
 
 private:
 	std::wstring miniDumpPath_;
+	std::wstring backtracePath_;
 	HWND progressBarWindowHWnd_;
 	bool uploadSucceeded_;
 	std::wstring resultText_;
 
+	std::string GetBacktrace();
 
 	static HRESULT CALLBACK UploadProgressCallbackProc(HWND hwnd,
 		UINT uNotification, WPARAM wParam, LPARAM lParam, LONG_PTR dwRefData);
