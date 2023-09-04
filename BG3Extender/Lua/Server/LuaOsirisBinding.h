@@ -251,14 +251,16 @@ public:
 	void InsertPostHook(Node* node, TuplePtrLL* tuple, bool deleted);
 	void CallQueryPreHook(Node* node, OsiArgumentDesc* args);
 	void CallQueryPostHook(Node* node, OsiArgumentDesc* args, bool succeeded);
+	void CallPreHook(uint32_t functionId, OsiArgumentDesc* args);
+	void CallPostHook(uint32_t functionId, OsiArgumentDesc* args, bool succeeded);
 	void EventPreHook(Function* node, OsiArgumentDesc* args);
 	void EventPostHook(Function* node, OsiArgumentDesc* args);
 
 private:
 	static constexpr uint64_t AfterTriggerNodeRef = 0x8000000000000000ull;
 	static constexpr uint64_t DeleteTriggerNodeRef = 0x4000000000000000ull;
-	static constexpr uint64_t AfterEventNodeRef = 0x2000000000000000ull;
-	static constexpr uint64_t BeforeEventNodeRef = 0x1000000000000000ull;
+	static constexpr uint64_t AfterFunctionRef = 0x2000000000000000ull;
+	static constexpr uint64_t BeforeFunctionRef = 0x1000000000000000ull;
 
 	ExtensionState& state_;
 	std::vector<RegistryEntry> subscribers_;

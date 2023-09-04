@@ -169,7 +169,7 @@ void OsirisCallbackManager::RegisterNodeHandler(OsirisHookSignature const& sig, 
 {
 	auto func = LookupOsiFunction(sig.name, sig.arity);
 	if (func != nullptr && func->Type == FunctionType::UserQuery) {
-		// We need to find the backing data node for the user query
+		// We need to find the backing node for the user query
 		func = LookupOsiFunction(sig.name + "__DEF__", sig.arity);
 	}
 
@@ -178,19 +178,17 @@ void OsirisCallbackManager::RegisterNodeHandler(OsirisHookSignature const& sig, 
 		return;
 	}
 
-	if (func->Type == FunctionType::Call) {
-		OsiWarn("Couldn't register Osiris subscriber for " << sig.name << "/" << sig.arity << ": Hooks on calls not supported yet!");
-		return;
-	}
-
 	if (
-		// Functions that aren't mapped to a node cannot be hooked, with the exception of events
-		(func->Type != FunctionType::Event && func->Node.Get() == nullptr)
+		// Functions that aren't mapped to a node cannot be hooked, with the exception of events/calls
+		(func->Type != FunctionType::Event 
+		&& func->Type != FunctionType::Call
+		&& func->Node.Get() == nullptr)
 		|| (
 			func->Type != FunctionType::Event
 			&& func->Type != FunctionType::Query
 			&& func->Type != FunctionType::Call
 			// User queries (QRY) are disguised as a database
+			&& func->Type != FunctionType::UserQuery
 			&& func->Type != FunctionType::Database
 			&& func->Type != FunctionType::Proc
 		)) {
@@ -200,12 +198,12 @@ void OsirisCallbackManager::RegisterNodeHandler(OsirisHookSignature const& sig, 
 
 	uint64_t nodeRef;
 
-	if (func->Type == FunctionType::Event) {
+	if (func->Type == FunctionType::Event || func->Type == FunctionType::Call) {
 		nodeRef = func->OsiFunctionId;
 		if (sig.type == OsirisHookSignature::BeforeTrigger) {
-			nodeRef |= BeforeEventNodeRef;
+			nodeRef |= BeforeFunctionRef;
 		} else if (sig.type == OsirisHookSignature::AfterTrigger) {
-			nodeRef |= AfterEventNodeRef;
+			nodeRef |= AfterFunctionRef;
 		} else {
 			OsiWarn("Couldn't register Osiris subscriber for " << sig.name << "/" << sig.arity << ": Delete triggers not supported on events.");
 			return;
@@ -264,15 +262,27 @@ void OsirisCallbackManager::CallQueryPostHook(Node* node, OsiArgumentDesc* args,
 	RunHandlers(nodeRef, args);
 }
 
+void OsirisCallbackManager::CallPreHook(uint32_t functionId, OsiArgumentDesc* args)
+{
+	uint64_t nodeRef = functionId | BeforeFunctionRef;
+	RunHandlers(nodeRef, args);
+}
+
+void OsirisCallbackManager::CallPostHook(uint32_t functionId, OsiArgumentDesc* args, bool succeeded)
+{
+	uint64_t nodeRef = functionId | AfterFunctionRef;
+	RunHandlers(nodeRef, args);
+}
+
 void OsirisCallbackManager::EventPreHook(Function* node, OsiArgumentDesc* args)
 {
-	uint64_t nodeRef = node->OsiFunctionId | BeforeEventNodeRef;
+	uint64_t nodeRef = node->OsiFunctionId | BeforeFunctionRef;
 	RunHandlers(nodeRef, args);
 }
 
 void OsirisCallbackManager::EventPostHook(Function* node, OsiArgumentDesc* args)
 {
-	uint64_t nodeRef = node->OsiFunctionId | AfterEventNodeRef;
+	uint64_t nodeRef = node->OsiFunctionId | AfterFunctionRef;
 	RunHandlers(nodeRef, args);
 }
 
