@@ -443,6 +443,11 @@ public:
 		return path_ + L"\\Manifest-" + FromStdUTF8(config_.UpdateChannel) + L".json";
 	}
 
+	Manifest const& GetManifest() const
+	{
+		return manifest_;
+	}
+
 	bool LoadManifest(std::wstring const& path)
 	{
 		std::string manifestText;
@@ -468,6 +473,7 @@ public:
 	bool SaveManifest(std::wstring const& path)
 	{
 		manifest_.ManifestVersion = Manifest::CurrentVersion;
+		manifest_.ManifestMinorVersion = Manifest::CurrentMinorVersion;
 
 		ManifestSerializer parser;
 		std::string manifestText = parser.Stringify(manifest_);
@@ -509,7 +515,59 @@ public:
 		}
 	}
 
-	bool RemoveLocalPackage(Manifest::Resource const& resource, Manifest::ResourceVersion const& version)
+	void UpdateFromManifest(Manifest const& manifest)
+	{
+		for (auto const& res : manifest.Resources) {
+			for (auto const& ver : res.second.ResourceVersions) {
+				UpdateFromLatestMetadata(res.second, ver.second);
+			}
+		}
+
+		// Remove all resource versions that are cached locally but are not present in the manifest
+		std::vector<std::pair< Manifest::Resource const*, Manifest::ResourceVersion const*>> removals;
+		for (auto const& res : manifest_.Resources) {
+			for (auto const& ver : res.second.ResourceVersions) {
+				auto resIt = manifest.Resources.find(res.second.Name);
+				if (resIt == manifest.Resources.end()) {
+					DEBUG("Resource %s not found in update manifest, marked for removal, digest %s", res.second.Name.c_str());
+					removals.push_back(std::make_pair(&res.second, &ver.second));
+				} else {
+					auto verIt = resIt->second.ResourceVersions.find(ver.second.Digest);
+					if (verIt == resIt->second.ResourceVersions.end()) {
+						DEBUG("Resource %s, digest %s not found in update manifest, marked for removal", res.second.Name.c_str(), ver.second.Digest.c_str());
+						removals.push_back(std::make_pair(&res.second, &ver.second));
+					}
+				}
+			}
+		}
+
+		for (auto const& removal : removals) {
+			RemoveResource(*removal.first, *removal.second);
+		}
+	}
+
+	bool UpdateFromLatestMetadata(Manifest::Resource const& resource, Manifest::ResourceVersion const& version)
+	{
+		auto resIt = manifest_.Resources.find(resource.Name);
+		if (resIt == manifest_.Resources.end()) {
+			return false;
+		}
+
+		auto verIt = resIt->second.ResourceVersions.find(version.Digest);
+		if (verIt == resIt->second.ResourceVersions.end()) {
+			return false;
+		}
+
+		if (version.Revoked) {
+			RemoveResource(resource, version);
+		} else {
+			verIt->second.Notice = version.Notice;
+		}
+
+		return true;
+	}
+
+	bool RemoveResource(Manifest::Resource const& resource, Manifest::ResourceVersion const& version)
 	{
 		auto resIt = manifest_.Resources.find(resource.Name);
 		if (resIt == manifest_.Resources.end()) {
@@ -527,6 +585,16 @@ public:
 		res.RemoveLocalPackage();
 		resIt->second.ResourceVersions.erase(verIt);
 		return true;
+	}
+
+	std::optional<Manifest::ResourceVersion> FindResourceVersion(std::string const& name, VersionNumber const& gameVersion)
+	{
+		auto resource = manifest_.Resources.find(name);
+		if (resource == manifest_.Resources.end()) {
+			return {};
+		}
+
+		return resource->second.FindResourceVersionWithOverrides(gameVersion, config_);
 	}
 
 	std::optional<std::wstring> FindResourcePath(std::string const& name, VersionNumber const& gameVersion)
@@ -801,6 +869,12 @@ public:
 			Sleep(300);
 			completed_ = true;
 
+			auto ver = cache_->FindResourceVersion("ScriptExtender", gameVersion_);
+			if (ver && message.empty() && !ver->Notice.empty()) {
+				DEBUG("Notice in manifest resource data: %s", ver->Notice.c_str());
+				message = ver->Notice;
+			}
+
 			if (handle == NULL && !message.empty()) {
 				auto errc = GetLastError();
 				DEBUG("Extender DLL load failed; error code %d", errc);
@@ -812,6 +886,11 @@ public:
 			completed_ = true;
 		}
 
+		if (message.empty() && updateManifest_ && !updateManifest_->Notice.empty()) {
+			DEBUG("Notice in manifest: %s", updateManifest_->Notice.c_str());
+			message = updateManifest_->Notice;
+		}
+
 		if (!message.empty()) {
 			gGameHelpers->ShowError(message.c_str());
 		}
@@ -819,20 +898,15 @@ public:
 	
 	bool TryToUpdate(ErrorReason& reason)
 	{
-		Manifest manifest;
 		ManifestFetcher manifestFetcher(config_);
+		Manifest manifest;
 		if (!manifestFetcher.Fetch(manifest, reason)) {
 			return false;
 		}
 
-		for (auto const& res : manifest.Resources) {
-			for (auto const& ver : res.second.ResourceVersions) {
-				if (ver.second.Revoked) {
-					cache_->RemoveLocalPackage(res.second, ver.second);
-				}
-			}
-		}
+		cache_->UpdateFromManifest(manifest);
 
+		updateManifest_ = manifest;
 		ResourceUpdater updater(config_, *cache_);
 		return updater.Update(manifest, "ScriptExtender", gameVersion_, reason);
 	}
@@ -876,6 +950,7 @@ public:
 private:
 	VersionNumber gameVersion_;
 	UpdaterConfig config_;
+	std::optional<Manifest> updateManifest_;
 	std::wstring exeDir_;
 	std::unique_ptr<ResourceCacheRepository> cache_;
 	bool completed_{ false };

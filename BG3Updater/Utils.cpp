@@ -88,16 +88,19 @@ bool GameHelpers::ShowErrorDialog(char const * msg) const
 	}
 
 	unsigned retries{ 0 };
-	while (!CanShowError() && retries < 3000) {
+	for (; retries < 300000; retries += 100) {
 		Sleep(100);
-		retries++;
+
+		if (CanShowError()) break;
+		// Wait for 15 sec for the game engine to start up
+		if (retries >= 15000 && !GetState()) break;
 	}
 
-	if (retries >= 3000) {
+	if (CanShowError()) {
+		return ClientHandleError(msg, false);
+	} else {
 		return false;
 	}
-
-	return ClientHandleError(msg, false);
 }
 
 bool GameHelpers::ClientHandleError(char const * msg, bool exitGame) const

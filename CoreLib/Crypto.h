@@ -12,13 +12,21 @@
 BEGIN_SE()
 
 #pragma pack(push, 1)
-struct PackageSignature
+struct PackageSignatureBase
 {
 	static constexpr uint32_t MAGIC_V1 = 'BGS1';
+	static constexpr uint8_t VER_INITIAL = 0;
+	static constexpr uint8_t VER_SIGNATURE_IN_MANIFEST = 1;
 
 	uint32_t Magic;
-	uint8_t EccSignature[NUM_ECC_BYTES];
-	uint8_t Unused[224];
+	uint8_t EccSignature[NUM_ECC_BYTES*2];
+	uint8_t Version;
+	uint32_t SignedBytes;
+};
+
+struct PackageSignature : public PackageSignatureBase
+{
+	uint8_t Unused[187];
 };
 #pragma pack(pop)
 

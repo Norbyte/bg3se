@@ -83,6 +83,7 @@ enum class ManifestParseResult
 struct Manifest
 {
 	static constexpr int32_t CurrentVersion = 1;
+	static constexpr int32_t CurrentMinorVersion = 1;
 
 	struct ResourceVersion
 	{
@@ -92,6 +93,8 @@ struct Manifest
 		std::optional<VersionNumber> MinGameVersion, MaxGameVersion;
 		uint64_t BuildDate{ 0 };
 		bool Revoked{ false };
+		std::string Signature;
+		std::string Notice;
 
 		bool UpdatePackageMetadata(std::wstring const& path);
 		bool UpdateDLLMetadata(std::wstring const& path);
@@ -109,6 +112,8 @@ struct Manifest
 	};
 
 	int32_t ManifestVersion;
+	int32_t ManifestMinorVersion;
+	std::string Notice;
 	std::unordered_map<std::string, Resource> Resources;
 };
 

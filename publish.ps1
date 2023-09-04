@@ -88,17 +88,17 @@ function Create-Update-Package ($BuildDir, $ZipPath, $HasEditor, $HasGame)
 	}
 	
 	Remove-Item $ZipPath -ErrorAction SilentlyContinue
-	Compress-Archive -Path $BuildDir\* -DestinationPath $ZipPath -CompressionLevel Optimal
+	Compress-Archive -Path $BuildDir\* -DestinationPath $ZipPath -CompressionLevel Optimal -Force
 }
 
 function Archive-Build ($Digest, $ZipPath)
 {
-	Write-Output "Digest:" $Digest
-	Write-Output "Zip path:" $ZipPath
+	Write-Output "Digest: " $Digest
+	Write-Output "Zip path: " $ZipPath
 	$ArchivePDBDir = Join-Path "$PDBRoot" "$Digest"
 	New-Item $ArchivePDBDir -ItemType directory -ErrorAction SilentlyContinue
 	Copy-Item $PDBDir\* -Destination $ArchivePDBDir
-	Copy-Item $ZipPath -Destination $BuildRoot\$DigestPath.zip
+	Copy-Item $ZipPath -Destination $BuildRoot\$Digest.zip
 }
 
 function Build-Package ($BuildDir, $ZipPath, $DllPath, $Channel, $IsGame, $IsEditor)

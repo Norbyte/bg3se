@@ -60,6 +60,8 @@ bool CryptoUtils::SignFile(std::wstring const& zipPath, std::wstring const& priv
 	PackageSignature sig;
 	memset(&sig, 0, sizeof(sig));
 	sig.Magic = PackageSignature::MAGIC_V1;
+	sig.Version = PackageSignature::VER_SIGNATURE_IN_MANIFEST;
+	sig.SignedBytes = (uint32_t)contents.size();
 
 	if (!EccSign(contents.data(), contents.size(), key.data(), sig.EccSignature)) {
 		return false;

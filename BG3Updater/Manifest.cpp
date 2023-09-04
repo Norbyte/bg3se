@@ -74,6 +74,19 @@ bool Manifest::ResourceVersion::UpdatePackageMetadata(std::wstring const& path)
 
     CloseHandle(hFile);
 
+	PackageSignature sig;
+	if (!CryptoUtils::GetFileSignature(path, sig)) {
+		return false;
+	}
+
+	Signature = "";
+	for (auto p = 0; p < sizeof(PackageSignatureBase); p++) {
+		auto b = reinterpret_cast<uint8_t *>(&sig)[p];
+		char hex[4];
+		sprintf_s(hex, "%02x", (unsigned)b);
+		Signature += hex;
+	}
+
     BuildDate = (uint64_t)updateTime.dwLowDateTime | ((uint64_t)updateTime.dwHighDateTime << 32);
 
     return true;
@@ -171,6 +184,15 @@ ManifestParseResult ManifestSerializer::Parse(std::string const& json, Manifest&
 
 	manifest.ManifestVersion = version.asInt();
 
+	auto& minorVersion = root["ManifestMinorVersion"];
+	if (!minorVersion.isNumeric()) {
+		manifest.ManifestMinorVersion = 0;
+	} else {
+		manifest.ManifestMinorVersion = minorVersion.asInt();
+	}
+
+	manifest.Notice = root["Notice"].asString();
+
 	if (Parse(root, manifest, parseError)) {
 		return ManifestParseResult::Successful;
 	} else {
@@ -266,6 +288,8 @@ bool ManifestSerializer::ParseVersion(Json::Value const& node, Manifest::Resourc
 	version.Digest = node["Digest"].asString();
 	version.BuildDate = node["BuildDate"].asUInt64();
 	version.Revoked = node["Revoked"].isBool() ? node["Revoked"].asBool() : false;
+	version.Signature = node["Signature"].asString();
+	version.Notice = node["Notice"].asString();
 	return true;
 }
 
@@ -296,6 +320,14 @@ std::string ManifestSerializer::Stringify(Manifest& manifest)
 				jsonVer["Revoked"] = true;
 			}
 
+			if (!ver.second.Signature.empty()) {
+				jsonVer["Signature"] = ver.second.Signature;
+			}
+
+			if (!ver.second.Notice.empty()) {
+				jsonVer["Notice"] = ver.second.Notice;
+			}
+
 			versions.append(jsonVer);
 		}
 
@@ -305,6 +337,12 @@ std::string ManifestSerializer::Stringify(Manifest& manifest)
 
 	Json::Value root(Json::objectValue);
 	root["ManifestVersion"] = manifest.ManifestVersion;
+	root["ManifestMinorVersion"] = manifest.ManifestMinorVersion;
+
+	if (!manifest.Notice.empty()) {
+		root["Notice"] = manifest.Notice;
+	}
+
 	root["Resources"] = resources;
 
 	Json::StreamWriterBuilder builder;
