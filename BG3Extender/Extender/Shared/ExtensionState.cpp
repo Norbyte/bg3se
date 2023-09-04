@@ -78,7 +78,7 @@ namespace bg3se
 					}
 
 					if (config.MinimumVersion > CurrentVersion) {
-						OsiError("Module '" << mod.Info.Name << " is targeting version v" << config.MinimumVersion << " that' doesn't exist's more recent than the current version!");
+						OsiError("Module '" << mod.Info.Name << " is targeting version v" << config.MinimumVersion << " that's more recent than the current version!");
 					}
 
 					if (config.MinimumVersion != 0 && config.MinimumVersion > MergedConfig.MinimumVersion) {
