@@ -26,7 +26,7 @@ std::optional<STDWString> GetPathForExternalIo(std::string_view scriptPath, Path
 		return {};
 	}
 
-	auto storageRoot = GetStaticSymbols().ToPath("/Osiris Data", root);
+	auto storageRoot = GetStaticSymbols().ToPath("/Script Extender", root);
 	if (storageRoot.empty()) {
 		OsiErrorS("Could not fetch game storage path");
 		return {};
