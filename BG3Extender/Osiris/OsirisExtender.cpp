@@ -141,7 +141,7 @@ void OsirisExtender::OnRegisterDIVFunctions(void * Osiris, DivFunctions * Functi
 	storyLoaded_ = false;
 	dynamicGlobals_.OsirisObject = Osiris;
 	uint8_t * interfaceLoadPtr = nullptr;
-	uint8_t * errorMessageFunc = ResolveRealFunctionAddress((uint8_t *)wrappers_.ErrorOriginal);
+	auto errorMessageFunc = ResolveRealFunctionAddress((uint8_t *)wrappers_.ErrorOriginal);
 
 	// Look for TypedValue::VMT
 	uint8_t const copyCtor1[] = {

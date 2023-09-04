@@ -205,23 +205,32 @@ void * OsirisWrappers::FindRuleActionCallProc()
 	return nullptr;
 }
 
-uint8_t * ResolveRealFunctionAddress(uint8_t * Address)
+void const* ResolveRealFunctionAddress(void const * ptr)
 {
+	auto p = (uint8_t const*)ptr;
+
+	// Unconditional jump
+	if (p[0] == 0xE9) {
+		int32_t relOffset = *reinterpret_cast<int32_t const *>(p + 1);
+		return p + relOffset + 5;
+	}
+
 	// Resolve function pointer through relocations
-	for (uint8_t * ptr = Address; ptr < Address + 64; ptr++)
+	auto end = p + 64;
+	for (; p < end; p++)
 	{
 		// Look for the instruction "cmp qword ptr [rip+xxxxxx], 0"
-		if (ptr[0] == 0x48 && ptr[1] == 0x83 && ptr[2] == 0x3d && ptr[6] == 0x00 &&
+		if (p[0] == 0x48 && p[1] == 0x83 && p[2] == 0x3d && p[6] == 0x00 &&
 			// Look for the instruction "jmp xxxx"
-			ptr[13] == 0xe9)
+			p[13] == 0xe9)
 		{
-			int32_t relOffset = *reinterpret_cast<int32_t *>(ptr + 14);
-			return ptr + relOffset + 18;
+			int32_t relOffset = *reinterpret_cast<int32_t const *>(p + 14);
+			return p + relOffset + 18;
 		}
 	}
 
 	// Could not find any relocations
-	return Address;
+	return ptr;
 }
 
 void OsirisWrappers::FindOsirisGlobals(FARPROC CtorProc)
@@ -229,20 +238,20 @@ void OsirisWrappers::FindOsirisGlobals(FARPROC CtorProc)
 #if 0
 	DEBUG("ScriptExtender::FindOsirisGlobals:");
 #endif
-	uint8_t * Addr = ResolveRealFunctionAddress((uint8_t *)CtorProc);
+	auto addr = (uint8_t const *)ResolveRealFunctionAddress((void const *)CtorProc);
 
 	// Try to find pointers of Osiris globals
 	const unsigned NumGlobals = 9;
 	uint8_t * globals[NumGlobals];
 	unsigned foundGlobals = 0;
-	for (uint8_t * ptr = Addr; ptr < Addr + 0x500; ptr++)
+	for (auto ptr = addr; ptr < addr + 0x500; ptr++)
 	{
 		// Look for the instruction "mov <reg>, r14"
 		if ((ptr[0] == 0x49 || ptr[0] == 0x48) && ptr[1] == 0x8B &&
 			// Look for the instruction "mov cs:[rip + xxx], <64-bit register>"
 			ptr[3] == 0x48 && ptr[4] == 0x89 && (ptr[5] & 0xC7) == 0x05)
 		{
-			int32_t relOffset = *reinterpret_cast<int32_t *>(ptr + 6);
+			int32_t relOffset = *reinterpret_cast<int32_t const *>(ptr + 6);
 			uint64_t osiPtr = (uint64_t)ptr + relOffset + 10;
 			globals[foundGlobals++] = (uint8_t *)osiPtr;
 			if (foundGlobals == NumGlobals) break;
@@ -278,17 +287,17 @@ void OsirisWrappers::FindOsirisGlobals(FARPROC CtorProc)
 
 void OsirisWrappers::FindDebugFlags(FARPROC SetOptionProc)
 {
-	uint8_t * Addr = ResolveRealFunctionAddress((uint8_t *)SetOptionProc);
+	auto addr = (uint8_t const*)ResolveRealFunctionAddress((void const *)SetOptionProc);
 
 	// Try to find pointer of global var DebugFlags
-	for (uint8_t * ptr = Addr; ptr < Addr + 0x80; ptr++)
+	for (auto ptr = addr; ptr < addr + 0x80; ptr++)
 	{
 		// Look for the instruction "mov ecx, cs:xxx"
 		if (ptr[0] == 0x8B && ptr[1] == 0x0D &&
 			// Look for the instruction "shr e*x, 14h"
 			ptr[8] == 0xC1 && ptr[10] == 0x14)
 		{
-			int32_t relOffset = *reinterpret_cast<int32_t *>(ptr + 2);
+			int32_t relOffset = *reinterpret_cast<int32_t const *>(ptr + 2);
 			uint64_t dbgPtr = (uint64_t)ptr + relOffset + 6;
 			Globals.DebugFlags = (DebugFlag *)dbgPtr;
 			break;

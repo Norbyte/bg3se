@@ -8,7 +8,7 @@
 
 namespace bg3se {
 
-uint8_t * ResolveRealFunctionAddress(uint8_t * Address);
+void const * ResolveRealFunctionAddress(void const * ptr);
 
 #define WRAPPABLE(ty, name) enum class name##Tag {}; \
 	WrappableFunction<name##Tag, ty> name
