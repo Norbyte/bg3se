@@ -563,11 +563,6 @@ namespace bg3se
 
 	void ExtensionStateBase::LuaLoadPreinitBootstrap(ExtensionModConfig const& config, Module const& mod)
 	{
-		// Mods before v58 can't have support for preinit Lua code
-		if (config.MinimumVersion < 58) {
-			return;
-		}
-
 		auto bootstrapFileName = "BootstrapModule.lua";
 		auto const& sym = GetStaticSymbols();
 
