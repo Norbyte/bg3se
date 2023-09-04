@@ -36,12 +36,12 @@ struct ExcludedSymbol
 // Wrapper frames are included in the stack trace for any server/client worker thread crash,
 // so we have to filter them to make sure that we don't receive a report for every (unrelated) game crash.
 static const ExcludedSymbol ExcludedSymbols[] = {
-	{&bg3se::NodeVMTWrapper::s_WrappedIsValid, 0x100},
-	{&bg3se::NodeVMTWrapper::s_WrappedPushDownTuple, 0x100},
-	{&bg3se::NodeVMTWrapper::s_WrappedPushDownTupleDelete, 0x100},
-	{&bg3se::NodeVMTWrapper::s_WrappedInsertTuple, 0x100},
-	{&bg3se::NodeVMTWrapper::s_WrappedDeleteTuple, 0x100},
-	{&bg3se::NodeVMTWrapper::s_WrappedCallQuery, 0x100},
+	{&bg3se::NodeVMTWrapper::s_WrappedIsValid, 0x180},
+	{&bg3se::NodeVMTWrapper::s_WrappedPushDownTuple, 0x180},
+	{&bg3se::NodeVMTWrapper::s_WrappedPushDownTupleDelete, 0x180},
+	{&bg3se::NodeVMTWrapper::s_WrappedInsertTuple, 0x180},
+	{&bg3se::NodeVMTWrapper::s_WrappedDeleteTuple, 0x180},
+	{&bg3se::NodeVMTWrapper::s_WrappedCallQuery, 0x180},
 	{&bg3se::CustomFunctionInjector::StaticCallWrapper, 0x120},
 	{&bg3se::CustomFunctionInjector::StaticQueryWrapper, 0x120}
 };

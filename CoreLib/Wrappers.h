@@ -35,7 +35,6 @@ namespace bg3se {
 			}
 
 			Wrap(ExportProc, NewFunction);
-			gRegisteredTrampolines.insert(NewFunction);
 		}
 
 		void Wrap(void * Function, FuncType NewFunction)
@@ -47,6 +46,7 @@ namespace bg3se {
 			OriginalFunc = Function;
 			TrampolineFunc = Function;
 			NewFunc = NewFunction;
+			gRegisteredTrampolines.insert(NewFunction);
 			auto status = DetourAttachEx((PVOID *)&TrampolineFunc, (PVOID)NewFunc, (PDETOUR_TRAMPOLINE *)&FuncTrampoline, NULL, NULL);
 			if (status != NO_ERROR) {
 				Fail("Detour attach failed");
