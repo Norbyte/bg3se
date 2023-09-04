@@ -249,10 +249,18 @@ namespace bg3se
 			DebuggerAttachment->InsertPreHook(node, tuple, true);
 		}
 
+		if (OsirisCallbacksAttachment) {
+			OsirisCallbacksAttachment->InsertPreHook(node, tuple, true);
+		}
+
 		wrapper.WrappedDeleteTuple(node, tuple);
 
 		if (DebuggerAttachment) {
 			DebuggerAttachment->InsertPostHook(node, tuple, true);
+		}
+
+		if (OsirisCallbacksAttachment) {
+			OsirisCallbacksAttachment->InsertPostHook(node, tuple, true);
 		}
 	}
 
