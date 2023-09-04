@@ -168,6 +168,11 @@ void OsirisCallbackManager::StorySetMerging(bool isMerging)
 void OsirisCallbackManager::RegisterNodeHandler(OsirisHookSignature const& sig, std::size_t handlerId)
 {
 	auto func = LookupOsiFunction(sig.name, sig.arity);
+	if (func != nullptr && func->Type == FunctionType::UserQuery) {
+		// We need to find the backing data node for the user query
+		func = LookupOsiFunction(sig.name + "__DEF__", sig.arity);
+	}
+
 	if (func == nullptr) {
 		OsiWarn("Couldn't register Osiris subscriber for " << sig.name << "/" << sig.arity << ": Symbol not found in story.");
 		return;
