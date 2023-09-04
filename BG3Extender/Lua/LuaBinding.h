@@ -156,7 +156,7 @@ namespace bg3se::lua
 			StackCheck _(L, 0);
 			LifetimeStackPin _p(GetStack());
 			PushInternalFunction(L, "_ThrowEvent");
-			MakeObjectRef(L, &evt, GetCurrentLifetime());
+			MakeObjectRef(L, &evt);
 			return DispatchEvent(evt, eventName, canPreventAction, restrictions);
 		}
 

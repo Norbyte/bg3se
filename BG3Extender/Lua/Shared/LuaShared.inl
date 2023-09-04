@@ -29,7 +29,7 @@ int GameObjectGetStatus(lua_State* L, TObject* self)
 	}
 
 	if (status) {
-		LuaMakeStatusProxy(L, status, GetCurrentLifetime());
+		LuaMakeStatusProxy(L, status, GetCurrentLifetime(L));
 	} else {
 		push(L, nullptr);
 	}
@@ -49,7 +49,7 @@ int GameObjectGetStatusByType(lua_State* L, TObject* self)
 
 	for (auto status : self->StatusMachine->StackedStatuses) {
 		if (status->GetStatusId() == statusType) {
-			LuaMakeStatusProxy(L, status, GetCurrentLifetime());
+			LuaMakeStatusProxy(L, status, GetCurrentLifetime(L));
 			return 1;
 		}
 	}
@@ -87,7 +87,7 @@ int GameObjectGetStatuses(lua_State* L, TObject* self)
 	int32_t index = 1;
 	for (auto status : self->StatusMachine->StackedStatuses) {
 		push(L, index++);
-		LuaMakeStatusProxy(L, status, GetCurrentLifetime());
+		LuaMakeStatusProxy(L, status, GetCurrentLifetime(L));
 		lua_settable(L, -3);
 	}
 

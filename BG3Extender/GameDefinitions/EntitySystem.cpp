@@ -604,7 +604,7 @@ void* EntitySystemHelpersBase::GetRawEntityComponent(EntityHandle entityHandle, 
 	}
 }
 
-GuidResourceDefinitionManagerBase* EntitySystemHelpersBase::GetRawResourceManager(ExtResourceManagerType type)
+resource::GuidResourceBankBase* EntitySystemHelpersBase::GetRawResourceManager(ExtResourceManagerType type)
 {
 	auto index = resourceManagerIndices_[(int)type];
 	if (index == UndefinedIndex) {
@@ -612,7 +612,7 @@ GuidResourceDefinitionManagerBase* EntitySystemHelpersBase::GetRawResourceManage
 		return {};
 	}
 
-	auto defns = GetStaticSymbols().ResourceDefns;
+	auto defns = GetStaticSymbols().eoc__gGuidResourceManager;
 	if (!defns || !*defns) {
 		OsiError("Resource definition manager not available yet!");
 		return {};

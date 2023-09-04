@@ -154,7 +154,7 @@ namespace bg3se::lua::stats
 			|| statType == GFS.strPassiveData) {
 			auto object = StatFindObject(statName);
 			if (object != nullptr) {
-				StatsProxy::New(L, object, level, GetCurrentLifetime());
+				StatsProxy::New(L, object, level, GetCurrentLifetime(L));
 			} else {
 				push(L, nullptr);
 			}
@@ -263,7 +263,7 @@ namespace bg3se::lua::stats
 			}
 		}
 
-		StatsProxy::New(L, *object, -1, GetCurrentLifetime());
+		StatsProxy::New(L, *object, -1, GetCurrentLifetime(L));
 		return 1;
 	}
 }

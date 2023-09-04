@@ -126,7 +126,7 @@ namespace bg3se::lua
 {
 	inline void push(lua_State* L, stats::Functors* v)
 	{
-		ArrayProxy::MakeImplByRef<stats::FunctorsProxy>(L, GetCurrentLifetime(), v);
+		ArrayProxy::MakeImplByRef<stats::FunctorsProxy>(L, GetCurrentLifetime(L), v);
 	}
 
 	void RegisterEntityProxy(lua_State* L);

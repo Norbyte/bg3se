@@ -10,6 +10,7 @@
 #include <Lua/Libs/StatAttributes.inl>
 #include <Lua/Libs/StatMisc.inl>
 #include <Lua/Libs/Stats.inl>
+#include <Lua/Libs/StaticData.inl>
 #include <Lua/Libs/Types.inl>
 #include <Lua/Libs/Utils.inl>
 
@@ -60,6 +61,7 @@ void RegisterSharedLibraries()
 	//loca::RegisterLocalizationLib();
 	debug::RegisterDebugLib();
 	stats::RegisterStatsLib();
+	res::RegisterStaticDataLib();
 }
 
 void RegisterLibraries()

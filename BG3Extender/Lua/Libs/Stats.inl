@@ -493,7 +493,7 @@ UserReturn Get(lua_State * L, char const* statName, std::optional<int> level, st
 {
 	auto object = StatFindObject(statName, warnOnError.value_or(true));
 	if (object != nullptr) {
-		StatsProxy::New(L, object, -1, GetCurrentLifetime());
+		StatsProxy::New(L, object, -1, GetCurrentLifetime(L));
 		return 1;
 	} else {
 		push(L, nullptr);
@@ -592,7 +592,7 @@ UserReturn Create(lua_State * L, FixedString const& statName, FixedString const&
 		}
 	}
 
-	StatsProxy::New(L, *object, -1, GetCurrentLifetime());
+	StatsProxy::New(L, *object, -1, GetCurrentLifetime(L));
 	return 1;
 }
 

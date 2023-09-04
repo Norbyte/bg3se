@@ -228,10 +228,10 @@ namespace bg3se::esv::lua
 	{
 		auto s = get<FixedString>(L, 1);
 
-		auto rsrc = GetStaticSymbols().ResourceDefns;
+		auto rsrc = GetStaticSymbols().eoc__gGuidResourceManager;
 		if (rsrc && *rsrc) {
-			auto const& mgrs = (*rsrc)->DefinitionManagers;
-			auto mgr = mgrs[0];
+			auto const& mgrs = (*rsrc)->Definitions;
+			//auto mgr = mgrs[0];
 		}
 
 		return 0;
@@ -241,10 +241,10 @@ namespace bg3se::esv::lua
 	{
 		auto s = get<Guid>(L, 1);
 
-		auto rsrc = gExtender->GetServer().GetEntityHelpers().GetResourceManager<TagResource>();
+		auto rsrc = gExtender->GetServer().GetEntityHelpers().GetResourceManager<resource::Tag>();
 		if (rsrc) {
 
-			auto tag = reinterpret_cast<TagResource*>((*rsrc)->Resources.Values.begin().get());
+			auto tag = reinterpret_cast<resource::Tag*>((*rsrc)->Resources.Values.begin().get());
 			std::cout << tag->Name.GetString() << std::endl;
 			std::cout << tag->Icon.GetString() << std::endl;
 
@@ -368,7 +368,7 @@ namespace bg3se::esv::lua
 		}
 
 		if (dd) {
-			ObjectProxy::MakeRef<bg3se::stats::DealDamageFunctor>(L, dd, GetCurrentLifetime());
+			MakeObjectRef(L, dd);
 			return 1;
 		}
 

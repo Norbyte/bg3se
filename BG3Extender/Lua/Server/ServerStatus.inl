@@ -22,7 +22,7 @@ namespace bg3se::lua
 
 	void LuaMakeStatusProxy(lua_State* L, esv::Status* status, LifetimeHandle const& lifetime)
 	{
-#define S(ty, cls) case StatusType::ty: ObjectProxy::MakeRef<cls>(L, static_cast<cls*>(status), lifetime); break;
+#define S(ty, cls) case StatusType::ty: MakeDirectObjectRef(L, static_cast<cls*>(status), lifetime); break;
 
 		switch (status->GetStatusId()) {
 			S(DYING, esv::StatusDying)
@@ -66,7 +66,7 @@ namespace bg3se::lua
 			S(DOWNED, esv::StatusDowned)
 
 		default:
-			ObjectProxy::MakeRef<esv::Status>(L, status, lifetime);
+			MakeDirectObjectRef(L, status, lifetime);
 			break;
 		}
 

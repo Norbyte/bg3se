@@ -193,7 +193,7 @@ namespace bg3se
 		SYM_OFF(ls__GlobalAllocator__Alloc);
 		SYM_OFF(ls__GlobalAllocator__Free);
 
-		SYM_OFF(ResourceDefns);
+		SYM_OFF(eoc__gGuidResourceManager);
 		SYM_OFF(ResourceMgr);
 		SYM_OFF(ls__GlobalSwitches);
 	}

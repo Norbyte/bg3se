@@ -312,7 +312,7 @@ namespace bg3se::esv::lua
 		return nullptr;
 	}
 
-#define TY(cls) case SurfaceActionType::cls: ObjectProxy::MakeRef<esv::cls>(L, static_cast<esv::cls*>(action), GetServerLifetime()); break;
+#define TY(cls) case SurfaceActionType::cls: MakeDirectObjectRef(L, static_cast<esv::cls*>(action), GetServerLifetime()); break;
 
 	void CreateSurfaceActionRef(lua_State* L, SurfaceAction* action)
 	{

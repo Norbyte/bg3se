@@ -5,11 +5,6 @@
 #include <GameDefinitions/EntitySystem.h>
 #include <GameDefinitions/Misc.h>
 
-namespace bg3se
-{
-	struct GuidResourceDefinitionManagerBase;
-}
-
 namespace bg3se::esv
 {
 	struct Level;
@@ -82,7 +77,7 @@ namespace bg3se::esv
 		Level* Level;
 		int StoryActionID;
 		ActionOriginator Originator;
-		GuidResourceDefinitionManagerBase* ClassDescriptionMgr;
+		resource::GuidResourceBankBase* ClassDescriptionMgr;
 		ComponentHandle Handle;
 	};
 
@@ -251,7 +246,7 @@ namespace bg3se::esv
 	/*struct SurfaceActionFactory : public ComponentFactoryBase
 	{
 		using CreateActionProc = SurfaceAction * (SurfaceActionFactory* self, SurfaceActionType actionType, 
-			GuidResourceDefinitionManagerBase* classDefMgr, uint64_t actionHandle);
+			resource::GuidResourceBankBase* classDefMgr, uint64_t actionHandle);
 	};
 
 	struct SurfaceManager : public ComponentFactoryBase

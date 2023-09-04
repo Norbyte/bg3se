@@ -38,8 +38,12 @@ struct LocalTemplateManager;
 struct GlobalCacheTemplateManager;
 struct LevelCacheTemplateManager;
 
-struct GuidResourceDefinition;
-struct GuidResourceDefinitionManagerBase;
+namespace resource
+{
+	struct GuidResource;
+	struct GuidResourceBankBase;
+	struct GuidResourceManager;
+}
 
 namespace ecs
 {

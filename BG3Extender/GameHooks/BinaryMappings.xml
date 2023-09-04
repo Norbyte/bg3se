@@ -576,15 +576,6 @@
             E8 ?? ?? ?? ?? // call    esv__SurfaceActionFactory__CreateSurfaceAction
         </Mapping>
 
-        <Mapping Name="eoc::gResourceDefinitions">
-            <Target Type="Indirect" Offset="0" Symbol="ResourceDefns" />
-            48 8B 0D ?? ?? ?? ?? // mov     rcx, cs:eoc__gResourceDefinitions
-            E8 ?? ?? ?? ?? // call    eoc__ResourceDefinitions__GetTagManager
-            40 38 6C 24 40 // cmp     [rsp+58h+var_18], bpl
-            48 8D 54 24 30 // lea     rdx, [rsp+58h+var_28]
-            48 0F 45 D5 // cmovnz  rdx, rbp
-        </Mapping>
-
         <Mapping Name="eoc::gResourceManager">
             <Condition Type="String" Offset="0" Value="Loading Sound" />
             <Target Type="Indirect" Offset="18" Symbol="ResourceMgr" />
@@ -595,6 +586,20 @@
             48 8B 15 ?? ?? ?? ?? // mov     rdx, cs:eoc__gResourceManager
         </Mapping>
         -->
+
+      <Mapping Name="eoc::gGuidResourceManager">
+        @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, fs_MaximumTotalTargetHP
+        48 8b cb // mov     rcx, rbx
+        e8 ?? ?? ?? ?? // call    sub_142164A70
+        85 c0 // test    eax, eax
+        0f 9f c1 // setnle  cl
+        85 c0 // test    eax, eax
+        0f 8f 8f 00 00 00 // jg      loc_1426BF7C0
+        @ref1 4c 8b 05 ?? ?? ?? ?? // mov     r8, cs:eoc__gGuidResourceManager
+        49 63 40 08 // movsxd  rax, dword ptr [r8+8]
+        <Condition Type="FixedString" Offset="@str1" Value="MaximumTotalTargetHP" />
+        <Target Type="Indirect" Offset="@ref1" Symbol="eoc__gGuidResourceManager" />
+      </Mapping>
 
         <Mapping Name="ls::GlobalSwitches">
           48 89 5c 24 08 // mov     [rsp+arg_0], rbx

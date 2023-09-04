@@ -609,6 +609,9 @@
     <None Include="Lua\Shared\Proxies\LuaCppClass.inl" />
     <None Include="GameDefinitions\PropertyMaps\Mod.inl" />
     <None Include="Lua\Shared\LuaReference.inl" />
+    <None Include="Lua\Libs\StaticData.inl">
+      <Filter>Lua\Libs</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

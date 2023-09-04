@@ -34,7 +34,7 @@ FunctorEventHooks::~FunctorEventHooks()
 
 NewHit* FunctorEventHooks::OnDealDamage(bg3se::stats::DealDamageFunctor::ApplyDamageProc* next, NewHit* result, bg3se::stats::DealDamageFunctor* functor, ecs::EntityRef* casterHandle,
 	ecs::EntityRef* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId, int storyActionId, 
-	ActionOriginator* originator, GuidResourceDefinitionManagerBase* classResourceMgr, Hit* hit, DamageSums* damageSums, uint64_t* unknownThothParam, HitWith hitWith)
+	ActionOriginator* originator, resource::GuidResourceBankBase* classResourceMgr, Hit* hit, DamageSums* damageSums, uint64_t* unknownThothParam, HitWith hitWith)
 {
 	DealDamageEvent evt;
 	evt.Functor = functor;

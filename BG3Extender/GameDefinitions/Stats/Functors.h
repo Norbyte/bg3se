@@ -53,7 +53,7 @@ struct BaseFunctorExecParams : public HasObjectProxy
 	PropertyContext PropertyContext{ 0 };
 	int32_t StoryActionId{ 0 };
 	ActionOriginator Originator;
-	GuidResourceDefinitionManagerBase* GuidResourceMgr{ nullptr };
+	resource::GuidResourceBankBase* GuidResourceMgr{ nullptr };
 	uint64_t Unkn{ 0 };
 };
 
@@ -430,7 +430,7 @@ struct DealDamageFunctor : public Functor
 
 	using ApplyDamageProc = NewHit * (NewHit* result, DealDamageFunctor* functor, ecs::EntityRef* casterHandle, 
 		ecs::EntityRef* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId, 
-		int storyActionId, ActionOriginator* originator, GuidResourceDefinitionManagerBase* classResourceMgr, 
+		int storyActionId, ActionOriginator* originator, resource::GuidResourceBankBase* classResourceMgr, 
 		Hit* hit, DamageSums* damageSums, uint64_t* unknownThothParam, HitWith hitWith);
 
 	DamageType DamageType{ DamageType::None }; // Arg1

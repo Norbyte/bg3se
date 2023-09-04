@@ -15,7 +15,6 @@
 
 namespace bg3se
 {
-	struct GuidResourceDefinitions;
 	struct ResourceManager;
 	struct App;
 
@@ -100,7 +99,7 @@ namespace bg3se
 		ls__GlobalAllocator__AllocProc* ls__GlobalAllocator__Alloc{ nullptr };
 		ls__GlobalAllocator__FreeProc* ls__GlobalAllocator__Free{ nullptr };
 
-		GuidResourceDefinitions** ResourceDefns{ nullptr };
+		resource::GuidResourceManager** eoc__gGuidResourceManager{ nullptr };
 		ResourceManager** ResourceMgr{ nullptr };
 
 		GlobalSwitches** ls__GlobalSwitches{ nullptr };

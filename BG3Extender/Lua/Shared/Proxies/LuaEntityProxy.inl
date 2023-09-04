@@ -67,7 +67,7 @@ namespace bg3se::lua
 	{
 		auto component = helpers->GetComponent<T>(handle);
 		if (component) {
-			ObjectProxy::MakeRef<T>(L, component, lifetime);
+			MakeDirectObjectRef(L, component, lifetime);
 		} else {
 			push(L, nullptr);
 		}
@@ -100,7 +100,7 @@ namespace bg3se::lua
 		StackCheck _(L, 1);
 		auto self = get<EntityProxy*>(L, 1);
 		auto componentType = get<ExtComponentType>(L, 2);
-		PushComponent(L, self->entitySystem_, self->handle_, componentType, GetCurrentLifetime());
+		PushComponent(L, self->entitySystem_, self->handle_, componentType, GetCurrentLifetime(L));
 		return 1;
 	}
 
@@ -126,7 +126,7 @@ namespace bg3se::lua
 
 					if (type) {
 						push(L, type);
-						PushComponent(L, self->entitySystem_, self->handle_, *type, GetCurrentLifetime(), true);
+						PushComponent(L, self->entitySystem_, self->handle_, *type, GetCurrentLifetime(L), true);
 						lua_settable(L, -3);
 					} else if (warnOnMissing) {
 						auto name = self->entitySystem_->GetComponentName((EntityWorldBase::ComponentTypeIndex)componentIdx);
@@ -223,7 +223,7 @@ namespace bg3se::lua
 
 		auto componentType = EnumInfo<ExtComponentType>::Find(key);
 		if (componentType) {
-			PushComponent(L, self->entitySystem_, self->handle_, *componentType, GetCurrentLifetime());
+			PushComponent(L, self->entitySystem_, self->handle_, *componentType, GetCurrentLifetime(L));
 		} else {
 			auto componentTypeName = get<char const*>(L, 2);
 			luaL_error(L, "Not a valid EntityProxy method or component type: %s", componentTypeName);
@@ -302,7 +302,7 @@ namespace bg3se::lua
 		auto self = get<ComponentHandleProxy*>(L, 1);
 		auto componentType = self->entitySystem_->GetComponentType((ecs::HandleTypeIndex)self->handle_.GetType());
 		if (componentType) {
-			// PushComponent(L, self->entitySystem_, self->handle_, *componentType, GetCurrentLifetime());
+			// PushComponent(L, self->entitySystem_, self->handle_, *componentType, GetCurrentLifetime(L));
 			ERR("FIXME");
 			push(L, nullptr);
 		} else {

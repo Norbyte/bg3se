@@ -181,7 +181,7 @@ namespace bg3se::esv::lua
 
 		NewHit* OnDealDamage(bg3se::stats::DealDamageFunctor::ApplyDamageProc* next, NewHit* result, bg3se::stats::DealDamageFunctor* functor, ecs::EntityRef* casterHandle,
 			ecs::EntityRef* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId, int storyActionId,
-			ActionOriginator* originator, GuidResourceDefinitionManagerBase* classResourceMgr, Hit* hit, DamageSums* damageSums, uint64_t* unknownThothParam, HitWith hitWith);
+			ActionOriginator* originator, resource::GuidResourceBankBase* classResourceMgr, Hit* hit, DamageSums* damageSums, uint64_t* unknownThothParam, HitWith hitWith);
 
 		template <class TParams>
 		void LuaTriggerFunctorPreExecEvent(bg3se::stats::Functors* self, TParams* params)

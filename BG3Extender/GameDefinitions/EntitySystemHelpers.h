@@ -181,11 +181,11 @@ public:
 	virtual EntityWorld* GetEntityWorld() = 0;
 
 	template <class T>
-	std::optional<GuidResourceDefinitionManager<T>*> GetResourceManager()
+	std::optional<resource::GuidResourceBank<T>*> GetResourceManager()
 	{
 		auto mgr = GetRawResourceManager(T::ResourceManagerType);
 		if (mgr) {
-			return static_cast<GuidResourceDefinitionManager<T>*>(mgr);
+			return static_cast<resource::GuidResourceBank<T>*>(mgr);
 		} else {
 			return {};
 		}
@@ -236,7 +236,7 @@ private:
 	void* GetRawComponent(char const* nameGuid, ExtComponentType type);
 	void* GetRawComponent(FixedString const& guid, ExtComponentType type);
 	void* GetRawEntityComponent(EntityHandle entityHandle, ExtComponentType type);
-	GuidResourceDefinitionManagerBase* GetRawResourceManager(ExtResourceManagerType type);
+	resource::GuidResourceBankBase* GetRawResourceManager(ExtResourceManagerType type);
 };
 
 class ServerEntitySystemHelpers : public EntitySystemHelpersBase
