@@ -159,7 +159,7 @@ PropertyOperationResult CharacterSetFlag(lua_State* L, LifetimeHandle const& lif
 	pm.AddRawProperty(#prop, \
 		&(GenericGetOffsetRefProperty<decltype(PM::ObjectType::prop)>), \
 		&GenericSetNonWriteableProperty, \
-		&(GenericValidateOffsetRefProperty<decltype(PM::ObjectType::prop)>), \
+		&(GenericValidateOffsetProperty<decltype(PM::ObjectType::prop)>), \
 		offsetof(PM::ObjectType, prop) \
 	);
 
@@ -167,7 +167,7 @@ PropertyOperationResult CharacterSetFlag(lua_State* L, LifetimeHandle const& lif
 	pm.AddRawProperty(#prop, \
 		&(GenericGetOffsetRefProperty<ty>), \
 		&GenericSetNonWriteableProperty, \
-		&(GenericValidateOffsetRefProperty<ty>), \
+		&(GenericValidateOffsetProperty<ty>), \
 		offsetof(PM::ObjectType, prop) \
 	);
 

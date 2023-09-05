@@ -129,13 +129,6 @@ bool GenericValidateOffsetProperty(void* obj, std::size_t offset, uint64_t flag)
 	return ValidateAny(value);
 }
 
-template <class T>
-bool GenericValidateOffsetRefProperty(void* obj, std::size_t offset, uint64_t flag)
-{
-	auto value = *reinterpret_cast<T**>((std::uintptr_t)obj + offset);
-	return ValidateAny(value);
-}
-
 void CopyRawProperties(GenericPropertyMap const& base, GenericPropertyMap& child);
 
 template <class T, class T2>

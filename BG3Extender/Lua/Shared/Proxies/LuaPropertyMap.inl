@@ -83,6 +83,7 @@ bool GenericPropertyMap::ValidatePropertyMap(void* object)
 		if (ValidateObject(object)) {
 			Validated = ValidationState::Valid;
 		} else {
+			ERR("Object class %s failed validation; proxying of this class is disabled", Name.GetString());
 			Validated = ValidationState::Invalid;
 		}
 	}
@@ -94,7 +95,7 @@ bool GenericPropertyMap::ValidateObject(void* object)
 {
 	for (auto const& property : Validators) {
 		if (!property.Validate(object, property.Offset, property.Flag)) {
-			ERR("[%s] Validation of property '%s' failed on object %p", Name.GetString(), property.Name.GetString(), object);
+			ERR("Validation of property '%s' failed on %s %p", property.Name.GetString(), Name.GetString(), object);
 			return false;
 		}
 	}

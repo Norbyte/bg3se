@@ -112,10 +112,10 @@ namespace bg3se
 		struct StringEntryHeader
 		{
 			uint32_t Hash;
-			uint32_t FastLock;
+			uint32_t RefCount;
 			uint32_t Length;
 			uint32_t Id;
-			uint64_t SlotIndex;
+			uint64_t NextFreeIndex;
 		};
 
 		struct StringEntry : public StringEntryHeader

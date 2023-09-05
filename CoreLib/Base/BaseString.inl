@@ -81,7 +81,10 @@ bool FixedString::IsValid() const
 
 	auto header = (GlobalStringTable::StringEntryHeader*)(subTable.Buckets[bucketIdx] + entryIdx * subTable.EntrySize);
 
-	return header->Id == Index;
+	if (header->RefCount > 0x1000000) return false;
+	if (header->Length > subTable.EntrySize - 0x18) return false;
+
+	return true;
 }
 
 void FixedString::IncRef()
