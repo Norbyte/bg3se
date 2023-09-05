@@ -419,6 +419,16 @@ public:
 		}
 	}
 
+	inline T* raw_buf() const
+	{
+		return buf_;
+	}
+
+	inline unsigned int size() const
+	{
+		return size_;
+	}
+
 	inline unsigned int Size() const
 	{
 		return size_;
@@ -529,6 +539,21 @@ public:
 				new (buf_ + i) T(a[i]);
 			}
 		}
+	}
+
+	inline T* raw_buf() const
+	{
+		return buf_;
+	}
+
+	inline unsigned int size() const
+	{
+		return size_;
+	}
+
+	inline unsigned int capacity() const
+	{
+		return capacity_;
 	}
 
 	inline unsigned int Size() const

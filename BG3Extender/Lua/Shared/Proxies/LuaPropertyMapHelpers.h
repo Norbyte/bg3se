@@ -2,6 +2,7 @@
 
 #include <Lua/LuaBinding.h>
 #include <Lua/LuaSerializers.h>
+#include <Lua/Shared/LuaTypeValidators.h>
 #include <GameDefinitions/RootTemplates.h>
 
 BEGIN_NS(lua)
@@ -119,6 +120,20 @@ PropertyOperationResult GenericGetOffsetRefProperty(lua_State* L, LifetimeHandle
 	auto* value = (T*)((std::uintptr_t)obj + offset);
 	MakeObjectRef(L, value, lifetime);
 	return PropertyOperationResult::Success;
+}
+
+template <class T>
+bool GenericValidateOffsetProperty(void* obj, std::size_t offset, uint64_t flag)
+{
+	auto value = reinterpret_cast<T*>((std::uintptr_t)obj + offset);
+	return ValidateAny(value);
+}
+
+template <class T>
+bool GenericValidateOffsetRefProperty(void* obj, std::size_t offset, uint64_t flag)
+{
+	auto value = *reinterpret_cast<T**>((std::uintptr_t)obj + offset);
+	return ValidateAny(value);
 }
 
 void CopyRawProperties(GenericPropertyMap const& base, GenericPropertyMap& child);

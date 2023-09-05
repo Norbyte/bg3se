@@ -58,6 +58,32 @@ uint32_t FixedString::GetHash() const
 	return 0;
 }
 
+bool FixedString::IsValid() const
+{
+	if (Index == NullIndex) return true;
+
+	auto gst = gCoreLibPlatformInterface.ls__gGlobalStringTable;
+	if (!gst || !*gst) return false;
+
+	auto subTableIdx = (Index & 0x0F);
+	if (subTableIdx >= std::size((*gst)->SubTables)) {
+		return false;
+	}
+
+	auto& subTable = (*gst)->SubTables[subTableIdx];
+
+	auto bucketIdx = (Index >> 4) & 0xffff;
+	auto entryIdx = (Index >> 20);
+
+	if (bucketIdx >= subTable.NumBuckets || entryIdx >= subTable.EntriesPerBucket) {
+		return false;
+	}
+
+	auto header = (GlobalStringTable::StringEntryHeader*)(subTable.Buckets[bucketIdx] + entryIdx * subTable.EntrySize);
+
+	return header->Id == Index;
+}
+
 void FixedString::IncRef()
 {
 	if (Index != NullIndex) {

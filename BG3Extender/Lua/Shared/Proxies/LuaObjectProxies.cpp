@@ -11,6 +11,10 @@ void CopyRawProperties(GenericPropertyMap const& base, GenericPropertyMap& child
 	for (auto const& prop : base.Properties) {
 		child.AddRawProperty(prop.first.GetString(), prop.second.Get, prop.second.Set, prop.second.Offset, prop.second.Flag);
 	}
+	
+	for (auto const& prop : base.Validators) {
+		child.AddRawValidator(prop.Name.GetString(), prop.Validate, prop.Offset, prop.Flag);
+	}
 
 	for (auto const& parent : base.Parents) {
 		child.Parents.push_back(parent);
@@ -139,6 +143,7 @@ PropertyOperationResult CharacterSetFlag(lua_State* L, LifetimeHandle const& lif
 	pm.AddRawProperty(#prop, \
 		&(GenericGetOffsetProperty<decltype(PM::ObjectType::prop)>), \
 		&(GenericSetOffsetProperty<decltype(PM::ObjectType::prop)>), \
+		&(GenericValidateOffsetProperty<decltype(PM::ObjectType::prop)>), \
 		offsetof(PM::ObjectType, prop) \
 	);
 
@@ -146,6 +151,7 @@ PropertyOperationResult CharacterSetFlag(lua_State* L, LifetimeHandle const& lif
 	pm.AddRawProperty(#prop, \
 		&(GenericGetOffsetProperty<decltype(PM::ObjectType::prop)>), \
 		&GenericSetReadOnlyProperty, \
+		&(GenericValidateOffsetProperty<decltype(PM::ObjectType::prop)>), \
 		offsetof(PM::ObjectType, prop) \
 	);
 
@@ -153,6 +159,7 @@ PropertyOperationResult CharacterSetFlag(lua_State* L, LifetimeHandle const& lif
 	pm.AddRawProperty(#prop, \
 		&(GenericGetOffsetRefProperty<decltype(PM::ObjectType::prop)>), \
 		&GenericSetNonWriteableProperty, \
+		&(GenericValidateOffsetRefProperty<decltype(PM::ObjectType::prop)>), \
 		offsetof(PM::ObjectType, prop) \
 	);
 
@@ -160,6 +167,7 @@ PropertyOperationResult CharacterSetFlag(lua_State* L, LifetimeHandle const& lif
 	pm.AddRawProperty(#prop, \
 		&(GenericGetOffsetRefProperty<ty>), \
 		&GenericSetNonWriteableProperty, \
+		&(GenericValidateOffsetRefProperty<ty>), \
 		offsetof(PM::ObjectType, prop) \
 	);
 
@@ -180,6 +188,7 @@ PropertyOperationResult CharacterSetFlag(lua_State* L, LifetimeHandle const& lif
 	pm.AddRawProperty(#name, \
 		&(GenericGetOffsetProperty<decltype(PM::ObjectType::prop)>), \
 		&(GenericSetOffsetProperty<decltype(PM::ObjectType::prop)>), \
+		&(GenericValidateOffsetProperty<decltype(PM::ObjectType::prop)>), \
 		offsetof(PM::ObjectType, prop) \
 	);
 
@@ -187,6 +196,7 @@ PropertyOperationResult CharacterSetFlag(lua_State* L, LifetimeHandle const& lif
 	pm.AddRawProperty(#name, \
 		&(GenericGetOffsetProperty<decltype(PM::ObjectType::prop)>), \
 		&GenericSetReadOnlyProperty, \
+		&(GenericValidateOffsetProperty<decltype(PM::ObjectType::prop)>), \
 		offsetof(PM::ObjectType, prop) \
 	);
 
@@ -194,6 +204,7 @@ PropertyOperationResult CharacterSetFlag(lua_State* L, LifetimeHandle const& lif
 	pm.AddRawProperty(#name, \
 		&(GenericGetOffsetRefProperty<decltype(PM::ObjectType::prop)>), \
 		&GenericSetNonWriteableProperty, \
+		&(GenericValidateOffsetProperty<decltype(PM::ObjectType::prop)>), \
 		offsetof(PM::ObjectType, prop) \
 	);
 
@@ -203,7 +214,7 @@ PropertyOperationResult CharacterSetFlag(lua_State* L, LifetimeHandle const& lif
 			CallGetter(L, obj, &PM::ObjectType::fun); \
 			return PropertyOperationResult::Success; \
 		}, \
-		(PM::TPropertyMap::PropertyAccessors::Setter*)&GenericSetNonWriteableProperty, 0 \
+		(PM::TPropertyMap::PropertyAccessors::Setter*)&GenericSetNonWriteableProperty, nullptr, 0 \
 	);
 
 #define P_GETTER_SETTER(prop, getter, setter) \
@@ -216,6 +227,7 @@ PropertyOperationResult CharacterSetFlag(lua_State* L, LifetimeHandle const& lif
 			CallSetter(L, obj, index, &PM::ObjectType::setter); \
 			return PropertyOperationResult::Success; \
 		}, \
+		nullptr, \
 		0 \
 	);
 
@@ -228,7 +240,7 @@ PropertyOperationResult CharacterSetFlag(lua_State* L, LifetimeHandle const& lif
 			}); \
 			return PropertyOperationResult::Success; \
 		}, \
-		(PM::TPropertyMap::PropertyAccessors::Setter*)&GenericSetNonWriteableProperty, 0 \
+		(PM::TPropertyMap::PropertyAccessors::Setter*)&GenericSetNonWriteableProperty, nullptr, 0 \
 	);
 
 #define P_FALLBACK(getter, setter) pm.SetFallback(getter, setter);

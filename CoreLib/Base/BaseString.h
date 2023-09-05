@@ -91,6 +91,7 @@ namespace bg3se
 
 		char const* GetString() const;
 		uint32_t GetHash() const;
+		bool IsValid() const;
 
 		uint32_t Index;
 
@@ -130,43 +131,35 @@ namespace bg3se
 			}; 
 
 			Element field_0[64];
-			__int64 field_1000[17];
-			__int64 EntrySize;
-			int EntriesPerBucket;
-			__int64 field_1098[21];
-			StringEntry** PoolPtr;
-			__int64 field_1148[15];
+			uint64_t LockCounter;
+			uint64_t _Pad1[7];
+			uint64_t LockEvent;
+			uint64_t _Pad2[7];
+			int32_t TableIndex;
+			uint64_t EntrySize;
+			uint32_t EntriesPerBucket;
+			uint64_t _Pad3[5];
+			uint32_t NumBuckets;
+			uint64_t _Pad4[7];
+			uint32_t field_1100;
+			uint64_t _Pad5[7];
+			uint8_t** Buckets;
+			uint64_t _Pad6[7];
+			uint64_t field_1180;
+			uint64_t _Pad7[7];
 			CRITICAL_SECTION CriticalSection;
-			__int64 field_11E8[3];
+			uint64_t field_11E8[3];
 		};
 
 		struct MainTable
 		{
 			SubTable::Element SomeTable[64];
-			__int64 field_1000;
-			__int64 field_1008;
-			__int64 field_1010;
-			__int64 field_1018;
-			__int64 field_1020;
-			__int64 field_1028;
-			__int64 field_1030;
-			__int64 field_1038;
+			uint64_t field_1000;
+			uint64_t _Pad1[7];
 			HANDLE EventHandle;
-			__int64 field_1048;
-			__int64 field_1050;
-			__int64 field_1058;
-			__int64 field_1060;
-			__int64 field_1068;
-			__int64 field_1070;
-			__int64 field_1078;
+			uint64_t _Pad2[7];
 			GlobalStringTable* StringTable;
-			__int64 field_1088;
-			__int64 field_1090;
-			__int64 field_1098;
-			__int64 field_10A0;
-			__int64 field_10A8;
-			__int64 field_10B0;
-			__int64 field_10B8;
+			uint64_t _Pad3[7];
 			uint32_t field_10C0[65535];
 		};
 
@@ -208,6 +201,16 @@ namespace bg3se
 	struct Guid
 	{
 		uint64_t Val[2]{ 0 };
+
+		inline operator bool() const
+		{
+			return Val[0] != 0 || Val[1] != 0;
+		}
+
+		inline bool operator !() const
+		{
+			return Val[0] == 0 && Val[1] == 0;
+		}
 
 		inline bool operator ==(Guid const& o) const
 		{

@@ -24,6 +24,23 @@ public:
 		uint64_t Flag;
 	};
 
+	struct RawPropertyValidators
+	{
+		using Validator = bool (void* object, std::size_t offset, uint64_t flag);
+
+		FixedString Name;
+		Validator* Validate;
+		std::size_t Offset;
+		uint64_t Flag;
+	};
+
+	enum class ValidationState
+	{
+		Unknown,
+		Valid,
+		Invalid
+	};
+
 	void Init(int registryIndex);
 	void Finish();
 	bool HasProperty(FixedString const& prop) const;
@@ -31,16 +48,23 @@ public:
 	PropertyOperationResult SetRawProperty(lua_State* L, LifetimeHandle const& lifetime, void* object, FixedString const& prop, int index) const;
 	void AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter,
 		typename RawPropertyAccessors::Setter* setter, std::size_t offset, uint64_t flag = 0);
+	void AddRawValidator(char const* prop, typename RawPropertyValidators::Validator* validate, std::size_t offset, uint64_t flag = 0);
+	void AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter,
+		typename RawPropertyAccessors::Setter* setter, typename RawPropertyValidators::Validator* validate, std::size_t offset, uint64_t flag = 0);
 	bool IsA(int typeRegistryIndex) const;
+	bool ValidatePropertyMap(void* object);
+	bool ValidateObject(void* object);
 
 	FixedString Name;
 	std::unordered_map<FixedString, RawPropertyAccessors> Properties;
+	std::vector<RawPropertyValidators> Validators;
 	std::vector<FixedString> Parents;
 	std::vector<int> ParentRegistryIndices;
 	TFallbackGetter* FallbackGetter{ nullptr };
 	TFallbackSetter* FallbackSetter{ nullptr };
 	bool IsInitializing{ false };
 	bool Initialized{ false };
+	ValidationState Validated{ ValidationState::Unknown };
 	int RegistryIndex{ -1 };
 };
 
@@ -54,6 +78,11 @@ inline PropertyOperationResult GenericSetReadOnlyProperty(lua_State* L, Lifetime
 	return PropertyOperationResult::ReadOnly;
 }
 
+inline bool GenericValidateNoopProperty(void* obj, std::size_t offset, uint64_t)
+{
+	return true;
+}
+
 template <class T>
 class LuaPropertyMap : public GenericPropertyMap
 {
@@ -62,6 +91,7 @@ public:
 	{
 		using Getter = PropertyOperationResult (lua_State* L, LifetimeHandle const& lifetime, T* object, std::size_t offset, uint64_t flag);
 		using Setter = PropertyOperationResult (lua_State* L, LifetimeHandle const& lifetime, T* object, int index, std::size_t offset, uint64_t flag);
+		using Validator = bool (T* object, std::size_t offset, uint64_t flag);
 		using FallbackGetter = PropertyOperationResult (lua_State* L, LifetimeHandle const& lifetime, T* object, FixedString const& prop);
 		using FallbackSetter = PropertyOperationResult (lua_State* L, LifetimeHandle const& lifetime, T* object, FixedString const& prop, int index);
 	};
@@ -131,13 +161,18 @@ public:
 	}
 
 	inline void AddProperty(char const* prop, typename PropertyAccessors::Getter* getter,
-		typename PropertyAccessors::Setter* setter = nullptr, std::size_t offset = 0, uint64_t flag = 0)
+		typename PropertyAccessors::Setter* setter = nullptr, typename PropertyAccessors::Validator* validator = nullptr, 
+		std::size_t offset = 0, uint64_t flag = 0)
 	{
 		if (setter == nullptr) {
 			setter = (typename PropertyAccessors::Setter*)&GenericSetNonWriteableProperty;
 		}
+		
+		if (validator == nullptr) {
+			validator = (typename PropertyAccessors::Validator*)&GenericValidateNoopProperty;
+		}
 
-		AddRawProperty(prop, (RawPropertyAccessors::Getter*)getter, (RawPropertyAccessors::Setter*)setter, offset, flag);
+		AddRawProperty(prop, (RawPropertyAccessors::Getter*)getter, (RawPropertyAccessors::Setter*)setter, (RawPropertyValidators::Validator*)validator, offset, flag);
 	}
 
 	inline void SetFallback(PropertyAccessors::FallbackGetter* getter, PropertyAccessors::FallbackSetter* setter)

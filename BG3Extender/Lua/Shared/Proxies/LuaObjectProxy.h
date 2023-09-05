@@ -243,8 +243,13 @@ namespace bg3se::lua
 		template <class T>
 		inline static ObjectProxyRefImpl<T>* MakeRef(lua_State* L, T* object, LifetimeHandle const& lifetime)
 		{
-			auto self = NewWithExtraData(L, sizeof(ObjectProxyRefImpl<T>), lifetime);
-			return new (self->GetImpl()) ObjectProxyRefImpl<T>(lifetime, object);
+			if (!StaticLuaPropertyMap<T>::PropertyMap.ValidatePropertyMap(object)) {
+				push(L, nullptr);
+				return nullptr;
+			} else {
+				auto self = NewWithExtraData(L, sizeof(ObjectProxyRefImpl<T>), lifetime);
+				return new (self->GetImpl()) ObjectProxyRefImpl<T>(lifetime, object);
+			}
 		}
 
 		template <class T>

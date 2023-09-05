@@ -426,6 +426,7 @@
     <ClInclude Include="Lua\Shared\Proxies\LuaCppClass.h" />
     <ClInclude Include="GameDefinitions\TranslatedString.h" />
     <ClInclude Include="Extender\Shared\Hooks.h" />
+    <ClInclude Include="Lua\Shared\LuaTypeValidators.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

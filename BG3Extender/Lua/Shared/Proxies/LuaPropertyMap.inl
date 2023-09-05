@@ -56,6 +56,50 @@ void GenericPropertyMap::AddRawProperty(char const* prop, typename RawPropertyAc
 	auto key = FixedString(prop);
 	assert(Properties.find(key) == Properties.end());
 	Properties.insert(std::make_pair(key, RawPropertyAccessors{ key, getter, setter, offset, flag }));
+
+}
+
+void GenericPropertyMap::AddRawValidator(char const* prop, typename RawPropertyValidators::Validator* validate, std::size_t offset, uint64_t flag)
+{
+	assert(!Initialized && IsInitializing);
+	Validators.push_back(RawPropertyValidators{ FixedString(prop), validate, offset, flag });
+}
+
+void GenericPropertyMap::AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter,
+	typename RawPropertyAccessors::Setter* setter, typename RawPropertyValidators::Validator* validate, std::size_t offset, uint64_t flag)
+{
+	if (getter != nullptr || setter != nullptr) {
+		AddRawProperty(prop, getter, setter, offset, flag);
+	}
+
+	if (validate != nullptr) {
+		AddRawValidator(prop, validate, offset, flag);
+	}
+}
+
+bool GenericPropertyMap::ValidatePropertyMap(void* object)
+{
+	if (Validated == ValidationState::Unknown) {
+		if (ValidateObject(object)) {
+			Validated = ValidationState::Valid;
+		} else {
+			Validated = ValidationState::Invalid;
+		}
+	}
+
+	return Validated == ValidationState::Valid;
+}
+
+bool GenericPropertyMap::ValidateObject(void* object)
+{
+	for (auto const& property : Validators) {
+		if (!property.Validate(object, property.Offset, property.Flag)) {
+			ERR("[%s] Validation of property '%s' failed on object %p", Name.GetString(), property.Name.GetString(), object);
+			return false;
+		}
+	}
+
+	return true;
 }
 
 bool GenericPropertyMap::IsA(int typeRegistryIndex) const
