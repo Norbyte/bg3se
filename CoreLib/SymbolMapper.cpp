@@ -1012,6 +1012,12 @@ uint8_t const * AsmResolveInstructionRef(uint8_t const * insn)
 		return insn + rel + 10;
 	}
 
+	// OR ax, word ptr [cs:<imm4>] instruction
+	if (insn[0] == 0x66 && insn[1] == 0x0B) {
+		int32_t rel = *(int32_t const *)(insn + 3);
+		return insn + rel + 7;
+	}
+
 	ERR("AsmResolveInstructionRef(): Not a supported CALL, MOV, LEA or CMP instruction at %p", insn);
 	return nullptr;
 }

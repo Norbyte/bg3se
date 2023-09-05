@@ -70,6 +70,7 @@ namespace bg3se {
 		SymbolMapper::MappingResult BindComponentReplicationIDRef(uint8_t const*);
 		SymbolMapper::MappingResult BindComponentIDRef(uint8_t const*);
 		SymbolMapper::MappingResult BindComponentIDRef2(uint8_t const*);
+		SymbolMapper::MappingResult BindEventComponentIDRef(uint8_t const*);
 		HMODULE GetAppHandle();
 
 		bool CanShowError();

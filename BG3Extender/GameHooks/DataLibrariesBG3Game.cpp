@@ -31,6 +31,7 @@ namespace bg3se
 		mapper.AddEngineCallback("BindComponentReplicationIDRef", std::bind(&LibraryManager::BindComponentReplicationIDRef, this, std::placeholders::_1));
 		mapper.AddEngineCallback("BindComponentIDRef", std::bind(&LibraryManager::BindComponentIDRef, this, std::placeholders::_1));
 		mapper.AddEngineCallback("BindComponentIDRef2", std::bind(&LibraryManager::BindComponentIDRef2, this, std::placeholders::_1));
+		mapper.AddEngineCallback("BindEventComponentIDRef", std::bind(&LibraryManager::BindEventComponentIDRef, this, std::placeholders::_1));
 	}
 
 	SymbolMapper::MappingResult LibraryManager::BindECSIndex(uint8_t const* ptr)
@@ -68,6 +69,7 @@ namespace bg3se
 
 		auto indexIt = GetStaticSymbols().IndexSymbolToNameMaps.find(indexPtr);
 		if (indexIt != GetStaticSymbols().IndexSymbolToNameMaps.end()) {
+			assert(indexIt->second.type == ecs::IndexSymbolType::None || indexIt->second.type == ecs::IndexSymbolType::Replication);
 			indexIt->second.type = ecs::IndexSymbolType::Replication;
 		}
 
@@ -80,6 +82,7 @@ namespace bg3se
 
 		auto indexIt = GetStaticSymbols().IndexSymbolToNameMaps.find(indexPtr);
 		if (indexIt != GetStaticSymbols().IndexSymbolToNameMaps.end()) {
+			assert(indexIt->second.type == ecs::IndexSymbolType::None || indexIt->second.type == ecs::IndexSymbolType::Component);
 			indexIt->second.type = ecs::IndexSymbolType::Component;
 		}
 
@@ -92,7 +95,21 @@ namespace bg3se
 
 		auto indexIt = GetStaticSymbols().IndexSymbolToNameMaps.find(indexPtr);
 		if (indexIt != GetStaticSymbols().IndexSymbolToNameMaps.end()) {
+			assert(indexIt->second.type == ecs::IndexSymbolType::None || indexIt->second.type == ecs::IndexSymbolType::Component);
 			indexIt->second.type = ecs::IndexSymbolType::Component;
+		}
+
+		return SymbolMapper::MappingResult::TryNext;
+	}
+
+	SymbolMapper::MappingResult LibraryManager::BindEventComponentIDRef(uint8_t const* ptr)
+	{
+		auto indexPtr = (int32_t*)AsmResolveInstructionRef(ptr);
+
+		auto indexIt = GetStaticSymbols().IndexSymbolToNameMaps.find(indexPtr);
+		if (indexIt != GetStaticSymbols().IndexSymbolToNameMaps.end()) {
+			assert(indexIt->second.type == ecs::IndexSymbolType::None || indexIt->second.type == ecs::IndexSymbolType::EventComponent);
+			indexIt->second.type = ecs::IndexSymbolType::EventComponent;
 		}
 
 		return SymbolMapper::MappingResult::TryNext;

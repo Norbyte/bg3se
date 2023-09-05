@@ -27,11 +27,11 @@ int GetGuidResourceProxy(lua_State* L, Guid const& resourceGuid)
 	return 1;
 }
 
-int GetGuidResource(lua_State* L, Guid resourceGuid, ExtResourceManagerType type)
+UserReturn GetGuidResource(lua_State* L, Guid resourceGuid, ExtResourceManagerType type)
 {
 	auto& helpers = gExtender->GetServer().GetEntityHelpers();
 	switch (type) {
-	case Action::ResourceManagerType: return GetGuidResourceProxy<Action>(L, resourceGuid);
+	case ActionResource::ResourceManagerType: return GetGuidResourceProxy<ActionResource>(L, resourceGuid);
 	case ClassDescription::ResourceManagerType: return GetGuidResourceProxy<ClassDescription>(L, resourceGuid);
 	case Tag::ResourceManagerType: return GetGuidResourceProxy<Tag>(L, resourceGuid);
 	case Faction::ResourceManagerType: return GetGuidResourceProxy<Faction>(L, resourceGuid);
@@ -48,6 +48,9 @@ int GetGuidResource(lua_State* L, Guid resourceGuid, ExtResourceManagerType type
 	case Flag::ResourceManagerType: return GetGuidResourceProxy<Flag>(L, resourceGuid);
 	case Feat::ResourceManagerType: return GetGuidResourceProxy<Feat>(L, resourceGuid);
 	case FeatDescription::ResourceManagerType: return GetGuidResourceProxy<FeatDescription>(L, resourceGuid);
+	case PassiveList::ResourceManagerType: return GetGuidResourceProxy<PassiveList>(L, resourceGuid);
+	case SkillList::ResourceManagerType: return GetGuidResourceProxy<SkillList>(L, resourceGuid);
+	case SpellList::ResourceManagerType: return GetGuidResourceProxy<SpellList>(L, resourceGuid);
 
 	default:
 		LuaError("Resource type not supported: " << type);
@@ -79,7 +82,7 @@ Array<Guid> GetAllGuidResources(lua_State* L, ExtResourceManagerType type)
 {
 	auto& helpers = gExtender->GetServer().GetEntityHelpers();
 	switch (type) {
-	case Action::ResourceManagerType: return GetAllGuidResourcesTyped<Action>();
+	case ActionResource::ResourceManagerType: return GetAllGuidResourcesTyped<ActionResource>();
 	case ClassDescription::ResourceManagerType: return GetAllGuidResourcesTyped<ClassDescription>();
 	case Tag::ResourceManagerType: return GetAllGuidResourcesTyped<Tag>();
 	case Faction::ResourceManagerType: return GetAllGuidResourcesTyped<Faction>();
@@ -96,6 +99,9 @@ Array<Guid> GetAllGuidResources(lua_State* L, ExtResourceManagerType type)
 	case Flag::ResourceManagerType: return GetAllGuidResourcesTyped<Flag>();
 	case Feat::ResourceManagerType: return GetAllGuidResourcesTyped<Feat>();
 	case FeatDescription::ResourceManagerType: return GetAllGuidResourcesTyped<FeatDescription>();
+	case PassiveList::ResourceManagerType: return GetAllGuidResourcesTyped<PassiveList>();
+	case SkillList::ResourceManagerType: return GetAllGuidResourcesTyped<SkillList>();
+	case SpellList::ResourceManagerType: return GetAllGuidResourcesTyped<SpellList>();
 
 	default:
 		LuaError("Resource type not supported: " << type);

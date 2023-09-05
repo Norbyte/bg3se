@@ -10,7 +10,8 @@ enum class IndexSymbolType
 	None,
 	Replication,
 	Handle,
-	Component
+	Component,
+	EventComponent
 };
 
 struct IndexSymbolInfo
@@ -208,7 +209,8 @@ private:
 		int32_t ReplicationIndex{ -1 };
 		int32_t HandleIndex{ -1 };
 		int32_t ComponentIndex{ -1 };
-		std::array<int32_t, 4> Indices;
+		int32_t EventComponentIndex{ -1 };
+		std::array<int32_t, 5> Indices;
 		std::size_t NumIndices{ 0 };
 
 		void Add(int32_t index, IndexSymbolType type);
@@ -227,12 +229,15 @@ private:
 	std::unordered_map<HandleTypeIndex, ExtComponentType> handleIndexToTypeMappings_;
 	std::unordered_map<HandleTypeIndex, ComponentTypeIndex> handleIndexToComponentMappings_;
 	std::unordered_map<STDString, int32_t> systemIndexMappings_;
+	std::vector<STDString> systemIndices_;
 	std::array<ComponentTypeIndex, (int)ExtComponentType::Max> componentIndices_;
 	std::array<HandleTypeIndex, (int)ExtComponentType::Max> handleIndices_;
 	std::array<int32_t, (int)ExtResourceManagerType::Max> resourceManagerIndices_;
 	bool initialized_{ false };
 
-	void UpdateComponentMapping(char const* name, ComponentIndexMappings& mapping);
+	bool TryUpdateSystemMapping(char const* name, ComponentIndexMappings& mapping);
+	void TryUpdateComponentMapping(char const* name, ComponentIndexMappings& mapping);
+	void BindSystemName(char const* name, int32_t systemId);
 	void* GetRawComponent(char const* nameGuid, ExtComponentType type);
 	void* GetRawComponent(FixedString const& guid, ExtComponentType type);
 	void* GetRawEntityComponent(EntityHandle entityHandle, ExtComponentType type);

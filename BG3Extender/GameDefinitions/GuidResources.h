@@ -35,14 +35,14 @@ struct GuidResourceManager
 };
 
 
-struct Action : public GuidResource
+struct ActionResource : public GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::ActionResource;
 
 	FixedString Name;
-	FixedString DisplayName;
-	FixedString Description;
-	FixedString Error;
+	TranslatedString DisplayName;
+	TranslatedString Description;
+	TranslatedString Error;
 	uint32_t MaxLevel;
 	double MaxValue;
 	uint8_t DiceType; // FIXME - map to enumeration
@@ -51,6 +51,7 @@ struct Action : public GuidResource
 	bool UpdatesSpellPowerLevel;
 	bool PartyActionResource;
 	bool IsSpellResource;
+	bool IsHidden;
 };
 
 
@@ -96,7 +97,8 @@ struct Tag : public GuidResource
 	FixedString Name;
 	STDString Description;
 	FixedString Icon;
-	uint16_t Categories; // FIXME - map to flags
+	uint32_t Categories; // FIXME - map to flags
+	uint32_t Properties; // FIXME - map to flags
 	TranslatedString DisplayName;
 	TranslatedString DisplayDescription;
 };
@@ -116,17 +118,24 @@ struct Race : public GuidResource
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::Race;
 
 	FixedString Name;
-	FixedString DisplayName;
-	FixedString Description;
+	TranslatedString DisplayName;
+	TranslatedString Description;
 	Guid ParentGuid;
+	Guid DisplayTypeUUID;
 	Array<Guid> Tags;
 	Guid ProgressionTableUUID;
 	FixedString RaceSoundSwitch;
+	FixedString RaceEquipment;
 	Array<Guid> HairColors;
 	Array<Guid> SkinColors;
 	Array<Guid> EyeColors;
 	Array<Guid> TattooColors;
 	Array<Guid> MakeupColors;
+	Array<Guid> LipsMakeupColors;
+	Array<Guid> HairHighlightColors;
+	Array<Guid> HairGrayingColors;
+	Array<Guid> HornColors;
+	Array<Guid> HornTipColors;
 	Array<Guid> Visuals;
 	Array<Guid> Gods;
 	Array<Guid> ExcludedGods;
@@ -139,26 +148,35 @@ struct Origin : public GuidResource
 
 	bool AvailableInCharacterCreation;
 	FixedString Name;
-	FixedString DisplayName;
-	FixedString Description;
-	uint8_t Gender;
+	TranslatedString DisplayName;
+	TranslatedString Description;
+	uint8_t BodyType;
+	uint8_t BodyShape;
+	bool LockBody;
 	Guid RaceUUID;
 	Guid SubRaceUUID;
+	bool LockRace;
 	Guid BackgroundUUID;
 	Guid GodUUID;
 	Guid ClassUUID;
 	Guid SubClassUUID;
 	bool LockClass;
 	Guid GlobalTemplate;
+	Guid DefaultsTemplate;
 	STDString Passives;
 	Array<Guid> field_C8;
-	Array<Guid> Tags;
+	Array<Guid> AppearanceTags;
+	Array<Guid> ReallyTags;
 	uint32_t Flags;
 	STDString Overview;
 	STDString CloseUpA;
 	STDString CloseUpB;
 	FixedString ClassEquipmentOverride;
 	Guid VoiceTableUUID;
+	Guid IntroDialogUUID;
+	bool IsHenchman;
+	uint8_t Identity;
+	Guid ExcludesOriginUUID;
 };
 
 
@@ -166,13 +184,13 @@ struct Background : public GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::Background;
 
-	FixedString DisplayName;
-	FixedString Description;
+	TranslatedString DisplayName;
+	TranslatedString Description;
 	STDString Passives;
 	__int64 field_40;
 	__int64 field_48;
-	__int64 field_50;
 	Array<Guid> Tags;
+	bool Hidden;
 };
 
 
@@ -181,8 +199,8 @@ struct God : public GuidResource
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::God;
 
 	FixedString Name;
-	FixedString DisplayName;
-	FixedString Description;
+	TranslatedString DisplayName;
+	TranslatedString Description;
 	Array<Guid> Tags;
 };
 
@@ -191,23 +209,40 @@ struct Progression : public GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::Progression;
 
+	struct Spell
+	{
+		Guid SpellUUID;
+		STDString field_10;
+		AbilityId Ability;
+		Guid field_30;
+		SpellPrepareType PrepareType;
+		SpellCooldownType CooldownType;
+		Guid field_48;
+	};
+
+
 	Guid TableUUID;
 	STDString Name;
 	Array<Guid> SubClasses;
-	Array<Guid> field_60;
+	Array<Guid> field_50;
 	STDString PassivesAdded;
-	Array<Guid> field_98;
+	Array<Guid> field_78;
 	STDString PassivesRemoved;
-	Array<Guid> field_D0;
+	Array<Guid> field_A0;
 	STDString Boosts;
 	uint8_t ProgressionType; // FIXME - map to enumeration
 	uint8_t Level;
 	bool AllowImprovement;
+	Array<FixedString> field_D0;
+	bool IsMulticlass;
 	Array<Guid> SelectAbilities;
+	Array<Guid> SelectAbilityBonus;
 	Array<Guid> SelectSkills;
+	Array<Guid> SelectSkillsExpertise;
 	Array<Guid> SelectSpells;
 	Array<Guid> SelectPassives;
-	Array<Guid> AddSpells;
+	Array<Guid> SelectEquipment;
+	Array<Spell> AddSpells;
 };
 
 
@@ -215,8 +250,8 @@ struct ProgressionDescription : public GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::ProgressionDescription;
 
-	FixedString DisplayName;
-	FixedString Description;
+	TranslatedString DisplayName;
+	TranslatedString Description;
 	bool Hidden;
 	FixedString ExactMatch;
 	FixedString Type;
@@ -257,7 +292,7 @@ struct Color : public GuidResource
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::ColorDefinition;
 
 	FixedString Name;
-	FixedString DisplayName;
+	TranslatedString DisplayName;
 	glm::vec4 Color;
 };
 
@@ -278,6 +313,7 @@ struct EquipmentType : public GuidResource
 	FixedString SourceBoneSheathed;
 	FixedString SourceBoneVersatileSheathed;
 	FixedString SourceBoneVersatileUnsheathed;
+	FixedString SourceBoneAlternativeUnsheathed;
 	FixedString SoundAttackType;
 	FixedString SoundEquipmentType;
 };
@@ -308,10 +344,13 @@ struct Feat : public GuidResource
 	Array<Guid> field_E8;
 	bool CanBeTakenMultipleTimes;
 	Array<Guid> SelectAbilities;
+	Array<Guid> SelectAbilityBonus;
 	Array<Guid> SelectSkills;
+	Array<Guid> SelectSkillsExpertise;
 	Array<Guid> SelectSpells;
 	Array<Guid> SelectPassives;
-	Array<Guid> AddSpells;
+	Array<Guid> SelectEquipment;
+	Array<Progression::Spell> AddSpells;
 };
 
 
@@ -319,8 +358,8 @@ struct FeatDescription : public GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::FeatDescription;
 
-	FixedString DisplayName;
-    FixedString Description;
+	TranslatedString DisplayName;
+    TranslatedString Description;
 	bool Hidden;
 	FixedString ExactMatch;
 	FixedString Type;
@@ -330,5 +369,29 @@ struct FeatDescription : public GuidResource
 	FixedString PassivePrototype;
 };
 
-END_NS()
 
+struct PassiveList : public GuidResource
+{
+	static constexpr auto ResourceManagerType = ExtResourceManagerType::PassiveList;
+
+	Array<FixedString> Passives;
+};
+
+
+struct SkillList : public GuidResource
+{
+	static constexpr auto ResourceManagerType = ExtResourceManagerType::SkillList;
+
+	Array<STDString> Skills;
+};
+
+
+struct SpellList : public GuidResource
+{
+	static constexpr auto ResourceManagerType = ExtResourceManagerType::SpellList;
+
+	MultiHashSet<FixedString> Spells;
+};
+
+
+END_NS()

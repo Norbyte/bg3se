@@ -519,6 +519,59 @@
         <Target Type="Absolute" Offset="@ref1" EngineCallback="BindComponentIDRef2" />
       </Mapping>
 
+      <Mapping Name="ecs::ComponentIDRef3" AllowFail="true">
+        45 33 e4 // xor     r12d, r12d
+        @ref1 0f b7 1d ?? ?? ?? ?? // movzx   ebx, word ptr cs:eoc__controller__LocomotionComponentID
+        41 bd ff 7f 00 00 // mov     r13d, 7FFFh
+        66 41 23 dd // and     bx, r13w
+        48 8d 4d c0 // lea     rcx, [rbp+a3]
+        e8 ?? ?? ?? ?? // call    ecs__ComponentRegistryEntry3__ctor
+        90 // nop
+        <Target Type="Absolute" Offset="@ref1" EngineCallback="BindComponentIDRef2" />
+      </Mapping>
+
+      <Mapping Name="ecs::ComponentIDRef4" AllowFail="true">
+        45 33 e4 // xor     r12d, r12d
+        @ref1 0f b7 1d ?? ?? ?? ?? // movzx   ebx, word ptr cs:eoc__spell_cast__FinishedEventOneFrameComponentID_2
+        41 be ff 7f 00 00 // mov     r14d, 7FFFh
+        66 41 23 de // and     bx, r14w
+        48 8d 4d c0 // lea     rcx, [rbp+a3]
+        e8 ?? ?? ?? ?? // call    ecs__ComponentRegistryEntry3__ctor
+        90 // nop
+        <Target Type="Absolute" Offset="@ref1" EngineCallback="BindComponentIDRef2" />
+      </Mapping>
+
+      <Mapping Name="ecs::EventComponentIDRef" AllowFail="true">
+        be 00 80 00 00 // mov     esi, 8000h
+        48 8d 54 24 30 // lea     rdx, [rsp+0A8h+a2]; a2
+        8b c6 // mov     eax, esi
+        48 83 c1 50 // add     rcx, 50h ; 'P'; a1
+        @ref1 66 0b 05 ?? ?? ?? ?? // or      ax, word ptr cs:esv__item__UseEventsOneFrameComponentID_2
+        66 89 44 24 30 // mov     [rsp+0A8h+a2], ax
+        <Target Type="Absolute" Offset="@ref1" EngineCallback="BindEventComponentIDRef" />
+      </Mapping>
+
+      <Mapping Name="ecs::EventComponentIDRef2" AllowFail="true">
+        41 be 00 80 00 00 // mov     r14d, 8000h
+        41 8b f6 // mov     esi, r14d
+        @ref1 66 0b 35 ?? ?? ?? ?? // or      si, word ptr cs:ls__VisualChangeRequestOneFrameComponentID_2
+        48 8d 4d c0 // lea     rcx, [rbp+a3]
+        e8 ?? ?? ?? ?? // call    ecs__ComponentRegistryEntry3__ctor
+        90 // nop
+        <Target Type="Absolute" Offset="@ref1" EngineCallback="BindEventComponentIDRef" />
+      </Mapping>
+
+      <Mapping Name="ecs::EventComponentIDRef3" AllowFail="true">
+        45 33 ed // xor     r13d, r13d
+        41 be 00 80 00 00 // mov     r14d, 8000h
+        41 8b fe // mov     edi, r14d
+        @ref1 66 0b 3d ?? ?? ?? ?? // or      di, word ptr cs:esv__sight__StealthRollRequestOneFrameComponentID
+        48 8d 4d c0 // lea     rcx, [rbp+a3]
+        e8 ?? ?? ?? ?? // call    ecs__ComponentRegistryEntry3__ctor
+        90 // nop
+        <Target Type="Absolute" Offset="@ref1" EngineCallback="BindEventComponentIDRef" />
+      </Mapping>
+
       <Mapping Name="KillLauncher" AllowFail="true">
         @ref1 ff 15 ?? ?? ?? ?? // call    cs:SteamAPI_RestartAppIfNecessary
         84 c0 // test    al, al

@@ -118,7 +118,6 @@ EntitySystemHelpersBase::EntitySystemHelpersBase()
 
 void EntitySystemHelpersBase::ComponentIndexMappings::Add(int32_t index, IndexSymbolType type)
 {
-
 	switch (type) {
 	case IndexSymbolType::Replication:
 		assert(ReplicationIndex == -1);
@@ -133,6 +132,11 @@ void EntitySystemHelpersBase::ComponentIndexMappings::Add(int32_t index, IndexSy
 	case IndexSymbolType::Component:
 		assert(ComponentIndex == -1);
 		ComponentIndex = index;
+		break;
+			
+	case IndexSymbolType::EventComponent:
+		assert(EventComponentIndex == -1);
+		EventComponentIndex = index;
 		break;
 
 	default:
@@ -217,23 +221,41 @@ void EntitySystemHelpersBase::NotifyReplicationFlagsDirtied()
 	world->Replication->Dirty = true;
 }
 
-void EntitySystemHelpersBase::UpdateComponentMapping(char const* name, ComponentIndexMappings& mapping)
+void EntitySystemHelpersBase::BindSystemName(char const* name, int32_t systemId)
+{
+	systemIndexMappings_.insert(std::make_pair(SimplifyComponentName(name), systemId));
+	if (systemIndices_.size() <= systemId) {
+		systemIndices_.resize(systemId + 1);
+	}
+
+	systemIndices_[systemId] = name;
+}
+
+bool EntitySystemHelpersBase::TryUpdateSystemMapping(char const* name, ComponentIndexMappings& mapping)
 {
 	if (mapping.NumIndices == 1
 		&& mapping.ReplicationIndex == -1
 		&& mapping.HandleIndex == -1
-		&& mapping.ComponentIndex == -1) {
-		systemIndexMappings_.insert(std::make_pair(SimplifyComponentName(name), mapping.Indices[0]));
-		return;
+		&& mapping.ComponentIndex == -1
+		&& mapping.EventComponentIndex == -1
+		&& strstr(name, "ecs::query::spec::Spec<") == nullptr) {
+		BindSystemName(name, mapping.Indices[0]);
+		return true;
 	}
 
+	return false;
+}
+
+void EntitySystemHelpersBase::TryUpdateComponentMapping(char const* name, ComponentIndexMappings& mapping)
+{
 	std::sort(mapping.Indices.begin(), mapping.Indices.begin() + mapping.NumIndices, std::less<int32_t>());
 	DEBUG_IDX("\t" << name << ": ");
 
 	auto totalIndices = mapping.NumIndices
 		+ ((mapping.ReplicationIndex != -1) ? 1 : 0)
 		+ ((mapping.HandleIndex != -1) ? 1 : 0)
-		+ ((mapping.ComponentIndex != -1) ? 1 : 0);
+		+ ((mapping.ComponentIndex != -1) ? 1 : 0)
+		+ ((mapping.EventComponentIndex != -1) ? 1 : 0);
 
 	if (totalIndices == 1) {
 		assert(mapping.ReplicationIndex == -1);
@@ -247,9 +269,19 @@ void EntitySystemHelpersBase::UpdateComponentMapping(char const* name, Component
 		assert(mapping.ReplicationIndex == -1);
 		assert(mapping.HandleIndex == -1);
 
+		if (mapping.EventComponentIndex != -1) {
+			DEBUG_IDX("Event component, ignored.");
+			return;
+		}
+
 		unsigned nextIndex{ 0 };
 		if (mapping.ComponentIndex == -1) {
-			mapping.ComponentIndex = mapping.Indices[nextIndex++];
+			// Maybe this is a system?
+			if (strstr(name, "Component") == nullptr) {
+				BindSystemName(name, mapping.Indices[0]);
+			} else {
+				mapping.ComponentIndex = mapping.Indices[nextIndex++];
+			}
 		}
 
 		mapping.HandleIndex = mapping.Indices[nextIndex++];
@@ -294,11 +326,6 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 	handleIndices_.fill(UndefinedIndex);
 	resourceManagerIndices_.fill(UndefinedIndex);
 
-	auto entityWorld = GetEntityWorld();
-	if (!entityWorld) {
-		return;
-	}
-
 	auto const& symbolMaps = GetStaticSymbols().IndexSymbolToNameMaps;
 
 	std::unordered_map<char const*, ComponentIndexMappings> mappings;
@@ -314,8 +341,15 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 		}
 	}
 
+	std::vector<std::pair<char const*, ComponentIndexMappings>> pendingMappings;
 	for (auto& map : mappings) {
-		UpdateComponentMapping(map.first, map.second);
+		if (!TryUpdateSystemMapping(map.first, map.second)) {
+			pendingMappings.push_back(map);
+		}
+	}
+	
+	for (auto& map : pendingMappings) {
+		TryUpdateComponentMapping(map.first, map.second);
 	}
 
 #if defined(DEBUG_INDEX_MAPPINGS)
@@ -467,7 +501,6 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 	MapResourceManagerIndex("eoc::ActionResourceGroupManager", ExtResourceManagerType::ActionResourceGroup);
 	MapResourceManagerIndex("eoc::EquipmentTypes", ExtResourceManagerType::EquipmentType);
 	MapResourceManagerIndex("eoc::VFXContainer", ExtResourceManagerType::VFX);
-	MapResourceManagerIndex("eoc::DeathTypesContainer", ExtResourceManagerType::DeathType);
 	MapResourceManagerIndex("eoc::CharacterCreationAppearanceMaterialManager", ExtResourceManagerType::CharacterCreationAppearanceMaterial);
 	MapResourceManagerIndex("eoc::CharacterCreationAppearanceVisualManager", ExtResourceManagerType::CharacterCreationAppearanceVisual);
 	MapResourceManagerIndex("eoc::CharacterCreationSharedVisualManager", ExtResourceManagerType::CharacterCreationSharedVisual);
@@ -475,7 +508,6 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 	MapResourceManagerIndex("eoc::FeatManager", ExtResourceManagerType::Feat);
 	MapResourceManagerIndex("eoc::FeatDescriptionManager", ExtResourceManagerType::FeatDescription);
 	MapResourceManagerIndex("eoc::tutorial::ModalEntriesManager", ExtResourceManagerType::TutorialModalEntries);
-	MapResourceManagerIndex("eoc::AvailableClassSpellsManager", ExtResourceManagerType::AvailableClassSpells);
 	MapResourceManagerIndex("eoc::ClassDescriptions", ExtResourceManagerType::ClassDescription);
 	MapResourceManagerIndex("eoc::ColorDefinitions", ExtResourceManagerType::ColorDefinition);
 	MapResourceManagerIndex("ls::FlagManager", ExtResourceManagerType::Flag);
@@ -554,8 +586,7 @@ void EntitySystemHelpersBase::MapResourceManagerIndex(char const* componentName,
 	if (it != systemIndexMappings_.end()) {
 		resourceManagerIndices_[(unsigned)type] = it->second;
 	} else {
-		// FIXME - disabled until we map the new resource managers
-		// OsiWarn("Could not find index for resource manager: " << componentName);
+		OsiWarn("Could not find index for resource manager: " << componentName);
 	}
 }
 

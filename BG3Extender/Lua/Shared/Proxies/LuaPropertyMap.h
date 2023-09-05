@@ -186,6 +186,8 @@ template <class T>
 struct StaticLuaPropertyMap
 {
 	static_assert(!std::is_pointer_v<T>, "StaticLuaPropertyMap type should not be a pointer type!");
+	static_assert(!ByVal<T>::Value, "StaticLuaPropertyMap type should not be a by-val type!");
+
 	using ObjectType = T;
 	using TPropertyMap = LuaPropertyMap<T>;
 
