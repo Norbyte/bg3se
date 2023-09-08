@@ -33,13 +33,13 @@ namespace bg3se::lua
 				break;
 
 			case PropertyOperationResult::NoSuchProperty:
-				luaL_error(L, "Property does not exist: %s::%s - property does not exist", GetTypeInfo<T>().TypeName.GetString(), prop.GetString());
+				luaL_error(L, "Cannot get property: %s.%s - property does not exist", GetTypeInfo<T>().TypeName.GetString(), prop.GetString());
 				push(L, nullptr);
 				break;
 
 			case PropertyOperationResult::Unknown:
 			default:
-				luaL_error(L, "Cannot get property %s::%s - unknown error", GetTypeInfo<T>().TypeName.GetString(), prop.GetString());
+				luaL_error(L, "Cannot get property %s.%s - unknown error", GetTypeInfo<T>().TypeName.GetString(), prop.GetString());
 				push(L, nullptr);
 				break;
 			}
@@ -56,20 +56,20 @@ namespace bg3se::lua
 				return true;
 
 			case PropertyOperationResult::NoSuchProperty:
-				luaL_error(L, "Cannot set property %s::%s - property does not exist", GetTypeInfo<T>().TypeName.GetString(), prop.GetString());
+				luaL_error(L, "Cannot set property %s.%s - property does not exist", GetTypeInfo<T>().TypeName.GetString(), prop.GetString());
 				return false;
 
 			case PropertyOperationResult::ReadOnly:
-				luaL_error(L, "Cannot set property %s::%s - property is read-only", GetTypeInfo<T>().TypeName.GetString(), prop.GetString());
+				luaL_error(L, "Cannot set property %s.%s - property is read-only", GetTypeInfo<T>().TypeName.GetString(), prop.GetString());
 				return false;
 
 			case PropertyOperationResult::UnsupportedType:
-				luaL_error(L, "Cannot set property %s::%s - cannot write properties of this type", GetTypeInfo<T>().TypeName.GetString(), prop.GetString());
+				luaL_error(L, "Cannot set property %s.%s - cannot write properties of this type", GetTypeInfo<T>().TypeName.GetString(), prop.GetString());
 				return false;
 
 			case PropertyOperationResult::Unknown:
 			default:
-				luaL_error(L, "Cannot set property %s::%s - unknown error", GetTypeInfo<T>().TypeName.GetString(), prop.GetString());
+				luaL_error(L, "Cannot set property %s.%s - unknown error", GetTypeInfo<T>().TypeName.GetString(), prop.GetString());
 				return false;
 			}
 		}

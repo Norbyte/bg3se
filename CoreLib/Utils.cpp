@@ -80,7 +80,9 @@ void Fail(char const * reason)
 {
 	ERR("%s", reason);
 #if defined(_DEBUG)
-	DebugBreak();
+	if (IsDebuggerPresent()) {
+		DebugBreak();
+	}
 #endif
 	MessageBoxA(NULL, reason, "BG3 Script Extender Error", MB_OK | MB_ICONERROR);
 	TerminateProcess(GetCurrentProcess(), 1);

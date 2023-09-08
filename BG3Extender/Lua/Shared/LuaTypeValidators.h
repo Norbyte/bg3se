@@ -1,11 +1,18 @@
 #pragma once
 
+#if defined(_DEBUG)
+#define CHECK(expr) if (!(expr)) { if (IsDebuggerPresent()) { DebugBreak(); } return false; }
+#else
+#define CHECK(expr) if (!(expr)) return false;
+#endif
+
 BEGIN_NS(lua)
 
 inline bool Validate(bool* b, Overload<bool>)
 {
 	// Bool is false (0) / true (1)
-	return *(uint8_t*)b <= 1;
+	CHECK(*(uint8_t*)b <= 1);
+	return true;
 }
 
 // No validation needed/possible for numeric types
@@ -53,14 +60,16 @@ struct STDStringInternals
 inline bool Validate(STDString* s, Overload<STDString>)
 {
 	auto i = reinterpret_cast<STDStringInternals*>(s);
-	if (i->Size > i->Capacity) return false;
+	CHECK(i->Size <= i->Capacity);
+	// Sanity check for very large values
+	CHECK(i->Capacity <= 0x1000000);
 
-	if (i->Capacity >= 0xF) {
-		if (IsBadReadPtr(i->Ptr, (uint64_t)i->Capacity + 1)) return false;
+	if (i->Capacity > 0xF) {
+		CHECK(!IsBadReadPtr(i->Ptr, (uint64_t)i->Capacity + 1));
 		// Check null terminator
-		if (i->Ptr[i->Size] != 0x00) return false;
+		CHECK(i->Ptr[i->Size] == 0x00);
 	} else {
-		if (i->InlineStr[i->Size] != 0x00) return false;
+		CHECK(i->InlineStr[i->Size] == 0x00);
 	}
 
 	return true;
@@ -73,50 +82,57 @@ inline bool Validate(Path* p, Overload<Path>)
 
 inline bool Validate(FixedString* s, Overload<FixedString>)
 {
-	return s->IsValid();
+	CHECK(s->IsValid());
+	return true;
 }
 
 inline bool Validate(RuntimeStringHandle* h, Overload<RuntimeStringHandle>)
 {
-	return h->Handle.IsValid()
-		&& h->Version <= 0x1000;
+	CHECK(h->Handle.IsValid());
+	CHECK(h->Version <= 0x1000);
+	return true;
 }
 
 inline bool Validate(TranslatedString* ts, Overload<TranslatedString>)
 {
-	return Validate(&ts->Handle, Overload<RuntimeStringHandle>{})
-		&& Validate(&ts->ArgumentString, Overload<RuntimeStringHandle>{});
+	CHECK(Validate(&ts->Handle, Overload<RuntimeStringHandle>{}));
+	CHECK(Validate(&ts->ArgumentString, Overload<RuntimeStringHandle>{}));
+	return true;
 }
 
 inline bool Validate(Guid* g, Overload<Guid>)
 {
 	// Heuristic: Consider non-null GUIDs with zero lower/higher dwords to be sus
-	return !*g
+	CHECK(!*g
 		|| (
 			(g->Val[0] & 0xffffffff) != 0
 			&& (g->Val[0] >> 32) != 0
 			&& (g->Val[1] & 0xffffffff) != 0
 			&& (g->Val[1] >> 32) != 0
-		);
+		));
+	return true;
 }
 
 template <class T>
 typename std::enable_if_t<std::is_enum_v<T>, bool> Validate(T* v, Overload<T>)
 {
 	if constexpr (std::is_base_of_v<BitmaskInfoBase<T>, EnumInfo<T>>) {
-		return ((uint64_t)*v & ~EnumInfo<T>::Store->AllowedFlags) == 0;
+		CHECK(((uint64_t)*v & ~EnumInfo<T>::Store->AllowedFlags) == 0);
 	} else if constexpr (std::is_base_of_v<EnumInfoBase<T>, EnumInfo<T>>) {
-		return (int64_t)*v < EnumInfo<T>::Store->Labels.size();
+		CHECK((int64_t)*v < EnumInfo<T>::Store->Labels.size());
 	} else {
 		assert(false && *T{});
 	}
+
+	return true;
 }
 
 inline bool Validate(ecs::EntityRef* g, Overload<ecs::EntityRef>)
 {
 	// TODO - check if World points to a valid EntityWorld?
-	return (g->World == nullptr && !g->Handle)
-		|| (g->World != nullptr && (bool)g->Handle);
+	CHECK((g->World == nullptr && !g->Handle)
+		|| (g->World != nullptr && (bool)g->Handle));
+	return true;
 }
 
 template <class T>
@@ -143,40 +159,48 @@ template <class TE>
 bool ValidateRef(Array<TE>* v, Overload<Array<TE>>)
 {
 	if (v->raw_buf() == nullptr) {
-		return v->size() == 0 && v->capacity() == 0;
+		CHECK(v->size() == 0);
+		CHECK(v->capacity() == 0);
 	} else {
-		if (v->size() > v->capacity()) return false;
-		if (v->capacity() > 0x1000000) return false;
-		return !IsBadReadPtr(v->raw_buf(), v->capacity() * sizeof(TE));
+		CHECK(v->size() <= v->capacity());
+		CHECK(v->capacity() <= 0x1000000);
+		CHECK(!IsBadReadPtr(v->raw_buf(), v->capacity() * sizeof(TE)));
 		// TODO - check contents (shallow ptr scan)
 	}
+
+	return true;
 }
 
 template <class TE>
 bool ValidateRef(ObjectSet<TE>* v, Overload<ObjectSet<TE>>)
 {
-	if (v->CapacityIncrementSize > 0x100000) return false;
+	CHECK(v->CapacityIncrementSize <= 0x100000);
 
 	if (v->Buf == nullptr) {
-		return v->Size == 0 && v->Capacity == 0;
+		CHECK(v->Size == 0);
+		CHECK(v->Capacity == 0);
 	} else {
-		if (v->Size > v->Capacity) return false;
-		if (v->Capacity > 0x1000000) return false;
-		return !IsBadReadPtr(v->Buf, v->Capacity * sizeof(TE));
+		CHECK(v->Size <= v->Capacity);
+		CHECK(v->Capacity <= 0x1000000);
+		CHECK(!IsBadReadPtr(v->Buf, v->Capacity * sizeof(TE)));
 		// TODO - check contents (shallow ptr scan)
 	}
+
+	return true;
 }
 
 template <class TE>
 bool ValidateRef(StaticArray<TE>* v, Overload<StaticArray<TE>>)
 {
 	if (v->raw_buf() == nullptr) {
-		return v->size() == 0;
+		CHECK(v->size() == 0);
 	} else {
-		if (v->size() > 0x1000000) return false;
-		return !IsBadReadPtr(v->raw_buf(), v->size() * sizeof(TE));
+		CHECK(v->size() <= 0x1000000);
+		CHECK(!IsBadReadPtr(v->raw_buf(), v->size() * sizeof(TE)));
 		// TODO - check contents (shallow ptr scan)
 	}
+
+	return true;
 }
 
 template <class TK, class TV>
@@ -184,14 +208,16 @@ bool ValidateRef(Map<TK, TV>* v, Overload<Map<TK, TV>>)
 {
 	auto m = reinterpret_cast<MapInternals<TK, TV>*>(v);
 	if (m->HashTable == nullptr) {
-		return m->HashSize == 0 && m->ItemCount == 0;
+		CHECK(m->HashSize == 0);
+		CHECK(m->ItemCount == 0);
 	} else {
-		if (m->HashSize == 0) return false;
-		if (IsBadReadPtr(m->HashTable, m->HashSize * sizeof(void*))) return false;
+		CHECK(m->HashSize > 0);
+		CHECK(!IsBadReadPtr(m->HashTable, m->HashSize * sizeof(void*)));
 		// TODO - deeper checks on the table?
 		// TODO - check keys (shallow ptr scan)
-		return true;
 	}
+
+	return true;
 }
 
 template <class TK, class TV>
@@ -199,26 +225,26 @@ bool ValidateRef(RefMap<TK, TV>* v, Overload<RefMap<TK, TV>>)
 {
 	auto m = reinterpret_cast<RefMapInternals<TK, TV>*>(v);
 	if (m->HashTable == nullptr) {
-		return m->HashSize == 0 && m->ItemCount == 0;
+		CHECK(m->HashSize == 0);
+		CHECK(m->ItemCount == 0);
 	} else {
-		if (m->HashSize == 0) return false;
-		if (IsBadReadPtr(m->HashTable, m->HashSize * sizeof(void*))) return false;
+		CHECK(m->HashSize > 0);
+		CHECK(!IsBadReadPtr(m->HashTable, m->HashSize * sizeof(void*)));
 		// TODO - deeper checks on the table?
 		// TODO - check keys (shallow ptr scan)
-		return true;
 	}
+
+	return true;
 }
 
 template <class TK>
 bool ValidateRef(MultiHashSet<TK>* v, Overload<MultiHashSet<TK>>)
 {
-	if (!ValidateRef(&v->HashKeys, Overload<StaticArray<int32_t>>{})
-		|| !ValidateRef(&v->NextIds, Overload<Array<int32_t>>{})
-		|| !ValidateRef(&v->Keys, Overload<Array<TK>>{})) {
-		return false;
-	}
+	CHECK(ValidateRef(&v->HashKeys, Overload<StaticArray<int32_t>>{}));
+	CHECK(ValidateRef(&v->NextIds, Overload<Array<int32_t>>{}));
+	CHECK(ValidateRef(&v->Keys, Overload<Array<TK>>{}));
 
-	if (v->HashKeys.size() != v->NextIds.size()) return false;
+	CHECK(v->HashKeys.size() == v->NextIds.size());
 	// TODO - check keys (shallow ptr scan)
 	return true;
 }
@@ -232,10 +258,10 @@ bool ValidateRef(VirtualMultiHashSet<TK>* v, Overload<VirtualMultiHashSet<TK>>)
 template <class TK, class TV>
 bool ValidateRef(MultiHashMap<TK, TV>* v, Overload<MultiHashMap<TK, TV>>)
 {
-	if (!ValidateRef(v, Overload<MultiHashSet<TK>>{})
-		|| !ValidateRef(&v->Values, Overload<StaticArray<TV>>{})) return false;
+	CHECK(ValidateRef(v, Overload<MultiHashSet<TK>>{}));
+	CHECK(ValidateRef(&v->Values, Overload<StaticArray<TV>>{}));
 
-	if (v->Keys.size() != v->Values.size()) return false;
+	CHECK(v->Keys.size() == v->Values.size());
 
 	// TODO - check values (shallow ptr scan)
 	return true;
@@ -302,22 +328,24 @@ bool ValidateAny(T* v);
 template <class T>
 typename bool Validate(OverrideableProperty<T>* v, Overload<OverrideableProperty<T>>)
 {
-	return Validate(&v->IsOverridden, Overload<bool>{})
-		&& ValidateAny(&v->Value);
+	CHECK(Validate(&v->IsOverridden, Overload<bool>{}));
+	CHECK(ValidateAny(&v->Value));
+	return true;
 }
 
 template <class T>
 typename bool ValidateRef(OverrideableProperty<T>* v, Overload<OverrideableProperty<T>>)
 {
-	return Validate(&v->IsOverridden, Overload<bool>{})
-		&& ValidateAny(&v->Value);
+	CHECK(Validate(&v->IsOverridden, Overload<bool>{}));
+	CHECK(ValidateAny(&v->Value));
+	return true;
 }
 
 template <class TE, size_t Size>
 bool ValidateRef(std::array<TE, Size>* v, Overload<std::array<TE, Size>>)
 {
 	for (size_t i = 0; i < Size; i++) {
-		if (!ValidateAny(&(*v)[i])) return false;
+		CHECK(ValidateAny(&(*v)[i]));
 	}
 
 	return true;
@@ -334,3 +362,5 @@ bool ValidateAny(T* v)
 }
 
 END_NS()
+
+#undef CHECK
