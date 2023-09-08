@@ -65,14 +65,12 @@ namespace bg3se
 
 	struct ModManager : public ProtectedGameObject<ModManager>
 	{
-		typedef void (*CollectAvailableMods)(ObjectSet<Module, GameMemoryAllocator, true>& mods);
-
 		void * VMT;
 		uint64_t Unknown;
 		Array<void*> Unknowns;
 		Module BaseModule;
 		uint8_t Flag;
-		ObjectSet<Module, GameMemoryAllocator, true> AvailableMods;
+		ObjectSet<Module> AvailableMods;
 		ModuleSettings Settings;
 
 		Module const * FindModByNameGuid(char const * nameGuid) const;

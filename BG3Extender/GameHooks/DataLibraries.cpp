@@ -293,14 +293,6 @@ namespace bg3se
 		GetStaticSymbols().ecl__EoCClient__HandleError(*GetStaticSymbols().ecl__EoCClient, ts, exitGame, ts);
 	}
 
-	void LibraryManager::ShowStartupMessage(STDString const & msg, bool exitGame)
-	{
-		// Don't show progress if we're already in a loaded state, as it'll show a message box instead
-		if (CanShowError()) return;
-
-		ShowStartupError(msg, exitGame);
-	}
-
 	bool LibraryManager::CanShowMessages()
 	{
 		return GetStaticSymbols().GetClientState()

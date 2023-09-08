@@ -271,16 +271,6 @@ void ScriptExtender::OnSkillPrototypeManagerInit(void * self)
 		ERR("Module info not available in OnSkillPrototypeManagerInit?");
 		return;
 	}
-
-	STDString loadMsg = "Loading ";
-	loadMsg += modManager->BaseModule.Info.Name;
-	loadMsg += " (Script Extender v";
-	loadMsg += std::to_string(CurrentVersion);
-#if defined(_DEBUG)
-	loadMsg += " Devel";
-#endif
-	loadMsg += ")";
-	Libraries.ShowStartupMessage(loadMsg, false);
 	
 	if (server_.IsInServerThread()) {
 		server_.LoadExtensionState(ExtensionStateContext::Game);
