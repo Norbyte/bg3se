@@ -46,60 +46,6 @@ ObjectSet<Guid> GetLoadOrder()
 
 /// <summary>
 /// Returns detailed information about the specified (loaded) module.
-/// This function is deprecated; use `Ext.Mod.GetMod()` instead.
-/// 
-/// Example:
-/// ```lua
-/// local loadOrder = Ext.Mods.GetLoadOrder()
-/// for k, uuid in pairs(loadOrder) do
-///     local mod = Ext.GetModInfo(uuid)
-///     Ext.Dump(mod)
-/// end
-/// ```
-/// </summary>
-/// <param name="modNameGuid">Mod UUID to query</param>
-UserReturn GetModInfo(lua_State* L, char const* modNameGuid)
-{
-	StackCheck _(L, 1);
-	Module const * module{ nullptr };
-	auto modUuid = Guid::Parse(modNameGuid);
-	if (modUuid) {
-		auto modManager = gExtender->GetCurrentExtensionState()->GetModManager();
-		for (auto const& mod : modManager->BaseModule.LoadOrderedModules) {
-			if (mod.Info.ModuleUUID == *modUuid) {
-				module = &mod;
-				break;
-			}
-		}
-	}
-
-	if (module != nullptr) {
-		lua_newtable(L);
-		setfield(L, "UUID", module->Info.ModuleUUID);
-		setfield(L, "Name", module->Info.Name);
-		setfield(L, "Version", module->Info.ModVersion.Ver);
-		setfield(L, "PublishVersion", module->Info.PublishVersion.Ver);
-		setfield(L, "Directory", module->Info.Directory);
-		setfield(L, "Author", module->Info.Author);
-		setfield(L, "Description", module->Info.Description);
-		setfield(L, "ModuleType", module->Info.ModuleType);
-			
-		lua_newtable(L);
-		auto & dependents = module->DependentModules;
-		for (uint32_t i = 0; i < dependents.Size(); i++) {
-			auto const & mod = dependents[i];
-			settable(L, i + 1, mod.Info.ModuleUUID);
-		}
-		lua_setfield(L, -2, "Dependencies");
-	} else {
-		push(L, nullptr);
-	}
-
-	return 1;
-}
-
-/// <summary>
-/// Returns detailed information about the specified (loaded) module.
 /// </summary>
 /// <param name="modNameGuid">Mod UUID to query</param>
 Module* GetMod(char const* modNameGuid)
@@ -123,15 +69,20 @@ Module* GetBaseMod()
 	return &gExtender->GetCurrentExtensionState()->GetModManager()->BaseModule;
 }
 
+ModManager* GetModManager()
+{
+	return gExtender->GetCurrentExtensionState()->GetModManager();
+}
+
 void RegisterModLib()
 {
 	DECLARE_MODULE(Mod, Both)
 	BEGIN_MODULE()
 	MODULE_FUNCTION(IsModLoaded)
 	MODULE_FUNCTION(GetLoadOrder)
-	MODULE_FUNCTION(GetModInfo)
 	MODULE_FUNCTION(GetMod)
 	MODULE_FUNCTION(GetBaseMod)
+	MODULE_FUNCTION(GetModManager)
 	END_MODULE()
 }
 
