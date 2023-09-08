@@ -2,6 +2,7 @@
 #include "ScriptHelpers.h"
 #include <Extender/ScriptExtender.h>
 #include <fstream>
+#include <shlwapi.h>
 
 namespace bg3se::script {
 
@@ -64,27 +65,42 @@ std::optional<STDString> LoadExternalFile(std::string_view path, PathRootType ro
 	return {};
 }
 
+bool CreateParentDirectoryRecursive(std::wstring_view path)
+{
+	auto dirEnd = path.find_last_of('/');
+	if (dirEnd == std::string::npos) return true;
+	STDWString parentDir(path.substr(0, dirEnd));
+
+	if (PathFileExistsW(parentDir.c_str())) {
+		return true;
+	}
+
+	if (!CreateParentDirectoryRecursive(parentDir)) {
+		return false;
+	}
+
+	BOOL created = CreateDirectoryW(parentDir.c_str(), NULL);
+	if (created == FALSE) {
+		DWORD lastError = GetLastError();
+		if (lastError != ERROR_ALREADY_EXISTS) {
+			OsiError("Could not create storage directory: " << ToUTF8(parentDir));
+			return false;
+		}
+	}
+
+	return true;
+}
+
 bool SaveExternalFile(std::string_view path, PathRootType root, std::string_view contents)
 {
 	auto absolutePath = GetPathForExternalIo(path, root);
 	if (!absolutePath) return false;
 
-	auto dirEnd = absolutePath->find_last_of('/');
-	if (dirEnd == std::string::npos) return false;
-
-	auto storageDir = absolutePath->substr(0, dirEnd);
-	BOOL created = CreateDirectoryW(storageDir.c_str(), NULL);
-	if (created == FALSE) {
-		DWORD lastError = GetLastError();
-		if (lastError != ERROR_ALREADY_EXISTS) {
-			OsiError("Could not create storage directory: " << ToUTF8(storageDir));
-			return {};
-		}
-	}
+	if (!CreateParentDirectoryRecursive(*absolutePath)) return false;
 
 	std::ofstream f(absolutePath->c_str(), std::ios::out | std::ios::binary);
 	if (!f.good()) {
-		OsiError("Could not open file: '" << path << "'");
+		OsiError("Could not open file for writing: '" << path << "'");
 		return false;
 	}
 

@@ -150,7 +150,7 @@ void ScriptExtender::LogOsirisMsg(std::string_view msg)
 std::wstring ScriptExtender::MakeLogFilePath(std::wstring const & Type, std::wstring const & Extension)
 {
 	if (config_.LogDirectory.empty()) {
-		config_.LogDirectory = FromUTF8(GetStaticSymbols().ToPath("/Extender Logs", PathRootType::GameStorage));
+		config_.LogDirectory = FromUTF8(GetStaticSymbols().ToPath("/Script Extender Logs", PathRootType::UserProfile));
 	}
 
 	if (config_.LogDirectory.empty()) {

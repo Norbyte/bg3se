@@ -27,7 +27,7 @@ namespace bg3se::esv
 			auto path = args[0].String;
 			auto & contents = args[1];
 
-			auto loaded = script::LoadExternalFile(path, PathRootType::GameStorage);
+			auto loaded = script::LoadExternalFile(path, PathRootType::UserProfile);
 			if (loaded) {
 				contents.Set(gTempStrings.Make(*loaded));
 				return true;
@@ -41,7 +41,7 @@ namespace bg3se::esv
 			auto path = args[0].String;
 			auto contents = args[1].String;
 
-			script::SaveExternalFile(path, PathRootType::GameStorage, contents);
+			script::SaveExternalFile(path, PathRootType::UserProfile, contents);
 		}
 
 		void DoExperiment(OsiArgumentDesc const & args)

@@ -7,7 +7,7 @@ BEGIN_NS(lua::io)
 std::optional<STDString> LoadFile(char const* path, std::optional<FixedString> context)
 {
 	if (!context || *context == GFS.struser) {
-		return script::LoadExternalFile(path, PathRootType::GameStorage);
+		return script::LoadExternalFile(path, PathRootType::UserProfile);
 	} else if (context == GFS.strdata) {
 		return script::LoadExternalFile(path, PathRootType::Data);
 	} else {
@@ -18,7 +18,7 @@ std::optional<STDString> LoadFile(char const* path, std::optional<FixedString> c
 
 bool SaveFile(char const* path, char const* contents)
 {
-	return script::SaveExternalFile(path, PathRootType::GameStorage, contents);
+	return script::SaveExternalFile(path, PathRootType::UserProfile, contents);
 }
 
 void AddPathOverride(char const* path, char const* overridePath)

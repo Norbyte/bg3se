@@ -265,8 +265,6 @@ namespace bg3se
 		} else {
 			if (CanShowError()) {
 				ShowStartupError(msg, exitGame);
-			} else {
-				ShowStartupMessage(msg, exitGame);
 			}
 		}
 	}
