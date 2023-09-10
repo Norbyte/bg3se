@@ -127,6 +127,22 @@ function AssertEqualsProperties(expectation, value)
     end
 end
 
+function AssertContains(arr, element)
+    for _,v in pairs(arr) do
+        if v == element then
+            return
+        end
+    end
+
+    error("Element not in table: " .. element)
+end
+
+function AssertValid(val)
+    if not Ext.Debug.Validate(val) then
+        error("Structure not valid: " .. val)
+    end
+end
+
 function RunTest(name, fun)
     local result, err = xpcall(fun, debug.traceback)
     if result then
