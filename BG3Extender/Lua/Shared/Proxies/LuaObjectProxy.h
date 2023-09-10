@@ -19,6 +19,7 @@ namespace bg3se::lua
 		virtual bool SetProperty(lua_State* L, FixedString const& prop, int index) = 0;
 		virtual int Next(lua_State* L, FixedString const& key) = 0;
 		virtual bool IsA(FixedString const& typeName) = 0;
+		virtual GenericPropertyMap& GetPropertyMap() = 0;
 	};
 
 	template <class T>
@@ -172,6 +173,11 @@ namespace bg3se::lua
 			return ObjectProxyHelpers<T>::IsA(typeName);
 		}
 
+		GenericPropertyMap& GetPropertyMap() override
+		{
+			return StaticLuaPropertyMap<T>::PropertyMap;
+		}
+
 	private:
 		T* object_;
 		LifetimeHandle lifetime_;
@@ -226,6 +232,11 @@ namespace bg3se::lua
 		bool IsA(FixedString const& typeName) override
 		{
 			return ObjectProxyHelpers<T>::IsA(typeName);
+		}
+
+		GenericPropertyMap& GetPropertyMap() override
+		{
+			return StaticLuaPropertyMap<T>::PropertyMap;
 		}
 
 	private:

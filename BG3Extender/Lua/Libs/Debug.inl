@@ -257,6 +257,14 @@ void Crash(int type)
 #endif
 }
 
+// Development-only function for testing crash reporting
+bool Validate(lua_State* L)
+{
+	auto proxy = Userdata<ObjectProxy>::CheckUserData(L, 1);
+	auto pm = proxy->GetImpl()->GetPropertyMap();
+	return pm.ValidateObject(proxy->GetRaw(L));
+}
+
 void RegisterDebugLib()
 {
 	DECLARE_MODULE(Debug, Both)
@@ -267,6 +275,7 @@ void RegisterDebugLib()
 	MODULE_NAMED_FUNCTION("DebugBreak", LuaDebugBreak)
 	MODULE_FUNCTION(IsDeveloperMode)
 	MODULE_FUNCTION(Crash)
+	MODULE_FUNCTION(Validate)
 	END_MODULE()
 }
 
