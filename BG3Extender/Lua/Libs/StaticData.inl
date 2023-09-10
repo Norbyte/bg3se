@@ -6,6 +6,40 @@ BEGIN_NS(lua::res)
 
 using namespace bg3se::resource;
 
+#define FOR_EACH_RESOURCE_TYPE() \
+	FOR_RESOURCE_TYPE(ActionResource) \
+	FOR_RESOURCE_TYPE(ActionResourceGroup) \
+	FOR_RESOURCE_TYPE(ClassDescription) \
+	FOR_RESOURCE_TYPE(Tag) \
+	FOR_RESOURCE_TYPE(Faction) \
+	FOR_RESOURCE_TYPE(Race) \
+	FOR_RESOURCE_TYPE(Origin) \
+	FOR_RESOURCE_TYPE(Background) \
+	FOR_RESOURCE_TYPE(God) \
+	FOR_RESOURCE_TYPE(Progression) \
+	FOR_RESOURCE_TYPE(ProgressionDescription) \
+	FOR_RESOURCE_TYPE(Gossip) \
+	FOR_RESOURCE_TYPE(Color) \
+	FOR_RESOURCE_TYPE(EquipmentType) \
+	FOR_RESOURCE_TYPE(Flag) \
+	FOR_RESOURCE_TYPE(Feat) \
+	FOR_RESOURCE_TYPE(FeatDescription) \
+	FOR_RESOURCE_TYPE(PassiveList) \
+	FOR_RESOURCE_TYPE(SkillList) \
+	FOR_RESOURCE_TYPE(SpellList) \
+	FOR_RESOURCE_TYPE(CharacterCreationPreset) \
+	FOR_RESOURCE_TYPE(CharacterCreationSkinColor) \
+	FOR_RESOURCE_TYPE(CharacterCreationEyeColor) \
+	FOR_RESOURCE_TYPE(CharacterCreationHairColor) \
+	FOR_RESOURCE_TYPE(CharacterCreationAccessorySet) \
+	FOR_RESOURCE_TYPE(CharacterCreationEquipmentIcons) \
+	FOR_RESOURCE_TYPE(CharacterCreationIconSettings) \
+	FOR_RESOURCE_TYPE(CharacterCreationMaterialOverride) \
+	FOR_RESOURCE_TYPE(CharacterCreationAppearanceMaterial) \
+	FOR_RESOURCE_TYPE(CharacterCreationPassiveAppearance) \
+	FOR_RESOURCE_TYPE(CharacterCreationAppearanceVisual) \
+	FOR_RESOURCE_TYPE(CharacterCreationSharedVisual)
+
 template <class T>
 int GetGuidResourceProxy(lua_State* L, Guid const& resourceGuid)
 {
@@ -27,30 +61,13 @@ int GetGuidResourceProxy(lua_State* L, Guid const& resourceGuid)
 	return 1;
 }
 
+#define FOR_RESOURCE_TYPE(ty) case ty::ResourceManagerType: return GetGuidResourceProxy<ty>(L, resourceGuid);
+
 UserReturn GetGuidResource(lua_State* L, Guid resourceGuid, ExtResourceManagerType type)
 {
 	auto& helpers = gExtender->GetServer().GetEntityHelpers();
 	switch (type) {
-	case ActionResource::ResourceManagerType: return GetGuidResourceProxy<ActionResource>(L, resourceGuid);
-	case ActionResourceGroup::ResourceManagerType: return GetGuidResourceProxy<ActionResourceGroup>(L, resourceGuid);
-	case ClassDescription::ResourceManagerType: return GetGuidResourceProxy<ClassDescription>(L, resourceGuid);
-	case Tag::ResourceManagerType: return GetGuidResourceProxy<Tag>(L, resourceGuid);
-	case Faction::ResourceManagerType: return GetGuidResourceProxy<Faction>(L, resourceGuid);
-	case Race::ResourceManagerType: return GetGuidResourceProxy<Race>(L, resourceGuid);
-	case Origin::ResourceManagerType: return GetGuidResourceProxy<Origin>(L, resourceGuid);
-	case Background::ResourceManagerType: return GetGuidResourceProxy<Background>(L, resourceGuid);
-	case God::ResourceManagerType: return GetGuidResourceProxy<God>(L, resourceGuid);
-	case Progression::ResourceManagerType: return GetGuidResourceProxy<Progression>(L, resourceGuid);
-	case ProgressionDescription::ResourceManagerType: return GetGuidResourceProxy<ProgressionDescription>(L, resourceGuid);
-	case Gossip::ResourceManagerType: return GetGuidResourceProxy<Gossip>(L, resourceGuid);
-	case Color::ResourceManagerType: return GetGuidResourceProxy<Color>(L, resourceGuid);
-	case EquipmentType::ResourceManagerType: return GetGuidResourceProxy<EquipmentType>(L, resourceGuid);
-	case Flag::ResourceManagerType: return GetGuidResourceProxy<Flag>(L, resourceGuid);
-	case Feat::ResourceManagerType: return GetGuidResourceProxy<Feat>(L, resourceGuid);
-	case FeatDescription::ResourceManagerType: return GetGuidResourceProxy<FeatDescription>(L, resourceGuid);
-	case PassiveList::ResourceManagerType: return GetGuidResourceProxy<PassiveList>(L, resourceGuid);
-	case SkillList::ResourceManagerType: return GetGuidResourceProxy<SkillList>(L, resourceGuid);
-	case SpellList::ResourceManagerType: return GetGuidResourceProxy<SpellList>(L, resourceGuid);
+	FOR_EACH_RESOURCE_TYPE()
 
 	default:
 		LuaError("Resource type not supported: " << type);
@@ -59,6 +76,7 @@ UserReturn GetGuidResource(lua_State* L, Guid resourceGuid, ExtResourceManagerTy
 	}
 }
 
+#undef FOR_RESOURCE_TYPE
 
 template <class T>
 Array<Guid> GetAllGuidResourcesTyped()
@@ -70,44 +88,24 @@ Array<Guid> GetAllGuidResourcesTyped()
 		return {};
 	}
 
-	Array<Guid> keys;
-	for (auto const& k : (*resourceMgr)->Resources.Keys) {
-		keys.Add(k);
-	}
-
-	return keys;
+	return (*resourceMgr)->Resources.Keys;
 }
+
+#define FOR_RESOURCE_TYPE(ty) case ty::ResourceManagerType: return GetAllGuidResourcesTyped<ty>();
 
 Array<Guid> GetAllGuidResources(lua_State* L, ExtResourceManagerType type)
 {
 	auto& helpers = gExtender->GetServer().GetEntityHelpers();
 	switch (type) {
-	case ActionResource::ResourceManagerType: return GetAllGuidResourcesTyped<ActionResource>();
-	case ClassDescription::ResourceManagerType: return GetAllGuidResourcesTyped<ClassDescription>();
-	case Tag::ResourceManagerType: return GetAllGuidResourcesTyped<Tag>();
-	case Faction::ResourceManagerType: return GetAllGuidResourcesTyped<Faction>();
-	case Race::ResourceManagerType: return GetAllGuidResourcesTyped<Race>();
-	case Origin::ResourceManagerType: return GetAllGuidResourcesTyped<Origin>();
-	case Background::ResourceManagerType: return GetAllGuidResourcesTyped<Background>();
-	case God::ResourceManagerType: return GetAllGuidResourcesTyped<God>();
-	case Progression::ResourceManagerType: return GetAllGuidResourcesTyped<Progression>();
-	case ProgressionDescription::ResourceManagerType: return GetAllGuidResourcesTyped<ProgressionDescription>();
-	case Gossip::ResourceManagerType: return GetAllGuidResourcesTyped<Gossip>();
-	case ActionResourceGroup::ResourceManagerType: return GetAllGuidResourcesTyped<ActionResourceGroup>();
-	case Color::ResourceManagerType: return GetAllGuidResourcesTyped<Color>();
-	case EquipmentType::ResourceManagerType: return GetAllGuidResourcesTyped<EquipmentType>();
-	case Flag::ResourceManagerType: return GetAllGuidResourcesTyped<Flag>();
-	case Feat::ResourceManagerType: return GetAllGuidResourcesTyped<Feat>();
-	case FeatDescription::ResourceManagerType: return GetAllGuidResourcesTyped<FeatDescription>();
-	case PassiveList::ResourceManagerType: return GetAllGuidResourcesTyped<PassiveList>();
-	case SkillList::ResourceManagerType: return GetAllGuidResourcesTyped<SkillList>();
-	case SpellList::ResourceManagerType: return GetAllGuidResourcesTyped<SpellList>();
+	FOR_EACH_RESOURCE_TYPE()
 
 	default:
 		LuaError("Resource type not supported: " << type);
 		return {};
 	}
 }
+
+#undef FOR_RESOURCE_TYPE
 
 
 ResourceBank* GetCurrentResourceBank()

@@ -452,4 +452,159 @@ struct SpellList : public GuidResource
 };
 
 
+struct CharacterCreationAccessorySet : public GuidResource
+{
+	static constexpr auto ResourceManagerType = ExtResourceManagerType::CharacterCreationAccessorySet;
+
+	bool CharacterCreationSet;
+	TranslatedString DisplayName;
+	Array<Guid> VisualUUID;
+	FixedString SlotName;
+	Guid RaceUUID;
+	Array<Guid> DefaultForRootTemplates;
+};
+
+
+struct CharacterCreationAppearanceMaterial : public GuidResource
+{
+	static constexpr auto ResourceManagerType = ExtResourceManagerType::CharacterCreationAppearanceMaterial;
+
+	FixedString Name;
+	TranslatedString DisplayName;
+	Guid MaterialPresetUUID;
+	FixedString MaterialType;
+	FixedString MaterialType2;
+	glm::vec4 UIColor;
+	Guid MaleRootTemplate;
+	FixedString MaleCameraName;
+	Guid FemaleRootTemplate;
+	FixedString FemaleCameraName;
+	Guid DragonbornMaleRootTemplate;
+	Guid DragonbornFemaleRootTemplate;
+};
+
+
+struct CharacterCreationAppearanceVisual : public GuidResource
+{
+	static constexpr auto ResourceManagerType = ExtResourceManagerType::CharacterCreationAppearanceVisual;
+
+	Guid RootTemplate;
+	Guid RaceUUID;
+	uint8_t BodyType;
+	uint8_t BodyShape;
+	uint32_t field_3C;
+	FixedString SlotName;
+	Guid VisualResource;
+	Guid HeadAppearanceUUID;
+	Guid DefaultSkinColor;
+	TranslatedString DisplayName;
+	FixedString IconIdOverride;
+	uint8_t DefaultForBodyType;
+	Array<Guid> Tags;
+};
+
+
+struct CharacterCreationEquipmentIcons : public GuidResource
+{
+	static constexpr auto ResourceManagerType = ExtResourceManagerType::CharacterCreationEquipmentIcons;
+
+	Guid RootTemplate;
+	Guid EquipmentTemplate;
+	Guid AnimationUUID;
+	FixedString IconGenerationTrigger;
+	FixedString SlotName;
+	bool MeshIsTwoSided;
+};
+
+
+struct CharacterCreationIconSettings : public GuidResource
+{
+	static constexpr auto ResourceManagerType = ExtResourceManagerType::CharacterCreationIconSettings;
+
+	Guid RootTemplate;
+	uint8_t BodyShape;
+	Guid HeadAppearanceUUID;
+};
+
+
+struct CharacterCreationColor : public GuidResource
+{
+	FixedString Name;
+	TranslatedString DisplayName;
+	Guid MaterialPresetUUID;
+	glm::vec4 UIColor;
+	FixedString SkinType;
+};
+
+
+struct CharacterCreationEyeColor : public CharacterCreationColor
+{
+	static constexpr auto ResourceManagerType = ExtResourceManagerType::CharacterCreationEyeColor;
+};
+
+
+struct CharacterCreationHairColor : public CharacterCreationColor
+{
+	static constexpr auto ResourceManagerType = ExtResourceManagerType::CharacterCreationHairColor;
+};
+
+
+struct CharacterCreationSkinColor : public CharacterCreationColor
+{
+	static constexpr auto ResourceManagerType = ExtResourceManagerType::CharacterCreationSkinColor;
+};
+
+
+struct CharacterCreationMaterialOverride : public GuidResource
+{
+	static constexpr auto ResourceManagerType = ExtResourceManagerType::CharacterCreationMaterialOverride;
+
+	int32_t MaterialType;
+	Guid ActiveMaterialPresetUUID;
+	Guid InactiveMaterialPresetUUID;
+	FixedString SourceMaterialUUID;
+	FixedString TargetMaterialUUID;
+};
+
+
+struct CharacterCreationPassiveAppearance : public GuidResource
+{
+	static constexpr auto ResourceManagerType = ExtResourceManagerType::CharacterCreationPassiveAppearance;
+
+	FixedString Passive;
+	Guid RaceUUID;
+	Array<Guid> AppearanceMaterialUUIDs;
+	Array<Guid> ColorMaterialUUIDs;
+	Array<Guid> AccessorySetUUIDs;
+};
+
+
+struct CharacterCreationPreset : public GuidResource
+{
+	static constexpr auto ResourceManagerType = ExtResourceManagerType::CharacterCreationPreset;
+
+	Guid RaceUUID;
+	Guid SubRaceUUID;
+	uint8_t BodyType;
+	uint8_t BodyShape;
+	Guid RootTemplate;
+	STDString Overview;
+	STDString CloseUpA;
+	STDString CloseUpB;
+	Guid VOLinesTableUUID;
+};
+
+
+struct CharacterCreationSharedVisual : public GuidResource
+{
+	static constexpr auto ResourceManagerType = ExtResourceManagerType::CharacterCreationSharedVisual;
+
+	FixedString SlotName;
+	Guid VisualResource;
+	FixedString BoneName;
+	TranslatedString DisplayName;
+	Array<Guid> Tags;
+};
+
+
 END_NS()

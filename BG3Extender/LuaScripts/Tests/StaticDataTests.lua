@@ -40,7 +40,19 @@ function TestGuidResourceLayout()
         "FeatDescription",
         "PassiveList",
         "SkillList",
-        "SpellList"
+        "SpellList",
+        "CharacterCreationPreset",
+        "CharacterCreationSkinColor",
+        "CharacterCreationEyeColor",
+        "CharacterCreationHairColor",
+        "CharacterCreationAccessorySet",
+        "CharacterCreationEquipmentIcons",
+        "CharacterCreationIconSettings",
+        "CharacterCreationMaterialOverride",
+        "CharacterCreationAppearanceMaterial",
+        "CharacterCreationPassiveAppearance",
+        "CharacterCreationAppearanceVisual",
+        "CharacterCreationSharedVisual"
     }
 
     for i,type in ipairs(types) do
