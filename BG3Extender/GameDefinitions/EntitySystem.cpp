@@ -17,14 +17,14 @@
 
 BEGIN_NS(ecs)
 
-void* Entity::GetComponent(EntityHandle entityHandle, ComponentTypeIndex type) const
+void* EntityClass::GetComponent(EntityHandle entityHandle, ComponentTypeIndex type) const
 {
-	auto componentBucket = ComponentBuckets.Find(entityHandle.Handle);
+	auto componentBucket = InstanceToPageMap.Find(entityHandle.Handle);
 	if (componentBucket) {
 		auto compIndex = ComponentTypeToIndex.Find((uint16_t)type.Value());
 		if (compIndex) {
-			auto& pool = Components[(*componentBucket)->A]->Pool[**compIndex];
-			return pool.Components[(*componentBucket)->B];
+			auto& pool = ComponentPools[(*componentBucket)->BucketIndex]->Pool[**compIndex];
+			return pool.Components[(*componentBucket)->EntryIndex];
 		}
 	}
 
@@ -33,9 +33,9 @@ void* Entity::GetComponent(EntityHandle entityHandle, ComponentTypeIndex type) c
 	
 void* EntityWorld::GetComponent(EntityHandle entityHandle, ComponentTypeIndex type)
 {
-	auto entity = GetEntity(entityHandle);
-	if (entity != nullptr) {
-		auto component = entity->GetComponent(entityHandle, type);
+	auto entityClass = GetEntityClass(entityHandle);
+	if (entityClass != nullptr) {
+		auto component = entityClass->GetComponent(entityHandle, type);
 		if (component != nullptr) {
 			return component;
 		}
@@ -90,26 +90,26 @@ bool EntityWorld::IsValid(EntityHandle entityHandle) const
 	return false;
 }
 
-Entity* EntityStore::GetEntity(EntityHandle entityHandle) const
+EntityClass* EntityStore::GetEntityClass(EntityHandle entityHandle) const
 {
 	auto& componentSalts = Salts.Buckets[entityHandle.GetType()];
 	if (entityHandle.GetIndex() < componentSalts.NumElements) {
 		auto salt = componentSalts.Buckets[entityHandle.GetIndex() >> componentSalts.BitsPerBucket][entityHandle.GetIndex() & ((1 << componentSalts.BitsPerBucket) - 1)];
 		if (salt.Salt == entityHandle.GetSalt()) {
-			return Entities[salt.EntityIndex];
+			return EntityClasses[salt.EntityClassIndex];
 		}
 	}
 
 	return nullptr;
 }
 
-Entity* EntityWorld::GetEntity(EntityHandle entityHandle) const
+EntityClass* EntityWorld::GetEntityClass(EntityHandle entityHandle) const
 {
 	if (!IsValid(entityHandle)) {
 		return nullptr;
 	}
 
-	return Entities->GetEntity(entityHandle);
+	return EntityTypes->GetEntityClass(entityHandle);
 }
 
 EntitySystemHelpersBase::EntitySystemHelpersBase()
@@ -148,7 +148,7 @@ void EntitySystemHelpersBase::ComponentIndexMappings::Add(int32_t index, IndexSy
 	}
 }
 
-STDString SimplifyComponentName(char const* name)
+STDString SimplifyComponentName(StringView name)
 {
 	STDString key{ name };
 	if (key.length() > 52 && strncmp(key.c_str(), "class ls::_StringView<char> __cdecl ls::GetTypeName<", 52) == 0) {
@@ -221,32 +221,45 @@ void EntitySystemHelpersBase::NotifyReplicationFlagsDirtied()
 	world->Replication->Dirty = true;
 }
 
-void EntitySystemHelpersBase::BindSystemName(char const* name, int32_t systemId)
+void EntitySystemHelpersBase::BindSystemName(StringView name, int32_t systemId)
 {
-	systemIndexMappings_.insert(std::make_pair(SimplifyComponentName(name), systemId));
+	auto it = systemIndexMappings_.insert(std::make_pair(name, systemId));
 	if (systemIndices_.size() <= systemId) {
 		systemIndices_.resize(systemId + 1);
 	}
 
-	systemIndices_[systemId] = name;
+	systemIndices_[systemId] = &it.first->first;
 }
 
-bool EntitySystemHelpersBase::TryUpdateSystemMapping(char const* name, ComponentIndexMappings& mapping)
+void EntitySystemHelpersBase::BindQueryName(StringView name, int32_t queryId)
+{
+	auto it = queryMappings_.insert(std::make_pair(name, queryId));
+	if (queryIndices_.size() <= queryId) {
+		queryIndices_.resize(queryId + 1);
+	}
+
+	queryIndices_[queryId] = &it.first->first;
+}
+
+bool EntitySystemHelpersBase::TryUpdateSystemMapping(StringView name, ComponentIndexMappings& mapping)
 {
 	if (mapping.NumIndices == 1
 		&& mapping.ReplicationIndex == -1
 		&& mapping.HandleIndex == -1
 		&& mapping.ComponentIndex == -1
-		&& mapping.EventComponentIndex == -1
-		&& strstr(name, "ecs::query::spec::Spec<") == nullptr) {
-		BindSystemName(name, mapping.Indices[0]);
+		&& mapping.EventComponentIndex == -1) {
+		if (name.starts_with("ecs::query::spec::Spec<")) {
+			BindQueryName(name, mapping.Indices[0]);
+		} else {
+			BindSystemName(name, mapping.Indices[0]);
+		}
 		return true;
 	}
 
 	return false;
 }
 
-void EntitySystemHelpersBase::TryUpdateComponentMapping(char const* name, ComponentIndexMappings& mapping)
+void EntitySystemHelpersBase::TryUpdateComponentMapping(StringView name, ComponentIndexMappings& mapping)
 {
 	std::sort(mapping.Indices.begin(), mapping.Indices.begin() + mapping.NumIndices, std::less<int32_t>());
 	DEBUG_IDX("\t" << name << ": ");
@@ -277,7 +290,7 @@ void EntitySystemHelpersBase::TryUpdateComponentMapping(char const* name, Compon
 		unsigned nextIndex{ 0 };
 		if (mapping.ComponentIndex == -1) {
 			// Maybe this is a system?
-			if (strstr(name, "Component") == nullptr) {
+			if (name.find("Component") == StringView::npos) {
 				BindSystemName(name, mapping.Indices[0]);
 			} else {
 				mapping.ComponentIndex = mapping.Indices[nextIndex++];
@@ -300,16 +313,15 @@ void EntitySystemHelpersBase::TryUpdateComponentMapping(char const* name, Compon
 			mapping.HandleIndex = mapping.Indices[nextIndex++];
 		}
 	} else {
-		WARN("Component with strange configuration: %s", name);
+		WARN("Component with strange configuration: %s", name.data());
 		return;
 	}
 
 	DEBUG_IDX("Repl " << mapping.ReplicationIndex << ", Handle " << mapping.HandleIndex << ", Comp " << mapping.ComponentIndex);
 	IndexMappings indexMapping{ (uint16_t)mapping.HandleIndex, (uint16_t)mapping.ComponentIndex };
-	auto componentName = SimplifyComponentName(name);
-	componentNameToIndexMappings_.insert(std::make_pair(componentName, indexMapping));
-	componentIndexToNameMappings_.insert(std::make_pair(indexMapping.ComponentIndex, componentName));
-	handleIndexToNameMappings_.insert(std::make_pair(indexMapping.HandleIndex, componentName));
+	auto it = componentNameToIndexMappings_.insert(std::make_pair(name, indexMapping));
+	componentIndexToNameMappings_.insert(std::make_pair(indexMapping.ComponentIndex, &it.first->first));
+	handleIndexToNameMappings_.insert(std::make_pair(indexMapping.HandleIndex, &it.first->first));
 }
 
 void EntitySystemHelpersBase::UpdateComponentMappings()
@@ -341,10 +353,11 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 		}
 	}
 
-	std::vector<std::pair<char const*, ComponentIndexMappings>> pendingMappings;
+	std::vector<std::pair<STDString, ComponentIndexMappings>> pendingMappings;
 	for (auto& map : mappings) {
-		if (!TryUpdateSystemMapping(map.first, map.second)) {
-			pendingMappings.push_back(map);
+		auto componentName = SimplifyComponentName(map.first);
+		if (!TryUpdateSystemMapping(componentName, map.second)) {
+			pendingMappings.push_back({ std::move(componentName), map.second});
 		}
 	}
 	

@@ -35,7 +35,7 @@ public:
 		}
 	}
 
-	inline std::optional<STDString> GetComponentName(ComponentTypeIndex index) const
+	inline std::optional<STDString const*> GetComponentName(ComponentTypeIndex index) const
 	{
 		auto it = componentIndexToNameMappings_.find(index);
 		if (it != componentIndexToNameMappings_.end()) {
@@ -45,7 +45,7 @@ public:
 		}
 	}
 
-	inline std::optional<STDString> GetComponentName(HandleTypeIndex index) const
+	inline std::optional<STDString const*> GetComponentName(HandleTypeIndex index) const
 	{
 		auto it = handleIndexToNameMappings_.find(index);
 		if (it != handleIndexToNameMappings_.end()) {
@@ -192,6 +192,16 @@ public:
 		}
 	}
 
+	inline std::optional<int32_t> GetQueryIndex(STDString const& type) const
+	{
+		auto it = queryMappings_.find(type);
+		if (it != queryMappings_.end() && it->second != UndefinedIndex) {
+			return it->second;
+		} else {
+			return {};
+		}
+	}
+
 	BitSet<> * GetReplicationFlags(EntityHandle const& entity, ComponentTypeIndex replicationType);
 	BitSet<> * GetOrCreateReplicationFlags(EntityHandle const& entity, ComponentTypeIndex replicationType);
 	void NotifyReplicationFlagsDirtied();
@@ -223,21 +233,24 @@ private:
 	};
 
 	std::unordered_map<STDString, IndexMappings> componentNameToIndexMappings_;
-	std::unordered_map<ComponentTypeIndex, STDString> componentIndexToNameMappings_;
-	std::unordered_map<HandleTypeIndex, STDString> handleIndexToNameMappings_;
+	std::unordered_map<ComponentTypeIndex, STDString const*> componentIndexToNameMappings_;
+	std::unordered_map<HandleTypeIndex, STDString const*> handleIndexToNameMappings_;
 	std::unordered_map<ComponentTypeIndex, ExtComponentType> componentIndexToTypeMappings_;
 	std::unordered_map<HandleTypeIndex, ExtComponentType> handleIndexToTypeMappings_;
 	std::unordered_map<HandleTypeIndex, ComponentTypeIndex> handleIndexToComponentMappings_;
 	std::unordered_map<STDString, int32_t> systemIndexMappings_;
-	std::vector<STDString> systemIndices_;
+	std::vector<STDString const*> systemIndices_;
+	std::unordered_map<STDString, int32_t> queryMappings_;
+	std::vector<STDString const*> queryIndices_;
 	std::array<ComponentTypeIndex, (int)ExtComponentType::Max> componentIndices_;
 	std::array<HandleTypeIndex, (int)ExtComponentType::Max> handleIndices_;
 	std::array<int32_t, (int)ExtResourceManagerType::Max> resourceManagerIndices_;
 	bool initialized_{ false };
 
-	bool TryUpdateSystemMapping(char const* name, ComponentIndexMappings& mapping);
-	void TryUpdateComponentMapping(char const* name, ComponentIndexMappings& mapping);
-	void BindSystemName(char const* name, int32_t systemId);
+	bool TryUpdateSystemMapping(std::string_view name, ComponentIndexMappings& mapping);
+	void TryUpdateComponentMapping(std::string_view name, ComponentIndexMappings& mapping);
+	void BindSystemName(std::string_view name, int32_t systemId);
+	void BindQueryName(std::string_view name, int32_t systemId);
 	void* GetRawComponent(char const* nameGuid, ExtComponentType type);
 	void* GetRawComponent(FixedString const& guid, ExtComponentType type);
 	void* GetRawEntityComponent(EntityHandle entityHandle, ExtComponentType type);

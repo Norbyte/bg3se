@@ -615,6 +615,11 @@ struct MultiHashSet
 		return *this;
 	}
 
+	inline uint32_t size() const
+	{
+		return Keys.size();
+	}
+
 	int FindIndex(T const& key) const
 	{
 		if (HashKeys.Size() == 0) return -1;

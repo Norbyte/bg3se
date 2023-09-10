@@ -354,7 +354,7 @@ inline Guid do_get(lua_State* L, int index, Overload<Guid>)
 	auto str = luaL_checklstring(L, index, &len);
 	auto guid = Guid::ParseGuidString(StringView(str, len));
 	if (!guid) {
-		luaL_error(L, "Param %d: not a valid GUID value: '%s'", str);
+		luaL_error(L, "Param %d: not a valid GUID value: '%s'", index, str);
 	}
 
 	return *guid;

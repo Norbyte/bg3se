@@ -170,8 +170,8 @@ namespace bg3se::lua
 		StackCheck _(L, 1);
 		auto self = get<EntityProxy*>(L, 1);
 		auto world = self->entitySystem_->GetEntityWorld();
-		auto entity = world->GetEntity(self->handle_);
-		push(L, entity != nullptr);
+		auto cls = world->GetEntityClass(self->handle_);
+		push(L, cls != nullptr);
 		return 1;
 	}
 
@@ -345,7 +345,7 @@ namespace bg3se::lua
 	{
 		StackCheck _(L, 1);
 
-		std::optional<STDString> componentName;
+		std::optional<STDString const*> componentName;
 		if (gExtender->GetServer().IsInServerThread()) {
 			componentName = gExtender->GetServer().GetEntityHelpers().GetComponentName((ecs::HandleTypeIndex)handle_.GetType());
 		} else {
@@ -354,7 +354,7 @@ namespace bg3se::lua
 
 		char entityName[200];
 		if (componentName) {
-			_snprintf_s(entityName, std::size(entityName) - 1, "%s Object (%016llx)", componentName->c_str(), handle_.Handle);
+			_snprintf_s(entityName, std::size(entityName) - 1, "%s Object (%016llx)", (*componentName)->c_str(), handle_.Handle);
 		} else {
 			_snprintf_s(entityName, std::size(entityName) - 1, "Object (%016llx)", handle_.Handle);
 		}

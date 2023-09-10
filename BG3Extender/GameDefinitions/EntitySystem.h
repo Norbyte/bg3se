@@ -17,7 +17,7 @@ END_SE()
 BEGIN_NS(ecs)
 
 struct EntityWorld;
-struct Entity;
+struct EntityClass;
 
 struct EntityRef
 {
@@ -25,8 +25,8 @@ struct EntityRef
 	EntityWorld* World{ nullptr };
 };
 
-using ComponentTypeMask = std::array<uint64_t, 30>;
-using UnknownMask = std::array<uint64_t, 38>;
+using ComponentTypeMask = std::array<uint64_t, 32>;
+using UnknownMask = std::array<uint64_t, 40>;
 using EntityTypeMask = std::array<uint64_t, 4>;
 
 
@@ -89,37 +89,38 @@ struct ComponentType
 
 struct Query
 {
-	struct EntityMatch
+	struct EntityClassMatch
 	{
 		EntityTypeMask ComponentTypeIdMask;
-		void* field_20;
-		uint8_t field_28;
-		uint8_t field_29;
-		uint8_t field_2A;
-		uint8_t field_2B;
-		uint8_t field_2C;
-		uint8_t field_2D;
-		uint8_t field_2E;
-		uint8_t field_2F;
-		Entity* Entity;
+		union {
+			uint8_t* ComponentIndices;
+			std::array<uint8_t, 8> InlineComponentIndices;
+		};
+		uint8_t LastIndex1;
+		uint8_t LastIndex2;
+		uint8_t LastIndex3;
+		uint8_t LastIndex4;
+		uint8_t LastIndex5;
+		uint8_t NumIndices;
+		EntityClass* EntityClass;
 		void* field_38;
 	};
 
-
+	// TypeList template parameters to ecs::query::spec::Spec<...>
 	ComponentTypeMask ComponentTypeIdMask;
 	ComponentTypeMask ComponentTypeIdMask2;
 	ComponentTypeMask ComponentTypeIdMask3;
-	UnknownMask field_2D0;
-	UnknownMask field_400;
-	UnknownMask field_530;
-	int field_620;
-	Array<EntityMatch*> Entities;
+	UnknownMask ComponentTypeIdMask4;
+	UnknownMask ComponentTypeIdMask5;
+	ComponentTypeMask ComponentTypeIdMask6;
+	uint32_t Tags1;
+	Array<EntityClassMatch> EntityClasses;
 	Array<void*> field_638;
 	uint16_t* ComponentTypeIds;
 	uint8_t FirstComponentTypeIndex;
 	uint8_t LastComponentTypeIndex;
-	char field_652;
-	char field_653;
+	uint8_t field_652;
+	uint8_t NextComponentTypeIndex;
 	uint8_t ComponentTypesCapacity;
 	void* field_658;
 };
@@ -128,12 +129,12 @@ struct Query
 struct QueryManager
 {
 	Array<Query> Queries;
-	Array<int16_t> field_10;
-	Array<int16_t> field_20;
-	Array<int16_t> field_30;
-	Array<int16_t> field_40;
-	Array<int16_t> field_50;
-	Array<int16_t> field_60;
+	Array<int16_t> ComponentTypes1;
+	Array<int16_t> ComponentTypes2;
+	Array<int16_t> ComponentTypes3;
+	Array<int16_t> ComponentTypes4;
+	Array<int16_t> ComponentTypes5;
+	Array<int16_t> ComponentTypes6;
 };
 
 struct ComponentRegistry
@@ -194,7 +195,7 @@ struct EntityTypeSalts
 	__int64 field_38;
 };
 		
-struct Entity
+struct EntityClass
 {
 	struct ComponentEntry
 	{
@@ -205,25 +206,30 @@ struct Entity
 		void* DtorProc;
 	};
 			
-	struct ComponentBucket
+	struct InstanceComponentBucket
 	{
-		__int16 A;
-		__int16 B;
+		uint16_t BucketIndex;
+		uint16_t EntryIndex;
 	};
 			
-	struct ComponentPoolEntry
+	struct InstanceComponents
 	{
 		void** Components;
 		void* B;
 	};
-			
-	struct EntityComponentPool
+
+	struct ComponentPage
 	{
-		ComponentPoolEntry Pool[256];
+		InstanceComponents Pool[256];
+	};
+
+	struct HandlePage
+	{
+		InstanceComponents Pool[256];
 	};
 
 
-	ComponentTypeMask field_0;
+	ComponentTypeMask ComponentsInClass;
 	uint64_t SomeEntityMask;
 	uint16_t* ComponentIndexList; // List of indices into EntityComponentPool
 	ComponentEntry* ComponentDtors;
@@ -233,18 +239,18 @@ struct Entity
 	char field_10E;
 	char field_10F;
 	char field_110;
-	Array<EntityComponentPool*> Components;
-	Array<void*> field_128;
+	Array<ComponentPage*> ComponentPools;
+	Array<HandlePage*> InstanceHandles;
 	BitSet<> field_138;
 	int field_148;
 	Array<void*> field_150;
 	MultiHashMap<uint16_t, uint8_t> ComponentTypeToIndex;
-	MultiHashMap<uint64_t, ComponentBucket> ComponentBuckets;
+	MultiHashMap<uint64_t, InstanceComponentBucket> InstanceToPageMap;
 	MultiHashMap<uint64_t, uint64_t> field_1E0;
 	MultiHashMap<uint64_t, uint64_t> field_220;
 	Array<void*> field_260;
 	Array<void*> field_270;
-	MultiHashMap<uint16_t, MultiHashMap<uint16_t, void*>*> Components_u16_Unk;
+	MultiHashMap<uint16_t, MultiHashMap<uint16_t, ComponentPage*>*> ComponentPoolsByType;
 	char field_2C0;
 	__int64 field_2C8;
 	EntityTypeMask ComponentMask; // Valid indices into Components pool
@@ -265,7 +271,7 @@ struct EntityStore
 		struct Entry
 		{
 			int Salt;
-			uint16_t EntityIndex;
+			uint16_t EntityClassIndex;
 		};
 
 		Entry** Buckets;
@@ -280,15 +286,15 @@ struct EntityStore
 		uint32_t Size;
 	};
 
-	Array<Entity*> Entities;
-	MultiHashMap<uint64_t, uint16_t> TypeHashToEntityIndex;
+	Array<EntityClass*> EntityClasses;
+	MultiHashMap<uint64_t, uint16_t> TypeHashToClassIndex;
 	SaltMap Salts;
 	MultiHashMap<uint64_t, uint64_t> field_458;
 	BitSet<> UsedTypeIndices;
 	ComponentRegistry* ComponentRegistry;
 	QueryManager* Queries;
 
-	Entity* GetEntity(EntityHandle entityHandle) const;
+	EntityClass* GetEntityClass(EntityHandle entityHandle) const;
 };
 
 struct ComponentDataStore
@@ -391,7 +397,7 @@ struct EntityWorld : public ProtectedGameObject<EntityWorld>
 	bool field_193;
 	QueryManager Queries;
 	std::array<EntityTypeSalts, 0x40>* EntitySalts;
-	EntityStore* Entities;
+	EntityStore* EntityTypes;
 	ComponentDataStore ComponentData;
 	__int64 field_270;
 	MultiHashMap<uint64_t, uint64_t> field_278;
@@ -414,7 +420,7 @@ struct EntityWorld : public ProtectedGameObject<EntityWorld>
 	void* GetComponent(char const* nameGuid, ComponentTypeIndex type);
 	void* GetComponent(FixedString const& guid, ComponentTypeIndex type);
 
-	Entity* GetEntity(EntityHandle entityHandle) const;
+	EntityClass* GetEntityClass(EntityHandle entityHandle) const;
 	bool IsValid(EntityHandle entityHandle) const;
 };
 
