@@ -1,8 +1,0 @@
-{
-    "RequiredVersion": 1,
-	"ModTable": "BG3Ext_Testsuite",
-    "FeatureFlags": [
-        "Osiris",
-        "Lua"
-    ]
-}
