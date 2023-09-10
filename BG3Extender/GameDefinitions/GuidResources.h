@@ -146,7 +146,7 @@ struct Origin : public GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::Origin;
 
-	bool AvailableInCharacterCreation;
+	uint8_t AvailableInCharacterCreation;
 	FixedString Name;
 	TranslatedString DisplayName;
 	TranslatedString Description;
@@ -212,14 +212,72 @@ struct Progression : public GuidResource
 	struct Spell
 	{
 		Guid SpellUUID;
-		STDString field_10;
-		AbilityId Ability;
-		Guid field_30;
+		int32_t Amount;
+		int32_t Arg3;
+		STDString SelectorId;
+		AbilityId CastingAbility;
+		Guid ActionResource;
 		SpellPrepareType PrepareType;
 		SpellCooldownType CooldownType;
-		Guid field_48;
+		Guid ClassUUID;
+	};
+	
+	struct AddedSpell
+	{
+		Guid SpellUUID;
+		STDString SelectorId;
+		AbilityId Ability;
+		Guid ActionResource;
+		SpellPrepareType PrepareType;
+		SpellCooldownType CooldownType;
+		Guid ClassUUID;
+	};
+	
+	struct Ability
+	{
+		Guid UUID;
+		int32_t Arg2;
+		int32_t Arg3;
+		STDString Arg4;
 	};
 
+
+	struct AbilityBonus
+	{
+		Guid UUID;
+		int32_t Amount;
+		Array<int32_t> Amounts;
+		STDString BonusType;
+	};
+
+	struct Skill
+	{
+		Guid UUID;
+		int32_t Amount;
+		STDString Arg3;
+	};
+
+	struct SkillExpertise
+	{
+		Guid UUID;
+		int32_t Amount;
+		bool Arg3;
+		STDString Arg4;
+	};
+
+	struct Passive
+	{
+		Guid UUID;
+		int64_t Amount;
+		STDString Arg3;
+	};
+
+	struct Equipment
+	{
+		Guid UUID;
+		int32_t Amount;
+		STDString Arg3;
+	};
 
 	Guid TableUUID;
 	STDString Name;
@@ -235,14 +293,14 @@ struct Progression : public GuidResource
 	bool AllowImprovement;
 	Array<FixedString> field_D0;
 	bool IsMulticlass;
-	Array<Guid> SelectAbilities;
-	Array<Guid> SelectAbilityBonus;
-	Array<Guid> SelectSkills;
-	Array<Guid> SelectSkillsExpertise;
-	Array<Guid> SelectSpells;
-	Array<Guid> SelectPassives;
-	Array<Guid> SelectEquipment;
-	Array<Spell> AddSpells;
+	Array<Ability> SelectAbilities;
+	Array<AbilityBonus> SelectAbilityBonus;
+	Array<Skill> SelectSkills;
+	Array<SkillExpertise> SelectSkillsExpertise;
+	Array<Spell> SelectSpells;
+	Array<Passive> SelectPassives;
+	Array<Equipment> SelectEquipment;
+	Array<AddedSpell> AddSpells;
 };
 
 
@@ -343,14 +401,14 @@ struct Feat : public GuidResource
 	STDString Boosts;
 	Array<Guid> field_E8;
 	bool CanBeTakenMultipleTimes;
-	Array<Guid> SelectAbilities;
-	Array<Guid> SelectAbilityBonus;
-	Array<Guid> SelectSkills;
-	Array<Guid> SelectSkillsExpertise;
-	Array<Guid> SelectSpells;
-	Array<Guid> SelectPassives;
-	Array<Guid> SelectEquipment;
-	Array<Progression::Spell> AddSpells;
+	Array<Progression::Ability> SelectAbilities;
+	Array<Progression::AbilityBonus> SelectAbilityBonus;
+	Array<Progression::Skill> SelectSkills;
+	Array<Progression::SkillExpertise> SelectSkillsExpertise;
+	Array<Progression::Spell> SelectSpells;
+	Array<Progression::Passive> SelectPassives;
+	Array<Progression::Equipment> SelectEquipment;
+	Array<Progression::AddedSpell> AddSpells;
 };
 
 
@@ -382,7 +440,7 @@ struct SkillList : public GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::SkillList;
 
-	Array<STDString> Skills;
+	Array<SkillId> Skills;
 };
 
 
