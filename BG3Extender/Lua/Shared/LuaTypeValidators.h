@@ -165,7 +165,12 @@ bool ValidateRef(Array<TE>* v, Overload<Array<TE>>)
 		CHECK(v->size() <= v->capacity());
 		CHECK(v->capacity() <= 0x1000000);
 		CHECK(!IsBadReadPtr(v->raw_buf(), v->capacity() * sizeof(TE)));
-		// TODO - check contents (shallow ptr scan)
+
+		if (!std::is_pointer_v<TE>) {
+			for (auto& ele : *v) {
+				ValidateAny<TE>(&ele);
+			}
+		}
 	}
 
 	return true;
@@ -183,7 +188,12 @@ bool ValidateRef(ObjectSet<TE>* v, Overload<ObjectSet<TE>>)
 		CHECK(v->Size <= v->Capacity);
 		CHECK(v->Capacity <= 0x1000000);
 		CHECK(!IsBadReadPtr(v->Buf, v->Capacity * sizeof(TE)));
-		// TODO - check contents (shallow ptr scan)
+
+		if (!std::is_pointer_v<TE>) {
+			for (auto& ele : *v) {
+				ValidateAny<TE>(&ele);
+			}
+		}
 	}
 
 	return true;
@@ -197,7 +207,12 @@ bool ValidateRef(StaticArray<TE>* v, Overload<StaticArray<TE>>)
 	} else {
 		CHECK(v->size() <= 0x1000000);
 		CHECK(!IsBadReadPtr(v->raw_buf(), v->size() * sizeof(TE)));
-		// TODO - check contents (shallow ptr scan)
+
+		if (!std::is_pointer_v<TE>) {
+			for (auto& ele : *v) {
+				ValidateAny<TE>(&ele);
+			}
+		}
 	}
 
 	return true;
@@ -244,8 +259,14 @@ bool ValidateRef(MultiHashSet<TK>* v, Overload<MultiHashSet<TK>>)
 	CHECK(ValidateRef(&v->NextIds, Overload<Array<int32_t>>{}));
 	CHECK(ValidateRef(&v->Keys, Overload<Array<TK>>{}));
 
-	CHECK(v->HashKeys.size() == v->NextIds.size());
-	// TODO - check keys (shallow ptr scan)
+	CHECK(v->Keys.size() == v->NextIds.size());
+
+	if (!std::is_pointer_v<TK>) {
+		for (auto& ele : v->Keys) {
+			ValidateAny<TK>(&ele);
+		}
+	}
+
 	return true;
 }
 
@@ -263,7 +284,12 @@ bool ValidateRef(MultiHashMap<TK, TV>* v, Overload<MultiHashMap<TK, TV>>)
 
 	CHECK(v->Keys.size() == v->Values.size());
 
-	// TODO - check values (shallow ptr scan)
+	if (!std::is_pointer_v<TV>) {
+		for (auto& ele : v->Values) {
+			ValidateAny<TV>(&ele);
+		}
+	}
+
 	return true;
 }
 
