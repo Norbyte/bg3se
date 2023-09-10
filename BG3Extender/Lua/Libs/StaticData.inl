@@ -32,6 +32,7 @@ UserReturn GetGuidResource(lua_State* L, Guid resourceGuid, ExtResourceManagerTy
 	auto& helpers = gExtender->GetServer().GetEntityHelpers();
 	switch (type) {
 	case ActionResource::ResourceManagerType: return GetGuidResourceProxy<ActionResource>(L, resourceGuid);
+	case ActionResourceGroup::ResourceManagerType: return GetGuidResourceProxy<ActionResourceGroup>(L, resourceGuid);
 	case ClassDescription::ResourceManagerType: return GetGuidResourceProxy<ClassDescription>(L, resourceGuid);
 	case Tag::ResourceManagerType: return GetGuidResourceProxy<Tag>(L, resourceGuid);
 	case Faction::ResourceManagerType: return GetGuidResourceProxy<Faction>(L, resourceGuid);
@@ -42,7 +43,6 @@ UserReturn GetGuidResource(lua_State* L, Guid resourceGuid, ExtResourceManagerTy
 	case Progression::ResourceManagerType: return GetGuidResourceProxy<Progression>(L, resourceGuid);
 	case ProgressionDescription::ResourceManagerType: return GetGuidResourceProxy<ProgressionDescription>(L, resourceGuid);
 	case Gossip::ResourceManagerType: return GetGuidResourceProxy<Gossip>(L, resourceGuid);
-	case ActionResourceGroup::ResourceManagerType: return GetGuidResourceProxy<ActionResourceGroup>(L, resourceGuid);
 	case Color::ResourceManagerType: return GetGuidResourceProxy<Color>(L, resourceGuid);
 	case EquipmentType::ResourceManagerType: return GetGuidResourceProxy<EquipmentType>(L, resourceGuid);
 	case Flag::ResourceManagerType: return GetGuidResourceProxy<Flag>(L, resourceGuid);
@@ -161,7 +161,7 @@ Array<FixedString> GetAllResources(ResourceBankType type)
 
 void RegisterStaticDataLib()
 {
-	DECLARE_MODULE(Definition, Both)
+	DECLARE_MODULE(StaticData, Both)
 	BEGIN_MODULE()
 	MODULE_NAMED_FUNCTION("Get", GetGuidResource)
 	MODULE_NAMED_FUNCTION("GetAll", GetAllGuidResources)
