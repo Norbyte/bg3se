@@ -24,9 +24,7 @@ function RunTests()
 end
 
 Ext.RegisterConsoleCommand("se_test", function ()
-    Ext.Utils.Print(" --- STARTING TESTS --- ")
     RunTests()
-    Ext.Utils.Print(" --- FINISHING TESTS --- ")
 end)
 
 function Assert(expr)
