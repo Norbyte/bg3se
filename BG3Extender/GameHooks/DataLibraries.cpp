@@ -100,6 +100,7 @@ namespace bg3se
 	void LibraryManager::ApplyCodePatches()
 	{
 		if (gExtender->GetConfig().EnableAchievements && !WasPatchApplied("ls::ModuleSettings::IsModded")) {
+			ApplyCodePatch("esv::SavegameManager::WarnIfModded");
 			if (ApplyCodePatch("ls::ModuleSettings::IsModded")) {
 				DEBUG("Modded achievements enabled.");
 			} else {
