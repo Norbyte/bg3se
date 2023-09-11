@@ -4,6 +4,10 @@
 #include <GameDefinitions/Symbols.h>
 #include <GameDefinitions/EntitySystem.h>
 #include <GameDefinitions/GuidResources.h>
+#include <GameDefinitions/Components/Components.h>
+#include <GameDefinitions/Components/Stats.h>
+#include <GameDefinitions/Components/Passives.h>
+#include <GameDefinitions/Components/Combat.h>
 #include <Extender/ScriptExtender.h>
 
 #undef DEBUG_INDEX_MAPPINGS
@@ -16,25 +20,67 @@
 
 BEGIN_NS(ecs)
 
-void* EntityClass::GetComponent(EntityHandle entityHandle, ComponentTypeIndex type) const
+void* Query::GetFirstMatchingComponent(std::size_t componentSize)
 {
-	auto componentBucket = InstanceToPageMap.Find(entityHandle.Handle);
-	if (componentBucket) {
-		auto compIndex = ComponentTypeToIndex.Find((uint16_t)type.Value());
-		if (compIndex) {
-			auto& pool = ComponentPools[(*componentBucket)->BucketIndex]->Pool[**compIndex];
-			return pool.Components[(*componentBucket)->EntryIndex];
+	for (auto const& cls : EntityClasses) {
+		if (cls.EntityClass->InstanceToPageMap.size() > 0) {
+			auto instPage = cls.EntityClass->InstanceToPageMap.Values[0];
+			auto componentIdx = cls.GetComponentIndex(0);
+			assert(cls.EntityClass->ComponentPools.size() >= 1);
+			return cls.EntityClass->GetComponent(instPage, componentIdx, componentSize);
 		}
 	}
 
-	return nullptr;
+	return {};
+}
+
+Array<void*> Query::GetAllMatchingComponents(std::size_t componentSize)
+{
+	Array<void*> hits;
+	
+	for (auto const& cls : EntityClasses) {
+		auto componentIdx = cls.GetComponentIndex(0);
+		for (auto const& instance : cls.EntityClass->InstanceToPageMap) {
+			auto component = cls.EntityClass->GetComponent(instance.Value(), componentIdx, componentSize);
+			hits.push_back(component);
+		}
+	}
+
+	return hits;
+}
+
+void* EntityClass::GetComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize) const
+{
+	auto ref = InstanceToPageMap.Find(entityHandle);
+	if (ref) {
+		return GetComponent(**ref, type, componentSize);
+	} else {
+		return nullptr;
+	}
+}
+
+void* EntityClass::GetComponent(InstanceComponentPointer const& entityPtr, ComponentTypeIndex type, std::size_t componentSize) const
+{
+	auto compIndex = ComponentTypeToIndex.Find((uint16_t)type.Value());
+	if (compIndex) {
+		return GetComponent(entityPtr, **compIndex, componentSize);
+	} else {
+		return nullptr;
+	}
+}
+
+void* EntityClass::GetComponent(InstanceComponentPointer const& entityPtr, uint8_t componentSlot, std::size_t componentSize) const
+{
+	auto& page = ComponentPools[entityPtr.PageIndex][componentSlot];
+	auto buf = (uint8_t*)page.ComponentBuffer;
+	return buf + componentSize * entityPtr.EntryIndex;
 }
 	
-void* EntityWorld::GetComponent(EntityHandle entityHandle, ComponentTypeIndex type)
+void* EntityWorld::GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize)
 {
 	auto entityClass = GetEntityClass(entityHandle);
 	if (entityClass != nullptr) {
-		auto component = entityClass->GetComponent(entityHandle, type);
+		auto component = entityClass->GetComponent(entityHandle, type, componentSize);
 		if (component != nullptr) {
 			return component;
 		}
@@ -59,7 +105,7 @@ void* EntityWorld::GetComponent(EntityHandle entityHandle, ComponentTypeIndex ty
 	return nullptr;
 }
 	
-void* EntityWorld::GetComponent(char const* nameGuid, ComponentTypeIndex type)
+void* EntityWorld::GetRawComponent(char const* nameGuid, ComponentTypeIndex type, std::size_t componentSize)
 {
 	auto fs = NameGuidToFixedString(nameGuid);
 	if (!fs) {
@@ -67,10 +113,10 @@ void* EntityWorld::GetComponent(char const* nameGuid, ComponentTypeIndex type)
 		return nullptr;
 	}
 
-	return GetComponent(fs, type);
+	return GetRawComponent(fs, type, componentSize);
 }
 
-void* EntityWorld::GetComponent(FixedString const& guid, ComponentTypeIndex type)
+void* EntityWorld::GetRawComponent(FixedString const& guid, ComponentTypeIndex type, std::size_t componentSize)
 {
 	ERR("FIXME!");
 	return nullptr;
@@ -112,7 +158,11 @@ EntityClass* EntityWorld::GetEntityClass(EntityHandle entityHandle) const
 }
 
 EntitySystemHelpersBase::EntitySystemHelpersBase()
-	: componentIndices_{ UndefinedComponent }, handleIndices_{ UndefinedHandle }, resourceManagerIndices_{ UndefinedIndex }
+	: componentIndices_{ UndefinedComponent }, 
+	componentSizes_{ 0 },
+	handleIndices_{ UndefinedHandle }, 
+	queryIndices_{ UndefinedIndex },
+	resourceManagerIndices_{ UndefinedIndex }
 {}
 
 void EntitySystemHelpersBase::ComponentIndexMappings::Add(int32_t index, IndexSymbolType type)
@@ -223,21 +273,21 @@ void EntitySystemHelpersBase::NotifyReplicationFlagsDirtied()
 void EntitySystemHelpersBase::BindSystemName(StringView name, int32_t systemId)
 {
 	auto it = systemIndexMappings_.insert(std::make_pair(name, systemId));
-	if (systemIndices_.size() <= systemId) {
-		systemIndices_.resize(systemId + 1);
+	if (systemTypeIdToName_.size() <= systemId) {
+		systemTypeIdToName_.resize(systemId + 1);
 	}
 
-	systemIndices_[systemId] = &it.first->first;
+	systemTypeIdToName_[systemId] = &it.first->first;
 }
 
 void EntitySystemHelpersBase::BindQueryName(StringView name, int32_t queryId)
 {
 	auto it = queryMappings_.insert(std::make_pair(name, queryId));
-	if (queryIndices_.size() <= queryId) {
-		queryIndices_.resize(queryId + 1);
+	if (queryTypeIdToName_.size() <= queryId) {
+		queryTypeIdToName_.resize(queryId + 1);
 	}
 
-	queryIndices_[queryId] = &it.first->first;
+	queryTypeIdToName_[queryId] = &it.first->first;
 }
 
 bool EntitySystemHelpersBase::TryUpdateSystemMapping(StringView name, ComponentIndexMappings& mapping)
@@ -333,8 +383,10 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 	componentIndexToTypeMappings_.clear();
 	handleIndexToTypeMappings_.clear();
 	handleIndexToComponentMappings_.clear();
-	componentIndices_.fill(UndefinedIndex);
-	handleIndices_.fill(UndefinedIndex);
+	componentIndices_.fill(UndefinedComponent);
+	componentSizes_.fill(0);
+	handleIndices_.fill(UndefinedHandle);
+	queryIndices_.fill(UndefinedIndex);
 	resourceManagerIndices_.fill(UndefinedIndex);
 
 	auto const& symbolMaps = GetStaticSymbols().IndexSymbolToNameMaps;
@@ -374,121 +426,128 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 	DEBUG_IDX("-------------------------------------------------------");
 #endif
 
-	MapComponentIndices("eoc::ActionResourcesComponent", ExtComponentType::ActionResources);
-	MapComponentIndices("eoc::ArmorComponent", ExtComponentType::Armor);
-	MapComponentIndices("eoc::BaseHpComponent", ExtComponentType::BaseHp);
-	MapComponentIndices("eoc::DataComponent", ExtComponentType::Data);
-	MapComponentIndices("eoc::exp::ExperienceComponent", ExtComponentType::Experience);
-	MapComponentIndices("eoc::HealthComponent", ExtComponentType::Health);
-	MapComponentIndices("eoc::PassiveComponent", ExtComponentType::Passive);
-	MapComponentIndices("eoc::HearingComponent", ExtComponentType::Hearing);
-	MapComponentIndices("eoc::spell::BookComponent", ExtComponentType::SpellBook);
-	MapComponentIndices("eoc::StatsComponent", ExtComponentType::Stats);
-	MapComponentIndices("eoc::StatusImmunitiesComponent", ExtComponentType::StatusImmunities);
-	MapComponentIndices("eoc::SurfacePathInfluencesComponent", ExtComponentType::SurfacePathInfluences);
-	MapComponentIndices("eoc::UseComponent", ExtComponentType::Use);
-	MapComponentIndices("eoc::ValueComponent", ExtComponentType::Value);
-	MapComponentIndices("eoc::WeaponComponent", ExtComponentType::Weapon);
-	MapComponentIndices("eoc::WieldingComponent", ExtComponentType::Wielding);
-	MapComponentIndices("eoc::CustomStatsComponent", ExtComponentType::CustomStats);
-	MapComponentIndices("eoc::BoostConditionComponent", ExtComponentType::BoostCondition);
-	MapComponentIndices("eoc::BoostsContainerComponent", ExtComponentType::BoostsContainer);
-	MapComponentIndices("eoc::ActionResourceConsumeMultiplierBoostCompnent", ExtComponentType::ActionResourceConsumeMultiplierBoost);
-	MapComponentIndices("eoc::combat::ParticipantComponent", ExtComponentType::CombatParticipant);
-	MapComponentIndices("eoc::GenderComponent", ExtComponentType::Gender);
-	MapComponentIndices("eoc::spell::ContainerComponent", ExtComponentType::SpellContainer);
-	MapComponentIndices("eoc::TagComponent", ExtComponentType::Tag);
-	MapComponentIndices("eoc::spell::BookPreparesComponent", ExtComponentType::SpellBookPrepares);
-	MapComponentIndices("eoc::combat::StateComponent", ExtComponentType::CombatState);
-	MapComponentIndices("eoc::TurnBasedComponent", ExtComponentType::TurnBased);
-	MapComponentIndices("eoc::TurnOrderComponent", ExtComponentType::TurnOrder);
-	MapComponentIndices("ls::TransformComponent", ExtComponentType::Transform);
-	MapComponentIndices("eoc::PassiveContainerComponent", ExtComponentType::PassiveContainer);
-	MapComponentIndices("eoc::BoostInfoComponent", ExtComponentType::BoostInfo);
-	MapComponentIndices("eoc::RelationComponent", ExtComponentType::Relation);
-	MapComponentIndices("eoc::CanInteractComponent", ExtComponentType::CanInteract);
-	MapComponentIndices("eoc::CanSpeakComponent", ExtComponentType::CanSpeak);
-	MapComponentIndices("eoc::OriginComponent", ExtComponentType::Origin);
-	MapComponentIndices("ls::LevelComponent", ExtComponentType::Level);
+#define MAP_COMPONENT(name, ty) \
+	MapComponentIndices(name, ty##Component::ComponentType); \
+	componentSizes_[(unsigned)ty##Component::ComponentType] = sizeof(ty##Component);
+
+	MAP_COMPONENT("eoc::ActionResourcesComponent", ActionResources);
+	MAP_COMPONENT("eoc::ArmorComponent", Armor);
+	MAP_COMPONENT("eoc::BaseHpComponent", BaseHp);
+	MAP_COMPONENT("eoc::DataComponent", Data);
+	MAP_COMPONENT("eoc::exp::ExperienceComponent", Experience);
+	MAP_COMPONENT("eoc::HealthComponent", Health);
+	MAP_COMPONENT("eoc::PassiveComponent", Passive);
+	MAP_COMPONENT("eoc::HearingComponent", Hearing);
+	MAP_COMPONENT("eoc::spell::BookComponent", SpellBook);
+	MAP_COMPONENT("eoc::StatsComponent", Stats);
+	MAP_COMPONENT("eoc::StatusImmunitiesComponent", StatusImmunities);
+	MAP_COMPONENT("eoc::SurfacePathInfluencesComponent", SurfacePathInfluences);
+	MAP_COMPONENT("eoc::UseComponent", Use);
+	MAP_COMPONENT("eoc::ValueComponent", Value);
+	MAP_COMPONENT("eoc::WeaponComponent", Weapon);
+	MAP_COMPONENT("eoc::WieldingComponent", Wielding);
+	MAP_COMPONENT("eoc::CustomStatsComponent", CustomStats);
+	MAP_COMPONENT("eoc::BoostConditionComponent", BoostCondition);
+	MAP_COMPONENT("eoc::BoostsContainerComponent", BoostsContainer);
+	MAP_COMPONENT("eoc::ActionResourceConsumeMultiplierBoostCompnent", ActionResourceConsumeMultiplierBoost);
+	MAP_COMPONENT("eoc::combat::ParticipantComponent", CombatParticipant);
+	MAP_COMPONENT("eoc::GenderComponent", Gender);
+	MAP_COMPONENT("eoc::spell::ContainerComponent", SpellContainer);
+	MAP_COMPONENT("eoc::TagComponent", Tag);
+	MAP_COMPONENT("eoc::spell::BookPreparesComponent", SpellBookPrepares);
+	MAP_COMPONENT("eoc::combat::StateComponent", CombatState);
+	MAP_COMPONENT("eoc::TurnBasedComponent", TurnBased);
+	MAP_COMPONENT("eoc::TurnOrderComponent", TurnOrder);
+	MAP_COMPONENT("ls::TransformComponent", Transform);
+	MAP_COMPONENT("eoc::PassiveContainerComponent", PassiveContainer);
+	MAP_COMPONENT("eoc::BoostInfoComponent", BoostInfo);
+	MAP_COMPONENT("eoc::RelationComponent", Relation);
+	MAP_COMPONENT("eoc::CanInteractComponent", CanInteract);
+	MAP_COMPONENT("eoc::CanSpeakComponent", CanSpeak);
+	MAP_COMPONENT("eoc::OriginComponent", Origin);
+	MAP_COMPONENT("ls::LevelComponent", Level);
 
 
-	MapComponentIndices("eoc::BackgroundComponent", ExtComponentType::Background);
-	MapComponentIndices("eoc::GodComponent", ExtComponentType::God);
-	MapComponentIndices("eoc::LevelUpComponent", ExtComponentType::LevelUp);
-	MapComponentIndices("eoc::spell::PlayerPrepareSpellComponent", ExtComponentType::PlayerPrepareSpell);
-	MapComponentIndices("eoc::spell::CCPrepareSpellComponent", ExtComponentType::CCPrepareSpell);
-	MapComponentIndices("eoc::spell::CastComponent", ExtComponentType::SpellCast);
-	MapComponentIndices("eoc::FloatingComponent", ExtComponentType::Floating);
-	MapComponentIndices("eoc::VoiceComponent", ExtComponentType::Voice);
-	MapComponentIndices("eoc::CustomIconComponent", ExtComponentType::CustomIcon);
-	MapComponentIndices("eoc::CharacterCreationStatsComponent", ExtComponentType::CharacterCreationStats);
-	MapComponentIndices("eoc::DisarmableComponent", ExtComponentType::Disarmable);
-	MapComponentIndices("eoc::rest::ShortRestComponent", ExtComponentType::ShortRest);
-	MapComponentIndices("eoc::summon::IsSummonComponent", ExtComponentType::IsSummon);
-	MapComponentIndices("eoc::summon::ContainerComponent", ExtComponentType::SummonContainer);
-	MapComponentIndices("eoc::StealthComponent", ExtComponentType::Stealth);
-	MapComponentIndices("ls::IsGlobalComponent", ExtComponentType::IsGlobal);
-	MapComponentIndices("ls::SavegameComponent", ExtComponentType::Savegame);
-	MapComponentIndices("eoc::DisabledEquipmentComponent", ExtComponentType::DisabledEquipment);
-	MapComponentIndices("eoc::LootingStateComponent", ExtComponentType::LootingState);
-	MapComponentIndices("eoc::LootComponent", ExtComponentType::Loot);
-	MapComponentIndices("eoc::lock::LockComponent", ExtComponentType::Lock);
-	MapComponentIndices("eoc::summon::LifetimeComponent", ExtComponentType::SummonLifetime);
-	MapComponentIndices("eoc::InvisibilityComponent", ExtComponentType::Invisibility);
-	MapComponentIndices("eoc::IconComponent", ExtComponentType::Icon);
-	MapComponentIndices("eoc::hotbar::ContainerComponent", ExtComponentType::HotbarContainer);
-	MapComponentIndices("eoc::OriginTagComponent", ExtComponentType::OriginTag);
-	MapComponentIndices("eoc::OriginPassivesComponent", ExtComponentType::OriginPassives);
-	MapComponentIndices("eoc::GodTagComponent", ExtComponentType::GodTag);
-	MapComponentIndices("eoc::ClassTagComponent", ExtComponentType::ClassTag);
-	MapComponentIndices("eoc::BackgroundTagComponent", ExtComponentType::BackgroundTag);
-	MapComponentIndices("eoc::BackgroundPassivesComponent", ExtComponentType::BackgroundPassives);
-	MapComponentIndices("eoc::GlobalShortRestDisabledComponent", ExtComponentType::GlobalShortRestDisabled);
-	MapComponentIndices("eoc::GlobalLongRestDisabledComponent", ExtComponentType::GlobalLongRestDisabled);
-	MapComponentIndices("eoc::StoryShortRestDisabledComponent", ExtComponentType::StoryShortRestDisabled);
-	MapComponentIndices("eoc::FleeCapabilityComponent", ExtComponentType::FleeCapability);
-	MapComponentIndices("eoc::CanDoRestComponent", ExtComponentType::CanDoRest);
-	MapComponentIndices("eoc::ItemBoostsComponent", ExtComponentType::ItemBoosts);
-	MapComponentIndices("eoc::light::ActiveCharacterLightComponent", ExtComponentType::ActiveCharacterLight);
-	MapComponentIndices("ls::AnimationSetComponent", ExtComponentType::AnimationSet);
-	MapComponentIndices("ls::AnimationBlueprintComponent", ExtComponentType::AnimationBlueprint);
-	MapComponentIndices("eoc::CanModifyHealthComponent", ExtComponentType::CanModifyHealth);
-	MapComponentIndices("eoc::spell::AddedSpellsComponent", ExtComponentType::AddedSpells);
-	MapComponentIndices("eoc::exp::AvailableLevelComponent", ExtComponentType::AvailableLevel);
-	MapComponentIndices("eoc::CanBeLootedComponent", ExtComponentType::CanBeLooted);
-	MapComponentIndices("eoc::CanDoActionsComponent", ExtComponentType::CanDoActions);
-	MapComponentIndices("eoc::CanMoveComponent", ExtComponentType::CanMove);
-	MapComponentIndices("eoc::CanSenseComponent", ExtComponentType::CanSense);
-	MapComponentIndices("eoc::ConcentrationComponent", ExtComponentType::Concentration);
-	MapComponentIndices("eoc::DarknessComponent", ExtComponentType::Darkness);
-	MapComponentIndices("eoc::DualWieldingComponent", ExtComponentType::DualWielding);
-	MapComponentIndices("eoc::GameObjectVisualComponent", ExtComponentType::GameObjectVisual);
-	MapComponentIndices("eoc::InventorySlotComponent", ExtComponentType::InventorySlot);
-	MapComponentIndices("eoc::spell::BookCooldownsComponent", ExtComponentType::SpellBookCooldowns);
-	MapComponentIndices("eoc::DisplayNameComponent", ExtComponentType::DisplayName);
-	MapComponentIndices("eoc::EquipableComponent", ExtComponentType::Equipable);
-	MapComponentIndices("eoc::GameplayLightComponent", ExtComponentType::GameplayLight);
-	MapComponentIndices("eoc::ProgressionContainerComponent", ExtComponentType::ProgressionContainer);
-	MapComponentIndices("eoc::progression::MetaComponent", ExtComponentType::ProgressionMeta);
-	MapComponentIndices("eoc::RaceComponent", ExtComponentType::Race);
-	MapComponentIndices("eoc::sight::ReplicatedDataComponent", ExtComponentType::Sight);
-	MapComponentIndices("eoc::CanTravelComponent", ExtComponentType::CanTravel);
-	MapComponentIndices("eoc::CanBeInInventoryComponent", ExtComponentType::CanBeInInventory);
-	MapComponentIndices("eoc::MovementComponent", ExtComponentType::Movement);
-	MapComponentIndices("eoc::ObjectInteractionComponent", ExtComponentType::ObjectInteraction);
-	MapComponentIndices("eoc::PathingComponent", ExtComponentType::Pathing);
-	MapComponentIndices("eoc::SteeringComponent", ExtComponentType::Steering);
-	MapComponentIndices("eoc::CanDeflectProjectilesComponent", ExtComponentType::CanDeflectProjectiles);
-	MapComponentIndices("eoc::spell::LearnedSpellsComponent", ExtComponentType::LearnedSpells);
-	MapComponentIndices("eoc::spell::AiConditionsComponent", ExtComponentType::SpellAiConditions);
-	MapComponentIndices("ls::ActiveSkeletonSlotsComponent", ExtComponentType::ActiveSkeletonSlots);
-	MapComponentIndices("ls::NetComponent", ExtComponentType::Net);
-	MapComponentIndices("ls::PhysicsComponent", ExtComponentType::Physics);
-	MapComponentIndices("eoc::ftb::ParticipantComponent", ExtComponentType::FTBParticipant);
-	MapComponentIndices("eoc::unsheath::InfoComponent", ExtComponentType::UnsheathInfo);
-	MapComponentIndices("eoc::approval::Ratings", ExtComponentType::ApprovalRatings);
-	MapComponentIndices("eoc::character_creation::AppearanceComponent", ExtComponentType::CharacterCreationAppearance);
+	MAP_COMPONENT("eoc::BackgroundComponent", Background);
+	MAP_COMPONENT("eoc::GodComponent", God);
+	MAP_COMPONENT("eoc::LevelUpComponent", LevelUp);
+	MAP_COMPONENT("eoc::spell::PlayerPrepareSpellComponent", PlayerPrepareSpell);
+	MAP_COMPONENT("eoc::spell::CCPrepareSpellComponent", CCPrepareSpell);
+	MAP_COMPONENT("eoc::spell::CastComponent", SpellCast);
+	MAP_COMPONENT("eoc::FloatingComponent", Floating);
+	MAP_COMPONENT("eoc::VoiceComponent", Voice);
+	MAP_COMPONENT("eoc::CustomIconComponent", CustomIcon);
+	MAP_COMPONENT("eoc::CharacterCreationStatsComponent", CharacterCreationStats);
+	MAP_COMPONENT("eoc::DisarmableComponent", Disarmable);
+	MAP_COMPONENT("eoc::rest::ShortRestComponent", ShortRest);
+	MAP_COMPONENT("eoc::summon::IsSummonComponent", IsSummon);
+	MAP_COMPONENT("eoc::summon::ContainerComponent", SummonContainer);
+	MAP_COMPONENT("eoc::StealthComponent", Stealth);
+	MAP_COMPONENT("ls::IsGlobalComponent", IsGlobal);
+	MAP_COMPONENT("ls::SavegameComponent", Savegame);
+	MAP_COMPONENT("eoc::DisabledEquipmentComponent", DisabledEquipment);
+	MAP_COMPONENT("eoc::LootingStateComponent", LootingState);
+	MAP_COMPONENT("eoc::LootComponent", Loot);
+	MAP_COMPONENT("eoc::lock::LockComponent", Lock);
+	MAP_COMPONENT("eoc::summon::LifetimeComponent", SummonLifetime);
+	MAP_COMPONENT("eoc::InvisibilityComponent", Invisibility);
+	MAP_COMPONENT("eoc::IconComponent", Icon);
+	MAP_COMPONENT("eoc::hotbar::ContainerComponent", HotbarContainer);
+	MAP_COMPONENT("eoc::OriginTagComponent", OriginTag);
+	MAP_COMPONENT("eoc::OriginPassivesComponent", OriginPassives);
+	MAP_COMPONENT("eoc::GodTagComponent", GodTag);
+	MAP_COMPONENT("eoc::ClassTagComponent", ClassTag);
+	MAP_COMPONENT("eoc::BackgroundTagComponent", BackgroundTag);
+	MAP_COMPONENT("eoc::BackgroundPassivesComponent", BackgroundPassives);
+	MAP_COMPONENT("eoc::GlobalShortRestDisabledComponent", GlobalShortRestDisabled);
+	MAP_COMPONENT("eoc::GlobalLongRestDisabledComponent", GlobalLongRestDisabled);
+	MAP_COMPONENT("eoc::StoryShortRestDisabledComponent", StoryShortRestDisabled);
+	MAP_COMPONENT("eoc::FleeCapabilityComponent", FleeCapability);
+	MAP_COMPONENT("eoc::CanDoRestComponent", CanDoRest);
+	MAP_COMPONENT("eoc::ItemBoostsComponent", ItemBoosts);
+	MAP_COMPONENT("eoc::light::ActiveCharacterLightComponent", ActiveCharacterLight);
+	MAP_COMPONENT("ls::AnimationSetComponent", AnimationSet);
+	MAP_COMPONENT("ls::AnimationBlueprintComponent", AnimationBlueprint);
+	MAP_COMPONENT("eoc::CanModifyHealthComponent", CanModifyHealth);
+	MAP_COMPONENT("eoc::spell::AddedSpellsComponent", AddedSpells);
+	MAP_COMPONENT("eoc::exp::AvailableLevelComponent", AvailableLevel);
+	MAP_COMPONENT("eoc::CanBeLootedComponent", CanBeLooted);
+	MAP_COMPONENT("eoc::CanDoActionsComponent", CanDoActions);
+	MAP_COMPONENT("eoc::CanMoveComponent", CanMove);
+	MAP_COMPONENT("eoc::CanSenseComponent", CanSense);
+	MAP_COMPONENT("eoc::ConcentrationComponent", Concentration);
+	MAP_COMPONENT("eoc::DarknessComponent", Darkness);
+	MAP_COMPONENT("eoc::DualWieldingComponent", DualWielding);
+	MAP_COMPONENT("eoc::GameObjectVisualComponent", GameObjectVisual);
+	MAP_COMPONENT("eoc::InventorySlotComponent", InventorySlot);
+	MAP_COMPONENT("eoc::spell::BookCooldownsComponent", SpellBookCooldowns);
+	MAP_COMPONENT("eoc::DisplayNameComponent", DisplayName);
+	MAP_COMPONENT("eoc::EquipableComponent", Equipable);
+	MAP_COMPONENT("eoc::GameplayLightComponent", GameplayLight);
+	MAP_COMPONENT("eoc::ProgressionContainerComponent", ProgressionContainer);
+	MAP_COMPONENT("eoc::progression::MetaComponent", ProgressionMeta);
+	MAP_COMPONENT("eoc::RaceComponent", Race);
+	MAP_COMPONENT("eoc::sight::ReplicatedDataComponent", Sight);
+	MAP_COMPONENT("eoc::CanTravelComponent", CanTravel);
+	MAP_COMPONENT("eoc::CanBeInInventoryComponent", CanBeInInventory);
+	MAP_COMPONENT("eoc::MovementComponent", Movement);
+	MAP_COMPONENT("eoc::ObjectInteractionComponent", ObjectInteraction);
+	MAP_COMPONENT("eoc::PathingComponent", Pathing);
+	MAP_COMPONENT("eoc::SteeringComponent", Steering);
+	MAP_COMPONENT("eoc::CanDeflectProjectilesComponent", CanDeflectProjectiles);
+	MAP_COMPONENT("eoc::spell::LearnedSpellsComponent", LearnedSpells);
+	MAP_COMPONENT("eoc::spell::AiConditionsComponent", SpellAiConditions);
+	MAP_COMPONENT("ls::ActiveSkeletonSlotsComponent", ActiveSkeletonSlots);
+	MAP_COMPONENT("ls::NetComponent", Net);
+	MAP_COMPONENT("ls::PhysicsComponent", Physics);
+	MAP_COMPONENT("eoc::ftb::ParticipantComponent", FTBParticipant);
+	MAP_COMPONENT("eoc::unsheath::InfoComponent", UnsheathInfo);
+	MAP_COMPONENT("eoc::approval::Ratings", ApprovalRatings);
+	MAP_COMPONENT("eoc::character_creation::AppearanceComponent", CharacterCreationAppearance);
+	MAP_COMPONENT("ls::uuid::Component", Uuid);
+	MAP_COMPONENT("ls::uuid::ToHandleMappingComponent", UuidToHandleMapping);
 
+	MapQueryIndex("ecs::query::spec::Spec<struct ls::TypeList<struct ls::uuid::ToHandleMappingComponent>,struct ls::TypeList<>,struct ls::TypeList<>,struct ls::TypeList<>,struct ls::TypeList<>,struct ls::TypeList<>,struct ecs::QueryTypePersistentTag,struct ecs::QueryTypeAliveTag>", ExtQueryType::UuidToHandleMapping);
 
 	MapResourceManagerIndex("ls::TagManager", ExtResourceManagerType::Tag);
 	MapResourceManagerIndex("eoc::FactionContainer", ExtResourceManagerType::Faction);
@@ -529,7 +588,8 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 	MapResourceManagerIndex("eoc::ColorDefinitions", ExtResourceManagerType::ColorDefinition);
 	MapResourceManagerIndex("ls::FlagManager", ExtResourceManagerType::Flag);
 
-#define MAP_BOOST(name) MapComponentIndices("eoc::" #name "Component", ExtComponentType::name)
+#define MAP_BOOST(name) MapComponentIndices("eoc::" #name "Component", ExtComponentType::name); \
+	componentSizes_[(unsigned)name##Component::ComponentType] = sizeof(name##Component);
 
 	MAP_BOOST(ArmorClassBoost);
 	MAP_BOOST(AbilityBoost);
@@ -597,6 +657,16 @@ void EntitySystemHelpersBase::MapComponentIndices(char const* componentName, Ext
 	}
 }
 
+void EntitySystemHelpersBase::MapQueryIndex(char const* name, ExtQueryType type)
+{
+	auto it = queryMappings_.find(name);
+	if (it != queryMappings_.end()) {
+		queryIndices_[(unsigned)type] = it->second;
+	} else {
+		OsiWarn("Could not find index for query: " << name);
+	}
+}
+
 void EntitySystemHelpersBase::MapResourceManagerIndex(char const* componentName, ExtResourceManagerType type)
 {
 	auto it = systemIndexMappings_.find(componentName);
@@ -616,7 +686,7 @@ void* EntitySystemHelpersBase::GetRawComponent(char const* nameGuid, ExtComponen
 
 	auto componentIndex = GetComponentIndex(type);
 	if (componentIndex) {
-		return world->GetComponent(nameGuid, *componentIndex);
+		return world->GetRawComponent(nameGuid, *componentIndex, componentSizes_[(unsigned)type]);
 	} else {
 		return nullptr;
 	}
@@ -631,13 +701,13 @@ void* EntitySystemHelpersBase::GetRawComponent(FixedString const& guid, ExtCompo
 
 	auto componentIndex = GetComponentIndex(type);
 	if (componentIndex) {
-		return world->GetComponent(guid, *componentIndex);
+		return world->GetRawComponent(guid, *componentIndex, componentSizes_[(unsigned)type]);
 	} else {
 		return nullptr;
 	}
 }
 
-void* EntitySystemHelpersBase::GetRawEntityComponent(EntityHandle entityHandle, ExtComponentType type)
+void* EntitySystemHelpersBase::GetRawComponent(EntityHandle entityHandle, ExtComponentType type)
 {
 	auto world = GetEntityWorld();
 	if (!world) {
@@ -646,15 +716,31 @@ void* EntitySystemHelpersBase::GetRawEntityComponent(EntityHandle entityHandle, 
 
 	auto componentIndex = GetComponentIndex(type);
 	if (componentIndex) {
-		return world->GetComponent(entityHandle, *componentIndex);
+		return world->GetRawComponent(entityHandle, *componentIndex, componentSizes_[(unsigned)type]);
 	} else {
 		return nullptr;
 	}
 }
 
+EntityHandle EntitySystemHelpersBase::GetEntityHandle(Guid uuid)
+{
+	auto query = GetQuery(ExtQueryType::UuidToHandleMapping);
+	if (query) {
+		auto entityMap = reinterpret_cast<UuidToHandleMappingComponent*>(query->GetFirstMatchingComponent(componentSizes_[(unsigned)ExtComponentType::UuidToHandleMapping]));
+		if (entityMap) {
+			auto handle = entityMap->Mappings.Find(uuid);
+			if (handle) {
+				return **handle;
+			}
+		}
+	}
+
+	return {};
+}
+
 resource::GuidResourceBankBase* EntitySystemHelpersBase::GetRawResourceManager(ExtResourceManagerType type)
 {
-	auto index = resourceManagerIndices_[(int)type];
+	auto index = resourceManagerIndices_[(unsigned)type];
 	if (index == UndefinedIndex) {
 		OsiError("No resource manager index mapping registered for " << type);
 		return {};
@@ -673,6 +759,22 @@ resource::GuidResourceBankBase* EntitySystemHelpersBase::GetRawResourceManager(E
 	}
 
 	return **res;
+}
+
+Query* EntitySystemHelpersBase::GetQuery(ExtQueryType type)
+{
+	auto index = queryIndices_[(unsigned)type];
+	if (index == UndefinedIndex) {
+		OsiError("No query index mapping registered for " << type);
+		return {};
+	}
+
+	auto world = GetEntityWorld();
+	if (!world) {
+		return {};
+	}
+
+	return &world->Queries.Queries[index];
 }
 
 void ServerEntitySystemHelpers::Setup()

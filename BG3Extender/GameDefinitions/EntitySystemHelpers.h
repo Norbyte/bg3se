@@ -95,6 +95,11 @@ public:
 		}
 	}
 
+	inline std::size_t GetComponentSize(ExtComponentType type) const
+	{
+		return componentSizes_[(unsigned)type];
+	}
+
 	std::optional<HandleTypeIndex> GetHandleIndex(ExtComponentType type) const
 	{
 		auto idx = handleIndices_[(unsigned)type];
@@ -141,7 +146,7 @@ public:
 	template <class T>
 	T* GetComponent(EntityHandle entityHandle)
 	{
-		auto component = GetRawEntityComponent(entityHandle, T::ComponentType);
+		auto component = GetRawComponent(entityHandle, T::ComponentType);
 		if (component) {
 			return RawComponentPtrToComponent<T>(component);
 		} else {
@@ -202,14 +207,20 @@ public:
 		}
 	}
 
+	Query* GetQuery(ExtQueryType type);
+
 	BitSet<> * GetReplicationFlags(EntityHandle const& entity, ComponentTypeIndex replicationType);
 	BitSet<> * GetOrCreateReplicationFlags(EntityHandle const& entity, ComponentTypeIndex replicationType);
 	void NotifyReplicationFlagsDirtied();
+
+	void* GetRawComponent(EntityHandle entityHandle, ExtComponentType type);
+	EntityHandle GetEntityHandle(Guid uuid);
 
 protected:
 	static constexpr int32_t UndefinedIndex{ -1 };
 
 	void MapComponentIndices(char const* componentName, ExtComponentType type);
+	void MapQueryIndex(char const* name, ExtQueryType type);
 	void MapResourceManagerIndex(char const* componentName, ExtResourceManagerType type);
 	void UpdateComponentMappings();
 
@@ -232,6 +243,12 @@ private:
 		ComponentTypeIndex ComponentIndex;
 	};
 
+	std::array<ComponentTypeIndex, (size_t)ExtComponentType::Max> componentIndices_;
+	std::array<std::size_t, (size_t)ExtComponentType::Max> componentSizes_;
+	std::array<HandleTypeIndex, (size_t)ExtComponentType::Max> handleIndices_;
+	std::array<int32_t, (size_t)ExtQueryType::Max> queryIndices_;
+	std::array<int32_t, (size_t)ExtResourceManagerType::Max> resourceManagerIndices_;
+
 	std::unordered_map<STDString, IndexMappings> componentNameToIndexMappings_;
 	std::unordered_map<ComponentTypeIndex, STDString const*> componentIndexToNameMappings_;
 	std::unordered_map<HandleTypeIndex, STDString const*> handleIndexToNameMappings_;
@@ -239,12 +256,10 @@ private:
 	std::unordered_map<HandleTypeIndex, ExtComponentType> handleIndexToTypeMappings_;
 	std::unordered_map<HandleTypeIndex, ComponentTypeIndex> handleIndexToComponentMappings_;
 	std::unordered_map<STDString, int32_t> systemIndexMappings_;
-	std::vector<STDString const*> systemIndices_;
+	std::vector<STDString const*> systemTypeIdToName_;
 	std::unordered_map<STDString, int32_t> queryMappings_;
-	std::vector<STDString const*> queryIndices_;
-	std::array<ComponentTypeIndex, (int)ExtComponentType::Max> componentIndices_;
-	std::array<HandleTypeIndex, (int)ExtComponentType::Max> handleIndices_;
-	std::array<int32_t, (int)ExtResourceManagerType::Max> resourceManagerIndices_;
+	std::vector<STDString const*> queryTypeIdToName_;
+
 	bool initialized_{ false };
 
 	bool TryUpdateSystemMapping(std::string_view name, ComponentIndexMappings& mapping);
@@ -253,7 +268,6 @@ private:
 	void BindQueryName(std::string_view name, int32_t systemId);
 	void* GetRawComponent(char const* nameGuid, ExtComponentType type);
 	void* GetRawComponent(FixedString const& guid, ExtComponentType type);
-	void* GetRawEntityComponent(EntityHandle entityHandle, ExtComponentType type);
 	resource::GuidResourceBankBase* GetRawResourceManager(ExtResourceManagerType type);
 };
 

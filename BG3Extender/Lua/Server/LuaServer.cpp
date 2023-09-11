@@ -16,8 +16,6 @@
 
 #include <Lua/LevelIteratorFunctions.inl>
 #include <Lua/Shared/LuaShared.inl>
-#include <Lua/Server/ServerCharacter.inl>
-#include <Lua/Server/ServerItem.inl>
 #include <Lua/Server/ServerStatus.inl>
 #include <Lua/Server/ServerProjectile.inl>
 #include <Lua/Server/ServerSurface.inl>
@@ -192,8 +190,6 @@ namespace bg3se::esv::lua
 		return 1;
 	}
 
-	*/
-
 	int XDumpBoosts(lua_State* L)
 	{
 		auto s = get<FixedString>(L, 1);
@@ -258,6 +254,8 @@ namespace bg3se::esv::lua
 
 		return 0;
 	}
+
+	*/
 
 	int XGetByGuid(lua_State* L)
 	{
@@ -418,9 +416,9 @@ namespace bg3se::esv::lua
 
 			{"XGetByGuid", XGetByGuid},
 			{"XGetByHandle", XGetByHandle},
-			{"XDumpBoosts", XDumpBoosts},
+			/*{"XDumpBoosts", XDumpBoosts},
 			{"XGetResource", XGetResource},
-			{"XGetTag", XGetTag},
+			{"XGetTag", XGetTag},*/
 			{"XTest", XTest},
 
 			/*{"GetSurfaceTransformRules", GetSurfaceTransformRules},
@@ -429,14 +427,6 @@ namespace bg3se::esv::lua
 			{"ExecuteSurfaceAction", ExecuteSurfaceAction},
 			{"CancelSurfaceAction", CancelSurfaceAction},*/
 
-			{"GetAllCharacters", GetAllCharacters},
-			{"GetCharactersAroundPosition", GetCharactersAroundPosition},
-			{"GetAllItems", GetAllItems},
-			{"GetItemsAroundPosition", GetItemsAroundPosition},
-			/*{"CreateItemConstructor", CreateItemConstructor},*/
-			{"GetCharacter", GetCharacter},
-			{"GetItem", GetItem},
-			{"GetGameObject", GetGameObject},
 			/*{"GetCombat", GetCombat},
 			{"GetSurface", GetSurface},
 			{"GetAiGrid", GetAiGrid},

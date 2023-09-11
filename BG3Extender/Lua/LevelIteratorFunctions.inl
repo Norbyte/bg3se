@@ -1,7 +1,7 @@
 namespace bg3se::esv::lua
 {
 
-template <class Predicate>
+/*template <class Predicate>
 void GetCharactersGeneric(lua_State* L, FixedString const& requestedLevel, Predicate pred, bool excludeOffStage, bool excludeDeactivated)
 {
 	int index{ 1 };
@@ -166,6 +166,6 @@ int GetItemsAroundPosition(lua_State* L)
 		return abs(glm::length(pos - transform->Transform.Translate)) < distance;
 	}, excludeOffStage, excludeDeactivated);
 	return 1;
-}
+}*/
 
 }

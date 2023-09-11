@@ -227,7 +227,15 @@ bool ValidateRef(Map<TK, TV>* v, Overload<Map<TK, TV>>)
 		CHECK(m->ItemCount == 0);
 	} else {
 		CHECK(m->HashSize > 0);
+		CHECK(m->HashSize < 0x1000000);
 		CHECK(!IsBadReadPtr(m->HashTable, m->HashSize * sizeof(void*)));
+
+		for (uint32_t i = 0; i < m->HashSize; i++) {
+			if (m->HashTable[i] != nullptr) {
+				CHECK(!IsBadReadPtr(m->HashTable[i], sizeof(m->HashTable[i])));
+			}
+		}
+
 		// TODO - deeper checks on the table?
 		// TODO - check keys (shallow ptr scan)
 	}
@@ -244,7 +252,15 @@ bool ValidateRef(RefMap<TK, TV>* v, Overload<RefMap<TK, TV>>)
 		CHECK(m->ItemCount == 0);
 	} else {
 		CHECK(m->HashSize > 0);
+		CHECK(m->HashSize < 0x1000000);
 		CHECK(!IsBadReadPtr(m->HashTable, m->HashSize * sizeof(void*)));
+
+		for (uint32_t i = 0; i < m->HashSize; i++) {
+			if (m->HashTable[i] != nullptr) {
+				CHECK(!IsBadReadPtr(m->HashTable[i], sizeof(m->HashTable[i])));
+			}
+		}
+
 		// TODO - deeper checks on the table?
 		// TODO - check keys (shallow ptr scan)
 	}
@@ -302,6 +318,10 @@ bool ValidateRef(VirtualMultiHashMap<TK, TV>* v, Overload<VirtualMultiHashMap<TK
 template <class T>
 bool ValidateRef(T** v, Overload<T*>)
 {
+	if (v != nullptr) {
+		CHECK(!IsBadReadPtr(v, 1));
+	}
+
 	// TODO - pointer to pointer validation?
 	return true;
 }

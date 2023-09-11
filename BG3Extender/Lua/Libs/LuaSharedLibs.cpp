@@ -3,6 +3,7 @@
 #include <Lua/Shared/LuaModule.h>
 #include <Lua/Shared/LuaMethodCallHelpers.h>
 #include <Lua/Libs/Debug.inl>
+#include <Lua/Libs/Entity.inl>
 #include <Lua/Libs/IO.inl>
 #include <Lua/Libs/Json.inl>
 #include <Lua/Libs/Math.inl>
@@ -53,6 +54,7 @@ void RegisterSharedMetatables(lua_State* L)
 void RegisterSharedLibraries()
 {
 	utils::RegisterUtilsLib();
+	entity::RegisterEntityLib();
 	json::RegisterJsonLib();
 	types::RegisterTypesLib();
 	io::RegisterIOLib();

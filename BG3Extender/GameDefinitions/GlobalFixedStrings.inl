@@ -27,8 +27,6 @@ FS(Sync);
 FS(SetPersistence);
 
 // Entity proxy functions
-FS(HasRawComponent);
-FS(GetComponentHandles);
 FS(GetComponent);
 FS(GetAllComponents);
 FS(GetEntityType);

@@ -22,6 +22,18 @@ END_CLS()
 */
 
 
+BEGIN_CLS(UuidComponent)
+INHERIT(BaseComponent)
+P_RO(EntityUuid)
+END_CLS()
+
+
+BEGIN_CLS(UuidToHandleMappingComponent)
+INHERIT(BaseComponent)
+P_REF(Mappings)
+END_CLS()
+
+
 BEGIN_CLS(TransformComponent)
 INHERIT(BaseComponent)
 P_REF(Transform)
@@ -106,7 +118,7 @@ P_RO(Owner)
 END_CLS()
 
 
-BEGIN_CLS(ActionResourceConsumeMultiplierBoost)
+BEGIN_CLS(ActionResourceConsumeMultiplierBoostComponent)
 INHERIT(BaseComponent)
 P_RO(ResourceUUID)
 END_CLS()
@@ -905,7 +917,7 @@ P_RO(Slot)
 END_CLS()
 
 
-BEGIN_CLS(SpellBookCooldowns::Cooldown)
+BEGIN_CLS(SpellBookCooldownsComponent::Cooldown)
 P_REF(SpellId)
 P_RO(CooldownType)
 P_RO(field_29)
@@ -913,7 +925,7 @@ P_RO(Cooldown)
 END_CLS()
 
 
-BEGIN_CLS(SpellBookCooldowns)
+BEGIN_CLS(SpellBookCooldownsComponent)
 INHERIT(BaseComponent)
 P_REF(Cooldowns)
 END_CLS()
@@ -1038,14 +1050,14 @@ P_RO(Flags)
 END_CLS()
 
 
-BEGIN_CLS(LearnedSpells)
+BEGIN_CLS(LearnedSpellsComponent)
 INHERIT(BaseComponent)
 P_REF(field_18)
 P_REF(field_70)
 END_CLS()
 
 
-BEGIN_CLS(SpellAiConditions)
+BEGIN_CLS(SpellAiConditionsComponent)
 INHERIT(BaseComponent)
 P_REF(field_18)
 END_CLS()

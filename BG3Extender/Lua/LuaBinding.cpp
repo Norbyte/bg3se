@@ -46,8 +46,7 @@ namespace bg3se::lua
 	void push(lua_State* L, EntityHandle const& h)
 	{
 		if (h) {
-			auto helpers = State::FromLua(L)->GetEntitySystemHelpers();
-			EntityProxy::New(L, h, helpers);
+			EntityProxy::New(L, h);
 		} else {
 			push(L, nullptr);
 		}

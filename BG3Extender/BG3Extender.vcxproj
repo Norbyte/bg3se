@@ -343,6 +343,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">false</ExcludedFromBuild>
     </None>
     <None Include="Lua\Libs\Debug.inl" />
+    <None Include="Lua\Libs\Entity.inl" />
     <None Include="Lua\Libs\IO.inl" />
     <None Include="Lua\Libs\Json.inl" />
     <None Include="Lua\Libs\Math.inl" />
@@ -352,10 +353,8 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <None Include="Lua\Libs\Types.inl" />
     <None Include="Lua\Libs\Utils.inl" />
     <None Include="Lua\Server\FunctorEvents.inl" />
-    <None Include="Lua\Server\ServerCharacter.inl" />
     <None Include="Lua\Server\ServerCombat.inl" />
     <None Include="Lua\Server\ServerFunctors.inl" />
-    <None Include="Lua\Server\ServerItem.inl" />
     <None Include="Lua\Server\ServerNetwork.inl" />
     <None Include="Lua\Server\ServerProjectile.inl" />
     <None Include="Lua\Server\ServerStatus.inl" />

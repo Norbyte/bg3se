@@ -6,6 +6,20 @@
 
 namespace bg3se
 {
+	struct UuidComponent : public BaseComponent
+	{
+		static constexpr ExtComponentType ComponentType = ExtComponentType::Uuid;
+
+		Guid EntityUuid;
+	};
+	
+	struct UuidToHandleMappingComponent : public BaseComponent
+	{
+		static constexpr ExtComponentType ComponentType = ExtComponentType::UuidToHandleMapping;
+
+		MultiHashMap<Guid, EntityHandle> Mappings;
+	};
+	
 	struct TransformComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Transform;
@@ -124,7 +138,7 @@ namespace bg3se
 		EntityHandle Owner;
 	};
 
-	struct ActionResourceConsumeMultiplierBoost : public BaseComponent
+	struct ActionResourceConsumeMultiplierBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ActionResourceConsumeMultiplierBoost;
 

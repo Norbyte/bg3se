@@ -11,22 +11,20 @@ namespace bg3se::lua
 	public:
 		static char const* const MetatableName;
 
-		EntityProxy(EntityHandle const& handle, ecs::EntitySystemHelpersBase* entitySystem);
+		EntityProxy(EntityHandle const& handle);
 
 		template <class T>
-		bool HasComponent()
+		bool HasComponent(lua_State* L)
 		{
-			return this->entitySystem_->GetComponent<T>(handle_) != nullptr;
+			return GetEntitySystem(L)->GetComponent<T>(handle_) != nullptr;
 		}
 
 		template <class T>
-		T* GetComponent()
+		T* GetComponent(lua_State* L)
 		{
-			return this->entitySystem_->GetComponent<T>(handle_);
+			return GetEntitySystem(L)->GetComponent<T>(handle_);
 		}
 
-		static int HasRawComponent(lua_State* L);
-		static int GetComponentHandles(lua_State* L);
 		static int GetComponent(lua_State* L);
 		static int GetAllComponents(lua_State* L);
 		static int GetEntityType(lua_State* L);
@@ -42,14 +40,10 @@ namespace bg3se::lua
 			return handle_;
 		}
 
-		inline ecs::EntitySystemHelpersBase* EntitySystem() const
-		{
-			return entitySystem_;
-		}
+		static ecs::EntitySystemHelpersBase* GetEntitySystem(lua_State* L);
 
 	private:
 		EntityHandle handle_;
-		ecs::EntitySystemHelpersBase* entitySystem_;
 	};
 
 

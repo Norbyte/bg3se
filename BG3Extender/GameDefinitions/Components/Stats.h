@@ -964,7 +964,7 @@ namespace bg3se
 		uint16_t Slot;
 	};
 
-	struct SpellBookCooldowns : public BaseComponent
+	struct SpellBookCooldownsComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::SpellBookCooldowns;
 
@@ -1133,7 +1133,7 @@ namespace bg3se
 		uint16_t Flags;
 	};
 
-	struct LearnedSpells : public BaseComponent
+	struct LearnedSpellsComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::LearnedSpells;
 
@@ -1141,7 +1141,7 @@ namespace bg3se
 		VirtualMultiHashSet<uint8_t> field_70;
 	};
 
-	struct SpellAiConditions : public BaseComponent
+	struct SpellAiConditionsComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::SpellAiConditions;
 

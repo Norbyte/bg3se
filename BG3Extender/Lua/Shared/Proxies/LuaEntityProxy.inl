@@ -13,53 +13,15 @@ namespace bg3se::lua
 {
 	char const* const EntityProxy::MetatableName = "EntityProxy";
 
-	EntityProxy::EntityProxy(EntityHandle const& handle, ecs::EntitySystemHelpersBase* entitySystem)
-		: handle_(handle), entitySystem_(entitySystem)
+
+	ecs::EntitySystemHelpersBase* EntityProxy::GetEntitySystem(lua_State* L)
+	{
+		return State::FromLua(L)->GetEntitySystemHelpers();
+	}
+
+	EntityProxy::EntityProxy(EntityHandle const& handle)
+		: handle_(handle)
 	{}
-
-	int EntityProxy::HasRawComponent(lua_State* L)
-	{
-		StackCheck _(L, 1);
-		auto self = get<EntityProxy*>(L, 1);
-		auto componentType = get<char const*>(L, 2);
-		auto componentIdx = self->entitySystem_->GetComponentIndex(componentType);
-		if (componentIdx) {
-			auto world = self->entitySystem_->GetEntityWorld();
-			auto component = world->GetComponent(self->handle_, *componentIdx);
-			push(L, component != nullptr);
-		} else {
-			push(L, false);
-		}
-
-		return 1;
-	}
-
-	int EntityProxy::GetComponentHandles(lua_State* L)
-	{
-		StackCheck _(L, 1);
-		auto self = get<EntityProxy*>(L, 1);
-
-		lua_newtable(L);
-
-		/*auto entity = self->entitySystem_->GetEntityWorld()->GetEntity(self->handle_);
-		if (entity) {
-			for (unsigned i = 0; i < entity->ComponentHandles.Size(); i++) {
-				auto componentHandle = entity->ComponentHandles[i];
-				if (componentHandle) {
-					auto componentIdx = entity->SlotIndexToComponentIdMap[i];
-					auto name = self->entitySystem_->GetComponentName((EntityWorldBase::ComponentTypeIndex)componentIdx);
-
-					if (name) {
-						push(L, *name);
-						push(L, componentHandle);
-						lua_settable(L, -3);
-					}
-				}
-			}
-		}*/
-
-		return 1;
-	}
 
 	template <class T>
 	void PushComponentType(lua_State* L, ecs::EntitySystemHelpersBase* helpers, EntityHandle const& handle,
@@ -95,12 +57,29 @@ namespace bg3se::lua
 
 #undef T
 
+#define T(cls) case cls::ComponentType: MakeDirectObjectRef(L, reinterpret_cast<cls*>(rawComponent), lifetime); break;
+
+	void PushComponent(lua_State* L, void* rawComponent, ExtComponentType componentType, LifetimeHandle const& lifetime)
+	{
+		switch (componentType) {
+
+#include <GameDefinitions/Components/AllComponentTypes.inl>
+
+		default:
+			OsiError("Don't know how to push component type: " << componentType);
+			break;
+		}
+	}
+
+#undef T
+
 	int EntityProxy::GetComponent(lua_State* L)
 	{
 		StackCheck _(L, 1);
 		auto self = get<EntityProxy*>(L, 1);
 		auto componentType = get<ExtComponentType>(L, 2);
-		PushComponent(L, self->entitySystem_, self->handle_, componentType, GetCurrentLifetime(L));
+		auto ecs = GetEntitySystem(L);
+		PushComponent(L, ecs, self->handle_, componentType, GetCurrentLifetime(L));
 		return 1;
 	}
 
@@ -116,27 +95,30 @@ namespace bg3se::lua
 
 		lua_newtable(L);
 
-		/*auto entity = self->entitySystem_->GetEntityWorld()->GetEntity(self->handle_);
-		if (entity) {
-			for (unsigned i = 0; i < entity->ComponentHandles.Size(); i++) {
-				auto componentHandle = entity->ComponentHandles[i];
-				if (componentHandle) {
-					auto componentIdx = entity->SlotIndexToComponentIdMap[i];
-					auto type = self->entitySystem_->GetComponentType((EntityWorldBase::ComponentTypeIndex)componentIdx);
+		auto ecs = GetEntitySystem(L);
+		auto world = ecs->GetEntityWorld();
+		auto entityClass = world->GetEntityClass(self->handle_);
+		if (entityClass != nullptr) {
+			auto componentPtr = entityClass->InstanceToPageMap.Find(self->handle_);
+			if (componentPtr) {
+				for (auto typeInfo : entityClass->ComponentTypeToIndex) {
+					auto extType = ecs->GetComponentType(typeInfo.Key());
+					if (extType) {
+						auto componentSize = ecs->GetComponentSize(*extType);
+						auto component = entityClass->GetComponent(**componentPtr, typeInfo.Value(), componentSize);
 
-					if (type) {
-						push(L, type);
-						PushComponent(L, self->entitySystem_, self->handle_, *type, GetCurrentLifetime(L), true);
+						push(L, *extType);
+						PushComponent(L, component, *extType, GetCurrentLifetime(L));
 						lua_settable(L, -3);
 					} else if (warnOnMissing) {
-						auto name = self->entitySystem_->GetComponentName((EntityWorldBase::ComponentTypeIndex)componentIdx);
+						auto name = ecs->GetComponentName(typeInfo.Key());
 						if (name) {
 							OsiWarn("No model found for component: " << *name);
 						}
 					}
 				}
 			}
-		}*/
+		}
 
 		return 1;
 	}
@@ -169,9 +151,14 @@ namespace bg3se::lua
 	{
 		StackCheck _(L, 1);
 		auto self = get<EntityProxy*>(L, 1);
-		auto world = self->entitySystem_->GetEntityWorld();
-		auto cls = world->GetEntityClass(self->handle_);
-		push(L, cls != nullptr);
+		auto world = GetEntitySystem(L)->GetEntityWorld();
+		bool alive{ false };
+		auto entityClass = world->GetEntityClass(self->handle_);
+		if (entityClass != nullptr) {
+			alive = (bool)entityClass->InstanceToPageMap.Find(self->handle_);
+		}
+
+		push(L, alive);
 		return 1;
 	}
 
@@ -180,16 +167,6 @@ namespace bg3se::lua
 		StackCheck _(L, 1);
 		auto self = get<EntityProxy*>(L, 1);
 		auto key = get<FixedString>(L, 2);
-
-		if (key == GFS.strHasRawComponent) {
-			push(L, &EntityProxy::HasRawComponent);
-			return 1;
-		}
-
-		if (key == GFS.strGetComponentHandles) {
-			push(L, &EntityProxy::GetComponentHandles);
-			return 1;
-		}
 
 		if (key == GFS.strGetComponent) {
 			push(L, &EntityProxy::GetComponent);
@@ -223,7 +200,13 @@ namespace bg3se::lua
 
 		auto componentType = EnumInfo<ExtComponentType>::Find(key);
 		if (componentType) {
-			PushComponent(L, self->entitySystem_, self->handle_, *componentType, GetCurrentLifetime(L));
+			auto ecs = GetEntitySystem(L);
+			auto rawComponent = ecs->GetRawComponent(self->handle_, *componentType);
+			if (rawComponent != nullptr) {
+				PushComponent(L, GetEntitySystem(L), self->handle_, *componentType, GetCurrentLifetime(L));
+			} else {
+				push(L, nullptr);
+			}
 		} else {
 			auto componentTypeName = get<char const*>(L, 2);
 			luaL_error(L, "Not a valid EntityProxy method or component type: %s", componentTypeName);

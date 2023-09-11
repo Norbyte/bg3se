@@ -6,8 +6,6 @@ BEGIN_SE()
 
 struct BaseComponent
 {
-	// FIXME - not sure if this even exists anymore
-	EntityHandle Entity;
 };
 
 END_SE()
@@ -38,6 +36,21 @@ using ComponentTypeIndex = TypedIntegral<uint16_t, ComponentTypeIndexTag>;
 
 static constexpr ComponentTypeIndex UndefinedComponent{ 0xffff };
 static constexpr HandleTypeIndex UndefinedHandle{ 0xffff };
+
+END_NS()
+
+BEGIN_SE()
+
+template <>
+inline uint64_t MultiHashMapHash<ecs::ComponentTypeIndex>(ecs::ComponentTypeIndex const& v)
+{
+	return ((v.Value() & 0x7FFF) + 0x780 * (v.Value() >> 15))
+		| (uint64_t)(((v.Value() & 0x7FFF) + 0x780 * (v.Value() >> 15)) << 16);
+}
+
+END_SE()
+
+BEGIN_NS(ecs)
 
 struct UpdateInfo
 {
@@ -102,6 +115,16 @@ struct Query
 		uint8_t NumIndices;
 		EntityClass* EntityClass;
 		void* field_38;
+
+		uint8_t GetComponentIndex(uint8_t idx) const
+		{
+			assert(idx < NumIndices);
+			if (NumIndices > 8) {
+				return ComponentIndices[idx];
+			} else {
+				return InlineComponentIndices[idx];
+			}
+		}
 	};
 
 	// TypeList template parameters to ecs::query::spec::Spec<...>
@@ -121,6 +144,9 @@ struct Query
 	uint8_t NextComponentTypeIndex;
 	uint8_t ComponentTypesCapacity;
 	void* field_658;
+
+	void* GetFirstMatchingComponent(std::size_t componentSize);
+	Array<void*> GetAllMatchingComponents(std::size_t componentSize);
 };
 
 
@@ -195,6 +221,8 @@ struct EntityTypeSalts
 		
 struct EntityClass
 {
+	static constexpr std::size_t PageSize = 64;
+
 	struct ComponentEntry
 	{
 		uint16_t Index;
@@ -204,34 +232,29 @@ struct EntityClass
 		void* DtorProc;
 	};
 			
-	struct InstanceComponentBucket
+	struct InstanceComponentPointer
 	{
-		uint16_t BucketIndex;
+		uint16_t PageIndex;
 		uint16_t EntryIndex;
 	};
 			
-	struct InstanceComponents
-	{
-		void** Components;
-		void* B;
-	};
-
 	struct ComponentPage
 	{
-		InstanceComponents Pool[256];
+		void* ComponentBuffer;
+		void* B;
 	};
 
 	struct HandlePage
 	{
-		InstanceComponents Pool[256];
+		EntityHandle Pool[PageSize];
 	};
 
 
 	ComponentTypeMask ComponentsInClass;
 	uint64_t SomeEntityMask;
-	uint16_t* ComponentIndexList; // List of indices into EntityComponentPool
+	ComponentTypeIndex* ComponentIndices; // List of indices into ComponentTypeToIndex/ComponentPoolsByType
 	ComponentEntry* ComponentDtors;
-	ComponentTypeIndex TypeId;
+	uint16_t EntityClassId;
 	__int16 field_10A;
 	uint16_t ComponentIndexListSize;
 	char field_10E;
@@ -242,13 +265,13 @@ struct EntityClass
 	BitSet<> field_138;
 	int field_148;
 	Array<void*> field_150;
-	MultiHashMap<uint16_t, uint8_t> ComponentTypeToIndex;
-	MultiHashMap<uint64_t, InstanceComponentBucket> InstanceToPageMap;
-	MultiHashMap<uint64_t, uint64_t> field_1E0;
-	MultiHashMap<uint64_t, uint64_t> field_220;
+	MultiHashMap<ComponentTypeIndex, uint8_t> ComponentTypeToIndex;
+	MultiHashMap<EntityHandle, InstanceComponentPointer> InstanceToPageMap;
+	MultiHashMap<EntityHandle, uint64_t> field_1E0;
+	MultiHashMap<EntityHandle, uint64_t> field_220;
 	Array<void*> field_260;
 	Array<void*> field_270;
-	MultiHashMap<uint16_t, MultiHashMap<uint16_t, ComponentPage*>*> ComponentPoolsByType;
+	MultiHashMap<ComponentTypeIndex, MultiHashMap<uint16_t, ComponentPage*>*> ComponentPoolsByType;
 	char field_2C0;
 	__int64 field_2C8;
 	EntityTypeMask ComponentMask; // Valid indices into Components pool
@@ -258,7 +281,14 @@ struct EntityClass
 	Array<void*> field_440;
 	UnknownMask field_450;
 
-	void* GetComponent(EntityHandle entityHandle, ComponentTypeIndex type) const;
+	void* GetComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize) const;
+	void* GetComponent(InstanceComponentPointer const& entityPtr, ComponentTypeIndex type, std::size_t componentSize) const;
+	void* GetComponent(InstanceComponentPointer const& entityPtr, uint8_t componentSlot, std::size_t componentSize) const;
+
+	inline bool HasComponent(ComponentTypeIndex type) const
+	{
+		return (ComponentsInClass[(uint16_t)type >> 6] & (1ull << ((uint16_t)type & 0x3f))) != 0;
+	}
 };
 
 
@@ -362,8 +392,8 @@ struct EntityComponents
 	MultiHashMap<EntityHandle, EntityEntry*> Entities;
 	SparseHashMap ComponentPools;
 	char field_80;
-	MultiHashMap<uint16_t, MultiHashMap<uint64_t, void*>> ComponentsByType;
-	MultiHashMap<uint16_t, MultiHashMap<uint64_t, void*>> ComponentsByType2;
+	MultiHashMap<ComponentTypeIndex, MultiHashMap<uint64_t, void*>> ComponentsByType;
+	MultiHashMap<ComponentTypeIndex, MultiHashMap<uint64_t, void*>> ComponentsByType2;
 	void* field_108;
 	void* field_110;
 	Array<void*>* ComponentTypes;
@@ -414,9 +444,9 @@ struct EntityWorld : public ProtectedGameObject<EntityWorld>
 	__int64 field_370;
 	__int64 field_378;
 
-	void* GetComponent(EntityHandle entityHandle, ComponentTypeIndex type);
-	void* GetComponent(char const* nameGuid, ComponentTypeIndex type);
-	void* GetComponent(FixedString const& guid, ComponentTypeIndex type);
+	void* GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize);
+	void* GetRawComponent(char const* nameGuid, ComponentTypeIndex type, std::size_t componentSize);
+	void* GetRawComponent(FixedString const& guid, ComponentTypeIndex type, std::size_t componentSize);
 
 	EntityClass* GetEntityClass(EntityHandle entityHandle) const;
 	bool IsValid(EntityHandle entityHandle) const;

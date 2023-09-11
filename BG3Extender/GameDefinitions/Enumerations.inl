@@ -292,9 +292,18 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 	E(ACOverrideMinimumBoost)
 	E(FallDamageMultiplierBoost)
 
+	E(Uuid)
+
+	// Special engine components
+	E(UuidToHandleMapping)
+
 	E(Max)
 END_ENUM()
 
+BEGIN_ENUM(ExtQueryType, uint32_t)
+	E(UuidToHandleMapping)
+	E(Max)
+END_ENUM()
 
 BEGIN_ENUM_NS(ecl, GameState, ClientGameState, uint32_t)
 	EV(Unknown, 0)
