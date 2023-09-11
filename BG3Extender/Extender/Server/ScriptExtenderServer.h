@@ -10,6 +10,7 @@
 #include <Osiris/OsirisExtender.h>
 #include <GameDefinitions/EntitySystemHelpers.h>
 #include <CoreLib/Wrappers.h>
+#include <Extender/Shared/SavegameSerializer.h>
 
 #include <thread>
 #include <mutex>
@@ -53,7 +54,7 @@ public:
 	bool RequestResetClientLuaState();
 	void ResetExtensionState();
 	void LoadExtensionState(ExtensionStateContext ctx);
-	void OnSavegameVisit(ObjectVisitor* visitor);
+	void OnSavegameVisit(OsirisVariableHelper* helper, SavegameVisitor* visitor);
 
 	// HACK - we need to expose this so it can be added to the CrashReporter whitelist
 	enum class GameStateWorkerStartTag {};
@@ -67,6 +68,7 @@ private:
 	bool extensionLoaded_{ false };
 	bool postStartupDone_{ false };
 	ecs::ServerEntitySystemHelpers entityHelpers_;
+	SavegameSerializer savegameSerializer_;
 
 	void OnBaseModuleLoaded(void * self);
 	void GameStateWorkerWrapper(void (* wrapped)(void*), void * self);

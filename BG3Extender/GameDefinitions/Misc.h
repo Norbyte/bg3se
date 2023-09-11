@@ -6,6 +6,26 @@
 #include "Module.h"
 #include <glm/gtc/quaternion.hpp>
 
+BEGIN_NS(esv)
+
+struct SavegameVisitor : public ObjectVisitor
+{
+	MultiHashMap<uint64_t, uint64_t> field_48;
+	__int64 field_88;
+	ModuleSettings Settings;
+	STDString ModuleHash;
+	ObjectVisitor* LSFVisitor;
+	bool OwnsLSFVisitor;
+	__int64 field_E0;
+	__int64 field_E8;
+};
+
+struct OsirisVariableHelper : public ProtectedGameObject<OsirisVariableHelper> {};
+
+using OsirisVariableHelper__SavegameVisitProc = bool (OsirisVariableHelper*, SavegameVisitor*);
+
+END_NS()
+
 namespace bg3se
 {
 	struct ActionOriginator : public HasObjectProxy

@@ -6,7 +6,6 @@
 #include <Extender/Client/ScriptExtenderClient.h>
 #include <Extender/Server/ScriptExtenderServer.h>
 #include <Extender/Shared/StatLoadOrderHelper.h>
-#include <Extender/Shared/SavegameSerializer.h>
 #if !defined(OSI_NO_DEBUGGER)
 #include <Lua/Debugger/LuaDebugger.h>
 #include <Lua/Debugger/LuaDebugMessages.h>
@@ -126,7 +125,6 @@ private:
 	std::recursive_mutex globalStateLock_;
 	std::shared_mutex pathOverrideMutex_;
 	std::unordered_map<STDString, STDString> pathOverrides_;
-	SavegameSerializer savegameSerializer_;
 	stats::StatLoadOrderHelper statLoadOrderHelper_;
 	lua::LuaBundle luaBuiltinBundle_;
 	lua::CppPropertyMapManager propertyMapManager_;
@@ -149,7 +147,6 @@ private:
 	void OnStatsLoad(stats::RPGStats::LoadProc* wrapped, stats::RPGStats* mgr, Array<STDString>* paths);
 	void OnSkillPrototypeManagerInit(void * self);
 	FileReader * OnFileReaderCreate(FileReader::CtorProc* next, FileReader * self, Path const& path, unsigned int type, unsigned int unknown);
-	void OnSavegameVisit(void* osirisHelpers, ObjectVisitor* visitor);
 };
 
 extern std::unique_ptr<ScriptExtender> gExtender;

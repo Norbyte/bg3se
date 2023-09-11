@@ -186,6 +186,8 @@ namespace bg3se
 		SYM_OFF(eoc__PassiveManager);
 		SYM_OFF(eoc__Passive__Init);
 
+		SYM_OFF(esv__OsirisVariableHelper__SavegameVisit);
+
 		SYM_OFF(esv__StatusMachine__CreateStatus);
 		SYM_OFF(esv__StatusMachine__ApplyStatus);
 

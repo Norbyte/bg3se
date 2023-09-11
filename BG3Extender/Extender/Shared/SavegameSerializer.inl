@@ -15,12 +15,10 @@ void SavegameSerializer::SavegameVisit(ObjectVisitor* visitor)
 				ss << "Could not load Script Extender save data - savegame is newer than the currently installed extender!<br>";
 				ss << "Extender version v" << SavegameVersion << ", savegame version v" << version;
 				gExtender->GetLibraryManager().ShowStartupError(ss.str().c_str(), true, false);
-			}
-			else {
+			} else {
 				Serialize(visitor, version);
 			}
-		}
-		else {
+		} else {
 			Serialize(visitor, SavegameVersion);
 		}
 
@@ -32,7 +30,8 @@ void SavegameSerializer::SavegameVisit(ObjectVisitor* visitor)
 void SavegameSerializer::Serialize(ObjectVisitor* visitor, uint32_t version)
 {
 	SerializePersistentVariables(visitor, version);
-	SerializeStatObjects(visitor, version);
+	// FIXME - persistent stat support disabled for now
+	// SerializeStatObjects(visitor, version);
 }
 
 

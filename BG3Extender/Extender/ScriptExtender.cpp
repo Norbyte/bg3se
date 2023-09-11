@@ -6,7 +6,6 @@
 #include <iomanip>
 
 #include <Extender/Shared/StatLoadOrderHelper.inl>
-#include <Extender/Shared/SavegameSerializer.inl>
 
 #undef DEBUG_SERVER_CLIENT
 
@@ -337,11 +336,6 @@ FileReader * ScriptExtender::OnFileReaderCreate(FileReader::CtorProc* next, File
 	return next(self, path, type, unknown);
 }
 
-void ScriptExtender::OnSavegameVisit(void* osirisHelpers, ObjectVisitor* visitor)
-{
-	savegameSerializer_.SavegameVisit(visitor);
-}
-
 void ScriptExtender::PostStartup()
 {
 	if (postStartupDone_) return;
@@ -352,8 +346,6 @@ void ScriptExtender::PostStartup()
 		lua::RegisterLibraries();
 		TypeInformationRepository::GetInstance().Initialize();
 
-		// FIXME - savegame hooks not yet added
-		// gExtender->GetServer().Osiris().GetWrappers().InitializeDeferredExtensions();
 		Hooks.HookAll();
 		server_.PostStartup();
 		client_.PostStartup();

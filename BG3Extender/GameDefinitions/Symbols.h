@@ -69,6 +69,8 @@ namespace bg3se
 		stats::PassiveManager** eoc__PassiveManager{ nullptr };
 		stats::Passive::InitProc* eoc__Passive__Init{ nullptr };
 
+		esv::OsirisVariableHelper__SavegameVisitProc* esv__OsirisVariableHelper__SavegameVisit{ nullptr };
+
 		esv::StatusMachine::CreateStatusProc* esv__StatusMachine__CreateStatus{ nullptr };
 		esv::StatusMachine::ApplyStatusProc* esv__StatusMachine__ApplyStatus{ nullptr };
 

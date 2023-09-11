@@ -2,6 +2,8 @@
 #include <Extender/Server/ScriptExtenderServer.h>
 #include <Extender/ScriptExtender.h>
 
+#include <Extender/Shared/SavegameSerializer.inl>
+
 #define STATIC_HOOK(name) decltype(bg3se::esv::ScriptExtender::name) * decltype(bg3se::esv::ScriptExtender::name)::gHook;
 STATIC_HOOK(gameStateWorkerStart_)
 STATIC_HOOK(gameStateMachineUpdate_)
@@ -56,6 +58,8 @@ void ScriptExtender::Initialize()
 
 		gameStateWorkerStart_.SetWrapper(&ScriptExtender::GameStateWorkerWrapper, this);
 		gameStateMachineUpdate_.SetPostHook(&ScriptExtender::OnUpdate, this);
+
+		gExtender->GetEngineHooks().esv__OsirisVariableHelper__SavegameVisit.SetPreHook(&ScriptExtender::OnSavegameVisit, this);
 	}
 }
 
@@ -242,6 +246,13 @@ void ScriptExtender::LoadExtensionState(ExtensionStateContext ctx)
 	}
 
 	extensionLoaded_ = true;
+}
+
+void ScriptExtender::OnSavegameVisit(OsirisVariableHelper* helpers, SavegameVisitor* visitor)
+{
+	if (visitor->LSFVisitor != nullptr) {
+		savegameSerializer_.SavegameVisit(visitor->LSFVisitor);
+	}
 }
 
 END_NS()

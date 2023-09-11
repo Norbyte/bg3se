@@ -668,6 +668,24 @@
           <Target Type="Indirect" Offset="@ref1" Symbol="ls__GlobalSwitches" />
         </Mapping>
 
+      <Mapping Name="esv::OsirisVariableHelper::SavegameVisit">
+        48 89 5c 24 08 // mov     [rsp+arg_0], rbx
+        55 // push    rbp
+        56 // push    rsi
+        57 // push    rdi
+        41 56 // push    r14
+        41 57 // push    r15
+        48 83 ec 20 // sub     rsp, 20h
+        48 8b f2 // mov     rsi, rdx
+        48 8b d9 // mov     rbx, rcx
+        45 33 f6 // xor     r14d, r14d
+        44 89 74 24 60 // mov     [rsp+48h+arg_10], r14d
+        40 b7 01 // mov     dil, 1
+        @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, fs_OsirisVariableHelper
+        <Condition Type="FixedString" Offset="@str1" Value="OsirisVariableHelper" />
+        <Target Type="Absolute" Offset="0" Symbol="esv__OsirisVariableHelper__SavegameVisit" />
+      </Mapping>
+
       <!--
       <Mapping Name="eoc::SpellPrototype::Init" Scope="Custom">
         <Target Type="Absolute" Offset="0" Symbol="eoc__SpellPrototype__Init" />
