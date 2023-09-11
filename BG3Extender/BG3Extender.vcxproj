@@ -142,10 +142,11 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <ClInclude Include="Extender\Shared\tinyxml2.h" />
     <ClInclude Include="Extender\Shared\Utils.h" />
     <ClInclude Include="GameDefinitions\Base\Base.h" />
+    <ClInclude Include="GameDefinitions\Base\Serialization.h" />
     <ClInclude Include="GameDefinitions\Base\BaseTypeInformation.h" />
     <ClInclude Include="GameDefinitions\Base\ForwardDeclarations.h" />
     <ClInclude Include="GameDefinitions\Character.h" />
-    <ClInclude Include="GameDefinitions\CommonTypes.h" />
+    <ClInclude Include="GameDefinitions\Base\CommonTypes.h" />
     <ClInclude Include="GameDefinitions\Components\Boosts.h" />
     <ClInclude Include="GameDefinitions\Components\Combat.h" />
     <ClInclude Include="GameDefinitions\Components\Components.h" />

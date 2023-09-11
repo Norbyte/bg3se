@@ -1,7 +1,7 @@
 #include <stdafx.h>
 #include <Extender/ScriptExtender.h>
 #include "FunctionLibrary.h"
-#include <Version.h>
+#include <Extender/Version.h>
 
 namespace bg3se::esv
 {

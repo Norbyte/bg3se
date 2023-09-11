@@ -1,7 +1,7 @@
 #include <stdafx.h>
 #include <Extender/ScriptExtender.h>
 #include <Osiris/Functions/FunctionLibrary.h>
-#include <Version.h>
+#include <Extender/Version.h>
 #include <Extender/Shared/ScriptHelpers.h>
 #include <fstream>
 #include "json/json.h"

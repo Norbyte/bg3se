@@ -1,6 +1,5 @@
 #pragma once
 
-#include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/Symbols.h>
 
 #include <GameDefinitions/Resources.h>

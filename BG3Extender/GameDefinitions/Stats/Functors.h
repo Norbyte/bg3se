@@ -1,7 +1,6 @@
 #pragma once
 
 #include <GameDefinitions/Base/Base.h>
-#include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/Stats/Common.h>
 #include <GameDefinitions/Hit.h>
 #include <GameDefinitions/Misc.h>

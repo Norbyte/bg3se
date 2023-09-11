@@ -418,7 +418,7 @@
       <Filter>Lua\Shared</Filter>
     </ClInclude>
     <ClInclude Include="GameDefinitions\GameState.h" />
-    <ClInclude Include="GameDefinitions\CommonTypes.h" />
+    <ClInclude Include="GameDefinitions\Base\CommonTypes.h" />
     <ClInclude Include="Lua\Libs\Json.h" />
     <ClInclude Include="Lua\Shared\Proxies\PropertyMapDependencies.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaPropertyMap.h" />
@@ -427,6 +427,7 @@
     <ClInclude Include="GameDefinitions\TranslatedString.h" />
     <ClInclude Include="Extender\Shared\Hooks.h" />
     <ClInclude Include="Lua\Shared\LuaTypeValidators.h" />
+    <ClInclude Include="GameDefinitions\Base\Serialization.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

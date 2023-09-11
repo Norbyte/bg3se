@@ -1,7 +1,6 @@
 #include <stdafx.h>
 
 #include <GameDefinitions/Base/Base.h>
-#include <GameDefinitions/Enumerations.h>
 #include <Extender/Shared/ExtensionHelpers.h>
 
 namespace bg3se

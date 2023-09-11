@@ -1,7 +1,6 @@
 #pragma once
 
 #include <GameDefinitions/Base/Base.h>
-#include <GameDefinitions/Enumerations.h>
 
 namespace bg3se
 {

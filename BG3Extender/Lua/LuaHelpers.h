@@ -7,8 +7,6 @@
 #include <optional>
 
 #include <GameDefinitions/Base/Base.h>
-#include <GameDefinitions/Enumerations.h>
-#include <GameDefinitions/CommonTypes.h>
 #include <Lua/Shared/LuaReference.h>
 
 BEGIN_NS(lua)

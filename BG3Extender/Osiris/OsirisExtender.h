@@ -13,7 +13,6 @@
 #include <Osiris/Functions/FunctionLibrary.h>
 #include <GameHooks/DataLibraries.h>
 #include <GameDefinitions/Symbols.h>
-#include <GameDefinitions/GlobalFixedStrings.h>
 
 #include <thread>
 

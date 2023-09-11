@@ -1,6 +1,5 @@
 #pragma once
 
-#include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/Osiris.h>
 #include <CoreLib/Wrappers.h>
 #include <detours.h>

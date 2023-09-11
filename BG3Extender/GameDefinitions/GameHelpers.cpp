@@ -2,7 +2,6 @@
 
 #include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/Symbols.h>
-#include <GameDefinitions/Enumerations.h>
 #include <Lua/Shared/Proxies/LuaPropertyMapHelpers.h>
 //#include <GameDefinitions/Ai.h>
 #include <Extender/ScriptExtender.h>

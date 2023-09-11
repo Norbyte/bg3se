@@ -2,7 +2,6 @@
 
 #include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/Misc.h>
-#include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/EntitySystem.h>
 #include <GameDefinitions/Hit.h>
 

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <GameDefinitions/Enumerations.h>
-
 struct lua_State;
 
 BEGIN_SE()

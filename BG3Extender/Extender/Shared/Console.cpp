@@ -1,5 +1,5 @@
 #include <stdafx.h>
-#include <Version.h>
+#include <Extender/Version.h>
 #include <Extender/Shared/Console.h>
 #include <Extender/ScriptExtender.h>
 

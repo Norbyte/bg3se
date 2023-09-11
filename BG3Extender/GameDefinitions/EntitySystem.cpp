@@ -2,7 +2,6 @@
 
 #include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/Symbols.h>
-#include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/EntitySystem.h>
 #include <GameDefinitions/GuidResources.h>
 #include <Extender/ScriptExtender.h>

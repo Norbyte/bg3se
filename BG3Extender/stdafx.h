@@ -28,5 +28,3 @@
 
 #include <Extender/Shared/Utils.h>
 #include <GameDefinitions/Base/Base.h>
-#include <GameDefinitions/Enumerations.h>
-#include <GameDefinitions/GlobalFixedStrings.h>

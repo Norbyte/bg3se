@@ -1,6 +1,5 @@
 #pragma once
 
-#include <GameDefinitions/Enumerations.h>
 #include <Lua/LuaBinding.h>
 
 namespace bg3se::ecl::lua
