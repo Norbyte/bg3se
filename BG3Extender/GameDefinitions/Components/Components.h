@@ -44,12 +44,14 @@ namespace bg3se
 			int ResourceId;
 			double Amount;
 			double MaxAmount;
+			uint64_t field_28;
+			uint64_t field_30;
 			std::array<SubAmount, 7> SubAmounts;
 			bool SubAmountsValid;
 		};
 
 
-		VirtualMultiHashMap<Guid, Array<Amount>> Resources;
+		MultiHashMap<Guid, Array<Amount>> Resources;
 	};
 
 	struct HearingComponent : public BaseComponent
@@ -65,16 +67,8 @@ namespace bg3se
 	{
 		struct InnerEntry
 		{
-			__int64 field_0;
-			__int64 field_8;
-			__int64 field_10;
-			__int64 field_18;
-			__int64 field_20;
-			__int64 field_28;
-			__int64 field_30;
-			__int64 field_38;
-			__int64 field_40;
-			__int64 field_48;
+			uint8_t field_0;
+			MultiHashSet<int32_t> field_8;
 		};
 
 		SpellId Id;
@@ -92,6 +86,7 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::SpellBook;
 
+		uint64_t field_0;
 		Array<SpellBookEntry> Spells;
 	};
 
@@ -186,8 +181,8 @@ namespace bg3se
 		static constexpr ExtComponentType ComponentType = ExtComponentType::SpellBookPrepares;
 
 		Array<SpellIdBase> PreparedSpells;
-		VirtualMultiHashMap<Guid, int> field_30;
-		VirtualMultiHashMap<Guid, int> field_88;
+		MultiHashMap<Guid, int> field_30;
+		MultiHashMap<Guid, int> field_88;
 	};
 
 	struct RelationComponent : public BaseComponent

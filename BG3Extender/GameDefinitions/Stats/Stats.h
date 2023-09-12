@@ -111,7 +111,7 @@ struct SpellPrototype : public Noncopyable<SpellPrototype>
 struct SpellPrototypeManager : public ProtectedGameObject<SpellPrototypeManager>
 {
 	void* VMT;
-	VirtualMultiHashMap<FixedString, SpellPrototype*> Spells;
+	MultiHashMap<FixedString, SpellPrototype*> Spells;
 	Array<FixedString> SpellNames;
 	bool Initialized;
 

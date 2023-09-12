@@ -239,7 +239,7 @@ namespace bg3se
 		struct StatusHealSharingCaster : public StatusBoost
 		{
 			Array<ComponentHandle> Targets;
-			VirtualMultiHashMap<ComponentHandle, ComponentHandle> field_1C0;
+			MultiHashMap<ComponentHandle, ComponentHandle> field_1C0;
 		};
 		
 		struct StatusHealing : public StatusBoost
@@ -277,7 +277,7 @@ namespace bg3se
 
 			SurfaceLayerCheck LayerChecks[2];
 			glm::vec3 Translate;
-			VirtualMultiHashMap<FixedString, bool> Unknown;
+			MultiHashMap<FixedString, bool> Unknown;
 		};
 
 		struct StatusInfectiousDiseased : public StatusBoost

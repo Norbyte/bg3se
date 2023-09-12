@@ -115,7 +115,7 @@ namespace bg3se
         OverrideableProperty<FixedString> ActiveCharacterLightID;
         OverrideableProperty<FixedString> BloodType;
         OverrideableProperty<FixedString> DefaultDialog;
-        VirtualMultiHashSet<Guid>* SpeakerGroupList;
+        MultiHashSet<Guid>* SpeakerGroupList;
         OverrideableProperty<STDString> GeneratePortrait;
         OverrideableProperty<float> LadderAttachOffset;
         OverrideableProperty<float> LadderLoopSpeed;
@@ -268,7 +268,7 @@ namespace bg3se
         OverrideableProperty<ObjectSet<void*>> OnDestroyActions;
         OverrideableProperty<TranslatedString> OnUseDescription;
         OverrideableProperty<ObjectSet<void*>> Scripts;
-        OverrideableProperty<VirtualMultiHashMap<FixedString, void*>> ScriptOverrides;
+        OverrideableProperty<MultiHashMap<FixedString, void*>> ScriptOverrides;
         OverrideableProperty<ObjectSet<void*>> ScriptConfigGlobalParameters;
         OverrideableProperty<FixedString> AnubisConfigName;
         OverrideableProperty<ObjectSet<void*>> ItemList;
@@ -296,8 +296,8 @@ namespace bg3se
         OverrideableProperty<uint8_t> InventoryType;
         OverrideableProperty<TranslatedString> Description;
         OverrideableProperty<TranslatedString> UnknownDescription;
-        VirtualMultiHashSet<Guid>* SpeakerGroupList;
-        VirtualMultiHashSet<Guid>* InteractionFilterList;
+        MultiHashSet<Guid>* SpeakerGroupList;
+        MultiHashSet<Guid>* InteractionFilterList;
         OverrideableProperty<uint8_t> InteractionFilterType;
         OverrideableProperty<FixedString> ActivationGroupId;
         OverrideableProperty<int32_t> Race;

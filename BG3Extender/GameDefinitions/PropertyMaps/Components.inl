@@ -55,12 +55,14 @@ END_CLS()
 
 
 BEGIN_CLS(ActionResourcesComponent::Amount)
-P_RO(ResourceUUID)
-P_RO(ResourceId)
-P_RO(Amount)
-P_RO(MaxAmount)
+P(ResourceUUID)
+P(ResourceId)
+P(Amount)
+P(MaxAmount)
+P(field_28)
+P(field_30)
 P_REF(SubAmounts)
-P_RO(SubAmountsValid)
+P(SubAmountsValid)
 END_CLS()
 
 
@@ -681,20 +683,26 @@ END_CLS()
 BEGIN_CLS(HotbarContainerComponent)
 INHERIT(BaseComponent)
 P_REF(Containers)
-P_RO(ActiveContainer)
+P(ActiveContainer)
 END_CLS()
 
 
 BEGIN_CLS(HotbarContainerComponent::Element)
-P_RO(Item)
+P(Item)
 P_REF(SpellId)
-P_RO(Passive)
+P(Passive)
+P(field_34)
+P(field_38)
 END_CLS()
 
 
 BEGIN_CLS(HotbarContainerComponent::Bar)
+P(Index)
+P(field_1)
 P_REF(Elements)
-P_RO(SomeFlag)
+P(field_18)
+P(field_1C)
+P(field_20)
 END_CLS()
 
 

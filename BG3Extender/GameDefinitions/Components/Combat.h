@@ -26,7 +26,7 @@ namespace bg3se
 		static constexpr ExtComponentType ComponentType = ExtComponentType::CombatState;
 
 		Guid MyGuid;
-		VirtualMultiHashMap<EntityHandle, int32_t> Initiatives;
+		MultiHashMap<EntityHandle, int32_t> Initiatives;
 		Array<EntityHandle> Participants;
 		EntityHandle field_98;
 		EntityHandle field_A0;

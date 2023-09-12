@@ -66,8 +66,8 @@ namespace bg3se
 	{
 		int ProficiencyBonus;
 		int RollBonus;
-		VirtualMultiHashMap<AbilityId, int32_t> AbilityBoosts;
-		VirtualMultiHashMap<SkillId, int32_t> SkillBonuses;
+		MultiHashMap<AbilityId, int32_t> AbilityBoosts;
+		MultiHashMap<SkillId, int32_t> SkillBonuses;
 		bool AutoSkillCheckFail;
 		bool AutoAbilityCheckFail;
 		bool AutoAbilitySavingThrowFail;

@@ -101,7 +101,7 @@ namespace bg3se
 		int WeaponActionDC;
 		int ProficiencyBonus;
 		int field_AC;
-		VirtualMultiHashMap<ItemSlot32, EquipmentEntry> Equipment;
+		MultiHashMap<ItemSlot32, EquipmentEntry> Equipment;
 		int ArmorType;
 		int ArmorType_Breast;
 		int Level;
@@ -115,7 +115,7 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::StatusImmunities;
 
-		VirtualMultiHashMap<FixedString, Guid> PersonalStatusImmunities;
+		MultiHashMap<FixedString, Guid> PersonalStatusImmunities;
 	};
 
 	struct ValueComponent : public BaseComponent
@@ -365,9 +365,9 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::SummonContainer;
 
-		VirtualMultiHashMap<FixedString, Array<EntityHandle>> field_18;
-		VirtualMultiHashSet<ComponentHandle> Characters;
-		VirtualMultiHashSet<ComponentHandle> Items;
+		MultiHashMap<FixedString, Array<EntityHandle>> field_18;
+		MultiHashSet<ComponentHandle> Characters;
+		MultiHashSet<ComponentHandle> Items;
 	};
 
 	struct StealthComponent : public BaseComponent
@@ -457,15 +457,21 @@ namespace bg3se
 			EntityHandle Item;
 			SpellId SpellId;
 			FixedString Passive;
+			uint32_t field_34;
+			uint8_t field_38;
 		};
 
 		struct Bar
 		{
+			uint8_t Index;
+			uint8_t field_1;
 			Array<Element> Elements;
-			uint8_t SomeFlag;
+			uint8_t field_18;
+			uint32_t field_1C;
+			STDString field_20;
 		};
 
-		VirtualMultiHashMap<FixedString, Array<Bar>> Containers;
+		MultiHashMap<FixedString, Array<Bar>> Containers;
 		FixedString ActiveContainer;
 	};
 
@@ -601,7 +607,7 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ServerToggledPassives;
 
-		VirtualMultiHashMap<FixedString, bool> Passives;
+		MultiHashMap<FixedString, bool> Passives;
 	};
 
 	struct BoostTagComponent : public BaseComponent
@@ -615,7 +621,7 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ServerTriggerState;
 
-		VirtualMultiHashSet<Guid> Triggers;
+		MultiHashSet<Guid> Triggers;
 	};
 
 	struct SafePositionComponent : public BaseComponent
@@ -640,7 +646,7 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ServerLeader;
 
-		VirtualMultiHashSet<EntityHandle> Followers_M;
+		MultiHashSet<EntityHandle> Followers_M;
 	};
 
 	struct BreadcrumbComponent : public BaseComponent
@@ -1137,15 +1143,15 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::LearnedSpells;
 
-		VirtualMultiHashMap<Guid, VirtualMultiHashSet<FixedString>> field_18;
-		VirtualMultiHashSet<uint8_t> field_70;
+		MultiHashMap<Guid, MultiHashSet<FixedString>> field_18;
+		MultiHashSet<uint8_t> field_70;
 	};
 
 	struct SpellAiConditionsComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::SpellAiConditions;
 
-		VirtualMultiHashMap<FixedString, uint64_t> field_18;
+		MultiHashMap<FixedString, uint64_t> field_18;
 	};
 
 	struct ActiveSkeletonSlotsComponent : public BaseComponent
@@ -1240,8 +1246,8 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ApprovalRatings;
 
-		VirtualMultiHashMap<EntityHandle, int> Ratings;
-		VirtualMultiHashSet<Guid> field_70;
+		MultiHashMap<EntityHandle, int> Ratings;
+		MultiHashSet<Guid> field_70;
 	};
 
 

@@ -136,8 +136,22 @@ inline bool Validate(ecs::EntityRef* g, Overload<ecs::EntityRef>)
 }
 
 template <class T>
-inline bool Validate(T** b, Overload<T*>)
+inline bool Validate(T** p, Overload<T*>)
 {
+	if (*p != nullptr) {
+		CHECK(!IsBadReadPtr(*p, sizeof(T)));
+	}
+
+	return true;
+}
+
+template <class T>
+inline bool ValidatePointer(T* p)
+{
+	if (p != nullptr) {
+		CHECK(!IsBadReadPtr(p, sizeof(*p)));
+	}
+
 	return true;
 }
 
@@ -166,9 +180,13 @@ bool ValidateRef(Array<TE>* v, Overload<Array<TE>>)
 		CHECK(v->capacity() <= 0x1000000);
 		CHECK(!IsBadReadPtr(v->raw_buf(), v->capacity() * sizeof(TE)));
 
-		if (!std::is_pointer_v<TE>) {
+		if constexpr (!std::is_pointer_v<TE>) {
 			for (auto& ele : *v) {
-				ValidateAny<TE>(&ele);
+				CHECK(ValidateAny<TE>(&ele));
+			}
+		} else {
+			for (auto& ele : *v) {
+				CHECK(ValidatePointer(ele));
 			}
 		}
 	}
@@ -189,9 +207,13 @@ bool ValidateRef(ObjectSet<TE>* v, Overload<ObjectSet<TE>>)
 		CHECK(v->Capacity <= 0x1000000);
 		CHECK(!IsBadReadPtr(v->Buf, v->Capacity * sizeof(TE)));
 
-		if (!std::is_pointer_v<TE>) {
+		if constexpr (!std::is_pointer_v<TE>) {
 			for (auto& ele : *v) {
-				ValidateAny<TE>(&ele);
+				CHECK(ValidateAny<TE>(&ele));
+			}
+		} else {
+			for (auto& ele : *v) {
+				CHECK(ValidatePointer(ele));
 			}
 		}
 	}
@@ -208,9 +230,36 @@ bool ValidateRef(StaticArray<TE>* v, Overload<StaticArray<TE>>)
 		CHECK(v->size() <= 0x1000000);
 		CHECK(!IsBadReadPtr(v->raw_buf(), v->size() * sizeof(TE)));
 
-		if (!std::is_pointer_v<TE>) {
+		if constexpr (!std::is_pointer_v<TE>) {
 			for (auto& ele : *v) {
-				ValidateAny<TE>(&ele);
+				CHECK(ValidateAny<TE>(&ele));
+			}
+		} else {
+			for (auto& ele : *v) {
+				CHECK(ValidatePointer(ele));
+			}
+		}
+	}
+
+	return true;
+}
+
+template <class TE>
+bool ValidateRef(StaticArray<TE>* v, uint32_t maxSize, Overload<StaticArray<TE>>)
+{
+	if (v->raw_buf() == nullptr) {
+		CHECK(v->size() == 0);
+	} else {
+		CHECK(v->size() <= 0x1000000);
+		CHECK(!IsBadReadPtr(v->raw_buf(), v->size() * sizeof(TE)));
+
+		if constexpr (!std::is_pointer_v<TE>) {
+			for (uint32_t i = 0; i < std::min(v->size(), maxSize); i++) {
+				CHECK(ValidateAny<TE>(&(*v)[i]));
+			}
+		} else {
+			for (uint32_t i = 0; i < std::min(v->size(), maxSize); i++) {
+				CHECK(ValidatePointer((*v)[i]));
 			}
 		}
 	}
@@ -277,12 +326,6 @@ bool ValidateRef(MultiHashSet<TK>* v, Overload<MultiHashSet<TK>>)
 
 	CHECK(v->Keys.size() == v->NextIds.size());
 
-	if (!std::is_pointer_v<TK>) {
-		for (auto& ele : v->Keys) {
-			ValidateAny<TK>(&ele);
-		}
-	}
-
 	return true;
 }
 
@@ -296,15 +339,9 @@ template <class TK, class TV>
 bool ValidateRef(MultiHashMap<TK, TV>* v, Overload<MultiHashMap<TK, TV>>)
 {
 	CHECK(ValidateRef(v, Overload<MultiHashSet<TK>>{}));
-	CHECK(ValidateRef(&v->Values, Overload<StaticArray<TV>>{}));
+	CHECK(ValidateRef(&v->Values, v->Keys.size(), Overload<StaticArray<TV>>{}));
 
-	CHECK(v->Keys.size() == v->Values.size());
-
-	if (!std::is_pointer_v<TV>) {
-		for (auto& ele : v->Values) {
-			ValidateAny<TV>(&ele);
-		}
-	}
+	CHECK(v->Values.size() >= v->Keys.size());
 
 	return true;
 }
@@ -318,8 +355,8 @@ bool ValidateRef(VirtualMultiHashMap<TK, TV>* v, Overload<VirtualMultiHashMap<TK
 template <class T>
 bool ValidateRef(T** v, Overload<T*>)
 {
-	if (v != nullptr) {
-		CHECK(!IsBadReadPtr(v, 1));
+	if (*v != nullptr) {
+		CHECK(!IsBadReadPtr(*v, sizeof(T)));
 	}
 
 	// TODO - pointer to pointer validation?
