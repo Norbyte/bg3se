@@ -295,7 +295,6 @@ namespace bg3se::esv::lua
 					auto bcn = helpers.GetEntityComponent<BoostsContainerComponent>(entity);
 					auto arm = helpers.GetEntityComponent<ActionResourceConsumeMultiplierBoost>(entity);
 					auto cp = helpers.GetEntityComponent<CombatParticipantComponent>(entity);
-					auto gc = helpers.GetEntityComponent<GenderComponent>(entity);
 					auto sc = helpers.GetEntityComponent<SpellContainerComponent>(entity);
 					auto t = helpers.GetEntityComponent<TagComponent>(entity);
 					auto ot = helpers.GetEntityComponent<OsirisTagComponent>(entity);

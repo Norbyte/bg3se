@@ -401,14 +401,6 @@ namespace bg3se
 		int Amount;
 	};
 
-	struct ACOverrideMinimumBoostComponent : public BaseComponent
-	{
-		static constexpr ExtComponentType ComponentType = ExtComponentType::ACOverrideMinimumBoost;
-
-	    int Amount;
-	    bool field_1C;
-	};
-
 	struct FallDamageMultiplierBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::FallDamageMultiplierBoost;

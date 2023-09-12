@@ -197,7 +197,7 @@ P_RO(LevelName)
 END_CLS()
 
 
-BEGIN_CLS(esv::ActiveComponent)
+BEGIN_CLS(ActiveComponent)
 INHERIT(BaseComponent)
 END_CLS()
 
@@ -308,13 +308,6 @@ INHERIT(BaseComponent)
 P(Value)
 P(Rarity)
 P(Unique)
-END_CLS()
-
-
-BEGIN_CLS(GenderComponent)
-INHERIT(BaseComponent)
-P(Gender1)
-P(Gender2)
 END_CLS()
 
 
@@ -718,12 +711,6 @@ P_REF(field_18)
 END_CLS()
 
 
-BEGIN_CLS(GodTagComponent)
-INHERIT(BaseComponent)
-P_REF(Tags)
-END_CLS()
-
-
 BEGIN_CLS(ClassTagComponent)
 INHERIT(BaseComponent)
 P_REF(Tags)
@@ -919,12 +906,6 @@ P_RO(field_28)
 END_CLS()
 
 
-BEGIN_CLS(InventorySlotComponent)
-INHERIT(BaseComponent)
-P_RO(Slot)
-END_CLS()
-
-
 BEGIN_CLS(SpellBookCooldownsComponent::Cooldown)
 P_REF(SpellId)
 P_RO(CooldownType)
@@ -999,12 +980,6 @@ INHERIT(BaseComponent)
 P_RO(field_18)
 P_RO(field_1A)
 P_RO(field_1C)
-END_CLS()
-
-
-BEGIN_CLS(CanBeInInventoryComponent)
-INHERIT(BaseComponent)
-P_RO(Flags)
 END_CLS()
 
 
@@ -1184,12 +1159,6 @@ P_RO(field_30)
 END_CLS()
 
 
-BEGIN_CLS(PlanTagComponent)
-INHERIT(BaseComponent)
-P_RO(Tags)
-END_CLS()
-
-
 BEGIN_CLS(RaceTagComponent)
 INHERIT(BaseComponent)
 P_RO(Tags)
@@ -1211,12 +1180,6 @@ END_CLS()
 BEGIN_CLS(BoostTagComponent)
 INHERIT(BaseComponent)
 P_RO(Tags)
-END_CLS()
-
-
-BEGIN_CLS(TriggerStateComponent)
-INHERIT(BaseComponent)
-P_REF(Triggers)
 END_CLS()
 
 
@@ -1243,14 +1206,6 @@ P_RO(field_18)
 P_RO(field_20)
 P_RO(field_28)
 P_RO(field_30)
-END_CLS()
-
-
-BEGIN_CLS(AnubisComponent)
-INHERIT(BaseComponent)
-P_RO(field_18)
-//P_RO(field_38)
-//P_RO(field_40)
 END_CLS()
 
 
@@ -1306,15 +1261,6 @@ END_CLS()
 BEGIN_CLS(FTBParticipantComponent)
 INHERIT(BaseComponent)
 P_RO(field_18)
-END_CLS()
-
-
-BEGIN_CLS(UnsheathInfoComponent)
-INHERIT(BaseComponent)
-P_RO(field_18)
-P_RO(field_19)
-P_RO(field_1A)
-P_RO(field_1B)
 END_CLS()
 
 

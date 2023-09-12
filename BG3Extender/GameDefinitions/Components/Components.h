@@ -225,11 +225,8 @@ namespace bg3se
 		bool field_28;
 	};
 
-	namespace esv
+	struct ActiveComponent : public BaseComponent
 	{
-		struct ActiveComponent : public BaseComponent
-		{
-			static constexpr ExtComponentType ComponentType = ExtComponentType::ServerActive;
-		};
-	}
+		static constexpr ExtComponentType ComponentType = ExtComponentType::Active;
+	};
 }

@@ -127,14 +127,6 @@ namespace bg3se
 		bool Unique;
 	};
 
-	struct GenderComponent : public BaseComponent
-	{
-		static constexpr ExtComponentType ComponentType = ExtComponentType::Gender;
-
-		Gender Gender1;
-		Gender Gender2;
-	};
-
 	struct WeaponComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Weapon;
@@ -582,13 +574,6 @@ namespace bg3se
 		uint8_t field_30;
 	};
 
-	struct PlanTagComponent : public BaseComponent
-	{
-		static constexpr ExtComponentType ComponentType = ExtComponentType::ServerPlanTag;
-
-		Array<Guid> Tags;
-	};
-
 	struct RaceTagComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ServerRaceTag;
@@ -615,13 +600,6 @@ namespace bg3se
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ServerBoostTag;
 
 		Array<Guid> Tags;
-	};
-
-	struct TriggerStateComponent : public BaseComponent
-	{
-		static constexpr ExtComponentType ComponentType = ExtComponentType::ServerTriggerState;
-
-		MultiHashSet<Guid> Triggers;
 	};
 
 	struct SafePositionComponent : public BaseComponent
@@ -721,13 +699,6 @@ namespace bg3se
 		static constexpr ExtComponentType ComponentType = ExtComponentType::OriginPassives;
 
 		Array<PassiveInfo> field_18;
-	};
-
-	struct GodTagComponent : public BaseComponent
-	{
-		static constexpr ExtComponentType ComponentType = ExtComponentType::GodTag;
-
-		Array<Guid> Tags;
 	};
 
 	struct ClassTagComponent : public BaseComponent
@@ -963,13 +934,6 @@ namespace bg3se
 		GameObjectVisualData VisualData;
 	};
 
-	struct InventorySlotComponent : public BaseComponent
-	{
-		static constexpr ExtComponentType ComponentType = ExtComponentType::InventorySlot;
-
-		uint16_t Slot;
-	};
-
 	struct SpellBookCooldownsComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::SpellBookCooldowns;
@@ -1055,13 +1019,6 @@ namespace bg3se
 		__int16 field_18;
 		__int16 field_1A;
 		__int16 field_1C;
-	};
-
-	struct CanBeInInventoryComponent : public BaseComponent
-	{
-		static constexpr ExtComponentType ComponentType = ExtComponentType::CanBeInInventory;
-
-		uint16_t Flags;
 	};
 
 	struct MovementComponent : public BaseComponent
@@ -1189,56 +1146,11 @@ namespace bg3se
 		int field_18;
 	};
 
-
-	struct AnubisComponent : public BaseComponent
-	{
-		static constexpr ExtComponentType ComponentType = ExtComponentType::Anubis;
-
-		struct Inner
-		{
-			__int64 field_0;
-			__int64 field_8;
-			__int64 field_10;
-			__int64 field_18;
-			__int64 field_20;
-			__int64 field_28;
-			__int64 field_30;
-			__int64 field_38;
-			__int64 field_40;
-			__int64 field_48;
-			__int64 field_50;
-			__int64 field_58;
-			uint8_t TypeId;
-		};
-
-		STDString field_18;
-		// FIXME - need remapping
-		/*int field_38;
-		Array<uint64_t> field_40;
-		uint8_t field_58;
-		Inner field_60;
-		uint8_t field_C8;
-		__int64 field_D0;
-		__int64 field_D8;
-		SomeSharedServerClientObjId2 field_E0;*/
-	};
-
 	struct FTBParticipantComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::FTBParticipant;
 
 		EntityHandle field_18;
-	};
-
-
-	struct UnsheathInfoComponent : public BaseComponent
-	{
-		static constexpr ExtComponentType ComponentType = ExtComponentType::UnsheathInfo;
-
-		uint8_t field_18;
-		uint8_t field_19;
-		uint8_t field_1A;
-		uint8_t field_1B;
 	};
 
 

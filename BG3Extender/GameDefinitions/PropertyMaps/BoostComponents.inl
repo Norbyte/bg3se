@@ -344,13 +344,6 @@ P(Amount)
 END_CLS()
 
 
-BEGIN_CLS(ACOverrideMinimumBoostComponent)
-INHERIT(BaseComponent)
-P(Amount)
-P(field_1C)
-END_CLS()
-
-
 BEGIN_CLS(FallDamageMultiplierBoostComponent)
 INHERIT(BaseComponent)
 P(Amount)
