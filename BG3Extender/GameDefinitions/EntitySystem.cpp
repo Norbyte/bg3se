@@ -449,9 +449,8 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 	MAP_COMPONENT("eoc::CustomStatsComponent", CustomStats);
 	MAP_COMPONENT("eoc::BoostConditionComponent", BoostCondition);
 	MAP_COMPONENT("eoc::BoostsContainerComponent", BoostsContainer);
-	MAP_COMPONENT("eoc::ActionResourceConsumeMultiplierBoostCompnent", ActionResourceConsumeMultiplierBoost);
+	MAP_COMPONENT("eoc::ActionResourceConsumeMultiplierBoostComponent", ActionResourceConsumeMultiplierBoost);
 	MAP_COMPONENT("eoc::combat::ParticipantComponent", CombatParticipant);
-	MAP_COMPONENT("eoc::GenderComponent", Gender);
 	MAP_COMPONENT("eoc::spell::ContainerComponent", SpellContainer);
 	MAP_COMPONENT("eoc::TagComponent", Tag);
 	MAP_COMPONENT("eoc::spell::BookPreparesComponent", SpellBookPrepares);
@@ -461,7 +460,7 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 	MAP_COMPONENT("ls::TransformComponent", Transform);
 	MAP_COMPONENT("eoc::PassiveContainerComponent", PassiveContainer);
 	MAP_COMPONENT("eoc::BoostInfoComponent", BoostInfo);
-	MAP_COMPONENT("eoc::RelationComponent", Relation);
+	MAP_COMPONENT("eoc::relation::RelationComponent", Relation);
 	MAP_COMPONENT("eoc::CanInteractComponent", CanInteract);
 	MAP_COMPONENT("eoc::CanSpeakComponent", CanSpeak);
 	MAP_COMPONENT("eoc::OriginComponent", Origin);
@@ -469,8 +468,8 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 
 
 	MAP_COMPONENT("eoc::BackgroundComponent", Background);
-	MAP_COMPONENT("eoc::GodComponent", God);
-	MAP_COMPONENT("eoc::LevelUpComponent", LevelUp);
+	MAP_COMPONENT("eoc::god::GodComponent", God);
+	MAP_COMPONENT("eoc::progression::LevelUpComponent", LevelUp);
 	MAP_COMPONENT("eoc::spell::PlayerPrepareSpellComponent", PlayerPrepareSpell);
 	MAP_COMPONENT("eoc::spell::CCPrepareSpellComponent", CCPrepareSpell);
 	MAP_COMPONENT("eoc::spell::CastComponent", SpellCast);
@@ -495,7 +494,6 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 	MAP_COMPONENT("eoc::hotbar::ContainerComponent", HotbarContainer);
 	MAP_COMPONENT("eoc::OriginTagComponent", OriginTag);
 	MAP_COMPONENT("eoc::OriginPassivesComponent", OriginPassives);
-	MAP_COMPONENT("eoc::GodTagComponent", GodTag);
 	MAP_COMPONENT("eoc::ClassTagComponent", ClassTag);
 	MAP_COMPONENT("eoc::BackgroundTagComponent", BackgroundTag);
 	MAP_COMPONENT("eoc::BackgroundPassivesComponent", BackgroundPassives);
@@ -515,11 +513,10 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 	MAP_COMPONENT("eoc::CanDoActionsComponent", CanDoActions);
 	MAP_COMPONENT("eoc::CanMoveComponent", CanMove);
 	MAP_COMPONENT("eoc::CanSenseComponent", CanSense);
-	MAP_COMPONENT("eoc::ConcentrationComponent", Concentration);
+	MAP_COMPONENT("eoc::concentration::ConcentrationComponent", Concentration);
 	MAP_COMPONENT("eoc::DarknessComponent", Darkness);
 	MAP_COMPONENT("eoc::DualWieldingComponent", DualWielding);
 	MAP_COMPONENT("eoc::GameObjectVisualComponent", GameObjectVisual);
-	MAP_COMPONENT("eoc::InventorySlotComponent", InventorySlot);
 	MAP_COMPONENT("eoc::spell::BookCooldownsComponent", SpellBookCooldowns);
 	MAP_COMPONENT("eoc::DisplayNameComponent", DisplayName);
 	MAP_COMPONENT("eoc::EquipableComponent", Equipable);
@@ -527,9 +524,7 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 	MAP_COMPONENT("eoc::ProgressionContainerComponent", ProgressionContainer);
 	MAP_COMPONENT("eoc::progression::MetaComponent", ProgressionMeta);
 	MAP_COMPONENT("eoc::RaceComponent", Race);
-	MAP_COMPONENT("eoc::sight::ReplicatedDataComponent", Sight);
 	MAP_COMPONENT("eoc::CanTravelComponent", CanTravel);
-	MAP_COMPONENT("eoc::CanBeInInventoryComponent", CanBeInInventory);
 	MAP_COMPONENT("eoc::MovementComponent", Movement);
 	MAP_COMPONENT("eoc::ObjectInteractionComponent", ObjectInteraction);
 	MAP_COMPONENT("eoc::PathingComponent", Pathing);
@@ -538,11 +533,10 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 	MAP_COMPONENT("eoc::spell::LearnedSpellsComponent", LearnedSpells);
 	MAP_COMPONENT("eoc::spell::AiConditionsComponent", SpellAiConditions);
 	MAP_COMPONENT("ls::ActiveSkeletonSlotsComponent", ActiveSkeletonSlots);
-	MAP_COMPONENT("ls::NetComponent", Net);
+	MAP_COMPONENT("esv::NetComponent", Net);
 	MAP_COMPONENT("ls::PhysicsComponent", Physics);
 	MAP_COMPONENT("eoc::ftb::ParticipantComponent", FTBParticipant);
-	MAP_COMPONENT("eoc::unsheath::InfoComponent", UnsheathInfo);
-	MAP_COMPONENT("eoc::approval::Ratings", ApprovalRatings);
+	MAP_COMPONENT("eoc::approval::RatingsComponent", ApprovalRatings);
 	MAP_COMPONENT("eoc::character_creation::AppearanceComponent", CharacterCreationAppearance);
 	MAP_COMPONENT("ls::uuid::Component", Uuid);
 	MAP_COMPONENT("ls::uuid::ToHandleMappingComponent", UuidToHandleMapping);
@@ -636,7 +630,6 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 	MAP_BOOST(CharacterWeaponDamageBoost);
 	MAP_BOOST(ProjectileDeflectBoost);
 	MAP_BOOST(AbilityOverrideMinimumBoost);
-	MAP_BOOST(ACOverrideMinimumBoost);
 	MAP_BOOST(FallDamageMultiplierBoost);
 
 	initialized_ = true;
@@ -652,8 +645,7 @@ void EntitySystemHelpersBase::MapComponentIndices(char const* componentName, Ext
 		handleIndexToTypeMappings_.insert(std::make_pair(it->second.HandleIndex, type));
 		handleIndexToComponentMappings_.insert(std::make_pair(it->second.HandleIndex, it->second.ComponentIndex));
 	} else {
-		// FIXME - disabled until we map the new component list
-		// OsiWarn("Could not find index for component: " << componentName);
+		OsiWarn("Could not find index for component: " << componentName);
 	}
 }
 
@@ -785,36 +777,33 @@ void ServerEntitySystemHelpers::Setup()
 	MapComponentIndices("esv::recruit::RecruitedByComponent", ExtComponentType::ServerRecruitedBy);
 	MapComponentIndices("esv::GameTimerComponent", ExtComponentType::ServerGameTimer);
 	MapComponentIndices("esv::exp::ExperienceGaveOutComponent", ExtComponentType::ServerExperienceGaveOut);
-	MapComponentIndices("esv::ReplicationDependencyComponent", ExtComponentType::ServerReplicationDependency);
+	MapComponentIndices("esv::replication::ReplicationDependencyComponent", ExtComponentType::ServerReplicationDependency);
 	MapComponentIndices("esv::summon::IsUnsummoningComponent", ExtComponentType::ServerIsUnsummoning);
 	MapComponentIndices("esv::combat::FleeBlockedComponent", ExtComponentType::ServerFleeBlocked);
 	MapComponentIndices("esv::ActivationGroupContainerComponent", ExtComponentType::ServerActivationGroupContainer);
-	MapComponentIndices("esv::AnubisTagComponent", ExtComponentType::ServerAnubisTag);
-	MapComponentIndices("esv::DialogTagComponent", ExtComponentType::ServerDialogTag);
+	MapComponentIndices("esv::tags::AnubisTagComponent", ExtComponentType::ServerAnubisTag);
+	MapComponentIndices("esv::tags::DialogTagComponent", ExtComponentType::ServerDialogTag);
 	MapComponentIndices("esv::DisplayNameListComponent", ExtComponentType::ServerDisplayNameList);
 	MapComponentIndices("esv::IconListComponent", ExtComponentType::ServerIconList);
-	MapComponentIndices("esv::PlanTagComponent", ExtComponentType::ServerPlanTag);
-	MapComponentIndices("esv::RaceTagComponent", ExtComponentType::ServerRaceTag);
-	MapComponentIndices("esv::TemplateTagComponent", ExtComponentType::ServerTemplateTag);
+	MapComponentIndices("esv::tags::RaceTagComponent", ExtComponentType::ServerRaceTag);
+	MapComponentIndices("esv::tags::TemplateTagComponent", ExtComponentType::ServerTemplateTag);
 	MapComponentIndices("esv::passive::ToggledPassivesComponent", ExtComponentType::ServerToggledPassives);
-	MapComponentIndices("esv::BoostTagComponent", ExtComponentType::ServerBoostTag);
-	MapComponentIndices("esv::TriggerStateComponent", ExtComponentType::ServerTriggerState);
+	MapComponentIndices("esv::tags::BoostTagComponent", ExtComponentType::ServerBoostTag);
 	MapComponentIndices("esv::SafePositionComponent", ExtComponentType::ServerSafePosition);
 	MapComponentIndices("esv::AnubisExecutorComponent", ExtComponentType::ServerAnubisExecutor);
 	MapComponentIndices("esv::LeaderComponent", ExtComponentType::ServerLeader);
 	MapComponentIndices("esv::BreadcrumbComponent", ExtComponentType::ServerBreadcrumb);
 	MapComponentIndices("esv::death::DelayDeathCauseComponent", ExtComponentType::ServerDelayDeathCause);
 	MapComponentIndices("esv::pickpocket::PickpocketComponent", ExtComponentType::ServerPickpocket);
-	MapComponentIndices("esv::ReplicationDependencyOwnerComponent", ExtComponentType::ServerReplicationDependencyOwner);
+	MapComponentIndices("esv::replication::ReplicationDependencyOwnerComponent", ExtComponentType::ServerReplicationDependencyOwner);
 
 	MapComponentIndices("ls::StaticPhysicsComponent", ExtComponentType::StaticPhysics);
-	MapComponentIndices("ls::anubis::Component", ExtComponentType::Anubis);
 
 	MapComponentIndices("esv::Character", ExtComponentType::ServerCharacter);
 	MapComponentIndices("esv::Item", ExtComponentType::ServerItem);
 	MapComponentIndices("esv::Projectile", ExtComponentType::ServerProjectile);
-	MapComponentIndices("esv::OsirisTagComponent", ExtComponentType::ServerOsirisTag);
-	MapComponentIndices("esv::ActiveComponent", ExtComponentType::ServerActive);
+	MapComponentIndices("esv::tags::OsirisTagComponent", ExtComponentType::ServerOsirisTag);
+	MapComponentIndices("eoc::ActiveComponent", ExtComponentType::Active);
 }
 
 void ClientEntitySystemHelpers::Setup()
