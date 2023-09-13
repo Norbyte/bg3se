@@ -99,6 +99,7 @@ namespace bg3se
 		struct Item : public IEoCServerObject
 		{
 			static constexpr ExtComponentType ComponentType = ExtComponentType::ServerItem;
+			static constexpr auto EngineClass = "esv::Item";
 
 			FixedString GUID; // Part of IEoCServerObject?
 			NetId NetID; // Part of IEoCServerObject?

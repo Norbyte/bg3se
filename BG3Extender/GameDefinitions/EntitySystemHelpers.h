@@ -219,7 +219,7 @@ public:
 protected:
 	static constexpr int32_t UndefinedIndex{ -1 };
 
-	void MapComponentIndices(char const* componentName, ExtComponentType type);
+	void MapComponentIndices(char const* componentName, ExtComponentType type, std::size_t size);
 	void MapQueryIndex(char const* name, ExtQueryType type);
 	void MapResourceManagerIndex(char const* componentName, ExtResourceManagerType type);
 	void UpdateComponentMappings();

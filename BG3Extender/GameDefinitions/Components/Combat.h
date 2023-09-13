@@ -8,6 +8,7 @@ namespace bg3se
 	struct CombatParticipantComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::CombatParticipant;
+		static constexpr auto EngineClass = "eoc::combat::ParticipantComponent";
 
 		EntityHandle CombatHandle;
 		FixedString CombatGroupId;
@@ -24,6 +25,7 @@ namespace bg3se
 	struct CombatStateComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::CombatState;
+		static constexpr auto EngineClass = "eoc::combat::StateComponent";
 
 		Guid MyGuid;
 		MultiHashMap<EntityHandle, int32_t> Initiatives;
@@ -40,6 +42,7 @@ namespace bg3se
 	struct TurnBasedComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::TurnBased;
+		static constexpr auto EngineClass = "eoc::TurnBasedComponent";
 		
 		uint8_t field_18;
 		uint8_t field_19;
@@ -57,6 +60,7 @@ namespace bg3se
 	struct TurnOrderComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::TurnOrder;
+		static constexpr auto EngineClass = "eoc::TurnOrderComponent";
 
 		struct ParticipantHandleInfo
 		{

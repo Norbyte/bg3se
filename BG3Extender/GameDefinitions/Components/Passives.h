@@ -8,6 +8,7 @@ namespace bg3se
 	struct PassiveContainerComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::PassiveContainer;
+		static constexpr auto EngineClass = "eoc::PassiveContainerComponent";
 
 		Array<void*> field_18;
 		Array<void*> field_30;
@@ -16,6 +17,7 @@ namespace bg3se
 	struct PassiveComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Passive;
+		static constexpr auto EngineClass = "eoc::PassiveComponent";
 
 		int field_18;
 		FixedString PassiveId;

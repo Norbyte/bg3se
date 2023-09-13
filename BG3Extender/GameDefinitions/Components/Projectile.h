@@ -47,6 +47,7 @@ namespace bg3se::esv
 	struct Projectile : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ServerProjectile;
+		static constexpr auto EngineClass = "esv::Projectile";
 
 		void* TEMP_PAD;
 		FixedString field_20;

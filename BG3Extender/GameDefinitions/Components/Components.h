@@ -9,6 +9,7 @@ namespace bg3se
 	struct UuidComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Uuid;
+		static constexpr auto EngineClass = "ls::uuid::Component";
 
 		Guid EntityUuid;
 	};
@@ -16,6 +17,7 @@ namespace bg3se
 	struct UuidToHandleMappingComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::UuidToHandleMapping;
+		static constexpr auto EngineClass = "ls::uuid::ToHandleMappingComponent";
 
 		MultiHashMap<Guid, EntityHandle> Mappings;
 	};
@@ -23,6 +25,7 @@ namespace bg3se
 	struct TransformComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Transform;
+		static constexpr auto EngineClass = "ls::TransformComponent";
 
 		Transform Transform;
 		float field_9C;
@@ -31,6 +34,7 @@ namespace bg3se
 	struct ActionResourcesComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ActionResources;
+		static constexpr auto EngineClass = "eoc::ActionResourcesComponent";
 
 		struct Amount
 		{
@@ -57,6 +61,7 @@ namespace bg3se
 	struct HearingComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Hearing;
+		static constexpr auto EngineClass = "eoc::HearingComponent";
 
 		float Sight;
 		float Hearing;
@@ -85,6 +90,7 @@ namespace bg3se
 	struct SpellBookComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::SpellBook;
+		static constexpr auto EngineClass = "eoc::spell::BookComponent";
 
 		uint64_t field_0;
 		Array<SpellBookEntry> Spells;
@@ -101,6 +107,7 @@ namespace bg3se
 	struct SurfacePathInfluencesComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::SurfacePathInfluences;
+		static constexpr auto EngineClass = "eoc::SurfacePathInfluencesComponent";
 
 		Array<SurfacePathInfluence> PathInfluences;
 	};
@@ -108,6 +115,7 @@ namespace bg3se
 	struct UseComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Use;
+		static constexpr auto EngineClass = "eoc::UseComponent";
 
 		__int64 field_18_PTR;
 		int field_20;
@@ -129,6 +137,7 @@ namespace bg3se
 	struct WieldingComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Wielding;
+		static constexpr auto EngineClass = "eoc::WieldingComponent";
 
 		EntityHandle Owner;
 	};
@@ -136,6 +145,7 @@ namespace bg3se
 	struct ActionResourceConsumeMultiplierBoostComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ActionResourceConsumeMultiplierBoost;
+		static constexpr auto EngineClass = "eoc::ActionResourceConsumeMultiplierBoostComponent";
 
 		Guid ResourceUUID;
 		int Multiplier;
@@ -145,6 +155,7 @@ namespace bg3se
 	struct SpellContainerComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::SpellContainer;
+		static constexpr auto EngineClass = "eoc::spell::ContainerComponent";
 
 		struct Spell
 		{
@@ -165,6 +176,7 @@ namespace bg3se
 	struct TagComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Tag;
+		static constexpr auto EngineClass = "eoc::TagComponent";
 
 		Array<Guid> Tags;
 	};
@@ -172,6 +184,7 @@ namespace bg3se
 	struct OsirisTagComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ServerOsirisTag;
+		static constexpr auto EngineClass = "esv::tags::OsirisTagComponent";
 
 		Array<Guid> Tags;
 	};
@@ -179,6 +192,7 @@ namespace bg3se
 	struct SpellBookPreparesComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::SpellBookPrepares;
+		static constexpr auto EngineClass = "eoc::spell::BookPreparesComponent";
 
 		Array<SpellIdBase> PreparedSpells;
 		MultiHashMap<Guid, int> field_30;
@@ -188,6 +202,7 @@ namespace bg3se
 	struct RelationComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Relation;
+		static constexpr auto EngineClass = "eoc::relation::RelationComponent";
 
 		Guid field_18;
 		Guid field_28;
@@ -197,6 +212,7 @@ namespace bg3se
 	struct CanInteractComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::CanInteract;
+		static constexpr auto EngineClass = "eoc::CanInteractComponent";
 
 		uint16_t Flags;
 	};
@@ -204,6 +220,7 @@ namespace bg3se
 	struct CanSpeakComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::CanSpeak;
+		static constexpr auto EngineClass = "eoc::CanSpeakComponent";
 
 		uint16_t Flags;
 	};
@@ -211,6 +228,7 @@ namespace bg3se
 	struct OriginComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Origin;
+		static constexpr auto EngineClass = "eoc::OriginComponent";
 
 		Guid field_18;
 		FixedString Origin;
@@ -219,6 +237,7 @@ namespace bg3se
 	struct LevelComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Level;
+		static constexpr auto EngineClass = "ls::LevelComponent";
 
 		FixedString LevelName;
 		EntityHandle field_20;
@@ -228,5 +247,6 @@ namespace bg3se
 	struct ActiveComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Active;
+		static constexpr auto EngineClass = "eoc::ActiveComponent";
 	};
 }

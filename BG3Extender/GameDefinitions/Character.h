@@ -168,6 +168,7 @@ namespace bg3se
 		struct Character : public IEoCServerObject
 		{
 			static constexpr ExtComponentType ComponentType = ExtComponentType::ServerCharacter;
+			static constexpr auto EngineClass = "esv::Character";
 
 			Status* GetStatus(ComponentHandle statusHandle) const;
 			Status* GetStatus(NetId handle) const;
