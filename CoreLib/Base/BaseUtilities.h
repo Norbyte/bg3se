@@ -97,13 +97,13 @@ namespace bg3se
 		inline constexpr TypedIntegral(TypedIntegral<TValue, Tag> const& t) : value_(t.value_) {}
 		inline constexpr TypedIntegral(TValue const& val) : value_(val) {}
 
-		inline TypedIntegral<TValue, Tag>& operator = (TValue const& val)
+		inline constexpr TypedIntegral<TValue, Tag>& operator = (TValue const& val)
 		{
 			value_ = val;
 			return *this;
 		}
 
-		inline TypedIntegral<TValue, Tag>& operator = (TypedIntegral<TValue, Tag> const& val)
+		inline constexpr TypedIntegral<TValue, Tag>& operator = (TypedIntegral<TValue, Tag> const& val)
 		{
 			value_ = val.value_;
 			return *this;
@@ -189,27 +189,27 @@ namespace bg3se
 	};
 
 
-	inline uint64_t Hash(uint8_t v)
+	inline constexpr uint64_t Hash(uint8_t v)
 	{
 		return v;
 	}
 
-	inline uint64_t Hash(uint16_t v)
+	inline constexpr uint64_t Hash(uint16_t v)
 	{
 		return v;
 	}
 
-	inline uint64_t Hash(uint32_t v)
+	inline constexpr uint64_t Hash(uint32_t v)
 	{
 		return v;
 	}
 
-	inline uint64_t Hash(int32_t v)
+	inline constexpr uint64_t Hash(int32_t v)
 	{
 		return v;
 	}
 
-	inline uint64_t Hash(uint64_t v)
+	inline constexpr uint64_t Hash(uint64_t v)
 	{
 		return v;
 	}
@@ -239,15 +239,15 @@ namespace bg3se
 	template <class T>
 	struct ByValReturn
 	{
-		inline ByValReturn()
+		inline constexpr ByValReturn()
 			: Object(nullptr)
 		{}
 	
-		inline ByValReturn(T* obj)
+		inline constexpr ByValReturn(T* obj)
 			: Object(obj)
 		{}
 
-		inline operator T*() const
+		inline constexpr operator T*() const
 		{
 			return Object;
 		}
@@ -259,15 +259,15 @@ namespace bg3se
 	template <class T>
 	struct RefReturn
 	{
-		inline RefReturn()
+		inline constexpr RefReturn()
 			: Object(nullptr)
 		{}
 	
-		inline RefReturn(T* obj)
+		inline constexpr RefReturn(T* obj)
 			: Object(obj)
 		{}
 
-		inline operator T*() const
+		inline constexpr operator T*() const
 		{
 			return Object;
 		}
@@ -279,20 +279,20 @@ namespace bg3se
 	template <class T>
 	struct ProxyParam
 	{
-		inline ProxyParam()
+		inline constexpr ProxyParam()
 			: Object(nullptr)
 		{}
 	
-		inline ProxyParam(T* obj)
+		inline constexpr ProxyParam(T* obj)
 			: Object(obj)
 		{}
 
-		inline operator T*() const
+		inline constexpr operator T*() const
 		{
 			return Object;
 		}
 
-		inline T* operator ->() const
+		inline constexpr T* operator ->() const
 		{
 			return Object;
 		}
@@ -369,7 +369,7 @@ namespace std
 		typedef bg3se::TypedIntegral<UnderlyingType, Tag> argument_type;
 		typedef std::size_t result_type;
 
-		result_type operator()(argument_type const& v) const noexcept
+		constexpr result_type operator()(argument_type const& v) const noexcept
 		{
 			return std::hash<UnderlyingType>{}(v.Value());
 		}

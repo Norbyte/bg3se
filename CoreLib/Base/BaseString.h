@@ -202,22 +202,22 @@ namespace bg3se
 	{
 		uint64_t Val[2]{ 0 };
 
-		inline operator bool() const
+		inline constexpr operator bool() const
 		{
 			return Val[0] != 0 || Val[1] != 0;
 		}
 
-		inline bool operator !() const
+		inline constexpr bool operator !() const
 		{
 			return Val[0] == 0 && Val[1] == 0;
 		}
 
-		inline bool operator ==(Guid const& o) const
+		inline constexpr bool operator ==(Guid const& o) const
 		{
 			return Val[0] == o.Val[0] && Val[1] == o.Val[1];
 		}
 
-		inline bool operator !=(Guid const& o) const
+		inline constexpr bool operator !=(Guid const& o) const
 		{
 			return Val[0] != o.Val[0] || Val[1] != o.Val[1];
 		}
@@ -227,7 +227,7 @@ namespace bg3se
 		static std::optional<Guid> ParseGuidString(StringView nameGuid);
 	};
 
-	inline uint64_t Hash(Guid const& h)
+	inline constexpr uint64_t Hash(Guid const& h)
 	{
 		return h.Val[0] ^ h.Val[1];
 	}

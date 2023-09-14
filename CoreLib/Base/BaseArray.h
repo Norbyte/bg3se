@@ -160,6 +160,11 @@ struct CompactSet
 		return *this;
 	}
 
+	inline unsigned int size() const
+	{
+		return Size;
+	}
+
 	inline T const& operator [] (uint32_t index) const
 	{
 		return Buf[index];
@@ -276,6 +281,15 @@ struct Set : public CompactSet<T, Allocator, StoreSize>
 		else {
 			return 1;
 		}
+	}
+
+	void push_back(T const& value)
+	{
+		if (this->Capacity <= this->Size) {
+			this->Reallocate(CapacityIncrement());
+		}
+
+		new (&this->Buf[this->Size++]) T(value);
 	}
 
 	void Add(T const& value)

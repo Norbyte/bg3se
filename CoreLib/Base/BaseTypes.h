@@ -109,65 +109,65 @@ namespace bg3se
 
 		uint64_t Handle;
 
-		inline TypedHandle()
+		inline constexpr TypedHandle()
 			: Handle(NullHandle)
 		{}
 
-		explicit inline TypedHandle(uint64_t handle)
+		explicit inline constexpr TypedHandle(uint64_t handle)
 			: Handle(handle)
 		{}
 
-		explicit inline TypedHandle(int64_t handle)
+		explicit inline constexpr TypedHandle(int64_t handle)
 			: Handle((uint64_t)handle)
 		{}
 
-		inline TypedHandle(uint64_t type, uint64_t index, uint64_t salt)
+		inline constexpr TypedHandle(uint64_t type, uint64_t index, uint64_t salt)
 		{
 			assert(type < 0x400 && salt < 0x400000);
 			Handle = index | (salt << 32) | (type << 54);
 		}
 
-		inline TypedHandle(TypedHandle const & oh)
+		inline constexpr TypedHandle(TypedHandle const & oh)
 			: Handle(oh.Handle)
 		{}
 
-		inline TypedHandle& operator = (TypedHandle const & oh)
+		inline constexpr TypedHandle& operator = (TypedHandle const & oh)
 		{
 			Handle = oh.Handle;
 			return *this;
 		}
 
-		inline bool operator == (TypedHandle const & oh) const
+		inline constexpr bool operator == (TypedHandle const & oh) const
 		{
 			return Handle == oh.Handle;
 		}
 
-		inline uint32_t GetType() const
+		inline constexpr uint32_t GetType() const
 		{
 			return Handle >> 54;
 		}
 
-		inline uint32_t GetSalt() const
+		inline constexpr uint32_t GetSalt() const
 		{
 			return (Handle >> 32) & 0x3fffff;
 		}
 
-		inline uint32_t GetIndex() const
+		inline constexpr uint32_t GetIndex() const
 		{
 			return (uint32_t)(Handle & 0xffffffff);
 		}
 
-		explicit inline operator bool() const
+		explicit inline constexpr operator bool() const
 		{
 			return Handle != NullHandle;
 		}
 
-		inline bool operator !() const
+		inline constexpr bool operator !() const
 		{
 			return Handle == NullHandle;
 		}
 
-		explicit inline operator int64_t() const
+		explicit inline constexpr operator int64_t() const
 		{
 			return (int64_t)Handle;
 		}
@@ -178,9 +178,10 @@ namespace bg3se
 
 	using EntityHandle = TypedHandle<EntityHandleTag>;
 	using ComponentHandle = TypedHandle<GenericComponentHandleTag>;
+	static constexpr auto NullEntityHandle = EntityHandle{ EntityHandle::NullHandle };
 
 	template <class T>
-	inline uint64_t Hash(TypedHandle<T> const& h)
+	inline constexpr uint64_t Hash(TypedHandle<T> const& h)
 	{
 		return h.Handle;
 	}
