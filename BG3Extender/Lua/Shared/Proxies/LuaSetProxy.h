@@ -52,32 +52,20 @@ namespace bg3se::lua
 
 		bool HasElement(lua_State* L, int luaIndex) override
 		{
-			T element;
-			lua_pushvalue(L, luaIndex);
-			LuaRead(L, element);
-			lua_pop(L, 1);
-
+			auto element = get<T>(L, luaIndex);
 			return object_->FindIndex(element) != -1;
 		}
 
 		bool AddElement(lua_State* L, int luaIndex) override
 		{
-			T element;
-			lua_pushvalue(L, luaIndex);
-			LuaRead(L, element);
-			lua_pop(L, 1);
-
+			auto element = get<T>(L, luaIndex);
 			object_->Add(element);
 			return true;
 		}
 
 		bool RemoveElement(lua_State* L, int luaIndex) override
 		{
-			T element;
-			lua_pushvalue(L, luaIndex);
-			LuaRead(L, element);
-			lua_pop(L, 1);
-
+			auto element = get<T>(L, luaIndex);
 			auto index = object_->FindIndex(element);
 			// FIXME - add support for remove() in hashsets!
 			// object_->RemoveIndex(index);
@@ -93,7 +81,7 @@ namespace bg3se::lua
 		{
 			if (key >= -1 && key < (int)object_->Keys.Size() - 1) {
 				push(L, ++key);
-				LuaWrite(L, object_->Keys[key]);
+				PushAny(L, &object_->Keys[key], lifetime_);
 				return 2;
 			} else {
 				return 0;
@@ -182,29 +170,4 @@ namespace bg3se::lua
 		static constexpr bool Value = true;
 		using TKey = TK;
 	};
-
-	template <class T>
-	inline void push_set_proxy(lua_State* L, LifetimeHandle const& lifetime, T* v)
-	{
-		SetProxy::Make<T>(L, v, lifetime);
-	}
-
-	template <class T>
-	inline T* checked_get_set_proxy(lua_State* L, int index)
-	{
-		auto proxy = Userdata<SetProxy>::CheckUserData(L, index);
-		auto const& typeName = GetTypeInfo<T>().TypeName.GetString();
-		if (strcmp(proxy->GetImpl()->GetTypeName(), typeName) == 0) {
-			auto obj = proxy->Get<T>();
-			if (obj == nullptr) {
-				luaL_error(L, "Argument %d: got Set<%s> whose lifetime has expired", index, typeName);
-				return nullptr;
-			} else {
-				return obj;
-			}
-		} else {
-			luaL_error(L, "Argument %d: expected Set<%s>, got Set<%s>", index, typeName, proxy->GetImpl()->GetTypeName());
-			return nullptr;
-		}
-	}
 }
