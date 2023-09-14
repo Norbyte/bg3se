@@ -8,7 +8,7 @@ P_RO(UniqueName)
 END_CLS()
 
 BEGIN_CLS(LuaExpressionBase)
-P_REF(ExpressionParams)
+P(ExpressionParams)
 P(Code)
 END_CLS()
 
@@ -25,7 +25,7 @@ END_CLS()
 
 BEGIN_CLS(stats::Functor)
 P_RO(UniqueName)
-P_REF(RollConditions)
+P(RollConditions)
 // TODO - Conditions object access
 P_RO(StatsConditionsId)
 // P_BITMASK(PropertyContext)

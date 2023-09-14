@@ -7,7 +7,7 @@ END_CLS()
 
 BEGIN_CLS(BoostsContainerComponent)
 INHERIT(BaseComponent)
-P_REF(Boosts)
+P(Boosts)
 END_CLS()
 
 
@@ -28,7 +28,7 @@ P(Passive)
 P(Cause_M)
 P(field_38)
 P(OwnerEntity)
-P_REF(Params)
+P(Params)
 P(field_90)
 END_CLS()
 
@@ -50,7 +50,7 @@ END_CLS()
 BEGIN_CLS(RollBonusBoostComponent)
 INHERIT(BaseComponent)
 P(RollType)
-P_REF(Amount)
+P(Amount)
 P(Ability)
 P(Skill)
 END_CLS()
@@ -62,7 +62,7 @@ P(AdvantageType)
 P(Type)
 P(Ability)
 P(Skill)
-P_REF(Tags)
+P(Tags)
 END_CLS()
 
 
@@ -98,7 +98,7 @@ END_CLS()
 
 BEGIN_CLS(WeaponDamageResistanceBoostComponent)
 INHERIT(BaseComponent)
-P_REF(DamageTypes)
+P(DamageTypes)
 END_CLS()
 
 
@@ -153,7 +153,7 @@ END_CLS()
 
 BEGIN_CLS(IncreaseMaxHPBoostComponent)
 INHERIT(BaseComponent)
-P_REF(HP)
+P(HP)
 END_CLS()
 
 
@@ -167,19 +167,19 @@ END_CLS()
 BEGIN_CLS(StatusImmunityBoostComponent)
 INHERIT(BaseComponent)
 P(StatusID)
-P_REF(UnknownUUIDs)
+P(UnknownUUIDs)
 END_CLS()
 
 
 BEGIN_CLS(UseBoostsComponent)
 INHERIT(BaseComponent)
-P_REF(Boosts)
+P(Boosts)
 END_CLS()
 
 
 BEGIN_CLS(TemporaryHPBoostComponent)
 INHERIT(BaseComponent)
-P_REF(HP)
+P(HP)
 END_CLS()
 
 

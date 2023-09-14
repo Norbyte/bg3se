@@ -80,6 +80,9 @@ namespace bg3se
 		static constexpr bool Value = std::is_integral_v<T> || std::is_floating_point_v<T> || std::is_enum_v<T>;
 	};
 
+	template <class T>
+	constexpr bool IsByVal = ByVal<T>::Value;
+
 #define BY_VAL(cls) template<> struct ByVal<cls> { static constexpr bool Value = true; }
 
 	// Prevents implicit casting between aliases of integral types (eg. NetId and UserId)

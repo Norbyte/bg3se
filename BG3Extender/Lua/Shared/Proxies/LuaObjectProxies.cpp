@@ -78,13 +78,10 @@ PropertyOperationResult CharacterSetFlag(lua_State* L, LifetimeHandle const& lif
 #define INHERIT(base)
 #define P(prop)
 #define P_RO(prop)
-#define P_REF(prop)
-#define P_REF_TY(prop, ty)
 #define P_BITMASK(prop)
 #define P_BITMASK_GETTER_SETTER(prop, getter, setter)
 #define PN(name, prop)
 #define PN_RO(name, prop)
-#define PN_REF(name, prop)
 #define P_GETTER(prop, fun)
 #define P_GETTER_SETTER(prop, getter, setter)
 #define P_FUN(prop, fun)
@@ -98,13 +95,10 @@ PropertyOperationResult CharacterSetFlag(lua_State* L, LifetimeHandle const& lif
 #undef INHERIT
 #undef P
 #undef P_RO
-#undef P_REF
-#undef P_REF_TY
 #undef P_BITMASK
 #undef P_BITMASK_GETTER_SETTER
 #undef PN
 #undef PN_RO
-#undef PN_REF
 #undef P_GETTER
 #undef P_GETTER_SETTER
 #undef P_FUN
@@ -155,22 +149,6 @@ PropertyOperationResult CharacterSetFlag(lua_State* L, LifetimeHandle const& lif
 		offsetof(PM::ObjectType, prop) \
 	);
 
-#define P_REF(prop) \
-	pm.AddRawProperty(#prop, \
-		&(GenericGetOffsetRefProperty<decltype(PM::ObjectType::prop)>), \
-		&GenericSetNonWriteableProperty, \
-		&(GenericValidateOffsetProperty<decltype(PM::ObjectType::prop)>), \
-		offsetof(PM::ObjectType, prop) \
-	);
-
-#define P_REF_TY(prop, ty) \
-	pm.AddRawProperty(#prop, \
-		&(GenericGetOffsetRefProperty<ty>), \
-		&GenericSetNonWriteableProperty, \
-		&(GenericValidateOffsetProperty<ty>), \
-		offsetof(PM::ObjectType, prop) \
-	);
-
 #define P_BITMASK(prop) AddBitmaskProperty<decltype(PM::ObjectType::prop)>(pm, offsetof(PM::ObjectType, prop));
 
 #define P_BITMASK_GETTER_SETTER(prop, getter, setter) \
@@ -196,14 +174,6 @@ PropertyOperationResult CharacterSetFlag(lua_State* L, LifetimeHandle const& lif
 	pm.AddRawProperty(#name, \
 		&(GenericGetOffsetProperty<decltype(PM::ObjectType::prop)>), \
 		&GenericSetReadOnlyProperty, \
-		&(GenericValidateOffsetProperty<decltype(PM::ObjectType::prop)>), \
-		offsetof(PM::ObjectType, prop) \
-	);
-
-#define PN_REF(name, prop) \
-	pm.AddRawProperty(#name, \
-		&(GenericGetOffsetRefProperty<decltype(PM::ObjectType::prop)>), \
-		&GenericSetNonWriteableProperty, \
 		&(GenericValidateOffsetProperty<decltype(PM::ObjectType::prop)>), \
 		offsetof(PM::ObjectType, prop) \
 	);
@@ -254,13 +224,10 @@ PropertyOperationResult CharacterSetFlag(lua_State* L, LifetimeHandle const& lif
 #undef INHERIT
 #undef P
 #undef P_RO
-#undef P_REF
-#undef P_REF_TY
 #undef P_BITMASK
 #undef P_BITMASK_GETTER_SETTER
 #undef PN
 #undef PN_RO
-#undef PN_REF
 #undef P_GETTER
 #undef P_GETTER_SETTER
 #undef P_FUN

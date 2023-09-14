@@ -20,21 +20,21 @@ inline void MakeObjectRef(lua_State* L, T* value, LifetimeHandle const& lifetime
 	if constexpr (LuaPolymorphic<T>::IsPolymorphic) {
 		return LuaPolymorphic<T>::MakeRef(L, value, lifetime);
 	} else if constexpr (IsArrayLike<T>::Value) {
-		if constexpr (ByVal<typename IsArrayLike<T>::TElement>::Value) {
+		if constexpr (IsByVal<typename IsArrayLike<T>::TElement>) {
 			ArrayProxy::MakeByVal<typename IsArrayLike<T>::TElement>(L, value, lifetime);
 		} else {
 			ArrayProxy::MakeByRef<typename IsArrayLike<T>::TElement>(L, value, lifetime);
 		}
 	} else if constexpr (IsMapLike<T>::Value) {
-		static_assert(ByVal<typename IsMapLike<T>::TKey>::Value, "Map key is a type that we cannot serialize by-value?");
+		static_assert(IsByVal<typename IsMapLike<T>::TKey>, "Map key is a type that we cannot serialize by-value?");
 
-		if constexpr (ByVal<typename IsMapLike<T>::TValue>::Value) {
+		if constexpr (IsByVal<typename IsMapLike<T>::TValue>) {
 			MapProxy::MakeByVal(L, value, lifetime);
 		} else {
 			MapProxy::MakeByRef(L, value, lifetime);
 		}
 	} else if constexpr (IsSetLike<T>::Value) {
-		static_assert(ByVal<typename IsSetLike<T>::TKey>::Value, "Set key is a type that we cannot serialize by-value?");
+		static_assert(IsByVal<typename IsSetLike<T>::TKey>, "Set key is a type that we cannot serialize by-value?");
 		SetProxy::Make(L, value, lifetime);
 	} else if constexpr (std::is_pointer_v<T>) {
 		if constexpr (std::is_const_v<std::remove_pointer_t<T>>) {
@@ -78,18 +78,28 @@ inline auto MakeObjectRef(lua_State* L, T* value)
 template <class T>
 PropertyOperationResult GenericGetOffsetProperty(lua_State* L, LifetimeHandle const& lifetime, void* obj, std::size_t offset, uint64_t)
 {
-	auto* value = (T*)((std::uintptr_t)obj + offset);
-	return (LuaWrite(L, *value) == 1) ? PropertyOperationResult::Success : PropertyOperationResult::Unknown;
+	if constexpr (IsByVal<T>) {
+		auto* value = (T*)((std::uintptr_t)obj + offset);
+		return (LuaWrite(L, *value) == 1) ? PropertyOperationResult::Success : PropertyOperationResult::Unknown;
+	} else {
+		auto* value = (T*)((std::uintptr_t)obj + offset);
+		MakeObjectRef(L, value, lifetime);
+		return PropertyOperationResult::Success;
+	}
 }
 
 template <class T>
 PropertyOperationResult GenericSetOffsetProperty(lua_State* L, LifetimeHandle const& lifetime, void* obj, int index, std::size_t offset, uint64_t)
 {
-	auto* value = (T*)((std::uintptr_t)obj + offset);
-	lua_pushvalue(L, index);
-	LuaRead(L, *value);
-	lua_pop(L, 1);
-	return PropertyOperationResult::Success;
+	if constexpr (IsByVal<T>) {
+		auto* value = (T*)((std::uintptr_t)obj + offset);
+		lua_pushvalue(L, index);
+		LuaRead(L, *value);
+		lua_pop(L, 1);
+		return PropertyOperationResult::Success;
+	} else {
+		return PropertyOperationResult::UnsupportedType;
+	}
 }
 
 template <class UnderlyingType>
@@ -111,14 +121,6 @@ PropertyOperationResult GenericSetOffsetBitmaskFlag(lua_State* L, LifetimeHandle
 		*value &= (UnderlyingType)~flag;
 	}
 
-	return PropertyOperationResult::Success;
-}
-
-template <class T>
-PropertyOperationResult GenericGetOffsetRefProperty(lua_State* L, LifetimeHandle const& lifetime, void* obj, std::size_t offset, uint64_t)
-{
-	auto* value = (T*)((std::uintptr_t)obj + offset);
-	MakeObjectRef(L, value, lifetime);
 	return PropertyOperationResult::Success;
 }
 

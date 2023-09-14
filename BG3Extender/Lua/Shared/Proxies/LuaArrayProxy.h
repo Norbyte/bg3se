@@ -37,6 +37,9 @@ BY_VAL(glm::mat4x3);
 BY_VAL(glm::mat4);
 BY_VAL(TypeInformationRef);
 
+template <class T> 
+struct ByVal<OverrideableProperty<T>> { static constexpr bool Value = IsByVal<T>; };
+
 END_SE()
 
 namespace bg3se::lua

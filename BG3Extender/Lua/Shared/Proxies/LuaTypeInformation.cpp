@@ -50,13 +50,10 @@ void RegisterObjectProxyTypeInformation()
 #define INHERIT(base) ty.ParentType = GetTypeInfoRef<base>();
 #define P(prop) ty.Members.insert(std::make_pair(FixedString(#prop), GetTypeInfoRef<decltype(TClass::prop)>()));
 #define P_RO(prop) ty.Members.insert(std::make_pair(FixedString(#prop), GetTypeInfoRef<decltype(TClass::prop)>()));
-#define P_REF(prop) ty.Members.insert(std::make_pair(FixedString(#prop), GetTypeInfoRef<decltype(TClass::prop)>()));
-#define P_REF_TY(prop, propty) ty.Members.insert(std::make_pair(FixedString(#prop), GetTypeInfoRef<propty>()));
 #define P_BITMASK(prop) AddBitmaskTypeInfo<decltype(TClass::prop)>(ty);
 #define P_BITMASK_GETTER_SETTER(prop, getter, setter) AddBitmaskTypeInfo<decltype(TClass::prop)>(ty);
 #define PN(name, prop) ty.Members.insert(std::make_pair(FixedString(#name), GetTypeInfoRef<decltype(TClass::prop)>()));
 #define PN_RO(name, prop) ty.Members.insert(std::make_pair(FixedString(#name), GetTypeInfoRef<decltype(TClass::prop)>()));
-#define PN_REF(name, prop) ty.Members.insert(std::make_pair(FixedString(#name), GetTypeInfoRef<decltype(TClass::prop)>()));
 #define P_GETTER(prop, fun) ty.Members.insert(std::make_pair(FixedString(#prop), GetTypeInfoRef<decltype(GetFunctionReturnType(&TClass::fun))>()));
 #define P_GETTER_SETTER(prop, getter, setter) ty.Members.insert(std::make_pair(FixedString(#prop), GetTypeInfoRef<decltype(GetFunctionReturnType(&TClass::getter))>()));
 #define P_FUN(prop, fun) AddFunctionSignature(ty, #prop, &TClass::fun);
@@ -70,13 +67,10 @@ void RegisterObjectProxyTypeInformation()
 #undef INHERIT
 #undef P
 #undef P_RO
-#undef P_REF
-#undef P_REF_TY
 #undef P_BITMASK
 #undef P_BITMASK_GETTER_SETTER
 #undef PN
 #undef PN_RO
-#undef PN_REF
 #undef P_GETTER
 #undef P_GETTER_SETTER
 #undef P_FUN

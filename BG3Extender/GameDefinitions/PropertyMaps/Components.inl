@@ -30,13 +30,13 @@ END_CLS()
 
 BEGIN_CLS(UuidToHandleMappingComponent)
 INHERIT(BaseComponent)
-P_REF(Mappings)
+P(Mappings)
 END_CLS()
 
 
 BEGIN_CLS(TransformComponent)
 INHERIT(BaseComponent)
-P_REF(Transform)
+P(Transform)
 END_CLS()
 
 
@@ -61,19 +61,19 @@ P(Amount)
 P(MaxAmount)
 P(field_28)
 P(field_30)
-P_REF(SubAmounts)
+P(SubAmounts)
 P(SubAmountsValid)
 END_CLS()
 
 
 BEGIN_CLS(ActionResourcesComponent)
 INHERIT(BaseComponent)
-P_REF(Resources)
+P(Resources)
 END_CLS()
 
 
 BEGIN_CLS(SpellBookEntry)
-P_REF(Id)
+P(Id)
 P_RO(SpellUUID)
 P_RO(field_38)
 P_RO(CooldownType)
@@ -85,7 +85,7 @@ END_CLS()
 
 BEGIN_CLS(SpellBookComponent)
 INHERIT(BaseComponent)
-P_REF(Spells)
+P(Spells)
 END_CLS()
 
 
@@ -98,7 +98,7 @@ END_CLS()
 
 BEGIN_CLS(SurfacePathInfluencesComponent)
 INHERIT(BaseComponent)
-P_REF(PathInfluences)
+P(PathInfluences)
 END_CLS()
 
 
@@ -109,7 +109,7 @@ P(MaxCharges)
 P(ItemUseType)
 P(ItemComboFlag1)
 P(ItemComboFlag2)
-P_REF(Boosts)
+P(Boosts)
 // TODO - map other fields
 END_CLS()
 
@@ -127,7 +127,7 @@ END_CLS()
 
 
 BEGIN_CLS(SpellContainerComponent::Spell)
-P_REF(SpellId)
+P(SpellId)
 P_RO(ItemHandle)
 P_RO(SelectionType)
 P_RO(field_29)
@@ -141,27 +141,27 @@ END_CLS()
 
 BEGIN_CLS(SpellContainerComponent)
 INHERIT(BaseComponent)
-P_REF(Spells)
+P(Spells)
 END_CLS()
 
 
 BEGIN_CLS(TagComponent)
 INHERIT(BaseComponent)
-P_REF(Tags)
+P(Tags)
 END_CLS()
 
 
 BEGIN_CLS(OsirisTagComponent)
 INHERIT(BaseComponent)
-P_REF(Tags)
+P(Tags)
 END_CLS()
 
 
 BEGIN_CLS(SpellBookPreparesComponent)
 INHERIT(BaseComponent)
-P_REF(PreparedSpells)
-P_REF(field_30)
-P_REF(field_88)
+P(PreparedSpells)
+P(field_30)
+P(field_88)
 END_CLS()
 
 
@@ -221,7 +221,7 @@ END_CLS()
 
 BEGIN_CLS(CustomStatsComponent)
 INHERIT(BaseComponent)
-P_REF(Stats)
+P(Stats)
 END_CLS()
 
 
@@ -248,12 +248,12 @@ END_CLS()
 
 BEGIN_CLS(HealthComponent)
 INHERIT(BaseComponent)
-P_REF(PerDamageTypeModifiers)
+P(PerDamageTypeModifiers)
 P(CurrentHealth)
 P(CurrentHealth_M)
 P(MaxHealth)
 P(MaxHealth_M)
-P_REF(PerDamageTypeHealthThresholds)
+P(PerDamageTypeHealthThresholds)
 P(CannotDamage_M)
 // TODO - map
 END_CLS()
@@ -278,20 +278,20 @@ END_CLS()
 BEGIN_CLS(StatsComponent)
 INHERIT(BaseComponent)
 P(field_10)
-P_REF(Abilities)
-P_REF(AbilityModifiers)
-P_REF(Skills)
+P(Abilities)
+P(AbilityModifiers)
+P(Skills)
 P(SpellCastingAbility)
 P(SpellDC)
 P(WeaponActionDC)
 P(ProficiencyBonus)
 P(field_AC)
-P_REF(Equipment)
+P(Equipment)
 P(ArmorType)
 P(ArmorType_Breast)
 P(Level)
 P(Flanked)
-P_REF(Classes)
+P(Classes)
 P(UnarmedAttackAbility)
 P(RangedAttackAbility)
 END_CLS()
@@ -299,7 +299,7 @@ END_CLS()
 
 BEGIN_CLS(StatusImmunitiesComponent)
 INHERIT(BaseComponent)
-P_REF(PersonalStatusImmunities)
+P(PersonalStatusImmunities)
 END_CLS()
 
 
@@ -313,8 +313,8 @@ END_CLS()
 
 BEGIN_CLS(WeaponComponent)
 INHERIT(BaseComponent)
-P_REF(Rolls)
-P_REF(Rolls2)
+P(Rolls)
+P(Rolls2)
 P(WeaponRange)
 P(DamageRange)
 P(WeaponProperties)
@@ -351,14 +351,14 @@ END_CLS()
 BEGIN_CLS(CombatStateComponent)
 INHERIT(BaseComponent)
 P_RO(MyGuid)
-P_REF(Initiatives)
-P_REF(Participants)
+P(Initiatives)
+P(Participants)
 P_RO(field_98)
 P_RO(field_A0)
 P_RO(Level)
 P_RO(field_AC)
 P_RO(field_B0)
-P_REF(field_B8)
+P(field_B8)
 P_RO(field_D0)
 END_CLS()
 
@@ -370,7 +370,7 @@ END_CLS()
 
 
 BEGIN_CLS(TurnOrderComponent::Participant)
-P_REF(Handles)
+P(Handles)
 P_RO(Participant)
 P_RO(field_28)
 P_RO(Initiative)
@@ -380,10 +380,10 @@ END_CLS()
 
 BEGIN_CLS(TurnOrderComponent)
 INHERIT(BaseComponent)
-P_REF(TurnOrderIndices)
-P_REF(Participants)
-P_REF(TurnOrderIndices2)
-P_REF(Participants2)
+P(TurnOrderIndices)
+P(Participants)
+P(TurnOrderIndices2)
+P(Participants2)
 P_RO(field_78)
 P_RO(field_7C)
 END_CLS()
@@ -424,7 +424,7 @@ P_RO(Class)
 P_RO(field_28)
 P_RO(field_30)
 P_RO(Ability)
-P_REF(Array_b8)
+P(Array_b8)
 P_RO(field_60)
 P_RO(field_80)
 END_CLS()
@@ -437,7 +437,7 @@ P_RO(field_18)
 P_RO(field_28)
 P_RO(field_30)
 P_RO(Skill)
-P_REF(Array_b8)
+P(Array_b8)
 P_RO(field_60)
 P_RO(field_80)
 END_CLS()
@@ -457,8 +457,8 @@ P_RO(field_18)
 P_RO(field_28)
 P_RO(field_30)
 P_RO(Spell)
-P_REF(Array_FS)
-P_REF(Array_FS2)
+P(Array_FS)
+P(Array_FS2)
 P_RO(field_78)
 END_CLS()
 
@@ -470,17 +470,17 @@ P_RO(Class)
 P_RO(field_28)
 P_RO(field_30)
 P_RO(field_38)
-P_REF(Array_FS)
+P(Array_FS)
 P_RO(field_60)
 P_RO(field_80)
 END_CLS()
 
 
 BEGIN_CLS(LevelUpUpgrades)
-P_REF(Abilities)
-P_REF(Skills)
-P_REF(Spells)
-P_REF(field_48)
+P(Abilities)
+P(Skills)
+P(Spells)
+P(field_48)
 END_CLS()
 
 
@@ -495,15 +495,15 @@ BEGIN_CLS(LevelUpData)
 P_RO(Class)
 P_RO(SubClass)
 P_RO(Feat)
-P_REF(field_30)
-P_REF(Upgrades)
-P_REF(field_B0)
+P(field_30)
+P(Upgrades)
+P(field_B0)
 END_CLS()
 
 
 BEGIN_CLS(LevelUpComponent)
 INHERIT(BaseComponent)
-P_REF(field_18)
+P(field_18)
 END_CLS()
 
 
@@ -517,14 +517,14 @@ END_CLS()
 
 BEGIN_CLS(PlayerPrepareSpellComponent)
 INHERIT(BaseComponent)
-P_REF(field_18)
+P(field_18)
 P_RO(field_30)
 END_CLS()
 
 
 BEGIN_CLS(CCPrepareSpellComponent)
 INHERIT(BaseComponent)
-P_REF(field_18)
+P(field_18)
 END_CLS()
 
 
@@ -598,9 +598,9 @@ END_CLS()
 
 BEGIN_CLS(SummonContainerComponent)
 INHERIT(BaseComponent)
-P_REF(field_18)
-P_REF(Characters)
-P_REF(Items)
+P(field_18)
+P(Characters)
+P(Items)
 END_CLS()
 
 
@@ -675,14 +675,14 @@ END_CLS()
 
 BEGIN_CLS(HotbarContainerComponent)
 INHERIT(BaseComponent)
-P_REF(Containers)
+P(Containers)
 P(ActiveContainer)
 END_CLS()
 
 
 BEGIN_CLS(HotbarContainerComponent::Element)
 P(Item)
-P_REF(SpellId)
+P(SpellId)
 P(Passive)
 P(field_34)
 P(field_38)
@@ -692,7 +692,7 @@ END_CLS()
 BEGIN_CLS(HotbarContainerComponent::Bar)
 P(Index)
 P(field_1)
-P_REF(Elements)
+P(Elements)
 P(field_18)
 P(field_1C)
 P(field_20)
@@ -701,25 +701,25 @@ END_CLS()
 
 BEGIN_CLS(OriginTagComponent)
 INHERIT(BaseComponent)
-P_REF(Tags)
+P(Tags)
 END_CLS()
 
 
 BEGIN_CLS(OriginPassivesComponent)
 INHERIT(BaseComponent)
-P_REF(field_18)
+P(field_18)
 END_CLS()
 
 
 BEGIN_CLS(ClassTagComponent)
 INHERIT(BaseComponent)
-P_REF(Tags)
+P(Tags)
 END_CLS()
 
 
 BEGIN_CLS(BackgroundTagComponent)
 INHERIT(BaseComponent)
-P_REF(Tags)
+P(Tags)
 END_CLS()
 
 
@@ -731,7 +731,7 @@ END_CLS()
 
 BEGIN_CLS(BackgroundPassivesComponent)
 INHERIT(BaseComponent)
-P_REF(field_18)
+P(field_18)
 END_CLS()
 
 
@@ -769,7 +769,7 @@ END_CLS()
 
 BEGIN_CLS(ItemBoostsComponent)
 INHERIT(BaseComponent)
-P_REF(field_18)
+P(field_18)
 END_CLS()
 
 
@@ -825,7 +825,7 @@ END_CLS()
 
 BEGIN_CLS(AddedSpellsComponent)
 INHERIT(BaseComponent)
-P_REF(Spells)
+P(Spells)
 END_CLS()
 
 
@@ -869,8 +869,8 @@ END_CLS()
 
 BEGIN_CLS(ConcentrationComponent)
 INHERIT(BaseComponent)
-P_REF(field_18)
-P_REF(SpellId)
+P(field_18)
+P(SpellId)
 END_CLS()
 
 
@@ -907,7 +907,7 @@ END_CLS()
 
 
 BEGIN_CLS(SpellBookCooldownsComponent::Cooldown)
-P_REF(SpellId)
+P(SpellId)
 P_RO(CooldownType)
 P_RO(field_29)
 P_RO(Cooldown)
@@ -916,7 +916,7 @@ END_CLS()
 
 BEGIN_CLS(SpellBookCooldownsComponent)
 INHERIT(BaseComponent)
-P_REF(Cooldowns)
+P(Cooldowns)
 END_CLS()
 
 
@@ -947,7 +947,7 @@ END_CLS()
 
 BEGIN_CLS(ProgressionContainerComponent)
 INHERIT(BaseComponent)
-P_REF(Progressions)
+P(Progressions)
 END_CLS()
 
 
@@ -1035,20 +1035,20 @@ END_CLS()
 
 BEGIN_CLS(LearnedSpellsComponent)
 INHERIT(BaseComponent)
-P_REF(field_18)
-P_REF(field_70)
+P(field_18)
+P(field_70)
 END_CLS()
 
 
 BEGIN_CLS(SpellAiConditionsComponent)
 INHERIT(BaseComponent)
-P_REF(field_18)
+P(field_18)
 END_CLS()
 
 
 BEGIN_CLS(ActiveSkeletonSlotsComponent)
 INHERIT(BaseComponent)
-P_REF(Slots)
+P(Slots)
 END_CLS()
 
 
@@ -1115,7 +1115,7 @@ END_CLS()
 
 BEGIN_CLS(ActivationGroupContainerComponent)
 INHERIT(BaseComponent)
-P_REF(Groups)
+P(Groups)
 END_CLS()
 
 
@@ -1141,7 +1141,7 @@ END_CLS()
 
 BEGIN_CLS(DisplayNameListComponent)
 INHERIT(BaseComponent)
-P_REF(Names)
+P(Names)
 P_RO(TranslatedStrings)
 END_CLS()
 
@@ -1154,7 +1154,7 @@ END_CLS()
 
 BEGIN_CLS(IconListComponent)
 INHERIT(BaseComponent)
-P_REF(Icons)
+P(Icons)
 P_RO(field_30)
 END_CLS()
 
@@ -1173,7 +1173,7 @@ END_CLS()
 
 BEGIN_CLS(ToggledPassivesComponent)
 INHERIT(BaseComponent)
-P_REF(Passives)
+P(Passives)
 END_CLS()
 
 
@@ -1211,7 +1211,7 @@ END_CLS()
 
 BEGIN_CLS(LeaderComponent)
 INHERIT(BaseComponent)
-P_REF(Followers_M)
+P(Followers_M)
 END_CLS()
 
 
@@ -1225,7 +1225,7 @@ END_CLS()
 
 BEGIN_CLS(BreadcrumbComponent)
 INHERIT(BaseComponent)
-P_REF(field_18)
+P(field_18)
 P_RO(field_118)
 END_CLS()
 
@@ -1248,13 +1248,13 @@ END_CLS()
 
 BEGIN_CLS(PickpocketComponent)
 INHERIT(BaseComponent)
-P_REF(field_18)
+P(field_18)
 END_CLS()
 
 
 BEGIN_CLS(ReplicationDependencyOwnerComponent)
 INHERIT(BaseComponent)
-P_REF(Dependents)
+P(Dependents)
 END_CLS()
 
 
@@ -1266,8 +1266,8 @@ END_CLS()
 
 BEGIN_CLS(ApprovalRatingsComponent)
 INHERIT(BaseComponent)
-P_REF(Ratings)
-P_REF(field_70)
+P(Ratings)
+P(field_70)
 END_CLS()
 
 
@@ -1280,8 +1280,8 @@ END_CLS()
 
 BEGIN_CLS(CharacterCreationAppearanceComponent)
 INHERIT(BaseComponent)
-P_REF(Visuals)
-P_REF(Elements)
+P(Visuals)
+P(Elements)
 P_RO(SkinColor)
 P_RO(EyeColor)
 P_RO(field_68)

@@ -18,7 +18,7 @@ inline void PushReturnValue(lua_State* L, T& v)
 template <class T>
 inline void PushReturnValue(lua_State* L, Array<T>* v)
 {
-	if constexpr (!ByVal<T>::Value) {
+	if constexpr (!IsByVal<T>) {
 		MakeObjectRef(L, v);
 	} else {
 		LuaWrite(L, v);
@@ -28,7 +28,7 @@ inline void PushReturnValue(lua_State* L, Array<T>* v)
 template <class T>
 inline void PushReturnValue(lua_State* L, Vector<T>* v)
 {
-	if constexpr (!ByVal<T>::Value) {
+	if constexpr (!IsByVal<T>) {
 		MakeObjectRef(L, v);
 	} else {
 		LuaWrite(L, v);
@@ -38,7 +38,7 @@ inline void PushReturnValue(lua_State* L, Vector<T>* v)
 template <class T>
 inline void PushReturnValue(lua_State* L, ObjectSet<T>* v)
 {
-	if constexpr (!ByVal<T>::Value) {
+	if constexpr (!IsByVal<T>) {
 		MakeObjectRef(L, v);
 	} else {
 		LuaWrite(L, v);
@@ -48,7 +48,7 @@ inline void PushReturnValue(lua_State* L, ObjectSet<T>* v)
 template <class TKey, class TValue>
 inline void PushReturnValue(lua_State* L, RefMap<TKey, TValue>* v)
 {
-	if constexpr (!ByVal<TValue>::Value) {
+	if constexpr (!IsByVal<TValue>) {
 		MakeObjectRef(L, v);
 	} else {
 		LuaWrite(L, v);
@@ -58,7 +58,7 @@ inline void PushReturnValue(lua_State* L, RefMap<TKey, TValue>* v)
 template <class TKey, class TValue>
 inline void PushReturnValue(lua_State* L, Map<TKey, TValue>* v)
 {
-	if constexpr (!ByVal<TValue>::Value) {
+	if constexpr (!IsByVal<TValue>) {
 		MakeObjectRef(L, v);
 	} else {
 		LuaWrite(L, v);

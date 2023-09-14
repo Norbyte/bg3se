@@ -437,7 +437,7 @@ bool ValidateRef(std::array<TE, Size>* v, Overload<std::array<TE, Size>>)
 template <class T>
 bool ValidateAny(T* v)
 {
-	if constexpr (ByVal<T>::Value) {
+	if constexpr (IsByVal<T>) {
 		return Validate(v, Overload<T>{});
 	} else {
 		return ValidateRef(v, Overload<T>{});
