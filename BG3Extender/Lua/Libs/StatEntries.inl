@@ -1,6 +1,5 @@
 #include <GameDefinitions/Stats/Stats.h>
 #include <Lua/Shared/LuaStats.h>
-#include <Lua/LuaSerializers.h>
 
 namespace bg3se::lua::stats
 {

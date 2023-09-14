@@ -1095,14 +1095,6 @@ namespace bg3se
 		Guid Race;
 	};
 
-	struct SightComponent : public BaseComponent
-	{
-		static constexpr ExtComponentType ComponentType = ExtComponentType::Sight;
-		static constexpr auto EngineClass = "eoc::SightComponent";
-
-		float Sight;
-	};
-
 	struct CanTravelComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::CanTravel;

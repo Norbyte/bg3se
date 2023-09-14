@@ -81,12 +81,13 @@ PropertyOperationResult GenericGetOffsetProperty(lua_State* L, LifetimeHandle co
 {
 	if constexpr (IsByVal<T>) {
 		auto* value = (T*)((std::uintptr_t)obj + offset);
-		return (LuaWrite(L, *value) == 1) ? PropertyOperationResult::Success : PropertyOperationResult::Unknown;
+		push(L, *value);
 	} else {
 		auto* value = (T*)((std::uintptr_t)obj + offset);
 		MakeObjectRef(L, value, lifetime);
-		return PropertyOperationResult::Success;
 	}
+
+	return PropertyOperationResult::Success;
 }
 
 template <class T>
@@ -94,9 +95,7 @@ PropertyOperationResult GenericSetOffsetProperty(lua_State* L, LifetimeHandle co
 {
 	if constexpr (IsByVal<T>) {
 		auto* value = (T*)((std::uintptr_t)obj + offset);
-		lua_pushvalue(L, index);
-		LuaRead(L, *value);
-		lua_pop(L, 1);
+		*value = get<T>(L, index);
 		return PropertyOperationResult::Success;
 	} else {
 		return PropertyOperationResult::UnsupportedType;

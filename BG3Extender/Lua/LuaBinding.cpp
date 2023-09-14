@@ -2,7 +2,6 @@
 #include <Extender/ScriptExtender.h>
 //#include <GameDefinitions/Ai.h>
 #include <GameDefinitions/RootTemplates.h>
-#include <Lua/LuaSerializers.h>
 #include <Lua/LuaBinding.h>
 #include "resource.h"
 #include <fstream>

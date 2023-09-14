@@ -1,7 +1,6 @@
 #include <stdafx.h>
 #include <Extender/ScriptExtender.h>
 #include <Lua/LuaBinding.h>
-#include <Lua/LuaSerializers.h>
 #include <GameDefinitions/Stats/Stats.h>
 #include <Lua/Shared/LuaStats.h>
 

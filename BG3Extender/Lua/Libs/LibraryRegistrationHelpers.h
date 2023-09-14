@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Lua/LuaBinding.h>
-#include <Lua/LuaSerializers.h>
 #include <Extender/ScriptExtender.h>
 #include <Lua/Shared/LuaModule.inl>
 #include <Lua/Shared/LuaReference.inl>

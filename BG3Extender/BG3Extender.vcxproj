@@ -267,9 +267,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <ClCompile Include="Lua\LuaOsiBridge.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Lua\LuaSerializers.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">false</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="Lua\LuaSerializers.cpp" />
     <ClCompile Include="Lua\Server\LuaOsirisBinding.cpp" />
     <ClCompile Include="Lua\Server\LuaServer.cpp" />
     <ClCompile Include="Lua\Shared\LuaBundle.cpp" />

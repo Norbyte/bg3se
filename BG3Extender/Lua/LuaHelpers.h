@@ -300,6 +300,12 @@ inline void push(lua_State* L, std::optional<T> const& v)
 	}
 }
 
+template <class T>
+inline void push(lua_State* L, OverrideableProperty<T> const& v)
+{
+	push(L, v.Value);
+}
+
 inline bool do_get(lua_State * L, int index, Overload<bool>)
 {
 	luaL_checktype(L, index, LUA_TBOOLEAN);
@@ -367,6 +373,12 @@ TypeInformationRef do_get(lua_State* L, int index, Overload<TypeInformationRef>)
 inline Path do_get(lua_State* L, int index, Overload<Path>)
 {
 	return Path(luaL_checkstring(L, index));
+}
+
+template <class T>
+inline OverrideableProperty<T> do_get(lua_State* L, int index, Overload<OverrideableProperty<T>>)
+{
+	return OverrideableProperty<T>{get<T>(L, index), true};
 }
 
 template <class T>

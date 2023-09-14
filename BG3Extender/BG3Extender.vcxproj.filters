@@ -16,9 +16,6 @@
     <ClCompile Include="Lua\LuaOsiBridge.cpp">
       <Filter>Lua</Filter>
     </ClCompile>
-    <ClCompile Include="Lua\LuaSerializers.cpp">
-      <Filter>Lua</Filter>
-    </ClCompile>
     <ClCompile Include="GameDefinitions\GameHelpers.cpp">
       <Filter>GameDefinitions</Filter>
     </ClCompile>
@@ -158,6 +155,7 @@
     <ClCompile Include="Lua\Libs\LuaSharedLibs.cpp" />
     <ClCompile Include="Lua\Shared\Proxies\LuaTypeInformation.cpp" />
     <ClCompile Include="Extender\Shared\Hooks.cpp" />
+    <ClCompile Include="Lua\LuaSerializers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />

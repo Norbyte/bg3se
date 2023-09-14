@@ -969,12 +969,6 @@ P_RO(Race)
 END_CLS()
 
 
-BEGIN_CLS(SightComponent)
-INHERIT(BaseComponent)
-P_RO(Sight)
-END_CLS()
-
-
 BEGIN_CLS(CanTravelComponent)
 INHERIT(BaseComponent)
 P_RO(field_18)

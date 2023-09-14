@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include <Lua/Debugger/LuaDebugger.h>
-#include <Lua/LuaSerializers.h>
 #include <Extender/ScriptExtender.h>
 #include <lstate.h>
 #include <lapi.h>

@@ -1,5 +1,3 @@
-#include <Lua/LuaSerializers.h>
-
 BEGIN_NS(lua::json)
 
 struct StringifyContext

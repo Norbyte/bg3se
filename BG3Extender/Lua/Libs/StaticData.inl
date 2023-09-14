@@ -1,6 +1,5 @@
 #include <GameDefinitions/Resources.h>
 #include <GameDefinitions/GuidResources.h>
-#include <Lua/LuaSerializers.h>
 
 BEGIN_NS(lua::res)
 

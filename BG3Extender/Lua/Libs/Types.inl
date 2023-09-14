@@ -1,5 +1,3 @@
-#include <Lua/LuaSerializers.h>
-
 /// <lua_module>Types</lua_module>
 BEGIN_NS(lua::types)
 
