@@ -62,6 +62,24 @@ namespace bg3se::lua
 		}
 	}
 
+	void push(lua_State* L, ecs::EntityRef const& h)
+	{
+		if (h.Handle) {
+			EntityProxy::New(L, h.Handle);
+		} else {
+			push(L, nullptr);
+		}
+	}
+
+	void push(lua_State* L, TypeInformationRef const& v)
+	{
+		if (v) {
+			MakeObjectRef(L, v.GetStatic()->Type);
+		} else {
+			push(L, nullptr);
+		}
+	}
+
 	ComponentHandle checked_get_handle(lua_State* L, int index, ExtComponentType type)
 	{
 		luaL_checktype(L, index, LUA_TUSERDATA);

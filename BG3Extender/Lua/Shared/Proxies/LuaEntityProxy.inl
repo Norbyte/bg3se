@@ -227,10 +227,25 @@ namespace bg3se::lua
 	EntityHandle do_get(lua_State* L, int index, Overload<EntityHandle>)
 	{
 		if (lua_type(L, index) == LUA_TNIL) {
-			return EntityHandle{ EntityHandle::NullHandle };
+			return NullEntityHandle;
 		} else {
 			return EntityProxy::CheckUserData(L, index)->Handle();
 		}
+	}
+
+	ecs::EntityRef do_get(lua_State* L, int index, Overload<ecs::EntityRef>)
+	{
+		if (lua_type(L, index) == LUA_TNIL) {
+			return ecs::EntityRef{ NullEntityHandle, State::FromLua(L)->GetEntityWorld() };
+		} else {
+			return ecs::EntityRef{ EntityProxy::CheckUserData(L, index)->Handle(), State::FromLua(L)->GetEntityWorld() };
+		}
+	}
+
+	TypeInformationRef do_get(lua_State* L, int index, Overload<TypeInformationRef>)
+	{
+		luaL_error(L, "TypeInformationRef is an engine-only type");
+		return {};
 	}
 
 	EntityProxy* do_get(lua_State* L, int index, Overload<EntityProxy*>)

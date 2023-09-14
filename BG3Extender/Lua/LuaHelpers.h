@@ -224,8 +224,9 @@ inline void push(lua_State* L, WStringView const& v)
 }
 
 void push(lua_State* L, EntityHandle const& h);
-
 void push(lua_State* L, ComponentHandle const& h);
+void push(lua_State* L, ecs::EntityRef const& h);
+void push(lua_State* L, TypeInformationRef const& h);
 
 inline void push(lua_State* L, lua_CFunction v)
 {
@@ -360,6 +361,8 @@ inline Guid do_get(lua_State* L, int index, Overload<Guid>)
 
 ComponentHandle do_get(lua_State* L, int index, Overload<ComponentHandle>);
 EntityHandle do_get(lua_State* L, int index, Overload<EntityHandle>);
+ecs::EntityRef do_get(lua_State* L, int index, Overload<ecs::EntityRef>);
+TypeInformationRef do_get(lua_State* L, int index, Overload<TypeInformationRef>);
 
 inline Path do_get(lua_State* L, int index, Overload<Path>)
 {
