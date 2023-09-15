@@ -295,28 +295,4 @@ namespace bg3se::lua
 		int ToString(lua_State* L);
 		int GC(lua_State* L);
 	};
-
-	template <class T>
-	struct IsArrayLike { static constexpr bool Value = false; };
-
-	template <class T>
-	struct IsArrayLike<Array<T>> { static constexpr bool Value = true; using TElement = T; };
-
-	template <class T>
-	struct IsArrayLike<StaticArray<T>> { static constexpr bool Value = true; using TElement = T; };
-
-	template <class T>
-	struct IsArrayLike<Vector<T>> { static constexpr bool Value = true; using TElement = T; };
-
-	template <class T, class Allocator, bool StoreSize>
-	struct IsArrayLike<Set<T, Allocator, StoreSize>> { static constexpr bool Value = true; using TElement = T; };
-
-	template <class T, class Allocator, bool StoreSize>
-	struct IsArrayLike<ObjectSet<T, Allocator, StoreSize>> { static constexpr bool Value = true; using TElement = T; };
-
-	template <class T, size_t Size>
-	struct IsArrayLike<std::array<T, Size>> { static constexpr bool Value = true; using TElement = T; };
-
-	template <class T>
-	struct IsArrayLike<std::vector<T>> { static constexpr bool Value = true; using TElement = T; };
 }

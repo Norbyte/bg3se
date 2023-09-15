@@ -100,6 +100,7 @@ namespace lua
 	class Ref;
 	class EntityProxy;
 	class ComponentHandleProxy;
+	class GenericPropertyMap;
 	//class CachedUserVariableManager;
 	//class CachedModVariableManager;
 }

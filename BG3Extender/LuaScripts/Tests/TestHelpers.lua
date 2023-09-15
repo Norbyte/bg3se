@@ -136,7 +136,7 @@ function AssertContains(arr, element)
 end
 
 function AssertValid(val)
-    if not Ext.Debug.Validate(val) then
+    if not Ext.Types.Validate(val) then
         error("Structure not valid: " .. val)
     end
 end

@@ -94,6 +94,62 @@ void RegisterEnumerations(lua_State* L)
 	lua_pop(L, 1);
 }
 
+bool Validate(lua_State* L)
+{
+	auto proxy = Userdata<ObjectProxy>::CheckUserData(L, 1);
+	auto& pm = proxy->GetImpl()->GetPropertyMap();
+	return pm.ValidateObject(proxy->GetRaw(L));
+}
+
+UserReturn Serialize(lua_State* L)
+{
+	luaL_checktype(L, 1, LUA_TUSERDATA);
+	auto proxy = Userdata<ObjectProxy>::AsUserData(L, 1);
+	if (proxy != nullptr) {
+		auto& pm = proxy->GetImpl()->GetPropertyMap();
+		if (pm.Serialize != nullptr) {
+			pm.Serialize(L, proxy->GetRaw(L));
+			return 1;
+		} else {
+			return luaL_error(L, "Object class '%s' does not support serialization", pm.Name.GetString());
+		}
+	} else {
+		return luaL_error(L, "Don't know how to serialize this object");
+	}
+}
+
+void Unserialize(lua_State* L)
+{
+	auto proxy = Userdata<ObjectProxy>::CheckUserData(L, 1);
+	luaL_checktype(L, 2, LUA_TTABLE);
+
+	auto const& pm = proxy->GetImpl()->GetPropertyMap();
+	if (pm.Unserialize == nullptr) {
+		luaL_error(L, "No serializer available for type '%s'", proxy->GetImpl()->GetTypeName().GetString());
+	}
+
+	pm.Unserialize(L, 2, proxy->GetRaw(L));
+}
+
+UserReturn Construct(lua_State* L, FixedString const& typeName)
+{
+	auto const& type = TypeInformationRepository::GetInstance().GetType(typeName);
+	if (type.Kind == LuaTypeId::Unknown) {
+		return luaL_error(L, "Unknown type name '%s'", typeName.GetString());
+	}
+	
+	if (type.Kind != LuaTypeId::Object) {
+		return luaL_error(L, "Unable to construct non-object type '%s'", typeName.GetString());
+	}
+	
+	if (type.PropertyMap == nullptr || type.PropertyMap->Construct == nullptr) {
+		return luaL_error(L, "Type '%s' is not constructible", typeName.GetString());
+	}
+
+	// TODO
+	return 0;
+}
+
 void RegisterTypesLib()
 {
 	DECLARE_MODULE(Types, Both)
@@ -101,6 +157,10 @@ void RegisterTypesLib()
 	MODULE_FUNCTION(GetObjectType)
 	MODULE_FUNCTION(GetTypeInfo)
 	MODULE_FUNCTION(GetAllTypes)
+	MODULE_FUNCTION(Validate)
+	MODULE_FUNCTION(Serialize)
+	MODULE_FUNCTION(Unserialize)
+	MODULE_FUNCTION(Construct)
 	END_MODULE()
 }
 

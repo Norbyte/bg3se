@@ -37,14 +37,16 @@ void RegisterObjectProxyTypeInformation()
 	using TClass = clsName;\
 	auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(#clsName)); \
 	ty.Kind = LuaTypeId::Object; \
-	ty.NativeName = FixedString(typeid(TClass).name());
+	ty.NativeName = FixedString(typeid(TClass).name()); \
+	ty.PropertyMap = &lua::StaticLuaPropertyMap<TClass>::PropertyMap;
 
 
 #define BEGIN_CLS_TN(clsName, typeName) ([]() { \
 	using TClass = clsName;\
 	auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(#typeName)); \
 	ty.Kind = LuaTypeId::Object; \
-	ty.NativeName = FixedString(typeid(TClass).name());
+	ty.NativeName = FixedString(typeid(TClass).name()); \
+	ty.PropertyMap = &lua::StaticLuaPropertyMap<TClass>::PropertyMap;
 
 #define END_CLS() GetStaticTypeInfo(Overload<TClass>{}).Type = &ty; })();
 #define INHERIT(base) ty.ParentType = GetTypeInfoRef<base>();

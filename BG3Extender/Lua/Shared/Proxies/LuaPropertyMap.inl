@@ -35,27 +35,28 @@ PropertyOperationResult GenericPropertyMap::GetRawProperty(lua_State* L, Lifetim
 	return it->second.Get(L, lifetime, object, it->second.Offset, it->second.Flag);
 }
 
-PropertyOperationResult GenericPropertyMap::SetRawProperty(lua_State* L, LifetimeHandle const& lifetime, void* object, FixedString const& prop, int index) const
+PropertyOperationResult GenericPropertyMap::SetRawProperty(lua_State* L, void* object, FixedString const& prop, int index) const
 {
 	auto it = Properties.find(prop);
 	if (it == Properties.end()) {
 		if (FallbackSetter) {
-			return FallbackSetter(L, lifetime, object, prop, index);
+			return FallbackSetter(L, object, prop, index);
 		} else {
 			return PropertyOperationResult::NoSuchProperty;
 		}
 	}
 
-	return it->second.Set(L, lifetime, object, index, it->second.Offset, it->second.Flag);
+	return it->second.Set(L, object, index, it->second.Offset, it->second.Flag);
 }
 
 void GenericPropertyMap::AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter,
-	typename RawPropertyAccessors::Setter* setter, std::size_t offset, uint64_t flag)
+	typename RawPropertyAccessors::Setter* setter, typename RawPropertyAccessors::Serializer* serialize, 
+	typename RawPropertyAccessors::Unserializer* unserialize, std::size_t offset, uint64_t flag)
 {
 	assert(!Initialized && IsInitializing);
 	auto key = FixedString(prop);
 	assert(Properties.find(key) == Properties.end());
-	Properties.insert(std::make_pair(key, RawPropertyAccessors{ key, getter, setter, offset, flag }));
+	Properties.insert(std::make_pair(key, RawPropertyAccessors{ key, offset, flag, getter, setter, serialize, unserialize }));
 
 }
 
@@ -66,10 +67,12 @@ void GenericPropertyMap::AddRawValidator(char const* prop, typename RawPropertyV
 }
 
 void GenericPropertyMap::AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter,
-	typename RawPropertyAccessors::Setter* setter, typename RawPropertyValidators::Validator* validate, std::size_t offset, uint64_t flag)
+	typename RawPropertyAccessors::Setter* setter, typename RawPropertyValidators::Validator* validate, 
+	typename RawPropertyAccessors::Serializer* serialize, typename RawPropertyAccessors::Unserializer* unserialize, 
+	std::size_t offset, uint64_t flag)
 {
 	if (getter != nullptr || setter != nullptr) {
-		AddRawProperty(prop, getter, setter, offset, flag);
+		AddRawProperty(prop, getter, setter, serialize, unserialize, offset, flag);
 	}
 
 	if (validate != nullptr) {
@@ -116,6 +119,20 @@ bool GenericPropertyMap::IsA(int typeRegistryIndex) const
 	}
 
 	return false;
+}
+
+PropertyOperationResult SerializeRawObject(lua_State* L, void* obj, GenericPropertyMap const& pm)
+{
+	StackCheck _(L, 1);
+	lua_createtable(L, 0, (int)pm.Properties.size());
+	for (auto const& prop : pm.Properties) {
+		auto result = prop.second.Serialize(L, obj, prop.second.Offset, prop.second.Flag);
+		if (result == PropertyOperationResult::Success) {
+			lua_setfield(L, -2, prop.first.GetString());
+		}
+	}
+
+	return PropertyOperationResult::Success;
 }
 
 END_NS()

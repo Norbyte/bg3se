@@ -48,10 +48,10 @@ namespace bg3se::lua
 			return true;
 		}
 
-		static bool SetProperty(lua_State* L, T* object, LifetimeHandle const& lifetime, FixedString const& prop, int index)
+		static bool SetProperty(lua_State* L, T* object, FixedString const& prop, int index)
 		{
 			auto const& map = StaticLuaPropertyMap<T>::PropertyMap;
-			auto result = map.SetProperty(L, lifetime, object, prop, index);
+			auto result = map.SetProperty(L, object, prop, index);
 			switch (result) {
 			case PropertyOperationResult::Success:
 				return true;
@@ -160,7 +160,7 @@ namespace bg3se::lua
 
 		bool SetProperty(lua_State* L, FixedString const& prop, int index) override
 		{
-			return ObjectProxyHelpers<T>::SetProperty(L, object_, lifetime_, prop, index);
+			return ObjectProxyHelpers<T>::SetProperty(L, object_, prop, index);
 		}
 
 		int Next(lua_State* L, FixedString const& key) override
@@ -221,7 +221,7 @@ namespace bg3se::lua
 
 		bool SetProperty(lua_State* L, FixedString const& prop, int index) override
 		{
-			return ObjectProxyHelpers<T>::SetProperty(L, object_.get(), lifetime_, prop, index);
+			return ObjectProxyHelpers<T>::SetProperty(L, object_.get(), prop, index);
 		}
 
 		int Next(lua_State* L, FixedString const& key) override

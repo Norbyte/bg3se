@@ -2,6 +2,12 @@
 
 struct lua_State;
 
+BEGIN_NS(lua)
+
+class GenericPropertyMap;
+
+END_NS();
+
 BEGIN_SE()
 
 struct TypeInformation;
@@ -68,6 +74,7 @@ struct TypeInformation
 	bool DeferredInitializationDone{ false };
 	bool Validated{ false };
 	FixedString ModuleRole;
+	lua::GenericPropertyMap* PropertyMap{ nullptr };
 
 	void DeferredInitialize();
 	void Validate();

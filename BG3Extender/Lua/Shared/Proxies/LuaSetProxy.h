@@ -153,21 +153,4 @@ namespace bg3se::lua
 		int ToString(lua_State* L);
 		int GC(lua_State* L);
 	};
-
-	template <class T>
-	struct IsSetLike { static constexpr bool Value = false; };
-
-	template <class TK>
-	struct IsSetLike<MultiHashSet<TK>>
-	{ 
-		static constexpr bool Value = true;
-		using TKey = TK;
-	};
-
-	template <class TK>
-	struct IsSetLike<VirtualMultiHashSet<TK>>
-	{ 
-		static constexpr bool Value = true;
-		using TKey = TK;
-	};
 }

@@ -79,11 +79,11 @@ inline void PushAny(lua_State* L, T* value, LifetimeHandle const& lifetime)
 template <class T>
 PropertyOperationResult GenericGetOffsetProperty(lua_State* L, LifetimeHandle const& lifetime, void* obj, std::size_t offset, uint64_t)
 {
+	auto* value = (T*)((std::uintptr_t)obj + offset);
+
 	if constexpr (IsByVal<T>) {
-		auto* value = (T*)((std::uintptr_t)obj + offset);
 		push(L, *value);
 	} else {
-		auto* value = (T*)((std::uintptr_t)obj + offset);
 		MakeObjectRef(L, value, lifetime);
 	}
 
@@ -91,7 +91,7 @@ PropertyOperationResult GenericGetOffsetProperty(lua_State* L, LifetimeHandle co
 }
 
 template <class T>
-PropertyOperationResult GenericSetOffsetProperty(lua_State* L, LifetimeHandle const& lifetime, void* obj, int index, std::size_t offset, uint64_t)
+PropertyOperationResult GenericSetOffsetProperty(lua_State* L, void* obj, int index, std::size_t offset, uint64_t)
 {
 	if constexpr (IsByVal<T>) {
 		auto* value = (T*)((std::uintptr_t)obj + offset);
@@ -100,6 +100,19 @@ PropertyOperationResult GenericSetOffsetProperty(lua_State* L, LifetimeHandle co
 	} else {
 		return PropertyOperationResult::UnsupportedType;
 	}
+}
+
+template <class T>
+PropertyOperationResult GenericSerializeOffsetProperty(lua_State* L, void* obj, std::size_t offset, uint64_t flag)
+{
+	auto* value = (T*)((std::uintptr_t)obj + offset);
+	return Serialize(L, value);
+}
+
+template <class T>
+PropertyOperationResult GenericUnserializeOffsetProperty(lua_State* L, void* object, int index, std::size_t offset, uint64_t flag)
+{
+	return PropertyOperationResult::UnsupportedType;
 }
 
 template <class UnderlyingType>

@@ -289,39 +289,4 @@ namespace bg3se::lua
 		int ToString(lua_State* L);
 		int GC(lua_State* L);
 	};
-
-	template <class T>
-	struct IsMapLike { static constexpr bool Value = false; };
-
-	template <class TK, class TV>
-	struct IsMapLike<Map<TK, TV>>
-	{ 
-		static constexpr bool Value = true; 
-		using TKey = TK;
-		using TValue = TV;
-	};
-
-	template <class TK, class TV>
-	struct IsMapLike<RefMap<TK, TV>>
-	{ 
-		static constexpr bool Value = true;
-		using TKey = TK;
-		using TValue = TV;
-	};
-
-	template <class TK, class TV>
-	struct IsMapLike<MultiHashMap<TK, TV>>
-	{ 
-		static constexpr bool Value = true;
-		using TKey = TK;
-		using TValue = TV;
-	};
-
-	template <class TK, class TV>
-	struct IsMapLike<VirtualMultiHashMap<TK, TV>>
-	{ 
-		static constexpr bool Value = true;
-		using TKey = TK;
-		using TValue = TV;
-	};
 }

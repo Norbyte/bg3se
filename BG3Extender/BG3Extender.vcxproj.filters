@@ -426,6 +426,7 @@
     <ClInclude Include="Extender\Shared\Hooks.h" />
     <ClInclude Include="Lua\Shared\LuaTypeValidators.h" />
     <ClInclude Include="GameDefinitions\Base\Serialization.h" />
+    <ClInclude Include="Lua\Shared\LuaTypeTraits.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
