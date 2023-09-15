@@ -161,6 +161,7 @@ _D = Ext.Dump
 _DS = Ext.DumpShallow
 _P = Ext.Utils.Print
 Print = Ext.Utils.Print
+print = Ext.Utils.Print
 
 -- Backward compatibility with v3
 Ext.Definition = Ext.StaticData

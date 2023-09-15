@@ -108,7 +108,7 @@ end
 
 function OnSessionLoaded()
     -- Persistent variables are only available after SessionLoaded is triggered!
-    Ext.Print(PersistentVars['Test'])
+    _P(PersistentVars['Test'])
 end
 
 Ext.Events.SessionLoaded:Subscribe("SessionLoaded", OnSessionLoaded)
@@ -130,13 +130,13 @@ Commands prefixed by a `!` will trigger callbacks registered via the `RegisterCo
 Example:
 ```lua
 local function testCmd(cmd, a1, a2, ...)
-    Ext.Print("Cmd: " .. cmd .. ", args: ", a1, ", ", a2);
+    _P("Cmd: " .. cmd .. ", args: ", a1, ", ", a2);
 end
 Ext.RegisterConsoleCommand("test", testCmd);
 ```
 The command `!test 123 456` will call `testCmd("test", 123, 456)` and prints `Cmd: test, args: 123, 456`.
 
-Anything else typed in the console will be executed as Lua code in the current context. (eg. typing `Ext.Print(1234)` will print `123`). 
+Anything else typed in the console will be executed as Lua code in the current context. (eg. typing `_P(1234)` will print `123`). 
 The console has full access to the underlying Lua state, i.e. server console commands can also call builtin/custom Osiris functions, so Osiris calls like `AddExplorationExperience(GetHostCharacter(), 100)` are possible using the console.
 Variables can be used just like in Lua, i.e. variable in one command can later on be used in another console command. Be careful, console code runs in global context, so make sure console variable names don't conflict with globals (i.e. `Mods`, `Ext`, etc.)! Don't use `local` for console variables, since the lifetime of the local will be one console command. (Each console command is technically a separate chunk).
 
@@ -147,61 +147,46 @@ Variables can be used just like in Lua, i.e. variable in one command can later o
 <a id="lua-scopes"></a>
 ### Object Scopes
 
-Previously, a `userdata` (game object passed from the extender to Lua, i.e. `Character`, `Status`, etc.) returned from an API call or passed via a parameter was valid for an infinite duration. This meant that the object could be accessed anytime, potentially well after the actual object in the engine was destroyed, leading to strange crashes. The extender before v56 tried to work around this by storing object handles instead of the actual object in the `userdata`, which meant that each time a property was accessed on an object, it had to resolve the handle, which is a very slow operation. Example:
-
-```lua
-s = Ext.GetCharacter(...).Stats
--- These 2 reads cause the character and stats component to be fetched via their handle twice. 
--- If you do anything thats is stats-intensive, it may cause up to 100+ entity fetches
-local wf = s.WarriorLore
-local lr = s.RangerLore
-```
+Previously, a `userdata` (game object passed from the extender to Lua, i.e. `Character`, `Status`, etc.) returned from an API call or passed via a parameter was valid for an infinite duration. This meant that the object could be accessed anytime, potentially well after the actual object in the engine was destroyed, leading to strange crashes.
 
 Example of possible crash:
 ```lua
-local hit
-Ext.RegisterListener("StatusHitEnter", function (status, ...) 
-    hit = status
-end)
+local spells = Ext.Entity.Get(...).SpellBook.Spells
 
-Ext.RegisterListener("ProjectileHit", function (...) 
-    -- Status might get deleted beforehand
+Ext.OnNextTick(function (...) 
+    -- Spell might get deleted beforehand
     -- POSSIBLE CRASH!
-    local dmg = hit.Hit.TotalDamageDealt
+    local uuid = spells[2].SpellUUID
 end)
 ```
 
 To fix these issues, most `userdata` types are now bound to their enclosing *extender scope*. Since the engine always deletes game objects at the end of the game loop, it is guaranteed that eg. a Status or Character won't disappear during a Lua call, but they may be gone afterwards. To rectify this, "smuggling" objects outside of listeners is no longer allowed. Example:
 
 ```lua
-local hit
+local spellbook = Ext.Entity.Get(...).SpellBook
 
-Ext.Events.StatusHitEnter:Subscribe(function (event) 
-    hit = event.Hit
-end)
-
-Ext.Events.ProjectileHit:Subscribe(function (event) 
-    -- Throws "Attempted to read object of type 'esv::StatusHit' whose lifetime has expired"
-    local dmg = hit.Hit.TotalDamageDealt
+Ext.OnNextTick(function (...) 
+    -- Throws "Attempted to read object of type 'SpellBookEntry' whose lifetime has expired"
+    local uuid = spellbook.Spells[2].SpellUUID
 end)
 ```
 
 This rule also applies to objects you fetch manually during a listener:
 
 ```lua
-local ch
+local spellbook
 
-Ext.Events.StatusHitEnter:Subscribe(function (event) 
-    ch = Ext.GetCharacter(event.Hit.OwnerHandle)
+Ext.Events.SessionLoaded:Subscribe(function (event) 
+    spellbook = Ext.Entity.Get(...).SpellBook
 end)
 
-Ext.Events.ProjectileHit:Subscribe(function (event) 
-    -- Throws "Attempted to read object of type 'esv::Character' whose lifetime has expired"
-    local name = ch.DisplayName
+Ext.OnNextTick(function (...) 
+    -- Throws "Attempted to read object of type 'SpellBookEntry' whose lifetime has expired"
+    local uuid = spellbook.Spells[2].SpellUUID
 end)
 ```
 
-Subproperties inherit the lifetime of their parent object, eg. if you keep a copy of the permament boosts (`local boosts = character.Stats.DynamicStats[2]`), its lifetime will expire at the same time as the characters'.
+Subproperties inherit the lifetime of their parent object, eg. if you keep a reference to one specific spell (`local spellbook = Ext.Entity.Get(...).SpellBook.Spells[2]`), its lifetime will expire at the same time as the characters'.
 
 This ensures that no potentially deleted objects are not accessed in risky contexts.
 
@@ -211,37 +196,36 @@ This ensures that no potentially deleted objects are not accessed in risky conte
 
 Attempting to read or write properties that don't exist on an object class now lead to a Lua error:
 ```lua
-local ch = Ext.GetCharacter(...)
--- Object of type 'esv::Character' has no property named 'Shield'
-Ext.Print(ch.Shield)
+local spellbook = Ext.Entity.Get(...).SpellBook
+-- Object of type 'SpellBookComponent' has no property named 'PreparedSpells'
+_P(spellbook.PreparedSpells)
 ```
 
 The properties and methods of all engine objects can be read using iteration (metatables now support `__pairs`):
 ```lua
-local ch = Ext.GetCharacter(...)
-for property, value in pairs(ch) do
-    Ext.Print(property, value)
+local spell = Ext.Entity.Get(...).SpellBook.Spells[1]
+for property, value in pairs(spell) do
+    _P(property, value)
 end
 ```
 
 Stringifying an engine object returns its class and instance ID (i.e. metatables now support `__tostring`):
 ```lua
--- Prints "esv::Character (00007FF43B4F6600)"
-Ext.Print(tostring(Ext.GetCharacter(CharacterGetHostCharacter())))
+-- Prints "SpellBookEntry (00000209C32D16F0)"
+_P(tostring(Ext.Entity.Get(GetHostCharacter()).SpellBook.Spells[1]))
 ```
 
 Equality checks on engine objects return whether the two references point to the _same_ object:
 ```lua
--- Prints whether the current player character is the red prince
-Ext.Print(Ext.GetCharacter(CharacterGetHostCharacter()) == Ext.GetCharacter("a26a1efb-cdc8-4cf3-a7b2-b2f9544add6f"))
+_P(Ext.Entity.Get(GetHostCharacter()) == Ext.Entity.Get(GetHostCharacter()))
 ```
 
 Array-like engine objects support iteration via `ipairs()` and their length can be read using the `#` operator (i.e. the `__len` and `__pairs` metamethods are now supported):
 ```lua
-local tags = _C().Tags
-Ext.Print("Number of tags: ", #tags)
+local tags = _C().Tag.Tags
+_P("Number of tags: ", #tags)
 for i, tag in ipairs(tags) do
-    Ext.Print(i, tag)
+    _P(i, tag)
 end
 ```
 
@@ -263,7 +247,7 @@ Subscribing to engine events can be done through the `Ext.Events` table.
 Example:
 ```lua
 Ext.Events.GameStateChanged:Subscribe(function (e)
-    Ext.Print("State change from " .. e.FromState .. " to " .. e.ToState)
+    _P("State change from " .. e.FromState .. " to " .. e.ToState)
 end)
 ```
 
@@ -398,7 +382,7 @@ Parameters:
 Example:
 ```lua
 Ext.Osiris.RegisterListener("TurnEnded", 1, "after", function (characterGuid)
-    Ext.Print("TurnEnded- " .. characterGuid)
+    _P("TurnEnded- " .. characterGuid)
 end)
 ```
 
@@ -411,39 +395,40 @@ The `Ext.Require` function is the extender's version of the Lua built-in `requir
 The function checks if the file at `Mods/<ModuleUUID>/Story/RawFiles/Lua/<path>` was already loaded; if not, it'll load the file, store the return value of the main chunk and return it to the caller. If the file was already loaded, it'll return the stored return value.
 **Note:** `Ext.Require` should only be called during module startup (i.e. when loading `BootstrapClient.lua` or `BoostrapServer.lua`). Loading Lua files after module startup is deprecated.
 
-#### Ext.Print(...)
+#### Ext.Utils.Print(...)
 
 Prints the specified value(s) to the debug console. Works similarly to the built-in Lua `print()`, except that it also logs the printed messages to the editor messages pane.
 
-#### Ext.AddPathOverride(originalPath, newPath)
+#### Ext.IO.AddPathOverride(originalPath, newPath)
 
 Redirects file access from `originalPath` to `newPath`. This is useful for overriding built-in files or resources that are otherwise not moddable, eg. UI Flash files.
 Make sure that the override is added as early as possible (preferably in `ModuleLoading`), as adding path overrides after the game has already loaded the resource has no effect.
 
 Example:
 ```lua
-Ext.AddPathOverride("Public/Game/GUI/enemyHealthBar.swf", "Public/YourMod/GUI/enemyHealthBar.swf")
+Ext.IO.AddPathOverride("Public/Game/GUI/enemyHealthBar.swf", "Public/YourMod/GUI/enemyHealthBar.swf")
 ```
 
-#### Ext.MonotonicTime()
+#### Ext.Utils.MonotonicTime()
 
 Returns a monotonic value representing the current system time in milliseconds. Useful for performance measurements / measuring real world time.
 (Note: This value is not synchronized between peers and different clients may report different time values!)
 
 Example:
 ```lua
-local startTime = Ext.MonotonicTime()
+local startTime = Ext.Utils.MonotonicTime()
 DoLongTask()
-local endTime = Ext.MonotonicTime()
-Ext.Print("Took: " .. tostring(endTime - startTime) .. " ms")
+local endTime = Ext.Utils.MonotonicTime()
+_P("Took: " .. tostring(endTime - startTime) .. " ms")
 ```
 
 ### Helper functions
 
 Some helper functions were added to aid in development. (Please note that using them in mod code is not recommended, they are designed for developer use only.)
 
- - `_D()`: Equivalent to `Ext.Utils.Dump()`, an utility function for dumping an expression to console; supports hierarchical dumping of tables and userdata (engine) objects
- - `_P()`: Equivalent to `Ext.Print()`
+ - `_D()`: Equivalent to `Ext.Dump()`, an utility function for dumping an expression to console; supports hierarchical dumping of tables and userdata (engine) objects
+ - `_P()`: Equivalent to `Ext.Utils.Print()`
+ - `_C()`: Equivalent to `Ext.Entity.Get(Osi.GetHostCharacter())`
 
 
 ## JSON Support
@@ -476,10 +461,10 @@ local tab = {
 }
 
 local json = Ext.Json.Stringify(tab)
-Ext.Print(json)
+_P(json)
 
 local decoded = Ext.Json.Parse(json)
-Ext.Print(decoded.arr[1])
+_P(decoded.arr[1])
 ```
 
 Expected output:
@@ -713,7 +698,7 @@ Arc tangent. Returns an angle whose tangent is `y / x`. The signs of x and y are
 ### ModuleLoadStarted
 
 The `ModuleLoadStarted` event is thrown when the engine has started loading mods. Mod data (stats, localization, root templates, etc.) is not yet loaded when this listener is called, so most mod editing functionality (eg. `Ext.StatSetAttribute`) is inaccessible.
-The purpose of this event is to allow adding filesystem-level hooks using `Ext.AddPathOverride` before mod data is loaded.
+The purpose of this event is to allow adding filesystem-level hooks using `Ext.IO.AddPathOverride` before mod data is loaded.
 
 ### StatsLoaded
 
@@ -725,7 +710,7 @@ The purpose of this event is to allow adding filesystem-level hooks using `Ext.A
 
 ### SessionLoading
 
-`SessionLoading` is thrown when the the engine has started setting up a game session (i.e. new game, loading a savegame or joining a multiplayer game). Stat overrides that use Lua callbacks (`Ext.StatSetLevelScaling`) and custom UI (`Ext.CreateUI`, `Ext.RegisterUICall`, `Ext.RegisterUIInvokeListener`, etc.) should be set up here.
+`SessionLoading` is thrown when the the engine has started setting up a game session (i.e. new game, loading a savegame or joining a multiplayer game). 
 
 ### SessionLoaded
 

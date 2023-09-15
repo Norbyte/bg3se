@@ -47,3 +47,7 @@ if Ext.Debug.IsDeveloperMode() then
 		end
 	end)
 end
+
+function _C()
+	return Ext.Entity.Get(Osi.GetHostCharacter())
+end
