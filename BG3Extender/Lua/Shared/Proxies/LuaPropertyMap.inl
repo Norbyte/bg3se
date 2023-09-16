@@ -139,6 +139,7 @@ void UnserializeRawObject(lua_State* L, int index, void* obj, GenericPropertyMap
 		if (lua_type(L, -1) != LUA_TNIL) {
 			prop.second.Unserialize(L, obj, lua_absindex(L, -1), prop.second.Offset, prop.second.Flag);
 		}
+		lua_pop(L, 1);
 	}
 
 }
