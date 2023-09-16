@@ -12,14 +12,9 @@ namespace bg3se
 
 		EntityHandle CombatHandle;
 		FixedString CombatGroupId;
-		int field_24;
-		__int64 field_28;
-		int Flags;
-		FixedString Archetype;
-		Guid AiHint;
-		int field_48;
-		char field_4C;
-		bool CombatGroupChangedFlag_M;
+		int field_C;
+		int field_10;
+		Guid field_18;
 	};
 
 	struct CombatStateComponent : public BaseComponent
@@ -43,18 +38,18 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::TurnBased;
 		static constexpr auto EngineClass = "eoc::TurnBasedComponent";
-		
-		uint8_t field_18;
-		uint8_t field_19;
-		uint8_t field_1A;
-		int field_1C;
-		uint8_t field_20;
-		uint8_t field_21;
-		int field_24;
-		uint8_t field_28;
-		int field_2C;
-		uint8_t field_30;
-		Guid field_38;
+
+		EntityHandle field_0;
+		int field_8;
+		uint8_t field_C;
+		int field_10;
+		uint8_t field_14;
+		uint8_t field_15;
+		uint8_t field_16;
+		uint64_t field_18;
+		uint64_t field_20;
+		uint64_t field_28;
+		Guid field_30;
 	};
 
 	struct TurnOrderComponent : public BaseComponent

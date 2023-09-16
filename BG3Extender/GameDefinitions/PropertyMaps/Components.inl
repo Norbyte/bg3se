@@ -1,25 +1,6 @@
 
 BEGIN_CLS(BaseComponent)
-/*P_RO(Entity)
-P_RO(Handle)
-
-P_FUN(GetReplicationFlags, ComponentGetReplicationFlags)
-P_FUN(SetReplicationFlag, ComponentSetReplicationFlag)
-P_FUN(Replicate, ComponentReplicate)*/
 END_CLS()
-
-
-// TEMPORARY WORKAROUND
-/*
-BEGIN_CLS(IGameObject)
-P_RO(Entity)
-P_RO(Handle)
-
-P_FUN(GetReplicationFlags, ComponentGetReplicationFlags)
-P_FUN(SetReplicationFlag, ComponentSetReplicationFlag)
-P_FUN(Replicate, ComponentReplicate)
-END_CLS()
-*/
 
 
 BEGIN_CLS(UuidComponent)
@@ -49,8 +30,8 @@ END_CLS()
 
 
 BEGIN_CLS(ActionResourcesComponent::Amount::SubAmount)
-P_RO(Amount)
-P_RO(MaxAmount)
+P(Amount)
+P(MaxAmount)
 END_CLS()
 
 
@@ -74,12 +55,12 @@ END_CLS()
 
 BEGIN_CLS(SpellBookEntry)
 P(Id)
-P_RO(SpellUUID)
-P_RO(field_38)
-P_RO(CooldownType)
-P_RO(field_41)
-P_RO(field_42)
-P_RO(SpellCastingAbility)
+P(SpellUUID)
+P(field_38)
+P(CooldownType)
+P(field_41)
+P(field_42)
+P(SpellCastingAbility)
 END_CLS()
 
 
@@ -90,9 +71,9 @@ END_CLS()
 
 
 BEGIN_CLS(SurfacePathInfluence)
-P_RO(SurfaceType)
-P_RO(IsCloud)
-P_RO(Influence)
+P(SurfaceType)
+P(IsCloud)
+P(Influence)
 END_CLS()
 
 
@@ -116,26 +97,26 @@ END_CLS()
 
 BEGIN_CLS(WieldingComponent)
 INHERIT(BaseComponent)
-P_RO(Owner)
+P(Owner)
 END_CLS()
 
 
 BEGIN_CLS(ActionResourceConsumeMultiplierBoostComponent)
 INHERIT(BaseComponent)
-P_RO(ResourceUUID)
+P(ResourceUUID)
 END_CLS()
 
 
 BEGIN_CLS(SpellContainerComponent::Spell)
 P(SpellId)
-P_RO(ItemHandle)
-P_RO(SelectionType)
-P_RO(field_29)
-P_RO(SpellUUID)
-P_RO(SpellCastingAbility)
-P_RO(CooldownType)
-P_RO(field_44)
-P_RO(field_48)
+P(ItemHandle)
+P(SelectionType)
+P(field_29)
+P(SpellUUID)
+P(SpellCastingAbility)
+P(CooldownType)
+P(field_44)
+P(field_48)
 END_CLS()
 
 
@@ -167,9 +148,9 @@ END_CLS()
 
 BEGIN_CLS(RelationComponent)
 INHERIT(BaseComponent)
-P_RO(field_18)
-P_RO(field_28)
-P_RO(field_38)
+P(field_18)
+P(field_28)
+P(field_38)
 END_CLS()
 
 
@@ -270,8 +251,8 @@ P(Hp)
 P(field_40)
 P(MaxHp)
 P(TemporaryHp)
-P(field_60)
-P(field_64)
+P(MaxTemporaryHp)
+P(AC)
 P(PerDamageTypeHealthThresholds)
 P(IsInvulnerable)
 END_CLS()
@@ -351,12 +332,11 @@ END_CLS()
 
 BEGIN_CLS(CombatParticipantComponent)
 INHERIT(BaseComponent)
-P_RO(CombatHandle)
-P_RO(CombatGroupId)
-P_RO(Flags)
-P_RO(Archetype)
-P_RO(AiHint)
-P_RO(CombatGroupChangedFlag_M)
+P(CombatHandle)
+P(CombatGroupId)
+P(field_C)
+P(field_10)
+P(field_18)
 END_CLS()
 
 
@@ -365,28 +345,28 @@ INHERIT(BaseComponent)
 P_RO(MyGuid)
 P(Initiatives)
 P(Participants)
-P_RO(field_98)
-P_RO(field_A0)
+P(field_98)
+P(field_A0)
 P_RO(Level)
-P_RO(field_AC)
-P_RO(field_B0)
+P(field_AC)
+P(field_B0)
 P(field_B8)
-P_RO(field_D0)
+P(field_D0)
 END_CLS()
 
 
 BEGIN_CLS(TurnOrderComponent::ParticipantHandleInfo)
-P_RO(Entity)
-P_RO(Initiative)
+P(Entity)
+P(Initiative)
 END_CLS()
 
 
 BEGIN_CLS(TurnOrderComponent::Participant)
 P(Handles)
-P_RO(Participant)
-P_RO(field_28)
-P_RO(Initiative)
-P_RO(field_30)
+P(Participant)
+P(field_28)
+P(Initiative)
+P(field_30)
 END_CLS()
 
 
@@ -396,95 +376,95 @@ P(TurnOrderIndices)
 P(Participants)
 P(TurnOrderIndices2)
 P(Participants2)
-P_RO(field_78)
-P_RO(field_7C)
+P(field_78)
+P(field_7C)
 END_CLS()
 
 
 BEGIN_CLS(TurnBasedComponent)
 INHERIT(BaseComponent)
-P_RO(field_18)
-P_RO(field_19)
-P_RO(field_1A)
-P_RO(field_1C)
-P_RO(field_20)
-P_RO(field_21)
-P_RO(field_24)
-P_RO(field_28)
-P_RO(field_2C)
-P_RO(field_30)
-P_RO(field_38)
+P(field_0)
+P(field_8)
+P(field_C)
+P(field_10)
+P(field_14)
+P(field_15)
+P(field_16)
+P(field_18)
+P(field_20)
+P(field_28)
+P(field_30)
 END_CLS()
 
 
 BEGIN_CLS(BackgroundComponent)
 INHERIT(BaseComponent)
-P_RO(Background)
+P(Background)
 END_CLS()
 
 
 BEGIN_CLS(GodComponent)
 INHERIT(BaseComponent)
-P_RO(God)
+P(God)
 END_CLS()
 
 
 BEGIN_CLS(LevelUpUpgrades::AbilityData)
-P_RO(field_0)
-P_RO(Feat)
-P_RO(Class)
-P_RO(field_28)
-P_RO(field_30)
-P_RO(Ability)
+P(field_0)
+P(Feat)
+P(Class)
+P(field_28)
+P(field_30)
+P(Ability)
 P(Array_b8)
-P_RO(field_60)
-P_RO(field_80)
+P(field_60)
+P(field_80)
 END_CLS()
 
 
 BEGIN_CLS(LevelUpUpgrades::SkillData)
-P_RO(field_0)
-P_RO(field_8)
-P_RO(field_18)
-P_RO(field_28)
-P_RO(field_30)
-P_RO(Skill)
+P(field_0)
+P(field_8)
+P(field_18)
+P(field_28)
+P(field_30)
+P(Skill)
 P(Array_b8)
-P_RO(field_60)
-P_RO(field_80)
+P(field_60)
+P(field_80)
 END_CLS()
 
 
 BEGIN_CLS(LevelUpUpgrades::SpellData::StringPair)
-P_RO(A)
-P_RO(B)
+P(A)
+P(B)
 END_CLS()
 
 
 
 BEGIN_CLS(LevelUpUpgrades::SpellData)
-P_RO(field_0)
-P_RO(Race)
-P_RO(field_18)
-P_RO(field_28)
-P_RO(field_30)
-P_RO(Spell)
+P(field_0)
+P(Race)
+P(field_18)
+P(field_28)
+P(field_30)
+P(Spell)
 P(Array_FS)
 P(Array_FS2)
-P_RO(field_78)
+P(field_78)
 END_CLS()
 
 
 BEGIN_CLS(LevelUpUpgrades::LevelUpDataInner4)
-P_RO(field_0)
-P_RO(field_8)
-P_RO(Class)
-P_RO(field_28)
-P_RO(field_30)
-P_RO(field_38)
+P(field_0)
+P(field_8)
+P(Class)
+P(field_28)
+P(field_30)
+P(field_38)
 P(Array_FS)
-P_RO(field_60)
-P_RO(field_80)
+P(field_60)
+P(field_80)
 END_CLS()
 
 
@@ -497,17 +477,17 @@ END_CLS()
 
 
 BEGIN_CLS(LevelUpData3)
-P_RO(field_0)
-P_RO(field_4)
-P_RO(field_10)
+P(field_0)
+P(field_4)
+P(field_10)
 END_CLS()
 
 
 BEGIN_CLS(LevelUpData)
-P_RO(Class)
-P_RO(SubClass)
-P_RO(Feat)
-P(field_30)
+P(Class)
+P(SubClass)
+P(Feat)
+P(Abilities)
 P(Upgrades)
 P(field_B0)
 END_CLS()
@@ -520,52 +500,51 @@ END_CLS()
 
 
 BEGIN_CLS(PlayerPrepareSpellComponent::Spell)
-P_RO(field_0)
-P_RO(field_4)
-P_RO(field_8)
-P_RO(field_10)
+P(field_0)
+P(field_8)
+P(field_10)
 END_CLS()
 
 
 BEGIN_CLS(PlayerPrepareSpellComponent)
 INHERIT(BaseComponent)
-P(field_18)
-P_RO(field_30)
+P(Spells)
+P(field_30)
 END_CLS()
 
 
 BEGIN_CLS(CCPrepareSpellComponent)
 INHERIT(BaseComponent)
-P(field_18)
+P(Spells)
 END_CLS()
 
 
 BEGIN_CLS(SpellCastComponent)
 INHERIT(BaseComponent)
-P_RO(field_18)
-P_RO(field_1C)
-P_RO(field_20)
-P_RO(field_28)
-P_RO(field_2C)
-P_RO(field_30)
-P_RO(field_34)
-P_RO(field_38)
-P_RO(field_39)
-P_RO(field_3A)
-P_RO(field_3B)
+P(field_18)
+P(field_1C)
+P(field_20)
+P(field_28)
+P(field_2C)
+P(field_30)
+P(field_34)
+P(field_38)
+P(field_39)
+P(field_3A)
+P(field_3B)
 END_CLS()
 
 
 BEGIN_CLS(FloatingComponent)
 INHERIT(BaseComponent)
-P_RO(field_18)
-P_RO(field_1C)
+P(field_18)
+P(field_1C)
 END_CLS()
 
 
 BEGIN_CLS(VoiceComponent)
 INHERIT(BaseComponent)
-P_RO(Voice)
+P(Voice)
 END_CLS()
 
 
@@ -576,35 +555,32 @@ END_CLS()
 
 BEGIN_CLS(CharacterCreationStatsComponent)
 INHERIT(BaseComponent)
-P_RO(Race)
-P_RO(SubRace)
-P_RO(field_38)
-P_RO(Name)
-P_RO(field_60)
-P_RO(field_68)
-P_RO(field_6C)
-P_RO(field_70)
-P_RO(field_74)
-P_RO(field_78)
+P(Race)
+P(SubRace)
+P(field_20)
+P(field_21)
+P(Name)
+P(Abilities)
+P(field_5C)
 END_CLS()
 
 
 BEGIN_CLS(DisarmableComponent)
 INHERIT(BaseComponent)
-P_RO(SomeTrapId)
+P(SomeTrapId)
 P(CanDisarm)
 END_CLS()
 
 
 BEGIN_CLS(ShortRestComponent)
 INHERIT(BaseComponent)
-P_RO(StateId)
+P(StateId)
 END_CLS()
 
 
 BEGIN_CLS(IsSummonComponent)
 INHERIT(BaseComponent)
-P_RO(Owner_M)
+P(Owner_M)
 END_CLS()
 
 
@@ -621,7 +597,7 @@ INHERIT(BaseComponent)
 P(SeekHiddenFlag)
 P(Position)
 P(SeekHiddenTimeout)
-P_RO(field_2C)
+P(field_2C)
 END_CLS()
 
 
@@ -632,56 +608,56 @@ END_CLS()
 
 BEGIN_CLS(SavegameComponent)
 INHERIT(BaseComponent)
-P_RO(field_18)
+P_RO(field_0)
 END_CLS()
 
 
 BEGIN_CLS(DisabledEquipmentComponent)
 INHERIT(BaseComponent)
-P_RO(ShapeshiftFlag)
+P(ShapeshiftFlag)
 END_CLS()
 
 
 BEGIN_CLS(LootingStateComponent)
 INHERIT(BaseComponent)
-P_RO(Looter_M)
-P_RO(State)
-P_RO(field_24)
+P(Looter_M)
+P(State)
+P(field_24)
 END_CLS()
 
 
 BEGIN_CLS(LootComponent)
 INHERIT(BaseComponent)
-P_RO(Flags)
-P_RO(InventoryType)
+P(Flags)
+P(InventoryType)
 END_CLS()
 
 
 BEGIN_CLS(LockComponent)
 INHERIT(BaseComponent)
-P_RO(Key_M)
-P_RO(LockDC)
-P_RO(Unlocked_M)
+P(Key_M)
+P(LockDC)
+P(Unlocked_M)
 END_CLS()
 
 
 BEGIN_CLS(SummonLifetimeComponent)
 INHERIT(BaseComponent)
-P_RO(Lifetime)
+P(Lifetime)
 END_CLS()
 
 
 BEGIN_CLS(InvisibilityComponent)
 INHERIT(BaseComponent)
-P_RO(field_18)
-P_RO(field_1C)
-P_RO(field_28)
+P(field_18)
+P(field_1C)
+P(field_28)
 END_CLS()
 
 
 BEGIN_CLS(IconComponent)
 INHERIT(BaseComponent)
-P_RO(Icon)
+P(Icon)
 END_CLS()
 
 
@@ -736,8 +712,8 @@ END_CLS()
 
 
 BEGIN_CLS(PassiveInfo)
-P_RO(field_0)
-P_RO(Passive)
+P(field_0)
+P(Passive)
 END_CLS()
 
 
@@ -764,18 +740,18 @@ END_CLS()
 
 BEGIN_CLS(FleeCapabilityComponent)
 INHERIT(BaseComponent)
-P_RO(field_18)
-P_RO(field_1C)
-P_RO(field_20)
+P(field_18)
+P(field_1C)
+P(field_20)
 END_CLS()
 
 
 BEGIN_CLS(CanDoRestComponent)
 INHERIT(BaseComponent)
-P_RO(field_18)
-P_RO(field_19)
-P_RO(field_1A)
-P_RO(field_1B)
+P(field_18)
+P(field_19)
+P(field_1A)
+P(field_1B)
 END_CLS()
 
 
@@ -787,51 +763,54 @@ END_CLS()
 
 BEGIN_CLS(ActiveCharacterLightComponent)
 INHERIT(BaseComponent)
-P_RO(Light)
+P(Light)
+END_CLS()
+
+
+BEGIN_CLS(AnimationSetComponent::Internal)
+P(field_0)
+P(field_8)
+P(field_16)
 END_CLS()
 
 
 BEGIN_CLS(AnimationSetComponent)
 INHERIT(BaseComponent)
-P_RO(field_18)
-P_RO(field_20)
-P_RO(field_21)
-P_RO(field_28)
-P_RO(field_2C)
+P(AnimationSet)
 END_CLS()
 
 
 BEGIN_CLS(AnimationBlueprintComponent)
 INHERIT(BaseComponent)
-P_RO(field_18)
-P_RO(field_20)
-P_RO(field_28)
-P_RO(field_30)
-P_RO(field_38)
-P_RO(field_40)
-P_RO(field_48)
-P_RO(field_49)
+P(field_18)
+P(field_20)
+P(field_28)
+P(field_30)
+P(field_38)
+P(field_40)
+P(field_48)
+P(field_49)
 END_CLS()
 
 
 BEGIN_CLS(CanModifyHealthComponent)
 INHERIT(BaseComponent)
-P_RO(Flags)
+P(Flags)
 END_CLS()
 
 
 BEGIN_CLS(AddedSpellsComponent::SpellInfo)
-P_RO(SpellId)
-P_RO(field_8)
-P_RO(field_18)
-P_RO(field_20)
-P_RO(field_28)
-P_RO(field_29)
-P_RO(SomeUUID)
-P_RO(field_40)
-P_RO(Cooldown)
-P_RO(field_44)
-P_RO(field_48)
+P(SpellId)
+P(field_8)
+P(field_18)
+P(field_20)
+P(field_28)
+P(field_29)
+P(SomeUUID)
+P(field_40)
+P(Cooldown)
+P(field_44)
+P(field_48)
 END_CLS()
 
 
@@ -843,86 +822,88 @@ END_CLS()
 
 BEGIN_CLS(AvailableLevelComponent)
 INHERIT(BaseComponent)
-P_RO(Level)
+P(Level)
 END_CLS()
 
 
 BEGIN_CLS(CanBeLootedComponent)
 INHERIT(BaseComponent)
-P_RO(Flags)
+P(Flags)
 END_CLS()
 
 
 BEGIN_CLS(CanDoActionsComponent)
 INHERIT(BaseComponent)
-P_RO(Flags)
+P(Flags)
 END_CLS()
 
 
 BEGIN_CLS(CanMoveComponent)
 INHERIT(BaseComponent)
-P_RO(Flags)
+P(Flags)
 END_CLS()
 
 
 BEGIN_CLS(CanSenseComponent)
 INHERIT(BaseComponent)
-P_RO(Flags)
+P(Flags)
 END_CLS()
 
 
 BEGIN_CLS(ConcentrationComponent::Element)
-P_RO(field_0)
-P_RO(field_8)
-P_RO(field_10)
-P_RO(field_12)
+P(field_0)
+P(field_8)
+P(field_10)
+P(field_18)
+P(field_1A)
 END_CLS()
 
 
 BEGIN_CLS(ConcentrationComponent)
 INHERIT(BaseComponent)
-P(field_18)
+P(field_0)
+P(field_8)
 P(SpellId)
 END_CLS()
 
 
 BEGIN_CLS(DarknessComponent)
 INHERIT(BaseComponent)
-P_RO(field_18)
-P_RO(field_19)
-P_RO(field_1A)
-P_RO(field_1B)
-P_RO(field_1C)
-P_RO(field_1D)
-P_RO(field_20)
+P(field_18)
+P(field_19)
+P(field_1A)
+P(field_1B)
+P(field_1C)
+P(field_1D)
+P(field_20)
 END_CLS()
 
 
 BEGIN_CLS(DualWieldingComponent)
 INHERIT(BaseComponent)
-P_RO(field_18)
-P_RO(field_1A)
-P_RO(field_1B)
-P_RO(field_1D)
-P_RO(field_1E)
+P(field_18)
+P(field_1A)
+P(field_1B)
+P(field_1D)
+P(field_1E)
 END_CLS()
 
 
 BEGIN_CLS(GameObjectVisualComponent)
 INHERIT(BaseComponent)
-P_RO(RootTemplateId)
-P_RO(RootTemplateType)
-P_RO(Icon)
-P_RO(field_24)
-P_RO(field_28)
+P(RootTemplateId)
+P(RootTemplateType)
+P(Icon)
+P(field_24)
+P(field_28)
 END_CLS()
 
 
 BEGIN_CLS(SpellBookCooldownsComponent::Cooldown)
 P(SpellId)
-P_RO(CooldownType)
-P_RO(field_29)
-P_RO(Cooldown)
+P(CooldownType)
+P(field_29)
+P(Cooldown)
 END_CLS()
 
 
@@ -934,26 +915,26 @@ END_CLS()
 
 BEGIN_CLS(DisplayNameComponent)
 INHERIT(BaseComponent)
-P_RO(NameKey)
-P_RO(UnknownKey)
-P_RO(Name)
+P(NameKey)
+P(UnknownKey)
+P(Name)
 END_CLS()
 
 
 BEGIN_CLS(EquipableComponent)
 INHERIT(BaseComponent)
-P_RO(field_18)
-P_RO(Slot_M)
+P(field_18)
+P(Slot_M)
 END_CLS()
 
 
 BEGIN_CLS(GameplayLightComponent)
 INHERIT(BaseComponent)
-P_RO(field_18)
-P_RO(field_1C)
-P_RO(field_20)
-P_RO(field_24)
-P_RO(field_28)
+P(field_18)
+P(field_1C)
+P(field_20)
+P(field_24)
+P(field_28)
 END_CLS()
 
 
@@ -965,77 +946,77 @@ END_CLS()
 
 BEGIN_CLS(ProgressionMetaComponent)
 INHERIT(BaseComponent)
-P_RO(field_18)
-P_RO(Progression)
-P_RO(Race)
-P_RO(field_40)
-P_RO(field_44)
-P_RO(field_48)
-P_RO(Owner)
+P(field_18)
+P(Progression)
+P(Race)
+P(field_40)
+P(field_44)
+P(field_48)
+P(Owner)
 END_CLS()
 
 
 BEGIN_CLS(RaceComponent)
 INHERIT(BaseComponent)
-P_RO(Race)
+P(Race)
 END_CLS()
 
 
 BEGIN_CLS(CanTravelComponent)
 INHERIT(BaseComponent)
-P_RO(field_18)
-P_RO(field_1A)
-P_RO(field_1C)
+P(field_18)
+P(field_1A)
+P(field_1C)
 END_CLS()
 
 
 BEGIN_CLS(MovementComponent)
 INHERIT(BaseComponent)
-P_RO(field_18)
-P_RO(field_1C)
-P_RO(field_20)
-P_RO(field_24)
-P_RO(field_28)
-P_RO(field_2C)
+P(field_18)
+P(field_1C)
+P(field_20)
+P(field_24)
+P(field_28)
+P(field_2C)
 END_CLS()
 
 
 BEGIN_CLS(ObjectInteractionComponent)
 INHERIT(BaseComponent)
-P_RO(field_18)
+P(field_18)
 END_CLS()
 
 
 BEGIN_CLS(PathingComponent)
 INHERIT(BaseComponent)
-P_RO(field_18)
-P_RO(field_28)
-P_RO(field_38)
-P_RO(field_40)
-P_RO(CurveUUID)
-P_RO(field_48)
-P_RO(field_50)
-P_RO(field_58)
-P_RO(field_59)
-P_RO(field_5A)
-P_RO(field_5B)
-P_RO(field_5C)
+P(field_18)
+P(field_28)
+P(field_38)
+P(field_40)
+P(CurveUUID)
+P(field_48)
+P(field_50)
+P(field_58)
+P(field_59)
+P(field_5A)
+P(field_5B)
+P(field_5C)
 END_CLS()
 
 
 BEGIN_CLS(SteeringComponent)
 INHERIT(BaseComponent)
-P_RO(field_18)
-P_RO(field_1C)
-P_RO(field_20)
-P_RO(field_24)
+P(field_18)
+P(field_1C)
+P(field_20)
+P(field_24)
 // FIXME remainder
 END_CLS()
 
 
 BEGIN_CLS(CanDeflectProjectilesComponent)
 INHERIT(BaseComponent)
-P_RO(Flags)
+P(Flags)
 END_CLS()
 
 
@@ -1060,14 +1041,14 @@ END_CLS()
 
 BEGIN_CLS(NetComponent)
 INHERIT(BaseComponent)
-P_RO(field_18)
-P_RO(NetID)
+P(field_18)
+P(NetID)
 END_CLS()
 
 
 BEGIN_CLS(PhysicsComponent)
 INHERIT(BaseComponent)
-P_RO(field_18)
+P(field_18)
 END_CLS()
 
 
@@ -1075,31 +1056,31 @@ END_CLS()
 
 BEGIN_CLS(RecruitedByComponent)
 INHERIT(BaseComponent)
-P_RO(RecruitedBy)
+P(RecruitedBy)
 END_CLS()
 
 
 BEGIN_CLS(GameTimerComponent)
 INHERIT(BaseComponent)
-P_RO(field_18)
-P_RO(field_20)
-P_RO(field_28)
-P_RO(field_2C)
-P_RO(field_30)
-P_RO(field_34)
-P_RO(field_38)
+P(field_18)
+P(field_20)
+P(field_28)
+P(field_2C)
+P(field_30)
+P(field_34)
+P(field_38)
 END_CLS()
 
 
 BEGIN_CLS(ExperienceGaveOutComponent)
 INHERIT(BaseComponent)
-P_RO(Experience)
+P(Experience)
 END_CLS()
 
 
 BEGIN_CLS(ReplicationDependencyComponent)
 INHERIT(BaseComponent)
-P_RO(Dependency)
+P(Dependency)
 END_CLS()
 
 
@@ -1114,8 +1095,8 @@ END_CLS()
 
 
 BEGIN_CLS(ActivationGroupContainerComponent::ActivationGroup)
-P_RO(field_0)
-P_RO(field_4)
+P(field_0)
+P(field_4)
 END_CLS()
 
 
@@ -1127,53 +1108,53 @@ END_CLS()
 
 BEGIN_CLS(AnubisTagComponent)
 INHERIT(BaseComponent)
-P_RO(Tags)
+P(Tags)
 END_CLS()
 
 
 BEGIN_CLS(DialogTagComponent)
 INHERIT(BaseComponent)
-P_RO(Tags)
+P(Tags)
 END_CLS()
 
 
 BEGIN_CLS(DisplayName)
-P_RO(NameKey)
-P_RO(Unknown)
-P_RO(Unknown2)
-P_RO(Name)
+P(NameKey)
+P(Unknown)
+P(Unknown2)
+P(Name)
 END_CLS()
 
 
 BEGIN_CLS(DisplayNameListComponent)
 INHERIT(BaseComponent)
 P(Names)
-P_RO(TranslatedStrings)
+P(TranslatedStrings)
 END_CLS()
 
 
 BEGIN_CLS(IconListComponent::Icon)
-P_RO(Icon)
-P_RO(field_4)
+P(Icon)
+P(field_4)
 END_CLS()
 
 
 BEGIN_CLS(IconListComponent)
 INHERIT(BaseComponent)
 P(Icons)
-P_RO(field_30)
+P(field_30)
 END_CLS()
 
 
 BEGIN_CLS(RaceTagComponent)
 INHERIT(BaseComponent)
-P_RO(Tags)
+P(Tags)
 END_CLS()
 
 
 BEGIN_CLS(TemplateTagComponent)
 INHERIT(BaseComponent)
-P_RO(Tags)
+P(Tags)
 END_CLS()
 
 
@@ -1185,33 +1166,33 @@ END_CLS()
 
 BEGIN_CLS(BoostTagComponent)
 INHERIT(BaseComponent)
-P_RO(Tags)
+P(Tags)
 END_CLS()
 
 
 BEGIN_CLS(SafePositionComponent)
 INHERIT(BaseComponent)
 P(Position)
-P_RO(field_24)
+P(field_24)
 END_CLS()
 
 
 BEGIN_CLS(AnubisExecutorComponent)
 INHERIT(BaseComponent)
-P_RO(field_18)
-P_RO(field_20)
-P_RO(field_28)
-P_RO(field_29)
+P(field_18)
+P(field_20)
+P(field_28)
+P(field_29)
 END_CLS()
 
 
 
 BEGIN_CLS(StaticPhysicsComponent)
 INHERIT(BaseComponent)
-P_RO(field_18)
-P_RO(field_20)
-P_RO(field_28)
-P_RO(field_30)
+P(field_18)
+P(field_20)
+P(field_28)
+P(field_30)
 END_CLS()
 
 
@@ -1222,33 +1203,33 @@ END_CLS()
 
 
 BEGIN_CLS(BreadcrumbComponent::Element)
-P_RO(field_0)
-P_RO(field_4)
-P_RO(field_8)
-P_RO(field_14)
+P(field_0)
+P(field_4)
+P(field_8)
+P(field_14)
 END_CLS()
 
 
 BEGIN_CLS(BreadcrumbComponent)
 INHERIT(BaseComponent)
 P(field_18)
-P_RO(field_118)
+P(field_118)
 END_CLS()
 
 
 BEGIN_CLS(DelayDeathCauseComponent)
 INHERIT(BaseComponent)
-P_RO(DelayCount)
-P_RO(Blocked_M)
+P(DelayCount)
+P(Blocked_M)
 END_CLS()
 
 
 BEGIN_CLS(PickpocketComponent::PickpocketEntry)
-P_RO(field_0)
-P_RO(field_8)
-P_RO(field_10)
-P_RO(field_14)
-P_RO(field_18)
+P(field_0)
+P(field_8)
+P(field_10)
+P(field_14)
+P(field_18)
 END_CLS()
 
 
@@ -1266,7 +1247,7 @@ END_CLS()
 
 BEGIN_CLS(FTBParticipantComponent)
 INHERIT(BaseComponent)
-P_RO(field_18)
+P(field_18)
 END_CLS()
 
 
@@ -1278,9 +1259,11 @@ END_CLS()
 
 
 BEGIN_CLS(CharacterCreationAppearanceComponent::AppearanceElement)
-P_RO(Material)
-P_RO(Color)
-P_RO(field_20)
+P(Material)
+P(Color)
+P(field_20)
+P(field_24)
+P(field_28)
 END_CLS()
 
 
@@ -1288,28 +1271,30 @@ BEGIN_CLS(CharacterCreationAppearanceComponent)
 INHERIT(BaseComponent)
 P(Visuals)
 P(Elements)
-P_RO(SkinColor)
-P_RO(EyeColor)
-P_RO(field_68)
+P(field_20)
+P(SkinColor)
+P(EyeColor)
+P(field_50)
+P(field_60)
 END_CLS()
 
 
 BEGIN_CLS(inventory::DataComponent)
 INHERIT(BaseComponent)
 P(field_0)
-P(field_2)
+P(Flags)
 END_CLS()
 
 
 BEGIN_CLS(inventory::OwnerComponent)
 INHERIT(BaseComponent)
-P(field_0)
-P(field_8)
+P(Inventories)
+P(PrimaryInventory)
 END_CLS()
 
 
 BEGIN_CLS(inventory::ContainerComponent::Item)
-P(Handle)
+P(Item)
 P(field_8)
 END_CLS()
 

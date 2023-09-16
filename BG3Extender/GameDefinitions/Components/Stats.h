@@ -39,7 +39,7 @@ namespace bg3se
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Data;
 		static constexpr auto EngineClass = "eoc::DataComponent";
 
-		float Weight;
+		int32_t Weight;
 		FixedString StatsId;
 		uint32_t Flags;
 	};
@@ -67,8 +67,8 @@ namespace bg3se
 		Guid field_40;
 		int MaxHp;
 		int TemporaryHp;
-		int field_60;
-		int field_64;
+		int MaxTemporaryHp;
+		int AC;
 		std::array<int, 14> PerDamageTypeHealthThresholds;
 		bool IsInvulnerable;
 	};
@@ -244,7 +244,7 @@ namespace bg3se
 		Guid Class;
 		Guid SubClass;
 		Guid Feat;
-		std::array<int, 7> field_30;
+		std::array<int, 7> Abilities;
 		LevelUpUpgrades Upgrades;
 		Array<LevelUpData3> field_B0;
 	};
@@ -266,13 +266,13 @@ namespace bg3se
 		struct Spell
 		{
 			FixedString field_0;
-			int32_t field_4;
+			int32_t _Pad;
 			uint8_t field_8;
 			Guid field_10;
 		};
 
 
-		Array<Spell> field_18;
+		Array<Spell> Spells;
 		uint8_t field_30;
 	};
 
@@ -281,7 +281,7 @@ namespace bg3se
 		static constexpr ExtComponentType ComponentType = ExtComponentType::CCPrepareSpell;
 		static constexpr auto EngineClass = "eoc::spell::CCPrepareSpellComponent";
 
-		Array<PlayerPrepareSpellComponent::Spell> field_18;
+		Array<PlayerPrepareSpellComponent::Spell> Spells;
 	};
 
 	struct SpellCastComponent : public BaseComponent
@@ -334,14 +334,11 @@ namespace bg3se
 
 		Guid Race;
 		Guid SubRace;
-		__int64 field_38;
+		uint8_t field_20;
+		uint8_t field_21;
 		STDString Name;
-		__int64 field_60;
-		uint32_t field_68;
-		uint32_t field_6C;
-		uint32_t field_70;
-		uint32_t field_74;
-		int field_78;
+		std::array<int32_t, 7> Abilities;
+		uint8_t field_5C;
 	};
 
 	struct DisarmableComponent : public BaseComponent
@@ -401,7 +398,7 @@ namespace bg3se
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Savegame;
 		static constexpr auto EngineClass = "ls::SavegameComponent";
 
-		ComponentHandle field_18;
+		uint8_t field_0;
 	};
 
 	struct DisabledEquipmentComponent : public BaseComponent
@@ -847,12 +844,15 @@ namespace bg3se
 		static constexpr ExtComponentType ComponentType = ExtComponentType::AnimationSet;
 		static constexpr auto EngineClass = "ls::AnimationSetComponent";
 
-		__int64 field_18;
-		uint8_t field_20;
-		uint8_t field_21;
-		uint32_t _Pad;
-		FixedString field_28;
-		uint8_t field_2C;
+		struct Internal
+		{
+			uint64_t field_0;
+			uint16_t field_8;
+			uint32_t _Pad;
+			FixedString field_16;
+		};
+
+		Internal* AnimationSet;
 	};
 
 	struct AnimationBlueprintComponent : public BaseComponent
@@ -950,11 +950,13 @@ namespace bg3se
 		{
 			EntityHandle field_0;
 			EntityHandle field_8;
-			int16_t field_10;
-			bool field_12;
+			EntityHandle field_10;
+			int16_t field_18;
+			bool field_1A;
 		};
 
-		Array<Element> field_18;
+		EntityHandle field_0;
+		Array<Element> field_8;
 		SpellId SpellId;
 	};
 
@@ -1263,13 +1265,17 @@ namespace bg3se
 			Guid Material;
 			Guid Color;
 			float field_20;
+			uint32_t field_24;
+			float field_28;
 		};
 
 		Array<Guid> Visuals;
 		Array<AppearanceElement> Elements;
+		Array<int32_t> field_20;
 		Guid SkinColor;
 		Guid EyeColor;
-		Guid field_68;
+		Guid field_50;
+		Guid field_60;
 	};
 }
 
@@ -1277,30 +1283,30 @@ BEGIN_NS(inventory)
 
 struct DataComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryDataComponent;
+	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryData;
 	static constexpr auto EngineClass = "eoc::inventory::DataComponent";
 
 	uint8_t field_0;
-	uint16_t field_2;
+	uint16_t Flags;
 };
 
 struct OwnerComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryOwnerComponent;
+	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryOwner;
 	static constexpr auto EngineClass = "eoc::inventory::OwnerComponent";
 
-	Array<EntityHandle> field_0;
-	EntityHandle field_8;
+	Array<EntityHandle> Inventories;
+	EntityHandle PrimaryInventory;
 };
 
 struct ContainerComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryContainerComponent;
+	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryContainer;
 	static constexpr auto EngineClass = "eoc::inventory::ContainerComponent";
 
 	struct Item
 	{
-		EntityHandle Handle;
+		EntityHandle Item;
 		uint32_t field_8;
 	};
 
@@ -1309,7 +1315,7 @@ struct ContainerComponent : public BaseComponent
 
 struct MemberComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryMemberComponent;
+	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryMember;
 	static constexpr auto EngineClass = "eoc::inventory::MemberComponent";
 
 	EntityHandle Inventory;
