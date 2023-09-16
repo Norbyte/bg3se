@@ -34,18 +34,14 @@ namespace bg3se
 		Map<FixedString, int> Stats;
 	};
 
-
 	struct DataComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Data;
 		static constexpr auto EngineClass = "eoc::DataComponent";
 
-		float Weight_M;
+		float Weight;
 		FixedString StatsId;
 		uint32_t Flags;
-		uint32_t field_24;
-		uint64_t field_28;
-		int StepsType;
 	};
 
 	struct ExperienceComponent : public BaseComponent
@@ -65,55 +61,52 @@ namespace bg3se
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Health;
 		static constexpr auto EngineClass = "eoc::HealthComponent";
 
-		std::array<int, 14> PerDamageTypeModifiers;
-		int CurrentHealth;
-		int CurrentHealth_M;
-		int MaxHealth;
-		int MaxHealth_M;
+		std::array<int, 14> Resistances;
+		int field_38;
+		int Hp;
+		Guid field_40;
+		int MaxHp;
+		int TemporaryHp;
 		int field_60;
 		int field_64;
 		std::array<int, 14> PerDamageTypeHealthThresholds;
-		bool CannotDamage_M;
+		bool IsInvulnerable;
 	};
 
+	struct DifficultyCheckComponent : public BaseComponent
+	{
+		static constexpr ExtComponentType ComponentType = ExtComponentType::DifficultyCheck;
+		static constexpr auto EngineClass = "eoc::DifficultyCheckComponent";
 
+		int SpellDC;
+		int field_4;
+		int field_8;
+	};
+
+	struct ObjectSizeComponent : public BaseComponent
+	{
+		static constexpr ExtComponentType ComponentType = ExtComponentType::ObjectSize;
+		static constexpr auto EngineClass = "eoc::ObjectSizeComponent";
+
+		uint8_t Size;
+		uint8_t field_1;
+	};
 
 	struct StatsComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Stats;
 		static constexpr auto EngineClass = "eoc::StatsComponent";
 
-		struct EquipmentEntry
-		{
-			ItemSlot32 Slot;
-			EntityHandle ItemHandle;
-			uint8_t field_10;
-			uint8_t field_11;
-		};
-
-		struct ClassInfo
-		{
-			Guid Class;
-			Guid SubClass;
-			int32_t Priority;
-			int32_t Unknown;
-		};
-
-		int field_10;
+		int field_0;
 		std::array<int, 7> Abilities;
 		std::array<int, 7> AbilityModifiers;
 		std::array<int, 18> Skills;
-		AbilityId SpellCastingAbility;
-		int SpellDC;
-		int WeaponActionDC;
 		int ProficiencyBonus;
-		int field_AC;
-		MultiHashMap<ItemSlot32, EquipmentEntry> Equipment;
-		int ArmorType;
-		int ArmorType_Breast;
-		int Level;
-		bool Flanked;
-		Array<ClassInfo> Classes;
+		AbilityId SpellCastingAbility;
+		int field_8C;
+		int field_90;
+		int field_94;
+		int field_98;
 		AbilityId UnarmedAttackAbility;
 		AbilityId RangedAttackAbility;
 	};
@@ -1279,3 +1272,48 @@ namespace bg3se
 		Guid field_68;
 	};
 }
+
+BEGIN_NS(inventory)
+
+struct DataComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryDataComponent;
+	static constexpr auto EngineClass = "eoc::inventory::DataComponent";
+
+	uint8_t field_0;
+	uint16_t field_2;
+};
+
+struct OwnerComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryOwnerComponent;
+	static constexpr auto EngineClass = "eoc::inventory::OwnerComponent";
+
+	Array<EntityHandle> field_0;
+	EntityHandle field_8;
+};
+
+struct ContainerComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryContainerComponent;
+	static constexpr auto EngineClass = "eoc::inventory::ContainerComponent";
+
+	struct Item
+	{
+		EntityHandle Handle;
+		uint32_t field_8;
+	};
+
+	MultiHashMap<uint16_t, Item> Items;
+};
+
+struct MemberComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryMemberComponent;
+	static constexpr auto EngineClass = "eoc::inventory::MemberComponent";
+
+	EntityHandle Inventory;
+	int16_t EquipmentSlot;
+};
+
+END_NS()
