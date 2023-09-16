@@ -620,6 +620,13 @@ struct MultiHashSet
 		return Keys.size();
 	}
 
+	void clear()
+	{
+		Keys.clear();
+		std::fill(HashKeys.begin(), HashKeys.end(), -1);
+		std::fill(NextIds.begin(), NextIds.end(), -1);
+	}
+
 	int FindIndex(T const& key) const
 	{
 		if (HashKeys.Size() == 0) return -1;
@@ -641,8 +648,8 @@ struct MultiHashSet
 	void Clear()
 	{
 		std::fill(HashKeys.begin(), HashKeys.end(), -1);
-		NextIds.Clear();
-		Keys.Clear();
+		NextIds.clear();
+		Keys.clear();
 	}
 
 	int Add(T const& key)
@@ -842,7 +849,7 @@ struct MultiHashMap : public MultiHashSet<TKey>
 	{}
 
 	MultiHashMap(MultiHashMap const& other)
-		: MultiHashSet(other)
+		: MultiHashSet<TKey>(other)
 	{
 		Values = other.Values;
 	}
@@ -856,6 +863,12 @@ struct MultiHashMap : public MultiHashSet<TKey>
 		Values = other.Values;
 
 		return *this;
+	}
+
+	void clear()
+	{
+		Values.clear();
+		MultiHashSet<TKey>::clear();
 	}
 
 	std::optional<TValue const*> Find(TKey const& key) const

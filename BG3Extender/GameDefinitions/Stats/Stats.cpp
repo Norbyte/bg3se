@@ -15,17 +15,17 @@ bool SpellPrototypeManager::SyncStat(Object* object, SpellPrototype* proto)
 		return false;
 	}
 
-	proto->UseCosts2.Clear();
-	proto->RitualCosts2.Clear();
-	proto->DualWieldingUseCosts2.Clear();
-	proto->CastTextEvents.Clear();
-	proto->UseCosts.Clear();
-	proto->DualWieldingUseCosts.Clear();
-	proto->RitualCosts.Clear();
-	proto->SpellAnimationNoneMagic.Clear();
-	proto->DualWieldingSpellAnimationNoneMagic.Clear();
-	proto->AlternativeCastTextEvents.Clear();
-	proto->ContainerSpells.Clear();
+	proto->UseCosts2.clear();
+	proto->RitualCosts2.clear();
+	proto->DualWieldingUseCosts2.clear();
+	proto->CastTextEvents.clear();
+	proto->UseCosts.clear();
+	proto->DualWieldingUseCosts.clear();
+	proto->RitualCosts.clear();
+	proto->SpellAnimationNoneMagic.clear();
+	proto->DualWieldingSpellAnimationNoneMagic.clear();
+	proto->AlternativeCastTextEvents.clear();
+	proto->ContainerSpells.clear();
 
 	proto->SpellFlags = 0;
 	proto->LineOfSightFlags = 0;
@@ -65,7 +65,7 @@ bool StatusPrototypeManager::SyncStat(Object* object, StatusPrototype* proto)
 	proto->StatusGroups = 0;
 	proto->Flags = 0;
 	proto->RemoveEvents = 0;
-	proto->Boosts.Clear();
+	proto->Boosts.clear();
 
 	sync(proto, object->Name, 1);
 	return true;
@@ -99,7 +99,7 @@ bool PassiveManager::SyncStat(Object* object, Passive* proto)
 	proto->StatsFunctorContext = 0;
 	proto->ToggleOffContext = 0;
 	proto->BoostContext = 0;
-	proto->Boosts.Clear();
+	proto->Boosts.clear();
 
 	sync(proto, object);
 	return true;

@@ -276,8 +276,12 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <ClCompile Include="Lua\Shared\LuaStats.cpp">
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
-    <ClCompile Include="Lua\Shared\Proxies\LuaObjectProxies.cpp" />
-    <ClCompile Include="Lua\Shared\Proxies\LuaTypeInformation.cpp" />
+    <ClCompile Include="Lua\Shared\Proxies\LuaObjectProxies.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">/bigobj %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="Lua\Shared\Proxies\LuaTypeInformation.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">/bigobj %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
     <ClCompile Include="Osiris\Debugger\Debugger.cpp" />
     <ClCompile Include="Osiris\Debugger\DebugInterface.cpp" />
     <ClCompile Include="Osiris\Debugger\DebugMessages.cpp" />

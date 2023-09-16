@@ -121,18 +121,26 @@ bool GenericPropertyMap::IsA(int typeRegistryIndex) const
 	return false;
 }
 
-PropertyOperationResult SerializeRawObject(lua_State* L, void* obj, GenericPropertyMap const& pm)
+void SerializeRawObject(lua_State* L, void* obj, GenericPropertyMap const& pm)
 {
 	StackCheck _(L, 1);
 	lua_createtable(L, 0, (int)pm.Properties.size());
 	for (auto const& prop : pm.Properties) {
-		auto result = prop.second.Serialize(L, obj, prop.second.Offset, prop.second.Flag);
-		if (result == PropertyOperationResult::Success) {
-			lua_setfield(L, -2, prop.first.GetString());
+		prop.second.Serialize(L, obj, prop.second.Offset, prop.second.Flag);
+		lua_setfield(L, -2, prop.first.GetString());
+	}
+}
+
+void UnserializeRawObject(lua_State* L, int index, void* obj, GenericPropertyMap const& pm)
+{
+	StackCheck _(L);
+	for (auto const& prop : pm.Properties) {
+		lua_getfield(L, index, prop.first.GetString());
+		if (lua_type(L, -1) != LUA_TNIL) {
+			prop.second.Unserialize(L, obj, lua_absindex(L, -1), prop.second.Offset, prop.second.Flag);
 		}
 	}
 
-	return PropertyOperationResult::Success;
 }
 
 END_NS()

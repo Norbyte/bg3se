@@ -106,13 +106,24 @@ template <class T>
 PropertyOperationResult GenericSerializeOffsetProperty(lua_State* L, void* obj, std::size_t offset, uint64_t flag)
 {
 	auto* value = (T*)((std::uintptr_t)obj + offset);
-	return Serialize(L, value);
+	if constexpr (!std::is_pointer_v<T>) {
+		Serialize(L, value);
+		return PropertyOperationResult::Success;
+	} else {
+		return PropertyOperationResult::UnsupportedType;
+	}
 }
 
 template <class T>
-PropertyOperationResult GenericUnserializeOffsetProperty(lua_State* L, void* object, int index, std::size_t offset, uint64_t flag)
+PropertyOperationResult GenericUnserializeOffsetProperty(lua_State* L, void* obj, int index, std::size_t offset, uint64_t flag)
 {
-	return PropertyOperationResult::UnsupportedType;
+	auto* value = (T*)((std::uintptr_t)obj + offset);
+	if constexpr (!std::is_pointer_v<T>) {
+		Unserialize(L, index, value);
+		return PropertyOperationResult::Success;
+	} else {
+		return PropertyOperationResult::UnsupportedType;
+	}
 }
 
 template <class UnderlyingType>

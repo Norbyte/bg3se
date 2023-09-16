@@ -7,7 +7,10 @@
 BEGIN_NS(lua)
 
 template <class T>
-PropertyOperationResult Serialize(lua_State* L, T* obj);
+void Serialize(lua_State* L, T* obj);
+
+template <class T>
+void Unserialize(lua_State* L, int index, T* obj);
 
 class GenericPropertyMap : Noncopyable<GenericPropertyMap>
 {
@@ -136,6 +139,12 @@ void DefaultSerialize(lua_State* L, void* ptr)
 }
 
 template <class T>
+void DefaultUnserialize(lua_State* L, int index, void* ptr)
+{
+	Unserialize(L, index, reinterpret_cast<T*>(ptr));
+}
+
+template <class T>
 class LuaPropertyMap : public GenericPropertyMap
 {
 public:
@@ -260,7 +269,7 @@ public:
 		}
 
 		Serialize = &(DefaultSerialize<T>);
-		// Unserialize = &(DefaultUnserialize<T>);
+		Unserialize = &(DefaultUnserialize<T>);
 	}
 };
 
@@ -277,157 +286,252 @@ struct StaticLuaPropertyMap
 	static TPropertyMap PropertyMap;
 };
 
+
 template <class TK>
-PropertyOperationResult SerializeArray(lua_State* L, Array<TK>* obj)
+void SerializeArray(lua_State* L, Array<TK>* obj)
 {
 	StackCheck _(L, 1);
 	lua_createtable(L, (int)obj->size(), 0);
 	for (uint32_t i = 0; i < obj->size(); i++) {
-		auto result = Serialize(L, &(*obj)[i]);
-		if (result == PropertyOperationResult::Success) {
-			lua_rawseti(L, -2, i);
-		}
+		Serialize(L, &(*obj)[i]);
+		lua_rawseti(L, -2, i);
 	}
-
-	return PropertyOperationResult::Success;
 }
 
 template <class TK>
-PropertyOperationResult SerializeArray(lua_State* L, ObjectSet<TK>* obj)
+void SerializeArray(lua_State* L, ObjectSet<TK>* obj)
 {
 	StackCheck _(L, 1);
 	lua_createtable(L, (int)obj->size(), 0);
 	for (uint32_t i = 0; i < obj->size(); i++) {
-		auto result = Serialize(L, &(*obj)[i]);
-		if (result == PropertyOperationResult::Success) {
-			lua_rawseti(L, -2, i);
-		}
+		Serialize(L, &(*obj)[i]);
+		lua_rawseti(L, -2, i);
 	}
-
-	return PropertyOperationResult::Success;
 }
 
 template <class TK, size_t Size>
-PropertyOperationResult SerializeArray(lua_State* L, std::array<TK, Size>* obj)
+void SerializeArray(lua_State* L, std::array<TK, Size>* obj)
 {
 	StackCheck _(L, 1);
 	lua_createtable(L, (int)obj->size(), 0);
 	for (uint32_t i = 0; i < obj->size(); i++) {
-		auto result = Serialize(L, &(*obj)[i]);
-		if (result == PropertyOperationResult::Success) {
-			lua_rawseti(L, -2, i);
-		}
+		Serialize(L, &(*obj)[i]);
+		lua_rawseti(L, -2, i);
 	}
-
-	return PropertyOperationResult::Success;
 }
 
 template <class TK, class TV>
-PropertyOperationResult SerializeMap(lua_State* L, MultiHashMap<TK, TV>* obj)
+void SerializeMap(lua_State* L, MultiHashMap<TK, TV>* obj)
 {
 	StackCheck _(L, 1);
 	lua_createtable(L, 0, (int)obj->size());
 	for (auto& kv : *obj) {
-		auto result = Serialize(L, &kv.Key());
-		if (result == PropertyOperationResult::Success) {
-			result = Serialize(L, &kv.Value());
-			if (result != PropertyOperationResult::Success) {
-				push(L, nullptr);
-			}
-
-			lua_rawset(L, -2);
-		}
+		Serialize(L, &kv.Key());
+		Serialize(L, &kv.Value());
+		lua_rawset(L, -2);
 	}
-
-	return PropertyOperationResult::Success;
 }
 
 template <class TK, class TV>
-PropertyOperationResult SerializeMap(lua_State* L, RefMap<TK, TV>* obj)
+void SerializeMap(lua_State* L, RefMap<TK, TV>* obj)
 {
 	StackCheck _(L, 1);
 	lua_createtable(L, 0, (int)obj->size());
 	for (auto& kv : *obj) {
-		auto result = Serialize(L, &kv.Key);
-		if (result == PropertyOperationResult::Success) {
-			result = Serialize(L, &kv.Value);
-			if (result != PropertyOperationResult::Success) {
-				push(L, nullptr);
-			}
-
-			lua_rawset(L, -2);
-		}
+		Serialize(L, &kv.Key);
+		Serialize(L, &kv.Value);
+		lua_rawset(L, -2);
 	}
-
-	return PropertyOperationResult::Success;
 }
 
 template <class TK, class TV>
-PropertyOperationResult SerializeMap(lua_State* L, Map<TK, TV>* obj)
+void SerializeMap(lua_State* L, Map<TK, TV>* obj)
 {
 	StackCheck _(L, 1);
 	lua_createtable(L, 0, (int)obj->size());
 	for (auto& kv : *obj) {
-		auto result = Serialize(L, &kv.Key);
-		if (result == PropertyOperationResult::Success) {
-			result = Serialize(L, &kv.Value);
-			if (result != PropertyOperationResult::Success) {
-				push(L, nullptr);
-			}
-
-			lua_rawset(L, -2);
-		}
+		Serialize(L, &kv.Key);
+		Serialize(L, &kv.Value);
+		lua_rawset(L, -2);
 	}
-
-	return PropertyOperationResult::Success;
 }
 
 template <class TK>
-PropertyOperationResult SerializeSet(lua_State* L, MultiHashSet<TK>* obj)
+void SerializeSet(lua_State* L, MultiHashSet<TK>* obj)
 {
 	StackCheck _(L, 1);
 	lua_createtable(L, (int)obj->size(), 0);
 	for (uint32_t i = 0; i < obj->size(); i++) {
-		auto result = Serialize(L, &obj->Keys[i]);
-		if (result == PropertyOperationResult::Success) {
-			lua_rawseti(L, -2, i);
-		}
+		Serialize(L, &obj->Keys[i]);
+		lua_rawseti(L, -2, i);
 	}
-
-	return PropertyOperationResult::Success;
 }
 
-PropertyOperationResult SerializeRawObject(lua_State* L, void* obj, GenericPropertyMap const& pm);
+void SerializeRawObject(lua_State* L, void* obj, GenericPropertyMap const& pm);
 
 template <class T>
-inline PropertyOperationResult SerializeObject(lua_State* L, T* obj)
+inline void SerializeObject(lua_State* L, T* obj)
 {
-	return SerializeRawObject(L, obj, StaticLuaPropertyMap<T>::PropertyMap);
+	SerializeRawObject(L, obj, StaticLuaPropertyMap<T>::PropertyMap);
 }
 
 template <class T>
-inline PropertyOperationResult Serialize(lua_State* L, T* obj)
+inline void Serialize(lua_State* L, T* obj)
 {
+	static_assert(!std::is_pointer_v<T>);
+
 	if constexpr (IsByVal<T>) {
 		push(L, *obj);
-		return PropertyOperationResult::Success;
-	} else if constexpr (std::is_pointer_v<T>) {
-		return PropertyOperationResult::UnsupportedType;
 	} else if constexpr (IsArrayLike<T>::Value) {
-		return SerializeArray(L, obj);
+		SerializeArray(L, obj);
 	} else if constexpr (IsMapLike<T>::Value) {
-		return SerializeMap(L, obj);
+		SerializeMap(L, obj);
 	} else if constexpr (IsSetLike<T>::Value) {
-		return SerializeSet(L, obj);
+		SerializeSet(L, obj);
 	} else {
-		return SerializeObject(L, obj);
+		SerializeObject(L, obj);
 	}
 }
 
 template <class T>
-inline PropertyOperationResult Serialize(lua_State* L, OverrideableProperty<T>* obj)
+inline void Serialize(lua_State* L, OverrideableProperty<T>* obj)
 {
-	return Serialize(L, &obj->Value);
+	Serialize(L, &obj->Value);
+}
+
+
+template <class TK>
+void UnserializeArray(lua_State* L, int index, Array<TK>* obj)
+{
+	StackCheck _(L);
+	luaL_checktype(L, index, LUA_TTABLE);
+
+	obj->clear();
+	for (auto idx : iterate(L, index)) {
+		TK value;
+		Unserialize(L, idx, &value);
+		// FIXME - in-place unserialize
+		obj->push_back(value);
+	}
+}
+
+template <class TK>
+void UnserializeArray(lua_State* L, int index, ObjectSet<TK>* obj)
+{
+	StackCheck _(L);
+	luaL_checktype(L, index, LUA_TTABLE);
+
+	obj->clear();
+	for (auto idx : iterate(L, index)) {
+		TK value;
+		Unserialize(L, idx, &value);
+		// FIXME - in-place unserialize
+		obj->push_back(value);
+	}
+}
+
+template <class TK, size_t Size>
+void UnserializeArray(lua_State* L, int index, std::array<TK, Size>* obj)
+{
+	StackCheck _(L);
+	luaL_checktype(L, index, LUA_TTABLE);
+
+	for (uint32_t i = 0; i < obj->size(); i++) {
+		lua_rawgeti(L, index, i + 1);
+		TK value;
+		Unserialize(L, index + 1, &value);
+		// FIXME - in-place unserialize
+		(*obj)[i] = value;
+		lua_pop(L, 1);
+	}
+}
+
+template <class TK, class TV>
+void UnserializeMap(lua_State* L, int index, MultiHashMap<TK, TV>* obj)
+{
+	StackCheck _(L);
+	luaL_checktype(L, index, LUA_TTABLE);
+
+	obj->clear();
+	for (auto idx : iterate(L, index)) {
+		auto key = get<TK>(L, idx);
+		TV value;
+		Unserialize(L, idx + 1, &value);
+		// FIXME - in-place unserialize
+		obj->Set(key, value);
+	}
+}
+
+template <class TK, class TV>
+void UnserializeMap(lua_State* L, int index, RefMap<TK, TV>* obj)
+{
+	StackCheck _(L);
+	luaL_checktype(L, index, LUA_TTABLE);
+
+	obj->clear();
+	for (auto idx : iterate(L, index)) {
+		auto key = get<TK>(L, idx);
+		auto value = obj->get_or_insert(key);
+		Unserialize(L, idx + 1, value);
+	}
+}
+
+template <class TK, class TV>
+void UnserializeMap(lua_State* L, int index, Map<TK, TV>* obj)
+{
+	StackCheck _(L);
+	luaL_checktype(L, index, LUA_TTABLE);
+
+	obj->clear();
+	for (auto idx : iterate(L, index)) {
+		auto key = get<TK>(L, idx);
+		auto value = obj->get_or_insert(key);
+		Unserialize(L, idx + 1, value);
+	}
+}
+
+template <class TK>
+void UnserializeSet(lua_State* L, int index, MultiHashSet<TK>* obj)
+{
+	StackCheck _(L);
+	luaL_checktype(L, index, LUA_TTABLE);
+
+	obj->clear();
+	for (auto idx : iterate(L, index)) {
+		obj->Add(get<TK>(L, idx));
+	}
+}
+
+void UnserializeRawObject(lua_State* L, int index, void* obj, GenericPropertyMap const& pm);
+
+template <class T>
+inline void UnserializeObject(lua_State* L, int index, T* obj)
+{
+	UnserializeRawObject(L, index, obj, StaticLuaPropertyMap<T>::PropertyMap);
+}
+
+template <class T>
+inline void Unserialize(lua_State* L, int index, T* obj)
+{
+	static_assert(!std::is_pointer_v<T>);
+
+	if constexpr (IsByVal<T>) {
+		*obj = get<T>(L, index);
+	} else if constexpr (IsArrayLike<T>::Value) {
+		UnserializeArray(L, lua_absindex(L, index), obj);
+	} else if constexpr (IsMapLike<T>::Value) {
+		UnserializeMap(L, lua_absindex(L, index), obj);
+	} else if constexpr (IsSetLike<T>::Value) {
+		UnserializeSet(L, lua_absindex(L, index), obj);
+	} else {
+		UnserializeObject(L, lua_absindex(L, index), obj);
+	}
+}
+
+template <class T>
+inline void Unserialize(lua_State* L, int index, OverrideableProperty<T>* obj)
+{
+	Unserialize(L, index, &obj->Value);
 }
 
 END_NS()

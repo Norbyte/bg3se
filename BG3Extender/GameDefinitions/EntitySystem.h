@@ -83,7 +83,7 @@ struct UpdateInfo
 	__int64 field_120;
 };
 
-struct ComponentType
+struct ComponentType : public ProtectedGameObject<ComponentType>
 {
 	__int16 field_0;
 	int field_4;
@@ -98,9 +98,9 @@ struct ComponentType
 	Array<int16_t> DependencyComponentIndices;
 };
 
-struct Query
+struct Query : public ProtectedGameObject<Query>
 {
-	struct EntityClassMatch
+	struct EntityClassMatch : public ProtectedGameObject<EntityClassMatch>
 	{
 		EntityTypeMask ComponentTypeIdMask;
 		union {
@@ -150,7 +150,7 @@ struct Query
 };
 
 
-struct QueryManager
+struct QueryManager : public ProtectedGameObject<QueryManager>
 {
 	Array<Query> Queries;
 	Array<int16_t> ComponentTypes1;
@@ -161,13 +161,13 @@ struct QueryManager
 	Array<int16_t> ComponentTypes6;
 };
 
-struct ComponentRegistry
+struct ComponentRegistry : public ProtectedGameObject<ComponentRegistry>
 {
 	BitSet<> Bitmask;
 	Array<ComponentType> Types;
 };
 
-struct SystemType
+struct SystemType : public ProtectedGameObject<SystemType>
 {
 	using ID = uint32_t;
 
@@ -185,7 +185,7 @@ struct SystemType
 	MultiHashSet<uint32_t> HandleMappings;
 };
 
-struct SystemRegistry
+struct SystemRegistry : public ProtectedGameObject<SystemRegistry>
 {
 	void* VMT;
 	Array<SystemType> Systems;
@@ -193,13 +193,13 @@ struct SystemRegistry
 	uint32_t GrowSize;
 };
 
-struct ComponentReplication
+struct ComponentReplication : public ProtectedGameObject<ComponentReplication>
 {
 	Array<MultiHashMap<EntityHandle, BitSet<>>> ComponentPools;
 	bool Dirty;
 };
 
-struct EntityTypeSalts
+struct EntityTypeSalts : public ProtectedGameObject<EntityTypeSalts>
 {
 	struct Entry
 	{
@@ -219,7 +219,7 @@ struct EntityTypeSalts
 	__int64 field_38;
 };
 		
-struct EntityClass
+struct EntityClass : public ProtectedGameObject<EntityClass>
 {
 	static constexpr std::size_t PageSize = 64;
 
@@ -292,9 +292,9 @@ struct EntityClass
 };
 
 
-struct EntityStore
+struct EntityStore : public ProtectedGameObject<EntityStore>
 {
-	struct TypeSalts
+	struct TypeSalts : public ProtectedGameObject<TypeSalts>
 	{
 		struct Entry
 		{
@@ -308,7 +308,7 @@ struct EntityStore
 		uint16_t BitsPerBucket;
 	};
 
-	struct SaltMap
+	struct SaltMap : public ProtectedGameObject<SaltMap>
 	{
 		std::array<TypeSalts, 0x40> Buckets;
 		uint32_t Size;
@@ -325,7 +325,7 @@ struct EntityStore
 	EntityClass* GetEntityClass(EntityHandle entityHandle) const;
 };
 
-struct ComponentDataStore
+struct ComponentDataStore : public ProtectedGameObject<ComponentDataStore>
 {
 	__int64 FastLock;
 	__int64 FastLock2;
@@ -333,7 +333,7 @@ struct ComponentDataStore
 	Array<void*> Pages[2];
 };
 
-struct ComponentOps
+struct ComponentOps : public ProtectedGameObject<ComponentOps>
 {
 	__int64 VMT;
 	__int64 field_8;
@@ -343,7 +343,7 @@ struct ComponentOps
 	__int16 TypeId;
 };
 
-struct ComponentPool
+struct ComponentPool : public ProtectedGameObject<ComponentPool>
 {
 	Array<void*> Pages;
 	void* GrowProc;
@@ -355,7 +355,7 @@ struct ComponentPool
 	void* DtorProc;
 };
 
-struct ComponentRegistryEntry1
+struct ComponentRegistryEntry1 : public ProtectedGameObject<ComponentRegistryEntry1>
 {
 	void* VMT;
 	__int64 field_8;
@@ -364,7 +364,7 @@ struct ComponentRegistryEntry1
 	Array<void*> field_28;
 };
 
-struct EntityComponents
+struct EntityComponents : public ProtectedGameObject<EntityComponents>
 {
 	struct SparseHashMap
 	{
@@ -372,9 +372,11 @@ struct EntityComponents
 		Array<int16_t> NextIds;
 		Array<int16_t> Keys;
 		Array<ComponentPool*> Values;
+
+		ComponentPool* Get(ComponentTypeIndex index) const;
 	};
 
-	struct EntityEntry
+	struct EntityEntry : public ProtectedGameObject<EntityEntry>
 	{
 		ComponentTypeMask ComponentTypeIdMask;
 		ComponentTypeMask ComponentUpdateFlags1;
@@ -403,6 +405,16 @@ struct EntityComponents
 	__int64 field_128;
 };
 
+struct ComponentPools2 : public ProtectedGameObject<ComponentPools2>
+{
+	__int64 field_0;
+	ComponentDataStore* Store;
+	MultiHashMap<EntityHandle, EntityComponents::EntityEntry*> Entities;
+	EntityComponents::SparseHashMap ComponentPools;
+	__int64 field_90;
+	__int64 field_98;
+};
+
 struct EntityWorld : public ProtectedGameObject<EntityWorld>
 {
 	ComponentReplication* Replication;
@@ -417,7 +429,7 @@ struct EntityWorld : public ProtectedGameObject<EntityWorld>
 	void*  ECSUpdateBatch;
 	int field_160;
 	__int64 field_168;
-	Array<void*> field_170;
+	Array<ComponentPools2> ComponentPools;
 	Array<ComponentRegistryEntry1*> ComponentTypes;
 	bool field_190;
 	bool NeedsUpdate;

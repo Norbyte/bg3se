@@ -169,7 +169,7 @@ namespace bg3se::lua
 				lua_settable(s.L, -3);
 			}
 		} else {
-			v.Clear();
+			v.clear();
 			for (auto idx : iterate(s.L, -1)) {
 				StackCheck _(s.L);
 				T temp{};
@@ -194,7 +194,7 @@ namespace bg3se::lua
 				lua_settable(s.L, -3);
 			}
 		} else {
-			v.Clear();
+			v.clear();
 			for (auto idx : iterate(s.L, -1)) {
 				StackCheck _(s.L);
 				T temp{};

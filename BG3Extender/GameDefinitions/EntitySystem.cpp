@@ -76,6 +76,19 @@ void* EntityClass::GetComponent(InstanceComponentPointer const& entityPtr, uint8
 	auto buf = (uint8_t*)page.ComponentBuffer;
 	return buf + componentSize * entityPtr.EntryIndex;
 }
+
+ComponentPool* EntityComponents::SparseHashMap::Get(ComponentTypeIndex index) const
+{
+	auto hash = ((index.Value() & 0x7FFF) + 0x780 * (index.Value() >> 15));
+	if (hash < (int)SetValues.Size && SetValues[hash]) {
+		auto idx = NextIds[hash];
+		if (idx != -1 && Keys[idx] == index.Value()) {
+			return Values[idx];
+		}
+	}
+
+	return nullptr;
+}
 	
 void* EntityWorld::GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize)
 {
@@ -126,7 +139,7 @@ void* EntityWorld::GetRawComponent(FixedString const& guid, ComponentTypeIndex t
 bool EntityWorld::IsValid(EntityHandle entityHandle) const
 {
 	if (entityHandle.GetType() < 0x40) {
-		auto salts = (*EntitySalts)[entityHandle.GetType()];
+		auto& salts = (*EntitySalts)[entityHandle.GetType()];
 		if (entityHandle.GetIndex() < salts.NumElements) {
 			auto salt = salts.Buckets[entityHandle.GetIndex() >> salts.BitsPerBucket][entityHandle.GetIndex() & ((1 << salts.BitsPerBucket) - 1)];
 			return salt.Salt == entityHandle.GetSalt() && salt.Index == entityHandle.GetIndex();

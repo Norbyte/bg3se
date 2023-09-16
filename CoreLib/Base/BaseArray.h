@@ -144,14 +144,14 @@ struct CompactSet
 	~CompactSet()
 	{
 		if (Buf) {
-			Clear();
+			clear();
 			FreeBuffer(Buf);
 		}
 	}
 
 	CompactSet& operator = (CompactSet const& other)
 	{
-		Clear();
+		clear();
 		Reallocate(other.Size);
 		Size = other.Size;
 		for (uint32_t i = 0; i < other.Size; i++) {
@@ -235,7 +235,7 @@ struct CompactSet
 		Size--;
 	}
 
-	void Clear()
+	void clear()
 	{
 		for (uint32_t i = 0; i < Size; i++) {
 			Buf[i].~T();
@@ -410,8 +410,7 @@ public:
 	~StaticArray()
 	{
 		if (buf_) {
-			Clear();
-			GameFree(buf_);
+			Resize(0);
 		}
 	}
 
@@ -423,7 +422,7 @@ public:
 
 	void CopyFrom(StaticArray const& a)
 	{
-		Clear();
+		clear();
 
 		if (a.size_ != size_) {
 			Resize(a.size_);
@@ -458,19 +457,21 @@ public:
 		return buf_[index];
 	}
 
-	void Clear()
+	void clear()
 	{
-		for (uint32_t i = 0; i < size_; i++) {
-			buf_[i].~T();
-		}
-
-		size_ = 0;
+		Resize(0);
 	}
 
 	void Resize(uint32_t newSize, T const& initval = T{})
 	{
 		if (size_ != newSize) {
-			auto newBuf = GameMemoryAllocator::NewRaw<T>(newSize);
+			T* newBuf;
+			if (newSize > 0) {
+				newBuf = GameMemoryAllocator::NewRaw<T>(newSize);
+			} else {
+				newBuf = nullptr;
+			}
+
 			for (uint32_t i = 0; i < std::min(size_, newSize); i++) {
 				new (newBuf + i) T(buf_[i]);
 			}
@@ -531,7 +532,7 @@ public:
 	~Array()
 	{
 		if (buf_) {
-			Clear();
+			clear();
 			GameFree(buf_);
 		}
 	}
@@ -544,7 +545,7 @@ public:
 
 	void CopyFrom(Array const& a)
 	{
-		Clear();
+		clear();
 
 		if (a.size_ > 0) {
 			Reallocate(a.size_);
@@ -594,7 +595,7 @@ public:
 		}
 	}
 
-	void Clear()
+	void clear()
 	{
 		for (uint32_t i = 0; i < size_; i++) {
 			buf_[i].~T();
