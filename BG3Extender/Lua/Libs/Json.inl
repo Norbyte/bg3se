@@ -133,7 +133,7 @@ void* GetUserdataPointer(lua_State* L, int index)
 {
 	auto proxy = Userdata<ObjectProxy>::AsUserData(L, index);
 	if (proxy) {
-		return proxy->GetRaw(L);
+		return (void*)((std::uintptr_t)proxy->GetRaw(L) ^ ((std::uintptr_t)&proxy->GetImpl()->GetPropertyMap() << 32));
 	}
 
 	return lua_touserdata(L, index);
