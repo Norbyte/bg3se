@@ -742,7 +742,7 @@ namespace bg3se::esv
 		}
 
 		for (auto const& config : GetConfigs()) {
-			if (config.second.MinimumVersion >= 43 && !config.second.ModTable.empty()) {
+			if (config.second.MinimumVersion >= 4 && !config.second.ModTable.empty()) {
 				names.insert(config.first);
 			}
 		}
