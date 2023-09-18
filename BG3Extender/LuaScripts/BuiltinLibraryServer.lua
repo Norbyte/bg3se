@@ -14,7 +14,7 @@ Ext.IsServer = function ()
 	return true
 end
 
-Ext._GetModPersistentVars = function (modTable)
+_I._GetModPersistentVars = function (modTable)
 	local tab = Mods[modTable]
 	if tab ~= nil then
 		local persistent = tab.PersistentVars
