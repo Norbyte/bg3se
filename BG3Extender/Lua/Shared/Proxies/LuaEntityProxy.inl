@@ -113,9 +113,35 @@ namespace bg3se::lua
 					} else if (warnOnMissing) {
 						auto name = ecs->GetComponentName(typeInfo.Key());
 						if (name) {
-							OsiWarn("No model found for component: " << *name);
+							OsiWarn("No model found for component: " << **name);
+						} else {
+							OsiWarn("No model found for component ID: " << typeInfo.Key().Value());
 						}
 					}
+				}
+			}
+		}
+
+		return 1;
+	}
+
+	int EntityProxy::GetAllComponentNames(lua_State* L)
+	{
+		StackCheck _(L, 1);
+		auto self = get<EntityProxy*>(L, 1);
+
+		lua_newtable(L);
+
+		auto ecs = GetEntitySystem(L);
+		auto world = ecs->GetEntityWorld();
+		auto entityClass = world->GetEntityClass(self->handle_);
+		if (entityClass != nullptr) {
+			for (auto componentIdx : entityClass->ComponentTypeToIndex.Keys) {
+				auto name = ecs->GetComponentName(componentIdx);
+				if (name) {
+					push(L, componentIdx.Value());
+					push(L, **name);
+					lua_settable(L, -3);
 				}
 			}
 		}
@@ -175,6 +201,11 @@ namespace bg3se::lua
 
 		if (key == GFS.strGetAllComponents) {
 			push(L, &EntityProxy::GetAllComponents);
+			return 1;
+		}
+
+		if (key == GFS.strGetAllComponentNames) {
+			push(L, &EntityProxy::GetAllComponentNames);
 			return 1;
 		}
 

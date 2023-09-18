@@ -889,6 +889,27 @@ P(field_1E)
 END_CLS()
 
 
+BEGIN_CLS(GameObjectVisualData)
+P(field_58)
+P(field_68)
+P(field_78)
+P(field_88)
+P(field_98)
+P(Visuals)
+P(Elements)
+P(field_C8)
+END_CLS()
+
+
+BEGIN_CLS(GameObjectVisualData::AppearanceElement)
+P(Material)
+P(Color)
+P(field_20)
+P(field_24)
+P(field_28)
+END_CLS()
+
+
 BEGIN_CLS(GameObjectVisualComponent)
 INHERIT(BaseComponent)
 P(RootTemplateId)
@@ -896,6 +917,8 @@ P(RootTemplateType)
 P(Icon)
 P(field_24)
 P(field_28)
+P(VisualData)
+P(field_F0)
 END_CLS()
 
 
@@ -1255,15 +1278,6 @@ BEGIN_CLS(ApprovalRatingsComponent)
 INHERIT(BaseComponent)
 P(Ratings)
 P(field_70)
-END_CLS()
-
-
-BEGIN_CLS(CharacterCreationAppearanceComponent::AppearanceElement)
-P(Material)
-P(Color)
-P(field_20)
-P(field_24)
-P(field_28)
 END_CLS()
 
 

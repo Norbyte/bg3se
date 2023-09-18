@@ -27,6 +27,7 @@ namespace bg3se::lua
 
 		static int GetComponent(lua_State* L);
 		static int GetAllComponents(lua_State* L);
+		static int GetAllComponentNames(lua_State* L);
 		static int GetEntityType(lua_State* L);
 		static int GetSalt(lua_State* L);
 		static int GetIndex(lua_State* L);

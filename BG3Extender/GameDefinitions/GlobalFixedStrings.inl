@@ -29,6 +29,7 @@ FS(SetPersistence);
 // Entity proxy functions
 FS(GetComponent);
 FS(GetAllComponents);
+FS(GetAllComponentNames);
 FS(GetEntityType);
 FS(GetSalt);
 FS(GetIndex);

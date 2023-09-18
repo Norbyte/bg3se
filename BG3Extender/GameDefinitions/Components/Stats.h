@@ -988,15 +988,24 @@ namespace bg3se
 
 	struct GameObjectVisualData
 	{
-		ScratchBuffer field_0;
-		__int64 field_58;
-		__int64 field_60;
-		__int64 field_68;
-		__int64 field_70;
-		__int64 field_78;
-		__int64 field_80;
-		Array<uint64_t> field_88;
-		Array<uint64_t> field_A0;
+		struct AppearanceElement
+		{
+			Guid Material;
+			Guid Color;
+			float field_20;
+			uint32_t field_24;
+			float field_28;
+		};
+
+		ScratchBuffer Buffer;
+		Guid field_58;
+		Guid field_68;
+		Guid field_78;
+		Guid field_88;
+		Guid field_98;
+		Array<Guid> Visuals;
+		Array<AppearanceElement> Elements;
+		Array<int32_t> field_C8;
 	};
 
 	struct GameObjectVisualComponent : public BaseComponent
@@ -1010,6 +1019,7 @@ namespace bg3se
 		float field_24;
 		uint8_t field_28;
 		GameObjectVisualData VisualData;
+		FixedString field_F0;
 	};
 
 	struct SpellBookCooldownsComponent : public BaseComponent
@@ -1260,17 +1270,8 @@ namespace bg3se
 		static constexpr ExtComponentType ComponentType = ExtComponentType::CharacterCreationAppearance;
 		static constexpr auto EngineClass = "eoc::character_creation::AppearanceComponent";
 
-		struct AppearanceElement
-		{
-			Guid Material;
-			Guid Color;
-			float field_20;
-			uint32_t field_24;
-			float field_28;
-		};
-
 		Array<Guid> Visuals;
-		Array<AppearanceElement> Elements;
+		Array<GameObjectVisualData::AppearanceElement> Elements;
 		Array<int32_t> field_20;
 		Guid SkinColor;
 		Guid EyeColor;
