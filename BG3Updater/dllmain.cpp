@@ -163,6 +163,7 @@ void LoadConfigFile(std::wstring const& configPath, UpdaterConfig& config)
 	config.Debug = false;
 #endif
 	config.ValidateSignature = true;
+	config.IPv4Only = false;
 	config.DisableUpdates = false;
 
 	std::ifstream f(configPath, std::ios::in);
@@ -191,6 +192,7 @@ void LoadConfigFile(std::wstring const& configPath, UpdaterConfig& config)
 	ConfigGetBool(root, "Debug", config.Debug);
 	ConfigGetBool(root, "ValidateSignature", config.ValidateSignature);
 #endif
+	ConfigGetBool(root, "IPv4Only", config.IPv4Only);
 	ConfigGetBool(root, "DisableUpdates", config.DisableUpdates);
 }
 
@@ -685,6 +687,8 @@ public:
 	bool Fetch(Manifest& manifest, ErrorReason& reason)
 	{
 		HttpFetcher fetcher;
+		fetcher.DebugLogging = config_.Debug;
+		fetcher.IPv4Only = config_.IPv4Only;
 		std::string manifestUrl = config_.ManifestURL + config_.UpdateChannel + "/" + config_.ManifestName;
 
 		DEBUG("Fetching manifest from: %s", manifestUrl.c_str());
@@ -780,6 +784,9 @@ public:
 		}
 
 		HttpFetcher fetcher;
+		fetcher.DebugLogging = config_.Debug;
+		fetcher.IPv4Only = config_.IPv4Only;
+
 		DEBUG("Fetching update package: %s", version.URL.c_str());
 		std::vector<uint8_t> response;
 		if (!fetcher.Fetch(version.URL, response)) {

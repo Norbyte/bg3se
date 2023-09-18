@@ -9,6 +9,9 @@ BEGIN_SE()
 class HttpFetcher
 {
 public:
+	bool DebugLogging{ false };
+	bool IPv4Only{ false };
+
 	HttpFetcher();
 	~HttpFetcher();
 
@@ -32,6 +35,7 @@ private:
 
 	void LogError(CURL* curl, CURLcode result);
 	static size_t WriteFunc(char* contents, size_t size, size_t nmemb, HttpFetcher* self);
+	static int DebugFunc(CURL* handle, curl_infotype type, char* data, size_t size, void* clientp);
 };
 
 END_SE()

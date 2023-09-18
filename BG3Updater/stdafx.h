@@ -33,6 +33,7 @@ struct UpdaterConfig
 	std::wstring CachePath;
 	bool Debug;
 	bool ValidateSignature;
+	bool IPv4Only;
 	bool DisableUpdates;
 };
 
