@@ -168,7 +168,7 @@ void ScriptExtender::OnGameStateChanged(void * self, GameState fromState, GameSt
 		AddThread(GetCurrentThreadId());
 	}
 
-	if (gExtender->WasInitialized()) {
+	if (gExtender->WasInitialized() && !gExtender->GetLibraryManager().CriticalInitializationFailed()) {
 		if (IsLoadingState(toState)) {
 			UpdateClientProgress(EnumInfo<GameState>::Find(toState).GetString());
 		} else {
