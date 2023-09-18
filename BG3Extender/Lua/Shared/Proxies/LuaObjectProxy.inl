@@ -10,7 +10,7 @@ namespace bg3se::lua
 		StackCheck _(L, 1);
 		auto impl = GetImpl();
 		if (!lifetime_.IsAlive(L)) {
-			luaL_error(L, "Attempted to read dead object of type '%s'", impl->GetTypeName());
+			luaL_error(L, "Attempted to read dead object of type '%s'", impl->GetTypeName().GetString());
 			push(L, nullptr);
 			return 1;
 		}
@@ -28,7 +28,7 @@ namespace bg3se::lua
 		StackCheck _(L, 0);
 		auto impl = GetImpl();
 		if (!lifetime_.IsAlive(L)) {
-			luaL_error(L, "Attempted to write dead object of type '%s'", impl->GetTypeName());
+			luaL_error(L, "Attempted to write dead object of type '%s'", impl->GetTypeName().GetString());
 			return 0;
 		}
 
@@ -41,7 +41,7 @@ namespace bg3se::lua
 	{
 		auto impl = GetImpl();
 		if (!lifetime_.IsAlive(L)) {
-			luaL_error(L, "Attempted to iterate dead object of type '%s'", impl->GetTypeName());
+			luaL_error(L, "Attempted to iterate dead object of type '%s'", impl->GetTypeName().GetString());
 			return 0;
 		}
 
@@ -85,7 +85,7 @@ namespace bg3se::lua
 				return obj;
 			}
 		} else {
-			luaL_error(L, "Argument %d: expected an object of type '%s', got '%s'", index, typeName.GetString(), proxy->GetImpl()->GetTypeName());
+			luaL_error(L, "Argument %d: expected an object of type '%s', got '%s'", index, typeName.GetString(), proxy->GetImpl()->GetTypeName().GetString());
 			return nullptr;
 		}
 	}
