@@ -279,7 +279,7 @@
           @str1 48 8d 05 ?? ?? ?? ?? // lea     rax, aHf7952f87g01c4; "hf7952f87g01c4g4ce7g9badg018bbe33f62a"
           <Condition Type="String" Offset="@str1" Value="hf7952f87g01c4g4ce7g9badg018bbe33f62a" />
           <Patch Type="Absolute" Offset="@ref">
-            90 E0
+            90 E9
           </Patch>
         </Mapping>
 
