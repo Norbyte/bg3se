@@ -35,6 +35,7 @@ bool HttpFetcher::Fetch(std::string const& url, std::vector<uint8_t> & response)
 	curl_easy_setopt(curl, CURLOPT_HEADER, 0);
 	curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1);
 	curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT_MS, 10000);
+	curl_easy_setopt(curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2_0);
 
 	if (DebugLogging) {
 		curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
