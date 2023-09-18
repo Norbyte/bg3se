@@ -128,7 +128,7 @@ namespace bg3se::lua
 		template <class... Ret, class... Args>
 		bool CallExtRet(char const * func, uint32_t restrictions, std::tuple<Ret...>& ret, Args... args)
 		{
-			StackCheck _(L, sizeof...(Ret));
+			StackCheck _(L);
 			// FIXME - Restriction restriction(*this, restrictions);
 			LifetimeStackPin _p(lifetimeStack_);
 			auto lifetime = lifetimeStack_.GetCurrent();
