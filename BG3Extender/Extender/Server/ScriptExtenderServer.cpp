@@ -250,7 +250,7 @@ void ScriptExtender::LoadExtensionState(ExtensionStateContext ctx)
 
 void ScriptExtender::OnSavegameVisit(OsirisVariableHelper* helpers, SavegameVisitor* visitor)
 {
-	if (visitor->LSFVisitor != nullptr) {
+	if (extensionState_ && visitor->LSFVisitor != nullptr) {
 		savegameSerializer_.SavegameVisit(visitor->LSFVisitor);
 	}
 }
