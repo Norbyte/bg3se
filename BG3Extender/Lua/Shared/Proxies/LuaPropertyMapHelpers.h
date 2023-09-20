@@ -77,6 +77,16 @@ inline void PushAny(lua_State* L, T* value, LifetimeHandle const& lifetime)
 }
 
 template <class T>
+inline void PushAny(lua_State* L, T& value, LifetimeHandle const& lifetime)
+{
+	if constexpr (IsByVal<T>) {
+		push(L, value);
+	} else {
+		MakeObjectRef(L, &value, lifetime);
+	}
+}
+
+template <class T>
 PropertyOperationResult GenericGetOffsetProperty(lua_State* L, LifetimeHandle const& lifetime, void* obj, std::size_t offset, uint64_t)
 {
 	auto* value = (T*)((std::uintptr_t)obj + offset);
@@ -135,7 +145,7 @@ PropertyOperationResult GenericGetOffsetBitmaskFlag(lua_State* L, LifetimeHandle
 }
 
 template <class UnderlyingType>
-PropertyOperationResult GenericSetOffsetBitmaskFlag(lua_State* L, LifetimeHandle const& lifetime, void* obj, int index, std::size_t offset, uint64_t flag)
+PropertyOperationResult GenericSetOffsetBitmaskFlag(lua_State* L, void* obj, int index, std::size_t offset, uint64_t flag)
 {
 	auto* value = (UnderlyingType*)((std::uintptr_t)obj + offset);
 	auto set = get<bool>(L, index);

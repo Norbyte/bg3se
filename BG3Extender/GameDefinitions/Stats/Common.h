@@ -4,7 +4,7 @@
 
 BEGIN_SE()
 
-struct SpellIdBase : public HasObjectProxy
+struct SpellIdBase
 {
 	FixedString OriginatorPrototype;
 	uint8_t _Pad[4];
@@ -12,7 +12,7 @@ struct SpellIdBase : public HasObjectProxy
 	Guid ProgressionSource;
 };
 
-struct SpellId : public HasObjectProxy
+struct SpellId
 {
 	FixedString OriginatorPrototype;
 	uint8_t _Pad[4];

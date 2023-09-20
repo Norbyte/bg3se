@@ -8,7 +8,7 @@
 
 BEGIN_NS(stats)
 
-struct Functor : HasObjectProxy
+struct Functor
 {
 	struct FunctorVMT
 	{
@@ -46,7 +46,7 @@ struct Functor : HasObjectProxy
 	}
 };
 
-struct BaseFunctorExecParams : public HasObjectProxy
+struct BaseFunctorExecParams
 {
 	FunctorExecParamsType ParamsTypeId{ 0 };
 	PropertyContext PropertyContext{ 0 };

@@ -4,7 +4,7 @@
 
 namespace bg3se
 {
-    struct GameObjectTemplate : public HasObjectProxy
+    struct GameObjectTemplate
     {
         void* VMT;
         OverrideableProperty<uint32_t> Flags;

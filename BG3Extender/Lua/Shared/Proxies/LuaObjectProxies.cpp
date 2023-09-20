@@ -57,18 +57,6 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 	}
 }
 
-PropertyOperationResult CharacterSetFlag(lua_State* L, LifetimeHandle const& lifetime, void* obj, int index, std::size_t offset, uint64_t flag)
-{
-	auto ch = reinterpret_cast<esv::Character*>(obj);
-	auto set = get<bool>(L, index);
-	if (set) {
-		ch->SetFlags(flag);
-	} else {
-		ch->ClearFlags(flag);
-	}
-
-	return PropertyOperationResult::Success;
-}
 
 // Lua property map and object proxy template specialization declarations
 

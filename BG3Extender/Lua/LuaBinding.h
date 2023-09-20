@@ -133,7 +133,7 @@ namespace bg3se::lua
 			LifetimeStackPin _p(lifetimeStack_);
 			auto lifetime = lifetimeStack_.GetCurrent();
 			PushInternalFunction(L, func);
-			(push_proxy(L, lifetime, args), ...);
+			(PushAny(L, args, lifetime), ...);
 			return CheckedCall<Ret...>(L, sizeof...(args), ret, func);
 		}
 
@@ -145,7 +145,7 @@ namespace bg3se::lua
 			LifetimeStackPin _p(lifetimeStack_);
 			auto lifetime = lifetimeStack_.GetCurrent();
 			PushInternalFunction(L, func);
-			(push_proxy(L, lifetime, args), ...);
+			(PushAny(L, args, lifetime), ...);
 			return CheckedCall(L, sizeof...(args), func);
 		}
 

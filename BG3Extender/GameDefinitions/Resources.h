@@ -6,7 +6,7 @@
 
 namespace bg3se
 {
-	struct Resource : public ProtectedProxyGameObject<Resource>
+	struct Resource : public ProtectedGameObject<Resource>
 	{
 		void* VMT;
 		Path SourceFile;

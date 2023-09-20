@@ -29,7 +29,7 @@ namespace bg3se
 			bool IsCustom;
 		};*/
 
-		struct PlayerCustomData : public ProtectedProxyGameObject<PlayerCustomData>
+		struct PlayerCustomData : public ProtectedGameObject<PlayerCustomData>
 		{
 			void* VMT;
 			bool Initialized;
@@ -143,7 +143,7 @@ namespace bg3se
 
 		struct PlayerCustomData : public eoc::PlayerCustomData {};
 
-		struct PlayerData : public ProtectedProxyGameObject<PlayerData>
+		struct PlayerData : public ProtectedGameObject<PlayerData>
 		{
 			ComponentHandle PlayerHandle;
 			uint64_t SkillBar;
@@ -260,8 +260,6 @@ namespace bg3se
 			FixedString PreviousLevel;
 		};
 	}
-
-	HAS_OBJECT_PROXY(esv::Character);
 
 	namespace ecl 
 	{

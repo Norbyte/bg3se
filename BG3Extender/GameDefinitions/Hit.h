@@ -5,7 +5,7 @@
 
 namespace bg3se
 {
-	struct DamageSums : public HasObjectProxy
+	struct DamageSums
 	{
 		int TotalDamageDone;
 		int TotalHealDone;
@@ -13,20 +13,20 @@ namespace bg3se
 	};
 
 
-	struct DamagePair : public HasObjectProxy
+	struct DamagePair
 	{
 		int32_t Amount;
 		DamageType DamageType;
 	};
 
-	struct DiceValues : public HasObjectProxy
+	struct DiceValues
 	{
 		int8_t DiceValue;
 		uint8_t AmountOfDices;
 		int DiceAdditionalValue;
 	};
 
-	struct DamageModifierMetadata : public HasObjectProxy
+	struct DamageModifierMetadata
 	{
 
 		uint8_t MetadataType;
@@ -39,7 +39,7 @@ namespace bg3se
 		};
 	};
 
-	struct StatsRollRoll : public HasObjectProxy
+	struct StatsRollRoll
 	{
 		DiceValues Roll;
 		RollTypeId RollType;
@@ -47,7 +47,7 @@ namespace bg3se
 		bool Disadvantage;
 	};
 
-	struct StatsRollResult : public HasObjectProxy
+	struct StatsRollResult
 	{
 		int Total;
 		int DiceTotal;
@@ -55,14 +55,14 @@ namespace bg3se
 		bool Critical;
 	};
 
-	struct ResolvedRollBonus : public HasObjectProxy
+	struct ResolvedRollBonus
 {
 		uint8_t DiceSetType;
 		uint8_t NumDice;
 		int ResolvedRollBonus;
 	};
 
-	struct StatsRollMetadata : public HasObjectProxy
+	struct StatsRollMetadata
 	{
 		int ProficiencyBonus;
 		int RollBonus;
@@ -76,7 +76,7 @@ namespace bg3se
 		Array<ResolvedRollBonus> ResolvedRollBonuses;
 	};
 
-	struct StatsRollBase : public HasObjectProxy
+	struct StatsRollBase
 	{
 		StatsRollRoll Roll;
 		StatsRollResult Result;
@@ -89,7 +89,7 @@ namespace bg3se
 		uint8_t Type;
 	};
 
-	struct StatsRollType1 : public HasObjectProxy
+	struct StatsRollType1
 	{
 		void* CachedStatExpression;
 		STDString StatExpression;
@@ -102,7 +102,7 @@ namespace bg3se
 	};
 
 
-	struct ConditionRoll : public HasObjectProxy
+	struct ConditionRoll
 	{
 		uint8_t DataType;
 		RollTypeId RollType; // Maybe?
@@ -111,16 +111,16 @@ namespace bg3se
 	};
 
 
-	struct DamageResistance : public HasObjectProxy
+	struct DamageResistance
 	{
 		int ResistanceType;
 		DamageType DamageType;
 		int Damage;
 	};
 
-	struct Hit : public HasObjectProxy
+	struct Hit
 	{
-		struct Subobj : public HasObjectProxy
+		struct Subobj
 		{
 			RefMap<uint8_t, ObjectSet<StatsRollType0>> DamageRolls;
 			ObjectSet<DamageModifierMetadata> ModifierMetadata;
