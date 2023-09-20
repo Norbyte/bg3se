@@ -23,11 +23,13 @@ $RootPath = (Get-Location).Path
 $GameManifestPath = Join-Path $PublishingRoot "GameManifest.json"
 $EditorManifestPath = Join-Path $PublishingRoot "EditorManifest.json"
 $GameBuildZipPath = Join-Path $BuildRoot "GameLatest.zip"
+$GameManualBuildZipPath = Join-Path $BuildRoot "GameLatestManual.zip"
 $EditorBuildZipPath = Join-Path $BuildRoot "EditorLatest.zip"
 $GameDllPath = Join-Path $RootPath "x64\Game Release\BG3ScriptExtender.dll"
 $EditorDllPath = Join-Path $RootPath "x64\Editor Release\BG3EditorScriptExtender.dll"
 
 $GameBuildDir = Join-Path "$BuildRoot" "TempGameBuild"
+$GameManualBuildDir = Join-Path "$BuildRoot" "TempGameManualBuild"
 $EditorBuildDir = Join-Path "$BuildRoot" "TempEditorBuild"
 $PDBDir = Join-Path "$PDBRoot" "TempPDB"
 	
@@ -72,7 +74,7 @@ function Create-Update-Package ($BuildDir, $ZipPath, $HasEditor, $HasGame)
 	Remove-Item $BuildDir -Recurse -ErrorAction SilentlyContinue
 	New-Item $BuildDir -ItemType "directory"
 
-	git show -s --format="D:OS2 Extender Version: Commit %H, %cD" > $BuildDir\Version.txt
+	git show -s --format="BG3SE Version: Commit %H, %cD" > $BuildDir\Version.txt
 
 	Copy-Item "x64\Release\CrashReporter.exe" -Destination $BuildDir\CrashReporter.exe
 	Copy-Item External\protobuf\bin\libprotobuf-lite.dll -Destination $BuildDir\libprotobuf-lite.dll
@@ -86,6 +88,18 @@ function Create-Update-Package ($BuildDir, $ZipPath, $HasEditor, $HasGame)
 	{
 		Copy-Item "x64\Game Release\BG3ScriptExtender.dll" -Destination $BuildDir\BG3ScriptExtender.dll
 	}
+	
+	Remove-Item $ZipPath -ErrorAction SilentlyContinue
+	Compress-Archive -Path $BuildDir\* -DestinationPath $ZipPath -CompressionLevel Optimal -Force
+}
+
+function Create-ManualInstall-Package ($BuildDir, $ZipPath)
+{
+	Remove-Item $BuildDir -Recurse -ErrorAction SilentlyContinue
+	New-Item $BuildDir -ItemType "directory"
+
+	Copy-Item External\protobuf\bin\libprotobuf-lite.dll -Destination $BuildDir\libprotobuf-lite.dll
+	Copy-Item "x64\Game Release\BG3ScriptExtender.dll" -Destination $BuildDir\DWrite.dll
 	
 	Remove-Item $ZipPath -ErrorAction SilentlyContinue
 	Compress-Archive -Path $BuildDir\* -DestinationPath $ZipPath -CompressionLevel Optimal -Force
@@ -132,9 +146,20 @@ function Publish-Package ($ZipPath, $DigestPath, $Channel, $ManifestPath)
 	aws cloudfront create-invalidation --distribution-id $CloudFrontDistributionID --paths "$CloudFrontRootPath/$Channel/$S3ManifestPath" "$CloudFrontRootPath/$Channel/Packages/$DigestPath"
 }
 
+function Publish-Manual-Package ($ZipPath, $Channel)
+{
+	Write-Output "S3 path: s3://$S3Bucket/$S3RootPath/$Channel/ManualInstall.zip"
+	Write-Output "CloudFront path: $CloudFrontRootPath/$Channel/ManualInstall.zip"
+	Write-Output "URL: $CloudFrontRootURL/$Channel/ManualInstall.zip"
+
+	aws s3 cp $ZipPath "s3://$S3Bucket/$S3RootPath/$Channel/ManualInstall.zip"
+	aws s3api put-object-acl --bucket nb-stor --key "$S3RootPath/$Channel/ManualInstall.zip" --acl public-read
+}
+
 Build-Extender
 
 Build-Package $GameBuildDir $GameBuildZipPath $GameDllPath $GameChannel 1 0
+Create-ManualInstall-Package $GameManualBuildDir $GameManualBuildZipPath
 # Build-Package $EditorBuildDir $EditorBuildZipPath $EditorDllPath $EditorChannel 0 1
 
 Create-PDBDir
@@ -157,4 +182,5 @@ Read-Host
 
 Write-Output " ===== UPLOADING PACKAGES ===== "
 Publish-Package $GameBuildZipPath $GameDigestPath $GameChannel $GameManifestPath
+Publish-Manual-Package $GameManualBuildZipPath $GameChannel
 # Publish-Package $EditorBuildZipPath $EditorDigestPath $EditorChannel $EditorManifestPath
