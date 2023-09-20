@@ -592,6 +592,48 @@
         <Target Type="Absolute" Offset="@ref1" EngineCallback="BindEventComponentIDRef" />
       </Mapping>
 
+      <Mapping Name="ecs::ReplicationComponentIDRef" AllowFail="true">
+        48 83 ec 20 // sub     rsp, 20h
+        48 8b d9 // mov     rbx, rcx
+        48 83 79 20 00 // cmp     qword ptr [rcx+20h], 0
+        74 25 // jz      short loc_14169FA09
+        48 83 c1 28 // add     rcx, 28h ; '('; a1
+        @ref1 e8 ?? ?? ?? ?? // call    ls__BitSet__IsEmpty
+        84 c0 // test    al, al
+        74 18 // jz      short loc_14169FA09
+        4c 8d 4b 28 // lea     r9, [rbx+28h]; a4
+        @ref2 44 8b 05 ?? ?? ?? ?? // mov     r8d, cs:eoc__lock__KeyComponentID; a3
+        48 8b 53 40 // mov     rdx, [rbx+40h]; a2
+        48 8b 4b 20 // mov     rcx, [rbx+20h]; this
+        @ref3 e8 ?? ?? ?? ?? // call    ecs__ComponentReplication__RequestSync
+        48 8d 4b 28 // lea     rcx, [rbx+28h]; a1
+        <Target Type="Absolute" Offset="@ref2" EngineCallback="BindReplicationComponentIDRef" />
+      </Mapping>
+
+      <Mapping Name="ecs::ReplicationComponentIDRef2" AllowFail="true">
+        48 83 ec 40 // sub     rsp, 40h
+        48 8b e9 // mov     rbp, rcx
+        @ref1 48 63 3d ?? ?? ?? ?? // movsxd  rdi, cs:eoc__spell_cast__CanBeTargetedComponentID
+        33 d2 // xor     edx, edx; a2
+        8d 4a 08 // lea     ecx, [rdx+8]; size
+        @ref2 e8 ?? ?? ?? ?? // call    ls__GlobalAllocator__Alloc1
+        48 8b f0 // mov     rsi, rax
+        <Target Type="Absolute" Offset="@ref1" EngineCallback="BindReplicationComponentIDRef" />
+      </Mapping>
+
+      <Mapping Name="ecs::ReplicationComponentIDRef3" AllowFail="true">
+        48 8d 6c 24 d9 // lea     rbp, [rsp-27h]
+        48 81 ec b0 00 00 00 // sub     rsp, 0B0h
+        4c 8b f1 // mov     r14, rcx
+        45 33 e4 // xor     r12d, r12d
+        @ref1 48 63 3d ?? ?? ?? ?? // movsxd  rdi, cs:dword_1455D3FEC
+        33 d2 // xor     edx, edx
+        8d 4a 08 // lea     ecx, [rdx+8]
+        e8 ?? ?? ?? ?? // call    ls__GlobalAllocator__Alloc1
+        48 8b f0 // mov     rsi, rax
+        <Target Type="Absolute" Offset="@ref1" EngineCallback="BindReplicationComponentIDRef" />
+      </Mapping>
+
       <Mapping Name="KillLauncher" AllowFail="true">
         @ref1 ff 15 ?? ?? ?? ?? // call    cs:SteamAPI_RestartAppIfNecessary
         84 c0 // test    al, al

@@ -988,6 +988,12 @@ uint8_t const * AsmResolveInstructionRef(uint8_t const * insn)
 		return insn + rel + 7;
 	}
 
+	// MOVSXD (4b operand) instruction
+	if (insn[0] == 0x48 && insn[1] == 0x63) {
+		int32_t rel = *(int32_t const *)(insn + 3);
+		return insn + rel + 7;
+	}
+
 	// MOVZX (4b operand) instruction
 	if (insn[0] == 0x44 && insn[1] == 0x0F && insn[2] == 0xB7) {
 		int32_t rel = *(int32_t const *)(insn + 4);

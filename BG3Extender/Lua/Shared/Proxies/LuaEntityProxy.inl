@@ -188,6 +188,80 @@ namespace bg3se::lua
 		return 1;
 	}
 
+
+	int EntityProxy::GetReplicationFlags(lua_State* L)
+	{
+		StackCheck _(L, 1);
+		auto self = get<EntityProxy*>(L, 1);
+		auto component = get<ExtComponentType>(L, 2);
+
+		uint32_t qword{ 0 };
+		if (lua_gettop(L) > 2) {
+			qword = get<uint32_t>(L, 3);
+		}
+
+		auto ecs = State::FromLua(L)->GetEntitySystemHelpers();
+		auto flagMask = ecs->GetReplicationFlags(self->handle_, component);
+		uint64_t flags{ 0 };
+		if (flagMask && qword < flagMask->NumQwords()) {
+			flags = flagMask->GetBuf()[qword];
+		}
+
+		push(L, flags);
+		return 1;
+	}
+
+	void ReplicateComponent(lua_State* L, EntityHandle entity, ExtComponentType component, uint32_t qword, uint64_t flags)
+	{
+		auto ecs = gExtender->GetCurrentExtensionState()->GetLua()->GetEntitySystemHelpers();
+		if (!ecs->GetEntityWorld()->Replication) {
+			OsiError("Replication system is unavailable");
+			return;
+		}
+
+		auto replicationFlags = ecs->GetOrCreateReplicationFlags(entity, component);
+		if (replicationFlags) {
+			replicationFlags->EnsureSize((qword + 1) * 64);
+			bool changed = (replicationFlags->GetBuf()[qword] & flags) != flags;
+			replicationFlags->GetBuf()[qword] |= flags;
+			if (changed) {
+				ecs->NotifyReplicationFlagsDirtied();
+			}
+		} else {
+			OsiError("Unable to replicate; this component type cannot be replicated or the replication ID is not mapped");
+		}
+	}
+
+	int EntityProxy::SetReplicationFlags(lua_State* L)
+	{
+		StackCheck _(L);
+		auto self = get<EntityProxy*>(L, 1);
+		auto component = get<ExtComponentType>(L, 2);
+
+		uint64_t flags{ 0 };
+		if (lua_gettop(L) > 2) {
+			flags = get<uint64_t>(L, 3);
+		}
+
+		uint32_t qword{ 0 };
+		if (lua_gettop(L) > 3) {
+			qword = get<uint32_t>(L, 4);
+		}
+
+		ReplicateComponent(L, self->handle_, component, qword, flags);
+		return 0;
+	}
+
+	int EntityProxy::Replicate(lua_State* L)
+	{
+		StackCheck _(L);
+		auto self = get<EntityProxy*>(L, 1);
+		auto component = get<ExtComponentType>(L, 2);
+
+		ReplicateComponent(L, self->handle_, component, 0, 0xffffffffffffffffull);
+		return 0;
+	}
+
 	int EntityProxy::Index(lua_State* L)
 	{
 		StackCheck _(L, 1);
@@ -226,6 +300,21 @@ namespace bg3se::lua
 
 		if (key == GFS.strIsAlive) {
 			push(L, &EntityProxy::IsAlive);
+			return 1;
+		}
+
+		if (key == GFS.strGetReplicationFlags) {
+			push(L, &EntityProxy::GetReplicationFlags);
+			return 1;
+		}
+
+		if (key == GFS.strSetReplicationFlags) {
+			push(L, &EntityProxy::SetReplicationFlags);
+			return 1;
+		}
+
+		if (key == GFS.strReplicate) {
+			push(L, &EntityProxy::Replicate);
 			return 1;
 		}
 

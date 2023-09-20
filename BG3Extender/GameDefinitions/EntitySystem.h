@@ -33,7 +33,11 @@ using HandleTypeIndex = TypedIntegral<uint16_t, HandleTypeIndexTag>;
 // Component type index, registered statically during game startup
 enum class ComponentTypeIndexTag {};
 using ComponentTypeIndex = TypedIntegral<uint16_t, ComponentTypeIndexTag>;
+// Replication component type index, registered statically during game startup
+enum class ReplicationTypeIndexTag {};
+using ReplicationTypeIndex = TypedIntegral<uint16_t, ReplicationTypeIndexTag>;
 
+static constexpr ReplicationTypeIndex UndefinedReplicationComponent{ 0xffff };
 static constexpr ComponentTypeIndex UndefinedComponent{ 0xffff };
 static constexpr HandleTypeIndex UndefinedHandle{ 0xffff };
 

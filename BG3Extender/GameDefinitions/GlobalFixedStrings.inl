@@ -34,6 +34,9 @@ FS(GetEntityType);
 FS(GetSalt);
 FS(GetIndex);
 FS(IsAlive);
+FS(GetReplicationFlags);
+FS(SetReplicationFlags);
+FS(Replicate);
 
 // Stat modifier value types
 FS(FixedString);

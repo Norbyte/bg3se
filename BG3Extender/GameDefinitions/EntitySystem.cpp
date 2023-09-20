@@ -174,6 +174,7 @@ EntityClass* EntityWorld::GetEntityClass(EntityHandle entityHandle) const
 EntitySystemHelpersBase::EntitySystemHelpersBase()
 	: componentIndices_{ UndefinedComponent }, 
 	componentSizes_{ 0 },
+	replicationIndices_{ UndefinedReplicationComponent },
 	handleIndices_{ UndefinedHandle }, 
 	queryIndices_{ UndefinedIndex },
 	resourceManagerIndices_{ UndefinedIndex }
@@ -232,16 +233,24 @@ STDString SimplifyComponentName(StringView name)
 	return key;
 }
 
-BitSet<>* EntitySystemHelpersBase::GetReplicationFlags(EntityHandle const& entity, ComponentTypeIndex type)
+BitSet<>* EntitySystemHelpersBase::GetReplicationFlags(EntityHandle const& entity, ExtComponentType type)
+{
+	if (replicationIndices_[(unsigned)type] == UndefinedReplicationComponent) {
+		return nullptr;
+	}
+
+	return GetReplicationFlags(entity, replicationIndices_[(unsigned)type]);
+}
+
+BitSet<>* EntitySystemHelpersBase::GetReplicationFlags(EntityHandle const& entity, ReplicationTypeIndex replicationType)
 {
 	auto world = GetEntityWorld();
 	if (!world || !world->Replication) return nullptr;
 
-	return nullptr;
-	/*auto& pools = world->Replication->ComponentPools;
-	auto typeId = (int)replicationType;
+	auto& pools = world->Replication->ComponentPools;
+	auto typeId = (uint16_t)replicationType;
 	if (typeId >= (int)pools.Size()) {
-		OsiError("Attempted to fetch replication list for component " << entity << ", but replication pool size is " << pools.Size() << "!");
+		OsiError("Attempted to fetch replication list for component " << typeId << ", but replication pool size is " << pools.Size() << "!");
 		return nullptr;
 	}
 
@@ -251,19 +260,27 @@ BitSet<>* EntitySystemHelpersBase::GetReplicationFlags(EntityHandle const& entit
 		return *syncFlags;
 	} else {
 		return nullptr;
-	}*/
+	}
 }
 
-BitSet<>* EntitySystemHelpersBase::GetOrCreateReplicationFlags(EntityHandle const& entity, ComponentTypeIndex replicationType)
+BitSet<>* EntitySystemHelpersBase::GetOrCreateReplicationFlags(EntityHandle const& entity, ExtComponentType type)
+{
+	if (replicationIndices_[(unsigned)type] == UndefinedReplicationComponent) {
+		return nullptr;
+	}
+
+	return GetOrCreateReplicationFlags(entity, replicationIndices_[(unsigned)type]);
+}
+
+BitSet<>* EntitySystemHelpersBase::GetOrCreateReplicationFlags(EntityHandle const& entity, ReplicationTypeIndex replicationType)
 {
 	auto world = GetEntityWorld();
 	if (!world || !world->Replication) return nullptr;
 
-	return nullptr;
-	/*auto& pools = world->Replication->ComponentPools;
-	auto typeId = (int)replicationType;
+	auto& pools = world->Replication->ComponentPools;
+	auto typeId = (uint16_t)replicationType;
 	if (typeId >= (int)pools.Size()) {
-		OsiError("Attempted to fetch replication list for component " << entity << ", but replication pool size is " << pools.Size() << "!");
+		OsiError("Attempted to fetch replication list for component " << typeId << ", but replication pool size is " << pools.Size() << "!");
 		return nullptr;
 	}
 
@@ -273,7 +290,7 @@ BitSet<>* EntitySystemHelpersBase::GetOrCreateReplicationFlags(EntityHandle cons
 		return *syncFlags;
 	}
 
-	return pool.Set(entity, BitSet<>());*/
+	return pool.Set(entity, BitSet<>());
 }
 
 void EntitySystemHelpersBase::NotifyReplicationFlagsDirtied()
@@ -341,14 +358,13 @@ void EntitySystemHelpersBase::TryUpdateComponentMapping(StringView name, Compone
 			mapping.ComponentIndex = mapping.Indices[0];
 		}
 	} else if (totalIndices == 2) {
-		// Only HandleIndex and ComponentIndex, no replication
-		assert(mapping.ReplicationIndex == -1);
-		assert(mapping.HandleIndex == -1);
-
 		if (mapping.EventComponentIndex != -1) {
 			DEBUG_IDX("Event component, ignored.");
 			return;
 		}
+
+		// Only Handle/ReplicationIndex and ComponentIndex, no replication
+		assert(mapping.ReplicationIndex == -1 || mapping.HandleIndex == -1);
 
 		unsigned nextIndex{ 0 };
 		if (mapping.ComponentIndex == -1) {
@@ -360,7 +376,9 @@ void EntitySystemHelpersBase::TryUpdateComponentMapping(StringView name, Compone
 			}
 		}
 
-		mapping.HandleIndex = mapping.Indices[nextIndex++];
+		if (mapping.ReplicationIndex == -1 && mapping.HandleIndex == -1) {
+			mapping.HandleIndex = mapping.Indices[nextIndex++];
+		}
 	} else if (totalIndices == 3) {
 		unsigned nextIndex{ 0 };
 
@@ -381,7 +399,7 @@ void EntitySystemHelpersBase::TryUpdateComponentMapping(StringView name, Compone
 	}
 
 	DEBUG_IDX("Repl " << mapping.ReplicationIndex << ", Handle " << mapping.HandleIndex << ", Comp " << mapping.ComponentIndex);
-	IndexMappings indexMapping{ (uint16_t)mapping.HandleIndex, (uint16_t)mapping.ComponentIndex };
+	IndexMappings indexMapping{ (uint16_t)mapping.HandleIndex, (uint16_t)mapping.ComponentIndex, (uint16_t)mapping.ReplicationIndex };
 	auto it = componentNameToIndexMappings_.insert(std::make_pair(name, indexMapping));
 	componentIndexToNameMappings_.insert(std::make_pair(indexMapping.ComponentIndex, &it.first->first));
 	handleIndexToNameMappings_.insert(std::make_pair(indexMapping.HandleIndex, &it.first->first));
@@ -399,6 +417,7 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 	handleIndexToComponentMappings_.clear();
 	componentIndices_.fill(UndefinedComponent);
 	componentSizes_.fill(0);
+	replicationIndices_.fill(UndefinedReplicationComponent);
 	handleIndices_.fill(UndefinedHandle);
 	queryIndices_.fill(UndefinedIndex);
 	resourceManagerIndices_.fill(UndefinedIndex);
@@ -493,6 +512,7 @@ void EntitySystemHelpersBase::MapComponentIndices(char const* componentName, Ext
 	auto it = componentNameToIndexMappings_.find(componentName);
 	if (it != componentNameToIndexMappings_.end()) {
 		componentIndices_[(unsigned)type] = it->second.ComponentIndex;
+		replicationIndices_[(unsigned)type] = it->second.ReplicationIndex;
 		handleIndices_[(unsigned)type] = it->second.HandleIndex;
 		componentIndexToTypeMappings_.insert(std::make_pair(it->second.ComponentIndex, type));
 		handleIndexToTypeMappings_.insert(std::make_pair(it->second.HandleIndex, type));

@@ -209,8 +209,10 @@ public:
 
 	Query* GetQuery(ExtQueryType type);
 
-	BitSet<> * GetReplicationFlags(EntityHandle const& entity, ComponentTypeIndex replicationType);
-	BitSet<> * GetOrCreateReplicationFlags(EntityHandle const& entity, ComponentTypeIndex replicationType);
+	BitSet<> * GetReplicationFlags(EntityHandle const& entity, ExtComponentType type);
+	BitSet<> * GetOrCreateReplicationFlags(EntityHandle const& entity, ExtComponentType type);
+	BitSet<> * GetReplicationFlags(EntityHandle const& entity, ReplicationTypeIndex replicationType);
+	BitSet<> * GetOrCreateReplicationFlags(EntityHandle const& entity, ReplicationTypeIndex replicationType);
 	void NotifyReplicationFlagsDirtied();
 
 	void* GetRawComponent(EntityHandle entityHandle, ExtComponentType type);
@@ -239,12 +241,14 @@ private:
 	
 	struct IndexMappings
 	{
-		HandleTypeIndex HandleIndex;
-		ComponentTypeIndex ComponentIndex;
+		HandleTypeIndex HandleIndex{ UndefinedHandle };
+		ComponentTypeIndex ComponentIndex{ UndefinedComponent };
+		ReplicationTypeIndex ReplicationIndex{ UndefinedReplicationComponent };
 	};
 
 	std::array<ComponentTypeIndex, (size_t)ExtComponentType::Max> componentIndices_;
 	std::array<std::size_t, (size_t)ExtComponentType::Max> componentSizes_;
+	std::array<ReplicationTypeIndex, (size_t)ExtComponentType::Max> replicationIndices_;
 	std::array<HandleTypeIndex, (size_t)ExtComponentType::Max> handleIndices_;
 	std::array<int32_t, (size_t)ExtQueryType::Max> queryIndices_;
 	std::array<int32_t, (size_t)ExtResourceManagerType::Max> resourceManagerIndices_;

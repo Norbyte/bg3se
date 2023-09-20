@@ -32,6 +32,9 @@ namespace bg3se::lua
 		static int GetSalt(lua_State* L);
 		static int GetIndex(lua_State* L);
 		static int IsAlive(lua_State* L);
+		static int Replicate(lua_State* L);
+		static int SetReplicationFlags(lua_State* L);
+		static int GetReplicationFlags(lua_State* L);
 
 		int Index(lua_State* L);
 		int ToString(lua_State* L);

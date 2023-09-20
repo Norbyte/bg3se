@@ -32,6 +32,7 @@ namespace bg3se
 		mapper.AddEngineCallback("BindComponentIDRef", std::bind(&LibraryManager::BindComponentIDRef, this, std::placeholders::_1));
 		mapper.AddEngineCallback("BindComponentIDRef2", std::bind(&LibraryManager::BindComponentIDRef2, this, std::placeholders::_1));
 		mapper.AddEngineCallback("BindEventComponentIDRef", std::bind(&LibraryManager::BindEventComponentIDRef, this, std::placeholders::_1));
+		mapper.AddEngineCallback("BindReplicationComponentIDRef", std::bind(&LibraryManager::BindReplicationComponentIDRef, this, std::placeholders::_1));
 	}
 
 	SymbolMapper::MappingResult LibraryManager::BindECSIndex(uint8_t const* ptr)
@@ -110,6 +111,19 @@ namespace bg3se
 		if (indexIt != GetStaticSymbols().IndexSymbolToNameMaps.end()) {
 			assert(indexIt->second.type == ecs::IndexSymbolType::None || indexIt->second.type == ecs::IndexSymbolType::EventComponent);
 			indexIt->second.type = ecs::IndexSymbolType::EventComponent;
+		}
+
+		return SymbolMapper::MappingResult::TryNext;
+	}
+
+	SymbolMapper::MappingResult LibraryManager::BindReplicationComponentIDRef(uint8_t const* ptr)
+	{
+		auto indexPtr = (int32_t*)AsmResolveInstructionRef(ptr);
+
+		auto indexIt = GetStaticSymbols().IndexSymbolToNameMaps.find(indexPtr);
+		if (indexIt != GetStaticSymbols().IndexSymbolToNameMaps.end()) {
+			assert(indexIt->second.type == ecs::IndexSymbolType::None || indexIt->second.type == ecs::IndexSymbolType::Replication);
+			indexIt->second.type = ecs::IndexSymbolType::Replication;
 		}
 
 		return SymbolMapper::MappingResult::TryNext;
