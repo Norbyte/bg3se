@@ -31,21 +31,27 @@ struct BoostParameters
 	STDString Params2;
 };
 
+struct BoostCause
+{
+	BoostCauseType Type;
+	FixedString Cause;
+	EntityHandle Entity;
+	__int64 field_10;
+};
+
 struct BoostInfoComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::BoostInfo;
 	static constexpr auto EngineClass = "eoc::BoostInfoComponent";
 
+	EntityHandle BoostEntity;
 	BoostType Type;
-	ComponentHandle field_18;
-	uint64_t field_20;
-	uint32_t Flags_M;
-	FixedString Passive;
-	EntityHandle Cause_M;
-	int64_t field_38;
-	EntityHandle OwnerEntity;
+	Guid field_10;
+	uint8_t field_20;
+	BoostCause Cause;
+	EntityHandle Owner;
 	BoostParameters Params;
-	Guid field_90;
+	Guid field_80;
 };
 
 struct ArmorClassBoostComponent : public BaseComponent

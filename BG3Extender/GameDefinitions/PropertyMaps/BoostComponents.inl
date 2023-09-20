@@ -11,6 +11,13 @@ P(Boosts)
 END_CLS()
 
 
+BEGIN_CLS(BoostCause)
+P(Type)
+P(Cause)
+P(Entity)
+END_CLS()
+
+
 BEGIN_CLS(BoostParameters)
 P(Boost)
 P(Params)
@@ -20,16 +27,14 @@ END_CLS()
 
 BEGIN_CLS(BoostInfoComponent)
 INHERIT(BaseComponent)
+P(BoostEntity)
 P_RO(Type)
-P(field_18)
+P(field_10)
 P(field_20)
-P(Flags_M)
-P(Passive)
-P(Cause_M)
-P(field_38)
-P(OwnerEntity)
+P(Cause)
+P(Owner)
 P(Params)
-P(field_90)
+P(field_80)
 END_CLS()
 
 

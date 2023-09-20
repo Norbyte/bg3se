@@ -799,21 +799,6 @@ P(Flags)
 END_CLS()
 
 
-BEGIN_CLS(AddedSpellsComponent::SpellInfo)
-P(SpellId)
-P(field_8)
-P(field_18)
-P(field_20)
-P(field_28)
-P(field_29)
-P(SomeUUID)
-P(field_40)
-P(Cooldown)
-P(field_44)
-P(field_48)
-END_CLS()
-
-
 BEGIN_CLS(AddedSpellsComponent)
 INHERIT(BaseComponent)
 P(Spells)

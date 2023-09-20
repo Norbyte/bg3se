@@ -883,22 +883,7 @@ namespace bg3se
 		static constexpr ExtComponentType ComponentType = ExtComponentType::AddedSpells;
 		static constexpr auto EngineClass = "eoc::spell::AddedSpellsComponent";
 
-		struct SpellInfo
-		{
-			FixedString SpellId;
-			Guid field_8;
-			uint64_t field_18;
-			EntityHandle field_20;
-			uint8_t field_28;
-			uint8_t field_29;
-			Guid SomeUUID;
-			uint8_t field_40;
-			uint8_t Cooldown;
-			FixedString field_44;
-			uint8_t field_48;
-		};
-
-		Array<SpellInfo> Spells;
+		Array<SpellContainerComponent::Spell> Spells;
 	};
 
 	struct AvailableLevelComponent : public BaseComponent
