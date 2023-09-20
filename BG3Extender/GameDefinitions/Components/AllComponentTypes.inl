@@ -143,7 +143,7 @@ T(StaticPhysicsComponent)
 
 
 T(esv::Character)
-T(esv::Item)
+T(esv::ItemComponent)
 T(esv::Projectile)
 T(OsirisTagComponent)
 T(ActiveComponent)

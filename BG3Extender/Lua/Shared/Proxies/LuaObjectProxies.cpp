@@ -36,6 +36,8 @@ void AddBitmaskProperty(GenericPropertyMap& pm, std::size_t offset)
 		pm.AddRawProperty(label.Key.GetString(),
 			&(GenericGetOffsetBitmaskFlag<std::underlying_type_t<T>>),
 			&(GenericSetOffsetBitmaskFlag<std::underlying_type_t<T>>),
+			nullptr,
+			nullptr,
 			offset,
 			(uint64_t)label.Value
 		);
@@ -51,6 +53,8 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 		pm.AddProperty(label.Key.GetString(),
 			getter,
 			setter,
+			nullptr,
+			nullptr,
 			offset,
 			(uint64_t)label.Value
 		);

@@ -13,7 +13,4 @@ namespace bg3se::script {
 	bool GetTranslatedStringFromKey(FixedString const& key, TranslatedString& translated);
 	bool CreateTranslatedStringKey(FixedString const& key, FixedString const& handle);
 	bool CreateTranslatedString(FixedString const& handle, STDString const& string);
-
-	/*bool CreateItemDefinition(char const* templateGuid, ObjectSet<eoc::ItemDefinition>& definition);
-	bool ParseItem(esv::Item* item, ObjectSet<eoc::ItemDefinition>& definition, bool recursive);*/
 }
