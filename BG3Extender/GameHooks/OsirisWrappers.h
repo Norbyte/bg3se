@@ -58,6 +58,11 @@ public:
 
 	NodeVMT* VMTs[(unsigned)NodeType::Max + 1];
 
+	static bool CallWrapper(uint32_t FunctionHandle, OsiArgumentDesc * Params);
+	static bool QueryWrapper(uint32_t FunctionHandle, OsiArgumentDesc * Params);
+	static void ErrorWrapper(char const * Message);
+	static void AssertWrapper(bool Successful, char const * Message, bool Unknown2);
+
 private:
 	HMODULE Kernel32Module{ NULL };
 	HMODULE OsirisModule{ NULL };
@@ -70,11 +75,6 @@ private:
 	bool ResolveNodeVMTsInternal();
 
 	void SaveNodeVMT(NodeType type, NodeVMT* vmt);
-
-	static bool CallWrapper(uint32_t FunctionHandle, OsiArgumentDesc * Params);
-	static bool QueryWrapper(uint32_t FunctionHandle, OsiArgumentDesc * Params);
-	static void ErrorWrapper(char const * Message);
-	static void AssertWrapper(bool Successful, char const * Message, bool Unknown2);
 };
 
 }

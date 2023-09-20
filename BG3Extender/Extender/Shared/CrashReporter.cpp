@@ -43,7 +43,11 @@ static const ExcludedSymbol ExcludedSymbols[] = {
 	{&bg3se::NodeVMTWrapper::s_WrappedDeleteTuple, 0x180},
 	{&bg3se::NodeVMTWrapper::s_WrappedCallQuery, 0x180},
 	{&bg3se::CustomFunctionInjector::StaticCallWrapper, 0x120},
-	{&bg3se::CustomFunctionInjector::StaticQueryWrapper, 0x120}
+	{&bg3se::CustomFunctionInjector::StaticQueryWrapper, 0x120},
+	{&bg3se::OsirisWrappers::CallWrapper, 0x120},
+	{&bg3se::OsirisWrappers::QueryWrapper, 0x120},
+	{&bg3se::OsirisWrappers::ErrorWrapper, 0x120},
+	{&bg3se::OsirisWrappers::AssertWrapper, 0x120},
 };
 
 class CrashReporterSymbolData
