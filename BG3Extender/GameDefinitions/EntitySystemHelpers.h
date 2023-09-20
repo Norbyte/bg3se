@@ -112,46 +112,21 @@ public:
 	}
 
 	template <class T>
-	T* RawComponentPtrToComponent(void* ptr)
-	{
-		/*if constexpr (std::is_same_v<T, esv::Character> || std::is_same_v<T, esv::Item>) {
-			return reinterpret_cast<T*>((uintptr_t)ptr - 8);
-		}*/
-
-		return reinterpret_cast<T*>(ptr);
-	}
-
-	template <class T>
 	T* GetComponent(char const* nameGuid)
 	{
-		auto component = GetRawComponent(nameGuid, T::ComponentType);
-		if (component) {
-			return RawComponentPtrToComponent<T>(component);
-		} else {
-			return nullptr;
-		}
+		return reinterpret_cast<T*>(GetRawComponent(nameGuid, T::ComponentType));
 	}
 
 	template <class T>
 	T* GetComponent(FixedString const& guid)
 	{
-		auto component = GetRawComponent(guid, T::ComponentType);
-		if (component) {
-			return RawComponentPtrToComponent<T>(component);
-		} else {
-			return nullptr;
-		}
+		return reinterpret_cast<T*>(GetRawComponent(guid, T::ComponentType));
 	}
 
 	template <class T>
 	T* GetComponent(EntityHandle entityHandle)
 	{
-		auto component = GetRawComponent(entityHandle, T::ComponentType);
-		if (component) {
-			return RawComponentPtrToComponent<T>(component);
-		} else {
-			return nullptr;
-		}
+		return reinterpret_cast<T*>(GetRawComponent(entityHandle, T::ComponentType));
 	}
 
 	template <class T>
@@ -159,29 +134,6 @@ public:
 	{
 		ERR("FIXME");
 		return nullptr;
-	}
-
-	template <class T, class Fun>
-	void IterateComponents(Fun fun)
-	{
-		auto world = GetEntityWorld();
-		if (!world) {
-			return;
-		}
-
-		auto componentIndex = GetComponentIndex(T::ComponentType);
-		if (!componentIndex) {
-			return;
-		}
-
-		auto pool = world->Components.Types[(int)*componentIndex].Pool;
-		auto size = pool->GetSize();
-		for (auto i = 0; i < size; i++) {
-			auto component = pool->Factory.FindByIndex(i);
-			if (component) {
-				fun(RawComponentPtrToComponent<T>(component));
-			}
-		}
 	}
 
 	virtual EntityWorld* GetEntityWorld() = 0;

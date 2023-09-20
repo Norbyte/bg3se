@@ -49,7 +49,7 @@ namespace bg3se
 		uint64_t field_18;
 		uint64_t field_20;
 		uint64_t field_28;
-		Guid field_30;
+		Guid Combat;
 	};
 
 	struct TurnOrderComponent : public BaseComponent

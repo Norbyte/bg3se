@@ -130,13 +130,20 @@ struct StatusPrototype : public Noncopyable<StatusPrototype>
 	uint32_t StatusPropertyFlags;
 	uint32_t StatusGroups;
 	DescriptionInfo Description;
+	uint32_t StackType;
 	uint8_t LEDEffect;
 	uint8_t TickType;
+	uint32_t ImmuneFlag;
 	uint8_t Flags;
 	ObjectSet<SurfaceType>* AbsorbSurfaceTypes{ nullptr };
 	Array<Guid> Boosts;
-	int16_t RemoveEvents;
+	uint32_t RemoveEvents;
+	Array<FixedString> SoundStart;
+	Array<FixedString> SoundLoop;
+	Array<FixedString> SoundStop;
 	uint8_t HitAnimationType;
+	uint8_t Sheathing;
+	uint8_t AuraFlags;
 
 	Object* GetStats() const;
 };
@@ -144,7 +151,8 @@ struct StatusPrototype : public Noncopyable<StatusPrototype>
 struct StatusPrototypeManager : public ProtectedGameObject<StatusPrototypeManager>
 {
 	void* VMT;
-	Map<FixedString, StatusPrototype*> Statuses;
+	MultiHashMap<FixedString, StatusPrototype*> Statuses;
+	Array<FixedString> Unk;
 	bool Initialized;
 
 	void SyncStat(Object* object);

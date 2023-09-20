@@ -393,7 +393,7 @@ P(field_16)
 P(field_18)
 P(field_20)
 P(field_28)
-P(field_30)
+P(Combat)
 END_CLS()
 
 

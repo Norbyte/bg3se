@@ -75,15 +75,14 @@ bool StatusPrototypeManager::SyncStat(Object* object, StatusPrototype* proto)
 void StatusPrototypeManager::SyncStat(Object* object)
 {
 	auto stats = GetStaticSymbols().GetStats();
-	auto pProto = Statuses.find(object->Name);
-	if (pProto == Statuses.end()) {
+	auto pProto = Statuses.Find(object->Name);
+	if (!pProto) {
 		auto proto = GameAlloc<StatusPrototype>();
 		if (SyncStat(object, proto)) {
-			Statuses.insert(proto->StatusName, proto);
+			Statuses.Set(proto->StatusName, proto);
 		}
-	}
-	else {
-		SyncStat(object, pProto.Value());
+	} else {
+		SyncStat(object, **pProto);
 	}
 }
 

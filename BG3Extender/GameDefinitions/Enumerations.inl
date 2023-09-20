@@ -1251,33 +1251,50 @@ BEGIN_ENUM(EquipmentStatsType, uint32_t)
 	EV(Shield, 2)
 END_ENUM()
 
-BEGIN_BITMASK_NS(esv, StatusFlags0, ServerStatusFlags0, uint8_t)
-	EV(KeepAlive, 1)
-	EV(IsOnSourceSurface, 2)
-	EV(IsFromItem, 4)
-	EV(Channeled, 8)
-	EV(IsLifeTimeSet, 0x10)
-	EV(InitiateCombat, 0x20)
-	EV(Influence, 0x80)
-END_ENUM_NS()
 
-
-BEGIN_BITMASK_NS(esv, StatusFlags1, ServerStatusFlags1, uint8_t)
-	EV(BringIntoCombat, 1)
-	EV(IsHostileAct, 2)
-	EV(IsInvulnerable, 8)
-	EV(IsResistingDeath, 0x10)
-END_ENUM_NS()
-
-
-BEGIN_BITMASK_NS(esv, StatusFlags2, ServerStatusFlags2, uint8_t)
+BEGIN_BITMASK_NS(esv, StatusFlags, ServerStatusFlags, uint8_t)
 	EV(ForceStatus, 1)
 	EV(ForceFailStatus, 2)
 	EV(RequestClientSync2, 4)
 	EV(RequestClientSync, 8)
+	EV(Loaded, 0x10)
 	EV(RequestDelete, 0x20)
 	EV(RequestDeleteAtTurnEnd, 0x40)
 	EV(Started, 0x80)
+END_ENUM_NS()
+
+BEGIN_BITMASK_NS(esv, StatusFlags2, ServerStatusFlags2, uint8_t)
+	EV(KeepAlive, 1)
+	EV(DontTickWhileOnSurface, 2)
+	EV(IsFromItem, 4)
+	EV(Channeled, 8)
+	EV(IsLifeTimeSet, 0x10)
+	EV(InitiateCombat, 0x20)
+	EV(ExcludeFromPortraitRendering, 0x40)
+	EV(Influence, 0x80)
+END_ENUM_NS()
+
+
+BEGIN_BITMASK_NS(esv, StatusFlags3, ServerStatusFlags3, uint8_t)
+	EV(IsUnique, 1)
+	EV(NotifiedPlanManager, 2)
+	EV(DisableImmunityOverhead, 4)
+END_ENUM_NS()
+
+
+BEGIN_BITMASK_NS(esv, StatusFlags4, ServerStatusFlags4, uint8_t)
+	EV(BringIntoCombat, 1)
+	EV(IsHostileAct, 2)
+	EV(StatusFlags4_0x04, 4)
+	EV(IsInvulnerable, 8)
+	EV(IsInvulnerableVisible, 0x10)
+	EV(StatusFlags4_0x20, 0x20)
+	EV(StatusFlags4_0x40, 0x40)
+END_ENUM_NS()
+
+
+BEGIN_BITMASK_NS(esv, StatusFlags5, ServerStatusFlags5, uint8_t)
+	EV(HasTriedEntering, 1)
 END_ENUM_NS()
 
 

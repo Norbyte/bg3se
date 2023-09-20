@@ -28,7 +28,7 @@ END_NS()
 
 namespace bg3se
 {
-	struct ActionOriginator : public HasObjectProxy
+	struct ActionOriginator
 	{
 		Guid ActionGuid;
 		FixedString PassiveId;
@@ -36,12 +36,15 @@ namespace bg3se
 
 	struct DescriptionInfo
 	{
-		TranslatedString DisplayNameTS;
-		uint64_t field_10;
-		STDString DisplayName;
+		TranslatedString DisplayNameTSK;
+		FixedString Icon;
+		TranslatedString Description;
 		STDString DescriptionParams;
-		STDString ExtraDescription;
+		TranslatedString ExtraDescription;
 		STDString ExtraDescriptionParams;
+		TranslatedString ShortDescription;
+		STDString ShortDescriptionParams;
+		TranslatedString LoreDescription;
 	};
 
 

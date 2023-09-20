@@ -10,121 +10,64 @@ namespace bg3se
 {
 	namespace esv
 	{
-		struct Status : public ProtectedProxyGameObject<Status>
+		struct Status : public ProtectedGameObject<Status>
 		{
-			using EnterProc = bool(Status* self);
-
-			struct VMT
-			{
-				void* Destroy;
-				void* SetComponentHandle1;
-				void* SetOldIDs;
-				void* SetMyHandle;
-				void* GetMyHandle;
-				void* GetStatusId;
-				void* GetStatusType;
-				void* SetStringParam;
-				void* SetFloatParams;
-				void* VMT48;
-				void* VMT50;
-				void* CanEnter;
-				void* Init;
-				Status::EnterProc* Enter;
-				void* Resume;
-				void* Update;
-				void* Tick;
-				void* Exit;
-				void* VMT90;
-				void* LoseControl;
-				void* VMTA0;
-				void* VMTA8;
-				void* GetOwnerHandle;
-				void* OnEndTurn;
-				void* GetSyncData;
-				void* VMTC8;
-				void* Visit;
-				void* VMTD8;
-				void* ReevaluateHandles_M;
-				void* VMTE8;
-				void* VMTF0;
-			};
-
 			virtual ~Status() = 0;
-			virtual void SetComponentHandle1(ComponentHandle Handle) = 0;
-			virtual void CopySomeFields() = 0;
-			virtual void SetMyHandle(ComponentHandle Handle) = 0;
-			virtual void GetMyHandle(ComponentHandle* Handle) = 0;
+			virtual void SetHandle(uint64_t handle) = 0;
+			virtual ComponentHandle GetHandle(uint64_t handle) = 0;
 			virtual StatusType GetStatusId() = 0;
 			// 0 - Stackable
 			// 1 - Apply only the first instance, discard new ones
 			// 2 - Apply only one instance, new instances replace old ones
 			// 3 - Apply only the first instance; triggers combat?
 			virtual uint32_t GetStatusType() = 0;
+			// TODO - map VMTs later
 
-			virtual uint32_t SetStringParam() = 0;
-			virtual uint32_t SetFloatParams() = 0;
-			virtual uint32_t VMT48() = 0;
-			virtual uint32_t VMT50() = 0;
-
-			virtual bool CanEnter() = 0;
-			virtual void Init() = 0;
-			virtual bool Enter() = 0;
-			virtual bool Resume() = 0;
-			virtual void Update(GameTime* time) = 0;
-			virtual void Tick(Guid* combatUuid, float deltaTime) = 0;
-			virtual void Exit() = 0;
-			virtual void VMT90() = 0;
-			virtual bool LoseControl() = 0;
-			virtual void VMTA0() = 0;
-			virtual void VMTA8() = 0;
-			virtual ComponentHandle* GetOwnerHandle() = 0;
-			virtual void VMTB0() = 0;
-			virtual void GetSyncData(void* msgWriter) = 0;
-			virtual void VMTC8() = 0;
-			virtual void Visit(ObjectVisitor* visitor) = 0;
-			virtual void VMTD8() = 0;
-			virtual void ReevaluateHandles_M() = 0;
-			virtual void VMTE8() = 0;
-			virtual void VMTF0() = 0;
-
-			Array<ComponentHandle> field_8;
-			ComponentHandle SomeHandle;
-			ComponentHandle SomeEntityHandle_Old;
-			int SomeState;
-			FixedString StatusID_Old;
-			ComponentHandle field_38;
-			NetId NetID_Old;
-			FixedString field_48;
-			NetId NetID;
+			Guid field_8;
+			__int64 field_18;
 			int StoryActionID;
 			ActionOriginator Originator;
-			double field_78;
+			double field_48;
 			FixedString StatusId;
 			float StartTimer;
 			float LifeTime;
 			float CurrentLifeTime;
 			float TurnTimer;
 			float Strength;
-			uint8_t CauseType; // TODO - CauseType enum?
+			uint8_t CauseType;
+			uint8_t OriginCauseType;
+			EntityHandle SourceEquippedItem;
+			EntityHandle SourceUsedItem;
 			ComponentHandle StatusHandle;
-			ComponentHandle UnknownHandle;
-			EntityHandle OwnerHandle;
-			ObjectSet<EntityHandle> StatusOwner;
-			ecs::EntityRef StatusSource;
-			Guid StatusSourceUUID;
-			EntityHandle StatusSourceEntityHandle;
-			ecs::EntityRef StatusSource_M;
-			EntityHandle CleansedByHandle_M;
-			Guid field_110;
-			int Conditions;
-			uint16_t RemoveEvents;
-			uint8_t Flags2; // TODO - typing flags
-			uint8_t Flags0; // TODO - typing flags
-			int field_118;
-			uint8_t field_11C;
+			EntityHandle SyncEntity;
+			EntityHandle Owner;
+			Array<EntityHandle> StatusOwner;
+			ecs::EntityRef Cause;
+			Guid CauseGUID;
+			EntityHandle StatusSource;
+			ecs::EntityRef Combat_M;
+			EntityHandle field_E0;
+			Guid field_E8;
+			int ConditionsId;
+			uint32_t RemoveEvents;
+			StatusFlags Flags;
+			StatusFlags2 Flags2;
+			StatusFlags3 Flags3;
+			bool FreezeDuration;
+			uint8_t field_104;
+			uint8_t field_105;
+			uint8_t SpellCastingAbility;
+			SpellId SourceSpell;
+			Guid SpellCastSourceUuid;
+			FixedString StackId;
+			int StackPriority;
+			bool IsRecoverable;
+			FixedString DifficultyStatus;
+			Guid field_150;
+			Array<void*> ConditionRolls;
 			uint8_t TickType;
-			uint8_t Flags3; // TODO - typing flags
-			uint8_t SomeFlags;
+			StatusFlags4 Flags4;
+			StatusFlags5 Flags5;
 		};
 
 		struct StatusAura : public Status
@@ -139,7 +82,7 @@ namespace bg3se
 			bool LoseControl;
 			ObjectSet<ComponentHandle> ItemHandles;
 			float EffectTime;
-			FixedString StackId;
+			FixedString BoostStackId;
 			glm::vec3 SourceDirection;
 			ObjectSet<uint32_t> SurfaceChanges;
 		};

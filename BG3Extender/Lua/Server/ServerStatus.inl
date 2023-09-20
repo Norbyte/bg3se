@@ -6,11 +6,6 @@
 #include <Extender/ScriptExtender.h>
 #include <Extender/Server/ExtensionStateServer.h>
 
-namespace bg3se::esv::lua
-{
-	//#include <Lua/LevelIteratorFunctions.inl>
-}
-
 namespace bg3se::lua
 {
 	int StatusGetEngineType(lua_State* L, esv::Status* self)
@@ -78,59 +73,9 @@ namespace bg3se::esv::lua
 {
 	using namespace ::bg3se::lua;
 
-	char const* const StatusHandleProxy::MetatableName = "esv::HStatus";
-
-	esv::Status* StatusHandleProxy::Get(lua_State* L)
-	{
-		auto character = gExtender->GetServer().GetEntityHelpers().GetComponent<esv::Character>(character_);
-		if (character == nullptr) {
-			luaL_error(L, "Character handle invalid");
-			return nullptr;
-		}
-
-		esv::Status* status;
-		if (statusHandle_) {
-			status = character->GetStatus(statusHandle_);
-		} else {
-			status = character->GetStatus(statusNetId_);
-		}
-
-		if (status == nullptr) luaL_error(L, "Status handle invalid");
-		return status;
-	}
-
-	int StatusHandleProxy::Index(lua_State* L)
-	{
-		auto status = Get(L);
-		if (!status) return 0;
-
-		return luaL_error(L, "Not implemented yet!");
-
-		/*StackCheck _(L, 1);
-		auto prop = luaL_checkstring(L, 2);
-		auto& propertyMap = StatusToPropertyMap(status);
-		auto fetched = LuaPropertyMapGet(L, propertyMap, status, prop, true);
-		if (!fetched) push(L, nullptr);
-		return 1;*/
-	}
-
-	int StatusHandleProxy::NewIndex(lua_State* L)
-	{
-		StackCheck _(L, 0);
-		auto status = Get(L);
-		if (!status) return 0;
-
-		return luaL_error(L, "Not implemented yet!");
-
-		/*auto prop = luaL_checkstring(L, 2);
-		auto& propertyMap = StatusToPropertyMap(status);
-		LuaPropertyMapSet(L, 3, propertyMap, status, prop, true);
-		return 0;*/
-	}
-
 	esv::StatusMachine* GetEntityStatusMachine(EntityHandle const& entity)
 	{
-		auto character = gExtender->GetServer().GetEntityHelpers().GetComponent<Character>(entity);
+		/*auto character = gExtender->GetServer().GetEntityHelpers().GetComponent<Character>(entity);
 		if (character != nullptr) {
 			return character->StatusMachine;
 		}
@@ -138,7 +83,7 @@ namespace bg3se::esv::lua
 		auto item = gExtender->GetServer().GetEntityHelpers().GetComponent<Item>(entity);
 		if (item != nullptr) {
 			return item->StatusMachine;
-		}
+		}*/
 
 		return nullptr;
 	}
