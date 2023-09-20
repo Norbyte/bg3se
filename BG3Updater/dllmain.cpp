@@ -985,10 +985,21 @@ private:
 };
 
 std::unique_ptr<ScriptExtenderUpdater> gUpdater;
+HANDLE UpdaterMutex{ NULL };
 
 bool ShouldLoad()
 {
-	return GetExeHandle() != NULL;
+	if (GetExeHandle() == NULL) {
+		return false;
+	}
+
+	if (UpdaterMutex == NULL) {
+		char mutexName[MAX_PATH];
+		sprintf_s(mutexName, "BG3SE_Upd_%d", GetCurrentProcessId());
+		UpdaterMutex = CreateMutexA(NULL, TRUE, mutexName);
+	}
+
+	return UpdaterMutex != NULL;
 }
 
 // This thread is responsible for polling and suspending/resuming

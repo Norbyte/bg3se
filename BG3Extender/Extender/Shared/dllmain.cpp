@@ -113,10 +113,21 @@ void SetupScriptExtender(HMODULE hModule)
 #endif
 }
 
+HANDLE ExtenderMutex{ NULL };
+
 bool ShouldInitializeExtender()
 {
-	return GetModuleHandleW(L"bg3.exe") != NULL
-		|| GetModuleHandleW(L"bg3_dx11.exe") != NULL;
+	if (GetModuleHandleW(L"bg3.exe") == NULL && GetModuleHandleW(L"bg3_dx11.exe") != NULL) {
+		return false;
+	}
+
+	if (ExtenderMutex == NULL) {
+		char mutexName[MAX_PATH];
+		sprintf_s(mutexName, "BG3SE_Ext_%d", GetCurrentProcessId());
+		ExtenderMutex = CreateMutexA(NULL, TRUE, mutexName);
+	}
+
+	return ExtenderMutex != NULL;
 }
 
 BOOL APIENTRY DllMain( HMODULE hModule,
