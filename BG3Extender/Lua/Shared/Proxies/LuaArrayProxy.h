@@ -56,6 +56,8 @@ namespace bg3se::lua
 		virtual bool SetElement(lua_State* L, unsigned arrayIndex, int luaIndex) = 0;
 		virtual int Next(lua_State* L, int key) = 0;
 		virtual unsigned Length() = 0;
+		virtual bool Unserialize(lua_State* L, int index) = 0;
+		virtual void Serialize(lua_State* L) = 0;
 	};
 
 
@@ -118,6 +120,21 @@ namespace bg3se::lua
 		unsigned Length() override
 		{
 			return object_->size();
+		}
+
+		bool Unserialize(lua_State* L, int index) override
+		{
+			if constexpr (std::is_default_constructible_v<T>) {
+				lua::Unserialize(L, index, object_);
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		void Serialize(lua_State* L) override
+		{
+			lua::Serialize(L, object_);
 		}
 
 		int Next(lua_State* L, int key) override
@@ -193,6 +210,21 @@ namespace bg3se::lua
 		unsigned Length() override
 		{
 			return (unsigned)object_->size();
+		}
+
+		bool Unserialize(lua_State* L, int index) override
+		{
+			if constexpr (std::is_default_constructible_v<T>) {
+				lua::Unserialize(L, index, object_);
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		void Serialize(lua_State* L) override
+		{
+			lua::Serialize(L, object_);
 		}
 
 		int Next(lua_State* L, int key) override

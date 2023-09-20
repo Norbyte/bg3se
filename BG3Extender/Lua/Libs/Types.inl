@@ -104,6 +104,7 @@ bool Validate(lua_State* L)
 UserReturn Serialize(lua_State* L)
 {
 	luaL_checktype(L, 1, LUA_TUSERDATA);
+
 	auto proxy = Userdata<ObjectProxy>::AsUserData(L, 1);
 	if (proxy != nullptr) {
 		auto& pm = proxy->GetImpl()->GetPropertyMap();
@@ -113,22 +114,65 @@ UserReturn Serialize(lua_State* L)
 		} else {
 			return luaL_error(L, "Object class '%s' does not support serialization", pm.Name.GetString());
 		}
-	} else {
-		return luaL_error(L, "Don't know how to serialize this object");
 	}
+
+	auto arr = Userdata<ArrayProxy>::AsUserData(L, 1);
+	if (arr != nullptr) {
+		arr->GetImpl()->Serialize(L);
+		return 1;
+	}
+
+	auto map = Userdata<MapProxy>::AsUserData(L, 1);
+	if (map != nullptr) {
+		map->GetImpl()->Serialize(L);
+		return 1;
+	}
+
+	auto set = Userdata<SetProxy>::AsUserData(L, 1);
+	if (set != nullptr) {
+		set->GetImpl()->Serialize(L);
+		return 1;
+	}
+
+	return luaL_error(L, "Don't know how to serialize objects of this type");
 }
 
 void Unserialize(lua_State* L)
 {
-	auto proxy = Userdata<ObjectProxy>::CheckUserData(L, 1);
+	luaL_checktype(L, 1, LUA_TUSERDATA);
 	luaL_checktype(L, 2, LUA_TTABLE);
 
-	auto const& pm = proxy->GetImpl()->GetPropertyMap();
-	if (pm.Unserialize == nullptr) {
-		luaL_error(L, "No serializer available for type '%s'", proxy->GetImpl()->GetTypeName().GetString());
+	auto proxy = Userdata<ObjectProxy>::AsUserData(L, 1);
+	if (proxy) {
+		auto const& pm = proxy->GetImpl()->GetPropertyMap();
+		if (pm.Unserialize == nullptr) {
+			luaL_error(L, "No serializer available for type '%s'", proxy->GetImpl()->GetTypeName().GetString());
+		}
+
+		pm.Unserialize(L, 2, proxy->GetRaw(L));
+		return;
 	}
 
-	pm.Unserialize(L, 2, proxy->GetRaw(L));
+	// Not very nice, but will do until the new reference system is added
+	auto arr = Userdata<ArrayProxy>::AsUserData(L, 1);
+	if (arr) {
+		arr->GetImpl()->Unserialize(L, 2);
+		return;
+	}
+
+	auto map = Userdata<MapProxy>::AsUserData(L, 1);
+	if (map) {
+		map->GetImpl()->Unserialize(L, 2);
+		return;
+	}
+
+	auto set = Userdata<SetProxy>::AsUserData(L, 1);
+	if (set) {
+		set->GetImpl()->Unserialize(L, 2);
+		return;
+	}
+
+	luaL_error(L, "Don't know how to unserialize objects of this type");
 }
 
 UserReturn Construct(lua_State* L, FixedString const& typeName)

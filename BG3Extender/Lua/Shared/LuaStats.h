@@ -66,30 +66,6 @@ public:
 };
 
 
-class FunctorsProxy : public ArrayProxyImplBase
-{
-public:
-	FunctorsProxy(LifetimeHandle const& lifetime, Functors* obj);
-	~FunctorsProxy() override;
-
-	inline Functors* Get() const
-	{
-		return object_;
-	}
-
-	void* GetRaw() override;
-	char const* GetTypeName() const override;
-	bool GetElement(lua_State* L, unsigned arrayIndex) override;
-	bool SetElement(lua_State* L, unsigned arrayIndex, int luaIndex) override;
-	unsigned Length() override;
-	int Next(lua_State* L, int key) override;
-
-private:
-	Functors* object_;
-	LifetimeHandle lifetime_;
-};
-
-
 /*
 class DamageList : public Userdata<DamageList>, public Pushable<PushPolicy::None>
 {
@@ -124,11 +100,6 @@ END_NS()
 
 namespace bg3se::lua
 {
-	inline void push(lua_State* L, stats::Functors* v)
-	{
-		ArrayProxy::MakeImpl<stats::FunctorsProxy>(L, GetCurrentLifetime(L), v);
-	}
-
 	void RegisterEntityProxy(lua_State* L);
 	void RegisterSharedMetatables(lua_State* L);
 }
