@@ -101,22 +101,15 @@ PropertyOperationResult GenericGetOffsetProperty(lua_State* L, LifetimeHandle co
 }
 
 template <class T>
-PropertyOperationResult GenericSetOffsetProperty(lua_State* L, void* obj, int index, std::size_t offset, uint64_t)
-{
-	if constexpr (IsByVal<T>) {
-		auto* value = (T*)((std::uintptr_t)obj + offset);
-		*value = get<T>(L, index);
-		return PropertyOperationResult::Success;
-	} else {
-		return PropertyOperationResult::UnsupportedType;
-	}
-}
-
-template <class T>
 PropertyOperationResult GenericSerializeOffsetProperty(lua_State* L, void* obj, std::size_t offset, uint64_t flag)
 {
 	auto* value = (T*)((std::uintptr_t)obj + offset);
 	if constexpr (!std::is_pointer_v<T>) {
+		// FIXME FIXME FIXME FIXME FIXME
+		// FIXME FIXME FIXME FIXME FIXME
+		// FIXME FIXME FIXME FIXME FIXME
+		// The top-level serializer needs to default-construct a temporary (or do placement new)
+		// to ensure that the new object starts out from a known good state.
 		Serialize(L, value);
 		return PropertyOperationResult::Success;
 	} else {
@@ -133,6 +126,18 @@ PropertyOperationResult GenericUnserializeOffsetProperty(lua_State* L, void* obj
 		return PropertyOperationResult::Success;
 	} else {
 		return PropertyOperationResult::UnsupportedType;
+	}
+}
+
+template <class T>
+PropertyOperationResult GenericSetOffsetProperty(lua_State* L, void* obj, int index, std::size_t offset, uint64_t flag)
+{
+	if constexpr (IsByVal<T>) {
+		auto* value = (T*)((std::uintptr_t)obj + offset);
+		*value = get<T>(L, index);
+		return PropertyOperationResult::Success;
+	} else {
+		return GenericUnserializeOffsetProperty<T>(L, obj, index, offset, flag);
 	}
 }
 
