@@ -65,7 +65,7 @@ namespace bg3se::lua
 	class DynamicArrayProxyImpl : public ArrayProxyImplBase
 	{
 	public:
-		static_assert(!std::is_pointer_v<T>, "DynamicArrayProxyImpl template parameter should not be a pointer type!");
+		static_assert(!std::is_pointer_v<TContainer>, "DynamicArrayProxyImpl template parameter should not be a pointer type!");
 
 		DynamicArrayProxyImpl(LifetimeHandle const& lifetime, TContainer* obj)
 			: object_(obj), lifetime_(lifetime)
@@ -158,7 +158,7 @@ namespace bg3se::lua
 	class ConstSizeArrayProxyImpl : public ArrayProxyImplBase
 	{
 	public:
-		static_assert(!std::is_pointer_v<T>, "ConstSizeArrayProxyImpl template parameter should not be a pointer type!");
+		static_assert(!std::is_pointer_v<TContainer>, "ConstSizeArrayProxyImpl template parameter should not be a pointer type!");
 
 		ConstSizeArrayProxyImpl(LifetimeHandle const& lifetime, TContainer* obj)
 			: object_(obj), lifetime_(lifetime)

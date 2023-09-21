@@ -87,18 +87,6 @@ namespace bg3se
 			ObjectSet<uint32_t> SurfaceChanges;
 		};
 
-		struct StatusActiveDefense : public StatusBoost
-		{
-			int Charges;
-			glm::vec3 TargetPos;
-			ComponentHandle Target;
-			float Radius;
-			FixedString Projectile;
-			int TargetConditions_M;
-			ObjectSet<glm::vec3> UnknVectors;
-			ObjectSet<ComponentHandle> PreviousTargets;
-		};
-
 		struct StatusClimbing : public Status
 		{
 			__int64 field_120;
@@ -114,11 +102,6 @@ namespace bg3se
 			bool JumpUpLadders_M;
 			bool Incapacitated_M;
 			bool Started_M;
-		};
-
-		struct StatusDestroying : public Status
-		{
-			Hit HitDescription;
 		};
 
 		struct StatusIncapacitated : public StatusBoost
@@ -155,11 +138,6 @@ namespace bg3se
 			uint8_t DyingFlags;
 		};
 
-		struct StatusEncumbered : public Status
-		{
-			int field_1A8;
-		};
-
 		struct StatusHeal : public Status
 		{
 			float EffectTime;
@@ -172,36 +150,6 @@ namespace bg3se
 			ObjectSet<void*> AbsorbSurfaceTypes;
 			int TargetDependentValue;
 			int TargetDependentHealAmount;
-		};
-
-		struct StatusHealSharing : public StatusBoost
-		{
-			ComponentHandle Caster;
-		};
-
-		struct StatusHealSharingCaster : public StatusBoost
-		{
-			Array<ComponentHandle> Targets;
-			MultiHashMap<ComponentHandle, ComponentHandle> field_1C0;
-		};
-		
-		struct StatusHealing : public StatusBoost
-		{
-			int HealAmount;
-			float TimeElapsed;
-			int HealEffect;
-			FixedString HealEffectId;
-			bool SkipInitialEffect;
-			uint16_t HealingEvent; // TODO enum
-			uint8_t HealType; // TODO enum
-			int AbsorbSurfaceRange;
-		};
-
-		struct StatusIdentify : public Status
-		{
-			int Level;
-			int Identified;
-			ComponentHandle Identifier;
 		};
 
 		struct StatusInSurface : public Status
@@ -223,14 +171,6 @@ namespace bg3se
 			MultiHashMap<FixedString, bool> Unknown;
 		};
 
-		struct StatusInfectiousDiseased : public StatusBoost
-		{
-			int InfectiousDiseaseDepth;
-			float InfectTimer;
-			float InfectiousDiseaseRadius;
-			ComponentHandle Target;
-		};
-
 		struct StatusInvisible : public StatusBoost
 		{
 		    glm::vec3 InvisiblePosition;
@@ -240,10 +180,6 @@ namespace bg3se
 		{
 			uint8_t KnockedDownState;
 			bool IsInstant;
-		};
-
-		struct StatusSummoning : public Status
-		{
 		};
 
 		struct StatusMaterial : public Status
@@ -277,31 +213,10 @@ namespace bg3se
 		{
 		};
 
-		struct StatusRepair : public Status
-		{
-			int Level;
-			int Repaired;
-			ComponentHandle Repairer;
-		};
-
 		struct StatusRotate : public Status
 		{
 			float Yaw;
 			float RotationSpeed;
-		};
-
-		struct StatusSitting : public Status
-		{
-			EntityHandle Item;
-			glm::vec3 Position;
-			int Index;
-			float field_138;
-			int TimeElapsed;
-			int Heal;
-		};
-
-		struct StatusLying : public StatusSitting
-		{
 		};
 
 		struct StatusTeleportFalling : public Status
@@ -329,33 +244,9 @@ namespace bg3se
 		{
 		};
 
-		struct StatusClean : public Status
-		{
-		};
-
 		struct StatusSneaking : public StatusBoost
 		{
 		    bool ClientRequestStop;
-		};
-
-		struct StatusWindWalker : public StatusBoost
-		{
-		};
-
-		struct StatusDecayingTouch : public StatusBoost
-		{
-		};
-
-		struct StatusUnhealable : public Status
-		{
-		};
-
-		struct StatusForceMove : public Status
-		{
-		};
-
-		struct StatusConstrained : public StatusSitting
-		{
 		};
 
 		struct StatusEffect : public Status
@@ -372,28 +263,26 @@ namespace bg3se
 			using CreateStatusProc = Status* (StatusMachine* self, FixedString* statusId, uint64_t statusHandle, bool unkn1, bool unkn2);
 			using ApplyStatusProc = Status* (StatusMachine* self, Status* status);
 
-			Status* GetStatus(ComponentHandle handle) const;
-			Status* GetStatus(NetId netId) const;
 			Status* GetStatus(FixedString const& statusId) const;
 
 			void* VMT;
 			ComponentHandle OwnerHandle;
-			ComponentHandle OwnerEntityHandle;
 			uint8_t field_18;
-			ObjectSet<Status*> NewlyAddedStatuses;
-			ObjectSet<Status*> StackedStatuses;
-			ObjectSet<Status*> CleanseStatuses;
-			ObjectSet<Status*> UnknownStatuses;
+			Array<Status*> NewlyAddedStatuses;
+			Array<Status*> Statuses;
+			Array<Status*> CleanseStatuses;
+			Array<Status*> UnknownStatuses;
+			__int64 field_58;
+			__int64 field_60;
+			__int64 field_68;
+			__int64 field_70;
+			__int64 field_78;
 			__int64 field_80;
 			__int64 field_88;
-			void* SomeProc1;
-			void* SomeProc2;
-			void* SomeProc3;
-			__int64 field_A8;
-			__int64 field_B0;
-			__int64 field_B8;
-			__int64 field_C0;
-			void* StatusFactory;
+			__int64 field_90;
+			__int64 field_98;
+			__int64 field_A0;
+			Array<void*> RemoveStatusRequests;
 		};
 	}
 }

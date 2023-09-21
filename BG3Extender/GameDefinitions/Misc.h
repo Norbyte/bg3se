@@ -32,6 +32,9 @@ namespace bg3se
 	{
 		Guid ActionGuid;
 		FixedString PassiveId;
+		FixedString StatusId;
+		FixedString InterruptId;
+		bool CanApplyConcentration;
 	};
 
 	struct DescriptionInfo

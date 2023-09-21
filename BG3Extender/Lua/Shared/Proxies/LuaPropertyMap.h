@@ -10,7 +10,7 @@ template <class T>
 void Serialize(lua_State* L, T* obj);
 
 template <class T>
-void Unserialize(lua_State* L, int index, T* obj);
+PropertyOperationResult Unserialize(lua_State* L, int index, T* obj);
 
 class GenericPropertyMap : Noncopyable<GenericPropertyMap>
 {
@@ -141,7 +141,10 @@ void DefaultSerialize(lua_State* L, void* ptr)
 template <class T>
 void DefaultUnserialize(lua_State* L, int index, void* ptr)
 {
-	Unserialize(L, index, reinterpret_cast<T*>(ptr));
+	auto result = Unserialize(L, index, reinterpret_cast<T*>(ptr));
+	if (result != PropertyOperationResult::Success) {
+		luaL_error(L, "Failed to unserialize value");
+	}
 }
 
 template <class T>
@@ -378,9 +381,13 @@ inline void SerializeObject(lua_State* L, T* obj)
 template <class T>
 inline void Serialize(lua_State* L, T* obj)
 {
-	static_assert(!std::is_pointer_v<T>);
-
-	if constexpr (IsByVal<T>) {
+	if constexpr (std::is_pointer_v<T>) {
+		if (obj) {
+			Serialize(L, *obj);
+		} else {
+			push(L, nullptr);
+		}
+	} else if constexpr (IsByVal<T>) {
 		push(L, *obj);
 	} else if constexpr (IsArrayLike<T>::Value) {
 		SerializeArray(L, obj);
@@ -401,8 +408,12 @@ inline void Serialize(lua_State* L, OverrideableProperty<T>* obj)
 
 
 template <class TK>
-void UnserializeArray(lua_State* L, int index, Array<TK>* obj)
+PropertyOperationResult UnserializeArray(lua_State* L, int index, Array<TK>* obj)
 {
+	if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>) {
+		return PropertyOperationResult::UnsupportedType;
+	}
+
 	StackCheck _(L);
 	luaL_checktype(L, index, LUA_TTABLE);
 
@@ -413,11 +424,17 @@ void UnserializeArray(lua_State* L, int index, Array<TK>* obj)
 		// FIXME - in-place unserialize
 		obj->push_back(value);
 	}
+
+	return PropertyOperationResult::Success;
 }
 
 template <class TK>
-void UnserializeArray(lua_State* L, int index, ObjectSet<TK>* obj)
+PropertyOperationResult UnserializeArray(lua_State* L, int index, ObjectSet<TK>* obj)
 {
+	if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>) {
+		return PropertyOperationResult::UnsupportedType;
+	}
+
 	StackCheck _(L);
 	luaL_checktype(L, index, LUA_TTABLE);
 
@@ -428,11 +445,17 @@ void UnserializeArray(lua_State* L, int index, ObjectSet<TK>* obj)
 		// FIXME - in-place unserialize
 		obj->push_back(value);
 	}
+
+	return PropertyOperationResult::Success;
 }
 
 template <class TK, size_t Size>
-void UnserializeArray(lua_State* L, int index, std::array<TK, Size>* obj)
+PropertyOperationResult UnserializeArray(lua_State* L, int index, std::array<TK, Size>* obj)
 {
+	if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>) {
+		return PropertyOperationResult::UnsupportedType;
+	}
+
 	StackCheck _(L);
 	luaL_checktype(L, index, LUA_TTABLE);
 
@@ -444,11 +467,18 @@ void UnserializeArray(lua_State* L, int index, std::array<TK, Size>* obj)
 		(*obj)[i] = value;
 		lua_pop(L, 1);
 	}
+
+	return PropertyOperationResult::Success;
 }
 
 template <class TK, class TV>
-void UnserializeMap(lua_State* L, int index, MultiHashMap<TK, TV>* obj)
+PropertyOperationResult UnserializeMap(lua_State* L, int index, MultiHashMap<TK, TV>* obj)
 {
+	if constexpr (std::is_pointer_v<TK> || std::is_pointer_v<TV>
+		|| !std::is_default_constructible_v<TK> || !std::is_default_constructible_v<TV>) {
+		return PropertyOperationResult::UnsupportedType;
+	}
+
 	StackCheck _(L);
 	luaL_checktype(L, index, LUA_TTABLE);
 
@@ -460,11 +490,18 @@ void UnserializeMap(lua_State* L, int index, MultiHashMap<TK, TV>* obj)
 		// FIXME - in-place unserialize
 		obj->Set(key, value);
 	}
+
+	return PropertyOperationResult::Success;
 }
 
 template <class TK, class TV>
-void UnserializeMap(lua_State* L, int index, RefMap<TK, TV>* obj)
+PropertyOperationResult UnserializeMap(lua_State* L, int index, RefMap<TK, TV>* obj)
 {
+	if constexpr (std::is_pointer_v<TK> || std::is_pointer_v<TV>
+		|| !std::is_default_constructible_v<TK> || !std::is_default_constructible_v<TV>) {
+		return PropertyOperationResult::UnsupportedType;
+	}
+
 	StackCheck _(L);
 	luaL_checktype(L, index, LUA_TTABLE);
 
@@ -474,11 +511,18 @@ void UnserializeMap(lua_State* L, int index, RefMap<TK, TV>* obj)
 		auto value = obj->get_or_insert(key);
 		Unserialize(L, idx + 1, value);
 	}
+
+	return PropertyOperationResult::Success;
 }
 
 template <class TK, class TV>
-void UnserializeMap(lua_State* L, int index, Map<TK, TV>* obj)
+PropertyOperationResult UnserializeMap(lua_State* L, int index, Map<TK, TV>* obj)
 {
+	if constexpr (std::is_pointer_v<TK> || std::is_pointer_v<TV>
+		|| !std::is_default_constructible_v<TK> || !std::is_default_constructible_v<TV>) {
+		return PropertyOperationResult::UnsupportedType;
+	}
+
 	StackCheck _(L);
 	luaL_checktype(L, index, LUA_TTABLE);
 
@@ -488,6 +532,8 @@ void UnserializeMap(lua_State* L, int index, Map<TK, TV>* obj)
 		auto value = obj->get_or_insert(key);
 		Unserialize(L, idx + 1, value);
 	}
+
+	return PropertyOperationResult::Success;
 }
 
 template <class TK>
@@ -511,27 +557,29 @@ inline void UnserializeObject(lua_State* L, int index, T* obj)
 }
 
 template <class T>
-inline void Unserialize(lua_State* L, int index, T* obj)
+inline PropertyOperationResult Unserialize(lua_State* L, int index, T* obj)
 {
-	static_assert(!std::is_pointer_v<T>);
-
-	if constexpr (IsByVal<T>) {
+	if constexpr (std::is_pointer_v<T>) {
+		return PropertyOperationResult::UnsupportedType;
+	} else if constexpr (IsByVal<T>) {
 		*obj = get<T>(L, index);
 	} else if constexpr (IsArrayLike<T>::Value) {
-		UnserializeArray(L, lua_absindex(L, index), obj);
+		return UnserializeArray(L, lua_absindex(L, index), obj);
 	} else if constexpr (IsMapLike<T>::Value) {
-		UnserializeMap(L, lua_absindex(L, index), obj);
+		return UnserializeMap(L, lua_absindex(L, index), obj);
 	} else if constexpr (IsSetLike<T>::Value) {
 		UnserializeSet(L, lua_absindex(L, index), obj);
 	} else {
 		UnserializeObject(L, lua_absindex(L, index), obj);
 	}
+
+	return PropertyOperationResult::Success;
 }
 
 template <class T>
-inline void Unserialize(lua_State* L, int index, OverrideableProperty<T>* obj)
+inline PropertyOperationResult Unserialize(lua_State* L, int index, OverrideableProperty<T>* obj)
 {
-	Unserialize(L, index, &obj->Value);
+	return Unserialize(L, index, &obj->Value);
 }
 
 END_NS()

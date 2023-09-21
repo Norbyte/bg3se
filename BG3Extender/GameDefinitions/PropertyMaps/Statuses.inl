@@ -73,19 +73,6 @@ P(SourceDirection)
 END_CLS()
 
 
-BEGIN_CLS(esv::StatusActiveDefense)
-INHERIT(esv::StatusBoost)
-P(Charges)
-P(TargetPos)
-P(Target)
-P(Radius)
-P(Projectile)
-P_RO(TargetConditions_M) // TODO - map conditions
-P(UnknVectors)
-P(PreviousTargets)
-END_CLS()
-
-
 BEGIN_CLS(esv::StatusClimbing)
 INHERIT(esv::Status)
 P_RO(MoveDirection_M)
@@ -96,12 +83,6 @@ P_RO(Direction)
 P_RO(JumpUpLadders_M)
 P_RO(Incapacitated_M)
 P_RO(Started_M)
-END_CLS()
-
-
-BEGIN_CLS(esv::StatusDestroying)
-INHERIT(esv::Status)
-P(HitDescription)
 END_CLS()
 
 
@@ -137,11 +118,6 @@ P_RO(DyingFlags)
 END_CLS()
 
 
-BEGIN_CLS(esv::StatusEncumbered)
-INHERIT(esv::Status)
-END_CLS()
-
-
 BEGIN_CLS(esv::StatusHeal)
 INHERIT(esv::Status)
 P(EffectTime)
@@ -156,52 +132,10 @@ P(TargetDependentHealAmount)
 END_CLS()
 
 
-BEGIN_CLS(esv::StatusHealSharing)
-INHERIT(esv::StatusBoost)
-P(Caster)
-END_CLS()
-
-
-BEGIN_CLS(esv::StatusHealSharingCaster)
-INHERIT(esv::StatusBoost)
-P(Targets)
-END_CLS()
-
-
-BEGIN_CLS(esv::StatusHealing)
-INHERIT(esv::StatusBoost)
-P(HealAmount)
-P(TimeElapsed)
-P(HealEffect)
-P(HealEffectId)
-P(SkipInitialEffect)
-P(HealingEvent)
-P(HealType)
-P(AbsorbSurfaceRange)
-END_CLS()
-
-
-BEGIN_CLS(esv::StatusIdentify)
-INHERIT(esv::Status)
-P(Level)
-P(Identified)
-P(Identifier)
-END_CLS()
-
-
 BEGIN_CLS(esv::StatusInSurface)
 INHERIT(esv::Status)
 // TODO - LayerChecks
 P(Translate)
-END_CLS()
-
-
-BEGIN_CLS(esv::StatusInfectiousDiseased)
-INHERIT(esv::StatusBoost)
-P(InfectiousDiseaseDepth)
-P(InfectTimer)
-P(InfectiousDiseaseRadius)
-P(Target)
 END_CLS()
 
 
@@ -248,25 +182,10 @@ P(IgnoreChecks)
 END_CLS()
 
 
-BEGIN_CLS(esv::StatusRepair)
-INHERIT(esv::Status)
-P(Level)
-P(Repaired)
-P(Repairer)
-END_CLS()
-
-
 BEGIN_CLS(esv::StatusRotate)
 INHERIT(esv::Status)
 P(Yaw)
 P(RotationSpeed)
-END_CLS()
-
-
-BEGIN_CLS(esv::StatusSitting)
-INHERIT(esv::Status)
-P(Item)
-P(Position)
 END_CLS()
 
 
@@ -294,18 +213,8 @@ P(ClientRequestStop)
 END_CLS()
 
 
-BEGIN_CLS(esv::StatusSummoning)
-INHERIT(esv::Status)
-END_CLS()
-
-
 BEGIN_CLS(esv::StatusStoryFrozen)
 INHERIT(esv::Status)
-END_CLS()
-
-
-BEGIN_CLS(esv::StatusLying)
-INHERIT(esv::StatusSitting)
 END_CLS()
 
 
@@ -316,36 +225,6 @@ END_CLS()
 
 BEGIN_CLS(esv::StatusSmelly)
 INHERIT(esv::Status)
-END_CLS()
-
-
-BEGIN_CLS(esv::StatusClean)
-INHERIT(esv::Status)
-END_CLS()
-
-
-BEGIN_CLS(esv::StatusWindWalker)
-INHERIT(esv::StatusBoost)
-END_CLS()
-
-
-BEGIN_CLS(esv::StatusDecayingTouch)
-INHERIT(esv::StatusBoost)
-END_CLS()
-
-
-BEGIN_CLS(esv::StatusUnhealable)
-INHERIT(esv::Status)
-END_CLS()
-
-
-BEGIN_CLS(esv::StatusForceMove)
-INHERIT(esv::Status)
-END_CLS()
-
-
-BEGIN_CLS(esv::StatusConstrained)
-INHERIT(esv::StatusSitting)
 END_CLS()
 
 

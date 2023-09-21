@@ -122,8 +122,7 @@ PropertyOperationResult GenericUnserializeOffsetProperty(lua_State* L, void* obj
 {
 	auto* value = (T*)((std::uintptr_t)obj + offset);
 	if constexpr (!std::is_pointer_v<T>) {
-		Unserialize(L, index, value);
-		return PropertyOperationResult::Success;
+		return Unserialize(L, index, value);
 	} else {
 		return PropertyOperationResult::UnsupportedType;
 	}

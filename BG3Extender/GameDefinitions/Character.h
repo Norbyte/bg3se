@@ -14,34 +14,12 @@ namespace bg3se
 
 	namespace eoc
 	{
-		/*struct PlayerUpgrade : public ProtectedGameObject<PlayerUpgrade>
-		{
-			CDivinityStats_Character * Stats;
-			uint32_t AttributePoints;
-			uint32_t CombatAbilityPoints;
-			uint32_t CivilAbilityPoints;
-			uint32_t TalentPoints;
-			uint32_t Unknown;
-			ObjectSet<int> Attributes;
-			ObjectSet<int> Abilities;
-			BitArray<4> Talents;
-			ObjectSet<uint16_t> Traits;
-			bool IsCustom;
-		};*/
-
 		struct PlayerCustomData : public ProtectedGameObject<PlayerCustomData>
 		{
 			void* VMT;
 			bool Initialized;
-			bool CustomLookEnabled;
-			uint32_t ClothColor1;
-			uint32_t ClothColor2;
-			uint32_t ClothColor3;
-			FixedString ClassType;
-			FixedString MusicInstrumentID;
 			FixedString OwnerProfileID;
 			FixedString ReservedProfileID;
-			FixedString AiPersonality;
 		};
 	}
 
@@ -71,193 +49,97 @@ namespace bg3se
 		struct Status;
 		struct StatusMachine;
 
-		/*struct SkillConditions
-		{
-			int32_t MinimumHealthPercentage;
-			int32_t MaximumHealthPercentage;
-			bool HasNoPhysicalArmor;
-			bool HasNoMagicalArmor;
-			ObjectSet<FixedString> Tags;
-		};
-
-		struct SkillInfo
-		{
-			float ScoreModifier;
-			int32_t StartRound;
-			int32_t MinimumImpact;
-			bool OnlyCastOnSelf;
-			uint8_t AIFlags; // Enum
-			SkillConditions SourceConditions;
-			SkillConditions TargetConditions;
-			bool CasualExplorer;
-			bool Classic;
-			bool TacticianHardcore;
-			bool HonorHardcore;
-			uint32_t Unknown;
-		};
-
-		struct Skill : public ProtectedGameObject<Skill>
-		{
-			void * VMT;
-			FixedString UnknownFS;
-			NetId NetID;
-			SkillInfo Info;
-			ObjectSet<ComponentHandle> CauseList;
-			ComponentHandle UnknownHandle;
-			uint32_t Unknown1;
-			ComponentHandle OwnerHandle;
-			FixedString SkillId;
-			float ActiveCooldown;
-			bool IsActivated;
-			bool IsLearned;
-			bool ZeroMemory;
-			bool OncePerCombat;
-			bool Unknown2;
-			int32_t NumCharges;
-			uint64_t Unknown3;
-		};
-
-		struct SkillManager : public ProtectedGameObject<SkillManager>
-		{
-			void * FreeSkillState;
-			ComponentHandle OwnerHandle;
-			Map<FixedString, Skill *> Skills;
-			RefMap<FixedString, uint32_t> TimeItemAddedToSkillManager;
-			bool IsLoading;
-			uint32_t FreeMemorySlots;
-		};
-
-		struct SkillBarItem : public ProtectedGameObject<SkillBarItem>
-		{
-			enum ItemType : uint32_t
-			{
-				kNone = 0,
-				kSkill = 1,
-				kItem = 2
-			};
-
-			ItemType Type;
-			FixedString SkillOrStatId;
-			ComponentHandle ItemHandle;
-		};*/
-
 		struct PlayerCustomData : public eoc::PlayerCustomData {};
 
 		struct PlayerData : public ProtectedGameObject<PlayerData>
 		{
-			ComponentHandle PlayerHandle;
-			uint64_t SkillBar;
-			uint64_t ShapeShiftVariableManagers[10];
-			Map<FixedString, void*> ShapeShiftAttitudeMaps;
-			bool LevelUpMarker;
+			EntityHandle PlayerHandle;
+			MultiHashMap<EntityHandle, void*> ShapeShiftVariableManager;
 			FixedString QuestSelected;
-			PlayerCustomData CustomData;
-			EntityHandle SomeHandle;
-			ObjectSet<glm::vec3> PreviousPositions;
+			int field_4C;
+			eoc::PlayerCustomData CustomData;
+			EntityHandle field_68;
+			Array<glm::vec3> PreviousPositions;
 			int PreviousPositionId;
 			bool HelmetOption;
-			uint32_t Renown;
+			int Renown;
 			uint8_t CachedTension;
-			__int64 field_E0;
 			bool IsInDangerZone;
-			FixedString OriginalTemplate;
 			FixedString Region;
-			char field_100;
+			bool field_94;
 		};
 
-		struct Character : public IEoCServerObject
+		struct Character
+		{
+			Status* GetStatus(FixedString statusId);
+			Status* GetStatusByType(StatusType type);
+
+			void* VMT;
+			void* VMT2;
+			EntityHandle field_10;
+			CharacterFlags Flags;
+			FixedString Level;
+			ecs::EntityRef MyHandle;
+			Array<PeerId> UpdatePeerIds;
+			Array<void*> field_48;
+			Array<void*> field_58;
+			Array<void*> field_68;
+			Array<FixedString> CreatedTemplateItems;
+			Array<FixedString> Treasures;
+			Array<FixedString> DisabledCrime;
+			Array<Guid> PreferredAiTargets;
+			Array<FixedString> field_B8;
+			void* Template;
+			void* OriginalTemplate;
+			void* TemplateUsedForSpells;
+			void* field_E0;
+			void* BehaviourMachine;
+			void* field_F0;
+			void* SteeringMachine;
+			void* CharacterSupervisor;
+			void* DialogController;
+			void* field_110;
+			void* field_118;
+			void* OsirisController;
+			void* field_128;
+			StatusMachine* StatusManager;
+			void* VariableManager;
+			void* ShapeShiftingVariableManager;
+			void* field_148;
+			PlayerData* PlayerData;
+			EntityHandle Inventory;
+			EntityHandle OwnerCharacter;
+			EntityHandle FollowCharacter;
+			EntityHandle field_170;
+			EntityHandle EnemyCharacter;
+			int Dialog;
+			FixedString field_14C;
+			FixedString CustomTradeTreasure;
+			FixedString PreviousLevel;
+			UserId UserID;
+			UserId UserID2;
+			float InvestigationTimer;
+			int32_t CrimeHandle;
+			int32_t PreviousCrimeHandle;
+			int field_16C;
+			uint8_t CrimeState;
+			bool PreviousCrimeState;
+			bool BlockNewDisturbanceReactions;
+			bool field_173;
+			uint8_t HasOsirisDialog;
+			uint8_t NeedsUpdate;
+			uint8_t ForceSynch;
+			uint8_t NumConsumables;
+			CharacterFlags2 Flags2;
+			CharacterFlags3 Flags3;
+		};
+
+		struct CharacterComponent : public BaseComponent
 		{
 			static constexpr ExtComponentType ComponentType = ExtComponentType::ServerCharacter;
 			static constexpr auto EngineClass = "esv::Character";
 
-			Status* GetStatus(ComponentHandle statusHandle) const;
-			Status* GetStatus(NetId handle) const;
-
-			FixedString GUID; // Part of IEoCServerObject?
-			NetId NetID; // Part of IEoCServerObject?
-			uint64_t Flags;
-			FixedString CurrentLevel;
-			ecs::EntityRef Handle;
-			Array<uint32_t> VisibleToPeerIds;
-			CharacterTemplate* CurrentTemplate;
-			CharacterTemplate* OriginalTemplate;
-			CharacterTemplate* TemplateUsedForSpells;
-			uint8_t Flags2;
-			uint8_t Flags3;
-			bool WaitForTeleportAck;
-			int8_t Team;
-			int HasOsirisDialog;
-			ObjectSet<void*> VoiceOverrides;
-			bool NeedsUpdate;
-			bool ForceSynch;
-			int8_t field_133;
-			ComponentHandle InventoryHandle;
-			void* MovementMachine_M;
-			void* BehaviourMachine;
-			void* ActionMachine_M;
-			void* SteeringMachine;
-			void* CharacterSupervisor;
-			void* DialogController;
-			void* FallbackController;
-			void* NetworkController_M;
-			void* OsirisController;
-			void* GameplayController;
-			StatusMachine* StatusMachine;
-			void* SkillManager_M;
-			void* VariableManager;
-			void* ShapeShiftVariableManager_M;
-			Map<uint32_t, void*> Attitudes;
-			void* SkillBeingPrepared_M;
-			void** pCurrentTemplate_MAYBE;
-			int Dialog;
-			bool IsDialogAiControlled;
-			float TurnTimer;
-			float TriggerTrapsTimer;
-			UserId UserID;
-			UserId ReservedUserID;
-			EntityHandle OwnerCharacterHandle;
-			EntityHandle FollowCharacterHandle;
-			EntityHandle EnemyCharacterHandle;
-			EntityHandle SpiritCharacterHandle;
-			ObjectSet<EntityHandle> EnemyHandleSet;
-			Array<void*> SurfacePathInfluenceSet;
-			ObjectSet<EntityHandle> SummonHandleSet;
-			FixedString field_190;
-			ObjectSet<ComponentHandle> RegisteredTriggerHandles;
-			ObjectSet<FixedString> RegisteredTriggers;
-			PlayerData* PlayerData;
-			int LoseControl_M;
-			int field_474;
-			float MovementSpeedMultiplier;
-			float MovementSpeedMultiplier2;
-			ComponentHandle PartyHandle;
-			ObjectSet<FixedString> CreatedTemplateItems;
-			ObjectSet<FixedString> Treasures;
-			FixedString CustomTradeTreasure;
-			uint32_t CrimeHandle;
-			uint32_t PreviousCrimeHandle;
-			uint8_t CrimeState;
-			uint8_t PreviousCrimeState;
-			bool CrimeWarningsEnabled;
-			bool CrimeInterrogationEnabled;
-			bool BlockNewDisturbanceReactions;
-			ObjectSet<FixedString> DisabledCrimes;
-			uint64_t DamageCounter;
-			uint64_t HealCounter;
-			uint64_t KillCounter;
-			EntityHandle MovingCasterHandle;
-			FixedString EquipmentColor;
-			FixedString ProjectileTemplate;
-			uint32_t TimeElapsed;
-			ObjectSet<Guid> PreferredAiTargetTags;
-			void* CharacterBody_M;
-			RefMap<EntityHandle, ObjectSet<void*>> StatusesFromObjects;
-			ObjectSet<FixedString> TagsFromItems;
-			bool ReadyCheckBlocked;
-			uint8_t NumConsumables;
-			bool CorpseLootable;
-			uint8_t CharmedNumConsumablesConsumed;
-			FixedString PreviousLevel;
+			Character* Character;
 		};
 	}
 

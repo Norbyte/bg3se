@@ -274,26 +274,9 @@ namespace bg3se
 		}
 	}*/
 
-	esv::Status * esv::StatusMachine::GetStatus(ComponentHandle handle) const
-	{
-		for (auto status : StackedStatuses) {
-			if (status->StatusHandle == handle) {
-				return status;
-			}
-		}
-
-		return nullptr;
-	}
-
-	esv::Status* esv::StatusMachine::GetStatus(NetId netId) const
-	{
-		throw std::runtime_error("FIXME");
-		// return FindByNetId(netId);
-	}
-
 	esv::Status* esv::StatusMachine::GetStatus(FixedString const& statusId) const
 	{
-		for (auto status : StackedStatuses) {
+		for (auto status : Statuses) {
 			if (status->StatusId == statusId) {
 				return status;
 			}
@@ -330,39 +313,28 @@ namespace bg3se
 	}*/
 
 
-	esv::Status * esv::Character::GetStatus(ComponentHandle statusHandle/*, bool returnPending*/) const
+	esv::Status * esv::Character::GetStatus(FixedString statusId)
 	{
-		if (StatusMachine == nullptr) {
+		if (StatusManager == nullptr) {
 			return nullptr;
 		}
 
-		auto status = StatusMachine->GetStatus(statusHandle);
-		if (status != nullptr) {
-			return status;
-		}
-
-		/* FIXME
-		if (returnPending) {
-			ComponentHandle ownerHandle;
-			this->GetComponentHandle(ownerHandle);
-
-			auto pendingStatus = ExtensionState::Get().PendingStatuses.Find(ownerHandle, statusHandle);
-			if (pendingStatus != nullptr) {
-				return pendingStatus->Status;
-			}
-		}*/
-
-		return nullptr;
+		return StatusManager->GetStatus(statusId);
 	}
 
-	esv::Status* esv::Character::GetStatus(NetId netId) const
+	esv::Status* esv::Character::GetStatusByType(StatusType type)
 	{
-		if (StatusMachine == nullptr) {
+		if (StatusManager == nullptr) {
 			return nullptr;
 		}
 
-		// Pending statuses have no NetID, so we can't check them here
-		return StatusMachine->GetStatus(netId);
+		for (auto status : StatusManager->Statuses) {
+			if (status->GetStatusId() == type) {
+				return status;
+			}
+		}
+
+		return nullptr;
 	}
 
 	/*esv::Status * esv::Item::GetStatus(ComponentHandle statusHandle, bool returnPending) const

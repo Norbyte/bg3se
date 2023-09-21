@@ -140,7 +140,7 @@ T(ReplicationDependencyOwnerComponent)
 T(StaticPhysicsComponent)
 
 
-T(esv::Character)
+T(esv::CharacterComponent)
 T(esv::ItemComponent)
 T(esv::Projectile)
 T(OsirisTagComponent)
