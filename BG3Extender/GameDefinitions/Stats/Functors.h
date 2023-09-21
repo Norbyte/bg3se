@@ -227,7 +227,7 @@ struct ResurrectFunctor : public Functor
 
 	float Probability{ 1.0f }; // Arg0
 	float HealthPercentage{ 1.0f }; // Arg1
-	ResurrectFlags Flags{ 0 };
+	TargetTypeFlags Flags{ 0 };
 };
 
 struct SabotageFunctor : public Functor
@@ -258,7 +258,7 @@ struct ForceFunctor : public Functor
 	FixedString Distance; // Arg0
 	ForceFunctorOrigin Origin{ ForceFunctorOrigin::OriginToEntity }; // Arg1
 	ForceFunctorAggression Aggression{ ForceFunctorAggression::Aggressive }; // Arg2
-	LuaExpression* Unkn{ nullptr };
+	StatsExpressionParamEx* Unkn{ nullptr };
 	bool Arg3{ false };
 	bool Arg4{ false };
 };
@@ -368,7 +368,7 @@ struct RestoreResourceFunctor : public Functor
 	Guid ActionResourceUUID; // Arg0
 	int Hex{ 0 }; // Arg2
 	int field_34{ 0 };
-	LuaExpression* LuaAmount{ nullptr }; // Arg1
+	StatsExpressionParam* LuaAmount{ nullptr }; // Arg1
 	double Amount{ 0.0 }; // Arg1
 	bool IsPercentage{ false }; // Arg1
 };
@@ -435,7 +435,7 @@ struct DealDamageFunctor : public Functor
 	DamageType DamageType{ DamageType::None }; // Arg1
 	DealDamageWeaponType WeaponType{ DealDamageWeaponType::None }; // Arg0
 	DealDamageWeaponDamageType WeaponDamageType{ DealDamageWeaponDamageType::None }; // Arg1
-	LuaExpression* Damage{ nullptr };
+	StatsExpressionParam* Damage{ nullptr };
 	bool Nonlethal{ false }; // Arg3
 	bool Magical{ false }; // Arg2
 	int32_t field_34{ 0 }; // Arg5
@@ -481,8 +481,8 @@ struct RegainHitPointsFunctor : public Functor
 {
 	static constexpr auto FunctorType = FunctorId::RegainHitPoints;
 
-	LuaExpression* HitPoints{ nullptr };
-	ResurrectFlags Flags{ 0 };
+	StatsExpressionParam* HitPoints{ nullptr };
+	TargetTypeFlags Flags{ 0 };
 };
 
 struct UseSpellFunctor : public Functor
@@ -563,7 +563,7 @@ struct GainTemporaryHitPointsFunctor : public Functor
 {
 	static constexpr auto FunctorType = FunctorId::GainTemporaryHitPoints;
 
-	LuaExpressionBase* HitPointsExpression;
+	StatsExpressionParam* HitPointsExpression;
 };
 
 struct FireProjectileFunctor : public Functor
@@ -600,7 +600,7 @@ struct RegainTemporaryHitPointsFunctor : public Functor
 {
 	static constexpr auto FunctorType = FunctorId::RegainTemporaryHitPoints;
 
-	LuaExpression* HitPoints;
+	StatsExpressionParam* HitPoints;
 };
 
 struct RemoveStatusByLevelFunctor : public Functor
@@ -656,7 +656,7 @@ struct AdjustRollFunctor : public Functor
 {
 	static constexpr auto FunctorType = FunctorId::AdjustRoll;
 
-	LuaExpressionBase* Expression; // Arg1
+	StatsExpressionParam* Expression; // Arg1
 	RollAdjustmentType Type; // Arg2
 	DamageType DamageType; // Arg2
 };

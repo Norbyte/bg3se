@@ -839,37 +839,6 @@ namespace bg3se
 		uint8_t field_21;
 	};
 
-	struct AnimationSetComponent : public BaseComponent
-	{
-		static constexpr ExtComponentType ComponentType = ExtComponentType::AnimationSet;
-		static constexpr auto EngineClass = "ls::AnimationSetComponent";
-
-		struct Internal
-		{
-			uint64_t field_0;
-			uint16_t field_8;
-			uint32_t _Pad;
-			FixedString field_16;
-		};
-
-		Internal* AnimationSet;
-	};
-
-	struct AnimationBlueprintComponent : public BaseComponent
-	{
-		static constexpr ExtComponentType ComponentType = ExtComponentType::AnimationBlueprint;
-		static constexpr auto EngineClass = "ls::AnimationBlueprintComponent";
-
-		uint8_t field_18;
-		__int64 field_20;
-		__int64 field_28;
-		__int64 field_30;
-		__int64 field_38;
-		__int64 field_40;
-		uint8_t field_48;
-		uint8_t field_49;
-	};
-
 	struct CanModifyHealthComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::CanModifyHealth;
@@ -1151,21 +1120,12 @@ namespace bg3se
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Steering;
 		static constexpr auto EngineClass = "eoc::SteeringComponent";
 
+		glm::vec3 field_0;
+		float field_C;
+		float field_10;
+		uint8_t field_14;
 		float field_18;
-		float field_1C;
-		uint8_t field_20;
-		FixedString field_24;
-		float field_28;
-		float field_2C;
-		float field_30;
-		int field_34;
-		int field_38;
-		int field_3C;
-		float field_40;
-		float field_44;
-		float field_48;
-		float field_4C;
-		float field_50;
+		uint8_t field_1C;
 	};
 
 	struct CanDeflectProjectilesComponent : public BaseComponent

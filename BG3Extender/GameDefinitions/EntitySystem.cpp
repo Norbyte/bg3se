@@ -74,6 +74,7 @@ void* EntityClass::GetComponent(InstanceComponentPointer const& entityPtr, uint8
 {
 	auto& page = ComponentPools[entityPtr.PageIndex][componentSlot];
 	auto buf = (uint8_t*)page.ComponentBuffer;
+	assert(buf != nullptr);
 	return buf + componentSize * entityPtr.EntryIndex;
 }
 

@@ -767,32 +767,6 @@ P(Light)
 END_CLS()
 
 
-BEGIN_CLS(AnimationSetComponent::Internal)
-P(field_0)
-P(field_8)
-P(field_16)
-END_CLS()
-
-
-BEGIN_CLS(AnimationSetComponent)
-INHERIT(BaseComponent)
-P(AnimationSet)
-END_CLS()
-
-
-BEGIN_CLS(AnimationBlueprintComponent)
-INHERIT(BaseComponent)
-P(field_18)
-P(field_20)
-P(field_28)
-P(field_30)
-P(field_38)
-P(field_40)
-P(field_48)
-P(field_49)
-END_CLS()
-
-
 BEGIN_CLS(CanModifyHealthComponent)
 INHERIT(BaseComponent)
 P(Flags)
@@ -1014,11 +988,12 @@ END_CLS()
 
 BEGIN_CLS(SteeringComponent)
 INHERIT(BaseComponent)
+P(field_0)
+P(field_C)
+P(field_10)
+P(field_14)
 P(field_18)
 P(field_1C)
-P(field_20)
-P(field_24)
-// FIXME remainder
 END_CLS()
 
 

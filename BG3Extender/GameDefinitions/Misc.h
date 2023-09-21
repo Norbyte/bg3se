@@ -47,14 +47,69 @@ namespace bg3se
 		TranslatedString LoreDescription;
 	};
 
-
-	struct LuaExpressionBase
+	struct RollDefinition
 	{
-		Array<STDString> ExpressionParams;
+		uint8_t field_0;
+		uint8_t field_1;
+		int32_t field_4;
+		uint8_t field_8;
+	};
+
+	struct ResourceRollDefinition
+	{
+		Guid field_0;
+		uint8_t field_10;
+	};
+
+	struct StatsExpressionParam
+	{
+		struct SubType1
+		{
+			inline ~SubType1()
+			{
+				if (Type == StatsExpressionParamType2::STDString) {
+					String.~basic_string();
+				}
+			}
+
+			union {
+				uint8_t StatsExpressionVariableData;
+				AbilityId Ability;
+				SkillId Skill;
+				uint8_t StatusGroup;
+				STDString String;
+			};
+			StatsExpressionParamType2 Type;
+		};
+		
+		struct Param
+		{
+			inline ~Param()
+			{
+				if (Type == StatsExpressionParamType::Type1) {
+					Type1.~SubType1();
+				}
+			}
+
+			union {
+				uint8_t StatsExpressionType;
+				SubType1 Type1;
+				uint8_t StatsExpressionVariableDataType;
+				uint8_t StatsExpressionVariableDataModifier;
+				RollDefinition Roll;
+				ResourceRollDefinition ResourceRoll;
+				uint8_t StatsContextType;
+				int32_t Int;
+				bool Bool;
+			};
+			StatsExpressionParamType Type;
+		};
+
+		Array<Param> ExpressionParams;
 		STDString Code;
 	};
 
-	struct LuaExpression : public LuaExpressionBase
+	struct StatsExpressionParamEx : public StatsExpressionParam
 	{
 		int FastLock;
 	};
@@ -62,7 +117,7 @@ namespace bg3se
 	struct LuaExpressionManager : public ProtectedGameObject<LuaExpressionManager>
 	{
 		void* VMT;
-		RefMap<Guid, LuaExpression*> Expressions;
+		RefMap<Guid, StatsExpressionParamEx*> Expressions;
 		char field_18;
 	};
 

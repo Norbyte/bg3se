@@ -54,181 +54,116 @@ struct BoostInfoComponent : public BaseComponent
 	Guid field_80;
 };
 
-struct ArmorClassBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ArmorClassBoost;
-	static constexpr auto EngineClass = "eoc::ArmorClassBoostComponent";
+#define DEFN_BOOST(name, boostType, defn) \
+	struct name##BoostComponent_Base : public BaseComponent \
+	defn; \
+	struct name##BoostComponent : public name##BoostComponent_Base \
+	{ \
+		static constexpr ExtComponentType ComponentType = ExtComponentType::name##Boost; \
+		static constexpr auto BoostType = BoostType::boostType; \
+		static constexpr auto EngineClass = "eoc::" #name "BoostComponent"; \
+	};
 
+DEFN_BOOST(ArmorClass, AC, {
 	int32_t AC;
-};
+})
 
-struct AbilityBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::AbilityBoost;
-	static constexpr auto EngineClass = "eoc::AbilityBoostComponent";
-
+DEFN_BOOST(Ability, Ability, {
 	AbilityId Ability;
 	int32_t Value;
-	int8_t SomeFlag; // Unused?
-};
+	int32_t field_8;
+	int8_t field_C;
+})
 
-struct RollBonusBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::RollBonusBoost;
-	static constexpr auto EngineClass = "eoc::RollBonusBoostComponent";
-
+DEFN_BOOST(RollBonus, RollBonus, {
 	RollTypeId RollType;
-	LuaExpressionBase Amount;
+	StatsExpressionParam Amount;
 	AbilityId Ability;
 	SkillId Skill;
-};
+})
 
-struct AdvantageBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::AdvantageBoost;
-	static constexpr auto EngineClass = "eoc::AdvantageBoostComponent";
-
+DEFN_BOOST(Advantage, Advantage, {
 	AdvantageTypeId AdvantageType;
 	AdvantageBoostType Type;
 	AbilityId Ability;
 	SkillId Skill;
 	Array<Guid> Tags;
-};
+})
 
-struct ActionResourceValueBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ActionResourceValueBoost;
-	static constexpr auto EngineClass = "eoc::ActionResourceValueBoostComponent";
-
+DEFN_BOOST(ActionResourceValue, ActionResource, {
 	Guid ResourceUUID;
 	int Amount2;
 	double Amount;
 	DiceSizeId DiceSize;
-};
+})
 
-struct CriticalHitBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CriticalHitBoost;
-	static constexpr auto EngineClass = "eoc::CriticalHitBoostComponent";
-
+DEFN_BOOST(CriticalHit, CriticalHit, {
 	CriticalHitBoostFlags Flags;
+	uint8_t field_1;
 	int Value;
-};
+})
 
-struct AbilityFailedSavingThrowBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::AbilityFailedSavingThrowBoost;
-	static constexpr auto EngineClass = "eoc::AbilityFailedSavingThrowBoostComponent";
-
+DEFN_BOOST(AbilityFailedSavingThrow, AbilityFailedSavingThrow, {
 	AbilityId Ability;
-};
+})
 
-struct ResistanceBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ResistanceBoost;
-	static constexpr auto EngineClass = "eoc::ResistanceBoostComponent";
-
+DEFN_BOOST(Resistance, Resistance, {
 	DamageType DamageType;
 	ResistanceBoostFlags ResistanceFlags;
 	bool IsResistantToAll;
-};
+})
 
-struct WeaponDamageResistanceBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::WeaponDamageResistanceBoost;
-	static constexpr auto EngineClass = "eoc::WeaponDamageResistanceBoostComponent";
-
+DEFN_BOOST(WeaponDamageResistance, WeaponDamageResistance, {
 	Array<DamageType> DamageTypes;
-};
+})
 
-struct ProficiencyBonusOverrideBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ProficiencyBonusOverrideBoost;
-	static constexpr auto EngineClass = "eoc::ProficiencyBonusOverrideBoostComponent";
+DEFN_BOOST(ProficiencyBonusOverride, ProficiencyBonusOverride, {
+	StatsExpressionParam Value;
+})
 
-	int Value;
-};
-
-struct JumpMaxDistanceMultiplierBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::JumpMaxDistanceMultiplierBoost;
-	static constexpr auto EngineClass = "eoc::JumpMaxDistanceMultiplierBoostComponent";
-
+DEFN_BOOST(JumpMaxDistanceMultiplier, JumpMaxDistanceMultiplier, {
 	float Amount;
-};
+})
 
-struct HalveWeaponDamageBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::HalveWeaponDamageBoost;
-	static constexpr auto EngineClass = "eoc::HalveWeaponDamageBoostComponent";
-
+DEFN_BOOST(HalveWeaponDamage, HalveWeaponDamage, {
 	AbilityId Ability;
-};
+})
 
-struct UnlockSpellBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::UnlockSpellBoost;
-	static constexpr auto EngineClass = "eoc::UnlockSpellBoostComponent";
+DEFN_BOOST(UnlockSpell, UnlockSpell, {
+	FixedString SpellId;
+	AbilityId Ability;
+	Guid SomeUUID;
+	SpellChildSelectionType SpellChildSelection;
+	SpellCooldownType CooldownType;
+})
 
-	FixedString SpellId; // Param 1
-	AbilityId Ability; // Param 5
-	Guid SomeUUID; // Param 2
-	SpellChildSelectionType SpellChildSelection; // Param 3
-	SpellCooldownType CooldownType; // Param 4
-};
-
-struct SourceAdvantageBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::SourceAdvantageBoost;
-	static constexpr auto EngineClass = "eoc::SourceAdvantageBoostComponent";
-
+DEFN_BOOST(SourceAdvantage, SourceAllyAdvantageOnAttack, {
 	SourceAdvantageType Type;
-};
+})
 
-struct ProficiencyBonusBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ProficiencyBonusBoost;
-	static constexpr auto EngineClass = "eoc::ProficiencyBonusBoostComponent";
-
+DEFN_BOOST(ProficiencyBonus, ProficiencyBonus, {
 	ProficiencyBonusBoostType Type;
 	AbilityId Ability;
 	SkillId Skill;
-};
+})
 
-struct ProficiencyBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ProficiencyBoost;
-	static constexpr auto EngineClass = "eoc::ProficiencyBoostComponent";
+DEFN_BOOST(Proficiency, Proficiency, {
+	ProficiencyGroupFlags Flags;
+})
 
-	AbilityId Ability;
-	SkillId Skill;
-};
+DEFN_BOOST(IncreaseMaxHP, IncreaseMaxHP, {
+	StatsExpressionParam Amount;
+})
 
-struct IncreaseMaxHPBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::IncreaseMaxHPBoost;
-	static constexpr auto EngineClass = "eoc::IncreaseMaxHPBoostComponent";
-
-	LuaExpressionBase HP;
-};
-
-struct ActionResourceBlockBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ActionResourceBlockBoost;
-	static constexpr auto EngineClass = "eoc::ActionResourceBlockBoostComponent";
-
+DEFN_BOOST(ActionResourceBlock, ActionResourceBlock, {
 	Guid ResourceUUID;
 	int IntParam;
-};
+})
 
-struct StatusImmunityBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::StatusImmunityBoost;
-	static constexpr auto EngineClass = "eoc::StatusImmunityBoostComponent";
-
+DEFN_BOOST(StatusImmunity, StatusImmunity, {
 	FixedString StatusID;
 	Array<Guid> UnknownUUIDs;
-};
+})
 
 struct UseBoostsComponent : public BaseComponent
 {
@@ -238,229 +173,386 @@ struct UseBoostsComponent : public BaseComponent
 	Array<BoostParameters> Boosts;
 };
 
-struct TemporaryHPBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::TemporaryHPBoost;
-	static constexpr auto EngineClass = "eoc::TemporaryHPBoostComponent";
+DEFN_BOOST(CannotHarmCauseEntity, CannotHarmCauseEntity, {
+	FixedString Type;
+})
 
-	LuaExpressionBase HP;
-};
+DEFN_BOOST(TemporaryHP, TemporaryHP, {
+	StatsExpressionParam HP;
+})
 
-struct WeightBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::WeightBoost;
-	static constexpr auto EngineClass = "eoc::WeightBoostComponent";
-
+DEFN_BOOST(Weight, Weight, {
 	int Amount;
-};
+})
 
-struct FactionOverrideBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::FactionOverrideBoost;
-	static constexpr auto EngineClass = "eoc::FactionOverrideBoostComponent";
+DEFN_BOOST(WeightCategory, WeightCategory, {
+	int Amount;
+})
 
-	FixedString Faction;
-};
+DEFN_BOOST(FactionOverride, FactionOverride, {
+	Guid Faction;
+	uint8_t field_10;
+})
 
-struct ActionResourceMultiplierBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ActionResourceMultiplierBoost;
-	static constexpr auto EngineClass = "eoc::ActionResourceMultiplierBoostComponent";
-
+DEFN_BOOST(ActionResourceMultiplier, ActionResourceMultiplier, {
 	Guid ResourceUUID;
 	int IntParam2;
 	int IntParam;
 	DiceSizeId DiceSize;
-};
+})
 
-struct InitiativeBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::InitiativeBoost;
-	static constexpr auto EngineClass = "eoc::InitiativeBoostComponent";
-
+DEFN_BOOST(Initiative, Initiative, {
 	int Amount;
-};
+})
 
-struct DarkvisionRangeBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::DarkvisionRangeBoost;
-	static constexpr auto EngineClass = "eoc::DarkvisionRangeBoostComponent";
-
+DEFN_BOOST(DarkvisionRange, DarkvisionRange, {
 	float Range;
-};
+})
 
-struct DarkvisionRangeMinBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::DarkvisionRangeMinBoost;
-	static constexpr auto EngineClass = "eoc::DarkvisionRangeMinBoostComponent";
-
+DEFN_BOOST(DarkvisionRangeMin, DarkvisionRangeMin, {
 	float Range;
-};
+})
 
-struct DarkvisionRangeOverrideBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::DarkvisionRangeOverrideBoost;
-	static constexpr auto EngineClass = "eoc::DarkvisionRangeOverrideBoostComponent";
-
+DEFN_BOOST(DarkvisionRangeOverride, DarkvisionRangeOverride, {
 	float Range;
-};
+})
 
-struct AddTagBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::AddTagBoost;
-	static constexpr auto EngineClass = "eoc::AddTagBoostComponent";
+DEFN_BOOST(AddTag, Tag, {
+	Guid Tag;
+})
 
-	Guid TagUUID;
-};
-
-struct IgnoreDamageThresholdMinBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::IgnoreDamageThresholdMinBoost;
-	static constexpr auto EngineClass = "eoc::IgnoreDamageThresholdMinBoostComponent";
-
+DEFN_BOOST(IgnoreDamageThresholdMin, IgnoreDamageThreshold, {
 	DamageType DamageType;
 	bool All;
 	int Amount;
-};
+})
 
-struct SkillBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::SkillBoost;
-	static constexpr auto EngineClass = "eoc::SkillBoostComponent";
-
+DEFN_BOOST(Skill, Skill, {
 	SkillId Skill;
-	int Amount;
-};
+	StatsExpressionParam Amount;
+})
 
-struct WeaponDamageBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::WeaponDamageBoost;
-	static constexpr auto EngineClass = "eoc::WeaponDamageBoostComponent";
-
+DEFN_BOOST(WeaponDamage, WeaponDamage, {
 	DamageType DamageType;
-	int DamageMin;
-	int DamageMax;
-	bool field_24;
-};
+	StatsExpressionParam Amount;
+	bool field_30;
+})
 
-struct NullifyAbilityBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::NullifyAbilityBoost;
-	static constexpr auto EngineClass = "eoc::NullifyAbilityBoostComponent";
-
+DEFN_BOOST(NullifyAbility, NullifyAbilityScore, {
 	AbilityId Ability;
-};
+})
 
-struct RerollBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::RerollBoost;
-	static constexpr auto EngineClass = "eoc::RerollBoostComponent";
-
+DEFN_BOOST(Reroll, Reroll, {
 	RollTypeId RollType;
-	int8_t field_19;
-	bool field_1A;
-};
+	int8_t field_1;
+	bool field_2;
+})
 
-struct DownedStatusBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::DownedStatusBoost;
-	static constexpr auto EngineClass = "eoc::DownedStatusBoostComponent";
-
+DEFN_BOOST(DownedStatus, DownedStatus, {
 	FixedString StatusId;
-};
+	int32_t field_4;
+})
 
-struct WeaponEnchantmentBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::WeaponEnchantmentBoost;
-	static constexpr auto EngineClass = "eoc::WeaponEnchantmentBoostComponent";
-
+DEFN_BOOST(WeaponEnchantment, WeaponEnchantment, {
 	int Value;
-};
+})
 
-struct GuaranteedChanceRollOutcomeBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::GuaranteedChanceRollOutcomeBoost;
-	static constexpr auto EngineClass = "eoc::GuaranteedChanceRollOutcomeBoostComponent";
+DEFN_BOOST(GuaranteedChanceRollOutcome, GuaranteedChanceRollOutcome, {
+	bool field_0;
+})
 
-	bool field_18;
-};
-
-struct AttributeBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::AttributeBoost;
-	static constexpr auto EngineClass = "eoc::AttributeBoostComponent";
-
+// FIXME - update mapping from stats!
+DEFN_BOOST(Attribute, Attribute, {
 	AttributeFlags AttributeFlags;
-};
+})
 
-struct GameplayLightBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::GameplayLightBoost;
-	static constexpr auto EngineClass = "eoc::GameplayLightBoostComponent";
+DEFN_BOOST(GameplayLight, GameplayLight, {
+	int field_0;
+	bool field_4;
+	int field_8;
+	uint8_t field_C;
+})
 
-	int field_18;
-	uint8_t field_1C;
-	int field_20;
-};
+DEFN_BOOST(DualWielding, DualWielding, {
+	bool DualWielding;
+})
 
-struct DualWieldingBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::DualWieldingBoost;
-	static constexpr auto EngineClass = "eoc::DualWieldingBoostComponent";
-
-	bool field_18;
-};
-
-struct SavantBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::SavantBoost;
-	static constexpr auto EngineClass = "eoc::SavantBoostComponent";
-
+DEFN_BOOST(Savant, Savant, {
 	SpellSchoolId SpellSchool;
-};
+})
 
-struct MinimumRollResultBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::MinimumRollResultBoost;
-	static constexpr auto EngineClass = "eoc::MinimumRollResultBoostComponent";
-
+DEFN_BOOST(MinimumRollResult, MinimumRollResult, {
 	RollTypeId RollType;
 	int8_t Result;
-};
+})
 
-struct CharacterWeaponDamageBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CharacterWeaponDamageBoost;
-	static constexpr auto EngineClass = "eoc::CharacterWeaponDamageBoostComponent";
-
-	int MinDamage;
-	int MaxDamage;
+DEFN_BOOST(CharacterWeaponDamage, CharacterWeaponDamage, {
+	StatsExpressionParam Amount;
 	DamageType DamageType;
-};
+})
 
-struct ProjectileDeflectBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ProjectileDeflectBoost;
-	static constexpr auto EngineClass = "eoc::ProjectileDeflectBoostComponent";
-
+DEFN_BOOST(ProjectileDeflect, ProjectileDeflect, {
 	ProjectileTypeIds ProjectileTypes;
-};
+})
 
-struct AbilityOverrideMinimumBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::AbilityOverrideMinimumBoost;
-	static constexpr auto EngineClass = "eoc::AbilityOverrideMinimumBoostComponent";
-
+DEFN_BOOST(AbilityOverrideMinimum, AbilityOverrideMinimum, {
 	AbilityId Ability;
 	int Amount;
-};
+})
 
-struct FallDamageMultiplierBoostComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::FallDamageMultiplierBoost;
-	static constexpr auto EngineClass = "eoc::FallDamageMultiplierBoostComponent";
+DEFN_BOOST(ACOverrideFormula, ACOverrideFormula, {
+	int32_t AC;
+	bool field_4;
+	Array<AbilityId> Abilities;
+})
 
+DEFN_BOOST(FallDamageMultiplier, FallDamageMultiplier, {
 	float Amount;
+})
+
+DEFN_BOOST(ActiveCharacterLight, ActiveCharacterLight, {
+	FixedString LightUUID;
+})
+
+DEFN_BOOST(WeaponAttackTypeOverride, WeaponAttackTypeOverride, {
+	SpellAttackType AttackType;
+})
+
+DEFN_BOOST(WeaponDamageDieOverride, WeaponDamageDieOverride, {
+	RollDefinition Roll;
+})
+
+DEFN_BOOST(CarryCapacityMultiplier, CarryCapacityMultiplier, {
+	float Multiplier;
+})
+
+DEFN_BOOST(WeaponProperty, WeaponProperty, {
+	WeaponFlags Properties;
+})
+
+DEFN_BOOST(WeaponAttackRollAbilityOverride, WeaponAttackRollAbilityOverride, {
+	AbilityId Ability;
+})
+
+DEFN_BOOST(SightRangeAdditive, SightRangeAdditive, {
+	float Range;
+})
+
+DEFN_BOOST(SightRangeMinimum, SightRangeMinimum, {
+	float Range;
+})
+
+DEFN_BOOST(SightRangeMaximum, SightRangeMaximum, {
+	float Range;
+})
+
+DEFN_BOOST(SightRangeOverride, SightRangeOverride, {
+	float Range;
+})
+
+DEFN_BOOST(MovementSpeedLimit, MovementSpeedLimit, {
+	uint8_t MovementType;
+})
+
+DEFN_BOOST(UnlockSpellVariant, UnlockSpellVariant, {
+	STDString field_0;
+	Array<void*> field_8;
+})
+
+DEFN_BOOST(DetectCrimesBlock, DetectDisturbancesBlock, {
+	bool field_0;
+})
+
+struct BlockAbilityModifierFromACComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::BlockAbilityModifierFromACBoost;
+	static constexpr auto EngineClass = "eoc::BlockAbilityModifierFromACComponent";
+
+	AbilityId Ability;
 };
+
+DEFN_BOOST(ScaleMultiplier, ScaleMultiplier, {
+	float Multiplier;
+})
+
+DEFN_BOOST(DamageReduction, DamageReduction, {
+	DamageType DamageType;
+	StatsExpressionParam Amount;
+	bool HasAmount;
+	uint8_t gap31[7];
+	uint8_t field_38;
+	uint8_t field_39;
+})
+
+DEFN_BOOST(ReduceCriticalAttackThreshold, ReduceCriticalAttackThreshold, {
+	int32_t field_0;
+	int32_t field_4;
+	int64_t field_8;
+})
+
+DEFN_BOOST(PhysicalForceRangeBonus, PhysicalForceRangeBonus, {
+	float field_0;
+	uint8_t field_4;
+})
+
+DEFN_BOOST(ObjectSize, ObjectSize, {
+	int32_t SizeCategoryAdjustment;
+})
+
+DEFN_BOOST(ObjectSizeOverride, ObjectSizeOverride, {
+	uint8_t field_0;
+})
+
+DEFN_BOOST(AiArchetypeOverride, AiArchetypeOverride, {
+	FixedString Archetype;
+	int32_t Priority;
+})
+
+DEFN_BOOST(ExpertiseBonus, ExpertiseBonus, {
+	SkillId Skill;
+})
+
+DEFN_BOOST(EntityThrowDamage, EntityThrowDamage, {
+	RollDefinition Roll;
+	uint8_t field_C;
+})
+
+DEFN_BOOST(WeaponDamageTypeOverride, WeaponDamageTypeOverride, {
+	DamageType DamageType;
+})
+
+DEFN_BOOST(MaximizeHealing, MaximizeHealing, {
+	HealDirection Direction;
+	stats::TargetTypeFlags TargetTypes;
+})
+
+DEFN_BOOST(DamageBonus, DamageBonus, {
+	StatsExpressionParam Amount;
+	DamageType DamageType;
+	uint8_t field_31;
+})
+
+DEFN_BOOST(AdvanceSpells, AdvanceSpells, {
+	FixedString field_0;
+	int32_t field_4;
+})
+
+DEFN_BOOST(SpellResistance, SpellResistance, {
+	ResistanceBoostFlags Resistance;
+})
+
+DEFN_BOOST(WeaponAttackRollBonus, WeaponAttackRollBonus, {
+	StatsExpressionParam Amount;
+})
+
+DEFN_BOOST(SpellSaveDC, SpellSaveDC, {
+	int32_t DC;
+})
+
+DEFN_BOOST(RedirectDamage, RedirectDamage, {
+	int32_t Amount;
+	DamageType DamageType1;
+	DamageType DamageType2;
+	bool field_6;
+})
+
+DEFN_BOOST(CanSeeThrough, CanSeeThrough, {
+	bool CanSeeThrough;
+})
+
+DEFN_BOOST(CanShootThrough, CanShootThrough, {
+	bool CanShootThrough;
+})
+
+DEFN_BOOST(CanWalkThrough, CanWalkThrough, {
+	bool CanWalkThrough;
+})
+
+DEFN_BOOST(MonkWeaponDamageDiceOverride, MonkWeaponDamageDiceOverride, {
+	FixedString DamageDice;
+})
+
+DEFN_BOOST(HorizontalFOVOverride, HorizontalFOVOverride, {
+	float FOV;
+})
+
+DEFN_BOOST(CharacterUnarmedDamage, CharacterUnarmedDamage, {
+	StatsExpressionParam Amount;
+	DamageType DamageType;
+})
+
+DEFN_BOOST(ActionResourceReplenishTypeOverride, ActionResourceReplenishTypeOverride, {
+	Guid ActionResource;
+	uint8_t ReplenishType;
+})
+
+DEFN_BOOST(ActionResourcePreventReduction, ActionResourcePreventReduction, {
+	Guid ActionResource;
+	int32_t Amount;
+})
+
+DEFN_BOOST(AttackSpellOverride, AttackSpellOverride, {
+	FixedString SpellId;
+	SpellAttackTypeOverride AttackType;
+})
+
+DEFN_BOOST(Lock, Lock, {
+	Guid Lock;
+})
+
+DEFN_BOOST(IgnorePointBlankDisadvantage, IgnorePointBlankDisadvantage, {
+	WeaponFlags Flags;
+})
+
+DEFN_BOOST(CriticalHitExtraDice, CriticalHitExtraDice, {
+	uint8_t Amount;
+	SpellAttackType AttackType;
+})
+
+DEFN_BOOST(DodgeAttackRoll, DodgeAttackRoll, {
+	uint8_t field_0;
+	int32_t field_4;
+	StatusType StatusType;
+	stats::StatusGroup StatusGroup;
+})
+
+DEFN_BOOST(GameplayObscurity, GameplayObscurity, {
+	float Obscurity;
+})
+
+DEFN_BOOST(MaximumRollResult, MaximumRollResult, {
+	stats::RollType RollType;
+	int8_t Result;
+})
+
+DEFN_BOOST(UnlockInterrupt, UnlockInterrupt, {
+	FixedString Interrupt;
+})
+
+DEFN_BOOST(JumpMaxDistanceBonus, JumpMaxDistanceBonus, {
+	float DistanceBonus;
+})
+
+DEFN_BOOST(ArmorAbilityModifierCapOverride, ArmorAbilityModifierCapOverride, {
+	ArmorType ArmorType;
+	int32_t Value;
+})
+
+DEFN_BOOST(IgnoreResistance, IgnoreResistance, {
+	DamageType DamageType;
+	ResistanceBoostFlags Flags;
+})
+
+DEFN_BOOST(ConcentrationIgnoreDamage, ConcentrationIgnoreDamage, {
+	SpellSchoolId SpellSchool;
+})
+
+DEFN_BOOST(IgnoreLowGroundPenalty, IgnoreLowGroundPenalty, {
+	stats::RollType RollType;
+})
+
+DEFN_BOOST(IgnoreSurfaceCover, IgnoreSurfaceCover, {
+	SurfaceType SurfaceType;
+})
 
 END_SE()
