@@ -117,7 +117,7 @@ HANDLE ExtenderMutex{ NULL };
 
 bool ShouldInitializeExtender()
 {
-	if (GetModuleHandleW(L"bg3.exe") == NULL && GetModuleHandleW(L"bg3_dx11.exe") != NULL) {
+	if (GetModuleHandleW(L"bg3.exe") == NULL && GetModuleHandleW(L"bg3_dx11.exe") == NULL) {
 		return false;
 	}
 
