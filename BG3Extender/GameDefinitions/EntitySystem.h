@@ -132,22 +132,22 @@ struct Query : public ProtectedGameObject<Query>
 	};
 
 	// TypeList template parameters to ecs::query::spec::Spec<...>
-	ComponentTypeMask ComponentTypeIdMask;
-	ComponentTypeMask ComponentTypeIdMask2;
-	ComponentTypeMask ComponentTypeIdMask3;
-	UnknownMask ComponentTypeIdMask4;
-	UnknownMask ComponentTypeIdMask5;
-	ComponentTypeMask ComponentTypeIdMask6;
-	uint32_t Tags1;
-	Array<EntityClassMatch> EntityClasses;
-	Array<void*> field_638;
-	uint16_t* ComponentTypeIds;
+	StaticArray<int32_t> A1;
+	StaticArray<int32_t> A2;
+	StaticArray<uint64_t> A3;
+	StaticArray<EntityClassMatch> EntityClasses;
+	uint64_t* A5;
+	uint32_t A6;
+	uint8_t A7;
+	uint8_t A8;
+	uint8_t A9;
+	uint8_t A10;
 	uint8_t FirstComponentTypeIndex;
 	uint8_t LastComponentTypeIndex;
 	uint8_t field_652;
 	uint8_t NextComponentTypeIndex;
 	uint8_t ComponentTypesCapacity;
-	void* field_658;
+	uint8_t ComponentTypesCapacityUnk;
 
 	void* GetFirstMatchingComponent(std::size_t componentSize);
 	Array<void*> GetAllMatchingComponents(std::size_t componentSize);
@@ -212,15 +212,14 @@ struct EntityTypeSalts : public ProtectedGameObject<EntityTypeSalts>
 	};
 
 	Entry** Buckets;
-	uint32_t NumElements;
-	uint16_t NumBuckets;
 	uint16_t BitsPerBucket;
-	__int64 field_10;
-	int field_18;
-	__int64 field_20;
-	__int64 field_28;
-	__int64 field_30;
-	__int64 field_38;
+	uint16_t NumBuckets;
+	uint16_t field_C;
+	uint16_t field_E;
+	uint32_t field_10;
+	uint32_t field_14;
+	uint32_t NumElements;
+	uint64_t field_20[4];
 };
 		
 struct EntityClass : public ProtectedGameObject<EntityClass>
@@ -307,9 +306,9 @@ struct EntityStore : public ProtectedGameObject<EntityStore>
 		};
 
 		Entry** Buckets;
-		uint32_t NumElements;
-		uint16_t NumBuckets;
 		uint16_t BitsPerBucket;
+		uint16_t NumBuckets;
+		uint32_t NumElements;
 	};
 
 	struct SaltMap : public ProtectedGameObject<SaltMap>

@@ -38,7 +38,7 @@ void* Query::GetFirstMatchingComponent(std::size_t componentSize)
 Array<void*> Query::GetAllMatchingComponents(std::size_t componentSize)
 {
 	Array<void*> hits;
-	
+
 	for (auto const& cls : EntityClasses) {
 		auto componentIdx = cls.GetComponentIndex(0);
 		for (auto const& instance : cls.EntityClass->InstanceToPageMap) {
@@ -101,7 +101,7 @@ void* EntityWorld::GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex
 		}
 	}
 
-	auto compPool = Components->ComponentsByType.Find((uint16_t)type);
+	/*auto compPool = Components->ComponentsByType.Find((uint16_t)type);
 	if (compPool) {
 		auto transientRef = (*compPool)->Find(entityHandle.Handle);
 		if (transientRef) {
@@ -115,7 +115,7 @@ void* EntityWorld::GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex
 		if (transientRef) {
 			return **transientRef;
 		}
-	}
+	}*/
 
 	return nullptr;
 }

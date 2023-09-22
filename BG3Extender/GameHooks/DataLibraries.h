@@ -22,8 +22,8 @@ namespace bg3se {
 
 		inline bool IsSupported() const
 		{
-			// We need v4.36 or later for game
-			return (Major == 4 && Minor >= 36);
+			// We need v4.37 or later for game
+			return (Major == 4 && Minor >= 37);
 		}
 	};
 

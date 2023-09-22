@@ -145,19 +145,21 @@ void OsirisExtender::OnRegisterDIVFunctions(void * Osiris, DivFunctions * Functi
 
 	// Look for TypedValue::VMT
 	uint8_t const copyCtor1[] = {
-		0x48, 0xC7, 0x44, 0x24, 0x20, 0xFE, 0xFF, 0xFF, 0xFF, // mov     [rsp+38h+var_18], 0FFFFFFFFFFFFFFFEh
-		0x48, 0x89, 0x5C, 0x24, 0x48, // mov     [rsp+38h+arg_0], rbx
-		0x48, 0x8B, 0xD9, // mov     rdi, rcx
-		0x48, 0x8D, 0x05, // lea     rax, TypedValue__VMT
+		0x4c, 0x8b, 0xf2, // mov     r14, rdx
+		0x48, 0x8b, 0xe9, // mov     rbp, rcx
+		0x33, 0xf6, // xor     esi, esi
+		0x40, 0x38, 0x71, 0x10, // cmp     [rcx+10h], sil
+		0x0f, 0x86, 0x28, 0x01, 0x00, 0x00, // jbe     loc_18001D0A2
+		0x4c, 0x8d, 0x3d // lea     r15, TypedValue__VMT
 	};
 
 	auto start = reinterpret_cast<uint8_t *>(wrappers_.OsirisDllStart);
 	auto end = start + wrappers_.OsirisDllSize - sizeof(copyCtor1);
 
 	for (auto p = start; p < end; p++) {
-		if (*p == 0x48
+		if (*p == 0x4c
 			&& memcmp(copyCtor1, p, sizeof(copyCtor1)) == 0) {
-			wrappers_.Globals.TypedValueVMT = (void *)AsmResolveInstructionRef(p + 17);
+			wrappers_.Globals.TypedValueVMT = (void *)AsmResolveInstructionRef(p + 18);
 			break;
 		}
 	}
