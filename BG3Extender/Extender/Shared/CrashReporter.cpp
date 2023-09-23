@@ -463,8 +463,13 @@ public:
 	// is present in any of the frames. If it is, the crash may be extension related.
 	// If no extension frames are present, we skip error reporting.
 	// noinline needed to ensure that the error handler stack is always 2 levels deep
-	static __declspec(noinline) bool IsExtensionRelatedCrash()
+	static __declspec(noinline) bool IsExtensionRelatedCrash(_EXCEPTION_POINTERS* exceptionInfo)
 	{
+		if (exceptionInfo != nullptr && exceptionInfo->ExceptionRecord->ExceptionCode == 0xC00000FD) {
+			// Osiris is riddled with various stack overflow issues, skip reporting those
+			return false;
+		}
+
 		CRASHDBG("IsExtensionRelatedCrash() - checking frames");
 		if (gDisableCrashReportingCount > 0) {
 			CRASHDBG("gDisableCrashReportingCount > 0 --> false");
@@ -620,7 +625,7 @@ public:
 
 	static LONG OnUnhandledException(_EXCEPTION_POINTERS * exceptionInfo)
 	{
-		if (IsExtensionRelatedCrash()) {
+		if (IsExtensionRelatedCrash(exceptionInfo)) {
 			LaunchCrashReporterThread(exceptionInfo);
 			return EXCEPTION_EXECUTE_HANDLER;
 		} else if (PrevExceptionFilter != nullptr) {
@@ -638,7 +643,7 @@ public:
 
 	static void OnTerminate()
 	{
-		if (IsExtensionRelatedCrash()) {
+		if (IsExtensionRelatedCrash(nullptr)) {
 			LaunchCrashReporterThread(nullptr);
 		} else {
 #if defined(DEBUG_CRASH_REPORTER)
