@@ -575,6 +575,12 @@ void CustomFunctionInjector::CreateOsirisSymbolMap(MappingInfo ** Mappings, uint
 void CustomFunctionInjector::OnAfterGetFunctionMappings(void * Osiris, MappingInfo ** Mappings, uint32_t * MappingCount)
 {
 	CreateOsirisSymbolMap(Mappings, MappingCount);
+
+	// Osiris function mapping may fail after an unsuccessful merge
+	if (*Mappings == nullptr) {
+		return;
+	}
+
 	// FIXME - remove, move to server state load event?
 	gExtender->GetServer().GetExtensionState().Reset();
 
