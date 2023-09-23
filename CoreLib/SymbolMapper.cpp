@@ -926,8 +926,13 @@ bool SymbolMapper::MapSymbol(SymbolMappings::Mapping & mapping, uint8_t const * 
 
 	if (!mapped) {
 		if (!hasMatches) {
-			ERR("No match found for mapping '%s' %s", mapping.Name.c_str(),
-				(mapping.Flag & SymbolMappings::Mapping::kCritical) ? "[CRITICAL]" : "");
+			if (mapping.Flag & SymbolMappings::Mapping::kAllowFail) {
+				WARN("No match found for mapping '%s' %s", mapping.Name.c_str(),
+					(mapping.Flag& SymbolMappings::Mapping::kCritical) ? "[CRITICAL]" : "");
+			} else {
+				ERR("No match found for mapping '%s' %s", mapping.Name.c_str(),
+					(mapping.Flag & SymbolMappings::Mapping::kCritical) ? "[CRITICAL]" : "");
+			}
 		} else if (!hasCallbacks || !(mapping.Flag & SymbolMappings::Mapping::kAllowFail)) {
 			ERR("Target mapping action did not succeed for mapping '%s' %s", mapping.Name.c_str(),
 				(mapping.Flag & SymbolMappings::Mapping::kCritical) ? "[CRITICAL]" : "");
