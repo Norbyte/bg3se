@@ -214,11 +214,10 @@ struct EntityTypeSalts : public ProtectedGameObject<EntityTypeSalts>
 	Entry** Buckets;
 	uint16_t BitsPerBucket;
 	uint16_t NumBuckets;
-	uint16_t field_C;
-	uint16_t field_E;
+	uint32_t NumElements;
 	uint32_t field_10;
 	uint32_t field_14;
-	uint32_t NumElements;
+	uint32_t field_18;
 	uint64_t field_20[4];
 };
 		
