@@ -30,6 +30,8 @@ void Debug(DebugMessageType type, char const * fmt, Args... args)
 #define WARN(msg, ...) Debug(DebugMessageType::Warning, msg, __VA_ARGS__)
 #define ERR(msg, ...) Debug(DebugMessageType::Error, msg, __VA_ARGS__)
 
+void TryDebugBreak();
+
 [[noreturn]]
 void Fail(TCHAR const * reason);
 

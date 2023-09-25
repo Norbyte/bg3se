@@ -34,7 +34,7 @@ struct StackCheck
 		if (newTop != expectedTop) {
 			// DebugBreak() crashes without a debugger
 			if (IsDebuggerPresent()) {
-				DebugBreak();
+				TryDebugBreak();
 			} else {
 				luaL_error(L, "Stack check failed! Top is %d, expected %d", newTop, expectedTop);
 			}

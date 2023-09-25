@@ -160,6 +160,8 @@ end
 _D = Ext.Dump
 _DS = Ext.DumpShallow
 _P = Ext.Utils.Print
+_PW = Ext.Utils.PrintWarning
+_PE = Ext.Utils.PrintError
 Print = Ext.Utils.Print
 print = Ext.Utils.Print
 

@@ -62,14 +62,19 @@ std::optional<std::string> GetExeResource(int resourceId)
 	return {};
 }
 
-[[noreturn]]
-void Fail(TCHAR const * reason)
+void TryDebugBreak()
 {
 #if defined(_DEBUG)
 	if (IsDebuggerPresent()) {
 		DebugBreak();
 	}
 #endif
+}
+
+[[noreturn]]
+void Fail(TCHAR const * reason)
+{
+	TryDebugBreak();
 	ERR(L"%s", reason);
 	MessageBoxW(NULL, reason, L"BG3 Script Extender Error", MB_OK | MB_ICONERROR);
 	TerminateProcess(GetCurrentProcess(), 1);
@@ -79,11 +84,7 @@ void Fail(TCHAR const * reason)
 void Fail(char const * reason)
 {
 	ERR("%s", reason);
-#if defined(_DEBUG)
-	if (IsDebuggerPresent()) {
-		DebugBreak();
-	}
-#endif
+	TryDebugBreak();
 	MessageBoxA(NULL, reason, "BG3 Script Extender Error", MB_OK | MB_ICONERROR);
 	TerminateProcess(GetCurrentProcess(), 1);
 }

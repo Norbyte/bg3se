@@ -1,10 +1,11 @@
 #pragma once
 
 #if defined(_DEBUG)
-#define CHECK(expr) if (!(expr)) { if (IsDebuggerPresent()) { DebugBreak(); } return false; }
+#define CHECK(expr) if (!(expr)) { TryDebugBreak(); return false; }
 #else
 #define CHECK(expr) if (!(expr)) return false;
 #endif
+#define CHECKR(expr) if (!(expr)) return false;
 
 BEGIN_NS(lua)
 
@@ -95,8 +96,8 @@ inline bool Validate(RuntimeStringHandle* h, Overload<RuntimeStringHandle>)
 
 inline bool Validate(TranslatedString* ts, Overload<TranslatedString>)
 {
-	CHECK(Validate(&ts->Handle, Overload<RuntimeStringHandle>{}));
-	CHECK(Validate(&ts->ArgumentString, Overload<RuntimeStringHandle>{}));
+	CHECKR(Validate(&ts->Handle, Overload<RuntimeStringHandle>{}));
+	CHECKR(Validate(&ts->ArgumentString, Overload<RuntimeStringHandle>{}));
 	return true;
 }
 
@@ -182,11 +183,11 @@ bool ValidateRef(Array<TE>* v, Overload<Array<TE>>)
 
 		if constexpr (!std::is_pointer_v<TE>) {
 			for (auto& ele : *v) {
-				CHECK(ValidateAny<TE>(&ele));
+				CHECKR(ValidateAny<TE>(&ele));
 			}
 		} else {
 			for (auto& ele : *v) {
-				CHECK(ValidatePointer(ele));
+				CHECKR(ValidatePointer(ele));
 			}
 		}
 	}
@@ -209,11 +210,11 @@ bool ValidateRef(ObjectSet<TE>* v, Overload<ObjectSet<TE>>)
 
 		if constexpr (!std::is_pointer_v<TE>) {
 			for (auto& ele : *v) {
-				CHECK(ValidateAny<TE>(&ele));
+				CHECKR(ValidateAny<TE>(&ele));
 			}
 		} else {
 			for (auto& ele : *v) {
-				CHECK(ValidatePointer(ele));
+				CHECKR(ValidatePointer(ele));
 			}
 		}
 	}
@@ -232,11 +233,11 @@ bool ValidateRef(StaticArray<TE>* v, Overload<StaticArray<TE>>)
 
 		if constexpr (!std::is_pointer_v<TE>) {
 			for (auto& ele : *v) {
-				CHECK(ValidateAny<TE>(&ele));
+				CHECKR(ValidateAny<TE>(&ele));
 			}
 		} else {
 			for (auto& ele : *v) {
-				CHECK(ValidatePointer(ele));
+				CHECKR(ValidatePointer(ele));
 			}
 		}
 	}
@@ -255,11 +256,11 @@ bool ValidateRef(StaticArray<TE>* v, uint32_t maxSize, Overload<StaticArray<TE>>
 
 		if constexpr (!std::is_pointer_v<TE>) {
 			for (uint32_t i = 0; i < std::min(v->size(), maxSize); i++) {
-				CHECK(ValidateAny<TE>(&(*v)[i]));
+				CHECKR(ValidateAny<TE>(&(*v)[i]));
 			}
 		} else {
 			for (uint32_t i = 0; i < std::min(v->size(), maxSize); i++) {
-				CHECK(ValidatePointer((*v)[i]));
+				CHECKR(ValidatePointer((*v)[i]));
 			}
 		}
 	}
@@ -320,9 +321,9 @@ bool ValidateRef(RefMap<TK, TV>* v, Overload<RefMap<TK, TV>>)
 template <class TK>
 bool ValidateRef(MultiHashSet<TK>* v, Overload<MultiHashSet<TK>>)
 {
-	CHECK(ValidateRef(&v->HashKeys, Overload<StaticArray<int32_t>>{}));
-	CHECK(ValidateRef(&v->NextIds, Overload<Array<int32_t>>{}));
-	CHECK(ValidateRef(&v->Keys, Overload<Array<TK>>{}));
+	CHECKR(ValidateRef(&v->HashKeys, Overload<StaticArray<int32_t>>{}));
+	CHECKR(ValidateRef(&v->NextIds, Overload<Array<int32_t>>{}));
+	CHECKR(ValidateRef(&v->Keys, Overload<Array<TK>>{}));
 
 	CHECK(v->Keys.size() == v->NextIds.size());
 
@@ -338,8 +339,8 @@ bool ValidateRef(VirtualMultiHashSet<TK>* v, Overload<VirtualMultiHashSet<TK>>)
 template <class TK, class TV>
 bool ValidateRef(MultiHashMap<TK, TV>* v, Overload<MultiHashMap<TK, TV>>)
 {
-	CHECK(ValidateRef(v, Overload<MultiHashSet<TK>>{}));
-	CHECK(ValidateRef(&v->Values, v->Keys.size(), Overload<StaticArray<TV>>{}));
+	CHECKR(ValidateRef(v, Overload<MultiHashSet<TK>>{}));
+	CHECKR(ValidateRef(&v->Values, v->Keys.size(), Overload<StaticArray<TV>>{}));
 
 	CHECK(v->Values.size() >= v->Keys.size());
 
@@ -411,16 +412,16 @@ bool ValidateAny(T* v);
 template <class T>
 typename bool Validate(OverrideableProperty<T>* v, Overload<OverrideableProperty<T>>)
 {
-	CHECK(Validate(&v->IsOverridden, Overload<bool>{}));
-	CHECK(ValidateAny(&v->Value));
+	CHECKR(Validate(&v->IsOverridden, Overload<bool>{}));
+	CHECKR(ValidateAny(&v->Value));
 	return true;
 }
 
 template <class T>
 typename bool ValidateRef(OverrideableProperty<T>* v, Overload<OverrideableProperty<T>>)
 {
-	CHECK(Validate(&v->IsOverridden, Overload<bool>{}));
-	CHECK(ValidateAny(&v->Value));
+	CHECKR(Validate(&v->IsOverridden, Overload<bool>{}));
+	CHECKR(ValidateAny(&v->Value));
 	return true;
 }
 
@@ -428,7 +429,7 @@ template <class TE, size_t Size>
 bool ValidateRef(std::array<TE, Size>* v, Overload<std::array<TE, Size>>)
 {
 	for (size_t i = 0; i < Size; i++) {
-		CHECK(ValidateAny(&(*v)[i]));
+		CHECKR(ValidateAny(&(*v)[i]));
 	}
 
 	return true;

@@ -2,8 +2,8 @@ Ext.Utils.Include(nil, "builtin://Tests/TestHelpers.lua")
 Ext.Utils.Include(nil, "builtin://Tests/ModTests.lua")
 Ext.Utils.Include(nil, "builtin://Tests/StaticDataTests.lua")
 Ext.Utils.Include(nil, "builtin://Tests/StatTests.lua")
+Ext.Utils.Include(nil, "builtin://Tests/ECSTests.lua")
 --Ext.Utils.Include(nil, "builtin://Tests/ResourceTests.lua")
---Ext.Utils.Include(nil, "builtin://Tests/ComponentTests.lua")
 --Ext.Utils.Include(nil, "builtin://Tests/CharacterTests.lua")
 --Ext.Utils.Include(nil, "builtin://Tests/CharacterComponentTests.lua")
 --Ext.Utils.Include(nil, "builtin://Tests/ItemComponentTests.lua")
@@ -23,4 +23,17 @@ Ext.RegisterConsoleCommand("se_dyntest", function ()
     end
 
     Ext.Utils.Print(" --- FINISHING TESTS --- ")
+end)
+
+-- Iterate through every entity class and consistency check all components
+Ext.RegisterConsoleCommand("se_entitytest", function ()
+    _P("Starting entity iteration test ... this may take a while")
+    for i,entity in ipairs(Ext.Entity.GetAllEntities()) do
+        for name,component in pairs(entity:GetAllComponents()) do
+            if not Ext.Types.Validate(component) then
+                _PE("Validation failed: Entity " .. entity .. ", component " .. name)
+            end
+        end
+    end
+    _P("Done.")
 end)
