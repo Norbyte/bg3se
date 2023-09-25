@@ -589,16 +589,23 @@ void* EntitySystemHelpersBase::GetRawComponent(EntityHandle entityHandle, ExtCom
 	}
 }
 
-EntityHandle EntitySystemHelpersBase::GetEntityHandle(Guid uuid)
+UuidToHandleMappingComponent* EntitySystemHelpersBase::GetUuidMappings()
 {
 	auto query = GetQuery(ExtQueryType::UuidToHandleMapping);
 	if (query) {
-		auto entityMap = reinterpret_cast<UuidToHandleMappingComponent*>(query->GetFirstMatchingComponent(componentSizes_[(unsigned)ExtComponentType::UuidToHandleMapping]));
-		if (entityMap) {
-			auto handle = entityMap->Mappings.Find(uuid);
-			if (handle) {
-				return **handle;
-			}
+		return reinterpret_cast<UuidToHandleMappingComponent*>(query->GetFirstMatchingComponent(componentSizes_[(unsigned)ExtComponentType::UuidToHandleMapping]));
+	} else {
+		return nullptr;
+	}
+}
+
+EntityHandle EntitySystemHelpersBase::GetEntityHandle(Guid uuid)
+{
+	auto entityMap = GetUuidMappings();
+	if (entityMap) {
+		auto handle = entityMap->Mappings.Find(uuid);
+		if (handle) {
+			return **handle;
 		}
 	}
 

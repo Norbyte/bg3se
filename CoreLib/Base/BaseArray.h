@@ -9,6 +9,13 @@ template <class T>
 class ContiguousIterator
 {
 public:
+	using value_type = T;
+	using reference = T&;
+	using pointer = T*;
+	using difference_type = int32_t;
+	using size_type = uint32_t;
+	using iterator_category = std::random_access_iterator_tag;
+
 	ContiguousIterator(T* p) : ptr_(p) {}
 
 	ContiguousIterator operator ++ ()
@@ -34,14 +41,19 @@ public:
 		return it.ptr_ != ptr_;
 	}
 
-	ContiguousIterator operator + (int n) const
+	ContiguousIterator operator + (difference_type n) const
 	{
 		return ContiguousIterator(ptr_ + n);
 	}
 
-	ContiguousIterator operator - (int n) const
+	ContiguousIterator operator - (difference_type n) const
 	{
 		return ContiguousIterator(ptr_ - n);
+	}
+
+	difference_type operator - (ContiguousIterator const& o) const
+	{
+		return (difference_type)(ptr_ - o.ptr_);
 	}
 
 	T& operator * () const
@@ -68,6 +80,13 @@ template <class T>
 class ContiguousConstIterator
 {
 public:
+	using value_type = T;
+	using reference = T const&;
+	using pointer = T const*;
+	using difference_type = int32_t;
+	using size_type = uint32_t;
+	using iterator_category = std::random_access_iterator_tag;
+
 	ContiguousConstIterator(T const* p) : ptr_(p) {}
 
 	ContiguousConstIterator operator ++ ()
@@ -93,14 +112,19 @@ public:
 		return it.ptr_ != ptr_;
 	}
 
-	ContiguousConstIterator operator + (int n) const
+	ContiguousConstIterator operator + (difference_type n) const
 	{
 		return ContiguousConstIterator(ptr_ + n);
 	}
 
-	ContiguousConstIterator operator - (int n) const
+	ContiguousConstIterator operator - (difference_type n) const
 	{
 		return ContiguousConstIterator(ptr_ - n);
+	}
+
+	difference_type operator - (ContiguousConstIterator const& o) const
+	{
+		return (difference_type)(ptr_ - o.ptr_);
 	}
 
 	T const& operator * () const
@@ -126,6 +150,14 @@ private:
 template <class T, class Allocator = GameMemoryAllocator, bool StoreSize = false>
 struct CompactSet
 {
+	using value_type = T;
+	using reference = T&;
+	using const_reference = T const&;
+	using iterator = ContiguousIterator<T>;
+	using const_iterator = ContiguousConstIterator<T>;
+	using difference_type = int32_t;
+	using size_type = uint32_t;
+
 	T* Buf{ nullptr };
 	uint32_t Capacity{ 0 };
 	uint32_t Size{ 0 };
@@ -390,6 +422,14 @@ template <class T>
 class StaticArray
 {
 public:
+	using value_type = T;
+	using reference = T&;
+	using const_reference = T const&;
+	using iterator = ContiguousIterator<T>;
+	using const_iterator = ContiguousConstIterator<T>;
+	using difference_type = int32_t;
+	using size_type = uint32_t;
+
 	inline StaticArray() {}
 	
 	StaticArray(uint32_t size)
@@ -493,24 +533,24 @@ public:
 		}
 	}
 
-	ContiguousIterator<T> begin()
+	iterator begin()
 	{
-		return ContiguousIterator<T>(buf_);
+		return iterator(buf_);
 	}
 
-	ContiguousConstIterator<T> begin() const
+	const_iterator begin() const
 	{
-		return ContiguousConstIterator<T>(buf_);
+		return const_iterator(buf_);
 	}
 
-	ContiguousIterator<T> end()
+	iterator end()
 	{
-		return ContiguousIterator<T>(buf_ + size_);
+		return iterator(buf_ + size_);
 	}
 
-	ContiguousConstIterator<T> end() const
+	const_iterator end() const
 	{
-		return ContiguousConstIterator<T>(buf_ + size_);
+		return const_iterator(buf_ + size_);
 	}
 
 private:
@@ -522,6 +562,14 @@ template <class T>
 class Array
 {
 public:
+	using value_type = T;
+	using reference = T&;
+	using const_reference = T const&;
+	using iterator = ContiguousIterator<T>;
+	using const_iterator = ContiguousConstIterator<T>;
+	using difference_type = int32_t;
+	using size_type = uint32_t;
+
 	inline Array() {}
 
 	Array(Array const& a)
@@ -653,24 +701,24 @@ public:
 		size_--;
 	}
 
-	ContiguousIterator<T> begin()
+	iterator begin()
 	{
-		return ContiguousIterator<T>(buf_);
+		return iterator(buf_);
 	}
 
-	ContiguousConstIterator<T> begin() const
+	const_iterator begin() const
 	{
-		return ContiguousConstIterator<T>(buf_);
+		return const_iterator(buf_);
 	}
 
-	ContiguousIterator<T> end()
+	iterator end()
 	{
-		return ContiguousIterator<T>(buf_ + size_);
+		return iterator(buf_ + size_);
 	}
 
-	ContiguousConstIterator<T> end() const
+	const_iterator end() const
 	{
-		return ContiguousConstIterator<T>(buf_ + size_);
+		return const_iterator(buf_ + size_);
 	}
 
 private:

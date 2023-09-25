@@ -169,6 +169,7 @@ public:
 
 	void* GetRawComponent(EntityHandle entityHandle, ExtComponentType type);
 	EntityHandle GetEntityHandle(Guid uuid);
+	UuidToHandleMappingComponent* GetUuidMappings();
 
 protected:
 	static constexpr int32_t UndefinedIndex{ -1 };

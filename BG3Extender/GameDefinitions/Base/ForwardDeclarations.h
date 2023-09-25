@@ -38,6 +38,9 @@ struct LocalTemplateManager;
 struct GlobalCacheTemplateManager;
 struct LevelCacheTemplateManager;
 
+struct UuidComponent;
+struct UuidToHandleMappingComponent;
+
 namespace resource
 {
 	struct GuidResource;
