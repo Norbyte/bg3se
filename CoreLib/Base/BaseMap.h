@@ -917,12 +917,12 @@ struct MultiHashMap : public MultiHashSet<TKey>
 
 	Iterator end()
 	{
-		return Iterator(this, Values.Size());
+		return Iterator(this, this->Keys.Size());
 	}
 
 	ConstIterator end() const
 	{
-		return ConstIterator(this, Values.Size());
+		return ConstIterator(this, this->Keys.Size());
 	}
 };
 
