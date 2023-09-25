@@ -65,7 +65,7 @@ std::optional<std::string> GetExeResource(int resourceId)
 void TryDebugBreak()
 {
 #if defined(_DEBUG)
-	if (IsDebuggerPresent()) {
+	if (IsDebuggerPresent() && gCoreLibPlatformInterface.EnableDebugBreak) {
 		DebugBreak();
 	}
 #endif

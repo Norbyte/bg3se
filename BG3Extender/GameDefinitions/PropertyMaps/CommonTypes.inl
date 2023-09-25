@@ -63,3 +63,14 @@ BEGIN_CLS(TranslatedString)
 P(Handle)
 P(ArgumentString)
 END_CLS()
+
+
+BEGIN_CLS(StatsExpressionParam)
+// TODO - P(Params)
+P(Code)
+END_CLS()
+
+
+BEGIN_CLS(StatsExpressionParamEx)
+INHERIT(StatsExpressionParam)
+END_CLS()

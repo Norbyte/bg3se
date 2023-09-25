@@ -70,6 +70,7 @@ namespace bg3se
 		int MaxTemporaryHp;
 		int AC;
 		std::array<int, 14> PerDamageTypeHealthThresholds;
+		std::array<int, 14> PerDamageTypeHealthThresholds2;
 		bool IsInvulnerable;
 	};
 
@@ -134,14 +135,26 @@ namespace bg3se
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Weapon;
 		static constexpr auto EngineClass = "eoc::WeaponComponent";
 
+		struct Element1 : StatsExpressionParam
+		{
+			uint8_t field_28;
+			BoostCause Cause;
+			TranslatedString field_48;
+			uint8_t field_58;
+		};
+
+
 		RefMap<AbilityId, Array<DiceValues>> Rolls;
 		RefMap<AbilityId, Array<DiceValues>> Rolls2;
 		float WeaponRange;
 		float DamageRange;
-		__int64 WeaponFunctors;
+		void* WeaponFunctors;
 		uint32_t WeaponProperties;
 		uint8_t WeaponGroup;
 		AbilityId Ability;
+		Array<Element1> field_38;
+		uint8_t field_48;
+		uint8_t field_49;
 	};
 
 	struct BackgroundComponent : public BaseComponent
@@ -346,8 +359,9 @@ namespace bg3se
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Disarmable;
 		static constexpr auto EngineClass = "eoc::DisarmableComponent";
 
-		int SomeTrapId;
-		bool CanDisarm;
+		Guid field_0;
+		uint8_t field_10;
+		uint8_t field_11;
 	};
 
 	struct ShortRestComponent : public BaseComponent
@@ -435,7 +449,8 @@ namespace bg3se
 
 		FixedString Key_M;
 		int LockDC;
-		bool Unlocked_M;
+		Guid field_8;
+		Array<Guid> field_18;
 	};
 
 	struct SummonLifetimeComponent : public BaseComponent
@@ -581,9 +596,14 @@ namespace bg3se
 	struct DisplayName
 	{
 		TranslatedString NameKey;
-		float Unknown;
-		int Unknown2;
+		uint8_t field_10;
 		STDString Name;
+	};
+
+	struct DisplayNameTranslatedString
+	{
+		TranslatedString NameKey;
+		uint8_t field_10;
 	};
 
 	struct DisplayNameListComponent : public BaseComponent
@@ -592,7 +612,7 @@ namespace bg3se
 		static constexpr auto EngineClass = "esv::DisplayNameListComponent";
 
 		Array<DisplayName> Names;
-		Array<TranslatedString> TranslatedStrings;
+		Array<DisplayNameTranslatedString> TranslatedStrings;
 	};
 
 	struct IconListComponent : public BaseComponent
@@ -987,6 +1007,7 @@ namespace bg3se
 			SpellCooldownType CooldownType;
 			uint8_t field_29;
 			float Cooldown;
+			Guid field_30;
 		};
 
 		Array<Cooldown> Cooldowns;
@@ -1090,29 +1111,35 @@ namespace bg3se
 		static constexpr ExtComponentType ComponentType = ExtComponentType::StaticPhysics;
 		static constexpr auto EngineClass = "ls::StaticPhysicsComponent";
 
-		FixedString field_18;
-		__int64 field_20;
-		__int64 field_28;
-		__int16 field_30;
+		void* field_0;
 	};
 
 	struct PathingComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Pathing;
-		static constexpr auto EngineClass = "eoc::PathingComponent";
+		static constexpr auto EngineClass = "eoc::PathingComponent"; 
+		
+		struct Param
+		{
+			Array<int32_t> Values1;
+			Array<float> Values2;
+			Array<glm::vec3> Values3;
+			int field_30;
+		};
 
-		RefMap<uint64_t, uint64_t> field_18;
-		RefMap<uint64_t, uint64_t> field_28;
-		__int64 field_38;
-		int field_40;
-		FixedString CurveUUID;
-		__int64 field_48;
-		__int64 field_50;
-		uint8_t field_58;
-		uint8_t field_59;
-		uint8_t field_5A;
-		uint8_t field_5B;
-		int field_5C;
+
+		RefMap<FixedString, glm::vec4> VectorParameters;
+		RefMap<FixedString, Param> PathParameters;
+		__int64 field_20;
+		int field_28;
+		FixedString field_2C;
+		__int64 field_30;
+		int field_38;
+		int field_3C;
+		uint8_t field_40;
+		float field_44;
+		int field_48;
+		uint8_t field_4C;
 	};
 
 	struct SteeringComponent : public BaseComponent
@@ -1166,8 +1193,7 @@ namespace bg3se
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Net;
 		static constexpr auto EngineClass = "esv::NetComponent";
 
-		FixedString field_18;
-		NetId NetID;
+		uint8_t field_0;
 	};
 
 	struct PhysicsComponent : public BaseComponent

@@ -28,12 +28,24 @@ end)
 -- Iterate through every entity class and consistency check all components
 Ext.RegisterConsoleCommand("se_entitytest", function ()
     _P("Starting entity iteration test ... this may take a while")
+    local counters = {}
+
     for i,entity in ipairs(Ext.Entity.GetAllEntities()) do
         for name,component in pairs(entity:GetAllComponents()) do
             if not Ext.Types.Validate(component) then
-                _PE("Validation failed: Entity " .. entity .. ", component " .. name)
+                _PE("Validation failed: Entity " .. tostring(entity) .. ", component " .. name)
+                if counters[name] == nil then
+                    counters[name] = 1
+                else
+                    counters[name] = counters[name] + 1
+                end
             end
         end
+    end
+
+    _P("Error stats:")
+    for name,count in pairs(counters) do
+        _P(name .. ": " .. count)
     end
     _P("Done.")
 end)

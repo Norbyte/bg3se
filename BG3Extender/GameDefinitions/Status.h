@@ -67,7 +67,8 @@ namespace bg3se
 			Array<void*> ConditionRolls;
 			uint8_t TickType;
 			StatusFlags4 Flags4;
-			StatusFlags5 Flags5;
+			// Flags5 is gone in patch3?
+			// StatusFlags5 Flags5;
 		};
 
 		struct StatusAura : public Status

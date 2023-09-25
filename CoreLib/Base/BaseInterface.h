@@ -19,6 +19,7 @@ struct CoreLibPlatformInterface
 	void* StaticSymbols{ NULL };
 	HMODULE ThisModule{ NULL };
 	Console* GlobalConsole{ NULL };
+	bool EnableDebugBreak{ true };
 };
 
 extern CoreLibPlatformInterface gCoreLibPlatformInterface;

@@ -110,7 +110,6 @@ namespace bg3se
 			EntityHandle Inventory;
 			EntityHandle OwnerCharacter;
 			EntityHandle FollowCharacter;
-			EntityHandle field_170;
 			EntityHandle EnemyCharacter;
 			int Dialog;
 			FixedString field_14C;

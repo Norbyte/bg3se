@@ -20,8 +20,6 @@ struct Item
 	void* PlanManager;
 	void* VariableManager;
 	void* StatusManager;
-	EntityHandle Inventory;
-	EntityHandle Parent;
 	stats::Object* StatsObject;
 	uint64_t field_58;
 	uint64_t field_60;

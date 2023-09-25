@@ -19,13 +19,12 @@ namespace bg3se
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Passive;
 		static constexpr auto EngineClass = "eoc::PassiveComponent";
 
-		int field_18;
+		uint8_t field_0;
 		FixedString PassiveId;
-		ComponentHandle field_20;
-		ComponentHandle field_28;
-		Array<uint64_t> array_unkn2;
-		RefMap<void*, void*> field_48;
-		uint8_t StatsFunctorContext;
-		int field_5C;
+		EntityHandle field_8;
+		EntityHandle field_10;
+		uint8_t field_18;
+		uint8_t field_19;
+		uint32_t field_1C;
 	};
 }

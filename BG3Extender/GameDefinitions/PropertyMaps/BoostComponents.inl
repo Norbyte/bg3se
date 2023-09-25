@@ -167,7 +167,10 @@ END_CLS()
 
 BEGIN_CLS(IncreaseMaxHPBoostComponent)
 INHERIT(BaseComponent)
-P(Amount)
+// FIXME - this is Variant<int32_t, StatsExpressionParam>
+//P(Amount)
+//P(HasAmount)
+P(field_30)
 END_CLS()
 
 

@@ -92,21 +92,24 @@ struct UseComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::Use;
 	static constexpr auto EngineClass = "eoc::UseComponent";
 
-	__int64 field_18_PTR;
-	int field_20;
-	int field_24;
-	__int64 field_28;
+	struct Param
+	{
+		int32_t field_0;
+		int32_t field_4;
+		Guid field_8;
+		uint8_t field_18;
+	};
+
+	Array<Param> field_0;
 	int Charges;
 	int MaxCharges;
-	uint8_t ItemUseType;
-	uint8_t field_39;
-	uint8_t ItemComboFlag1;
-	uint8_t ItemComboFlag2;
-	uint8_t ItemUseType_M;
-	uint8_t field_3D;
-	uint8_t field_3E;
-	uint8_t field_3F;
-	Array<BoostParameters> Boosts;
+	uint8_t field_18;
+	uint8_t field_19;
+	uint8_t field_1A;
+	uint8_t field_1B;
+	Array<BoostParameters> Boosts1;
+	Array<BoostParameters> Boosts2;
+	Array<BoostParameters> Boosts3;
 };
 
 struct WieldingComponent : public BaseComponent
@@ -179,9 +182,19 @@ struct RelationComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::Relation;
 	static constexpr auto EngineClass = "eoc::relation::RelationComponent";
 
-	Guid field_18;
-	Guid field_28;
-	EntityHandle field_38;
+	struct GuidAndHandle
+	{
+		Guid field_0;
+		EntityHandle field_10;
+	};
+
+	MultiHashMap<uint32_t, uint8_t> field_0;
+	MultiHashMap<uint32_t, uint8_t> field_40;
+	MultiHashMap<uint32_t, uint8_t> field_80;
+	MultiHashMap<GuidAndHandle, uint8_t> field_C0;
+	MultiHashMap<uint32_t, uint8_t> field_100;
+	MultiHashSet<uint32_t> field_140;
+	MultiHashSet<uint32_t> field_170;
 };
 
 struct CanInteractComponent : public BaseComponent
@@ -263,9 +276,8 @@ struct LevelComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::Level;
 	static constexpr auto EngineClass = "ls::LevelComponent";
 
+	EntityHandle field_0;
 	FixedString LevelName;
-	EntityHandle field_20;
-	bool field_28;
 };
 	
 struct TransformComponent : public BaseComponent
@@ -274,7 +286,6 @@ struct TransformComponent : public BaseComponent
 	static constexpr auto EngineClass = "ls::TransformComponent";
 
 	Transform Transform;
-	float field_9C;
 };
 
 END_SE()

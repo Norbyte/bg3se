@@ -47,8 +47,6 @@ P(field_150)
 P(TickType)
 P(Flags4)
 P_BITMASK(Flags4)
-P(Flags5)
-P_BITMASK(Flags5)
 
 //P_FUN(GetEngineType, StatusGetEngineType)
 END_CLS()

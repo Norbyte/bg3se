@@ -75,6 +75,32 @@ namespace bg3se
 				}
 			}
 
+			inline SubType1()
+				: Type(StatsExpressionParamType2::StatsExpressionVariableData), StatsExpressionVariableData(0)
+			{}
+
+			inline SubType1(SubType1 const& o)
+			{
+				Type = o.Type;
+				if (Type == StatsExpressionParamType2::STDString) {
+					String = o.String;
+				} else {
+					StatsExpressionVariableData = o.StatsExpressionVariableData;
+				}
+			}
+
+			inline SubType1& operator = (SubType1 const& o)
+			{
+				Type = o.Type;
+				if (Type == StatsExpressionParamType2::STDString) {
+					String = o.String;
+				} else {
+					StatsExpressionVariableData = o.StatsExpressionVariableData;
+				}
+
+				return *this;
+			}
+
 			union {
 				uint8_t StatsExpressionVariableData;
 				AbilityId Ability;
@@ -92,6 +118,32 @@ namespace bg3se
 				if (Type == StatsExpressionParamType::Type1) {
 					Type1.~SubType1();
 				}
+			}
+
+			inline Param()
+				: Type(StatsExpressionParamType::StatsExpressionType), StatsExpressionType(0)
+			{}
+
+			inline Param(Param const& o)
+			{
+				Type = o.Type;
+				if (Type == StatsExpressionParamType::Type1) {
+					Type1 = o.Type1;
+				} else {
+					ResourceRoll = o.ResourceRoll;
+				}
+			}
+
+			inline Param& operator = (Param const& o)
+			{
+				Type = o.Type;
+				if (Type == StatsExpressionParamType::Type1) {
+					Type1 = o.Type1;
+				} else {
+					ResourceRoll = o.ResourceRoll;
+				}
+
+				return *this;
 			}
 
 			union {

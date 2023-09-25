@@ -24,6 +24,7 @@ namespace bg3se
 		int8_t DiceValue;
 		uint8_t AmountOfDices;
 		int DiceAdditionalValue;
+		uint8_t field_8;
 	};
 
 	struct DamageModifierMetadata
@@ -42,7 +43,7 @@ namespace bg3se
 	struct StatsRollRoll
 	{
 		DiceValues Roll;
-		RollTypeId RollType;
+		stats::RollType RollType;
 		bool Advantage;
 		bool Disadvantage;
 	};
@@ -105,7 +106,7 @@ namespace bg3se
 	struct ConditionRoll
 	{
 		uint8_t DataType;
-		RollTypeId RollType; // Maybe?
+		stats::RollType RollType; // Maybe?
 		StatsRollType0 Roll;
 		int Difficulty;
 	};

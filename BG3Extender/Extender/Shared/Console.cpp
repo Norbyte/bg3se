@@ -146,6 +146,15 @@ void DebugConsole::HandleCommand(std::string const& cmd)
 	} else if (cmd == "client") {
 		DEBUG("Switching to client context.");
 		serverContext_ = false;
+#if defined(_DEBUG)
+	} else if (cmd == "debugbreak") {
+		gCoreLibPlatformInterface.EnableDebugBreak = !gCoreLibPlatformInterface.EnableDebugBreak;
+		if (gCoreLibPlatformInterface.EnableDebugBreak) {
+			DEBUG("Debug breaks ON");
+		} else {
+			DEBUG("Debug breaks OFF");
+		}
+#endif
 	} else if (cmd == "reset") {
 		ResetLua();
 	} else if (cmd == "reset server") {

@@ -83,15 +83,26 @@ P(PathInfluences)
 END_CLS()
 
 
+BEGIN_CLS(UseComponent::Param)
+P(field_0)
+P(field_4)
+P(field_8)
+P(field_18)
+END_CLS()
+
+
 BEGIN_CLS(UseComponent)
 INHERIT(BaseComponent)
+P(field_0)
 P(Charges)
 P(MaxCharges)
-P(ItemUseType)
-P(ItemComboFlag1)
-P(ItemComboFlag2)
-P(Boosts)
-// TODO - map other fields
+P(field_18)
+P(field_19)
+P(field_1A)
+P(field_1B)
+P(Boosts1)
+P(Boosts2)
+P(Boosts3)
 END_CLS()
 
 
@@ -148,9 +159,14 @@ END_CLS()
 
 BEGIN_CLS(RelationComponent)
 INHERIT(BaseComponent)
-P(field_18)
-P(field_28)
-P(field_38)
+P(field_0)
+P(field_40)
+P(field_80)
+// TODO - cannot serialize this rn
+// P(field_C0)
+P(field_100)
+P(field_140)
+P(field_170)
 END_CLS()
 
 
@@ -254,6 +270,7 @@ P(TemporaryHp)
 P(MaxTemporaryHp)
 P(AC)
 P(PerDamageTypeHealthThresholds)
+P(PerDamageTypeHealthThresholds2)
 P(IsInvulnerable)
 END_CLS()
 
@@ -304,6 +321,15 @@ P(Unique)
 END_CLS()
 
 
+BEGIN_CLS(WeaponComponent::Element1)
+INHERIT(StatsExpressionParam)
+P(field_28)
+P(Cause)
+P(field_48)
+P(field_58)
+END_CLS()
+
+
 BEGIN_CLS(WeaponComponent)
 INHERIT(BaseComponent)
 P(Rolls)
@@ -313,6 +339,9 @@ P(DamageRange)
 P(WeaponProperties)
 P(WeaponGroup)
 P(Ability)
+P(field_38)
+P(field_48)
+P(field_49)
 END_CLS()
 
 
@@ -324,9 +353,13 @@ END_CLS()
 
 BEGIN_CLS(PassiveComponent)
 INHERIT(BaseComponent)
-P_RO(PassiveId)
-P_RO(StatsFunctorContext)
-// TODO - map
+P(field_0)
+P(PassiveId)
+P(field_8)
+P(field_10)
+P(field_18)
+P(field_19)
+P(field_1C)
 END_CLS()
 
 
@@ -567,8 +600,9 @@ END_CLS()
 
 BEGIN_CLS(DisarmableComponent)
 INHERIT(BaseComponent)
-P(SomeTrapId)
-P(CanDisarm)
+P(field_0)
+P(field_10)
+P(field_11)
 END_CLS()
 
 
@@ -637,7 +671,8 @@ BEGIN_CLS(LockComponent)
 INHERIT(BaseComponent)
 P(Key_M)
 P(LockDC)
-P(Unlocked_M)
+P(field_8)
+P(field_18)
 END_CLS()
 
 
@@ -886,6 +921,7 @@ P(SpellId)
 P(CooldownType)
 P(field_29)
 P(Cooldown)
+P(field_30)
 END_CLS()
 
 
@@ -971,18 +1007,16 @@ END_CLS()
 
 BEGIN_CLS(PathingComponent)
 INHERIT(BaseComponent)
-P(field_18)
+P(field_20)
 P(field_28)
+P(field_2C)
+P(field_30)
 P(field_38)
+P(field_3C)
 P(field_40)
-P(CurveUUID)
+P(field_44)
 P(field_48)
-P(field_50)
-P(field_58)
-P(field_59)
-P(field_5A)
-P(field_5B)
-P(field_5C)
+P(field_4C)
 END_CLS()
 
 
@@ -1024,8 +1058,7 @@ END_CLS()
 
 BEGIN_CLS(NetComponent)
 INHERIT(BaseComponent)
-P(field_18)
-P(NetID)
+P(field_0)
 END_CLS()
 
 
@@ -1103,9 +1136,14 @@ END_CLS()
 
 BEGIN_CLS(DisplayName)
 P(NameKey)
-P(Unknown)
-P(Unknown2)
+P(field_10)
 P(Name)
+END_CLS()
+
+
+BEGIN_CLS(DisplayNameTranslatedString)
+P(NameKey)
+P(field_10)
 END_CLS()
 
 
@@ -1172,10 +1210,6 @@ END_CLS()
 
 BEGIN_CLS(StaticPhysicsComponent)
 INHERIT(BaseComponent)
-P(field_18)
-P(field_20)
-P(field_28)
-P(field_30)
 END_CLS()
 
 

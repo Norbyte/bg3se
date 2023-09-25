@@ -36,7 +36,7 @@ struct BoostCause
 	BoostCauseType Type;
 	FixedString Cause;
 	EntityHandle Entity;
-	__int64 field_10;
+	uint64_t field_10;
 };
 
 struct BoostInfoComponent : public BaseComponent
@@ -76,7 +76,7 @@ DEFN_BOOST(Ability, Ability, {
 })
 
 DEFN_BOOST(RollBonus, RollBonus, {
-	RollTypeId RollType;
+	stats::RollType RollType;
 	StatsExpressionParam Amount;
 	AbilityId Ability;
 	SkillId Skill;
@@ -151,8 +151,11 @@ DEFN_BOOST(Proficiency, Proficiency, {
 	ProficiencyGroupFlags Flags;
 })
 
+// FIXME - this is Variant<int32_t, StatsExpressionParam>
 DEFN_BOOST(IncreaseMaxHP, IncreaseMaxHP, {
 	StatsExpressionParam Amount;
+	uint8_t AmountType;
+	int32_t field_30;
 })
 
 DEFN_BOOST(ActionResourceBlock, ActionResourceBlock, {
@@ -243,7 +246,7 @@ DEFN_BOOST(NullifyAbility, NullifyAbilityScore, {
 })
 
 DEFN_BOOST(Reroll, Reroll, {
-	RollTypeId RollType;
+	stats::RollType RollType;
 	int8_t field_1;
 	bool field_2;
 })
@@ -282,7 +285,7 @@ DEFN_BOOST(Savant, Savant, {
 })
 
 DEFN_BOOST(MinimumRollResult, MinimumRollResult, {
-	RollTypeId RollType;
+	stats::RollType RollType;
 	int8_t Result;
 })
 

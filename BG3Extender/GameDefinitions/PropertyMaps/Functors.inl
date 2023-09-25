@@ -7,16 +7,6 @@ P_RO(NextFunctorIndex)
 P_RO(UniqueName)
 END_CLS()
 
-BEGIN_CLS(StatsExpressionParam)
-// TODO - P(Params)
-P(Code)
-END_CLS()
-
-
-BEGIN_CLS(StatsExpressionParamEx)
-INHERIT(StatsExpressionParam)
-END_CLS()
-
 BEGIN_CLS(stats::Functor::RollCondition)
 P_RO(Type)
 // TODO - Conditions object access
