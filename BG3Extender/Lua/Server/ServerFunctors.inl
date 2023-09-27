@@ -107,7 +107,7 @@ namespace bg3se::esv::lua
 		auto params = checked_get_proxy<bg3se::stats::BaseFunctorExecParams>(L, 2);
 		auto& pool = GetServerLifetimePool();
 
-		auto hit = ObjectProxy::MakeOwner<NewHit>(L, pool)->Get();
+		auto hit = ObjectProxy::MakeOwner<HitResult>(L, pool)->Get();
 		auto functorSet = GetStaticSymbols().GetStats()->ConstructFunctorSet(GFS.strEmpty);
 		functorSet->VMT->AddOrUpdate(functorSet, functor);
 

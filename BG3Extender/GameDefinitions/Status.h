@@ -5,6 +5,7 @@
 #include <GameDefinitions/Misc.h>
 #include <GameDefinitions/Stats/Common.h>
 #include <GameDefinitions/Hit.h>
+#include <variant>
 
 namespace bg3se
 {

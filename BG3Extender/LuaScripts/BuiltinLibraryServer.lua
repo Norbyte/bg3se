@@ -2,6 +2,8 @@ local _I = Ext._Internal
 
 _I._PublishedEvents = {
 	"DealDamage",
+	"DealtDamage",
+	"BeforeDealDamage",
 	"ExecuteFunctor",
 	"AfterExecuteFunctor"
 }

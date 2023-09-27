@@ -44,7 +44,7 @@ struct ActionResource : public GuidResource
 	TranslatedString Error;
 	uint32_t MaxLevel;
 	double MaxValue;
-	uint8_t DiceType; // FIXME - map to enumeration
+	DiceSizeId DiceType; // FIXME - map to enumeration
 	uint8_t ReplenishType; // FIXME - map to enumeration
 	bool ShowOnActionResourcePanel;
 	bool UpdatesSpellPowerLevel;

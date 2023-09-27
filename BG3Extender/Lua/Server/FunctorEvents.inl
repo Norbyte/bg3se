@@ -8,6 +8,7 @@ FunctorEventHooks::FunctorEventHooks(lua::State& state)
 {
 	auto& hooks = gExtender->GetEngineHooks();
 	hooks.stats__DealDamageFunctor__ApplyDamage.SetWrapper(&FunctorEventHooks::OnDealDamage, this);
+	hooks.esv__StatsSystem__ThrowDamageEvent.SetWrapper(&FunctorEventHooks::OnEntityDamageEvent, this);
 	hooks.stats__Functors__ExecuteType1.SetWrapper(&FunctorEventHooks::OnFunctorExecute<bg3se::stats::FunctorExecParamsType1, bg3se::stats::Functors::ExecuteType1Proc>, this);
 	hooks.stats__Functors__ExecuteType2.SetWrapper(&FunctorEventHooks::OnFunctorExecute<bg3se::stats::FunctorExecParamsType2, bg3se::stats::Functors::ExecuteType2Proc>, this);
 	hooks.stats__Functors__ExecuteType3.SetWrapper(&FunctorEventHooks::OnFunctorExecute<bg3se::stats::FunctorExecParamsType3, bg3se::stats::Functors::ExecuteType3Proc>, this);
@@ -22,6 +23,7 @@ FunctorEventHooks::~FunctorEventHooks()
 {
 	auto& hooks = gExtender->GetEngineHooks();
 	hooks.stats__DealDamageFunctor__ApplyDamage.ClearHook();
+	hooks.esv__StatsSystem__ThrowDamageEvent.ClearHook();
 	hooks.stats__Functors__ExecuteType1.ClearHook();
 	hooks.stats__Functors__ExecuteType2.ClearHook();
 	hooks.stats__Functors__ExecuteType3.ClearHook();
@@ -32,26 +34,67 @@ FunctorEventHooks::~FunctorEventHooks()
 	hooks.stats__Functors__ExecuteType8.ClearHook();
 }
 
-NewHit* FunctorEventHooks::OnDealDamage(bg3se::stats::DealDamageFunctor::ApplyDamageProc* next, NewHit* result, bg3se::stats::DealDamageFunctor* functor, ecs::EntityRef* casterHandle,
-	ecs::EntityRef* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId, int storyActionId, 
-	ActionOriginator* originator, resource::GuidResourceBankBase* classResourceMgr, Hit* hit, DamageSums* damageSums, uint64_t* unknownThothParam, HitWith hitWith)
+HitResult* FunctorEventHooks::OnDealDamage(bg3se::stats::DealDamageFunctor::ApplyDamageProc* next, 
+	HitResult* result, bg3se::stats::DealDamageFunctor* functor, ecs::EntityRef* casterHandle,
+	ecs::EntityRef* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId,
+	int storyActionId, ActionOriginator* originator, resource::GuidResourceBankBase* classResourceMgr,
+	Hit* hit, DamageSums* damageSums, EntityHandle* sourceHandle2, HitWith hitWith, int conditionRollIndex,
+	bool entityDamagedEventParam, __int64 a17, SpellId* spellId2)
 {
-	DealDamageEvent evt;
-	evt.Functor = functor;
-	evt.Caster = *casterHandle;
-	evt.Target = *targetHandle;
-	evt.Position = *position;
-	evt.IsFromItem = isFromItem;
-	evt.SpellId = spellId;
-	evt.StoryActionId = storyActionId;
-	evt.Originator = originator;
-	evt.Hit = hit;
-	evt.DamageSums = damageSums;
-	evt.HitWith = hitWith;
-	state_.ThrowEvent("DealDamage", evt, false, 0);
+	{
+		DealDamageEvent evt;
+		evt.Functor = functor;
+		evt.Caster = *casterHandle;
+		evt.Target = *targetHandle;
+		evt.Position = *position;
+		evt.IsFromItem = isFromItem;
+		evt.SpellId = spellId;
+		evt.StoryActionId = storyActionId;
+		evt.Originator = originator;
+		evt.Hit = hit;
+		evt.DamageSums = damageSums;
+		evt.HitWith = hitWith;
+		evt.Caster2 = *sourceHandle2;
+		evt.SpellId2 = spellId2;
+		state_.ThrowEvent("DealDamage", evt, false, 0);
+	}
 
-	auto ret = next(result, functor, casterHandle, targetHandle, position, isFromItem, spellId, storyActionId, originator, classResourceMgr, hit, damageSums, unknownThothParam, hitWith);
+	auto ret = next(result, functor, casterHandle, targetHandle, position, isFromItem, spellId, storyActionId, originator, classResourceMgr, 
+		hit, damageSums, sourceHandle2, hitWith, conditionRollIndex, entityDamagedEventParam, a17, spellId2);
+
+	{
+		DealtDamageEvent evt;
+		evt.Functor = functor;
+		evt.Caster = *casterHandle;
+		evt.Target = *targetHandle;
+		evt.Position = *position;
+		evt.IsFromItem = isFromItem;
+		evt.SpellId = spellId;
+		evt.StoryActionId = storyActionId;
+		evt.Originator = originator;
+		evt.Hit = hit;
+		evt.DamageSums = damageSums;
+		evt.HitWith = hitWith;
+		evt.Caster2 = *sourceHandle2;
+		evt.SpellId2 = spellId2;
+		evt.Result = result;
+		state_.ThrowEvent("DealtDamage", evt, false, 0);
+	}
+
 	return ret;
+}
+
+void FunctorEventHooks::OnEntityDamageEvent(bg3se::stats::StatsSystem_ThrowDamageEventProc* next, void* statsSystem,
+	void* temp5, Hit* hit, DamageSums* damageAmounts, bool a5, bool a6)
+{
+	{
+		BeforeDealDamageEvent evt;
+		evt.Hit = hit;
+		evt.DamageSums = damageAmounts;
+		state_.ThrowEvent("BeforeDealDamage", evt, false, 0);
+	}
+
+	next(statsSystem, temp5, hit, damageAmounts, a5, a6);
 }
 
 END_NS()

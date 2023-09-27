@@ -48,6 +48,17 @@ P(DamageSums)
 P(HitWith)
 END_CLS()
 
+BEGIN_CLS(esv::lua::DealtDamageEvent)
+INHERIT(esv::lua::DealDamageEvent)
+P(Result)
+END_CLS()
+
+BEGIN_CLS(esv::lua::BeforeDealDamageEvent)
+INHERIT(lua::EventBase)
+P(Hit)
+P(DamageSums)
+END_CLS()
+
 BEGIN_CLS(esv::lua::ExecuteFunctorEvent)
 INHERIT(lua::EventBase)
 P(Functor)

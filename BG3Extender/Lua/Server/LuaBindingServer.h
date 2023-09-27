@@ -141,8 +141,6 @@ namespace bg3se::esv::lua
 
 	struct DealDamageEvent : public EventBase
 	{
-		// TODO - only available after hit! 
-		// NewHit* Result;
 		bg3se::stats::DealDamageFunctor* Functor;
 		ecs::EntityRef Caster;
 		ecs::EntityRef Target;
@@ -155,6 +153,19 @@ namespace bg3se::esv::lua
 		DamageSums* DamageSums;
 		uint64_t* UnknownThothParam;
 		HitWith HitWith;
+		EntityHandle Caster2;
+		bg3se::SpellId* SpellId2;
+	};
+
+	struct DealtDamageEvent : public DealDamageEvent
+	{
+		HitResult* Result;
+	};
+
+	struct BeforeDealDamageEvent : public EventBase
+	{
+		Hit* Hit;
+		DamageSums* DamageSums;
 	};
 
 	struct ExecuteFunctorEvent : public EventBase
@@ -167,7 +178,7 @@ namespace bg3se::esv::lua
 	{
 		bg3se::stats::Functors* Functor;
 		bg3se::stats::BaseFunctorExecParams* Params;
-		NewHit* Hit;
+		HitResult* Hit;
 	};
 	
 	class FunctorEventHooks
@@ -179,9 +190,13 @@ namespace bg3se::esv::lua
 	private:
 		lua::State& state_;
 
-		NewHit* OnDealDamage(bg3se::stats::DealDamageFunctor::ApplyDamageProc* next, NewHit* result, bg3se::stats::DealDamageFunctor* functor, ecs::EntityRef* casterHandle,
-			ecs::EntityRef* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId, int storyActionId,
-			ActionOriginator* originator, resource::GuidResourceBankBase* classResourceMgr, Hit* hit, DamageSums* damageSums, uint64_t* unknownThothParam, HitWith hitWith);
+		HitResult* OnDealDamage(bg3se::stats::DealDamageFunctor::ApplyDamageProc* next, HitResult* result, bg3se::stats::DealDamageFunctor* functor, ecs::EntityRef* casterHandle,
+			ecs::EntityRef* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId,
+			int storyActionId, ActionOriginator* originator, resource::GuidResourceBankBase* classResourceMgr,
+			Hit* hit, DamageSums* damageSums, EntityHandle* sourceHandle2, HitWith hitWith, int conditionRollIndex,
+			bool entityDamagedEventParam, __int64 a17, SpellId* spellId2);
+		void OnEntityDamageEvent(bg3se::stats::StatsSystem_ThrowDamageEventProc* next, void* statsSystem, void* temp5, 
+			Hit* hit, DamageSums* damageAmounts, bool a5, bool a6);
 
 		template <class TParams>
 		void LuaTriggerFunctorPreExecEvent(bg3se::stats::Functors* self, TParams* params)
@@ -194,7 +209,7 @@ namespace bg3se::esv::lua
 		}
 
 		template <class TParams>
-		void LuaTriggerFunctorPostExecEvent(bg3se::stats::Functors* self, TParams* params, NewHit* hit)
+		void LuaTriggerFunctorPostExecEvent(bg3se::stats::Functors* self, TParams* params, HitResult* hit)
 		{
 			AfterExecuteFunctorEvent evt{ 
 				.Functor = self, 
@@ -205,7 +220,7 @@ namespace bg3se::esv::lua
 		}
 
 		template <class TParams, class TNext>
-		void OnFunctorExecute(TNext* next, NewHit* hit, bg3se::stats::Functors* self, TParams* params)
+		void OnFunctorExecute(TNext* next, HitResult* hit, bg3se::stats::Functors* self, TParams* params)
 		{
 			LuaTriggerFunctorPreExecEvent<TParams>(self, params);
 			next(hit, self, params);

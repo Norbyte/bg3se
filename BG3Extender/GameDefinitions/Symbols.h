@@ -75,6 +75,7 @@ namespace bg3se
 		esv::StatusMachine::ApplyStatusProc* esv__StatusMachine__ApplyStatus{ nullptr };
 
 		stats::DealDamageFunctor::ApplyDamageProc* stats__DealDamageFunctor__ApplyDamage{ nullptr };
+		stats::StatsSystem_ThrowDamageEventProc* esv__StatsSystem__ThrowDamageEvent{ nullptr };
 
 		stats::Functors::ExecuteType1Proc* stats__Functors__ExecuteType1{ nullptr };
 		stats::Functors::ExecuteType2Proc* stats__Functors__ExecuteType2{ nullptr };

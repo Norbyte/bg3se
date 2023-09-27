@@ -366,13 +366,6 @@
             48 8D 4C ?? ?? // lea     rcx, [rsp+238h+var_1D8]
         </Mapping>
 
-        <Mapping Name="eoc::DealDamageFunctor::ApplyDamage" Scope="Custom">
-            <Target Type="Indirect" Offset="7" Symbol="eoc__DealDamageFunctor__ApplyDamage" />
-            48 8D 8D ?? ?? 00 00 // lea     rcx, [rbp+420h+var_230]
-            E8 ?? ?? ?? ?? // call    eoc__DealDamageFunctor__ApplyDamage2
-            90 // nop
-        </Mapping>
-
         <Mapping Name="eoc::DealDamageFunctor::ApplyDamage Outer">
             <Condition Type="FixedString" Offset="0" Value="FallDamageDamageType" />
             <Target Type="Absolute" Offset="0" NextSymbol="eoc::DealDamageFunctor::ApplyDamage" NextSymbolSeekSize="384" />
@@ -385,6 +378,43 @@
         </Mapping>
         -->
 
+        <!-- Sig: call from osi::ApplyDamage -->
+        <Mapping Name="esv::StatsSystem::ThrowDamageEvent2" Scope="Custom">
+          40 55 // push    rbp
+          53 // push    rbx
+          56 // push    rsi
+          57 // push    rdi
+          41 54 // push    r12
+          41 55 // push    r13
+          41 56 // push    r14
+          41 57 // push    r15
+          <Target Type="Absolute" Offset="0" Symbol="esv__StatsSystem__ThrowDamageEvent" />
+        </Mapping>
+
+        <!-- Sig: call from DealDamageFunctor::ApplyDamage -->
+        <Mapping Name="esv::StatsSystem::ThrowDamageEvent">
+          c6 45 74 00 // mov     [rbp+0C0h+var_4C], 0
+          48 83 7a 10 00 // cmp     qword ptr [rdx+10h], 0
+          75 0d // jnz     short loc_141672E0C
+          48 8b 4a 08 // mov     rcx, [rdx+8]
+          e8 ?? ?? ?? ?? // call    sub_140F87C70
+          84 c0 // test    al, al
+          74 02 // jz      short loc_141672E0E
+          b0 01 // mov     al, 1
+          84 c0 // test    al, al
+          <Target Type="Absolute" Offset="-200" NextSymbol="esv::StatsSystem::ThrowDamageEvent2" NextSymbolSeekSize="200" />
+        </Mapping>
+      
+        <Mapping Name="eoc::DealDamageFunctor::ApplyDamage">
+          4c 8d 4d c8 // lea     r9, [rbp+510h+targetHandle]
+          4c 8d 45 d8 // lea     r8, [rbp+510h+sourceHandle2]
+          48 8d 95 50 02 00 00 // lea     rdx, [rbp+510h+functor]
+          48 8d 8d b0 02 00 00 // lea     rcx, [rbp+510h+a2]
+          @ref1 e8 ?? ?? ?? ?? // call    esv__ExecuteDamageFunctor
+          90 // nop
+          <Target Type="Indirect" Offset="@ref1" Symbol="stats__DealDamageFunctor__ApplyDamage" />
+        </Mapping>
+      
         <Mapping Name="App::Instance">
           @str1 48 8d 0d ?? ?? ?? ?? // lea     rcx, aCreatingApp; "Creating App\n"
           @ref1 ff 15 ?? ?? ?? ?? // call    cs:OutputDebugStringA

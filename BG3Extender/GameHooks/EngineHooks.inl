@@ -39,6 +39,7 @@ HOOK_DEFN(RPGStats__ParseStructureFolder, RPGStats__ParseStructureFolder, stats:
 HOOK_DEFN(FileReader__ctor, ls__FileReader__ctor, FileReader::CtorProc)
 HOOK_DEFN(esv__OsirisVariableHelper__SavegameVisit, esv__OsirisVariableHelper__SavegameVisit, esv::OsirisVariableHelper__SavegameVisitProc)
 HOOK_DEFN(stats__DealDamageFunctor__ApplyDamage, stats__DealDamageFunctor__ApplyDamage, stats::DealDamageFunctor::ApplyDamageProc)
+HOOK_DEFN(esv__StatsSystem__ThrowDamageEvent, esv__StatsSystem__ThrowDamageEvent, stats::StatsSystem_ThrowDamageEventProc)
 HOOK_DEFN(stats__Functors__ExecuteType1, stats__Functors__ExecuteType1, stats::Functors::ExecuteType1Proc)
 HOOK_DEFN(stats__Functors__ExecuteType2, stats__Functors__ExecuteType2, stats::Functors::ExecuteType2Proc)
 HOOK_DEFN(stats__Functors__ExecuteType3, stats__Functors__ExecuteType3, stats::Functors::ExecuteType3Proc)

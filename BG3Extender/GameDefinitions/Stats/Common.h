@@ -24,6 +24,8 @@ struct SpellId
 struct SpellIdWithPrototype : public SpellId
 {
 	stats::SpellPrototype* SpellProto;
+	Guid field_30;
+	uint8_t field_40;
 };
 
 END_SE()

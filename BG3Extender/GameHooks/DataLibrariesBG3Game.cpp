@@ -206,6 +206,7 @@ namespace bg3se
 		SYM_OFF(esv__StatusMachine__ApplyStatus);
 
 		SYM_OFF(stats__DealDamageFunctor__ApplyDamage);
+		SYM_OFF(esv__StatsSystem__ThrowDamageEvent);
 
 		SYM_OFF(stats__Functors__ExecuteType1);
 		SYM_OFF(stats__Functors__ExecuteType2);

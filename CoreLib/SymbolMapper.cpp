@@ -507,8 +507,14 @@ bool SymbolMappingLoader::LoadTarget(tinyxml2::XMLElement* ele, Pattern const& p
 	auto nextSymbol = ele->Attribute("NextSymbol");
 	if (nextSymbol) {
 		target.NextSymbol = nextSymbol;
-		if (mappings_.Mappings.find(nextSymbol) == mappings_.Mappings.end()) {
+		auto nextIt = mappings_.Mappings.find(nextSymbol);
+		if (nextIt == mappings_.Mappings.end()) {
 			ERR("Mapping target references nonexistent symbol mapping: '%s'", nextSymbol);
+			return false;
+		}
+
+		if (nextIt->second.Scope != SymbolMappings::MatchScope::kCustom) {
+			ERR("Mapping target references symbol '%s' that has a non-custom scope", nextSymbol);
 			return false;
 		}
 

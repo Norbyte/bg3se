@@ -152,14 +152,14 @@ struct FunctorExecParamsType8 : public BaseFunctorExecParams
 
 struct Functors : public Noncopyable<Functors>
 {
-	using ExecuteType1Proc = void (NewHit* hit, Functors* self, FunctorExecParamsType1 * params);
-	using ExecuteType2Proc = void (NewHit* hit, Functors* self, FunctorExecParamsType2 * params);
-	using ExecuteType3Proc = void (NewHit* hit, Functors* self, FunctorExecParamsType3 * params);
-	using ExecuteType4Proc = void (NewHit* hit, Functors* self, FunctorExecParamsType4 * params);
-	using ExecuteType5Proc = void (NewHit* hit, Functors* self, FunctorExecParamsType5 * params);
-	using ExecuteType6Proc = void (NewHit* hit, Functors* self, FunctorExecParamsType6 * params);
-	using ExecuteType7Proc = void (NewHit* hit, Functors* self, FunctorExecParamsType7 * params);
-	using ExecuteType8Proc = void (NewHit* hit, Functors* self, FunctorExecParamsType8 * params);
+	using ExecuteType1Proc = void (HitResult* hit, Functors* self, FunctorExecParamsType1 * params);
+	using ExecuteType2Proc = void (HitResult* hit, Functors* self, FunctorExecParamsType2 * params);
+	using ExecuteType3Proc = void (HitResult* hit, Functors* self, FunctorExecParamsType3 * params);
+	using ExecuteType4Proc = void (HitResult* hit, Functors* self, FunctorExecParamsType4 * params);
+	using ExecuteType5Proc = void (HitResult* hit, Functors* self, FunctorExecParamsType5 * params);
+	using ExecuteType6Proc = void (HitResult* hit, Functors* self, FunctorExecParamsType6 * params);
+	using ExecuteType7Proc = void (HitResult* hit, Functors* self, FunctorExecParamsType7 * params);
+	using ExecuteType8Proc = void (HitResult* hit, Functors* self, FunctorExecParamsType8 * params);
 
 	struct BaseVMT
 	{
@@ -423,14 +423,17 @@ struct ApplyStatusFunctor : public Functor
 	bool HasParam6{ false };
 };
 
+using StatsSystem_ThrowDamageEventProc = void (void* statsSystem, void* temp5, Hit* hit, DamageSums* damageAmounts, bool a5, bool a6);
+
 struct DealDamageFunctor : public Functor
 {
 	static constexpr auto FunctorType = FunctorId::DealDamage;
 
-	using ApplyDamageProc = NewHit * (NewHit* result, DealDamageFunctor* functor, ecs::EntityRef* casterHandle, 
+	using ApplyDamageProc = HitResult * (HitResult* result, DealDamageFunctor* functor, ecs::EntityRef* casterHandle,
 		ecs::EntityRef* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId, 
 		int storyActionId, ActionOriginator* originator, resource::GuidResourceBankBase* classResourceMgr, 
-		Hit* hit, DamageSums* damageSums, uint64_t* unknownThothParam, HitWith hitWith);
+		Hit* hit, DamageSums* damageSums, EntityHandle* sourceHandle2, HitWith hitWith, int conditionRollIndex,
+		bool entityDamagedEventParam, __int64 a17, SpellId* spellId2);
 
 	DamageType DamageType{ DamageType::None }; // Arg1
 	DealDamageWeaponType WeaponType{ DealDamageWeaponType::None }; // Arg0

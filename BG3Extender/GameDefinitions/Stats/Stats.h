@@ -81,7 +81,7 @@ struct SpellPrototype : public Noncopyable<SpellPrototype>
 	FixedString SpellContainerId;
 	int RechargeValuesFrom;
 	int RechargeValuesTo;
-	int8_t DiceValue;
+	DiceSizeId DiceValue;
 	int8_t Cooldown;
 	uint32_t WeaponTypes;
 	DescriptionInfo Description;
