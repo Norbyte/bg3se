@@ -1,9 +1,5 @@
 #pragma once
 
-#include <Lua/LuaHelpers.h>
-#include <Lua/LuaSerializers.h>
-#include <Lua/Shared/LuaLifetime.h>
-
 namespace bg3se::lua
 {
 	LifetimeHandle GetCurrentLifetime();
@@ -58,7 +54,7 @@ namespace bg3se::lua
 			auto key = get<TKey>(L, luaKeyIndex);
 			auto value = object_->Find(key);
 			if (value) {
-				PushAny(L, *value, lifetime_);
+				push(L, *value, lifetime_);
 				return true;
 			} else {
 				return false;
@@ -93,16 +89,16 @@ namespace bg3se::lua
 		{
 			if (lua_type(L, luaKeyIndex) == LUA_TNIL) {
 				if (object_->Keys.size() > 0) {
-					PushAny(L, &object_->Keys[0], lifetime_);
-					PushAny(L, &object_->Values[0], lifetime_);
+					push(L, &object_->Keys[0], lifetime_);
+					push(L, &object_->Values[0], lifetime_);
 					return 2;
 				}
 			} else {
 				auto key = get<TKey>(L, luaKeyIndex);
 				auto index = object_->FindIndex(key);
 				if (index != -1 && index < (int)object_->Keys.size() - 1) {
-					PushAny(L, &object_->Keys[index + 1], lifetime_);
-					PushAny(L, &object_->Values[index + 1], lifetime_);
+					push(L, &object_->Keys[index + 1], lifetime_);
+					push(L, &object_->Values[index + 1], lifetime_);
 					return 2;
 				}
 			}
@@ -165,7 +161,7 @@ namespace bg3se::lua
 			auto key = get<TKey>(L, luaKeyIndex);
 			auto value = object_->find(key);
 			if (value != object_->end()) {
-				PushAny(L, &value.Value(), lifetime_);
+				push(L, &value.Value(), lifetime_);
 				return true;
 			} else {
 				return false;
@@ -201,8 +197,8 @@ namespace bg3se::lua
 			if (lua_type(L, luaKeyIndex) == LUA_TNIL) {
 				auto it = object_->begin();
 				if (it != object_->end()) {
-					PushAny(L, &it.Key(), lifetime_);
-					PushAny(L, &it.Value(), lifetime_);
+					push(L, &it.Key(), lifetime_);
+					push(L, &it.Value(), lifetime_);
 					return 2;
 				}
 			} else {
@@ -211,8 +207,8 @@ namespace bg3se::lua
 				if (it != object_->end()) {
 					it++;
 					if (it != object_->end()) {
-						PushAny(L, &it.Key(), lifetime_);
-						PushAny(L, &it.Value(), lifetime_);
+						push(L, &it.Key(), lifetime_);
+						push(L, &it.Value(), lifetime_);
 						return 2;
 					}
 				}

@@ -1,8 +1,5 @@
 #pragma once
 
-#include <GameDefinitions/Base/Base.h>
-#include <lua.h>
-
 BEGIN_NS(lua)
 
 // Generation ID forward declarations

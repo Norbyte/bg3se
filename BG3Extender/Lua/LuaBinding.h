@@ -3,9 +3,6 @@
 #include <Lua/LuaHelpers.h>
 #include <Lua/Shared/LuaLifetime.h>
 #include <Lua/Shared/Proxies/LuaObjectProxy.h>
-#include <Lua/Shared/Proxies/LuaArrayProxy.h>
-#include <Lua/Shared/Proxies/LuaSetProxy.h>
-#include <Lua/Shared/Proxies/LuaMapProxy.h>
 #include <Lua/Shared/Proxies/LuaEvent.h>
 #include <Lua/Shared/Proxies/LuaEntityProxy.h>
 #include <Lua/Shared/Proxies/LuaPropertyMapHelpers.h>
@@ -133,7 +130,7 @@ namespace bg3se::lua
 			LifetimeStackPin _p(lifetimeStack_);
 			auto lifetime = lifetimeStack_.GetCurrent();
 			PushInternalFunction(L, func);
-			(PushAny(L, args, lifetime), ...);
+			(push(L, args, lifetime), ...);
 			return CheckedCall<Ret...>(L, sizeof...(args), ret, func);
 		}
 
@@ -145,7 +142,7 @@ namespace bg3se::lua
 			LifetimeStackPin _p(lifetimeStack_);
 			auto lifetime = lifetimeStack_.GetCurrent();
 			PushInternalFunction(L, func);
-			(PushAny(L, args, lifetime), ...);
+			(push(L, args, lifetime), ...);
 			return CheckedCall(L, sizeof...(args), func);
 		}
 

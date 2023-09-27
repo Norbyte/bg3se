@@ -1,10 +1,5 @@
 #pragma once
 
-#include <Lua/LuaHelpers.h>
-#include <Lua/LuaUserdata.h>
-#include <Lua/Shared/LuaLifetime.h>
-#include <Lua/Shared/Proxies/LuaPropertyMap.h>
-
 namespace bg3se::lua
 {
 	LifetimeHandle GetCurrentLifetime();

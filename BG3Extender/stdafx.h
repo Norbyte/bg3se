@@ -25,6 +25,7 @@
 #include <thread>
 #include <mutex>
 #include <shared_mutex>
+#include <variant>
 
 #include <Extender/Shared/Utils.h>
 #include <GameDefinitions/Base/Base.h>

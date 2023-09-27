@@ -185,10 +185,16 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <ClInclude Include="Lua\Debugger\LuaDebug.pb.h" />
     <ClInclude Include="Lua\Debugger\LuaDebugger.h" />
     <ClInclude Include="Lua\Debugger\LuaDebugMessages.h" />
+    <ClInclude Include="Lua\Helpers\LuaGetObject.h" />
+    <ClInclude Include="Lua\Helpers\LuaPushObject.h" />
+    <ClInclude Include="Lua\Helpers\LuaSerialize.h" />
+    <ClInclude Include="Lua\Helpers\LuaUnserialize.h" />
     <ClInclude Include="Lua\Libs\Json.h" />
     <ClInclude Include="Lua\Libs\LibraryRegistrationHelpers.h" />
     <ClInclude Include="Lua\LuaBinding.h" />
+    <ClInclude Include="Lua\Helpers\LuaGet.h" />
     <ClInclude Include="Lua\LuaHelpers.h" />
+    <ClInclude Include="Lua\Helpers\LuaPush.h" />
     <ClInclude Include="Lua\LuaSerializers.h" />
     <ClInclude Include="Lua\LuaUserdata.h" />
     <ClInclude Include="Lua\Server\LuaBindingServer.h" />

@@ -1,9 +1,5 @@
 #pragma once
 
-#include <Lua/LuaHelpers.h>
-#include <Lua/LuaSerializers.h>
-#include <Lua/Shared/LuaLifetime.h>
-
 namespace bg3se::lua
 {
 	LifetimeHandle GetCurrentLifetime();
@@ -83,7 +79,7 @@ namespace bg3se::lua
 		{
 			if (key >= -1 && key < (int)object_->Keys.Size() - 1) {
 				push(L, ++key);
-				PushAny(L, &object_->Keys[key], lifetime_);
+				push(L, &object_->Keys[key], lifetime_);
 				return 2;
 			} else {
 				return 0;

@@ -9,6 +9,9 @@
 
 BEGIN_NS(lua)
 
+template <class T>
+bool ValidateAny(T * v);
+
 inline bool Validate(bool* b, Overload<bool>)
 {
 	// Bool is false (0) / true (1)
@@ -368,6 +371,13 @@ template <class T>
 bool ValidateRef(T* v, Overload<T>)
 {
 	return StaticLuaPropertyMap<T>::PropertyMap.ValidateObject(v);
+}
+
+template <class... Args>
+bool ValidateRef(std::variant<Args...>* v, Overload<std::variant<Args...>>)
+{
+	CHECK(v->index() < std::variant_size_v<std::variant<Args...>>);
+	return std::visit([=](auto& var) { return ValidateAny(&var); }, *v);
 }
 
 template <class TE>

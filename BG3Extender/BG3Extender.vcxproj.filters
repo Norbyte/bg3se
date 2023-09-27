@@ -427,6 +427,12 @@
     <ClInclude Include="Lua\Shared\LuaTypeValidators.h" />
     <ClInclude Include="GameDefinitions\Base\Serialization.h" />
     <ClInclude Include="Lua\Shared\LuaTypeTraits.h" />
+    <ClInclude Include="Lua\Helpers\LuaPush.h" />
+    <ClInclude Include="Lua\Helpers\LuaGet.h" />
+    <ClInclude Include="Lua\Helpers\LuaGetObject.h" />
+    <ClInclude Include="Lua\Helpers\LuaPushObject.h" />
+    <ClInclude Include="Lua\Helpers\LuaSerialize.h" />
+    <ClInclude Include="Lua\Helpers\LuaUnserialize.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

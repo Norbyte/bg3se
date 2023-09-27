@@ -98,6 +98,9 @@ TypeInformation* MakeDeferredSetType();
 template <class TKey, class TValue>
 TypeInformation* MakeDeferredMapType();
 
+template <class... Args>
+TypeInformation* MakeDeferredVariantType();
+
 template <class T>
 inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<Array<T>>)
 {
@@ -174,6 +177,12 @@ template <class TKey, class TValue>
 inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<VirtualMultiHashMap<TKey, TValue>>)
 {
 	return &MakeDeferredMapType<TKey, TValue>;
+}
+
+template <class... Args>
+inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<std::variant<Args...>>)
+{
+	return &MakeDeferredVariantType<Args...>;
 }
 
 /*template <class T, class... Trait>
@@ -395,6 +404,15 @@ void ConstructFunctionSignature(TypeInformation& sig, R (*)(lua_State* L, Args..
 	sig.Kind = LuaTypeId::Function;
 	AddFunctionReturnType(sig, Overload<R>{});
 	(AddFunctionParamType(sig, Overload<Args>{}), ...);
+}
+
+template <class... Args>
+TypeInformation* MakeDeferredVariantType()
+{
+	auto ty = GameAlloc<TypeInformation>();
+	ty->Kind = LuaTypeId::Variant;
+	(AddFunctionParamType(*ty, Overload<Args>{}), ...);
+	return ty;
 }
 
 END_SE()

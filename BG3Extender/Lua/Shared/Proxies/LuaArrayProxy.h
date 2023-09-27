@@ -1,9 +1,5 @@
 #pragma once
 
-#include <Lua/LuaHelpers.h>
-#include <Lua/LuaSerializers.h>
-#include <Lua/Shared/LuaLifetime.h>
-
 BEGIN_SE()
 
 BY_VAL(uint8_t);
@@ -92,7 +88,7 @@ namespace bg3se::lua
 		bool GetElement(lua_State* L, unsigned arrayIndex) override
 		{
 			if (arrayIndex > 0 && arrayIndex <= (int)object_->size()) {
-				PushAny(L, &(*object_)[arrayIndex - 1], lifetime_);
+				push(L, &(*object_)[arrayIndex - 1], lifetime_);
 				return true;
 			} else {
 				return false;
@@ -141,7 +137,7 @@ namespace bg3se::lua
 		{
 			if (key >= 0 && key < (int)object_->size()) {
 				push(L, ++key);
-				PushAny(L, &(*object_)[key - 1], lifetime_);
+				push(L, &(*object_)[key - 1], lifetime_);
 				return 2;
 			} else {
 				return 0;
@@ -185,7 +181,7 @@ namespace bg3se::lua
 		bool GetElement(lua_State* L, unsigned arrayIndex) override
 		{
 			if (arrayIndex > 0 && arrayIndex <= object_->size()) {
-				PushAny(L, &(*object_)[arrayIndex - 1], lifetime_);
+				push(L, &(*object_)[arrayIndex - 1], lifetime_);
 				return true;
 			} else {
 				return false;
@@ -231,7 +227,7 @@ namespace bg3se::lua
 		{
 			if (key >= 0 && key < object_->size()) {
 				push(L, ++key);
-				PushAny(L, &(*object_)[key - 1], lifetime_);
+				push(L, &(*object_)[key - 1], lifetime_);
 				return 2;
 			} else {
 				return 0;

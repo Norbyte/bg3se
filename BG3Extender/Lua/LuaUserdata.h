@@ -1,14 +1,5 @@
 #pragma once
 
-#include <cstdint>
-#include <lua.h>
-#include <lualib.h>
-#include <lauxlib.h>
-#include <optional>
-
-#include <GameDefinitions/Base/Base.h>
-#include <Lua/LuaHelpers.h>
-
 namespace bg3se::lua
 {
 	class Callable {};

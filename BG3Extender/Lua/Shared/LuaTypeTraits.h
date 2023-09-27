@@ -78,4 +78,13 @@ struct IsSetLike<VirtualMultiHashSet<TK>>
 	using TKey = TK;
 };
 
+template <class T>
+struct IsVariantLike { static constexpr bool Value = false; };
+
+template <class... Args>
+struct IsVariantLike<std::variant<Args...>>
+{ 
+	static constexpr bool Value = true;
+};
+
 END_NS()
