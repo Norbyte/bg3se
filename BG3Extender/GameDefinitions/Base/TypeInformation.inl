@@ -62,6 +62,27 @@ void TypeInformation::DeferredInitialize()
 			TypeInformationRepository::GetInstance().RegisterType(TypeName, this);
 		}
 		break;
+
+	case LuaTypeId::Variant:
+	{
+		bool hasAllVariants{ true };
+		for (auto const& var : Params) {
+			var.GetStatic()->DeferredInitialize();
+			hasAllVariants = hasAllVariants && (bool)var;
+		}
+
+		if (!TypeName && hasAllVariants) {
+			STDString name("Variant<");
+			for (auto const& var : Params) {
+				name += var.Get().TypeName.GetString();
+				name += ",";
+			}
+			name += + ">";
+			TypeName = FixedString(name);
+			TypeInformationRepository::GetInstance().RegisterType(TypeName, this);
+		}
+		break;
+	}
 	}
 }
 
