@@ -89,9 +89,9 @@ namespace bg3se
 			Array<FixedString> DisabledCrime;
 			Array<Guid> PreferredAiTargets;
 			Array<FixedString> field_B8;
-			void* Template;
-			void* OriginalTemplate;
-			void* TemplateUsedForSpells;
+			CharacterTemplate* Template;
+			CharacterTemplate* OriginalTemplate;
+			CharacterTemplate* TemplateUsedForSpells;
 			void* field_E0;
 			void* BehaviourMachine;
 			void* field_F0;
