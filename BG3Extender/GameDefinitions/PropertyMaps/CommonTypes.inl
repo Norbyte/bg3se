@@ -74,3 +74,11 @@ END_CLS()
 BEGIN_CLS(StatsExpressionParamEx)
 INHERIT(StatsExpressionParam)
 END_CLS()
+
+
+BEGIN_CLS(stats::Requirement)
+P(RequirementId)
+P(IntParam)
+P(TagParam)
+P(Not)
+END_CLS()

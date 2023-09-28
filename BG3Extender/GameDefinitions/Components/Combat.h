@@ -13,8 +13,8 @@ namespace bg3se
 		EntityHandle CombatHandle;
 		FixedString CombatGroupId;
 		int field_C;
-		int field_10;
-		Guid field_18;
+		CombatParticipantFlags Flags;
+		Guid AiHint;
 	};
 
 	struct CombatStateComponent : public BaseComponent

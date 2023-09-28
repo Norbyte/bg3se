@@ -41,7 +41,7 @@ namespace bg3se
 
 		int32_t Weight;
 		FixedString StatsId;
-		uint32_t Flags;
+		uint32_t StepsType;
 	};
 
 	struct ExperienceComponent : public BaseComponent
@@ -106,8 +106,8 @@ namespace bg3se
 		AbilityId SpellCastingAbility;
 		int field_8C;
 		int field_90;
-		int field_94;
-		int field_98;
+		int ArmorType;
+		int ArmorType2;
 		AbilityId UnarmedAttackAbility;
 		AbilityId RangedAttackAbility;
 	};
@@ -153,8 +153,8 @@ namespace bg3se
 		uint8_t WeaponGroup;
 		AbilityId Ability;
 		Array<Element1> field_38;
-		uint8_t field_48;
-		uint8_t field_49;
+		DiceSizeId DamageDice;
+		DiceSizeId VersatileDamageDice;
 	};
 
 	struct BackgroundComponent : public BaseComponent
@@ -1029,7 +1029,7 @@ namespace bg3se
 		static constexpr auto EngineClass = "eoc::EquipableComponent";
 
 		Guid field_18;
-		int Slot_M;
+		ItemSlot Slot;
 	};
 
 	struct GameplayLightComponent : public BaseComponent

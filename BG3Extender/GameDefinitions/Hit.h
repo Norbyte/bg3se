@@ -189,7 +189,7 @@ struct StatsRollResult
 
 struct ResolvedRollBonus
 {
-	DiceSizeId DiceSetType;
+	DiceSizeId DiceSize;
 	uint8_t NumDice;
 	int ResolvedRollBonus;
 	TranslatedString Description;

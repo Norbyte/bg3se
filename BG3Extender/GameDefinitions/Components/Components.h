@@ -92,24 +92,16 @@ struct UseComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::Use;
 	static constexpr auto EngineClass = "eoc::UseComponent";
 
-	struct Param
-	{
-		int32_t field_0;
-		int32_t field_4;
-		Guid field_8;
-		uint8_t field_18;
-	};
-
-	Array<Param> field_0;
+	Array<stats::Requirement> Requirements;
 	int Charges;
 	int MaxCharges;
-	uint8_t field_18;
+	uint8_t ItemUseType;
 	uint8_t field_19;
 	uint8_t field_1A;
 	uint8_t field_1B;
-	Array<BoostParameters> Boosts1;
-	Array<BoostParameters> Boosts2;
-	Array<BoostParameters> Boosts3;
+	Array<BoostParameters> Boosts;
+	Array<BoostParameters> BoostsOnEquipMainHand;
+	Array<BoostParameters> BoostsOnEquipOffHand;
 };
 
 struct WieldingComponent : public BaseComponent
