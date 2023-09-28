@@ -111,7 +111,7 @@ function OnSessionLoaded()
     _P(PersistentVars['Test'])
 end
 
-Ext.Events.SessionLoaded:Subscribe("SessionLoaded", OnSessionLoaded)
+Ext.Events.SessionLoaded:Subscribe(OnSessionLoaded)
 ```
 
 
