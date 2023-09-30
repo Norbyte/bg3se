@@ -67,7 +67,7 @@ struct SpellPrototype : public Noncopyable<SpellPrototype>
 	SpellType SpellTypeId;
 	FixedString SpellId;
 	uint8_t SpellSchool;
-	uint64_t SpellFlags;
+	SpellFlags SpellFlags;
 	uint8_t SpellActionType;
 	uint8_t SpellAnimationType;
 	uint8_t SpellJumpType;

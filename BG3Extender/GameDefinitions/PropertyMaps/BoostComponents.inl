@@ -482,9 +482,8 @@ BEGIN_CLS(DamageReductionBoostComponent)
 INHERIT(BaseComponent)
 P(DamageType)
 P(Amount)
-P(HasAmount)
-P(field_38)
-P(field_39)
+P(Flat)
+P(Half)
 END_CLS()
 
 

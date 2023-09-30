@@ -369,6 +369,7 @@ DEFN_BOOST(DetectCrimesBlock, DetectDisturbancesBlock, {
 struct BlockAbilityModifierFromACComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::BlockAbilityModifierFromACBoost;
+	static constexpr auto BoostType = BoostType::BlockAbilityModifierFromAC;
 	static constexpr auto EngineClass = "eoc::BlockAbilityModifierFromACComponent";
 
 	AbilityId Ability;
@@ -378,14 +379,17 @@ DEFN_BOOST(ScaleMultiplier, ScaleMultiplier, {
 	float Multiplier;
 })
 
-DEFN_BOOST(DamageReduction, DamageReduction, {
+struct DamageReductionBoostComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::DamageReductionBoost;
+	static constexpr auto BoostType = BoostType::DamageReduction;
+	static constexpr auto EngineClass = "eoc::DamageReductionBoostComponent";
+
 	DamageType DamageType;
-	StatsExpressionParam Amount;
-	bool HasAmount;
-	uint8_t gap31[7];
-	uint8_t field_38;
-	uint8_t field_39;
-})
+	std::variant<int32_t, StatsExpressionParam> Amount;
+	bool Flat;
+	bool Half;
+};
 
 DEFN_BOOST(ReduceCriticalAttackThreshold, ReduceCriticalAttackThreshold, {
 	int32_t field_0;
