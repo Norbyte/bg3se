@@ -778,22 +778,34 @@
         <Target Type="Absolute" Offset="0" Symbol="esv__OsirisVariableHelper__SavegameVisit" />
       </Mapping>
 
-      <!--
+      <Mapping Name="eoc::SpellPrototypeManager">
+        48 83 c2 20 // add     rdx, 20h ; ' '; a2
+        @ref1 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:eoc__gSpellPrototypeManager; a1
+        e8 ?? ?? ?? ?? // call    eoc__SpellPrototypeManager__Get
+        4c 8b f8 // mov     r15, rax
+        @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, fs_Autocast; a2
+        <Condition Type="FixedString" Offset="@str1" Value="Autocast" />
+        <Target Type="Indirect" Offset="@ref1" Symbol="eoc__SpellPrototypeManager" />
+      </Mapping>
+      
       <Mapping Name="eoc::SpellPrototype::Init" Scope="Custom">
         <Target Type="Absolute" Offset="0" Symbol="eoc__SpellPrototype__Init" />
-        48 89 5C 24 18 // mov     [rsp-8+arg_10], rbx
+        48 8b c4 // mov     rax, rsp
+        48 89 58 18 // mov     [rax+18h], rbx
         55 // push    rbp
       </Mapping>
 
       <Mapping Name="eoc::SpellPrototype::Init Outer">
-        <Condition Type="FixedStringIndirect" Offset="6" Value="SpellSchool" />
+        4c 8b e0 // mov     r12, rax
+        48 89 45 a8 // mov     [rbp+160h+var_1B8], rax
+        @str1 48 8b 15 ?? ?? ?? ?? // mov     rdx, cs:pfs_SpellSchool_2; a2
+        48 8b c8 // mov     rcx, rax; a1
+        e8 ?? ?? ?? ?? // call    stats__Object__GetModifier
+        <Condition Type="FixedStringIndirect" Offset="@str1" Value="SpellSchool" />
         <Target Type="Absolute" Offset="-256" NextSymbol="eoc::SpellPrototype::Init" NextSymbolSeekSize="256" />
-        41 B8 FF FF FF FF // mov     r8d, 0FFFFFFFFh
-        48 8B 15 ?? ?? ?? ?? // lea     rdx, fs_SpellSchool
-        48 8B C8 // mov     rcx, rax
-        E8 ?? ?? ?? ?? // call    CRPGStats::etModifierInt
-        41 88 46 0C // mov     [r14+0Ch], al
       </Mapping>
+
+      <!--
 
       <Mapping Name="eoc::StatusPrototype::Init">
         <Condition Type="FixedString" Offset="10" Value="DESTROYING" />
@@ -820,16 +832,6 @@
         48 8B 15 ?? ?? ?? ?? // mov     rdx, cs:pffs_ToggleOnEffect
         49 8B CD // mov     rcx, r13
         E8 ?? ?? ?? ?? // call    CRPGStats_Object__GetModifierString
-      </Mapping>
-
-      <Mapping Name="eoc::gSpellPrototypeManager">
-        <Condition Type="String" Offset="0" Value="Spells" />
-        <Target Type="Indirect" Offset="18" Symbol="eoc__SpellPrototypeManager" />
-        4C 8D 05 ?? ?? ?? ?? // lea     r8, str_Spells
-        BA 01 00 00 00 // mov     edx, 1
-        49 8B CF // mov     rcx, r15
-        FF 50 78 // call    qword ptr [rax+78h]
-        48 8B 0D ?? ?? ?? ?? // mov     rcx, cs:eoc__gSpellManager
       </Mapping>
 
       <Mapping Name="eoc::gStatusPrototypeManager">

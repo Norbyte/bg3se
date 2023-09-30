@@ -63,6 +63,34 @@ struct SpellPrototype : public Noncopyable<SpellPrototype>
 {
 	using InitProc = void(SpellPrototype* self, FixedString const& spellId);
 
+	struct UseCost
+	{
+		Guid Resource;
+		float Amount;
+	};
+	
+	struct UseCostGroup
+	{
+		Array<Guid> Resources;
+		double field_10;
+		int field_18;
+		Guid ResourceGroup;
+	};
+
+	struct Animation
+	{
+		std::array<FixedString, 3> Part0;
+		std::array<FixedString, 3> Part6;
+		std::array<FixedString, 3> Part4;
+		std::array<FixedString, 3> Part1;
+		std::array<FixedString, 3> Part5;
+		Array<std::array<FixedString, 3>> Part2;
+		std::array<FixedString, 3> Part3;
+		std::array<FixedString, 3> Part7;
+		std::array<FixedString, 3> Part8;
+		uint8_t Flags;
+	};
+
 	int StatsObjectIndex;
 	SpellType SpellTypeId;
 	FixedString SpellId;
@@ -73,8 +101,11 @@ struct SpellPrototype : public Noncopyable<SpellPrototype>
 	uint8_t SpellJumpType;
 	uint8_t SpellHitAnimationType;
 	uint8_t SpellAnimationIntentType;
+	char HitAnimationType;
 	uint32_t LineOfSightFlags;
-	uint32_t SpellCategoryFlags;
+	uint32_t CinematicArenaFlags;
+	Guid CinematicArenaTimelineOverride;
+	uint32_t SpellCategory;
 	int Level;
 	int PowerLevel;
 	bool HasMemoryCost;
@@ -86,24 +117,38 @@ struct SpellPrototype : public Noncopyable<SpellPrototype>
 	uint32_t WeaponTypes;
 	DescriptionInfo Description;
 	uint8_t AiFlags;
+	uint8_t field_101;
+	DamageType DamageType;
 	SpellPrototype* ParentPrototype;
-	ObjectSet<SpellPrototype*> ChildPrototypes;
-	Array<void*> UseCosts2;
-	Array<void*> RitualCosts2;
-	Array<void*> DualWieldingUseCosts2;
-	Array<void*> CastTextEvents;
-	ObjectSet<void*> UseCosts;
-	ObjectSet<void*> DualWieldingUseCosts;
-	ObjectSet<void*> RitualCosts;
-	int VerbalIntent;
-	Array<void*> SpellAnimationNoneMagic;
-	Array<void*> DualWieldingSpellAnimationNoneMagic;
+	Array<SpellPrototype*> ChildPrototypes;
+	Array<UseCostGroup> UseCostGroups;
+	Array<UseCostGroup> RitualCostGroups;
+	Array<UseCostGroup> DualWieldingUseCostsGroups;
+	Array<UseCost> HitCostGroups;
+	Array<UseCost> UseCosts;
+	Array<UseCost> DualWieldingUseCosts;
+	Array<UseCost> RitualCosts;
+	uint32_t VerbalIntent;
+	Animation SpellAnimation;
+	Animation DualWieldingSpellAnimation;
 	FixedString PrepareEffect;
 	FixedString PrepareSound;
-	bool field_1F8;
-	Array<void*> AlternativeCastTextEvents;
-	uint8_t SourceLimbIndex;
-	Array<void*> ContainerSpells;
+	FixedString PrepareLoopSound;
+	FixedString CastSound;
+	uint8_t CastSoundType;
+	uint8_t field_299;
+	uint8_t Sheathing;
+	Array<FixedString> AlternativeCastTextEvents;
+	int8_t SourceLimbIndex;
+	Array<FixedString> ContainerSpells;
+	Array<Array<FixedString>> Trajectories;
+	uint32_t RequirementEvents;
+	MultiHashMap<uint8_t, void*> field_2E0;
+	FixedString ItemWall;
+	FixedString InterruptPrototype;
+	FixedString CombatAIOverrideSpell;
+	Array<FixedString> CombatAIOverrideSpells;
+	float SteerSpeedMultipler;
 
 	Object* GetStats() const;
 };
@@ -112,6 +157,7 @@ struct SpellPrototypeManager : public ProtectedGameObject<SpellPrototypeManager>
 {
 	void* VMT;
 	MultiHashMap<FixedString, SpellPrototype*> Spells;
+	MultiHashMap<FixedString, SpellPrototype*> CombatAIOverrideSpells;
 	Array<FixedString> SpellNames;
 	bool Initialized;
 

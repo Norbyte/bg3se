@@ -15,23 +15,25 @@ bool SpellPrototypeManager::SyncStat(Object* object, SpellPrototype* proto)
 		return false;
 	}
 
-	proto->UseCosts2.clear();
-	proto->RitualCosts2.clear();
-	proto->DualWieldingUseCosts2.clear();
-	proto->CastTextEvents.clear();
+	proto->UseCostGroups.clear();
+	proto->RitualCostGroups.clear();
+	proto->DualWieldingUseCostsGroups.clear();
+	proto->HitCostGroups.clear();
 	proto->UseCosts.clear();
 	proto->DualWieldingUseCosts.clear();
 	proto->RitualCosts.clear();
-	proto->SpellAnimationNoneMagic.clear();
-	proto->DualWieldingSpellAnimationNoneMagic.clear();
+	proto->SpellAnimation = SpellPrototype::Animation{};
+	proto->DualWieldingSpellAnimation = SpellPrototype::Animation{};
 	proto->AlternativeCastTextEvents.clear();
 	proto->ContainerSpells.clear();
+	proto->Trajectories.clear();
 
-	proto->SpellFlags = 0;
+	proto->SpellFlags = (SpellFlags)0;
 	proto->LineOfSightFlags = 0;
-	proto->SpellCategoryFlags = 0;
+	proto->CinematicArenaFlags = 0;
 	proto->WeaponTypes = 0;
 	proto->AiFlags = 0;
+	proto->RequirementEvents = 0;
 
 	sync(proto, object->Name);
 	return true;
