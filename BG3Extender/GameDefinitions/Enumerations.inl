@@ -2024,12 +2024,18 @@ BEGIN_ENUM(BoostType, uint8_t)
 	E(Resistance)
 	E(WeaponDamageResistance)
 	E(ProficiencyBonusOverride)
+	E(ActionResourceOverride) // Has no component
+	E(AddProficiencyToAC) // Has no component
 	EV(JumpMaxDistanceMultiplier, 12)
+	E(AddProficiencyToDamage) // Has no component
 	EV(ActionResourceConsumeMultiplier, 14)
+	E(BlockVerbalComponent) // Has no component
+	E(BlockSomaticComponent) // Has no component
 	EV(HalveWeaponDamage, 17)
 	EV(UnlockSpell, 19)
 	EV(SourceAdvantageOnAttack, 20)
 	EV(ProficiencyBonus, 21)
+	E(BlockSpellCast) // Has no component
 	EV(Proficiency, 23)
 	E(SourceAllyAdvantageOnAttack)
 	E(IncreaseMaxHP)
@@ -2054,44 +2060,61 @@ BEGIN_ENUM(BoostType, uint8_t)
 	E(NullifyAbilityScore)
 	EV(Reroll, 46)
 	EV(DownedStatus, 47)
+	E(Invulnerable) // Has no component
 	EV(WeaponEnchantment, 49)
 	EV(GuaranteedChanceRollOutcome, 50)
 	EV(Attribute, 51)
+	E(IgnoreLeaveAttackRange) // Has no component
 	EV(GameplayLight, 53)
 	EV(DualWielding, 55)
 	EV(Savant, 56)
 	EV(MinimumRollResult, 57)
+	E(Lootable) // Has no component
 	EV(CharacterWeaponDamage, 59)
 	E(ProjectileDeflect)
 	E(AbilityOverrideMinimum)
 	E(ACOverrideFormula)
 	E(FallDamageMultiplier)
 	EV(ActiveCharacterLight, 64)
+	E(Invisibility) // Has no component
+	E(TwoWeaponFighting) // Has no component
 	EV(WeaponAttackTypeOverride, 67)
 	E(WeaponDamageDieOverride)
 	E(CarryCapacityMultiplier)
 	E(WeaponProperty)
 	EV(WeaponAttackRollAbilityOverride, 71)
+	E(BlockTravel) // Has no component
+	E(BlockGatherAtCamp) // Has no component
+	E(BlockAbilityModifierDamageBonus) // Has no component
+	E(VoicebarkBlock) // Has no component
+	E(HiddenDuringCinematic) // Has no component
 	EV(SightRangeAdditive, 77)
 	E(SightRangeMinimum)
 	E(SightRangeMaximum)
 	EV(SightRangeOverride, 80)
+	E(CannotBeDisarmed) // Has no component
 	EV(MovementSpeedLimit, 82)
+	E(NonLethal) // Has no component
 	EV(UnlockSpellVariant, 84)
 	E(DetectDisturbancesBlock)
 	E(BlockAbilityModifierFromAC)
 	EV(ScaleMultiplier, 87)
+	E(CriticalDamageOnHit) // Has no component
 	EV(DamageReduction, 89)
 	E(ReduceCriticalAttackThreshold)
 	E(PhysicalForceRangeBonus)
 	E(ObjectSize)
 	EV(ObjectSizeOverride, 93)
+	E(ItemReturnToOwner) // Has no component
 	EV(AiArchetypeOverride, 95)
 	E(ExpertiseBonus)
 	E(EntityThrowDamage)
 	E(WeaponDamageTypeOverride)
 	EV(MaximizeHealing, 99)
+	E(IgnoreEnterAttackRange) // Has no component
 	EV(DamageBonus, 101)
+	E(Detach) // Has no component
+	E(ConsumeItemBlock) // Has no component
 	EV(AdvanceSpells, 104)
 	E(SpellResistance)
 	E(WeaponAttackRollBonus)
@@ -2100,25 +2123,34 @@ BEGIN_ENUM(BoostType, uint8_t)
 	E(CanSeeThrough)
 	E(CanShootThrough)
 	EV(CanWalkThrough, 111)
+	E(MonkWeaponAttackOverride) // Has no component
 	EV(MonkWeaponDamageDiceOverride, 113)
+	E(IntrinsicSummonerProficiency) // Has no component
 	EV(HorizontalFOVOverride, 115)
 	EV(CharacterUnarmedDamage, 116)
+	E(UnarmedMagicalProperty) // Has no component
 	EV(ActionResourceReplenishTypeOverride, 118)
+	E(AreaDamageEvade) // Has no component
 	EV(ActionResourcePreventReduction, 120)
 	EV(AttackSpellOverride, 121)
 	EV(Lock, 122)
+	E(NoAOEDamageOnLand) // Has no component
 	EV(IgnorePointBlankDisadvantage, 124)
 	E(CriticalHitExtraDice)
 	E(DodgeAttackRoll)
 	E(GameplayObscurity)
 	E(MaximumRollResult)
 	EV(UnlockInterrupt, 129)
+	E(IntrinsicSourceProficiency) // Has no component
 	EV(JumpMaxDistanceBonus, 131)
 	E(ArmorAbilityModifierCapOverride)
 	E(IgnoreResistance)
 	EV(ConcentrationIgnoreDamage, 134)
+	E(LeaveTriggers) // Has no component
 	EV(IgnoreLowGroundPenalty, 136)
 	E(IgnoreSurfaceCover)
+	E(EnableBasicItemInteractions) // Has no component
+	E(SoundsBlocked) // Has no component
 END_ENUM()
 
 BEGIN_ENUM(GameActionType, int)
