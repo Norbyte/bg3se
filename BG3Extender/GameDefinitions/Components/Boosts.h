@@ -306,7 +306,7 @@ DEFN_BOOST(AbilityOverrideMinimum, AbilityOverrideMinimum, {
 DEFN_BOOST(ACOverrideFormula, ACOverrideFormula, {
 	int32_t AC;
 	bool field_4;
-	Array<AbilityId> Abilities;
+	Array<AbilityId> AddAbilityModifiers;
 })
 
 DEFN_BOOST(FallDamageMultiplier, FallDamageMultiplier, {

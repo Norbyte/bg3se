@@ -61,7 +61,7 @@ namespace bg3se
 			EntityHandle field_68;
 			Array<glm::vec3> PreviousPositions;
 			int PreviousPositionId;
-			bool HelmetOption;
+			uint8_t HelmetOption;
 			int Renown;
 			uint8_t CachedTension;
 			bool IsInDangerZone;
