@@ -26,6 +26,9 @@ namespace bg3se::lua
 	public:
 		static_assert(!std::is_pointer_v<T>, "MultiHashSetProxyImpl template parameter should not be a pointer type!");
 
+		using ElementType = T;
+		using ContainerType = MultiHashSet<T>;
+
 		MultiHashSetProxyImpl(LifetimeHandle const& lifetime, MultiHashSet<T> * obj)
 			: object_(obj), lifetime_(lifetime)
 		{}
@@ -33,7 +36,7 @@ namespace bg3se::lua
 		~MultiHashSetProxyImpl() override
 		{}
 
-		T* Get() const
+		MultiHashSet<T>* Get() const
 		{
 			return object_;
 		}
@@ -133,15 +136,25 @@ namespace bg3se::lua
 		template <class T>
 		T* Get(lua_State* L)
 		{
+			auto impl = GetImpl();
 			if (!lifetime_.IsAlive(L)) {
+				luaL_error(L, "Attempted to access dead Set<%s>", impl->GetTypeName());
 				return nullptr;
 			}
 			
-			if (strcmp(GetImpl()->GetTypeName(), GetTypeInfo<T>().TypeName.GetString()) == 0) {
-				return reinterpret_cast<T*>(GetImpl()->GetRaw(L));
+			if (strcmp(impl->GetTypeName(), GetTypeInfo<typename T::ElementType>().TypeName.GetString()) == 0) {
+				return reinterpret_cast<T*>(impl->GetRaw());
 			} else {
+				luaL_error(L, "Attempted to access Set<%s>, got Set<%s>", GetTypeInfo<typename T::ElementType>().TypeName.GetString(), impl->GetTypeName());
 				return nullptr;
 			}
+		}
+
+		template <class T>
+		static T* CheckedGet(lua_State* L, int index)
+		{
+			auto self = CheckUserData(L, index);
+			return self->Get<T>(L);
 		}
 
 	private:

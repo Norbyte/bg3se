@@ -593,6 +593,14 @@ inline uint64_t MultiHashMapHash<FixedString>(FixedString const& v)
 template <class T>
 struct MultiHashSet
 {
+	using value_type = T;
+	using reference = T&;
+	using const_reference = T const&;
+	using iterator = ContiguousIterator<T>;
+	using const_iterator = ContiguousConstIterator<T>;
+	using difference_type = int32_t;
+	using size_type = uint32_t;
+
 	StaticArray<int32_t> HashKeys;
 	Array<int32_t> NextIds;
 	Array<T> Keys;
@@ -859,7 +867,7 @@ struct MultiHashMap : public MultiHashSet<TKey>
 
 	MultiHashMap& operator =(MultiHashMap const& other)
 	{
-		MultiHashSet::operator =(other);
+		MultiHashSet<TKey>::operator =(other);
 		Values = other.Values;
 
 		return *this;

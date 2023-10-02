@@ -51,12 +51,12 @@ PropertyOperationResult GenericPropertyMap::SetRawProperty(lua_State* L, void* o
 
 void GenericPropertyMap::AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter,
 	typename RawPropertyAccessors::Setter* setter, typename RawPropertyAccessors::Serializer* serialize, 
-	typename RawPropertyAccessors::Unserializer* unserialize, std::size_t offset, uint64_t flag)
+	std::size_t offset, uint64_t flag)
 {
 	assert(!Initialized && IsInitializing);
 	auto key = FixedString(prop);
 	assert(Properties.find(key) == Properties.end());
-	Properties.insert(std::make_pair(key, RawPropertyAccessors{ key, offset, flag, getter, setter, serialize, unserialize }));
+	Properties.insert(std::make_pair(key, RawPropertyAccessors{ key, offset, flag, getter, setter, serialize }));
 
 }
 
@@ -68,11 +68,10 @@ void GenericPropertyMap::AddRawValidator(char const* prop, typename RawPropertyV
 
 void GenericPropertyMap::AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter,
 	typename RawPropertyAccessors::Setter* setter, typename RawPropertyValidators::Validator* validate, 
-	typename RawPropertyAccessors::Serializer* serialize, typename RawPropertyAccessors::Unserializer* unserialize, 
-	std::size_t offset, uint64_t flag)
+	typename RawPropertyAccessors::Serializer* serialize, std::size_t offset, uint64_t flag)
 {
 	if (getter != nullptr || setter != nullptr) {
-		AddRawProperty(prop, getter, setter, serialize, unserialize, offset, flag);
+		AddRawProperty(prop, getter, setter, serialize, offset, flag);
 	}
 
 	if (validate != nullptr) {
@@ -131,17 +130,33 @@ void SerializeRawObject(lua_State* L, void* obj, GenericPropertyMap const& pm)
 	}
 }
 
-void UnserializeRawObject(lua_State* L, int index, void* obj, GenericPropertyMap const& pm)
+void UnserializeRawObjectFromTable(lua_State* L, int index, void* obj, GenericPropertyMap const& pm)
 {
 	StackCheck _(L);
 	for (auto const& prop : pm.Properties) {
 		lua_getfield(L, index, prop.first.GetString());
 		if (lua_type(L, -1) != LUA_TNIL) {
-			prop.second.Unserialize(L, obj, lua_absindex(L, -1), prop.second.Offset, prop.second.Flag);
+			prop.second.Set(L, obj, lua_absindex(L, -1), prop.second.Offset, prop.second.Flag);
 		}
 		lua_pop(L, 1);
 	}
+}
 
+void UnserializeRawObjectFromUserdata(lua_State* L, int index, void* obj, GenericPropertyMap const& pm)
+{
+	StackCheck _(L);
+	auto other = Userdata<ObjectProxy>::CheckUserData(L, index);
+	auto& otherPm = other->GetImpl()->GetPropertyMap();
+	if (otherPm.Name != pm.Name) {
+		luaL_error(L, "Attempted to access %s, got %s", pm.Name.GetString(), otherPm.Name.GetString());
+		return;
+	}
+
+	if (otherPm.Assign != nullptr) {
+		otherPm.Assign(obj, other->GetRaw(L));
+	} else {
+		luaL_error(L, "Type %s does not support assignment", pm.Name.GetString());
+	}
 }
 
 END_NS()

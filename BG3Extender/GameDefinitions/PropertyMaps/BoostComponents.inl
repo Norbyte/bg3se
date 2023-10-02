@@ -378,7 +378,7 @@ BEGIN_CLS(ACOverrideFormulaBoostComponent)
 INHERIT(BaseComponent)
 P(AC)
 P(field_4)
-P(Abilities)
+P(AddAbilityModifiers)
 END_CLS()
 
 

@@ -27,6 +27,13 @@ class TypeInformationRef
 public:
 	inline TypeInformationRef() {}
 	inline TypeInformationRef(StaticTypeInformation& ref) : ref_(&ref) {}
+	inline TypeInformationRef(TypeInformationRef const& ref) : ref_(ref.ref_) {}
+	
+	inline TypeInformationRef& operator = (TypeInformationRef const& ref)
+	{
+		ref_ = ref.ref_;
+		return *this;
+	}
 
 	inline operator bool() const
 	{

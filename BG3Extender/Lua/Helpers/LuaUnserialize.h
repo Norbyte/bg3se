@@ -3,7 +3,7 @@
 BEGIN_NS(lua)
 
 template <class TK>
-PropertyOperationResult UnserializeArray(lua_State* L, int index, Array<TK>* obj)
+PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, Array<TK>* obj)
 {
 	if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>) {
 		return PropertyOperationResult::UnsupportedType;
@@ -24,7 +24,20 @@ PropertyOperationResult UnserializeArray(lua_State* L, int index, Array<TK>* obj
 }
 
 template <class TK>
-PropertyOperationResult UnserializeArray(lua_State* L, int index, ObjectSet<TK>* obj)
+PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, Array<TK>* obj)
+{
+	if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>) {
+		return PropertyOperationResult::UnsupportedType;
+	}
+
+	StackCheck _(L);
+	auto arr = ArrayProxy::CheckedGet<DynamicArrayProxyImpl<Array<TK>, TK, 2>, TK>(L, index);
+	*obj = *arr->Get();
+	return PropertyOperationResult::Success;
+}
+
+template <class TK>
+PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, ObjectSet<TK>* obj)
 {
 	if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>) {
 		return PropertyOperationResult::UnsupportedType;
@@ -44,8 +57,21 @@ PropertyOperationResult UnserializeArray(lua_State* L, int index, ObjectSet<TK>*
 	return PropertyOperationResult::Success;
 }
 
+template <class TK>
+PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, ObjectSet<TK>* obj)
+{
+	if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>) {
+		return PropertyOperationResult::UnsupportedType;
+	}
+
+	StackCheck _(L);
+	auto arr = ArrayProxy::CheckedGet<DynamicArrayProxyImpl<ObjectSet<TK>, TK, 3>, TK>(L, index);
+	*obj = *arr->Get();
+	return PropertyOperationResult::Success;
+}
+
 template <class TK, size_t Size>
-PropertyOperationResult UnserializeArray(lua_State* L, int index, std::array<TK, Size>* obj)
+PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, std::array<TK, Size>* obj)
 {
 	if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>) {
 		return PropertyOperationResult::UnsupportedType;
@@ -66,8 +92,21 @@ PropertyOperationResult UnserializeArray(lua_State* L, int index, std::array<TK,
 	return PropertyOperationResult::Success;
 }
 
+template <class TK, size_t Size>
+PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, std::array<TK, Size>* obj)
+{
+	if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>) {
+		return PropertyOperationResult::UnsupportedType;
+	}
+
+	StackCheck _(L);
+	auto arr = ArrayProxy::CheckedGet<ConstSizeArrayProxyImpl<std::array<TK, Size>, TK, 1>, TK>(L, index);
+	*obj = *arr->Get();
+	return PropertyOperationResult::Success;
+}
+
 template <class TK, class TV>
-PropertyOperationResult UnserializeMap(lua_State* L, int index, MultiHashMap<TK, TV>* obj)
+PropertyOperationResult UnserializeMapFromTable(lua_State* L, int index, MultiHashMap<TK, TV>* obj)
 {
 	if constexpr (std::is_pointer_v<TK> || std::is_pointer_v<TV>
 		|| !std::is_default_constructible_v<TK> || !std::is_default_constructible_v<TV>) {
@@ -90,7 +129,21 @@ PropertyOperationResult UnserializeMap(lua_State* L, int index, MultiHashMap<TK,
 }
 
 template <class TK, class TV>
-PropertyOperationResult UnserializeMap(lua_State* L, int index, RefMap<TK, TV>* obj)
+PropertyOperationResult UnserializeMapFromUserdata(lua_State* L, int index, MultiHashMap<TK, TV>* obj)
+{
+	if constexpr (std::is_pointer_v<TK> || std::is_pointer_v<TV>
+		|| !std::is_default_constructible_v<TK> || !std::is_default_constructible_v<TV>) {
+		return PropertyOperationResult::UnsupportedType;
+	}
+
+	StackCheck _(L);
+	auto map = MapProxy::CheckedGetMultiHashMap<TK, TV>(L, index);
+	*obj = *map->Get();
+	return PropertyOperationResult::Success;
+}
+
+template <class TK, class TV>
+PropertyOperationResult UnserializeMapFromTable(lua_State* L, int index, RefMap<TK, TV>* obj)
 {
 	if constexpr (std::is_pointer_v<TK> || std::is_pointer_v<TV>
 		|| !std::is_default_constructible_v<TK> || !std::is_default_constructible_v<TV>) {
@@ -111,7 +164,21 @@ PropertyOperationResult UnserializeMap(lua_State* L, int index, RefMap<TK, TV>* 
 }
 
 template <class TK, class TV>
-PropertyOperationResult UnserializeMap(lua_State* L, int index, Map<TK, TV>* obj)
+PropertyOperationResult UnserializeMapFromUserdata(lua_State* L, int index, RefMap<TK, TV>* obj)
+{
+	if constexpr (std::is_pointer_v<TK> || std::is_pointer_v<TV>
+		|| !std::is_default_constructible_v<TK> || !std::is_default_constructible_v<TV>) {
+		return PropertyOperationResult::UnsupportedType;
+	}
+
+	StackCheck _(L);
+	auto map = MapProxy::CheckedGetRefMap<TK, TV>(L, index);
+	*obj = *map->Get();
+	return PropertyOperationResult::Success;
+}
+
+template <class TK, class TV>
+PropertyOperationResult UnserializeMapFromTable(lua_State* L, int index, Map<TK, TV>* obj)
 {
 	if constexpr (std::is_pointer_v<TK> || std::is_pointer_v<TV>
 		|| !std::is_default_constructible_v<TK> || !std::is_default_constructible_v<TV>) {
@@ -131,8 +198,22 @@ PropertyOperationResult UnserializeMap(lua_State* L, int index, Map<TK, TV>* obj
 	return PropertyOperationResult::Success;
 }
 
+template <class TK, class TV>
+PropertyOperationResult UnserializeMapFromUserdata(lua_State* L, int index, Map<TK, TV>* obj)
+{
+	if constexpr (std::is_pointer_v<TK> || std::is_pointer_v<TV>
+		|| !std::is_default_constructible_v<TK> || !std::is_default_constructible_v<TV>) {
+		return PropertyOperationResult::UnsupportedType;
+	}
+
+	StackCheck _(L);
+	auto map = MapProxy::CheckedGetMap<TK, TV>(L, index);
+	*obj = *map->Get();
+	return PropertyOperationResult::Success;
+}
+
 template <class TK>
-void UnserializeSet(lua_State* L, int index, MultiHashSet<TK>* obj)
+void UnserializeSetFromTable(lua_State* L, int index, MultiHashSet<TK>* obj)
 {
 	StackCheck _(L);
 	luaL_checktype(L, index, LUA_TTABLE);
@@ -143,8 +224,16 @@ void UnserializeSet(lua_State* L, int index, MultiHashSet<TK>* obj)
 	}
 }
 
+template <class TK>
+void UnserializeSetFromUserdata(lua_State* L, int index, MultiHashSet<TK>* obj)
+{
+	StackCheck _(L);
+	auto set = SetProxy::CheckedGet<MultiHashSetProxyImpl<TK>>(L, index);
+	*obj = *set->Get();
+}
+
 template <class... Args>
-PropertyOperationResult UnserializeVariant(lua_State* L, int index, std::variant<Args...>* obj)
+PropertyOperationResult UnserializeVariantFromTable(lua_State* L, int index, std::variant<Args...>* obj)
 {
 	StackCheck _(L);
 	// FIXME - not supported until we figure out how to serialize type selection
@@ -152,12 +241,19 @@ PropertyOperationResult UnserializeVariant(lua_State* L, int index, std::variant
 	// return std::visit([=](auto& var) { return Unserialize(L, index, &var); }, *obj);
 }
 
-void UnserializeRawObject(lua_State* L, int index, void* obj, GenericPropertyMap const& pm);
+void UnserializeRawObjectFromTable(lua_State* L, int index, void* obj, GenericPropertyMap const& pm);
+void UnserializeRawObjectFromUserdata(lua_State* L, int index, void* obj, GenericPropertyMap const& pm);
 
 template <class T>
-inline void UnserializeObject(lua_State* L, int index, T* obj)
+inline void UnserializeObjectFromTable(lua_State* L, int index, T* obj)
 {
-	UnserializeRawObject(L, index, obj, StaticLuaPropertyMap<T>::PropertyMap);
+	UnserializeRawObjectFromTable(L, index, obj, StaticLuaPropertyMap<T>::PropertyMap);
+}
+
+template <class T>
+inline void UnserializeObjectFromUserdata(lua_State* L, int index, T* obj)
+{
+	UnserializeRawObjectFromUserdata(L, index, obj, StaticLuaPropertyMap<T>::PropertyMap);
 }
 
 template <class T>
@@ -167,16 +263,40 @@ inline PropertyOperationResult Unserialize(lua_State* L, int index, T* obj)
 		return PropertyOperationResult::UnsupportedType;
 	} else if constexpr (IsByVal<T>) {
 		*obj = get<T>(L, index);
-	} else if constexpr (IsArrayLike<T>::Value) {
-		return UnserializeArray(L, lua_absindex(L, index), obj);
-	} else if constexpr (IsMapLike<T>::Value) {
-		return UnserializeMap(L, lua_absindex(L, index), obj);
-	} else if constexpr (IsSetLike<T>::Value) {
-		UnserializeSet(L, lua_absindex(L, index), obj);
-	} else if constexpr (IsVariantLike<T>::Value) {
-		return UnserializeVariant(L, index, obj);
 	} else {
-		UnserializeObject(L, lua_absindex(L, index), obj);
+		bool isTable = lua_type(L, index) == LUA_TTABLE;
+		if constexpr (IsArrayLike<T>::Value) {
+			if (isTable) {
+				return UnserializeArrayFromTable(L, lua_absindex(L, index), obj);
+			} else {
+				return UnserializeArrayFromUserdata(L, lua_absindex(L, index), obj);
+			}
+		} else if constexpr (IsMapLike<T>::Value) {
+			if (isTable) {
+				return UnserializeMapFromTable(L, lua_absindex(L, index), obj);
+			} else {
+				return UnserializeMapFromUserdata(L, lua_absindex(L, index), obj);
+			}
+		} else if constexpr (IsSetLike<T>::Value) {
+			if (isTable) {
+				UnserializeSetFromTable(L, lua_absindex(L, index), obj);
+			} else {
+				UnserializeSetFromUserdata(L, lua_absindex(L, index), obj);
+			}
+		} else if constexpr (IsVariantLike<T>::Value) {
+			if (isTable) {
+				return UnserializeVariantFromTable(L, index, obj);
+			} else {
+				// References to variants are not kept in userspace
+				return PropertyOperationResult::UnsupportedType;
+			}
+		} else {
+			if (isTable) {
+				UnserializeObjectFromTable(L, lua_absindex(L, index), obj);
+			} else {
+				UnserializeObjectFromUserdata(L, lua_absindex(L, index), obj);
+			}
+		}
 	}
 
 	return PropertyOperationResult::Success;

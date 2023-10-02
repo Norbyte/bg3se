@@ -39,15 +39,20 @@ namespace bg3se
 		static constexpr ExtComponentType ComponentType = ExtComponentType::TurnBased;
 		static constexpr auto EngineClass = "eoc::TurnBasedComponent";
 
-		EntityHandle field_0;
-		int field_8;
-		uint8_t field_C;
+		EntityHandle Entity;
+		BYTE field_8;
+		bool IsInCombat_M;
+		bool field_A;
+		bool RequestedEndTurn;
+		bool field_C;
 		int field_10;
-		uint8_t field_14;
-		uint8_t field_15;
-		uint8_t field_16;
-		uint64_t field_18;
-		uint64_t field_20;
+		bool ActedThisRoundInCombat;
+		bool HadTurnInCombat;
+		bool CanAct_M;
+		int field_18;
+		uint8_t field_1C;
+		int field_20;
+		uint8_t field_24;
 		uint64_t field_28;
 		Guid Combat;
 	};

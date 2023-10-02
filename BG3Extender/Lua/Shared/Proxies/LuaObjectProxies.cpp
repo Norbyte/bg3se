@@ -10,7 +10,7 @@ void CopyRawProperties(GenericPropertyMap const& base, GenericPropertyMap& child
 {
 	for (auto const& prop : base.Properties) {
 		child.AddRawProperty(prop.first.GetString(), prop.second.Get, prop.second.Set, 
-			prop.second.Serialize, prop.second.Unserialize, prop.second.Offset, prop.second.Flag);
+			prop.second.Serialize, prop.second.Offset, prop.second.Flag);
 	}
 	
 	for (auto const& prop : base.Validators) {
@@ -134,7 +134,6 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 		&(GenericSetOffsetProperty<decltype(PM::ObjectType::prop)>), \
 		&(GenericValidateOffsetProperty<decltype(PM::ObjectType::prop)>), \
 		&(GenericSerializeOffsetProperty<decltype(PM::ObjectType::prop)>), \
-		&(GenericUnserializeOffsetProperty<decltype(PM::ObjectType::prop)>), \
 		offsetof(PM::ObjectType, prop) \
 	);
 
@@ -144,7 +143,6 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 		&GenericSetReadOnlyProperty, \
 		&(GenericValidateOffsetProperty<decltype(PM::ObjectType::prop)>), \
 		&(GenericSerializeOffsetProperty<decltype(PM::ObjectType::prop)>), \
-		&GenericUnserializeReadOnlyProperty, \
 		offsetof(PM::ObjectType, prop) \
 	);
 
@@ -167,7 +165,6 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 		&(GenericSetOffsetProperty<decltype(PM::ObjectType::prop)>), \
 		&(GenericValidateOffsetProperty<decltype(PM::ObjectType::prop)>), \
 		&(GenericSerializeOffsetProperty<decltype(PM::ObjectType::prop)>), \
-		&(GenericUnserializeOffsetProperty<decltype(PM::ObjectType::prop)>), \
 		offsetof(PM::ObjectType, prop) \
 	);
 
@@ -177,7 +174,6 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 		&GenericSetReadOnlyProperty, \
 		&(GenericValidateOffsetProperty<decltype(PM::ObjectType::prop)>), \
 		&(GenericSerializeOffsetProperty<decltype(PM::ObjectType::prop)>), \
-		&GenericUnserializeReadOnlyProperty, \
 		offsetof(PM::ObjectType, prop) \
 	);
 
@@ -216,7 +212,6 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 		(PM::TPropertyMap::PropertyAccessors::Setter*)&GenericSetNonWriteableProperty, \
 		nullptr, \
 		(PM::TPropertyMap::PropertyAccessors::Serializer*)&GenericNullSerializeProperty, \
-		(PM::TPropertyMap::PropertyAccessors::Unserializer*)&GenericNullUnserializeProperty, \
 		0, 0 \
 	);
 

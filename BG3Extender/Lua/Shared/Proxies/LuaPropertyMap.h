@@ -11,13 +11,13 @@ public:
 	using TDestructor = void (void*);
 	using TSerializer = void (lua_State* L, void*);
 	using TUnserializer = void (lua_State* L, int index, void*);
+	using TAssigner = void (void* object, void* rhs);
 
 	struct RawPropertyAccessors
 	{
 		using Getter = PropertyOperationResult (lua_State* L, LifetimeHandle const& lifetime, void* object, std::size_t offset, uint64_t flag);
 		using Setter = PropertyOperationResult (lua_State* L, void* object, int index, std::size_t offset, uint64_t flag);
 		using Serializer = PropertyOperationResult (lua_State* L, void* object, std::size_t offset, uint64_t flag);
-		using Unserializer = PropertyOperationResult (lua_State* L, void* object, int index, std::size_t offset, uint64_t flag);
 
 		FixedString Name;
 		std::size_t Offset;
@@ -25,7 +25,6 @@ public:
 		Getter* Get;
 		Setter* Set;
 		Serializer* Serialize;
-		Unserializer* Unserialize;
 	};
 
 	struct RawPropertyValidators
@@ -51,13 +50,11 @@ public:
 	PropertyOperationResult GetRawProperty(lua_State* L, LifetimeHandle const& lifetime, void* object, FixedString const& prop) const;
 	PropertyOperationResult SetRawProperty(lua_State* L, void* object, FixedString const& prop, int index) const;
 	void AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter, typename RawPropertyAccessors::Setter* setter,
-		typename RawPropertyAccessors::Serializer* serialize, typename RawPropertyAccessors::Unserializer* unserialize, 
-		std::size_t offset, uint64_t flag = 0);
+		typename RawPropertyAccessors::Serializer* serialize, std::size_t offset, uint64_t flag = 0);
 	void AddRawValidator(char const* prop, typename RawPropertyValidators::Validator* validate, std::size_t offset, uint64_t flag = 0);
 	void AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter,
 		typename RawPropertyAccessors::Setter* setter, typename RawPropertyValidators::Validator* validate, 
-		typename RawPropertyAccessors::Serializer* serialize, typename RawPropertyAccessors::Unserializer* unserialize,
-		std::size_t offset, uint64_t flag = 0);
+		typename RawPropertyAccessors::Serializer* serialize, std::size_t offset, uint64_t flag = 0);
 	bool IsA(int typeRegistryIndex) const;
 	bool ValidatePropertyMap(void* object);
 	bool ValidateObject(void* object);
@@ -71,6 +68,7 @@ public:
 	TFallbackSetter* FallbackSetter{ nullptr };
 	TConstructor* Construct{ nullptr };
 	TDestructor* Destroy{ nullptr };
+	TAssigner* Assign{ nullptr };
 	TSerializer* Serialize{ nullptr };
 	TUnserializer* Unserialize{ nullptr };
 	std::size_t Size{ 0 };
@@ -93,16 +91,6 @@ inline PropertyOperationResult GenericSetReadOnlyProperty(lua_State* L, void* ob
 inline PropertyOperationResult GenericNullSerializeProperty(lua_State* L, void* object, std::size_t offset, uint64_t flag)
 {
 	return PropertyOperationResult::UnsupportedType;
-}
-
-inline PropertyOperationResult GenericNullUnserializeProperty(lua_State* L, void* object, int index, std::size_t offset, uint64_t flag)
-{
-	return PropertyOperationResult::UnsupportedType;
-}
-
-inline PropertyOperationResult GenericUnserializeReadOnlyProperty(lua_State* L, void* object, int index, std::size_t offset, uint64_t flag)
-{
-	return PropertyOperationResult::ReadOnly;
 }
 
 inline bool GenericValidateNoopProperty(void* obj, std::size_t offset, uint64_t)
@@ -138,6 +126,12 @@ void DefaultUnserialize(lua_State* L, int index, void* ptr)
 }
 
 template <class T>
+void DefaultAssign(void* object, void* rhs)
+{
+	*reinterpret_cast<T*>(object) = *reinterpret_cast<T*>(rhs);
+}
+
+template <class T>
 class LuaPropertyMap : public GenericPropertyMap
 {
 public:
@@ -146,7 +140,6 @@ public:
 		using Getter = PropertyOperationResult (lua_State* L, LifetimeHandle const& lifetime, T* object, std::size_t offset, uint64_t flag);
 		using Setter = PropertyOperationResult (lua_State* L, T* object, int index, std::size_t offset, uint64_t flag);
 		using Serializer = PropertyOperationResult (lua_State* L, T* object, std::size_t offset, uint64_t flag);
-		using Unserializer = PropertyOperationResult (lua_State* L, T* object, int index, std::size_t offset, uint64_t flag);
 		using Validator = bool (T* object, std::size_t offset, uint64_t flag);
 		using FallbackGetter = PropertyOperationResult (lua_State* L, LifetimeHandle const& lifetime, T* object, FixedString const& prop);
 		using FallbackSetter = PropertyOperationResult (lua_State* L, T* object, FixedString const& prop, int index);
@@ -221,7 +214,6 @@ public:
 		typename PropertyAccessors::Setter* setter, 
 		typename PropertyAccessors::Validator* validator,
 		typename PropertyAccessors::Serializer* serialize,
-		typename PropertyAccessors::Unserializer* unserialize,
 		std::size_t offset, uint64_t flag)
 	{
 		if (setter == nullptr) {
@@ -232,18 +224,10 @@ public:
 			validator = (typename PropertyAccessors::Validator*)&GenericValidateNoopProperty;
 		}
 
-		if (serialize == nullptr) {
-			serialize = (typename PropertyAccessors::Serializer*)&GenericNullSerializeProperty;
-		}
-
-		if (unserialize == nullptr) {
-			unserialize = (typename PropertyAccessors::Unserializer*)&GenericNullUnserializeProperty;
-		}
-
 		AddRawProperty(prop, 
 			(RawPropertyAccessors::Getter*)getter, (RawPropertyAccessors::Setter*)setter, 
 			(RawPropertyValidators::Validator*)validator, 
-			(RawPropertyAccessors::Serializer*)serialize, (RawPropertyAccessors::Unserializer*)unserialize,
+			(RawPropertyAccessors::Serializer*)serialize,
 			offset, flag);
 	}
 
@@ -259,6 +243,9 @@ public:
 		if constexpr (std::is_default_constructible_v<T>) {
 			Construct = &(DefaultConstruct<T>);
 			Destroy = &(DefaultDestroy<T>);
+			if constexpr (std::is_assignable_v<T, T>) {
+				Assign = &(DefaultAssign<T>);
+			}
 		}
 
 		Serialize = &(DefaultSerialize<T>);

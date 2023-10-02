@@ -121,9 +121,10 @@ template <class T>
 typename std::enable_if_t<std::is_enum_v<T>, bool> Validate(T* v, Overload<T>)
 {
 	if constexpr (std::is_base_of_v<BitmaskInfoBase<T>, EnumInfo<T>>) {
-		CHECK(((uint64_t)*v & ~EnumInfo<T>::Store->AllowedFlags) == 0);
+		// Disabled for now as it causes unmapped enum elements to be flagged all the time
+		// CHECK(((uint64_t)*v & ~EnumInfo<T>::Store->AllowedFlags) == 0);
 	} else if constexpr (std::is_base_of_v<EnumInfoBase<T>, EnumInfo<T>>) {
-		CHECK((int64_t)*v < EnumInfo<T>::Store->Labels.size());
+		// CHECK((int64_t)*v < EnumInfo<T>::Store->Labels.size());
 	} else {
 		assert(false && *T{});
 	}

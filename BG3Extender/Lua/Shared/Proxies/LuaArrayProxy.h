@@ -46,6 +46,7 @@ namespace bg3se::lua
 	{
 	public:
 		inline virtual ~ArrayProxyImplBase() {};
+		virtual unsigned GetContainerClass() = 0;
 		virtual char const* GetTypeName() const = 0;
 		virtual void* GetRaw() = 0;
 		virtual bool GetElement(lua_State* L, unsigned arrayIndex) = 0;
@@ -57,11 +58,13 @@ namespace bg3se::lua
 	};
 
 
-	template <class TContainer, class T>
+	template <class TContainer, class T, unsigned TContainerClassId>
 	class DynamicArrayProxyImpl : public ArrayProxyImplBase
 	{
 	public:
 		static_assert(!std::is_pointer_v<TContainer>, "DynamicArrayProxyImpl template parameter should not be a pointer type!");
+
+		static constexpr unsigned ContainerClassId = TContainerClassId;
 
 		DynamicArrayProxyImpl(LifetimeHandle const& lifetime, TContainer* obj)
 			: object_(obj), lifetime_(lifetime)
@@ -70,7 +73,12 @@ namespace bg3se::lua
 		~DynamicArrayProxyImpl() override
 		{}
 
-		T* Get() const
+		unsigned GetContainerClass() override
+		{
+			return ContainerClassId;
+		}
+
+		TContainer* Get() const
 		{
 			return object_;
 		}
@@ -150,11 +158,13 @@ namespace bg3se::lua
 	};
 
 
-	template <class TContainer, class T>
+	template <class TContainer, class T, unsigned TContainerClassId>
 	class ConstSizeArrayProxyImpl : public ArrayProxyImplBase
 	{
 	public:
 		static_assert(!std::is_pointer_v<TContainer>, "ConstSizeArrayProxyImpl template parameter should not be a pointer type!");
+
+		static constexpr unsigned ContainerClassId = TContainerClassId;
 
 		ConstSizeArrayProxyImpl(LifetimeHandle const& lifetime, TContainer* obj)
 			: object_(obj), lifetime_(lifetime)
@@ -163,7 +173,12 @@ namespace bg3se::lua
 		~ConstSizeArrayProxyImpl() override
 		{}
 
-		T* Get() const
+		unsigned GetContainerClass() override
+		{
+			return ContainerClassId;
+		}
+
+		TContainer* Get() const
 		{
 			return object_;
 		}
@@ -254,27 +269,27 @@ namespace bg3se::lua
 		}
 
 		template <class T>
-		inline static DynamicArrayProxyImpl<Array<T>, T>* Make(lua_State* L, Array<T>* object, LifetimeHandle const& lifetime)
+		inline static DynamicArrayProxyImpl<Array<T>, T, 2>* Make(lua_State* L, Array<T>* object, LifetimeHandle const& lifetime)
 		{
-			return MakeImpl<DynamicArrayProxyImpl<Array<T>, T>>(L, lifetime, object);
+			return MakeImpl<DynamicArrayProxyImpl<Array<T>, T, 2>>(L, lifetime, object);
 		}
 
 		template <class T>
-		inline static DynamicArrayProxyImpl<ObjectSet<T>, T>* Make(lua_State* L, ObjectSet<T>* object, LifetimeHandle const& lifetime)
+		inline static DynamicArrayProxyImpl<ObjectSet<T>, T, 3>* Make(lua_State* L, ObjectSet<T>* object, LifetimeHandle const& lifetime)
 		{
-			return MakeImpl<DynamicArrayProxyImpl<ObjectSet<T>, T>>(L, lifetime, object);
+			return MakeImpl<DynamicArrayProxyImpl<ObjectSet<T>, T, 3>>(L, lifetime, object);
 		}
 
 		template <class T, int Size>
-		inline static ConstSizeArrayProxyImpl<std::array<T, Size>, T>* Make(lua_State* L, std::array<T, Size>* object, LifetimeHandle const& lifetime)
+		inline static ConstSizeArrayProxyImpl<std::array<T, Size>, T, 1>* Make(lua_State* L, std::array<T, Size>* object, LifetimeHandle const& lifetime)
 		{
-			return MakeImpl<ConstSizeArrayProxyImpl<std::array<T, Size>, T>>(L, lifetime, object);
+			return MakeImpl<ConstSizeArrayProxyImpl<std::array<T, Size>, T, 1>>(L, lifetime, object);
 		}
 
 		template <class T>
-		inline static DynamicArrayProxyImpl<std::vector<T>, T>* Make(lua_State* L, std::vector<T>* object, LifetimeHandle const& lifetime)
+		inline static DynamicArrayProxyImpl<std::vector<T>, T, 4>* Make(lua_State* L, std::vector<T>* object, LifetimeHandle const& lifetime)
 		{
-			return MakeImpl<DynamicArrayProxyImpl<std::vector<T>, T>>(L, lifetime, object);
+			return MakeImpl<DynamicArrayProxyImpl<std::vector<T>, T, 4>>(L, lifetime, object);
 		}
 
 		inline ArrayProxyImplBase* GetImpl()
@@ -295,10 +310,34 @@ namespace bg3se::lua
 			}
 
 			if (strcmp(GetTypeInfo<T>().TypeName.GetString(), GetImpl()->GetTypeName()) == 0) {
-				return reinterpret_cast<T*>(GetImpl()->GetRaw(L));
+				return reinterpret_cast<T*>(GetImpl()->GetRaw());
 			} else {
 				return nullptr;
 			}
+		}
+
+		template <class TContainer, class TElement>
+		static TContainer* CheckedGet(lua_State* L, int index)
+		{
+			auto self = CheckUserData(L, index);
+
+			auto impl = self->GetImpl();
+			if (!self->lifetime_.IsAlive(L)) {
+				luaL_error(L, "Attempted to access dead Array<%s>", impl->GetTypeName());
+				return nullptr;
+			}
+
+			if (impl->GetContainerClass() != TContainer::ContainerClassId) {
+				luaL_error(L, "Attempted to access Array<%s> with different container type", impl->GetTypeName());
+				return nullptr;
+			}
+
+			if (strcmp(GetTypeInfo<TElement>().TypeName.GetString(), impl->GetTypeName()) == 0) {
+				luaL_error(L, "Attempted to access Array<%s>, got Array<%s>", GetTypeInfo<TElement>().TypeName.GetString(), impl->GetTypeName());
+				return nullptr;
+			}
+
+			return reinterpret_cast<TContainer*>(impl->GetRaw());
 		}
 
 	private:

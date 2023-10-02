@@ -84,6 +84,23 @@ namespace bg3se
 		int field_8;
 	};
 
+	struct AttributeFlagsComponent : public BaseComponent
+	{
+		static constexpr ExtComponentType ComponentType = ExtComponentType::AttributeFlags;
+		static constexpr auto EngineClass = "eoc::AttributeFlagsComponent";
+
+		uint32_t AttributeFlags;
+	};
+
+	struct BodyTypeComponent : public BaseComponent
+	{
+		static constexpr ExtComponentType ComponentType = ExtComponentType::BodyType;
+		static constexpr auto EngineClass = "eoc::BodyTypeComponent";
+
+		uint8_t BodyType;
+		uint8_t BodyType2;
+	};
+
 	struct ObjectSizeComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ObjectSize;
@@ -405,6 +422,8 @@ namespace bg3se
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::IsGlobal;
 		static constexpr auto EngineClass = "ls::IsGlobalComponent";
+
+		uint8_t Flag;
 	};
 
 	struct SavegameComponent : public BaseComponent
@@ -966,9 +985,9 @@ namespace bg3se
 		{
 			Guid Material;
 			Guid Color;
-			float field_20;
-			uint32_t field_24;
-			float field_28;
+			float ColorIntensity;
+			uint32_t MetallicTint;
+			float GlossyTint;
 		};
 
 		ScratchBuffer Buffer;
@@ -1243,11 +1262,11 @@ namespace bg3se
 
 		Array<Guid> Visuals;
 		Array<GameObjectVisualData::AppearanceElement> Elements;
-		Array<int32_t> field_20;
+		Array<int32_t> AdditionalChoices;
 		Guid SkinColor;
 		Guid EyeColor;
-		Guid field_50;
-		Guid field_60;
+		Guid SecondEyeColor;
+		Guid HairColor;
 	};
 }
 

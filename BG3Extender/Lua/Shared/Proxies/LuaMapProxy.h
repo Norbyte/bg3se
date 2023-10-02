@@ -8,6 +8,7 @@ namespace bg3se::lua
 	{
 	public:
 		inline virtual ~MapProxyImplBase() {};
+		virtual unsigned GetContainerClass() = 0;
 		virtual char const* GetKeyTypeName() const = 0;
 		virtual char const* GetValueTypeName() const = 0;
 		virtual void* GetRaw() = 0;
@@ -27,12 +28,24 @@ namespace bg3se::lua
 		static_assert(!std::is_pointer_v<TKey>, "MultiHashMapProxyImpl template parameter should not be a pointer type!");
 		static_assert(!std::is_pointer_v<TValue>, "MultiHashMapProxyImpl template parameter should not be a pointer type!");
 
+		static constexpr unsigned ContainerClassId = 1;
+
 		MultiHashMapProxyImpl(LifetimeHandle const& lifetime, MultiHashMap<TKey, TValue> * obj)
 			: object_(obj), lifetime_(lifetime)
 		{}
 		
 		~MultiHashMapProxyImpl() override
 		{}
+
+		unsigned GetContainerClass() override
+		{
+			return ContainerClassId;
+		}
+
+		MultiHashMap<TKey, TValue>* Get() const
+		{
+			return object_;
+		}
 
 		void* GetRaw() override
 		{
@@ -127,12 +140,14 @@ namespace bg3se::lua
 	};
 
 	
-	template <class TKey, class TValue, class TInternals>
+	template <class TKey, class TValue, class TInternals, unsigned TContainerClassId>
 	class RefMapProxyImpl : public MapProxyImplBase
 	{
 	public:
 		static_assert(!std::is_pointer_v<TKey>, "RefMapProxyImpl template parameter should not be a pointer type!");
 		static_assert(!std::is_pointer_v<TValue>, "RefMapProxyImpl template parameter should not be a pointer type!");
+
+		static constexpr unsigned ContainerClassId = TContainerClassId;
 
 		RefMapProxyImpl(LifetimeHandle const& lifetime, MapBase<TInternals> * obj)
 			: object_(obj), lifetime_(lifetime)
@@ -140,6 +155,16 @@ namespace bg3se::lua
 		
 		~RefMapProxyImpl() override
 		{}
+
+		unsigned GetContainerClass() override
+		{
+			return ContainerClassId;
+		}
+
+		MapBase<TInternals>* Get() const
+		{
+			return object_;
+		}
 
 		void* GetRaw() override
 		{
@@ -252,17 +277,17 @@ namespace bg3se::lua
 		}
 
 		template <class TKey, class TValue>
-		inline static RefMapProxyImpl<TKey, TValue, RefMapInternals<TKey, TValue>>* Make(lua_State* L, RefMap<TKey, TValue>* object, LifetimeHandle const& lifetime)
+		inline static RefMapProxyImpl<TKey, TValue, RefMapInternals<TKey, TValue>, 2>* Make(lua_State* L, RefMap<TKey, TValue>* object, LifetimeHandle const& lifetime)
 		{
-			auto self = NewWithExtraData(L, sizeof(RefMapProxyImpl<TKey, TValue, RefMapInternals<TKey, TValue>>), lifetime);
-			return new (self->GetImpl()) RefMapProxyImpl<TKey, TValue, RefMapInternals<TKey, TValue>>(lifetime, object);
+			auto self = NewWithExtraData(L, sizeof(RefMapProxyImpl<TKey, TValue, RefMapInternals<TKey, TValue>, 2>), lifetime);
+			return new (self->GetImpl()) RefMapProxyImpl<TKey, TValue, RefMapInternals<TKey, TValue>, 2>(lifetime, object);
 		}
 
 		template <class TKey, class TValue>
-		inline static RefMapProxyImpl<TKey, TValue, MapInternals<TKey, TValue>>* Make(lua_State* L, Map<TKey, TValue>* object, LifetimeHandle const& lifetime)
+		inline static RefMapProxyImpl<TKey, TValue, MapInternals<TKey, TValue>, 3>* Make(lua_State* L, Map<TKey, TValue>* object, LifetimeHandle const& lifetime)
 		{
-			auto self = NewWithExtraData(L, sizeof(RefMapProxyImpl<TKey, TValue, MapInternals<TKey, TValue>>), lifetime);
-			return new (self->GetImpl()) RefMapProxyImpl<TKey, TValue, MapInternals<TKey, TValue>>(lifetime, object);
+			auto self = NewWithExtraData(L, sizeof(RefMapProxyImpl<TKey, TValue, MapInternals<TKey, TValue>, 3>), lifetime);
+			return new (self->GetImpl()) RefMapProxyImpl<TKey, TValue, MapInternals<TKey, TValue>, 3>(lifetime, object);
 		}
 
 		inline MapProxyImplBase* GetImpl()
@@ -275,24 +300,41 @@ namespace bg3se::lua
 			return lifetime_.IsAlive(L);
 		}
 
-		template <class TKey, class TValue>
-		MultiHashMapProxyImpl<TKey, TValue>* GetMultiHashMap(lua_State* L)
+		template <class T>
+		static T* CheckedGetImpl(lua_State* L, int index)
 		{
-			if (!lifetime_.IsAlive(L)) {
+			auto self = CheckUserData(L, index);
+			auto impl = self->GetImpl();
+
+			if (!self->lifetime_.IsAlive(L)) {
+				luaL_error(L, "Attempted to reference dead Map<%s, %s>", impl->GetKeyTypeName(), impl->GetValueTypeName());
 				return nullptr;
 			}
-			
-			return dynamic_cast<MultiHashMapProxyImpl<TKey, TValue>*>(GetImpl());
+
+			if (impl->GetContainerClass() != T::ContainerClassId) {
+				luaL_error(L, "Attempted to reference Map<%s, %s> with incorrect internal container type", impl->GetKeyTypeName(), impl->GetValueTypeName());
+				return nullptr;
+			}
+
+			return static_cast<T*>(impl);
 		}
 
 		template <class TKey, class TValue>
-		RefMapProxyImpl<TKey, TValue, RefMapInternals<TKey, TValue>>* GetRefMap(lua_State* L)
+		static inline auto CheckedGetMultiHashMap(lua_State* L, int index)
 		{
-			if (!lifetime_.IsAlive(L)) {
-				return nullptr;
-			}
-			
-			return dynamic_cast<RefMapProxyImpl<TKey, TValue, RefMapInternals<TKey, TValue>>*>(GetImpl());
+			return CheckedGetImpl<MultiHashMapProxyImpl<TKey, TValue>>(L, index);
+		}
+
+		template <class TKey, class TValue>
+		static inline auto CheckedGetRefMap(lua_State* L, int index)
+		{
+			return CheckedGetImpl<RefMapProxyImpl<TKey, TValue, RefMapInternals<TKey, TValue>, 2>>(L, index);
+		}
+
+		template <class TKey, class TValue>
+		static inline auto CheckedGetMap(lua_State* L, int index)
+		{
+			return CheckedGetImpl<RefMapProxyImpl<TKey, TValue, MapInternals<TKey, TValue>, 3>>(L, index);
 		}
 
 	private:
