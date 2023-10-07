@@ -70,7 +70,7 @@ void OsirisWrappers::Initialize()
 
 	OriginalRuleActionCallProc = (RuleActionCallProc)FindRuleActionCallProc();
 	if (!OriginalRuleActionCallProc) {
-		Fail("Could not locate RuleAction::Call in osiris.dll");
+		ERR("Could not locate RuleAction::Call in osiris.dll");
 	}
 
 	FARPROC OsirisCtorProc = GetProcAddress(OsirisModule, "??0COsiris@@QEAA@XZ");
@@ -104,7 +104,9 @@ void OsirisWrappers::Initialize()
 	Compile.Wrap(OsirisModule, "?Compile@COsiris@@QEAA_NPEB_W0@Z");
 	Merge.Wrap(OsirisModule, "?Merge@COsiris@@QEAA_NPEB_W@Z");
 	Event.Wrap(OsirisModule, "?Event@COsiris@@QEAA?AW4ReturnCode@osi@@IPEAVCOsiArgumentDesc@@@Z");
-	RuleActionCall.Wrap(OriginalRuleActionCallProc);
+	if (OriginalRuleActionCallProc != nullptr) {
+		RuleActionCall.Wrap(OriginalRuleActionCallProc);
+	}
 
 	Call.Wrap(&CallWrapper);
 	Query.Wrap(&QueryWrapper);
