@@ -209,6 +209,37 @@ namespace bg3se
 		return Hash(std::underlying_type_t<T>(v));
 	}
 
+	inline constexpr uint64_t HashMix(uint64_t x, uint64_t y)
+	{
+		constexpr uint64_t K = 0x9ddfea08eb382d69ull;
+
+		uint64_t r1 = K * (x ^ y);
+		uint64_t r2 = r1 ^ (r1 >> 47);
+		uint64_t r3 = (y ^ r2) * K;
+		return K * (r3 ^ (r3 >> 47));
+	}
+
+	template <class T1, class T2>
+	inline uint64_t HashMulti(T1 const& a, T2 const& b)
+	{
+		return HashMix(Hash(a), Hash(b));
+	}
+
+	template <class T1, class T2, class T3>
+	inline uint64_t HashMulti(T1 const& a, T2 const& b, T3 const& c)
+	{
+		auto h1 = HashMix(Hash(a), Hash(b));
+		return HashMix(h1, Hash(c));
+	}
+
+	template <class T1, class T2, class T3, class T4>
+	inline uint64_t HashMulti(T1 const& a, T2 const& b, T3 const& c, T4 const& d)
+	{
+		auto h1 = HashMix(Hash(a), Hash(b));
+		auto h2 = HashMix(h1, Hash(c));
+		return HashMix(h2, Hash(d));
+	}
+
 	// Return type indicating that Lua return values are pushed to the stack by the function
 	struct UserReturn
 	{

@@ -33,8 +33,7 @@ struct SpellId
 template <>
 inline uint64_t MultiHashMapHash<SpellId>(SpellId const& v)
 {
-	// FIXME - this is not the actual algo
-	return Hash(v.OriginatorPrototype) ^ Hash(v.SourceType) ^ Hash(v.ProgressionSource) ^ Hash(v.Prototype);
+	return HashMulti(v.ProgressionSource, v.SourceType, v.Prototype, v.OriginatorPrototype);
 }
 
 
