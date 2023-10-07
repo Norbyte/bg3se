@@ -14,12 +14,12 @@ struct Item
 	FixedString Level;
 	ecs::EntityRef MyHandle;
 	Array<UserId> UpdatePeerIds;
-	void* Template;
-	void* OriginalTemplate;
+	ItemTemplate* Template;
+	ItemTemplate* OriginalTemplate;
 	void* ItemMachine;
 	void* PlanManager;
 	void* VariableManager;
-	void* StatusManager;
+	StatusMachine* StatusManager;
 	stats::Object* StatsObject;
 	uint64_t field_58;
 	uint64_t field_60;
