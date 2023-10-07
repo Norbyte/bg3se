@@ -41,7 +41,7 @@ namespace bg3se::esv
 		bool LifeTimeOverride;
 		bool IsControlledByConcentration;
 		Array<SurfaceCell> PrimSetSurfaceCell;
-		ComponentHandle SurfaceTransformActions[9];
+		EntityHandle SurfaceTransformActions[9];
 		int16_t Index;
 		int16_t SurfaceConcentrationTarget;
 		void* SurfaceManager;
@@ -77,7 +77,7 @@ namespace bg3se::esv
 		int StoryActionID;
 		ActionOriginator Originator;
 		resource::GuidResourceBankBase* ClassDescriptionMgr;
-		ComponentHandle Handle;
+		EntityHandle Handle;
 	};
 
 	struct CreateSurfaceActionBase : public SurfaceAction
@@ -87,7 +87,7 @@ namespace bg3se::esv
 		bool IsControlledByConcentration;
 		glm::vec3 Position;
 		SurfaceType SurfaceType;
-		ComponentHandle SurfaceHandlesByType[(unsigned)SurfaceType::Sentinel];
+		EntityHandle SurfaceHandlesByType[(unsigned)SurfaceType::Sentinel];
 		Array<SurfaceCell>* SurfaceChanges[(unsigned)SurfaceType::Sentinel];
 		Array<SurfaceCell>* SurfaceCellsByLayer[2];
 	};
@@ -237,8 +237,8 @@ namespace bg3se::esv
 		int LastSurfaceCellCount;
 		int field_4B4;
 		Array<SurfaceCell> SurfaceCells;
-		ObjectSet<ComponentHandle> Characters;
-		ObjectSet<ComponentHandle> Items;
+		ObjectSet<EntityHandle> Characters;
+		ObjectSet<EntityHandle> Items;
 		uint8_t field_500;
 	};
 

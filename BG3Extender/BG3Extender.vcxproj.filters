@@ -234,9 +234,6 @@
     <ClInclude Include="GameDefinitions\Osiris.h">
       <Filter>GameDefinitions</Filter>
     </ClInclude>
-    <ClInclude Include="GameDefinitions\Party.h">
-      <Filter>GameDefinitions</Filter>
-    </ClInclude>
     <ClInclude Include="GameDefinitions\RootTemplates.h">
       <Filter>GameDefinitions</Filter>
     </ClInclude>

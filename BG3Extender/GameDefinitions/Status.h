@@ -82,7 +82,7 @@ namespace bg3se
 			ObjectSet<FixedString> Spell;
 			ObjectSet<FixedString> Items;
 			bool LoseControl;
-			ObjectSet<ComponentHandle> ItemHandles;
+			ObjectSet<EntityHandle> ItemHandles;
 			float EffectTime;
 			FixedString BoostStackId;
 			glm::vec3 SourceDirection;
@@ -97,7 +97,7 @@ namespace bg3se
 			glm::vec3 MoveDirection_M;
 			int field_13C;
 			__int64 field_140;
-			ComponentHandle Item;
+			EntityHandle Item;
 			FixedString Level;
 			uint8_t Status;
 			bool Direction;
@@ -134,7 +134,7 @@ namespace bg3se
 		{
 			ecs::EntityRef Source;
 			__int64 field_128;
-			ComponentHandle field_130;
+			EntityHandle field_130;
 			Hit HitDescription;
 			Guid Combat;
 			uint8_t DyingFlags;
@@ -204,7 +204,7 @@ namespace bg3se
 			ecs::EntityRef Source;
 			ecs::EntityRef Target;
 			glm::vec3 TargetPosition;
-			ComponentHandle Partner;
+			EntityHandle Partner;
 			bool ShowOverhead;
 			SpellId Spell;
 			bool IgnoreHasSpell;
@@ -232,7 +232,7 @@ namespace bg3se
 
 		struct StatusUnlock : public Status
 		{
-			ComponentHandle Source;
+			EntityHandle Source;
 			FixedString field_128;
 			bool Success;
 			int Unlocked;
@@ -268,7 +268,7 @@ namespace bg3se
 			Status* GetStatus(FixedString const& statusId) const;
 
 			void* VMT;
-			ComponentHandle OwnerHandle;
+			EntityHandle OwnerHandle;
 			uint8_t field_18;
 			Array<Status*> NewlyAddedStatuses;
 			Array<Status*> Statuses;

@@ -274,7 +274,7 @@ Json::Value StringifyUserdata(lua_State * L, int index, unsigned depth, Stringif
 			int top2 = lua_gettop(L);
 			lua_pop(L, 1);  /* pop result */
 		} else if (type == LUA_TLIGHTUSERDATA && ctx.StringifyInternalTypes) {
-			auto handle = get<ComponentHandle>(L, -2);
+			auto handle = get<EntityHandle>(L, -2);
 			char key[100];
 			sprintf_s(key, "%016llx", handle.Handle);
 			arr[key] = val;

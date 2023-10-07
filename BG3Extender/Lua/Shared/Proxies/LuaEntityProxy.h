@@ -50,37 +50,4 @@ namespace bg3se::lua
 		EntityHandle handle_;
 	};
 
-
-	class ComponentHandleProxy : public Userdata<ComponentHandleProxy>, public Indexable, public Stringifiable, public Pushable
-	{
-	public:
-		static char const* const MetatableName;
-
-		ComponentHandleProxy(ComponentHandle const& handle, ecs::EntitySystemHelpersBase* entitySystem);
-
-		static int GetType(lua_State* L);
-		static int GetTypeName(lua_State* L);
-		static int GetSalt(lua_State* L);
-		static int GetIndex(lua_State* L);
-		static int GetComponent(lua_State* L);
-		static void PopulateMetatable(lua_State* L);
-
-		int Index(lua_State* L);
-		int ToString(lua_State* L);
-
-		inline ComponentHandle const& Handle() const
-		{
-			return handle_;
-		}
-
-		inline ecs::EntitySystemHelpersBase* EntitySystem() const
-		{
-			return entitySystem_;
-		}
-
-	private:
-		ComponentHandle handle_;
-		ecs::EntitySystemHelpersBase* entitySystem_;
-	};
-
 }

@@ -124,11 +124,11 @@ bool IsValidHandle(lua_State* L)
 	switch (lua_type(L, 1))
 	{
 	case LUA_TLIGHTUSERDATA:
-		return (bool)get<ComponentHandle>(L, 1);
+		return (bool)get<EntityHandle>(L, 1);
 
 	case LUA_TUSERDATA:
 	{
-		auto handle = ComponentHandleProxy::AsUserData(L, 1);
+		auto handle = EntityProxy::AsUserData(L, 1);
 		return handle != nullptr ? (bool)handle->Handle() : false;
 	}
 
@@ -141,7 +141,7 @@ bool IsValidHandle(lua_State* L)
 /// Converts a handle to an integer value for serialization purposes.
 /// </summary>
 /// <param name="handle">Handle to convert</param>
-int64_t HandleToInteger(ComponentHandle handle)
+int64_t HandleToInteger(EntityHandle handle)
 {
 	return (int64_t)handle.Handle;
 }
@@ -150,9 +150,9 @@ int64_t HandleToInteger(ComponentHandle handle)
 /// Converts an integer value to a handle for serialization purposes.
 /// </summary>
 /// <param name="i">Integer value to convert</param>
-ComponentHandle IntegerToHandle(int64_t i)
+EntityHandle IntegerToHandle(int64_t i)
 {
-	return ComponentHandle(i);
+	return EntityHandle(i);
 }
 
 STDString GetValueType(lua_State* L)

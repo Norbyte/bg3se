@@ -54,10 +54,18 @@ namespace bg3se::lua
 	void push(lua_State* L, ComponentHandle const& h)
 	{
 		if (h) {
-			auto helpers = State::FromLua(L)->GetEntitySystemHelpers();
-			ComponentHandleProxy::New(L, h, helpers);
+			lua_pushlightuserdata(L, (void*)h.Handle);
 		} else {
 			push(L, nullptr);
+		}
+	}
+
+	ComponentHandle do_get(lua_State* L, int index, Overload<ComponentHandle>)
+	{
+		if (lua_type(L, index) == LUA_TNIL) {
+			return ComponentHandle{ ComponentHandle::NullHandle };
+		} else {
+			return ComponentHandle{ (uint64_t)lua_touserdata(L, index) };
 		}
 	}
 
@@ -77,28 +85,6 @@ namespace bg3se::lua
 		} else {
 			push(L, nullptr);
 		}
-	}
-
-	ComponentHandle checked_get_handle(lua_State* L, int index, ExtComponentType type)
-	{
-		luaL_checktype(L, index, LUA_TUSERDATA);
-		auto handle = ComponentHandleProxy::CheckUserData(L, index);
-		auto reqTypeIndex = handle->EntitySystem()->GetHandleIndex(type);
-		if (!reqTypeIndex) {
-			luaL_error(L, "No handle mapping info available for type '%s'", 
-				EnumInfo<ExtComponentType>::Find(type).GetString());
-		}
-
-		auto typeIndex = handle->Handle().GetType();
-		if ((uint16_t)typeIndex != (uint16_t)*reqTypeIndex) {
-			auto typeName = handle->EntitySystem()->GetComponentName(ecs::HandleTypeIndex(typeIndex));
-			luaL_error(L, "Expected handle of type '%s', got '%s'", 
-				EnumInfo<ExtComponentType>::Find(type).GetString(),
-				typeName ? (*typeName)->c_str() : "(UNKNOWN)"
-			);
-		}
-
-		return  handle->Handle();
 	}
 
 	int TracebackHandler(lua_State * L)

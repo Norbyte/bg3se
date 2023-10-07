@@ -388,7 +388,7 @@ struct IsSummonComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::IsSummon;
 	static constexpr auto EngineClass = "eoc::summon::IsSummonComponent";
 
-	ComponentHandle Owner_M;
+	EntityHandle Owner_M;
 };
 
 struct SummonContainerComponent : public BaseComponent
@@ -397,8 +397,8 @@ struct SummonContainerComponent : public BaseComponent
 	static constexpr auto EngineClass = "eoc::summon::ContainerComponent";
 
 	MultiHashMap<FixedString, Array<EntityHandle>> field_18;
-	MultiHashSet<ComponentHandle> Characters;
-	MultiHashSet<ComponentHandle> Items;
+	MultiHashSet<EntityHandle> Characters;
+	MultiHashSet<EntityHandle> Items;
 };
 
 struct StealthComponent : public BaseComponent
@@ -939,7 +939,7 @@ struct ObjectInteractionComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::ObjectInteraction;
 	static constexpr auto EngineClass = "eoc::ObjectInteractionComponent";
 
-	Array<ComponentHandle> field_0;
+	Array<EntityHandle> Interactions;
 };
 
 struct CanDeflectProjectilesComponent : public BaseComponent

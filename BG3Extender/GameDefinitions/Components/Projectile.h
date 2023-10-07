@@ -52,11 +52,11 @@ namespace bg3se::esv
 		void* TEMP_PAD;
 		FixedString field_20;
 		NetId NetID;
-		ComponentHandle Caster;
-		ComponentHandle Source;
-		ComponentHandle TargetObject;
-		ComponentHandle HitObject;
-		ComponentHandle SourceWeapon;
+		EntityHandle Caster;
+		EntityHandle Source;
+		EntityHandle TargetObject;
+		EntityHandle HitObject;
+		EntityHandle SourceWeapon;
 		glm::vec3 SourcePosition;
 		glm::vec3 TargetPosition;
 		float PathRadius;
@@ -77,7 +77,7 @@ namespace bg3se::esv
 		glm::mat4 MovingObjectTransform;
 		FixedString SpawnEffect;
 		bool SpawnFXOverridesImpactFX;
-		ComponentHandle EffectHandle;
+		EntityHandle EffectHandle;
 		bool RequestDelete;
 		bool Launched;
 		bool IsOnHold;

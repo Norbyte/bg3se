@@ -11,8 +11,8 @@ struct IGameObject : public ProtectedGameObject<IGameObject>
 	virtual ~IGameObject() = 0;
 	virtual void HandleTextKeyEvent() = 0;
 	virtual uint64_t Ret5() = 0;
-	virtual void SetComponentHandle(ComponentHandle Handle) = 0;
-	virtual void GetComponentHandle(ComponentHandle& Handle) const = 0;
+	virtual void SetHandle(EntityHandle Handle) = 0;
+	virtual void GetHandle(EntityHandle& Handle) const = 0;
 	virtual void SetGuid(FixedString const& fs) = 0;
 	virtual FixedString* GetGuid() const = 0;
 	virtual void SetNetId(NetId netId) = 0;
@@ -22,7 +22,7 @@ struct IGameObject : public ProtectedGameObject<IGameObject>
 	virtual void SetGlobal(bool isGlobal) = 0;
 	virtual bool IsGlobal() const = 0;
 	virtual uint32_t GetComponentType() = 0;
-	virtual void* GetEntityObjectByHandle(ComponentHandle handle) = 0;
+	virtual void* GetEntityByHandle(EntityHandle handle) = 0;
 	virtual void* GetUnknownHandle() = 0;
 	virtual STDString* GetName() = 0;
 	virtual void SetFlags(uint64_t flag) = 0;
