@@ -54,9 +54,25 @@ namespace bg3se
 	};
 
 	template <class T>
+	struct ByVal<std::optional<T>> { static constexpr bool Value = ByVal<T>::Value; };
+
+	template <class T>
 	constexpr bool IsByVal = ByVal<T>::Value;
 
 #define BY_VAL(cls) template<> struct ByVal<cls> { static constexpr bool Value = true; }
+
+
+	template <class T>
+	struct IsOptional { 
+		static constexpr bool Value = false;
+	};
+
+	template <class T>
+	struct IsOptional<std::optional<T>> { 
+		static constexpr bool Value = true;
+		using ValueType = T;
+	};
+
 
 	// Prevents implicit casting between aliases of integral types (eg. NetId and UserId)
 	// Goal is to prevent accidental mixups between different types

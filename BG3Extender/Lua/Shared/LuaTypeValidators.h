@@ -418,6 +418,26 @@ bool Validate(MultiHashMap<TK, TV>* v, Overload<MultiHashMap<TK, TV>>)
 }
 
 template <class T>
+bool Validate(std::optional<T>* v, Overload<std::optional<T>>)
+{
+	if (v->has_value()) {
+		return Validate(&v->value(), Overload<T>{});
+	} else {
+		return true;
+	}
+}
+
+template <class T>
+bool ValidateRef(std::optional<T>* v, Overload<std::optional<T>>)
+{
+	if (v->has_value()) {
+		return ValidateRef(&v->value(), Overload<T>{});
+	} else {
+		return true;
+	}
+}
+
+template <class T>
 bool ValidateAny(T* v);
 
 template <class T>

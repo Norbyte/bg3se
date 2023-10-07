@@ -98,6 +98,16 @@ inline void SerializeObject(lua_State* L, T* obj)
 }
 
 template <class T>
+inline void SerializeObject(lua_State* L, std::optional<T>* obj)
+{
+	if (obj->has_value()) {
+		SerializeObject(L, &obj->value());
+	} else {
+		push(L, nullptr);
+	}
+}
+
+template <class T>
 inline void Serialize(lua_State* L, T* obj)
 {
 	if constexpr (std::is_pointer_v<T>) {

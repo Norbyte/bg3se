@@ -290,6 +290,17 @@ inline PropertyOperationResult Unserialize(lua_State* L, int index, T* obj)
 				// References to variants are not kept in userspace
 				return PropertyOperationResult::UnsupportedType;
 			}
+		} else if constexpr (IsOptional<T>::Value) {
+			if (lua_type(L, index) == LUA_TNIL) {
+				*obj = {};
+			} else {
+				*obj = typename IsOptional<T>::ValueType{};
+				if (isTable) {
+					UnserializeObjectFromTable(L, lua_absindex(L, index), &obj->value());
+				} else {
+					UnserializeObjectFromUserdata(L, lua_absindex(L, index), &obj->value());
+				}
+			}
 		} else {
 			if (isTable) {
 				UnserializeObjectFromTable(L, lua_absindex(L, index), obj);

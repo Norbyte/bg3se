@@ -258,6 +258,7 @@ struct StaticLuaPropertyMap
 {
 	static_assert(!std::is_pointer_v<T>, "StaticLuaPropertyMap type should not be a pointer type!");
 	static_assert(!IsByVal<T>, "StaticLuaPropertyMap type should not be a by-val type!");
+	static_assert(!IsOptional<T>::Value, "StaticLuaPropertyMap type should not be an optional<T> type!");
 	static_assert(!IsArrayLike<T>::Value && !IsSetLike<T>::Value && !IsMapLike<T>::Value && !IsVariantLike<T>::Value, "StaticLuaPropertyMap type should not be a container type!");
 
 	using ObjectType = T;
