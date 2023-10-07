@@ -5,13 +5,7 @@
 
 BEGIN_NS(combat)
 
-struct IsInCombatComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::IsInCombat;
-	static constexpr auto EngineClass = "eoc::combat::IsInCombatComponent";
-
-	uint8_t Dummy;
-};
+DEFINE_TAG_COMPONENT(eoc::combat, IsInCombatComponent, IsInCombat)
 
 struct ParticipantComponent : public BaseComponent
 {
@@ -97,14 +91,6 @@ END_NS()
 
 BEGIN_NS(esv::combat)
 
-struct CanStartCombatComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerCanStartCombat;
-	static constexpr auto EngineClass = "esv::combat::CanStartCombatComponent";
-
-	uint8_t Dummy;
-};
-
 struct CombatGroupMappingComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerCombatGroupMapping;
@@ -122,20 +108,8 @@ struct EnterRequestComponent : public BaseComponent
 	MultiHashSet<EntityHandle> EnterRequests;
 };
 
-struct FleeBlockedComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerFleeBlocked;
-	static constexpr auto EngineClass = "esv::combat::FleeBlockedComponent";
-
-	uint8_t Dummy;
-};
-
-struct ImmediateJoinComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerImmediateJoin;
-	static constexpr auto EngineClass = "esv::combat::ImmediateJoinComponent";
-
-	uint8_t Dummy;
-};
+DEFINE_TAG_COMPONENT(esv::combat, CanStartCombatComponent, ServerCanStartCombat)
+DEFINE_TAG_COMPONENT(esv::combat, ImmediateJoinComponent, ServerImmediateJoin)
+DEFINE_TAG_COMPONENT(esv::combat, FleeBlockedComponent, ServerFleeBlocked)
 
 END_NS()

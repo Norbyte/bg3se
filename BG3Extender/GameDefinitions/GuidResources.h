@@ -7,11 +7,12 @@ BEGIN_NS(resource)
 
 struct GuidResource : ProtectedGameObject<GuidResource>
 {
+	[[bg3::hidden]]
 	void* VMT;
 	Guid ResourceUUID;
 };
 
-struct GuidResourceBankBase : ProtectedGameObject<GuidResourceBankBase>
+struct [[bg3::hidden]] GuidResourceBankBase : ProtectedGameObject<GuidResourceBankBase>
 {
 	void* VMT;
 	FixedString LSXRegionName;
@@ -20,7 +21,7 @@ struct GuidResourceBankBase : ProtectedGameObject<GuidResourceBankBase>
 };
 
 template <class T>
-struct GuidResourceBank : public GuidResourceBankBase
+struct [[bg3::hidden]] GuidResourceBank : public GuidResourceBankBase
 {
 	MultiHashMap<Guid, T> Resources;
 	STDString Path;
@@ -28,13 +29,13 @@ struct GuidResourceBank : public GuidResourceBankBase
 };
 
 
-struct GuidResourceManager
+struct [[bg3::hidden]] GuidResourceManager
 {
 	MultiHashMap<int32_t, GuidResourceBankBase*> Definitions;
 };
 
 
-struct ActionResource : public GuidResource
+struct ActionResource : public resource::GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::ActionResource;
 
@@ -54,7 +55,7 @@ struct ActionResource : public GuidResource
 };
 
 
-struct ClassDescription : public GuidResource
+struct ClassDescription : public resource::GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::ClassDescription;
 
@@ -89,7 +90,7 @@ struct ClassDescription : public GuidResource
 };
 
 
-struct Tag : public GuidResource
+struct Tag : public resource::GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::Tag;
 
@@ -103,7 +104,7 @@ struct Tag : public GuidResource
 };
 
 
-struct Faction : public GuidResource
+struct Faction : public resource::GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::Faction;
 
@@ -112,7 +113,7 @@ struct Faction : public GuidResource
 };
 
 
-struct Race : public GuidResource
+struct Race : public resource::GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::Race;
 
@@ -141,7 +142,7 @@ struct Race : public GuidResource
 };
 
 
-struct Origin : public GuidResource
+struct Origin : public resource::GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::Origin;
 
@@ -163,7 +164,8 @@ struct Origin : public GuidResource
 	Guid GlobalTemplate;
 	Guid DefaultsTemplate;
 	STDString Passives;
-	Array<Guid> field_C8;
+	[[bg3::hidden]]
+	Array<void*> field_C8;
 	Array<Guid> AppearanceTags;
 	Array<Guid> ReallyTags;
 	uint32_t Flags;
@@ -179,7 +181,7 @@ struct Origin : public GuidResource
 };
 
 
-struct Background : public GuidResource
+struct Background : public resource::GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::Background;
 
@@ -193,7 +195,7 @@ struct Background : public GuidResource
 };
 
 
-struct God : public GuidResource
+struct God : public resource::GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::God;
 
@@ -204,7 +206,7 @@ struct God : public GuidResource
 };
 
 
-struct Progression : public GuidResource
+struct Progression : public resource::GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::Progression;
 
@@ -281,11 +283,14 @@ struct Progression : public GuidResource
 	Guid TableUUID;
 	STDString Name;
 	Array<Guid> SubClasses;
-	Array<Guid> field_50;
+	[[bg3::hidden]]
+	Array<void*> field_50;
 	STDString PassivesAdded;
-	Array<Guid> field_78;
+	[[bg3::hidden]]
+	Array<void*> field_78;
 	STDString PassivesRemoved;
-	Array<Guid> field_A0;
+	[[bg3::hidden]]
+	Array<void*> field_A0;
 	STDString Boosts;
 	uint8_t ProgressionType; // FIXME - map to enumeration
 	uint8_t Level;
@@ -303,7 +308,7 @@ struct Progression : public GuidResource
 };
 
 
-struct ProgressionDescription : public GuidResource
+struct ProgressionDescription : public resource::GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::ProgressionDescription;
 
@@ -320,7 +325,7 @@ struct ProgressionDescription : public GuidResource
 };
 
 
-struct Gossip : public GuidResource
+struct Gossip : public resource::GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::Gossip;
 
@@ -333,7 +338,7 @@ struct Gossip : public GuidResource
 };
 
 
-struct ActionResourceGroup : public GuidResource
+struct ActionResourceGroup : public resource::GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::ActionResourceGroup;
 
@@ -344,7 +349,7 @@ struct ActionResourceGroup : public GuidResource
 };
 
 
-struct Color : public GuidResource
+struct Color : public resource::GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::ColorDefinition;
 
@@ -354,7 +359,7 @@ struct Color : public GuidResource
 };
 
 
-struct EquipmentType : public GuidResource
+struct EquipmentType : public resource::GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::EquipmentType;
 
@@ -376,7 +381,7 @@ struct EquipmentType : public GuidResource
 };
 
 
-struct Flag : public GuidResource
+struct Flag : public resource::GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::Flag;
 
@@ -386,19 +391,23 @@ struct Flag : public GuidResource
 };
 
 
-struct Feat : public GuidResource
+struct Feat : public resource::GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::Feat;
 
 	FixedString Name;
 	STDString Requirements;
-	Array<Guid> field_40;
+	[[bg3::hidden]]
+	Array<void*> field_40;
 	STDString PassivesAdded;
-	Array<Guid> field_78;
+	[[bg3::hidden]]
+	Array<void*> field_78;
 	STDString PassivesRemoved;
-	Array<Guid> field_B0;
+	[[bg3::hidden]]
+	Array<void*> field_B0;
 	STDString Boosts;
-	Array<Guid> field_E8;
+	[[bg3::hidden]]
+	Array<void*> field_E8;
 	bool CanBeTakenMultipleTimes;
 	Array<Progression::Ability> SelectAbilities;
 	Array<Progression::AbilityBonus> SelectAbilityBonus;
@@ -411,7 +420,7 @@ struct Feat : public GuidResource
 };
 
 
-struct FeatDescription : public GuidResource
+struct FeatDescription : public resource::GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::FeatDescription;
 
@@ -427,7 +436,7 @@ struct FeatDescription : public GuidResource
 };
 
 
-struct PassiveList : public GuidResource
+struct PassiveList : public resource::GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::PassiveList;
 
@@ -435,7 +444,7 @@ struct PassiveList : public GuidResource
 };
 
 
-struct SkillList : public GuidResource
+struct SkillList : public resource::GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::SkillList;
 
@@ -443,7 +452,7 @@ struct SkillList : public GuidResource
 };
 
 
-struct SpellList : public GuidResource
+struct SpellList : public resource::GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::SpellList;
 
@@ -451,7 +460,7 @@ struct SpellList : public GuidResource
 };
 
 
-struct CharacterCreationAccessorySet : public GuidResource
+struct CharacterCreationAccessorySet : public resource::GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::CharacterCreationAccessorySet;
 
@@ -464,7 +473,7 @@ struct CharacterCreationAccessorySet : public GuidResource
 };
 
 
-struct CharacterCreationAppearanceMaterial : public GuidResource
+struct CharacterCreationAppearanceMaterial : public resource::GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::CharacterCreationAppearanceMaterial;
 
@@ -483,7 +492,7 @@ struct CharacterCreationAppearanceMaterial : public GuidResource
 };
 
 
-struct CharacterCreationAppearanceVisual : public GuidResource
+struct CharacterCreationAppearanceVisual : public resource::GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::CharacterCreationAppearanceVisual;
 
@@ -503,7 +512,7 @@ struct CharacterCreationAppearanceVisual : public GuidResource
 };
 
 
-struct CharacterCreationEquipmentIcons : public GuidResource
+struct CharacterCreationEquipmentIcons : public resource::GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::CharacterCreationEquipmentIcons;
 
@@ -516,7 +525,7 @@ struct CharacterCreationEquipmentIcons : public GuidResource
 };
 
 
-struct CharacterCreationIconSettings : public GuidResource
+struct CharacterCreationIconSettings : public resource::GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::CharacterCreationIconSettings;
 
@@ -526,7 +535,7 @@ struct CharacterCreationIconSettings : public GuidResource
 };
 
 
-struct CharacterCreationColor : public GuidResource
+struct CharacterCreationColor : public resource::GuidResource
 {
 	FixedString Name;
 	TranslatedString DisplayName;
@@ -536,25 +545,25 @@ struct CharacterCreationColor : public GuidResource
 };
 
 
-struct CharacterCreationEyeColor : public CharacterCreationColor
+struct CharacterCreationEyeColor : public resource::CharacterCreationColor
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::CharacterCreationEyeColor;
 };
 
 
-struct CharacterCreationHairColor : public CharacterCreationColor
+struct CharacterCreationHairColor : public resource::CharacterCreationColor
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::CharacterCreationHairColor;
 };
 
 
-struct CharacterCreationSkinColor : public CharacterCreationColor
+struct CharacterCreationSkinColor : public resource::CharacterCreationColor
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::CharacterCreationSkinColor;
 };
 
 
-struct CharacterCreationMaterialOverride : public GuidResource
+struct CharacterCreationMaterialOverride : public resource::GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::CharacterCreationMaterialOverride;
 
@@ -566,7 +575,7 @@ struct CharacterCreationMaterialOverride : public GuidResource
 };
 
 
-struct CharacterCreationPassiveAppearance : public GuidResource
+struct CharacterCreationPassiveAppearance : public resource::GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::CharacterCreationPassiveAppearance;
 
@@ -578,7 +587,7 @@ struct CharacterCreationPassiveAppearance : public GuidResource
 };
 
 
-struct CharacterCreationPreset : public GuidResource
+struct CharacterCreationPreset : public resource::GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::CharacterCreationPreset;
 
@@ -594,7 +603,7 @@ struct CharacterCreationPreset : public GuidResource
 };
 
 
-struct CharacterCreationSharedVisual : public GuidResource
+struct CharacterCreationSharedVisual : public resource::GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::CharacterCreationSharedVisual;
 

@@ -142,6 +142,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <ClInclude Include="Extender\Shared\tinyxml2.h" />
     <ClInclude Include="Extender\Shared\Utils.h" />
     <ClInclude Include="GameDefinitions\Base\Base.h" />
+    <ClInclude Include="GameDefinitions\Base\ExposedTypes.h" />
     <ClInclude Include="GameDefinitions\Base\Serialization.h" />
     <ClInclude Include="GameDefinitions\Base\BaseTypeInformation.h" />
     <ClInclude Include="GameDefinitions\Base\ForwardDeclarations.h" />
@@ -151,10 +152,13 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\Components\Boosts.h" />
     <ClInclude Include="GameDefinitions\Components\Combat.h" />
     <ClInclude Include="GameDefinitions\Components\Components.h" />
+    <ClInclude Include="GameDefinitions\Components\Inventory.h" />
     <ClInclude Include="GameDefinitions\Components\Passives.h" />
     <ClInclude Include="GameDefinitions\Components\Projectile.h" />
+    <ClInclude Include="GameDefinitions\Components\Runtime.h" />
     <ClInclude Include="GameDefinitions\Components\Spell.h" />
-    <ClInclude Include="GameDefinitions\Components\Stats.h" />
+    <ClInclude Include="GameDefinitions\Components\Data.h" />
+    <ClInclude Include="GameDefinitions\Components\Visual.h" />
     <ClInclude Include="GameDefinitions\EntityManager.h" />
     <ClInclude Include="GameDefinitions\EntitySystemHelpers.h" />
     <ClInclude Include="GameDefinitions\GameAction.h" />
@@ -174,6 +178,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\Resources.h" />
     <ClInclude Include="GameDefinitions\RootTemplates.h" />
     <ClInclude Include="GameDefinitions\Stats\Common.h" />
+    <ClInclude Include="GameDefinitions\Stats\Expression.h" />
     <ClInclude Include="GameDefinitions\Stats\Functors.h" />
     <ClInclude Include="GameDefinitions\Stats\Stats.h" />
     <ClInclude Include="GameDefinitions\Status.h" />
@@ -328,15 +333,9 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <None Include="GameDefinitions\Enumerations.inl" />
     <None Include="GameDefinitions\GlobalFixedStrings.inl" />
     <None Include="GameDefinitions\PropertyMaps\AllPropertyMaps.inl" />
-    <None Include="GameDefinitions\PropertyMaps\BoostComponents.inl" />
     <None Include="GameDefinitions\PropertyMaps\CommonTypes.inl" />
-    <None Include="GameDefinitions\PropertyMaps\Components.inl" />
     <None Include="GameDefinitions\PropertyMaps\Events.inl" />
     <None Include="GameDefinitions\PropertyMaps\FunctorExecParams.inl" />
-    <None Include="GameDefinitions\PropertyMaps\Hit.inl" />
-    <None Include="GameDefinitions\PropertyMaps\Mod.inl" />
-    <None Include="GameDefinitions\PropertyMaps\ResourceDefinitions.inl" />
-    <None Include="GameDefinitions\PropertyMaps\RootTemplates.inl" />
     <None Include="GameDefinitions\PropertyMaps\ServerObjects.inl" />
     <None Include="GameDefinitions\PropertyMaps\Functors.inl" />
     <None Include="GameDefinitions\PropertyMaps\Statuses.inl" />

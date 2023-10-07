@@ -192,7 +192,7 @@
     <ClInclude Include="GameDefinitions\Components\Projectile.h">
       <Filter>GameDefinitions\Components</Filter>
     </ClInclude>
-    <ClInclude Include="GameDefinitions\Components\Stats.h">
+    <ClInclude Include="GameDefinitions\Components\Data.h">
       <Filter>GameDefinitions\Components</Filter>
     </ClInclude>
     <ClInclude Include="GameDefinitions\Passives.h">
@@ -435,6 +435,11 @@
     <ClInclude Include="Lua\Helpers\LuaUnserialize.h" />
     <ClInclude Include="GameDefinitions\Components\Spell.h" />
     <ClInclude Include="GameDefinitions\Components\All.h" />
+    <ClInclude Include="GameDefinitions\Components\Inventory.h" />
+    <ClInclude Include="GameDefinitions\Components\Visual.h" />
+    <ClInclude Include="GameDefinitions\Components\Runtime.h" />
+    <ClInclude Include="GameDefinitions\Stats\Expression.h" />
+    <ClInclude Include="GameDefinitions\Base\ExposedTypes.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -492,19 +497,10 @@
     <None Include="GameDefinitions\PropertyMaps\AllPropertyMaps.inl">
       <Filter>GameDefinitions\PropertyMaps</Filter>
     </None>
-    <None Include="GameDefinitions\PropertyMaps\ResourceDefinitions.inl">
-      <Filter>GameDefinitions\PropertyMaps</Filter>
-    </None>
-    <None Include="GameDefinitions\PropertyMaps\RootTemplates.inl">
-      <Filter>GameDefinitions\PropertyMaps</Filter>
-    </None>
     <None Include="Lua\LevelIteratorFunctions.inl">
       <Filter>Lua\Shared</Filter>
     </None>
     <None Include="GameDefinitions\PropertyMaps\ServerObjects.inl">
-      <Filter>GameDefinitions\PropertyMaps</Filter>
-    </None>
-    <None Include="GameDefinitions\PropertyMaps\Hit.inl">
       <Filter>GameDefinitions\PropertyMaps</Filter>
     </None>
     <None Include="GameDefinitions\PropertyMaps\FunctorExecParams.inl">
@@ -532,12 +528,6 @@
       <Filter>GameDefinitions\PropertyMaps</Filter>
     </None>
     <None Include="GameDefinitions\PropertyMaps\Statuses.inl">
-      <Filter>GameDefinitions\PropertyMaps</Filter>
-    </None>
-    <None Include="GameDefinitions\PropertyMaps\Components.inl">
-      <Filter>GameDefinitions\PropertyMaps</Filter>
-    </None>
-    <None Include="GameDefinitions\PropertyMaps\BoostComponents.inl">
       <Filter>GameDefinitions\PropertyMaps</Filter>
     </None>
     <None Include="GameDefinitions\Components\AllComponentTypes.inl">
@@ -610,7 +600,6 @@
     <None Include="Lua\Shared\LuaMethodCallHelpers.h" />
     <None Include="Lua\Shared\LuaReference.h" />
     <None Include="Lua\Shared\Proxies\LuaCppClass.inl" />
-    <None Include="GameDefinitions\PropertyMaps\Mod.inl" />
     <None Include="Lua\Shared\LuaReference.inl" />
     <None Include="Lua\Libs\StaticData.inl">
       <Filter>Lua\Libs</Filter>

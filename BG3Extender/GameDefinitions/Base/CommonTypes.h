@@ -35,11 +35,17 @@ struct Version
 	uint64_t Ver;
 };
 
-struct GameTime
+struct GameRandom
 {
-	double Time;
-	float DeltaTime;
-	int32_t Ticks;
+	int* FixedRollList;
+	int CurFixedRollIndex;
+	int Steps;
+	int RerolledLCG_X;
+	int BucketCount;
+	int LCG_X;
+	int MinRoll;
+	int StepSize;
+	uint8_t field_24;
 };
 
 struct CriticalSection : public CRITICAL_SECTION

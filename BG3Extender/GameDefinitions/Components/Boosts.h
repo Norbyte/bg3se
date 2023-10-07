@@ -24,21 +24,6 @@ struct BoostsContainerComponent : public BaseComponent
 	MultiHashMap<BoostType, Array<EntityHandle>> Boosts;
 };
 
-struct BoostParameters
-{
-	FixedString Boost;
-	STDString Params;
-	STDString Params2;
-};
-
-struct BoostCause
-{
-	BoostCauseType Type;
-	FixedString Cause;
-	EntityHandle Entity;
-	uint64_t field_10;
-};
-
 struct BoostInfoComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::BoostInfo;
@@ -53,16 +38,6 @@ struct BoostInfoComponent : public BaseComponent
 	BoostParameters Params;
 	Guid field_80;
 };
-
-#define DEFN_BOOST(name, boostType, defn) \
-	struct name##BoostComponent_Base : public BaseComponent \
-	defn; \
-	struct name##BoostComponent : public name##BoostComponent_Base \
-	{ \
-		static constexpr ExtComponentType ComponentType = ExtComponentType::name##Boost; \
-		static constexpr auto BoostType = BoostType::boostType; \
-		static constexpr auto EngineClass = "eoc::" #name "BoostComponent"; \
-	};
 
 DEFN_BOOST(ArmorClass, AC, {
 	int32_t AC;
@@ -151,12 +126,14 @@ DEFN_BOOST(Proficiency, Proficiency, {
 	ProficiencyGroupFlags Flags;
 })
 
-// FIXME - this is Variant<int32_t, StatsExpressionParam>
-DEFN_BOOST(IncreaseMaxHP, IncreaseMaxHP, {
-	StatsExpressionParam Amount;
-	uint8_t AmountType;
+struct IncreaseMaxHPComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::IncreaseMaxHPBoost;
+	static constexpr auto EngineClass = "eoc::IncreaseMaxHPBoostComponent";
+
+	std::variant<int32_t, StatsExpressionParam> Amount;
 	int32_t field_30;
-})
+};
 
 DEFN_BOOST(ActionResourceBlock, ActionResourceBlock, {
 	Guid ResourceUUID;
@@ -322,7 +299,7 @@ DEFN_BOOST(WeaponAttackTypeOverride, WeaponAttackTypeOverride, {
 })
 
 DEFN_BOOST(WeaponDamageDieOverride, WeaponDamageDieOverride, {
-	RollDefinition Roll;
+	DiceValues Roll;
 })
 
 DEFN_BOOST(CarryCapacityMultiplier, CarryCapacityMultiplier, {
@@ -358,8 +335,8 @@ DEFN_BOOST(MovementSpeedLimit, MovementSpeedLimit, {
 })
 
 DEFN_BOOST(UnlockSpellVariant, UnlockSpellVariant, {
-	STDString field_0;
-	Array<void*> field_8;
+	STDString Spell;
+	Array<spell::Modification::Variant> Modifications;
 })
 
 DEFN_BOOST(DetectCrimesBlock, DetectDisturbancesBlock, {
@@ -420,7 +397,7 @@ DEFN_BOOST(ExpertiseBonus, ExpertiseBonus, {
 })
 
 DEFN_BOOST(EntityThrowDamage, EntityThrowDamage, {
-	RollDefinition Roll;
+	DiceValues Roll;
 	uint8_t field_C;
 })
 

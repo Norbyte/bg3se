@@ -1,12 +1,3 @@
-BEGIN_CLS(ActionOriginator)
-P(ActionGuid)
-P(PassiveId)
-P(StatusId)
-P(InterruptId)
-P(CanApplyConcentration)
-END_CLS()
-
-
 BEGIN_CLS(esv::PlayerData)
 P(PlayerHandle)
 P(QuestSelected)

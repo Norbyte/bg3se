@@ -17,7 +17,6 @@ inline void MakeObjectRef(lua_State* L, T* value, LifetimeHandle const& lifetime
 	} else if constexpr (IsArrayLike<T>::Value) {
 		ArrayProxy::Make<typename IsArrayLike<T>::TElement>(L, value, lifetime);
 	} else if constexpr (IsMapLike<T>::Value) {
-		static_assert(IsByVal<typename IsMapLike<T>::TKey>, "Map key is a type that we cannot serialize by-value?");
 		MapProxy::Make(L, value, lifetime);
 	} else if constexpr (IsSetLike<T>::Value) {
 		SetProxy::Make(L, value, lifetime);

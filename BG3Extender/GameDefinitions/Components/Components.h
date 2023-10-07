@@ -2,7 +2,6 @@
 
 #include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/EntitySystem.h>
-#include <GameDefinitions/Components/Boosts.h>
 
 BEGIN_SE()
 
@@ -119,16 +118,30 @@ struct RelationComponent : public BaseComponent
 	{
 		Guid field_0;
 		EntityHandle field_10;
+
+		inline bool operator == (GuidAndHandle const& o) const
+		{
+			return field_0 == o.field_0
+				&& field_10 == o.field_10;
+		}
 	};
 
 	MultiHashMap<uint32_t, uint8_t> field_0;
 	MultiHashMap<uint32_t, uint8_t> field_40;
 	MultiHashMap<uint32_t, uint8_t> field_80;
+	// FIXME - disabled until set is fixed
+	[[bg3::hidden]]
 	MultiHashMap<GuidAndHandle, uint8_t> field_C0;
 	MultiHashMap<uint32_t, uint8_t> field_100;
 	MultiHashSet<uint32_t> field_140;
 	MultiHashSet<uint32_t> field_170;
 };
+
+template <>
+inline uint64_t MultiHashMapHash<RelationComponent::GuidAndHandle>(RelationComponent::GuidAndHandle const& v)
+{
+	return HashMulti(v.field_0, v.field_10);
+}
 
 struct CanInteractComponent : public BaseComponent
 {
@@ -199,37 +212,11 @@ struct MaterialParameterOverrideComponent : public BaseComponent
 	Array<Param> field_10;
 };
 
-struct OffStageComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::OffStage;
-	static constexpr auto EngineClass = "eoc::OffStageComponent";
-
-	uint8_t Dummy;
-};
-
-struct PickingStateComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::PickingState;
-	static constexpr auto EngineClass = "eoc::PickingStateComponent";
-
-	uint8_t Dummy;
-};
-
-struct PlayerComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Player;
-	static constexpr auto EngineClass = "eoc::PlayerComponent";
-
-	uint8_t Dummy;
-};
-
-struct SimpleCharacterComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::SimpleCharacter;
-	static constexpr auto EngineClass = "eoc::SimpleCharacterComponent";
-
-	uint8_t Dummy;
-};
+DEFINE_TAG_COMPONENT(eoc, OffStageComponent, OffStage)
+DEFINE_TAG_COMPONENT(eoc, PickingStateComponent, PickingState)
+DEFINE_TAG_COMPONENT(eoc, PlayerComponent, Player)
+DEFINE_TAG_COMPONENT(eoc, SimpleCharacterComponent, SimpleCharacter)
+DEFINE_TAG_COMPONENT(eoc, WeaponSetComponent, WeaponSet)
 
 struct SpeakerComponent : public BaseComponent
 {
@@ -237,14 +224,6 @@ struct SpeakerComponent : public BaseComponent
 	static constexpr auto EngineClass = "eoc::SpeakerComponent";
 
 	Array<FixedString> field_0;
-};
-
-struct WeaponSetComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::WeaponSet;
-	static constexpr auto EngineClass = "eoc::WeaponSetComponent";
-
-	uint8_t Dummy;
 };
 
 END_SE()

@@ -2,143 +2,9 @@
 
 #include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/EntitySystem.h>
+#include <GameDefinitions/Stats/Expression.h>
 
 BEGIN_SE()
-
-struct ActionOriginator
-{
-	Guid ActionGuid;
-	FixedString PassiveId;
-	FixedString StatusId;
-	FixedString InterruptId;
-	bool CanApplyConcentration;
-};
-
-struct RollDefinition
-{
-	uint8_t field_0;
-	uint8_t field_1;
-	int32_t field_4;
-	uint8_t field_8;
-};
-
-struct ResourceRollDefinition
-{
-	Guid field_0;
-	uint8_t field_10;
-};
-
-struct StatsExpressionParam
-{
-	struct SubType1
-	{
-		inline ~SubType1()
-		{
-			if (Type == StatsExpressionParamType2::STDString) {
-				String.~basic_string();
-			}
-		}
-
-		inline SubType1()
-			: Type(StatsExpressionParamType2::StatsExpressionVariableData), StatsExpressionVariableData(0)
-		{}
-
-		inline SubType1(SubType1 const& o)
-		{
-			Type = o.Type;
-			if (Type == StatsExpressionParamType2::STDString) {
-				String = o.String;
-			} else {
-				StatsExpressionVariableData = o.StatsExpressionVariableData;
-			}
-		}
-
-		inline SubType1& operator = (SubType1 const& o)
-		{
-			Type = o.Type;
-			if (Type == StatsExpressionParamType2::STDString) {
-				String = o.String;
-			} else {
-				StatsExpressionVariableData = o.StatsExpressionVariableData;
-			}
-
-			return *this;
-		}
-
-		union {
-			uint8_t StatsExpressionVariableData;
-			AbilityId Ability;
-			SkillId Skill;
-			uint8_t StatusGroup;
-			STDString String;
-		};
-		StatsExpressionParamType2 Type;
-	};
-		
-	struct Param
-	{
-		inline ~Param()
-		{
-			if (Type == StatsExpressionParamType::Type1) {
-				Type1.~SubType1();
-			}
-		}
-
-		inline Param()
-			: Type(StatsExpressionParamType::StatsExpressionType), StatsExpressionType(0)
-		{}
-
-		inline Param(Param const& o)
-		{
-			Type = o.Type;
-			if (Type == StatsExpressionParamType::Type1) {
-				Type1 = o.Type1;
-			} else {
-				ResourceRoll = o.ResourceRoll;
-			}
-		}
-
-		inline Param& operator = (Param const& o)
-		{
-			Type = o.Type;
-			if (Type == StatsExpressionParamType::Type1) {
-				Type1 = o.Type1;
-			} else {
-				ResourceRoll = o.ResourceRoll;
-			}
-
-			return *this;
-		}
-
-		union {
-			uint8_t StatsExpressionType;
-			SubType1 Type1;
-			uint8_t StatsExpressionVariableDataType;
-			uint8_t StatsExpressionVariableDataModifier;
-			RollDefinition Roll;
-			ResourceRollDefinition ResourceRoll;
-			uint8_t StatsContextType;
-			int32_t Int;
-			bool Bool;
-		};
-		StatsExpressionParamType Type;
-	};
-
-	Array<Param> ExpressionParams;
-	STDString Code;
-};
-
-struct StatsExpressionParamEx : public StatsExpressionParam
-{
-	int FastLock;
-};
-
-struct LuaExpressionManager : public ProtectedGameObject<LuaExpressionManager>
-{
-	void* VMT;
-	RefMap<Guid, StatsExpressionParamEx*> Expressions;
-	char field_18;
-};
 
 struct DamageSums
 {
@@ -149,26 +15,8 @@ struct DamageSums
 	int8_t field_A;
 };
 
-
-struct DamagePair
-{
-	int32_t Amount;
-	DamageType DamageType;
-};
-
-struct DiceValues
-{
-	DiceSizeId DiceValue;
-	uint8_t AmountOfDices;
-	int DiceAdditionalValue;
-	uint8_t field_8;
-};
-
 struct StatsRollRoll
 {
-	// ??? not sure
-	// __int64 field_0;
-	// int field_8;
 	DiceValues Roll;
 	stats::RollType RollType;
 	bool Advantage;
@@ -228,6 +76,7 @@ struct StatsRollType0
 
 struct StatsRollType1
 {
+	[[bg3::hidden]]
 	StatsExpressionParamEx* CachedStatExpression;
 	STDString StatExpression;
 	Array<int32_t> IntParams;
@@ -241,6 +90,7 @@ struct StatsRollType1
 struct ConditionRoll
 {
 	uint8_t DataType;
+	//+ P_BITMASK(RollType)
 	ConditionRollType RollType;
 	std::variant<StatsRollType0, StatsRollType1> Roll;
 	int Difficulty;

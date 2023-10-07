@@ -6,11 +6,7 @@
 #include <Lua/LuaSerializers.h>
 #include <Extender/ScriptExtender.h>
 #include <Extender/Shared/ScriptHelpers.h>
-#include <GameDefinitions/Components/Components.h>
-#include <GameDefinitions/Components/Combat.h>
-#include <GameDefinitions/Components/Passives.h>
-#include <GameDefinitions/Components/Stats.h>
-#include <GameDefinitions/Components/Boosts.h>
+#include <GameDefinitions/Components/All.h>
 #include <GameDefinitions/GuidResources.h>
 #include <GameDefinitions/Resources.h>
 

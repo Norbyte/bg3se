@@ -246,6 +246,95 @@ END_NS()
 
 BEGIN_NS(spell)
 
+struct Modification
+{
+	struct ModifyAreaRadius
+	{
+		uint64_t Value;
+	};
+
+	struct ModifyMaximumTargets
+	{
+		uint64_t Value;
+	};
+
+	struct ModifyNumberOfTargets
+	{
+		glm::vec3 Value;
+	};
+
+	struct ModifySavingThrowDisadvantage
+	{
+		uint8_t Value;
+	};
+
+	struct ModifySpellFlags
+	{
+		uint8_t Value;
+		uint8_t field_1;
+	};
+
+	struct ModifySpellRoll
+	{
+		STDString field_0;
+		STDString field_18;
+		int field_30;
+	};
+
+	struct ModifyStatusDuration
+	{
+		uint64_t Value;
+	};
+
+	struct ModifySummonDuration
+	{
+		uint64_t Value;
+	};
+
+	struct ModifySurfaceDuration
+	{
+		uint64_t Value;
+	};
+
+	struct ModifyTargetRadius
+	{
+		uint64_t Value;
+	};
+
+	struct ModifyUseCosts
+	{
+		uint8_t Type;
+		Guid field_10;
+		STDString field_18;
+		int field_30;
+		Guid field_38;
+	};
+
+	struct ModifyVisuals
+	{
+		uint8_t Value;
+	};
+
+	struct ModifyIconGlow
+	{
+		uint8_t Value;
+	};
+
+	struct ModifyTooltipDescription
+	{
+		uint8_t Value;
+	};
+
+	using Variant = std::variant<ModifyAreaRadius, ModifyMaximumTargets, ModifyNumberOfTargets, ModifySavingThrowDisadvantage, ModifySpellFlags, ModifySpellRoll, ModifyStatusDuration, ModifySummonDuration, ModifySurfaceDuration, ModifyTargetRadius, ModifyUseCosts, ModifyVisuals, ModifyIconGlow, ModifyTooltipDescription>;
+
+	uint8_t field_0;
+	FixedString field_4;
+	Variant Modification;
+	// FIXME - Needs Set serialization fix to work
+	[[bg3::hidden]]
+	MultiHashSet<SpellId> Spells;
+};
+
 struct SpellContainerComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::SpellContainer;
@@ -315,93 +404,6 @@ struct SpellModificationContainerComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::SpellModificationContainer;
 	static constexpr auto EngineClass = "eoc::spell::ModificationContainerComponent";
 
-	struct Variant0
-	{
-		uint64_t Value;
-	};
-
-	struct Variant1
-	{
-		uint64_t Value;
-	};
-
-	struct Variant2
-	{
-		glm::vec3 Value;
-	};
-
-	struct Variant3
-	{
-		uint8_t Value;
-	};
-
-	struct Variant4
-	{
-		uint8_t Value;
-		uint8_t field_1;
-	};
-
-	struct Variant5
-	{
-		STDString field_0;
-		STDString field_18;
-		int field_30;
-	};
-
-	struct Variant6
-	{
-		uint64_t Value;
-	};
-
-	struct Variant7
-	{
-		uint64_t Value;
-	};
-
-	struct Variant8
-	{
-		uint64_t Value;
-	};
-
-	struct Variant9
-	{
-		uint64_t Value;
-	};
-
-	struct Variant10
-	{
-		Guid field_0;
-		char field_10;
-		STDString field_18;
-		int field_30;
-		Guid field_38;
-	};
-
-	struct Variant11
-	{
-		uint8_t Value;
-	};
-
-	struct Variant12
-	{
-		uint8_t Value;
-	};
-
-	struct Variant13
-	{
-		uint8_t Value;
-	};
-
-	struct Modification
-	{
-		uint8_t field_0;
-		FixedString field_4;
-		std::variant<Variant0, Variant1, Variant2, Variant3, Variant4, Variant5, Variant6, Variant6, Variant8, Variant9, Variant10, Variant11, Variant12, Variant13> field_8;
-		// FIXME - Needs Set serialization fix to work
-		[[bg3::hidden]]
-		MultiHashSet<SpellId> Spells;
-	};
-
 	MultiHashMap<FixedString, Array<Modification>> Modifications;
 };
 
@@ -463,6 +465,8 @@ struct SpellBookEntry
 	uint8_t field_41;
 	uint8_t field_42;
 	AbilityId SpellCastingAbility;
+	// FIXME - mapping broken 
+	[[bg3::hidden]]
 	Array<InnerEntry> InnerEntries;
 };
 
