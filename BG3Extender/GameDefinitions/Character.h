@@ -122,7 +122,7 @@ namespace bg3se
 			int32_t PreviousCrimeHandle;
 			int field_16C;
 			uint8_t CrimeState;
-			bool PreviousCrimeState;
+			uint8_t PreviousCrimeState;
 			bool BlockNewDisturbanceReactions;
 			bool field_173;
 			uint8_t HasOsirisDialog;

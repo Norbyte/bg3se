@@ -307,7 +307,7 @@ struct ItemTemplate : public EoCGameObjectTemplate2
     OverrideableProperty<bool> CanBeImprovisedWeapon;
     OverrideableProperty<bool> ForceAffectedByAura;
     OverrideableProperty<bool> IsBlueprintDisabledByDefault;
-    OverrideableProperty<bool> IsTradable;
+    OverrideableProperty<uint8_t> IsTradable;
     OverrideableProperty<TranslatedString> UnknownDisplayName;
     OverrideableProperty<uint8_t> GravityType;
     OverrideableProperty<uint32_t> Tooltip;

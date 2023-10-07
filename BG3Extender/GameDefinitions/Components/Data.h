@@ -210,36 +210,54 @@ struct GodComponent : public BaseComponent
 
 struct LevelUpUpgrades
 {
-	struct AbilityData
+	struct Reference
 	{
 		uint8_t field_0;
-		Guid Feat;
 		Guid Class;
+		Guid Subclass;
 		int field_28;
-		int field_2C;
+		uint8_t field_2C;
+	};
+
+	struct FeatData : public LevelUpUpgrades::Reference
+	{
 		int field_30;
-		Guid Ability;
+		Guid Feat;
 		Array<uint8_t> Array_b8;
-		STDString field_60;
+		STDString FeatName;
 		int field_80;
 	};
-		
-	struct SkillData
+
+	struct SkillData : public LevelUpUpgrades::Reference
 	{
-		uint8_t field_0;
-		Guid field_8;
-		Guid field_18;
-		int field_28;
-		int field_2C;
 		int field_30;
 		Guid Skill;
 		Array<uint8_t> Array_b8;
-		Array<uint8_t> Array_b8_2;
 		STDString field_60;
 		int field_80;
 	};
 		
-	struct SpellData
+	struct Unknown2Data : public LevelUpUpgrades::Reference
+	{
+		int field_30;
+		Guid field_38;
+		uint8_t field_48;
+		Array<uint8_t> Array_b8;
+		STDString field_60;
+		int field_80;
+	};
+		
+	struct AbilityBonusData : public LevelUpUpgrades::Reference
+	{
+		int field_30;
+		Guid AbilityBonus;
+		Array<uint8_t> Array_b8;
+		Array<uint32_t> Array_i32;
+		STDString field_60;
+		int field_80;
+	};
+		
+	struct SpellData : public LevelUpUpgrades::Reference
 	{
 		struct StringPair
 		{
@@ -247,25 +265,31 @@ struct LevelUpUpgrades
 			FixedString B;
 		};
 
-		uint8_t field_0;
-		Guid Race;
-		Guid field_18;
-		int field_28;
-		int field_2C;
 		int field_30;
-		Guid Spell;
-		Array<FixedString> Array_FS;
+		Guid SpellList;
+		Array<FixedString> Spells;
 		Array<StringPair> Array_FS2;
 		STDString field_78;
 	};
 		
-	struct LevelUpDataInner4
+	struct Spell2Data : public LevelUpUpgrades::Reference
 	{
-		uint8_t field_0;
-		Guid field_8;
-		Guid Class;
-		int field_28;
-		int field_2C;
+		struct StringPair
+		{
+			FixedString A;
+			FixedString B;
+		};
+
+		int field_30;
+		Guid SpellList;
+		Array<FixedString> Spells;
+		Array<StringPair> Array_FS2;
+		STDString field_78;
+		int field_80;
+	};
+		
+	struct Unknown4 : public LevelUpUpgrades::Reference
+	{
 		int field_30;
 		Guid field_38;
 		Array<FixedString> Array_FS;
@@ -273,11 +297,13 @@ struct LevelUpUpgrades
 		int field_80;
 	};
 
-	Array<AbilityData> Abilities;
+	Array<FeatData> Feats;
+	Array<AbilityBonusData> AbilityBonuses;
 	Array<SkillData> Skills;
-	Array<AbilityData> Abilities2;
+	Array<Unknown2Data> Unknowns2;
 	Array<SpellData> Spells;
-	Array<LevelUpDataInner4> field_48;
+	Array<Spell2Data> Spells2;
+	Array<Unknown4> Unknowns4;
 };
 
 struct LevelUpData3
@@ -293,6 +319,7 @@ struct LevelUpData
 	Guid Class;
 	Guid SubClass;
 	Guid Feat;
+	Guid AccessorySet;
 	std::array<int, 7> Abilities;
 	LevelUpUpgrades Upgrades;
 	Array<LevelUpData3> field_B0;
