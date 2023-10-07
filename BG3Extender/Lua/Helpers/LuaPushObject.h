@@ -20,7 +20,6 @@ inline void MakeObjectRef(lua_State* L, T* value, LifetimeHandle const& lifetime
 		static_assert(IsByVal<typename IsMapLike<T>::TKey>, "Map key is a type that we cannot serialize by-value?");
 		MapProxy::Make(L, value, lifetime);
 	} else if constexpr (IsSetLike<T>::Value) {
-		static_assert(IsByVal<typename IsSetLike<T>::TKey>, "Set key is a type that we cannot serialize by-value?");
 		SetProxy::Make(L, value, lifetime);
 	} else if constexpr (std::is_pointer_v<T>) {
 		if constexpr (std::is_const_v<std::remove_pointer_t<T>>) {
