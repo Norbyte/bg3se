@@ -110,6 +110,30 @@ namespace bg3se
 		uint8_t field_1;
 	};
 
+	struct BaseStatsComponent : public BaseComponent
+	{
+		static constexpr ExtComponentType ComponentType = ExtComponentType::BaseStats;
+		static constexpr auto EngineClass = "eoc::BaseStatsComponent";
+
+		std::array<int, 7> BaseAbilities;
+	};
+
+	struct ExpertiseComponent : public BaseComponent
+	{
+		static constexpr ExtComponentType ComponentType = ExtComponentType::Expertise;
+		static constexpr auto EngineClass = "eoc::expertise::ExpertiseComponent";
+
+		MultiHashSet<SkillId> Expertise;
+	};
+
+	struct HealBlockComponent : public BaseComponent
+	{
+		static constexpr ExtComponentType ComponentType = ExtComponentType::HealBlock;
+		static constexpr auto EngineClass = "eoc::heal::BlockComponent";
+
+		uint8_t Dummy;
+	};
+
 	struct StatsComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Stats;
@@ -217,6 +241,7 @@ namespace bg3se
 			int field_30;
 			Guid Skill;
 			Array<uint8_t> Array_b8;
+			Array<uint8_t> Array_b8_2;
 			STDString field_60;
 			int field_80;
 		};
@@ -257,6 +282,7 @@ namespace bg3se
 
 		Array<AbilityData> Abilities;
 		Array<SkillData> Skills;
+		Array<AbilityData> Abilities2;
 		Array<SpellData> Spells;
 		Array<LevelUpDataInner4> field_48;
 	};
@@ -374,6 +400,14 @@ namespace bg3se
 		int field_2C;
 	};
 
+	struct ClientControlComponent : public BaseComponent
+	{
+		static constexpr ExtComponentType ComponentType = ExtComponentType::ClientControl;
+		static constexpr auto EngineClass = "eoc::ClientControlComponent";
+
+		uint8_t Dummy;
+	};
+
 	struct IsGlobalComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::IsGlobal;
@@ -434,16 +468,6 @@ namespace bg3se
 		static constexpr auto EngineClass = "eoc::summon::LifetimeComponent";
 
 		float Lifetime;
-	};
-
-	struct InvisibilityComponent : public BaseComponent
-	{
-		static constexpr ExtComponentType ComponentType = ExtComponentType::Invisibility;
-		static constexpr auto EngineClass = "eoc::InvisibilityComponent";
-
-		uint8_t field_18;
-		glm::vec3 field_1C;
-		uint8_t field_28;
 	};
 
 	struct IconComponent : public BaseComponent
@@ -808,14 +832,6 @@ namespace bg3se
 		uint8_t field_1B;
 	};
 
-	struct ItemBoostsComponent : public BaseComponent
-	{
-		static constexpr ExtComponentType ComponentType = ExtComponentType::ItemBoosts;
-		static constexpr auto EngineClass = "eoc::ItemBoostsComponent";
-
-		Array<uint64_t> field_18;
-	};
-
 	struct ActiveCharacterLightComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ActiveCharacterLight;
@@ -856,6 +872,22 @@ namespace bg3se
 		static constexpr auto EngineClass = "eoc::CanBeLootedComponent";
 
 		uint16_t Flags;
+	};
+
+	struct CanBeDisarmedComponent : public BaseComponent
+	{
+		static constexpr ExtComponentType ComponentType = ExtComponentType::CanBeDisarmed;
+		static constexpr auto EngineClass = "eoc::CanBeDisarmedComponent";
+
+		uint16_t Flags;
+	};
+
+	struct CanTriggerRandomCastsComponent : public BaseComponent
+	{
+		static constexpr ExtComponentType ComponentType = ExtComponentType::CanTriggerRandomCasts;
+		static constexpr auto EngineClass = "eoc::CanTriggerRandomCastsComponent";
+
+		uint8_t Dummy;
 	};
 
 	struct CanDoActionsComponent : public BaseComponent
@@ -920,9 +952,11 @@ namespace bg3se
 		static constexpr ExtComponentType ComponentType = ExtComponentType::DualWielding;
 		static constexpr auto EngineClass = "eoc::DualWieldingComponent";
 
-		uint16_t field_18;
+		uint8_t field_18;
+		uint8_t field_19;
 		uint8_t field_1A;
-		uint16_t field_1B;
+		uint8_t field_1B;
+		uint8_t field_1C;
 		uint8_t field_1D;
 		uint8_t field_1E;
 	};
@@ -963,9 +997,56 @@ namespace bg3se
 		FixedString field_F0;
 	};
 
+	struct GravityDisabledComponent : public BaseComponent
 	{
+		static constexpr ExtComponentType ComponentType = ExtComponentType::GravityDisabled;
+		static constexpr auto EngineClass = "eoc::GravityDisabledComponent";
 
+		uint8_t Dummy;
+	};
 
+	struct GravityDisabledUntilMovedComponent : public BaseComponent
+	{
+		static constexpr ExtComponentType ComponentType = ExtComponentType::GravityDisabledUntilMoved;
+		static constexpr auto EngineClass = "eoc::GravityDisabledUntilMovedComponent";
+
+		uint8_t Dummy;
+	};
+
+	struct InteractionFilterComponent : public BaseComponent
+	{
+		static constexpr ExtComponentType ComponentType = ExtComponentType::InteractionFilter;
+		static constexpr auto EngineClass = "eoc::InteractionFilterComponent";
+
+		MultiHashSet<Guid> field_0;
+		uint8_t field_30;
+		uint8_t field_31;
+	};
+
+	struct InvisibilityComponent : public BaseComponent
+	{
+		static constexpr ExtComponentType ComponentType = ExtComponentType::Invisibility;
+		static constexpr auto EngineClass = "eoc::InvisibilityComponent";
+
+		uint8_t field_0;
+		glm::vec3 field_4;
+		uint8_t field_10;
+	};
+
+	struct IsInTurnBasedModeComponent : public BaseComponent
+	{
+		static constexpr ExtComponentType ComponentType = ExtComponentType::IsInTurnBasedMode;
+		static constexpr auto EngineClass = "eoc::IsInTurnBasedModeComponent";
+
+		uint8_t Dummy;
+	};
+
+	struct ItemBoostsComponent : public BaseComponent
+	{
+		static constexpr ExtComponentType ComponentType = ExtComponentType::ItemBoosts;
+		static constexpr auto EngineClass = "eoc::ItemBoostsComponent";
+
+		Array<EntityHandle> Boosts;
 	};
 
 	struct DisplayNameComponent : public BaseComponent
@@ -1058,7 +1139,7 @@ namespace bg3se
 		static constexpr ExtComponentType ComponentType = ExtComponentType::ObjectInteraction;
 		static constexpr auto EngineClass = "eoc::ObjectInteractionComponent";
 
-		Array<ComponentHandle> field_18;
+		Array<ComponentHandle> field_0;
 	};
 
 	struct StaticPhysicsComponent : public BaseComponent
@@ -1171,6 +1252,23 @@ namespace bg3se
 
 		MultiHashMap<EntityHandle, int> Ratings;
 		MultiHashSet<Guid> field_70;
+	};
+
+
+	struct AttitudesToPlayersComponent : public BaseComponent
+	{
+		static constexpr ExtComponentType ComponentType = ExtComponentType::AttitudesToPlayers;
+		static constexpr auto EngineClass = "eoc::attitude::AttitudesToPlayersComponent";
+
+		struct Key
+		{
+			EntityHandle field_0;
+			uint8_t field_8;
+			Guid field_10;
+			uint8_t field_20;
+		};
+
+		MultiHashMap<Key, int> Attitudes;
 	};
 
 

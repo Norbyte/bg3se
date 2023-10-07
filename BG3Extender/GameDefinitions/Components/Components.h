@@ -184,6 +184,69 @@ struct ClassesComponent : public BaseComponent
 	Array<Class> Classes;
 };
 
+struct MaterialParameterOverrideComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::MaterialParameterOverride;
+	static constexpr auto EngineClass = "eoc::MaterialParameterOverrideComponent";
+
+	struct Param
+	{
+		STDString field_0;
+		FixedString field_18;
+	};
+
+	Array<Guid> field_0;
+	Array<Param> field_10;
+};
+
+struct OffStageComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::OffStage;
+	static constexpr auto EngineClass = "eoc::OffStageComponent";
+
+	uint8_t Dummy;
+};
+
+struct PickingStateComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::PickingState;
+	static constexpr auto EngineClass = "eoc::PickingStateComponent";
+
+	uint8_t Dummy;
+};
+
+struct PlayerComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::Player;
+	static constexpr auto EngineClass = "eoc::PlayerComponent";
+
+	uint8_t Dummy;
+};
+
+struct SimpleCharacterComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::SimpleCharacter;
+	static constexpr auto EngineClass = "eoc::SimpleCharacterComponent";
+
+	uint8_t Dummy;
+};
+
+struct SpeakerComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::Speaker;
+	static constexpr auto EngineClass = "eoc::SpeakerComponent";
+
+	Array<FixedString> field_0;
+};
+
+struct WeaponSetComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::WeaponSet;
+	static constexpr auto EngineClass = "eoc::WeaponSetComponent";
+
+	uint8_t Dummy;
+};
+
 END_SE()
 
 BEGIN_SE()
