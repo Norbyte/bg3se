@@ -164,10 +164,10 @@ END_NS()
 #include <Lua/Shared/Proxies/LuaMapProxy.h>
 #include <Lua/Shared/Proxies/LuaObjectProxy.h>
 
-#include <Lua/Helpers/LuaPushObject.h>
-#include <Lua/Helpers/LuaGetObject.h>
 #include <Lua/Helpers/LuaSerialize.h>
 #include <Lua/Helpers/LuaUnserialize.h>
+#include <Lua/Helpers/LuaPushObject.h>
+#include <Lua/Helpers/LuaGetObject.h>
 
 BEGIN_NS(lua)
 

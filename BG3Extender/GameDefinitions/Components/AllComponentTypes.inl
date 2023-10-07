@@ -1,3 +1,5 @@
+#include <GameDefinitions/Components/GeneratedComponentTypes.inl>
+
 T(ActionResourcesComponent)
 T(ArmorComponent)
 T(BaseHpComponent)

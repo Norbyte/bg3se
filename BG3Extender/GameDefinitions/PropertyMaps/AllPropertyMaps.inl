@@ -13,6 +13,7 @@
 #include <GameDefinitions/PropertyMaps/Statuses.inl>
 #include <GameDefinitions/PropertyMaps/Events.inl>
 #include <GameDefinitions/PropertyMaps/Mod.inl>
+#include <GameDefinitions/PropertyMaps/Generated.inl>
 
 // WIP - not exported yet!
 BEGIN_CLS(GlobalSwitches)

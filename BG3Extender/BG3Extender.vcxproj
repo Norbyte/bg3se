@@ -60,7 +60,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\External\protobuf\include;$(SolutionDir)\External\glm;$(SolutionDir)\External\Detours\include;$(SolutionDir)\External\lua-5.3.6\src;$(SolutionDir)\External\jsoncpp-master\include;$(ProjectDir)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <DisableSpecificWarnings>4251</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4251;5030</DisableSpecificWarnings>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -95,7 +95,7 @@ $(SolutionDir)x64\Debug\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Project
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\External\protobuf\include;$(SolutionDir)\External\glm;$(SolutionDir)\External\Detours\include;$(SolutionDir)\External\lua-5.3.6\src;$(SolutionDir)\External\jsoncpp-master\include;$(ProjectDir)</AdditionalIncludeDirectories>
-      <DisableSpecificWarnings>4251</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4251;5030</DisableSpecificWarnings>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -147,6 +147,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\Base\ForwardDeclarations.h" />
     <ClInclude Include="GameDefinitions\Character.h" />
     <ClInclude Include="GameDefinitions\Base\CommonTypes.h" />
+    <ClInclude Include="GameDefinitions\Components\All.h" />
     <ClInclude Include="GameDefinitions\Components\Boosts.h" />
     <ClInclude Include="GameDefinitions\Components\Combat.h" />
     <ClInclude Include="GameDefinitions\Components\Components.h" />
@@ -267,7 +268,9 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     </ClCompile>
     <ClCompile Include="Lua\Debugger\LuaDebugger.cpp" />
     <ClCompile Include="Lua\Debugger\LuaDebugMessages.cpp" />
-    <ClCompile Include="Lua\Libs\LuaSharedLibs.cpp" />
+    <ClCompile Include="Lua\Libs\LuaSharedLibs.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">/bigobj %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
     <ClCompile Include="Lua\LuaBinding.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>

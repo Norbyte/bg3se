@@ -1,12 +1,7 @@
 #include <Lua/Shared/Proxies/LuaEntityProxy.h>
 #include <GameDefinitions/Character.h>
 #include <GameDefinitions/Item.h>
-#include <GameDefinitions/Components/Components.h>
-#include <GameDefinitions/Components/Combat.h>
-#include <GameDefinitions/Components/Passives.h>
-#include <GameDefinitions/Components/Projectile.h>
-#include <GameDefinitions/Components/Stats.h>
-#include <GameDefinitions/Components/Boosts.h>
+#include <GameDefinitions/Components/All.h>
 #include <Extender/ScriptExtender.h>
 
 namespace bg3se::lua
