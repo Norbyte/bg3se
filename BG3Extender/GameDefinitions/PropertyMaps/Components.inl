@@ -324,78 +324,6 @@ P(field_1C)
 END_CLS()
 
 
-BEGIN_CLS(CombatParticipantComponent)
-INHERIT(BaseComponent)
-P(CombatHandle)
-P(CombatGroupId)
-P(field_C)
-P(Flags)
-P(AiHint)
-END_CLS()
-
-
-BEGIN_CLS(CombatStateComponent)
-INHERIT(BaseComponent)
-P_RO(MyGuid)
-P(Initiatives)
-P(Participants)
-P(field_98)
-P(field_A0)
-P_RO(Level)
-P(field_AC)
-P(field_B0)
-P(field_B8)
-P(field_D0)
-END_CLS()
-
-
-BEGIN_CLS(TurnOrderComponent::ParticipantHandleInfo)
-P(Entity)
-P(Initiative)
-END_CLS()
-
-
-BEGIN_CLS(TurnOrderComponent::Participant)
-P(Handles)
-P(Participant)
-P(field_28)
-P(Initiative)
-P(field_30)
-END_CLS()
-
-
-BEGIN_CLS(TurnOrderComponent)
-INHERIT(BaseComponent)
-P(TurnOrderIndices)
-P(Participants)
-P(TurnOrderIndices2)
-P(Participants2)
-P(field_78)
-P(field_7C)
-END_CLS()
-
-
-BEGIN_CLS(TurnBasedComponent)
-INHERIT(BaseComponent)
-P(Entity)
-P(field_8)
-P(IsInCombat_M)
-P(field_A)
-P(RequestedEndTurn)
-P(field_C)
-P(field_10)
-P(ActedThisRoundInCombat)
-P(HadTurnInCombat)
-P(CanAct_M)
-P(field_18)
-P(field_1C)
-P(field_20)
-P(field_24)
-P(field_28)
-P(Combat)
-END_CLS()
-
-
 BEGIN_CLS(BackgroundComponent)
 INHERIT(BaseComponent)
 P(Background)
@@ -614,9 +542,9 @@ END_CLS()
 
 BEGIN_CLS(InvisibilityComponent)
 INHERIT(BaseComponent)
-P(field_18)
-P(field_1C)
-P(field_28)
+P(field_0)
+P(field_4)
+P(field_10)
 END_CLS()
 
 
@@ -722,7 +650,7 @@ END_CLS()
 
 BEGIN_CLS(ItemBoostsComponent)
 INHERIT(BaseComponent)
-P(field_18)
+P(Boosts)
 END_CLS()
 
 
@@ -910,7 +838,7 @@ END_CLS()
 
 BEGIN_CLS(ObjectInteractionComponent)
 INHERIT(BaseComponent)
-P(field_18)
+P(field_0)
 END_CLS()
 
 

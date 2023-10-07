@@ -391,6 +391,8 @@ struct SpellModificationContainerComponent : public BaseComponent
 		uint8_t field_0;
 		FixedString field_4;
 		std::variant<Variant0, Variant1, Variant2, Variant3, Variant4, Variant5, Variant6, Variant6, Variant8, Variant9, Variant10, Variant11, Variant12, Variant13> field_8;
+		// FIXME - Needs Set serialization fix to work
+		[[bg3::hidden]]
 		MultiHashSet<SpellId> Spells;
 	};
 

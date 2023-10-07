@@ -112,6 +112,7 @@ def generate_property_map(struct):
 
 
 sources = [
+    'GameDefinitions/Components/Combat.h',
     'GameDefinitions/Components/Spell.h'
 ]
 
