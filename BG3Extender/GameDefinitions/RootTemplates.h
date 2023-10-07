@@ -86,7 +86,8 @@ namespace bg3se
         OverrideableProperty<bool> StayInAiHints;
         OverrideableProperty<Guid> AiHint;
         OverrideableProperty<bool> IsInspector;
-        OverrideableProperty<uint8_t> Unknown;
+        uint8_t Unknown;
+        uint8_t Unknown2;
         OverrideableProperty<float> StartCombatRange;
         OverrideableProperty<FixedString> AiUseCombatHelper;
         OverrideableProperty<Guid> ProxyOwner;
