@@ -288,50 +288,6 @@ namespace bg3se
 		Array<LevelUpData> field_18;
 	};
 
-	struct PlayerPrepareSpellComponent : public BaseComponent
-	{
-		static constexpr ExtComponentType ComponentType = ExtComponentType::PlayerPrepareSpell;
-		static constexpr auto EngineClass = "eoc::spell::PlayerPrepareSpellComponent";
-
-		struct Spell
-		{
-			FixedString field_0;
-			int32_t _Pad;
-			uint8_t field_8;
-			Guid field_10;
-		};
-
-
-		Array<Spell> Spells;
-		uint8_t field_30;
-	};
-
-	struct CCPrepareSpellComponent : public BaseComponent
-	{
-		static constexpr ExtComponentType ComponentType = ExtComponentType::CCPrepareSpell;
-		static constexpr auto EngineClass = "eoc::spell::CCPrepareSpellComponent";
-
-		Array<PlayerPrepareSpellComponent::Spell> Spells;
-	};
-
-	struct SpellCastComponent : public BaseComponent
-	{
-		static constexpr ExtComponentType ComponentType = ExtComponentType::SpellCast;
-		static constexpr auto EngineClass = "eoc::spell::CastComponent";
-
-		FixedString field_18;
-		uint8_t field_1C;
-		__int64 field_20;
-		int field_28;
-		int field_2C;
-		int field_30;
-		int field_34;
-		uint8_t field_38;
-		uint8_t field_39;
-		uint8_t field_3A;
-		uint8_t field_3B;
-	};
-
 	struct FloatingComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::Floating;
@@ -886,14 +842,6 @@ namespace bg3se
 		uint16_t Flags;
 	};
 
-	struct AddedSpellsComponent : public BaseComponent
-	{
-		static constexpr ExtComponentType ComponentType = ExtComponentType::AddedSpells;
-		static constexpr auto EngineClass = "eoc::spell::AddedSpellsComponent";
-
-		Array<SpellContainerComponent::Spell> Spells;
-	};
-
 	struct AvailableLevelComponent : public BaseComponent
 	{
 		static constexpr ExtComponentType ComponentType = ExtComponentType::AvailableLevel;
@@ -1015,21 +963,9 @@ namespace bg3se
 		FixedString field_F0;
 	};
 
-	struct SpellBookCooldownsComponent : public BaseComponent
 	{
-		static constexpr ExtComponentType ComponentType = ExtComponentType::SpellBookCooldowns;
-		static constexpr auto EngineClass = "eoc::spell::BookCooldownsComponent";
 
-		struct Cooldown
-		{
-			SpellId SpellId;
-			SpellCooldownType CooldownType;
-			uint8_t field_29;
-			float Cooldown;
-			Guid field_30;
-		};
 
-		Array<Cooldown> Cooldowns;
 	};
 
 	struct DisplayNameComponent : public BaseComponent
@@ -1180,23 +1116,6 @@ namespace bg3se
 		static constexpr auto EngineClass = "eoc::CanDeflectProjectilesComponent";
 
 		uint16_t Flags;
-	};
-
-	struct LearnedSpellsComponent : public BaseComponent
-	{
-		static constexpr ExtComponentType ComponentType = ExtComponentType::LearnedSpells;
-		static constexpr auto EngineClass = "eoc::spell::LearnedSpellsComponent";
-
-		MultiHashMap<Guid, MultiHashSet<FixedString>> field_18;
-		MultiHashSet<uint8_t> field_70;
-	};
-
-	struct SpellAiConditionsComponent : public BaseComponent
-	{
-		static constexpr ExtComponentType ComponentType = ExtComponentType::SpellAiConditions;
-		static constexpr auto EngineClass = "eoc::spell::AiConditionsComponent";
-
-		MultiHashMap<FixedString, uint64_t> field_18;
 	};
 
 	struct ActiveSkeletonSlotsComponent : public BaseComponent

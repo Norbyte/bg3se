@@ -53,23 +53,6 @@ P(Resources)
 END_CLS()
 
 
-BEGIN_CLS(SpellBookEntry)
-P(Id)
-P(SpellUUID)
-P(field_38)
-P(CooldownType)
-P(field_41)
-P(field_42)
-P(SpellCastingAbility)
-END_CLS()
-
-
-BEGIN_CLS(SpellBookComponent)
-INHERIT(BaseComponent)
-P(Spells)
-END_CLS()
-
-
 BEGIN_CLS(SurfacePathInfluence)
 P(SurfaceType)
 P(IsCloud)
@@ -110,25 +93,6 @@ P(ResourceUUID)
 END_CLS()
 
 
-BEGIN_CLS(SpellContainerComponent::Spell)
-P(SpellId)
-P(ItemHandle)
-P(SelectionType)
-P(field_29)
-P(SpellUUID)
-P(SpellCastingAbility)
-P(CooldownType)
-P(field_44)
-P(field_48)
-END_CLS()
-
-
-BEGIN_CLS(SpellContainerComponent)
-INHERIT(BaseComponent)
-P(Spells)
-END_CLS()
-
-
 BEGIN_CLS(TagComponent)
 INHERIT(BaseComponent)
 P(Tags)
@@ -138,14 +102,6 @@ END_CLS()
 BEGIN_CLS(OsirisTagComponent)
 INHERIT(BaseComponent)
 P(Tags)
-END_CLS()
-
-
-BEGIN_CLS(SpellBookPreparesComponent)
-INHERIT(BaseComponent)
-P(PreparedSpells)
-P(field_30)
-P(field_88)
 END_CLS()
 
 
@@ -542,42 +498,6 @@ P(field_18)
 END_CLS()
 
 
-BEGIN_CLS(PlayerPrepareSpellComponent::Spell)
-P(field_0)
-P(field_8)
-P(field_10)
-END_CLS()
-
-
-BEGIN_CLS(PlayerPrepareSpellComponent)
-INHERIT(BaseComponent)
-P(Spells)
-P(field_30)
-END_CLS()
-
-
-BEGIN_CLS(CCPrepareSpellComponent)
-INHERIT(BaseComponent)
-P(Spells)
-END_CLS()
-
-
-BEGIN_CLS(SpellCastComponent)
-INHERIT(BaseComponent)
-P(field_18)
-P(field_1C)
-P(field_20)
-P(field_28)
-P(field_2C)
-P(field_30)
-P(field_34)
-P(field_38)
-P(field_39)
-P(field_3A)
-P(field_3B)
-END_CLS()
-
-
 BEGIN_CLS(FloatingComponent)
 INHERIT(BaseComponent)
 P(field_18)
@@ -818,12 +738,6 @@ P(Flags)
 END_CLS()
 
 
-BEGIN_CLS(AddedSpellsComponent)
-INHERIT(BaseComponent)
-P(Spells)
-END_CLS()
-
-
 BEGIN_CLS(AvailableLevelComponent)
 INHERIT(BaseComponent)
 P(Level)
@@ -923,21 +837,6 @@ P(field_24)
 P(field_28)
 P(VisualData)
 P(field_F0)
-END_CLS()
-
-
-BEGIN_CLS(SpellBookCooldownsComponent::Cooldown)
-P(SpellId)
-P(CooldownType)
-P(field_29)
-P(Cooldown)
-P(field_30)
-END_CLS()
-
-
-BEGIN_CLS(SpellBookCooldownsComponent)
-INHERIT(BaseComponent)
-P(Cooldowns)
 END_CLS()
 
 
@@ -1044,19 +943,6 @@ END_CLS()
 BEGIN_CLS(CanDeflectProjectilesComponent)
 INHERIT(BaseComponent)
 P(Flags)
-END_CLS()
-
-
-BEGIN_CLS(LearnedSpellsComponent)
-INHERIT(BaseComponent)
-P(field_18)
-P(field_70)
-END_CLS()
-
-
-BEGIN_CLS(SpellAiConditionsComponent)
-INHERIT(BaseComponent)
-P(field_18)
 END_CLS()
 
 

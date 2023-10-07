@@ -43,34 +43,6 @@ struct HearingComponent : public BaseComponent
 	float FOV;
 };
 
-struct SpellBookEntry
-{
-	struct InnerEntry
-	{
-		uint8_t field_0;
-		MultiHashSet<int32_t> field_8;
-	};
-
-	SpellId Id;
-	Guid SpellUUID;
-	int32_t field_38;
-	int32_t field_3C;
-	SpellCooldownType CooldownType;
-	uint8_t field_41;
-	uint8_t field_42;
-	AbilityId SpellCastingAbility;
-	Array<InnerEntry> InnerEntries;
-};
-
-struct SpellBookComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::SpellBook;
-	static constexpr auto EngineClass = "eoc::spell::BookComponent";
-
-	uint64_t field_0;
-	Array<SpellBookEntry> Spells;
-};
-
 	
 struct SurfacePathInfluence
 {
@@ -122,27 +94,6 @@ struct ActionResourceConsumeMultiplierBoostComponent : public BaseComponent
 	__int64 field_30;
 };
 
-struct SpellContainerComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::SpellContainer;
-	static constexpr auto EngineClass = "eoc::spell::ContainerComponent";
-
-	struct Spell
-	{
-		SpellIdBase SpellId;
-		EntityHandle ItemHandle;
-		SpellChildSelectionType SelectionType;
-		uint8_t field_29;
-		Guid SpellUUID;
-		AbilityId SpellCastingAbility;
-		SpellCooldownType CooldownType;
-		FixedString field_44;
-		uint8_t field_48;
-	};
-
-	Array<Spell> Spells;
-};
-
 struct TagComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::Tag;
@@ -157,16 +108,6 @@ struct OsirisTagComponent : public BaseComponent
 	static constexpr auto EngineClass = "esv::tags::OsirisTagComponent";
 
 	Array<Guid> Tags;
-};
-
-struct SpellBookPreparesComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::SpellBookPrepares;
-	static constexpr auto EngineClass = "eoc::spell::BookPreparesComponent";
-
-	Array<SpellIdBase> PreparedSpells;
-	MultiHashMap<Guid, int> field_30;
-	MultiHashMap<Guid, int> field_88;
 };
 
 struct RelationComponent : public BaseComponent

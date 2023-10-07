@@ -19,7 +19,24 @@ struct SpellId
 	SpellSourceType SourceType;
 	Guid ProgressionSource;
 	FixedString Prototype;
+
+	inline bool operator == (SpellId const& o) const
+	{
+		return
+			OriginatorPrototype == o.OriginatorPrototype
+			&& SourceType == o.SourceType
+			&& ProgressionSource == o.ProgressionSource
+			&& Prototype == o.Prototype;
+	}
 };
+
+template <>
+inline uint64_t MultiHashMapHash<SpellId>(SpellId const& v)
+{
+	// FIXME - this is not the actual algo
+	return Hash(v.OriginatorPrototype) ^ Hash(v.SourceType) ^ Hash(v.ProgressionSource) ^ Hash(v.Prototype);
+}
+
 
 struct SpellIdWithPrototype : public SpellId
 {

@@ -433,6 +433,7 @@
     <ClInclude Include="Lua\Helpers\LuaPushObject.h" />
     <ClInclude Include="Lua\Helpers\LuaSerialize.h" />
     <ClInclude Include="Lua\Helpers\LuaUnserialize.h" />
+    <ClInclude Include="GameDefinitions\Components\Spell.h" />
     <ClInclude Include="GameDefinitions\Components\All.h" />
   </ItemGroup>
   <ItemGroup>

@@ -4,11 +4,7 @@
 #include <GameDefinitions/Symbols.h>
 #include <GameDefinitions/EntitySystem.h>
 #include <GameDefinitions/GuidResources.h>
-#include <GameDefinitions/Components/Components.h>
-#include <GameDefinitions/Components/Stats.h>
-#include <GameDefinitions/Components/Passives.h>
-#include <GameDefinitions/Components/Combat.h>
-#include <GameDefinitions/Components/Projectile.h>
+#include <GameDefinitions/Components/All.h>
 #include <Extender/ScriptExtender.h>
 
 #undef DEBUG_INDEX_MAPPINGS
