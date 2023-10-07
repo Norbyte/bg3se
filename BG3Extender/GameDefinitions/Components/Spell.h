@@ -124,6 +124,12 @@ struct InterruptType8
 	int field_4C;
 };
 
+struct InterruptEntities
+{
+	EntityHandle field_0;
+	EntityHandle field_8;
+};
+
 struct InterruptVariant2
 {
 	std::variant<InterruptType0, InterruptType1, InterruptType2, InterruptType3, InterruptType4, InterruptType5, InterruptType6, InterruptType7, InterruptType8> Variant;
@@ -131,7 +137,7 @@ struct InterruptVariant2
 	EntityHandle field_B8;
 	EntityHandle field_C0;
 	EntityHandle field_C8;
-	Array<std::pair<EntityHandle, EntityHandle>> field_D0;
+	Array<InterruptEntities> field_D0;
 	__int64 field_E0;
 	__int64 field_E8;
 	__int64 field_F0;
@@ -154,7 +160,7 @@ struct ActionStateComponent : public BaseComponent
 	static constexpr auto EngineClass = "eoc::interrupt::ActionStateComponent";
 
 	InterruptVariant2 Variant;
-	Array<std::pair<EntityHandle, EntityHandle>> Arr_EHx2;
+	Array<InterruptEntities> Arr_EHx2;
 	Guid field_118;
 };
 
@@ -660,7 +666,7 @@ struct ActionRequest4
 {
 	struct RequestElement
 	{
-		Array<std::pair<EntityHandle, EntityHandle>> field_0;
+		Array<bg3se::interrupt::InterruptEntities> field_0;
 		__int64 field_10;
 		int field_18;
 		__int64 field_20;

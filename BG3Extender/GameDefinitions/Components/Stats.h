@@ -346,7 +346,7 @@ namespace bg3se
 
 		Guid Race;
 		Guid SubRace;
-		uint8_t field_20;
+		uint8_t BodyType;
 		uint8_t field_21;
 		STDString Name;
 		std::array<int32_t, 7> Abilities;
