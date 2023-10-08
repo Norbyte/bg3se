@@ -142,8 +142,8 @@ namespace bg3se::esv::lua
 	struct DealDamageEvent : public EventBase
 	{
 		bg3se::stats::DealDamageFunctor* Functor;
-		ecs::EntityRef Caster;
-		ecs::EntityRef Target;
+		EntityHandle Caster;
+		EntityHandle Target;
 		glm::vec3 Position;
 		bool IsFromItem;
 		SpellIdWithPrototype* SpellId;

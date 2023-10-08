@@ -44,8 +44,8 @@ HitResult* FunctorEventHooks::OnDealDamage(bg3se::stats::DealDamageFunctor::Appl
 	{
 		DealDamageEvent evt;
 		evt.Functor = functor;
-		evt.Caster = *casterHandle;
-		evt.Target = *targetHandle;
+		evt.Caster = casterHandle->Handle;
+		evt.Target = targetHandle->Handle;
 		evt.Position = *position;
 		evt.IsFromItem = isFromItem;
 		evt.SpellId = spellId;
@@ -65,8 +65,8 @@ HitResult* FunctorEventHooks::OnDealDamage(bg3se::stats::DealDamageFunctor::Appl
 	{
 		DealtDamageEvent evt;
 		evt.Functor = functor;
-		evt.Caster = *casterHandle;
-		evt.Target = *targetHandle;
+		evt.Caster = casterHandle->Handle;
+		evt.Target = targetHandle->Handle;
 		evt.Position = *position;
 		evt.IsFromItem = isFromItem;
 		evt.SpellId = spellId;
