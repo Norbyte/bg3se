@@ -73,6 +73,8 @@ struct VersionNumber
 	int32_t Major, Minor, Revision, Build;
 };
 
+std::optional<VersionNumber> GetGameVersion();
+
 enum class ManifestParseResult
 {
 	Successful,

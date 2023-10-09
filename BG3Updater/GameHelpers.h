@@ -10,6 +10,20 @@
 
 BEGIN_SE()
 
+struct UpdaterConfig
+{
+	std::string ManifestURL;
+	std::string ManifestName;
+	std::string UpdateChannel;
+	std::string TargetVersion;
+	std::string TargetResourceDigest;
+	std::wstring CachePath;
+	bool Debug;
+	bool ValidateSignature;
+	bool IPv4Only;
+	bool DisableUpdates;
+};
+
 struct THREADNAME_INFO
 {
 	DWORD dwType; // Must be 0x1000.
@@ -65,6 +79,11 @@ private:
 	static LONG NTAPI ThreadNameCaptureFilter(_EXCEPTION_POINTERS *ExceptionInfo);
 };
 
+HMODULE GetExeHandle();
+bool IsInEditor();
+void LoadConfigFile(std::wstring const& configPath, UpdaterConfig& config);
+std::string trim(std::string const& s);
+bool ShouldLoad();
 std::optional<std::string> GetExeResource(int resourceId);
 
 extern std::unique_ptr<GameHelpers> gGameHelpers;

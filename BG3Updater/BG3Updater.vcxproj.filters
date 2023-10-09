@@ -7,6 +7,9 @@
     <ClCompile Include="Manifest.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="API.cpp" />
+    <ClCompile Include="Cache.cpp" />
+    <ClCompile Include="Updater.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DWriteWrapper.h" />
@@ -17,6 +20,9 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="GameHelpers.h" />
     <ClInclude Include="UpdaterSymbols.h" />
+    <ClInclude Include="Cache.h" />
+    <ClInclude Include="Updater.h" />
+    <ClInclude Include="Defines.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resources.rc" />

@@ -20,22 +20,5 @@
 
 #include <CoreLib/Base/Base.h>
 #include <CoreLib/Utils.h>
-
-BEGIN_SE()
-
-struct UpdaterConfig
-{
-	std::string ManifestURL;
-	std::string ManifestName;
-	std::string UpdateChannel;
-	std::string TargetVersion;
-	std::string TargetResourceDigest;
-	std::wstring CachePath;
-	bool Debug;
-	bool ValidateSignature;
-	bool IPv4Only;
-	bool DisableUpdates;
-};
-
-END_SE()
-
+#include "Defines.h"
+#include "GameHelpers.h"

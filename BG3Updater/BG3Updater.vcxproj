@@ -98,7 +98,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>CoreLib.lib;version.lib;jsoncpp.lib;TinyCrypt.lib;Rpcrt4.lib;dbghelp.lib;ZipLib.lib;bzip2.lib;lzma.lib;zlib.lib;libcurl_a.lib;Normaliz.lib;Wldap32.lib;ws2_32.lib;Crypt32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>CoreLib.lib;version.lib;jsoncpp.lib;TinyCrypt.lib;shlwapi.lib;Rpcrt4.lib;dbghelp.lib;ZipLib.lib;bzip2.lib;lzma.lib;zlib.lib;libcurl_a.lib;Normaliz.lib;Wldap32.lib;ws2_32.lib;Crypt32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>Exports.def</ModuleDefinitionFile>
       <AdditionalLibraryDirectories>$(SolutionDir)\External\curl\lib;$(SolutionDir)\External\ziplib\Bin\x64\Debug;$(SolutionDir)$(Platform)\$(Configuration);$(SolutionDir)\External\jsoncpp-build\src\lib_json\Debug</AdditionalLibraryDirectories>
     </Link>
@@ -162,7 +162,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>Exports.def</ModuleDefinitionFile>
-      <AdditionalDependencies>CoreLib.lib;version.lib;jsoncpp.lib;TinyCrypt.lib;Rpcrt4.lib;dbghelp.lib;ZipLib.lib;bzip2.lib;lzma.lib;zlib.lib;libcurl_a.lib;Normaliz.lib;Wldap32.lib;ws2_32.lib;Crypt32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>CoreLib.lib;version.lib;jsoncpp.lib;TinyCrypt.lib;shlwapi.lib;Rpcrt4.lib;dbghelp.lib;ZipLib.lib;bzip2.lib;lzma.lib;zlib.lib;libcurl_a.lib;Normaliz.lib;Wldap32.lib;ws2_32.lib;Crypt32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\External\curl\lib;$(SolutionDir)\External\ziplib\Bin\x64\Release;$(SolutionDir)$(Platform)\$(Configuration);$(SolutionDir)\External\jsoncpp-build\src\lib_json\Release</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -170,6 +170,8 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Cache.h" />
+    <ClInclude Include="Defines.h" />
     <ClInclude Include="DWriteWrapper.h" />
     <ClInclude Include="GameHelpers.h" />
     <ClInclude Include="HttpFetcher.h" />
@@ -177,9 +179,12 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Updater.h" />
     <ClInclude Include="UpdaterSymbols.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="API.cpp" />
+    <ClCompile Include="Cache.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="DWriteWrapper.cpp" />
     <ClCompile Include="HttpFetcher.cpp" />
@@ -190,6 +195,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Updater.cpp" />
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
