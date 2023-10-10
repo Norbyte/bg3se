@@ -8,3 +8,6 @@ EXPORTS
 	SEUpdaterGetError=SEUpdaterGetError @103
 	SEUpdaterGetLog=SEUpdaterGetLog @104
 	SEUpdaterGetResourceVersion=SEUpdaterGetResourceVersion @105
+	SEUpdaterShowConsole=SEUpdaterShowConsole @106
+	SEUpdaterTest=SEUpdaterTest @107
+	SEUpdaterShutdown=SEUpdaterShutdown @108

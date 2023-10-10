@@ -4,6 +4,12 @@
 
 BEGIN_SE()
 
+
+Console::~Console()
+{
+	Destroy();
+}
+
 void Console::SetColor(DebugMessageType type)
 {
 	WORD wAttributes = 0;
@@ -117,6 +123,14 @@ void Console::Create()
 	FILE* inputStream;
 	freopen_s(&inputStream, "CONIN$", "r", stdin);
 	created_ = true;
+}
+
+void Console::Destroy()
+{
+	if (!created_) return;
+
+	FreeConsole();
+	created_ = false;
 }
 
 void Console::OpenLogFile(std::wstring const& path)

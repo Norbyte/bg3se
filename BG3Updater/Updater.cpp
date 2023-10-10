@@ -280,7 +280,7 @@ void ScriptExtenderUpdater::LoadConfig(char const* configPathOverride)
 {
 	std::wstring configPath;
 	if (configPathOverride && *configPathOverride) {
-		configPath = FromUTF8(configPathOverride);
+		configPath = FromStdUTF8(configPathOverride);
 	} else {
 		HMODULE hGameModule = GetExeHandle();
 		if (hGameModule != NULL) {

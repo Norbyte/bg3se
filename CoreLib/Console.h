@@ -9,7 +9,9 @@ BEGIN_SE()
 class Console
 {
 public:
+	virtual ~Console();
 	virtual void Create();
+	void Destroy();
 	void OpenLogFile(std::wstring const& path);
 	void CloseLogFile();
 

@@ -35,6 +35,16 @@ GameHelpers::GameHelpers()
 	gCoreLibPlatformInterface.GlobalConsole = new Console();
 }
 
+GameHelpers::~GameHelpers()
+{
+	if (exceptionHandler_ != NULL) {
+		RemoveVectoredExceptionHandler(exceptionHandler_);
+	}
+
+	delete gCoreLibPlatformInterface.GlobalConsole;
+	gCoreLibPlatformInterface.GlobalConsole = nullptr;
+}
+
 #define SYM_OFF(name) mappings_.StaticSymbols.insert(std::make_pair(#name, SymbolMappings::StaticSymbol{ (int)offsetof(UpdaterSymbols, name) }))
 
 void GameHelpers::Initialize()
@@ -63,7 +73,7 @@ void GameHelpers::Initialize()
 		}
 
 		symbolMapper_.MapAllSymbols(false);
-		AddVectoredExceptionHandler(1, &ThreadNameCaptureFilter);
+		exceptionHandler_ = AddVectoredExceptionHandler(1, &ThreadNameCaptureFilter);
 
 		gCoreLibPlatformInterface.Alloc = &BG3Alloc;
 		gCoreLibPlatformInterface.Free = &BG3Free;

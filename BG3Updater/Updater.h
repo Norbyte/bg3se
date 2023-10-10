@@ -66,6 +66,11 @@ public:
 	void InitConsole();
 	void LoadConfig(char const* configPathOverride);
 
+	UpdaterConfig& GetConfig()
+	{
+		return config_;
+	}
+
 	std::string const& GetErrorMessage() const
 	{
 		return errorMessage_;

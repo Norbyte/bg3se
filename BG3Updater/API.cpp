@@ -13,6 +13,14 @@ void SEUpdaterInitialize(char const* configPath)
 	gGameHelpers->Initialize();
 }
 
+void SEUpdaterShowConsole()
+{
+	if (!gUpdater) return;
+
+	gUpdater->GetConfig().Debug = true;
+	gUpdater->InitConsole();
+}
+
 void SESetGameVersion(int32_t major, int32_t minor, int32_t revision, int32_t build)
 {
 	if (!gUpdater) return;
@@ -29,6 +37,11 @@ bool SEUpdate()
 
 void SEUpdaterGetError(char* buf, uint32_t* length)
 {
+	if (!gUpdater) {
+		*length = 0;
+		return;
+	}
+
 	*length = (uint32_t)gUpdater->GetErrorMessage().size();
 	if (buf != nullptr) {
 		std::copy(gUpdater->GetErrorMessage().begin(), gUpdater->GetErrorMessage().end(), buf);
@@ -37,6 +50,11 @@ void SEUpdaterGetError(char* buf, uint32_t* length)
 
 void SEUpdaterGetLog(char* buf, uint32_t* length)
 {
+	if (!gUpdater) {
+		*length = 0;
+		return;
+	}
+
 	*length = (uint32_t)gUpdater->GetErrorMessage().size();
 	if (buf != nullptr) {
 		std::copy(gUpdater->GetErrorMessage().begin(), gUpdater->GetErrorMessage().end(), buf);
@@ -45,6 +63,8 @@ void SEUpdaterGetLog(char* buf, uint32_t* length)
 
 bool SEUpdaterGetResourceVersion(int32_t* major, int32_t* minor, int32_t* revision, int32_t* build)
 {
+	if (!gUpdater) return false;
+
 	gUpdater->LoadCaches();
 	auto ver = gUpdater->GetCache()->FindResourceVersion("ScriptExtender", gUpdater->GetCachedGameVersion());
 	if (ver) {
@@ -58,6 +78,23 @@ bool SEUpdaterGetResourceVersion(int32_t* major, int32_t* minor, int32_t* revisi
 	}
 }
 
+void SEUpdaterShutdown()
+{
+	if (!gUpdater) return;
+
+	gUpdater.reset();
+	gGameHelpers.reset();
+}
+
+void SEUpdaterTest()
+{
+	SEUpdaterInitialize(nullptr);
+	SEUpdaterShowConsole();
+	SESetGameVersion(4, 37, 67, 641);
+	SEUpdate();
+	SEUpdaterShutdown();
+}
+
 END_SE()
 
 extern "C"
@@ -66,6 +103,11 @@ extern "C"
 void SEUpdaterInitialize(char const* configPath)
 {
 	bg3se::SEUpdaterInitialize(configPath);
+}
+
+void SEUpdaterShowConsole()
+{
+	bg3se::SEUpdaterShowConsole();
 }
 
 void SESetGameVersion(int32_t major, int32_t minor, int32_t revision, int32_t build)
@@ -91,6 +133,16 @@ void SEUpdaterGetLog(char* buf, uint32_t* length)
 bool SEUpdaterGetResourceVersion(int32_t* major, int32_t* minor, int32_t* revision, int32_t* build)
 {
 	return bg3se::SEUpdaterGetResourceVersion(major, minor, revision, build);
+}
+
+void SEUpdaterTest()
+{
+	bg3se::SEUpdaterTest();
+}
+
+void SEUpdaterShutdown()
+{
+	bg3se::SEUpdaterShutdown();
 }
 
 }

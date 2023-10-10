@@ -36,6 +36,7 @@ class GameHelpers
 {
 public:
 	GameHelpers();
+	~GameHelpers();
 
 	void Initialize();
 
@@ -59,6 +60,7 @@ private:
 		std::string Name;
 	};
 
+	PVOID exceptionHandler_{ NULL };
 	HMODULE eocApp_{ NULL };
 	uint8_t const * moduleStart_{ nullptr };
 	std::size_t moduleSize_{ 0 };
