@@ -427,6 +427,9 @@ bool Validate(std::optional<T>* v, Overload<std::optional<T>>)
 	}
 }
 
+template <class TE, size_t Size>
+bool ValidateRef(std::array<TE, Size>* v, Overload<std::array<TE, Size>>);
+
 template <class T>
 bool ValidateRef(std::optional<T>* v, Overload<std::optional<T>>)
 {

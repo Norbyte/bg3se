@@ -143,6 +143,13 @@ struct InterruptVariant2
 	__int64 field_F0;
 	__int64 field_F8;
 	uint8_t field_100;
+
+	// FIXME - needs adjustment depending on variant
+	inline bool operator == (InterruptVariant2 const& o) const
+	{
+		return Source == o.Source
+			&& Target == o.Target;
+	}
 };
 
 struct InterruptVariantContainer
@@ -197,8 +204,6 @@ struct DecisionComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::InterruptDecision;
 	static constexpr auto EngineClass = "eoc::interrupt::DecisionComponent";
 
-	// We cannot serialize composite keys yet!
-	[[bg3::hidden]]
 	MultiHashMap<InterruptVariant2, uint8_t> Decisions;
 };
 
@@ -330,8 +335,6 @@ struct Modification
 	uint8_t field_0;
 	FixedString field_4;
 	Variant Modification;
-	// FIXME - Needs Set serialization fix to work
-	[[bg3::hidden]]
 	MultiHashSet<SpellId> Spells;
 };
 
@@ -765,6 +768,13 @@ struct InterruptIdentifier
 	uint64_t field_0;
 	uint64_t field_8;
 	uint64_t field_10;
+
+	inline bool operator == (InterruptIdentifier const& o) const
+	{
+		return field_0 == o.field_0
+			&& field_8 == o.field_8
+			&& field_10 == o.field_10;
+	}
 };
 
 struct InterruptRollData
@@ -806,8 +816,6 @@ struct InterruptResultsComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerSpellInterruptResults;
 	static constexpr auto EngineClass = "esv::spell_cast::InterruptResultsComponent";
 
-	// We cannot serialize composite keys yet!
-	[[bg3::hidden]]
 	MultiHashMap<InterruptIdentifier, InterruptResult> Results;
 	Array<InterruptResult2> Results2;
 };
@@ -884,7 +892,8 @@ BEGIN_SE()
 template <>
 inline uint64_t MultiHashMapHash<interrupt::InterruptVariant2>(interrupt::InterruptVariant2 const& v)
 {
-	return Hash(v.field_B0) ^ Hash(v.field_C0);
+	// FIXME - needs adjustment depending on variant
+	return HashMulti(v.Source, v.Target);
 }
 
 END_SE()

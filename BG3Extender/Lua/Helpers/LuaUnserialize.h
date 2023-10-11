@@ -295,11 +295,7 @@ inline PropertyOperationResult Unserialize(lua_State* L, int index, T* obj)
 				*obj = {};
 			} else {
 				*obj = typename IsOptional<T>::ValueType{};
-				if (isTable) {
-					UnserializeObjectFromTable(L, lua_absindex(L, index), &obj->value());
-				} else {
-					UnserializeObjectFromUserdata(L, lua_absindex(L, index), &obj->value());
-				}
+				return Unserialize(L, index, &obj->value());
 			}
 		} else {
 			if (isTable) {

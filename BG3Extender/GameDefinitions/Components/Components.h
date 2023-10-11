@@ -129,8 +129,6 @@ struct RelationComponent : public BaseComponent
 	MultiHashMap<uint32_t, uint8_t> field_0;
 	MultiHashMap<uint32_t, uint8_t> field_40;
 	MultiHashMap<uint32_t, uint8_t> field_80;
-	// FIXME - disabled until set is fixed
-	[[bg3::hidden]]
 	MultiHashMap<GuidAndHandle, uint8_t> field_C0;
 	MultiHashMap<uint32_t, uint8_t> field_100;
 	MultiHashSet<uint32_t> field_140;

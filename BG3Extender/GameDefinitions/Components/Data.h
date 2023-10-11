@@ -1013,8 +1013,6 @@ struct AttitudesToPlayersComponent : public BaseComponent
 		}
 	};
 
-	// FIXME - disabled until do_get for objects is fixed
-	[[bg3::hidden]]
 	MultiHashMap<Key, int> Attitudes;
 };
 

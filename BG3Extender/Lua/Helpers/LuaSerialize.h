@@ -126,6 +126,12 @@ inline void Serialize(lua_State* L, T* obj)
 		SerializeSet(L, obj);
 	} else if constexpr (IsVariantLike<T>::Value) {
 		SerializeVariant(L, obj);
+	} else if constexpr (IsOptional<T>::Value) {
+		if (obj->has_value()) {
+			Serialize(L, &obj->value());
+		} else {
+			push(L, nullptr);
+		}
 	} else {
 		SerializeObject(L, obj);
 	}

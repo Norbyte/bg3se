@@ -224,6 +224,9 @@ inline T checked_get_flags(lua_State* L, int index)
 }
 
 template <class T>
+typename std::enable_if_t<!IsByVal<T>, T> do_get(lua_State* L, int index, Overload<T>);
+
+template <class T>
 inline T get(lua_State* L, int index)
 {
 	return do_get(L, index, Overload<T>{});

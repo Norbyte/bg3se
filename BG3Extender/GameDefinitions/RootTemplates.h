@@ -161,7 +161,6 @@ struct CharacterTemplate : public EoCGameObjectTemplate
     OverrideableProperty<Array<void*>> SkillList;
     [[bg3::hidden]]
     OverrideableProperty<Array<void*>> ItemList;
-    [[bg3::hidden]]
     OverrideableProperty<Array<FixedString>> StatusList;
     OverrideableProperty<FixedString> TrophyID;
     OverrideableProperty<FixedString> SoundInitEvent;
@@ -277,7 +276,6 @@ struct CharacterTemplate : public EoCGameObjectTemplate
 
 struct ItemTemplate : public EoCGameObjectTemplate2
 {
-    [[bg3::hidden]]
     CombatComponentTemplate CombatComponent;
     OverrideableProperty<Array<FixedString>> InventoryList;
     MultiHashSet<Guid>* SpeakerGroups;
