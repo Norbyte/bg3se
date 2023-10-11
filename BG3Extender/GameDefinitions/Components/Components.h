@@ -24,8 +24,7 @@ struct ActionResourcesComponent : public BaseComponent
 		double MaxAmount;
 		uint64_t field_28;
 		uint64_t field_30;
-		std::array<SubAmount, 7> SubAmounts;
-		bool SubAmountsValid;
+		std::optional<std::array<SubAmount, 7>> SubAmounts;
 	};
 
 

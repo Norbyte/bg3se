@@ -27,7 +27,7 @@ struct StatsRollRoll
 struct StatsRollResult
 {
 	int Total;
-	int DiceTotal;
+	int NaturalRoll;
 	int DiscardedDiceTotal;
 	bool Critical;
 	uint32_t DiceSize;
@@ -152,9 +152,9 @@ struct Hit
 	int StoryActionId;
 	Array<ConditionRoll> ConditionRolls;
 	ResultMetadata Results;
-	SpellAttackType SpellAttackType;
+	SpellAttackType AttackType;
 	FixedString SpellId;
-	Guid field_140;
+	Guid SpellCastGuid;
 	FixedString field_150;
 	EntityHandle field_158;
 	uint8_t field_160;
@@ -163,9 +163,9 @@ struct Hit
 	int SpellPowerLevel;
 	int TotalHealDone;
 	uint8_t HitDescFlags;
-	uint8_t field_171;
+	uint8_t AttackFlags;
 	int field_174;
-	int field_178;
+	int OriginalDamageValue;
 	int field_17C;
 	int field_180;
 	int field_184;

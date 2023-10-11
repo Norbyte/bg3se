@@ -133,15 +133,13 @@ struct InterruptEntities
 struct InterruptVariant2
 {
 	std::variant<InterruptType0, InterruptType1, InterruptType2, InterruptType3, InterruptType4, InterruptType5, InterruptType6, InterruptType7, InterruptType8> Variant;
-	EntityHandle field_B0;
-	EntityHandle field_B8;
-	EntityHandle field_C0;
-	EntityHandle field_C8;
+	EntityHandle Source;
+	EntityHandle SourceProxy;
+	EntityHandle Target;
+	EntityHandle TargetProxy;
 	Array<InterruptEntities> field_D0;
-	__int64 field_E0;
-	__int64 field_E8;
-	__int64 field_F0;
-	__int64 field_F8;
+	std::optional<glm::vec3> SourcePos;
+	std::optional<glm::vec3> TargetPos;
 	uint8_t field_100;
 
 	// FIXME - needs adjustment depending on variant
@@ -192,7 +190,7 @@ struct DataComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::InterruptData;
 	static constexpr auto EngineClass = "eoc::interrupt::DataComponent";
 
-	FixedString field_0;
+	FixedString Interrupt;
 	uint8_t field_4;
 	EntityHandle field_8;
 	EntityHandle field_10;
@@ -671,18 +669,8 @@ struct ActionRequest3
 
 struct ActionRequest4
 {
-	struct RequestElement
-	{
-		Array<bg3se::interrupt::InterruptEntities> field_0;
-		__int64 field_10;
-		int field_18;
-		__int64 field_20;
-		__int64 field_28;
-	};
-
 	__int64 field_0;
-	Array<RequestElement> field_8;
-	[[bg3::hidden]]
+	Array<stats::SpellPrototype::UseCostGroup> UseCosts;
 	MultiHashMap<EntityHandle, MultiHashMap<bg3se::interrupt::InterruptVariant2, ConditionRoll>> field_18;
 };
 
@@ -894,6 +882,12 @@ inline uint64_t MultiHashMapHash<interrupt::InterruptVariant2>(interrupt::Interr
 {
 	// FIXME - needs adjustment depending on variant
 	return HashMulti(v.Source, v.Target);
+}
+
+template <>
+inline uint64_t MultiHashMapHash<esv::spell_cast::InterruptIdentifier>(esv::spell_cast::InterruptIdentifier const& v)
+{
+	return HashMulti(v.field_0, v.field_8, v.field_10);
 }
 
 END_SE()

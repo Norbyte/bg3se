@@ -55,8 +55,7 @@ inline uint64_t MultiHashMapHash<SpellId>(SpellId const& v)
 struct SpellIdWithPrototype : public SpellId
 {
 	stats::SpellPrototype* SpellProto;
-	Guid field_30;
-	uint8_t field_40;
+	std::optional<Guid> SpellCastSource;
 };
 
 struct DamagePair
