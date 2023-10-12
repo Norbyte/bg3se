@@ -72,8 +72,8 @@ struct SpellPrototype : public Noncopyable<SpellPrototype>
 	struct UseCostGroup
 	{
 		Array<Guid> Resources;
-		double field_10;
-		int field_18;
+		double Amount;
+		int SubResourceId;
 		Guid ResourceGroup;
 	};
 

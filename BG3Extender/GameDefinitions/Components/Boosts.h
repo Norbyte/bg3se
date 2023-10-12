@@ -467,7 +467,7 @@ DEFN_BOOST(CharacterUnarmedDamage, CharacterUnarmedDamage, {
 
 DEFN_BOOST(ActionResourceReplenishTypeOverride, ActionResourceReplenishTypeOverride, {
 	Guid ActionResource;
-	uint8_t ReplenishType;
+	ResourceReplenishType ReplenishType;
 })
 
 DEFN_BOOST(ActionResourcePreventReduction, ActionResourcePreventReduction, {

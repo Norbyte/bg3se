@@ -63,8 +63,8 @@ END_CLS()
 
 BEGIN_CLS(stats::SpellPrototype::UseCostGroup)
 P(Resources)
-P(field_10)
-P(field_18)
+P(Amount)
+P(SubResourceId)
 P(ResourceGroup)
 END_CLS()
 

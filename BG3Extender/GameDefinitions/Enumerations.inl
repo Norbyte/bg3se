@@ -1283,7 +1283,7 @@ BEGIN_ENUM(SpellPrepareType, uint8_t)
 	EV(Unknown, 2)
 END_ENUM()
 
-BEGIN_BITMASK(ReplenishType, uint8_t)
+BEGIN_BITMASK(ResourceReplenishType, uint8_t)
 	EV(Never, 0x01)
 	EV(Default, 0x02)
 	EV(Combat, 0x04)

@@ -151,6 +151,7 @@ sources = [
     'GameDefinitions/GuidResources.h',
     'GameDefinitions/Module.h',
     'GameDefinitions/Hit.h',
+    'GameDefinitions/Interrupt.h',
     'GameDefinitions/RootTemplates.h',
     'GameDefinitions/Components/Boosts.h',
     'GameDefinitions/Components/Combat.h',

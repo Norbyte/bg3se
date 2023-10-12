@@ -2,6 +2,7 @@
 
 #include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/Stats/Common.h>
+#include <GameDefinitions/Interrupt.h>
 #include <GameDefinitions/Hit.h>
 #include <GameDefinitions/Misc.h>
 #include <Lua/LuaHelpers.h>
@@ -52,24 +53,33 @@ struct BaseFunctorExecParams
 	PropertyContext PropertyContext{ 0 };
 	int32_t StoryActionId{ 0 };
 	ActionOriginator Originator;
-	resource::GuidResourceBankBase* GuidResourceMgr{ nullptr };
-	uint64_t Unkn{ 0 };
+	resource::GuidResourceBankBase* ClassResources{ nullptr };
+	EntityHandle HistoryEntity;
+	EntityHandle StatusSource;
+	MultiHashMap<EntityHandle, int32_t> EntityToThothContextIndex;
+	int field_98;
+	bool field_9C;
 };
 
 struct FunctorExecParamsType1 : public BaseFunctorExecParams
 {
 	ecs::EntityRef Caster;
+	ecs::EntityRef CasterProxy;
 	ecs::EntityRef Target;
+	ecs::EntityRef TargetProxy;
 	glm::vec3 Position;
 	bool IsFromItem;
 	SpellIdWithPrototype SpellId;
 	Hit Hit;
 	DamageSums DamageSums;
+	uint64_t field_2F8;
+	uint64_t field_300;
 	float SomeRadius;
 	HitWith HitWith;
-	int16_t Hit2Flags;
+	uint32_t field_310;
+	uint32_t field_314;
 	FixedString field_26C;
-	char field_270;
+	uint8_t field_31C;
 };
 
 struct FunctorExecParamsType2 : public BaseFunctorExecParams
@@ -88,17 +98,24 @@ struct FunctorExecParamsType3 : public BaseFunctorExecParams
 {
 	ecs::EntityRef Caster;
 	ecs::EntityRef Target;
+	ecs::EntityRef field_C0;
 	glm::vec3 Position;
+	float Distance;
 };
 
 struct FunctorExecParamsType4 : public BaseFunctorExecParams
 {
 	ecs::EntityRef Caster;
+	ecs::EntityRef field_B0;
 	glm::vec3 Position;
 	SpellIdWithPrototype SpellId;
 	Hit Hit;
 	DamageSums DamageSums;
-	uint16_t Hit2_field_90;
+	uint64_t field_2D8;
+	uint64_t field_2E0;
+	uint32_t field_2E8;
+	FixedString field_2EC;
+	uint8_t field_2F0;
 };
 
 struct FunctorExecParamsType5 : public BaseFunctorExecParams
@@ -106,48 +123,59 @@ struct FunctorExecParamsType5 : public BaseFunctorExecParams
 	ecs::EntityRef Owner_M;
 	ecs::EntityRef Target;
 	ecs::EntityRef Caster;
+	ecs::EntityRef field_D0;
+	ecs::EntityRef field_E0;
 	glm::vec3 Position;
 	bool IsFromItem;
 	SpellIdWithPrototype SpellId;
 	Hit Hit;
 	DamageSums DamageSums;
-	float SomeRadius;
-	uint8_t field_268;
 };
 
 struct FunctorExecParamsType6 : public BaseFunctorExecParams
 {
 	ecs::EntityRef Target;
-	ecs::EntityRef TargetX;
+	ecs::EntityRef TargetProxy;
 	ecs::EntityRef Caster;
+	ecs::EntityRef field_D0;
+	ecs::EntityRef field_E0;
 	glm::vec3 Position;
 	bool IsFromItem;
 	SpellIdWithPrototype SpellId;
 	Hit Hit;
 	DamageSums DamageSums;
-	float SomeRadius;
-	uint8_t field_268;
-	int field_25C;
 };
 
 struct FunctorExecParamsType7 : public BaseFunctorExecParams
 {
 	ecs::EntityRef Caster;
-	ecs::EntityRef Caster2;
 	ecs::EntityRef Target;
-	glm::vec3 Position;
-	bool IsFromItem;
-	SpellIdWithPrototype SpellId;
-	Hit Hit;
-	DamageSums DamageSums;
-	float SomeRadius;
-	bool SummonInInventoryFlag;
+	bool UseCasterStats;
 };
 
 struct FunctorExecParamsType8 : public BaseFunctorExecParams
 {
+	ecs::EntityRef Caster;
 	ecs::EntityRef Target;
 };
+
+struct FunctorExecParamsType9 : public BaseFunctorExecParams
+{
+	bool OnlyAllowRollAdjustments;
+	ecs::EntityRef Source;
+	ecs::EntityRef SourceProxy;
+	ecs::EntityRef Target;
+	ecs::EntityRef TargetProxy;
+	ecs::EntityRef Observer;
+	ecs::EntityRef ObserverProxy;
+	std::optional<interrupt::ResolveData> ResolveData;
+	interrupt::InterruptVariant2 Interrupt;
+	Hit Hit;
+	DamageSums DamageSums;
+	Array<DamagePair> DamageList;
+	interrupt::ExecuteResult ExecuteInterruptResult;
+};
+
 
 
 struct Functors : public Noncopyable<Functors>
@@ -160,6 +188,7 @@ struct Functors : public Noncopyable<Functors>
 	using ExecuteType6Proc = void (HitResult* hit, Functors* self, FunctorExecParamsType6 * params);
 	using ExecuteType7Proc = void (HitResult* hit, Functors* self, FunctorExecParamsType7 * params);
 	using ExecuteType8Proc = void (HitResult* hit, Functors* self, FunctorExecParamsType8 * params);
+	using ExecuteType9Proc = void (HitResult* hit, Functors* self, FunctorExecParamsType9 * params);
 
 	struct BaseVMT
 	{
