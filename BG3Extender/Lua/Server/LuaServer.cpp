@@ -531,7 +531,7 @@ namespace bg3se::esv::lua
 
 	void ServerState::OnGameStateChanged(GameState fromState, GameState toState)
 	{
-		GameStateChangeEvent params{ 
+		GameStateChangedEvent params{
 			.FromState = fromState, 
 			.ToState = toState
 		};

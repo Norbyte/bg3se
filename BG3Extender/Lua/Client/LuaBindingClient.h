@@ -9,7 +9,7 @@ namespace bg3se::ecl::lua
 	LifetimeHandle GetClientLifetime();
 	LifetimePool& GetClientLifetimePool();
 
-	struct GameStateChangeEvent : public EventBase
+	struct GameStateChangedEvent : public EventBase
 	{
 		ecl::GameState FromState;
 		ecl::GameState ToState;

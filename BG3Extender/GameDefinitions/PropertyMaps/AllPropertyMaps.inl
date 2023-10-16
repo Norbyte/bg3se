@@ -15,7 +15,47 @@ END_CLS()
 BEGIN_CLS(stats::TreasureTable)
 END_CLS()
 
+BEGIN_CLS(stats::RPGEnumeration)
+P(Name)
+P(Values)
+END_CLS()
+
+BEGIN_CLS(stats::Modifier)
+P(EnumerationIndex)
+P(LevelMapIndex)
+P(Name)
+END_CLS()
+
+BEGIN_CLS(stats::ModifierList)
+P(Name)
+P(Attributes)
+END_CLS()
+
+BEGIN_CLS(stats::CNamedElementManager<stats::RPGEnumeration>)
+P(Primitives)
+P(NameHashMap)
+END_CLS()
+
+BEGIN_CLS(stats::CNamedElementManager<stats::ModifierList>)
+P(Primitives)
+P(NameHashMap)
+END_CLS()
+
+BEGIN_CLS(stats::CNamedElementManager<stats::Modifier>)
+P(Primitives)
+P(NameHashMap)
+END_CLS()
+
+BEGIN_CLS(stats::CNamedElementManager<stats::TreasureTable>)
+P(Primitives)
+P(NameHashMap)
+END_CLS()
+
 BEGIN_CLS(stats::RPGStats)
+P(ModifierValueLists)
+P(ModifierLists)
+P(TreasureTables)
+P(ExtraData)
 END_CLS()
 
 #include <GameDefinitions/PropertyMaps/Generated.inl>

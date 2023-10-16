@@ -27,7 +27,7 @@ namespace bg3se::esv::lua
 	LifetimeHandle GetServerLifetime();
 	LifetimePool& GetServerLifetimePool();
 
-	struct GameStateChangeEvent : public EventBase
+	struct GameStateChangedEvent : public EventBase
 	{
 		esv::GameState FromState;
 		esv::GameState ToState;
