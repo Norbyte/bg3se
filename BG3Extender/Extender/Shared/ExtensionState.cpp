@@ -395,14 +395,25 @@ namespace bg3se
 			return {};
 		}
 
+		loadedFiles_.insert(std::make_pair(scriptName, path));
+		auto fullPath = GetStaticSymbols().ToPath(path, PathRootType::Data);
+		if (!fullPath.empty()) {
+			fullPath[0] = std::tolower(fullPath[0]);
+		}
+		loadedFileFullPaths_.insert(std::make_pair(scriptName, fullPath));
+
 		auto result = LuaLoadGameFile(reader, scriptName.empty() ? path : scriptName, globalsIdx);
-		if (result) {
-			loadedFiles_.insert(std::make_pair(scriptName, path));
-			auto fullPath = GetStaticSymbols().ToPath(path, PathRootType::Data);
-			if (!fullPath.empty()) {
-				fullPath[0] = std::tolower(fullPath[0]);
+
+		if (!result) {
+			auto it = loadedFiles_.find(scriptName);
+			if (it != loadedFiles_.end()) {
+				loadedFiles_.erase(it);
 			}
-			loadedFileFullPaths_.insert(std::make_pair(scriptName, fullPath));
+
+			auto fit = loadedFileFullPaths_.find(scriptName);
+			if (fit != loadedFileFullPaths_.end()) {
+				loadedFileFullPaths_.erase(fit);
+			}
 		}
 
 		return result;
