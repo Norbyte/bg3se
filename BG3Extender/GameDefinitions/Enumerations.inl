@@ -940,6 +940,12 @@ BEGIN_BITMASK(ConditionRollType, uint8_t)
 	EV(AbilityCheckRoll, 0x10)
 END_ENUM()
 
+BEGIN_ENUM(RollCritical, uint8_t)
+	EV(None, 0)
+	EV(Success, 1)
+	EV(Fail, 2)
+END_ENUM()
+
 BEGIN_ENUM_NS(stats, RollType, StatsRollType, uint8_t)
 	EV(None, 0)
 	EV(Attack, 1)

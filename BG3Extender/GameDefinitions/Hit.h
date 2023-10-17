@@ -29,7 +29,7 @@ struct StatsRollResult
 	int Total;
 	int NaturalRoll;
 	int DiscardedDiceTotal;
-	bool Critical;
+	RollCritical Critical;
 	uint32_t DiceSize;
 	uint8_t field_14;
 	Array<int16_t> field_18;
