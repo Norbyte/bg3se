@@ -755,6 +755,7 @@ namespace bg3se::lua::dbg
 		auto L = lua->GetState();
 		DebugEvalGuard _G(*this);
 		StackCheck _(L);
+		StaticLifetimeStackPin _LT(lua->GetStack(), lua->GetGlobalLifetime());
 
 		STDString syntaxCheck = "local x = " + req.Expression;
 		if (luaL_loadstring(L, syntaxCheck.c_str())) {
@@ -794,7 +795,6 @@ namespace bg3se::lua::dbg
 		STDString evaluator = evalateLocals;
 		evaluator += "return " + req.Expression;
 
-		LifetimeStackPin _p(lua->GetStack());
 		if (luaL_loadstring(L, evaluator.c_str())) {
 			req.Response->set_error_message(lua_tostring(L, -1));
 			lua_pop(L, top - lua_gettop(L));
@@ -939,6 +939,7 @@ namespace bg3se::lua::dbg
 		auto L = lua->GetState();
 		DebugEvalGuard _G(*this);
 		StackCheck _(L);
+		StaticLifetimeStackPin _LT(lua->GetStack(), lua->GetGlobalLifetime());
 
 		ContextDebuggerGetVarCtx ctx{ this, &req, ResultCode::Success };
 		char const* error;
