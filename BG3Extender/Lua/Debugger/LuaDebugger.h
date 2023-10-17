@@ -86,6 +86,8 @@ namespace bg3se::lua::dbg
 		void GetVariables(DebuggerGetVariablesRequest const& req);
 
 	private:
+		friend class DebugEvalGuard;
+
 		struct BreakpointSet
 		{
 			// Currently active breakpoints
@@ -116,6 +118,8 @@ namespace bg3se::lua::dbg
 		bool breakOnError_{ false };
 		// Trigger breakpoint on non-Lua error message if we're running Lua code
 		bool breakOnGenericError_{ false };
+		// Are we currently evaluating a debugger expression?
+		int32_t evaluatingExpression_{ 0 };
 		// Lua registry index of global evaluation results
 		int evalContextRef_{ -1 };
 

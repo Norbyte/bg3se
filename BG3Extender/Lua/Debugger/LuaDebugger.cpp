@@ -273,6 +273,25 @@ namespace bg3se::lua::dbg
 		}
 	}
 
+	class DebugEvalGuard
+	{
+	public:
+		inline DebugEvalGuard(ContextDebugger& dbg) :
+			dbg_(dbg)
+		{
+			dbg_.evaluatingExpression_++;
+		}
+
+		inline ~DebugEvalGuard()
+		{
+			assert(dbg_.evaluatingExpression_ > 0);
+			dbg_.evaluatingExpression_--;
+		}
+
+	private:
+		ContextDebugger& dbg_;
+	};
+
 	bool ContextDebugger::IsBreakpoint(lua_State* L, lua_Debug* ar, BkBreakpointTriggered::Reason& reason)
 	{
 		// Fast-path to avoid expensive lookups if we can't break anyway
@@ -372,7 +391,7 @@ namespace bg3se::lua::dbg
 
 	void ContextDebugger::OnLuaError(lua_State* L, char const* msg)
 	{
-		if (breakOnError_) {
+		if (breakOnError_ && !evaluatingExpression_) {
 			TriggerBreakpoint(L, BkBreakpointTriggered::EXCEPTION, msg);
 		}
 	}
@@ -594,6 +613,7 @@ namespace bg3se::lua::dbg
 		}
 
 		auto L = lua->GetState();
+		DebugEvalGuard _G(*this);
 		StackCheck _(L);
 
 		STDString syntaxCheck = "local x = " + req.Expression;
@@ -742,6 +762,7 @@ namespace bg3se::lua::dbg
 		}
 
 		auto L = lua->GetState();
+		DebugEvalGuard _G(*this);
 		StackCheck _(L);
 
 		try {
