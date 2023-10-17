@@ -153,3 +153,5 @@ print = Ext.Utils.Print
 
 -- Backward compatibility with v3
 Ext.Definition = Ext.StaticData
+Ext.Utils.Round = Ext.Math.Round
+Ext.Utils.Random = Ext.Math.Random

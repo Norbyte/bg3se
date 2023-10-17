@@ -853,6 +853,47 @@ bool IsInf(lua_Number x)
 	return glm::isinf(x);
 }
 
+// Variation of Lua builtin math_random() with custom RNG
+UserReturn Random(lua_State *L)
+{
+	auto state = gExtender->GetCurrentExtensionState();
+
+	lua_Integer low, up;
+	switch (lua_gettop(L)) {  /* check number of arguments */
+	case 0: {  /* no arguments */
+		std::uniform_real_distribution<double> dist(0.0, 1.0);
+		push(L, (lua_Number)dist(state->OsiRng));  /* Number between 0 and 1 */
+		return 1;
+	}
+	case 1: {  /* only upper limit */
+		low = 1;
+		up = luaL_checkinteger(L, 1);
+		break;
+	}
+	case 2: {  /* lower and upper limits */
+		low = luaL_checkinteger(L, 1);
+		up = luaL_checkinteger(L, 2);
+		break;
+	}
+	default: return luaL_error(L, "wrong number of arguments");
+	}
+	/* random integer in the interval [low, up] */
+	luaL_argcheck(L, low <= up, 1, "interval is empty");
+#if LUA_VERSION_NUM > 501
+	luaL_argcheck(L, low >= 0 || up <= LUA_MAXINTEGER + low, 1,
+		"interval too large");
+#endif
+
+	std::uniform_int_distribution<int64_t> dist(low, up);
+	push(L, dist(state->OsiRng));
+	return 1;
+}
+
+int64_t Round(double val)
+{
+	return (int64_t)round(val);
+}
+
 void RegisterMathLib()
 {
 	DECLARE_MODULE(Math, Both)
@@ -890,6 +931,8 @@ void RegisterMathLib()
 	MODULE_FUNCTION(BuildTranslation)
 	MODULE_FUNCTION(BuildScale)
 
+	MODULE_FUNCTION(Random)
+	MODULE_FUNCTION(Round)
 	MODULE_FUNCTION(Fract)
 	MODULE_FUNCTION(Trunc)
 	MODULE_FUNCTION(Sign)

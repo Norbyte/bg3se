@@ -35,7 +35,7 @@ debug = {
 oldDebug = nil
 
 -- math.random replaced by custom implementation
-math.random = Ext.Random
+math.random = Ext.Math.Random
 -- math.randomseed not implemented
 math.randomseed = function ()
 	error("math.randomseed() not implemented")
