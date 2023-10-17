@@ -31,7 +31,6 @@ enum MsgValueType {
   USERDATA = 7;
   THREAD = 8;
   UNKNOWN = 9;
-  COMPONENT_HANDLE = 10;
   NONE = 11;
 }
 
@@ -60,8 +59,8 @@ message MsgValue {
     int64 intval = 3;
     float floatval = 4;
     string stringval = 5;
-    MsgVariablesRef variables = 6;
   }
+  MsgVariablesRef variables = 6;
 }
 
 message MsgChildValue {

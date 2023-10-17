@@ -32,7 +32,7 @@ namespace bg3se::lua::dbg
 	class DebugMessageHandler
 	{
 	public:
-		static const uint32_t ProtocolVersion = 2;
+		static const uint32_t ProtocolVersion = 3;
 
 		DebugMessageHandler(LuaDebugInterface& intf);
 

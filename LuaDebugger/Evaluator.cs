@@ -145,9 +145,6 @@ namespace NSE.DebuggerFrontend
                 case MsgValueType.Thread:
                     return "(thread)";
 
-                case MsgValueType.ComponentHandle:
-                    return value.Stringval;
-
                 case MsgValueType.Unknown:
                     return "(unknown)";
 

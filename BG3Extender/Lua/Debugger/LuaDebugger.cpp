@@ -59,32 +59,6 @@ namespace bg3se::lua::dbg
 		return depth;
 	}
 
-	void ComponentHandleToProtobuf(ComponentHandle const& handle, MsgValue* value)
-	{
-		value->set_type_id(MsgValueType::COMPONENT_HANDLE);
-		value->set_intval((int)handle.Handle);
-
-		if (!handle) {
-			value->set_stringval("(null handle)");
-		}
-		else {
-			std::stringstream ss;
-
-			// FIXME - lookup component by type?
-			/*auto type = EnumInfo<ExtComponentType>::Find((ExtComponentType)handle.GetType());
-			if (type) {
-				ss << type;
-			}
-			else {*/
-				ss << "UNKNOWN";
-			//}
-
-			ss << " handle 0x" << std::hex << handle.Handle;
-
-			value->set_stringval(ss.str().c_str());
-		}
-	}
-
 	void LuaToProtobuf(lua_State* L, int idx, MsgValue* value)
 	{
 		switch (lua_type(L, idx)) {
@@ -94,9 +68,6 @@ namespace bg3se::lua::dbg
 		case LUA_TBOOLEAN:
 			value->set_type_id(MsgValueType::BOOLEAN);
 			value->set_boolval(lua_toboolean(L, idx));
-			break;
-		case LUA_TLIGHTUSERDATA:
-			ComponentHandleToProtobuf(ComponentHandle((uint64_t)lua_touserdata(L, idx)), value);
 			break;
 		case LUA_TNUMBER:
 			value->set_type_id(MsgValueType::FLOAT);
@@ -310,11 +281,30 @@ namespace bg3se::lua::dbg
 		}
 	}
 
+	void LuaEntityToEvalResults(lua_State* L, int index, EntityProxy* entity, DebuggerGetVariablesRequest const& req)
+	{
+		StackCheck _(L);
+
+		auto ecs = EntityProxy::GetEntitySystem(L);
+		auto types = entity->GetAllComponentTypes(ecs);
+
+		for (auto type : types) {
+			entity->GetComponentByType(L, type);
+			if (lua_type(L, 1) != LUA_TNIL) {
+				push(L, EnumInfo<ExtComponentType>::Find(type).GetString());
+				LuaElementToEvalResults(L, -1, -2, req);
+				lua_pop(L, 1);
+			}
+
+			lua_pop(L, 1);
+		}
+	}
+
 	void LuaArrayToEvalResults(lua_State* L, int index, ArrayProxy* arr, DebuggerGetVariablesRequest const& req)
 	{
 		StackCheck _(L);
 		auto impl = arr->GetImpl();
-		for (unsigned i = 1; i < impl->Length(); i++) {
+		for (unsigned i = 1; i <= impl->Length(); i++) {
 			if (impl->GetElement(L, i)) {
 				auto pair = req.Response->add_result();
 				pair->set_type(MsgChildValue::NUMERIC);
@@ -327,6 +317,8 @@ namespace bg3se::lua::dbg
 					key->set_type(MsgTableKey::NUMERIC);
 					key->set_index(i);
 				}
+
+				lua_pop(L, 1);
 			}
 		}
 	}
@@ -350,7 +342,7 @@ namespace bg3se::lua::dbg
 	{
 		StackCheck _(L);
 		auto impl = set->GetImpl();
-		for (unsigned i = 1; i < impl->Length(); i++) {
+		for (unsigned i = 1; i <= impl->Length(); i++) {
 			if (impl->GetElementAt(L, i)) {
 				auto pair = req.Response->add_result();
 				pair->set_type(MsgChildValue::NUMERIC);
@@ -363,6 +355,8 @@ namespace bg3se::lua::dbg
 					key->set_type(MsgTableKey::NUMERIC);
 					key->set_index(i);
 				}
+
+				lua_pop(L, 1);
 			}
 		}
 	}
@@ -372,6 +366,12 @@ namespace bg3se::lua::dbg
 		auto proxy = Userdata<ObjectProxy>::AsUserData(L, index);
 		if (proxy != nullptr) {
 			LuaUserdataToEvalResults(L, index, proxy, req);
+			return;
+		}
+
+		auto entity = Userdata<EntityProxy>::AsUserData(L, index);
+		if (entity != nullptr) {
+			LuaEntityToEvalResults(L, index, entity, req);
 			return;
 		}
 

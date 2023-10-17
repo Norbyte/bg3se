@@ -78,6 +78,13 @@ namespace bg3se::lua
 		return 1;
 	}
 
+	void EntityProxy::GetComponentByType(lua_State* L, ExtComponentType componentType) const
+	{
+		StackCheck _(L, 1);
+		auto ecs = GetEntitySystem(L);
+		PushComponent(L, ecs, handle_, componentType, GetCurrentLifetime(L));
+	}
+
 	int EntityProxy::GetAllComponents(lua_State* L)
 	{
 		StackCheck _(L, 1);
@@ -118,6 +125,24 @@ namespace bg3se::lua
 		}
 
 		return 1;
+	}
+
+	Array<ExtComponentType> EntityProxy::GetAllComponentTypes(ecs::EntitySystemHelpersBase* ecs) const
+	{
+		Array<ExtComponentType> types;
+
+		auto world = ecs->GetEntityWorld();
+		auto entityClass = world->GetEntityClass(handle_);
+		if (entityClass != nullptr) {
+			for (auto typeInfo : entityClass->ComponentTypeToIndex) {
+				auto extType = ecs->GetComponentType(typeInfo.Key());
+				if (extType) {
+					types.push_back(*extType);
+				}
+			}
+		}
+
+		return types;
 	}
 
 	int EntityProxy::GetAllComponentNames(lua_State* L)
