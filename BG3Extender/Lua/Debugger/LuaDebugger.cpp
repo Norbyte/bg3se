@@ -1005,7 +1005,7 @@ namespace bg3se::lua::dbg
 		lua_Debug ar;
 		memset(&ar, 0, sizeof(ar));
 		
-		if (lua_getstack(L, req.Frame, &ar) == 0) {
+		if (lua_getstack(L, req.Frame + 1, &ar) == 0) {
 			req.Response->set_error_message("Nonexistent stack frame");
 			return ResultCode::EvalFailed;
 		}
@@ -1015,7 +1015,7 @@ namespace bg3se::lua::dbg
 			return ResultCode::Success;
 		}
 
-		StackFrameToEvalResults(L, &ar, req.Frame, req.Response);
+		StackFrameToEvalResults(L, &ar, req.Frame + 1, req.Response);
 		return ResultCode::Success;
 	}
 
@@ -1115,7 +1115,7 @@ namespace bg3se::lua::dbg
 
 	void Debugger::ClientStateDeleted()
 	{
-		server_.OnContextDestroyed();
+		client_.OnContextDestroyed();
 		messageHandler_.SendLuaStateUpdate(false, false);
 	}
 
