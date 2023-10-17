@@ -894,6 +894,41 @@ namespace bg3se::lua::dbg
 		}
 	}
 
+	int ProtectedRunCFunc(lua_State* L)
+	{
+		auto fun = (void (*)(lua_State*, void*))lua_touserdata(L, 1);
+		auto ctx = lua_touserdata(L, 2);
+		fun(L, ctx);
+		return 0;
+	}
+
+	bool ProtectedRunC(lua_State* L, void (* fun)(lua_State*, void*), void* context, char const*& error)
+	{
+		return ProtectedCallC(L, &ProtectedRunCFunc, fun, context, nullptr, error);
+	}
+
+	struct ContextDebuggerGetVarCtx
+	{
+		ContextDebugger* Debugger;
+		DebuggerGetVariablesRequest const* Request;
+		ResultCode Result;
+	};
+
+	void ContextDebuggerGetVar(lua_State* L, void* context)
+	{
+		auto& ctx = *(ContextDebuggerGetVarCtx*)context;
+		if (ctx.Request->Frame != -1 && ctx.Request->Local == -1) {
+			if (!ctx.Request->Key.empty()) {
+				ctx.Request->Response->set_error_message("Cannot get variables using keys in a stack frame request");
+				ctx.Result = ResultCode::EvalFailed;
+			} else {
+				ctx.Result = ctx.Debugger->GetVariablesInStackFrame(L, *ctx.Request);
+			}
+		} else {
+			ctx.Result = ctx.Debugger->GetVariablesInLocal(L, *ctx.Request);
+		}
+	}
+
 	ResultCode ContextDebugger::GetVariablesInContext(DebuggerGetVariablesRequest const& req)
 	{
 		LuaVirtualPin lua(GetExtensionState());
@@ -905,19 +940,12 @@ namespace bg3se::lua::dbg
 		DebugEvalGuard _G(*this);
 		StackCheck _(L);
 
-		try {
-			if (req.Frame != -1 && req.Local == -1) {
-				if (!req.Key.empty()) {
-					req.Response->set_error_message("Cannot get variables using keys in a stack frame request");
-					return ResultCode::EvalFailed;
-				}
-
-				return GetVariablesInStackFrame(L, req);
-			} else  {
-				return GetVariablesInLocal(L, req);
-			}
-		} catch (lua::Exception& e) {
-			req.Response->set_error_message(e.what());
+		ContextDebuggerGetVarCtx ctx{ this, &req, ResultCode::Success };
+		char const* error;
+		if (ProtectedRunC(lua->GetState(), &ContextDebuggerGetVar, &ctx, error)) {
+			return ctx.Result;
+		} else {
+			ctx.Request->Response->set_error_message(error);
 			return ResultCode::EvalFailed;
 		}
 	}

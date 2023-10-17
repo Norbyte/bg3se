@@ -52,6 +52,8 @@ struct StackCheck
 };
 #endif
 
+bool ProtectedCallC(lua_State* L, lua_CFunction fun, void* context, void* context2, char const* funcDescription, char const*& error);
+
 // LuaEnumValue forward declarations
 void push_enum_value(lua_State* L, EnumUnderlyingType value, EnumInfoStore<EnumUnderlyingType> const& store);
 EnumUnderlyingType get_enum_value(lua_State* L, int index, EnumInfoStore<EnumUnderlyingType> const& store);

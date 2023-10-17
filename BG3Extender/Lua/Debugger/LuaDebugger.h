@@ -85,6 +85,9 @@ namespace bg3se::lua::dbg
 		void Evaluate(DebuggerEvaluateRequest const& req);
 		void GetVariables(DebuggerGetVariablesRequest const& req);
 
+		ResultCode GetVariablesInLocal(lua_State* L, DebuggerGetVariablesRequest const& req);
+		ResultCode GetVariablesInStackFrame(lua_State* L, DebuggerGetVariablesRequest const& req);
+
 	private:
 		friend class DebugEvalGuard;
 
@@ -137,8 +140,6 @@ namespace bg3se::lua::dbg
 
 		ResultCode EvaluateInContext(DebuggerEvaluateRequest const& req);
 		bool PushVariableContext(lua_State* L, DebuggerGetVariablesRequest const& req);
-		ResultCode GetVariablesInLocal(lua_State* L, DebuggerGetVariablesRequest const& req);
-		ResultCode GetVariablesInStackFrame(lua_State* L, DebuggerGetVariablesRequest const& req);
 
 		ResultCode GetVariablesInContext(DebuggerGetVariablesRequest const& req);
 	};

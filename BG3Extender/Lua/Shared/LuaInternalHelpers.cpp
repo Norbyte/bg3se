@@ -610,6 +610,35 @@ int ProtectedFunctionCallerBase::CallUserFunctionWithTraceback(lua_State* L, lua
 }
 */
 
+int TracebackHandler(lua_State* L);
+
+bool ProtectedCallC(lua_State* L, lua_CFunction fun, void* context, void* context2, char const* funcDescription, char const*& error)
+{
+	StackCheck _(L);
+
+	lua_pushcfunction(L, &TracebackHandler);
+	int tracebackHandlerIdx = lua_gettop(L);
+	lua_pushcfunction(L, fun);
+	lua_pushlightuserdata(L, context);
+	lua_pushlightuserdata(L, context2);
+	int status = lua_pcall(L, 2, 0, tracebackHandlerIdx);
+	lua_remove(L, tracebackHandlerIdx);
+
+	if (status != LUA_OK) {
+		error = lua_tostring(L, -1);
+		if (funcDescription) {
+			ERR("Error while dispatching C call for %s: %s", funcDescription, lua_tostring(L, -1));
+		} else {
+			ERR("Error while dispatching C call: %s", lua_tostring(L, -1));
+		}
+
+		lua_pop(L, 1);
+		return false;
+	} else {
+		return true;
+	}
+}
+
 void push_enum_value(lua_State* L, EnumUnderlyingType value, EnumInfoStore<EnumUnderlyingType> const& store)
 {
 	if (value < store.Labels.size()) {
