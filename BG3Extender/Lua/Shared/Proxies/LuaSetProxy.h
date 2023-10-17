@@ -10,6 +10,7 @@ namespace bg3se::lua
 		inline virtual ~SetProxyImplBase() {};
 		virtual char const* GetTypeName() const = 0;
 		virtual void* GetRaw() = 0;
+		virtual bool GetElementAt(lua_State* L, unsigned int arrayIndex) = 0;
 		virtual bool HasElement(lua_State* L, int luaIndex) = 0;
 		virtual bool AddElement(lua_State* L, int luaIndex) = 0;
 		virtual bool RemoveElement(lua_State* L, int luaIndex) = 0;
@@ -49,6 +50,16 @@ namespace bg3se::lua
 		char const* GetTypeName() const override
 		{
 			return GetTypeInfo<T>().TypeName.GetString();
+		}
+
+		bool GetElementAt(lua_State* L, unsigned int arrayIndex) override
+		{
+			if (arrayIndex > 0 && arrayIndex <= object_->size()) {
+				push(L, &object_->Keys[arrayIndex - 1], lifetime_);
+				return true;
+			} else {
+				return false;
+			}
 		}
 
 		bool HasElement(lua_State* L, int luaIndex) override

@@ -11,6 +11,16 @@
 
 namespace bg3se::lua::dbg
 {
+	inline bool IsContainerType(MsgValueType type)
+	{
+		return type == MsgValueType::TABLE || type == MsgValueType::USERDATA;
+	}
+	
+	inline bool IsLuaContainerType(int tt)
+	{
+		return tt == LUA_TTABLE || tt == LUA_TUSERDATA;
+	}
+
 	ContextDebugger::ContextDebugger(DebugMessageHandler& messageHandler, DbgContext ctx)
 		: messageHandler_(messageHandler), context_(ctx)
 	{}
@@ -120,7 +130,7 @@ namespace bg3se::lua::dbg
 	{
 		LuaToProtobuf(L, idx, value);
 
-		if (value->type_id() == MsgValueType::TABLE) {
+		if (IsContainerType(value->type_id())) {
 			auto ref = value->mutable_variables();
 			ref->set_frame(req.Frame);
 			ref->set_local(req.Local);
@@ -160,7 +170,7 @@ namespace bg3se::lua::dbg
 
 					auto val = var->mutable_value();
 					LuaToProtobuf(L, -1, val);
-					if (val->type_id() == MsgValueType::TABLE) {
+					if (IsContainerType(val->type_id())) {
 						auto ref = val->mutable_variables();
 						ref->set_frame(frame);
 						ref->set_local(localIdx);
@@ -186,7 +196,7 @@ namespace bg3se::lua::dbg
 
 				auto val = var->mutable_value();
 				LuaToProtobuf(L, -1, val);
-				if (val->type_id() == MsgValueType::TABLE) {
+				if (IsContainerType(val->type_id())) {
 					auto ref = val->mutable_variables();
 					ref->set_frame(frame);
 					ref->set_local(-i - 1);
@@ -238,38 +248,168 @@ namespace bg3se::lua::dbg
 		lua_remove(L, funcIdx);
 	}
 
-	void LuaTableToEvalResults(lua_State* L, int index, DebuggerGetVariablesRequest const& req)
+	void LuaElementToEvalResults(lua_State* L, int keyIndex, int valueIndex, DebuggerGetVariablesRequest const& req)
 	{
-		for (auto idx : iterate(L, index)) {
-			auto pair = req.Response->add_result();
-			switch (lua_type(L, -2)) {
+		auto pair = req.Response->add_result();
+		switch (lua_type(L, keyIndex)) {
+		case LUA_TNUMBER:
+			pair->set_type(MsgChildValue::NUMERIC);
+			pair->set_index(lua_tointeger(L, keyIndex));
+			break;
+
+		case LUA_TSTRING:
+			pair->set_type(MsgChildValue::TEXT);
+			pair->set_name(lua_tostring(L, keyIndex));
+			break;
+		}
+
+		auto val = pair->mutable_value();
+		LuaToProtobuf(L, valueIndex, val, req);
+		if (IsContainerType(val->type_id())) {
+			auto key = val->mutable_variables()->add_key();
+			switch (lua_type(L, keyIndex)) {
 			case LUA_TNUMBER:
-				pair->set_type(MsgChildValue::NUMERIC);
-				pair->set_index(lua_tointeger(L, -2));
+				key->set_type(MsgTableKey::NUMERIC);
+				key->set_index(lua_tointeger(L, keyIndex));
 				break;
 
 			case LUA_TSTRING:
-				pair->set_type(MsgChildValue::TEXT);
-				pair->set_name(lua_tostring(L, -2));
+				key->set_type(MsgTableKey::TEXT);
+				key->set_key(lua_tostring(L, keyIndex));
 				break;
 			}
+		}
+	}
 
-			auto val = pair->mutable_value();
-			LuaToProtobuf(L, -1, val, req);
-			if (val->type_id() == MsgValueType::TABLE) {
-				auto key = val->mutable_variables()->add_key();
-				switch (lua_type(L, -2)) {
-				case LUA_TNUMBER:
+	void LuaTableToEvalResults(lua_State* L, int index, DebuggerGetVariablesRequest const& req)
+	{
+		StackCheck _(L);
+		for (auto idx : iterate(L, index)) {
+			LuaElementToEvalResults(L, -2, -1, req);
+		}
+	}
+
+	void LuaUserdataToEvalResults(lua_State* L, int index, ObjectProxy* proxy, DebuggerGetVariablesRequest const& req)
+	{
+		StackCheck _(L);
+		if (!proxy->IsAlive(L)) {
+			luaL_error(L, "Attempted to dump dead object of type '%s'", proxy->GetImpl()->GetTypeName().GetString());
+		}
+
+		auto const& pm = proxy->GetImpl()->GetPropertyMap();
+		auto obj = proxy->GetImpl()->GetRaw(L);
+		auto lifetime = State::FromLua(L)->GetGlobalLifetime();
+
+		for (auto const& prop : pm.Properties) {
+			auto result = prop.second.Get(L, lifetime, obj, prop.second.Offset, prop.second.Flag);
+			if (result == PropertyOperationResult::Success) {
+				push(L, prop.first);
+				LuaElementToEvalResults(L, -1, -2, req);
+				lua_pop(L, 2);
+			}
+		}
+	}
+
+	void LuaArrayToEvalResults(lua_State* L, int index, ArrayProxy* arr, DebuggerGetVariablesRequest const& req)
+	{
+		StackCheck _(L);
+		auto impl = arr->GetImpl();
+		for (unsigned i = 1; i < impl->Length(); i++) {
+			if (impl->GetElement(L, i)) {
+				auto pair = req.Response->add_result();
+				pair->set_type(MsgChildValue::NUMERIC);
+				pair->set_index(i);
+
+				auto val = pair->mutable_value();
+				LuaToProtobuf(L, -1, val, req);
+				if (IsContainerType(val->type_id())) {
+					auto key = val->mutable_variables()->add_key();
 					key->set_type(MsgTableKey::NUMERIC);
-					key->set_index(lua_tointeger(L, -2));
-					break;
-
-				case LUA_TSTRING:
-					key->set_type(MsgTableKey::TEXT);
-					key->set_key(lua_tostring(L, -2));
-					break;
+					key->set_index(i);
 				}
 			}
+		}
+	}
+
+	void LuaMapToEvalResults(lua_State* L, int index, MapProxy* map, DebuggerGetVariablesRequest const& req)
+	{
+		StackCheck _(L);
+		auto impl = map->GetImpl();
+		push(L, nullptr);
+
+		while (impl->Next(L, -1) == 2) {
+			LuaElementToEvalResults(L, -2, -1, req);
+			lua_pop(L, 1);
+			lua_remove(L, -2);
+		}
+
+		lua_pop(L, 1);
+	}
+
+	void LuaSetToEvalResults(lua_State* L, int index, SetProxy* set, DebuggerGetVariablesRequest const& req)
+	{
+		StackCheck _(L);
+		auto impl = set->GetImpl();
+		for (unsigned i = 1; i < impl->Length(); i++) {
+			if (impl->GetElementAt(L, i)) {
+				auto pair = req.Response->add_result();
+				pair->set_type(MsgChildValue::NUMERIC);
+				pair->set_index(i);
+
+				auto val = pair->mutable_value();
+				LuaToProtobuf(L, -1, val, req);
+				if (IsContainerType(val->type_id())) {
+					auto key = val->mutable_variables()->add_key();
+					key->set_type(MsgTableKey::NUMERIC);
+					key->set_index(i);
+				}
+			}
+		}
+	}
+
+	void LuaUserdataToEvalResults(lua_State* L, int index, DebuggerGetVariablesRequest const& req)
+	{
+		auto proxy = Userdata<ObjectProxy>::AsUserData(L, index);
+		if (proxy != nullptr) {
+			LuaUserdataToEvalResults(L, index, proxy, req);
+			return;
+		}
+
+		auto arr = Userdata<ArrayProxy>::AsUserData(L, index);
+		if (arr != nullptr) {
+			LuaArrayToEvalResults(L, index, arr, req);
+			return;
+		}
+
+		auto map = Userdata<MapProxy>::AsUserData(L, index);
+		if (map != nullptr) {
+			LuaMapToEvalResults(L, index, map, req);
+			return;
+		}
+
+		auto set = Userdata<SetProxy>::AsUserData(L, index);
+		if (set != nullptr) {
+			LuaSetToEvalResults(L, index, set, req);
+			return;
+		}
+
+		WARN("LuaValueToEvalResults(): Evaluating unrecognized userdata type");
+	}
+
+	void LuaValueToEvalResults(lua_State* L, int index, DebuggerGetVariablesRequest const& req)
+	{
+		switch (lua_type(L, index)) {
+		case LUA_TTABLE:
+			LuaTableToEvalResults(L, index, req);
+			break;
+
+		case LUA_TUSERDATA:
+			LuaUserdataToEvalResults(L, index, req);
+			break;
+
+		default:
+			WARN("LuaValueToEvalResults(): Evaluating non-table/userdata recursively?");
+			break;
 		}
 	}
 
@@ -679,7 +819,7 @@ namespace bg3se::lua::dbg
 				LuaToProtobuf(L, retval, result);
 				auto type = lua_type(L, retval);
 
-				if (type == LUA_TTABLE || type == LUA_TUSERDATA) {
+				if (IsLuaContainerType(type)) {
 					lua_rawgeti(L, LUA_REGISTRYINDEX, evalContextRef_);
 					auto registry = lua_absindex(L, -1);
 					auto index = lua_rawlen(L, registry);
@@ -801,12 +941,12 @@ namespace bg3se::lua::dbg
 				lua_remove(L, -2); // stack: value
 			}
 
-			if (lua_type(L, -1) == LUA_TTABLE) {
-				LuaTableToEvalResults(L, -1, req);
+			if (IsLuaContainerType(lua_type(L, -1))) {
+				LuaValueToEvalResults(L, -1, req);
 				lua_pop(L, 1);
 				return ResultCode::Success;
 			} else {
-				req.Response->set_error_message("Not a table");
+				req.Response->set_error_message("Can only enumerate table or userdata types");
 				lua_pop(L, 1);
 				return ResultCode::EvalFailed;
 			}
