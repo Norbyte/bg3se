@@ -45,6 +45,10 @@ namespace bg3se::lua::dbg
 
 	std::optional<STDString> FindLuaSourcePath(STDString const& name)
 	{
+		if (name.starts_with("builtin://") && !gExtender->GetConfig().LuaBuiltinResourceDirectory.empty()) {
+			return ToUTF8(gExtender->GetConfig().LuaBuiltinResourceDirectory) + "/" + name.substr(10);
+		}
+
 		if (gExtender->GetServer().HasExtensionState()) {
 			auto const& files = gExtender->GetServer().GetExtensionState().GetLoadedFileFullPaths();
 			auto it = files.find(name);
@@ -387,6 +391,13 @@ namespace bg3se::lua::dbg
 				SendSourceResponse(seq, req.name().c_str(), reader.ToString());
 				return;
 			}
+		}
+
+		// Check for a builtin resource
+		auto builtin = gExtender->GetLuaBuiltinBundle().GetResource(req.name().c_str());
+		if (builtin) {
+			SendSourceResponse(seq, req.name().c_str(), builtin->c_str());
+			return;
 		}
 
 		SendResult(seq, ResultCode::NoSuchFile);
