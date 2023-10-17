@@ -116,6 +116,8 @@ namespace bg3se::lua::dbg
 		bool breakOnError_{ false };
 		// Trigger breakpoint on non-Lua error message if we're running Lua code
 		bool breakOnGenericError_{ false };
+		// Lua registry index of global evaluation results
+		int evalContextRef_{ -1 };
 
 		// Breakpoint set currently in use by the debugger
 		std::unique_ptr<BreakpointSet> breakpoints_;
@@ -123,6 +125,8 @@ namespace bg3se::lua::dbg
 		std::unique_ptr<BreakpointSet> newBreakpoints_;
 
 		ExtensionStateBase& GetExtensionState();
+		void SetupLuaBindings(lua_State* L);
+		void CleanupLuaBindings(lua_State* L);
 		void ExecuteQueuedActions();
 		bool IsBreakpoint(lua_State* L, lua_Debug* ar, BkBreakpointTriggered::Reason& reason);
 		void TriggerBreakpoint(lua_State* L, BkBreakpointTriggered_Reason reason, char const* msg);

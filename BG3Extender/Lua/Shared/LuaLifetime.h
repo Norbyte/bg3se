@@ -302,7 +302,7 @@ public:
 		}
 
 		if (!ref->IsAlive()) {
-#if defined(DEBUG_LIFETIMES)
+#if defined(TRACE_LIFETIMES)
 			ERR("[%012lx] Attempted to get a dead lifetime.", (uint64_t)handle);
 #endif
 			return nullptr;

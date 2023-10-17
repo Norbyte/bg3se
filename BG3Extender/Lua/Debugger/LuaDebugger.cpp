@@ -395,8 +395,28 @@ namespace bg3se::lua::dbg
 	void ContextDebugger::OnContextCreated(lua_State* L)
 	{
 		if (enabled_) {
-			lua_sethook(L, LuaHook, LUA_MASKLINE, 0);
+			SetupLuaBindings(L);
 		}
+	}
+
+	void ContextDebugger::SetupLuaBindings(lua_State* L)
+	{
+		if (evalContextRef_ != -1) return;
+
+		StackCheck _(L);
+		lua_sethook(L, LuaHook, LUA_MASKLINE, 0);
+		lua_newtable(L);
+		evalContextRef_ = luaL_ref(L, LUA_REGISTRYINDEX);
+	}
+
+	void ContextDebugger::CleanupLuaBindings(lua_State* L)
+	{
+		if (evalContextRef_ == -1) return;
+
+		StackCheck _(L);
+		lua_sethook(L, nullptr, 0, 0);
+		luaL_unref(L, LUA_REGISTRYINDEX, evalContextRef_);
+		evalContextRef_ = -1;
 	}
 
 	void ContextDebugger::EnableDebugging(bool enabled)
@@ -417,9 +437,9 @@ namespace bg3se::lua::dbg
 		LuaVirtualPin lua(GetExtensionState());
 		if (lua) {
 			if (enabled) {
-				lua_sethook(lua->GetState(), LuaHook, LUA_MASKLINE, 0);
+				SetupLuaBindings(lua->GetState());
 			} else {
-				lua_sethook(lua->GetState(), nullptr, 0, 0);
+				CleanupLuaBindings(lua->GetState());
 			}
 		}
 	}
@@ -612,8 +632,7 @@ namespace bg3se::lua::dbg
 		}
 
 		STDString evaluator = evalateLocals;
-		evaluator += "local result = " + req.Expression + "\r\n"
-			"return Ext.DebugEvaluate(result)";
+		evaluator += "return " + req.Expression;
 
 		LifetimeStackPin _p(lua->GetStack());
 		if (luaL_loadstring(L, evaluator.c_str())) {
@@ -626,7 +645,7 @@ namespace bg3se::lua::dbg
 			lua_insert(L, top + 1);
 		}
 
-		if (bg3se::lua::CallWithTraceback(L, (int)locals.size(), LUA_MULTRET)) {
+		if (bg3se::lua::CallWithTraceback(L, (int)locals.size(), 1)) {
 			req.Response->set_error_message(lua_tostring(L, -1));
 			lua_pop(L, 1);
 			return ResultCode::EvalFailed;
@@ -636,14 +655,22 @@ namespace bg3se::lua::dbg
 			if (numReturnValues == 0) {
 				result->set_type_id(MsgValueType::NONE);
 			} else {
-				LuaToProtobuf(L, -numReturnValues, result);
+				auto retval = lua_absindex(L, -1);
+				LuaToProtobuf(L, retval, result);
+				auto type = lua_type(L, retval);
 
-				if (numReturnValues >= 2) {
-					auto index = (int32_t)lua_tointeger(L, -numReturnValues + 1);
+				if (type == LUA_TTABLE || type == LUA_TUSERDATA) {
+					lua_rawgeti(L, LUA_REGISTRYINDEX, evalContextRef_);
+					auto registry = lua_absindex(L, -1);
+					auto index = lua_rawlen(L, registry);
+					lua_pushvalue(L, retval);
+					lua_rawseti(L, registry, index + 1);
+					lua_pop(L, 1);
+
 					auto ref = result->mutable_variables();
 					ref->set_frame(-1);
 					ref->set_local(-1);
-					ref->set_variableref(index);
+					ref->set_variableref((int32_t)index + 1);
 				}
 			}
 
@@ -658,9 +685,7 @@ namespace bg3se::lua::dbg
 			lua_pushglobaltable(L);
 			return true;
 		} else if (req.Frame == -1 && req.Local == -1 && req.VariablesRef != -1) {
-			lua_getglobal(L, "Ext"); // stack: Ext
-			lua_getfield(L, -1, "_EVAL_ROOTS_"); // stack: Ext, roots
-			lua_remove(L, -2); // stack: roots
+			lua_rawgeti(L, LUA_REGISTRYINDEX, evalContextRef_);
 			push(L, req.VariablesRef); // stack: roots, key
 			lua_gettable(L, -2); // stack: roots, value
 			lua_remove(L, -2); // stack: value
@@ -719,15 +744,20 @@ namespace bg3se::lua::dbg
 		auto L = lua->GetState();
 		StackCheck _(L);
 
-		if (req.Frame != -1 && req.Local == -1) {
-			if (!req.Key.empty()) {
-				req.Response->set_error_message("Cannot get variables using keys in a stack frame request");
-				return ResultCode::EvalFailed;
-			}
+		try {
+			if (req.Frame != -1 && req.Local == -1) {
+				if (!req.Key.empty()) {
+					req.Response->set_error_message("Cannot get variables using keys in a stack frame request");
+					return ResultCode::EvalFailed;
+				}
 
-			return GetVariablesInStackFrame(L, req);
-		} else  {
-			return GetVariablesInLocal(L, req);
+				return GetVariablesInStackFrame(L, req);
+			} else  {
+				return GetVariablesInLocal(L, req);
+			}
+		} catch (lua::Exception& e) {
+			req.Response->set_error_message(e.what());
+			return ResultCode::EvalFailed;
 		}
 	}
 

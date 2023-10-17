@@ -4,8 +4,6 @@ Ext._Internal = {}
 local _I = Ext._Internal
 
 _I._LoadedFiles = {}
--- Table to hold debugger expression evaluation results
-_I._EVAL_ROOTS_ = {}
 Mods = {}
 
 _I._PublishedSharedEvents = {
@@ -98,18 +96,6 @@ _I._LoadBootstrap = function (path, modTable)
 	
 	env._G = env
 	Ext.Utils.Include(ModuleUUID, path, env)
-end
-
--- Used by the Lua debug adapter to store intermediate evaluation results.
--- Should not be used manually!
-Ext.DebugEvaluate = function (retval)
-	if type(retval) ~= "table" then
-		return retval
-	else
-		local idx = #_I._EVAL_ROOTS_ + 1
-		_I._EVAL_ROOTS_[idx] = retval
-		return retval, idx
-	end
 end
 
 -- Helper for dumping variables in console
