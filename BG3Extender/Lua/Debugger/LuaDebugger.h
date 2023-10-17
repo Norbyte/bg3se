@@ -65,6 +65,7 @@ namespace bg3se::lua::dbg
 		ContextDebugger(DebugMessageHandler& messageHandler, DbgContext ctx);
 
 		void OnContextCreated(lua_State* L);
+		void OnContextDestroyed();
 		void OnLuaHook(lua_State* L, lua_Debug* ar);
 		void OnLuaError(lua_State* L, char const* msg);
 		void OnGenericError(char const* msg);

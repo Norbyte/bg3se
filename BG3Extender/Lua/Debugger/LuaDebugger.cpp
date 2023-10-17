@@ -558,6 +558,11 @@ namespace bg3se::lua::dbg
 		}
 	}
 
+	void ContextDebugger::OnContextDestroyed()
+	{
+		evalContextRef_ = -1;
+	}
+
 	void ContextDebugger::SetupLuaBindings(lua_State* L)
 	{
 		if (evalContextRef_ != -1) return;
@@ -1104,11 +1109,13 @@ namespace bg3se::lua::dbg
 
 	void Debugger::ServerStateDeleted()
 	{
+		server_.OnContextDestroyed();
 		messageHandler_.SendLuaStateUpdate(true, false);
 	}
 
 	void Debugger::ClientStateDeleted()
 	{
+		server_.OnContextDestroyed();
 		messageHandler_.SendLuaStateUpdate(false, false);
 	}
 
