@@ -24,12 +24,14 @@ $GameManifestPath = Join-Path $PublishingRoot "GameManifest.json"
 $EditorManifestPath = Join-Path $PublishingRoot "EditorManifest.json"
 $GameBuildZipPath = Join-Path $BuildRoot "GameLatest.zip"
 $GameManualBuildZipPath = Join-Path $BuildRoot "GameLatestManual.zip"
+$GameDebugAdapterBuildZipPath = Join-Path $BuildRoot "DebugAdapter.zip"
 $EditorBuildZipPath = Join-Path $BuildRoot "EditorLatest.zip"
 $GameDllPath = Join-Path $RootPath "x64\Game Release\BG3ScriptExtender.dll"
 $EditorDllPath = Join-Path $RootPath "x64\Editor Release\BG3EditorScriptExtender.dll"
 
 $GameBuildDir = Join-Path "$BuildRoot" "TempGameBuild"
 $GameManualBuildDir = Join-Path "$BuildRoot" "TempGameManualBuild"
+$GameDebugAdapterBuildDir = Join-Path "$BuildRoot" "TempGameDebugAdapter"
 $EditorBuildDir = Join-Path "$BuildRoot" "TempEditorBuild"
 $PDBDir = Join-Path "$PDBRoot" "TempPDB"
 	
@@ -67,6 +69,14 @@ function Create-PDBDir
 	Copy-Item "x64\Game Release\BG3ScriptExtender.dll" -Destination $PDBDir\BG3ScriptExtender.dll
 	#Copy-Item "x64\Editor Release\BG3EditorScriptExtender.dll" -Destination $PDBDir\BG3EditorScriptExtender.dll
 	Copy-Item External\protobuf\bin\libprotobuf-lite.dll -Destination $PDBDir\libprotobuf-lite.dll
+
+	if ($Channel -eq "Devel" -Or $Channel -ne "Nightly") {
+		New-Item $PDBDir\DAP -ItemType "directory"
+		Copy-Item "LuaDebugger\bin\Release\Google.Protobuf.dll" -Destination $PDBDir\DAP\Google.Protobuf.dll
+		Copy-Item "LuaDebugger\bin\Release\Newtonsoft.Json.dll" -Destination $PDBDir\DAP\Newtonsoft.Json.dll
+		Copy-Item "LuaDebugger\bin\Release\LuaDebugger.exe" -Destination $PDBDir\DAP\LuaDebugger.exe
+		Copy-Item "LuaDebugger\bin\Release\LuaDebugger.exe.config" -Destination $PDBDir\DAP\LuaDebugger.exe.config
+	}
 }
 
 function Create-Update-Package ($BuildDir, $ZipPath, $HasEditor, $HasGame)
@@ -100,6 +110,20 @@ function Create-ManualInstall-Package ($BuildDir, $ZipPath)
 
 	Copy-Item External\protobuf\bin\libprotobuf-lite.dll -Destination $BuildDir\libprotobuf-lite.dll
 	Copy-Item "x64\Game Release\BG3ScriptExtender.dll" -Destination $BuildDir\DWrite.dll
+	
+	Remove-Item $ZipPath -ErrorAction SilentlyContinue
+	Compress-Archive -Path $BuildDir\* -DestinationPath $ZipPath -CompressionLevel Optimal -Force
+}
+
+function Create-DebugAdapter-Package ($BuildDir, $ZipPath)
+{
+	Remove-Item $BuildDir -Recurse -ErrorAction SilentlyContinue
+	New-Item $BuildDir -ItemType "directory"
+
+	Copy-Item "LuaDebugger\bin\Release\Google.Protobuf.dll" -Destination $BuildDir\Google.Protobuf.dll
+	Copy-Item "LuaDebugger\bin\Release\Newtonsoft.Json.dll" -Destination $BuildDir\Newtonsoft.Json.dll
+	Copy-Item "LuaDebugger\bin\Release\LuaDebugger.exe" -Destination $BuildDir\LuaDebugger.exe
+	Copy-Item "LuaDebugger\bin\Release\LuaDebugger.exe.config" -Destination $BuildDir\LuaDebugger.exe.config
 	
 	Remove-Item $ZipPath -ErrorAction SilentlyContinue
 	Compress-Archive -Path $BuildDir\* -DestinationPath $ZipPath -CompressionLevel Optimal -Force
@@ -156,10 +180,17 @@ function Publish-Manual-Package ($ZipPath, $Channel)
 	aws s3api put-object-acl --bucket nb-stor --key "$S3RootPath/$Channel/ManualInstall.zip" --acl public-read
 }
 
+function Publish-DebugAdapter-Package ($ZipPath, $Channel)
+{
+	aws s3 cp $ZipPath "s3://$S3Bucket/$S3RootPath/$Channel/DebugAdapter.zip"
+	aws s3api put-object-acl --bucket nb-stor --key "$S3RootPath/$Channel/DebugAdapter.zip" --acl public-read
+}
+
 Build-Extender
 
 Build-Package $GameBuildDir $GameBuildZipPath $GameDllPath $GameChannel 1 0
 Create-ManualInstall-Package $GameManualBuildDir $GameManualBuildZipPath
+Create-DebugAdapter-Package $GameDebugAdapterBuildDir $GameDebugAdapterBuildZipPath
 # Build-Package $EditorBuildDir $EditorBuildZipPath $EditorDllPath $EditorChannel 0 1
 
 Create-PDBDir
@@ -183,4 +214,5 @@ Read-Host
 Write-Output " ===== UPLOADING PACKAGES ===== "
 Publish-Package $GameBuildZipPath $GameDigestPath $GameChannel $GameManifestPath
 Publish-Manual-Package $GameManualBuildZipPath $GameChannel
+Publish-DebugAdapter-Package $GameDebugAdapterBuildZipPath $GameChannel
 # Publish-Package $EditorBuildZipPath $EditorDigestPath $EditorChannel $EditorManifestPath
