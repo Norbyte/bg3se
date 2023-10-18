@@ -58,9 +58,9 @@ The following features are accepted in `FeatureFlags`:
 <a id="bootstrap-scripts"></a>
 ### Bootstrap Scripts  
 
-If Lua is enabled for the mod, the extender will attempt to load `BootstrapServer.lua` on the server side, and `BootstrapClient.lua` on the client side. These scripts should be created in this folder (create the Story\RawFiles\Lua folders if necessary):
+If Lua is enabled for the mod, the extender will attempt to load `BootstrapServer.lua` on the server side, and `BootstrapClient.lua` on the client side. These scripts should be created in the `Mods\<YOURMOD>\ScriptExtender\Lua\` folder.
 ```
-Mods\ModName\ScriptExtender\Lua\
+
 ```
 **Required Scripts**  
 | Name | State |
@@ -392,7 +392,7 @@ end)
 #### Ext.Require(path) <sup>R</sup>
 
 The `Ext.Require` function is the extender's version of the Lua built-in `require` function. 
-The function checks if the file at `Mods/<ModuleUUID>/Story/RawFiles/Lua/<path>` was already loaded; if not, it'll load the file, store the return value of the main chunk and return it to the caller. If the file was already loaded, it'll return the stored return value.
+The function checks if the file at `Mods/<ModuleUUID>/ScriptExtender/Lua/<path>` was already loaded; if not, it'll load the file, store the return value of the main chunk and return it to the caller. If the file was already loaded, it'll return the stored return value.
 **Note:** `Ext.Require` should only be called during module startup (i.e. when loading `BootstrapClient.lua` or `BoostrapServer.lua`). Loading Lua files after module startup is deprecated.
 
 #### Ext.Utils.Print(...)
