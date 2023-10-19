@@ -69,8 +69,5 @@ P(ResourceGroup)
 END_CLS()
 
 
-BEGIN_CLS(Resource)
-END_CLS()
-
 BEGIN_CLS(BaseComponent)
 END_CLS()

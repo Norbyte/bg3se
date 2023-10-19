@@ -732,6 +732,17 @@
         </Mapping>
         -->
 
+      <Mapping Name="eoc::gResourceManager">
+          49 8b f0 // mov rsi, r8
+          4c 8b fa // mov r15, rdx
+          48 8b f9 // mov rdi, rcx
+          49 81 c0 84 00 00 00 // add r8, 0x84
+          @ref1 48 8b 0d ?? ?? ?? ?? // mov rcx, qword ptr [GlobalResourceManager]
+          33 d2 // xor edx, edx
+          4d 8b e1 // mov r12, r9
+          <Target Type="Indirect" Offset="@ref1" Symbol="ResourceMgr"/>
+      </Mapping>
+
       <Mapping Name="eoc::gGuidResourceManager">
         @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, fs_MaximumTotalTargetHP
         48 8b cb // mov     rcx, rbx
