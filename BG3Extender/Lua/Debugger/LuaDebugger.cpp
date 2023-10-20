@@ -496,7 +496,7 @@ namespace bg3se::lua::dbg
 
 	void ContextDebugger::TriggerBreakpoint(lua_State* L, BkBreakpointTriggered_Reason reason, char const* msg)
 	{
-		DEBUG("Debugger::TriggerBreakpoint()");
+		DBGMSG("Debugger::TriggerBreakpoint()");
 
 		{
 			std::unique_lock<std::mutex> lk(breakpointMutex_);
@@ -516,7 +516,7 @@ namespace bg3se::lua::dbg
 			breakpointCv_.wait(lk, [this]() { this->ExecuteQueuedActions(); return !this->isPaused_; });
 		}
 
-		DEBUG("Continuing from breakpoint.");
+		DBGMSG("Continuing from breakpoint.");
 	}
 
 	void ContextDebugger::OnLuaHook(lua_State* L, lua_Debug* ar)
@@ -662,7 +662,7 @@ namespace bg3se::lua::dbg
 				return ResultCode::InPause;
 			}
 
-			DEBUG("ContextDebugger::ContinueExecution(): Force pause");
+			DBGMSG("ContextDebugger::ContinueExecution(): Force pause");
 			// Forcibly break on the next call
 			requestPause_ = true;
 			pauseMaxStackDepth_ = 0x7fffffff;
@@ -706,7 +706,7 @@ namespace bg3se::lua::dbg
 			return ResultCode::InvalidContinueAction;
 		}
 
-		DEBUG("ContextDebugger::ContinueExecution(): Continuing; action %d", action);
+		DBGMSG("ContextDebugger::ContinueExecution(): Continuing; action %d", action);
 		isPaused_ = false;
 		breakpointCv_.notify_one();
 
@@ -1025,12 +1025,12 @@ namespace bg3se::lua::dbg
 		client_(messageHandler, DbgContext::CLIENT)
 	{
 		messageHandler_.SetDebugger(this);
-		DEBUG("Debugger::Debugger(): Starting Lua debugger");
+		DBGMSG("Debugger::Debugger(): Starting Lua debugger");
 	}
 
 	Debugger::~Debugger()
 	{
-		DEBUG("Debugger::~Debugger(): Shutting down Lua debugger");
+		DBGMSG("Debugger::~Debugger(): Shutting down Lua debugger");
 		messageHandler_.SetDebugger(nullptr);
 	}
 

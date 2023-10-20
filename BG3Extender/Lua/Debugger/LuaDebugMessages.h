@@ -7,6 +7,12 @@
 #include <GameDefinitions/Module.h>
 #include <Osiris/Debugger/DebugInterface.h>
 
+#if defined(DBG_PROTOCOL_DEBUG)
+#define DBGMSG(...) DEBUG(__VA_ARGS__)
+#else
+#define DBGMSG(...)
+#endif
+
 struct lua_State;
 struct lua_Debug;
 

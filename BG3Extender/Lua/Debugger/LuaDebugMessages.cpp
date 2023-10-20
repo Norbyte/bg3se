@@ -38,7 +38,7 @@ namespace bg3se::lua::dbg
 		auto results = msg.mutable_results();
 		results->set_status_code((StatusCode)code);
 		Send(msg);
-		DEBUG(" <-- BkResult(%d)", code);
+		DBGMSG(" <-- BkResult(%d)", code);
 	}
 
 	bool LuaIsUserFunction(lua_State* L, CallInfo* ci);
@@ -123,7 +123,7 @@ namespace bg3se::lua::dbg
 		}
 
 		Send(msg);
-		DEBUG(" <-- BkBreakpointTriggered");
+		DBGMSG(" <-- BkBreakpointTriggered");
 	}
 
 	void DebugMessageHandler::SendEvaluateResponse(DebuggerEvaluateRequest const& req)
@@ -132,9 +132,9 @@ namespace bg3se::lua::dbg
 		Send(*req.Msg);
 
 		if (req.Response->error_message().empty()) {
-			DEBUG(" <-- BkEvaluateResponse(OK)");
+			DBGMSG(" <-- BkEvaluateResponse(OK)");
 		} else {
-			DEBUG(" <-- BkEvaluateResponse(): \"%s\"", req.Response->error_message().c_str());
+			DBGMSG(" <-- BkEvaluateResponse(): \"%s\"", req.Response->error_message().c_str());
 		}
 	}
 
@@ -148,7 +148,7 @@ namespace bg3se::lua::dbg
 		ctx->set_status(loaded ? BkContextUpdated_Status_LOADED : BkContextUpdated_Status_UNLOADED);
 
 		Send(msg);
-		DEBUG(" <-- BkContextUpdated(%s, %d)", server ? "Server" : "Client", loaded ? 1 : 0);
+		DBGMSG(" <-- BkContextUpdated(%s, %d)", server ? "Server" : "Client", loaded ? 1 : 0);
 	}
 
 	void DebugMessageHandler::SendModInfo()
@@ -203,7 +203,7 @@ namespace bg3se::lua::dbg
 		}
 
 		Send(msg);
-		DEBUG(" <-- BkModInfoResponse()");
+		DBGMSG(" <-- BkModInfoResponse()");
 	}
 
 	void DebugMessageHandler::SendDebuggerReady()
@@ -211,7 +211,7 @@ namespace bg3se::lua::dbg
 		DEBUGGER_MSG(msg);
 		auto debugMsg = msg.mutable_debuggerready();
 		Send(msg);
-		DEBUG(" <-- BkDebuggerReady()");
+		DBGMSG(" <-- BkDebuggerReady()");
 	}
 
 	void DebugMessageHandler::SendSourceResponse(uint32_t seq, STDString const& path, STDString const& body)
@@ -222,7 +222,7 @@ namespace bg3se::lua::dbg
 		resp->set_name(path.c_str());
 		resp->set_body(body.c_str());
 		Send(msg);
-		DEBUG(" <-- BkSourceResponse(%s)", path.c_str());
+		DBGMSG(" <-- BkSourceResponse(%s)", path.c_str());
 	}
 
 	void DebugMessageHandler::SendGetVariablesResponse(DebuggerGetVariablesRequest const& req)
@@ -231,9 +231,9 @@ namespace bg3se::lua::dbg
 		Send(*req.Msg);
 
 		if (req.Response->error_message().empty()) {
-			DEBUG(" <-- BkGetVariablesResponse(OK)");
+			DBGMSG(" <-- BkGetVariablesResponse(OK)");
 		} else {
-			DEBUG(" <-- BkGetVariablesResponse(): \"%s\"", req.Response->error_message().c_str());
+			DBGMSG(" <-- BkGetVariablesResponse(): \"%s\"", req.Response->error_message().c_str());
 		}
 	}
 
@@ -263,7 +263,7 @@ namespace bg3se::lua::dbg
 		}
 
 		Send(msg);
-		DEBUG(" <-- BkDebugOutput(): \"%s\"", message);
+		DBGMSG(" <-- BkDebugOutput(): \"%s\"", message);
 	}
 
 	void DebugMessageHandler::SendConnectResponse(uint32_t seq)
@@ -273,12 +273,12 @@ namespace bg3se::lua::dbg
 		version->set_protocol_version(ProtocolVersion);
 
 		Send(msg);
-		DEBUG(" <-- BkConnectResponse()");
+		DBGMSG(" <-- BkConnectResponse()");
 	}
 	
 	void DebugMessageHandler::HandleConnectMessage(uint32_t seq, DbgConnectRequest const& req)
 	{
-		DEBUG(" --> DbgConnectRequest(Version %d)", req.protocol_version());
+		DBGMSG(" --> DbgConnectRequest(Version %d)", req.protocol_version());
 		SendConnectResponse(seq);
 
 		if (req.protocol_version() != ProtocolVersion) {
@@ -309,20 +309,20 @@ namespace bg3se::lua::dbg
 
 	void DebugMessageHandler::HandleUpdateSettings(uint32_t seq, DbgUpdateSettings const& req)
 	{
-		DEBUG(" --> DbgUpdateSettings(%d, %d)", req.break_on_error(), req.break_on_generic_error());
+		DBGMSG(" --> DbgUpdateSettings(%d, %d)", req.break_on_error(), req.break_on_generic_error());
 		debugger_->UpdateSettings(req.break_on_error(), req.break_on_generic_error());
 		SendResult(seq, ResultCode::Success);
 	}
 
 	void DebugMessageHandler::HandleSetBreakpoints(uint32_t seq, DbgSetBreakpoints const& req)
 	{
-		DEBUG(" --> DbgSetBreakpoints()");
+		DBGMSG(" --> DbgSetBreakpoints()");
 
 		ResultCode rc = ResultCode::Success;
 
 		debugger_->BeginUpdatingBreakpoints();
 		for (auto const& bp : req.breakpoint()) {
-			DEBUG("AddBreakpoint(%s:%d)", bp.path().c_str(), bp.line());
+			DBGMSG("AddBreakpoint(%s:%d)", bp.path().c_str(), bp.line());
 			rc = debugger_->AddBreakpoint(bp.path().c_str(), bp.line());
 			if (rc != ResultCode::Success) {
 				break;
@@ -336,7 +336,7 @@ namespace bg3se::lua::dbg
 
 	void DebugMessageHandler::HandleContinue(uint32_t seq, DbgContinue const& req)
 	{
-		DEBUG(" --> DbgContinue()");
+		DBGMSG(" --> DbgContinue()");
 
 		ResultCode rc = debugger_->ContinueExecution(req.context(), req.action());
 		SendResult(seq, rc);
@@ -344,7 +344,7 @@ namespace bg3se::lua::dbg
 
 	void DebugMessageHandler::HandleEvaluate(uint32_t seq, DbgEvaluate const& req)
 	{
-		DEBUG(" --> DbgEvaluate(): \"%s\"", req.expression().c_str());
+		DBGMSG(" --> DbgEvaluate(): \"%s\"", req.expression().c_str());
 
 		if (!debugger_) {
 			WARN("Evaluate: Not attached to story debugger!");
@@ -373,13 +373,13 @@ namespace bg3se::lua::dbg
 
 	void DebugMessageHandler::HandleFetchMods(uint32_t seq, DbgFetchMods const& req)
 	{
-		DEBUG(" --> DbgFetchMods()");
+		DBGMSG(" --> DbgFetchMods()");
 		SendModInfo();
 	}
 
 	void DebugMessageHandler::HandleRequestSource(uint32_t seq, DbgRequestSource const& req)
 	{
-		DEBUG(" --> DbgRequestSource(%s)", req.name().c_str());
+		DBGMSG(" --> DbgRequestSource(%s)", req.name().c_str());
 
 		// Check for a loaded Lua file from mods
 		auto path = FindLuaSourcePath(req.name().c_str());
@@ -405,7 +405,7 @@ namespace bg3se::lua::dbg
 
 	void DebugMessageHandler::HandleGetVariables(uint32_t seq, DbgGetVariables const& req)
 	{
-		DEBUG(" --> DbgGetVariables(%d, %d, %d)", req.variableref(), req.frame(), req.local());
+		DBGMSG(" --> DbgGetVariables(%d, %d, %d)", req.variableref(), req.frame(), req.local());
 
 		if (!debugger_) {
 			WARN("GetVariables: Not attached to story debugger!");
