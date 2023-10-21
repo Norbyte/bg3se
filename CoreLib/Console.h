@@ -15,7 +15,7 @@ public:
 	void OpenLogFile(std::wstring const& path);
 	void CloseLogFile();
 
-	void Print(DebugMessageType type, char const* msg);
+	virtual void Print(DebugMessageType type, char const* msg);
 	void SetColor(DebugMessageType type);
 
 	void Clear();

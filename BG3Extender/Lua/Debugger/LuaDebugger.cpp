@@ -1043,8 +1043,7 @@ namespace bg3se::lua::dbg
 
 	void Debugger::OnLogMessage(DebugMessageType type, STDString const& message)
 	{
-		// Don't send debug messages by default to avoid log spam
-		if (type != DebugMessageType::Debug && IsDebuggerReady() && !SendingLogMessage) {
+		if (IsDebuggerReady() && !SendingLogMessage) {
 			SendingLogMessage = true;
 			messageHandler_.SendDebugOutput(type, message.c_str());
 			SendingLogMessage = false;

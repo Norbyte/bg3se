@@ -10,6 +10,7 @@ class DebugConsole : public Console
 public:
 	void Create() override;
 	void HandleCommand(std::string const& cmd);
+	void Print(DebugMessageType type, char const* msg) override;
 
 private:
 	bool consoleRunning_{ false };

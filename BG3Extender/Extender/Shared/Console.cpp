@@ -5,18 +5,6 @@
 
 BEGIN_SE()
 
-// FIXME ON PRINT!
-/*
-#if !defined(OSI_NO_DEBUGGER)
-if (gExtender) {
-	auto debugger = gExtender->GetLuaDebugger();
-	if (debugger && debugger->IsDebuggerReady()) {
-		debugger->OnLogMessage(type, msg);
-	}
-}
-#endif
-*/
-
 void DebugConsole::SubmitTaskAndWait(bool server, std::function<void()> task)
 {
 	if (server) {
@@ -174,6 +162,20 @@ void DebugConsole::HandleCommand(std::string const& cmd)
 	} else {
 		ExecLuaCommand(cmd);
 	}
+}
+
+void DebugConsole::Print(DebugMessageType type, char const* msg)
+{
+	Console::Print(type, msg);
+
+	#if !defined(OSI_NO_DEBUGGER)
+	if (!silence_ && gExtender) {
+		auto debugger = gExtender->GetLuaDebugger();
+		if (debugger && debugger->IsDebuggerReady()) {
+			debugger->OnLogMessage(type, msg);
+		}
+	}
+	#endif
 }
 
 void DebugConsole::ConsoleThread()
