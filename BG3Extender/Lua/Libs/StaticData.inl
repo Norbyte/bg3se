@@ -5,7 +5,7 @@ BEGIN_NS(lua::res)
 
 using namespace bg3se::resource;
 
-#define FOR_EACH_RESOURCE_TYPE() \
+#define FOR_EACH_GUID_RESOURCE_TYPE() \
 	FOR_RESOURCE_TYPE(ActionResource) \
 	FOR_RESOURCE_TYPE(ActionResourceGroup) \
 	FOR_RESOURCE_TYPE(ClassDescription) \
@@ -39,6 +39,42 @@ using namespace bg3se::resource;
 	FOR_RESOURCE_TYPE(CharacterCreationAppearanceVisual) \
 	FOR_RESOURCE_TYPE(CharacterCreationSharedVisual)
 
+#define FOR_EACH_NONGUID_RESOURCE_TYPE() \
+	FOR_RESOURCE_TYPE(Visual) \
+	FOR_RESOURCE_TYPE(VisualSet) \
+	FOR_RESOURCE_TYPE(Animation) \
+	FOR_RESOURCE_TYPE(AnimationSet) \
+	FOR_RESOURCE_TYPE(Texture) \
+	FOR_RESOURCE_TYPE(Material) \
+	FOR_RESOURCE_TYPE(Physics) \
+	FOR_RESOURCE_TYPE(Effect) \
+	FOR_RESOURCE_TYPE(Script) \
+	FOR_RESOURCE_TYPE(Sound) \
+	FOR_RESOURCE_TYPE(Lighting) \
+	FOR_RESOURCE_TYPE(Atmosphere) \
+	FOR_RESOURCE_TYPE(AnimationBlueprint) \
+	FOR_RESOURCE_TYPE(MeshProxy) \
+	FOR_RESOURCE_TYPE(MaterialSet) \
+	FOR_RESOURCE_TYPE(BlendSpace) \
+	FOR_RESOURCE_TYPE(FCurve) \
+	FOR_RESOURCE_TYPE(Timeline) \
+	FOR_RESOURCE_TYPE(Dialog) \
+	FOR_RESOURCE_TYPE(VoiceBark) \
+	FOR_RESOURCE_TYPE(TileSet) \
+	FOR_RESOURCE_TYPE(IKRig) \
+	FOR_RESOURCE_TYPE(Skeleton) \
+	FOR_RESOURCE_TYPE(VirtualTexture) \
+	FOR_RESOURCE_TYPE(TerrainBrush) \
+	FOR_RESOURCE_TYPE(ColorList) \
+	FOR_RESOURCE_TYPE(CharacterVisual) \
+	FOR_RESOURCE_TYPE(MaterialPreset) \
+	FOR_RESOURCE_TYPE(SkinPreset) \
+	FOR_RESOURCE_TYPE(ClothCollider) \
+	FOR_RESOURCE_TYPE(DiffusionProfile) \
+	FOR_RESOURCE_TYPE(LightCookie) \
+	FOR_RESOURCE_TYPE(TimelineScene) \
+	FOR_RESOURCE_TYPE(SkeletonMirrorTable)
+
 template <class T>
 int GetGuidResourceProxy(lua_State* L, Guid const& resourceGuid)
 {
@@ -66,7 +102,7 @@ UserReturn GetGuidResource(lua_State* L, Guid resourceGuid, ExtResourceManagerTy
 {
 	auto& helpers = gExtender->GetServer().GetEntityHelpers();
 	switch (type) {
-	FOR_EACH_RESOURCE_TYPE()
+	FOR_EACH_GUID_RESOURCE_TYPE()
 
 	default:
 		LuaError("Resource type not supported: " << type);
@@ -96,7 +132,7 @@ Array<Guid> GetAllGuidResources(lua_State* L, ExtResourceManagerType type)
 {
 	auto& helpers = gExtender->GetServer().GetEntityHelpers();
 	switch (type) {
-	FOR_EACH_RESOURCE_TYPE()
+	FOR_EACH_GUID_RESOURCE_TYPE()
 
 	default:
 		LuaError("Resource type not supported: " << type);
@@ -121,21 +157,28 @@ ResourceBank* GetCurrentResourceBank()
 	}
 }
 
-	
-RefReturn<Resource> GetResource(FixedString const& resourceGuid, ResourceBankType type)
+#define FOR_RESOURCE_TYPE(ty)																	  \
+	case ResourceBankType::ty: MakeObjectRef(L, (ty##Resource*)resource.Value()); break;
+
+UserReturn GetResource(lua_State* L, FixedString const& resourceGuid, ResourceBankType type)
 {
 	auto bank = GetCurrentResourceBank();
 	if (!bank) {
 		LuaError("Resource manager not available");
-		return {};
+		push(L, nullptr);
+		return 1;
 	}
 
 	auto resource = bank->Container.Banks[(unsigned)type]->Resources.find(resourceGuid);
 	if (resource != bank->Container.Banks[(unsigned)type]->Resources.end()) {
-		return resource.Value();
+		switch (type)
+		{
+			FOR_EACH_NONGUID_RESOURCE_TYPE();
+		}
 	} else {
-		return {};
+		push(L, nullptr);
 	}
+	return 1;
 }
 
 

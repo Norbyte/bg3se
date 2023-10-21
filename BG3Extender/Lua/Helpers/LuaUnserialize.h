@@ -37,6 +37,43 @@ PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, Ar
 }
 
 template <class TK>
+PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, StaticArray<TK>* obj)
+{
+	if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>)
+	{
+		return PropertyOperationResult::UnsupportedType;
+	}
+
+	StackCheck _(L);
+	luaL_checktype(L, index, LUA_TTABLE);
+	uint32_t size = (uint32_t) lua_rawlen(L, index);
+
+	obj->clear();
+	obj->Resize(size);
+	int i = 0;
+	for (auto idx : iterate(L, index))
+	{
+		Unserialize(L, idx, &obj[i++]);
+	}
+
+	return PropertyOperationResult::Success;
+}
+
+template <class TK>
+PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, StaticArray<TK>* obj)
+{
+	if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>)
+	{
+		return PropertyOperationResult::UnsupportedType;
+	}
+
+	StackCheck _(L);
+	auto arr = ArrayProxy::CheckedGet<ConstSizeArrayProxyImpl<StaticArray<TK>, TK, 2>, TK>(L, index);
+	*obj	 = *arr->Get();
+	return PropertyOperationResult::Success;
+}
+
+template <class TK>
 PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, ObjectSet<TK>* obj)
 {
 	if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>) {
