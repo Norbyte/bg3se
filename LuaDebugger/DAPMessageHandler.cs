@@ -101,6 +101,7 @@ namespace NSE.DebuggerFrontend
         private int NextBreakpointId = 1;
 
         private ExpressionEvaluator Evaluator;
+        private DAPRequest PendingLaunchRequest;
 
 
         public DAPMessageHandler(DAPStream stream)
@@ -235,8 +236,15 @@ namespace NSE.DebuggerFrontend
         {
             if (response.ProtocolVersion != DBGProtocolVersion)
             {
-                throw new InvalidDataException($"Backend sent unsupported protocol version; got {response.ProtocolVersion}, we only support {DBGProtocolVersion}");
+                Stream.SendReply(PendingLaunchRequest, $"Backend sent unsupported protocol version; got {response.ProtocolVersion}, we only support {DBGProtocolVersion}");
+            } 
+            else
+            {
+                var reply = new DAPLaunchResponse();
+                Stream.SendReply(PendingLaunchRequest, reply);
             }
+
+            PendingLaunchRequest = null;
         }
 
         private void OnBreakpointTriggered(BkBreakpointTriggered bp)
@@ -325,7 +333,11 @@ namespace NSE.DebuggerFrontend
                 Path = mod.Path
             }).ToList();
 
-            SourceFiles = msg.Source.Select(source => source.Path).ToList();
+            SourceFiles = msg.Source.Select(source => new SourceInfo{
+                    Path = source.Path,
+                    Name = source.Name
+                }
+            ).ToList();
         }
 
         private void OnDebugOutput(BkDebugOutput msg)
@@ -472,8 +484,7 @@ namespace NSE.DebuggerFrontend
             DbgThread = new Thread(new ThreadStart(DebugThreadMain));
             DbgThread.Start();
 
-            var reply = new DAPLaunchResponse();
-            Stream.SendReply(request, reply);
+            PendingLaunchRequest = request;
         }
 
         private void SendBreakpointUpdate()
