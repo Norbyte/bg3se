@@ -590,7 +590,7 @@ namespace NSE.DebuggerFrontend
                     dapFrame.source = new DAPSource
                     {
                         name = frame.Source,
-                        path = frame.Path != null ? frame.Path.Replace("/", "\\") : null
+                        path = frame.Path?.Replace("/", "\\") ?? frame.Source
                     };
                     dapFrame.line = frame.Line;
                     dapFrame.column = (frame.Line > 0) ? 1 : 0;
@@ -619,7 +619,7 @@ namespace NSE.DebuggerFrontend
                 scope.source = new DAPSource
                 {
                     name = frame.Source,
-                    path = (frame.Path ?? frame.Source).Replace("/", "\\")
+                    path = frame.Path?.Replace("/", "\\") ?? frame.Source
                 };
                 scope.line = frame.ScopeFirstLine;
                 scope.column = 1;

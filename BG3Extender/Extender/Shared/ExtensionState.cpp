@@ -397,9 +397,6 @@ namespace bg3se
 
 		loadedFiles_.insert(std::make_pair(scriptName, path));
 		auto fullPath = GetStaticSymbols().ToPath(path, PathRootType::Data);
-		if (!fullPath.empty()) {
-			fullPath[0] = std::tolower(fullPath[0]);
-		}
 		loadedFileFullPaths_.insert(std::make_pair(scriptName, fullPath));
 
 		auto result = LuaLoadGameFile(reader, scriptName.empty() ? path : scriptName, globalsIdx);

@@ -73,6 +73,10 @@ namespace bg3se
 			CanonicalizePath(canonicalPath);
 		}
 
+		if (root == PathRootType::Root) {
+			return canonicalPath;
+		}
+
 		auto rootPath = ls__PathRoots[(unsigned)root];
 		if (rootPath == nullptr) {
 			ERR("StaticSymbols::ToPath(): Path roots not initialized!");
