@@ -329,7 +329,7 @@ bool ValidateRef(MultiHashSet<TK>* v, Overload<MultiHashSet<TK>>)
 	CHECKR(ValidateRef(&v->NextIds, Overload<Array<int32_t>>{}));
 	CHECKR(ValidateRef(&v->Keys, Overload<Array<TK>>{}));
 
-	CHECK(v->Keys.size() == v->NextIds.size());
+	CHECK(v->Keys.size() <= v->NextIds.size());
 
 	return true;
 }
