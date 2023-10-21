@@ -121,8 +121,8 @@ void OsirisExtender::RestartLogging(std::wstring const & Type)
 		logType_ = Type;
 
 		if (!logFilename_.empty()) {
-			DEBUG(L"ScriptExtender::RestartLogging: Starting %s debug logging.\r\n"
-				"\tPath=%s", Type.c_str(), logFilename_.c_str());
+			DEBUG("ScriptExtender::RestartLogging: Starting %s debug logging.\r\n"
+				"\tPath=%s", ToStdUTF8(Type).c_str(), ToStdUTF8(logFilename_).c_str());
 		}
 	}
 
@@ -230,7 +230,7 @@ void OsirisExtender::OnAssert(bool Successful, char const * Message, bool Unknow
 
 bool OsirisExtender::CompileWrapper(bool (* next)(void *, wchar_t const *, wchar_t const *), void * Osiris, wchar_t const * Path, wchar_t const * Mode)
 {
-	DEBUG(L"OsirisExtender::CompileWrapper: Starting compilation of '%s'", Path);
+	DEBUG("OsirisExtender::CompileWrapper: Starting compilation of '%s'", ToStdUTF8(Path));
 	auto OriginalFlags = *wrappers_.Globals.DebugFlags;
 	std::wstring storyPath;
 
@@ -371,7 +371,7 @@ void OsirisExtender::InitRuntimeLogging()
 
 	auto path = gExtender->MakeLogFilePath(L"Extender Runtime", L"log");
 	gCoreLibPlatformInterface.GlobalConsole->OpenLogFile(path);
-	DEBUG(L"Extender runtime log written to '%s'", path.c_str());
+	DEBUG("Extender runtime log written to '%s'", ToStdUTF8(path).c_str());
 }
 
 void OsirisExtender::BindCallbackManager(esv::lua::OsirisCallbackManager* mgr)

@@ -72,15 +72,6 @@ void TryDebugBreak()
 }
 
 [[noreturn]]
-void Fail(TCHAR const * reason)
-{
-	TryDebugBreak();
-	ERR(L"%s", reason);
-	MessageBoxW(NULL, reason, L"BG3 Script Extender Error", MB_OK | MB_ICONERROR);
-	TerminateProcess(GetCurrentProcess(), 1);
-}
-
-[[noreturn]]
 void Fail(char const * reason)
 {
 	ERR("%s", reason);

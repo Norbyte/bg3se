@@ -58,25 +58,6 @@ void Console::Print(DebugMessageType type, char const* msg)
 	}
 }
 
-void Console::Print(DebugMessageType type, wchar_t const* msg)
-{
-	if (enabled_ && (!inputEnabled_ || !silence_)) {
-		SetColor(type);
-		OutputDebugStringW(msg);
-		OutputDebugStringW(L"\r\n");
-		std::wcout << msg << std::endl;
-		std::wcout.flush();
-		SetColor(DebugMessageType::Debug);
-	}
-
-	if (logToFile_) {
-		auto utf = ToUTF8(msg);
-		logFile_.write(utf.c_str(), utf.size());
-		logFile_.write("\r\n", 2);
-		logFile_.flush();
-	}
-}
-
 void Console::Clear()
 {
 	// Clear screen, move cursor to top-left and clear scrollback
@@ -142,7 +123,7 @@ void Console::OpenLogFile(std::wstring const& path)
 	logFile_.rdbuf()->pubsetbuf(0, 0);
 	logFile_.open(path.c_str(), std::ios::binary | std::ios::out | std::ios::app);
 	if (!logFile_.good()) {
-		ERR(L"Failed to open log file '%s'", path.c_str());
+		ERR("Failed to open log file '%s'", ToStdUTF8(path).c_str());
 	} else {
 		logToFile_ = true;
 	}

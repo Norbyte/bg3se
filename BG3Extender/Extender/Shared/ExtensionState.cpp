@@ -104,8 +104,8 @@ namespace bg3se
 				featureFlags << flag << " ";
 			}
 
-			INFO(L"Merged configuration:\r\n\tMinVersion %d; Feature flags: %s",
-				MergedConfig.MinimumVersion, FromUTF8(featureFlags.str()).c_str());
+			INFO("Merged configuration:\r\n\tMinVersion %d; Feature flags: %s",
+				MergedConfig.MinimumVersion, featureFlags.str());
 		}
 
 		if (CurrentVersion < MergedConfig.MinimumVersion && HighestVersionMod != nullptr) {

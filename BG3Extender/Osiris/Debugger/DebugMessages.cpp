@@ -84,7 +84,7 @@ namespace bg3se::osidbg
 		}
 	}
 
-	void DebugDumpTV(std::wstringstream & ss, TypedValue const & tv)
+	void DebugDumpTV(std::stringstream & ss, TypedValue const & tv)
 	{
 		switch ((ValueType)tv.TypeId) {
 		case ValueType::Integer:
@@ -115,7 +115,7 @@ namespace bg3se::osidbg
 		}
 	}
 
-	void DebugDumpTuple(std::wstringstream & ss, TupleLL const & tuple)
+	void DebugDumpTuple(std::stringstream & ss, TupleLL const & tuple)
 	{
 		auto head = tuple.Items.Head;
 		auto cur = head->Next;
@@ -126,7 +126,7 @@ namespace bg3se::osidbg
 		}
 	}
 
-	void DebugDumpTuple(std::wstringstream & ss, TuplePtrLL const & tuple)
+	void DebugDumpTuple(std::stringstream & ss, TuplePtrLL const & tuple)
 	{
 		auto const & items = tuple.Items;
 		auto head = items.Head;
@@ -187,13 +187,13 @@ namespace bg3se::osidbg
 
 		Send(msg);
 
-		std::wstringstream tup;
+		std::stringstream tup;
 		if (lastFrame.tupleLL != nullptr) {
 			DebugDumpTuple(tup, *lastFrame.tupleLL);
 		} else if (lastFrame.tuplePtrLL != nullptr) {
 			DebugDumpTuple(tup, *lastFrame.tuplePtrLL);
 		}
-		DEBUG(L" <-- BkBreakpointTriggered(type %d, node %d/goal %d, tuple (%s))",
+		DEBUG(" <-- BkBreakpointTriggered(type %d, node %d/goal %d, tuple (%s))",
 			lastFrame.frameType, 
 			lastFrame.node ? lastFrame.node->Id : 0,
 			lastFrame.goal ? lastFrame.goal->Id : 0,

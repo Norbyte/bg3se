@@ -54,10 +54,8 @@ void LoadConfig(std::wstring const & configPath, ExtenderConfig & config)
 	Json::Value root;
 	std::string errs;
 	if (!Json::parseFromStream(factory, f, &root, &errs)) {
-		std::wstring werrs = FromStdUTF8(errs);
-
-		std::wstringstream err;
-		err << L"Failed to load configuration file '" << configPath << "':\r\n" << werrs;
+		std::stringstream err;
+		err << "Failed to load configuration file '" << ToStdUTF8(configPath) << "':\r\n" << errs;
 		Fail(err.str().c_str());
 	}
 

@@ -16,7 +16,6 @@ public:
 	void CloseLogFile();
 
 	void Print(DebugMessageType type, char const* msg);
-	void Print(DebugMessageType type, wchar_t const* msg);
 	void SetColor(DebugMessageType type);
 
 	void Clear();

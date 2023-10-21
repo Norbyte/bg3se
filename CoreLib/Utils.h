@@ -6,16 +6,6 @@
 BEGIN_SE()
 
 template <typename... Args>
-void Debug(DebugMessageType type, wchar_t const * fmt, Args... args)
-{
-	if (gCoreLibPlatformInterface.GlobalConsole) {
-		wchar_t buf[1024];
-		_snwprintf_s(buf, std::size(buf), _TRUNCATE, fmt, args...);
-		gCoreLibPlatformInterface.GlobalConsole->Print(type, buf);
-	}
-}
-
-template <typename... Args>
 void Debug(DebugMessageType type, char const * fmt, Args... args)
 {
 	if (gCoreLibPlatformInterface.GlobalConsole) {
@@ -31,9 +21,6 @@ void Debug(DebugMessageType type, char const * fmt, Args... args)
 #define ERR(msg, ...) Debug(DebugMessageType::Error, msg, __VA_ARGS__)
 
 void TryDebugBreak();
-
-[[noreturn]]
-void Fail(TCHAR const * reason);
 
 [[noreturn]]
 void Fail(char const * reason);

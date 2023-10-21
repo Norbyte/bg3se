@@ -49,7 +49,7 @@ void ScriptExtender::Initialize()
 		} else {
 			ERR("Game version v%d.%d.%d.%d is not supported, please upgrade!", gameVersion.Major, gameVersion.Minor, gameVersion.Revision, gameVersion.Build);
 			// Hard exit below a certain version as th EoCClient error display UI won't work anymore
-			Fail(L"Script Extender doesn't support game versions below v4.37, please upgrade!");
+			Fail("Script Extender doesn't support game versions below v4.37, please upgrade!");
 		}
 	} else {
 		ERR("Failed to retrieve game version info.");
@@ -380,7 +380,7 @@ void ScriptExtender::InitRuntimeLogging()
 
 	auto path = MakeLogFilePath(L"Extender Runtime", L"log");
 	gCoreLibPlatformInterface.GlobalConsole->OpenLogFile(path);
-	DEBUG(L"Extender runtime log written to '%s'", path.c_str());
+	DEBUG("Extender runtime log written to '%s'", ToStdUTF8(path).c_str());
 }
 
 }

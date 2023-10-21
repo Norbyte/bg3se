@@ -696,7 +696,7 @@ void CustomFunctionInjector::OnCreateFile(LPCWSTR lpFileName,
 	if (!extendingStory_ && (dwDesiredAccess & GENERIC_WRITE)) {
 		auto length = wcslen(lpFileName);
 		if (length > 16 && wcscmp(&lpFileName[length - 16], L"story_header.div") == 0) {
-			DEBUG(L"CustomFunctionInjector::OnCreateFile: %s", lpFileName);
+			DEBUG("CustomFunctionInjector::OnCreateFile: %s", ToStdUTF8(lpFileName));
 			storyHeaderFile_ = hFile;
 			storyHeaderPath_ = lpFileName;
 		}
