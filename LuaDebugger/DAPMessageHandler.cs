@@ -60,6 +60,13 @@ namespace NSE.DebuggerFrontend
     }
 
 
+    public class SourceInfo
+    {
+        public string Name;
+        public string Path;
+    }
+
+
     public class DAPMessageHandler
     {
         // DBG protocol version (game/editor backend to debugger frontend communication)
@@ -84,7 +91,7 @@ namespace NSE.DebuggerFrontend
         private ThreadState ServerState;
         private ThreadState ClientState;
         private List<ModuleInfo> Modules;
-        private List<string> SourceFiles;
+        private List<SourceInfo> SourceFiles;
         // List of DAP source code fetch requests that are currently pending
         // (i.e. we're waiting for a debugger backend response).
         // Backend sequence ID => original DAP request map
@@ -721,7 +728,8 @@ namespace NSE.DebuggerFrontend
             {
                 sources = SourceFiles.Select(source => new DAPSource
                 {
-                    path = source
+                    path = (source.Path.Length > 0) ? source.Path.Replace("/", "\\") : source.Name,
+                    name = (source.Name.Length > 0) ? source.Name : ""
                 }).ToList()
             };
             Stream.SendReply(request, reply);
