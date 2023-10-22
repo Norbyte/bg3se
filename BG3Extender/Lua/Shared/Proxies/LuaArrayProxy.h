@@ -332,7 +332,7 @@ namespace bg3se::lua
 				return nullptr;
 			}
 
-			if (strcmp(GetTypeInfo<TElement>().TypeName.GetString(), impl->GetTypeName()) == 0) {
+			if (strcmp(GetTypeInfo<TElement>().TypeName.GetString(), impl->GetTypeName()) != 0) {
 				luaL_error(L, "Attempted to access Array<%s>, got Array<%s>", GetTypeInfo<TElement>().TypeName.GetString(), impl->GetTypeName());
 				return nullptr;
 			}
