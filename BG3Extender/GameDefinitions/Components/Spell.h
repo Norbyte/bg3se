@@ -600,14 +600,12 @@ struct InterruptRequestsComponent
 
 struct InterruptIdentifier
 {
-	uint64_t field_0;
-	uint64_t field_8;
+	Guid field_0;
 	uint64_t field_10;
 
 	inline bool operator == (InterruptIdentifier const& o) const
 	{
 		return field_0 == o.field_0
-			&& field_8 == o.field_8
 			&& field_10 == o.field_10;
 	}
 };
@@ -727,7 +725,7 @@ BEGIN_SE()
 template <>
 inline uint64_t MultiHashMapHash<esv::spell_cast::InterruptIdentifier>(esv::spell_cast::InterruptIdentifier const& v)
 {
-	return HashMulti(v.field_0, v.field_8, v.field_10);
+	return HashMulti(v.field_0, v.field_10);
 }
 
 END_SE()

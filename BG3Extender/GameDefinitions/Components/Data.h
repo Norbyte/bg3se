@@ -359,7 +359,7 @@ struct CharacterCreationStatsComponent : public BaseComponent
 	Guid Race;
 	Guid SubRace;
 	uint8_t BodyType;
-	uint8_t field_21;
+	uint8_t BodyShape;
 	STDString Name;
 	std::array<int32_t, 7> Abilities;
 	uint8_t field_5C;
@@ -472,7 +472,7 @@ struct HotbarContainerComponent : public BaseComponent
 		EntityHandle Item;
 		SpellId SpellId;
 		FixedString Passive;
-		uint32_t field_34;
+		uint32_t Slot;
 		uint8_t field_38;
 	};
 
