@@ -302,7 +302,7 @@ struct SpellBookEntry
 	struct InnerEntry
 	{
 		uint8_t field_0;
-		MultiHashSet<int32_t> field_8;
+		int32_t field_4;
 	};
 
 	SpellId Id;
@@ -313,8 +313,6 @@ struct SpellBookEntry
 	uint8_t field_41;
 	uint8_t field_42;
 	AbilityId SpellCastingAbility;
-	// FIXME - mapping broken 
-	[[bg3::hidden]]
 	Array<InnerEntry> InnerEntries;
 };
 

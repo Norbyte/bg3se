@@ -57,7 +57,7 @@ struct GameObjectVisualData
 	Guid field_98;
 	Array<Guid> Visuals;
 	Array<AppearanceElement> Elements;
-	Array<int32_t> field_C8;
+	Array<int32_t> AdditionalChoices;
 };
 
 struct GameObjectVisualComponent : public BaseComponent
@@ -68,10 +68,10 @@ struct GameObjectVisualComponent : public BaseComponent
 	FixedString RootTemplateId;
 	uint8_t RootTemplateType;
 	FixedString Icon;
-	float field_24;
-	uint8_t field_28;
+	float Scale;
+	uint8_t Type;
 	GameObjectVisualData VisualData;
-	FixedString field_F0;
+	FixedString TemplateId;
 };
 
 struct DisplayNameComponent : public BaseComponent
