@@ -106,10 +106,15 @@ namespace bg3se::lua
 		bool SetElement(lua_State* L, unsigned arrayIndex, int luaIndex) override
 		{
 			if constexpr (IsByVal<T> || std::is_default_constructible_v<T>) {
-				if (arrayIndex > 0 && arrayIndex <= object_->size()) {
-					(*object_)[arrayIndex - 1] = get<T>(L, luaIndex);
+				auto size = object_->size();
+				if (arrayIndex > 0 && arrayIndex <= size) {
+					if (lua_type(L, luaIndex) == LUA_TNIL) {
+						object_->remove_at(arrayIndex - 1);
+					} else {
+						(*object_)[arrayIndex - 1] = get<T>(L, luaIndex);
+					}
 					return true;
-				} else if (arrayIndex == object_->size() + 1) {
+				} else if (arrayIndex == size + 1) {
 					object_->push_back(get<T>(L, luaIndex));
 					return true;
 				} else {

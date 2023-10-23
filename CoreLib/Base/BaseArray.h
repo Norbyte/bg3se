@@ -255,7 +255,7 @@ struct CompactSet
 		FreeBuffer(oldBuf);
 	}
 
-	void Remove(uint32_t index)
+	void remove_at(uint32_t index)
 	{
 		assert(index < Size);
 
@@ -345,6 +345,18 @@ struct Set : public CompactSet<T, Allocator, StoreSize>
 
 		this->Buf[index] = value;
 		this->Size++;
+	}
+
+	void remove_last()
+	{
+		assert(this->Size > 0);
+		this->Size--;
+	}
+
+	T pop_last()
+	{
+		assert(this->Size > 0);
+		return this->Buf[--this->Size];
 	}
 };
 
@@ -689,7 +701,7 @@ public:
 		new (&buf_[size_++]) T(value);
 	}
 
-	void Remove(uint32_t index)
+	void remove_at(uint32_t index)
 	{
 		assert(index < size_);
 
@@ -699,6 +711,19 @@ public:
 
 		buf_[size_ - 1].~T();
 		size_--;
+	}
+
+	void remove_last()
+	{
+		assert(size_ > 0);
+		buf_[size_ - 1].~T();
+		size_--;
+	}
+
+	T pop_last()
+	{
+		assert(size_ > 0);
+		return std::move(buf_[--size_]);
 	}
 
 	iterator begin()
