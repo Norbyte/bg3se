@@ -105,7 +105,7 @@ namespace bg3se::lua
 
 		bool SetElement(lua_State* L, unsigned arrayIndex, int luaIndex) override
 		{
-			if constexpr (IsByVal<T>) {
+			if constexpr (IsByVal<T> || std::is_default_constructible_v<T>) {
 				if (arrayIndex > 0 && arrayIndex <= object_->size()) {
 					(*object_)[arrayIndex - 1] = get<T>(L, luaIndex);
 					return true;
@@ -116,7 +116,6 @@ namespace bg3se::lua
 					return false;
 				}
 			} else {
-				// Appending/swapping elements to by-ref arrays not supported for now
 				return false;
 			}
 		}
