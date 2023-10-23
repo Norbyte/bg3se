@@ -41,7 +41,7 @@ struct ExecuteResult
 {
 	uint8_t field_0;
 	MultiHashMap<Guid, ResolveData> ResolveData;
-	[[bg3se::hidden]]
+	[[bg3::hidden]]
 	MultiHashMap<InterruptIdentifier, void*> MHM_u24_unk; // FIXME
 };
 
