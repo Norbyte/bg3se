@@ -306,14 +306,6 @@ struct LevelUpUpgrades
 	Array<Unknown4> Unknowns4;
 };
 
-struct LevelUpData3
-{
-	FixedString field_0;
-	uint8_t field_4;
-	uint64_t _Pad;
-	Guid field_10;
-};
-
 struct LevelUpData
 {
 	Guid Class;
@@ -322,7 +314,7 @@ struct LevelUpData
 	Guid AccessorySet;
 	std::array<int, 7> Abilities;
 	LevelUpUpgrades Upgrades;
-	Array<LevelUpData3> field_B0;
+	Array<SpellIdBase> field_B0;
 };
 
 

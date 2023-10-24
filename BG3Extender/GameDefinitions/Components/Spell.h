@@ -209,15 +209,7 @@ struct PlayerPrepareSpellComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::PlayerPrepareSpell;
 	static constexpr auto EngineClass = "eoc::spell::PlayerPrepareSpellComponent";
 
-	struct Spell
-	{
-		FixedString field_0;
-		int32_t _Pad;
-		uint8_t field_8;
-		Guid field_10;
-	};
-
-	Array<Spell> Spells;
+	Array<SpellIdBase> Spells;
 	uint8_t field_30;
 };
 
@@ -226,7 +218,7 @@ struct CCPrepareSpellComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::CCPrepareSpell;
 	static constexpr auto EngineClass = "eoc::spell::CCPrepareSpellComponent";
 
-	Array<PlayerPrepareSpellComponent::Spell> Spells;
+	Array<SpellIdBase> Spells;
 };
 
 struct SpellCastComponent : public BaseComponent
