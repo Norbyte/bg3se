@@ -32,7 +32,7 @@ struct ContainerComponent : public BaseComponent
 	Array<EntityHandle> Interrupts;
 };
 
-struct DataComponent
+struct DataComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::InterruptData;
 	static constexpr auto EngineClass = "eoc::interrupt::DataComponent";
@@ -44,7 +44,7 @@ struct DataComponent
 	FixedString field_18;
 };
 
-struct DecisionComponent
+struct DecisionComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::InterruptDecision;
 	static constexpr auto EngineClass = "eoc::interrupt::DecisionComponent";
@@ -52,7 +52,7 @@ struct DecisionComponent
 	MultiHashMap<InterruptVariant2, uint8_t> Decisions;
 };
 
-struct PreferencesComponent
+struct PreferencesComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::InterruptPreferences;
 	static constexpr auto EngineClass = "eoc::interrupt::PreferencesComponent";
@@ -456,7 +456,7 @@ struct StateComponent : public BaseComponent
 	STDString field_A0;
 };
 
-struct SyncTargetingComponent
+struct SyncTargetingComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::SpellSyncTargeting;
 	static constexpr auto EngineClass = "eoc::spell_cast::SyncTargetingComponent";
@@ -577,7 +577,7 @@ struct HitRegisterComponent : public BaseComponent
 	Array<Guid> Hits;
 };
 
-struct InterruptRequestsComponent
+struct InterruptRequestsComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerSpellInterruptRequests;
 	static constexpr auto EngineClass = "esv::spell_cast::InterruptRequestsComponent";
@@ -634,7 +634,7 @@ struct InterruptResult2
 	uint8_t field_152;
 };
 
-struct InterruptResultsComponent
+struct InterruptResultsComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerSpellInterruptResults;
 	static constexpr auto EngineClass = "esv::spell_cast::InterruptResultsComponent";
@@ -659,7 +659,7 @@ END_NS()
 
 BEGIN_NS(esv::interrupt)
 
-struct AddRemoveRequestsComponent
+struct AddRemoveRequestsComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerInterruptAddRemoveRequests;
 	static constexpr auto EngineClass = "esv::interrupt::AddRemoveRequestsComponent";
@@ -667,7 +667,7 @@ struct AddRemoveRequestsComponent
 	MultiHashMap<EntityHandle, uint8_t> Requests;
 };
 
-struct ActionRequestsComponent
+struct ActionRequestsComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerInterruptActionRequests;
 	static constexpr auto EngineClass = "esv::interrupt::ActionRequestsComponent";
@@ -677,7 +677,7 @@ struct ActionRequestsComponent
 	Array<ActionRequest3> Requests3;
 };
 
-struct ZoneRequestsComponent
+struct ZoneRequestsComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerInterruptZoneRequests;
 	static constexpr auto EngineClass = "esv::interrupt::ZoneRequestsComponent";
@@ -686,7 +686,7 @@ struct ZoneRequestsComponent
 	Array<ActionRequest2> Requests2;
 };
 
-struct InitialParticipantsComponent
+struct InitialParticipantsComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerInterruptInitialParticipants;
 	static constexpr auto EngineClass = "esv::interrupt::InitialParticipantsComponent";
@@ -700,7 +700,7 @@ struct InitialParticipantsComponent
 	MultiHashMap<EntityHandle, Participant> Participants;
 };
 
-struct TurnOrderInZoneComponent
+struct TurnOrderInZoneComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerInterruptTurnOrderInZone;
 	static constexpr auto EngineClass = "esv::interrupt::TurnOrderInZoneComponent";

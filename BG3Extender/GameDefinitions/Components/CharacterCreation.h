@@ -138,7 +138,7 @@ struct CharacterDefinitionComponent : public BaseComponent
 };
 
 
-struct SessionCommonComponent
+struct SessionCommonComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::CCSessionCommon;
 	static constexpr auto EngineClass = "eoc::character_creation::SessionCommonComponent";
