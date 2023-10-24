@@ -57,6 +57,12 @@ private:
 	ResourceCacheRepository& cache_;
 };
 
+class UpdaterConsole : public Console
+{
+public:
+	void Print(DebugMessageType type, char const* msg) override;
+};
+
 class ScriptExtenderUpdater
 {
 public:
@@ -64,7 +70,6 @@ public:
 	bool TryToUpdate(ErrorReason& reason);
 	inline bool IsCompleted() const;
 	void InitConsole();
-	void LoadConfig(char const* configPathOverride);
 
 	UpdaterConfig& GetConfig()
 	{
@@ -74,6 +79,11 @@ public:
 	std::string const& GetErrorMessage() const
 	{
 		return errorMessage_;
+	}
+
+	std::string& GetLog()
+	{
+		return log_;
 	}
 
 	ResourceCacheRepository* GetCache() const
@@ -86,6 +96,7 @@ public:
 		return gameVersion_;
 	}
 
+	void Initialize(char const* exeDirOverride);
 	void Run();
 	void LoadCaches();
 	bool FetchUpdates();
@@ -101,8 +112,12 @@ private:
 	std::string errorMessage_;
 	bool updated_{ false };
 	bool completed_{ false };
+	std::string log_;
 
 	void UpdatePaths();
+	void UpdateExeDir(char const* exeDirOverride);
+	void LoadConfig();
+	void LoadGameVersion();
 };
 
 void StartUpdaterThread();

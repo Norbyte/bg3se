@@ -240,17 +240,16 @@ bool IsInEditor()
 	// return GetModuleHandleW(L"DivinityEngine2.exe") != NULL;
 }
 
-std::optional<VersionNumber> GetGameVersion()
+std::optional<VersionNumber> GetModuleVersion(HMODULE hModule)
 {
-	HMODULE hGameModule = GetExeHandle();
-	if (hGameModule == NULL) {
+	if (hModule == NULL) {
 		return {};
 	}
 
-	auto hResource = FindResource(hGameModule, MAKEINTRESOURCE(VS_VERSION_INFO), RT_VERSION);
+	auto hResource = FindResource(hModule, MAKEINTRESOURCE(VS_VERSION_INFO), RT_VERSION);
 	if (hResource == NULL) return {};
-	auto dwSize = SizeofResource(hGameModule, hResource);
-	auto hData = LoadResource(hGameModule, hResource);
+	auto dwSize = SizeofResource(hModule, hResource);
+	auto hData = LoadResource(hModule, hResource);
 	if (hData == NULL) return {};
 	auto pRes = LockResource(hData);
 	if (pRes == NULL) return {};
@@ -270,6 +269,28 @@ std::optional<VersionNumber> GetGameVersion()
 
 	LocalFree(pResCopy);
 	FreeResource(hData);
+	return version;
+}
+
+std::optional<VersionNumber> GetGameVersion()
+{
+	HMODULE hGameModule = GetExeHandle();
+	if (hGameModule == NULL) {
+		return {};
+	}
+
+	return GetModuleVersion(hGameModule);
+}
+
+std::optional<VersionNumber> GetModuleVersion(std::wstring_view path)
+{
+	HMODULE hModule = LoadLibraryExW(path.data(), NULL, LOAD_LIBRARY_AS_DATAFILE | LOAD_LIBRARY_AS_IMAGE_RESOURCE);
+	if (hModule == NULL) {
+		return {};
+	}
+
+	auto version = GetModuleVersion(hModule);
+	FreeLibrary(hModule);
 	return version;
 }
 

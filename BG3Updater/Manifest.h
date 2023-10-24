@@ -74,6 +74,7 @@ struct VersionNumber
 };
 
 std::optional<VersionNumber> GetGameVersion();
+std::optional<VersionNumber> GetModuleVersion(std::wstring_view path);
 
 enum class ManifestParseResult
 {

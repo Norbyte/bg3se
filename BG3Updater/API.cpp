@@ -3,13 +3,13 @@
 
 BEGIN_SE()
 
-void SEUpdaterInitialize(char const* configPath)
+void SEUpdaterInitialize(char const* binPath)
 {
 	if (gUpdater) return;
 
 	gGameHelpers = std::make_unique<GameHelpers>();
 	gUpdater = std::make_unique<ScriptExtenderUpdater>();
-	gUpdater->LoadConfig(configPath);
+	gUpdater->Initialize(binPath);
 	gGameHelpers->Initialize();
 }
 
@@ -55,9 +55,9 @@ void SEUpdaterGetLog(char* buf, uint32_t* length)
 		return;
 	}
 
-	*length = (uint32_t)gUpdater->GetErrorMessage().size();
+	*length = (uint32_t)gUpdater->GetLog().size();
 	if (buf != nullptr) {
-		std::copy(gUpdater->GetErrorMessage().begin(), gUpdater->GetErrorMessage().end(), buf);
+		std::copy(gUpdater->GetLog().begin(), gUpdater->GetLog().end(), buf);
 	}
 }
 

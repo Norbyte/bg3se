@@ -122,6 +122,16 @@ bool ResourceUpdater::Update(Manifest::Resource const& resource, Manifest::Resou
 	}
 }
 
+void UpdaterConsole::Print(DebugMessageType type, char const* msg)
+{
+	Console::Print(type, msg);
+
+	if (gUpdater) {
+		gUpdater->GetLog() += msg;
+		gUpdater->GetLog() += "\r\n";
+	}
+}
+
 void ScriptExtenderUpdater::SetGameVersion(int32_t major, int32_t minor, int32_t revision, int32_t build)
 {
 	gameVersion_ = VersionNumber(major, minor, revision, build);
@@ -276,11 +286,17 @@ void ScriptExtenderUpdater::InitConsole()
 	SetConsoleTitleW(L"BG3 Script Extender Debug Console");
 }
 
-void ScriptExtenderUpdater::LoadConfig(char const* configPathOverride)
+void ScriptExtenderUpdater::Initialize(char const* exeDirOverride)
 {
-	std::wstring configPath;
-	if (configPathOverride && *configPathOverride) {
-		configPath = FromStdUTF8(configPathOverride);
+	UpdateExeDir(exeDirOverride);
+	LoadConfig();
+	LoadGameVersion();
+}
+
+void ScriptExtenderUpdater::UpdateExeDir(char const* exeDirOverride)
+{
+	if (exeDirOverride && *exeDirOverride) {
+		exeDir_ = FromStdUTF8(exeDirOverride);
 	} else {
 		HMODULE hGameModule = GetExeHandle();
 		if (hGameModule != NULL) {
@@ -292,12 +308,16 @@ void ScriptExtenderUpdater::LoadConfig(char const* configPathOverride)
 				exeDir_ = exeDir_.substr(0, sep);
 			}
 		}
+	}
+}
 
-		if (!exeDir_.empty()) {
-			configPath = exeDir_ + L"\\ScriptExtenderUpdaterConfig.json";
-		} else {
-			configPath = L"ScriptExtenderUpdaterConfig.json";
-		}
+void ScriptExtenderUpdater::LoadConfig()
+{
+	std::wstring configPath;
+	if (!exeDir_.empty()) {
+		configPath = exeDir_ + L"\\ScriptExtenderUpdaterConfig.json";
+	} else {
+		configPath = L"ScriptExtenderUpdaterConfig.json";
 	}
 		
 	LoadConfigFile(configPath, config_);
@@ -309,16 +329,25 @@ void ScriptExtenderUpdater::LoadConfig(char const* configPathOverride)
 	}
 }
 
+void ScriptExtenderUpdater::LoadGameVersion()
+{
+	auto version = GetGameVersion();
+	if (!version && !exeDir_.empty()) {
+		auto exePath = exeDir_;
+		exePath += L"\\bg3.exe";
+		version = GetModuleVersion(exePath);
+	}
+
+	if (version) {
+		gameVersion_ = *version;
+	}
+}
+
 void ScriptExtenderUpdater::UpdatePaths()
 {
 	auto cacheDir = config_.CachePath;
 	if (!PathFileExistsW(cacheDir.c_str())) {
 		CreateDirectoryW(cacheDir.c_str(), NULL);
-	}
-
-	auto version = GetGameVersion();
-	if (version) {
-		gameVersion_ = *version;
 	}
 
 	DEBUG("Cache path: %s", ToStdUTF8(cacheDir).c_str());
@@ -369,7 +398,7 @@ DWORD WINAPI UpdaterThread(LPVOID param)
 {
 	gGameHelpers = std::make_unique<GameHelpers>();
 	gUpdater = std::make_unique<ScriptExtenderUpdater>();
-	gUpdater->LoadConfig(nullptr);
+	gUpdater->Initialize(nullptr);
 	gUpdater->InitConsole();
 	gGameHelpers->Initialize();
 	CreateThread(NULL, 0, &ClientWorkerSuspenderThread, NULL, 0, NULL);
