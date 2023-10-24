@@ -6,17 +6,33 @@
 
 namespace bg3se::script {
 
-#define SAFE_PATH_CHARS "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_./ "
-
 bool IsSafeRelativePath(STDString const& path)
 {
-	if (path.find_first_not_of(SAFE_PATH_CHARS) != STDString::npos
-		|| path.find("..") != STDString::npos) {
-		OsiError("Illegal file name for external file access: '" << path << "'");
+	if (path.empty()) {
+		OsiError("IO path cannot be empty");
 		return false;
-	} else {
-		return true;
 	}
+
+	// File naming rules per https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file
+	for (auto c : path) {
+		// Note: since path is UTF-8, we let all code points > 0x80 through
+		if (c < 0x20 || c == '<' || c == '>' || c == ':' || c == '"' || c == '|' || c == '?' || c == '*') {
+			OsiError("Illegal character in filename: '" << path << "'");
+			return false;
+		}
+	}
+
+	if (*path.rbegin() == ' ' || *path.rbegin() == '.') {
+		OsiError("Path cannot end with space or dot: '" << path << "'");
+		return false;
+	}
+
+	if (path.find("..") != STDString::npos) {
+		OsiError("Path cannot contain traversal: '" << path << "'");
+		return false;
+	}
+
+	return true;
 }
 
 std::optional<STDWString> GetPathForExternalIo(std::string_view scriptPath, PathRootType root)
