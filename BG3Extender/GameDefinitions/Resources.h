@@ -24,7 +24,7 @@ namespace bg3se
 	struct [[bg3::hidden]] ResourceContainer : public ProtectedGameObject<ResourceContainer>
 	{
 		void* VMT;
-		Bank* Banks[(unsigned)ResourceBankType::Sentinel];
+		std::array<Bank*, (unsigned)ResourceBankType::Sentinel> Banks;
 	};
 
 	struct [[bg3::hidden]] ResourcePackage;
@@ -51,7 +51,7 @@ namespace bg3se
 	{
 		__int64 field_0;
 		[[bg3::hidden]] Map<FixedString, Resource*> Resources;
-		[[bg3::hidden]] ResourceBank* ResourceBanks[2];
+		[[bg3::hidden]] std::array<ResourceBank*, 2> ResourceBanks;
 		__int64 field_30; // Unknown pointer; size 1
 		__int64 field_38;
 		Array<FixedString> field_40;

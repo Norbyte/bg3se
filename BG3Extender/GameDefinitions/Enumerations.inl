@@ -206,6 +206,20 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 	E(ServerInterruptInitialParticipants)
 	E(ServerInterruptTurnOrderInZone)
 
+	// Character creation
+	E(CCCompanionDefinition)
+	E(CCDefinitionCommon)
+	E(CCFullRespecDefinition)
+	E(CCRespecDefinition)
+	E(CCCharacterDefinition)
+	E(CCSessionCommon)
+	E(CCState)
+	E(CCLevelUpDefinition)
+	E(CCFullRespec)
+	E(CCRespec)
+	E(CCCreation)
+	E(CCLevelUp)
+
 	// Experimental components
 	E(Background)
 	E(God)

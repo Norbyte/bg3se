@@ -150,6 +150,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\Base\CommonTypes.h" />
     <ClInclude Include="GameDefinitions\Components\All.h" />
     <ClInclude Include="GameDefinitions\Components\Boosts.h" />
+    <ClInclude Include="GameDefinitions\Components\CharacterCreation.h" />
     <ClInclude Include="GameDefinitions\Components\Combat.h" />
     <ClInclude Include="GameDefinitions\Components\Components.h" />
     <ClInclude Include="GameDefinitions\Components\Inventory.h" />

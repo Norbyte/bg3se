@@ -1,5 +1,6 @@
 #pragma once
 
+#include <GameDefinitions/Components/CharacterCreation.h>
 #include <GameDefinitions/Components/Combat.h>
 #include <GameDefinitions/Components/Components.h>
 #include <GameDefinitions/Components/Inventory.h>

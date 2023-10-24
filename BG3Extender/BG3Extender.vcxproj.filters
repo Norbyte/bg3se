@@ -438,6 +438,7 @@
     <ClInclude Include="GameDefinitions\Stats\Expression.h" />
     <ClInclude Include="GameDefinitions\Base\ExposedTypes.h" />
     <ClInclude Include="GameDefinitions\Interrupt.h" />
+    <ClInclude Include="GameDefinitions\Components\CharacterCreation.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

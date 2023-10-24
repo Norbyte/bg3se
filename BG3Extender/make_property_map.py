@@ -154,6 +154,7 @@ sources = [
     'GameDefinitions/Interrupt.h',
     'GameDefinitions/RootTemplates.h',
     'GameDefinitions/Components/Boosts.h',
+    'GameDefinitions/Components/CharacterCreation.h',
     'GameDefinitions/Components/Combat.h',
     'GameDefinitions/Components/Components.h',
     'GameDefinitions/Components/Spell.h',
