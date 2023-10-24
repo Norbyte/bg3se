@@ -231,6 +231,11 @@ namespace bg3se
 	{
 		return h.Val[0] ^ h.Val[1];
 	}
+
+	inline uint64_t Hash(STDString const& h)
+	{
+		return std::hash<STDString>{}(h);
+	}
 }
 
 namespace std

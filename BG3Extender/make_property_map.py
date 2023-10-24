@@ -161,7 +161,8 @@ sources = [
     'GameDefinitions/Components/Inventory.h',
     'GameDefinitions/Components/Visual.h',
     'GameDefinitions/Components/Passives.h',
-    'GameDefinitions/Components/Runtime.h'
+    'GameDefinitions/Components/Runtime.h',
+    'GameDefinitions/Resources.h'
 ]
 
 structs = {}

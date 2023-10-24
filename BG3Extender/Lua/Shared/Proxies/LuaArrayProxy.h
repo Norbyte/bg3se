@@ -244,7 +244,7 @@ namespace bg3se::lua
 
 		int Next(lua_State* L, int key) override
 		{
-			if (key >= 0 && key < object_->size()) {
+			if (key >= 0 && (decltype(object_->size()))key < object_->size()) {
 				push(L, ++key);
 				push(L, &(*object_)[key - 1], lifetime_);
 				return 2;
@@ -270,6 +270,13 @@ namespace bg3se::lua
 		{
 			auto self = NewWithExtraData(L, sizeof(TImpl), lifetime);
 			return new (self->GetImpl()) TImpl(lifetime, args...);
+		}
+
+		template <class T>
+		static inline ConstSizeArrayProxyImpl<StaticArray<T>, T, 2>* Make(
+			lua_State* L, StaticArray<T>* object, const LifetimeHandle& lifetime)
+		{
+			return MakeImpl<ConstSizeArrayProxyImpl<StaticArray<T>, T, 2>>(L, lifetime, object);
 		}
 
 		template <class T>

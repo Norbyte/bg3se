@@ -115,6 +115,12 @@ inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overl
 }
 
 template <class T>
+inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<StaticArray<T>>)
+{
+	return &MakeDeferredArrayType<T>;
+}
+
+template <class T>
 inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<Vector<T>>)
 {
 	return &MakeDeferredArrayType<T>;
