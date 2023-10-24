@@ -762,6 +762,18 @@ namespace bg3se::lua::dbg
 		StackCheck _(L);
 		StaticLifetimeStackPin _LT(lua->GetStack(), lua->GetGlobalLifetime());
 
+		if (req.Expression == "reset") {
+			if (gExtender->GetServer().HasExtensionState() && gExtender->GetServer().GetExtensionState().GetLua()) {
+				gExtender->GetServer().EnqueueTask([]() {
+					gExtender->GetServer().ResetLuaState();
+				});
+				return ResultCode::Success;
+			} else {
+				req.Response->set_error_message("Cannot reset - server is not running");
+				return ResultCode::EvalFailed;
+			}
+		}
+
 		STDString syntaxCheck = "local x = " + req.Expression;
 		if (luaL_loadstring(L, syntaxCheck.c_str())) {
 			req.Response->set_error_message(lua_tostring(L, -1));
