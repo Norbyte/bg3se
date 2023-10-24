@@ -50,10 +50,10 @@ struct GameObjectVisualData
 
 	[[bg3::hidden]]
 	ScratchBuffer Buffer;
-	Guid field_58;
-	Guid field_68;
-	Guid field_78;
-	Guid field_88;
+	Guid HairColor;
+	Guid SkinColor;
+	Guid EyeColor;
+	Guid SecondEyeColor;
 	Guid field_98;
 	Array<Guid> Visuals;
 	Array<AppearanceElement> Elements;

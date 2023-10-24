@@ -465,7 +465,7 @@ struct HotbarContainerComponent : public BaseComponent
 		SpellId SpellId;
 		FixedString Passive;
 		uint32_t Slot;
-		uint8_t field_38;
+		bool IsNew;
 	};
 
 	struct Bar
@@ -473,8 +473,8 @@ struct HotbarContainerComponent : public BaseComponent
 		uint8_t Index;
 		uint8_t field_1;
 		Array<Element> Elements;
-		uint8_t field_18;
-		uint32_t field_1C;
+		uint8_t Width;
+		uint32_t Height;
 		STDString field_20;
 	};
 
@@ -821,13 +821,13 @@ struct DualWieldingComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::DualWielding;
 	static constexpr auto EngineClass = "eoc::DualWieldingComponent";
 
-	uint8_t field_18;
-	uint8_t field_19;
+	bool Melee;
+	bool RangedUI;
 	uint8_t field_1A;
-	uint8_t field_1B;
-	uint8_t field_1C;
+	bool Ranged;
+	bool MeleeUI;
 	uint8_t field_1D;
-	uint8_t field_1E;
+	bool DisableDualWielding;
 };
 
 DEFINE_TAG_COMPONENT(eoc, GravityDisabledComponent, GravityDisabled)

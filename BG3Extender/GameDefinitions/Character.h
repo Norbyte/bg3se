@@ -112,7 +112,7 @@ namespace bg3se
 			EntityHandle FollowCharacter;
 			EntityHandle EnemyCharacter;
 			int Dialog;
-			FixedString field_14C;
+			FixedString BaseVisual;
 			FixedString CustomTradeTreasure;
 			FixedString PreviousLevel;
 			UserId UserID;
