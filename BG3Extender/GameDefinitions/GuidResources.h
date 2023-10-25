@@ -269,7 +269,8 @@ struct Progression : public resource::GuidResource
 	struct Passive
 	{
 		Guid UUID;
-		int64_t Amount;
+		int32_t Amount;
+		int32_t Amount2;
 		STDString Arg3;
 	};
 

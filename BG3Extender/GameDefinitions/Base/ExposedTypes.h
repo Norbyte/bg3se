@@ -9,6 +9,7 @@ struct GameTime
 	double Time;
 	float DeltaTime;
 	int32_t Ticks;
+	double Unknown;
 };
 
 struct ActionOriginator

@@ -918,12 +918,10 @@ struct MovementComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::Movement;
 	static constexpr auto EngineClass = "eoc::MovementComponent";
 
-	float field_18;
-	float field_1C;
-	float field_20;
-	float field_24;
-	int field_28;
-	int field_2C;
+	glm::vec3 Direction;
+	float Acceleration;
+	float Speed;
+	float Speed2;
 };
 
 struct ObjectInteractionComponent : public BaseComponent

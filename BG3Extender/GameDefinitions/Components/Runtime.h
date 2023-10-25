@@ -20,14 +20,14 @@ struct PathingComponent : public BaseComponent
 	RefMap<FixedString, Param> PathParameters;
 	__int64 field_20;
 	int field_28;
-	FixedString field_2C;
+	FixedString MovementTiltToRemap;
 	__int64 field_30;
 	int field_38;
-	int field_3C;
-	uint8_t field_40;
-	float field_44;
+	int PathId;
+	uint8_t Flags;
+	float PathMovementSpeed;
 	int field_48;
-	uint8_t field_4C;
+	uint8_t ServerControl;
 };
 
 struct SteeringComponent : public BaseComponent
