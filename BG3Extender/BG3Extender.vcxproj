@@ -173,6 +173,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\Enumerations.h" />
     <ClInclude Include="GameDefinitions\Item.h" />
     <ClInclude Include="GameDefinitions\Module.h" />
+    <ClInclude Include="GameDefinitions\Net.h" />
     <ClInclude Include="GameDefinitions\Osiris.h" />
     <ClInclude Include="GameDefinitions\Passives.h" />
     <ClInclude Include="GameDefinitions\GuidResources.h" />

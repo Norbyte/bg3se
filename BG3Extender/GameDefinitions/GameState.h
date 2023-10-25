@@ -156,7 +156,7 @@ struct EoCServer : public ProtectedGameObject<EoCServer>
 	FixedString field_98;
 	FixedString field_9C;
 	GameStateMachine* GameStateMachine;
-	__int64 GameServer;
+	net::GameServer* GameServer;
 	__int64 field_B0;
 	int Rand1;
 	int Rand2;
@@ -209,7 +209,7 @@ struct EoCClient : public ProtectedGameObject<EoCClient>
 	Array<void*> field_70X;
 	__int64 field_80X;
 	GameStateMachine* GameStateMachine;
-	void* GameClient;
+	net::Client* GameClient;
 	void* field_98;
 	__int64 field_A0;
 	__int64 field_A8;

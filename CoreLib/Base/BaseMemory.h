@@ -38,6 +38,16 @@ namespace bg3se
 	}
 
 	template <class T>
+	void GameDeleteArray(T* ptr, std::size_t n)
+	{
+		for (std::size_t i = 0; i < n; i++) {
+			ptr[i].~T();
+		}
+
+		GameFree(ptr);
+	}
+
+	template <class T>
 	using GameUniquePtr = std::unique_ptr<T, decltype(&GameDelete<T>)>;
 
 	template <class T>

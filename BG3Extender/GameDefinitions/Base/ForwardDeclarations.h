@@ -48,6 +48,20 @@ namespace resource
 	struct GuidResourceManager;
 }
 
+namespace net
+{
+	struct Bitstream;
+	struct BitstreamSerializer;
+	struct Message;
+	struct MessagePool;
+	struct MessageFactory;
+	struct Protocol;
+	struct AbstractPeer;
+	struct Host;
+	struct Client;
+	struct GameServer;
+}
+
 namespace ecs
 {
 	struct EntityRef;
