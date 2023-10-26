@@ -193,8 +193,8 @@ void ScriptExtender::OnGameStateChanged(void * self, GameState fromState, GameSt
 		}
 		break;
 
-	case GameState::InitConnection:
-		//networkManager_.ExtendNetworkingClient();
+	case GameState::InitNetwork:
+		network_.ExtendNetworking();
 		break;
 	}
 
@@ -205,7 +205,7 @@ void ScriptExtender::OnGameStateChanged(void * self, GameState fromState, GameSt
 
 	case GameState::InitNetwork:
 	case GameState::Disconnect:
-		//networkManager_.ClientReset();
+		network_.Reset();
 		break;
 
 	case GameState::UnloadModule:
@@ -224,7 +224,7 @@ void ScriptExtender::OnGameStateChanged(void * self, GameState fromState, GameSt
 	case GameState::LoadSession:
 		INFO("ecl::ScriptExtender::OnClientGameStateChanged(): Loading game session");
 		LoadExtensionState(ExtensionStateContext::Game);
-		//networkManager_.ExtendNetworkingClient();
+		network_.ExtendNetworking();
 		if (extensionState_) {
 			extensionState_->OnGameSessionLoading();
 		}

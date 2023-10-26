@@ -43,6 +43,17 @@ struct QueueCS : public Queue<T>
 
 struct Message : Noncopyable<Message>
 {
+	using SerializeProc = void (Message* msg, BitstreamSerializer* serializer);
+
+	struct VMT
+	{
+		void* Dtor;
+		void* Serialize;
+		void* Unknown;
+		void* CreateNew;
+		void* Reset;
+	};
+
 	inline virtual ~Message() {}
 	virtual void Serialize(BitstreamSerializer & serializer) = 0;
 	virtual void Unknown() = 0;
@@ -65,14 +76,21 @@ struct MessagePool : Noncopyable<MessagePool>
 	uint64_t GrowSize{ 1 };
 	Queue<Message*> Messages;
 	Array<Message*> LeasedMessages;
+
+	Message* GetFreeMessage();
 };
 
 struct MessageFactory : ProtectedGameObject<MessagePool>
 {
+	void* VMT;
 	Array<MessagePool*> MessagePools;
 	uint32_t UsedPoolSlots;
 	uint32_t WriteOffset;
 	CRITICAL_SECTION CriticalSection;
+
+	Message* GetFreeMessage(uint32_t messageId);
+	void Grow(uint32_t lastMessageId);
+	void Register(uint32_t messageId, Message* tmpl);
 };
 
 struct MessageContext
@@ -97,8 +115,8 @@ struct Protocol
 {
 	inline virtual ~Protocol() {}
 	virtual ProtocolResult ProcessMsg(void * Unused, MessageContext * Unknown, Message * Msg) = 0;
-	virtual ProtocolResult PreUpdate(GameTime* Time) = 0;
-	virtual ProtocolResult PostUpdate(GameTime* Time) = 0;
+	virtual ProtocolResult PreUpdate(GameTime const& time) = 0;
+	virtual ProtocolResult PostUpdate(GameTime const& time) = 0;
 	virtual void OnAddedToHost() = 0;
 	virtual void OnRemovedFromHost() = 0;
 	virtual void Reset() = 0;
@@ -226,7 +244,7 @@ struct AbstractPeer : public AbstractPeerBase
 	uint16_t Port1;
 	uint16_t Port2;
 	Array<Protocol*> ProtocolList;
-	MultiHashMap<int32_t, Protocol*> ProtocolMap;
+	MultiHashMap<uint32_t, Protocol*> ProtocolMap;
 	QueueCS<Message*> PacketsToSend;
 };
 
@@ -318,14 +336,17 @@ struct Client : public AbstractPeer
 	PeerId HostPeerId;
 };
 
-
-/*class HostRefuseMessage : public Message
+struct ClientConnectMessage : public Message
 {
-public:
-	static constexpr NetMessage MessageId = NetMessage::NETMSG_HOST_REFUSE;
-
-	int ReasonCode;
-	ModuleSettings Settings;
-};*/
+	STDString GameVersion;
+	STDString Build;
+	int field_58;
+	char field_5C;
+	Guid field_60;
+	uint8_t field_70;
+	MultiHashSet<Guid> field_78;
+	int field_A8;
+	uint8_t field_AC;
+};
 
 END_NS()

@@ -1,5 +1,5 @@
 cd BG3Extender\Extender\Shared
-..\..\..\External\protobuf\tools\protobuf\protoc --cpp_out=. ScriptExtensions.proto
+..\..\..\External\protobuf\tools\protobuf\protoc --cpp_out=. ExtenderProtocol.proto
 
 cd ..\..\Lua\Debugger
 ..\..\..\External\protobuf\tools\protobuf\protoc --cpp_out=. LuaDebug.proto

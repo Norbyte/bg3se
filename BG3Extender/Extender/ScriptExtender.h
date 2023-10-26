@@ -6,6 +6,7 @@
 #include <Extender/Client/ScriptExtenderClient.h>
 #include <Extender/Server/ScriptExtenderServer.h>
 #include <Extender/Shared/StatLoadOrderHelper.h>
+#include <Extender/Shared/Hooks.h>
 #if !defined(OSI_NO_DEBUGGER)
 #include <Lua/Debugger/LuaDebugger.h>
 #include <Lua/Debugger/LuaDebugMessages.h>
@@ -91,7 +92,12 @@ public:
 
 	inline EngineHooks& GetEngineHooks()
 	{
-		return Hooks;
+		return engineHooks_;
+	}
+
+	inline Hooks& GetHooks()
+	{
+		return hooks_;
 	}
 
 	inline lua::LuaBundle& GetLuaBuiltinBundle()
@@ -120,7 +126,8 @@ private:
 	esv::ScriptExtender server_;
 	ecl::ScriptExtender client_;
 	LibraryManager Libraries;
-	EngineHooks Hooks;
+	EngineHooks engineHooks_;
+	Hooks hooks_;
 	bool LibrariesPostInitialized{ false };
 	std::recursive_mutex globalStateLock_;
 	std::shared_mutex pathOverrideMutex_;

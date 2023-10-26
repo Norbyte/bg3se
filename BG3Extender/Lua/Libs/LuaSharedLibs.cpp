@@ -14,12 +14,14 @@
 #include <Lua/Libs/StaticData.inl>
 #include <Lua/Libs/Types.inl>
 #include <Lua/Libs/Utils.inl>
+#include <Lua/Libs/ClientNet.inl>
+#include <Lua/Libs/ServerNet.inl>
 
 BEGIN_NS(ecl::lua)
 
 void RegisterClientLibraries()
 {
-	//ecs::RegisterEntityLib();
+	net::RegisterNetLib();
 }
 
 END_NS()
@@ -28,7 +30,7 @@ BEGIN_NS(esv::lua)
 
 void RegisterServerLibraries()
 {
-	//ecs::RegisterEntityLib();
+	net::RegisterNetLib();
 }
 
 END_NS()

@@ -121,6 +121,7 @@ namespace bg3se::lua
 		void OnResetCompleted();
 		virtual void OnUpdate(GameTime const& time);
 		void OnStatsStructureLoaded();
+		void OnNetMessageReceived(STDString const& channel, STDString const& payload, UserId userId);
 
 		template <class... Ret, class... Args>
 		bool CallExtRet(char const * func, uint32_t restrictions, std::tuple<Ret...>& ret, Args... args)
@@ -208,6 +209,13 @@ namespace bg3se::lua
 	struct TickEvent : public EventBase
 	{
 		GameTime Time;
+	};
+
+	struct NetMessageEvent : public EventBase
+	{
+		STDString Channel;
+		STDString Payload;
+		UserId UserID;
 	};
 }
 

@@ -28,6 +28,13 @@ INHERIT(lua::EventBase)
 P(Time)
 END_CLS()
 
+BEGIN_CLS(lua::NetMessageEvent)
+INHERIT(lua::EventBase)
+P(Channel)
+P(Payload)
+P(UserID)
+END_CLS()
+
 BEGIN_CLS(lua::DoConsoleCommandEvent)
 INHERIT(lua::EventBase)
 P_RO(Command)

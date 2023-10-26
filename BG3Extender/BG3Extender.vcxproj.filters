@@ -94,9 +94,6 @@
     <ClCompile Include="Extender\Shared\ExtensionState.cpp">
       <Filter>Extender\Shared</Filter>
     </ClCompile>
-    <ClCompile Include="Extender\Shared\ScriptExtensions.pb.cc">
-      <Filter>Extender\Shared</Filter>
-    </ClCompile>
     <ClCompile Include="Extender\Shared\ScriptHelpers.cpp">
       <Filter>Extender\Shared</Filter>
     </ClCompile>
@@ -156,6 +153,10 @@
     <ClCompile Include="Lua\Shared\Proxies\LuaTypeInformation.cpp" />
     <ClCompile Include="Extender\Shared\Hooks.cpp" />
     <ClCompile Include="Lua\LuaSerializers.cpp" />
+    <ClCompile Include="Extender\Shared\ExtenderProtocol.pb.cc" />
+    <ClCompile Include="Extender\Shared\ExtenderNet.cpp" />
+    <ClCompile Include="Extender\Client\ClientNetworking.cpp" />
+    <ClCompile Include="Extender\Server\ServerNetworking.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -312,9 +313,6 @@
     <ClInclude Include="Extender\Shared\ExtensionState.h">
       <Filter>Extender\Shared</Filter>
     </ClInclude>
-    <ClInclude Include="Extender\Shared\ScriptExtensions.pb.h">
-      <Filter>Extender\Shared</Filter>
-    </ClInclude>
     <ClInclude Include="Extender\Shared\ScriptHelpers.h">
       <Filter>Extender\Shared</Filter>
     </ClInclude>
@@ -440,6 +438,10 @@
     <ClInclude Include="GameDefinitions\Interrupt.h" />
     <ClInclude Include="GameDefinitions\Components\CharacterCreation.h" />
     <ClInclude Include="GameDefinitions\Net.h" />
+    <ClInclude Include="Extender\Shared\ExtenderNet.h" />
+    <ClInclude Include="Extender\Shared\ExtenderProtocol.pb.h" />
+    <ClInclude Include="Extender\Client\ClientNetworking.h" />
+    <ClInclude Include="Extender\Server\ServerNetworking.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -533,7 +535,7 @@
     <None Include="GameDefinitions\Components\AllComponentTypes.inl">
       <Filter>GameDefinitions\Components</Filter>
     </None>
-    <None Include="Extender\Shared\ScriptExtensions.proto">
+    <None Include="Extender\Shared\ExtenderProtocol.proto">
       <Filter>Extender\Shared</Filter>
     </None>
     <None Include="GameDefinitions\GlobalFixedStrings.inl">
@@ -605,6 +607,12 @@
       <Filter>Lua\Libs</Filter>
     </None>
     <None Include="Lua\Libs\Entity.inl">
+      <Filter>Lua\Libs</Filter>
+    </None>
+    <None Include="Lua\Libs\ServerNet.inl">
+      <Filter>Lua\Libs</Filter>
+    </None>
+    <None Include="Lua\Libs\ClientNet.inl">
       <Filter>Lua\Libs</Filter>
     </None>
   </ItemGroup>

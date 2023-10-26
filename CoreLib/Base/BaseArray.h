@@ -610,7 +610,7 @@ public:
 		if (a.size_ > 0) {
 			Reallocate(a.size_);
 			size_ = a.size_;
-			for (uint32_t i = 0; i < size_; i++) {
+			for (size_type i = 0; i < size_; i++) {
 				new (buf_ + i) T(a[i]);
 			}
 		}
@@ -621,32 +621,32 @@ public:
 		return buf_;
 	}
 
-	inline unsigned int size() const
+	inline size_type size() const
 	{
 		return size_;
 	}
 
-	inline unsigned int capacity() const
+	inline size_type capacity() const
 	{
 		return capacity_;
 	}
 
-	inline unsigned int Size() const
+	inline size_type Size() const
 	{
 		return size_;
 	}
 
-	inline T const& operator [] (uint32_t index) const
+	inline T const& operator [] (size_type index) const
 	{
 		return buf_[index];
 	}
 
-	inline T& operator [] (uint32_t index)
+	inline T& operator [] (size_type index)
 	{
 		return buf_[index];
 	}
 
-	uint32_t CapacityIncrement() const
+	size_type CapacityIncrement() const
 	{
 		if (capacity_ > 0) {
 			return 2 * capacity_;
@@ -657,22 +657,22 @@ public:
 
 	void clear()
 	{
-		for (uint32_t i = 0; i < size_; i++) {
+		for (size_type i = 0; i < size_; i++) {
 			buf_[i].~T();
 		}
 
 		size_ = 0;
 	}
 
-	void Reallocate(uint32_t newCapacity)
+	void Reallocate(size_type newCapacity)
 	{
 		auto newBuf = GameMemoryAllocator::NewRaw<T>(newCapacity);
-		for (uint32_t i = 0; i < std::min(size_, newCapacity); i++) {
+		for (size_type i = 0; i < std::min(size_, newCapacity); i++) {
 			new (newBuf + i) T(buf_[i]);
 		}
 
 		if (buf_ != nullptr) {
-			for (uint32_t i = 0; i < size_; i++) {
+			for (size_type i = 0; i < size_; i++) {
 				buf_[i].~T();
 			}
 
@@ -701,11 +701,39 @@ public:
 		new (&buf_[size_++]) T(value);
 	}
 
-	void remove_at(uint32_t index)
+	void ordered_insert_at(size_type index, T const& value)
+	{
+		assert(index <= size_);
+		if (capacity_ <= size_) {
+			Reallocate(CapacityIncrement());
+		}
+
+		new (&buf_[size_++]) T();
+
+		for (size_type i = size_ - 1; i > index; i++) {
+			buf_[i] = buf_[i - 1];
+		}
+
+		buf_[index] = value;
+	}
+
+	void insert_at(size_type index, T const& value)
+	{
+		assert(index <= size_);
+		if (capacity_ <= size_) {
+			Reallocate(CapacityIncrement());
+		}
+
+		new (&buf_[size_]) T(buf_[index]);
+		buf_[index] = value;
+		size_++;
+	}
+
+	void remove_at(size_type index)
 	{
 		assert(index < size_);
 
-		for (auto i = index; i < size_ - 1; i++) {
+		for (size_type i = index; i < size_ - 1; i++) {
 			buf_[i] = buf_[i + 1];
 		}
 
@@ -748,8 +776,8 @@ public:
 
 private:
 	T* buf_{ nullptr };
-	unsigned int capacity_{ 0 };
-	unsigned int size_{ 0 };
+	size_type capacity_{ 0 };
+	size_type size_{ 0 };
 };
 
 
@@ -921,10 +949,10 @@ public:
 
 private:
 	T* buf_{ nullptr };
-	int32_t capacity_{ 0 };
-	int32_t size_{ 0 };
-	int32_t readIndex_{ -1 };
-	int32_t writeIndex_{ 0 };
+	size_type capacity_{ 0 };
+	size_type size_{ 0 };
+	difference_type readIndex_{ -1 };
+	difference_type writeIndex_{ 0 };
 
 	void copy_from(Queue const& a)
 	{

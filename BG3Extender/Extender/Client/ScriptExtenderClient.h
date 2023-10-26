@@ -3,6 +3,7 @@
 #include <Extender/Shared/ScriptExtenderBase.h>
 #include <Extender/Shared/ExtenderConfig.h>
 #include <Extender/Client/ExtensionStateClient.h>
+#include <Extender/Client/ClientNetworking.h>
 #include <Extender/Shared/ModuleHasher.h>
 #include <GameDefinitions/Symbols.h>
 #include <GameDefinitions/EntitySystemHelpers.h>
@@ -44,6 +45,11 @@ public:
 		return hasher_;
 	}
 
+	inline NetworkManager& GetNetworkManager()
+	{
+		return network_;
+	}
+
 	bool IsInClientThread() const;
 	void ResetLuaState();
 	void ResetExtensionState();
@@ -69,6 +75,7 @@ private:
 	ModuleHasher hasher_;
 	STDString serverStatus_;
 	STDString clientStatus_;
+	NetworkManager network_;
 
 	void OnBaseModuleLoaded(void * self);
 	void OnGameStateChanged(void * self, GameState fromState, GameState toState);

@@ -16,7 +16,8 @@ _I._PublishedSharedEvents = {
 	"GameStateChanged",
 	"ResetCompleted",
 	"DoConsoleCommand",
-	"Tick"
+	"Tick",
+	"StatsStructureLoaded"
 }
 
 _I._DoStartup = function ()

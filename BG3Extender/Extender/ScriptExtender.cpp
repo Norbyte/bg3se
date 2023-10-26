@@ -113,7 +113,7 @@ void ScriptExtender::Shutdown()
 	DEBUG("ScriptExtender::Shutdown: Exiting");
 	server_.Shutdown();
 	client_.Shutdown();
-	Hooks.UnhookAll();
+	engineHooks_.UnhookAll();
 }
 
 void ScriptExtender::LogLuaError(std::string_view msg)
@@ -346,7 +346,8 @@ void ScriptExtender::PostStartup()
 		lua::RegisterLibraries();
 		TypeInformationRepository::GetInstance().Initialize();
 
-		Hooks.HookAll();
+		engineHooks_.HookAll();
+		hooks_.Startup();
 		server_.PostStartup();
 		client_.PostStartup();
 
@@ -355,8 +356,8 @@ void ScriptExtender::PostStartup()
 			ERR("Failed to load Lua builtin resource bundle!");
 		}
 
-		Hooks.FileReader__ctor.SetWrapper(&ScriptExtender::OnFileReaderCreate, this);
-		Hooks.RPGStats__Load.SetWrapper(&ScriptExtender::OnStatsLoad, this);
+		engineHooks_.FileReader__ctor.SetWrapper(&ScriptExtender::OnFileReaderCreate, this);
+		engineHooks_.RPGStats__Load.SetWrapper(&ScriptExtender::OnStatsLoad, this);
 	}
 
 	GameVersionInfo gameVersion;

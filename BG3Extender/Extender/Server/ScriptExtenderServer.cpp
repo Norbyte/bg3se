@@ -122,10 +122,12 @@ void ScriptExtender::OnGameStateChanged(void * self, GameState fromState, GameSt
 	}
 
 	switch (toState) {
-	// Gift Bag selection in the main menu reloads the module without reconnecting
-	// We only need to reset the extender enabled peer list on a disconnect.
+	case GameState::Init:
+		network_.ExtendNetworking();
+		break;
+		
 	case GameState::Disconnect:
-		//networkManager_.ServerReset();
+		network_.Reset();
 		break;
 
 	case GameState::UnloadSession:
@@ -134,13 +136,13 @@ void ScriptExtender::OnGameStateChanged(void * self, GameState fromState, GameSt
 		break;
 
 	case GameState::LoadModule:
-		//networkManager_.ExtendNetworkingServer();
+		network_.ExtendNetworking();
 		break;
 
 	case GameState::LoadSession:
 		INFO("esv::ScriptExtender::OnGameStateChanged(): Loading game session");
 		LoadExtensionState(ExtensionStateContext::Game);
-		//networkManager_.ExtendNetworkingServer();
+		network_.ExtendNetworking();
 		if (extensionState_) {
 			extensionState_->OnGameSessionLoading();
 		}
@@ -212,8 +214,19 @@ void ScriptExtender::ResetLuaState()
 
 bool ScriptExtender::RequestResetClientLuaState()
 {
-	// FIXME - networking not supported yet
-	return false;
+	auto server = GetStaticSymbols().GetEoCServer();
+	if (!server || !server->GameServer) return false;
+
+	// Reset clients via a network message if the server is running
+	auto msg = network_.GetFreeMessage(ReservedUserId);
+	if (msg != nullptr) {
+		auto resetMsg = msg->GetMessage().mutable_s2c_reset_lua();
+		resetMsg->set_bootstrap_scripts(true);
+		network_.Broadcast(msg, ReservedUserId);
+		return true;
+	} else {
+		return false;
+	}
 }
 
 void ScriptExtender::ResetExtensionState()
@@ -240,7 +253,7 @@ void ScriptExtender::LoadExtensionState(ExtensionStateContext ctx)
 	if (!gExtender->GetLibraryManager().CriticalInitializationFailed()) {
 		OsiMsg("Initializing server with target context " << ContextToString(ctx));
 		gExtender->GetLibraryManager().ApplyCodePatches();
-		//networkManager_.ExtendNetworkingServer();
+		network_.ExtendNetworking();
 		osiris_.GetCustomFunctionManager().ClearDynamicEntries();
 		extensionState_->LuaReset(ctx, true);
 	}

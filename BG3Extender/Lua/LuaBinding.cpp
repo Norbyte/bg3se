@@ -781,6 +781,15 @@ namespace bg3se::lua
 		ThrowEvent("StatsStructureLoaded", params, false, 0);
 	}
 
+	void State::OnNetMessageReceived(STDString const& channel, STDString const& payload, UserId userId)
+	{
+		NetMessageEvent params;
+		params.Channel = channel;
+		params.Payload = payload;
+		params.UserID = userId;
+		ThrowEvent("NetMessage", params);
+	}
+
 	STDString State::GetBuiltinLibrary(int resourceId)
 	{
 		auto resource = GetExeResource(resourceId);

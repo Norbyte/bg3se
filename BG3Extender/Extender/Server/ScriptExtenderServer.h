@@ -11,6 +11,7 @@
 #include <GameDefinitions/EntitySystemHelpers.h>
 #include <CoreLib/Wrappers.h>
 #include <Extender/Shared/SavegameSerializer.h>
+#include <Extender/Server/ServerNetworking.h>
 
 #include <thread>
 #include <mutex>
@@ -49,6 +50,11 @@ public:
 		return osiris_;
 	}
 
+	inline NetworkManager& GetNetworkManager()
+	{
+		return network_;
+	}
+
 	bool IsInServerThread() const;
 	void ResetLuaState();
 	bool RequestResetClientLuaState();
@@ -69,6 +75,7 @@ private:
 	bool postStartupDone_{ false };
 	ecs::ServerEntitySystemHelpers entityHelpers_;
 	SavegameSerializer savegameSerializer_;
+	NetworkManager network_;
 
 	void OnBaseModuleLoaded(void * self);
 	void GameStateWorkerWrapper(void (* wrapped)(void*), void * self);

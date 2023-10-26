@@ -190,7 +190,7 @@ end
 
 
 _I._RegisterEvents = function ()
-	_I._RegisterEngineEvent("NetMessageReceived")
+	_I._RegisterEngineEvent("NetMessage")
 	
 	for i,ev in pairs(_I._PublishedSharedEvents) do
 		_I._RegisterEngineEvent(ev)
@@ -206,7 +206,7 @@ _I._RegisterEvents = function ()
 	end)
 
 	-- Support for Ext.RegisterNetListener()
-	Ext.Events.NetMessageReceived:Subscribe(function (e)
+	Ext.Events.NetMessage:Subscribe(function (e)
 		_I._NetMessageReceived(e.Channel, e.Payload, e.UserID)
 	end)
 end
@@ -226,7 +226,7 @@ _I._NetMessageReceived = function (channel, payload, userId)
 		for i,callback in pairs(_I._NetListeners[channel]) do
 			local ok, err = xpcall(callback, debug.traceback, channel, payload, userId)
 			if not ok then
-				Ext.Utils.PrintError("Error during NetMessageReceived: ", err)
+				Ext.Utils.PrintError("Error during NetMessage dispatch: ", err)
 			end
 		end
 	end

@@ -80,7 +80,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <PreBuildEvent>
       <Command>rem $(SolutionDir)\External\protobuf\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Osiris\Debugger Osiris\Debugger\osidebug.proto
 rem $(SolutionDir)\External\protobuf\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Lua\Debugger Lua\Debugger\LuaDebug.proto
-rem $(SolutionDir)\External\protobuf\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Extender\Shared Extender\Shared\ScriptExtensions.proto
+rem $(SolutionDir)\External\protobuf\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Extender\Shared Extender\Shared\ExtenderProtocol.proto
 $(SolutionDir)x64\Debug\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(ProjectDir)Lua.bundle"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -112,8 +112,8 @@ $(SolutionDir)x64\Debug\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Project
     </Link>
     <PreBuildEvent>
       <Command>$(SolutionDir)\External\protobuf\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Osiris\Debugger Osiris\Debugger\osidebug.proto
-$(SolutionDir)\External\protobuf\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Lua Lua\LuaDebug.proto
-$(SolutionDir)\External\protobuf\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Extender\Shared Extender\Shared\ScriptExtensions.proto
+$(SolutionDir)\External\protobuf\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Lua\Debugger Lua\Debugger\LuaDebug.proto
+$(SolutionDir)\External\protobuf\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Extender\Shared Extender\Shared\ExtenderProtocol.proto
 $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(ProjectDir)Lua.bundle"</Command>
     </PreBuildEvent>
     <PostBuildEvent>
@@ -122,21 +122,24 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Extender\Client\ClientNetworking.h" />
     <ClInclude Include="Extender\Client\ExtensionStateClient.h" />
     <ClInclude Include="Extender\Client\ScriptExtenderClient.h" />
     <ClInclude Include="Extender\ScriptExtender.h" />
     <ClInclude Include="Extender\Server\ExtensionStateServer.h" />
     <ClInclude Include="Extender\Server\ScriptExtenderServer.h" />
+    <ClInclude Include="Extender\Server\ServerNetworking.h" />
     <ClInclude Include="Extender\Shared\Console.h" />
     <ClInclude Include="Extender\Shared\DWriteWrapper.h" />
     <ClInclude Include="Extender\Shared\ExtenderConfig.h" />
+    <ClInclude Include="Extender\Shared\ExtenderNet.h" />
+    <ClInclude Include="Extender\Shared\ExtenderProtocol.pb.h" />
     <ClInclude Include="Extender\Shared\ExtensionHelpers.h" />
     <ClInclude Include="Extender\Shared\ExtensionState.h" />
     <ClInclude Include="Extender\Shared\Hooks.h" />
     <ClInclude Include="Extender\Shared\ModuleHasher.h" />
     <ClInclude Include="Extender\Shared\SavegameSerializer.h" />
     <ClInclude Include="Extender\Shared\ScriptExtenderBase.h" />
-    <ClInclude Include="Extender\Shared\ScriptExtensions.pb.h" />
     <ClInclude Include="Extender\Shared\ScriptHelpers.h" />
     <ClInclude Include="Extender\Shared\StatLoadOrderHelper.h" />
     <ClInclude Include="Extender\Shared\tinyxml2.h" />
@@ -238,20 +241,23 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Extender\Client\ClientNetworking.cpp" />
     <ClCompile Include="Extender\Client\ExtensionStateClient.cpp" />
     <ClCompile Include="Extender\Client\ScriptExtenderClient.cpp" />
     <ClCompile Include="Extender\ScriptExtender.cpp" />
     <ClCompile Include="Extender\Server\ScriptExtenderServer.cpp" />
+    <ClCompile Include="Extender\Server\ServerNetworking.cpp" />
     <ClCompile Include="Extender\Shared\Console.cpp" />
     <ClCompile Include="Extender\Shared\CrashReporter.cpp" />
     <ClCompile Include="Extender\Shared\dllmain.cpp" />
     <ClCompile Include="Extender\Shared\DWriteWrapper.cpp" />
+    <ClCompile Include="Extender\Shared\ExtenderNet.cpp" />
+    <ClCompile Include="Extender\Shared\ExtenderProtocol.pb.cc">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Game Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Extender\Shared\ExtensionState.cpp" />
     <ClCompile Include="Extender\Shared\Hooks.cpp" />
-    <ClCompile Include="Extender\Shared\ScriptExtensions.pb.cc">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Game Release|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="Extender\Shared\ScriptHelpers.cpp" />
     <ClCompile Include="Extender\Shared\tinyxml2.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">NotUsing</PrecompiledHeader>
@@ -327,7 +333,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <None Include="Exports.def" />
     <None Include="Extender\Shared\ModuleHasher.inl" />
     <None Include="Extender\Shared\SavegameSerializer.inl" />
-    <None Include="Extender\Shared\ScriptExtensions.proto" />
+    <None Include="Extender\Shared\ExtenderProtocol.proto" />
     <None Include="Extender\Shared\StatLoadOrderHelper.inl" />
     <None Include="Extender\Shared\ThreadedExtenderState.inl" />
     <None Include="GameDefinitions\Base\TypeInformation.inl" />
@@ -356,12 +362,14 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <None Include="Lua\LevelIteratorFunctions.inl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">false</ExcludedFromBuild>
     </None>
+    <None Include="Lua\Libs\ClientNet.inl" />
     <None Include="Lua\Libs\Debug.inl" />
     <None Include="Lua\Libs\Entity.inl" />
     <None Include="Lua\Libs\IO.inl" />
     <None Include="Lua\Libs\Json.inl" />
     <None Include="Lua\Libs\Math.inl" />
     <None Include="Lua\Libs\Mod.inl" />
+    <None Include="Lua\Libs\ServerNet.inl" />
     <None Include="Lua\Libs\StaticData.inl" />
     <None Include="Lua\Libs\Stats.inl" />
     <None Include="Lua\Libs\Types.inl" />
