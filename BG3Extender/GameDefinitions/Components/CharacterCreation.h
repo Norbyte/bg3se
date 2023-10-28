@@ -154,8 +154,8 @@ struct StateComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::CCState;
 	static constexpr auto EngineClass = "eoc::character_creation::StateComponent";
 
-	uint8_t field_0;
-	uint8_t field_1;
+	bool HasDummy;
+	bool Canceled;
 	uint8_t field_2;
 };
 

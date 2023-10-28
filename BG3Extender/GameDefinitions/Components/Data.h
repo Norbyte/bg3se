@@ -131,7 +131,7 @@ struct StatsComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::Stats;
 	static constexpr auto EngineClass = "eoc::StatsComponent";
 
-	int field_0;
+	int InitiativeBonus;
 	std::array<int, 7> Abilities;
 	std::array<int, 7> AbilityModifiers;
 	std::array<int, 18> Skills;
@@ -709,7 +709,7 @@ struct FleeCapabilityComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::FleeCapability;
 	static constexpr auto EngineClass = "eoc::FleeCapabilityComponent";
 
-	uint8_t field_18;
+	FleeErrorFlags Flags;
 	float field_1C;
 	float field_20;
 };
@@ -719,10 +719,9 @@ struct CanDoRestComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::CanDoRest;
 	static constexpr auto EngineClass = "eoc::CanDoRestComponent";
 
-	uint8_t field_18;
-	uint8_t field_19;
-	uint8_t field_1A;
-	uint8_t field_1B;
+	RestFlags Flags;
+	RestErrorFlags RestErrorFlags1;
+	RestErrorFlags RestErrorFlags2;
 };
 
 struct CanModifyHealthComponent : public BaseComponent
@@ -807,13 +806,13 @@ struct DarknessComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::Darkness;
 	static constexpr auto EngineClass = "eoc::DarknessComponent";
 
-	uint8_t field_18;
-	uint8_t field_19;
-	uint8_t field_1A;
-	uint8_t field_1B;
-	uint8_t field_1C;
-	uint8_t field_1D;
-	int field_20;
+	bool Sneaking;
+	uint8_t Obscurity;
+	bool field_2;
+	uint8_t field_3;
+	bool field_4;
+	float field_8;
+	float field_C;
 };
 
 struct DualWieldingComponent : public BaseComponent
@@ -908,9 +907,9 @@ struct CanTravelComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::CanTravel;
 	static constexpr auto EngineClass = "eoc::CanTravelComponent";
 
-	__int16 field_18;
-	__int16 field_1A;
-	__int16 field_1C;
+	TravelFlags Flags;
+	uint16_t field_2;
+	TravelErrorFlags ErrorFlags;
 };
 
 struct MovementComponent : public BaseComponent
