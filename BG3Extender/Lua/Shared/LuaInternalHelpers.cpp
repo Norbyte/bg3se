@@ -1,6 +1,7 @@
 #include <stdafx.h>
 #include <Lua/LuaHelpers.h>
 #include <Lua/Shared/LuaLifetime.h>
+#include <Lua/Shared/LuaMethodCallHelpers.h>
 #include <Lua/LuaBinding.h>
 #include <Extender/ScriptExtender.h>
 
@@ -578,7 +579,7 @@ int ProtectedMethodCallerBase::CallUserFunctionWithTraceback(lua_State* L, lua_C
 	lua_remove(L, tracebackHandlerIdx);
 	return status;
 }
-
+*/
 
 bool ProtectedFunctionCallerBase::ProtectedCall(lua_State* L, lua_CFunction fun, char const* funcDescription)
 {
@@ -608,7 +609,6 @@ int ProtectedFunctionCallerBase::CallUserFunctionWithTraceback(lua_State* L, lua
 	lua_remove(L, tracebackHandlerIdx);
 	return status;
 }
-*/
 
 int TracebackHandler(lua_State* L);
 

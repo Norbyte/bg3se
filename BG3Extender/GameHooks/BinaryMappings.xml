@@ -664,6 +664,19 @@
         <Target Type="Absolute" Offset="@ref1" EngineCallback="BindReplicationComponentIDRef" />
       </Mapping>
 
+      <Mapping Name="ecs::EntityWorld::Update">
+        48 8b 8f 88 02 00 00 // mov     rcx, [rdi+288h]
+        48 8b d3 // mov     rdx, rbx
+        @ref1 e8 ?? ?? ?? ?? // call    ecs__EntityWorld__Update
+        48 8b 8f a8 00 00 00 // mov     rcx, [rdi+0A8h]
+        48 85 c9 // test    rcx, rcx
+        74 0c // jz      short loc_140FBA071
+        48 8b 01 // mov     rax, [rcx]
+        48 8b d3 // mov     rdx, rbx
+        ff 90 b0 00 00 00 // call    qword ptr [rax+0B0h]
+        <Target Type="Indirect" Offset="@ref1" Symbol="ecs__EntityWorld__Update" />
+      </Mapping>
+
       <Mapping Name="KillLauncher" AllowFail="true">
         @ref1 ff 15 ?? ?? ?? ?? // call    cs:SteamAPI_RestartAppIfNecessary
         84 c0 // test    al, al

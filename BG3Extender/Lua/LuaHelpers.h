@@ -52,6 +52,12 @@ struct StackCheck
 };
 #endif
 
+// Helper type for getting functions as parameters
+struct FunctionRef
+{
+	int Index;
+};
+
 bool ProtectedCallC(lua_State* L, lua_CFunction fun, void* context, void* context2, char const* funcDescription, char const*& error);
 
 // LuaEnumValue forward declarations

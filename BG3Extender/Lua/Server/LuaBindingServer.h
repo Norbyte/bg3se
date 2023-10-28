@@ -2,6 +2,7 @@
 
 #include <Lua/LuaBinding.h>
 #include <Lua/Server/LuaOsirisBinding.h>
+#include <Lua/Server/EntityEvents.h>
 #include <GameDefinitions/Stats/Functors.h>
 #include <GameDefinitions/Status.h>
 #include <Extender/Shared/ExtensionHelpers.h>
@@ -264,6 +265,7 @@ namespace bg3se::esv::lua
 
 		ecs::EntityWorld* GetEntityWorld() override;
 		ecs::EntitySystemHelpersBase* GetEntitySystemHelpers() override;
+		EntityEventHooks* GetEntityEventHooks() override;
 
 		template <class TArg>
 		void Call(char const* mod, char const* func, std::vector<TArg> const & args)
@@ -320,6 +322,7 @@ namespace bg3se::esv::lua
 		ExtensionLibraryServer library_;
 		OsirisBinding osiris_;
 		FunctorEventHooks functorHooks_;
+		EntityEventHooks entityHooks_;
 
 		bool QueryInternal(char const* mod, char const* name, RegistryEntry * func,
 			std::vector<CustomFunctionParam> const & signature, OsiArgumentDesc & params);

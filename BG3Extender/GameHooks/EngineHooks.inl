@@ -37,6 +37,7 @@ HOOK_DEFN(RPGStats__Load, RPGStats__Load, stats::RPGStats::LoadProc)
 HOOK_DEFN(RPGStats__ParseStructureFolder, RPGStats__ParseStructureFolder, stats::RPGStats::ParseStructureFolderProc)
 
 HOOK_DEFN(FileReader__ctor, ls__FileReader__ctor, FileReader::CtorProc)
+HOOK_DEFN(ecs__EntityWorld__Update, ecs__EntityWorld__Update, ecs::EntityWorld::UpdateProc)
 HOOK_DEFN(esv__OsirisVariableHelper__SavegameVisit, esv__OsirisVariableHelper__SavegameVisit, esv::OsirisVariableHelper__SavegameVisitProc)
 HOOK_DEFN(stats__DealDamageFunctor__ApplyDamage, stats__DealDamageFunctor__ApplyDamage, stats::DealDamageFunctor::ApplyDamageProc)
 HOOK_DEFN(esv__StatsSystem__ThrowDamageEvent, esv__StatsSystem__ThrowDamageEvent, stats::StatsSystem_ThrowDamageEventProc)

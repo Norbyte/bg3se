@@ -1022,13 +1022,13 @@ struct BitSet
 		}
 	}
 
-	inline void Set(uint32_t index) const
+	inline void Set(uint32_t index)
 	{
 		EnsureSize(index + 1);
 		GetBuf()[index / 64] |= (1ull << (index % 64));
 	}
 
-	inline void Clear(uint32_t index) const
+	inline void Clear(uint32_t index)
 	{
 		EnsureSize(index + 1);
 		GetBuf()[index / 64] &= ~(1ull << (index % 64));

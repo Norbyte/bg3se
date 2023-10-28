@@ -108,6 +108,7 @@ namespace bg3se::lua
 
 		virtual ecs::EntityWorld* GetEntityWorld() = 0;
 		virtual ecs::EntitySystemHelpersBase* GetEntitySystemHelpers() = 0;
+		virtual EntityEventHooks* GetEntityEventHooks() = 0;
 
 		void FinishStartup();
 		void LoadBootstrap(STDString const& path, STDString const& modTable);

@@ -412,6 +412,7 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 	componentIndexToTypeMappings_.clear();
 	handleIndexToTypeMappings_.clear();
 	handleIndexToComponentMappings_.clear();
+	replicationIndexToTypeMappings_.clear();
 	componentIndices_.fill(UndefinedComponent);
 	componentSizes_.fill(0);
 	replicationIndices_.fill(UndefinedReplicationComponent);
@@ -511,9 +512,23 @@ void EntitySystemHelpersBase::MapComponentIndices(char const* componentName, Ext
 		componentIndices_[(unsigned)type] = it->second.ComponentIndex;
 		replicationIndices_[(unsigned)type] = it->second.ReplicationIndex;
 		handleIndices_[(unsigned)type] = it->second.HandleIndex;
-		componentIndexToTypeMappings_.insert(std::make_pair(it->second.ComponentIndex, type));
-		handleIndexToTypeMappings_.insert(std::make_pair(it->second.HandleIndex, type));
-		handleIndexToComponentMappings_.insert(std::make_pair(it->second.HandleIndex, it->second.ComponentIndex));
+
+		if (it->second.ComponentIndex != UndefinedComponent) {
+			componentIndexToTypeMappings_.insert(std::make_pair(it->second.ComponentIndex, type));
+		}
+
+		if (it->second.HandleIndex != UndefinedHandle) {
+			handleIndexToTypeMappings_.insert(std::make_pair(it->second.HandleIndex, type));
+		}
+
+		if (it->second.HandleIndex != UndefinedHandle && it->second.ComponentIndex != UndefinedComponent) {
+			handleIndexToComponentMappings_.insert(std::make_pair(it->second.HandleIndex, it->second.ComponentIndex));
+		}
+
+		if (it->second.ReplicationIndex != UndefinedReplicationComponent) {
+			replicationIndexToTypeMappings_.insert(std::make_pair(it->second.ReplicationIndex, type));
+		}
+
 		componentSizes_[(unsigned)type] = size;
 	} else {
 		OsiWarn("Could not find index for component: " << componentName);

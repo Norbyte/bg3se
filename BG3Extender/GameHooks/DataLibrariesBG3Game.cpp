@@ -187,6 +187,8 @@ namespace bg3se
 		SYM_OFF(ecl__GameStateMachine__Update);
 		SYM_OFF(esv__GameStateMachine__Update);
 
+		SYM_OFF(ecs__EntityWorld__Update);
+
 		/*SYM_OFF(esv__SurfaceActionFactory);
 		SYM_OFF(esv__SurfaceActionFactory__CreateAction);
 		SYM_OFF(esv__SurfaceManager__AddAction);*/

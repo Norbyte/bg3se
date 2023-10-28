@@ -20,6 +20,7 @@
 #include <Lua/Server/ServerNetwork.inl>
 #include <Lua/Server/FunctorEvents.inl>
 #include <Lua/Server/ServerFunctors.inl>
+#include <Lua/Server/EntityEvents.inl>
 
 
 
@@ -129,7 +130,8 @@ namespace bg3se::esv::lua
 	ServerState::ServerState(ExtensionState& state, uint32_t generationId)
 		: State(generationId, true),
 		osiris_(state),
-		functorHooks_(*this)
+		functorHooks_(*this),
+		entityHooks_(*this)
 	{}
 
 	ServerState::~ServerState()
@@ -213,6 +215,11 @@ namespace bg3se::esv::lua
 	ecs::EntitySystemHelpersBase* ServerState::GetEntitySystemHelpers()
 	{
 		return &gExtender->GetServer().GetEntityHelpers();
+	}
+
+	EntityEventHooks* ServerState::GetEntityEventHooks()
+	{
+		return &entityHooks_;
 	}
 
 

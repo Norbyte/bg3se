@@ -582,7 +582,7 @@ public:
 	using difference_type = int32_t;
 	using size_type = uint32_t;
 
-	inline Array() {}
+	inline constexpr Array() noexcept {}
 
 	Array(Array const& a)
 	{
@@ -616,22 +616,27 @@ public:
 		}
 	}
 
-	inline T* raw_buf() const
+	inline constexpr T* raw_buf() const noexcept
 	{
 		return buf_;
 	}
 
-	inline size_type size() const
+	inline constexpr bool empty() const noexcept
+	{
+		return size_ == 0;
+	}
+
+	inline constexpr size_type size() const noexcept
 	{
 		return size_;
 	}
 
-	inline size_type capacity() const
+	inline constexpr size_type capacity() const noexcept
 	{
 		return capacity_;
 	}
 
-	inline size_type Size() const
+	inline constexpr size_type Size() const noexcept
 	{
 		return size_;
 	}
@@ -646,7 +651,7 @@ public:
 		return buf_[index];
 	}
 
-	size_type CapacityIncrement() const
+	constexpr size_type CapacityIncrement() const noexcept
 	{
 		if (capacity_ > 0) {
 			return 2 * capacity_;

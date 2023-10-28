@@ -419,6 +419,8 @@ struct ComponentPools2 : public ProtectedGameObject<ComponentPools2>
 
 struct EntityWorld : public ProtectedGameObject<EntityWorld>
 {
+	using UpdateProc = void (EntityWorld* self, GameTime const& time);
+
 	ComponentReplication* Replication;
 	ComponentRegistry ComponentRegistry_;
 	SystemRegistry Systems;

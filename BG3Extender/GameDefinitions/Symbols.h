@@ -56,6 +56,8 @@ namespace bg3se
 		ecl::GameStateMachine__Update ecl__GameStateMachine__Update{ nullptr };
 		esv::GameStateMachine__Update esv__GameStateMachine__Update{ nullptr };
 
+		ecs::EntityWorld::UpdateProc* ecs__EntityWorld__Update{ nullptr };
+
 		/*esv::SurfaceActionFactory** esv__SurfaceActionFactory{nullptr};
 		esv::SurfaceActionFactory::CreateActionProc* esv__SurfaceActionFactory__CreateAction{ nullptr };
 		esv::SurfaceManager::AddActionProc* esv__SurfaceManager__AddAction{ nullptr };*/

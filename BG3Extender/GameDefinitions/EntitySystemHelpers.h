@@ -75,6 +75,16 @@ public:
 		}
 	}
 
+	inline std::optional<ExtComponentType> GetComponentType(ReplicationTypeIndex index) const
+	{
+		auto it = replicationIndexToTypeMappings_.find(index);
+		if (it != replicationIndexToTypeMappings_.end()) {
+			return it->second;
+		} else {
+			return {};
+		}
+	}
+
 	inline std::optional<ComponentTypeIndex> GetComponentIndex(HandleTypeIndex index) const
 	{
 		auto it = handleIndexToComponentMappings_.find(index);
@@ -105,8 +115,17 @@ public:
 		auto idx = handleIndices_[(unsigned)type];
 		if (idx != -1) {
 			return idx;
+		} else {
+			return {};
 		}
-		else {
+	}
+
+	std::optional<ReplicationTypeIndex> GetReplicationIndex(ExtComponentType type) const
+	{
+		auto idx = replicationIndices_[(unsigned)type];
+		if (idx != -1) {
+			return idx;
+		} else {
 			return {};
 		}
 	}
@@ -212,6 +231,7 @@ private:
 	std::unordered_map<ComponentTypeIndex, ExtComponentType> componentIndexToTypeMappings_;
 	std::unordered_map<HandleTypeIndex, ExtComponentType> handleIndexToTypeMappings_;
 	std::unordered_map<HandleTypeIndex, ComponentTypeIndex> handleIndexToComponentMappings_;
+	std::unordered_map<ReplicationTypeIndex, ExtComponentType> replicationIndexToTypeMappings_;
 	std::unordered_map<STDString, int32_t> systemIndexMappings_;
 	std::vector<STDString const*> systemTypeIdToName_;
 	std::unordered_map<STDString, int32_t> queryMappings_;

@@ -119,6 +119,7 @@ namespace lua
 	class GenericPropertyMap;
 	//class CachedUserVariableManager;
 	//class CachedModVariableManager;
+	class EntityEventHooks;
 }
 
 namespace osidbg

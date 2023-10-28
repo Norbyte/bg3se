@@ -1063,6 +1063,10 @@ namespace bg3se::ecl::lua
 		return &gExtender->GetClient().GetEntityHelpers();
 	}
 
+	EntityEventHooks* ClientState::GetEntityEventHooks()
+	{
+		return nullptr;
+	}
 
 	void ClientState::OnGameStateChanged(GameState fromState, GameState toState)
 	{

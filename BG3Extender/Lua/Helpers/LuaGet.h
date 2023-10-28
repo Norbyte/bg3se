@@ -176,6 +176,13 @@ inline Version do_get(lua_State* L, int index, Overload<Version>)
 	return Version(major, minor, revision, build);
 }
 
+inline FunctionRef do_get(lua_State* L, int index, Overload<FunctionRef>)
+{
+	auto i = lua_absindex(L, index);
+	luaL_checktype(L, i, LUA_TFUNCTION);
+	return FunctionRef(i);
+}
+
 template <class T>
 inline typename std::optional<T> do_get(lua_State* L, int index, Overload<std::optional<T>>)
 {
