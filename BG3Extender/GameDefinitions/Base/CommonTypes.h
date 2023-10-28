@@ -8,8 +8,8 @@ struct Version
 {
 	inline Version() : Ver(0) {}
 	inline Version(uint64_t ver) : Ver(ver) {}
-	inline Version(uint64_t minor, uint64_t major, uint64_t revision, uint64_t build)
-		: Ver(((major & 0x1ffull) << 55) | ((minor & 0x1ffull) << 47) | ((revision & 0x7ffffull) << 31) | (build & 0x7fffffffull))
+	inline Version(uint64_t major, uint64_t minor, uint64_t revision, uint64_t build)
+		: Ver(((major & 0x1ffull) << 55) | ((minor & 0x1ffull) << 47) | ((revision & 0xffffull) << 31) | (build & 0x7fffffffull))
 	{}
 
 	inline uint64_t Major() const
@@ -24,7 +24,7 @@ struct Version
 
 	inline uint64_t Revision() const
 	{
-		return (Ver >> 31) & 0x7ffff;
+		return (Ver >> 31) & 0xffff;
 	}
 
 	inline uint64_t Build() const

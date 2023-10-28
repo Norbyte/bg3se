@@ -197,8 +197,8 @@ inline void push(lua_State* L, glm::i16vec2 const& v)
 inline void push(lua_State* L, Version const& v)
 {
 	lua_createtable(L, 4, 0);
-	settable(L, 2, v.Major());
-	settable(L, 1, v.Minor());
+	settable(L, 1, v.Major());
+	settable(L, 2, v.Minor());
 	settable(L, 3, v.Revision());
 	settable(L, 4, v.Build());
 }

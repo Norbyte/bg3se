@@ -169,11 +169,11 @@ inline Version do_get(lua_State* L, int index, Overload<Version>)
 {
 	auto i = lua_absindex(L, index);
 	luaL_checktype(L, i, LUA_TTABLE);
-	uint32_t minor = gettable<uint32_t>(L, 1, i),
-		major = gettable<uint32_t>(L, 2, i),
+	uint32_t major = gettable<uint32_t>(L, 1, i), 
+		minor = gettable<uint32_t>(L, 2, i),
 		revision = gettable<uint32_t>(L, 3, i),
 		build = gettable<uint32_t>(L, 4, i);
-	return Version(minor, major, revision, build);	
+	return Version(major, minor, revision, build);
 }
 
 template <class T>
