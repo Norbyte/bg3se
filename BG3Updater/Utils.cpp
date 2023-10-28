@@ -142,7 +142,7 @@ bool GameHelpers::ClientHandleError(char const * msg, bool exitGame) const
 
 		// Update reference to new string
 		auto originalRef = **tskRef;
-		**tskRef = StringView(*str);
+		**tskRef = LSStringView(str->data(), str->size());
 
 		symbols_.ecl__EoCClient__HandleError(*symbols_.ecl__EoCClient, ts, exitGame, ts);
 		return true;
