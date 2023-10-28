@@ -615,6 +615,9 @@
     <None Include="Lua\Libs\ClientNet.inl">
       <Filter>Lua\Libs</Filter>
     </None>
+    <None Include="Lua\Libs\Localization.inl">
+      <Filter>Lua\Libs</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

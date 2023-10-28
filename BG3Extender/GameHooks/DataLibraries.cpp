@@ -287,7 +287,7 @@ namespace bg3se
 		texts->Strings.Add(str);
 
 		// Update reference to new string
-		**tskRef = StringView(*str);
+		**tskRef = LSStringView(str->data(), str->size());
 
 		GetStaticSymbols().ecl__EoCClient__HandleError(*GetStaticSymbols().ecl__EoCClient, ts, exitGame, ts);
 	}

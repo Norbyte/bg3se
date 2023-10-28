@@ -5,9 +5,63 @@
 
 namespace bg3se
 {
+	template <class T>
+    class LSBaseStringView
+	{
+    public:
+        using value_type = T;
+        using pointer = T*;
+        using const_pointer = const T*;
+        using reference = T&;
+        using const_reference = const T&;
+        using size_type = int32_t;
+        using difference_type = int32_t;
+
+        static constexpr auto npos{static_cast<size_type>(-1)};
+
+		inline constexpr LSBaseStringView() noexcept : data_(), size_(0) {}
+		inline constexpr LSBaseStringView(const LSBaseStringView&) noexcept = default;
+		inline constexpr LSBaseStringView& operator=(const LSBaseStringView&) noexcept = default;
+
+		inline constexpr LSBaseStringView(const_pointer s) noexcept
+            : data_(s), size_(strlen(s)) {}
+
+		LSBaseStringView(nullptr_t) = delete;
+
+		inline constexpr LSBaseStringView(const_pointer s, size_type size) noexcept
+            : data_(s), size_(size)
+        {}
+
+		inline constexpr size_type size() const noexcept
+		{
+            return size_;
+        }
+
+		inline constexpr bool empty() const noexcept
+		{
+            return size_ == 0;
+        }
+
+        inline constexpr const_pointer data() const noexcept
+		{
+            return data_;
+		}
+
+		inline constexpr operator std::basic_string_view<T>() const noexcept
+		{
+			return std::basic_string_view<T>(data_, size_);
+		}
+
+    private:
+        const_pointer data_;
+        size_type size_;
+    };
+
+
 	using STDString = std::basic_string<char, std::char_traits<char>, GameAllocator<char>>;
 	using STDWString = std::basic_string<wchar_t, std::char_traits<wchar_t>, GameAllocator<wchar_t>>;
 	using StringView = std::string_view;
+	using LSStringView = LSBaseStringView<char>;
 	using WStringView = std::wstring_view;
 
 	std::string ToStdUTF8(std::wstring_view s);

@@ -211,6 +211,15 @@ namespace bg3se
 			}
 		}
 
+		inline TranslatedStringRepository* GetTranslatedStringRepository() const
+		{
+			if (ls__gTranslatedStringRepository != nullptr) {
+				return *ls__gTranslatedStringRepository;
+			} else {
+				return nullptr;
+			}
+		}
+
 		/*inline esv::SurfaceActionFactory* GetSurfaceActionFactory() const
 		{
 			if (esv__SurfaceActionFactory != nullptr) {

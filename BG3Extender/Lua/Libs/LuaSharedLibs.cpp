@@ -6,6 +6,7 @@
 #include <Lua/Libs/Entity.inl>
 #include <Lua/Libs/IO.inl>
 #include <Lua/Libs/Json.inl>
+#include <Lua/Libs/Localization.inl>
 #include <Lua/Libs/Math.inl>
 #include <Lua/Libs/Mod.inl>
 #include <Lua/Libs/StatAttributes.inl>
@@ -60,9 +61,9 @@ void RegisterSharedLibraries()
 	json::RegisterJsonLib();
 	types::RegisterTypesLib();
 	io::RegisterIOLib();
+	loca::RegisterLocalizationLib();
 	math::RegisterMathLib();
 	mod::RegisterModLib();
-	//loca::RegisterLocalizationLib();
 	debug::RegisterDebugLib();
 	stats::RegisterStatsLib();
 	res::RegisterStaticDataLib();
