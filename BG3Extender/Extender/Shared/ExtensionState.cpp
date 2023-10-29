@@ -27,8 +27,8 @@ namespace bg3se
 	}
 
 	ExtensionStateBase::ExtensionStateBase(bool isServer)
-		/* : userVariables_(isServer),
-		modVariables_(isServer)*/
+		: userVariables_(isServer, isServer ? (ecs::EntitySystemHelpersBase &)gExtender->GetServer().GetEntityHelpers() : gExtender->GetClient().GetEntityHelpers()),
+		modVariables_(isServer)
 	{}
 
 	ExtensionStateBase::~ExtensionStateBase()
@@ -273,8 +273,8 @@ namespace bg3se
 			lua->OnUpdate(time);
 		}
 
-		// userVariables_.Update();
-		// modVariables_.Update();
+		userVariables_.Update();
+		modVariables_.Update();
 	}
 
 

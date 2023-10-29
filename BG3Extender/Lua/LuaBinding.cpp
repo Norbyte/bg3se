@@ -594,9 +594,9 @@ namespace bg3se::lua
 	State::State(uint32_t generationId, bool isServer)
 		: generationId_(generationId),
 		lifetimeStack_(lifetimePool_),
-		globalLifetime_(lifetimePool_.Allocate())
-		//variableManager_(isServer ? gExtender->GetServer().GetExtensionState().GetUserVariables() : gExtender->GetClient().GetExtensionState().GetUserVariables(), isServer),
-		//modVariableManager_(isServer ? gExtender->GetServer().GetExtensionState().GetModVariables() : gExtender->GetClient().GetExtensionState().GetModVariables(), isServer)
+		globalLifetime_(lifetimePool_.Allocate()),
+		variableManager_(isServer ? gExtender->GetServer().GetExtensionState().GetUserVariables() : gExtender->GetClient().GetExtensionState().GetUserVariables(), isServer),
+		modVariableManager_(isServer ? gExtender->GetServer().GetExtensionState().GetModVariables() : gExtender->GetClient().GetExtensionState().GetModVariables(), isServer)
 	{
 		L = lua_newstate(LuaAlloc, nullptr);
 		*reinterpret_cast<State**>(lua_getextraspace(L)) = this;
@@ -615,9 +615,8 @@ namespace bg3se::lua
 
 	void State::Shutdown()
 	{
-		//stats::RestoreLevelMaps(IsClient());
-		//variableManager_.Invalidate();
-		//modVariableManager_.Invalidate();
+		variableManager_.Invalidate();
+		modVariableManager_.Invalidate();
 	}
 
 	State* State::FromLua(lua_State* L)
@@ -753,9 +752,8 @@ namespace bg3se::lua
 
 	void State::OnLevelLoading()
 	{
-		// FIXME - no variable manager yet!
-		//variableManager_.Invalidate();
-		//modVariableManager_.Invalidate();
+		variableManager_.Invalidate();
+		modVariableManager_.Invalidate();
 	}
 
 	void State::OnResetCompleted()
@@ -770,9 +768,8 @@ namespace bg3se::lua
 		ThrowEvent("Tick", params, false, 0);
 
 		lua_gc(L, LUA_GCSTEP, 10);
-		// FIXME - no variable manager yet!
-		//variableManager_.Flush();
-		//modVariableManager_.Flush();
+		variableManager_.Flush();
+		modVariableManager_.Flush();
 	}
 
 	void State::OnStatsStructureLoaded()

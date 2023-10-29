@@ -103,6 +103,16 @@ namespace bg3se
 			return loadedFileFullPaths_;
 		}
 
+		inline UserVariableManager& GetUserVariables()
+		{
+			return userVariables_;
+		}
+
+		inline ModVariableManager& GetModVariables()
+		{
+			return modVariables_;
+		}
+
 	protected:
 		friend class LuaVirtualPin;
 		static std::unordered_set<std::string_view> sAllFeatureFlags;
@@ -124,12 +134,17 @@ namespace bg3se
 		std::unordered_map<STDString, STDString> loadedFiles_;
 		std::unordered_map<STDString, STDString> loadedFileFullPaths_;
 
+		UserVariableManager userVariables_;
+		ModVariableManager modVariables_;
+
 		void LuaResetInternal();
 		virtual void DoLuaReset() = 0;
 		virtual void LuaStartup();
 		void LuaLoadGameBootstrap(ExtensionModConfig const& config, Module const& mod);
 		void LuaLoadPreinitBootstrap(ExtensionModConfig const& config, Module const& mod);
 	};
+
+	ExtensionStateBase* GetCurrentExtensionState();
 
 
 	class LuaVirtualPin
@@ -143,6 +158,12 @@ namespace bg3se
 
 		inline LuaVirtualPin(ExtensionStateBase* state)
 			: state_(state)
+		{
+			if (state_) state_->IncLuaRefs();
+		}
+
+		inline LuaVirtualPin()
+			: state_(GetCurrentExtensionState())
 		{
 			if (state_) state_->IncLuaRefs();
 		}

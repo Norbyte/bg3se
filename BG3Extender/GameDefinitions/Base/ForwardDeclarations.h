@@ -117,8 +117,8 @@ namespace lua
 	class Ref;
 	class EntityProxy;
 	class GenericPropertyMap;
-	//class CachedUserVariableManager;
-	//class CachedModVariableManager;
+	class CachedUserVariableManager;
+	class CachedModVariableManager;
 	class EntityEventHooks;
 }
 

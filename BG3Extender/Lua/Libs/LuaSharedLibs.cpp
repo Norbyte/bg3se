@@ -15,6 +15,7 @@
 #include <Lua/Libs/StaticData.inl>
 #include <Lua/Libs/Types.inl>
 #include <Lua/Libs/Utils.inl>
+#include <Lua/Libs/Vars.inl>
 #include <Lua/Libs/ClientNet.inl>
 #include <Lua/Libs/ServerNet.inl>
 
@@ -67,6 +68,7 @@ void RegisterSharedLibraries()
 	debug::RegisterDebugLib();
 	stats::RegisterStatsLib();
 	res::RegisterStaticDataLib();
+	vars::RegisterVarsLib();
 }
 
 void RegisterLibraries()

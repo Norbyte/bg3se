@@ -68,8 +68,15 @@ message MsgS2CKick {
   string message = 1;
 }
 
+enum UserVarType {
+  ENTITY_VAR = 0;
+  MODULE_VAR = 1;
+}
+
 message UserVar {
-  string uuid = 1;
+  // Entity UUID split into two qwords
+  uint64 uuid1 = 1;
+  uint64 uuid2 = 2;
   string key = 3;
   oneof val {
     int64 intval = 4;
@@ -77,6 +84,7 @@ message UserVar {
     string strval = 6;
     bytes luaval = 7;
   };
+  UserVarType type = 8;
 }
 
 // Synchronizes user variables between server and client

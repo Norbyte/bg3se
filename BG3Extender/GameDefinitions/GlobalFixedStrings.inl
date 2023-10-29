@@ -87,3 +87,14 @@ FS(Blob);
 // IO context types
 FS(user);
 FS(data);
+
+// User variables
+FS(Type);
+FS(Value);
+FS(Variable);
+FS(UserVariables);
+FS(EntityVariables);
+FS(Entity);
+FS(ModVariables);
+FS(ModVariable);
+FS(Module);

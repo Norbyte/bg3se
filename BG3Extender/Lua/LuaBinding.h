@@ -6,6 +6,7 @@
 #include <Lua/Shared/Proxies/LuaEvent.h>
 #include <Lua/Shared/Proxies/LuaEntityProxy.h>
 #include <Lua/Shared/Proxies/LuaPropertyMapHelpers.h>
+#include <Extender/Shared/UserVariables.h>
 
 #include <mutex>
 #include <unordered_set>
@@ -102,6 +103,16 @@ namespace bg3se::lua
 			return lifetimePool_;
 		}
 
+		inline CachedUserVariableManager& GetVariableManager()
+		{
+			return variableManager_;
+		}
+
+		inline CachedModVariableManager& GetModVariableManager()
+		{
+			return modVariableManager_;
+		}
+
 		virtual void Initialize() = 0;
 		virtual void Shutdown();
 		virtual bool IsClient() = 0;
@@ -173,6 +184,9 @@ namespace bg3se::lua
 		LifetimePool lifetimePool_;
 		LifetimeStack lifetimeStack_;
 		LifetimeHandle globalLifetime_;
+
+		CachedUserVariableManager variableManager_;
+		CachedModVariableManager modVariableManager_;
 
 		void OpenLibs();
 		EventResult DispatchEvent(EventBase& evt, char const* eventName, bool canPreventAction, uint32_t restrictions);

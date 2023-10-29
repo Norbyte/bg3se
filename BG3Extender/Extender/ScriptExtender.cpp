@@ -6,6 +6,7 @@
 #include <iomanip>
 
 #include <Extender/Shared/StatLoadOrderHelper.inl>
+#include <Extender/Shared/UserVariables.inl>
 
 #undef DEBUG_SERVER_CLIENT
 

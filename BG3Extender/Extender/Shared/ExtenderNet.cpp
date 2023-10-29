@@ -95,11 +95,6 @@ void ExtenderProtocolBase::Reset()
 {
 }
 
-void ExtenderProtocolBase::SyncUserVars(MsgUserVars const& msg)
-{
-	// FIXME - not handled yet!
-}
-
 ExtenderMessage::ExtenderMessage()
 {
 	MsgId = MessageId;

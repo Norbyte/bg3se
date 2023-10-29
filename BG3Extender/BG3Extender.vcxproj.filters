@@ -443,6 +443,7 @@
     <ClInclude Include="Extender\Client\ClientNetworking.h" />
     <ClInclude Include="Extender\Server\ServerNetworking.h" />
     <ClInclude Include="Lua\Server\EntityEvents.h" />
+    <ClInclude Include="Extender\Shared\UserVariables.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -621,6 +622,12 @@
     </None>
     <None Include="Lua\Server\EntityEvents.inl">
       <Filter>Lua\Server</Filter>
+    </None>
+    <None Include="Extender\Shared\UserVariables.inl">
+      <Filter>Extender\Shared</Filter>
+    </None>
+    <None Include="Lua\Libs\Vars.inl">
+      <Filter>Lua\Libs</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

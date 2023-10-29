@@ -32,6 +32,11 @@ void SavegameSerializer::Serialize(ObjectVisitor* visitor, uint32_t version)
 	SerializePersistentVariables(visitor, version);
 	// FIXME - persistent stat support disabled for now
 	// SerializeStatObjects(visitor, version);
+
+	if (version >= SavegameVerAddedUserVars) {
+		gExtender->GetServer().GetExtensionState().GetUserVariables().SavegameVisit(visitor);
+		gExtender->GetServer().GetExtensionState().GetModVariables().SavegameVisit(visitor);
+	}
 }
 
 
