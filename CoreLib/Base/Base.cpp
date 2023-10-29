@@ -10,6 +10,8 @@ BEGIN_SE()
 
 CoreLibPlatformInterface gCoreLibPlatformInterface;
 
+const Guid Guid::Null{};
+
 std::optional<Guid> Guid::Parse(StringView s)
 {
 	Guid uuid;
@@ -41,7 +43,7 @@ std::optional<Guid> Guid::ParseGuidString(StringView nameGuid)
 	return Parse(std::string_view(guid, 36));
 }
 
-STDString Guid::Print() const
+STDString Guid::ToString() const
 {
 	uint8_t const* p = reinterpret_cast<uint8_t const*>(this);
 	char s[100];

@@ -71,10 +71,19 @@ namespace bg3se
 
 	struct FixedString
 	{
-		using CreateFromStringProc = uint32_t (StringView const&);
-		using GetStringProc = StringView * (StringView&, uint32_t index);
+		using CreateFromStringProc = uint32_t (LSStringView const&);
+		using GetStringProc = LSStringView * (LSStringView&, uint32_t index);
 		using IncRefProc = void(uint32_t index);
 		using DecRefProc = void(uint32_t index);
+
+		struct Header
+		{
+			uint32_t Hash;
+			uint32_t RefCount;
+			uint32_t Length;
+			uint32_t Id;
+			uint64_t NextFreeIndex;
+		};
 
 		static constexpr uint32_t NullIndex = 0xffffffffu;
 
@@ -144,14 +153,29 @@ namespace bg3se
 		}
 
 		char const* GetString() const;
+		StringView GetStringView() const;
+		uint32_t GetLength() const;
 		uint32_t GetHash() const;
 		bool IsValid() const;
+
+		inline operator char const* () const
+		{
+			return GetString();
+		}
+
+		inline operator StringView () const
+		{
+			return GetStringView();
+		}
 
 		uint32_t Index;
 
 	private:
 		void IncRef();
 		void DecRef();
+
+		char const* GetPooledStringPtr() const;
+		Header const* GetMetadata() const;
 	};
 
 
@@ -163,16 +187,7 @@ namespace bg3se
 
 	struct GlobalStringTable : public ProtectedGameObject<GlobalStringTable>
 	{
-		struct StringEntryHeader
-		{
-			uint32_t Hash;
-			uint32_t RefCount;
-			uint32_t Length;
-			uint32_t Id;
-			uint64_t NextFreeIndex;
-		};
-
-		struct StringEntry : public StringEntryHeader
+		struct StringEntry : public FixedString::Header
 		{
 			char Str[1];
 		};
@@ -254,6 +269,8 @@ namespace bg3se
 
 	struct Guid
 	{
+		static const Guid Null;
+
 		uint64_t Val[2]{ 0 };
 
 		inline constexpr operator bool() const
@@ -276,7 +293,7 @@ namespace bg3se
 			return Val[0] != o.Val[0] || Val[1] != o.Val[1];
 		}
 
-		STDString Print() const;
+		STDString ToString() const;
 		static std::optional<Guid> Parse(StringView s);
 		static std::optional<Guid> ParseGuidString(StringView nameGuid);
 	};

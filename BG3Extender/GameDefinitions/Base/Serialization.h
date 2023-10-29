@@ -27,7 +27,7 @@ struct ObjectVisitor : public ProtectedGameObject<ObjectVisitor>
 	virtual void FindDataType(FixedString const&) = 0;
 	virtual void VisitRaw(FixedString const&, void*, uint64_t, uint32_t) = 0;
 	virtual void VisitTransatedFSString() = 0;
-	virtual void VisitGuid(FixedString const&, void*, void const*) = 0;
+	virtual void VisitGuid(FixedString const&, Guid&, Guid const&) = 0;
 	virtual void VisitTranslatedString(FixedString const&, TranslatedString&, TranslatedString const&) = 0;
 	virtual void VisitSTDString(FixedString const&, STDString&, STDString const&) = 0;
 	virtual void VisitFixedString(FixedString const&, FixedString&, FixedString const&) = 0;

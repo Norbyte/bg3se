@@ -5,7 +5,7 @@ FixedString::FixedString(StringView str)
 {
 	auto create = gCoreLibPlatformInterface.ls__FixedString__CreateFromString;
 	if (create) {
-		Index = create(str);
+		Index = create(LSStringView(str.data(), (uint32_t)str.size()));
 	}
 }
 
@@ -14,48 +14,70 @@ FixedString::FixedString(char const* str)
 {
 	auto create = gCoreLibPlatformInterface.ls__FixedString__CreateFromString;
 	if (create) {
-		Index = create(StringView(str, strlen(str)));
+		Index = create(LSStringView(str, (uint32_t)strlen(str)));
+	}
+}
+
+char const* FixedString::GetPooledStringPtr() const
+{
+	if (Index != NullIndex) {
+		auto getter = gCoreLibPlatformInterface.ls__FixedString__GetString;
+		if (getter) {
+			LSStringView sv;
+			getter(sv, Index);
+			return sv.data();
+		}
+	}
+
+	return nullptr;
+}
+
+FixedString::Header const* FixedString::GetMetadata() const
+{
+	if (Index != NullIndex) {
+		auto str = GetPooledStringPtr();
+		return reinterpret_cast<Header const*>(str - sizeof(Header));
+	} else {
+		return nullptr;
 	}
 }
 
 char const* FixedString::GetString() const
 {
+	auto str = GetPooledStringPtr();
+	return str ? str : "";
+}
+
+StringView FixedString::GetStringView() const
+{
 	if (Index != NullIndex) {
 		auto getter = gCoreLibPlatformInterface.ls__FixedString__GetString;
 		if (getter) {
-			StringView sv;
-#if defined(_DEBUG)
-			__try {
-				getter(sv, Index);
-			} __except (EXCEPTION_EXECUTE_HANDLER) {
-				return "<<< EXCEPTION THROWN WHILE READING STRING >>>";
-			}
-#else
+			LSStringView sv;
 			getter(sv, Index);
-#endif
-
-			return sv.data();
+			return StringView(sv.data(), sv.size());
 		}
 	}
 
-	return "";
+	return StringView();
+}
+
+uint32_t FixedString::GetLength() const
+{
+	if (Index != NullIndex) {
+		return GetMetadata()->Length;
+	} else {
+		return 0;
+	}
 }
 
 uint32_t FixedString::GetHash() const
 {
 	if (Index != NullIndex) {
-		auto getter = gCoreLibPlatformInterface.ls__FixedString__GetString;
-		if (getter) {
-			StringView sv;
-			getter(sv, Index);
-			if (sv.data()) {
-				auto entry = reinterpret_cast<GlobalStringTable::StringEntryHeader const*>(sv.data() - sizeof(GlobalStringTable::StringEntryHeader));
-				return entry->Hash;
-			}
-		}
+		return GetMetadata()->Hash;
+	} else {
+		return 0;
 	}
-
-	return 0;
 }
 
 bool FixedString::IsValid() const
@@ -79,7 +101,7 @@ bool FixedString::IsValid() const
 		return false;
 	}
 
-	auto header = (GlobalStringTable::StringEntryHeader*)(subTable.Buckets[bucketIdx] + entryIdx * subTable.EntrySize);
+	auto header = (Header*)(subTable.Buckets[bucketIdx] + entryIdx * subTable.EntrySize);
 
 	if (header->RefCount > 0x1000000) return false;
 	if (header->Length > subTable.EntrySize - 0x18) return false;

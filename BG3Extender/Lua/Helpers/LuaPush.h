@@ -69,7 +69,7 @@ inline void push(lua_State* L, STDWString const& s)
 
 inline void push(lua_State* L, Guid const& s)
 {
-	push(L, s.Print());
+	push(L, s.ToString());
 }
 
 inline void push(lua_State* L, StringView const& v)

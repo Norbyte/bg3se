@@ -444,12 +444,12 @@ public:
 
 	inline StaticArray() {}
 	
-	StaticArray(uint32_t size)
+	StaticArray(size_type size)
 	{
 		Resize(size);
 	}
 	
-	StaticArray(uint32_t size, T const& initval)
+	StaticArray(size_type size, T const& initval)
 	{
 		Resize(size, initval);
 	}
@@ -459,10 +459,24 @@ public:
 		CopyFrom(a);
 	}
 
+	StaticArray(StaticArray&& a)
+	{
+		if (this != &a) {
+			buf_ = a.buf_;
+			size_ = a.size_;
+			a.buf_ = nullptr;
+			a.size_ = 0;
+		}
+	}
+
 	~StaticArray()
 	{
 		if (buf_) {
-			Resize(0);
+			for (size_type i = 0; i < size_; i++) {
+				buf_[i].~T();
+			}
+
+			GameFree(buf_);
 		}
 	}
 
@@ -472,13 +486,25 @@ public:
 		return *this;
 	}
 
+	StaticArray& operator =(StaticArray&& a)
+	{
+		if (this != &a) {
+			buf_ = a.buf_;
+			size_ = a.size_;
+			a.buf_ = nullptr;
+			a.size_ = 0;
+		}
+
+		return *this;
+	}
+
 	void CopyFrom(StaticArray const& a)
 	{
 		clear();
 
 		if (a.size_ != size_) {
 			Resize(a.size_);
-			for (uint32_t i = 0; i < size_; i++) {
+			for (size_type i = 0; i < size_; i++) {
 				new (buf_ + i) T(a[i]);
 			}
 		}
@@ -499,12 +525,12 @@ public:
 		return size_;
 	}
 
-	inline T const& operator [] (uint32_t index) const
+	inline T const& operator [] (size_type index) const
 	{
 		return buf_[index];
 	}
 
-	inline T& operator [] (uint32_t index)
+	inline T& operator [] (size_type index)
 	{
 		return buf_[index];
 	}
@@ -514,7 +540,7 @@ public:
 		Resize(0);
 	}
 
-	void Resize(uint32_t newSize, T const& initval = T{})
+	void Resize(size_type newSize, T const& initval)
 	{
 		if (size_ != newSize) {
 			T* newBuf;
@@ -524,16 +550,47 @@ public:
 				newBuf = nullptr;
 			}
 
-			for (uint32_t i = 0; i < std::min(size_, newSize); i++) {
-				new (newBuf + i) T(buf_[i]);
+			for (size_type i = 0; i < std::min(size_, newSize); i++) {
+				new (newBuf + i) T(std::move(buf_[i]));
 			}
 			
-			for (uint32_t i = std::min(size_, newSize); i < newSize; i++) {
+			for (size_type i = std::min(size_, newSize); i < newSize; i++) {
 				new (newBuf + i) T(initval);
 			}
 
 			if (buf_ != nullptr) {
-				for (uint32_t i = 0; i < size_; i++) {
+				for (size_type i = 0; i < size_; i++) {
+					buf_[i].~T();
+				}
+
+				GameFree(buf_);
+			}
+
+			buf_ = newBuf;
+			size_ = newSize;
+		}
+	}
+
+	void Resize(size_type newSize)
+	{
+		if (size_ != newSize) {
+			T* newBuf;
+			if (newSize > 0) {
+				newBuf = GameMemoryAllocator::NewRaw<T>(newSize);
+			} else {
+				newBuf = nullptr;
+			}
+
+			for (size_type i = 0; i < std::min(size_, newSize); i++) {
+				new (newBuf + i) T(std::move(buf_[i]));
+			}
+			
+			for (size_type i = std::min(size_, newSize); i < newSize; i++) {
+				new (newBuf + i) T();
+			}
+
+			if (buf_ != nullptr) {
+				for (size_type i = 0; i < size_; i++) {
 					buf_[i].~T();
 				}
 
@@ -567,7 +624,7 @@ public:
 
 private:
 	T* buf_{ nullptr };
-	unsigned int size_{ 0 };
+	size_type size_{ 0 };
 };
 
 template <class T>

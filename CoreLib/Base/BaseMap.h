@@ -612,6 +612,10 @@ struct MultiHashSet
 		: HashKeys(other.HashKeys), NextIds(other.NextIds), Keys(other.Keys)
 	{}
 
+	MultiHashSet(MultiHashSet&& other)
+		: HashKeys(std::move(other.HashKeys)), NextIds(std::move(other.NextIds)), Keys(std::move(other.Keys))
+	{}
+
 	~MultiHashSet()
 	{}
 
@@ -620,6 +624,17 @@ struct MultiHashSet
 		HashKeys = other.HashKeys;
 		NextIds = other.NextIds;
 		Keys = other.Keys;
+		return *this;
+	}
+
+	MultiHashSet& operator =(MultiHashSet&& other)
+	{
+		if (this != &other) {
+			HashKeys = std::move(other.HashKeys);
+			NextIds = std::move(other.NextIds);
+			Keys = std::move(other.Keys);
+		}
+
 		return *this;
 	}
 
@@ -698,6 +713,68 @@ struct MultiHashSet
 	ContiguousConstIterator<T> end() const
 	{
 		return Keys.end();
+	}
+
+	bool remove(T const& key)
+	{
+		return removeKeyInternal(key) >= 0;
+	}
+
+protected:
+	int removeKeyInternal(T const& key)
+	{
+		if (HashKeys.Size() == 0) return -1;
+
+		auto hash = (uint32_t)(MultiHashMapHash(key) % HashKeys.Size());
+		auto keyIndex = HashKeys[hash];
+		auto prevKeyIndex = keyIndex;
+		while (keyIndex >= 0) {
+			if (Keys[keyIndex] == key) {
+				if (prevKeyIndex == keyIndex) {
+					// Remove first element in the hash table
+					HashKeys[hash] = NextIds[keyIndex];
+				} else {
+					// Remove intermediate element in the chain
+					NextIds[prevKeyIndex] = NextIds[keyIndex];
+				}
+
+				NextIds[keyIndex] = -1;
+				Keys[keyIndex] = T{};
+				if (keyIndex != size() - 1) {
+					migrateKey(size() - 1, keyIndex);
+				}
+
+				Keys.pop_last();
+				return keyIndex;
+			}
+
+			prevKeyIndex = keyIndex;
+			keyIndex = NextIds[keyIndex];
+		}
+
+		return -1;
+	}
+
+	void migrateKey(int32_t from, int32_t to)
+	{
+		Keys[to] = std::move(Keys[from]);
+
+		// Find root node
+		int32_t next = NextIds[from];
+		while (next >= 0) {
+			next = NextIds[next];
+		}
+
+		assert(next < -1);
+		uint32_t slot = (uint32_t)(-next + 2);
+
+		int32_t prev = HashKeys[slot];
+		while (NextIds[prev] != from) {
+			prev = NextIds[prev];
+		}
+
+		assert(NextIds[prev] == from);
+		NextIds[prev] = to;
 	}
 
 private:
@@ -857,10 +934,14 @@ struct MultiHashMap : public MultiHashSet<TKey>
 	{}
 
 	MultiHashMap(MultiHashMap const& other)
-		: MultiHashSet<TKey>(other)
-	{
-		Values = other.Values;
-	}
+		: MultiHashSet<TKey>(other),
+		Values(other.Values)
+	{}
+
+	MultiHashMap(MultiHashMap&& other)
+		: MultiHashSet<TKey>(other),
+		Values(std::move(other.Values))
+	{}
 
 	~MultiHashMap()
 	{}
@@ -869,6 +950,14 @@ struct MultiHashMap : public MultiHashSet<TKey>
 	{
 		MultiHashSet<TKey>::operator =(other);
 		Values = other.Values;
+
+		return *this;
+	}
+
+	MultiHashMap& operator =(MultiHashMap&& other)
+	{
+		MultiHashSet<TKey>::operator =(other);
+		Values = std::move(other.Values);
 
 		return *this;
 	}
@@ -899,18 +988,40 @@ struct MultiHashMap : public MultiHashSet<TKey>
 		}
 	}
 
+	TValue* Set(TKey const& key, TValue&& value)
+	{
+		auto index = this->Add(key);
+		if (Values.Size() <= (uint32_t)index) {
+			Values.Resize(index + 1);
+		}
+
+		Values[index] = std::move(value);
+		return &Values[index];
+	}
+
 	TValue* Set(TKey const& key, TValue const& value)
 	{
-		auto index = this->FindIndex(key);
-		if (index == -1) {
-			index = this->Add(key);
-			if (Values.Size() <= (uint32_t)index) {
-				Values.Resize(index + 1);
-			}
+		auto index = this->Add(key);
+		if (Values.Size() <= (uint32_t)index) {
+			Values.Resize(index + 1);
 		}
 
 		Values[index] = value;
 		return &Values[index];
+	}
+
+	bool remove(TKey const& key)
+	{
+		auto index = this->removeKeyInternal(key);
+		if (index >= 0) {
+			if (index < (int32_t)this->Keys.size()) {
+				Values[index] = std::move(Values[this->Keys.size()]);
+			}
+
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	Iterator begin()
