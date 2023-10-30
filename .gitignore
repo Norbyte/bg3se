@@ -323,17 +323,7 @@ ASALocalRun/
 *.binlog
 
 # Ignore externals
-External/curl
-External/curl-7.71.1
-External/Detours
-External/glm
-External/jsoncpp-build
-External/jsoncpp-build2
-External/jsoncpp-master
-External/LuaJIT-2.1
-External/protobuf
-External/tinycrypt
-External/ziplib
+External/
 
 # Ignore JsonCpp library
 jsoncpp-build/
