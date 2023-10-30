@@ -98,3 +98,11 @@ FS(Entity);
 FS(ModVariables);
 FS(ModVariable);
 FS(Module);
+
+// Enums
+FS(Label);
+FS(EnumValue);
+FS(EnumName);
+FS(__Labels);
+FS(__Value);
+FS(__EnumName);

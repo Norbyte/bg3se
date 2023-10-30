@@ -25,15 +25,7 @@ inline char const* do_get(lua_State* L, int index, Overload<char const*>)
 	return luaL_checkstring(L, index);
 }
 
-inline FixedString do_get(lua_State* L, int index, Overload<FixedString>)
-{
-	auto str = lua_tostring(L, index);
-	if (str) {
-		return FixedString{ str };
-	} else {
-		return FixedString{};
-	}
-}
+FixedString do_get(lua_State* L, int index, Overload<FixedString>);
 
 inline STDString do_get(lua_State* L, int index, Overload<STDString>)
 {

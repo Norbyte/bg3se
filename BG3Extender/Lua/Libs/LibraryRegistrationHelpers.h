@@ -12,6 +12,10 @@
 #include <Lua/Shared/Proxies/LuaObjectProxy.inl>
 #include <Lua/Shared/Proxies/LuaSetProxy.inl>
 #include <Lua/Shared/Proxies/LuaEvent.inl>
+#include <Lua/Shared/Proxies/LuaCppObjectProxy.inl>
+#include <Lua/Shared/Proxies/LuaEnumValue.inl>
+#include <Lua/Shared/Proxies/LuaBitfieldValue.inl>
+#include <Lua/Shared/Proxies/LuaUserVariableHolder.inl>
 
 BEGIN_SE()
 

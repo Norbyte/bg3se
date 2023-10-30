@@ -80,10 +80,4 @@ namespace bg3se::lua
 		push(L, entityName);
 		return 1;
 	}
-
-	int SetProxy::GC(lua_State* L)
-	{
-		this->~SetProxy();
-		return 0;
-	}
 }

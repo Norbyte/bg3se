@@ -52,10 +52,7 @@ inline void push(lua_State* L, char const* v)
 	}
 }
 
-inline void push(lua_State* L, FixedString const& v)
-{
-	lua_pushstring(L, v.GetString());
-}
+void push(lua_State* L, FixedString const& v);
 
 inline void push(lua_State* L, STDString const& s)
 {

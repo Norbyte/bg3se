@@ -120,6 +120,9 @@ namespace lua
 	class CachedUserVariableManager;
 	class CachedModVariableManager;
 	class EntityEventHooks;
+
+	struct CppObjectMetadata;
+	struct CppValueMetadata;
 }
 
 namespace osidbg

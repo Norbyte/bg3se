@@ -63,8 +63,10 @@ bool ProtectedCallC(lua_State* L, lua_CFunction fun, void* context, void* contex
 // LuaEnumValue forward declarations
 void push_enum_value(lua_State* L, EnumUnderlyingType value, EnumInfoStore<EnumUnderlyingType> const& store);
 EnumUnderlyingType get_enum_value(lua_State* L, int index, EnumInfoStore<EnumUnderlyingType> const& store);
+std::optional<EnumUnderlyingType> try_get_enum_value(lua_State* L, int index, EnumInfoStore<EnumUnderlyingType> const& store);
 
 EnumUnderlyingType get_bitfield_value(lua_State* L, int index, BitmaskInfoStore<EnumUnderlyingType> const& store, bool maskInvalidBits = false);
+std::optional<EnumUnderlyingType> try_get_bitfield_value(lua_State* L, int index, BitmaskInfoStore<EnumUnderlyingType> const& store, bool maskInvalidBits);
 void push_bitfield_value(lua_State* L, EnumUnderlyingType value, BitmaskInfoStore<EnumUnderlyingType> const& store);
 
 struct MathParam
@@ -161,6 +163,7 @@ PropertyOperationResult Unserialize(lua_State* L, int index, T* obj);
 END_NS()
 
 #include <Lua/Shared/LuaLifetime.h>
+#include <Lua/Shared/LuaCustomizations.h>
 
 #include <Lua/Helpers/LuaPush.h>
 #include <Lua/Helpers/LuaGet.h>

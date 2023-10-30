@@ -241,7 +241,7 @@ namespace bg3se::lua
 
 
 	class ObjectProxy : private Userdata<ObjectProxy>, public Indexable, public NewIndexable, 
-		public Iterable, public Stringifiable, public Pushable, public GarbageCollected
+		public Iterable, public Stringifiable, public Pushable
 	{
 	public:
 		static char const * const MetatableName;
@@ -346,7 +346,6 @@ namespace bg3se::lua
 		int NewIndex(lua_State* L);
 		int Next(lua_State* L);
 		int ToString(lua_State* L);
-		int GC(lua_State* L);
 	};
 
 	template <class T>

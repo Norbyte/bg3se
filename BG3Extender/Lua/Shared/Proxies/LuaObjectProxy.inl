@@ -67,12 +67,6 @@ namespace bg3se::lua
 		return 1;
 	}
 
-	int ObjectProxy::GC(lua_State* L)
-	{
-		this->~ObjectProxy();
-		return 0;
-	}
-
 	void* ObjectProxy::GetRaw(lua_State* L, int index, FixedString const& typeName)
 	{
 		auto proxy = Userdata<ObjectProxy>::CheckUserData(L, index);

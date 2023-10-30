@@ -214,6 +214,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <ClInclude Include="Lua\Server\LuaBindingServer.h" />
     <ClInclude Include="Lua\Server\LuaOsirisBinding.h" />
     <ClInclude Include="Lua\Shared\LuaBundle.h" />
+    <ClInclude Include="Lua\Shared\LuaCustomizations.h" />
     <ClInclude Include="Lua\Shared\LuaLifetime.h" />
     <ClInclude Include="Lua\Shared\LuaModule.h" />
     <ClInclude Include="Lua\Shared\LuaStats.h" />
@@ -221,14 +222,19 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <ClInclude Include="Lua\Shared\LuaTypeTraits.h" />
     <ClInclude Include="Lua\Shared\LuaTypeValidators.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaArrayProxy.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaBitfieldValue.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaCppClass.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaCppObjectProxy.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaCppValue.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaEntityProxy.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaEnumValue.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaEvent.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaMapProxy.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaObjectProxy.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaPropertyMap.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaPropertyMapHelpers.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaSetProxy.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaUserVariableHolder.h" />
     <ClInclude Include="Lua\Shared\Proxies\PropertyMapDependencies.h" />
     <ClInclude Include="Osiris\Debugger\Debugger.h" />
     <ClInclude Include="Osiris\Debugger\DebugInterface.h" />
@@ -387,14 +393,20 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <None Include="Lua\Server\ServerProjectile.inl" />
     <None Include="Lua\Server\ServerStatus.inl" />
     <None Include="Lua\Server\ServerSurface.inl" />
+    <None Include="Lua\Shared\LuaCustomizations.inl" />
+    <None Include="Lua\Shared\LuaGet.inl" />
     <None Include="Lua\Shared\LuaMethodCallHelpers.h" />
     <None Include="Lua\Shared\LuaModule.inl" />
+    <None Include="Lua\Shared\LuaPush.inl" />
     <None Include="Lua\Shared\LuaReference.h" />
     <None Include="Lua\Shared\LuaReference.inl" />
     <None Include="Lua\Shared\LuaShared.inl" />
     <None Include="Lua\Shared\Proxies\LuaArrayProxy.inl" />
+    <None Include="Lua\Shared\Proxies\LuaBitfieldValue.inl" />
     <None Include="Lua\Shared\Proxies\LuaCppClass.inl" />
+    <None Include="Lua\Shared\Proxies\LuaCppObjectProxy.inl" />
     <None Include="Lua\Shared\Proxies\LuaEntityProxy.inl" />
+    <None Include="Lua\Shared\Proxies\LuaEnumValue.inl" />
     <None Include="Lua\Shared\Proxies\LuaEvent.inl" />
     <None Include="Lua\Shared\Proxies\LuaMapProxy.inl" />
     <None Include="Lua\Shared\Proxies\LuaObjectProxy.inl" />
@@ -404,6 +416,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <None Include="Lua\Libs\StatEntries.inl" />
     <None Include="Lua\Libs\StatEnumerators.inl" />
     <None Include="Lua\Libs\StatMisc.inl" />
+    <None Include="Lua\Shared\Proxies\LuaUserVariableHolder.inl" />
     <None Include="Misc\ExtIdeHelpers.lua" />
     <None Include="Osiris\Debugger\osidebug.proto" />
   </ItemGroup>

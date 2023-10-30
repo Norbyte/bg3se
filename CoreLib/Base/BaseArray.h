@@ -745,6 +745,25 @@ public:
 		capacity_ = newCapacity;
 	}
 
+	void resize(size_type newSize)
+	{
+		if (newSize > capacity_) {
+			Reallocate(newSize);
+		}
+
+		if (size_ > newSize) {
+			for (size_type i = newSize; i < size_; i++) {
+				buf_[i].~T();
+			}
+		} else {
+			for (size_type i = size_; i < newSize; i++) {
+				new (buf_ + i) T();
+			}
+		}
+
+		size_ = newSize;
+	}
+
 	void Add(T const& value)
 	{
 		if (capacity_ <= size_) {

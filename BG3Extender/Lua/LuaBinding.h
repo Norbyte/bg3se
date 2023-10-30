@@ -6,6 +6,12 @@
 #include <Lua/Shared/Proxies/LuaEvent.h>
 #include <Lua/Shared/Proxies/LuaEntityProxy.h>
 #include <Lua/Shared/Proxies/LuaPropertyMapHelpers.h>
+#include <Lua/Shared/Proxies/LuaCppClass.h>
+#include <Lua/Shared/Proxies/LuaCppObjectProxy.h>
+#include <Lua/Shared/Proxies/LuaCppValue.h>
+#include <Lua/Shared/Proxies/LuaEnumValue.h>
+#include <Lua/Shared/Proxies/LuaBitfieldValue.h>
+#include <Lua/Shared/Proxies/LuaUserVariableHolder.h>
 #include <Extender/Shared/UserVariables.h>
 
 #include <mutex>
@@ -81,6 +87,11 @@ namespace bg3se::lua
 			return generationId_;
 		}
 
+		inline LuaInternalState* GetInternalState()
+		{
+			return internal_;
+		}
+
 		inline LifetimeStack & GetStack()
 		{
 			return lifetimeStack_;
@@ -101,6 +112,11 @@ namespace bg3se::lua
 		inline LifetimePool& GetLifetimePool()
 		{
 			return lifetimePool_;
+		}
+
+		inline CppMetatableManager& GetMetatableManager()
+		{
+			return metatableManager_;
 		}
 
 		inline CachedUserVariableManager& GetVariableManager()
@@ -178,12 +194,15 @@ namespace bg3se::lua
 
 	protected:
 		lua_State * L;
+		LuaInternalState* internal_{ nullptr };
 		bool startupDone_{ false };
 		uint32_t generationId_;
 
 		LifetimePool lifetimePool_;
 		LifetimeStack lifetimeStack_;
 		LifetimeHandle globalLifetime_;
+
+		CppMetatableManager metatableManager_;
 
 		CachedUserVariableManager variableManager_;
 		CachedModVariableManager modVariableManager_;

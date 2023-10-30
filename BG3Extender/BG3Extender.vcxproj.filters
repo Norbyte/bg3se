@@ -444,6 +444,12 @@
     <ClInclude Include="Extender\Server\ServerNetworking.h" />
     <ClInclude Include="Lua\Server\EntityEvents.h" />
     <ClInclude Include="Extender\Shared\UserVariables.h" />
+    <ClInclude Include="Lua\Shared\LuaCustomizations.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaCppObjectProxy.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaCppValue.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaUserVariableHolder.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaEnumValue.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaBitfieldValue.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -628,6 +634,27 @@
     </None>
     <None Include="Lua\Libs\Vars.inl">
       <Filter>Lua\Libs</Filter>
+    </None>
+    <None Include="Lua\Shared\LuaGet.inl">
+      <Filter>Lua\Shared</Filter>
+    </None>
+    <None Include="Lua\Shared\LuaPush.inl">
+      <Filter>Lua\Shared</Filter>
+    </None>
+    <None Include="Lua\Shared\LuaCustomizations.inl">
+      <Filter>Lua\Shared</Filter>
+    </None>
+    <None Include="Lua\Shared\Proxies\LuaCppObjectProxy.inl">
+      <Filter>Lua\Shared\Proxies</Filter>
+    </None>
+    <None Include="Lua\Shared\Proxies\LuaUserVariableHolder.inl">
+      <Filter>Lua\Shared\Proxies</Filter>
+    </None>
+    <None Include="Lua\Shared\Proxies\LuaEnumValue.inl">
+      <Filter>Lua\Shared\Proxies</Filter>
+    </None>
+    <None Include="Lua\Shared\Proxies\LuaBitfieldValue.inl">
+      <Filter>Lua\Shared\Proxies</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

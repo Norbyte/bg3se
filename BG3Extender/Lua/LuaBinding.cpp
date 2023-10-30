@@ -599,6 +599,9 @@ namespace bg3se::lua
 		modVariableManager_(isServer ? gExtender->GetServer().GetExtensionState().GetModVariables() : gExtender->GetClient().GetExtensionState().GetModVariables(), isServer)
 	{
 		L = lua_newstate(LuaAlloc, nullptr);
+		internal_ = lua_new_internal_state();
+		lua_setup_cppobjects(L, &LuaCppAlloc, &LuaCppFree, &LuaCppGetLightMetatable, &LuaCppGetMetatable, &LuaCppCanonicalize);
+		lua_setup_strcache(L, &LuaCacheString, &LuaReleaseString);
 		*reinterpret_cast<State**>(lua_getextraspace(L)) = this;
 #if LUA_VERSION_NUM <= 501
 		luaJIT_setmode(L, 0, LUAJIT_MODE_ENGINE | LUAJIT_MODE_ON);

@@ -75,10 +75,4 @@ namespace bg3se::lua
 		push(L, entityName);
 		return 1;
 	}
-
-	int MapProxy::GC(lua_State* L)
-	{
-		this->~MapProxy();
-		return 0;
-	}
 }

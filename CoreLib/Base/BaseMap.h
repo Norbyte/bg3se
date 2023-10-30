@@ -715,6 +715,18 @@ struct MultiHashSet
 		return Keys.end();
 	}
 
+	ContiguousIterator<T> find(T const& key) const
+	{
+		auto idx = FindIndex(key);
+		return idx != -1 ? (Keys.begin() + idx) : Keys.end();
+	}
+
+	ContiguousIterator<T> find(T const& key)
+	{
+		auto idx = FindIndex(key);
+		return idx != -1 ? (Keys.begin() + idx) : Keys.end();
+	}
+
 	bool remove(T const& key)
 	{
 		return removeKeyInternal(key) >= 0;
@@ -866,6 +878,16 @@ struct MultiHashMap : public MultiHashSet<TKey>
 			return *this;
 		}
 
+		inline operator bool() const
+		{
+			return Index != Map->Keys.size();
+		}
+
+		inline bool operator !() const
+		{
+			return Index == Map->Keys.size();
+		}
+
 	private:
 		MultiHashMap const* Map;
 		int32_t Index;
@@ -923,6 +945,16 @@ struct MultiHashMap : public MultiHashSet<TKey>
 		Iterator* operator -> ()
 		{
 			return *this;
+		}
+
+		inline operator bool() const
+		{
+			return Index != Map->Keys.size();
+		}
+
+		inline bool operator !() const
+		{
+			return Index == Map->Keys.size();
 		}
 
 	private:
@@ -1042,6 +1074,18 @@ struct MultiHashMap : public MultiHashSet<TKey>
 	ConstIterator end() const
 	{
 		return ConstIterator(this, this->Keys.Size());
+	}
+
+	Iterator find(TKey const& key)
+	{
+		auto idx = this->FindIndex(key);
+		return Iterator(this, idx != -1 ? idx : this->Keys.size());
+	}
+
+	ConstIterator find(TKey const& key) const
+	{
+		auto idx = this->FindIndex(key);
+		return ConstIterator(this, idx != -1 ? idx : this->Keys.size());
 	}
 };
 
