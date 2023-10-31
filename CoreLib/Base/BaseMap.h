@@ -822,7 +822,7 @@ struct VirtualMultiHashSet : public MultiHashSet<T>
 template <class TKey, class TValue>
 struct MultiHashMap : public MultiHashSet<TKey>
 {
-	StaticArray<TValue> Values;
+	UninitializedStaticArray<TValue> Values;
 
 	class ConstIterator
 	{
@@ -966,9 +966,10 @@ struct MultiHashMap : public MultiHashSet<TKey>
 	{}
 
 	MultiHashMap(MultiHashMap const& other)
-		: MultiHashSet<TKey>(other),
-		Values(other.Values)
-	{}
+		: MultiHashSet<TKey>(other)
+	{
+		Values.copy_from(other.Values, this->Keys.size(), other.Keys.size());
+	}
 
 	MultiHashMap(MultiHashMap&& other)
 		: MultiHashSet<TKey>(other),
@@ -976,12 +977,14 @@ struct MultiHashMap : public MultiHashSet<TKey>
 	{}
 
 	~MultiHashMap()
-	{}
+	{
+		Values.clear(this->Keys.size());
+	}
 
 	MultiHashMap& operator =(MultiHashMap const& other)
 	{
 		MultiHashSet<TKey>::operator =(other);
-		Values = other.Values;
+		Values.copy_from(other.Values, this->Keys.size(), other.Keys.size());
 
 		return *this;
 	}
@@ -996,7 +999,7 @@ struct MultiHashMap : public MultiHashSet<TKey>
 
 	void clear()
 	{
-		Values.clear();
+		Values.clear(this->Keys.size());
 		MultiHashSet<TKey>::clear();
 	}
 
@@ -1006,7 +1009,7 @@ struct MultiHashMap : public MultiHashSet<TKey>
 		if (index == -1) {
 			return {};
 		} else {
-			return (Values.begin() + index).get();
+			return &Values[index];
 		}
 	}
 
@@ -1016,38 +1019,38 @@ struct MultiHashMap : public MultiHashSet<TKey>
 		if (index == -1) {
 			return {};
 		} else {
-			return (Values.begin() + index).get();
+			return &Values[index];
 		}
 	}
 
 	TValue* Set(TKey const& key, TValue&& value)
 	{
 		auto index = this->Add(key);
-		if (Values.Size() <= (uint32_t)index) {
-			Values.Resize(index + 1);
+		if (Values.size() <= (uint32_t)index) {
+			Values.resize(Values.grow_size(), index, index);
 		}
 
-		Values[index] = std::move(value);
-		return &Values[index];
+		return new (&Values[index]) TValue(std::move(value));
 	}
 
 	TValue* Set(TKey const& key, TValue const& value)
 	{
 		auto index = this->Add(key);
-		if (Values.Size() <= (uint32_t)index) {
-			Values.Resize(index + 1);
+		if (Values.size() <= (uint32_t)index) {
+			Values.resize(Values.grow_size(), index, index);
 		}
 
-		Values[index] = value;
-		return &Values[index];
+		return new (&Values[index]) TValue(value);
 	}
 
 	bool remove(TKey const& key)
 	{
 		auto index = this->removeKeyInternal(key);
 		if (index >= 0) {
+			auto lastIndex = this->Keys.size();
 			if (index < (int32_t)this->Keys.size()) {
 				Values[index] = std::move(Values[this->Keys.size()]);
+				Values[this->Keys.size()].~TValue();
 			}
 
 			return true;

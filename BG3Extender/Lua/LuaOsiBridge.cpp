@@ -371,7 +371,7 @@ namespace bg3se::esv::lua
 			if (MatchTuple(L, 2, current->Item)) {
 				push(L, index++);
 				ConstructTuple(L, current->Item);
-				lua_settable(L, -3);
+				lua_rawset(L, -3);
 			}
 
 			current = current->Next;
@@ -488,7 +488,7 @@ namespace bg3se::esv::lua
 		for (auto i = 0; i < tuple.Size; i++) {
 			push(L, i + 1);
 			OsiToLua(L, tuple.Values[i]);
-			lua_settable(L, -3);
+			lua_rawset(L, -3);
 		}
 	}
 
@@ -1089,7 +1089,7 @@ namespace bg3se::esv::lua
 		lua_pushvalue(L, 1); // stack: fun, tab
 		push(L, name); // stack: fun, tab, name
 		lua_pushvalue(L, -3); // stack: fun, tab, name, fun
-		lua_settable(L, -3); // stack: fun
+		lua_rawset(L, -3); // stack: fun
 		lua_pop(L, 1);
 		return 1;
 	}

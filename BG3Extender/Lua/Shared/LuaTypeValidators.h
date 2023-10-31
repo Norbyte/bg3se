@@ -250,20 +250,22 @@ bool ValidateRef(StaticArray<TE>* v, Overload<StaticArray<TE>>)
 }
 
 template <class TE>
-bool ValidateRef(StaticArray<TE>* v, uint32_t maxSize, Overload<StaticArray<TE>>)
+bool ValidateRef(UninitializedStaticArray<TE>* v, uint32_t initializedSize, Overload<UninitializedStaticArray<TE>>)
 {
 	if (v->raw_buf() == nullptr) {
 		CHECK(v->size() == 0);
+		CHECK(initializedSize == 0);
 	} else {
 		CHECK(v->size() <= 0x1000000);
+		CHECK(initializedSize <= v->size());
 		CHECK(!IsBadReadPtr(v->raw_buf(), v->size() * sizeof(TE)));
 
 		if constexpr (!std::is_pointer_v<TE>) {
-			for (uint32_t i = 0; i < std::min(v->size(), maxSize); i++) {
+			for (uint32_t i = 0; i < initializedSize; i++) {
 				CHECKR(ValidateAny<TE>(&(*v)[i]));
 			}
 		} else {
-			for (uint32_t i = 0; i < std::min(v->size(), maxSize); i++) {
+			for (uint32_t i = 0; i < initializedSize; i++) {
 				CHECKR(ValidatePointer((*v)[i]));
 			}
 		}
@@ -344,7 +346,7 @@ template <class TK, class TV>
 bool ValidateRef(MultiHashMap<TK, TV>* v, Overload<MultiHashMap<TK, TV>>)
 {
 	CHECKR(ValidateRef(v, Overload<MultiHashSet<TK>>{}));
-	CHECKR(ValidateRef(&v->Values, v->Keys.size(), Overload<StaticArray<TV>>{}));
+	CHECKR(ValidateRef(&v->Values, v->Keys.size(), Overload<UninitializedStaticArray<TV>>{}));
 
 	CHECK(v->Values.size() >= v->Keys.size());
 

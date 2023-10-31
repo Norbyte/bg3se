@@ -88,7 +88,7 @@ int GameObjectGetStatuses(lua_State* L, TObject* self)
 	for (auto status : self->StatusMachine->StackedStatuses) {
 		push(L, index++);
 		LuaMakeStatusProxy(L, status, GetCurrentLifetime(L));
-		lua_settable(L, -3);
+		lua_rawset(L, -3);
 	}
 
 	return 1;

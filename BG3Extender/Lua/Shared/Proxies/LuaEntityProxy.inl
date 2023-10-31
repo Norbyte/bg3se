@@ -111,7 +111,7 @@ namespace bg3se::lua
 
 						push(L, *extType);
 						PushComponent(L, component, *extType, GetCurrentLifetime(L));
-						lua_settable(L, -3);
+						lua_rawset(L, -3);
 					} else if (warnOnMissing) {
 						auto name = ecs->GetComponentName(typeInfo.Key());
 						if (name) {
@@ -161,7 +161,7 @@ namespace bg3se::lua
 				if (name) {
 					push(L, componentIdx.Value());
 					push(L, **name);
-					lua_settable(L, -3);
+					lua_rawset(L, -3);
 				}
 			}
 		}

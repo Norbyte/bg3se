@@ -54,7 +54,7 @@ void RegisterEnumeration(lua_State* L, EnumInfoStore<EnumUnderlyingType> const& 
 
 		push(L, elem.Value);
 		EnumValueMetatable::Make(L, elem.Value, ty.RegistryIndex);
-		lua_settable(L, -3);
+		lua_rawset(L, -3);
 	}
 
 	lua_setfield(L, -2, ty.LuaName.GetString());*/
@@ -70,7 +70,7 @@ void RegisterEnumeration(lua_State* L, BitmaskInfoStore<EnumUnderlyingType> cons
 
 		push(L, elem.Value);
 		BitfieldValueMetatable::Make(L, elem.Value, ty.RegistryIndex);
-		lua_settable(L, -3);
+		lua_rawset(L, -3);
 	}
 
 	lua_setfield(L, -2, ty.LuaName.GetString());*/

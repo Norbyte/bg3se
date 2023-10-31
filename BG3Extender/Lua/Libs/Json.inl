@@ -17,7 +17,7 @@ void ParseArray(lua_State * L, Json::Value const & val)
 	for (auto it = val.begin(), end = val.end(); it != end; ++it) {
 		push(L, idx++);
 		Parse(L, *it);
-		lua_settable(L, -3);
+		lua_rawset(L, -3);
 	}
 }
 
@@ -27,7 +27,7 @@ void ParseObject(lua_State * L, Json::Value const & val)
 	for (auto it = val.begin(), end = val.end(); it != end; ++it) {
 		Parse(L, it.key());
 		Parse(L, *it);
-		lua_settable(L, -3);
+		lua_rawset(L, -3);
 	}
 }
 

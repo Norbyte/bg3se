@@ -155,9 +155,9 @@ PropertyOperationResult UnserializeMapFromTable(lua_State* L, int index, MultiHa
 
 	obj->clear();
 	for (auto idx : iterate(L, index)) {
-		auto key = get<TK>(L, idx);
+		auto key = get<TK>(L, -2);
 		TV value;
-		Unserialize(L, idx + 1, &value);
+		Unserialize(L, -1, &value);
 		// FIXME - in-place unserialize
 		obj->Set(key, value);
 	}
@@ -192,9 +192,9 @@ PropertyOperationResult UnserializeMapFromTable(lua_State* L, int index, RefMap<
 
 	obj->clear();
 	for (auto idx : iterate(L, index)) {
-		auto key = get<TK>(L, idx);
+		auto key = get<TK>(L, -2);
 		auto value = obj->get_or_insert(key);
-		Unserialize(L, idx + 1, value);
+		Unserialize(L, -1, value);
 	}
 
 	return PropertyOperationResult::Success;
@@ -227,9 +227,9 @@ PropertyOperationResult UnserializeMapFromTable(lua_State* L, int index, Map<TK,
 
 	obj->clear();
 	for (auto idx : iterate(L, index)) {
-		auto key = get<TK>(L, idx);
+		auto key = get<TK>(L, -2);
 		auto value = obj->get_or_insert(key);
-		Unserialize(L, idx + 1, value);
+		Unserialize(L, -1, value);
 	}
 
 	return PropertyOperationResult::Success;

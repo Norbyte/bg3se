@@ -166,7 +166,7 @@ namespace bg3se::lua
 				StackCheck _(s.L);
 				push(s.L, i++);
 				s << val;
-				lua_settable(s.L, -3);
+				lua_rawset(s.L, -3);
 			}
 		} else {
 			v.clear();
@@ -191,7 +191,7 @@ namespace bg3se::lua
 				StackCheck _(s.L);
 				push(s.L, i++);
 				s << val;
-				lua_settable(s.L, -3);
+				lua_rawset(s.L, -3);
 			}
 		} else {
 			v.clear();
@@ -216,7 +216,7 @@ namespace bg3se::lua
 				StackCheck _(s.L);
 				push(s.L, i++);
 				s << val;
-				lua_settable(s.L, -3);
+				lua_rawset(s.L, -3);
 			}
 		} else {
 			v.Clear();
@@ -240,13 +240,13 @@ namespace bg3se::lua
 			/*for (auto& it : v) {
 				StackCheck _(s.L);
 				s << it.Key() << it.Value();
-				lua_settable(s.L, -3);
+				lua_rawset(s.L, -3);
 			}*/
 			for (auto it = v.begin(); it != v.end(); ++it) {
 				StackCheck _(s.L);
 				s << it.Key();
 				s << it.Value();
-				lua_settable(s.L, -3);
+				lua_rawset(s.L, -3);
 			}
 		} else {
 			v.Clear();
@@ -274,7 +274,7 @@ namespace bg3se::lua
 			for (auto& it : v) {
 				StackCheck _(s.L);
 				s << it.Key << it.Value;
-				lua_settable(s.L, -3);
+				lua_rawset(s.L, -3);
 			}
 		} else {
 			v.clear();
@@ -302,7 +302,7 @@ namespace bg3se::lua
 			for (auto& it : v) {
 				StackCheck _(s.L);
 				s << it.Key << it.Value;
-				lua_settable(s.L, -3);
+				lua_rawset(s.L, -3);
 			}
 		} else {
 			v.clear();
@@ -331,7 +331,7 @@ namespace bg3se::lua
 				StackCheck _(s.L);
 				push(s.L, i++);
 				s << val;
-				lua_settable(s.L, -3);
+				lua_rawset(s.L, -3);
 			}
 		} else {
 			v.clear();

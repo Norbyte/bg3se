@@ -628,6 +628,136 @@ private:
 };
 
 template <class T>
+class UninitializedStaticArray
+{
+public:
+	using value_type = T;
+	using reference = T&;
+	using const_reference = T const&;
+	using difference_type = int32_t;
+	using size_type = uint32_t;
+
+	inline UninitializedStaticArray() {}
+	
+	UninitializedStaticArray(size_type size)
+	{
+		resize(size);
+	}
+
+	UninitializedStaticArray(UninitializedStaticArray const& a) = delete;
+
+	UninitializedStaticArray(UninitializedStaticArray&& a)
+	{
+		if (this != &a) {
+			buf_ = a.buf_;
+			size_ = a.size_;
+			a.buf_ = nullptr;
+			a.size_ = 0;
+		}
+	}
+
+	~UninitializedStaticArray()
+	{
+		GameFree(buf_);
+	}
+
+	UninitializedStaticArray& operator =(UninitializedStaticArray const& a) = delete;
+
+	UninitializedStaticArray& operator =(UninitializedStaticArray&& a)
+	{
+		if (this != &a) {
+			buf_ = a.buf_;
+			size_ = a.size_;
+			a.buf_ = nullptr;
+			a.size_ = 0;
+		}
+
+		return *this;
+	}
+
+	inline T* raw_buf() const
+	{
+		return buf_;
+	}
+
+	inline unsigned int size() const
+	{
+		return size_;
+	}
+
+	inline T const& operator [] (size_type index) const
+	{
+		return buf_[index];
+	}
+
+	inline T& operator [] (size_type index)
+	{
+		return buf_[index];
+	}
+
+	void clear(size_type initializedCapacity)
+	{
+		resize(0, 0, initializedCapacity);
+	}
+
+	void resize(size_type newSize, size_type newInitializedCapacity, size_type initializedCapacity)
+	{
+		assert(initializedCapacity <= size_);
+		assert(newInitializedCapacity <= newSize);
+
+		if (size_ != newSize) {
+			T* newBuf;
+			if (newSize > 0) {
+				newBuf = GameMemoryAllocator::NewRaw<T>(newSize);
+			} else {
+				newBuf = nullptr;
+			}
+
+			for (size_type i = 0; i < std::min(initializedCapacity, newInitializedCapacity); i++) {
+				new (newBuf + i) T(std::move(buf_[i]));
+			}
+			
+			for (size_type i = std::min(initializedCapacity, newInitializedCapacity); i < newInitializedCapacity; i++) {
+				new (newBuf + i) T();
+			}
+
+			if (buf_ != nullptr) {
+				for (size_type i = 0; i < initializedCapacity; i++) {
+					buf_[i].~T();
+				}
+
+				GameFree(buf_);
+			}
+
+			buf_ = newBuf;
+			size_ = newSize;
+		}
+	}
+
+	void copy_from(UninitializedStaticArray const& a, size_type curInitializedCapacity, size_type newInitializedCapacity)
+	{
+		assert(newInitializedCapacity <= a.size());
+		resize(a.size(), curInitializedCapacity, newInitializedCapacity);
+		for (size_type i = 0; i < newInitializedCapacity; i++) {
+			buf_[i] = a.buf_[i];
+		}
+	}
+
+	size_type grow_size() const
+	{
+		if (size_ > 0) {
+			return 2 * size_;
+		} else {
+			return 1;
+		}
+	}
+
+private:
+	T* buf_{ nullptr };
+	size_type size_{ 0 };
+};
+
+template <class T>
 class Array
 {
 public:

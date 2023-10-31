@@ -9,7 +9,7 @@ void SerializeArray(lua_State* L, Array<TK>* obj)
 	lua_createtable(L, (int)obj->size(), 0);
 	for (uint32_t i = 0; i < obj->size(); i++) {
 		Serialize(L, &(*obj)[i]);
-		lua_rawseti(L, -2, i);
+		lua_rawseti(L, -2, i + 1);
 	}
 }
 
@@ -21,7 +21,7 @@ void SerializeArray(lua_State* L, StaticArray<TK>* obj)
 	for (uint32_t i = 0; i < obj->size(); i++)
 	{
 		Serialize(L, &(*obj)[i]);
-		lua_rawseti(L, -2, i);
+		lua_rawseti(L, -2, i + 1);
 	}
 }
 
@@ -32,7 +32,7 @@ void SerializeArray(lua_State* L, ObjectSet<TK>* obj)
 	lua_createtable(L, (int)obj->size(), 0);
 	for (uint32_t i = 0; i < obj->size(); i++) {
 		Serialize(L, &(*obj)[i]);
-		lua_rawseti(L, -2, i);
+		lua_rawseti(L, -2, i + 1);
 	}
 }
 
@@ -43,7 +43,7 @@ void SerializeArray(lua_State* L, std::array<TK, Size>* obj)
 	lua_createtable(L, (int)obj->size(), 0);
 	for (uint32_t i = 0; i < obj->size(); i++) {
 		Serialize(L, &(*obj)[i]);
-		lua_rawseti(L, -2, i);
+		lua_rawseti(L, -2, i + 1);
 	}
 }
 
@@ -55,7 +55,7 @@ void SerializeMap(lua_State* L, MultiHashMap<TK, TV>* obj)
 	for (auto& kv : *obj) {
 		Serialize(L, &kv.Key());
 		Serialize(L, &kv.Value());
-		lua_rawset(L, -2);
+		lua_rawset(L, -3);
 	}
 }
 
@@ -67,7 +67,7 @@ void SerializeMap(lua_State* L, RefMap<TK, TV>* obj)
 	for (auto& kv : *obj) {
 		Serialize(L, &kv.Key);
 		Serialize(L, &kv.Value);
-		lua_rawset(L, -2);
+		lua_rawset(L, -3);
 	}
 }
 
@@ -79,7 +79,7 @@ void SerializeMap(lua_State* L, Map<TK, TV>* obj)
 	for (auto& kv : *obj) {
 		Serialize(L, &kv.Key);
 		Serialize(L, &kv.Value);
-		lua_rawset(L, -2);
+		lua_rawset(L, -3);
 	}
 }
 
@@ -90,7 +90,7 @@ void SerializeSet(lua_State* L, MultiHashSet<TK>* obj)
 	lua_createtable(L, (int)obj->size(), 0);
 	for (uint32_t i = 0; i < obj->size(); i++) {
 		Serialize(L, &obj->Keys[i]);
-		lua_rawseti(L, -2, i);
+		lua_rawseti(L, -2, i + 1);
 	}
 }
 
