@@ -1,5 +1,7 @@
 # Norbyte's Baldur's Gate 3 Script Extender
 
+# PATCH 4 IS NOT YET SUPPORTED!
+
 [Downloads available here](https://github.com/Norbyte/bg3se/releases)
 
 The Script Extender adds Lua/Osiris scripting support to the game.
