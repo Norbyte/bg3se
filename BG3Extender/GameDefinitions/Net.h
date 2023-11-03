@@ -190,6 +190,8 @@ struct AbstractPeerBase : ProtectedGameObject<AbstractPeerBase>
 struct AbstractPeer : public AbstractPeerBase
 {
 	void* VMT2;
+	void* VMT3;
+	void* VMT4;
 	void* RakNetPeer;
 	int SocketBindingType_M;
 	int PeerAddressID;

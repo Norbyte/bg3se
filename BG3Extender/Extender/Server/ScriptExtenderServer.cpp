@@ -97,7 +97,7 @@ bool IsLoadingState(GameState state)
 		|| state == GameState::ReloadStory;
 }
 
-void ScriptExtender::OnGameStateChanged(void * self, GameState fromState, GameState toState)
+void ScriptExtender::OnGameStateChanged(GameState fromState, GameState toState)
 {
 #if defined(DEBUG_SERVER_CLIENT)
 		DEBUG("esv::ScriptExtender::OnGameStateChanged(): %s -> %s", 

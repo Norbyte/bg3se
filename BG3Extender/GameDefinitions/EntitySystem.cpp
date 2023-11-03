@@ -172,42 +172,9 @@ EntitySystemHelpersBase::EntitySystemHelpersBase()
 	: componentIndices_{ UndefinedComponent }, 
 	componentSizes_{ 0 },
 	replicationIndices_{ UndefinedReplicationComponent },
-	handleIndices_{ UndefinedHandle }, 
 	queryIndices_{ UndefinedIndex },
-	resourceManagerIndices_{ UndefinedIndex }
+	staticDataIndices_{ UndefinedIndex }
 {}
-
-void EntitySystemHelpersBase::ComponentIndexMappings::Add(int32_t index, IndexSymbolType type)
-{
-	switch (type) {
-	case IndexSymbolType::Replication:
-		assert(ReplicationIndex == -1);
-		ReplicationIndex = index;
-		break;
-			
-	case IndexSymbolType::Handle:
-		assert(HandleIndex == -1);
-		HandleIndex = index;
-		break;
-			
-	case IndexSymbolType::Component:
-		assert(ComponentIndex == -1);
-		ComponentIndex = index;
-		break;
-			
-	case IndexSymbolType::EventComponent:
-		assert(EventComponentIndex == -1);
-		EventComponentIndex = index;
-		break;
-
-	default:
-		assert(NumIndices < Indices.size());
-		if (NumIndices < Indices.size()) {
-			Indices[NumIndices++] = index;
-		}
-		break;
-	}
-}
 
 STDString SimplifyComponentName(StringView name)
 {
@@ -298,7 +265,7 @@ void EntitySystemHelpersBase::NotifyReplicationFlagsDirtied()
 	world->Replication->Dirty = true;
 }
 
-void EntitySystemHelpersBase::BindSystemName(StringView name, int32_t systemId)
+void EntitySystemHelpersBase::BindSystem(StringView name, int32_t systemId)
 {
 	auto it = systemIndexMappings_.insert(std::make_pair(name, systemId));
 	if (systemTypeIdToName_.size() <= systemId) {
@@ -308,7 +275,7 @@ void EntitySystemHelpersBase::BindSystemName(StringView name, int32_t systemId)
 	systemTypeIdToName_[systemId] = &it.first->first;
 }
 
-void EntitySystemHelpersBase::BindQueryName(StringView name, int32_t queryId)
+void EntitySystemHelpersBase::BindQuery(StringView name, int32_t queryId)
 {
 	auto it = queryMappings_.insert(std::make_pair(name, queryId));
 	if (queryTypeIdToName_.size() <= queryId) {
@@ -318,88 +285,39 @@ void EntitySystemHelpersBase::BindQueryName(StringView name, int32_t queryId)
 	queryTypeIdToName_[queryId] = &it.first->first;
 }
 
-bool EntitySystemHelpersBase::TryUpdateSystemMapping(StringView name, ComponentIndexMappings& mapping)
+void EntitySystemHelpersBase::BindStaticData(StringView name, int32_t id)
 {
-	if (mapping.NumIndices == 1
-		&& mapping.ReplicationIndex == -1
-		&& mapping.HandleIndex == -1
-		&& mapping.ComponentIndex == -1
-		&& mapping.EventComponentIndex == -1) {
-		if (name.starts_with("ecs::query::spec::Spec<")) {
-			BindQueryName(name, mapping.Indices[0]);
-		} else {
-			BindSystemName(name, mapping.Indices[0]);
-		}
-		return true;
+	auto it = staticDataMappings_.insert(std::make_pair(name, id));
+	if (staticDataIdToName_.size() <= id) {
+		staticDataIdToName_.resize(id + 1);
 	}
 
-	return false;
+	staticDataIdToName_[id] = &it.first->first;
 }
 
-void EntitySystemHelpersBase::TryUpdateComponentMapping(StringView name, ComponentIndexMappings& mapping)
+void EntitySystemHelpersBase::BindComponent(StringView name, int32_t id)
 {
-	std::sort(mapping.Indices.begin(), mapping.Indices.begin() + mapping.NumIndices, std::less<int32_t>());
-	DEBUG_IDX("\t" << name << ": ");
-
-	auto totalIndices = mapping.NumIndices
-		+ ((mapping.ReplicationIndex != -1) ? 1 : 0)
-		+ ((mapping.HandleIndex != -1) ? 1 : 0)
-		+ ((mapping.ComponentIndex != -1) ? 1 : 0)
-		+ ((mapping.EventComponentIndex != -1) ? 1 : 0);
-
-	if (totalIndices == 1) {
-		assert(mapping.ReplicationIndex == -1);
-		assert(mapping.HandleIndex == -1);
-
-		if (mapping.ComponentIndex == -1) {
-			mapping.ComponentIndex = mapping.Indices[0];
-		}
-	} else if (totalIndices == 2) {
-		if (mapping.EventComponentIndex != -1) {
-			DEBUG_IDX("Event component, ignored.");
-			return;
-		}
-
-		// Only Handle/ReplicationIndex and ComponentIndex, no replication
-		assert(mapping.ReplicationIndex == -1 || mapping.HandleIndex == -1);
-
-		unsigned nextIndex{ 0 };
-		if (mapping.ComponentIndex == -1) {
-			// Maybe this is a system?
-			if (name.find("Component") == StringView::npos) {
-				BindSystemName(name, mapping.Indices[0]);
-			} else {
-				mapping.ComponentIndex = mapping.Indices[nextIndex++];
-			}
-		}
-
-		if (mapping.ReplicationIndex == -1 && mapping.HandleIndex == -1) {
-			mapping.HandleIndex = mapping.Indices[nextIndex++];
-		}
-	} else if (totalIndices == 3) {
-		unsigned nextIndex{ 0 };
-
-		if (mapping.ReplicationIndex == -1) {
-			mapping.ReplicationIndex = mapping.Indices[nextIndex++];
-		}
-
-		if (mapping.ComponentIndex == -1) {
-			mapping.ComponentIndex = mapping.Indices[nextIndex++];
-		}
-
-		if (mapping.HandleIndex == -1) {
-			mapping.HandleIndex = mapping.Indices[nextIndex++];
-		}
+	STDString const* pName;
+	auto it = componentNameToIndexMappings_.find(STDString(name));
+	if (it == componentNameToIndexMappings_.end()) {
+		auto iit = componentNameToIndexMappings_.insert(std::make_pair(name, IndexMappings{(ComponentTypeIndex)id, UndefinedReplicationComponent}));
+		pName = &iit.first->first;
 	} else {
-		WARN("Component with strange configuration: %s", name.data());
-		return;
+		it->second.ComponentIndex = (ComponentTypeIndex)id;
+		pName = &it->first;
 	}
 
-	DEBUG_IDX("Repl " << mapping.ReplicationIndex << ", Handle " << mapping.HandleIndex << ", Comp " << mapping.ComponentIndex);
-	IndexMappings indexMapping{ (uint16_t)mapping.HandleIndex, (uint16_t)mapping.ComponentIndex, (uint16_t)mapping.ReplicationIndex };
-	auto it = componentNameToIndexMappings_.insert(std::make_pair(name, indexMapping));
-	componentIndexToNameMappings_.insert(std::make_pair(indexMapping.ComponentIndex, &it.first->first));
-	handleIndexToNameMappings_.insert(std::make_pair(indexMapping.HandleIndex, &it.first->first));
+	componentIndexToNameMappings_.insert(std::make_pair(id, pName));
+}
+
+void EntitySystemHelpersBase::BindReplication(StringView name, int32_t id)
+{
+	auto it = componentNameToIndexMappings_.find(STDString(name));
+	if (it == componentNameToIndexMappings_.end()) {
+		componentNameToIndexMappings_.insert(std::make_pair(name, IndexMappings{UndefinedComponent, (ReplicationTypeIndex)id}));
+	} else {
+		it->second.ReplicationIndex = (ReplicationTypeIndex)id;
+	}
 }
 
 void EntitySystemHelpersBase::UpdateComponentMappings()
@@ -408,43 +326,58 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 
 	componentNameToIndexMappings_.clear();
 	componentIndexToNameMappings_.clear();
-	handleIndexToNameMappings_.clear();
 	componentIndexToTypeMappings_.clear();
-	handleIndexToTypeMappings_.clear();
-	handleIndexToComponentMappings_.clear();
 	replicationIndexToTypeMappings_.clear();
 	componentIndices_.fill(UndefinedComponent);
 	componentSizes_.fill(0);
 	replicationIndices_.fill(UndefinedReplicationComponent);
-	handleIndices_.fill(UndefinedHandle);
 	queryIndices_.fill(UndefinedIndex);
-	resourceManagerIndices_.fill(UndefinedIndex);
+	staticDataIndices_.fill(UndefinedIndex);
+
+	std::unordered_map<int32_t*, TypeIdContext> contexts;
+	for (auto const& context : GetStaticSymbols().IndexSymbolToContextMaps) {
+		auto name = ecs::SimplifyComponentName(context.second);
+		if (name == "ecs::OneFrameComponentTypeIdContext") {
+			contexts.insert(std::make_pair(context.first, TypeIdContext::OneFrameComponent));
+		} else if (name == "ecs::ComponentTypeIdContext") {
+			contexts.insert(std::make_pair(context.first, TypeIdContext::Component));
+		} else if (name == "ecs::EntityWorld::SystemsContext") {
+			contexts.insert(std::make_pair(context.first, TypeIdContext::System));
+		} else if (name == "ecs::sync::ReplicatedTypeContext") {
+			contexts.insert(std::make_pair(context.first, TypeIdContext::Replication));
+		} else if (name == "ls::ImmutableDataHeadmaster") {
+			contexts.insert(std::make_pair(context.first, TypeIdContext::ImmutableData));
+		}
+	}
 
 	auto const& symbolMaps = GetStaticSymbols().IndexSymbolToNameMaps;
-
-	std::unordered_map<char const*, ComponentIndexMappings> mappings;
 	for (auto const& mapping : symbolMaps) {
-		auto it = mappings.find(mapping.second.name);
-		if (it == mappings.end()) {
-			ComponentIndexMappings newMapping;
-			std::fill(newMapping.Indices.begin(), newMapping.Indices.end(), UndefinedIndex);
-			newMapping.Add(*mapping.first, mapping.second.type);
-			mappings.insert(std::make_pair(mapping.second.name, newMapping));
-		} else {
-			it->second.Add(*mapping.first, mapping.second.type);
+		auto name = SimplifyComponentName(mapping.second.name);
+		if (name.starts_with("ecs::query::spec::Spec<")) {
+			BindQuery(name, *mapping.first);
 		}
-	}
+		else {
+			auto contextIt = contexts.find(mapping.second.context);
+			if (contextIt != contexts.end()) {
+				switch (contextIt->second) {
+				case TypeIdContext::System:
+					BindSystem(name, *mapping.first);
+					break;
 
-	std::vector<std::pair<STDString, ComponentIndexMappings>> pendingMappings;
-	for (auto& map : mappings) {
-		auto componentName = SimplifyComponentName(map.first);
-		if (!TryUpdateSystemMapping(componentName, map.second)) {
-			pendingMappings.push_back({ std::move(componentName), map.second});
+				case TypeIdContext::ImmutableData:
+					BindStaticData(name, *mapping.first);
+					break;
+
+				case TypeIdContext::Component:
+					BindComponent(name, *mapping.first);
+					break;
+
+				case TypeIdContext::Replication:
+					BindReplication(name, *mapping.first);
+					break;
+				}
+			}
 		}
-	}
-	
-	for (auto& map : pendingMappings) {
-		TryUpdateComponentMapping(map.first, map.second);
 	}
 
 #if defined(DEBUG_INDEX_MAPPINGS)
@@ -511,18 +444,9 @@ void EntitySystemHelpersBase::MapComponentIndices(char const* componentName, Ext
 	if (it != componentNameToIndexMappings_.end()) {
 		componentIndices_[(unsigned)type] = it->second.ComponentIndex;
 		replicationIndices_[(unsigned)type] = it->second.ReplicationIndex;
-		handleIndices_[(unsigned)type] = it->second.HandleIndex;
 
 		if (it->second.ComponentIndex != UndefinedComponent) {
 			componentIndexToTypeMappings_.insert(std::make_pair(it->second.ComponentIndex, type));
-		}
-
-		if (it->second.HandleIndex != UndefinedHandle) {
-			handleIndexToTypeMappings_.insert(std::make_pair(it->second.HandleIndex, type));
-		}
-
-		if (it->second.HandleIndex != UndefinedHandle && it->second.ComponentIndex != UndefinedComponent) {
-			handleIndexToComponentMappings_.insert(std::make_pair(it->second.HandleIndex, it->second.ComponentIndex));
 		}
 
 		if (it->second.ReplicationIndex != UndefinedReplicationComponent) {
@@ -547,9 +471,9 @@ void EntitySystemHelpersBase::MapQueryIndex(char const* name, ExtQueryType type)
 
 void EntitySystemHelpersBase::MapResourceManagerIndex(char const* componentName, ExtResourceManagerType type)
 {
-	auto it = systemIndexMappings_.find(componentName);
-	if (it != systemIndexMappings_.end()) {
-		resourceManagerIndices_[(unsigned)type] = it->second;
+	auto it = staticDataMappings_.find(componentName);
+	if (it != staticDataMappings_.end()) {
+		staticDataIndices_[(unsigned)type] = it->second;
 	} else {
 		OsiWarn("Could not find index for resource manager: " << componentName);
 	}
@@ -625,7 +549,7 @@ EntityHandle EntitySystemHelpersBase::GetEntityHandle(Guid uuid)
 
 resource::GuidResourceBankBase* EntitySystemHelpersBase::GetRawResourceManager(ExtResourceManagerType type)
 {
-	auto index = resourceManagerIndices_[(unsigned)type];
+	auto index = staticDataIndices_[(unsigned)type];
 	if (index == UndefinedIndex) {
 		OsiError("No resource manager index mapping registered for " << type);
 		return {};

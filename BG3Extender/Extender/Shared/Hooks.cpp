@@ -14,7 +14,7 @@ void Hooks::Startup()
 	}
 
 	auto& lib = gExtender->GetEngineHooks();
-	lib.RPGStats__ParseStructureFolder.SetPostHook(&Hooks::OnParseStructureFolder, this);
+	lib.RPGStats__PreParseDataFolder.SetPreHook(&Hooks::OnParseStructureFolder, this);
 	eocnet__ClientConnectMessage__Serialize.SetWrapper(&Hooks::OnClientConnectMessage, this);
 	
 	loaded_ = true;

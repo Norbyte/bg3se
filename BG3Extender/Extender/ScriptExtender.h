@@ -121,6 +121,8 @@ public:
 	WrappableFunction<CoreLibInitTag, CoreLibInitProc> CoreLibInit;
 	enum class AppUpdatePathsTag {};
 	WrappableFunction<AppUpdatePathsTag, AppUpdatePathsProc> AppUpdatePaths;
+	enum class AppLoadGraphicSettingsTag {};
+	WrappableFunction<AppLoadGraphicSettingsTag, App::LoadGraphicSettingsProc> AppLoadGraphicSettings;
 
 private:
 	esv::ScriptExtender server_;
@@ -149,6 +151,7 @@ private:
 
 	void OnCoreLibInit(void * self);
 	void OnAppUpdatePaths(void * self);
+	void OnAppLoadGraphicSettings(App* self);
 	void OnBaseModuleLoaded(void * self);
 	void OnModuleLoadStarted(TranslatedStringRepository* self);
 	void OnStatsLoad(stats::RPGStats::LoadProc* wrapped, stats::RPGStats* mgr, Array<STDString>* paths);

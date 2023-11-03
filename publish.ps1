@@ -35,10 +35,10 @@ $GameDebugAdapterBuildDir = Join-Path "$BuildRoot" "TempGameDebugAdapter"
 $EditorBuildDir = Join-Path "$BuildRoot" "TempEditorBuild"
 $PDBDir = Join-Path "$PDBRoot" "TempPDB"
 	
-$EditorMinVersion = "4.37.32.833"
+$EditorMinVersion = "4.38.81.0"
 $EditorMaxVersion = "-"
 
-$GameMinVersion = "4.37.32.833"
+$GameMinVersion = "4.38.81.0"
 $GameMaxVersion = "-"
 
 function Build-Extender

@@ -13,12 +13,12 @@ namespace bg3se
 {
 	void* BG3Alloc(std::size_t size)
 	{
-		return GetStaticSymbols().ls__GlobalAllocator__Alloc(size, 2, 0, 8);
+		return GetStaticSymbols().ls__GlobalAllocator__Alloc(GetStaticSymbols().ls__gGlobalAllocator, size, 2, 0, 8);
 	}
 
 	void BG3Free(void* ptr)
 	{
-		GetStaticSymbols().ls__GlobalAllocator__Free(ptr);
+		GetStaticSymbols().ls__GlobalAllocator__Free(GetStaticSymbols().ls__gGlobalAllocator, ptr);
 	}
 
 	LibraryManager::LibraryManager()
@@ -65,10 +65,10 @@ namespace bg3se
 		auto const& sym = GetStaticSymbols();
 		gCoreLibPlatformInterface.Alloc = &BG3Alloc;
 		gCoreLibPlatformInterface.Free = &BG3Free;
-		gCoreLibPlatformInterface.ls__FixedString__CreateFromString = sym.ls__FixedString__CreateFromString;
+		gCoreLibPlatformInterface.ls__GlobalStringTable__MainTable__CreateFromString = sym.ls__GlobalStringTable__MainTable__CreateFromString;
 		gCoreLibPlatformInterface.ls__FixedString__GetString = sym.ls__FixedString__GetString;
 		gCoreLibPlatformInterface.ls__FixedString__IncRef = sym.ls__FixedString__IncRef;
-		gCoreLibPlatformInterface.ls__FixedString__DecRef = sym.ls__FixedString__DecRef;
+		gCoreLibPlatformInterface.ls__GlobalStringTable__MainTable__DecRef = sym.ls__GlobalStringTable__MainTable__DecRef;
 		gCoreLibPlatformInterface.ls__gGlobalStringTable = sym.ls__gGlobalStringTable;
 
 		return !CriticalInitFailed;

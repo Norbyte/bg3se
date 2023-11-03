@@ -2,91 +2,95 @@
 <BinaryMappings>
   <Mappings Version="4.36.35.601" Default="true">
     <Mapping Name="ls__GlobalAllocator" Critical="true">
-      c3 // retn
-      48 85 db // test    rbx, rbx
-      74 0f // jz      short loc_143858624
-      45 33 c0 // xor     r8d, r8d
-      48 8b cb // mov     rcx, rbx
-      41 8d 50 07 // lea     edx, [r8+7]
-      @ref1 e8 ?? ?? ?? ?? // call    ls__GlobalAllocator__Free
-      41 b9 10 00 00 00 // mov     r9d, 10h; alignment
-      45 33 c0 // xor     r8d, r8d; a3
-      33 c9 // xor     ecx, ecx; size
-      41 8d 51 f5 // lea     edx, [r9-0Bh]; pool
-      @ref2 e8 ?? ?? ?? ?? // call    ls__GlobalAllocator__Alloc
-      48 8b 5c 24 30 // mov     rbx, [rsp+28h+arg_0]
-      33 f6 // xor     esi, esi
-      <Target Type="Indirect" Offset="@ref1" Symbol="ls__GlobalAllocator__Free" />
-      <Target Type="Indirect" Offset="@ref2" Symbol="ls__GlobalAllocator__Alloc" />
-    </Mapping>
-
-    <Mapping Name="ls::FixedString::CreateFromString" Critical="true">
-      48 83 ec 28 // sub     rsp, 28h
-      4c 8b c1 // mov     r8, rcx
-      48 8d 54 24 38 // lea     rdx, [rsp+28h+arg_8]
-      @ref1 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:ls__gGlobalStringPool
-      48 81 c1 00 c6 00 00 // add     rcx, 0C600h
-      @ref2 e8 ?? ?? ?? ?? // call    ls__GlobalStringPool__CreateFromString
-      8b 44 24 38 // mov     eax, [rsp+28h+arg_8]
-      48 83 c4 28 // add     rsp, 28h
-      <Target Type="Indirect" Offset="@ref1" Symbol="ls__gGlobalStringTable" />
-      <Target Type="Absolute" Offset="0" Symbol="ls__FixedString__CreateFromString" />
-    </Mapping>
-
-    <Mapping Name="ls::FixedString::GetString" Critical="true">
-      40 53 // push    rbx
+      48 89 6c 24 18 // mov     [rsp+arg_10], rbp
+      48 89 74 24 20 // mov     [rsp+arg_18], rsi
+      41 56 // push    r14
       48 83 ec 20 // sub     rsp, 20h
-      48 8b d9 // mov     rbx, rcx
-      89 54 24 38 // mov     [rsp+28h+arg_8], edx
-      @ref1 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:ls__gGlobalStringPool
-      48 8d 54 24 38 // lea     rdx, [rsp+28h+arg_8]
-      e8 ?? ?? ?? ?? // call    sub_143866DA0
-      48 8d 50 18 // lea     rdx, [rax+18h]
-      8b 40 08 // mov     eax, [rax+8]
-      89 43 08 // mov     [rbx+8], eax
-      48 8b c3 // mov     rax, rbx
-      48 89 13 // mov     [rbx], rdx
-      48 83 c4 20 // add     rsp, 20h
-      5b // pop     rbx
-      <Target Type="Absolute" Offset="0" Symbol="ls__FixedString__GetString" />
+      65 48 8b 04 25 58 00 00 00 // mov     rax, gs:58h
+      @ref2 4c 8d 35 ?? ?? ?? ?? // lea     r14, ls__gGlobalAllocator
+      ba 88 04 00 00 // mov     edx, 488h
+      48 8b 08 // mov     rcx, [rax]
+      8b 04 0a // mov     eax, [rdx+rcx]
+      <Target Type="Indirect" Offset="@ref2" Symbol="ls__gGlobalAllocator" />
+    </Mapping>
+
+    <Mapping Name="ls__GlobalAllocator__Alloc" Critical="true">
+      83 79 0c 00 // cmp     dword ptr [rcx+0Ch], 0
+      7e 07 // jle     short loc_140572680
+      c7 41 0c 00 00 00 00 // mov     dword ptr [rcx+0Ch], 0
+      48 8b 39 // mov     rdi, [rcx]
+      48 85 ff // test    rdi, rdi
+      74 10 // jz      short loc_140572698
+      e8 ?? ?? ?? ?? // call    ls__GlobalAllocator__Get
+      48 8b d7 // mov     rdx, rdi; a2
+      48 8b c8 // mov     rcx, rax; a1
+      @ref2 e8 ?? ?? ?? ?? // call    ls__GlobalMemoryManager__Free
+      e8 ?? ?? ?? ?? // call    ls__GlobalAllocator__Get
+      48 c7 44 24 20 10 00 00 00 // mov     [rsp+38h+alignment], 10h; alignment
+      33 d2 // xor     edx, edx; size
+      48 8b c8 // mov     rcx, rax; a1
+      @ref4 e8 ?? ?? ?? ?? // call    ls__GlobalAllocator__Alloc2
+      <Target Type="Indirect" Offset="@ref2" Symbol="ls__GlobalAllocator__Free" />
+      <Target Type="Indirect" Offset="@ref4" Symbol="ls__GlobalAllocator__Alloc" />
     </Mapping>
 
     <Mapping Name="ls::FixedString::IncRef" Critical="true">
-      48 83 ec 28 // sub     rsp, 28h
-      89 4c 24 30 // mov     [rsp+28h+arg_0], ecx
-      48 8d 54 24 30 // lea     rdx, [rsp+28h+arg_0]
-      @ref1 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:ls__gGlobalStringPool
+      83 f8 ff // cmp     eax, 0FFFFFFFFh
+      74 0b // jz      short loc_140EC1A4F
+      8b c8 // mov     ecx, eax; a1
+      @ref1 e8 ?? ?? ?? ?? // call    ls__FixedString__AddRef
+      8b 44 24 58 // mov     eax, [rsp+48h+a1]
+      8b 0b // mov     ecx, [rbx]
+      83 f9 ff // cmp     ecx, 0FFFFFFFFh
+      74 20 // jz      short loc_140EC1A76
+      89 4c 24 20 // mov     [rsp+48h+var_28], ecx
+      @ref2 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:ls__gGlobalStringTable
       48 81 c1 00 c6 00 00 // add     rcx, 0C600h
-      @ref2 e8 ?? ?? ?? ?? // call    ls__GlobalStringPool__AddRef
-      48 83 c4 28 // add     rsp, 28h
-      <Target Type="Absolute" Offset="0" Symbol="ls__FixedString__IncRef" />
+      48 8d 54 24 20 // lea     rdx, [rsp+48h+var_28]
+      @ref3 e8 ?? ?? ?? ?? // call    ls__GlobalStringTable__MainTable__DecRef
+      <Target Type="Indirect" Offset="@ref1" Symbol="ls__FixedString__IncRef" />
+      <Target Type="Indirect" Offset="@ref2" Symbol="ls__gGlobalStringTable" />
+      <Target Type="Indirect" Offset="@ref3" Symbol="ls__GlobalStringTable__MainTable__DecRef" />
     </Mapping>
 
-    <Mapping Name="ls::FixedString::DecRef" Critical="true">
-      48 83 ec 28 // sub     rsp, 28h
-      89 4c 24 30 // mov     dword ptr [rsp+28h+a2], ecx
-      48 8d 54 24 30 // lea     rdx, [rsp+28h+a2]; a2
-      @ref1 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:ls__gGlobalStringPool
+    <Mapping Name="ls::FixedString::CreateFromString" Critical="true">
+      @str1 48 8d 05 ?? ?? ?? ?? // lea     rax, aH8e3f9e82g8fda; "h8e3f9e82g8fdag437cg99c1g4988a6aeccff"
+      48 89 44 24 28 // mov     [rsp+58h+a3.Str], rax
+      c7 44 24 30 25 00 00 00 // mov     [rsp+58h+a3.Length], 25h ; '%'
+      c7 44 24 78 ff ff ff ff // mov     [rsp+58h+arg_18], 0FFFFFFFFh
+      c7 44 24 20 02 00 00 00 // mov     [rsp+58h+var_38], 2
+      48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:ls__gGlobalStringTable
       48 81 c1 00 c6 00 00 // add     rcx, 0C600h; a1
-      e8 ?? ?? ?? ?? // call    sub_143865FD0
-      48 83 c4 28 // add     rsp, 28h
-      <Target Type="Absolute" Offset="0" Symbol="ls__FixedString__DecRef" />
+      4c 8d 44 24 28 // lea     r8, [rsp+58h+a3]; a3
+      48 8d 54 24 70 // lea     rdx, [rsp+58h+a1]; a2
+      @ref2 e8 ?? ?? ?? ?? // call    ls__GlobalStringTable__MainTable__FromString
+      <Condition Type="String" Offset="@str1" Value="h8e3f9e82g8fdag437cg99c1g4988a6aeccff" />
+      <Target Type="Indirect" Offset="@ref2" Symbol="ls__GlobalStringTable__MainTable__CreateFromString" />
+    </Mapping>
+
+    <Mapping Name="ls::FixedString::GetString" Critical="true">
+      48 8d 54 24 40 // lea     rdx, [rsp+58h+var_18]; a2
+      48 8b d8 // mov     rbx, rax
+      @ref1 e8 ?? ?? ?? ?? // call    ls__FixedString__ToString
+      0f 10 07 // movups  xmm0, xmmword ptr [rdi]
+      0f 11 05 ?? ?? ?? ?? // movups  cs:xmmword_145B17160, xmm0
+      0f 10 0b // movups  xmm1, xmmword ptr [rbx]
+      48 8b 5c 24 60 // mov     rbx, [rsp+58h+arg_0]
+      <Target Type="Indirect" Offset="@ref1" Symbol="ls__FixedString__GetString" />
     </Mapping>
 
     <!-- Sig: reference to strings "gr2", "lsm" -->
     <Mapping Name="EoCServer2/EoCClient2" Critical="true">
-      89 44 24 50 // mov     [rsp+48h+arg_0], eax
-      e8 ?? ?? ?? ?? // call    sub_143690CA0
-      48 8d 15 ?? ?? ?? ?? // lea     rdx, unk_145787190
-      48 8b c8 // mov     rcx, rax
-      e8 ?? ?? ?? ?? // call    sub_143233510
-      @ref1 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:ecl__gEoCClient
-      e8 ?? ?? ?? ?? // call    sub_140666800
-      48 8b 8b ?? ?? ?? ?? // mov     rcx, [rbx+170h]
-      e8 ?? ?? ?? ?? // call    sub_14065EC00
-      @ref2 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:esv__gEoCServer
-      e8 ?? ?? ?? ?? // call    sub_140FB9F70
-      <Target Type="Indirect" Offset="@ref1" Symbol="ecl__EoCClient" />
+      83 b8 44 07 00 00 02 // cmp     dword ptr [rax+744h], 2
+      74 0f // jz      short loc_140567F25
+      48 8b d3 // mov     rdx, rbx
+      @ref1 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:esv__gEocServer
+      e8 ?? ?? ?? ?? // call    sub_14072F540
+      @ref2 48 8b 3d ?? ?? ?? ?? // mov     rdi, cs:ecl__gEoCClient
+      48 8b d3 // mov     rdx, rbx
+      48 8b 8f a8 00 00 00 // mov     rcx, [rdi+0A8h]
+      <Target Type="Indirect" Offset="@ref1" Symbol="esv__EoCServer" />
+      <Target Type="Indirect" Offset="@ref2" Symbol="ecl__EoCClient" />
     </Mapping>
 
     <!-- Sig: reference to string "MoveController" -->
@@ -101,17 +105,17 @@
     </Mapping>
 
     <Mapping Name="ecl::EoCClient::HandleError" Critical="true">
-      90 // nop
-      4c 8b c8 // mov     r9, rax
       41 b0 01 // mov     r8b, 1
       48 8d 54 24 50 // lea     rdx, [rsp+350h+var_300]
-      48 8b cb // mov     rcx, rbx
+      48 8b cf // mov     rcx, rdi
       @ref1 e8 ?? ?? ?? ?? // call    ecl__EocClient__HandleError
       90 // nop
-      48 8d 4c 24 28 // lea     rcx, [rsp+350h+var_328]
-      e9 af 00 00 00 // jmp     loc_14086156B
-      48 c7 44 24 70 05 00 00 00 // mov     [rsp+350h+var_2E0], 5
+      48 8d 4c 24 28 // lea     rcx, [rsp+350h+a1]
+      e9 e1 01 00 00 // jmp     loc_142938339
+      48 c7 44 24 28 05 00 00 00 // mov     qword ptr [rsp+350h+a1], 5
       44 8b c8 // mov     r9d, eax
+      @str1 4c 8d 05 ?? ?? ?? ?? // lea     r8, a4x; "%.4x"
+      <Condition Type="String" Offset="@str1" Value="%.4x" />
       <Target Type="Indirect" Offset="@ref1" Symbol="ecl__EoCClient__HandleError" />
     </Mapping>
   </Mappings>

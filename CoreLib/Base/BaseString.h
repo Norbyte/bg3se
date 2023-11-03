@@ -72,7 +72,7 @@ namespace bg3se
 	struct FixedString
 	{
 		using CreateFromStringProc = uint32_t (LSStringView const&);
-		using GetStringProc = LSStringView * (LSStringView&, uint32_t index);
+		using GetStringProc = LSStringView * (FixedString const*, LSStringView&);
 		using IncRefProc = void(uint32_t index);
 		using DecRefProc = void(uint32_t index);
 
@@ -222,6 +222,9 @@ namespace bg3se
 
 		struct MainTable
 		{
+			using DecRefProc = void (MainTable* self, FixedString* fs);
+			using CreateFromStringProc = FixedString* (MainTable* self, FixedString* fs, LSStringView* src);
+
 			SubTable::Element SomeTable[64];
 			uint64_t field_1000;
 			uint64_t _Pad1[7];

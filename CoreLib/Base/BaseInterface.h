@@ -15,6 +15,8 @@ struct CoreLibPlatformInterface
 	FixedString::IncRefProc* ls__FixedString__IncRef{ nullptr };
 	FixedString::DecRefProc* ls__FixedString__DecRef{ nullptr };
 	GlobalStringTable** ls__gGlobalStringTable{ nullptr };
+	GlobalStringTable::MainTable::CreateFromStringProc* ls__GlobalStringTable__MainTable__CreateFromString{ nullptr };
+	GlobalStringTable::MainTable::DecRefProc* ls__GlobalStringTable__MainTable__DecRef{ nullptr };
 
 	void* StaticSymbols{ NULL };
 	HMODULE ThisModule{ NULL };

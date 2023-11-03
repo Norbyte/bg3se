@@ -20,12 +20,20 @@ std::unique_ptr<GameHelpers> gGameHelpers;
 
 void* BG3Alloc(std::size_t size)
 {
-	return gGameHelpers->Symbols().ls__GlobalAllocator__Alloc(size, 2, 0, 8);
+	if (gGameHelpers->Symbols().ls__GlobalAllocator__Alloc && gGameHelpers->Symbols().ls__gGlobalAllocator) {
+		return gGameHelpers->Symbols().ls__GlobalAllocator__Alloc(gGameHelpers->Symbols().ls__gGlobalAllocator, size, 2, 0, 8);
+	} else {
+		return malloc(size);
+	}
 }
 
 void BG3Free(void* ptr)
 {
-	gGameHelpers->Symbols().ls__GlobalAllocator__Free(ptr);
+	if (gGameHelpers->Symbols().ls__GlobalAllocator__Free && gGameHelpers->Symbols().ls__gGlobalAllocator) {
+		gGameHelpers->Symbols().ls__GlobalAllocator__Free(gGameHelpers->Symbols().ls__gGlobalAllocator, ptr);
+	} else {
+		return free(ptr);
+	}
 }
 
 GameHelpers::GameHelpers()
@@ -142,7 +150,7 @@ bool GameHelpers::ClientHandleError(char const * msg, bool exitGame) const
 
 		// Update reference to new string
 		auto originalRef = **tskRef;
-		**tskRef = LSStringView(str->data(), str->size());
+		**tskRef = LSStringView(str->data(), (uint32_t)str->size());
 
 		symbols_.ecl__EoCClient__HandleError(*symbols_.ecl__EoCClient, ts, exitGame, ts);
 		return true;

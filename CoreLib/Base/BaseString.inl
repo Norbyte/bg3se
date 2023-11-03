@@ -3,18 +3,31 @@ BEGIN_SE()
 FixedString::FixedString(StringView str)
 	: Index(NullIndex)
 {
-	auto create = gCoreLibPlatformInterface.ls__FixedString__CreateFromString;
-	if (create) {
-		Index = create(LSStringView(str.data(), (uint32_t)str.size()));
+	auto createGlobal = gCoreLibPlatformInterface.ls__GlobalStringTable__MainTable__CreateFromString;
+	if (createGlobal) {
+		LSStringView sv(str.data(), (uint32_t)str.size());
+		createGlobal(&(*gCoreLibPlatformInterface.ls__gGlobalStringTable)->Main, this, &sv);
+	} else {
+		auto create = gCoreLibPlatformInterface.ls__FixedString__CreateFromString;
+		if (create) {
+			Index = create(LSStringView(str.data(), (uint32_t)str.size()));
+		}
 	}
 }
 
 FixedString::FixedString(char const* str)
 	: Index(NullIndex)
 {
-	auto create = gCoreLibPlatformInterface.ls__FixedString__CreateFromString;
-	if (create) {
-		Index = create(LSStringView(str, (uint32_t)strlen(str)));
+	auto createGlobal = gCoreLibPlatformInterface.ls__GlobalStringTable__MainTable__CreateFromString;
+	if (createGlobal) {
+		LSStringView sv(str, (uint32_t)strlen(str));
+		createGlobal(&(*gCoreLibPlatformInterface.ls__gGlobalStringTable)->Main, this, &sv);
+	}
+	else {
+		auto create = gCoreLibPlatformInterface.ls__FixedString__CreateFromString;
+		if (create) {
+			Index = create(LSStringView(str, (uint32_t)strlen(str)));
+		}
 	}
 }
 
@@ -24,7 +37,7 @@ char const* FixedString::GetPooledStringPtr() const
 		auto getter = gCoreLibPlatformInterface.ls__FixedString__GetString;
 		if (getter) {
 			LSStringView sv;
-			getter(sv, Index);
+			getter(this, sv);
 			return sv.data();
 		}
 	}
@@ -54,7 +67,7 @@ StringView FixedString::GetStringView() const
 		auto getter = gCoreLibPlatformInterface.ls__FixedString__GetString;
 		if (getter) {
 			LSStringView sv;
-			getter(sv, Index);
+			getter(this, sv);
 			return StringView(sv.data(), sv.size());
 		}
 	}
@@ -122,9 +135,14 @@ void FixedString::IncRef()
 void FixedString::DecRef()
 {
 	if (Index != NullIndex) {
-		auto decRef = gCoreLibPlatformInterface.ls__FixedString__DecRef;
-		if (decRef) {
-			decRef(Index);
+		auto decRefGlobal = gCoreLibPlatformInterface.ls__GlobalStringTable__MainTable__DecRef;
+		if (decRefGlobal) {
+			decRefGlobal(&(*gCoreLibPlatformInterface.ls__gGlobalStringTable)->Main, this);
+		} else {
+			auto decRef = gCoreLibPlatformInterface.ls__FixedString__DecRef;
+			if (decRef) {
+				decRef(Index);
+			}
 		}
 	}
 }

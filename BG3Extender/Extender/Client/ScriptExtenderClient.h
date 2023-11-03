@@ -57,14 +57,13 @@ public:
 
 	void UpdateServerProgress(STDString const& status);
 	void UpdateClientProgress(STDString const& status);
+	void OnGameStateChanged(GameState fromState, GameState toState);
 
 	// HACK - we need to expose this so it can be added to the CrashReporter whitelist
 	enum class GameStateWorkerStartTag {};
 	enum class GameStateMachcineUpdateTag {};
-	enum class GameStateChangedEventTag {};
 	WrappableFunction<GameStateWorkerStartTag, void(void*)> gameStateWorkerStart_;
 	WrappableFunction<GameStateMachcineUpdateTag, void(void*, GameTime*)> gameStateMachineUpdate_;
-	WrappableFunction<GameStateChangedEventTag, void(void*, GameState, GameState)> gameStateChangedEvent_;
 
 private:
 	ExtenderConfig& config_;
@@ -78,7 +77,6 @@ private:
 	NetworkManager network_;
 
 	void OnBaseModuleLoaded(void * self);
-	void OnGameStateChanged(void * self, GameState fromState, GameState toState);
 	void GameStateWorkerWrapper(void (*wrapped)(void*), void* self);
 	void OnUpdate(void* self, GameTime* time);
 	void OnIncLocalProgress(void* self, int progress, char const* state);

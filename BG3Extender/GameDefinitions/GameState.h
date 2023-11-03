@@ -92,6 +92,17 @@ struct IEoCServerObject : public IGameObject
 	BaseComponent Base;
 };
 
+struct GameStateEventManager
+{
+	void* VMT;
+	Array<void*> Callbacks;
+};
+
+struct App
+{
+	using LoadGraphicSettingsProc = void (App*);
+};
+
 END_SE()
 
 BEGIN_NS(esv)

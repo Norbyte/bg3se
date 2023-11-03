@@ -28,7 +28,7 @@ public:
 	void Initialize();
 	void PostStartup();
 	void Shutdown();
-	void OnGameStateChanged(void* self, GameState fromState, GameState toState);
+	void OnGameStateChanged(GameState fromState, GameState toState);
 
 	inline bool HasExtensionState() const
 	{

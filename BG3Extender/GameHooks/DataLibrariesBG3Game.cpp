@@ -7,6 +7,12 @@
 #include <psapi.h>
 #include <Extender/Shared/tinyxml2.h>
 
+BEGIN_NS(ecs)
+
+STDString SimplifyComponentName(StringView name);
+
+END_NS()
+
 namespace bg3se
 {
 	void LibraryManager::PreRegisterLibraries(SymbolMappingLoader & loader)
@@ -25,40 +31,47 @@ namespace bg3se
 			mapper.AddModule("Main", L"bg3_dx11.exe");
 		}
 
+		mapper.AddEngineCallback("BindECSContext", std::bind(&LibraryManager::BindECSContext, this, std::placeholders::_1));
 		mapper.AddEngineCallback("BindECSIndex", std::bind(&LibraryManager::BindECSIndex, this, std::placeholders::_1));
 		mapper.AddEngineCallback("BindECSStaticStringConstructor", std::bind(&LibraryManager::BindECSStaticStringConstructor, this, std::placeholders::_1));
 		mapper.AddEngineCallback("BindECSStaticRegistrant", std::bind(&LibraryManager::BindECSStaticRegistrant, this, std::placeholders::_1));
 		mapper.AddEngineCallback("BindComponentReplicationIDRef", std::bind(&LibraryManager::BindComponentReplicationIDRef, this, std::placeholders::_1));
-		mapper.AddEngineCallback("BindComponentIDRef", std::bind(&LibraryManager::BindComponentIDRef, this, std::placeholders::_1));
-		mapper.AddEngineCallback("BindComponentIDRef2", std::bind(&LibraryManager::BindComponentIDRef2, this, std::placeholders::_1));
-		mapper.AddEngineCallback("BindEventComponentIDRef", std::bind(&LibraryManager::BindEventComponentIDRef, this, std::placeholders::_1));
-		mapper.AddEngineCallback("BindReplicationComponentIDRef", std::bind(&LibraryManager::BindReplicationComponentIDRef, this, std::placeholders::_1));
+	}
+
+	SymbolMapper::MappingResult LibraryManager::BindECSContext(uint8_t const* ptr)
+	{
+		auto indexPtr = (int32_t*)AsmResolveInstructionRef(ptr + 7);
+		auto namePtr = (char const*)AsmResolveInstructionRef(ptr + 0x63);
+		GetStaticSymbols().IndexSymbolToContextMaps.insert(std::make_pair(indexPtr, namePtr));
+		return SymbolMapper::MappingResult::TryNext;
 	}
 
 	SymbolMapper::MappingResult LibraryManager::BindECSIndex(uint8_t const* ptr)
 	{
-		auto indexPtr = (int32_t*)AsmResolveInstructionRef(ptr);
-		auto namePtr = (char const*)AsmResolveInstructionRef(ptr + 0x25);
-		GetStaticSymbols().IndexSymbolToNameMaps.insert(std::make_pair(indexPtr, ecs::IndexSymbolInfo{ namePtr, ecs::IndexSymbolType::None }));
+		auto contextPtr = (int32_t*)AsmResolveInstructionRef(ptr);
+		auto indexPtr = (int32_t*)AsmResolveInstructionRef(ptr + 0x1C);
+		auto namePtr = (char const*)AsmResolveInstructionRef(ptr + 0x46);
+		GetStaticSymbols().IndexSymbolToNameMaps.insert(std::make_pair(indexPtr, ecs::IndexSymbolInfo{ namePtr, contextPtr }));
 		return SymbolMapper::MappingResult::TryNext;
 	}
 
 	SymbolMapper::MappingResult LibraryManager::BindECSStaticStringConstructor(uint8_t const* ptr)
 	{
-		auto funcPtr = ptr - 0x3C;
-		auto namePtr = (char const*)AsmResolveInstructionRef(ptr + 30);
+		auto funcPtr = ptr - 0x65;
+		auto namePtr = (char const*)AsmResolveInstructionRef(ptr + 9);
 		GetStaticSymbols().StaticStringRegistrantMaps.insert(std::make_pair(funcPtr, namePtr));
 		return SymbolMapper::MappingResult::TryNext;
 	}
 
 	SymbolMapper::MappingResult LibraryManager::BindECSStaticRegistrant(uint8_t const* ptr)
 	{
-		auto funcPtr = AsmResolveInstructionRef(ptr);
-		auto indexPtr = (int32_t*)AsmResolveInstructionRef(ptr + 43);
+		auto indexPtr = (int32_t*)AsmResolveInstructionRef(ptr);
+		auto funcPtr = AsmResolveInstructionRef(ptr + 0x13);
+		auto contextPtr = (int32_t*)AsmResolveInstructionRef(ptr + 0x1B);
 
 		auto nameIt = GetStaticSymbols().StaticStringRegistrantMaps.find(funcPtr);
 		if (nameIt != GetStaticSymbols().StaticStringRegistrantMaps.end()) {
-			GetStaticSymbols().IndexSymbolToNameMaps.insert(std::make_pair(indexPtr, ecs::IndexSymbolInfo{ nameIt->second, ecs::IndexSymbolType::None }));
+			GetStaticSymbols().IndexSymbolToNameMaps.insert(std::make_pair(indexPtr, ecs::IndexSymbolInfo{ nameIt->second, contextPtr }));
 		}
 
 		return SymbolMapper::MappingResult::TryNext;
@@ -66,66 +79,10 @@ namespace bg3se
 
 	SymbolMapper::MappingResult LibraryManager::BindComponentReplicationIDRef(uint8_t const* ptr)
 	{
-		auto indexPtr = (int32_t*)AsmResolveInstructionRef(ptr);
-
-		auto indexIt = GetStaticSymbols().IndexSymbolToNameMaps.find(indexPtr);
-		if (indexIt != GetStaticSymbols().IndexSymbolToNameMaps.end()) {
-			assert(indexIt->second.type == ecs::IndexSymbolType::None || indexIt->second.type == ecs::IndexSymbolType::Replication);
-			indexIt->second.type = ecs::IndexSymbolType::Replication;
-		}
-
-		return SymbolMapper::MappingResult::TryNext;
-	}
-
-	SymbolMapper::MappingResult LibraryManager::BindComponentIDRef(uint8_t const* ptr)
-	{
-		auto indexPtr = (int32_t*)AsmResolveInstructionRef(ptr);
-
-		auto indexIt = GetStaticSymbols().IndexSymbolToNameMaps.find(indexPtr);
-		if (indexIt != GetStaticSymbols().IndexSymbolToNameMaps.end()) {
-			assert(indexIt->second.type == ecs::IndexSymbolType::None || indexIt->second.type == ecs::IndexSymbolType::Component);
-			indexIt->second.type = ecs::IndexSymbolType::Component;
-		}
-
-		return SymbolMapper::MappingResult::TryNext;
-	}
-
-	SymbolMapper::MappingResult LibraryManager::BindComponentIDRef2(uint8_t const* ptr)
-	{
-		auto indexPtr = (int32_t*)AsmResolveInstructionRef(ptr);
-
-		auto indexIt = GetStaticSymbols().IndexSymbolToNameMaps.find(indexPtr);
-		if (indexIt != GetStaticSymbols().IndexSymbolToNameMaps.end()) {
-			assert(indexIt->second.type == ecs::IndexSymbolType::None || indexIt->second.type == ecs::IndexSymbolType::Component);
-			indexIt->second.type = ecs::IndexSymbolType::Component;
-		}
-
-		return SymbolMapper::MappingResult::TryNext;
-	}
-
-	SymbolMapper::MappingResult LibraryManager::BindEventComponentIDRef(uint8_t const* ptr)
-	{
-		auto indexPtr = (int32_t*)AsmResolveInstructionRef(ptr);
-
-		auto indexIt = GetStaticSymbols().IndexSymbolToNameMaps.find(indexPtr);
-		if (indexIt != GetStaticSymbols().IndexSymbolToNameMaps.end()) {
-			assert(indexIt->second.type == ecs::IndexSymbolType::None || indexIt->second.type == ecs::IndexSymbolType::EventComponent);
-			indexIt->second.type = ecs::IndexSymbolType::EventComponent;
-		}
-
-		return SymbolMapper::MappingResult::TryNext;
-	}
-
-	SymbolMapper::MappingResult LibraryManager::BindReplicationComponentIDRef(uint8_t const* ptr)
-	{
-		auto indexPtr = (int32_t*)AsmResolveInstructionRef(ptr);
-
-		auto indexIt = GetStaticSymbols().IndexSymbolToNameMaps.find(indexPtr);
-		if (indexIt != GetStaticSymbols().IndexSymbolToNameMaps.end()) {
-			assert(indexIt->second.type == ecs::IndexSymbolType::None || indexIt->second.type == ecs::IndexSymbolType::Replication);
-			indexIt->second.type = ecs::IndexSymbolType::Replication;
-		}
-
+		auto contextPtr = (int32_t*)AsmResolveInstructionRef(ptr);
+		auto indexPtr = (int32_t*)AsmResolveInstructionRef(ptr + 0x7);
+		auto namePtr = (char const*)AsmResolveInstructionRef(ptr + 0x31);
+		GetStaticSymbols().IndexSymbolToNameMaps.insert(std::make_pair(indexPtr, ecs::IndexSymbolInfo{ namePtr, contextPtr }));
 		return SymbolMapper::MappingResult::TryNext;
 	}
 
@@ -163,10 +120,10 @@ namespace bg3se
 
 	void LibraryManager::RegisterSymbols()
 	{
-		SYM_OFF(ls__FixedString__CreateFromString);
+		SYM_OFF(ls__GlobalStringTable__MainTable__CreateFromString);
 		SYM_OFF(ls__FixedString__GetString);
 		SYM_OFF(ls__FixedString__IncRef);
-		SYM_OFF(ls__FixedString__DecRef);
+		SYM_OFF(ls__GlobalStringTable__MainTable__DecRef);
 		SYM_OFF(ls__gGlobalStringTable);
 
 		SYM_OFF(ls__FileReader__ctor);
@@ -181,11 +138,12 @@ namespace bg3se
 		SYM_OFF(ls__gTranslatedStringRepository);
 
 		SYM_OFF(ecl__gGameStateEventManager);
-		SYM_OFF(ecl__GameStateEventManager__ExecuteGameStateChangedEvent);
+		SYM_OFF(esv__gGameStateEventManager);
 		SYM_OFF(ecl__GameStateThreaded__GameStateWorker__DoWork);
 		SYM_OFF(esv__GameStateThreaded__GameStateWorker__DoWork);
 		SYM_OFF(ecl__GameStateMachine__Update);
 		SYM_OFF(esv__GameStateMachine__Update);
+		SYM_OFF(App__LoadGraphicSettings);
 
 		SYM_OFF(ecs__EntityWorld__Update);
 
@@ -221,11 +179,12 @@ namespace bg3se
 
 		SYM_OFF(gRPGStats);
 		SYM_OFF(RPGStats__Load);
-		SYM_OFF(RPGStats__ParseStructureFolder);
+		SYM_OFF(RPGStats__PreParseDataFolder);
 
 		SYM_OFF(esv__SavegameManager);
 		SYM_OFF(AppInstance);
 
+		SYM_OFF(ls__gGlobalAllocator);
 		SYM_OFF(ls__GlobalAllocator__Alloc);
 		SYM_OFF(ls__GlobalAllocator__Free);
 

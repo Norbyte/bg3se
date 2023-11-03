@@ -5,19 +5,19 @@
 
 BEGIN_NS(ecs)
 
-enum class IndexSymbolType
+enum class TypeIdContext
 {
-	None,
 	Replication,
-	Handle,
 	Component,
-	EventComponent
+	OneFrameComponent,
+	System,
+	ImmutableData
 };
 
 struct IndexSymbolInfo
 {
 	char const* name;
-	IndexSymbolType type;
+	int32_t* context;
 };
 
 class EntitySystemHelpersBase : public Noncopyable<EntitySystemHelpersBase>
@@ -45,30 +45,10 @@ public:
 		}
 	}
 
-	inline std::optional<STDString const*> GetComponentName(HandleTypeIndex index) const
-	{
-		auto it = handleIndexToNameMappings_.find(index);
-		if (it != handleIndexToNameMappings_.end()) {
-			return it->second;
-		} else {
-			return {};
-		}
-	}
-
 	inline std::optional<ExtComponentType> GetComponentType(ComponentTypeIndex index) const
 	{
 		auto it = componentIndexToTypeMappings_.find(index);
 		if (it != componentIndexToTypeMappings_.end()) {
-			return it->second;
-		} else {
-			return {};
-		}
-	}
-
-	inline std::optional<ExtComponentType> GetComponentType(HandleTypeIndex index) const
-	{
-		auto it = handleIndexToTypeMappings_.find(index);
-		if (it != handleIndexToTypeMappings_.end()) {
 			return it->second;
 		} else {
 			return {};
@@ -80,16 +60,6 @@ public:
 		auto it = replicationIndexToTypeMappings_.find(index);
 		if (it != replicationIndexToTypeMappings_.end()) {
 			return it->second;
-		} else {
-			return {};
-		}
-	}
-
-	inline std::optional<ComponentTypeIndex> GetComponentIndex(HandleTypeIndex index) const
-	{
-		auto it = handleIndexToComponentMappings_.find(index);
-		if (it != handleIndexToComponentMappings_.end()) {
-			return ComponentTypeIndex(it->second);
 		} else {
 			return {};
 		}
@@ -108,16 +78,6 @@ public:
 	inline std::size_t GetComponentSize(ExtComponentType type) const
 	{
 		return componentSizes_[(unsigned)type];
-	}
-
-	std::optional<HandleTypeIndex> GetHandleIndex(ExtComponentType type) const
-	{
-		auto idx = handleIndices_[(unsigned)type];
-		if (idx != -1) {
-			return idx;
-		} else {
-			return {};
-		}
 	}
 
 	std::optional<ReplicationTypeIndex> GetReplicationIndex(ExtComponentType type) const
@@ -199,21 +159,8 @@ protected:
 	void UpdateComponentMappings();
 
 private:
-	struct ComponentIndexMappings
-	{
-		int32_t ReplicationIndex{ -1 };
-		int32_t HandleIndex{ -1 };
-		int32_t ComponentIndex{ -1 };
-		int32_t EventComponentIndex{ -1 };
-		std::array<int32_t, 5> Indices;
-		std::size_t NumIndices{ 0 };
-
-		void Add(int32_t index, IndexSymbolType type);
-	};
-	
 	struct IndexMappings
 	{
-		HandleTypeIndex HandleIndex{ UndefinedHandle };
 		ComponentTypeIndex ComponentIndex{ UndefinedComponent };
 		ReplicationTypeIndex ReplicationIndex{ UndefinedReplicationComponent };
 	};
@@ -221,28 +168,27 @@ private:
 	std::array<ComponentTypeIndex, (size_t)ExtComponentType::Max> componentIndices_;
 	std::array<std::size_t, (size_t)ExtComponentType::Max> componentSizes_;
 	std::array<ReplicationTypeIndex, (size_t)ExtComponentType::Max> replicationIndices_;
-	std::array<HandleTypeIndex, (size_t)ExtComponentType::Max> handleIndices_;
 	std::array<int32_t, (size_t)ExtQueryType::Max> queryIndices_;
-	std::array<int32_t, (size_t)ExtResourceManagerType::Max> resourceManagerIndices_;
+	std::array<int32_t, (size_t)ExtResourceManagerType::Max> staticDataIndices_;
 
 	std::unordered_map<STDString, IndexMappings> componentNameToIndexMappings_;
 	std::unordered_map<ComponentTypeIndex, STDString const*> componentIndexToNameMappings_;
-	std::unordered_map<HandleTypeIndex, STDString const*> handleIndexToNameMappings_;
 	std::unordered_map<ComponentTypeIndex, ExtComponentType> componentIndexToTypeMappings_;
-	std::unordered_map<HandleTypeIndex, ExtComponentType> handleIndexToTypeMappings_;
-	std::unordered_map<HandleTypeIndex, ComponentTypeIndex> handleIndexToComponentMappings_;
 	std::unordered_map<ReplicationTypeIndex, ExtComponentType> replicationIndexToTypeMappings_;
 	std::unordered_map<STDString, int32_t> systemIndexMappings_;
 	std::vector<STDString const*> systemTypeIdToName_;
 	std::unordered_map<STDString, int32_t> queryMappings_;
 	std::vector<STDString const*> queryTypeIdToName_;
+	std::unordered_map<STDString, int32_t> staticDataMappings_;
+	std::vector<STDString const*> staticDataIdToName_;
 
 	bool initialized_{ false };
 
-	bool TryUpdateSystemMapping(std::string_view name, ComponentIndexMappings& mapping);
-	void TryUpdateComponentMapping(std::string_view name, ComponentIndexMappings& mapping);
-	void BindSystemName(std::string_view name, int32_t systemId);
-	void BindQueryName(std::string_view name, int32_t systemId);
+	void BindSystem(std::string_view name, int32_t id);
+	void BindQuery(std::string_view name, int32_t id);
+	void BindStaticData(std::string_view name, int32_t id);
+	void BindComponent(std::string_view name, int32_t id);
+	void BindReplication(std::string_view name, int32_t id);
 	void* GetRawComponent(char const* nameGuid, ExtComponentType type);
 	void* GetRawComponent(FixedString const& guid, ExtComponentType type);
 	resource::GuidResourceBankBase* GetRawResourceManager(ExtResourceManagerType type);

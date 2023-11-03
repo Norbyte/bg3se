@@ -32,6 +32,7 @@ struct UpdaterSymbols : Noncopyable<UpdaterSymbols>
 
 	TranslatedStringRepository** ls__gTranslatedStringRepository{ nullptr };
 
+	void* ls__gGlobalAllocator{ nullptr };
 	ls__GlobalAllocator__AllocProc* ls__GlobalAllocator__Alloc{ nullptr };
 	ls__GlobalAllocator__FreeProc* ls__GlobalAllocator__Free{ nullptr };
 

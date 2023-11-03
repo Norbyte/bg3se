@@ -4,7 +4,6 @@
 
 #define STATIC_HOOK(name) decltype(bg3se::ecl::ScriptExtender::name) * decltype(bg3se::ecl::ScriptExtender::name)::gHook;
 STATIC_HOOK(gameStateWorkerStart_)
-STATIC_HOOK(gameStateChangedEvent_)
 STATIC_HOOK(gameStateMachineUpdate_)
 
 #include <Extender/Shared/ThreadedExtenderState.inl>
@@ -70,10 +69,6 @@ void ScriptExtender::Initialize()
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
 
-	if (lib.ecl__GameStateEventManager__ExecuteGameStateChangedEvent != nullptr) {
-		gameStateChangedEvent_.Wrap(lib.ecl__GameStateEventManager__ExecuteGameStateChangedEvent);
-	}
-
 	if (lib.ecl__GameStateThreaded__GameStateWorker__DoWork != nullptr) {
 		gameStateWorkerStart_.Wrap(lib.ecl__GameStateThreaded__GameStateWorker__DoWork);
 	}
@@ -84,7 +79,6 @@ void ScriptExtender::Initialize()
 
 	DetourTransactionCommit();
 
-	gameStateChangedEvent_.SetPostHook(&ScriptExtender::OnGameStateChanged, this);
 	gameStateWorkerStart_.SetWrapper(&ScriptExtender::GameStateWorkerWrapper, this);
 	gameStateMachineUpdate_.SetPostHook(&ScriptExtender::OnUpdate, this);
 }
@@ -122,13 +116,8 @@ bool IsLoadingState(GameState state)
 		|| state == GameState::ModReceiving;
 }
 
-void ScriptExtender::OnGameStateChanged(void * self, GameState fromState, GameState toState)
+void ScriptExtender::OnGameStateChanged(GameState fromState, GameState toState)
 {
-	if (self != *GetStaticSymbols().ecl__gGameStateEventManager) {
-		gExtender->GetServer().OnGameStateChanged(self, (esv::GameState)fromState, (esv::GameState)toState);
-		return;
-	}
-
 	if (gExtender->GetConfig().SendCrashReports) {
 		// We need to initialize the crash reporter after the game engine has started,
 		// otherwise the game will overwrite the top level exception filter

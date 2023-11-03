@@ -18,6 +18,7 @@ void ShutdownCrashReporting();
 
 decltype(ScriptExtender::CoreLibInit)* decltype(ScriptExtender::CoreLibInit)::gHook;
 decltype(ScriptExtender::AppUpdatePaths)* decltype(ScriptExtender::AppUpdatePaths)::gHook;
+decltype(ScriptExtender::AppLoadGraphicSettings)* decltype(ScriptExtender::AppLoadGraphicSettings)::gHook;
 
 std::unique_ptr<ScriptExtender> gExtender;
 
@@ -80,6 +81,11 @@ void ScriptExtender::Initialize()
 	if (GetStaticSymbols().App__UpdatePaths != nullptr) {
 		AppUpdatePaths.Wrap(GetStaticSymbols().App__UpdatePaths);
 		AppUpdatePaths.SetPostHook(&ScriptExtender::OnAppUpdatePaths, this);
+	}
+
+	if (GetStaticSymbols().App__LoadGraphicSettings != nullptr) {
+		AppLoadGraphicSettings.Wrap(GetStaticSymbols().App__LoadGraphicSettings);
+		AppLoadGraphicSettings.SetPostHook(&ScriptExtender::OnAppLoadGraphicSettings, this);
 	}
 
 	DetourTransactionCommit();
@@ -257,6 +263,73 @@ void ScriptExtender::OnAppUpdatePaths(void * self)
 		if (gameLocalPath->ends_with("Baldur's Gate 3")) {
 			*gameLocalPath = gameLocalPath->substr(0, gameLocalPath->size() - 15) + config_.CustomProfile.c_str();
 		}
+	}
+}
+
+class ClientEventManagerHook
+{
+public:
+	struct GameStates
+	{
+		ecl::GameState From;
+		ecl::GameState To;
+	};
+
+	virtual ~ClientEventManagerHook()
+	{}
+
+	virtual bool OnGameStateChanged(GameStates& states)
+	{
+		gExtender->GetClient().OnGameStateChanged(states.From, states.To);
+		return true;
+	}
+
+	virtual bool Unknown()
+	{
+		return false;
+	}
+
+	uint64_t dummy{ 0 };
+};
+
+class ServerEventManagerHook
+{
+public:
+	struct GameStates
+	{
+		esv::GameState From;
+		esv::GameState To;
+	};
+
+	virtual ~ServerEventManagerHook()
+	{}
+
+	virtual bool OnGameStateChanged(GameStates& states)
+	{
+		gExtender->GetServer().OnGameStateChanged(states.From, states.To);
+		return true;
+	}
+
+	virtual bool Unknown()
+	{
+		return false;
+	}
+
+	uint64_t dummy{ 0 };
+};
+
+void ScriptExtender::OnAppLoadGraphicSettings(App * self)
+{
+	auto clientEvtMgr = GetStaticSymbols().ecl__gGameStateEventManager;
+	if (clientEvtMgr && *clientEvtMgr) {
+		auto client = GameAlloc<ClientEventManagerHook>();
+		(*clientEvtMgr)->Callbacks.push_back(&client->dummy);
+	}
+
+	auto serverEvtMgr = GetStaticSymbols().esv__gGameStateEventManager;
+	if (serverEvtMgr && *serverEvtMgr) {
+		auto server = GameAlloc<ServerEventManagerHook>();
+		(*serverEvtMgr)->Callbacks.push_back(&server->dummy);
 	}
 }
 

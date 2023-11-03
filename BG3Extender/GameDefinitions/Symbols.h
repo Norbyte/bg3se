@@ -20,6 +20,7 @@ namespace bg3se
 
 	struct StaticSymbols : Noncopyable<StaticSymbols>
 	{
+		std::unordered_map<int32_t*, char const*> IndexSymbolToContextMaps;
 		std::unordered_map<int32_t*, ecs::IndexSymbolInfo> IndexSymbolToNameMaps;
 		std::unordered_map<void const*, char const*> StaticStringRegistrantMaps;
 
@@ -30,10 +31,10 @@ namespace bg3se
 			uint32_t refs;
 		};
 
-		FixedString::CreateFromStringProc* ls__FixedString__CreateFromString{ nullptr };
 		FixedString::GetStringProc* ls__FixedString__GetString{ nullptr };
 		FixedString::IncRefProc* ls__FixedString__IncRef{ nullptr };
-		FixedString::DecRefProc* ls__FixedString__DecRef{ nullptr };
+		GlobalStringTable::MainTable::CreateFromStringProc* ls__GlobalStringTable__MainTable__CreateFromString{ nullptr };
+		GlobalStringTable::MainTable::DecRefProc* ls__GlobalStringTable__MainTable__DecRef{ nullptr };
 		GlobalStringTable** ls__gGlobalStringTable{ nullptr };
 
 		FileReader::CtorProc* ls__FileReader__ctor{ nullptr };
@@ -49,12 +50,13 @@ namespace bg3se
 
 		TranslatedStringRepository** ls__gTranslatedStringRepository{ nullptr };
 
-		void** ecl__gGameStateEventManager{ nullptr };
-		ecl::GameStateEventManager__ExecuteGameStateChangedEvent ecl__GameStateEventManager__ExecuteGameStateChangedEvent{ nullptr };
+		GameStateEventManager** ecl__gGameStateEventManager{ nullptr };
+		GameStateEventManager** esv__gGameStateEventManager{ nullptr };
 		ecl::GameStateThreaded__GameStateWorker__DoWork ecl__GameStateThreaded__GameStateWorker__DoWork{ nullptr };
 		esv::GameStateThreaded__GameStateWorker__DoWork esv__GameStateThreaded__GameStateWorker__DoWork{ nullptr };
 		ecl::GameStateMachine__Update ecl__GameStateMachine__Update{ nullptr };
 		esv::GameStateMachine__Update esv__GameStateMachine__Update{ nullptr };
+		App::LoadGraphicSettingsProc* App__LoadGraphicSettings{ nullptr };
 
 		ecs::EntityWorld::UpdateProc* ecs__EntityWorld__Update{ nullptr };
 
@@ -90,7 +92,7 @@ namespace bg3se
 
 		stats::RPGStats** gRPGStats{ nullptr };
 		stats::RPGStats::LoadProc* RPGStats__Load{ nullptr };
-		stats::RPGStats::ParseStructureFolderProc* RPGStats__ParseStructureFolder{ nullptr };
+		stats::RPGStats::ParseStructureFolderProc* RPGStats__PreParseDataFolder{ nullptr };
 		/*RPGStats::ParsePropertiesProc* RPGStats__ParseProperties{nullptr};
 		SkillPrototypeManager** eoc__SkillPrototypeManager{ nullptr };
 		StatusPrototypeManager** eoc__StatusPrototypeManager{ nullptr };*/
@@ -101,6 +103,7 @@ namespace bg3se
 
 		std::map<uint8_t const *, EoCLibraryInfo> Libraries;
 
+		void* ls__gGlobalAllocator{ nullptr };
 		ls__GlobalAllocator__AllocProc* ls__GlobalAllocator__Alloc{ nullptr };
 		ls__GlobalAllocator__FreeProc* ls__GlobalAllocator__Free{ nullptr };
 
