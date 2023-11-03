@@ -129,7 +129,7 @@ namespace bg3se
 		SYM_OFF(ls__FileReader__ctor);
 		SYM_OFF(ls__FileReader__dtor);
 		SYM_OFF(ls__PathRoots);
-		SYM_OFF(CoreLibSDM__Init);
+		SYM_OFF(App__Ctor);
 		SYM_OFF(App__UpdatePaths);
 
 		SYM_OFF(ecl__EoCClient);
@@ -189,7 +189,7 @@ namespace bg3se
 		SYM_OFF(ls__GlobalAllocator__Free);
 
 		SYM_OFF(eoc__gGuidResourceManager);
-		SYM_OFF(ResourceMgr);
+		SYM_OFF(ls__gGlobalResourceManager);
 		SYM_OFF(ls__GlobalSwitches);
 	}
 }

@@ -101,6 +101,7 @@ struct GameStateEventManager
 struct App
 {
 	using LoadGraphicSettingsProc = void (App*);
+	using CtorProc = App * (App*);
 };
 
 END_SE()

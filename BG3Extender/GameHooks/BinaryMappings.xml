@@ -123,15 +123,6 @@
           <Target Type="Indirect" Offset="@ref1" Symbol="ls__PathRoots" />
         </Mapping>
 
-        <Mapping Name="CoreLibSDM::Init">
-          @ref1 e8 ?? ?? ?? ?? // call    xxx
-          @str1 48 8d 0d ?? ?? ?? ?? // lea     rcx, aCreatingApp; "Creating App\n"
-          ff 15 ?? ?? ?? ?? // call    cs:OutputDebugStringA
-          b9 ?? ?? 00 00 // mov     ecx, 1C0h; Size
-          <Condition Type="String" Offset="@str1" Value="Creating App&#10;" />
-          <Target Type="Indirect" Offset="@ref1" Symbol="CoreLibSDM__Init" />
-        </Mapping>
-
         <Mapping Name="App::UpdatePaths">
           @ref1 e8 ?? ?? ?? ?? // call    App__UpdatePaths
           @ref2 48 8d 15 ?? ?? ?? ?? // lea     rdx, Locale; Locale
@@ -319,15 +310,18 @@
         </Mapping>
 
         <Mapping Name="esv::SavegamePostVisit_DisableStoryMerge" AllowFail="true">
-          48 8d 4d 10 // lea     rcx, [rbp+3A0h+var_390]
-          e8 ?? ?? ?? ?? // call    ls__Module__GetAddonModules
-          4c 8d 45 e0 // lea     r8, [rbp+3A0h+var_3C0]
+          4c 8d 45 b0 // lea     r8, [rbp+370h+Src]
           48 8b d6 // mov     rdx, rsi
-          49 8b cc // mov     rcx, r12
-          83 78 0c 00 // cmp     dword ptr [rax+0Ch], 0
-          @ref 0f 85 ?? ?? ?? ?? // jnz     loc_144359278
-          e8 ?? ?? ?? ?? // call    sub_141088470
+          49 8b cf // mov     rcx, r15
+          83 bd cc 01 00 00 00 // cmp     [rbp+370h+var_1A4], 0
+          @ref 0f 85 23 02 00 00 // jnz     loc_141AD5193
+          e8 4b ab 4c 00 // call    sub_141F9FAC0
           84 c0 // test    al, al
+          75 10 // jnz     short loc_141AD4F89
+          48 8b 05 ?? ?? ?? ?? // mov     rax, cs:ls__gGlobalSwitches
+          80 b8 af 00 00 00 00 // cmp     byte ptr [rax+0AFh], 0
+          74 bb // jz      short loc_141AD4F44
+          48 8b d6 // mov     rdx, rsi
           <Patch Type="Absolute" Offset="@ref">
             90 90 90 90 90 90
           </Patch>
@@ -413,52 +407,53 @@
         </Mapping>
         -->
 
-        <!-- Sig: call from osi::ApplyDamage -->
-        <Mapping Name="esv::StatsSystem::ThrowDamageEvent2" Scope="Custom">
-          40 55 // push    rbp
-          53 // push    rbx
-          56 // push    rsi
-          57 // push    rdi
-          41 54 // push    r12
-          41 55 // push    r13
-          41 56 // push    r14
-          41 57 // push    r15
-          <Target Type="Absolute" Offset="0" Symbol="esv__StatsSystem__ThrowDamageEvent" />
-        </Mapping>
+      <!-- Sig: call from DealDamageFunctor::ApplyDamage, near ref to PassiveSystemID -->
+      <Mapping Name="esv::StatsSystem::ThrowDamageEvent">
+        0f b6 45 82 // movzx   eax, [rbp+12E0h+var_135E]
+        88 44 24 20 // mov     [rsp+13E0h+a5], al; a5
+        4c 8d 8d 68 0b 00 00 // lea     r9, [rbp+12E0h+damageAmounts]; damageAmounts
+        4c 8d 85 90 06 00 00 // lea     r8, [rbp+12E0h+var_C50]; hit
+        48 8d 95 a0 03 00 00 // lea     rdx, [rbp+12E0h+temp5]; temp5
+        48 8b 4d c8 // mov     rcx, [rbp+12E0h+rcx0]; rcx0
+        @ref1 e8 ?? ?? ?? ?? // call    esv__StatsSystem__ThrowEntityDamagedEvent
+        80 bd 96 06 00 00 0a // cmp     [rbp+12E0h+var_C50.CauseType], 0Ah
+        0f 84 25 02 00 00 // jz      loc_142626AC1
+        83 bd 90 06 00 00 00 // cmp     [rbp+12E0h+var_C50.TotalDamageDone], 0
+        41 0f 9f c7 // setnle  r15b
+        <Target Type="Indirect" Offset="@ref1" Symbol="esv__StatsSystem__ThrowDamageEvent" />
+      </Mapping>
 
-        <!-- Sig: call from DealDamageFunctor::ApplyDamage -->
-        <Mapping Name="esv::StatsSystem::ThrowDamageEvent">
-          c6 45 74 00 // mov     [rbp+0C0h+var_4C], 0
-          48 83 7a 10 00 // cmp     qword ptr [rdx+10h], 0
-          75 0d // jnz     short loc_141672E0C
-          48 8b 4a 08 // mov     rcx, [rdx+8]
-          e8 ?? ?? ?? ?? // call    sub_140F87C70
-          84 c0 // test    al, al
-          74 02 // jz      short loc_141672E0E
-          b0 01 // mov     al, 1
-          84 c0 // test    al, al
-          <Target Type="Absolute" Offset="-200" NextSymbol="esv::StatsSystem::ThrowDamageEvent2" NextSymbolSeekSize="200" />
-        </Mapping>
-      
+      <!-- Sig: call from osi::ApplyDamage -->
         <Mapping Name="eoc::DealDamageFunctor::ApplyDamage">
-          4c 8d 4d c8 // lea     r9, [rbp+510h+targetHandle]
-          4c 8d 45 d8 // lea     r8, [rbp+510h+sourceHandle2]
-          48 8d 95 50 02 00 00 // lea     rdx, [rbp+510h+functor]
-          48 8d 8d b0 02 00 00 // lea     rcx, [rbp+510h+a2]
+          48 8d 4d a0 // lea     rcx, [rbp+50h+var_B0]
+          48 89 4c 24 30 // mov     [rsp+160h+spellId2], rcx; spellId2
+          88 44 24 28 // mov     [rsp+160h+var_138], al; char
+          4c 89 7c 24 20 // mov     [rsp+160h+position], r15; position
+          4d 8b cc // mov     r9, r12; target
+          4d 8b c5 // mov     r8, r13; cause
+          48 8b 7d 80 // mov     rdi, qword ptr [rbp+50h+a2.ID]
+          48 8b d7 // mov     rdx, rdi; functor
+          48 8b 5d 90 // mov     rbx, [rbp+50h+hitResult]
+          48 8b cb // mov     rcx, rbx; hitResult
           @ref1 e8 ?? ?? ?? ?? // call    esv__ExecuteDamageFunctor
           90 // nop
+          8b 45 c0 // mov     eax, [rbp+50h+var_B0.baseclass_0.Prototype.ID]
+          83 f8 ff // cmp     eax, 0FFFFFFFFh
           <Target Type="Indirect" Offset="@ref1" Symbol="stats__DealDamageFunctor__ApplyDamage" />
         </Mapping>
       
         <Mapping Name="App::Instance">
           @str1 48 8d 0d ?? ?? ?? ?? // lea     rcx, aCreatingApp; "Creating App\n"
-          @ref1 ff 15 ?? ?? ?? ?? // call    cs:OutputDebugStringA
+          ff 15 ?? ?? ?? ?? // call    cs:OutputDebugStringA
           b9 c8 01 00 00 // mov     ecx, 1C8h
-          @ref2 ff 15 ?? ?? ?? ?? // call    cs:malloc
+          ff 15 ?? ?? ?? ?? // call    cs:malloc
           4c 8b e0 // mov     r12, rax
-          @ref3 48 89 05 ?? ?? ?? ?? // mov     cs:ls__gApp2, rax
+          @ref1 48 89 05 ?? ?? ?? ?? // mov     cs:ls__gApp2, rax
+          48 8b c8 // mov     rcx, rax
+          @ref2 e8 ?? ?? ?? ?? // call    App__ctor
           <Condition Type="String" Offset="@str1" Value="Creating App&#10;" />
-          <Target Type="Indirect" Offset="@ref3" Symbol="AppInstance" />
+          <Target Type="Indirect" Offset="@ref1" Symbol="AppInstance" />
+          <Target Type="Indirect" Offset="@ref2" Symbol="App__Ctor" />
         </Mapping>
 
         <Mapping Name="esv::SavegameManager">
@@ -693,14 +688,14 @@
         -->
 
       <Mapping Name="eoc::gResourceManager">
-          49 8b f0 // mov rsi, r8
-          4c 8b fa // mov r15, rdx
-          48 8b f9 // mov rdi, rcx
-          49 81 c0 84 00 00 00 // add r8, 0x84
-          @ref1 48 8b 0d ?? ?? ?? ?? // mov rcx, qword ptr [GlobalResourceManager]
-          33 d2 // xor edx, edx
-          4d 8b e1 // mov r12, r9
-          <Target Type="Indirect" Offset="@ref1" Symbol="ResourceMgr"/>
+        4c 8b 1c 0a // mov     r11, [rdx+rcx]
+        4c 8b d5 // mov     r10, rbp
+        @ref1 4c 8b 0d ?? ?? ?? ?? // mov     r9, cs:ls__gGlobalResourceManager
+        33 d2 // xor     edx, edx
+        @str1 8b 0d ?? ?? ?? ?? // mov     ecx, cs:fs_lsbs.ID
+        8b c1 // mov     eax, ecx
+        <Condition Type="FixedString" Offset="@str1" Value="lsbs" />
+        <Target Type="Indirect" Offset="@ref1" Symbol="ls__gGlobalResourceManager" />
       </Mapping>
 
       <Mapping Name="eoc::gGuidResourceManager">
@@ -720,16 +715,14 @@
       </Mapping>
 
         <Mapping Name="ls::GlobalSwitches">
-          48 89 5c 24 08 // mov     [rsp+arg_0], rbx
-          48 89 6c 24 10 // mov     [rsp+arg_8], rbp
-          48 89 74 24 18 // mov     [rsp+arg_10], rsi
-          57 // push    rdi
-          48 83 ec 20 // sub     rsp, 20h
-          @ref1 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:ls__gGlobalSwitches
-          48 8b ea // mov     rbp, rdx
-          @ref2 48 8b 15 ?? ?? ?? ?? // mov     rdx, cs:pfs_UseEndTurnFallback
-          48 8b f1 // mov     rsi, rcx
-          <Condition Type="FixedStringIndirect" Offset="@ref2" Value="UseEndTurnFallback" />
+          48 8b ec // mov     rbp, rsp
+          48 83 ec 30 // sub     rsp, 30h
+          @ref1 4c 8b 15 ?? ?? ?? ?? // mov     r10, cs:ls__gGlobalSwitches
+          48 8b f2 // mov     rsi, rdx
+          @str1 48 8b 15 ?? ?? ?? ?? // mov     rdx, cs:pfs_UseEndTurnFallback; _DWORD *
+          48 8b d9 // mov     rbx, rcx
+          41 c6 82 a8 01 00 00 01 // mov     byte ptr [r10+1A8h], 1
+          <Condition Type="FixedStringIndirect" Offset="@str1" Value="UseEndTurnFallback" />
           <Target Type="Indirect" Offset="@ref1" Symbol="ls__GlobalSwitches" />
         </Mapping>
 
@@ -741,41 +734,50 @@
         41 56 // push    r14
         41 57 // push    r15
         48 83 ec 20 // sub     rsp, 20h
-        48 8b f2 // mov     rsi, rdx
+        48 8b ea // mov     rbp, rdx
         48 8b d9 // mov     rbx, rcx
         45 33 f6 // xor     r14d, r14d
-        44 89 74 24 60 // mov     [rsp+48h+arg_10], r14d
+        44 89 74 24 60 // mov     [rsp+48h+a2.ID], r14d
         40 b7 01 // mov     dil, 1
+        48 8b 8a d0 00 00 00 // mov     rcx, [rdx+0D0h]
+        48 8b 01 // mov     rax, [rcx]
         @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, fs_OsirisVariableHelper
         <Condition Type="FixedString" Offset="@str1" Value="OsirisVariableHelper" />
         <Target Type="Absolute" Offset="0" Symbol="esv__OsirisVariableHelper__SavegameVisit" />
       </Mapping>
 
       <Mapping Name="eoc::SpellPrototypeManager">
-        48 83 c2 20 // add     rdx, 20h ; ' '; a2
-        @ref1 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:eoc__gSpellPrototypeManager; a1
-        e8 ?? ?? ?? ?? // call    eoc__SpellPrototypeManager__Get
-        4c 8b f8 // mov     r15, rax
-        @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, fs_Autocast; a2
+        84 c0 // test    al, al
+        0f 84 81 00 00 00 // jz      loc_142F9AA76
+        @ref1 48 8b 3d ?? ?? ?? ?? // mov     rdi, cs:eoc__gSpellPrototypeManager
+        48 8b d3 // mov     rdx, rbx
+        48 8b ce // mov     rcx, rsi
+        e8 ?? ?? ?? ?? // call    sub_1428F6630
+        48 8d 4f 08 // lea     rcx, [rdi+8]
+        48 8d 50 30 // lea     rdx, [rax+30h]
+        e8 ?? ?? ?? ?? // call    sub_140EC8860
+        @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, fs_Autocast
         <Condition Type="FixedString" Offset="@str1" Value="Autocast" />
         <Target Type="Indirect" Offset="@ref1" Symbol="eoc__SpellPrototypeManager" />
       </Mapping>
       
-      <Mapping Name="eoc::SpellPrototype::Init" Scope="Custom">
-        <Target Type="Absolute" Offset="0" Symbol="eoc__SpellPrototype__Init" />
-        48 8b c4 // mov     rax, rsp
-        48 89 58 18 // mov     [rax+18h], rbx
-        55 // push    rbp
-      </Mapping>
-
       <Mapping Name="eoc::SpellPrototype::Init Outer">
-        4c 8b e0 // mov     r12, rax
-        48 89 45 a8 // mov     [rbp+160h+var_1B8], rax
-        @str1 48 8b 15 ?? ?? ?? ?? // mov     rdx, cs:pfs_SpellSchool_2; a2
-        48 8b c8 // mov     rcx, rax; a1
-        e8 ?? ?? ?? ?? // call    stats__Object__GetModifier
-        <Condition Type="FixedStringIndirect" Offset="@str1" Value="SpellSchool" />
-        <Target Type="Absolute" Offset="-256" NextSymbol="eoc::SpellPrototype::Init" NextSymbolSeekSize="256" />
+        49 8d 54 24 20 // lea     rdx, [r12+20h]
+        49 8b cd // mov     rcx, r13
+        @ref1 e8 ?? ?? ?? ?? // call    eoc__SpellPrototype__Init
+        4d 8d 44 24 20 // lea     r8, [r12+20h]
+        48 8d 55 b7 // lea     rdx, [rbp+57h+var_A0]
+        48 8d 4e 08 // lea     rcx, [rsi+8]
+        e8 ?? ?? ?? ?? // call    sub_140EC91F0
+        48 8b 4e 38 // mov     rcx, [rsi+38h]
+        48 63 45 bb // movsxd  rax, [rbp+57h+var_9C]
+        4c 89 2c c1 // mov     [rcx+rax*8], r13
+        48 8d 8e 88 00 00 00 // lea     rcx, [rsi+88h]
+        49 8d 54 24 20 // lea     rdx, [r12+20h]
+        e8 ?? ?? ?? ?? // call    sub_140735650
+        @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, fs_RootSpellID
+        <Condition Type="FixedString" Offset="@str1" Value="RootSpellID" />
+        <Target Type="Indirect" Offset="@ref1" Symbol="eoc__SpellPrototype__Init" />
       </Mapping>
 
       <!--

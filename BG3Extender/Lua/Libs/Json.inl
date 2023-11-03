@@ -139,6 +139,13 @@ void* GetUserdataPointer(lua_State* L, int index)
 	return lua_touserdata(L, index);
 }
 
+void* GetLightCppObjectPointer(lua_State* L, int index)
+{
+	CppObjectMetadata meta;
+	lua_get_cppobject(L, index, meta);
+	return (void*)((uintptr_t)meta.Ptr | ((uint64_t)meta.PropertyMapTag << 48) | ((uint64_t)meta.MetatableTag << 62));
+}
+
 void* GetPointerValue(lua_State* L, int index)
 {
 	switch (lua_type(L, index)) {
@@ -147,6 +154,10 @@ void* GetPointerValue(lua_State* L, int index)
 
 	case LUA_TUSERDATA:
 		return GetUserdataPointer(L, index);
+
+	case LUA_TLIGHTCPPOBJECT:
+	case LUA_TCPPOBJECT:
+		return GetLightCppObjectPointer(L, index);
 
 	default:
 		return nullptr;
@@ -172,20 +183,54 @@ bool CheckForRecursion(lua_State* L, int index, StringifyContext& ctx)
 
 bool TryGetUserdataPairs(lua_State* L, int index)
 {
-	assert(lua_type(L, index) == LUA_TUSERDATA);
-	if (!lua_getmetatable(L, index)) {
-		return false;
+	if (lua_type(L, index) == LUA_TUSERDATA) {
+		if (!lua_getmetatable(L, index)) {
+			return false;
+		}
+
+		push(L, "__pairs");
+		lua_gettable(L, -2);
+		lua_remove(L, -2);
+		// No __pairs function, can't iterate this object
+		if (lua_type(L, -1) != LUA_TNIL) {
+			return true;
+		} else {
+			lua_pop(L, 1);
+			return false;
+		}
+	} else {
+		CppObjectMetadata meta;
+		lua_get_cppobject(L, index, meta);
+		auto mt = State::FromLua(L)->GetMetatableManager().GetMetatable(meta.MetatableTag);
+		if (lua_cmetatable_push(L, mt, (int)MetamethodName::Pairs)) {
+			return true;
+		}
 	}
 
-	push(L, "__pairs");
-	lua_gettable(L, -2);
-	lua_remove(L, -2);
-	// No __pairs function, can't iterate this object
-	if (lua_type(L, -1) != LUA_TNIL) {
-		return true;
-	} else {
-		lua_pop(L, 1);
-		return false;
+	return false;
+}
+
+bool IsArrayLikeUserdata(lua_State* L, int index)
+{
+	StackCheck _(L, 0);
+
+	if (lua_type(L, index) == LUA_TLIGHTCPPOBJECT) {
+		CppObjectMetadata meta;
+		lua_get_cppobject(L, index, meta);
+		return meta.MetatableTag == MetatableTag::ArrayProxy;
+	}
+
+	return false;
+}
+
+bool IsMapLikeUserdata(lua_State* L, int index)
+{
+	StackCheck _(L, 0);
+
+	if (lua_type(L, index) == LUA_TLIGHTCPPOBJECT) {
+		CppObjectMetadata meta;
+		lua_get_cppobject(L, index, meta);
+		return meta.MetatableTag == MetatableTag::MapProxy;
 	}
 
 	return false;
@@ -203,7 +248,14 @@ Json::Value StringifyUserdata(lua_State * L, int index, unsigned depth, Stringif
 		return Json::Value("*RECURSION*");
 	}
 
-	Json::Value arr(Json::objectValue);
+	Json::Value arr;
+	if (IsArrayLikeUserdata(L, index)) {
+		arr = Json::Value(Json::arrayValue);
+	} else {
+		arr = Json::Value(Json::objectValue);
+	}
+
+	bool isMap = IsMapLikeUserdata(L, index);
 
 	if (!TryGetUserdataPairs(L, index)) {
 		return Json::Value();
@@ -227,7 +279,7 @@ Json::Value StringifyUserdata(lua_State * L, int index, unsigned depth, Stringif
 
 	int numElements{ 0 };
 	while (lua_type(L, -2) != LUA_TNIL) {
-		if (ctx.LimitArrayElements != -1 && numElements > ctx.LimitArrayElements) {
+		if (isMap && ctx.LimitArrayElements != -1 && numElements > ctx.LimitArrayElements) {
 			break;
 		}
 
@@ -262,7 +314,7 @@ Json::Value StringifyUserdata(lua_State * L, int index, unsigned depth, Stringif
 				arr[key] = val;
 				lua_pop(L, 1);
 			}
-		} else if (type == LUA_TUSERDATA && ctx.StringifyInternalTypes) {
+		} else if ((type == LUA_TUSERDATA || type == LUA_TLIGHTCPPOBJECT || type == LUA_TCPPOBJECT) && ctx.StringifyInternalTypes) {
 			int top = lua_gettop(L);
 			lua_getglobal(L, "tostring");  /* function to be called */
 			lua_pushvalue(L, -3);   /* value to print */
@@ -406,7 +458,15 @@ Json::Value StringifyInternalType(lua_State * L, int index, StringifyContext& ct
 
 Json::Value TryStringifyUserdata(lua_State * L, int index, unsigned depth, StringifyContext& ctx)
 {
+	CppValueMetadata meta;
 	index = lua_absindex(L, index);
+	if (lua_try_get_cppvalue(L, index, EnumValueMetatable::MetaTag, meta)) {
+		return Json::Value(EnumValueMetatable::GetLabel(meta).GetString());
+	}
+
+	if (lua_try_get_cppvalue(L, index, BitfieldValueMetatable::MetaTag, meta)) {
+		return BitfieldValueMetatable::ToJson(meta);
+	}
 
 	if (ctx.IterateUserdata) {
 		if (ctx.LimitDepth != -1 && depth > (uint32_t)ctx.LimitDepth) {
@@ -457,6 +517,8 @@ Json::Value Stringify(lua_State * L, int index, unsigned depth, StringifyContext
 		return StringifyTable(L, index, depth, ctx);
 
 	case LUA_TUSERDATA:
+	case LUA_TLIGHTCPPOBJECT:
+	case LUA_TCPPOBJECT:
 		return TryStringifyUserdata(L, index, depth, ctx);
 
 	case LUA_TLIGHTUSERDATA:

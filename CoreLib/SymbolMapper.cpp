@@ -701,7 +701,7 @@ bool SymbolMapper::IsFixedStringRef(uint8_t const * ref, char const * str) const
 {
 	if (IsValidModulePtr(ref)) {
 		auto fsx = (FixedString const *)ref;
-		if (*fsx && strcmp(fsx->GetString(), str) == 0) {
+		if (*fsx && fsx->IsValid() && strcmp(fsx->GetString(), str) == 0) {
 			return true;
 		}
 	}
@@ -714,7 +714,7 @@ bool SymbolMapper::IsIndirectFixedStringRef(uint8_t const * ref, char const * st
 	if (IsValidModulePtr(ref)) {
 		auto fsx = (FixedString const * const *)ref;
 		if (*fsx && IsValidModulePtr((uint8_t*)*fsx)) {
-			if (**fsx && strcmp((*fsx)->GetString(), str) == 0) {
+			if (**fsx && (*fsx)->IsValid() && strcmp((*fsx)->GetString(), str) == 0) {
 				return true;
 			}
 		}

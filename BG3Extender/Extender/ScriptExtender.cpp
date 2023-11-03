@@ -73,9 +73,9 @@ void ScriptExtender::Initialize()
 	DetourTransactionBegin();
 	DetourUpdateThread(GetCurrentThread());
 
-	if (GetStaticSymbols().CoreLibSDM__Init != nullptr) {
-		CoreLibInit.Wrap(GetStaticSymbols().CoreLibSDM__Init);
-		CoreLibInit.SetPostHook(&ScriptExtender::OnCoreLibInit, this);
+	if (GetStaticSymbols().App__Ctor != nullptr) {
+		CoreLibInit.Wrap(GetStaticSymbols().App__Ctor);
+		CoreLibInit.SetPreHook(&ScriptExtender::OnCoreLibInit, this);
 	}
 
 	if (GetStaticSymbols().App__UpdatePaths != nullptr) {

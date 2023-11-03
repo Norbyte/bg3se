@@ -221,24 +221,6 @@ struct CCPrepareSpellComponent : public BaseComponent
 	Array<SpellIdBase> Spells;
 };
 
-struct SpellCastComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::SpellCast;
-	static constexpr auto EngineClass = "eoc::spell::CastComponent";
-
-	FixedString field_18;
-	uint8_t field_1C;
-	__int64 field_20;
-	int field_28;
-	int field_2C;
-	int field_30;
-	int field_34;
-	uint8_t field_38;
-	uint8_t field_39;
-	uint8_t field_3A;
-	uint8_t field_3B;
-};
-
 struct SpellModificationContainerComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::SpellModificationContainer;

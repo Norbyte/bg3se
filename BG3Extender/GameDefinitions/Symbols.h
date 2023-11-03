@@ -40,7 +40,7 @@ namespace bg3se
 		FileReader::CtorProc* ls__FileReader__ctor{ nullptr };
 		FileReader::DtorProc* ls__FileReader__dtor{ nullptr };
 		STDString** ls__PathRoots{ nullptr };
-		CoreLibInitProc* CoreLibSDM__Init{ nullptr };
+		App::CtorProc* App__Ctor{ nullptr };
 		AppUpdatePathsProc* App__UpdatePaths{ nullptr };
 
 		ecl::EoCClient** ecl__EoCClient{ nullptr };
@@ -108,7 +108,7 @@ namespace bg3se
 		ls__GlobalAllocator__FreeProc* ls__GlobalAllocator__Free{ nullptr };
 
 		resource::GuidResourceManager** eoc__gGuidResourceManager{ nullptr };
-		ResourceManager** ResourceMgr{ nullptr };
+		ResourceManager** ls__gGlobalResourceManager{ nullptr };
 
 		GlobalSwitches** ls__GlobalSwitches{ nullptr };
 

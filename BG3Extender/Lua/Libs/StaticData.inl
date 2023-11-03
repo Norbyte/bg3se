@@ -145,7 +145,7 @@ Array<Guid> GetAllGuidResources(lua_State* L, ExtResourceManagerType type)
 
 ResourceBank* GetCurrentResourceBank()
 {
-	auto resMgr = GetStaticSymbols().ResourceMgr;
+	auto resMgr = GetStaticSymbols().ls__gGlobalResourceManager;
 	if (!resMgr || !*resMgr || !(*resMgr)->ResourceBanks[0]) {
 		return nullptr;
 	}
