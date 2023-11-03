@@ -70,8 +70,14 @@ struct GameObjectVisualComponent : public BaseComponent
 	FixedString Icon;
 	float Scale;
 	uint8_t Type;
-	GameObjectVisualData VisualData;
-	FixedString TemplateId;
+};
+
+struct ApperanceOverrideComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ApperanceOverride;
+	static constexpr auto EngineClass = "eoc::object_visual::AppearanceOverrideComponent";
+
+	GameObjectVisualData Visual;
 };
 
 struct DisplayNameComponent : public BaseComponent

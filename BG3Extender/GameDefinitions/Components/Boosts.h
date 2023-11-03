@@ -204,7 +204,7 @@ DEFN_BOOST(AddTag, Tag, {
 DEFN_BOOST(IgnoreDamageThresholdMin, IgnoreDamageThreshold, {
 	DamageType DamageType;
 	bool All;
-	int Amount;
+	uint16_t Amount;
 })
 
 DEFN_BOOST(Skill, Skill, {

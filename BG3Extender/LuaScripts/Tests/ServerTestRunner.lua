@@ -26,7 +26,7 @@ Ext.RegisterConsoleCommand("se_dyntest", function ()
 end)
 
 local function DebugValidate(obj, entity, counters)
-    if not Ext.Types.Validate(obj) then
+    if obj ~= nil and not Ext.Types.Validate(obj) then
         local name = Ext.Types.GetObjectType(obj)
         _PE("Validation failed: " .. tostring(entity) .. ", component " .. name)
         if counters[name] == nil then

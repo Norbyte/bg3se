@@ -248,6 +248,10 @@ struct AbstractPeer : public AbstractPeerBase
 	Array<Protocol*> ProtocolList;
 	MultiHashMap<uint32_t, Protocol*> ProtocolMap;
 	QueueCS<Message*> PacketsToSend;
+	QueueCS<Message*> Ring2;
+	QueueCS<Message*> Ring3;
+	uint64_t field_440;
+	uint8_t field_448;
 };
 
 struct Host : public AbstractPeer
