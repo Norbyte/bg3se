@@ -1,4 +1,4 @@
-### BG3SE Lua API v1 Documentation
+### BG3SE Lua API v10 Documentation
 
 ### Table of Contents  
  - [Getting Started](#getting-started)
@@ -19,7 +19,10 @@
     * [Object Scopes](#lua-scopes)
     * [Object Behavior](#lua-objects)
     * [Parameter Passing](#lua-parameters)
+    * [Enumerations](#lua-enumerations)
+    * [Bitfields](#lua-bitfields)
     * [Events](#lua-events)
+ - [Custom Variables](#custom-variables)
  - [Utility functions](#ext-utility)
  - [JSON Support](#json-support)
  - [Mod Info](#mod-info)
@@ -239,6 +242,163 @@ end
     - String (i.e. `"Target"`) - note that this only supports passing a single value!
     - Table (i.e. `{"Target", "AoE"}`)
 
+<a id="lua-enumerations"></a>
+### Enumerations
+
+Enum values returned from functions and enum properties are returned as `userdata` (lightcppobject) values instead of `string`.
+
+```lua
+_D(type(_C().CurrentTemplate.BloodSurfaceType)) -- "userdata"
+```
+
+Enum values have `Label`, `Value` and `EnumName` properties that can be queried to fetch the textual name, numeric value and enumeration name respectively.
+```lua
+local bt = _C().CurrentTemplate.BloodSurfaceType
+_D(bt.Label) -- "Blood"
+_D(bt.Value) -- 16
+_D(bt.EnumName) -- "SurfaceType"
+```
+
+Enum values implement `__tostring` for backwards compatibility with old string enums
+
+```lua
+print(_C().CurrentTemplate.BloodSurfaceType) -- "Blood"
+```
+
+Enum values support comparison with other enum values, enum labels (names) and numeric values:
+
+```lua
+local bt = _C().CurrentTemplate.BloodSurfaceType
+_D(bt) -- "Blood"
+_D(bt == "Blood") -- true
+_D(bt == "something else") -- false
+_D(bt == 16) -- true
+_D(bt == 15) -- false
+_D(bt == Ext.Enums.SurfaceType.Blood) -- true
+_D(bt == Ext.Enums.SurfaceType.Web) -- false
+```
+
+Enum properties support assignment of other enum values, enum labels (names) and numeric values:
+
+```lua
+-- assignment by enum label
+_C().CurrentTemplate.BloodSurfaceType = "Blood"
+-- assignment by enum value
+_C().CurrentTemplate.BloodSurfaceType = 16
+-- assignment by enum object
+_C().CurrentTemplate.BloodSurfaceType = Ext.Enums.SurfaceType.Blood
+```
+
+Using enum values as table keys turns them into strings for backwards compatibility reasons:
+
+```lua
+local t = { Web = 123 }
+_D(t[Ext.Enums.SurfaceType.Web]) -- prints 123
+```
+
+JSON serialization turns enum values into their string representation.
+
+```lua
+print(Ext.Json.Stringify(Ext.Enums.SurfaceType.Web))
+-- "Web"
+```
+
+<a id="lua-bitfields"></a>
+### Bitfields
+
+Bitfields returned from functions and enum properties are `userdata` (lightcppobject) values instead of `table`.
+
+```lua
+_D(type(_C().Stats.AttributeFlags)) -- "userdata"
+```
+
+Bitfields have `__Labels`, `__Value` and `__EnumName` properties that can be queried to fetch a table containing all textual names, a numeric value representing all values and the enumeration name respectively.
+```lua
+local af = _C().Stats.AttributeFlags
+_D(af) -- ["SuffocatingImmunity", "BleedingImmunity", "DrunkImmunity"]
+_D(af.__Labels) -- ["SuffocatingImmunity", "BleedingImmunity", "DrunkImmunity"]
+_D(af.__Value) -- 137440004096
+_D(af.__EnumName) -- "StatAttributeFlags"
+```
+
+They also support querying the state of each bitfield flag (either by label or by numeric value):
+```lua
+local af = _C().Stats.AttributeFlags
+_D(af.DrunkImmunity) -- true
+_D(af.WebImmunity) -- false
+```
+
+Bitfields support table-like iteration (i.e. `pairs`/`ipairs`):
+```lua
+for k,v in pairs(af) do 
+   print(k,v) 
+end
+-- 1       BleedingImmunity
+-- 2       DrunkImmunity
+-- 3       SuffocatingImmunity
+```
+
+Bitfields implement `__tostring` that returns a string containing the enum type and all labels:
+
+```lua
+-- "StatAttributeFlags(SuffocatingImmunity,BleedingImmunity,DrunkImmunity)"
+print(_C().Stats.AttributeFlags)
+```
+
+Bitfields support the `~` (bitwise negate) unary operator and the `|` (bitwise or), `&` (bitwise and) and `~` (bitwise xor) binary operators. All binary operators support bitfields, string bitfield labels, tables of bitfield labels and numeric values as their second operand:
+
+```lua
+local af = _C().Stats.AttributeFlags
+_D(af) -- ["SuffocatingImmunity", "BleedingImmunity", "DrunkImmunity"]
+_D(~af) -- ["Unstorable", "DisarmedImmunity", "PoisonImmunity", "HastedImmunity", ...]
+_D(af & {"DrunkImmunity", "BleedingImmunity"}) -- ["BleedingImmunity", "DrunkImmunity"]
+_D(af & Ext.Enums.StatAttributeFlags.DrunkImmunity) -- ["DrunkImmunity"]
+_D(af | "FreezeImmunity") -- ["FreezeImmunity", "SuffocatingImmunity", "BleedingImmunity", "DrunkImmunity"]
+_D(af ~ 0x802) -- ["SuffocatingImmunity", "DrunkImmunity", "BurnImmunity"]
+```
+
+
+Bitfields support comparison with other bitfields, singular bitfield labels, tables of bitfield labels and numeric values:
+
+```lua
+local af = _C().Stats.AttributeFlags
+_D(af) -- ["SuffocatingImmunity", "BleedingImmunity", "DrunkImmunity"]
+_D(af == {"SuffocatingImmunity", "BleedingImmunity", "DrunkImmunity"}) -- true
+_D(af == {"SuffocatingImmunity", "BleedingImmunity"}) -- false
+_D(af == 137440004096) -- true
+_D(af == 1234) -- false
+```
+
+Bitfields support assignment of other enum values, enum labels (names) and numeric values:
+
+```lua
+-- assignment by enum label
+_C().Stats.AttributeFlags = {"SuffocatingImmunity", "BleedingImmunity"}
+-- assignment by enum value
+_C().Stats.AttributeFlags = 137440004096
+-- assignment by enum object
+_C().Stats.AttributeFlags = Ext.Enums.StatAttributeFlags.WebImmunity
+-- assigning result of bitfield operation
+_C().Stats.AttributeFlags = _C().Stats.AttributeFlags | "WebImmunity"
+```
+
+JSON serialization turns bitfields into an array of textual labels.
+
+```lua
+print(Ext.Json.Stringify(_C().Stats.AttributeFlags))
+-- ["SuffocatingImmunity", "BleedingImmunity", "DrunkImmunity"]
+```
+
+It should be noted that bitfields are always passed by value, so appending or removing elements from them like a table is not possible:
+
+```lua
+local af = _C().Stats.AttributeFlags
+-- throws "attempt to index a userdata value (global 'af')"
+af.SuffocatingImmunity = false
+-- throws "bad argument #1 to 'insert' (table expected, got light C++ object)"
+table.insert(af, "WebImmunity")
+```
+
 <a id="lua-events"></a>
 ## Events
 
@@ -385,6 +545,154 @@ Ext.Osiris.RegisterListener("TurnEnded", 1, "after", function (characterGuid)
     _P("TurnEnded- " .. characterGuid)
 end)
 ```
+
+<a id="custom-variables"></a>
+## Custom variables
+
+v10 adds support for attaching custom properties to entities. These properties support automatic network synchronization between server and clients as well as savegame persistence.
+
+To use custom variables, the variable name must first be registered with the variable manager:
+```lua
+Ext.Vars.RegisterUserVariable("NRD_Whatever", {
+    Server = true,
+    Client = true, 
+    SyncToClient = true
+})
+```
+
+The `RegisterUserVariable` method accepts two parameters, a variable name and an optional list of settings.
+The following settings are supported:
+| Setting | Default | Meaning |
+|-|-|-|
+| `Server` | true | Variable is present on server entities |
+| `Client` | false | Variable is present on client entities |
+| `WriteableOnServer` | true | Variable can be modified on server side |
+| `WriteableOnClient` | false | Variable can be modified on client side |
+| `Persistent` | true | Variable is written to/restored from savegames |
+| `SyncToClient` | false | Server-side changes to the variable are synced to all clients |
+| `SyncToServer` | false | Client-side changes to the variable are synced to the server |
+| `SyncOnTick` | true | Client-server sync is performed once per game loop tick |
+| `SyncOnWrite` | false | Client-server sync is performed immediately when the variable is written. This is disabled by default for performance reasons. |
+| `DontCache` | false | Disable Lua caching of variable values (see below) |
+
+Usage notes:
+ - Since variable prototypes are used for savegame serialization, network syncing, etc., they must be registered before the savegame is loaded and every time the Lua context is reset; performing the registration when `BootstrapServer.lua` or `BootstrapClient.lua` is loaded is recommended
+ - Although the variables registered server-side and client-side can differ, it is recommended to register all variables on both sides (even if they're server-only or client-only) for consistency
+ - Variable names, much like Osiris DB names are global; it is recommended to prefix them with your mod name to ensure they're unique
+ - Variables must be registered with the same settings on both client and server, otherwise various synchronization issues may occur.
+
+
+After registration, custom variables can be read/written through the `UserVars` property on entities:
+```lua
+_C().UserVars.NRD_Whatever = 123
+Ext.Print(_C().UserVars.NRD_Whatever)
+```
+
+### Synchronization
+
+A variable is only eligible for synchronization if:
+ - Both `Server` and `Client` flags are set
+ - For server to client synchronization, both `WriteableOnServer` and `SyncToClient` flags are set
+ - For client to server synchronization, both `WriteableOnClient` and `SyncToServer` flags are set
+
+For a variable to be synchronized, it must be *dirtied* first. The most straightforward way to perform this is by doing a direct write to the variable:
+```lua
+_C().UserVars.NRD_Whatever = "asd"
+```
+
+Note: Writes to subproperties of complex types (i.e. tables etc) will not trigger this mechanism! Example:
+```lua
+_C().UserVars.NRD_Whatever.SomeProperty = 123
+```
+Since the `__newindex` metamethod of the `UserVars` object is not called, the variable manager does not detect that a change was performed. A simple fix is to reassign the property after modifications were made:
+```lua
+local v = _C().UserVars.NRD_Whatever
+v.SomeProperty = 123
+_C().UserVars.NRD_Whatever = v
+```
+
+On each tick of the game loop, variables that were changed during the current tick are collected and sent to the client/server in a batch. Unless configured otherwise (i.e. the `SyncOnTick` setting is disabled), this is the default synchronization method.
+
+If a change to a user variable must be visible by the peer before the end of the current tick:
+ - The `SyncOnWrite` flag can be enabled which ensures that the write is immediately sent to client/server without additional wait time. 
+ - `Ext.Vars.SyncUserVariables()` can be called, which synchronizes all user variable changes that were done up to that point
+
+
+### Caching behavior
+
+The variable manager keeps a Lua copy of table variables for performance reasons. This means that instead of unserializing the table from JSON each time the property is accessed, the cached Lua version is returned after the first access. This means that subsequent accesses to the property will return the same reference and writes to the property.
+
+Example:
+```lua
+local t1 = _C().UserVars.NRD_Whatever
+local t2 = _C().UserVars.NRD_Whatever
+t1.Name = "test"
+_D(t2.Name) -- prints "test"
+```
+
+Cached variables are serialized to JSON when they are first sent to the client/server or when a savegame is created. This means that all changes to a dirtied variable up to the next synchronization point will be visible to peers despite no explicit write being performed to `UserVars`. Example:
+```lua
+local v = _C().UserVars.NRD_Whatever
+v.SomeProperty = 123
+-- variable is dirtied here
+_C().UserVars.NRD_Whatever = v
+v.SomeProperty = 456
+-- client will receive 456
+Ext.Vars.SyncUserVariables()
+
+-- client will NOT receive this change since the NRD_Whatever variable is no longer dirtied after sync;
+-- another explicit write to UserVars.NRD_Whatever must be performed
+v.SomeProperty = 789
+```
+
+Variable caching can be disabled by passing the `DontCache` flag to `RegisterUserVariable`. Uncached variables are unserialized from JSON each time the property is accessed, so each access returns a different copy:
+
+```lua
+local t1 = _C().UserVars.NRD_Whatever
+local t2 = _C().UserVars.NRD_Whatever
+t1.Name = "test"
+_D(t2.Name) -- prints nil
+```
+
+Variables are immediately serialized to JSON when a `UserVars` write occurs; this means that changes to the original reference have no effect after assignment.
+
+```lua
+local t1 = { Name = "t1" }
+_C().UserVars.NRD_Whatever = t1
+t1.Name = "t2"
+_D(_C().UserVars.NRD_Whatever.Name) -- prints "t1"
+```
+
+This also means that changing the value returned from a `UserVars` fetch will not affect the stored value:
+
+```lua
+local t1 = _C().UserVars.NRD_Whatever
+t1.Name = "t1"
+_D(_C().UserVars.NRD_Whatever.Name) -- prints "t1"
+```
+
+### Mod variables
+
+Mod variables are the equivalent of user variables for mods; i.e. they store and synchronize a set of variables for each mod. Mod variables are mostly functionally identical to user variables, so only the differences are highlighted here.
+
+To use a mod variable, the variable must first be registered with the variable manager:
+```lua
+Ext.Vars.RegisterModVariable(ModuleUUID, "VariableName", {
+    Server = true, Client = true, SyncToClient = true
+})
+```
+
+Mod variable registrations are kept separate for each mod UUID, so there is no need to use unique prefixes for variables since a mod registering a variable in its own table will have no effect on other mods.
+
+The variables for a mod can be accessed by calling `Ext.Vars.GetModVariables(ModuleUUID)`:
+```lua
+local vars = Ext.Vars.GetModVariables(ModuleUUID)
+Ext.Print(vars.VariableName)
+vars.VariableName = 123
+```
+
+`Ext.Vars.SyncModVariables([moduleUuid])` can be called to perform an immediate synchronization of all mod variable changes.
+
 
 <a id="ext-utility"></a>
 ## Utility functions
