@@ -333,6 +333,7 @@ struct ItemTemplate : public EoCGameObjectTemplate2
     OverrideableProperty<FixedString> Key;
     OverrideableProperty<FixedString> BloodType;
     OverrideableProperty<FixedString> CriticalHitType;
+    OverrideableProperty<FixedString> MapMarkerStyle;
     OverrideableProperty<Guid> LockDifficultyClassID;
     OverrideableProperty<Guid> DisarmDifficultyClassID;
     OverrideableProperty<int32_t> Amount;
@@ -367,11 +368,11 @@ struct ItemTemplate : public EoCGameObjectTemplate2
     OverrideableProperty<uint8_t> InteractionFilterType;
     OverrideableProperty<uint8_t> InteractionFilterRequirement;
     OverrideableProperty<FixedString> ActivationGroupId;
-    OverrideableProperty<int32_t> Race;
+    OverrideableProperty<int32_t> LevelOverride;
     OverrideableProperty<bool> IsSourceContainer;
     OverrideableProperty<bool> IsPublicDomain;
     OverrideableProperty<bool> IgnoreGenerics;
-    OverrideableProperty<bool> AllowSummonTeleport;
+    OverrideableProperty<bool> AllowSummonGenericUse;
     OverrideableProperty<bool> IsPortalProhibitedToPlayers;
     OverrideableProperty<uint8_t> LightChannel;
     OverrideableProperty<Guid> EquipmentTypeID;

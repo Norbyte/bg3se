@@ -315,7 +315,7 @@
           49 8b cf // mov     rcx, r15
           83 bd cc 01 00 00 00 // cmp     [rbp+370h+var_1A4], 0
           @ref 0f 85 23 02 00 00 // jnz     loc_141AD5193
-          e8 4b ab 4c 00 // call    sub_141F9FAC0
+          e8 ?? ?? ?? ?? // call    sub_141F9FAC0
           84 c0 // test    al, al
           75 10 // jnz     short loc_141AD4F89
           48 8b 05 ?? ?? ?? ?? // mov     rax, cs:ls__gGlobalSwitches

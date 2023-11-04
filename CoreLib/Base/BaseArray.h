@@ -737,7 +737,7 @@ public:
 	void copy_from(UninitializedStaticArray const& a, size_type curInitializedCapacity, size_type newInitializedCapacity)
 	{
 		assert(newInitializedCapacity <= a.size());
-		resize(a.size(), curInitializedCapacity, newInitializedCapacity);
+		resize(a.size(), newInitializedCapacity, curInitializedCapacity);
 		for (size_type i = 0; i < newInitializedCapacity; i++) {
 			buf_[i] = a.buf_[i];
 		}
