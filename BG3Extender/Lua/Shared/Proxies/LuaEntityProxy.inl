@@ -68,6 +68,28 @@ namespace bg3se::lua
 
 #undef T
 
+	int EntityProxy::CreateComponent(lua_State* L)
+	{
+		StackCheck _(L, 1);
+		auto self = get<EntityProxy*>(L, 1);
+		auto componentType = get<ExtComponentType>(L, 2);
+		auto ecs = GetEntitySystem(L);
+		auto typeId = (uint16_t)*ecs->GetComponentIndex(componentType);
+		auto world = ecs->GetEntityWorld();
+		if (typeId < world->ComponentOpsList.size()) {
+			auto ops = world->ComponentOpsList[typeId];
+			if (ops != nullptr) {
+				ops->AddImmediateDefaultComponent(self->handle_.Handle, 0);
+				PushComponent(L, ecs, self->handle_, componentType, GetCurrentLifetime(L));
+				return 1;
+			}
+		}
+
+		OsiError("Unable to construct components of this type: " << componentType);
+		push(L, nullptr);
+		return 1;
+	}
+
 	int EntityProxy::GetComponent(lua_State* L)
 	{
 		StackCheck _(L, 1);
@@ -248,7 +270,7 @@ namespace bg3se::lua
 				ecs->NotifyReplicationFlagsDirtied();
 			}
 		} else {
-			OsiError("Unable to replicate; this component type cannot be replicated or the replication ID is not mapped");
+			OsiError("Unable to replicate; " << component << " type cannot be replicated or the replication ID is not mapped");
 		}
 	}
 
@@ -287,6 +309,11 @@ namespace bg3se::lua
 		StackCheck _(L, 1);
 		auto self = get<EntityProxy*>(L, 1);
 		auto key = get<FixedString>(L, 2);
+
+		if (key == GFS.strCreateComponent) {
+			push(L, &EntityProxy::CreateComponent);
+			return 1;
+		}
 
 		if (key == GFS.strGetComponent) {
 			push(L, &EntityProxy::GetComponent);

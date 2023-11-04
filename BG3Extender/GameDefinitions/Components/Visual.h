@@ -72,9 +72,9 @@ struct GameObjectVisualComponent : public BaseComponent
 	uint8_t Type;
 };
 
-struct ApperanceOverrideComponent : public BaseComponent
+struct AppearanceOverrideComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ApperanceOverride;
+	static constexpr ExtComponentType ComponentType = ExtComponentType::AppearanceOverride;
 	static constexpr auto EngineClass = "eoc::object_visual::AppearanceOverrideComponent";
 
 	GameObjectVisualData Visual;

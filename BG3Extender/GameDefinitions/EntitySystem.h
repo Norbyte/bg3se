@@ -331,7 +331,12 @@ struct ComponentDataStore : public ProtectedGameObject<ComponentDataStore>
 
 struct ComponentOps : public ProtectedGameObject<ComponentOps>
 {
-	__int64 VMT;
+	virtual ~ComponentOps() = 0;
+	virtual void fun_08() = 0;
+	virtual void fun_10() = 0;
+	virtual void DefaultConstructComponents() = 0;
+	virtual void AddImmediateDefaultComponent(uint64_t entity, int retryCount) = 0;
+
 	__int64 field_8;
 	__int64 field_10;
 	__int64 field_18;
@@ -436,23 +441,23 @@ struct EntityWorld : public ProtectedGameObject<EntityWorld>
 	QueryManager Queries;
 	std::array<EntityTypeSalts, 0x40>* EntitySalts;
 	EntityStore* EntityTypes;
+	__int64 field_218[5];
 	ComponentDataStore ComponentData;
-	__int64 field_270;
-	MultiHashMap<uint64_t, uint64_t> field_278;
-	Array<void*> field_2B8;
+	__int64 field_298;
+	__int64 field_2A0;
+	__int64 field_2A8;
+	__int64 field_2B0;
+	__int64 field_2B8;
+	Array<void*> field_2C0;
 	Array<ComponentOps*> ComponentOpsList;
-	ScratchString Scratch;
+	Array<void*> field_2E0;
+	void* field_2F0;
+	bool field_2F8;
+	bool field_2F9;
 	void* UpdateBatches;
 	CriticalSection CS;
 	int field_338;
 	EntityComponents* Components;
-	__int64 field_348;
-	__int64 field_350;
-	__int64 field_358;
-	__int64 field_360;
-	__int64 field_368;
-	__int64 field_370;
-	__int64 field_378;
 
 	void* GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize);
 	void* GetRawComponent(char const* nameGuid, ComponentTypeIndex type, std::size_t componentSize);

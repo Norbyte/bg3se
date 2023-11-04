@@ -28,6 +28,7 @@ namespace bg3se::lua
 		Array<ExtComponentType> GetAllComponentTypes(ecs::EntitySystemHelpersBase* ecs) const;
 		void GetComponentByType(lua_State* L, ExtComponentType componentType) const;
 
+		static int CreateComponent(lua_State* L);
 		static int GetComponent(lua_State* L);
 		static int GetAllComponents(lua_State* L);
 		static int GetAllComponentNames(lua_State* L);
