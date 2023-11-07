@@ -616,4 +616,21 @@ struct CharacterCreationSharedVisual : public resource::GuidResource
 };
 
 
+struct LevelMap : public resource::GuidResource
+{
+	static constexpr auto ResourceManagerType = ExtResourceManagerType::LevelMap;
+
+	struct DiceRoll
+	{
+		DiceSizeId DiceValue;
+		uint8_t AmountOfDices;
+	};
+
+	FixedString Name;
+	Guid PreferredClassUUID;
+	std::variant<int32_t, DiceRoll> FallbackValue;
+	Array<std::variant<int32_t, DiceRoll>> LevelMaps;
+};
+
+
 END_NS()

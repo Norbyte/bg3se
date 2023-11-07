@@ -434,6 +434,7 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 	MapResourceManagerIndex("eoc::ClassDescriptions", ExtResourceManagerType::ClassDescription);
 	MapResourceManagerIndex("eoc::ColorDefinitions", ExtResourceManagerType::ColorDefinition);
 	MapResourceManagerIndex("ls::FlagManager", ExtResourceManagerType::Flag);
+	MapResourceManagerIndex("eoc::LevelMapValues", ExtResourceManagerType::LevelMap);
 	
 	initialized_ = true;
 }

@@ -86,6 +86,7 @@ BEGIN_ENUM(ExtResourceManagerType, uint32_t)
 	E(ClassDescription)
 	E(ColorDefinition)
 	E(Flag)
+	E(LevelMap)
 	E(Max)
 END_ENUM()
 

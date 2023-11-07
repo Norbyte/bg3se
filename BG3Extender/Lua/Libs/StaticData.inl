@@ -37,7 +37,8 @@ using namespace bg3se::resource;
 	FOR_RESOURCE_TYPE(CharacterCreationAppearanceMaterial) \
 	FOR_RESOURCE_TYPE(CharacterCreationPassiveAppearance) \
 	FOR_RESOURCE_TYPE(CharacterCreationAppearanceVisual) \
-	FOR_RESOURCE_TYPE(CharacterCreationSharedVisual)
+	FOR_RESOURCE_TYPE(CharacterCreationSharedVisual) \
+	FOR_RESOURCE_TYPE(LevelMap)
 
 #define FOR_EACH_NONGUID_RESOURCE_TYPE() \
 	FOR_RESOURCE_TYPE(Visual) \
