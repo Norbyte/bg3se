@@ -51,6 +51,10 @@ void Console::Print(DebugMessageType type, char const* msg)
 		SetColor(DebugMessageType::Debug);
 	}
 
+	if (logCallback_) {
+		logCallback_(msg);
+	}
+
 	if (logToFile_) {
 		logFile_.write(msg, strlen(msg));
 		logFile_.write("\r\n", 2);
@@ -67,6 +71,11 @@ void Console::Clear()
 void Console::EnableOutput(bool enabled)
 {
 	enabled_ = enabled;
+}
+
+void Console::SetLogCallback(LogCallbackProc* callback)
+{
+	logCallback_ = callback;
 }
 
 void Console::Create()

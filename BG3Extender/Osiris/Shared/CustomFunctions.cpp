@@ -684,6 +684,17 @@ void CustomFunctionInjector::ExtendStoryHeader(std::wstring const & headerPath)
 	extendingStory_ = false;
 }
 
+void CustomFunctionInjector::AddJunkToStory(std::wstring const& storyPath)
+{
+	extendingStory_ = true;
+
+	std::ofstream wf(storyPath.c_str(), std::ios::out | std::ios::binary | std::ios::app);
+	wf.write("\r\nJUNK JUNK JUNK JUNK JUNK\r\n", 28);
+	wf.close();
+
+	extendingStory_ = false;
+}
+
 void CustomFunctionInjector::OnCreateFile(LPCWSTR lpFileName,
 	DWORD dwDesiredAccess,
 	DWORD dwShareMode,
@@ -696,21 +707,37 @@ void CustomFunctionInjector::OnCreateFile(LPCWSTR lpFileName,
 	if (!extendingStory_ && (dwDesiredAccess & GENERIC_WRITE)) {
 		auto length = wcslen(lpFileName);
 		if (length > 16 && wcscmp(&lpFileName[length - 16], L"story_header.div") == 0) {
-			DEBUG("CustomFunctionInjector::OnCreateFile: %s", ToStdUTF8(lpFileName));
+			DEBUG("CustomFunctionInjector::OnCreateFile: %s", ToStdUTF8(lpFileName).c_str());
 			storyHeaderFile_ = hFile;
 			storyHeaderPath_ = lpFileName;
+		}
+
+		if (length > 19 && wcscmp(&lpFileName[length - 19], L"story_generated.div") == 0) {
+			DEBUG("CustomFunctionInjector::OnCreateFile: %s", ToStdUTF8(lpFileName).c_str());
+			storyGeneratedFile_ = hFile;
+			storyGeneratedPath_ = lpFileName;
 		}
 	}
 }
 
 void CustomFunctionInjector::OnCloseHandle(HANDLE hFile, BOOL bSucceeded)
 {
-	if (bSucceeded && !extendingStory_ && storyHeaderFile_ != NULL && hFile == storyHeaderFile_) {
-		if (esv::ExtensionState::Get().HasFeatureFlag("Osiris")) {
-			ExtendStoryHeader(storyHeaderPath_);
+	if (bSucceeded && !extendingStory_) {
+		if (storyHeaderFile_ != NULL && hFile == storyHeaderFile_) {
+			if (esv::ExtensionState::Get().HasFeatureFlag("Osiris")) {
+				ExtendStoryHeader(storyHeaderPath_);
+			}
+
+			storyHeaderFile_ = NULL;
 		}
 
-		storyHeaderFile_ = NULL;
+		if (storyGeneratedFile_ != NULL && hFile == storyGeneratedFile_) {
+			if (gExtender->GetConfig().DisableStoryCompilation) {
+				AddJunkToStory(storyGeneratedPath_);
+			}
+
+			storyHeaderFile_ = NULL;
+		}
 	}
 }
 

@@ -30,6 +30,7 @@ struct ExtenderConfig
 	bool DisableLauncher{ false };
 	bool DisableStoryMerge{ true };
 	bool DisableStoryPatching{ false };
+	bool DisableStoryCompilation{ true };
 
 #if defined(OSI_EXTENSION_BUILD)
 	bool DisableModValidation{ true };

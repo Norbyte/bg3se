@@ -9,6 +9,8 @@ BEGIN_SE()
 class Console
 {
 public:
+	using LogCallbackProc = void (char const* message);
+
 	virtual ~Console();
 	virtual void Create();
 	void Destroy();
@@ -20,6 +22,7 @@ public:
 
 	void Clear();
 	void EnableOutput(bool enabled);
+	void SetLogCallback(LogCallbackProc* callback);
 
 protected:
 	bool created_{ false };
@@ -27,6 +30,7 @@ protected:
 	bool inputEnabled_{ false };
 	bool enabled_{ false };
 	bool logToFile_{ false };
+	LogCallbackProc* logCallback_{ nullptr };
 	std::ofstream logFile_;
 };
 

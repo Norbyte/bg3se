@@ -26,7 +26,7 @@ namespace bg3se::lua
 	{
 	public:
 		static_assert(!std::is_pointer_v<TKey>, "MultiHashMapProxyImpl template parameter should not be a pointer type!");
-		static_assert(!std::is_pointer_v<TValue>, "MultiHashMapProxyImpl template parameter should not be a pointer type!");
+		//static_assert(!std::is_pointer_v<TValue>, "MultiHashMapProxyImpl template parameter should not be a pointer type!");
 
 		static constexpr unsigned ContainerClassId = 1;
 
@@ -145,7 +145,7 @@ namespace bg3se::lua
 	{
 	public:
 		static_assert(!std::is_pointer_v<TKey>, "RefMapProxyImpl template parameter should not be a pointer type!");
-		static_assert(!std::is_pointer_v<TValue>, "RefMapProxyImpl template parameter should not be a pointer type!");
+		//static_assert(!std::is_pointer_v<TValue>, "RefMapProxyImpl template parameter should not be a pointer type!");
 
 		static constexpr unsigned ContainerClassId = TContainerClassId;
 

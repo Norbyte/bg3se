@@ -230,7 +230,7 @@ void OsirisExtender::OnAssert(bool Successful, char const * Message, bool Unknow
 
 bool OsirisExtender::CompileWrapper(bool (* next)(void *, wchar_t const *, wchar_t const *), void * Osiris, wchar_t const * Path, wchar_t const * Mode)
 {
-	DEBUG("OsirisExtender::CompileWrapper: Starting compilation of '%s'", ToStdUTF8(Path));
+	DEBUG("OsirisExtender::CompileWrapper: Starting compilation of '%s'", ToStdUTF8(Path).c_str());
 	auto OriginalFlags = *wrappers_.Globals.DebugFlags;
 	std::wstring storyPath;
 

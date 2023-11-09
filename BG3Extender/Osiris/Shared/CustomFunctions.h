@@ -315,7 +315,9 @@ namespace bg3se
 		OsirisWrappers & wrappers_;
 		CustomFunctionManager & functions_;
 		std::wstring storyHeaderPath_;
+		std::wstring storyGeneratedPath_;
 		HANDLE storyHeaderFile_{ NULL };
+		HANDLE storyGeneratedFile_{ NULL };
 		bool extendingStory_{ false };
 		std::unordered_map<uint32_t, FunctionHandle> osiToDivMappings_;
 		std::unordered_map<FunctionHandle, uint32_t> divToOsiMappings_;
@@ -324,6 +326,7 @@ namespace bg3se
 		void CreateOsirisSymbolMap(MappingInfo ** Mappings, uint32_t * MappingCount);
 		void OnAfterGetFunctionMappings(void * Osiris, MappingInfo ** Mappings, uint32_t * MappingCount);
 		void ExtendStoryHeader(std::wstring const & headerPath);
+		void AddJunkToStory(std::wstring const & storyPath);
 		void OnCreateFile(LPCWSTR lpFileName,
 			DWORD dwDesiredAccess,
 			DWORD dwShareMode,
