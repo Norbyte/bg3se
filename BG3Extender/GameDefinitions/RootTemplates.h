@@ -480,4 +480,54 @@ struct SurfaceTemplate : public GameObjectTemplate
     OverrideableProperty<FixedString> AiPathIconFX;
 };
 
+
+struct GlobalTemplateBank
+{
+    void* VMT;
+    Map<FixedString, GameObjectTemplate*> Templates;
+    Array<void*> field_20;
+    Array<void*> field_30;
+    Array<void*> field_40;
+    Array<void*> field_50;
+    int field_60;
+    int field_64;
+    FixedString field_68;
+};
+
+
+struct GlobalTemplateManager
+{
+    void* VMT;
+    Map<FixedString, GameObjectTemplate*> Templates;
+    std::array<GlobalTemplateBank*, 2> Banks;
+};
+
+
+struct CacheTemplateManagerBase
+{
+    void* VMT;
+    uint8_t TemplateManagerType;
+    MultiHashMap<FixedString, GameObjectTemplate*> Templates;
+    MultiHashMap<uint32_t, GameObjectTemplate*> TemplatesByHandle;
+    MultiHashMap<uint32_t, uint32_t> RefCountsByHandle;
+    SRWLock Lock;
+    Array<void*> NewTemplates;
+    Array<void*> CacheTemplateRemovers;
+    bool field_100;
+};
+
+
+struct LocalTemplateManager
+{
+    SRWLOCK Lock;
+    RefMap<FixedString, GameObjectTemplate*> Templates;
+    RefMap<uint16_t, Array<GameObjectTemplate*>*> TemplatesByType;
+    RefMap<uint32_t, GameObjectTemplate*> TemplatesByHandle;
+    void* LocalLoadHelper;
+    CRITICAL_SECTION CriticalSection;
+    RefMap<FixedString, RefMap<FixedString, GameObjectTemplate*>> TemplatesByLevel;
+    int field_78;
+};
+
+
 END_SE()

@@ -18,6 +18,7 @@
 #include <Lua/Libs/Vars.inl>
 #include <Lua/Libs/ClientNet.inl>
 #include <Lua/Libs/ServerNet.inl>
+#include <Lua/Libs/ServerTemplate.inl>
 
 BEGIN_NS(ecl::lua)
 
@@ -33,6 +34,7 @@ BEGIN_NS(esv::lua)
 void RegisterServerLibraries()
 {
 	net::RegisterNetLib();
+	tmpl::RegisterTemplateLib();
 }
 
 END_NS()

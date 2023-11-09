@@ -97,6 +97,10 @@ namespace bg3se
 		SkillPrototypeManager** eoc__SkillPrototypeManager{ nullptr };
 		StatusPrototypeManager** eoc__StatusPrototypeManager{ nullptr };*/
 
+		esv::LevelManager** esv__LevelManager{ nullptr };
+		GlobalTemplateManager** ls__GlobalTemplateManager{ nullptr };
+		CacheTemplateManagerBase** esv__CacheTemplateManager{ nullptr };
+
 		esv::SavegameManager** esv__SavegameManager{ nullptr };
 
 		App** AppInstance{ nullptr };
@@ -236,15 +240,12 @@ namespace bg3se
 
 		inline esv::LevelManager* GetServerLevelManager() const
 		{
-			/*if (esv__EoCServer != nullptr
-				&& *esv__EoCServer != nullptr
-				&& (*esv__EoCServer)->EntityManager != nullptr
-				&& (*esv__EoCServer)->EntityManager->LevelManager != nullptr) {
-				return reinterpret_cast<esv::LevelManager *>((*esv__EoCServer)->EntityManager->LevelManager);
+			if (esv__LevelManager != nullptr
+				&& *esv__LevelManager != nullptr) {
+				return *esv__LevelManager;
 			} else {
 				return {};
-			}*/
-			return nullptr;
+			}
 		}
 
 		inline esv::Level* GetCurrentServerLevel() const
@@ -266,6 +267,17 @@ namespace bg3se
 				return {};
 			}
 		}
+
+		inline GlobalTemplateManager* GetGlobalTemplateManager() const
+		{
+			if (ls__GlobalTemplateManager) {
+				return *ls__GlobalTemplateManager;
+			} else {
+				return nullptr;
+			}
+		}
+
+		GlobalTemplateBank* GetGlobalTemplateBank() const;
 
 		void CanonicalizePath(STDString & path) const;
 		STDString ToPath(StringView path, PathRootType root, bool canonicalize = true) const;

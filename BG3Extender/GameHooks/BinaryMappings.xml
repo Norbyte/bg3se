@@ -714,6 +714,25 @@
         <Condition Type="FixedString" Offset="@str1" Value="MALE" />
       </Mapping>
 
+      <Mapping Name="esv::LevelManager">
+        48 89 54 24 40 // mov     qword ptr [rsp+0D8h+a2.ID], rdx
+        49 8b 0c 24 // mov     rcx, [r12]
+        e8 1f 21 e2 fe // call    sub_140A7A5F0
+        @ref1 4c 8b 15 ?? ?? ?? ?? // mov     r10, cs:esv__gLevelManager
+        48 8d 50 0c // lea     rdx, [rax+0Ch]
+        c6 44 24 28 01 // mov     [rsp+0D8h+var_B0], 1
+        4c 89 54 24 20 // mov     [rsp+0D8h+var_B8], r10
+        @ref2 4c 8b 0d ?? ?? ?? ?? // mov     r9, cs:esv__gLocalTemplateManager
+        @ref3 4c 8b 05 ?? ?? ?? ?? // mov     r8, cs:esv__gGlobalTemplateManager
+        0f b6 48 08 // movzx   ecx, byte ptr [rax+8]
+        @ref4 e8 ?? ?? ?? ?? // call    esv__DoResolveRootTemplate
+        48 8b f8 // mov     rdi, rax
+        c7 44 24 74 ff ff ff ff // mov     [rsp+0D8h+var_64], 0FFFFFFFFh
+        <Target Type="Indirect" Offset="@ref1" Symbol="esv__LevelManager" />
+        <Target Type="Indirect" Offset="@ref2" Symbol="esv__CacheTemplateManager" />
+        <Target Type="Indirect" Offset="@ref3" Symbol="ls__GlobalTemplateManager" />
+      </Mapping>
+
         <Mapping Name="ls::GlobalSwitches">
           48 8b ec // mov     rbp, rsp
           48 83 ec 30 // sub     rsp, 30h

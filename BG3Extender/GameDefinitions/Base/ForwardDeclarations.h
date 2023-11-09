@@ -23,7 +23,8 @@ struct WallConstructionTemplate;
 struct LightProbeTemplate;
 struct LightTemplate;
 
-struct Level;
+struct LevelBase;
+struct EoCLevel;
 
 struct ModuleInfo;
 struct Module;
@@ -34,9 +35,9 @@ struct FileReader;
 struct TranslatedStringRepository;
 
 struct GlobalTemplateManager;
+struct GlobalTemplateBank;
 struct LocalTemplateManager;
-struct GlobalCacheTemplateManager;
-struct LevelCacheTemplateManager;
+struct CacheTemplateManagerBase;
 
 struct UuidComponent;
 struct UuidToHandleMappingComponent;

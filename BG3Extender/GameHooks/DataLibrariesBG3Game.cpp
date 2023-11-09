@@ -181,6 +181,10 @@ namespace bg3se
 		SYM_OFF(RPGStats__Load);
 		SYM_OFF(RPGStats__PreParseDataFolder);
 
+		SYM_OFF(esv__LevelManager);
+		SYM_OFF(ls__GlobalTemplateManager);
+		SYM_OFF(esv__CacheTemplateManager);
+
 		SYM_OFF(esv__SavegameManager);
 		SYM_OFF(AppInstance);
 

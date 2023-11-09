@@ -656,6 +656,9 @@
     <None Include="Lua\Shared\Proxies\LuaBitfieldValue.inl">
       <Filter>Lua\Shared\Proxies</Filter>
     </None>
+    <None Include="Lua\Libs\ServerTemplate.inl">
+      <Filter>Lua\Libs</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

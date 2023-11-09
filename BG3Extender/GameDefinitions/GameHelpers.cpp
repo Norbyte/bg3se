@@ -119,6 +119,21 @@ namespace bg3se
 		return reader.IsLoaded();
 	}
 
+	GlobalTemplateBank* StaticSymbols::GetGlobalTemplateBank() const
+	{
+		auto gtm = GetStaticSymbols().GetGlobalTemplateManager();
+		if (!gtm) return nullptr;
+
+#if defined(OSI_EOCAPP)
+		auto tls = *(uint64_t*)__readgsqword(0x58);
+		auto slot = ((uint8_t*)tls)[8];
+		return gtm->Banks[slot];
+#else
+		auto getter = GetStaticSymbols().GlobalTemplateManager__GetGlobalTemplateBank;
+		return getter(gtm);
+#endif
+	}
+
 	FileReaderPin::~FileReaderPin()
 	{
 		if (reader_ != nullptr) {

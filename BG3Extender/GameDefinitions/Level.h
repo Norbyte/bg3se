@@ -36,37 +36,29 @@ namespace bg3se
 	};
 
 
-	struct Level : public ProtectedGameObject<Level>
+	struct LevelBase : public ProtectedGameObject<LevelBase>
 	{
 		void* VMT;
 		void* LevelManager;
-		void* LocalTemplateManager;
+		void* LevelManager2;
 		LevelData* LevelData;
-		void* LocalTemplateManager2_M;
+		LocalTemplateManager* LocalTemplateManager;
 		void* Scene_M;
 		void* SimplePhysXScene;
-		ObjectSet<void*> GameObjects_M;
-		void* SomeObject;
-		void* field_58;
 		FixedString LevelGuid;
-		EntityHandle LevelHandle;
-		int SomeFlag;
-		ObjectSet<void*> ActivePersistentLevelTemplates_M;
-		ObjectSet<void*> Unknown2;
-		int IsLoaded_M;
-		int field_AC;
 	};
 
-	struct EoCLevel : public Level
+
+	struct EoCLevel : public LevelBase
 	{
-		EntityManager* EntityManager;
-		void* AiGrid;
-		__int64 field_C0;
-		__int64 field_C8;
-		// Maybe?
-		/*void* LayerManager;
-		eoc::AiGrid* AiGrid;
-		void* VisionGrid;*/
+		EntityHandle field_40;
+		FixedString field_48;
+		Array<void*> ActiveLevelTemplates;
+		Array<void*> LocalTemplateTraces;
+		int field_70;
+		void* ServerField_290;
+		void* AiGrid_M;
+		void* VisionGrid_M;
 	};
 
 	struct LevelManagerBase
@@ -78,10 +70,10 @@ namespace bg3se
 	{
 		void* VMT;
 		LevelManagerBase b;
-		void* field_88;
-		Level* CurrentLevel;
-		VirtualMultiHashMap<FixedString, Level*> LevelData;
-		Map<FixedString, Level*> Levels;
+		LocalTemplateManager* LocalTemplateManager;
+		EoCLevel* CurrentLevel;
+		Map<FixedString, EoCLevel*> Levels;
+		void* field_B0;
 	};
 
 
@@ -94,8 +86,7 @@ namespace bg3se
 			void* SightManager;
 			void* CharacterManager;
 			void* ItemManager;
-			void* ProjectileManager;
-			SurfaceManager* SurfaceManager;
+			void* SurfaceManager;
 			void* GameActionManager;
 			void* EffectManager;
 			void* ShroudManager;
@@ -103,20 +94,13 @@ namespace bg3se
 			void* AtmosphereOverrides;
 			void* EnvironmentalStatusManager;
 			void* StaticPhysicsManager;
-			void* TimelineSystem;
-			void* TerrainManager;
-			void* LevelCacheTemplateManager_M;
+			CacheTemplateManagerBase* CacheTemplateManager;
 		};
 
 		struct LevelManager : public bg3se::LevelManager
 		{
-			__int64 field_108;
-			void* VMT2;
-			void* field_118;
-			ObjectSet<void*> SomeRegistrations;
-			FixedString field_138;
-			int field_13C;
-			STDString field_140;
+			Array<void*> field_B8;
+			void* field_C8;
 		};
 	}
 }
