@@ -38,5 +38,17 @@ MapProxyImplBase* CppPropertyMapManager::GetMapProxy(int index)
 	return mapProxies_[index];
 }
 
+int CppPropertyMapManager::RegisterSetProxy(SetProxyImplBase* mt)
+{
+	setProxies_.push_back(mt);
+	return (int)(setProxies_.Size() - 1);
+}
+
+SetProxyImplBase* CppPropertyMapManager::GetSetProxy(int index)
+{
+	assert(index >= 0 && (uint32_t)index < setProxies_.Size());
+	return setProxies_[index];
+}
+
 
 END_NS()

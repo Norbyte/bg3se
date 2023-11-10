@@ -11,6 +11,9 @@ namespace bg3se::lua
 		virtual unsigned GetContainerClass() = 0;
 		virtual char const* GetKeyTypeName() const = 0;
 		virtual char const* GetValueTypeName() const = 0;
+		virtual TypeInformation const& GetContainerType() const = 0;
+		virtual TypeInformation const& GetKeyType() const = 0;
+		virtual TypeInformation const& GetValueType() const = 0;
 		virtual void* GetRaw() = 0;
 		virtual bool GetValue(lua_State* L, int luaKeyIndex) = 0;
 		virtual bool SetValue(lua_State* L, int luaKeyIndex, int luaValueIndex) = 0;
@@ -26,11 +29,11 @@ namespace bg3se::lua
 	{
 	public:
 		static_assert(!std::is_pointer_v<TKey>, "MultiHashMapProxyImpl template parameter should not be a pointer type!");
-		//static_assert(!std::is_pointer_v<TValue>, "MultiHashMapProxyImpl template parameter should not be a pointer type!");
 
+		using ContainerType = MultiHashMap<TKey, TValue>;
 		static constexpr unsigned ContainerClassId = 1;
 
-		MultiHashMapProxyImpl(LifetimeHandle const& lifetime, MultiHashMap<TKey, TValue> * obj)
+		MultiHashMapProxyImpl(LifetimeHandle const& lifetime, ContainerType* obj)
 			: object_(obj), lifetime_(lifetime)
 		{}
 		
@@ -42,7 +45,22 @@ namespace bg3se::lua
 			return ContainerClassId;
 		}
 
-		MultiHashMap<TKey, TValue>* Get() const
+		TypeInformation const& GetContainerType() const override
+		{
+			return GetTypeInfo<ContainerType>();
+		}
+
+		TypeInformation const& GetKeyType() const override
+		{
+			return GetTypeInfo<TKey>();
+		}
+
+		TypeInformation const& GetValueType() const override
+		{
+			return GetTypeInfo<TValue>();
+		}
+
+		ContainerType* Get() const
 		{
 			return object_;
 		}
@@ -135,7 +153,7 @@ namespace bg3se::lua
 		}
 
 	private:
-		MultiHashMap<TKey, TValue>* object_;
+		ContainerType* object_;
 		LifetimeHandle lifetime_;
 	};
 
@@ -145,11 +163,11 @@ namespace bg3se::lua
 	{
 	public:
 		static_assert(!std::is_pointer_v<TKey>, "RefMapProxyImpl template parameter should not be a pointer type!");
-		//static_assert(!std::is_pointer_v<TValue>, "RefMapProxyImpl template parameter should not be a pointer type!");
 
+		using ContainerType = MapBase<TInternals>;
 		static constexpr unsigned ContainerClassId = TContainerClassId;
 
-		RefMapProxyImpl(LifetimeHandle const& lifetime, MapBase<TInternals> * obj)
+		RefMapProxyImpl(LifetimeHandle const& lifetime, ContainerType* obj)
 			: object_(obj), lifetime_(lifetime)
 		{}
 		
@@ -161,7 +179,22 @@ namespace bg3se::lua
 			return ContainerClassId;
 		}
 
-		MapBase<TInternals>* Get() const
+		TypeInformation const& GetContainerType() const override
+		{
+			return GetTypeInfo<ContainerType>();
+		}
+
+		TypeInformation const& GetKeyType() const override
+		{
+			return GetTypeInfo<TKey>();
+		}
+
+		TypeInformation const& GetValueType() const override
+		{
+			return GetTypeInfo<TValue>();
+		}
+
+		ContainerType* Get() const
 		{
 			return object_;
 		}
@@ -258,7 +291,7 @@ namespace bg3se::lua
 		}
 
 	private:
-		MapBase<TInternals>* object_;
+		ContainerType* object_;
 		LifetimeHandle lifetime_;
 	};
 

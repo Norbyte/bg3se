@@ -9,6 +9,8 @@ namespace bg3se::lua
 	public:
 		inline virtual ~SetProxyImplBase() {};
 		virtual char const* GetTypeName() const = 0;
+		virtual TypeInformation const& GetContainerType() const = 0;
+		virtual TypeInformation const& GetElementType() const = 0;
 		virtual void* GetRaw() = 0;
 		virtual bool GetElementAt(lua_State* L, unsigned int arrayIndex) = 0;
 		virtual bool HasElement(lua_State* L, int luaIndex) = 0;
@@ -36,6 +38,16 @@ namespace bg3se::lua
 		
 		~MultiHashSetProxyImpl() override
 		{}
+
+		TypeInformation const& GetContainerType() const override
+		{
+			return GetTypeInfo<ContainerType>();
+		}
+
+		TypeInformation const& GetElementType() const override
+		{
+			return GetTypeInfo<T>();
+		}
 
 		MultiHashSet<T>* Get() const
 		{

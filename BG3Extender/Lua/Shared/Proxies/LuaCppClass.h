@@ -19,11 +19,15 @@ public:
 	
 	int RegisterMapProxy(MapProxyImplBase* mt);
 	MapProxyImplBase* GetMapProxy(int index);
+	
+	int RegisterSetProxy(SetProxyImplBase* mt);
+	SetProxyImplBase* GetSetProxy(int index);
 
 private:
 	Array<GenericPropertyMap*> propertyMaps_;
 	Array<ArrayProxyImplBase*> arrayProxies_;
 	Array<MapProxyImplBase*> mapProxies_;
+	Array<SetProxyImplBase*> setProxies_;
 };
 
 struct CppObjectMetadata

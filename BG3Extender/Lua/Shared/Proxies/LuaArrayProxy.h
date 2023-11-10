@@ -48,6 +48,8 @@ namespace bg3se::lua
 		inline virtual ~ArrayProxyImplBase() {};
 		virtual unsigned GetContainerClass() = 0;
 		virtual char const* GetTypeName() const = 0;
+		virtual TypeInformation const& GetContainerType() const = 0;
+		virtual TypeInformation const& GetElementType() const = 0;
 		virtual void* GetRaw() = 0;
 		virtual bool GetElement(lua_State* L, unsigned arrayIndex) = 0;
 		virtual bool SetElement(lua_State* L, unsigned arrayIndex, int luaIndex) = 0;
@@ -81,6 +83,16 @@ namespace bg3se::lua
 		TContainer* Get() const
 		{
 			return object_;
+		}
+
+		TypeInformation const& GetContainerType() const override
+		{
+			return GetTypeInfo<TContainer>();
+		}
+
+		TypeInformation const& GetElementType() const override
+		{
+			return GetTypeInfo<T>();
 		}
 
 		void* GetRaw() override
@@ -180,6 +192,16 @@ namespace bg3se::lua
 		unsigned GetContainerClass() override
 		{
 			return ContainerClassId;
+		}
+
+		TypeInformation const& GetContainerType() const override
+		{
+			return GetTypeInfo<TContainer>();
+		}
+
+		TypeInformation const& GetElementType() const override
+		{
+			return GetTypeInfo<T>();
 		}
 
 		TContainer* Get() const

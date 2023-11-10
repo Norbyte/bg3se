@@ -217,7 +217,7 @@ bool IsArrayLikeUserdata(lua_State* L, int index)
 	if (lua_type(L, index) == LUA_TLIGHTCPPOBJECT) {
 		CppObjectMetadata meta;
 		lua_get_cppobject(L, index, meta);
-		return meta.MetatableTag == MetatableTag::ArrayProxy;
+		return meta.MetatableTag == MetatableTag::ArrayProxy || meta.MetatableTag == MetatableTag::SetProxy;
 	}
 
 	return false;

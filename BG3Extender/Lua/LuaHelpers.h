@@ -52,8 +52,20 @@ struct StackCheck
 };
 #endif
 
+// Helper type for getting any Lua value as parameter
+struct AnyRef
+{
+	int Index;
+};
+
 // Helper type for getting functions as parameters
 struct FunctionRef
+{
+	int Index;
+};
+
+// Helper type for getting userdata/cpplightuserdata as parameters
+struct AnyUserdataRef
 {
 	int Index;
 };

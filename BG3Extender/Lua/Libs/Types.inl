@@ -11,16 +11,79 @@ std::optional<STDString> GetUserdataObjectTypeName(lua_State * L, int index)
 	return {};
 }
 
-UserReturn GetObjectType(lua_State * L)
+std::optional<STDString> GetCppObjectTypeName(lua_State * L, int index)
 {
-	StackCheck _(L, 1);
-	std::optional<STDString> type;
-	switch (lua_type(L, 1)) {
-	case LUA_TUSERDATA: type = GetUserdataObjectTypeName(L, 1); break;
+	CppObjectMetadata meta;
+	lua_get_cppobject(L, index, meta);
+
+	switch (meta.MetatableTag) {
+	case MetatableTag::ObjectProxyByRef:
+	{
+		auto propertyMap = gExtender->GetPropertyMapManager().GetPropertyMap(meta.PropertyMapTag);
+		return propertyMap->Name.GetString();
 	}
 
-	push(L, type);
-	return 1;
+	case MetatableTag::ArrayProxy:
+	{
+		auto impl = gExtender->GetPropertyMapManager().GetArrayProxy(meta.PropertyMapTag);
+		return impl->GetContainerType().TypeName.GetString();
+	}
+
+	case MetatableTag::MapProxy:
+	{
+		auto impl = gExtender->GetPropertyMapManager().GetMapProxy(meta.PropertyMapTag);
+		return impl->GetContainerType().TypeName.GetString();
+	}
+
+	case MetatableTag::SetProxy:
+	{
+		auto impl = gExtender->GetPropertyMapManager().GetSetProxy(meta.PropertyMapTag);
+		return impl->GetContainerType().TypeName.GetString();
+	}
+
+	case MetatableTag::EnumValue:
+	{
+		CppValueMetadata val;
+		lua_get_cppvalue(L, index, val);
+		return EnumValueMetatable::GetTypeName(L, val);
+	}
+
+	case MetatableTag::BitfieldValue:
+	{
+		CppValueMetadata val;
+		lua_get_cppvalue(L, index, val);
+		return BitfieldValueMetatable::GetTypeName(L, val);
+	}
+
+	case MetatableTag::UserVariableHolder:
+	{
+		CppValueMetadata val;
+		lua_get_cppvalue(L, index, val);
+		return UserVariableHolderMetatable::GetTypeName(L, val);
+	}
+
+	case MetatableTag::ModVariableHolder:
+	{
+		CppValueMetadata val;
+		lua_get_cppvalue(L, index, val);
+		return ModVariableHolderMetatable::GetTypeName(L, val);
+	}
+
+	default:
+		return {};
+	}
+}
+
+std::optional<STDString> GetObjectType(lua_State* L, AnyUserdataRef object)
+{
+	std::optional<STDString> type;
+	switch (lua_type(L, object.Index)) {
+	case LUA_TUSERDATA:
+		return GetUserdataObjectTypeName(L, 1);
+	case LUA_TLIGHTCPPOBJECT:
+	case LUA_TCPPOBJECT:
+		return GetCppObjectTypeName(L, 1);
+	}
 }
 
 TypeInformation* GetTypeInfo(FixedString const& typeName)

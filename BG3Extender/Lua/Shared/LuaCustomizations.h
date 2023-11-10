@@ -5,10 +5,11 @@ enum class MetatableTag : uint8_t
 	ObjectProxyByRef = 0,
 	ArrayProxy = 1,
 	MapProxy = 2,
-	EnumValue = 3,
-	BitfieldValue = 4,
-	UserVariableHolder = 5,
-	ModVariableHolder = 6,
+	SetProxy = 3,
+	EnumValue = 4,
+	BitfieldValue = 5,
+	UserVariableHolder = 6,
+	ModVariableHolder = 7,
 	Max = ModVariableHolder
 };
 
