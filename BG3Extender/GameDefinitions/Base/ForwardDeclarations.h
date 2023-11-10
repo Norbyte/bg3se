@@ -47,6 +47,8 @@ namespace resource
 	struct GuidResource;
 	struct GuidResourceBankBase;
 	struct GuidResourceManager;
+
+	struct Resource;
 }
 
 namespace net
