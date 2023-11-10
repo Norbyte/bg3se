@@ -54,7 +54,8 @@ class DefinitionLoader:
             'name': self.cur_ns,
             'base': base,
             'attributes': attrs,
-            'members': {}
+            'members': {},
+            'raw_lines': []
         }
         self.cur_struct = struct
         self.structs[self.cur_ns] = struct
@@ -66,6 +67,10 @@ class DefinitionLoader:
         self.exit_ns()
 
     def parse_line(self, line):
+        if len(line) > 3 and line[0] == '/' and line[1] == '/' and line[2] == '#':
+            self.cur_struct['raw_lines'].append(line[3:])
+            return
+        
         if line == '' or line[0] == '/' or line[0] == '#' or re.match(ignore_re, line) is not None:
             return
         
@@ -142,6 +147,8 @@ def generate_property_map(struct):
         pm += 'INHERIT(' + struct['base'] + ')\n'
     for name,member in struct['members'].items():
         pm += generate_member(name, member)
+    for line in struct['raw_lines']:
+        pm += line + '\n'
     pm += 'END_CLS()\n'
     return pm
 

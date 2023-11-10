@@ -41,6 +41,10 @@ struct GameObjectTemplate
     virtual void* GetOnUsePeaceActions() = 0;
     virtual OverrideableProperty<bool>* IsTrap() = 0;
 
+    FixedString GetTemplateType();
+
+    //# P_GETTER(TemplateType, GetTemplateType)
+
     OverrideableProperty<uint32_t> Flags;
     [[bg3::hidden]]
     void* Tags;

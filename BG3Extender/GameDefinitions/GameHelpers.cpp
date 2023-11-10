@@ -154,6 +154,11 @@ namespace bg3se
 		return contents;
 	}
 
+	FixedString GameObjectTemplate::GetTemplateType()
+	{
+		return *GetType();
+	}
+
 	/*
 	void TextBuffer::Replace(WStringView replacement)
 	{

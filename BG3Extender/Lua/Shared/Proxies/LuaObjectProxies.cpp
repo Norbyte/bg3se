@@ -184,7 +184,7 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 			CallGetter(L, obj, &PM::ObjectType::fun); \
 			return PropertyOperationResult::Success; \
 		}, \
-		(PM::TPropertyMap::PropertyAccessors::Setter*)&GenericSetNonWriteableProperty, nullptr, 0 \
+		(PM::TPropertyMap::PropertyAccessors::Setter*)&GenericSetNonWriteableProperty, nullptr, nullptr, 0, 0 \
 	);
 
 #define P_GETTER_SETTER(prop, getter, setter) \
@@ -197,8 +197,7 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 			CallSetter(L, obj, index, &PM::ObjectType::setter); \
 			return PropertyOperationResult::Success; \
 		}, \
-		nullptr, \
-		0 \
+		nullptr, nullptr, 0, 0 \
 	);
 
 // FIXME - avoid generating a separate push function for each closure
