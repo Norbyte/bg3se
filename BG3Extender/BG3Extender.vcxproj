@@ -419,6 +419,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <None Include="Lua\Libs\StatEnumerators.inl" />
     <None Include="Lua\Libs\StatMisc.inl" />
     <None Include="Lua\Shared\Proxies\LuaUserVariableHolder.inl" />
+    <None Include="Lua\Shared\Proxies\PolymorphicPush.inl" />
     <None Include="Misc\ExtIdeHelpers.lua" />
     <None Include="Osiris\Debugger\osidebug.proto" />
   </ItemGroup>

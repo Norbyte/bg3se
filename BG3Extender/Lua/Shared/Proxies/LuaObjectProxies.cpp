@@ -3,6 +3,7 @@
 #include <stdafx.h>
 
 #include <Lua/Shared/Proxies/PropertyMapDependencies.h>
+#include <Lua/Shared/Proxies/PolymorphicPush.inl>
 
 BEGIN_NS(lua)
 

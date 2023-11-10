@@ -107,3 +107,15 @@ FS(EnumName);
 FS(__Labels);
 FS(__Value);
 FS(__EnumName);
+
+// Root template types
+FS(LevelTemplate);
+FS(character);
+FS(item);
+FS(scenery);
+FS(surface);
+FS(projectile);
+FS(trigger);
+FS(decal);
+FS(prefab);
+FS(light);
