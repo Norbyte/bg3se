@@ -2,6 +2,7 @@
 
 #include <CoreLib/Base/Base.h>
 #include <GameDefinitions/Enumerations.h>
+#include <GameDefinitions/Base/LuaAnnotations.h>
 #include <GameDefinitions/Base/BaseTypeInformation.h>
 #include <GameDefinitions/Base/ForwardDeclarations.h>
 #include <GameDefinitions/Base/CommonTypes.h>

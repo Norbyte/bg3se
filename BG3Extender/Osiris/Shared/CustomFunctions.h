@@ -296,6 +296,7 @@ namespace bg3se
 	{
 	public:
 		CustomFunctionInjector(class OsirisWrappers & wrappers, CustomFunctionManager & functions);
+		~CustomFunctionInjector();
 
 		void Initialize();
 		void ThrowEvent(FunctionHandle handle, OsiArgumentDesc * args) const;

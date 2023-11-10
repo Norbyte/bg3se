@@ -478,6 +478,15 @@ CustomFunctionInjector::CustomFunctionInjector(OsirisWrappers & wrappers, Custom
 	: wrappers_(wrappers), functions_(functions)
 {}
 
+CustomFunctionInjector::~CustomFunctionInjector()
+{
+	wrappers_.GetFunctionMappings.ClearHook();
+	wrappers_.Call.ClearHook();
+	wrappers_.Query.ClearHook();
+	wrappers_.CreateFileW.ClearHook();
+	wrappers_.CloseHandle.ClearHook();
+}
+
 void CustomFunctionInjector::Initialize()
 {
 	wrappers_.GetFunctionMappings.SetPostHook(&CustomFunctionInjector::OnAfterGetFunctionMappings, this);
