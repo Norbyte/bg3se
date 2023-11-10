@@ -297,7 +297,7 @@ namespace bg3se::lua
 
 
 	class MapProxy : private Userdata<MapProxy>, public Indexable, public NewIndexable,
-		public Lengthable, public Iterable, public Stringifiable, public Pushable
+		public Lengthable, public Iterable, public Stringifiable
 	{
 	public:
 		static char const * const MetatableName;

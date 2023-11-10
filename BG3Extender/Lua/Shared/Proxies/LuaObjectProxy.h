@@ -241,7 +241,7 @@ namespace bg3se::lua
 
 
 	class ObjectProxy : private Userdata<ObjectProxy>, public Indexable, public NewIndexable, 
-		public Iterable, public Stringifiable, public Pushable
+		public Iterable, public Stringifiable
 	{
 	public:
 		static char const * const MetatableName;

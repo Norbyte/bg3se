@@ -6,7 +6,7 @@
 
 namespace bg3se::lua
 {
-	class EntityProxy : public Userdata<EntityProxy>, public Indexable, public Stringifiable, public Pushable
+	class EntityProxy : public Userdata<EntityProxy>, public Indexable, public Stringifiable
 	{
 	public:
 		static char const* const MetatableName;

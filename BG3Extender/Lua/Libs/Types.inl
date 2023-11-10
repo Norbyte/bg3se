@@ -83,6 +83,8 @@ std::optional<STDString> GetObjectType(lua_State* L, AnyUserdataRef object)
 	case LUA_TLIGHTCPPOBJECT:
 	case LUA_TCPPOBJECT:
 		return GetCppObjectTypeName(L, 1);
+	default:
+		return {};
 	}
 }
 

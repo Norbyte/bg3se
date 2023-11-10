@@ -12,7 +12,7 @@ BEGIN_NS(lua::stats)
 
 using namespace bg3se::stats;
 
-class StatsProxy : public Userdata<StatsProxy>, public Indexable, public NewIndexable, public Pushable
+class StatsProxy : public Userdata<StatsProxy>, public Indexable, public NewIndexable
 {
 public:
 	static char const * const MetatableName;
@@ -38,7 +38,7 @@ private:
 	static int SetPersistence(lua_State* L);
 };
 
-class SpellPrototypeProxy : public Userdata<SpellPrototypeProxy>, public Indexable, public Pushable
+class SpellPrototypeProxy : public Userdata<SpellPrototypeProxy>, public Indexable
 {
 public:
 	static char const * const MetatableName;
@@ -56,7 +56,7 @@ private:
 
 
 class StatsExtraDataProxy : public Userdata<StatsExtraDataProxy>, public Indexable, 
-	public NewIndexable, public Pushable
+	public NewIndexable
 {
 public:
 	static char const * const MetatableName;
@@ -67,7 +67,7 @@ public:
 
 
 /*
-class DamageList : public Userdata<DamageList>, public Pushable<PushPolicy::None>
+class DamageList : public Userdata<DamageList><PushPolicy::None>
 {
 public:
 	static char const * const MetatableName;

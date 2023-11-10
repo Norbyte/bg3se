@@ -134,7 +134,7 @@ namespace bg3se::lua
 
 
 	class SetProxy : private Userdata<SetProxy>, public Indexable, public NewIndexable,
-		public Lengthable, public Iterable, public Stringifiable, public Pushable
+		public Lengthable, public Iterable, public Stringifiable
 	{
 	public:
 		static char const * const MetatableName;

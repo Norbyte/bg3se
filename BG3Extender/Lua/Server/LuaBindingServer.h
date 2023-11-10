@@ -34,7 +34,7 @@ namespace bg3se::esv::lua
 		esv::GameState ToState;
 	};
 
-	class StatusHandleProxy : public Userdata<StatusHandleProxy>, public Indexable, public NewIndexable, public Pushable
+	class StatusHandleProxy : public Userdata<StatusHandleProxy>, public Indexable, public NewIndexable
 	{
 	public:
 		static char const * const MetatableName;
@@ -57,7 +57,7 @@ namespace bg3se::esv::lua
 		NetId statusNetId_;
 	};
 
-	/*class TurnManagerCombatProxy : public Userdata<TurnManagerCombatProxy>, public Indexable, public Pushable<PushPolicy::None>
+	/*class TurnManagerCombatProxy : public Userdata<TurnManagerCombatProxy>, public Indexable<PushPolicy::None>
 	{
 	public:
 		static char const * const MetatableName;
@@ -85,7 +85,7 @@ namespace bg3se::esv::lua
 		static int GetAllTeams(lua_State * L);
 	};
 
-	class TurnManagerTeamProxy : public Userdata<TurnManagerTeamProxy>, public Indexable, public Pushable<PushPolicy::None>
+	class TurnManagerTeamProxy : public Userdata<TurnManagerTeamProxy>, public Indexable<PushPolicy::None>
 	{
 	public:
 		static char const * const MetatableName;
@@ -121,7 +121,7 @@ namespace bg3se::esv::lua
 	};
 
 
-	class ItemConstructor : public Userdata<ItemConstructor>, public Indexable, public Pushable<PushPolicy::None>
+	class ItemConstructor : public Userdata<ItemConstructor>, public Indexable<PushPolicy::None>
 	{
 	public:
 		static char const* const MetatableName;

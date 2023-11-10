@@ -8,7 +8,6 @@ class NewIndexable {};
 class Lengthable {};
 class Iterable {};
 class Stringifiable {};
-class Pushable {};
 class EqualityComparable {};
 class HasBinaryOps {};
 
