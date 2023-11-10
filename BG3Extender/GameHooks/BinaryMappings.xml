@@ -620,18 +620,13 @@
       </Mapping>
 
       <Mapping Name="KillLauncher" AllowFail="true">
+        b9 dc 95 10 00 // mov     ecx, 1095DCh
         @ref1 ff 15 ?? ?? ?? ?? // call    cs:SteamAPI_RestartAppIfNecessary
         84 c0 // test    al, al
-        74 09 // jz      short loc_14276B94B
+        74 09 // jz      short loc_141187B18
         33 c9 // xor     ecx, ecx; Code
         @ref2 ff 15 ?? ?? ?? ?? // call    cs:__imp_exit
-        cc // int     3; Trap to Debugger
-        @ref3 ff 15 ?? ?? ?? ?? // call    cs:SteamAPI_Init
-        84 c0 // test    al, al
-        75 13 // jnz     short loc_14276B968
-        c7 45 d8 b7 00 00 00 // mov     [rbp+var_28], 0B7h ; '·'
-        @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, aFailedToInitia; "Failed to initialize the Steam API"
-        <Condition Type="String" Offset="@str1" Value="Failed to initialize the Steam API" />
+        cc // align 8
         <Patch Type="Absolute" Offset="@ref1">
           90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
         </Patch>
