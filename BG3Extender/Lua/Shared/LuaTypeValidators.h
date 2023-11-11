@@ -471,6 +471,12 @@ bool ValidateRef(std::array<TE, Size>* v, Overload<std::array<TE, Size>>)
 	return true;
 }
 
+template <unsigned Words>
+bool ValidateRef(BitArray<Words>* v, Overload<BitArray<Words>>)
+{
+    return true;
+}
+
 template <class T>
 bool ValidateAny(T* v)
 {

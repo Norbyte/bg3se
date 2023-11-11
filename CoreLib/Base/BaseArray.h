@@ -428,6 +428,11 @@ struct BitArray
 
 		return (Bits[(index - 1) >> 5] & (1 << ((index - 1) & 0x1f))) != 0;
 	}
+
+	inline uint32_t size() const
+	{
+		return TDWords * sizeof(Bits[0]) * CHAR_BIT;
+	}
 };
 
 template <class T>

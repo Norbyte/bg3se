@@ -449,9 +449,9 @@ struct AtmosphereResource : public resource::ResourceWithExtraData
 			__int32 field_28;
 		};
 		[[bg3::hidden]] void* VMT;
-		FixedString field_8;
+		FixedString GUID;
 		uint32_t InheritanceFlags;
-		std::array<__int64, 8> field_10;
+		glm::fmat4x4 field_10;
 		Range GlobalRange;
 		Range DarkRange;
 		Range ShadowRange;
@@ -467,21 +467,23 @@ struct AtmosphereResource : public resource::ResourceWithExtraData
 		float Shadows;
 		float Highlights;
 		__int32 field_d4;
+		// void* GradingLutTextureData_butagain?; std::array<__int64, 18> field_e0;
 		std::array<__int64, 19> field_d8;
 		__int32 field_170;
 		float WhiteBalanceTemperature;
 		float WhiteBalanceTint;
 		bool GradingLutEnabled;
-		__int8 field_17d;
-		__int16 field_17e;
+		[[bg3::hidden]] __int8 field_17d;
+		[[bg3::hidden]] __int16 field_17e;
 		FixedString GradingLut;
 		__int32 field_184;
+		// void* GradingLutTextureData?
 		__int64 field_188;
 		__int32 field_190;
 		bool DOF;
 		bool DOFNearOnly;
 		bool DOFFarOnly;
-		__int8 field_197;
+		[[bg3::hidden]] __int8 field_197;
 		float DOFFocalDistance;
 		float DOFNearSharpDistance;
 		float DOFFarSharpDistance;
@@ -496,8 +498,8 @@ struct AtmosphereResource : public resource::ResourceWithExtraData
 		float LensFlareHaloWidth;
 		float LensFlareChromaticDistortion;
 		bool LensFlareEnabled;
-		__int8 field_229;
-		__int16 field_22a;
+		[[bg3::hidden]] __int8 field_229;
+		[[bg3::hidden]] __int16 field_22a;
 		float Threshold;
 		float Amount;
 		float GodRaysIntensity;
@@ -511,7 +513,7 @@ struct AtmosphereResource : public resource::ResourceWithExtraData
 		bool Bloom;
 		bool GodRays;
 		bool Vignette;
-		__int8 field_25f;
+		[[bg3::hidden]] __int8 field_25f;
 		float WindDirection;
 		float WindSpeed;
 		float ClothWindSpeed;
@@ -531,8 +533,8 @@ struct AtmosphereResource : public resource::ResourceWithExtraData
 		bool EnvironmentEffectEnabledForTimeline1;
 		bool EnvironmentEffectEnabledForTimeline2;
 		bool EnvironmentEffectEnabledForTimeline3;
-		__int8 field_291;
-		__int16 field_292;
+		[[bg3::hidden]] __int8 field_291;
+		[[bg3::hidden]] __int16 field_292;
 		FixedString EnvironmentEffect;
 		FixedString EnvironmentEffect1;
 		FixedString EnvironmentEffect2;
@@ -543,16 +545,15 @@ struct AtmosphereResource : public resource::ResourceWithExtraData
 		float EnvironmentEffectOffset3;
 		bool LocalLightSourceEnabled;
 		bool LocalLightSourceOverrideSettings;
-		__int16 field_2b6;
+		[[bg3::hidden]] __int16 field_2b6;
 		glm::fvec3 LocalLightSourceColor;
 		float LocalLightSourceIntensity;
 		bg3se::Guid TimelineAutomaticLightingDefaultSetup;
 		bool TimelineAutomaticLightingDisableFlip;
-		__int8 field_2d9;
-		__int16 field_2da;
-		__int32 field_2dc;
-		__int64 field_2e0;
-		__int64 field_2e8;
+		[[bg3::hidden]] __int8 field_2d9;
+		[[bg3::hidden]] __int16 field_2da;
+		[[bg3::hidden]] __int32 field_2dc;
+		bg3se::Guid CharacterLightSetup;
 	};
 	AtmosphereData* Atmosphere;
 	Array<FixedString> Labels;
@@ -586,29 +587,37 @@ struct BlendSpaceResource : public resource::LockedResource
 	float MinYValue;
 	float MaxYValue;
 
-	struct Field90Entry
+	struct Adjustment
 	{
-		__int32 field_0;
-		__int32 field_4;
-		__int32 field_8;
-		__int32 field_c;
-		__int16 field_10;
-		__int16 field_12;
+		glm::fvec3 Adjustment;
+		std::array<uint16_t, 3> indexes;
+		uint16_t index;
 	};
 
 	struct FieldB8Entry
 	{
-		__int32 field_0;
-		__int32 field_4;
-		__int32 field_8;
-		__int32 field_c;
-		__int32 field_10;
-		__int32 field_14;
+		glm::fvec2 field_0;
+		glm::fvec2 field_8;
+		glm::fvec2 field_10;
+		glm::fvec2 field_18;
+		__int32 field_20;
+		__int32 field_24;
+		__int32 field_28;
+		glm::fvec2 field_2c;
+		__int32 field_34;
+		__int32 field_38;
+		__int32 field_3c;
+		glm::fvec2 field_40;
+		__int32 field_48;
+		__int32 field_4c;
+		__int32 field_50;
+		glm::fvec2 field_54;
+		__int32 field_5c;
 	};
 
-	Array<Field90Entry> field_90;
+	Array<Adjustment> field_90;
 
-	Array<InputInfo*> MappedInputs;
+	Array<InputInfo*> Inputs;
 	bool NeedsAdjustment_maybe;
 	[[bg3::hidden]] __int8 field_b1;
 	[[bg3::hidden]] __int16 field_b2;
@@ -718,215 +727,185 @@ struct DiffusionProfileResource : public resource::ResourceWithExtraData
 
 struct EffectResource : public resource::LockedResource
 {
-	// In RE, this is TimelineContent
-	struct Data
+	struct Property : public ProtectedGameObject<Property>
 	{
-		struct Subdata
+		struct Parameter
 		{
-			__int64 field_0;
-			__int64 field_8;
-			__int64 field_10;
-			__int64 field_18;
-			__int64 field_20;
-			__int64 field_28;
-			__int64 field_30;
-			__int64 field_38;
-			__int64 field_40;
-			__int64 field_48;
+			STDString Name;
+			float Value;
+			[[bg3::hidden]] __int32 field_1c;
 		};
 
-		__int64 field_0;
-		[[bg3::hidden]] __int64 field_8; // Dynamic array VMT
-		Array<Subdata*> field_10;
-		[[bg3::hidden]] __int64 field_20; // Dynamic array extra data
-		Array<__int64> field_28;          // pointers to ????
-		Array<__int64> field_38;          // pointers to ????
-		__int32 field_40;
-		__int32 field_44;
-		__int8 field_48;
-		__int8 field_49;
-		__int8 field_4a;
-		__int8 field_4b;
-		FixedString field_4c;
+		virtual ~Property() = 0;
+		virtual void UnknownFunc1(__int64, __int64, __int64) = 0;
+		virtual bool parseXML(void* XMLReader) = 0;
+		virtual EffectPropertyType GetPropertyType() = 0;
+
+		FixedString FullName;
+		FixedString AttributeName;
+		[[bg3::hidden]] void* ParametersVMT;
+		Array<Parameter> Parameters;
+		[[bg3::hidden]] __int64 ParametersExtraData;
+		FixedString Input;
+		[[bg3::hidden]] __int32 field_34;
 	};
 
-	struct EffectComponent
+	struct BoolProperty : public resource::EffectResource::Property
 	{
-		struct Property : public ProtectedGameObject<Property>
+		bool Value;
+		[[bg3::hidden]] __int8 field_39;
+		[[bg3::hidden]] __int16 field_3a;
+		[[bg3::hidden]] __int32 field_3c;
+	};
+
+	struct Int32Property : public resource::EffectResource::Property
+	{
+		int32_t Value;
+		[[bg3::hidden]] __int32 field_3c;
+	};
+
+	struct Int32RangeProperty : public resource::EffectResource::Property
+	{
+		int32_t Min;
+		int32_t Max;
+	};
+
+	struct ColoredFramesProperty : public resource::EffectResource::Property
+	{
+		struct FramesArray
 		{
-			struct Parameter
+			struct Frame
 			{
-				STDString Name;
+				float Time;
+				[[bg3::hidden]] __int32 field_4;
+				[[bg3::hidden]] __int64 field_8;
+				glm::fvec4 Color;
+			};
+
+			[[bg3::hidden]] void* VMT;
+			Array<Frame> data;
+			[[bg3::hidden]] __int64 field_18;
+		};
+		FramesArray* Frames;
+	};
+
+	struct FloatProperty : public resource::EffectResource::Property
+	{
+		float Value;
+		[[bg3::hidden]] __int32 field_3c;
+	};
+
+	struct FloatRangeProperty : public resource::EffectResource::Property
+	{
+		float Min;
+		float Max;
+	};
+
+	struct FramesProperty : public resource::EffectResource::Property
+	{
+		struct VirtualFrames : public ProtectedGameObject<VirtualFrames>
+		{
+			virtual ~VirtualFrames() = 0;
+			virtual int GetType() = 0;
+		};
+		struct Frames0 : public resource::EffectResource::FramesProperty::VirtualFrames
+		{
+			struct Frame
+			{
+				__int64 field_0;
+				float Time;
+				__int32 field_c;
 				float Value;
-				[[bg3::hidden]] __int32 field_1c;
+				__int32 field_14;
 			};
-
-			virtual ~Property() = 0;
-			virtual void UnknownFunc1(__int64, __int64, __int64) = 0;
-			virtual bool parseXML(void* XMLReader) = 0;
-			virtual EffectPropertyType GetPropertyType() = 0;
-
-			FixedString FullName;
-			FixedString AttributeName;
-			[[bg3::hidden]] void* ParametersVMT;
-			Array<Parameter> Parameters;
-			[[bg3::hidden]] __int64 ParametersExtraData;
-			FixedString Input;
-			[[bg3::hidden]] __int32 field_34;
-		};
-
-		struct BoolProperty : public resource::EffectResource::EffectComponent::Property
-		{
-			bool Value;
-			[[bg3::hidden]] __int8 field_39;
-			[[bg3::hidden]] __int16 field_3a;
-			[[bg3::hidden]] __int32 field_3c;
-		};
-
-		struct Int32Property : public resource::EffectResource::EffectComponent::Property
-		{
-			int32_t Value;
-			[[bg3::hidden]] __int32 field_3c;
-		};
-
-		struct Int32RangeProperty : public resource::EffectResource::EffectComponent::Property
-		{
-			int32_t Min;
-			int32_t Max;
-		};
-
-		struct ColoredFramesProperty : public resource::EffectResource::EffectComponent::Property
-		{
-			struct FramesArray
-			{
-				struct Frame
-				{
-					float Time;
-					[[bg3::hidden]] __int32 field_4;
-					[[bg3::hidden]] __int64 field_8;
-					glm::fvec4 Color;
-				};
-
-				[[bg3::hidden]] void* VMT;
-				Array<Frame> data;
-				[[bg3::hidden]] __int64 field_18;
-			};
-			FramesArray* Frames;
-		};
-
-		struct FloatProperty : public resource::EffectResource::EffectComponent::Property
-		{
-			float Value;
-			[[bg3::hidden]] __int32 field_3c;
-		};
-
-		struct FloatRangeProperty : public resource::EffectResource::EffectComponent::Property
-		{
-			float Min;
-			float Max;
-		};
-
-		struct FramesProperty : public resource::EffectResource::EffectComponent::Property
-		{
-			struct VirtualFrames : public ProtectedGameObject<VirtualFrames>
-			{
-				virtual ~VirtualFrames() = 0;
-				virtual int GetType() = 0;
-			};
-			struct Frames0 : public resource::EffectResource::EffectComponent::FramesProperty::VirtualFrames
-			{
-				struct Frame
-				{
-					__int64 field_0;
-					float Time;
-					__int32 field_c;
-					float Value;
-					__int32 field_14;
-				};
-				[[bg3::hidden]] __int64 Frames_VMT;
-				Array<Frame> Frames;
-				[[bg3::hidden]] __int64 Frames_ExtraData;
-			};
-
-			struct Frames1 : public resource::EffectResource::EffectComponent::FramesProperty::VirtualFrames
-			{
-				struct Frame
-				{
-					__int64 field_0;
-					float Time;
-					__int32 field_c;
-					float A;
-					float B;
-					float C;
-					float D;
-				};
-				[[bg3::hidden]] __int64 Frames_VMT;
-				Array<Frame> Frames;
-				[[bg3::hidden]] __int64 Frames_ExtraData;
-			};
-			[[bg3::hidden]] void* Frames_VMT;
-			Array<VirtualFrames*> Frames;
+			[[bg3::hidden]] __int64 Frames_VMT;
+			Array<Frame> Frames;
 			[[bg3::hidden]] __int64 Frames_ExtraData;
 		};
 
-		struct STDStringProperty : public resource::EffectResource::EffectComponent::Property
+		struct Frames1 : public resource::EffectResource::FramesProperty::VirtualFrames
 		{
-			STDString Value;
-		};
-
-		struct Vector3Property : public resource::EffectResource::EffectComponent::Property
-		{
-			Vector3 Value;
-			[[bg3::hidden]] __int32 field_44;
-		};
-
-		struct FunctionTypeProperty : public resource::EffectResource::EffectComponent::Property
-		{
-			// Types: 0, 1, 2, 3 is null
-			struct VirtualFunction : public ProtectedGameObject<VirtualFunction>
+			struct Frame
 			{
-				virtual ~VirtualFunction() = 0;
-				virtual void unknown1() = 0;
-				virtual void unknown2() = 0;
-				virtual void unknown3() = 0;
-				virtual int GetFunctionType() = 0;
-			};
-
-			struct Function0 : public resource::EffectResource::EffectComponent::FunctionTypeProperty::VirtualFunction
-			{
-				float A;
-				float B;
-			};
-
-			struct Function1 : public resource::EffectResource::EffectComponent::FunctionTypeProperty::VirtualFunction
-			{
-				float A;
-				float B;
-				float C;
-				[[bg3::hidden]] __int32 field_14;
-			};
-
-			struct Function2 : public resource::EffectResource::EffectComponent::FunctionTypeProperty::VirtualFunction
-			{
+				__int64 field_0;
+				float Time;
+				__int32 field_c;
 				float A;
 				float B;
 				float C;
 				float D;
 			};
-
-			VirtualFunction* Function;
+			[[bg3::hidden]] __int64 Frames_VMT;
+			Array<Frame> Frames;
+			[[bg3::hidden]] __int64 Frames_ExtraData;
 		};
+		[[bg3::hidden]] void* Frames_VMT;
+		Array<VirtualFrames*> Frames;
+		[[bg3::hidden]] __int64 Frames_ExtraData;
+	};
 
-		struct FixedStringProperty : public resource::EffectResource::EffectComponent::Property
+	struct STDStringProperty : public resource::EffectResource::Property
+	{
+		STDString Value;
+	};
+
+	struct Vector3Property : public resource::EffectResource::Property
+	{
+		Vector3 Value;
+		[[bg3::hidden]] __int32 field_44;
+	};
+
+	struct FunctionTypeProperty : public resource::EffectResource::Property
+	{
+		// Types: 0, 1, 2, 3 is null
+		struct VirtualFunction : public ProtectedGameObject<VirtualFunction>
 		{
-			FixedString Value;
-			[[bg3::hidden]] __int32 field_44;
+			virtual ~VirtualFunction() = 0;
+			virtual void unknown1() = 0;
+			virtual void unknown2() = 0;
+			virtual void unknown3() = 0;
+			virtual int GetFunctionType() = 0;
 		};
 
-		struct BaseProperty : public resource::EffectResource::EffectComponent::Property
+		struct Function0 : public resource::EffectResource::FunctionTypeProperty::VirtualFunction
 		{
+			float A;
+			float B;
 		};
 
+		struct Function1 : public resource::EffectResource::FunctionTypeProperty::VirtualFunction
+		{
+			float A;
+			float B;
+			float C;
+			[[bg3::hidden]] __int32 field_14;
+		};
+
+		struct Function2 : public resource::EffectResource::FunctionTypeProperty::VirtualFunction
+		{
+			float A;
+			float B;
+			float C;
+			float D;
+		};
+
+		VirtualFunction* Function;
+	};
+
+	struct FixedStringProperty : public resource::EffectResource::Property
+	{
+		FixedString Value;
+		[[bg3::hidden]] __int32 field_44;
+	};
+
+	struct BaseProperty : public resource::EffectResource::Property
+	{
+	};
+
+	// Note: There are a LOT of different EffectComponents, all seemingly over 0x100 in size
+	// The polymorphic choice should be made based on vtable[4]'s FixedString return value
+	struct EffectComponent
+	{
 		struct Module
 		{
 			STDString Name;
@@ -957,12 +936,67 @@ struct EffectResource : public resource::LockedResource
 		__int64 field_b8;
 	};
 
+	struct TimelineContentEffects
+	{
+		struct Phase
+		{
+			struct QuestionHoldAutomationSettings
+			{
+				[[bg3::hidden]] void* QuestionHoldAutomationVMT;
+				bool IsEnabled;
+				[[bg3::hidden]] __int8 field_9;
+				[[bg3::hidden]] __int16 field_a;
+				float CycleSpeed;
+				float CycleSpeedDeviation;
+				float StartOffset;
+				float StartOffsetDeviation;
+				[[bg3::hidden]] __int32 field_1c;
+			};
+			[[bg3::hidden]] void* VMT;
+			float Duration;
+			float StartTime;
+			int32_t PlayCount;
+			__int32 field_14;
+			bg3se::Guid DialogNodeId;
+			bool IsOverridingTimelineQuestionHoldAutomationSettings;
+			[[bg3::hidden]] __int8 field_31;
+			[[bg3::hidden]] __int16 field_32;
+			[[bg3::hidden]] __int32 field_34;
+			QuestionHoldAutomationSettings QuestionHoldAutomation;
+		};
+
+		struct Input
+		{
+			virtual ~Input() = 0;
+			virtual int GetType() = 0;
+			FixedString Name;
+			[[bg3::hidden]] __int32 field_c;
+			[[bg3::hidden]] void* Data;
+		};
+
+		float Duration;
+		[[bg3::hidden]] __int32 field_4;
+		[[bg3::hidden]] __int64 field_8; // Dynamic array VMT
+		Array<Phase> Phases;
+		[[bg3::hidden]] __int64 field_20; // Dynamic array extra data
+		Array<Input*> Inputs;
+		Array<EffectComponent*> EffectComponents;
+		__int32 field_40;
+		__int32 field_44;
+		__int8 field_48;
+		__int8 field_49;
+		__int8 field_4a;
+		__int8 field_4b;
+		FixedString EffectName;
+	};
+
 	FixedString EffectName;
 	[[bg3::hidden]] __int32 field_4c;
 	Array<EffectComponent*> EffectComponents;
 	Array<FixedString> Dependencies;
-	__int64 field_70; // pointer to structure, size 0x50
-	__int64 field_78;
+	TimelineContentEffects* TimelineContentEffect;
+	// TImelineContent?
+	__int64 TimelineContent;
 	glm::fvec3 BoundsMin;
 	glm::fvec3 BoundsMax;
 	float CullingDistance;
@@ -1068,37 +1102,209 @@ struct IKRigResource : public resource::ResourceWithExtraData
 
 struct LightCookieResource : public resource::LockedResource
 {
-	__int64 field_48;
-	__int64 field_50;
-	__int64 field_58;
-	__int64 field_60;
-	__int64 field_68;
-	__int64 field_70;
-	__int64 field_78;
-	__int64 field_80;
-	__int64 field_88;
-	__int64 field_90;
-	__int64 field_98;
-	__int64 field_a0;
-	__int64 field_a8;
-	__int64 field_b0;
-	__int64 field_b8;
-	__int64 field_c0;
-	__int64 field_c8;
+	BitArray<0x80> Data;
 };
 
 struct LightingResource : public resource::ResourceWithExtraData
 {
-	struct Details : public ProtectedGameObject<Details>
+	struct Details
 	{
+		struct MoonDetails
+		{
+			bool Enabled;
+			bool CastLightEnabled;
+			[[bg3::hidden]] __int16 field_2;
+			float Yaw;
+			float Pitch;
+			glm::fvec3 RotationAsVec3;
+			float Distance;
+			float Radius;
+			glm::fvec3 Color;
+			glm::fvec3 ColorAdjustedForIntensity;
+			bool UseTemperature;
+			[[bg3::hidden]] __int8 field_39;
+			[[bg3::hidden]] __int16 field_3a;
+			float Kelvin;
+			glm::fvec3 ColorTemperatureAdjustment;
+			float Intensity;
+			float Earthshine;
+			float MoonGlare;
+			float TearsScale;
+			float TearsRotate;
+			FixedString AlbedoTexResourceGUID;
+			FixedString NormalTexResourceGUID;
+			FixedString TearsAlbedoTexResourceGUID;
+			FixedString TearsNormalTexResourceGUID;
+		};
+
+		struct DetailsCoverageSettings
+		{
+			float StartHeight;
+			float EndHeight;
+			float HorizonDistance;
+			FixedString TexResourceGUID;
+			glm::fvec2 Offset;
+		};
+
+		struct DetailsVolumetricCloudSettings
+		{
+			bool Enabled;
+			[[bg3::hidden]] __int8 field_1;
+			[[bg3::hidden]] __int16 field_2;
+			float Intensity;
+			float AmbientLightFactor;
+			float SunLightFactor;
+			float ShadowFactor;
+			glm::fvec3 BaseColor;
+			glm::fvec3 TopColor;
+			float BottomFade;
+			float HorizonFade;
+			float SampleScalar;
+			float SampleThreshold;
+			float DetailScale;
+			float ErosionEdgeSize;
+			float Distortion;
+			float DistortionScale;
+			float Density;
+			float ForwardScatteringG;
+			float BackwardScatteringG;
+			float DarkOutline;
+			float SunRayLength;
+			float ConeRadius;
+			float LODDistance;
+			DetailsCoverageSettings CoverageSettings;
+			float CoverageStartDistance;
+			float CoverageEndDistance;
+			float CoverageWindSpeed;
+			float RainCoverageMaxInfluence;
+		};
+
+		struct SkyLightDetails
+		{
+			glm::fvec3 Color;
+			float Intensity;
+			float Kelvin;
+			bool UseTemperature;
+			glm::fvec3 ColorTemperatureAdjustment;
+			glm::fvec3 ColorAdjustedForIntensity;
+			[[bg3::hidden]] __int8 field_2d;
+			[[bg3::hidden]] __int16 field_2e;
+			FixedString SkydomeTex;
+			bool SkydomeEnabled;
+			bool RotateSkydomeEnabled;
+			[[bg3::hidden]] __int16 field_36;
+			int32_t PhysicalModel;
+			float ScatteringIntensity;
+			float ScatteringSunIntensity;
+			glm::fvec3 ScatteringSunColor;
+			bool ScatteringEnabled;
+			[[bg3::hidden]] __int8 field_51;
+			[[bg3::hidden]] __int16 field_52;
+			float ProcStarsIntensity;
+			float ProcStarsAmount;
+			float ProcStarsShimmer;
+			glm::fvec2 ProcStarsSaturation;
+			bool ProcStarsEnabled;
+			[[bg3::hidden]] __int8 field_69;
+			[[bg3::hidden]] __int16 field_6a;
+			float CirrusCloudsIntensity;
+			float CirrusCloudsAmount;
+			glm::fvec3 CirrusCloudsColor;
+			bool CirrusCloudsEnabled_FixedString;
+			[[bg3::hidden]] __int8 field_81;
+			[[bg3::hidden]] __int16 field_82;
+		};
+
+		struct DetailsSSAOSettings
+		{
+			bool Enabled;
+			[[bg3::hidden]] __int8 field_1;
+			[[bg3::hidden]] __int16 field_2;
+			float Radius;
+			float Bias;
+			float Intensity;
+			float DirectLightInfluence;
+		};
+
+		struct FogLayer
+		{
+			glm::fvec3 Albedo;
+			float Density0;
+			float Density1;
+			float Height0;
+			float Height1;
+			float NoiseCoverage;
+			glm::fvec3 NoiseFrequency;
+			glm::fvec3 NoiseRotation;
+			glm::fvec3 NoiseWind;
+			bool Enabled;
+			[[bg3::hidden]] __int8 field_45;
+			[[bg3::hidden]] __int16 field_46;
+		};
+
+		struct FogSettings
+		{
+			float Phase;
+			float RenderDistance;
+			FogLayer FogLayer0;
+			FogLayer FogLayer1;
+		};
+
+		struct SunDetails
+		{
+			glm::fvec3 SunColor;
+			float Kelvin;
+			float SunIntensity;
+			bool UseTemperature;
+			[[bg3::hidden]] __int8 field_15;
+			[[bg3::hidden]] __int16 field_16;
+			glm::fvec3 ColorTemperatureAdjustment;
+			glm::fvec3 ColorAdjustedForIntensity;
+			glm::fvec3 RotationAsVec3;
+			float Yaw;
+			float Pitch;
+			bool ShadowEnabled;
+			[[bg3::hidden]] __int8 field_45;
+			[[bg3::hidden]] __int16 field_46;
+			float ShadowFarPlane;
+			float ShadowNearPlane;
+			float ShadowFade;
+			float ShadowBias;
+			float LightSize;
+			float LightDistance;
+			float CascadeSpeed;
+			uint8_t CascadeCount;
+			uint8_t ShadowObscurity;
+			uint8_t SunlightObscurity;
+			[[bg3::hidden]] __int8 field_67;
+			DetailsCoverageSettings CoverageSettings;
+			float LocalCoverageScalar;
+			bool LocalCoverageEnabled;
+			[[bg3::hidden]] __int8 field_85;
+			[[bg3::hidden]] __int16 field_86;
+			float ScatteringIntensityScale;
+		};
+
 		[[bg3::hidden]] void* VMT;
 		FixedString field_8;
-		std::array<__int8, 0x368> data;
+		SunDetails Sun;
+		MoonDetails Moon;
+		SkyLightDetails SkyLight;
+		DetailsSSAOSettings SSAOSettings;
+		DetailsVolumetricCloudSettings VolumetricCloudSettings;
+		FogSettings Fog;
+		FogSettings TimelineFog;
+		bool TimelineFogOverride;
+		[[bg3::hidden]] __int8 field_361;
+		[[bg3::hidden]] __int16 field_362;
+		[[bg3::hidden]] __int32 field_364;
+		__int64 field_368;
+		__int64 field_370;
 	};
 
 	// Lighting details; pointer to 0x378 size structure. Very scary constructor and destructor;
 	// can't make heads nor tails of it
-	Details* field_48;
+	Details* Lighting;
 };
 
 struct MaterialResource : public resource::LockedResource
@@ -1197,7 +1403,7 @@ struct MaterialSetResource : public resource::LockedResource
 
 struct MeshProxyResource : public resource::LockedResource
 {
-	__int64 field_48;
+	__int64 field_48; // Size 0x30
 	FixedString Template;
 	[[bg3::hidden]] __int32 field_54;
 };
@@ -1240,8 +1446,6 @@ struct PhysicsResource : public resource::ResourceWithExtraData
 
 		FixedString UUID;
 		[[bg3::hidden]] __int32 field_4;
-		// This holds either a PhysicsCapsule or a PhysicsBox. Not sure how to have that
-		// displayed properly
 		Array<PhysicsObject*> PhysicsObjects;
 	};
 
@@ -1262,8 +1466,7 @@ struct ScriptResource : public resource::ResourceWithExtraData
 		STDString Value;
 	};
 
-	// This is a map to a Parameter*, but for some reason the proxy doesn't allow that
-	Map<FixedString, __int64> Parameters;
+	Map<FixedString, Parameter*> Parameters;
 };
 
 struct SkeletonResource : public resource::LockedResource
@@ -1450,7 +1653,7 @@ struct VisualResource : public resource::LockedResource
 	{
 		FixedString ObjectID;
 		FixedString MaterialID;
-		__int8 LOD;
+		uint8_t LOD;
 		[[bg3::hidden]] __int8 field_9;
 		[[bg3::hidden]] __int16 field_10;
 	};
@@ -1520,7 +1723,7 @@ struct VisualResource : public resource::LockedResource
 	{
 		FixedString Name;
 		[[bg3::hidden]] __int32 field_4;
-		Array<__int16> ClosestVertices;
+		Array<uint16_t> ClosestVertices;
 	};
 
 	[[bg3::hidden]] void* field_48; // DynamicArray VMT
@@ -1571,8 +1774,8 @@ END_NS()
 BEGIN_NS(lua)
 
 LUA_POLYMORPHIC(resource::AnimationResource::Event::PropertiesHolder);
-LUA_POLYMORPHIC(resource::EffectResource::EffectComponent::Property);
-LUA_POLYMORPHIC(resource::EffectResource::EffectComponent::FramesProperty::VirtualFrames);
+LUA_POLYMORPHIC(resource::EffectResource::Property);
+LUA_POLYMORPHIC(resource::EffectResource::FramesProperty::VirtualFrames);
 LUA_POLYMORPHIC(resource::PhysicsResource::ObjectTemplate::PhysicsObject);
 
 END_NS()

@@ -951,10 +951,10 @@ void LuaPolymorphic<resource::AnimationResource::Event::PropertiesHolder>::MakeR
 #undef V
 }
 
-void LuaPolymorphic<resource::EffectResource::EffectComponent::Property>::MakeRef(lua_State* L, resource::EffectResource::EffectComponent::Property* value, LifetimeHandle const& lifetime)
+void LuaPolymorphic<resource::EffectResource::Property>::MakeRef(lua_State* L, resource::EffectResource::Property* value, LifetimeHandle const& lifetime)
 {
 #define V(type) case EffectPropertyType::type: \
-			MakeDirectObjectRef(L, static_cast<resource::EffectResource::EffectComponent::type##Property*>(value), lifetime); break;
+			MakeDirectObjectRef(L, static_cast<resource::EffectResource::type##Property*>(value), lifetime); break;
 
 	switch (value->GetPropertyType()) {
 		V(Bool)
@@ -978,10 +978,10 @@ void LuaPolymorphic<resource::EffectResource::EffectComponent::Property>::MakeRe
 #undef V
 }
 
-void LuaPolymorphic<resource::EffectResource::EffectComponent::FramesProperty::VirtualFrames>::MakeRef(lua_State* L, resource::EffectResource::EffectComponent::FramesProperty::VirtualFrames* value, LifetimeHandle const& lifetime)
+void LuaPolymorphic<resource::EffectResource::FramesProperty::VirtualFrames>::MakeRef(lua_State* L, resource::EffectResource::FramesProperty::VirtualFrames* value, LifetimeHandle const& lifetime)
 {
 #define V(type) case type: \
-			MakeDirectObjectRef(L, static_cast<resource::EffectResource::EffectComponent::FramesProperty::Frames##type*>(value), lifetime); break;
+			MakeDirectObjectRef(L, static_cast<resource::EffectResource::FramesProperty::Frames##type*>(value), lifetime); break;
 
 	switch (value->GetType()) {
 		V(0)
