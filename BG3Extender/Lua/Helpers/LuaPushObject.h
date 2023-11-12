@@ -19,7 +19,7 @@ inline void MakeObjectRef(lua_State* L, T* value, LifetimeHandle const& lifetime
 	} else if constexpr (IsMapLike<T>::Value) {
 		MapProxyMetatable::Make(L, value, lifetime);
 	} else if constexpr (IsSetLike<T>::Value) {
-		SetProxy::Make(L, value, lifetime);
+		SetProxyMetatable::Make(L, value, lifetime);
 	} else if constexpr (std::is_pointer_v<T>) {
 		if constexpr (std::is_const_v<std::remove_pointer_t<T>>) {
 			MakeObjectRef(L, const_cast<std::remove_const_t<std::remove_pointer_t<T>>*>(*value), lifetime);

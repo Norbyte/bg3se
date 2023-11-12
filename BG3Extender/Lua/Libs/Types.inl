@@ -181,12 +181,6 @@ UserReturn Serialize(lua_State* L)
 				return luaL_error(L, "Object class '%s' does not support serialization", pm.Name.GetString());
 			}
 		}
-
-		auto set = Userdata<SetProxy>::AsUserData(L, 1);
-		if (set != nullptr) {
-			set->GetImpl()->Serialize(L);
-			return 1;
-		}
 	} else if (type == LUA_TLIGHTCPPOBJECT) {
 		CppObjectMetadata meta;
 		lua_get_cppobject(L, 1, meta);
@@ -202,6 +196,13 @@ UserReturn Serialize(lua_State* L)
 			case MetatableTag::MapProxy:
 			{
 				auto impl = MapProxyMetatable::GetImpl(meta);
+				impl->Serialize(L, meta);
+				break;
+			}
+
+			case MetatableTag::SetProxy:
+			{
+				auto impl = SetProxyMetatable::GetImpl(meta);
 				impl->Serialize(L, meta);
 				break;
 			}
@@ -227,13 +228,6 @@ void Unserialize(lua_State* L)
 			pm.Unserialize(L, 2, proxy->GetRaw(L));
 			return;
 		}
-
-		// Not very nice, but will do until the new reference system is added
-		auto set = Userdata<SetProxy>::AsUserData(L, 1);
-		if (set) {
-			set->GetImpl()->Unserialize(L, 2);
-			return;
-		}
 	} else if (type == LUA_TLIGHTCPPOBJECT) {
 		CppObjectMetadata meta;
 		lua_get_cppobject(L, 1, meta);
@@ -242,6 +236,20 @@ void Unserialize(lua_State* L)
 			case MetatableTag::ArrayProxy:
 			{
 				auto impl = ArrayProxyMetatable::GetImpl(meta);
+				impl->Unserialize(L, meta, 2);
+				break;
+			}
+
+			case MetatableTag::MapProxy:
+			{
+				auto impl = MapProxyMetatable::GetImpl(meta);
+				impl->Unserialize(L, meta, 2);
+				break;
+			}
+
+			case MetatableTag::SetProxy:
+			{
+				auto impl = SetProxyMetatable::GetImpl(meta);
 				impl->Unserialize(L, meta, 2);
 				break;
 			}

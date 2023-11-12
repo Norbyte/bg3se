@@ -40,8 +40,6 @@ END_SE()
 
 BEGIN_NS(lua)
 
-LifetimeHandle GetCurrentLifetime();
-
 class ArrayProxyImplBase
 {
 public:
@@ -248,7 +246,7 @@ public:
 
 
 class ArrayProxyMetatable : public LightCppObjectMetatable<ArrayProxyMetatable>, public Indexable, public NewIndexable,
-	public Lengthable, public Iterable, public Stringifiable
+	public Lengthable, public Iterable, public Stringifiable, public EqualityComparable
 {
 public:
 	static constexpr MetatableTag MetaTag = MetatableTag::ArrayProxy;

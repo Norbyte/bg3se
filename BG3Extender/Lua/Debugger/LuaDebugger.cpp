@@ -339,12 +339,14 @@ namespace bg3se::lua::dbg
 		lua_pop(L, 1);
 	}
 
-	void LuaSetToEvalResults(lua_State* L, int index, SetProxy* set, DebuggerGetVariablesRequest const& req)
+	void LuaSetToEvalResults(lua_State* L, int index, CppObjectMetadata& meta, DebuggerGetVariablesRequest const& req)
 	{
 		StackCheck _(L);
-		auto impl = set->GetImpl();
-		for (unsigned i = 1; i <= impl->Length(); i++) {
-			if (impl->GetElementAt(L, i)) {
+		auto impl = SetProxyMetatable::GetImpl(meta);
+		auto len = impl->Length(meta);
+
+		for (unsigned i = 1; i <= len; i++) {
+			if (impl->GetElementAt(L, meta, i)) {
 				auto pair = req.Response->add_result();
 				pair->set_type(MsgChildValue::NUMERIC);
 				pair->set_index(i);
@@ -376,12 +378,6 @@ namespace bg3se::lua::dbg
 			return;
 		}
 
-		auto set = Userdata<SetProxy>::AsUserData(L, index);
-		if (set != nullptr) {
-			LuaSetToEvalResults(L, index, set, req);
-			return;
-		}
-
 		WARN("LuaValueToEvalResults(): Evaluating unrecognized userdata type");
 	}
 
@@ -400,6 +396,12 @@ namespace bg3se::lua::dbg
 		case MetatableTag::MapProxy:
 		{
 			LuaMapToEvalResults(L, index, meta, req);
+			break;
+		}
+		
+		case MetatableTag::SetProxy:
+		{
+			LuaSetToEvalResults(L, index, meta, req);
 			break;
 		}
 

@@ -4,7 +4,9 @@ BEGIN_NS(lua)
 
 
 ArrayProxyImplBase::ArrayProxyImplBase()
-{}
+{
+	Register();
+}
 
 ArrayProxyImplBase::~ArrayProxyImplBase()
 {}

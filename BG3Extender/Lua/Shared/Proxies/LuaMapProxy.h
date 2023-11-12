@@ -2,8 +2,6 @@
 
 BEGIN_NS(lua)
 
-LifetimeHandle GetCurrentLifetime();
-
 class MapProxyImplBase
 {
 public:

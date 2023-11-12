@@ -47,11 +47,9 @@ void RegisterSharedMetatables(lua_State* L)
 {
 	Userdata<ObjectProxy>::RegisterMetatable(L);
 	ArrayProxyMetatable::RegisterMetatable(L);
-	Userdata<SetProxy>::RegisterMetatable(L);
+	SetProxyMetatable::RegisterMetatable(L);
 	MapProxyMetatable::RegisterMetatable(L);
 	LightObjectProxyByRefMetatable::RegisterMetatable(L);
-	//ArrayProxyMetatable::RegisterMetatable(L);
-	//MapProxyMetatable::RegisterMetatable(L);
 	EnumValueMetatable::RegisterMetatable(L);
 	BitfieldValueMetatable::RegisterMetatable(L);
 	UserVariableHolderMetatable::RegisterMetatable(L);

@@ -265,8 +265,8 @@ template <class TK>
 void UnserializeSetFromUserdata(lua_State* L, int index, MultiHashSet<TK>* obj)
 {
 	StackCheck _(L);
-	auto set = SetProxy::CheckedGet<MultiHashSetProxyImpl<TK>>(L, index);
-	*obj = *set->Get();
+	auto set = SetProxyMetatable::Get<MultiHashSetProxyImpl<TK>>(L, index);
+	*obj = *set;
 }
 
 template <class... Args>
