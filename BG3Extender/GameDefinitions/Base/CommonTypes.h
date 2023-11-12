@@ -61,5 +61,14 @@ struct SRWLock
 	uint32_t EnterCount;
 };
 
-
 END_SE()
+
+BEGIN_NS(ecs)
+
+struct EntityRef
+{
+	EntityHandle Handle;
+	EntityWorld* World{ nullptr };
+};
+
+END_NS()

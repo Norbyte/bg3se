@@ -15,7 +15,7 @@ PropertyOperationResult GenericGetOffsetProperty(lua_State* L, LifetimeHandle co
 	if constexpr (IsByVal<T>) {
 		push(L, *value);
 	} else {
-		MakeObjectRef(L, value, lifetime);
+		push(L, value);
 	}
 
 	return PropertyOperationResult::Success;

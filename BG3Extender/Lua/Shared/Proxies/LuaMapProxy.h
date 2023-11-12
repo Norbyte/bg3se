@@ -73,12 +73,10 @@ public:
 	bool SetValue(lua_State* L, CppObjectMetadata& self, int luaKeyIndex, int luaValueIndex) override
 	{
 		auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
-		if constexpr (IsByVal<TValue>) {
+		if constexpr (std::is_default_constructible_v<TValue>) {
 			auto key = get<TKey>(L, luaKeyIndex);
 			if (lua_type(L, luaValueIndex) == LUA_TNIL) {
-				// FIXME - add support for remove() in hashmaps!
-				// obj->Remove(key);
-				return false;
+				obj->remove(key);
 			} else {
 				auto value = get<TValue>(L, luaValueIndex);
 				obj->Set(key, value);
@@ -185,7 +183,7 @@ public:
 	bool SetValue(lua_State* L, CppObjectMetadata& self, int luaKeyIndex, int luaValueIndex) override
 	{
 		auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
-		if constexpr (IsByVal<TValue>) {
+		if constexpr (std::is_default_constructible_v<TValue>) {
 			auto key = get<TKey>(L, luaKeyIndex);
 			if (lua_type(L, luaValueIndex) == LUA_TNIL) {
 				// FIXME - add support for remove() in refmaps!

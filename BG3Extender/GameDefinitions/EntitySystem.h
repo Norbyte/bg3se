@@ -15,12 +15,6 @@ BEGIN_NS(ecs)
 struct EntityWorld;
 struct EntityClass;
 
-struct EntityRef
-{
-	EntityHandle Handle;
-	EntityWorld* World{ nullptr };
-};
-
 using ComponentTypeMask = std::array<uint64_t, 32>;
 using UnknownMask = std::array<uint64_t, 40>;
 using EntityTypeMask = std::array<uint64_t, 4>;
