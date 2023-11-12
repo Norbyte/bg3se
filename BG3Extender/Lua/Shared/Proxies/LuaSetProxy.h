@@ -77,10 +77,7 @@ public:
 	{
 		auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
 		auto element = get<T>(L, luaIndex);
-		auto index = obj->FindIndex(element);
-		// FIXME - add support for remove() in hashsets!
-		// object_->RemoveIndex(index);
-		return true;
+		return obj->remove(element);
 	}
 
 	unsigned Length(CppObjectMetadata& self) override
