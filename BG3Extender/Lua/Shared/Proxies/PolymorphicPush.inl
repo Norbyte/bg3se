@@ -2,6 +2,8 @@ BEGIN_NS(lua)
 
 #define MAKE_REF(ty, cls) if (*type == GFS.ty) { MakeDirectObjectRef(L, static_cast<cls*>(obj), lifetime); return; }
 
+static bool ShownTemplateTypeWarning{ false };
+
 void LuaPolymorphic<GameObjectTemplate>::MakeRef(lua_State* L, GameObjectTemplate* obj, LifetimeHandle const& lifetime)
 {
 	auto type = obj->GetType();
@@ -18,7 +20,11 @@ void LuaPolymorphic<GameObjectTemplate>::MakeRef(lua_State* L, GameObjectTemplat
 	//MAKE_REF(strprefab, PrefabTemplate)
 	//MAKE_REF(strlight, LightTemplate)
 
-	OsiError("Creating Lua proxy for unknown template type " << *type);
+	if (!ShownTemplateTypeWarning) {
+		ShownTemplateTypeWarning = true;
+		OsiWarn("Found template of unknown type '" << *type << "'; unknown templates will be proxies as GameObjectTemplate");
+	}
+
 	MakeDirectObjectRef(L, obj, lifetime);
 }
 
