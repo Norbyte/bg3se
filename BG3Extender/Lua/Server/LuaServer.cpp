@@ -14,9 +14,6 @@
 #include <Lua/LevelIteratorFunctions.inl>
 #include <Lua/Shared/LuaShared.inl>
 #include <Lua/Server/ServerStatus.inl>
-#include <Lua/Server/ServerProjectile.inl>
-#include <Lua/Server/ServerSurface.inl>
-#include <Lua/Server/ServerCombat.inl>
 #include <Lua/Server/ServerNetwork.inl>
 #include <Lua/Server/FunctorEvents.inl>
 #include <Lua/Server/ServerFunctors.inl>
