@@ -27,7 +27,7 @@ Debugger::Debugger(): Starting Lua debugger
 Lua debugger listening on 127.0.0.1:9998; DBG protocol version 3
 ```
 
-To test your mod(s), place your ScriptExtender/ and meta.lsx files (not .pak'd) in `<Baldurs Gate 3 path>/Data/Mods/<ModName>`. If you're using the [Recommended Mod structure](https://github.com/ShinyHobo/BG3-Modders-Multitool/wiki/Mod-Workspace-Structure), you can create a directory-type symblink to your vscode project's `<project-path>\Mods\<mod-name>` folder.
+To test your mod(s), place your `ScriptExtender/` directory and `meta.lsx` (not .pak'd) in `<Baldurs Gate 3 path>/Data/Mods/<ModName>`. If you're using the [Recommended Mod structure](https://github.com/ShinyHobo/BG3-Modders-Multitool/wiki/Mod-Workspace-Structure), you can create a directory-type symblink to your vscode project's `<project-path>\Mods\<mod-name>` folder.
 
 <details>
 <summary>Creating symblink examples</summary>
