@@ -308,54 +308,6 @@ public:
 		return GetImpl(meta.PropertyMapTag);
 	}
 
-	/*inline ArrayProxyImplBase* GetImpl()
-	{
-		return reinterpret_cast<ArrayProxyImplBase*>(this + 1);
-	}
-
-	inline bool IsAlive(lua_State* L) const
-	{
-		return lifetime_.IsAlive(L);
-	}
-
-	template <class T>
-	T* Get(lua_State* L)
-	{
-		if (!lifetime_.IsAlive(L)) {
-			return nullptr;
-		}
-
-		if (strcmp(GetTypeInfo<T>().TypeName.GetString(), GetImpl()->GetTypeName()) == 0) {
-			return reinterpret_cast<T*>(GetImpl()->GetRaw());
-		} else {
-			return nullptr;
-		}
-	}
-
-	template <class TContainer, class TElement>
-	static TContainer* CheckedGet(lua_State* L, int index)
-	{
-		auto self = CheckUserData(L, index);
-
-		auto impl = self->GetImpl();
-		if (!self->lifetime_.IsAlive(L)) {
-			luaL_error(L, "Attempted to access dead Array<%s>", impl->GetTypeName());
-			return nullptr;
-		}
-
-		if (impl->GetContainerClass() != TContainer::ContainerClassId) {
-			luaL_error(L, "Attempted to access Array<%s> with different container type", impl->GetTypeName());
-			return nullptr;
-		}
-
-		if (strcmp(GetTypeInfo<TElement>().TypeName.GetString(), impl->GetTypeName()) != 0) {
-			luaL_error(L, "Attempted to access Array<%s>, got Array<%s>", GetTypeInfo<TElement>().TypeName.GetString(), impl->GetTypeName());
-			return nullptr;
-		}
-
-		return reinterpret_cast<TContainer*>(impl->GetRaw());
-	}*/
-
 	static int Index(lua_State* L, CppObjectMetadata& self);
 	static int NewIndex(lua_State* L, CppObjectMetadata& self);
 	static int Length(lua_State* L, CppObjectMetadata& self);
@@ -366,7 +318,6 @@ public:
 
 private:
 	static void* GetRaw(lua_State* L, int index, int propertyMapIndex);
-	static void* GetRaw(lua_State* L, int index);
 	static ArrayProxyImplBase* GetImpl(int propertyMapIndex);
 };
 

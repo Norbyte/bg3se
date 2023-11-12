@@ -174,8 +174,8 @@ PropertyOperationResult UnserializeMapFromUserdata(lua_State* L, int index, Mult
 	}
 
 	StackCheck _(L);
-	auto map = MapProxy::CheckedGetMultiHashMap<TK, TV>(L, index);
-	*obj = *map->Get();
+	auto map = MapProxyMetatable::Get<MultiHashMapProxyImpl<TK, TV>>(L, index);
+	*obj = *map;
 	return PropertyOperationResult::Success;
 }
 
@@ -209,8 +209,8 @@ PropertyOperationResult UnserializeMapFromUserdata(lua_State* L, int index, RefM
 	}
 
 	StackCheck _(L);
-	auto map = MapProxy::CheckedGetRefMap<TK, TV>(L, index);
-	*obj = *map->Get();
+	auto map = MapProxyMetatable::Get<RefMapProxyImpl<TK, TV, RefMapInternals<TK, TV>, 2>>(L, index);
+	*obj = *map;
 	return PropertyOperationResult::Success;
 }
 
@@ -244,8 +244,8 @@ PropertyOperationResult UnserializeMapFromUserdata(lua_State* L, int index, Map<
 	}
 
 	StackCheck _(L);
-	auto map = MapProxy::CheckedGetMap<TK, TV>(L, index);
-	*obj = *map->Get();
+	auto map = MapProxyMetatable::Get<RefMapProxyImpl<TK, TV, MapInternals<TK, TV>, 3>>(L, index);
+	*obj = *map;
 	return PropertyOperationResult::Success;
 }
 

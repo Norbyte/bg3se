@@ -182,12 +182,6 @@ UserReturn Serialize(lua_State* L)
 			}
 		}
 
-		auto map = Userdata<MapProxy>::AsUserData(L, 1);
-		if (map != nullptr) {
-			map->GetImpl()->Serialize(L);
-			return 1;
-		}
-
 		auto set = Userdata<SetProxy>::AsUserData(L, 1);
 		if (set != nullptr) {
 			set->GetImpl()->Serialize(L);
@@ -201,6 +195,13 @@ UserReturn Serialize(lua_State* L)
 			case MetatableTag::ArrayProxy:
 			{
 				auto impl = ArrayProxyMetatable::GetImpl(meta);
+				impl->Serialize(L, meta);
+				break;
+			}
+
+			case MetatableTag::MapProxy:
+			{
+				auto impl = MapProxyMetatable::GetImpl(meta);
 				impl->Serialize(L, meta);
 				break;
 			}
@@ -228,12 +229,6 @@ void Unserialize(lua_State* L)
 		}
 
 		// Not very nice, but will do until the new reference system is added
-		auto map = Userdata<MapProxy>::AsUserData(L, 1);
-		if (map) {
-			map->GetImpl()->Unserialize(L, 2);
-			return;
-		}
-
 		auto set = Userdata<SetProxy>::AsUserData(L, 1);
 		if (set) {
 			set->GetImpl()->Unserialize(L, 2);

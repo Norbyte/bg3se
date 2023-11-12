@@ -324,13 +324,13 @@ namespace bg3se::lua::dbg
 		}
 	}
 
-	void LuaMapToEvalResults(lua_State* L, int index, MapProxy* map, DebuggerGetVariablesRequest const& req)
+	void LuaMapToEvalResults(lua_State* L, int index, CppObjectMetadata& meta, DebuggerGetVariablesRequest const& req)
 	{
 		StackCheck _(L);
-		auto impl = map->GetImpl();
+		auto impl = MapProxyMetatable::GetImpl(meta);
 		push(L, nullptr);
 
-		while (impl->Next(L, -1) == 2) {
+		while (impl->Next(L, meta, -1) == 2) {
 			LuaElementToEvalResults(L, -2, -1, req);
 			lua_pop(L, 1);
 			lua_remove(L, -2);
@@ -376,12 +376,6 @@ namespace bg3se::lua::dbg
 			return;
 		}
 
-		auto map = Userdata<MapProxy>::AsUserData(L, index);
-		if (map != nullptr) {
-			LuaMapToEvalResults(L, index, map, req);
-			return;
-		}
-
 		auto set = Userdata<SetProxy>::AsUserData(L, index);
 		if (set != nullptr) {
 			LuaSetToEvalResults(L, index, set, req);
@@ -400,6 +394,12 @@ namespace bg3se::lua::dbg
 		case MetatableTag::ArrayProxy:
 		{
 			LuaArrayToEvalResults(L, index, meta, req);
+			break;
+		}
+		
+		case MetatableTag::MapProxy:
+		{
+			LuaMapToEvalResults(L, index, meta, req);
 			break;
 		}
 
