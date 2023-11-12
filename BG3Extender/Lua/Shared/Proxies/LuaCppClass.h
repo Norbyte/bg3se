@@ -7,6 +7,7 @@ BEGIN_NS(lua)
 
 class ArrayProxyImplBase;
 class MapProxyImplBase;
+class SetProxyImplBase;
 
 class CppPropertyMapManager
 {

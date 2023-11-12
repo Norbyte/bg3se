@@ -300,12 +300,13 @@ namespace bg3se::lua::dbg
 		}
 	}
 
-	void LuaArrayToEvalResults(lua_State* L, int index, ArrayProxy* arr, DebuggerGetVariablesRequest const& req)
+	void LuaArrayToEvalResults(lua_State* L, int index, CppObjectMetadata& meta, DebuggerGetVariablesRequest const& req)
 	{
 		StackCheck _(L);
-		auto impl = arr->GetImpl();
-		for (unsigned i = 1; i <= impl->Length(); i++) {
-			if (impl->GetElement(L, i)) {
+		auto impl = ArrayProxyMetatable::GetImpl(meta);
+		auto len = impl->Length(meta);
+		for (unsigned i = 1; i <= len; i++) {
+			if (impl->GetElement(L, meta, i)) {
 				auto pair = req.Response->add_result();
 				pair->set_type(MsgChildValue::NUMERIC);
 				pair->set_index(i);
@@ -375,12 +376,6 @@ namespace bg3se::lua::dbg
 			return;
 		}
 
-		auto arr = Userdata<ArrayProxy>::AsUserData(L, index);
-		if (arr != nullptr) {
-			LuaArrayToEvalResults(L, index, arr, req);
-			return;
-		}
-
 		auto map = Userdata<MapProxy>::AsUserData(L, index);
 		if (map != nullptr) {
 			LuaMapToEvalResults(L, index, map, req);
@@ -396,6 +391,23 @@ namespace bg3se::lua::dbg
 		WARN("LuaValueToEvalResults(): Evaluating unrecognized userdata type");
 	}
 
+	void LuaLightCppObjectToEvalResults(lua_State* L, int index, DebuggerGetVariablesRequest const& req)
+	{
+		CppObjectMetadata meta;
+		lua_get_cppobject(L, index, meta);
+
+		switch (meta.MetatableTag) {
+		case MetatableTag::ArrayProxy:
+		{
+			LuaArrayToEvalResults(L, index, meta, req);
+			break;
+		}
+
+		default:
+			WARN("LuaLightCppObjectToEvalResults(): Evaluating unrecognized lightcppobject type");
+		}
+	}
+
 	void LuaValueToEvalResults(lua_State* L, int index, DebuggerGetVariablesRequest const& req)
 	{
 		switch (lua_type(L, index)) {
@@ -405,6 +417,10 @@ namespace bg3se::lua::dbg
 
 		case LUA_TUSERDATA:
 			LuaUserdataToEvalResults(L, index, req);
+			break;
+
+		case LUA_TLIGHTCPPOBJECT:
+			LuaLightCppObjectToEvalResults(L, index, req);
 			break;
 
 		default:

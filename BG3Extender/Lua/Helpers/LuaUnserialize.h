@@ -31,8 +31,8 @@ PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, Ar
 	}
 
 	StackCheck _(L);
-	auto arr = ArrayProxy::CheckedGet<DynamicArrayProxyImpl<Array<TK>, TK, 2>, TK>(L, index);
-	*obj = *arr->Get();
+	auto arr = ArrayProxyMetatable::Get<DynamicArrayProxyImpl<Array<TK>, TK, 2>>(L, index);
+	*obj = *arr;
 	return PropertyOperationResult::Success;
 }
 
@@ -68,8 +68,8 @@ PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, St
 	}
 
 	StackCheck _(L);
-	auto arr = ArrayProxy::CheckedGet<ConstSizeArrayProxyImpl<StaticArray<TK>, TK, 2>, TK>(L, index);
-	*obj	 = *arr->Get();
+	auto arr = ArrayProxyMetatable::Get<ConstSizeArrayProxyImpl<StaticArray<TK>, TK, 2>>(L, index);
+	*obj = *arr;
 	return PropertyOperationResult::Success;
 }
 
@@ -102,8 +102,8 @@ PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, Ob
 	}
 
 	StackCheck _(L);
-	auto arr = ArrayProxy::CheckedGet<DynamicArrayProxyImpl<ObjectSet<TK>, TK, 3>, TK>(L, index);
-	*obj = *arr->Get();
+	auto arr = ArrayProxyMetatable::Get<DynamicArrayProxyImpl<ObjectSet<TK>, TK, 3>>(L, index);
+	*obj = *arr;
 	return PropertyOperationResult::Success;
 }
 
@@ -137,8 +137,8 @@ PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, st
 	}
 
 	StackCheck _(L);
-	auto arr = ArrayProxy::CheckedGet<ConstSizeArrayProxyImpl<std::array<TK, Size>, TK, 1>, TK>(L, index);
-	*obj = *arr->Get();
+	auto arr = ArrayProxyMetatable::Get<ConstSizeArrayProxyImpl<std::array<TK, Size>, TK, 1>>(L, index);
+	*obj = *arr;
 	return PropertyOperationResult::Success;
 }
 

@@ -42,7 +42,7 @@ struct CppPointerVal
 		: value_(lua_index2addr(L, idx))
 	{
 		if (!IsCppObject(value_)) {
-			luaL_error(L, "Param %d must be a C++ object", idx);
+			luaL_error(L, "Param %d: expected a C++ object, got %s", idx, lua_typename(L, lua_type(L, idx)));
 		}
 	}
 

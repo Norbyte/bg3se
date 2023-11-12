@@ -1,83 +1,116 @@
 #include <Lua/Shared/Proxies/LuaArrayProxy.h>
 
-namespace bg3se::lua
+BEGIN_NS(lua)
+
+
+ArrayProxyImplBase::ArrayProxyImplBase()
+{}
+
+ArrayProxyImplBase::~ArrayProxyImplBase()
+{}
+
+void ArrayProxyImplBase::Register()
 {
-	char const* const ArrayProxy::MetatableName = "bg3se::Array";
+	assert(registryIndex_ == -1);
+	registryIndex_ = gExtender->GetPropertyMapManager().RegisterArrayProxy(this);
+}
 
-	int ArrayProxy::Index(lua_State* L)
-	{
-		StackCheck _(L, 1);
-		auto impl = GetImpl();
-		if (!lifetime_.IsAlive(L)) {
-			luaL_error(L, "Attempted to read dead Array<%s>", impl->GetTypeName());
-			push(L, nullptr);
-			return 1;
-		}
+int ArrayProxyImplBase::GetRegistryIndex() const
+{
+	assert(registryIndex_ >= 0);
+	return registryIndex_;
+}
 
-		auto index = get<int>(L, 2);
-		// TODO - integer range check?
-		if (!impl->GetElement(L, index)) {
-			push(L, nullptr);
-		}
+void* ArrayProxyMetatable::GetRaw(lua_State* L, int index, int propertyMapIndex)
+{
+	CppObjectMetadata meta;
+	lua_get_cppobject(L, index, MetatableTag::ArrayProxy, meta);
 
-		return 1;
+	if (meta.PropertyMapTag == propertyMapIndex) {
+		auto curTy = gExtender->GetPropertyMapManager().GetArrayProxy(meta.PropertyMapTag);
+		auto expectedTy = gExtender->GetPropertyMapManager().GetArrayProxy(propertyMapIndex);
+		luaL_error(L, "Argument %d: expected %s, got %s", index, 
+			expectedTy->GetContainerType().TypeName.GetString(),
+			curTy->GetContainerType().TypeName.GetString());
+		return nullptr;
 	}
 
-	int ArrayProxy::NewIndex(lua_State* L)
-	{
-		StackCheck _(L, 0);
-		auto impl = GetImpl();
-		if (!lifetime_.IsAlive(L)) {
-			luaL_error(L, "Attempted to write dead Array<%s>", impl->GetTypeName());
-			return 0;
-		}
-
-		auto index = get<int>(L, 2);
-		impl->SetElement(L, index, 3);
-		return 0;
+	if (!meta.Lifetime.IsAlive(L)) {
+		auto curTy = gExtender->GetPropertyMapManager().GetArrayProxy(meta.PropertyMapTag);
+		luaL_error(L, "Argument %d: got %s whose lifetime has expired", index,
+			curTy->GetContainerType().TypeName.GetString());
+		return nullptr;
 	}
 
-	int ArrayProxy::Length(lua_State* L)
-	{
-		StackCheck _(L, 1);
-		auto impl = GetImpl();
-		if (!lifetime_.IsAlive(L)) {
-			luaL_error(L, "Attempted to get length of dead Array<%s>", impl->GetTypeName());
-			push(L, nullptr);
-			return 1;
-		}
+	return meta.Ptr;
+}
 
-		push(L, impl->Length());
-		return 1;
+ArrayProxyImplBase* ArrayProxyMetatable::GetImpl(int propertyMapIndex)
+{
+	return gExtender->GetPropertyMapManager().GetArrayProxy(propertyMapIndex);
+}
+
+int ArrayProxyMetatable::Index(lua_State* L, CppObjectMetadata& self)
+{
+	auto impl = gExtender->GetPropertyMapManager().GetArrayProxy(self.PropertyMapTag);
+	auto index = get<int>(L, 2);
+	if (!impl->GetElement(L, self, index)) {
+		push(L, nullptr);
 	}
 
-	int ArrayProxy::Next(lua_State* L)
-	{
-		auto impl = GetImpl();
-		if (!lifetime_.IsAlive(L)) {
-			luaL_error(L, "Attempted to iterate dead Array<%s>", impl->GetTypeName());
-			return 0;
-		}
+	return 1;
+}
 
-		if (lua_type(L, 2) == LUA_TNIL) {
-			return impl->Next(L, 0);
-		} else {
-			auto key = get<int>(L, 2);
-			return impl->Next(L, key);
-		}
-	}
+int ArrayProxyMetatable::NewIndex(lua_State* L, CppObjectMetadata& self)
+{
+	auto impl = gExtender->GetPropertyMapManager().GetArrayProxy(self.PropertyMapTag);
+	auto index = get<int>(L, 2);
+	impl->SetElement(L, self, index, 3);
+	return 0;
+}
 
-	int ArrayProxy::ToString(lua_State* L)
-	{
-		StackCheck _(L, 1);
-		char entityName[200];
-		if (lifetime_.IsAlive(L)) {
-			_snprintf_s(entityName, std::size(entityName) - 1, "Array<%s> (%p)", GetImpl()->GetTypeName(), GetImpl()->GetRaw());
-		} else {
-			_snprintf_s(entityName, std::size(entityName) - 1, "Array<%s> (%p, DEAD)", GetImpl()->GetTypeName(), GetImpl()->GetRaw());
-		}
+int ArrayProxyMetatable::Length(lua_State* L, CppObjectMetadata& self)
+{
+	auto impl = gExtender->GetPropertyMapManager().GetArrayProxy(self.PropertyMapTag);
+	push(L, impl->Length(self));
+	return 1;
+}
 
-		push(L, entityName);
-		return 1;
+int ArrayProxyMetatable::Next(lua_State* L, CppObjectMetadata& self)
+{
+	auto impl = gExtender->GetPropertyMapManager().GetArrayProxy(self.PropertyMapTag);
+	if (lua_type(L, 2) == LUA_TNIL) {
+		return impl->Next(L, self, 0);
+	} else {
+		auto key = get<int>(L, 2);
+		return impl->Next(L, self, key);
 	}
 }
+
+int ArrayProxyMetatable::ToString(lua_State* L, CppObjectMetadata& self)
+{
+	StackCheck _(L, 1);
+	char entityName[200];
+	if (self.Lifetime.IsAlive(L)) {
+		_snprintf_s(entityName, std::size(entityName) - 1, "%s (%p)", GetTypeName(L, self), self.Ptr);
+	} else {
+		_snprintf_s(entityName, std::size(entityName) - 1, "%s (%p, DEAD REFERENCE)", GetTypeName(L, self), self.Ptr);
+	}
+
+	push(L, entityName);
+	return 1;
+}
+
+bool ArrayProxyMetatable::IsEqual(lua_State*, CppObjectMetadata& self, CppObjectMetadata& other)
+{
+	return self.Ptr == other.Ptr && self.PropertyMapTag == other.PropertyMapTag;
+}
+
+char const* ArrayProxyMetatable::GetTypeName(lua_State* L, CppObjectMetadata& self)
+{
+	auto impl = gExtender->GetPropertyMapManager().GetArrayProxy(self.PropertyMapTag);
+	return impl->GetContainerType().TypeName.GetString();
+}
+
+END_NS()
+

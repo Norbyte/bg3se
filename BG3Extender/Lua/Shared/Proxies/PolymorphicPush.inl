@@ -22,7 +22,7 @@ void LuaPolymorphic<GameObjectTemplate>::MakeRef(lua_State* L, GameObjectTemplat
 
 	if (!ShownTemplateTypeWarning) {
 		ShownTemplateTypeWarning = true;
-		OsiWarn("Found template of unknown type '" << *type << "'; unknown templates will be proxies as GameObjectTemplate");
+		OsiWarn("Found template of unknown type '" << *type << "'; unknown templates will be proxied as GameObjectTemplate");
 	}
 
 	MakeDirectObjectRef(L, obj, lifetime);
