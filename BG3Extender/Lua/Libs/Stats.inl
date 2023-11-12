@@ -491,7 +491,7 @@ void UpdateItemColor(lua_State* L)
 /// <returns></returns>
 UserReturn Get(lua_State * L, char const* statName, std::optional<int> level, std::optional<bool> warnOnError, std::optional<bool> byRef)
 {
-	auto object = StatFindObject(statName, warnOnError.value_or(true));
+	auto object = StatFindObject(statName, warnOnError.value_or(false));
 	if (object != nullptr) {
 		StatsProxy::New(L, object, -1, GetCurrentLifetime(L));
 		return 1;
