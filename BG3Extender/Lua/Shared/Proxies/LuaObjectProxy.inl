@@ -3,9 +3,9 @@
 
 namespace bg3se::lua
 {
-	char const* const ObjectProxy::MetatableName = "bg3se::Object";
+	char const* const LegacyObjectProxy::MetatableName = "bg3se::Object";
 
-	int ObjectProxy::Index(lua_State* L)
+	int LegacyObjectProxy::Index(lua_State* L)
 	{
 		StackCheck _(L, 1);
 		auto impl = GetImpl();
@@ -23,7 +23,7 @@ namespace bg3se::lua
 		return 1;
 	}
 
-	int ObjectProxy::NewIndex(lua_State* L)
+	int LegacyObjectProxy::NewIndex(lua_State* L)
 	{
 		StackCheck _(L, 0);
 		auto impl = GetImpl();
@@ -37,7 +37,7 @@ namespace bg3se::lua
 		return 0;
 	}
 
-	int ObjectProxy::Next(lua_State* L)
+	int LegacyObjectProxy::Next(lua_State* L)
 	{
 		auto impl = GetImpl();
 		if (!lifetime_.IsAlive(L)) {
@@ -53,7 +53,7 @@ namespace bg3se::lua
 		}
 	}
 
-	int ObjectProxy::ToString(lua_State* L)
+	int LegacyObjectProxy::ToString(lua_State* L)
 	{
 		StackCheck _(L, 1);
 		char entityName[200];
@@ -67,9 +67,9 @@ namespace bg3se::lua
 		return 1;
 	}
 
-	void* ObjectProxy::GetRaw(lua_State* L, int index, FixedString const& typeName)
+	void* LegacyObjectProxy::GetRaw(lua_State* L, int index, FixedString const& typeName)
 	{
-		auto proxy = Userdata<ObjectProxy>::CheckUserData(L, index);
+		auto proxy = Userdata<LegacyObjectProxy>::CheckUserData(L, index);
 		if (proxy->GetImpl()->IsA(typeName)) {
 			auto obj = proxy->GetRaw(L);
 			if (obj == nullptr) {
@@ -84,9 +84,9 @@ namespace bg3se::lua
 		}
 	}
 
-	void* ObjectProxy::TryGetRaw(lua_State* L, int index, FixedString const& typeName)
+	void* LegacyObjectProxy::TryGetRaw(lua_State* L, int index, FixedString const& typeName)
 	{
-		auto proxy = Userdata<ObjectProxy>::AsUserData(L, index);
+		auto proxy = Userdata<LegacyObjectProxy>::AsUserData(L, index);
 		if (proxy && proxy->GetImpl()->IsA(typeName)) {
 			return proxy->GetRaw(L);
 		} else {

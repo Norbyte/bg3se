@@ -18,4 +18,27 @@ public:
 	static char const* GetTypeName(lua_State* L, CppObjectMetadata& self);
 };
 
+
+class ObjectProxy
+{
+public:
+	template <class T>
+	inline static void MakeRef(lua_State* L, T* object, LifetimeHandle const& lifetime)
+	{
+		if (!StaticLuaPropertyMap<T>::PropertyMap.ValidatePropertyMap(object)) {
+			push(L, nullptr);
+		} else {
+			LightObjectProxyByRefMetatable::Make(L, object, lifetime);
+		}
+	}
+
+	static void* GetRaw(lua_State* L, int index, GenericPropertyMap const& pm);
+
+	template <class T>
+	inline static T* Get(lua_State* L, int index)
+	{
+		return reinterpret_cast<T*>(GetRaw(L, index, StaticLuaPropertyMap<T>::PropertyMap));
+	}
+};
+
 END_NS()

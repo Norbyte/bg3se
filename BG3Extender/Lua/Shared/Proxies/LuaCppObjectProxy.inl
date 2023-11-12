@@ -61,6 +61,24 @@ CppMetatableManager& CppMetatableManager::FromLua(lua_State* L)
 }
 
 
+void* ObjectProxy::GetRaw(lua_State* L, int index, GenericPropertyMap const& pm)
+{
+	CppObjectMetadata meta;
+	lua_get_cppobject(L, index, meta);
+
+	if (pm.RegistryIndex != meta.PropertyMapTag) {
+		luaL_error(L, "Argument %d: Expected object of type '%s', got '%s'", index,
+			pm.Name.GetString(), LuaGetPropertyMap(meta.PropertyMapTag).Name.GetString());
+	}
+
+	if (!meta.Lifetime.IsAlive(L)) {
+		luaL_error(L, "Attempted to fetch '%s' whose lifetime has expired", pm.Name.GetString());
+	}
+
+	return meta.Ptr;
+}
+
+
 int LightObjectProxyByRefMetatable::Index(lua_State* L, CppObjectMetadata& self)
 {
 	auto pm = gExtender->GetPropertyMapManager().GetPropertyMap(self.PropertyMapTag);

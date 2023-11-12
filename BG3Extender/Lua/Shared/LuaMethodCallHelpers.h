@@ -122,6 +122,9 @@ T* get_object(lua_State* L, int index)
 {
 	switch (lua_type(L, index)) {
 	case LUA_TUSERDATA:
+		return LegacyObjectProxy::Get<T>(L, index);
+		
+	case LUA_TLIGHTCPPOBJECT:
 		return ObjectProxy::Get<T>(L, index);
 
 	default:

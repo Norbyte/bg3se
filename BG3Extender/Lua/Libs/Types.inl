@@ -3,7 +3,7 @@ BEGIN_NS(lua::types)
 
 std::optional<STDString> GetUserdataObjectTypeName(lua_State * L, int index)
 {
-	auto object = Userdata<ObjectProxy>::AsUserData(L, index);
+	auto object = Userdata<LegacyObjectProxy>::AsUserData(L, index);
 	if (object) {
 		return object->GetImpl()->GetTypeName().GetString();
 	}
@@ -161,7 +161,8 @@ void RegisterEnumerations(lua_State* L)
 
 bool Validate(lua_State* L)
 {
-	auto proxy = Userdata<ObjectProxy>::CheckUserData(L, 1);
+	// FIXME - convert to new property maps!
+	auto proxy = Userdata<LegacyObjectProxy>::CheckUserData(L, 1);
 	auto& pm = proxy->GetImpl()->GetPropertyMap();
 	return pm.ValidateObject(proxy->GetRaw(L));
 }
@@ -171,7 +172,7 @@ UserReturn Serialize(lua_State* L)
 	auto type = lua_type(L, 1);
 
 	if (type == LUA_TUSERDATA) {
-		auto proxy = Userdata<ObjectProxy>::AsUserData(L, 1);
+		auto proxy = Userdata<LegacyObjectProxy>::AsUserData(L, 1);
 		if (proxy != nullptr) {
 			auto& pm = proxy->GetImpl()->GetPropertyMap();
 			if (pm.Serialize != nullptr) {
@@ -218,7 +219,7 @@ void Unserialize(lua_State* L)
 	luaL_checktype(L, 2, LUA_TTABLE);
 
 	if (type == LUA_TUSERDATA) {
-		auto proxy = Userdata<ObjectProxy>::AsUserData(L, 1);
+		auto proxy = Userdata<LegacyObjectProxy>::AsUserData(L, 1);
 		if (proxy) {
 			auto const& pm = proxy->GetImpl()->GetPropertyMap();
 			if (pm.Unserialize == nullptr) {

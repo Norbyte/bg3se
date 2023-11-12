@@ -240,7 +240,7 @@ namespace bg3se::lua
 	};
 
 
-	class ObjectProxy : private Userdata<ObjectProxy>, public Indexable, public NewIndexable, 
+	class LegacyObjectProxy : private Userdata<LegacyObjectProxy>, public Indexable, public NewIndexable,
 		public Iterable, public Stringifiable
 	{
 	public:
@@ -330,17 +330,17 @@ namespace bg3se::lua
 	private:
 		LifetimeHandle lifetime_;
 
-		ObjectProxy(LifetimeHandle const& lifetime)
+		LegacyObjectProxy(LifetimeHandle const& lifetime)
 			: lifetime_(lifetime)
 		{}
 
-		~ObjectProxy()
+		~LegacyObjectProxy()
 		{
 			GetImpl()->~ObjectProxyImplBase();
 		}
 
 	protected:
-		friend Userdata<ObjectProxy>;
+		friend Userdata<LegacyObjectProxy>;
 
 		int Index(lua_State* L);
 		int NewIndex(lua_State* L);
@@ -351,7 +351,7 @@ namespace bg3se::lua
 	template <class T>
 	inline T* checked_get_proxy(lua_State* L, int index)
 	{
-		auto proxy = Userdata<ObjectProxy>::CheckUserData(L, index);
+		auto proxy = Userdata<LegacyObjectProxy>::CheckUserData(L, index);
 		auto const& typeName = StaticLuaPropertyMap<T>::PropertyMap.Name;
 		if (proxy->GetImpl()->IsA(typeName)) {
 			auto obj = proxy->Get<T>(L);

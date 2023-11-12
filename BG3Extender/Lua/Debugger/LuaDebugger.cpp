@@ -260,7 +260,25 @@ namespace bg3se::lua::dbg
 		}
 	}
 
-	void LuaUserdataToEvalResults(lua_State* L, int index, ObjectProxy* proxy, DebuggerGetVariablesRequest const& req)
+	void LuaCppRefObjectToEvalResults(lua_State* L, int index, CppObjectMetadata& meta, DebuggerGetVariablesRequest const& req)
+	{
+		StackCheck _(L);
+		// TODO - liveliness check
+
+		auto const& pm = LightObjectProxyByRefMetatable::GetPropertyMap(meta);
+		auto obj = meta.Ptr;
+
+		for (auto const& prop : pm.Properties) {
+			auto result = prop.second.Get(L, meta.Lifetime, obj, prop.second.Offset, prop.second.Flag);
+			if (result == PropertyOperationResult::Success) {
+				push(L, prop.first);
+				LuaElementToEvalResults(L, -1, -2, req);
+				lua_pop(L, 2);
+			}
+		}
+	}
+
+	void LuaUserdataToEvalResults(lua_State* L, int index, LegacyObjectProxy* proxy, DebuggerGetVariablesRequest const& req)
 	{
 		StackCheck _(L);
 		if (!proxy->IsAlive(L)) {
@@ -366,7 +384,7 @@ namespace bg3se::lua::dbg
 
 	void LuaUserdataToEvalResults(lua_State* L, int index, DebuggerGetVariablesRequest const& req)
 	{
-		auto proxy = Userdata<ObjectProxy>::AsUserData(L, index);
+		auto proxy = Userdata<LegacyObjectProxy>::AsUserData(L, index);
 		if (proxy != nullptr) {
 			LuaUserdataToEvalResults(L, index, proxy, req);
 			return;
@@ -387,6 +405,12 @@ namespace bg3se::lua::dbg
 		lua_get_cppobject(L, index, meta);
 
 		switch (meta.MetatableTag) {
+		case MetatableTag::ObjectProxyByRef:
+		{
+			LuaCppRefObjectToEvalResults(L, index, meta, req);
+			break;
+		}
+		
 		case MetatableTag::ArrayProxy:
 		{
 			LuaArrayToEvalResults(L, index, meta, req);

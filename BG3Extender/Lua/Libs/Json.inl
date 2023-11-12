@@ -131,7 +131,7 @@ void* GetTablePointer(lua_State* L, int index)
 
 void* GetUserdataPointer(lua_State* L, int index)
 {
-	auto proxy = Userdata<ObjectProxy>::AsUserData(L, index);
+	auto proxy = Userdata<LegacyObjectProxy>::AsUserData(L, index);
 	if (proxy) {
 		return (void*)((std::uintptr_t)proxy->GetRaw(L) ^ ((std::uintptr_t)&proxy->GetImpl()->GetPropertyMap() << 32));
 	}

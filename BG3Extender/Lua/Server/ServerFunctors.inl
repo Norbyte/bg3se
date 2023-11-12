@@ -18,7 +18,7 @@ namespace bg3se::esv::lua
 			return 1;
 		}
 
-#define V(type) case bg3se::stats::FunctorId::type: ObjectProxy::MakeOwner<bg3se::stats::type##Functor>(L, pool, static_cast<bg3se::stats::type##Functor*>(functor)); break;
+#define V(type) case bg3se::stats::FunctorId::type: LegacyObjectProxy::MakeOwner<bg3se::stats::type##Functor>(L, pool, static_cast<bg3se::stats::type##Functor*>(functor)); break;
 
 		switch (type) {
 			V(CustomDescription)
@@ -76,7 +76,7 @@ namespace bg3se::esv::lua
 		auto& pool = GetServerLifetimePool();
 
 #define V(ty) case FunctorExecParamsType::ty: { \
-			auto params = ObjectProxy::MakeOwner<bg3se::stats::FunctorExecParams##ty>(L, pool); \
+			auto params = LegacyObjectProxy::MakeOwner<bg3se::stats::FunctorExecParams##ty>(L, pool); \
 			params->Get()->ParamsTypeId = type; \
 			break; }
 
@@ -107,7 +107,7 @@ namespace bg3se::esv::lua
 		auto params = checked_get_proxy<bg3se::stats::BaseFunctorExecParams>(L, 2);
 		auto& pool = GetServerLifetimePool();
 
-		auto hit = ObjectProxy::MakeOwner<HitResult>(L, pool)->Get();
+		auto hit = LegacyObjectProxy::MakeOwner<HitResult>(L, pool)->Get();
 		auto functorSet = GetStaticSymbols().GetStats()->ConstructFunctorSet(GFS.strEmpty);
 		functorSet->VMT->AddOrUpdate(functorSet, functor);
 

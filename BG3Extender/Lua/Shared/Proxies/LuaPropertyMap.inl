@@ -145,15 +145,10 @@ void UnserializeRawObjectFromTable(lua_State* L, int index, void* obj, GenericPr
 void UnserializeRawObjectFromUserdata(lua_State* L, int index, void* obj, GenericPropertyMap const& pm)
 {
 	StackCheck _(L);
-	auto other = Userdata<ObjectProxy>::CheckUserData(L, index);
-	auto& otherPm = other->GetImpl()->GetPropertyMap();
-	if (otherPm.Name != pm.Name) {
-		luaL_error(L, "Attempted to access %s, got %s", pm.Name.GetString(), otherPm.Name.GetString());
-		return;
-	}
+	auto other = ObjectProxy::GetRaw(L, index, pm);
 
-	if (otherPm.Assign != nullptr) {
-		otherPm.Assign(obj, other->GetRaw(L));
+	if (pm.Assign != nullptr) {
+		pm.Assign(obj, other);
 	} else {
 		luaL_error(L, "Type %s does not support assignment", pm.Name.GetString());
 	}
