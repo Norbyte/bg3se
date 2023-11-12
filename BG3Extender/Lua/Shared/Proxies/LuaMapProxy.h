@@ -6,7 +6,6 @@ class MapProxyImplBase
 {
 public:
 	MapProxyImplBase();
-	virtual ~MapProxyImplBase();
 	void Register();
 	virtual int GetRegistryIndex() const;
 	virtual unsigned GetContainerClass() const = 0;
@@ -33,9 +32,6 @@ public:
 
 	using ContainerType = MultiHashMap<TKey, TValue>;
 	static constexpr unsigned ContainerClassId = 1;
-
-	~MultiHashMapProxyImpl() override
-	{}
 
 	unsigned GetContainerClass() const override
 	{
@@ -143,9 +139,6 @@ public:
 
 	using ContainerType = MapBase<TInternals>;
 	static constexpr unsigned ContainerClassId = TContainerClassId;
-
-	~RefMapProxyImpl() override
-	{}
 
 	unsigned GetContainerClass() const override
 	{

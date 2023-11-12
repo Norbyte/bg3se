@@ -44,7 +44,6 @@ class ArrayProxyImplBase
 {
 public:
 	ArrayProxyImplBase();
-	virtual ~ArrayProxyImplBase();
 	void Register();
 	int GetRegistryIndex() const;
 	virtual unsigned GetContainerClass() = 0;

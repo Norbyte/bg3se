@@ -7,9 +7,6 @@ SetProxyImplBase::SetProxyImplBase()
 	Register();
 }
 
-SetProxyImplBase::~SetProxyImplBase()
-{}
-
 void SetProxyImplBase::Register()
 {
 	assert(registryIndex_ == -1);

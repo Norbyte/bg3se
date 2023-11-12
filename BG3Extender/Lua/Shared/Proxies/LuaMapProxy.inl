@@ -7,9 +7,6 @@ MapProxyImplBase::MapProxyImplBase()
 	Register();
 }
 
-MapProxyImplBase::~MapProxyImplBase()
-{}
-
 void MapProxyImplBase::Register()
 {
 	assert(registryIndex_ == -1);

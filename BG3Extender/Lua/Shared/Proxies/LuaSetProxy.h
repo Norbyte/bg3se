@@ -6,7 +6,6 @@ class SetProxyImplBase
 {
 public:
 	SetProxyImplBase();
-	virtual ~SetProxyImplBase();
 	void Register();
 	int GetRegistryIndex() const;
 	virtual TypeInformation const& GetContainerType() const = 0;
@@ -33,9 +32,6 @@ public:
 
 	using ElementType = T;
 	using ContainerType = MultiHashSet<T>;
-
-	~MultiHashSetProxyImpl() override
-	{}
 
 	TypeInformation const& GetContainerType() const override
 	{

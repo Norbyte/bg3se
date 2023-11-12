@@ -8,9 +8,6 @@ ArrayProxyImplBase::ArrayProxyImplBase()
 	Register();
 }
 
-ArrayProxyImplBase::~ArrayProxyImplBase()
-{}
-
 void ArrayProxyImplBase::Register()
 {
 	assert(registryIndex_ == -1);
