@@ -1,6 +1,7 @@
 #include <stdafx.h>
 #include <Extender/Client/ScriptExtenderClient.h>
 #include <Extender/ScriptExtender.h>
+#include <Extender/Version.h>
 
 #define STATIC_HOOK(name) decltype(bg3se::ecl::ScriptExtender::name) * decltype(bg3se::ecl::ScriptExtender::name)::gHook;
 STATIC_HOOK(gameStateWorkerStart_)
@@ -204,6 +205,14 @@ void ScriptExtender::OnGameStateChanged(GameState fromState, GameState toState)
 	case GameState::UnloadSession:
 		INFO("ecl::ScriptExtender::OnGameStateChanged(): Unloading session");
 		ResetExtensionState();
+		break;
+
+	case GameState::Menu:
+		#if defined(SE_IS_DEVELOPER_BUILD) && defined(NDEBUG)
+		if (!gExtender->GetConfig().DeveloperMode) {
+			gExtender->GetLibraryManager().ShowStartupError("This is an experimental version of the Script Extender meant for development use; things may frequently break here. It is recommended to switch back to the Release version unless you know what you are doing!", false, false);
+		}
+		#endif
 		break;
 
 	case GameState::LoadModule:

@@ -45,6 +45,12 @@ function Build-Extender
 {
 	# Force a build date refresh
 	(gci BG3Extender/Extender/Shared/Console.cpp).LastWriteTime = Get-Date
+	(gci BG3Extender/Extender/BuildInfo.h).LastWriteTime = Get-Date
+	if ($Channel -eq "Release") {
+		echo "#undef SE_IS_DEVELOPER_BUILD" | Out-File -FilePath BG3Extender/Extender/BuildInfo.h
+	} else {
+		echo "#define SE_IS_DEVELOPER_BUILD" | Out-File -FilePath BG3Extender/Extender/BuildInfo.h
+	}
 
 	Write-Output " ===== BUILDING GAME EXTENDER ===== "
 	msbuild BG3Tools.sln "/p:Configuration=Game Release" /t:Build /m /nologo /verbosity:quiet /consoleloggerparameters:summary

@@ -122,6 +122,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Extender\BuildInfo.h" />
     <ClInclude Include="Extender\Client\ClientNetworking.h" />
     <ClInclude Include="Extender\Client\ExtensionStateClient.h" />
     <ClInclude Include="Extender\Client\ScriptExtenderClient.h" />
@@ -145,6 +146,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <ClInclude Include="Extender\Shared\tinyxml2.h" />
     <ClInclude Include="Extender\Shared\UserVariables.h" />
     <ClInclude Include="Extender\Shared\Utils.h" />
+    <ClInclude Include="Extender\Version.h" />
     <ClInclude Include="GameDefinitions\Base\Base.h" />
     <ClInclude Include="GameDefinitions\Base\ExposedTypes.h" />
     <ClInclude Include="GameDefinitions\Base\LuaAnnotations.h" />

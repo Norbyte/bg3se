@@ -451,6 +451,8 @@
     <ClInclude Include="Lua\Shared\Proxies\LuaEnumValue.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaBitfieldValue.h" />
     <ClInclude Include="GameDefinitions\Base\LuaAnnotations.h" />
+    <ClInclude Include="Extender\Version.h" />
+    <ClInclude Include="Extender\BuildInfo.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

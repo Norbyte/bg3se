@@ -3,6 +3,7 @@
 #include <cstdint>
 
 #include "resource.h"
+#include <Extender/BuildInfo.h>
 
 namespace bg3se {
 	static constexpr uint32_t CurrentVersion = RES_DLL_MAJOR_VERSION;
