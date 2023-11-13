@@ -1317,7 +1317,7 @@ BEGIN_BITMASK(CriticalHitBoostFlags, uint8_t)
 	EV(AttackRoll, 32)
 END_ENUM()
 
-BEGIN_BITMASK(ResistanceBoostFlags, uint32_t)
+BEGIN_BITMASK(ResistanceBoostFlags, uint8_t)
 	EV(BelowDamageThreshold, 0x01)
 	EV(ResistantToMagical, 0x02)
 	EV(ImmuneToMagical, 0x04)

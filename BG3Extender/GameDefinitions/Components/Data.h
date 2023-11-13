@@ -804,11 +804,11 @@ struct DarknessComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::Darkness;
 	static constexpr auto EngineClass = "eoc::DarknessComponent";
 
-	bool Sneaking;
+	uint8_t Sneaking;
 	uint8_t Obscurity;
-	bool field_2;
+	uint8_t field_2;
 	uint8_t field_3;
-	bool field_4;
+	uint8_t field_4;
 	float field_8;
 	float field_C;
 };

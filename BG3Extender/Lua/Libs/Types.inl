@@ -191,28 +191,28 @@ UserReturn Serialize(lua_State* L)
 			{
 				auto& pm = LightObjectProxyByRefMetatable::GetPropertyMap(meta);
 				pm.Serialize(L, meta.Ptr);
-				break;
+				return 1;
 			}
 			
 			case MetatableTag::ArrayProxy:
 			{
 				auto impl = ArrayProxyMetatable::GetImpl(meta);
 				impl->Serialize(L, meta);
-				break;
+				return 1;
 			}
 
 			case MetatableTag::MapProxy:
 			{
 				auto impl = MapProxyMetatable::GetImpl(meta);
 				impl->Serialize(L, meta);
-				break;
+				return 1;
 			}
 
 			case MetatableTag::SetProxy:
 			{
 				auto impl = SetProxyMetatable::GetImpl(meta);
 				impl->Serialize(L, meta);
-				break;
+				return 1;
 			}
 		}
 	}
@@ -245,28 +245,28 @@ void Unserialize(lua_State* L)
 			{
 				auto& pm = LightObjectProxyByRefMetatable::GetPropertyMap(meta);
 				pm.Unserialize(L, 2, meta.Ptr);
-				break;
+				return;
 			}
 
 			case MetatableTag::ArrayProxy:
 			{
 				auto impl = ArrayProxyMetatable::GetImpl(meta);
 				impl->Unserialize(L, meta, 2);
-				break;
+				return;
 			}
 
 			case MetatableTag::MapProxy:
 			{
 				auto impl = MapProxyMetatable::GetImpl(meta);
 				impl->Unserialize(L, meta, 2);
-				break;
+				return;
 			}
 
 			case MetatableTag::SetProxy:
 			{
 				auto impl = SetProxyMetatable::GetImpl(meta);
 				impl->Unserialize(L, meta, 2);
-				break;
+				return;
 			}
 		}
 	}
