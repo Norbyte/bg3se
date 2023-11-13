@@ -111,7 +111,7 @@ Array<FixedString> GetAllTypes()
 
 void RegisterEnumeration(lua_State* L, EnumInfoStore<EnumUnderlyingType> const& ty)
 {
-	/*lua_newtable(L);
+	lua_newtable(L);
 
 	for (auto const& elem : ty.Values) {
 		EnumValueMetatable::Make(L, elem.Value, ty.RegistryIndex);
@@ -122,12 +122,12 @@ void RegisterEnumeration(lua_State* L, EnumInfoStore<EnumUnderlyingType> const& 
 		lua_rawset(L, -3);
 	}
 
-	lua_setfield(L, -2, ty.LuaName.GetString());*/
+	lua_setfield(L, -2, ty.LuaName.GetString());
 }
 
 void RegisterEnumeration(lua_State* L, BitmaskInfoStore<EnumUnderlyingType> const& ty)
 {
-	/*lua_newtable(L);
+	lua_newtable(L);
 
 	for (auto const& elem : ty.Values) {
 		BitfieldValueMetatable::Make(L, elem.Value, ty.RegistryIndex);
@@ -138,7 +138,7 @@ void RegisterEnumeration(lua_State* L, BitmaskInfoStore<EnumUnderlyingType> cons
 		lua_rawset(L, -3);
 	}
 
-	lua_setfield(L, -2, ty.LuaName.GetString());*/
+	lua_setfield(L, -2, ty.LuaName.GetString());
 }
 
 void RegisterEnumerations(lua_State* L)
