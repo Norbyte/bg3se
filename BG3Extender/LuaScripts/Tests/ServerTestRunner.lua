@@ -175,12 +175,11 @@ local function ReserializeResources()
     _P("Re-serializing all resources ...")
     for i,cls in pairs(Ext.Enums.ExtResourceManagerType) do
         if type(i) == "number" then
-            for j,guid in pairs(Ext.StaticData.GetAll(type)) do
-                local resource = Ext.StaticData.Get(guid, type)
-                print(resource)
+            for j,guid in pairs(Ext.StaticData.GetAll(cls)) do
+                local resource = Ext.StaticData.Get(guid, cls)
                 local reason = TryToReserializeObject(resource)
                 if reason ~= nil then
-                    _PE("Serialization failed: Resource type " .. type .. ", guid " .. guid)
+                    _PE("Serialization failed: Resource type " .. tostring(cls) .. ", guid " .. guid)
                     _PE(reason)
                 end
             end
