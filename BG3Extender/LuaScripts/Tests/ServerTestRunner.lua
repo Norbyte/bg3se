@@ -41,8 +41,8 @@ local function DebugValidate(obj, entity, counters)
 end
 
 -- Iterate through every entity class and consistency check all components
-Ext.RegisterConsoleCommand("se_entitytest", function ()
-    _P("Starting entity iteration test ... this may take a while")
+local function ValidateEntities()
+    _P("Validating all entity components ...")
     local counters = {}
 
     for i,entity in ipairs(Ext.Entity.GetAllEntities()) do
@@ -69,9 +69,154 @@ Ext.RegisterConsoleCommand("se_entitytest", function ()
         end
     end
 
-    _P("Error stats:")
+    _P("Object validation error stats:")
     for name,count in pairs(counters) do
         _P(name .. ": " .. count)
     end
     _P("Done.")
+end
+
+local function TryToReserializeObject(obj)
+    local serializer = function ()
+        local serialized = Ext.Types.Serialize(obj)
+        Ext.Types.Unserialize(obj, serialized)
+        local serialized2 = Ext.Types.Serialize(obj)
+        return Ext.DumpExport(serialized) == Ext.DumpExport(serialized2)
+    end
+
+    local ok, err = xpcall(serializer, debug.traceback)
+    if not ok then
+        return err
+    elseif not err then
+        return "Mismatch"
+    else
+        return nil
+    end
+end
+
+-- Iterate through every entity class and perform an unserialization -> serialization -> unserialization test
+-- to check if the serialization logic is symmetric
+local function ReserializeEntities()
+    _P("Re-serializing entity components ... this is VERY SLOW!")
+    local counters = {}
+
+    for i,entity in ipairs(Ext.Entity.GetAllEntities()) do
+        for name,component in pairs(entity:GetAllComponents()) do
+            DebugValidate(component, entity, counters)
+            if name ~= "ServerCharacter" and name ~= "ServerItem" then
+			    local reason = TryToReserializeObject(component)
+                if reason ~= nil then
+                    _PE("Serialization failed: " .. tostring(entity) .. ", component " .. name)
+                    _PE(reason)
+                    if counters[name] == nil then
+                        counters[name] = 1
+                    else
+                        counters[name] = counters[name] + 1
+                    end
+                end
+            end
+        end
+    end
+
+    _P("Serialization error stats:")
+    for name,count in pairs(counters) do
+        _P(name .. ": " .. count)
+    end
+    _P("Done.")
+end
+
+local function ValidateTemplateList(templates)
+    for key,tmpl in pairs(templates) do
+        if not Ext.Types.Validate(tmpl) then
+            _PE("Validation failed: Template " .. key)
+        end
+    end
+end
+
+local function ValidateTemplates()
+    _P("Validating all root templates ...")
+    ValidateTemplateList(Ext.Template.GetAllRootTemplates())
+    ValidateTemplateList(Ext.Template.GetAllLocalTemplates())
+    ValidateTemplateList(Ext.Template.GetAllCacheTemplates())
+    ValidateTemplateList(Ext.Template.GetAllLocalCacheTemplates())
+end
+
+local function ReserializeTemplateList(templates)
+    for key,tmpl in pairs(templates) do
+        local reason = TryToReserializeObject(tmpl)
+        if reason ~= nil then
+            _PE("Serialization failed: Template " .. key)
+            _PE(reason)
+        end
+    end
+end
+
+local function ReserializeTemplates()
+    _P("Serializing all root templates ...")
+    ReserializeTemplateList(Ext.Template.GetAllRootTemplates())
+    ReserializeTemplateList(Ext.Template.GetAllLocalTemplates())
+    ReserializeTemplateList(Ext.Template.GetAllCacheTemplates())
+    ReserializeTemplateList(Ext.Template.GetAllLocalCacheTemplates())
+end
+
+local function ValidateResources()
+    _P("Validating all resources ...")
+    for i,cls in pairs(Ext.Enums.ExtResourceManagerType) do
+        if type(i) == "number" then
+            for j,guid in pairs(Ext.StaticData.GetAll(cls)) do
+                local resource = Ext.StaticData.Get(guid, cls)
+                Ext.Types.Validate(resource)
+            end
+        end
+    end
+end
+
+local function ReserializeResources()
+    _P("Re-serializing all resources ...")
+    for i,cls in pairs(Ext.Enums.ExtResourceManagerType) do
+        if type(i) == "number" then
+            for j,guid in pairs(Ext.StaticData.GetAll(type)) do
+                local resource = Ext.StaticData.Get(guid, type)
+                print(resource)
+                local reason = TryToReserializeObject(resource)
+                if reason ~= nil then
+                    _PE("Serialization failed: Resource type " .. type .. ", guid " .. guid)
+                    _PE(reason)
+                end
+            end
+        end
+    end
+end
+
+Ext.RegisterConsoleCommand("se_entitytest", function ()
+    ValidateEntities()
+end)
+
+Ext.RegisterConsoleCommand("se_serializertest", function ()
+    ReserializeEntities()
+end)
+
+Ext.RegisterConsoleCommand("se_roottest", function ()
+    ValidateTemplates()
+end)
+
+Ext.RegisterConsoleCommand("se_rootserializertest", function ()
+    ReserializeTemplates()
+end)
+
+Ext.RegisterConsoleCommand("se_resourcetest", function ()
+    ValidateResources()
+end)
+
+Ext.RegisterConsoleCommand("se_resourceserializertest", function ()
+    ReserializeResources()
+end)
+
+Ext.RegisterConsoleCommand("se_deepfry", function ()
+    ValidateTemplates()
+    ValidateResources()
+    ValidateEntities()
+    ReserializeTemplates()
+    ReserializeResources()
+    ReserializeEntities()
 end)
