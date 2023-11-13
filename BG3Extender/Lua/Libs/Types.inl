@@ -161,10 +161,10 @@ void RegisterEnumerations(lua_State* L)
 
 bool Validate(lua_State* L)
 {
-	// FIXME - convert to new property maps!
-	auto proxy = Userdata<LegacyObjectProxy>::CheckUserData(L, 1);
-	auto& pm = proxy->GetImpl()->GetPropertyMap();
-	return pm.ValidateObject(proxy->GetRaw(L));
+	CppObjectMetadata meta;
+	lua_get_cppobject(L, 1, MetatableTag::ObjectProxyByRef, meta);
+	auto& pm = LightObjectProxyByRefMetatable::GetPropertyMap(meta);
+	return pm.ValidateObject(meta.Ptr);
 }
 
 UserReturn Serialize(lua_State* L)
@@ -187,6 +187,13 @@ UserReturn Serialize(lua_State* L)
 		lua_get_cppobject(L, 1, meta);
 
 		switch (meta.MetatableTag) {
+			case MetatableTag::ObjectProxyByRef:
+			{
+				auto& pm = LightObjectProxyByRefMetatable::GetPropertyMap(meta);
+				pm.Serialize(L, meta.Ptr);
+				break;
+			}
+			
 			case MetatableTag::ArrayProxy:
 			{
 				auto impl = ArrayProxyMetatable::GetImpl(meta);
@@ -234,6 +241,13 @@ void Unserialize(lua_State* L)
 		lua_get_cppobject(L, 1, meta);
 
 		switch (meta.MetatableTag) {
+			case MetatableTag::ObjectProxyByRef:
+			{
+				auto& pm = LightObjectProxyByRefMetatable::GetPropertyMap(meta);
+				pm.Unserialize(L, 2, meta.Ptr);
+				break;
+			}
+
 			case MetatableTag::ArrayProxy:
 			{
 				auto impl = ArrayProxyMetatable::GetImpl(meta);

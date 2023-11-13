@@ -11,13 +11,7 @@ template <class T>
 PropertyOperationResult GenericGetOffsetProperty(lua_State* L, LifetimeHandle const& lifetime, void* obj, std::size_t offset, uint64_t)
 {
 	auto* value = (T*)((std::uintptr_t)obj + offset);
-
-	if constexpr (IsByVal<T>) {
-		push(L, *value);
-	} else {
-		push(L, value);
-	}
-
+	push(L, value, lifetime);
 	return PropertyOperationResult::Success;
 }
 
