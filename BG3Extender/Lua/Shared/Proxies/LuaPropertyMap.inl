@@ -125,8 +125,12 @@ void SerializeRawObject(lua_State* L, void* obj, GenericPropertyMap const& pm)
 	StackCheck _(L, 1);
 	lua_createtable(L, 0, (int)pm.Properties.size());
 	for (auto const& prop : pm.Properties) {
-		prop.second.Serialize(L, obj, prop.second.Offset, prop.second.Flag);
-		lua_setfield(L, -2, prop.first.GetString());
+		if (prop.second.Serialize != nullptr) {
+			auto result = prop.second.Serialize(L, obj, prop.second.Offset, prop.second.Flag);
+			if (result == PropertyOperationResult::Success) {
+				lua_setfield(L, -2, prop.first.GetString());
+			}
+		}
 	}
 }
 
