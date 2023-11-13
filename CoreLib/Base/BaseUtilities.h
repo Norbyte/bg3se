@@ -59,7 +59,11 @@ struct ByVal<std::optional<T>> { static constexpr bool Value = ByVal<T>::Value; 
 template <class T>
 constexpr bool IsByVal = ByVal<T>::Value;
 
-#define BY_VAL(cls) template<> struct ByVal<cls> { static constexpr bool Value = true; }
+#define BY_VAL(cls) template<> \
+	struct ByVal<cls> { \
+		static_assert(std::is_default_constructible_v<cls>, "By-value types must be default constructible"); \
+		static constexpr bool Value = true; \
+	}
 
 
 template <class T>
