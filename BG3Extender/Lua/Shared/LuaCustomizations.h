@@ -10,7 +10,8 @@ enum class MetatableTag : uint8_t
 	BitfieldValue = 5,
 	UserVariableHolder = 6,
 	ModVariableHolder = 7,
-	Max = ModVariableHolder
+	Entity = 8,
+	Max = Entity
 };
 
 struct LuaInternalState;

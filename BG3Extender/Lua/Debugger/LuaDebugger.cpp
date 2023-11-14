@@ -299,15 +299,14 @@ namespace bg3se::lua::dbg
 		}
 	}
 
-	void LuaEntityToEvalResults(lua_State* L, int index, EntityProxy* entity, DebuggerGetVariablesRequest const& req)
+	void LuaEntityToEvalResults(lua_State* L, int index, CppObjectMetadata& meta, DebuggerGetVariablesRequest const& req)
 	{
 		StackCheck _(L);
-
-		auto ecs = EntityProxy::GetEntitySystem(L);
-		auto types = entity->GetAllComponentTypes(ecs);
+		auto entity = EntityProxyMetatable::GetHelper(L, index);
+		auto types = entity.GetAllComponentTypes();
 
 		for (auto type : types) {
-			entity->GetComponentByType(L, type);
+			entity.PushComponentByType(L, type);
 			if (lua_type(L, 1) != LUA_TNIL) {
 				push(L, EnumInfo<ExtComponentType>::Find(type).GetString());
 				LuaElementToEvalResults(L, -1, -2, req);
@@ -390,12 +389,6 @@ namespace bg3se::lua::dbg
 			return;
 		}
 
-		auto entity = Userdata<EntityProxy>::AsUserData(L, index);
-		if (entity != nullptr) {
-			LuaEntityToEvalResults(L, index, entity, req);
-			return;
-		}
-
 		WARN("LuaValueToEvalResults(): Evaluating unrecognized userdata type");
 	}
 
@@ -426,6 +419,12 @@ namespace bg3se::lua::dbg
 		case MetatableTag::SetProxy:
 		{
 			LuaSetToEvalResults(L, index, meta, req);
+			break;
+		}
+		
+		case MetatableTag::Entity:
+		{
+			LuaEntityToEvalResults(L, index, meta, req);
 			break;
 		}
 

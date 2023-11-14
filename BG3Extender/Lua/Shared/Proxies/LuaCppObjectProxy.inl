@@ -78,6 +78,51 @@ void* ObjectProxy::GetRaw(lua_State* L, int index, GenericPropertyMap const& pm)
 	return meta.Ptr;
 }
 
+GenericPropertyMap& LightObjectProxyByRefMetatable::GetPropertyMap(CppObjectMetadata const& meta)
+{
+	assert(meta.MetatableTag == MetaTag);
+	return LuaGetPropertyMap(meta.PropertyMapTag);
+}
+
+
+void* LightObjectProxyByRefMetatable::TryGetGeneric(lua_State* L, int index, int propertyMapIndex)
+{
+	CppObjectMetadata meta;
+	if (lua_try_get_cppobject(L, index, MetaTag, meta)) {
+		auto& pm = LuaGetPropertyMap(meta.PropertyMapTag);
+		if (pm.IsA(meta.PropertyMapTag) && meta.Lifetime.IsAlive(L)) {
+			return meta.Ptr;
+		}
+	}
+
+	return nullptr;
+}
+
+void* LightObjectProxyByRefMetatable::GetGeneric(lua_State* L, int index, int propertyMapIndex)
+{
+	CppObjectMetadata meta;
+	if (lua_try_get_cppobject(L, index, meta)) {
+		auto& pm = LuaGetPropertyMap(meta.PropertyMapTag);
+		if (pm.IsA(propertyMapIndex)) {
+			if (!meta.Lifetime.IsAlive(L)) {
+				luaL_error(L, "Attempted to fetch '%s' whose lifetime has expired", GetTypeName(L, meta));
+				return 0;
+			}
+
+			return meta.Ptr;
+		} else {
+			luaL_error(L, "Argument %d: Expected object of type '%s', got '%s'", index,
+				LuaGetPropertyMap(propertyMapIndex).Name.GetString(),
+				pm.Name.GetString());
+			return nullptr;
+		}
+	} else {
+		luaL_error(L, "Argument %d: Expected object of type '%s', got '%s'", index,
+			LuaGetPropertyMap(propertyMapIndex).Name.GetString(),
+			lua_typename(L, lua_type(L, index)));
+		return nullptr;
+	}
+}
 
 int LightObjectProxyByRefMetatable::Index(lua_State* L, CppObjectMetadata& self)
 {

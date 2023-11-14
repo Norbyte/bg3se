@@ -138,10 +138,10 @@ bool IsValidHandle(lua_State* L)
 	case LUA_TLIGHTUSERDATA:
 		return (bool)get<EntityHandle>(L, 1);
 
-	case LUA_TUSERDATA:
+	case LUA_TLIGHTCPPOBJECT:
 	{
-		auto handle = EntityProxy::AsUserData(L, 1);
-		return handle != nullptr ? (bool)handle->Handle() : false;
+		auto handle = EntityProxyMetatable::Get(L, 1);
+		return (bool)handle;
 	}
 
 	default:

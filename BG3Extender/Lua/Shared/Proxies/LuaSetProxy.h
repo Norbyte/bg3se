@@ -118,6 +118,7 @@ class SetProxyMetatable : public LightCppObjectMetatable<SetProxyMetatable>, pub
 {
 public:
 	static constexpr MetatableTag MetaTag = MetatableTag::SetProxy;
+	static constexpr bool HasLifetime = true;
 
 	template <class TImpl>
 	static SetProxyImplBase* GetImplementation()

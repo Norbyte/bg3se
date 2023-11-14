@@ -116,7 +116,7 @@ namespace lua
 {
 	struct LifetimeHandle;
 	class Ref;
-	class EntityProxy;
+	class EntityHelper;
 	class GenericPropertyMap;
 	class CachedUserVariableManager;
 	class CachedModVariableManager;

@@ -95,19 +95,6 @@ template <class TSubclass>
 class LightCppObjectMetatable
 {
 public:
-	template <class T>
-	inline static void Make(lua_State* L, T* object, LifetimeHandle const& lifetime)
-	{
-		auto const& pm = StaticLuaPropertyMap<T>::PropertyMap;
-		lua_push_cppobject(L, TSubclass::MetaTag, pm.RegistryIndex, object, lifetime);
-	}
-
-	static lua::GenericPropertyMap& GetPropertyMap(CppObjectMetadata const& meta)
-	{
-		assert(meta.MetatableTag == TSubclass::MetaTag);
-		return LuaGetPropertyMap(meta.PropertyMapTag);
-	}
-
 	static std::optional<CppObjectMetadata> TryGetMetadata(lua_State* L, int index)
 	{
 		CppObjectMetadata meta;
@@ -116,59 +103,6 @@ public:
 		} else {
 			return {};
 		}
-	}
-
-	static void* TryGetGeneric(lua_State* L, int index, int propertyMapIndex)
-	{
-		CppObjectMetadata meta;
-		if (lua_try_get_cppobject(L, index, TSubclass::MetaTag, meta)) {
-			auto& pm = LuaGetPropertyMap(meta.PropertyMapTag);
-			if (pm.IsA(meta.PropertyMapTag) && meta.Lifetime.IsAlive(L)) {
-				return meta.Ptr;
-			}
-		}
-
-		return nullptr;
-	}
-
-	static void* GetGeneric(lua_State* L, int index, int propertyMapIndex)
-	{
-		CppObjectMetadata meta;
-		if (lua_try_get_cppobject(L, index, meta)) {
-			auto& pm = LuaGetPropertyMap(meta.PropertyMapTag);
-			if (pm.IsA(propertyMapIndex)) {
-				if (!meta.Lifetime.IsAlive(L)) {
-					luaL_error(L, "Attempted to fetch '%s' whose lifetime has expired", TSubclass::GetTypeName(L, meta));
-					return 0;
-				}
-
-				return meta.Ptr;
-			} else {
-				luaL_error(L, "Argument %d: Expected object of type '%s', got '%s'", index,
-					LuaGetPropertyMap(propertyMapIndex).Name.GetString(),
-					pm.Name.GetString());
-				return nullptr;
-			}
-		} else {
-			luaL_error(L, "Argument %d: Expected object of type '%s', got '%s'", index,
-				LuaGetPropertyMap(propertyMapIndex).Name.GetString(),
-				lua_typename(L, lua_type(L, index)));
-			return nullptr;
-		}
-	}
-
-	template <class T>
-	static T* TryGet(lua_State* L, int index)
-	{
-		auto const& pm = StaticLuaPropertyMap<T>::PropertyMap;
-		return reinterpret_cast<T*>(TryGetGeneric(L, index, pm.PropertyMapTag));
-	}
-
-	template <class T>
-	static T* Get(lua_State* L, int index)
-	{
-		auto ptr = GetGeneric(L, index, StaticLuaPropertyMap<T>::PropertyMap.RegistryIndex);
-		return reinterpret_cast<T*>(ptr);
 	}
 
 	static int CallProxy(lua_State* L)
@@ -189,9 +123,11 @@ public:
 			CppObjectMetadata self;
 			lua_get_cppobject(L, 1, TSubclass::MetaTag, self);
 
-			if (!self.Lifetime.IsAlive(L)) {
-				luaL_error(L, "Attempted to read '%s' whose lifetime has expired", TSubclass::GetTypeName(L, self));
-				return 0;
+			if constexpr (TSubclass::HasLifetime) {
+				if (!self.Lifetime.IsAlive(L)) {
+					luaL_error(L, "Attempted to read '%s' whose lifetime has expired", TSubclass::GetTypeName(L, self));
+					return 0;
+				}
 			}
 
 			return TSubclass::Index(L, self);
@@ -207,9 +143,11 @@ public:
 			CppObjectMetadata self;
 			lua_get_cppobject(L, 1, TSubclass::MetaTag, self);
 
-			if (!self.Lifetime.IsAlive(L)) {
-				luaL_error(L, "Attempted to write '%s' whose lifetime has expired", TSubclass::GetTypeName(L, self));
-				return 0;
+			if constexpr (TSubclass::HasLifetime) {
+				if (!self.Lifetime.IsAlive(L)) {
+					luaL_error(L, "Attempted to write '%s' whose lifetime has expired", TSubclass::GetTypeName(L, self));
+					return 0;
+				}
 			}
 
 			return TSubclass::NewIndex(L, self);
@@ -225,10 +163,12 @@ public:
 			CppObjectMetadata self;
 			lua_get_cppobject(L, 1, TSubclass::MetaTag, self);
 
-			if (!self.Lifetime.IsAlive(L)) {
-				luaL_error(L, "Attempted to get length of '%s' whose lifetime has expired", TSubclass::GetTypeName(L, self));
-				push(L, nullptr);
-				return 1;
+			if constexpr (TSubclass::HasLifetime) {
+				if (!self.Lifetime.IsAlive(L)) {
+					luaL_error(L, "Attempted to get length of '%s' whose lifetime has expired", TSubclass::GetTypeName(L, self));
+					push(L, nullptr);
+					return 1;
+				}
 			}
 
 			return TSubclass::Length(L, self);

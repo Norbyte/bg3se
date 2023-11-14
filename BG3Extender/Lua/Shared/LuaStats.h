@@ -100,6 +100,5 @@ END_NS()
 
 namespace bg3se::lua
 {
-	void RegisterEntityProxy(lua_State* L);
 	void RegisterSharedMetatables(lua_State* L);
 }

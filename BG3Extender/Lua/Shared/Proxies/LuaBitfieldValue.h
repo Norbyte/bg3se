@@ -9,6 +9,7 @@ class BitfieldValueMetatable : public LightCppValueMetatable<BitfieldValueMetata
 {
 public:
 	static constexpr MetatableTag MetaTag = MetatableTag::BitfieldValue;
+	static constexpr bool HasLifetime = false;
 
 	inline static void Make(lua_State* L, EnumUnderlyingType value, int registryIndex)
 	{

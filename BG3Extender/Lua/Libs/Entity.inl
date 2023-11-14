@@ -20,7 +20,7 @@ UserReturn Get(lua_State* L, Guid uuid)
 {
 	auto handle = State::FromLua(L)->GetEntitySystemHelpers()->GetEntityHandle(uuid);
 	if (handle) {
-		EntityProxy::New(L, handle);
+		EntityProxyMetatable::Make(L, handle);
 	} else {
 		push(L, nullptr);
 	}

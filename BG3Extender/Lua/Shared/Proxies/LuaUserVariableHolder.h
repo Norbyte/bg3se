@@ -7,6 +7,7 @@ class UserVariableHolderMetatable : public LightCppValueMetatable<UserVariableHo
 {
 public:
 	static constexpr MetatableTag MetaTag = MetatableTag::UserVariableHolder;
+	static constexpr bool HasLifetime = false;
 
 	inline static void Make(lua_State* L, ComponentHandle const& component)
 	{
@@ -26,6 +27,7 @@ class ModVariableHolderMetatable : public LightCppValueMetatable<ModVariableHold
 {
 public:
 	static constexpr MetatableTag MetaTag = MetatableTag::ModVariableHolder;
+	static constexpr bool HasLifetime = false;
 
 	inline static void Make(lua_State* L, uint32_t modIndex)
 	{

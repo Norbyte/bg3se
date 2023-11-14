@@ -44,7 +44,7 @@ namespace bg3se::lua
 	void push(lua_State* L, EntityHandle const& h)
 	{
 		if (h) {
-			EntityProxy::New(L, h);
+			EntityProxyMetatable::Make(L, h);
 		} else {
 			push(L, nullptr);
 		}
@@ -71,7 +71,7 @@ namespace bg3se::lua
 	void push(lua_State* L, ecs::EntityRef const& h)
 	{
 		if (h.Handle) {
-			EntityProxy::New(L, h.Handle);
+			EntityProxyMetatable::Make(L, h.Handle);
 		} else {
 			push(L, nullptr);
 		}

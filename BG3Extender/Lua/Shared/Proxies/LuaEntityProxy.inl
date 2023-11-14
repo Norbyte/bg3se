@@ -4,425 +4,440 @@
 #include <GameDefinitions/Components/All.h>
 #include <Extender/ScriptExtender.h>
 
-namespace bg3se::lua
+BEGIN_NS(lua)
+
+ecs::EntitySystemHelpersBase* GetEntitySystem(lua_State* L)
 {
-	char const* const EntityProxy::MetatableName = "EntityProxy";
+	return State::FromLua(L)->GetEntitySystemHelpers();
+}
 
-
-	ecs::EntitySystemHelpersBase* EntityProxy::GetEntitySystem(lua_State* L)
-	{
-		return State::FromLua(L)->GetEntitySystemHelpers();
+template <class T>
+void PushComponentType(lua_State* L, ecs::EntitySystemHelpersBase* helpers, EntityHandle const& handle,
+	LifetimeHandle const& lifetime)
+{
+	auto component = helpers->GetComponent<T>(handle);
+	if (component) {
+		MakeDirectObjectRef(L, component, lifetime);
+	} else {
+		push(L, nullptr);
 	}
-
-	EntityProxy::EntityProxy(EntityHandle const& handle)
-		: handle_(handle)
-	{}
-
-	template <class T>
-	void PushComponentType(lua_State* L, ecs::EntitySystemHelpersBase* helpers, EntityHandle const& handle,
-		LifetimeHandle const& lifetime)
-	{
-		auto component = helpers->GetComponent<T>(handle);
-		if (component) {
-			MakeDirectObjectRef(L, component, lifetime);
-		} else {
-			push(L, nullptr);
-		}
-	}
+}
 
 #define T(cls) \
-	case cls::ComponentType: \
-	{ \
-		PushComponentType<cls>(L, helpers, handle, lifetime); \
-		break; \
-	}
+case cls::ComponentType: \
+{ \
+	PushComponentType<cls>(L, helpers, handle, lifetime); \
+	break; \
+}
 
-	void PushComponent(lua_State* L, ecs::EntitySystemHelpersBase* helpers, EntityHandle const& handle, ExtComponentType componentType,
-		LifetimeHandle const& lifetime)
-	{
-		switch (componentType) {
+void PushComponent(lua_State* L, ecs::EntitySystemHelpersBase* helpers, EntityHandle const& handle, ExtComponentType componentType,
+	LifetimeHandle const& lifetime)
+{
+	switch (componentType) {
 
 #include <GameDefinitions/Components/AllComponentTypes.inl>
 
-		default:
-			OsiError("Don't know how to push component type: " << componentType);
-			break;
-		}
+	default:
+		OsiError("Don't know how to push component type: " << componentType);
+		break;
 	}
+}
 
 #undef T
 
 #define T(cls) case cls::ComponentType: MakeDirectObjectRef(L, reinterpret_cast<cls*>(rawComponent), lifetime); break;
 
-	void PushComponent(lua_State* L, void* rawComponent, ExtComponentType componentType, LifetimeHandle const& lifetime)
-	{
-		switch (componentType) {
+void PushComponent(lua_State* L, void* rawComponent, ExtComponentType componentType, LifetimeHandle const& lifetime)
+{
+	switch (componentType) {
 
 #include <GameDefinitions/Components/AllComponentTypes.inl>
 
-		default:
-			OsiError("Don't know how to push component type: " << componentType);
-			break;
-		}
+	default:
+		OsiError("Don't know how to push component type: " << componentType);
+		break;
 	}
+}
 
 #undef T
 
-	int EntityProxy::CreateComponent(lua_State* L)
-	{
-		StackCheck _(L, 1);
-		auto self = get<EntityProxy*>(L, 1);
-		auto componentType = get<ExtComponentType>(L, 2);
-		auto ecs = GetEntitySystem(L);
-		auto typeId = (uint16_t)*ecs->GetComponentIndex(componentType);
-		auto world = ecs->GetEntityWorld();
-		if (typeId < world->ComponentOpsList.size()) {
-			auto ops = world->ComponentOpsList[typeId];
-			if (ops != nullptr) {
-				ops->AddImmediateDefaultComponent(self->handle_.Handle, 0);
-				PushComponent(L, ecs, self->handle_, componentType, GetCurrentLifetime(L));
-				return 1;
+
+void EntityHelper::PushComponentByType(lua_State* L, ExtComponentType componentType) const
+{
+	StackCheck _(L, 1);
+	auto ecs = GetEntitySystem(L);
+	PushComponent(L, ecs, handle_, componentType, GetCurrentLifetime(L));
+}
+
+Array<ExtComponentType> EntityHelper::GetAllComponentTypes() const
+{
+	Array<ExtComponentType> types;
+
+	auto world = ecs_->GetEntityWorld();
+	auto entityClass = world->GetEntityClass(handle_);
+	if (entityClass != nullptr) {
+		for (auto typeInfo : entityClass->ComponentTypeToIndex) {
+			auto extType = ecs_->GetComponentType(typeInfo.Key());
+			if (extType) {
+				types.push_back(*extType);
 			}
 		}
-
-		OsiError("Unable to construct components of this type: " << componentType);
-		push(L, nullptr);
-		return 1;
 	}
 
-	int EntityProxy::GetComponent(lua_State* L)
-	{
-		StackCheck _(L, 1);
-		auto self = get<EntityProxy*>(L, 1);
-		auto componentType = get<ExtComponentType>(L, 2);
-		auto ecs = GetEntitySystem(L);
-		PushComponent(L, ecs, self->handle_, componentType, GetCurrentLifetime(L));
-		return 1;
-	}
+	return types;
+}
 
-	void EntityProxy::GetComponentByType(lua_State* L, ExtComponentType componentType) const
-	{
-		StackCheck _(L, 1);
-		auto ecs = GetEntitySystem(L);
-		PushComponent(L, ecs, handle_, componentType, GetCurrentLifetime(L));
-	}
 
-	int EntityProxy::GetAllComponents(lua_State* L)
-	{
-		StackCheck _(L, 1);
-		auto self = get<EntityProxy*>(L, 1);
+EntityHandle EntityProxyMetatable::Get(lua_State* L, int index)
+{
+	CppObjectMetadata meta;
+	lua_try_get_cppobject(L, 1, MetatableTag::Entity, meta);
+	return GetHandle(meta);
+}
 
-		bool warnOnMissing = false;
-		if (lua_gettop(L) >= 2) {
-			warnOnMissing = get<bool>(L, 2);
+EntityHelper EntityProxyMetatable::GetHelper(lua_State* L, int index)
+{
+	return EntityHelper(Get(L, index), GetEntitySystem(L));
+}
+
+int EntityProxyMetatable::CreateComponent(lua_State* L)
+{
+	StackCheck _(L, 1);
+	auto handle = Get(L, 1);
+	auto componentType = get<ExtComponentType>(L, 2);
+	auto ecs = GetEntitySystem(L);
+	auto typeId = (uint16_t)*ecs->GetComponentIndex(componentType);
+	auto world = ecs->GetEntityWorld();
+	if (typeId < world->ComponentOpsList.size()) {
+		auto ops = world->ComponentOpsList[typeId];
+		if (ops != nullptr) {
+			ops->AddImmediateDefaultComponent(handle.Handle, 0);
+			PushComponent(L, ecs, handle, componentType, GetCurrentLifetime(L));
+			return 1;
 		}
+	}
 
-		lua_newtable(L);
+	OsiError("Unable to construct components of this type: " << componentType);
+	push(L, nullptr);
+	return 1;
+}
 
-		auto ecs = GetEntitySystem(L);
-		auto world = ecs->GetEntityWorld();
-		auto entityClass = world->GetEntityClass(self->handle_);
-		if (entityClass != nullptr) {
-			auto componentPtr = entityClass->InstanceToPageMap.Find(self->handle_);
-			if (componentPtr) {
-				for (auto typeInfo : entityClass->ComponentTypeToIndex) {
-					auto extType = ecs->GetComponentType(typeInfo.Key());
-					if (extType) {
-						auto componentSize = ecs->GetComponentSize(*extType);
-						auto component = entityClass->GetComponent(**componentPtr, typeInfo.Value(), componentSize);
+int EntityProxyMetatable::GetComponent(lua_State* L)
+{
+	StackCheck _(L, 1);
+	auto handle = Get(L, 1);
+	auto componentType = get<ExtComponentType>(L, 2);
+	auto ecs = GetEntitySystem(L);
+	PushComponent(L, ecs, handle, componentType, GetCurrentLifetime(L));
+	return 1;
+}
 
-						push(L, *extType);
-						PushComponent(L, component, *extType, GetCurrentLifetime(L));
-						lua_rawset(L, -3);
-					} else if (warnOnMissing) {
-						auto name = ecs->GetComponentName(typeInfo.Key());
-						if (name) {
-							OsiWarn("No model found for component: " << **name);
-						} else {
-							OsiWarn("No model found for component ID: " << typeInfo.Key().Value());
-						}
+int EntityProxyMetatable::GetAllComponents(lua_State* L)
+{
+	StackCheck _(L, 1);
+	auto handle = Get(L, 1);
+
+	bool warnOnMissing = false;
+	if (lua_gettop(L) >= 2) {
+		warnOnMissing = get<bool>(L, 2);
+	}
+
+	lua_newtable(L);
+
+	auto ecs = GetEntitySystem(L);
+	auto world = ecs->GetEntityWorld();
+	auto entityClass = world->GetEntityClass(handle);
+	if (entityClass != nullptr) {
+		auto componentPtr = entityClass->InstanceToPageMap.Find(handle);
+		if (componentPtr) {
+			for (auto typeInfo : entityClass->ComponentTypeToIndex) {
+				auto extType = ecs->GetComponentType(typeInfo.Key());
+				if (extType) {
+					auto componentSize = ecs->GetComponentSize(*extType);
+					auto component = entityClass->GetComponent(**componentPtr, typeInfo.Value(), componentSize);
+
+					push(L, *extType);
+					PushComponent(L, component, *extType, GetCurrentLifetime(L));
+					lua_rawset(L, -3);
+				} else if (warnOnMissing) {
+					auto name = ecs->GetComponentName(typeInfo.Key());
+					if (name) {
+						OsiWarn("No model found for component: " << **name);
+					} else {
+						OsiWarn("No model found for component ID: " << typeInfo.Key().Value());
 					}
 				}
 			}
 		}
-
-		return 1;
 	}
 
-	Array<ExtComponentType> EntityProxy::GetAllComponentTypes(ecs::EntitySystemHelpersBase* ecs) const
-	{
-		Array<ExtComponentType> types;
+	return 1;
+}
 
-		auto world = ecs->GetEntityWorld();
-		auto entityClass = world->GetEntityClass(handle_);
-		if (entityClass != nullptr) {
-			for (auto typeInfo : entityClass->ComponentTypeToIndex) {
-				auto extType = ecs->GetComponentType(typeInfo.Key());
-				if (extType) {
-					types.push_back(*extType);
-				}
+int EntityProxyMetatable::GetAllComponentNames(lua_State* L)
+{
+	StackCheck _(L, 1);
+	auto handle = Get(L, 1);
+
+	lua_newtable(L);
+
+	auto ecs = GetEntitySystem(L);
+	auto world = ecs->GetEntityWorld();
+	auto entityClass = world->GetEntityClass(handle);
+	if (entityClass != nullptr) {
+		for (auto componentIdx : entityClass->ComponentTypeToIndex.Keys) {
+			auto name = ecs->GetComponentName(componentIdx);
+			if (name) {
+				push(L, componentIdx.Value());
+				push(L, **name);
+				lua_rawset(L, -3);
 			}
 		}
-
-		return types;
 	}
 
-	int EntityProxy::GetAllComponentNames(lua_State* L)
-	{
-		StackCheck _(L, 1);
-		auto self = get<EntityProxy*>(L, 1);
+	return 1;
+}
 
-		lua_newtable(L);
+int EntityProxyMetatable::GetEntityType(lua_State* L)
+{
+	StackCheck _(L, 1);
+	auto handle = Get(L, 1);
+	push(L, handle.GetType());
+	return 1;
+}
 
-		auto ecs = GetEntitySystem(L);
-		auto world = ecs->GetEntityWorld();
-		auto entityClass = world->GetEntityClass(self->handle_);
-		if (entityClass != nullptr) {
-			for (auto componentIdx : entityClass->ComponentTypeToIndex.Keys) {
-				auto name = ecs->GetComponentName(componentIdx);
-				if (name) {
-					push(L, componentIdx.Value());
-					push(L, **name);
-					lua_rawset(L, -3);
-				}
-			}
-		}
+int EntityProxyMetatable::GetSalt(lua_State* L)
+{
+	StackCheck _(L, 1);
+	auto handle = Get(L, 1);
+	push(L, handle.GetSalt());
+	return 1;
+}
 
-		return 1;
+int EntityProxyMetatable::GetIndex(lua_State* L)
+{
+	StackCheck _(L, 1);
+	auto handle = Get(L, 1);
+	push(L, handle.GetIndex());
+	return 1;
+}
+
+int EntityProxyMetatable::IsAlive(lua_State* L)
+{
+	StackCheck _(L, 1);
+	auto handle = Get(L, 1);
+	auto world = GetEntitySystem(L)->GetEntityWorld();
+	bool alive{ false };
+	auto entityClass = world->GetEntityClass(handle);
+	if (entityClass != nullptr) {
+		alive = (bool)entityClass->InstanceToPageMap.Find(handle);
 	}
 
-	int EntityProxy::GetEntityType(lua_State* L)
-	{
-		StackCheck _(L, 1);
-		auto self = get<EntityProxy*>(L, 1);
-		push(L, self->handle_.GetType());
-		return 1;
+	push(L, alive);
+	return 1;
+}
+
+
+int EntityProxyMetatable::GetReplicationFlags(lua_State* L)
+{
+	StackCheck _(L, 1);
+	auto handle = Get(L, 1);
+	auto component = get<ExtComponentType>(L, 2);
+
+	uint32_t qword{ 0 };
+	if (lua_gettop(L) > 2) {
+		qword = get<uint32_t>(L, 3);
 	}
 
-	int EntityProxy::GetSalt(lua_State* L)
-	{
-		StackCheck _(L, 1);
-		auto self = get<EntityProxy*>(L, 1);
-		push(L, self->handle_.GetSalt());
-		return 1;
+	auto ecs = State::FromLua(L)->GetEntitySystemHelpers();
+	auto flagMask = ecs->GetReplicationFlags(handle, component);
+	uint64_t flags{ 0 };
+	if (flagMask && qword < flagMask->NumQwords()) {
+		flags = flagMask->GetBuf()[qword];
 	}
 
-	int EntityProxy::GetIndex(lua_State* L)
-	{
-		StackCheck _(L, 1);
-		auto self = get<EntityProxy*>(L, 1);
-		push(L, self->handle_.GetIndex());
-		return 1;
+	push(L, flags);
+	return 1;
+}
+
+void ReplicateComponent(lua_State* L, EntityHandle entity, ExtComponentType component, uint32_t qword, uint64_t flags)
+{
+	auto ecs = gExtender->GetCurrentExtensionState()->GetLua()->GetEntitySystemHelpers();
+	if (!ecs->GetEntityWorld()->Replication) {
+		OsiError("Replication system is unavailable");
+		return;
 	}
 
-	int EntityProxy::IsAlive(lua_State* L)
-	{
-		StackCheck _(L, 1);
-		auto self = get<EntityProxy*>(L, 1);
-		auto world = GetEntitySystem(L)->GetEntityWorld();
-		bool alive{ false };
-		auto entityClass = world->GetEntityClass(self->handle_);
-		if (entityClass != nullptr) {
-			alive = (bool)entityClass->InstanceToPageMap.Find(self->handle_);
+	auto replicationFlags = ecs->GetOrCreateReplicationFlags(entity, component);
+	if (replicationFlags) {
+		replicationFlags->EnsureSize((qword + 1) * 64);
+		bool changed = (replicationFlags->GetBuf()[qword] & flags) != flags;
+		replicationFlags->GetBuf()[qword] |= flags;
+		if (changed) {
+			ecs->NotifyReplicationFlagsDirtied();
 		}
-
-		push(L, alive);
-		return 1;
-	}
-
-
-	int EntityProxy::GetReplicationFlags(lua_State* L)
-	{
-		StackCheck _(L, 1);
-		auto self = get<EntityProxy*>(L, 1);
-		auto component = get<ExtComponentType>(L, 2);
-
-		uint32_t qword{ 0 };
-		if (lua_gettop(L) > 2) {
-			qword = get<uint32_t>(L, 3);
-		}
-
-		auto ecs = State::FromLua(L)->GetEntitySystemHelpers();
-		auto flagMask = ecs->GetReplicationFlags(self->handle_, component);
-		uint64_t flags{ 0 };
-		if (flagMask && qword < flagMask->NumQwords()) {
-			flags = flagMask->GetBuf()[qword];
-		}
-
-		push(L, flags);
-		return 1;
-	}
-
-	void ReplicateComponent(lua_State* L, EntityHandle entity, ExtComponentType component, uint32_t qword, uint64_t flags)
-	{
-		auto ecs = gExtender->GetCurrentExtensionState()->GetLua()->GetEntitySystemHelpers();
-		if (!ecs->GetEntityWorld()->Replication) {
-			OsiError("Replication system is unavailable");
-			return;
-		}
-
-		auto replicationFlags = ecs->GetOrCreateReplicationFlags(entity, component);
-		if (replicationFlags) {
-			replicationFlags->EnsureSize((qword + 1) * 64);
-			bool changed = (replicationFlags->GetBuf()[qword] & flags) != flags;
-			replicationFlags->GetBuf()[qword] |= flags;
-			if (changed) {
-				ecs->NotifyReplicationFlagsDirtied();
-			}
-		} else {
-			OsiError("Unable to replicate; " << component << " type cannot be replicated or the replication ID is not mapped");
-		}
-	}
-
-	int EntityProxy::SetReplicationFlags(lua_State* L)
-	{
-		StackCheck _(L);
-		auto self = get<EntityProxy*>(L, 1);
-		auto component = get<ExtComponentType>(L, 2);
-
-		uint64_t flags{ 0 };
-		if (lua_gettop(L) > 2) {
-			flags = get<uint64_t>(L, 3);
-		}
-
-		uint32_t qword{ 0 };
-		if (lua_gettop(L) > 3) {
-			qword = get<uint32_t>(L, 4);
-		}
-
-		ReplicateComponent(L, self->handle_, component, qword, flags);
-		return 0;
-	}
-
-	int EntityProxy::Replicate(lua_State* L)
-	{
-		StackCheck _(L);
-		auto self = get<EntityProxy*>(L, 1);
-		auto component = get<ExtComponentType>(L, 2);
-
-		ReplicateComponent(L, self->handle_, component, 0, 0xffffffffffffffffull);
-		return 0;
-	}
-
-	int EntityProxy::Index(lua_State* L)
-	{
-		StackCheck _(L, 1);
-		auto self = get<EntityProxy*>(L, 1);
-		auto key = get<FixedString>(L, 2);
-
-		if (key == GFS.strCreateComponent) {
-			push(L, &EntityProxy::CreateComponent);
-			return 1;
-		}
-
-		if (key == GFS.strGetComponent) {
-			push(L, &EntityProxy::GetComponent);
-			return 1;
-		}
-
-		if (key == GFS.strGetAllComponents) {
-			push(L, &EntityProxy::GetAllComponents);
-			return 1;
-		}
-
-		if (key == GFS.strGetAllComponentNames) {
-			push(L, &EntityProxy::GetAllComponentNames);
-			return 1;
-		}
-
-		if (key == GFS.strGetEntityType) {
-			push(L, &EntityProxy::GetEntityType);
-			return 1;
-		}
-
-		if (key == GFS.strGetSalt) {
-			push(L, &EntityProxy::GetSalt);
-			return 1;
-		}
-
-		if (key == GFS.strGetIndex) {
-			push(L, &EntityProxy::GetIndex);
-			return 1;
-		}
-
-		if (key == GFS.strIsAlive) {
-			push(L, &EntityProxy::IsAlive);
-			return 1;
-		}
-
-		if (key == GFS.strGetReplicationFlags) {
-			push(L, &EntityProxy::GetReplicationFlags);
-			return 1;
-		}
-
-		if (key == GFS.strSetReplicationFlags) {
-			push(L, &EntityProxy::SetReplicationFlags);
-			return 1;
-		}
-
-		if (key == GFS.strReplicate) {
-			push(L, &EntityProxy::Replicate);
-			return 1;
-		}
-
-		auto componentType = EnumInfo<ExtComponentType>::Find(key);
-		if (componentType) {
-			auto ecs = GetEntitySystem(L);
-			auto rawComponent = ecs->GetRawComponent(self->handle_, *componentType);
-			if (rawComponent != nullptr) {
-				PushComponent(L, GetEntitySystem(L), self->handle_, *componentType, GetCurrentLifetime(L));
-			} else {
-				push(L, nullptr);
-			}
-		} else {
-			auto componentTypeName = get<char const*>(L, 2);
-			luaL_error(L, "Not a valid EntityProxy method or component type: %s", componentTypeName);
-		}
-
-		return 1;
-	}
-
-	int EntityProxy::ToString(lua_State* L)
-	{
-		StackCheck _(L, 1);
-		char entityName[100];
-		sprintf_s(entityName, "Entity (%016llx)", handle_.Handle);
-		push(L, entityName);
-		return 1;
-	}
-
-	EntityHandle do_get(lua_State* L, int index, Overload<EntityHandle>)
-	{
-		if (lua_type(L, index) == LUA_TNIL) {
-			return NullEntityHandle;
-		} else {
-			return EntityProxy::CheckUserData(L, index)->Handle();
-		}
-	}
-
-	ecs::EntityRef do_get(lua_State* L, int index, Overload<ecs::EntityRef>)
-	{
-		if (lua_type(L, index) == LUA_TNIL) {
-			return ecs::EntityRef{ NullEntityHandle, State::FromLua(L)->GetEntityWorld() };
-		} else {
-			return ecs::EntityRef{ EntityProxy::CheckUserData(L, index)->Handle(), State::FromLua(L)->GetEntityWorld() };
-		}
-	}
-
-	TypeInformationRef do_get(lua_State* L, int index, Overload<TypeInformationRef>)
-	{
-		luaL_error(L, "TypeInformationRef is an engine-only type");
-		return {};
-	}
-
-	EntityProxy* do_get(lua_State* L, int index, Overload<EntityProxy*>)
-	{
-		luaL_checktype(L, index, LUA_TUSERDATA);
-		return EntityProxy::CheckUserData(L, index);
-	}
-
-	void RegisterEntityProxy(lua_State* L)
-	{
-		EntityProxy::RegisterMetatable(L);
+	} else {
+		OsiError("Unable to replicate; " << component << " type cannot be replicated or the replication ID is not mapped");
 	}
 }
+
+int EntityProxyMetatable::SetReplicationFlags(lua_State* L)
+{
+	StackCheck _(L);
+	auto handle = Get(L, 1);
+	auto component = get<ExtComponentType>(L, 2);
+
+	uint64_t flags{ 0 };
+	if (lua_gettop(L) > 2) {
+		flags = get<uint64_t>(L, 3);
+	}
+
+	uint32_t qword{ 0 };
+	if (lua_gettop(L) > 3) {
+		qword = get<uint32_t>(L, 4);
+	}
+
+	ReplicateComponent(L, handle, component, qword, flags);
+	return 0;
+}
+
+int EntityProxyMetatable::Replicate(lua_State* L)
+{
+	StackCheck _(L);
+	auto handle = Get(L, 1);
+	auto component = get<ExtComponentType>(L, 2);
+
+	ReplicateComponent(L, handle, component, 0, 0xffffffffffffffffull);
+	return 0;
+}
+
+
+int EntityProxyMetatable::Index(lua_State* L, CppObjectMetadata& self)
+{
+	StackCheck _(L, 1);
+	auto handle = Get(L, 1);
+	auto key = get<FixedString>(L, 2);
+
+	if (key == GFS.strCreateComponent) {
+		push(L, &CreateComponent);
+		return 1;
+	}
+
+	if (key == GFS.strGetComponent) {
+		push(L, &GetComponent);
+		return 1;
+	}
+
+	if (key == GFS.strGetAllComponents) {
+		push(L, &GetAllComponents);
+		return 1;
+	}
+
+	if (key == GFS.strGetAllComponentNames) {
+		push(L, &GetAllComponentNames);
+		return 1;
+	}
+
+	if (key == GFS.strGetEntityType) {
+		push(L, &GetEntityType);
+		return 1;
+	}
+
+	if (key == GFS.strGetSalt) {
+		push(L, &GetSalt);
+		return 1;
+	}
+
+	if (key == GFS.strGetIndex) {
+		push(L, &GetIndex);
+		return 1;
+	}
+
+	if (key == GFS.strIsAlive) {
+		push(L, &IsAlive);
+		return 1;
+	}
+
+	if (key == GFS.strGetReplicationFlags) {
+		push(L, &GetReplicationFlags);
+		return 1;
+	}
+
+	if (key == GFS.strSetReplicationFlags) {
+		push(L, &SetReplicationFlags);
+		return 1;
+	}
+
+	if (key == GFS.strReplicate) {
+		push(L, &Replicate);
+		return 1;
+	}
+
+	auto componentType = EnumInfo<ExtComponentType>::Find(key);
+	if (componentType) {
+		auto ecs = GetEntitySystem(L);
+		auto rawComponent = ecs->GetRawComponent(handle, *componentType);
+		if (rawComponent != nullptr) {
+			PushComponent(L, GetEntitySystem(L), handle, *componentType, GetCurrentLifetime(L));
+		} else {
+			push(L, nullptr);
+		}
+	} else {
+		auto componentTypeName = get<char const*>(L, 2);
+		luaL_error(L, "Not a valid EntityProxy method or component type: %s", componentTypeName);
+	}
+
+	return 1;
+}
+
+bool EntityProxyMetatable::IsEqual(lua_State* L, CppObjectMetadata& self, CppObjectMetadata& other)
+{
+	return self.Ptr == other.Ptr;
+}
+
+char const* EntityProxyMetatable::GetTypeName(lua_State* L, CppObjectMetadata& self)
+{
+	return "EntityProxy";
+}
+
+int EntityProxyMetatable::ToString(lua_State* L, CppObjectMetadata& self)
+{
+	StackCheck _(L, 1);
+	char entityName[100];
+	auto handle = GetHandle(self);
+	sprintf_s(entityName, "Entity (%016llx)", handle.Handle);
+	push(L, entityName);
+	return 1;
+}
+
+EntityHandle do_get(lua_State* L, int index, Overload<EntityHandle>)
+{
+	if (lua_type(L, index) == LUA_TNIL) {
+		return NullEntityHandle;
+	} else {
+		return EntityProxyMetatable::Get(L, index);
+	}
+}
+
+ecs::EntityRef do_get(lua_State* L, int index, Overload<ecs::EntityRef>)
+{
+	if (lua_type(L, index) == LUA_TNIL) {
+		return ecs::EntityRef{ NullEntityHandle, State::FromLua(L)->GetEntityWorld() };
+	} else {
+		return ecs::EntityRef{ EntityProxyMetatable::Get(L, index), State::FromLua(L)->GetEntityWorld() };
+	}
+}
+
+TypeInformationRef do_get(lua_State* L, int index, Overload<TypeInformationRef>)
+{
+	luaL_error(L, "TypeInformationRef is an engine-only type");
+	return {};
+}
+
+EntityHelper do_get(lua_State* L, int index, Overload<EntityHelper>)
+{
+	luaL_checktype(L, index, LUA_TUSERDATA);
+	return EntityProxyMetatable::GetHelper(L, index);
+}
+
+END_NS()

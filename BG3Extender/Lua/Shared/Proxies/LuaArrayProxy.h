@@ -248,6 +248,7 @@ class ArrayProxyMetatable : public LightCppObjectMetatable<ArrayProxyMetatable>,
 {
 public:
 	static constexpr MetatableTag MetaTag = MetatableTag::ArrayProxy;
+	static constexpr bool HasLifetime = true;
 
 	template <class TImpl>
 	static ArrayProxyImplBase* GetImplementation()

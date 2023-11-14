@@ -4,54 +4,77 @@
 #include <GameDefinitions/EntitySystem.h>
 #include <GameDefinitions/EntitySystemHelpers.h>
 
-namespace bg3se::lua
+BEGIN_NS(lua)
+
+class EntityHelper
 {
-	class EntityProxy : public Userdata<EntityProxy>, public Indexable, public Stringifiable
+public:
+	inline EntityHelper(EntityHandle const& handle, ecs::EntitySystemHelpersBase* ecs)
+		: handle_(handle), ecs_(ecs)
+	{}
+
+	template <class T>
+	bool HasComponent()
 	{
-	public:
-		static char const* const MetatableName;
+		return ecs_->GetComponent<T>(handle_) != nullptr;
+	}
 
-		EntityProxy(EntityHandle const& handle);
+	template <class T>
+	T* GetComponent()
+	{
+		return ecs_->GetComponent<T>(handle_);
+	}
 
-		template <class T>
-		bool HasComponent(lua_State* L)
-		{
-			return GetEntitySystem(L)->GetComponent<T>(handle_) != nullptr;
-		}
+	Array<ExtComponentType> GetAllComponentTypes() const;
+	void PushComponentByType(lua_State* L, ExtComponentType componentType) const;
 
-		template <class T>
-		T* GetComponent(lua_State* L)
-		{
-			return GetEntitySystem(L)->GetComponent<T>(handle_);
-		}
+	inline EntityHandle const& Handle() const
+	{
+		return handle_;
+	}
 
-		Array<ExtComponentType> GetAllComponentTypes(ecs::EntitySystemHelpersBase* ecs) const;
-		void GetComponentByType(lua_State* L, ExtComponentType componentType) const;
+private:
+	EntityHandle handle_;
+	ecs::EntitySystemHelpersBase* ecs_;
+};
 
-		static int CreateComponent(lua_State* L);
-		static int GetComponent(lua_State* L);
-		static int GetAllComponents(lua_State* L);
-		static int GetAllComponentNames(lua_State* L);
-		static int GetEntityType(lua_State* L);
-		static int GetSalt(lua_State* L);
-		static int GetIndex(lua_State* L);
-		static int IsAlive(lua_State* L);
-		static int Replicate(lua_State* L);
-		static int SetReplicationFlags(lua_State* L);
-		static int GetReplicationFlags(lua_State* L);
+class EntityProxyMetatable : public LightCppObjectMetatable<EntityProxyMetatable>,
+	public Indexable, public Stringifiable, public EqualityComparable
+{
+public:
+	static constexpr MetatableTag MetaTag = MetatableTag::Entity;
+	static constexpr bool HasLifetime = false;
 
-		int Index(lua_State* L);
-		int ToString(lua_State* L);
+	inline static void Make(lua_State* L, EntityHandle const& handle)
+	{
+		lua_push_cppobject(L, MetatableTag::Entity, 0, reinterpret_cast<void*>(handle.Handle), LifetimeHandle{});
+	}
 
-		inline EntityHandle const& Handle() const
-		{
-			return handle_;
-		}
+	static EntityHandle Get(lua_State* L, int index);
+	static EntityHelper GetHelper(lua_State* L, int index);
 
-		static ecs::EntitySystemHelpersBase* GetEntitySystem(lua_State* L);
+	inline static EntityHandle GetHandle(CppObjectMetadata& self)
+	{
+		return EntityHandle(reinterpret_cast<uint64_t>(self.Ptr));
+	}
 
-	private:
-		EntityHandle handle_;
-	};
+	static int Index(lua_State* L, CppObjectMetadata& self);
+	static int ToString(lua_State* L, CppObjectMetadata& self);
+	static bool IsEqual(lua_State* L, CppObjectMetadata& self, CppObjectMetadata& other);
+	static char const* GetTypeName(lua_State* L, CppObjectMetadata& self);
 
-}
+private:
+	static int CreateComponent(lua_State* L);
+	static int GetComponent(lua_State* L);
+	static int GetAllComponents(lua_State* L);
+	static int GetAllComponentNames(lua_State* L);
+	static int GetEntityType(lua_State* L);
+	static int GetSalt(lua_State* L);
+	static int GetIndex(lua_State* L);
+	static int IsAlive(lua_State* L);
+	static int Replicate(lua_State* L);
+	static int SetReplicationFlags(lua_State* L);
+	static int GetReplicationFlags(lua_State* L);
+};
+
+END_NS()

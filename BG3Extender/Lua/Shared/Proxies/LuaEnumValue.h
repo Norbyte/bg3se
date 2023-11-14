@@ -9,6 +9,7 @@ class EnumValueMetatable : public LightCppValueMetatable<EnumValueMetatable>,
 {
 public:
 	static constexpr MetatableTag MetaTag = MetatableTag::EnumValue;
+	static constexpr bool HasLifetime = false;
 
 	inline static void Make(lua_State* L, EnumUnderlyingType value, int registryIndex)
 	{

@@ -249,6 +249,7 @@ class MapProxyMetatable : public LightCppObjectMetatable<MapProxyMetatable>, pub
 {
 public:
 	static constexpr MetatableTag MetaTag = MetatableTag::MapProxy;
+	static constexpr bool HasLifetime = true;
 
 	template <class TImpl>
 	static MapProxyImplBase* GetImplementation()

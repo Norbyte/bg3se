@@ -155,7 +155,7 @@ glm::mat3x4 do_get(lua_State* L, int index, Overload<glm::mat3x4>);
 glm::mat4x3 do_get(lua_State* L, int index, Overload<glm::mat4x3>);
 glm::mat4 do_get(lua_State* L, int index, Overload<glm::mat4>);
 MathParam do_get(lua_State* L, int index, Overload<MathParam>);
-EntityProxy* do_get(lua_State* L, int index, Overload<EntityProxy*>);
+EntityHelper do_get(lua_State* L, int index, Overload<EntityHelper>);
 
 inline Version do_get(lua_State* L, int index, Overload<Version>)
 {
