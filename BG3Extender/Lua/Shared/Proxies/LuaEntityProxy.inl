@@ -90,8 +90,8 @@ Array<ExtComponentType> EntityHelper::GetAllComponentTypes() const
 
 EntityHandle EntityProxyMetatable::Get(lua_State* L, int index)
 {
-	CppObjectMetadata meta;
-	lua_try_get_cppobject(L, 1, MetatableTag::Entity, meta);
+	CppValueMetadata meta;
+	lua_try_get_cppvalue(L, 1, MetatableTag::Entity, meta);
 	return GetHandle(meta);
 }
 
@@ -312,10 +312,10 @@ int EntityProxyMetatable::Replicate(lua_State* L)
 }
 
 
-int EntityProxyMetatable::Index(lua_State* L, CppObjectMetadata& self)
+int EntityProxyMetatable::Index(lua_State* L, CppValueMetadata& self)
 {
 	StackCheck _(L, 1);
-	auto handle = Get(L, 1);
+	auto handle = GetHandle(self);
 	auto key = get<FixedString>(L, 2);
 
 	if (key == GFS.strCreateComponent) {
@@ -390,17 +390,18 @@ int EntityProxyMetatable::Index(lua_State* L, CppObjectMetadata& self)
 	return 1;
 }
 
-bool EntityProxyMetatable::IsEqual(lua_State* L, CppObjectMetadata& self, CppObjectMetadata& other)
+bool EntityProxyMetatable::IsEqual(lua_State* L, CppValueMetadata& self, int otherIndex)
 {
-	return self.Ptr == other.Ptr;
+	auto other = Get(L, otherIndex);
+	return self.Value == other.Handle;
 }
 
-char const* EntityProxyMetatable::GetTypeName(lua_State* L, CppObjectMetadata& self)
+char const* EntityProxyMetatable::GetTypeName(lua_State* L, CppValueMetadata& self)
 {
 	return "EntityProxy";
 }
 
-int EntityProxyMetatable::ToString(lua_State* L, CppObjectMetadata& self)
+int EntityProxyMetatable::ToString(lua_State* L, CppValueMetadata& self)
 {
 	StackCheck _(L, 1);
 	char entityName[100];

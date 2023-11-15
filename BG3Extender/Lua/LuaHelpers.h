@@ -183,6 +183,7 @@ END_NS()
 #include <Lua/LuaUserdata.h>
 #include <Lua/Shared/Proxies/LuaPropertyMap.h>
 #include <Lua/Shared/Proxies/LuaCppClass.h>
+#include <Lua/Shared/Proxies/LuaCppValue.h>
 #include <Lua/Shared/Proxies/LuaArrayProxy.h>
 #include <Lua/Shared/Proxies/LuaSetProxy.h>
 #include <Lua/Shared/Proxies/LuaMapProxy.h>

@@ -38,7 +38,7 @@ private:
 	ecs::EntitySystemHelpersBase* ecs_;
 };
 
-class EntityProxyMetatable : public LightCppObjectMetatable<EntityProxyMetatable>,
+class EntityProxyMetatable : public LightCppValueMetatable<EntityProxyMetatable>,
 	public Indexable, public Stringifiable, public EqualityComparable
 {
 public:
@@ -47,21 +47,21 @@ public:
 
 	inline static void Make(lua_State* L, EntityHandle const& handle)
 	{
-		lua_push_cppobject(L, MetatableTag::Entity, 0, reinterpret_cast<void*>(handle.Handle), LifetimeHandle{});
+		lua_push_cppvalue(L, MetatableTag::Entity, 0, handle.Handle);
 	}
 
 	static EntityHandle Get(lua_State* L, int index);
 	static EntityHelper GetHelper(lua_State* L, int index);
 
-	inline static EntityHandle GetHandle(CppObjectMetadata& self)
+	inline static EntityHandle GetHandle(CppValueMetadata& self)
 	{
-		return EntityHandle(reinterpret_cast<uint64_t>(self.Ptr));
+		return EntityHandle(self.Value);
 	}
 
-	static int Index(lua_State* L, CppObjectMetadata& self);
-	static int ToString(lua_State* L, CppObjectMetadata& self);
-	static bool IsEqual(lua_State* L, CppObjectMetadata& self, CppObjectMetadata& other);
-	static char const* GetTypeName(lua_State* L, CppObjectMetadata& self);
+	static int Index(lua_State* L, CppValueMetadata& self);
+	static int ToString(lua_State* L, CppValueMetadata& self);
+	static bool IsEqual(lua_State* L, CppValueMetadata& self, int otherIndex);
+	static char const* GetTypeName(lua_State* L, CppValueMetadata& self);
 
 private:
 	static int CreateComponent(lua_State* L);
