@@ -1,4 +1,4 @@
-### BG3SE Lua API v10 Documentation
+### BG3SE Lua API v1 Documentation
 
 ### Table of Contents  
  - [Getting Started](#getting-started)
@@ -582,10 +582,10 @@ Usage notes:
  - Variables must be registered with the same settings on both client and server, otherwise various synchronization issues may occur.
 
 
-After registration, custom variables can be read/written through the `UserVars` property on entities:
+After registration, custom variables can be read/written through the `Vars` property on entities:
 ```lua
-_C().UserVars.NRD_Whatever = 123
-Ext.Print(_C().UserVars.NRD_Whatever)
+_C().Vars.NRD_Whatever = 123
+Ext.Print(_C().Vars.NRD_Whatever)
 ```
 
 ### Synchronization
@@ -597,18 +597,18 @@ A variable is only eligible for synchronization if:
 
 For a variable to be synchronized, it must be *dirtied* first. The most straightforward way to perform this is by doing a direct write to the variable:
 ```lua
-_C().UserVars.NRD_Whatever = "asd"
+_C().Vars.NRD_Whatever = "asd"
 ```
 
 Note: Writes to subproperties of complex types (i.e. tables etc) will not trigger this mechanism! Example:
 ```lua
-_C().UserVars.NRD_Whatever.SomeProperty = 123
+_C().Vars.NRD_Whatever.SomeProperty = 123
 ```
-Since the `__newindex` metamethod of the `UserVars` object is not called, the variable manager does not detect that a change was performed. A simple fix is to reassign the property after modifications were made:
+Since the `__newindex` metamethod of the `Vars` object is not called, the variable manager does not detect that a change was performed. A simple fix is to reassign the property after modifications were made:
 ```lua
-local v = _C().UserVars.NRD_Whatever
+local v = _C().Vars.NRD_Whatever
 v.SomeProperty = 123
-_C().UserVars.NRD_Whatever = v
+_C().Vars.NRD_Whatever = v
 ```
 
 On each tick of the game loop, variables that were changed during the current tick are collected and sent to the client/server in a batch. Unless configured otherwise (i.e. the `SyncOnTick` setting is disabled), this is the default synchronization method.
@@ -624,51 +624,51 @@ The variable manager keeps a Lua copy of table variables for performance reasons
 
 Example:
 ```lua
-local t1 = _C().UserVars.NRD_Whatever
-local t2 = _C().UserVars.NRD_Whatever
+local t1 = _C().Vars.NRD_Whatever
+local t2 = _C().Vars.NRD_Whatever
 t1.Name = "test"
 _D(t2.Name) -- prints "test"
 ```
 
-Cached variables are serialized to JSON when they are first sent to the client/server or when a savegame is created. This means that all changes to a dirtied variable up to the next synchronization point will be visible to peers despite no explicit write being performed to `UserVars`. Example:
+Cached variables are serialized to JSON when they are first sent to the client/server or when a savegame is created. This means that all changes to a dirtied variable up to the next synchronization point will be visible to peers despite no explicit write being performed to `Vars`. Example:
 ```lua
-local v = _C().UserVars.NRD_Whatever
+local v = _C().Vars.NRD_Whatever
 v.SomeProperty = 123
 -- variable is dirtied here
-_C().UserVars.NRD_Whatever = v
+_C().Vars.NRD_Whatever = v
 v.SomeProperty = 456
 -- client will receive 456
 Ext.Vars.SyncUserVariables()
 
 -- client will NOT receive this change since the NRD_Whatever variable is no longer dirtied after sync;
--- another explicit write to UserVars.NRD_Whatever must be performed
+-- another explicit write to Vars.NRD_Whatever must be performed
 v.SomeProperty = 789
 ```
 
 Variable caching can be disabled by passing the `DontCache` flag to `RegisterUserVariable`. Uncached variables are unserialized from JSON each time the property is accessed, so each access returns a different copy:
 
 ```lua
-local t1 = _C().UserVars.NRD_Whatever
-local t2 = _C().UserVars.NRD_Whatever
+local t1 = _C().Vars.NRD_Whatever
+local t2 = _C().Vars.NRD_Whatever
 t1.Name = "test"
 _D(t2.Name) -- prints nil
 ```
 
-Variables are immediately serialized to JSON when a `UserVars` write occurs; this means that changes to the original reference have no effect after assignment.
+Variables are immediately serialized to JSON when a `Vars` write occurs; this means that changes to the original reference have no effect after assignment.
 
 ```lua
 local t1 = { Name = "t1" }
-_C().UserVars.NRD_Whatever = t1
+_C().Vars.NRD_Whatever = t1
 t1.Name = "t2"
-_D(_C().UserVars.NRD_Whatever.Name) -- prints "t1"
+_D(_C().Vars.NRD_Whatever.Name) -- prints "t1"
 ```
 
-This also means that changing the value returned from a `UserVars` fetch will not affect the stored value:
+This also means that changing the value returned from a `Vars` fetch will not affect the stored value:
 
 ```lua
-local t1 = _C().UserVars.NRD_Whatever
+local t1 = _C().Vars.NRD_Whatever
 t1.Name = "t1"
-_D(_C().UserVars.NRD_Whatever.Name) -- prints "t1"
+_D(_C().Vars.NRD_Whatever.Name) -- prints "t1"
 ```
 
 ### Mod variables

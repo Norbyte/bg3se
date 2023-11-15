@@ -373,6 +373,11 @@ int EntityProxyMetatable::Index(lua_State* L, CppValueMetadata& self)
 		return 1;
 	}
 
+	if (key == GFS.strVars) {
+		UserVariableHolderMetatable::Make(L, handle);
+		return 1;
+	}
+
 	auto componentType = EnumInfo<ExtComponentType>::Find(key);
 	if (componentType) {
 		auto ecs = GetEntitySystem(L);

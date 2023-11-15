@@ -2,8 +2,8 @@
 #include <GameDefinitions/Components/Components.h>
 #include <Lua/Libs/Json.h>
 
-//#define USER_VAR_DBG(msg, ...)
-#define USER_VAR_DBG(msg, ...) DEBUG(msg, __VA_ARGS__)
+#define USER_VAR_DBG(msg, ...)
+//#define USER_VAR_DBG(msg, ...) DEBUG(msg, __VA_ARGS__)
 
 BEGIN_NS(net)
 
@@ -1162,6 +1162,19 @@ void CachedUserVariableManager::Set(lua_State* L, EntityHandle entity, FixedStri
 	Set(L, entity, key, *proto, std::move(var));
 }
 
+void CachedUserVariableManager::MoveToGlobal(lua_State* L, EntityHandle entity, FixedString const& key, UserVariablePrototype const& proto, CachedUserVariable& var)
+{
+	auto uuid = global_.EntityToGuid(entity);
+	if (!uuid) {
+		OsiError("Setting user variable on entity '" << entity << "' that has no Guid! Changes will not be synced to the client and will be lost on save!");
+		return;
+	}
+
+	auto userVar = var.ToUserVariable(L);
+	userVar.Dirty = true;
+	global_.Set(uuid, key, proto, std::move(userVar));
+}
+
 void CachedUserVariableManager::Set(lua_State* L, EntityHandle entity, FixedString const& key, UserVariablePrototype const& proto, CachedUserVariable && var)
 {
 	if (!proto.Has(UserVariableFlags::DontCache)) {
@@ -1170,16 +1183,12 @@ void CachedUserVariableManager::Set(lua_State* L, EntityHandle entity, FixedStri
 
 		if (cachedVar->Dirty && proto.NeedsSyncFor(isServer_) && proto.Has(UserVariableFlags::SyncOnWrite)) {
 			USER_VAR_DBG("Set global var %016llx/%s", entity.Handle, key.GetString());
-			auto userVar = cachedVar->ToUserVariable(L);
 			cachedVar->Dirty = false;
-			userVar.Dirty = true;
-			global_.Set(global_.EntityToGuid(entity), key, proto, std::move(userVar));
+			MoveToGlobal(L, entity, key, proto, *cachedVar);
 		}
 	} else {
 		USER_VAR_DBG("Set global var %016llx/%s", entity.Handle, key.GetString());
-		auto userVar = var.ToUserVariable(L);
-		userVar.Dirty = true;
-		global_.Set(global_.EntityToGuid(entity), key, proto, std::move(userVar));
+		MoveToGlobal(L, entity, key, proto, var);
 	}
 }
 

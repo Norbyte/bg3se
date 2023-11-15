@@ -321,6 +321,7 @@ private:
 	CachedUserVariable* GetFromCache(EntityHandle entity, FixedString const& key);
 	CachedUserVariable* PutCache(lua_State* L, EntityHandle entity, FixedString const& key, Guid const& entityGuid, UserVariablePrototype const& proto, UserVariable const& value);
 	CachedUserVariable* PutCache(EntityHandle entity, FixedString const& key, Guid const& entityGuid, UserVariablePrototype const& proto, CachedUserVariable && value, bool isWrite);
+	void MoveToGlobal(lua_State* L, EntityHandle entity, FixedString const& key, UserVariablePrototype const& proto, CachedUserVariable& var);
 };
 
 class CachedModVariableManager

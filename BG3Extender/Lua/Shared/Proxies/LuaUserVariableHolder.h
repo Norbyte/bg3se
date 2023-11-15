@@ -9,7 +9,7 @@ public:
 	static constexpr MetatableTag MetaTag = MetatableTag::UserVariableHolder;
 	static constexpr bool HasLifetime = false;
 
-	inline static void Make(lua_State* L, ComponentHandle const& component)
+	inline static void Make(lua_State* L, EntityHandle const& component)
 	{
 		lua_push_cppvalue(L, MetaTag, 0, component.Handle);
 	}

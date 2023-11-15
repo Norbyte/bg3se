@@ -38,6 +38,7 @@ FS(IsAlive);
 FS(GetReplicationFlags);
 FS(SetReplicationFlags);
 FS(Replicate);
+FS(Vars);
 
 // Stat modifier value types
 FS(FixedString);
