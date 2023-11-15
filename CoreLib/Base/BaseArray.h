@@ -776,6 +776,18 @@ public:
 		CopyFrom(a);
 	}
 
+	Array(Array&& a)
+	{
+		if (this != &a) {
+			buf_ = a.buf_;
+			capacity_ = a.capacity_;
+			size_ = a.size_;
+			a.buf_ = nullptr;
+			a.capacity_ = 0;
+			a.size_ = 0;
+		}
+	}
+
 	~Array()
 	{
 		if (buf_) {
@@ -787,6 +799,19 @@ public:
 	Array& operator =(Array const& a)
 	{
 		CopyFrom(a);
+		return *this;
+	}
+
+	Array& operator =(Array&& a)
+	{
+		if (this != &a) {
+			buf_ = a.buf_;
+			capacity_ = a.capacity_;
+			size_ = a.size_;
+			a.buf_ = nullptr;
+			a.capacity_ = 0;
+			a.size_ = 0;
+		}
 		return *this;
 	}
 

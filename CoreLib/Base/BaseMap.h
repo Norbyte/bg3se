@@ -972,7 +972,7 @@ struct MultiHashMap : public MultiHashSet<TKey>
 	}
 
 	MultiHashMap(MultiHashMap&& other)
-		: MultiHashSet<TKey>(other),
+		: MultiHashSet<TKey>(std::move(other)),
 		Values(std::move(other.Values))
 	{}
 
@@ -991,7 +991,7 @@ struct MultiHashMap : public MultiHashSet<TKey>
 
 	MultiHashMap& operator =(MultiHashMap&& other)
 	{
-		MultiHashSet<TKey>::operator =(other);
+		MultiHashSet<TKey>::operator =(std::move(other));
 		Values = std::move(other.Values);
 
 		return *this;
