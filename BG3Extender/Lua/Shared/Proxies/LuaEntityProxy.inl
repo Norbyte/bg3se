@@ -91,7 +91,7 @@ Array<ExtComponentType> EntityHelper::GetAllComponentTypes() const
 EntityHandle EntityProxyMetatable::Get(lua_State* L, int index)
 {
 	CppValueMetadata meta;
-	lua_get_cppvalue(L, 1, MetatableTag::Entity, meta);
+	lua_get_cppvalue(L, index, MetatableTag::Entity, meta);
 	return GetHandle(meta);
 }
 

@@ -71,6 +71,7 @@ namespace bg3se::lua::dbg
 		void OnLuaError(lua_State* L, char const* msg);
 		void OnGenericError(char const* msg);
 		void DebugBreak(lua_State* L);
+		void Tick();
 
 		inline bool IsPaused() const
 		{
@@ -163,6 +164,8 @@ namespace bg3se::lua::dbg
 		void ClientStateCreated(ecl::lua::ClientState* state);
 		void ServerStateDeleted();
 		void ClientStateDeleted();
+		void ServerTick();
+		void ClientTick();
 		void EnableDebugging(bool enabled);
 
 		void BeginUpdatingBreakpoints();

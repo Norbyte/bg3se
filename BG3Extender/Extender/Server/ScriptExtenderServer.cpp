@@ -184,6 +184,9 @@ void ScriptExtender::OnUpdate(void* self, GameTime* time)
 	RunPendingTasks();
 	if (extensionState_) {
 		extensionState_->OnUpdate(*time);
+		if (gExtender->GetLuaDebugger()) {
+			gExtender->GetLuaDebugger()->ServerTick();
+		}
 	}
 }
 

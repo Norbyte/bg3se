@@ -157,7 +157,7 @@ namespace bg3se::lua::dbg
 			{
 				CppValueMetadata val;
 				lua_get_cppvalue(L, idx, val);
-				value->set_type_id(MsgValueType::STRING);
+				value->set_type_id(MsgValueType::USERDATA);
 				char name[100];
 				sprintf_s(name, "Entity (%016llx)", EntityProxyMetatable::GetHandle(val).Handle);
 				value->set_stringval(name);
@@ -312,9 +312,10 @@ namespace bg3se::lua::dbg
 			pair->set_index(lua_tointeger(L, keyIndex));
 			break;
 
-		case LUA_TSTRING:
+		default:
 			pair->set_type(MsgChildValue::TEXT);
-			pair->set_name(lua_tostring(L, keyIndex));
+			pair->set_name(luaL_tolstring(L, keyIndex, nullptr));
+			lua_pop(L, 1);
 			break;
 		}
 
@@ -328,9 +329,10 @@ namespace bg3se::lua::dbg
 				key->set_index(lua_tointeger(L, keyIndex));
 				break;
 
-			case LUA_TSTRING:
+			default:
 				key->set_type(MsgTableKey::TEXT);
-				key->set_key(lua_tostring(L, keyIndex));
+				key->set_key(luaL_tolstring(L, keyIndex, nullptr));
+				lua_pop(L, 1);
 				break;
 			}
 		}
@@ -674,6 +676,11 @@ namespace bg3se::lua::dbg
 	void ContextDebugger::DebugBreak(lua_State* L)
 	{
 		TriggerBreakpoint(L, BkBreakpointTriggered::EXCEPTION, "Ext.DebugBreak() called");
+	}
+
+	void ContextDebugger::Tick()
+	{
+		ExecuteQueuedActions();
 	}
 
 	void ContextDebugger::OnContextCreated(lua_State* L)
@@ -1261,6 +1268,16 @@ namespace bg3se::lua::dbg
 	{
 		client_.OnContextDestroyed();
 		messageHandler_.SendLuaStateUpdate(false, false);
+	}
+
+	void Debugger::ServerTick()
+	{
+		server_.Tick();
+	}
+
+	void Debugger::ClientTick()
+	{
+		client_.Tick();
 	}
 
 	void Debugger::EnableDebugging(bool enabled)
