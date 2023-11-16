@@ -19,7 +19,7 @@ struct ExtenderConfig
 	bool EnableLuaDebugger{ true };
 #endif
 
-	bool EnableExtensions{ true };
+	bool ExtendStory{ false };
 	bool LogFailedCompile{ true };
 	bool EnableLogging{ false };
 	bool LogCompile{ false };

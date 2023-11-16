@@ -65,7 +65,7 @@ void LoadConfig(std::wstring const & configPath, ExtenderConfig & config)
 	ConfigGetBool(root, "LogCompile", config.LogCompile);
 	ConfigGetBool(root, "LogFailedCompile", config.LogFailedCompile);
 	ConfigGetBool(root, "LogRuntime", config.LogRuntime);
-	ConfigGetBool(root, "EnableExtensions", config.EnableExtensions);
+	ConfigGetBool(root, "ExtendStory", config.ExtendStory);
 	ConfigGetBool(root, "SendCrashReports", config.SendCrashReports);
 	ConfigGetBool(root, "ForceCrashReporting", config.ForceCrashReporting);
 	ConfigGetBool(root, "EnableDebugger", config.EnableDebugger);

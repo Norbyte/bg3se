@@ -42,8 +42,6 @@ void ScriptExtender::Initialize()
 		InitCrashReporting();
 	}
 
-	extensionsEnabled_ = config_.EnableExtensions;
-
 	GameVersionInfo gameVersion;
 	if (Libraries.GetGameVersion(gameVersion)) {
 		if (gameVersion.IsSupported()) {
@@ -64,7 +62,6 @@ void ScriptExtender::Initialize()
 
 	if (!Libraries.FindLibraries(gameVersion.Revision)) {
 		ERR("ScriptExtender::Initialize: Could not load libraries; skipping scripting extension initialization.");
-		extensionsEnabled_ = false;
 	}
 
 	server_.Initialize();
@@ -340,8 +337,6 @@ void ScriptExtender::OnBaseModuleLoaded(void * self)
 
 void ScriptExtender::OnSkillPrototypeManagerInit(void * self)
 {
-	if (!extensionsEnabled_) return;
-
 	std::lock_guard _(globalStateLock_);
 	auto extState = GetCurrentExtensionState();
 	if (extState == nullptr) {

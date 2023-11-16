@@ -713,7 +713,7 @@ void CustomFunctionInjector::OnCreateFile(LPCWSTR lpFileName,
 	HANDLE hTemplateFile,
 	HANDLE hFile)
 {
-	if (!extendingStory_ && (dwDesiredAccess & GENERIC_WRITE)) {
+	if (!extendingStory_ && (dwDesiredAccess & GENERIC_WRITE) && gExtender->GetConfig().ExtendStory) {
 		auto length = wcslen(lpFileName);
 		if (length > 16 && wcscmp(&lpFileName[length - 16], L"story_header.div") == 0) {
 			DEBUG("CustomFunctionInjector::OnCreateFile: %s", ToStdUTF8(lpFileName).c_str());

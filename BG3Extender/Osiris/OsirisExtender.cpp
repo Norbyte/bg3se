@@ -236,6 +236,10 @@ bool OsirisExtender::CompileWrapper(bool (* next)(void *, wchar_t const *, wchar
 		ts->UpdateTranslatedString(storyErrorTsk, "Script Extender was loaded successfully, have a nice day :)");
 	}
 
+	if (!config_.ExtendStory) {
+		return next(Osiris, Path, Mode);
+	}
+
 	DEBUG("OsirisExtender::CompileWrapper: Starting compilation of '%s'", ToStdUTF8(Path).c_str());
 	auto OriginalFlags = *wrappers_.Globals.DebugFlags;
 	std::wstring storyPath;

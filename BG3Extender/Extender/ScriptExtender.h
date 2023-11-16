@@ -139,7 +139,6 @@ private:
 	lua::CppPropertyMapManager propertyMapManager_;
 
 	ExtenderConfig config_;
-	bool extensionsEnabled_{ false };
 	bool postStartupDone_{ false };
 
 #if !defined(OSI_NO_DEBUGGER)

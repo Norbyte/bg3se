@@ -1,4 +1,4 @@
-### BG3SE Lua API v1 Documentation
+### BG3SE Lua API v10 Documentation
 
 ### Table of Contents  
  - [Getting Started](#getting-started)
