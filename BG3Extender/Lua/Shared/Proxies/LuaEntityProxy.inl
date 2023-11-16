@@ -91,7 +91,7 @@ Array<ExtComponentType> EntityHelper::GetAllComponentTypes() const
 EntityHandle EntityProxyMetatable::Get(lua_State* L, int index)
 {
 	CppValueMetadata meta;
-	lua_try_get_cppvalue(L, 1, MetatableTag::Entity, meta);
+	lua_get_cppvalue(L, 1, MetatableTag::Entity, meta);
 	return GetHandle(meta);
 }
 
@@ -397,8 +397,9 @@ int EntityProxyMetatable::Index(lua_State* L, CppValueMetadata& self)
 
 bool EntityProxyMetatable::IsEqual(lua_State* L, CppValueMetadata& self, int otherIndex)
 {
-	auto other = Get(L, otherIndex);
-	return self.Value == other.Handle;
+	CppValueMetadata other;
+	return lua_try_get_cppvalue(L, otherIndex, MetatableTag::Entity, other)
+		&& GetHandle(other) == GetHandle(self);
 }
 
 char const* EntityProxyMetatable::GetTypeName(lua_State* L, CppValueMetadata& self)
