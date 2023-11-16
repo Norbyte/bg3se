@@ -64,12 +64,12 @@ namespace bg3se::lua::dbg
 	public:
 		ContextDebugger(DebugMessageHandler& messageHandler, DbgContext ctx);
 
+		void RequestEnableDebugging(bool enabled);
 		void OnContextCreated(lua_State* L);
 		void OnContextDestroyed();
 		void OnLuaHook(lua_State* L, lua_Debug* ar);
 		void OnLuaError(lua_State* L, char const* msg);
 		void OnGenericError(char const* msg);
-		void EnableDebugging(bool enabled);
 		void DebugBreak(lua_State* L);
 
 		inline bool IsPaused() const
@@ -135,6 +135,7 @@ namespace bg3se::lua::dbg
 		ExtensionStateBase& GetExtensionState();
 		void SetupLuaBindings(lua_State* L);
 		void CleanupLuaBindings(lua_State* L);
+		void EnableDebugging(bool enabled);
 		void ExecuteQueuedActions();
 		bool IsBreakpoint(lua_State* L, lua_Debug* ar, BkBreakpointTriggered::Reason& reason);
 		void TriggerBreakpoint(lua_State* L, BkBreakpointTriggered_Reason reason, char const* msg);

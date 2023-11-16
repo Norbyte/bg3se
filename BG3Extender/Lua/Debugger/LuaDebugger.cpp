@@ -708,6 +708,15 @@ namespace bg3se::lua::dbg
 		evalContextRef_ = -1;
 	}
 
+	void ContextDebugger::RequestEnableDebugging(bool enabled)
+	{
+		pendingActions_.push([=]() {
+			if (enabled_ != enabled) {
+				EnableDebugging(enabled);
+			}
+		});
+	}
+
 	void ContextDebugger::EnableDebugging(bool enabled)
 	{
 		enabled_ = enabled;
@@ -1256,8 +1265,8 @@ namespace bg3se::lua::dbg
 
 	void Debugger::EnableDebugging(bool enabled)
 	{
-		server_.EnableDebugging(enabled);
-		client_.EnableDebugging(enabled);
+		server_.RequestEnableDebugging(enabled);
+		client_.RequestEnableDebugging(enabled);
 	}
 
 	void Debugger::BeginUpdatingBreakpoints()
