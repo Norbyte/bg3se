@@ -27,6 +27,7 @@ public:
 	static EnumUnderlyingType GetValue(CppValueMetadata const& self);
 	static std::optional<EnumUnderlyingType> GetValueAtIndex(CppValueMetadata const& self, int index);
 	static Json::Value ToJson(CppValueMetadata& self);
+	static STDString GetValueAsString(CppValueMetadata& self);
 
 	static int Index(lua_State* L, CppValueMetadata& self);
 	static int ToString(lua_State* L, CppValueMetadata& self);

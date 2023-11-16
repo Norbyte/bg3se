@@ -69,6 +69,11 @@ std::optional<STDString> GetCppObjectTypeName(lua_State * L, int index)
 		return ModVariableHolderMetatable::GetTypeName(L, val);
 	}
 
+	case MetatableTag::Entity:
+	{
+		return "Entity";
+	}
+
 	default:
 		return {};
 	}

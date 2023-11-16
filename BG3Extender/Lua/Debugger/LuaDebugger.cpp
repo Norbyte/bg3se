@@ -16,9 +16,22 @@ namespace bg3se::lua::dbg
 		return type == MsgValueType::TABLE || type == MsgValueType::USERDATA;
 	}
 	
-	inline bool IsLuaContainerType(int tt)
+	inline bool IsLuaContainerType(lua_State* L, int index)
 	{
-		return tt == LUA_TTABLE || tt == LUA_TUSERDATA;
+		auto tt = lua_type(L, index);
+
+		if (tt == LUA_TLIGHTCPPOBJECT || tt == LUA_TCPPOBJECT) {
+			CppObjectMetadata meta;
+			lua_get_cppobject(L, index, meta);
+			return meta.MetatableTag == MetatableTag::ObjectProxyByRef
+				|| meta.MetatableTag == MetatableTag::ArrayProxy
+				|| meta.MetatableTag == MetatableTag::MapProxy
+				|| meta.MetatableTag == MetatableTag::SetProxy
+				|| meta.MetatableTag == MetatableTag::Entity;
+		} else {
+			return tt == LUA_TTABLE
+				|| tt == LUA_TUSERDATA;
+		}
 	}
 
 	ContextDebugger::ContextDebugger(DebugMessageHandler& messageHandler, DbgContext ctx)
@@ -61,36 +74,107 @@ namespace bg3se::lua::dbg
 
 	void LuaToProtobuf(lua_State* L, int idx, MsgValue* value)
 	{
+		idx = lua_absindex(L, idx);
 		switch (lua_type(L, idx)) {
 		case LUA_TNIL:
 			value->set_type_id(MsgValueType::NIL);
 			break;
+
 		case LUA_TBOOLEAN:
 			value->set_type_id(MsgValueType::BOOLEAN);
 			value->set_boolval(lua_toboolean(L, idx));
 			break;
+
 		case LUA_TNUMBER:
 			value->set_type_id(MsgValueType::FLOAT);
 			value->set_floatval((float)lua_tonumber(L, idx));
 			break;
+
 		case LUA_TSTRING:
 			value->set_type_id(MsgValueType::STRING);
 			value->set_stringval(lua_tostring(L, idx));
 			break;
+
 		case LUA_TTABLE:
 			value->set_type_id(MsgValueType::TABLE);
 			break;
+
 		case LUA_TFUNCTION:
 			value->set_type_id(MsgValueType::FUNCTION);
 			break;
+
 		case LUA_TUSERDATA:
 			value->set_type_id(MsgValueType::USERDATA);
 			value->set_stringval(luaL_tolstring(L, idx, nullptr));
 			lua_pop(L, 1);
 			break;
+
+		case LUA_TCPPOBJECT:
+		case LUA_TLIGHTCPPOBJECT:
+		{
+			CppObjectMetadata meta;
+			lua_get_cppobject(L, idx, meta);
+			switch (meta.MetatableTag) {
+			case MetatableTag::ObjectProxyByRef:
+				value->set_type_id(MsgValueType::USERDATA);
+				value->set_stringval(gExtender->GetPropertyMapManager().GetPropertyMap(meta.PropertyMapTag)->Name.GetString());
+				break;
+
+			case MetatableTag::ArrayProxy:
+				value->set_type_id(MsgValueType::USERDATA);
+				value->set_stringval(gExtender->GetPropertyMapManager().GetArrayProxy(meta.PropertyMapTag)->GetContainerType().TypeName.GetString());
+				break;
+
+			case MetatableTag::MapProxy:
+				value->set_type_id(MsgValueType::USERDATA);
+				value->set_stringval(gExtender->GetPropertyMapManager().GetMapProxy(meta.PropertyMapTag)->GetContainerType().TypeName.GetString());
+				break;
+
+			case MetatableTag::SetProxy:
+				value->set_type_id(MsgValueType::USERDATA);
+				value->set_stringval(gExtender->GetPropertyMapManager().GetSetProxy(meta.PropertyMapTag)->GetContainerType().TypeName.GetString());
+				break;
+
+			case MetatableTag::EnumValue:
+			{
+				CppValueMetadata val;
+				lua_get_cppvalue(L, idx, val);
+				value->set_type_id(MsgValueType::STRING);
+				value->set_stringval(EnumValueMetatable::GetLabel(val).GetString());
+				break;
+			}
+
+			case MetatableTag::BitfieldValue:
+			{
+				CppValueMetadata val;
+				lua_get_cppvalue(L, idx, val);
+				value->set_type_id(MsgValueType::STRING);
+				value->set_stringval(BitfieldValueMetatable::GetValueAsString(val).c_str());
+				break;
+			}
+
+			case MetatableTag::Entity:
+			{
+				CppValueMetadata val;
+				lua_get_cppvalue(L, idx, val);
+				value->set_type_id(MsgValueType::STRING);
+				char name[100];
+				sprintf_s(name, "Entity (%016llx)", EntityProxyMetatable::GetHandle(val).Handle);
+				value->set_stringval(name);
+				break;
+			}
+
+			default:
+				value->set_type_id(MsgValueType::UNKNOWN);
+				break;
+			}
+			break;
+		}
+
 		case LUA_TTHREAD:
 			value->set_type_id(MsgValueType::THREAD);
 			break;
+
 		default:
 			value->set_type_id(MsgValueType::UNKNOWN);
 			break;
@@ -445,6 +529,7 @@ namespace bg3se::lua::dbg
 			break;
 
 		case LUA_TLIGHTCPPOBJECT:
+		case LUA_TCPPOBJECT:
 			LuaLightCppObjectToEvalResults(L, index, req);
 			break;
 
@@ -510,7 +595,6 @@ namespace bg3se::lua::dbg
 			if (lua_getinfo(L, "fnSl", ar) == 0) {
 				return false;
 			}
-
 
 			ExtensionStateBase* state{ nullptr };
 			if (context_ == DbgContext::SERVER) {
@@ -659,7 +743,7 @@ namespace bg3se::lua::dbg
 		STDString bpPath = path;
 		std::replace(bpPath.begin(), bpPath.end(), '\\', '/');
 		if (!bpPath.empty()) {
-			bpPath[0] = std::tolower(bpPath[0]);
+			bpPath[0] = std::toupper(bpPath[0]);
 		}
 
 		auto fileIt = newBreakpoints_->breakpoints.find(bpPath);
@@ -875,9 +959,7 @@ namespace bg3se::lua::dbg
 			} else {
 				auto retval = lua_absindex(L, -1);
 				LuaToProtobuf(L, retval, result);
-				auto type = lua_type(L, retval);
-
-				if (IsLuaContainerType(type)) {
+				if (IsLuaContainerType(L, retval)) {
 					lua_rawgeti(L, LUA_REGISTRYINDEX, evalContextRef_);
 					auto registry = lua_absindex(L, -1);
 					auto index = lua_rawlen(L, registry);
@@ -1028,8 +1110,9 @@ namespace bg3se::lua::dbg
 				lua_remove(L, -2); // stack: value
 			}
 
-			if (IsLuaContainerType(lua_type(L, -1))) {
-				LuaValueToEvalResults(L, -1, req);
+			auto retval = lua_absindex(L, -1);
+			if (IsLuaContainerType(L, retval)) {
+				LuaValueToEvalResults(L, lua_absindex(L, retval), req);
 				lua_pop(L, 1);
 				return ResultCode::Success;
 			} else {

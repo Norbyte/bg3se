@@ -32,6 +32,20 @@ std::optional<EnumUnderlyingType> BitfieldValueMetatable::GetValueAtIndex(CppVal
 	}
 }
 
+STDString BitfieldValueMetatable::GetValueAsString(CppValueMetadata& self)
+{
+	STDString labels;
+	auto ei = GetBitfieldInfo(self);
+	for (auto const& val : ei->Values) {
+		if ((self.Value & val.Value) == val.Value) {
+			if (!labels.empty()) labels += " | ";
+			labels += val.Key.GetString();
+		}
+	}
+
+	return labels;
+}
+
 Json::Value BitfieldValueMetatable::ToJson(CppValueMetadata& self)
 {
 	Json::Value arr(Json::arrayValue);
