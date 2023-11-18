@@ -140,6 +140,7 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 	E(InventoryMember)
 	E(InventoryData)
 	E(InventoryOwner)
+	E(InventoryIsOwned)
 	E(InventoryContainer)
 
 	// Combat components

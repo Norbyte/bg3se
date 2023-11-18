@@ -20,6 +20,14 @@ struct OwnerComponent : public BaseComponent
 	EntityHandle PrimaryInventory;
 };
 
+struct IsOwnedComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryIsOwned;
+	static constexpr auto EngineClass = "eoc::inventory::IsOwnedComponent";
+
+	EntityHandle Owner;
+};
+
 struct ContainerComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryContainer;
