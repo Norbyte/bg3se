@@ -69,11 +69,11 @@ END_CLS()
 
 BEGIN_CLS(stats::SummonFunctor)
 INHERIT(stats::Functor)
-P(MovingObject)
-P(Arg2)
+P(Template)
+P(Arg3)
 P(SpawnLifetime)
 P(StatusesToApply)
-P(Arg3)
+P(Arg5)
 END_CLS()
 
 
@@ -95,12 +95,6 @@ END_CLS()
 BEGIN_CLS(stats::SwapPlacesFunctor)
 INHERIT(stats::Functor)
 ////P(Arg0)
-END_CLS()
-
-
-BEGIN_CLS(stats::EqualizeFunctor)
-INHERIT(stats::Functor)
-P(HealType)
 END_CLS()
 
 
@@ -168,7 +162,6 @@ BEGIN_CLS(stats::SetStatusDurationFunctor)
 INHERIT(stats::Functor)
 P(StatusId)
 P(Duration)
-P(SetIfLonger)
 END_CLS()
 
 
@@ -255,27 +248,11 @@ END_CLS()
 
 BEGIN_CLS(stats::SummonInInventoryFunctor)
 INHERIT(stats::Functor)
-P(Arg1)
-//P(Arg2)
-P(Arg3)
-P(Arg4)
-P(Arg5)
-P(Arg6)
-P(Arg7)
-P(Arg8)
-P(AdditionalArgs)
 END_CLS()
 
 
 BEGIN_CLS(stats::SpawnInInventoryFunctor)
 INHERIT(stats::Functor)
-P(Arg1)
-P(Arg2)
-P(Arg3)
-P(Arg4)
-P(Arg5)
-P(Arg6)
-P(AdditionalArgs)
 END_CLS()
 
 

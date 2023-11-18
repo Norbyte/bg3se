@@ -31,7 +31,7 @@ struct Functor
 	Array<RollCondition> RollConditions;
 	int32_t StatsConditionsId{ -1 };
 	PropertyContext PropertyContext{ 0 };
-	uint32_t field_40{ 0 };
+	uint32_t StoryActionId{ 0 };
 	ObserverType ObserverType{ ObserverType::None };
 	FunctorId TypeId{ FunctorId::CustomDescription };
 	FunctorFlags Flags{ 0 };
@@ -270,13 +270,13 @@ struct SummonFunctor : public Functor
 {
 	static constexpr auto FunctorType = FunctorId::Summon;
 
-	FixedString MovingObject; // Arg1
-	FixedString Arg2;
-	float SpawnLifetime{ 6.0f };
+	FixedString Template; // Arg1
+	FixedString Arg3; // Arg 3
+	float SpawnLifetime{ 6.0f }; // Arg 2
 	uint8_t LifetimeType{ 0 };
 	MultiHashSet<FixedString> StatusesToApply;
 	FixedString Arg4;
-	bool Arg3;
+	bool Arg5;
 	bool Arg9;
 };
 
@@ -287,7 +287,7 @@ struct ForceFunctor : public Functor
 	FixedString Distance; // Arg0
 	ForceFunctorOrigin Origin{ ForceFunctorOrigin::OriginToEntity }; // Arg1
 	ForceFunctorAggression Aggression{ ForceFunctorAggression::Aggressive }; // Arg2
-	StatsExpressionParamEx* Unkn{ nullptr };
+	StatsExpressionParamEx* DistanceExpression{ nullptr };
 	bool Arg3{ false };
 	bool Arg4{ false };
 };
@@ -307,13 +307,6 @@ struct SwapPlacesFunctor : public Functor
 	FixedString Animation; // Arg0
 	bool Arg1{ false };
 	bool Arg2{ false };
-};
-
-struct EqualizeFunctor : public Functor
-{
-	static constexpr auto FunctorType = FunctorId::Equalize;
-
-	StatusHealType HealType{ StatusHealType::None }; // Arg0
 };
 
 struct PickupFunctor : public Functor
@@ -374,7 +367,7 @@ struct SetStatusDurationFunctor : public Functor
 
 	FixedString StatusId; // Arg0
 	float Duration{ 6.0f }; // Arg1
-	bool SetIfLonger{ false }; // Arg2
+	SetStatusDurationType ChangeType{ false }; // Arg2
 };
 
 struct UseAttackFunctor : public Functor
@@ -441,14 +434,14 @@ struct ApplyStatusFunctor : public Functor
 {
 	static constexpr auto FunctorType = FunctorId::ApplyStatus;
 
-	FixedString StatusId; // Arg0
-	FixedString StringParam; // Arg3
-	STDString StatsConditions; // Arg6
-	int StatsConditionsId{ -1 }; // Arg6
+	FixedString StatusId; // Arg1
+	FixedString StringParam; // Arg4
+	STDString StatsConditions; // Arg7
+	int StatsConditionsId{ -1 }; // Arg7
 	int Param5{ -1 }; // Arg5
-	int Param6{ -1 }; // ???
+	int Param6{ -1 }; // Arg6
 	bool Param8{ false };
-	void* Arg2_DurationLuaExpression{ nullptr }; // Arg2
+	void* DurationLuaExpression{ nullptr }; // Arg3
 	bool HasParam6{ false };
 };
 
@@ -464,12 +457,12 @@ struct DealDamageFunctor : public Functor
 		Hit* hit, DamageSums* damageSums, EntityHandle* sourceHandle2, HitWith hitWith, int conditionRollIndex,
 		bool entityDamagedEventParam, __int64 a17, SpellId* spellId2);
 
-	DamageType DamageType{ DamageType::None }; // Arg1
-	DealDamageWeaponType WeaponType{ DealDamageWeaponType::None }; // Arg0
-	DealDamageWeaponDamageType WeaponDamageType{ DealDamageWeaponDamageType::None }; // Arg1
-	StatsExpressionParam* Damage{ nullptr };
-	bool Nonlethal{ false }; // Arg3
-	bool Magical{ false }; // Arg2
+	DamageType DamageType{ DamageType::None }; // Arg2
+	DealDamageWeaponType WeaponType{ DealDamageWeaponType::None }; // Arg1
+	DealDamageWeaponDamageType WeaponDamageType{ DealDamageWeaponDamageType::None }; // Arg2
+	StatsExpressionParam* Damage{ nullptr }; // Arg1
+	bool Nonlethal{ false }; // Arg4
+	bool Magical{ false }; // Arg3
 	int32_t field_34{ 0 }; // Arg5
 };
 
@@ -525,7 +518,7 @@ struct UseSpellFunctor : public Functor
 	bool IgnoreHasSpell{ false }; // Arg1
 	bool IgnoreChecks{ false }; // Arg2
 	bool Arg3{ false };
-	Guid Arg4;
+	Guid SpellCastGuid;
 };
 
 struct ExtenderFunctor : public Functor
@@ -537,7 +530,7 @@ struct SummonInInventoryFunctor : public Functor
 {
 	static constexpr auto FunctorType = FunctorId::SummonInInventory;
 
-	FixedString Arg1;
+	FixedString TemplateId;
 	FixedString Arg8;
 	float Duration{ 0.0f }; // Arg2
 	uint8_t DurationType{ 0 };
@@ -554,7 +547,7 @@ struct SpawnInInventoryFunctor : public Functor
 {
 	static constexpr auto FunctorType = FunctorId::SpawnInInventory;
 
-	FixedString Arg1;
+	FixedString TemplateId;
 	FixedString Arg6;
 	float Arg2{ 0.0f };
 	bool Arg3{ false };
@@ -586,7 +579,7 @@ struct TriggerRandomCastFunctor : public Functor
 {
 	static constexpr auto FunctorType = FunctorId::TriggerRandomCast;
 
-	bool Arg1;
+	uint8_t Arg1;
 	float Arg2;
 	Array<FixedString> RandomCastOutcomes;
 };
@@ -746,7 +739,7 @@ struct SetRerollFunctor : public Functor
 {
 	static constexpr auto FunctorType = FunctorId::SetReroll;
 
-	uint8_t Arg1;
+	uint8_t Roll;
 	bool Arg2;
 };
 

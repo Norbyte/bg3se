@@ -21,7 +21,6 @@ namespace bg3se::lua::stats
 			V(ForceFunctor)
 			V(DouseFunctor)
 			V(SwapPlacesFunctor)
-			V(EqualizeFunctor)
 			V(PickupFunctor)
 			V(CreateSurfaceFunctor)
 			V(CreateConeSurfaceFunctor)

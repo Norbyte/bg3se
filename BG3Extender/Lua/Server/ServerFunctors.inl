@@ -30,7 +30,6 @@ namespace bg3se::esv::lua
 			V(Force)
 			V(Douse)
 			V(SwapPlaces)
-			V(Equalize)
 			V(Pickup)
 			V(CreateSurface)
 			V(CreateConeSurface)
