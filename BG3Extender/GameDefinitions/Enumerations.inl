@@ -2202,6 +2202,7 @@ BEGIN_ENUM(BoostType, uint8_t)
 	E(Skill)
 	E(WeaponDamage)
 	E(NullifyAbilityScore)
+	E(IgnoreFallDamage)
 	EV(Reroll, 46)
 	EV(DownedStatus, 47)
 	E(Invulnerable) // Has no component
@@ -2210,7 +2211,8 @@ BEGIN_ENUM(BoostType, uint8_t)
 	EV(Attribute, 51)
 	E(IgnoreLeaveAttackRange) // Has no component
 	EV(GameplayLight, 53)
-	EV(DualWielding, 55)
+	E(DialogueBlock)
+	E(DualWielding)
 	EV(Savant, 56)
 	EV(MinimumRollResult, 57)
 	E(Lootable) // Has no component
