@@ -50,7 +50,7 @@ void TypeInformation::DeferredInitialize()
 		ElementType.GetStatic()->DeferredInitialize();
 		if (!TypeName && ElementType) {
 			TypeName = FixedString(STDString("Array<") + ElementType.Get().TypeName.GetString() + ">");
-			TypeInformationRepository::GetInstance().RegisterType(TypeName, this);
+			TypeInformationRepository::GetInstance().RegisterType(this);
 		}
 		break;
 
@@ -59,7 +59,7 @@ void TypeInformation::DeferredInitialize()
 		ElementType.GetStatic()->DeferredInitialize();
 		if (!TypeName && KeyType && ElementType) {
 			TypeName = FixedString(STDString("Map<") + KeyType.Get().TypeName.GetString() + ", " + ElementType.Get().TypeName.GetString() + ">");
-			TypeInformationRepository::GetInstance().RegisterType(TypeName, this);
+			TypeInformationRepository::GetInstance().RegisterType(this);
 		}
 		break;
 
@@ -79,7 +79,7 @@ void TypeInformation::DeferredInitialize()
 			}
 			name += + ">";
 			TypeName = FixedString(name);
-			TypeInformationRepository::GetInstance().RegisterType(TypeName, this);
+			TypeInformationRepository::GetInstance().RegisterType(this);
 		}
 		break;
 	}
@@ -246,9 +246,9 @@ TypeInformation& TypeInformationRepository::RegisterType(FixedString const& type
 	return *ty;
 }
 
-void TypeInformationRepository::RegisterType(FixedString const& typeName, TypeInformation* typeInfo)
+void TypeInformationRepository::RegisterType(TypeInformation* typeInfo)
 {
-	types_.insert(typeName, typeInfo);
+	types_.insert(typeInfo->TypeName, typeInfo);
 }
 
 TypeInformation const& TypeInformationRepository::GetType(FixedString const& typeName)

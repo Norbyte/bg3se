@@ -423,6 +423,7 @@ void ScriptExtender::PostStartup()
 	// We need to initialize the function library here, as GlobalAllocator isn't available in Init().
 	if (Libraries.PostStartupFindLibraries()) {
 		lua::RegisterLibraries();
+		lua::InitObjectProxyPropertyMaps();
 		TypeInformationRepository::GetInstance().Initialize();
 
 		engineHooks_.HookAll();

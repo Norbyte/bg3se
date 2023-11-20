@@ -55,7 +55,6 @@ void RegisterSharedMetatables(lua_State* L)
 	UserVariableHolderMetatable::RegisterMetatable(L);
 	ModVariableHolderMetatable::RegisterMetatable(L);
 	EntityProxyMetatable::RegisterMetatable(L);
-	InitObjectProxyPropertyMaps();
 	stats::StatsExtraDataProxy::RegisterMetatable(L);
 	stats::StatsProxy::RegisterMetatable(L);
 	stats::SpellPrototypeProxy::RegisterMetatable(L);

@@ -11,6 +11,7 @@
 BEGIN_NS(lua)
 
 void RegisterLibraries();
+void InitObjectProxyPropertyMaps();
 void RegisterSharedMetatables(lua_State* L);
 
 END_NS()

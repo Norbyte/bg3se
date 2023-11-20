@@ -283,7 +283,7 @@ public:
 	TypeInformationRepository();
 	void Initialize();
 	TypeInformation& RegisterType(FixedString const& typeName);
-	void RegisterType(FixedString const& typeName, TypeInformation* typeInfo);
+	void RegisterType(TypeInformation* typeInfo);
 	TypeInformation const& GetType(FixedString const& typeName);
 	TypeInformation const& GetUndefinedType();
 	Map<FixedString, TypeInformation*> const& GetAllTypes();
