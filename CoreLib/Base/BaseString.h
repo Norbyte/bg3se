@@ -325,6 +325,12 @@ namespace std
 		}
 	};
 
+	inline ostream& operator << (ostream& out, bg3se::Guid const& guid)
+	{
+		out << guid.ToString();
+		return out;
+	}
+
 	inline ostream& operator << (ostream& out, bg3se::FixedString const& str)
 	{
 		if (str) {

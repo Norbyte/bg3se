@@ -25,7 +25,7 @@ void* ArrayProxyMetatable::GetRaw(lua_State* L, int index, int propertyMapIndex)
 	CppObjectMetadata meta;
 	lua_get_cppobject(L, index, MetatableTag::ArrayProxy, meta);
 
-	if (meta.PropertyMapTag == propertyMapIndex) {
+	if (meta.PropertyMapTag != propertyMapIndex) {
 		auto curTy = gExtender->GetPropertyMapManager().GetArrayProxy(meta.PropertyMapTag);
 		auto expectedTy = gExtender->GetPropertyMapManager().GetArrayProxy(propertyMapIndex);
 		luaL_error(L, "Argument %d: expected %s, got %s", index, 
