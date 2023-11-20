@@ -709,8 +709,8 @@ Prints the specified value(s) to the debug console. Works similarly to the built
 
 #### Ext.IO.AddPathOverride(originalPath, newPath)
 
-Redirects file access from `originalPath` to `newPath`. This is useful for overriding built-in files or resources that are otherwise not moddable, eg. UI Flash files.
-Make sure that the override is added as early as possible (preferably in `ModuleLoading`), as adding path overrides after the game has already loaded the resource has no effect.
+Redirects file access from `originalPath` to `newPath`. This is useful for overriding built-in files or resources that are otherwise not moddable.
+Make sure that the override is added as early as possible (preferably in `StatsLoaded`), as adding path overrides after the game has already loaded the resource has no effect.
 
 Example:
 ```lua
@@ -1011,10 +1011,6 @@ The purpose of this event is to allow adding filesystem-level hooks using `Ext.I
 ### StatsLoaded
 
 `StatsLoaded` is thrown after stats entries (weapons, skills, etc.) were cleared and subsequently reloaded. Stat modifications that are valid for every game session should be applied here.
-
-### ModuleLoading
-
-`ModuleLoading` is thrown after the stats manager has finished loading; this callback is deprecated and `StatsLoaded` should be used instead.
 
 ### SessionLoading
 

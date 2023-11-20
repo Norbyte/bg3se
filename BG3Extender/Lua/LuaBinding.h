@@ -142,7 +142,6 @@ namespace bg3se::lua
 		virtual void OnGameSessionLoading();
 		void OnGameSessionLoaded();
 		void OnModuleLoadStarted();
-		void OnModuleLoading();
 		void OnStatsLoaded();
 		void OnModuleResume();
 		void OnLevelLoading();

@@ -8,7 +8,6 @@ Mods = {}
 
 _I._PublishedSharedEvents = {
 	"ModuleLoadStarted",
-	"ModuleLoading",
 	"StatsLoaded",
 	"ModuleResume",
 	"SessionLoading",

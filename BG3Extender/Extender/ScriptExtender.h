@@ -155,7 +155,6 @@ private:
 	void OnModuleLoadStarted(TranslatedStringRepository* self);
 	void OnStatsLoad(stats::RPGStats::LoadProc* wrapped, stats::RPGStats* mgr, Array<STDString>* paths);
 	void OnECSUpdate(ecs::EntityWorld* entityWorld, GameTime const& time);
-	void OnSkillPrototypeManagerInit(void * self);
 	FileReader * OnFileReaderCreate(FileReader::CtorProc* next, FileReader * self, Path const& path, unsigned int type, unsigned int unknown);
 };
 

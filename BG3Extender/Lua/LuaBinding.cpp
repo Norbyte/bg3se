@@ -380,12 +380,6 @@ namespace bg3se::lua
 		ThrowEvent("ModuleLoadStarted", params, false, RestrictAll | ScopeModulePreLoad);
 	}
 
-	void State::OnModuleLoading()
-	{
-		EmptyEvent params;
-		ThrowEvent("ModuleLoading", params, false, RestrictAll | ScopeModuleLoad);
-	}
-
 	void State::OnStatsLoaded()
 	{
 		EmptyEvent params;

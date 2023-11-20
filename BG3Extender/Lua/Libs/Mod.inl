@@ -3,7 +3,7 @@ BEGIN_NS(lua::mod)
 
 /// <summary>
 /// Returns whether the module with the specified GUID is loaded.
-/// This is equivalent to Osiris `NRD_IsModLoaded`, but is callable when the Osiris scripting runtime is not yet available (i.e. `ModuleLoading˙, etc events).
+/// This is equivalent to Osiris `NRD_IsModLoaded`, but is callable when the Osiris scripting runtime is not yet available (i.e. `ModuleLoadStarted˙, etc events).
 /// 
 /// Example:
 /// ```lua

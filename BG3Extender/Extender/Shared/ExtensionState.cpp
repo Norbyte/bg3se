@@ -233,15 +233,6 @@ namespace bg3se
 		}
 	}
 
-	void ExtensionStateBase::OnModuleLoading()
-	{
-		StatLoadTriggered = true;
-		LuaVirtualPin lua(*this);
-		if (lua) {
-			lua->OnModuleLoading();
-		}
-	}
-
 	void ExtensionStateBase::OnStatsLoaded()
 	{
 		LuaVirtualPin lua(*this);

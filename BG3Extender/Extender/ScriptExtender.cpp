@@ -335,31 +335,6 @@ void ScriptExtender::OnBaseModuleLoaded(void * self)
 }
 
 
-void ScriptExtender::OnSkillPrototypeManagerInit(void * self)
-{
-	std::lock_guard _(globalStateLock_);
-	auto extState = GetCurrentExtensionState();
-	if (extState == nullptr) {
-		ERR("Extension not initialized in OnSkillPrototypeManagerInit?");
-		return;
-	}
-
-	auto modManager = extState->GetModManager();
-	if (modManager == nullptr) {
-		ERR("Module info not available in OnSkillPrototypeManagerInit?");
-		return;
-	}
-	
-	if (server_.IsInServerThread()) {
-		server_.LoadExtensionState(ExtensionStateContext::Game);
-	} else {
-		client_.LoadExtensionState(ExtensionStateContext::Game);
-	}
-
-	extState->OnModuleLoading();
-}
-
-
 void ScriptExtender::ClearPathOverrides()
 {
 	std::unique_lock lock(pathOverrideMutex_);

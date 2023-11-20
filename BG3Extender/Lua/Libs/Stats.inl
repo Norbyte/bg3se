@@ -598,7 +598,7 @@ UserReturn Create(lua_State * L, FixedString const& statName, FixedString const&
 
 /// <summary>
 /// Synchronizes the changes made to the specified stats entry to each client.
-/// `Sync` must be called each time a stats entry is modified dynamically (after `ModuleLoading`/`StatsLoaded`) to ensure that the hostand all clients see the same properties.
+/// `Sync` must be called each time a stats entry is modified dynamically (after `ModuleLoadStarted`/`StatsLoaded`) to ensure that the hostand all clients see the same properties.
 /// </summary>
 /// <lua_export>Sync</lua_export>
 /// <lua_legacy>Ext.SyncStat</lua_legacy>
