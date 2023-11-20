@@ -191,6 +191,15 @@ void UserVariableSyncWriter::Flush(bool force)
 	SendSyncs();
 }
 
+
+void UserVariableSyncWriter::Clear()
+{
+	deferredSyncs_.clear();
+	nextTickSyncs_.clear();
+	syncMsg_ = nullptr;
+	syncMsgBudget_ = 0;
+}
+
 void UserVariableSyncWriter::Sync(Guid const& entity, FixedString const& key, UserVariablePrototype const& proto, UserVariable const* value)
 {
 	if (proto.NeedsSyncFor(isServer_)) {
@@ -693,9 +702,10 @@ void ModVariableManager::Update()
 	Flush(true);
 }
 
-void ModVariableManager::OnModuleLoading()
+void ModVariableManager::OnSessionLoading()
 {
 	modIndices_.clear();
+
 	auto& mod = (isServer_ ? GetStaticSymbols().GetModManagerServer()->BaseModule : GetStaticSymbols().GetModManagerClient()->BaseModule);
 	uint32_t nextIndex{ 0 };
 	for (auto const& mod : mod.LoadOrderedModules) {

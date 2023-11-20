@@ -211,6 +211,8 @@ namespace bg3se
 
 	void ExtensionStateBase::OnGameSessionLoading()
 	{
+		modVariables_.OnSessionLoading();
+
 		LuaVirtualPin lua(*this);
 		if (lua) {
 			lua->OnGameSessionLoading();

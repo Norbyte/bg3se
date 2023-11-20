@@ -95,6 +95,7 @@ public:
 	{}
 
 	void Flush(bool force);
+	void Clear();
 	void Sync(Guid const& entity, FixedString const& key, UserVariablePrototype const& proto, UserVariable const* value);
 	void DeferredSync(Guid const& entity, FixedString const& key);
 
@@ -220,7 +221,7 @@ public:
 	void Set(ModVariableMap& mod, FixedString const& key, UserVariablePrototype const& proto, UserVariable&& value);
 	void MarkDirty(Guid const& modUuid, FixedString const& key, UserVariable& value);
 
-	void OnModuleLoading();
+	void OnSessionLoading();
 	void BindCache(lua::CachedModVariableManager* cache);
 	void Update();
 	void Flush(bool force);
