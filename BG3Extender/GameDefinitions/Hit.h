@@ -108,6 +108,7 @@ struct DamageModifierMetadata
 	uint8_t SourceType;
 	std::variant<DiceValues, int32_t, StatsRollType1> Argument;
 	TranslatedString Description;
+	FixedString Description2;
 };
 
 struct DamageResistance
