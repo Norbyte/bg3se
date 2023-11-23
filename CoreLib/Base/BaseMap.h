@@ -781,12 +781,16 @@ protected:
 		uint32_t slot = (uint32_t)(-next - 2);
 
 		int32_t prev = HashKeys[slot];
-		while (NextIds[prev] != from) {
-			prev = NextIds[prev];
-		}
+		if (prev == from) {
+			HashKeys[slot] = to;
+		} else {
+			while (NextIds[prev] != from) {
+				prev = NextIds[prev];
+			}
 
-		assert(NextIds[prev] == from);
-		NextIds[prev] = to;
+			assert(NextIds[prev] == from);
+			NextIds[prev] = to;
+		}
 	}
 
 private:
