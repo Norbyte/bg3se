@@ -93,6 +93,7 @@ namespace bg3se
 		stats::RPGStats** gRPGStats{ nullptr };
 		stats::RPGStats::LoadProc* RPGStats__Load{ nullptr };
 		stats::RPGStats::ParseStructureFolderProc* RPGStats__PreParseDataFolder{ nullptr };
+		stats::Object::SetPropertyStringProc* stats__Object__SetPropertyString{ nullptr };
 		/*RPGStats::ParsePropertiesProc* RPGStats__ParseProperties{nullptr};
 		SkillPrototypeManager** eoc__SkillPrototypeManager{ nullptr };
 		StatusPrototypeManager** eoc__StatusPrototypeManager{ nullptr };*/

@@ -50,6 +50,90 @@ namespace bg3se::lua::stats
 		return 0;
 	}
 
+	int StatsProxy::SetRawAttribute(lua_State* L)
+	{
+		auto self = StatsProxy::CheckUserData(L, 1);
+		auto key = get<FixedString>(L, 2);
+		auto value = get<char const*>(L, 3);
+
+		auto object = self->Get();
+
+		int attrIndex{ 0 };
+		auto info = object->GetAttributeInfo(key, attrIndex);
+		if (info == nullptr) {
+			OsiError("Stats object '" << object->Name << "' has no attribute named '" << key << "'");
+			return 0;
+		}
+
+		if (info->GetPropertyType() == RPGEnumerationType::StatsFunctors) {
+			// We need to delete the functors beforehand, otherwise updating them will
+			// delete the functor object while inherited stats entries may still use it
+			auto stats = GetStaticSymbols().GetStats();
+			STDString setName = object->Name.GetString();
+			setName += '_';
+			setName += key.GetString();
+			setName += '_';
+			setName += "Default";
+			auto it = stats->StatsFunctors.find(FixedString(setName));
+			if (it != stats->StatsFunctors.end()) {
+				stats->StatsFunctors.erase(it);
+			}
+
+			// Try to find cast keys
+			STDString functors(value);
+			STDString::size_type pos = 0;
+			for (;;) {
+				auto nextKey = functors.find_first_of('[', pos);
+				if (nextKey != STDString::npos) {
+					pos = nextKey + 1;
+					auto end = nextKey;
+					auto start = end;
+					while (start > 0 && isalnum(functors[start - 1])) {
+						start--;
+					}
+
+					auto textKey = functors.substr(start, end - start);
+					setName = object->Name.GetString();
+					setName += '_';
+					setName += key.GetString();
+					setName += '_';
+					setName += textKey;
+					auto it = stats->StatsFunctors.find(FixedString(setName));
+					if (it != stats->StatsFunctors.end()) {
+						stats->StatsFunctors.erase(it);
+					}
+				} else {
+					break;
+				}
+			}
+
+			object->Functors.remove(key);
+		}
+
+		auto set = GetStaticSymbols().stats__Object__SetPropertyString;
+		set(object, key, value);
+
+		return 0;
+	}
+
+	int StatsProxy::CopyFrom(lua_State* L)
+	{
+		auto self = StatsProxy::CheckUserData(L, 1);
+		auto copyFrom = get<FixedString>(L, 2);
+
+		auto stats = GetStaticSymbols().GetStats();
+		auto copyFromObject = stats->Objects.Find(copyFrom);
+		if (copyFromObject == nullptr) {
+			OsiError("Cannot copy stats from nonexistent object: " << copyFrom);
+			push(L, false);
+		// Self-inheritance should not copy anything
+		} else if (copyFromObject != self->obj_) {
+			push(L, self->obj_->CopyFrom(copyFromObject));
+		}
+
+		return 1;
+	}
+
 	int StatsProxy::Index(lua_State* L)
 	{
 		if (!lifetime_.IsAlive(L) || obj_ == nullptr) {
@@ -65,6 +149,16 @@ namespace bg3se::lua::stats
 		
 		if (attributeName == GFS.strSetPersistence) {
 			push(L, &StatsProxy::SetPersistence);
+			return 1;
+		}
+		
+		if (attributeName == GFS.strSetRawAttribute) {
+			push(L, &StatsProxy::SetRawAttribute);
+			return 1;
+		}
+		
+		if (attributeName == GFS.strCopyFrom) {
+			push(L, &StatsProxy::CopyFrom);
 			return 1;
 		}
 

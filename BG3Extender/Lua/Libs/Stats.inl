@@ -510,34 +510,7 @@ bool CopyStats(Object* obj, FixedString const& copyFrom)
 		return false;
 	}
 
-	if (obj->ModifierListIndex != copyFromObject->ModifierListIndex) {
-		auto objModifier = stats->ModifierLists.Find(obj->ModifierListIndex);
-		auto copyModifier = stats->ModifierLists.Find(obj->ModifierListIndex);
-		OsiError("Cannot copy stats from object '" << copyFrom << "' (a " << copyModifier->Name 
-			<< ") to an object of type " << objModifier->Name);
-		return false;
-	}
-
-	obj->AIFlags = copyFromObject->AIFlags;
-
-	for (uint32_t i = 0; i < obj->IndexedProperties.size(); i++) {
-		obj->IndexedProperties[i] = copyFromObject->IndexedProperties[i];
-	}
-
-	for (auto const& prop : copyFromObject->Functors) {
-		// TODO - is reusing property list objects allowed?
-		obj->Functors.Set(prop.Key(), prop.Value());
-	}
-
-	for (auto const& cond : copyFromObject->RollConditions) {
-		// TODO - is reusing condition objects allowed?
-		obj->RollConditions.Set(cond.Key(), cond.Value());
-	}
-
-	obj->Requirements = copyFromObject->Requirements;
-	obj->ComboCategories = copyFromObject->ComboCategories;
-
-	return true;
+	return obj->CopyFrom(copyFromObject);
 }
 
 /// <summary>

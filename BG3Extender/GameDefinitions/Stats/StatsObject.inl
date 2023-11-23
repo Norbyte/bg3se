@@ -524,4 +524,36 @@ bool Object::SetRollConditions(FixedString const& attributeName, std::optional<A
 
 // FIXME - ExtraProperties, ComboCategory
 
+bool Object::CopyFrom(Object* source)
+{
+	if (ModifierListIndex != source->ModifierListIndex) {
+		auto stats = GetStaticSymbols().GetStats();
+		auto objModifier = stats->ModifierLists.Find(ModifierListIndex);
+		auto copyModifier = stats->ModifierLists.Find(source->ModifierListIndex);
+		OsiError("Cannot copy stats from object '" << source->Name << "' (a " << copyModifier->Name
+			<< ") to an object of type " << objModifier->Name);
+		return false;
+	}
+
+	AIFlags = source->AIFlags;
+
+	for (uint32_t i = 0; i < IndexedProperties.size(); i++) {
+		IndexedProperties[i] = source->IndexedProperties[i];
+	}
+
+	for (auto const& prop : source->Functors) {
+		// TODO - is reusing property list objects allowed?
+		Functors.Set(prop.Key(), prop.Value());
+	}
+
+	for (auto const& cond : source->RollConditions) {
+		// TODO - is reusing condition objects allowed?
+		RollConditions.Set(cond.Key(), cond.Value());
+	}
+
+	Requirements = source->Requirements;
+	ComboCategories = source->ComboCategories;
+	return true;
+}
+
 END_NS()

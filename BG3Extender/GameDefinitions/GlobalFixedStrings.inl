@@ -25,6 +25,8 @@ FS(NameGroup);
 // Stat proxy functions
 FS(Sync);
 FS(SetPersistence);
+FS(SetRawAttribute);
+FS(CopyFrom);
 
 // Entity proxy functions
 FS(CreateComponent);

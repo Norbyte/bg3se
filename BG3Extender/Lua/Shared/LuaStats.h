@@ -36,6 +36,8 @@ private:
 
 	static int Sync(lua_State* L);
 	static int SetPersistence(lua_State* L);
+	static int SetRawAttribute(lua_State* L);
+	static int CopyFrom(lua_State* L);
 };
 
 class SpellPrototypeProxy : public Userdata<SpellPrototypeProxy>, public Indexable

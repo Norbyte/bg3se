@@ -180,6 +180,7 @@ namespace bg3se
 		SYM_OFF(gRPGStats);
 		SYM_OFF(RPGStats__Load);
 		SYM_OFF(RPGStats__PreParseDataFolder);
+		SYM_OFF(stats__Object__SetPropertyString);
 
 		SYM_OFF(esv__LevelManager);
 		SYM_OFF(ls__GlobalTemplateManager);

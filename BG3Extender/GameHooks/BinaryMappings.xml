@@ -512,6 +512,20 @@
           <Target Type="Absolute" Offset="0" NextSymbol="RPGStats::PreParseDataFolder" NextSymbolSeekSize="0x180" />
         </Mapping>
 
+        <Mapping Name="stats::Object::SetPropertyString">
+          49 8b 4f 20 // mov     rcx, [r15+20h]; this
+          @str1 3b 05 ?? ?? ?? ?? // cmp     eax, cs:fs_ComboCategory.ID
+          75 0a // jnz     short loc_140EF9214
+          48 8b d1 // mov     rdx, rcx
+          e8 ?? ?? ?? ?? // call    sub_140EF9600
+          eb 0b // jmp     short loc_140EF921F
+          48 8d 54 24 30 // lea     rdx, [rsp+211E0h+propertyName]; propertyName
+          @ref2 e8 ?? ?? ?? ?? // call    stats__Object__SetPropertyString
+          90 // nop
+          <Condition Type="FixedString" Offset="@str1" Value="ComboCategory" />
+          <Target Type="Indirect" Offset="@ref2" Symbol="stats__Object__SetPropertyString" />
+        </Mapping>
+      
       <!-- NOTE: Adjust LibraryManager::BindECSContext after changing this -->
       <Mapping Name="ecs::StaticContextRegistrant" AllowFail="true">
         @ref1 0f 11 05 ?? ?? ?? ?? // movups  cs:xmmword_145B2D7A0, xmm0
