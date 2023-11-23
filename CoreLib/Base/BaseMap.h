@@ -778,7 +778,7 @@ protected:
 		}
 
 		assert(next < -1);
-		uint32_t slot = (uint32_t)(-next + 2);
+		uint32_t slot = (uint32_t)(-next - 2);
 
 		int32_t prev = HashKeys[slot];
 		while (NextIds[prev] != from) {
