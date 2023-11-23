@@ -368,32 +368,42 @@ std::optional<Object*> RPGStats::CreateObject(FixedString const& name, FixedStri
 
 std::optional<Object*> RPGStats::CreateObject(FixedString const& name, int32_t modifierListIndex)
 {
-	throw std::runtime_error("FIXME!");
-	/*auto modifier = modifierList.Find(modifierListIndex);
-	if (!modifier) {
+	auto modifierList = ModifierLists.Find(modifierListIndex);
+	if (!modifierList) {
 		OsiError("Modifier list doesn't exist: " << name);
 		return {};
 	}
 
-	auto object = objects.Find(name);
+	auto object = Objects.Find(name);
 	if (object) {
 		OsiError("A stats object already exists with this name: " << name);
 		return {};
 	}
 
+	if (Objects.Primitives.empty()) {
+		OsiError("No stats object found to copy VMT from!");
+		return {};
+	}
+
 	object = GameAlloc<Object>();
-	object->VMT = gCRPGStatsVMTMappings.ObjectVMT;
+	object->VMT = Objects.Primitives[0]->VMT;
 	object->ModifierListIndex = modifierListIndex;
-	object->IndexedProperties.resize(modifier->Attributes.Primitives.Size, 0);
-	object->DivStats = DivinityStats;
+	object->IndexedProperties.resize(modifierList->Attributes.Primitives.size(), 0);
 	object->Name = name;
-	object->PropertyList.Init(3);
-	object->ConditionList.Init(3);
 
-	object->Handle = objects.Primitives.Size;
-	objects.Add(name, object);
+	for (int i = 0; i < modifierList->Attributes.Primitives.size(); i++) {
+		auto const& modifier = modifierList->Attributes.Primitives[i];
+		auto valueList = ModifierValueLists.Find(modifier->EnumerationIndex);
+		if (valueList) {
+			auto type = valueList->GetPropertyType();
+			if (type == RPGEnumerationType::Conditions || type == RPGEnumerationType::RollConditions) {
+				object->IndexedProperties[i] = -1;
+			}
+		}
+	}
 
-	return object;*/
+	Objects.Add(name, object);
+	return object;
 }
 
 /*void RPGStats::SyncObjectFromServer(MsgS2CSyncStat const& msg)
