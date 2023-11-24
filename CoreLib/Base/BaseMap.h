@@ -769,16 +769,10 @@ protected:
 
 	void migrateKey(int32_t from, int32_t to)
 	{
+		// Backrefs in NextIds are inconsistent, so we need to rehash the key we're moving
+		auto slot = (uint32_t)(MultiHashMapHash(Keys[from]) % HashKeys.Size());
+
 		Keys[to] = std::move(Keys[from]);
-
-		// Find root node
-		int32_t next = NextIds[from];
-		while (next >= 0) {
-			next = NextIds[next];
-		}
-
-		assert(next < -1);
-		uint32_t slot = (uint32_t)(-next - 2);
 
 		int32_t prev = HashKeys[slot];
 		if (prev == from) {
