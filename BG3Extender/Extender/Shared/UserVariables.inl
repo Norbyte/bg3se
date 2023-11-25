@@ -241,6 +241,11 @@ void UserVariableSyncWriter::AppendToSyncMessage(Guid const& entity, FixedString
 	}
 
 	auto var = syncMsg_->GetMessage().mutable_user_vars()->add_vars();
+	switch (varClass_) {
+	case UserVarClass::EntityVar: var->set_type(net::UserVarType::ENTITY_VAR); break;
+	case UserVarClass::ModuleVar: var->set_type(net::UserVarType::MODULE_VAR); break;
+	}
+	
 	var->set_uuid1(entity.Val[0]);
 	var->set_uuid2(entity.Val[1]);
 	var->set_key(key.GetString());

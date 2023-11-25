@@ -87,11 +87,17 @@ public:
 	virtual UserVariable* Get(Guid const& entity, FixedString const& key) = 0;
 };
 
+enum class UserVarClass
+{
+	EntityVar,
+	ModuleVar
+};
+
 class UserVariableSyncWriter
 {
 public:
-	inline UserVariableSyncWriter(UserVariableInterface* vars, bool isServer)
-		: vars_(vars), isServer_(isServer)
+	inline UserVariableSyncWriter(UserVariableInterface* vars, bool isServer, UserVarClass varClass)
+		: vars_(vars), isServer_(isServer), varClass_(varClass)
 	{}
 
 	void Flush(bool force);
@@ -115,6 +121,7 @@ private:
 	net::ExtenderMessage* syncMsg_{ nullptr };
 	size_t syncMsgBudget_{ 0 };
 	bool isServer_;
+	UserVarClass varClass_;
 
 	void AppendToSyncMessage(Guid const& entity, FixedString const& key, UserVariable const& value);
 	void FlushSyncQueue(Array<SyncRequest>& queue);
@@ -131,7 +138,7 @@ public:
 	};
 
 	inline UserVariableManager(bool isServer, ecs::EntitySystemHelpersBase& entityHelpers)
-		: sync_(this, isServer),
+		: sync_(this, isServer, UserVarClass::EntityVar),
 		isServer_(isServer),
 		entityHelpers_(entityHelpers)
 	{}
@@ -204,7 +211,7 @@ class ModVariableManager : public UserVariableInterface
 {
 public:
 	inline ModVariableManager(bool isServer)
-		: sync_(this, isServer),
+		: sync_(this, isServer, UserVarClass::ModuleVar),
 		isServer_(isServer)
 	{}
 
