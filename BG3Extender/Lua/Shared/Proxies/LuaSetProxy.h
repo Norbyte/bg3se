@@ -85,9 +85,9 @@ public:
 	int Next(lua_State* L, CppObjectMetadata& self, int key) override
 	{
 		auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
-		if (key >= -1 && key < (int)obj->Keys.Size() - 1) {
+		if (key >= 0 && key < (int)obj->Keys.size()) {
 			push(L, ++key);
-			push(L, &obj->Keys[key], self.Lifetime);
+			push(L, &obj->Keys[key - 1], self.Lifetime);
 			return 2;
 		} else {
 			return 0;

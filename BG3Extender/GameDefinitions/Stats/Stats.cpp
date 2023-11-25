@@ -391,7 +391,7 @@ std::optional<Object*> RPGStats::CreateObject(FixedString const& name, int32_t m
 	object->IndexedProperties.resize(modifierList->Attributes.Primitives.size(), 0);
 	object->Name = name;
 
-	for (int i = 0; i < modifierList->Attributes.Primitives.size(); i++) {
+	for (unsigned i = 0; i < modifierList->Attributes.Primitives.size(); i++) {
 		auto const& modifier = modifierList->Attributes.Primitives[i];
 		auto valueList = ModifierValueLists.Find(modifier->EnumerationIndex);
 		if (valueList) {

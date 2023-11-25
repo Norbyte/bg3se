@@ -684,7 +684,12 @@ struct MultiHashSet
 
 		int keyIdx = (int)Keys.Size();
 		Keys.Add(key);
-		NextIds.Add(-1);
+
+		if (NextIds.size() < Keys.size()) {
+			NextIds.resize(Keys.size());
+		}
+
+		NextIds[keyIdx] = -1;
 
 		if (HashKeys.Size() >= Keys.Size() * 2) {
 			InsertToHashMap(key, keyIdx);
