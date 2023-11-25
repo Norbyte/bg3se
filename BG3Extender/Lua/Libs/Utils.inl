@@ -181,6 +181,11 @@ void ShowErrorAndExitGame(STDString message)
 	gExtender->GetLibraryManager().ShowStartupError(message, true);
 }
 
+void ShowError(STDString message)
+{
+	gExtender->GetLibraryManager().ShowStartupError(message, true, false);
+}
+
 GlobalSwitches* GetGlobalSwitches()
 {
 	return GetStaticSymbols().GetGlobalSwitches();
@@ -228,6 +233,7 @@ void RegisterUtilsLib()
 	MODULE_FUNCTION(HandleToInteger)
 	MODULE_FUNCTION(IntegerToHandle)
 	MODULE_FUNCTION(ShowErrorAndExitGame)
+	MODULE_FUNCTION(ShowError)
 	MODULE_FUNCTION(GetGlobalSwitches)
 	MODULE_FUNCTION(GetCommandLineParams)
 	END_MODULE()
