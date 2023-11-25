@@ -183,7 +183,7 @@ void ShowErrorAndExitGame(STDString message)
 
 void ShowError(STDString message)
 {
-	gExtender->GetLibraryManager().ShowStartupError(message, true, false);
+	gExtender->GetLibraryManager().ShowStartupError(message, false);
 }
 
 GlobalSwitches* GetGlobalSwitches()
