@@ -81,6 +81,7 @@ private:
 	void OnUpdate(void* self, GameTime* time);
 	void OnIncLocalProgress(void* self, int progress, char const* state);
 	void ShowLoadingProgress();
+	void ShowVersionNumber();
 };
 
 END_NS()

@@ -14,6 +14,8 @@ BEGIN_SE()
 
 void InitCrashReporting();
 
+extern char const* BuildDate;
+
 END_SE()
 
 BEGIN_NS(ecl)
@@ -169,6 +171,7 @@ void ScriptExtender::OnGameStateChanged(GameState fromState, GameState toState)
 	switch (fromState) {
 	case GameState::LoadModule:
 		INFO("ecl::ScriptExtender::OnGameStateChanged(): Loaded module");
+		ShowVersionNumber();
 		LoadExtensionState(ExtensionStateContext::Game);
 		break;
 
@@ -286,6 +289,17 @@ void ScriptExtender::UpdateClientProgress(STDString const& status)
 void ScriptExtender::ShowLoadingProgress()
 {
 	// FIXME - not supported for now
+}
+
+void ScriptExtender::ShowVersionNumber()
+{
+	RuntimeStringHandle rsh(FixedString("h5b6e4138g2cf0g4d67gb825gee416cf8c54f"));
+	auto versionText = GetStaticSymbols().GetTranslatedStringRepository()->GetTranslatedString(rsh);
+	if (versionText) {
+		auto expandedVersion = STDString(*versionText) +
+			"\r\nScript Extender v" + STDString(std::to_string(CurrentVersion)) + " loaded, built on " + BuildDate + ".";
+		GetStaticSymbols().GetTranslatedStringRepository()->UpdateTranslatedString(rsh, expandedVersion);
+	}
 }
 
 bool ScriptExtender::IsInClientThread() const

@@ -5,6 +5,8 @@
 
 BEGIN_SE()
 
+extern char const* BuildDate;
+
 class DebugConsole : public Console
 {
 public:

@@ -5,6 +5,8 @@
 
 BEGIN_SE()
 
+char const* BuildDate = __DATE__ " " __TIME__;
+
 void DebugConsole::SubmitTaskAndWait(bool server, std::function<void()> task)
 {
 	if (server) {
@@ -252,7 +254,7 @@ void DebugConsole::Create()
 	DEBUG("*                                                                            *");
 	DEBUG("******************************************************************************");
 	DEBUG("");
-	DEBUG("BG3Ext v%d built on " __DATE__ " " __TIME__, CurrentVersion);
+	DEBUG("BG3Ext v%d built on %s", CurrentVersion, BuildDate);
 
 	consoleThread_ = new std::thread(&DebugConsole::ConsoleThread, this);
 }

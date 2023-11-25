@@ -9,6 +9,18 @@ struct RuntimeStringHandle
 	FixedString Handle;
 	uint16_t Version{ 0 };
 
+	inline RuntimeStringHandle() {}
+
+	inline RuntimeStringHandle(FixedString const& handle)
+		: Handle(handle),
+		Version(1)
+	{}
+
+	inline RuntimeStringHandle(FixedString const& handle, uint16_t version)
+		: Handle(handle),
+		Version(version)
+	{}
+
 	inline bool operator == (RuntimeStringHandle const& fs) const
 	{
 		return Handle == fs.Handle;
