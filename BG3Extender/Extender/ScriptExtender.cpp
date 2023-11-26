@@ -107,6 +107,12 @@ void ScriptExtender::Initialize()
 	auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(initEnd - initStart).count();
 	DEBUG("Library startup took %d ms", ms);
 
+	auto app = GetStaticSymbols().AppInstance;
+	if (app && *app) {
+		DEBUG("We're already past App load, triggering CoreLibInit");
+		OnCoreLibInit(nullptr);
+	}
+
 	if (config_.SendCrashReports) {
 		ShutdownCrashReporting();
 	}
@@ -192,6 +198,12 @@ void ScriptExtender::OnStatsLoad(stats::RPGStats::LoadProc* wrapped, stats::RPGS
 {
 	// Stats load is scheduled from the client on the shared worker pool
 	client_.AddThread(GetCurrentThreadId());
+
+	// Ensure that we have an empty extension state ready in case OnStatsLoad() is the first callback
+	// due to late load
+	if (!client_.HasExtensionState()) {
+		client_.ResetExtensionState();
+	}
 
 	statLoadOrderHelper_.OnLoadStarted();
 	client_.LoadExtensionState(ExtensionStateContext::Load);

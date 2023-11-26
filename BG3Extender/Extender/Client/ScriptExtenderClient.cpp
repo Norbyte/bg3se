@@ -255,6 +255,9 @@ void ScriptExtender::GameStateWorkerWrapper(void (*wrapped)(void*), void* self)
 
 void ScriptExtender::OnUpdate(void* self, GameTime* time)
 {
+	// In case we're loaded too late to see LoadModule transition
+	AddThread(GetCurrentThreadId());
+
 	RunPendingTasks();
 	if (extensionState_) {
 		extensionState_->OnUpdate(*time);
