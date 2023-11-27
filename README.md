@@ -11,7 +11,7 @@ The following configuration variables can be set in the `ScriptExtenderSettings.
 
 | Variable | Type | Default | Description |
 |--|--|--|--|
-| CreateConsole | Boolean | true | Creates a console window that logs extender internals. Mainly useful for debugging. |
+| CreateConsole | Boolean | false | Creates a console window that logs extender internals. Mainly useful for debugging. |
 | EnableLogging | Boolean | false | Enable logging of Osiris activity (rule evaluation, queries, etc.) to a log file. |
 | LogRuntime | Boolean | false | Log extender console and script output to a log file. |
 | LogCompile | Boolean | false | Log Osiris story compilation to a log file. |
