@@ -93,15 +93,27 @@ void GameHelpers::SetMainThread(HANDLE h)
 	hMainThread_ = h;
 }
 
-void GameHelpers::ShowError(char const * msg) const
+DWORD WINAPI GameHelpers::ShowErrorThreadMain(LPVOID param)
 {
-	if (!ShowErrorDialog(msg)) {
-		MessageBoxA(NULL, msg, "Script Extender Updater Error", MB_OK | MB_ICONERROR);
+	auto self = reinterpret_cast<GameHelpers*>(param);
+	if (!self->ShowErrorDialog(self->errorMsg_.c_str())) {
+		MessageBoxA(NULL, self->errorMsg_.c_str(), "Script Extender Updater Error", MB_OK | MB_ICONERROR);
 	}
+
+	return 0;
 }
 
-bool GameHelpers::ShowErrorDialog(char const * msg) const
+void GameHelpers::ShowError(char const * msg)
 {
+	errorMsg_ = msg;
+	CreateThread(NULL, 0, &ShowErrorThreadMain, this, 0, NULL);
+}
+
+bool GameHelpers::ShowErrorDialog(char const * msg)
+{
+	Sleep(1500);
+	BindToGame();
+
 	auto client = symbols_.GetEoCClient();
 	if (client == nullptr
 		|| symbols_.ecl__EoCClient__HandleError == nullptr

@@ -3,14 +3,31 @@
 
 BEGIN_SE()
 
+void SEUpdaterInitializeLibrary()
+{
+	if (!gGameHelpers) {
+		gGameHelpers = std::make_unique<GameHelpers>();
+	}
+}
+
+void SEUpdaterSetLogCallback(Console::LogCallbackProc* callback)
+{
+	if (gCoreLibPlatformInterface.GlobalConsole) {
+		auto console = static_cast<Console*>(gCoreLibPlatformInterface.GlobalConsole);
+		console->SetLogCallback(callback);
+	}
+}
+
 void SEUpdaterInitialize(char const* binPath)
 {
 	if (gUpdater) return;
 
-	gGameHelpers = std::make_unique<GameHelpers>();
+	if (!gGameHelpers) {
+		gGameHelpers = std::make_unique<GameHelpers>();
+	}
+
 	gUpdater = std::make_unique<ScriptExtenderUpdater>();
 	gUpdater->Initialize(binPath);
-	gGameHelpers->Initialize();
 }
 
 void SEUpdaterShowConsole()
@@ -80,10 +97,13 @@ bool SEUpdaterGetResourceVersion(int32_t* major, int32_t* minor, int32_t* revisi
 
 void SEUpdaterShutdown()
 {
-	if (!gUpdater) return;
-
-	gUpdater.reset();
-	gGameHelpers.reset();
+	if (gUpdater) {
+		gUpdater.reset();
+	}
+	
+	if (gGameHelpers) {
+		gGameHelpers.reset();
+	}
 }
 
 void SEUpdaterTest()
@@ -99,6 +119,16 @@ END_SE()
 
 extern "C"
 {
+
+void SEUpdaterInitializeLibrary()
+{
+	bg3se::SEUpdaterInitializeLibrary();
+}
+
+void SEUpdaterSetLogCallback(bg3se::Console::LogCallbackProc* callback)
+{
+	bg3se::SEUpdaterSetLogCallback(callback);
+}
 
 void SEUpdaterInitialize(char const* configPath)
 {

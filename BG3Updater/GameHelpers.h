@@ -38,9 +38,10 @@ public:
 	GameHelpers();
 	~GameHelpers();
 
-	void Initialize();
+	void BindToGame();
+	void SetMainThread(HANDLE h);
 
-	void ShowError(char const * msg) const;
+	void ShowError(char const * msg);
 	std::optional<ecl::GameState> GetState() const;
 
 	void SuspendClientThread() const;
@@ -65,6 +66,9 @@ private:
 	uint8_t const * moduleStart_{ nullptr };
 	std::size_t moduleSize_{ 0 };
 	std::vector<ThreadInfo> threads_;
+	HANDLE hMainThread_{ NULL };
+	bool bindingsDone_{ false };
+	std::string errorMsg_;
 
 	UpdaterSymbols symbols_;
 
@@ -74,11 +78,12 @@ private:
 
 	bool CanShowError() const;
 
-	bool ShowErrorDialog(char const * msg) const;
+	bool ShowErrorDialog(char const * msg);
 	bool ClientHandleError(char const * msg, bool exitGame) const;
 
 	ThreadInfo const * FindClientThread() const;
 	static LONG NTAPI ThreadNameCaptureFilter(_EXCEPTION_POINTERS *ExceptionInfo);
+	static DWORD WINAPI ShowErrorThreadMain(LPVOID param);
 };
 
 HMODULE GetExeHandle();

@@ -11,3 +11,5 @@ EXPORTS
 	SEUpdaterShowConsole=SEUpdaterShowConsole @106
 	SEUpdaterTest=SEUpdaterTest @107
 	SEUpdaterShutdown=SEUpdaterShutdown @108
+	SEUpdaterInitializeLibrary=SEUpdaterInitializeLibrary @109
+	SEUpdaterSetLogCallback=SEUpdaterSetLogCallback @110

@@ -2,6 +2,9 @@
 #include "Updater.h"
 #include "HttpFetcher.h"
 #include <Shlwapi.h>
+#include <CommCtrl.h>
+#pragma comment(linker, "/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='amd64' publicKeyToken='6595b64144ccf1df' language='*'\"")
+
 
 BEGIN_SE()
 
@@ -104,6 +107,7 @@ bool ResourceUpdater::Update(Manifest::Resource const& resource, Manifest::Resou
 	fetcher.DebugLogging = config_.Debug;
 	fetcher.IPv4Only = config_.IPv4Only;
 
+	gUpdater->SetStatusText(std::wstring(L"Downloading update: ") + FromStdUTF8(version.Version.ToString()));
 	DEBUG("Fetching update package: %s", version.URL.c_str());
 	std::vector<uint8_t> response;
 	if (!fetcher.Fetch(version.URL, response)) {
@@ -114,6 +118,7 @@ bool ResourceUpdater::Update(Manifest::Resource const& resource, Manifest::Resou
 		return false;
 	}
 
+	gUpdater->SetStatusText(std::wstring(L"Unpacking update: ") + FromStdUTF8(version.Version.ToString()));
 	if (cache_.UpdateLocalPackage(resource, version, response, reason.Message)) {
 		return true;
 	} else {
@@ -221,8 +226,10 @@ bool ScriptExtenderUpdater::LoadExtender()
 {
 	auto dllPath = cache_->FindResourceDllPath("ScriptExtender", gameVersion_);
 	if (!dllPath) {
-		errorMessage_ = "No extender version found for game version v";
-		errorMessage_ += gameVersion_.ToString();
+		if (errorMessage_.empty()) {
+			errorMessage_ = "No extender version found for game version v";
+			errorMessage_ += gameVersion_.ToString();
+		}
 		return false;
 	}
 
@@ -233,15 +240,15 @@ bool ScriptExtenderUpdater::LoadExtender()
 		if (updated_) {
 			auto errc = GetLastError();
 			DEBUG("Extender DLL load failed; error code %d", errc);
-			errorMessage_ = "Failed to load Script Extender library.\r\n"
-				"LoadLibrary() returned error code ";
-			errorMessage_ += std::to_string(errc);
+			if (errorMessage_.empty()) {
+				errorMessage_ = "Failed to load Script Extender library.\r\n"
+					"LoadLibrary() returned error code ";
+				errorMessage_ += std::to_string(errc);
+			}
 		}
 
 		return false;
 	} else {
-		// Wait a bit for extender startup to complete
-		Sleep(300);
 		return true;
 	}
 }
@@ -249,6 +256,9 @@ bool ScriptExtenderUpdater::LoadExtender()
 void ScriptExtenderUpdater::Run()
 {
 	FetchUpdates();
+	if (ui_) {
+		ui_->Hide();
+	}
 	LoadExtender();
 	completed_ = true;
 
@@ -261,6 +271,7 @@ bool ScriptExtenderUpdater::TryToUpdate(ErrorReason& reason)
 {
 	ManifestFetcher manifestFetcher(config_);
 	Manifest manifest;
+	SetStatusText(L"Fetching manifest");
 	if (!manifestFetcher.Fetch(manifest, reason)) {
 		return false;
 	}
@@ -286,8 +297,22 @@ void ScriptExtenderUpdater::InitConsole()
 	SetConsoleTitleW(L"BG3 Script Extender Debug Console");
 }
 
+void ScriptExtenderUpdater::InitUI()
+{
+	ui_ = std::make_unique<UpdaterUI>();
+	ui_->Show();
+}
+
+void ScriptExtenderUpdater::SetStatusText(std::wstring const& status)
+{
+	if (ui_) {
+		ui_->SetStatusText(status);
+	}
+}
+
 void ScriptExtenderUpdater::Initialize(char const* exeDirOverride)
 {
+	SetStatusText(L"Initializing");
 	UpdateExeDir(exeDirOverride);
 	LoadConfig();
 	LoadGameVersion();
@@ -356,60 +381,114 @@ void ScriptExtenderUpdater::UpdatePaths()
 
 std::unique_ptr<ScriptExtenderUpdater> gUpdater;
 
-
-// This thread is responsible for polling and suspending/resuming
-// the client init thread if the update is still pending during client init.
-// The goal is to prevent the client from loading modules before the extender is loaded.
-DWORD WINAPI ClientWorkerSuspenderThread(LPVOID param)
+void UpdaterUI::Show()
 {
-	bool suspended{ false };
-	for (;;) {
-		auto state = gGameHelpers->GetState();
-		if (state) {
-			bool completed = gUpdater->IsCompleted();
-			if (!suspended && !completed && (*state == ecl::GameState::LoadModule || *state == ecl::GameState::Init)) {
-				DEBUG("Suspending client thread (pending update)");
-				gGameHelpers->SuspendClientThread();
-				suspended = true;
-			}
+	requestShow_ = true;
+	CreateThread(NULL, 0, &UIThreadMain, this, 0, NULL);
+}
 
-			if (completed) {
-				if (suspended) {
-					DEBUG("Resuming client thread");
-					gGameHelpers->ResumeClientThread();
-				}
-				break;
-			}
+void UpdaterUI::Hide()
+{
+	requestShow_ = false;
+	if (progressWindow_) {
+		SendMessage(progressWindow_, TDM_CLICK_BUTTON, static_cast<WPARAM>(TDCBF_CANCEL_BUTTON), 0);
+	}
+}
 
-			if (*state == ecl::GameState::Menu) {
-				// No update takes place once we reach the menu, exit thread
-				break;
-			}
-		}
+void UpdaterUI::DoShow()
+{
+	Sleep(1000);
 
-		Sleep(1);
+	if (!requestShow_) {
+		return;
 	}
 
-	DEBUG("Client suspend worker exiting");
+	TASKDIALOG_BUTTON button;
+	memset(&button, 0, sizeof(button));
+	button.nButtonID = IDCANCEL;
+	button.pszButtonText = L"Cancel";
+
+	TASKDIALOGCONFIG config;
+	memset(&config, 0, sizeof(config));
+	config.cbSize = sizeof(TASKDIALOGCONFIG);
+	config.hwndParent = NULL;
+	config.hInstance = NULL;
+
+	config.cButtons = 1;
+	config.pButtons = &button;
+	config.nDefaultButton = IDCANCEL;
+
+	config.pfCallback = &UICallback;
+	config.lpCallbackData = (LONG_PTR)this;
+
+	// Ensure string doesn't go poof during construction
+	auto status = status_;
+	config.pszWindowTitle = L"Script Extender Updater";
+	config.pszMainInstruction = L"Checking for Script Extender updates";
+	config.pszContent = status.c_str();
+
+	config.dwFlags = TDF_SHOW_MARQUEE_PROGRESS_BAR;
+	TaskDialogIndirect(&config, NULL, NULL, NULL);
+	progressWindow_ = NULL;
+}
+
+void UpdaterUI::SetStatusText(std::wstring const& status)
+{
+	status_ = status;
+	if (progressWindow_ != NULL) {
+		SendMessage(progressWindow_, TDM_UPDATE_ELEMENT_TEXT, TDE_CONTENT, (LONG_PTR)status_.c_str());
+	}
+}
+
+DWORD WINAPI UpdaterUI::UIThreadMain(LPVOID param)
+{
+	auto self = reinterpret_cast<UpdaterUI*>(param);
+	self->DoShow();
 	return 0;
+}
+
+HRESULT UpdaterUI::UICallback(HWND hwnd, UINT uNotification, WPARAM wParam, LPARAM lParam, LONG_PTR lpRefData)
+{
+	auto self = reinterpret_cast<UpdaterUI*>(lpRefData);
+
+	switch (uNotification)
+	{
+	case TDN_CREATED:
+		PostMessage(hwnd, TDM_SET_PROGRESS_BAR_MARQUEE, TRUE, 0);
+		self->progressWindow_ = hwnd;
+
+		if (!self->requestShow_) {
+			PostMessage(hwnd, TDM_CLICK_BUTTON, static_cast<WPARAM>(TDCBF_CANCEL_BUTTON), 0);
+		}
+		break;
+	}
+
+	return S_OK;
 }
 
 DWORD WINAPI UpdaterThread(LPVOID param)
 {
-	gGameHelpers = std::make_unique<GameHelpers>();
-	gUpdater = std::make_unique<ScriptExtenderUpdater>();
-	gUpdater->Initialize(nullptr);
+	gGameHelpers->SuspendClientThread();
 	gUpdater->InitConsole();
-	gGameHelpers->Initialize();
-	CreateThread(NULL, 0, &ClientWorkerSuspenderThread, NULL, 0, NULL);
+	gUpdater->InitUI();
 	DEBUG("Launch loader");
 	gUpdater->Run();
+	gGameHelpers->ResumeClientThread();
 	DEBUG("Extender launcher thread exiting");
 	return 0;
 }
 
 void StartUpdaterThread()
 {
+	gGameHelpers = std::make_unique<GameHelpers>();
+
+	auto hProcess = GetCurrentProcess();
+	HANDLE hThread{ NULL };
+	DuplicateHandle(hProcess, GetCurrentThread(), hProcess, &hThread, 0, FALSE, DUPLICATE_SAME_ACCESS);
+	gGameHelpers->SetMainThread(hThread);
+
+	gUpdater = std::make_unique<ScriptExtenderUpdater>();
+	gUpdater->Initialize(nullptr);
 	CreateThread(NULL, 0, &UpdaterThread, NULL, 0, NULL);
 }
 

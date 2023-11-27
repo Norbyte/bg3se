@@ -63,6 +63,24 @@ public:
 	void Print(DebugMessageType type, char const* msg) override;
 };
 
+class UpdaterUI
+{
+public:
+	void Show();
+	void Hide();
+	void SetStatusText(std::wstring const& status);
+
+private:
+	bool requestShow_{ false };
+	HWND progressWindow_{ NULL };
+	std::wstring status_;
+
+	void DoShow();
+
+	static HRESULT UICallback(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam, LONG_PTR lpRefData);
+	static DWORD WINAPI UIThreadMain(LPVOID param);
+};
+
 class ScriptExtenderUpdater
 {
 public:
@@ -70,6 +88,8 @@ public:
 	bool TryToUpdate(ErrorReason& reason);
 	inline bool IsCompleted() const;
 	void InitConsole();
+	void InitUI();
+	void SetStatusText(std::wstring const& status);
 
 	UpdaterConfig& GetConfig()
 	{
@@ -108,6 +128,7 @@ private:
 	std::optional<Manifest> updateManifest_;
 	std::wstring exeDir_;
 	std::unique_ptr<ResourceCacheRepository> cache_;
+	std::unique_ptr<UpdaterUI> ui_;
 	std::optional<std::wstring> launchDllPath_;
 	std::string errorMessage_;
 	bool updated_{ false };
