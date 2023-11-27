@@ -49,8 +49,10 @@ GameHelpers::~GameHelpers()
 
 #define SYM_OFF(name) mappings_.StaticSymbols.insert(std::make_pair(#name, SymbolMappings::StaticSymbol{ (int)offsetof(UpdaterSymbols, name) }))
 
-void GameHelpers::Initialize()
+void GameHelpers::BindToGame()
 {
+	if (bindingsDone_) return;
+
 	SymbolMappingLoader loader(mappings_);
 	loader.AddKnownModule("Main");
 
@@ -82,6 +84,13 @@ void GameHelpers::Initialize()
 		gCoreLibPlatformInterface.ls__GlobalStringTable__MainTable__DecRef = symbols_.ls__GlobalStringTable__MainTable__DecRef;
 		gCoreLibPlatformInterface.ls__gGlobalStringTable = symbols_.ls__gGlobalStringTable;
 	}
+
+	bindingsDone_ = true;
+}
+
+void GameHelpers::SetMainThread(HANDLE h)
+{
+	hMainThread_ = h;
 }
 
 void GameHelpers::ShowError(char const * msg) const
@@ -178,6 +187,7 @@ void GameHelpers::SuspendClientThread() const
 		}
 	} else {
 		DEBUG("Could not suspend client thread (thread not found!)");
+		SuspendThread(hMainThread_);
 	}
 }
 
@@ -192,6 +202,7 @@ void GameHelpers::ResumeClientThread() const
 		}
 	} else {
 		DEBUG("Could not resume client thread (thread not found!)");
+		ResumeThread(hMainThread_);
 	}
 }
 
