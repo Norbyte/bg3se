@@ -20,21 +20,15 @@ struct SimplifiedEoCClient : public ProtectedGameObject<SimplifiedEoCClient>
 
 struct UpdaterSymbols : Noncopyable<UpdaterSymbols>
 {
-	FixedString::CreateFromStringProc* ls__FixedString__CreateFromString{ nullptr };
 	FixedString::GetStringProc* ls__FixedString__GetString{ nullptr };
 	FixedString::IncRefProc* ls__FixedString__IncRef{ nullptr };
-	FixedString::DecRefProc* ls__FixedString__DecRef{ nullptr };
+	GlobalStringTable::MainTable::CreateFromStringProc* ls__GlobalStringTable__MainTable__CreateFromString{ nullptr };
+	GlobalStringTable::MainTable::DecRefProc* ls__GlobalStringTable__MainTable__DecRef{ nullptr };
 	GlobalStringTable** ls__gGlobalStringTable{ nullptr };
 
 	SimplifiedEoCClient** ecl__EoCClient{ nullptr };
-
 	SimplifiedEoCClient::HandleErrorProc* ecl__EoCClient__HandleError{ nullptr };
-
 	TranslatedStringRepository** ls__gTranslatedStringRepository{ nullptr };
-
-	void* ls__gGlobalAllocator{ nullptr };
-	ls__GlobalAllocator__AllocProc* ls__GlobalAllocator__Alloc{ nullptr };
-	ls__GlobalAllocator__FreeProc* ls__GlobalAllocator__Free{ nullptr };
 
 	inline UpdaterSymbols() {}
 	UpdaterSymbols(UpdaterSymbols const &) = delete;

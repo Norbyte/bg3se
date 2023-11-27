@@ -1,38 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BinaryMappings>
   <Mappings Version="4.36.35.601" Default="true">
-    <Mapping Name="ls__GlobalAllocator" Critical="true">
-      48 89 6c 24 18 // mov     [rsp+arg_10], rbp
-      48 89 74 24 20 // mov     [rsp+arg_18], rsi
-      41 56 // push    r14
-      48 83 ec 20 // sub     rsp, 20h
-      65 48 8b 04 25 58 00 00 00 // mov     rax, gs:58h
-      @ref2 4c 8d 35 ?? ?? ?? ?? // lea     r14, ls__gGlobalAllocator
-      ba 88 04 00 00 // mov     edx, 488h
-      48 8b 08 // mov     rcx, [rax]
-      8b 04 0a // mov     eax, [rdx+rcx]
-      <Target Type="Indirect" Offset="@ref2" Symbol="ls__gGlobalAllocator" />
-    </Mapping>
-
-    <Mapping Name="ls__GlobalAllocator__Alloc" Critical="true">
-      83 79 0c 00 // cmp     dword ptr [rcx+0Ch], 0
-      7e 07 // jle     short loc_140572680
-      c7 41 0c 00 00 00 00 // mov     dword ptr [rcx+0Ch], 0
-      48 8b 39 // mov     rdi, [rcx]
-      48 85 ff // test    rdi, rdi
-      74 10 // jz      short loc_140572698
-      e8 ?? ?? ?? ?? // call    ls__GlobalAllocator__Get
-      48 8b d7 // mov     rdx, rdi; a2
-      48 8b c8 // mov     rcx, rax; a1
-      @ref2 e8 ?? ?? ?? ?? // call    ls__GlobalMemoryManager__Free
-      e8 ?? ?? ?? ?? // call    ls__GlobalAllocator__Get
-      48 c7 44 24 20 10 00 00 00 // mov     [rsp+38h+alignment], 10h; alignment
-      33 d2 // xor     edx, edx; size
-      48 8b c8 // mov     rcx, rax; a1
-      @ref4 e8 ?? ?? ?? ?? // call    ls__GlobalAllocator__Alloc2
-      <Target Type="Indirect" Offset="@ref2" Symbol="ls__GlobalAllocator__Free" />
-      <Target Type="Indirect" Offset="@ref4" Symbol="ls__GlobalAllocator__Alloc" />
-    </Mapping>
 
     <Mapping Name="ls::FixedString::IncRef" Critical="true">
       83 f8 ff // cmp     eax, 0FFFFFFFFh
@@ -89,7 +57,6 @@
       @ref2 48 8b 3d ?? ?? ?? ?? // mov     rdi, cs:ecl__gEoCClient
       48 8b d3 // mov     rdx, rbx
       48 8b 8f a8 00 00 00 // mov     rcx, [rdi+0A8h]
-      <Target Type="Indirect" Offset="@ref1" Symbol="esv__EoCServer" />
       <Target Type="Indirect" Offset="@ref2" Symbol="ecl__EoCClient" />
     </Mapping>
 

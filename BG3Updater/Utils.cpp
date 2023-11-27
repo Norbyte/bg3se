@@ -18,22 +18,14 @@ BEGIN_SE()
 
 std::unique_ptr<GameHelpers> gGameHelpers;
 
-void* BG3Alloc(std::size_t size)
+void* OSAlloc(std::size_t size)
 {
-	if (gGameHelpers->Symbols().ls__GlobalAllocator__Alloc && gGameHelpers->Symbols().ls__gGlobalAllocator) {
-		return gGameHelpers->Symbols().ls__GlobalAllocator__Alloc(gGameHelpers->Symbols().ls__gGlobalAllocator, size, 2, 0, 8);
-	} else {
-		return malloc(size);
-	}
+	return malloc(size);
 }
 
-void BG3Free(void* ptr)
+void OSFree(void* ptr)
 {
-	if (gGameHelpers->Symbols().ls__GlobalAllocator__Free && gGameHelpers->Symbols().ls__gGlobalAllocator) {
-		gGameHelpers->Symbols().ls__GlobalAllocator__Free(gGameHelpers->Symbols().ls__gGlobalAllocator, ptr);
-	} else {
-		return free(ptr);
-	}
+	return free(ptr);
 }
 
 GameHelpers::GameHelpers()
@@ -41,6 +33,8 @@ GameHelpers::GameHelpers()
 {
 	gCoreLibPlatformInterface.StaticSymbols = &symbols_;
 	gCoreLibPlatformInterface.GlobalConsole = new Console();
+	gCoreLibPlatformInterface.Alloc = &OSAlloc;
+	gCoreLibPlatformInterface.Free = &OSFree;
 }
 
 GameHelpers::~GameHelpers()
@@ -60,13 +54,10 @@ void GameHelpers::Initialize()
 	SymbolMappingLoader loader(mappings_);
 	loader.AddKnownModule("Main");
 
-	SYM_OFF(ls__GlobalAllocator__Alloc);
-	SYM_OFF(ls__GlobalAllocator__Free);
-
-	SYM_OFF(ls__FixedString__CreateFromString);
 	SYM_OFF(ls__FixedString__GetString);
 	SYM_OFF(ls__FixedString__IncRef);
-	SYM_OFF(ls__FixedString__DecRef);
+	SYM_OFF(ls__GlobalStringTable__MainTable__CreateFromString);
+	SYM_OFF(ls__GlobalStringTable__MainTable__DecRef);
 	SYM_OFF(ls__gGlobalStringTable);
 
 	SYM_OFF(ecl__EoCClient);
@@ -83,12 +74,12 @@ void GameHelpers::Initialize()
 		symbolMapper_.MapAllSymbols(false);
 		exceptionHandler_ = AddVectoredExceptionHandler(1, &ThreadNameCaptureFilter);
 
-		gCoreLibPlatformInterface.Alloc = &BG3Alloc;
-		gCoreLibPlatformInterface.Free = &BG3Free;
-		gCoreLibPlatformInterface.ls__FixedString__CreateFromString = symbols_.ls__FixedString__CreateFromString;
+		gCoreLibPlatformInterface.Alloc = &OSAlloc;
+		gCoreLibPlatformInterface.Free = &OSFree;
 		gCoreLibPlatformInterface.ls__FixedString__GetString = symbols_.ls__FixedString__GetString;
 		gCoreLibPlatformInterface.ls__FixedString__IncRef = symbols_.ls__FixedString__IncRef;
-		gCoreLibPlatformInterface.ls__FixedString__DecRef = symbols_.ls__FixedString__DecRef;
+		gCoreLibPlatformInterface.ls__GlobalStringTable__MainTable__CreateFromString = symbols_.ls__GlobalStringTable__MainTable__CreateFromString;
+		gCoreLibPlatformInterface.ls__GlobalStringTable__MainTable__DecRef = symbols_.ls__GlobalStringTable__MainTable__DecRef;
 		gCoreLibPlatformInterface.ls__gGlobalStringTable = symbols_.ls__gGlobalStringTable;
 	}
 }
@@ -105,9 +96,9 @@ bool GameHelpers::ShowErrorDialog(char const * msg) const
 	auto client = symbols_.GetEoCClient();
 	if (client == nullptr
 		|| symbols_.ecl__EoCClient__HandleError == nullptr
-		|| symbols_.ls__GlobalAllocator__Alloc == nullptr
-		|| symbols_.ls__GlobalAllocator__Free == nullptr
-		|| symbols_.ls__FixedString__CreateFromString == nullptr
+		|| symbols_.ls__gGlobalStringTable == nullptr
+		|| symbols_.ls__GlobalStringTable__MainTable__CreateFromString == nullptr
+		|| symbols_.ls__GlobalStringTable__MainTable__DecRef == nullptr
 		|| symbols_.ls__gTranslatedStringRepository == nullptr) {
 		return false;
 	}
