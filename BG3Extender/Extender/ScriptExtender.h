@@ -140,6 +140,7 @@ private:
 
 	ExtenderConfig config_;
 	bool postStartupDone_{ false };
+	bool updateHooksAdded_{ false };
 
 #if !defined(OSI_NO_DEBUGGER)
 	std::thread* luaDebuggerThread_{ nullptr };
@@ -151,6 +152,7 @@ private:
 	void OnCoreLibInit(void * self);
 	void OnAppUpdatePaths(void * self);
 	void OnAppLoadGraphicSettings(App* self);
+	void HookStateMachineUpdates();
 	void OnBaseModuleLoaded(void * self);
 	void OnModuleLoadStarted(TranslatedStringRepository* self);
 	void OnStatsLoad(stats::RPGStats::LoadProc* wrapped, stats::RPGStats* mgr, Array<STDString>* paths);

@@ -329,6 +329,13 @@ public:
 
 void ScriptExtender::OnAppLoadGraphicSettings(App * self)
 {
+	HookStateMachineUpdates();
+}
+
+void ScriptExtender::HookStateMachineUpdates()
+{
+	if (updateHooksAdded_) return;
+
 	auto clientEvtMgr = GetStaticSymbols().ecl__gGameStateEventManager;
 	if (clientEvtMgr && *clientEvtMgr) {
 		auto client = GameAlloc<ClientEventManagerHook>();
@@ -340,6 +347,8 @@ void ScriptExtender::OnAppLoadGraphicSettings(App * self)
 		auto server = GameAlloc<ServerEventManagerHook>();
 		(*serverEvtMgr)->Callbacks.push_back(&server->dummy);
 	}
+
+	updateHooksAdded_ = true;
 }
 
 void ScriptExtender::OnBaseModuleLoaded(void * self)
@@ -439,6 +448,8 @@ void ScriptExtender::PostStartup()
 	} else if (Libraries.InitializationFailed()) {
 		Libraries.ShowStartupError("An error has occurred during Script Extender initialization. Some extension features might be unavailable.", true, false);
 	}
+
+	HookStateMachineUpdates();
 
 	postStartupDone_ = true;
 }
