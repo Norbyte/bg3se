@@ -8,24 +8,21 @@
 
 BEGIN_SE()
 
-ManifestFetcher::ManifestFetcher(UpdaterConfig const& config)
-	: config_(config)
+ManifestFetcher::ManifestFetcher(HttpFetcher& fetcher, UpdaterConfig const& config)
+	: fetcher_(fetcher), config_(config)
 {}
 	
 bool ManifestFetcher::Fetch(Manifest& manifest, ErrorReason& reason)
 {
-	HttpFetcher fetcher;
-	fetcher.DebugLogging = config_.Debug;
-	fetcher.IPv4Only = config_.IPv4Only;
 	std::string manifestUrl = config_.ManifestURL + config_.UpdateChannel + "/" + config_.ManifestName;
 
 	DEBUG("Fetching manifest from: %s", manifestUrl.c_str());
 	std::vector<uint8_t> manifestBinary;
-	if (!fetcher.Fetch(manifestUrl, manifestBinary)) {
+	if (!fetcher_.Fetch(manifestUrl, manifestBinary)) {
 		reason.Category = ErrorCategory::ManifestFetch;
 		reason.Message = "Unable to download manifest: ";
-		reason.Message += fetcher.GetLastError();
-		reason.CurlResult = fetcher.GetLastResultCode();
+		reason.Message += fetcher_.GetLastError();
+		reason.CurlResult = fetcher_.GetLastResultCode();
 		return false;
 	}
 
@@ -55,8 +52,8 @@ bool ManifestFetcher::Parse(std::string const& manifestStr, Manifest& manifest, 
 }
 
 
-ResourceUpdater::ResourceUpdater(UpdaterConfig const& config, ResourceCacheRepository& cache)
-	: config_(config), cache_(cache)
+ResourceUpdater::ResourceUpdater(HttpFetcher& fetcher, UpdaterConfig const& config, ResourceCacheRepository& cache)
+	: fetcher_(fetcher), config_(config), cache_(cache)
 {}
 
 bool ResourceUpdater::Update(Manifest const& manifest, std::string const& resourceName, VersionNumber const& gameVersion, ErrorReason& reason)
@@ -103,18 +100,14 @@ bool ResourceUpdater::Update(Manifest::Resource const& resource, Manifest::Resou
 		return false;
 	}
 
-	HttpFetcher fetcher;
-	fetcher.DebugLogging = config_.Debug;
-	fetcher.IPv4Only = config_.IPv4Only;
-
 	gUpdater->SetStatusText(std::wstring(L"Downloading update: ") + FromStdUTF8(version.Version.ToString()));
 	DEBUG("Fetching update package: %s", version.URL.c_str());
 	std::vector<uint8_t> response;
-	if (!fetcher.Fetch(version.URL, response)) {
+	if (!fetcher_.Fetch(version.URL, response)) {
 		reason.Category = ErrorCategory::UpdateDownload;
 		reason.Message = "Unable to download package: ";
-		reason.Message += fetcher.GetLastError();
-		reason.CurlResult = fetcher.GetLastResultCode();
+		reason.Message += fetcher_.GetLastError();
+		reason.CurlResult = fetcher_.GetLastResultCode();
 		return false;
 	}
 
@@ -158,6 +151,11 @@ bool ScriptExtenderUpdater::FetchUpdates()
 	if (!config_.DisableUpdates) {
 		updated_ = TryToUpdate(updateReason);
 	} else {
+		updated_ = true;
+	}
+
+	if (cancellingUpdate_) {
+		// Update failure is due to cancellation, don't show an error message
 		updated_ = true;
 	}
 
@@ -269,17 +267,19 @@ void ScriptExtenderUpdater::Run()
 	
 bool ScriptExtenderUpdater::TryToUpdate(ErrorReason& reason)
 {
-	ManifestFetcher manifestFetcher(config_);
+	cancellingUpdate_ = false;
+
+	ManifestFetcher manifestFetcher(fetcher_, config_);
 	Manifest manifest;
 	SetStatusText(L"Fetching manifest");
-	if (!manifestFetcher.Fetch(manifest, reason)) {
+	if (!manifestFetcher.Fetch(manifest, reason) || cancellingUpdate_) {
 		return false;
 	}
 
 	cache_->UpdateFromManifest(manifest);
 
 	updateManifest_ = manifest;
-	ResourceUpdater updater(config_, *cache_);
+	ResourceUpdater updater(fetcher_, config_, *cache_);
 	return updater.Update(manifest, "ScriptExtender", gameVersion_, reason);
 }
 
@@ -308,6 +308,12 @@ void ScriptExtenderUpdater::SetStatusText(std::wstring const& status)
 	if (ui_) {
 		ui_->SetStatusText(status);
 	}
+}
+
+void ScriptExtenderUpdater::RequestCancelUpdate()
+{
+	cancellingUpdate_ = true;
+	fetcher_.Cancel();
 }
 
 void ScriptExtenderUpdater::Initialize(char const* exeDirOverride)
@@ -352,6 +358,9 @@ void ScriptExtenderUpdater::LoadConfig()
 	} else {
 		config_.UpdateChannel += UPDATER_CHANNEL_GAME;
 	}
+
+	fetcher_.DebugLogging = config_.Debug;
+	fetcher_.IPv4Only = config_.IPv4Only;
 }
 
 void ScriptExtenderUpdater::LoadGameVersion()
@@ -459,6 +468,12 @@ HRESULT UpdaterUI::UICallback(HWND hwnd, UINT uNotification, WPARAM wParam, LPAR
 
 		if (!self->requestShow_) {
 			PostMessage(hwnd, TDM_CLICK_BUTTON, static_cast<WPARAM>(TDCBF_CANCEL_BUTTON), 0);
+		}
+		break;
+
+	case TDN_BUTTON_CLICKED:
+		if (self->requestShow_ && wParam == IDCANCEL) {
+			gUpdater->RequestCancelUpdate();
 		}
 		break;
 	}

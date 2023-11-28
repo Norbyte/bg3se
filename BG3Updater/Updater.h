@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Cache.h"
+#include "HttpFetcher.h"
 #include <curl/curl.h>
 
 BEGIN_SE()
@@ -36,25 +37,27 @@ struct ErrorReason
 class ManifestFetcher
 {
 public:
-	ManifestFetcher(UpdaterConfig const& config);
+	ManifestFetcher(HttpFetcher& fetcher, UpdaterConfig const& config);
 	bool Fetch(Manifest& manifest, ErrorReason& reason);
 	bool Parse(std::string const& manifestStr, Manifest& manifest, ErrorReason& reason);
 
 private:
 	UpdaterConfig const& config_;
+	HttpFetcher& fetcher_;
 };
 
 
 class ResourceUpdater
 {
 public:
-	ResourceUpdater(UpdaterConfig const& config, ResourceCacheRepository& cache);
+	ResourceUpdater(HttpFetcher& fetcher, UpdaterConfig const& config, ResourceCacheRepository& cache);
 	bool Update(Manifest const& manifest, std::string const& resourceName, VersionNumber const& gameVersion, ErrorReason& reason);
 	bool Update(Manifest::Resource const& resource, Manifest::ResourceVersion const& version, ErrorReason& reason);
 
 private:
 	UpdaterConfig const& config_;
 	ResourceCacheRepository& cache_;
+	HttpFetcher& fetcher_;
 };
 
 class UpdaterConsole : public Console
@@ -90,6 +93,7 @@ public:
 	void InitConsole();
 	void InitUI();
 	void SetStatusText(std::wstring const& status);
+	void RequestCancelUpdate();
 
 	UpdaterConfig& GetConfig()
 	{
@@ -116,6 +120,11 @@ public:
 		return gameVersion_;
 	}
 
+	bool IsCancellingUpdate() const
+	{
+		return cancellingUpdate_;
+	}
+
 	void Initialize(char const* exeDirOverride);
 	void Run();
 	void LoadCaches();
@@ -125,6 +134,7 @@ public:
 private:
 	VersionNumber gameVersion_;
 	UpdaterConfig config_;
+	HttpFetcher fetcher_;
 	std::optional<Manifest> updateManifest_;
 	std::wstring exeDir_;
 	std::unique_ptr<ResourceCacheRepository> cache_;
@@ -133,6 +143,7 @@ private:
 	std::string errorMessage_;
 	bool updated_{ false };
 	bool completed_{ false };
+	bool cancellingUpdate_{ false };
 	std::string log_;
 
 	void UpdatePaths();
