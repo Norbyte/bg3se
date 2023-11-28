@@ -971,7 +971,7 @@ struct MultiHashMap : public MultiHashSet<TKey>
 	MultiHashMap(MultiHashMap const& other)
 		: MultiHashSet<TKey>(other)
 	{
-		Values.copy_from(other.Values, this->Keys.size(), other.Keys.size());
+		Values.copy_from(other.Values, 0, other.Keys.size());
 	}
 
 	MultiHashMap(MultiHashMap&& other)
@@ -986,8 +986,9 @@ struct MultiHashMap : public MultiHashSet<TKey>
 
 	MultiHashMap& operator =(MultiHashMap const& other)
 	{
+		auto oldSize = this->Keys.size();
 		MultiHashSet<TKey>::operator =(other);
-		Values.copy_from(other.Values, this->Keys.size(), other.Keys.size());
+		Values.copy_from(other.Values, oldSize, other.Keys.size());
 
 		return *this;
 	}
