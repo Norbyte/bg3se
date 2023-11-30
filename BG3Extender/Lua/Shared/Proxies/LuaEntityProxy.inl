@@ -178,6 +178,7 @@ int EntityProxyMetatable::GetAllComponentNames(lua_State* L)
 {
 	StackCheck _(L, 1);
 	auto handle = Get(L, 1);
+	auto reqMapped = get<std::optional<bool>>(L, 2);
 
 	lua_newtable(L);
 
@@ -188,9 +189,12 @@ int EntityProxyMetatable::GetAllComponentNames(lua_State* L)
 		for (auto componentIdx : entityClass->ComponentTypeToIndex.Keys) {
 			auto name = ecs->GetComponentName(componentIdx);
 			if (name) {
-				push(L, componentIdx.Value());
-				push(L, **name);
-				lua_rawset(L, -3);
+				auto mapped = ecs->GetComponentType(componentIdx).has_value();
+				if (!reqMapped || *reqMapped == mapped) {
+					push(L, componentIdx.Value());
+					push(L, **name);
+					lua_rawset(L, -3);
+				}
 			}
 		}
 	}

@@ -38,6 +38,7 @@ _I._DoStartup()
 -- Test runner helper
 if Ext.Debug.IsDeveloperMode() then
 	Ext.Utils.LoadTestLibrary()
+	Ext.Utils.Include(nil, "builtin://Libs/DevelopmentHelpers.lua")
 	Ext.Events.GameStateChanged:Subscribe(function (e)
 		if e.ToState == "Running" then
 			local args = Ext.Utils.GetCommandLineParams()
