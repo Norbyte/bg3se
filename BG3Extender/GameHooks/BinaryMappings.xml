@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <BinaryMappings>
-    <Mappings Version="4.36.35.601" Default="true">
-        <Mapping Name="ls__GlobalAllocator" Critical="true">
+  <Mappings Version="4.40.61.76" Default="true">
+    <DllImport Module="Kernel32" Proc="FindFirstFileW" Symbol="Kernel_FindFirstFileW" />
+    <DllImport Module="Kernel32" Proc="FindNextFileW" Symbol="Kernel_FindNextFileW" />
+    <DllImport Module="Kernel32" Proc="FindClose" Symbol="Kernel_FindClose" />
+
+    <Mapping Name="ls__GlobalAllocator" Critical="true">
           48 89 6c 24 18 // mov     [rsp+arg_10], rbp
           48 89 74 24 20 // mov     [rsp+arg_18], rsi
           41 56 // push    r14
@@ -138,14 +142,14 @@
 
         <!-- Sig: reference to strings "gr2", "lsm" -->
         <Mapping Name="EoCServer2/EoCClient2" Critical="true">
-          83 b8 44 07 00 00 02 // cmp     dword ptr [rax+744h], 2
+          83 b8 84 07 00 00 02 // cmp     dword ptr [rax+784h], 2
           74 0f // jz      short loc_140567F25
           48 8b d3 // mov     rdx, rbx
           @ref1 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:esv__gEocServer
           e8 ?? ?? ?? ?? // call    sub_14072F540
           @ref2 48 8b 3d ?? ?? ?? ?? // mov     rdi, cs:ecl__gEoCClient
           48 8b d3 // mov     rdx, rbx
-          48 8b 8f a8 00 00 00 // mov     rcx, [rdi+0A8h]
+          48 8b 8f 98 00 00 00 // mov     rcx, [rdi+098h]
           <Target Type="Indirect" Offset="@ref1" Symbol="esv__EoCServer" />
           <Target Type="Indirect" Offset="@ref2" Symbol="ecl__EoCClient" />
         </Mapping>
@@ -178,12 +182,12 @@
 
         <Mapping Name="ecl::GameStateMachine::Update" Critical="true">
           48 8b d3 // mov     rdx, rbx
-          48 8b 8f a0 00 00 00 // mov     rcx, [rdi+0A0h]
+          48 8b 8f 90 00 00 00 // mov     rcx, [rdi+90h]
           @ref1 e8 ?? ?? ?? ?? // call    ecl__GameStateMachine__Update
           48 8b d3 // mov     rdx, rbx
-          48 8b 8f 68 01 00 00 // mov     rcx, [rdi+168h]
-          e8 ?? ?? ?? ?? // call    sub_143755470
-          48 8b 8f b8 00 00 00 // mov     rcx, [rdi+0B8h]
+          48 8b 8f 58 01 00 00 // mov     rcx, [rdi+158h]
+          e8 ?? ?? ?? ?? // call    sub_143693EC0
+          48 8b 8f a8 00 00 00 // mov     rcx, [rdi+0A8h]
           48 85 c9 // test    rcx, rcx
           <Target Type="Indirect" Offset="@ref1" Symbol="ecl__GameStateMachine__Update" />
         </Mapping>
@@ -243,6 +247,7 @@
           <Target Type="Absolute" Offset="0" Symbol="App__LoadGraphicSettings" />
         </Mapping>
 
+        <!-- Sig: Ref to esv::platform::MovementSystemID -->
         <Mapping Name="esv::GameStateThreaded::GameStateWorker::DoWork" Critical="true">
           48 8b c4 // mov     rax, rsp
           48 89 58 10 // mov     [rax+10h], rbx
@@ -252,8 +257,8 @@
           41 55 // push    r13
           41 56 // push    r14
           41 57 // push    r15
-          48 8d 68 88 // lea     rbp, [rax-78h]
-          48 81 ec 50 01 00 00 // sub     rsp, 150h
+          48 8d 68 98 // lea     rbp, [rax-68h]
+          48 81 ec 40 01 00 00 // sub     rsp, 140h
           0f 29 70 c8 // movaps  xmmword ptr [rax-38h], xmm6
           0f 29 78 b8 // movaps  xmmword ptr [rax-48h], xmm7
           48 8b f1 // mov     rsi, rcx
@@ -277,12 +282,13 @@
 
         <Mapping Name="ls::ModuleSettings::IsModded" AllowFail="true">
           48 89 5c 24 08 // mov     [rsp+arg_0], rbx
-          8b 59 14 // mov     ebx, [rcx+14h]
-          45 33 db // xor     r11d, r11d
-          48 85 db // test    rbx, rbx
-          @ref 74 43 // jz      short loc_143215A93
-          4c 8b 51 08 // mov     r10, [rcx+8]
-          @str 8b 0d ?? ?? ?? ?? // mov     ecx, cs:stru_1457873D0.ID
+          48 89 7c 24 10 // mov     [rsp+arg_8], rdi
+          8b 79 14 // mov     edi, [rcx+14h]
+          33 db // xor     ebx, ebx
+          48 85 ff // test    rdi, rdi
+          @ref 74 4c // jz      short loc_1431B59D0
+          4c 8b 59 08 // mov     r11, [rcx+8]
+          @str 8b 0d ?? ?? ?? ?? // mov     ecx, cs:dword_1459B4F50
           <Condition Type="FixedString" Offset="@str" Value="991c9c7a-fb80-40cb-8f0d-b92d4e80e9b1" />
           <Patch Type="Absolute" Offset="@ref">
             EB 43
@@ -311,17 +317,17 @@
 
         <Mapping Name="esv::SavegamePostVisit_DisableStoryMerge" AllowFail="true">
           4c 8d 45 b0 // lea     r8, [rbp+370h+Src]
-          48 8b d6 // mov     rdx, rsi
-          49 8b cf // mov     rcx, r15
+          49 8b d6 // mov     rdx, r14
+          49 8b cc // mov     rcx, r12
           83 bd cc 01 00 00 00 // cmp     [rbp+370h+var_1A4], 0
-          @ref 0f 85 23 02 00 00 // jnz     loc_141AD5193
-          e8 ?? ?? ?? ?? // call    sub_141F9FAC0
+          @ref 0f 85 cc 02 00 00 // jnz     loc_1419DDD0B
+          e8 ?? ?? ?? ?? // call    sub_141EAD2D0
           84 c0 // test    al, al
-          75 10 // jnz     short loc_141AD4F89
-          48 8b 05 ?? ?? ?? ?? // mov     rax, cs:ls__gGlobalSwitches
-          80 b8 af 00 00 00 00 // cmp     byte ptr [rax+0AFh], 0
-          74 bb // jz      short loc_141AD4F44
-          48 8b d6 // mov     rdx, rsi
+          75 64 // jnz     short loc_1419DDAAC
+          @ref1 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:ls__gGlobalSwitches
+          80 b8 b3 00 00 00 00 // cmp     byte ptr [rax+0B3h], 0
+          75 54 // jnz     short loc_1419DDAAC
+          4d 8b 4f 10 // mov     r9, [r15+10h]
           <Patch Type="Absolute" Offset="@ref">
             90 90 90 90 90 90
           </Patch>
@@ -409,17 +415,17 @@
 
       <!-- Sig: call from DealDamageFunctor::ApplyDamage, near ref to PassiveSystemID -->
       <Mapping Name="esv::StatsSystem::ThrowDamageEvent">
-        0f b6 45 82 // movzx   eax, [rbp+12E0h+var_135E]
-        88 44 24 20 // mov     [rsp+13E0h+a5], al; a5
-        4c 8d 8d 68 0b 00 00 // lea     r9, [rbp+12E0h+damageAmounts]; damageAmounts
-        4c 8d 85 90 06 00 00 // lea     r8, [rbp+12E0h+var_C50]; hit
-        48 8d 95 a0 03 00 00 // lea     rdx, [rbp+12E0h+temp5]; temp5
-        48 8b 4d c8 // mov     rcx, [rbp+12E0h+rcx0]; rcx0
+        0f b6 45 82 // movzx   eax, [rbp+0EB0h+var_F2E]
+        88 44 24 20 // mov     [rsp+0FB0h+a5], al; a5
+        4c 8d 8d 20 09 00 00 // lea     r9, [rbp+0EB0h+damageAmounts]; damageAmounts
+        4c 8d 85 30 05 00 00 // lea     r8, [rbp+0EB0h+hit]; hit
+        48 8d 95 40 02 00 00 // lea     rdx, [rbp+0EB0h+temp5]; temp5
+        48 8b 4d 38 // mov     rcx, [rbp+0EB0h+rcx0]; rcx0
         @ref1 e8 ?? ?? ?? ?? // call    esv__StatsSystem__ThrowEntityDamagedEvent
-        80 bd 96 06 00 00 0a // cmp     [rbp+12E0h+var_C50.CauseType], 0Ah
-        0f 84 25 02 00 00 // jz      loc_142626AC1
-        83 bd 90 06 00 00 00 // cmp     [rbp+12E0h+var_C50.TotalDamageDone], 0
-        41 0f 9f c7 // setnle  r15b
+        80 bd 36 05 00 00 0a // cmp     [rbp+0EB0h+hit.CauseType], 0Ah
+        0f 84 9c 01 00 00 // jz      loc_142548D64
+        83 bd 30 05 00 00 00 // cmp     [rbp+0EB0h+hit.TotalDamageDone], 0
+        41 0f 9f c4 // setnle  r12b
         <Target Type="Indirect" Offset="@ref1" Symbol="esv__StatsSystem__ThrowDamageEvent" />
       </Mapping>
 
@@ -482,10 +488,10 @@
 
         <Mapping Name="RPGStats::PreParseDataFolder" Scope="Custom">
           48 83 c6 18 // add     rsi, 18h
-          49 83 ee 01 // sub     r14, 1
-          0f 85 ?? ?? ff ff // jnz     loc_140EFD210
-          49 8b d5 // mov     rdx, r13
-          49 8b cf // mov     rcx, r15
+          49 83 ef 01 // sub     r15, 1
+          0f 85 ?? ff ff ff // jnz     loc_140EA8070
+          49 8b d4 // mov     rdx, r12
+          49 8b ce // mov     rcx, r14
           @ref1 e8 ?? ?? ?? ?? // call    RPGStats__PreParseDataFolder
           <Target Type="Indirect" Offset="@ref1" Symbol="RPGStats__PreParseDataFolder" />
         </Mapping>
@@ -500,12 +506,12 @@
           41 56 // push    r14
           41 57 // push    r15
           48 8d 6c 24 d9 // lea     rbp, [rsp-27h]
-          48 81 ec d0 00 00 00 // sub     rsp, 0D0h
+          48 81 ec c0 00 00 00 // sub     rsp, 0C0h
           @ref1 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:__security_cookie
           48 33 c4 // xor     rax, rsp
           48 89 45 17 // mov     [rbp+57h+var_40], rax
-          4c 8b ea // mov     r13, rdx
-          4c 8b f9 // mov     r15, rcx
+          4c 8b e2 // mov     r12, rdx
+          4c 8b f1 // mov     r14, rcx
           48 81 c1 e8 03 00 00 // add     rcx, 3E8h
           48 89 4d a7 // mov     [rbp+57h+var_B0], rcx
           <Target Type="Absolute" Offset="0" Symbol="RPGStats__Load" />

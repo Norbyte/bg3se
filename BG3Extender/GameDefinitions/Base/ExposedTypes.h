@@ -76,8 +76,8 @@ struct DiceValues
 struct BoostParameters
 {
 	FixedString Boost;
-	STDString Params;
-	STDString Params2;
+	FixedString Params;
+	FixedString Params2;
 };
 
 struct BoostCause

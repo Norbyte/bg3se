@@ -420,7 +420,6 @@ struct ItemTemplate : public SceneryTemplate
     OverrideableProperty<Guid> MaterialPreset;
     OverrideableProperty<Guid> ColorPreset;
     OverrideableProperty<glm::vec3> ExamineRotation;
-    bool V4_0_0_26Flag;
 };
 
 

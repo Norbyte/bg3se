@@ -28,6 +28,10 @@ END_NS()
 
 namespace bg3se
 {
+	using FindFirstFileWProc = WINBASEAPI HANDLE WINAPI(_In_ LPCWSTR lpFileName, _Out_ LPWIN32_FIND_DATAW lpFindFileData);
+	using FindNextFileWProc = WINBASEAPI BOOL WINAPI(_In_ HANDLE hFindFile, _Out_ LPWIN32_FIND_DATAW lpFindFileData);
+	using FindCloseProc = WINBASEAPI BOOL WINAPI(_Inout_ HANDLE hFindFile);
+
 	struct DescriptionInfo
 	{
 		TranslatedString DisplayNameTSK;

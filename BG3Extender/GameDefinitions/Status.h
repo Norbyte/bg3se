@@ -268,7 +268,6 @@ namespace bg3se
 			Status* GetStatus(FixedString const& statusId) const;
 
 			void* VMT;
-			EntityHandle OwnerHandle;
 			uint8_t field_18;
 			Array<Status*> NewlyAddedStatuses;
 			Array<Status*> Statuses;

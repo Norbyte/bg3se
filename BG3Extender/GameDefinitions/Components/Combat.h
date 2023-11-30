@@ -41,7 +41,6 @@ struct TurnBasedComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::TurnBased;
 	static constexpr auto EngineClass = "eoc::TurnBasedComponent";
 
-	EntityHandle Entity;
 	BYTE field_8;
 	bool IsInCombat_M;
 	bool field_A;

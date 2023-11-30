@@ -20,7 +20,6 @@ struct BoostsContainerComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::BoostsContainer;
 	static constexpr auto EngineClass = "eoc::BoostsContainerComponent";
 
-	uint64_t field_0;
 	MultiHashMap<BoostType, Array<EntityHandle>> Boosts;
 };
 
@@ -29,8 +28,6 @@ struct BoostInfoComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::BoostInfo;
 	static constexpr auto EngineClass = "eoc::BoostInfoComponent";
 
-	EntityHandle BoostEntity;
-	BoostType Type;
 	Guid field_10;
 	uint8_t field_20;
 	BoostCause Cause;
@@ -179,6 +176,9 @@ DEFN_BOOST(ActionResourceMultiplier, ActionResourceMultiplier, {
 	int IntParam2;
 	int IntParam;
 	DiceSizeId DiceSize;
+})
+
+DEFN_BOOST(BlockRegainHP, BlockRegainHP, {
 })
 
 DEFN_BOOST(Initiative, Initiative, {

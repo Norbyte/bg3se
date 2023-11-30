@@ -100,7 +100,7 @@ namespace bg3se
 		struct LevelManager : public bg3se::LevelManager
 		{
 			Array<void*> field_B8;
-			void* field_C8;
+			ecs::EntityWorld* EntityWorld;
 		};
 	}
 }

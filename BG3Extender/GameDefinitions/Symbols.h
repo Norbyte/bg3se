@@ -117,6 +117,10 @@ namespace bg3se
 
 		GlobalSwitches** ls__GlobalSwitches{ nullptr };
 
+		FindFirstFileWProc* Kernel_FindFirstFileW{ nullptr };
+		FindNextFileWProc* Kernel_FindNextFileW{ nullptr };
+		FindCloseProc* Kernel_FindClose{ nullptr };
+
 		inline StaticSymbols() {}
 		StaticSymbols(StaticSymbols const &) = delete;
 		StaticSymbols & operator = (StaticSymbols const &) = delete;

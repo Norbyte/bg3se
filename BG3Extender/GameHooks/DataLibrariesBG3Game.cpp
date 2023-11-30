@@ -196,5 +196,9 @@ namespace bg3se
 		SYM_OFF(eoc__gGuidResourceManager);
 		SYM_OFF(ls__gGlobalResourceManager);
 		SYM_OFF(ls__GlobalSwitches);
+
+		SYM_OFF(Kernel_FindFirstFileW);
+		SYM_OFF(Kernel_FindNextFileW);
+		SYM_OFF(Kernel_FindClose);
 	}
 }

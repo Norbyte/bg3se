@@ -208,9 +208,7 @@ struct EoCClient : public ProtectedGameObject<EoCClient>
 	__int64 VMT2;
 	__int64 field_10;
 	__int64 VMT3;
-	__int64 field_20;
 	__int64 VMT4;
-	__int64 VMT5;
 	__int64 field_38;
 	Array<void*> field_40;
 	__int64 field_50;

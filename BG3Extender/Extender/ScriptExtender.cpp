@@ -433,6 +433,9 @@ void ScriptExtender::PostStartup()
 		}
 
 		engineHooks_.FileReader__ctor.SetWrapper(&ScriptExtender::OnFileReaderCreate, this);
+		//engineHooks_.Kernel_FindFirstFileW.SetWrapper(&ScriptExtender::OnFindFirstFileW, this);
+		//engineHooks_.Kernel_FindNextFileW.SetWrapper(&ScriptExtender::OnFindNextFileW, this);
+		//engineHooks_.Kernel_FindClose.SetWrapper(&ScriptExtender::OnFindClose, this);
 		engineHooks_.RPGStats__Load.SetWrapper(&ScriptExtender::OnStatsLoad, this);
 		engineHooks_.ecs__EntityWorld__Update.SetPostHook(&ScriptExtender::OnECSUpdate, this);
 	}

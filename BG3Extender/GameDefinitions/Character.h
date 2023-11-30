@@ -78,8 +78,8 @@ namespace bg3se
 			void* VMT2;
 			EntityHandle field_10;
 			CharacterFlags Flags;
-			FixedString Level;
 			ecs::EntityRef MyHandle;
+			FixedString Level;
 			Array<PeerId> UpdatePeerIds;
 			Array<void*> field_48;
 			Array<void*> field_58;
@@ -114,7 +114,6 @@ namespace bg3se
 			int Dialog;
 			FixedString BaseVisual;
 			FixedString CustomTradeTreasure;
-			FixedString PreviousLevel;
 			UserId UserID;
 			UserId UserID2;
 			float InvestigationTimer;

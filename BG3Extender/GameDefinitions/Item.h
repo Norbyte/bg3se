@@ -11,8 +11,9 @@ struct Item
 	void* VMT2;
 	EntityHandle field_10;
 	ItemFlags Flags;
-	FixedString Level;
 	ecs::EntityRef MyHandle;
+	FixedString Level;
+	FixedString ItemType;
 	Array<UserId> UpdatePeerIds;
 	ItemTemplate* Template;
 	ItemTemplate* OriginalTemplate;
@@ -26,19 +27,10 @@ struct Item
 	EntityHandle field_68;
 	FixedString field_70;
 	FixedString Stats;
-	FixedString ItemType;
 	FixedString PreviousLevel;
 	int32_t TreasureLevel;
 	int32_t Amount;
-	uint8_t MovingCount;
-	uint8_t InheritedForceSynch;
-	uint8_t ForceSynch;
-	uint8_t DisableUse;
 	ItemFlags2 Flags2;
-	uint64_t field_90;
-	uint64_t field_98;
-	uint64_t field_A0;
-	uint64_t field_A8;
 };
 
 struct ItemComponent : public BaseComponent

@@ -296,6 +296,7 @@ inline void UnserializeObjectFromUserdata(lua_State* L, int index, T* obj)
 template <class T>
 inline PropertyOperationResult Unserialize(lua_State* L, int index, T* obj)
 {
+	index = lua_absindex(L, index);
 	if constexpr (std::is_pointer_v<T>) {
 		return PropertyOperationResult::UnsupportedType;
 	} else if constexpr (IsByVal<T>) {
@@ -304,21 +305,21 @@ inline PropertyOperationResult Unserialize(lua_State* L, int index, T* obj)
 		bool isTable = lua_type(L, index) == LUA_TTABLE;
 		if constexpr (IsArrayLike<T>::Value) {
 			if (isTable) {
-				return UnserializeArrayFromTable(L, lua_absindex(L, index), obj);
+				return UnserializeArrayFromTable(L, index, obj);
 			} else {
-				return UnserializeArrayFromUserdata(L, lua_absindex(L, index), obj);
+				return UnserializeArrayFromUserdata(L, index, obj);
 			}
 		} else if constexpr (IsMapLike<T>::Value) {
 			if (isTable) {
-				return UnserializeMapFromTable(L, lua_absindex(L, index), obj);
+				return UnserializeMapFromTable(L, index, obj);
 			} else {
-				return UnserializeMapFromUserdata(L, lua_absindex(L, index), obj);
+				return UnserializeMapFromUserdata(L, index, obj);
 			}
 		} else if constexpr (IsSetLike<T>::Value) {
 			if (isTable) {
-				UnserializeSetFromTable(L, lua_absindex(L, index), obj);
+				UnserializeSetFromTable(L, index, obj);
 			} else {
-				UnserializeSetFromUserdata(L, lua_absindex(L, index), obj);
+				UnserializeSetFromUserdata(L, index, obj);
 			}
 		} else if constexpr (IsVariantLike<T>::Value) {
 			if (isTable) {
@@ -336,9 +337,9 @@ inline PropertyOperationResult Unserialize(lua_State* L, int index, T* obj)
 			}
 		} else {
 			if (isTable) {
-				UnserializeObjectFromTable(L, lua_absindex(L, index), obj);
+				UnserializeObjectFromTable(L, index, obj);
 			} else {
-				UnserializeObjectFromUserdata(L, lua_absindex(L, index), obj);
+				UnserializeObjectFromUserdata(L, index, obj);
 			}
 		}
 	}

@@ -509,6 +509,7 @@ struct CharacterCreationAppearanceVisual : public resource::GuidResource
 	TranslatedString DisplayName;
 	FixedString IconIdOverride;
 	uint8_t DefaultForBodyType;
+	FixedString TextureEntryPart;
 	Array<Guid> Tags;
 };
 
