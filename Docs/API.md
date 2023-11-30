@@ -1,4 +1,4 @@
-### BG3SE Lua API v10 Documentation
+### BG3SE Lua API v11 Documentation
 
 ### Table of Contents  
  - [Getting Started](#getting-started)
@@ -22,6 +22,8 @@
     * [Enumerations](#lua-enumerations)
     * [Bitfields](#lua-bitfields)
     * [Events](#lua-events)
+ - [Stats](#stats)
+ - [ECS](#ecs)
  - [Custom Variables](#custom-variables)
  - [Utility functions](#ext-utility)
  - [JSON Support](#json-support)
@@ -545,6 +547,284 @@ Ext.Osiris.RegisterListener("TurnEnded", 1, "after", function (characterGuid)
     _P("TurnEnded- " .. characterGuid)
 end)
 ```
+
+<a id="stats"></a>
+## Stats (Ext.Stats module)
+
+<a id="stats-GetStatEntries"></a>
+### Ext.Stats.GetAllStats(type: string): string[]
+
+Returns a table with the names of all stat entries.
+When the optional parameter `type` is specified, it'll only return stats with the specified type.
+The following types are supported: `StatusData`, `SpellData`, `PassiveData`, `Armor`,  `Weapon`, `Character`, `Object`, `SpellSet`, `EquipmentSet`, `TreasureTable`, `TreasureCategory`,  `ItemGroup`, `NameGroup`
+
+
+<a id="stats-objects"></a>
+## Stats Objects
+
+The following functions are only usable for Spell, Status, Passive, Interrupt, Armor, Weapon, Character and Object stats entries. Other stats types (eg. ItemGroups, TreasureTables) have their own separate sections in the docs and cannot be manipulated using these functions.
+
+
+### Ext.Stats.GetStatsLoadedBefore(modGuid: string, type: string): string[]
+
+Returns a table with the names of all stat entries that were loaded before the specified mod.
+This function is useful for retrieving stats that can be overridden by a mod according to the module load order.
+When the optional parameter `type` is specified, it'll only return stats with the specified type. (The type of a stat entry is specified in the stat .txt file itself (eg. `type "StatusData"`).
+
+### Ext.Stats.Create(name: string, type: string, template: string|nil): StatEntry
+
+Creates a new stats entry. 
+If a stat object with the same name already exists, the specified modifier type is invalid or the specified template doesn't exist, the function returns `nil`.
+After all stat properties were initialized, the stats entry must be synchronized by calling `stat:Sync()`. 
+
+ - `name` is the name of stats entry to create; it should be globally unique
+ - `type` is the stats entry type (eg. `SkillData`, `StatusData`, `Weapon`, etc.)
+ - If the `template` parameter is not null, stats properties are copied from the template entry to the newly created entry
+ - If the entry was created on the server, `stat:Sync()` will replicate the stats entry to all clients. If the entry was created on the client, `stat:Sync()` will only update it locally.
+
+Example:
+```lua
+local stat = Ext.Stats.CreateStat("NRD_Dynamic_Skill", "SkillData", "Rain_Water")
+stat.RainEffect = "RS3_FX_Environment_Rain_Fire_01"
+stat.SurfaceType = "Fire"
+stat:Sync()
+```
+
+### Ext.Stats.Get(stat, type, [level]): StatEntry
+
+Returns the specified stats entry as an object for easier manipulation.
+If the `level` argument is not specified or is `nil`, the table will contain stat values as specified in the stat entry.
+If the `level` argument is not `nil`, the table will contain level-scaled values for the specified level. A `level` value of `-1` will use the level specified in the stat entry.
+
+The behavior of getting a table entry is identical to that of `StatGetAttribute` and setting a table entry is identical to `StatSetAttribute`.
+
+The `StatSetAttribute` example rewritten using `GetStat`:
+```lua
+-- Swap DamageType from Poison to Air on all skills
+for i,name in pairs(Ext.Stats.GetAllStats("SkillData")) do
+    local stat = Ext.Stats.GetStat(name)
+    if stat.DamageType == "Poison" then
+        stat.DamageType = "Air"
+    end
+end
+```
+
+### Reading stat attributes
+
+Stat attributes can be retrieved by reading the appropriate property of the StatEntry object:
+
+```lua
+local spell = Ext.Stats.GetStat("Shout_FlameBlade", "SpellData")
+local useCosts = spell.UseCosts
+```
+
+If the stat entry doesn't have the specified attribute or the attribute is not supported, `nil` is returned. 
+The list of attributes each stat type supports can be found in `Public\Shared\Stats\Generated\Structure\Modifiers.txt`.
+
+*Technical note:* The StatEntry object has an `__index` metamethod that retrieves the stats property; the StatEntry is not a Lua table and shouldn't be treated as such!
+
+### Writing stat attributes
+
+Stat attributes can be updated using simple table assignment:
+
+```lua
+local spell = Ext.Stats.GetStat("Shout_FlameBlade", "SpellData")
+spell.UseCosts = "BonusActionPoint:1;SpellSlot:1:1:2"
+```
+
+This essentially allows on-the-fly changing of data loaded from stat .txt files without having to override the whole stat entry.
+If the function is called while the module is loading (i.e. from a `ModuleLoading`/`StatsLoaded` listener) no additional synchronization is needed. If the function is called after module load, the stats entry must be synchronized with the client via the `StatEntry:Sync()` call. 
+
+*Technical note:* The StatEntry object has a `__newindex` metamethod that performs validation and updates the real stats entry in the background.
+
+
+Example usage of stats read/write (Disable autocast on all spells):
+```lua
+for i,name in pairs(Ext.Stats.GetStats("SpellData")) do
+    local spell = Ext.Stats.Get(name, "SpellData")
+    if spell.Autocast == "Yes" then
+        spell.Autocast = "No"
+    end
+end
+```
+
+**Note:** When modifying stat attributes that are tables (i.e. `Requirements`, `SpellSuccess`, `SpellProperties` etc.) it is not sufficient to just modify the table, the modified table must be reassigned to the stat property:
+```lua
+local requirements = spell.Requirements
+table.insert(requirements, {Name = "Immobile", Param = -1, Not = false})
+-- Reassign table to update Requirements
+spell.Requirements = requirements
+```
+
+### Stat property type notes
+
+For a list of enumeration types and their possible values see `Public\Shared\Stats\Generated\Structure\Base\ValueLists.txt` or `Enumerations.xml`.
+
+#### Flags 
+
+The `AttributeFlags`, `SpellFlagList`, `WeaponFlags`, `ResistanceFlags`, `PassiveFlags`, `ProficiencyGroupFlags`, `StatsFunctorContext`, `StatusEvent`, `StatusPropertyFlags`, `StatusGroupFlags` and `LineOfSightFlags` enumerations are flags; this means that multiple enumeration values may be assigned to a stats property. 
+
+Reading flags:
+```lua
+local spell = Ext.Stats.GetStat("Shout_ArmorOfAgathys", "SpellData")
+_D(spell.SpellFlags)
+-- Prints:
+-- ["HasSomaticComponent", "HasVerbalComponent", "IsSpell"]
+```
+
+Writing flags:
+```lua
+local spell = Ext.Stats.GetStat("Shout_ArmorOfAgathys", "SpellData")
+spell.SpellFlags = {"HasVerbalComponent", "IsSpell"}
+```
+
+#### Requirements
+
+`Requirements` and `MemorizationRequirements` are returned in the following format:
+```js
+[
+    {
+        "Not" : true, // Negated condition?
+        "Param" : "Tag", // Parameter; number for ability/attribute level, string for Tag
+        "Requirement" : "TADPOLE_POWERS_BLOCKED" // Requirement name
+    },
+    {
+        "Not" : true,
+        "Param" : -1,
+        "Requirement" : "Immobile"
+    }
+]
+```
+
+#### StatsFunctors
+
+**StatsFunctors are not supported as of v11.**
+
+### Ext.Stats.ExtraData
+
+`Ext.ExtraData` is an object containing all entries from `Data.txt`.
+
+*Note*: It is possible to add custom `ExtraData` keys by adding a new `Data.txt` to the mod and then retrieve them using Lua.
+
+Example:
+```lua
+Ext.Utils.Print(Ext.Stats.ExtraData.WisdomTierHigh)
+```
+
+
+## ECS
+
+### TODO - WIP
+
+## Entity class
+
+Game objects in BG3 are called entities. Each entity consists of multiple components that describes certain properties or behaviors of the entity.
+The Lua `Entity` class is the represntation of an ingame object (eg. character, item, trigger, etc.).
+
+*Technical note:* For a somewhat more detailed description of the ECS system see:
+ - [Entities, components and systems](https://medium.com/ingeniouslysimple/entities-components-and-systems-89c31464240d)
+ - [The Entity-Component-System - An awesome game-design pattern in C++ ](https://www.gamasutra.com/blogs/TobiasStein/20171122/310172/The_EntityComponentSystem__An_awesome_gamedesign_pattern_in_C_Part_1.php)
+
+
+### Entity:GetAllComponentNames() : string[]
+
+Returns all engine component types (native C++ class names) that the entity has.
+
+Example:
+```lua
+local char = Ext.Entity.Get(GetHostCharacter())
+_D(char:GetAllComponentNames())
+-- Prints:
+-- {
+--      "eoc::ActionResourcesComponent" : "eoc::ActionResourcesComponent Object (1c4000010000039e)",
+--      "eoc::BackgroundComponent" : "eoc::BackgroundComponent Object (1e000001000003ff)",
+--      "eoc::BackgroundPassivesComponent" : "eoc::BackgroundPassivesComponent Object (66c00001000003ff)",
+-- ...
+```
+
+
+### Entity:GetAllComponents() : Component[]
+
+Returns all components that are attached to the entity.
+
+*Note:* This method only returns components whose structure is known to the Script Extender. Components with unknown structure are not returned.
+
+Example:
+```lua
+local entity = Ext.Entity.Get(GetHostCharacter())
+_D(entity:GetAllComponents())
+-- Prints:
+-- {
+--      "ActionResources" :
+--      {
+--              "Entity" : "Entity (02c0000100000180)",
+--              "GetReplicationFlags" : "function: 00007FFDE482D5E0",
+-- ...
+```
+
+
+### Entity:GetComponent(name) : Component|nil
+
+Returns the specified component if it is attached to the entity. If the component is not present the method returns `nil`.
+
+*Note:* This method only returns components whose structure is known to the Script Extender. Components with unknown structure are not returned.
+
+*Note:* Although the type (character, item, etc.) of the entity cannot be determined directly, it can be inferred from the components that are attached to the entity.
+Eg. to check if the entity is a character, an `entity:GetComponent("ServerCharacter") ~= nil` check can be used.
+
+Example:
+```lua
+local entity = Ext.Entity.Get(GetHostCharacter())
+_D(entity:GetComponent("DisplayName"))
+-- Prints:
+-- {
+--      "Entity" : "Entity (02c0000100000180)",
+--      "Name" : "Tav",
+--      "NameKey" : "ResStr_669727657",
+-- ...
+```
+
+The `__index` metamethod of the Entity object is a shorthand for `GetComponent`:
+```lua
+local entity = Ext.Entity.Get(GetHostCharacter())
+-- The two below are equivalent
+local displayName = entity:GetComponent("DisplayName")
+local displayName = entity.DisplayName
+```
+
+
+### Entity:CraeteComponent(name) : Component
+
+Attaches a new empty copy of the specified component type to the entity, if one does not exist. The function returns the newly created component.
+
+*Note:* This method only works for components whose structure is known to the Script Extender. Components with unknown structure are not returned.
+
+
+### Entity:Replicate(component)
+### Entity:SetReplicationFlags(component, flags, word)
+### Entity:GetReplicationFlags(component, word) : flags
+
+FIXME - DOCUMENT
+
+### Entity:IsAlive() : boolean
+
+Returns whether the entity still exists.
+
+### Entity:GetEntityType() : integer
+
+Returns the numeric type ID of the entity.
+(For development purposes only.)
+
+### Entity:GetSalt() : integer
+
+Returns the salt value of the entity handle.
+(For development purposes only.)
+
+### Entity:GetIndex() : integer
+
+Returns the entity index of the entity handle.
+(For development purposes only.)
+
 
 <a id="custom-variables"></a>
 ## Custom variables
