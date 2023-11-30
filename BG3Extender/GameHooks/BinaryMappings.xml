@@ -291,7 +291,7 @@
           @str 8b 0d ?? ?? ?? ?? // mov     ecx, cs:dword_1459B4F50
           <Condition Type="FixedString" Offset="@str" Value="991c9c7a-fb80-40cb-8f0d-b92d4e80e9b1" />
           <Patch Type="Absolute" Offset="@ref">
-            EB 43
+            EB 4C
           </Patch>
         </Mapping>
 
