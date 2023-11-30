@@ -131,6 +131,7 @@ struct Hit
 		int FinalDamage;
 		RefMap<DamageType, int32_t> TotalDamagePerType;
 		RefMap<DamageType, int32_t> FinalDamagePerType;
+		Guid field_D0;
 	};
 
 	int TotalDamageDone;
@@ -154,7 +155,6 @@ struct Hit
 	uint8_t field_4F;
 	Array<ConditionRoll> ConditionRolls;
 	ResultMetadata Results;
-	// SpellAttackType AttackType; - Maybe?
 	Guid SpellCastGuid;
 	FixedString SpellId;
 	FixedString field_150;
@@ -166,12 +166,13 @@ struct Hit
 	int SpellLevel;
 	int SpellPowerLevel;
 	int TotalHealDone;
-	int field_170;
 	int field_174;
 	int OriginalDamageValue;
+	int field_178;
 	int field_17C;
 	int field_180;
 	int field_184;
+	uint8_t field_188;
 	Array<glm::vec3> field_190;
 	Array<DamagePair> DamageList;
 };
