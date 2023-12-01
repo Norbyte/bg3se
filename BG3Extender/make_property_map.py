@@ -17,6 +17,8 @@ ignore_re = r'^(BEGIN_SE|END_SE).*$'
 template_re = r'^template\s*<.*>$'
 explicit_instantiation_re = r'template\s+(struct|class)\s+(?P<name>[a-zA-Z0-9_:<>*:, ]+)\s*(?P<template_args><[a-zA-Z0-9_<>*:, ]+>);$'
 
+member_function_re = r'^(?P<attributes>(\[\[[a-zA-Z0-9:_]+\]\]\s*)*)\s*(inline\s+)?(?P<retval>[a-zA-Z0-9_:<>*, ]+)\s+(?P<name>[a-zA-Z0-9_]+)\s*\(.*\)\s*(const)?$'
+
 class Structure:
     def __init__(self, ns_stack : list[str], base : str, attributes : list):
         self.name_ns : list[str] = ns_stack.copy()
@@ -25,6 +27,8 @@ class Structure:
         self.attributes : list[str] = attributes.copy()
         self.members = {}
         self.raw_lines : list[str] = []
+        self.getters : list[str] = []
+        self.setters : list[str] = []
 
     def name(self) -> str:
         if len(self.name_ns) == 0:
@@ -43,6 +47,14 @@ class Structure:
             pm += generate_member(name, member)
         for line in self.raw_lines:
             pm += line + '\n'
+        for name in self.getters:
+            if name in self.setters:
+                pm += 'P_GETTER_SETTER(' + name + "," + name + "," + name + ")\n"
+            else:
+                pm += 'P_GETTER(' + name + "," + name + ")\n"
+        for name in self.setters:
+            if name not in self.getters:
+                print("Cannot have setter without corresponding getter for name", name)
         pm += 'END_CLS()\n'
         return pm
     
@@ -50,6 +62,8 @@ class Structure:
         ret = Structure(self.name_ns, self.base, self.attributes)
         ret.members = self.members.copy()
         ret.raw_lines = self.raw_lines.copy()
+        ret.getters = self.getters.copy()
+        ret.setters = self.setters.copy()
         return ret
         
 class Template(Structure):
@@ -63,6 +77,8 @@ class Template(Structure):
         ret = Template(self.name_ns, self.base, self.attributes)
         ret.members = self.members.copy()
         ret.raw_lines = self.raw_lines.copy()
+        ret.getters = self.getters.copy()
+        ret.setters = self.setters.copy()
         for k,v in self.children.items():
             ret.children[k] = v.clone()
         for v in self.template_list:
@@ -75,12 +91,6 @@ class Template(Structure):
                 ret.templates[nsname] = v
 
         return ret
-    
-    def __repr__(self):
-        return self.__str__()
-    
-    def __str__(self):
-        return "Name: " + self.name() + " Base: " + str(self.base) + " Members: " + str(self.members) + " Templates: " +  str(self.templates) + " Children: " + str(self.children) + "\n"
 
 class DefinitionLoader:
     def __init__(self, structs):
@@ -192,12 +202,8 @@ class DefinitionLoader:
         else:
             return False
         
-        print(template)
-        
         templclone = template.clone()
         templclone.name_ns[-1] += template_args
-
-        print(templclone)
         
         structs[templclone.name()] = templclone
 
@@ -287,6 +293,15 @@ class DefinitionLoader:
                 'attributes': self.next_attributes
             }
             self.next_attributes = []
+            return
+
+        match = re.match(member_function_re, line)
+        if match is not None:
+            self.parse_attributes(match.group('attributes'))
+            if 'bg3::getter' in self.next_attributes:
+                self.cur_struct.getters.append(match.group('name'))
+            if 'bg3::setter' in self.next_attributes:
+                self.cur_struct.setters.append(match.group('name'))
             return
         
         print('UNKNOWN: ', line)
