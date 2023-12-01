@@ -5,6 +5,7 @@
 #include <Lua/Shared/Proxies/LuaPropertyMapHelpers.h>
 //#include <GameDefinitions/Ai.h>
 #include <Extender/ScriptExtender.h>
+#include <GameDefinitions/Resources.h>
 
 namespace bg3se
 {
@@ -919,6 +920,95 @@ void LuaPolymorphic<stats::BaseFunctorExecParams>::MakeRef(lua_State* L, stats::
 	}
 
 #undef V
+}
+
+void LuaPolymorphic<resource::AnimationResource::Event::PropertiesHolder>::MakeRef(lua_State* L, resource::AnimationResource::Event::PropertiesHolder* value, LifetimeHandle const& lifetime)
+{
+#define V(type) case AnimationEventPropertyType::type: \
+			MakeDirectObjectRef(L, static_cast<resource::AnimationResource::Event::type##Properties*>(value), lifetime); break;
+
+	switch (value->GetPropertyType()) {
+		V(SoundObject)
+		V(BoneEffect)
+		V(Foot)
+		V(BoneAttachBone)
+		V(WeaponEffect)
+		V(Unknown7)
+		V(Unknown8)
+		V(Prop9)
+		V(Prop10)
+		V(FloatData)
+		V(EFoleySoundObject)
+		V(EVocalSoundObject)
+		V(U8Data)
+		V(Unknown15)
+
+	default:
+		MakeDirectObjectRef(L, value, lifetime);
+		break;
+	}
+
+#undef V
+}
+
+void LuaPolymorphic<resource::EffectResource::Property>::MakeRef(lua_State* L, resource::EffectResource::Property* value, LifetimeHandle const& lifetime)
+{
+#define V(type) case EffectPropertyType::type: \
+			MakeDirectObjectRef(L, static_cast<resource::EffectResource::type##Property*>(value), lifetime); break;
+
+	switch (value->GetPropertyType()) {
+		V(Bool)
+		V(Int32)
+		V(Int32Range)
+		V(ColoredFrames)
+		V(Float)
+		V(FloatRange)
+		V(Frames)
+		V(STDString)
+		V(Vector3)
+		V(FunctionType)
+		V(FixedString)
+		V(Base)
+
+	default:
+		MakeDirectObjectRef(L, value, lifetime);
+		break;
+	}
+
+#undef V
+}
+
+void LuaPolymorphic<resource::EffectResource::FramesProperty::VirtualFrames>::MakeRef(lua_State* L, resource::EffectResource::FramesProperty::VirtualFrames* value, LifetimeHandle const& lifetime)
+{
+#define V(type) case type: \
+			MakeDirectObjectRef(L, static_cast<resource::EffectResource::FramesProperty::Frames##type*>(value), lifetime); break;
+
+	switch (value->GetType()) {
+		V(0)
+		V(1)
+
+	default:
+		MakeDirectObjectRef(L, value, lifetime);
+		break;
+	}
+
+#undef V
+}
+
+void LuaPolymorphic<resource::PhysicsResource::ObjectTemplate::PhysicsObject>::MakeRef(lua_State* L, resource::PhysicsResource::ObjectTemplate::PhysicsObject* value, LifetimeHandle const& lifetime)
+{
+	if (value->GetType()->GetStringView() == "box")
+	{
+		MakeDirectObjectRef(L, static_cast<resource::PhysicsResource::ObjectTemplate::PhysicsBox*>(value), lifetime);
+	}
+	else if (value->GetType()->GetStringView() == "capsule")
+	{
+		MakeDirectObjectRef(L, static_cast<resource::PhysicsResource::ObjectTemplate::PhysicsCapsule*>(value), lifetime);
+	}
+	else
+	{
+		MakeDirectObjectRef(L, value, lifetime);
+	}
 }
 
 END_NS()

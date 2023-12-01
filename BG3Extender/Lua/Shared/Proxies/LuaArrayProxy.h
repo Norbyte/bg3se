@@ -177,7 +177,7 @@ public:
 
 	TypeInformation const& GetElementType() const override
 	{
-		return GetTypeInfo<T>();
+		return GetTypeInfo<bool>();
 	}
 
 	bool GetElement(lua_State* L, CppObjectMetadata& self, unsigned arrayIndex) override
@@ -242,6 +242,91 @@ public:
 	}
 };
 
+template <unsigned Words, unsigned TContainerClassId>
+class ConstSizeArrayProxyImpl<BitArray<Words>, bool, TContainerClassId> : public ArrayProxyImplBase
+{
+public:
+	static constexpr unsigned ContainerClassId = TContainerClassId;
+
+	using ContainerType = BitArray<Words>;
+
+	unsigned GetContainerClass() override
+	{
+		return ContainerClassId;
+	}
+
+	TypeInformation const& GetContainerType() const override
+	{
+		return GetTypeInfo<ContainerType>();
+	}
+
+	TypeInformation const& GetElementType() const override
+	{
+		return GetTypeInfo<bool>();
+	}
+
+	bool GetElement(lua_State* L, CppObjectMetadata& self, unsigned arrayIndex) override
+	{
+		auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
+		if (arrayIndex > 0 && arrayIndex <= obj->size()) {
+			bool isSet = obj->IsSet(arrayIndex);
+			push(L, &isSet, self.Lifetime);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	bool SetElement(lua_State* L, CppObjectMetadata& self, unsigned arrayIndex, int luaIndex) override
+	{
+		auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
+		if (arrayIndex > 0 && arrayIndex <= obj->size()) {
+			if (get<bool>(L, luaIndex))
+			{
+				obj->Set(arrayIndex);
+			}
+			else
+			{
+				obj->Clear(arrayIndex);
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	unsigned Length(CppObjectMetadata& self) override
+	{
+		auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
+		return (unsigned)obj->size();
+	}
+
+	bool Unserialize(lua_State* L, CppObjectMetadata& self, int index) override
+	{
+		auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
+		lua::Unserialize(L, index, obj);
+        return true;
+	}
+
+	void Serialize(lua_State* L, CppObjectMetadata& self) override
+	{
+		auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
+		lua::Serialize(L, obj);
+	}
+
+	int Next(lua_State* L, CppObjectMetadata& self, int key) override
+	{
+		auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
+		if (key >= 0 && (decltype(obj->size()))key < obj->size()) {
+			push(L, ++key);
+			bool isSet = obj->IsSet(key - 1);
+			push(L, &isSet, self.Lifetime);
+			return 2;
+		} else {
+			return 0;
+		}
+	}
+};
 
 class ArrayProxyMetatable : public LightCppObjectMetatable<ArrayProxyMetatable>, public Indexable, public NewIndexable,
 	public Lengthable, public Iterable, public Stringifiable, public EqualityComparable
@@ -272,6 +357,13 @@ public:
 	inline static void Make(lua_State* L, Array<T>* object, LifetimeHandle const& lifetime)
 	{
 		MakeImpl(L, object, lifetime, GetImplementation<DynamicArrayProxyImpl<Array<T>, T, 2>>());
+	}
+
+	template <unsigned Words>
+	inline static void Make(
+		lua_State* L, BitArray<Words>* object, const LifetimeHandle& lifetime)
+	{
+		MakeImpl(L, object, lifetime, GetImplementation<ConstSizeArrayProxyImpl<BitArray<Words>, bool, 5>>());
 	}
 
 	template <class T>

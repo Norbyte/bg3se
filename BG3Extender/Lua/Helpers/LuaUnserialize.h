@@ -142,6 +142,39 @@ PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, st
 	return PropertyOperationResult::Success;
 }
 
+template <unsigned Words>
+PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, BitArray<Words>* obj)
+{
+	StackCheck _(L);
+	luaL_checktype(L, index, LUA_TTABLE);
+
+	for (uint32_t i = 0; i < obj->size(); i++) {
+		lua_rawgeti(L, index, i + 1);
+		bool value;
+		Unserialize(L, index + 1, &value);
+		if (value)
+		{
+			obj->Set(i);
+		}
+		else
+		{
+			obj->Clear(i);
+		}
+		lua_pop(L, 1);
+	}
+
+	return PropertyOperationResult::Success;
+}
+
+template <unsigned Words>
+PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, BitArray<Words>* obj)
+{
+	StackCheck _(L);
+	auto arr = ArrayProxyMetatable::Get<ConstSizeArrayProxyImpl<BitArray<Words>, bool, 5>>(L, index);
+	*obj = *arr;
+	return PropertyOperationResult::Success;
+}
+
 template <class TK, class TV>
 PropertyOperationResult UnserializeMapFromTable(lua_State* L, int index, MultiHashMap<TK, TV>* obj)
 {
