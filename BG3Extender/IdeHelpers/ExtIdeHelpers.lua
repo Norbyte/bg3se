@@ -6320,6 +6320,7 @@ function Ext_Types.GenerateIdeHelpers(outputPath, addOsi) end
 --- @field PrintError fun()
 --- @field PrintWarning fun()
 --- @field ShowErrorAndExitGame fun(a1:string)
+--- @field ShowError fun(a1:string)
 --- @field Version fun():int32
 local Ext_Utils = {}
 
