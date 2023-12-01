@@ -1,7 +1,7 @@
 import re
 
-ns_start_re = r'^BEGIN_NS\(\s*(.*)\s*\)$'
-ns_end_re = r'^END_NS\(\s*\)$'
+ns_start_re = r'^BEGIN(_BARE)?_NS\(\s*(.*)\s*\)$'
+ns_end_re = r'^END(_BARE)?_NS\(\s*\)$'
 struct_re = r'^(struct|class)\s+(?P<attributes>(\[\[[a-zA-Z0-9:_]+\]\]\s*)*)?(?P<class>[a-zA-Z0-9_]+)(\s*:(\s*public)?\s+(?P<baseclass>[a-zA-Z0-9_<>:]+))?$'
 struct_start_re = r'^{$'
 struct_end_re = r'^(};|}\))$'
@@ -14,16 +14,87 @@ tag_component_re = r'^DEFINE_TAG_COMPONENT\((?P<ns>[^,]+), (?P<name>[^,]+), (?P<
 boost_re = r'^DEFN_BOOST\(\s*(?P<name>[^,]+),\s*(?P<boostType>[^,]+),\s*{$'
 ignore_re = r'^(BEGIN_SE|END_SE).*$'
 
+template_re = r'^template\s*<.*>$'
+explicit_instantiation_re = r'template\s+(struct|class)\s+(?P<name>[a-zA-Z0-9_:<>*:, ]+)\s*(?P<template_args><[a-zA-Z0-9_<>*:, ]+>);$'
+
+class Structure:
+    def __init__(self, ns_stack : list[str], base : str, attributes : list):
+        self.name_ns : list[str] = ns_stack.copy()
+        self.ns_stack : list[str] = []
+        self.base : str = base
+        self.attributes : list[str] = attributes.copy()
+        self.members = {}
+        self.raw_lines : list[str] = []
+
+    def name(self) -> str:
+        if len(self.name_ns) == 0:
+            return ''
+        else:
+            nsname = self.name_ns[0]
+            for ns in self.name_ns[1:]:
+                nsname = nsname + '::' + ns
+            return nsname
+        
+    def generate_property_map(self) -> str:
+        pm = 'BEGIN_CLS(' + self.name() + ')\n'
+        if self.base and not self.base.startswith('ProtectedGameObject<'):
+            pm += 'INHERIT(' + self.base + ')\n'
+        for name,member in self.members.items():
+            pm += generate_member(name, member)
+        for line in self.raw_lines:
+            pm += line + '\n'
+        pm += 'END_CLS()\n'
+        return pm
+    
+    def clone(self):
+        ret = Structure(self.name_ns, self.base, self.attributes)
+        ret.members = self.members.copy()
+        ret.raw_lines = self.raw_lines.copy()
+        return ret
+        
+class Template(Structure):
+    def __init__(self, ns_stack : list[str], base : str, attributes : list):
+        Structure.__init__(self, ns_stack, base, attributes)
+        self.children : dict[str, Structure] = {}
+        self.templates : dict[str, Template] = {}
+        self.template_list : list[Template] = []
+
+    def clone(self):
+        ret = Template(self.name_ns, self.base, self.attributes)
+        ret.members = self.members.copy()
+        ret.raw_lines = self.raw_lines.copy()
+        for k,v in self.children.items():
+            ret.children[k] = v.clone()
+        for v in self.template_list:
+            ret.template_list.append(v.clone())
+        for v in ret.template_list:
+            nsname = v.name_ns[-1]
+            ret.templates[nsname] = v
+            for ns in reversed(v.name_ns[:-1]):
+                nsname = ns + '::' + nsname
+                ret.templates[nsname] = v
+
+        return ret
+    
+    def __repr__(self):
+        return self.__str__()
+    
+    def __str__(self):
+        return "Name: " + self.name() + " Base: " + str(self.base) + " Members: " + str(self.members) + " Templates: " +  str(self.templates) + " Children: " + str(self.children) + "\n"
+
 class DefinitionLoader:
     def __init__(self, structs):
-        self.cur_ns = ''
-        self.ns_stack = []
-        self.cur_struct = None
-        self.struct_stack = []
-        self.next_struct = None
-        self.next_struct_base = None
-        self.next_attributes = []
-        self.structs = structs
+        self.ns_stack : list[str] = []
+        self.cur_struct : Structure = None
+        self.struct_stack : list[Structure] = []
+        self.next_struct : str = None
+        self.next_struct_base : str = None
+        self.next_attributes : list[str] = []
+        self.structs : dict[str, Structure] = structs
+        self.template_stack : list[Template] = []
+        self.cur_template : Template = None
+        self.templates : dict[str, Template] = {}
+        self.next_template : bool = False
 
     def load_file(self, path):
         with open(path, 'r') as header:
@@ -38,37 +109,114 @@ class DefinitionLoader:
             self.next_attributes.append(match.group(1))
 
     def enter_ns(self, ns):
-        self.ns_stack.append(self.cur_ns)
-        if self.cur_ns != '':
-            self.cur_ns = self.cur_ns + '::' + ns
+        if self.cur_template is None:
+            self.ns_stack.append(ns)
         else:
-            self.cur_ns = ns
+            self.cur_template.ns_stack.append(ns)
 
     def exit_ns(self):
-        self.cur_ns = self.ns_stack.pop()
+        if self.cur_template is None:
+            self.ns_stack.pop()
+        else:
+            self.cur_template.ns_stack.pop()
 
-    def enter_struct(self, name, base, attrs):
+    def enter_struct_normal(self, name, base, attrs):
         self.enter_ns(name)
         self.struct_stack.append(self.cur_struct)
-        struct = {
-            'name': self.cur_ns,
-            'base': base,
-            'attributes': attrs,
-            'members': {},
-            'raw_lines': []
-        }
+
+        struct = None
+
+        if self.next_template:
+            struct = Template(self.ns_stack, base, attrs)
+            nsname = self.ns_stack[-1]
+            self.templates[nsname] = struct
+            for ns in reversed(self.ns_stack[:-1]):
+                nsname = ns + '::' + nsname
+                self.templates[nsname] = struct
+            self.cur_template = struct
+        else:
+            struct = Structure(self.ns_stack, base, attrs)
+            self.structs[struct.name()] = struct
         self.cur_struct = struct
-        self.structs[self.cur_ns] = struct
         self.next_struct = None
         self.next_attributes = []
+        self.next_template = False
+
+    def enter_struct(self, name, base, attrs):
+        if self.cur_template is None:
+            self.enter_struct_normal(name, base, attrs)
+            return
+        
+        self.enter_ns(name)
+        self.struct_stack.append(self.cur_struct)
+        
+        struct = None
+        
+        if self.next_template:
+            self.template_stack.append(self.cur_template)
+            struct = Template(self.cur_template.ns_stack, base, attrs)
+            self.cur_template.template_list.append(struct)
+            nsname = self.cur_template.ns_stack[-1]
+            self.cur_template.templates[nsname] = struct
+            for ns in reversed(self.cur_template.ns_stack[:-1]):
+                nsname = ns + '::' + nsname
+                self.cur_template.templates[nsname] = struct
+            self.cur_template = struct
+        else:
+            struct = Structure(self.cur_template.ns_stack, base, attrs)
+            self.cur_template.children[struct.name()] = struct
+        self.cur_struct = struct
+        self.next_struct = None
+        self.next_attributes = []
+        self.next_template = False
 
     def exit_struct(self):
+        if self.cur_struct is self.cur_template:
+            if len(self.template_stack) != 0:
+                self.cur_template = self.template_stack.pop()
+            else:
+                self.cur_template = None
         self.cur_struct = self.struct_stack.pop()
         self.exit_ns()
 
+    def explicit_instantiate(self, name : str, template_args : str):
+        othername = None
+        othername = '::' + name
+
+        template = None
+
+        if name in self.templates:
+            template = self.templates[name]
+        elif othername in self.templates:
+            template = self.templates[othername]
+        else:
+            return False
+        
+        print(template)
+        
+        templclone = template.clone()
+        templclone.name_ns[-1] += template_args
+
+        print(templclone)
+        
+        structs[templclone.name()] = templclone
+
+        for subtemplate in template.template_list:
+            newtemplate = subtemplate.clone()
+            for ns in reversed(templclone.name_ns):
+                newtemplate.name_ns.insert(0, ns)
+            
+            nsname = newtemplate.name_ns[-1]
+            self.templates[nsname] = newtemplate
+            for ns in reversed(newtemplate.name_ns[:-1]):
+                nsname = ns + '::' + nsname
+                self.templates[nsname] = newtemplate
+        
+        return True
+
     def parse_line(self, line):
         if len(line) > 3 and line[0] == '/' and line[1] == '/' and line[2] == '#':
-            self.cur_struct['raw_lines'].append(line[3:])
+            self.cur_struct.raw_lines.append(line[3:])
             return
         
         if line == '' or line[0] == '/' or line[0] == '#' or re.match(ignore_re, line) is not None:
@@ -76,8 +224,19 @@ class DefinitionLoader:
         
         match = re.match(ns_start_re, line)
         if match is not None:
-            self.enter_ns(match.group(1))
+            self.enter_ns(match.group(2))
             return
+        
+        match = re.match(template_re, line)
+        if match is not None:
+            self.next_template = True
+            return
+        
+        match = re.match(explicit_instantiation_re, line)
+        if match is not None:
+            if self.explicit_instantiate(match.group('name'), match.group('template_args')):
+                return
+
         
         if re.match(ns_end_re, line) is not None:
             self.exit_ns()
@@ -123,7 +282,7 @@ class DefinitionLoader:
         match = re.match(property_re, line)
         if match is not None:
             self.parse_attributes(match.group('attributes'))
-            self.cur_struct['members'][match.group('name')] = {
+            self.cur_struct.members[match.group('name')] = {
                 'type': match.group('type'),
                 'attributes': self.next_attributes
             }
@@ -131,6 +290,7 @@ class DefinitionLoader:
             return
         
         print('UNKNOWN: ', line)
+        self.next_template = False
 
 def generate_member(name, member):
     if 'bg3::hidden' in member['attributes']:
@@ -140,17 +300,6 @@ def generate_member(name, member):
         return 'P_RO(' + name + ')\n'
     
     return 'P(' + name + ')\n'
-
-def generate_property_map(struct):
-    pm = 'BEGIN_CLS(' + struct['name'] + ')\n'
-    if struct['base'] and not struct['base'].startswith('ProtectedGameObject<'):
-        pm += 'INHERIT(' + struct['base'] + ')\n'
-    for name,member in struct['members'].items():
-        pm += generate_member(name, member)
-    for line in struct['raw_lines']:
-        pm += line + '\n'
-    pm += 'END_CLS()\n'
-    return pm
 
 
 sources = [
@@ -173,7 +322,7 @@ sources = [
     'GameDefinitions/Resources.h'
 ]
 
-structs = {}
+structs : dict[str, Structure] = {}
 
 for source in sources:
     loader = DefinitionLoader(structs)
@@ -182,9 +331,9 @@ for source in sources:
 propmap = ''
 component_names = ''
 for n,struct in structs.items():
-    if 'bg3::hidden' not in struct['attributes']:
-        propmap += generate_property_map(struct) + '\n'
-        if struct['base'] == 'BaseComponent':
+    if 'bg3::hidden' not in struct.attributes:
+        propmap += struct.generate_property_map() + '\n'
+        if struct.base == 'BaseComponent':
             component_names += 'T(' + n + ')\n'
 
 
