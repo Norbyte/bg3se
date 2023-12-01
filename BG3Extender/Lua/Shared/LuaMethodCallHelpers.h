@@ -16,6 +16,12 @@ inline void PushReturnValue(lua_State* L, T& v)
 }
 
 template <class T>
+inline void PushReturnValue(lua_State* L, std::span<T>& v)
+{
+	MakeObjectRef(L, &v);
+}
+
+template <class T>
 inline void PushReturnValue(lua_State* L, Array<T>* v)
 {
 	if constexpr (!IsByVal<T>) {

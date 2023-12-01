@@ -29,6 +29,9 @@ struct IsArrayLike<std::array<T, Size>> { static constexpr bool Value = true; us
 template <class T>
 struct IsArrayLike<std::vector<T>> { static constexpr bool Value = true; using TElement = T; };
 
+template <class T, size_t Extent>
+struct IsArrayLike<std::span<T, Extent>> { static constexpr bool Value = true; using TElement = T; };
+
 template <class T>
 struct IsMapLike { static constexpr bool Value = false; };
 

@@ -142,6 +142,41 @@ PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, st
 	return PropertyOperationResult::Success;
 }
 
+template <class T, size_t Extent>
+PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, std::span<T, Extent>* obj)
+{
+	if constexpr (std::is_pointer_v<T> || !std::is_default_constructible_v<T>) {
+		return PropertyOperationResult::UnsupportedType;
+	}
+
+	StackCheck _(L);
+	luaL_checktype(L, index, LUA_TTABLE);
+
+	for (uint32_t i = 0; i < obj->size(); i++) {
+		lua_rawgeti(L, index, i + 1);
+		T value;
+		Unserialize(L, index + 1, &value);
+		// FIXME - in-place unserialize
+		(*obj)[i] = value;
+		lua_pop(L, 1);
+	}
+
+	return PropertyOperationResult::Success;
+}
+
+template <class T, size_t Extent>
+PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, std::span<T, Extent>* obj)
+{
+	if constexpr (std::is_pointer_v<T> || !std::is_default_constructible_v<T>) {
+		return PropertyOperationResult::UnsupportedType;
+	}
+
+	StackCheck _(L);
+	auto arr = ArrayProxyMetatable::Get<ConstSizeArrayProxyImpl<std::span<T, Extent>, T, 6>>(L, index);
+	*obj = *arr;
+	return PropertyOperationResult::Success;
+}
+
 template <unsigned Words>
 PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, BitArray<Words>* obj)
 {
