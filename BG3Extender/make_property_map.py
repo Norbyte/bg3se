@@ -133,6 +133,81 @@ class Template(Structure):
                         newbase = newbase[:match.start('paramused')] + args[i] + newbase[match.end('paramused'):]
             self.base = newbase
 
+def to_namespaces(typename : str):
+    ret = []
+    templ_depth = 0
+
+    prev_push = 0
+
+    i = 0
+    while i < len(typename) + 1:
+        if i == len(typename):
+            ret.append(typename[prev_push:i])
+        elif typename[i] == '<':
+            templ_depth += 1
+        elif typename[i] == '>':
+            templ_depth -= 1
+        elif templ_depth == 0 and i < len(typename) - 1 and typename[i] == ':' and typename[i+1] == ':':
+            ret.append(typename[prev_push:i])
+            i += 1
+            prev_push = i+1 # current + 2
+        elif templ_depth == 0 and typename[i] != '_' and not typename[i].isalnum():
+            ret.append(typename[prev_push:i])
+            return ret
+        i += 1
+
+    return ret
+
+def expand_namespaces(ns_stack : list[str], structs : dict[str, Structure], typename : str):
+    newname = ""
+    for ns in ns_stack[:-1]:
+        newname += ns + "::"
+        if newname + typename in structs:
+            typename = newname + typename
+            break
+
+    namespaces = to_namespaces(typename)
+
+    nsname : str = ""
+    for ns in namespaces:
+        ns_bare = ns
+        templ = ""
+        if '<' in ns_bare:
+            ns_bare = ns[:ns.find('<')]
+            templ = ns[ns.find('<'):]
+        if len(nsname) != 0:
+            nsname += "::" + ns_bare
+        else:
+            nsname += ns_bare
+        if '<' in ns:
+            template_args : list[str] = []
+
+            inprogress_arg_idx = 1
+            while inprogress_arg_idx < len(templ) - 2:
+                template_args.append(expand_namespaces(ns_stack, structs, templ[inprogress_arg_idx:-1]))
+                inprogress_arg_idx += len(template_args[-1])
+                nextmatch = alnum_re.search(templ, inprogress_arg_idx)
+                if nextmatch is None:
+                    inprogress_arg_idx = len(templ)
+                else:
+                    inprogress_arg_idx = nextmatch.start()
+
+            for i in range(len(template_args)):
+                newname = ""
+                for ns in ns_stack[:-1]:
+                    newname += ns + "::"
+                    if newname + template_args[i] in structs:
+                        template_args[i] = newname + template_args[i]
+                        break
+            nsname += '<'
+            for arg in template_args:
+                nsname += arg
+            nsname += '>'
+
+    
+    return nsname
+    
+
 class DefinitionLoader:
     def __init__(self, structs):
         self.ns_stack : list[str] = []
@@ -164,6 +239,12 @@ class DefinitionLoader:
             self.ns_stack.append(ns)
         else:
             self.cur_template.ns_stack.append(ns)
+
+    def current_ns_stack(self):
+        if self.cur_template is None:
+            return self.ns_stack
+        else:
+            return self.cur_template.ns_stack
 
     def exit_ns(self):
         if self.cur_template is None:
@@ -241,6 +322,7 @@ class DefinitionLoader:
         while inprogress_arg_idx < len(template_arg_str) - 2:
             template_arg_strs.append(self.instantiate_if_necessary(template_arg_str[inprogress_arg_idx:-1]))
             inprogress_arg_idx += len(template_arg_strs[-1])
+            template_arg_strs[-1] = expand_namespaces(self.current_ns_stack(), self.structs, template_arg_strs[-1])
             nextmatch = alnum_re.search(template_arg_str, inprogress_arg_idx)
             if nextmatch is None:
                 inprogress_arg_idx = len(template_arg_str)
@@ -258,7 +340,9 @@ class DefinitionLoader:
         templclone.name_ns[-1] += template_arg_str
         templclone.replace_template_args(template_arg_strs)
 
-        self.instantiate_if_necessary(templclone.base)
+        if templclone.base is not None:
+            self.instantiate_if_necessary(templclone.base)
+            templclone.base = expand_namespaces(self.current_ns_stack(), self.structs, templclone.base)
 
         for _,member in templclone.members.items():
             self.instantiate_if_necessary(member['type'])
@@ -292,36 +376,11 @@ class DefinitionLoader:
         
         return True
     
-    def to_namespaces(self, typename : str):
-        ret = []
-        templ_depth = 0
-
-        prev_push = 0
-
-        i = 0
-        while i < len(typename) + 1:
-            if i == len(typename):
-                ret.append(typename[prev_push:i])
-            elif typename[i] == '<':
-                templ_depth += 1
-            elif typename[i] == '>':
-                templ_depth -= 1
-            elif templ_depth == 0 and i < len(typename) - 1 and typename[i] == ':' and typename[i+1] == ':':
-                ret.append(typename[prev_push:i])
-                i += 1
-                prev_push = i+1 # current + 2
-            elif templ_depth == 0 and typename[i] != '_' and not typename[i].isalnum():
-                ret.append(typename[prev_push:i])
-                return ret
-            i += 1
-
-        return ret
-    
     def instantiate_if_necessary(self, type : str) -> str:
         if type is None:
             return None
         
-        namespaces = self.to_namespaces(type)
+        namespaces = to_namespaces(type)
 
         nsname : str = ""
         for ns in namespaces:
@@ -476,9 +535,14 @@ propmap = ''
 component_names = ''
 for n,struct in structs.items():
     if 'bg3::hidden' not in struct.attributes:
-        propmap += struct.generate_property_map() + '\n'
         if struct.base == 'BaseComponent':
             component_names += 'T(' + n + ')\n'
+        if struct.base is not None:
+            struct.base = expand_namespaces(struct.name_ns, structs, struct.base)
+
+        struct.name_ns = to_namespaces(expand_namespaces(struct.name_ns, structs, struct.name()))
+        
+        propmap += struct.generate_property_map() + '\n'
 
 
 with open('GameDefinitions/PropertyMaps/Generated.inl', 'w') as f:
