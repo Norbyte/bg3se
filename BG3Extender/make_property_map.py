@@ -14,13 +14,20 @@ tag_component_re = r'^DEFINE_TAG_COMPONENT\((?P<ns>[^,]+), (?P<name>[^,]+), (?P<
 boost_re = r'^DEFN_BOOST\(\s*(?P<name>[^,]+),\s*(?P<boostType>[^,]+),\s*{$'
 ignore_re = r'^(BEGIN_SE|END_SE).*$'
 
-template_re = r'^template\s*<.*>$'
+template_re = r'^template\s*<(.+)>$'
 explicit_instantiation_re = r'template\s+(struct|class)\s+(?P<name>[a-zA-Z0-9_:<>*:, ]+)\s*(?P<template_args><[a-zA-Z0-9_<>*:, ]+>);$'
 
-member_function_re = r'^(?P<attributes>(\[\[[a-zA-Z0-9:_]+\]\]\s*)*)\s*(inline\s+)?(?P<retval>[a-zA-Z0-9_:<>*, ]+)\s+(?P<name>[a-zA-Z0-9_]+)\s*\(.*\)\s*(const)?$'
+member_function_re = r'^(?P<attributes>(\[\[[a-zA-Z0-9:_]+\]\]\s*)*)\s*(inline\s+)?(?P<retval>[a-zA-Z0-9_:<>*, ]+)\s+(?P<name>[a-zA-Z0-9_]+)\s*\((?P<params>.*)\)\s*(const)?$'
+
+#doesn't support template template types, but I think that's fine
+template_arg_re = r'(template\s*<\s*|,\s*)(((typename|class)|((?P<paramtype>[a-zA-Z0-9_:<>*, ]+)))(\.\.\.)?\s+(?P<paramname>[a-zA-Z0-9_]+)\s*(?=(,\s*)|>))'
+
+template_individual_types_re = r'(?:<|,|^)\s*(?P<paramused>[a-zA-Z0-9_:]+)\s*(?=,|>|<)'
+
+alnum_re = re.compile('[a-zA-Z0-9_]')
 
 class Structure:
-    def __init__(self, ns_stack : list[str], base : str, attributes : list):
+    def __init__(self, ns_stack : list[str], base : str, attributes : list[str]):
         self.name_ns : list[str] = ns_stack.copy()
         self.ns_stack : list[str] = []
         self.base : str = base
@@ -58,6 +65,21 @@ class Structure:
         pm += 'END_CLS()\n'
         return pm
     
+    def replace_template_arg(self, argname : str, argvalue : str):
+        for _,member in self.members.items():
+            newtype = member['type']
+            for match in re.finditer(template_individual_types_re, member['type']):
+                if match.group('paramused') == argname:
+                    newtype = newtype[:match.start('paramused')] + argvalue + newtype[match.end('paramused'):]
+            member['type'] = newtype
+        
+        if self.base is not None:
+            newbase = self.base
+            for match in re.finditer(template_individual_types_re, self.base):
+                if match.group('paramused') == argname:
+                    newbase = newbase[:match.start('paramused')] + argvalue + newbase[match.end('paramused'):]
+            self.base = newbase
+    
     def clone(self):
         ret = Structure(self.name_ns, self.base, self.attributes)
         ret.members = self.members.copy()
@@ -67,14 +89,15 @@ class Structure:
         return ret
         
 class Template(Structure):
-    def __init__(self, ns_stack : list[str], base : str, attributes : list):
+    def __init__(self, ns_stack : list[str], base : str, attributes : list[str], template_args : list[str]):
         Structure.__init__(self, ns_stack, base, attributes)
         self.children : dict[str, Structure] = {}
         self.templates : dict[str, Template] = {}
         self.template_list : list[Template] = []
+        self.template_args : list[str] = template_args
 
     def clone(self):
-        ret = Template(self.name_ns, self.base, self.attributes)
+        ret = Template(self.name_ns, self.base, self.attributes, self.template_args.copy())
         ret.members = self.members.copy()
         ret.raw_lines = self.raw_lines.copy()
         ret.getters = self.getters.copy()
@@ -91,6 +114,24 @@ class Template(Structure):
                 ret.templates[nsname] = v
 
         return ret
+    
+    def replace_template_args(self, args : list[str]):
+        if len(args) == len(self.template_args):
+            for _,member in self.members.items():
+                newtype = member['type']
+                for match in re.finditer(template_individual_types_re, member['type']):
+                    for i in range(len(args)):
+                        if match.group('paramused') == self.template_args[i]:
+                            newtype = newtype[:match.start('paramused')] + args[i] + newtype[match.end('paramused'):]
+                member['type'] = newtype
+        
+        if self.base is not None:
+            newbase = self.base
+            for match in re.finditer(template_individual_types_re, self.base):
+                for i in range(len(args)):
+                    if match.group('paramused') == self.template_args[i]:
+                        newbase = newbase[:match.start('paramused')] + args[i] + newbase[match.end('paramused'):]
+            self.base = newbase
 
 class DefinitionLoader:
     def __init__(self, structs):
@@ -104,7 +145,7 @@ class DefinitionLoader:
         self.template_stack : list[Template] = []
         self.cur_template : Template = None
         self.templates : dict[str, Template] = {}
-        self.next_template : bool = False
+        self.next_template_args : list[str] = None
 
     def load_file(self, path):
         with open(path, 'r') as header:
@@ -136,8 +177,8 @@ class DefinitionLoader:
 
         struct = None
 
-        if self.next_template:
-            struct = Template(self.ns_stack, base, attrs)
+        if self.next_template_args is not None:
+            struct = Template(self.ns_stack, base, attrs, self.next_template_args)
             nsname = self.ns_stack[-1]
             self.templates[nsname] = struct
             for ns in reversed(self.ns_stack[:-1]):
@@ -147,10 +188,11 @@ class DefinitionLoader:
         else:
             struct = Structure(self.ns_stack, base, attrs)
             self.structs[struct.name()] = struct
+            self.instantiate_if_necessary(base)
         self.cur_struct = struct
         self.next_struct = None
         self.next_attributes = []
-        self.next_template = False
+        self.next_template_args = None
 
     def enter_struct(self, name, base, attrs):
         if self.cur_template is None:
@@ -162,9 +204,9 @@ class DefinitionLoader:
         
         struct = None
         
-        if self.next_template:
+        if self.next_template_args is not None:
             self.template_stack.append(self.cur_template)
-            struct = Template(self.cur_template.ns_stack, base, attrs)
+            struct = Template(self.cur_template.ns_stack, base, attrs, self.next_template_args)
             self.cur_template.template_list.append(struct)
             nsname = self.cur_template.ns_stack[-1]
             self.cur_template.templates[nsname] = struct
@@ -175,10 +217,11 @@ class DefinitionLoader:
         else:
             struct = Structure(self.cur_template.ns_stack, base, attrs)
             self.cur_template.children[struct.name()] = struct
+            self.instantiate_if_necessary(base)
         self.cur_struct = struct
         self.next_struct = None
         self.next_attributes = []
-        self.next_template = False
+        self.next_template_args = None
 
     def exit_struct(self):
         if self.cur_struct is self.cur_template:
@@ -189,26 +232,55 @@ class DefinitionLoader:
         self.cur_struct = self.struct_stack.pop()
         self.exit_ns()
 
-    def explicit_instantiate(self, name : str, template_args : str):
-        othername = None
-        othername = '::' + name
-
+    def explicit_instantiate(self, name : str, template_arg_str : str):
         template = None
+
+        template_arg_strs = []
+
+        inprogress_arg_idx = 1
+        while inprogress_arg_idx < len(template_arg_str) - 2:
+            template_arg_strs.append(self.instantiate_if_necessary(template_arg_str[inprogress_arg_idx:-1]))
+            inprogress_arg_idx += len(template_arg_strs[-1])
+            nextmatch = alnum_re.search(template_arg_str, inprogress_arg_idx)
+            if nextmatch is None:
+                inprogress_arg_idx = len(template_arg_str)
+            else:
+                inprogress_arg_idx = nextmatch.start()
 
         if name in self.templates:
             template = self.templates[name]
-        elif othername in self.templates:
-            template = self.templates[othername]
+        elif '::' + name in self.templates:
+            template = self.templates['::' + name]
         else:
             return False
         
         templclone = template.clone()
-        templclone.name_ns[-1] += template_args
+        templclone.name_ns[-1] += template_arg_str
+        templclone.replace_template_args(template_arg_strs)
+
+        self.instantiate_if_necessary(templclone.base)
+
+        for _,member in templclone.members.items():
+            self.instantiate_if_necessary(member['type'])
         
         structs[templclone.name()] = templclone
 
+        for _,child in templclone.children.items():
+            childclone : Structure = child.clone()
+            for ns in reversed(templclone.name_ns):
+                childclone.name_ns.insert(0, ns)
+            
+            for i in range(len(template_arg_strs)):
+                childclone.replace_template_arg(templclone.template_args[i], template_arg_strs)
+            self.instantiate_if_necessary(childclone.base)
+            for _,member in childclone.members.items():
+                self.instantiate_if_necessary(member['type'])
+            self.structs[childclone.name()] = childclone
+
         for subtemplate in template.template_list:
             newtemplate = subtemplate.clone()
+            for i in range(len(template_arg_strs)):
+                newtemplate.replace_template_arg(templclone.template_args[i], template_arg_strs)
             for ns in reversed(templclone.name_ns):
                 newtemplate.name_ns.insert(0, ns)
             
@@ -219,6 +291,55 @@ class DefinitionLoader:
                 self.templates[nsname] = newtemplate
         
         return True
+    
+    def to_namespaces(self, typename : str):
+        ret = []
+        templ_depth = 0
+
+        prev_push = 0
+
+        i = 0
+        while i < len(typename) + 1:
+            if i == len(typename):
+                ret.append(typename[prev_push:i])
+            elif typename[i] == '<':
+                templ_depth += 1
+            elif typename[i] == '>':
+                templ_depth -= 1
+            elif templ_depth == 0 and i < len(typename) - 1 and typename[i] == ':' and typename[i+1] == ':':
+                ret.append(typename[prev_push:i])
+                i += 1
+                prev_push = i+1 # current + 2
+            elif templ_depth == 0 and typename[i] != '_' and not typename[i].isalnum():
+                ret.append(typename[prev_push:i])
+                return ret
+            i += 1
+
+        return ret
+    
+    def instantiate_if_necessary(self, type : str) -> str:
+        if type is None:
+            return None
+        
+        namespaces = self.to_namespaces(type)
+
+        nsname : str = ""
+        for ns in namespaces:
+            ns_bare = ns
+            templ = ""
+            if '<' in ns_bare:
+                ns_bare = ns[:ns.find('<')]
+                templ = ns[ns.find('<'):]
+            if len(nsname) != 0:
+                nsname += "::" + ns_bare
+            else:
+                nsname += ns_bare
+            if '<' in ns:
+                self.explicit_instantiate(nsname, templ)
+            nsname += templ
+
+        return nsname
+                
 
     def parse_line(self, line):
         if len(line) > 3 and line[0] == '/' and line[1] == '/' and line[2] == '#':
@@ -235,14 +356,17 @@ class DefinitionLoader:
         
         match = re.match(template_re, line)
         if match is not None:
-            self.next_template = True
+            self.next_template_args = []
+            for arg in re.finditer(template_arg_re, line):
+                if arg.group('paramtype') is not None:
+                    self.instantiate_if_necessary(arg.group('paramtype'))
+                self.next_template_args.append(arg.group('paramname'))
             return
         
         match = re.match(explicit_instantiation_re, line)
         if match is not None:
             if self.explicit_instantiate(match.group('name'), match.group('template_args')):
                 return
-
         
         if re.match(ns_end_re, line) is not None:
             self.exit_ns()
@@ -275,9 +399,11 @@ class DefinitionLoader:
             return
         
         if re.match(static_property_re, line) is not None:
+            self.next_template_args = None
             return
         
         if re.match(typedef_re, line) is not None:
+            self.next_template_args = None
             return
         
         match = re.match(attributes_re, line)
@@ -292,16 +418,19 @@ class DefinitionLoader:
                 'type': match.group('type'),
                 'attributes': self.next_attributes
             }
+            self.instantiate_if_necessary(match.group('type'))
             self.next_attributes = []
             return
 
         match = re.match(member_function_re, line)
         if match is not None:
-            self.parse_attributes(match.group('attributes'))
-            if 'bg3::getter' in self.next_attributes:
-                self.cur_struct.getters.append(match.group('name'))
-            if 'bg3::setter' in self.next_attributes:
-                self.cur_struct.setters.append(match.group('name'))
+            if not self.next_template:
+                self.parse_attributes(match.group('attributes'))
+                if 'bg3::getter' in self.next_attributes:
+                    self.cur_struct.getters.append(match.group('name'))
+                    self.instantiate_if_necessary(match.group('retval'))
+                if 'bg3::setter' in self.next_attributes:
+                    self.cur_struct.setters.append(match.group('name'))
             return
         
         print('UNKNOWN: ', line)
