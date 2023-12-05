@@ -195,6 +195,11 @@ namespace bg3se
 
 		SYM_OFF(eoc__gGuidResourceManager);
 		SYM_OFF(ls__gGlobalResourceManager);
+
+		SYM_OFF(ls__VirtualTextureResource__Load);
+		SYM_OFF(ls__VirtualTextureResource__Unload);
+		SYM_OFF(ls__VirtualTextureResource__Transcode);
+
 		SYM_OFF(ls__GlobalSwitches);
 
 		SYM_OFF(Kernel_FindFirstFileW);

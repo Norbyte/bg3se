@@ -57,4 +57,19 @@ STDString Guid::ToString() const
 	return s;
 }
 
+void LSAcquireSRWLockExclusive(PSRWLOCK SRWLock)
+{
+	if (!TryAcquireSRWLockExclusive(SRWLock))
+	{
+		auto loops = 0;
+		while (loops++ < 4000)
+		{
+			if (TryAcquireSRWLockExclusive(SRWLock))
+				return;
+		}
+
+		AcquireSRWLockExclusive(SRWLock);
+	}
+}
+
 END_SE()

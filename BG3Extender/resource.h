@@ -2,8 +2,8 @@
 // Microsoft Visual C++ generated include file.
 // Used by BG3Extender.rc
 //
-#define RES_DLL_MAJOR_VERSION           11
-#define RES_DLL_VERSION_STRING          "11.0.0.0"
+#define RES_DLL_MAJOR_VERSION           12
+#define RES_DLL_VERSION_STRING          "12.0.0.0"
 
 #define IDR_LUA_BUILTIN_BUNDLE          101
 #define IDR_BINARY_MAPPINGS             107

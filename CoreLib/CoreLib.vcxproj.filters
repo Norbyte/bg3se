@@ -92,6 +92,9 @@
     <ClCompile Include="SymbolMapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MurmurHash3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Base\BaseMap.inl">

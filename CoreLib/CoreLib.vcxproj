@@ -166,6 +166,7 @@
     <ClCompile Include="Base\Base.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="Crypto.cpp" />
+    <ClCompile Include="MurmurHash3.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

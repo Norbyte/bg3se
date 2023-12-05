@@ -3,6 +3,7 @@
 #include <CoreLib/Wrappers.h>
 #include <GameDefinitions/Stats/Functors.h>
 #include <GameDefinitions/Stats/Stats.h>
+#include <GameDefinitions/Resources.h>
 #include <GameDefinitions/Misc.h>
 
 namespace bg3se

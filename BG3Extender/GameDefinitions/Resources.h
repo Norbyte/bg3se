@@ -7,6 +7,130 @@
 
 BEGIN_SE()
 
+struct TextureLayerConfigId
+{
+	uint32_t TextureLayerConfig;
+	uint8_t Flag;
+
+	inline bool operator == (TextureLayerConfigId const& o) const
+	{
+		return o.TextureLayerConfig == TextureLayerConfig
+			&& o.Flag == Flag;
+	}
+};
+
+inline constexpr uint64_t Hash(TextureLayerConfigId const& v)
+{
+	return v.Flag ^ (v.TextureLayerConfig * 397);
+}
+
+struct [[bg3::hidden]] VirtualTextureManagerBase : public ProtectedGameObject<VirtualTextureManagerBase>
+{
+	struct [[bg3::hidden]] GTSInfo
+	{
+		int32_t GTSHandle;
+		int32_t RefCount;
+	};
+
+	struct LayerConfig
+	{
+		uint64_t A;
+		uint64_t B;
+		uint64_t C;
+	};
+
+	virtual ~VirtualTextureManagerBase() = 0;
+	virtual void VMT_08() = 0;
+	virtual void VMT_10() = 0;
+	virtual void VMT_18() = 0;
+	virtual void VMT_20() = 0;
+	virtual void VMT_28() = 0;
+	virtual void VMT_30() = 0;
+	virtual bool InitGraphine() = 0;
+	virtual void* LoadTexture(int32_t gtsHandle, FixedString const& gtexFileName, uint8_t r9_0) = 0;
+	virtual bool UnloadTexture(int32_t gtsHandle, void* graphineTexture) = 0;
+	virtual void VMT_50() = 0;
+	virtual void VMT_58() = 0;
+	virtual void VMT_60() = 0;
+	virtual void VMT_68() = 0;
+	virtual void VMT_70() = 0;
+	virtual void VMT_78() = 0;
+	virtual void VMT_80() = 0;
+	virtual void VMT_88() = 0;
+	virtual void VMT_90() = 0;
+	virtual void VMT_98() = 0;
+	virtual void VMT_A0() = 0;
+	virtual void VMT_A8() = 0;
+	virtual void VMT_B0() = 0;
+	virtual int32_t LoadGTS(uint32_t textureLayerConfig, STDString const& path, int textureSetId, Array<LayerConfig>& layerConfigs) = 0;
+	virtual void ReleaseGTS(uint32_t textureLayerConfig, int32_t gtsHandle, bool releaseTexSet0, bool releaseTexSet1) = 0;
+
+	bool UseChunkedVirtualTextures;
+	SRWLOCK GTSLock;
+	RefMap<STDString, GTSInfo> LoadedGTS;
+	MultiHashMap<TextureLayerConfigId, Array<LayerConfig>> LayerConfigs;
+};
+
+struct [[bg3::hidden]] VirtualTextureSet
+{
+	BitSet<> Bits;
+	Array<void*> field_10;
+};
+
+struct [[bg3::hidden]] VirtualTextureManager : public VirtualTextureManagerBase
+{
+	struct [[bg3::hidden]] SomeVal
+	{
+		__int64 field_0;
+		int field_8;
+	};
+
+	void* Renderer_M;
+	void* GraphineContext;
+	void* GraphineDevice;
+	void* GraphineTranscoder;
+	VirtualTextureSet TexSet0;
+	VirtualTextureSet TexSet1;
+	SRWLOCK Lock2;
+	uint64_t field_D0[3];
+	SomeVal field_E8[3];
+	int field_118;
+	SRWLOCK Lock3;
+	Array<void*> SomeArrays1[17];
+	Array<void*> SomeArrays2[17];
+	VirtualTextureSet field_348;
+	__int64 TexSet2;
+	__int64 field_370;
+	Array<void*> field_378;
+	int field_388;
+	int field_38C;
+	int field_390;
+	int field_394;
+	int field_398;
+	int field_39C;
+	int field_3A0;
+	int field_3A4;
+	__int64 VMT2;
+	__int64 field_3B0;
+	VirtualTextureManagerBase* ThisPtr;
+	CRITICAL_SECTION CriticalSection;
+	__int64 field_3E8;
+	int field_3F0;
+	int field_3F4;
+	int field_3F8;
+	char field_3FC;
+	__declspec(align(4)) BYTE field_400;
+	char field_401;
+	char field_402;
+	char field_403;
+	int field_404;
+	int field_408;
+	int field_40C;
+	int field_410;
+	char field_414;
+};
+
+
 struct [[bg3::hidden]] Bank : public ProtectedGameObject<Bank>
 {
 	void* VMT;
@@ -41,11 +165,11 @@ struct [[bg3::hidden]] ResourcePackage
 	RefMap<FixedString, void*> field_38;
 };
 
-struct ResourceManager
+struct [[bg3::hidden]] ResourceManager
 {
 	__int64 field_0;
-	[[bg3::hidden]] Map<FixedString, resource::Resource*> Resources;
-	[[bg3::hidden]] std::array<ResourceBank*, 2> ResourceBanks;
+	Map<FixedString, resource::Resource*> Resources;
+	std::array<ResourceBank*, 2> ResourceBanks;
 	__int64 field_30; // Unknown pointer; size 1
 	__int64 field_38;
 	Array<FixedString> field_40;
@@ -60,15 +184,12 @@ struct ResourceManager
 	__int64 SoundManager_M;
 	__int64 field_98;
 	__int64 field_A0;
-	__int64 GameAnalytics_M;
-	__int64 field_B0; // Unknown pointer; has vtable with a deleting destructor
-	[[bg3::hidden]] CRITICAL_SECTION CriticalSection;
-	[[bg3::hidden]] RefMap<STDString, void*> Unknown; // std::string -> ???
-	__int64 field_e0;
-	__int64 field_e8;
-	[[bg3::hidden]] Map<FixedString, Path*> Paths;
-	[[bg3::hidden]] Array<void*> Unknown2;            // Contains objects of size 0x20
-	[[bg3::hidden]] Map<FixedString, void*> Unknown3; // Points to objects of size 0x110
+	VirtualTextureManager* VirtualTextureManager; // Unknown pointer; has vtable with a deleting destructor
+	CRITICAL_SECTION CriticalSection;
+	RefMap<STDString, void*> Unknown; // std::string -> ???
+	Map<FixedString, Path*> Paths;
+	Array<void*> Unknown2;            // Contains objects of size 0x20
+	Map<FixedString, void*> Unknown3; // Points to objects of size 0x110
 	__int64 field_130;                                // Unknown pointer; size 0x180
 	__int64 field_138; // Unknown pointer; size 0x40. Initialized to same pointer as field_140.
 					   // Has virtual destructor.
@@ -113,25 +234,61 @@ struct BG3Variant
 
 struct Resource : public ProtectedGameObject<Resource>
 {
-	[[bg3::hidden]] void* VMT;
+	virtual ~Resource() = 0;
+	virtual void* GetMetadata(void*) = 0;
+	virtual STDString* DebugDump(STDString&) = 0;
+	virtual void SetGuid(FixedString const&) = 0;
+	virtual void VMT18(FixedString const&) = 0;
+	virtual void ForceUnload(ResourceManager* mgr) = 0;
+	virtual bool IncRef(ResourceManager* mgr) = 0;
+	virtual bool DecRef(ResourceManager* mgr) = 0;
+	virtual bool IsInState2() = 0;
+	virtual bool IsInState3() = 0;
+	virtual uint32_t GetType() = 0;
+	virtual Resource* Clone() = 0;
+	virtual bool Visit(ObjectVisitor& visitor) = 0;
+
 	Path SourceFile;
-	FixedString Guid;
+	[[bg3::readonly]] FixedString Guid;
 };
 
-struct LockedResource : public resource::Resource
+struct TwoStepLoadableResource : public resource::Resource
 {
-	[[bg3::hidden]] void* LockedResource_VMT;
+	[[bg3::hidden]] void* TwoStepLoadableResource_VMT;
 	__int64 field_30;
 	[[bg3::hidden]] SRWLOCK lock;
-	__int64 field_40; // Unknown pointer
+	[[bg3::hidden]] void* LoadJob;
 };
 
-struct ResourceWithExtraData : public resource::Resource
+struct LoadableResource : public resource::Resource
 {
-	__int16 field_28;
-	__int8 field_2a;
-	[[bg3::hidden]] __int8 field_2b;
-	[[bg3::hidden]] __int32 field_2c;
+	using LoadProc = bool (LoadableResource* self, ResourceManager* mgr);
+	using UnloadProc = bool (LoadableResource* self, ResourceManager* mgr);
+
+	struct [[bg3::hidden]] VMT
+	{
+		void* Dtor;
+		void* GetMetadata;
+		void* DebugDump;
+		void* SetGuid;
+		void* VMT18;
+		void* ForceUnload;
+		void* IncRef;
+		void* DecRef;
+		void* IsInState2;
+		void* IsInState3;
+		void* GetType;
+		void* Clone;
+		void* Visit;
+		LoadProc* Load;
+		UnloadProc* Unload;
+	};
+
+	virtual bool Load(ResourceManager* mgr) = 0;
+	virtual bool Unload(ResourceManager* mgr) = 0;
+
+	[[bg3::readonly]] uint16_t RefCount;
+	[[bg3::readonly]] uint8_t State;
 };
 
 struct PresetData
@@ -222,7 +379,7 @@ struct PresetData
 	MultiHashMap<FixedString, Mapped> MaterialPresets;
 };
 
-struct AnimationResource : public resource::LockedResource
+struct AnimationResource : public resource::TwoStepLoadableResource
 {
 	struct Event
 	{
@@ -385,7 +542,7 @@ struct AnimationResource : public resource::LockedResource
 	[[bg3::hidden]] __int32 field_7c;
 };
 
-struct AnimationBlueprintResource : public resource::LockedResource
+struct AnimationBlueprintResource : public resource::TwoStepLoadableResource
 {
 	[[bg3::hidden]] void* field_48;              // Deleter
 	Array<__int64> field_50; // Vtable pointers??? Why???
@@ -395,7 +552,7 @@ struct AnimationBlueprintResource : public resource::LockedResource
 	RefMap<bg3se::Guid, BG3Variant> Params;
 };
 
-struct AnimationSetResource : public resource::ResourceWithExtraData
+struct AnimationSetResource : public resource::LoadableResource
 {
 	struct Subset
 	{
@@ -422,7 +579,7 @@ struct AnimationSetResource : public resource::ResourceWithExtraData
 	Bank* AnimationBank;
 };
 
-struct AtmosphereResource : public resource::ResourceWithExtraData
+struct AtmosphereResource : public resource::LoadableResource
 {
 	struct AtmosphereData
 	{
@@ -559,7 +716,7 @@ struct AtmosphereResource : public resource::ResourceWithExtraData
 	Array<FixedString> Labels;
 };
 
-struct BlendSpaceResource : public resource::LockedResource
+struct BlendSpaceResource : public resource::TwoStepLoadableResource
 {
 	struct [[bg3::hidden]] BlendSpaceInternals;
 
@@ -625,7 +782,7 @@ struct BlendSpaceResource : public resource::LockedResource
 	Array<FieldB8Entry> field_b8;
 };
 
-struct CharacterVisualResource : public resource::ResourceWithExtraData
+struct CharacterVisualResource : public resource::LoadableResource
 {
 	struct Slot
 	{
@@ -656,7 +813,7 @@ struct CharacterVisualResource : public resource::ResourceWithExtraData
 	[[bg3::hidden]] __int32 field_1a4;
 };
 
-struct ClothColliderResource : public resource::ResourceWithExtraData
+struct ClothColliderResource : public resource::LoadableResource
 {
 	struct Sphere
 	{
@@ -672,7 +829,7 @@ struct ClothColliderResource : public resource::ResourceWithExtraData
 	Array<Sphere> Spheres;
 };
 
-struct ColorListResource : public resource::ResourceWithExtraData
+struct ColorListResource : public resource::LoadableResource
 {
 	[[bg3::hidden]] __int64 field_30; // Dynamic array vtable
 	Array<uint32_t> Colors;
@@ -686,7 +843,7 @@ struct ColorListResource : public resource::ResourceWithExtraData
 	[[bg3::hidden]] __int32 field_74;
 };
 
-struct DialogResource : public resource::ResourceWithExtraData
+struct DialogResource : public resource::LoadableResource
 {
 	bool automated;
 	bool isWorld;
@@ -709,7 +866,7 @@ struct DialogResource : public resource::ResourceWithExtraData
 	STDString Name;
 };
 
-struct DiffusionProfileResource : public resource::ResourceWithExtraData
+struct DiffusionProfileResource : public resource::LoadableResource
 {
 	glm::fvec3 ScatterColor;
 	float ScatterDistance;
@@ -725,7 +882,7 @@ struct DiffusionProfileResource : public resource::ResourceWithExtraData
 	[[bg3::hidden]] __int32 field_64;
 };
 
-struct EffectResource : public resource::LockedResource
+struct EffectResource : public resource::TwoStepLoadableResource
 {
 	struct Property : public ProtectedGameObject<Property>
 	{
@@ -1007,7 +1164,7 @@ struct EffectResource : public resource::LockedResource
 	uint32_t InterruptionMode;
 };
 
-struct FCurveResource : public resource::LockedResource
+struct FCurveResource : public resource::TwoStepLoadableResource
 {
 	struct CurveKey
 	{
@@ -1042,7 +1199,7 @@ struct FCurveResource : public resource::LockedResource
 	Array<ProcessedCurveKey> ProcessedCurveKeys;
 };
 
-struct IKRigResource : public resource::ResourceWithExtraData
+struct IKRigResource : public resource::LoadableResource
 {
 	struct BoneProperty
 	{
@@ -1100,12 +1257,12 @@ struct IKRigResource : public resource::ResourceWithExtraData
 	MultiHashMap<bg3se::Guid, FixedString> BoneCategories;
 };
 
-struct LightCookieResource : public resource::LockedResource
+struct LightCookieResource : public resource::TwoStepLoadableResource
 {
 	BitArray<0x80> Data;
 };
 
-struct LightingResource : public resource::ResourceWithExtraData
+struct LightingResource : public resource::LoadableResource
 {
 	struct Details
 	{
@@ -1307,7 +1464,7 @@ struct LightingResource : public resource::ResourceWithExtraData
 	Details* Lighting;
 };
 
-struct MaterialResource : public resource::LockedResource
+struct MaterialResource : public resource::TwoStepLoadableResource
 {
 	struct ScalarParameter
 	{
@@ -1391,24 +1548,24 @@ struct MaterialResource : public resource::LockedResource
 	[[bg3::hidden]] __int16 field_b6;
 };
 
-struct MaterialPresetResource : public resource::ResourceWithExtraData
+struct MaterialPresetResource : public resource::LoadableResource
 {
 	PresetData Presets;
 };
 
 // I think this is unimplemented and std::terminates on construction
-struct MaterialSetResource : public resource::LockedResource
+struct MaterialSetResource : public resource::TwoStepLoadableResource
 {
 };
 
-struct MeshProxyResource : public resource::LockedResource
+struct MeshProxyResource : public resource::TwoStepLoadableResource
 {
 	__int64 field_48; // Size 0x30
 	FixedString Template;
 	[[bg3::hidden]] __int32 field_54;
 };
 
-struct PhysicsResource : public resource::ResourceWithExtraData
+struct PhysicsResource : public resource::LoadableResource
 {
 	struct ObjectTemplate
 	{
@@ -1457,7 +1614,7 @@ struct PhysicsResource : public resource::ResourceWithExtraData
 	[[bg3::hidden]] __int16 field_56;
 };
 
-struct ScriptResource : public resource::ResourceWithExtraData
+struct ScriptResource : public resource::LoadableResource
 {
 	struct Parameter
 	{
@@ -1469,7 +1626,7 @@ struct ScriptResource : public resource::ResourceWithExtraData
 	Map<FixedString, Parameter*> Parameters;
 };
 
-struct SkeletonResource : public resource::LockedResource
+struct SkeletonResource : public resource::TwoStepLoadableResource
 {
 	struct Socket
 	{
@@ -1515,7 +1672,7 @@ struct SkeletonResource : public resource::LockedResource
 	__int64 field_98;
 };
 
-struct SkeletonMirrorTableResource : public resource::LockedResource
+struct SkeletonMirrorTableResource : public resource::TwoStepLoadableResource
 {
 	struct Entry
 	{
@@ -1526,12 +1683,12 @@ struct SkeletonMirrorTableResource : public resource::LockedResource
 	Array<Entry> Entries;
 };
 
-struct SkinPresetResource : public resource::ResourceWithExtraData
+struct SkinPresetResource : public resource::LoadableResource
 {
 	PresetData Presets;
 };
 
-struct SoundResource : public resource::LockedResource
+struct SoundResource : public resource::TwoStepLoadableResource
 {
 	uint32_t SoundEventID;
 	FixedString SoundEvent;
@@ -1547,7 +1704,7 @@ struct SoundResource : public resource::LockedResource
 	[[bg3::hidden]] __int32 field_74;
 };
 
-struct TerrainBrushResource : public resource::ResourceWithExtraData
+struct TerrainBrushResource : public resource::LoadableResource
 {
 	FixedString BaseColorMap;
 	FixedString NormalMap;
@@ -1574,7 +1731,7 @@ struct TerrainBrushResource : public resource::ResourceWithExtraData
 	[[bg3::hidden]] __int32 field_8c;
 };
 
-struct TextureResource : public resource::ResourceWithExtraData
+struct TextureResource : public resource::LoadableResource
 {
 	__int64 field_30;
 	FixedString Template;
@@ -1591,7 +1748,7 @@ struct TextureResource : public resource::ResourceWithExtraData
 	[[bg3::hidden]] __int32 field_54;
 };
 
-struct TileSetResource : public resource::ResourceWithExtraData
+struct TileSetResource : public resource::LoadableResource
 {
 	struct Tile
 	{
@@ -1613,7 +1770,7 @@ struct TileSetResource : public resource::ResourceWithExtraData
 	ExtendedRefMap* TileSet;
 };
 
-struct TimelineResource : public resource::ResourceWithExtraData
+struct TimelineResource : public resource::LoadableResource
 {
 	bg3se::Guid DialogResourceId;
 	bool FadeOutOnEnd;
@@ -1624,7 +1781,7 @@ struct TimelineResource : public resource::ResourceWithExtraData
 	[[bg3::hidden]] __int32 field_4c;
 };
 
-struct TimelineSceneResource : public resource::ResourceWithExtraData
+struct TimelineSceneResource : public resource::LoadableResource
 {
 	Array<FixedString> Labels;
 	uint8_t SceneType;
@@ -1633,21 +1790,22 @@ struct TimelineSceneResource : public resource::ResourceWithExtraData
 	int32_t AdditionalSpeakerCount;
 };
 
-struct VirtualTextureResource : public resource::ResourceWithExtraData
+struct VirtualTextureResource : public resource::LoadableResource
 {
-	__int32 field_30;
+	[[bg3::readonly]] uint32_t GTSHandle;
 	uint32_t VirtualTextureLayerConfig;
-	__int64 field_38;
+	uint32_t LoadedVirtualTextureLayerConfig;
+	bool LoadedField52;
+	std::optional<char> GTSSuffix;
 	FixedString GTexFileName;
-	__int32 field_44;
-	__int64 field_48;
+	[[bg3::hidden]] void* GraphineTextureData;
 	bool Prefetch;
 	int8_t PrefetchMipLevel;
-	__int16 field_52;
+	uint8_t field_52;
 	uint32_t ReferencedColorSpaces;
 };
 
-struct VisualResource : public resource::LockedResource
+struct VisualResource : public resource::TwoStepLoadableResource
 {
 	struct Object
 	{
@@ -1761,11 +1919,11 @@ struct VisualResource : public resource::LockedResource
 	[[bg3::hidden]] __int32 field_174;
 };
 
-struct VisualSetResource : public resource::ResourceWithExtraData
+struct VisualSetResource : public resource::LoadableResource
 {
 };
 
-struct VoiceBarkResource : public resource::ResourceWithExtraData
+struct VoiceBarkResource : public resource::LoadableResource
 {
 };
 

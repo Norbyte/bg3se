@@ -271,6 +271,24 @@ enum class DebugMessageType
 	Error
 };
 
+void LSAcquireSRWLockExclusive(PSRWLOCK SRWLock);
+
+struct SRWLockPin
+{
+	inline SRWLockPin(PSRWLOCK SRWLock)
+		: Lock(SRWLock)
+	{
+		LSAcquireSRWLockExclusive(Lock);
+	}
+	
+	inline ~SRWLockPin()
+	{
+		ReleaseSRWLockExclusive(Lock);
+	}
+
+	PSRWLOCK Lock;
+};
+
 END_SE()
 
 namespace std

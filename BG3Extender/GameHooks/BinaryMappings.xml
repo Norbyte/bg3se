@@ -702,6 +702,69 @@
         </Mapping>
         -->
 
+    <Mapping Name="ls::VirtualTextureResource::Transcode">
+      48 89 5c 24 08 // mov     [rsp-8+arg_0], rbx
+      55 // push    rbp
+      56 // push    rsi
+      57 // push    rdi
+      41 54 // push    r12
+      41 55 // push    r13
+      41 56 // push    r14
+      41 57 // push    r15
+      48 8d 6c 24 f9 // lea     rbp, [rsp-7]
+      48 81 ec c0 00 00 00 // sub     rsp, 0C0h
+      48 8b 05 ?? ?? ?? ?? // mov     rax, cs:__security_cookie
+      48 33 c4 // xor     rax, rsp
+      48 89 45 ff // mov     [rbp+37h+var_38], rax
+      48 8b 8d 8f 00 00 00 // mov     rcx, [rbp+37h+arg_48]
+      48 8b da // mov     rbx, rdx
+      4c 8b 65 77 // mov     r12, [rbp+37h+pSaveMip]
+      49 8b f9 // mov     rdi, r9
+      48 8b 55 7f // mov     rdx, [rbp+37h+paramBlock_1]; Src
+      4d 8b d0 // mov     r10, r8
+      48 89 4d a7 // mov     [rbp+37h+var_90], rcx
+      <Target Type="Absolute" Offset="0" Symbol="ls__VirtualTextureResource__Transcode" />
+    </Mapping>
+
+      <Mapping Name="ls::VirtualTextureResource::Load">
+        48 89 5c 24 10 // mov     [rsp+arg_8], rbx
+        48 89 74 24 18 // mov     [rsp+arg_10], rsi
+        57 // push    rdi
+        48 83 ec 30 // sub     rsp, 30h
+        48 8b b2 a8 00 00 00 // mov     rsi, [rdx+0A8h]
+        48 8b d9 // mov     rbx, rcx
+        c6 44 24 41 00 // mov     byte ptr [rsp+38h+arg_0+1], 0
+        80 7e 08 00 // cmp     byte ptr [rsi+8], 0
+        74 1d // jz      short loc_143453F81
+        48 8d 54 24 20 // lea     rdx, [rsp+38h+a2]; a2
+        48 83 c1 40 // add     rcx, 40h ; '@'; a1
+        e8 ?? ?? ?? ?? // call    ls__FixedString__ToString
+        c6 44 24 41 01 // mov     byte ptr [rsp+38h+arg_0+1], 1
+        48 8b 10 // mov     rdx, [rax]
+        0f b6 02 // movzx   eax, byte ptr [rdx]
+        88 44 24 40 // mov     byte ptr [rsp+38h+arg_0], al
+        <Target Type="Absolute" Offset="0" Symbol="ls__VirtualTextureResource__Load" />
+      </Mapping>
+
+      <Mapping Name="ls::VirtualTextureResource::Unload">
+        48 89 5c 24 08 // mov     [rsp+arg_0], rbx
+        48 89 74 24 10 // mov     [rsp+arg_8], rsi
+        57 // push    rdi
+        48 83 ec 20 // sub     rsp, 20h
+        4c 8b 41 48 // mov     r8, [rcx+48h]
+        48 8b d9 // mov     rbx, rcx
+        48 8b b2 a8 00 00 00 // mov     rsi, [rdx+0A8h]
+        4d 85 c0 // test    r8, r8
+        74 14 // jz      short loc_143454036
+        8b 51 30 // mov     edx, [rcx+30h]
+        48 8b ce // mov     rcx, rsi
+        48 8b 06 // mov     rax, [rsi]
+        ff 50 48 // call    qword ptr [rax+48h]
+        48 c7 43 48 00 00 00 00 // mov     qword ptr [rbx+48h], 0
+        44 0f b6 4b 3c // movzx   r9d, byte ptr [rbx+3Ch]
+        <Target Type="Absolute" Offset="0" Symbol="ls__VirtualTextureResource__Unload" />
+      </Mapping>
+
       <Mapping Name="eoc::gResourceManager">
         4c 8b 1c 0a // mov     r11, [rdx+rcx]
         4c 8b d5 // mov     r10, rbp

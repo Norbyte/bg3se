@@ -9,6 +9,7 @@
 #include <GameDefinitions/RootTemplates.h>
 #include <GameDefinitions/Stats/Stats.h>
 #include <GameDefinitions/Passives.h>
+#include <GameDefinitions/Resources.h>
 #include <GameDefinitions/Status.h>
 #include <GameDefinitions/Surface.h>
 #include <GameDefinitions/EntitySystemHelpers.h>
@@ -114,6 +115,9 @@ namespace bg3se
 
 		resource::GuidResourceManager** eoc__gGuidResourceManager{ nullptr };
 		ResourceManager** ls__gGlobalResourceManager{ nullptr };
+
+		resource::LoadableResource::LoadProc* ls__VirtualTextureResource__Load{ nullptr };
+		resource::LoadableResource::UnloadProc* ls__VirtualTextureResource__Unload{ nullptr };
 
 		GlobalSwitches** ls__GlobalSwitches{ nullptr };
 

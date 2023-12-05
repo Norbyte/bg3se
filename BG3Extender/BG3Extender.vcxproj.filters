@@ -453,6 +453,7 @@
     <ClInclude Include="GameDefinitions\Base\LuaAnnotations.h" />
     <ClInclude Include="Extender\Version.h" />
     <ClInclude Include="Extender\BuildInfo.h" />
+    <ClInclude Include="Extender\Shared\VirtualTextures.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -655,6 +656,9 @@
     </None>
     <None Include="Lua\Shared\Proxies\PolymorphicPush.inl">
       <Filter>Lua\Shared\Proxies</Filter>
+    </None>
+    <None Include="Extender\Shared\VirtualTextures.inl">
+      <Filter>Extender</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

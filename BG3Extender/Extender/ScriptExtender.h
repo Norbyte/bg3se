@@ -6,6 +6,7 @@
 #include <Extender/Client/ScriptExtenderClient.h>
 #include <Extender/Server/ScriptExtenderServer.h>
 #include <Extender/Shared/StatLoadOrderHelper.h>
+#include <Extender/Shared/VirtualTextures.h>
 #include <Extender/Shared/Hooks.h>
 #if !defined(OSI_NO_DEBUGGER)
 #include <Lua/Debugger/LuaDebugger.h>
@@ -137,6 +138,7 @@ private:
 	stats::StatLoadOrderHelper statLoadOrderHelper_;
 	lua::LuaBundle luaBuiltinBundle_;
 	lua::CppPropertyMapManager propertyMapManager_;
+	VirtualTextureHelpers virtualTextures_;
 
 	ExtenderConfig config_;
 	bool postStartupDone_{ false };

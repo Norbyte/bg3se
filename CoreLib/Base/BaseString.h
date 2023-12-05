@@ -3,6 +3,8 @@
 #include <cstdint>
 #include <string>
 
+void MurmurHash3_x64_128(const void* key, int len, uint32_t seed, void* out);
+
 namespace bg3se
 {
 	template <class T>
@@ -306,9 +308,11 @@ namespace bg3se
 		return h.Val[0] ^ h.Val[1];
 	}
 
-	inline uint64_t Hash(STDString const& h)
+	inline uint64_t Hash(STDString const& s)
 	{
-		return std::hash<STDString>{}(h);
+		uint64_t hash[2];
+		MurmurHash3_x64_128(s.data(), s.size(), 0, hash);
+		return hash[0];
 	}
 }
 

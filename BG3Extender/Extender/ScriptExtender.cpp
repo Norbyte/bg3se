@@ -7,6 +7,7 @@
 
 #include <Extender/Shared/StatLoadOrderHelper.inl>
 #include <Extender/Shared/UserVariables.inl>
+#include <Extender/Shared/VirtualTextures.inl>
 
 #undef DEBUG_SERVER_CLIENT
 
@@ -207,6 +208,7 @@ void ScriptExtender::OnStatsLoad(stats::RPGStats::LoadProc* wrapped, stats::RPGS
 
 	statLoadOrderHelper_.OnLoadStarted();
 	client_.LoadExtensionState(ExtensionStateContext::Load);
+	virtualTextures_.Load();
 
 	wrapped(mgr, paths);
 
@@ -433,6 +435,8 @@ void ScriptExtender::PostStartup()
 		}
 
 		engineHooks_.FileReader__ctor.SetWrapper(&ScriptExtender::OnFileReaderCreate, this);
+		engineHooks_.ls__VirtualTextureResource__Load.SetWrapper(&VirtualTextureHelpers::OnTextureLoad, &virtualTextures_);
+		engineHooks_.ls__VirtualTextureResource__Unload.SetWrapper(&VirtualTextureHelpers::OnTextureUnload, &virtualTextures_);
 		//engineHooks_.Kernel_FindFirstFileW.SetWrapper(&ScriptExtender::OnFindFirstFileW, this);
 		//engineHooks_.Kernel_FindNextFileW.SetWrapper(&ScriptExtender::OnFindNextFileW, this);
 		//engineHooks_.Kernel_FindClose.SetWrapper(&ScriptExtender::OnFindClose, this);
