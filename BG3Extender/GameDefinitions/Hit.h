@@ -131,7 +131,10 @@ struct Hit
 		int FinalDamage;
 		RefMap<DamageType, int32_t> TotalDamagePerType;
 		RefMap<DamageType, int32_t> FinalDamagePerType;
-		Guid field_D0;
+		uint32_t field_D0;
+		uint32_t field_D4;
+		uint32_t field_D8;
+		uint8_t field_DC;
 	};
 
 	int TotalDamageDone;
