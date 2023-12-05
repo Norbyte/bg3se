@@ -53,6 +53,8 @@ int32_t VirtualTextureHelpers::IncRefGTS(VirtualTextureManager* vt, unsigned int
 		}
 	}
 
+	ERR("Unable to load tile set '%s'!", path.c_str());
+
 	return -1;
 }
 
@@ -128,7 +130,13 @@ bool VirtualTextureHelpers::OnTextureLoad(resource::LoadableResource::LoadProc* 
 	}
 
 	res->GTSHandle = IncRefGTS(vt, res->VirtualTextureLayerConfig, gtsSuffix, res->field_52, res->GTexFileName);
-	if (res->Prefetch && res->PrefetchMipLevel >= 0 && res->GTSHandle != -1) {
+
+	if (res->GTSHandle == -1) {
+		// Load a dummy GTS to ensure the game doesn't crash
+		FixedString placeholderTex{ "00fb1fe11e94bc9fad61170f5551017f" };
+		res->GTSHandle = IncRefGTS(vt, res->VirtualTextureLayerConfig, '0', res->field_52, placeholderTex);
+		res->GTexFileName = placeholderTex;
+	} else if (res->Prefetch && res->PrefetchMipLevel >= 0) {
 		res->GraphineTextureData = vt->LoadTexture(res->GTSHandle, res->GTexFileName, 1);
 	}
 
