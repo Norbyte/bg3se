@@ -53,8 +53,21 @@ namespace bg3se
 			return;
 		}
 
+		std::unordered_set<FixedString> mods;
+
+		auto isLoaded = [&mods, &modManager](const Module& mod){
+			if (mods.size() == 0)
+			{
+				for (const Module& mod : modManager->BaseModule.LoadOrderedModules)
+				{
+					mods.emplace(mod.Info.ModuleUUIDString);
+				}
+			}
+			return mods.contains(mod.Info.ModuleUUIDString);
+		};
+
 		unsigned numConfigs{ 0 };
-		for (auto const& mod : modManager->BaseModule.LoadOrderedModules) {
+		for (auto const& mod : modManager->AvailableMods) {
 			auto dir = mod.Info.Directory;
 			auto configFile = "Mods/" + dir + "/ScriptExtender/Config.json";
 			auto reader = GetStaticSymbols().MakeFileReader(configFile);
@@ -81,6 +94,8 @@ namespace bg3se
 						OsiError("Module must specify a ModTable in ScriptExtender/Config.json.");
 						continue;
 					}
+
+					config.IsLoaded = isLoaded(mod);
 
 					if (config.MinimumVersion > CurrentVersion) {
 						OsiError("Module '" << mod.Info.Name << " is targeting version v" << config.MinimumVersion << " that's more recent than the current version!");
@@ -536,9 +551,17 @@ namespace bg3se
 					}
 
 					if (context_ == ExtensionStateContext::Game) {
-						LuaLoadGameBootstrap(config, mod);
+						LuaLoadGameUnconditional(config, mod);
+						if (config.IsLoaded)
+						{
+							LuaLoadGameBootstrap(config, mod);
+						}
 					} else if (context_ == ExtensionStateContext::Load) {
-						LuaLoadPreinitBootstrap(config, mod);
+						LuaLoadPreinitUnconditional(config, mod);
+						if (config.IsLoaded)
+						{
+							LuaLoadPreinitBootstrap(config, mod);
+						}
 					} else {
 						ERR("Bootstrap request with Uninitialized extension context?");
 					}
@@ -547,6 +570,48 @@ namespace bg3se
 		}
 
 		lua->FinishStartup();
+	}
+
+	void ExtensionStateBase::LuaLoadPreinitUnconditional(ExtensionModConfig const& config, Module const& mod)
+	{
+		auto bootstrapFileName = "OverrideModule.lua";
+		auto const& sym = GetStaticSymbols();
+
+		auto path = ResolveModScriptPath(mod, bootstrapFileName);
+		if (!sym.FileExists(path)) {
+			return;
+		}
+
+		LuaVirtualPin lua(*this);
+		auto L = lua->GetState();
+		lua::push(L, mod.Info.ModuleUUID);
+		lua_setglobal(L, "ModuleUUID");
+
+		OsiMsg("Loading preinit override script: " << path);
+		lua->LoadBootstrap(bootstrapFileName, config.ModTable);
+
+		lua::push(L, nullptr);
+		lua_setglobal(L, "ModuleUUID");
+	}
+
+	void ExtensionStateBase::LuaLoadGameUnconditional(ExtensionModConfig const& config, Module const& mod)
+	{
+		auto bootstrapFileName = GetUnconditionalFileName();
+		auto const& sym = GetStaticSymbols();
+
+		auto bootstrapPath = ResolveModScriptPath(mod, bootstrapFileName);
+		if (!bootstrapPath.empty() && sym.FileExists(bootstrapPath)) {
+			LuaVirtualPin lua(*this);
+			auto L = lua->GetState();
+			lua::push(L, mod.Info.ModuleUUIDString);
+			lua_setglobal(L, "ModuleUUID");
+
+			OsiMsg("Loading override script: " << bootstrapPath);
+			lua->LoadBootstrap(bootstrapFileName, config.ModTable);
+
+			lua::push(L, nullptr);
+			lua_setglobal(L, "ModuleUUID");
+		}
 	}
 
 	void ExtensionStateBase::LuaLoadGameBootstrap(ExtensionModConfig const& config, Module const& mod)
