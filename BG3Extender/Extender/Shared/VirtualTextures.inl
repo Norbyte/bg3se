@@ -161,4 +161,18 @@ bool VirtualTextureHelpers::OnTextureUnload(resource::LoadableResource::UnloadPr
 	return true;
 }
 
+#if defined(VT_DEBUG_TRANSCODE)
+int64_t VirtualTextureHelpers::OnTranscode(resource::LoadableResource::TranscodeProc* next, void* self, void* transcodeData, void* source, __int64 sourceSize, int width, int height, void* pSaveMip, void* paramBlock, int a9, void* destination, int expectedBCFormat)
+{
+	auto res = next(self, transcodeData, source, sourceSize, width, height, pSaveMip, paramBlock, a9, destination, expectedBCFormat);
+	auto tc = (BCTranscodeData*)transcodeData;
+	auto pb = (GTSBCParameterBlock*)paramBlock;
+	auto sm = (SaveMipData*)pSaveMip;
+	if (res != 0) {
+		DEBUG("Transcode fail: %d; DataType: %d, BC: %d, SM: %d", res, pb->DataType, tc->BCFormat, sm->SaveMip);
+	}
+	return res;
+}
+#endif
+
 END_SE()

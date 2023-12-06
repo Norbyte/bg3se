@@ -118,6 +118,7 @@ namespace bg3se
 
 		resource::LoadableResource::LoadProc* ls__VirtualTextureResource__Load{ nullptr };
 		resource::LoadableResource::UnloadProc* ls__VirtualTextureResource__Unload{ nullptr };
+		resource::LoadableResource::TranscodeProc* ls__VirtualTextureResource__Transcode{ nullptr };
 
 		GlobalSwitches** ls__GlobalSwitches{ nullptr };
 

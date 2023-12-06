@@ -264,6 +264,7 @@ struct LoadableResource : public resource::Resource
 {
 	using LoadProc = bool (LoadableResource* self, ResourceManager* mgr);
 	using UnloadProc = bool (LoadableResource* self, ResourceManager* mgr);
+	using TranscodeProc = __int64 (void* self, void* transcodeData, void* source, __int64 sourceSize, int width, int height, void* pSaveMip, void* paramBlock, int a9, void* destination, int expectedBCFormat);
 
 	struct [[bg3::hidden]] VMT
 	{
