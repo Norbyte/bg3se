@@ -1013,9 +1013,6 @@ void LuaPolymorphic<resource::PhysicsResource::ObjectTemplate::PhysicsObject>::M
 
 void LuaPolymorphic<resource::effects::EffectComponentBase>::MakeRef(lua_State* L, resource::effects::EffectComponentBase* value, LifetimeHandle const& lifetime)
 {
-	// Using this to provide more information than just EffectComponentBase, but not all because not researched yet
-#define V_BaseComponent(type) else if (value->GetType().GetStringView() == #type) \
-					MakeDirectObjectRef(L, static_cast<resource::effects::BaseEffectComponent*>(value), lifetime);
 #define V(type) else if (value->GetType().GetStringView() == #type) \
 					MakeDirectObjectRef(L, static_cast<resource::effects::type##Component*>(value), lifetime);
 #define V_timeline(type) else if (value->GetType().GetStringView() == #type) \
@@ -1032,29 +1029,29 @@ void LuaPolymorphic<resource::effects::EffectComponentBase>::MakeRef(lua_State* 
 	else if (value->GetType().GetStringView() == "Ribbon 2.0")
 	{
 		//MakeDirectObjectRef(L, static_cast<resource::effects::Ribbon2Component*>(value), lifetime);
-		MakeDirectObjectRef(L, static_cast<resource::effects::BaseEffectComponent*>(value), lifetime);
+		MakeDirectObjectRef(L, static_cast<resource::effects::Ribbon2Component*>(value), lifetime);
 	}
-	V_BaseComponent(Billboard)
-	V_BaseComponent(BoundingBox)
-	V_BaseComponent(BoundingSphere)
-	V_BaseComponent(CameraShake)
-	V_BaseComponent(Decal)
-	V_BaseComponent(Deflector)
-	V_BaseComponent(GravityForce)
-	V_BaseComponent(Light)
-	V_BaseComponent(Model)
-	V_BaseComponent(MovingLevel)
-	V_BaseComponent(OrbitForce)
-	V_BaseComponent(OverlayMaterial)
+	V(Billboard)
+	V(BoundingBox)
+	V(BoundingSphere)
+	V(CameraShake)
+	V(Decal)
+	V(Deflector)
+	V(GravityForce)
+	V(Light)
+	V(Model)
+	V(MovingLevel)
+	V(OrbitForce)
+	V(OverlayMaterial)
 	V(ParticleSystem)
-	V_BaseComponent(PostProcess)
-	V_BaseComponent(PreRoll)
-	V_BaseComponent(RadialForce)
-	V_BaseComponent(Sound)
-	V_BaseComponent(SpinForce)
-	V_BaseComponent(TurbulentForce)
-	V_BaseComponent(VortexForce)
-	V_BaseComponent(WindForce)
+	V(PostProcess)
+	V(PreRoll)
+	V(RadialForce)
+	V(Sound)
+	V(SpinForce)
+	V(TurbulentForce)
+	V(VortexForce)
+	V(WindForce)
 	V_timeline(TLBaseComponent)
 	V_timeline(TimelineActorPropertiesReflection)
 	V_timeline(TLAdditiveAnimation)
@@ -1097,15 +1094,23 @@ void LuaPolymorphic<resource::effects::EffectComponentBase>::MakeRef(lua_State* 
 	V_tlkeybase(TLEventKeyComponent)
 	V_tlkeybase(TLInterpolationKeyComponent)
 	V_tlkeybase(TLKeyBaseComponent)
+	V_tlchannel(TimelineActorPropertiesReflectionKeyComponent)
+	V_tlchannel(TLAtmosphereAndLightingChannel)
+	V_tlchannel(TLCameraDoFChannel)
+	V_tlchannel(TLCameraExposureChannel)
+	V_tlchannel(TLMaterialKeyComponent)
+	V_tlchannel(TLMaterialTextureKeyComponent)
+	V_tlchannel(TLShowArmorChannel)
+	V_tlchannel(TLSplatterChannel)
 	// Theoretically there are a lot of other EffectComponents that could get output here; haven't finished researching them
 	else
 	{
 		MakeDirectObjectRef(L, value, lifetime);
 	}
 
+#undef V_tlchannel
 #undef V_tlkeybase
 #undef V_timeline
-#undef V_BaseComponent
 #undef V
 }
 
