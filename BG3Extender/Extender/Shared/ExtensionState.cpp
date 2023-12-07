@@ -539,7 +539,7 @@ namespace bg3se
 		}
 
 		lua::Restriction restriction(*lua, lua::State::RestrictAll);
-		for (auto const& mod : modManager->BaseModule.LoadOrderedModules) {
+		for (auto const& mod : modManager->AvailableMods) {
 			auto configIt = modConfigs_.find(mod.Info.ModuleUUIDString);
 			if (configIt != modConfigs_.end()) {
 				auto const & config = configIt->second;
