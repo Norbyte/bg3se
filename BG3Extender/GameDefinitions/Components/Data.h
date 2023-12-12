@@ -2,6 +2,7 @@
 
 #include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/EntitySystem.h>
+#include <GameDefinitions/RootTemplates.h>
 
 BEGIN_SE()
 
@@ -17,6 +18,14 @@ struct ArmorComponent : public BaseComponent
 	uint8_t Shield;
 };
 
+struct ArmorSetStateComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ArmorSetState;
+	static constexpr auto EngineClass = "eoc::armor_set::StateComponent";
+
+	uint8_t State;
+};
+
 struct BaseHpComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::BaseHp;
@@ -24,6 +33,33 @@ struct BaseHpComponent : public BaseComponent
 
 	int Vitality;
 	int VitalityBoost;
+};
+
+struct Bound
+{
+	EntityHandle Entity;
+	RefMap<uint16_t, AIBound> AIBounds;
+	void* SomeContainer;
+	void* GameObject;
+	MultiHashSet<uint32_t> field_28;
+	glm::vec3 Translate;
+	glm::quat RotationQuat;
+	float Scale;
+	int16_t field_78;
+	uint16_t SomeRefCount;
+	glm::vec3 TranslateOverride;
+	uint8_t Flags;
+	uint8_t field_89;
+	uint16_t Flags2;
+	FixedString field_8C;
+};
+
+struct BoundComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::Bound;
+	static constexpr auto EngineClass = "eoc::BoundComponent";
+
+	Bound* Bound;
 };
 
 struct CustomStatsComponent : public BaseComponent
@@ -672,6 +708,30 @@ struct BackgroundTagComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::BackgroundTag;
 	static constexpr auto EngineClass = "eoc::BackgroundTagComponent";
+
+	Array<Guid> Tags;
+};
+
+struct OriginAppearanceTagComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::OriginAppearanceTag;
+	static constexpr auto EngineClass = "eoc::OriginAppearanceTagComponent";
+
+	Array<Guid> Tags;
+};
+
+struct VoiceTagComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::VoiceTag;
+	static constexpr auto EngineClass = "eoc::VoiceTagComponent";
+
+	Array<Guid> Tags;
+};
+
+struct GodTagComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::GodTag;
+	static constexpr auto EngineClass = "eoc::god::TagComponent";
 
 	Array<Guid> Tags;
 };

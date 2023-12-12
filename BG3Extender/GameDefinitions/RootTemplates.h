@@ -80,10 +80,23 @@ struct GameObjectTemplate
 };
 
 
+struct AIBound
+{
+    int Type;
+    float Height;
+    float Radius2;
+    glm::vec3 Min;
+    glm::vec3 Max;
+    float Radius;
+    uint8_t field_28;
+    uint8_t AiType;
+    uint8_t field_2A;
+};
+
+
 struct EoCGameObjectTemplate : public GameObjectTemplate
 {
-    [[bg3::hidden]]
-    OverrideableProperty<Array<void*>> AIBounds;
+    OverrideableProperty<Array<AIBound>> AIBounds;
     OverrideableProperty<TranslatedString> DisplayName;
     OverrideableProperty<bool> Fadeable;
     OverrideableProperty<bool> SeeThrough;
