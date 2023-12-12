@@ -59,6 +59,17 @@ void SerializeArray(lua_State* L, BitArray<Words>* obj)
 	}
 }
 
+template <class T, size_t Extent>
+void SerializeArray(lua_State* L, std::span<T, Extent>* obj)
+{
+	StackCheck _(L, 1);
+	lua_createtable(L, (int)obj->size(), 0);
+	for (uint32_t i = 0; i < obj->size(); i++) {
+		Serialize(L, &(*obj)[i]);
+		lua_rawseti(L, -2, i + 1);
+	}
+}
+
 template <class TK, class TV>
 void SerializeMap(lua_State* L, MultiHashMap<TK, TV>* obj)
 {

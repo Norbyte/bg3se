@@ -11,6 +11,9 @@
 #define BEGIN_NS(ns) namespace bg3se::ns {
 #define END_NS() }
 
+#define BEGIN_BARE_NS(ns) namespace ns {
+#define END_BARE_NS() }
+
 BEGIN_SE()
 
 // Helper struct to allow function overloading without (real) template-dependent parameters

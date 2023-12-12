@@ -951,10 +951,10 @@ void LuaPolymorphic<resource::AnimationResource::Event::PropertiesHolder>::MakeR
 #undef V
 }
 
-void LuaPolymorphic<resource::EffectResource::Property>::MakeRef(lua_State* L, resource::EffectResource::Property* value, LifetimeHandle const& lifetime)
+void LuaPolymorphic<resource::effects::Property>::MakeRef(lua_State* L, resource::effects::Property* value, LifetimeHandle const& lifetime)
 {
 #define V(type) case EffectPropertyType::type: \
-			MakeDirectObjectRef(L, static_cast<resource::EffectResource::type##Property*>(value), lifetime); break;
+			MakeDirectObjectRef(L, static_cast<resource::effects::type##Property*>(value), lifetime); break;
 
 	switch (value->GetPropertyType()) {
 		V(Bool)
@@ -978,10 +978,10 @@ void LuaPolymorphic<resource::EffectResource::Property>::MakeRef(lua_State* L, r
 #undef V
 }
 
-void LuaPolymorphic<resource::EffectResource::FramesProperty::VirtualFrames>::MakeRef(lua_State* L, resource::EffectResource::FramesProperty::VirtualFrames* value, LifetimeHandle const& lifetime)
+void LuaPolymorphic<resource::effects::FramesProperty::VirtualFrames>::MakeRef(lua_State* L, resource::effects::FramesProperty::VirtualFrames* value, LifetimeHandle const& lifetime)
 {
 #define V(type) case type: \
-			MakeDirectObjectRef(L, static_cast<resource::EffectResource::FramesProperty::Frames##type*>(value), lifetime); break;
+			MakeDirectObjectRef(L, static_cast<resource::effects::FramesProperty::Frames##type*>(value), lifetime); break;
 
 	switch (value->GetType()) {
 		V(0)
@@ -997,13 +997,139 @@ void LuaPolymorphic<resource::EffectResource::FramesProperty::VirtualFrames>::Ma
 
 void LuaPolymorphic<resource::PhysicsResource::ObjectTemplate::PhysicsObject>::MakeRef(lua_State* L, resource::PhysicsResource::ObjectTemplate::PhysicsObject* value, LifetimeHandle const& lifetime)
 {
-	if (value->GetType()->GetStringView() == "box")
+	if (value->GetType().GetStringView() == "box")
 	{
 		MakeDirectObjectRef(L, static_cast<resource::PhysicsResource::ObjectTemplate::PhysicsBox*>(value), lifetime);
 	}
-	else if (value->GetType()->GetStringView() == "capsule")
+	else if (value->GetType().GetStringView() == "capsule")
 	{
 		MakeDirectObjectRef(L, static_cast<resource::PhysicsResource::ObjectTemplate::PhysicsCapsule*>(value), lifetime);
+	}
+	else
+	{
+		MakeDirectObjectRef(L, value, lifetime);
+	}
+}
+
+void LuaPolymorphic<resource::effects::EffectComponentBase>::MakeRef(lua_State* L, resource::effects::EffectComponentBase* value, LifetimeHandle const& lifetime)
+{
+#define V(type) else if (value->GetType().GetStringView() == #type) \
+					MakeDirectObjectRef(L, static_cast<resource::effects::type##Component*>(value), lifetime);
+#define V_timeline(type) else if (value->GetType().GetStringView() == #type) \
+					MakeDirectObjectRef(L, static_cast<resource::effects::timeline::type##Component*>(value), lifetime);
+#define V_tlkeybase(type) else if (value->GetType().GetStringView() == #type) \
+					MakeDirectObjectRef(L, static_cast<resource::effects::timeline::type##Component<resource::effects::timeline::keys::KeyBase>*>(value), lifetime);
+#define V_tlchannel(type) else if (value->GetType().GetStringView() == #type) \
+					MakeDirectObjectRef(L, static_cast<resource::effects::timeline::channels::type##Component*>(value), lifetime);
+	if (value->GetType().GetStringView() == "BaseComponent")
+	{
+		MakeDirectObjectRef(L, static_cast<resource::effects::BaseEffectComponent*>(value), lifetime);
+	}
+	// Special case for this one because it can't be its own V
+	else if (value->GetType().GetStringView() == "Ribbon 2.0")
+	{
+		//MakeDirectObjectRef(L, static_cast<resource::effects::Ribbon2Component*>(value), lifetime);
+		MakeDirectObjectRef(L, static_cast<resource::effects::Ribbon2Component*>(value), lifetime);
+	}
+	V(Billboard)
+	V(BoundingBox)
+	V(BoundingSphere)
+	V(CameraShake)
+	V(Decal)
+	V(Deflector)
+	V(GravityForce)
+	V(Light)
+	V(Model)
+	V(MovingLevel)
+	V(OrbitForce)
+	V(OverlayMaterial)
+	V(ParticleSystem)
+	V(PostProcess)
+	V(PreRoll)
+	V(RadialForce)
+	V(Sound)
+	V(SpinForce)
+	V(TurbulentForce)
+	V(VortexForce)
+	V(WindForce)
+	V_timeline(TLBaseComponent)
+	V_timeline(TimelineActorPropertiesReflection)
+	V_timeline(TLAdditiveAnimation)
+	V_timeline(TLAnimation)
+	V_timeline(TLAtmosphereAndLighting)
+	V_timeline(TLAttachToEvent)
+	V_timeline(TLAttitudeEvent)
+	V_timeline(TLCameraDoF)
+	V_timeline(TLCameraExposure)
+	V_timeline(TLCameraFoV)
+	V_timeline(TLCameraLookAt)
+	V_timeline(TLEffectPhaseEvent)
+	V_timeline(TLEmotionEvent)
+	V_timeline(TLFloatRTPC)
+	V_timeline(TLGenomeTextEvent)
+	V_timeline(TLHandsIK)
+	V_timeline(TLLayeredAnimation)
+	V_timeline(TLLookAtEvent)
+	V_timeline(TLMaterial)
+	V_timeline(TLPhysics)
+	V_timeline(TLPlayEffectEvent)
+	V_timeline(TLPlayRate)
+	V_timeline(TLShapeShift)
+	V_timeline(TLShot)
+	V_timeline(TLShotHoldPrevious)
+	V_timeline(TLShotZoom)
+	V_timeline(TLShowArmor)
+	V_timeline(TLShowHUD)
+	V_timeline(TLShowPeanuts)
+	V_timeline(TLShowVisual)
+	V_timeline(TLShowWeapon)
+	V_timeline(TLSoundEvent)
+	V_timeline(TLSplatter)
+	V_timeline(TLSprings)
+	V_timeline(TLSteppingFade)
+	V_timeline(TLSwitchLocationEvent)
+	V_timeline(TLSwitchStageEvent)
+	V_timeline(TLTransform)
+	V_timeline(TLVoice)
+	V_tlkeybase(TLEventKeyComponent)
+	V_tlkeybase(TLInterpolationKeyComponent)
+	V_tlkeybase(TLKeyBaseComponent)
+	V_tlchannel(TimelineActorPropertiesReflectionKeyComponent)
+	V_tlchannel(TLAtmosphereAndLightingChannel)
+	V_tlchannel(TLCameraDoFChannel)
+	V_tlchannel(TLCameraExposureChannel)
+	V_tlchannel(TLMaterialKeyComponent)
+	V_tlchannel(TLMaterialTextureKeyComponent)
+	V_tlchannel(TLShowArmorChannel)
+	V_tlchannel(TLSplatterChannel)
+	// Theoretically there are a lot of other EffectComponents that could get output here; haven't finished researching them
+	else
+	{
+		MakeDirectObjectRef(L, value, lifetime);
+	}
+
+#undef V_tlchannel
+#undef V_tlkeybase
+#undef V_timeline
+#undef V
+}
+
+void LuaPolymorphic<resource::effects::timeline::TLMaterialComponent::Parameter>::MakeRef(lua_State* L, resource::effects::timeline::TLMaterialComponent::Parameter* value, LifetimeHandle const& lifetime)
+{
+	resource::effects::timeline::TLMaterialComponent::Parameter::Range range;
+	value->getRange(range);
+	if (range.begin == nullptr || range.end == nullptr)
+	{
+		MakeDirectObjectRef(L, value, lifetime);
+	}
+	else if ((*range.begin)->GetType().GetStringView() == "TLMaterialKeyComponent")
+	{
+		MakeDirectObjectRef(L, static_cast<resource::effects::timeline::TLMaterialComponent::MaterialParameter*>(value), lifetime);
+	}
+	// For some reason, this takes the name TLInterpolationKeyComponent. I have no idea how it's supposed to be distinguished in actual code
+	else if ((*range.begin)->GetType().GetStringView() == "TLInterpolationKeyComponent")
+	{
+		MakeDirectObjectRef(L, static_cast<resource::effects::timeline::TLMaterialComponent::TextureParameter*>(value), lifetime);
 	}
 	else
 	{

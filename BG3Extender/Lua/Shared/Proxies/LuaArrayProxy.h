@@ -384,6 +384,12 @@ public:
 		MakeImpl(L, object, lifetime, GetImplementation<DynamicArrayProxyImpl<std::vector<T>, T, 4>>());
 	}
 
+	template <class T, size_t Extent>
+	inline static void Make(lua_State* L, std::span<T, Extent>* object, LifetimeHandle const& lifetime)
+	{
+		MakeImpl(L, object, lifetime, GetImplementation<ConstSizeArrayProxyImpl<std::span<T, Extent>, T, 6>>());
+	}
+
 	template <class T>
 	inline static typename T::ContainerType* Get(lua_State* L, int index)
 	{
