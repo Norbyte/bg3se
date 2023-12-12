@@ -513,15 +513,21 @@ sources = [
     'GameDefinitions/Interrupt.h',
     'GameDefinitions/RootTemplates.h',
     'GameDefinitions/Components/Boosts.h',
+    'GameDefinitions/Components/Camp.h',
     'GameDefinitions/Components/CharacterCreation.h',
     'GameDefinitions/Components/Combat.h',
     'GameDefinitions/Components/Components.h',
     'GameDefinitions/Components/Spell.h',
     'GameDefinitions/Components/Data.h',
+    'GameDefinitions/Components/Hit.h',
+    'GameDefinitions/Components/Item.h',
     'GameDefinitions/Components/Inventory.h',
     'GameDefinitions/Components/Visual.h',
     'GameDefinitions/Components/Passives.h',
+    'GameDefinitions/Components/Party.h',
     'GameDefinitions/Components/Runtime.h',
+    'GameDefinitions/Components/Status.h',
+    'GameDefinitions/Components/Tadpole.h',
     'GameDefinitions/Resources.h'
 ]
 

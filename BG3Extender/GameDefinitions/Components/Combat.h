@@ -86,6 +86,25 @@ struct TurnOrderComponent : public BaseComponent
 	int field_7C;
 };
 
+struct IsCombatPausedComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::IsCombatPaused;
+	static constexpr auto EngineClass = "eoc::combat::IsCombatPausedComponent";
+
+	bool Paused;
+};
+
+struct ThreatRangeComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ThreatRange;
+	static constexpr auto EngineClass = "eoc::combat::ThreatRangeComponent";
+
+	float field_0;
+	int field_4;
+	int field_8;
+};
+
+
 END_NS()
 
 BEGIN_NS(esv::combat)

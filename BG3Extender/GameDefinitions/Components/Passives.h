@@ -27,6 +27,23 @@ struct PassiveComponent : public BaseComponent
 	uint32_t field_1C;
 };
 
+struct PassiveUsageCount
+{
+	uint16_t field_0;
+	uint16_t field_2;
+	uint16_t field_4;
+	uint16_t field_6;
+	uint16_t field_8;
+};
+
+struct UsageCountComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::PassiveUsageCount;
+	static constexpr auto EngineClass = "eoc::passive::UsageCountComponent";
+
+	MultiHashMap<FixedString, PassiveUsageCount> Passives;
+};
+
 struct ToggledPassivesComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerToggledPassives;

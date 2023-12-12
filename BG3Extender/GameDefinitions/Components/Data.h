@@ -240,6 +240,22 @@ struct GodComponent : public BaseComponent
 
 	Guid God;
 };
+	
+struct ProficiencyComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::Proficiency;
+	static constexpr auto EngineClass = "eoc::stats::proficiency::ProficiencyComponent";
+
+	__int64 field_0;
+};
+	
+struct ProficiencyGroupComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ProficiencyGroup;
+	static constexpr auto EngineClass = "eoc::stats::proficiency::ProficiencyGroupComponent";
+
+	__int64 field_0;
+};
 
 
 struct LevelUpUpgrades
@@ -480,6 +496,14 @@ struct LockComponent : public BaseComponent
 	Array<Guid> field_18;
 };
 
+struct KeyComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::Key;
+	static constexpr auto EngineClass = "eoc::lock::KeyComponent";
+
+	FixedString Key;
+};
+
 struct SummonLifetimeComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::SummonLifetime;
@@ -514,6 +538,14 @@ struct HotbarContainerComponent : public BaseComponent
 
 	MultiHashMap<FixedString, Array<Bar>> Containers;
 	FixedString ActiveContainer;
+};
+
+struct HotbarCurrentDecksComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::HotbarDecks;
+	static constexpr auto EngineClass = "eoc::hotbar::CurrentDecksComponent";
+
+	MultiHashMap<FixedString, int32_t> Decks;
 };
 
 /// <summary>
@@ -889,6 +921,10 @@ struct DualWieldingComponent : public BaseComponent
 
 DEFINE_TAG_COMPONENT(eoc, GravityDisabledComponent, GravityDisabled)
 DEFINE_TAG_COMPONENT(eoc, GravityDisabledUntilMovedComponent, GravityDisabledUntilMoved)
+DEFINE_TAG_COMPONENT(eoc::improvised_weapon, CanBeWieldedComponent, CanBeWielded)
+DEFINE_TAG_COMPONENT(eoc::tag, AvatarComponent, Avatar)
+DEFINE_TAG_COMPONENT(eoc::tag, HasExclamationDialogComponent, HasExclamationDialog)
+DEFINE_TAG_COMPONENT(eoc::tag, TraderComponent, Trader)
 
 struct InteractionFilterComponent : public BaseComponent
 {
@@ -1028,6 +1064,7 @@ struct FTBParticipantComponent : public BaseComponent
 	EntityHandle field_18;
 };
 
+DEFINE_TAG_COMPONENT(eoc::ftb, RespectComponent, FTBRespect)
 
 struct ApprovalRatingsComponent : public BaseComponent
 {

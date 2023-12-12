@@ -1,7 +1,5 @@
 #pragma once
 
-#include <GameDefinitions/Base/Base.h>
-#include <GameDefinitions/EntitySystem.h>
 #include <GameDefinitions/Components/Data.h>
 #include <GameDefinitions/Components/Visual.h>
 

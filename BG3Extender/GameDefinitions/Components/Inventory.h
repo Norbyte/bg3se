@@ -51,4 +51,53 @@ struct MemberComponent : public BaseComponent
 	int16_t EquipmentSlot;
 };
 
+struct MemberTransformComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryMemberTransform;
+	static constexpr auto EngineClass = "eoc::inventory::MemberTransformComponent";
+
+	Transform Transform;
+};
+
+struct StackComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryStack;
+	static constexpr auto EngineClass = "eoc::inventory::StackComponent";
+
+	Array<EntityHandle> Arr_u64;
+	Array<uint8_t> Arr_u8;
+};
+
+struct StackMemberComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryStackMember;
+	static constexpr auto EngineClass = "eoc::inventory::StackMemberComponent";
+
+	EntityHandle Stack;
+};
+
+struct WeightComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryWeight;
+	static constexpr auto EngineClass = "eoc::inventory::WeightComponent";
+
+	int Weight;
+};
+
+struct WieldedComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::Wielded;
+	static constexpr auto EngineClass = "eoc::inventory::WieldedComponent";
+
+	Guid field_0;
+};
+
+
+DEFINE_TAG_COMPONENT(eoc::inventory, CanBeInComponent, CanBeInInventory)
+DEFINE_TAG_COMPONENT(eoc::inventory, CannotBePickpocketedComponent, CannotBePickpocketed)
+DEFINE_TAG_COMPONENT(eoc::inventory, CannotBeTakenOutComponent, CannotBeTakenOut)
+DEFINE_TAG_COMPONENT(eoc::inventory, DropOnDeathBlockedComponent, DropOnDeathBlocked)
+DEFINE_TAG_COMPONENT(eoc::inventory, NewItemsInsideComponent, NewItemsInside)
+DEFINE_TAG_COMPONENT(eoc::inventory, NonTradableComponent, NonTradable)
+
 END_NS()

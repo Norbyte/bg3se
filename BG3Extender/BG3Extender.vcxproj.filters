@@ -454,6 +454,12 @@
     <ClInclude Include="Extender\Version.h" />
     <ClInclude Include="Extender\BuildInfo.h" />
     <ClInclude Include="Extender\Shared\VirtualTextures.h" />
+    <ClInclude Include="GameDefinitions\Components\Camp.h" />
+    <ClInclude Include="GameDefinitions\Components\Hit.h" />
+    <ClInclude Include="GameDefinitions\Components\Item.h" />
+    <ClInclude Include="GameDefinitions\Components\Party.h" />
+    <ClInclude Include="GameDefinitions\Components\Status.h" />
+    <ClInclude Include="GameDefinitions\Components\Tadpole.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
