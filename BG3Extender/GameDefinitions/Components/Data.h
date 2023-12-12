@@ -39,8 +39,8 @@ struct Bound
 {
 	EntityHandle Entity;
 	RefMap<uint16_t, AIBound> AIBounds;
-	void* SomeContainer;
-	void* GameObject;
+	[[bg3::hidden]] void* SomeContainer;
+	[[bg3::hidden]] void* GameObject;
 	MultiHashSet<uint32_t> field_28;
 	glm::vec3 Translate;
 	glm::quat RotationQuat;
