@@ -69,6 +69,7 @@ namespace ecs
 {
 	struct EntityRef;
 	struct EntityWorld;
+	class EntitySystemHelpersBase;
 }
 
 namespace stats

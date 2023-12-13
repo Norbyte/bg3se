@@ -133,7 +133,10 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 	auto& pm = StaticLuaPropertyMap<cls>::PropertyMap; \
 	pm.Init(gExtender->GetPropertyMapManager().RegisterPropertyMap(&pm)); \
 	pm.BindConstructors(); \
-	pm.Name = FixedString(#cls);
+	pm.Name = FixedString(#cls); \
+	if constexpr (std::is_base_of_v<bg3se::BaseComponent, cls> && !std::is_same_v<cls, bg3se::BaseComponent>) { \
+		pm.ComponentType = cls::ComponentType; \
+	}
 
 #define BEGIN_CLS_TN(cls, typeName) ([]() { \
 	using PM = StaticLuaPropertyMap<cls>; \

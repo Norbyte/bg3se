@@ -257,6 +257,13 @@ void Crash(int type)
 #endif
 }
 
+void SetEntityRuntimeCheckLevel(int level)
+{
+	if (level >= (int)ecs::RuntimeCheckLevel::Once && level <= (int)ecs::RuntimeCheckLevel::FullECS) {
+		ecs::EntitySystemHelpersBase::CheckLevel = (ecs::RuntimeCheckLevel)level;
+	}
+}
+
 void RegisterDebugLib()
 {
 	DECLARE_MODULE(Debug, Both)
@@ -266,6 +273,7 @@ void RegisterDebugLib()
 	MODULE_FUNCTION(GenerateIdeHelpers)
 	MODULE_NAMED_FUNCTION("DebugBreak", LuaDebugBreak)
 	MODULE_FUNCTION(IsDeveloperMode)
+	MODULE_FUNCTION(SetEntityRuntimeCheckLevel)
 	MODULE_FUNCTION(Crash)
 	END_MODULE()
 }

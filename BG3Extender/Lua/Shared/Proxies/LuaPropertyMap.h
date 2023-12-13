@@ -78,6 +78,7 @@ public:
 	bool InheritanceUpdated{ false };
 	ValidationState Validated{ ValidationState::Unknown };
 	int RegistryIndex{ -1 };
+	std::optional<ExtComponentType> ComponentType;
 };
 
 inline PropertyOperationResult GenericSetNonWriteableProperty(lua_State* L,  void* obj, int index, std::size_t offset, uint64_t)

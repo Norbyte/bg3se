@@ -81,16 +81,28 @@ void GenericPropertyMap::AddRawProperty(char const* prop, typename RawPropertyAc
 
 bool GenericPropertyMap::ValidatePropertyMap(void* object)
 {
-	if (Validated == ValidationState::Unknown) {
-		if (ValidateObject(object)) {
-			Validated = ValidationState::Valid;
-		} else {
-			ERR("Object class %s failed validation; proxying of this class is disabled", Name.GetString());
-			Validated = ValidationState::Invalid;
-		}
-	}
+	switch (ecs::EntitySystemHelpersBase::CheckLevel) {
+	case ecs::RuntimeCheckLevel::None: 
+		return true;
 
-	return Validated == ValidationState::Valid;
+	case ecs::RuntimeCheckLevel::Once:
+		if (Validated == ValidationState::Unknown) {
+			if (ValidateObject(object)) {
+				Validated = ValidationState::Valid;
+			}
+			else {
+				ERR("Object class %s failed validation; proxying of this class is disabled", Name.GetString());
+				Validated = ValidationState::Invalid;
+			}
+		}
+
+		return Validated == ValidationState::Valid;
+
+	case ecs::RuntimeCheckLevel::Always:
+	case ecs::RuntimeCheckLevel::FullECS:
+	default:
+		return ValidateObject(object);
+	}
 }
 
 bool GenericPropertyMap::ValidateObject(void* object)

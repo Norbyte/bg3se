@@ -20,9 +20,23 @@ struct IndexSymbolInfo
 	int32_t* context;
 };
 
+enum class RuntimeCheckLevel
+{
+	// No property map validation
+	None,
+	// Validate each property map on the first mapped object
+	Once,
+	// Validate each mapped object separately
+	Always,
+	// Validate changed ECS components even if no Lua mapping is done
+	FullECS
+};
+
 class EntitySystemHelpersBase : public Noncopyable<EntitySystemHelpersBase>
 {
 public:
+	static RuntimeCheckLevel CheckLevel;
+
 	EntitySystemHelpersBase();
 
 	inline std::optional<ComponentTypeIndex> GetComponentIndex(STDString const& type) const
@@ -67,7 +81,7 @@ public:
 
 	inline std::optional<ComponentTypeIndex> GetComponentIndex(ExtComponentType type) const
 	{
-		auto idx = componentIndices_[(unsigned)type];
+		auto idx = components_[(unsigned)type].ComponentIndex;
 		if (idx != UndefinedIndex) {
 			return idx;
 		} else {
@@ -77,17 +91,28 @@ public:
 
 	inline std::size_t GetComponentSize(ExtComponentType type) const
 	{
-		return componentSizes_[(unsigned)type];
+		return components_[(unsigned)type].Size;
 	}
 
 	std::optional<ReplicationTypeIndex> GetReplicationIndex(ExtComponentType type) const
 	{
-		auto idx = replicationIndices_[(unsigned)type];
+		auto idx = components_[(unsigned)type].ReplicationIndex;
 		if (idx != -1) {
 			return idx;
 		} else {
 			return {};
 		}
+	}
+
+	lua::GenericPropertyMap* GetPropertyMap(ExtComponentType type) const
+	{
+		return components_[(unsigned)type].Properties;
+	}
+
+	void BindPropertyMap(ExtComponentType type, lua::GenericPropertyMap* pm)
+	{
+		assert(components_[(unsigned)type].Properties == nullptr);
+		components_[(unsigned)type].Properties = pm;
 	}
 
 	template <class T>
@@ -151,6 +176,7 @@ public:
 	UuidToHandleMappingComponent* GetUuidMappings();
 
 	void Update();
+	void PostUpdate();
 
 protected:
 	static constexpr int32_t UndefinedIndex{ -1 };
@@ -166,10 +192,16 @@ private:
 		ComponentTypeIndex ComponentIndex{ UndefinedComponent };
 		ReplicationTypeIndex ReplicationIndex{ UndefinedReplicationComponent };
 	};
+	
+	struct PerComponentData
+	{
+		ComponentTypeIndex ComponentIndex{ UndefinedComponent };
+		ReplicationTypeIndex ReplicationIndex{ UndefinedReplicationComponent };
+		std::size_t Size{ 0 };
+		lua::GenericPropertyMap* Properties{ nullptr };
+	};
 
-	std::array<ComponentTypeIndex, (size_t)ExtComponentType::Max> componentIndices_;
-	std::array<std::size_t, (size_t)ExtComponentType::Max> componentSizes_;
-	std::array<ReplicationTypeIndex, (size_t)ExtComponentType::Max> replicationIndices_;
+	std::array<PerComponentData, (size_t)ExtComponentType::Max> components_;
 	std::array<int32_t, (size_t)ExtQueryType::Max> queryIndices_;
 	std::array<int32_t, (size_t)ExtResourceManagerType::Max> staticDataIndices_;
 

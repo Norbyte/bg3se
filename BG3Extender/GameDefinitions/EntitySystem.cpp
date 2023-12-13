@@ -155,11 +155,14 @@ EntityClass* EntityWorld::GetEntityClass(EntityHandle entityHandle) const
 	return EntityTypes->GetEntityClass(entityHandle);
 }
 
+#if defined(NDEBUG)
+RuntimeCheckLevel EntitySystemHelpersBase::CheckLevel{ RuntimeCheckLevel::Once };
+#else
+RuntimeCheckLevel EntitySystemHelpersBase::CheckLevel{ RuntimeCheckLevel::FullECS };
+#endif
+
 EntitySystemHelpersBase::EntitySystemHelpersBase()
-	: componentIndices_{ UndefinedComponent }, 
-	componentSizes_{ 0 },
-	replicationIndices_{ UndefinedReplicationComponent },
-	queryIndices_{ UndefinedIndex },
+	: queryIndices_{ UndefinedIndex },
 	staticDataIndices_{ UndefinedIndex }
 {}
 
@@ -186,11 +189,11 @@ STDString SimplifyComponentName(StringView name)
 
 BitSet<>* EntitySystemHelpersBase::GetReplicationFlags(EntityHandle const& entity, ExtComponentType type)
 {
-	if (replicationIndices_[(unsigned)type] == UndefinedReplicationComponent) {
+	if (components_[(unsigned)type].ReplicationIndex == UndefinedReplicationComponent) {
 		return nullptr;
 	}
 
-	return GetReplicationFlags(entity, replicationIndices_[(unsigned)type]);
+	return GetReplicationFlags(entity, components_[(unsigned)type].ReplicationIndex);
 }
 
 BitSet<>* EntitySystemHelpersBase::GetReplicationFlags(EntityHandle const& entity, ReplicationTypeIndex replicationType)
@@ -216,11 +219,11 @@ BitSet<>* EntitySystemHelpersBase::GetReplicationFlags(EntityHandle const& entit
 
 BitSet<>* EntitySystemHelpersBase::GetOrCreateReplicationFlags(EntityHandle const& entity, ExtComponentType type)
 {
-	if (replicationIndices_[(unsigned)type] == UndefinedReplicationComponent) {
+	if (components_[(unsigned)type].ReplicationIndex == UndefinedReplicationComponent) {
 		return nullptr;
 	}
 
-	return GetOrCreateReplicationFlags(entity, replicationIndices_[(unsigned)type]);
+	return GetOrCreateReplicationFlags(entity, components_[(unsigned)type].ReplicationIndex);
 }
 
 BitSet<>* EntitySystemHelpersBase::GetOrCreateReplicationFlags(EntityHandle const& entity, ReplicationTypeIndex replicationType)
@@ -315,9 +318,7 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 	componentIndexToNameMappings_.clear();
 	componentIndexToTypeMappings_.clear();
 	replicationIndexToTypeMappings_.clear();
-	componentIndices_.fill(UndefinedComponent);
-	componentSizes_.fill(0);
-	replicationIndices_.fill(UndefinedReplicationComponent);
+	components_.fill(PerComponentData{});
 	queryIndices_.fill(UndefinedIndex);
 	staticDataIndices_.fill(UndefinedIndex);
 
@@ -430,8 +431,8 @@ void EntitySystemHelpersBase::MapComponentIndices(char const* componentName, Ext
 {
 	auto it = componentNameToIndexMappings_.find(componentName);
 	if (it != componentNameToIndexMappings_.end()) {
-		componentIndices_[(unsigned)type] = it->second.ComponentIndex;
-		replicationIndices_[(unsigned)type] = it->second.ReplicationIndex;
+		components_[(unsigned)type].ComponentIndex = it->second.ComponentIndex;
+		components_[(unsigned)type].ReplicationIndex = it->second.ReplicationIndex;
 
 		if (it->second.ComponentIndex != UndefinedComponent) {
 			componentIndexToTypeMappings_.insert(std::make_pair(it->second.ComponentIndex, type));
@@ -441,7 +442,7 @@ void EntitySystemHelpersBase::MapComponentIndices(char const* componentName, Ext
 			replicationIndexToTypeMappings_.insert(std::make_pair(it->second.ReplicationIndex, type));
 		}
 
-		componentSizes_[(unsigned)type] = size;
+		components_[(unsigned)type].Size = size;
 	} else {
 		OsiWarn("Could not find index for component: " << componentName);
 	}
@@ -476,7 +477,7 @@ void* EntitySystemHelpersBase::GetRawComponent(char const* nameGuid, ExtComponen
 
 	auto componentIndex = GetComponentIndex(type);
 	if (componentIndex) {
-		return world->GetRawComponent(nameGuid, *componentIndex, componentSizes_[(unsigned)type]);
+		return world->GetRawComponent(nameGuid, *componentIndex, components_[(unsigned)type].Size);
 	} else {
 		return nullptr;
 	}
@@ -491,7 +492,7 @@ void* EntitySystemHelpersBase::GetRawComponent(FixedString const& guid, ExtCompo
 
 	auto componentIndex = GetComponentIndex(type);
 	if (componentIndex) {
-		return world->GetRawComponent(guid, *componentIndex, componentSizes_[(unsigned)type]);
+		return world->GetRawComponent(guid, *componentIndex, components_[(unsigned)type].Size);
 	} else {
 		return nullptr;
 	}
@@ -506,7 +507,7 @@ void* EntitySystemHelpersBase::GetRawComponent(EntityHandle entityHandle, ExtCom
 
 	auto componentIndex = GetComponentIndex(type);
 	if (componentIndex) {
-		return world->GetRawComponent(entityHandle, *componentIndex, componentSizes_[(unsigned)type]);
+		return world->GetRawComponent(entityHandle, *componentIndex, components_[(unsigned)type].Size);
 	} else {
 		return nullptr;
 	}
@@ -516,7 +517,7 @@ UuidToHandleMappingComponent* EntitySystemHelpersBase::GetUuidMappings()
 {
 	auto query = GetQuery(ExtQueryType::UuidToHandleMapping);
 	if (query) {
-		return reinterpret_cast<UuidToHandleMappingComponent*>(query->GetFirstMatchingComponent(componentSizes_[(unsigned)ExtComponentType::UuidToHandleMapping]));
+		return reinterpret_cast<UuidToHandleMappingComponent*>(query->GetFirstMatchingComponent(components_[(unsigned)ExtComponentType::UuidToHandleMapping].Size));
 	} else {
 		return nullptr;
 	}
@@ -524,22 +525,63 @@ UuidToHandleMappingComponent* EntitySystemHelpersBase::GetUuidMappings()
 
 void EntitySystemHelpersBase::Update()
 {
-#if !defined(NDEBUG)
+	if (CheckLevel != RuntimeCheckLevel::FullECS) return;
+
 	auto world = GetEntityWorld();
 	auto pools = world->Components->ComponentPools;
-	for (auto i = 0; i < componentIndices_.size(); i++) {
-		auto componentIdx = componentIndices_[i];
-		if (componentIdx != UndefinedComponent) {
-			auto pool = pools.Find(componentIdx);
+	for (auto i = 0; i < components_.size(); i++) {
+		auto const& componentInfo = components_[i];
+		if (componentInfo.ComponentIndex != UndefinedComponent) {
+			auto pool = pools.Find(componentInfo.ComponentIndex);
 			if (pool != nullptr) {
-				auto name = componentIndexToNameMappings_[componentIdx];
-				if (pool->ComponentSizeInBytes != componentSizes_[i]) {
-					ERR("[ECS INTEGRITY CHECK] Component size mismatch (%s): local %d, ECS %d", name->c_str(), componentSizes_[i], pool->ComponentSizeInBytes);
+				auto name = componentIndexToNameMappings_[componentInfo.ComponentIndex];
+				if (pool->ComponentSizeInBytes != componentInfo.Size) {
+					ERR("[ECS INTEGRITY CHECK] Component size mismatch (%s): local %d, ECS %d", name->c_str(), componentInfo.Size, pool->ComponentSizeInBytes);
 				}
 			}
 		}
 	}
-#endif
+
+	for (uint32_t i = 0; i < world->Components->ComponentsByType.Values.Used; i++) {
+		auto componentId = world->Components->ComponentsByType.KeyAt(i);
+		auto const& components = world->Components->ComponentsByType.Values[i];
+		auto componentType = GetComponentType(componentId);
+		if (componentType) {
+			auto pm = GetPropertyMap(*componentType);
+			if (pm != nullptr && components.Values.Used > 0) {
+				for (uint32_t j = 0; j < components.Values.Used; j++) {
+					auto component = components.Values[j];
+					if (component != nullptr) {
+						pm->ValidateObject(component);
+					}
+				}
+			}
+		}
+	}
+}
+
+void EntitySystemHelpersBase::PostUpdate()
+{
+	if (CheckLevel != RuntimeCheckLevel::FullECS) return;
+
+	auto world = GetEntityWorld();
+	if (!world->Replication || !world->Replication->Dirty) return;
+
+	for (unsigned i = 0; i < world->Replication->ComponentPools.size(); i++) {
+		auto const& pool = world->Replication->ComponentPools[i];
+		auto componentType = GetComponentType(ReplicationTypeIndex(i));
+		if (componentType && pool.size() > 0) {
+			auto pm = GetPropertyMap(*componentType);
+			if (pm != nullptr) {
+				for (auto const& entity : pool) {
+					auto component = GetRawComponent(entity.Key(), *componentType);
+					if (component) {
+						pm->ValidateObject(component);
+					}
+				}
+			}
+		}
+	}
 }
 
 EntityHandle EntitySystemHelpersBase::GetEntityHandle(Guid uuid)

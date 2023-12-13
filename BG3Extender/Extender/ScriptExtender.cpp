@@ -224,11 +224,14 @@ void ScriptExtender::OnStatsLoad(stats::RPGStats::LoadProc* wrapped, stats::RPGS
 
 void ScriptExtender::OnECSUpdate(ecs::EntityWorld::UpdateProc* wrapped, ecs::EntityWorld* entityWorld, GameTime const& time)
 {
-	GetServer().GetEntityHelpers().Update();
+	if (entityWorld->Replication && GetServer().HasExtensionState()) {
+		GetServer().GetEntityHelpers().Update();
+	}
 
 	wrapped(entityWorld, time);
 
 	if (entityWorld->Replication && GetServer().HasExtensionState()) {
+		GetServer().GetEntityHelpers().PostUpdate();
 		esv::LuaServerPin lua(GetServer().GetExtensionState());
 		if (lua) {
 			lua->GetEntityEventHooks()->OnEntityReplication(*entityWorld);

@@ -15,6 +15,7 @@ public:
 	int RegisterPropertyMap(GenericPropertyMap* mt);
 	GenericPropertyMap* GetPropertyMap(int index);
 	void UpdateInheritance();
+	void RegisterComponents(ecs::EntitySystemHelpersBase& helpers);
 	
 	int RegisterArrayProxy(ArrayProxyImplBase* mt);
 	ArrayProxyImplBase* GetArrayProxy(int index);

@@ -422,6 +422,13 @@ struct BucketedHashSet
 	uint32_t HashTableSize;
 	uint32_t KeysSize;
 
+	TKey const& KeyAt(uint32_t index) const
+	{
+		auto keyTable = index >> BitsPerKeyBucket;
+		auto keySlot = index & ((1 << BitsPerKeyBucket) - 1);
+		return Keys[keyTable][keySlot];
+	}
+
 	int FindIndex(TKey const& key) const
 	{
 		if (HashTableSize == 0) return -1;

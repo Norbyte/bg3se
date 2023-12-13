@@ -40,6 +40,15 @@ void CppPropertyMapManager::UpdateInheritance()
 	} while (!pendingUpdates.empty());
 }
 
+void CppPropertyMapManager::RegisterComponents(ecs::EntitySystemHelpersBase& helpers)
+{
+	for (auto pm : propertyMaps_) {
+		if (pm->ComponentType) {
+			helpers.BindPropertyMap(*pm->ComponentType, pm);
+		}
+	}
+}
+
 int CppPropertyMapManager::RegisterArrayProxy(ArrayProxyImplBase* mt)
 {
 	arrayProxies_.push_back(mt);
