@@ -14,6 +14,32 @@ GenericPropertyMap* CppPropertyMapManager::GetPropertyMap(int index)
 	return propertyMaps_[index];
 }
 
+void CppPropertyMapManager::UpdateInheritance()
+{
+	auto pendingUpdates = propertyMaps_;
+	Array<GenericPropertyMap*> nextBatchUpdates;
+
+	do {
+		bool progressed{ false };
+		for (auto pm : pendingUpdates) {
+			assert(!pm->InheritanceUpdated);
+			if (pm->Parent == nullptr) {
+				pm->InheritanceUpdated = true;
+				progressed = true;
+			} else if (pm->Parent->InheritanceUpdated) {
+				InheritProperties(*pm->Parent, *pm);
+				progressed = true;
+			} else {
+				nextBatchUpdates.push_back(pm);
+			}
+		}
+
+		pendingUpdates = nextBatchUpdates;
+		nextBatchUpdates.clear();
+		assert(progressed && "Recursion in property map inheritance tree?");
+	} while (!pendingUpdates.empty());
+}
+
 int CppPropertyMapManager::RegisterArrayProxy(ArrayProxyImplBase* mt)
 {
 	arrayProxies_.push_back(mt);

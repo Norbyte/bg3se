@@ -71,9 +71,11 @@ public:
 	TAssigner* Assign{ nullptr };
 	TSerializer* Serialize{ nullptr };
 	TUnserializer* Unserialize{ nullptr };
+	GenericPropertyMap const* Parent{ nullptr };
 	std::size_t Size{ 0 };
 	bool IsInitializing{ false };
 	bool Initialized{ false };
+	bool InheritanceUpdated{ false };
 	ValidationState Validated{ ValidationState::Unknown };
 	int RegistryIndex{ -1 };
 };

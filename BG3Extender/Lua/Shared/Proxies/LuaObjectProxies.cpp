@@ -7,8 +7,18 @@
 
 BEGIN_NS(lua)
 
-void CopyRawProperties(GenericPropertyMap const& base, GenericPropertyMap& child)
+void InheritProperties(GenericPropertyMap const& base, GenericPropertyMap& child)
 {
+	// Check to make sure that the property map we're inheriting from is already initialized
+	assert(base.Initialized);
+	assert(base.InheritanceUpdated);
+	assert(child.Initialized);
+	assert(!child.IsInitializing);
+	assert(!child.InheritanceUpdated);
+	assert(child.Parent == &base);
+
+	child.IsInitializing = true;
+
 	for (auto const& prop : base.Properties) {
 		child.AddRawProperty(prop.first.GetString(), prop.second.Get, prop.second.Set, 
 			prop.second.Serialize, prop.second.Offset, prop.second.Flag);
@@ -28,6 +38,17 @@ void CopyRawProperties(GenericPropertyMap const& base, GenericPropertyMap& child
 
 	child.Parents.push_back(base.Name);
 	child.ParentRegistryIndices.push_back(base.RegistryIndex);
+
+	if (child.FallbackGetter == nullptr) {
+		child.FallbackGetter = base.FallbackGetter;
+	}
+
+	if (child.FallbackSetter == nullptr) {
+		child.FallbackSetter = base.FallbackSetter;
+	}
+
+	child.IsInitializing = false;
+	child.InheritanceUpdated = true;
 }
 
 template <class T>
@@ -126,7 +147,7 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 
 #define INHERIT(base) { \
 		auto& basePm = StaticLuaPropertyMap<base>::PropertyMap; \
-		InheritProperties(basePm, pm); \
+		MarkAsInherited(basePm, pm); \
 	}
 
 #define P(prop) \
@@ -234,6 +255,8 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 #undef P_GETTER_SETTER
 #undef P_FUN
 #undef P_FALLBACK
+
+		gExtender->GetPropertyMapManager().UpdateInheritance();
 
 		initialized = true;
 	}

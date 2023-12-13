@@ -53,7 +53,7 @@ void GenericPropertyMap::AddRawProperty(char const* prop, typename RawPropertyAc
 	typename RawPropertyAccessors::Setter* setter, typename RawPropertyAccessors::Serializer* serialize, 
 	std::size_t offset, uint64_t flag)
 {
-	assert(!Initialized && IsInitializing);
+	assert((!Initialized || !InheritanceUpdated) && IsInitializing);
 	auto key = FixedString(prop);
 	assert(Properties.find(key) == Properties.end());
 	Properties.insert(std::make_pair(key, RawPropertyAccessors{ key, offset, flag, getter, setter, serialize }));
@@ -62,7 +62,7 @@ void GenericPropertyMap::AddRawProperty(char const* prop, typename RawPropertyAc
 
 void GenericPropertyMap::AddRawValidator(char const* prop, typename RawPropertyValidators::Validator* validate, std::size_t offset, uint64_t flag)
 {
-	assert(!Initialized && IsInitializing);
+	assert((!Initialized || !InheritanceUpdated) && IsInitializing);
 	Validators.push_back(RawPropertyValidators{ FixedString(prop), validate, offset, flag });
 }
 

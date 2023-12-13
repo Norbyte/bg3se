@@ -14,6 +14,7 @@ class CppPropertyMapManager
 public:
 	int RegisterPropertyMap(GenericPropertyMap* mt);
 	GenericPropertyMap* GetPropertyMap(int index);
+	void UpdateInheritance();
 	
 	int RegisterArrayProxy(ArrayProxyImplBase* mt);
 	ArrayProxyImplBase* GetArrayProxy(int index);
