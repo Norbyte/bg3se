@@ -222,8 +222,12 @@ void ScriptExtender::OnStatsLoad(stats::RPGStats::LoadProc* wrapped, stats::RPGS
 	client_.RemoveThread(GetCurrentThreadId());
 }
 
-void ScriptExtender::OnECSUpdate(ecs::EntityWorld* entityWorld, GameTime const& time)
+void ScriptExtender::OnECSUpdate(ecs::EntityWorld::UpdateProc* wrapped, ecs::EntityWorld* entityWorld, GameTime const& time)
 {
+	GetServer().GetEntityHelpers().Update();
+
+	wrapped(entityWorld, time);
+
 	if (entityWorld->Replication && GetServer().HasExtensionState()) {
 		esv::LuaServerPin lua(GetServer().GetExtensionState());
 		if (lua) {
@@ -444,7 +448,7 @@ void ScriptExtender::PostStartup()
 		//engineHooks_.Kernel_FindNextFileW.SetWrapper(&ScriptExtender::OnFindNextFileW, this);
 		//engineHooks_.Kernel_FindClose.SetWrapper(&ScriptExtender::OnFindClose, this);
 		engineHooks_.RPGStats__Load.SetWrapper(&ScriptExtender::OnStatsLoad, this);
-		engineHooks_.ecs__EntityWorld__Update.SetPostHook(&ScriptExtender::OnECSUpdate, this);
+		engineHooks_.ecs__EntityWorld__Update.SetWrapper(&ScriptExtender::OnECSUpdate, this);
 	}
 
 	GameVersionInfo gameVersion;

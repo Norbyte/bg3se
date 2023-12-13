@@ -73,19 +73,6 @@ void* EntityClass::GetComponent(InstanceComponentPointer const& entityPtr, uint8
 	assert(buf != nullptr);
 	return buf + componentSize * entityPtr.EntryIndex;
 }
-
-ComponentPool* EntityComponents::SparseHashMap::Get(ComponentTypeIndex index) const
-{
-	auto hash = ((index.Value() & 0x7FFF) + 0x780 * (index.Value() >> 15));
-	if (hash < (int)SetValues.Size && SetValues[hash]) {
-		auto idx = NextIds[hash];
-		if (idx != -1 && Keys[idx] == index.Value()) {
-			return Values[idx];
-		}
-	}
-
-	return nullptr;
-}
 	
 void* EntityWorld::GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize)
 {
@@ -97,21 +84,21 @@ void* EntityWorld::GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex
 		}
 	}
 
-	/*auto compPool = Components->ComponentsByType.Find((uint16_t)type);
+	auto compPool = Components->ComponentsByType.Find((uint16_t)type);
 	if (compPool) {
-		auto transientRef = (*compPool)->Find(entityHandle.Handle);
+		auto transientRef = compPool->Find(entityHandle);
 		if (transientRef) {
-			return **transientRef;
+			return *transientRef;
 		}
 	}
 
 	auto compPool2 = Components->ComponentsByType2.Find((uint16_t)type);
 	if (compPool2) {
-		auto transientRef = (*compPool2)->Find(entityHandle.Handle);
+		auto transientRef = compPool2->Find(entityHandle);
 		if (transientRef) {
-			return **transientRef;
+			return *transientRef;
 		}
-	}*/
+	}
 
 	return nullptr;
 }
@@ -533,6 +520,26 @@ UuidToHandleMappingComponent* EntitySystemHelpersBase::GetUuidMappings()
 	} else {
 		return nullptr;
 	}
+}
+
+void EntitySystemHelpersBase::Update()
+{
+#if !defined(NDEBUG)
+	auto world = GetEntityWorld();
+	auto pools = world->Components->ComponentPools;
+	for (auto i = 0; i < componentIndices_.size(); i++) {
+		auto componentIdx = componentIndices_[i];
+		if (componentIdx != UndefinedComponent) {
+			auto pool = pools.Find(componentIdx);
+			if (pool != nullptr) {
+				auto name = componentIndexToNameMappings_[componentIdx];
+				if (pool->ComponentSizeInBytes != componentSizes_[i]) {
+					ERR("[ECS INTEGRITY CHECK] Component size mismatch (%s): local %d, ECS %d", name->c_str(), componentSizes_[i], pool->ComponentSizeInBytes);
+				}
+			}
+		}
+	}
+#endif
 }
 
 EntityHandle EntitySystemHelpersBase::GetEntityHandle(Guid uuid)

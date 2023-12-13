@@ -150,6 +150,8 @@ public:
 	EntityHandle GetEntityHandle(Guid uuid);
 	UuidToHandleMappingComponent* GetUuidMappings();
 
+	void Update();
+
 protected:
 	static constexpr int32_t UndefinedIndex{ -1 };
 

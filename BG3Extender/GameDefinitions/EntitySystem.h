@@ -34,6 +34,12 @@ END_NS()
 BEGIN_SE()
 
 template <>
+inline uint64_t SparseHashMapHash<ecs::ComponentTypeIndex>(ecs::ComponentTypeIndex const& v)
+{
+	return (v.Value() & 0x7FFF) + (v.Value() >> 15 << 11);
+}
+
+template <>
 inline uint64_t MultiHashMapHash<ecs::ComponentTypeIndex>(ecs::ComponentTypeIndex const& v)
 {
 	return ((v.Value() & 0x7FFF) + 0x780 * (v.Value() >> 15))
@@ -359,8 +365,176 @@ struct ComponentRegistryEntry1 : public ProtectedGameObject<ComponentRegistryEnt
 	Array<void*> field_28;
 };
 
+template <class T>
+struct BucketedRawStaticArray
+{
+	T** Buckets;
+	uint16_t BitsPerBucket;
+	uint16_t NumBuckets;
+	uint32_t Used;
+
+	inline T const& operator [] (uint32_t index) const
+	{
+		assert(index < ((uint32_t)NumBuckets << BitsPerBucket));
+		return Buckets[index >> BitsPerBucket][index & ((1 << BitsPerBucket) - 1)];
+	}
+
+	inline T& operator [] (uint32_t index)
+	{
+		assert(index < ((uint32_t)NumBuckets << BitsPerBucket));
+		return Buckets[index >> BitsPerBucket][index & ((1 << BitsPerBucket) - 1)];
+	}
+};
+
+template <class T>
+struct BucketedStaticArray
+{
+	ComponentDataStore* Store;
+	T** Buckets;
+	uint16_t BitsPerBucket;
+	uint16_t NumBuckets;
+	uint32_t Used;
+
+	inline T const& operator [] (uint32_t index) const
+	{
+		assert(index < ((uint32_t)NumBuckets << BitsPerBucket));
+		return Buckets[index >> BitsPerBucket][index & ((1 << BitsPerBucket) - 1)];
+	}
+
+	inline T& operator [] (uint32_t index)
+	{
+		assert(index < ((uint32_t)NumBuckets << BitsPerBucket));
+		return Buckets[index >> BitsPerBucket][index & ((1 << BitsPerBucket) - 1)];
+	}
+};
+
+template <class TKey>
+struct BucketedHashSet
+{
+	ComponentDataStore* Store;
+	int32_t** HashKeys;
+	int32_t** NextIds;
+	TKey** Keys;
+	uint16_t BitsPerHashBucket;
+	uint16_t NumHashBuckets;
+	uint16_t BitsPerKeyBucket;
+	uint16_t NumKeyBuckets;
+	uint32_t HashTableSize;
+	uint32_t KeysSize;
+
+	int FindIndex(TKey const& key) const
+	{
+		if (HashTableSize == 0) return -1;
+
+		auto hash = MultiHashMapHash(key) % HashTableSize;
+		auto keyIndex = HashKeys[hash >> BitsPerHashBucket][hash & ((1 << BitsPerHashBucket) - 1)];
+		while (keyIndex >= 0) {
+			auto keyTable = keyIndex >> BitsPerKeyBucket;
+			auto keySlot = keyIndex & ((1 << BitsPerKeyBucket) - 1);
+			if (Keys[keyTable][keySlot] == key) return keyIndex;
+			keyIndex = NextIds[keyTable][keySlot];
+		}
+
+		return -1;
+	}
+};
+
+struct BucketedBitSet
+{
+	uint64_t** BitSet;
+	uint16_t BitsPerBucket;
+	uint16_t NumBuckets;
+	uint32_t NumQwords;
+
+	inline uint32_t Size() const
+	{
+		return NumQwords << 6;
+	}
+
+	inline bool Get(uint32_t index) const
+	{
+		if (Size() < index) {
+			return false;
+		} else {
+			auto qword = index >> 6;
+			return _bittest64((int64_t*)&BitSet[qword >> BitsPerBucket][qword & ((1 << BitsPerBucket) - 1)], index & 0x3f);
+		}
+	}
+
+	inline bool operator [] (uint32_t index) const
+	{
+		return Get(index);
+	}
+
+	inline void Set(uint32_t index)
+	{
+		assert(index < Size());
+		auto qword = index >> 6;
+		BitSet[qword >> BitsPerBucket][qword & ((1 << BitsPerBucket) - 1)] |= (1ull << (index & 0x3f));
+	}
+
+	inline void Clear(uint32_t index)
+	{
+		assert(index < Size());
+		auto qword = index >> 6;
+		BitSet[qword >> BitsPerBucket][qword & ((1 << BitsPerBucket) - 1)] &= ~(1ull << (index & 0x3f));
+	}
+};
+
+template <class TKey, class TValue>
+struct BucketedSparseHashSet
+{
+	ComponentDataStore* Store;
+	BucketedBitSet Bitmap;
+
+	BucketedRawStaticArray<uint16_t> LookupTable;
+	BucketedStaticArray<TKey> Keys;
+	BucketedStaticArray<TValue> Values;
+
+	int FindIndex(TKey const& key) const
+	{
+		auto hash = (uint32_t)SparseHashMapHash(key);
+		if (!Bitmap[hash]) return -1;
+
+		auto keyIndex = LookupTable[hash];
+		if (keyIndex == 0xFFFF || Keys[keyIndex] != key) return -1;
+		return keyIndex;
+	}
+
+	TValue const* Find(TKey const& key) const
+	{
+		auto index = FindIndex(key);
+		if (index < 0) return nullptr;
+
+		return &Values[index];
+	}
+};
+
+template <class TKey, class TValue>
+struct BucketedHashMap : public BucketedHashSet<TKey>
+{
+	BucketedStaticArray<TValue> Values;
+
+	TValue* Find(TKey const& key)
+	{
+		auto index = this->FindIndex(key);
+		if (index < 0) return nullptr;
+
+		return &Values[index];
+	}
+
+	TValue const* Find(TKey const& key) const
+	{
+		auto index = this->FindIndex(key);
+		if (index < 0) return nullptr;
+
+		return &Values[index];
+	}
+};
+
 struct EntityComponents : public ProtectedGameObject<EntityComponents>
 {
+	/*
 	struct SparseHashMap
 	{
 		BitSet<> SetValues;
@@ -397,17 +571,43 @@ struct EntityComponents : public ProtectedGameObject<EntityComponents>
 	ComponentDataStore* Store;
 	EntityWorld* EntityWorld;
 	EntityTypeSalts* Salts;
-	__int64 field_128;
-};
+	__int64 field_128;*/
 
-struct ComponentPools2 : public ProtectedGameObject<ComponentPools2>
-{
-	__int64 field_0;
+	struct ComponentPoolInfo
+	{
+		BucketedStaticArray<void*> Components;
+		uint32_t NumComponents;
+		uint16_t ComponentSizeInBytes;
+		uint16_t ComponentTypeId;
+		void* DestructorProc;
+	};
+	
+	struct ComponentRef
+	{
+		uint32_t PoolIndex;
+		uint16_t field_4;
+		uint16_t ComponentTypeId;
+	};
+
+	struct EntityComponentMap
+	{
+		BucketedStaticArray<ComponentRef> Store;
+		uint64_t X;
+		uint64_t Y;
+		uint16_t Flags;
+		__int16 field_2A;
+	};
+
+	BucketedHashMap<EntityHandle, EntityComponentMap> Entities;
+	BucketedSparseHashSet<ComponentTypeIndex, ComponentPoolInfo> ComponentPools;
+	bool field_A0;
+	BucketedHashMap<ComponentTypeIndex, BucketedHashMap<EntityHandle, void*>> ComponentsByType;
+	BucketedHashMap<ComponentTypeIndex, BucketedHashMap<EntityHandle, void*>> ComponentsByType2;
+	Array<ComponentRegistryEntry1*>* ComponentTypes;
 	ComponentDataStore* Store;
-	MultiHashMap<EntityHandle, EntityComponents::EntityEntry*> Entities;
-	EntityComponents::SparseHashMap ComponentPools;
-	__int64 field_90;
-	__int64 field_98;
+	EntityWorld* EntityWorld;
+	EntityTypeSalts* Salts;
+	__int64 field_158;
 };
 
 struct EntityWorld : public ProtectedGameObject<EntityWorld>
@@ -422,11 +622,11 @@ struct EntityWorld : public ProtectedGameObject<EntityWorld>
 	__int64 field_128;
 	__int64 field_130;
 	__int64 field_138;
-	uint64_t GameTime[3];
-	void*  ECSUpdateBatch;
+	GameTime Time;
+	void* ECSUpdateBatch;
 	int field_160;
 	__int64 field_168;
-	Array<ComponentPools2> ComponentPools;
+	Array<void*> ComponentPools;
 	Array<ComponentRegistryEntry1*> ComponentTypes;
 	bool field_190;
 	bool NeedsUpdate;
