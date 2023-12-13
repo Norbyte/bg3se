@@ -576,6 +576,9 @@ using Map = MapBase<MapInternals<TKey, TValue>>;
 template <class TKey, class TValue>
 using RefMap = MapBase<RefMapInternals<TKey, TValue>>;
 
+template <class T>
+inline uint64_t SparseHashMapHash(T const& v);
+
 // Special hashing needed for FixedStrings in the new hash table
 
 template <class T>
