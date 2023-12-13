@@ -426,7 +426,7 @@ struct StateComponent : public BaseComponent
 
 	EntityHandle Entity;
 	EntityHandle field_8;
-	SpellIdBase SpellId;
+	SpellId SpellId;
 	int field_38;
 	Array<ReposeState2> Repose;
 	std::optional<glm::vec3> field_50;

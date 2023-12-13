@@ -36,9 +36,7 @@ struct HearingComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::Hearing;
 	static constexpr auto EngineClass = "eoc::HearingComponent";
 
-	float Sight;
 	float Hearing;
-	float FOV;
 };
 
 	

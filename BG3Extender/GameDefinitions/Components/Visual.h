@@ -117,7 +117,13 @@ struct PhysicsComponent : public BaseComponent
 	static constexpr auto EngineClass = "ls::PhysicsComponent";
 
 	[[bg3::hidden]]
-	void* field_0;
+	void* Physics;
+	int field_8;
+	int field_C;
+	int field_10;
+	uint8_t field_14;
+	uint8_t field_15;
+	uint8_t field_16;
 };
 
 struct CharacterCreationAppearanceComponent : public BaseComponent
