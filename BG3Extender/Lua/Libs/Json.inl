@@ -143,6 +143,14 @@ void* GetLightCppObjectPointer(lua_State* L, int index)
 {
 	CppObjectMetadata meta;
 	lua_get_cppobject(L, index, meta);
+
+	// Value-type userdata has no pointer (we don't want to mark same enum values/entities as false recursion)
+	if (meta.MetatableTag == MetatableTag::EnumValue
+		|| meta.MetatableTag == MetatableTag::BitfieldValue
+		|| meta.MetatableTag == MetatableTag::Entity) {
+		return nullptr;
+	}
+
 	return (void*)((uintptr_t)meta.Ptr | ((uint64_t)meta.PropertyMapTag << 48) | ((uint64_t)meta.MetatableTag << 62));
 }
 
