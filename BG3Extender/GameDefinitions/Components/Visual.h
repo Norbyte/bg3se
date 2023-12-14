@@ -80,6 +80,14 @@ struct AppearanceOverrideComponent : public BaseComponent
 	GameObjectVisualData Visual;
 };
 
+struct CharacterCreationTemplateOverrideComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::CharacterCreationTemplateOverride;
+	static constexpr auto EngineClass = "eoc::object_visual::CharacterCreationTemplateOverrideComponent";
+
+	FixedString Template;
+};
+
 struct DisplayNameComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::DisplayName;

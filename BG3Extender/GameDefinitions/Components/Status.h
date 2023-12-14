@@ -2,6 +2,14 @@
 
 BEGIN_NS(status)
 
+struct ContainerComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::StatusContainer;
+	static constexpr auto EngineClass = "eoc::status::ContainerComponent";
+
+	MultiHashMap<EntityHandle, FixedString> Statuses;
+};
+
 struct CauseComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::StatusCause;

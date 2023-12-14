@@ -5,6 +5,25 @@
 
 BEGIN_SE()
 
+struct RulesetComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::Ruleset;
+	static constexpr auto EngineClass = "eoc::ruleset::RulesetComponent";
+
+	Array<Guid> Rulesets;
+	// FIXME: First variant is void
+	MultiHashMap<Guid, std::variant<uint8_t, int32_t, float, FixedString, bool>> Modifiers;
+};
+
+struct RulesetModifiersComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::RulesetModifiers;
+	static constexpr auto EngineClass = "eoc::ruleset::RulesetModifiersComponent";
+
+	// FIXME: First variant is void
+	MultiHashMap<Guid, std::variant<uint8_t, int32_t, float, FixedString, bool>> Modifiers;
+};
+
 struct ActionResourcesComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::ActionResources;
@@ -450,6 +469,19 @@ struct UserReservedForComponent : public BaseComponent
 
 	int UserID;
 };
+
+
+struct ShapeshiftStateComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ShapeshiftState;
+	static constexpr auto EngineClass = "eoc::shapeshift::StateComponent";
+
+	std::optional<uint8_t> field_0;
+	std::optional<FixedString> field_4;
+	std::optional<FixedString> field_C;
+	uint8_t field_14;
+};
+
 
 
 END_SE()

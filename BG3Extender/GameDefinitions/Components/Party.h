@@ -7,7 +7,7 @@ struct View
 	int UserID;
 	Guid field_8;
 	Guid field_18;
-	Array<EntityHandle> field_28;
+	Array<EntityHandle> Characters;
 };
 
 
@@ -18,7 +18,26 @@ struct ViewComponent : public BaseComponent
 
 	Guid field_0;
 	Array<View> Views;
-	Array<EntityHandle> Entities;
+	Array<EntityHandle> Characters;
+};
+
+
+struct CompositionComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::PartyComposition;
+	static constexpr auto EngineClass = "eoc::party::CompositionComponent";
+
+	struct Member
+	{
+		Guid field_8;
+		Guid field_18;
+		Array<uint8_t> field_28;
+	};
+
+
+	EntityHandle Party;
+	Guid field_8;
+	Array<Member> Members;
 };
 
 
@@ -76,7 +95,7 @@ struct MemberComponent : public BaseComponent
 
 	int UserID;
 	Guid field_8;
-	EntityHandle PartyView;
+	EntityHandle Party;
 	Guid field_20;
 	uint8_t field_30;
 };

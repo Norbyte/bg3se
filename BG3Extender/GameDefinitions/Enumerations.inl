@@ -139,6 +139,9 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 	E(BaseStats)
 	E(Expertise)
 	E(HealBlock)
+	E(Ruleset)
+	E(RulesetModifiers)
+	E(ShapeshiftState)
 
 	// Passives
 	E(PassiveContainer)
@@ -194,6 +197,7 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 
 	// Party
 	E(PartyView)
+	E(PartyComposition)
 	E(PartyPortals)
 	E(PartyRecipes)
 	E(PartyWaypoints)
@@ -303,6 +307,7 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 	E(SightEntityViewshed)
 
 	// Status
+	E(StatusContainer)
 	E(StatusCause)
 	E(StatusID)
 	E(StatusIncapacitated)
@@ -390,6 +395,7 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 	E(DualWielding)
 	E(GameObjectVisual)
 	E(AppearanceOverride)
+	E(CharacterCreationTemplateOverride)
 	E(GravityDisabled)
 	E(GravityDisabledUntilMoved)
 	E(CanBeWielded)
