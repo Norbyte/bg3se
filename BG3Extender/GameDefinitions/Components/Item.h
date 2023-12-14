@@ -21,7 +21,7 @@ struct DyeComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::ItemDye;
 	static constexpr auto EngineClass = "eoc::item::DyeComponent";
 
-	glm::vec4 Color;
+	Guid Color;
 };
 
 struct MapMarkerStyleComponent : public BaseComponent
