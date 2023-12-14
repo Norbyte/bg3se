@@ -319,10 +319,10 @@ struct AnimationInfoComponent : public BaseComponent
 	static constexpr auto EngineClass = "eoc::spell_cast::AnimationInfoComponent";
 
 	uint8_t field_0;
-	glm::vec3 field_4;
+	glm::vec3 TargetPosition;
 	uint8_t field_10;
-	glm::vec3 field_14;
-	EntityHandle field_20;
+	glm::vec3 TargetRotation;
+	EntityHandle Target;
 	uint8_t field_28;
 	uint8_t field_29;
 	uint8_t field_2A;
@@ -389,7 +389,7 @@ struct RollsComponent : public BaseComponent
 
 	struct Roll
 	{
-		EntityHandle field_0;
+		EntityHandle Target;
 		std::optional<EntityHandle> field_8;
 		Array<RollHit> Hits;
 		MultiHashMap<FixedString, int32_t> MHS_FS_i32;
@@ -404,19 +404,19 @@ struct RollsComponent : public BaseComponent
 	Array<Roll> Rolls;
 };
 
-struct ReposeState
+struct TargetInfo : public ProtectedGameObject<TargetInfo>
 {
-	__int64 field_0;
-	EntityHandle field_8;
+	[[bg3::hidden]] void* VMT;
+	EntityHandle Target;
 	std::optional<EntityHandle> field_10;
-	std::optional<glm::vec3> field_20;
+	std::optional<glm::vec3> Position;
 };
 
-struct ReposeState2
+struct TargetInfo2
 {
-	ReposeState Repose;
-	uint8_t field_30;
-	std::optional<ReposeState> Repose2;
+	TargetInfo Target;
+	SpellType SpellType;
+	std::optional<TargetInfo> Target2;
 };
 
 struct StateComponent : public BaseComponent
@@ -425,13 +425,13 @@ struct StateComponent : public BaseComponent
 	static constexpr auto EngineClass = "eoc::spell_cast::StateComponent";
 
 	EntityHandle Entity;
-	EntityHandle field_8;
+	EntityHandle Caster;
 	SpellId SpellId;
 	int field_38;
-	Array<ReposeState2> Repose;
-	std::optional<glm::vec3> field_50;
+	Array<TargetInfo2> Targets;
+	std::optional<glm::vec3> CasterMoveToPosition;
 	std::optional<glm::vec3> field_60;
-	glm::vec3 field_70;
+	glm::vec3 CasterStartPosition;
 	EntityHandle field_80;
 	int field_88;
 	Guid field_90;
@@ -448,13 +448,13 @@ struct SyncTargetingComponent : public BaseComponent
 	EntityHandle field_8;
 	std::optional<EntityHandle> field_10;
 	std::optional<glm::vec3> field_20;
-	Array<ReposeState2> Repose;
+	Array<TargetInfo2> Targets;
 	uint8_t field_40;
 	int field_44;
 	std::optional<glm::vec3> field_48;
 	std::optional<glm::vec3> field_58;
-	std::optional<glm::vec3> field_68;
-	std::optional<glm::vec3> field_78;
+	std::optional<glm::vec3> CasterPosition;
+	std::optional<glm::vec3> CasterMoveToPosition;
 	std::optional<glm::vec3> field_88;
 };
 
@@ -513,12 +513,12 @@ struct CastHitDelayComponent : public BaseComponent
 
 	struct CastHitDelay
 	{
-		int field_0;
+		int HitNumber;
 		int field_4;
 		int field_8;
 		int field_C;
-		int field_10;
-		FixedString field_14;
+		float field_10;
+		FixedString TextKey;
 		int field_18;
 	};
 
@@ -535,13 +535,7 @@ struct CastResponsibleComponent : public BaseComponent
 	EntityHandle Entity;
 };
 
-struct ClientInitiatedComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerSpellClientInitiated;
-	static constexpr auto EngineClass = "esv::spell_cast::ClientInitiatedComponent";
-
-	uint8_t Dummy;
-};
+DEFINE_TAG_COMPONENT(esv::spell_cast, ClientInitiatedComponent, ServerSpellClientInitiated)
 
 struct ExternalsComponent : public BaseComponent
 {
@@ -630,7 +624,7 @@ struct StateComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerSpellCastState;
 	static constexpr auto EngineClass = "esv::spell_cast::StateComponent";
 
-	uint8_t field_0;
+	uint8_t State;
 	int field_4;
 	CastState State;
 	int field_28;
