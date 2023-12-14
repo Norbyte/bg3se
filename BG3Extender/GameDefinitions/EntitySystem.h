@@ -541,45 +541,6 @@ struct BucketedHashMap : public BucketedHashSet<TKey>
 
 struct EntityComponents : public ProtectedGameObject<EntityComponents>
 {
-	/*
-	struct SparseHashMap
-	{
-		BitSet<> SetValues;
-		Array<int16_t> NextIds;
-		Array<int16_t> Keys;
-		Array<ComponentPool*> Values;
-
-		ComponentPool* Get(ComponentTypeIndex index) const;
-	};
-
-	struct EntityEntry : public ProtectedGameObject<EntityEntry>
-	{
-		ComponentTypeMask ComponentTypeIdMask;
-		ComponentTypeMask ComponentUpdateFlags1;
-		ComponentTypeMask ComponentUpdateFlags2;
-		uint64_t field_2D0[8];
-		__int64 field_310;
-		__int64 field_318;
-		Array<uint64_t> ComponentHandles;
-		Array<uint64_t> field_330;
-		int Flags;
-		int field_344;
-		__int64 field_348;
-	};
-
-	MultiHashMap<EntityHandle, EntityEntry*> Entities;
-	SparseHashMap ComponentPools;
-	char field_80;
-	MultiHashMap<ComponentTypeIndex, MultiHashMap<uint64_t, void*>> ComponentsByType;
-	MultiHashMap<ComponentTypeIndex, MultiHashMap<uint64_t, void*>> ComponentsByType2;
-	void* field_108;
-	void* field_110;
-	Array<void*>* ComponentTypes;
-	ComponentDataStore* Store;
-	EntityWorld* EntityWorld;
-	EntityTypeSalts* Salts;
-	__int64 field_128;*/
-
 	struct ComponentPoolInfo
 	{
 		BucketedStaticArray<void*> Components;
@@ -591,7 +552,7 @@ struct EntityComponents : public ProtectedGameObject<EntityComponents>
 	
 	struct ComponentRef
 	{
-		uint32_t PoolIndex;
+		int32_t PoolIndex;
 		uint16_t field_4;
 		uint16_t ComponentTypeId;
 	};
@@ -617,6 +578,33 @@ struct EntityComponents : public ProtectedGameObject<EntityComponents>
 	__int64 field_158;
 };
 
+struct NewEntityPool : public ProtectedGameObject<NewEntityPool>
+{
+	BucketedRawStaticArray<EntityHandle> FreePool;
+	uint32_t NextFreeSlotIndex;
+	uint32_t HighestIndex;
+	uint32_t NumFreeSlots;
+	__int64 field_20;
+	__int64 field_28;
+	__int64 field_30;
+	__int64 field_38;
+};
+
+struct NewEntityPools : public ProtectedGameObject<NewEntityPools>
+{
+	std::array<NewEntityPool, 0x40> Pools;
+};
+
+struct ComponentUpdates : public ProtectedGameObject<ComponentUpdates>
+{
+	NewEntityPools* NewEntities;
+	ComponentDataStore* Store;
+	BucketedHashMap<EntityHandle, EntityComponents::EntityComponentMap> Entities;
+	BucketedSparseHashSet<ComponentTypeIndex, EntityComponents::ComponentPoolInfo> ComponentPools;
+	bool field_A0;
+	uint64_t field_B8;
+};
+
 struct EntityWorld : public ProtectedGameObject<EntityWorld>
 {
 	using UpdateProc = void (EntityWorld* self, GameTime const& time);
@@ -633,7 +621,7 @@ struct EntityWorld : public ProtectedGameObject<EntityWorld>
 	void* ECSUpdateBatch;
 	int field_160;
 	__int64 field_168;
-	Array<void*> ComponentPools;
+	Array<ComponentUpdates*> ComponentUpdates;
 	Array<ComponentRegistryEntry1*> ComponentTypes;
 	bool field_190;
 	bool NeedsUpdate;

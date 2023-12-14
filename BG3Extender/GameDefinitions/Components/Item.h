@@ -16,6 +16,14 @@ struct DestroyedComponent : public BaseComponent
 	std::optional<DestroyInfo> Info;
 };
 
+struct DyeComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ItemDye;
+	static constexpr auto EngineClass = "eoc::item::DyeComponent";
+
+	glm::vec4 Color;
+};
+
 struct MapMarkerStyleComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::MapMarkerStyle;

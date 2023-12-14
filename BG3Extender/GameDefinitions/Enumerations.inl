@@ -147,6 +147,7 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 
 	// Item components
 	E(ItemDestroyed)
+	E(ItemDye)
 	E(MapMarkerStyle)
 	E(ItemPortal)
 	E(IsDoor)
