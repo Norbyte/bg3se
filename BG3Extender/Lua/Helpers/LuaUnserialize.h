@@ -7,20 +7,20 @@ PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, Array
 {
 	if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>) {
 		return PropertyOperationResult::UnsupportedType;
+	} else {
+		StackCheck _(L);
+		luaL_checktype(L, index, LUA_TTABLE);
+
+		obj->clear();
+		for (auto idx : iterate(L, index)) {
+			TK value;
+			Unserialize(L, idx, &value);
+			// FIXME - in-place unserialize
+			obj->push_back(value);
+		}
+
+		return PropertyOperationResult::Success;
 	}
-
-	StackCheck _(L);
-	luaL_checktype(L, index, LUA_TTABLE);
-
-	obj->clear();
-	for (auto idx : iterate(L, index)) {
-		TK value;
-		Unserialize(L, idx, &value);
-		// FIXME - in-place unserialize
-		obj->push_back(value);
-	}
-
-	return PropertyOperationResult::Success;
 }
 
 template <class TK>
@@ -28,49 +28,47 @@ PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, Ar
 {
 	if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>) {
 		return PropertyOperationResult::UnsupportedType;
+	} else {
+		StackCheck _(L);
+		auto arr = ArrayProxyMetatable::Get<DynamicArrayProxyImpl<Array<TK>, TK, 2>>(L, index);
+		*obj = *arr;
+		return PropertyOperationResult::Success;
 	}
-
-	StackCheck _(L);
-	auto arr = ArrayProxyMetatable::Get<DynamicArrayProxyImpl<Array<TK>, TK, 2>>(L, index);
-	*obj = *arr;
-	return PropertyOperationResult::Success;
 }
 
 template <class TK>
 PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, StaticArray<TK>* obj)
 {
-	if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>)
-	{
+	if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>) {
 		return PropertyOperationResult::UnsupportedType;
+	} else {
+		StackCheck _(L);
+		luaL_checktype(L, index, LUA_TTABLE);
+		uint32_t size = (uint32_t) lua_rawlen(L, index);
+
+		obj->clear();
+		obj->Resize(size);
+		int i = 0;
+		for (auto idx : iterate(L, index))
+		{
+			Unserialize(L, idx, &obj[i++]);
+		}
+
+		return PropertyOperationResult::Success;
 	}
-
-	StackCheck _(L);
-	luaL_checktype(L, index, LUA_TTABLE);
-	uint32_t size = (uint32_t) lua_rawlen(L, index);
-
-	obj->clear();
-	obj->Resize(size);
-	int i = 0;
-	for (auto idx : iterate(L, index))
-	{
-		Unserialize(L, idx, &obj[i++]);
-	}
-
-	return PropertyOperationResult::Success;
 }
 
 template <class TK>
 PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, StaticArray<TK>* obj)
 {
-	if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>)
-	{
+	if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>) {
 		return PropertyOperationResult::UnsupportedType;
+	} else {
+		StackCheck _(L);
+		auto arr = ArrayProxyMetatable::Get<ConstSizeArrayProxyImpl<StaticArray<TK>, TK, 2>>(L, index);
+		*obj = *arr;
+		return PropertyOperationResult::Success;
 	}
-
-	StackCheck _(L);
-	auto arr = ArrayProxyMetatable::Get<ConstSizeArrayProxyImpl<StaticArray<TK>, TK, 2>>(L, index);
-	*obj = *arr;
-	return PropertyOperationResult::Success;
 }
 
 template <class TK>
@@ -78,20 +76,20 @@ PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, Objec
 {
 	if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>) {
 		return PropertyOperationResult::UnsupportedType;
+	} else {
+		StackCheck _(L);
+		luaL_checktype(L, index, LUA_TTABLE);
+
+		obj->clear();
+		for (auto idx : iterate(L, index)) {
+			TK value;
+			Unserialize(L, idx, &value);
+			// FIXME - in-place unserialize
+			obj->push_back(value);
+		}
+
+		return PropertyOperationResult::Success;
 	}
-
-	StackCheck _(L);
-	luaL_checktype(L, index, LUA_TTABLE);
-
-	obj->clear();
-	for (auto idx : iterate(L, index)) {
-		TK value;
-		Unserialize(L, idx, &value);
-		// FIXME - in-place unserialize
-		obj->push_back(value);
-	}
-
-	return PropertyOperationResult::Success;
 }
 
 template <class TK>
@@ -99,12 +97,13 @@ PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, Ob
 {
 	if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>) {
 		return PropertyOperationResult::UnsupportedType;
+	} else {
+		StackCheck _(L);
+		auto arr = ArrayProxyMetatable::Get<DynamicArrayProxyImpl<ObjectSet<TK>, TK, 3>>(L, index);
+		*obj = *arr;
+		return PropertyOperationResult::Success;
 	}
 
-	StackCheck _(L);
-	auto arr = ArrayProxyMetatable::Get<DynamicArrayProxyImpl<ObjectSet<TK>, TK, 3>>(L, index);
-	*obj = *arr;
-	return PropertyOperationResult::Success;
 }
 
 template <class TK, size_t Size>
@@ -112,21 +111,21 @@ PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, std::
 {
 	if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>) {
 		return PropertyOperationResult::UnsupportedType;
+	} else {
+		StackCheck _(L);
+		luaL_checktype(L, index, LUA_TTABLE);
+
+		for (uint32_t i = 0; i < obj->size(); i++) {
+			lua_rawgeti(L, index, i + 1);
+			TK value;
+			Unserialize(L, index + 1, &value);
+			// FIXME - in-place unserialize
+			(*obj)[i] = value;
+			lua_pop(L, 1);
+		}
+
+		return PropertyOperationResult::Success;
 	}
-
-	StackCheck _(L);
-	luaL_checktype(L, index, LUA_TTABLE);
-
-	for (uint32_t i = 0; i < obj->size(); i++) {
-		lua_rawgeti(L, index, i + 1);
-		TK value;
-		Unserialize(L, index + 1, &value);
-		// FIXME - in-place unserialize
-		(*obj)[i] = value;
-		lua_pop(L, 1);
-	}
-
-	return PropertyOperationResult::Success;
 }
 
 template <class TK, size_t Size>
@@ -134,12 +133,12 @@ PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, st
 {
 	if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>) {
 		return PropertyOperationResult::UnsupportedType;
+	} else {
+		StackCheck _(L);
+		auto arr = ArrayProxyMetatable::Get<ConstSizeArrayProxyImpl<std::array<TK, Size>, TK, 1>>(L, index);
+		*obj = *arr;
+		return PropertyOperationResult::Success;
 	}
-
-	StackCheck _(L);
-	auto arr = ArrayProxyMetatable::Get<ConstSizeArrayProxyImpl<std::array<TK, Size>, TK, 1>>(L, index);
-	*obj = *arr;
-	return PropertyOperationResult::Success;
 }
 
 template <class T, size_t Extent>
@@ -147,21 +146,21 @@ PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, std::
 {
 	if constexpr (std::is_pointer_v<T> || !std::is_default_constructible_v<T>) {
 		return PropertyOperationResult::UnsupportedType;
+	} else {
+		StackCheck _(L);
+		luaL_checktype(L, index, LUA_TTABLE);
+
+		for (uint32_t i = 0; i < obj->size(); i++) {
+			lua_rawgeti(L, index, i + 1);
+			T value;
+			Unserialize(L, index + 1, &value);
+			// FIXME - in-place unserialize
+			(*obj)[i] = value;
+			lua_pop(L, 1);
+		}
+
+		return PropertyOperationResult::Success;
 	}
-
-	StackCheck _(L);
-	luaL_checktype(L, index, LUA_TTABLE);
-
-	for (uint32_t i = 0; i < obj->size(); i++) {
-		lua_rawgeti(L, index, i + 1);
-		T value;
-		Unserialize(L, index + 1, &value);
-		// FIXME - in-place unserialize
-		(*obj)[i] = value;
-		lua_pop(L, 1);
-	}
-
-	return PropertyOperationResult::Success;
 }
 
 template <class T, size_t Extent>
@@ -169,12 +168,12 @@ PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, st
 {
 	if constexpr (std::is_pointer_v<T> || !std::is_default_constructible_v<T>) {
 		return PropertyOperationResult::UnsupportedType;
+	} else {
+		StackCheck _(L);
+		auto arr = ArrayProxyMetatable::Get<ConstSizeArrayProxyImpl<std::span<T, Extent>, T, 6>>(L, index);
+		*obj = *arr;
+		return PropertyOperationResult::Success;
 	}
-
-	StackCheck _(L);
-	auto arr = ArrayProxyMetatable::Get<ConstSizeArrayProxyImpl<std::span<T, Extent>, T, 6>>(L, index);
-	*obj = *arr;
-	return PropertyOperationResult::Success;
 }
 
 template <unsigned Words>
@@ -216,21 +215,21 @@ PropertyOperationResult UnserializeMapFromTable(lua_State* L, int index, MultiHa
 	if constexpr (std::is_pointer_v<TK> || std::is_pointer_v<TV>
 		|| !std::is_default_constructible_v<TK> || !std::is_default_constructible_v<TV>) {
 		return PropertyOperationResult::UnsupportedType;
+	} else {
+		StackCheck _(L);
+		luaL_checktype(L, index, LUA_TTABLE);
+
+		obj->clear();
+		for (auto idx : iterate(L, index)) {
+			auto key = get<TK>(L, -2);
+			TV value;
+			Unserialize(L, -1, &value);
+			// FIXME - in-place unserialize
+			obj->Set(key, value);
+		}
+
+		return PropertyOperationResult::Success;
 	}
-
-	StackCheck _(L);
-	luaL_checktype(L, index, LUA_TTABLE);
-
-	obj->clear();
-	for (auto idx : iterate(L, index)) {
-		auto key = get<TK>(L, -2);
-		TV value;
-		Unserialize(L, -1, &value);
-		// FIXME - in-place unserialize
-		obj->Set(key, value);
-	}
-
-	return PropertyOperationResult::Success;
 }
 
 template <class TK, class TV>
@@ -239,12 +238,12 @@ PropertyOperationResult UnserializeMapFromUserdata(lua_State* L, int index, Mult
 	if constexpr (std::is_pointer_v<TK> || std::is_pointer_v<TV>
 		|| !std::is_default_constructible_v<TK> || !std::is_default_constructible_v<TV>) {
 		return PropertyOperationResult::UnsupportedType;
+	} else {
+		StackCheck _(L);
+		auto map = MapProxyMetatable::Get<MultiHashMapProxyImpl<TK, TV>>(L, index);
+		*obj = *map;
+		return PropertyOperationResult::Success;
 	}
-
-	StackCheck _(L);
-	auto map = MapProxyMetatable::Get<MultiHashMapProxyImpl<TK, TV>>(L, index);
-	*obj = *map;
-	return PropertyOperationResult::Success;
 }
 
 template <class TK, class TV>
@@ -253,19 +252,19 @@ PropertyOperationResult UnserializeMapFromTable(lua_State* L, int index, RefMap<
 	if constexpr (std::is_pointer_v<TK> || std::is_pointer_v<TV>
 		|| !std::is_default_constructible_v<TK> || !std::is_default_constructible_v<TV>) {
 		return PropertyOperationResult::UnsupportedType;
+	} else {
+		StackCheck _(L);
+		luaL_checktype(L, index, LUA_TTABLE);
+
+		obj->clear();
+		for (auto idx : iterate(L, index)) {
+			auto key = get<TK>(L, -2);
+			auto value = obj->get_or_insert(key);
+			Unserialize(L, -1, value);
+		}
+
+		return PropertyOperationResult::Success;
 	}
-
-	StackCheck _(L);
-	luaL_checktype(L, index, LUA_TTABLE);
-
-	obj->clear();
-	for (auto idx : iterate(L, index)) {
-		auto key = get<TK>(L, -2);
-		auto value = obj->get_or_insert(key);
-		Unserialize(L, -1, value);
-	}
-
-	return PropertyOperationResult::Success;
 }
 
 template <class TK, class TV>
@@ -274,12 +273,12 @@ PropertyOperationResult UnserializeMapFromUserdata(lua_State* L, int index, RefM
 	if constexpr (std::is_pointer_v<TK> || std::is_pointer_v<TV>
 		|| !std::is_default_constructible_v<TK> || !std::is_default_constructible_v<TV>) {
 		return PropertyOperationResult::UnsupportedType;
+	} else {
+		StackCheck _(L);
+		auto map = MapProxyMetatable::Get<RefMapProxyImpl<TK, TV, RefMapInternals<TK, TV>, 2>>(L, index);
+		*obj = *map;
+		return PropertyOperationResult::Success;
 	}
-
-	StackCheck _(L);
-	auto map = MapProxyMetatable::Get<RefMapProxyImpl<TK, TV, RefMapInternals<TK, TV>, 2>>(L, index);
-	*obj = *map;
-	return PropertyOperationResult::Success;
 }
 
 template <class TK, class TV>
@@ -288,19 +287,19 @@ PropertyOperationResult UnserializeMapFromTable(lua_State* L, int index, Map<TK,
 	if constexpr (std::is_pointer_v<TK> || std::is_pointer_v<TV>
 		|| !std::is_default_constructible_v<TK> || !std::is_default_constructible_v<TV>) {
 		return PropertyOperationResult::UnsupportedType;
+	} else {
+		StackCheck _(L);
+		luaL_checktype(L, index, LUA_TTABLE);
+
+		obj->clear();
+		for (auto idx : iterate(L, index)) {
+			auto key = get<TK>(L, -2);
+			auto value = obj->get_or_insert(key);
+			Unserialize(L, -1, value);
+		}
+
+		return PropertyOperationResult::Success;
 	}
-
-	StackCheck _(L);
-	luaL_checktype(L, index, LUA_TTABLE);
-
-	obj->clear();
-	for (auto idx : iterate(L, index)) {
-		auto key = get<TK>(L, -2);
-		auto value = obj->get_or_insert(key);
-		Unserialize(L, -1, value);
-	}
-
-	return PropertyOperationResult::Success;
 }
 
 template <class TK, class TV>
@@ -309,12 +308,12 @@ PropertyOperationResult UnserializeMapFromUserdata(lua_State* L, int index, Map<
 	if constexpr (std::is_pointer_v<TK> || std::is_pointer_v<TV>
 		|| !std::is_default_constructible_v<TK> || !std::is_default_constructible_v<TV>) {
 		return PropertyOperationResult::UnsupportedType;
+	} else {
+		StackCheck _(L);
+		auto map = MapProxyMetatable::Get<RefMapProxyImpl<TK, TV, MapInternals<TK, TV>, 3>>(L, index);
+		*obj = *map;
+		return PropertyOperationResult::Success;
 	}
-
-	StackCheck _(L);
-	auto map = MapProxyMetatable::Get<RefMapProxyImpl<TK, TV, MapInternals<TK, TV>, 3>>(L, index);
-	*obj = *map;
-	return PropertyOperationResult::Success;
 }
 
 template <class TK>
@@ -397,11 +396,15 @@ inline PropertyOperationResult Unserialize(lua_State* L, int index, T* obj)
 				return PropertyOperationResult::UnsupportedType;
 			}
 		} else if constexpr (IsOptional<T>::Value) {
-			if (lua_type(L, index) == LUA_TNIL) {
-				*obj = {};
+			if constexpr (std::is_default_constructible_v<typename IsOptional<T>::ValueType>) {
+				if (lua_type(L, index) == LUA_TNIL) {
+					*obj = {};
+				} else {
+					*obj = typename IsOptional<T>::ValueType{};
+					return Unserialize(L, index, &obj->value());
+				}
 			} else {
-				*obj = typename IsOptional<T>::ValueType{};
-				return Unserialize(L, index, &obj->value());
+				return PropertyOperationResult::UnsupportedType;
 			}
 		} else {
 			if (isTable) {
