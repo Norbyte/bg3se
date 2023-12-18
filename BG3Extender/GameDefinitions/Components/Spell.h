@@ -624,7 +624,7 @@ struct StateComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerSpellCastState;
 	static constexpr auto EngineClass = "esv::spell_cast::StateComponent";
 
-	uint8_t State;
+	uint8_t Status;
 	int field_4;
 	CastState State;
 	int field_28;
