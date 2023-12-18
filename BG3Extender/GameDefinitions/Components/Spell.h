@@ -412,7 +412,7 @@ struct TargetInfo : public ProtectedGameObject<TargetInfo>
 	std::optional<glm::vec3> Position;
 };
 
-struct TargetInfo2
+struct TargetInfo2 : public ProtectedGameObject<TargetInfo2>
 {
 	TargetInfo Target;
 	SpellType SpellType;
@@ -423,6 +423,9 @@ struct StateComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::SpellCastState;
 	static constexpr auto EngineClass = "eoc::spell_cast::StateComponent";
+
+	StateComponent(const StateComponent&) = delete;
+	StateComponent& operator = (const StateComponent&) = delete;
 
 	EntityHandle Entity;
 	EntityHandle Caster;
@@ -442,6 +445,9 @@ struct SyncTargetingComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::SpellSyncTargeting;
 	static constexpr auto EngineClass = "eoc::spell_cast::SyncTargetingComponent";
+
+	SyncTargetingComponent(const SyncTargetingComponent&) = delete;
+	SyncTargetingComponent& operator = (const SyncTargetingComponent&) = delete;
 
 	[[bg3::hidden]]
 	void* VMT;
