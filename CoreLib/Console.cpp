@@ -88,7 +88,7 @@ void Console::Create()
 	}
 
 	auto hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleMode(hStdout, ENABLE_PROCESSED_OUTPUT | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+	SetConsoleMode(hStdout, ENABLE_PROCESSED_OUTPUT | ENABLE_WRAP_AT_EOL_OUTPUT | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
 	// Disable Ctrl+C handling
 	SetConsoleCtrlHandler(NULL, TRUE);
 
