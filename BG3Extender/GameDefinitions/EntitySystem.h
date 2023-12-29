@@ -460,7 +460,7 @@ struct BucketedBitSet
 
 	inline bool Get(uint32_t index) const
 	{
-		if (Size() < index) {
+		if (index >= Size()) {
 			return false;
 		} else {
 			auto qword = index >> 6;
