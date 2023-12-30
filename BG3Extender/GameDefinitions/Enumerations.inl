@@ -329,11 +329,12 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 	E(CCCharacterDefinition)
 	E(CCSessionCommon)
 	E(CCState)
+	E(CCLevelUp)
 	E(CCLevelUpDefinition)
 	E(CCFullRespec)
 	E(CCRespec)
 	E(CCCreation)
-	E(CCLevelUp)
+	E(CCDefinitionLevelUp)
 
 	// Experimental components
 	E(Background)

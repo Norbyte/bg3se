@@ -183,6 +183,14 @@ struct LevelUpDefinitionComponent : public BaseComponent
 	LevelUpDefinitionExtra LevelUp;
 };
 
+struct LevelUpComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::CCLevelUp;
+	static constexpr auto EngineClass = "eoc::character_creation::LevelUpComponent";
+
+	Array<LevelUpData> LevelUps;
+};
+
 END_NS()
 
 BEGIN_NS(character_creation::definition)
@@ -219,7 +227,7 @@ struct CreationComponent : public BaseComponent
 
 struct LevelUpComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CCLevelUp;
+	static constexpr ExtComponentType ComponentType = ExtComponentType::CCDefinitionLevelUp;
 	static constexpr auto EngineClass = "eoc::character_creation::definition::LevelUpComponent";
 
 	EntityHandle field_0;
