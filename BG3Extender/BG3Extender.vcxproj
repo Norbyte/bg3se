@@ -201,6 +201,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\Surface.h" />
     <ClInclude Include="GameDefinitions\Symbols.h" />
     <ClInclude Include="GameDefinitions\TranslatedString.h" />
+    <ClInclude Include="GameDefinitions\VirtualTextureFormat.h" />
     <ClInclude Include="GameHooks\DataLibraries.h" />
     <ClInclude Include="GameHooks\EngineHooks.h" />
     <ClInclude Include="GameHooks\OsirisWrappers.h" />
@@ -355,6 +356,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <None Include="Extender\Shared\StatLoadOrderHelper.inl" />
     <None Include="Extender\Shared\ThreadedExtenderState.inl" />
     <None Include="Extender\Shared\UserVariables.inl" />
+    <None Include="Extender\Shared\VirtualTextureMerge.inl" />
     <None Include="Extender\Shared\VirtualTextures.inl" />
     <None Include="GameDefinitions\Base\TypeInformation.inl" />
     <None Include="GameDefinitions\Components\AllComponentTypes.inl" />

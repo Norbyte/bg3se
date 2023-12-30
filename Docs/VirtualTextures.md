@@ -79,27 +79,22 @@ A complete sample XML:
 	</Layers>
 	
 	<TileSetConfig>
-		<TileWidth>128</TileWidth>
-		<TileHeight>128</TileHeight>
-		<TileBorder>8</TileBorder>
 		<Compression>Best</Compression>
-		<PageSize>1048576</PageSize>
 		<OneFilePerGTex>false</OneFilePerGTex>
 		<BackfillPages>true</BackfillPages>
-		<EmbedMips>true</EmbedMips>
-		<EmbedTopLevelMips>true</EmbedTopLevelMips>
+		<DeduplicateTiles>true</DeduplicateTiles>
 	</TileSetConfig>
 </TileSet>
 ```
 
 After making the config XML, the tile set can be built either using the LSLib UI on the Virtual Textures tab, or by using the `VTexTool.exe` cli using the parameters:
 `VTexTool.exe \<XML path\> \<Mod root path\>`
-(eg. `VTexTool.exe "C:\Dev\MyMod\Mods\ExtenderSampleMod\VTexConfig.xml" "C:\Dev\MyMod"`)
+(eg. `VTexTool.exe "C:\Dev\MyMod\Mods\YOUR_MOD_NAME\VTexConfig.xml" "C:\Dev\MyMod"`)
 
 ### Loading Virtual Textures
 
 To load custom .GTS files, Script Extender v12 or later is required (currently `Devel` branch only).
-The mod must include a configuration file at `Mods\ExtenderSampleMod\ScriptExtender\VirtualTextures.json` that describes which GTex resource can be found in which .GTP file.
+The mod must include a configuration file at `Mods\YOUR_MOD_NAME\ScriptExtender\VirtualTextures.json` that describes which GTex resource can be found in which .GTP file.
 
 If you specify a GTexName that is already defined by the base game, the original GTex will be overridden by the new one.
 If you specify a GTexName that is defined by another mod, the mod that loads later will override the GTex of the one that loaded earlier.
@@ -109,11 +104,11 @@ If you specify a GTexName that is defined by another mod, the mod that loads lat
     "Mappings": [
         {
             "GTexName": "e05176c4ac30d5228d0c0452d938f699",
-            "GTS": "Public/ExtenderSampleMod/Assets/VirtualTextures/YOUR_TILESET_FILE_NAME.gts"
+            "GTS": "Public/YOUR_MOD_NAME/Assets/VirtualTextures/YOUR_TILESET_FILE_NAME.gts"
         },
         {
             "GTexName": "00fb1fe11e94bc9fad61170f5551017f",
-            "GTS": "Public/ExtenderSampleMod/Assets/VirtualTextures/YOUR_TILESET_FILE_NAME.gts"
+            "GTS": "Public/YOUR_MOD_NAME/Assets/VirtualTextures/YOUR_TILESET_FILE_NAME.gts"
         }
     ]
 }

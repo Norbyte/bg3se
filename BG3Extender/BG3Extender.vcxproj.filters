@@ -460,6 +460,7 @@
     <ClInclude Include="GameDefinitions\Components\Party.h" />
     <ClInclude Include="GameDefinitions\Components\Status.h" />
     <ClInclude Include="GameDefinitions\Components\Tadpole.h" />
+    <ClInclude Include="GameDefinitions\VirtualTextureFormat.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -665,6 +666,9 @@
     </None>
     <None Include="Extender\Shared\VirtualTextures.inl">
       <Filter>Extender</Filter>
+    </None>
+    <None Include="Extender\Shared\VirtualTextureMerge.inl">
+      <Filter>Extender\Shared</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

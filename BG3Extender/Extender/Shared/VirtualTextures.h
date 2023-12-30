@@ -72,6 +72,7 @@ private:
 	int32_t IncRefGTS(VirtualTextureManager* vt, unsigned int textureLayerConfig, std::optional<char> gtsSuffix, bool a4, FixedString const& gTexId);
 	void DecRefGTS(VirtualTextureManager* vt, unsigned int textureLayerConfig, std::optional<char> gtsSuffix, bool a4, FixedString const& gTexId);
 	STDString GetVirtualTexturePath(unsigned int textureLayerConfig, std::optional<char> gtsSuffix, bool a4, FixedString const& gTexId, bool isLoad);
+	void Stitch();
 };
 
 END_SE()

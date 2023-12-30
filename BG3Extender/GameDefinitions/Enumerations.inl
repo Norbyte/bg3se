@@ -1691,10 +1691,9 @@ BEGIN_ENUM(CauseType, uint8_t)
 	EV(StatusTick, 5)
 	EV(Attack, 6)
 	EV(Offhand, 7)
-	EV(GM, 8)
+	EV(AURA, 8)
 	EV(InventoryItem, 9)
 	EV(WorldItemThrow, 10)
-	EV(AURA, 12)
 END_ENUM()
 
 

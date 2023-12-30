@@ -1,4 +1,5 @@
 #include "json/json.h"
+#include <Extender/Shared/VirtualTextureMerge.inl>
 
 BEGIN_SE()
 
@@ -114,8 +115,69 @@ void VirtualTextureHelpers::Load()
 			}
 		}
 	}
+
 	if (gtsPaths_.size() > 0) {
 		DEBUG("Loaded %d virtual texture mappings", gtsPaths_.size());
+	}
+
+	Stitch();
+}
+
+void VirtualTextureHelpers::Stitch()
+{
+	std::unordered_set<FixedString> gtsFiles;
+	for (auto const& path : gtsPaths_) {
+		gtsFiles.insert(path.Value());
+	}
+
+	if (gtsFiles.size() < 2) {
+		// No need to stitch if we only have 1 tile set
+		return;
+	}
+
+	DEBUG("Creating merged virtual texture tile set");
+
+	vt::GTSStitchedFile stitched;
+	for (auto const& path : gtsFiles) {
+		auto reader = GetStaticSymbols().MakeFileReader(path, PathRootType::Data);
+		if (reader.IsLoaded()) {
+			auto gts = GameAlloc<vt::GTSFile>();
+			gts->Path = path;
+			gts->Buf.resize((uint32_t)reader.Size());
+			std::copy(reinterpret_cast<uint8_t*>(reader.Buf()), reinterpret_cast<uint8_t*>(reader.Buf()) + reader.Size(), gts->Buf.begin());
+			char const* reason{ nullptr };
+			if (!gts->Read(reason)) {
+				ERR("Failed to load '%s': %s", path.GetString(), reason ? reason : "");
+			} else {
+				stitched.TileSets.push_back(gts);
+			}
+		}
+	}
+
+	vt::MergedTileSetGeometryCalculator geom;
+	geom.TileSets = stitched.TileSets;
+	if (!geom.DoAutoPlacement()) {
+		ERR("Failed to calculate merged tileset geometry, virtual textures will not be available!");
+		gtsPaths_.clear();
+		return;
+	}
+
+	DEBUG("Merged geometry: %d x %d tiles (%d x %d px)",
+		geom.TotalWidth, geom.TotalHeight,
+		geom.TotalWidth * 128, geom.TotalHeight * 128
+	);
+
+	stitched.Init(geom.TotalWidth, geom.TotalHeight);
+	if (stitched.Build()) {
+		DEBUG("Built merged GTS: %s", stitched.OutputPath.c_str());
+
+		FixedString outputPath{ stitched.OutputPath };
+		for (auto& path : gtsPaths_) {
+			path.Value() = outputPath;
+		}
+	} else {
+		ERR("Merged tile set build failed, virtual textures will not be available!");
+		gtsPaths_.clear();
 	}
 }
 
@@ -136,6 +198,7 @@ bool VirtualTextureHelpers::OnTextureLoad(resource::LoadableResource::LoadProc* 
 		FixedString placeholderTex{ "00fb1fe11e94bc9fad61170f5551017f" };
 		res->GTSHandle = IncRefGTS(vt, res->VirtualTextureLayerConfig, '0', res->field_52, placeholderTex);
 		res->GTexFileName = placeholderTex;
+		gtsSuffix = '0';
 	} else if (res->Prefetch && res->PrefetchMipLevel >= 0) {
 		res->GraphineTextureData = vt->LoadTexture(res->GTSHandle, res->GTexFileName, 1);
 	}
