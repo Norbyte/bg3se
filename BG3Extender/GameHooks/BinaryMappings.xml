@@ -295,26 +295,6 @@
           </Patch>
         </Mapping>
 
-        <Mapping Name="esv::SavegameManager::WarnIfModded" AllowFail="true">
-          40 84 f6 // test    sil, sil
-          @ref 0f 84 ?? ?? 00 00 // jz      loc_1406B0AC1
-          4c 8b 3d ?? ?? ?? ?? // mov     r15, cs:qword_145645F08
-          48 8d 4c 24 50 // lea     rcx, [rsp+230h+var_1E0]; void *
-          @ref1 e8 ?? ?? ?? ?? // call    ls__FixedString__ctor
-          4c 8b f0 // mov     r14, rax
-          48 8d 4c 24 54 // lea     rcx, [rsp+230h+var_1DC]; void *
-          @ref2 e8 ?? ?? ?? ?? // call    ls__FixedString__ctor
-          48 8b f0 // mov     rsi, rax
-          49 8d 7d 08 // lea     rdi, [r13+8]
-          4d 85 ed // test    r13, r13
-          49 0f 44 fc // cmovz   rdi, r12
-          @str1 48 8d 05 ?? ?? ?? ?? // lea     rax, aHf7952f87g01c4; "hf7952f87g01c4g4ce7g9badg018bbe33f62a"
-          <Condition Type="String" Offset="@str1" Value="hf7952f87g01c4g4ce7g9badg018bbe33f62a" />
-          <Patch Type="Absolute" Offset="@ref">
-            90 E9
-          </Patch>
-        </Mapping>
-
         <Mapping Name="esv::SavegamePostVisit_DisableStoryMerge" AllowFail="true">
           4c 8d 45 b0 // lea     r8, [rbp+370h+Src]
           49 8b d6 // mov     rdx, r14
