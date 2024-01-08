@@ -46,16 +46,16 @@ namespace bg3se
 			ecs::EntityRef Cause;
 			Guid CauseGUID;
 			EntityHandle StatusSource;
-			ecs::EntityRef Combat_M;
+			ecs::EntityRef RootCause;
 			EntityHandle field_E0;
 			Guid field_E8;
-			int ConditionsId;
+			int RemoveConditionsId;
 			uint32_t RemoveEvents;
 			StatusFlags Flags;
 			StatusFlags2 Flags2;
 			StatusFlags3 Flags3;
 			bool FreezeDuration;
-			uint8_t field_104;
+			uint8_t ExitCause;
 			uint8_t field_105;
 			uint8_t SpellCastingAbility;
 			SpellId SourceSpell;
@@ -64,7 +64,7 @@ namespace bg3se
 			int StackPriority;
 			bool IsRecoverable;
 			FixedString DifficultyStatus;
-			Guid field_150;
+			Guid StackedSpellCastSourceUuid;
 			Array<void*> ConditionRolls;
 			uint8_t TickType;
 			StatusFlags4 Flags4;
@@ -267,7 +267,7 @@ namespace bg3se
 
 			Status* GetStatus(FixedString const& statusId) const;
 
-			void* VMT;
+			EntityHandle Owner;
 			uint8_t field_18;
 			Array<Status*> NewlyAddedStatuses;
 			Array<Status*> Statuses;

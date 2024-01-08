@@ -173,8 +173,8 @@ struct StatusPrototype : public Noncopyable<StatusPrototype>
 	int StatsObjectIndex{ -1 };
 	StatusType StatusId;
 	FixedString StatusName;
-	uint32_t StatusPropertyFlags;
-	uint32_t StatusGroups;
+	uint64_t StatusPropertyFlags;
+	uint64_t StatusGroups;
 	DescriptionInfo Description;
 	uint32_t StackType;
 	uint8_t LEDEffect;
