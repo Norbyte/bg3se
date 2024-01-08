@@ -234,7 +234,7 @@ void ScriptExtender::OnECSUpdate(ecs::EntityWorld::UpdateProc* wrapped, ecs::Ent
 		GetServer().GetEntityHelpers().PostUpdate();
 		esv::LuaServerPin lua(GetServer().GetExtensionState());
 		if (lua) {
-			lua->GetEntityEventHooks()->OnEntityReplication(*entityWorld);
+			lua->GetReplicationEventHooks()->OnEntityReplication(*entityWorld);
 		}
 	}
 }

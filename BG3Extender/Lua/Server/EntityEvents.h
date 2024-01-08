@@ -2,11 +2,11 @@
 
 BEGIN_NS(lua)
 
-class EntityEventHooks
+class EntityReplicationEventHooks
 {
 public:
-	EntityEventHooks(lua::State& state);
-	~EntityEventHooks();
+	EntityReplicationEventHooks(lua::State& state);
+	~EntityReplicationEventHooks();
 
 	void Subscribe(ecs::ReplicationTypeIndex type, EntityHandle entity, uint64_t flags, RegistryEntry&& hook);
 	bool Unsubscribe(uint32_t index);

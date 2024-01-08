@@ -123,7 +123,7 @@ namespace lua
 	class GenericPropertyMap;
 	class CachedUserVariableManager;
 	class CachedModVariableManager;
-	class EntityEventHooks;
+	class EntityReplicationEventHooks;
 
 	struct CppObjectMetadata;
 	struct CppValueMetadata;

@@ -128,7 +128,7 @@ namespace bg3se::esv::lua
 		: State(generationId, true),
 		osiris_(state),
 		functorHooks_(*this),
-		entityHooks_(*this)
+		replicationHooks_(*this)
 	{}
 
 	ServerState::~ServerState()
@@ -214,9 +214,9 @@ namespace bg3se::esv::lua
 		return &gExtender->GetServer().GetEntityHelpers();
 	}
 
-	EntityEventHooks* ServerState::GetEntityEventHooks()
+	EntityReplicationEventHooks* ServerState::GetReplicationEventHooks()
 	{
-		return &entityHooks_;
+		return &replicationHooks_;
 	}
 
 

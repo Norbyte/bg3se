@@ -266,7 +266,7 @@ namespace bg3se::esv::lua
 
 		ecs::EntityWorld* GetEntityWorld() override;
 		ecs::EntitySystemHelpersBase* GetEntitySystemHelpers() override;
-		EntityEventHooks* GetEntityEventHooks() override;
+		EntityReplicationEventHooks* GetReplicationEventHooks() override;
 
 		template <class TArg>
 		void Call(char const* mod, char const* func, std::vector<TArg> const & args)
@@ -323,7 +323,7 @@ namespace bg3se::esv::lua
 		ExtensionLibraryServer library_;
 		OsirisBinding osiris_;
 		FunctorEventHooks functorHooks_;
-		EntityEventHooks entityHooks_;
+		EntityReplicationEventHooks replicationHooks_;
 
 		bool QueryInternal(char const* mod, char const* name, RegistryEntry * func,
 			std::vector<CustomFunctionParam> const & signature, OsiArgumentDesc & params);

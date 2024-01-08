@@ -59,7 +59,7 @@ namespace bg3se::ecl::lua
 
 		ecs::EntityWorld* GetEntityWorld() override;
 		ecs::EntitySystemHelpersBase* GetEntitySystemHelpers() override;
-		EntityEventHooks* GetEntityEventHooks() override;
+		EntityReplicationEventHooks* GetReplicationEventHooks() override;
 		void OnGameStateChanged(GameState fromState, GameState toState);
 
 	private:

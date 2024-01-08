@@ -2,13 +2,13 @@
 
 BEGIN_NS(lua)
 
-EntityEventHooks::EntityEventHooks(lua::State& state)
+EntityReplicationEventHooks::EntityReplicationEventHooks(lua::State& state)
 	: state_(state)
 {}
 
-EntityEventHooks::~EntityEventHooks() {}
+EntityReplicationEventHooks::~EntityReplicationEventHooks() {}
 
-uint32_t EntityEventHooks::FindFreeSlot()
+uint32_t EntityReplicationEventHooks::FindFreeSlot()
 {
 	if (!freeSlots_.empty()) {
 		return freeSlots_.pop_last();
@@ -19,7 +19,7 @@ uint32_t EntityEventHooks::FindFreeSlot()
 	return slot;
 }
 
-EntityEventHooks::ReplicationHooks& EntityEventHooks::AddComponentType(ecs::ReplicationTypeIndex type)
+EntityReplicationEventHooks::ReplicationHooks& EntityReplicationEventHooks::AddComponentType(ecs::ReplicationTypeIndex type)
 {
 	auto index = (unsigned)type.Value();
 	if (!hookedReplicationComponentMask_[index]) {
@@ -32,7 +32,7 @@ EntityEventHooks::ReplicationHooks& EntityEventHooks::AddComponentType(ecs::Repl
 	return hookedReplicationComponents_[index];
 }
 
-void EntityEventHooks::Subscribe(ecs::ReplicationTypeIndex type, EntityHandle entity, uint64_t flags, RegistryEntry&& hook)
+void EntityReplicationEventHooks::Subscribe(ecs::ReplicationTypeIndex type, EntityHandle entity, uint64_t flags, RegistryEntry&& hook)
 {
 	auto slot = FindFreeSlot();
 	auto& pool = AddComponentType(type);
@@ -59,7 +59,7 @@ void EntityEventHooks::Subscribe(ecs::ReplicationTypeIndex type, EntityHandle en
 	subscriptions_[slot] = hookEntry;
 }
 
-bool EntityEventHooks::Unsubscribe(uint32_t index)
+bool EntityReplicationEventHooks::Unsubscribe(uint32_t index)
 {
 	if (index >= subscriptions_.size() || subscriptions_[index] == nullptr) {
 		return false;
@@ -92,7 +92,7 @@ bool EntityEventHooks::Unsubscribe(uint32_t index)
 	return true;
 }
 
-void EntityEventHooks::OnEntityReplication(ecs::EntityWorld& world)
+void EntityReplicationEventHooks::OnEntityReplication(ecs::EntityWorld& world)
 {
 	if (!world.Replication || !world.Replication->Dirty) return;
 
@@ -106,7 +106,7 @@ void EntityEventHooks::OnEntityReplication(ecs::EntityWorld& world)
 	}
 }
 
-void EntityEventHooks::OnEntityReplication(ecs::EntityWorld& world, EntityHandle entity, BitSet<> const& flags, ecs::ReplicationTypeIndex type)
+void EntityReplicationEventHooks::OnEntityReplication(ecs::EntityWorld& world, EntityHandle entity, BitSet<> const& flags, ecs::ReplicationTypeIndex type)
 {
 	auto& hooks = hookedReplicationComponents_[type.Value()];
 	auto word1 = *flags.GetBuf();
@@ -128,7 +128,7 @@ void EntityEventHooks::OnEntityReplication(ecs::EntityWorld& world, EntityHandle
 	}
 }
 
-void EntityEventHooks::CallHandler(EntityHandle entity, BitSet<> const& flags, ecs::ReplicationTypeIndex type, ReplicationHook const& hook)
+void EntityReplicationEventHooks::CallHandler(EntityHandle entity, BitSet<> const& flags, ecs::ReplicationTypeIndex type, ReplicationHook const& hook)
 {
 	auto L = state_.GetState();
 	auto componentType = state_.GetEntitySystemHelpers()->GetComponentType(type);
@@ -137,7 +137,7 @@ void EntityEventHooks::CallHandler(EntityHandle entity, BitSet<> const& flags, e
 	Ref func(L, lua_absindex(L, -1));
 
 	ProtectedFunctionCaller<std::tuple<EntityHandle, ExtComponentType, uint64_t>, void> caller{ func, std::tuple(entity, *componentType, word1) };
-	caller.Call(L, "Entity event dispatch");
+	caller.Call(L, "Entity replication event dispatch");
 	lua_pop(L, 1);
 }
 

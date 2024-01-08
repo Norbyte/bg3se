@@ -69,7 +69,7 @@ Array<EntityHandle> GetAllEntities(lua_State* L)
 
 void Subscribe(lua_State* L, ExtComponentType type, FunctionRef func, std::optional<EntityHandle> entity, std::optional<uint64_t> flags)
 {
-	auto hooks = State::FromLua(L)->GetEntityEventHooks();
+	auto hooks = State::FromLua(L)->GetReplicationEventHooks();
 	if (!hooks) {
 		luaL_error(L, "Entity events are only available on the server");
 	}
@@ -84,7 +84,7 @@ void Subscribe(lua_State* L, ExtComponentType type, FunctionRef func, std::optio
 
 bool Unsubscribe(lua_State* L, unsigned index)
 {
-	auto hooks = State::FromLua(L)->GetEntityEventHooks();
+	auto hooks = State::FromLua(L)->GetReplicationEventHooks();
 	if (!hooks) {
 		luaL_error(L, "Entity events are only available on the server");
 	}

@@ -98,7 +98,7 @@ ecs::EntitySystemHelpersBase* ClientState::GetEntitySystemHelpers()
 	return &gExtender->GetClient().GetEntityHelpers();
 }
 
-EntityEventHooks* ClientState::GetEntityEventHooks()
+EntityReplicationEventHooks* ClientState::GetReplicationEventHooks()
 {
 	return nullptr;
 }
