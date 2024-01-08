@@ -127,6 +127,12 @@ namespace bg3se
 			Handle = index | (salt << 32) | (type << 54);
 		}
 
+		inline constexpr TypedHandle(uint64_t type, uint64_t indexAndSalt)
+		{
+			assert(type < 0x400 && (indexAndSalt >> 32) < 0x400000);
+			Handle = indexAndSalt | (type << 54);
+		}
+
 		inline constexpr TypedHandle(TypedHandle const & oh)
 			: Handle(oh.Handle)
 		{}

@@ -46,6 +46,54 @@ Array<void*> Query::GetAllMatchingComponents(std::size_t componentSize)
 	return hits;
 }
 
+uint64_t NewEntityPool::Add()
+{
+	if (NumFreeSlots < (1u << FreePool.BitsPerBucket) / 2) {
+		Grow();
+	}
+
+	NumFreeSlots--;
+	auto index = NextFreeSlotIndex & ((1 << FreePool.BitsPerBucket) - 1);
+	auto& bucket = FreePool.Buckets[NextFreeSlotIndex >> FreePool.BitsPerBucket];
+	auto prevFreeSlot = NextFreeSlotIndex;
+	NextFreeSlotIndex = (uint32_t)(bucket[index] & 0xffffffffull);
+	bucket[index] = (bucket[index] & 0xffffffff00000000ull) | prevFreeSlot;
+	return bucket[index];
+}
+
+void NewEntityPool::Grow()
+{
+	auto newSize = FreePool.Used + (1 << FreePool.BitsPerBucket);
+	if (((uint32_t)FreePool.NumBuckets << FreePool.BitsPerBucket) < newSize) {
+		FreePool.Resize(newSize);
+	}
+
+	for (auto i = 0; i < (1 << FreePool.BitsPerBucket); i++) {
+		auto entityIndex = FreePool.Used;
+		FreePool[FreePool.Used++] = entityIndex | 0x100000000ull;
+
+		if (NumFreeSlots > 0) {
+			auto highestIndex = HighestIndex;
+			FreePool[HighestIndex] = (FreePool[HighestIndex] & 0xffffffff00000000ull) | entityIndex;
+		}
+
+		FreePool[entityIndex] = entityIndex | 0x100000000ull;
+		NumFreeSlots = this->NumFreeSlots;
+		HighestIndex = entityIndex;
+		if (NumFreeSlots == 0) {
+			NextFreeSlotIndex = entityIndex;
+		}
+
+		NumFreeSlots++;
+	}
+}
+
+EntityHandle NewEntityPools::Add(uint32_t classIndex)
+{
+	auto index = Pools[classIndex].Add();
+	return EntityHandle(classIndex, index);
+}
+
 void* EntityClass::GetComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize) const
 {
 	auto ref = InstanceToPageMap.Find(entityHandle);

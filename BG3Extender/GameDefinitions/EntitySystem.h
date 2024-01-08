@@ -356,15 +356,6 @@ struct ComponentPool : public ProtectedGameObject<ComponentPool>
 	void* DtorProc;
 };
 
-struct ComponentRegistryEntry1 : public ProtectedGameObject<ComponentRegistryEntry1>
-{
-	void* VMT;
-	__int64 field_8;
-	Array<void*> field_10;
-	__int64 field_20;
-	Array<void*> field_28;
-};
-
 template <class T>
 struct BucketedRawStaticArray
 {
@@ -372,6 +363,49 @@ struct BucketedRawStaticArray
 	uint16_t BitsPerBucket;
 	uint16_t NumBuckets;
 	uint32_t Used;
+
+	void Resize(uint32_t newSize)
+	{
+		if (newSize) {
+			auto bucketSize = 1u << BitsPerBucket;
+			auto newNumBuckets = (~bucketSize & (bucketSize + newSize - 1)) >> BitsPerBucket;
+			if (newNumBuckets != NumBuckets) {
+				for (auto i = newNumBuckets; i < NumBuckets; i++) {
+					GameFree(Buckets[i]);
+				}
+
+				auto newAllocBuckets = (newNumBuckets + 15) & 0xFFF0;
+				if (newAllocBuckets < NumBuckets) {
+					auto newBuckets = GameAllocArray<T*>(newAllocBuckets);
+					if (Buckets) {
+						if ((unsigned int)NumBuckets < NumBuckets)
+							NumBuckets = NumBuckets;
+						memcpy(newBuckets, Buckets, sizeof(T*) * std::min(newNumBuckets, (uint32_t)NumBuckets));
+						GameFree(Buckets);
+					}
+					Buckets = newBuckets;
+				}
+
+				for (auto i = NumBuckets; i < newNumBuckets; i++) {
+					Buckets[i] = GameAllocArray<T>(bucketSize);
+				}
+
+				NumBuckets = newNumBuckets;
+			}
+		} else {
+			if (NumBuckets) {
+				for (auto i = 0; i < NumBuckets; i++) {
+					GameFree(Buckets[i]);
+				}
+
+				if (Buckets != nullptr) {
+					GameFree(Buckets);
+				}
+			}
+
+			NumBuckets = 0;
+		}
+	}
 
 	inline T const& operator [] (uint32_t index) const
 	{
@@ -539,6 +573,41 @@ struct BucketedHashMap : public BucketedHashSet<TKey>
 	}
 };
 
+struct ComponentCallbackHandler
+{
+	using CallProc = void (ComponentCallbackHandler* self, void* arg);
+	using UserCallProc = void (void* object, void* arg);
+	using CopyProc = ComponentCallbackHandler* (void* dummy, ComponentCallbackHandler* src, ComponentCallbackHandler* dst);
+
+	CallProc* Call;
+	CopyProc* Copy;
+	CopyProc* TryCopy;
+	void* Object;
+	UserCallProc* UserHandler;
+};
+
+
+struct ComponentCallback
+{
+	ComponentCallbackHandler* pHandler;
+	ComponentCallbackHandler Handler;
+	uint64_t Unused[2];
+	uint64_t RegistrantIndex;
+};
+
+struct ComponentCallbackList : public ProtectedGameObject<ComponentCallbackList>
+{
+	uint64_t NextRegistrantId;
+	Array<ComponentCallback> Callbacks;
+};
+
+struct ComponentCallbacks : public ProtectedGameObject<ComponentCallbacks>
+{
+	void* VMT;
+	ComponentCallbackList OnConstruct;
+	ComponentCallbackList OnDestroy;
+};
+
 struct EntityComponents : public ProtectedGameObject<EntityComponents>
 {
 	struct ComponentPoolInfo
@@ -571,7 +640,7 @@ struct EntityComponents : public ProtectedGameObject<EntityComponents>
 	bool field_A0;
 	BucketedHashMap<ComponentTypeIndex, BucketedHashMap<EntityHandle, void*>> ComponentsByType;
 	BucketedHashMap<ComponentTypeIndex, BucketedHashMap<EntityHandle, void*>> ComponentsByType2;
-	Array<ComponentRegistryEntry1*>* ComponentTypes;
+	Array<ComponentCallbacks*>* Callbacks;
 	ComponentDataStore* Store;
 	EntityWorld* EntityWorld;
 	EntityTypeSalts* Salts;
@@ -580,7 +649,7 @@ struct EntityComponents : public ProtectedGameObject<EntityComponents>
 
 struct NewEntityPool : public ProtectedGameObject<NewEntityPool>
 {
-	BucketedRawStaticArray<EntityHandle> FreePool;
+	BucketedRawStaticArray<uint64_t> FreePool;
 	uint32_t NextFreeSlotIndex;
 	uint32_t HighestIndex;
 	uint32_t NumFreeSlots;
@@ -588,11 +657,16 @@ struct NewEntityPool : public ProtectedGameObject<NewEntityPool>
 	__int64 field_28;
 	__int64 field_30;
 	__int64 field_38;
+
+	uint64_t Add();
+	void Grow();
 };
 
 struct NewEntityPools : public ProtectedGameObject<NewEntityPools>
 {
 	std::array<NewEntityPool, 0x40> Pools;
+
+	EntityHandle Add(uint32_t classIndex);
 };
 
 struct ComponentUpdates : public ProtectedGameObject<ComponentUpdates>
@@ -622,7 +696,7 @@ struct EntityWorld : public ProtectedGameObject<EntityWorld>
 	int field_160;
 	__int64 field_168;
 	Array<ComponentUpdates*> ComponentUpdates;
-	Array<ComponentRegistryEntry1*> ComponentTypes;
+	Array<ComponentCallbacks*> ComponentCallbacks;
 	bool field_190;
 	bool NeedsUpdate;
 	bool field_192;
