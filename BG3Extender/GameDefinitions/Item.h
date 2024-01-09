@@ -5,8 +5,11 @@
 
 BEGIN_NS(esv)
 
-struct Item
+struct Item : public BaseProxyComponent
 {
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerItem;
+	static constexpr auto EngineClass = "esv::Item";
+
 	void* VMT;
 	void* VMT2;
 	EntityHandle field_10;
@@ -31,14 +34,8 @@ struct Item
 	int32_t TreasureLevel;
 	int32_t Amount;
 	ItemFlags2 Flags2;
-};
 
-struct ItemComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerItem;
-	static constexpr auto EngineClass = "esv::Item";
-
-	esv::Item* Item;
+	RefReturn<Item> LuaGetSelf();
 };
 
 END_NS()

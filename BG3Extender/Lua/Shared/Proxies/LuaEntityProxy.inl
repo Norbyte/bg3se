@@ -153,8 +153,8 @@ int EntityProxyMetatable::GetAllComponents(lua_State* L)
 			for (auto typeInfo : entityClass->ComponentTypeToIndex) {
 				auto extType = ecs->GetComponentType(typeInfo.Key());
 				if (extType) {
-					auto componentSize = ecs->GetComponentSize(*extType);
-					auto component = entityClass->GetComponent(**componentPtr, typeInfo.Value(), componentSize);
+					auto const& meta = ecs->GetComponentMeta(*extType);
+					auto component = entityClass->GetComponent(**componentPtr, typeInfo.Value(), meta.Size, meta.IsProxy);
 
 					push(L, *extType);
 					PushComponent(L, component, *extType, GetCurrentLifetime(L));

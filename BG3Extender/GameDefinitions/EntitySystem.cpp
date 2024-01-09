@@ -17,28 +17,28 @@
 
 BEGIN_NS(ecs)
 
-void* Query::GetFirstMatchingComponent(std::size_t componentSize)
+void* Query::GetFirstMatchingComponent(std::size_t componentSize, bool isProxy)
 {
 	for (auto const& cls : EntityClasses) {
 		if (cls.EntityClass->InstanceToPageMap.size() > 0) {
 			auto instPage = cls.EntityClass->InstanceToPageMap.Values[0];
 			auto componentIdx = cls.GetComponentIndex(0);
 			assert(cls.EntityClass->ComponentPools.size() >= 1);
-			return cls.EntityClass->GetComponent(instPage, componentIdx, componentSize);
+			return cls.EntityClass->GetComponent(instPage, componentIdx, componentSize, isProxy);
 		}
 	}
 
 	return {};
 }
 
-Array<void*> Query::GetAllMatchingComponents(std::size_t componentSize)
+Array<void*> Query::GetAllMatchingComponents(std::size_t componentSize, bool isProxy)
 {
 	Array<void*> hits;
 
 	for (auto const& cls : EntityClasses) {
 		auto componentIdx = cls.GetComponentIndex(0);
 		for (auto const& instance : cls.EntityClass->InstanceToPageMap) {
-			auto component = cls.EntityClass->GetComponent(instance.Value(), componentIdx, componentSize);
+			auto component = cls.EntityClass->GetComponent(instance.Value(), componentIdx, componentSize, isProxy);
 			hits.push_back(component);
 		}
 	}
@@ -94,39 +94,44 @@ EntityHandle NewEntityPools::Add(uint32_t classIndex)
 	return EntityHandle(classIndex, index);
 }
 
-void* EntityClass::GetComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize) const
+void* EntityClass::GetComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy) const
 {
 	auto ref = InstanceToPageMap.Find(entityHandle);
 	if (ref) {
-		return GetComponent(**ref, type, componentSize);
+		return GetComponent(**ref, type, componentSize, isProxy);
 	} else {
 		return nullptr;
 	}
 }
 
-void* EntityClass::GetComponent(InstanceComponentPointer const& entityPtr, ComponentTypeIndex type, std::size_t componentSize) const
+void* EntityClass::GetComponent(InstanceComponentPointer const& entityPtr, ComponentTypeIndex type, std::size_t componentSize, bool isProxy) const
 {
 	auto compIndex = ComponentTypeToIndex.Find((uint16_t)type.Value());
 	if (compIndex) {
-		return GetComponent(entityPtr, **compIndex, componentSize);
+		return GetComponent(entityPtr, **compIndex, componentSize, isProxy);
 	} else {
 		return nullptr;
 	}
 }
 
-void* EntityClass::GetComponent(InstanceComponentPointer const& entityPtr, uint8_t componentSlot, std::size_t componentSize) const
+void* EntityClass::GetComponent(InstanceComponentPointer const& entityPtr, uint8_t componentSlot, std::size_t componentSize, bool isProxy) const
 {
 	auto& page = ComponentPools[entityPtr.PageIndex][componentSlot];
 	auto buf = (uint8_t*)page.ComponentBuffer;
 	assert(buf != nullptr);
-	return buf + componentSize * entityPtr.EntryIndex;
+	if (isProxy) {
+		auto ptr = buf + sizeof(void*) * entityPtr.EntryIndex;
+		return *(uint8_t**)ptr;
+	} else {
+		return buf + componentSize * entityPtr.EntryIndex;
+	}
 }
 	
-void* EntityWorld::GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize)
+void* EntityWorld::GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy)
 {
 	auto entityClass = GetEntityClass(entityHandle);
 	if (entityClass != nullptr) {
-		auto component = entityClass->GetComponent(entityHandle, type, componentSize);
+		auto component = entityClass->GetComponent(entityHandle, type, componentSize, isProxy);
 		if (component != nullptr) {
 			return component;
 		}
@@ -148,23 +153,6 @@ void* EntityWorld::GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex
 		}
 	}
 
-	return nullptr;
-}
-	
-void* EntityWorld::GetRawComponent(char const* nameGuid, ComponentTypeIndex type, std::size_t componentSize)
-{
-	auto fs = NameGuidToFixedString(nameGuid);
-	if (!fs) {
-		OsiError("Could not map GUID '" << nameGuid << "' to FixedString");
-		return nullptr;
-	}
-
-	return GetRawComponent(fs, type, componentSize);
-}
-
-void* EntityWorld::GetRawComponent(FixedString const& guid, ComponentTypeIndex type, std::size_t componentSize)
-{
-	ERR("FIXME!");
 	return nullptr;
 }
 
@@ -426,7 +414,7 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 	DEBUG_IDX("-------------------------------------------------------");
 #endif
 
-	#define T(cls) MapComponentIndices(cls::EngineClass, cls::ComponentType, sizeof(cls));
+	#define T(cls) MapComponentIndices(cls::EngineClass, cls::ComponentType, sizeof(cls), std::is_base_of_v<BaseProxyComponent, cls>);
 	#include <GameDefinitions/Components/AllComponentTypes.inl>
 	#undef T
 
@@ -475,7 +463,7 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 	initialized_ = true;
 }
 
-void EntitySystemHelpersBase::MapComponentIndices(char const* componentName, ExtComponentType type, std::size_t size)
+void EntitySystemHelpersBase::MapComponentIndices(char const* componentName, ExtComponentType type, std::size_t size, bool isProxy)
 {
 	auto it = componentNameToIndexMappings_.find(componentName);
 	if (it != componentNameToIndexMappings_.end()) {
@@ -491,6 +479,7 @@ void EntitySystemHelpersBase::MapComponentIndices(char const* componentName, Ext
 		}
 
 		components_[(unsigned)type].Size = size;
+		components_[(unsigned)type].IsProxy = isProxy;
 	} else {
 		OsiWarn("Could not find index for component: " << componentName);
 	}
@@ -516,16 +505,11 @@ void EntitySystemHelpersBase::MapResourceManagerIndex(char const* componentName,
 	}
 }
 
-void* EntitySystemHelpersBase::GetRawComponent(char const* nameGuid, ExtComponentType type)
+void* EntitySystemHelpersBase::GetRawComponent(Guid const& guid, ExtComponentType type)
 {
-	auto world = GetEntityWorld();
-	if (!world) {
-		return nullptr;
-	}
-
-	auto componentIndex = GetComponentIndex(type);
-	if (componentIndex) {
-		return world->GetRawComponent(nameGuid, *componentIndex, components_[(unsigned)type].Size);
+	auto handle = GetEntityHandle(guid);
+	if (handle) {
+		return GetRawComponent(guid, type);
 	} else {
 		return nullptr;
 	}
@@ -533,14 +517,9 @@ void* EntitySystemHelpersBase::GetRawComponent(char const* nameGuid, ExtComponen
 
 void* EntitySystemHelpersBase::GetRawComponent(FixedString const& guid, ExtComponentType type)
 {
-	auto world = GetEntityWorld();
-	if (!world) {
-		return nullptr;
-	}
-
-	auto componentIndex = GetComponentIndex(type);
-	if (componentIndex) {
-		return world->GetRawComponent(guid, *componentIndex, components_[(unsigned)type].Size);
+	auto handle = GetEntityHandle(guid);
+	if (handle) {
+		return GetRawComponent(guid, type);
 	} else {
 		return nullptr;
 	}
@@ -553,9 +532,9 @@ void* EntitySystemHelpersBase::GetRawComponent(EntityHandle entityHandle, ExtCom
 		return nullptr;
 	}
 
-	auto componentIndex = GetComponentIndex(type);
-	if (componentIndex) {
-		return world->GetRawComponent(entityHandle, *componentIndex, components_[(unsigned)type].Size);
+	auto const& meta = GetComponentMeta(type);
+	if (meta.ComponentIndex != UndefinedComponent) {
+		return world->GetRawComponent(entityHandle, meta.ComponentIndex, meta.Size, meta.IsProxy);
 	} else {
 		return nullptr;
 	}
@@ -565,7 +544,8 @@ UuidToHandleMappingComponent* EntitySystemHelpersBase::GetUuidMappings()
 {
 	auto query = GetQuery(ExtQueryType::UuidToHandleMapping);
 	if (query) {
-		return reinterpret_cast<UuidToHandleMappingComponent*>(query->GetFirstMatchingComponent(components_[(unsigned)ExtComponentType::UuidToHandleMapping].Size));
+		auto const& meta = GetComponentMeta(ExtComponentType::UuidToHandleMapping);
+		return reinterpret_cast<UuidToHandleMappingComponent*>(query->GetFirstMatchingComponent(meta.Size, meta.IsProxy));
 	} else {
 		return nullptr;
 	}
@@ -632,7 +612,17 @@ void EntitySystemHelpersBase::PostUpdate()
 	}
 }
 
-EntityHandle EntitySystemHelpersBase::GetEntityHandle(Guid uuid)
+EntityHandle EntitySystemHelpersBase::GetEntityHandle(FixedString const& guidString)
+{
+	auto guid = Guid::ParseGuidString(guidString.GetStringView());
+	if (guid) {
+		return GetEntityHandle(*guid);
+	} else {
+		return {};
+	}
+}
+
+EntityHandle EntitySystemHelpersBase::GetEntityHandle(Guid const& uuid)
 {
 	auto entityMap = GetUuidMappings();
 	if (entityMap) {

@@ -69,8 +69,11 @@ namespace bg3se
 			bool field_94;
 		};
 
-		struct Character
+		struct Character : public BaseProxyComponent
 		{
+			static constexpr ExtComponentType ComponentType = ExtComponentType::ServerCharacter;
+			static constexpr auto EngineClass = "esv::Character";
+
 			Status* GetStatus(FixedString statusId);
 			Status* GetStatusByType(StatusType type);
 
@@ -130,14 +133,8 @@ namespace bg3se
 			uint8_t NumConsumables;
 			CharacterFlags2 Flags2;
 			CharacterFlags3 Flags3;
-		};
 
-		struct CharacterComponent : public BaseComponent
-		{
-			static constexpr ExtComponentType ComponentType = ExtComponentType::ServerCharacter;
-			static constexpr auto EngineClass = "esv::Character";
-
-			Character* Character;
+			RefReturn<Character> LuaGetSelf();
 		};
 	}
 

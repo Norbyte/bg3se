@@ -37,6 +37,15 @@ class EntitySystemHelpersBase : public Noncopyable<EntitySystemHelpersBase>
 public:
 	static RuntimeCheckLevel CheckLevel;
 
+	struct PerComponentData
+	{
+		ComponentTypeIndex ComponentIndex{ UndefinedComponent };
+		ReplicationTypeIndex ReplicationIndex{ UndefinedReplicationComponent };
+		std::size_t Size{ 0 };
+		lua::GenericPropertyMap* Properties{ nullptr };
+		bool IsProxy{ false };
+	};
+
 	EntitySystemHelpersBase();
 
 	inline std::optional<ComponentTypeIndex> GetComponentIndex(STDString const& type) const
@@ -89,6 +98,11 @@ public:
 		}
 	}
 
+	inline PerComponentData const& GetComponentMeta(ExtComponentType type) const
+	{
+		return components_[(unsigned)type];
+	}
+
 	inline std::size_t GetComponentSize(ExtComponentType type) const
 	{
 		return components_[(unsigned)type].Size;
@@ -116,13 +130,13 @@ public:
 	}
 
 	template <class T>
-	T* GetComponent(char const* nameGuid)
+	T* GetComponent(FixedString const& guid)
 	{
-		return reinterpret_cast<T*>(GetRawComponent(nameGuid, T::ComponentType));
+		return reinterpret_cast<T*>(GetRawComponent(guid, T::ComponentType));
 	}
 
 	template <class T>
-	T* GetComponent(FixedString const& guid)
+	T* GetComponent(Guid const& guid)
 	{
 		return reinterpret_cast<T*>(GetRawComponent(guid, T::ComponentType));
 	}
@@ -131,13 +145,6 @@ public:
 	T* GetComponent(EntityHandle entityHandle)
 	{
 		return reinterpret_cast<T*>(GetRawComponent(entityHandle, T::ComponentType));
-	}
-
-	template <class T>
-	T* GetComponent(NetId netId)
-	{
-		ERR("FIXME");
-		return nullptr;
 	}
 
 	virtual EntityWorld* GetEntityWorld() = 0;
@@ -172,7 +179,8 @@ public:
 	void NotifyReplicationFlagsDirtied();
 
 	void* GetRawComponent(EntityHandle entityHandle, ExtComponentType type);
-	EntityHandle GetEntityHandle(Guid uuid);
+	EntityHandle GetEntityHandle(FixedString const& guidString);
+	EntityHandle GetEntityHandle(Guid const& uuid);
 	UuidToHandleMappingComponent* GetUuidMappings();
 
 	void Update();
@@ -181,7 +189,7 @@ public:
 protected:
 	static constexpr int32_t UndefinedIndex{ -1 };
 
-	void MapComponentIndices(char const* componentName, ExtComponentType type, std::size_t size);
+	void MapComponentIndices(char const* componentName, ExtComponentType type, std::size_t size, bool isProxy);
 	void MapQueryIndex(char const* name, ExtQueryType type);
 	void MapResourceManagerIndex(char const* componentName, ExtResourceManagerType type);
 	void UpdateComponentMappings();
@@ -191,14 +199,6 @@ private:
 	{
 		ComponentTypeIndex ComponentIndex{ UndefinedComponent };
 		ReplicationTypeIndex ReplicationIndex{ UndefinedReplicationComponent };
-	};
-	
-	struct PerComponentData
-	{
-		ComponentTypeIndex ComponentIndex{ UndefinedComponent };
-		ReplicationTypeIndex ReplicationIndex{ UndefinedReplicationComponent };
-		std::size_t Size{ 0 };
-		lua::GenericPropertyMap* Properties{ nullptr };
 	};
 
 	std::array<PerComponentData, (size_t)ExtComponentType::Max> components_;
@@ -223,7 +223,7 @@ private:
 	void BindStaticData(std::string_view name, int32_t id);
 	void BindComponent(std::string_view name, int32_t id);
 	void BindReplication(std::string_view name, int32_t id);
-	void* GetRawComponent(char const* nameGuid, ExtComponentType type);
+	void* GetRawComponent(Guid const& guid, ExtComponentType type);
 	void* GetRawComponent(FixedString const& guid, ExtComponentType type);
 	resource::GuidResourceBankBase* GetRawResourceManager(ExtResourceManagerType type);
 };

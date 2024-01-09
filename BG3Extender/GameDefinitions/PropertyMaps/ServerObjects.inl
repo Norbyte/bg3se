@@ -20,13 +20,8 @@ P(Statuses)
 END_CLS()
 
 
-BEGIN_CLS(esv::CharacterComponent)
-INHERIT(BaseComponent)
-P(Character)
-END_CLS()
-
-
 BEGIN_CLS(esv::Character)
+INHERIT(BaseComponent)
 P(Flags)
 P_BITMASK(Flags)
 P_RO(Level)
@@ -65,6 +60,8 @@ P_BITMASK(Flags2)
 P(Flags3)
 P_BITMASK(Flags3)
 
+P_GETTER(Character, LuaGetSelf)
+
 // Functions
 P_FUN(GetStatus, GetStatus)
 P_FUN(GetStatusByType, GetStatusByType)
@@ -78,13 +75,8 @@ P(ReservedProfileID)
 END_CLS()
 
 
-BEGIN_CLS(esv::ItemComponent)
-INHERIT(BaseComponent)
-P(Item)
-END_CLS()
-
-
 BEGIN_CLS(esv::Item)
+INHERIT(BaseComponent)
 P_RO(field_10)
 P(Flags)
 P_BITMASK(Flags)
@@ -101,6 +93,8 @@ P(PreviousLevel)
 P(TreasureLevel)
 P(Flags2)
 P_BITMASK(Flags2)
+
+P_GETTER(Item, LuaGetSelf)
 
 /*P_FUN(GetInventoryItems, ItemGetInventoryItems)
 P_FUN(GetNearbyCharacters, ItemGetNearbyCharacters)

@@ -4,7 +4,13 @@
 
 BEGIN_SE()
 
+// Base class for all component data
 struct BaseComponent
+{
+};
+
+// Base class for component data that uses external storage
+struct BaseProxyComponent : public BaseComponent
 {
 };
 
@@ -143,8 +149,8 @@ struct Query : public ProtectedGameObject<Query>
 	uint8_t ComponentTypesCapacity;
 	uint8_t ComponentTypesCapacityUnk;
 
-	void* GetFirstMatchingComponent(std::size_t componentSize);
-	Array<void*> GetAllMatchingComponents(std::size_t componentSize);
+	void* GetFirstMatchingComponent(std::size_t componentSize, bool isProxy);
+	Array<void*> GetAllMatchingComponents(std::size_t componentSize, bool isProxy);
 };
 
 
@@ -277,9 +283,9 @@ struct EntityClass : public ProtectedGameObject<EntityClass>
 	Array<void*> field_440;
 	UnknownMask field_450;
 
-	void* GetComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize) const;
-	void* GetComponent(InstanceComponentPointer const& entityPtr, ComponentTypeIndex type, std::size_t componentSize) const;
-	void* GetComponent(InstanceComponentPointer const& entityPtr, uint8_t componentSlot, std::size_t componentSize) const;
+	void* GetComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy) const;
+	void* GetComponent(InstanceComponentPointer const& entityPtr, ComponentTypeIndex type, std::size_t componentSize, bool isProxy) const;
+	void* GetComponent(InstanceComponentPointer const& entityPtr, uint8_t componentSlot, std::size_t componentSize, bool isProxy) const;
 
 	inline bool HasComponent(ComponentTypeIndex type) const
 	{
@@ -722,9 +728,7 @@ struct EntityWorld : public ProtectedGameObject<EntityWorld>
 	int field_338;
 	EntityComponents* Components;
 
-	void* GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize);
-	void* GetRawComponent(char const* nameGuid, ComponentTypeIndex type, std::size_t componentSize);
-	void* GetRawComponent(FixedString const& guid, ComponentTypeIndex type, std::size_t componentSize);
+	void* GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy);
 
 	EntityClass* GetEntityClass(EntityHandle entityHandle) const;
 	bool IsValid(EntityHandle entityHandle) const;

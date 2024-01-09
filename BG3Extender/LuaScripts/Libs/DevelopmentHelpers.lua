@@ -38,19 +38,19 @@ local function ValidateEntities()
         for name,component in pairs(entity:GetAllComponents()) do
             DebugValidate(component, entity, counters)
             if name == "ServerCharacter" then
-                if DebugValidate(component.Character, entity, counters) then
-                    DebugValidate(component.Character.Template, entity, counters)
-                    DebugValidate(component.Character.StatusManager, entity, counters)
-                    for i,status in pairs(component.Character.StatusManager.Statuses) do
+                if DebugValidate(component, entity, counters) then
+                    DebugValidate(component.Template, entity, counters)
+                    DebugValidate(component.StatusManager, entity, counters)
+                    for i,status in pairs(component.StatusManager.Statuses) do
                         DebugValidate(status, entity, counters)
                     end
                 end
             end
             if name == "ServerItem" then
-                if DebugValidate(component.Item, entity, counters) then
-                    DebugValidate(component.Item.Template, entity, counters)
-                    DebugValidate(component.Item.StatusManager, entity, counters)
-                    for i,status in pairs(component.Item.StatusManager.Statuses) do
+                if DebugValidate(component, entity, counters) then
+                    DebugValidate(component.Template, entity, counters)
+                    DebugValidate(component.StatusManager, entity, counters)
+                    for i,status in pairs(component.StatusManager.Statuses) do
                         DebugValidate(status, entity, counters)
                     end
                 end

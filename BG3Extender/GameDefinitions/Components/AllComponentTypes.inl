@@ -1,7 +1,7 @@
 #include <GameDefinitions/Components/GeneratedComponentTypes.inl>
 
-T(esv::CharacterComponent)
-T(esv::ItemComponent)
+T(esv::Character)
+T(esv::Item)
 T(esv::Projectile)
 
 /*

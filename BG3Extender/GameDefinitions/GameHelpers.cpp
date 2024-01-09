@@ -337,6 +337,29 @@ namespace bg3se
 		return FindByNetId(netId);
 	}*/
 
+	static bool CharacterGetSelfCalled{ false };
+
+	RefReturn<esv::Character> esv::Character::LuaGetSelf()
+	{
+		if (!CharacterGetSelfCalled) {
+			CharacterGetSelfCalled = true;
+			WARN("entity.ServerCharacter.Character is deprecated; use entity.ServerCharacter instead");
+		}
+
+		return this;
+	}
+
+	static bool ItemGetSelfCalled{ false };
+
+	RefReturn<esv::Item> esv::Item::LuaGetSelf()
+	{
+		if (!ItemGetSelfCalled) {
+			ItemGetSelfCalled = true;
+			WARN("entity.ServerItem.Item is deprecated; use entity.ServerItem instead");
+		}
+
+		return this;
+	}
 
 	esv::Status * esv::Character::GetStatus(FixedString statusId)
 	{
