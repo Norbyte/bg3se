@@ -501,6 +501,12 @@ def generate_member(name, member):
 
     if 'bg3::readonly' in member['attributes']:
         return 'P_RO(' + name + ')\n'
+
+    if 'bg3::deprecated' in member['attributes']:
+        return 'P_NOTIFY(' + name + ', Deprecated)\n'
+
+    if name.startswith('field_'):
+        return 'P_NOTIFY(' + name + ', TemporaryName)\n'
     
     return 'P(' + name + ')\n'
 
@@ -541,7 +547,7 @@ propmap = ''
 component_names = ''
 for n,struct in structs.items():
     if 'bg3::hidden' not in struct.attributes:
-        if struct.base == 'BaseComponent':
+        if struct.base == 'BaseComponent' or struct.base == 'BaseProxyComponent':
             component_names += 'T(' + n + ')\n'
         if struct.base is not None:
             struct.base = expand_namespaces(struct.name_ns, structs, struct.base)

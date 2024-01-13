@@ -21,7 +21,7 @@ void InheritProperties(GenericPropertyMap const& base, GenericPropertyMap& child
 
 	for (auto const& prop : base.Properties) {
 		child.AddRawProperty(prop.first.GetString(), prop.second.Get, prop.second.Set, 
-			prop.second.Serialize, prop.second.Offset, prop.second.Flag);
+			prop.second.Serialize, prop.second.Offset, prop.second.Flag, prop.second.PendingNotifications);
 	}
 	
 	for (auto const& prop : base.Validators) {
@@ -61,7 +61,8 @@ void AddBitmaskProperty(GenericPropertyMap& pm, std::size_t offset)
 			nullptr,
 			nullptr,
 			offset,
-			(uint64_t)label.Value
+			(uint64_t)label.Value,
+			PropertyNotification::None
 		);
 	}
 }
@@ -78,7 +79,8 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 			nullptr,
 			nullptr,
 			offset,
-			(uint64_t)label.Value
+			(uint64_t)label.Value,
+			PropertyNotification::None
 		);
 	}
 }
@@ -92,6 +94,7 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 #define END_CLS()
 #define INHERIT(base)
 #define P(prop)
+#define P_NOTIFY(prop, notification)
 #define P_RO(prop)
 #define P_BITMASK(prop)
 #define P_BITMASK_GETTER_SETTER(prop, getter, setter)
@@ -109,6 +112,7 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 #undef END_CLS
 #undef INHERIT
 #undef P
+#undef P_NOTIFY
 #undef P_RO
 #undef P_BITMASK
 #undef P_BITMASK_GETTER_SETTER
@@ -159,7 +163,16 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 		&(GenericSetOffsetProperty<decltype(PM::ObjectType::prop)>), \
 		&(GenericValidateOffsetProperty<decltype(PM::ObjectType::prop)>), \
 		&(GenericSerializeOffsetProperty<decltype(PM::ObjectType::prop)>), \
-		offsetof(PM::ObjectType, prop) \
+		offsetof(PM::ObjectType, prop), 0, PropertyNotification::None \
+	);
+		
+#define P_NOTIFY(prop, notify) \
+	pm.AddRawProperty(#prop, \
+		&(GenericGetOffsetProperty<decltype(PM::ObjectType::prop)>), \
+		&(GenericSetOffsetProperty<decltype(PM::ObjectType::prop)>), \
+		&(GenericValidateOffsetProperty<decltype(PM::ObjectType::prop)>), \
+		&(GenericSerializeOffsetProperty<decltype(PM::ObjectType::prop)>), \
+		offsetof(PM::ObjectType, prop), 0, PropertyNotification::notify \
 	);
 
 #define P_RO(prop) \
@@ -168,19 +181,19 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 		&GenericSetReadOnlyProperty, \
 		&(GenericValidateOffsetProperty<decltype(PM::ObjectType::prop)>), \
 		&(GenericSerializeOffsetProperty<decltype(PM::ObjectType::prop)>), \
-		offsetof(PM::ObjectType, prop) \
+		offsetof(PM::ObjectType, prop), 0, PropertyNotification::None \
 	);
 
 #define P_BITMASK(prop) AddBitmaskProperty<decltype(PM::ObjectType::prop)>(pm, offsetof(PM::ObjectType, prop));
 
 #define P_BITMASK_GETTER_SETTER(prop, getter, setter) \
 	AddBitmaskProperty<PM::ObjectType, decltype(PM::ObjectType::prop)>(pm, offsetof(PM::ObjectType, prop), \
-		[](lua_State* L, LifetimeHandle const& lifetime, PM::ObjectType* obj, std::size_t offset, uint64_t flag) { \
-			CallFlagGetter(L, obj, &PM::ObjectType::getter, (decltype(PM::ObjectType::prop))flag); \
+		[](lua_State* L, LifetimeHandle const& lifetime, PM::ObjectType* obj, RawPropertyAccessors const& prop) { \
+			CallFlagGetter(L, obj, &PM::ObjectType::getter, (decltype(PM::ObjectType::prop))prop.Flag); \
 			return PropertyOperationResult::Success; \
 		}, \
-		[](lua_State* L, LifetimeHandle const& lifetime, PM::ObjectType* obj, int index, std::size_t offset, uint64_t flag) { \
-			CallFlagSetter(L, obj, index, &PM::ObjectType::setter, (decltype(PM::ObjectType::prop))flag); \
+		[](lua_State* L, LifetimeHandle const& lifetime, PM::ObjectType* obj, int index, RawPropertyAccessors const& prop) { \
+			CallFlagSetter(L, obj, index, &PM::ObjectType::setter, (decltype(PM::ObjectType::prop))prop.Flag); \
 			return PropertyOperationResult::Success; \
 		});
 
@@ -190,7 +203,7 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 		&(GenericSetOffsetProperty<decltype(PM::ObjectType::prop)>), \
 		&(GenericValidateOffsetProperty<decltype(PM::ObjectType::prop)>), \
 		&(GenericSerializeOffsetProperty<decltype(PM::ObjectType::prop)>), \
-		offsetof(PM::ObjectType, prop) \
+		offsetof(PM::ObjectType, prop), 0, PropertyNotification::None \
 	);
 
 #define PN_RO(name, prop) \
@@ -199,35 +212,35 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 		&GenericSetReadOnlyProperty, \
 		&(GenericValidateOffsetProperty<decltype(PM::ObjectType::prop)>), \
 		&(GenericSerializeOffsetProperty<decltype(PM::ObjectType::prop)>), \
-		offsetof(PM::ObjectType, prop) \
+		offsetof(PM::ObjectType, prop), 0, PropertyNotification::None \
 	);
 
 #define P_GETTER(name, fun) \
 	pm.AddProperty(#name, \
-		[](lua_State* L, LifetimeHandle const& lifetime, PM::ObjectType* obj, std::size_t offset, uint64_t flag) { \
+		[](lua_State* L, LifetimeHandle const& lifetime, PM::ObjectType* obj, RawPropertyAccessors const& prop) { \
 			CallGetter(L, obj, &PM::ObjectType::fun); \
 			return PropertyOperationResult::Success; \
 		}, \
-		(PM::TPropertyMap::PropertyAccessors::Setter*)&GenericSetNonWriteableProperty, nullptr, nullptr, 0, 0 \
+		(PM::TPropertyMap::PropertyAccessors::Setter*)&GenericSetNonWriteableProperty, nullptr, nullptr, 0, 0, PropertyNotification::None \
 	);
 
 #define P_GETTER_SETTER(prop, getter, setter) \
 	pm.AddProperty(#prop, \
-		[](lua_State* L, LifetimeHandle const& lifetime, PM::ObjectType* obj, std::size_t offset, uint64_t flag) { \
+		[](lua_State* L, LifetimeHandle const& lifetime, PM::ObjectType* obj, RawPropertyAccessors const& prop) { \
 			CallGetter(L, obj, &PM::ObjectType::getter); \
 			return PropertyOperationResult::Success; \
 		}, \
-		[](lua_State* L, LifetimeHandle const& lifetime, PM::ObjectType* obj, int index, std::size_t offset, uint64_t flag) { \
+		[](lua_State* L, LifetimeHandle const& lifetime, PM::ObjectType* obj, int index, RawPropertyAccessors const& prop) { \
 			CallSetter(L, obj, index, &PM::ObjectType::setter); \
 			return PropertyOperationResult::Success; \
 		}, \
-		nullptr, nullptr, 0, 0 \
+		nullptr, nullptr, 0, 0, PropertyNotification::None\
 	);
 
 // FIXME - avoid generating a separate push function for each closure
 #define P_FUN(name, fun) \
 	pm.AddProperty(#name, \
-		[](lua_State* L, LifetimeHandle const& lifetime, PM::ObjectType* obj, std::size_t offset, uint64_t flag) { \
+		[](lua_State* L, LifetimeHandle const& lifetime, PM::ObjectType* obj, RawPropertyAccessors const& prop) { \
 			lua_pushcfunction(L, [](lua_State* L) -> int { \
 				return CallMethod(L, &PM::ObjectType::fun); \
 			}); \
@@ -236,7 +249,7 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 		(PM::TPropertyMap::PropertyAccessors::Setter*)&GenericSetNonWriteableProperty, \
 		nullptr, \
 		(PM::TPropertyMap::PropertyAccessors::Serializer*)&GenericNullSerializeProperty, \
-		0, 0 \
+		0, 0, PropertyNotification::None \
 	);
 
 #define P_FALLBACK(getter, setter) pm.SetFallback(getter, setter);
@@ -249,6 +262,7 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 #undef END_CLS
 #undef INHERIT
 #undef P
+#undef P_NOTIFY
 #undef P_RO
 #undef P_BITMASK
 #undef P_BITMASK_GETTER_SETTER

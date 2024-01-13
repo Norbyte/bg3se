@@ -355,7 +355,7 @@ namespace bg3se::lua::dbg
 		auto obj = meta.Ptr;
 
 		for (auto const& prop : pm.Properties) {
-			auto result = prop.second.Get(L, meta.Lifetime, obj, prop.second.Offset, prop.second.Flag);
+			auto result = prop.second.Get(L, meta.Lifetime, obj, prop.second);
 			if (result == PropertyOperationResult::Success) {
 				push(L, prop.first);
 				LuaElementToEvalResults(L, -1, -2, req);
@@ -376,7 +376,7 @@ namespace bg3se::lua::dbg
 		auto lifetime = State::FromLua(L)->GetGlobalLifetime();
 
 		for (auto const& prop : pm.Properties) {
-			auto result = prop.second.Get(L, lifetime, obj, prop.second.Offset, prop.second.Flag);
+			auto result = prop.second.Get(L, lifetime, obj, prop.second);
 			if (result == PropertyOperationResult::Success) {
 				push(L, prop.first);
 				LuaElementToEvalResults(L, -1, -2, req);

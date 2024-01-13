@@ -32,7 +32,7 @@ PropertyOperationResult GenericPropertyMap::GetRawProperty(lua_State* L, Lifetim
 		}
 	}
 
-	return it->second.Get(L, lifetime, object, it->second.Offset, it->second.Flag);
+	return it->second.Get(L, lifetime, object, it->second);
 }
 
 PropertyOperationResult GenericPropertyMap::SetRawProperty(lua_State* L, void* object, FixedString const& prop, int index) const
@@ -46,17 +46,17 @@ PropertyOperationResult GenericPropertyMap::SetRawProperty(lua_State* L, void* o
 		}
 	}
 
-	return it->second.Set(L, object, index, it->second.Offset, it->second.Flag);
+	return it->second.Set(L, object, index, it->second);
 }
 
 void GenericPropertyMap::AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter,
 	typename RawPropertyAccessors::Setter* setter, typename RawPropertyAccessors::Serializer* serialize, 
-	std::size_t offset, uint64_t flag)
+	std::size_t offset, uint64_t flag, PropertyNotification notification)
 {
 	assert((!Initialized || !InheritanceUpdated) && IsInitializing);
 	auto key = FixedString(prop);
 	assert(Properties.find(key) == Properties.end());
-	Properties.insert(std::make_pair(key, RawPropertyAccessors{ key, offset, flag, getter, setter, serialize }));
+	Properties.insert(std::make_pair(key, RawPropertyAccessors{ key, offset, flag, getter, setter, serialize, notification, this }));
 
 }
 
@@ -68,10 +68,10 @@ void GenericPropertyMap::AddRawValidator(char const* prop, typename RawPropertyV
 
 void GenericPropertyMap::AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter,
 	typename RawPropertyAccessors::Setter* setter, typename RawPropertyValidators::Validator* validate, 
-	typename RawPropertyAccessors::Serializer* serialize, std::size_t offset, uint64_t flag)
+	typename RawPropertyAccessors::Serializer* serialize, std::size_t offset, uint64_t flag, PropertyNotification notification)
 {
 	if (getter != nullptr || setter != nullptr) {
-		AddRawProperty(prop, getter, setter, serialize, offset, flag);
+		AddRawProperty(prop, getter, setter, serialize, offset, flag, notification);
 	}
 
 	if (validate != nullptr) {
@@ -138,7 +138,7 @@ void SerializeRawObject(lua_State* L, void* obj, GenericPropertyMap const& pm)
 	lua_createtable(L, 0, (int)pm.Properties.size());
 	for (auto const& prop : pm.Properties) {
 		if (prop.second.Serialize != nullptr) {
-			auto result = prop.second.Serialize(L, obj, prop.second.Offset, prop.second.Flag);
+			auto result = prop.second.Serialize(L, obj, prop.second);
 			if (result == PropertyOperationResult::Success) {
 				lua_setfield(L, -2, prop.first.GetString());
 			}
@@ -152,7 +152,7 @@ void UnserializeRawObjectFromTable(lua_State* L, int index, void* obj, GenericPr
 	for (auto const& prop : pm.Properties) {
 		lua_getfield(L, index, prop.first.GetString());
 		if (lua_type(L, -1) != LUA_TNIL) {
-			prop.second.Set(L, obj, lua_absindex(L, -1), prop.second.Offset, prop.second.Flag);
+			prop.second.Set(L, obj, lua_absindex(L, -1), prop.second);
 		}
 		lua_pop(L, 1);
 	}
@@ -168,6 +168,35 @@ void UnserializeRawObjectFromUserdata(lua_State* L, int index, void* obj, Generi
 	} else {
 		luaL_error(L, "Type %s does not support assignment", pm.Name.GetString());
 	}
+}
+
+std::atomic<uint32_t> gDisablePropertyWarningsCount{ 0 };
+
+void DisablePropertyWarnings()
+{
+	gDisablePropertyWarningsCount++;
+}
+
+void EnablePropertyWarnings()
+{
+	gDisablePropertyWarningsCount--;
+}
+
+void ProcessPropertyNotifications(RawPropertyAccessors const& prop, bool isWriting)
+{
+	if (gDisablePropertyWarningsCount > 0) return;
+
+	if ((unsigned)prop.PendingNotifications & (unsigned)PropertyNotification::Deprecated) {
+		WARN("%s property %s.%s which is deprecated and will be removed in future versions", 
+			(isWriting ? "Writing" : "Reading"), prop.PropertyMap->Name.GetString(), prop.Name.GetString());
+	}
+	
+	if ((unsigned)prop.PendingNotifications & (unsigned)PropertyNotification::TemporaryName) {
+		WARN("%s property %s.%s whose name is a placeholder and will be renamed in future versions", 
+			(isWriting ? "Writing" : "Reading"), prop.PropertyMap->Name.GetString(), prop.Name.GetString());
+	}
+
+	prop.PendingNotifications = PropertyNotification::None;
 }
 
 END_NS()

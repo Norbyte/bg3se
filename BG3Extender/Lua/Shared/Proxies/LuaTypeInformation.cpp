@@ -53,6 +53,7 @@ void RegisterObjectProxyTypeInformation()
 #define END_CLS() GetStaticTypeInfo(Overload<TClass>{}).Type = &ty; })();
 #define INHERIT(base) ty.ParentType = GetTypeInfoRef<base>();
 #define P(prop) ty.Members.insert(std::make_pair(FixedString(#prop), GetTypeInfoRef<decltype(TClass::prop)>()));
+#define P_NOTIFY(prop, notification) ty.Members.insert(std::make_pair(FixedString(#prop), GetTypeInfoRef<decltype(TClass::prop)>()));
 #define P_RO(prop) ty.Members.insert(std::make_pair(FixedString(#prop), GetTypeInfoRef<decltype(TClass::prop)>()));
 #define P_BITMASK(prop) AddBitmaskTypeInfo<decltype(TClass::prop)>(ty);
 #define P_BITMASK_GETTER_SETTER(prop, getter, setter) AddBitmaskTypeInfo<decltype(TClass::prop)>(ty);
@@ -70,6 +71,7 @@ void RegisterObjectProxyTypeInformation()
 #undef END_CLS
 #undef INHERIT
 #undef P
+#undef P_NOTIFY
 #undef P_RO
 #undef P_BITMASK
 #undef P_BITMASK_GETTER_SETTER

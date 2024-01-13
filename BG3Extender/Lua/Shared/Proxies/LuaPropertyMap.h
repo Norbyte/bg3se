@@ -2,6 +2,32 @@
 
 BEGIN_NS(lua)
 
+enum class PropertyNotification
+{
+	None = 0,
+	Deprecated = 1 << 0,
+	Renamed = 1 << 1,
+	TemporaryName = 1 << 2,
+};
+
+class GenericPropertyMap;
+
+struct RawPropertyAccessors
+{
+	using Getter = PropertyOperationResult (lua_State* L, LifetimeHandle const& lifetime, void* object, RawPropertyAccessors const& prop);
+	using Setter = PropertyOperationResult (lua_State* L, void* object, int index, RawPropertyAccessors const& prop);
+	using Serializer = PropertyOperationResult (lua_State* L, void* object, RawPropertyAccessors const& prop);
+
+	FixedString Name;
+	std::size_t Offset;
+	uint64_t Flag;
+	Getter* Get;
+	Setter* Set;
+	Serializer* Serialize;
+	mutable PropertyNotification PendingNotifications;
+	GenericPropertyMap* PropertyMap;
+};
+
 class GenericPropertyMap : Noncopyable<GenericPropertyMap>
 {
 public:
@@ -12,20 +38,6 @@ public:
 	using TSerializer = void (lua_State* L, void*);
 	using TUnserializer = void (lua_State* L, int index, void*);
 	using TAssigner = void (void* object, void* rhs);
-
-	struct RawPropertyAccessors
-	{
-		using Getter = PropertyOperationResult (lua_State* L, LifetimeHandle const& lifetime, void* object, std::size_t offset, uint64_t flag);
-		using Setter = PropertyOperationResult (lua_State* L, void* object, int index, std::size_t offset, uint64_t flag);
-		using Serializer = PropertyOperationResult (lua_State* L, void* object, std::size_t offset, uint64_t flag);
-
-		FixedString Name;
-		std::size_t Offset;
-		uint64_t Flag;
-		Getter* Get;
-		Setter* Set;
-		Serializer* Serialize;
-	};
 
 	struct RawPropertyValidators
 	{
@@ -50,11 +62,11 @@ public:
 	PropertyOperationResult GetRawProperty(lua_State* L, LifetimeHandle const& lifetime, void* object, FixedString const& prop) const;
 	PropertyOperationResult SetRawProperty(lua_State* L, void* object, FixedString const& prop, int index) const;
 	void AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter, typename RawPropertyAccessors::Setter* setter,
-		typename RawPropertyAccessors::Serializer* serialize, std::size_t offset, uint64_t flag = 0);
-	void AddRawValidator(char const* prop, typename RawPropertyValidators::Validator* validate, std::size_t offset, uint64_t flag = 0);
+		typename RawPropertyAccessors::Serializer* serialize, std::size_t offset, uint64_t flag, PropertyNotification notification);
+	void AddRawValidator(char const* prop, typename RawPropertyValidators::Validator* validate, std::size_t offset, uint64_t flag);
 	void AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter,
 		typename RawPropertyAccessors::Setter* setter, typename RawPropertyValidators::Validator* validate, 
-		typename RawPropertyAccessors::Serializer* serialize, std::size_t offset, uint64_t flag = 0);
+		typename RawPropertyAccessors::Serializer* serialize, std::size_t offset, uint64_t flag, PropertyNotification notification);
 	bool IsA(int typeRegistryIndex) const;
 	bool ValidatePropertyMap(void* object);
 	bool ValidateObject(void* object);
@@ -81,17 +93,17 @@ public:
 	std::optional<ExtComponentType> ComponentType;
 };
 
-inline PropertyOperationResult GenericSetNonWriteableProperty(lua_State* L,  void* obj, int index, std::size_t offset, uint64_t)
+inline PropertyOperationResult GenericSetNonWriteableProperty(lua_State* L,  void* obj, int index, RawPropertyAccessors const&)
 {
 	return PropertyOperationResult::UnsupportedType;
 }
 
-inline PropertyOperationResult GenericSetReadOnlyProperty(lua_State* L, void* obj, int index, std::size_t offset, uint64_t)
+inline PropertyOperationResult GenericSetReadOnlyProperty(lua_State* L, void* obj, int index, RawPropertyAccessors const&)
 {
 	return PropertyOperationResult::ReadOnly;
 }
 
-inline PropertyOperationResult GenericNullSerializeProperty(lua_State* L, void* object, std::size_t offset, uint64_t flag)
+inline PropertyOperationResult GenericNullSerializeProperty(lua_State* L, void* object, RawPropertyAccessors const&)
 {
 	return PropertyOperationResult::UnsupportedType;
 }
@@ -140,9 +152,9 @@ class LuaPropertyMap : public GenericPropertyMap
 public:
 	struct PropertyAccessors
 	{
-		using Getter = PropertyOperationResult (lua_State* L, LifetimeHandle const& lifetime, T* object, std::size_t offset, uint64_t flag);
-		using Setter = PropertyOperationResult (lua_State* L, T* object, int index, std::size_t offset, uint64_t flag);
-		using Serializer = PropertyOperationResult (lua_State* L, T* object, std::size_t offset, uint64_t flag);
+		using Getter = PropertyOperationResult (lua_State* L, LifetimeHandle const& lifetime, T* object, RawPropertyAccessors const& prop);
+		using Setter = PropertyOperationResult (lua_State* L, T* object, int index, RawPropertyAccessors const& prop);
+		using Serializer = PropertyOperationResult (lua_State* L, T* object, RawPropertyAccessors const& prop);
 		using Validator = bool (T* object, std::size_t offset, uint64_t flag);
 		using FallbackGetter = PropertyOperationResult (lua_State* L, LifetimeHandle const& lifetime, T* object, FixedString const& prop);
 		using FallbackSetter = PropertyOperationResult (lua_State* L, T* object, FixedString const& prop, int index);
@@ -184,14 +196,14 @@ public:
 
 #if defined(DEBUG_TRAP_GETTERS)
 		__try {
-			return getter(L, lifetime, object, prop.Offset, prop.Flag);
+			return getter(L, lifetime, object, prop);
 		}
 		__except (EXCEPTION_EXECUTE_HANDLER) {
 			ERR("Exception while reading property %s.%s", Name.GetString(), prop.Name.GetString());
 			return PropertyOperationResult::Unknown;
 		}
 #else
-		return getter(L, lifetime, object, prop.Offset, prop.Flag);
+		return getter(L, lifetime, object, prop);
 #endif
 	}
 
@@ -201,14 +213,14 @@ public:
 
 #if defined(DEBUG_TRAP_GETTERS)
 		__try {
-			return setter(L, object, index, prop.Offset, prop.Flag);
+			return setter(L, object, index, prop);
 		}
 		__except (EXCEPTION_EXECUTE_HANDLER) {
 			ERR("Exception while writing property %s.%s", Name.GetString(), prop.Name.GetString());
 			return PropertyOperationResult::Unknown;
 		}
 #else
-		return setter(L, object, index, prop.Offset, prop.Flag);
+		return setter(L, object, index, prop);
 #endif
 	}
 
@@ -217,7 +229,7 @@ public:
 		typename PropertyAccessors::Setter* setter, 
 		typename PropertyAccessors::Validator* validator,
 		typename PropertyAccessors::Serializer* serialize,
-		std::size_t offset, uint64_t flag)
+		std::size_t offset, uint64_t flag, PropertyNotification notification)
 	{
 		if (setter == nullptr) {
 			setter = (typename PropertyAccessors::Setter*)&GenericSetNonWriteableProperty;
@@ -231,7 +243,7 @@ public:
 			(RawPropertyAccessors::Getter*)getter, (RawPropertyAccessors::Setter*)setter, 
 			(RawPropertyValidators::Validator*)validator, 
 			(RawPropertyAccessors::Serializer*)serialize,
-			offset, flag);
+			offset, flag, notification);
 	}
 
 	inline void SetFallback(PropertyAccessors::FallbackGetter* getter, PropertyAccessors::FallbackSetter* setter)

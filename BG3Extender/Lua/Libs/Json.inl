@@ -600,11 +600,13 @@ UserReturn LuaStringify(lua_State * L)
 		}
 	}
 
+	DisablePropertyWarnings();
 	try {
 		push(L, Stringify(L, ctx, 1));
 	} catch (std::runtime_error& e) {
 		return luaL_error(L, "%s", e.what());
 	}
+	EnablePropertyWarnings();
 
 	return 1;
 }
