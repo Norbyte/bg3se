@@ -563,8 +563,9 @@ void EntitySystemHelpersBase::Update()
 			auto pool = pools.Find(componentInfo.ComponentIndex);
 			if (pool != nullptr) {
 				auto name = componentIndexToNameMappings_[componentInfo.ComponentIndex];
-				if (pool->ComponentSizeInBytes != componentInfo.Size) {
-					ERR("[ECS INTEGRITY CHECK] Component size mismatch (%s): local %d, ECS %d", name->c_str(), componentInfo.Size, pool->ComponentSizeInBytes);
+				auto componentSize = componentInfo.IsProxy ? sizeof(void*) : componentInfo.Size;
+				if (pool->ComponentSizeInBytes != componentSize) {
+					ERR("[ECS INTEGRITY CHECK] Component size mismatch (%s): local %d, ECS %d", name->c_str(), componentSize, pool->ComponentSizeInBytes);
 				}
 			}
 		}
