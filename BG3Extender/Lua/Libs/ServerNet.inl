@@ -67,6 +67,17 @@ std::optional<bool> PlayerHasExtender(lua_State* L, Guid characterGuid)
 	return networkMgr.CanSendExtenderMessages(character->UserID.GetPeerId());
 }
 
+void Kick(int userId, const char* kickText)
+{
+	if (UserId(userId) == ReservedUserId) {
+		OsiError("Attempted to send message to reserved user ID!");
+		return;
+	}
+
+	auto& networkMgr = gExtender->GetServer().GetNetworkManager();
+	networkMgr.Kick(UserId(userId), kickText);
+}
+
 void RegisterNetLib()
 {
 	DECLARE_MODULE(Net, Server)
@@ -75,6 +86,7 @@ void RegisterNetLib()
 	MODULE_FUNCTION(PostMessageToClient)
 	MODULE_FUNCTION(PostMessageToUser)
 	MODULE_FUNCTION(PlayerHasExtender)
+	MODULE_FUNCTION(Kick)
 	END_MODULE()
 }
 
