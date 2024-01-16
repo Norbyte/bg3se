@@ -2,14 +2,14 @@ import re
 
 ns_start_re = r'^BEGIN(_BARE)?_NS\(\s*(.*)\s*\)$'
 ns_end_re = r'^END(_BARE)?_NS\(\s*\)$'
-struct_re = r'^(struct|class)\s+(?P<attributes>(\[\[[a-zA-Z0-9:_]+\]\]\s*)*)?(?P<class>[a-zA-Z0-9_]+)(\s*:(\s*public)?\s+(?P<baseclass>[a-zA-Z0-9_<>:]+))?$'
+struct_re = r'^(struct|class)\s+(?P<attributes>\[\[(\s*[a-zA-Z0-9:_]+\s*(\([^)]*\))?\s*,?\s*)+\]\])?\s*(?P<class>[a-zA-Z0-9_]+)(\s*:(\s*public)?\s+(?P<baseclass>[a-zA-Z0-9_<>:]+))?$'
 struct_start_re = r'^{$'
 struct_end_re = r'^(};|}\))$'
 static_property_re = r'^static\s+constexpr\s+(?P<type>.+)\s+(?P<name>.+)\s*=\s*(?P<value>.+)\s*;?$'
 typedef_re = r'^using\s+.*=.*;?$'
-attributes_re = r'^((\[\[[a-zA-Z0-9:_]+\]\]\s*)+)$'
-attribute_re = r'\[\[([a-zA-Z0-9:_]+)\]\]'
-property_re = r'^(?P<attributes>(\[\[[a-zA-Z0-9:_]+\]\]\s*)*)?(?P<type>[a-zA-Z0-9_<>*:, ]+)\s+(?P<name>[a-zA-Z0-9_]+)\s*(?P<initval>{.*})?\s*;\s*(?P<comment>//.*)?$'
+attributes_re = r'^(\[\[(\s*[a-zA-Z0-9:_]+\s*(\([^)]*\))?\s*,?\s*)+\]\])$'
+attribute_re = r'(?P<name>[a-zA-Z0-9:_]+)\s*(\(\s*(?P<args>[^)]*)\s*\))?'
+property_re = r'^(?P<attributes>\[\[(\s*[a-zA-Z0-9:_]+\s*(\([^)]*\))?\s*,?\s*)+\]\])?\s*(?P<type>[a-zA-Z0-9_<>*:, ]+)\s+(?P<name>[a-zA-Z0-9_]+)\s*(?P<initval>{.*})?\s*;\s*(?P<comment>//.*)?$'
 tag_component_re = r'^DEFINE_TAG_COMPONENT\((?P<ns>[^,]+), (?P<name>[^,]+), (?P<type>[^,]+)\)$'
 boost_re = r'^DEFN_BOOST\(\s*(?P<name>[^,]+),\s*(?P<boostType>[^,]+),\s*{$'
 ignore_re = r'^(BEGIN_SE|END_SE).*$'
@@ -17,7 +17,7 @@ ignore_re = r'^(BEGIN_SE|END_SE).*$'
 template_re = r'^template\s*<(.+)>$'
 explicit_instantiation_re = r'template\s+(struct|class)\s+(?P<name>[a-zA-Z0-9_:<>*:, ]+)\s*(?P<template_args><[a-zA-Z0-9_<>*:, ]+>);$'
 
-member_function_re = r'^(?P<attributes>(\[\[[a-zA-Z0-9:_]+\]\]\s*)*)\s*(inline\s+)?(?P<retval>[a-zA-Z0-9_:<>*, ]+)\s+(?P<name>[a-zA-Z0-9_]+)\s*\((?P<params>.*)\)\s*(const)?$'
+member_function_re = r'^(?P<attributes>\[\[(\s*[a-zA-Z0-9:_]+\s*(\([^)]*\))?\s*,?\s*)+\]\])\s*(inline\s+)?(?P<retval>[a-zA-Z0-9_:<>*, ]+)\s+(?P<name>[a-zA-Z0-9_]+)\s*\((?P<params>.*)\)\s*(const)?$'
 
 #doesn't support template template types, but I think that's fine
 template_arg_re = r'(template\s*<\s*|,\s*)(((typename|class)|((?P<paramtype>[a-zA-Z0-9_:<>*, ]+)))(\.\.\.)?\s+(?P<paramname>[a-zA-Z0-9_]+)\s*(?=(,\s*)|>))'
@@ -26,12 +26,21 @@ template_individual_types_re = r'(?:<|,|^)\s*(?P<paramused>[a-zA-Z0-9_:]+)\s*(?=
 
 alnum_re = re.compile('[a-zA-Z0-9_]')
 
+    
+class Attribute:
+    def __init__(self, name: str, args: str):
+        self.name : str = name
+        self.args : str = args
+
+def get_attr(attrs: list[Attribute], name: str):
+    return next((attr for attr in attrs if attr.name == name), None)
+
 class Structure:
-    def __init__(self, ns_stack : list[str], base : str, attributes : list[str]):
+    def __init__(self, ns_stack : list[str], base : str, attributes : list[Attribute]):
         self.name_ns : list[str] = ns_stack.copy()
         self.ns_stack : list[str] = []
         self.base : str = base
-        self.attributes : list[str] = attributes.copy()
+        self.attributes : list[Attribute] = attributes.copy()
         self.members = {}
         self.raw_lines : list[str] = []
         self.getters : list[str] = []
@@ -89,7 +98,7 @@ class Structure:
         return ret
         
 class Template(Structure):
-    def __init__(self, ns_stack : list[str], base : str, attributes : list[str], template_args : list[str]):
+    def __init__(self, ns_stack : list[str], base : str, attributes : list[Attribute], template_args : list[str]):
         Structure.__init__(self, ns_stack, base, attributes)
         self.children : dict[str, Structure] = {}
         self.templates : dict[str, Template] = {}
@@ -206,7 +215,7 @@ def expand_namespaces(ns_stack : list[str], structs : dict[str, Structure], type
 
     
     return nsname
-    
+
 
 class DefinitionLoader:
     def __init__(self, structs):
@@ -215,7 +224,7 @@ class DefinitionLoader:
         self.struct_stack : list[Structure] = []
         self.next_struct : str = None
         self.next_struct_base : str = None
-        self.next_attributes : list[str] = []
+        self.next_attributes : list[Attribute] = []
         self.structs : dict[str, Structure] = structs
         self.template_stack : list[Template] = []
         self.cur_template : Template = None
@@ -231,8 +240,9 @@ class DefinitionLoader:
             raise Exception("Partially parsed namespace or struct after EOF")
 
     def parse_attributes(self, line):
-        for match in re.finditer(attribute_re, line):
-            self.next_attributes.append(match.group(1))
+        if line is not None:
+            for match in re.finditer(attribute_re, line):
+                self.next_attributes.append(Attribute(match.group('name'), match.group('args')))
 
     def enter_ns(self, ns):
         if self.cur_template is None:
@@ -496,14 +506,18 @@ class DefinitionLoader:
         self.next_template = False
 
 def generate_member(name, member):
-    if 'bg3::hidden' in member['attributes']:
+    if get_attr(member['attributes'], 'bg3::hidden') is not None:
         return ''
 
-    if 'bg3::readonly' in member['attributes']:
+    if get_attr(member['attributes'], 'bg3::readonly') is not None:
         return 'P_RO(' + name + ')\n'
 
-    if 'bg3::deprecated' in member['attributes']:
+    if get_attr(member['attributes'], 'bg3::deprecated') is not None:
         return 'P_NOTIFY(' + name + ', Deprecated)\n'
+
+    legacy_tag = get_attr(member['attributes'], 'bg3::legacy')
+    if legacy_tag is not None:
+        return 'P_RENAMED(' + name + ', ' + legacy_tag.args + ')\n'
 
     if name.startswith('field_'):
         return 'P_NOTIFY(' + name + ', TemporaryName)\n'
@@ -546,7 +560,7 @@ for source in sources:
 propmap = ''
 component_names = ''
 for n,struct in structs.items():
-    if 'bg3::hidden' not in struct.attributes:
+    if get_attr(struct.attributes, 'bg3::hidden') is None:
         if struct.base == 'BaseComponent' or struct.base == 'BaseProxyComponent':
             component_names += 'T(' + n + ')\n'
         if struct.base is not None:

@@ -51,12 +51,13 @@ PropertyOperationResult GenericPropertyMap::SetRawProperty(lua_State* L, void* o
 
 void GenericPropertyMap::AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter,
 	typename RawPropertyAccessors::Setter* setter, typename RawPropertyAccessors::Serializer* serialize, 
-	std::size_t offset, uint64_t flag, PropertyNotification notification)
+	std::size_t offset, uint64_t flag, PropertyNotification notification, char const* newName)
 {
 	assert((!Initialized || !InheritanceUpdated) && IsInitializing);
-	auto key = FixedString(prop);
+	FixedString key{ prop };
+	FixedString newNameKey{ newName ? newName : "" };
 	assert(Properties.find(key) == Properties.end());
-	Properties.insert(std::make_pair(key, RawPropertyAccessors{ key, offset, flag, getter, setter, serialize, notification, this }));
+	Properties.insert(std::make_pair(key, RawPropertyAccessors{ key, offset, flag, getter, setter, serialize, notification, this, newNameKey }));
 
 }
 
@@ -68,10 +69,11 @@ void GenericPropertyMap::AddRawValidator(char const* prop, typename RawPropertyV
 
 void GenericPropertyMap::AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter,
 	typename RawPropertyAccessors::Setter* setter, typename RawPropertyValidators::Validator* validate, 
-	typename RawPropertyAccessors::Serializer* serialize, std::size_t offset, uint64_t flag, PropertyNotification notification)
+	typename RawPropertyAccessors::Serializer* serialize, std::size_t offset, uint64_t flag, 
+	PropertyNotification notification, char const* newName)
 {
 	if (getter != nullptr || setter != nullptr) {
-		AddRawProperty(prop, getter, setter, serialize, offset, flag, notification);
+		AddRawProperty(prop, getter, setter, serialize, offset, flag, notification, newName);
 	}
 
 	if (validate != nullptr) {
@@ -187,12 +189,17 @@ void ProcessPropertyNotifications(RawPropertyAccessors const& prop, bool isWriti
 	if (gDisablePropertyWarningsCount > 0) return;
 
 	if ((unsigned)prop.PendingNotifications & (unsigned)PropertyNotification::Deprecated) {
-		WARN("%s property %s.%s which is deprecated and will be removed in future versions", 
+		WARN("DEPRECATED: %s property %s.%s that is deprecated and will be removed in future versions", 
 			(isWriting ? "Writing" : "Reading"), prop.PropertyMap->Name.GetString(), prop.Name.GetString());
 	}
 	
+	if ((unsigned)prop.PendingNotifications & (unsigned)PropertyNotification::Renamed) {
+		WARN("DEPRECATED: %s property %s.%s that has been renamed to %s", 
+			(isWriting ? "Writing" : "Reading"), prop.PropertyMap->Name.GetString(), prop.Name.GetString(), prop.NewName.GetString());
+	}
+	
 	if ((unsigned)prop.PendingNotifications & (unsigned)PropertyNotification::TemporaryName) {
-		WARN("%s property %s.%s whose name is a placeholder and will be renamed in future versions", 
+		WARN("DEPRECATED: %s property %s.%s that is a placeholder and will be renamed in future versions", 
 			(isWriting ? "Writing" : "Reading"), prop.PropertyMap->Name.GetString(), prop.Name.GetString());
 	}
 

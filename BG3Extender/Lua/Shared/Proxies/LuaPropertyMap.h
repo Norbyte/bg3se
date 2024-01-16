@@ -26,6 +26,7 @@ struct RawPropertyAccessors
 	Serializer* Serialize;
 	mutable PropertyNotification PendingNotifications;
 	GenericPropertyMap* PropertyMap;
+	FixedString NewName;
 };
 
 class GenericPropertyMap : Noncopyable<GenericPropertyMap>
@@ -62,11 +63,13 @@ public:
 	PropertyOperationResult GetRawProperty(lua_State* L, LifetimeHandle const& lifetime, void* object, FixedString const& prop) const;
 	PropertyOperationResult SetRawProperty(lua_State* L, void* object, FixedString const& prop, int index) const;
 	void AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter, typename RawPropertyAccessors::Setter* setter,
-		typename RawPropertyAccessors::Serializer* serialize, std::size_t offset, uint64_t flag, PropertyNotification notification);
+		typename RawPropertyAccessors::Serializer* serialize, std::size_t offset, uint64_t flag, 
+		PropertyNotification notification, char const* newName = nullptr);
 	void AddRawValidator(char const* prop, typename RawPropertyValidators::Validator* validate, std::size_t offset, uint64_t flag);
 	void AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter,
 		typename RawPropertyAccessors::Setter* setter, typename RawPropertyValidators::Validator* validate, 
-		typename RawPropertyAccessors::Serializer* serialize, std::size_t offset, uint64_t flag, PropertyNotification notification);
+		typename RawPropertyAccessors::Serializer* serialize, std::size_t offset, uint64_t flag, 
+		PropertyNotification notification, char const* newName = nullptr);
 	bool IsA(int typeRegistryIndex) const;
 	bool ValidatePropertyMap(void* object);
 	bool ValidateObject(void* object);

@@ -95,6 +95,7 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 #define INHERIT(base)
 #define P(prop)
 #define P_NOTIFY(prop, notification)
+#define P_RENAMED(prop, oldName)
 #define P_RO(prop)
 #define P_BITMASK(prop)
 #define P_BITMASK_GETTER_SETTER(prop, getter, setter)
@@ -113,6 +114,7 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 #undef INHERIT
 #undef P
 #undef P_NOTIFY
+#undef P_RENAMED
 #undef P_RO
 #undef P_BITMASK
 #undef P_BITMASK_GETTER_SETTER
@@ -173,6 +175,22 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 		&(GenericValidateOffsetProperty<decltype(PM::ObjectType::prop)>), \
 		&(GenericSerializeOffsetProperty<decltype(PM::ObjectType::prop)>), \
 		offsetof(PM::ObjectType, prop), 0, PropertyNotification::notify \
+	);
+		
+#define P_RENAMED(prop, oldName) \
+	pm.AddRawProperty(#prop, \
+		&(GenericGetOffsetProperty<decltype(PM::ObjectType::prop)>), \
+		&(GenericSetOffsetProperty<decltype(PM::ObjectType::prop)>), \
+		&(GenericValidateOffsetProperty<decltype(PM::ObjectType::prop)>), \
+		&(GenericSerializeOffsetProperty<decltype(PM::ObjectType::prop)>), \
+		offsetof(PM::ObjectType, prop), 0, PropertyNotification::None \
+	); \
+	pm.AddRawProperty(#oldName, \
+		&(GenericGetOffsetProperty<decltype(PM::ObjectType::prop)>), \
+		&(GenericSetOffsetProperty<decltype(PM::ObjectType::prop)>), \
+		&(GenericValidateOffsetProperty<decltype(PM::ObjectType::prop)>), \
+		&(GenericSerializeOffsetProperty<decltype(PM::ObjectType::prop)>), \
+		offsetof(PM::ObjectType, prop), 0, PropertyNotification::Renamed, #prop \
 	);
 
 #define P_RO(prop) \
@@ -263,6 +281,7 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 #undef INHERIT
 #undef P
 #undef P_NOTIFY
+#undef P_RENAMED
 #undef P_RO
 #undef P_BITMASK
 #undef P_BITMASK_GETTER_SETTER
