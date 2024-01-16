@@ -237,6 +237,21 @@ private:
 
 class ServerState;
 
+// Stores an immutable copy of the subscribed handler ID-s during callback evaluation
+// to ensure that changes to the subscriber list don't affect the current list being evaluated
+class PendingCallbackManager
+{
+public:
+	~PendingCallbackManager();
+	Array<std::size_t>* Enter(std::unordered_multimap<uint64_t, std::size_t>::iterator& begin, 
+		std::unordered_multimap<uint64_t, std::size_t>::iterator& end);
+	void Exit(Array<std::size_t>* v);
+
+private:
+	Array<Array<std::size_t>*> cache_;
+	uint32_t depth_{ 0 };
+};
+
 class OsirisCallbackManager : Noncopyable<OsirisCallbackManager>
 {
 public:
@@ -266,6 +281,7 @@ private:
 	std::vector<RegistryEntry> subscribers_;
 	std::unordered_multimap<OsirisHookSignature, std::size_t> nameSubscriberRefs_;
 	std::unordered_multimap<uint64_t, std::size_t> nodeSubscriberRefs_;
+	PendingCallbackManager pendingCallbacks_;
 	bool storyLoaded_{ false };
 	bool osirisHooked_{ false };
 	// Are we currently merging Osiris files (story)?
@@ -276,10 +292,10 @@ private:
 	void RegisterNodeHandler(OsirisHookSignature const& sig, std::size_t handlerId);
 	void HookOsiris();
 
-	void RunHandlers(uint64_t nodeRef, TuplePtrLL* tuple) const;
-	void RunHandler(ServerState& lua, RegistryEntry const& func, TuplePtrLL* tuple) const;
-	void RunHandlers(uint64_t nodeRef, OsiArgumentDesc* tuple) const;
-	void RunHandler(ServerState& lua, RegistryEntry const& func, OsiArgumentDesc* tuple) const;
+	void RunHandlers(uint64_t nodeRef, TuplePtrLL* tuple);
+	void RunHandler(ServerState& lua, RegistryEntry const& func, TuplePtrLL* tuple);
+	void RunHandlers(uint64_t nodeRef, OsiArgumentDesc* tuple);
+	void RunHandler(ServerState& lua, RegistryEntry const& func, OsiArgumentDesc* tuple);
 };
 
 class OsirisBinding : Noncopyable<OsirisBinding>

@@ -4,6 +4,33 @@
 
 BEGIN_NS(esv::lua)
 
+PendingCallbackManager::~PendingCallbackManager()
+{
+	for (auto entry : cache_) {
+		GameDelete(entry);
+	}
+}
+
+Array<std::size_t>* PendingCallbackManager::Enter(std::unordered_multimap<uint64_t, std::size_t>::iterator& begin, 
+	std::unordered_multimap<uint64_t, std::size_t>::iterator& end)
+{
+	if (depth_ >= cache_.size()) {
+		cache_.push_back(GameAlloc<Array<std::size_t>>());
+	}
+
+	auto entry = cache_[depth_];
+	entry->clear();
+	depth_++;
+	return entry;
+}
+
+void PendingCallbackManager::Exit(Array<std::size_t>* v)
+{
+	assert(depth_ > 0 && cache_[depth_ - 1] == v);
+	depth_--;
+}
+
+
 OsirisCallbackManager::OsirisCallbackManager(ExtensionState& state)
 	: state_(state)
 {}
@@ -27,7 +54,7 @@ void OsirisCallbackManager::Subscribe(STDString const& name, uint32_t arity, Osi
 	}
 }
 
-void OsirisCallbackManager::RunHandlers(uint64_t nodeRef, TuplePtrLL* tuple) const
+void OsirisCallbackManager::RunHandlers(uint64_t nodeRef, TuplePtrLL* tuple)
 {
 	if (merging_) {
 		return;
@@ -40,13 +67,17 @@ void OsirisCallbackManager::RunHandlers(uint64_t nodeRef, TuplePtrLL* tuple) con
 
 	LuaServerPin lua(state_);
 	if (lua) {
-		std::for_each(it.first, it.second, [&lua, this, tuple](std::pair<uint64_t, std::size_t> handler) {
-			RunHandler(lua.Get(), subscribers_[handler.second], tuple);
-		});
+		// Make a copy of the subscriber indices to as the subscriber map iterator can be invalidated
+		// if the Lua handler function registers a new subscriber
+		auto indices = pendingCallbacks_.Enter(it.first, it.second);
+		for (auto index : *indices) {
+			RunHandler(lua.Get(), subscribers_[index], tuple);
+		}
+		pendingCallbacks_.Exit(indices);
 	}
 }
 
-void OsirisCallbackManager::RunHandler(ServerState& lua, RegistryEntry const& func, TuplePtrLL* tuple) const
+void OsirisCallbackManager::RunHandler(ServerState& lua, RegistryEntry const& func, TuplePtrLL* tuple)
 {
 	auto L = lua.GetState();
 	StackCheck _(L, 0);
@@ -92,7 +123,7 @@ void OsirisCallbackManager::RunHandler(ServerState& lua, RegistryEntry const& fu
 	}
 }
 
-void OsirisCallbackManager::RunHandlers(uint64_t nodeRef, OsiArgumentDesc* args) const
+void OsirisCallbackManager::RunHandlers(uint64_t nodeRef, OsiArgumentDesc* args)
 {
 	auto it = nodeSubscriberRefs_.equal_range(nodeRef);
 	if (it.first == nodeSubscriberRefs_.end()) {
@@ -101,13 +132,17 @@ void OsirisCallbackManager::RunHandlers(uint64_t nodeRef, OsiArgumentDesc* args)
 
 	LuaServerPin lua(state_);
 	if (lua) {
-		std::for_each(it.first, it.second, [&lua, this, args](std::pair<uint64_t, std::size_t> handler) {
-			RunHandler(lua.Get(), subscribers_[handler.second], args);
-		});
+		// Make a copy of the subscriber indices to as the subscriber map iterator can be invalidated
+		// if the Lua handler function registers a new subscriber
+		auto indices = pendingCallbacks_.Enter(it.first, it.second);
+		for (auto index : *indices) {
+			RunHandler(lua.Get(), subscribers_[index], args);
+		}
+		pendingCallbacks_.Exit(indices);
 	}
 }
 
-void OsirisCallbackManager::RunHandler(ServerState& lua, RegistryEntry const& func, OsiArgumentDesc* args) const
+void OsirisCallbackManager::RunHandler(ServerState& lua, RegistryEntry const& func, OsiArgumentDesc* args)
 {
 	auto L = lua.GetState();
 	StackCheck _(L, 0);
