@@ -402,7 +402,6 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <None Include="Lua\Server\EntityEvents.inl" />
     <None Include="Lua\Server\FunctorEvents.inl" />
     <None Include="Lua\Server\ServerFunctors.inl" />
-    <None Include="Lua\Server\ServerNetwork.inl" />
     <None Include="Lua\Server\ServerStatus.inl" />
     <None Include="Lua\Shared\LuaCustomizations.inl" />
     <None Include="Lua\Shared\LuaGet.inl" />

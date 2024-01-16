@@ -14,7 +14,6 @@
 #include <Lua/LevelIteratorFunctions.inl>
 #include <Lua/Shared/LuaShared.inl>
 #include <Lua/Server/ServerStatus.inl>
-#include <Lua/Server/ServerNetwork.inl>
 #include <Lua/Server/FunctorEvents.inl>
 #include <Lua/Server/ServerFunctors.inl>
 #include <Lua/Server/EntityEvents.inl>

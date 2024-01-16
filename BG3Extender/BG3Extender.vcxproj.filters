@@ -488,9 +488,6 @@
     <None Include="Lua\Libs\StatMisc.inl">
       <Filter>Lua\Shared</Filter>
     </None>
-    <None Include="Lua\Server\ServerNetwork.inl">
-      <Filter>Lua\Server</Filter>
-    </None>
     <None Include="Lua\Server\ServerStatus.inl">
       <Filter>Lua\Server</Filter>
     </None>
