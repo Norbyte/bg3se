@@ -509,7 +509,7 @@ void* EntitySystemHelpersBase::GetRawComponent(Guid const& guid, ExtComponentTyp
 {
 	auto handle = GetEntityHandle(guid);
 	if (handle) {
-		return GetRawComponent(guid, type);
+		return GetRawComponent(handle, type);
 	} else {
 		return nullptr;
 	}
@@ -519,7 +519,7 @@ void* EntitySystemHelpersBase::GetRawComponent(FixedString const& guid, ExtCompo
 {
 	auto handle = GetEntityHandle(guid);
 	if (handle) {
-		return GetRawComponent(guid, type);
+		return GetRawComponent(handle, type);
 	} else {
 		return nullptr;
 	}
