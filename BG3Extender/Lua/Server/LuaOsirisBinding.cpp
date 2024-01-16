@@ -21,6 +21,11 @@ Array<std::size_t>* PendingCallbackManager::Enter(std::unordered_multimap<uint64
 	auto entry = cache_[depth_];
 	entry->clear();
 	depth_++;
+
+	for (auto it = begin; it != end; it++) {
+		entry->Add(it->second);
+	}
+
 	return entry;
 }
 
