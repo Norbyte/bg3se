@@ -1066,6 +1066,13 @@ BEGIN_ENUM(RollCritical, uint8_t)
 	EV(Fail, 2)
 END_ENUM()
 
+BEGIN_ENUM_NS(stats, UnsheathState, StatsUnsheathState, uint32_t)
+	EV(Instrument, 0)
+	EV(Melee, 1)
+	EV(Ranged, 2)
+	EV(Sheathed, 3)
+END_ENUM_NS()
+
 BEGIN_ENUM_NS(stats, RollType, StatsRollType, uint8_t)
 	EV(None, 0)
 	EV(Attack, 1)

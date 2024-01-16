@@ -337,9 +337,9 @@ struct EncumbranceStatsComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::EncumbranceStats;
 	static constexpr auto EngineClass = "eoc::encumbrance::StatsComponent";
 
-	int field_0;
-	int field_4;
-	int field_8;
+	[[bg3::legacy(field_0)]] int UnencumberedWeight;
+	[[bg3::legacy(field_4)]] int EncumberedWeight;
+	[[bg3::legacy(field_8)]] int HeavilyEncumberedWeight;
 };
 
 
@@ -357,7 +357,7 @@ struct IdentityStateComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::IdentityState;
 	static constexpr auto EngineClass = "eoc::identity::StateComponent";
 
-	uint8_t field_0;
+	[[bg3::legacy(field_0)]] bool Disguised;
 };
 
 
@@ -420,10 +420,10 @@ struct UnsheathStateComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::Unsheath;
 	static constexpr auto EngineClass = "eoc::unsheath::StateComponent";
 
-	EntityHandle field_0;
-	EntityHandle field_8;
+	[[bg3::legacy(field_0)]] EntityHandle MainHandWeapon;
+	[[bg3::legacy(field_8)]] EntityHandle OffHandWeapon;
 	int field_10;
-	int field_14;
+	[[bg3::legacy(field_14)]] stats::UnsheathState State;
 	uint8_t field_18;
 	uint8_t field_19;
 	uint8_t field_1A;

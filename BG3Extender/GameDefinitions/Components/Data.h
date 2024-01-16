@@ -691,14 +691,14 @@ struct PickpocketComponent : public BaseComponent
 
 	struct PickpocketEntry
 	{
-		EntityHandle field_0;
-		EntityHandle field_8;
-		int field_10;
+		[[bg3::legacy(field_0)]] EntityHandle Target;
+		[[bg3::legacy(field_8)]] EntityHandle Item;
+		[[bg3::legacy(field_10)]] int Amount;
 		bool field_14;
 		EntityHandle field_18;
 	};
 
-	Array<PickpocketEntry> field_18;
+	[[bg3::legacy(field_18)]] Array<PickpocketEntry> Items;
 };
 
 /// <summary>
@@ -800,8 +800,8 @@ struct FleeCapabilityComponent : public BaseComponent
 	static constexpr auto EngineClass = "eoc::FleeCapabilityComponent";
 
 	FleeErrorFlags Flags;
-	float field_1C;
-	float field_20;
+	[[bg3::legacy(field_1C)]] float FleeDistance;
+	[[bg3::legacy(field_20)]] float CurrentFleeDistance;
 };
 
 struct CanDoRestComponent : public BaseComponent
@@ -877,17 +877,17 @@ struct ConcentrationComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::Concentration;
 	static constexpr auto EngineClass = "eoc::concentration::ConcentrationComponent";
 
-	struct Element
+	struct TargetInfo
 	{
-		EntityHandle field_0;
-		EntityHandle field_8;
-		EntityHandle field_10;
+		[[bg3::legacy(field_0)]] EntityHandle Target;
+		[[bg3::legacy(field_8)]] EntityHandle Concentration;
+		[[bg3::legacy(field_10)]] EntityHandle Status;
 		int16_t field_18;
 		bool field_1A;
 	};
 
-	EntityHandle field_0;
-	Array<Element> field_8;
+	[[bg3::legacy(field_0)]] EntityHandle Caster;
+	[[bg3::legacy(field_8)]] Array<TargetInfo> Targets;
 	SpellId SpellId;
 };
 
