@@ -8,17 +8,6 @@ EntityReplicationEventHooks::EntityReplicationEventHooks(lua::State& state)
 
 EntityReplicationEventHooks::~EntityReplicationEventHooks() {}
 
-uint32_t EntityReplicationEventHooks::FindFreeSlot()
-{
-	if (!freeSlots_.empty()) {
-		return freeSlots_.pop_last();
-	}
-
-	auto slot = subscriptions_.size();
-	subscriptions_.push_back(nullptr);
-	return slot;
-}
-
 EntityReplicationEventHooks::ReplicationHooks& EntityReplicationEventHooks::AddComponentType(ecs::ReplicationTypeIndex type)
 {
 	auto index = (unsigned)type.Value();
@@ -32,44 +21,43 @@ EntityReplicationEventHooks::ReplicationHooks& EntityReplicationEventHooks::AddC
 	return hookedReplicationComponents_[index];
 }
 
-void EntityReplicationEventHooks::Subscribe(ecs::ReplicationTypeIndex type, EntityHandle entity, uint64_t flags, RegistryEntry&& hook)
+EntityReplicationEventHooks::SubscriptionIndex EntityReplicationEventHooks::Subscribe(ecs::ReplicationTypeIndex type, EntityHandle entity, uint64_t flags, RegistryEntry&& hook)
 {
-	auto slot = FindFreeSlot();
-	auto& pool = AddComponentType(type);
-	auto hookEntry = GameAlloc<ReplicationHook>();
-	hookEntry->InvalidationFlags = flags;
-	hookEntry->Hook = std::move(hook);
-	hookEntry->Type = type;
-	hookEntry->Entity = entity;
-	hookEntry->Index = slot;
+	SubscriptionIndex index;
+	auto sub = subscriptions_.Add(index);
+	sub->InvalidationFlags = flags;
+	sub->Hook = std::move(hook);
+	sub->Type = type;
+	sub->Entity = entity;
 
+	auto& pool = AddComponentType(type);
 	pool.InvalidationFlags |= flags;
 	if (!entity) {
-		pool.GlobalHooks.Add(hookEntry);
+		pool.GlobalHooks.Add(index);
 	} else {
 		auto entityHooks = pool.EntityHooks.Find(entity);
 		if (entityHooks) {
-			(*entityHooks)->push_back(hookEntry);
+			(*entityHooks)->push_back(index);
 		} else {
 			entityHooks = pool.EntityHooks.Set(entity, {});
-			(*entityHooks)->push_back(hookEntry);
+			(*entityHooks)->push_back(index);
 		}
 	}
 
-	subscriptions_[slot] = hookEntry;
+	return index;
 }
 
-bool EntityReplicationEventHooks::Unsubscribe(uint32_t index)
+bool EntityReplicationEventHooks::Unsubscribe(SubscriptionIndex index)
 {
-	if (index >= subscriptions_.size() || subscriptions_[index] == nullptr) {
+	auto sub = subscriptions_.Find(index);
+	if (sub == nullptr) {
 		return false;
 	}
 
-	auto sub = subscriptions_[index];
 	auto& pool = hookedReplicationComponents_[(unsigned)sub->Type.Value()];
 	if (!sub->Entity) {
 		for (unsigned i = 0; i < pool.GlobalHooks.size(); i++) {
-			if (pool.GlobalHooks[i]->Index == index) {
+			if (pool.GlobalHooks[i] == index) {
 				pool.GlobalHooks.remove_at(i);
 				break;
 			}
@@ -78,7 +66,7 @@ bool EntityReplicationEventHooks::Unsubscribe(uint32_t index)
 		auto entityHooks = pool.EntityHooks.Find(sub->Entity);
 		if (entityHooks) {
 			for (unsigned i = 0; i < (*entityHooks)->size(); i++) {
-				if ((**entityHooks)[i]->Index == index) {
+				if ((**entityHooks)[i] == index) {
 					(*entityHooks)->remove_at(i);
 					break;
 				}
@@ -86,9 +74,7 @@ bool EntityReplicationEventHooks::Unsubscribe(uint32_t index)
 		}
 	}
 
-	subscriptions_[index] = nullptr;
-	freeSlots_.push_back(index);
-	GameFree(sub);
+	subscriptions_.Free(index);
 	return true;
 }
 
@@ -112,16 +98,18 @@ void EntityReplicationEventHooks::OnEntityReplication(ecs::EntityWorld& world, E
 	auto word1 = *flags.GetBuf();
 	if ((hooks.InvalidationFlags & word1) == 0) return;
 
-	for (auto const& hook : hooks.GlobalHooks) {
-		if ((hook->InvalidationFlags & word1) != 0) {
+	for (auto index : hooks.GlobalHooks) {
+		auto hook = subscriptions_.Find(index);
+		if (hook != nullptr && (hook->InvalidationFlags & word1) != 0) {
 			CallHandler(entity, flags, type, *hook);
 		}
 	}
 
 	auto entityHooks = hooks.EntityHooks.Find(entity);
 	if (entityHooks) {
-		for (auto const& hook : **entityHooks) {
-			if ((hook->InvalidationFlags & word1) != 0) {
+		for (auto index : **entityHooks) {
+			auto hook = subscriptions_.Find(index);
+			if (hook != nullptr && (hook->InvalidationFlags & word1) != 0) {
 				CallHandler(entity, flags, type, *hook);
 			}
 		}

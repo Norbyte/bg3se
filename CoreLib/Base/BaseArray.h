@@ -890,7 +890,7 @@ public:
 	{
 		auto newBuf = GameMemoryAllocator::NewRaw<T>(newCapacity);
 		for (size_type i = 0; i < std::min(size_, newCapacity); i++) {
-			new (newBuf + i) T(buf_[i]);
+			new (newBuf + i) T(std::move(buf_[i]));
 		}
 
 		if (buf_ != nullptr) {
@@ -940,6 +940,15 @@ public:
 		}
 
 		new (&buf_[size_++]) T(value);
+	}
+
+	void push_back(T&& value)
+	{
+		if (capacity_ <= size_) {
+			Reallocate(CapacityIncrement());
+		}
+
+		new (&buf_[size_++]) T(std::move(value));
 	}
 
 	void ordered_insert_at(size_type index, T const& value)
@@ -1215,6 +1224,64 @@ private:
 			return 1;
 		}
 	}
+};
+
+template <class T, class TId = uint32_t, unsigned IdBits = 22, unsigned SaltBits = 10>
+class SaltedPool
+{
+public:
+	static_assert(sizeof(TId) * 8 == IdBits + SaltBits);
+	static constexpr uint32_t DeletedFlag = 0x80000000u;
+
+	T* Add(TId& id)
+	{
+		uint32_t index;
+		if (freeIndices_.empty()) {
+			index = pool_.size();
+			pool_.push_back(T{});
+			salts_.push_back(DeletedFlag);
+		} else {
+			index = freeIndices_.pop_last();
+		}
+
+		auto salt = salts_[index];
+		salt &= ~DeletedFlag;
+		salts_[index] = salt;
+		id = index | (salt << IdBits);
+		return &pool_[index];
+	}
+
+	bool Free(TId& id)
+	{
+		auto index = id & ((1 << IdBits) - 1);
+		auto salt = id >> SaltBits;
+
+		if (index < salts_.size() && salts_[index] == salt) {
+			freeIndices_.push_back(index);
+			salt = (salt + 1) & ((1 << SaltBits) - 1);
+			salts_[index] = salt | DeletedFlag;
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	T* Find(TId id)
+	{
+		auto index = id & ((1 << IdBits) - 1);
+		auto salt = id >> SaltBits;
+
+		if (index < salts_.size() && salts_[index] == salt) {
+			return &pool_[index];
+		} else {
+			return nullptr;
+		}
+	}
+
+private:
+	Array<T> pool_;
+	Array<uint32_t> freeIndices_;
+	Array<uint32_t> salts_;
 };
 
 END_SE()

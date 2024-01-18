@@ -67,7 +67,7 @@ Array<EntityHandle> GetAllEntities(lua_State* L)
 	return entities;
 }
 
-void Subscribe(lua_State* L, ExtComponentType type, FunctionRef func, std::optional<EntityHandle> entity, std::optional<uint64_t> flags)
+EntityReplicationEventHooks::SubscriptionIndex Subscribe(lua_State* L, ExtComponentType type, FunctionRef func, std::optional<EntityHandle> entity, std::optional<uint64_t> flags)
 {
 	auto hooks = State::FromLua(L)->GetReplicationEventHooks();
 	if (!hooks) {
@@ -79,7 +79,7 @@ void Subscribe(lua_State* L, ExtComponentType type, FunctionRef func, std::optio
 		luaL_error(L, "No events are available for components of type %s", EnumInfo<ExtComponentType>::Store->Find((EnumUnderlyingType)type).GetString());
 	}
 
-	hooks->Subscribe(*replicationType, entity ? *entity : EntityHandle{}, flags ? *flags : 0xffffffffffffffffull, RegistryEntry(L, func.Index));
+	return hooks->Subscribe(*replicationType, entity ? *entity : EntityHandle{}, flags ? *flags : 0xffffffffffffffffull, RegistryEntry(L, func.Index));
 }
 
 bool Unsubscribe(lua_State* L, unsigned index)

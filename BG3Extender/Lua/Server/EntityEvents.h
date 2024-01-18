@@ -5,11 +5,13 @@ BEGIN_NS(lua)
 class EntityReplicationEventHooks
 {
 public:
+	using SubscriptionIndex = uint32_t;
+
 	EntityReplicationEventHooks(lua::State& state);
 	~EntityReplicationEventHooks();
 
-	void Subscribe(ecs::ReplicationTypeIndex type, EntityHandle entity, uint64_t flags, RegistryEntry&& hook);
-	bool Unsubscribe(uint32_t index);
+	SubscriptionIndex Subscribe(ecs::ReplicationTypeIndex type, EntityHandle entity, uint64_t flags, RegistryEntry&& hook);
+	bool Unsubscribe(SubscriptionIndex index);
 
 	void OnEntityReplication(ecs::EntityWorld& world);
 
@@ -21,25 +23,22 @@ private:
 		// Needed for looking up unsubscribe data
 		ecs::ReplicationTypeIndex Type;
 		EntityHandle Entity;
-		uint32_t Index;
 	};
 
 	struct ReplicationHooks
 	{
 		uint64_t InvalidationFlags;
-		Array<ReplicationHook*> GlobalHooks;
-		MultiHashMap<EntityHandle, Array<ReplicationHook*>> EntityHooks;
+		Array<SubscriptionIndex> GlobalHooks;
+		MultiHashMap<EntityHandle, Array<SubscriptionIndex>> EntityHooks;
 	};
 
 	lua::State& state_;
 	BitSet<> hookedReplicationComponentMask_;
 	Array<ReplicationHooks> hookedReplicationComponents_;
-	Array<ReplicationHook*> subscriptions_;
-	Array<uint32_t> freeSlots_;
+	SaltedPool<ReplicationHook> subscriptions_;
 
 	void OnEntityReplication(ecs::EntityWorld& world, EntityHandle entity, BitSet<> const& flags, ecs::ReplicationTypeIndex type);
 	void CallHandler(EntityHandle entity, BitSet<> const& flags, ecs::ReplicationTypeIndex type, ReplicationHook const& hook);
-	uint32_t FindFreeSlot();
 	ReplicationHooks& AddComponentType(ecs::ReplicationTypeIndex type);
 };
 
