@@ -103,7 +103,7 @@ void NetworkManager::ExtendNetworking()
 
 	protocol_ = new ExtenderProtocol();
 	server->ProtocolList.insert_at(0, protocol_);
-	server->ProtocolMap.Set(ExtenderProtocol::ProtocolId, protocol_);
+	server->ProtocolMap.set(ExtenderProtocol::ProtocolId, protocol_);
 
 	auto extenderMsg = new net::ExtenderMessage();
 	server->NetMessageFactory->Register((uint32_t)net::ExtenderMessage::MessageId, extenderMsg);

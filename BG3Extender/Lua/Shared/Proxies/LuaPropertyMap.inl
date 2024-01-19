@@ -81,7 +81,7 @@ void GenericPropertyMap::AddRawProperty(char const* prop, typename RawPropertyAc
 	}
 }
 
-bool GenericPropertyMap::ValidatePropertyMap(void* object)
+bool GenericPropertyMap::ValidatePropertyMap(void const* object)
 {
 	switch (ecs::EntitySystemHelpersBase::CheckLevel) {
 	case ecs::RuntimeCheckLevel::None: 
@@ -107,7 +107,7 @@ bool GenericPropertyMap::ValidatePropertyMap(void* object)
 	}
 }
 
-bool GenericPropertyMap::ValidateObject(void* object)
+bool GenericPropertyMap::ValidateObject(void const* object)
 {
 	for (auto const& property : Validators) {
 		if (!property.Validate(object, property.Offset, property.Flag)) {
@@ -134,7 +134,7 @@ bool GenericPropertyMap::IsA(int typeRegistryIndex) const
 	return false;
 }
 
-void SerializeRawObject(lua_State* L, void* obj, GenericPropertyMap const& pm)
+void SerializeRawObject(lua_State* L, void const* obj, GenericPropertyMap const& pm)
 {
 	StackCheck _(L, 1);
 	lua_createtable(L, 0, (int)pm.Properties.size());

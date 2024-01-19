@@ -781,7 +781,7 @@ public:
 		CopyFrom(a);
 	}
 
-	Array(Array&& a)
+	Array(Array&& a) noexcept
 	{
 		if (this != &a) {
 			buf_ = a.buf_;
@@ -807,7 +807,7 @@ public:
 		return *this;
 	}
 
-	Array& operator =(Array&& a)
+	Array& operator =(Array&& a) noexcept
 	{
 		if (this != &a) {
 			buf_ = a.buf_;

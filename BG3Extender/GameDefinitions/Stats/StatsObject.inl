@@ -218,12 +218,7 @@ std::optional<Array<Object::RollCondition>*> Object::GetRollConditions(FixedStri
 		return {};
 	}
 
-	auto conditions = RollConditions.Find(attributeName);
-	if (conditions) {
-		return *conditions;
-	} else {
-		return {};
-	}
+	return RollConditions.try_get(attributeName);
 }
 
 
@@ -492,7 +487,7 @@ bool Object::SetFunctors(FixedString const& attributeName, std::optional<Array<F
 	OsiErrorS("Temporarily disabled until functors are mapped");
 	return false;
 	if (value) {
-		Functors.Set(attributeName, *value);
+		Functors.set(attributeName, *value);
 	} else {
 		// FIXME - clearing stats functors not implemented!
 	}
@@ -514,7 +509,7 @@ bool Object::SetRollConditions(FixedString const& attributeName, std::optional<A
 	}
 
 	if (value) {
-		RollConditions.Set(attributeName, *value);
+		RollConditions.set(attributeName, *value);
 	} else {
 		// FIXME - clearing roll conditions not implemented!
 	}
@@ -543,12 +538,12 @@ bool Object::CopyFrom(Object* source)
 
 	for (auto const& prop : source->Functors) {
 		// TODO - is reusing property list objects allowed?
-		Functors.Set(prop.Key(), prop.Value());
+		Functors.set(prop.Key(), prop.Value());
 	}
 
 	for (auto const& cond : source->RollConditions) {
 		// TODO - is reusing condition objects allowed?
-		RollConditions.Set(cond.Key(), cond.Value());
+		RollConditions.set(cond.Key(), cond.Value());
 	}
 
 	Requirements = source->Requirements;

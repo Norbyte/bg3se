@@ -16,7 +16,7 @@ struct RawPropertyAccessors
 {
 	using Getter = PropertyOperationResult (lua_State* L, LifetimeHandle const& lifetime, void* object, RawPropertyAccessors const& prop);
 	using Setter = PropertyOperationResult (lua_State* L, void* object, int index, RawPropertyAccessors const& prop);
-	using Serializer = PropertyOperationResult (lua_State* L, void* object, RawPropertyAccessors const& prop);
+	using Serializer = PropertyOperationResult (lua_State* L, void const* object, RawPropertyAccessors const& prop);
 
 	FixedString Name;
 	std::size_t Offset;
@@ -36,13 +36,13 @@ public:
 	using TFallbackSetter = PropertyOperationResult (lua_State* L, void* object, FixedString const& prop, int index);
 	using TConstructor = void (void*);
 	using TDestructor = void (void*);
-	using TSerializer = void (lua_State* L, void*);
+	using TSerializer = void (lua_State* L, void const*);
 	using TUnserializer = void (lua_State* L, int index, void*);
 	using TAssigner = void (void* object, void* rhs);
 
 	struct RawPropertyValidators
 	{
-		using Validator = bool (void* object, std::size_t offset, uint64_t flag);
+		using Validator = bool (void const* object, std::size_t offset, uint64_t flag);
 
 		FixedString Name;
 		Validator* Validate;
@@ -71,8 +71,8 @@ public:
 		typename RawPropertyAccessors::Serializer* serialize, std::size_t offset, uint64_t flag, 
 		PropertyNotification notification, char const* newName = nullptr);
 	bool IsA(int typeRegistryIndex) const;
-	bool ValidatePropertyMap(void* object);
-	bool ValidateObject(void* object);
+	bool ValidatePropertyMap(void const* object);
+	bool ValidateObject(void const* object);
 
 	FixedString Name;
 	std::unordered_map<FixedString, RawPropertyAccessors> Properties;
@@ -111,7 +111,7 @@ inline PropertyOperationResult GenericNullSerializeProperty(lua_State* L, void* 
 	return PropertyOperationResult::UnsupportedType;
 }
 
-inline bool GenericValidateNoopProperty(void* obj, std::size_t offset, uint64_t)
+inline bool GenericValidateNoopProperty(void const* obj, std::size_t offset, uint64_t)
 {
 	return true;
 }
@@ -129,9 +129,9 @@ void DefaultDestroy(void* ptr)
 }
 
 template <class T>
-void DefaultSerialize(lua_State* L, void* ptr)
+void DefaultSerialize(lua_State* L, void const* ptr)
 {
-	Serialize(L, reinterpret_cast<T*>(ptr));
+	Serialize(L, reinterpret_cast<T const*>(ptr));
 }
 
 template <class T>

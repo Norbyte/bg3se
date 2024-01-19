@@ -43,15 +43,15 @@ bool SpellPrototypeManager::SyncStat(Object* object, SpellPrototype* proto)
 void SpellPrototypeManager::SyncStat(Object* object)
 {
 	auto stats = GetStaticSymbols().GetStats();
-	auto pProto = Spells.Find(object->Name);
+	auto pProto = Spells.try_get(object->Name);
 	if (!pProto) {
 		auto proto = GameAlloc<SpellPrototype>();
 		if (SyncStat(object, proto)) {
-			Spells.Set(proto->SpellId, proto);
+			Spells.set(proto->SpellId, proto);
 			SpellNames.Add(proto->SpellId);
 		}
 	} else {
-		SyncStat(object, **pProto);
+		SyncStat(object, *pProto);
 	}
 }
 
@@ -77,14 +77,14 @@ bool StatusPrototypeManager::SyncStat(Object* object, StatusPrototype* proto)
 void StatusPrototypeManager::SyncStat(Object* object)
 {
 	auto stats = GetStaticSymbols().GetStats();
-	auto pProto = Statuses.Find(object->Name);
+	auto pProto = Statuses.try_get(object->Name);
 	if (!pProto) {
 		auto proto = GameAlloc<StatusPrototype>();
 		if (SyncStat(object, proto)) {
-			Statuses.Set(proto->StatusName, proto);
+			Statuses.set(proto->StatusName, proto);
 		}
 	} else {
-		SyncStat(object, **pProto);
+		SyncStat(object, *pProto);
 	}
 }
 

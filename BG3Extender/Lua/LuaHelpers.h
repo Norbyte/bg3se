@@ -167,7 +167,7 @@ inline TableIterationHelper iterate(lua_State* L, int index)
 }
 
 template <class T>
-void Serialize(lua_State* L, T* obj);
+void Serialize(lua_State* L, T const* obj);
 
 template <class T>
 PropertyOperationResult Unserialize(lua_State* L, int index, T* obj);

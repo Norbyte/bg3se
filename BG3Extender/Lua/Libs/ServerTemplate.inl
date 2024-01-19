@@ -47,8 +47,8 @@ GameObjectTemplate* GetCacheTemplate(FixedString const& templateId)
 {
 	auto cache = *GetStaticSymbols().esv__CacheTemplateManager;
 	if (cache) {
-		auto tmpl = cache->Templates.Find(templateId);
-		return tmpl ? **tmpl : nullptr;
+		auto tmpl = cache->Templates.try_get(templateId);
+		return tmpl ? *tmpl : nullptr;
 	}
 
 	return nullptr;
@@ -68,8 +68,8 @@ GameObjectTemplate* GetLocalCacheTemplate(FixedString const& templateId)
 {
 	auto level = GetStaticSymbols().GetCurrentServerLevel();
 	if (level) {
-		auto tmpl = level->CacheTemplateManager->Templates.Find(templateId);
-		return tmpl ? **tmpl : nullptr;
+		auto tmpl = level->CacheTemplateManager->Templates.try_get(templateId);
+		return tmpl ? *tmpl : nullptr;
 	}
 
 	return nullptr;

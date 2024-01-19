@@ -47,7 +47,8 @@ public:
 	{
 		auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
 		if (arrayIndex > 0 && arrayIndex <= obj->size()) {
-			push(L, &obj->Keys[arrayIndex - 1], self.Lifetime);
+			// TODO - jank, but const proxies are not supported yet
+			push(L, const_cast<T*>(&obj->keys()[arrayIndex - 1]), self.Lifetime);
 			return true;
 		} else {
 			return false;
@@ -58,14 +59,14 @@ public:
 	{
 		auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
 		auto element = get<T>(L, luaIndex);
-		return obj->FindIndex(element) != -1;
+		return obj->find_index(element) != -1;
 	}
 
 	bool AddElement(lua_State* L, CppObjectMetadata& self, int luaIndex) override
 	{
 		auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
 		auto element = get<T>(L, luaIndex);
-		obj->Add(element);
+		obj->insert(element);
 		return true;
 	}
 
@@ -79,15 +80,16 @@ public:
 	unsigned Length(CppObjectMetadata& self) override
 	{
 		auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
-		return obj->Keys.Size();
+		return obj->size();
 	}
 
 	int Next(lua_State* L, CppObjectMetadata& self, int key) override
 	{
 		auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
-		if (key >= 0 && key < (int)obj->Keys.size()) {
+		if (key >= 0 && key < (int)obj->size()) {
 			push(L, ++key);
-			push(L, &obj->Keys[key - 1], self.Lifetime);
+			// TODO - jank, but const proxies are not supported yet
+			push(L, const_cast<T*>(&obj->keys()[key - 1]), self.Lifetime);
 			return 2;
 		} else {
 			return 0;

@@ -10,9 +10,9 @@
 BEGIN_NS(lua)
 
 template <class T>
-bool ValidateAny(T * v);
+bool ValidateAny(T const* v);
 
-inline bool Validate(bool* b, Overload<bool>)
+inline bool Validate(bool const* b, Overload<bool>)
 {
 	// Bool is false (0) / true (1)
 	CHECK(*(uint8_t*)b <= 1);
@@ -21,35 +21,35 @@ inline bool Validate(bool* b, Overload<bool>)
 
 // No validation needed/possible for numeric types
 template <class T>
-inline typename std::enable_if_t<std::is_integral_v<T>, bool> Validate(T*, Overload<T>)
+inline typename std::enable_if_t<std::is_integral_v<T>, bool> Validate(T const*, Overload<T>)
 {
 	return true;
 }
 
 template <class T>
-inline typename std::enable_if_t<std::is_floating_point_v<T>, bool> Validate(T*, Overload<T>)
+inline typename std::enable_if_t<std::is_floating_point_v<T>, bool> Validate(T const*, Overload<T>)
 {
 	return true;
 }
 
 // No validation possible for vector types
-inline bool Validate(glm::ivec2* b, Overload<glm::ivec2>) { return true; }
-inline bool Validate(glm::i16vec2* b, Overload<glm::i16vec2>) { return true; }
-inline bool Validate(glm::vec2* b, Overload<glm::vec2>) { return true; }
-inline bool Validate(glm::vec3* b, Overload<glm::vec3>) { return true; }
-inline bool Validate(glm::vec4* b, Overload<glm::vec4>) { return true; }
-inline bool Validate(glm::quat* b, Overload<glm::quat>) { return true; }
-inline bool Validate(glm::mat3* b, Overload<glm::mat3>) { return true; }
-inline bool Validate(glm::mat3x4* b, Overload<glm::mat3x4>) { return true; }
-inline bool Validate(glm::mat4x3* b, Overload<glm::mat4x3>) { return true; }
-inline bool Validate(glm::mat4* b, Overload<glm::mat4>) { return true; }
+inline bool Validate(glm::ivec2 const* b, Overload<glm::ivec2>) { return true; }
+inline bool Validate(glm::i16vec2 const* b, Overload<glm::i16vec2>) { return true; }
+inline bool Validate(glm::vec2 const* b, Overload<glm::vec2>) { return true; }
+inline bool Validate(glm::vec3 const* b, Overload<glm::vec3>) { return true; }
+inline bool Validate(glm::vec4 const* b, Overload<glm::vec4>) { return true; }
+inline bool Validate(glm::quat const* b, Overload<glm::quat>) { return true; }
+inline bool Validate(glm::mat3 const* b, Overload<glm::mat3>) { return true; }
+inline bool Validate(glm::mat3x4 const* b, Overload<glm::mat3x4>) { return true; }
+inline bool Validate(glm::mat4x3 const* b, Overload<glm::mat4x3>) { return true; }
+inline bool Validate(glm::mat4 const* b, Overload<glm::mat4>) { return true; }
 
 // TODO - might add some validation heuristic later?
-inline bool Validate(EntityHandle* b, Overload<EntityHandle>) { return true; }
-inline bool Validate(ComponentHandle* b, Overload<ComponentHandle>) { return true; }
-inline bool Validate(NetId* b, Overload<NetId>) { return true; }
-inline bool Validate(UserId* b, Overload<UserId>) { return true; }
-inline bool Validate(Version* b, Overload<Version>) { return true; }
+inline bool Validate(EntityHandle const* b, Overload<EntityHandle>) { return true; }
+inline bool Validate(ComponentHandle const* b, Overload<ComponentHandle>) { return true; }
+inline bool Validate(NetId const* b, Overload<NetId>) { return true; }
+inline bool Validate(UserId const* b, Overload<UserId>) { return true; }
+inline bool Validate(Version const* b, Overload<Version>) { return true; }
 
 struct STDStringInternals
 {
@@ -61,9 +61,9 @@ struct STDStringInternals
 	uint32_t Capacity;
 };
 
-inline bool Validate(STDString* s, Overload<STDString>)
+inline bool Validate(STDString const* s, Overload<STDString>)
 {
-	auto i = reinterpret_cast<STDStringInternals*>(s);
+	auto i = reinterpret_cast<STDStringInternals const*>(s);
 	CHECK(i->Size <= i->Capacity);
 	// Sanity check for very large values
 	CHECK(i->Capacity <= 0x1000000);
@@ -79,32 +79,32 @@ inline bool Validate(STDString* s, Overload<STDString>)
 	return true;
 }
 
-inline bool Validate(Path* p, Overload<Path>)
+inline bool Validate(Path const* p, Overload<Path>)
 {
 	return Validate(&p->Name, Overload<STDString>{});
 }
 
-inline bool Validate(FixedString* s, Overload<FixedString>)
+inline bool Validate(FixedString const* s, Overload<FixedString>)
 {
 	CHECK(s->IsValid());
 	return true;
 }
 
-inline bool Validate(RuntimeStringHandle* h, Overload<RuntimeStringHandle>)
+inline bool Validate(RuntimeStringHandle const* h, Overload<RuntimeStringHandle>)
 {
 	CHECK(h->Handle.IsValid());
 	CHECK(h->Version <= 0x1000);
 	return true;
 }
 
-inline bool Validate(TranslatedString* ts, Overload<TranslatedString>)
+inline bool Validate(TranslatedString const* ts, Overload<TranslatedString>)
 {
 	CHECKR(Validate(&ts->Handle, Overload<RuntimeStringHandle>{}));
 	CHECKR(Validate(&ts->ArgumentString, Overload<RuntimeStringHandle>{}));
 	return true;
 }
 
-inline bool Validate(Guid* g, Overload<Guid>)
+inline bool Validate(Guid const* g, Overload<Guid>)
 {
 	// Heuristic: Consider non-null GUIDs with zero lower/higher dwords to be sus
 	CHECK(!*g
@@ -118,7 +118,7 @@ inline bool Validate(Guid* g, Overload<Guid>)
 }
 
 template <class T>
-typename std::enable_if_t<std::is_enum_v<T>, bool> Validate(T* v, Overload<T>)
+typename std::enable_if_t<std::is_enum_v<T>, bool> Validate(T const* v, Overload<T>)
 {
 	if constexpr (std::is_base_of_v<BitmaskInfoBase<T>, EnumInfo<T>>) {
 		// Disabled for now as it causes unmapped enum elements to be flagged all the time
@@ -132,7 +132,7 @@ typename std::enable_if_t<std::is_enum_v<T>, bool> Validate(T* v, Overload<T>)
 	return true;
 }
 
-inline bool Validate(ecs::EntityRef* g, Overload<ecs::EntityRef>)
+inline bool Validate(ecs::EntityRef const* g, Overload<ecs::EntityRef>)
 {
 	// TODO - check if World points to a valid EntityWorld?
 	CHECK((g->World == nullptr && !g->Handle)
@@ -141,7 +141,7 @@ inline bool Validate(ecs::EntityRef* g, Overload<ecs::EntityRef>)
 }
 
 template <class T>
-inline bool Validate(T** p, Overload<T*>)
+inline bool Validate(T* const* p, Overload<T*>)
 {
 	if (*p != nullptr) {
 		CHECK(!IsBadReadPtr(*p, sizeof(T)));
@@ -151,7 +151,7 @@ inline bool Validate(T** p, Overload<T*>)
 }
 
 template <class T>
-inline bool ValidatePointer(T* p)
+inline bool ValidatePointer(T const* p)
 {
 	if (p != nullptr) {
 		CHECK(!IsBadReadPtr(p, sizeof(*p)));
@@ -161,21 +161,21 @@ inline bool ValidatePointer(T* p)
 }
 
 // No need to validate internal special types
-inline bool ValidateRef(TypeInformationRef* b, Overload<TypeInformationRef>) { return true; }
-inline bool Validate(TypeInformationRef* b, Overload<TypeInformationRef>) { return true; }
+inline bool ValidateRef(TypeInformationRef const* b, Overload<TypeInformationRef>) { return true; }
+inline bool Validate(TypeInformationRef const* b, Overload<TypeInformationRef>) { return true; }
 
-inline bool ValidateRef(RuntimeStringHandle* h, Overload<RuntimeStringHandle>)
+inline bool ValidateRef(RuntimeStringHandle const* h, Overload<RuntimeStringHandle>)
 {
 	return Validate(h, Overload<RuntimeStringHandle>{});
 }
 
-inline bool ValidateRef(TranslatedString* h, Overload<TranslatedString>)
+inline bool ValidateRef(TranslatedString const* h, Overload<TranslatedString>)
 {
 	return Validate(h, Overload<TranslatedString>{});
 }
 
 template <class TE>
-bool ValidateRef(Array<TE>* v, Overload<Array<TE>>)
+bool ValidateRef(Array<TE> const* v, Overload<Array<TE>>)
 {
 	if (v->raw_buf() == nullptr) {
 		CHECK(v->size() == 0);
@@ -200,7 +200,7 @@ bool ValidateRef(Array<TE>* v, Overload<Array<TE>>)
 }
 
 template <class TE>
-bool ValidateRef(ObjectSet<TE>* v, Overload<ObjectSet<TE>>)
+bool ValidateRef(ObjectSet<TE> const* v, Overload<ObjectSet<TE>>)
 {
 	CHECK(v->CapacityIncrementSize <= 0x100000);
 
@@ -227,7 +227,7 @@ bool ValidateRef(ObjectSet<TE>* v, Overload<ObjectSet<TE>>)
 }
 
 template <class TE>
-bool ValidateRef(StaticArray<TE>* v, Overload<StaticArray<TE>>)
+bool ValidateRef(StaticArray<TE> const* v, Overload<StaticArray<TE>>)
 {
 	if (v->raw_buf() == nullptr) {
 		CHECK(v->size() == 0);
@@ -250,7 +250,7 @@ bool ValidateRef(StaticArray<TE>* v, Overload<StaticArray<TE>>)
 }
 
 template <class TE>
-bool ValidateRef(UninitializedStaticArray<TE>* v, uint32_t initializedSize, Overload<UninitializedStaticArray<TE>>)
+bool ValidateRef(UninitializedStaticArray<TE> const* v, uint32_t initializedSize, Overload<UninitializedStaticArray<TE>>)
 {
 	if (v->raw_buf() == nullptr) {
 		CHECK(v->size() == 0);
@@ -275,9 +275,9 @@ bool ValidateRef(UninitializedStaticArray<TE>* v, uint32_t initializedSize, Over
 }
 
 template <class TK, class TV>
-bool ValidateRef(Map<TK, TV>* v, Overload<Map<TK, TV>>)
+bool ValidateRef(Map<TK, TV> const* v, Overload<Map<TK, TV>>)
 {
-	auto m = reinterpret_cast<MapInternals<TK, TV>*>(v);
+	auto m = reinterpret_cast<MapInternals<TK, TV> const*>(v);
 	if (m->HashTable == nullptr) {
 		CHECK(m->HashSize == 0);
 		CHECK(m->ItemCount == 0);
@@ -300,9 +300,9 @@ bool ValidateRef(Map<TK, TV>* v, Overload<Map<TK, TV>>)
 }
 
 template <class TK, class TV>
-bool ValidateRef(RefMap<TK, TV>* v, Overload<RefMap<TK, TV>>)
+bool ValidateRef(RefMap<TK, TV> const* v, Overload<RefMap<TK, TV>>)
 {
-	auto m = reinterpret_cast<RefMapInternals<TK, TV>*>(v);
+	auto m = reinterpret_cast<RefMapInternals<TK, TV> const*>(v);
 	if (m->HashTable == nullptr) {
 		CHECK(m->HashSize == 0);
 		CHECK(m->ItemCount == 0);
@@ -325,42 +325,43 @@ bool ValidateRef(RefMap<TK, TV>* v, Overload<RefMap<TK, TV>>)
 }
 
 template <class TK>
-bool ValidateRef(MultiHashSet<TK>* v, Overload<MultiHashSet<TK>>)
+bool ValidateRef(MultiHashSet<TK> const* v, Overload<MultiHashSet<TK>>)
 {
-	CHECKR(ValidateRef(&v->HashKeys, Overload<StaticArray<int32_t>>{}));
-	CHECKR(ValidateRef(&v->NextIds, Overload<Array<int32_t>>{}));
-	CHECKR(ValidateRef(&v->Keys, Overload<Array<TK>>{}));
+	CHECKR(ValidateRef(&v->hash_keys(), Overload<StaticArray<int32_t>>{}));
+	CHECKR(ValidateRef(&v->next_ids(), Overload<Array<int32_t>>{}));
+	CHECKR(ValidateRef(&v->keys(), Overload<Array<TK>>{}));
 
-	CHECK(v->Keys.size() <= v->NextIds.size());
+	CHECK(v->keys().size() <= v->next_ids().size());
 
 	return true;
 }
 
 template <class TK>
-bool ValidateRef(VirtualMultiHashSet<TK>* v, Overload<VirtualMultiHashSet<TK>>)
+bool ValidateRef(VirtualMultiHashSet<TK> const* v, Overload<VirtualMultiHashSet<TK>>)
 {
 	return ValidateRef(v, Overload<MultiHashSet<TK>>{});
 }
 
 template <class TK, class TV>
-bool ValidateRef(MultiHashMap<TK, TV>* v, Overload<MultiHashMap<TK, TV>>)
+bool ValidateRef(MultiHashMap<TK, TV> const* v, Overload<MultiHashMap<TK, TV>>)
 {
-	CHECKR(ValidateRef(v, Overload<MultiHashSet<TK>>{}));
-	CHECKR(ValidateRef(&v->Values, v->Keys.size(), Overload<UninitializedStaticArray<TV>>{}));
+	auto set = reinterpret_cast<MultiHashSet<TK> const*>(v);
+	CHECKR(ValidateRef(set, Overload<MultiHashSet<TK>>{}));
+	CHECKR(ValidateRef(&v->values(), v->keys().size(), Overload<UninitializedStaticArray<TV>>{}));
 
-	CHECK(v->Values.size() >= v->Keys.size());
+	CHECK(v->values().size() >= v->keys().size());
 
 	return true;
 }
 
 template <class TK, class TV>
-bool ValidateRef(VirtualMultiHashMap<TK, TV>* v, Overload<VirtualMultiHashMap<TK, TV>>)
+bool ValidateRef(VirtualMultiHashMap<TK, TV> const* v, Overload<VirtualMultiHashMap<TK, TV>>)
 {
 	return ValidateRef(v, Overload<MultiHashMap<TK, TV>>{});
 }
 
 template <class T>
-bool ValidateRef(T** v, Overload<T*>)
+bool ValidateRef(T* const* v, Overload<T*>)
 {
 	if (*v != nullptr) {
 		CHECK(!IsBadReadPtr(*v, sizeof(T)));
@@ -371,56 +372,56 @@ bool ValidateRef(T** v, Overload<T*>)
 }
 
 template <class T>
-bool ValidateRef(T* v, Overload<T>)
+bool ValidateRef(T const* v, Overload<T>)
 {
 	return StaticLuaPropertyMap<T>::PropertyMap.ValidateObject(v);
 }
 
 template <class... Args>
-bool ValidateRef(std::variant<Args...>* v, Overload<std::variant<Args...>>)
+bool ValidateRef(std::variant<Args...> const* v, Overload<std::variant<Args...>>)
 {
 	CHECK(v->index() < std::variant_size_v<std::variant<Args...>>);
 	return std::visit([=](auto& var) { return ValidateAny(&var); }, *v);
 }
 
 template <class TE>
-bool Validate(Array<TE>* v, Overload<Array<TE>>)
+bool Validate(Array<TE> const* v, Overload<Array<TE>>)
 {
 	return ValidateRef(v, Overload<Array<TE>>{});
 }
 
 template <class TE>
-bool Validate(ObjectSet<TE>* v, Overload<ObjectSet<TE>>)
+bool Validate(ObjectSet<TE> const* v, Overload<ObjectSet<TE>>)
 {
 	return ValidateRef(v, Overload<ObjectSet<TE>>{});
 }
 
 template <class TK, class TV>
-bool Validate(Map<TK, TV>* v, Overload<Map<TK, TV>>)
+bool Validate(Map<TK, TV> const* v, Overload<Map<TK, TV>>)
 {
 	return ValidateRef(v, Overload<Map<TK, TV>>{});
 }
 
 template <class TK, class TV>
-bool Validate(RefMap<TK, TV>* v, Overload<RefMap<TK, TV>>)
+bool Validate(RefMap<TK, TV> const* v, Overload<RefMap<TK, TV>>)
 {
 	return ValidateRef(v, Overload<RefMap<TK, TV>>{});
 }
 
 template <class TE>
-bool Validate(MultiHashSet<TE>* v, Overload<MultiHashSet<TE>>)
+bool Validate(MultiHashSet<TE> const* v, Overload<MultiHashSet<TE>>)
 {
 	return ValidateRef(v, Overload<MultiHashSet<TE>>{});
 }
 
 template <class TK, class TV>
-bool Validate(MultiHashMap<TK, TV>* v, Overload<MultiHashMap<TK, TV>>)
+bool Validate(MultiHashMap<TK, TV> const* v, Overload<MultiHashMap<TK, TV>>)
 {
 	return ValidateRef(v, Overload<MultiHashMap<TK, TV>>{});
 }
 
 template <class T>
-bool Validate(std::optional<T>* v, Overload<std::optional<T>>)
+bool Validate(std::optional<T> const* v, Overload<std::optional<T>>)
 {
 	if (v->has_value()) {
 		return Validate(&v->value(), Overload<T>{});
@@ -430,10 +431,10 @@ bool Validate(std::optional<T>* v, Overload<std::optional<T>>)
 }
 
 template <class TE, size_t Size>
-bool ValidateRef(std::array<TE, Size>* v, Overload<std::array<TE, Size>>);
+bool ValidateRef(std::array<TE, Size> const* v, Overload<std::array<TE, Size>>);
 
 template <class T>
-bool ValidateRef(std::optional<T>* v, Overload<std::optional<T>>)
+bool ValidateRef(std::optional<T> const* v, Overload<std::optional<T>>)
 {
 	if (v->has_value()) {
 		return ValidateRef(&v->value(), Overload<T>{});
@@ -443,10 +444,10 @@ bool ValidateRef(std::optional<T>* v, Overload<std::optional<T>>)
 }
 
 template <class T>
-bool ValidateAny(T* v);
+bool ValidateAny(T const* v);
 
 template <class T>
-typename bool Validate(OverrideableProperty<T>* v, Overload<OverrideableProperty<T>>)
+typename bool Validate(OverrideableProperty<T> const* v, Overload<OverrideableProperty<T>>)
 {
 	CHECKR(Validate(&v->IsOverridden, Overload<bool>{}));
 	CHECKR(ValidateAny(&v->Value));
@@ -454,7 +455,7 @@ typename bool Validate(OverrideableProperty<T>* v, Overload<OverrideableProperty
 }
 
 template <class T>
-typename bool ValidateRef(OverrideableProperty<T>* v, Overload<OverrideableProperty<T>>)
+typename bool ValidateRef(OverrideableProperty<T> const* v, Overload<OverrideableProperty<T>>)
 {
 	CHECKR(Validate(&v->IsOverridden, Overload<bool>{}));
 	CHECKR(ValidateAny(&v->Value));
@@ -462,7 +463,7 @@ typename bool ValidateRef(OverrideableProperty<T>* v, Overload<OverrideablePrope
 }
 
 template <class TE, size_t Size>
-bool ValidateRef(std::array<TE, Size>* v, Overload<std::array<TE, Size>>)
+bool ValidateRef(std::array<TE, Size> const* v, Overload<std::array<TE, Size>>)
 {
 	for (size_t i = 0; i < Size; i++) {
 		CHECKR(ValidateAny(&(*v)[i]));
@@ -472,13 +473,13 @@ bool ValidateRef(std::array<TE, Size>* v, Overload<std::array<TE, Size>>)
 }
 
 template <unsigned Words>
-bool ValidateRef(BitArray<Words>* v, Overload<BitArray<Words>>)
+bool ValidateRef(BitArray<Words> const* v, Overload<BitArray<Words>>)
 {
     return true;
 }
 
 template <class T>
-bool ValidateAny(T* v)
+bool ValidateAny(T const* v)
 {
 	if constexpr (IsByVal<T>) {
 		return Validate(v, Overload<T>{});

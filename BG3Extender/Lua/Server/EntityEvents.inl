@@ -35,12 +35,12 @@ EntityReplicationEventHooks::SubscriptionIndex EntityReplicationEventHooks::Subs
 	if (!entity) {
 		pool.GlobalHooks.Add(index);
 	} else {
-		auto entityHooks = pool.EntityHooks.Find(entity);
+		auto entityHooks = pool.EntityHooks.try_get(entity);
 		if (entityHooks) {
-			(*entityHooks)->push_back(index);
+			entityHooks->push_back(index);
 		} else {
-			entityHooks = pool.EntityHooks.Set(entity, {});
-			(*entityHooks)->push_back(index);
+			entityHooks = pool.EntityHooks.add_key(entity);
+			entityHooks->push_back(index);
 		}
 	}
 
@@ -63,11 +63,11 @@ bool EntityReplicationEventHooks::Unsubscribe(SubscriptionIndex index)
 			}
 		}
 	} else {
-		auto entityHooks = pool.EntityHooks.Find(sub->Entity);
+		auto entityHooks = pool.EntityHooks.try_get(sub->Entity);
 		if (entityHooks) {
-			for (unsigned i = 0; i < (*entityHooks)->size(); i++) {
-				if ((**entityHooks)[i] == index) {
-					(*entityHooks)->remove_at(i);
+			for (unsigned i = 0; i < entityHooks->size(); i++) {
+				if ((*entityHooks)[i] == index) {
+					entityHooks->remove_at(i);
 					break;
 				}
 			}
@@ -105,9 +105,9 @@ void EntityReplicationEventHooks::OnEntityReplication(ecs::EntityWorld& world, E
 		}
 	}
 
-	auto entityHooks = hooks.EntityHooks.Find(entity);
+	auto entityHooks = hooks.EntityHooks.try_get(entity);
 	if (entityHooks) {
-		for (auto index : **entityHooks) {
+		for (auto index : *entityHooks) {
 			auto hook = subscriptions_.Find(index);
 			if (hook != nullptr && (hook->InvalidationFlags & word1) != 0) {
 				CallHandler(entity, flags, type, *hook);

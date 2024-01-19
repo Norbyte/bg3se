@@ -11,12 +11,13 @@ PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, Array
 		StackCheck _(L);
 		luaL_checktype(L, index, LUA_TTABLE);
 
+		// FIXME - in-place resize object by using raw size from the Lua table meta
+		// (this will also require the table to be array-like)
 		obj->clear();
 		for (auto idx : iterate(L, index)) {
 			TK value;
 			Unserialize(L, idx, &value);
-			// FIXME - in-place unserialize
-			obj->push_back(value);
+			obj->push_back(std::move(value));
 		}
 
 		return PropertyOperationResult::Success;
@@ -42,15 +43,16 @@ PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, Stati
 	if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>) {
 		return PropertyOperationResult::UnsupportedType;
 	} else {
+		// FIXME - this will not work well for hash-like tables
 		StackCheck _(L);
 		luaL_checktype(L, index, LUA_TTABLE);
-		uint32_t size = (uint32_t) lua_rawlen(L, index);
+		uint32_t size = (uint32_t)lua_rawlen(L, index);
 
 		obj->clear();
 		obj->Resize(size);
 		int i = 0;
-		for (auto idx : iterate(L, index))
-		{
+		for (auto idx : iterate(L, index)) {
+			obj[i++] = {};
 			Unserialize(L, idx, &obj[i++]);
 		}
 
@@ -80,12 +82,13 @@ PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, Objec
 		StackCheck _(L);
 		luaL_checktype(L, index, LUA_TTABLE);
 
+		// FIXME - in-place resize object by using raw size from the Lua table meta
+		// (this will also require the table to be array-like)
 		obj->clear();
 		for (auto idx : iterate(L, index)) {
 			TK value;
 			Unserialize(L, idx, &value);
-			// FIXME - in-place unserialize
-			obj->push_back(value);
+			obj->push_back(std::move(value));
 		}
 
 		return PropertyOperationResult::Success;
@@ -117,10 +120,8 @@ PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, std::
 
 		for (uint32_t i = 0; i < obj->size(); i++) {
 			lua_rawgeti(L, index, i + 1);
-			TK value;
-			Unserialize(L, index + 1, &value);
-			// FIXME - in-place unserialize
-			(*obj)[i] = value;
+			(*obj)[i] = TK{};
+			Unserialize(L, index + 1, &(*obj)[i]);
 			lua_pop(L, 1);
 		}
 
@@ -152,10 +153,8 @@ PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, std::
 
 		for (uint32_t i = 0; i < obj->size(); i++) {
 			lua_rawgeti(L, index, i + 1);
-			T value;
-			Unserialize(L, index + 1, &value);
-			// FIXME - in-place unserialize
-			(*obj)[i] = value;
+			(*obj)[i] = T{};
+			Unserialize(L, index + 1, &(*obj)[i]);
 			lua_pop(L, 1);
 		}
 
@@ -222,10 +221,8 @@ PropertyOperationResult UnserializeMapFromTable(lua_State* L, int index, MultiHa
 		obj->clear();
 		for (auto idx : iterate(L, index)) {
 			auto key = get<TK>(L, -2);
-			TV value;
+			auto value = obj->add_key(key);
 			Unserialize(L, -1, &value);
-			// FIXME - in-place unserialize
-			obj->Set(key, value);
 		}
 
 		return PropertyOperationResult::Success;
@@ -324,7 +321,7 @@ void UnserializeSetFromTable(lua_State* L, int index, MultiHashSet<TK>* obj)
 
 	obj->clear();
 	for (auto idx : iterate(L, index)) {
-		obj->Add(get<TK>(L, idx));
+		obj->insert(get<TK>(L, idx));
 	}
 }
 

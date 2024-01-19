@@ -3,7 +3,7 @@
 BEGIN_NS(lua)
 
 template <class TK>
-void SerializeArray(lua_State* L, Array<TK>* obj)
+void SerializeArray(lua_State* L, Array<TK> const* obj)
 {
 	StackCheck _(L, 1);
 	lua_createtable(L, (int)obj->size(), 0);
@@ -14,7 +14,7 @@ void SerializeArray(lua_State* L, Array<TK>* obj)
 }
 
 template <class TK>
-void SerializeArray(lua_State* L, StaticArray<TK>* obj)
+void SerializeArray(lua_State* L, StaticArray<TK> const* obj)
 {
 	StackCheck _(L, 1);
 	lua_createtable(L, (int)obj->size(), 0);
@@ -26,7 +26,7 @@ void SerializeArray(lua_State* L, StaticArray<TK>* obj)
 }
 
 template <class TK>
-void SerializeArray(lua_State* L, ObjectSet<TK>* obj)
+void SerializeArray(lua_State* L, ObjectSet<TK> const* obj)
 {
 	StackCheck _(L, 1);
 	lua_createtable(L, (int)obj->size(), 0);
@@ -37,7 +37,7 @@ void SerializeArray(lua_State* L, ObjectSet<TK>* obj)
 }
 
 template <class TK, size_t Size>
-void SerializeArray(lua_State* L, std::array<TK, Size>* obj)
+void SerializeArray(lua_State* L, std::array<TK, Size> const* obj)
 {
 	StackCheck _(L, 1);
 	lua_createtable(L, (int)obj->size(), 0);
@@ -48,7 +48,7 @@ void SerializeArray(lua_State* L, std::array<TK, Size>* obj)
 }
 
 template <unsigned Words>
-void SerializeArray(lua_State* L, BitArray<Words>* obj)
+void SerializeArray(lua_State* L, BitArray<Words> const* obj)
 {
 	StackCheck _(L, 1);
 	lua_createtable(L, obj->size(), 0);
@@ -60,7 +60,7 @@ void SerializeArray(lua_State* L, BitArray<Words>* obj)
 }
 
 template <class T, size_t Extent>
-void SerializeArray(lua_State* L, std::span<T, Extent>* obj)
+void SerializeArray(lua_State* L, std::span<T, Extent> const* obj)
 {
 	StackCheck _(L, 1);
 	lua_createtable(L, (int)obj->size(), 0);
@@ -71,7 +71,7 @@ void SerializeArray(lua_State* L, std::span<T, Extent>* obj)
 }
 
 template <class TK, class TV>
-void SerializeMap(lua_State* L, MultiHashMap<TK, TV>* obj)
+void SerializeMap(lua_State* L, MultiHashMap<TK, TV> const* obj)
 {
 	StackCheck _(L, 1);
 	lua_createtable(L, 0, (int)obj->size());
@@ -83,7 +83,7 @@ void SerializeMap(lua_State* L, MultiHashMap<TK, TV>* obj)
 }
 
 template <class TK, class TV>
-void SerializeMap(lua_State* L, RefMap<TK, TV>* obj)
+void SerializeMap(lua_State* L, RefMap<TK, TV> const* obj)
 {
 	StackCheck _(L, 1);
 	lua_createtable(L, 0, (int)obj->size());
@@ -95,7 +95,7 @@ void SerializeMap(lua_State* L, RefMap<TK, TV>* obj)
 }
 
 template <class TK, class TV>
-void SerializeMap(lua_State* L, Map<TK, TV>* obj)
+void SerializeMap(lua_State* L, Map<TK, TV> const* obj)
 {
 	StackCheck _(L, 1);
 	lua_createtable(L, 0, (int)obj->size());
@@ -107,33 +107,33 @@ void SerializeMap(lua_State* L, Map<TK, TV>* obj)
 }
 
 template <class TK>
-void SerializeSet(lua_State* L, MultiHashSet<TK>* obj)
+void SerializeSet(lua_State* L, MultiHashSet<TK> const* obj)
 {
 	StackCheck _(L, 1);
 	lua_createtable(L, (int)obj->size(), 0);
 	for (uint32_t i = 0; i < obj->size(); i++) {
-		Serialize(L, &obj->Keys[i]);
+		Serialize(L, &obj->keys()[i]);
 		lua_rawseti(L, -2, i + 1);
 	}
 }
 
 template <class... Args>
-void SerializeVariant(lua_State* L, std::variant<Args...>* obj)
+void SerializeVariant(lua_State* L, std::variant<Args...> const* obj)
 {
 	StackCheck _(L, 1);
 	return std::visit([=](auto& var) { return Serialize(L, &var); }, *obj);
 }
 
-void SerializeRawObject(lua_State* L, void* obj, GenericPropertyMap const& pm);
+void SerializeRawObject(lua_State* L, void const* obj, GenericPropertyMap const& pm);
 
 template <class T>
-inline void SerializeObject(lua_State* L, T* obj)
+inline void SerializeObject(lua_State* L, T const* obj)
 {
 	SerializeRawObject(L, obj, StaticLuaPropertyMap<T>::PropertyMap);
 }
 
 template <class T>
-inline void SerializeObject(lua_State* L, std::optional<T>* obj)
+inline void SerializeObject(lua_State* L, std::optional<T> const* obj)
 {
 	if (obj->has_value()) {
 		SerializeObject(L, &obj->value());
@@ -143,7 +143,7 @@ inline void SerializeObject(lua_State* L, std::optional<T>* obj)
 }
 
 template <class T>
-inline void Serialize(lua_State* L, T* obj)
+inline void Serialize(lua_State* L, T const* obj)
 {
 	if constexpr (std::is_pointer_v<T>) {
 		if (obj) {
@@ -173,7 +173,7 @@ inline void Serialize(lua_State* L, T* obj)
 }
 
 template <class T>
-inline void Serialize(lua_State* L, OverrideableProperty<T>* obj)
+inline void Serialize(lua_State* L, OverrideableProperty<T> const* obj)
 {
 	Serialize(L, &obj->Value);
 }

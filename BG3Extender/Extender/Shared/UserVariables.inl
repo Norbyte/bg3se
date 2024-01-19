@@ -305,12 +305,9 @@ void UserVariableSyncWriter::SendSyncs()
 
 UserVariable* UserVariableManager::Get(Guid const& entity, FixedString const& key)
 {
-	auto it = vars_.Find(entity);
-	if (it) {
-		auto valueIt = (*it)->Vars.Find(key);
-		if (valueIt) {
-			return *valueIt;
-		}
+	auto vars = vars_.try_get(entity);
+	if (vars) {
+		return vars->Vars.try_get(key);
 	}
 
 	return nullptr;
@@ -318,9 +315,9 @@ UserVariable* UserVariableManager::Get(Guid const& entity, FixedString const& ke
 
 MultiHashMap<FixedString, UserVariable>* UserVariableManager::GetAll(Guid const& entity)
 {
-	auto it = vars_.Find(entity);
-	if (it) {
-		return &(*it)->Vars;
+	auto vars = vars_.try_get(entity);
+	if (vars) {
+		return &vars->Vars;
 	} else {
 		return nullptr;
 	}
@@ -346,18 +343,18 @@ UserVariableManager::EntityVariables* UserVariableManager::Set(Guid const& entit
 		sync_.Sync(entity, key, proto, &value);
 	}
 
-	auto it = vars_.Find(entity);
+	auto it = vars_.try_get(entity);
 	if (it) {
-		auto valueIt = (*it)->Vars.Find(key);
+		auto valueIt = it->Vars.try_get(key);
 		if (valueIt) {
-			**valueIt = std::move(value);
+			*valueIt = std::move(value);
 		} else {
-			(*it)->Vars.Set(key, std::move(value));
+			it->Vars.set(key, std::move(value));
 		}
-		return *it;
+		return it;
 	} else {
-		auto gameObjectVars = vars_.Set(entity, EntityVariables{});
-		gameObjectVars->Vars.Set(key, std::move(value));
+		auto gameObjectVars = vars_.set(entity, EntityVariables{});
+		gameObjectVars->Vars.set(key, std::move(value));
 		return gameObjectVars;
 	}
 }
@@ -379,17 +376,12 @@ void UserVariableManager::Flush(bool force)
 
 UserVariablePrototype const* UserVariableManager::GetPrototype(FixedString const& key) const
 {
-	auto it = prototypes_.Find(key);
-	if (it) {
-		return *it;
-	} else {
-		return nullptr;
-	}
+	return prototypes_.try_get(key);
 }
 
 void UserVariableManager::RegisterPrototype(FixedString const& key, UserVariablePrototype const& proto)
 {
-	prototypes_.Set(key, proto);
+	prototypes_.set(key, proto);
 }
 
 void UserVariableManager::SavegameVisit(ObjectVisitor* visitor)
@@ -408,7 +400,7 @@ void UserVariableManager::SavegameVisit(ObjectVisitor* visitor)
 				if (visitor->EnterNode(GFS.strEntityVariables, GFS.strEntity)) {
 					Guid entity;
 					visitor->VisitGuid(GFS.strEntity, entity, Guid::Null);
-					auto entityVars = vars_.Set(entity, EntityVariables{});
+					auto entityVars = vars_.add_key(entity);
 
 					uint32_t numEntityVars;
 					visitor->VisitCount(GFS.strVariable, &numEntityVars);
@@ -419,7 +411,7 @@ void UserVariableManager::SavegameVisit(ObjectVisitor* visitor)
 							visitor->VisitFixedString(GFS.strName, name, GFS.strEmpty);
 							USER_VAR_DBG("Savegame restore var %s/%s", entity.ToString().c_str(), name.GetString());
 							
-							auto var = entityVars->Vars.Set(name, UserVariable{});
+							auto var = entityVars->Vars.add_key(name);
 							var->SavegameVisit(visitor);
 							visitor->ExitNode(GFS.strVariable);
 
@@ -442,13 +434,13 @@ void UserVariableManager::SavegameVisit(ObjectVisitor* visitor)
 
 			for (auto& entity : vars_) {
 				if (visitor->EnterNode(GFS.strEntityVariables, GFS.strEntity)) {
-					visitor->VisitGuid(GFS.strEntity, entity.Key(), Guid::Null);
+					visitor->VisitGuid(GFS.strEntity, const_cast<Guid&>(entity.Key()), Guid::Null);
 
 					for (auto& kv : entity.Value().Vars) {
 						auto proto = GetPrototype(kv.Key());
 						if (proto && proto->Has(UserVariableFlags::Persistent)) {
 							if (visitor->EnterNode(GFS.strVariable, GFS.strName)) {
-								visitor->VisitFixedString(GFS.strName, kv.Key(), GFS.strEmpty);
+								visitor->VisitFixedString(GFS.strName, const_cast<FixedString&>(kv.Key()), GFS.strEmpty);
 								USER_VAR_DBG("Savegame persist var %s/%s", entity.Key().ToString().c_str(), kv.Key().GetString());
 								kv.Value().SavegameVisit(visitor);
 								visitor->ExitNode(GFS.strVariable);
@@ -523,8 +515,7 @@ EntityHandle UserVariableManager::GuidToEntity(Guid const& uuid) const
 
 UserVariable* ModVariableMap::Get(FixedString const& key)
 {
-	auto it = vars_.Find(key);
-	return it ? *it : nullptr;
+	return vars_.try_get(key);
 }
 
 ModVariableMap::VariableMap& ModVariableMap::GetAll()
@@ -540,12 +531,12 @@ void ModVariableMap::ClearVars()
 UserVariable* ModVariableMap::Set(FixedString const& key, UserVariablePrototype const& proto, UserVariable&& value)
 {
 	UserVariable* var;
-	auto valueIt = vars_.Find(key);
+	auto valueIt = vars_.try_get(key);
 	if (valueIt) {
-		**valueIt = std::move(value);
-		var = &**valueIt;
+		*valueIt = std::move(value);
+		var = valueIt;
 	} else {
-		var = vars_.Set(key, std::move(value));
+		var = vars_.set(key, std::move(value));
 	}
 
 	return var;
@@ -553,13 +544,12 @@ UserVariable* ModVariableMap::Set(FixedString const& key, UserVariablePrototype 
 
 UserVariablePrototype const* ModVariableMap::GetPrototype(FixedString const& key) const
 {
-	auto it = prototypes_.Find(key);
-	return it ? *it : nullptr;
+	return prototypes_.try_get(key);
 }
 
 void ModVariableMap::RegisterPrototype(FixedString const& key, UserVariablePrototype const& proto)
 {
-	prototypes_.Set(key, proto);
+	prototypes_.set(key, proto);
 }
 
 void ModVariableMap::SavegameVisit(ObjectVisitor* visitor)
@@ -575,7 +565,7 @@ void ModVariableMap::SavegameVisit(ObjectVisitor* visitor)
 				visitor->VisitFixedString(GFS.strName, name, GFS.strEmpty);
 				USER_VAR_DBG("Savegame restore var %s/%s", moduleUuid_.ToString().c_str(), name.GetString());
 							
-				auto var = vars_.Set(name, UserVariable{});
+				auto var = vars_.add_key(name);
 				var->SavegameVisit(visitor);
 				visitor->ExitNode(GFS.strVariable);
 
@@ -591,7 +581,7 @@ void ModVariableMap::SavegameVisit(ObjectVisitor* visitor)
 			auto proto = GetPrototype(kv.Key());
 			if (proto && proto->Has(UserVariableFlags::Persistent)) {
 				if (visitor->EnterNode(GFS.strVariable, GFS.strName)) {
-					visitor->VisitFixedString(GFS.strName, kv.Key(), GFS.strEmpty);
+					visitor->VisitFixedString(GFS.strName, const_cast<FixedString&>(kv.Key()), GFS.strEmpty);
 					USER_VAR_DBG("Savegame persist var %s/%s", moduleUuid_.ToString().c_str(), kv.Key().GetString());
 					kv.Value().SavegameVisit(visitor);
 					visitor->ExitNode(GFS.strVariable);
@@ -608,9 +598,9 @@ void ModVariableMap::SavegameVisit(ObjectVisitor* visitor)
 
 std::optional<int32_t> ModVariableManager::GuidToModId(Guid const& uuid) const
 {
-	auto it = modIndices_.Find(uuid);
+	auto it = modIndices_.find(uuid);
 	if (it) {
-		return **it;
+		return *it;
 	} else {
 		return {};
 	}
@@ -618,19 +608,19 @@ std::optional<int32_t> ModVariableManager::GuidToModId(Guid const& uuid) const
 
 UserVariable* ModVariableManager::Get(Guid const& modUuid, FixedString const& key)
 {
-	auto it = vars_.Find(modUuid);
+	auto it = vars_.try_get(modUuid);
 	if (it) {
-		return (*it)->Get(key);
+		return it->Get(key);
+	} else {
+		return nullptr;
 	}
-
-	return nullptr;
 }
 
 ModVariableMap::VariableMap* ModVariableManager::GetAll(Guid const& modUuid)
 {
-	auto it = vars_.Find(modUuid);
+	auto it = vars_.try_get(modUuid);
 	if (it) {
-		return &(*it)->GetAll();
+		return &it->GetAll();
 	} else {
 		return nullptr;
 	}
@@ -643,25 +633,24 @@ MultiHashMap<Guid, ModVariableMap>& ModVariableManager::GetAll()
 
 ModVariableMap* ModVariableManager::GetMod(Guid const& modUuid)
 {
-	auto it = vars_.Find(modUuid);
-	return it ? *it : nullptr;
+	return vars_.try_get(modUuid);
 }
 
 ModVariableMap* ModVariableManager::GetOrCreateMod(Guid const& modUuid)
 {
-	auto it = vars_.Find(modUuid);
+	auto it = vars_.try_get(modUuid);
 	if (it) {
-		return *it;
+		return it;
 	} else {
-		return vars_.Set(modUuid, ModVariableMap(modUuid, isServer_));
+		return vars_.set(modUuid, ModVariableMap{ modUuid, isServer_ });
 	}
 }
 
 UserVariablePrototype const* ModVariableManager::GetPrototype(Guid const& modUuid, FixedString const& key) const
 {
-	auto it = vars_.Find(modUuid);
+	auto it = vars_.try_get(modUuid);
 	if (it) {
-		return (*it)->GetPrototype(key);
+		return it->GetPrototype(key);
 	} else {
 		return nullptr;
 	}
@@ -714,7 +703,7 @@ void ModVariableManager::OnSessionLoading()
 	auto& mod = (isServer_ ? GetStaticSymbols().GetModManagerServer()->BaseModule : GetStaticSymbols().GetModManagerClient()->BaseModule);
 	uint32_t nextIndex{ 0 };
 	for (auto const& mod : mod.LoadOrderedModules) {
-		modIndices_.Set(mod.Info.ModuleUUID, nextIndex++);
+		modIndices_.set(mod.Info.ModuleUUID, nextIndex++);
 	}
 }
 
@@ -758,7 +747,7 @@ void ModVariableManager::SavegameVisit(ObjectVisitor* visitor)
 
 			for (auto& mod : vars_) {
 				if (visitor->EnterNode(GFS.strModVariables, GFS.strModule)) {
-					visitor->VisitGuid(GFS.strModule, mod.Key(), Guid::Null);
+					visitor->VisitGuid(GFS.strModule, const_cast<Guid&>(mod.Key()), Guid::Null);
 					mod.Value().SavegameVisit(visitor);
 					visitor->ExitNode(GFS.strModVariables);
 				}
@@ -802,9 +791,9 @@ void ModVariableManager::NetworkSync(net::UserVar const& var)
 	Set(*map, key, *proto, std::move(value));
 
 	if (proto && cache_ && !proto->Has(UserVariableFlags::DontCache)) {
-		auto modIndex = modIndices_.Find(modUuid);
+		auto modIndex = modIndices_.try_get(modUuid);
 		if (modIndex) {
-			cache_->Invalidate(**modIndex, key);
+			cache_->Invalidate(*modIndex, key);
 		}
 	}
 }
@@ -1045,12 +1034,12 @@ CachedUserVariableManager::~CachedUserVariableManager()
 
 CachedUserVariable* CachedUserVariableManager::GetFromCache(EntityHandle entity, FixedString const& key, Guid& entityGuid)
 {
-	auto it = vars_.Find(entity);
+	auto it = vars_.try_get(entity);
 	if (it) {
-		auto valueIt = (*it)->Vars.Find(key);
+		auto valueIt = it->Vars.try_get(key);
 		if (valueIt) {
-			entityGuid = (*it)->CachedGuid;
-			return *valueIt;
+			entityGuid = it->CachedGuid;
+			return valueIt;
 		}
 	}
 
@@ -1059,12 +1048,10 @@ CachedUserVariable* CachedUserVariableManager::GetFromCache(EntityHandle entity,
 
 CachedUserVariable* CachedUserVariableManager::GetFromCache(EntityHandle entity, FixedString const& key)
 {
-	auto it = vars_.Find(entity);
+	auto it = vars_.try_get(entity);
 	if (it) {
-		auto valueIt = (*it)->Vars.Find(key);
-		if (valueIt) {
-			return *valueIt;
-		}
+		auto valueIt = it->Vars.try_get(key);
+		return valueIt;
 	}
 
 	return nullptr;
@@ -1076,29 +1063,27 @@ CachedUserVariable* CachedUserVariableManager::PutCache(EntityHandle entity, Fix
 	EntityVariables* vars;
 	bool wasDirty{ false };
 
-	auto it = vars_.Find(entity);
-	if (it) {
-		vars = *it;
-		auto valueIt = vars->Vars.Find(key);
-		if (valueIt) {
-			wasDirty = (*valueIt)->Dirty;
-			bool dirty = (*valueIt)->Dirty || (isWrite && (*valueIt)->LikelyChanged(value));
-			**valueIt = std::move(value);
-			var = *valueIt;
+	vars = vars_.try_get(entity);
+	if (vars) {
+		var = vars->Vars.try_get(key);
+		if (var) {
+			wasDirty = var->Dirty;
+			bool dirty = var->Dirty || (isWrite && var->LikelyChanged(value));
+			*var = std::move(value);
 			var->Dirty = dirty;
 		} else {
-			var = vars->Vars.Set(key, std::move(value));
+			var = vars->Vars.set(key, std::move(value));
 			var->Dirty = isWrite;
 		}
 	} else {
-		vars = vars_.Set(entity, EntityVariables{});
+		vars = vars_.add_key(entity);
 		if (entityGuid) {
 			vars->CachedGuid = entityGuid;
 		} else {
 			vars->CachedGuid = global_.EntityToGuid(entity);
 		}
 
-		var = vars->Vars.Set(key, std::move(value));
+		var = vars->Vars.set(key, std::move(value));
 		var->Dirty = isWrite;
 	}
 
@@ -1215,9 +1200,9 @@ void CachedUserVariableManager::Invalidate()
 
 void CachedUserVariableManager::Invalidate(EntityHandle entity, FixedString const& key)
 {
-	auto it = vars_.Find(entity);
+	auto it = vars_.try_get(entity);
 	if (it) {
-		if ((*it)->Vars.remove(key)) {
+		if (it->Vars.remove(key)) {
 			USER_VAR_DBG("Invalidate cached var %016llx/%s", entity.Handle, key.GetString());
 		}
 	}
@@ -1268,12 +1253,12 @@ Guid CachedModVariableManager::ModIndexToGuid(uint32_t modIndex)
 
 CachedUserVariable* CachedModVariableManager::GetFromCache(uint32_t modIndex, FixedString const& key, Guid& modUuid)
 {
-	auto it = vars_.Find(modIndex);
+	auto it = vars_.try_get(modIndex);
 	if (it) {
-		auto valueIt = (*it)->Vars.Find(key);
+		auto valueIt = it->Vars.try_get(key);
 		if (valueIt) {
-			modUuid = (*it)->CachedGuid;
-			return *valueIt;
+			modUuid = it->CachedGuid;
+			return valueIt;
 		}
 	}
 
@@ -1282,12 +1267,9 @@ CachedUserVariable* CachedModVariableManager::GetFromCache(uint32_t modIndex, Fi
 
 CachedUserVariable* CachedModVariableManager::GetFromCache(uint32_t modIndex, FixedString const& key)
 {
-	auto it = vars_.Find(modIndex);
+	auto it = vars_.try_get(modIndex);
 	if (it) {
-		auto valueIt = (*it)->Vars.Find(key);
-		if (valueIt) {
-			return *valueIt;
-		}
+		return it->Vars.try_get(key);
 	}
 
 	return nullptr;
@@ -1299,29 +1281,27 @@ CachedUserVariable* CachedModVariableManager::PutCache(uint32_t modIndex, FixedS
 	ModVariables* vars;
 	bool wasDirty{ false };
 
-	auto it = vars_.Find(modIndex);
-	if (it) {
-		vars = *it;
-		auto valueIt = vars->Vars.Find(key);
-		if (valueIt) {
-			wasDirty = (*valueIt)->Dirty;
-			bool dirty = (*valueIt)->Dirty || (isWrite && (*valueIt)->LikelyChanged(value));
-			**valueIt = std::move(value);
-			var = *valueIt;
+	vars = vars_.try_get(modIndex);
+	if (vars) {
+		var = vars->Vars.try_get(key);
+		if (var) {
+			wasDirty = var->Dirty;
+			bool dirty = var->Dirty || (isWrite && var->LikelyChanged(value));
+			*var = std::move(value);
 			var->Dirty = dirty;
 		} else {
-			var = vars->Vars.Set(key, std::move(value));
+			var = vars->Vars.set(key, std::move(value));
 			var->Dirty = isWrite;
 		}
 	} else {
-		vars = vars_.Set(modIndex, ModVariables{});
+		vars = vars_.add_key(modIndex);
 		if (modUuid) {
 			vars->CachedGuid = modUuid;
 		} else {
 			vars->CachedGuid = ModIndexToGuid(modIndex);
 		}
 
-		var = vars->Vars.Set(key, std::move(value));
+		var = vars->Vars.set(key, std::move(value));
 		var->Dirty = isWrite;
 	}
 
@@ -1429,9 +1409,9 @@ void CachedModVariableManager::Invalidate()
 
 void CachedModVariableManager::Invalidate(uint32_t modIndex, FixedString const& key)
 {
-	auto it = vars_.Find(modIndex);
+	auto it = vars_.try_get(modIndex);
 	if (it) {
-		if ((*it)->Vars.remove(key)) {
+		if (it->Vars.remove(key)) {
 			USER_VAR_DBG("Invalidate cached mod var %d/%s", modIndex, key.GetString());
 		}
 	}

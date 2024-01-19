@@ -87,9 +87,9 @@ int GetGuidResourceProxy(lua_State* L, Guid const& resourceGuid)
 		return 1;
 	}
 
-	auto resource = (*resourceMgr)->Resources.Find(resourceGuid);
+	auto resource = (*resourceMgr)->Resources.try_get(resourceGuid);
 	if (resource) {
-		MakeObjectRef(L, *resource);
+		MakeObjectRef(L, resource);
 	} else {
 		push(L, nullptr);
 	}
@@ -124,7 +124,7 @@ Array<Guid> GetAllGuidResourcesTyped()
 		return {};
 	}
 
-	return (*resourceMgr)->Resources.Keys;
+	return (*resourceMgr)->Resources.keys();
 }
 
 #define FOR_RESOURCE_TYPE(ty) case ty::ResourceManagerType: return GetAllGuidResourcesTyped<ty>();

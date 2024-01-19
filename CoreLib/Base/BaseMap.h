@@ -594,8 +594,9 @@ inline uint64_t MultiHashMapHash<FixedString>(FixedString const& v)
 }
 
 template <class T>
-struct MultiHashSet
+class MultiHashSet
 {
+public:
 	using value_type = T;
 	using reference = T&;
 	using const_reference = T const&;
@@ -604,18 +605,14 @@ struct MultiHashSet
 	using difference_type = int32_t;
 	using size_type = uint32_t;
 
-	StaticArray<int32_t> HashKeys;
-	Array<int32_t> NextIds;
-	Array<T> Keys;
-
-	MultiHashSet()
+	MultiHashSet() noexcept
 	{}
 
 	MultiHashSet(MultiHashSet const& other)
 		: HashKeys(other.HashKeys), NextIds(other.NextIds), Keys(other.Keys)
 	{}
 
-	MultiHashSet(MultiHashSet&& other)
+	MultiHashSet(MultiHashSet&& other) noexcept
 		: HashKeys(std::move(other.HashKeys)), NextIds(std::move(other.NextIds)), Keys(std::move(other.Keys))
 	{}
 
@@ -630,7 +627,7 @@ struct MultiHashSet
 		return *this;
 	}
 
-	MultiHashSet& operator =(MultiHashSet&& other)
+	MultiHashSet& operator =(MultiHashSet&& other) noexcept
 	{
 		if (this != &other) {
 			HashKeys = std::move(other.HashKeys);
@@ -646,14 +643,34 @@ struct MultiHashSet
 		return Keys.size();
 	}
 
-	void clear()
+	inline bool empty() const
 	{
-		Keys.clear();
-		std::fill(HashKeys.begin(), HashKeys.end(), -1);
-		std::fill(NextIds.begin(), NextIds.end(), -1);
+		return Keys.empty();
 	}
 
-	int FindIndex(T const& key) const
+	Array<T> const& keys() const
+	{
+		return Keys;
+	}
+
+	StaticArray<int32_t> const& hash_keys() const
+	{
+		return HashKeys;
+	}
+
+	Array<int32_t> const& next_ids() const
+	{
+		return NextIds;
+	}
+
+	void clear()
+	{
+		std::fill(HashKeys.begin(), HashKeys.end(), -1);
+		NextIds.clear();
+		Keys.clear();
+	}
+
+	int find_index(T const& key) const
 	{
 		if (HashKeys.Size() == 0) return -1;
 
@@ -666,21 +683,9 @@ struct MultiHashSet
 		return -1;
 	}
 
-	bool Contains(T const& key) const
+	int insert(T const& key)
 	{
-		return FindIndex(key) != -1;
-	}
-
-	void Clear()
-	{
-		std::fill(HashKeys.begin(), HashKeys.end(), -1);
-		NextIds.clear();
-		Keys.clear();
-	}
-
-	int Add(T const& key)
-	{
-		auto index = FindIndex(key);
+		auto index = find_index(key);
 		if (index != -1) {
 			return index;
 		}
@@ -725,13 +730,13 @@ struct MultiHashSet
 
 	ContiguousIterator<T> find(T const& key) const
 	{
-		auto idx = FindIndex(key);
+		auto idx = find_index(key);
 		return idx != -1 ? (Keys.begin() + idx) : Keys.end();
 	}
 
 	ContiguousIterator<T> find(T const& key)
 	{
-		auto idx = FindIndex(key);
+		auto idx = find_index(key);
 		return idx != -1 ? (Keys.begin() + idx) : Keys.end();
 	}
 
@@ -740,7 +745,16 @@ struct MultiHashSet
 		return removeKeyInternal(key) >= 0;
 	}
 
+	bool contains(T const& key) const
+	{
+		return find_index(key) != -1;
+	}
+
 protected:
+	StaticArray<int32_t> HashKeys;
+	Array<int32_t> NextIds;
+	Array<T> Keys;
+
 	int removeKeyInternal(T const& key)
 	{
 		if (HashKeys.Size() == 0) return -1;
@@ -826,10 +840,9 @@ struct VirtualMultiHashSet : public MultiHashSet<T>
 };
 
 template <class TKey, class TValue>
-struct MultiHashMap : public MultiHashSet<TKey>
+class MultiHashMap : private MultiHashSet<TKey>
 {
-	UninitializedStaticArray<TValue> Values;
-
+public:
 	class ConstIterator
 	{
 	public:
@@ -933,7 +946,7 @@ struct MultiHashMap : public MultiHashSet<TKey>
 			return it.Map != Map || it.Index != Index;
 		}
 
-		TKey & Key() const
+		TKey const & Key() const
 		{
 			return Map->Keys[Index];
 		}
@@ -968,7 +981,7 @@ struct MultiHashMap : public MultiHashSet<TKey>
 		int32_t Index;
 	};
 
-	MultiHashMap()
+	MultiHashMap() noexcept
 	{}
 
 	MultiHashMap(MultiHashMap const& other)
@@ -977,7 +990,7 @@ struct MultiHashMap : public MultiHashSet<TKey>
 		Values.copy_from(other.Values, 0, other.Keys.size());
 	}
 
-	MultiHashMap(MultiHashMap&& other)
+	MultiHashMap(MultiHashMap&& other) noexcept
 		: MultiHashSet<TKey>(std::move(other)),
 		Values(std::move(other.Values))
 	{}
@@ -996,12 +1009,37 @@ struct MultiHashMap : public MultiHashSet<TKey>
 		return *this;
 	}
 
-	MultiHashMap& operator =(MultiHashMap&& other)
+	MultiHashMap& operator =(MultiHashMap&& other) noexcept
 	{
 		MultiHashSet<TKey>::operator =(std::move(other));
 		Values = std::move(other.Values);
 
 		return *this;
+	}
+
+	inline uint32_t size() const
+	{
+		return this->Keys.size();
+	}
+
+	inline bool empty() const
+	{
+		return this->Keys.empty();
+	}
+
+	Array<TKey> const& keys() const
+	{
+		return this->Keys;
+	}
+
+	UninitializedStaticArray<TValue>& values()
+	{
+		return Values;
+	}
+
+	UninitializedStaticArray<TValue> const& values() const
+	{
+		return Values;
 	}
 
 	void clear()
@@ -1010,29 +1048,9 @@ struct MultiHashMap : public MultiHashSet<TKey>
 		MultiHashSet<TKey>::clear();
 	}
 
-	std::optional<TValue const*> Find(TKey const& key) const
+	TValue* set(TKey const& key, TValue&& value)
 	{
-		auto index = this->FindIndex(key);
-		if (index == -1) {
-			return {};
-		} else {
-			return &Values[index];
-		}
-	}
-
-	std::optional<TValue*> Find(TKey const& key)
-	{
-		auto index = this->FindIndex(key);
-		if (index == -1) {
-			return {};
-		} else {
-			return &Values[index];
-		}
-	}
-
-	TValue* Set(TKey const& key, TValue&& value)
-	{
-		auto index = this->Add(key);
+		auto index = this->insert(key);
 		if (Values.size() <= (uint32_t)index) {
 			Values.resize(Values.grow_size(), index, index);
 		}
@@ -1040,14 +1058,24 @@ struct MultiHashMap : public MultiHashSet<TKey>
 		return new (&Values[index]) TValue(std::move(value));
 	}
 
-	TValue* Set(TKey const& key, TValue const& value)
+	TValue* set(TKey const& key, TValue const& value)
 	{
-		auto index = this->Add(key);
+		auto index = this->insert(key);
 		if (Values.size() <= (uint32_t)index) {
 			Values.resize(Values.grow_size(), index, index);
 		}
 
 		return new (&Values[index]) TValue(value);
+	}
+
+	TValue* add_key(TKey const& key)
+	{
+		auto index = this->insert(key);
+		if (Values.size() <= (uint32_t)index) {
+			Values.resize(Values.grow_size(), index, index);
+		}
+
+		return new (&Values[index]) TValue();
 	}
 
 	bool remove(TKey const& key)
@@ -1088,15 +1116,53 @@ struct MultiHashMap : public MultiHashSet<TKey>
 
 	Iterator find(TKey const& key)
 	{
-		auto idx = this->FindIndex(key);
+		auto idx = this->find_index(key);
 		return Iterator(this, idx != -1 ? idx : this->Keys.size());
 	}
 
 	ConstIterator find(TKey const& key) const
 	{
-		auto idx = this->FindIndex(key);
+		auto idx = this->find_index(key);
 		return ConstIterator(this, idx != -1 ? idx : this->Keys.size());
 	}
+
+	TValue const* try_get(TKey const& key) const
+	{
+		auto index = this->find_index(key);
+		if (index == -1) {
+			return nullptr;
+		} else {
+			return &Values[index];
+		}
+	}
+
+	TValue* try_get(TKey const& key)
+	{
+		auto index = this->find_index(key);
+		if (index == -1) {
+			return nullptr;
+		} else {
+			return &Values[index];
+		}
+	}
+
+	TValue get_or_default(TKey const& key, TValue const& defaultv = TValue{}) const
+	{
+		auto index = this->find_index(key);
+		if (index == -1) {
+			return defaultv;
+		} else {
+			return Values[index];
+		}
+	}
+
+	inline int find_index(TKey const& key) const
+	{
+		return MultiHashSet<TKey>::find_index(key);
+	}
+
+private:
+	UninitializedStaticArray<TValue> Values;
 };
 
 template <class TKey, class TValue>

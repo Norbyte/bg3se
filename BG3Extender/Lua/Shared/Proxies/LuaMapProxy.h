@@ -57,9 +57,9 @@ public:
 	{
 		auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
 		auto key = get<TKey>(L, luaKeyIndex);
-		auto value = obj->Find(key);
+		auto value = obj->try_get(key);
 		if (value) {
-			push(L, *value, self.Lifetime);
+			push(L, value, self.Lifetime);
 			return true;
 		} else {
 			return false;
@@ -75,7 +75,7 @@ public:
 				obj->remove(key);
 			} else {
 				auto value = get<TValue>(L, luaValueIndex);
-				obj->Set(key, value);
+				obj->set(key, value);
 			}
 
 			return true;
@@ -87,24 +87,26 @@ public:
 	unsigned Length(CppObjectMetadata& self) override
 	{
 		auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
-		return obj->Keys.size();
+		return obj->keys().size();
 	}
 
 	int Next(lua_State* L, CppObjectMetadata& self, int luaKeyIndex) override
 	{
 		auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
 		if (lua_type(L, luaKeyIndex) == LUA_TNIL) {
-			if (obj->Keys.size() > 0) {
-				push(L, &obj->Keys[0], self.Lifetime);
-				push(L, &obj->Values[0], self.Lifetime);
+			if (!obj->empty()) {
+				// TODO - jank, but const proxies are not supported yet
+				push(L, const_cast<TKey*>(&obj->keys()[0]), self.Lifetime);
+				push(L, &obj->values()[0], self.Lifetime);
 				return 2;
 			}
 		} else {
 			auto key = get<TKey>(L, luaKeyIndex);
-			auto index = obj->FindIndex(key);
-			if (index != -1 && index < (int)obj->Keys.size() - 1) {
-				push(L, &obj->Keys[index + 1], self.Lifetime);
-				push(L, &obj->Values[index + 1], self.Lifetime);
+			auto index = obj->find_index(key);
+			if (index != -1 && index < (int)obj->keys().size() - 1) {
+				// TODO - jank, but const proxies are not supported yet
+				push(L, const_cast<TKey*>(&obj->keys()[index + 1]), self.Lifetime);
+				push(L, &obj->values()[index + 1], self.Lifetime);
 				return 2;
 			}
 		}

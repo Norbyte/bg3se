@@ -21,7 +21,7 @@ void* Query::GetFirstMatchingComponent(std::size_t componentSize, bool isProxy)
 {
 	for (auto const& cls : EntityClasses) {
 		if (cls.EntityClass->InstanceToPageMap.size() > 0) {
-			auto instPage = cls.EntityClass->InstanceToPageMap.Values[0];
+			auto const& instPage = cls.EntityClass->InstanceToPageMap.values()[0];
 			auto componentIdx = cls.GetComponentIndex(0);
 			assert(cls.EntityClass->ComponentPools.size() >= 1);
 			return cls.EntityClass->GetComponent(instPage, componentIdx, componentSize, isProxy);
@@ -96,9 +96,9 @@ EntityHandle NewEntityPools::Add(uint32_t classIndex)
 
 void* EntityClass::GetComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy) const
 {
-	auto ref = InstanceToPageMap.Find(entityHandle);
+	auto ref = InstanceToPageMap.try_get(entityHandle);
 	if (ref) {
-		return GetComponent(**ref, type, componentSize, isProxy);
+		return GetComponent(*ref, type, componentSize, isProxy);
 	} else {
 		return nullptr;
 	}
@@ -106,9 +106,9 @@ void* EntityClass::GetComponent(EntityHandle entityHandle, ComponentTypeIndex ty
 
 void* EntityClass::GetComponent(InstanceComponentPointer const& entityPtr, ComponentTypeIndex type, std::size_t componentSize, bool isProxy) const
 {
-	auto compIndex = ComponentTypeToIndex.Find((uint16_t)type.Value());
+	auto compIndex = ComponentTypeToIndex.try_get((uint16_t)type.Value());
 	if (compIndex) {
-		return GetComponent(entityPtr, **compIndex, componentSize, isProxy);
+		return GetComponent(entityPtr, *compIndex, componentSize, isProxy);
 	} else {
 		return nullptr;
 	}
@@ -244,13 +244,7 @@ BitSet<>* EntitySystemHelpersBase::GetReplicationFlags(EntityHandle const& entit
 		return nullptr;
 	}
 
-	auto& pool = pools[typeId];
-	auto syncFlags = pool.Find(entity);
-	if (syncFlags) {
-		return *syncFlags;
-	} else {
-		return nullptr;
-	}
+	return pools[typeId].try_get(entity);
 }
 
 BitSet<>* EntitySystemHelpersBase::GetOrCreateReplicationFlags(EntityHandle const& entity, ExtComponentType type)
@@ -275,12 +269,12 @@ BitSet<>* EntitySystemHelpersBase::GetOrCreateReplicationFlags(EntityHandle cons
 	}
 
 	auto& pool = pools[typeId];
-	auto syncFlags = pool.Find(entity);
+	auto syncFlags = pool.try_get(entity);
 	if (syncFlags) {
-		return *syncFlags;
+		return syncFlags;
+	} else {
+		return pool.add_key(entity);
 	}
-
-	return pool.Set(entity, BitSet<>());
 }
 
 void EntitySystemHelpersBase::NotifyReplicationFlagsDirtied()
@@ -627,9 +621,9 @@ EntityHandle EntitySystemHelpersBase::GetEntityHandle(Guid const& uuid)
 {
 	auto entityMap = GetUuidMappings();
 	if (entityMap) {
-		auto handle = entityMap->Mappings.Find(uuid);
+		auto handle = entityMap->Mappings.try_get(uuid);
 		if (handle) {
-			return **handle;
+			return *handle;
 		}
 	}
 
@@ -650,13 +644,13 @@ resource::GuidResourceBankBase* EntitySystemHelpersBase::GetRawResourceManager(E
 		return {};
 	}
 
-	auto res = (*defns)->Definitions.Find(index);
+	auto res = (*defns)->Definitions.try_get(index);
 	if (!res) {
 		OsiError("Resource manager missing for " << type);
 		return {};
 	}
 
-	return **res;
+	return *res;
 }
 
 Query* EntitySystemHelpersBase::GetQuery(ExtQueryType type)

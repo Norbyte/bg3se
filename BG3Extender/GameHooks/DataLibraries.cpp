@@ -281,12 +281,14 @@ namespace bg3se
 
 		// Create a new entry in the string repository text pool
 		auto& texts = (*GetStaticSymbols().ls__gTranslatedStringRepository)->TranslatedStrings[0];
-		auto tskRef = texts->Texts.Find(ts.Handle);
+		auto tskRef = texts->Texts.try_get(ts.Handle);
+		if (!tskRef) return;
+
 		auto str = GameAlloc<STDString>(msg);
 		texts->Strings.Add(str);
 
 		// Update reference to new string
-		**tskRef = LSStringView(str->data(), str->size());
+		*tskRef = LSStringView(str->data(), str->size());
 
 		GetStaticSymbols().ecl__EoCClient__HandleError(*GetStaticSymbols().ecl__EoCClient, ts, exitGame, ts);
 	}

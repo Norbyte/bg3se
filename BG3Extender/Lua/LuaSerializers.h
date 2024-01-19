@@ -237,19 +237,14 @@ namespace bg3se::lua
 		s.BeginObject();
 		if (s.IsWriting) {
 			int i = 1;
-			/*for (auto& it : v) {
-				StackCheck _(s.L);
-				s << it.Key() << it.Value();
-				lua_rawset(s.L, -3);
-			}*/
 			for (auto it = v.begin(); it != v.end(); ++it) {
 				StackCheck _(s.L);
-				s << it.Key();
+				s << const_cast<TKey&>(it.Key());
 				s << it.Value();
 				lua_rawset(s.L, -3);
 			}
 		} else {
-			v.Clear();
+			v.clear();
 			for (auto idx : iterate(s.L, -1)) {
 				StackCheck _(s.L);
 				TKey key{};
@@ -258,7 +253,7 @@ namespace bg3se::lua
 				s << key;
 				lua_pop(s.L, 1);
 				s << value;
-				v.Set(std::move(key), std::move(value));
+				v.set(std::move(key), std::move(value));
 			}
 		}
 		s.EndObject();

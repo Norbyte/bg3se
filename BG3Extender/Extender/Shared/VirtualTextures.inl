@@ -107,7 +107,7 @@ void VirtualTextureHelpers::Load()
 							auto gTex = mapping["GTexName"].asString();
 							auto gts = mapping["GTS"].asString();
 							if (!gTex.empty() && !gts.empty()) {
-								gtsPaths_.Set(FixedString(gTex), FixedString(gts));
+								gtsPaths_.set(FixedString(gTex), FixedString(gts));
 							}
 						}
 					}

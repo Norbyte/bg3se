@@ -90,7 +90,7 @@ void NetworkManager::ExtendNetworking()
 
 	protocol_ = new ExtenderProtocol();
 	client->ProtocolList.insert_at(0, protocol_);
-	client->ProtocolMap.Set(ExtenderProtocol::ProtocolId, protocol_);
+	client->ProtocolMap.set(ExtenderProtocol::ProtocolId, protocol_);
 
 	auto extenderMsg = new net::ExtenderMessage();
 	client->NetMessageFactory->Register((uint32_t)net::ExtenderMessage::MessageId, extenderMsg);

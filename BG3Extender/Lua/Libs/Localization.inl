@@ -2,22 +2,22 @@ BEGIN_SE()
 
 std::optional<StringView> TranslatedStringRepository::GetTranslatedString(RuntimeStringHandle const& handle)
 {
-	auto text = TranslatedStrings[0]->Texts.Find(handle);
+	auto text = TranslatedStrings[0]->Texts.try_get(handle);
 	if (!text) {
-		text = VersionedFallbackPool->Texts.Find(handle);
+		text = VersionedFallbackPool->Texts.try_get(handle);
 		if (!text) {
-			text = FallbackPool->Texts.Find(handle);
+			text = FallbackPool->Texts.try_get(handle);
 		}
 	}
 
-	return text ? **text : std::optional<StringView>{};
+	return text ? *text : std::optional<StringView>{};
 }
 
 void TranslatedStringRepository::UpdateTranslatedString(RuntimeStringHandle const& handle, StringView translated)
 {
 	auto text = GameAlloc<STDString>(translated);
 	TranslatedStrings[0]->Strings.push_back(text);
-	TranslatedStrings[0]->Texts.Set(handle, LSStringView(text->data(), text->size()));
+	TranslatedStrings[0]->Texts.set(handle, LSStringView(text->data(), text->size()));
 }
 
 END_SE()

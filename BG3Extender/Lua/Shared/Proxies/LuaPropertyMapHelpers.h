@@ -24,7 +24,7 @@ PropertyOperationResult GenericGetOffsetProperty(lua_State* L, LifetimeHandle co
 }
 
 template <class T>
-PropertyOperationResult GenericSerializeOffsetProperty(lua_State* L, void* obj, RawPropertyAccessors const& prop)
+PropertyOperationResult GenericSerializeOffsetProperty(lua_State* L, void const* obj, RawPropertyAccessors const& prop)
 {
 	auto* value = (T*)((std::uintptr_t)obj + prop.Offset);
 	if constexpr (!std::is_pointer_v<T>) {
@@ -90,9 +90,9 @@ PropertyOperationResult GenericSetOffsetBitmaskFlag(lua_State* L, void* obj, int
 }
 
 template <class T>
-bool GenericValidateOffsetProperty(void* obj, std::size_t offset, uint64_t flag)
+bool GenericValidateOffsetProperty(void const* obj, std::size_t offset, uint64_t flag)
 {
-	auto value = reinterpret_cast<T*>((std::uintptr_t)obj + offset);
+	auto value = reinterpret_cast<T const*>((std::uintptr_t)obj + offset);
 	return ValidateAny(value);
 }
 
