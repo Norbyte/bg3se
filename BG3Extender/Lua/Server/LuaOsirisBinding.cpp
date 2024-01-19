@@ -11,11 +11,11 @@ PendingCallbackManager::~PendingCallbackManager()
 	}
 }
 
-Array<std::size_t>* PendingCallbackManager::Enter(std::unordered_multimap<uint64_t, std::size_t>::iterator& begin, 
-	std::unordered_multimap<uint64_t, std::size_t>::iterator& end)
+Array<uint32_t>* PendingCallbackManager::Enter(std::unordered_multimap<uint64_t, uint32_t>::iterator& begin,
+	std::unordered_multimap<uint64_t, uint32_t>::iterator& end)
 {
 	if (depth_ >= cache_.size()) {
-		cache_.push_back(GameAlloc<Array<std::size_t>>());
+		cache_.push_back(GameAlloc<Array<uint32_t>>());
 	}
 
 	auto entry = cache_[depth_];
@@ -29,7 +29,7 @@ Array<std::size_t>* PendingCallbackManager::Enter(std::unordered_multimap<uint64
 	return entry;
 }
 
-void PendingCallbackManager::Exit(Array<std::size_t>* v)
+void PendingCallbackManager::Exit(Array<uint32_t>* v)
 {
 	assert(depth_ > 0 && cache_[depth_ - 1] == v);
 	depth_--;
@@ -47,16 +47,51 @@ OsirisCallbackManager::~OsirisCallbackManager()
 	}
 }
 
-void OsirisCallbackManager::Subscribe(STDString const& name, uint32_t arity, OsirisHookSignature::HookType type, RegistryEntry handler)
+OsirisCallbackManager::SubscriptionId OsirisCallbackManager::Subscribe(STDString const& name, uint32_t arity, OsirisHookSignature::HookType type, RegistryEntry handler)
 {
 	OsirisHookSignature sig{ name, arity, type };
-	auto it = nameSubscriberRefs_.insert(std::make_pair(sig, subscribers_.size()));
-	subscribers_.push_back(std::move(handler));
+	SubscriptionId id;
+
+	auto sub = subscriptions_.Add(id);
+	sub->Callback = std::move(handler);
+	sub->Signature = sig;
+
+	nameSubscriberRefs_.insert(std::make_pair(sig, id));
 
 	if (storyLoaded_) {
 		HookOsiris();
-		RegisterNodeHandler(it->first, it->second);
+		RegisterNodeHandler(sig, id);
 	}
+
+	return id;
+}
+
+bool OsirisCallbackManager::Unsubscribe(SubscriptionId id)
+{
+	auto sub = subscriptions_.Find(id);
+	if (!sub) return false;
+
+	auto nameIt = nameSubscriberRefs_.find(sub->Signature);
+	while (nameIt != nameSubscriberRefs_.end() && nameIt->first == sub->Signature) {
+		if (nameIt->second == id) {
+			nameSubscriberRefs_.erase(nameIt);
+			break;
+		}
+	}
+
+	if (sub->Node) {
+		auto it = nodeSubscriberRefs_.find(*sub->Node);
+		while (it != nodeSubscriberRefs_.end() && it->first == *sub->Node) {
+			if (it->second == id) {
+				nodeSubscriberRefs_.erase(it);
+				break;
+			}
+		}
+	}
+
+	sub->Callback.Reset();
+	subscriptions_.Free(id);
+	return true;
 }
 
 void OsirisCallbackManager::RunHandlers(uint64_t nodeRef, TuplePtrLL* tuple)
@@ -76,7 +111,10 @@ void OsirisCallbackManager::RunHandlers(uint64_t nodeRef, TuplePtrLL* tuple)
 		// if the Lua handler function registers a new subscriber
 		auto indices = pendingCallbacks_.Enter(it.first, it.second);
 		for (auto index : *indices) {
-			RunHandler(lua.Get(), subscribers_[index], tuple);
+			auto sub = subscriptions_.Find(index);
+			if (sub) {
+				RunHandler(lua.Get(), sub->Callback, tuple);
+			}
 		}
 		pendingCallbacks_.Exit(indices);
 	}
@@ -141,7 +179,10 @@ void OsirisCallbackManager::RunHandlers(uint64_t nodeRef, OsiArgumentDesc* args)
 		// if the Lua handler function registers a new subscriber
 		auto indices = pendingCallbacks_.Enter(it.first, it.second);
 		for (auto index : *indices) {
-			RunHandler(lua.Get(), subscribers_[index], args);
+			auto sub = subscriptions_.Find(index);
+			if (sub) {
+				RunHandler(lua.Get(), sub->Callback, args);
+			}
 		}
 		pendingCallbacks_.Exit(indices);
 	}
@@ -205,7 +246,7 @@ void OsirisCallbackManager::StorySetMerging(bool isMerging)
 	merging_ = isMerging;
 }
 
-void OsirisCallbackManager::RegisterNodeHandler(OsirisHookSignature const& sig, std::size_t handlerId)
+void OsirisCallbackManager::RegisterNodeHandler(OsirisHookSignature const& sig, SubscriptionId handlerId)
 {
 	auto func = LookupOsiFunction(sig.name, sig.arity);
 	if (func != nullptr && func->Type == FunctionType::UserQuery) {
@@ -259,6 +300,10 @@ void OsirisCallbackManager::RegisterNodeHandler(OsirisHookSignature const& sig, 
 	}
 
 	nodeSubscriberRefs_.insert(std::make_pair(nodeRef, handlerId));
+	auto sub = subscriptions_.Find(handlerId);
+	if (sub) {
+		sub->Node = nodeRef;
+	}
 }
 
 void OsirisCallbackManager::HookOsiris()

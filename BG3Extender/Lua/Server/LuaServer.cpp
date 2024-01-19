@@ -79,14 +79,25 @@ namespace bg3se::esv::lua
 
 		LuaServerPin lua(ExtensionState::Get());
 		RegistryEntry handler(L, 4);
-		lua->Osiris().GetOsirisCallbacks().Subscribe(name, arity, type, std::move(handler));
-		return 0;
+		auto subscriberId = lua->Osiris().GetOsirisCallbacks().Subscribe(name, arity, type, std::move(handler));
+		push(L, subscriberId);
+		return 1;
+	}
+
+	int UnregisterOsirisListener(lua_State* L)
+	{
+		auto subscriberId = get<uint32_t>(L, 1);
+
+		LuaServerPin lua(ExtensionState::Get());
+		push(L, lua->Osiris().GetOsirisCallbacks().Unsubscribe(subscriberId));
+		return 1;
 	}
 
 	void RegisterOsirisLibrary(lua_State* L)
 	{
 		static const luaL_Reg extLib[] = {
 			{"RegisterListener", RegisterOsirisListener},
+			{"UnregisterListener", UnregisterOsirisListener},
 			{0,0}
 		};
 

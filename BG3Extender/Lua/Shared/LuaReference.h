@@ -38,6 +38,7 @@ public:
 	}
 
 	void Bind(lua_State* L, Ref const& ref);
+	void Reset();
 
 private:
 	lua_State * L_;

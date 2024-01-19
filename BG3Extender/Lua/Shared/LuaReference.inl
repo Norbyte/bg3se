@@ -66,6 +66,15 @@ void RegistryEntry::Bind(lua_State* L, Ref const& ref)
 	}
 }
 
+void RegistryEntry::Reset()
+{
+	if (ref_ != -1) {
+		luaL_unref(L_, LUA_REGISTRYINDEX, ref_);
+		ref_ = -1;
+		L_ = nullptr;
+	}
+}
+
 
 PersistentRegistryEntry::PersistentRegistryEntry()
 	: L_(nullptr), generationId_(0), ref_(-1)

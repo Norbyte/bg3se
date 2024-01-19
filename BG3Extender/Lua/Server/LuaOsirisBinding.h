@@ -243,22 +243,26 @@ class PendingCallbackManager
 {
 public:
 	~PendingCallbackManager();
-	Array<std::size_t>* Enter(std::unordered_multimap<uint64_t, std::size_t>::iterator& begin, 
-		std::unordered_multimap<uint64_t, std::size_t>::iterator& end);
-	void Exit(Array<std::size_t>* v);
+	Array<uint32_t>* Enter(std::unordered_multimap<uint64_t, uint32_t>::iterator& begin,
+		std::unordered_multimap<uint64_t, uint32_t>::iterator& end);
+	void Exit(Array<uint32_t>* v);
 
 private:
-	Array<Array<std::size_t>*> cache_;
+	Array<Array<uint32_t>*> cache_;
 	uint32_t depth_{ 0 };
 };
 
 class OsirisCallbackManager : Noncopyable<OsirisCallbackManager>
 {
 public:
+	using SubscriptionId = uint32_t;
+
 	OsirisCallbackManager(ExtensionState& state);
 	~OsirisCallbackManager();
 
-	void Subscribe(STDString const& name, uint32_t arity, OsirisHookSignature::HookType type, RegistryEntry handler);
+	SubscriptionId Subscribe(STDString const& name, uint32_t arity, OsirisHookSignature::HookType type, RegistryEntry handler);
+	bool Unsubscribe(SubscriptionId id);
+
 	void StoryLoaded();
 	void StorySetMerging(bool isMerging);
 
@@ -277,10 +281,17 @@ private:
 	static constexpr uint64_t AfterFunctionRef = 0x2000000000000000ull;
 	static constexpr uint64_t BeforeFunctionRef = 0x1000000000000000ull;
 
+	struct Subscription
+	{
+		RegistryEntry Callback;
+		OsirisHookSignature Signature;
+		std::optional<uint64_t> Node;
+	};
+
 	ExtensionState& state_;
-	std::vector<RegistryEntry> subscribers_;
-	std::unordered_multimap<OsirisHookSignature, std::size_t> nameSubscriberRefs_;
-	std::unordered_multimap<uint64_t, std::size_t> nodeSubscriberRefs_;
+	SaltedPool<Subscription> subscriptions_;
+	std::unordered_multimap<OsirisHookSignature, SubscriptionId> nameSubscriberRefs_;
+	std::unordered_multimap<uint64_t, SubscriptionId> nodeSubscriberRefs_;
 	PendingCallbackManager pendingCallbacks_;
 	bool storyLoaded_{ false };
 	bool osirisHooked_{ false };
@@ -289,7 +300,7 @@ private:
 	// as those are not real inserts but byproducts of the merge process.
 	bool merging_{ false };
 
-	void RegisterNodeHandler(OsirisHookSignature const& sig, std::size_t handlerId);
+	void RegisterNodeHandler(OsirisHookSignature const& sig, SubscriptionId handlerId);
 	void HookOsiris();
 
 	void RunHandlers(uint64_t nodeRef, TuplePtrLL* tuple);
