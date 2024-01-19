@@ -196,9 +196,6 @@
     <ClInclude Include="GameDefinitions\Components\Data.h">
       <Filter>GameDefinitions\Components</Filter>
     </ClInclude>
-    <ClInclude Include="GameDefinitions\Passives.h">
-      <Filter>GameDefinitions</Filter>
-    </ClInclude>
     <ClInclude Include="GameDefinitions\Stats\Stats.h">
       <Filter>GameDefinitions\Stats</Filter>
     </ClInclude>
@@ -461,6 +458,7 @@
     <ClInclude Include="GameDefinitions\Components\Status.h" />
     <ClInclude Include="GameDefinitions\Components\Tadpole.h" />
     <ClInclude Include="GameDefinitions\VirtualTextureFormat.h" />
+    <ClInclude Include="GameDefinitions\Stats\Prototype.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

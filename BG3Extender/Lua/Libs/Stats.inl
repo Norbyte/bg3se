@@ -501,6 +501,28 @@ UserReturn Get(lua_State * L, char const* statName, std::optional<int> level, st
 	}
 }
 
+SpellPrototype* GetCachedSpell(lua_State * L, FixedString name)
+{
+	auto proto = (*GetStaticSymbols().eoc__SpellPrototypeManager)->Spells.try_get(name);
+	return proto ? *proto : nullptr;
+}
+
+StatusPrototype* GetCachedStatus(lua_State * L, FixedString name)
+{
+	auto proto = (*GetStaticSymbols().eoc__StatusPrototypeManager)->Statuses.try_get(name);
+	return proto ? *proto : nullptr;
+}
+
+PassivePrototype* GetCachedPassive(lua_State * L, FixedString name)
+{
+	return (*GetStaticSymbols().eoc__PassivePrototypeManager)->Passives.try_get_ptr(name);
+}
+
+InterruptPrototype* GetCachedInterrupt(lua_State * L, FixedString name)
+{
+	return (*GetStaticSymbols().eoc__InterruptPrototypeManager)->Interrupts.try_get(name);
+}
+
 bool CopyStats(Object* obj, FixedString const& copyFrom)
 {
 	auto stats = GetStaticSymbols().GetStats();
@@ -774,6 +796,10 @@ void RegisterStatsLib()
 	MODULE_FUNCTION(GetStats)
 	MODULE_FUNCTION(GetStatsLoadedBefore)
 	MODULE_FUNCTION(Get)
+	MODULE_FUNCTION(GetCachedSpell)
+	MODULE_FUNCTION(GetCachedStatus)
+	MODULE_FUNCTION(GetCachedPassive)
+	MODULE_FUNCTION(GetCachedInterrupt)
 	MODULE_FUNCTION(Create)
 	// TODO - move to stats object method
 	MODULE_FUNCTION(Sync)

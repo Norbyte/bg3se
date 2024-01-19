@@ -57,7 +57,7 @@ class Structure:
         
     def generate_property_map(self) -> str:
         pm = 'BEGIN_CLS(' + self.name() + ')\n'
-        if self.base and not self.base.startswith('ProtectedGameObject<'):
+        if self.base and not self.base.startswith('ProtectedGameObject<') and not self.base.startswith('Noncopyable<'):
             pm += 'INHERIT(' + self.base + ')\n'
         for name,member in self.members.items():
             pm += generate_member(name, member)
@@ -548,6 +548,7 @@ sources = [
     'GameDefinitions/Components/Runtime.h',
     'GameDefinitions/Components/Status.h',
     'GameDefinitions/Components/Tadpole.h',
+    'GameDefinitions/Stats/Prototype.h',
     'GameDefinitions/Resources.h'
 ]
 

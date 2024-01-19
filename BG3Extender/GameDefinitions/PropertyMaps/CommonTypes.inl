@@ -57,17 +57,5 @@ P(Not)
 END_CLS()
 
 
-BEGIN_CLS(stats::SpellPrototype)
-END_CLS()
-
-
-BEGIN_CLS(stats::SpellPrototype::UseCostGroup)
-P(Resources)
-P(Amount)
-P(SubResourceId)
-P(ResourceGroup)
-END_CLS()
-
-
 BEGIN_CLS(BaseComponent)
 END_CLS()

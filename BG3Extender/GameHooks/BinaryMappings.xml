@@ -823,22 +823,62 @@
         <Target Type="Absolute" Offset="0" Symbol="esv__OsirisVariableHelper__SavegameVisit" />
       </Mapping>
 
-      <Mapping Name="eoc::SpellPrototypeManager">
-        84 c0 // test    al, al
-        0f 84 81 00 00 00 // jz      loc_142F9AA76
-        @ref1 48 8b 3d ?? ?? ?? ?? // mov     rdi, cs:eoc__gSpellPrototypeManager
-        48 8b d3 // mov     rdx, rbx
-        48 8b ce // mov     rcx, rsi
-        e8 ?? ?? ?? ?? // call    sub_1428F6630
-        48 8d 4f 08 // lea     rcx, [rdi+8]
-        48 8d 50 30 // lea     rdx, [rax+30h]
-        e8 ?? ?? ?? ?? // call    sub_140EC8860
-        @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, fs_Autocast
-        <Condition Type="FixedString" Offset="@str1" Value="Autocast" />
-        <Target Type="Indirect" Offset="@ref1" Symbol="eoc__SpellPrototypeManager" />
+      <Mapping Name="eoc::InterruptPrototypeManager" Scope="Custom">
+        @ref1 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:eoc__gInterruptPrototypeManager
+        e8 ?? ?? ?? ?? // call    eoc__InterruptPrototypeManager__Init
+        @ref3 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:eoc__gSpellPrototypeManager
+        e8 ?? ?? ?? ?? // call    eoc__SpellPrototypeManager__Init
+        48 8b 15 ?? ?? ?? ?? // mov     rdx, cs:gRPGStats
+        48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:eoc__gCriticalHitTypeManager
+        e8 ?? ?? ?? ?? // call    sub_140EADF90
+        48 8b 4d bf // mov     rcx, [rbp+57h+var_98]
+        48 8b 01 // mov     rax, [rcx]
+        f0 ff 48 18 // lock dec dword ptr [rax+18h]
+        <Target Type="Indirect" Offset="@ref1" Symbol="eoc__InterruptPrototypeManager" />
+        <Target Type="Indirect" Offset="@ref3" Symbol="eoc__SpellPrototypeManager" />
       </Mapping>
       
-      <Mapping Name="eoc::SpellPrototype::Init Outer">
+      <Mapping Name="eoc::PassivePrototype::Init" Scope="Custom">
+        48 8b d3 // mov     rdx, rbx
+        48 8b c8 // mov     rcx, rax
+        @ref1 e8 ?? ?? ?? ?? // call    eoc__PassivePrototype__Init
+        48 ff c6 // inc     rsi
+        41 8b 86 d4 00 00 00 // mov     eax, [r14+0D4h]
+        <Target Type="Indirect" Offset="@ref1" Symbol="eoc__PassivePrototype__Init" />
+      </Mapping>
+
+      <Mapping Name="eoc::StatusPrototypeManager">
+        @ref1 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:eoc__gStatusPrototypeManager
+        e8 ?? ?? ?? ?? // call    eoc__StatusPrototypeManager__Init
+        @ref3 48 8b 3d ?? ?? ?? ?? // mov     rdi, cs:eoc__gPassiveManager
+        80 7f 18 00 // cmp     byte ptr [rdi+18h], 0
+        0f 85 a1 00 00 00 // jnz     loc_1428A2201
+        4c 8b 35 ?? ?? ?? ?? // mov     r14, cs:gRPGStats
+        49 8d 4e 60 // lea     rcx, [r14+60h]
+        48 8b 01 // mov     rax, [rcx]
+        @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, fs_PassiveData
+        ff 50 20 // call    qword ptr [rax+20h]
+        44 8b f8 // mov     r15d, eax
+        41 83 be d4 00 00 00 00 // cmp     dword ptr [r14+0D4h], 0
+        76 7c // jbe     short loc_1428A2201
+        <Condition Type="FixedString" Offset="@str1" Value="PassiveData" />
+        <Target Type="Indirect" Offset="@ref1" Symbol="eoc__StatusPrototypeManager" />
+        <Target Type="Indirect" Offset="@ref3" Symbol="eoc__PassivePrototypeManager" />
+        <Target Type="Absolute" Offset="0" NextSymbol="eoc::InterruptPrototypeManager" NextSymbolSeekSize="0x100" />
+        <Target Type="Absolute" Offset="0" NextSymbol="eoc::PassivePrototype::Init" NextSymbolSeekSize="0x100" />
+      </Mapping>
+
+    <Mapping Name="eoc::StatusPrototype::Init">
+      41 c7 46 04 11 00 00 00 // mov     dword ptr [r14+4], 11h
+      41 b0 01 // mov     r8b, 1
+      @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, fs_INSURFACE
+      49 8b ce // mov     rcx, r14
+      @ref1 e8 ?? ?? ?? ?? // call    eoc__StatusPrototype__Init
+      <Condition Type="FixedString" Offset="@str1" Value="INSURFACE" />
+      <Target Type="Indirect" Offset="@ref1" Symbol="eoc__StatusPrototype__Init" />
+    </Mapping>
+      
+      <Mapping Name="eoc::SpellPrototype::Init">
         49 8d 54 24 20 // lea     rdx, [r12+20h]
         49 8b cd // mov     rcx, r13
         @ref1 e8 ?? ?? ?? ?? // call    eoc__SpellPrototype__Init
@@ -856,6 +896,22 @@
         <Condition Type="FixedString" Offset="@str1" Value="RootSpellID" />
         <Target Type="Indirect" Offset="@ref1" Symbol="eoc__SpellPrototype__Init" />
       </Mapping>
+      
+      <Mapping Name="eoc::InterruptPrototype::Init">
+        48 8b 4e 30 // mov     rcx, [rsi+30h]
+        48 03 cf // add     rcx, rdi
+        eb 0a // jmp     short loc_140EAF824
+        48 69 c8 20 02 00 00 // imul    rcx, rax, 220h
+        48 03 ca // add     rcx, rdx; a1
+        49 8b d7 // mov     rdx, r15; rdx0
+        @ref1 e8 ?? ?? ?? ?? // call    eoc__InterruptPrototype__Init
+        48 8b 7c 24 70 // mov     rdi, [rsp+68h+arg_0]
+        41 8b 85 d4 00 00 00 // mov     eax, [r13+0D4h]
+        49 ff c4 // inc     r12
+        <Target Type="Indirect" Offset="@ref1" Symbol="eoc__InterruptPrototype__Init" />
+      </Mapping>
+    
+    
 
       <!--
 

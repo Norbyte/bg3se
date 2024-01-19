@@ -14,6 +14,7 @@ FS(Weapon);
 FS(SpellData);
 FS(StatusData);
 FS(PassiveData);
+FS(InterruptData);
 
 FS(SpellSet);
 FS(EquipmentSet);

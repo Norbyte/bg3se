@@ -157,8 +157,11 @@ namespace bg3se
 		SYM_OFF(eoc__StatusPrototypeManager);
 		SYM_OFF(eoc__StatusPrototype__Init);
 
-		SYM_OFF(eoc__PassiveManager);
-		SYM_OFF(eoc__Passive__Init);
+		SYM_OFF(eoc__PassivePrototypeManager);
+		SYM_OFF(eoc__PassivePrototype__Init);
+
+		SYM_OFF(eoc__InterruptPrototypeManager);
+		SYM_OFF(eoc__InterruptPrototype__Init);
 
 		SYM_OFF(esv__OsirisVariableHelper__SavegameVisit);
 

@@ -11,11 +11,15 @@ BEGIN_NS(stats)
 
 struct Functor
 {
+	using DtorProc = void (Functor *, bool);
+	using ParseParamsProc = void (Functor *, std::span<StringView>& params, STDString& key, uint64_t unkn);
+	using CloneProc = Functor * (Functor *);
+
 	struct FunctorVMT
 	{
-		void* Destroy;
-		void* ParseParams;
-		void* Clone;
+		DtorProc* Destroy;
+		ParseParamsProc* ParseParams;
+		CloneProc* Clone;
 	};
 
 	struct RollCondition
@@ -178,7 +182,7 @@ struct FunctorExecParamsType9 : public BaseFunctorExecParams
 
 
 
-struct Functors : public Noncopyable<Functors>
+struct Functors
 {
 	using ExecuteType1Proc = void (HitResult* hit, Functors* self, FunctorExecParamsType1 * params);
 	using ExecuteType2Proc = void (HitResult* hit, Functors* self, FunctorExecParamsType2 * params);
@@ -205,6 +209,12 @@ struct Functors : public Noncopyable<Functors>
 		void (*UpdateNameMap)(Functors*);
 	};
 
+	Functors() noexcept;
+	Functors(Functors const& o);
+	Functors(Functors&& o) noexcept;
+	Functors& operator = (Functors const& o);
+	Functors& operator = (Functors&& o) noexcept;
+
 	/*virtual ~Functors() = 0;
 	virtual void ClearNextIndex() = 0;
 	virtual void Clear() = 0;
@@ -218,7 +228,7 @@ struct Functors : public Noncopyable<Functors>
 	virtual void UpdateNameMap() = 0;*/
 
 	BaseVMT* VMT{ nullptr };
-	Array<Functor*> Functors;
+	Array<Functor*> FunctorList;
 	MultiHashMap<FixedString, Functor*> FunctorsByName;
 	int NextFunctorIndex{ 0 };
 	int Unknown{ 0 };

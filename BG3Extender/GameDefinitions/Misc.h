@@ -32,19 +32,6 @@ namespace bg3se
 	using FindNextFileWProc = WINBASEAPI BOOL WINAPI(_In_ HANDLE hFindFile, _Out_ LPWIN32_FIND_DATAW lpFindFileData);
 	using FindCloseProc = WINBASEAPI BOOL WINAPI(_Inout_ HANDLE hFindFile);
 
-	struct DescriptionInfo
-	{
-		TranslatedString DisplayNameTSK;
-		FixedString Icon;
-		TranslatedString Description;
-		STDString DescriptionParams;
-		TranslatedString ExtraDescription;
-		STDString ExtraDescriptionParams;
-		TranslatedString ShortDescription;
-		STDString ShortDescriptionParams;
-		TranslatedString LoreDescription;
-	};
-
 	struct GlobalSwitches
 	{
 		struct SoundSetting

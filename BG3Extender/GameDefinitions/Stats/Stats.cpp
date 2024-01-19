@@ -88,36 +88,135 @@ void StatusPrototypeManager::SyncStat(Object* object)
 	}
 }
 
-bool PassiveManager::SyncStat(Object* object, Passive* proto)
+
+bool PassivePrototypeManager::SyncStat(Object* object, PassivePrototype* proto)
 {
-	auto sync = GetStaticSymbols().eoc__Passive__Init;
+	auto sync = GetStaticSymbols().eoc__PassivePrototype__Init;
 	if (!sync) {
-		OsiError("eoc::Passive::Init not mapped!");
+		OsiError("eoc::PassivePrototype::Init not mapped!");
 		return false;
 	}
 
 	proto->Properties = 0;
+	proto->EnabledContext = 0;
 	proto->StatsFunctorContext = 0;
 	proto->ToggleOffContext = 0;
 	proto->BoostContext = 0;
-	proto->Boosts.clear();
+	proto->Boosts_SV.clear();
 
 	sync(proto, object);
 	return true;
 }
 
 
-void PassiveManager::SyncStat(Object* object)
+void PassivePrototypeManager::SyncStat(Object* object)
 {
-	/*auto stats = GetStaticSymbols().GetStats();
 	auto pProto = Passives.find(object->Name);
 	if (pProto == Passives.end()) {
-		auto proto = Passives.insert(object->Name);
+		auto proto = Passives.get_or_insert(object->Name);
 		SyncStat(object, proto);
 	} else {
-		SyncStat(object, pProto.Value());
-	}*/
+		SyncStat(object, &pProto.Value());
+	}
 }
+
+
+bool InterruptPrototypeManager::SyncStat(Object* object, InterruptPrototype* proto)
+{
+	auto sync = GetStaticSymbols().eoc__InterruptPrototype__Init;
+	if (!sync) {
+		OsiError("eoc::InterruptPrototype::Init not mapped!");
+		return false;
+	}
+
+	proto->Costs.clear();
+
+	sync(proto, object);
+	return true;
+}
+
+
+void InterruptPrototypeManager::SyncStat(Object* object)
+{
+	auto proto = Interrupts.try_get(object->Name);
+	if (!proto) {
+		auto proto = Interrupts.add_key(object->Name);
+	}
+
+	SyncStat(object, proto);
+}
+
+
+Functors::Functors() noexcept {}
+
+Functors::Functors(Functors const& o)
+	: VMT(o.VMT),
+	FunctorList(o.FunctorList),
+	FunctorsByName(o.FunctorsByName),
+	NextFunctorIndex(o.NextFunctorIndex),
+	Unknown(o.Unknown),
+	UniqueName(o.UniqueName)
+{
+	for (auto& functor : FunctorList) {
+		functor = functor->VMT->Clone(functor);
+	}
+
+	for (auto& functor : FunctorsByName) {
+		for (uint32_t i = 0; i < FunctorList.size(); i++) {
+			if (functor.Value() == o.FunctorList[i]) {
+				functor.Value() = FunctorList[i];
+				break;
+			}
+		}
+	}
+}
+
+Functors::Functors(Functors&& o) noexcept
+	: VMT(o.VMT),
+	FunctorList(std::move(o.FunctorList)),
+	FunctorsByName(std::move(o.FunctorsByName)),
+	NextFunctorIndex(o.NextFunctorIndex),
+	Unknown(o.Unknown),
+	UniqueName(std::move(o.UniqueName))
+{}
+
+Functors& Functors::operator = (Functors const& o)
+{
+	VMT = o.VMT;
+	FunctorList = o.FunctorList;
+	FunctorsByName = o.FunctorsByName;
+	NextFunctorIndex = o.NextFunctorIndex;
+	Unknown = o.Unknown;
+	UniqueName = o.UniqueName;
+
+	for (auto& functor : FunctorList) {
+		functor = functor->VMT->Clone(functor);
+	}
+
+	for (auto& functor : FunctorsByName) {
+		for (uint32_t i = 0; i < FunctorList.size(); i++) {
+			if (functor.Value() == o.FunctorList[i]) {
+				functor.Value() = FunctorList[i];
+				break;
+			}
+		}
+	}
+
+	return *this;
+}
+
+Functors& Functors::operator = (Functors&& o) noexcept
+{
+	VMT = o.VMT;
+	FunctorList = std::move(o.FunctorList);
+	FunctorsByName = std::move(o.FunctorsByName);
+	NextFunctorIndex = o.NextFunctorIndex;
+	Unknown = o.Unknown;
+	UniqueName = std::move(o.UniqueName);
+
+	return *this;
+}
+
 
 /*
 void Requirement::ToProtobuf(StatRequirement* msg) const
@@ -438,9 +537,14 @@ void RPGStats::SyncWithPrototypeManager(Object* object)
 			(*statusProtoMgr)->SyncStat(object);
 		}
 	} else if (modifier->Name == GFS.strPassiveData) {
-		auto passiveMgr = GetStaticSymbols().eoc__PassiveManager;
+		auto passiveMgr = GetStaticSymbols().eoc__PassivePrototypeManager;
 		if (passiveMgr && *passiveMgr) {
 			(*passiveMgr)->SyncStat(object);
+		}
+	} else if (modifier->Name == GFS.strInterruptData) {
+		auto interruptMgr = GetStaticSymbols().eoc__InterruptPrototypeManager;
+		if (interruptMgr && *interruptMgr) {
+			(*interruptMgr)->SyncStat(object);
 		}
 	}
 }
@@ -643,7 +747,7 @@ void RPGStats::VMTMappings::Update()
 			StatsFunctorSetVMT = kv.Value->VMT;
 		}
 
-		for (auto const& prop : kv.Value->Functors) {
+		for (auto const& prop : kv.Value->FunctorList) {
 			auto it = FunctorVMTs.find(prop->TypeId);
 			if (it == FunctorVMTs.end()) {
 				FunctorVMTs.insert(std::make_pair(prop->TypeId, prop->VMT));

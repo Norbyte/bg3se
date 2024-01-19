@@ -8,11 +8,11 @@
 #include <GameDefinitions/Osiris.h>
 #include <GameDefinitions/RootTemplates.h>
 #include <GameDefinitions/Stats/Stats.h>
-#include <GameDefinitions/Passives.h>
 #include <GameDefinitions/Resources.h>
 #include <GameDefinitions/Status.h>
 #include <GameDefinitions/Surface.h>
 #include <GameDefinitions/EntitySystemHelpers.h>
+#include <GameDefinitions/Stats/Prototype.h>
 
 namespace bg3se
 {
@@ -71,8 +71,11 @@ namespace bg3se
 		stats::StatusPrototypeManager** eoc__StatusPrototypeManager{ nullptr };
 		stats::StatusPrototype::InitProc* eoc__StatusPrototype__Init{ nullptr };
 
-		stats::PassiveManager** eoc__PassiveManager{ nullptr };
-		stats::Passive::InitProc* eoc__Passive__Init{ nullptr };
+		stats::PassivePrototypeManager** eoc__PassivePrototypeManager{ nullptr };
+		stats::PassivePrototype::InitProc* eoc__PassivePrototype__Init{ nullptr };
+
+		stats::InterruptPrototypeManager** eoc__InterruptPrototypeManager{ nullptr };
+		stats::InterruptPrototype::InitProc* eoc__InterruptPrototype__Init{ nullptr };
 
 		esv::OsirisVariableHelper__SavegameVisitProc* esv__OsirisVariableHelper__SavegameVisit{ nullptr };
 

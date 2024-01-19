@@ -261,7 +261,7 @@ public:
 		if constexpr (std::is_default_constructible_v<T>) {
 			Construct = &(DefaultConstruct<T>);
 			Destroy = &(DefaultDestroy<T>);
-			if constexpr (std::is_assignable_v<T, T>) {
+			if constexpr (std::is_assignable_v<T, T> && !std::is_base_of_v<Noncopyable<T>, T>) {
 				Assign = &(DefaultAssign<T>);
 			}
 		}

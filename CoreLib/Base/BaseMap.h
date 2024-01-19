@@ -20,6 +20,10 @@ struct MapNode
 		: Key(key), Value(value)
 	{}
 
+	MapNode(TKey const& key)
+		: Key(key), Value()
+	{}
+
 	MapNode(TKey const& key, TValue&& value)
 		: Key(key), Value(std::move(value))
 	{}
@@ -417,7 +421,7 @@ public:
 			item = item->Next;
 		}
 
-		auto node = GameAlloc<Node>(key, ValueType{});
+		auto node = GameAlloc<Node>(key);
 		if (last == nullptr) {
 			*hash = node;
 		} else {
