@@ -155,14 +155,14 @@ bool GameHelpers::ClientHandleError(char const * msg, bool exitGame) const
 
 	// Create a new entry in the string repository text pool
 	auto& texts = (*symbols_.ls__gTranslatedStringRepository)->TranslatedStrings[0];
-	auto tskRef = texts->Texts.Find(ts.Handle);
+	auto tskRef = texts->Texts.try_get(ts.Handle);
 	if (tskRef) {
 		// Avoid using the game allocator as much as possible, as the mapping may be broken
 		auto str = new std::string(msg);
 
 		// Update reference to new string
-		auto originalRef = **tskRef;
-		**tskRef = LSStringView(str->data(), (uint32_t)str->size());
+		auto originalRef = *tskRef;
+		*tskRef = LSStringView(str->data(), (uint32_t)str->size());
 
 		symbols_.ecl__EoCClient__HandleError(*symbols_.ecl__EoCClient, ts, exitGame, ts);
 		return true;
