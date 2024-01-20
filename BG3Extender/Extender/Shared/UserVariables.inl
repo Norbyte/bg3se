@@ -598,7 +598,7 @@ void ModVariableMap::SavegameVisit(ObjectVisitor* visitor)
 
 std::optional<int32_t> ModVariableManager::GuidToModId(Guid const& uuid) const
 {
-	auto it = modIndices_.find(uuid);
+	auto it = modIndices_.try_get(uuid);
 	if (it) {
 		return *it;
 	} else {
