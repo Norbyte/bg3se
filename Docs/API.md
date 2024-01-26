@@ -793,7 +793,7 @@ local displayName = entity.DisplayName
 ```
 
 
-### Entity:CraeteComponent(name) : Component
+### Entity:CreateComponent(name) : Component
 
 Attaches a new empty copy of the specified component type to the entity, if one does not exist. The function returns the newly created component.
 
