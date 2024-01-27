@@ -1,3 +1,4 @@
+
 ### BG3SE Lua API v11 Documentation
 
 ### Table of Contents  
@@ -598,11 +599,11 @@ If the `level` argument is not `nil`, the table will contain level-scaled values
 
 The behavior of getting a table entry is identical to that of `StatGetAttribute` and setting a table entry is identical to `StatSetAttribute`.
 
-The `StatSetAttribute` example rewritten using `GetStat`:
+The `StatSetAttribute` example rewritten using `Stats.Get`:
 ```lua
 -- Swap DamageType from Poison to Air on all skills
 for i,name in pairs(Ext.Stats.GetAllStats("SkillData")) do
-    local stat = Ext.Stats.GetStat(name)
+    local stat = Ext.Stats.Get(name)
     if stat.DamageType == "Poison" then
         stat.DamageType = "Air"
     end
@@ -614,7 +615,7 @@ end
 Stat attributes can be retrieved by reading the appropriate property of the StatEntry object:
 
 ```lua
-local spell = Ext.Stats.GetStat("Shout_FlameBlade", "SpellData")
+local spell = Ext.Stats.Get("Shout_FlameBlade", "SpellData")
 local useCosts = spell.UseCosts
 ```
 
@@ -628,7 +629,7 @@ The list of attributes each stat type supports can be found in `Public\Shared\St
 Stat attributes can be updated using simple table assignment:
 
 ```lua
-local spell = Ext.Stats.GetStat("Shout_FlameBlade", "SpellData")
+local spell = Ext.Stats.Get("Shout_FlameBlade", "SpellData")
 spell.UseCosts = "BonusActionPoint:1;SpellSlot:1:1:2"
 ```
 
@@ -640,7 +641,7 @@ If the function is called while the module is loading (i.e. from a `ModuleLoadin
 
 Example usage of stats read/write (Disable autocast on all spells):
 ```lua
-for i,name in pairs(Ext.Stats.GetStats("SpellData")) do
+for i,name in pairs(Ext.Stats.Gets("SpellData")) do
     local spell = Ext.Stats.Get(name, "SpellData")
     if spell.Autocast == "Yes" then
         spell.Autocast = "No"
@@ -666,7 +667,7 @@ The `AttributeFlags`, `SpellFlagList`, `WeaponFlags`, `ResistanceFlags`, `Passiv
 
 Reading flags:
 ```lua
-local spell = Ext.Stats.GetStat("Shout_ArmorOfAgathys", "SpellData")
+local spell = Ext.Stats.Get("Shout_ArmorOfAgathys", "SpellData")
 _D(spell.SpellFlags)
 -- Prints:
 -- ["HasSomaticComponent", "HasVerbalComponent", "IsSpell"]
@@ -674,7 +675,7 @@ _D(spell.SpellFlags)
 
 Writing flags:
 ```lua
-local spell = Ext.Stats.GetStat("Shout_ArmorOfAgathys", "SpellData")
+local spell = Ext.Stats.Get("Shout_ArmorOfAgathys", "SpellData")
 spell.SpellFlags = {"HasVerbalComponent", "IsSpell"}
 ```
 
@@ -793,7 +794,7 @@ local displayName = entity.DisplayName
 ```
 
 
-### Entity:CraeteComponent(name) : Component
+### Entity:CreateComponent(name) : Component
 
 Attaches a new empty copy of the specified component type to the entity, if one does not exist. The function returns the newly created component.
 
