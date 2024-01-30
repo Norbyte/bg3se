@@ -197,7 +197,7 @@ public:
 		auto obj = reinterpret_cast<TContainer*>(self.Ptr);
 		if constexpr (std::is_default_constructible_v<T>) {
 			if (arrayIndex > 0 && arrayIndex <= obj->size()) {
-				(*obj)[arrayIndex - 1] = get<T>(L, luaIndex);
+				lua::Unserialize(L, luaIndex, &(*obj)[arrayIndex - 1]);
 				return true;
 			} else {
 				return false;

@@ -98,3 +98,85 @@ struct OwneeCurrentComponent : public BaseComponent
 DEFINE_TAG_COMPONENT(eoc::ownership, OwnedAsLootComponent, OwnedAsLoot)
 
 END_NS()
+
+
+BEGIN_NS(esv::item)
+
+struct DynamicLayerOwnerComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerDynamicLayerOwner;
+	static constexpr auto EngineClass = "esv::item::DynamicLayerOwnerComponent";
+
+	FixedString Owner;
+};
+
+END_NS()
+
+
+BEGIN_NS(esv::ownership)
+
+struct IsCurrentOwnerComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerIsCurrentOwner;
+	static constexpr auto EngineClass = "esv::ownership::IsCurrentOwnerComponent";
+
+	MultiHashSet<EntityHandle> Owner;
+};
+
+struct IsLatestOwnerComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerIsLatestOwner;
+	static constexpr auto EngineClass = "esv::ownership::IsLatestOwnerComponent";
+
+	MultiHashSet<EntityHandle> Owner;
+};
+
+struct IsPreviousLatestOwnerComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerIsPreviousLatestOwner;
+	static constexpr auto EngineClass = "esv::ownership::IsPreviousLatestOwnerComponent";
+
+	MultiHashSet<EntityHandle> Owner;
+};
+
+struct IsPreviousOwnerComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerIsPreviousOwner;
+	static constexpr auto EngineClass = "esv::ownership::IsPreviousOwnerComponent";
+
+	MultiHashSet<EntityHandle> Owner;
+};
+
+struct IsOriginalOwnerComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerIsOriginalOwner;
+	static constexpr auto EngineClass = "esv::ownership::IsOriginalOwnerComponent";
+
+	MultiHashSet<EntityHandle> Owner;
+};
+
+struct OwneeHistoryComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerOwneeHistory;
+	static constexpr auto EngineClass = "esv::ownership::OwneeHistoryComponent";
+
+	EntityHandle OriginalOwner;
+	EntityHandle LatestOwner;
+	EntityHandle PreviousOwner;
+	EntityHandle PreviousLatestOwner;
+};
+
+struct OwneeRequestComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerOwneeRequest;
+	static constexpr auto EngineClass = "esv::ownership::OwneeRequestComponent";
+
+	EntityHandle NewCurrentOwnee;
+	bool RequestChangeCurrentOwnee;
+	EntityHandle LatestOwner;
+	bool RequestChangeLatestOwner;
+	EntityHandle OriginalOwner;
+	bool RequestChangeOriginalOwner;
+};
+
+END_NS()

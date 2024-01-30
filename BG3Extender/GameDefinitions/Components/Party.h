@@ -29,6 +29,7 @@ struct CompositionComponent : public BaseComponent
 
 	struct Member
 	{
+		int32_t field_0;
 		Guid field_8;
 		Guid field_18;
 		Array<uint8_t> field_28;
@@ -136,5 +137,66 @@ struct RecruiterComponent : public BaseComponent
 
 	MultiHashSet<EntityHandle> Recruiters;
 };
+
+END_NS()
+
+
+BEGIN_NS(esv::party)
+
+struct UserSnapshotComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerUserSnapshot;
+	static constexpr auto EngineClass = "esv::party::UserSnapshotComponent";
+
+	MultiHashMap<Guid, Array<Array<EntityHandle>>> Snapshot;
+};
+
+END_NS()
+
+
+BEGIN_NS(esv::escort)
+
+struct FollowerComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::EscortFollower;
+	static constexpr auto EngineClass = "esv::escort::FollowerComponent";
+
+	EntityHandle Following;
+};
+
+struct LeaderComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::EscortLeader;
+	static constexpr auto EngineClass = "esv::escort::LeaderComponent";
+
+	FixedString Group;
+};
+
+struct LeaderPriorityComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::EscortLeaderPriority;
+	static constexpr auto EngineClass = "esv::escort::LeaderPriorityComponent";
+
+	MultiHashMap<FixedString, int32_t> Priorities;
+};
+
+struct MemberComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::EscortMember;
+	static constexpr auto EngineClass = "esv::escort::MemberComponent";
+
+	FixedString Group;
+};
+
+struct StragglersTrackerComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::EscortStragglersTracker;
+	static constexpr auto EngineClass = "esv::escort::StragglersTrackerComponent";
+
+	Array<EntityHandle> Stragglers;
+	glm::vec3 field_10;
+};
+
+DEFINE_TAG_COMPONENT(esv::escort, HasStragglersComponent, EscortHasStragglers)
 
 END_NS()

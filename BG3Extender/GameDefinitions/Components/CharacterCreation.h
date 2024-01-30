@@ -237,3 +237,42 @@ struct LevelUpComponent : public BaseComponent
 
 
 END_NS()
+
+
+BEGIN_NS(esv::character_creation)
+
+struct AppearanceVisualTagComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerCCAppearanceVisualTag;
+	static constexpr auto EngineClass = "esv::character_creation::AppearanceVisualTagComponent";
+
+	Array<Guid> Tags;
+};
+
+struct EquipmentSetRequestComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerCCEquipmentSetRequest;
+	static constexpr auto EngineClass = "esv::character_creation::EquipmentSetRequestComponent";
+
+	MultiHashMap<EntityHandle, Array<FixedString>> Requests;
+};
+
+struct GodComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerCCGod;
+	static constexpr auto EngineClass = "esv::character_creation::GodComponent";
+
+	Guid God;
+};
+
+struct UpdatesComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerCCUpdates;
+	static constexpr auto EngineClass = "esv::character_creation::UpdatesComponent";
+
+	MultiHashMap<EntityHandle, int32_t> Updates;
+};
+
+DEFINE_TAG_COMPONENT(esv::character_creation, IsCustomComponent, ServerCCIsCustom)
+
+END_NS()

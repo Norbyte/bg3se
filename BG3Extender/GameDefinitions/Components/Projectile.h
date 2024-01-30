@@ -73,7 +73,7 @@ namespace bg3se::esv
 		float field_484;
 		SpellId SpellId;
 		StatsFunctorSet* PropertyListFunctor;
-		__int64 MovingObject;
+		__int64 MovingObject;	
 		glm::mat4 MovingObjectTransform;
 		FixedString SpawnEffect;
 		bool SpawnFXOverridesImpactFX;

@@ -412,11 +412,16 @@ struct TargetInfo : public ProtectedGameObject<TargetInfo>
 	std::optional<glm::vec3> Position;
 };
 
-struct TargetInfo2 : public ProtectedGameObject<TargetInfo2>
+struct MultiTargetInfo : public TargetInfo
 {
-	TargetInfo Target;
 	SpellType SpellType;
 	std::optional<TargetInfo> Target2;
+};
+
+struct MultiTargetInfo2 : public TargetInfo
+{
+	MultiTargetInfo Target2;
+	uint8_t field_A0;
 };
 
 struct StateComponent : public BaseComponent
@@ -431,7 +436,7 @@ struct StateComponent : public BaseComponent
 	EntityHandle Caster;
 	SpellId SpellId;
 	int field_38;
-	Array<TargetInfo2> Targets;
+	Array<MultiTargetInfo> Targets;
 	std::optional<glm::vec3> CasterMoveToPosition;
 	std::optional<glm::vec3> field_60;
 	glm::vec3 CasterStartPosition;
@@ -454,7 +459,7 @@ struct SyncTargetingComponent : public BaseComponent
 	EntityHandle field_8;
 	std::optional<EntityHandle> field_10;
 	std::optional<glm::vec3> field_20;
-	Array<TargetInfo2> Targets;
+	Array<MultiTargetInfo> Targets;
 	uint8_t field_40;
 	int field_44;
 	std::optional<glm::vec3> field_48;
@@ -498,6 +503,26 @@ struct ActionRequest4
 	Array<stats::SpellPrototype::UseCostGroup> UseCosts;
 	MultiHashMap<EntityHandle, MultiHashMap<bg3se::interrupt::InterruptVariant2, ConditionRoll>> field_18;
 };
+
+END_NS()
+
+BEGIN_NS(esv::spell)
+
+struct OnDamageSpell
+{
+	FixedString Spell;
+	int field_4;
+	uint8_t field_8;
+};
+
+struct OnDamageSpellsComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::OnDamageSpells;
+	static constexpr auto EngineClass = "esv::spell::OnDamageSpellsComponent";
+
+	Array<OnDamageSpell> Spells;
+};
+
 
 END_NS()
 

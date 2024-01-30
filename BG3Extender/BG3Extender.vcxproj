@@ -167,8 +167,11 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\Components\Item.h" />
     <ClInclude Include="GameDefinitions\Components\Party.h" />
     <ClInclude Include="GameDefinitions\Components\Passives.h" />
+    <ClInclude Include="GameDefinitions\Components\Progression.h" />
     <ClInclude Include="GameDefinitions\Components\Projectile.h" />
     <ClInclude Include="GameDefinitions\Components\Runtime.h" />
+    <ClInclude Include="GameDefinitions\Components\ServerData.h" />
+    <ClInclude Include="GameDefinitions\Components\Shapeshift.h" />
     <ClInclude Include="GameDefinitions\Components\Spell.h" />
     <ClInclude Include="GameDefinitions\Components\Data.h" />
     <ClInclude Include="GameDefinitions\Components\Status.h" />

@@ -6,6 +6,12 @@
 
 BEGIN_SE()
 
+struct GenericPropertyTag
+{
+	uint8_t Type;
+	Guid Entity;
+};
+
 struct ArmorComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::Armor;
@@ -80,6 +86,15 @@ struct DataComponent : public BaseComponent
 	uint32_t StepsType;
 };
 
+struct DetachedComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::Detached;
+	static constexpr auto EngineClass = "eoc::DetachedComponent";
+
+	uint32_t Flags;
+};
+
+
 struct ExperienceComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::Experience;
@@ -97,7 +112,7 @@ struct HealthComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::Health;
 	static constexpr auto EngineClass = "eoc::HealthComponent";
 
-	std::array<std::array<uint8_t, 7>, 2> Resistances;
+	std::array<std::array<ResistanceBoostFlags, 7>, 2> Resistances;
 	int Hp;
 	int MaxHp;
 	int TemporaryHp;
@@ -141,7 +156,7 @@ struct ObjectSizeComponent : public BaseComponent
 	static constexpr auto EngineClass = "eoc::ObjectSizeComponent";
 
 	uint8_t Size;
-	uint8_t field_1;
+	[[bg3::legacy(field_1)]] uint8_t SoundSize;
 };
 
 struct BaseStatsComponent : public BaseComponent
@@ -262,11 +277,11 @@ struct LevelUpUpgrades
 {
 	struct Reference
 	{
-		uint8_t field_0;
+		[[bg3::legacy(field_0)]] uint8_t Type;
 		Guid Class;
 		Guid Subclass;
-		int field_28;
-		uint8_t field_2C;
+		[[bg3::legacy(field_28)]] int Level;
+		[[bg3::legacy(field_2C)]] bool Multiclass;
 	};
 
 	struct FeatData : public LevelUpUpgrades::Reference
@@ -365,15 +380,6 @@ struct LevelUpData
 	std::array<int, 7> Abilities;
 	LevelUpUpgrades Upgrades;
 	Array<SpellIdBase> field_B0;
-};
-
-
-struct LevelUpComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::LevelUp;
-	static constexpr auto EngineClass = "eoc::progression::LevelUpComponent";
-
-	Array<LevelUpData> field_18;
 };
 
 struct FloatingComponent : public BaseComponent
@@ -548,164 +554,6 @@ struct HotbarCurrentDecksComponent : public BaseComponent
 	MultiHashMap<FixedString, int32_t> Decks;
 };
 
-/// <summary>
-/// ///////////////////////// START SERVER
-/// </summary>
-
-
-struct RecruitedByComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerRecruitedBy;
-	static constexpr auto EngineClass = "esv::recruit::RecruitedByComponent";
-
-	EntityHandle RecruitedBy;
-};
-
-struct GameTimerComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerGameTimer;
-	static constexpr auto EngineClass = "esv::GameTimerComponent";
-
-	FixedString field_18;
-	EntityHandle field_20;
-	int field_28;
-	int field_2C;
-	int field_30;
-	int field_34;
-	uint8_t field_38;
-};
-
-struct ExperienceGaveOutComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerExperienceGaveOut;
-	static constexpr auto EngineClass = "esv::exp::ExperienceGaveOutComponent";
-
-	int Experience;
-};
-
-DEFINE_TAG_COMPONENT(esv::summon, IsUnsummoningComponent, ServerIsUnsummoning)
-
-struct ActivationGroupContainerComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerActivationGroupContainer;
-	static constexpr auto EngineClass = "esv::ActivationGroupContainerComponent";
-
-	struct ActivationGroup
-	{
-		FixedString field_0;
-		FixedString field_4;
-	};
-
-	Array<ActivationGroup> Groups;
-};
-
-struct AnubisTagComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerAnubisTag;
-	static constexpr auto EngineClass = "esv::tags::AnubisTagComponent";
-
-	Array<Guid> Tags;
-};
-
-struct DialogTagComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerDialogTag;
-	static constexpr auto EngineClass = "esv::tags::DialogTagComponent";
-
-	Array<Guid> Tags;
-};
-
-struct RaceTagComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerRaceTag;
-	static constexpr auto EngineClass = "esv::tags::RaceTagComponent";
-
-	Array<Guid> Tags;
-};
-
-struct TemplateTagComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerTemplateTag;
-	static constexpr auto EngineClass = "esv::tags::TemplateTagComponent";
-
-	Array<Guid> Tags;
-};
-
-struct BoostTagComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerBoostTag;
-	static constexpr auto EngineClass = "esv::tags::BoostTagComponent";
-
-	Array<Guid> Tags;
-};
-
-struct SafePositionComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerSafePosition;
-	static constexpr auto EngineClass = "esv::SafePositionComponent";
-
-	glm::vec3 Position;
-	bool field_24;
-};
-
-struct LeaderComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerLeader;
-	static constexpr auto EngineClass = "esv::LeaderComponent";
-
-	MultiHashSet<EntityHandle> Followers_M;
-};
-
-struct BreadcrumbComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerBreadcrumb;
-	static constexpr auto EngineClass = "esv::BreadcrumbComponent";
-
-	struct Element
-	{
-		int field_0;
-		uint8_t field_4;
-		glm::vec3 field_8;
-		glm::vec3 field_14;
-	};
-
-	std::array<Element, 8> field_18;
-	glm::vec3 field_118;
-};
-
-
-struct DelayDeathCauseComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerDelayDeathCause;
-	static constexpr auto EngineClass = "esv::death::DelayDeathCauseComponent";
-
-	int DelayCount;
-	int Blocked_M;
-};
-
-
-struct PickpocketComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerPickpocket;
-	static constexpr auto EngineClass = "esv::pickpocket::PickpocketComponent";
-
-	struct PickpocketEntry
-	{
-		[[bg3::legacy(field_0)]] EntityHandle Target;
-		[[bg3::legacy(field_8)]] EntityHandle Item;
-		[[bg3::legacy(field_10)]] int Amount;
-		bool field_14;
-		EntityHandle field_18;
-	};
-
-	[[bg3::legacy(field_18)]] Array<PickpocketEntry> Items;
-};
-
-/// <summary>
-/// //////////////////////////////////////// END SERVER
-/// </summary>
-
-
 struct OriginTagComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::OriginTag;
@@ -856,6 +704,15 @@ struct CanDoActionsComponent : public BaseComponent
 	uint16_t Flags;
 };
 
+struct ActionUseConditionsComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ActionUseConditions;
+	static constexpr auto EngineClass = "eoc::action::ActionUseConditionsComponent";
+
+	Array<int32_t> Conditions;
+};
+
+
 struct CanMoveComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::CanMove;
@@ -925,6 +782,7 @@ DEFINE_TAG_COMPONENT(eoc::improvised_weapon, CanBeWieldedComponent, CanBeWielded
 DEFINE_TAG_COMPONENT(eoc::tag, AvatarComponent, Avatar)
 DEFINE_TAG_COMPONENT(eoc::tag, HasExclamationDialogComponent, HasExclamationDialog)
 DEFINE_TAG_COMPONENT(eoc::tag, TraderComponent, Trader)
+DEFINE_TAG_COMPONENT(eoc::ambush, AmbushingComponent, Ambushing)
 
 struct InteractionFilterComponent : public BaseComponent
 {
@@ -964,29 +822,6 @@ struct EquipableComponent : public BaseComponent
 	Guid field_18;
 	ItemSlot Slot;
 };
-
-struct ProgressionContainerComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ProgressionContainer;
-	static constexpr auto EngineClass = "eoc::ProgressionContainerComponent";
-
-	Array<Array<EntityHandle>> Progressions;
-};
-
-struct ProgressionMetaComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ProgressionMeta;
-	static constexpr auto EngineClass = "eoc::progression::MetaComponent";
-
-	uint8_t field_18;
-	Guid Progression;
-	Guid Race;
-	int field_40;
-	uint8_t field_44;
-	int field_48;
-	EntityHandle Owner;
-};
-
 
 struct RaceComponent : public BaseComponent
 {
@@ -1041,8 +876,6 @@ struct ActiveSkeletonSlotsComponent : public BaseComponent
 	Array<FixedString> Slots;
 };
 
-DEFINE_TAG_COMPONENT(esv, NetComponent, Net)
-
 struct SomeSharedServerClientObjId
 {
 	__int64 field_0;
@@ -1055,16 +888,6 @@ struct SomeSharedServerClientObjId2 : public SomeSharedServerClientObjId
 	__int64 field_10;
 	int field_18;
 };
-
-struct FTBParticipantComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::FTBParticipant;
-	static constexpr auto EngineClass = "eoc::ftb::ParticipantComponent";
-
-	EntityHandle field_18;
-};
-
-DEFINE_TAG_COMPONENT(eoc::ftb, RespectComponent, FTBRespect)
 
 struct ApprovalRatingsComponent : public BaseComponent
 {
@@ -1107,6 +930,69 @@ inline uint64_t MultiHashMapHash<AttitudesToPlayersComponent::Key>(AttitudesToPl
 }
 
 END_SE()
+
+BEGIN_NS(eoc::background)
+
+struct GoalsComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::BackgroundGoals;
+	static constexpr auto EngineClass = "eoc::background::GoalsComponent";
+
+	struct Goal
+	{
+		Guid Goal;
+		Guid Entity;
+		FixedString CategoryId;
+		uint64_t field_28;
+	};
+
+	MultiHashMap<Guid, Array<Goal>> Goals;
+};
+
+END_NS()
+
+BEGIN_NS(eoc::calendar)
+
+struct DaysPassedComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::CalendarDaysPassed;
+	static constexpr auto EngineClass = "eoc::calendar::DaysPassedComponent";
+
+	int Days;
+};
+
+struct StartingDateComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::CalendarStartingDate;
+	static constexpr auto EngineClass = "eoc::calendar::StartingDateComponent";
+
+	int Day;
+	int Year;
+};
+
+END_NS()
+
+BEGIN_NS(eoc::ftb)
+
+struct ParticipantComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::FTBParticipant;
+	static constexpr auto EngineClass = "eoc::ftb::ParticipantComponent";
+
+	EntityHandle field_18;
+};
+
+struct ZoneBlockReasonComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::FTBZoneBlockReason;
+	static constexpr auto EngineClass = "eoc::ftb::ZoneBlockReasonComponent";
+
+	uint8_t Reason;
+};
+
+DEFINE_TAG_COMPONENT(eoc::ftb, RespectComponent, FTBRespect)
+
+END_NS()
 
 BEGIN_NS(heal)
 

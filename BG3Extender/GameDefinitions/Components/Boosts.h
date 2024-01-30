@@ -540,3 +540,17 @@ DEFN_BOOST(IgnoreSurfaceCover, IgnoreSurfaceCover, {
 })
 
 END_SE()
+
+BEGIN_NS(esv::boost)
+
+struct BoostBaseComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerBoostBase;
+	static constexpr auto EngineClass = "esv::boost::BaseComponent";
+
+	Array<FixedString> field_0;
+};
+
+DEFINE_TAG_COMPONENT(esv::boost, StatusBoostsProcessedComponent, ServerStatusBoostsProcessed)
+
+END_NS()

@@ -101,3 +101,70 @@ DEFINE_TAG_COMPONENT(eoc::inventory, NewItemsInsideComponent, NewItemsInside)
 DEFINE_TAG_COMPONENT(eoc::inventory, NonTradableComponent, NonTradable)
 
 END_NS()
+
+BEGIN_NS(esv::inventory)
+
+struct ContainerDataComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerInventoryContainerData;
+	static constexpr auto EngineClass = "esv::inventory::ContainerDataComponent";
+
+	uint16_t Flags;
+	int field_4;
+};
+
+struct GroupCheckComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerInventoryGroupCheck;
+	static constexpr auto EngineClass = "esv::inventory::GroupCheckComponent";
+
+	int32_t ConditionId;
+};
+
+struct ShapeshiftEquipmentHistoryComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerShapeshiftEquipmentHistory;
+	static constexpr auto EngineClass = "esv::inventory::ShapeshiftEquipmentHistoryComponent";
+
+	Array<Guid> History;
+};
+
+DEFINE_TAG_COMPONENT(esv::inventory, CharacterHasGeneratedTradeTreasureComponent, CharacterHasGeneratedTradeTreasure)
+DEFINE_TAG_COMPONENT(esv::inventory, IsReplicatedWithComponent, ServerInventoryIsReplicatedWith)
+DEFINE_TAG_COMPONENT(esv::inventory, ItemHasGeneratedTreasureComponent, ItemHasGeneratedTreasure)
+DEFINE_TAG_COMPONENT(esv::inventory, ReadyToBeAddedToInventoryComponent, ReadyToBeAddedToInventory)
+
+END_NS()
+
+
+BEGIN_NS(esv)
+
+struct InventoryPropertyCanBePickpocketedComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryPropertyCanBePickpocketed;
+	static constexpr auto EngineClass = "esv::InventoryPropertyCanBePickpocketedComponent";
+
+	GenericPropertyTag Tag;
+};
+
+struct InventoryPropertyIsDroppedOnDeathComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryPropertyIsDroppedOnDeath;
+	static constexpr auto EngineClass = "esv::InventoryPropertyIsDroppedOnDeathComponent";
+
+	GenericPropertyTag Tag;
+};
+
+struct InventoryPropertyIsTradableComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryPropertyIsTradable;
+	static constexpr auto EngineClass = "esv::InventoryPropertyIsTradableComponent";
+
+	GenericPropertyTag Tag;
+};
+
+DEFINE_TAG_COMPONENT(esv, ScriptPropertyCanBePickpocketedComponent, ScriptPropertyCanBePickpocketed)
+DEFINE_TAG_COMPONENT(esv, ScriptPropertyIsDroppedOnDeathComponent, ScriptPropertyIsDroppedOnDeath)
+DEFINE_TAG_COMPONENT(esv, ScriptPropertyIsTradableComponent, ScriptPropertyIsTradable)
+
+END_NS()

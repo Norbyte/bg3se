@@ -459,6 +459,9 @@
     <ClInclude Include="GameDefinitions\Components\Tadpole.h" />
     <ClInclude Include="GameDefinitions\VirtualTextureFormat.h" />
     <ClInclude Include="GameDefinitions\Stats\Prototype.h" />
+    <ClInclude Include="GameDefinitions\Components\ServerData.h" />
+    <ClInclude Include="GameDefinitions\Components\Progression.h" />
+    <ClInclude Include="GameDefinitions\Components\Shapeshift.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

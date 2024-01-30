@@ -44,6 +44,10 @@ struct UsageCountComponent : public BaseComponent
 	MultiHashMap<FixedString, PassiveUsageCount> Passives;
 };
 
+END_SE()
+
+BEGIN_NS(esv::passive)
+
 struct ToggledPassivesComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerToggledPassives;
@@ -52,4 +56,29 @@ struct ToggledPassivesComponent : public BaseComponent
 	MultiHashMap<FixedString, bool> Passives;
 };
 
-END_SE()
+struct PassiveBaseComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerPassiveBase;
+	static constexpr auto EngineClass = "esv::passive::BaseComponent";
+
+	Array<FixedString> field_0;
+};
+
+struct PersistentDataComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerPassivePersistentData;
+	static constexpr auto EngineClass = "esv::passive::PersistentDataComponent";
+
+	int field_0;
+	int field_4;
+};
+
+struct ScriptPassivesComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerScriptPassives;
+	static constexpr auto EngineClass = "esv::passive::ScriptPassivesComponent";
+
+	MultiHashSet<FixedString> Passives;
+};
+
+END_NS()

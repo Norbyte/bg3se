@@ -439,8 +439,6 @@ struct ItemTemplate : public SceneryTemplate
 struct ProjectileTemplate : public EoCGameObjectTemplate
 {
     OverrideableProperty<float> LifeTime;
-    OverrideableProperty<float> Speed;
-    OverrideableProperty<float> Acceleration;
     OverrideableProperty<FixedString> CastBone;
     OverrideableProperty<FixedString> ImpactFX;
     OverrideableProperty<STDString> GroundImpactFX;
@@ -449,19 +447,34 @@ struct ProjectileTemplate : public EoCGameObjectTemplate
     OverrideableProperty<FixedString> BeamFX;
     OverrideableProperty<FixedString> PreviewPathMaterial;
     OverrideableProperty<FixedString> PreviewPathImpactFX;
+    OverrideableProperty<FixedString> ImpactSoundResourceID;
     OverrideableProperty<float> PreviewPathRadius;
     OverrideableProperty<bool> RotateImpact;
     OverrideableProperty<bool> IgnoreRoof;
     OverrideableProperty<bool> DetachBeam;
     OverrideableProperty<bool> NeedsImpactSFX;
     OverrideableProperty<uint8_t> ProjectilePath;
-    OverrideableProperty<float> PathShift;
-    OverrideableProperty<float> PathRadius;
-    OverrideableProperty<float> MinPathRadius;
-    OverrideableProperty<float> MaxPathRadius;
-    OverrideableProperty<float> PathMinArcDist;
-    OverrideableProperty<float> PathMaxArcDist;
-    OverrideableProperty<int32_t> PathRepeat;
+    OverrideableProperty<float> DistanceMin_Bezier3;
+    OverrideableProperty<float> DistanceMax_Bezier3;
+    OverrideableProperty<glm::vec2> OffsetMin_Bezier3;
+    OverrideableProperty<glm::vec2> OffsetMax_Bezier3;
+    OverrideableProperty<float> ShiftMin_Bezier3;
+    OverrideableProperty<float> ShiftMax_Bezier3;
+    OverrideableProperty<float> DistanceMin_Bezier4;
+    OverrideableProperty<float> DistanceMax_Bezier4;
+    OverrideableProperty<glm::vec2> OffsetAMin_Bezier3;
+    OverrideableProperty<glm::vec2> OffsetAMax_Bezier3;
+    OverrideableProperty<glm::vec2> OffsetBMin_Bezier3;
+    OverrideableProperty<glm::vec2> OffsetBMax_Bezier3;
+    OverrideableProperty<float> ShiftAMin_Bezier3;
+    OverrideableProperty<float> ShiftAMax_Bezier3;
+    OverrideableProperty<float> ShiftBMin_Bezier3;
+    OverrideableProperty<float> ShiftBMax_Bezier3;
+    OverrideableProperty<uint8_t> RotateMode;
+    OverrideableProperty<uint8_t> VelocityMode;
+    OverrideableProperty<float> InitialSpeed;
+    OverrideableProperty<float> Acceleration;
+    OverrideableProperty<FixedString> CurveResourceId;
 };
 
 struct SurfaceTemplate : public GameObjectTemplate

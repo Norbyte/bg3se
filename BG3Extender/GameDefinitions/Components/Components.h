@@ -521,6 +521,52 @@ struct TransformComponent : public BaseComponent
 	Transform Transform;
 };
 
+struct AnimationWaterfallElement
+{
+	FixedString Slot;
+	FixedString Resource;
+	FixedString Type;
+};
+
+struct AnimationWaterfallOverride
+{
+	Guid AnimationTag;
+	uint8_t OverrideType;
+	Array<AnimationWaterfallElement> Overrides;
+};
+
+struct AnimationTag
+{
+	Guid Tag;
+	uint8_t field_10;
+};
+
+struct AnimationWaterfallComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::AnimationWaterfall;
+	static constexpr auto EngineClass = "ls::animation::AnimationWaterfallComponent";
+
+	Array<AnimationWaterfallElement> Waterfall;
+	Array<AnimationWaterfallOverride> Overrides;
+};
+
+struct DynamicAnimationTagsComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::DynamicAnimationTags;
+	static constexpr auto EngineClass = "ls::animation::DynamicAnimationTagsComponent";
+
+	Array<AnimationTag> Tags;
+};
+
+struct TemplateAnimationSetOverrideComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::TemplateAnimationSetOverride;
+	static constexpr auto EngineClass = "ls::animation::TemplateAnimationSetOverrideComponent";
+
+	Array<AnimationWaterfallElement> Overrides;
+};
+
+
 END_SE()
 
 BEGIN_NS(sight)

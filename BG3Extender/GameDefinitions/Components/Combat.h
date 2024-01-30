@@ -131,3 +131,41 @@ DEFINE_TAG_COMPONENT(esv::combat, ImmediateJoinComponent, ServerImmediateJoin)
 DEFINE_TAG_COMPONENT(esv::combat, FleeBlockedComponent, ServerFleeBlocked)
 
 END_NS()
+
+BEGIN_NS(esv::ai::combat)
+
+struct InterestedInItemsComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerAiInterestedInItems;
+	static constexpr auto EngineClass = "esv::ai::combat::InterestedInItemsComponent";
+
+	MultiHashSet<EntityHandle> Items;
+};
+
+struct InterestingItemComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerAiInterestingItem;
+	static constexpr auto EngineClass = "esv::ai::combat::InterestingItemComponent";
+
+	MultiHashSet<EntityHandle> Items;
+};
+struct ArchetypeComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerAiArchetype;
+	static constexpr auto EngineClass = "esv::ai::combat::ArchetypeComponent";
+
+	FixedString field_0;
+	FixedString field_4;
+	FixedString field_8;
+	FixedString field_C;
+};
+
+struct AiModifiersComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerAiModifiers;
+	static constexpr auto EngineClass = "esv::ai::combat::AiModifiersComponent";
+
+	MultiHashMap<FixedString, Guid> Modifiers;
+};
+
+END_NS()
