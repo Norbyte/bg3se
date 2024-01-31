@@ -388,6 +388,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "C:\Program Files (x86)\Steam\s
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">false</ExcludedFromBuild>
     </None>
     <None Include="Lua\Libs\ClientNet.inl" />
+    <None Include="Lua\Libs\ClientTemplate.inl" />
     <None Include="Lua\Libs\Debug.inl" />
     <None Include="Lua\Libs\Entity.inl" />
     <None Include="Lua\Libs\IO.inl" />

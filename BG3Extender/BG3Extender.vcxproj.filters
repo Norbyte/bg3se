@@ -668,6 +668,9 @@
     <None Include="Extender\Shared\VirtualTextureMerge.inl">
       <Filter>Extender\Shared</Filter>
     </None>
+    <None Include="Lua\Libs\ClientTemplate.inl">
+      <Filter>Lua\Libs</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

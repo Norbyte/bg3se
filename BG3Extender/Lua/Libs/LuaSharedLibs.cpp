@@ -19,12 +19,14 @@
 #include <Lua/Libs/ClientNet.inl>
 #include <Lua/Libs/ServerNet.inl>
 #include <Lua/Libs/ServerTemplate.inl>
+#include <Lua/Libs/ClientTemplate.inl>
 
 BEGIN_NS(ecl::lua)
 
 void RegisterClientLibraries()
 {
 	net::RegisterNetLib();
+	tmpl::RegisterTemplateLib();
 }
 
 END_NS()
