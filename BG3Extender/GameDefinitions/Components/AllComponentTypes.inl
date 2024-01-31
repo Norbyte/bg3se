@@ -2,7 +2,6 @@
 
 T(esv::Character)
 T(esv::Item)
-T(esv::Projectile)
 
 /*
 TODO - client not supported yet!

@@ -579,7 +579,13 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 
 	E(ServerCharacter)
 	E(ServerItem)
+
+	// Projectile
+	E(ProjectileSource)
 	E(ServerProjectile)
+	E(ServerProjectileAttachment)
+	E(ServerProjectileSpell)
+	E(ServerProjectileInitialization)
 	E(ServerOsirisTag)
 
 	E(ClientCharacter)

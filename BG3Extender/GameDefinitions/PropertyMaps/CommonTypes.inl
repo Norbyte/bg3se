@@ -59,3 +59,6 @@ END_CLS()
 
 BEGIN_CLS(BaseComponent)
 END_CLS()
+
+BEGIN_CLS(BaseProxyComponent)
+END_CLS()
