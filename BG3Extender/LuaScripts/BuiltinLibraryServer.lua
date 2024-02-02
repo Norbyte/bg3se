@@ -54,3 +54,7 @@ end
 function _C()
 	return Ext.Entity.Get(Osi.GetHostCharacter())
 end
+
+function _W()
+	return Ext.Entity.Get(Osi.GetEquippedWeapon(Osi.GetHostCharacter()) or "00000000-0000-0000-0000-000000000000")
+end
