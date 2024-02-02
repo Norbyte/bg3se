@@ -414,46 +414,10 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 
 	MapQueryIndex("ecs::query::spec::Spec<struct ls::TypeList<struct ls::uuid::ToHandleMappingComponent>,struct ls::TypeList<>,struct ls::TypeList<>,struct ls::TypeList<>,struct ls::TypeList<>,struct ls::TypeList<>,struct ecs::QueryTypePersistentTag,struct ecs::QueryTypeAliveTag>", ExtQueryType::UuidToHandleMapping);
 
-	MapResourceManagerIndex("ls::TagManager", ExtResourceManagerType::Tag);
-	MapResourceManagerIndex("eoc::FactionContainer", ExtResourceManagerType::Faction);
-	MapResourceManagerIndex("eoc::RaceManager", ExtResourceManagerType::Race);
-	MapResourceManagerIndex("eoc::AbilityDistributionPresetManager", ExtResourceManagerType::AbilityDistributionPreset);
-	MapResourceManagerIndex("eoc::CompanionPresetManager", ExtResourceManagerType::CompanionPreset);
-	MapResourceManagerIndex("eoc::OriginManager", ExtResourceManagerType::Origin);
-	MapResourceManagerIndex("eoc::BackgroundManager", ExtResourceManagerType::Background);
-	MapResourceManagerIndex("eoc::GodManager", ExtResourceManagerType::God);
-	MapResourceManagerIndex("eoc::AbilityListManager", ExtResourceManagerType::AbilityList);
-	MapResourceManagerIndex("eoc::SkillListManager", ExtResourceManagerType::SkillList);
-	MapResourceManagerIndex("eoc::SpellListManager", ExtResourceManagerType::SpellList);
-	MapResourceManagerIndex("eoc::PassiveListManager", ExtResourceManagerType::PassiveList);
-	MapResourceManagerIndex("eoc::ProgressionManager", ExtResourceManagerType::Progression);
-	MapResourceManagerIndex("eoc::ProgressionDescriptionManager", ExtResourceManagerType::ProgressionDescription);
-	MapResourceManagerIndex("eoc::GossipContainer", ExtResourceManagerType::Gossip);
-	MapResourceManagerIndex("eoc::ActionResourceTypes", ExtResourceManagerType::ActionResource);
-	MapResourceManagerIndex("eoc::ActionResourceGroupManager", ExtResourceManagerType::ActionResourceGroup);
-	MapResourceManagerIndex("eoc::EquipmentTypes", ExtResourceManagerType::EquipmentType);
-	MapResourceManagerIndex("eoc::VFXContainer", ExtResourceManagerType::VFX);
-	MapResourceManagerIndex("eoc::CharacterCreationPresetManager", ExtResourceManagerType::CharacterCreationPreset);
-	MapResourceManagerIndex("eoc::CharacterCreationSkinColorManager", ExtResourceManagerType::CharacterCreationSkinColor);
-	MapResourceManagerIndex("eoc::CharacterCreationEyeColorManager", ExtResourceManagerType::CharacterCreationEyeColor);
-	MapResourceManagerIndex("eoc::CharacterCreationHairColorManager", ExtResourceManagerType::CharacterCreationHairColor);
-	MapResourceManagerIndex("eoc::CharacterCreationAccessorySetManager", ExtResourceManagerType::CharacterCreationAccessorySet);
-	MapResourceManagerIndex("eoc::CharacterCreationEquipmentIconsManager", ExtResourceManagerType::CharacterCreationEquipmentIcons);
-	MapResourceManagerIndex("eoc::CharacterCreationIconSettingsManager", ExtResourceManagerType::CharacterCreationIconSettings);
-	MapResourceManagerIndex("eoc::CharacterCreationMaterialOverrideManager", ExtResourceManagerType::CharacterCreationMaterialOverride);
-	MapResourceManagerIndex("eoc::CharacterCreationAppearanceMaterialManager", ExtResourceManagerType::CharacterCreationAppearanceMaterial);
-	MapResourceManagerIndex("eoc::CharacterCreationPassiveAppearanceManager", ExtResourceManagerType::CharacterCreationPassiveAppearance);
-	MapResourceManagerIndex("eoc::CharacterCreationAppearanceVisualManager", ExtResourceManagerType::CharacterCreationAppearanceVisual);
-	MapResourceManagerIndex("eoc::CharacterCreationSharedVisualManager", ExtResourceManagerType::CharacterCreationSharedVisual);
-	MapResourceManagerIndex("eoc::tutorial::EntriesManager", ExtResourceManagerType::TutorialEntries);
-	MapResourceManagerIndex("eoc::FeatManager", ExtResourceManagerType::Feat);
-	MapResourceManagerIndex("eoc::FeatDescriptionManager", ExtResourceManagerType::FeatDescription);
-	MapResourceManagerIndex("eoc::tutorial::ModalEntriesManager", ExtResourceManagerType::TutorialModalEntries);
-	MapResourceManagerIndex("eoc::ClassDescriptions", ExtResourceManagerType::ClassDescription);
-	MapResourceManagerIndex("eoc::ColorDefinitions", ExtResourceManagerType::ColorDefinition);
-	MapResourceManagerIndex("ls::FlagManager", ExtResourceManagerType::Flag);
-	MapResourceManagerIndex("eoc::LevelMapValues", ExtResourceManagerType::LevelMap);
-	
+#define FOR_RESOURCE_TYPE(cls) MapResourceManagerIndex(resource::cls::EngineClass, resource::cls::ResourceManagerType);
+	FOR_EACH_GUID_RESOURCE_TYPE()
+#undef FOR_RESOURCE_TYPE
+
 	initialized_ = true;
 }
 

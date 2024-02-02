@@ -5,41 +5,6 @@ BEGIN_NS(lua::res)
 
 using namespace bg3se::resource;
 
-#define FOR_EACH_GUID_RESOURCE_TYPE() \
-	FOR_RESOURCE_TYPE(ActionResource) \
-	FOR_RESOURCE_TYPE(ActionResourceGroup) \
-	FOR_RESOURCE_TYPE(ClassDescription) \
-	FOR_RESOURCE_TYPE(Tag) \
-	FOR_RESOURCE_TYPE(Faction) \
-	FOR_RESOURCE_TYPE(Race) \
-	FOR_RESOURCE_TYPE(Origin) \
-	FOR_RESOURCE_TYPE(Background) \
-	FOR_RESOURCE_TYPE(God) \
-	FOR_RESOURCE_TYPE(Progression) \
-	FOR_RESOURCE_TYPE(ProgressionDescription) \
-	FOR_RESOURCE_TYPE(Gossip) \
-	FOR_RESOURCE_TYPE(Color) \
-	FOR_RESOURCE_TYPE(EquipmentType) \
-	FOR_RESOURCE_TYPE(Flag) \
-	FOR_RESOURCE_TYPE(Feat) \
-	FOR_RESOURCE_TYPE(FeatDescription) \
-	FOR_RESOURCE_TYPE(PassiveList) \
-	FOR_RESOURCE_TYPE(SkillList) \
-	FOR_RESOURCE_TYPE(SpellList) \
-	FOR_RESOURCE_TYPE(CharacterCreationPreset) \
-	FOR_RESOURCE_TYPE(CharacterCreationSkinColor) \
-	FOR_RESOURCE_TYPE(CharacterCreationEyeColor) \
-	FOR_RESOURCE_TYPE(CharacterCreationHairColor) \
-	FOR_RESOURCE_TYPE(CharacterCreationAccessorySet) \
-	FOR_RESOURCE_TYPE(CharacterCreationEquipmentIcons) \
-	FOR_RESOURCE_TYPE(CharacterCreationIconSettings) \
-	FOR_RESOURCE_TYPE(CharacterCreationMaterialOverride) \
-	FOR_RESOURCE_TYPE(CharacterCreationAppearanceMaterial) \
-	FOR_RESOURCE_TYPE(CharacterCreationPassiveAppearance) \
-	FOR_RESOURCE_TYPE(CharacterCreationAppearanceVisual) \
-	FOR_RESOURCE_TYPE(CharacterCreationSharedVisual) \
-	FOR_RESOURCE_TYPE(LevelMap)
-
 #define FOR_EACH_NONGUID_RESOURCE_TYPE() \
 	FOR_RESOURCE_TYPE(Visual) \
 	FOR_RESOURCE_TYPE(VisualSet) \

@@ -2870,8 +2870,8 @@ struct VisualResource : public TwoStepLoadableResource
 	glm::fvec3 BoundsMax;
 	bool NeedsSkeletonRemap;
 	bool SupportsVertexColorMask;
-	[[bg3::hidden]] __int16 field_172;
-	[[bg3::hidden]] __int32 field_174;
+	uint8_t MaterialType;
+	uint8_t HairType;
 };
 
 struct VisualSetResource : public LoadableResource

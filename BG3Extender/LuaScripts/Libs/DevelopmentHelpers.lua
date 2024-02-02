@@ -151,7 +151,7 @@ end
 local function ValidateResources()
     _P("Validating all resources ...")
     for i,cls in pairs(Ext.Enums.ExtResourceManagerType) do
-        if type(i) == "number" then
+        if type(i) == "number" and cls ~= "Max" then
             for j,guid in pairs(Ext.StaticData.GetAll(cls)) do
                 local resource = Ext.StaticData.Get(guid, cls)
                 Ext.Types.Validate(resource)
@@ -163,7 +163,7 @@ end
 local function ReserializeResources()
     _P("Re-serializing all resources ...")
     for i,cls in pairs(Ext.Enums.ExtResourceManagerType) do
-        if type(i) == "number" then
+        if type(i) == "number" and cls ~= "Max" then
             for j,guid in pairs(Ext.StaticData.GetAll(cls)) do
                 local resource = Ext.StaticData.Get(guid, cls)
                 local reason = TryToReserializeObject(resource)
