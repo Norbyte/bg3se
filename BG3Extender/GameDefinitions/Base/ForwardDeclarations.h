@@ -124,6 +124,8 @@ namespace lua
 	class CachedUserVariableManager;
 	class CachedModVariableManager;
 	class EntityReplicationEventHooks;
+	class EntityComponentEventHooks;
+	class State;
 
 	struct CppObjectMetadata;
 	struct CppValueMetadata;

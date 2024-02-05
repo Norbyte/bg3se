@@ -39,6 +39,7 @@ void PushComponent(lua_State* L, ecs::EntitySystemHelpersBase* helpers, EntityHa
 
 	default:
 		OsiError("Don't know how to push component type: " << componentType);
+		push(L, nullptr);
 		break;
 	}
 }
@@ -55,6 +56,7 @@ void PushComponent(lua_State* L, void* rawComponent, ExtComponentType componentT
 
 	default:
 		OsiError("Don't know how to push component type: " << componentType);
+		push(L, nullptr);
 		break;
 	}
 }

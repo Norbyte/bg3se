@@ -284,6 +284,11 @@ constexpr typename std::enable_if_t<IsBitmaskV<T>, T> operator ^= (T& lhs, T rhs
 	return lhs;
 }
 
+#define MARK_AS_BITFIELD(T) \
+	template<> struct IsBitmask<T> { \
+		static const bool value = true; \
+	};
+
 void InitializeEnumerations();
 
 #define BEGIN_BITMASK_NS(NS, T, luaName, type) namespace NS { \

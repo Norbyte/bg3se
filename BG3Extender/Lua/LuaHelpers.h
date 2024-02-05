@@ -8,6 +8,7 @@
 
 #include <GameDefinitions/Base/Base.h>
 #include <Lua/Shared/LuaReference.h>
+#include <Lua/Shared/RawComponentRef.h>
 #include <Lua/Shared/LuaTypeTraits.h>
 
 BEGIN_NS(lua)

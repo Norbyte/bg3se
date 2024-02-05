@@ -5,6 +5,7 @@
 #include "resource.h"
 #include <fstream>
 #include <lstate.h>
+#include <Lua/Shared/EntityComponentEvents.inl>
 
 // Callback from the Lua runtime when a handled (i.e. pcall/xpcall'd) error was thrown.
 // This is needed to capture errors for the Lua debugger, as there is no
@@ -246,7 +247,8 @@ namespace bg3se::lua
 		lifetimeStack_(lifetimePool_),
 		globalLifetime_(lifetimePool_.Allocate()),
 		variableManager_(isServer ? gExtender->GetServer().GetExtensionState().GetUserVariables() : gExtender->GetClient().GetExtensionState().GetUserVariables(), isServer),
-		modVariableManager_(isServer ? gExtender->GetServer().GetExtensionState().GetModVariables() : gExtender->GetClient().GetExtensionState().GetModVariables(), isServer)
+		modVariableManager_(isServer ? gExtender->GetServer().GetExtensionState().GetModVariables() : gExtender->GetClient().GetExtensionState().GetModVariables(), isServer),
+		entityHooks_(*this)
 	{
 		L = lua_newstate(LuaAlloc, nullptr);
 		internal_ = lua_new_internal_state();
@@ -264,6 +266,11 @@ namespace bg3se::lua
 	{
 		lifetimePool_.Release(globalLifetime_);
 		lua_close(L);
+	}
+
+	void State::Initialize()
+	{
+		entityHooks_.BindECS();
 	}
 
 	void State::Shutdown()

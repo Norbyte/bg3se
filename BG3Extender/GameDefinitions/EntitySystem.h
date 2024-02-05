@@ -579,15 +579,29 @@ struct BucketedHashMap : public BucketedHashSet<TKey>
 	}
 };
 
+struct ComponentCallbackParams
+{
+	EntityHandle Entity;
+	EntityWorld* World;
+};
+
 struct ComponentCallbackHandler
 {
-	using CallProc = void (ComponentCallbackHandler* self, void* arg);
-	using UserCallProc = void (void* object, void* arg);
-	using CopyProc = ComponentCallbackHandler* (void* dummy, ComponentCallbackHandler* src, ComponentCallbackHandler* dst);
+	using CallProc = void (ComponentCallbackHandler const& self, ComponentCallbackParams const& params, void* component);
+	using UserCallProc = void (void* object, ComponentCallbackParams const& params, void* component);
+	using CopyProc = ComponentCallbackHandler* (void* dummy, ComponentCallbackHandler const& src, ComponentCallbackHandler* dst);
+	using MoveProc = ComponentCallbackHandler* (void* dummy, ComponentCallbackHandler& src, ComponentCallbackHandler* dst);
+
+	static void DefaultCall(ComponentCallbackHandler const& self, ComponentCallbackParams const& arg, void* component);
+	static ComponentCallbackHandler* DefaultCopy(void* dummy, ComponentCallbackHandler const& src, ComponentCallbackHandler* dst);
+	static ComponentCallbackHandler* DefaultMoveDtor(void* dummy, ComponentCallbackHandler& src, ComponentCallbackHandler* dst);
+
+	ComponentCallbackHandler();
+	ComponentCallbackHandler(UserCallProc* handler, void* context);
 
 	CallProc* Call;
 	CopyProc* Copy;
-	CopyProc* TryCopy;
+	MoveProc* MoveDtor;
 	void* Object;
 	UserCallProc* UserHandler;
 };
@@ -595,16 +609,29 @@ struct ComponentCallbackHandler
 
 struct ComponentCallback
 {
-	ComponentCallbackHandler* pHandler;
+	ComponentCallback();
+	~ComponentCallback();
+	ComponentCallback(ComponentCallbackHandler const& handler, uint64_t index);
+	ComponentCallback(ComponentCallback const&);
+	ComponentCallback(ComponentCallback&&) noexcept;
+
+	ComponentCallback& operator = (ComponentCallback const&);
+	ComponentCallback& operator = (ComponentCallback&&) noexcept;
+
+	ComponentCallbackHandler* pHandler{ nullptr };
 	ComponentCallbackHandler Handler;
-	uint64_t Unused[2];
-	uint64_t RegistrantIndex;
+	uint64_t Unused1{ 0 };
+	uint64_t Unused2{ 0 };
+	uint64_t RegistrantIndex{ 0 };
 };
 
 struct ComponentCallbackList : public ProtectedGameObject<ComponentCallbackList>
 {
 	uint64_t NextRegistrantId;
 	Array<ComponentCallback> Callbacks;
+
+	uint64_t Add(ComponentCallbackHandler const& handler);
+	bool Remove(uint64_t registrantIndex);
 };
 
 struct ComponentCallbacks : public ProtectedGameObject<ComponentCallbacks>

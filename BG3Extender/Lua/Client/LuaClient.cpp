@@ -61,6 +61,8 @@ ClientState::~ClientState()
 
 void ClientState::Initialize()
 {
+	State::Initialize();
+
 	StackCheck _(L, 0);
 	library_.Register(L);
 

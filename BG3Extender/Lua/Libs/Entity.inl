@@ -1,6 +1,9 @@
 /// <lua_module>Entity</lua_module>
 BEGIN_NS(lua::entity)
 
+static constexpr uint64_t ReplicationEventHandleType = 1;
+static constexpr uint64_t ComponentEventHandleType = 2;
+
 std::optional<Guid> HandleToUuid(lua_State* L, EntityHandle entity)
 {
 	auto uuid = State::FromLua(L)->GetEntitySystemHelpers()->GetComponent<UuidComponent>(entity);
@@ -67,7 +70,7 @@ Array<EntityHandle> GetAllEntities(lua_State* L)
 	return entities;
 }
 
-EntityReplicationEventHooks::SubscriptionIndex Subscribe(lua_State* L, ExtComponentType type, FunctionRef func, std::optional<EntityHandle> entity, std::optional<uint64_t> flags)
+uint64_t Subscribe(lua_State* L, ExtComponentType type, FunctionRef func, std::optional<EntityHandle> entity, std::optional<uint64_t> flags)
 {
 	auto hooks = State::FromLua(L)->GetReplicationEventHooks();
 	if (!hooks) {
@@ -79,17 +82,56 @@ EntityReplicationEventHooks::SubscriptionIndex Subscribe(lua_State* L, ExtCompon
 		luaL_error(L, "No events are available for components of type %s", EnumInfo<ExtComponentType>::Store->Find((EnumUnderlyingType)type).GetString());
 	}
 
-	return hooks->Subscribe(*replicationType, entity ? *entity : EntityHandle{}, flags ? *flags : 0xffffffffffffffffull, RegistryEntry(L, func.Index));
+	auto index = hooks->Subscribe(*replicationType, entity ? *entity : EntityHandle{}, flags ? *flags : 0xffffffffffffffffull, RegistryEntry(L, func.Index));
+	return (ReplicationEventHandleType << 32) | index;
 }
 
-bool Unsubscribe(lua_State* L, unsigned index)
+uint64_t OnCreate(lua_State* L, ExtComponentType type, FunctionRef func, std::optional<EntityHandle> entity)
 {
-	auto hooks = State::FromLua(L)->GetReplicationEventHooks();
-	if (!hooks) {
-		luaL_error(L, "Entity events are only available on the server");
+	auto componentType = State::FromLua(L)->GetEntitySystemHelpers()->GetComponentIndex(type);
+	if (!componentType) {
+		luaL_error(L, "No events are available for components of type %s", EnumInfo<ExtComponentType>::Store->Find((EnumUnderlyingType)type).GetString());
 	}
 
-	return hooks->Unsubscribe(index);
+	auto& hooks = State::FromLua(L)->GetComponentEventHooks();
+	auto index = hooks.Subscribe(*componentType, entity ? *entity : EntityHandle{}, EntityComponentEvent::Create, RegistryEntry(L, func.Index));
+	return (ComponentEventHandleType << 32) | index;
+}
+
+uint64_t OnDestroy(lua_State* L, ExtComponentType type, FunctionRef func, std::optional<EntityHandle> entity)
+{
+	auto componentType = State::FromLua(L)->GetEntitySystemHelpers()->GetComponentIndex(type);
+	if (!componentType) {
+		luaL_error(L, "No events are available for components of type %s", EnumInfo<ExtComponentType>::Store->Find((EnumUnderlyingType)type).GetString());
+	}
+
+	auto& hooks = State::FromLua(L)->GetComponentEventHooks();
+	auto index = hooks.Subscribe(*componentType, entity ? *entity : EntityHandle{}, EntityComponentEvent::Destroy, RegistryEntry(L, func.Index));
+	return (ComponentEventHandleType << 32) | index;
+}
+
+bool Unsubscribe(lua_State* L, uint64_t index)
+{
+	switch (index >> 32) {
+	case ReplicationEventHandleType:
+	{
+		auto hooks = State::FromLua(L)->GetReplicationEventHooks();
+		if (!hooks) {
+			luaL_error(L, "Entity events are only available on the server");
+		}
+
+		return hooks->Unsubscribe((uint32_t)index);
+	}
+
+	case ComponentEventHandleType:
+	{
+		return State::FromLua(L)->GetComponentEventHooks().Unsubscribe((uint32_t)index);
+	}
+
+	default:
+		OsiWarn("Illegible subscription index");
+		return false;
+	}
 }
 
 void RegisterEntityLib()
@@ -103,6 +145,9 @@ void RegisterEntityLib()
 	MODULE_FUNCTION(GetAllEntitiesWithComponent)
 	MODULE_FUNCTION(GetAllEntities)
 	MODULE_FUNCTION(Subscribe)
+	MODULE_NAMED_FUNCTION("OnChange", Subscribe)
+	MODULE_FUNCTION(OnCreate)
+	MODULE_FUNCTION(OnDestroy)
 	MODULE_FUNCTION(Unsubscribe)
 	END_MODULE()
 }

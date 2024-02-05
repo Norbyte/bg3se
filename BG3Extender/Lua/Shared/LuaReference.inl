@@ -163,4 +163,24 @@ void PersistentRegistryEntry::Bind(lua_State* L, Ref const& ref)
 	}
 }
 
+
+
+void RawComponentRef::Push(lua_State* L) const
+{
+	if (ptr_ != nullptr) {
+		auto state = State::FromLua(L);
+		auto ecs = state->GetEntitySystemHelpers();
+		auto ptr = reinterpret_cast<void*>((uintptr_t)ptr_ & 0x0000ffffffffffffull);
+		ecs::ComponentTypeIndex type{ (uint16_t)((uintptr_t)ptr_ >> 48) };
+		auto extType = ecs->GetComponentType(type);
+		if (extType) {
+			PushComponent(L, ptr, *extType, state->GetCurrentLifetime());
+		} else {
+			push(L, nullptr);
+		}
+	} else {
+		push(L, nullptr);
+	}
+}
+
 END_NS()

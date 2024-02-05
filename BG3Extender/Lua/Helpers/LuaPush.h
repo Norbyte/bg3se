@@ -117,6 +117,7 @@ void push(lua_State* L, Ref const& v);
 void push(lua_State* L, PersistentRef const& v);
 void push(lua_State* L, RegistryEntry const& v);
 void push(lua_State* L, PersistentRegistryEntry const& v);
+void push(lua_State* L, RawComponentRef const& v);
 
 void assign(lua_State* L, int idx, glm::vec2 const& v);
 void assign(lua_State* L, int idx, glm::vec3 const& v);

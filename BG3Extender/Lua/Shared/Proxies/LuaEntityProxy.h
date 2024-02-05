@@ -6,6 +6,10 @@
 
 BEGIN_NS(lua)
 
+void PushComponent(lua_State* L, ecs::EntitySystemHelpersBase* helpers, EntityHandle const& handle, 
+	ExtComponentType componentType, LifetimeHandle const& lifetime);
+void PushComponent(lua_State* L, void* rawComponent, ExtComponentType componentType, LifetimeHandle const& lifetime);
+
 class EntityHelper
 {
 public:

@@ -62,6 +62,7 @@ struct MappedVelocity
 struct MovementSettings
 {
 	std::variant<Bezier3Trajectory, Bezier4Trajectory> Trajectory;
+	[[bg3::hidden]] uint32_t _Pad;
 	uint8_t RotateMode;
 	std::variant<ConstantVelocity, LinearVelocity, MappedVelocity> Velocity;
 };
@@ -146,7 +147,7 @@ struct InitializationData
 	EntityHandle TargetTracking_M;
 	EntityHandle TargetTracking2_M;
 	bool MainDamageType;
-	bool SpellCastingAbility;
+	AbilityId SpellCastingAbility;
 	bool IsTrap;
 	uint8_t field_93;
 	bool CanDeflect;
@@ -163,18 +164,18 @@ struct InitializationData
 	OnHitActionBase* HitAction;
 	EntityHandle ThrownObject;
 	bool DamageMovingObjectOnLand;
-	std::optional<PathDescription> Path;
+	std::optional<ProjectileMovementSettings> Path;
 	std::optional<MovementSettings> MovementSettings;
 	EntityHandle MovingObject;
 	SpellComponent SpellData;
 };
 
-struct InitializationComponent : public BaseComponent
+struct InitializationComponent : public BaseProxyComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerProjectileInitialization;
 	static constexpr auto EngineClass = "esv::projectile::InitializationComponent";
 
-	__int64 field_0;
+	[[bg3::hidden]] void* field_0;
 	InitializationData Data;
 };
 

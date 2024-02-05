@@ -462,6 +462,8 @@
     <ClInclude Include="GameDefinitions\Components\ServerData.h" />
     <ClInclude Include="GameDefinitions\Components\Progression.h" />
     <ClInclude Include="GameDefinitions\Components\Shapeshift.h" />
+    <ClInclude Include="Lua\Shared\EntityComponentEvents.h" />
+    <ClInclude Include="Lua\Shared\RawComponentRef.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -670,6 +672,9 @@
     </None>
     <None Include="Lua\Libs\ClientTemplate.inl">
       <Filter>Lua\Libs</Filter>
+    </None>
+    <None Include="Lua\Shared\EntityComponentEvents.inl">
+      <Filter>Lua\Shared</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

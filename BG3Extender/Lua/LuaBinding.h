@@ -12,6 +12,7 @@
 #include <Lua/Shared/Proxies/LuaEnumValue.h>
 #include <Lua/Shared/Proxies/LuaBitfieldValue.h>
 #include <Lua/Shared/Proxies/LuaUserVariableHolder.h>
+#include <Lua/Shared/EntityComponentEvents.h>
 #include <Extender/Shared/UserVariables.h>
 
 #include <mutex>
@@ -129,13 +130,18 @@ namespace bg3se::lua
 			return modVariableManager_;
 		}
 
-		virtual void Initialize() = 0;
+		virtual void Initialize();
 		virtual void Shutdown();
 		virtual bool IsClient() = 0;
 
 		virtual ecs::EntityWorld* GetEntityWorld() = 0;
 		virtual ecs::EntitySystemHelpersBase* GetEntitySystemHelpers() = 0;
 		virtual EntityReplicationEventHooks* GetReplicationEventHooks() = 0;
+
+		EntityComponentEventHooks& GetComponentEventHooks()
+		{
+			return entityHooks_;
+		}
 
 		void FinishStartup();
 		void LoadBootstrap(STDString const& path, STDString const& modTable);
@@ -205,6 +211,7 @@ namespace bg3se::lua
 
 		CachedUserVariableManager variableManager_;
 		CachedModVariableManager modVariableManager_;
+		EntityComponentEventHooks entityHooks_;
 
 		void OpenLibs();
 		EventResult DispatchEvent(EventBase& evt, char const* eventName, bool canPreventAction, uint32_t restrictions);
