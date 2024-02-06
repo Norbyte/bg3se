@@ -19,11 +19,12 @@ void InheritProperties(GenericPropertyMap const& base, GenericPropertyMap& child
 
 	child.IsInitializing = true;
 
-	for (auto const& prop : base.Properties) {
-		child.AddRawProperty(prop.first.GetString(), prop.second.Get, prop.second.Set, 
-			prop.second.Serialize, prop.second.Offset, prop.second.Flag, prop.second.PendingNotifications);
+	for (auto prop : base.Properties) {
+		auto const& p = prop.Value();
+		child.AddRawProperty(prop.Key().GetString(), p.Get, p.Set, p.Serialize, p.Offset, p.Flag, 
+			p.PendingNotifications, p.NewName, p.Iterable);
 	}
-	
+
 	for (auto const& prop : base.Validators) {
 		child.AddRawValidator(prop.Name.GetString(), prop.Validate, prop.Offset, prop.Flag);
 	}
@@ -190,7 +191,7 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 		&(GenericSetOffsetProperty<decltype(PM::ObjectType::prop)>), \
 		&(GenericValidateOffsetProperty<decltype(PM::ObjectType::prop)>), \
 		&(GenericSerializeOffsetProperty<decltype(PM::ObjectType::prop)>), \
-		offsetof(PM::ObjectType, prop), 0, PropertyNotification::Renamed, #prop \
+		offsetof(PM::ObjectType, prop), 0, PropertyNotification::Renamed, #prop, false \
 	);
 
 #define P_RO(prop) \

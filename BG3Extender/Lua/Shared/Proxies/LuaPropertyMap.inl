@@ -23,8 +23,8 @@ bool GenericPropertyMap::HasProperty(FixedString const& prop) const
 
 PropertyOperationResult GenericPropertyMap::GetRawProperty(lua_State* L, LifetimeHandle const& lifetime, void* object, FixedString const& prop) const
 {
-	auto it = Properties.find(prop);
-	if (it == Properties.end()) {
+	auto it = Properties.try_get(prop);
+	if (it == nullptr) {
 		if (FallbackGetter) {
 			return FallbackGetter(L, lifetime, object, prop);
 		} else {
@@ -32,13 +32,18 @@ PropertyOperationResult GenericPropertyMap::GetRawProperty(lua_State* L, Lifetim
 		}
 	}
 
-	return it->second.Get(L, lifetime, object, it->second);
+	return it->Get(L, lifetime, object, *it);
+}
+
+PropertyOperationResult GenericPropertyMap::GetRawProperty(lua_State* L, LifetimeHandle const& lifetime, void* object, RawPropertyAccessors const& prop) const
+{
+	return prop.Get(L, lifetime, object, prop);
 }
 
 PropertyOperationResult GenericPropertyMap::SetRawProperty(lua_State* L, void* object, FixedString const& prop, int index) const
 {
-	auto it = Properties.find(prop);
-	if (it == Properties.end()) {
+	auto it = Properties.try_get(prop);
+	if (it == nullptr) {
 		if (FallbackSetter) {
 			return FallbackSetter(L, object, prop, index);
 		} else {
@@ -46,19 +51,22 @@ PropertyOperationResult GenericPropertyMap::SetRawProperty(lua_State* L, void* o
 		}
 	}
 
-	return it->second.Set(L, object, index, it->second);
+	return it->Set(L, object, index, *it);
 }
 
 void GenericPropertyMap::AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter,
 	typename RawPropertyAccessors::Setter* setter, typename RawPropertyAccessors::Serializer* serialize, 
-	std::size_t offset, uint64_t flag, PropertyNotification notification, char const* newName)
+	std::size_t offset, uint64_t flag, PropertyNotification notification, char const* newName, bool iterable)
 {
 	assert((!Initialized || !InheritanceUpdated) && IsInitializing);
 	FixedString key{ prop };
 	FixedString newNameKey{ newName ? newName : "" };
 	assert(Properties.find(key) == Properties.end());
-	Properties.insert(std::make_pair(key, RawPropertyAccessors{ key, offset, flag, getter, setter, serialize, notification, this, newNameKey }));
+	Properties.set(key, RawPropertyAccessors{ key, offset, flag, getter, setter, serialize, notification, this, newNameKey, iterable });
 
+	if (iterable) {
+		IterableProperties.set(key, Properties.size() - 1);
+	}
 }
 
 void GenericPropertyMap::AddRawValidator(char const* prop, typename RawPropertyValidators::Validator* validate, std::size_t offset, uint64_t flag)
@@ -70,10 +78,10 @@ void GenericPropertyMap::AddRawValidator(char const* prop, typename RawPropertyV
 void GenericPropertyMap::AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter,
 	typename RawPropertyAccessors::Setter* setter, typename RawPropertyValidators::Validator* validate, 
 	typename RawPropertyAccessors::Serializer* serialize, std::size_t offset, uint64_t flag, 
-	PropertyNotification notification, char const* newName)
+	PropertyNotification notification, char const* newName, bool iterable)
 {
 	if (getter != nullptr || setter != nullptr) {
-		AddRawProperty(prop, getter, setter, serialize, offset, flag, notification, newName);
+		AddRawProperty(prop, getter, setter, serialize, offset, flag, notification, newName, iterable);
 	}
 
 	if (validate != nullptr) {
@@ -138,11 +146,12 @@ void SerializeRawObject(lua_State* L, void const* obj, GenericPropertyMap const&
 {
 	StackCheck _(L, 1);
 	lua_createtable(L, 0, (int)pm.Properties.size());
-	for (auto const& prop : pm.Properties) {
-		if (prop.second.Serialize != nullptr) {
-			auto result = prop.second.Serialize(L, obj, prop.second);
+	for (auto it : pm.IterableProperties) {
+		auto const& prop = pm.Properties.values()[it.Value()];
+		if (prop.Serialize != nullptr) {
+			auto result = prop.Serialize(L, obj, prop);
 			if (result == PropertyOperationResult::Success) {
-				lua_setfield(L, -2, prop.first.GetString());
+				lua_setfield(L, -2, it.Key().GetString());
 			}
 		}
 	}
@@ -151,10 +160,11 @@ void SerializeRawObject(lua_State* L, void const* obj, GenericPropertyMap const&
 void UnserializeRawObjectFromTable(lua_State* L, int index, void* obj, GenericPropertyMap const& pm)
 {
 	StackCheck _(L);
-	for (auto const& prop : pm.Properties) {
-		lua_getfield(L, index, prop.first.GetString());
+	for (auto it : pm.IterableProperties) {
+		auto const& prop = pm.Properties.values()[it.Value()];
+		lua_getfield(L, index, it.Key().GetString());
 		if (lua_type(L, -1) != LUA_TNIL) {
-			prop.second.Set(L, obj, lua_absindex(L, -1), prop.second);
+			prop.Set(L, obj, lua_absindex(L, -1), prop);
 		}
 		lua_pop(L, 1);
 	}

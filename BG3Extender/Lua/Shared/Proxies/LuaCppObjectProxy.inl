@@ -8,24 +8,26 @@ struct CppObjectProxyHelpers
 	static int Next(lua_State* L, GenericPropertyMap const& pm, void* object, LifetimeHandle const& lifetime, FixedString const& key)
 	{
 		if (!key) {
-			if (!pm.Properties.empty()) {
+			if (!pm.IterableProperties.empty()) {
 				StackCheck _(L, 2);
-				auto it = pm.Properties.begin();
-				push(L, it->first);
-				if (pm.GetRawProperty(L, lifetime, object, it->first) != PropertyOperationResult::Success) {
+				auto it = pm.IterableProperties.begin();
+				push(L, it.Key());
+				auto const& prop = pm.Properties.values()[it.Value()];
+				if (pm.GetRawProperty(L, lifetime, object, prop) != PropertyOperationResult::Success) {
 					push(L, nullptr);
 				}
 
 				return 2;
 			}
 		} else {
-			auto it = pm.Properties.find(key);
-			if (it != pm.Properties.end()) {
+			auto it = pm.IterableProperties.find(key);
+			if (it != pm.IterableProperties.end()) {
 				++it;
-				if (it != pm.Properties.end()) {
+				if (it != pm.IterableProperties.end()) {
 					StackCheck _(L, 2);
-					push(L, it->first);
-					if (pm.GetRawProperty(L, lifetime, object, it->first) != PropertyOperationResult::Success) {
+					push(L, it.Key());
+					auto const& prop = pm.Properties.values()[it.Value()];
+					if (pm.GetRawProperty(L, lifetime, object, prop) != PropertyOperationResult::Success) {
 						push(L, nullptr);
 					}
 

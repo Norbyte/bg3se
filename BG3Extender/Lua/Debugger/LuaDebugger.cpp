@@ -354,10 +354,11 @@ namespace bg3se::lua::dbg
 		auto const& pm = LightObjectProxyByRefMetatable::GetPropertyMap(meta);
 		auto obj = meta.Ptr;
 
-		for (auto const& prop : pm.Properties) {
-			auto result = prop.second.Get(L, meta.Lifetime, obj, prop.second);
+		for (auto it : pm.IterableProperties) {
+			auto const& prop = pm.Properties.values()[it.Value()];
+			auto result = prop.Get(L, meta.Lifetime, obj, prop);
 			if (result == PropertyOperationResult::Success) {
-				push(L, prop.first);
+				push(L, it.Key());
 				LuaElementToEvalResults(L, -1, -2, req);
 				lua_pop(L, 2);
 			}
@@ -375,10 +376,11 @@ namespace bg3se::lua::dbg
 		auto obj = proxy->GetImpl()->GetRaw(L);
 		auto lifetime = State::FromLua(L)->GetGlobalLifetime();
 
-		for (auto const& prop : pm.Properties) {
-			auto result = prop.second.Get(L, lifetime, obj, prop.second);
+		for (auto it : pm.IterableProperties) {
+			auto const& prop = pm.Properties.values()[it.Value()];
+			auto result = prop.Get(L, lifetime, obj, prop);
 			if (result == PropertyOperationResult::Success) {
-				push(L, prop.first);
+				push(L, it.Key());
 				LuaElementToEvalResults(L, -1, -2, req);
 				lua_pop(L, 2);
 			}

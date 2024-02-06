@@ -74,24 +74,26 @@ namespace bg3se::lua
 		{
 			auto const& map = StaticLuaPropertyMap<T>::PropertyMap;
 			if (!key) {
-				if (!map.Properties.empty()) {
+				if (!map.IterableProperties.empty()) {
 					StackCheck _(L, 2);
-					auto it = map.Properties.begin();
-					push(L, it->first);
-					if (map.GetProperty(L, lifetime, object, it->second) != PropertyOperationResult::Success) {
+					auto it = map.IterableProperties.begin();
+					push(L, it.Key());
+					auto const& prop = map.Properties.values()[it.Value()];
+					if (map.GetProperty(L, lifetime, object, prop) != PropertyOperationResult::Success) {
 						push(L, nullptr);
 					}
 
 					return 2;
 				}
 			} else {
-				auto it = map.Properties.find(key);
-				if (it != map.Properties.end()) {
+				auto it = map.IterableProperties.find(key);
+				if (it != map.IterableProperties.end()) {
 					++it;
-					if (it != map.Properties.end()) {
+					if (it != map.IterableProperties.end()) {
 						StackCheck _(L, 2);
-						push(L, it->first);
-						if (map.GetProperty(L, lifetime, object, it->second) != PropertyOperationResult::Success) {
+						push(L, it.Key());
+						auto const& prop = map.Properties.values()[it.Value()];
+						if (map.GetProperty(L, lifetime, object, prop) != PropertyOperationResult::Success) {
 							push(L, nullptr);
 						}
 

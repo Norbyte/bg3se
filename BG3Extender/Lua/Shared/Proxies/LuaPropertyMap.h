@@ -20,13 +20,14 @@ struct RawPropertyAccessors
 
 	FixedString Name;
 	std::size_t Offset;
-	uint64_t Flag;
-	Getter* Get;
-	Setter* Set;
-	Serializer* Serialize;
-	mutable PropertyNotification PendingNotifications;
-	GenericPropertyMap* PropertyMap;
+	uint64_t Flag{ 0 };
+	Getter* Get{ nullptr };
+	Setter* Set{ nullptr };
+	Serializer* Serialize{ nullptr };
+	mutable PropertyNotification PendingNotifications{ PropertyNotification::None };
+	GenericPropertyMap* PropertyMap{ nullptr };
 	FixedString NewName;
+	bool Iterable{ true };
 };
 
 class GenericPropertyMap : Noncopyable<GenericPropertyMap>
@@ -61,24 +62,26 @@ public:
 	void Finish();
 	bool HasProperty(FixedString const& prop) const;
 	PropertyOperationResult GetRawProperty(lua_State* L, LifetimeHandle const& lifetime, void* object, FixedString const& prop) const;
+	PropertyOperationResult GetRawProperty(lua_State* L, LifetimeHandle const& lifetime, void* object, RawPropertyAccessors const& prop) const;
 	PropertyOperationResult SetRawProperty(lua_State* L, void* object, FixedString const& prop, int index) const;
 	void AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter, typename RawPropertyAccessors::Setter* setter,
 		typename RawPropertyAccessors::Serializer* serialize, std::size_t offset, uint64_t flag, 
-		PropertyNotification notification, char const* newName = nullptr);
+		PropertyNotification notification, char const* newName = nullptr, bool iterable = true);
 	void AddRawValidator(char const* prop, typename RawPropertyValidators::Validator* validate, std::size_t offset, uint64_t flag);
 	void AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter,
 		typename RawPropertyAccessors::Setter* setter, typename RawPropertyValidators::Validator* validate, 
 		typename RawPropertyAccessors::Serializer* serialize, std::size_t offset, uint64_t flag, 
-		PropertyNotification notification, char const* newName = nullptr);
+		PropertyNotification notification, char const* newName = nullptr, bool iterable = true);
 	bool IsA(int typeRegistryIndex) const;
 	bool ValidatePropertyMap(void const* object);
 	bool ValidateObject(void const* object);
 
 	FixedString Name;
-	std::unordered_map<FixedString, RawPropertyAccessors> Properties;
-	std::vector<RawPropertyValidators> Validators;
-	std::vector<FixedString> Parents;
-	std::vector<int> ParentRegistryIndices;
+	MultiHashMap<FixedString, RawPropertyAccessors> Properties;
+	MultiHashMap<FixedString, uint32_t> IterableProperties;
+	Array<RawPropertyValidators> Validators;
+	Array<FixedString> Parents;
+	Array<int> ParentRegistryIndices;
 	TFallbackGetter* FallbackGetter{ nullptr };
 	TFallbackSetter* FallbackSetter{ nullptr };
 	TConstructor* Construct{ nullptr };
