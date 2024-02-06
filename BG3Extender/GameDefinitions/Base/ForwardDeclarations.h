@@ -49,6 +49,7 @@ namespace resource
 	struct GuidResourceManager;
 
 	struct Resource;
+	struct VisualSet;
 }
 
 namespace net

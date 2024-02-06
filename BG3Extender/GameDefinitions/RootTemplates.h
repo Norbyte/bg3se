@@ -133,7 +133,7 @@ struct SceneryTemplate : public EoCGameObjectTemplate
 }; 
 
 
-struct CombatComponentTemplate
+struct CombatComponentTemplate : public ProtectedGameObject<CombatComponentTemplate>
 {
     [[bg3::hidden]]
     void* VMT;
@@ -326,6 +326,27 @@ struct CharacterTemplate : public EoCGameObjectTemplate
 
 struct ItemTemplate : public SceneryTemplate
 {
+    struct EquipmentData : public ProtectedGameObject<EquipmentData>
+    {
+        MultiHashMap<Guid, FixedString> ShortHair;
+        MultiHashMap<Guid, FixedString> LongHair;
+        MultiHashMap<Guid, FixedString> WavyShortHair;
+        MultiHashMap<Guid, FixedString> WavyLongHair;
+        MultiHashMap<Guid, FixedString> CurlyShortHair;
+        MultiHashMap<Guid, FixedString> CurlyLongHair;
+        MultiHashMap<Guid, FixedString> DreadShortHair;
+        MultiHashMap<Guid, FixedString> DreadLongHair;
+        MultiHashMap<Guid, FixedString> AfroShortHair;
+        MultiHashMap<Guid, FixedString> AfroLongHair;
+        MultiHashMap<Guid, Array<FixedString>> Visuals;
+        MultiHashMap<Guid, Guid> ParentRace;
+        MultiHashSet<Guid> SyncWithParent;
+        resource::VisualSet* VisualSet;
+        [[bg3::hidden]] void* Slot_VMT;
+        Array<FixedString> Slot;
+        [[bg3::hidden]] void* Slot_junk;
+    };
+
     CombatComponentTemplate CombatComponent;
     OverrideableProperty<Array<FixedString>> InventoryList;
     MultiHashSet<Guid>* SpeakerGroups;
@@ -389,8 +410,7 @@ struct ItemTemplate : public SceneryTemplate
     OverrideableProperty<int32_t> Amount;
     OverrideableProperty<int32_t> MaxStackAmount;
     OverrideableProperty<int32_t> TreasureLevel;
-    [[bg3::hidden]]
-    OverrideableProperty<void*> SomeTemplateInfo;
+    OverrideableProperty<EquipmentData*> Equipment;
     OverrideableProperty<FixedString> DropSound;
     OverrideableProperty<FixedString> PickupSound;
     OverrideableProperty<FixedString> UseSound;

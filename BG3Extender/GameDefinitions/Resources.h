@@ -782,7 +782,7 @@ struct BlendSpaceResource : public TwoStepLoadableResource
 	Array<FieldB8Entry> field_b8;
 };
 
-struct CharacterVisualResource : public LoadableResource
+struct VisualSet
 {
 	struct Slot
 	{
@@ -798,7 +798,6 @@ struct CharacterVisualResource : public LoadableResource
 	};
 
 	FixedString BodySetVisual;
-	[[bg3::hidden]] __int32 field_34;
 	Array<Slot> Slots;
 	Array<LocatorAttachment> LocatorAttachments;
 	PresetData MaterialOverrides;
@@ -807,10 +806,12 @@ struct CharacterVisualResource : public LoadableResource
 	MultiHashMap<FixedString, FixedString> field_158;
 	FixedString ID;
 	bool ShowEquipmentVisuals;
-	[[bg3::hidden]] __int8 field_19d;
-	[[bg3::hidden]] __int16 field_19e;
+};
+
+struct CharacterVisualResource : public LoadableResource
+{
+	VisualSet VisualSet;
 	FixedString BaseVisual;
-	[[bg3::hidden]] __int32 field_1a4;
 };
 
 struct ClothColliderResource : public LoadableResource
