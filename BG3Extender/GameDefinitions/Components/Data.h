@@ -819,7 +819,7 @@ struct EquipableComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::Equipable;
 	static constexpr auto EngineClass = "eoc::EquipableComponent";
 
-	Guid field_18;
+	[[bg3::legacy(field_18)]] Guid EquipmentTypeID;
 	ItemSlot Slot;
 };
 
