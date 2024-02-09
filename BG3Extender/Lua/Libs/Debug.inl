@@ -259,8 +259,14 @@ void Crash(int type)
 
 void SetEntityRuntimeCheckLevel(int level)
 {
+#if defined(_DEBUG)
+	if (level >= (int)ecs::RuntimeCheckLevel::None && level <= (int)ecs::RuntimeCheckLevel::FullECS) {
+#else
 	if (level >= (int)ecs::RuntimeCheckLevel::Once && level <= (int)ecs::RuntimeCheckLevel::FullECS) {
+#endif
 		ecs::EntitySystemHelpersBase::CheckLevel = (ecs::RuntimeCheckLevel)level;
+	} else {
+		OsiError("Unsupported check level: " << level);
 	}
 }
 

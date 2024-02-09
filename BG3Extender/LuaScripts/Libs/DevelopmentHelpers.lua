@@ -148,8 +148,8 @@ local function ReserializeTemplates()
     ReserializeTemplateList(Ext.Template.GetAllLocalCacheTemplates())
 end
 
-local function ValidateResources()
-    _P("Validating all resources ...")
+local function ValidateStaticData()
+    _P("Validating all static data resources ...")
     for i,cls in pairs(Ext.Enums.ExtResourceManagerType) do
         if type(i) == "number" and cls ~= "Max" then
             for j,guid in pairs(Ext.StaticData.GetAll(cls)) do
@@ -160,12 +160,42 @@ local function ValidateResources()
     end
 end
 
-local function ReserializeResources()
-    _P("Re-serializing all resources ...")
+local function ReserializeStaticData()
+    _P("Re-serializing all static data resources ...")
     for i,cls in pairs(Ext.Enums.ExtResourceManagerType) do
         if type(i) == "number" and cls ~= "Max" then
             for j,guid in pairs(Ext.StaticData.GetAll(cls)) do
                 local resource = Ext.StaticData.Get(guid, cls)
+                local reason = TryToReserializeObject(resource)
+                if reason ~= nil then
+                    _PE("Serialization failed: Static data type " .. tostring(cls) .. ", guid " .. guid)
+                    _PE(reason)
+                end
+            end
+        end
+    end
+end
+
+local function ValidateResources()
+    _P("Validating all resources ...")
+    for i,cls in pairs(Ext.Enums.ResourceBankType) do
+        if type(i) == "number" and cls ~= "Sentinel" then
+            for j,guid in pairs(Ext.Resource.GetAll(cls)) do
+                local resource = Ext.Resource.Get(guid, cls)
+                if resource ~= nil then
+                    Ext.Types.Validate(resource)
+                end
+            end
+        end
+    end
+end
+
+local function ReserializeResources()
+    _P("Re-serializing all resources ...")
+    for i,cls in pairs(Ext.Enums.ResourceBankType) do
+        if type(i) == "number" and cls ~= "Sentinel" then
+            for j,guid in pairs(Ext.Resource.GetAll(cls)) do
+                local resource = Ext.Resource.Get(guid, cls)
                 local reason = TryToReserializeObject(resource)
                 if reason ~= nil then
                     _PE("Serialization failed: Resource type " .. tostring(cls) .. ", guid " .. guid)
@@ -200,11 +230,22 @@ Ext.RegisterConsoleCommand("se_resourceserializertest", function ()
     ReserializeResources()
 end)
 
+Ext.RegisterConsoleCommand("se_staticdatatest", function ()
+    ValidateStaticData()
+end)
+
+Ext.RegisterConsoleCommand("se_staticdataserializertest", function ()
+    ReserializeStaticData()
+end)
+
 Ext.RegisterConsoleCommand("se_deepfry", function ()
+    Ext.Debug.SetEntityRuntimeCheckLevel(0)
     ValidateTemplates()
+    ValidateStaticData()
     ValidateResources()
     ValidateEntities()
     ReserializeTemplates()
+    ReserializeStaticData()
     ReserializeResources()
     ReserializeEntities()
 end)
