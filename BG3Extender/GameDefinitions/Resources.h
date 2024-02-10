@@ -846,25 +846,12 @@ struct ColorListResource : public LoadableResource
 
 struct DialogResource : public LoadableResource
 {
-	bool automated;
-	bool isWorld;
-	bool isBehaviour;
-	bool EnableTimeline;
-	bool BlockFTB;
-	bool isSubbedDialog;
-	bool isPrivateDialog;
-	bool AllowDeadSpeakers;
-	bool IsAllowingJoinCombat;
-	[[bg3::hidden]] __int8 field_39;
-	[[bg3::hidden]] __int16 field_3a;
-	[[bg3::hidden]] __int32 field_3c;
-	Array<bool> SpeakerSlotsWithLines;
-	Array<bg3se::Guid> childResources;
-	uint8_t TimelineSplitScreenPriority;
-	[[bg3::hidden]] __int8 field_61;
-	[[bg3::hidden]] __int16 field_62;
-	[[bg3::hidden]] __int32 field_64;
+	Array<bg3se::Guid> ChildResources;
+	Array<uint8_t> SpeakerSlotsWithLines;
 	STDString Name;
+	uint8_t TimelineSplitScreenPriority;
+	uint8_t Flags;
+	uint8_t Flags2;
 };
 
 struct DiffusionProfileResource : public LoadableResource
@@ -874,13 +861,10 @@ struct DiffusionProfileResource : public LoadableResource
 	glm::fvec3 TransmissionTint;
 	float ThicknessRemapMin;
 	float ThicknessRemapMax;
-	bool ThickObjectTransmission;
-	[[bg3::hidden]] __int8 field_55;
-	[[bg3::hidden]] __int16 field_56;
+	uint8_t ThickObjectTransmission; // Sometimes filled with junk values, unknown why
 	float DualSpecularRoughnessA;
 	float DualSpecularRoughnessB;
 	float DualSpecularMix;
-	[[bg3::hidden]] __int32 field_64;
 };
 
 BEGIN_BARE_NS(effects)
@@ -2645,18 +2629,12 @@ struct SkinPresetResource : public LoadableResource
 
 struct SoundResource : public TwoStepLoadableResource
 {
-	uint32_t SoundEventID;
 	FixedString SoundEvent;
-	FixedString SoundBank;
-	[[bg3::hidden]] __int32 field_54;
-	bg3se::Guid SoundEventUUID;
+	uint32_t SoundEventID;
 	float Duration;
 	float MaxDistance;
-	bool Preload;
-	int8_t SoundCategory;
-	int8_t SoundCodec;
-	bool Internal;
-	[[bg3::hidden]] __int32 field_74;
+	uint8_t SoundCodec;
+	uint8_t Flags;
 };
 
 struct TerrainBrushResource : public LoadableResource
@@ -2688,19 +2666,14 @@ struct TerrainBrushResource : public LoadableResource
 
 struct TextureResource : public LoadableResource
 {
-	__int64 field_30;
+	[[bg3::hidden]] void* field_30;
 	FixedString Template;
 	bool Streaming;
-	[[bg3::hidden]] __int8 field_3d;
-	[[bg3::hidden]] __int16 field_3e;
-	int32_t Type;
+	bool SRGB;
+	uint8_t Type;
 	int32_t Width;
 	int32_t Height;
 	int32_t Depth;
-	bool SRGB;
-	[[bg3::hidden]] __int8 field_51;
-	[[bg3::hidden]] __int16 field_52;
-	[[bg3::hidden]] __int32 field_54;
 };
 
 struct TileSetResource : public LoadableResource
@@ -2836,8 +2809,10 @@ struct VisualResource : public TwoStepLoadableResource
 	struct ClothProxy
 	{
 		FixedString Name;
-		[[bg3::hidden]] __int32 field_4;
 		Array<uint16_t> ClosestVertices;
+		[[bg3::hidden]] void* CompressedVertices;
+		[[bg3::hidden]] uint32_t CompressedSize;
+		[[bg3::hidden]] uint32_t NbClosestVertices;
 	};
 
 	[[bg3::hidden]] void* field_48; // DynamicArray VMT

@@ -99,8 +99,7 @@ bool GenericPropertyMap::ValidatePropertyMap(void const* object)
 		if (Validated == ValidationState::Unknown) {
 			if (ValidateObject(object)) {
 				Validated = ValidationState::Valid;
-			}
-			else {
+			} else {
 				ERR("Object class %s failed validation; proxying of this class is disabled", Name.GetString());
 				Validated = ValidationState::Invalid;
 			}
