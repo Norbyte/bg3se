@@ -349,7 +349,7 @@ struct LevelUpUpgrades
 		Guid SpellList;
 		Array<FixedString> Spells;
 		Array<StringPair> Array_FS2;
-		STDString field_78;
+		[[bg3::legacy(field_78)]] STDString SelectorId;
 		int field_80;
 	};
 		
