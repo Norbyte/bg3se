@@ -305,7 +305,7 @@ struct LevelUpUpgrades
 	struct Unknown2Data : public LevelUpUpgrades::Reference
 	{
 		int field_30;
-		Guid field_38;
+		[[bg3::legacy(field_38)]] Guid Skill;
 		uint8_t field_48;
 		Array<uint8_t> Array_b8;
 		STDString field_60;
