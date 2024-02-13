@@ -318,7 +318,7 @@ struct LevelUpUpgrades
 		Guid AbilityBonus;
 		Array<uint8_t> Array_b8;
 		Array<uint32_t> Array_i32;
-		STDString field_60;
+		[[bg3::legacy(field_60)]] STDString BonusType;
 		int field_80;
 	};
 		
