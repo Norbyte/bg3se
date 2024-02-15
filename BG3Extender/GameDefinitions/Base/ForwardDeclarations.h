@@ -42,6 +42,10 @@ struct CacheTemplateManagerBase;
 struct UuidComponent;
 struct UuidToHandleMappingComponent;
 
+struct MoveableObject;
+struct RenderableObject;
+struct Visual;
+
 namespace resource
 {
 	struct GuidResource;
@@ -130,6 +134,11 @@ namespace lua
 
 	struct CppObjectMetadata;
 	struct CppValueMetadata;
+}
+
+namespace ui
+{
+	struct UIManager;
 }
 
 namespace osidbg

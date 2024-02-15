@@ -553,6 +553,7 @@ sources = [
     'GameDefinitions/Components/Status.h',
     'GameDefinitions/Components/Tadpole.h',
     'GameDefinitions/Stats/Prototype.h',
+    'GameDefinitions/Render.h',
     'GameDefinitions/Resources.h'
 ]
 

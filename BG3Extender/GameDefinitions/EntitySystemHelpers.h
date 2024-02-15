@@ -147,6 +147,12 @@ public:
 		return reinterpret_cast<T*>(GetRawComponent(entityHandle, T::ComponentType));
 	}
 
+	template <class T>
+	T* GetSystem()
+	{
+		return reinterpret_cast<T*>(GetRawSystem(T::SystemType));
+	}
+
 	virtual EntityWorld* GetEntityWorld() = 0;
 
 	template <class T>
@@ -179,6 +185,7 @@ public:
 	void NotifyReplicationFlagsDirtied();
 
 	void* GetRawComponent(EntityHandle entityHandle, ExtComponentType type);
+	void* GetRawSystem(ExtSystemType type);
 	EntityHandle GetEntityHandle(FixedString const& guidString);
 	EntityHandle GetEntityHandle(Guid const& uuid);
 	UuidToHandleMappingComponent* GetUuidMappings();
@@ -192,6 +199,7 @@ protected:
 	void MapComponentIndices(char const* componentName, ExtComponentType type, std::size_t size, bool isProxy);
 	void MapQueryIndex(char const* name, ExtQueryType type);
 	void MapResourceManagerIndex(char const* componentName, ExtResourceManagerType type);
+	void MapSystemIndex(char const* systemName, ExtSystemType type);
 	void UpdateComponentMappings();
 
 private:
@@ -204,6 +212,7 @@ private:
 	std::array<PerComponentData, (size_t)ExtComponentType::Max> components_;
 	std::array<int32_t, (size_t)ExtQueryType::Max> queryIndices_;
 	std::array<int32_t, (size_t)ExtResourceManagerType::Max> staticDataIndices_;
+	std::array<int32_t, (size_t)ExtSystemType::Max> systemIndices_;
 
 	std::unordered_map<STDString, IndexMappings> componentNameToIndexMappings_;
 	std::unordered_map<ComponentTypeIndex, STDString const*> componentIndexToNameMappings_;

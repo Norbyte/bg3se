@@ -464,6 +464,7 @@
     <ClInclude Include="GameDefinitions\Components\Shapeshift.h" />
     <ClInclude Include="Lua\Shared\EntityComponentEvents.h" />
     <ClInclude Include="Lua\Shared\RawComponentRef.h" />
+    <ClInclude Include="GameDefinitions\Render.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

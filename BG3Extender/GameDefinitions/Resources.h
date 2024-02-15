@@ -171,31 +171,29 @@ struct [[bg3::hidden]] ResourceManager
 	__int64 field_0;
 	Map<FixedString, resource::Resource*> Resources;
 	std::array<ResourceBank*, 2> ResourceBanks;
-	__int64 field_30; // Unknown pointer; size 1
-	__int64 field_38;
-	Array<FixedString> field_40;
-	__int64 field_50; // Unknown pointer; size 0x50
+	void* MeshProxyFactory;
+	void* VisualFactory;
+	Array<FixedString> AnimationPreloadList;
+	__int64 EffectManager;
 	__int64 EffectFactory;
 	__int64 field_60; // Unknown pointer; size 0x50
 	__int64 field_68; // Unknown pointer; size 0x50
 	__int64 field_70; // Unknown pointer; size 0x50
 	__int64 field_78; // Unknown pointer; size 0x90
 	__int64 field_80; // Unknown pointer; size 0x23e0
-	__int64 field_88; // Unknown pointer; size 8
-	__int64 SoundManager_M;
-	__int64 field_98;
-	__int64 field_A0;
-	VirtualTextureManager* VirtualTextureManager; // Unknown pointer; has vtable with a deleting destructor
+	__int64 SoundManager;
+	__int64 VideoManager;
+	__int64 VideoManager2;
+	__int64 GameAnalytics;
+	VirtualTextureManager* VirtualTextureManager;
 	CRITICAL_SECTION CriticalSection;
-	RefMap<STDString, void*> Unknown; // std::string -> ???
-	Map<FixedString, Path*> Paths;
-	Array<void*> Unknown2;            // Contains objects of size 0x20
-	Map<FixedString, void*> Unknown3; // Points to objects of size 0x110
-	__int64 field_130;                                // Unknown pointer; size 0x180
-	__int64 field_138; // Unknown pointer; size 0x40. Initialized to same pointer as field_140.
-					   // Has virtual destructor.
-	__int64 UI_M;      // Unknown pointer; size 0x40. Initialized to same pointer as field_138. Has
-					   // virtual destructor.
+	RefMap<STDString, void*> ResourceDependencies;
+	Map<FixedString, Path*> Sources;
+	Array<void*> VisualLoaders;
+	Map<FixedString, void*> GenomeAnimationManagers;
+	void* BlueprintManager;
+	ui::UIManager* UIManager;
+	ui::UIManager* UIManagerSwap;
 };
 
 END_SE()
@@ -2809,7 +2807,7 @@ struct VisualResource : public TwoStepLoadableResource
 	struct ClothProxy
 	{
 		FixedString Name;
-		Array<uint16_t> ClosestVertices;
+		[[bg3::hidden]] Array<uint16_t> ClosestVertices;
 		[[bg3::hidden]] void* CompressedVertices;
 		[[bg3::hidden]] uint32_t CompressedSize;
 		[[bg3::hidden]] uint32_t NbClosestVertices;

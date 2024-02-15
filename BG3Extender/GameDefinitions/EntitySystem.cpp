@@ -307,7 +307,8 @@ RuntimeCheckLevel EntitySystemHelpersBase::CheckLevel{ RuntimeCheckLevel::FullEC
 
 EntitySystemHelpersBase::EntitySystemHelpersBase()
 	: queryIndices_{ UndefinedIndex },
-	staticDataIndices_{ UndefinedIndex }
+	staticDataIndices_{ UndefinedIndex },
+	systemIndices_{ UndefinedIndex }
 {}
 
 STDString SimplifyComponentName(StringView name)
@@ -459,6 +460,7 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 	components_.fill(PerComponentData{});
 	queryIndices_.fill(UndefinedIndex);
 	staticDataIndices_.fill(UndefinedIndex);
+	systemIndices_.fill(UndefinedIndex);
 
 	std::unordered_map<int32_t*, TypeIdContext> contexts;
 	for (auto const& context : GetStaticSymbols().IndexSymbolToContextMaps) {
@@ -521,6 +523,7 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 	#undef T
 
 	MapQueryIndex("ecs::query::spec::Spec<struct ls::TypeList<struct ls::uuid::ToHandleMappingComponent>,struct ls::TypeList<>,struct ls::TypeList<>,struct ls::TypeList<>,struct ls::TypeList<>,struct ls::TypeList<>,struct ecs::QueryTypePersistentTag,struct ecs::QueryTypeAliveTag>", ExtQueryType::UuidToHandleMapping);
+	MapSystemIndex("ecl::UISystem", ExtSystemType::UISystem);
 
 #define FOR_RESOURCE_TYPE(cls) MapResourceManagerIndex(resource::cls::EngineClass, resource::cls::ResourceManagerType);
 	FOR_EACH_GUID_RESOURCE_TYPE()
@@ -571,6 +574,16 @@ void EntitySystemHelpersBase::MapResourceManagerIndex(char const* componentName,
 	}
 }
 
+void EntitySystemHelpersBase::MapSystemIndex(char const* systemName, ExtSystemType type)
+{
+	auto it = systemIndexMappings_.find(systemName);
+	if (it != systemIndexMappings_.end()) {
+		systemIndices_[(unsigned)type] = it->second;
+	} else {
+		OsiWarn("Could not find index for system: " << systemName);
+	}
+}
+
 void* EntitySystemHelpersBase::GetRawComponent(Guid const& guid, ExtComponentType type)
 {
 	auto handle = GetEntityHandle(guid);
@@ -601,6 +614,21 @@ void* EntitySystemHelpersBase::GetRawComponent(EntityHandle entityHandle, ExtCom
 	auto const& meta = GetComponentMeta(type);
 	if (meta.ComponentIndex != UndefinedComponent) {
 		return world->GetRawComponent(entityHandle, meta.ComponentIndex, meta.Size, meta.IsProxy);
+	} else {
+		return nullptr;
+	}
+}
+
+void* EntitySystemHelpersBase::GetRawSystem(ExtSystemType type)
+{
+	auto world = GetEntityWorld();
+	if (!world) {
+		return nullptr;
+	}
+
+	auto index = systemIndices_[(unsigned)type];
+	if (index != UndefinedComponent) {
+		return world->Systems.Systems[index].System;
 	} else {
 		return nullptr;
 	}

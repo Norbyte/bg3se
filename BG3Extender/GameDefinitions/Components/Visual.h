@@ -32,9 +32,10 @@ struct VisualComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::Visual;
 	static constexpr auto EngineClass = "ls::VisualComponent";
 
-	__int64 field_18;
-	uint8_t field_20;
-	uint8_t field_21;
+	Visual* Visual;
+	uint8_t field_8;
+	uint8_t field_9;
+	bool NotClustered;
 };
 
 struct GameObjectVisualData
@@ -188,5 +189,63 @@ struct IconListComponent : public BaseComponent
 	Array<Icon> Icons;
 	uint8_t field_30;
 };
+
+END_NS()
+
+BEGIN_NS(ecl)
+
+
+struct EquipmentVisualData
+{
+	Array<FixedString> VisualTemplates;
+	FixedString BoneSheathed;
+	FixedString SourceBoneSheathed;
+	FixedString field_18;
+	EntityHandle field_20;
+	Array<resource::PresetData::ScalarParameter> ScalarParameters;
+	Array<resource::PresetData::Vector3Parameter> Vector3Parameters;
+	uint8_t HairType;
+	ecs::EntityRef Item;
+	uint32_t Flags_60;
+	uint16_t Flags_64;
+	uint32_t SlotAndFlags;
+	uint8_t Flags_6C;
+};
+
+
+struct EquipmentVisualRequest
+{
+	struct SubVisualRequest
+	{
+		FixedString VisualTemplate;
+		EntityHandle VisualEntity;
+		[[bg3::hidden]] void* LoadRequest_M;
+		bool Processed;
+	};
+
+	Array<EntityHandle> Item;
+	Array<SubVisualRequest> SubRequests;
+	EquipmentVisualData Data;
+	EntityHandle field_90;
+};
+
+
+struct EquipmentVisualsComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ClientEquipmentVisuals;
+	static constexpr auto EngineClass = "ecl::EquipmentVisualsComponent";
+
+	struct VisualElement
+	{
+		EntityHandle Item;
+		Array<EntityHandle> SubVisuals;
+		EquipmentVisualRequest* VisualRequest;
+		bool field_20;
+	};
+
+	EntityHandle Entity;
+	std::array<VisualElement, 19> Equipment;
+};
+
 
 END_NS()
