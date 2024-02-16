@@ -98,6 +98,14 @@ struct DisplayNameComponent : public BaseComponent
 	TranslatedString UnknownKey;
 };
 
+struct CustomNameComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::CustomName;
+	static constexpr auto EngineClass = "eoc::CustomNameComponent";
+
+	STDString Name;
+};
+
 struct GameplayLightComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::GameplayLight;
