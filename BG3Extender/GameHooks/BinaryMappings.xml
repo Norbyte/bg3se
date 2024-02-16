@@ -145,7 +145,7 @@
           74 0f // jz      short loc_1404F9525
           48 8b d3 // mov     rdx, rbx
           @ref2 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:esv__gEocServer
-          e8 8b a8 1d 00 // call    sub_1406D3DB0
+          e8 ?? ?? ?? ?? // call    sub_1406D3DB0
           @ref3 48 8b 3d ?? ?? ?? ?? // mov     rdi, cs:ecl__gEoCClient
           48 8b d3 // mov     rdx, rbx
           48 8b 8f 98 00 00 00 // mov     rcx, [rdi+98h]
@@ -754,9 +754,9 @@
 
       <Mapping Name="eoc::InterruptPrototypeManager" Scope="Custom">
         @ref1 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:eoc__gInterruptPrototypeManager
-        e8 a8 df 5f fe // call    sub_140E4ECD0
+        e8 ?? ?? ?? ?? // call    sub_140E4ECD0
         @ref2 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:eoc__gSpellPrototypeManager
-        e8 6c 12 5c fe // call    sub_140E11FA0
+        e8 ?? ?? ?? ?? // call    sub_140E11FA0
         48 8b 15 ?? ?? ?? ?? // mov     rdx, cs:gRPGStats
         @ref3 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:eoc__gCriticalHitTypeManager
         e8 ?? ?? ?? ?? // call    sub_140E4D460
