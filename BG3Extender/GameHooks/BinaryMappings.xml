@@ -114,6 +114,7 @@
         </Mapping>
 
         <Mapping Name="ls__PathRoots" Critical="true">
+	<!-- Patch 5	
           c7 81 a4 00 00 00 00 00 04 00 // mov     dword ptr [rcx+0A4h], 40000h
           48 89 b9 a8 00 00 00 // mov     [rcx+0A8h], rdi
           89 b9 b0 00 00 00 // mov     [rcx+0B0h], edi
@@ -124,6 +125,17 @@
           48 81 c1 c8 00 00 00 // add     rcx, 0C8h ; 'È'
           @ref1 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:ls__gPathRoots
           48 8b d0 // mov     rdx, rax
+		  -->
+          66 44 89 89 a4 00 00 00 	// mov [rcx+000000a4],r9w
+          0f b6 81 a6 00 00 00     	// movzx eax,byte ptr [rcx+000000a6]
+          24 fe                	// and al,-02 { 254 }
+          24 fd                	// and al,-03 { 253 }
+          24 fb                	// and al,-05 { 251 }
+          88 81 a6 00 00 00       	// mov [rcx+000000a6],al
+          c7 81 a7 00 00 00 04 00 00 00 // mov [rcx+000000a7], 4
+          48 81 c1 b0 00 00 00     	// add rcx,000000b0 { 176 }
+          @ref1 48 8b 05 ?? ?? ?? ??     	// mov rax,[bg3_dx11.exe+5961410]
+          48 8b d0              	// mov rdx,rax
           <Target Type="Indirect" Offset="@ref1" Symbol="ls__PathRoots" />
         </Mapping>
 
@@ -142,14 +154,23 @@
 
         <!-- Sig: reference to strings "gr2", "lsm" -->
         <Mapping Name="EoCServer2/EoCClient2" Critical="true">
-          83 b8 84 07 00 00 02 // cmp     dword ptr [rax+784h], 2
+          <!-- Patch 5
+		  83 b8 84 07 00 00 02 // cmp     dword ptr [rax+784h], 2
           74 0f // jz      short loc_140567F25
           48 8b d3 // mov     rdx, rbx
           @ref1 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:esv__gEocServer
           e8 ?? ?? ?? ?? // call    sub_14072F540
           @ref2 48 8b 3d ?? ?? ?? ?? // mov     rdi, cs:ecl__gEoCClient
           48 8b d3 // mov     rdx, rbx
-          48 8b 8f 98 00 00 00 // mov     rcx, [rdi+098h]
+          48 8b 8f 98 00 00 00 // mov     rcx, [rdi+098h]-->
+		  83 b8 8c 07 00 00 02     // cmp dword ptr [rax+0000078c],02 { 2 }
+		  74 0f                 // je bg3_dx11.exe+4f85f5
+		  48 8b d3              // mov rdx,rbx
+		  @ref1 48 8b 0d ?? ?? ?? ??     // mov rcx,[bg3_dx11.exe+58d99f8] // cs:esv__geocserver
+		  e8 ?? ?? ?? ??           // call bg3_dx11.exe+6d2e10
+		  @ref2 48 8b 3d ?? ?? ?? ??     // mov rdi,[bg3_dx11.exe+58d9a30] // cs:ecl__geocclient
+		  48 8b d3              // mov rdx,rbx
+		  48 8b 8f 98 00 00 00     // mov rcx,[rdi+00000098]			
           <Target Type="Indirect" Offset="@ref1" Symbol="esv__EoCServer" />
           <Target Type="Indirect" Offset="@ref2" Symbol="ecl__EoCClient" />
         </Mapping>
@@ -166,7 +187,8 @@
         </Mapping>
 
         <Mapping Name="ecl::EoCClient::HandleError" Critical="true">
-          41 b0 01 // mov     r8b, 1
+          <!-- Patch 5
+		  41 b0 01 // mov     r8b, 1
           48 8d 54 24 50 // lea     rdx, [rsp+350h+var_300]
           48 8b cf // mov     rcx, rdi
           @ref1 e8 ?? ?? ?? ?? // call    ecl__EocClient__HandleError
@@ -175,20 +197,40 @@
           e9 e1 01 00 00 // jmp     loc_142938339
           48 c7 44 24 28 05 00 00 00 // mov     qword ptr [rsp+350h+a1], 5
           44 8b c8 // mov     r9d, eax
-          @str1 4c 8d 05 ?? ?? ?? ?? // lea     r8, a4x; "%.4x"
+          @str1 4c 8d 05 ?? ?? ?? ?? // lea     r8, a4x; "%.4x"-->
+		  4c 8d 4c 24 38       	// lea r9,[rsp+38]
+		  41 b0 01             	// mov r8b,01 { 1 }
+		  48 8d 54 24 60       	// lea rdx,[rsp+60]
+		  48 8b cf             	// mov rcx,rdi
+		  @ref1 e8 ?? ?? ?? ??          	// call bg3_dx11.exe+555f10			// ecl__eocclient__handleerror
+		  90                   	// nop 
+		  48 8d 4c 24 38       	// lea rcx,[rsp+38]
+		  e9 e6 01 00 00          	// jmp bg3_dx11.exe+2802021
+		  48 c7 44 24 38 05 00 00 00 // mov qword ptr [rsp+38],00000005 { 00000005 }
+		  44 8b c8              	// mov r9d,eax
+		  @str1 4c 8d 05 ?? ?? ?? ??     	// lea r8,[bg3_dx11.exe+5093c30] { ("%.4x") }
           <Condition Type="String" Offset="@str1" Value="%.4x" />
           <Target Type="Indirect" Offset="@ref1" Symbol="ecl__EoCClient__HandleError" />
         </Mapping>
 
         <Mapping Name="ecl::GameStateMachine::Update" Critical="true">
-          48 8b d3 // mov     rdx, rbx
+          <!-- Patch 5
+		  48 8b d3 // mov     rdx, rbx
           48 8b 8f 90 00 00 00 // mov     rcx, [rdi+90h]
           @ref1 e8 ?? ?? ?? ?? // call    ecl__GameStateMachine__Update
           48 8b d3 // mov     rdx, rbx
           48 8b 8f 58 01 00 00 // mov     rcx, [rdi+158h]
           e8 ?? ?? ?? ?? // call    sub_143693EC0
           48 8b 8f a8 00 00 00 // mov     rcx, [rdi+0A8h]
-          48 85 c9 // test    rcx, rcx
+          48 85 c9 // test    rcx, rcx-->
+		  48 8b d3              // mov rdx,rbx
+		  48 8b 8f 90 00 00 00     // mov rcx,[rdi+00000090]
+		  @ref1 e8 ?? ?? ?? ??           // call bg3_dx11.exe+278eab0		// ecl__gamestatemachine__update
+		  48 8b d3              // mov rdx,rbx
+		  48 8b 8f 98 01 00 00     // mov rcx,[rdi+00000198]
+		  e8 ?? ?? ?? ??           // call bg3_dx11.exe+364e960
+		  48 8b 8f a8 00 00 00     // mov rcx,[rdi+000000a8]
+		  48 85 c9              // test rcx,rcx
           <Target Type="Indirect" Offset="@ref1" Symbol="ecl__GameStateMachine__Update" />
         </Mapping>
 
@@ -395,7 +437,8 @@
 
       <!-- Sig: call from DealDamageFunctor::ApplyDamage, near ref to PassiveSystemID -->
       <Mapping Name="esv::StatsSystem::ThrowDamageEvent">
-        0f b6 45 82 // movzx   eax, [rbp+0EB0h+var_F2E]
+        <!-- Patch 5
+		0f b6 45 82 // movzx   eax, [rbp+0EB0h+var_F2E]
         88 44 24 20 // mov     [rsp+0FB0h+a5], al; a5
         4c 8d 8d 20 09 00 00 // lea     r9, [rbp+0EB0h+damageAmounts]; damageAmounts
         4c 8d 85 30 05 00 00 // lea     r8, [rbp+0EB0h+hit]; hit
@@ -405,8 +448,18 @@
         80 bd 36 05 00 00 0a // cmp     [rbp+0EB0h+hit.CauseType], 0Ah
         0f 84 9c 01 00 00 // jz      loc_142548D64
         83 bd 30 05 00 00 00 // cmp     [rbp+0EB0h+hit.TotalDamageDone], 0
-        41 0f 9f c4 // setnle  r12b
-        <Target Type="Indirect" Offset="@ref1" Symbol="esv__StatsSystem__ThrowDamageEvent" />
+        41 0f 9f c4 // setnle  r12b-->
+		0f b6 45 82           // movzx eax,byte ptr [rbp-7e]
+		88 44 24 20          // mov [rsp+20],al
+		4c 8d 8d 50 09 00 00    // lea r9,[rbp+00000950]
+		4c 8d 85 60 05 00 00    // lea r8,[rbp+00000560]
+		48 8d 95 40 02 00 00    // lea rdx,[rbp+00000240]
+		48 8b 4d 50          // mov rcx,[rbp+50]
+		@ref1 e8 ?? ?? ?? ??          // call bg3_dx11.exe+2052fe0
+		80 bd 66 05 00 00 0a    // cmp byte ptr [rbp+00000566],0a { 10 }
+		0f84 9f 01 00 00        // je bg3_dx11.exe+24f39e7
+		83 bd 60 05 00 00 00    // cmp dword ptr [rbp+00000560],00 { 0 }
+		<Target Type="Indirect" Offset="@ref1" Symbol="esv__StatsSystem__ThrowDamageEvent" />
       </Mapping>
 
       <!-- Sig: call from osi::ApplyDamage -->
@@ -454,14 +507,23 @@
         </Mapping>
 
         <Mapping Name="RPGStats">
-          44 8b 40 18 // mov     r8d, [rax+18h]
+          <!--Patch 5
+		  44 8b 40 18 // mov     r8d, [rax+18h]
           @ref1 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:gRPGStats
           48 85 c0 // test    rax, rax
           74 1e // jz      short loc_143AF0CC3
           48 8b 88 88 02 00 00 // mov     rcx, [rax+288h]
           48 85 c9 // test    rcx, rcx
           74 12 // jz      short loc_143AF0CC3
-          @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, fs_WisdomTierHigh
+          @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, fs_WisdomTierHigh-->
+		  8b 78 18              // mov edi,[rax+18]
+		  @ref1 48 8b 05 ?? ?? ?? ??     // mov rax,[bg3_dx11.exe+58d9a10]	//  cs:gRPGStats
+		  48 85 c0              // test rax,rax
+		  74 36                 // je bg3_dx11.exe+39cab3a
+		  48 8b 88 a8 02 00 00     // mov rcx,[rax+000002a8]
+		  48 85 c9              // test rcx,rcx
+		  74 2a                 // je bg3_dx11.exe+39cab3a
+		  @str1 4c 8d 05 ?? ?? ?? ??     // lea r8,[bg3_dx11.exe+5797b74]	// fs_WisdomTierHigh
           <Condition Type="FixedString" Offset="@str1" Value="WisdomTierHigh" />
           <Target Type="Indirect" Offset="@ref1" Symbol="gRPGStats" />
         </Mapping>
@@ -477,7 +539,8 @@
         </Mapping>
 
         <Mapping Name="RPGStats::Load">
-          48 89 5c 24 18 // mov     [rsp-8+arg_10], rbx
+          <!-- Patch 5
+		  48 89 5c 24 18 // mov     [rsp-8+arg_10], rbx
           55 // push    rbp
           56 // push    rsi
           57 // push    rdi
@@ -493,7 +556,24 @@
           4c 8b e2 // mov     r12, rdx
           4c 8b f1 // mov     r14, rcx
           48 81 c1 e8 03 00 00 // add     rcx, 3E8h
-          48 89 4d a7 // mov     [rbp+57h+var_B0], rcx
+          48 89 4d a7 // mov     [rbp+57h+var_B0], rcx-->
+		  48 89 5c 24 18        // mov [rsp+18],rbx
+		  55                    // push rbp
+		  56                    // push rsi
+		  57                    // push rdi
+		  41 54                 // push r12
+		  41 55                 // push r13
+		  41 56                 // push r14
+		  41 57                 // push r15
+		  48 8d 6c 24 d9        // lea rbp,[rsp-27]
+		  48 81 ec c0 00 00 00     // sub rsp,000000c0 { 192 }
+		  @ref1 48 8b 05 ?? ?? ?? ??     // mov rax,[bg3_dx11.exe+5764830] { (0.00) }
+		  48 33 c4              // xor rax,rsp
+		  48 89 45 17           // mov [rbp+17],rax
+		  4c 8b e2              // mov r12,rdx
+		  4c 8b f1              // mov r14,rcx
+		  48 81 c1 04 04 00 00     // add rcx,00000404 { 1028 }
+		  48 89 4d a7           // mov [rbp-59],rcx
           <Target Type="Absolute" Offset="0" Symbol="RPGStats__Load" />
           <Target Type="Absolute" Offset="0" NextSymbol="RPGStats::PreParseDataFolder" NextSymbolSeekSize="0x180" />
         </Mapping>
@@ -792,14 +872,21 @@
       </Mapping>
 
         <Mapping Name="ls::GlobalSwitches">
-          48 8b ec // mov     rbp, rsp
+          <!-- Patch 5
+		  48 8b ec // mov     rbp, rsp
           48 83 ec 30 // sub     rsp, 30h
           @ref1 4c 8b 15 ?? ?? ?? ?? // mov     r10, cs:ls__gGlobalSwitches
           48 8b f2 // mov     rsi, rdx
           @str1 48 8b 15 ?? ?? ?? ?? // mov     rdx, cs:pfs_UseEndTurnFallback; _DWORD *
           48 8b d9 // mov     rbx, rcx
-          41 c6 82 a8 01 00 00 01 // mov     byte ptr [r10+1A8h], 1
-          <Condition Type="FixedStringIndirect" Offset="@str1" Value="UseEndTurnFallback" />
+          41 c6 82 a8 01 00 00 01 // mov     byte ptr [r10+1A8h], 1-->
+		  48 8b ec              // mov rbp,rsp
+		  48 83 ec 30           // sub rsp,30 { 48 }
+		  @ref1 4c 8b 15 ?? ?? ?? ??     // mov r10,[bg3_dx11.exe+59614b0] // cs:ls__gglobalswitches
+		  48 8b d9              // mov rbx,rcx
+		  @str1 48 8b 15 ?? ?? ?? ??     // mov rdx,[bg3_dx11.exe+58c3ae8] // cs:pfs_useendturnfallback; _dword *
+		  41 c6 82 a8 01 00 00 01  // mov byte ptr [r10+000001a8],01 { 1 }
+		  <Condition Type="FixedStringIndirect" Offset="@str1" Value="UseEndTurnFallback" />
           <Target Type="Indirect" Offset="@ref1" Symbol="ls__GlobalSwitches" />
         </Mapping>
 
