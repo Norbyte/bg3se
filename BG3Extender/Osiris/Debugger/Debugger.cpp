@@ -662,7 +662,6 @@ namespace bg3se::osidbg
 
 		AdapterRef adapterRef;
 		adapterRef.Id = adapter->Id;
-		adapterRef.Manager = adapter->Db;
 
 		breakpoints_.SetDebuggingDisabled(true);
 

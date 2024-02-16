@@ -3,6 +3,39 @@
 #include <Lua/LuaBinding.h>
 #include <fstream>
 
+BEGIN_SE()
+
+Database* DatabaseRef::Get() const
+{
+	auto manager = *gExtender->GetServer().Osiris().GetGlobals().Databases;
+	if (Id == 0 || manager == nullptr) {
+		return nullptr;
+	}
+
+	return manager->Db.Elements[Id - 1];
+}
+
+Adapter* AdapterRef::Get() const
+{
+	auto manager = *gExtender->GetServer().Osiris().GetGlobals().Adapters;
+	if (Id == 0 || manager == nullptr) {
+		return nullptr;
+	}
+
+	return manager->Db.Elements[Id - 1];
+}
+
+Node* NodeRef::Get() const
+{
+	auto manager = *gExtender->GetServer().Osiris().GetGlobals().Nodes;
+	if (Id == 0 || manager == nullptr) {
+		return nullptr;
+	}
+
+	return manager->Db.Elements[Id - 1];
+}
+
+END_SE()
 
 namespace bg3se::esv::lua
 {
@@ -270,7 +303,6 @@ namespace bg3se::esv::lua
 				return false;
 			}
 
-			adapter_.Manager = *gExtender->GetServer().Osiris().GetGlobals().Adapters;
 			adapter_.Id = adapter->Id;
 		}
 

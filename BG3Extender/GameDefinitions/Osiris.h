@@ -756,25 +756,25 @@ using DatabaseDb = TypedDb<Database>;
 using AdapterDb = TypedDb<Adapter>;
 using NodeDb = TypedDb<Node>;
 
-template <typename T>
 struct OsirisRef
 {
 	uint32_t Id;
-	TypedDb<T> * Manager;
-
-	T * Get() const
-	{
-		if (Id == 0 || Manager == nullptr) {
-			return nullptr;
-		}
-
-		return Manager->Db.Elements[Id - 1];
-	}
 };
 
-typedef OsirisRef<Database> DatabaseRef;
-typedef OsirisRef<Adapter> AdapterRef;
-typedef OsirisRef<Node> NodeRef;
+struct DatabaseRef : OsirisRef
+{
+	Database* Get() const;
+};
+
+struct AdapterRef : OsirisRef
+{
+	Adapter* Get() const;
+};
+
+struct NodeRef : OsirisRef
+{
+	Node* Get() const;
+};
 
 enum class EntryPoint : uint32_t
 {
@@ -966,7 +966,6 @@ public:
 
 
 	uint32_t Id;
-	NodeDb * NodeDb;
 	Function * Function;
 	DatabaseRef Database;
 };
