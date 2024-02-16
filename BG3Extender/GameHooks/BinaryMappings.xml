@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <BinaryMappings>
-  <Mappings Version="4.40.61.76" Default="true">
+  <Mappings Version="4.47.63.76" Default="true">
     <DllImport Module="Kernel32" Proc="FindFirstFileW" Symbol="Kernel_FindFirstFileW" />
     <DllImport Module="Kernel32" Proc="FindNextFileW" Symbol="Kernel_FindNextFileW" />
     <DllImport Module="Kernel32" Proc="FindClose" Symbol="Kernel_FindClose" />
