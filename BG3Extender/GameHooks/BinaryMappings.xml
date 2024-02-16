@@ -457,7 +457,7 @@
 		48 8b 4d 50          // mov rcx,[rbp+50]
 		@ref1 e8 ?? ?? ?? ??          // call bg3_dx11.exe+2052fe0
 		80 bd 66 05 00 00 0a    // cmp byte ptr [rbp+00000566],0a { 10 }
-		0f84 9f 01 00 00        // je bg3_dx11.exe+24f39e7
+		0f 84 9f 01 00 00        // je bg3_dx11.exe+24f39e7
 		83 bd 60 05 00 00 00    // cmp dword ptr [rbp+00000560],00 { 0 }
 		<Target Type="Indirect" Offset="@ref1" Symbol="esv__StatsSystem__ThrowDamageEvent" />
       </Mapping>
