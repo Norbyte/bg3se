@@ -523,21 +523,21 @@ namespace bg3se::osidbg
 			break;
 
 		case ValueType::Integer:
-			tv.Value.Val.Int32 = (int32_t)msg.intval();
+			tv.Value.Int32 = (int32_t)msg.intval();
 			break;
 
 		case ValueType::Integer64:
-			tv.Value.Val.Int64 = msg.intval();
+			tv.Value.Int64 = msg.intval();
 			break;
 
 		case ValueType::Real:
-			tv.Value.Val.Float = msg.floatval();
+			tv.Value.Float = msg.floatval();
 			break;
 
 		case ValueType::String:
 		case ValueType::GuidString:
 		default:
-			tv.Value.Val.String = _strdup(msg.stringval().c_str());
+			tv.Value.String = _strdup(msg.stringval().c_str());
 			break;
 		}
 	}
@@ -660,9 +660,6 @@ namespace bg3se::osidbg
 			return ResultCode::EvalEngineNotReady;
 		}
 
-		AdapterRef adapterRef;
-		adapterRef.Id = adapter->Id;
-
 		breakpoints_.SetDebuggingDisabled(true);
 
 		switch (type)
@@ -672,13 +669,13 @@ namespace bg3se::osidbg
 			VirtTupleLL tuple;
 			MsgToTuple(params, tuple, globals_.TypedValueVMT);
 			// Evaluate whether the query succeeds
-			querySucceeded = node->IsValid(&tuple, &adapterRef);
+			querySucceeded = node->IsValid(&tuple, adapter->Id);
 			// Fetch output values
 			TupClearOutParams(tuple, *sig);
-			node->IsValid(&tuple, &adapterRef);
+			node->IsValid(&tuple, adapter->Id);
 			// TODO - We need to do this twice, for some reason
 			TupClearOutParams(tuple, *sig);
-			node->IsValid(&tuple, &adapterRef);
+			node->IsValid(&tuple, adapter->Id);
 			messageHandler_.SendEvaluateRow(seq, tuple);
 			break;
 		}
@@ -818,7 +815,7 @@ namespace bg3se::osidbg
 		callStack_.pop_back();
 	}
 
-	void Debugger::IsValidPreHook(Node * node, VirtTupleLL * tuple, AdapterRef * adapter)
+	void Debugger::IsValidPreHook(Node * node, VirtTupleLL * tuple, uint32_t adapter)
 	{
 		ServerThreadReentry();
 		PushFrame({ BreakpointReason::NodeIsValid, node, nullptr, 0, &tuple->Data, nullptr });
@@ -833,7 +830,7 @@ namespace bg3se::osidbg
 			GlobalBreakOnValid);
 	}
 
-	void Debugger::IsValidPostHook(Node * node, VirtTupleLL * tuple, AdapterRef * adapter, bool succeeded)
+	void Debugger::IsValidPostHook(Node * node, VirtTupleLL * tuple, uint32_t adapter, bool succeeded)
 	{
 		hasLastQueryInfo_ = true;
 		lastQueryDepth_ = (uint32_t)callStack_.size();
@@ -849,7 +846,7 @@ namespace bg3se::osidbg
 		PopFrame({ BreakpointReason::NodeIsValid, node, nullptr, 0, &tuple->Data, nullptr });
 	}
 
-	void Debugger::PushDownPreHook(Node * node, VirtTupleLL * tuple, AdapterRef * adapter, EntryPoint entry, bool deleted)
+	void Debugger::PushDownPreHook(Node * node, VirtTupleLL * tuple, uint32_t adapter, EntryPoint entry, bool deleted)
 	{
 		ServerThreadReentry();
 		auto reason = deleted ? BreakpointReason::NodePushDownTupleDelete : BreakpointReason::NodePushDownTuple;
@@ -867,7 +864,7 @@ namespace bg3se::osidbg
 		hasLastQueryInfo_ = false;
 	}
 
-	void Debugger::PushDownPostHook(Node * node, VirtTupleLL * tuple, AdapterRef * adapter, EntryPoint entry, bool deleted)
+	void Debugger::PushDownPostHook(Node * node, VirtTupleLL * tuple, uint32_t adapter, EntryPoint entry, bool deleted)
 	{
 		// Trigger a failed query breakpoint if the last query didn't succeed
 		if (hasLastQueryInfo_
@@ -985,8 +982,8 @@ namespace bg3se::osidbg
 			&& strcmp(action->FunctionName, "DebugBreak") == 0) {
 			TypedValue * message = action->Arguments->Args.Head->Next->Item;
 			if (message->TypeId == (uint32_t)ValueType::String
-				&& message->Value.Val.String != nullptr) {
-				messageHandler_.SendDebugOutput(message->Value.Val.String);
+				&& message->Value.String != nullptr) {
+				messageHandler_.SendDebugOutput(message->Value.String);
 			}
 			else {
 				WARN("Invalid message parameter type for DebugBreak(): %d", message->TypeId);

@@ -145,23 +145,30 @@ void OsirisExtender::OnRegisterDIVFunctions(void * Osiris, DivFunctions * Functi
 
 	// Look for TypedValue::VMT
 	uint8_t const copyCtor1[] = {
-		0x4c, 0x8b, 0xf2, // mov     r14, rdx
-		0x48, 0x8b, 0xe9, // mov     rbp, rcx
-		0x33, 0xf6, // xor     esi, esi
-		0x40, 0x38, 0x71, 0x10, // cmp     [rcx+10h], sil
-		0x0f, 0x86, 0x28, 0x01, 0x00, 0x00, // jbe     loc_18001D0A2
-		0x4c, 0x8d, 0x3d // lea     r15, TypedValue__VMT
+		0x48, 0x83, 0xec, 0x20, // sub     rsp, 20h
+		0x48, 0x8b, 0xd9, // mov     rbx, rcx
+		0x48, 0x8d, 0x05 // lea     rax, TypedValue__VMT
+	};
+
+	uint8_t const copyCtor2[] = {
+		0x48, 0x89, 0x01, // mov     [rcx], rax
+		0x0f, 0xb7, 0x41, 0x10 // movzx   eax, word ptr [rcx+10h]
 	};
 
 	auto start = reinterpret_cast<uint8_t *>(wrappers_.OsirisDllStart);
 	auto end = start + wrappers_.OsirisDllSize - sizeof(copyCtor1);
 
 	for (auto p = start; p < end; p++) {
-		if (*p == 0x4c
-			&& memcmp(copyCtor1, p, sizeof(copyCtor1)) == 0) {
-			wrappers_.Globals.TypedValueVMT = (void *)AsmResolveInstructionRef(p + 18);
+		if (*p == 0x48
+			&& memcmp(copyCtor1, p, sizeof(copyCtor1)) == 0
+			&& memcmp(copyCtor2, p + 14, sizeof(copyCtor2)) == 0) {
+			wrappers_.Globals.TypedValueVMT = (void *)AsmResolveInstructionRef(p + 7);
 			break;
 		}
+	}
+
+	if (wrappers_.Globals.TypedValueVMT == nullptr) {
+		ERR("Could not find TypedValue vtable");
 	}
 
 	if (config_.EnableLogging) {

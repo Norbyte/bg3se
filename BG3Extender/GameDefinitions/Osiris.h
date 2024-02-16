@@ -587,7 +587,7 @@ struct SomeDbItem
 	SomeDbItem * Next;
 };
 
-union Value
+union ValueUnion
 {
 	int64_t Int64;
 	float Float;
@@ -597,7 +597,7 @@ union Value
 
 struct RawValue
 {
-	Value Val;
+	ValueUnion Val;
 	uint32_t Unknown{ 0 };
 	OsiString Str;
 };
@@ -622,9 +622,8 @@ public:
 	virtual bool IsAdapted();*/
 
 	void * VMT{ nullptr };
-
+	ValueUnion Value;
 	uint16_t TypeId{ 0 };
-	RawValue Value;
 };
 
 struct DatabaseParam
@@ -651,10 +650,22 @@ public:
 	uint32_t Unknown{ 0 };
 };
 
+class SmallTuple
+{
+public:
+	virtual ~SmallTuple();
+	virtual void DebugDump();
+
+	void Resize(uint32_t size);
+
+	TypedValue * Values{ nullptr };
+	uint8_t Size{ 0 };
+};
+
 struct TuplePtrLL
 {
 	void* VMT{ nullptr };
-	List<TypedValue *> Items;
+	List<TypedValue*> Items;
 };
 
 struct TupleLL
@@ -679,7 +690,6 @@ public:
 struct Database : public ProtectedGameObject<Database>
 {
 	uint32_t DatabaseId;
-	uint64_t B;
 	SomeDbItem Items[16];
 	uint64_t C;
 	void * FactsVMT;
@@ -745,7 +755,6 @@ class Node;
 struct Adapter : public ProtectedGameObject<Adapter>
 {
 	uint32_t Id;
-	TypedDb<Adapter> * Db;
 	TMap<uint8_t, uint8_t> VarToColumnMaps;
 	uint64_t VarToColumnMapCount;
 	Vector<int8_t> ColumnToVarMaps;
@@ -887,14 +896,14 @@ struct NodeVMT
 	using DestroyProc = void (*)(Node * self, bool free);
 	using GetDatabaseRefProc = DatabaseRef * (*)(Node * self, DatabaseRef * ref);
 	using IsDataNodeProc = bool (*)(Node * self);
-	using IsValidProc = bool(*)(Node * self, VirtTupleLL * Values, AdapterRef * Adapter);
+	using IsValidProc = bool(*)(Node * self, VirtTupleLL * Values, uint32_t Adapter);
 	using IsProcProc = bool(*)(Node * self);
 	using IsPartOfAProcProc = bool(*)(Node * self);
 	using GetParentProc = NodeRef * (*)(Node * self, NodeRef * ref);
 	using SetNextNodeProc = void (*)(Node * self, NodeEntryRef * ref);
 	using GetAdapterProc = Adapter * (*)(Node * self, EntryPoint which);
 	using InsertTupleProc = void (*)(Node * self, TuplePtrLL * tuple);
-	using PushDownTupleProc = void(*)(Node * self, VirtTupleLL * tuple, AdapterRef * adapter, EntryPoint entryPoint);
+	using PushDownTupleProc = void(*)(Node * self, VirtTupleLL * tuple, uint32_t adapter, EntryPoint entryPoint);
 	using TriggerInsertEventProc = void (*)(Node * self, TupleVec * tuple);
 	using GetLowDatabaseRefProc = NodeRef * (*)(Node * self, NodeRef * ref);
 	using GetLowDatabaseProc = NodeEntryRef * (*)(Node * self, NodeEntryRef * ref);
@@ -942,16 +951,16 @@ public:
 	virtual DatabaseRef * GetDatabaseRef(DatabaseRef * Db) = 0;
 	virtual DatabaseRef * GetDatabaseRef2(DatabaseRef * Db) = 0;
 	virtual bool IsDataNode() = 0;
-	virtual bool IsValid(VirtTupleLL * Tuple, AdapterRef * Adapter) = 0;
+	virtual bool IsValid(VirtTupleLL* Tuple, uint32_t Adapter) = 0;
 	virtual bool IsProc() = 0;
 	virtual bool IsPartOfAProc() = 0;
 	virtual NodeRef * GetParent(NodeRef * Node) = 0;
 	virtual void SetNextNode(NodeEntryRef * Node) = 0;
 	virtual Adapter * GetAdapter(EntryPoint Which) = 0;
-	virtual void InsertTuple(TuplePtrLL * Tuple) = 0;
-	virtual void PushDownTuple(VirtTupleLL * Tuple, AdapterRef * Adapter, EntryPoint Which, NodeRef Ref) = 0;
-	virtual void DeleteTuple(TuplePtrLL * Tuple) = 0;
-	virtual void PushDownTupleDelete(VirtTupleLL * Tuple, AdapterRef * Adapter, EntryPoint Which, NodeRef Ref) = 0;
+	virtual void InsertTuple(TuplePtrLL* Tuple) = 0;
+	virtual void PushDownTuple(VirtTupleLL * Tuple, uint32_t Adapter, EntryPoint Which) = 0;
+	virtual void DeleteTuple(TuplePtrLL* Tuple) = 0;
+	virtual void PushDownTupleDelete(VirtTupleLL * Tuple, uint32_t Adapter, EntryPoint Which) = 0;
 	virtual void TriggerInsertEvent(TupleVec * Tuple) = 0;
 	virtual void TriggerInsertEvent2(TupleVec * Tuple) = 0;
 	virtual NodeRef * GetLowDatabaseRef(NodeRef * Node) = 0;

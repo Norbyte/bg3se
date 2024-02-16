@@ -100,11 +100,11 @@ namespace bg3se::esv::lua
 
 		switch (GetBaseType(osiType)) {
 		case ValueType::Integer:
-			tv.Value.Val.Int32 = (int32_t)LuaToInt(L, i, type);
+			tv.Value.Int32 = (int32_t)LuaToInt(L, i, type);
 			break;
 
 		case ValueType::Integer64:
-			tv.Value.Val.Int64 = (int64_t)LuaToInt(L, i, type);
+			tv.Value.Int64 = (int64_t)LuaToInt(L, i, type);
 			break;
 
 		case ValueType::Real:
@@ -114,9 +114,9 @@ namespace bg3se::esv::lua
 
 #if LUA_VERSION_NUM > 501
 			if (lua_isinteger(L, i)) {
-				tv.Value.Val.Float = (float)lua_tointeger(L, i);
+				tv.Value.Float = (float)lua_tointeger(L, i);
 			} else {
-				tv.Value.Val.Float = (float)lua_tonumber(L, i);
+				tv.Value.Float = (float)lua_tonumber(L, i);
 			}
 #else
 			tv.Value.Val.Float = (float)lua_tonumber(L, i);
@@ -125,7 +125,7 @@ namespace bg3se::esv::lua
 
 		case ValueType::String:
 		case ValueType::GuidString:
-			tv.Value.Val.String = LuaToString(L, i, type, nullptr);
+			tv.Value.String = LuaToString(L, i, type, nullptr);
 			break;
 
 		default:
@@ -228,20 +228,20 @@ namespace bg3se::esv::lua
 			break;
 
 		case ValueType::Integer:
-			push(L, tv.Value.Val.Int32);
+			push(L, tv.Value.Int32);
 			break;
 
 		case ValueType::Integer64:
-			push(L, tv.Value.Val.Int64);
+			push(L, tv.Value.Int64);
 			break;
 
 		case ValueType::Real:
-			push(L, tv.Value.Val.Float);
+			push(L, tv.Value.Float);
 			break;
 
 		case ValueType::String:
 		case ValueType::GuidString:
-			push(L, tv.Value.Val.String);
+			push(L, tv.Value.String);
 			break;
 
 		default:
@@ -465,19 +465,19 @@ namespace bg3se::esv::lua
 				auto const & v = tuple.Values[i];
 				switch (GetBaseType((ValueType)v.TypeId)) {
 				case ValueType::Integer:
-					if (v.Value.Val.Int32 != lua_tointeger(L, firstIndex + i)) {
+					if (v.Value.Int32 != lua_tointeger(L, firstIndex + i)) {
 						return false;
 					}
 					break;
 
 				case ValueType::Integer64:
-					if (v.Value.Val.Int64 != lua_tointeger(L, firstIndex + i)) {
+					if (v.Value.Int64 != lua_tointeger(L, firstIndex + i)) {
 						return false;
 					}
 					break;
 
 				case ValueType::Real:
-					if (abs(v.Value.Val.Float - lua_tonumber(L, firstIndex + i)) > 0.00001f) {
+					if (abs(v.Value.Float - lua_tonumber(L, firstIndex + i)) > 0.00001f) {
 						return false;
 					}
 					break;
@@ -485,7 +485,7 @@ namespace bg3se::esv::lua
 				case ValueType::String:
 				{
 					auto str = lua_tostring(L, firstIndex + i);
-					if (!str || _stricmp(v.Value.Val.String, str) != 0) {
+					if (!str || _stricmp(v.Value.String, str) != 0) {
 						return false;
 					}
 					break;
@@ -497,8 +497,8 @@ namespace bg3se::esv::lua
 					if (!str) return false;
 
 					auto len = strlen(str);
-					auto valueLen = strlen(v.Value.Val.String);
-					if (valueLen < 36 || len < 36 || _stricmp(&v.Value.Val.String[valueLen - 36], &str[len - 36]) != 0) {
+					auto valueLen = strlen(v.Value.String);
+					if (valueLen < 36 || len < 36 || _stricmp(&v.Value.String[valueLen - 36], &str[len - 36]) != 0) {
 						return false;
 					}
 					break;
@@ -714,7 +714,7 @@ namespace bg3se::esv::lua
 		}
 
 		auto node = (*gExtender->GetServer().Osiris().GetGlobals().Nodes)->Db.Elements[function_->Node.Id - 1];
-		bool valid = node->IsValid(&tuple, &adapter_);
+		bool valid = node->IsValid(&tuple, adapter_.Id);
 		if (valid) {
 			if (outParams > 0) {
 				auto retType = function_->Signature->Params->Params.Head->Next;

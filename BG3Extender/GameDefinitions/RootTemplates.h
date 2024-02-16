@@ -45,23 +45,15 @@ struct GameObjectTemplate
 
     //# P_GETTER(TemplateType, GetTemplateType)
 
-    OverrideableProperty<uint32_t> Flags;
-    [[bg3::hidden]]
-    void* Tags;
-    [[bg3::readonly]]
-    FixedString Id;
-    [[bg3::readonly]]
-    STDString Name;
-    [[bg3::readonly]]
-    FixedString TemplateName;
-    [[bg3::readonly]]
-    FixedString ParentTemplateId;
-    int32_t field_50;
-    bool IsGlobal;
-    bool IsDeleted;
+    [[bg3::readonly]] uint64_t field_8;
+    [[bg3::readonly]] FixedString Id;
+    [[bg3::readonly]] FixedString TemplateName;
+    [[bg3::readonly]] FixedString ParentTemplateId;
+    [[bg3::readonly]] STDString Name;
+    OverrideableProperty<uint32_t> GroupID;
     FixedString LevelName;
     uint8_t _Pad[4];
-    OverrideableProperty<uint32_t> GroupID;
+    OverrideableProperty<glm::vec3> CameraOffset;
     OverrideableProperty<Transform> Transform;
     OverrideableProperty<FixedString> VisualTemplate;
     OverrideableProperty<FixedString> PhysicsTemplate;
@@ -71,11 +63,9 @@ struct GameObjectTemplate
     OverrideableProperty<bool> AllowReceiveDecalWhenAnimated;
     OverrideableProperty<bool> IsReflecting;
     OverrideableProperty<bool> IsShadowProxy;
+    uint8_t GlobalDeletedFlag;
     OverrideableProperty<uint8_t> RenderChannel;
-    OverrideableProperty<glm::vec3> CameraOffset;
-    OverrideableProperty<bool> HasParentModRelation;
-    uint8_t _Pad2[6];
-    OverrideableProperty<bool> HasGameplayValue;
+    uint8_t ParentTemplateFlags;
     STDString FileName;
 };
 
@@ -120,16 +110,16 @@ struct SceneryTemplate : public EoCGameObjectTemplate
     OverrideableProperty<bool> IsBlocker;
     OverrideableProperty<bool> IsDecorative;
     OverrideableProperty<bool> AllowCameraMovement;
+    OverrideableProperty<bool> CanShineThrough;
+    OverrideableProperty<bool> BlockAoEDamage;
+    OverrideableProperty<uint8_t> ShootThroughType;
+    OverrideableProperty<uint8_t> WadableSurfaceType;
+    bool ReferencedInTimeline;
     OverrideableProperty<FixedString> LoopSound;
     OverrideableProperty<FixedString> SoundInitEvent;
-    OverrideableProperty<int16_t> SoundAttenuation;
     OverrideableProperty<Guid> HLOD;
-    OverrideableProperty<uint8_t> ShootThroughType;
-    OverrideableProperty<bool> CanShineThrough;
     OverrideableProperty<FixedString> ShadowPhysicsProxy;
-    OverrideableProperty<uint8_t> WadableSurfaceType;
-    OverrideableProperty<bool> BlockAoEDamage;
-    bool ReferencedInTimeline;
+    OverrideableProperty<int16_t> SoundAttenuation;
 }; 
 
 
@@ -143,7 +133,6 @@ struct CombatComponentTemplate : public ProtectedGameObject<CombatComponentTempl
     OverrideableProperty<bool> CanFight;
     OverrideableProperty<bool> CanJoinCombat;
     OverrideableProperty<FixedString> CombatGroupID;
-    OverrideableProperty<STDString> CombatName;
     OverrideableProperty<bool> IsBoss;
     OverrideableProperty<bool> StayInAiHints;
     OverrideableProperty<Guid> AiHint;
@@ -169,8 +158,6 @@ struct CharacterTemplate : public EoCGameObjectTemplate
     OverrideableProperty<Array<Guid>> EquipmentTypes;
     OverrideableProperty<Array<FixedString>> Treasures;
     OverrideableProperty<Array<FixedString>> TradeTreasures;
-    OverrideableProperty<FixedString> LightID;
-    OverrideableProperty<FixedString> ActiveCharacterLightID;
     OverrideableProperty<FixedString> BloodType;
     OverrideableProperty<FixedString> CriticalHitType;
     OverrideableProperty<FixedString> DefaultDialog;
@@ -189,9 +176,21 @@ struct CharacterTemplate : public EoCGameObjectTemplate
     OverrideableProperty<bool> CanWalkThroughDoors;
     OverrideableProperty<bool> AvoidTraps;
     OverrideableProperty<bool> InfluenceTreasureLevel;
+
+    OverrideableProperty<bool> UseOcclusion;
+    OverrideableProperty<FixedString> SoundInitEvent;
+    OverrideableProperty<FixedString> SoundMovementStartEvent;
+    OverrideableProperty<FixedString> SoundMovementStopEvent;
+    OverrideableProperty<int8_t> SoundObjectIndex;
+    OverrideableProperty<int16_t> SoundAttenuation;
+    OverrideableProperty<bool> UseSoundClustering;
+
     OverrideableProperty<Array<Guid>> ExcludeInDifficulty;
     OverrideableProperty<Array<Guid>> OnlyInDifficulty;
     OverrideableProperty<bool> JumpUpLadders;
+    OverrideableProperty<bool> AnubisNonPersistent;
+    OverrideableProperty<uint8_t> BloodSurfaceType;
+    OverrideableProperty<bool> ForceLifetimeDeath;
     OverrideableProperty<Guid> EquipmentRace;
     [[bg3::hidden]]
     OverrideableProperty<Array<void*>> OnDeathActions;
@@ -199,8 +198,6 @@ struct CharacterTemplate : public EoCGameObjectTemplate
     OverrideableProperty<float> DeathRaycastMaxLength;
     OverrideableProperty<float> DeathRaycastHeight;
     OverrideableProperty<float> DeathRaycastVerticalLength;
-    OverrideableProperty<uint8_t> BloodSurfaceType;
-    OverrideableProperty<bool> ForceLifetimeDeath;
     OverrideableProperty<Guid> DeathEffect;
     OverrideableProperty<FixedString> ExplodedResourceID;
     OverrideableProperty<FixedString> ExplosionFX;
@@ -213,13 +210,6 @@ struct CharacterTemplate : public EoCGameObjectTemplate
     OverrideableProperty<Array<void*>> ItemList;
     OverrideableProperty<Array<FixedString>> StatusList;
     OverrideableProperty<FixedString> TrophyID;
-    OverrideableProperty<FixedString> SoundInitEvent;
-    OverrideableProperty<FixedString> SoundMovementStartEvent;
-    OverrideableProperty<FixedString> SoundMovementStopEvent;
-    OverrideableProperty<int8_t> SoundObjectIndex;
-    OverrideableProperty<int16_t> SoundAttenuation;
-    OverrideableProperty<bool> UseOcclusion;
-    OverrideableProperty<bool> UseSoundClustering;
 
     OverrideableProperty<FixedString> FoleyShortResourceID;
     OverrideableProperty<FixedString> FoleyMediumResourceID;
@@ -261,9 +251,11 @@ struct CharacterTemplate : public EoCGameObjectTemplate
 
     OverrideableProperty<FixedString> CharacterVisualResourceID;
     OverrideableProperty<uint8_t> CoverAmount;
-    OverrideableProperty<int32_t> LevelOverride;
     OverrideableProperty<bool> CanBeTeleported;
+    OverrideableProperty<int32_t> LevelOverride;
     OverrideableProperty<FixedString> ActivationGroupId;
+    OverrideableProperty<uint8_t> AliveInventoryType;
+    OverrideableProperty<uint8_t> InventoryType;
     OverrideableProperty<RefMap<FixedString, FixedString>> PickingPhysicsTemplates;
     OverrideableProperty<FixedString> SoftBodyCollisionTemplate;
     OverrideableProperty<FixedString> RagdollTemplate;
@@ -277,8 +269,6 @@ struct CharacterTemplate : public EoCGameObjectTemplate
     OverrideableProperty<uint8_t> IsTradable;
     OverrideableProperty<bool> IsDroppedOnDeath;
     OverrideableProperty<uint8_t> LightChannel;
-    OverrideableProperty<uint8_t> AliveInventoryType;
-    OverrideableProperty<uint8_t> InventoryType;
     OverrideableProperty<Guid> Race;
     OverrideableProperty<TranslatedString> Title;
     OverrideableProperty<FixedString> AnimationSetResourceID;
@@ -321,6 +311,7 @@ struct CharacterTemplate : public EoCGameObjectTemplate
     OverrideableProperty<FixedString> LadderBlendspace_Attach_Up;
     OverrideableProperty<FixedString> LadderBlendspace_Detach_Down;
     OverrideableProperty<FixedString> LadderBlendspace_Detach_Up;
+    OverrideableProperty<float> VFXScale;
 };
 
 
@@ -365,8 +356,6 @@ struct ItemTemplate : public SceneryTemplate
     OverrideableProperty<bool> IsSurfaceBlocker;
     OverrideableProperty<bool> IsSurfaceCloudBlocker;
     OverrideableProperty<bool> TreasureOnDestroy;
-    OverrideableProperty<Array<Guid>> ExcludeInDifficulty;
-    OverrideableProperty<Array<Guid>> OnlyInDifficulty;
     OverrideableProperty<bool> UsePartyLevelForTreasureLevel;
     OverrideableProperty<bool> Unimportant;
     OverrideableProperty<bool> Hostile;
@@ -376,28 +365,26 @@ struct ItemTemplate : public SceneryTemplate
     OverrideableProperty<bool> CanBeImprovisedWeapon;
     OverrideableProperty<bool> ForceAffectedByAura;
     OverrideableProperty<bool> IsBlueprintDisabledByDefault;
-    OverrideableProperty<uint8_t> IsTradable;
+    OverrideableProperty<Array<Guid>> ExcludeInDifficulty;
+    OverrideableProperty<Array<Guid>> OnlyInDifficulty;
     OverrideableProperty<TranslatedString> UnknownDisplayName;
-    OverrideableProperty<uint8_t> GravityType;
+    OverrideableProperty<bool> ShowAttachedSpellDescriptions;
+    uint8_t GravityType;
+    uint8_t FreezeGravity;
     OverrideableProperty<uint32_t> Tooltip;
     OverrideableProperty<FixedString> Stats;
-    [[bg3::hidden]]
-    OverrideableProperty<Array<void*>> OnUsePeaceActions;
-    [[bg3::hidden]]
-    OverrideableProperty<Array<void*>> OnDestroyActions;
+    [[bg3::hidden]] OverrideableProperty<Array<void*>> OnUsePeaceActions;
+    [[bg3::hidden]] OverrideableProperty<Array<void*>> OnDestroyActions;
     OverrideableProperty<TranslatedString> OnUseDescription;
-    [[bg3::hidden]]
-    OverrideableProperty<Array<void*>> Scripts;
-    [[bg3::hidden]]
-    OverrideableProperty<MultiHashMap<FixedString, void*>> ScriptOverrides;
+    OverrideableProperty<bool> IsPortal;
+    OverrideableProperty<bool> AttackableWhenClickThrough;
+    [[bg3::hidden]] OverrideableProperty<Array<void*>> Scripts;
+    [[bg3::hidden]] OverrideableProperty<MultiHashMap<FixedString, void*>> ScriptOverrides;
     OverrideableProperty<FixedString> AnubisConfigName;
-    [[bg3::hidden]]
-    OverrideableProperty<Array<void*>> ScriptConfigGlobalParameters;
+    [[bg3::hidden]] OverrideableProperty<Array<void*>> ScriptConfigGlobalParameters;
     OverrideableProperty<FixedString> ConstellationConfigName;
-    [[bg3::hidden]]
-    OverrideableProperty<Array<void*>> ConstellationConfigGlobalParameters;
-    [[bg3::hidden]]
-    OverrideableProperty<Array<void*>> ItemList;
+    [[bg3::hidden]] OverrideableProperty<Array<void*>> ConstellationConfigGlobalParameters;
+    [[bg3::hidden]] OverrideableProperty<Array<void*>> ItemList;
     OverrideableProperty<Array<FixedString>> StatusList;
     OverrideableProperty<FixedString> DefaultState;
     OverrideableProperty<FixedString> Owner;
@@ -426,11 +413,10 @@ struct ItemTemplate : public SceneryTemplate
     OverrideableProperty<TranslatedString> DisplayNameAlchemy;
     OverrideableProperty<TranslatedString> Description;
     OverrideableProperty<TranslatedString> TechnicalDescription;
-    OverrideableProperty<STDString> TechnicalDescriptionParams;
     OverrideableProperty<TranslatedString> ShortDescription;
+    OverrideableProperty<STDString> TechnicalDescriptionParams;
     OverrideableProperty<STDString> ShortDescriptionParams;
     OverrideableProperty<TranslatedString> UnknownDescription;
-    OverrideableProperty<bool> ShowAttachedSpellDescriptions;
     OverrideableProperty<FixedString> PermanentWarnings;
     OverrideableProperty<bool> ContainerAutoAddOnPickup;
     OverrideableProperty<STDString> ContainerContentFilterCondition;
@@ -446,8 +432,6 @@ struct ItemTemplate : public SceneryTemplate
     OverrideableProperty<bool> IsPortalProhibitedToPlayers;
     OverrideableProperty<uint8_t> LightChannel;
     OverrideableProperty<Guid> EquipmentTypeID;
-    OverrideableProperty<bool> IsPortal;
-    OverrideableProperty<bool> AttackableWhenClickThrough;
     OverrideableProperty<uint32_t> CinematicArenaFlags;
     OverrideableProperty<Guid> TimelineCameraRigOverride;
     OverrideableProperty<Guid> MaterialPreset;
@@ -464,6 +448,7 @@ struct ProjectileTemplate : public EoCGameObjectTemplate
     OverrideableProperty<STDString> GroundImpactFX;
     OverrideableProperty<FixedString> TrailFX;
     OverrideableProperty<bool> DestroyTrailFXOnImpact;
+    OverrideableProperty<bool> NeedsImpactSFX;
     OverrideableProperty<FixedString> BeamFX;
     OverrideableProperty<FixedString> PreviewPathMaterial;
     OverrideableProperty<FixedString> PreviewPathImpactFX;
@@ -472,7 +457,6 @@ struct ProjectileTemplate : public EoCGameObjectTemplate
     OverrideableProperty<bool> RotateImpact;
     OverrideableProperty<bool> IgnoreRoof;
     OverrideableProperty<bool> DetachBeam;
-    OverrideableProperty<bool> NeedsImpactSFX;
     OverrideableProperty<uint8_t> ProjectilePath;
     OverrideableProperty<float> DistanceMin_Bezier3;
     OverrideableProperty<float> DistanceMax_Bezier3;

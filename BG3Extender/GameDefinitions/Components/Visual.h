@@ -186,7 +186,6 @@ struct IconListComponent : public BaseComponent
 	};
 
 	Array<Icon> Icons;
-	uint8_t field_30;
 };
 
 END_NS()

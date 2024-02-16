@@ -66,17 +66,17 @@ namespace bg3se
 		*vmt_ = originalVmt_;
 	}
 
-	bool NodeVMTWrapper::WrappedIsValid(Node * node, VirtTupleLL * tuple, AdapterRef * adapter)
+	bool NodeVMTWrapper::WrappedIsValid(Node * node, VirtTupleLL * tuple, uint32_t adapter)
 	{
 		return originalVmt_.IsValid(node, tuple, adapter);
 	}
 
-	void NodeVMTWrapper::WrappedPushDownTuple(Node * node, VirtTupleLL * tuple, AdapterRef * adapter, EntryPoint which)
+	void NodeVMTWrapper::WrappedPushDownTuple(Node * node, VirtTupleLL * tuple, uint32_t adapter, EntryPoint which)
 	{
 		originalVmt_.PushDownTuple(node, tuple, adapter, which);
 	}
 
-	void NodeVMTWrapper::WrappedPushDownTupleDelete(Node * node, VirtTupleLL * tuple, AdapterRef * adapter, EntryPoint which)
+	void NodeVMTWrapper::WrappedPushDownTupleDelete(Node * node, VirtTupleLL * tuple, uint32_t adapter, EntryPoint which)
 	{
 		originalVmt_.PushDownTupleDelete(node, tuple, adapter, which);
 	}
@@ -96,17 +96,17 @@ namespace bg3se
 		return originalVmt_.CallQuery(node, args);
 	}
 
-	bool NodeVMTWrapper::s_WrappedIsValid(Node * node, VirtTupleLL * tuple, AdapterRef * adapter)
+	bool NodeVMTWrapper::s_WrappedIsValid(Node * node, VirtTupleLL * tuple, uint32_t adapter)
 	{
 		return gNodeVMTWrappers->WrappedIsValid(node, tuple, adapter);
 	}
 
-	void NodeVMTWrapper::s_WrappedPushDownTuple(Node * node, VirtTupleLL * tuple, AdapterRef * adapter, EntryPoint which)
+	void NodeVMTWrapper::s_WrappedPushDownTuple(Node * node, VirtTupleLL * tuple, uint32_t adapter, EntryPoint which)
 	{
 		gNodeVMTWrappers->WrappedPushDownTuple(node, tuple, adapter, which);
 	}
 
-	void NodeVMTWrapper::s_WrappedPushDownTupleDelete(Node * node, VirtTupleLL * tuple, AdapterRef * adapter, EntryPoint which)
+	void NodeVMTWrapper::s_WrappedPushDownTupleDelete(Node * node, VirtTupleLL * tuple, uint32_t adapter, EntryPoint which)
 	{
 		gNodeVMTWrappers->WrappedPushDownTupleDelete(node, tuple, adapter, which);
 	}
@@ -171,7 +171,7 @@ namespace bg3se
 		return *wrappers_[(unsigned)type].get();
 	}
 
-	bool NodeVMTWrappers::WrappedIsValid(Node * node, VirtTupleLL * tuple, AdapterRef * adapter)
+	bool NodeVMTWrappers::WrappedIsValid(Node * node, VirtTupleLL * tuple, uint32_t adapter)
 	{
 		auto & wrapper = GetWrapper(node);
 
@@ -188,7 +188,7 @@ namespace bg3se
 		return succeeded;
 	}
 
-	void NodeVMTWrappers::WrappedPushDownTuple(Node * node, VirtTupleLL * tuple, AdapterRef * adapter, EntryPoint which)
+	void NodeVMTWrappers::WrappedPushDownTuple(Node * node, VirtTupleLL * tuple, uint32_t adapter, EntryPoint which)
 	{
 		auto & wrapper = GetWrapper(node);
 
@@ -203,7 +203,7 @@ namespace bg3se
 		}
 	}
 
-	void NodeVMTWrappers::WrappedPushDownTupleDelete(Node * node, VirtTupleLL * tuple, AdapterRef * adapter, EntryPoint which)
+	void NodeVMTWrappers::WrappedPushDownTupleDelete(Node * node, VirtTupleLL * tuple, uint32_t adapter, EntryPoint which)
 	{
 		auto & wrapper = GetWrapper(node);
 

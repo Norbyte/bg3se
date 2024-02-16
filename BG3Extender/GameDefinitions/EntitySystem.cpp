@@ -245,16 +245,19 @@ void* EntityWorld::GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex
 		}
 	}
 
-	if (Components->AvailableComponentTypes[(uint16_t)type]) {
-		auto& compPool = Components->ComponentsByType[(uint16_t)type];
+	auto typeIdx = (uint16_t)type;
+	if (Components->AvailableComponentTypes[typeIdx]
+		&& typeIdx < Components->ComponentsByType.size()) {
+		auto& compPool = Components->ComponentsByType[typeIdx];
 		auto transientRef = compPool.Components.Find(entityHandle);
 		if (transientRef) {
 			return *transientRef;
 		}
 	}
 
-	if (Components->AvailableComponentTypes2[(uint16_t)type]) {
-		auto& compPool = Components->ComponentsByType2[(uint16_t)type];
+	if (Components->AvailableComponentTypes2[typeIdx]
+		&& typeIdx < Components->ComponentsByType2.size()) {
+		auto& compPool = Components->ComponentsByType2[typeIdx];
 		auto transientRef = compPool.Components.Find(entityHandle);
 		if (transientRef) {
 			return *transientRef;
