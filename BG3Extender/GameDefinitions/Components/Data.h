@@ -112,15 +112,12 @@ struct HealthComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::Health;
 	static constexpr auto EngineClass = "eoc::HealthComponent";
 
-	std::array<std::array<ResistanceBoostFlags, 7>, 2> Resistances;
 	int Hp;
 	int MaxHp;
 	int TemporaryHp;
 	int MaxTemporaryHp;
-	int AC;
-	std::array<std::array<uint16_t, 7>, 2> PerDamageTypeHealthThresholds;
-	std::array<std::array<uint32_t, 7>, 2> PerDamageTypeHealthThresholds2;
-	Guid field_40;
+	Guid field_10;
+	uint8_t field_20;
 };
 
 struct DifficultyCheckComponent : public BaseComponent

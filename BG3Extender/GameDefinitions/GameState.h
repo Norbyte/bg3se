@@ -209,14 +209,10 @@ struct EoCClient : public ProtectedGameObject<EoCClient>
 	__int64 field_10;
 	__int64 VMT3;
 	__int64 VMT4;
-	__int64 field_38;
-	Array<void*> field_40;
-	__int64 field_50;
-	Array<void*> field_58;
-	__int64 field_68;
-	Array<void*> field_70;
-	__int64 field_80;
-	Array<void*> field_70X;
+	ecs::ComponentCallbackList ComponentCallbacks;
+	ecs::ComponentCallbackList field_50;
+	ecs::ComponentCallbackList field_68;
+	ecs::ComponentCallbackList field_80;
 	__int64 field_80X;
 	GameStateMachine* GameStateMachine;
 	net::Client* GameClient;
@@ -224,6 +220,7 @@ struct EoCClient : public ProtectedGameObject<EoCClient>
 	__int64 field_A0;
 	__int64 field_A8;
 	__int64 field_B0;
+	__int64 field_B8X;
 	FixedString FS1;
 	FixedString LevelName;
 	FixedString SomeGUID;
@@ -244,6 +241,7 @@ struct EoCClient : public ProtectedGameObject<EoCClient>
 	int field_140;
 	int field_144;
 	int field_148;
+	__int64 field_148X[7];
 	ecs::EntityWorld* EntityWorld;
 	__int64 EntityManager_M;
 	__int64 field_160;

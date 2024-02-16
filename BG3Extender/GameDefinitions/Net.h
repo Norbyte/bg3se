@@ -173,13 +173,6 @@ struct AbstractPeerBase : ProtectedGameObject<AbstractPeerBase>
 	virtual void RequestDisconnect(int peerId, int delay, int delayInfo) = 0;
 	virtual void PreUpdate(GameTime const&) = 0;
 	virtual void PostUpdate(GameTime const&) = 0;
-	virtual void SendMessageMultiRecipientSender(Array<UserId> const& recipients, Message* message, int16_t senderUserId, uint32_t excludeUserId) = 0;
-	virtual void SendMessageSingleRecipientSender(uint32_t userId, Message* message, int16_t senderUserId) = 0;
-	virtual void SendMessageMultiRecipient(Array<UserId> const& recipients, Message* message, uint32_t excludeUserId) = 0;
-	virtual void SendMessageSingleRecipient(uint32_t userId, Message* message) = 0;
-	virtual void SendMessageSinglePeerSenderRet(void* unused, Message* message, int16_t senderUserId, uint32_t peerId) = 0;
-	virtual void SendMessageSinglePeerSender(uint32_t peerId, Message* message, int16_t senderUserId) = 0;
-	virtual void SendMessageMultiPeerCopyIds(Array<PeerId> const& recipients, Message* message, uint32_t excudePeerId) = 0;
 	virtual void SendMessageMultiPeerMoveIds(Array<PeerId>& recipients, Message* message, uint32_t excudePeerId) = 0;
 	virtual void SendMessageSinglePeer(uint32_t peerId, Message* message) = 0;
 	virtual ProtocolResult ProcessMsg(void* unknown, void* context, Message* message) = 0;

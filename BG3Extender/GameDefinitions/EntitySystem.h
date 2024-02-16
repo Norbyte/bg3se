@@ -643,15 +643,6 @@ struct ComponentCallbacks : public ProtectedGameObject<ComponentCallbacks>
 
 struct EntityComponents : public ProtectedGameObject<EntityComponents>
 {
-	struct ComponentPoolInfo
-	{
-		BucketedStaticArray<void*> Components;
-		uint32_t NumComponents;
-		uint16_t ComponentSizeInBytes;
-		uint16_t ComponentTypeId;
-		void* DestructorProc;
-	};
-	
 	struct ComponentRef
 	{
 		int32_t PoolIndex;
@@ -668,11 +659,25 @@ struct EntityComponents : public ProtectedGameObject<EntityComponents>
 		__int16 field_2A;
 	};
 
-	BucketedHashMap<EntityHandle, EntityComponentMap> Entities;
-	BucketedSparseHashSet<ComponentTypeIndex, ComponentPoolInfo> ComponentPools;
-	bool field_A0;
-	BucketedHashMap<ComponentTypeIndex, BucketedHashMap<EntityHandle, void*>> ComponentsByType;
-	BucketedHashMap<ComponentTypeIndex, BucketedHashMap<EntityHandle, void*>> ComponentsByType2;
+	struct ComponentPoolInfo
+	{
+		BucketedStaticArray<void*> Components;
+		uint32_t NumComponents;
+		uint16_t ComponentSizeInBytes;
+		uint16_t ComponentTypeId;
+		void* DestructorProc;
+	};
+
+	struct ComponentMap
+	{
+		BucketedHashMap<EntityHandle, void*> Components;
+		ComponentPoolInfo Pool;
+	};
+
+	BitArray<uint64_t, 2048> AvailableComponentTypes;
+	Array<ComponentMap> ComponentsByType;
+	BitArray<uint64_t, 2048> AvailableComponentTypes2;
+	Array<ComponentMap> ComponentsByType2;
 	Array<ComponentCallbacks*>* Callbacks;
 	ComponentDataStore* Store;
 	EntityWorld* EntityWorld;
@@ -727,7 +732,6 @@ struct EntityWorld : public ProtectedGameObject<EntityWorld>
 	GameTime Time;
 	void* ECSUpdateBatch;
 	int field_160;
-	__int64 field_168;
 	Array<ComponentUpdates*> ComponentUpdates;
 	Array<ComponentCallbacks*> ComponentCallbacks;
 	bool field_190;
@@ -737,7 +741,7 @@ struct EntityWorld : public ProtectedGameObject<EntityWorld>
 	QueryManager Queries;
 	std::array<EntityTypeSalts, 0x40>* EntitySalts;
 	EntityStore* EntityTypes;
-	__int64 field_218[5];
+	__int64 field_218[6];
 	ComponentDataStore ComponentData;
 	__int64 field_298;
 	__int64 field_2A0;
@@ -752,8 +756,9 @@ struct EntityWorld : public ProtectedGameObject<EntityWorld>
 	bool field_2F9;
 	void* UpdateBatches;
 	CriticalSection CS;
-	int field_338;
 	EntityComponents* Components;
+	uint64_t InitFlags;
+	uint32_t InitFlags2;
 
 	void* GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy);
 

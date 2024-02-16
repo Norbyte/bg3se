@@ -243,13 +243,13 @@ public:
 	}
 };
 
-template <unsigned Words, unsigned TContainerClassId>
-class ConstSizeArrayProxyImpl<BitArray<Words>, bool, TContainerClassId> : public ArrayProxyImplBase
+template <class TWord, unsigned Words, unsigned TContainerClassId>
+class ConstSizeArrayProxyImpl<BitArray<TWord, Words>, bool, TContainerClassId> : public ArrayProxyImplBase
 {
 public:
 	static constexpr unsigned ContainerClassId = TContainerClassId;
 
-	using ContainerType = BitArray<Words>;
+	using ContainerType = BitArray<TWord, Words>;
 
 	unsigned GetContainerClass() override
 	{
@@ -270,7 +270,7 @@ public:
 	{
 		auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
 		if (arrayIndex > 0 && arrayIndex <= obj->size()) {
-			bool isSet = obj->IsSet(arrayIndex);
+			bool isSet = obj->IsSet(arrayIndex - 1);
 			push(L, &isSet, self.Lifetime);
 			return true;
 		} else {
@@ -282,13 +282,10 @@ public:
 	{
 		auto obj = reinterpret_cast<ContainerType*>(self.Ptr);
 		if (arrayIndex > 0 && arrayIndex <= obj->size()) {
-			if (get<bool>(L, luaIndex))
-			{
-				obj->Set(arrayIndex);
-			}
-			else
-			{
-				obj->Clear(arrayIndex);
+			if (get<bool>(L, luaIndex)) {
+				obj->Set(arrayIndex - 1);
+			} else {
+				obj->Clear(arrayIndex - 1);
 			}
 			return true;
 		} else {
@@ -360,11 +357,11 @@ public:
 		MakeImpl(L, object, lifetime, GetImplementation<DynamicArrayProxyImpl<Array<T>, T, 2>>());
 	}
 
-	template <unsigned Words>
+	template <class TWord, unsigned Words>
 	inline static void Make(
-		lua_State* L, BitArray<Words>* object, const LifetimeHandle& lifetime)
+		lua_State* L, BitArray<TWord, Words>* object, const LifetimeHandle& lifetime)
 	{
-		MakeImpl(L, object, lifetime, GetImplementation<ConstSizeArrayProxyImpl<BitArray<Words>, bool, 5>>());
+		MakeImpl(L, object, lifetime, GetImplementation<ConstSizeArrayProxyImpl<BitArray<TWord, Words>, bool, 5>>());
 	}
 
 	template <class T>

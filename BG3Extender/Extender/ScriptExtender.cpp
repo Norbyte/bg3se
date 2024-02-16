@@ -276,7 +276,7 @@ void ScriptExtender::OnCoreLibInit(void * self)
 
 void ScriptExtender::OnAppUpdatePaths(void * self)
 {
-	if (!config_.CustomProfile.empty()) {
+	if (!config_.CustomProfile.empty() && GetStaticSymbols().ls__PathRoots) {
 		auto& gameLocalPath = GetStaticSymbols().ls__PathRoots[4];
 		if (gameLocalPath->ends_with("Baldur's Gate 3")) {
 			*gameLocalPath = gameLocalPath->substr(0, gameLocalPath->size() - 15) + config_.CustomProfile.c_str();

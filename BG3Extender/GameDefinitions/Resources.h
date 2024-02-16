@@ -2198,7 +2198,7 @@ struct IKRigResource : public LoadableResource
 
 struct LightCookieResource : public TwoStepLoadableResource
 {
-	BitArray<0x80> Data;
+	BitArray<uint32_t, 0x80> Data;
 };
 
 struct LightingResource : public LoadableResource

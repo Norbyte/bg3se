@@ -192,7 +192,7 @@ void * OsirisWrappers::FindRuleActionCallProc()
 	uint8_t * Addr = static_cast<uint8_t *>(OsirisDllStart);
 
 	// Function prologue of RuleAction::Call
-	static const uint8_t instructions[42] = {
+	static const uint8_t instructions[] = {
 		0x48, 0x89, 0x5c, 0x24, 0x10, // mov     [rsp-28h+arg_8], rbx
 		0x48, 0x89, 0x74, 0x24, 0x18, // mov     [rsp-28h+arg_10], rsi
 		0x48, 0x89, 0x7c, 0x24, 0x20, // mov     [rsp-28h+arg_18], rdi
@@ -202,7 +202,7 @@ void * OsirisWrappers::FindRuleActionCallProc()
 		0x41, 0x56, // push    r14
 		0x41, 0x57, // push    r15
 		0x48, 0x8b, 0xec, // mov     rbp, rsp
-		0x48, 0x81, 0xec, 0x80, 0x00, 0x00, 0x00, // sub     rsp, 80h
+		0x48, 0x83, 0xec, 0x60, // sub     rsp, 80h
 		0x48, 0x8b, 0xf1, // mov     rsi, rcx
 		0x8b, 0x49, 0x14, // mov     ecx, [rcx+14h]
 		0x85, 0xc9, // test    ecx, ecx

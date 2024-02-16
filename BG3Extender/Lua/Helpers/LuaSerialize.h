@@ -47,8 +47,8 @@ void SerializeArray(lua_State* L, std::array<TK, Size> const* obj)
 	}
 }
 
-template <unsigned Words>
-void SerializeArray(lua_State* L, BitArray<Words> const* obj)
+template <class TWord, unsigned Words>
+void SerializeArray(lua_State* L, BitArray<TWord, Words> const* obj)
 {
 	StackCheck _(L, 1);
 	lua_createtable(L, obj->size(), 0);

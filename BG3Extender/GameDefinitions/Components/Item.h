@@ -131,14 +131,6 @@ struct IsLatestOwnerComponent : public BaseComponent
 	MultiHashSet<EntityHandle> Owner;
 };
 
-struct IsPreviousLatestOwnerComponent : public BaseComponent
-{
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerIsPreviousLatestOwner;
-	static constexpr auto EngineClass = "esv::ownership::IsPreviousLatestOwnerComponent";
-
-	MultiHashSet<EntityHandle> Owner;
-};
-
 struct IsPreviousOwnerComponent : public BaseComponent
 {
 	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerIsPreviousOwner;

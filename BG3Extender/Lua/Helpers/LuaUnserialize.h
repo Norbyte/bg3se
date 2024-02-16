@@ -175,8 +175,8 @@ PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, st
 	}
 }
 
-template <unsigned Words>
-PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, BitArray<Words>* obj)
+template <class TWord, unsigned Words>
+PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, BitArray<TWord, Words>* obj)
 {
 	StackCheck _(L);
 	luaL_checktype(L, index, LUA_TTABLE);
@@ -199,11 +199,11 @@ PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, BitAr
 	return PropertyOperationResult::Success;
 }
 
-template <unsigned Words>
-PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, BitArray<Words>* obj)
+template <class TWord, unsigned Words>
+PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, BitArray<TWord, Words>* obj)
 {
 	StackCheck _(L);
-	auto arr = ArrayProxyMetatable::Get<ConstSizeArrayProxyImpl<BitArray<Words>, bool, 5>>(L, index);
+	auto arr = ArrayProxyMetatable::Get<ConstSizeArrayProxyImpl<BitArray<TWord, Words>, bool, 5>>(L, index);
 	*obj = *arr;
 	return PropertyOperationResult::Success;
 }

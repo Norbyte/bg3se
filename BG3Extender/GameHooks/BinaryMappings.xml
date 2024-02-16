@@ -114,16 +114,14 @@
         </Mapping>
 
         <Mapping Name="ls__PathRoots" Critical="true">
-          c7 81 a4 00 00 00 00 00 04 00 // mov     dword ptr [rcx+0A4h], 40000h
-          48 89 b9 a8 00 00 00 // mov     [rcx+0A8h], rdi
-          89 b9 b0 00 00 00 // mov     [rcx+0B0h], edi
-          40 88 b9 b4 00 00 00 // mov     [rcx+0B4h], dil
-          66 89 b9 b8 00 00 00 // mov     [rcx+0B8h], di
-          89 b9 bc 00 00 00 // mov     [rcx+0BCh], edi
-          66 89 b9 c0 00 00 00 // mov     [rcx+0C0h], di
-          48 81 c1 c8 00 00 00 // add     rcx, 0C8h ; 'È'
-          @ref1 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:ls__gPathRoots
-          48 8b d0 // mov     rdx, rax
+          0f b6 81 a6 00 00 00 // movzx   eax, byte ptr [rcx+0A6h]
+          24 fe // and     al, 0FEh
+          24 fd // and     al, 0FDh
+          24 fb // and     al, 0FBh
+          88 81 a6 00 00 00 // mov     [rcx+0A6h], al
+          c7 81 a7 00 00 00 04 00 00 00 // mov     dword ptr [rcx+0A7h], 4
+          48 81 c1 b0 00 00 00 // add     rcx, 0B0h ; '°'; a1
+          @ref1 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:cpath_Roots
           <Target Type="Indirect" Offset="@ref1" Symbol="ls__PathRoots" />
         </Mapping>
 
@@ -142,16 +140,30 @@
 
         <!-- Sig: reference to strings "gr2", "lsm" -->
         <Mapping Name="EoCServer2/EoCClient2" Critical="true">
-          83 b8 84 07 00 00 02 // cmp     dword ptr [rax+784h], 2
-          74 0f // jz      short loc_140567F25
+          @ref1 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:ls__gGlobalSwitches
+          83 b8 8c 07 00 00 02 // cmp     dword ptr [rax+78Ch], 2
+          74 0f // jz      short loc_1404F9525
           48 8b d3 // mov     rdx, rbx
-          @ref1 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:esv__gEocServer
-          e8 ?? ?? ?? ?? // call    sub_14072F540
-          @ref2 48 8b 3d ?? ?? ?? ?? // mov     rdi, cs:ecl__gEoCClient
+          @ref2 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:esv__gEocServer
+          e8 8b a8 1d 00 // call    sub_1406D3DB0
+          @ref3 48 8b 3d ?? ?? ?? ?? // mov     rdi, cs:ecl__gEoCClient
           48 8b d3 // mov     rdx, rbx
-          48 8b 8f 98 00 00 00 // mov     rcx, [rdi+098h]
-          <Target Type="Indirect" Offset="@ref1" Symbol="esv__EoCServer" />
-          <Target Type="Indirect" Offset="@ref2" Symbol="ecl__EoCClient" />
+          48 8b 8f 98 00 00 00 // mov     rcx, [rdi+98h]
+          e8 ?? ?? ?? ?? // call    sub_1427A2EB0
+          48 8b d3 // mov     rdx, rbx
+          48 8b 8f 98 01 00 00 // mov     rcx, [rdi+198h]
+          @ref4 e8 ?? ?? ?? ?? // call    ecs__EntityWorld__PreUpdate
+          48 8b d3 // mov     rdx, rbx
+          48 8b 8f 90 00 00 00 // mov     rcx, [rdi+90h]
+          @ref5 e8 ?? ?? ?? ?? // call    ecl__GameStateMachine__Update
+          48 8b d3 // mov     rdx, rbx
+          48 8b 8f 98 01 00 00 // mov     rcx, [rdi+198h]
+          @ref6 e8 ?? ?? ?? ?? // call    ecs__EntityWorld__Update
+          <Target Type="Indirect" Offset="@ref1" Symbol="ls__GlobalSwitches" />
+          <Target Type="Indirect" Offset="@ref2" Symbol="esv__EoCServer" />
+          <Target Type="Indirect" Offset="@ref3" Symbol="ecl__EoCClient" />
+          <Target Type="Indirect" Offset="@ref5" Symbol="ecl__GameStateMachine__Update" />
+          <Target Type="Indirect" Offset="@ref6" Symbol="ecs__EntityWorld__Update" />
         </Mapping>
 
         <!-- Sig: reference to string "MoveController" -->
@@ -167,29 +179,17 @@
 
         <Mapping Name="ecl::EoCClient::HandleError" Critical="true">
           41 b0 01 // mov     r8b, 1
-          48 8d 54 24 50 // lea     rdx, [rsp+350h+var_300]
+          48 8d 54 24 60 // lea     rdx, [rsp+3A0h+var_340]
           48 8b cf // mov     rcx, rdi
           @ref1 e8 ?? ?? ?? ?? // call    ecl__EocClient__HandleError
           90 // nop
-          48 8d 4c 24 28 // lea     rcx, [rsp+350h+a1]
-          e9 e1 01 00 00 // jmp     loc_142938339
-          48 c7 44 24 28 05 00 00 00 // mov     qword ptr [rsp+350h+a1], 5
+          48 8d 4c 24 38 // lea     rcx, [rsp+3A0h+var_368]
+          e9 e6 01 00 00 // jmp     loc_1428032B1
+          48 c7 44 24 38 05 00 00 00 // mov     [rsp+3A0h+var_368], 5
           44 8b c8 // mov     r9d, eax
           @str1 4c 8d 05 ?? ?? ?? ?? // lea     r8, a4x; "%.4x"
           <Condition Type="String" Offset="@str1" Value="%.4x" />
           <Target Type="Indirect" Offset="@ref1" Symbol="ecl__EoCClient__HandleError" />
-        </Mapping>
-
-        <Mapping Name="ecl::GameStateMachine::Update" Critical="true">
-          48 8b d3 // mov     rdx, rbx
-          48 8b 8f 90 00 00 00 // mov     rcx, [rdi+90h]
-          @ref1 e8 ?? ?? ?? ?? // call    ecl__GameStateMachine__Update
-          48 8b d3 // mov     rdx, rbx
-          48 8b 8f 58 01 00 00 // mov     rcx, [rdi+158h]
-          e8 ?? ?? ?? ?? // call    sub_143693EC0
-          48 8b 8f a8 00 00 00 // mov     rcx, [rdi+0A8h]
-          48 85 c9 // test    rcx, rcx
-          <Target Type="Indirect" Offset="@ref1" Symbol="ecl__GameStateMachine__Update" />
         </Mapping>
 
         <Mapping Name="ecl__gGameStateEventManager" Critical="true">
@@ -395,16 +395,15 @@
 
       <!-- Sig: call from DealDamageFunctor::ApplyDamage, near ref to PassiveSystemID -->
       <Mapping Name="esv::StatsSystem::ThrowDamageEvent">
-        0f b6 45 82 // movzx   eax, [rbp+0EB0h+var_F2E]
-        88 44 24 20 // mov     [rsp+0FB0h+a5], al; a5
-        4c 8d 8d 20 09 00 00 // lea     r9, [rbp+0EB0h+damageAmounts]; damageAmounts
-        4c 8d 85 30 05 00 00 // lea     r8, [rbp+0EB0h+hit]; hit
-        48 8d 95 40 02 00 00 // lea     rdx, [rbp+0EB0h+temp5]; temp5
-        48 8b 4d 38 // mov     rcx, [rbp+0EB0h+rcx0]; rcx0
+        88 44 24 20 // mov     [rsp+0FE0h+a5], al; a5
+        4c 8d 8d 50 09 00 00 // lea     r9, [rbp+0EE0h+damageAmounts]; damageAmounts
+        4c 8d 85 60 05 00 00 // lea     r8, [rbp+0EE0h+var_980]; hit
+        48 8d 95 40 02 00 00 // lea     rdx, [rbp+0EE0h+temp5]; temp5
+        48 8b 4d 50 // mov     rcx, [rbp+0EE0h+rcx0]; rcx0
         @ref1 e8 ?? ?? ?? ?? // call    esv__StatsSystem__ThrowEntityDamagedEvent
-        80 bd 36 05 00 00 0a // cmp     [rbp+0EB0h+hit.CauseType], 0Ah
-        0f 84 9c 01 00 00 // jz      loc_142548D64
-        83 bd 30 05 00 00 00 // cmp     [rbp+0EB0h+hit.TotalDamageDone], 0
+        80 bd 66 05 00 00 0a // cmp     [rbp+0EE0h+var_980.CauseType], 0Ah
+        0f 84 9f 01 00 00 // jz      loc_1424F4B27
+        83 bd 60 05 00 00 00 // cmp     [rbp+0EE0h+var_980.TotalDamageDone], 0
         41 0f 9f c4 // setnle  r12b
         <Target Type="Indirect" Offset="@ref1" Symbol="esv__StatsSystem__ThrowDamageEvent" />
       </Mapping>
@@ -451,51 +450,6 @@
             48 8B 0D ?? ?? ?? ?? // mov     rcx, cs:esv__gSavegameManager
             E8 ?? ?? ?? ?? // call    esv__SavegameManager__RegisterFactory
             90 // nop
-        </Mapping>
-
-        <Mapping Name="RPGStats">
-          44 8b 40 18 // mov     r8d, [rax+18h]
-          @ref1 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:gRPGStats
-          48 85 c0 // test    rax, rax
-          74 1e // jz      short loc_143AF0CC3
-          48 8b 88 88 02 00 00 // mov     rcx, [rax+288h]
-          48 85 c9 // test    rcx, rcx
-          74 12 // jz      short loc_143AF0CC3
-          @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, fs_WisdomTierHigh
-          <Condition Type="FixedString" Offset="@str1" Value="WisdomTierHigh" />
-          <Target Type="Indirect" Offset="@ref1" Symbol="gRPGStats" />
-        </Mapping>
-
-        <Mapping Name="RPGStats::PreParseDataFolder" Scope="Custom">
-          48 83 c6 18 // add     rsi, 18h
-          49 83 ef 01 // sub     r15, 1
-          0f 85 ?? ff ff ff // jnz     loc_140EA8070
-          49 8b d4 // mov     rdx, r12
-          49 8b ce // mov     rcx, r14
-          @ref1 e8 ?? ?? ?? ?? // call    RPGStats__PreParseDataFolder
-          <Target Type="Indirect" Offset="@ref1" Symbol="RPGStats__PreParseDataFolder" />
-        </Mapping>
-
-        <Mapping Name="RPGStats::Load">
-          48 89 5c 24 18 // mov     [rsp-8+arg_10], rbx
-          55 // push    rbp
-          56 // push    rsi
-          57 // push    rdi
-          41 54 // push    r12
-          41 55 // push    r13
-          41 56 // push    r14
-          41 57 // push    r15
-          48 8d 6c 24 d9 // lea     rbp, [rsp-27h]
-          48 81 ec c0 00 00 00 // sub     rsp, 0C0h
-          @ref1 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:__security_cookie
-          48 33 c4 // xor     rax, rsp
-          48 89 45 17 // mov     [rbp+57h+var_40], rax
-          4c 8b e2 // mov     r12, rdx
-          4c 8b f1 // mov     r14, rcx
-          48 81 c1 e8 03 00 00 // add     rcx, 3E8h
-          48 89 4d a7 // mov     [rbp+57h+var_B0], rcx
-          <Target Type="Absolute" Offset="0" Symbol="RPGStats__Load" />
-          <Target Type="Absolute" Offset="0" NextSymbol="RPGStats::PreParseDataFolder" NextSymbolSeekSize="0x180" />
         </Mapping>
 
         <Mapping Name="stats::Object::SetPropertyString">
@@ -604,19 +558,6 @@
         75 90 // jnz     short loc_14004DF58
         @str1 48 8d 05 ?? ?? ?? ?? // lea     rax, aClassLsStringv_309; "class ls::_StringView
         <Target Type="Absolute" Offset="@ref1" EngineCallback="BindComponentReplicationIDRef" />
-      </Mapping>
-
-      <Mapping Name="ecs::EntityWorld::Update">
-        48 8b 8f 88 02 00 00 // mov     rcx, [rdi+288h]
-        48 8b d3 // mov     rdx, rbx
-        @ref1 e8 ?? ?? ?? ?? // call    ecs__EntityWorld__Update
-        48 8b 8f a8 00 00 00 // mov     rcx, [rdi+0A8h]
-        48 85 c9 // test    rcx, rcx
-        74 0c // jz      short loc_140FBA071
-        48 8b 01 // mov     rax, [rcx]
-        48 8b d3 // mov     rdx, rbx
-        ff 90 b0 00 00 00 // call    qword ptr [rax+0B0h]
-        <Target Type="Indirect" Offset="@ref1" Symbol="ecs__EntityWorld__Update" />
       </Mapping>
 
       <Mapping Name="KillLauncher" AllowFail="true">
@@ -791,18 +732,6 @@
         <Target Type="Indirect" Offset="@ref3" Symbol="ls__GlobalTemplateManager" />
       </Mapping>
 
-        <Mapping Name="ls::GlobalSwitches">
-          48 8b ec // mov     rbp, rsp
-          48 83 ec 30 // sub     rsp, 30h
-          @ref1 4c 8b 15 ?? ?? ?? ?? // mov     r10, cs:ls__gGlobalSwitches
-          48 8b f2 // mov     rsi, rdx
-          @str1 48 8b 15 ?? ?? ?? ?? // mov     rdx, cs:pfs_UseEndTurnFallback; _DWORD *
-          48 8b d9 // mov     rbx, rcx
-          41 c6 82 a8 01 00 00 01 // mov     byte ptr [r10+1A8h], 1
-          <Condition Type="FixedStringIndirect" Offset="@str1" Value="UseEndTurnFallback" />
-          <Target Type="Indirect" Offset="@ref1" Symbol="ls__GlobalSwitches" />
-        </Mapping>
-
       <Mapping Name="esv::OsirisVariableHelper::SavegameVisit">
         48 89 5c 24 08 // mov     [rsp+arg_0], rbx
         55 // push    rbp
@@ -825,17 +754,17 @@
 
       <Mapping Name="eoc::InterruptPrototypeManager" Scope="Custom">
         @ref1 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:eoc__gInterruptPrototypeManager
-        e8 ?? ?? ?? ?? // call    eoc__InterruptPrototypeManager__Init
-        @ref3 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:eoc__gSpellPrototypeManager
-        e8 ?? ?? ?? ?? // call    eoc__SpellPrototypeManager__Init
+        e8 a8 df 5f fe // call    sub_140E4ECD0
+        @ref2 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:eoc__gSpellPrototypeManager
+        e8 6c 12 5c fe // call    sub_140E11FA0
         48 8b 15 ?? ?? ?? ?? // mov     rdx, cs:gRPGStats
-        48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:eoc__gCriticalHitTypeManager
-        e8 ?? ?? ?? ?? // call    sub_140EADF90
+        @ref3 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:eoc__gCriticalHitTypeManager
+        e8 ?? ?? ?? ?? // call    sub_140E4D460
         48 8b 4d bf // mov     rcx, [rbp+57h+var_98]
         48 8b 01 // mov     rax, [rcx]
         f0 ff 48 18 // lock dec dword ptr [rax+18h]
         <Target Type="Indirect" Offset="@ref1" Symbol="eoc__InterruptPrototypeManager" />
-        <Target Type="Indirect" Offset="@ref3" Symbol="eoc__SpellPrototypeManager" />
+        <Target Type="Indirect" Offset="@ref2" Symbol="eoc__SpellPrototypeManager" />
       </Mapping>
       
       <Mapping Name="eoc::PassivePrototype::Init" Scope="Custom">
@@ -847,7 +776,28 @@
         <Target Type="Indirect" Offset="@ref1" Symbol="eoc__PassivePrototype__Init" />
       </Mapping>
 
-      <Mapping Name="eoc::StatusPrototypeManager">
+      <Mapping Name="RPGStats::PreParseDataFolder" Scope="Custom">
+        48 83 c6 18 // add     rsi, 18h
+        49 83 ef 01 // sub     r15, 1
+        0f 85 ?? ff ff ff // jnz     loc_140EA8070
+        49 8b d4 // mov     rdx, r12
+        49 8b ce // mov     rcx, r14
+        @ref1 e8 ?? ?? ?? ?? // call    RPGStats__PreParseDataFolder
+        <Target Type="Indirect" Offset="@ref1" Symbol="RPGStats__PreParseDataFolder" />
+      </Mapping>
+
+      <!-- Sig: "Stats/Generated" string -->
+      <Mapping Name="StatsShared">
+        @stats 48 8b 1d ?? ?? ?? ?? // mov     rbx, cs:gRPGStats
+        48 8b cb // mov     rcx, rbx
+        e8 ?? ?? ?? ?? // call    RPGStats__Clear
+        48 8b cb // mov     rcx, rbx
+        e8 ?? ?? ?? ?? // call    RPGStats__ClearDynamicEntries
+        48 8d 55 a7 // lea     rdx, [rbp+57h+var_B0]
+        48 8b cb // mov     rcx, rbx
+        @load e8 ?? ?? ?? ?? // call    RPGStats__Load
+        48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:qword_145BC3920
+        e8 ?? ?? ?? ?? // call    sub_14385AAF0
         @ref1 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:eoc__gStatusPrototypeManager
         e8 ?? ?? ?? ?? // call    eoc__StatusPrototypeManager__Init
         @ref3 48 8b 3d ?? ?? ?? ?? // mov     rdi, cs:eoc__gPassiveManager
@@ -864,8 +814,11 @@
         <Condition Type="FixedString" Offset="@str1" Value="PassiveData" />
         <Target Type="Indirect" Offset="@ref1" Symbol="eoc__StatusPrototypeManager" />
         <Target Type="Indirect" Offset="@ref3" Symbol="eoc__PassivePrototypeManager" />
-        <Target Type="Absolute" Offset="0" NextSymbol="eoc::InterruptPrototypeManager" NextSymbolSeekSize="0x100" />
+        <Target Type="Indirect" Offset="@stats" Symbol="gRPGStats" />
+        <Target Type="Indirect" Offset="@load" Symbol="RPGStats__Load" />
+        <Target Type="Absolute" Offset="0" NextSymbol="eoc::InterruptPrototypeManager" NextSymbolSeekSize="0x200" />
         <Target Type="Absolute" Offset="0" NextSymbol="eoc::PassivePrototype::Init" NextSymbolSeekSize="0x100" />
+        <Target Type="Indirect" Offset="@load" NextSymbol="RPGStats::PreParseDataFolder" NextSymbolSeekSize="0x180" />
       </Mapping>
 
     <Mapping Name="eoc::StatusPrototype::Init">

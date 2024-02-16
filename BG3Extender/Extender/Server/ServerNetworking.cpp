@@ -145,7 +145,7 @@ void NetworkManager::Send(net::ExtenderMessage * msg, UserId userId)
 {
 	auto server = GetServer();
 	if (server != nullptr) {
-		server->SendMessageSingleRecipient(userId.Id, msg);
+		server->SendMessageSinglePeer(userId.Id, msg);
 	}
 }
 
@@ -165,7 +165,7 @@ void NetworkManager::Broadcast(net::ExtenderMessage * msg, UserId excludeUserId,
 		}
 	}
 
-	server->SendMessageMultiPeerCopyIds(peerIds, msg, excludeUserId.Id);
+	server->SendMessageMultiPeerMoveIds(peerIds, msg, excludeUserId.Id);
 }
 
 void NetworkManager::BroadcastToConnectedPeers(net::ExtenderMessage* msg, UserId excludeUserId, bool excludeLocalPeer)
@@ -184,7 +184,7 @@ void NetworkManager::BroadcastToConnectedPeers(net::ExtenderMessage* msg, UserId
 		}
 	}
 
-	server->SendMessageMultiPeerCopyIds(peerIds, msg, excludeUserId.Id);
+	server->SendMessageMultiPeerMoveIds(peerIds, msg, excludeUserId.Id);
 }
 
 END_NS()

@@ -131,7 +131,6 @@ struct ShapeshiftEquipmentHistoryComponent : public BaseComponent
 
 DEFINE_TAG_COMPONENT(esv::inventory, CharacterHasGeneratedTradeTreasureComponent, CharacterHasGeneratedTradeTreasure)
 DEFINE_TAG_COMPONENT(esv::inventory, IsReplicatedWithComponent, ServerInventoryIsReplicatedWith)
-DEFINE_TAG_COMPONENT(esv::inventory, ItemHasGeneratedTreasureComponent, ItemHasGeneratedTreasure)
 DEFINE_TAG_COMPONENT(esv::inventory, ReadyToBeAddedToInventoryComponent, ReadyToBeAddedToInventory)
 
 END_NS()

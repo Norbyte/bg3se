@@ -20,7 +20,13 @@ struct BoostsContainerComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::BoostsContainer;
 	static constexpr auto EngineClass = "eoc::BoostsContainerComponent";
 
-	MultiHashMap<BoostType, Array<EntityHandle>> Boosts;
+	struct BoostTypeInfo
+	{
+		BoostType Type;
+		Array<EntityHandle> Boosts;
+	};
+
+	Array<BoostTypeInfo> Boosts;
 };
 
 struct BoostInfoComponent : public BaseComponent

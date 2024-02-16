@@ -395,43 +395,56 @@ struct PrimitiveSet : public ObjectSet<T, Allocator, false>
 {
 };
 
-template <unsigned TDWords>
+template <class TWord, unsigned NumWords>
 struct BitArray
 {
-	uint32_t Bits[TDWords];
+	static constexpr uint32_t BitsPerWord = sizeof(TWord) * CHAR_BIT;
+	static constexpr uint32_t IndexBitsPerWord = (sizeof(TWord) == 4) ? 5 : 6;
+	static constexpr uint32_t NumBits = NumWords * BitsPerWord;
 
-	inline bool Set(uint32_t index)
+	TWord Bits[NumWords];
+
+	inline bool operator [] (uint32_t index) const
 	{
-		if (index <= 0 || index > (TDWords * 32)) {
+		if (index >= NumBits) {
 			return false;
 		}
 
-		Bits[(index - 1) >> 5] |= (1 << ((index - 1) & 0x1f));
+		return (Bits[index >> IndexBitsPerWord] & (TWord(1) << (index & (BitsPerWord - 1)))) != 0;
+	}
+
+	inline bool Set(uint32_t index)
+	{
+		if (index >= NumBits) {
+			return false;
+		}
+
+		Bits[index >> IndexBitsPerWord] |= (TWord(1) << (index & (BitsPerWord - 1)));
 		return true;
 	}
 
 	inline bool Clear(uint32_t index)
 	{
-		if (index <= 0 || index > (TDWords * 32)) {
+		if (index >= NumBits) {
 			return false;
 		}
 
-		Bits[(index - 1) >> 5] &= ~(1 << ((index - 1) & 0x1f));
+		Bits[index >> IndexBitsPerWord] &= ~(TWord(1) << (index & (BitsPerWord - 1)));
 		return true;
 	}
 
 	inline bool IsSet(uint32_t index) const
 	{
-		if (index <= 0 || index > (TDWords * 32)) {
+		if (index >= NumBits) {
 			return false;
 		}
 
-		return (Bits[(index - 1) >> 5] & (1 << ((index - 1) & 0x1f))) != 0;
+		return (Bits[index >> IndexBitsPerWord] & (TWord(1) << (index & (BitsPerWord - 1)))) != 0;
 	}
 
 	inline uint32_t size() const
 	{
-		return TDWords * sizeof(Bits[0]) * CHAR_BIT;
+		return NumWords * sizeof(TWord) * CHAR_BIT;
 	}
 };
 

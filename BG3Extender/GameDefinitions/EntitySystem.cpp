@@ -245,17 +245,17 @@ void* EntityWorld::GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex
 		}
 	}
 
-	auto compPool = Components->ComponentsByType.Find((uint16_t)type);
-	if (compPool) {
-		auto transientRef = compPool->Find(entityHandle);
+	if (Components->AvailableComponentTypes[(uint16_t)type]) {
+		auto& compPool = Components->ComponentsByType[(uint16_t)type];
+		auto transientRef = compPool.Components.Find(entityHandle);
 		if (transientRef) {
 			return *transientRef;
 		}
 	}
 
-	auto compPool2 = Components->ComponentsByType2.Find((uint16_t)type);
-	if (compPool2) {
-		auto transientRef = compPool2->Find(entityHandle);
+	if (Components->AvailableComponentTypes2[(uint16_t)type]) {
+		auto& compPool = Components->ComponentsByType2[(uint16_t)type];
+		auto transientRef = compPool.Components.Find(entityHandle);
 		if (transientRef) {
 			return *transientRef;
 		}
@@ -650,32 +650,33 @@ void EntitySystemHelpersBase::Update()
 	if (CheckLevel != RuntimeCheckLevel::FullECS) return;
 
 	auto world = GetEntityWorld();
-	auto pools = world->Components->ComponentPools;
+	auto* pools = world->Components;
 	for (auto i = 0; i < components_.size(); i++) {
 		auto const& componentInfo = components_[i];
 		if (componentInfo.ComponentIndex != UndefinedComponent) {
-			auto pool = pools.Find(componentInfo.ComponentIndex);
-			if (pool != nullptr) {
+			if (pools->AvailableComponentTypes[componentInfo.ComponentIndex.Value()] && pools->ComponentsByType.size() >= componentInfo.ComponentIndex.Value()) {
+				auto const& pool = pools->ComponentsByType[componentInfo.ComponentIndex.Value()];
 				auto name = componentIndexToNameMappings_[componentInfo.ComponentIndex];
 				auto componentSize = componentInfo.IsProxy ? sizeof(void*) : componentInfo.Size;
-				if (pool->ComponentSizeInBytes != componentSize) {
-					ERR("[ECS INTEGRITY CHECK] Component size mismatch (%s): local %d, ECS %d", name->c_str(), componentSize, pool->ComponentSizeInBytes);
+				if (pool.Pool.ComponentSizeInBytes != componentSize) {
+					ERR("[ECS INTEGRITY CHECK] Component size mismatch (%s): local %d, ECS %d", name->c_str(), componentSize, pool.Pool.ComponentSizeInBytes);
 				}
 			}
 		}
 	}
 
-	for (uint32_t i = 0; i < world->Components->ComponentsByType.Values.Used; i++) {
-		auto componentId = world->Components->ComponentsByType.KeyAt(i);
-		auto const& components = world->Components->ComponentsByType.Values[i];
-		auto componentType = GetComponentType(componentId);
-		if (componentType) {
-			auto pm = GetPropertyMap(*componentType);
-			if (pm != nullptr && components.Values.Used > 0) {
-				for (uint32_t j = 0; j < components.Values.Used; j++) {
-					auto component = components.Values[j];
-					if (component != nullptr) {
-						pm->ValidateObject(component);
+	for (uint32_t componentId = 0; componentId < pools->ComponentsByType.size(); componentId++) {
+		if (pools->AvailableComponentTypes[componentId] && pools->ComponentsByType.size() >= componentId) {
+			auto const& components = world->Components->ComponentsByType[componentId].Components;
+			auto componentType = GetComponentType(ComponentTypeIndex(componentId));
+			if (componentType) {
+				auto pm = GetPropertyMap(*componentType);
+				if (pm != nullptr && components.Values.Used > 0) {
+					for (uint32_t j = 0; j < components.Values.Used; j++) {
+						auto component = components.Values[j];
+						if (component != nullptr) {
+							pm->ValidateObject(component);
+						}
 					}
 				}
 			}

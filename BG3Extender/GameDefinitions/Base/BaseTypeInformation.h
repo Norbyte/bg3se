@@ -120,8 +120,8 @@ inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overl
 	return &MakeDeferredArrayType<T>;
 }
 
-template <unsigned Words>
-inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<BitArray<Words>>)
+template <class TWord, unsigned Words>
+inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<BitArray<TWord, Words>>)
 {
 	return &MakeDeferredArrayType<bool>;
 }

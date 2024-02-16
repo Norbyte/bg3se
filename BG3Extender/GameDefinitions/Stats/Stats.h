@@ -294,7 +294,7 @@ struct RPGStats : public ProtectedGameObject<RPGStats>
 	CNamedElementManager<TreasureTable> TreasureTables;
 	ItemTypeManager ItemTypes;
 	Map<FixedString, Functors*> StatsFunctors;
-	uint64_t Unkn1[5];
+	uint64_t Unkn1[9];
 	Map<FixedString, float>* ExtraData;
 	Map<FixedString, FixedString> field_290;
 	Map<FixedString, void*> field_2A8;
@@ -317,9 +317,7 @@ struct RPGStats : public ProtectedGameObject<RPGStats>
 	Array<PreParsedDataBuffer*> PreParsedDataBuffers;
 	Map<FixedString, BloodType*> BloodTypes;
 	bool field_3E0;
-	bool field_3E1;
 	bool IsLoading;
-	bool field_3E3;
 	bool Loaded;
 	uint32_t FastLock;
 	Array<STDString> Conditions;

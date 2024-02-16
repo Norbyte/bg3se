@@ -472,8 +472,8 @@ bool ValidateRef(std::array<TE, Size> const* v, Overload<std::array<TE, Size>>)
 	return true;
 }
 
-template <unsigned Words>
-bool ValidateRef(BitArray<Words> const* v, Overload<BitArray<Words>>)
+template <class TWord, unsigned Words>
+bool ValidateRef(BitArray<TWord, Words> const* v, Overload<BitArray<TWord, Words>>)
 {
     return true;
 }

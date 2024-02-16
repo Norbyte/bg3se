@@ -11,8 +11,8 @@ struct IsArrayLike<Array<T>> { static constexpr bool Value = true; using TElemen
 template <class T>
 struct IsArrayLike<StaticArray<T>> { static constexpr bool Value = true; using TElement = T; };
 
-template <unsigned Words>
-struct IsArrayLike<BitArray<Words>> { static constexpr bool Value = true; using TElement = bool; };
+template <class TWord, unsigned Words>
+struct IsArrayLike<BitArray<TWord, Words>> { static constexpr bool Value = true; using TElement = bool; };
 
 template <class T>
 struct IsArrayLike<Vector<T>> { static constexpr bool Value = true; using TElement = T; };

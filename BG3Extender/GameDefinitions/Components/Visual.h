@@ -96,7 +96,6 @@ struct DisplayNameComponent : public BaseComponent
 
 	TranslatedString NameKey;
 	TranslatedString UnknownKey;
-	STDString Name;
 };
 
 struct GameplayLightComponent : public BaseComponent
