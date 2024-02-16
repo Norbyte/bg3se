@@ -14,7 +14,7 @@ struct ParticipantComponent : public BaseComponent
 
 	EntityHandle CombatHandle;
 	FixedString CombatGroupId;
-	int field_C;
+	[[bg3::legacy(field_C)]] int InitiativeRoll;
 	CombatParticipantFlags Flags;
 	Guid AiHint;
 };

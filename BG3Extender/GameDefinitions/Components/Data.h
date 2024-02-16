@@ -305,7 +305,7 @@ struct LevelUpUpgrades
 	struct Unknown2Data : public LevelUpUpgrades::Reference
 	{
 		int field_30;
-		Guid field_38;
+		[[bg3::legacy(field_38)]] Guid Skill;
 		uint8_t field_48;
 		Array<uint8_t> Array_b8;
 		STDString field_60;
@@ -318,7 +318,7 @@ struct LevelUpUpgrades
 		Guid AbilityBonus;
 		Array<uint8_t> Array_b8;
 		Array<uint32_t> Array_i32;
-		STDString field_60;
+		[[bg3::legacy(field_60)]] STDString BonusType;
 		int field_80;
 	};
 		
@@ -334,7 +334,7 @@ struct LevelUpUpgrades
 		Guid SpellList;
 		Array<FixedString> Spells;
 		Array<StringPair> Array_FS2;
-		STDString field_78;
+		[[bg3::legacy(field_78)]] STDString SelectorId;
 	};
 		
 	struct Spell2Data : public LevelUpUpgrades::Reference
@@ -349,7 +349,7 @@ struct LevelUpUpgrades
 		Guid SpellList;
 		Array<FixedString> Spells;
 		Array<StringPair> Array_FS2;
-		STDString field_78;
+		[[bg3::legacy(field_78)]] STDString SelectorId;
 		int field_80;
 	};
 		
@@ -819,7 +819,7 @@ struct EquipableComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::Equipable;
 	static constexpr auto EngineClass = "eoc::EquipableComponent";
 
-	Guid field_18;
+	[[bg3::legacy(field_18)]] Guid EquipmentTypeID;
 	ItemSlot Slot;
 };
 
