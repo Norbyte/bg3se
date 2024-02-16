@@ -246,18 +246,18 @@ void* EntityWorld::GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex
 	}
 
 	auto typeIdx = (uint16_t)type;
-	if (Components->AvailableComponentTypes[typeIdx]
-		&& typeIdx < Components->ComponentsByType.size()) {
-		auto& compPool = Components->ComponentsByType[typeIdx];
+	auto& pool1 = Components->Components;
+	if (pool1.AvailableComponentTypes[typeIdx]) {
+		auto& compPool = pool1.ComponentsByType[typeIdx];
 		auto transientRef = compPool.Components.Find(entityHandle);
 		if (transientRef) {
 			return *transientRef;
 		}
 	}
 
-	if (Components->AvailableComponentTypes2[typeIdx]
-		&& typeIdx < Components->ComponentsByType2.size()) {
-		auto& compPool = Components->ComponentsByType2[typeIdx];
+	auto& pool2 = Components->Components;
+	if (pool2.AvailableComponentTypes[typeIdx]) {
+		auto& compPool = pool2.ComponentsByType[typeIdx];
 		auto transientRef = compPool.Components.Find(entityHandle);
 		if (transientRef) {
 			return *transientRef;
@@ -305,7 +305,7 @@ EntityClass* EntityWorld::GetEntityClass(EntityHandle entityHandle) const
 #if defined(NDEBUG)
 RuntimeCheckLevel EntitySystemHelpersBase::CheckLevel{ RuntimeCheckLevel::Once };
 #else
-RuntimeCheckLevel EntitySystemHelpersBase::CheckLevel{ RuntimeCheckLevel::FullECS };
+RuntimeCheckLevel EntitySystemHelpersBase::CheckLevel{ RuntimeCheckLevel::Always };
 #endif
 
 EntitySystemHelpersBase::EntitySystemHelpersBase()
@@ -653,12 +653,12 @@ void EntitySystemHelpersBase::Update()
 	if (CheckLevel != RuntimeCheckLevel::FullECS) return;
 
 	auto world = GetEntityWorld();
-	auto* pools = world->Components;
+	auto& pool1 = world->Components->Components;
 	for (auto i = 0; i < components_.size(); i++) {
 		auto const& componentInfo = components_[i];
 		if (componentInfo.ComponentIndex != UndefinedComponent) {
-			if (pools->AvailableComponentTypes[componentInfo.ComponentIndex.Value()] && pools->ComponentsByType.size() >= componentInfo.ComponentIndex.Value()) {
-				auto const& pool = pools->ComponentsByType[componentInfo.ComponentIndex.Value()];
+			if (pool1.AvailableComponentTypes[componentInfo.ComponentIndex.Value()]) {
+				auto const& pool = pool1.ComponentsByType[componentInfo.ComponentIndex.Value()];
 				auto name = componentIndexToNameMappings_[componentInfo.ComponentIndex];
 				auto componentSize = componentInfo.IsProxy ? sizeof(void*) : componentInfo.Size;
 				if (pool.Pool.ComponentSizeInBytes != componentSize) {
@@ -668,9 +668,10 @@ void EntitySystemHelpersBase::Update()
 		}
 	}
 
-	for (uint32_t componentId = 0; componentId < pools->ComponentsByType.size(); componentId++) {
-		if (pools->AvailableComponentTypes[componentId] && pools->ComponentsByType.size() >= componentId) {
-			auto const& components = world->Components->ComponentsByType[componentId].Components;
+	auto& pool2 = world->Components->Components2;
+	for (uint32_t componentId = 0; componentId < pool2.AvailableComponentTypes.size(); componentId++) {
+		if (pool2.AvailableComponentTypes[componentId]) {
+			auto const& components = pool2.ComponentsByType[componentId].Components;
 			auto componentType = GetComponentType(ComponentTypeIndex(componentId));
 			if (componentType) {
 				auto pm = GetPropertyMap(*componentType);

@@ -672,12 +672,19 @@ struct EntityComponents : public ProtectedGameObject<EntityComponents>
 	{
 		BucketedHashMap<EntityHandle, void*> Components;
 		ComponentPoolInfo Pool;
+		void* field_70;
+		void* field_78;
 	};
 
-	BitArray<uint64_t, 2048> AvailableComponentTypes;
-	Array<ComponentMap> ComponentsByType;
-	BitArray<uint64_t, 2048> AvailableComponentTypes2;
-	Array<ComponentMap> ComponentsByType2;
+	struct TransientComponents
+	{
+		BitArray<uint64_t, 32> AvailableComponentTypes;
+		ComponentMap* ComponentsByType;
+		uint64_t Unknown;
+	};
+
+	TransientComponents Components;
+	TransientComponents Components2;
 	Array<ComponentCallbacks*>* Callbacks;
 	ComponentDataStore* Store;
 	EntityWorld* EntityWorld;
