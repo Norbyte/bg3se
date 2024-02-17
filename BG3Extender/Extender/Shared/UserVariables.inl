@@ -700,10 +700,14 @@ void ModVariableManager::OnSessionLoading()
 {
 	modIndices_.clear();
 
-	auto& mod = (isServer_ ? GetStaticSymbols().GetModManagerServer()->BaseModule : GetStaticSymbols().GetModManagerClient()->BaseModule);
-	uint32_t nextIndex{ 0 };
-	for (auto const& mod : mod.LoadOrderedModules) {
-		modIndices_.set(mod.Info.ModuleUUID, nextIndex++);
+	auto modManager = isServer_ ? GetStaticSymbols().GetModManagerServer() : GetStaticSymbols().GetModManagerClient();
+	if (modManager != nullptr) {
+		uint32_t nextIndex{ 0 };
+		for (auto const& mod : modManager->BaseModule.LoadOrderedModules) {
+			modIndices_.set(mod.Info.ModuleUUID, nextIndex++);
+		}
+	} else {
+		ERR("ModManager not initialized on session load?");
 	}
 }
 
