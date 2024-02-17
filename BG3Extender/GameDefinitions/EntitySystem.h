@@ -668,9 +668,15 @@ struct EntityComponents : public ProtectedGameObject<EntityComponents>
 		void* DestructorProc;
 	};
 
+	struct ComponentPtr
+	{
+		void* Ptr;
+		uint64_t Unknown;
+	};
+
 	struct ComponentMap
 	{
-		BucketedHashMap<EntityHandle, void*> Components;
+		BucketedHashMap<EntityHandle, ComponentPtr> Components;
 		ComponentPoolInfo Pool;
 		void* field_70;
 		void* field_78;

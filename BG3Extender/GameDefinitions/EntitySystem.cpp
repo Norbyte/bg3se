@@ -251,7 +251,7 @@ void* EntityWorld::GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex
 		auto& compPool = pool1.ComponentsByType[typeIdx];
 		auto transientRef = compPool.Components.Find(entityHandle);
 		if (transientRef) {
-			return *transientRef;
+			return transientRef->Ptr;
 		}
 	}
 
@@ -260,7 +260,7 @@ void* EntityWorld::GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex
 		auto& compPool = pool2.ComponentsByType[typeIdx];
 		auto transientRef = compPool.Components.Find(entityHandle);
 		if (transientRef) {
-			return *transientRef;
+			return transientRef->Ptr;
 		}
 	}
 
@@ -677,9 +677,9 @@ void EntitySystemHelpersBase::Update()
 				auto pm = GetPropertyMap(*componentType);
 				if (pm != nullptr && components.Values.Used > 0) {
 					for (uint32_t j = 0; j < components.Values.Used; j++) {
-						auto component = components.Values[j];
-						if (component != nullptr) {
-							pm->ValidateObject(component);
+						auto const& component = components.Values[j];
+						if (component.Ptr != nullptr) {
+							pm->ValidateObject(component.Ptr);
 						}
 					}
 				}
