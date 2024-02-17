@@ -96,8 +96,8 @@ struct MessageFactory : ProtectedGameObject<MessagePool>
 struct MessageContext
 {
 	UserId UserID;
-	ObjectSet<uint16_t> PeerIDClassNames;
-	ObjectSet<uint32_t> UserIDs;
+	Array<PeerId> PeerIDClassNames;
+	Array<UserId> UserIDs;
 	Message * Msg;
 	uint32_t Unknown1;
 	uint8_t Unknown2;
@@ -167,14 +167,14 @@ struct AbstractPeerBase : ProtectedGameObject<AbstractPeerBase>
 	virtual void fun_70() = 0;
 	virtual void Shutdown() = 0;
 	virtual void Init(uint16_t port, uint16_t port2, uint32_t socketType, void*, void*) = 0;
-	virtual void Disconnect(uint32_t) = 0;
+	virtual void Disconnect(uint32_t TPeerId) = 0;
 	virtual void CreateConnection(STDString*) = 0;
 	virtual void CreateConnection2(void* address) = 0;
-	virtual void RequestDisconnect(int peerId, int delay, int delayInfo) = 0;
+	virtual void RequestDisconnect(TPeerId peerId, int delay, int delayInfo) = 0;
 	virtual void PreUpdate(GameTime const&) = 0;
 	virtual void PostUpdate(GameTime const&) = 0;
-	virtual void SendMessageMultiPeerMoveIds(Array<PeerId>& recipients, Message* message, uint32_t excudePeerId) = 0;
-	virtual void SendMessageSinglePeer(uint32_t peerId, Message* message) = 0;
+	virtual void SendMessageMultiPeerMoveIds(Array<PeerId>& recipients, Message* message, TPeerId excludePeerId) = 0;
+	virtual void SendMessageSinglePeer(TPeerId peerId, Message* message) = 0;
 	virtual ProtocolResult ProcessMsg(void* unknown, void* context, Message* message) = 0;
 	virtual bool ConnectToNatPunchServer(void*, STDString*) = 0;
 	virtual bool fun_110() = 0;
@@ -203,7 +203,7 @@ struct AbstractPeer : public AbstractPeerBase
 	QueueCS<Message*> ImmediateIncomingMessages;
 	QueueCS<Message*> DeferredIncomingMessages;
 	QueueCS<Message*> OutgoingMessages;
-	Array<int32_t> PeerIdClassName;
+	Array<TPeerId> PeerIdClassName;
 	Array<void*> DisconnectDelays;
 	void* SocketLayerOverride;
 	MessageFactory *NetMessageFactory;

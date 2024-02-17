@@ -145,7 +145,7 @@ void NetworkManager::Send(net::ExtenderMessage * msg, UserId userId)
 {
 	auto server = GetServer();
 	if (server != nullptr) {
-		server->SendMessageSinglePeer(userId.Id, msg);
+		server->SendMessageSinglePeer((TPeerId)userId.GetPeerId(), msg);
 	}
 }
 
@@ -165,7 +165,7 @@ void NetworkManager::Broadcast(net::ExtenderMessage * msg, UserId excludeUserId,
 		}
 	}
 
-	server->SendMessageMultiPeerMoveIds(peerIds, msg, excludeUserId.Id);
+	server->SendMessageMultiPeerMoveIds(peerIds, msg, (TPeerId)excludeUserId.GetPeerId());
 }
 
 void NetworkManager::BroadcastToConnectedPeers(net::ExtenderMessage* msg, UserId excludeUserId, bool excludeLocalPeer)
@@ -176,7 +176,7 @@ void NetworkManager::BroadcastToConnectedPeers(net::ExtenderMessage* msg, UserId
 	Array<PeerId> peerIds;
 	for (auto peerId : server->ConnectedPeerIds) {
 		if (CanSendExtenderMessages(peerId)) {
-			if (peerId != 1 || !excludeLocalPeer) {
+			if (peerId != TPeerId(1) || !excludeLocalPeer) {
 				peerIds.push_back(peerId);
 			}
 		} else {
@@ -184,7 +184,7 @@ void NetworkManager::BroadcastToConnectedPeers(net::ExtenderMessage* msg, UserId
 		}
 	}
 
-	server->SendMessageMultiPeerMoveIds(peerIds, msg, excludeUserId.Id);
+	server->SendMessageMultiPeerMoveIds(peerIds, msg, (TPeerId)excludeUserId.GetPeerId());
 }
 
 END_NS()

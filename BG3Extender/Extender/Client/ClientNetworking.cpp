@@ -151,7 +151,7 @@ void NetworkManager::Send(net::ExtenderMessage* msg)
 {
 	auto client = GetClient();
 	if (client != nullptr) {
-		client->SendMessageSinglePeer(client->HostPeerId.Value(), msg);
+		client->SendMessageSinglePeer((TPeerId)client->HostPeerId, msg);
 	}
 }
 

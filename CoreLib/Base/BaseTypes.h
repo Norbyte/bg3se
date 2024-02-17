@@ -47,16 +47,18 @@ namespace bg3se
 	};
 
 	enum class PeerIdTag {};
-	using PeerId = TypedIntegral<int32_t, PeerIdTag>;
+	using TPeerId = uint32_t;
+	using TUserId = uint32_t;
+	using PeerId = TypedIntegral<TPeerId, PeerIdTag>;
 
 	struct UserId
 	{
-		static constexpr int32_t Unassigned = (int32_t)0xFFFF0000;
+		static constexpr auto Unassigned = (TUserId)0xFFFF0000;
 
-		int32_t Id;
+		TUserId Id;
 
 		inline constexpr UserId() : Id(Unassigned) {}
-		inline explicit constexpr UserId(int32_t id) : Id(id) {}
+		inline explicit constexpr UserId(TUserId id) : Id(id) {}
 		inline constexpr UserId(UserId const& id) : Id(id.Id) {}
 
 		inline operator bool() const
