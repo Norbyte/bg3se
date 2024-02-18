@@ -125,11 +125,11 @@ struct ResistancesComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::Resistances;
 	static constexpr auto EngineClass = "eoc::ResistancesComponent";
 
-	std::array<std::array<ResistanceBoostFlags, 7>, 2> Resistances;
+	std::array<ResistanceBoostFlags, 14> Resistances;
 	uint8_t field_E;
 	int AC;
-	std::array<std::array<uint16_t, 7>, 2> PerDamageTypeHealthThresholds;
-	std::array<std::array<uint32_t, 7>, 2> PerDamageTypeHealthThresholds2;
+	std::array<uint16_t, 14> PerDamageTypeHealthThresholds;
+	std::array<uint32_t, 14> PerDamageTypeHealthThresholds2;
 };
 
 struct DifficultyCheckComponent : public BaseComponent
