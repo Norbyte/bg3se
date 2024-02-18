@@ -48,12 +48,6 @@ struct ModifierList
 	Modifier* GetAttributeInfo(FixedString const& name, int * attributeIndex) const;
 };
 
-struct ExtraData : public ProtectedGameObject<ExtraData>
-{
-	Map<FixedString, float> Properties;
-};
-
-
 struct ItemTypeManager : public CNamedElementManager<uint64_t>
 {
 	uint64_t Unknown;
@@ -295,7 +289,7 @@ struct RPGStats : public ProtectedGameObject<RPGStats>
 	ItemTypeManager ItemTypes;
 	Map<FixedString, Functors*> StatsFunctors;
 	uint64_t Unkn1[9];
-	Map<FixedString, float>* ExtraData;
+	MultiHashMap<FixedString, float>* ExtraData;
 	Map<FixedString, FixedString> field_290;
 	Map<FixedString, void*> field_2A8;
 	Map<FixedString, void*> field_2C0;
