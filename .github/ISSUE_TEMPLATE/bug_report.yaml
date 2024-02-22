@@ -31,7 +31,7 @@ body:
 
 - type: dropdown
   attributes:
-    label: I have attempted solutions to common problems:
+    label: "I have attempted solutions to common problems:"
     description: |
       [Troubleshooting Guide]: ./TROUBLESHOOTING.md
 
@@ -47,7 +47,7 @@ body:
 
 - type: dropdown
   attributes:
-    label: I have checked that my game version is supported:
+    label: "I have checked that my game version is supported:"
     description: |
       [Readme]: ./README.md
 
