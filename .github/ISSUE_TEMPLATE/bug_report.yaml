@@ -10,6 +10,8 @@ body:
     value: |
       [Troubleshooting Guide]: ./TROUBLESHOOTING.md
 
+      # Before you create an issue...
+
       Note that issues should be created **ONLY** for Script Extender-specific bugs and issues.
       If you are having trouble with a **specific mod**, please report the issue to that mod's
       author, not here.
@@ -111,6 +113,8 @@ body:
   attributes:
     label: Diagnostic Files
     description: |
+      [this]: ./Generate%20BG3%20Diagnostic.bat
+
       Please download [this] batch file, then run it. Afterwards, a "BG3 Diagnostic Data.txt" file
       should be present in your `%TEMP%` folder. Please attach that file here, along with any
       screenshots or files that might help with fixing the issue.
