@@ -18,7 +18,12 @@ body:
       
       For a list of common issues and fixes, see the [Troubleshooting Guide]
 
-      Only AFTER you have attempted common fixes should you create an issue.
+      After you have attempted common fixes, please search using the search bar on the [Issues] page
+      to see if an issue already exists for the bug you encountered. If there is, please add to
+      that issue instead of making a new one. You can also react with 👍 to prioritize an issue.
+      
+      Only AFTER you have attempted common fixes and looked for an existing issue should you go
+      ahead and create a new issue.
 
 
 - type: markdown
