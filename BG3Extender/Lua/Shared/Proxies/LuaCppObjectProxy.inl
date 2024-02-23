@@ -62,13 +62,13 @@ CppMetatableManager& CppMetatableManager::FromLua(lua_State* L)
 	return State::FromLua(L)->GetMetatableManager();
 }
 
-
 void* ObjectProxy::GetRaw(lua_State* L, int index, GenericPropertyMap const& pm)
 {
 	CppObjectMetadata meta;
 	lua_get_cppobject(L, index, meta);
 
-	if (pm.RegistryIndex != meta.PropertyMapTag) {
+	auto& objPm = LuaGetPropertyMap(meta.PropertyMapTag);
+	if (!objPm.IsA(pm.RegistryIndex)) {
 		luaL_error(L, "Argument %d: Expected object of type '%s', got '%s'", index,
 			pm.Name.GetString(), LuaGetPropertyMap(meta.PropertyMapTag).Name.GetString());
 	}
