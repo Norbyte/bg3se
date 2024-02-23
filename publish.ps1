@@ -15,8 +15,8 @@ $CloudFrontDistributionID = "EVZRUV2YONUZF"
 
 $S3ManifestPath = "Manifest.json"
 
-$PublishingRoot = Join-Path "C:\Dev\LS\BG3PublishingRoot" "$Channel"
-$SigningKey = Join-Path "C:\Dev\LS\BG3PublishingRoot" "package-signer.key"
+$PublishingRoot = Join-Path "D:\Dev\LS\BG3PublishingRoot" "$Channel"
+$SigningKey = Join-Path "D:\Dev\LS\BG3PublishingRoot" "package-signer.key"
 $BuildRoot = Join-Path "$PublishingRoot" "Build"
 $PDBRoot = Join-Path "$PublishingRoot" "PDB"
 $RootPath = (Get-Location).Path
