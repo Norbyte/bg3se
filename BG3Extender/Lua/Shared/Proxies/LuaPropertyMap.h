@@ -261,7 +261,11 @@ public:
 	inline void BindConstructors()
 	{
 		Size = sizeof(T);
+#if defined(ENABLE_UI)
+		if constexpr (std::is_default_constructible_v<T> && !std::is_base_of_v<Noesis::BaseObject, T> && !std::is_base_of_v<Noesis::Interface, T>) {
+#else
 		if constexpr (std::is_default_constructible_v<T>) {
+#endif
 			Construct = &(DefaultConstruct<T>);
 			Destroy = &(DefaultDestroy<T>);
 			if constexpr (std::is_assignable_v<T, T> && !std::is_base_of_v<Noncopyable<T>, T>) {

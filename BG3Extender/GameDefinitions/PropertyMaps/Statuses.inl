@@ -47,8 +47,6 @@ P(StackedSpellCastSourceUuid)
 P(TickType)
 P(Flags4)
 P_BITMASK(Flags4)
-
-//P_FUN(GetEngineType, StatusGetEngineType)
 END_CLS()
 
 

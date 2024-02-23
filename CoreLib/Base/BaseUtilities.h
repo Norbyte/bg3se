@@ -33,10 +33,12 @@ public:
 	T& operator = (T&&) = delete;
 };
 
+class ProtectedGameObjectBase {};
+
 // Base class for game objects that are managed entirely
 // by the game and we cannot create/copy them.
 template <class T>
-class ProtectedGameObject
+class ProtectedGameObject : public ProtectedGameObjectBase
 {
 public:
 	ProtectedGameObject(const ProtectedGameObject&) = delete;

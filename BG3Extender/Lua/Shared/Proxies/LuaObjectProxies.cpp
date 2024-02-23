@@ -103,6 +103,7 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 #define PN(name, prop)
 #define PN_RO(name, prop)
 #define P_GETTER(prop, fun)
+#define P_FREE_GETTER(prop, fun)
 #define P_GETTER_SETTER(prop, getter, setter)
 #define P_FUN(prop, fun)
 #define P_FALLBACK(getter, setter)
@@ -122,6 +123,7 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 #undef PN
 #undef PN_RO
 #undef P_GETTER
+#undef P_FREE_GETTER
 #undef P_GETTER_SETTER
 #undef P_FUN
 #undef P_FALLBACK
@@ -243,6 +245,15 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 		(PM::TPropertyMap::PropertyAccessors::Setter*)&GenericSetNonWriteableProperty, nullptr, nullptr, 0, 0, PropertyNotification::None \
 	);
 
+#define P_FREE_GETTER(name, fun) \
+	pm.AddProperty(#name, \
+		[](lua_State* L, LifetimeHandle const& lifetime, PM::ObjectType* obj, RawPropertyAccessors const& prop) { \
+			CallGetter(L, obj, &fun); \
+			return PropertyOperationResult::Success; \
+		}, \
+		(PM::TPropertyMap::PropertyAccessors::Setter*)&GenericSetNonWriteableProperty, nullptr, nullptr, 0, 0, PropertyNotification::None \
+	);
+
 #define P_GETTER_SETTER(prop, getter, setter) \
 	pm.AddProperty(#prop, \
 		[](lua_State* L, LifetimeHandle const& lifetime, PM::ObjectType* obj, RawPropertyAccessors const& prop) { \
@@ -261,7 +272,7 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 	pm.AddProperty(#name, \
 		[](lua_State* L, LifetimeHandle const& lifetime, PM::ObjectType* obj, RawPropertyAccessors const& prop) { \
 			lua_pushcfunction(L, [](lua_State* L) -> int { \
-				return CallMethod(L, &PM::ObjectType::fun); \
+				return CallMethod(L, &fun); \
 			}); \
 			return PropertyOperationResult::Success; \
 		}, \
@@ -289,6 +300,7 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 #undef PN
 #undef PN_RO
 #undef P_GETTER
+#undef P_FREE_GETTER
 #undef P_GETTER_SETTER
 #undef P_FUN
 #undef P_FALLBACK

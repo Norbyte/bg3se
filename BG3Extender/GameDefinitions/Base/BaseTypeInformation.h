@@ -361,6 +361,9 @@ TypeInformation* MakeDeferredMapType()
 	return ty;
 }
 
+template <class R, class... Args>
+R GetFunctionReturnType(R (*)(Args...)) {}
+
 template <class R, class T, class... Args>
 R GetFunctionReturnType(R (T::*)(Args...)) {}
 

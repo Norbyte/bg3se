@@ -62,8 +62,9 @@ void RegisterObjectProxyTypeInformation()
 #define PN(name, prop) ty.Members.insert(std::make_pair(FixedString(#name), GetTypeInfoRef<decltype(TClass::prop)>()));
 #define PN_RO(name, prop) ty.Members.insert(std::make_pair(FixedString(#name), GetTypeInfoRef<decltype(TClass::prop)>()));
 #define P_GETTER(prop, fun) ty.Members.insert(std::make_pair(FixedString(#prop), GetTypeInfoRef<decltype(GetFunctionReturnType(&TClass::fun))>()));
+#define P_FREE_GETTER(prop, fun) ty.Members.insert(std::make_pair(FixedString(#prop), GetTypeInfoRef<decltype(GetFunctionReturnType(&fun))>()));
 #define P_GETTER_SETTER(prop, getter, setter) ty.Members.insert(std::make_pair(FixedString(#prop), GetTypeInfoRef<decltype(GetFunctionReturnType(&TClass::getter))>()));
-#define P_FUN(prop, fun) AddFunctionSignature(ty, #prop, &TClass::fun);
+#define P_FUN(prop, fun) AddFunctionSignature(ty, #prop, &fun);
 #define P_FALLBACK(getter, setter) ty.HasWildcardProperties = true;
 
 #include <GameDefinitions/PropertyMaps/AllPropertyMaps.inl>
@@ -81,6 +82,7 @@ void RegisterObjectProxyTypeInformation()
 #undef PN
 #undef PN_RO
 #undef P_GETTER
+#undef P_FREE_GETTER
 #undef P_GETTER_SETTER
 #undef P_FUN
 #undef P_FALLBACK

@@ -63,8 +63,8 @@ P_BITMASK(Flags3)
 P_GETTER(Character, LuaGetSelf)
 
 // Functions
-P_FUN(GetStatus, GetStatus)
-P_FUN(GetStatusByType, GetStatusByType)
+P_FUN(GetStatus, esv::Character::GetStatus)
+P_FUN(GetStatusByType, esv::Character::GetStatusByType)
 END_CLS()
 
 
@@ -95,15 +95,4 @@ P(Flags2)
 P_BITMASK(Flags2)
 
 P_GETTER(Item, LuaGetSelf)
-
-/*P_FUN(GetInventoryItems, ItemGetInventoryItems)
-P_FUN(GetNearbyCharacters, ItemGetNearbyCharacters)
-P_FUN(GetGeneratedBoosts, ItemGetInventoryItems)
-P_FUN(GetInventoryItems, ItemGetGeneratedBoosts)
-P_FUN(HasTag, GameObjectHasTag<esv::Item>)
-P_FUN(GetTags, GameObjectGetTags<esv::Item>)
-P_FUN(GetStatus, (GameObjectGetStatus<esv::Item, esv::Status>))
-P_FUN(GetStatusByType, (GameObjectGetStatusByType<esv::Item, esv::Status>))
-P_FUN(GetStatusIds, (GameObjectGetStatusIds<esv::Item>))
-P_FUN(GetStatuses, (GameObjectGetStatuses<esv::Item, esv::Status>))*/
 END_CLS()
