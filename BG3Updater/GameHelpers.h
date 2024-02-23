@@ -1,8 +1,6 @@
 #pragma once
 
-#include <CoreLib/SymbolMapper.h>
 #include <BG3Extender/GameDefinitions/Enumerations.h>
-#include "UpdaterSymbols.h"
 
 #if defined(_DEBUG)
 #define HAS_DEBUG_LOGGING
@@ -47,14 +45,7 @@ public:
 	void SuspendClientThread() const;
 	void ResumeClientThread() const;
 
-	UpdaterSymbols const& Symbols() const
-	{
-		return symbols_;
-	}
-
 private:
-	typedef void(*EoCClient__HandleError)(void * self, std::string const& message, bool exitGame, std::string const& a4);
-
 	struct ThreadInfo
 	{
 		DWORD ThreadId;
@@ -69,17 +60,6 @@ private:
 	HANDLE hMainThread_{ NULL };
 	bool bindingsDone_{ false };
 	std::string errorMsg_;
-
-	UpdaterSymbols symbols_;
-
-	SymbolMappings mappings_;
-	SymbolMapper symbolMapper_;
-	SymbolMapper::ModuleInfo appModule_;
-
-	bool CanShowError() const;
-
-	bool ShowErrorDialog(char const * msg);
-	bool ClientHandleError(char const * msg, bool exitGame) const;
 
 	ThreadInfo const * FindClientThread() const;
 	static LONG NTAPI ThreadNameCaptureFilter(_EXCEPTION_POINTERS *ExceptionInfo);

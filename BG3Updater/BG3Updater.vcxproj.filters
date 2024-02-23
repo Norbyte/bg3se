@@ -19,7 +19,6 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="GameHelpers.h" />
-    <ClInclude Include="UpdaterSymbols.h" />
     <ClInclude Include="Cache.h" />
     <ClInclude Include="Updater.h" />
     <ClInclude Include="Defines.h" />
@@ -29,8 +28,5 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Exports.def" />
-  </ItemGroup>
-  <ItemGroup>
-    <Xml Include="UpdaterBinaryMappings.xml" />
   </ItemGroup>
 </Project>

@@ -180,7 +180,6 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Updater.h" />
-    <ClInclude Include="UpdaterSymbols.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="API.cpp" />
@@ -203,9 +202,6 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resources.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Xml Include="UpdaterBinaryMappings.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

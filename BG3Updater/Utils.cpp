@@ -29,9 +29,7 @@ void OSFree(void* ptr)
 }
 
 GameHelpers::GameHelpers()
-	: symbolMapper_(mappings_)
 {
-	gCoreLibPlatformInterface.StaticSymbols = &symbols_;
 	gCoreLibPlatformInterface.GlobalConsole = new Console();
 	gCoreLibPlatformInterface.Alloc = &OSAlloc;
 	gCoreLibPlatformInterface.Free = &OSFree;
@@ -52,39 +50,7 @@ GameHelpers::~GameHelpers()
 void GameHelpers::BindToGame()
 {
 	if (bindingsDone_) return;
-
-	SymbolMappingLoader loader(mappings_);
-	loader.AddKnownModule("Main");
-
-	SYM_OFF(ls__FixedString__GetString);
-	SYM_OFF(ls__FixedString__IncRef);
-	SYM_OFF(ls__GlobalStringTable__MainTable__CreateFromString);
-	SYM_OFF(ls__GlobalStringTable__MainTable__DecRef);
-	SYM_OFF(ls__gGlobalStringTable);
-
-	SYM_OFF(ecl__EoCClient);
-	SYM_OFF(ecl__EoCClient__HandleError);
-	SYM_OFF(ls__gTranslatedStringRepository);
-
-	if (loader.LoadBuiltinMappings(IDR_BINARY_MAPPINGS)) {
-		if (GetModuleHandleW(L"bg3.exe") != NULL) {
-			symbolMapper_.AddModule("Main", L"bg3.exe");
-		} else {
-			symbolMapper_.AddModule("Main", L"bg3_dx11.exe");
-		}
-
-		symbolMapper_.MapAllSymbols(false);
-		exceptionHandler_ = AddVectoredExceptionHandler(1, &ThreadNameCaptureFilter);
-
-		gCoreLibPlatformInterface.Alloc = &OSAlloc;
-		gCoreLibPlatformInterface.Free = &OSFree;
-		gCoreLibPlatformInterface.ls__FixedString__GetString = symbols_.ls__FixedString__GetString;
-		gCoreLibPlatformInterface.ls__FixedString__IncRef = symbols_.ls__FixedString__IncRef;
-		gCoreLibPlatformInterface.ls__GlobalStringTable__MainTable__CreateFromString = symbols_.ls__GlobalStringTable__MainTable__CreateFromString;
-		gCoreLibPlatformInterface.ls__GlobalStringTable__MainTable__DecRef = symbols_.ls__GlobalStringTable__MainTable__DecRef;
-		gCoreLibPlatformInterface.ls__gGlobalStringTable = symbols_.ls__gGlobalStringTable;
-	}
-
+	exceptionHandler_ = AddVectoredExceptionHandler(1, &ThreadNameCaptureFilter);
 	bindingsDone_ = true;
 }
 
@@ -96,9 +62,7 @@ void GameHelpers::SetMainThread(HANDLE h)
 DWORD WINAPI GameHelpers::ShowErrorThreadMain(LPVOID param)
 {
 	auto self = reinterpret_cast<GameHelpers*>(param);
-	if (!self->ShowErrorDialog(self->errorMsg_.c_str())) {
-		MessageBoxA(NULL, self->errorMsg_.c_str(), "Script Extender Updater Error", MB_OK | MB_ICONERROR);
-	}
+	MessageBoxA(NULL, self->errorMsg_.c_str(), "Script Extender Updater Error", MB_OK | MB_ICONERROR);
 
 	return 0;
 }
@@ -109,83 +73,6 @@ void GameHelpers::ShowError(char const * msg)
 	CreateThread(NULL, 0, &ShowErrorThreadMain, this, 0, NULL);
 }
 
-bool GameHelpers::ShowErrorDialog(char const * msg)
-{
-	Sleep(1500);
-	BindToGame();
-
-	auto client = symbols_.GetEoCClient();
-	if (client == nullptr
-		|| symbols_.ecl__EoCClient__HandleError == nullptr
-		|| symbols_.ls__gGlobalStringTable == nullptr
-		|| symbols_.ls__GlobalStringTable__MainTable__CreateFromString == nullptr
-		|| symbols_.ls__GlobalStringTable__MainTable__DecRef == nullptr
-		|| symbols_.ls__gTranslatedStringRepository == nullptr) {
-		return false;
-	}
-
-	unsigned retries{ 0 };
-	for (; retries < 300000; retries += 100) {
-		Sleep(100);
-
-		if (CanShowError()) break;
-		// Wait for 15 sec for the game engine to start up
-		if (retries >= 15000 && !GetState()) break;
-	}
-
-	if (CanShowError()) {
-		return ClientHandleError(msg, false);
-	} else {
-		return false;
-	}
-}
-
-bool GameHelpers::ClientHandleError(char const * msg, bool exitGame) const
-{
-	std::string filtered(msg);
-	for (auto pos = filtered.find("\r\n"); pos != std::wstring::npos; pos = filtered.find("\r\n")) {
-		filtered.replace(filtered.begin() + pos, filtered.begin() + pos + 2, "<br>");
-	}
-
-	// Abuse a deprecated string key for displaying custom text
-	TranslatedString ts;
-	ts.Handle.Handle = FixedString("h11018635g3003g46c6g8013g4630abe55cad");
-	ts.Handle.Version = 1;
-	ts.ArgumentString.Handle = FixedString("ls::TranslatedStringRepository::s_HandleUnknown");
-
-	// Create a new entry in the string repository text pool
-	auto& texts = (*symbols_.ls__gTranslatedStringRepository)->TranslatedStrings[0];
-	auto tskRef = texts->Texts.try_get(ts.Handle);
-	if (tskRef) {
-		// Avoid using the game allocator as much as possible, as the mapping may be broken
-		auto str = new std::string(msg);
-
-		// Update reference to new string
-		auto originalRef = *tskRef;
-		*tskRef = LSStringView(str->data(), (uint32_t)str->size());
-
-		symbols_.ecl__EoCClient__HandleError(*symbols_.ecl__EoCClient, ts, exitGame, ts);
-		return true;
-	} else {
-		return false;
-	}
-}
-
-bool GameHelpers::CanShowError() const
-{
-	auto state = GetState();
-	return state
-		&& (*state == ecl::GameState::Running
-		|| *state == ecl::GameState::Paused
-		|| *state == ecl::GameState::Menu
-		|| *state == ecl::GameState::Lobby);
-}
-
-std::optional<ecl::GameState> GameHelpers::GetState() const
-{
-	return symbols_.GetClientState();
-}
-
 void GameHelpers::SuspendClientThread() const
 {
 	auto thread = FindClientThread();
@@ -194,8 +81,6 @@ void GameHelpers::SuspendClientThread() const
 		if (hThread && hThread != INVALID_HANDLE_VALUE) {
 			SuspendThread(hThread);
 			CloseHandle(hThread);
-			// The error handler only displays a status message during the loading screen
-			ClientHandleError("Checking for Script Extender updates", false);
 		}
 	} else {
 		DEBUG("Could not suspend client thread (thread not found!)");
