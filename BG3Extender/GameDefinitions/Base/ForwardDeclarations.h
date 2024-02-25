@@ -7,6 +7,11 @@ namespace Json
 	class Value;
 }
 
+namespace Noesis
+{
+	class BaseObject;
+}
+
 BEGIN_SE()
 
 struct LegacyPropertyMapBase;

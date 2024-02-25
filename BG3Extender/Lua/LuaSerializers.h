@@ -106,6 +106,9 @@ namespace bg3se::lua
 	inline LuaSerializer& operator << (LuaSerializer& s, FixedString& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, STDString& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, STDWString& v) { return s.Visit(v); }
+#if defined(ENABLE_UI)
+	inline LuaSerializer& operator << (LuaSerializer& s, Noesis::Symbol& v) { return s.Visit(v); }
+#endif
 	inline LuaSerializer& operator << (LuaSerializer& s, Path& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, Guid& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, NetId& v) { return s.Visit(v); }
@@ -205,6 +208,33 @@ namespace bg3se::lua
 		s.EndObject();
 		return s;
 	}
+
+#if defined(ENABLE_UI)
+	template <class T, unsigned N>
+	LuaSerializer& operator << (LuaSerializer& s, Noesis::Vector<T, N>& v)
+	{
+		s.BeginObject();
+		if (s.IsWriting) {
+			int i = 1;
+			for (auto& val : v) {
+				StackCheck _(s.L);
+				push(s.L, i++);
+				s << val;
+				lua_rawset(s.L, -3);
+			}
+		} else {
+			v.Clear();
+			for (auto idx : iterate(s.L, -1)) {
+				StackCheck _(s.L);
+				T temp{};
+				s << temp;
+				v.PushBack(temp);
+			}
+		}
+		s.EndObject();
+		return s;
+	}
+#endif
 
 	template <class T>
 	LuaSerializer& operator << (LuaSerializer& s, MultiHashSet<T>& v)
@@ -407,6 +437,17 @@ namespace bg3se::lua
 			assert(false && *v);
 		}
 
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::TreasureTable* v);
+	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::TreasureSubTable* v);
+	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::TreasureCategory* v);
+
+	template <class T>
+	std::enable_if_t<!IsByVal<T>, LuaSerializer&> operator << (LuaSerializer& s, T* v)
+	{
+		MakeObjectRef(s.L, v);
 		return s;
 	}
 

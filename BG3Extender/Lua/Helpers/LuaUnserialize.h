@@ -106,8 +106,44 @@ PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, Ob
 		*obj = *arr;
 		return PropertyOperationResult::Success;
 	}
-
 }
+
+#if defined(ENABLE_UI)
+template <class TK, unsigned N>
+PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, Noesis::Vector<TK, N>* obj)
+{
+	if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>) {
+		return PropertyOperationResult::UnsupportedType;
+	} else {
+		StackCheck _(L);
+		luaL_checktype(L, index, LUA_TTABLE);
+
+		// FIXME - in-place resize object by using raw size from the Lua table meta
+		// (this will also require the table to be array-like)
+		obj->Clear();
+		for (auto idx : iterate(L, index)) {
+			TK value;
+			Unserialize(L, idx, &value);
+			obj->PushBack(std::move(value));
+		}
+
+		return PropertyOperationResult::Success;
+	}
+}
+
+template <class TK, unsigned N>
+PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, Noesis::Vector<TK, N>* obj)
+{
+	if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>) {
+		return PropertyOperationResult::UnsupportedType;
+	} else {
+		StackCheck _(L);
+		auto arr = ArrayProxyMetatable::Get<DynamicArrayProxyImpl<Noesis::Vector<TK, N>, TK, 7>>(L, index);
+		*obj = *arr;
+		return PropertyOperationResult::Success;
+	}
+}
+#endif
 
 template <class TK, size_t Size>
 PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, std::array<TK, Size>* obj)

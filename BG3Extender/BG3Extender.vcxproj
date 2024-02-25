@@ -205,6 +205,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\Surface.h" />
     <ClInclude Include="GameDefinitions\Symbols.h" />
     <ClInclude Include="GameDefinitions\TranslatedString.h" />
+    <ClInclude Include="GameDefinitions\UI.h" />
     <ClInclude Include="GameDefinitions\VirtualTextureFormat.h" />
     <ClInclude Include="GameHooks\DataLibraries.h" />
     <ClInclude Include="GameHooks\EngineHooks.h" />
@@ -376,6 +377,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="GameDefinitions\PropertyMaps\Functors.inl" />
     <None Include="GameDefinitions\PropertyMaps\Statuses.inl" />
     <None Include="GameDefinitions\PropertyMaps\SurfaceActions.inl" />
+    <None Include="GameDefinitions\PropertyMaps\UI.inl" />
     <None Include="GameHooks\EngineHooks.inl" />
     <None Include="LuaScripts\BuiltinLibrary.lua" />
     <None Include="LuaScripts\BuiltinLibraryClient.lua" />
@@ -392,6 +394,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     </None>
     <None Include="Lua\Libs\ClientNet.inl" />
     <None Include="Lua\Libs\ClientTemplate.inl" />
+    <None Include="Lua\Libs\ClientUI.inl" />
     <None Include="Lua\Libs\Debug.inl" />
     <None Include="Lua\Libs\Entity.inl" />
     <None Include="Lua\Libs\IO.inl" />

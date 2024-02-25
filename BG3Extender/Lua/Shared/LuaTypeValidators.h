@@ -226,6 +226,38 @@ bool ValidateRef(ObjectSet<TE> const* v, Overload<ObjectSet<TE>>)
 	return true;
 }
 
+#if defined(ENABLE_UI)
+template <class TE, unsigned N>
+bool ValidateRef(Noesis::Vector<TE, N> const* v, Overload<Noesis::Vector<TE, N>>)
+{
+	CHECK(v->CapacityIncrementSize <= 0x100000);
+
+	if constexpr (N == 0) {
+		auto mBegin = *reinterpret_cast<void* const*>(v);
+		if (mBegin == reinterpret_cast<void const*>(v + 1)) {
+			CHECK(v->Size() == 0);
+			CHECK(v->Capacity() == 0);
+		}
+	}
+
+	CHECK(v->Size() <= v->Capacity());
+	CHECK(v->Capacity() <= 0x1000000);
+	CHECK(!IsBadReadPtr(&v[0], v->Capacity() * sizeof(TE)));
+
+	if constexpr (!std::is_pointer_v<TE>) {
+		for (auto& ele : *v) {
+			CHECKR(ValidateAny<TE>(&ele));
+		}
+	} else {
+		for (auto& ele : *v) {
+			CHECKR(ValidatePointer(ele));
+		}
+	}
+
+	return true;
+}
+#endif
+
 template <class TE>
 bool ValidateRef(StaticArray<TE> const* v, Overload<StaticArray<TE>>)
 {
@@ -395,6 +427,14 @@ bool Validate(ObjectSet<TE> const* v, Overload<ObjectSet<TE>>)
 {
 	return ValidateRef(v, Overload<ObjectSet<TE>>{});
 }
+
+#if defined(ENABLE_UI)
+template <class TE, unsigned N>
+bool Validate(Noesis::Vector<TE, N> const* v, Overload<Noesis::Vector<TE, N>>)
+{
+	return ValidateRef(v, Overload<Noesis::Vector<TE, N>>{});
+}
+#endif
 
 template <class TK, class TV>
 bool Validate(Map<TK, TV> const* v, Overload<Map<TK, TV>>)

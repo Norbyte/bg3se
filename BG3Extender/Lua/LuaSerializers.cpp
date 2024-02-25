@@ -72,6 +72,24 @@ namespace bg3se::lua
 		return s;
 	}*/
 
+	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::TreasureTable* v)
+	{
+		s << *v;
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::TreasureSubTable* v)
+	{
+		s << *v;
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::TreasureCategory* v)
+	{
+		s << *v;
+		return s;
+	}
+
 	LuaSerializer& operator << (LuaSerializer& s, TreasureTable& v)
 	{
 		s.BeginObject();
@@ -141,6 +159,12 @@ namespace bg3se::lua
 		return s;
 	}
 
+	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::TreasureSubTable::Category* v)
+	{
+		s << *v;
+		return s;
+	}
+
 	LuaSerializer& operator << (LuaSerializer& s, TreasureSubTable::DropCount& v)
 	{
 		s.BeginObject();
@@ -197,6 +221,12 @@ namespace bg3se::lua
 		PO(MinLevel, 0);
 		PO(MaxLevel, 0);
 		s.EndObject();
+		return s;
+	}
+
+	LuaSerializer& operator << (LuaSerializer& s, TreasureCategory::Item* v)
+	{
+		s << *v;
 		return s;
 	}
 

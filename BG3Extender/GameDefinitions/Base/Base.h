@@ -2,6 +2,14 @@
 
 #include <CoreLib/Base/Base.h>
 #include <GameDefinitions/Enumerations.h>
+
+#if defined(ENABLE_UI)
+#define NS_STATIC_LIBRARY
+#include <NsCore/Symbol.h>
+#include <NsCore/String.h>
+#include <NsCore/Vector.h>
+#endif
+
 #include <GameDefinitions/Base/LuaAnnotations.h>
 #include <GameDefinitions/Base/BaseTypeInformation.h>
 #include <GameDefinitions/Base/ForwardDeclarations.h>

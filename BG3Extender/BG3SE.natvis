@@ -66,4 +66,58 @@
       </ArrayItems>
     </Expand>
   </Type>
+  
+  <Type Name="Noesis::Symbol">
+    <DisplayString>{((char**)((Noesis::SymbolManagerInternals*)((uintptr_t)bg3se::gStaticSymbols->Noesis__SymbolManager__Buf1 - 8))->Strings.mBegin)[mIndex]}</DisplayString>
+  </Type>
+
+  <Type Name="Noesis::BaseVector&lt;*&gt;">
+    <Intrinsic Name="size" Expression="mSize" />
+    <Intrinsic Name="capacity" Expression="mCapacity" />
+    <DisplayString>{{ size={mSize} }}</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">mSize</Item>
+      <Item Name="[capacity]" ExcludeView="simple">mCapacity</Item>
+      <ArrayItems>
+        <Size>mSize</Size>
+        <ValuePointer>($T1*)mBegin</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="Noesis::HashMapImpl&lt;*&gt;">
+    <DisplayString>{{size={mNumEntries}}}</DisplayString>
+    <Expand HideRawView="true">
+      <Item Name="mNumEntries">mNumEntries</Item>
+      <CustomListItems>
+        <Variable Name="i" InitialValue="0"/>
+        <Loop>
+          <Break Condition="i >= mNumBuckets"/>
+          <If Condition="mBuckets[i].key != 1">
+            <Item Name="{mBuckets[i].key}">mBuckets[i].value</Item>
+          </If>
+          <Exec>i++</Exec>
+        </Loop>
+      </CustomListItems>
+    </Expand>
+  </Type>
+
+  <Type Name="Noesis::HashSetImpl&lt;*&gt;">
+    <DisplayString>{{size={mNumEntries}}}</DisplayString>
+    <Expand HideRawView="true">
+      <Item Name="mNumEntries">mNumEntries</Item>
+      <CustomListItems>
+        <Variable Name="i" InitialValue="0"/>
+        <Variable Name="idx" InitialValue="0"/>
+        <Loop>
+          <Break Condition="i >= mNumBuckets"/>
+          <If Condition="mBuckets[i].key != 1">
+            <Item Name="{idx}">mBuckets[i].key</Item>
+            <Exec>idx++</Exec>
+          </If>
+          <Exec>i++</Exec>
+        </Loop>
+      </CustomListItems>
+    </Expand>
+  </Type>
 </AutoVisualizer>

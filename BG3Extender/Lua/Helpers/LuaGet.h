@@ -34,6 +34,21 @@ inline STDString do_get(lua_State* L, int index, Overload<STDString>)
 	return STDString(str, (uint32_t)len);
 }
 
+#if defined(ENABLE_UI)
+inline Noesis::String do_get(lua_State* L, int index, Overload<Noesis::String>)
+{
+	size_t len;
+	auto str = luaL_checklstring(L, index, &len);
+	return Noesis::String(str, (uint32_t)len);
+}
+
+inline Noesis::Symbol do_get(lua_State* L, int index, Overload<Noesis::Symbol>)
+{
+	auto str = luaL_checkstring(L, index);
+	return Noesis::Symbol{ Noesis::SymbolManager::FindString(str) };
+}
+#endif
+
 inline STDWString do_get(lua_State* L, int index, Overload<STDWString>)
 {
 	size_t len;

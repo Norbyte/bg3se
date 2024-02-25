@@ -144,6 +144,14 @@ inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overl
 	return &MakeDeferredArrayType<T>;
 }
 
+#if defined(ENABLE_UI)
+template <class T, unsigned N>
+inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<Noesis::Vector<T, N>>)
+{
+	return &MakeDeferredArrayType<T>;
+}
+#endif
+
 template <class T, class Allocator, bool StoreSize>
 inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<Set<T, Allocator, StoreSize>>)
 {

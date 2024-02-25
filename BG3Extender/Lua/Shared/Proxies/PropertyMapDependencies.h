@@ -5,6 +5,9 @@
 #include <GameDefinitions/Resources.h>
 #include <GameDefinitions/Render.h>
 #include <GameDefinitions/Components/All.h>
+#if defined(ENABLE_UI)
+#include <GameDefinitions/UI.h>
+#endif
 
 #include <Lua/LuaBinding.h>
 #include <Lua/LuaSerializers.h>
@@ -16,3 +19,7 @@
 #include <Lua/Client/LuaBindingClient.h>
 
 #include <Extender/ScriptExtender.h>
+
+#if defined(ENABLE_UI)
+#include <NsGui/FrameworkElement.h>
+#endif

@@ -64,6 +64,18 @@ inline void push(lua_State* L, STDWString const& s)
 	push(L, ToUTF8(s));
 }
 
+#if defined(ENABLE_UI)
+inline void push(lua_State* L, Noesis::String const& s)
+{
+	lua_pushlstring(L, s.Str(), s.Size());
+}
+
+inline void push(lua_State* L, Noesis::Symbol const& s)
+{
+	push(L, s.Str());
+}
+#endif
+
 inline void push(lua_State* L, Guid const& s)
 {
 	push(L, s.ToString());

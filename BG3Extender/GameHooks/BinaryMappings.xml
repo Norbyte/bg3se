@@ -863,6 +863,38 @@
         49 ff c4 // inc     r12
         <Target Type="Indirect" Offset="@ref1" Symbol="eoc__InterruptPrototype__Init" />
       </Mapping>
+      
+      <Mapping Name="Noesis::SymbolManager">
+        48 c1 e0 04 // shl     rax, 4
+        48 03 05 ?? ?? ?? ?? // add     rax, cs:qword_14597F9A8
+        48 8b 4c 24 20 // mov     rcx, [rsp+68h+var_48]
+        48 3b c8 // cmp     rcx, rax
+        74 09 // jz      short loc_14493759F
+        44 8b 61 0c // mov     r12d, [rcx+0Ch]
+        e9 f5 01 00 00 // jmp     loc_144937794
+        8b 1d ?? ?? ?? ?? // mov     ebx, cs:dword_14597F9A4
+        81 e3 ff ff ff 00 // and     ebx, 0FFFFFFh
+        @ref1 8b 05 ?? ?? ?? ?? // mov     eax, cs:dword_14597F9A0
+        3b c3 // cmp     eax, ebx
+        <Target Type="Indirect" Offset="@ref1" Symbol="Noesis__SymbolManager__Buf1" />
+      </Mapping>
+      
+      <Mapping Name="Noesis::Reflection">
+        40 53 // push    rbx
+        48 83 ec 40 // sub     rsp, 40h
+        @ref1 4c 8b 1d ?? ?? ?? ?? // mov     r11, cs:Noesis__gReflection.Types.mBegin
+        8b 05 ?? ?? ?? ?? // mov     eax, cs:Noesis__gReflection.Types.mSize
+        44 8b 0d ?? ?? ?? ?? // mov     r9d, dword ptr cs:qword_14597F98C
+        48 ff c8 // dec     rax
+        49 8d 1c 83 // lea     rbx, [r11+rax*4]
+        49 8d 43 fc // lea     rax, [r11-4]
+        48 3b d8 // cmp     rbx, rax
+        48 8b 05 ?? ?? ?? ?? // mov     rax, cs:Noesis__gReflection.field_10.mBuckets
+        0f 84 d0 00 00 00 // jz      loc_144936FD5
+        48 89 7c 24 50 // mov     [rsp+48h+arg_0], rdi
+        66 0f 1f 44 00 00 // nop     word ptr [rax+rax+00h]
+        <Target Type="Indirect" Offset="@ref1" Symbol="Noesis__gReflection" />
+      </Mapping>
     
     
 

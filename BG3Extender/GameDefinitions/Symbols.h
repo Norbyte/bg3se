@@ -123,6 +123,11 @@ namespace bg3se
 		resource::LoadableResource::UnloadProc* ls__VirtualTextureResource__Unload{ nullptr };
 		resource::LoadableResource::TranscodeProc* ls__VirtualTextureResource__Transcode{ nullptr };
 
+#if defined(ENABLE_UI)
+		void* Noesis__gReflection;
+		void* Noesis__SymbolManager__Buf1;
+#endif
+
 		GlobalSwitches** ls__GlobalSwitches{ nullptr };
 
 		FindFirstFileWProc* Kernel_FindFirstFileW{ nullptr };

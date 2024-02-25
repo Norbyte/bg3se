@@ -190,6 +190,12 @@ namespace bg3se
 		SYM_OFF(esv__CacheTemplateManager);
 
 		SYM_OFF(esv__SavegameManager);
+
+#if defined(ENABLE_UI)
+		SYM_OFF(Noesis__gReflection);
+		SYM_OFF(Noesis__SymbolManager__Buf1);
+#endif
+
 		SYM_OFF(AppInstance);
 
 		SYM_OFF(ls__gGlobalAllocator);

@@ -20,6 +20,9 @@
 #include <Lua/Libs/ServerNet.inl>
 #include <Lua/Libs/ServerTemplate.inl>
 #include <Lua/Libs/ClientTemplate.inl>
+#if defined(ENABLE_UI)
+#include <Lua/Libs/ClientUI.inl>
+#endif
 
 BEGIN_NS(ecl::lua)
 
@@ -27,6 +30,9 @@ void RegisterClientLibraries()
 {
 	net::RegisterNetLib();
 	tmpl::RegisterTemplateLib();
+#if defined(ENABLE_UI)
+	ui::RegisterUILib();
+#endif
 }
 
 END_NS()

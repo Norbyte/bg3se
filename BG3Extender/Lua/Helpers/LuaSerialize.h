@@ -36,6 +36,19 @@ void SerializeArray(lua_State* L, ObjectSet<TK> const* obj)
 	}
 }
 
+#if defined(ENABLE_UI)
+template <class TK, unsigned N>
+void SerializeArray(lua_State* L, Noesis::Vector<TK, N> const* obj)
+{
+	StackCheck _(L, 1);
+	lua_createtable(L, (int)obj->Size(), 0);
+	for (uint32_t i = 0; i < obj->Size(); i++) {
+		Serialize(L, &(*obj)[i]);
+		lua_rawseti(L, -2, i + 1);
+	}
+}
+#endif
+
 template <class TK, size_t Size>
 void SerializeArray(lua_State* L, std::array<TK, Size> const* obj)
 {

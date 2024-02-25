@@ -23,6 +23,11 @@ struct IsArrayLike<Set<T, Allocator, StoreSize>> { static constexpr bool Value =
 template <class T, class Allocator, bool StoreSize>
 struct IsArrayLike<ObjectSet<T, Allocator, StoreSize>> { static constexpr bool Value = true; using TElement = T; };
 
+#if defined(ENABLE_UI)
+template <class T, unsigned N>
+struct IsArrayLike<Noesis::Vector<T, N>> { static constexpr bool Value = true; using TElement = T; };
+#endif
+
 template <class T, size_t Size>
 struct IsArrayLike<std::array<T, Size>> { static constexpr bool Value = true; using TElement = T; };
 

@@ -8,6 +8,10 @@
 #include <GameDefinitions/PropertyMaps/Statuses.inl>
 #include <GameDefinitions/PropertyMaps/Events.inl>
 
+#if defined(ENABLE_UI)
+#include <GameDefinitions/PropertyMaps/UI.inl>
+#endif
+
 // WIP - not exported yet!
 BEGIN_CLS(GlobalSwitches)
 END_CLS()
