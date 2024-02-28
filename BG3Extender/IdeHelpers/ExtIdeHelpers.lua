@@ -11816,6 +11816,22 @@ Ext_Enums.WeaponType = {
 
 --#endregion
 
+--#region Ext.Osiris
+
+--- @class Ext_Osiris
+local Ext_Osiris = {}
+
+--- @alias EventType "before"|"after"|"beforeDelete"|"afterDelete"
+
+--- Used to register a listener of an Osiris event
+--- @param name string the name of an Osiris event
+--- @param arity number the number of arguments to the handler
+--- @param event EventType the type of event to capture
+--- @param handler OsiFunction the function to call when the event is triggered
+function Ext_Osiris.RegisterListener(name, arity, event, handler) end
+
+--#endregion
+
 --- @class Ext
 --- @field Net Ext_ClientNet|Ext_ServerNet
 --- @field ClientNet Ext_ClientNet
@@ -11836,6 +11852,7 @@ Ext_Enums.WeaponType = {
 --- @field Utils Ext_Utils
 --- @field Vars Ext_Vars
 --- @field Enums Ext_Enums
+--- @field Osiris Ext_Osiris
 Ext = {Events = {}}
 
 
