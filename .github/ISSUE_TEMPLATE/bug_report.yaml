@@ -1,6 +1,8 @@
 # Credit goes to the TModLoader project team (https://github.com/tModLoader/tModLoader) for the
 # original issue template.
 
+# Note: Links are relative to the issues page.
+
 name: Bug Report
 description: Report a bug with BG3 Script Extender
 labels: ["Type: Bug", "NEW ISSUE"]
@@ -8,7 +10,8 @@ body:
 - type: markdown
   attributes:
     value: |
-      [Troubleshooting Guide]: ./TROUBLESHOOTING.md
+      [Troubleshooting Guide]: ../blob/main/TROUBLESHOOTING.md
+      [Issues]: ../issues
 
       # Before you create an issue...
 
@@ -29,7 +32,7 @@ body:
 - type: markdown
   attributes:
     value: |
-      [Issues]: ../../issues
+      [Issues]: ../issues
 
       Please search using the search bar on the [Issues] page to see if an issue already exists for
       the bug you encountered. If there is, please add to that issue instead of making a new one.
@@ -40,7 +43,7 @@ body:
   attributes:
     label: I have attempted solutions to common problems
     description: |
-      [Troubleshooting Guide]: ./TROUBLESHOOTING.md
+      [Troubleshooting Guide]: ../blob/main/TROUBLESHOOTING.md
 
       Have you attempted fixes for common issues, as described in the [Troubleshooting Guide]?
     
@@ -56,7 +59,7 @@ body:
   attributes:
     label: I have checked that my game version is supported
     description: |
-      [Readme]: ./README.md
+      [README]: ../blob/main/README.md
 
       Have you checked that your version of the game is supported by Script Extender
       (shown above Script Extender's download link in the [README])?
@@ -118,7 +121,7 @@ body:
   attributes:
     label: Diagnostic Files
     description: |
-      [this]: ./Generate%20BG3%20Diagnostic.bat
+      [this]: ../blob/main/Generate%20BG3%20Diagnostic.bat
 
       Please download [this] batch file, then run it. Afterwards, a "BG3 Diagnostic Data.txt" file
       should be present in your `%TEMP%` folder. Please attach that file here, along with any
