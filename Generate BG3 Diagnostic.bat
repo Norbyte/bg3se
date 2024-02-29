@@ -13,7 +13,7 @@ $OUT_FILE_ENCODING = "utf8"
 $OUT_FILE_WIDTH    = ([int]::MaxValue - 1)
 
 $BG3_GOG_DIRECTORY   = "C:\Program Files (x86)\GOG Galaxy\Games\Baldurs Gate 3"
-$BG3_STEAM_DIRECTORY = "C:\Program Files (x86)\Steam\steamapps\common\Baldurs Gate 3"
+$BG3_STEAM_DIRECTORY = "C:\Program Files (x86)\Steam\steamapps\common\Baldur's Gate 3"
 $BG3_STATE_DIRECTORY = "~\AppData\Local\Larian Studios\Baldur's Gate 3"
 
 $SECTION_START_PREFIX   = "Start Section: "
