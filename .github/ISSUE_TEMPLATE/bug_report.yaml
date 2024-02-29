@@ -29,16 +29,6 @@ body:
       ahead and create a new issue.
 
 
-- type: markdown
-  attributes:
-    value: |
-      [Issues]: ../issues
-
-      Please search using the search bar on the [Issues] page to see if an issue already exists for
-      the bug you encountered. If there is, please add to that issue instead of making a new one.
-      You can also react with 👍 to prioritize an issue.
-
-
 - type: dropdown
   attributes:
     label: I have attempted solutions to common problems
