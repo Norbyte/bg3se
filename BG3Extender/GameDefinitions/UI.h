@@ -2,8 +2,6 @@
 
 #include <CoreLib/Base/Base.h>
 
-#define NS_STATIC_LIBRARY
-
 #include <NsCore/BaseComponent.h>
 #include <NsCore/TypeClass.h>
 #include <NsGui/DependencyData.h>
@@ -113,10 +111,13 @@ struct RoutedEventHelpers
 
 struct DependencyObjectHelpers
 {
-	static PropertyOperationResult FallbackGetProperty(lua_State* L, lua::LifetimeHandle const& lifetime, void* object, bg3se::FixedString const& prop);
-	static PropertyOperationResult FallbackSetProperty(lua_State* L, void* object, bg3se::FixedString const& prop, int index);
+	static PropertyOperationResult FallbackGetProperty(lua_State* L, lua::LifetimeHandle const& lifetime, DependencyObject* object, bg3se::FixedString const& prop);
+	static PropertyOperationResult FallbackSetProperty(lua_State* L, DependencyObject* object, bg3se::FixedString const& prop, int index);
 
 	static UserReturn GetProperty(lua_State* L, DependencyObject* o, Symbol name);
+	static UserReturn GetDependencyProperty(lua_State* L, DependencyObject* o, DependencyProperty const* prop);
+	static void SetProperty(lua_State* L, DependencyObject* o, Symbol name, lua::AnyRef value);
+	static void SetDependencyProperty(lua_State* L, DependencyObject* o, DependencyProperty const* prop, lua::AnyRef value);
 	static UserReturn GetAllProperties(lua_State* L, DependencyObject* o);
 };
 
@@ -128,12 +129,31 @@ struct DependencyPropertyHelpers
 	static bool IsReadOnly(DependencyProperty* o);
 };
 
+struct StoredValueHolder
+{
+	inline StoredValueHolder() {}
+	inline StoredValueHolder(void* val) : Value(val), IsIntegral(true) {}
+	inline StoredValueHolder(BaseObject* val) : Value(val), IsIntegral(false) {}
+	inline StoredValueHolder(String* val) : Value(val), IsIntegral(false) {}
+
+
+	void* Value{ nullptr };
+	bool IsIntegral{ true };
+};
+
 struct StoredValueHelpers
 {
+	static std::optional<int64_t> TryParseIntegralValue(lua_State* L, Type const* type, void* val);
 	static void PushValue(lua_State* L, Type const* type, StoredValue const* o);
 	static void PushValue(lua_State* L, Type const* type, void* val);
+	static void PushValue(lua_State* L, TypeEnum const* type, uint64_t val);
 	template <class T>
 	static void PushRawValue(lua_State* L, Type const* type, void* val);
+
+	template <class T>
+	static void* GetRawValue(lua_State* L, Type const* type, lua::AnyRef value);
+
+	static std::optional<StoredValueHolder> GetValue(lua_State* L, Type const* type, lua::AnyRef value);
 };
 
 struct VisualHelpers
@@ -147,6 +167,12 @@ struct UIElementDataHelpers
 {
 	static RoutedEvent* GetEvent(UIElementData* o, Symbol evt);
 	static Array<RoutedEvent*> GetAllEvents(UIElementData* o);
+};
+
+struct UIElementHelpers
+{
+	static uint64_t Subscribe(lua_State* L, UIElement* o, Symbol evt, lua::FunctionRef func);
+	static bool Unsubscribe(lua_State* L, UIElement* o, uint64_t index);
 };
 
 struct FrameworkElementHelpers
@@ -168,16 +194,26 @@ struct TypeHelpers
 {
 	static STDString GetName(Type* o);
 	static bool IsDescendantOf(Type const* type, TypeClass const* cls);
+	static bool IsDescendantOf(TypeClass const* type, TypeClass const* cls);
 	static TypeClass* GetBase(TypeClass* o);
 	static bool IsInterface(TypeClass* o);
 	static TypeClass::AncestorVector* GetInterfaces(TypeClass* o);
 	static TypeClass::PropertyVector* GetProperties(TypeClass* o);
 	static TypeClass::PropertyVector* GetEvents(TypeClass* o);
 	static TypeMetaData* FindMetaRecursive(TypeClass const* o, const TypeClass* metaDataType);
+	static TypeMetaData* FindMetaOrDescendant(TypeClass const* o, const TypeClass* metaDataType);
 	static DependencyData* GetDependencyData(TypeClass* o);
 	static DependencyProperty const* GetDependencyProperty(TypeClass const* o, Symbol name);
+	static RoutedEvent const* GetRoutedEvent(TypeClass const* o, Symbol name);
 	static UIElementData* GetUIElementData(TypeClass* o);
 	static Array<DependencyProperty*> GetDependencyProperties(TypeClass* o);
+	static Array<RoutedEvent*> GetRoutedEvents(TypeClass* o);
+
+	static std::optional<uint64_t> StringToEnum(TypeEnum const* e, char const* value);
+	static std::optional<uint64_t> StringToEnum(TypeEnum const* e, Symbol value);
+
+	template <class Fun>
+	static void ForEachMeta(TypeClass const* cls, const TypeClass* metaDataType, Fun fun);
 };
 
 END_BARE_NS()
@@ -204,6 +240,8 @@ BEGIN_NS(lua)
 #define FOR_NOESIS_TYPE(c) LUA_POLYMORPHIC(c)
 FOR_EACH_NOESIS_TYPE()
 #undef FOR_NOESIS_TYPE
+
+LUA_POLYMORPHIC(Noesis::RoutedEventArgs)
 
 END_NS()
 

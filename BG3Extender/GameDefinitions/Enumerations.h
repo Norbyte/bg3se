@@ -2,6 +2,12 @@
 
 #include <cstdint>
 
+#if defined(ENABLE_UI)
+#include <NsGui/Enums.h>
+#include <NsGui/InputEnums.h>
+#include <NsGui/UIElementEvents.h>
+#endif
+
 BEGIN_SE()
 
 // Type used to store enumeration and bitmask values internally.
@@ -339,6 +345,7 @@ void InitializeEnumerations();
 #define END_ENUM_NS()
 #define END_ENUM()
 #include <GameDefinitions/Enumerations.inl>
+#include <GameDefinitions/ExternalEnumerations.inl>
 #undef BEGIN_BITMASK_NS
 #undef BEGIN_ENUM_NS
 #undef BEGIN_BITMASK

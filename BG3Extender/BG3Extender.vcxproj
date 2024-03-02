@@ -56,9 +56,9 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>ENABLE_UI;_SILENCE_CXX20_IS_POD_DEPRECATION_WARNING;_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS;GOOGLE_PROTOBUF_NO_RTTI;_DEBUG;_WINDOWS;_USRDLL;OSI_EOCAPP;OSIINTERFACE_EXPORTS;_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_ITERATOR_DEBUG_LEVEL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ENABLE_UI;NS_STATIC_LIBRARY;_SILENCE_CXX20_IS_POD_DEPRECATION_WARNING;_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS;GOOGLE_PROTOBUF_NO_RTTI;_DEBUG;_WINDOWS;_USRDLL;OSI_EOCAPP;OSIINTERFACE_EXPORTS;_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_ITERATOR_DEBUG_LEVEL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)External\protobuf\include;$(SolutionDir)External\glm;$(SolutionDir)External\Detours\include;$(SolutionDir)External\lua-5.3.6\src;$(SolutionDir)External\jsoncpp-master\include;$(SolutionDir)External\NoesisGUI-NativeSDK-win-3.2.2-Indie\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)External\protobuf\include;$(SolutionDir)External\glm;$(SolutionDir)External\Detours\include;$(SolutionDir)External\lua-5.3.6\src;$(SolutionDir)External\jsoncpp-master\include;$(SolutionDir)External\NoesisGUI-NativeSDK-win-3.1.7-Indie\Include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <DisableSpecificWarnings>4251;5030</DisableSpecificWarnings>
       <LanguageStandard>stdcpplatest</LanguageStandard>
@@ -91,10 +91,10 @@ $(SolutionDir)x64\Debug\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Project
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>_SILENCE_CXX20_IS_POD_DEPRECATION_WARNING;_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS;NDEBUG;_WINDOWS;_USRDLL;OSI_EOCAPP;OSIINTERFACE_EXPORTS;OSI_EXTENSION_BUILD;_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ENABLE_UI;NS_STATIC_LIBRARY;_SILENCE_CXX20_IS_POD_DEPRECATION_WARNING;_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS;NDEBUG;_WINDOWS;_USRDLL;OSI_EOCAPP;OSIINTERFACE_EXPORTS;OSI_EXTENSION_BUILD;_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)External\protobuf\include;$(SolutionDir)External\glm;$(SolutionDir)External\Detours\include;$(SolutionDir)External\lua-5.3.6\src;$(SolutionDir)External\jsoncpp-master\include;$(SolutionDir)External\NoesisGUI-NativeSDK-win-3.2.2-Indie\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)External\protobuf\include;$(SolutionDir)External\glm;$(SolutionDir)External\Detours\include;$(SolutionDir)External\lua-5.3.6\src;$(SolutionDir)External\jsoncpp-master\include;$(SolutionDir)External\NoesisGUI-NativeSDK-win-3.1.7-Indie\Include</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4251;5030</DisableSpecificWarnings>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
@@ -211,6 +211,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="GameHooks\EngineHooks.h" />
     <ClInclude Include="GameHooks\OsirisWrappers.h" />
     <ClInclude Include="Lua\Client\LuaBindingClient.h" />
+    <ClInclude Include="Lua\Client\UIEvents.h" />
     <ClInclude Include="Lua\Debugger\LuaDebug.pb.h" />
     <ClInclude Include="Lua\Debugger\LuaDebugger.h" />
     <ClInclude Include="Lua\Debugger\LuaDebugMessages.h" />
@@ -368,6 +369,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="GameDefinitions\Base\TypeInformation.inl" />
     <None Include="GameDefinitions\Components\AllComponentTypes.inl" />
     <None Include="GameDefinitions\Enumerations.inl" />
+    <None Include="GameDefinitions\ExternalEnumerations.inl" />
     <None Include="GameDefinitions\GlobalFixedStrings.inl" />
     <None Include="GameDefinitions\PropertyMaps\AllPropertyMaps.inl" />
     <None Include="GameDefinitions\PropertyMaps\CommonTypes.inl" />
@@ -388,6 +390,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="LuaScripts\Libs\Event.lua" />
     <None Include="LuaScripts\SandboxStartup.lua" />
     <None Include="LuaScripts\ServerStartup.lua" />
+    <None Include="Lua\Client\UIEvents.inl" />
     <None Include="Lua\Debugger\LuaDebug.proto" />
     <None Include="Lua\LevelIteratorFunctions.inl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">false</ExcludedFromBuild>

@@ -119,6 +119,11 @@ namespace ecl
 	struct Status;
 	struct StatusMachine;
 	class ExtensionState;
+
+	namespace lua
+	{
+		class ClientState;
+	}
 }
 
 class OsirisExtender;

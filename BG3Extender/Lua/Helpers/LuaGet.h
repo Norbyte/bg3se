@@ -187,7 +187,7 @@ inline AnyRef do_get(lua_State* L, int index, Overload<AnyRef>)
 {
 	auto i = lua_absindex(L, index);
 	auto type = lua_type(L, i);
-	if (type != LUA_TNONE) {
+	if (type == LUA_TNONE) {
 		luaL_error(L, "any value expected, got %s", lua_typename(L, lua_type(L, i)));
 	}
 

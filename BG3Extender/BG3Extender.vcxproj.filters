@@ -466,6 +466,7 @@
     <ClInclude Include="Lua\Shared\RawComponentRef.h" />
     <ClInclude Include="GameDefinitions\Render.h" />
     <ClInclude Include="GameDefinitions\UI.h" />
+    <ClInclude Include="Lua\Client\UIEvents.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -683,6 +684,12 @@
     </None>
     <None Include="GameDefinitions\PropertyMaps\UI.inl">
       <Filter>GameDefinitions\PropertyMaps</Filter>
+    </None>
+    <None Include="Lua\Client\UIEvents.inl">
+      <Filter>Lua\Client</Filter>
+    </None>
+    <None Include="GameDefinitions\ExternalEnumerations.inl">
+      <Filter>GameDefinitions</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

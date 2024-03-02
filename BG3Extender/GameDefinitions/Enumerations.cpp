@@ -19,6 +19,7 @@ namespace bg3se
 #define END_ENUM_NS()
 #define END_ENUM()
 #include <GameDefinitions/Enumerations.inl>
+#include <GameDefinitions/ExternalEnumerations.inl>
 #undef BEGIN_BITMASK_NS
 #undef BEGIN_ENUM_NS
 #undef BEGIN_BITMASK
@@ -56,6 +57,7 @@ namespace bg3se
 #define END_ENUM_NS() }
 #define END_ENUM() }
 #include <GameDefinitions/Enumerations.inl>
+#include <GameDefinitions/ExternalEnumerations.inl>
 #undef BEGIN_BITMASK_NS
 #undef BEGIN_ENUM_NS
 #undef BEGIN_BITMASK
