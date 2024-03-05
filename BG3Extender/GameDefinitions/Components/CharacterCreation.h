@@ -27,16 +27,16 @@ struct DefinitionCommon
 
 struct SomeDefinitionData
 {
-	Guid field_20;
-	Guid field_30;
-	Guid field_40;
+	Guid Origin;
+	Guid Race;
+	Guid Subrace;
 	uint8_t field_50;
 	uint8_t field_51;
-	Guid field_58;
-	Guid field_68;
+	Guid RootTemplate;
+	Guid Background;
 	Guid field_78;
-	Guid field_88;
-	Guid field_98;
+	Guid Voice;
+	Guid VOLines;
 	uint8_t field_A8;
 };
 
@@ -89,7 +89,7 @@ struct LevelUpUnknown
 
 struct FullRespecDefinition
 {
-	STDString field_0;
+	STDString Name;
 	SomeDefinitionData Definition;
 	GameObjectVisualData Visual;
 	std::array<int, 7> Abilities;
@@ -121,6 +121,29 @@ struct RespecDefinitionComponent : public BaseComponent
 	Guid field_0;
 	CharacterDefinition Definition;
 	uint8_t field_298;
+};
+
+struct ChangeAppearanceDefinitionBase
+{
+	STDString Name;
+	char field_18;
+	char field_19;
+	Guid RootTemplate;
+	Guid Voice;
+	char field_40;
+	GameObjectVisualData Visual;
+};
+
+struct ChangeAppearanceDefinitionComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::CCChangeAppearanceDefinition;
+	static constexpr auto EngineClass = "eoc::character_creation::ChangeAppearanceDefinitionComponent";
+
+	FullRespecDefinition Definition;
+	ChangeAppearanceDefinitionBase Appearance;
+	int32_t field_2E0;
+	uint8_t field_2E4;
+	EntityHandle field_2E8;
 };
 
 
@@ -166,11 +189,6 @@ struct LevelUpDefinitionExtra
 	ScratchBuffer Scratch;
 	Array<GameObjectVisualData::AppearanceElement> AppearanceElements;
 	LevelUpData LevelUpData;
-	uint8_t field_160;
-	int field_164;
-	uint8_t field_168;
-	int field_16C;
-	EntityHandle field_170;
 };
 
 
@@ -181,6 +199,12 @@ struct LevelUpDefinitionComponent : public BaseComponent
 
 	FullRespecDefinition Definition;
 	LevelUpDefinitionExtra LevelUp;
+
+	uint8_t field_160;
+	int field_164;
+	uint8_t field_168;
+	int field_16C;
+	EntityHandle field_170;
 };
 
 struct LevelUpComponent : public BaseComponent
@@ -233,6 +257,117 @@ struct LevelUpComponent : public BaseComponent
 	EntityHandle field_0;
 	EntityHandle field_8;
 	char field_10;
+};
+
+
+END_NS()
+
+
+BEGIN_NS(ecl::character_creation)
+
+struct DefinitionStateComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ClientCCDefinitionState;
+	static constexpr auto EngineClass = "ecl::character_creation::DefinitionStateComponent";
+
+	EntityHandle field_0;
+	float field_8;
+	uint32_t field_C;
+	int field_10;
+	bg3se::character_creation::DefinitionCommon Definition;
+};
+
+struct DefinitionStateExComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ClientCCDefinitionStateEx;
+	static constexpr auto EngineClass = "ecl::character_creation::DefinitionStateExComponent";
+
+	uint8_t field_0;
+	uint8_t field_1;
+	uint8_t field_2;
+	[[bg3::hidden]] Array<void*> field_8;
+	uint32_t field_18;
+	uint32_t field_1C;
+	uint8_t field_20;
+};
+
+struct BaseDefinitionComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ClientCCBaseDefinitionState;
+	static constexpr auto EngineClass = "ecl::character_creation::BaseDefinitionComponent";
+
+	bg3se::character_creation::CharacterDefinition Definition;
+};
+
+struct CompanionDefinitionComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ClientCCCompanionDefinition;
+	static constexpr auto EngineClass = "ecl::character_creation::CompanionDefinitionComponent";
+
+	Guid field_0;
+	Guid field_10;
+	char field_20;
+	char field_21;
+	Guid field_28;
+	GameObjectVisualData Visual;
+	Guid field_110;
+	Guid field_120;
+	char field_130;
+};
+
+struct LevelUpDefinitionComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ClientCCLevelUpDefinition;
+	static constexpr auto EngineClass = "ecl::character_creation::LevelUpDefinitionComponent";
+
+	bg3se::character_creation::LevelUpDefinitionExtra Definition;
+};
+
+struct ChangeAppearanceDefinitionComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ClientCCChangeAppearanceDefinition;
+	static constexpr auto EngineClass = "ecl::character_creation::ChangeAppearanceDefinitionComponent";
+
+	bg3se::character_creation::ChangeAppearanceDefinitionBase Definition;
+};
+
+struct FullRespecDefinitionComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ClientCCFullRespecDefinition;
+	static constexpr auto EngineClass = "ecl::character_creation::FullRespecDefinitionComponent";
+
+	Guid field_0;
+	Guid field_10;
+	int field_20;
+	LevelUpUpgrades LevelUpUpgrades;
+	[[bg3::hidden]] Array<void*> SpellIds;
+};
+
+struct DummyDefinitionComponent : public BaseComponent
+{
+	static constexpr ExtComponentType ComponentType = ExtComponentType::ClientCCDummyDefinition;
+	static constexpr auto EngineClass = "ecl::character_creation::DummyDefinitionComponent";
+
+	EntityHandle field_0;
+	int field_8;
+	int field_C;
+	int field_10;
+	MultiHashMap<uint64_t, FixedString> field_18_Map_unk_FS;
+	uint8_t field_58;
+	uint8_t field_59;
+	uint8_t field_5A;
+	uint8_t field_5B;
+	Guid field_60;
+	Guid field_70;
+	uint8_t field_80;
+	uint8_t field_81;
+	Guid field_88;
+	Guid field_98;
+	[[bg3::hidden]] Array<void*> field_A8;
+	[[bg3::hidden]] Array<void*> field_B8;
+	GameObjectVisualData Visual;
+	uint8_t field_1A0;
+	EntityHandle field_1A8;
 };
 
 

@@ -55,7 +55,7 @@ struct GameObjectVisualData
 	Guid SkinColor;
 	Guid EyeColor;
 	Guid SecondEyeColor;
-	Guid field_98;
+	[[bg3::deprecated(field_98)]] Guid AccessorySet;
 	Array<Guid> Visuals;
 	Array<AppearanceElement> Elements;
 	Array<int32_t> AdditionalChoices;
