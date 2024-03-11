@@ -155,6 +155,9 @@ namespace bg3se::lua
 		virtual void OnUpdate(GameTime const& time);
 		void OnStatsStructureLoaded();
 		void OnNetMessageReceived(STDString const& channel, STDString const& payload, UserId userId);
+		class AsyncOsiFuture* CreateOsirisFuture(uint32_t id);
+		void ResolveOsirisFuture(uint32_t id, std::string_view err);
+		void ResolveOsirisFuture(uint32_t id, Array<Array<std::variant<std::monostate, StringView, int64_t, float>>>& results);
 
 		template <class... Ret, class... Args>
 		bool CallExtRet(char const * func, uint32_t restrictions, std::tuple<Ret...>& ret, Args... args)
@@ -212,6 +215,7 @@ namespace bg3se::lua
 		CachedUserVariableManager variableManager_;
 		CachedModVariableManager modVariableManager_;
 		EntityComponentEventHooks entityHooks_;
+		std::unordered_map<uint32_t, RegistryEntry> futureManager_;
 
 		void OpenLibs();
 		EventResult DispatchEvent(EventBase& evt, char const* eventName, bool canPreventAction, uint32_t restrictions);
@@ -256,6 +260,28 @@ namespace bg3se::lua
 		STDString Channel;
 		STDString Payload;
 		UserId UserID;
+	};
+
+	class AsyncOsiFuture : public Userdata<AsyncOsiFuture>
+	{
+	public:
+		static char const * const MetatableName;
+
+		static void PopulateMetatable(lua_State * L);
+
+		static AsyncOsiFuture* New(lua_State* L, uint32_t id)
+		{
+			return State::FromLua(L)->CreateOsirisFuture(id);
+		}
+
+		void Resolve(std::string_view err);
+		void Resolve(Array<Array<std::variant<std::monostate, StringView, int64_t, float>>>& results);
+	private:
+		std::vector<RegistryEntry> ThenList;
+		std::optional<RegistryEntry> Else;
+
+		static int LuaThen(lua_State * L);
+		static int LuaElse(lua_State * L);
 	};
 }
 

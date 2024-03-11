@@ -13,6 +13,8 @@ public:
 
 protected:
 	void ProcessExtenderMessage(net::MessageContext& context, net::MessageWrapper& msg) override;
+
+	void ProcessOsirisGet(net::MessageContext& context, net::MessageWrapper& msg);
 };
 
 class NetworkManager

@@ -57,7 +57,6 @@ TypedValue * LuaToOsi(lua_State * L, int i, ValueType osiType, bool allowNil = f
 void LuaToOsi(lua_State * L, int i, OsiArgumentValue & arg, ValueType osiType, bool allowNil = false, bool reuseStrings = false);
 void OsiToLua(lua_State * L, OsiArgumentValue const & arg);
 void OsiToLua(lua_State * L, TypedValue const & tv);
-Function const* LookupOsiFunction(STDString const& name, uint32_t arity);
 
 class OsiFunction
 {
