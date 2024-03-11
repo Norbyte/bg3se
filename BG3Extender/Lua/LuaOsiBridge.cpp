@@ -37,14 +37,80 @@ Node* NodeRef::Get() const
 
 END_SE()
 
+namespace bg3se::lua
+{
+	char const * const AsyncOsiFuture::MetatableName = "AsyncOsiFuture";
+
+	void AsyncOsiFuture::PopulateMetatable(lua_State * L)
+	{
+		lua_newtable(L);
+
+		lua_pushcfunction(L, &LuaThen);
+		lua_setfield(L, -2, "Then");
+
+		lua_pushcfunction(L, &LuaElse);
+		lua_setfield(L, -2, "Else");
+
+		lua_setfield(L, -2, "__index");
+	}
+
+	void AsyncOsiFuture::Resolve(std::string_view err)
+	{
+		ecl::LuaClientPin pin(ecl::ExtensionState::Get());
+		if (pin)
+		{
+			auto L = pin->GetState();
+			if (Else)
+			{
+				Else->Push();
+				push(L, err);
+				CheckedCall(L, 1, "AsyncOsiFutureErrorCallback");
+			}
+		}
+	}
+
+	void AsyncOsiFuture::Resolve(Array<Array<std::variant<std::monostate, StringView, int64_t, float>>>& results)
+	{
+		ecl::LuaClientPin pin(ecl::ExtensionState::Get());
+		if (pin)
+		{
+			auto L = pin->GetState();
+			LifetimeStackPin lifetime(pin->GetStack());
+			push(L, results, lifetime.GetLifetime());
+			for (const auto& then : ThenList)
+			{
+				then.Push();
+				lua_pushvalue(L, -2);
+				CheckedCall(L, 1, "AsyncOsiFutureSuccessCallback");
+			}
+		}
+	}
+
+	int AsyncOsiFuture::LuaThen(lua_State * L)
+	{
+		auto self = AsyncOsiFuture::CheckUserData(L, 1);
+		luaL_checktype(L, 2, LUA_TFUNCTION);
+		
+		self->ThenList.emplace_back(L, 2);
+
+		lua_pushvalue(L, 1);
+		return 1;
+	}
+
+	int AsyncOsiFuture::LuaElse(lua_State * L)
+	{
+		auto self = AsyncOsiFuture::CheckUserData(L, 1);
+		luaL_checktype(L, 2, LUA_TFUNCTION);
+		
+		self->Else.emplace(L, 2);
+
+		return 0;
+	}
+}
+
 namespace bg3se::esv::lua
 {
 	using namespace bg3se::lua;
-
-	ValueType GetBaseType(ValueType type)
-	{
-		return (*gExtender->GetServer().Osiris().GetGlobals().Types)->ResolveAlias((uint16_t)type);
-	}
 
 	int64_t LuaToInt(lua_State* L, int i, int type)
 	{
@@ -98,7 +164,7 @@ namespace bg3se::esv::lua
 			return;
 		}
 
-		switch (GetBaseType(osiType)) {
+		switch (gExtender->GetServer().Osiris().GetBaseType(osiType)) {
 		case ValueType::Integer:
 			tv.Value.Int32 = (int32_t)LuaToInt(L, i, type);
 			break;
@@ -150,7 +216,7 @@ namespace bg3se::esv::lua
 			return;
 		}
 
-		switch (GetBaseType(osiType)) {
+		switch (gExtender->GetServer().Osiris().GetBaseType(osiType)) {
 		case ValueType::Integer:
 			arg.Int32 = (int32_t)LuaToInt(L, i, type);
 			break;
@@ -192,7 +258,7 @@ namespace bg3se::esv::lua
 
 	void OsiToLua(lua_State * L, OsiArgumentValue const & arg)
 	{
-		switch (GetBaseType(arg.TypeId)) {
+		switch (gExtender->GetServer().Osiris().GetBaseType(arg.TypeId)) {
 		case ValueType::None:
 			lua_pushnil(L);
 			break;
@@ -222,7 +288,7 @@ namespace bg3se::esv::lua
 
 	void OsiToLua(lua_State * L, TypedValue const & tv)
 	{
-		switch (GetBaseType((ValueType)tv.TypeId)) {
+		switch (gExtender->GetServer().Osiris().GetBaseType((ValueType)tv.TypeId)) {
 		case ValueType::None:
 			lua_pushnil(L);
 			break;
@@ -249,41 +315,6 @@ namespace bg3se::esv::lua
 			break;
 		}
 	}
-
-	uint32_t FunctionNameHash(char const * str)
-	{
-		uint32_t hash{ 0 };
-		while (*str) {
-			hash = (*str++ | 0x20) + 129 * (hash % 4294967);
-		}
-
-		return hash;
-	}
-
-	Function const* LookupOsiFunction(STDString const& name, uint32_t arity)
-	{
-		auto functions = gExtender->GetServer().Osiris().GetGlobals().Functions;
-		if (!functions) {
-			return nullptr;
-		}
-
-		OsiString sig(name);
-		sig += "/";
-		sig += std::to_string(arity);
-
-		auto hash = FunctionNameHash(name.c_str()) + arity;
-		auto func = (*functions)->Find(hash, sig);
-		if (func == nullptr
-			|| ((*func)->Node.Id == 0
-				&& (*func)->Type != FunctionType::Call
-				&& (*func)->Type != FunctionType::Query
-				&& (*func)->Type != FunctionType::Event)) {
-			return nullptr;
-		}
-
-		return *func;
-	};
-
 
 	bool OsiFunction::Bind(Function const * func, ServerState & state)
 	{
@@ -463,7 +494,7 @@ namespace bg3se::esv::lua
 		for (auto i = 0; i < tuple.Size; i++) {
 			if (!lua_isnil(L, firstIndex + i)) {
 				auto const & v = tuple.Values[i];
-				switch (GetBaseType((ValueType)v.TypeId)) {
+				switch (gExtender->GetServer().Osiris().GetBaseType((ValueType)v.TypeId)) {
 				case ValueType::Integer:
 					if (v.Value.Int32 != lua_tointeger(L, firstIndex + i)) {
 						return false;
@@ -869,14 +900,14 @@ namespace bg3se::esv::lua
 		}
 
 		// Look for Call/Proc/Event/Query (number of OUT args == 0)
-		auto func = LookupOsiFunction(name_, arity);
+		auto func = gExtender->GetServer().Osiris().LookupFunction(name_, arity);
 		if (func != nullptr && func->Signature->OutParamList.numOutParams() == 0) {
 			return CreateFunctionMapping(arity, func);
 		}
 
 		for (uint32_t args = arity + 1; args < arity + MaxQueryOutParams; args++) {
 			// Look for Query/UserQuery (number of OUT args > 0)
-			auto func = LookupOsiFunction(name_, args);
+			auto func = gExtender->GetServer().Osiris().LookupFunction(name_, args);
 			if (func != nullptr) {
 				auto outParams = func->Signature->OutParamList.numOutParams();
 				auto params = func->Signature->Params->Params.Size - outParams;
@@ -1138,5 +1169,184 @@ namespace bg3se::esv::lua
 		}
 
 		return STDString(ss.str());
+	}
+}
+
+namespace bg3se::ecl::lua
+{
+	using namespace bg3se::lua;
+
+	char const * const ExtensionLibraryClient::NameResolverMetatableName = "AsyncOsiProxyNameResolver";
+
+
+	void ExtensionLibraryClient::RegisterNameResolverMetatable(lua_State * L)
+	{
+		lua_register(L, NameResolverMetatableName, nullptr);
+		luaL_newmetatable(L, NameResolverMetatableName); // stack: mt
+		lua_pushcfunction(L, &LuaIndexResolverTable); // stack: mt, &LuaIndexResolverTable
+		lua_setfield(L, -2, "__index"); // mt.__index = &LuaIndexResolverTable; stack: mt
+		lua_pop(L, 1); // stack: mt
+	}
+
+	void ExtensionLibraryClient::CreateNameResolver(lua_State * L)
+	{
+		lua_newtable(L); // stack: osi
+		luaL_setmetatable(L, NameResolverMetatableName); // stack: osi
+		lua_setglobal(L, "AsyncOsi"); // stack: -
+	}
+
+	int ExtensionLibraryClient::LuaIndexResolverTable(lua_State * L)
+	{
+		luaL_checktype(L, 1, LUA_TTABLE);
+		auto name = luaL_checkstring(L, 2);
+
+		LuaClientPin lua(ExtensionState::Get());
+		AsyncOsiFunctionNameProxy::New(L, name, std::ref(lua.Get())); // stack: tab, name, proxy
+
+		lua_pushvalue(L, 1); // stack: fun, tab
+		push(L, name); // stack: fun, tab, name
+		lua_pushvalue(L, -3); // stack: fun, tab, name, fun
+		lua_rawset(L, -3); // stack: fun
+		lua_pop(L, 1);
+		return 1;
+	}
+
+	char const * const AsyncOsiFunctionNameProxy::MetatableName = "AsyncOsiFunctionNameProxy";
+	std::atomic<uint32_t> AsyncOsiFunctionNameProxy::currentId = 0;
+
+	void AsyncOsiFunctionNameProxy::PopulateMetatable(lua_State * L)
+	{
+		lua_newtable(L);
+
+		lua_pushcfunction(L, &LuaGet);
+		lua_setfield(L, -2, "Get");
+
+		lua_pushcfunction(L, &LuaDelete);
+		lua_setfield(L, -2, "Delete");
+
+		lua_pushcfunction(L, &LuaDeferredNotification);
+		lua_setfield(L, -2, "Defer");
+
+		lua_setfield(L, -2, "__index");
+	}
+
+	AsyncOsiFunctionNameProxy::AsyncOsiFunctionNameProxy(STDString const & name, ClientState & state)
+		: name_(name), state_(state)
+	{}
+
+	bool AsyncOsiFunctionNameProxy::BeforeCall(lua_State * L)
+	{
+		if (state_.RestrictionFlags & State::RestrictOsiris) {
+			luaL_error(L, "Attempted to access Osiris function in restricted context");
+			return false;
+		}
+
+		return true;
+	}
+
+	int AsyncOsiFunctionNameProxy::LuaCall(lua_State * L)
+	{
+		if (!BeforeCall(L)) return 1;
+
+		// Note: might be a good idea to do this in the future. Protocol supports it
+		luaL_error(L, "Cannot perform queries or procedures or add to databases from the client");
+		return 1;
+	}
+
+	int AsyncOsiFunctionNameProxy::LuaGet(lua_State * L)
+	{
+		auto self = AsyncOsiFunctionNameProxy::CheckUserData(L, 1);
+		if (!self->BeforeCall(L)) return 1;
+
+		const int args = lua_gettop(L) - 1;
+
+		// Check that all the args are fine:
+		for (int i = 0; i < args; i++)
+		{
+			const int idx = i+2;
+			switch (lua_type(L, idx))
+			{
+				case LUA_TNIL: // Null values don't get sent, but are fine
+				case LUA_TLIGHTUSERDATA:
+				case LUA_TNUMBER:
+				case LUA_TSTRING:
+					break;
+				case LUA_TBOOLEAN:
+					luaL_error(L, "Cannot use booleans in Osiris");
+					return 1;
+				default:
+					luaL_error(L, "Improper type passed to an Osiris database as argument %d: %s", idx, luaL_typename(L, idx));
+					return 1;
+			}
+		}
+
+		const uint32_t msgid = currentId++;
+
+		auto message = gExtender->GetClient().GetNetworkManager().GetFreeMessage();
+
+		auto query = message->GetMessage().mutable_c2s_osiris_query();
+
+		query->set_type(net::OsirisQueryType::OSIRIS_GET);
+		
+		query->set_name(self->name_.c_str());
+
+		query->set_num_args(args);
+
+		query->set_msgid(msgid);
+
+		// Actually use them:
+		for (int i = 0; i < args; i++)
+		{
+			const int idx = i+2;
+			switch (lua_type(L, idx))
+			{
+				case LUA_TNIL:
+					break;
+				case LUA_TLIGHTUSERDATA:
+				{
+					auto handle = get<EntityHandle>(L, idx);
+					query->add_args()->set_intv((int64_t)handle.Handle);
+					break;
+				}
+				case LUA_TNUMBER:
+					if (lua_isinteger(L, idx))
+					{
+						query->add_args()->set_intv(lua_tointeger(L, idx));
+					}
+					else
+					{
+						query->add_args()->set_numv((float)lua_tonumber(L, idx));
+					}
+					break;
+				case LUA_TSTRING:
+					query->add_args()->set_strv(lua_tostring(L, idx));
+					break;
+			}
+		}
+
+		gExtender->GetClient().GetNetworkManager().Send(message);
+
+		AsyncOsiFuture::New(L, msgid);
+		return 1;
+	}
+
+	int AsyncOsiFunctionNameProxy::LuaDelete(lua_State * L)
+	{
+		auto self = AsyncOsiFunctionNameProxy::CheckUserData(L, 1);
+		if (!self->BeforeCall(L)) return 1;
+
+		// Note: might be a good idea to do this in the future. Protocol supports it
+		luaL_error(L, "Cannot delete from databases from the client");
+		return 1;
+	}
+
+	int AsyncOsiFunctionNameProxy::LuaDeferredNotification(lua_State * L)
+	{
+		auto self = AsyncOsiFunctionNameProxy::CheckUserData(L, 1);
+		if (!self->BeforeCall(L)) return 1;
+		
+		// Note: might be a good idea to do this in the future. Protocol (might) support it
+		luaL_error(L, "I'm not even sure what this is supposed to do but it probably isn't doable from client-side, and also isn't implemented server-side");
+		return 1;
 	}
 }

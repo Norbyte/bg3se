@@ -177,6 +177,7 @@ namespace bg3se::lua
 	void ExtensionLibrary::Register(lua_State * L)
 	{
 		RegisterLib(L);
+		AsyncOsiFuture::RegisterMetatable(L);
 	}
 
 
@@ -465,6 +466,39 @@ namespace bg3se::lua
 		params.Payload = payload;
 		params.UserID = userId;
 		ThrowEvent("NetMessage", params);
+	}
+
+	AsyncOsiFuture* State::CreateOsirisFuture(uint32_t id)
+	{
+		auto ret = Userdata<AsyncOsiFuture>::New(L);
+		futureManager_.emplace(id, RegistryEntry(L, -1));
+		return ret;
+	}
+
+	void State::ResolveOsirisFuture(uint32_t id, std::string_view err)
+	{
+		auto found = futureManager_.find(id);
+		if (found != futureManager_.end())
+		{
+			found->second.Push();
+			auto future = AsyncOsiFuture::CheckUserData(L, -1);
+			future->Resolve(err);
+
+			futureManager_.erase(found);
+		}
+	}
+
+	void State::ResolveOsirisFuture(uint32_t id, Array<Array<std::variant<std::monostate, StringView, int64_t, float>>>& results)
+	{
+		auto found = futureManager_.find(id);
+		if (found != futureManager_.end())
+		{
+			found->second.Push();
+			auto future = AsyncOsiFuture::CheckUserData(L, -1);
+			future->Resolve(results);
+
+			futureManager_.erase(found);
+		}
 	}
 
 	STDString State::GetBuiltinLibrary(int resourceId)

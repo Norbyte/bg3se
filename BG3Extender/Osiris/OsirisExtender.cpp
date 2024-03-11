@@ -399,4 +399,38 @@ void OsirisExtender::BindCallbackManager(esv::lua::OsirisCallbackManager* mgr)
 	}
 }
 
+static uint32_t FunctionNameHash(char const * str)
+{
+	uint32_t hash{ 0 };
+	while (*str) {
+		hash = (*str++ | 0x20) + 129 * (hash % 4294967);
+	}
+
+	return hash;
+}
+
+Function const* OsirisExtender::LookupFunction(const STDString& name, uint32_t arity)
+{
+	auto functions = GetGlobals().Functions;
+	if (!functions) {
+		return nullptr;
+	}
+
+	OsiString sig(name);
+	sig += "/";
+	sig += std::to_string(arity);
+
+	auto hash = FunctionNameHash(name.c_str()) + arity;
+	auto func = (*functions)->Find(hash, sig);
+	if (func == nullptr
+		|| ((*func)->Node.Id == 0
+			&& (*func)->Type != FunctionType::Call
+			&& (*func)->Type != FunctionType::Query
+			&& (*func)->Type != FunctionType::Event)) {
+		return nullptr;
+	}
+
+	return *func;
+}
+
 }
