@@ -194,6 +194,9 @@ namespace bg3se
 #if defined(ENABLE_UI)
 		SYM_OFF(Noesis__gReflection);
 		SYM_OFF(Noesis__SymbolManager__Buf1);
+		SYM_OFF(Noesis__GUI__LoadXaml);
+		SYM_OFF(Noesis__Visual__AddVisualChild);
+		SYM_OFF(Noesis__Visual__RemoveVisualChild);
 #endif
 
 		SYM_OFF(AppInstance);

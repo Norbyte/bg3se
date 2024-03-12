@@ -126,6 +126,9 @@ namespace bg3se
 #if defined(ENABLE_UI)
 		void* Noesis__gReflection;
 		void* Noesis__SymbolManager__Buf1;
+		void* Noesis__GUI__LoadXaml;
+		void* Noesis__Visual__AddVisualChild;
+		void* Noesis__Visual__RemoveVisualChild;
 #endif
 
 		GlobalSwitches** ls__GlobalSwitches{ nullptr };

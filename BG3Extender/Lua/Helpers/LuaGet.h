@@ -269,6 +269,12 @@ inline T get(lua_State* L, int index)
 }
 
 template <class T>
+inline T get(lua_State* L, AnyRef ref)
+{
+	return do_get(L, ref.Index, Overload<T>{});
+}
+
+template <class T>
 T try_gettable(lua_State* L, char const* k, int index, T defaultValue)
 {
 	push(L, k);

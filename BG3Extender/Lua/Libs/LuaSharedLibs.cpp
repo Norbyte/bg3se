@@ -21,7 +21,7 @@
 #include <Lua/Libs/ServerTemplate.inl>
 #include <Lua/Libs/ClientTemplate.inl>
 #if defined(ENABLE_UI)
-#include <Lua/Libs/ClientUI.inl>
+#include <Lua/Libs/ClientUI/Module.inl>
 #endif
 
 BEGIN_NS(ecl::lua)

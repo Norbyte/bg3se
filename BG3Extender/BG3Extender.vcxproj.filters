@@ -679,7 +679,7 @@
     <None Include="Lua\Shared\EntityComponentEvents.inl">
       <Filter>Lua\Shared</Filter>
     </None>
-    <None Include="Lua\Libs\ClientUI.inl">
+    <None Include="Lua\Libs\ClientUI\NsHelpers.inl">
       <Filter>Lua\Libs</Filter>
     </None>
     <None Include="GameDefinitions\PropertyMaps\UI.inl">
@@ -691,6 +691,13 @@
     <None Include="GameDefinitions\ExternalEnumerations.inl">
       <Filter>GameDefinitions</Filter>
     </None>
+    <None Include="Lua\Libs\ClientUI\Symbols.inl">
+      <Filter>Lua\Libs</Filter>
+    </None>
+    <None Include="Lua\Libs\ClientUI\Events.inl">
+      <Filter>Lua\Libs</Filter>
+    </None>
+    <None Include="Lua\Libs\ClientUI\Module.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

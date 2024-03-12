@@ -16,6 +16,8 @@ BEGIN_BARE_NS(Noesis)
 
 using namespace bg3se;
 
+using LoadXamlProc = Ptr<BaseComponent>* (Ptr<BaseComponent>& ret, char const* path);
+
 struct SymbolManagerInternals
 {
 	Vector<char const*> Strings;
@@ -180,6 +182,11 @@ struct FrameworkElementHelpers
 	static FrameworkElement* GetLogicalParent(FrameworkElement* o);
 	static uint32_t GetLogicalChildrenCount(FrameworkElement* o);
 	static BaseComponent* GetLogicalChild(FrameworkElement* o, uint32_t index);
+	static BaseComponent* FindNodeName(FrameworkElement* o, char const* name);
+	static BaseComponent* GetResource(FrameworkElement* o, char const* key, std::optional<bool> fullElementSearch);
+	static BaseObject* GetTreeParent(FrameworkElement* o);
+	static FrameworkElement* AttachXamlChild(FrameworkElement* o, char const* path);
+	static FrameworkElement* SetXamlProperty(FrameworkElement* o, char const* prop, char const* path);
 };
 
 struct TypePropertyHelpers
@@ -193,8 +200,8 @@ struct TypePropertyHelpers
 struct TypeHelpers
 {
 	static STDString GetName(Type* o);
-	static bool IsDescendantOf(Type const* type, TypeClass const* cls);
-	static bool IsDescendantOf(TypeClass const* type, TypeClass const* cls);
+	static bool IsDescendantOf(Type const* type, TypeClass const* base);
+	static bool IsDescendantOf(TypeClass const* type, TypeClass const* base);
 	static TypeClass* GetBase(TypeClass* o);
 	static bool IsInterface(TypeClass* o);
 	static TypeClass::AncestorVector* GetInterfaces(TypeClass* o);

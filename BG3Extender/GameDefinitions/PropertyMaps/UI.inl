@@ -1,3 +1,7 @@
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// BASE CLASSES
+
 BEGIN_CLS(Noesis::BaseObject)
 P_FUN(TypeInfo, Noesis::ObjectHelpers::GetClassType)
 P_FREE_GETTER(Type, Noesis::ObjectHelpers::GetClassTypeName)
@@ -94,6 +98,10 @@ P_FREE_GETTER(OwnerType, Noesis::RoutedEventHelpers::GetOwnerType)
 END_CLS()
 
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// UI OBJECTS
+
 BEGIN_CLS(Noesis::Visual)
 INHERIT(Noesis::DependencyObject)
 P_FREE_GETTER(VisualParent, Noesis::VisualHelpers::GetVisualParent)
@@ -121,6 +129,11 @@ INHERIT(Noesis::UIElement)
 P_FREE_GETTER(Parent, Noesis::FrameworkElementHelpers::GetLogicalParent)
 P_FREE_GETTER(ChildrenCount, Noesis::FrameworkElementHelpers::GetLogicalChildrenCount)
 P_FUN(Child, Noesis::FrameworkElementHelpers::GetLogicalChild)
+P_FUN(Find, Noesis::FrameworkElementHelpers::FindNodeName)
+P_FUN(Resource, Noesis::FrameworkElementHelpers::GetResource)
+P_FUN(TreeParent, Noesis::FrameworkElementHelpers::GetTreeParent)
+PN_RO(TemplatedParent, mTemplatedParent)
+PN_RO(InheritanceParent, mInheritanceParent)
 END_CLS()
 
 
@@ -134,6 +147,10 @@ PN(X, x)
 PN(Y, y)
 END_CLS()
 
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// EVENTS
 
 BEGIN_CLS(Noesis::EventArgs)
 END_CLS()
