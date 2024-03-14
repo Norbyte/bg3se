@@ -240,11 +240,15 @@ namespace bg3se::esv::lua
 
 	private:
 		static char const * const NameResolverMetatableName;
+		static char const * const AsyncNameResolverMetatableName;
 
 		void RegisterNameResolverMetatable(lua_State * L);
 		void CreateNameResolver(lua_State * L);
+		void RegisterAsyncNameResolverMetatable(lua_State * L);
+		void CreateAsyncNameResolver(lua_State * L);
 
 		static int LuaIndexResolverTable(lua_State* L);
+		static int AsyncLuaIndexResolverTable(lua_State* L);
 	};
 
 	class ServerState : public State

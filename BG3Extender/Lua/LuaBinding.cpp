@@ -501,6 +501,19 @@ namespace bg3se::lua
 		}
 	}
 
+	void State::ResolveOsirisFuture(uint32_t id, std::span<const lua::PersistentRef> results, bool success)
+	{
+		auto found = futureManager_.find(id);
+		if (found != futureManager_.end())
+		{
+			found->second.Push();
+			auto future = AsyncOsiFuture::CheckUserData(L, -1);
+			future->Resolve(results, success);
+
+			futureManager_.erase(found);
+		}
+	}
+
 	STDString State::GetBuiltinLibrary(int resourceId)
 	{
 		auto resource = GetExeResource(resourceId);

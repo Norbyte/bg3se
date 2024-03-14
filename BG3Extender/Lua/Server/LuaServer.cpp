@@ -125,6 +125,9 @@ namespace bg3se::esv::lua
 		OsiFunctionNameProxy::RegisterMetatable(L);
 		RegisterNameResolverMetatable(L);
 		CreateNameResolver(L);
+		AsyncOsiFunctionNameProxy::RegisterMetatable(L);
+		RegisterAsyncNameResolverMetatable(L);
+		CreateAsyncNameResolver(L);
 	}
 
 

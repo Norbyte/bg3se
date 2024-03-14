@@ -56,7 +56,7 @@ namespace bg3se::lua
 
 	void AsyncOsiFuture::Resolve(std::string_view err)
 	{
-		ecl::LuaClientPin pin(ecl::ExtensionState::Get());
+		LuaVirtualPin pin(gExtender->GetCurrentExtensionState());
 		if (pin)
 		{
 			auto L = pin->GetState();
@@ -71,7 +71,7 @@ namespace bg3se::lua
 
 	void AsyncOsiFuture::Resolve(Array<Array<std::variant<std::monostate, StringView, int64_t, float>>>& results)
 	{
-		ecl::LuaClientPin pin(ecl::ExtensionState::Get());
+		LuaVirtualPin pin(gExtender->GetCurrentExtensionState());
 		if (pin)
 		{
 			auto L = pin->GetState();
@@ -82,6 +82,62 @@ namespace bg3se::lua
 				then.Push();
 				lua_pushvalue(L, -2);
 				CheckedCall(L, 1, "AsyncOsiFutureSuccessCallback");
+			}
+		}
+	}
+
+	void AsyncOsiFuture::Resolve(std::span<const lua::PersistentRef> result, bool success)
+	{
+		LuaVirtualPin pin(gExtender->GetCurrentExtensionState());
+		if (pin)
+		{
+			auto L = pin->GetState();
+			if (success)
+			{
+				for (const auto& ref : result)
+				{
+					if (!ref.IsValid(L))
+					{
+						// If not all references are valid, something weird happened. Just return
+						return;
+					}
+				}
+				for (const auto& then : ThenList)
+				{
+					then.Push();
+					for (const auto& pref : result)
+					{
+						auto ref = pref.MakeRef(L);
+						ref.Push(L);
+						if (ref.Type() == RefType::Registry)
+						{
+							luaL_unref(L, LUA_REGISTRYINDEX, ref.Index());
+						}
+					}
+					CheckedCall(L, result.size(), "AsyncOsiFutureSuccessCallback");
+				}
+				lua_pop(L, 1);
+			}
+			else
+			{
+				if (Else)
+				{
+					Else->Push();
+					if (result.size() == 1)
+					{
+						auto ref = result[0].MakeRef(L);
+						ref.Push(L);
+						if (ref.Type() == RefType::Registry)
+						{
+							luaL_unref(L, LUA_REGISTRYINDEX, ref.Index());
+						}
+					}
+					else
+					{
+						lua_pushstring(L, "Unknown error");
+					}
+					CheckedCall(L, 1, "AsyncOsiFutureErrorCallback");
+				}
 			}
 		}
 	}
@@ -342,35 +398,44 @@ namespace bg3se::esv::lua
 		return true;
 	}
 
+	std::pair<int, bool> BuildOsiError(lua_State * L, const char * fmt, ...)
+	{
+		va_list argp;
+		va_start(argp, fmt);
+		luaL_where(L, 1);
+		lua_pushvfstring(L, fmt, argp);
+		va_end(argp);
+		lua_concat(L, 2);
+		return {1, false};
+	}
+
 	void OsiFunction::Unbind()
 	{
 		function_ = nullptr;
 	}
 
-	int OsiFunction::LuaCall(lua_State * L)
+	std::pair<int, bool> OsiFunction::LuaCall(lua_State * L)
 	{
 		if (function_ == nullptr) {
-			return luaL_error(L, "Attempted to call an unbound Osiris function");
+			return BuildOsiError(L, "Attempted to call an unbound Osiris function");
 		}
 
 		int numArgs = lua_gettop(L);
 		if (numArgs < 1) {
-			return luaL_error(L, "Called Osi function without 'self' argument?");
+			return BuildOsiError(L, "Called Osi function without 'self' argument?");
 		}
 
 		if (state_->RestrictionFlags & State::RestrictOsiris) {
-			return luaL_error(L, "Attempted to call Osiris function in restricted context");
+			return BuildOsiError(L, "Attempted to call Osiris function in restricted context");
 		}
 
 		switch (function_->Type) {
 		case FunctionType::Call:
-			OsiCall(L);
-			return 0;
+			return OsiCall(L);
 
 		case FunctionType::Event:
 		case FunctionType::Proc:
-			OsiInsert(L, false);
-			return 0;
+			return OsiInsert(L, false);
 
 		case FunctionType::Database:
 		{
@@ -380,13 +445,12 @@ namespace bg3se::esv::lua
 			auto node = function_->Node.Get();
 			if (node) {
 				if (node->IsDataNode()) {
-					OsiInsert(L, false);
-					return 0;
+					return OsiInsert(L, false);
 				} else {
 					return OsiUserQuery(L);
 				}
 			} else {
-				return luaL_error(L, "Function has no node!");
+				return BuildOsiError(L, "Function has no node!");
 			}
 		}
 
@@ -399,27 +463,27 @@ namespace bg3se::esv::lua
 
 		case FunctionType::SysCall:
 		default:
-			return luaL_error(L, "Cannot call function of type %d", function_->Type);
+			return BuildOsiError(L, "Cannot call function of type %d", function_->Type);
 		}
 	}
 
-	int OsiFunction::LuaGet(lua_State * L)
+	std::pair<int, bool> OsiFunction::LuaGet(lua_State * L)
 	{
 		if (!IsBound()) {
-			return luaL_error(L, "Attempted to read an unbound Osiris database");
+			return BuildOsiError(L, "Attempted to read an unbound Osiris database");
 		}
 
 		if (!IsDB()) {
-			return luaL_error(L, "Attempted to read function that's not a database");
+			return BuildOsiError(L, "Attempted to read function that's not a database");
 		}
 
 		int numArgs = lua_gettop(L);
 		if (numArgs < 1) {
-			return luaL_error(L, "Read Osi database without 'self' argument?");
+			return BuildOsiError(L, "Read Osi database without 'self' argument?");
 		}
 
 		if (state_->RestrictionFlags & State::RestrictOsiris) {
-			return luaL_error(L, "Attempted to read Osiris database in restricted context");
+			return BuildOsiError(L, "Attempted to read Osiris database in restricted context");
 		}
 
 		auto db = function_->Node.Get()->Database.Get();
@@ -440,52 +504,50 @@ namespace bg3se::esv::lua
 			current = current->Next;
 		}
 
-		return 1;
+		return {1, true};
 	}
 
-	int OsiFunction::LuaDelete(lua_State * L)
+	std::pair<int, bool> OsiFunction::LuaDelete(lua_State * L)
 	{
 		if (!IsBound()) {
-			return luaL_error(L, "Attempted to delete from an unbound Osiris database");
+			return BuildOsiError(L, "Attempted to delete from an unbound Osiris database");
 		}
 
 		if (!IsDB()) {
-			return luaL_error(L, "Attempted to delete from function that's not a database");
+			return BuildOsiError(L, "Attempted to delete from function that's not a database");
 		}
 
 		int numArgs = lua_gettop(L);
 		if (numArgs < 1) {
-			return luaL_error(L, "Delete from Osi database without 'self' argument?");
+			return BuildOsiError(L, "Delete from Osi database without 'self' argument?");
 		}
 
 		if (state_->RestrictionFlags & State::RestrictOsiris) {
-			return luaL_error(L, "Attempted to delete from Osiris database in restricted context");
+			return BuildOsiError(L, "Attempted to delete from Osiris database in restricted context");
 		}
 
-		OsiInsert(L, true);
-		return 0;
+		return OsiInsert(L, true);
 	}
 
-	int OsiFunction::LuaDeferredNotification(lua_State * L)
+	std::pair<int, bool> OsiFunction::LuaDeferredNotification(lua_State * L)
 	{
 		if (function_ == nullptr) {
-			return luaL_error(L, "Attempted to call an unbound Osiris function");
+			return BuildOsiError(L, "Attempted to call an unbound Osiris function");
 		}
 
 		int numArgs = lua_gettop(L);
 		if (numArgs < 1) {
-			return luaL_error(L, "Called Osi function without 'self' argument?");
+			return BuildOsiError(L, "Called Osi function without 'self' argument?");
 		}
 
 		if (state_->RestrictionFlags & State::RestrictOsiris) {
-			return luaL_error(L, "Attempted to call Osiris function in restricted context");
+			return BuildOsiError(L, "Attempted to call Osiris function in restricted context");
 		}
 
 		if (function_->Type == FunctionType::Event) {
-			OsiDeferredNotification(L);
-			return 0;
+			return OsiDeferredNotification(L);
 		} else {
-			return luaL_error(L, "Cannot queue deferred events on function of type %d", function_->Type);
+			return BuildOsiError(L, "Cannot queue deferred events on function of type %d", function_->Type);
 		}
 	}
 
@@ -555,12 +617,12 @@ namespace bg3se::esv::lua
 		}
 	}
 
-	void OsiFunction::OsiCall(lua_State * L)
+	std::pair<int, bool> OsiFunction::OsiCall(lua_State * L)
 	{
 		auto funcArgs = function_->Signature->Params->Params.Size;
 		int numArgs = lua_gettop(L);
 		if (numArgs - 1 != funcArgs) {
-			luaL_error(L, "Incorrect number of arguments for '%s'; expected %d, got %d",
+			return BuildOsiError(L, "Incorrect number of arguments for '%s'; expected %d, got %d",
 				function_->Signature->Name, funcArgs, numArgs - 1);
 		}
 
@@ -576,9 +638,11 @@ namespace bg3se::esv::lua
 		}
 
 		gExtender->GetServer().Osiris().GetWrappers().Call.CallWithHooks(function_->GetHandle(), funcArgs == 0 ? nullptr : args.Args());
+
+		return {0, true};
 	}
 
-	void OsiFunction::OsiDeferredNotification(lua_State * L)
+	std::pair<int, bool> OsiFunction::OsiDeferredNotification(lua_State * L)
 	{
 		/*auto funcArgs = function_->Signature->Params->Params.Size;
 		int numArgs = lua_gettop(L);
@@ -614,19 +678,20 @@ namespace bg3se::esv::lua
 
 		story->Manager->QueueNotification(notification);*/
 		OsiError("FIXME: OsiDeferredNotification not implemented yet!");
+		return {0, false};
 	}
 
-	void OsiFunction::OsiInsert(lua_State * L, bool deleteTuple)
+	std::pair<int, bool> OsiFunction::OsiInsert(lua_State * L, bool deleteTuple)
 	{
 		auto funcArgs = function_->Signature->Params->Params.Size;
 		int numArgs = lua_gettop(L);
 		if (numArgs - 1 != funcArgs) {
-			luaL_error(L, "Incorrect number of arguments for '%s'; expected %d, got %d",
+			return BuildOsiError(L, "Incorrect number of arguments for '%s'; expected %d, got %d",
 				function_->Signature->Name, funcArgs, numArgs - 1);
 		}
 
 		if (function_->Node.Id == 0) {
-			luaL_error(L, "Function has no node");
+			return BuildOsiError(L, "Function has no node");
 		}
 
 		OsiArgumentListPin<TypedValue> tvs(state_->Osiris().GetTypedValuePool(), (uint32_t)funcArgs);
@@ -653,9 +718,11 @@ namespace bg3se::esv::lua
 		} else {
 			node->InsertTuple(&tuple);
 		}
+
+		return {0, true};
 	}
 
-	int OsiFunction::OsiQuery(lua_State * L)
+	std::pair<int, bool> OsiFunction::OsiQuery(lua_State * L)
 	{
 		auto outParams = function_->Signature->OutParamList.numOutParams();
 		auto numParams = function_->Signature->Params->Params.Size;
@@ -663,7 +730,7 @@ namespace bg3se::esv::lua
 
 		int numArgs = lua_gettop(L);
 		if (numArgs - 1 != inParams) {
-			return luaL_error(L, "Incorrect number of IN arguments for '%s'; expected %d, got %d",
+			return BuildOsiError(L, "Incorrect number of IN arguments for '%s'; expected %d, got %d",
 				function_->Signature->Name, inParams, numArgs - 1);
 		}
 
@@ -688,7 +755,7 @@ namespace bg3se::esv::lua
 		bool handled = gExtender->GetServer().Osiris().GetWrappers().Query.CallWithHooks(function_->GetHandle(), numParams == 0 ? nullptr : args.Args());
 		if (outParams == 0) {
 			push(L, handled);
-			return 1;
+			return {1, true};
 		} else {
 			if (handled) {
 				for (uint32_t i = 0; i < numParams; i++) {
@@ -702,11 +769,11 @@ namespace bg3se::esv::lua
 				}
 			}
 
-			return outParams;
+			return {outParams, true};
 		}
 	}
 
-	int OsiFunction::OsiUserQuery(lua_State * L)
+	std::pair<int, bool> OsiFunction::OsiUserQuery(lua_State * L)
 	{
 		auto outParams = function_->Signature->OutParamList.numOutParams();
 		auto numParams = function_->Signature->Params->Params.Size;
@@ -714,7 +781,7 @@ namespace bg3se::esv::lua
 
 		int numArgs = lua_gettop(L);
 		if (numArgs - 1 != inParams) {
-			return luaL_error(L, "Incorrect number of IN arguments for '%s'; expected %d, got %d",
+			return BuildOsiError(L, "Incorrect number of IN arguments for '%s'; expected %d, got %d",
 				function_->Signature->Name, inParams, numArgs - 1);
 		}
 
@@ -759,10 +826,10 @@ namespace bg3se::esv::lua
 					retType = retType->Next;
 				}
 
-				return outParams;
+				return {outParams, true};
 			} else {
 				push(L, true);
-				return 1;
+				return {1, true};
 			}
 		} else {
 			if (outParams > 0) {
@@ -770,47 +837,28 @@ namespace bg3se::esv::lua
 					lua_pushnil(L);
 				}
 
-				return outParams;
+				return {outParams, true};
 			} else {
 				push(L, false);
-				return 1;
+				return {1, true};
 			}
 		}
 	}
 
 
-
-	char const * const OsiFunctionNameProxy::MetatableName = "OsiFunctionNameProxy";
-
-	void OsiFunctionNameProxy::PopulateMetatable(lua_State * L)
-	{
-		lua_newtable(L);
-
-		lua_pushcfunction(L, &LuaGet);
-		lua_setfield(L, -2, "Get");
-
-		lua_pushcfunction(L, &LuaDelete);
-		lua_setfield(L, -2, "Delete");
-
-		lua_pushcfunction(L, &LuaDeferredNotification);
-		lua_setfield(L, -2, "Defer");
-
-		lua_setfield(L, -2, "__index");
-	}
-
-	OsiFunctionNameProxy::OsiFunctionNameProxy(STDString const & name, ServerState & state)
+	OsiFunctionNameProxyBase::OsiFunctionNameProxyBase(STDString const & name, ServerState & state)
 		: name_(name), state_(state), generationId_(state_.Osiris().GenerationId())
 	{}
 
-	void OsiFunctionNameProxy::UnbindAll()
+	void OsiFunctionNameProxyBase::UnbindAll()
 	{
 		functions_.clear();
 	}
 
-	bool OsiFunctionNameProxy::BeforeCall(lua_State * L)
+	bool OsiFunctionNameProxyBase::BeforeCall(lua_State * L)
 	{
 		if (state_.RestrictionFlags & State::RestrictOsiris) {
-			luaL_error(L, "Attempted to access Osiris function in restricted context");
+			BuildOsiError(L, "Attempted to access Osiris function in restricted context");
 			return false;
 		}
 
@@ -823,76 +871,73 @@ namespace bg3se::esv::lua
 		return true;
 	}
 
-	int OsiFunctionNameProxy::LuaCall(lua_State * L)
+	std::pair<int, bool> OsiFunctionNameProxyBase::DoLuaCall(lua_State * L)
 	{
-		if (!BeforeCall(L)) return 1;
+		if (!BeforeCall(L)) return {1, false};
 
 		auto arity = (uint32_t)lua_gettop(L) - 1;
 
 		auto func = TryGetFunction(arity);
 		if (func == nullptr) {
-			return luaL_error(L, "No function named '%s' exists that can be called with %d parameters.",
+			return BuildOsiError(L, "No function named '%s' exists that can be called with %d parameters.",
 				name_.c_str(), arity);
 		}
 
 		return func->LuaCall(L);
 	}
 
-	int OsiFunctionNameProxy::LuaGet(lua_State * L)
+	std::pair<int, bool> OsiFunctionNameProxyBase::DoLuaGet(OsiFunctionNameProxyBase * self, lua_State * L)
 	{
-		auto self = OsiFunctionNameProxy::CheckUserData(L, 1);
-		if (!self->BeforeCall(L)) return 1;
+		if (!self->BeforeCall(L)) return {1, false};
 
 		auto arity = (uint32_t)lua_gettop(L) - 1;
 
 		auto func = self->TryGetFunction(arity);
 		if (func == nullptr) {
-			return luaL_error(L, "No database named '%s(%d)' exists", self->name_.c_str(), arity);
+			return BuildOsiError(L, "No database named '%s(%d)' exists", self->name_.c_str(), arity);
 		}
 
 		if (!func->IsDB()) {
-			return luaL_error(L, "Function '%s(%d)' is not a database", self->name_.c_str(), arity);
+			return BuildOsiError(L, "Function '%s(%d)' is not a database", self->name_.c_str(), arity);
 		}
 
 		return func->LuaGet(L);
 	}
 
-	int OsiFunctionNameProxy::LuaDelete(lua_State * L)
+	std::pair<int, bool> OsiFunctionNameProxyBase::DoLuaDelete(OsiFunctionNameProxyBase * self, lua_State * L)
 	{
-		auto self = OsiFunctionNameProxy::CheckUserData(L, 1);
-		if (!self->BeforeCall(L)) return 1;
+		if (!self->BeforeCall(L)) return {1, false};
 
 		auto arity = (uint32_t)lua_gettop(L) - 1;
 
 		auto func = self->TryGetFunction(arity);
 		if (func == nullptr) {
-			return luaL_error(L, "No database named '%s(%d)' exists", self->name_.c_str(), arity);
+			return BuildOsiError(L, "No database named '%s(%d)' exists", self->name_.c_str(), arity);
 		}
 
 		if (!func->IsDB()) {
-			return luaL_error(L, "Function '%s(%d)' is not a database", self->name_.c_str(), arity);
+			return BuildOsiError(L, "Function '%s(%d)' is not a database", self->name_.c_str(), arity);
 		}
 
 		return func->LuaDelete(L);
 	}
 
-	int OsiFunctionNameProxy::LuaDeferredNotification(lua_State * L)
+	std::pair<int, bool> OsiFunctionNameProxyBase::DoLuaDeferredNotification(OsiFunctionNameProxyBase * self, lua_State * L)
 	{
-		auto self = OsiFunctionNameProxy::CheckUserData(L, 1);
-		if (!self->BeforeCall(L)) return 1;
+		if (!self->BeforeCall(L)) return {1, false};
 
 		auto arity = (uint32_t)lua_gettop(L) - 1;
 
 		auto func = self->TryGetFunction(arity);
 		if (func == nullptr) {
-			return luaL_error(L, "No function named '%s' exists that can be called with %d parameters.",
+			return BuildOsiError(L, "No function named '%s' exists that can be called with %d parameters.",
 				self->name_.c_str(), arity);
 		}
 
 		return func->LuaDeferredNotification(L);
 	}
 
-	OsiFunction * OsiFunctionNameProxy::TryGetFunction(uint32_t arity)
+	OsiFunction * OsiFunctionNameProxyBase::TryGetFunction(uint32_t arity)
 	{
 		if (functions_.size() > arity
 			&& functions_[arity].IsBound()) {
@@ -920,7 +965,7 @@ namespace bg3se::esv::lua
 		return nullptr;
 	}
 
-	OsiFunction * OsiFunctionNameProxy::CreateFunctionMapping(uint32_t arity, Function const * func)
+	OsiFunction * OsiFunctionNameProxyBase::CreateFunctionMapping(uint32_t arity, Function const * func)
 	{
 		if (functions_.size() <= arity) {
 			functions_.resize(arity + 1);
@@ -933,6 +978,154 @@ namespace bg3se::esv::lua
 		}
 	}
 
+	char const * const OsiFunctionNameProxy::MetatableName = "OsiFunctionNameProxy";
+
+	void OsiFunctionNameProxy::PopulateMetatable(lua_State * L)
+	{
+		lua_newtable(L);
+
+		lua_pushcfunction(L, &LuaGet);
+		lua_setfield(L, -2, "Get");
+
+		lua_pushcfunction(L, &LuaDelete);
+		lua_setfield(L, -2, "Delete");
+
+		lua_pushcfunction(L, &LuaDeferredNotification);
+		lua_setfield(L, -2, "Defer");
+
+		lua_setfield(L, -2, "__index");
+	}
+
+	int OsiFunctionNameProxy::LuaCall(lua_State * L)
+	{
+		auto [num, success] = DoLuaCall(L);
+		if (!success)
+		{
+			lua_error(L);
+			return 1;
+		}
+		
+		return num;
+	}
+
+	int OsiFunctionNameProxy::LuaGet(lua_State * L)
+	{
+		auto [num, success] = DoLuaGet(OsiFunctionNameProxy::CheckUserData(L, 1), L);
+		if (!success)
+		{
+			lua_error(L);
+			return 1;
+		}
+		
+		return num;
+	}
+
+	int OsiFunctionNameProxy::LuaDelete(lua_State * L)
+	{
+		auto [num, success] = DoLuaDelete(OsiFunctionNameProxy::CheckUserData(L, 1), L);
+		if (!success)
+		{
+			lua_error(L);
+			return 1;
+		}
+		
+		return num;
+	}
+
+	int OsiFunctionNameProxy::LuaDeferredNotification(lua_State * L)
+	{
+		auto [num, success] = DoLuaDeferredNotification(OsiFunctionNameProxy::CheckUserData(L, 1), L);
+		if (!success)
+		{
+			lua_error(L);
+			return num;
+		}
+		
+		return num;
+	}
+
+	char const * const AsyncOsiFunctionNameProxy::MetatableName = "AsyncOsiFunctionNameProxy";
+	std::atomic<uint32_t> AsyncOsiFunctionNameProxy::currQueryId = 0;
+
+	void AsyncOsiFunctionNameProxy::PopulateMetatable(lua_State * L)
+	{
+		lua_newtable(L);
+
+		lua_pushcfunction(L, &LuaGet);
+		lua_setfield(L, -2, "Get");
+
+		lua_pushcfunction(L, &LuaDelete);
+		lua_setfield(L, -2, "Delete");
+
+		lua_pushcfunction(L, &LuaDeferredNotification);
+		lua_setfield(L, -2, "Defer");
+
+		lua_setfield(L, -2, "__index");
+	}
+
+	int AsyncOsiFunctionNameProxy::SharedLuaLogic(const std::pair<int, bool>& result, lua_State* L)
+	{
+		const auto& [num, success] = result;
+		uint32_t queryid = currQueryId++;
+
+		if (!success)
+		{
+			PersistentRegistryEntry errEntry(L, -1);
+			lua::PersistentRef err(L, errEntry);
+			errEntry.ResetWithoutUnbind();
+			lua_pop(L, 1);
+			auto future = AsyncOsiFuture::New(L, queryid);
+			gExtender->GetServer().EnqueueTask([err=std::move(err), queryid]{
+				LuaServerPin pin(esv::ExtensionState::Get());
+				if (pin)
+				{
+					pin->ResolveOsirisFuture(queryid, std::span(&err, 1), false);
+				}
+			});
+		}
+		else
+		{
+			std::vector<lua::PersistentRef> entries;
+			for (int i = 0; i < num; i++)
+			{
+				PersistentRegistryEntry entry(L, -1 - i);
+				entries.emplace_back(L, entry);
+				entry.ResetWithoutUnbind();
+			}
+			lua_pop(L, num);
+			auto future = AsyncOsiFuture::New(L, queryid);
+			gExtender->GetServer().EnqueueTask([entries=std::move(entries), queryid]{
+				LuaServerPin pin(esv::ExtensionState::Get());
+				if (pin)
+				{
+					pin->ResolveOsirisFuture(queryid, std::span(entries), true);
+				}
+			});
+		}
+		return 1;
+	}
+
+	int AsyncOsiFunctionNameProxy::LuaCall(lua_State * L)
+	{
+		return SharedLuaLogic(DoLuaCall(L), L);
+	}
+
+	int AsyncOsiFunctionNameProxy::LuaGet(lua_State * L)
+	{
+		return SharedLuaLogic(DoLuaGet(AsyncOsiFunctionNameProxy::CheckUserData(L, 1), L), L);
+	}
+
+	int AsyncOsiFunctionNameProxy::LuaDelete(lua_State * L)
+	{
+		return SharedLuaLogic(DoLuaDelete(AsyncOsiFunctionNameProxy::CheckUserData(L, 1), L), L);
+	}
+
+	int AsyncOsiFunctionNameProxy::LuaDeferredNotification(lua_State * L)
+	{
+		return SharedLuaLogic(DoLuaDeferredNotification(AsyncOsiFunctionNameProxy::CheckUserData(L, 1), L), L);
+	}
+
+	
 
 	bool CustomLuaCall::Call(OsiArgumentDesc const & params)
 	{
@@ -1148,6 +1341,41 @@ namespace bg3se::esv::lua
 
 		LuaServerPin lua(ExtensionState::Get());
 		OsiFunctionNameProxy::New(L, name, std::ref(lua.Get())); // stack: tab, name, proxy
+
+		lua_pushvalue(L, 1); // stack: fun, tab
+		push(L, name); // stack: fun, tab, name
+		lua_pushvalue(L, -3); // stack: fun, tab, name, fun
+		lua_rawset(L, -3); // stack: fun
+		lua_pop(L, 1);
+		return 1;
+	}
+
+
+	char const * const ExtensionLibraryServer::AsyncNameResolverMetatableName = "AsyncOsiProxyNameResolver";
+
+	void ExtensionLibraryServer::RegisterAsyncNameResolverMetatable(lua_State * L)
+	{
+		lua_register(L, AsyncNameResolverMetatableName, nullptr);
+		luaL_newmetatable(L, AsyncNameResolverMetatableName); // stack: mt
+		lua_pushcfunction(L, &AsyncLuaIndexResolverTable); // stack: mt, &LuaIndexResolverTable
+		lua_setfield(L, -2, "__index"); // mt.__index = &LuaIndexResolverTable; stack: mt
+		lua_pop(L, 1); // stack: mt
+	}
+
+	void ExtensionLibraryServer::CreateAsyncNameResolver(lua_State * L)
+	{
+		lua_newtable(L); // stack: osi
+		luaL_setmetatable(L, AsyncNameResolverMetatableName); // stack: osi
+		lua_setglobal(L, "AsyncOsi"); // stack: -
+	}
+
+	int ExtensionLibraryServer::AsyncLuaIndexResolverTable(lua_State * L)
+	{
+		luaL_checktype(L, 1, LUA_TTABLE);
+		auto name = luaL_checkstring(L, 2);
+
+		LuaServerPin lua(ExtensionState::Get());
+		AsyncOsiFunctionNameProxy::New(L, name, std::ref(lua.Get())); // stack: tab, name, proxy
 
 		lua_pushvalue(L, 1); // stack: fun, tab
 		push(L, name); // stack: fun, tab, name
