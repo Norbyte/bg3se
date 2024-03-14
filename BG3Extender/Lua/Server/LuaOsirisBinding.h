@@ -58,6 +58,8 @@ void LuaToOsi(lua_State * L, int i, OsiArgumentValue & arg, ValueType osiType, b
 void OsiToLua(lua_State * L, OsiArgumentValue const & arg);
 void OsiToLua(lua_State * L, TypedValue const & tv);
 
+std::pair<int, bool> BuildOsiError(lua_State * L, const char *fmt, ...);
+
 class OsiFunction
 {
 public:
@@ -74,27 +76,70 @@ public:
 	bool Bind(Function const * func, class ServerState & state);
 	void Unbind();
 
-	int LuaCall(lua_State * L);
-	int LuaGet(lua_State * L);
-	int LuaDelete(lua_State * L);
-	int LuaDeferredNotification(lua_State * L);
+	std::pair<int, bool> LuaCall(lua_State * L);
+	std::pair<int, bool> LuaGet(lua_State * L);
+	std::pair<int, bool> LuaDelete(lua_State * L);
+	std::pair<int, bool> LuaDeferredNotification(lua_State * L);
 
 private:
 	Function const * function_{ nullptr };
 	AdapterRef adapter_;
 	ServerState * state_;
 
-	void OsiCall(lua_State * L);
-	void OsiDeferredNotification(lua_State * L);
-	void OsiInsert(lua_State * L, bool deleteTuple);
-	int OsiQuery(lua_State * L);
-	int OsiUserQuery(lua_State * L);
+	std::pair<int, bool> OsiCall(lua_State * L);
+	std::pair<int, bool> OsiDeferredNotification(lua_State * L);
+	std::pair<int, bool> OsiInsert(lua_State * L, bool deleteTuple);
+	std::pair<int, bool> OsiQuery(lua_State * L);
+	std::pair<int, bool> OsiUserQuery(lua_State * L);
 
 	bool MatchTuple(lua_State * L, int firstIndex, TupleVec const & tuple);
 	void ConstructTuple(lua_State * L, TupleVec const & tuple);
 };
 
-class OsiFunctionNameProxy : public Userdata<OsiFunctionNameProxy>, public Callable
+class OsiFunctionNameProxyBase;
+
+class OsiFunctionNameProxyBase
+{
+public:
+	static constexpr uint32_t MaxQueryOutParams = 6;
+	
+	OsiFunctionNameProxyBase(STDString const & name, ServerState & state);
+
+	void UnbindAll();
+
+protected:
+	STDString name_;
+	Vector<OsiFunction> functions_;
+	ServerState & state_;
+	uint32_t generationId_;
+
+	std::pair<int, bool> DoLuaCall(lua_State * L);
+	static std::pair<int, bool> DoLuaGet(OsiFunctionNameProxyBase* self, lua_State * L);
+	static std::pair<int, bool> DoLuaDelete(OsiFunctionNameProxyBase* self, lua_State * L);
+	static std::pair<int, bool> DoLuaDeferredNotification(OsiFunctionNameProxyBase* self, lua_State * L);
+	bool BeforeCall(lua_State * L);
+	OsiFunction * TryGetFunction(uint32_t arity);
+	OsiFunction * CreateFunctionMapping(uint32_t arity, Function const * func);
+};
+
+class OsiFunctionNameProxy : public OsiFunctionNameProxyBase, public Userdata<OsiFunctionNameProxy>, public Callable
+{
+public:
+	static char const * const MetatableName;
+	// Maximum number of OUT params that a query can return.
+	// (This setting determines how many function arities we'll check during name lookup)
+
+	static void PopulateMetatable(lua_State * L);
+
+	using OsiFunctionNameProxyBase::OsiFunctionNameProxyBase;
+
+	int LuaCall(lua_State * L);
+	static int LuaGet(lua_State * L);
+	static int LuaDelete(lua_State * L);
+	static int LuaDeferredNotification(lua_State * L);
+};
+
+class AsyncOsiFunctionNameProxy : public OsiFunctionNameProxyBase, public Userdata<AsyncOsiFunctionNameProxy>, public Callable
 {
 public:
 	static char const * const MetatableName;
@@ -104,23 +149,18 @@ public:
 
 	static void PopulateMetatable(lua_State * L);
 
-	OsiFunctionNameProxy(STDString const & name, ServerState & state);
+	using OsiFunctionNameProxyBase::OsiFunctionNameProxyBase;
 
-	void UnbindAll();
 	int LuaCall(lua_State * L);
 
 private:
-	STDString name_;
-	Vector<OsiFunction> functions_;
-	ServerState & state_;
-	uint32_t generationId_;
+	static std::atomic<uint32_t> currQueryId;
 
 	static int LuaGet(lua_State * L);
 	static int LuaDelete(lua_State * L);
 	static int LuaDeferredNotification(lua_State * L);
-	bool BeforeCall(lua_State * L);
-	OsiFunction * TryGetFunction(uint32_t arity);
-	OsiFunction * CreateFunctionMapping(uint32_t arity, Function const * func);
+
+	static int SharedLuaLogic(const std::pair<int, bool>& result, lua_State * L);
 };
 
 

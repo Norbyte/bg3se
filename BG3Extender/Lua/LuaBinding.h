@@ -158,6 +158,7 @@ namespace bg3se::lua
 		class AsyncOsiFuture* CreateOsirisFuture(uint32_t id);
 		void ResolveOsirisFuture(uint32_t id, std::string_view err);
 		void ResolveOsirisFuture(uint32_t id, Array<Array<std::variant<std::monostate, StringView, int64_t, float>>>& results);
+		void ResolveOsirisFuture(uint32_t id, std::span<const lua::PersistentRef> ref, bool success);
 
 		template <class... Ret, class... Args>
 		bool CallExtRet(char const * func, uint32_t restrictions, std::tuple<Ret...>& ret, Args... args)
@@ -276,6 +277,8 @@ namespace bg3se::lua
 
 		void Resolve(std::string_view err);
 		void Resolve(Array<Array<std::variant<std::monostate, StringView, int64_t, float>>>& results);
+
+		void Resolve(std::span<const lua::PersistentRef> result, bool succeeded);
 	private:
 		std::vector<RegistryEntry> ThenList;
 		std::optional<RegistryEntry> Else;
