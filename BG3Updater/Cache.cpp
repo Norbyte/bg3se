@@ -306,10 +306,18 @@ bool ResourceCacheRepository::UpdateLocalPackage(Manifest::Resource const& resou
 
 void ResourceCacheRepository::UpdateFromManifest(Manifest const& manifest)
 {
+	bool hasAnyResources{ false };
+
 	for (auto const& res : manifest.Resources) {
 		for (auto const& ver : res.second.ResourceVersions) {
 			UpdateFromLatestMetadata(res.second, ver.second);
+			hasAnyResources = true;
 		}
+	}
+
+	// Prevent removal of local resources if a bogus manifest was fetched
+	if (!hasAnyResources) {
+		return;
 	}
 
 	// Remove all resource versions that are cached locally but are not present in the manifest

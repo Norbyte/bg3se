@@ -306,17 +306,17 @@ struct LevelUpUpgrades
 	{
 		int field_30;
 		Guid Skill;
-		Array<uint8_t> Array_b8;
+		[[bg3::legacy(Array_b8)]] Array<SkillId> Proficiencies;
 		STDString field_60;
 		int field_80;
 	};
 		
-	struct Unknown2Data : public LevelUpUpgrades::Reference
+	struct SkillBonusData : public LevelUpUpgrades::Reference
 	{
 		int field_30;
 		[[bg3::legacy(field_38)]] Guid Skill;
 		uint8_t field_48;
-		Array<uint8_t> Array_b8;
+		[[bg3::legacy(Array_b8)]] Array<SkillId> Expertise;
 		STDString field_60;
 		int field_80;
 	};
@@ -325,8 +325,8 @@ struct LevelUpUpgrades
 	{
 		int field_30;
 		Guid AbilityBonus;
-		Array<uint8_t> Array_b8;
-		Array<uint32_t> Array_i32;
+		[[bg3::legacy(Array_b8)]] Array<AbilityId> Bonuses;
+		[[bg3::legacy(Array_i32)]] Array<uint32_t> BonusAmounts;
 		[[bg3::legacy(field_60)]] STDString BonusType;
 		int field_80;
 	};
@@ -335,49 +335,49 @@ struct LevelUpUpgrades
 	{
 		struct StringPair
 		{
-			FixedString A;
-			FixedString B;
+			FixedString From;
+			FixedString To;
 		};
 
 		int field_30;
 		Guid SpellList;
 		Array<FixedString> Spells;
-		Array<StringPair> Array_FS2;
+		[[bg3::legacy(Array_FS2)]] Array<StringPair> ReplaceSpells;
 		[[bg3::legacy(field_78)]] STDString SelectorId;
 	};
 		
-	struct Spell2Data : public LevelUpUpgrades::Reference
+	struct PassiveData : public LevelUpUpgrades::Reference
 	{
 		struct StringPair
 		{
-			FixedString A;
-			FixedString B;
+			FixedString From;
+			FixedString To;
 		};
 
 		int field_30;
-		Guid SpellList;
-		Array<FixedString> Spells;
-		Array<StringPair> Array_FS2;
+		[[bg3::legacy(SpellList)]] Guid PassiveList;
+		[[bg3::legacy(Spells)]] Array<FixedString> Passives;
+		[[bg3::legacy(Array_FS2)]] Array<StringPair> ReplacePassives;
 		[[bg3::legacy(field_78)]] STDString SelectorId;
 		int field_80;
 	};
 		
-	struct Unknown4 : public LevelUpUpgrades::Reference
+	struct EquipmentData : public LevelUpUpgrades::Reference
 	{
 		int field_30;
-		Guid field_38;
-		Array<FixedString> Array_FS;
-		STDString field_60;
+		[[bg3::legacy(field_38)]] Guid EquipmentList;
+		[[bg3::legacy(Array_FS)]] Array<FixedString> Equipment;
+		[[bg3::legacy(field_60)]] STDString SelectorId;
 		int field_80;
 	};
 
 	Array<FeatData> Feats;
 	Array<AbilityBonusData> AbilityBonuses;
 	Array<SkillData> Skills;
-	Array<Unknown2Data> Unknowns2;
+	[[bg3::legacy(Unknowns2)]] Array<SkillBonusData> SkillBonuses;
 	Array<SpellData> Spells;
-	Array<Spell2Data> Spells2;
-	Array<Unknown4> Unknowns4;
+	[[bg3::legacy(Spells2)]] Array<PassiveData> Passives;
+	[[bg3::legacy(Unknowns4)]] Array<EquipmentData> Equipment;
 };
 
 struct LevelUpData
@@ -388,7 +388,7 @@ struct LevelUpData
 	Guid AccessorySet;
 	std::array<int, 7> Abilities;
 	LevelUpUpgrades Upgrades;
-	Array<SpellIdBase> field_B0;
+	[[bg3::legacy(field_B0)]] Array<SpellIdBase> Spells;
 };
 
 struct FloatingComponent : public BaseComponent
@@ -453,7 +453,7 @@ struct SummonContainerComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::SummonContainer;
 	static constexpr auto EngineClass = "eoc::summon::ContainerComponent";
 
-	MultiHashMap<FixedString, Array<EntityHandle>> field_18;
+	[[bg3::legacy(field_18)]] MultiHashMap<FixedString, Array<EntityHandle>> ByTag;
 	MultiHashSet<EntityHandle> Characters;
 	MultiHashSet<EntityHandle> Items;
 };
@@ -524,7 +524,7 @@ struct SummonLifetimeComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::SummonLifetime;
 	static constexpr auto EngineClass = "eoc::summon::LifetimeComponent";
 
-	float Lifetime;
+	std::variant<uint8_t, float> Lifetime;
 };
 
 struct HotbarContainerComponent : public BaseComponent

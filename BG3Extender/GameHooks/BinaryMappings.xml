@@ -895,6 +895,49 @@
         66 0f 1f 44 00 00 // nop     word ptr [rax+rax+00h]
         <Target Type="Indirect" Offset="@ref1" Symbol="Noesis__gReflection" />
       </Mapping>
+      
+      <Mapping Name="Noesis::UI::LoadXaml">
+        48 83 ec 58 // sub     rsp, 58h
+        48 8b f9 // mov     rdi, rcx
+        c7 40 10 00 00 00 00 // mov     dword ptr [rax+10h], 0
+        @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, aMaincanvasXaml; "MainCanvas.xaml"
+        48 8d 48 20 // lea     rcx, [rax+20h]
+        @ref1 e8 ?? ?? ?? ?? // call    Noesis__GUI__LoadXaml
+        90 // nop
+        <Condition Type="String" Offset="@str1" Value="MainCanvas.xaml" />
+        <Target Type="Indirect" Offset="@ref1" Symbol="Noesis__GUI__LoadXaml" />
+      </Mapping>
+      
+      <Mapping Name="Noesis::Visual::AddVisualChild">
+        48 8b 97 78 02 00 00 // mov     rdx, [rdi+278h]
+        48 8b cf // mov     rcx, rdi
+        48 8b 5c 24 30 // mov     rbx, [rsp+28h+arg_0]
+        48 8b 74 24 38 // mov     rsi, [rsp+28h+arg_8]
+        48 83 c4 20 // add     rsp, 20h
+        5f // pop     rdi
+        @ref1 e9 ?? ?? ?? ?? // jmp     Noesis::Visual::RemoveVisualChild(Noesis::Visual *)
+        48 85 f6 // test    rsi, rsi
+        74 0f // jz      short loc_14486F209
+        48 8b 97 78 02 00 00 // mov     rdx, [rdi+278h]
+        48 8b cf // mov     rcx, rdi
+        @ref2 e8 ?? ?? ?? ?? // call    Noesis::Visual::AddVisualChild(Noesis::Visual *)
+        <Target Type="Indirect" Offset="@ref1" Symbol="Noesis__Visual__RemoveVisualChild" />
+        <Target Type="Indirect" Offset="@ref2" Symbol="Noesis__Visual__AddVisualChild" />
+      </Mapping>
+      
+      <Mapping Name="ls::UIStateMachine::FireStateEvent2">
+        44 0f b7 03 // movzx   r8d, word ptr [rbx]
+        @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, pfs_OpenTrade
+        48 8d 4c 24 30 // lea     rcx, [rsp+0A8h+var_78]
+        e8 ?? ?? ?? ?? // call    ls__UIStateMachine__EventArgs__Make
+        90 // nop
+        4c 8b c8 // mov     r9, rax
+        4c 8b c5 // mov     r8, rbp
+        48 8d 54 24 50 // lea     rdx, [rsp+0A8h+var_58]
+        48 8b ce // mov     rcx, rsi
+        @ref3 e8 ?? ?? ?? ?? // call    ls__UIStateMachine__FireStateEvent2
+        <Target Type="Indirect" Offset="@ref3" Symbol="ls__UIStateMachine__FireStateEvent2" />
+      </Mapping>
     
     
 

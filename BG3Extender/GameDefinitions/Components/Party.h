@@ -5,8 +5,8 @@ BEGIN_NS(party)
 struct View
 {
 	int UserID;
-	Guid field_8;
-	Guid field_18;
+	[[bg3::legacy(field_8)]] Guid UserUuid;
+	[[bg3::legacy(field_18)]] Guid ViewUuid;
 	Array<EntityHandle> Characters;
 };
 
@@ -16,7 +16,7 @@ struct ViewComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::PartyView;
 	static constexpr auto EngineClass = "eoc::party::ViewComponent";
 
-	Guid field_0;
+	[[bg3::legacy(field_0)]] Guid PartyUuid;
 	Array<View> Views;
 	Array<EntityHandle> Characters;
 };
@@ -29,15 +29,15 @@ struct CompositionComponent : public BaseComponent
 
 	struct Member
 	{
-		int32_t field_0;
-		Guid field_8;
-		Guid field_18;
+		[[bg3::legacy(field_0)]] int32_t UserId;
+		[[bg3::legacy(field_8)]] Guid UserUuid;
+		[[bg3::legacy(field_18)]] Guid ViewUuid;
 		Array<uint8_t> field_28;
 	};
 
 
 	EntityHandle Party;
-	Guid field_8;
+	[[bg3::legacy(field_8)]] Guid PartyUuid;
 	Array<Member> Members;
 };
 
@@ -94,11 +94,11 @@ struct MemberComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::PartyMember;
 	static constexpr auto EngineClass = "eoc::party::MemberComponent";
 
-	int UserID;
-	Guid field_8;
+	[[bg3::legacy(UserID)]] int UserId;
+	[[bg3::legacy(field_8)]] Guid UserUuid;
 	EntityHandle Party;
-	Guid field_20;
-	uint8_t field_30;
+	[[bg3::legacy(field_20)]] Guid ViewUuid;
+	[[bg3::legacy(field_30)]] bool IsPermanent;
 };
 
 
@@ -148,7 +148,7 @@ struct UserSnapshotComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerUserSnapshot;
 	static constexpr auto EngineClass = "esv::party::UserSnapshotComponent";
 
-	MultiHashMap<Guid, Array<Array<EntityHandle>>> Snapshot;
+	[[bg3::legacy(Snapshot)]] MultiHashMap<Guid, Array<Array<EntityHandle>>> PerUserCharacters;
 };
 
 END_NS()

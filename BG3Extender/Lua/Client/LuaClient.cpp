@@ -5,6 +5,9 @@
 #include <Extender/ScriptExtender.h>
 #include <Extender/Client/ExtensionStateClient.h>
 #include "resource.h"
+#if defined(ENABLE_UI)
+#include <Lua/Client/UIEvents.inl>
+#endif
 
 BEGIN_NS(ecl::lua)
 
@@ -43,6 +46,9 @@ void ExtensionLibraryClient::RegisterLib(lua_State * L)
 
 ClientState::ClientState(uint32_t generationId)
 	: State(generationId, false)
+#if defined(ENABLE_UI)
+	, uiEvents_(*this)
+#endif
 {}
 
 ClientState::~ClientState()

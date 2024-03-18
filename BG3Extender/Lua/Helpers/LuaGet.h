@@ -187,7 +187,7 @@ inline AnyRef do_get(lua_State* L, int index, Overload<AnyRef>)
 {
 	auto i = lua_absindex(L, index);
 	auto type = lua_type(L, i);
-	if (type != LUA_TNONE) {
+	if (type == LUA_TNONE) {
 		luaL_error(L, "any value expected, got %s", lua_typename(L, lua_type(L, i)));
 	}
 
@@ -266,6 +266,12 @@ template <class T>
 inline T get(lua_State* L, int index)
 {
 	return do_get(L, index, Overload<T>{});
+}
+
+template <class T>
+inline T get(lua_State* L, AnyRef ref)
+{
+	return do_get(L, ref.Index, Overload<T>{});
 }
 
 template <class T>

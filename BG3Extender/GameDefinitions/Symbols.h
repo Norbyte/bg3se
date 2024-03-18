@@ -124,8 +124,12 @@ namespace bg3se
 		resource::LoadableResource::TranscodeProc* ls__VirtualTextureResource__Transcode{ nullptr };
 
 #if defined(ENABLE_UI)
-		void* Noesis__gReflection;
-		void* Noesis__SymbolManager__Buf1;
+		void* Noesis__gReflection{ nullptr };
+		void* Noesis__SymbolManager__Buf1{ nullptr };
+		void* Noesis__GUI__LoadXaml{ nullptr };
+		void* Noesis__Visual__AddVisualChild{ nullptr };
+		void* Noesis__Visual__RemoveVisualChild{ nullptr };
+		void* ls__UIStateMachine__FireStateEvent2{ nullptr };
 #endif
 
 		GlobalSwitches** ls__GlobalSwitches{ nullptr };

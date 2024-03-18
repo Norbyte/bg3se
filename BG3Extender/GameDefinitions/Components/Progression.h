@@ -7,7 +7,7 @@ struct LevelUpComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::LevelUp;
 	static constexpr auto EngineClass = "eoc::progression::LevelUpComponent";
 
-	Array<LevelUpData> field_18;
+	[[bg3::legacy(field_18)]] Array<LevelUpData> LevelUps;
 };
 
 struct ContainerComponent : public BaseComponent

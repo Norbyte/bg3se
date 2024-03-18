@@ -1,6 +1,9 @@
 #pragma once
 
 #include <Lua/LuaBinding.h>
+#if defined(ENABLE_UI)
+#include <Lua/Client/UIEvents.h>
+#endif
 
 namespace bg3se::ecl::lua
 {
@@ -62,7 +65,17 @@ namespace bg3se::ecl::lua
 		EntityReplicationEventHooks* GetReplicationEventHooks() override;
 		void OnGameStateChanged(GameState fromState, GameState toState);
 
+#if defined(ENABLE_UI)
+		UIEventHooks& GetUIEvents()
+		{
+			return uiEvents_;
+		}
+#endif
+
 	private:
 		ExtensionLibraryClient library_;
+#if defined(ENABLE_UI)
+		UIEventHooks uiEvents_;
+#endif
 	};
 }
