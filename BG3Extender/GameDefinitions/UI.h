@@ -257,6 +257,102 @@ BEGIN_NS(ui)
 
 struct UICanvas;
 
+struct UIStateMachine : public ProtectedGameObject<UIStateMachine>
+{
+	void* VMT;
+	__int64 field_8;
+	ecs::ComponentCallbackList field_10;
+	ecs::ComponentCallbackList field_28;
+	ecs::ComponentCallbackList field_40;
+	ecs::ComponentCallbackList field_58;
+	ecs::ComponentCallbackList field_70;
+	int field_88;
+	bool CanProcessEvents;
+	bool IsProcessingEvent;
+	char field_8E;
+	char field_8F;
+	void* SomeEventArg;
+	__int64 field_98;
+	__int64 field_A0;
+	MultiHashMap<uint64_t, uint64_t> field_A8;
+	MultiHashMap<uint64_t, uint64_t> field_E8;
+	MultiHashMap<uint64_t, uint64_t> field_128;
+	MultiHashSet<uint64_t> field_168;
+	MultiHashSet<uint64_t> field_198;
+	MultiHashSet<uint64_t> field_1C8;
+	__int64 field_1F8;
+	__int64 field_200;
+	__int64 field_208;
+	__int64 field_210;
+	__int64 field_218;
+	MultiHashMap<uint64_t, uint64_t> field_220;
+	MultiHashSet<uint64_t> field_260;
+	MultiHashSet<uint64_t> field_290;
+	Array<uint64_t> field_2C0;
+	__int64 field_2D0;
+	MultiHashMap<uint64_t, uint64_t> field_2D8;
+	MultiHashMap<uint64_t, uint64_t> field_318;
+	MultiHashSet<uint64_t> field_358;
+	__int64 field_388;
+	__int64 field_390;
+	__int64 field_398;
+	__int64 field_3A0;
+	__int64 field_3A8;
+	__int64 field_3B0;
+	__int64 field_3B8;
+	__int64 field_3C0;
+	Array<uint64_t> field_3C8;
+	__int64 field_3D8;
+	CRITICAL_SECTION field_3E0;
+
+	struct EventArgs
+	{
+		int field_0{ 0 };
+		int field_4{ 3 };
+		FixedString StateEvent;
+		FixedString SubState;
+		bool RemoveState{ false };
+		int16_t PlayerId{ 0 };
+		uint64_t field_18{ 0 };
+	};
+
+	struct EventResult
+	{
+		__int64 field_0;
+		int field_8;
+		int field_C;
+		int field_10;
+		int field_14;
+		int field_18;
+		int field_1C;
+		__int64 field_20;
+		int field_28;
+		int field_2C;
+		uint16_t field_30;
+		int field_34;
+		BYTE field_38;
+		char field_39;
+	};
+
+	struct ECSData
+	{
+		ecs::EntityWorld* EntityWorld{ nullptr };
+		ecs::EntityWorld* EntityWorld2{ nullptr };
+		ecs::EntityStore* EntityTypes{ nullptr };
+		ecs::QueryManager* QuerySystem{ nullptr };
+		CRITICAL_SECTION* CriticalSection{ nullptr };
+	};
+
+	struct EntityContext
+	{
+		ECSData const* ECS{ nullptr };
+		int WorldView{ 0 };
+		uint8_t field_C{ 0 };
+	};
+
+};
+
+
 struct UIManager : public ProtectedGameObject<UIManager>
 {
 	struct Sub70
@@ -288,6 +384,73 @@ struct UIManager : public ProtectedGameObject<UIManager>
 		char field_A8;
 	};
 
+	struct Sub120
+	{
+		__int64 field_0;
+		ecs::ComponentCallbackList field_8;
+		ecs::ComponentCallbackList field_20;
+	};
+
+	struct Sub168
+	{
+		Array<void*> field_0;
+		int field_10;
+		int field_14;
+	};
+
+	struct Sub198
+	{
+		ecs::ComponentCallbackList field_0;
+		MultiHashSet<uint64_t> field_18;
+		Array<void*> field_48;
+	};
+
+	struct Sub1F0
+	{
+		ecs::ComponentCallbackList field_0;
+		ecs::ComponentCallbackList field_18;
+		ecs::ComponentCallbackList field_30;
+		ecs::ComponentCallbackList field_48;
+		ecs::ComponentCallbackList field_60;
+		__int64 field_78;
+		__int64 field_80;
+		Array<void*> field_88;
+		Array<void*> field_98;
+		__int64 field_A8;
+		__int64 field_B0;
+		char field_B8;
+		char field_B9;
+		char field_BA;
+		char field_BB;
+		char field_BC;
+		char field_BD;
+		char field_BE;
+		char field_BF;
+		__int64 field_C0;
+		__int64 field_C8;
+		CRITICAL_SECTION CriticalSection;
+		__int64 field_F8;
+		__int64 field_100;
+		__int64 field_108;
+		__int64 field_110;
+		__int64 field_118;
+		__int64 field_120;
+		__int64 field_128;
+		__int64 field_130;
+		void* field_138;
+		void* field_140;
+		void* field_148;
+		void* field_150;
+		Array<void*> field_158;
+	};
+
+	struct Sub358
+	{
+		__int64 field_0;
+		__int64 field_8;
+		UIStateMachine* StateMachine;
+	};
+
 	__int64 VMT;
 	__int64 VMT3;
 	__int64 VMT2;
@@ -308,6 +471,15 @@ struct UIManager : public ProtectedGameObject<UIManager>
 	char field_6E;
 	char field_6F;
 	Sub70 field_70;
+	Sub120 field_120;
+	__int64 field_158;
+	__int64 field_160;
+	Sub168 field_168;
+	Array<void*> field_180;
+	__int64 field_190;
+	Sub198 field_198;
+	Sub1F0 field_1F0;
+	Sub358 field_358;
 };
 
 struct UICanvas : public Noesis::Panel

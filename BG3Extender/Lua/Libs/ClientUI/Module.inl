@@ -1,4 +1,6 @@
 #include <Lua/Libs/ClientUI/NsHelpers.inl>
+#include <NsGui/UIElementCollection.h>
+#include <NsGui/IList.h>
 
 BEGIN_NS(lua)
 
@@ -53,21 +55,41 @@ Noesis::FrameworkElement* GetRoot()
 	return (*GetStaticSymbols().ls__gGlobalResourceManager)->UIManager->field_70.MainCanvasGrid;
 }
 
-Noesis::BaseComponent* CreateWidget(char const* path)
+using FireStateEventProc = void(bg3se::ui::UIStateMachine*, bg3se::ui::UIStateMachine::EventResult&, bg3se::ui::UIStateMachine::EntityContext const&, bg3se::ui::UIStateMachine::EventArgs const&);
+
+void SetState(lua_State* L, FixedString state, std::optional<FixedString> subState, std::optional<bool> clearState, std::optional<int16_t> playerId)
 {
-	Noesis::gStaticSymbols.Initialize();
-	auto contentRoot = static_cast<Noesis::FrameworkElement*>(GetRoot()->FindNodeName("ContentRoot"));
-	if (contentRoot == nullptr) {
-		ERR("Failed to find content root.");
-		return nullptr;
+	auto stateMachine = (*GetStaticSymbols().ls__gGlobalResourceManager)->UIManager->field_358.StateMachine;
+	auto fireStateEvent = (FireStateEventProc*)GetStaticSymbols().ls__UIStateMachine__FireStateEvent2;
+
+	bg3se::ui::UIStateMachine::EventResult result;
+	
+	bg3se::ui::UIStateMachine::ECSData ecs;
+	auto world = State::FromLua(L)->GetEntityWorld();
+	ecs.EntityWorld = world;
+	ecs.EntityWorld2 = world;
+	ecs.EntityTypes = world->EntityTypes;
+	ecs.QuerySystem = &world->Queries;
+	ecs.CriticalSection = &world->CS;
+
+	bg3se::ui::UIStateMachine::EntityContext context;
+	context.ECS = &ecs;
+
+	bg3se::ui::UIStateMachine::EventArgs args;
+	args.StateEvent = state;
+	if (subState) {
+		args.SubState = *subState;
 	}
 
-	auto widget = Noesis::LoadXaml(path);
-	if (!widget) return nullptr;
+	if (clearState) {
+		args.RemoveState = *clearState;
+	}
 
-	contentRoot->AddVisualChild(widget.GetPtr());
+	if (playerId) {
+		args.PlayerId = *playerId;
+	}
 
-	return widget.GetPtr();
+	fireStateEvent(stateMachine, result, context, args);
 }
 
 void RegisterUILib()
@@ -75,7 +97,7 @@ void RegisterUILib()
 	DECLARE_MODULE(UI, Client)
 	BEGIN_MODULE()
 	MODULE_FUNCTION(GetRoot)
-	MODULE_FUNCTION(CreateWidget)
+	MODULE_FUNCTION(SetState)
 	END_MODULE()
 }
 

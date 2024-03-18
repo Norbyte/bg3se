@@ -924,6 +924,20 @@
         <Target Type="Indirect" Offset="@ref1" Symbol="Noesis__Visual__RemoveVisualChild" />
         <Target Type="Indirect" Offset="@ref2" Symbol="Noesis__Visual__AddVisualChild" />
       </Mapping>
+      
+      <Mapping Name="ls::UIStateMachine::FireStateEvent2">
+        44 0f b7 03 // movzx   r8d, word ptr [rbx]
+        @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, pfs_OpenTrade
+        48 8d 4c 24 30 // lea     rcx, [rsp+0A8h+var_78]
+        e8 ?? ?? ?? ?? // call    ls__UIStateMachine__EventArgs__Make
+        90 // nop
+        4c 8b c8 // mov     r9, rax
+        4c 8b c5 // mov     r8, rbp
+        48 8d 54 24 50 // lea     rdx, [rsp+0A8h+var_58]
+        48 8b ce // mov     rcx, rsi
+        @ref3 e8 ?? ?? ?? ?? // call    ls__UIStateMachine__FireStateEvent2
+        <Target Type="Indirect" Offset="@ref3" Symbol="ls__UIStateMachine__FireStateEvent2" />
+      </Mapping>
     
     
 

@@ -197,6 +197,7 @@ namespace bg3se
 		SYM_OFF(Noesis__GUI__LoadXaml);
 		SYM_OFF(Noesis__Visual__AddVisualChild);
 		SYM_OFF(Noesis__Visual__RemoveVisualChild);
+		SYM_OFF(ls__UIStateMachine__FireStateEvent2);
 #endif
 
 		SYM_OFF(AppInstance);
