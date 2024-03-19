@@ -99,6 +99,14 @@ inline bool TypeClass::IsInterface() const
 
 struct ObjectHelpers
 {
+	static PropertyOperationResult FallbackGetProperty(lua_State* L, lua::LifetimeHandle const& lifetime, BaseObject* object, bg3se::FixedString const& prop);
+	static PropertyOperationResult FallbackSetProperty(lua_State* L, BaseObject* object, bg3se::FixedString const& prop, int index);
+	static UserReturn GetNamedProperty(lua_State* L, BaseObject* o, Symbol name);
+	static UserReturn GetProperty(lua_State* L, BaseObject* o, TypeProperty const* prop);
+	static void SetNamedProperty(lua_State* L, BaseObject* o, Symbol name, lua::AnyRef value);
+	static void SetProperty(lua_State* L, BaseObject* o, TypeProperty const* prop, lua::AnyRef value);
+	static UserReturn GetAllProperties(lua_State* L, BaseObject* o);
+
 	static TypeClass* GetClassType(BaseObject* o);
 	static Symbol GetClassTypeName(BaseObject* o);
 	static STDString ToString(BaseObject* o);
@@ -113,14 +121,10 @@ struct RoutedEventHelpers
 
 struct DependencyObjectHelpers
 {
-	static PropertyOperationResult FallbackGetProperty(lua_State* L, lua::LifetimeHandle const& lifetime, DependencyObject* object, bg3se::FixedString const& prop);
-	static PropertyOperationResult FallbackSetProperty(lua_State* L, DependencyObject* object, bg3se::FixedString const& prop, int index);
-
 	static UserReturn GetProperty(lua_State* L, DependencyObject* o, Symbol name);
 	static UserReturn GetDependencyProperty(lua_State* L, DependencyObject* o, DependencyProperty const* prop);
 	static void SetProperty(lua_State* L, DependencyObject* o, Symbol name, lua::AnyRef value);
 	static void SetDependencyProperty(lua_State* L, DependencyObject* o, DependencyProperty const* prop, lua::AnyRef value);
-	static UserReturn GetAllProperties(lua_State* L, DependencyObject* o);
 };
 
 struct DependencyPropertyHelpers
@@ -148,6 +152,7 @@ struct StoredValueHelpers
 	static std::optional<int64_t> TryParseIntegralValue(lua_State* L, Type const* type, void* val);
 	static void PushValue(lua_State* L, Type const* type, StoredValue const* o);
 	static void PushValue(lua_State* L, Type const* type, void* val);
+	static void PushValue(lua_State* L, TypeProperty const* prop, BaseObject* obj);
 	static void PushValue(lua_State* L, TypeEnum const* type, uint64_t val);
 	template <class T>
 	static void PushRawValue(lua_State* L, Type const* type, void* val);
@@ -207,6 +212,7 @@ struct TypeHelpers
 	static TypeClass::AncestorVector* GetInterfaces(TypeClass* o);
 	static TypeClass::PropertyVector* GetProperties(TypeClass* o);
 	static TypeClass::PropertyVector* GetEvents(TypeClass* o);
+	static TypeProperty const* GetProperty(TypeClass const* o, Symbol name);
 	static TypeMetaData* FindMetaRecursive(TypeClass const* o, const TypeClass* metaDataType);
 	static TypeMetaData* FindMetaOrDescendant(TypeClass const* o, const TypeClass* metaDataType);
 	static DependencyData* GetDependencyData(TypeClass* o);

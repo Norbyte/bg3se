@@ -40,6 +40,7 @@ struct StaticTypes
 	TypeInfo Double;
 	TypeInfo Bool;
 	TypeInfo String;
+	TypeInfo LocaString;
 
 	void Setup()
 	{
@@ -55,6 +56,7 @@ struct StaticTypes
 		Double.Setup("Double");
 		Bool.Setup("Bool");
 		String.Setup("String");
+		LocaString.Setup("ls.LocaString");
 	}
 };
 
@@ -77,6 +79,7 @@ struct StaticTypeClasses
 	TypeClassInfo BaseObject;
 	TypeClassInfo BaseRefCounted;
 	TypeClassInfo BaseComponent;
+	TypeClassInfo DependencyObject;
 	TypeClassInfo TypeClass;
 	TypeClassInfo TypeEnum;
 	TypeClassInfo BoxedValue;
@@ -89,6 +92,7 @@ struct StaticTypeClasses
 		BaseObject.Setup("BaseObject");
 		BaseRefCounted.Setup("BaseRefCounted");
 		BaseComponent.Setup("BaseComponent");
+		DependencyObject.Setup("DependencyObject");
 		TypeClass.Setup("TypeClass");
 		TypeEnum.Setup("TypeEnum");
 		BoxedValue.Setup("BoxedValue");
