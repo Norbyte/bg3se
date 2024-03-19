@@ -1533,22 +1533,32 @@ namespace bg3se::ecl::lua
 				case LUA_TLIGHTUSERDATA:
 				{
 					auto handle = get<EntityHandle>(L, idx);
-					query->add_args()->set_intv((int64_t)handle.Handle);
+					auto arg = query->add_args();
+					arg->set_index(i);
+					arg->set_intv((int64_t)handle.Handle);
 					break;
 				}
 				case LUA_TNUMBER:
+				{
+					auto arg = query->add_args();
+					arg->set_index(i);
 					if (lua_isinteger(L, idx))
 					{
-						query->add_args()->set_intv(lua_tointeger(L, idx));
+						arg->set_intv(lua_tointeger(L, idx));
 					}
 					else
 					{
-						query->add_args()->set_numv((float)lua_tonumber(L, idx));
+						arg->set_numv((float)lua_tonumber(L, idx));
 					}
 					break;
+				}
 				case LUA_TSTRING:
-					query->add_args()->set_strv(lua_tostring(L, idx));
+				{
+					auto arg = query->add_args();
+					arg->set_index(i);
+					arg->set_strv(lua_tostring(L, idx));
 					break;
+				}
 			}
 		}
 
