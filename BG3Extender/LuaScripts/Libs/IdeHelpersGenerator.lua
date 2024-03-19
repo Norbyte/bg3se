@@ -1112,12 +1112,10 @@ function Generator:EmitExt(role, declareGlobal)
 end
 
 --Ext.Types.GenerateIdeHelpers("ExtIdeHelpers_New.lua")
---Ext.Types.GenerateIdeHelpers("ExtIdeHelpers_New.lua", {UseBaseExtraData=true,AddDeprecated=true})
+--Ext.Types.GenerateIdeHelpers("ExtIdeHelpers_New.lua", {UseBaseExtraData=true})
 
 --- @class GenerateIdeHelpersOptions
 local _DefaultOpts = {
-    AddOsiris = false,
-    AddDeprecated = false,
     AddAliasEnums = true,
     UseBaseExtraData = false,
     GenerateExtraDataAsClass = false
