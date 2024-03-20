@@ -51,6 +51,9 @@ struct MoveableObject;
 struct RenderableObject;
 struct Visual;
 
+struct SoundManager;
+struct WwiseManager;
+
 namespace resource
 {
 	struct GuidResource;

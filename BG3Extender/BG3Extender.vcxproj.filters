@@ -467,6 +467,7 @@
     <ClInclude Include="GameDefinitions\Render.h" />
     <ClInclude Include="GameDefinitions\UI.h" />
     <ClInclude Include="Lua\Client\UIEvents.h" />
+    <ClInclude Include="GameDefinitions\Sound.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -698,6 +699,7 @@
       <Filter>Lua\Libs</Filter>
     </None>
     <None Include="Lua\Libs\ClientUI\Module.inl" />
+    <None Include="Lua\Libs\ClientAudio.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

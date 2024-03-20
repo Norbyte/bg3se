@@ -181,7 +181,7 @@ struct [[bg3::hidden]] ResourceManager
 	__int64 field_70; // Unknown pointer; size 0x50
 	__int64 field_78; // Unknown pointer; size 0x90
 	__int64 field_80; // Unknown pointer; size 0x23e0
-	__int64 SoundManager;
+	WwiseManager* SoundManager;
 	__int64 VideoManager;
 	__int64 VideoManager2;
 	__int64 GameAnalytics;
