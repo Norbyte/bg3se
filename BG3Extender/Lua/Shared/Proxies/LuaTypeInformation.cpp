@@ -108,6 +108,7 @@ void RegisterObjectProxyTypeInformation()
 #define END_ENUM() GetStaticTypeInfo(Overload<TEnum>{}).Type = &ty; })(); 
 
 #include <GameDefinitions/Enumerations.inl>
+#include <GameDefinitions/ExternalEnumerations.inl>
 
 #undef BEGIN_BITMASK_NS
 #undef BEGIN_ENUM_NS
