@@ -150,12 +150,15 @@ struct StoredValueHolder
 struct StoredValueHelpers
 {
 	static std::optional<int64_t> TryParseIntegralValue(lua_State* L, Type const* type, void* val);
-	static void PushValue(lua_State* L, Type const* type, StoredValue const* o);
-	static void PushValue(lua_State* L, Type const* type, void* val);
-	static void PushValue(lua_State* L, TypeProperty const* prop, BaseObject* obj);
+	static void PushValue(lua_State* L, Type const* type, StoredValue const* o, Type const* objectType = nullptr, Symbol* propertyName = nullptr);
+	static void PushValue(lua_State* L, Type const* type, void* val, Type const* objectType = nullptr, Symbol* propertyName = nullptr);
+	static void PushProperty(lua_State* L, BaseObject* obj, TypeClass const* objType, TypeProperty const* prop);
 	static void PushValue(lua_State* L, TypeEnum const* type, uint64_t val);
+
 	template <class T>
 	static void PushRawValue(lua_State* L, Type const* type, void* val);
+	template <class T>
+	static void PushPtrValue(lua_State* L, Type const* type, void* val);
 
 	template <class T>
 	static void* GetRawValue(lua_State* L, Type const* type, lua::AnyRef value);

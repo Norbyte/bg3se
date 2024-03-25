@@ -40,7 +40,18 @@ struct StaticTypes
 	TypeInfo Double;
 	TypeInfo Bool;
 	TypeInfo String;
+	TypeInfo Uri;
+	TypeInfo Color;
+	TypeInfo Vector2;
+	TypeInfo Vector3;
+	TypeInfo Point;
+	TypeInfo Rect;
 	TypeInfo LocaString;
+	TypeInfo TypeConst;
+	TypeInfo TypePointer;
+	TypeInfo TypePtr;
+	TypeInfo CStringPtr;
+	TypeInfo CTypePtr;
 
 	void Setup()
 	{
@@ -56,7 +67,18 @@ struct StaticTypes
 		Double.Setup("Double");
 		Bool.Setup("Bool");
 		String.Setup("String");
+		Uri.Setup("Uri");
+		Color.Setup("Color");
+		Vector2.Setup("Vector2");
+		Vector3.Setup("Vector3");
+		Point.Setup("Point");
+		Rect.Setup("Rect");
 		LocaString.Setup("ls.LocaString");
+		TypeConst.Setup("TypeConst");
+		TypePointer.Setup("TypePointer");
+		TypePtr.Setup("TypePtr");
+		CStringPtr.Setup("const Char*");
+		CTypePtr.Setup("const Type*");
 	}
 };
 
