@@ -254,6 +254,16 @@ void TypeInformationRepository::RegisterType(TypeInformation* typeInfo)
 	types_.insert(typeInfo->TypeName, typeInfo);
 }
 
+TypeInformation const* TypeInformationRepository::TryGetType(FixedString const& typeName)
+{
+	auto type = types_.find(typeName);
+	if (type) {
+		return type.Value();
+	}
+
+	return nullptr;
+}
+
 TypeInformation const& TypeInformationRepository::GetType(FixedString const& typeName)
 {
 	auto type = types_.find(typeName);

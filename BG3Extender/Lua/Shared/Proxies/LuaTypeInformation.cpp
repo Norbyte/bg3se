@@ -33,22 +33,16 @@ void RegisterObjectProxyTypeInformation()
 #define GENERATING_TYPE_INFO
 #define ADD_TYPE(prop, type) ty.Members.insert(std::make_pair(FixedString(prop), GetTypeInfoRef<type>()));
 
-#define BEGIN_CLS(clsName) ([]() { \
-	using TClass = clsName;\
-	auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(#clsName)); \
-	ty.Kind = LuaTypeId::Object; \
-	ty.NativeName = FixedString(typeid(TClass).name()); \
-	ty.PropertyMap = &lua::StaticLuaPropertyMap<TClass>::PropertyMap; \
-	assert(FixedString(#clsName) == ty.PropertyMap->Name);
-
-
 #define BEGIN_CLS_TN(clsName, typeName) ([]() { \
 	using TClass = clsName;\
 	auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(#typeName)); \
 	ty.Kind = LuaTypeId::Object; \
 	ty.NativeName = FixedString(typeid(TClass).name()); \
 	ty.PropertyMap = &lua::StaticLuaPropertyMap<TClass>::PropertyMap; \
+	lua::StaticLuaPropertyMap<TClass>::PropertyMap.TypeInfo = &ty; \
 	assert(FixedString(#typeName) == ty.PropertyMap->Name);
+
+#define BEGIN_CLS(clsName) BEGIN_CLS_TN(clsName, clsName)
 
 #define END_CLS() GetStaticTypeInfo(Overload<TClass>{}).Type = &ty; })();
 #define INHERIT(base) ty.ParentType = GetTypeInfoRef<base>();

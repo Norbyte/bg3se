@@ -79,9 +79,60 @@ std::optional<STDString> GetCppObjectTypeName(lua_State * L, int index)
 	}
 }
 
-std::optional<STDString> GetObjectType(lua_State* L, AnyUserdataRef object)
+TypeInformation* GetUserdataObjectType(lua_State * L, int index)
 {
-	std::optional<STDString> type;
+	auto object = Userdata<LegacyObjectProxy>::AsUserData(L, index);
+	if (object) {
+		return object->GetImpl()->GetPropertyMap().TypeInfo;
+	}
+
+	return {};
+}
+
+TypeInformation const* GetCppObjectType(lua_State * L, int index)
+{
+	CppObjectMetadata meta;
+	lua_get_cppobject(L, index, meta);
+
+	switch (meta.MetatableTag) {
+	case MetatableTag::ObjectProxyByRef:
+	{
+		auto propertyMap = gExtender->GetPropertyMapManager().GetPropertyMap(meta.PropertyMapTag);
+		return propertyMap->TypeInfo;
+	}
+
+	case MetatableTag::ArrayProxy:
+	{
+		auto impl = gExtender->GetPropertyMapManager().GetArrayProxy(meta.PropertyMapTag);
+		return &impl->GetContainerType();
+	}
+
+	case MetatableTag::MapProxy:
+	{
+		auto impl = gExtender->GetPropertyMapManager().GetMapProxy(meta.PropertyMapTag);
+		return &impl->GetContainerType();
+	}
+
+	case MetatableTag::SetProxy:
+	{
+		auto impl = gExtender->GetPropertyMapManager().GetSetProxy(meta.PropertyMapTag);
+		return &impl->GetContainerType();
+	}
+
+	case MetatableTag::EnumValue:
+	case MetatableTag::BitfieldValue:
+		// TODO - implement reflection for enum/bitfield types!
+
+	case MetatableTag::UserVariableHolder:
+	case MetatableTag::ModVariableHolder:
+	case MetatableTag::Entity:
+	default:
+		return nullptr;
+	}
+}
+
+std::optional<STDString> GetObjectType(lua_State* L, AnyRef object)
+{
 	switch (lua_type(L, object.Index)) {
 	case LUA_TUSERDATA:
 		return GetUserdataObjectTypeName(L, 1);
@@ -90,6 +141,42 @@ std::optional<STDString> GetObjectType(lua_State* L, AnyUserdataRef object)
 		return GetCppObjectTypeName(L, 1);
 	default:
 		return {};
+	}
+}
+
+TypeInformation* TypeOf(lua_State* L, AnyRef object)
+{
+	switch (lua_type(L, object.Index)) {
+	case LUA_TUSERDATA:
+		return GetUserdataObjectType(L, 1);
+	case LUA_TLIGHTCPPOBJECT:
+	case LUA_TCPPOBJECT:
+		return const_cast<TypeInformation*>(GetCppObjectType(L, 1));
+	default:
+		return nullptr;
+	}
+}
+
+bool IsA(lua_State* L, AnyRef object, FixedString typeName)
+{
+	auto expectedType = TypeInformationRepository::GetInstance().TryGetType(typeName);
+	if (expectedType == nullptr) {
+		luaL_error(L, "No such type: %s", typeName.GetString());
+	}
+
+	auto type = TypeOf(L, object);
+	if (type == nullptr) return false;
+
+	// Simple case: Types are equivalent
+	if (type == expectedType) return true;
+
+	// Check if both types are part of an inheritance tree
+	if (type->PropertyMap != nullptr && expectedType->PropertyMap != nullptr) {
+		// Yes, check if one of an ancestor of the other
+		return type->PropertyMap->IsA(expectedType->PropertyMap->RegistryIndex);
+	} else {
+		// No, they cannot be the same type
+		return false;
 	}
 }
 
@@ -304,6 +391,8 @@ void RegisterTypesLib()
 	BEGIN_MODULE()
 	MODULE_FUNCTION(GetObjectType)
 	MODULE_FUNCTION(GetTypeInfo)
+	MODULE_FUNCTION(TypeOf)
+	MODULE_FUNCTION(IsA)
 	MODULE_FUNCTION(GetAllTypes)
 	MODULE_FUNCTION(Validate)
 	MODULE_FUNCTION(Serialize)

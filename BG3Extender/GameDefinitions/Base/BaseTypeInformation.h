@@ -298,6 +298,7 @@ public:
 	void Initialize();
 	TypeInformation& RegisterType(FixedString const& typeName);
 	void RegisterType(TypeInformation* typeInfo);
+	TypeInformation const* TryGetType(FixedString const& typeName);
 	TypeInformation const& GetType(FixedString const& typeName);
 	TypeInformation const& GetUndefinedType();
 	Map<FixedString, TypeInformation*> const& GetAllTypes();

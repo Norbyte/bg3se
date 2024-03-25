@@ -97,6 +97,7 @@ public:
 	ValidationState Validated{ ValidationState::Unknown };
 	int RegistryIndex{ -1 };
 	std::optional<ExtComponentType> ComponentType;
+	TypeInformation* TypeInfo{ nullptr };
 };
 
 inline PropertyOperationResult GenericSetNonWriteableProperty(lua_State* L,  void* obj, int index, RawPropertyAccessors const&)
