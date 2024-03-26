@@ -20,7 +20,7 @@ void ThreadedExtenderState::RemoveThread(DWORD threadId)
 
 void ThreadedExtenderState::EnqueueTask(std::function<void()> fun)
 {
-	threadTasks_.push(fun);
+	threadTasks_.push(std::move(fun));
 }
 
 void ThreadedExtenderState::SubmitTaskAndWait(std::function<void()> fun)

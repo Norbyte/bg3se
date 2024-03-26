@@ -92,6 +92,45 @@ message MsgUserVars {
   repeated UserVar vars = 1;
 }
 
+message OsirisVal {
+  uint32 index = 1;
+  oneof val {
+    string strv = 2;
+    int64 intv = 3;
+    float numv = 4;
+  }
+}
+
+enum OsirisQueryType {
+  OSIRIS_GET = 0;
+  OSIRIS_CALL = 1;
+  OSIRIS_DELETE = 2;
+  OSIRIS_DEFER = 3;
+}
+
+// Notifies the server that the client requested an Osiris query
+message MsgC2SOsirisQuery {
+  uint32 msgid = 1;
+  string name = 2;
+  OsirisQueryType type = 3;
+  uint32 num_args = 4; // Full number of arguments, including null ones
+  repeated OsirisVal args = 5;
+}
+
+message OsirisResult {
+  uint32 num_retvals = 1;
+  repeated OsirisVal retvals = 2;
+}
+
+message MsgS2COsirisQueryResponse {
+  uint32 responseid = 1;
+  repeated OsirisResult results = 2;
+  oneof response {
+    bool succeeded = 3;
+    string error = 4;
+  }
+}
+
 message MessageWrapper {
   oneof msg {
     MsgPostLuaMessage post_lua = 1;
@@ -100,5 +139,7 @@ message MessageWrapper {
     MsgS2CSyncStat s2c_sync_stat = 6;
     MsgS2CKick s2c_kick = 7;
     MsgUserVars user_vars = 8;
+    MsgC2SOsirisQuery c2s_osiris_query = 9;
+    MsgS2COsirisQueryResponse s2c_osiris_query_response = 10;
   }
 }
