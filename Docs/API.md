@@ -7,6 +7,8 @@
  - [Client / Server States](#client-server)
     - [Persistent Variables](#persistent-vars)
  - [Console](#console)
+    - [Multiline Mode](#multiline-mode)
+    - [Saving output to a file](#save-console-output)
  - [Calling Lua from Osiris](#calling-lua-from-osiris)
     * [Capturing Events/Calls](#l2o_captures)
  - [Calling Osiris from Lua](#calling-osiris-from-lua)
@@ -145,6 +147,44 @@ The command `!test 123 456` will call `testCmd("test", 123, 456)` and prints `Cm
 Anything else typed in the console will be executed as Lua code in the current context. (eg. typing `_P(1234)` will print `123`). 
 The console has full access to the underlying Lua state, i.e. server console commands can also call builtin/custom Osiris functions, so Osiris calls like `AddExplorationExperience(GetHostCharacter(), 100)` are possible using the console.
 Variables can be used just like in Lua, i.e. variable in one command can later on be used in another console command. Be careful, console code runs in global context, so make sure console variable names don't conflict with globals (i.e. `Mods`, `Ext`, etc.)! Don't use `local` for console variables, since the lifetime of the local will be one console command. (Each console command is technically a separate chunk).
+
+<a id="multiline-mode"></a>
+### Multiline mode
+
+One unique feature of the console is its multiline mode, which facilitates the input of multiple lines of code at once. To enter multiline mode, start your input with "--\[\[" followed by pressing the enter key. This signals the console to expect multiple lines of code. Once you've entered all your lines, close the multiline mode with "]]--".
+
+Here's an example demonstrating the usage of multiline mode:
+
+```
+--[[
+someTable={1,2,3,4,5}
+for key,value in pairs(someTable) do
+    print(value)
+end
+]]--
+```
+
+<a id="save-console-output"></a>
+### Saving the console output to a file
+
+Sometimes, the output of a command in the console might be too lengthy or complex to analyze effectively within the console interface. In such cases, you might prefer to save the output to a file for easier review. This can be accomplished using a combination of two functions: Ext.IO.SaveFile(filename, content) and Ext.DumpExport(object).
+
+Here's how it works:
+
+Ext.IO.SaveFile(filename, content): This function allows you to save content to a file with a specified filename. You need to provide the filename and the content you want to save.
+
+Ext.DumpExport(object): This function serializes the given object into a string, which can then be saved to a file using Ext.IO.SaveFile.
+
+Here's an example illustrating how to save console output to a file:
+
+```lua
+entity=Ext.Entity.Get("0133f2ad-e121-4590-b5f0-a79413919805") --Wither's UUID, for demonstration purposes
+Ext.IO.SaveFile("output.json", Ext.DumpExport(entity:GetAllComponents()))
+```
+
+The saved file will be located in the script extender folder, typically found at `%localappdata%\Larian Studios\Baldur's Gate 3\Script Extender`
+
+This method provides a convenient way to store and analyze complex console output, allowing for easier debugging and analysis outside of the console environment.
 
 
 <a id="lua-general"></a>
