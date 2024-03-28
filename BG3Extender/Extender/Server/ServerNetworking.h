@@ -32,6 +32,7 @@ public:
 	net::GameServer* GetServer() const;
 
 	void Send(net::ExtenderMessage * msg, UserId userId);
+	void Kick(UserId userId, const char* kickText);
 	void Broadcast(net::ExtenderMessage * msg, UserId excludeUserId, bool excludeLocalPeer = false);
 	void BroadcastToConnectedPeers(net::ExtenderMessage* msg, UserId excludeUserId, bool excludeLocalPeer = false);
 
