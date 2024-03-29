@@ -27,3 +27,7 @@ The following configuration variables can be set in the `ScriptExtenderSettings.
 | DebuggerPort | Integer | 9999 | Port number the Osiris debugger will listen on |
 | EnableLuaDebugger | Boolean | false | Enables the Lua debugger interface |
 | LuaDebuggerPort | Integer | 9998 | Port number the Lua debugger will listen on  |
+
+### Build Instructions
+
+Download the latest [external dependencies from here](https://nb-stor.s3.eu-central-1.amazonaws.com/bg3/External.7z) and extract them to the `External/` folder.
