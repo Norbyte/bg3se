@@ -41,6 +41,21 @@ namespace bg3se::lua
 		{}
 	};
 
+	class LuaStateWrapper : Noncopyable<LuaStateWrapper>
+	{
+	public:
+		LuaStateWrapper();
+		~LuaStateWrapper();
+
+		inline operator lua_State* () const
+		{
+			return L;
+		}
+
+		lua_State* L;
+		LuaInternalState* Internal;
+	};
+
 	class State : Noncopyable<State>
 	{
 	public:
@@ -90,7 +105,7 @@ namespace bg3se::lua
 
 		inline LuaInternalState* GetInternalState()
 		{
-			return internal_;
+			return L.Internal;
 		}
 
 		inline LifetimeStack & GetStack()
@@ -198,8 +213,7 @@ namespace bg3se::lua
 		static STDString GetBuiltinLibrary(int resourceId);
 
 	protected:
-		lua_State * L;
-		LuaInternalState* internal_{ nullptr };
+		LuaStateWrapper L;
 		bool startupDone_{ false };
 		uint32_t generationId_;
 
