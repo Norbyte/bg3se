@@ -12,6 +12,9 @@
 #include <Lua/Shared/Proxies/LuaEnumValue.h>
 #include <Lua/Shared/Proxies/LuaBitfieldValue.h>
 #include <Lua/Shared/Proxies/LuaUserVariableHolder.h>
+#if defined(ENABLE_IMGUI)
+#include <Lua/Shared/Proxies/LuaImguiProxy.h>
+#endif
 #include <Lua/Shared/EntityComponentEvents.h>
 #include <Extender/Shared/UserVariables.h>
 

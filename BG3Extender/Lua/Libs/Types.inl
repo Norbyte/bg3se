@@ -74,6 +74,15 @@ std::optional<STDString> GetCppObjectTypeName(lua_State * L, int index)
 		return "Entity";
 	}
 
+#if defined(ENABLE_IMGUI)
+	case MetatableTag::ImguiObject:
+	{
+		CppValueMetadata val;
+		lua_get_cppvalue(L, index, val);
+		return ImguiObjectProxyMetatable::GetTypeName(L, val);
+	}
+#endif
+
 	default:
 		return {};
 	}
@@ -91,6 +100,18 @@ TypeInformation* GetUserdataObjectType(lua_State * L, int index)
 
 TypeInformation const* GetCppObjectType(lua_State * L, int index)
 {
+#if defined(ENABLE_IMGUI)
+	CppValueMetadata val;
+	if (lua_try_get_cppvalue(L, index, val) && val.MetatableTag == MetatableTag::ImguiObject) {
+		auto obj = ImguiObjectProxyMetatable::GetRenderable(val);
+		if (obj != nullptr) {
+			return obj->GetRTTI().TypeInfo;
+		} else {
+			return nullptr;
+		}
+	}
+#endif
+
 	CppObjectMetadata meta;
 	lua_get_cppobject(L, index, meta);
 

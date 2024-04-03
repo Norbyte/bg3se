@@ -24,6 +24,9 @@
 #if defined(ENABLE_UI)
 #include <Lua/Libs/ClientUI/Module.inl>
 #endif
+#if defined(ENABLE_IMGUI)
+#include <Lua/Libs/ClientIMGUI.inl>
+#endif
 
 BEGIN_NS(ecl::lua)
 
@@ -34,6 +37,9 @@ void RegisterClientLibraries()
 	audio::RegisterAudioLib();
 #if defined(ENABLE_UI)
 	ui::RegisterUILib();
+#endif
+#if defined(ENABLE_IMGUI)
+	imgui::RegisterIMGUILib();
 #endif
 }
 
@@ -65,6 +71,9 @@ void RegisterSharedMetatables(lua_State* L)
 	UserVariableHolderMetatable::RegisterMetatable(L);
 	ModVariableHolderMetatable::RegisterMetatable(L);
 	EntityProxyMetatable::RegisterMetatable(L);
+#if defined(ENABLE_IMGUI)
+	ImguiObjectProxyMetatable::RegisterMetatable(L);
+#endif
 	stats::StatsExtraDataProxy::RegisterMetatable(L);
 	stats::StatsProxy::RegisterMetatable(L);
 	stats::SpellPrototypeProxy::RegisterMetatable(L);

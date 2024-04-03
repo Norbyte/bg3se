@@ -8,6 +8,10 @@
 #include <NsGui/UIElementEvents.h>
 #endif
 
+#if defined(ENABLE_IMGUI)
+#include <imgui.h>
+#endif
+
 BEGIN_SE()
 
 // Type used to store enumeration and bitmask values internally.
@@ -305,6 +309,7 @@ void InitializeEnumerations();
 #define BEGIN_ENUM(T, type) enum class T : type {
 #define E(label) label,
 #define EV(label, value) label = value,
+#define ER(label, value) label = value,
 #define END_ENUM_NS() }; };
 #define END_ENUM() };
 #include <GameDefinitions/Enumerations.inl>
@@ -314,6 +319,7 @@ void InitializeEnumerations();
 #undef BEGIN_ENUM
 #undef E
 #undef EV
+#undef ER
 #undef END_ENUM_NS
 #undef END_ENUM
 
@@ -342,6 +348,7 @@ void InitializeEnumerations();
 	};
 #define E(label)
 #define EV(label, value)
+#define ER(label, value)
 #define END_ENUM_NS()
 #define END_ENUM()
 #include <GameDefinitions/Enumerations.inl>
@@ -352,6 +359,7 @@ void InitializeEnumerations();
 #undef BEGIN_ENUM
 #undef E
 #undef EV
+#undef ER
 #undef END_ENUM_NS
 #undef END_ENUM
 

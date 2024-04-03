@@ -104,6 +104,7 @@ void RegisterObjectProxyTypeInformation()
 
 #define E(label) ty.EnumValues.insert(std::make_pair(FixedString(#label), (uint64_t)TEnum::label));
 #define EV(label, value) ty.EnumValues.insert(std::make_pair(FixedString(#label), (uint64_t)TEnum::label));
+#define ER(label, value) ty.EnumValues.insert(std::make_pair(FixedString(#label), (uint64_t)value));
 #define END_ENUM_NS() GetStaticTypeInfo(Overload<TEnum>{}).Type = &ty; })();
 #define END_ENUM() GetStaticTypeInfo(Overload<TEnum>{}).Type = &ty; })(); 
 
@@ -116,6 +117,7 @@ void RegisterObjectProxyTypeInformation()
 #undef BEGIN_ENUM
 #undef E
 #undef EV
+#undef ER
 #undef END_ENUM_NS
 #undef END_ENUM
 }

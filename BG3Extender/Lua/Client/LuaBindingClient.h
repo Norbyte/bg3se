@@ -53,6 +53,8 @@ namespace bg3se::ecl::lua
 	class ClientState : public State
 	{
 	public:
+		static ClientState* FromLua(lua_State* L);
+
 		ClientState(uint32_t generationId);
 		~ClientState();
 
@@ -72,10 +74,17 @@ namespace bg3se::ecl::lua
 		}
 #endif
 
+#if defined(ENABLE_IMGUI)
+		extui::IMGUIObjectManager& IMGUI();
+#endif
+
 	private:
 		ExtensionLibraryClient library_;
 #if defined(ENABLE_UI)
 		UIEventHooks uiEvents_;
+#endif
+#if defined(ENABLE_IMGUI)
+		extui::IMGUIObjectManager* imgui_{ nullptr };
 #endif
 	};
 }

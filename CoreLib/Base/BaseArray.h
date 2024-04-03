@@ -1239,16 +1239,18 @@ private:
 	}
 };
 
-template <class T, class TId = uint32_t, unsigned IdBits = 22, unsigned SaltBits = 10>
+
+template <class T, class TId = uint32_t, class TSalt = uint16_t, unsigned IdBits = 22, unsigned SaltBits = 10>
 class SaltedPool
 {
 public:
-	static_assert(sizeof(TId) * 8 == IdBits + SaltBits);
-	static constexpr uint32_t DeletedFlag = 0x80000000u;
+	static_assert(sizeof(TId) * 8 >= IdBits + SaltBits);
+	static_assert(sizeof(TSalt) * 8 > SaltBits); // Need 1 bit for deleted flag
+	static constexpr TSalt DeletedFlag = TSalt(1) << (sizeof(TSalt) * 8 - 1);
 
 	T* Add(TId& id)
 	{
-		uint32_t index;
+		TId index;
 		if (freeIndices_.empty()) {
 			index = pool_.size();
 			pool_.push_back(T{});
@@ -1257,22 +1259,22 @@ public:
 			index = freeIndices_.pop_last();
 		}
 
-		auto salt = salts_[index];
+		auto salt = salts_[(uint32_t)index];
 		salt &= ~DeletedFlag;
-		salts_[index] = salt;
-		id = index | (salt << IdBits);
-		return &pool_[index];
+		salts_[(uint32_t)index] = salt;
+		id = index | (TId(salt) << IdBits);
+		return &pool_[(uint32_t)index];
 	}
 
 	bool Free(TId& id)
 	{
-		auto index = id & ((1 << IdBits) - 1);
-		auto salt = id >> SaltBits;
+		auto index = id & ((TId(1) << IdBits) - 1);
+		auto salt = TSalt(id >> SaltBits) & ((TSalt(1) << SaltBits) - 1);
 
-		if (index < salts_.size() && salts_[index] == salt) {
+		if (index < salts_.size() && salts_[(uint32_t)index] == salt) {
 			freeIndices_.push_back(index);
-			salt = (salt + 1) & ((1 << SaltBits) - 1);
-			salts_[index] = salt | DeletedFlag;
+			salt = (salt + 1) & TSalt(((TId(1) << SaltBits) - 1));
+			salts_[(uint32_t)index] = salt | DeletedFlag;
 			return true;
 		} else {
 			return false;
@@ -1281,11 +1283,11 @@ public:
 
 	T* Find(TId id)
 	{
-		auto index = id & ((1 << IdBits) - 1);
-		auto salt = id >> SaltBits;
+		auto index = id & ((TId(1) << IdBits) - 1);
+		auto salt = TSalt(id >> SaltBits) & TSalt((TId(1) << SaltBits) - 1);
 
-		if (index < salts_.size() && salts_[index] == salt) {
-			return &pool_[index];
+		if (index < salts_.size() && salts_[(uint32_t)index] == salt) {
+			return &pool_[(uint32_t)index];
 		} else {
 			return nullptr;
 		}
@@ -1293,8 +1295,8 @@ public:
 
 private:
 	Array<T> pool_;
-	Array<uint32_t> freeIndices_;
-	Array<uint32_t> salts_;
+	Array<TId> freeIndices_;
+	Array<TId> salts_;
 };
 
 END_SE()

@@ -88,6 +88,10 @@ void push(lua_State* L, EntityHandle const& h);
 void push(lua_State* L, ComponentHandle const& h);
 void push(lua_State* L, ecs::EntityRef const& h);
 void push(lua_State* L, TypeInformationRef const& h);
+#if defined(ENABLE_IMGUI)
+void push(lua_State* L, ImguiHandle const& h);
+void push(lua_State* L, extui::Renderable* o);
+#endif
 
 inline void push(lua_State* L, lua_CFunction v)
 {

@@ -65,6 +65,10 @@ void ScriptExtender::Initialize()
 		ERR("ScriptExtender::Initialize: Could not load libraries; skipping scripting extension initialization.");
 	}
 
+#if defined(ENABLE_IMGUI)
+	imgui_.EnableHooks();
+#endif
+
 	server_.Initialize();
 	client_.Initialize();
 
@@ -218,6 +222,10 @@ void ScriptExtender::OnStatsLoad(stats::RPGStats::LoadProc* wrapped, stats::RPGS
 	if (client_.HasExtensionState()) {
 		client_.GetExtensionState().OnStatsLoaded();
 	}
+
+#if defined(ENABLE_IMGUI)
+	imgui_.EnableUI(true);
+#endif
 
 	client_.RemoveThread(GetCurrentThreadId());
 }

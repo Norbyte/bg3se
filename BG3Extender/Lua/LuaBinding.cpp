@@ -87,6 +87,26 @@ namespace bg3se::lua
 		}
 	}
 
+#if defined(ENABLE_IMGUI)
+	void push(lua_State* L, ImguiHandle const& h)
+	{
+		if (h) {
+			ImguiObjectProxyMetatable::Make(L, h);
+		} else {
+			push(L, nullptr);
+		}
+	}
+
+	void push(lua_State* L, extui::Renderable* o)
+	{
+		if (o) {
+			ImguiObjectProxyMetatable::Make(L, o);
+		} else {
+			push(L, nullptr);
+		}
+	}
+#endif
+
 	int TracebackHandler(lua_State * L)
 	{
 		const char *msg = lua_tostring(L, 1);

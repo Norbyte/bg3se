@@ -155,6 +155,13 @@ namespace ui
 	struct UIManager;
 }
 
+namespace extui
+{
+	class IMGUIManager;
+	class IMGUIObjectManager;
+	class Renderable;
+}
+
 namespace osidbg
 {
 	class Debugger;

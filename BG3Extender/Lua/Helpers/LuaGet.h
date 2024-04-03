@@ -72,6 +72,10 @@ ComponentHandle do_get(lua_State* L, int index, Overload<ComponentHandle>);
 EntityHandle do_get(lua_State* L, int index, Overload<EntityHandle>);
 ecs::EntityRef do_get(lua_State* L, int index, Overload<ecs::EntityRef>);
 TypeInformationRef do_get(lua_State* L, int index, Overload<TypeInformationRef>);
+#if defined(ENABLE_IMGUI)
+ImguiHandle do_get(lua_State* L, int index, Overload<ImguiHandle>);
+extui::Renderable* do_get(lua_State* L, int index, Overload<extui::Renderable*>);
+#endif
 
 inline Path do_get(lua_State* L, int index, Overload<Path>)
 {

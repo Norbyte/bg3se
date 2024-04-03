@@ -16,6 +16,9 @@
 #include <Lua/Shared/Proxies/LuaEnumValue.inl>
 #include <Lua/Shared/Proxies/LuaBitfieldValue.inl>
 #include <Lua/Shared/Proxies/LuaUserVariableHolder.inl>
+#if defined(ENABLE_IMGUI)
+#include <Lua/Shared/Proxies/LuaImguiProxy.inl>
+#endif
 
 BEGIN_SE()
 

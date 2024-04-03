@@ -6,6 +6,9 @@
 #include <lobject.h>
 #include <lgc.h>
 #include <regex>
+#if defined(ENABLE_IMGUI)
+#include <Extender/Client/IMGUI/Objects.h>
+#endif
 
 #if !defined(OSI_NO_DEBUGGER)
 
@@ -27,7 +30,8 @@ namespace bg3se::lua::dbg
 				|| meta.MetatableTag == MetatableTag::ArrayProxy
 				|| meta.MetatableTag == MetatableTag::MapProxy
 				|| meta.MetatableTag == MetatableTag::SetProxy
-				|| meta.MetatableTag == MetatableTag::Entity;
+				|| meta.MetatableTag == MetatableTag::Entity
+				|| meta.MetatableTag == MetatableTag::ImguiObject;
 		} else {
 			return tt == LUA_TTABLE
 				|| tt == LUA_TUSERDATA;
@@ -163,6 +167,22 @@ namespace bg3se::lua::dbg
 				value->set_stringval(name);
 				break;
 			}
+
+#if defined(ENABLE_IMGUI)
+			case MetatableTag::ImguiObject:
+			{
+				CppValueMetadata val;
+				lua_get_cppvalue(L, idx, val);
+				value->set_type_id(MsgValueType::USERDATA);
+				auto obj = ecl::ExtensionState::Get().GetClientLua()->IMGUI().GetRenderable(val.Value);
+				if (obj) {
+					value->set_stringval(obj->GetTypeName());
+				} else {
+					value->set_stringval("Dead IMGUI object");
+				}
+				break;
+			}
+#endif
 
 			default:
 				value->set_type_id(MsgValueType::UNKNOWN);
@@ -364,6 +384,28 @@ namespace bg3se::lua::dbg
 			}
 		}
 	}
+
+#if defined(ENABLE_IMGUI)
+	void LuaImguiObjectToEvalResults(lua_State* L, int index, CppValueMetadata& meta, DebuggerGetVariablesRequest const& req)
+	{
+		StackCheck _(L);
+
+		auto obj = ImguiObjectProxyMetatable::GetRenderable(meta);
+		if (obj == nullptr) return;
+
+		auto& pm = obj->GetRTTI();
+
+		for (auto it : pm.IterableProperties) {
+			auto const& prop = pm.Properties.values()[it.Value()];
+			auto result = prop.Get(L, State::FromLua(L)->GetGlobalLifetime(), obj, prop);
+			if (result == PropertyOperationResult::Success) {
+				push(L, it.Key());
+				LuaElementToEvalResults(L, -1, -2, req);
+				lua_pop(L, 2);
+			}
+		}
+	}
+#endif
 
 	void LuaUserdataToEvalResults(lua_State* L, int index, LegacyObjectProxy* proxy, DebuggerGetVariablesRequest const& req)
 	{

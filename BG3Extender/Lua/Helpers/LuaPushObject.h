@@ -41,6 +41,15 @@ inline void MakeObjectRef(lua_State* L, T* value, LifetimeHandle const& lifetime
 	}
 }
 
+inline void MakeDirectObjectRef(lua_State* L, GenericPropertyMap& pm, void* value, LifetimeHandle const& lifetime)
+{
+	if (value == nullptr) {
+		push(L, nullptr);
+	} else {
+		ObjectProxy::MakeRef(L, pm, value, lifetime);
+	}
+}
+
 template <class T>
 inline void MakeDirectObjectRef(lua_State* L, T* value, LifetimeHandle const& lifetime)
 {

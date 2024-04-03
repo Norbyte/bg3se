@@ -3,14 +3,26 @@
 
 BEGIN_NS(lua)
 
-struct CppObjectProxyHelpers
+int CppObjectProxyHelpers::Next(lua_State* L, GenericPropertyMap const& pm, void* object, LifetimeHandle const& lifetime, FixedString const& key)
 {
-	static int Next(lua_State* L, GenericPropertyMap const& pm, void* object, LifetimeHandle const& lifetime, FixedString const& key)
-	{
-		if (!key) {
-			if (!pm.IterableProperties.empty()) {
+	if (!key) {
+		if (!pm.IterableProperties.empty()) {
+			StackCheck _(L, 2);
+			auto it = pm.IterableProperties.begin();
+			push(L, it.Key());
+			auto const& prop = pm.Properties.values()[it.Value()];
+			if (pm.GetRawProperty(L, lifetime, object, prop) != PropertyOperationResult::Success) {
+				push(L, nullptr);
+			}
+
+			return 2;
+		}
+	} else {
+		auto it = pm.IterableProperties.find(key);
+		if (it != pm.IterableProperties.end()) {
+			++it;
+			if (it != pm.IterableProperties.end()) {
 				StackCheck _(L, 2);
-				auto it = pm.IterableProperties.begin();
 				push(L, it.Key());
 				auto const& prop = pm.Properties.values()[it.Value()];
 				if (pm.GetRawProperty(L, lifetime, object, prop) != PropertyOperationResult::Success) {
@@ -19,26 +31,11 @@ struct CppObjectProxyHelpers
 
 				return 2;
 			}
-		} else {
-			auto it = pm.IterableProperties.find(key);
-			if (it != pm.IterableProperties.end()) {
-				++it;
-				if (it != pm.IterableProperties.end()) {
-					StackCheck _(L, 2);
-					push(L, it.Key());
-					auto const& prop = pm.Properties.values()[it.Value()];
-					if (pm.GetRawProperty(L, lifetime, object, prop) != PropertyOperationResult::Success) {
-						push(L, nullptr);
-					}
-
-					return 2;
-				}
-			}
 		}
-
-		return 0;
 	}
-};
+
+	return 0;
+}
 
 CppMetatableManager::CppMetatableManager()
 {
@@ -67,17 +64,30 @@ void* ObjectProxy::GetRaw(lua_State* L, int index, GenericPropertyMap const& pm)
 	CppObjectMetadata meta;
 	lua_get_cppobject(L, index, meta);
 
-	auto& objPm = LuaGetPropertyMap(meta.PropertyMapTag);
-	if (!objPm.IsA(pm.RegistryIndex)) {
-		luaL_error(L, "Argument %d: Expected object of type '%s', got '%s'", index,
-			pm.Name.GetString(), LuaGetPropertyMap(meta.PropertyMapTag).Name.GetString());
-	}
+	if (meta.MetatableTag == MetatableTag::ImguiObject) {
+		// Temporary jank to support imgui objects
+		auto obj = ImguiObjectProxyMetatable::GetGeneric(L, index);
+		auto& objPm = obj->GetRTTI();
+		if (!objPm.IsA(pm.RegistryIndex)) {
+			luaL_error(L, "Argument %d: Expected object of type '%s', got '%s'", index,
+				pm.Name.GetString(), objPm.Name.GetString());
+		}
 
-	if (!meta.Lifetime.IsAlive(L)) {
-		luaL_error(L, "Attempted to fetch '%s' whose lifetime has expired", pm.Name.GetString());
-	}
+		return obj;
+	} else {
 
-	return meta.Ptr;
+		auto& objPm = LuaGetPropertyMap(meta.PropertyMapTag);
+		if (!objPm.IsA(pm.RegistryIndex)) {
+			luaL_error(L, "Argument %d: Expected object of type '%s', got '%s'", index,
+				pm.Name.GetString(), objPm.Name.GetString());
+		}
+
+		if (!meta.Lifetime.IsAlive(L)) {
+			luaL_error(L, "Attempted to fetch '%s' whose lifetime has expired", pm.Name.GetString());
+		}
+
+		return meta.Ptr;
+	}
 }
 
 GenericPropertyMap& LightObjectProxyByRefMetatable::GetPropertyMap(CppObjectMetadata const& meta)

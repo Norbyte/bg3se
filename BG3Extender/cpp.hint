@@ -1,7 +1,20 @@
 // Hint files help the Visual Studio IDE interpret Visual C++ identifiers
 // such as names of functions and macros.
 // For more information see https://go.microsoft.com/fwlink/?linkid=865984
+
 #define BEGIN_SE() namespace bg3se {
 #define END_SE() }
 #define BEGIN_NS(ns) namespace bg3se::ns {
 #define END_NS() }
+
+#define BEGIN_BITMASK_NS(NS, T, luaName, type) namespace NS { \
+	enum class T : type {
+#define BEGIN_ENUM_NS(NS, T, luaName, type) namespace NS { \
+	enum class T : type {
+#define BEGIN_BITMASK(T, type) enum class T : type {
+#define BEGIN_ENUM(T, type) enum class T : type {
+#define E(label) label,
+#define EV(label, value) label = value,
+#define ER(label, value) label = value,
+#define END_ENUM_NS() }; };
+#define END_ENUM() };

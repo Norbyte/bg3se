@@ -13,6 +13,10 @@
 #include <NsDrawing/Rect.h>
 #endif
 
+#if defined(ENABLE_IMGUI)
+#include <Extender/Client/IMGUI/IMGUI.h>
+#endif
+
 #include <GameDefinitions/Base/LuaAnnotations.h>
 #include <GameDefinitions/Base/BaseTypeInformation.h>
 #include <GameDefinitions/Base/ForwardDeclarations.h>

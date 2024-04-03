@@ -16,6 +16,7 @@ namespace bg3se
 	EnumInfoStore<uint64_t>* EnumInfoBase<T>::Store;
 #define E(label)
 #define EV(label, value)
+#define ER(label, value)
 #define END_ENUM_NS()
 #define END_ENUM()
 #include <GameDefinitions/Enumerations.inl>
@@ -26,6 +27,7 @@ namespace bg3se
 #undef BEGIN_ENUM
 #undef E
 #undef EV
+#undef ER
 #undef END_ENUM_NS
 #undef END_ENUM
 
@@ -54,6 +56,7 @@ namespace bg3se
 	EnumRegistry::Get().Register(ei::Store);
 #define E(label) ei::Add(e::label, #label);
 #define EV(label, value) ei::Add(e::label, #label);
+#define ER(label, value) ei::Add(value, #label);
 #define END_ENUM_NS() }
 #define END_ENUM() }
 #include <GameDefinitions/Enumerations.inl>
@@ -64,6 +67,7 @@ namespace bg3se
 #undef BEGIN_ENUM
 #undef E
 #undef EV
+#undef ER
 #undef END_ENUM_NS
 #undef END_ENUM
 
