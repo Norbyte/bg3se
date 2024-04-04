@@ -8,7 +8,7 @@ ImguiHandle NewWindow(lua_State* L, char const* name)
 {
 	auto& ui = ClientState::FromLua(L)->IMGUI();
 	auto window = ui.CreateRenderable<extui::Window>();
-	window->Id = name;
+	window->Label = name;
 	return window;
 }
 

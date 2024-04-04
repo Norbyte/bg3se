@@ -18,9 +18,21 @@ class IMGUIObjectManager;
 enum class IMGUIObjectType : uint8_t
 {
     Window,
+    Group,
+    CollapsingHeader,
     Text,
+    SeparatorText,
     Button,
-    Max = Button
+    Checkbox,
+    RadioButton,
+    InputText,
+    Combo,
+    DragScalar,
+    SliderScalar,
+    InputScalar,
+    ColorEdit,
+    ColorPicker,
+    Max = ColorPicker
 };
 
 
@@ -62,22 +74,71 @@ public:
 
     Array<StyleVar> StyleVars;
     Array<StyleColor> StyleColors;
+    STDString Label;
+    bool SameLine{ false };
 };
 
 
-class Window : public StyledRenderable
+class TreeParent : public StyledRenderable
+{
+public:
+    virtual bool BeginRender() = 0;
+    virtual void EndRender() = 0;
+
+    void StyledRender() override;
+
+    lua::ImguiHandle AddButton(char const* label);
+    lua::ImguiHandle AddText(char const* label);
+    lua::ImguiHandle AddSeparatorText(char const* label);
+    lua::ImguiHandle AddCheckbox(char const* label, std::optional<bool> checked);
+    lua::ImguiHandle AddRadioButton(char const* label, std::optional<bool> active);
+    lua::ImguiHandle AddInputText(char const* label, std::optional<STDString> value);
+    lua::ImguiHandle AddCombo(char const* label);
+    lua::ImguiHandle AddDrag(char const* label, std::optional<float> value, std::optional<float> min, std::optional<float> max);
+    lua::ImguiHandle AddSlider(char const* label, std::optional<float> value, std::optional<float> min, std::optional<float> max);
+    lua::ImguiHandle AddInputScalar(char const* label, std::optional<float> value);
+    lua::ImguiHandle AddColorEdit(char const* label, std::optional<glm::vec3> value);
+    lua::ImguiHandle AddColorPicker(char const* label, std::optional<glm::vec3> value);
+
+    Array<HandleType> Children;
+
+private:
+    template <class T>
+    T* AddChild();
+};
+
+
+class Window : public TreeParent
 {
 public:
     DECL_UI_TYPE(Window)
 
-    void StyledRender() override;
+    bool BeginRender() override;
+    void EndRender() override;
 
-    STDString Id;
     bool Closed{ false };
     bool Closeable{ false };
     ImGuiWindowFlags Flags{ 0 };
+};
 
-    Array<HandleType> Children;
+
+class Group : public TreeParent
+{
+public:
+    DECL_UI_TYPE(Group)
+
+    bool BeginRender() override;
+    void EndRender() override;
+};
+
+
+class CollapsingHeader : public TreeParent
+{
+public:
+    DECL_UI_TYPE(CollapsingHeader)
+
+    bool BeginRender() override;
+    void EndRender() override;
 };
 
 
@@ -87,8 +148,15 @@ public:
     DECL_UI_TYPE(Text)
 
     void StyledRender() override;
+};
 
-    STDString Label;
+
+class SeparatorText : public StyledRenderable
+{
+public:
+    DECL_UI_TYPE(SeparatorText)
+
+    void StyledRender() override;
 };
 
 
@@ -98,8 +166,119 @@ public:
     DECL_UI_TYPE(Button)
 
     void StyledRender() override;
+};
 
-    STDString Label;
+
+class Checkbox : public StyledRenderable
+{
+public:
+    DECL_UI_TYPE(Checkbox)
+
+    void StyledRender() override;
+
+    bool Checked{ false };
+};
+
+
+class RadioButton : public StyledRenderable
+{
+public:
+    DECL_UI_TYPE(RadioButton)
+
+    void StyledRender() override;
+
+    bool Active{ false };
+};
+
+
+class InputText : public StyledRenderable
+{
+public:
+    DECL_UI_TYPE(InputText)
+
+    InputText();
+    void StyledRender() override;
+
+    STDString GetText();
+    void SetText(STDString text);
+
+    STDString Text;
+};
+
+
+class Combo : public StyledRenderable
+{
+public:
+    DECL_UI_TYPE(Combo)
+
+    void StyledRender() override;
+
+    Array<STDString> Options;
+    int SelectedIndex{ -1 };
+};
+
+
+class DragScalar : public StyledRenderable
+{
+public:
+    DECL_UI_TYPE(DragScalar)
+
+    void StyledRender() override;
+
+    glm::vec4 Value{ 0.0f };
+    glm::vec4 Min{ 0.0f };
+    glm::vec4 Max{ 1.0f };
+    int Components{ 1 };
+};
+
+
+class SliderScalar : public StyledRenderable
+{
+public:
+    DECL_UI_TYPE(SliderScalar)
+
+    void StyledRender() override;
+
+    glm::vec4 Value{ 0.0f };
+    glm::vec4 Min{ 0.0f };
+    glm::vec4 Max{ 1.0f };
+    int Components{ 1 };
+};
+
+
+class InputScalar : public StyledRenderable
+{
+public:
+    DECL_UI_TYPE(InputScalar)
+
+    void StyledRender() override;
+
+    glm::vec4 Value{ 0.0f };
+    int Components{ 1 };
+};
+
+
+class ColorEdit : public StyledRenderable
+{
+public:
+    DECL_UI_TYPE(ColorEdit)
+
+    void StyledRender() override;
+
+    glm::vec4 Color{ 0.0f };
+    bool HasAlpha{ false };
+};
+
+
+class ColorPicker : public StyledRenderable
+{
+public:
+    DECL_UI_TYPE(ColorPicker)
+
+    void StyledRender() override;
+
+    glm::vec4 Color{ 0.0f };
+    bool HasAlpha{ false };
 };
 
 
