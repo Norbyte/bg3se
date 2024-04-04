@@ -105,7 +105,6 @@ private:
         int h, uint32_t flags,
         SDL_Window* window)
     {
-        WARN("SDLCreateWindow IS AT %p", window);
         window_ = window;
     }
 

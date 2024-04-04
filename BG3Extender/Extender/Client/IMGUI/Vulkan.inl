@@ -150,6 +150,11 @@ public:
         drawViewport_ = curViewport_;
     }
 
+    void ClearFrame() override
+    {
+        drawViewport_ = -1;
+    }
+
     void RenderFrame() override
     {
         if (drawViewport_ != -1) {

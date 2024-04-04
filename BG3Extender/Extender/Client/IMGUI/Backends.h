@@ -26,6 +26,7 @@ public:
     virtual void NewFrame() = 0;
     virtual void RenderFrame() = 0;
     virtual void FinishFrame() = 0;
+    virtual void ClearFrame() = 0;
 };
 
 END_NS()

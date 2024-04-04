@@ -481,6 +481,10 @@ void IMGUIManager::EnableUI(bool enabled)
 void IMGUIManager::SetObjects(IMGUIObjectManager* objects)
 {
     objects_ = objects;
+
+    if (objects_ == nullptr) {
+        renderer_->ClearFrame();
+    }
 }
 
 void IMGUIManager::OnRenderBackendInitialized()
@@ -497,15 +501,13 @@ void IMGUIManager::OnClientRenderFrame()
 
 void IMGUIManager::Update()
 {
-    if (!enableUI_ || !initialized_) return;
+    if (!enableUI_ || !initialized_ || !objects_) return;
 
     platform_->NewFrame();
     renderer_->NewFrame();
     ImGui::NewFrame();
 
-    if (objects_) {
-        objects_->Render();
-    }
+    objects_->Render();
 
     ImGui::Render();
     renderer_->FinishFrame();
