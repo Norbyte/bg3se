@@ -1269,7 +1269,7 @@ public:
 	bool Free(TId& id)
 	{
 		auto index = id & ((TId(1) << IdBits) - 1);
-		auto salt = TSalt(id >> SaltBits) & ((TSalt(1) << SaltBits) - 1);
+		auto salt = TSalt(id >> IdBits) & ((TSalt(1) << SaltBits) - 1);
 
 		if (index < salts_.size() && salts_[(uint32_t)index] == salt) {
 			freeIndices_.push_back(index);
@@ -1284,7 +1284,7 @@ public:
 	T* Find(TId id)
 	{
 		auto index = id & ((TId(1) << IdBits) - 1);
-		auto salt = TSalt(id >> SaltBits) & TSalt((TId(1) << SaltBits) - 1);
+		auto salt = TSalt(id >> IdBits) & TSalt((TId(1) << SaltBits) - 1);
 
 		if (index < salts_.size() && salts_[(uint32_t)index] == salt) {
 			return &pool_[(uint32_t)index];
