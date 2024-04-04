@@ -26,6 +26,7 @@ public:
 
     void OnRenderBackendInitialized();
     void OnClientRenderFrame();
+    void Update();
 
 private:
     std::unique_ptr<PlatformBackend> platform_;

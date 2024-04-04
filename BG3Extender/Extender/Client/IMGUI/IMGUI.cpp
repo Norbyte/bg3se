@@ -253,6 +253,13 @@ void IMGUIManager::OnClientRenderFrame()
 {
     if (!enableUI_ || !initialized_) return;
 
+    renderer_->RenderFrame();
+}
+
+void IMGUIManager::Update()
+{
+    if (!enableUI_ || !initialized_) return;
+
     platform_->NewFrame();
     renderer_->NewFrame();
     ImGui::NewFrame();
@@ -262,7 +269,7 @@ void IMGUIManager::OnClientRenderFrame()
     }
 
     ImGui::Render();
-    renderer_->RenderFrame();
+    renderer_->FinishFrame();
 }
 
 END_NS()

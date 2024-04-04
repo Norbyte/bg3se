@@ -260,6 +260,7 @@ void ScriptExtender::OnUpdate(void* self, GameTime* time)
 	AddThread(GetCurrentThreadId());
 
 	RunPendingTasks();
+	gExtender->IMGUI().Update();
 	if (extensionState_) {
 		extensionState_->OnUpdate(*time);
 		if (gExtender->GetLuaDebugger()) {

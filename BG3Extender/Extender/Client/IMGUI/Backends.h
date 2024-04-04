@@ -25,6 +25,7 @@ public:
     virtual void DestroyUI() = 0;
     virtual void NewFrame() = 0;
     virtual void RenderFrame() = 0;
+    virtual void FinishFrame() = 0;
 };
 
 END_NS()

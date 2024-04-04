@@ -2,10 +2,12 @@
 
 #include <GameDefinitions/Base/Base.h>
 #include <Extender/Client/IMGUI/Backends.h>
+#include <Extender/ScriptExtender.h>
 #include <CoreLib/Wrappers.h>
 #include <vulkan/vulkan.h>
 #include <imgui.h>
 #include <backends/imgui_impl_vulkan.h>
+#include <imgui_internal.h>
 
 BEGIN_SE()
 
@@ -75,13 +77,12 @@ public:
         families.resize(numFamilies);
         vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice_, &numFamilies, families.raw_buf());
 
-        WARN("QUEUE FAMILIES: ");
         uint32_t queueFamily{ 0 };
         VkQueue queue{ nullptr };
         for (auto const& family : families) {
             if (family.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
-                WARN("%d: %x, %d", queueFamily, family.queueFlags, family.queueCount);
                 vkGetDeviceQueue(device_, queueFamily, 0, &queue);
+                renderQueue_ = queue;
                 break;
             }
 
@@ -120,12 +121,11 @@ public:
         init_info.Allocator = nullptr;
         init_info.CheckVkResultFn = nullptr;
         init_info.RenderPass = presentRenderPass_;
-        bool ok = ImGui_ImplVulkan_Init(&init_info);
+        ImGui_ImplVulkan_Init(&init_info);
         // (this gets a bit more complicated, see example app for full reference)
         //ImGui_ImplVulkan_CreateFontsTexture(YOUR_COMMAND_BUFFER);
         // (your code submit a queue)
         //ImGui_ImplVulkan_DestroyFontUploadObjects();
-        WARN("OK?", ok);
 
         initialized_ = true;
     }
@@ -140,12 +140,24 @@ public:
 
     void NewFrame() override
     {
+        curViewport_ = (curViewport_++) % 2;
+        GImGui->Viewports[0] = &viewports_[curViewport_];
         ImGui_ImplVulkan_NewFrame();
+    }
+
+    void FinishFrame() override
+    {
+        drawViewport_ = curViewport_;
     }
 
     void RenderFrame() override
     {
-        ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), lastRenderPassCommandBuffer_);
+        if (drawViewport_ != -1) {
+            auto& vp = viewports_[drawViewport_];
+            if (vp.DrawDataP.Valid) {
+                ImGui_ImplVulkan_RenderDrawData(&vp.DrawDataP, lastRenderPassCommandBuffer_);
+            }
+        }
     }
 
 private:
@@ -155,7 +167,6 @@ private:
         VkInstance* pInstance,
         VkResult result)
     {
-        WARN("VkInstance IS AT %p", *pInstance);
         instance_ = *pInstance;
     }
 
@@ -168,10 +179,6 @@ private:
     {
         physicalDevice_ = physicalDevice;
         device_ = *pDevice;
-
-        WARN("physicalDevice IS AT %p", physicalDevice);
-        WARN("VkDevice IS AT %p", *pDevice);
-        WARN("VkAllocationCallbacks IS AT %p", pAllocator);
 
         auto createPipelineCache = (PFN_vkCreatePipelineCache*)vkGetDeviceProcAddr(*pDevice, "vkCreatePipelineCache");
         auto queuePresentKHR = (PFN_vkQueuePresentKHR*)vkGetDeviceProcAddr(*pDevice, "vkQueuePresentKHR");
@@ -194,7 +201,6 @@ private:
         VkPipelineCache* pPipelineCache,
         VkResult result)
     {
-        WARN("VkPipelineCache %d IS AT %p", pCreateInfo->flags, *pPipelineCache);
         pipelineCache_ = *pPipelineCache;
     }
 
@@ -203,11 +209,13 @@ private:
         const VkPresentInfoKHR* pPresentInfo,
         VkResult result)
     {
-        //WARN("vkQueuePresentKHR %p/%d", queue, pPresentInfo->swapchainCount);
         presentRenderPass_ = lastSeenRenderPass_;
 
-        if (!initialized_) {
+        if (!initialized_ && lastSeenRenderPass_ != nullptr) {
             ui_.OnRenderBackendInitialized();
+            viewports_[0] = *GImGui->Viewports[0];
+            viewports_[1] = *GImGui->Viewports[0];
+            GImGui->Viewports[0] = &viewports_[0];
         }
     }
 
@@ -216,18 +224,16 @@ private:
         const VkRenderPassBeginInfo* pRenderPassBegin,
         VkSubpassContents contents)
     {
-        //WARN("vkCmdBeginRenderPass %p, FB %p", pRenderPassBegin->renderPass, pRenderPassBegin->framebuffer);
         lastSeenRenderPass_ = pRenderPassBegin->renderPass;
+        lastRenderPassInfo_ = *pRenderPassBegin;
     }
 
     void vkCmdEndRenderPassHooked(VkCommandBuffer commandBuffer)
     {
         if (initialized_ && lastSeenRenderPass_ == presentRenderPass_) {
             lastRenderPassCommandBuffer_ = commandBuffer;
-            ui_.OnClientRenderFrame();
+            RenderFrame();
         }
-
-        //WARN("vkCmdEndRenderPass %p", commandBuffer);
     }
 
     IMGUIManager& ui_;
@@ -240,6 +246,10 @@ private:
     VkRenderPass presentRenderPass_{ nullptr };
     VkRenderPass lastSeenRenderPass_{ nullptr };
     VkCommandBuffer lastRenderPassCommandBuffer_{ nullptr };
+    VkRenderPassBeginInfo lastRenderPassInfo_;
+    ImGuiViewportP viewports_[2];
+    int32_t drawViewport_{ -1 };
+    int32_t curViewport_{ 0 };
 
     bool initialized_{ false };
 
