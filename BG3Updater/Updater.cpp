@@ -232,7 +232,7 @@ bool ScriptExtenderUpdater::LoadExtender()
 	}
 
 	DEBUG("Loading extender DLL: %s", ToStdUTF8(*dllPath).c_str());
-	HMODULE handle = LoadLibraryExW(dllPath->c_str(), NULL, LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR | LOAD_LIBRARY_SEARCH_APPLICATION_DIR);
+	HMODULE handle = LoadLibraryExW(dllPath->c_str(), NULL, LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR | LOAD_LIBRARY_SEARCH_APPLICATION_DIR | LOAD_LIBRARY_SEARCH_SYSTEM32);
 
 	if (handle == NULL) {
 		if (updated_) {
