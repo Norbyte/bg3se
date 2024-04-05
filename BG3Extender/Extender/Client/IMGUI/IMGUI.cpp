@@ -492,13 +492,6 @@ void IMGUIManager::OnRenderBackendInitialized()
     InitializeUI();
 }
 
-void IMGUIManager::OnClientRenderFrame()
-{
-    if (!enableUI_ || !initialized_) return;
-
-    renderer_->RenderFrame();
-}
-
 void IMGUIManager::Update()
 {
     if (!enableUI_ || !initialized_ || !objects_) return;

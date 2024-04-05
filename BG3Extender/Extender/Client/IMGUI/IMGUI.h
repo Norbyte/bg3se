@@ -25,7 +25,6 @@ public:
     void SetObjects(IMGUIObjectManager* objects);
 
     void OnRenderBackendInitialized();
-    void OnClientRenderFrame();
     void Update();
 
 private:
