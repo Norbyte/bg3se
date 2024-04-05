@@ -90,7 +90,7 @@ public:
     void NewFrame() override
     {
         ImGuiIO& io = ImGui::GetIO();
-        if (io.WantCaptureKeyboard) {
+        if (io.WantTextInput) {
             if (!SDL_IsTextInputActive()) {
                 SDL_StartTextInput();
             }
@@ -117,7 +117,7 @@ private:
 
             ImGuiIO& io = ImGui::GetIO();
             if (io.WantCaptureKeyboard
-                && (event->type == SDL_KEYDOWN || event->type == SDL_KEYUP)) {
+                && (event->type == SDL_KEYDOWN || event->type == SDL_KEYUP || event->type == SDL_TEXTEDITING || event->type == SDL_TEXTINPUT)) {
                 result = 0;
             }
 
@@ -137,7 +137,7 @@ private:
 
     void SDLStopTextInputHooked(SDLStartTextInputProc* wrapped)
     {
-        if (enableUI_ && ImGui::GetIO().WantCaptureKeyboard) {
+        if (enableUI_ && ImGui::GetIO().WantTextInput) {
             if (!SDL_IsTextInputActive()) {
                 SDL_StartTextInput();
             }
