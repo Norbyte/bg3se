@@ -163,6 +163,10 @@ inline bool ValidatePointer(T const* p)
 // No need to validate internal special types
 inline bool ValidateRef(TypeInformationRef const* b, Overload<TypeInformationRef>) { return true; }
 inline bool Validate(TypeInformationRef const* b, Overload<TypeInformationRef>) { return true; }
+inline bool Validate(Ref const* b, Overload<Ref>) { return true; }
+inline bool Validate(PersistentRef const* b, Overload<PersistentRef>) { return true; }
+inline bool Validate(RegistryEntry const* b, Overload<RegistryEntry>) { return true; }
+inline bool Validate(PersistentRegistryEntry const* b, Overload<PersistentRegistryEntry>) { return true; }
 
 inline bool ValidateRef(RuntimeStringHandle const* h, Overload<RuntimeStringHandle>)
 {

@@ -36,6 +36,10 @@ BY_VAL(glm::mat3x4);
 BY_VAL(glm::mat4x3);
 BY_VAL(glm::mat4);
 BY_VAL(TypeInformationRef);
+BY_VAL(lua::Ref);
+BY_VAL(lua::PersistentRef);
+BY_VAL(lua::RegistryEntry);
+BY_VAL(lua::PersistentRegistryEntry);
 
 template <class T> 
 struct ByVal<OverrideableProperty<T>> { static constexpr bool Value = IsByVal<T>; };

@@ -15,6 +15,7 @@ BEGIN_CLS(extui::TreeParent)
 INHERIT(extui::StyledRenderable)
 P_FUN(AddButton, extui::TreeParent::AddButton)
 P_FUN(AddText, extui::TreeParent::AddText)
+P_FUN(AddBulletText, extui::TreeParent::AddBulletText)
 P_FUN(AddCheckbox, extui::TreeParent::AddCheckbox)
 P_FUN(AddRadioButton, extui::TreeParent::AddRadioButton)
 P_FUN(AddInputText, extui::TreeParent::AddInputText)
@@ -49,6 +50,11 @@ INHERIT(extui::StyledRenderable)
 END_CLS()
 
 
+BEGIN_CLS(extui::BulletText)
+INHERIT(extui::StyledRenderable)
+END_CLS()
+
+
 BEGIN_CLS(extui::SeparatorText)
 INHERIT(extui::StyledRenderable)
 END_CLS()
@@ -56,6 +62,7 @@ END_CLS()
 
 BEGIN_CLS(extui::Button)
 INHERIT(extui::StyledRenderable)
+P(OnClick)
 END_CLS()
 
 

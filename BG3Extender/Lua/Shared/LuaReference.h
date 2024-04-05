@@ -24,6 +24,11 @@ public:
 		return ref_ != -1;
 	}
 
+	inline lua_State* GetState() const
+	{
+		return L_;
+	}
+
 	inline int GetRef() const
 	{
 		return ref_;

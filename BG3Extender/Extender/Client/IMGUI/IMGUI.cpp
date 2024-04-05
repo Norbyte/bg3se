@@ -8,6 +8,7 @@
 
 #include <Extender/Client/IMGUI/SDL.inl>
 #include <Extender/Client/IMGUI/Vulkan.inl>
+#include <Lua/Shared/LuaMethodCallHelpers.h>
 
 BEGIN_NS(extui)
 
@@ -102,6 +103,14 @@ lua::ImguiHandle TreeParent::AddButton(char const* label)
 lua::ImguiHandle TreeParent::AddText(char const* label)
 {
     auto txt = AddChild<Text>();
+    txt->Label = label;
+    return txt;
+}
+
+
+lua::ImguiHandle TreeParent::AddBulletText(char const* label)
+{
+    auto txt = AddChild<BulletText>();
     txt->Label = label;
     return txt;
 }
@@ -241,6 +250,12 @@ void Text::StyledRender()
 }
 
 
+void BulletText::StyledRender()
+{
+    ImGui::BulletText("%s", Label.c_str());
+}
+
+
 void SeparatorText::StyledRender()
 {
     if (Label.empty()) {
@@ -254,7 +269,18 @@ void SeparatorText::StyledRender()
 void Button::StyledRender()
 {
     if (ImGui::Button(Label.c_str())) {
-        // call delegate
+
+        if (OnClick) {
+            auto L = OnClick.GetState();
+            lua::StackCheck _(L);
+
+            OnClick.Push();
+            lua::Ref func(L, lua_absindex(L, -1));
+
+            lua::ProtectedFunctionCaller<std::tuple<lua::ImguiHandle>, void> caller{ func, std::tuple(lua::ImguiHandle(Handle)) };
+            caller.Call(L, "IMGUI event dispatch");
+            lua_pop(L, 1);
+        }
     }
 }
 
@@ -284,6 +310,7 @@ InputText::InputText()
 void InputText::StyledRender()
 {
     if (ImGui::InputText(Label.c_str(), Text.data(), Text.capacity())) {
+        Text.resize((uint32_t)strlen(Text.data()));
         // call delegate
     }
 }
@@ -373,6 +400,7 @@ IMGUIObjectManager::IMGUIObjectManager()
     pools_[(unsigned)IMGUIObjectType::Group] = std::make_unique<IMGUIObjectPool<Group>>();
     pools_[(unsigned)IMGUIObjectType::CollapsingHeader] = std::make_unique<IMGUIObjectPool<CollapsingHeader>>();
     pools_[(unsigned)IMGUIObjectType::Text] = std::make_unique<IMGUIObjectPool<Text>>();
+    pools_[(unsigned)IMGUIObjectType::BulletText] = std::make_unique<IMGUIObjectPool<BulletText>>();
     pools_[(unsigned)IMGUIObjectType::SeparatorText] = std::make_unique<IMGUIObjectPool<SeparatorText>>();
     pools_[(unsigned)IMGUIObjectType::Button] = std::make_unique<IMGUIObjectPool<Button>>();
     pools_[(unsigned)IMGUIObjectType::Checkbox] = std::make_unique<IMGUIObjectPool<Checkbox>>();

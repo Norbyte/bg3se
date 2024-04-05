@@ -21,6 +21,7 @@ enum class IMGUIObjectType : uint8_t
     Group,
     CollapsingHeader,
     Text,
+    BulletText,
     SeparatorText,
     Button,
     Checkbox,
@@ -36,7 +37,7 @@ enum class IMGUIObjectType : uint8_t
 };
 
 
-class Renderable
+class Renderable : public Noncopyable<Renderable>
 {
 public:
     virtual ~Renderable();
@@ -89,6 +90,7 @@ public:
 
     lua::ImguiHandle AddButton(char const* label);
     lua::ImguiHandle AddText(char const* label);
+    lua::ImguiHandle AddBulletText(char const* label);
     lua::ImguiHandle AddSeparatorText(char const* label);
     lua::ImguiHandle AddCheckbox(char const* label, std::optional<bool> checked);
     lua::ImguiHandle AddRadioButton(char const* label, std::optional<bool> active);
@@ -151,6 +153,15 @@ public:
 };
 
 
+class BulletText : public StyledRenderable
+{
+public:
+    DECL_UI_TYPE(BulletText)
+
+    void StyledRender() override;
+};
+
+
 class SeparatorText : public StyledRenderable
 {
 public:
@@ -166,6 +177,8 @@ public:
     DECL_UI_TYPE(Button)
 
     void StyledRender() override;
+
+    lua::RegistryEntry OnClick;
 };
 
 
@@ -299,26 +312,33 @@ public:
     IMGUIObjectPool() {}
     ~IMGUIObjectPool() override {}
 
-    Renderable* Create() override
+    T* Create() override
     {
         HandleType handle{};
         auto obj = pool_.Add(handle);
-        obj->Handle = handle | ((uint64_t)T::ObjectType << 56);
-        return obj;
+        *obj = GameAlloc<T>();
+        (*obj)->Handle = handle | ((uint64_t)T::ObjectType << 56);
+        return *obj;
     }
     
-    Renderable* Get(HandleType handle) override
+    T* Get(HandleType handle) override
     {
-        return pool_.Find(handle);
+        auto ref = pool_.Find(handle);
+        return ref ? *ref : nullptr;
     }
 
     bool Destroy(HandleType handle) override
     {
+        auto ref = pool_.Find(handle);
+        if (ref) {
+            GameDelete(*ref);
+        }
+
         return pool_.Free(handle);
     }
 
 private:
-    SaltedPool<T, uint64_t, uint32_t, 24, 31> pool_;
+    SaltedPool<T*, uint64_t, uint32_t, 24, 31> pool_;
 };
 
 
