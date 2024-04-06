@@ -97,7 +97,6 @@ PersistentVars = {}
 ]]
 
 local dynamicTypesText = [[
-
 --- @alias OsirisValue number|string
 
 --- Using a DB like a function will allow inserting new values into the database (ex. `Osi.DB_IsPlayer("02a77f1f-872b-49ca-91ab-32098c443beb")`  
@@ -135,7 +134,7 @@ Osi = {}
 ]]
 
 --- @return GenerateIdeHelpersGenerator
-function Generator:New(opts)
+function Generator:New()
     local o = {}
     setmetatable(o, self)
     o.Intrinsics = {}
