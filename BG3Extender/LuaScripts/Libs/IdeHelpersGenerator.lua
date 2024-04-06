@@ -100,14 +100,14 @@ local dynamicTypesText = [[
 --- @alias OsirisValue number|string
 
 --- Using a DB like a function will allow inserting new values into the database (ex. `Osi.DB_IsPlayer("02a77f1f-872b-49ca-91ab-32098c443beb")`  
---- @overload fun(...:OsirisValue|nil)
+--- @overload fun(...:OsirisValue?)
 --- @class OsiDatabase
 local OsiDatabase = {}
 --- Databases can be read using the Get method. The method checks its parameters against the database and only returns rows that match the query.  
 --- The number of parameters passed to Get must be equivalent to the number of columns in the target database.  
 --- Each parameter defines an (optional) filter on the corresponding column.  
 --- If the parameter is nil, the column is not filtered (equivalent to passing _ in Osiris). If the parameter is not nil, only rows with matching values will be returned.
---- @param ... OsirisValue|nil
+--- @param ... OsirisValue?
 --- @return table<integer,table<integer,OsirisValue>>
 function OsiDatabase:Get(...) end
 --- The Delete method can be used to delete rows from databases.  
@@ -117,7 +117,7 @@ function OsiDatabase:Get(...) end
 --- @vararg OsirisValue|nil
 function OsiDatabase:Delete(...) end
 
---- @alias OsiFunction fun(...:OsirisValue):OsirisValue|nil
+--- @alias OsiFunction fun(...:OsirisValue):OsirisValue?
 --- @alias OsiDynamic table<string, OsiFunction|OsiDatabase>
 
 --- @class OsiCommonDatabases
@@ -896,7 +896,7 @@ function Generator:MakeModuleTypeName(type)
     return "Ext_" .. name
 end
 
----@param moduleToClassField table|nil
+---@param moduleToClassField table?
 function Generator:EmitModule(type, moduleToClassField)
     local helpersModuleName = self:MakeModuleTypeName(type)
     local nativeModuleName = type.NativeName
