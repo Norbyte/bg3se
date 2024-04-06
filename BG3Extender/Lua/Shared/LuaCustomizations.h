@@ -11,7 +11,8 @@ enum class MetatableTag : uint8_t
 	UserVariableHolder = 6,
 	ModVariableHolder = 7,
 	Entity = 8,
-	Max = Entity
+	ImguiObject = 9,
+	Max = ImguiObject
 };
 
 struct LuaInternalState;

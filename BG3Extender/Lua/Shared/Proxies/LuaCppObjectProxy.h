@@ -4,12 +4,23 @@
 
 BEGIN_NS(lua)
 
+struct CppObjectProxyHelpers
+{
+	static int Next(lua_State* L, GenericPropertyMap const& pm, void* object, LifetimeHandle const& lifetime, FixedString const& key);
+};
+
+
 class LightObjectProxyByRefMetatable : public LightCppObjectMetatable<LightObjectProxyByRefMetatable>,
 	public Indexable, public NewIndexable, public Iterable, public Stringifiable, public EqualityComparable
 {
 public:
 	static constexpr MetatableTag MetaTag = MetatableTag::ObjectProxyByRef;
 	static constexpr bool HasLifetime = true;
+
+	inline static void Make(lua_State* L, GenericPropertyMap& pm, void* object, LifetimeHandle const& lifetime)
+	{
+		lua_push_cppobject(L, MetaTag, pm.RegistryIndex, object, lifetime);
+	}
 
 	template <class T>
 	inline static void Make(lua_State* L, T* object, LifetimeHandle const& lifetime)
@@ -48,6 +59,15 @@ public:
 class ObjectProxy
 {
 public:
+	inline static void MakeRef(lua_State* L, GenericPropertyMap& pm, void* object, LifetimeHandle const& lifetime)
+	{
+		if (!pm.ValidatePropertyMap(object)) {
+			push(L, nullptr);
+		} else {
+			LightObjectProxyByRefMetatable::Make(L, pm, object, lifetime);
+		}
+	}
+	
 	template <class T>
 	inline static void MakeRef(lua_State* L, T* object, LifetimeHandle const& lifetime)
 	{

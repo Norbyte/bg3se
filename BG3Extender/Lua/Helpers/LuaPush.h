@@ -54,6 +54,11 @@ inline void push(lua_State* L, char const* v)
 
 void push(lua_State* L, FixedString const& v);
 
+inline void push(lua_State* L, std::string const& s)
+{
+	lua_pushlstring(L, s.data(), s.size());
+}
+
 inline void push(lua_State* L, STDString const& s)
 {
 	lua_pushlstring(L, s.data(), s.size());
@@ -63,18 +68,6 @@ inline void push(lua_State* L, STDWString const& s)
 {
 	push(L, ToUTF8(s));
 }
-
-#if defined(ENABLE_UI)
-inline void push(lua_State* L, Noesis::String const& s)
-{
-	lua_pushlstring(L, s.Str(), s.Size());
-}
-
-inline void push(lua_State* L, Noesis::Symbol const& s)
-{
-	push(L, s.Str());
-}
-#endif
 
 inline void push(lua_State* L, Guid const& s)
 {
@@ -95,6 +88,10 @@ void push(lua_State* L, EntityHandle const& h);
 void push(lua_State* L, ComponentHandle const& h);
 void push(lua_State* L, ecs::EntityRef const& h);
 void push(lua_State* L, TypeInformationRef const& h);
+#if defined(ENABLE_IMGUI)
+void push(lua_State* L, ImguiHandle const& h);
+void push(lua_State* L, extui::Renderable* o);
+#endif
 
 inline void push(lua_State* L, lua_CFunction v)
 {
@@ -139,6 +136,38 @@ void assign(lua_State* L, int idx, glm::mat3 const& m);
 void assign(lua_State* L, int idx, glm::mat3x4 const& m);
 void assign(lua_State* L, int idx, glm::mat4x3 const& m);
 void assign(lua_State* L, int idx, glm::mat4 const& m);
+
+#if defined(ENABLE_UI)
+inline void push(lua_State* L, Noesis::String const& s)
+{
+	lua_pushlstring(L, s.Str(), s.Size());
+}
+
+inline void push(lua_State* L, Noesis::Symbol const& s)
+{
+	push(L, s.Str());
+}
+
+inline void push(lua_State* L, Noesis::Color const& v)
+{
+	push(L, glm::vec4(v.r, v.g, v.b, v.a));
+}
+
+inline void push(lua_State* L, Noesis::Rect const& v)
+{
+	push(L, glm::vec4(v.x, v.y, v.width, v.height));
+}
+
+inline void push(lua_State* L, Noesis::Vector2 const& v)
+{
+	push(L, glm::vec2(v.x, v.y));
+}
+
+inline void push(lua_State* L, Noesis::Vector3 const& v)
+{
+	push(L, glm::vec3(v.x, v.y, v.z));
+}
+#endif
 
 template <class T>
 inline void push_bitfield(lua_State* L, T value)

@@ -50,6 +50,10 @@ struct UuidToHandleMappingComponent;
 struct MoveableObject;
 struct RenderableObject;
 struct Visual;
+struct Scene;
+
+struct SoundManager;
+struct WwiseManager;
 
 namespace resource
 {
@@ -149,6 +153,13 @@ namespace lua
 namespace ui
 {
 	struct UIManager;
+}
+
+namespace extui
+{
+	class IMGUIManager;
+	class IMGUIObjectManager;
+	class Renderable;
 }
 
 namespace osidbg

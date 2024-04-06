@@ -12,6 +12,10 @@
 #include <GameDefinitions/PropertyMaps/UI.inl>
 #endif
 
+#if defined(ENABLE_IMGUI)
+#include <GameDefinitions/PropertyMaps/IMGUI.inl>
+#endif
+
 // WIP - not exported yet!
 BEGIN_CLS(GlobalSwitches)
 END_CLS()

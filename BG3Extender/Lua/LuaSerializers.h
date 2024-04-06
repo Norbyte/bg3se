@@ -109,6 +109,9 @@ namespace bg3se::lua
 #if defined(ENABLE_UI)
 	inline LuaSerializer& operator << (LuaSerializer& s, Noesis::Symbol& v) { return s.Visit(v); }
 #endif
+#if defined(ENABLE_IMGUI)
+	inline LuaSerializer& operator << (LuaSerializer& s, ImguiHandle& v) { return s.Visit(v); }
+#endif
 	inline LuaSerializer& operator << (LuaSerializer& s, Path& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, Guid& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, NetId& v) { return s.Visit(v); }

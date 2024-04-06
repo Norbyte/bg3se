@@ -7,6 +7,14 @@
 #include <NsCore/Symbol.h>
 #include <NsCore/String.h>
 #include <NsCore/Vector.h>
+#include <NsMath/Vector.h>
+#include <NsDrawing/Color.h>
+#include <NsDrawing/Point.h>
+#include <NsDrawing/Rect.h>
+#endif
+
+#if defined(ENABLE_IMGUI)
+#include <Extender/Client/IMGUI/IMGUI.h>
 #endif
 
 #include <GameDefinitions/Base/LuaAnnotations.h>

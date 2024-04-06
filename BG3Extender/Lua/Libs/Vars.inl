@@ -97,6 +97,22 @@ void DirtyUserVariables(std::optional<Guid> entityGuid, std::optional<FixedStrin
 	}
 }
 
+Array<Guid> GetEntitiesWithVariable(FixedString variable)
+{
+	Array<Guid> entities;
+
+	auto& vars = gExtender->GetCurrentExtensionState()->GetUserVariables();
+	for (auto& entity : vars.GetAll()) {
+		auto const& vars = entity.Value().Vars;
+		auto var = vars.try_get(variable);
+		if (var != nullptr) {
+			entities.push_back(entity.Key());
+		}
+	}
+
+	return entities;
+}
+
 void RegisterModVariable(lua_State* L, Guid moduleUuid, FixedString name)
 {
 	auto vars = gExtender->GetCurrentExtensionState()->GetModVariables().GetOrCreateMod(moduleUuid);
@@ -160,6 +176,7 @@ void RegisterVarsLib()
 	MODULE_FUNCTION(RegisterUserVariable)
 	MODULE_FUNCTION(SyncUserVariables)
 	MODULE_FUNCTION(DirtyUserVariables)
+	MODULE_FUNCTION(GetEntitiesWithVariable)
 
 	MODULE_FUNCTION(RegisterModVariable)
 	MODULE_FUNCTION(GetModVariables)

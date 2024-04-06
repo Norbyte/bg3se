@@ -33,22 +33,16 @@ void RegisterObjectProxyTypeInformation()
 #define GENERATING_TYPE_INFO
 #define ADD_TYPE(prop, type) ty.Members.insert(std::make_pair(FixedString(prop), GetTypeInfoRef<type>()));
 
-#define BEGIN_CLS(clsName) ([]() { \
-	using TClass = clsName;\
-	auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(#clsName)); \
-	ty.Kind = LuaTypeId::Object; \
-	ty.NativeName = FixedString(typeid(TClass).name()); \
-	ty.PropertyMap = &lua::StaticLuaPropertyMap<TClass>::PropertyMap; \
-	assert(FixedString(#clsName) == ty.PropertyMap->Name);
-
-
 #define BEGIN_CLS_TN(clsName, typeName) ([]() { \
 	using TClass = clsName;\
 	auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(#typeName)); \
 	ty.Kind = LuaTypeId::Object; \
 	ty.NativeName = FixedString(typeid(TClass).name()); \
 	ty.PropertyMap = &lua::StaticLuaPropertyMap<TClass>::PropertyMap; \
+	lua::StaticLuaPropertyMap<TClass>::PropertyMap.TypeInfo = &ty; \
 	assert(FixedString(#typeName) == ty.PropertyMap->Name);
+
+#define BEGIN_CLS(clsName) BEGIN_CLS_TN(clsName, clsName)
 
 #define END_CLS() GetStaticTypeInfo(Overload<TClass>{}).Type = &ty; })();
 #define INHERIT(base) ty.ParentType = GetTypeInfoRef<base>();
@@ -110,10 +104,12 @@ void RegisterObjectProxyTypeInformation()
 
 #define E(label) ty.EnumValues.insert(std::make_pair(FixedString(#label), (uint64_t)TEnum::label));
 #define EV(label, value) ty.EnumValues.insert(std::make_pair(FixedString(#label), (uint64_t)TEnum::label));
+#define ER(label, value) ty.EnumValues.insert(std::make_pair(FixedString(#label), (uint64_t)value));
 #define END_ENUM_NS() GetStaticTypeInfo(Overload<TEnum>{}).Type = &ty; })();
 #define END_ENUM() GetStaticTypeInfo(Overload<TEnum>{}).Type = &ty; })(); 
 
 #include <GameDefinitions/Enumerations.inl>
+#include <GameDefinitions/ExternalEnumerations.inl>
 
 #undef BEGIN_BITMASK_NS
 #undef BEGIN_ENUM_NS
@@ -121,6 +117,7 @@ void RegisterObjectProxyTypeInformation()
 #undef BEGIN_ENUM
 #undef E
 #undef EV
+#undef ER
 #undef END_ENUM_NS
 #undef END_ENUM
 }

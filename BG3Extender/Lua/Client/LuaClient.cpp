@@ -8,6 +8,10 @@
 #if defined(ENABLE_UI)
 #include <Lua/Client/UIEvents.inl>
 #endif
+#if defined(ENABLE_IMGUI)
+#include <Extender/Client/IMGUI/IMGUI.h>
+#include <Extender/Client/IMGUI/Objects.h>
+#endif
 
 BEGIN_NS(ecl::lua)
 
@@ -44,6 +48,12 @@ void ExtensionLibraryClient::RegisterLib(lua_State * L)
 }
 
 
+ClientState* ClientState::FromLua(lua_State* L)
+{
+	assert(gExtender->GetClient().IsInClientThread());
+	return static_cast<ClientState*>(State::FromLua(L));
+}
+
 ClientState::ClientState(uint32_t generationId)
 	: State(generationId, false)
 #if defined(ENABLE_UI)
@@ -54,6 +64,13 @@ ClientState::ClientState(uint32_t generationId)
 ClientState::~ClientState()
 {
 	auto & sym = GetStaticSymbols();
+
+#if defined(ENABLE_IMGUI)
+	if (imgui_) {
+		gExtender->IMGUI().SetObjects(nullptr);
+		delete imgui_;
+	}
+#endif
 
 #if !defined(OSI_NO_DEBUGGER)
 	if (gExtender) {
@@ -119,5 +136,17 @@ void ClientState::OnGameStateChanged(GameState fromState, GameState toState)
 	};
 	ThrowEvent("GameStateChanged", params, false, 0);
 }
+
+#if defined(ENABLE_IMGUI)
+extui::IMGUIObjectManager& ClientState::IMGUI()
+{
+	if (imgui_ == nullptr) {
+		imgui_ = new extui::IMGUIObjectManager();
+		gExtender->IMGUI().SetObjects(imgui_);
+	}
+
+	return *imgui_;
+}
+#endif
 
 END_NS()

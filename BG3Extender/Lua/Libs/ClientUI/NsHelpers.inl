@@ -1,5 +1,8 @@
 #include <GameDefinitions/UI.h>
 #include <NsGui/UIElementEvents.h>
+#include <NsGui/Uri.h>
+#include <NsDrawing/Color.h>
+#include <NsMath/Vector.h>
 #include <Lua/Libs/ClientUI/Symbols.inl>
 
 BEGIN_BARE_NS(Noesis)
@@ -108,6 +111,123 @@ uint32_t ObjectHelpers::GetNumReferences(BaseRefCounted* o)
 	return o->GetNumReferences();
 }
 
+PropertyOperationResult ObjectHelpers::FallbackGetProperty(lua_State* L, lua::LifetimeHandle const& lifetime, BaseObject* object, bg3se::FixedString const& prop)
+{
+	auto typeProp = TypeHelpers::GetProperty(object->GetClassType(), Symbol(prop.GetString(), Symbol::NullIfNotFound{}));
+	if (typeProp != nullptr) {
+		GetProperty(L, object, typeProp);
+		return PropertyOperationResult::Success;
+	}
+
+	auto dependencyProp = TypeHelpers::GetDependencyProperty(object->GetClassType(), Symbol(prop.GetString(), Symbol::NullIfNotFound{}));
+	if (dependencyProp != nullptr) {
+		DependencyObjectHelpers::GetDependencyProperty(L, static_cast<DependencyObject*>(object), dependencyProp);
+		return PropertyOperationResult::Success;
+	}
+
+	return PropertyOperationResult::NoSuchProperty;
+}
+
+PropertyOperationResult ObjectHelpers::FallbackSetProperty(lua_State* L, BaseObject* object, bg3se::FixedString const& prop, int index)
+{
+	auto typeProp = TypeHelpers::GetProperty(object->GetClassType(), Symbol(prop.GetString(), Symbol::NullIfNotFound{}));
+	if (typeProp != nullptr) {
+		SetProperty(L, object, typeProp, lua::AnyRef(index));
+		return PropertyOperationResult::Success;
+	}
+
+	auto dependencyProp = TypeHelpers::GetDependencyProperty(object->GetClassType(), Symbol(prop.GetString(), Symbol::NullIfNotFound{}));
+	if (dependencyProp != nullptr) {
+		DependencyObjectHelpers::SetDependencyProperty(L, static_cast<DependencyObject*>(object), dependencyProp, lua::AnyRef(index));
+		return PropertyOperationResult::Success;
+	}
+
+	return PropertyOperationResult::NoSuchProperty;
+}
+
+UserReturn ObjectHelpers::GetNamedProperty(lua_State* L, BaseObject* o, Symbol name)
+{
+	auto prop = TypeHelpers::GetProperty(o->GetClassType(), name);
+	if (prop == nullptr) {
+		// Check DependencyObject path for dependency properties
+		if (TypeHelpers::IsDescendantOf(o->GetClassType(), gStaticSymbols.TypeClasses.DependencyObject.Type)) {
+			auto dep = static_cast<DependencyObject*>(o);
+			return DependencyObjectHelpers::GetProperty(L, dep, name);
+		}
+
+		OsiError("Object " << o->GetClassType()->GetName() << " has no property named '" << name.Str() << "'");
+		lua::push(L, nullptr);
+		return 1;
+	}
+
+	return GetProperty(L, o, prop);
+}
+
+UserReturn ObjectHelpers::GetProperty(lua_State* L, BaseObject* o, TypeProperty const* prop)
+{
+	StoredValueHelpers::PushProperty(L, o, o->GetClassType(), prop);
+	return 1;
+}
+
+void ObjectHelpers::SetNamedProperty(lua_State* L, BaseObject* o, Symbol name, lua::AnyRef value)
+{
+	auto prop = TypeHelpers::GetProperty(o->GetClassType(), name);
+	if (prop == nullptr) {
+		// Check DependencyObject path for dependency properties
+		if (TypeHelpers::IsDescendantOf(o->GetClassType(), gStaticSymbols.TypeClasses.DependencyObject.Type)) {
+			auto dep = static_cast<DependencyObject*>(o);
+			return DependencyObjectHelpers::SetProperty(L, dep, name, value);
+		}
+
+		OsiError("Object " << o->GetClassType()->GetName() << " has no property named '" << name.Str() << "'");
+		return;
+	}
+
+	SetProperty(L, o, prop, value);
+}
+
+void ObjectHelpers::SetProperty(lua_State* L, BaseObject* o, TypeProperty const* prop, lua::AnyRef value)
+{
+	if (prop->IsReadOnly()) {
+		luaL_error(L, "Property %s of %s is read-only", prop->GetName().Str(), o->GetClassType()->GetName());
+	}
+
+	auto val = StoredValueHelpers::GetValue(L, prop->GetContentType(), value);
+	if (!val) {
+		return;
+	}
+
+	auto pValue = val->Value;
+	if (val->IsIntegral) pValue = &val->Value;
+
+	prop->Set(o, pValue);
+}
+
+UserReturn ObjectHelpers::GetAllProperties(lua_State* L, BaseObject* o)
+{
+	lua_newtable(L);
+
+	auto type = o->GetClassType();
+	for (auto& prop : type->mProperties) {
+		lua::push(L, prop->GetName());
+		StoredValueHelpers::PushProperty(L, o, type, prop);
+		lua_settable(L, -3);
+	}
+
+	if (TypeHelpers::IsDescendantOf(type, gStaticSymbols.TypeClasses.DependencyObject.Type)) {
+		auto dep = static_cast<DependencyObject*>(o);
+		for (auto& prop : dep->mValues) {
+			auto name = prop.key->GetName();
+			lua::push(L, name);
+			StoredValueHelpers::PushValue(L, prop.key->GetType(), prop.value, type, &name);
+			lua_settable(L, -3);
+		}
+	}
+
+	return 1;
+}
+
+
 Symbol RoutedEventHelpers::GetName(RoutedEvent* o)
 {
 	return o->GetName();
@@ -118,27 +238,6 @@ TypeClass* RoutedEventHelpers::GetOwnerType(RoutedEvent* o)
 	return const_cast<TypeClass*>(o->GetOwnerType());
 }
 
-PropertyOperationResult DependencyObjectHelpers::FallbackGetProperty(lua_State* L, lua::LifetimeHandle const& lifetime, DependencyObject* object, bg3se::FixedString const& prop)
-{
-	auto dependencyProp = TypeHelpers::GetDependencyProperty(object->GetClassType(), Symbol(prop.GetString(), Symbol::NullIfNotFound{}));
-	if (dependencyProp != nullptr) {
-		GetDependencyProperty(L, object, dependencyProp);
-		return PropertyOperationResult::Success;
-	}
-
-	return PropertyOperationResult::NoSuchProperty;
-}
-
-PropertyOperationResult DependencyObjectHelpers::FallbackSetProperty(lua_State* L, DependencyObject* object, bg3se::FixedString const& prop, int index)
-{
-	auto dependencyProp = TypeHelpers::GetDependencyProperty(object->GetClassType(), Symbol(prop.GetString(), Symbol::NullIfNotFound{}));
-	if (dependencyProp != nullptr) {
-		SetDependencyProperty(L, object, dependencyProp, lua::AnyRef(index));
-		return PropertyOperationResult::Success;
-	}
-
-	return PropertyOperationResult::NoSuchProperty;
-}
 
 UserReturn DependencyObjectHelpers::GetProperty(lua_State* L, DependencyObject* o, Symbol name)
 {
@@ -160,7 +259,8 @@ UserReturn DependencyObjectHelpers::GetDependencyProperty(lua_State* L, Dependen
 		return 1;
 	}
 
-	StoredValueHelpers::PushValue(L, prop->GetType(), valIt->value);
+	auto name = prop->GetName();
+	StoredValueHelpers::PushValue(L, prop->GetType(), valIt->value, o->GetClassType(), &name);
 	return 1;
 }
 
@@ -188,19 +288,6 @@ void DependencyObjectHelpers::SetDependencyProperty(lua_State* L, DependencyObje
 	prop->GetValueManager()->SetValue(o, prop, pValue, 0, nullptr, nullptr, Value::Destination_BaseValue);
 }
 
-UserReturn DependencyObjectHelpers::GetAllProperties(lua_State* L, DependencyObject* o)
-{
-	lua_newtable(L);
-
-	for (auto& prop : o->mValues) {
-		lua::push(L, prop.key->GetName());
-		StoredValueHelpers::PushValue(L, prop.key->GetType(), prop.value);
-		lua_settable(L, -3);
-	}
-
-	return 1;
-}
-
 Symbol DependencyPropertyHelpers::GetName(DependencyProperty* o)
 {
 	return o->GetName();
@@ -225,6 +312,12 @@ template <class T>
 void StoredValueHelpers::PushRawValue(lua_State* L, Type const* type, void* val)
 {
 	lua::push(L, *reinterpret_cast<T*>(&val));
+}
+
+template <class T>
+void StoredValueHelpers::PushPtrValue(lua_State* L, Type const* type, void* val)
+{
+	lua::push(L, *reinterpret_cast<T*>(val));
 }
 
 void StoredValueHelpers::PushValue(lua_State* L, TypeEnum const* type, uint64_t val)
@@ -264,12 +357,16 @@ std::optional<int64_t> StoredValueHelpers::TryParseIntegralValue(lua_State* L, T
 	}
 }
 
-void StoredValueHelpers::PushValue(lua_State* L, Type const* type, void* val)
+void StoredValueHelpers::PushValue(lua_State* L, Type const* type, void* val, Type const* objectType, Symbol* propertyName)
 {
 	auto& classes = gStaticSymbols.TypeClasses;
 	auto& types = gStaticSymbols.Types;
+	auto typeOfType = type->GetClassType();
 
-	if (type == types.Int8.Type) {
+	if (typeOfType == types.TypeConst.Type) {
+		PushValue(L, static_cast<TypeConst const*>(type)->GetContentType(), val, objectType, propertyName);
+
+	} else if (type == types.Int8.Type) {
 		PushRawValue<int8_t>(L, type, val);
 	} else if (type == types.Int16.Type) {
 		PushRawValue<int16_t>(L, type, val);
@@ -291,30 +388,151 @@ void StoredValueHelpers::PushValue(lua_State* L, Type const* type, void* val)
 		PushRawValue<double>(L, type, val);
 	} else if (type == types.Bool.Type) {
 		PushRawValue<bool>(L, type, val);
+	} else if (type == types.Color.Type) {
+		PushPtrValue<Color>(L, type, val);
+	} else if (type == types.Vector2.Type) {
+		PushRawValue<Vector2>(L, type, val);
+	} else if (type == types.Vector3.Type) {
+		PushPtrValue<Vector3>(L, type, val);
+	} else if (type == types.Point.Type) {
+		PushRawValue<Point>(L, type, val);
+	} else if (type == types.Rect.Type) {
+		PushPtrValue<Rect>(L, type, val);
 	} else if (type == types.String.Type) {
-		lua::push(L, *reinterpret_cast<String *>(val));
+		PushPtrValue<String>(L, type, val);
+	} else if (type == types.Uri.Type) {
+		lua::push(L, reinterpret_cast<Uri*>(val)->mUri.Str());
 
 	} else if (TypeHelpers::IsDescendantOf(type, classes.BaseObject.Type)) {
 		auto obj = reinterpret_cast<BaseObject*>(val);
 
 		if (obj != nullptr && obj->GetClassType()->GetBase() == classes.BoxedValue.Type) {
 			auto boxed = reinterpret_cast<BoxedValue*>(val);
-			PushValue(L, boxed->GetValueType(), const_cast<void*>(boxed->GetValuePtr()));
+			PushValue(L, boxed->GetValueType(), const_cast<void*>(boxed->GetValuePtr()), objectType, propertyName);
 		} else {
 			lua::MakeObjectRef(L, obj);
 		}
 
-	} else if (TypeHelpers::IsDescendantOf(type->GetClassType(), classes.TypeEnum.Type)) {
+	} else if (TypeHelpers::IsDescendantOf(typeOfType, classes.TypeEnum.Type)) {
 		auto enumVal = *reinterpret_cast<int*>(&val);
 		auto enumType = static_cast<TypeEnum const*>(type);
 		PushValue(L, enumType, enumVal);
 	} else {
-		ERR("Don't know how to fetch properties of type '%s'", type->GetName());
+		if (objectType) {
+			auto cn = type->GetClassType()->GetName();
+			ERR("Don't know how to fetch property %s:%s of type '%s'", objectType->GetName(),
+				propertyName->Str(), type->GetName());
+		} else {
+			ERR("Don't know how to fetch properties of type '%s'", type->GetName());
+		}
 		lua::push(L, nullptr);
 	}
 }
 
-void StoredValueHelpers::PushValue(lua_State* L, Type const* type, StoredValue const* o)
+template <class T>
+void PushTyped(lua_State* L, TypeProperty const* prop, BaseObject* obj)
+{
+	T value;
+	prop->GetCopy(obj, &value);
+	lua::push(L, value);
+}
+
+template <class T>
+void PushTypedRef(lua_State* L, TypeProperty const* prop, BaseObject* obj)
+{
+	auto value = reinterpret_cast<T*>(const_cast<void*>(prop->Get(obj)));
+	lua::push(L, *value);
+}
+
+void StoredValueHelpers::PushProperty(lua_State* L, BaseObject* obj, TypeClass const* objType, TypeProperty const* prop)
+{
+	auto& types = gStaticSymbols.Types;
+	auto& classes = gStaticSymbols.TypeClasses;
+	auto type = prop->GetContentType();
+	auto typeOfType = type->GetClassType();
+	auto typeName = type->GetName();
+	auto propertyName = prop->GetName();
+
+	if (type == types.CStringPtr.Type) {
+		PushTyped<char const*>(L, prop, obj);
+
+	} else if (type == types.CTypePtr.Type) {
+		Type* value;
+		prop->GetCopy(obj, &value);
+		lua::MakeObjectRef(L, value);
+
+	} else if (typeOfType == types.TypePtr.Type) {
+		auto propValue = reinterpret_cast<Ptr<BaseRefCounted>*>(const_cast<void*>(prop->Get(obj)));
+		PushValue(L, static_cast<TypePtr const*>(type)->GetStaticContentType(), propValue->GetPtr(), objType, &propertyName);
+
+	} else if (typeOfType == types.TypePointer.Type) {
+		BaseObject* propValue{ nullptr };
+		prop->GetCopy(obj, &propValue);
+		PushValue(L, static_cast<TypePointer const*>(type)->GetStaticContentType(), propValue, objType, &propertyName);
+
+	} else if (TypeHelpers::IsDescendantOf(type->GetClassType(), classes.TypeEnum.Type)) {
+		auto cn = type->GetClassType()->GetName();
+		int32_t enumLabel{ 0 };
+		prop->GetCopy(obj, &enumLabel);
+
+		auto enumType = static_cast<TypeEnum const*>(type);
+		PushValue(L, enumType, enumLabel);
+
+	} else {
+		if (type == types.Int8.Type) {
+			PushTyped<int8_t>(L, prop, obj);
+		} else if (type == types.Int16.Type) {
+			PushTyped<int16_t>(L, prop, obj);
+		} else if (type == types.Int32.Type) {
+			PushTyped<int32_t>(L, prop, obj);
+		} else if (type == types.Int64.Type) {
+			PushTyped<int64_t>(L, prop, obj);
+		} else if (type == types.UInt8.Type) {
+			PushTyped<uint8_t>(L, prop, obj);
+		} else if (type == types.UInt16.Type) {
+			PushTyped<uint16_t>(L, prop, obj);
+		} else if (type == types.UInt32.Type) {
+			PushTyped<uint32_t>(L, prop, obj);
+		} else if (type == types.UInt64.Type) {
+			PushTyped<uint64_t>(L, prop, obj);
+		} else if (type == types.Single.Type) {
+			PushTyped<float>(L, prop, obj);
+		} else if (type == types.Double.Type) {
+			PushTyped<double>(L, prop, obj);
+		} else if (type == types.Bool.Type) {
+			PushTyped<bool>(L, prop, obj);
+		} else if (type == types.Color.Type) {
+			PushTypedRef<Color>(L, prop, obj);
+		} else if (type == types.Vector2.Type) {
+			PushTypedRef<Vector2>(L, prop, obj);
+		} else if (type == types.Vector3.Type) {
+			PushTypedRef<Vector3>(L, prop, obj);
+		} else if (type == types.Point.Type) {
+			PushTypedRef<Point>(L, prop, obj);
+		} else if (type == types.Rect.Type) {
+			PushTypedRef<Rect>(L, prop, obj);
+		} else if (type == types.String.Type) {
+			auto value = reinterpret_cast<String const*>(prop->Get(obj));
+			lua::push(L, *value);
+			
+		} else if (type == types.Uri.Type) {
+			auto value = reinterpret_cast<Uri const*>(prop->Get(obj));
+			lua::push(L, value->mUri.Str());
+			
+		} else if (type == types.LocaString.Type) {
+			auto str = reinterpret_cast<TranslatedString const*>(prop->Get(obj));
+			lua::push(L, str->Handle.Handle);
+
+		} else {
+			auto cn = type->GetClassType()->GetName();
+			ERR("Don't know how to fetch property %s:%s of type '%s'", obj->GetClassType()->GetName(), 
+				prop->GetName().Str(), type->GetName());
+			lua::push(L, nullptr);
+		}
+	}
+}
+
+void StoredValueHelpers::PushValue(lua_State* L, Type const* type, StoredValue const* o, Type const* objectType, Symbol* propertyName)
 {
 	if (!o->flags.isInitialized) {
 		lua::push(L, nullptr);
@@ -326,10 +544,10 @@ void StoredValueHelpers::PushValue(lua_State* L, Type const* type, StoredValue c
 		if (o->flags.isExpression) {
 			lua::push(L, nullptr);
 		} else {
-			PushValue(L, type, o->value.complex->base);
+			PushValue(L, type, o->value.complex->base, objectType, propertyName);
 		}
 	} else {
-		PushValue(L, type, o->value.simple);
+		PushValue(L, type, o->value.simple, objectType, propertyName);
 	}
 }
 
@@ -709,6 +927,17 @@ TypeClass::AncestorVector* TypeHelpers::GetInterfaces(TypeClass* o)
 TypeClass::PropertyVector* TypeHelpers::GetProperties(TypeClass* o)
 {
 	return &o->mProperties;
+}
+
+TypeProperty const* TypeHelpers::GetProperty(TypeClass const* o, Symbol name)
+{
+	for (auto property : o->mProperties) {
+		if (property->mName == name) {
+			return property;
+		}
+	}
+
+	return nullptr;
 }
 
 TypeClass::PropertyVector* TypeHelpers::GetEvents(TypeClass* o)

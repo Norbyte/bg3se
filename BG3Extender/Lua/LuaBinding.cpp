@@ -87,6 +87,26 @@ namespace bg3se::lua
 		}
 	}
 
+#if defined(ENABLE_IMGUI)
+	void push(lua_State* L, ImguiHandle const& h)
+	{
+		if (h) {
+			ImguiObjectProxyMetatable::Make(L, h);
+		} else {
+			push(L, nullptr);
+		}
+	}
+
+	void push(lua_State* L, extui::Renderable* o)
+	{
+		if (o) {
+			ImguiObjectProxyMetatable::Make(L, o);
+		} else {
+			push(L, nullptr);
+		}
+	}
+#endif
+
 	int TracebackHandler(lua_State * L)
 	{
 		const char *msg = lua_tostring(L, 1);
@@ -242,6 +262,23 @@ namespace bg3se::lua
 		return State::FromLua(L)->GetCurrentLifetime();
 	}
 
+	LuaStateWrapper::LuaStateWrapper()
+	{
+		L = lua_newstate(LuaAlloc, nullptr);
+		Internal = lua_new_internal_state();
+		lua_setup_cppobjects(L, &LuaCppAlloc, &LuaCppFree, &LuaCppGetLightMetatable, &LuaCppGetMetatable, &LuaCppCanonicalize);
+		lua_setup_strcache(L, &LuaCacheString, &LuaReleaseString);
+#if LUA_VERSION_NUM <= 501
+		luaJIT_setmode(L, 0, LUAJIT_MODE_ENGINE | LUAJIT_MODE_ON);
+#endif
+		lua_atpanic(L, &LuaPanic);
+	}
+
+	LuaStateWrapper::~LuaStateWrapper()
+	{
+		lua_close(L);
+	}
+
 	State::State(uint32_t generationId, bool isServer)
 		: generationId_(generationId),
 		lifetimeStack_(lifetimePool_),
@@ -250,22 +287,13 @@ namespace bg3se::lua
 		modVariableManager_(isServer ? gExtender->GetServer().GetExtensionState().GetModVariables() : gExtender->GetClient().GetExtensionState().GetModVariables(), isServer),
 		entityHooks_(*this)
 	{
-		L = lua_newstate(LuaAlloc, nullptr);
-		internal_ = lua_new_internal_state();
-		lua_setup_cppobjects(L, &LuaCppAlloc, &LuaCppFree, &LuaCppGetLightMetatable, &LuaCppGetMetatable, &LuaCppCanonicalize);
-		lua_setup_strcache(L, &LuaCacheString, &LuaReleaseString);
-		*reinterpret_cast<State**>(lua_getextraspace(L)) = this;
-#if LUA_VERSION_NUM <= 501
-		luaJIT_setmode(L, 0, LUAJIT_MODE_ENGINE | LUAJIT_MODE_ON);
-#endif
-		lua_atpanic(L, &LuaPanic);
+		*reinterpret_cast<State**>(lua_getextraspace(L.L)) = this;
 		OpenLibs();
 	}
 
 	State::~State()
 	{
 		lifetimePool_.Release(globalLifetime_);
-		lua_close(L);
 	}
 
 	void State::Initialize()

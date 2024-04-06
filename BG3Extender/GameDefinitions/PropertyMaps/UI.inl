@@ -6,6 +6,11 @@ BEGIN_CLS(Noesis::BaseObject)
 P_FUN(TypeInfo, Noesis::ObjectHelpers::GetClassType)
 P_FREE_GETTER(Type, Noesis::ObjectHelpers::GetClassTypeName)
 P_FUN(ToString, Noesis::ObjectHelpers::ToString)
+// For both TypeProperty & DependencyProperty
+P_FUN(GetProperty, Noesis::ObjectHelpers::GetNamedProperty)
+P_FUN(GetAllProperties, Noesis::ObjectHelpers::GetAllProperties)
+P_FUN(SetProperty, Noesis::ObjectHelpers::SetNamedProperty)
+P_FALLBACK(Noesis::ObjectHelpers::FallbackGetProperty, Noesis::ObjectHelpers::FallbackSetProperty)
 END_CLS()
 
 
@@ -79,10 +84,7 @@ END_CLS()
 
 BEGIN_CLS(Noesis::DependencyObject)
 INHERIT(Noesis::DispatcherObject)
-P_FUN(GetProperty, Noesis::DependencyObjectHelpers::GetProperty)
-P_FUN(GetAllProperties, Noesis::DependencyObjectHelpers::GetAllProperties)
-P_FUN(SetProperty, Noesis::DependencyObjectHelpers::SetProperty)
-P_FALLBACK(Noesis::DependencyObjectHelpers::FallbackGetProperty, Noesis::DependencyObjectHelpers::FallbackSetProperty)
+// Dependency properties handled by polymorphic logic in ObjectHelpers
 END_CLS()
 
 

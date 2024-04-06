@@ -260,6 +260,7 @@ void ScriptExtender::OnUpdate(void* self, GameTime* time)
 	AddThread(GetCurrentThreadId());
 
 	RunPendingTasks();
+	gExtender->IMGUI().Update();
 	if (extensionState_) {
 		extensionState_->OnUpdate(*time);
 		if (gExtender->GetLuaDebugger()) {
@@ -299,7 +300,7 @@ void ScriptExtender::ShowVersionNumber()
 {
 	RuntimeStringHandle rsh(FixedString("h5b6e4138g2cf0g4d67gb825gee416cf8c54f"));
 	auto versionText = GetStaticSymbols().GetTranslatedStringRepository()->GetTranslatedString(rsh);
-	if (versionText) {
+	if (versionText && !STDString(*versionText).contains("Script Extender")) {
 		auto expandedVersion = STDString(*versionText) +
 			"\r\nScript Extender v" + STDString(std::to_string(CurrentVersion)) + " loaded, built on " + BuildDate + ".";
 		GetStaticSymbols().GetTranslatedStringRepository()->UpdateTranslatedString(rsh, expandedVersion);

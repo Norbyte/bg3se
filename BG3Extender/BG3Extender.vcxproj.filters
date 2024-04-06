@@ -157,6 +157,7 @@
     <ClCompile Include="Extender\Shared\ExtenderNet.cpp" />
     <ClCompile Include="Extender\Client\ClientNetworking.cpp" />
     <ClCompile Include="Extender\Server\ServerNetworking.cpp" />
+    <ClCompile Include="Extender\Client\IMGUI\IMGUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -467,6 +468,11 @@
     <ClInclude Include="GameDefinitions\Render.h" />
     <ClInclude Include="GameDefinitions\UI.h" />
     <ClInclude Include="Lua\Client\UIEvents.h" />
+    <ClInclude Include="GameDefinitions\Sound.h" />
+    <ClInclude Include="Extender\Client\IMGUI\IMGUI.h" />
+    <ClInclude Include="Extender\Client\IMGUI\Backends.h" />
+    <ClInclude Include="Extender\Client\IMGUI\Objects.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaImguiProxy.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -698,6 +704,12 @@
       <Filter>Lua\Libs</Filter>
     </None>
     <None Include="Lua\Libs\ClientUI\Module.inl" />
+    <None Include="Lua\Libs\ClientAudio.inl" />
+    <None Include="Extender\Client\IMGUI\SDL.inl" />
+    <None Include="Extender\Client\IMGUI\Vulkan.inl" />
+    <None Include="Lua\Libs\ClientIMGUI.inl" />
+    <None Include="GameDefinitions\PropertyMaps\IMGUI.inl" />
+    <None Include="Lua\Shared\Proxies\LuaImguiProxy.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

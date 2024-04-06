@@ -147,7 +147,8 @@ void* GetLightCppObjectPointer(lua_State* L, int index)
 	// Value-type userdata has no pointer (we don't want to mark same enum values/entities as false recursion)
 	if (meta.MetatableTag == MetatableTag::EnumValue
 		|| meta.MetatableTag == MetatableTag::BitfieldValue
-		|| meta.MetatableTag == MetatableTag::Entity) {
+		|| meta.MetatableTag == MetatableTag::Entity
+		|| meta.MetatableTag == MetatableTag::ImguiObject) {
 		return nullptr;
 	}
 

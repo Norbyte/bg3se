@@ -71,6 +71,48 @@ struct AnyUserdataRef
 	int Index;
 };
 
+#if defined(ENABLE_IMGUI)
+struct ImguiHandle
+{
+	uint64_t Handle;
+
+	inline constexpr ImguiHandle()
+		: Handle(extui::InvalidHandle)
+	{}
+
+	explicit inline constexpr ImguiHandle(uint64_t handle)
+		: Handle(handle)
+	{}
+
+	ImguiHandle(extui::Renderable* o);
+
+	inline constexpr ImguiHandle(ImguiHandle const & oh)
+		: Handle(oh.Handle)
+	{}
+
+	inline constexpr ImguiHandle& operator = (ImguiHandle const & oh)
+	{
+		Handle = oh.Handle;
+		return *this;
+	}
+
+	inline constexpr bool operator == (ImguiHandle const & oh) const
+	{
+		return Handle == oh.Handle;
+	}
+
+	explicit inline constexpr operator bool() const
+	{
+		return Handle != extui::InvalidHandle;
+	}
+
+	inline constexpr bool operator !() const
+	{
+		return Handle == extui::InvalidHandle;
+	}
+};
+#endif
+
 bool ProtectedCallC(lua_State* L, lua_CFunction fun, void* context, void* context2, char const* funcDescription, char const*& error);
 
 // LuaEnumValue forward declarations

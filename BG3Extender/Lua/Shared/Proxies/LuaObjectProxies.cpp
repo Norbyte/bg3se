@@ -260,7 +260,7 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 			CallGetter(L, obj, &PM::ObjectType::getter); \
 			return PropertyOperationResult::Success; \
 		}, \
-		[](lua_State* L, LifetimeHandle const& lifetime, PM::ObjectType* obj, int index, RawPropertyAccessors const& prop) { \
+		[](lua_State* L, PM::ObjectType* obj, int index, RawPropertyAccessors const& prop) { \
 			CallSetter(L, obj, index, &PM::ObjectType::setter); \
 			return PropertyOperationResult::Success; \
 		}, \

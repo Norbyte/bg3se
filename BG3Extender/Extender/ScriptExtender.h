@@ -4,6 +4,9 @@
 #include <GameDefinitions/Osiris.h>
 #include <GameDefinitions/GuidResources.h>
 #include <Extender/Client/ScriptExtenderClient.h>
+#if defined(ENABLE_IMGUI)
+#include <Extender/Client/IMGUI/IMGUI.h>
+#endif
 #include <Extender/Server/ScriptExtenderServer.h>
 #include <Extender/Shared/StatLoadOrderHelper.h>
 #include <Extender/Shared/VirtualTextures.h>
@@ -111,6 +114,13 @@ public:
 		return propertyMapManager_;
 	}
 
+#if defined(ENABLE_IMGUI)
+	inline extui::IMGUIManager& IMGUI()
+	{
+		return imgui_;
+	}
+#endif
+
 	void ClearPathOverrides();
 	void AddPathOverride(STDString const & path, STDString const & overriddenPath);
 	std::optional<STDString> GetPathOverride(STDString const& path);
@@ -139,6 +149,9 @@ private:
 	lua::LuaBundle luaBuiltinBundle_;
 	lua::CppPropertyMapManager propertyMapManager_;
 	VirtualTextureHelpers virtualTextures_;
+#if defined(ENABLE_IMGUI)
+	extui::IMGUIManager imgui_;
+#endif
 
 	ExtenderConfig config_;
 	bool postStartupDone_{ false };

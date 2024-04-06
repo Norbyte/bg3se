@@ -23,3 +23,8 @@
 #if defined(ENABLE_UI)
 #include <NsGui/FrameworkElement.h>
 #endif
+
+#if defined(ENABLE_IMGUI)
+#include <imgui.h>
+#include <Extender/Client/IMGUI/Objects.h>
+#endif

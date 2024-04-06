@@ -25,7 +25,7 @@ template <class T>
 class Noncopyable
 {
 public:
-	inline Noncopyable() {}
+	inline Noncopyable() = default;
 
 	Noncopyable(const Noncopyable&) = delete;
 	T& operator = (const T&) = delete;

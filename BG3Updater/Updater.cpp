@@ -232,7 +232,7 @@ bool ScriptExtenderUpdater::LoadExtender()
 	}
 
 	DEBUG("Loading extender DLL: %s", ToStdUTF8(*dllPath).c_str());
-	HMODULE handle = LoadLibraryExW(dllPath->c_str(), NULL, LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR | LOAD_LIBRARY_SEARCH_APPLICATION_DIR);
+	HMODULE handle = LoadLibraryExW(dllPath->c_str(), NULL, LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR | LOAD_LIBRARY_SEARCH_APPLICATION_DIR | LOAD_LIBRARY_SEARCH_SYSTEM32);
 
 	if (handle == NULL) {
 		if (updated_) {
@@ -481,13 +481,27 @@ HRESULT UpdaterUI::UICallback(HWND hwnd, UINT uNotification, WPARAM wParam, LPAR
 	return S_OK;
 }
 
+volatile bool NeedsClientSuspend{ false };
+
+DWORD WINAPI DelayedClientSuspenderThread(LPVOID param)
+{
+	Sleep(1000);
+	if (NeedsClientSuspend) {
+		DEBUG("Suspending client thread");
+		gGameHelpers->SuspendClientThread();
+	}
+	return 0;
+}
+
 DWORD WINAPI UpdaterThread(LPVOID param)
 {
-	gGameHelpers->SuspendClientThread();
 	gUpdater->InitConsole();
 	gUpdater->InitUI();
 	DEBUG("Launch loader");
+	NeedsClientSuspend = true;
+	CreateThread(NULL, 0, &DelayedClientSuspenderThread, NULL, 0, NULL);
 	gUpdater->Run();
+	NeedsClientSuspend = false;
 	gGameHelpers->ResumeClientThread();
 	DEBUG("Extender launcher thread exiting");
 	return 0;

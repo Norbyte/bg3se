@@ -12,6 +12,9 @@
 #include <Lua/Shared/Proxies/LuaEnumValue.h>
 #include <Lua/Shared/Proxies/LuaBitfieldValue.h>
 #include <Lua/Shared/Proxies/LuaUserVariableHolder.h>
+#if defined(ENABLE_IMGUI)
+#include <Lua/Shared/Proxies/LuaImguiProxy.h>
+#endif
 #include <Lua/Shared/EntityComponentEvents.h>
 #include <Extender/Shared/UserVariables.h>
 
@@ -39,6 +42,21 @@ namespace bg3se::lua
 		Exception(std::string const& msg)
 			: std::runtime_error("Lua error thrown: " + msg)
 		{}
+	};
+
+	class LuaStateWrapper : Noncopyable<LuaStateWrapper>
+	{
+	public:
+		LuaStateWrapper();
+		~LuaStateWrapper();
+
+		inline operator lua_State* () const
+		{
+			return L;
+		}
+
+		lua_State* L;
+		LuaInternalState* Internal;
 	};
 
 	class State : Noncopyable<State>
@@ -90,7 +108,7 @@ namespace bg3se::lua
 
 		inline LuaInternalState* GetInternalState()
 		{
-			return internal_;
+			return L.Internal;
 		}
 
 		inline LifetimeStack & GetStack()
@@ -198,8 +216,7 @@ namespace bg3se::lua
 		static STDString GetBuiltinLibrary(int resourceId);
 
 	protected:
-		lua_State * L;
-		LuaInternalState* internal_{ nullptr };
+		LuaStateWrapper L;
 		bool startupDone_{ false };
 		uint32_t generationId_;
 

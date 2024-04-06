@@ -56,9 +56,9 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>ENABLE_UI;NS_STATIC_LIBRARY;_SILENCE_CXX20_IS_POD_DEPRECATION_WARNING;_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS;GOOGLE_PROTOBUF_NO_RTTI;_DEBUG;_WINDOWS;_USRDLL;OSI_EOCAPP;OSIINTERFACE_EXPORTS;_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_ITERATOR_DEBUG_LEVEL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ENABLE_IMGUI;ENABLE_UI;NS_STATIC_LIBRARY;_SILENCE_CXX20_IS_POD_DEPRECATION_WARNING;_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS;GOOGLE_PROTOBUF_NO_RTTI;_DEBUG;_WINDOWS;_USRDLL;OSI_EOCAPP;OSIINTERFACE_EXPORTS;_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_ITERATOR_DEBUG_LEVEL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)External\protobuf\include;$(SolutionDir)External\glm;$(SolutionDir)External\Detours\include;$(SolutionDir)External\lua-5.3.6\src;$(SolutionDir)External\jsoncpp-master\include;$(SolutionDir)External\NoesisGUI-NativeSDK-win-3.1.7-Indie\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)External\protobuf\include;$(SolutionDir)External\glm;$(SolutionDir)External\Detours\include;$(SolutionDir)External\lua-5.3.6\src;$(SolutionDir)External\jsoncpp-master\include;$(SolutionDir)External\NoesisGUI-NativeSDK-win-3.1.7-Indie\Include;$(SolutionDir)External\VulkanSDK\Include;$(SolutionDir)External\SDL2-2.30.1\include;$(SolutionDir)External\imgui-1.90.4</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <DisableSpecificWarnings>4251;5030</DisableSpecificWarnings>
       <LanguageStandard>stdcpplatest</LanguageStandard>
@@ -70,8 +70,8 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
       <ModuleDefinitionFile>Exports.def</ModuleDefinitionFile>
-      <AdditionalDependencies>CoreLib.lib;LuaLib.lib;ws2_32.lib;shlwapi.lib;Rpcrt4.lib;libprotobuf-lite.lib;detours.lib;jsoncpp.lib;dbghelp.lib;version.lib;winhttp.lib;comctl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\\External\protobuf\lib;$(SolutionDir)\External\Detours\lib.X64;$(SolutionDir)\x64\Debug;$(SolutionDir)\External\jsoncpp-build\src\lib_json\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;imgui.lib;vulkan-1.lib;CoreLib.lib;LuaLib.lib;ws2_32.lib;shlwapi.lib;Rpcrt4.lib;libprotobuf-lite.lib;detours.lib;jsoncpp.lib;dbghelp.lib;version.lib;winhttp.lib;comctl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\External\protobuf\lib;$(SolutionDir)\External\Detours\lib.X64;$(SolutionDir)\x64\Debug;$(SolutionDir)\External\jsoncpp-build\src\lib_json\Debug;$(SolutionDir)\External\SDL2-2.30.1\lib\x64;$(SolutionDir)\External\VulkanSDK\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>copy /Y "$(TargetPath)" "D:\SteamLibrary\steamapps\common\Baldurs Gate 3\bin\DWrite.dll"
@@ -91,10 +91,10 @@ $(SolutionDir)x64\Debug\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Project
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>ENABLE_UI;NS_STATIC_LIBRARY;_SILENCE_CXX20_IS_POD_DEPRECATION_WARNING;_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS;NDEBUG;_WINDOWS;_USRDLL;OSI_EOCAPP;OSIINTERFACE_EXPORTS;OSI_EXTENSION_BUILD;_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ENABLE_IMGUI;ENABLE_UI;NS_STATIC_LIBRARY;_SILENCE_CXX20_IS_POD_DEPRECATION_WARNING;_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS;NDEBUG;_WINDOWS;_USRDLL;OSI_EOCAPP;OSIINTERFACE_EXPORTS;OSI_EXTENSION_BUILD;_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)External\protobuf\include;$(SolutionDir)External\glm;$(SolutionDir)External\Detours\include;$(SolutionDir)External\lua-5.3.6\src;$(SolutionDir)External\jsoncpp-master\include;$(SolutionDir)External\NoesisGUI-NativeSDK-win-3.1.7-Indie\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)External\protobuf\include;$(SolutionDir)External\glm;$(SolutionDir)External\Detours\include;$(SolutionDir)External\lua-5.3.6\src;$(SolutionDir)External\jsoncpp-master\include;$(SolutionDir)External\NoesisGUI-NativeSDK-win-3.1.7-Indie\Include;$(SolutionDir)External\VulkanSDK\Include;$(SolutionDir)External\SDL2-2.30.1\include;$(SolutionDir)External\imgui-1.90.4</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4251;5030</DisableSpecificWarnings>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
@@ -107,8 +107,8 @@ $(SolutionDir)x64\Debug\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Project
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>Exports.def</ModuleDefinitionFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)\x64\Release;$(SolutionDir)\\External\protobuf\lib;$(SolutionDir)\External\Detours\lib.X64;$(SolutionDir)\External\jsoncpp-build\src\lib_json\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>CoreLib.lib;LuaLib.lib;ws2_32.lib;shlwapi.lib;Rpcrt4.lib;libprotobuf-lite.lib;detours.lib;jsoncpp.lib;dbghelp.lib;version.lib;winhttp.lib;comctl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\x64\Release;$(SolutionDir)\\External\protobuf\lib;$(SolutionDir)\External\Detours\lib.X64;$(SolutionDir)\External\jsoncpp-build\src\lib_json\Release;$(SolutionDir)\External\SDL2-2.30.1\lib\x64;$(SolutionDir)\External\VulkanSDK\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;imgui.lib;vulkan-1.lib;CoreLib.lib;LuaLib.lib;ws2_32.lib;shlwapi.lib;Rpcrt4.lib;libprotobuf-lite.lib;detours.lib;jsoncpp.lib;dbghelp.lib;version.lib;winhttp.lib;comctl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>$(SolutionDir)\External\protobuf\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Osiris\Debugger Osiris\Debugger\osidebug.proto
@@ -125,6 +125,8 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="Extender\BuildInfo.h" />
     <ClInclude Include="Extender\Client\ClientNetworking.h" />
     <ClInclude Include="Extender\Client\ExtensionStateClient.h" />
+    <ClInclude Include="Extender\Client\IMGUI\Backends.h" />
+    <ClInclude Include="Extender\Client\IMGUI\Objects.h" />
     <ClInclude Include="Extender\Client\ScriptExtenderClient.h" />
     <ClInclude Include="Extender\ScriptExtender.h" />
     <ClInclude Include="Extender\Server\ExtensionStateServer.h" />
@@ -147,6 +149,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="Extender\Shared\UserVariables.h" />
     <ClInclude Include="Extender\Shared\Utils.h" />
     <ClInclude Include="Extender\Shared\VirtualTextures.h" />
+    <ClInclude Include="Extender\Client\IMGUI\IMGUI.h" />
     <ClInclude Include="Extender\Version.h" />
     <ClInclude Include="GameDefinitions\Base\Base.h" />
     <ClInclude Include="GameDefinitions\Base\ExposedTypes.h" />
@@ -196,6 +199,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\Render.h" />
     <ClInclude Include="GameDefinitions\Resources.h" />
     <ClInclude Include="GameDefinitions\RootTemplates.h" />
+    <ClInclude Include="GameDefinitions\Sound.h" />
     <ClInclude Include="GameDefinitions\Stats\Common.h" />
     <ClInclude Include="GameDefinitions\Stats\Expression.h" />
     <ClInclude Include="GameDefinitions\Stats\Functors.h" />
@@ -247,6 +251,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="Lua\Shared\Proxies\LuaEntityProxy.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaEnumValue.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaEvent.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaImguiProxy.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaMapProxy.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaObjectProxy.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaPropertyMap.h" />
@@ -291,6 +296,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Game Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Extender\Shared\Utils.cpp" />
+    <ClCompile Include="Extender\Client\IMGUI\IMGUI.cpp" />
     <ClCompile Include="GameDefinitions\Base\Base.cpp" />
     <ClCompile Include="GameDefinitions\EntitySystem.cpp" />
     <ClCompile Include="GameDefinitions\Enumerations.cpp" />
@@ -358,6 +364,8 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="..\CHANGELOG.md" />
     <None Include="cpp.hint" />
     <None Include="Exports.def" />
+    <None Include="Extender\Client\IMGUI\SDL.inl" />
+    <None Include="Extender\Client\IMGUI\Vulkan.inl" />
     <None Include="Extender\Shared\ModuleHasher.inl" />
     <None Include="Extender\Shared\SavegameSerializer.inl" />
     <None Include="Extender\Shared\ExtenderProtocol.proto" />
@@ -375,6 +383,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="GameDefinitions\PropertyMaps\CommonTypes.inl" />
     <None Include="GameDefinitions\PropertyMaps\Events.inl" />
     <None Include="GameDefinitions\PropertyMaps\FunctorExecParams.inl" />
+    <None Include="GameDefinitions\PropertyMaps\IMGUI.inl" />
     <None Include="GameDefinitions\PropertyMaps\ServerObjects.inl" />
     <None Include="GameDefinitions\PropertyMaps\Functors.inl" />
     <None Include="GameDefinitions\PropertyMaps\Statuses.inl" />
@@ -395,6 +404,8 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="Lua\LevelIteratorFunctions.inl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Game Debug|x64'">false</ExcludedFromBuild>
     </None>
+    <None Include="Lua\Libs\ClientAudio.inl" />
+    <None Include="Lua\Libs\ClientIMGUI.inl" />
     <None Include="Lua\Libs\ClientNet.inl" />
     <None Include="Lua\Libs\ClientTemplate.inl" />
     <None Include="Lua\Libs\ClientUI\Module.inl" />
@@ -435,6 +446,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="Lua\Shared\Proxies\LuaEntityProxy.inl" />
     <None Include="Lua\Shared\Proxies\LuaEnumValue.inl" />
     <None Include="Lua\Shared\Proxies\LuaEvent.inl" />
+    <None Include="Lua\Shared\Proxies\LuaImguiProxy.inl" />
     <None Include="Lua\Shared\Proxies\LuaMapProxy.inl" />
     <None Include="Lua\Shared\Proxies\LuaObjectProxy.inl" />
     <None Include="Lua\Shared\Proxies\LuaPropertyMap.inl" />
