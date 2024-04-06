@@ -79,7 +79,7 @@ void TypeInformation::DeferredInitialize()
 				first = false;
 				name += var.Get().TypeName.GetString();
 			}
-			name += + ")";
+			name += ")";
 			TypeName = FixedString(name);
 			TypeInformationRepository::GetInstance().RegisterType(this);
 		}
