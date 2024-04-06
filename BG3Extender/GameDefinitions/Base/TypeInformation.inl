@@ -72,12 +72,14 @@ void TypeInformation::DeferredInitialize()
 		}
 
 		if (!TypeName && hasAllVariants) {
-			STDString name("Variant<");
+			STDString name("(");
+			bool first = true
 			for (auto const& var : Params) {
+				if (!first) name += "|";
+				first = false;
 				name += var.Get().TypeName.GetString();
-				name += ",";
 			}
-			name += + ">";
+			name += + ")";
 			TypeName = FixedString(name);
 			TypeInformationRepository::GetInstance().RegisterType(this);
 		}
