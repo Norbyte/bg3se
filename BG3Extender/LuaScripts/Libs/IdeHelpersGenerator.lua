@@ -7,10 +7,10 @@ local NEWLINE = "\r\n"
 ---@type {Specific:table<string,string>, Misc:string[]}
 local _CustomEntries = Ext.Utils.Include(nil, "builtin://Libs/HelpersGenerator/CustomEntries.lua")
 
----@type table<string,{Before:string|nil, After:string|nil}>
+---@type table<string,{Before:string?, After:string?}>
 local _CustomTypeEntries = Ext.Utils.Include(nil, "builtin://Libs/HelpersGenerator/CustomTypeEntries.lua")
 
----@type table<string,{Before:string|nil, After:string|nil}>
+---@type table<string,{Before:string?, After:string?}>
 
 local _CustomFunctionExtras = Ext.Utils.Include(nil, "builtin://Libs/HelpersGenerator/CustomFunctionExtras.lua")
 
@@ -114,7 +114,7 @@ function OsiDatabase:Get(...) end
 --- The number of parameters passed to Delete must be equivalent to the number of columns in the target database.  
 --- Each parameter defines an (optional) filter on the corresponding column.  
 --- If the parameter is nil, the column is not filtered (equivalent to passing _ in Osiris). If the parameter is not nil, only rows with matching values will be deleted. 
---- @vararg OsirisValue|nil
+--- @param ... OsirisValue?
 function OsiDatabase:Delete(...) end
 
 --- @alias OsiFunction fun(...:OsirisValue):OsirisValue?
@@ -661,11 +661,7 @@ function Generator:EmitFullMethodSignature(cls, funcName, fun, nativeMethod, aft
             overloads = missingFuncData.Overload
         end
         for i,data in ipairs(missingFuncData.Params) do
-            if data.name == "..." then
-                table.insert(argDescs, "--- @vararg " .. data.arg or "any" .. " " ..  self.Trim(data.description or ""))
-            else
-                table.insert(argDescs, "--- @param " .. data.name .. " " .. data.arg .. " " ..  self.Trim(data.description or ""))
-            end
+            table.insert(argDescs, "--- @param " .. data.name .. " " .. data.arg or any .. " " ..  self.Trim(data.description or ""))
             table.insert(args, data.name)
         end
     else
