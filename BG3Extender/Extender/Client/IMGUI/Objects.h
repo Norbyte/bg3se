@@ -20,8 +20,14 @@ enum class IMGUIObjectType : uint8_t
     Window,
     Group,
     CollapsingHeader,
+
     TabBar,
     TabItem,
+
+    Tree,
+    Table,
+    TableRow,
+    TableCell,
 
     // Texts
     Text,
@@ -109,6 +115,8 @@ public:
     lua::ImguiHandle AddGroup(char const* label);
     lua::ImguiHandle AddCollapsingHeader(char const* label);
     lua::ImguiHandle AddTabBar(char const* label);
+    lua::ImguiHandle AddTree(char const* label);
+    lua::ImguiHandle AddTable(char const* label, uint32_t columns);
 
     lua::ImguiHandle AddButton(char const* label);
 
@@ -201,6 +209,58 @@ public:
 
 private:
     bool rendering_{ false };
+};
+
+
+class Tree : public TreeParent
+{
+public:
+    DECL_UI_TYPE(Tree)
+
+    bool BeginRender() override;
+    void EndRender() override;
+
+private:
+    bool rendering_{ false };
+};
+
+
+class Table : public TreeParent
+{
+public:
+    DECL_UI_TYPE(Table)
+
+    bool BeginRender() override;
+    void EndRender() override;
+
+    lua::ImguiHandle AddRow();
+
+    uint32_t Columns{ 1 };
+
+private:
+    bool rendering_{ false };
+};
+
+
+class TableRow : public TreeParent
+{
+public:
+    DECL_UI_TYPE(TableRow)
+
+    bool BeginRender() override;
+    void EndRender() override;
+
+    lua::ImguiHandle AddCell();
+};
+
+
+class TableCell : public TreeParent
+{
+public:
+    DECL_UI_TYPE(TableCell)
+
+    bool BeginRender() override;
+    void EndRender() override;
 };
 
 

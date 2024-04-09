@@ -124,6 +124,23 @@ lua::ImguiHandle TreeParent::AddTabBar(char const* label)
 }
 
 
+lua::ImguiHandle TreeParent::AddTree(char const* label)
+{
+    auto e = AddChild<Tree>();
+    e->Label = label;
+    return e;
+}
+
+
+lua::ImguiHandle TreeParent::AddTable(char const* label, uint32_t columns)
+{
+    auto tbl = AddChild<Table>();
+    tbl->Label = label;
+    tbl->Columns = columns;
+    return tbl;
+}
+
+
 lua::ImguiHandle TreeParent::AddButton(char const* label)
 {
     auto btn = AddChild<Button>();
@@ -368,6 +385,64 @@ void TabItem::EndRender()
 }
 
 
+bool Tree::BeginRender()
+{
+    rendering_ = ImGui::TreeNode(Label.c_str());
+    return rendering_;
+}
+
+void Tree::EndRender()
+{
+    if (rendering_) ImGui::TreePop();
+    rendering_ = false;
+}
+
+
+bool Table::BeginRender()
+{
+    rendering_ = ImGui::BeginTable(Label.c_str(), (int)Columns);
+    return rendering_;
+}
+
+void Table::EndRender()
+{
+    if (rendering_) ImGui::EndTable();
+    rendering_ = false;
+}
+
+lua::ImguiHandle Table::AddRow()
+{
+    return AddChild<TableRow>();
+}
+
+
+bool TableRow::BeginRender()
+{
+    ImGui::TableNextRow();
+    return true;
+}
+
+void TableRow::EndRender()
+{
+}
+
+lua::ImguiHandle TableRow::AddCell()
+{
+    return AddChild<TableCell>();
+}
+
+
+bool TableCell::BeginRender()
+{
+    ImGui::TableNextColumn();
+    return true;
+}
+
+void TableCell::EndRender()
+{
+}
+
+
 void Text::StyledRender()
 {
     ImGui::TextUnformatted(Label.c_str(), Label.c_str() + Label.size());
@@ -595,6 +670,10 @@ IMGUIObjectManager::IMGUIObjectManager()
     pools_[(unsigned)IMGUIObjectType::CollapsingHeader] = std::make_unique<IMGUIObjectPool<CollapsingHeader>>();
     pools_[(unsigned)IMGUIObjectType::TabBar] = std::make_unique<IMGUIObjectPool<TabBar>>();
     pools_[(unsigned)IMGUIObjectType::TabItem] = std::make_unique<IMGUIObjectPool<TabItem>>();
+    pools_[(unsigned)IMGUIObjectType::Tree] = std::make_unique<IMGUIObjectPool<Tree>>();
+    pools_[(unsigned)IMGUIObjectType::Table] = std::make_unique<IMGUIObjectPool<Table>>();
+    pools_[(unsigned)IMGUIObjectType::TableRow] = std::make_unique<IMGUIObjectPool<TableRow>>();
+    pools_[(unsigned)IMGUIObjectType::TableCell] = std::make_unique<IMGUIObjectPool<TableCell>>();
 
     pools_[(unsigned)IMGUIObjectType::Text] = std::make_unique<IMGUIObjectPool<Text>>();
     pools_[(unsigned)IMGUIObjectType::BulletText] = std::make_unique<IMGUIObjectPool<BulletText>>();

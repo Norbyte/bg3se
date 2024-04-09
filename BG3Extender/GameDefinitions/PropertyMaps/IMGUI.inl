@@ -19,6 +19,8 @@ INHERIT(extui::StyledRenderable)
 P_FUN(AddGroup, extui::TreeParent::AddGroup)
 P_FUN(AddCollapsingHeader, extui::TreeParent::AddCollapsingHeader)
 P_FUN(AddTabBar, extui::TreeParent::AddTabBar)
+P_FUN(AddTree, extui::TreeParent::AddTree)
+P_FUN(AddTable, extui::TreeParent::AddTable)
 
 P_FUN(AddButton, extui::TreeParent::AddButton)
 P_FUN(AddText, extui::TreeParent::AddText)
@@ -69,6 +71,29 @@ END_CLS()
 
 
 BEGIN_CLS(extui::TabItem)
+INHERIT(extui::TreeParent)
+END_CLS()
+
+
+BEGIN_CLS(extui::Tree)
+INHERIT(extui::TreeParent)
+END_CLS()
+
+
+BEGIN_CLS(extui::Table)
+INHERIT(extui::TreeParent)
+P(Columns)
+P_FUN(AddRow, extui::Table::AddRow)
+END_CLS()
+
+
+BEGIN_CLS(extui::TableRow)
+INHERIT(extui::TreeParent)
+P_FUN(AddCell, extui::TableRow::AddCell)
+END_CLS()
+
+
+BEGIN_CLS(extui::TableCell)
 INHERIT(extui::TreeParent)
 END_CLS()
 
