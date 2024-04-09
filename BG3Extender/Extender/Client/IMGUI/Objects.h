@@ -168,7 +168,7 @@ public:
 
     bool Closed{ false };
     bool Closeable{ false };
-    ImGuiWindowFlags Flags{ 0 };
+    GuiWindowFlags Flags{ 0 };
 };
 
 
@@ -189,6 +189,8 @@ public:
 
     bool BeginRender() override;
     void EndRender() override;
+
+    GuiTreeNodeFlags Flags{ 0 };
 };
 
 
@@ -201,6 +203,8 @@ public:
     void EndRender() override;
 
     lua::ImguiHandle AddTabItem(char const* label);
+
+    GuiTabBarFlags Flags{ 0 };
 
 private:
     bool rendering_{ false };
@@ -215,6 +219,8 @@ public:
     bool BeginRender() override;
     void EndRender() override;
 
+    GuiTabItemFlags Flags{ 0 };
+
 private:
     bool rendering_{ false };
 };
@@ -227,6 +233,8 @@ public:
 
     bool BeginRender() override;
     void EndRender() override;
+
+    GuiTreeNodeFlags Flags{ 0 };
 
 private:
     bool rendering_{ false };
@@ -244,6 +252,7 @@ public:
     lua::ImguiHandle AddRow();
 
     uint32_t Columns{ 1 };
+    GuiTableFlags Flags{ 0 };
 
 private:
     bool rendering_{ false };
@@ -259,6 +268,9 @@ public:
     void EndRender() override;
 
     lua::ImguiHandle AddCell();
+
+    GuiTableRowFlags Flags{ 0 };
+    float MinHeight{ 0.0f };
 };
 
 
@@ -293,7 +305,9 @@ public:
     bool BeginRender() override;
     void EndRender() override;
 
-    void Open();
+    void Open(std::optional<GuiPopupFlags> flags);
+
+    GuiWindowFlags Flags{ 0 };
 
 private:
     bool rendering_{ false };
@@ -413,6 +427,7 @@ public:
     void SetText(STDString text);
 
     STDString Text;
+    GuiInputTextFlags Flags{ 0 };
     lua::LuaDelegate<void (lua::ImguiHandle, STDString)> OnChange;
 };
 
@@ -426,6 +441,7 @@ public:
 
     Array<STDString> Options;
     int SelectedIndex{ -1 };
+    GuiComboFlags Flags{ 0 };
     lua::LuaDelegate<void (lua::ImguiHandle, int)> OnChange;
 };
 
@@ -441,6 +457,7 @@ public:
     glm::vec4 Min{ 0.0f };
     glm::vec4 Max{ 1.0f };
     int Components{ 1 };
+    GuiSliderFlags Flags{ 0 };
     lua::LuaDelegate<void (lua::ImguiHandle, glm::vec4)> OnChange;
 };
 
@@ -456,6 +473,7 @@ public:
     glm::ivec4 Min{ 0 };
     glm::ivec4 Max{ 1 };
     int Components{ 1 };
+    GuiSliderFlags Flags{ 0 };
     lua::LuaDelegate<void (lua::ImguiHandle, glm::ivec4)> OnChange;
 };
 
@@ -471,6 +489,7 @@ public:
     glm::vec4 Min{ 0.0f };
     glm::vec4 Max{ 1.0f };
     int Components{ 1 };
+    GuiSliderFlags Flags{ 0 };
     lua::LuaDelegate<void (lua::ImguiHandle, glm::vec4)> OnChange;
 };
 
@@ -486,6 +505,7 @@ public:
     glm::ivec4 Min{ 0 };
     glm::ivec4 Max{ 1 };
     int Components{ 1 };
+    GuiSliderFlags Flags{ 0 };
     lua::LuaDelegate<void (lua::ImguiHandle, glm::ivec4)> OnChange;
 };
 
@@ -499,6 +519,7 @@ public:
 
     glm::vec4 Value{ 0.0f };
     int Components{ 1 };
+    GuiInputTextFlags Flags{ 0 };
     lua::LuaDelegate<void (lua::ImguiHandle, glm::vec4)> OnChange;
 };
 
@@ -512,6 +533,7 @@ public:
 
     glm::ivec4 Value{ 0 };
     int Components{ 1 };
+    GuiInputTextFlags Flags{ 0 };
     lua::LuaDelegate<void (lua::ImguiHandle, glm::ivec4)> OnChange;
 };
 
@@ -524,7 +546,7 @@ public:
     void StyledRender() override;
 
     glm::vec4 Color{ 0.0f };
-    bool HasAlpha{ false };
+    GuiColorEditFlags Flags{ ImGuiColorEditFlags_DefaultOptions_ };
     lua::LuaDelegate<void (lua::ImguiHandle, glm::vec4)> OnChange;
 };
 
@@ -537,7 +559,7 @@ public:
     void StyledRender() override;
 
     glm::vec4 Color{ 0.0f };
-    bool HasAlpha{ false };
+    GuiColorEditFlags Flags{ ImGuiColorEditFlags_DefaultOptions_ };
     lua::LuaDelegate<void (lua::ImguiHandle, glm::vec4)> OnChange;
 };
 

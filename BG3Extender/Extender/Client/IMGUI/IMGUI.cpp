@@ -342,7 +342,7 @@ lua::ImguiHandle TreeParent::AddColorPicker(char const* label, std::optional<glm
 
 bool Window::BeginRender()
 {
-    return ImGui::Begin(Label.c_str(), Closeable ? &Closed : nullptr, Flags);
+    return ImGui::Begin(Label.c_str(), Closeable ? &Closed : nullptr, (ImGuiWindowFlags)Flags);
 }
 
 
@@ -367,7 +367,7 @@ void Group::EndRender()
 
 bool CollapsingHeader::BeginRender()
 {
-    return ImGui::CollapsingHeader(Label.c_str());
+    return ImGui::CollapsingHeader(Label.c_str(), (ImGuiTreeNodeFlags)Flags);
 }
 
 void CollapsingHeader::EndRender()
@@ -376,7 +376,7 @@ void CollapsingHeader::EndRender()
 
 bool TabBar::BeginRender()
 {
-    rendering_ = ImGui::BeginTabBar(Label.c_str());
+    rendering_ = ImGui::BeginTabBar(Label.c_str(), (ImGuiTabBarFlags)Flags);
     return rendering_;
 }
 
@@ -396,7 +396,7 @@ lua::ImguiHandle TabBar::AddTabItem(char const* label)
 
 bool TabItem::BeginRender()
 {
-    rendering_ = ImGui::BeginTabItem(Label.c_str());
+    rendering_ = ImGui::BeginTabItem(Label.c_str(), nullptr, (ImGuiTabItemFlags)Flags);
     return rendering_;
 }
 
@@ -409,7 +409,7 @@ void TabItem::EndRender()
 
 bool Tree::BeginRender()
 {
-    rendering_ = ImGui::TreeNode(Label.c_str());
+    rendering_ = ImGui::TreeNodeEx(Label.c_str(), (ImGuiTreeNodeFlags)Flags);
     return rendering_;
 }
 
@@ -422,7 +422,7 @@ void Tree::EndRender()
 
 bool Table::BeginRender()
 {
-    rendering_ = ImGui::BeginTable(Label.c_str(), (int)Columns);
+    rendering_ = ImGui::BeginTable(Label.c_str(), (int)Columns, (ImGuiTableFlags)Flags);
     return rendering_;
 }
 
@@ -440,7 +440,7 @@ lua::ImguiHandle Table::AddRow()
 
 bool TableRow::BeginRender()
 {
-    ImGui::TableNextRow();
+    ImGui::TableNextRow((ImGuiTableRowFlags)Flags, MinHeight);
     return true;
 }
 
@@ -481,7 +481,7 @@ void Tooltip::EndRender()
 
 bool Popup::BeginRender()
 {
-    rendering_ = ImGui::BeginPopup(Label.c_str());
+    rendering_ = ImGui::BeginPopup(Label.c_str(), (ImGuiWindowFlags)Flags);
     return rendering_;
 }
 
@@ -493,9 +493,9 @@ void Popup::EndRender()
 }
 
 
-void Popup::Open()
+void Popup::Open(std::optional<GuiPopupFlags> flags)
 {
-    ImGui::OpenPopup(Label.c_str());
+    ImGui::OpenPopup(Label.c_str(), (flags ? (ImGuiPopupFlags)*flags : 0));
 }
 
 
@@ -583,7 +583,7 @@ InputText::InputText()
 
 void InputText::StyledRender()
 {
-    if (ImGui::InputText(Label.c_str(), Text.data(), Text.capacity())) {
+    if (ImGui::InputText(Label.c_str(), Text.data(), Text.capacity(), (ImGuiInputTextFlags)Flags)) {
         Text.resize((uint32_t)strlen(Text.data()));
         if (OnChange) {
             OnChange.Call(lua::ImguiHandle(Handle), Text);
@@ -610,7 +610,7 @@ void Combo::StyledRender()
         preview = Options[SelectedIndex].c_str();
     }
 
-    if (ImGui::BeginCombo(Label.c_str(), preview)) {
+    if (ImGui::BeginCombo(Label.c_str(), preview, (ImGuiComboFlags)Flags)) {
         int selectedIndex = -1;
 
         int i = 0;
@@ -639,7 +639,7 @@ void Combo::StyledRender()
 
 void DragScalar::StyledRender()
 {
-    if (ImGui::DragScalarN(Label.c_str(), ImGuiDataType_Float, &Value, Components, 1.0f, &Min, &Max)) {
+    if (ImGui::DragScalarN(Label.c_str(), ImGuiDataType_Float, &Value, Components, 1.0f, &Min, &Max, nullptr, (ImGuiSliderFlags)Flags)) {
         if (OnChange) {
             OnChange.Call(lua::ImguiHandle(Handle), Value);
         }
@@ -649,7 +649,7 @@ void DragScalar::StyledRender()
 
 void DragInt::StyledRender()
 {
-    if (ImGui::DragScalarN(Label.c_str(), ImGuiDataType_S32, &Value, Components, 1.0f, &Min, &Max)) {
+    if (ImGui::DragScalarN(Label.c_str(), ImGuiDataType_S32, &Value, Components, 1.0f, &Min, &Max, nullptr, (ImGuiSliderFlags)Flags)) {
         if (OnChange) {
             OnChange.Call(lua::ImguiHandle(Handle), Value);
         }
@@ -659,7 +659,7 @@ void DragInt::StyledRender()
 
 void SliderScalar::StyledRender()
 {
-    if (ImGui::SliderScalarN(Label.c_str(), ImGuiDataType_Float, &Value, Components, &Min, &Max)) {
+    if (ImGui::SliderScalarN(Label.c_str(), ImGuiDataType_Float, &Value, Components, &Min, &Max, nullptr, (ImGuiSliderFlags)Flags)) {
         if (OnChange) {
             OnChange.Call(lua::ImguiHandle(Handle), Value);
         }
@@ -669,7 +669,7 @@ void SliderScalar::StyledRender()
 
 void SliderInt::StyledRender()
 {
-    if (ImGui::SliderScalarN(Label.c_str(), ImGuiDataType_S32, &Value, Components, &Min, &Max)) {
+    if (ImGui::SliderScalarN(Label.c_str(), ImGuiDataType_S32, &Value, Components, &Min, &Max, nullptr, (ImGuiSliderFlags)Flags)) {
         if (OnChange) {
             OnChange.Call(lua::ImguiHandle(Handle), Value);
         }
@@ -679,7 +679,7 @@ void SliderInt::StyledRender()
 
 void InputScalar::StyledRender()
 {
-    if (ImGui::InputScalarN(Label.c_str(), ImGuiDataType_Float, &Value, Components)) {
+    if (ImGui::InputScalarN(Label.c_str(), ImGuiDataType_Float, &Value, Components, nullptr, nullptr, nullptr, (ImGuiInputTextFlags)Flags)) {
         if (OnChange) {
             OnChange.Call(lua::ImguiHandle(Handle), Value);
         }
@@ -689,7 +689,7 @@ void InputScalar::StyledRender()
 
 void InputInt::StyledRender()
 {
-    if (ImGui::InputScalarN(Label.c_str(), ImGuiDataType_S32, &Value, Components)) {
+    if (ImGui::InputScalarN(Label.c_str(), ImGuiDataType_S32, &Value, Components, nullptr, nullptr, nullptr, (ImGuiInputTextFlags)Flags)) {
         if (OnChange) {
             OnChange.Call(lua::ImguiHandle(Handle), Value);
         }
@@ -699,7 +699,7 @@ void InputInt::StyledRender()
 
 void ColorEdit::StyledRender()
 {
-    if (ImGui::ColorEdit4(Label.c_str(), &Color.x, HasAlpha ? 0 : ImGuiColorEditFlags_NoAlpha)) {
+    if (ImGui::ColorEdit4(Label.c_str(), &Color.x, (ImGuiColorEditFlags)Flags)) {
         if (OnChange) {
             OnChange.Call(lua::ImguiHandle(Handle), Color);
         }
@@ -709,7 +709,7 @@ void ColorEdit::StyledRender()
 
 void ColorPicker::StyledRender()
 {
-    if (ImGui::ColorPicker4(Label.c_str(), &Color.x, HasAlpha ? 0 : ImGuiColorEditFlags_NoAlpha)) {
+    if (ImGui::ColorPicker4(Label.c_str(), &Color.x, (ImGuiColorEditFlags)Flags)) {
         if (OnChange) {
             OnChange.Call(lua::ImguiHandle(Handle), Color);
         }
