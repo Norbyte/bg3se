@@ -49,6 +49,11 @@ void StyledRenderable::Render()
         ImGui::PopStyleVar(StyleVars.size());
     }
 
+    if (tooltip_) {
+        auto tooltip = Manager->GetRenderable(tooltip_.Handle);
+        if (tooltip) tooltip->Render();
+    }
+
     if (ImGui::IsItemActivated() && OnActivate) {
         OnActivate.Call(lua::ImguiHandle(Handle));
     }
@@ -82,6 +87,15 @@ void StyledRenderable::SetStyleColor(GuiColor color, glm::vec4 value)
     }
 
     StyleColors.push_back(StyleColor{ color, value });
+}
+
+
+lua::ImguiHandle StyledRenderable::Tooltip()
+{
+    if (tooltip_) return tooltip_;
+
+    tooltip_ = Manager->CreateRenderable<extui::Tooltip>();
+    return tooltip_;
 }
 
 
@@ -138,6 +152,14 @@ lua::ImguiHandle TreeParent::AddTable(char const* label, uint32_t columns)
     tbl->Label = label;
     tbl->Columns = columns;
     return tbl;
+}
+
+
+lua::ImguiHandle TreeParent::AddPopup(char const* label)
+{
+    auto e = AddChild<Popup>();
+    e->Label = label;
+    return e;
 }
 
 
@@ -443,6 +465,40 @@ void TableCell::EndRender()
 }
 
 
+bool Tooltip::BeginRender()
+{
+    rendering_ = ImGui::BeginItemTooltip();
+    return rendering_;
+}
+
+
+void Tooltip::EndRender()
+{
+    if (rendering_) ImGui::EndTooltip();
+    rendering_ = false;
+}
+
+
+bool Popup::BeginRender()
+{
+    rendering_ = ImGui::BeginPopup(Label.c_str());
+    return rendering_;
+}
+
+
+void Popup::EndRender()
+{
+    if (rendering_) ImGui::EndPopup();
+    rendering_ = false;
+}
+
+
+void Popup::Open()
+{
+    ImGui::OpenPopup(Label.c_str());
+}
+
+
 void Text::StyledRender()
 {
     ImGui::TextUnformatted(Label.c_str(), Label.c_str() + Label.size());
@@ -674,6 +730,8 @@ IMGUIObjectManager::IMGUIObjectManager()
     pools_[(unsigned)IMGUIObjectType::Table] = std::make_unique<IMGUIObjectPool<Table>>();
     pools_[(unsigned)IMGUIObjectType::TableRow] = std::make_unique<IMGUIObjectPool<TableRow>>();
     pools_[(unsigned)IMGUIObjectType::TableCell] = std::make_unique<IMGUIObjectPool<TableCell>>();
+    pools_[(unsigned)IMGUIObjectType::Tooltip] = std::make_unique<IMGUIObjectPool<Tooltip>>();
+    pools_[(unsigned)IMGUIObjectType::Popup] = std::make_unique<IMGUIObjectPool<Popup>>();
 
     pools_[(unsigned)IMGUIObjectType::Text] = std::make_unique<IMGUIObjectPool<Text>>();
     pools_[(unsigned)IMGUIObjectType::BulletText] = std::make_unique<IMGUIObjectPool<BulletText>>();

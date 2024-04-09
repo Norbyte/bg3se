@@ -29,6 +29,9 @@ enum class IMGUIObjectType : uint8_t
     TableRow,
     TableCell,
 
+    Tooltip,
+    Popup,
+
     // Texts
     Text,
     BulletText,
@@ -93,6 +96,7 @@ public:
     void Render() override;
     void SetStyleVar(GuiStyleVar var, float value);
     void SetStyleColor(GuiColor color, glm::vec4 value);
+    lua::ImguiHandle Tooltip();
 
     Array<StyleVar> StyleVars;
     Array<StyleColor> StyleColors;
@@ -101,6 +105,9 @@ public:
 
     lua::LuaDelegate<void(lua::ImguiHandle)> OnActivate;
     lua::LuaDelegate<void(lua::ImguiHandle)> OnDeactivate;
+
+private:
+    lua::ImguiHandle tooltip_;
 };
 
 
@@ -117,6 +124,7 @@ public:
     lua::ImguiHandle AddTabBar(char const* label);
     lua::ImguiHandle AddTree(char const* label);
     lua::ImguiHandle AddTable(char const* label, uint32_t columns);
+    lua::ImguiHandle AddPopup(char const* label);
 
     lua::ImguiHandle AddButton(char const* label);
 
@@ -261,6 +269,34 @@ public:
 
     bool BeginRender() override;
     void EndRender() override;
+};
+
+
+class Tooltip : public TreeParent
+{
+public:
+    DECL_UI_TYPE(Tooltip)
+
+    bool BeginRender() override;
+    void EndRender() override;
+
+private:
+    bool rendering_{ false };
+};
+
+
+class Popup : public TreeParent
+{
+public:
+    DECL_UI_TYPE(Popup)
+
+    bool BeginRender() override;
+    void EndRender() override;
+
+    void Open();
+
+private:
+    bool rendering_{ false };
 };
 
 

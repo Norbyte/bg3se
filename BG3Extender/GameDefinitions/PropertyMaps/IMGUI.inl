@@ -7,6 +7,7 @@ BEGIN_CLS(extui::StyledRenderable)
 INHERIT(extui::Renderable)
 P_FUN(SetStyle, extui::StyledRenderable::SetStyleVar)
 P_FUN(SetColor, extui::StyledRenderable::SetStyleColor)
+P_FUN(Tooltip, extui::TreeParent::Tooltip)
 P(Label)
 P(OnActivate)
 P(OnDeactivate)
@@ -21,6 +22,7 @@ P_FUN(AddCollapsingHeader, extui::TreeParent::AddCollapsingHeader)
 P_FUN(AddTabBar, extui::TreeParent::AddTabBar)
 P_FUN(AddTree, extui::TreeParent::AddTree)
 P_FUN(AddTable, extui::TreeParent::AddTable)
+P_FUN(AddPopup, extui::TreeParent::AddPopup)
 
 P_FUN(AddButton, extui::TreeParent::AddButton)
 P_FUN(AddText, extui::TreeParent::AddText)
@@ -95,6 +97,17 @@ END_CLS()
 
 BEGIN_CLS(extui::TableCell)
 INHERIT(extui::TreeParent)
+END_CLS()
+
+
+BEGIN_CLS(extui::Tooltip)
+INHERIT(extui::TreeParent)
+END_CLS()
+
+
+BEGIN_CLS(extui::Popup)
+INHERIT(extui::TreeParent)
+P_FUN(Open, extui::Popup::Open)
 END_CLS()
 
 
