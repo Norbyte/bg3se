@@ -114,6 +114,7 @@ inline void push(lua_State* L, UserId const& v)
 }
 
 void push(lua_State* L, glm::ivec2 const& v);
+void push(lua_State* L, glm::ivec4 const& v);
 void push(lua_State* L, glm::vec2 const& v);
 void push(lua_State* L, glm::vec3 const& v);
 void push(lua_State* L, glm::vec4 const& v);
@@ -127,6 +128,16 @@ void push(lua_State* L, PersistentRef const& v);
 void push(lua_State* L, RegistryEntry const& v);
 void push(lua_State* L, PersistentRegistryEntry const& v);
 void push(lua_State* L, RawComponentRef const& v);
+
+template <class T>
+void push(lua_State* L, LuaDelegate<T> const& v)
+{
+	if (v) {
+		v.Push();
+	} else {
+		lua_pushnil(L);
+	}
+}
 
 void assign(lua_State* L, int idx, glm::vec2 const& v);
 void assign(lua_State* L, int idx, glm::vec3 const& v);
@@ -224,6 +235,15 @@ inline void push(lua_State* L, glm::ivec2 const& v)
 	lua_createtable(L, 2, 0);
 	settable(L, 1, v.x);
 	settable(L, 2, v.y);
+}
+
+inline void push(lua_State* L, glm::ivec4 const& v)
+{
+	lua_createtable(L, 4, 0);
+	settable(L, 1, v.x);
+	settable(L, 2, v.y);
+	settable(L, 3, v.z);
+	settable(L, 4, v.w);
 }
 
 inline void push(lua_State* L, glm::i16vec2 const& v)

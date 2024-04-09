@@ -20,17 +20,32 @@ enum class IMGUIObjectType : uint8_t
     Window,
     Group,
     CollapsingHeader,
+    TabBar,
+    TabItem,
+
+    // Texts
     Text,
     BulletText,
     SeparatorText,
+
+    // Layout helpers
+    Spacing,
+    Dummy,
+    NewLine,
+    Separator,
+
+    // 
     Button,
     Checkbox,
     RadioButton,
     InputText,
     Combo,
     DragScalar,
+    DragInt,
     SliderScalar,
+    SliderInt,
     InputScalar,
+    InputInt,
     ColorEdit,
     ColorPicker,
     Max = ColorPicker
@@ -53,13 +68,13 @@ public:
 
 struct StyleColor
 {
-    ImGuiCol Key;
+    GuiColor Key;
     glm::vec4 Value;
 };
 
 struct StyleVar
 {
-    ImGuiStyleVar Key;
+    GuiStyleVar Key;
     float Value;
 };
 
@@ -70,13 +85,16 @@ public:
     virtual void StyledRender() = 0;
 
     void Render() override;
-    void SetStyleVar(ImGuiStyleVar var, float value);
-    void SetStyleColor(ImGuiCol color, glm::vec4 value);
+    void SetStyleVar(GuiStyleVar var, float value);
+    void SetStyleColor(GuiColor color, glm::vec4 value);
 
     Array<StyleVar> StyleVars;
     Array<StyleColor> StyleColors;
     STDString Label;
     bool SameLine{ false };
+
+    lua::LuaDelegate<void(lua::ImguiHandle)> OnActivate;
+    lua::LuaDelegate<void(lua::ImguiHandle)> OnDeactivate;
 };
 
 
@@ -88,23 +106,37 @@ public:
 
     void StyledRender() override;
 
+    lua::ImguiHandle AddGroup(char const* label);
+    lua::ImguiHandle AddCollapsingHeader(char const* label);
+    lua::ImguiHandle AddTabBar(char const* label);
+
     lua::ImguiHandle AddButton(char const* label);
+
     lua::ImguiHandle AddText(char const* label);
     lua::ImguiHandle AddBulletText(char const* label);
     lua::ImguiHandle AddSeparatorText(char const* label);
+
+    lua::ImguiHandle AddSpacing();
+    lua::ImguiHandle AddDummy(float width, float height);
+    lua::ImguiHandle AddNewLine();
+    lua::ImguiHandle AddSeparator();
+
     lua::ImguiHandle AddCheckbox(char const* label, std::optional<bool> checked);
     lua::ImguiHandle AddRadioButton(char const* label, std::optional<bool> active);
     lua::ImguiHandle AddInputText(char const* label, std::optional<STDString> value);
     lua::ImguiHandle AddCombo(char const* label);
     lua::ImguiHandle AddDrag(char const* label, std::optional<float> value, std::optional<float> min, std::optional<float> max);
+    lua::ImguiHandle AddDragInt(char const* label, std::optional<int> value, std::optional<int> min, std::optional<int> max);
     lua::ImguiHandle AddSlider(char const* label, std::optional<float> value, std::optional<float> min, std::optional<float> max);
+    lua::ImguiHandle AddSliderInt(char const* label, std::optional<int> value, std::optional<int> min, std::optional<int> max);
     lua::ImguiHandle AddInputScalar(char const* label, std::optional<float> value);
+    lua::ImguiHandle AddInputInt(char const* label, std::optional<int> value);
     lua::ImguiHandle AddColorEdit(char const* label, std::optional<glm::vec3> value);
     lua::ImguiHandle AddColorPicker(char const* label, std::optional<glm::vec3> value);
 
     Array<HandleType> Children;
 
-private:
+protected:
     template <class T>
     T* AddChild();
 };
@@ -144,6 +176,34 @@ public:
 };
 
 
+class TabBar : public TreeParent
+{
+public:
+    DECL_UI_TYPE(TabBar)
+
+    bool BeginRender() override;
+    void EndRender() override;
+
+    lua::ImguiHandle AddTabItem(char const* label);
+
+private:
+    bool rendering_{ false };
+};
+
+
+class TabItem : public TreeParent
+{
+public:
+    DECL_UI_TYPE(TabItem)
+
+    bool BeginRender() override;
+    void EndRender() override;
+
+private:
+    bool rendering_{ false };
+};
+
+
 class Text : public StyledRenderable
 {
 public:
@@ -171,6 +231,45 @@ public:
 };
 
 
+class Spacing : public StyledRenderable
+{
+public:
+    DECL_UI_TYPE(Spacing)
+
+    void StyledRender() override;
+};
+
+
+class Dummy : public StyledRenderable
+{
+public:
+    DECL_UI_TYPE(Dummy)
+
+    void StyledRender() override;
+
+    float Width{ 0.0f };
+    float Height{ 0.0f };
+};
+
+
+class NewLine : public StyledRenderable
+{
+public:
+    DECL_UI_TYPE(NewLine)
+
+    void StyledRender() override;
+};
+
+
+class Separator : public StyledRenderable
+{
+public:
+    DECL_UI_TYPE(Separator)
+
+    void StyledRender() override;
+};
+
+
 class Button : public StyledRenderable
 {
 public:
@@ -178,7 +277,7 @@ public:
 
     void StyledRender() override;
 
-    lua::RegistryEntry OnClick;
+    lua::LuaDelegate<void (lua::ImguiHandle)> OnClick;
 };
 
 
@@ -190,6 +289,7 @@ public:
     void StyledRender() override;
 
     bool Checked{ false };
+    lua::LuaDelegate<void (lua::ImguiHandle, bool)> OnChange;
 };
 
 
@@ -201,6 +301,7 @@ public:
     void StyledRender() override;
 
     bool Active{ false };
+    lua::LuaDelegate<void (lua::ImguiHandle, bool)> OnChange;
 };
 
 
@@ -216,6 +317,7 @@ public:
     void SetText(STDString text);
 
     STDString Text;
+    lua::LuaDelegate<void (lua::ImguiHandle, STDString)> OnChange;
 };
 
 
@@ -228,6 +330,7 @@ public:
 
     Array<STDString> Options;
     int SelectedIndex{ -1 };
+    lua::LuaDelegate<void (lua::ImguiHandle, int)> OnChange;
 };
 
 
@@ -242,6 +345,22 @@ public:
     glm::vec4 Min{ 0.0f };
     glm::vec4 Max{ 1.0f };
     int Components{ 1 };
+    lua::LuaDelegate<void (lua::ImguiHandle, glm::vec4)> OnChange;
+};
+
+
+class DragInt : public StyledRenderable
+{
+public:
+    DECL_UI_TYPE(DragInt)
+
+    void StyledRender() override;
+
+    glm::ivec4 Value{ 0 };
+    glm::ivec4 Min{ 0 };
+    glm::ivec4 Max{ 1 };
+    int Components{ 1 };
+    lua::LuaDelegate<void (lua::ImguiHandle, glm::ivec4)> OnChange;
 };
 
 
@@ -256,6 +375,22 @@ public:
     glm::vec4 Min{ 0.0f };
     glm::vec4 Max{ 1.0f };
     int Components{ 1 };
+    lua::LuaDelegate<void (lua::ImguiHandle, glm::vec4)> OnChange;
+};
+
+
+class SliderInt : public StyledRenderable
+{
+public:
+    DECL_UI_TYPE(SliderInt)
+
+    void StyledRender() override;
+
+    glm::ivec4 Value{ 0 };
+    glm::ivec4 Min{ 0 };
+    glm::ivec4 Max{ 1 };
+    int Components{ 1 };
+    lua::LuaDelegate<void (lua::ImguiHandle, glm::ivec4)> OnChange;
 };
 
 
@@ -268,6 +403,20 @@ public:
 
     glm::vec4 Value{ 0.0f };
     int Components{ 1 };
+    lua::LuaDelegate<void (lua::ImguiHandle, glm::vec4)> OnChange;
+};
+
+
+class InputInt : public StyledRenderable
+{
+public:
+    DECL_UI_TYPE(InputInt)
+
+    void StyledRender() override;
+
+    glm::ivec4 Value{ 0 };
+    int Components{ 1 };
+    lua::LuaDelegate<void (lua::ImguiHandle, glm::ivec4)> OnChange;
 };
 
 
@@ -280,6 +429,7 @@ public:
 
     glm::vec4 Color{ 0.0f };
     bool HasAlpha{ false };
+    lua::LuaDelegate<void (lua::ImguiHandle, glm::vec4)> OnChange;
 };
 
 
@@ -292,6 +442,7 @@ public:
 
     glm::vec4 Color{ 0.0f };
     bool HasAlpha{ false };
+    lua::LuaDelegate<void (lua::ImguiHandle, glm::vec4)> OnChange;
 };
 
 

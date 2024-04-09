@@ -53,6 +53,12 @@ struct StackCheck
 };
 #endif
 
+END_NS()
+
+#include <Lua/Shared/LuaDelegate.h>
+
+BEGIN_NS(lua)
+
 // Helper type for getting any Lua value as parameter
 struct AnyRef
 {

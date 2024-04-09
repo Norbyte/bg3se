@@ -6,6 +6,11 @@ BEGIN_NS(lua)
 
 class GenericPropertyMap;
 
+template <class T>
+class LuaDelegate;
+
+class RegistryEntry;
+
 END_NS();
 
 BEGIN_SE()
@@ -249,6 +254,12 @@ StaticTypeInformation& GetStaticTypeInfo(Overload<T>)
 	} else {
 		return GetStaticTypeInfoInternal(Overload<T>{});
 	}
+}
+
+template <class T>
+StaticTypeInformation& GetStaticTypeInfo(Overload<lua::LuaDelegate<T>>)
+{
+	return GetStaticTypeInfo(Overload<lua::RegistryEntry>{});
 }
 
 template <class T>

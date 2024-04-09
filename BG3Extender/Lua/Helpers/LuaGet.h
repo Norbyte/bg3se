@@ -117,6 +117,12 @@ RegistryEntry do_get(lua_State* L, int index, Overload<RegistryEntry>);
 PersistentRef do_get(lua_State* L, int index, Overload<PersistentRef>);
 PersistentRegistryEntry do_get(lua_State* L, int index, Overload<PersistentRegistryEntry>);
 
+template <class T>
+LuaDelegate<T> do_get(lua_State* L, int index, Overload<LuaDelegate<T>>)
+{
+	return LuaDelegate<T>(L, index);
+}
+
 template <class TValue>
 TValue checked_getfield(lua_State* L, char const* k, int index = -1)
 {
@@ -152,6 +158,18 @@ inline glm::ivec2 do_get(lua_State* L, int index, Overload<glm::ivec2>)
 	luaL_checktype(L, index, LUA_TTABLE);
 	val.x = gettable<int32_t>(L, 1, i);
 	val.y = gettable<int32_t>(L, 2, i);
+	return val;	
+}
+
+inline glm::ivec4 do_get(lua_State* L, int index, Overload<glm::ivec4>)
+{	
+	auto i = lua_absindex(L, index);
+	glm::ivec4 val;	
+	luaL_checktype(L, index, LUA_TTABLE);
+	val.x = gettable<int32_t>(L, 1, i);
+	val.y = gettable<int32_t>(L, 2, i);
+	val.z = gettable<int32_t>(L, 3, i);
+	val.w = gettable<int32_t>(L, 4, i);
 	return val;	
 }
 

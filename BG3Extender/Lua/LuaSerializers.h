@@ -119,6 +119,7 @@ namespace bg3se::lua
 	inline LuaSerializer& operator << (LuaSerializer& s, ComponentHandle& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, EntityHandle& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, glm::ivec2& v) { return s.Visit(v); }
+	inline LuaSerializer& operator << (LuaSerializer& s, glm::ivec4& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, glm::vec2& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, glm::vec3& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, glm::vec4& v) { return s.Visit(v); }
@@ -133,6 +134,9 @@ namespace bg3se::lua
 	inline LuaSerializer& operator << (LuaSerializer& s, RegistryEntry& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, PersistentRef& v) { return s.Visit(v); }
 	inline LuaSerializer& operator << (LuaSerializer& s, PersistentRegistryEntry& v) { return s.Visit(v); }
+
+	template <class T>
+	inline LuaSerializer& operator << (LuaSerializer& s, LuaDelegate<T>& v) { return s.Visit(v); }
 	
 
 	LuaSerializer& operator << (LuaSerializer& s, ecs::EntityRef& v);

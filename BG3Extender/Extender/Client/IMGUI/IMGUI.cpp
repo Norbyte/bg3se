@@ -30,11 +30,11 @@ Renderable::~Renderable() {}
 void StyledRenderable::Render()
 {
     for (auto const& var : StyleVars) {
-        ImGui::PushStyleVar(var.Key, var.Value);
+        ImGui::PushStyleVar((ImGuiStyleVar)var.Key, var.Value);
     }
 
     for (auto const& var : StyleColors) {
-        ImGui::PushStyleColor(var.Key, ImVec4(var.Value.r, var.Value.g, var.Value.b, var.Value.a));
+        ImGui::PushStyleColor((ImGuiCol)var.Key, ImVec4(var.Value.r, var.Value.g, var.Value.b, var.Value.a));
     }
 
     if (SameLine) ImGui::SameLine();
@@ -48,10 +48,18 @@ void StyledRenderable::Render()
     if (!StyleVars.empty()) {
         ImGui::PopStyleVar(StyleVars.size());
     }
+
+    if (ImGui::IsItemActivated() && OnActivate) {
+        OnActivate.Call(lua::ImguiHandle(Handle));
+    }
+
+    if (ImGui::IsItemDeactivated() && OnDeactivate) {
+        OnDeactivate.Call(lua::ImguiHandle(Handle));
+    }
 }
 
 
-void StyledRenderable::SetStyleVar(ImGuiStyleVar var, float value)
+void StyledRenderable::SetStyleVar(GuiStyleVar var, float value)
 {
     for (auto& kv : StyleVars) {
         if (kv.Key == var) {
@@ -64,7 +72,7 @@ void StyledRenderable::SetStyleVar(ImGuiStyleVar var, float value)
 }
 
 
-void StyledRenderable::SetStyleColor(ImGuiCol color, glm::vec4 value)
+void StyledRenderable::SetStyleColor(GuiColor color, glm::vec4 value)
 {
     for (auto& kv : StyleColors) {
         if (kv.Key == color) {
@@ -89,6 +97,30 @@ void TreeParent::StyledRender()
     }
 
     EndRender();
+}
+
+
+lua::ImguiHandle TreeParent::AddGroup(char const* label)
+{
+    auto btn = AddChild<Group>();
+    btn->Label = label;
+    return btn;
+}
+
+
+lua::ImguiHandle TreeParent::AddCollapsingHeader(char const* label)
+{
+    auto btn = AddChild<CollapsingHeader>();
+    btn->Label = label;
+    return btn;
+}
+
+
+lua::ImguiHandle TreeParent::AddTabBar(char const* label)
+{
+    auto btn = AddChild<TabBar>();
+    btn->Label = label;
+    return btn;
 }
 
 
@@ -121,6 +153,33 @@ lua::ImguiHandle TreeParent::AddSeparatorText(char const* label)
     auto txt = AddChild<SeparatorText>();
     txt->Label = label;
     return txt;
+}
+
+
+lua::ImguiHandle TreeParent::AddSpacing()
+{
+    return AddChild<Spacing>();
+}
+
+
+lua::ImguiHandle TreeParent::AddDummy(float width, float height)
+{
+    auto txt = AddChild<Dummy>();
+    txt->Width = width;
+    txt->Height = height;
+    return txt;
+}
+
+
+lua::ImguiHandle TreeParent::AddNewLine()
+{
+    return AddChild<NewLine>();
+}
+
+
+lua::ImguiHandle TreeParent::AddSeparator()
+{
+    return AddChild<Separator>();
 }
 
 
@@ -172,6 +231,18 @@ lua::ImguiHandle TreeParent::AddDrag(char const* label, std::optional<float> val
     return e;
 }
 
+
+lua::ImguiHandle TreeParent::AddDragInt(char const* label, std::optional<int> value, std::optional<int> min, std::optional<int> max)
+{
+    auto e = AddChild<DragInt>();
+    e->Label = label;
+    if (value) e->Value = glm::ivec4(*value);
+    if (min) e->Min = glm::ivec4(*min);
+    if (max) e->Max = glm::ivec4(*max);
+    return e;
+}
+
+
 lua::ImguiHandle TreeParent::AddSlider(char const* label, std::optional<float> value, std::optional<float> min, std::optional<float> max)
 {
     auto e = AddChild<SliderScalar>();
@@ -183,11 +254,31 @@ lua::ImguiHandle TreeParent::AddSlider(char const* label, std::optional<float> v
 }
 
 
+lua::ImguiHandle TreeParent::AddSliderInt(char const* label, std::optional<int> value, std::optional<int> min, std::optional<int> max)
+{
+    auto e = AddChild<SliderInt>();
+    e->Label = label;
+    if (value) e->Value = glm::ivec4(*value);
+    if (min) e->Min = glm::ivec4(*min);
+    if (max) e->Max = glm::ivec4(*max);
+    return e;
+}
+
+
 lua::ImguiHandle TreeParent::AddInputScalar(char const* label, std::optional<float> value)
 {
     auto e = AddChild<InputScalar>();
     e->Label = label;
     if (value) e->Value = glm::vec4(*value);
+    return e;
+}
+
+
+lua::ImguiHandle TreeParent::AddInputInt(char const* label, std::optional<int> value)
+{
+    auto e = AddChild<InputInt>();
+    e->Label = label;
+    if (value) e->Value = glm::ivec4(*value);
     return e;
 }
 
@@ -244,6 +335,39 @@ void CollapsingHeader::EndRender()
 {}
 
 
+bool TabBar::BeginRender()
+{
+    rendering_ = ImGui::BeginTabBar(Label.c_str());
+    return rendering_;
+}
+
+void TabBar::EndRender()
+{
+    if (rendering_) ImGui::EndTabBar();
+    rendering_ = false;
+}
+
+lua::ImguiHandle TabBar::AddTabItem(char const* label)
+{
+    auto btn = AddChild<TabItem>();
+    btn->Label = label;
+    return btn;
+}
+
+
+bool TabItem::BeginRender()
+{
+    rendering_ = ImGui::BeginTabItem(Label.c_str());
+    return rendering_;
+}
+
+void TabItem::EndRender()
+{
+    if (rendering_) ImGui::EndTabItem();
+    rendering_ = false;
+}
+
+
 void Text::StyledRender()
 {
     ImGui::TextUnformatted(Label.c_str(), Label.c_str() + Label.size());
@@ -266,20 +390,35 @@ void SeparatorText::StyledRender()
 }
 
 
+void Spacing::StyledRender()
+{
+    ImGui::Spacing();
+}
+
+
+void Dummy::StyledRender()
+{
+    ImGui::Dummy(ImVec2(Width, Height));
+}
+
+
+void NewLine::StyledRender()
+{
+    ImGui::NewLine();
+}
+
+
+void Separator::StyledRender()
+{
+    ImGui::Separator();
+}
+
+
 void Button::StyledRender()
 {
     if (ImGui::Button(Label.c_str())) {
-
         if (OnClick) {
-            auto L = OnClick.GetState();
-            lua::StackCheck _(L);
-
-            OnClick.Push();
-            lua::Ref func(L, lua_absindex(L, -1));
-
-            lua::ProtectedFunctionCaller<std::tuple<lua::ImguiHandle>, void> caller{ func, std::tuple(lua::ImguiHandle(Handle)) };
-            caller.Call(L, "IMGUI event dispatch");
-            lua_pop(L, 1);
+            OnClick.Call(lua::ImguiHandle(Handle));
         }
     }
 }
@@ -288,7 +427,9 @@ void Button::StyledRender()
 void Checkbox::StyledRender()
 {
     if (ImGui::Checkbox(Label.c_str(), &Checked)) {
-        // call delegate
+        if (OnChange) {
+            OnChange.Call(lua::ImguiHandle(Handle), Checked);
+        }
     }
 }
 
@@ -296,7 +437,9 @@ void Checkbox::StyledRender()
 void RadioButton::StyledRender()
 {
     if (ImGui::RadioButton(Label.c_str(), Active)) {
-        // call delegate
+        if (OnChange) {
+            OnChange.Call(lua::ImguiHandle(Handle), Active);
+        }
     }
 }
 
@@ -311,7 +454,9 @@ void InputText::StyledRender()
 {
     if (ImGui::InputText(Label.c_str(), Text.data(), Text.capacity())) {
         Text.resize((uint32_t)strlen(Text.data()));
-        // call delegate
+        if (OnChange) {
+            OnChange.Call(lua::ImguiHandle(Handle), Text);
+        }
     }
 }
 
@@ -335,16 +480,25 @@ void Combo::StyledRender()
     }
 
     if (ImGui::BeginCombo(Label.c_str(), preview)) {
+        int selectedIndex = -1;
+
         int i = 0;
         for (auto const& val : Options) {
             bool selected = (SelectedIndex == i);
             if (ImGui::Selectable(val.c_str(), &selected)) {
                 if (selected) {
-                    SelectedIndex = i;
+                    selectedIndex = i;
                 }
             }
 
             i++;
+        }
+
+        if (SelectedIndex != selectedIndex) {
+            SelectedIndex = selectedIndex;
+            if (OnChange) {
+                OnChange.Call(lua::ImguiHandle(Handle), SelectedIndex);
+            }
         }
 
         ImGui::EndCombo();
@@ -355,7 +509,19 @@ void Combo::StyledRender()
 void DragScalar::StyledRender()
 {
     if (ImGui::DragScalarN(Label.c_str(), ImGuiDataType_Float, &Value, Components, 1.0f, &Min, &Max)) {
-        // call delegate
+        if (OnChange) {
+            OnChange.Call(lua::ImguiHandle(Handle), Value);
+        }
+    }
+}
+
+
+void DragInt::StyledRender()
+{
+    if (ImGui::DragScalarN(Label.c_str(), ImGuiDataType_S32, &Value, Components, 1.0f, &Min, &Max)) {
+        if (OnChange) {
+            OnChange.Call(lua::ImguiHandle(Handle), Value);
+        }
     }
 }
 
@@ -363,7 +529,19 @@ void DragScalar::StyledRender()
 void SliderScalar::StyledRender()
 {
     if (ImGui::SliderScalarN(Label.c_str(), ImGuiDataType_Float, &Value, Components, &Min, &Max)) {
-        // call delegate
+        if (OnChange) {
+            OnChange.Call(lua::ImguiHandle(Handle), Value);
+        }
+    }
+}
+
+
+void SliderInt::StyledRender()
+{
+    if (ImGui::SliderScalarN(Label.c_str(), ImGuiDataType_S32, &Value, Components, &Min, &Max)) {
+        if (OnChange) {
+            OnChange.Call(lua::ImguiHandle(Handle), Value);
+        }
     }
 }
 
@@ -371,7 +549,19 @@ void SliderScalar::StyledRender()
 void InputScalar::StyledRender()
 {
     if (ImGui::InputScalarN(Label.c_str(), ImGuiDataType_Float, &Value, Components)) {
-        // call delegate
+        if (OnChange) {
+            OnChange.Call(lua::ImguiHandle(Handle), Value);
+        }
+    }
+}
+
+
+void InputInt::StyledRender()
+{
+    if (ImGui::InputScalarN(Label.c_str(), ImGuiDataType_S32, &Value, Components)) {
+        if (OnChange) {
+            OnChange.Call(lua::ImguiHandle(Handle), Value);
+        }
     }
 }
 
@@ -379,7 +569,9 @@ void InputScalar::StyledRender()
 void ColorEdit::StyledRender()
 {
     if (ImGui::ColorEdit4(Label.c_str(), &Color.x, HasAlpha ? 0 : ImGuiColorEditFlags_NoAlpha)) {
-        // call delegate
+        if (OnChange) {
+            OnChange.Call(lua::ImguiHandle(Handle), Color);
+        }
     }
 }
 
@@ -387,7 +579,9 @@ void ColorEdit::StyledRender()
 void ColorPicker::StyledRender()
 {
     if (ImGui::ColorPicker4(Label.c_str(), &Color.x, HasAlpha ? 0 : ImGuiColorEditFlags_NoAlpha)) {
-        // call delegate
+        if (OnChange) {
+            OnChange.Call(lua::ImguiHandle(Handle), Color);
+        }
     }
 }
 
@@ -399,17 +593,31 @@ IMGUIObjectManager::IMGUIObjectManager()
     pools_[(unsigned)IMGUIObjectType::Window] = std::make_unique<IMGUIObjectPool<Window>>();
     pools_[(unsigned)IMGUIObjectType::Group] = std::make_unique<IMGUIObjectPool<Group>>();
     pools_[(unsigned)IMGUIObjectType::CollapsingHeader] = std::make_unique<IMGUIObjectPool<CollapsingHeader>>();
+    pools_[(unsigned)IMGUIObjectType::TabBar] = std::make_unique<IMGUIObjectPool<TabBar>>();
+    pools_[(unsigned)IMGUIObjectType::TabItem] = std::make_unique<IMGUIObjectPool<TabItem>>();
+
     pools_[(unsigned)IMGUIObjectType::Text] = std::make_unique<IMGUIObjectPool<Text>>();
     pools_[(unsigned)IMGUIObjectType::BulletText] = std::make_unique<IMGUIObjectPool<BulletText>>();
     pools_[(unsigned)IMGUIObjectType::SeparatorText] = std::make_unique<IMGUIObjectPool<SeparatorText>>();
+
+    pools_[(unsigned)IMGUIObjectType::Spacing] = std::make_unique<IMGUIObjectPool<Spacing>>();
+    pools_[(unsigned)IMGUIObjectType::Dummy] = std::make_unique<IMGUIObjectPool<Dummy>>();
+    pools_[(unsigned)IMGUIObjectType::NewLine] = std::make_unique<IMGUIObjectPool<NewLine>>();
+    pools_[(unsigned)IMGUIObjectType::Separator] = std::make_unique<IMGUIObjectPool<Separator>>();
+
     pools_[(unsigned)IMGUIObjectType::Button] = std::make_unique<IMGUIObjectPool<Button>>();
     pools_[(unsigned)IMGUIObjectType::Checkbox] = std::make_unique<IMGUIObjectPool<Checkbox>>();
     pools_[(unsigned)IMGUIObjectType::RadioButton] = std::make_unique<IMGUIObjectPool<RadioButton>>();
     pools_[(unsigned)IMGUIObjectType::InputText] = std::make_unique<IMGUIObjectPool<InputText>>();
     pools_[(unsigned)IMGUIObjectType::Combo] = std::make_unique<IMGUIObjectPool<Combo>>();
+
     pools_[(unsigned)IMGUIObjectType::DragScalar] = std::make_unique<IMGUIObjectPool<DragScalar>>();
+    pools_[(unsigned)IMGUIObjectType::DragInt] = std::make_unique<IMGUIObjectPool<DragInt>>();
     pools_[(unsigned)IMGUIObjectType::SliderScalar] = std::make_unique<IMGUIObjectPool<SliderScalar>>();
+    pools_[(unsigned)IMGUIObjectType::SliderInt] = std::make_unique<IMGUIObjectPool<SliderInt>>();
     pools_[(unsigned)IMGUIObjectType::InputScalar] = std::make_unique<IMGUIObjectPool<InputScalar>>();
+    pools_[(unsigned)IMGUIObjectType::InputInt] = std::make_unique<IMGUIObjectPool<InputInt>>();
+
     pools_[(unsigned)IMGUIObjectType::ColorEdit] = std::make_unique<IMGUIObjectPool<ColorEdit>>();
     pools_[(unsigned)IMGUIObjectType::ColorPicker] = std::make_unique<IMGUIObjectPool<ColorPicker>>();
 }

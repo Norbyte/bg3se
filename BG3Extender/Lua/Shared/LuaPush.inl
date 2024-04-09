@@ -164,8 +164,7 @@ void push(lua_State* L, RegistryEntry const& v)
 {
 	if (v) {
 		v.Push();
-	}
-	else {
+	} else {
 		lua_pushnil(L);
 	}
 }

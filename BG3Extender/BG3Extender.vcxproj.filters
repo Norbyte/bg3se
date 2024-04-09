@@ -473,6 +473,7 @@
     <ClInclude Include="Extender\Client\IMGUI\Backends.h" />
     <ClInclude Include="Extender\Client\IMGUI\Objects.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaImguiProxy.h" />
+    <ClInclude Include="Lua\Shared\LuaDelegate.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

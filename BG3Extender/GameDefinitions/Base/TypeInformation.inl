@@ -200,9 +200,12 @@ void TypeInformationRepository::Initialize()
 	RegisterStaticType<lua::PersistentRef>("PersistentRef", LuaTypeId::Any);
 	RegisterStaticType<lua::PersistentRegistryEntry>("PersistentRegistryEntry", LuaTypeId::Any);
 	RegisterStaticType<UserReturn>("UserReturn", LuaTypeId::Any);
+	RegisterStaticType<lua::ImguiHandle>("ImguiHandle", LuaTypeId::Object);
 
 	auto& ivec2 = RegisterStaticType<glm::ivec2>("ivec2", LuaTypeId::Array);
 	ivec2.ElementType = GetStaticTypeInfo(Overload<int32_t>{});
+	auto& ivec4 = RegisterStaticType<glm::ivec4>("ivec4", LuaTypeId::Array);
+	ivec4.ElementType = GetStaticTypeInfo(Overload<int32_t>{});
 	auto& i16vec2 = RegisterStaticType<glm::i16vec2>("i16vec2", LuaTypeId::Array);
 	i16vec2.ElementType = GetStaticTypeInfo(Overload<int16_t>{});
 	auto& vec2 = RegisterStaticType<glm::vec2>("vec2", LuaTypeId::Array);

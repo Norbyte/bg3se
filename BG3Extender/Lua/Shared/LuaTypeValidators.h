@@ -34,6 +34,7 @@ inline typename std::enable_if_t<std::is_floating_point_v<T>, bool> Validate(T c
 
 // No validation possible for vector types
 inline bool Validate(glm::ivec2 const* b, Overload<glm::ivec2>) { return true; }
+inline bool Validate(glm::ivec4 const* b, Overload<glm::ivec4>) { return true; }
 inline bool Validate(glm::i16vec2 const* b, Overload<glm::i16vec2>) { return true; }
 inline bool Validate(glm::vec2 const* b, Overload<glm::vec2>) { return true; }
 inline bool Validate(glm::vec3 const* b, Overload<glm::vec3>) { return true; }
@@ -167,6 +168,9 @@ inline bool Validate(Ref const* b, Overload<Ref>) { return true; }
 inline bool Validate(PersistentRef const* b, Overload<PersistentRef>) { return true; }
 inline bool Validate(RegistryEntry const* b, Overload<RegistryEntry>) { return true; }
 inline bool Validate(PersistentRegistryEntry const* b, Overload<PersistentRegistryEntry>) { return true; }
+
+template <class T>
+inline bool Validate(LuaDelegate<T> const* b, Overload<LuaDelegate<T>>) { return true; }
 
 inline bool ValidateRef(RuntimeStringHandle const* h, Overload<RuntimeStringHandle>)
 {

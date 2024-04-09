@@ -27,6 +27,7 @@ BY_VAL(NetId);
 BY_VAL(UserId);
 BY_VAL(Version);
 BY_VAL(glm::ivec2);
+BY_VAL(glm::ivec4);
 BY_VAL(glm::vec2);
 BY_VAL(glm::vec3);
 BY_VAL(glm::vec4);
@@ -40,6 +41,9 @@ BY_VAL(lua::Ref);
 BY_VAL(lua::PersistentRef);
 BY_VAL(lua::RegistryEntry);
 BY_VAL(lua::PersistentRegistryEntry);
+
+template <class T> 
+struct ByVal<lua::LuaDelegate<T>> { static constexpr bool Value = true; };
 
 template <class T> 
 struct ByVal<OverrideableProperty<T>> { static constexpr bool Value = IsByVal<T>; };

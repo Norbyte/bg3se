@@ -148,6 +148,9 @@ namespace lua
 
 	struct CppObjectMetadata;
 	struct CppValueMetadata;
+
+	template <class T>
+	class LuaDelegate;
 }
 
 namespace ui
