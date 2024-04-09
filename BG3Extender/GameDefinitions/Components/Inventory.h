@@ -64,7 +64,7 @@ struct StackComponent : public BaseComponent
 	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryStack;
 	static constexpr auto EngineClass = "eoc::inventory::StackComponent";
 
-	Array<EntityHandle> Arr_u64;
+	[[bg3::legacy(Arr_u64)]] Array<EntityHandle> Elements;
 	Array<uint8_t> Arr_u8;
 };
 

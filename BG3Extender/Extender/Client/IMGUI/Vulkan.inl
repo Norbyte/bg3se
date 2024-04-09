@@ -120,8 +120,8 @@ public:
         init_info.PipelineCache = pipelineCache_;
         init_info.DescriptorPool = descriptorPool_;
         init_info.Subpass = 0;
-        init_info.MinImageCount = 2;
-        init_info.ImageCount = 2;
+        init_info.MinImageCount = swapchain_.images_.size();
+        init_info.ImageCount = swapchain_.images_.size();
         init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
         init_info.Allocator = nullptr;
         init_info.CheckVkResultFn = nullptr;
@@ -146,15 +146,15 @@ public:
 
     void NewFrame() override
     {
-        curViewport_ = (curViewport_ + 1) % 2;
-        GImGui->Viewports[0] = &viewports_[curViewport_];
+        curViewport_ = (curViewport_ + 1) % viewports_.size();
+        GImGui->Viewports[0] = &viewports_[curViewport_].Viewport;
         ImGui_ImplVulkan_NewFrame();
     }
 
     void FinishFrame() override
     {
-        auto vp = &viewports_[curViewport_];
-        auto& drawLists = clonedDrawLists_[curViewport_];
+        auto& vp = viewports_[curViewport_].Viewport;
+        auto& drawLists = viewports_[curViewport_].ClonedDrawLists;
 
         for (auto list : drawLists) {
             delete list;
@@ -162,10 +162,10 @@ public:
 
         drawLists.clear();
 
-        for (int i = 0; i < vp->DrawDataP.CmdLists.Size; i++) {
-            auto list = vp->DrawDataP.CmdLists[i];
+        for (int i = 0; i < vp.DrawDataP.CmdLists.Size; i++) {
+            auto list = vp.DrawDataP.CmdLists[i];
             auto drawList = list->CloneOutput();
-            vp->DrawDataP.CmdLists[i] = drawList;
+            vp.DrawDataP.CmdLists[i] = drawList;
             drawLists.Add(drawList);
         }
 
@@ -178,6 +178,31 @@ public:
     }
 
 private:
+    struct SwapchainImageInfo
+    {
+        VkImage image{ VK_NULL_HANDLE };
+        VkFramebuffer framebuffer{ VK_NULL_HANDLE };
+        VkImageView view{ VK_NULL_HANDLE };
+        VkFence fence{ VK_NULL_HANDLE };
+        VkSemaphore uiDoneSemaphore{ VK_NULL_HANDLE };
+        VkCommandBuffer commandBuffer{ VK_NULL_HANDLE };
+    };
+
+    struct SwapchainInfo
+    {
+        VkRenderPass renderPass_{ VK_NULL_HANDLE };
+        VkCommandPool commandPool_{ VK_NULL_HANDLE };
+        Array<SwapchainImageInfo> images_;
+        uint32_t width_;
+        uint32_t height_;
+    };
+
+    struct ViewportInfo
+    {
+        ImGuiViewportP Viewport;
+        Array<ImDrawList*> ClonedDrawLists;
+    };
+
     void vkCreateInstanceHooked(
         const VkInstanceCreateInfo* pCreateInfo,
         const VkAllocationCallbacks* pAllocator,
@@ -229,25 +254,6 @@ private:
         swapChain_ = *pSwapchain;
         collectSwapChainInfo(pCreateInfo);
     }
-
-    struct SwapchainImageInfo
-    {
-        VkImage image{ VK_NULL_HANDLE };
-        VkFramebuffer framebuffer{ VK_NULL_HANDLE };
-        VkImageView view{ VK_NULL_HANDLE };
-        VkFence fence{ VK_NULL_HANDLE };
-        VkSemaphore uiDoneSemaphore{ VK_NULL_HANDLE };
-        VkCommandBuffer commandBuffer{ VK_NULL_HANDLE };
-    };
-
-    struct SwapchainInfo
-    {
-        VkRenderPass renderPass_{ VK_NULL_HANDLE };
-        VkCommandPool commandPool_{ VK_NULL_HANDLE };
-        Array<SwapchainImageInfo> images_;
-        uint32_t width_;
-        uint32_t height_;
-    };
 
     void collectSwapChainInfo(const VkSwapchainCreateInfoKHR* pCreateInfo)
     {
@@ -398,7 +404,7 @@ private:
 
     void presentPreHook(VkPresentInfoKHR* pPresentInfo)
     {
-        auto& vp = viewports_[drawViewport_];
+        auto& vp = viewports_[drawViewport_].Viewport;
         if (!vp.DrawDataP.Valid) return;
 
         auto& image = swapchain_.images_[pPresentInfo->pImageIndices[0]];
@@ -516,9 +522,11 @@ private:
 
         if (!initialized_) {
             ui_.OnRenderBackendInitialized();
-            viewports_[0] = *GImGui->Viewports[0];
-            viewports_[1] = *GImGui->Viewports[0];
-            GImGui->Viewports[0] = &viewports_[0];
+            for (auto i = 0; i < viewports_.size(); i++) {
+                viewports_[i].Viewport = *GImGui->Viewports[0];
+            }
+            
+            GImGui->Viewports[0] = &viewports_[0].Viewport;
         }
 
         if (initialized_ && drawViewport_ != -1) {
@@ -535,10 +543,9 @@ private:
     VkSwapchainKHR swapChain_{ nullptr };
     VkPipelineCache pipelineCache_{ nullptr };
     VkDescriptorPool descriptorPool_{ nullptr };
-    ImGuiViewportP viewports_[2];
+    std::array<ViewportInfo, 3> viewports_;
     int32_t drawViewport_{ -1 };
     int32_t curViewport_{ 0 };
-    Array<ImDrawList*> clonedDrawLists_[2];
 
     bool initialized_{ false };
 

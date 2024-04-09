@@ -455,7 +455,7 @@ void IMGUIObjectManager::Render()
 
 IMGUIManager::IMGUIManager()
 {
-    platform_ = std::make_unique<SDLBackend>();
+    platform_ = std::make_unique<SDLBackend>(mutex_);
     renderer_ = std::make_unique<VulkanBackend>(*this);
 }
 
@@ -524,6 +524,7 @@ void IMGUIManager::Update()
 {
     if (!enableUI_ || !initialized_ || !objects_) return;
 
+    std::lock_guard _(mutex_);
     platform_->NewFrame();
     renderer_->NewFrame();
     ImGui::NewFrame();

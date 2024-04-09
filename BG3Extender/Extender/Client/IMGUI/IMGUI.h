@@ -27,9 +27,15 @@ public:
     void OnRenderBackendInitialized();
     void Update();
 
+    inline std::recursive_mutex& GetGlobalUIMutex()
+    {
+        return mutex_;
+    }
+
 private:
     std::unique_ptr<PlatformBackend> platform_;
     std::unique_ptr<RenderingBackend> renderer_;
+    std::recursive_mutex mutex_;
 
     IMGUIObjectManager* objects_{ nullptr };
 

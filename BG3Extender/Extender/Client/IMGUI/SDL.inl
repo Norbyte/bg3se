@@ -37,7 +37,10 @@ T* ResolveFunctionTrampoline(T* ref)
 class SDLBackend : public PlatformBackend
 {
 public:
-    SDLBackend() {}
+    SDLBackend(std::recursive_mutex& mutex)
+        : mutex_(mutex)
+    {}
+
     ~SDLBackend() override
     {
         DestroyUI();
@@ -113,7 +116,10 @@ private:
         int result = wrapped(event);
 
         if (enableUI_ && result == 1) {
-            ImGui_ImplSDL2_ProcessEvent(event);
+            {
+                std::lock_guard _(mutex_);
+                ImGui_ImplSDL2_ProcessEvent(event);
+            }
 
             ImGuiIO& io = ImGui::GetIO();
             if (io.WantCaptureKeyboard
@@ -148,6 +154,7 @@ private:
 
     SDL_Window* window_{ nullptr };
     bool enableUI_{ false };
+    std::recursive_mutex& mutex_;
 
     SDLCreateWindowHookType CreateWindowHook_;
     SDLPollEventHookType PollEventHook_;
