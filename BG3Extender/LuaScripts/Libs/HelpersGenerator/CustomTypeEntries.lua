@@ -4,17 +4,15 @@ return {
 Ext_Types = {
 	After = [[
 --- @class GenerateIdeHelpersOptions
---- @field AddOsiris boolean Add all Osiris functions to the global Osi table. This is optional, due to the possible performance cost of having so many functions.
---- @field AddDeprecated boolean Add deprecated functions to the helpers file.
 --- @field AddAliasEnums boolean Add the enums in alias format, for string comparison. Defaults to true.
 --- @field UseBaseExtraData boolean Only include the base ExtraData keys/values in Shared, instead of grabbing whatever the current keys are in the mod environment.
 --- @field GenerateExtraDataAsClass boolean Annotate ExtraData as a class, so it only has fields with no fixed/hardcoded values.
 
---- Generate an ExtIdeHelpers file  
---- @param outputPath string|nil Optional path to save the generated helper file, relative to the `Documents\Larian Studios\Divinity Original Sin 2 Definitive Edition\Osiris Data` folder  
---- @param addOsi boolean|nil If true, all Osiris functions will be included in the Osi global table. This is optional, due to the possible performance cost of having so many functions  
+--- Generate an ExtIdeHelpers file
+--- @param outputPath string? Optional path to save the generated helper file, relative to the `%LOCALAPPDATA%\Larian Studios\Baldur's Gate 3\Script Extender` folder
+--- @param opts GenerateIdeHelpersOptions? The optional settings to use
 --- @return string fileContents Returns the file contents, for use with Ext.IO.SaveFile
-function Ext_Types.GenerateIdeHelpers(outputPath, addOsi) end
+function Ext_Types.GenerateIdeHelpers(outputPath, opts) end
 ]]},
 Ext_Json = {
 	After = [[

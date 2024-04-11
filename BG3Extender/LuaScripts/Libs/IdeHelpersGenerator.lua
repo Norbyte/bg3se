@@ -7,10 +7,10 @@ local NEWLINE = "\r\n"
 ---@type {Specific:table<string,string>, Misc:string[]}
 local _CustomEntries = Ext.Utils.Include(nil, "builtin://Libs/HelpersGenerator/CustomEntries.lua")
 
----@type table<string,{Before:string|nil, After:string|nil}>
+---@type table<string,{Before:string?, After:string?}>
 local _CustomTypeEntries = Ext.Utils.Include(nil, "builtin://Libs/HelpersGenerator/CustomTypeEntries.lua")
 
----@type table<string,{Before:string|nil, After:string|nil}>
+---@type table<string,{Before:string?, After:string?}>
 
 local _CustomFunctionExtras = Ext.Utils.Include(nil, "builtin://Libs/HelpersGenerator/CustomFunctionExtras.lua")
 
@@ -91,27 +91,33 @@ ModuleUUID = "UUID"
 --- @type table
 PersistentVars = {}
 
+--- @alias OsirisEventType string|"before"|"after"|"beforeDelete"|"afterDelete"
+--- @alias i16vec2 int16[]
+--- @alias YesNo "Yes"|"No"
+]]
+
+local dynamicTypesText = [[
 --- @alias OsirisValue number|string
 
 --- Using a DB like a function will allow inserting new values into the database (ex. `Osi.DB_IsPlayer("02a77f1f-872b-49ca-91ab-32098c443beb")`  
---- @overload fun(...:OsirisValue|nil)
+--- @overload fun(...:OsirisValue?)
 --- @class OsiDatabase
 local OsiDatabase = {}
 --- Databases can be read using the Get method. The method checks its parameters against the database and only returns rows that match the query.  
 --- The number of parameters passed to Get must be equivalent to the number of columns in the target database.  
 --- Each parameter defines an (optional) filter on the corresponding column.  
 --- If the parameter is nil, the column is not filtered (equivalent to passing _ in Osiris). If the parameter is not nil, only rows with matching values will be returned.
---- @vararg OsirisValue|nil
+--- @param ... OsirisValue?
 --- @return table<integer,table<integer,OsirisValue>>
 function OsiDatabase:Get(...) end
 --- The Delete method can be used to delete rows from databases.  
 --- The number of parameters passed to Delete must be equivalent to the number of columns in the target database.  
 --- Each parameter defines an (optional) filter on the corresponding column.  
 --- If the parameter is nil, the column is not filtered (equivalent to passing _ in Osiris). If the parameter is not nil, only rows with matching values will be deleted. 
---- @vararg OsirisValue|nil
+--- @param ... OsirisValue?
 function OsiDatabase:Delete(...) end
 
---- @alias OsiFunction fun(...:OsirisValue):OsirisValue|nil
+--- @alias OsiFunction fun(...:OsirisValue):OsirisValue?
 --- @alias OsiDynamic table<string, OsiFunction|OsiDatabase>
 
 --- @class OsiCommonDatabases
@@ -125,10 +131,6 @@ function OsiDatabase:Delete(...) end
 --- The Osi table contains databases as well as calls, queries, events, and custom PROC / QRY defintions, as long as they are used in a script.  
 --- @type OsiCommonDatabases|OsiDynamic
 Osi = {}
-
---- @alias OsirisEventType string|"before"|"after"|"beforeDelete"|"afterDelete"
---- @alias i16vec2 int16[]
---- @alias YesNo "Yes"|"No"
 ]]
 
 --- @return GenerateIdeHelpersGenerator
@@ -310,6 +312,10 @@ end
 
 --- @param opts GenerateIdeHelpersOptions
 function Generator:Build(opts)
+    if opts.OsiDynamics then
+        self.Text = self.Text .. dynamicTypesText
+    end
+
     local types = Ext.Types.GetAllTypes()
     local sortedTypes = {}
 
@@ -441,7 +447,7 @@ function Generator:MakeTypeSignature(cls, type, forceExpand, nativeDefn)
     elseif type.Kind == "Any" then
         return "any"
     elseif type.Kind == "Nullable" then
-        return self:MakeTypeSignature(cls, type.ParentType) .. "|nil"
+        return self:MakeTypeSignature(cls, type.ParentType) .. "?"
     elseif type.Kind == "Array" then
         if type.ElementType.Kind == "Array" or type.ElementType.Kind == "Map" then
             return self:MakeTypeSignature(nil, type.ElementType) .. "[]"
@@ -655,11 +661,7 @@ function Generator:EmitFullMethodSignature(cls, funcName, fun, nativeMethod, aft
             overloads = missingFuncData.Overload
         end
         for i,data in ipairs(missingFuncData.Params) do
-            if data.name == "..." then
-                table.insert(argDescs, "--- @vararg " .. data.arg or "any" .. " " ..  self.Trim(data.description or ""))
-            else
-                table.insert(argDescs, "--- @param " .. data.name .. " " .. data.arg .. " " ..  self.Trim(data.description or ""))
-            end
+            table.insert(argDescs, "--- @param " .. data.name .. " " .. data.arg or any .. " " ..  self.Trim(data.description or ""))
             table.insert(args, data.name)
         end
     else
@@ -890,7 +892,7 @@ function Generator:MakeModuleTypeName(type)
     return "Ext_" .. name
 end
 
----@param moduleToClassField table|nil
+---@param moduleToClassField table?
 function Generator:EmitModule(type, moduleToClassField)
     local helpersModuleName = self:MakeModuleTypeName(type)
     local nativeModuleName = type.NativeName
@@ -1112,15 +1114,14 @@ function Generator:EmitExt(role, declareGlobal)
 end
 
 --Ext.Types.GenerateIdeHelpers("ExtIdeHelpers_New.lua")
---Ext.Types.GenerateIdeHelpers("ExtIdeHelpers_New.lua", {UseBaseExtraData=true,AddDeprecated=true})
+--Ext.Types.GenerateIdeHelpers("ExtIdeHelpers_New.lua", {UseBaseExtraData=true})
 
 --- @class GenerateIdeHelpersOptions
 local _DefaultOpts = {
-    AddOsiris = false,
-    AddDeprecated = false,
     AddAliasEnums = true,
     UseBaseExtraData = false,
-    GenerateExtraDataAsClass = false
+    GenerateExtraDataAsClass = false,
+    OsiDynamics = true
 }
 
 --- @param outputPath? string

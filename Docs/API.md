@@ -612,7 +612,7 @@ Returns a table with the names of all stat entries that were loaded before the s
 This function is useful for retrieving stats that can be overridden by a mod according to the module load order.
 When the optional parameter `type` is specified, it'll only return stats with the specified type. (The type of a stat entry is specified in the stat .txt file itself (eg. `type "StatusData"`).
 
-### Ext.Stats.Create(name: string, type: string, template: string|nil): StatEntry
+### Ext.Stats.Create(name: string, type: string, template: string?): StatEntry
 
 Creates a new stats entry. 
 If a stat object with the same name already exists, the specified modifier type is invalid or the specified template doesn't exist, the function returns `nil`.
@@ -804,7 +804,7 @@ _D(entity:GetAllComponents())
 ```
 
 
-### Entity:GetComponent(name) : Component|nil
+### Entity:GetComponent(name) : Component?
 
 Returns the specified component if it is attached to the entity. If the component is not present the method returns `nil`.
 

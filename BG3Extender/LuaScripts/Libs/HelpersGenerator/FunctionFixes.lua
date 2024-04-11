@@ -20,7 +20,7 @@ local _MissingFuncData = {
 				},
 				{
 					name = "opts",
-					arg = "JsonStringifyOptions|nil",
+					arg = "JsonStringifyOptions?",
 					description = "Optional settings for the stringify operation",
 				},
 			},
@@ -33,7 +33,7 @@ local _MissingFuncData = {
 		Get = {
 			Params = {{
 				name = "statType",
-				arg = "StatType|nil",
+				arg = "StatType?",
 				description = "Optional stat type to filter stats by.",
 			}},
 			Return = {
@@ -97,7 +97,7 @@ local _MissingFuncData = {
 			Params = {
 				{
 					name = "modGUID",
-					arg = "string|nil",
+					arg = "string?",
 					description = "The ModuleUUID value",
 				},
 				{
@@ -107,7 +107,7 @@ local _MissingFuncData = {
 				},
 				{
 					name = "replaceGlobals",
-					arg = "table|nil",
+					arg = "table?",
 					description = "If set, the global environment of the script is replaced with this table",
 				},
 			},
@@ -143,7 +143,7 @@ local _MissingFuncFieldData = {
 	},
 	Ext_Stats = {
 		AddEnumerationValue = "fun(typeName:FixedString, enumLabel:FixedString):int32",
-		AddRequirement = "fun(id:FixedString, overwriteBuiltIn:boolean|nil):CustomRequirementDescriptor",
+		AddRequirement = "fun(id:FixedString, overwriteBuiltIn:boolean?):CustomRequirementDescriptor",
 	},
 	Ext_Utils = {
 		LoadString = "fun(str:string):UserReturn Similar to lua `loadstring`, with extra safeguards.",
