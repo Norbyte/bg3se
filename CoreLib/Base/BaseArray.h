@@ -267,6 +267,12 @@ struct CompactSet
 		Size--;
 	}
 
+	void erase(iterator const& it)
+	{
+		assert(it != end());
+		remove_at((size_type)(it.get() - Buf));
+	}
+
 	void clear()
 	{
 		for (uint32_t i = 0; i < Size; i++) {
@@ -1002,6 +1008,12 @@ public:
 
 		buf_[size_ - 1].~T();
 		size_--;
+	}
+
+	void erase(iterator const& it)
+	{
+		assert(it != end());
+		remove_at((size_type)(it.get() - buf_));
 	}
 
 	void remove_last()

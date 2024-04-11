@@ -273,7 +273,12 @@ UserReturn GetTreasureTableLegacy(lua_State* L, FixedString const& tableName)
 {
 	auto stats = GetStaticSymbols().GetStats();
 	auto table = stats->TreasureTables.Find(tableName);
-	return LuaWrite(L, table);
+	if (table) {
+		return LuaWrite(L, table);
+	} else {
+		push(L, nullptr);
+		return 1;
+	}
 }
 
 stats::TreasureTable* GetTreasureTable(FixedString const& tableName)
@@ -304,7 +309,12 @@ UserReturn GetTreasureCategory(lua_State* L, FixedString const& categoryName)
 {
 	auto const* stats = GetStaticSymbols().GetStats();
 	auto category = stats->TreasureCategories.Find(categoryName);
-	return LuaWrite(L, category);
+	if (category) {
+		return LuaWrite(L, category);
+	} else {
+		push(L, nullptr);
+		return 1;
+	}
 }
 
 void UpdateTreasureCategory(lua_State* L, FixedString const& name)

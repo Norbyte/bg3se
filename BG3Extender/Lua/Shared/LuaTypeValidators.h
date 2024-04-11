@@ -217,6 +217,28 @@ bool ValidateRef(Array<TE> const* v, Overload<Array<TE>>)
 	return true;
 }
 
+template <class TE, class TAllocator>
+bool ValidateRef(std::vector<TE, TAllocator> const* v, Overload<std::vector<TE, TAllocator>>)
+{
+	CHECK(v->size() <= v->capacity());
+	CHECK(v->capacity() <= 0x1000000);
+	if (v->capacity() > 0) {
+		CHECK(!IsBadReadPtr(v->data(), v->capacity() * sizeof(TE)));
+
+		if constexpr (!std::is_pointer_v<TE>) {
+			for (auto& ele : *v) {
+				CHECKR(ValidateAny<TE>(&ele));
+			}
+		} else {
+			for (auto& ele : *v) {
+				CHECKR(ValidatePointer(ele));
+			}
+		}
+	}
+
+	return true;
+}
+
 template <class TE>
 bool ValidateRef(ObjectSet<TE> const* v, Overload<ObjectSet<TE>>)
 {
