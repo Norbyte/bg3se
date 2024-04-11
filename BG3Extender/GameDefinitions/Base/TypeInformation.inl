@@ -73,7 +73,7 @@ void TypeInformation::DeferredInitialize()
 
 		if (!TypeName && hasAllVariants) {
 			STDString name("Variant<");
-			bool first = true
+			bool first = true;
 			for (auto const& var : Params) {
 				if (!first) name += ",";
 				first = false;
