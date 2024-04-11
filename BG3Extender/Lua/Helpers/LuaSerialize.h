@@ -47,6 +47,8 @@ void SerializeArray(lua_State* L, Noesis::Vector<TK, N> const* obj)
 		lua_rawseti(L, -2, i + 1);
 	}
 }
+
+void SerializeArray(lua_State* L, Noesis::BaseCollection const* obj);
 #endif
 
 template <class TK, size_t Size>

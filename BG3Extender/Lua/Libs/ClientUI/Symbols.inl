@@ -109,6 +109,12 @@ struct StaticTypeClasses
 	TypeClassInfo DependencyData;
 	TypeClassInfo FrameworkElement;
 
+	TypeClassInfo InitialSubstate;
+	TypeClassInfo StateEvent;
+	TypeClassInfo StateWidget;
+	TypeClassInfo State;
+	TypeClassInfo Widget;
+
 	void Setup()
 	{
 		BaseObject.Setup("BaseObject");
@@ -121,6 +127,12 @@ struct StaticTypeClasses
 		UIElementData.Setup("UIElementData");
 		DependencyData.Setup("DependencyData");
 		FrameworkElement.Setup("FrameworkElement");
+
+		InitialSubstate.Setup("ls.InitialSubstate");
+		StateEvent.Setup("ls.StateEvent");
+		StateWidget.Setup("ls.StateWidget");
+		State.Setup("ls.State");
+		Widget.Setup("ls.UIWidget");
 	}
 };
 
@@ -152,6 +164,12 @@ struct ExtStaticSymbols
 		#define FOR_NOESIS_TYPE(T) SymbolInfo<T>::Name = MakeNoesisSymbol(#T);
 		FOR_EACH_NOESIS_TYPE()
 		#undef FOR_NOESIS_TYPE
+
+			// LS classes have a different naming scheme
+		SymbolInfo<ui::UIInitialSubstate>::Name = MakeNoesisSymbol("ls.InitialSubstate");
+		SymbolInfo<ui::UIStateEvent>::Name = MakeNoesisSymbol("ls.StateEvent");
+		SymbolInfo<ui::UIState>::Name = MakeNoesisSymbol("ls.State");
+		SymbolInfo<ui::UIWidget>::Name = MakeNoesisSymbol("ls.UIWidget");
 
 		Types.Setup();
 		TypeClasses.Setup();

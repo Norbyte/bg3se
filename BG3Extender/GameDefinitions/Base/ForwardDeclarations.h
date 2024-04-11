@@ -10,6 +10,8 @@ namespace Json
 namespace Noesis
 {
 	class BaseObject;
+	class BaseObservableCollection;
+	class UIElementCollection;
 }
 
 BEGIN_SE()

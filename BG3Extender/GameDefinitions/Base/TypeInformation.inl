@@ -183,6 +183,7 @@ void TypeInformationRepository::Initialize()
 	RegisterStaticType<STDWString>("STDWString", LuaTypeId::String);
 #if defined(ENABLE_UI)
 	RegisterStaticType<Noesis::Symbol>("Noesis::Symbol", LuaTypeId::String);
+	RegisterStaticType<Noesis::String>("Noesis::String", LuaTypeId::String);
 #endif
 	RegisterStaticType<Path>("Path", LuaTypeId::String);
 	RegisterStaticType<NetId>("NetId", LuaTypeId::Integer);

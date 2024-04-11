@@ -11,6 +11,7 @@
 #include <NsDrawing/Color.h>
 #include <NsDrawing/Point.h>
 #include <NsDrawing/Rect.h>
+#include <NsGui/BaseCollection.h>
 #endif
 
 #if defined(ENABLE_IMGUI)

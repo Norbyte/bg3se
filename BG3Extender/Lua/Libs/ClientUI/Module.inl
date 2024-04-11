@@ -55,6 +55,12 @@ Noesis::FrameworkElement* GetRoot()
 	return (*GetStaticSymbols().ls__gGlobalResourceManager)->UIManager->field_70.MainCanvasGrid;
 }
 
+bg3se::ui::UIStateMachine* GetStateMachine()
+{
+	Noesis::gStaticSymbols.Initialize();
+	return (*GetStaticSymbols().ls__gGlobalResourceManager)->UIManager->field_358.StateMachine;
+}
+
 using FireStateEventProc = void(bg3se::ui::UIStateMachine*, bg3se::ui::UIStateMachine::EventResult&, bg3se::ui::UIStateMachine::EntityContext const&, bg3se::ui::UIStateMachine::EventArgs const&);
 
 void SetState(lua_State* L, FixedString state, std::optional<FixedString> subState, std::optional<bool> clearState, std::optional<int16_t> playerId)
@@ -97,6 +103,7 @@ void RegisterUILib()
 	DECLARE_MODULE(UI, Client)
 	BEGIN_MODULE()
 	MODULE_FUNCTION(GetRoot)
+	MODULE_FUNCTION(GetStateMachine)
 	MODULE_FUNCTION(SetState)
 	END_MODULE()
 }

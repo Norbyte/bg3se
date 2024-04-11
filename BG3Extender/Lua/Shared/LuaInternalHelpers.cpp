@@ -160,6 +160,15 @@ bool ProtectedCallC(lua_State* L, lua_CFunction fun, void* context, void* contex
 	}
 }
 
+void SerializeArray(lua_State* L, Noesis::BaseCollection const* obj)
+{
+	StackCheck _(L, 1);
+	lua_createtable(L, obj->Count(), 0);
+	for (int i = 0; i < obj->Count(); i++) {
+		Serialize(L, obj->GetComponent(i).GetPtr());
+		lua_rawseti(L, -2, i + 1);
+	}
+}
 
 END_NS()
 

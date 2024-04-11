@@ -19,6 +19,7 @@ BY_VAL(FixedString);
 BY_VAL(STDString);
 BY_VAL(STDWString);
 #if defined(ENABLE_UI)
+BY_VAL(Noesis::String);
 BY_VAL(Noesis::Symbol);
 #endif
 BY_VAL(Guid);
@@ -262,6 +263,104 @@ public:
 		}
 	}
 };
+
+
+template <class TContainer, class T, unsigned TContainerClassId>
+class DynamicNoesisCollectionProxyImpl : public ArrayProxyImplBase
+{
+public:
+	static_assert(!std::is_pointer_v<TContainer>, "DynamicNoesisCollectionProxyImpl template parameter should not be a pointer type!");
+	static_assert(std::is_pointer_v<T>, "DynamicNoesisCollectionProxyImpl element should be a Noesis component type!");
+
+	using ContainerType = TContainer;
+	static constexpr unsigned ContainerClassId = TContainerClassId;
+
+	unsigned GetContainerClass() override
+	{
+		return ContainerClassId;
+	}
+
+	TypeInformation const& GetContainerType() const override
+	{
+		return GetTypeInfo<TContainer>();
+	}
+
+	TypeInformation const& GetElementType() const override
+	{
+		return GetTypeInfo<T>();
+	}
+
+	bool GetElement(lua_State* L, CppObjectMetadata& self, unsigned arrayIndex) override
+	{
+		auto obj = reinterpret_cast<TContainer*>(self.Ptr);
+		if (arrayIndex > 0 && arrayIndex <= (unsigned)obj->Count()) {
+			auto ref = obj->GetComponent(arrayIndex - 1);
+			push(L, ref.GetPtr(), self.Lifetime);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	bool SetElement(lua_State* L, CppObjectMetadata& self, unsigned arrayIndex, int luaIndex) override
+	{
+		auto obj = reinterpret_cast<TContainer*>(self.Ptr);
+		if constexpr (std::is_default_constructible_v<T>) {
+			auto size = (unsigned)obj->Count();
+			if (arrayIndex > 0 && arrayIndex <= size) {
+				if (lua_type(L, luaIndex) == LUA_TNIL) {
+					obj->RemoveItem(arrayIndex - 1);
+				} else {
+					obj->SetComponent(arrayIndex - 1, get<T>(L, luaIndex));
+				}
+				return true;
+			} else if (arrayIndex == size + 1) {
+				obj->AddComponent(get<T>(L, luaIndex));
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+
+	unsigned Length(CppObjectMetadata& self) override
+	{
+		auto obj = reinterpret_cast<TContainer*>(self.Ptr);
+		return (unsigned)obj->Count();
+	}
+
+	bool Unserialize(lua_State* L, CppObjectMetadata& self, int index) override
+	{
+		auto obj = reinterpret_cast<TContainer*>(self.Ptr);
+		if constexpr (std::is_default_constructible_v<T>) {
+			lua::Unserialize(L, index, obj);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	void Serialize(lua_State* L, CppObjectMetadata& self) override
+	{
+		auto obj = reinterpret_cast<TContainer*>(self.Ptr);
+		lua::Serialize(L, obj);
+	}
+
+	int Next(lua_State* L, CppObjectMetadata& self, int key) override
+	{
+		auto obj = reinterpret_cast<TContainer*>(self.Ptr);
+		if (key >= 0 && key < obj->Count()) {
+			push(L, ++key);
+			auto ref = obj->GetComponent(key - 1);
+			push(L, ref.GetPtr(), self.Lifetime);
+			return 2;
+		} else {
+			return 0;
+		}
+	}
+};
 #endif
 
 
@@ -470,6 +569,11 @@ public:
 	inline static void Make(lua_State* L, Noesis::Vector<T, N>* object, LifetimeHandle const& lifetime)
 	{
 		MakeImpl(L, object, lifetime, GetImplementation<DynamicNoesisArrayProxyImpl<Noesis::Vector<T, N>, T, 7>>());
+	}
+
+	inline static void Make(lua_State* L, Noesis::BaseCollection* object, LifetimeHandle const& lifetime)
+	{
+		MakeImpl(L, object, lifetime, GetImplementation<DynamicNoesisCollectionProxyImpl<Noesis::BaseCollection, Noesis::BaseComponent*, 8>>());
 	}
 #endif
 

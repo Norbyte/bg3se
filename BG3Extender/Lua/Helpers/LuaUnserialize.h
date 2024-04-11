@@ -143,6 +143,16 @@ PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, No
 		return PropertyOperationResult::Success;
 	}
 }
+
+inline PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, Noesis::BaseCollection* obj)
+{
+	return PropertyOperationResult::UnsupportedType;
+}
+
+inline PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, Noesis::BaseCollection* obj)
+{
+	return PropertyOperationResult::UnsupportedType;
+}
 #endif
 
 template <class TK, size_t Size>

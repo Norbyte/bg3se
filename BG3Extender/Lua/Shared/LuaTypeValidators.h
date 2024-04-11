@@ -80,6 +80,16 @@ inline bool Validate(STDString const* s, Overload<STDString>)
 	return true;
 }
 
+inline bool Validate(Noesis::String const* s, Overload<Noesis::String>)
+{
+	CHECK(s->Size() <= s->Capacity());
+	// Sanity check for very large values
+	CHECK(s->Capacity() <= 0x1000000);
+	CHECK(!IsBadReadPtr(s->Str(), (uint64_t)s->Capacity()));
+
+	return true;
+}
+
 inline bool Validate(Path const* p, Overload<Path>)
 {
 	return Validate(&p->Name, Overload<STDString>{});

@@ -11,6 +11,9 @@
 #include <NsGui/UIElementData.h>
 #include <NsGui/FrameworkElement.h>
 #include <NsGui/Panel.h>
+#include <NsGui/ObservableCollection.h>
+#include <NsGui/UIElementCollection.h>
+#include <NsGui/ContentControl.h>
 
 BEGIN_BARE_NS(Noesis)
 
@@ -234,37 +237,137 @@ struct TypeHelpers
 
 END_BARE_NS()
 
-BEGIN_NS(lua)
-
-#define FOR_EACH_NOESIS_TYPE() \
-	FOR_NOESIS_TYPE(Noesis::BaseObject) \
-	FOR_NOESIS_TYPE(Noesis::BaseRefCounted) \
-	FOR_NOESIS_TYPE(Noesis::BaseComponent) \
-	FOR_NOESIS_TYPE(Noesis::Type) \
-	FOR_NOESIS_TYPE(Noesis::TypeMeta) \
-	FOR_NOESIS_TYPE(Noesis::TypeMetaData) \
-	FOR_NOESIS_TYPE(Noesis::TypeClass) \
-	FOR_NOESIS_TYPE(Noesis::DispatcherObject) \
-	FOR_NOESIS_TYPE(Noesis::DependencyObject) \
-	FOR_NOESIS_TYPE(Noesis::DependencyData) \
-	FOR_NOESIS_TYPE(Noesis::Visual) \
-	FOR_NOESIS_TYPE(Noesis::UIElement) \
-	FOR_NOESIS_TYPE(Noesis::UIElementData) \
-	FOR_NOESIS_TYPE(Noesis::FrameworkElement) \
-	FOR_NOESIS_TYPE(Noesis::Panel)
-
-#define FOR_NOESIS_TYPE(c) LUA_POLYMORPHIC(c)
-FOR_EACH_NOESIS_TYPE()
-#undef FOR_NOESIS_TYPE
-
-LUA_POLYMORPHIC(Noesis::RoutedEventArgs)
-
-END_NS()
-
 
 BEGIN_NS(ui)
 
+using namespace Noesis;
+
 struct UICanvas;
+struct UIManager_Sub1F0;
+struct UIManager_Sub198;
+
+struct UIInitialSubstate : public Noesis::BaseComponent
+{
+	String Name;
+	String MetaData;
+};
+
+
+struct UIStateEvent : public Noesis::BaseComponent
+{
+	String Name;
+	String HandlesEvent;
+	BaseObservableCollection* Actions;
+};
+
+
+struct UIStateWidget : public Noesis::BaseComponent
+{
+	String Filename;
+	String Layer;
+	String SoundLayer;
+	bool IgnoreHitTest;
+	bool BlockedLoading;
+	bool AllowCreationDelay;
+	BaseObservableCollection* Libraries;
+};
+
+
+struct UIWidgetMetadata
+{
+	__int64 field_0;
+	Guid StateGuid;
+	int field_18;
+	int field_1C;
+	uint8_t Flags;
+};
+
+
+struct UIState : public Noesis::BaseComponent
+{
+	String Name;
+	String Layout;
+	String Owner;
+	String DisableStatesBelow;
+	String HideStatesBelow;
+	String IsModal;
+	String IsModalCameraControlAllowed;
+	String ForceSplitscreen;
+	String ForceVisible;
+	String DisableSoundLayersAbove;
+	String TutorialLayer;
+	String ModType;
+	String IsModdable;
+	BaseObservableCollection* InitialSubstates;
+	BaseObservableCollection* Events;
+	BaseObservableCollection* Widgets;
+	String ActivateOnRestore;
+	__int64 field_1A8_Events_M;
+	__int64 field_1B0;
+	__int64 field_1B8;
+	__int64 field_1C0;
+	__int64 field_1C8;
+	__int64 field_1D0;
+	__int64 field_1D8;
+	__int64 field_1E0;
+	uint8_t field_1E8[2048];
+	Map<int, int> field_9E8;
+};
+
+
+struct UIWidget : public ContentControl
+{
+	__int64 field_278;
+	__int64 field_280;
+	__int64 field_288;
+	__int64 field_290;
+	__int64 field_298;
+	__int64 field_2A0;
+	__int64 field_2A8;
+	int field_2B0;
+	int field_2B4;
+	__int64 field_2B8;
+	UIManager_Sub1F0* Sub1F0;
+	UIStateWidget* WidgetData;
+	__int64 field_2D0;
+	Guid StateGuid;
+	FrameworkElement* WidgetContainerGrid;
+	int field_2F0;
+	int field_2F4;
+	STDString XAMLPath;
+	uint8_t field_310;
+	uint8_t field_311;
+	uint8_t field_312;
+	__int64 field_318;
+	__int64 field_320;
+	__int64 field_328;
+	__int64 field_330;
+};
+
+
+
+struct UIStateInstance : public ProtectedGameObject<UIStateInstance>
+{
+	Array<UIWidget*> Widgets;
+	Array<UIWidgetMetadata*> WidgetMetadata;
+	Array<Array<UIStateInstance*>*> States;
+	UIState* State;
+	PlayerId PlayerID;
+	uint8_t Flags;
+	uint8_t Flags2;
+	uint8_t Layout;
+	uint8_t Owner;
+	uint8_t field_3E;
+	uint8_t field_3F;
+	FixedString field_40;
+	int field_44;
+	String field_48;
+	String field_68;
+	String TutorialLayer;
+	Guid StateGuid;
+	Guid field_B8;
+	UIElementCollection* StateWidgets;
+};
 
 struct UIStateMachine : public ProtectedGameObject<UIStateMachine>
 {
@@ -280,28 +383,25 @@ struct UIStateMachine : public ProtectedGameObject<UIStateMachine>
 	bool IsProcessingEvent;
 	char field_8E;
 	char field_8F;
-	void* SomeEventArg;
-	__int64 field_98;
-	__int64 field_A0;
-	MultiHashMap<uint64_t, uint64_t> field_A8;
-	MultiHashMap<uint64_t, uint64_t> field_E8;
-	MultiHashMap<uint64_t, uint64_t> field_128;
+	UIStateInstance* State;
+	UIManager_Sub1F0* Sub1F0;
+	UIManager_Sub198* Sub198;
+	MultiHashMap<Guid, uint64_t> field_A8;
+	MultiHashMap<Guid, UIStateInstance*> field_E8;
+	MultiHashMap<Guid, UIStateInstance*> field_128;
 	MultiHashSet<uint64_t> field_168;
 	MultiHashSet<uint64_t> field_198;
 	MultiHashSet<uint64_t> field_1C8;
-	__int64 field_1F8;
-	__int64 field_200;
-	__int64 field_208;
-	__int64 field_210;
-	__int64 field_218;
-	MultiHashMap<uint64_t, uint64_t> field_220;
-	MultiHashSet<uint64_t> field_260;
-	MultiHashSet<uint64_t> field_290;
-	Array<uint64_t> field_2C0;
+	String RootState;
+	BaseObservableCollection* States;
+	MultiHashMap<PlayerId, Array<Guid>> field_220;
+	MultiHashSet<PlayerId> field_260;
+	MultiHashSet<PlayerId> field_290;
+	Array<Guid> field_2C0;
 	__int64 field_2D0;
-	MultiHashMap<uint64_t, uint64_t> field_2D8;
-	MultiHashMap<uint64_t, uint64_t> field_318;
-	MultiHashSet<uint64_t> field_358;
+	MultiHashMap<PlayerId, uint8_t> field_2D8;
+	MultiHashMap<PlayerId, Array<Guid>> field_318;
+	MultiHashSet<PlayerId> field_358;
 	__int64 field_388;
 	__int64 field_390;
 	__int64 field_398;
@@ -310,13 +410,13 @@ struct UIStateMachine : public ProtectedGameObject<UIStateMachine>
 	__int64 field_3B0;
 	__int64 field_3B8;
 	__int64 field_3C0;
-	Array<uint64_t> field_3C8;
-	__int64 field_3D8;
-	CRITICAL_SECTION field_3E0;
+	Array<PlayerId> field_3C8;
+	PlayerId PlayerID;
+	CRITICAL_SECTION CriticalSection;
 
 	struct EventArgs
 	{
-		int field_0{ 0 };
+		uint32_t EventIndex{ 0 };
 		int field_4{ 3 };
 		FixedString StateEvent;
 		FixedString SubState;
@@ -361,104 +461,104 @@ struct UIStateMachine : public ProtectedGameObject<UIStateMachine>
 
 };
 
+struct UIManager_Sub70
+{
+	__int64 field_0;
+	__int64 field_8;
+	__int64 field_10;
+	__int64 field_18;
+	__int64 field_20;
+	__int64 field_28;
+	__int64 field_30;
+	__int64 field_38;
+	__int64 field_40;
+	__int64 field_48;
+	__int64 field_50;
+	__int64 ElementCacheManager;
+	UICanvas* MainCanvasGrid;
+	DispatcherObject* MainCanvasView;
+	__int64 field_70;
+	__int64 field_78;
+	int field_80;
+	int field_84;
+	int field_88;
+	int field_8C;
+	float field_90;
+	int field_94;
+	double field_98;
+	__int64 field_A0;
+	char field_A8;
+};
+
+struct UIManager_Sub120
+{
+	__int64 field_0;
+	ecs::ComponentCallbackList field_8;
+	ecs::ComponentCallbackList field_20;
+};
+
+struct UIManager_Sub168
+{
+	Array<void*> field_0;
+	int field_10;
+	int field_14;
+};
+
+struct UIManager_Sub198
+{
+	ecs::ComponentCallbackList field_0;
+	MultiHashSet<uint64_t> field_18;
+	Array<void*> field_48;
+};
+
+struct UIManager_Sub1F0
+{
+	ecs::ComponentCallbackList field_0;
+	ecs::ComponentCallbackList field_18;
+	ecs::ComponentCallbackList field_30;
+	ecs::ComponentCallbackList field_48;
+	ecs::ComponentCallbackList field_60;
+	__int64 field_78;
+	__int64 field_80;
+	Array<void*> field_88;
+	Array<void*> field_98;
+	__int64 field_A8;
+	__int64 field_B0;
+	char field_B8;
+	char field_B9;
+	char field_BA;
+	char field_BB;
+	char field_BC;
+	char field_BD;
+	char field_BE;
+	char field_BF;
+	__int64 field_C0;
+	__int64 field_C8;
+	CRITICAL_SECTION CriticalSection;
+	__int64 field_F8;
+	__int64 field_100;
+	__int64 field_108;
+	__int64 field_110;
+	__int64 field_118;
+	__int64 field_120;
+	__int64 field_128;
+	__int64 field_130;
+	void* field_138;
+	void* field_140;
+	void* field_148;
+	void* field_150;
+	Array<void*> field_158;
+};
+
+struct UIManager_Sub358
+{
+	__int64 field_0;
+	__int64 field_8;
+	UIStateMachine* StateMachine;
+};
 
 struct UIManager : public ProtectedGameObject<UIManager>
 {
-	struct Sub70
-	{
-		__int64 field_0;
-		__int64 field_8;
-		__int64 field_10;
-		__int64 field_18;
-		__int64 field_20;
-		__int64 field_28;
-		__int64 field_30;
-		__int64 field_38;
-		__int64 field_40;
-		__int64 field_48;
-		__int64 field_50;
-		__int64 ElementCacheManager;
-		UICanvas* MainCanvasGrid;
-		Noesis::DispatcherObject* MainCanvasView;
-		__int64 field_70;
-		__int64 field_78;
-		int field_80;
-		int field_84;
-		int field_88;
-		int field_8C;
-		float field_90;
-		int field_94;
-		double field_98;
-		__int64 field_A0;
-		char field_A8;
-	};
-
-	struct Sub120
-	{
-		__int64 field_0;
-		ecs::ComponentCallbackList field_8;
-		ecs::ComponentCallbackList field_20;
-	};
-
-	struct Sub168
-	{
-		Array<void*> field_0;
-		int field_10;
-		int field_14;
-	};
-
-	struct Sub198
-	{
-		ecs::ComponentCallbackList field_0;
-		MultiHashSet<uint64_t> field_18;
-		Array<void*> field_48;
-	};
-
-	struct Sub1F0
-	{
-		ecs::ComponentCallbackList field_0;
-		ecs::ComponentCallbackList field_18;
-		ecs::ComponentCallbackList field_30;
-		ecs::ComponentCallbackList field_48;
-		ecs::ComponentCallbackList field_60;
-		__int64 field_78;
-		__int64 field_80;
-		Array<void*> field_88;
-		Array<void*> field_98;
-		__int64 field_A8;
-		__int64 field_B0;
-		char field_B8;
-		char field_B9;
-		char field_BA;
-		char field_BB;
-		char field_BC;
-		char field_BD;
-		char field_BE;
-		char field_BF;
-		__int64 field_C0;
-		__int64 field_C8;
-		CRITICAL_SECTION CriticalSection;
-		__int64 field_F8;
-		__int64 field_100;
-		__int64 field_108;
-		__int64 field_110;
-		__int64 field_118;
-		__int64 field_120;
-		__int64 field_128;
-		__int64 field_130;
-		void* field_138;
-		void* field_140;
-		void* field_148;
-		void* field_150;
-		Array<void*> field_158;
-	};
-
-	struct Sub358
-	{
-		__int64 field_0;
-		__int64 field_8;
-		UIStateMachine* StateMachine;
-	};
 
 	__int64 VMT;
 	__int64 VMT3;
@@ -479,16 +579,16 @@ struct UIManager : public ProtectedGameObject<UIManager>
 	char field_6D;
 	char field_6E;
 	char field_6F;
-	Sub70 field_70;
-	Sub120 field_120;
+	UIManager_Sub70 field_70;
+	UIManager_Sub120 field_120;
 	__int64 field_158;
 	__int64 field_160;
-	Sub168 field_168;
+	UIManager_Sub168 field_168;
 	Array<void*> field_180;
 	__int64 field_190;
-	Sub198 field_198;
-	Sub1F0 field_1F0;
-	Sub358 field_358;
+	UIManager_Sub198 field_198;
+	UIManager_Sub1F0 field_1F0;
+	UIManager_Sub358 field_358;
 };
 
 struct UICanvas : public Noesis::Panel
@@ -500,11 +600,44 @@ struct UICanvas : public Noesis::Panel
 	__int64 field_2C0;
 	__int64 field_2C8;
 	__int64 field_2D0;
-	UIManager::Sub70* UIManager70;
+	UIManager_Sub70* UIManager70;
 	__int64 ElementCacheManager;
-	Noesis::DependencyObject* field_2E8;
+	DependencyObject* field_2E8;
 	float field_2F0;
 	float field_2F4;
 };
+
+END_NS()
+
+
+BEGIN_NS(lua)
+
+#define FOR_EACH_NOESIS_TYPE() \
+	FOR_NOESIS_TYPE(Noesis::BaseObject) \
+	FOR_NOESIS_TYPE(Noesis::BaseRefCounted) \
+	FOR_NOESIS_TYPE(Noesis::BaseComponent) \
+	FOR_NOESIS_TYPE(Noesis::Type) \
+	FOR_NOESIS_TYPE(Noesis::TypeMeta) \
+	FOR_NOESIS_TYPE(Noesis::TypeMetaData) \
+	FOR_NOESIS_TYPE(Noesis::TypeClass) \
+	FOR_NOESIS_TYPE(Noesis::DispatcherObject) \
+	FOR_NOESIS_TYPE(Noesis::DependencyObject) \
+	FOR_NOESIS_TYPE(Noesis::DependencyData) \
+	FOR_NOESIS_TYPE(Noesis::Visual) \
+	FOR_NOESIS_TYPE(Noesis::UIElement) \
+	FOR_NOESIS_TYPE(Noesis::UIElementData) \
+	FOR_NOESIS_TYPE(Noesis::FrameworkElement) \
+	FOR_NOESIS_TYPE(Noesis::Panel) \
+	FOR_NOESIS_TYPE(ui::UIInitialSubstate) \
+	FOR_NOESIS_TYPE(ui::UIStateEvent) \
+	FOR_NOESIS_TYPE(ui::UIStateWidget) \
+	FOR_NOESIS_TYPE(ui::UIState) \
+	FOR_NOESIS_TYPE(ui::UIWidget)
+
+#define FOR_NOESIS_TYPE(c) LUA_POLYMORPHIC(c)
+FOR_EACH_NOESIS_TYPE()
+#undef FOR_NOESIS_TYPE
+
+LUA_POLYMORPHIC(Noesis::RoutedEventArgs)
 
 END_NS()
