@@ -8,6 +8,7 @@
 
 #include <Extender/Client/IMGUI/SDL.inl>
 #include <Extender/Client/IMGUI/Vulkan.inl>
+#include <Extender/Client/IMGUI/DX11.inl>
 #include <Lua/Shared/LuaMethodCallHelpers.h>
 
 BEGIN_NS(extui)
@@ -822,7 +823,11 @@ void IMGUIObjectManager::EnableDemo(bool enable)
 IMGUIManager::IMGUIManager()
 {
     platform_ = std::make_unique<SDLBackend>(mutex_);
-    renderer_ = std::make_unique<VulkanBackend>(*this);
+    if (GetModuleHandleW(L"bg3_dx11.exe") == NULL) {
+        renderer_ = std::make_unique<VulkanBackend>(*this);
+    } else {
+        renderer_ = std::make_unique<DX11Backend>(*this);
+    }
 }
 
 IMGUIManager::~IMGUIManager()

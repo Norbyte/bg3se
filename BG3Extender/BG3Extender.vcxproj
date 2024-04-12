@@ -70,7 +70,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
       <ModuleDefinitionFile>Exports.def</ModuleDefinitionFile>
-      <AdditionalDependencies>SDL2.lib;imgui.lib;vulkan-1.lib;CoreLib.lib;LuaLib.lib;ws2_32.lib;shlwapi.lib;Rpcrt4.lib;libprotobuf-lite.lib;detours.lib;jsoncpp.lib;dbghelp.lib;version.lib;winhttp.lib;comctl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxguid.lib;SDL2.lib;imgui.lib;vulkan-1.lib;CoreLib.lib;LuaLib.lib;ws2_32.lib;shlwapi.lib;Rpcrt4.lib;libprotobuf-lite.lib;detours.lib;jsoncpp.lib;dbghelp.lib;version.lib;winhttp.lib;comctl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\External\protobuf\lib;$(SolutionDir)\External\Detours\lib.X64;$(SolutionDir)\x64\Debug;$(SolutionDir)\External\jsoncpp-build\src\lib_json\Debug;$(SolutionDir)\External\SDL2-2.30.1\lib\x64;$(SolutionDir)\External\VulkanSDK\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -108,7 +108,7 @@ $(SolutionDir)x64\Debug\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Project
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>Exports.def</ModuleDefinitionFile>
       <AdditionalLibraryDirectories>$(SolutionDir)\x64\Release;$(SolutionDir)\\External\protobuf\lib;$(SolutionDir)\External\Detours\lib.X64;$(SolutionDir)\External\jsoncpp-build\src\lib_json\Release;$(SolutionDir)\External\SDL2-2.30.1\lib\x64;$(SolutionDir)\External\VulkanSDK\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;imgui.lib;vulkan-1.lib;CoreLib.lib;LuaLib.lib;ws2_32.lib;shlwapi.lib;Rpcrt4.lib;libprotobuf-lite.lib;detours.lib;jsoncpp.lib;dbghelp.lib;version.lib;winhttp.lib;comctl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxguid.lib;SDL2.lib;imgui.lib;vulkan-1.lib;CoreLib.lib;LuaLib.lib;ws2_32.lib;shlwapi.lib;Rpcrt4.lib;libprotobuf-lite.lib;detours.lib;jsoncpp.lib;dbghelp.lib;version.lib;winhttp.lib;comctl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>$(SolutionDir)\External\protobuf\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Osiris\Debugger Osiris\Debugger\osidebug.proto
@@ -365,6 +365,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="..\CHANGELOG.md" />
     <None Include="cpp.hint" />
     <None Include="Exports.def" />
+    <None Include="Extender\Client\IMGUI\DX11.inl" />
     <None Include="Extender\Client\IMGUI\SDL.inl" />
     <None Include="Extender\Client\IMGUI\Vulkan.inl" />
     <None Include="Extender\Shared\ModuleHasher.inl" />

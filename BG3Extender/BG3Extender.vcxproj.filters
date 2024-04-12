@@ -711,6 +711,7 @@
     <None Include="Lua\Libs\ClientIMGUI.inl" />
     <None Include="GameDefinitions\PropertyMaps\IMGUI.inl" />
     <None Include="Lua\Shared\Proxies\LuaImguiProxy.inl" />
+    <None Include="Extender\Client\IMGUI\DX11.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">
