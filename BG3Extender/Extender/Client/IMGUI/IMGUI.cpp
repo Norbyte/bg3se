@@ -29,6 +29,8 @@ Renderable::~Renderable() {}
 
 void StyledRenderable::Render()
 {
+    if (!Visible) return;
+
     for (auto const& var : StyleVars) {
         ImGui::PushStyleVar((ImGuiStyleVar)var.Key, var.Value);
     }
@@ -342,13 +344,26 @@ lua::ImguiHandle TreeParent::AddColorPicker(char const* label, std::optional<glm
 
 bool Window::BeginRender()
 {
-    return ImGui::Begin(Label.c_str(), Closeable ? &Closed : nullptr, (ImGuiWindowFlags)Flags);
+    if (!Open) return false;
+
+    bool wasOpen = Open;
+    bool renderChildren = ImGui::Begin(Label.c_str(), Closeable ? &Open : nullptr, (ImGuiWindowFlags)Flags);
+    rendering_ = true;
+
+    if (wasOpen && !Open && OnClose) {
+        OnClose.Call(lua::ImguiHandle(Handle));
+    }
+
+    return renderChildren;
 }
 
 
 void Window::EndRender()
 {
-    ImGui::End();
+    if (rendering_) {
+        ImGui::End();
+        rendering_ = false;
+    }
 }
 
 
@@ -787,7 +802,9 @@ bool IMGUIObjectManager::DestroyRenderable(HandleType handle)
 
 void IMGUIObjectManager::Render()
 {
-    ImGui::ShowDemoWindow();
+    if (renderDemo_) {
+        ImGui::ShowDemoWindow();
+    }
 
     for (auto windowHandle : windows_) {
         auto window = GetRenderable(windowHandle);
@@ -797,6 +814,10 @@ void IMGUIObjectManager::Render()
     }
 }
 
+void IMGUIObjectManager::EnableDemo(bool enable)
+{
+    renderDemo_ = enable;
+}
 
 IMGUIManager::IMGUIManager()
 {

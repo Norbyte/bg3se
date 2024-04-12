@@ -12,11 +12,17 @@ ImguiHandle NewWindow(lua_State* L, char const* name)
 	return window;
 }
 
+void EnableDemo(lua_State* L, bool enabled)
+{
+	ClientState::FromLua(L)->IMGUI().EnableDemo(enabled);
+}
+
 void RegisterIMGUILib()
 {
 	DECLARE_MODULE(IMGUI, Client)
 	BEGIN_MODULE()
 	MODULE_FUNCTION(NewWindow)
+	MODULE_FUNCTION(EnableDemo)
 	END_MODULE()
 }
 

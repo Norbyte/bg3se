@@ -102,6 +102,7 @@ public:
     Array<StyleColor> StyleColors;
     STDString Label;
     bool SameLine{ false };
+    bool Visible{ true };
 
     lua::LuaDelegate<void(lua::ImguiHandle)> OnActivate;
     lua::LuaDelegate<void(lua::ImguiHandle)> OnDeactivate;
@@ -166,9 +167,13 @@ public:
     bool BeginRender() override;
     void EndRender() override;
 
-    bool Closed{ false };
+    bool Open{ true };
     bool Closeable{ false };
     GuiWindowFlags Flags{ 0 };
+    lua::LuaDelegate<void(lua::ImguiHandle)> OnClose;
+
+private:
+    bool rendering_{ false };
 };
 
 
@@ -626,10 +631,12 @@ public:
     Renderable* GetRenderable(HandleType handle);
     bool DestroyRenderable(HandleType handle);
     void Render();
+    void EnableDemo(bool enable);
 
 private:
     std::array<std::unique_ptr<IMGUIObjectPoolInterface>, (unsigned)IMGUIObjectType::Max + 1> pools_;
     Array<HandleType> windows_;
+    bool renderDemo_{ false };
 };
 
 END_NS()

@@ -51,9 +51,10 @@ END_CLS()
 
 BEGIN_CLS(extui::Window)
 INHERIT(extui::TreeParent)
-P(Closed)
+P(Open)
 P(Closeable)
 P_BITMASK(Flags)
+P(OnClose)
 END_CLS()
 
 
