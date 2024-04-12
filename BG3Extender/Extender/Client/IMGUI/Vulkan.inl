@@ -157,7 +157,8 @@ public:
         auto& drawLists = viewports_[curViewport_].ClonedDrawLists;
 
         for (auto list : drawLists) {
-            delete list;
+            list->~ImDrawList();
+            IM_FREE(list);
         }
 
         drawLists.clear();
