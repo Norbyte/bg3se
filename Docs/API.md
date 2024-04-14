@@ -171,9 +171,9 @@ Sometimes, the output of a command in the console might be too lengthy or comple
 
 Here's how it works:
 
-Ext.IO.SaveFile(filename, content): This function allows you to save content to a file with a specified filename. You need to provide the filename and the content you want to save.
+`Ext.IO.SaveFile(filename, content)`: This function allows you to save content to a file with a specified filename. You need to provide the filename and the content you want to save. If the directory specified in the filename does not exist, `SaveFile` will automatically create it.
 
-Ext.DumpExport(object): This function serializes the given object into a string, which can then be saved to a file using Ext.IO.SaveFile.
+`Ext.DumpExport(object)`: This function serializes the given object into a string, which can then be saved to a file using `Ext.IO.SaveFile`.
 
 Here's an example illustrating how to save console output to a file:
 
@@ -182,10 +182,9 @@ entity=Ext.Entity.Get("0133f2ad-e121-4590-b5f0-a79413919805") --Wither's UUID, f
 Ext.IO.SaveFile("output.json", Ext.DumpExport(entity:GetAllComponents()))
 ```
 
-The saved file will be located in the script extender folder, typically found at `%localappdata%\Larian Studios\Baldur's Gate 3\Script Extender`
+The saved file will be located in the Script Extender folder, typically found at `%localappdata%\Larian Studios\Baldur's Gate 3\Script Extender`
 
 This method provides a convenient way to store and analyze complex console output, allowing for easier debugging and analysis outside of the console environment.
-
 
 <a id="lua-general"></a>
 ## General Lua Rules
