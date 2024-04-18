@@ -444,6 +444,13 @@ void PushTypedRef(lua_State* L, TypeProperty const* prop, BaseObject* obj)
 	lua::push(L, *value);
 }
 
+StoredValueHolder::~StoredValueHolder()
+{
+	if (IsOwned && Value != nullptr) {
+		GameFree(Value);
+	}
+}
+
 void StoredValueHelpers::PushProperty(lua_State* L, BaseObject* obj, TypeClass const* objType, TypeProperty const* prop)
 {
 	auto& types = gStaticSymbols.Types;
@@ -552,10 +559,15 @@ void StoredValueHelpers::PushValue(lua_State* L, Type const* type, StoredValue c
 }
 
 template <class T>
-void* StoredValueHelpers::GetRawValue(lua_State* L, Type const* type, lua::AnyRef value)
+StoredValueHolder StoredValueHelpers::GetRawValue(lua_State* L, Type const* type, lua::AnyRef value)
 {
 	auto val = lua::get<T>(L, value.Index);
-	return *reinterpret_cast<void**>(&val);
+	if constexpr (sizeof(T) <= sizeof(void*)) {
+		return StoredValueHolder (*reinterpret_cast<void**>(&val), false);
+	} else {
+		auto buf = GameAlloc<T>(val);
+		return StoredValueHolder(buf, true);
+	}
 }
 
 std::optional<StoredValueHolder> StoredValueHelpers::GetValue(lua_State* L, Type const* type, lua::AnyRef value)
@@ -585,6 +597,16 @@ std::optional<StoredValueHolder> StoredValueHelpers::GetValue(lua_State* L, Type
 		return GetRawValue<double>(L, type, value);
 	} else if (type == types.Bool.Type) {
 		return GetRawValue<bool>(L, type, value);
+	} else if (type == types.Color.Type) {
+		return GetRawValue<glm::vec4>(L, type, value);
+	} else if (type == types.Vector2.Type) {
+		return GetRawValue<glm::vec2>(L, type, value);
+	} else if (type == types.Vector3.Type) {
+		return GetRawValue<glm::vec3>(L, type, value);
+	} else if (type == types.Point.Type) {
+		return GetRawValue<glm::vec2>(L, type, value);
+	} else if (type == types.Rect.Type) {
+		return GetRawValue<glm::vec4>(L, type, value);
 	} else if (type == types.String.Type) {
 		return GameAlloc<String>(lua::get<char const*>(L, value.Index));
 
@@ -598,7 +620,7 @@ std::optional<StoredValueHolder> StoredValueHelpers::GetValue(lua_State* L, Type
 			return {};
 		}
 
-		return (void*)(*label);
+		return StoredValueHolder((void*)(*label), false);
 
 	} else if (TypeHelpers::IsDescendantOf(type, classes.BaseObject.Type)) {
 		return lua::get<BaseObject*>(L, value.Index);

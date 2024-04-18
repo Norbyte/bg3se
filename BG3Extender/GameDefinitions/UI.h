@@ -141,13 +141,15 @@ struct DependencyPropertyHelpers
 struct StoredValueHolder
 {
 	inline StoredValueHolder() {}
-	inline StoredValueHolder(void* val) : Value(val), IsIntegral(true) {}
-	inline StoredValueHolder(BaseObject* val) : Value(val), IsIntegral(false) {}
-	inline StoredValueHolder(String* val) : Value(val), IsIntegral(false) {}
+	inline StoredValueHolder(void* val, bool owned) : Value(val), IsIntegral(true), IsOwned(owned) {}
+	inline StoredValueHolder(BaseObject* val) : Value(val), IsIntegral(false), IsOwned(false) {}
+	inline StoredValueHolder(String* val) : Value(val), IsIntegral(false), IsOwned(false) {}
 
+	~StoredValueHolder();
 
 	void* Value{ nullptr };
 	bool IsIntegral{ true };
+	bool IsOwned{ false };
 };
 
 struct StoredValueHelpers
@@ -164,7 +166,7 @@ struct StoredValueHelpers
 	static void PushPtrValue(lua_State* L, Type const* type, void* val);
 
 	template <class T>
-	static void* GetRawValue(lua_State* L, Type const* type, lua::AnyRef value);
+	static StoredValueHolder GetRawValue(lua_State* L, Type const* type, lua::AnyRef value);
 
 	static std::optional<StoredValueHolder> GetValue(lua_State* L, Type const* type, lua::AnyRef value);
 };
