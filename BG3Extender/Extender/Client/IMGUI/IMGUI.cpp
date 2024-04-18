@@ -17,6 +17,7 @@ template <class T>
 T* TreeParent::AddChild()
 {
     auto child = Manager->CreateRenderable<T>();
+    child->Parent = Handle;
     Children.Add(child->Handle);
     return child;
 }
@@ -342,6 +343,51 @@ lua::ImguiHandle TreeParent::AddColorPicker(char const* label, std::optional<glm
     return e;
 }
 
+bool TreeParent::RemoveChild(HandleType child)
+{
+    auto it = Children.find(child);
+    if (it != Children.end()) {
+        Children.erase(it);
+        return Manager->DestroyRenderable(child);
+    } else {
+        return false;
+    }
+}
+
+bool TreeParent::DetachChild(HandleType child)
+{
+    auto it = Children.find(child);
+    if (it != Children.end()) {
+        Children.erase(it);
+        auto ele = Manager->GetRenderable(child);
+        if (ele != nullptr) {
+            ele->Parent = InvalidHandle;
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+}
+
+bool TreeParent::AttachChild(HandleType child)
+{
+    auto ele = Manager->GetRenderable(child);
+    if (ele == nullptr) {
+        ERR("Tried to attach nonexistent child UI element");
+        return false;
+    }
+    
+    if (ele->Parent != InvalidHandle) {
+        ERR("Element is already attached to a parent");
+        return false;
+    }
+
+    ele->Parent = Handle;
+    Children.Add(ele->Handle);
+    return true;
+}
 
 bool Window::BeginRender()
 {

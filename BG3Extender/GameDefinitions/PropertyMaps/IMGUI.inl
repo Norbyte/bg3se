@@ -1,5 +1,7 @@
 
 BEGIN_CLS(extui::Renderable)
+P_RO(Handle)
+P_RO(Parent)
 END_CLS()
 
 
@@ -9,6 +11,8 @@ P_FUN(SetStyle, extui::StyledRenderable::SetStyleVar)
 P_FUN(SetColor, extui::StyledRenderable::SetStyleColor)
 P_FUN(Tooltip, extui::TreeParent::Tooltip)
 P(Label)
+P(SameLine)
+P(Visible)
 P(OnActivate)
 P(OnDeactivate)
 END_CLS()

@@ -1029,6 +1029,24 @@ public:
 		return std::move(buf_[--size_]);
 	}
 
+	iterator find(T const& v)
+	{
+		for (size_type i = 0; i < size_; i++) {
+			if (buf_[i] == v) return iterator(buf_ + i);
+		}
+
+		return end();
+	}
+
+	const_iterator find(T const& v) const
+	{
+		for (size_type i = 0; i < size_; i++) {
+			if (buf_[i] == v) return const_iterator(buf_ + i);
+		}
+
+		return end();
+	}
+
 	iterator begin()
 	{
 		return iterator(buf_);

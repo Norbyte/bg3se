@@ -71,6 +71,7 @@ public:
     virtual void Render() = 0;
 
     HandleType Handle{ InvalidHandle };
+    HandleType Parent{ InvalidHandle };
     IMGUIObjectManager* Manager{ nullptr };
 };
 
@@ -150,6 +151,10 @@ public:
     lua::ImguiHandle AddInputInt(char const* label, std::optional<int> value);
     lua::ImguiHandle AddColorEdit(char const* label, std::optional<glm::vec3> value);
     lua::ImguiHandle AddColorPicker(char const* label, std::optional<glm::vec3> value);
+
+    bool RemoveChild(HandleType child);
+    bool DetachChild(HandleType child);
+    bool AttachChild(HandleType child);
 
     Array<HandleType> Children;
 
