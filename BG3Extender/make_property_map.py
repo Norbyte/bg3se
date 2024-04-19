@@ -17,7 +17,7 @@ ignore_re = r'^(BEGIN_SE|END_SE).*$'
 template_re = r'^template\s*<(.+)>$'
 explicit_instantiation_re = r'template\s+(struct|class)\s+(?P<name>[a-zA-Z0-9_:<>*:, ]+)\s*(?P<template_args><[a-zA-Z0-9_<>*:, ]+>);$'
 
-member_function_re = r'^(?P<attributes>\[\[(\s*[a-zA-Z0-9:_]+\s*(\([^)]*\))?\s*,?\s*)+\]\])\s*(inline\s+)?(?P<retval>[a-zA-Z0-9_:<>*, ]+)\s+(?P<name>[a-zA-Z0-9_]+)\s*\((?P<params>.*)\)\s*(const)?$'
+member_function_re = r'^(?P<attributes>\[\[(\s*[a-zA-Z0-9:_]+\s*(\([^)]*\))?\s*,?\s*)+\]\])?\s*((inline|virtual|const|static)\s+)*(?P<retval>[a-zA-Z0-9_:<>*&, ]+)\s+(?P<name>[a-zA-Z0-9_]+)\s*\((?P<params>.*)\)\s*(const)?\s*(=\s*0)?\s*(;)?$'
 
 #doesn't support template template types, but I think that's fine
 template_arg_re = r'(template\s*<\s*|,\s*)(((typename|class)|((?P<paramtype>[a-zA-Z0-9_:<>*, ]+)))(\.\.\.)?\s+(?P<paramname>[a-zA-Z0-9_]+)\s*(?=(,\s*)|>))'
@@ -320,6 +320,7 @@ class DefinitionLoader:
                 self.cur_template = self.template_stack.pop()
             else:
                 self.cur_template = None
+
         self.cur_struct = self.struct_stack.pop()
         self.exit_ns()
 
@@ -493,15 +494,17 @@ class DefinitionLoader:
 
         match = re.match(member_function_re, line)
         if match is not None:
-            if not self.next_template:
+            if self.next_template_args is None:
                 self.parse_attributes(match.group('attributes'))
                 if 'bg3::getter' in self.next_attributes:
                     self.cur_struct.getters.append(match.group('name'))
                     self.instantiate_if_necessary(match.group('retval'))
                 if 'bg3::setter' in self.next_attributes:
                     self.cur_struct.setters.append(match.group('name'))
+
+            self.next_template_args = None
             return
-        
+    
         print('UNKNOWN: ', line)
         self.next_template = False
 
