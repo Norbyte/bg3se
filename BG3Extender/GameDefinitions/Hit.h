@@ -90,7 +90,7 @@ struct StatsRollType1
 struct ConditionRoll
 {
 	uint8_t DataType;
-	//+ P_BITMASK(RollType)
+	//# P_BITMASK(RollType)
 	ConditionRollType RollType;
 	std::variant<StatsRollType0, StatsRollType1> Roll;
 	int Difficulty;

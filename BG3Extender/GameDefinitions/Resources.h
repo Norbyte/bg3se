@@ -2403,86 +2403,62 @@ struct LightingResource : public LoadableResource
 
 struct MaterialResource : public TwoStepLoadableResource
 {
-	struct ScalarParameter
+	struct Parameter
 	{
 		FixedString ParameterName;
 		bool Enabled;
-		[[bg3::hidden]] __int8 field_5;
-		[[bg3::hidden]] __int16 field_6;
+	};
+	
+	struct ScalarParameter : public Parameter
+	{
 		float Value;
-		float BaseValue; // Reversed?
+		float BaseValue;
 	};
 
-	struct Vector2Parameter
+	struct Vector2Parameter : public Parameter
 	{
-		FixedString ParameterName;
-		bool Enabled;
-		[[bg3::hidden]] __int8 field_5;
-		[[bg3::hidden]] __int16 field_6;
 		glm::fvec2 Value;
 		glm::fvec2 BaseValue;
 	};
 
-	struct Vector3Parameter
+	struct Vector3Parameter : public Parameter
 	{
-		FixedString ParameterName;
-		bool Enabled;
-		[[bg3::hidden]] __int8 field_5;
-		[[bg3::hidden]] __int16 field_6;
 		glm::fvec3 Value;
 		glm::fvec3 BaseValue;
 		bool IsColor;
-		[[bg3::hidden]] __int8 field_21;
-		[[bg3::hidden]] __int16 field_22;
 	};
 
 	// alignas(16)
-	struct VectorParameter
+	struct Vector4Parameter : public Parameter
 	{
-		FixedString ParameterName;
-		bool Enabled;
-		[[bg3::hidden]] __int8 field_5;
-		[[bg3::hidden]] __int16 field_6;
-		[[bg3::hidden]] __int64 field_8;
+		[[bg3::hidden]] __int64 field_8; // Padding
 		glm::fvec4 Value;
 		glm::fvec4 BaseValue;
 		bool IsColor;
-		[[bg3::hidden]] __int8 field_31;
-		[[bg3::hidden]] __int16 field_32;
-		[[bg3::hidden]] __int32 field_34;
-		[[bg3::hidden]] __int64 field_38;
+		[[bg3::hidden]] __int64 field_38; // Padding
 	};
 
-	struct Texture2DParameter
+	struct Texture2DParameter : public Parameter
 	{
-		FixedString ParameterName;
-		bool Enabled;
-		[[bg3::hidden]] __int8 field_5;
-		[[bg3::hidden]] __int16 field_6;
 		FixedString ID;
 	};
 
-	struct VirtualTextureParameter
+	struct VirtualTextureParameter : public Parameter
 	{
-		FixedString Parameter;
-		bool Enabled;
-		[[bg3::hidden]] __int8 field_5;
-		[[bg3::hidden]] __int16 field_6;
 		int32_t Index;
 		FixedString ID;
 	};
 
-	__int64 field_48;
+	MaterialInstance* Instance;
 	Array<ScalarParameter> ScalarParameters;
 	Array<Vector2Parameter> Vector2Parameters;
 	Array<Vector3Parameter> Vector3Parameters;
-	Array<VectorParameter> VectorParameters;
+	Array<Vector4Parameter> VectorParameters;
 	Array<Texture2DParameter> Texture2DParameters;
 	Array<VirtualTextureParameter> VirtualTextureParameters;
 	FixedString DiffusionProfileUUID;
 	uint8_t MaterialType;
 	uint8_t RenderChannel;
-	[[bg3::hidden]] __int16 field_b6;
 };
 
 struct MaterialPresetResource : public LoadableResource

@@ -1161,3 +1161,204 @@ void LuaPolymorphic<resource::effects::timeline::TLMaterialComponent::Parameter>
 }
 
 END_NS()
+
+#include <GameDefinitions/Render.h>
+
+BEGIN_SE()
+
+template <class T>
+void MaterialInstance::SetUniformParam(MaterialInstance::UniformBindingData const& binding, T value)
+{
+	for (unsigned i = 0; i < std::size(ShaderDescriptions); i++) {
+		if (binding.PerShaderCBOffsets[i] != -1 && ShaderDescriptions[i].MaterialCBSize > 0 && MaterialCBs[i].MaterialCB != nullptr) {
+			*(T *)((uint8_t *)MaterialCBs[i].MaterialCB + binding.PerShaderCBOffsets[i]) = value;
+		}
+	}
+}
+
+bool MaterialInstance::SetScalar(FixedString const& paramName, float value)
+{
+	for (auto& param : Parameters.ScalarParameters) {
+		if (param.ParameterName == paramName) {
+			param.Value = value;
+			SetUniformParam(param.Binding, value);
+			return true;
+		}
+	}
+
+	ERR("Material binding has no float parameter named '%s'", paramName.GetString());
+	return false;
+}
+
+bool MaterialInstance::SetVector2(FixedString const& paramName, glm::vec2 value)
+{
+	for (auto& param : Parameters.Vector2Parameters) {
+		if (param.ParameterName == paramName) {
+			param.Value = value;
+			SetUniformParam(param.Binding, value);
+			return true;
+		}
+	}
+
+	ERR("Material binding has no vec2 parameter named '%s'", paramName.GetString());
+	return false;
+}
+
+bool MaterialInstance::SetVector3(FixedString const& paramName, glm::vec3 value)
+{
+	for (auto& param : Parameters.Vector3Parameters) {
+		if (param.ParameterName == paramName) {
+			param.Value = value;
+			SetUniformParam(param.Binding, value);
+			return true;
+		}
+	}
+
+	ERR("Material binding has no vec3 parameter named '%s'", paramName.GetString());
+	return false;
+}
+
+bool MaterialInstance::SetVector4(FixedString const& paramName, glm::vec4 value)
+{
+	for (auto& param : Parameters.VectorParameters) {
+		if (param.ParameterName == paramName) {
+			param.Value = value;
+			SetUniformParam(param.Binding, value);
+			return true;
+		}
+	}
+
+	ERR("Material binding has no vec4 parameter named '%s'", paramName.GetString());
+	return false;
+}
+
+void* MaterialInstance::GetOrCreateConstantBuffer(uint8_t shaderIndex)
+{
+	assert(shaderIndex < std::size(ShaderDescriptions));
+
+	if (MaterialCBs[shaderIndex].MaterialCB != nullptr) {
+		return MaterialCBs[shaderIndex].MaterialCB;
+	}
+
+	auto size = ShaderDescriptions[shaderIndex].MaterialCBSize;
+	auto cb = (uint8_t *)GameAllocRaw(size);
+	memset(cb, 0, size);
+
+	for (auto const& param : Parameters.ScalarParameters) {
+		if (param.Binding.PerShaderCBOffsets[shaderIndex] != -1) {
+			*(float*)(cb + param.Binding.PerShaderCBOffsets[shaderIndex]) = param.Value;
+		}
+	}
+
+	for (auto const& param : Parameters.Vector2Parameters) {
+		if (param.Binding.PerShaderCBOffsets[shaderIndex] != -1) {
+			*(glm::vec2*)(cb + param.Binding.PerShaderCBOffsets[shaderIndex]) = param.Value;
+		}
+	}
+
+	for (auto const& param : Parameters.Vector3Parameters) {
+		if (param.Binding.PerShaderCBOffsets[shaderIndex] != -1) {
+			*(glm::vec3*)(cb + param.Binding.PerShaderCBOffsets[shaderIndex]) = param.Value;
+		}
+	}
+
+	for (auto const& param : Parameters.VectorParameters) {
+		if (param.Binding.PerShaderCBOffsets[shaderIndex] != -1) {
+			*(glm::vec4*)(cb + param.Binding.PerShaderCBOffsets[shaderIndex]) = param.Value;
+		}
+	}
+
+	MaterialCBs[shaderIndex].MaterialCB = cb;
+	MaterialCBs[shaderIndex].MaterialCBSize = size;
+	return cb;
+}
+
+bool MaterialParameterSet::CheckConstantBuffer(MaterialInstance& instance)
+{
+	if (MaterialCB == nullptr && MaterialCBSize > 0 && MaterialVkDescriptorSet != -1) {
+		auto cb = instance.GetOrCreateConstantBuffer(ShaderIndex);
+		MaterialCB = GameAllocRaw(MaterialCBSize);
+		memcpy(MaterialCB, cb, MaterialCBSize);
+	}
+
+	return MaterialCB != nullptr;
+
+}
+
+template <class T>
+void MaterialParameterSet::SetUniformParam(MaterialInstance& instance, MaterialInstance::UniformBindingData const& binding, T value)
+{
+	if (!CheckConstantBuffer(instance)) return;
+
+	if (binding.PerShaderCBOffsets[ShaderIndex] != -1) {
+		*(T*)((uint8_t*)MaterialCB + binding.PerShaderCBOffsets[ShaderIndex]) = value;
+		// FIXME - VERY JANKY
+		MaterialHash += rand();
+	}
+}
+
+template <class T>
+void ActiveMaterial::SetUniformParam(MaterialInstance::UniformBindingData const& binding, T value)
+{
+	if (DefaultParameterSet != nullptr) {
+		DefaultParameterSet->SetUniformParam(*MaterialInstance, binding, value);
+	}
+
+	for (auto i = 0; i < std::size(ParameterSets); i++) {
+		ParameterSets[i].SetUniformParam(*MaterialInstance, binding, value);
+	}
+}
+
+bool ActiveMaterial::SetScalar(FixedString const& paramName, float value)
+{
+	for (auto const& param : MaterialInstance->Parameters.ScalarParameters) {
+		if (param.ParameterName == paramName) {
+			SetUniformParam(param.Binding, value);
+			return true;
+		}
+	}
+
+	ERR("Material binding has no float parameter named '%s'", paramName.GetString());
+	return false;
+}
+
+bool ActiveMaterial::SetVector2(FixedString const& paramName, glm::vec2 value)
+{
+	for (auto const& param : MaterialInstance->Parameters.Vector2Parameters) {
+		if (param.ParameterName == paramName) {
+			SetUniformParam(param.Binding, value);
+			return true;
+		}
+	}
+
+	ERR("Material binding has no vec2 parameter named '%s'", paramName.GetString());
+	return false;
+}
+
+bool ActiveMaterial::SetVector3(FixedString const& paramName, glm::vec3 value)
+{
+	for (auto const& param : MaterialInstance->Parameters.Vector3Parameters) {
+		if (param.ParameterName == paramName) {
+			SetUniformParam(param.Binding, value);
+			return true;
+		}
+	}
+
+	ERR("Material binding has no vec3 parameter named '%s'", paramName.GetString());
+	return false;
+}
+
+bool ActiveMaterial::SetVector4(FixedString const& paramName, glm::vec4 value)
+{
+	for (auto const& param : MaterialInstance->Parameters.VectorParameters) {
+		if (param.ParameterName == paramName) {
+			SetUniformParam(param.Binding, value);
+			return true;
+		}
+	}
+
+	ERR("Material binding has no vec4 parameter named '%s'", paramName.GetString());
+	return false;
+}
+
+END_SE()

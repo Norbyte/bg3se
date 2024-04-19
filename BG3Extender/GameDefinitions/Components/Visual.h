@@ -58,7 +58,7 @@ struct GameObjectVisualData
 	[[bg3::legacy(field_98)]] Guid AccessorySet;
 	Array<Guid> Visuals;
 	Array<AppearanceElement> Elements;
-	Array<int32_t> AdditionalChoices;
+	Array<float> AdditionalChoices;
 };
 
 struct GameObjectVisualComponent : public BaseComponent
@@ -149,7 +149,7 @@ struct CharacterCreationAppearanceComponent : public BaseComponent
 
 	Array<Guid> Visuals;
 	Array<GameObjectVisualData::AppearanceElement> Elements;
-	Array<int32_t> AdditionalChoices;
+	Array<float> AdditionalChoices;
 	Guid SkinColor;
 	Guid EyeColor;
 	Guid SecondEyeColor;
