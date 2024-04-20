@@ -17,8 +17,10 @@ BEGIN_SE()
 
 VK_HOOK(CreateInstance)
 VK_HOOK(CreateDevice)
+VK_HOOK(DestroyDevice)
 VK_HOOK(CreatePipelineCache)
 VK_HOOK(CreateSwapchainKHR)
+VK_HOOK(DestroySwapchainKHR)
 VK_HOOK(QueuePresentKHR)
 
 END_SE()
@@ -40,6 +42,7 @@ public:
 
     ~VulkanBackend() override
     {
+        releaseSwapChain(swapchain_);
         DestroyUI();
         DisableHooks();
     }
@@ -50,12 +53,15 @@ public:
         DetourUpdateThread(GetCurrentThread());
         CreateInstanceHook_.Wrap(ResolveFunctionTrampoline(&vkCreateInstance));
         CreateDeviceHook_.Wrap(ResolveFunctionTrampoline(&vkCreateDevice));
+        DestroyDeviceHook_.Wrap(ResolveFunctionTrampoline(&vkDestroyDevice));
         DetourTransactionCommit();
 
         CreateInstanceHook_.SetPostHook(&VulkanBackend::vkCreateInstanceHooked, this);
         CreateDeviceHook_.SetPostHook(&VulkanBackend::vkCreateDeviceHooked, this);
+        DestroyDeviceHook_.SetPreHook(&VulkanBackend::vkDestroyDeviceHooked, this);
         CreatePipelineCacheHook_.SetPostHook(&VulkanBackend::vkCreatePipelineCacheHooked, this);
         CreateSwapchainKHRHook_.SetPostHook(&VulkanBackend::vkCreateSwapchainKHRHooked, this);
+        DestroySwapchainKHRHook_.SetPreHook(&VulkanBackend::vkDestroySwapchainKHRHooked, this);
         QueuePresentKHRHook_.SetPreHook(&VulkanBackend::vkQueuePresentKHRHooked, this);
     }
 
@@ -65,8 +71,10 @@ public:
         DetourUpdateThread(GetCurrentThread());
         CreateInstanceHook_.Unwrap();
         CreateDeviceHook_.Unwrap();
+        DestroyDeviceHook_.Unwrap();
         CreatePipelineCacheHook_.Unwrap();
         CreateSwapchainKHRHook_.Unwrap();
+        DestroySwapchainKHRHook_.Unwrap();
         QueuePresentKHRHook_.Unwrap();
         DetourTransactionCommit();
     }
@@ -74,25 +82,6 @@ public:
     void InitializeUI() override
     {
         if (initialized_) return;
-
-        uint32_t numFamilies;
-        vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice_, &numFamilies, nullptr);
-        Array<VkQueueFamilyProperties> families;
-        families.resize(numFamilies);
-        vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice_, &numFamilies, families.raw_buf());
-
-        uint32_t queueFamily{ 0 };
-        VkQueue queue{ nullptr };
-        for (auto const& family : families) {
-            if (family.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
-                vkGetDeviceQueue(device_, queueFamily, 0, &queue);
-                queueFamily_ = queueFamily;
-                renderQueue_ = queue;
-                break;
-            }
-
-            queueFamily++;
-        }
 
         VkDescriptorPoolSize poolSize
         {
@@ -115,8 +104,8 @@ public:
         init_info.Instance = instance_;
         init_info.PhysicalDevice = physicalDevice_;
         init_info.Device = device_;
-        init_info.QueueFamily = queueFamily;
-        init_info.Queue = queue;
+        init_info.QueueFamily = queueFamily_;
+        init_info.Queue = renderQueue_;
         init_info.PipelineCache = pipelineCache_;
         init_info.DescriptorPool = descriptorPool_;
         init_info.Subpass = 0;
@@ -128,10 +117,7 @@ public:
         // init_info.RenderPass = presentRenderPass_;
         init_info.RenderPass = swapchain_.renderPass_;
         ImGui_ImplVulkan_Init(&init_info);
-        // (this gets a bit more complicated, see example app for full reference)
-        //ImGui_ImplVulkan_CreateFontsTexture(YOUR_COMMAND_BUFFER);
-        // (your code submit a queue)
-        //ImGui_ImplVulkan_DestroyFontUploadObjects();
+        ImGui_ImplVulkan_CreateFontsTexture();
 
         initialized_ = true;
     }
@@ -141,11 +127,14 @@ public:
         if (!initialized_) return;
 
         ImGui_ImplVulkan_Shutdown();
+        drawViewport_ = -1;
         initialized_ = false;
     }
 
     void NewFrame() override
     {
+        if (!initialized_) return;
+
         curViewport_ = (curViewport_ + 1) % viewports_.size();
         GImGui->Viewports[0] = &viewports_[curViewport_].Viewport;
         ImGui_ImplVulkan_NewFrame();
@@ -153,6 +142,8 @@ public:
 
     void FinishFrame() override
     {
+        if (!initialized_) return;
+
         auto& vp = viewports_[curViewport_].Viewport;
         auto& drawLists = viewports_[curViewport_].ClonedDrawLists;
 
@@ -175,6 +166,8 @@ public:
 
     void ClearFrame() override
     {
+        if (!initialized_) return;
+
         drawViewport_ = -1;
     }
 
@@ -222,17 +215,51 @@ private:
     {
         physicalDevice_ = physicalDevice;
         device_ = *pDevice;
+        
+        uint32_t numFamilies;
+        vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice_, &numFamilies, nullptr);
+        Array<VkQueueFamilyProperties> families;
+        families.resize(numFamilies);
+        vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice_, &numFamilies, families.raw_buf());
+
+        uint32_t queueFamily{ 0 };
+        VkQueue queue{ nullptr };
+        for (auto const& family : families) {
+            if (family.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+                vkGetDeviceQueue(device_, queueFamily, 0, &queue);
+                queueFamily_ = queueFamily;
+                renderQueue_ = queue;
+                break;
+            }
+
+            queueFamily++;
+        }
 
         auto createPipelineCache = (PFN_vkCreatePipelineCache*)vkGetDeviceProcAddr(*pDevice, "vkCreatePipelineCache");
         auto createSwapchainKHR = (PFN_vkCreatePipelineCache*)vkGetDeviceProcAddr(*pDevice, "vkCreateSwapchainKHR");
+        auto destroySwapchainKHR = (PFN_vkCreatePipelineCache*)vkGetDeviceProcAddr(*pDevice, "vkDestroySwapchainKHR");
         auto queuePresentKHR = (PFN_vkQueuePresentKHR*)vkGetDeviceProcAddr(*pDevice, "vkQueuePresentKHR");
 
         DetourTransactionBegin();
         DetourUpdateThread(GetCurrentThread());
         CreatePipelineCacheHook_.Wrap(ResolveFunctionTrampoline(createPipelineCache));
         CreateSwapchainKHRHook_.Wrap(ResolveFunctionTrampoline(createSwapchainKHR));
+        DestroySwapchainKHRHook_.Wrap(ResolveFunctionTrampoline(destroySwapchainKHR));
         QueuePresentKHRHook_.Wrap(ResolveFunctionTrampoline(queuePresentKHR));
         DetourTransactionCommit();
+    }
+
+    void vkDestroyDeviceHooked(VkDevice device, const VkAllocationCallbacks* pAllocator)
+    {
+        if (device != device_) return;
+
+        DestroyUI();
+        releaseSwapChain(swapchain_);
+
+        physicalDevice_ = VK_NULL_HANDLE;
+        device_ = VK_NULL_HANDLE;
+        queueFamily_ = 0;
+        renderQueue_ = VK_NULL_HANDLE;
     }
 
     void vkCreatePipelineCacheHooked(
@@ -254,6 +281,48 @@ private:
     {
         swapChain_ = *pSwapchain;
         collectSwapChainInfo(pCreateInfo);
+    }
+
+    void vkDestroySwapchainKHRHooked(
+        VkDevice device,
+        VkSwapchainKHR swapchain,
+        const VkAllocationCallbacks* pAllocator)
+    {
+        if (device != device_) return;
+
+        DestroyUI();
+        releaseSwapChain(swapchain_);
+
+        swapChain_ = VK_NULL_HANDLE;
+        pipelineCache_ = VK_NULL_HANDLE;
+    }
+
+    void releaseSwapChain(SwapchainInfo& swapchain)
+    {
+        for (auto& image : swapchain.images_) {
+            vkFreeCommandBuffers(device_, swapchain.commandPool_, 1, &image.commandBuffer);
+            vkDestroySemaphore(device_, image.uiDoneSemaphore, nullptr);
+            vkDestroyFence(device_, image.fence, nullptr);
+            vkDestroyFramebuffer(device_, image.framebuffer, nullptr);
+            vkDestroyImageView(device_, image.view, nullptr);
+        }
+
+        swapchain.images_.clear();
+
+        if (swapchain.renderPass_ != VK_NULL_HANDLE) {
+            vkDestroyRenderPass(device_, swapchain.renderPass_, nullptr);
+            swapchain.renderPass_ = VK_NULL_HANDLE;
+        }
+
+        if (swapchain.commandPool_ != VK_NULL_HANDLE) {
+            vkDestroyCommandPool(device_, swapchain.commandPool_, nullptr);
+            swapchain.commandPool_ = VK_NULL_HANDLE;
+        }
+
+        if (descriptorPool_ != VK_NULL_HANDLE) {
+            vkDestroyDescriptorPool(device_, descriptorPool_, nullptr);
+            descriptorPool_ = VK_NULL_HANDLE;
+        }
     }
 
     void collectSwapChainInfo(const VkSwapchainCreateInfoKHR* pCreateInfo)
@@ -343,7 +412,7 @@ private:
 
                 {
                     VkCommandBufferAllocateInfo allocInfo = {
-                        VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
+                        VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
                         NULL,
                         swapchain_.commandPool_,
                         VK_COMMAND_BUFFER_LEVEL_PRIMARY,
@@ -522,12 +591,18 @@ private:
         }
 
         if (!initialized_) {
-            ui_.OnRenderBackendInitialized();
-            for (auto i = 0; i < viewports_.size(); i++) {
-                viewports_[i].Viewport = *GImGui->Viewports[0];
-            }
+            if (!uiFrameworkStarted_) {
+                ui_.OnRenderBackendInitialized();
+                uiFrameworkStarted_ = true;
+
+                for (auto i = 0; i < viewports_.size(); i++) {
+                    viewports_[i].Viewport = *GImGui->Viewports[0];
+                }
             
-            GImGui->Viewports[0] = &viewports_[0].Viewport;
+                GImGui->Viewports[0] = &viewports_[0].Viewport;
+            } else {
+                InitializeUI();
+            }
         }
 
         if (initialized_ && drawViewport_ != -1) {
@@ -536,24 +611,27 @@ private:
     }
 
     IMGUIManager& ui_;
-    VkInstance instance_{ nullptr };
-    VkPhysicalDevice physicalDevice_{ nullptr };
-    VkDevice device_{ nullptr };
+    VkInstance instance_{ VK_NULL_HANDLE };
+    VkPhysicalDevice physicalDevice_{ VK_NULL_HANDLE };
+    VkDevice device_{ VK_NULL_HANDLE };
     uint32_t queueFamily_{ 0 };
-    VkQueue renderQueue_{ nullptr };
-    VkSwapchainKHR swapChain_{ nullptr };
-    VkPipelineCache pipelineCache_{ nullptr };
-    VkDescriptorPool descriptorPool_{ nullptr };
+    VkQueue renderQueue_{ VK_NULL_HANDLE };
+    VkSwapchainKHR swapChain_{ VK_NULL_HANDLE };
+    VkPipelineCache pipelineCache_{ VK_NULL_HANDLE };
+    VkDescriptorPool descriptorPool_{ VK_NULL_HANDLE };
     std::array<ViewportInfo, 3> viewports_;
     int32_t drawViewport_{ -1 };
     int32_t curViewport_{ 0 };
 
     bool initialized_{ false };
+    bool uiFrameworkStarted_{ false };
 
     VkCreateInstanceHookType CreateInstanceHook_;
     VkCreateDeviceHookType CreateDeviceHook_;
+    VkDestroyDeviceHookType DestroyDeviceHook_;
     VkCreatePipelineCacheHookType CreatePipelineCacheHook_;
     VkCreateSwapchainKHRHookType CreateSwapchainKHRHook_;
+    VkDestroySwapchainKHRHookType DestroySwapchainKHRHook_;
     VkQueuePresentKHRHookType QueuePresentKHRHook_;
 
     SwapchainInfo swapchain_;
