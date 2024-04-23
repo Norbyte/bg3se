@@ -675,16 +675,15 @@ void Combo::StyledRender()
         int i = 0;
         for (auto const& val : Options) {
             bool selected = (SelectedIndex == i);
-            if (ImGui::Selectable(val.c_str(), &selected)) {
-                if (selected) {
-                    selectedIndex = i;
-                }
+            ImGui::Selectable(val.c_str(), &selected);
+            if (selected) {
+                selectedIndex = i;
             }
 
             i++;
         }
 
-        if (SelectedIndex != selectedIndex) {
+        if (SelectedIndex != selectedIndex && selectedIndex != -1) {
             SelectedIndex = selectedIndex;
             if (OnChange) {
                 OnChange.Call(lua::ImguiHandle(Handle), SelectedIndex);
