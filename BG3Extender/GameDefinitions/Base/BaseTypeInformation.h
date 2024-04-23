@@ -160,6 +160,16 @@ inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overl
 {
 	return &MakeDeferredArrayType<Noesis::BaseComponent*>;
 }
+
+inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<Noesis::BaseObservableCollection>)
+{
+	return &MakeDeferredArrayType<Noesis::BaseComponent*>;
+}
+
+inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<Noesis::UIElementCollection>)
+{
+	return &MakeDeferredArrayType<Noesis::UIElement*>;
+}
 #endif
 
 template <class T, class Allocator, bool StoreSize>
