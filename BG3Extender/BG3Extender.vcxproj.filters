@@ -158,6 +158,7 @@
     <ClCompile Include="Extender\Client\ClientNetworking.cpp" />
     <ClCompile Include="Extender\Server\ServerNetworking.cpp" />
     <ClCompile Include="Extender\Client\IMGUI\IMGUI.cpp" />
+    <ClCompile Include="Extender\Client\SDL.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -474,6 +475,7 @@
     <ClInclude Include="Extender\Client\IMGUI\Objects.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaImguiProxy.h" />
     <ClInclude Include="Lua\Shared\LuaDelegate.h" />
+    <ClInclude Include="Extender\Client\SDLManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -706,12 +708,12 @@
     </None>
     <None Include="Lua\Libs\ClientUI\Module.inl" />
     <None Include="Lua\Libs\ClientAudio.inl" />
-    <None Include="Extender\Client\IMGUI\SDL.inl" />
     <None Include="Extender\Client\IMGUI\Vulkan.inl" />
     <None Include="Lua\Libs\ClientIMGUI.inl" />
     <None Include="GameDefinitions\PropertyMaps\IMGUI.inl" />
     <None Include="Lua\Shared\Proxies\LuaImguiProxy.inl" />
     <None Include="Extender\Client\IMGUI\DX11.inl" />
+    <None Include="Lua\Libs\ClientInput.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

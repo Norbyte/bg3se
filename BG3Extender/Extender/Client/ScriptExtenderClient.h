@@ -4,6 +4,7 @@
 #include <Extender/Shared/ExtenderConfig.h>
 #include <Extender/Client/ExtensionStateClient.h>
 #include <Extender/Client/ClientNetworking.h>
+#include <Extender/Client/SDLManager.h>
 #include <Extender/Shared/ModuleHasher.h>
 #include <GameDefinitions/Symbols.h>
 #include <GameDefinitions/EntitySystemHelpers.h>
@@ -50,6 +51,11 @@ public:
 		return network_;
 	}
 
+	inline SDLManager& GetSDL()
+	{
+		return sdl_;
+	}
+
 	bool IsInClientThread() const;
 	void ResetLuaState();
 	void ResetExtensionState();
@@ -75,6 +81,7 @@ private:
 	STDString serverStatus_;
 	STDString clientStatus_;
 	NetworkManager network_;
+	SDLManager sdl_;
 
 	void OnBaseModuleLoaded(void * self);
 	void GameStateWorkerWrapper(void (*wrapped)(void*), void* self);

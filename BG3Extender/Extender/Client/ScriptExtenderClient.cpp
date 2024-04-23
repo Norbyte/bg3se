@@ -84,11 +84,14 @@ void ScriptExtender::Initialize()
 
 	gameStateWorkerStart_.SetWrapper(&ScriptExtender::GameStateWorkerWrapper, this);
 	gameStateMachineUpdate_.SetPostHook(&ScriptExtender::OnUpdate, this);
+
+	sdl_.EnableHooks();
 }
 
 void ScriptExtender::Shutdown()
 {
 	DEBUG("ecl::ScriptExtender::Shutdown: Exiting");
+	sdl_.DisableHooks();
 	ResetExtensionState();
 }
 

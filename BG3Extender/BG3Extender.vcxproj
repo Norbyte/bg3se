@@ -56,7 +56,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>ENABLE_IMGUI;ENABLE_UI;NS_STATIC_LIBRARY;_SILENCE_CXX20_IS_POD_DEPRECATION_WARNING;_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS;GOOGLE_PROTOBUF_NO_RTTI;_DEBUG;_WINDOWS;_USRDLL;OSI_EOCAPP;OSIINTERFACE_EXPORTS;_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_ITERATOR_DEBUG_LEVEL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ENABLE_SDL;ENABLE_IMGUI;ENABLE_UI;NS_STATIC_LIBRARY;_SILENCE_CXX20_IS_POD_DEPRECATION_WARNING;_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS;GOOGLE_PROTOBUF_NO_RTTI;_DEBUG;_WINDOWS;_USRDLL;OSI_EOCAPP;OSIINTERFACE_EXPORTS;_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_ITERATOR_DEBUG_LEVEL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)External\protobuf\include;$(SolutionDir)External\glm;$(SolutionDir)External\Detours\include;$(SolutionDir)External\lua-5.3.6\src;$(SolutionDir)External\jsoncpp-master\include;$(SolutionDir)External\NoesisGUI-NativeSDK-win-3.1.7-Indie\Include;$(SolutionDir)External\VulkanSDK\Include;$(SolutionDir)External\SDL2-2.30.1\include;$(SolutionDir)External\imgui-1.90.4</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -91,7 +91,7 @@ $(SolutionDir)x64\Debug\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Project
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>ENABLE_IMGUI;ENABLE_UI;NS_STATIC_LIBRARY;_SILENCE_CXX20_IS_POD_DEPRECATION_WARNING;_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS;NDEBUG;_WINDOWS;_USRDLL;OSI_EOCAPP;OSIINTERFACE_EXPORTS;OSI_EXTENSION_BUILD;_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ENABLE_SDL;ENABLE_IMGUI;ENABLE_UI;NS_STATIC_LIBRARY;_SILENCE_CXX20_IS_POD_DEPRECATION_WARNING;_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS;NDEBUG;_WINDOWS;_USRDLL;OSI_EOCAPP;OSIINTERFACE_EXPORTS;OSI_EXTENSION_BUILD;_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)External\protobuf\include;$(SolutionDir)External\glm;$(SolutionDir)External\Detours\include;$(SolutionDir)External\lua-5.3.6\src;$(SolutionDir)External\jsoncpp-master\include;$(SolutionDir)External\NoesisGUI-NativeSDK-win-3.1.7-Indie\Include;$(SolutionDir)External\VulkanSDK\Include;$(SolutionDir)External\SDL2-2.30.1\include;$(SolutionDir)External\imgui-1.90.4</AdditionalIncludeDirectories>
@@ -128,6 +128,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="Extender\Client\IMGUI\Backends.h" />
     <ClInclude Include="Extender\Client\IMGUI\Objects.h" />
     <ClInclude Include="Extender\Client\ScriptExtenderClient.h" />
+    <ClInclude Include="Extender\Client\SDLManager.h" />
     <ClInclude Include="Extender\ScriptExtender.h" />
     <ClInclude Include="Extender\Server\ExtensionStateServer.h" />
     <ClInclude Include="Extender\Server\ScriptExtenderServer.h" />
@@ -366,7 +367,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="cpp.hint" />
     <None Include="Exports.def" />
     <None Include="Extender\Client\IMGUI\DX11.inl" />
-    <None Include="Extender\Client\IMGUI\SDL.inl" />
+    <ClCompile Include="Extender\Client\SDL.cpp" />
     <None Include="Extender\Client\IMGUI\Vulkan.inl" />
     <None Include="Extender\Shared\ModuleHasher.inl" />
     <None Include="Extender\Shared\SavegameSerializer.inl" />
@@ -408,6 +409,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     </None>
     <None Include="Lua\Libs\ClientAudio.inl" />
     <None Include="Lua\Libs\ClientIMGUI.inl" />
+    <None Include="Lua\Libs\ClientInput.inl" />
     <None Include="Lua\Libs\ClientNet.inl" />
     <None Include="Lua\Libs\ClientTemplate.inl" />
     <None Include="Lua\Libs\ClientUI\Module.inl" />

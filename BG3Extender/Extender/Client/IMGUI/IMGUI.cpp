@@ -6,7 +6,6 @@
 #include <Extender/Client/IMGUI/Objects.h>
 #include <CoreLib/Wrappers.h>
 
-#include <Extender/Client/IMGUI/SDL.inl>
 #include <Extender/Client/IMGUI/Vulkan.inl>
 #include <Extender/Client/IMGUI/DX11.inl>
 #include <Lua/Shared/LuaMethodCallHelpers.h>
@@ -21,8 +20,6 @@ T* TreeParent::AddChild()
     Children.Add(child->Handle);
     return child;
 }
-
-PlatformBackend::~PlatformBackend() {}
 
 RenderingBackend::~RenderingBackend() {}
 
@@ -866,9 +863,9 @@ void IMGUIObjectManager::EnableDemo(bool enable)
     renderDemo_ = enable;
 }
 
-IMGUIManager::IMGUIManager()
+IMGUIManager::IMGUIManager(SDLManager& sdl)
+    : sdl_(sdl)
 {
-    platform_ = std::make_unique<SDLBackend>(mutex_);
     if (GetModuleHandleW(L"bg3_dx11.exe") == NULL) {
         renderer_ = std::make_unique<VulkanBackend>(*this);
     } else {
@@ -883,13 +880,11 @@ IMGUIManager::~IMGUIManager()
 
 void IMGUIManager::EnableHooks()
 {
-    platform_->EnableHooks();
     renderer_->EnableHooks();
 }
 
 void IMGUIManager::DisableHooks()
 {
-    platform_->DisableHooks();
     renderer_->DisableHooks();
 }
 
@@ -903,7 +898,7 @@ void IMGUIManager::InitializeUI()
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 
-    platform_->InitializeUI();
+    sdl_.InitializeUI();
     renderer_->InitializeUI();
     initialized_ = true;
 }
@@ -914,7 +909,7 @@ void IMGUIManager::DestroyUI()
 
     initialized_ = false;
     renderer_->DestroyUI();
-    platform_->DestroyUI();
+    sdl_.DestroyUI();
     ImGui::DestroyContext();
 }
 
@@ -941,8 +936,8 @@ void IMGUIManager::Update()
 {
     if (!enableUI_ || !initialized_ || !objects_) return;
 
-    std::lock_guard _(mutex_);
-    platform_->NewFrame();
+    std::lock_guard _(sdl_.GetSDLMutex());
+    sdl_.NewFrame();
     renderer_->NewFrame();
     ImGui::NewFrame();
 

@@ -1,6 +1,10 @@
 #pragma once
 
 #include <cstdint>
+#if defined(ENABLE_SDL)
+#include <SDL_scancode.h>
+#include <SDL_keycode.h>
+#endif
 
 #if defined(ENABLE_UI)
 #include <NsGui/Enums.h>

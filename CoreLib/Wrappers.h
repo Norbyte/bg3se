@@ -6,6 +6,17 @@
 
 namespace bg3se {
 
+	template <class T>
+	T* ResolveFunctionTrampoline(T* ref)
+	{
+		auto p = reinterpret_cast<uint8_t *>(ref);
+		if (*p == 0xE9) {
+			return ResolveFunctionTrampoline(reinterpret_cast<T*>(p + 5 + *(int32_t*)(p + 1)));
+		} else {
+			return ref;
+		}
+	}
+
 	void const* ResolveRealFunctionAddress(void const* ptr);
 
 	extern std::unordered_set<void const *> gRegisteredTrampolines;

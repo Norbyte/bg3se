@@ -12,6 +12,7 @@
 #include <Extender/Client/IMGUI/IMGUI.h>
 #include <Extender/Client/IMGUI/Objects.h>
 #endif
+#include <SDL_events.h>
 
 BEGIN_NS(ecl::lua)
 
@@ -135,6 +136,23 @@ void ClientState::OnGameStateChanged(GameState fromState, GameState toState)
 		.ToState = toState
 	};
 	ThrowEvent("GameStateChanged", params, false, 0);
+}
+
+void ClientState::OnInputEvent(SDL_Event* event, int& result)
+{
+	if (event->type == SDL_KEYDOWN || event->type == SDL_KEYUP) {
+		KeyInputEvent params{
+			.Event = (event->key.type == SDL_KEYDOWN) ? SDLKeyEvent::KeyDown : SDLKeyEvent::KeyUp,
+			.Key = (SDLScanCode)event->key.keysym.scancode,
+			.Modifiers = (SDLKeyModifier)event->key.keysym.mod,
+			.Pressed = event->key.state == SDL_PRESSED,
+			.Repeat = event->key.repeat != 0,
+		};
+		auto res = ThrowEvent("KeyInput", params, true, 0);
+		if (res == EventResult::ActionPrevented) {
+			result = 0;
+		}
+	}
 }
 
 #if defined(ENABLE_IMGUI)

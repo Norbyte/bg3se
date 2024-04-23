@@ -18,6 +18,15 @@ namespace bg3se::ecl::lua
 		ecl::GameState ToState;
 	};
 
+	struct KeyInputEvent : public EventBase
+	{
+		SDLKeyEvent Event;
+		SDLScanCode Key;
+		SDLKeyModifier Modifiers;
+		bool Pressed;
+		bool Repeat;
+	};
+
 	class ExtensionLibraryClient : public ExtensionLibrary
 	{
 	public:
@@ -66,6 +75,7 @@ namespace bg3se::ecl::lua
 		ecs::EntitySystemHelpersBase* GetEntitySystemHelpers() override;
 		EntityReplicationEventHooks* GetReplicationEventHooks() override;
 		void OnGameStateChanged(GameState fromState, GameState toState);
+		void OnInputEvent(SDL_Event* event, int& result);
 
 #if defined(ENABLE_UI)
 		UIEventHooks& GetUIEvents()

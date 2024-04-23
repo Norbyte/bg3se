@@ -2,6 +2,9 @@
 
 struct lua_State;
 
+union SDL_Event;
+struct SDL_Window;
+
 namespace Json
 {
 	class Value;
@@ -57,6 +60,7 @@ struct MaterialInstance;
 
 struct SoundManager;
 struct WwiseManager;
+class SDLManager;
 
 namespace resource
 {

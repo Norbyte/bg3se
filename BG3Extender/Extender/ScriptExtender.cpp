@@ -32,7 +32,8 @@ void LuaDebugThreadRunner(LuaDebugInterface& intf)
 
 ScriptExtender::ScriptExtender()
 	: server_(config_),
-	client_(config_)
+	client_(config_),
+	imgui_(client_.GetSDL())
 {
 	gCoreLibPlatformInterface.GlobalConsole = new DebugConsole();
 }

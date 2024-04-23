@@ -2,6 +2,7 @@
 
 #include <CoreLib/Base/Base.h>
 #include <GameDefinitions/Enumerations.h>
+#include <GameDefinitions/Base/ForwardDeclarations.h>
 
 #if defined(ENABLE_UI)
 #include <NsCore/Symbol.h>
@@ -20,7 +21,6 @@
 
 #include <GameDefinitions/Base/LuaAnnotations.h>
 #include <GameDefinitions/Base/BaseTypeInformation.h>
-#include <GameDefinitions/Base/ForwardDeclarations.h>
 #include <GameDefinitions/Base/CommonTypes.h>
 #include <GameDefinitions/Base/ExposedTypes.h>
 #include <GameDefinitions/Base/Serialization.h>

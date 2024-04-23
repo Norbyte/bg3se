@@ -13,7 +13,7 @@ class IMGUIObjectManager;
 class IMGUIManager
 {
 public:
-    IMGUIManager();
+    IMGUIManager(SDLManager& sdl);
     ~IMGUIManager();
 
     void EnableHooks();
@@ -27,15 +27,9 @@ public:
     void OnRenderBackendInitialized();
     void Update();
 
-    inline std::recursive_mutex& GetGlobalUIMutex()
-    {
-        return mutex_;
-    }
-
 private:
-    std::unique_ptr<PlatformBackend> platform_;
+    SDLManager& sdl_;
     std::unique_ptr<RenderingBackend> renderer_;
-    std::recursive_mutex mutex_;
 
     IMGUIObjectManager* objects_{ nullptr };
 
