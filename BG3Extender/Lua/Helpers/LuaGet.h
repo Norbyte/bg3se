@@ -244,23 +244,6 @@ inline typename std::optional<T> do_get(lua_State* L, int index, Overload<std::o
 	}
 }
 
-// Overload helper for fetching a parameter for a Lua -> C++ function call
-template <class T>
-inline T get_param(lua_State* L, int i, Overload<T>)
-{
-	return do_get(L, i, Overload<T>{});
-}
-
-template <class T>
-inline std::optional<T> get_param(lua_State* L, int i, Overload<std::optional<T>>)
-{
-	if (lua_gettop(L) < i || lua_isnil(L, i)) {
-		return {};
-	} else {
-		return do_get(L, i, Overload<T>{});
-	}
-}
-
 template <class T>
 inline T checked_get_flags(lua_State* L, int index)
 {
@@ -282,7 +265,27 @@ inline T checked_get_flags(lua_State* L, int index)
 }
 
 template <class T>
-typename std::enable_if_t<!IsByVal<T>, T> do_get(lua_State* L, int index, Overload<T>);
+typename std::enable_if_t<!IsByVal<T> && !std::is_pointer_v<T>, T> do_get(lua_State* L, int index, Overload<T>);
+
+template <class T>
+typename std::enable_if_t<!IsByVal<T> && std::is_pointer_v<T>, T> do_get(lua_State* L, int index, Overload<T>);
+
+// Overload helper for fetching a parameter for a Lua -> C++ function call
+template <class T>
+inline T get_param(lua_State* L, int i, Overload<T>)
+{
+	return do_get(L, i, Overload<T>{});
+}
+
+template <class T>
+inline std::optional<T> get_param(lua_State* L, int i, Overload<std::optional<T>>)
+{
+	if (lua_gettop(L) < i || lua_isnil(L, i)) {
+		return {};
+	} else {
+		return do_get(L, i, Overload<T>{});
+	}
+}
 
 template <class T>
 inline T get(lua_State* L, int index)

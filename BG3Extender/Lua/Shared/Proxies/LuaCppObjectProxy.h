@@ -87,4 +87,10 @@ public:
 	}
 };
 
+template <class T>
+inline T* GetObjectRef(lua_State* L, int index)
+{
+	return ObjectProxy::Get<T>(L, index);
+}
+
 END_NS()
