@@ -58,14 +58,28 @@ const TypeClass* BaseRefCounted::GetClassType() const
 
 uint32_t SymbolManager::FindString(char const* k)
 {
-	auto it = GetSymbolManager()->Keys.Find(k);
-	if (it != GetSymbolManager()->Keys.End()) {
+	auto const& keys = GetSymbolManager()->Keys;
+	auto it = keys.Find(k);
+	if (it != keys.End()) {
 		return it->value;
 	}
 
 	auto it2 = gStaticSymbols.Symbols.find(k);
 	if (it2 != gStaticSymbols.Symbols.end()) {
 		return it2->second;
+	}
+
+	// If the symbol table changed since the last sync, re-sync and try again
+	if (keys.Size() != gStaticSymbols.Symbols.size()) {
+		auto& strings = Noesis::GetSymbolManager()->Strings;
+		for (uint32_t i = 0; i < strings.Size(); i++) {
+			gStaticSymbols.Symbols.insert(std::make_pair(strings[i], i));
+		}
+
+		auto it3 = gStaticSymbols.Symbols.find(k);
+		if (it3 != gStaticSymbols.Symbols.end()) {
+			return it3->second;
+		}
 	}
 
 	return 0;
