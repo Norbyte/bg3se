@@ -100,6 +100,13 @@ P_FREE_GETTER(OwnerType, Noesis::RoutedEventHelpers::GetOwnerType)
 END_CLS()
 
 
+BEGIN_CLS(Noesis::BaseCommand)
+INHERIT(Noesis::BaseComponent)
+P_FUN(CanExecute, Noesis::CommandHelpers::CanExecute)
+P_FUN(Execute, Noesis::CommandHelpers::Execute)
+END_CLS()
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// UI OBJECTS

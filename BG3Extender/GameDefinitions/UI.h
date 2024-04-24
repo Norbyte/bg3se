@@ -4,6 +4,7 @@
 
 #include <NsCore/BaseComponent.h>
 #include <NsCore/TypeClass.h>
+#include <NsGui/BaseCommand.h>
 #include <NsGui/DependencyData.h>
 #include <NsGui/DependencyObjectValueData.h>
 #include <NsGui/RoutedEvent.h>
@@ -169,6 +170,12 @@ struct StoredValueHelpers
 	static StoredValueHolder GetRawValue(lua_State* L, Type const* type, lua::AnyRef value);
 
 	static std::optional<StoredValueHolder> GetValue(lua_State* L, Type const* type, lua::AnyRef value);
+};
+
+struct CommandHelpers
+{
+	static bool CanExecute(lua_State* L, BaseCommand* o, std::optional<BaseComponent*> arg);
+	static void Execute(lua_State* L, BaseCommand* o, std::optional<BaseComponent*> arg);
 };
 
 struct VisualHelpers
@@ -622,6 +629,7 @@ BEGIN_NS(lua)
 	FOR_NOESIS_TYPE(Noesis::TypeMeta) \
 	FOR_NOESIS_TYPE(Noesis::TypeMetaData) \
 	FOR_NOESIS_TYPE(Noesis::TypeClass) \
+	FOR_NOESIS_TYPE(Noesis::BaseCommand) \
 	FOR_NOESIS_TYPE(Noesis::DispatcherObject) \
 	FOR_NOESIS_TYPE(Noesis::DependencyObject) \
 	FOR_NOESIS_TYPE(Noesis::DependencyData) \

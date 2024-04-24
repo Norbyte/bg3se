@@ -650,6 +650,16 @@ std::optional<StoredValueHolder> StoredValueHelpers::GetValue(lua_State* L, Type
 	}
 }
 
+bool CommandHelpers::CanExecute(lua_State* L, BaseCommand* o, std::optional<BaseComponent*> arg)
+{
+	return o->CanExecute(arg ? * arg : nullptr);
+}
+
+void CommandHelpers::Execute(lua_State* L, BaseCommand* o, std::optional<BaseComponent*> arg)
+{
+	o->Execute(arg ? *arg : nullptr);
+}
+
 Visual* VisualHelpers::GetVisualParent(Visual* o)
 {
 	return o->mVisualParent;

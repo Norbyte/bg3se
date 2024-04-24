@@ -102,6 +102,7 @@ struct StaticTypeClasses
 	TypeClassInfo BaseRefCounted;
 	TypeClassInfo BaseComponent;
 	TypeClassInfo BaseCollection;
+	TypeClassInfo BaseCommand;
 	TypeClassInfo DependencyObject;
 	TypeClassInfo TypeClass;
 	TypeClassInfo TypeEnum;
@@ -122,6 +123,7 @@ struct StaticTypeClasses
 		BaseRefCounted.Setup("BaseRefCounted");
 		BaseComponent.Setup("BaseComponent");
 		BaseCollection.Setup("BaseCollection");
+		BaseCommand.Setup("BaseCommand");
 		DependencyObject.Setup("DependencyObject");
 		TypeClass.Setup("TypeClass");
 		TypeEnum.Setup("TypeEnum");
