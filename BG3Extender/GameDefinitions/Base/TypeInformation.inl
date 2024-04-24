@@ -234,6 +234,9 @@ void TypeInformationRepository::Initialize()
 	auto& typeRef = RegisterStaticType<TypeInformationRef>("TypeInformationRef", LuaTypeId::Object);
 	typeRef.ParentType = GetStaticTypeInfo(Overload<TypeInformation>{});
 
+	auto& nsCollection = RegisterStaticType<Noesis::BaseCollection>("Noesis::BaseCollection", LuaTypeId::Array);
+	nsCollection.ElementType = GetStaticTypeInfo(Overload<Noesis::BaseObject>{});
+
 	RegisterObjectProxyTypeInformation();
 
 	lua::gModuleRegistry.RegisterTypeInformation();

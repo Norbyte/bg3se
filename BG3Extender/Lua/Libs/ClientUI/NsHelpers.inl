@@ -406,14 +406,20 @@ void StoredValueHelpers::PushValue(lua_State* L, Type const* type, void* val, Ty
 	} else if (TypeHelpers::IsDescendantOf(type, classes.BaseObject.Type)) {
 		auto obj = reinterpret_cast<BaseObject*>(val);
 
-		if (obj != nullptr && obj->GetClassType()->GetBase() == classes.BoxedValue.Type) {
+		if (obj == nullptr) {
+			lua::push(L, nullptr);
+		} else if (obj->GetClassType()->GetBase() == classes.BoxedValue.Type) {
 			auto boxed = reinterpret_cast<BoxedValue*>(val);
 			PushValue(L, boxed->GetValueType(), const_cast<void*>(boxed->GetValuePtr()), objectType, propertyName);
+		} else if (TypeHelpers::IsDescendantOf(type, classes.BaseCollection.Type)) {
+			auto coll = static_cast<BaseCollection*>(val);
+			lua::ArrayProxyMetatable::Make(L, coll, lua::GetCurrentLifetime(L));
 		} else {
 			lua::MakeObjectRef(L, obj);
 		}
 
 	} else if (TypeHelpers::IsDescendantOf(typeOfType, classes.TypeEnum.Type)) {
+		// This can also be an int64, but we have no way to determine for now
 		auto enumVal = *reinterpret_cast<int*>(&val);
 		auto enumType = static_cast<TypeEnum const*>(type);
 		PushValue(L, enumType, enumVal);
@@ -479,7 +485,7 @@ void StoredValueHelpers::PushProperty(lua_State* L, BaseObject* obj, TypeClass c
 
 	} else if (TypeHelpers::IsDescendantOf(type->GetClassType(), classes.TypeEnum.Type)) {
 		auto cn = type->GetClassType()->GetName();
-		int32_t enumLabel{ 0 };
+		int64_t enumLabel{ 0 };
 		prop->GetCopy(obj, &enumLabel);
 
 		auto enumType = static_cast<TypeEnum const*>(type);

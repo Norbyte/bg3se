@@ -282,7 +282,7 @@ public:
 
 	TypeInformation const& GetContainerType() const override
 	{
-		return GetTypeInfo<TContainer>();
+		return GetTypeInfo<Noesis::BaseCollection>();
 	}
 
 	TypeInformation const& GetElementType() const override
