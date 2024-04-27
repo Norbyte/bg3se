@@ -462,6 +462,13 @@ lua::ImguiHandle Menu::AddItem(char const* label, std::optional<char const*> sho
     return menu;
 }
 
+lua::ImguiHandle Menu::AddMenu(char const* label)
+{
+    auto menu = AddChild<Menu>();
+    menu->Label = label;
+    return menu;
+}
+
 void MenuItem::StyledRender()
 {
     if (ImGui::MenuItem(Label.c_str(), Shortcut ? Shortcut->c_str() : nullptr, false, Enabled) && OnClick) {

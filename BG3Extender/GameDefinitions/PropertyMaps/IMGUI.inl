@@ -134,6 +134,7 @@ END_CLS()
 BEGIN_CLS(extui::Menu)
 INHERIT(extui::TreeParent)
 P_FUN(AddItem, extui::Menu::AddItem)
+P_FUN(AddMenu, extui::Menu::AddMenu)
 END_CLS()
 
 

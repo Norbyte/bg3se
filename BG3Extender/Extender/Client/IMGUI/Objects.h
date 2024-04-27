@@ -213,6 +213,7 @@ public:
     void EndRender() override;
 
     lua::ImguiHandle AddItem(char const* label, std::optional<char const*> shortcut);
+    lua::ImguiHandle AddMenu(char const* label);
 
 private:
     bool rendering_{ false };
