@@ -740,9 +740,12 @@ void Combo::StyledRender()
         int i = 0;
         for (auto const& val : Options) {
             bool selected = (SelectedIndex == i);
-            ImGui::Selectable(val.c_str(), &selected);
-            if (selected) {
+            if (ImGui::Selectable(val.c_str(), &selected)) {
                 selectedIndex = i;
+            }
+
+            if (selected) {
+                ImGui::SetItemDefaultFocus();
             }
 
             i++;
