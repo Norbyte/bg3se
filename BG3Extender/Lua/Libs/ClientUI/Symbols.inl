@@ -116,6 +116,7 @@ struct StaticTypeClasses
 	TypeClassInfo StateWidget;
 	TypeClassInfo State;
 	TypeClassInfo Widget;
+	TypeClassInfo DCWidget;
 
 	void Setup()
 	{
@@ -137,6 +138,7 @@ struct StaticTypeClasses
 		StateWidget.Setup("ls.StateWidget");
 		State.Setup("ls.State");
 		Widget.Setup("ls.UIWidget");
+		DCWidget.Setup("ui::DCWidget");
 	}
 };
 
@@ -169,11 +171,12 @@ struct ExtStaticSymbols
 		FOR_EACH_NOESIS_TYPE()
 		#undef FOR_NOESIS_TYPE
 
-			// LS classes have a different naming scheme
+		// LS classes have a different naming scheme
 		SymbolInfo<ui::UIInitialSubstate>::Name = MakeNoesisSymbol("ls.InitialSubstate");
 		SymbolInfo<ui::UIStateEvent>::Name = MakeNoesisSymbol("ls.StateEvent");
 		SymbolInfo<ui::UIState>::Name = MakeNoesisSymbol("ls.State");
 		SymbolInfo<ui::UIWidget>::Name = MakeNoesisSymbol("ls.UIWidget");
+		SymbolInfo<ui::DCWidget>::Name = MakeNoesisSymbol("ui::DCWidget");
 
 		Types.Setup();
 		TypeClasses.Setup();

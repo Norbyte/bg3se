@@ -616,6 +616,54 @@ struct UICanvas : public Noesis::Panel
 	float field_2F4;
 };
 
+struct DeferredCommand : public BaseCommand
+{
+	__int64 field_38;
+	__int64 VMT3;
+	__int64 field_48;
+	__int64 field_50;
+	__int64 field_58;
+	__int64 field_60;
+	__int64 field_68;
+	__int64 field_70;
+	__int64 field_78;
+	__int64 VMT4;
+};
+
+
+struct ViewModel : public Noesis::BaseComponent, public INotifyPropertyChanged
+{
+};
+
+struct DCWidget : public ViewModel
+{
+	__int64 VMT3;
+	__int64 field_20;
+	__int64 field_28;
+	__int64 field_30;
+	uint8_t field_38;
+	UIManager_Sub168 field_40;
+	Array<void*> field_58;
+	bool field_68;
+	bool field_69;
+	DCWidget* pThis;
+	Noesis::String Name;
+	Symbol NameSymbol;
+	DCWidget* pThis2;
+	uint8_t Layout;
+	Symbol LayoutSymbol;
+	__int64 field_B0;
+	Array<ecs::ComponentCallbackList> field_B8;
+	__int64 field_C8;
+	__int64 field_D0;
+	PlayerId PlayerId;
+	ui::DeferredCommand* CustomEvent;
+	ui::DeferredCommand* OpenMessageBox;
+	ui::DeferredCommand* PasteFromClipboardToTextBoxCommand;
+	__int64 field_F8;
+};
+
+
 END_NS()
 
 
@@ -642,7 +690,8 @@ BEGIN_NS(lua)
 	FOR_NOESIS_TYPE(ui::UIStateEvent) \
 	FOR_NOESIS_TYPE(ui::UIStateWidget) \
 	FOR_NOESIS_TYPE(ui::UIState) \
-	FOR_NOESIS_TYPE(ui::UIWidget)
+	FOR_NOESIS_TYPE(ui::UIWidget) \
+	FOR_NOESIS_TYPE(ui::DCWidget)
 
 #define FOR_NOESIS_TYPE(c) LUA_POLYMORPHIC(c)
 FOR_EACH_NOESIS_TYPE()

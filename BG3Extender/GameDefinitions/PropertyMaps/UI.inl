@@ -246,6 +246,17 @@ P(States)
 P(PlayerID)
 END_CLS()
 
+BEGIN_CLS(ui::ViewModel)
+INHERIT(Noesis::BaseComponent)
+END_CLS()
+
+BEGIN_CLS(ui::DCWidget)
+INHERIT(ui::ViewModel)
+P_RO(Name)
+P(Layout)
+P(PlayerId)
+END_CLS()
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

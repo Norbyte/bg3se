@@ -32,6 +32,10 @@ enum class IMGUIObjectType : uint8_t
     Tooltip,
     Popup,
 
+    MenuBar,
+    Menu,
+    MenuItem,
+
     // Texts
     Text,
     BulletText,
@@ -172,13 +176,59 @@ public:
     bool BeginRender() override;
     void EndRender() override;
 
+    lua::ImguiHandle AddMainMenu();
+
     bool Open{ true };
     bool Closeable{ false };
     GuiWindowFlags Flags{ 0 };
     lua::LuaDelegate<void(lua::ImguiHandle)> OnClose;
+    lua::ImguiHandle MainMenu;
 
 private:
     bool rendering_{ false };
+};
+
+
+class MenuBar : public TreeParent
+{
+public:
+    DECL_UI_TYPE(MenuBar)
+
+    bool BeginRender() override;
+    void EndRender() override;
+
+    lua::ImguiHandle AddMenu(char const* label);
+
+private:
+    bool rendering_{ false };
+};
+
+
+class Menu : public TreeParent
+{
+public:
+    DECL_UI_TYPE(Menu)
+
+    bool BeginRender() override;
+    void EndRender() override;
+
+    lua::ImguiHandle AddItem(char const* label, std::optional<char const*> shortcut);
+
+private:
+    bool rendering_{ false };
+};
+
+
+class MenuItem : public StyledRenderable
+{
+public:
+    DECL_UI_TYPE(MenuItem)
+
+    void StyledRender() override;
+
+    bool Enabled{ true };
+    std::optional<STDString> Shortcut;
+    lua::LuaDelegate<void(lua::ImguiHandle)> OnClick;
 };
 
 

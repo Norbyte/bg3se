@@ -401,7 +401,6 @@ bool Window::BeginRender()
     return renderChildren;
 }
 
-
 void Window::EndRender()
 {
     if (rendering_) {
@@ -410,6 +409,65 @@ void Window::EndRender()
     }
 }
 
+lua::ImguiHandle Window::AddMainMenu()
+{
+    if (!MainMenu) {
+        MainMenu = AddChild<MenuBar>();
+        Flags |= GuiWindowFlags::MenuBar;
+    }
+
+    return MainMenu;
+}
+
+bool MenuBar::BeginRender()
+{
+    rendering_ = ImGui::BeginMenuBar();
+    return rendering_;
+}
+
+void MenuBar::EndRender()
+{
+    if (rendering_) {
+        ImGui::EndMenuBar();
+        rendering_ = false;
+    }
+}
+
+lua::ImguiHandle MenuBar::AddMenu(char const* label)
+{
+    auto menu = AddChild<Menu>();
+    menu->Label = label;
+    return menu;
+}
+
+bool Menu::BeginRender()
+{
+    rendering_ = ImGui::BeginMenu(Label.c_str());
+    return rendering_;
+}
+
+void Menu::EndRender()
+{
+    if (rendering_) {
+        ImGui::EndMenu();
+        rendering_ = false;
+    }
+}
+
+lua::ImguiHandle Menu::AddItem(char const* label, std::optional<char const*> shortcut)
+{
+    auto menu = AddChild<MenuItem>();
+    menu->Label = label;
+    if (shortcut) menu->Shortcut = shortcut;
+    return menu;
+}
+
+void MenuItem::StyledRender()
+{
+    if (ImGui::MenuItem(Label.c_str(), Shortcut ? Shortcut->c_str() : nullptr, false, Enabled) && OnClick) {
+        OnClick.Call(lua::ImguiHandle(Handle));
+    }
+}
 
 bool Group::BeginRender()
 {
@@ -790,6 +848,10 @@ IMGUIObjectManager::IMGUIObjectManager()
     pools_[(unsigned)IMGUIObjectType::TableCell] = std::make_unique<IMGUIObjectPool<TableCell>>();
     pools_[(unsigned)IMGUIObjectType::Tooltip] = std::make_unique<IMGUIObjectPool<Tooltip>>();
     pools_[(unsigned)IMGUIObjectType::Popup] = std::make_unique<IMGUIObjectPool<Popup>>();
+
+    pools_[(unsigned)IMGUIObjectType::MenuBar] = std::make_unique<IMGUIObjectPool<MenuBar>>();
+    pools_[(unsigned)IMGUIObjectType::Menu] = std::make_unique<IMGUIObjectPool<Menu>>();
+    pools_[(unsigned)IMGUIObjectType::MenuItem] = std::make_unique<IMGUIObjectPool<MenuItem>>();
 
     pools_[(unsigned)IMGUIObjectType::Text] = std::make_unique<IMGUIObjectPool<Text>>();
     pools_[(unsigned)IMGUIObjectType::BulletText] = std::make_unique<IMGUIObjectPool<BulletText>>();

@@ -55,6 +55,7 @@ END_CLS()
 
 BEGIN_CLS(extui::Window)
 INHERIT(extui::TreeParent)
+P_FUN(AddMainMenu, extui::Window::AddMainMenu)
 P(Open)
 P(Closeable)
 P_BITMASK(Flags)
@@ -121,6 +122,26 @@ BEGIN_CLS(extui::Popup)
 INHERIT(extui::TreeParent)
 P_BITMASK(Flags)
 P_FUN(Open, extui::Popup::Open)
+END_CLS()
+
+
+BEGIN_CLS(extui::MenuBar)
+INHERIT(extui::TreeParent)
+P_FUN(AddMenu, extui::MenuBar::AddMenu)
+END_CLS()
+
+
+BEGIN_CLS(extui::Menu)
+INHERIT(extui::TreeParent)
+P_FUN(AddItem, extui::Menu::AddItem)
+END_CLS()
+
+
+BEGIN_CLS(extui::MenuItem)
+INHERIT(extui::StyledRenderable)
+P(Enabled)
+P(Shortcut)
+P(OnClick)
 END_CLS()
 
 
