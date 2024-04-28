@@ -82,6 +82,7 @@ struct TypeInformation
 	Array<TypeInformationRef> Params;
 	bool VarargParams{ false };
 	bool VarargsReturn{ false };
+	bool IsBitfield{ false };
 	bool IsBuiltin{ false };
 	bool DeferredInitializationDone{ false };
 	bool Validated{ false };

@@ -1002,7 +1002,6 @@ local function GenerateSubscriptionEvents(self)
     end
 end
 
-local _enumNamePattern = ".-%((.+)%).-"
 local _restrictedKeys = {
     ["end"] = true,
 }
@@ -1026,26 +1025,35 @@ function Generator:GenerateEnums()
 
         local enum = Ext.Enums[enumName]
 
-        local valueToName = {}
-
-        for i,label in ipairs(enum) do
-            local name = tostring(label)
-            local _,_,actualName = string.find(name, _enumNamePattern)
-            if actualName then
-                name = actualName
-            end
-
-            valueToName[i] = name
-            
-            if string.find(name, "%s") or _restrictedKeys[name] then
-                self:EmitLine(string.format("\t[\"%s\"] = %s,", name, i))
-            else
-                self:EmitLine(string.format("\t%s = %s,", name, i))
+        local sortedKeys = {}
+        for i,label in pairs(enum) do
+            if type(i) == "number" then
+                table.insert(sortedKeys, i)
             end
         end
+        table.sort(sortedKeys)
+        
+        local valueToName = {}
+        for _,i in ipairs(sortedKeys) do
+            local label = enum[i]
+            if Ext.Types.GetTypeInfo(Ext.Types.GetObjectType(label)).IsBitfield then
+                label = label.__Labels[1]
+            else
+                label = tostring(label)
+            end
 
-        for i,v in ipairs(valueToName) do
-            self:EmitLine(string.format("\t[%s] = \"%s\",", i, v))
+            valueToName[i] = label
+            
+            if string.find(label, "%s") or _restrictedKeys[label] then
+                self:EmitLine(string.format("\t[\"%s\"] = %s,", label, i))
+            else
+                self:EmitLine(string.format("\t%s = %s,", label, i))
+            end
+        end
+        
+        for _,i in ipairs(sortedKeys) do
+            local label = valueToName[i]
+            self:EmitLine(string.format("\t[%s] = \"%s\",", i, label))
         end
 
         self:EmitLine("}")

@@ -52,7 +52,7 @@ bool EnumValueMetatable::IsEqual(lua_State* L, CppValueMetadata& self, int other
 char const* EnumValueMetatable::GetTypeName(lua_State* L, CppValueMetadata& self)
 {
 	auto ei = GetEnumInfo(self);
-	return ei->EnumName.GetString();
+	return ei->LuaName.GetString();
 }
 
 EnumUnderlyingType get_enum_value(lua_State* L, int index, EnumInfoStore<EnumUnderlyingType> const& store)

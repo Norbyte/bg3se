@@ -210,7 +210,7 @@ int BitfieldValueMetatable::BNot(lua_State* L, CppValueMetadata& self)
 char const* BitfieldValueMetatable::GetTypeName(lua_State* L, CppValueMetadata& self)
 {
 	auto ei = GetBitfieldInfo(self);
-	return ei->EnumName.GetString();
+	return ei->LuaName.GetString();
 }
 
 EnumUnderlyingType get_bitfield_value(lua_State* L, int index, BitmaskInfoStore<EnumUnderlyingType> const& store, bool maskInvalidBits)

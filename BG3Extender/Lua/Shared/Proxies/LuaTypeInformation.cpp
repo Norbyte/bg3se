@@ -85,7 +85,8 @@ void RegisterObjectProxyTypeInformation()
 #define BEGIN_BITMASK_NS(NS, T, luaName, type) ([]() { \
 	using TEnum = NS::T; \
 	auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(#luaName)); \
-	ty.Kind = LuaTypeId::Enumeration;
+	ty.Kind = LuaTypeId::Enumeration; \
+	ty.IsBitfield = true;
 
 #define BEGIN_ENUM_NS(NS, T, luaName, type) ([]() { \
 	using TEnum = NS::T; \
@@ -95,7 +96,8 @@ void RegisterObjectProxyTypeInformation()
 #define BEGIN_BITMASK(T, type) ([]() { \
 	using TEnum = T; \
 	auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(#T)); \
-	ty.Kind = LuaTypeId::Enumeration;
+	ty.Kind = LuaTypeId::Enumeration; \
+	ty.IsBitfield = true;
 
 #define BEGIN_ENUM(T, type) ([]() { \
 	using TEnum = T; \
