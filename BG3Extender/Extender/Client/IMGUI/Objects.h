@@ -106,6 +106,7 @@ public:
     Array<StyleVar> StyleVars;
     Array<StyleColor> StyleColors;
     STDString Label;
+    STDString IDContext;
     bool SameLine{ false };
     bool Visible{ true };
 

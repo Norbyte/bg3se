@@ -38,6 +38,8 @@ void StyledRenderable::Render()
         ImGui::PushStyleColor((ImGuiCol)var.Key, ImVec4(var.Value.r, var.Value.g, var.Value.b, var.Value.a));
     }
 
+    if (!IDContext.empty()) ImGui::PushID(IDContext.data(), IDContext.data() + IDContext.size());
+
     if (SameLine) ImGui::SameLine();
 
     StyledRender();
@@ -54,6 +56,8 @@ void StyledRenderable::Render()
         auto tooltip = Manager->GetRenderable(tooltip_.Handle);
         if (tooltip) tooltip->Render();
     }
+
+    if (!IDContext.empty()) ImGui::PopID();
 
     if (ImGui::IsItemActivated() && OnActivate) {
         OnActivate.Call(lua::ImguiHandle(Handle));
