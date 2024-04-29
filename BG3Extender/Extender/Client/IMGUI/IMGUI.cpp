@@ -25,6 +25,17 @@ RenderingBackend::~RenderingBackend() {}
 
 Renderable::~Renderable() {}
 
+void Renderable::Destroy()
+{
+    if (Parent) {
+        auto parent = Manager->GetRenderable(Parent);
+        if (parent != nullptr) {
+            static_cast<TreeParent*>(parent)->RemoveChild(Handle);
+        }
+    } else {
+        Manager->DestroyRenderable(Handle);
+    }
+}
 
 void StyledRenderable::Render()
 {
@@ -101,6 +112,14 @@ lua::ImguiHandle StyledRenderable::Tooltip()
 
     tooltip_ = Manager->CreateRenderable<extui::Tooltip>();
     return tooltip_;
+}
+
+
+TreeParent::~TreeParent()
+{
+    for (auto child : Children) {
+        Manager->DestroyRenderable(child);
+    }
 }
 
 

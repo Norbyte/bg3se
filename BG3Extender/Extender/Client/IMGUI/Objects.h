@@ -73,6 +73,7 @@ public:
     virtual char const* GetTypeName() = 0;
     virtual lua::GenericPropertyMap& GetRTTI() = 0;
     virtual void Render() = 0;
+    void Destroy();
 
     HandleType Handle{ InvalidHandle };
     HandleType Parent{ InvalidHandle };
@@ -121,6 +122,7 @@ private:
 class TreeParent : public StyledRenderable
 {
 public:
+    virtual ~TreeParent();
     virtual bool BeginRender() = 0;
     virtual void EndRender() = 0;
 

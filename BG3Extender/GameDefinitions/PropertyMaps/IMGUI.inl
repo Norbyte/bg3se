@@ -1,5 +1,6 @@
 
 BEGIN_CLS(extui::Renderable)
+P_FUN(Destroy, extui::Renderable::Destroy)
 P_RO(Handle)
 P_RO(Parent)
 END_CLS()
@@ -51,6 +52,10 @@ P_FUN(AddInputScalar, extui::TreeParent::AddInputScalar)
 P_FUN(AddInputInt, extui::TreeParent::AddInputInt)
 P_FUN(AddColorEdit, extui::TreeParent::AddColorEdit)
 P_FUN(AddColorPicker, extui::TreeParent::AddColorPicker)
+
+P_FUN(RemoveChild, extui::TreeParent::RemoveChild)
+P_FUN(DetachChild, extui::TreeParent::DetachChild)
+P_FUN(AttachChild, extui::TreeParent::AttachChild)
 END_CLS()
 
 
