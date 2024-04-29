@@ -178,8 +178,6 @@ private:
         DetourUpdateThread(GetCurrentThread());
         DXGICreateSwapChainForHwndHook_.Wrap(ResolveFunctionTrampoline(createSwapChain));
         DetourTransactionCommit();
-
-        // ui_.OnRenderBackendInitialized();
     }
 
     void STDMETHODCALLTYPE DXGICreateSwapChainForHwndHooked(
@@ -213,6 +211,8 @@ private:
         /* [in] */ UINT SyncInterval,
         /* [in] */ UINT Flags)
     {
+        if (pSwapChain != swapChain_ || !initialized_ || drawViewport_ == -1) return;
+
         auto& vp = viewports_[drawViewport_].Viewport;
         if (!vp.DrawDataP.Valid) return;
 
