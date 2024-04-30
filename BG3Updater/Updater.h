@@ -2,6 +2,8 @@
 #include "Cache.h"
 #include "HttpFetcher.h"
 #include <curl/curl.h>
+#include <CoreLib/Wrappers.h>
+#include <SDL.h>
 
 BEGIN_SE()
 
@@ -125,11 +127,18 @@ public:
 		return cancellingUpdate_;
 	}
 
+	void RequestClientSuspend(bool suspend)
+	{
+		needsClientSuspend_ = suspend;
+	}
+
 	void Initialize(char const* exeDirOverride);
 	void Run();
 	void LoadCaches();
 	bool FetchUpdates();
 	bool LoadExtender();
+
+	enum class SDLInitTag {};
 
 private:
 	VersionNumber gameVersion_;
@@ -145,11 +154,17 @@ private:
 	bool completed_{ false };
 	bool cancellingUpdate_{ false };
 	std::string log_;
+	volatile bool needsClientSuspend_{ false };
+
+	WrappableFunction<SDLInitTag, int (Uint32)> SDLInitHook;
 
 	void UpdatePaths();
 	void UpdateExeDir(char const* exeDirOverride);
 	void LoadConfig();
 	void LoadGameVersion();
+	void HookSDL();
+	void UnhookSDL();
+	void OnSDLInit(Uint32, int);
 };
 
 void StartUpdaterThread();

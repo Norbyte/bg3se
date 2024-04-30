@@ -2,8 +2,8 @@
 // Microsoft Visual C++ generated include file.
 // Used by Resources.rc
 
-#define UPDATER_DLL_MAJOR_VERSION 1
-#define UPDATER_DLL_VERSION_STRING "1.0.0.0"
+#define UPDATER_DLL_MAJOR_VERSION 5
+#define UPDATER_DLL_VERSION_STRING "5.0.0.0"
 
 #define IDR_BINARY_MAPPINGS             101
 

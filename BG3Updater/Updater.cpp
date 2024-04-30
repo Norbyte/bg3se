@@ -3,10 +3,15 @@
 #include "HttpFetcher.h"
 #include <Shlwapi.h>
 #include <CommCtrl.h>
+#include <detours.h>
 #pragma comment(linker, "/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='amd64' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 
 BEGIN_SE()
+
+std::unordered_set<void const*> gRegisteredTrampolines;
+
+WrappableFunction<ScriptExtenderUpdater::SDLInitTag, int(Uint32)>* WrappableFunction<ScriptExtenderUpdater::SDLInitTag, int(Uint32)>::gHook;
 
 ManifestFetcher::ManifestFetcher(HttpFetcher& fetcher, UpdaterConfig const& config)
 	: fetcher_(fetcher), config_(config)
@@ -322,6 +327,7 @@ void ScriptExtenderUpdater::Initialize(char const* exeDirOverride)
 	UpdateExeDir(exeDirOverride);
 	LoadConfig();
 	LoadGameVersion();
+	HookSDL();
 }
 
 void ScriptExtenderUpdater::UpdateExeDir(char const* exeDirOverride)
@@ -375,6 +381,32 @@ void ScriptExtenderUpdater::LoadGameVersion()
 	if (version) {
 		gameVersion_ = *version;
 	}
+}
+
+void ScriptExtenderUpdater::HookSDL()
+{
+	DetourTransactionBegin();
+	DetourUpdateThread(GetCurrentThread());
+	SDLInitHook.Wrap(ResolveFunctionTrampoline(&SDL_Init));
+	SDLInitHook.SetPostHook(&ScriptExtenderUpdater::OnSDLInit, this);
+	DetourTransactionCommit();
+}
+
+void ScriptExtenderUpdater::UnhookSDL()
+{
+	DetourTransactionBegin();
+	DetourUpdateThread(GetCurrentThread());
+	SDLInitHook.Unwrap();
+	DetourTransactionCommit();
+}
+
+void ScriptExtenderUpdater::OnSDLInit(Uint32, int)
+{
+	while (needsClientSuspend_) {
+		Sleep(10);
+	}
+
+	UnhookSDL();
 }
 
 void ScriptExtenderUpdater::UpdatePaths()
@@ -481,28 +513,13 @@ HRESULT UpdaterUI::UICallback(HWND hwnd, UINT uNotification, WPARAM wParam, LPAR
 	return S_OK;
 }
 
-volatile bool NeedsClientSuspend{ false };
-
-DWORD WINAPI DelayedClientSuspenderThread(LPVOID param)
-{
-	Sleep(1000);
-	if (NeedsClientSuspend) {
-		DEBUG("Suspending client thread");
-		gGameHelpers->SuspendClientThread();
-	}
-	return 0;
-}
-
 DWORD WINAPI UpdaterThread(LPVOID param)
 {
 	gUpdater->InitConsole();
 	gUpdater->InitUI();
 	DEBUG("Launch loader");
-	NeedsClientSuspend = true;
-	CreateThread(NULL, 0, &DelayedClientSuspenderThread, NULL, 0, NULL);
 	gUpdater->Run();
-	NeedsClientSuspend = false;
-	gGameHelpers->ResumeClientThread();
+	gUpdater->RequestClientSuspend(false);
 	DEBUG("Extender launcher thread exiting");
 	return 0;
 }
@@ -518,6 +535,7 @@ void StartUpdaterThread()
 
 	gUpdater = std::make_unique<ScriptExtenderUpdater>();
 	gUpdater->Initialize(nullptr);
+	gUpdater->RequestClientSuspend(true);
 	CreateThread(NULL, 0, &UpdaterThread, NULL, 0, NULL);
 }
 
