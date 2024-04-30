@@ -16,6 +16,7 @@ using SDLStartTextInputProc = void();
 
 SDL_HOOK(CreateWindow)
 SDL_HOOK(PollEvent)
+SDL_HOOK(IsTextInputActive)
 SDL_HOOK(StartTextInput)
 SDL_HOOK(StopTextInput)
 
@@ -43,6 +44,7 @@ private:
         int h, uint32_t flags,
         SDL_Window* window);
     int SDLPollEventHooked(SDLPollEventProc* wrapped, SDL_Event* event);
+    void SDLIsTextInputActiveHooked(SDL_bool active);
     void SDLStartTextInputHooked(SDLStartTextInputProc* wrapped);
     void SDLStopTextInputHooked(SDLStartTextInputProc* wrapped);
 
@@ -52,6 +54,7 @@ private:
 
     SDLCreateWindowHookType CreateWindowHook_;
     SDLPollEventHookType PollEventHook_;
+    SDLIsTextInputActiveHookType IsTextInputActiveHook_;
     SDLStartTextInputHookType StartTextInputHook_;
     SDLStopTextInputHookType StopTextInputHook_;
 };

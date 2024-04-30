@@ -23,12 +23,14 @@ void SDLManager::EnableHooks()
     DetourUpdateThread(GetCurrentThread());
     CreateWindowHook_.Wrap(ResolveFunctionTrampoline(&SDL_CreateWindow));
     PollEventHook_.Wrap(ResolveFunctionTrampoline(&SDL_PollEvent));
+    IsTextInputActiveHook_.Wrap(ResolveFunctionTrampoline(&SDL_IsTextInputActive));
     StartTextInputHook_.Wrap(ResolveFunctionTrampoline(&SDL_StartTextInput));
     StopTextInputHook_.Wrap(ResolveFunctionTrampoline(&SDL_StopTextInput));
     DetourTransactionCommit();
 
     CreateWindowHook_.SetPostHook(&SDLManager::SDLCreateWindowHooked, this);
     PollEventHook_.SetWrapper(&SDLManager::SDLPollEventHooked, this);
+    IsTextInputActiveHook_.SetPostHook(&SDLManager::SDLIsTextInputActiveHooked, this);
     StartTextInputHook_.SetWrapper(&SDLManager::SDLStartTextInputHooked, this);
     StopTextInputHook_.SetWrapper(&SDLManager::SDLStopTextInputHooked, this);
 }
@@ -62,13 +64,6 @@ void SDLManager::DestroyUI()
 
 void SDLManager::NewFrame()
 {
-    ImGuiIO& io = ImGui::GetIO();
-    if (io.WantTextInput) {
-        if (!SDL_IsTextInputActive()) {
-            SDL_StartTextInput();
-        }
-    }
-
     ImGui_ImplSDL2_NewFrame();
 }
 
@@ -110,6 +105,13 @@ int SDLManager::SDLPollEventHooked(SDLPollEventProc* wrapped, SDL_Event* event)
     }
 
     return result;
+}
+
+void SDLManager::SDLIsTextInputActiveHooked(SDL_bool active)
+{
+    if (enableUI_ && ImGui::GetIO().WantTextInput && !active) {
+        SDL_StartTextInput();
+    }
 }
 
 void SDLManager::SDLStartTextInputHooked(SDLStartTextInputProc* wrapped)
