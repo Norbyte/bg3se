@@ -72,6 +72,7 @@
       <ModuleDefinitionFile>Exports.def</ModuleDefinitionFile>
       <AdditionalDependencies>dxguid.lib;SDL2.lib;imgui.lib;vulkan-1.lib;CoreLib.lib;LuaLib.lib;ws2_32.lib;shlwapi.lib;Rpcrt4.lib;libprotobuf-lite.lib;detours.lib;jsoncpp.lib;dbghelp.lib;version.lib;winhttp.lib;comctl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\External\protobuf\lib;$(SolutionDir)\External\Detours\lib.X64;$(SolutionDir)\x64\Debug;$(SolutionDir)\External\jsoncpp-build\src\lib_json\Debug;$(SolutionDir)\External\SDL2-2.30.1\lib\x64;$(SolutionDir)\External\VulkanSDK\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <DelayLoadDLLs>vulkan-1.dll;d3dcompiler_47.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
       <Command>copy /Y "$(TargetPath)" "D:\SteamLibrary\steamapps\common\Baldurs Gate 3\bin\DWrite.dll"
@@ -109,6 +110,7 @@ $(SolutionDir)x64\Debug\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Project
       <ModuleDefinitionFile>Exports.def</ModuleDefinitionFile>
       <AdditionalLibraryDirectories>$(SolutionDir)\x64\Release;$(SolutionDir)\\External\protobuf\lib;$(SolutionDir)\External\Detours\lib.X64;$(SolutionDir)\External\jsoncpp-build\src\lib_json\Release;$(SolutionDir)\External\SDL2-2.30.1\lib\x64;$(SolutionDir)\External\VulkanSDK\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>dxguid.lib;SDL2.lib;imgui.lib;vulkan-1.lib;CoreLib.lib;LuaLib.lib;ws2_32.lib;shlwapi.lib;Rpcrt4.lib;libprotobuf-lite.lib;detours.lib;jsoncpp.lib;dbghelp.lib;version.lib;winhttp.lib;comctl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>vulkan-1.dll;d3dcompiler_47.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
     <PreBuildEvent>
       <Command>$(SolutionDir)\External\protobuf\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Osiris\Debugger Osiris\Debugger\osidebug.proto
