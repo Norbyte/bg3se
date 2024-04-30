@@ -143,4 +143,32 @@ bool LoadFile(std::wstring const& path, std::string& body)
 	return false;
 }
 
+void const* ResolveRealFunctionAddress(void const * ptr)
+{
+	auto p = (uint8_t const*)ptr;
+
+	// Unconditional jump
+	if (p[0] == 0xE9) {
+		int32_t relOffset = *reinterpret_cast<int32_t const *>(p + 1);
+		return p + relOffset + 5;
+	}
+
+	// Resolve function pointer through relocations
+	auto end = p + 64;
+	for (; p < end; p++)
+	{
+		// Look for the instruction "cmp qword ptr [rip+xxxxxx], 0"
+		if (p[0] == 0x48 && p[1] == 0x83 && p[2] == 0x3d && p[6] == 0x00 &&
+			// Look for the instruction "jmp xxxx"
+			p[13] == 0xe9)
+		{
+			int32_t relOffset = *reinterpret_cast<int32_t const *>(p + 14);
+			return p + relOffset + 18;
+		}
+	}
+
+	// Could not find any relocations
+	return ptr;
+}
+
 END_SE()

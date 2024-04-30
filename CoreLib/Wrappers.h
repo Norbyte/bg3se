@@ -32,7 +32,7 @@ namespace bg3se {
 
 		bool IsWrapped() const
 		{
-			return TrampolineFunc != nullptr;
+			return FuncTrampoline != nullptr;
 		}
 
 		void Wrap(HMODULE Module, char const * ProcName, FuncType NewFunction)
