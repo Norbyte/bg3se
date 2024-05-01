@@ -159,9 +159,11 @@ private:
     {
         if (!SUCCEEDED(result)) return;
 
-        adapter_ = pAdapter;
-        context_ = *ppImmediateContext;
-        device_ = *ppDevice;
+        if (device_ == nullptr && ppImmediateContext != nullptr) {
+            adapter_ = pAdapter;
+            context_ = *ppImmediateContext;
+            device_ = *ppDevice;
+        }
     }
 
     void WINAPI CreateDXGIFactory1Hooked(REFIID riid, _COM_Outptr_ void** ppFactory, HRESULT result)
@@ -203,7 +205,9 @@ private:
         DXGISwapChainPresentHook_.Wrap(ResolveFunctionTrampoline(createSwapChain));
         DetourTransactionCommit();
 
-        ui_.OnRenderBackendInitialized();
+        if (swapChain_ != nullptr && device_ != nullptr) {
+            ui_.OnRenderBackendInitialized();
+        }
     }
 
     void STDMETHODCALLTYPE DXGISwapChainPresentHooked(
