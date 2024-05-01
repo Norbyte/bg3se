@@ -284,8 +284,8 @@ struct SpellBookEntry
 	int32_t field_38;
 	int32_t field_3C;
 	SpellCooldownType CooldownType;
-	uint8_t field_41;
-	uint8_t field_42;
+	[[bg3::legacy(field_41)]] bool Charged;
+	[[bg3::legacy(field_42)]] SpellPrepareType PrepareType;
 	AbilityId SpellCastingAbility;
 	Array<InnerEntry> InnerEntries;
 };
