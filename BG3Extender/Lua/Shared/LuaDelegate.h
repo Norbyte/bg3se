@@ -12,6 +12,9 @@ template<class TRet, class ...TArgs>
 class LuaDelegate<TRet(TArgs...)>
 {
 public:
+    using Function = TRet(TArgs...);
+    using ArgumentTuple = std::tuple<TArgs...>;
+
     inline LuaDelegate() {}
     inline LuaDelegate(lua_State* L, int index)
         : ref_(L, index)
@@ -23,14 +26,20 @@ public:
 
     inline ~LuaDelegate() {}
 
-    LuaDelegate(LuaDelegate const&) = delete;
+    inline LuaDelegate(LuaDelegate const& o)
+        : ref_(o.ref_)
+    {}
 
     inline LuaDelegate(LuaDelegate && o)
     {
         ref_ = std::move(o.ref_);
     }
 
-    LuaDelegate& operator = (LuaDelegate const&) = delete;
+    inline LuaDelegate& operator = (LuaDelegate const& o)
+    {
+        ref_ = o.ref_;
+        return *this;
+    }
     
     inline LuaDelegate& operator = (LuaDelegate && o)
     {
@@ -50,13 +59,22 @@ public:
 
     TRet Call(TArgs... args)
     {
+		if constexpr (std::is_same_v<TRet, void>) {
+            Call(std::tuple(args...));
+		} else {
+            return Call(std::tuple(args...));
+		}
+    }
+
+    TRet Call(ArgumentTuple const& args)
+    {
         auto L = ref_.GetState();
         StackCheck _(L);
 
         ref_.Push();
         Ref func(L, lua_absindex(L, -1));
 
-        ProtectedFunctionCaller<std::tuple<TArgs...>, TRet> caller{ func, std::tuple(args...) };
+        ProtectedFunctionCaller<ArgumentTuple, TRet> caller{ func, args };
 
 		if constexpr (std::is_same_v<TRet, void>) {
 			caller.Call(L);
@@ -70,6 +88,81 @@ public:
 
 private:
     RegistryEntry ref_;
+};
+
+template <class T>
+class DeferredLuaDelegateCall;
+
+template <class TRet, class... TArgs>
+class DeferredLuaDelegateCall<TRet (TArgs...)>
+{
+public:
+    DeferredLuaDelegateCall(LuaDelegate<TRet (TArgs...)> delegate, TArgs... args)
+        : delegate_(delegate), args_(std::tuple(args...))
+    {}
+
+    TRet Call()
+    {
+        if constexpr (std::is_same_v<TRet, void>) {
+            delegate_.Call(args_);
+        } else {
+            return delegate_.Call(args_);
+        }
+    }
+
+private:
+    LuaDelegate<TRet(TArgs...)> delegate_;
+    std::tuple<TArgs...> args_;
+};
+
+class GenericDeferredLuaDelegateCall
+{
+public:
+    virtual ~GenericDeferredLuaDelegateCall() {}
+    virtual void Call() = 0;
+};
+
+template <class TRet, class... TArgs>
+class DeferredLuaDelegateCallImpl : public GenericDeferredLuaDelegateCall
+{
+public:
+    DeferredLuaDelegateCallImpl(LuaDelegate<TRet(TArgs...)> const& delegate, TArgs... args)
+        : call_(delegate, args...)
+    {}
+
+    ~DeferredLuaDelegateCallImpl() override {}
+
+    void Call() override
+    {
+        call_.Call();
+    }
+
+private:
+    DeferredLuaDelegateCall<TRet(TArgs...)> call_;
+};
+
+class DeferredLuaDelegateQueue
+{
+public:
+    template <class TRet, class... TArgs>
+    void Call(LuaDelegate<TRet(TArgs...)> const& delegate, TArgs... args)
+    {
+        auto call = new DeferredLuaDelegateCallImpl<TRet, TArgs...>(delegate, args...);
+        queue_.push_back(call);
+    }
+
+    void Flush()
+    {
+        Array<GenericDeferredLuaDelegateCall*> cur;
+        std::swap(cur, queue_);
+        for (auto const& call : cur) {
+            call->Call();
+            delete call;
+        }
+    }
+
+private:
+    Array<GenericDeferredLuaDelegateCall*> queue_;
 };
 
 END_NS()

@@ -29,10 +29,36 @@ RegistryEntry::~RegistryEntry()
 	}
 }
 
+RegistryEntry::RegistryEntry(RegistryEntry const& other)
+	: L_(other.L_), ref_(-1)
+{
+	if (other.ref_ != -1) {
+		other.Push();
+		ref_ = luaL_ref(L_, LUA_REGISTRYINDEX);
+	}
+}
+
 RegistryEntry::RegistryEntry(RegistryEntry && other)
 	: L_(other.L_), ref_(other.ref_)
 {
 	other.ref_ = -1;
+}
+
+RegistryEntry & RegistryEntry::operator = (RegistryEntry const& other)
+{
+	if (ref_ != -1) {
+		luaL_unref(L_, LUA_REGISTRYINDEX, ref_);
+	}
+
+	L_ = other.L_;
+	ref_ = other.ref_;
+
+	if (other.ref_ != -1) {
+		other.Push();
+		ref_ = luaL_ref(L_, LUA_REGISTRYINDEX);
+	}
+
+	return *this;
 }
 
 RegistryEntry & RegistryEntry::operator = (RegistryEntry && other)

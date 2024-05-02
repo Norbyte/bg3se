@@ -680,6 +680,11 @@ class IMGUIObjectManager
 public:
     IMGUIObjectManager();
 
+    inline lua::DeferredLuaDelegateQueue& GetEventQueue()
+    {
+        return eventQueue_;
+    }
+
     template <class T>
     T* CreateRenderable()
     {
@@ -691,11 +696,13 @@ public:
     bool DestroyRenderable(HandleType handle);
     void Render();
     void EnableDemo(bool enable);
+    void ClientUpdate();
 
 private:
     std::array<std::unique_ptr<IMGUIObjectPoolInterface>, (unsigned)IMGUIObjectType::Max + 1> pools_;
     Array<HandleType> windows_;
     bool renderDemo_{ false };
+    lua::DeferredLuaDelegateQueue eventQueue_;
 };
 
 END_NS()

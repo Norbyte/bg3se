@@ -71,11 +71,11 @@ void StyledRenderable::Render()
     if (!IDContext.empty()) ImGui::PopID();
 
     if (ImGui::IsItemActivated() && OnActivate) {
-        OnActivate.Call(lua::ImguiHandle(Handle));
+        Manager->GetEventQueue().Call(OnActivate, lua::ImguiHandle(Handle));
     }
 
     if (ImGui::IsItemDeactivated() && OnDeactivate) {
-        OnDeactivate.Call(lua::ImguiHandle(Handle));
+        Manager->GetEventQueue().Call(OnDeactivate, lua::ImguiHandle(Handle));
     }
 }
 
@@ -418,7 +418,7 @@ bool Window::BeginRender()
     rendering_ = true;
 
     if (wasOpen && !Open && OnClose) {
-        OnClose.Call(lua::ImguiHandle(Handle));
+        Manager->GetEventQueue().Call(OnClose, lua::ImguiHandle(Handle));
     }
 
     return renderChildren;
@@ -495,7 +495,7 @@ lua::ImguiHandle Menu::AddMenu(char const* label)
 void MenuItem::StyledRender()
 {
     if (ImGui::MenuItem(Label.c_str(), Shortcut ? Shortcut->c_str() : nullptr, false, Enabled) && OnClick) {
-        OnClick.Call(lua::ImguiHandle(Handle));
+        Manager->GetEventQueue().Call(OnClick, lua::ImguiHandle(Handle));
     }
 }
 
@@ -696,7 +696,7 @@ void Button::StyledRender()
 {
     if (ImGui::Button(Label.c_str())) {
         if (OnClick) {
-            OnClick.Call(lua::ImguiHandle(Handle));
+            Manager->GetEventQueue().Call(OnClick, lua::ImguiHandle(Handle));
         }
     }
 }
@@ -706,7 +706,7 @@ void Checkbox::StyledRender()
 {
     if (ImGui::Checkbox(Label.c_str(), &Checked)) {
         if (OnChange) {
-            OnChange.Call(lua::ImguiHandle(Handle), Checked);
+            Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Checked);
         }
     }
 }
@@ -716,7 +716,7 @@ void RadioButton::StyledRender()
 {
     if (ImGui::RadioButton(Label.c_str(), Active)) {
         if (OnChange) {
-            OnChange.Call(lua::ImguiHandle(Handle), Active);
+            Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Active);
         }
     }
 }
@@ -733,7 +733,7 @@ void InputText::StyledRender()
     if (ImGui::InputText(Label.c_str(), Text.data(), Text.capacity(), (ImGuiInputTextFlags)Flags)) {
         Text.resize((uint32_t)strlen(Text.data()));
         if (OnChange) {
-            OnChange.Call(lua::ImguiHandle(Handle), Text);
+            Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Text);
         }
     }
 }
@@ -777,7 +777,7 @@ void Combo::StyledRender()
         if (SelectedIndex != selectedIndex && selectedIndex != -1) {
             SelectedIndex = selectedIndex;
             if (OnChange) {
-                OnChange.Call(lua::ImguiHandle(Handle), SelectedIndex);
+                Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), SelectedIndex);
             }
         }
 
@@ -790,7 +790,7 @@ void DragScalar::StyledRender()
 {
     if (ImGui::DragScalarN(Label.c_str(), ImGuiDataType_Float, &Value, Components, 1.0f, &Min, &Max, nullptr, (ImGuiSliderFlags)Flags)) {
         if (OnChange) {
-            OnChange.Call(lua::ImguiHandle(Handle), Value);
+            Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Value);
         }
     }
 }
@@ -800,7 +800,7 @@ void DragInt::StyledRender()
 {
     if (ImGui::DragScalarN(Label.c_str(), ImGuiDataType_S32, &Value, Components, 1.0f, &Min, &Max, nullptr, (ImGuiSliderFlags)Flags)) {
         if (OnChange) {
-            OnChange.Call(lua::ImguiHandle(Handle), Value);
+            Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Value);
         }
     }
 }
@@ -810,7 +810,7 @@ void SliderScalar::StyledRender()
 {
     if (ImGui::SliderScalarN(Label.c_str(), ImGuiDataType_Float, &Value, Components, &Min, &Max, nullptr, (ImGuiSliderFlags)Flags)) {
         if (OnChange) {
-            OnChange.Call(lua::ImguiHandle(Handle), Value);
+            Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Value);
         }
     }
 }
@@ -820,7 +820,7 @@ void SliderInt::StyledRender()
 {
     if (ImGui::SliderScalarN(Label.c_str(), ImGuiDataType_S32, &Value, Components, &Min, &Max, nullptr, (ImGuiSliderFlags)Flags)) {
         if (OnChange) {
-            OnChange.Call(lua::ImguiHandle(Handle), Value);
+            Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Value);
         }
     }
 }
@@ -830,7 +830,7 @@ void InputScalar::StyledRender()
 {
     if (ImGui::InputScalarN(Label.c_str(), ImGuiDataType_Float, &Value, Components, nullptr, nullptr, nullptr, (ImGuiInputTextFlags)Flags)) {
         if (OnChange) {
-            OnChange.Call(lua::ImguiHandle(Handle), Value);
+            Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Value);
         }
     }
 }
@@ -840,7 +840,7 @@ void InputInt::StyledRender()
 {
     if (ImGui::InputScalarN(Label.c_str(), ImGuiDataType_S32, &Value, Components, nullptr, nullptr, nullptr, (ImGuiInputTextFlags)Flags)) {
         if (OnChange) {
-            OnChange.Call(lua::ImguiHandle(Handle), Value);
+            Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Value);
         }
     }
 }
@@ -850,7 +850,7 @@ void ColorEdit::StyledRender()
 {
     if (ImGui::ColorEdit4(Label.c_str(), &Color.x, (ImGuiColorEditFlags)Flags)) {
         if (OnChange) {
-            OnChange.Call(lua::ImguiHandle(Handle), Color);
+            Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Color);
         }
     }
 }
@@ -860,7 +860,7 @@ void ColorPicker::StyledRender()
 {
     if (ImGui::ColorPicker4(Label.c_str(), &Color.x, (ImGuiColorEditFlags)Flags)) {
         if (OnChange) {
-            OnChange.Call(lua::ImguiHandle(Handle), Color);
+            Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Color);
         }
     }
 }
@@ -957,6 +957,11 @@ void IMGUIObjectManager::EnableDemo(bool enable)
     renderDemo_ = enable;
 }
 
+void IMGUIObjectManager::ClientUpdate()
+{
+    eventQueue_.Flush();
+}
+
 IMGUIManager::IMGUIManager(SDLManager& sdl)
     : sdl_(sdl)
 {
@@ -1039,6 +1044,8 @@ void IMGUIManager::Update()
 
     ImGui::Render();
     renderer_->FinishFrame();
+
+    objects_->ClientUpdate();
 }
 
 END_NS()

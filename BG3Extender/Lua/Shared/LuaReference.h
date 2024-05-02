@@ -13,10 +13,10 @@ public:
 	RegistryEntry(lua_State * L, Ref const& local);
 	~RegistryEntry();
 
-	RegistryEntry(RegistryEntry const &) = delete;
+	RegistryEntry(RegistryEntry const &);
 	RegistryEntry(RegistryEntry &&);
 
-	RegistryEntry & operator = (RegistryEntry const &) = delete;
+	RegistryEntry & operator = (RegistryEntry const &);
 	RegistryEntry & operator = (RegistryEntry &&);
 
 	explicit inline operator bool() const
