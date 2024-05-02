@@ -51,9 +51,8 @@ public:
     {
         DetourTransactionBegin();
         DetourUpdateThread(GetCurrentThread());
-        CreateInstanceHook_.Wrap(ResolveFunctionTrampoline(&vkCreateInstance));
-        CreateDeviceHook_.Wrap(ResolveFunctionTrampoline(&vkCreateDevice));
-        DestroyDeviceHook_.Wrap(ResolveFunctionTrampoline(&vkDestroyDevice));
+        auto createInstance = vkGetInstanceProcAddr(nullptr, "vkCreateInstance");
+        CreateInstanceHook_.Wrap(ResolveFunctionTrampoline(createInstance));
         DetourTransactionCommit();
 
         CreateInstanceHook_.SetPostHook(&VulkanBackend::vkCreateInstanceHooked, this);
@@ -203,7 +202,17 @@ private:
         VkInstance* pInstance,
         VkResult result)
     {
+        if (result != VK_SUCCESS) return;
+
         instance_ = *pInstance;
+
+        DetourTransactionBegin();
+        DetourUpdateThread(GetCurrentThread());
+        auto createDevice = vkGetInstanceProcAddr(instance_, "vkCreateDevice");
+        auto destroyDevice = vkGetInstanceProcAddr(instance_, "vkDestroyDevice");
+        CreateDeviceHook_.Wrap(ResolveFunctionTrampoline(createDevice));
+        DestroyDeviceHook_.Wrap(ResolveFunctionTrampoline(destroyDevice));
+        DetourTransactionCommit();
     }
 
     void vkCreateDeviceHooked(
@@ -213,6 +222,8 @@ private:
         VkDevice* pDevice,
         VkResult result)
     {
+        if (result != VK_SUCCESS) return;
+
         physicalDevice_ = physicalDevice;
         device_ = *pDevice;
         
@@ -269,6 +280,8 @@ private:
         VkPipelineCache* pPipelineCache,
         VkResult result)
     {
+        if (result != VK_SUCCESS) return;
+
         pipelineCache_ = *pPipelineCache;
     }
 
@@ -279,6 +292,8 @@ private:
         VkSwapchainKHR* pSwapchain,
         VkResult result)
     {
+        if (result != VK_SUCCESS) return;
+
         swapChain_ = *pSwapchain;
         collectSwapChainInfo(pCreateInfo);
     }
