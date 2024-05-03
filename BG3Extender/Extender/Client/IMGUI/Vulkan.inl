@@ -206,13 +206,15 @@ private:
 
         instance_ = *pInstance;
 
-        DetourTransactionBegin();
-        DetourUpdateThread(GetCurrentThread());
-        auto createDevice = vkGetInstanceProcAddr(instance_, "vkCreateDevice");
-        auto destroyDevice = vkGetInstanceProcAddr(instance_, "vkDestroyDevice");
-        CreateDeviceHook_.Wrap(ResolveFunctionTrampoline(createDevice));
-        DestroyDeviceHook_.Wrap(ResolveFunctionTrampoline(destroyDevice));
-        DetourTransactionCommit();
+        if (!CreateDeviceHook_.IsWrapped()) {
+            DetourTransactionBegin();
+            DetourUpdateThread(GetCurrentThread());
+            auto createDevice = vkGetInstanceProcAddr(instance_, "vkCreateDevice");
+            auto destroyDevice = vkGetInstanceProcAddr(instance_, "vkDestroyDevice");
+            CreateDeviceHook_.Wrap(ResolveFunctionTrampoline(createDevice));
+            DestroyDeviceHook_.Wrap(ResolveFunctionTrampoline(destroyDevice));
+            DetourTransactionCommit();
+        }
     }
 
     void vkCreateDeviceHooked(
@@ -251,13 +253,15 @@ private:
         auto destroySwapchainKHR = (PFN_vkCreatePipelineCache*)vkGetDeviceProcAddr(*pDevice, "vkDestroySwapchainKHR");
         auto queuePresentKHR = (PFN_vkQueuePresentKHR*)vkGetDeviceProcAddr(*pDevice, "vkQueuePresentKHR");
 
-        DetourTransactionBegin();
-        DetourUpdateThread(GetCurrentThread());
-        CreatePipelineCacheHook_.Wrap(ResolveFunctionTrampoline(createPipelineCache));
-        CreateSwapchainKHRHook_.Wrap(ResolveFunctionTrampoline(createSwapchainKHR));
-        DestroySwapchainKHRHook_.Wrap(ResolveFunctionTrampoline(destroySwapchainKHR));
-        QueuePresentKHRHook_.Wrap(ResolveFunctionTrampoline(queuePresentKHR));
-        DetourTransactionCommit();
+        if (!CreatePipelineCacheHook_.IsWrapped()) {
+            DetourTransactionBegin();
+            DetourUpdateThread(GetCurrentThread());
+            CreatePipelineCacheHook_.Wrap(ResolveFunctionTrampoline(createPipelineCache));
+            CreateSwapchainKHRHook_.Wrap(ResolveFunctionTrampoline(createSwapchainKHR));
+            DestroySwapchainKHRHook_.Wrap(ResolveFunctionTrampoline(destroySwapchainKHR));
+            QueuePresentKHRHook_.Wrap(ResolveFunctionTrampoline(queuePresentKHR));
+            DetourTransactionCommit();
+        }
     }
 
     void vkDestroyDeviceHooked(VkDevice device, const VkAllocationCallbacks* pAllocator)
