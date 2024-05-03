@@ -3,6 +3,11 @@ BEGIN_SE()
 FixedString::FixedString(StringView str)
 	: Index(NullIndex)
 {
+	if (str.size() >= 2047) {
+		ERR("Tried to create FixedString of length %d - this will crash! %s", str.size(), str.data());
+		return;
+	}
+
 	auto createGlobal = gCoreLibPlatformInterface.ls__GlobalStringTable__MainTable__CreateFromString;
 	if (createGlobal) {
 		LSStringView sv(str.data(), (uint32_t)str.size());
@@ -18,15 +23,19 @@ FixedString::FixedString(StringView str)
 FixedString::FixedString(char const* str)
 	: Index(NullIndex)
 {
+	LSStringView sv(str, (uint32_t)strlen(str));
+	if (sv.size() >= 2047) {
+		ERR("Tried to create FixedString of length %d - this will crash! %s", sv.size(), str);
+		return;
+	}
+
 	auto createGlobal = gCoreLibPlatformInterface.ls__GlobalStringTable__MainTable__CreateFromString;
 	if (createGlobal) {
-		LSStringView sv(str, (uint32_t)strlen(str));
 		createGlobal(&(*gCoreLibPlatformInterface.ls__gGlobalStringTable)->Main, this, &sv);
-	}
-	else {
+	} else {
 		auto create = gCoreLibPlatformInterface.ls__FixedString__CreateFromString;
 		if (create) {
-			Index = create(LSStringView(str, (uint32_t)strlen(str)));
+			Index = create(sv);
 		}
 	}
 }
