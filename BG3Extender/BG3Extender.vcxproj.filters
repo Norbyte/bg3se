@@ -249,9 +249,6 @@
     <ClInclude Include="GameDefinitions\Character.h">
       <Filter>GameDefinitions</Filter>
     </ClInclude>
-    <ClInclude Include="GameDefinitions\GameAction.h">
-      <Filter>GameDefinitions</Filter>
-    </ClInclude>
     <ClInclude Include="GameDefinitions\GuidResources.h">
       <Filter>GameDefinitions</Filter>
     </ClInclude>

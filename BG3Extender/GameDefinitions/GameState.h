@@ -50,27 +50,6 @@ struct IGameObject : public ProtectedGameObject<IGameObject>
 	void* VMT2;
 };
 
-/*struct IEocClientObject : public IGameObject
-{
-	virtual eoc::Ai * GetAi() = 0;
-	virtual void LoadAi() = 0;
-	virtual void UnloadAi() = 0;
-	virtual void Unknown0() = 0;
-	virtual void Unknown1() = 0;
-	virtual void Unknown2() = 0;
-	virtual void Unknown3() = 0;
-	virtual FixedString * Unknown4() = 0;
-	virtual bool Unknown5() = 0;
-	virtual TranslatedString* GetDisplayName(TranslatedString* name) = 0;
-	virtual float Unknown6() = 0;
-	virtual void SavegameVisit() = 0;
-	virtual void SetLight(FixedString *) = 0;
-	virtual void * GetLight() = 0;
-	virtual void RemoveLight() = 0;
-	virtual FixedString * GetPlayerRace(bool returnPolymorph, bool excludeUninitialized) = 0;
-	virtual FixedString* GetPlayerOrigin(bool returnPolymorph, bool excludeUninitialized) = 0;
-};*/
-
 struct IEoCServerObject : public IGameObject
 {
 	virtual void MarkVisibleToPeerId(uint32_t* peerId) = 0;
@@ -109,30 +88,6 @@ END_SE()
 BEGIN_NS(esv)
 
 struct EntityManager;
-
-/*
-struct CharacterFactory : public NetworkObjectFactory<esv::Character, (uint32_t)ObjectType::ServerCharacter>
-{
-	void* VMT2;
-	void* VMT3;
-	Map<FixedString, void*> FSMap_ReloadComponent;
-	EntityWorld* Entities;
-	uint64_t Unkn8[2];
-};
-
-struct ItemFactory : public NetworkObjectFactory<esv::Item, (uint32_t)ObjectType::ServerItem>
-{
-	void* VMT2;
-	void* VMT3;
-	Map<FixedString, void*> FSMap_ReloadComponent;
-	EntityWorld* Entities;
-	uint64_t Unkn8[2];
-};
-
-struct InventoryFactory : public NetworkObjectFactory<esv::Inventory, (uint32_t)ObjectType::ServerInventory>
-{
-	// TODO
-};*/
 
 struct GameStateMachine : public ProtectedGameObject<GameStateMachine>
 {

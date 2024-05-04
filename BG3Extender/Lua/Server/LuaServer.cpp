@@ -108,12 +108,6 @@ namespace bg3se::esv::lua
 	{
 		static const luaL_Reg extLib[] = {
 
-			/*{"GetSurfaceTransformRules", GetSurfaceTransformRules},
-			{"UpdateSurfaceTransformRules", UpdateSurfaceTransformRules},
-			{"CreateSurfaceAction", CreateSurfaceAction},
-			{"ExecuteSurfaceAction", ExecuteSurfaceAction},
-			{"CancelSurfaceAction", CancelSurfaceAction},*/
-
 			{0,0}
 		};
 
@@ -170,12 +164,6 @@ namespace bg3se::esv::lua
 		library_.Register(L);
 
 		gExtender->GetServer().GetExtensionState().LuaLoadBuiltinFile("ServerStartup.lua");
-		/*
-		lua_getglobal(L, "Ext"); // stack: Ext
-		StatsExtraDataProxy::New(L); // stack: Ext, "ExtraData", ExtraDataProxy
-		lua_setfield(L, -2, "ExtraData"); // stack: Ext
-		lua_pop(L, 1); // stack: -
-		*/
 		// Ext is not writeable after loading SandboxStartup!
 		gExtender->GetServer().GetExtensionState().LuaLoadBuiltinFile("SandboxStartup.lua");
 
