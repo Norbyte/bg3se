@@ -148,14 +148,15 @@ public:
 
     std::optional<ImTextureID> RegisterTexture(FixedString id) override
     {
-        // TODO
-        return {};
-    }
+        auto textureManager = (*GetStaticSymbols().ls__gGlobalResourceManager)->TextureManager;
 
+        auto views = textureManager->Textures.try_get(id);
+        if (!views) return {};
 
-    void UnregisterTexture(ImTextureID id) override
-    {
-        // TODO
+        auto view = (*views)->descriptor->DX11.Views[0].View;
+        if (!view) return {};
+
+        return { view };
     }
 
 private:

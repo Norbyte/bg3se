@@ -16,7 +16,7 @@ public:
     virtual void FinishFrame() = 0;
     virtual void ClearFrame() = 0;
     virtual std::optional<ImTextureID> RegisterTexture(FixedString id) = 0;
-    virtual void UnregisterTexture(ImTextureID id) = 0;
+    virtual void UnregisterTexture(ImTextureID id) {}
 };
 
 END_NS()

@@ -3,6 +3,7 @@
 #include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/EntitySystem.h>
 #include <Lua/LuaHelpers.h>
+#include <d3d11.h>
 #include <synchapi.h>
 #include <variant>
 
@@ -164,17 +165,49 @@ struct [[bg3::hidden]] Image
 	uint8_t NamedViews;
 };
 
-struct [[bg3::hidden]] TextureDescriptor
+struct [[bg3::hidden]] ResourceView
+{
+	uint64_t unk;
+	ID3D11ShaderResourceView* View;
+};
+
+struct [[bg3::hidden]] TextureDescriptorDX11
+{
+	ID3D11Resource* Resource;
+	Array<void *> unkArr;
+	uint32_t Width;
+	uint32_t Height;
+	uint32_t Depth;
+	uint8_t unk[16];
+	Array<ResourceView> Views;
+};
+
+struct [[bg3::hidden]] TextureDescriptorVulkan
 {
 	Image ImageData;
 	Array<ImageView*> Views;
+};
+
+union [[bg3::hidden]] TextureDescriptor
+{
+	~TextureDescriptor() {}
+
+	TextureDescriptorDX11 DX11;
+	TextureDescriptorVulkan Vulkan;
+};
+
+struct [[bg3::hidden]] Texture
+{
+	TextureDescriptor* descriptor;
+	uint8_t unk[16];
+	STDString path;
 };
 
 struct [[bg3::hidden]] TextureManager
 {
     SRWLOCK Lock;
     MultiHashMap<TextureDescriptor*, FixedString> Names;
-    MultiHashMap<FixedString, TextureDescriptor**> Textures;
+    MultiHashMap<FixedString, Texture*> Textures;
 };
 
 struct [[bg3::hidden]] UVValues
