@@ -131,6 +131,79 @@ struct [[bg3::hidden]] VirtualTextureManager : public VirtualTextureManagerBase
 	char field_414;
 };
 
+struct [[bg3::hidden]] ViewDescriptor
+{
+	uint16_t Format;
+	uint8_t BaseMip;
+	uint8_t MipCount;
+	uint16_t BaseSlice;
+	uint16_t SliceCount;
+	uint16_t unk;
+};
+
+struct [[bg3::hidden]] ImageView
+{
+	uint64_t unk;
+	uint64_t View;
+};
+
+struct [[bg3::hidden]] Image
+{
+	Array<ViewDescriptor> ViewDescriptors;
+	uint32_t Width;
+	uint32_t Height;
+	uint32_t Depth;
+	uint16_t unk;
+	uint16_t MipCount;
+	uint16_t ArraySize;
+	uint16_t Usage;
+	uint8_t Dimension;
+	uint8_t Format;
+	uint8_t SampleCount;
+	uint8_t Access;
+	uint8_t NamedViews;
+};
+
+struct [[bg3::hidden]] TextureDescriptor
+{
+	Image ImageData;
+	Array<ImageView*> Views;
+};
+
+struct [[bg3::hidden]] TextureManager
+{
+    SRWLOCK Lock;
+    MultiHashMap<TextureDescriptor*, FixedString> Names;
+    MultiHashMap<FixedString, TextureDescriptor**> Textures;
+};
+
+struct [[bg3::hidden]] UVValues
+{
+    float U1;
+    float V1;
+    float U2;
+    float V2;
+};
+
+struct [[bg3::hidden]] TextureAtlas
+{
+    void* VMT;
+    Map<FixedString, UVValues*> Icons;
+    STDString Path;
+    STDString TexturePath;
+    uint32_t IconWidth;
+    uint32_t IconHeight;
+    uint32_t TextureWidth;
+    uint32_t TextureHeight;
+    FixedString Name;
+};
+
+struct [[bg3::hidden]] TextureAtlasMap
+{
+    void* VMT;
+    RefMap<STDString, TextureAtlas*> AtlasMap;
+    Map<FixedString, TextureAtlas*> IconMap;
+};
 
 struct [[bg3::hidden]] Bank : public ProtectedGameObject<Bank>
 {
@@ -179,7 +252,7 @@ struct [[bg3::hidden]] ResourceManager
 	__int64 field_60; // Unknown pointer; size 0x50
 	__int64 field_68; // Unknown pointer; size 0x50
 	__int64 field_70; // Unknown pointer; size 0x50
-	__int64 field_78; // Unknown pointer; size 0x90
+	TextureManager* TextureManager;
 	__int64 field_80; // Unknown pointer; size 0x23e0
 	WwiseManager* SoundManager;
 	__int64 VideoManager;

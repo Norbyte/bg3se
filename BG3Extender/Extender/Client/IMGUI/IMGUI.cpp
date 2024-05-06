@@ -195,6 +195,84 @@ lua::ImguiHandle TreeParent::AddButton(char const* label)
 }
 
 
+std::optional<lua::ImguiHandle> TreeParent::AddImage(
+    FixedString name,
+    float width,
+    float height,
+    std::optional<float> U1,
+    std::optional<float> V1,
+    std::optional<float> U2,
+    std::optional<float> V2
+)
+{
+    auto id = gExtender->IMGUI().RegisterTexture(name);
+    if (!id) {
+        WARN("failed to find texture '%s'", name.GetString());
+        return {};
+    }
+
+    auto img = AddChild<Image>();
+    img->Width = width;
+    img->Height = height;
+    if (U1) img->U1 = *U1;
+	if (V1) img->V1 = *V1;
+	if (U2) img->U2 = *U2;
+	if (V2) img->V2 = *V2;
+
+    img->Id = *id;
+
+    return img;
+}
+
+
+std::optional<lua::ImguiHandle> TreeParent::AddIcon(FixedString name, std::optional<float> width, std::optional<float> height)
+{
+    auto atlas = (*GetStaticSymbols().ls__gTextureAtlasMap)->IconMap.try_get(name);
+    if (!atlas) {
+        WARN("failed to find atlas for icon '%s'", name.GetString());
+        return {};
+    }
+
+    auto uvs = atlas->Icons.try_get(name);
+    if (!uvs) {
+        WARN("failed to find icon UVs '%s'", name.GetString());
+        return {};
+    }
+
+    auto id = gExtender->IMGUI().RegisterTexture(atlas->Name);
+    if (!id) {
+        WARN("failed to find texture for icon '%s'", name.GetString());
+        return {};
+    }
+
+    auto icon = AddChild<Icon>();
+
+    float iconWidth;
+    if (!width) {
+        iconWidth = static_cast<float>(atlas->IconWidth);
+    } else {
+        iconWidth = *width;
+    }
+    float iconHeight;
+    if (!height) {
+        iconHeight = static_cast<float>(atlas->IconHeight);
+    } else {
+        iconHeight = *height;
+    }
+
+    icon->Width = iconWidth;
+    icon->Height = iconHeight;
+    icon->U1 = uvs->U1;
+    icon->V1 = uvs->V1;
+    icon->U2 = uvs->U2;
+    icon->V2 = uvs->V2;
+
+    icon->Id = *id;
+
+    return icon;
+}
+
+
 lua::ImguiHandle TreeParent::AddText(char const* label)
 {
     auto txt = AddChild<Text>();
@@ -415,6 +493,7 @@ bool Window::BeginRender()
 
     bool wasOpen = Open;
     bool renderChildren = ImGui::Begin(Label.c_str(), Closeable ? &Open : nullptr, (ImGuiWindowFlags)Flags);
+
     rendering_ = true;
 
     if (wasOpen && !Open && OnClose) {
@@ -643,6 +722,44 @@ void Popup::EndRender()
 void Popup::Open(std::optional<GuiPopupFlags> flags)
 {
     ImGui::OpenPopup(Label.c_str(), (flags ? (ImGuiPopupFlags)*flags : 0));
+}
+
+
+void Image::StyledRender()
+{
+    ImGui::Image(
+        Id,
+        ImVec2(Width, Height),
+        ImVec2(U1, V1),
+        ImVec2(U2, V2),
+        ImVec4(1.0, 1.0, 1.0, 1.0),
+        ImVec4(0.0, 0.0, 0.0, 0.0)
+    );
+}
+
+
+Image::~Image()
+{
+    gExtender->IMGUI().UnregisterTexture(Id);
+}
+
+
+void Icon::StyledRender()
+{
+    ImGui::Image(
+        Id,
+        ImVec2(Width, Height),
+        ImVec2(U1, V1),
+        ImVec2(U2, V2),
+        ImVec4(1.0, 1.0, 1.0, 1.0),
+        ImVec4(0.0, 0.0, 0.0, 0.0)
+    );
+}
+
+
+Icon::~Icon()
+{
+    gExtender->IMGUI().UnregisterTexture(Id);
 }
 
 
@@ -886,6 +1003,9 @@ IMGUIObjectManager::IMGUIObjectManager()
     pools_[(unsigned)IMGUIObjectType::Menu] = std::make_unique<IMGUIObjectPool<Menu>>();
     pools_[(unsigned)IMGUIObjectType::MenuItem] = std::make_unique<IMGUIObjectPool<MenuItem>>();
 
+    pools_[(unsigned)IMGUIObjectType::Image] = std::make_unique<IMGUIObjectPool<Image>>();
+    pools_[(unsigned)IMGUIObjectType::Icon] = std::make_unique<IMGUIObjectPool<Icon>>();
+
     pools_[(unsigned)IMGUIObjectType::Text] = std::make_unique<IMGUIObjectPool<Text>>();
     pools_[(unsigned)IMGUIObjectType::BulletText] = std::make_unique<IMGUIObjectPool<BulletText>>();
     pools_[(unsigned)IMGUIObjectType::SeparatorText] = std::make_unique<IMGUIObjectPool<SeparatorText>>();
@@ -1046,6 +1166,16 @@ void IMGUIManager::Update()
     renderer_->FinishFrame();
 
     objects_->ClientUpdate();
+}
+
+std::optional<ImTextureID> IMGUIManager::RegisterTexture(FixedString id)
+{
+    return renderer_->RegisterTexture(id);
+}
+
+void IMGUIManager::UnregisterTexture(ImTextureID id)
+{
+    renderer_->UnregisterTexture(id);
 }
 
 END_NS()

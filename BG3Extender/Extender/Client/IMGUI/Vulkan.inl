@@ -85,7 +85,7 @@ public:
         VkDescriptorPoolSize poolSize
         {
             .type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-            .descriptorCount = 10
+            .descriptorCount = 1024,
         };
 
         VkDescriptorPoolCreateInfo createInfo
@@ -93,11 +93,25 @@ public:
             .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
             .pNext = nullptr,
             .flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT,
-            .maxSets = 1,
+            .maxSets = 1024,
             .poolSizeCount = 1,
             .pPoolSizes = &poolSize
         };
         auto result = vkCreateDescriptorPool(device_, &createInfo, nullptr, &descriptorPool_);
+
+        VkSamplerCreateInfo samplerInfo
+        {
+            .sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
+            .magFilter = VK_FILTER_LINEAR,
+            .minFilter = VK_FILTER_LINEAR,
+            .mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR,
+            .addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
+            .addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
+            .addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
+            .maxLod = VK_LOD_CLAMP_NONE,
+        };
+        vkCreateSampler(device_, &samplerInfo, nullptr, &sampler_);
+
 
         ImGui_ImplVulkan_InitInfo init_info = {};
         init_info.Instance = instance_;
@@ -168,6 +182,26 @@ public:
         if (!initialized_) return;
 
         drawViewport_ = -1;
+    }
+
+
+    std::optional<ImTextureID> RegisterTexture(FixedString id) override
+    {
+        auto textureManager = (*GetStaticSymbols().ls__gGlobalResourceManager)->TextureManager;
+
+        auto views = textureManager->Textures.try_get(id);
+        if (!views) return {};
+
+        auto view = (**views)->Views[0]->View;
+        if (!view) return {};
+
+        return { ImGui_ImplVulkan_AddTexture(sampler_, VkImageView(view), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) };
+    }
+
+
+    void UnregisterTexture(ImTextureID id) override
+    {
+        ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(id));
     }
 
 private:
@@ -275,6 +309,16 @@ private:
         device_ = VK_NULL_HANDLE;
         queueFamily_ = 0;
         renderQueue_ = VK_NULL_HANDLE;
+
+        if (descriptorPool_ != VK_NULL_HANDLE) {
+            vkDestroyDescriptorPool(device_, descriptorPool_, nullptr);
+            descriptorPool_ = VK_NULL_HANDLE;
+        }
+
+        if (sampler_ != VK_NULL_HANDLE) {
+            vkDestroySampler(device_, sampler_, nullptr);
+            sampler_ = VK_NULL_HANDLE;
+        }
     }
 
     void vkCreatePipelineCacheHooked(
@@ -336,11 +380,6 @@ private:
         if (swapchain.commandPool_ != VK_NULL_HANDLE) {
             vkDestroyCommandPool(device_, swapchain.commandPool_, nullptr);
             swapchain.commandPool_ = VK_NULL_HANDLE;
-        }
-
-        if (descriptorPool_ != VK_NULL_HANDLE) {
-            vkDestroyDescriptorPool(device_, descriptorPool_, nullptr);
-            descriptorPool_ = VK_NULL_HANDLE;
         }
     }
 
@@ -638,6 +677,7 @@ private:
     VkSwapchainKHR swapChain_{ VK_NULL_HANDLE };
     VkPipelineCache pipelineCache_{ VK_NULL_HANDLE };
     VkDescriptorPool descriptorPool_{ VK_NULL_HANDLE };
+    VkSampler sampler_{ VK_NULL_HANDLE };
     std::array<ViewportInfo, 3> viewports_;
     int32_t drawViewport_{ -1 };
     int32_t curViewport_{ 0 };

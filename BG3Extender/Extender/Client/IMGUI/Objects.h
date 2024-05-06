@@ -36,6 +36,9 @@ enum class IMGUIObjectType : uint8_t
     Menu,
     MenuItem,
 
+    Image,
+    Icon,
+
     // Texts
     Text,
     BulletText,
@@ -136,6 +139,17 @@ public:
     lua::ImguiHandle AddPopup(char const* label);
 
     lua::ImguiHandle AddButton(char const* label);
+
+    std::optional<lua::ImguiHandle> AddImage(
+        FixedString name,
+        float width,
+        float height,
+        std::optional<float> U1,
+        std::optional<float> V1,
+        std::optional<float> U2,
+        std::optional<float> V2
+    );
+    std::optional<lua::ImguiHandle> AddIcon(FixedString name, std::optional<float> width, std::optional<float> height);
 
     lua::ImguiHandle AddText(char const* label);
     lua::ImguiHandle AddBulletText(char const* label);
@@ -377,6 +391,44 @@ private:
     bool rendering_{ false };
 };
 
+
+class Image : public StyledRenderable
+{
+public:
+    DECL_UI_TYPE(Image)
+
+	~Image() override;
+    void StyledRender() override;
+
+    float Width;
+    float Height;
+
+    float U1{ 0.0f };
+    float V1{ 0.0f };
+    float U2{ 1.0f };
+    float V2{ 1.0f };
+
+    ImTextureID Id;
+};
+
+class Icon : public StyledRenderable
+{
+public:
+    DECL_UI_TYPE(Icon)
+
+	~Icon();
+    void StyledRender() override;
+
+    float Width;
+    float Height;
+
+    float U1;
+    float V1;
+    float U2;
+    float V2;
+
+    ImTextureID Id;
+};
 
 class Text : public StyledRenderable
 {

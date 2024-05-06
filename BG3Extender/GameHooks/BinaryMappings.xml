@@ -732,6 +732,15 @@
         <Target Type="Indirect" Offset="@ref3" Symbol="ls__GlobalTemplateManager" />
       </Mapping>
 
+      <Mapping Name="ls__TextureAtlasMap" Critical="true">
+        e8 ?? ?? ?? ??              // call bg3.1433BE8F0
+        48 8b 53 20                 // mov rdx,qword ptr ds:[rbx+20]
+        @ref1 48 8b 0d ?? ?? ?? ??  // mov rcx,qword ptr ds:[ls__gTextureAtlasMap]
+        e8 ?? ?? ?? ??              // call bg3.1433C08A0
+        48 8b 43 18                 // mov rax,qword ptr ds:[rbx+18]
+        <Target Type="Indirect" Offset="@ref1" Symbol="ls__gTextureAtlasMap" />
+      </Mapping>
+
       <Mapping Name="esv::OsirisVariableHelper::SavegameVisit">
         48 89 5c 24 08 // mov     [rsp+arg_0], rbx
         55 // push    rbp

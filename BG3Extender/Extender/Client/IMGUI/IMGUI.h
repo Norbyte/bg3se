@@ -23,6 +23,8 @@ public:
     void DestroyUI();
     void EnableUI(bool enabled);
     void SetObjects(IMGUIObjectManager* objects);
+    std::optional<ImTextureID> RegisterTexture(FixedString id);
+    void UnregisterTexture(ImTextureID id);
 
     void OnRenderBackendInitialized();
     void Update();

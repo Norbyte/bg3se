@@ -145,6 +145,19 @@ public:
         drawViewport_ = -1;
     }
 
+
+    std::optional<ImTextureID> RegisterTexture(FixedString id) override
+    {
+        // TODO
+        return {};
+    }
+
+
+    void UnregisterTexture(ImTextureID id) override
+    {
+        // TODO
+    }
+
 private:
     struct ViewportInfo
     {

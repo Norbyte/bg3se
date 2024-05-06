@@ -118,6 +118,7 @@ namespace bg3se
 
 		resource::GuidResourceManager** eoc__gGuidResourceManager{ nullptr };
 		ResourceManager** ls__gGlobalResourceManager{ nullptr };
+		TextureAtlasMap** ls__gTextureAtlasMap{ nullptr };
 
 		resource::LoadableResource::LoadProc* ls__VirtualTextureResource__Load{ nullptr };
 		resource::LoadableResource::UnloadProc* ls__VirtualTextureResource__Unload{ nullptr };
