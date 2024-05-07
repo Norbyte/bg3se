@@ -356,6 +356,12 @@ private:
     bool rendering_{ false };
 };
 
+struct ColumnDefinition
+{
+    STDString Name;
+    GuiTableColumnFlags Flags;
+    float Width;
+};
 
 class Table : public TreeParent
 {
@@ -365,10 +371,12 @@ public:
     bool BeginRender() override;
     void EndRender() override;
 
+    void AddColumn(char const* name, std::optional<GuiTableColumnFlags> flags, std::optional<float> width);
     lua::ImguiHandle AddRow();
 
     uint32_t Columns{ 1 };
     GuiTableFlags Flags{ 0 };
+    Array<ColumnDefinition> ColumnDefs;
 
 private:
     bool rendering_{ false };

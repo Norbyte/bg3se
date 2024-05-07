@@ -684,6 +684,13 @@ void Tree::EndRender()
 bool Table::BeginRender()
 {
     rendering_ = ImGui::BeginTable(Label.c_str(), (int)Columns, (ImGuiTableFlags)Flags);
+
+    if (rendering_) {
+        for (auto const& def : ColumnDefs) {
+            ImGui::TableSetupColumn(def.Name.c_str(), (ImGuiTableColumnFlags)def.Flags, def.Width);
+        }
+    }
+
     return rendering_;
 }
 
@@ -691,6 +698,13 @@ void Table::EndRender()
 {
     if (rendering_) ImGui::EndTable();
     rendering_ = false;
+}
+
+void Table::AddColumn(char const* name, std::optional<GuiTableColumnFlags> flags, std::optional<float> width)
+{
+    ColumnDefs.push_back(ColumnDefinition{
+        name, flags ? *flags : GuiTableColumnFlags(0), width ? *width : 0.0f
+    });
 }
 
 lua::ImguiHandle Table::AddRow()

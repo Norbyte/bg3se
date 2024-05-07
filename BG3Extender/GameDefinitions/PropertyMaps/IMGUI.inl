@@ -109,10 +109,18 @@ P(OnExpand)
 END_CLS()
 
 
+BEGIN_CLS(extui::ColumnDefinition)
+P(Name)
+P_BITMASK(Flags)
+P(Width)
+END_CLS()
+
+
 BEGIN_CLS(extui::Table)
 INHERIT(extui::TreeParent)
 P(Columns)
 P_BITMASK(Flags)
+P(ColumnDefs)
 P_FUN(AddRow, extui::Table::AddRow)
 END_CLS()
 
