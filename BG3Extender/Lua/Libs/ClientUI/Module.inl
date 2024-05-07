@@ -1,6 +1,7 @@
 #include <Lua/Libs/ClientUI/NsHelpers.inl>
 #include <NsGui/UIElementCollection.h>
 #include <NsGui/IList.h>
+#include <GameDefinitions/Picking.h>
 
 BEGIN_NS(lua)
 
@@ -98,6 +99,18 @@ void SetState(lua_State* L, FixedString state, std::optional<FixedString> subSta
 	fireStateEvent(stateMachine, result, context, args);
 }
 
+PlayerPickingHelper* GetPickingHelper(uint16_t playerIndex)
+{
+	auto picking = ecl::ExtensionState::Get().GetClientLua()->GetEntitySystemHelpers()->GetSystem<ecl::PickingHelperManager>();
+	auto it = picking->PlayerHelpers.find(playerIndex);
+	if (it != picking->PlayerHelpers.end()) {
+		return it.Value();
+	}
+	else {
+		return nullptr;
+	}
+}
+
 void RegisterUILib()
 {
 	DECLARE_MODULE(UI, Client)
@@ -105,6 +118,7 @@ void RegisterUILib()
 	MODULE_FUNCTION(GetRoot)
 	MODULE_FUNCTION(GetStateMachine)
 	MODULE_FUNCTION(SetState)
+	MODULE_FUNCTION(GetPickingHelper)
 	END_MODULE()
 }
 

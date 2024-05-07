@@ -49,6 +49,7 @@ END_ENUM()
 
 BEGIN_ENUM(ExtSystemType, uint32_t)
 	E(UISystem)
+	E(PickingHelperManager)
 	E(Max)
 END_ENUM()
 

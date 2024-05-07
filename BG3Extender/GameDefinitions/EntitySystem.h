@@ -180,9 +180,10 @@ struct SystemType : public ProtectedGameObject<SystemType>
 	int32_t SystemIndex1;
 	__int16 field_10;
 	char field_12;
-	void* SomeProc1;
-	__int64 field_20;
+	void* UpdateProc;
 	void* SomeProc2;
+	void* SomeProc3;
+	void* SomeProc4;
 	MultiHashSet<SystemType::ID> DependencySystems;
 	MultiHashSet<SystemType::ID> DependentSystems;
 	MultiHashSet<uint32_t> HandleMappings2;
