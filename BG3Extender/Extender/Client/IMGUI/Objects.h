@@ -170,6 +170,43 @@ protected:
     T* AddChild();
 };
 
+struct WindowRenderRequests
+{
+    struct SetPos
+    {
+        ImVec2 Pos;
+        ImVec2 Pivot;
+        ImGuiCond Cond;
+    };
+
+    struct SetSize
+    {
+        ImVec2 Size;
+        ImGuiCond Cond;
+    };
+
+    struct SetSizeConstraints
+    {
+        ImVec2 SizeMin;
+        ImVec2 SizeMax;
+    };
+
+    struct SetCollapsed
+    {
+        bool Collapsed;
+        ImGuiCond Cond;
+    };
+
+
+    std::optional<SetPos> Pos;
+    std::optional<SetSize> Size;
+    std::optional<SetSizeConstraints> SizeConstraints;
+    std::optional<ImVec2> ContentSize;
+    std::optional<ImVec2> Scroll;
+    std::optional<SetCollapsed> Collapsed;
+    bool Focus{ false };
+    std::optional<float> BgAlpha;
+};
 
 class Window : public TreeParent
 {
@@ -181,6 +218,15 @@ public:
 
     lua::ImguiHandle AddMainMenu();
 
+    void SetPos(glm::vec2 pos, std::optional<GuiCond> cond, std::optional<glm::vec2> pivot);
+    void SetSize(glm::vec2 size, std::optional<GuiCond> cond);
+    void SetSizeConstraints(std::optional<glm::vec2> size_min, std::optional<glm::vec2> size_max);
+    void SetContentSize(std::optional<glm::vec2> size);
+    void SetCollapsed(bool collapsed, std::optional<GuiCond> cond);
+    void SetFocus();
+    void SetScroll(std::optional<glm::vec2> scroll);
+    void SetBgAlpha(std::optional<float> alpha);
+
     bool Open{ true };
     bool Closeable{ false };
     GuiWindowFlags Flags{ 0 };
@@ -189,6 +235,9 @@ public:
 
 private:
     bool rendering_{ false };
+    WindowRenderRequests req_;
+
+    void ProcessRenderSettings();
 };
 
 
@@ -299,6 +348,9 @@ public:
     void EndRender() override;
 
     GuiTreeNodeFlags Flags{ 0 };
+
+    lua::LuaDelegate<void(lua::ImguiHandle)> OnClick;
+    lua::LuaDelegate<void(lua::ImguiHandle)> OnExpand;
 
 private:
     bool rendering_{ false };

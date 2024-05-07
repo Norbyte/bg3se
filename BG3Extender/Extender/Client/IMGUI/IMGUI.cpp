@@ -12,6 +12,16 @@
 
 BEGIN_NS(extui)
 
+inline ImVec2 ToImVec(glm::vec2 const& v)
+{
+    return ImVec2(v.x, v.y);
+}
+
+inline ImVec2 ToImVec(std::optional<glm::vec2> const& v, ImVec2 defaultVal)
+{
+    return v ? ImVec2(v->x, v->y) : defaultVal;
+}
+
 template <class T>
 T* TreeParent::AddChild()
 {
@@ -413,6 +423,8 @@ bool Window::BeginRender()
 {
     if (!Open) return false;
 
+    ProcessRenderSettings();
+
     bool wasOpen = Open;
     bool renderChildren = ImGui::Begin(Label.c_str(), Closeable ? &Open : nullptr, (ImGuiWindowFlags)Flags);
     rendering_ = true;
@@ -440,6 +452,101 @@ lua::ImguiHandle Window::AddMainMenu()
     }
 
     return MainMenu;
+}
+
+void Window::SetPos(glm::vec2 pos, std::optional<GuiCond> cond, std::optional<glm::vec2> pivot)
+{
+    req_.Pos = WindowRenderRequests::SetPos { 
+        ToImVec(pos),
+        ToImVec(pivot, ImVec2(0.0f, 0.0f)),
+        cond ? (ImGuiCond )*cond : ImGuiCond_Always
+    };
+}
+
+void Window::SetSize(glm::vec2 size, std::optional<GuiCond> cond)
+{
+    req_.Size = WindowRenderRequests::SetSize{ ToImVec(size), cond ? (ImGuiCond)*cond : ImGuiCond_Always };
+}
+
+void Window::SetSizeConstraints(std::optional<glm::vec2> size_min, std::optional<glm::vec2> size_max)
+{
+    if (size_min || size_max) {
+        req_.SizeConstraints = WindowRenderRequests::SetSizeConstraints{ 
+            ToImVec(size_min, ImVec2(0.0f, 0.0f)),
+            ToImVec(size_max, ImVec2(0.0f, 0.0f))
+        };
+    } else {
+        req_.SizeConstraints = {};
+    }
+}
+
+void Window::SetContentSize(std::optional<glm::vec2> size)
+{
+    req_.ContentSize = size ? std::optional<ImVec2>(ToImVec(*size)) : std::optional<ImVec2>{};
+}
+
+void Window::SetCollapsed(bool collapsed, std::optional<GuiCond> cond)
+{
+    req_.Collapsed = WindowRenderRequests::SetCollapsed{ collapsed, cond ? (ImGuiCond)*cond : ImGuiCond_Always };
+}
+
+void Window::SetFocus()
+{
+    req_.Focus = true;
+}
+
+void Window::SetScroll(std::optional<glm::vec2> scroll)
+{
+    req_.Scroll = scroll ? std::optional<ImVec2>(ToImVec(*scroll)) : std::optional<ImVec2>{};
+}
+
+void Window::SetBgAlpha(std::optional<float> alpha)
+{
+    req_.BgAlpha = alpha;
+}
+
+
+void Window::ProcessRenderSettings()
+{
+    if (req_.Pos) {
+        ImGui::SetNextWindowPos(req_.Pos->Pos, req_.Pos->Cond, req_.Pos->Pivot);
+        req_.Pos = {};
+    }
+
+    if (req_.Size) {
+        ImGui::SetNextWindowSize(req_.Size->Size, req_.Size->Cond);
+        req_.Size = {};
+    }
+
+    if (req_.SizeConstraints) {
+        ImGui::SetNextWindowSizeConstraints(req_.SizeConstraints->SizeMin, req_.SizeConstraints->SizeMax);
+        req_.SizeConstraints = {};
+    }
+
+    if (req_.ContentSize) {
+        ImGui::SetNextWindowContentSize(*req_.ContentSize);
+        req_.ContentSize = {};
+    }
+
+    if (req_.Scroll) {
+        ImGui::SetNextWindowScroll(*req_.Scroll);
+        req_.Scroll = {};
+    }
+
+    if (req_.Collapsed) {
+        ImGui::SetNextWindowCollapsed(req_.Collapsed->Collapsed, req_.Collapsed->Cond);
+        req_.Collapsed = {};
+    }
+
+    if (req_.Focus) {
+        ImGui::SetNextWindowFocus();
+        req_.Focus = false;
+    }
+
+    if (req_.BgAlpha) {
+        ImGui::SetNextWindowBgAlpha(*req_.BgAlpha);
+        req_.BgAlpha = {};
+    }
 }
 
 bool MenuBar::BeginRender()
@@ -557,6 +664,13 @@ void TabItem::EndRender()
 bool Tree::BeginRender()
 {
     rendering_ = ImGui::TreeNodeEx(Label.c_str(), (ImGuiTreeNodeFlags)Flags);
+    if (ImGui::IsItemClicked()) {
+        if (!ImGui::IsItemToggledOpen() && OnClick) {
+            Manager->GetEventQueue().Call(OnClick, lua::ImguiHandle(Handle));
+        } else if (ImGui::IsItemToggledOpen() && OnExpand) {
+            Manager->GetEventQueue().Call(OnExpand, lua::ImguiHandle(Handle));
+        }
+    }
     return rendering_;
 }
 

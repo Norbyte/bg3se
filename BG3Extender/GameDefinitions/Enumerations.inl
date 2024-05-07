@@ -3570,4 +3570,11 @@ BEGIN_BITMASK(GuiColorEditFlags, uint32_t)
 	EV(InputHSV, (uint32_t)ImGuiColorEditFlags_InputHSV)
 END_ENUM()
 
+BEGIN_BITMASK(GuiCond, uint32_t)
+	EV(Always, (uint32_t)ImGuiCond_Always)
+	EV(Once, (uint32_t)ImGuiCond_Once)
+	EV(FirstUseEver, (uint32_t)ImGuiCond_FirstUseEver)
+	EV(Appearing, (uint32_t)ImGuiCond_Appearing)
+END_ENUM()
+
 #endif
