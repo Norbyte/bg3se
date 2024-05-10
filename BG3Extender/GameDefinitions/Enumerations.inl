@@ -3522,6 +3522,7 @@ BEGIN_BITMASK(GuiInputTextFlags, uint32_t)
 	EV(CallbackResize, (uint32_t)ImGuiInputTextFlags_CallbackResize)
 	EV(CallbackEdit, (uint32_t)ImGuiInputTextFlags_CallbackEdit)
 	EV(EscapeClearsAll, (uint32_t)ImGuiInputTextFlags_EscapeClearsAll)
+	EV(Multiline, (uint32_t)(1 << 26))
 END_ENUM()
 
 BEGIN_BITMASK(GuiComboFlags, uint32_t)
