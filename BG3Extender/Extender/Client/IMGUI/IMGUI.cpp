@@ -756,6 +756,11 @@ void Tooltip::EndRender()
 
 bool Popup::BeginRender()
 {
+    if (requestOpen_) {
+        ImGui::OpenPopup(Label.c_str(), (ImGuiPopupFlags)openFlags_);
+        requestOpen_ = false;
+    }
+
     rendering_ = ImGui::BeginPopup(Label.c_str(), (ImGuiWindowFlags)Flags);
     return rendering_;
 }
@@ -770,7 +775,8 @@ void Popup::EndRender()
 
 void Popup::Open(std::optional<GuiPopupFlags> flags)
 {
-    ImGui::OpenPopup(Label.c_str(), (flags ? (ImGuiPopupFlags)*flags : 0));
+    requestOpen_ = true;
+    openFlags_ = flags.value_or((GuiPopupFlags)0);
 }
 
 
@@ -858,7 +864,7 @@ InputText::InputText()
 
 void InputText::StyledRender()
 {
-    if (ImGui::InputText(Label.c_str(), Text.data(), Text.capacity(), (ImGuiInputTextFlags)Flags)) {
+    if (ImGui::InputTextEx(Label.c_str(), Hint ? Hint->c_str() : nullptr, Text.data(), Text.capacity(), ToImVec(SizeHint, ImVec2(0, 0)), (ImGuiInputTextFlags)Flags, nullptr, nullptr)) {
         Text.resize((uint32_t)strlen(Text.data()));
         if (OnChange) {
             Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Text);

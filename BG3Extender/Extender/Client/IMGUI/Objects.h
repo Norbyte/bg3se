@@ -435,6 +435,8 @@ public:
 
 private:
     bool rendering_{ false };
+    bool requestOpen_{ false };
+    GuiPopupFlags openFlags_{ 0 };
 };
 
 
@@ -551,6 +553,8 @@ public:
     void SetText(STDString text);
 
     STDString Text;
+    std::optional<STDString> Hint;
+    std::optional<glm::vec2> SizeHint;
     GuiInputTextFlags Flags{ 0 };
     lua::LuaDelegate<void (lua::ImguiHandle, STDString)> OnChange;
 };
