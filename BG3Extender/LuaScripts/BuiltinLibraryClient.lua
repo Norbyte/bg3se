@@ -1,7 +1,9 @@
 local _I = Ext._Internal
 
 _I._PublishedEvents = {
-	"KeyInput"
+	"KeyInput",
+	"MouseButtonInput",
+	"MouseWheelInput"
 }
 
 Ext.IsClient = function ()
