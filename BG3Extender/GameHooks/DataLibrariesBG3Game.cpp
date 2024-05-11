@@ -211,6 +211,7 @@ namespace bg3se
 
 		SYM_OFF(ls__gTextureAtlasMap);
 		SYM_OFF(ls__TextureInitOrIncRef);
+		SYM_OFF(ls__TextureManager__UnloadTexture);
 
 		SYM_OFF(ls__VirtualTextureResource__Load);
 		SYM_OFF(ls__VirtualTextureResource__Unload);

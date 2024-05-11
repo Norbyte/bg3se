@@ -220,6 +220,7 @@ std::optional<lua::ImguiHandle> TreeParent::AddImage(
 	if (V2) img->V2 = *V2;
 
     img->Id = *id;
+    img->Guid = name;
 
     return img;
 }
@@ -268,6 +269,7 @@ std::optional<lua::ImguiHandle> TreeParent::AddIcon(FixedString name, std::optio
     icon->V2 = uvs->V2;
 
     icon->Id = *id;
+    icon->Guid = atlas->Name;
 
     return icon;
 }
@@ -740,7 +742,7 @@ void Image::StyledRender()
 
 Image::~Image()
 {
-    gExtender->IMGUI().UnregisterTexture(Id);
+    gExtender->IMGUI().UnregisterTexture(Id, Guid);
 }
 
 
@@ -759,7 +761,7 @@ void Icon::StyledRender()
 
 Icon::~Icon()
 {
-    gExtender->IMGUI().UnregisterTexture(Id);
+    gExtender->IMGUI().UnregisterTexture(Id, Guid);
 }
 
 
@@ -1173,9 +1175,9 @@ std::optional<ImTextureID> IMGUIManager::RegisterTexture(FixedString id)
     return renderer_->RegisterTexture(id);
 }
 
-void IMGUIManager::UnregisterTexture(ImTextureID id)
+void IMGUIManager::UnregisterTexture(ImTextureID id, FixedString guid)
 {
-    renderer_->UnregisterTexture(id);
+    renderer_->UnregisterTexture(id, guid);
 }
 
 END_NS()

@@ -123,6 +123,8 @@ namespace bg3se
 		using TextureInitOrIncRefProc = TextureDescriptor* (void** unused, FixedString* guid);
 		TextureInitOrIncRefProc* ls__TextureInitOrIncRef{ nullptr };
 
+        TextureManager::UnloadTextureProc* ls__TextureManager__UnloadTexture{ nullptr };
+
 		resource::LoadableResource::LoadProc* ls__VirtualTextureResource__Load{ nullptr };
 		resource::LoadableResource::UnloadProc* ls__VirtualTextureResource__Unload{ nullptr };
 		resource::LoadableResource::TranscodeProc* ls__VirtualTextureResource__Transcode{ nullptr };

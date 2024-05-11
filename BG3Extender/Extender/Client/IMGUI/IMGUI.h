@@ -24,7 +24,7 @@ public:
     void EnableUI(bool enabled);
     void SetObjects(IMGUIObjectManager* objects);
     std::optional<ImTextureID> RegisterTexture(FixedString id);
-    void UnregisterTexture(ImTextureID id);
+    void UnregisterTexture(ImTextureID id, FixedString guid);
 
     void OnRenderBackendInitialized();
     void Update();

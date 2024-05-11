@@ -158,6 +158,13 @@ public:
         return { view };
     }
 
+
+    void UnregisterTexture(ImTextureID id, FixedString guid) override
+    {
+        auto texture_manager = (*GetStaticSymbols().ls__gGlobalResourceManager)->TextureManager;
+        (*GetStaticSymbols().ls__TextureManager__UnloadTexture)(texture_manager, &guid, 0, 0);
+    }
+
 private:
     struct ViewportInfo
     {

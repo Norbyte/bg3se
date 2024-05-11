@@ -409,6 +409,7 @@ public:
     float V2{ 1.0f };
 
     ImTextureID Id;
+    FixedString Guid;
 };
 
 class Icon : public StyledRenderable
@@ -428,6 +429,7 @@ public:
     float V2;
 
     ImTextureID Id;
+    FixedString Guid;
 };
 
 class Text : public StyledRenderable

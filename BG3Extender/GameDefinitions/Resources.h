@@ -214,6 +214,8 @@ struct [[bg3::hidden]] TextureData
 
 struct [[bg3::hidden]] TextureManager
 {
+    using UnloadTextureProc = void (TextureManager* self, FixedString* guid, void* unused1, void* unused2);
+
     SRWLOCK Lock;
     MultiHashMap<TextureDescriptor*, FixedString> Names;
     MultiHashMap<FixedString, TextureData*> Textures;

@@ -697,6 +697,18 @@
         <Target Type="Absolute" Offset="0" Symbol="ls__TextureInitOrIncRef" />
       </Mapping>
 
+      <Mapping Name="ls::TextureManager::UnloadTexture">
+        40 53                 // push rbx                                                                                                  |
+        57                    // push rdi                                                                                                  |
+        41 56                 // push r14                                                                                                  |
+        41 57                 // push r15                                                                                                  |
+        48 83 EC 58           // sub rsp,58                                                                                                |
+        48 8B 05 ?? ?? ?? ??  // mov rax,qword ptr ds:[__security_cookie]                                                                          |
+        48 33 C4              // xor rax,rsp                                                                                               |
+        48 89 44 24 40        // mov qword ptr ss:[rsp+40],rax                                                                             |
+        <Target Type="Absolute" Offset="0" Symbol="ls__TextureManager__UnloadTexture" />
+      </Mapping>
+
       <Mapping Name="eoc::gResourceManager">
         4c 8b 1c 0a // mov     r11, [rdx+rcx]
         4c 8b d5 // mov     r10, rbp
