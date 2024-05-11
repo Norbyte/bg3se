@@ -46,7 +46,28 @@ UserReturn Include(lua_State * L)
 
 UserReturn LoadString(lua_State * L, char const* s)
 {
+	bool replaceGlobals = lua_gettop(L) > 1 && !lua_isnil(L, 2);
+	auto globalsIdx = lua_gettop(L) + 1;
+
+	if (replaceGlobals) {
+		luaL_checktype(L, 2, LUA_TTABLE);
+#if LUA_VERSION_NUM > 501
+		lua_rawgeti(L, LUA_REGISTRYINDEX, LUA_RIDX_GLOBALS);
+		lua_pushvalue(L, 2);
+		lua_rawseti(L, LUA_REGISTRYINDEX, LUA_RIDX_GLOBALS);
+#endif
+	}
+
 	auto status = luaL_loadbufferx(L, s, strlen(s), NULL, "t");
+
+	if (replaceGlobals) {
+#if LUA_VERSION_NUM > 501
+		lua_pushvalue(L, globalsIdx);
+		lua_rawseti(L, LUA_REGISTRYINDEX, LUA_RIDX_GLOBALS);
+		lua_remove(L, globalsIdx);
+#endif
+	}
+
 	if (status == LUA_OK) {
 		return 1;
 	} else {  /* error (message is on top of the stack) */
