@@ -187,12 +187,11 @@ public:
 
     std::optional<ImTextureID> RegisterTexture(FixedString id) override
     {
-        auto textureManager = (*GetStaticSymbols().ls__gGlobalResourceManager)->TextureManager;
+        void* unused = 0;
+        auto descriptor = (*GetStaticSymbols().ls__TextureInitOrIncRef)(&unused, &id);
+        if (!descriptor) return {};
 
-        auto views = textureManager->Textures.try_get(id);
-        if (!views) return {};
-
-        auto view = (*views)->descriptor->Vulkan.Views[0]->View;
+        auto view = descriptor->Vulkan.Views[0]->View;
         if (!view) return {};
 
         return { ImGui_ImplVulkan_AddTexture(sampler_, VkImageView(view), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) };

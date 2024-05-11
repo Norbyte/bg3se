@@ -120,6 +120,9 @@ namespace bg3se
 		ResourceManager** ls__gGlobalResourceManager{ nullptr };
 		TextureAtlasMap** ls__gTextureAtlasMap{ nullptr };
 
+		using TextureInitOrIncRefProc = TextureDescriptor* (void** unused, FixedString* guid);
+		TextureInitOrIncRefProc* ls__TextureInitOrIncRef{ nullptr };
+
 		resource::LoadableResource::LoadProc* ls__VirtualTextureResource__Load{ nullptr };
 		resource::LoadableResource::UnloadProc* ls__VirtualTextureResource__Unload{ nullptr };
 		resource::LoadableResource::TranscodeProc* ls__VirtualTextureResource__Transcode{ nullptr };
