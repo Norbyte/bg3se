@@ -196,7 +196,7 @@ lua::ImguiHandle TreeParent::AddButton(char const* label)
 
 
 std::optional<lua::ImguiHandle> TreeParent::AddImage(
-    FixedString name,
+    char const* name,
     float width,
     float height,
     std::optional<float> U1,
@@ -205,9 +205,10 @@ std::optional<lua::ImguiHandle> TreeParent::AddImage(
     std::optional<float> V2
 )
 {
-    auto id = gExtender->IMGUI().RegisterTexture(name);
+    auto str = FixedString(name);
+    auto id = gExtender->IMGUI().RegisterTexture(str);
     if (!id) {
-        WARN("failed to find texture '%s'", name.GetString());
+        WARN("failed to find texture '%s'", name);
         return {};
     }
 
@@ -220,29 +221,30 @@ std::optional<lua::ImguiHandle> TreeParent::AddImage(
 	if (V2) img->V2 = *V2;
 
     img->Id = *id;
-    img->Guid = name;
+    img->Guid = str;
 
     return img;
 }
 
 
-std::optional<lua::ImguiHandle> TreeParent::AddIcon(FixedString name, std::optional<float> width, std::optional<float> height)
+std::optional<lua::ImguiHandle> TreeParent::AddIcon(char const* name, std::optional<float> width, std::optional<float> height)
 {
-    auto atlas = (*GetStaticSymbols().ls__gTextureAtlasMap)->IconMap.try_get(name);
+    auto str = FixedString(name);
+    auto atlas = (*GetStaticSymbols().ls__gTextureAtlasMap)->IconMap.try_get(str);
     if (!atlas) {
-        WARN("failed to find atlas for icon '%s'", name.GetString());
+        WARN("failed to find atlas for icon '%s'", name);
         return {};
     }
 
-    auto uvs = atlas->Icons.try_get(name);
+    auto uvs = atlas->Icons.try_get(str);
     if (!uvs) {
-        WARN("failed to find icon UVs '%s'", name.GetString());
+        WARN("failed to find UVs for icon '%s'", name);
         return {};
     }
 
     auto id = gExtender->IMGUI().RegisterTexture(atlas->Name);
     if (!id) {
-        WARN("failed to find texture for icon '%s'", name.GetString());
+        WARN("failed to find texture for icon '%s'", name);
         return {};
     }
 
@@ -1177,7 +1179,9 @@ std::optional<ImTextureID> IMGUIManager::RegisterTexture(FixedString id)
 
 void IMGUIManager::UnregisterTexture(ImTextureID id, FixedString guid)
 {
-    renderer_->UnregisterTexture(id, guid);
+    renderer_->UnregisterTexture(id);
+    auto texture_manager = (*GetStaticSymbols().ls__gGlobalResourceManager)->TextureManager;
+    (*GetStaticSymbols().ls__TextureManager__UnloadTexture)(texture_manager, &guid, 0, 0);
 }
 
 END_NS()

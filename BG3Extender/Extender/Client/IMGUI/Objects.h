@@ -141,7 +141,7 @@ public:
     lua::ImguiHandle AddButton(char const* label);
 
     std::optional<lua::ImguiHandle> AddImage(
-        FixedString name,
+        char const* name,
         float width,
         float height,
         std::optional<float> U1,
@@ -149,7 +149,7 @@ public:
         std::optional<float> U2,
         std::optional<float> V2
     );
-    std::optional<lua::ImguiHandle> AddIcon(FixedString name, std::optional<float> width, std::optional<float> height);
+    std::optional<lua::ImguiHandle> AddIcon(char const* name, std::optional<float> width, std::optional<float> height);
 
     lua::ImguiHandle AddText(char const* label);
     lua::ImguiHandle AddBulletText(char const* label);

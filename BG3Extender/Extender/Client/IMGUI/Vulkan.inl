@@ -198,11 +198,9 @@ public:
     }
 
 
-    void UnregisterTexture(ImTextureID id, FixedString guid) override
+    void UnregisterTexture(ImTextureID id) override
     {
         ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(id));
-        auto texture_manager = (*GetStaticSymbols().ls__gGlobalResourceManager)->TextureManager;
-        (*GetStaticSymbols().ls__TextureManager__UnloadTexture)(texture_manager, &guid, 0, 0);
     }
 
 private:

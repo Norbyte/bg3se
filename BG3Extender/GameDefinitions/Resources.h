@@ -198,6 +198,8 @@ union [[bg3::hidden]] TextureDescriptor
 
 struct [[bg3::hidden]] TextureData
 {
+    using InitOrIncRefProc = TextureDescriptor* (void** unused, FixedString* guid);
+
 	TextureDescriptor* Descriptor;
     uint32_t LoadRequestCount;
     uint32_t RefCount;
