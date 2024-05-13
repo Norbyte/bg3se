@@ -967,7 +967,7 @@ public:
 
 		Iterator* operator -> ()
 		{
-			return *this;
+			return this;
 		}
 
 		inline operator bool() const

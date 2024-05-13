@@ -110,12 +110,14 @@ public:
     STDString IDContext;
     bool SameLine{ false };
     bool Visible{ true };
+    FixedString Font;
 
     lua::LuaDelegate<void(lua::ImguiHandle)> OnActivate;
     lua::LuaDelegate<void(lua::ImguiHandle)> OnDeactivate;
 
 private:
     lua::ImguiHandle tooltip_;
+    ImFont* font_{ nullptr };
 };
 
 

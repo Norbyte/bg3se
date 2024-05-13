@@ -15,6 +15,8 @@ public:
     virtual void NewFrame() = 0;
     virtual void FinishFrame() = 0;
     virtual void ClearFrame() = 0;
+    virtual bool IsInitialized() = 0;
+    virtual void ReloadFonts() = 0;
 };
 
 END_NS()

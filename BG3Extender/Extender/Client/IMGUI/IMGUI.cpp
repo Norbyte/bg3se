@@ -4,6 +4,7 @@
 
 #include <Extender/Client/IMGUI/IMGUI.h>
 #include <Extender/Client/IMGUI/Objects.h>
+#include <Extender/Shared/ScriptHelpers.h>
 #include <CoreLib/Wrappers.h>
 
 #include <Extender/Client/IMGUI/Vulkan.inl>
@@ -51,6 +52,14 @@ void StyledRenderable::Render()
 {
     if (!Visible) return;
 
+    ImFont* font{ nullptr };
+    if (Font) {
+        auto info = gExtender->IMGUI().GetFont(Font);
+        if (info) font = info->Font;
+    }
+
+    if (font) ImGui::PushFont(font);
+
     for (auto const& var : StyleVars) {
         ImGui::PushStyleVar((ImGuiStyleVar)var.Key, var.Value);
     }
@@ -72,6 +81,8 @@ void StyledRenderable::Render()
     if (!StyleVars.empty()) {
         ImGui::PopStyleVar(StyleVars.size());
     }
+
+    if (font) ImGui::PopFont();
 
     if (tooltip_) {
         auto tooltip = Manager->GetRenderable(tooltip_.Handle);
@@ -123,7 +134,6 @@ lua::ImguiHandle StyledRenderable::Tooltip()
     tooltip_ = Manager->CreateRenderable<extui::Tooltip>();
     return tooltip_;
 }
-
 
 TreeParent::~TreeParent()
 {
@@ -1108,6 +1118,7 @@ IMGUIManager::IMGUIManager(SDLManager& sdl)
 
 IMGUIManager::~IMGUIManager()
 {
+    ImGui::GetIO().Fonts->ClearFonts();
     DestroyUI();
 }
 
@@ -1160,6 +1171,59 @@ void IMGUIManager::SetObjects(IMGUIObjectManager* objects)
     }
 }
 
+bool IMGUIManager::LoadFont(FixedString const& name, char const* path, float size)
+{
+    if (fonts_.find(name) != fonts_.end()) {
+        return true;
+    }
+
+    FontData font{
+        .Key = name,
+        .Path = path,
+        .SizePixels = size
+    };
+    if (LoadFont(font)) {
+        fonts_.set(name, font);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool IMGUIManager::LoadFont(FontData& request)
+{
+    auto blob = script::LoadExternalFile(request.Path, PathRootType::Data);
+    if (!blob) {
+        OsiError("Failed to open font file: " << request.Path);
+        return false;
+    }
+
+    auto& io = ImGui::GetIO();
+    ImFontConfig cfg;
+    cfg.FontDataOwnedByAtlas = false;
+    cfg.RasterizerDensity = requestedScale_;
+    cfg.SizePixels = request.SizePixels * requestedScale_;
+
+    request.Font = io.Fonts->AddFontFromMemoryTTF(blob->data(), blob->size(), 0.0f, &cfg);
+    if (!request.Font) {
+        OsiError("Failed to load font file (not a valid TTF font?): " << request.Path);
+        return false;
+    }
+
+    renderer_->ReloadFonts();
+    return true;
+}
+
+IMGUIManager::FontData* IMGUIManager::GetFont(FixedString const& name)
+{
+    return fonts_.try_get(name);
+}
+
+void IMGUIManager::SetScale(float scale)
+{
+    requestedScale_ = scale;
+}
+
 void IMGUIManager::OnRenderBackendInitialized()
 {
     InitializeUI();
@@ -1167,10 +1231,28 @@ void IMGUIManager::OnRenderBackendInitialized()
 
 void IMGUIManager::Update()
 {
-    if (!enableUI_ || !initialized_ || !objects_) return;
+    if (!enableUI_
+        || !initialized_
+        || !objects_
+        || !renderer_->IsInitialized()) {
+        return;
+    }
 
-    std::lock_guard _(sdl_.GetSDLMutex());
-    sdl_.NewFrame();
+    if (scale_ != requestedScale_) {
+        ImGui::GetStyle().ScaleAllSizes(requestedScale_ / scale_);
+        ImGui::GetIO().Fonts->Clear();
+        for (auto& font : fonts_) {
+            font->Value().Font = nullptr;
+            LoadFont(font->Value());
+        }
+        scale_ = requestedScale_;
+    }
+
+    {
+        std::lock_guard _(sdl_.GetSDLMutex());
+        sdl_.NewFrame();
+    }
+
     renderer_->NewFrame();
     ImGui::NewFrame();
 

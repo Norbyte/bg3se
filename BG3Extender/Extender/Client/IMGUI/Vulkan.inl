@@ -136,6 +136,12 @@ public:
 
         curViewport_ = (curViewport_ + 1) % viewports_.size();
         GImGui->Viewports[0] = &viewports_[curViewport_].Viewport;
+
+        if (requestReloadFonts_) {
+            ImGui_ImplVulkan_DestroyFontsTexture();
+            requestReloadFonts_ = false;
+        }
+
         ImGui_ImplVulkan_NewFrame();
     }
 
@@ -168,6 +174,16 @@ public:
         if (!initialized_) return;
 
         drawViewport_ = -1;
+    }
+
+    bool IsInitialized() override
+    {
+        return initialized_;
+    }
+
+    void ReloadFonts() override
+    {
+        requestReloadFonts_ = true;
     }
 
 private:
@@ -644,6 +660,7 @@ private:
 
     bool initialized_{ false };
     bool uiFrameworkStarted_{ false };
+    bool requestReloadFonts_{ false };
 
     VkCreateInstanceHookType CreateInstanceHook_;
     VkCreateDeviceHookType CreateDeviceHook_;
