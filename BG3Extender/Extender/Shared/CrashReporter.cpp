@@ -497,19 +497,25 @@ public:
 		for (auto i = 0; i < Dumper.BacktraceSize; i++) {
 			if (Dumper.Backtrace[i] >= moduleStart && Dumper.Backtrace[i] < moduleEnd) {
 				bool excluded = false;
-				for (auto const & sym : ExcludedSymbols) {
-					if (Dumper.Backtrace[i] >= sym.Ptr && Dumper.Backtrace[i] < (uint8_t *)sym.Ptr + sym.Size) {
-						excluded = true;
-						CRASHDBG("Exclude %p: Whitelisted region (%p .. %p)", Dumper.Backtrace[i], sym.Ptr, (uint8_t*)sym.Ptr + sym.Size);
-						break;
-					}
-				}
 
-				for (auto const& trampoline : gRegisteredTrampolines) {
-					if (Dumper.Backtrace[i] >= trampoline && Dumper.Backtrace[i] < (uint8_t*)trampoline + 0x120) {
-						excluded = true;
-						CRASHDBG("Exclude %p: Whitelisted trampoline (%p .. %p)", Dumper.Backtrace[i], trampoline, (uint8_t*)trampoline + 0x120);
-						break;
+				// Only exclude crashes where the IP itself is not in a trampoline
+				if (i > 0) {
+					// Exclude trampolines from crash reporting to make sure that we don't send reports for
+					// BG3 code thats below a trampoline
+					for (auto const & sym : ExcludedSymbols) {
+						if (Dumper.Backtrace[i] >= sym.Ptr && Dumper.Backtrace[i] < (uint8_t *)sym.Ptr + sym.Size) {
+							excluded = true;
+							CRASHDBG("Exclude %p: Whitelisted region (%p .. %p)", Dumper.Backtrace[i], sym.Ptr, (uint8_t*)sym.Ptr + sym.Size);
+							break;
+						}
+					}
+
+					for (auto const& trampoline : gRegisteredTrampolines) {
+						if (Dumper.Backtrace[i] >= trampoline && Dumper.Backtrace[i] < (uint8_t*)trampoline + 0x120) {
+							excluded = true;
+							CRASHDBG("Exclude %p: Whitelisted trampoline (%p .. %p)", Dumper.Backtrace[i], trampoline, (uint8_t*)trampoline + 0x120);
+							break;
+						}
 					}
 				}
 
