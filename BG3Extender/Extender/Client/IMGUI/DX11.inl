@@ -177,7 +177,6 @@ private:
 
         if (device_ == nullptr && ppImmediateContext != nullptr 
             // Filter out extra device created by nvidia overlay
-            && pFeatureLevel == nullptr
             && FeatureLevels == 1
             && *pFeatureLevels == D3D_FEATURE_LEVEL_11_1) {
             adapter_ = pAdapter;
