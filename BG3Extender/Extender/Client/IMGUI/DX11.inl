@@ -115,6 +115,12 @@ public:
     {
         curViewport_ = (curViewport_ + 1) % viewports_.size();
         GImGui->Viewports[0] = &viewports_[curViewport_].Viewport;
+
+        if (requestReloadFonts_) {
+            ImGui_ImplDX11_InvalidateDeviceObjects();
+            requestReloadFonts_ = false;
+        }
+
         ImGui_ImplDX11_NewFrame();
     }
 
@@ -143,6 +149,16 @@ public:
     void ClearFrame() override
     {
         drawViewport_ = -1;
+    }
+    
+    bool IsInitialized() override
+    {
+        return initialized_;
+    }
+
+    void ReloadFonts() override
+    {
+        requestReloadFonts_ = true;
     }
 
 
@@ -253,6 +269,7 @@ private:
     IDXGISwapChain* swapChain_{ nullptr };
 
     bool initialized_{ false };
+    bool requestReloadFonts_{ false };
 
     D3D11CreateDeviceHookType CreateDeviceHook_;
     CreateDXGIFactory1HookType CreateDxgiFactoryHook_;

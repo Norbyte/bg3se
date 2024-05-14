@@ -4,6 +4,7 @@
 
 #include <Extender/Client/IMGUI/IMGUI.h>
 #include <Extender/Client/IMGUI/Objects.h>
+#include <Extender/Shared/ScriptHelpers.h>
 #include <CoreLib/Wrappers.h>
 
 #include <Extender/Client/IMGUI/Vulkan.inl>
@@ -11,6 +12,16 @@
 #include <Lua/Shared/LuaMethodCallHelpers.h>
 
 BEGIN_NS(extui)
+
+inline ImVec2 ToImVec(glm::vec2 const& v)
+{
+    return ImVec2(v.x, v.y);
+}
+
+inline ImVec2 ToImVec(std::optional<glm::vec2> const& v, ImVec2 defaultVal)
+{
+    return v ? ImVec2(v->x, v->y) : defaultVal;
+}
 
 template <class T>
 T* TreeParent::AddChild()
@@ -41,6 +52,14 @@ void StyledRenderable::Render()
 {
     if (!Visible) return;
 
+    ImFont* font{ nullptr };
+    if (Font) {
+        auto info = gExtender->IMGUI().GetFont(Font);
+        if (info) font = info->Font;
+    }
+
+    if (font) ImGui::PushFont(font);
+
     for (auto const& var : StyleVars) {
         ImGui::PushStyleVar((ImGuiStyleVar)var.Key, var.Value);
     }
@@ -62,6 +81,8 @@ void StyledRenderable::Render()
     if (!StyleVars.empty()) {
         ImGui::PopStyleVar(StyleVars.size());
     }
+
+    if (font) ImGui::PopFont();
 
     if (tooltip_) {
         auto tooltip = Manager->GetRenderable(tooltip_.Handle);
@@ -113,7 +134,6 @@ lua::ImguiHandle StyledRenderable::Tooltip()
     tooltip_ = Manager->CreateRenderable<extui::Tooltip>();
     return tooltip_;
 }
-
 
 TreeParent::~TreeParent()
 {
@@ -495,6 +515,8 @@ bool Window::BeginRender()
 {
     if (!Open) return false;
 
+    ProcessRenderSettings();
+
     bool wasOpen = Open;
     bool renderChildren = ImGui::Begin(Label.c_str(), Closeable ? &Open : nullptr, (ImGuiWindowFlags)Flags);
 
@@ -523,6 +545,101 @@ lua::ImguiHandle Window::AddMainMenu()
     }
 
     return MainMenu;
+}
+
+void Window::SetPos(glm::vec2 pos, std::optional<GuiCond> cond, std::optional<glm::vec2> pivot)
+{
+    req_.Pos = WindowRenderRequests::SetPos { 
+        ToImVec(pos),
+        ToImVec(pivot, ImVec2(0.0f, 0.0f)),
+        cond ? (ImGuiCond )*cond : ImGuiCond_Always
+    };
+}
+
+void Window::SetSize(glm::vec2 size, std::optional<GuiCond> cond)
+{
+    req_.Size = WindowRenderRequests::SetSize{ ToImVec(size), cond ? (ImGuiCond)*cond : ImGuiCond_Always };
+}
+
+void Window::SetSizeConstraints(std::optional<glm::vec2> size_min, std::optional<glm::vec2> size_max)
+{
+    if (size_min || size_max) {
+        req_.SizeConstraints = WindowRenderRequests::SetSizeConstraints{ 
+            ToImVec(size_min, ImVec2(0.0f, 0.0f)),
+            ToImVec(size_max, ImVec2(0.0f, 0.0f))
+        };
+    } else {
+        req_.SizeConstraints = {};
+    }
+}
+
+void Window::SetContentSize(std::optional<glm::vec2> size)
+{
+    req_.ContentSize = size ? std::optional<ImVec2>(ToImVec(*size)) : std::optional<ImVec2>{};
+}
+
+void Window::SetCollapsed(bool collapsed, std::optional<GuiCond> cond)
+{
+    req_.Collapsed = WindowRenderRequests::SetCollapsed{ collapsed, cond ? (ImGuiCond)*cond : ImGuiCond_Always };
+}
+
+void Window::SetFocus()
+{
+    req_.Focus = true;
+}
+
+void Window::SetScroll(std::optional<glm::vec2> scroll)
+{
+    req_.Scroll = scroll ? std::optional<ImVec2>(ToImVec(*scroll)) : std::optional<ImVec2>{};
+}
+
+void Window::SetBgAlpha(std::optional<float> alpha)
+{
+    req_.BgAlpha = alpha;
+}
+
+
+void Window::ProcessRenderSettings()
+{
+    if (req_.Pos) {
+        ImGui::SetNextWindowPos(req_.Pos->Pos, req_.Pos->Cond, req_.Pos->Pivot);
+        req_.Pos = {};
+    }
+
+    if (req_.Size) {
+        ImGui::SetNextWindowSize(req_.Size->Size, req_.Size->Cond);
+        req_.Size = {};
+    }
+
+    if (req_.SizeConstraints) {
+        ImGui::SetNextWindowSizeConstraints(req_.SizeConstraints->SizeMin, req_.SizeConstraints->SizeMax);
+        req_.SizeConstraints = {};
+    }
+
+    if (req_.ContentSize) {
+        ImGui::SetNextWindowContentSize(*req_.ContentSize);
+        req_.ContentSize = {};
+    }
+
+    if (req_.Scroll) {
+        ImGui::SetNextWindowScroll(*req_.Scroll);
+        req_.Scroll = {};
+    }
+
+    if (req_.Collapsed) {
+        ImGui::SetNextWindowCollapsed(req_.Collapsed->Collapsed, req_.Collapsed->Cond);
+        req_.Collapsed = {};
+    }
+
+    if (req_.Focus) {
+        ImGui::SetNextWindowFocus();
+        req_.Focus = false;
+    }
+
+    if (req_.BgAlpha) {
+        ImGui::SetNextWindowBgAlpha(*req_.BgAlpha);
+        req_.BgAlpha = {};
+    }
 }
 
 bool MenuBar::BeginRender()
@@ -640,6 +757,13 @@ void TabItem::EndRender()
 bool Tree::BeginRender()
 {
     rendering_ = ImGui::TreeNodeEx(Label.c_str(), (ImGuiTreeNodeFlags)Flags);
+    if (ImGui::IsItemClicked()) {
+        if (!ImGui::IsItemToggledOpen() && OnClick) {
+            Manager->GetEventQueue().Call(OnClick, lua::ImguiHandle(Handle));
+        } else if (ImGui::IsItemToggledOpen() && OnExpand) {
+            Manager->GetEventQueue().Call(OnExpand, lua::ImguiHandle(Handle));
+        }
+    }
     return rendering_;
 }
 
@@ -653,6 +777,13 @@ void Tree::EndRender()
 bool Table::BeginRender()
 {
     rendering_ = ImGui::BeginTable(Label.c_str(), (int)Columns, (ImGuiTableFlags)Flags);
+
+    if (rendering_) {
+        for (auto const& def : ColumnDefs) {
+            ImGui::TableSetupColumn(def.Name.c_str(), (ImGuiTableColumnFlags)def.Flags, def.Width);
+        }
+    }
+
     return rendering_;
 }
 
@@ -660,6 +791,13 @@ void Table::EndRender()
 {
     if (rendering_) ImGui::EndTable();
     rendering_ = false;
+}
+
+void Table::AddColumn(char const* name, std::optional<GuiTableColumnFlags> flags, std::optional<float> width)
+{
+    ColumnDefs.push_back(ColumnDefinition{
+        name, flags ? *flags : GuiTableColumnFlags(0), width ? *width : 0.0f
+    });
 }
 
 lua::ImguiHandle Table::AddRow()
@@ -711,6 +849,11 @@ void Tooltip::EndRender()
 
 bool Popup::BeginRender()
 {
+    if (requestOpen_) {
+        ImGui::OpenPopup(Label.c_str(), (ImGuiPopupFlags)openFlags_);
+        requestOpen_ = false;
+    }
+
     rendering_ = ImGui::BeginPopup(Label.c_str(), (ImGuiWindowFlags)Flags);
     return rendering_;
 }
@@ -725,7 +868,8 @@ void Popup::EndRender()
 
 void Popup::Open(std::optional<GuiPopupFlags> flags)
 {
-    ImGui::OpenPopup(Label.c_str(), (flags ? (ImGuiPopupFlags)*flags : 0));
+    requestOpen_ = true;
+    openFlags_ = flags.value_or((GuiPopupFlags)0);
 }
 
 
@@ -851,7 +995,7 @@ InputText::InputText()
 
 void InputText::StyledRender()
 {
-    if (ImGui::InputText(Label.c_str(), Text.data(), Text.capacity(), (ImGuiInputTextFlags)Flags)) {
+    if (ImGui::InputTextEx(Label.c_str(), Hint ? Hint->c_str() : nullptr, Text.data(), Text.capacity(), ToImVec(SizeHint, ImVec2(0, 0)), (ImGuiInputTextFlags)Flags, nullptr, nullptr)) {
         Text.resize((uint32_t)strlen(Text.data()));
         if (OnChange) {
             Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Text);
@@ -1098,6 +1242,7 @@ IMGUIManager::IMGUIManager(SDLManager& sdl)
 
 IMGUIManager::~IMGUIManager()
 {
+    ImGui::GetIO().Fonts->ClearFonts();
     DestroyUI();
 }
 
@@ -1150,6 +1295,59 @@ void IMGUIManager::SetObjects(IMGUIObjectManager* objects)
     }
 }
 
+bool IMGUIManager::LoadFont(FixedString const& name, char const* path, float size)
+{
+    if (fonts_.find(name) != fonts_.end()) {
+        return true;
+    }
+
+    FontData font{
+        .Key = name,
+        .Path = path,
+        .SizePixels = size
+    };
+    if (LoadFont(font)) {
+        fonts_.set(name, font);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool IMGUIManager::LoadFont(FontData& request)
+{
+    auto blob = script::LoadExternalFile(request.Path, PathRootType::Data);
+    if (!blob) {
+        OsiError("Failed to open font file: " << request.Path);
+        return false;
+    }
+
+    auto& io = ImGui::GetIO();
+    ImFontConfig cfg;
+    cfg.FontDataOwnedByAtlas = false;
+    cfg.RasterizerDensity = requestedScale_;
+    cfg.SizePixels = request.SizePixels * requestedScale_;
+
+    request.Font = io.Fonts->AddFontFromMemoryTTF(blob->data(), blob->size(), 0.0f, &cfg);
+    if (!request.Font) {
+        OsiError("Failed to load font file (not a valid TTF font?): " << request.Path);
+        return false;
+    }
+
+    renderer_->ReloadFonts();
+    return true;
+}
+
+IMGUIManager::FontData* IMGUIManager::GetFont(FixedString const& name)
+{
+    return fonts_.try_get(name);
+}
+
+void IMGUIManager::SetScale(float scale)
+{
+    requestedScale_ = scale;
+}
+
 void IMGUIManager::OnRenderBackendInitialized()
 {
     InitializeUI();
@@ -1157,10 +1355,28 @@ void IMGUIManager::OnRenderBackendInitialized()
 
 void IMGUIManager::Update()
 {
-    if (!enableUI_ || !initialized_ || !objects_) return;
+    if (!enableUI_
+        || !initialized_
+        || !objects_
+        || !renderer_->IsInitialized()) {
+        return;
+    }
 
-    std::lock_guard _(sdl_.GetSDLMutex());
-    sdl_.NewFrame();
+    if (scale_ != requestedScale_) {
+        ImGui::GetStyle().ScaleAllSizes(requestedScale_ / scale_);
+        ImGui::GetIO().Fonts->Clear();
+        for (auto& font : fonts_) {
+            font->Value().Font = nullptr;
+            LoadFont(font->Value());
+        }
+        scale_ = requestedScale_;
+    }
+
+    {
+        std::lock_guard _(sdl_.GetSDLMutex());
+        sdl_.NewFrame();
+    }
+
     renderer_->NewFrame();
     ImGui::NewFrame();
 

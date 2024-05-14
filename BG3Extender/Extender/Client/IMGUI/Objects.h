@@ -113,12 +113,14 @@ public:
     STDString IDContext;
     bool SameLine{ false };
     bool Visible{ true };
+    FixedString Font;
 
     lua::LuaDelegate<void(lua::ImguiHandle)> OnActivate;
     lua::LuaDelegate<void(lua::ImguiHandle)> OnDeactivate;
 
 private:
     lua::ImguiHandle tooltip_;
+    ImFont* font_{ nullptr };
 };
 
 
@@ -184,6 +186,43 @@ protected:
     T* AddChild();
 };
 
+struct WindowRenderRequests
+{
+    struct SetPos
+    {
+        ImVec2 Pos;
+        ImVec2 Pivot;
+        ImGuiCond Cond;
+    };
+
+    struct SetSize
+    {
+        ImVec2 Size;
+        ImGuiCond Cond;
+    };
+
+    struct SetSizeConstraints
+    {
+        ImVec2 SizeMin;
+        ImVec2 SizeMax;
+    };
+
+    struct SetCollapsed
+    {
+        bool Collapsed;
+        ImGuiCond Cond;
+    };
+
+
+    std::optional<SetPos> Pos;
+    std::optional<SetSize> Size;
+    std::optional<SetSizeConstraints> SizeConstraints;
+    std::optional<ImVec2> ContentSize;
+    std::optional<ImVec2> Scroll;
+    std::optional<SetCollapsed> Collapsed;
+    bool Focus{ false };
+    std::optional<float> BgAlpha;
+};
 
 class Window : public TreeParent
 {
@@ -195,6 +234,15 @@ public:
 
     lua::ImguiHandle AddMainMenu();
 
+    void SetPos(glm::vec2 pos, std::optional<GuiCond> cond, std::optional<glm::vec2> pivot);
+    void SetSize(glm::vec2 size, std::optional<GuiCond> cond);
+    void SetSizeConstraints(std::optional<glm::vec2> size_min, std::optional<glm::vec2> size_max);
+    void SetContentSize(std::optional<glm::vec2> size);
+    void SetCollapsed(bool collapsed, std::optional<GuiCond> cond);
+    void SetFocus();
+    void SetScroll(std::optional<glm::vec2> scroll);
+    void SetBgAlpha(std::optional<float> alpha);
+
     bool Open{ true };
     bool Closeable{ false };
     GuiWindowFlags Flags{ 0 };
@@ -203,6 +251,9 @@ public:
 
 private:
     bool rendering_{ false };
+    WindowRenderRequests req_;
+
+    void ProcessRenderSettings();
 };
 
 
@@ -314,10 +365,19 @@ public:
 
     GuiTreeNodeFlags Flags{ 0 };
 
+    lua::LuaDelegate<void(lua::ImguiHandle)> OnClick;
+    lua::LuaDelegate<void(lua::ImguiHandle)> OnExpand;
+
 private:
     bool rendering_{ false };
 };
 
+struct ColumnDefinition
+{
+    STDString Name;
+    GuiTableColumnFlags Flags;
+    float Width;
+};
 
 class Table : public TreeParent
 {
@@ -327,10 +387,12 @@ public:
     bool BeginRender() override;
     void EndRender() override;
 
+    void AddColumn(char const* name, std::optional<GuiTableColumnFlags> flags, std::optional<float> width);
     lua::ImguiHandle AddRow();
 
     uint32_t Columns{ 1 };
     GuiTableFlags Flags{ 0 };
+    Array<ColumnDefinition> ColumnDefs;
 
 private:
     bool rendering_{ false };
@@ -389,6 +451,8 @@ public:
 
 private:
     bool rendering_{ false };
+    bool requestOpen_{ false };
+    GuiPopupFlags openFlags_{ 0 };
 };
 
 
@@ -545,6 +609,8 @@ public:
     void SetText(STDString text);
 
     STDString Text;
+    std::optional<STDString> Hint;
+    std::optional<glm::vec2> SizeHint;
     GuiInputTextFlags Flags{ 0 };
     lua::LuaDelegate<void (lua::ImguiHandle, STDString)> OnChange;
 };

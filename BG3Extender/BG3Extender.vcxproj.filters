@@ -473,6 +473,7 @@
     <ClInclude Include="Lua\Shared\Proxies\LuaImguiProxy.h" />
     <ClInclude Include="Lua\Shared\LuaDelegate.h" />
     <ClInclude Include="Extender\Client\SDLManager.h" />
+    <ClInclude Include="GameDefinitions\Picking.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

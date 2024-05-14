@@ -152,6 +152,29 @@ void ClientState::OnInputEvent(SDL_Event* event, int& result)
 		if (res == EventResult::ActionPrevented) {
 			result = 0;
 		}
+	} else if (event->type == SDL_MOUSEBUTTONDOWN || event->type == SDL_MOUSEBUTTONUP) {
+		MouseButtonEvent params{
+			.Button = event->button.button,
+			.Pressed = event->button.state == SDL_PRESSED,
+			.Clicks = event->button.clicks,
+			.X = event->button.x,
+			.Y = event->button.y,
+		};
+		auto res = ThrowEvent("MouseButtonInput", params, true, 0);
+		if (res == EventResult::ActionPrevented) {
+			result = 0;
+		}
+	} else if (event->type == SDL_MOUSEWHEEL) {
+		MouseWheelEvent params{
+			.ScrollX = event->wheel.preciseX,
+			.ScrollY = event->wheel.preciseY,
+			.X = event->wheel.x,
+			.Y = event->wheel.y,
+		};
+		auto res = ThrowEvent("MouseWheelInput", params, true, 0);
+		if (res == EventResult::ActionPrevented) {
+			result = 0;
+		}
 	}
 }
 

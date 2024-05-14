@@ -150,6 +150,12 @@ public:
 
         curViewport_ = (curViewport_ + 1) % viewports_.size();
         GImGui->Viewports[0] = &viewports_[curViewport_].Viewport;
+
+        if (requestReloadFonts_) {
+            ImGui_ImplVulkan_DestroyFontsTexture();
+            requestReloadFonts_ = false;
+        }
+
         ImGui_ImplVulkan_NewFrame();
     }
 
@@ -184,7 +190,6 @@ public:
         drawViewport_ = -1;
     }
 
-
     std::optional<ImTextureID> RegisterTexture(FixedString id) override
     {
         void* unused = 0;
@@ -197,10 +202,19 @@ public:
         return { ImGui_ImplVulkan_AddTexture(sampler_, VkImageView(view), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) };
     }
 
-
     void UnregisterTexture(ImTextureID id) override
     {
         ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(id));
+    }
+
+    bool IsInitialized() override
+    {
+        return initialized_;
+    }
+
+    void ReloadFonts() override
+    {
+        requestReloadFonts_ = true;
     }
 
 private:
@@ -683,6 +697,7 @@ private:
 
     bool initialized_{ false };
     bool uiFrameworkStarted_{ false };
+    bool requestReloadFonts_{ false };
 
     VkCreateInstanceHookType CreateInstanceHook_;
     VkCreateDeviceHookType CreateDeviceHook_;

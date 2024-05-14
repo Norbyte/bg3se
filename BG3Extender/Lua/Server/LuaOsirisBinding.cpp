@@ -77,6 +77,8 @@ bool OsirisCallbackManager::Unsubscribe(SubscriptionId id)
 			nameSubscriberRefs_.erase(nameIt);
 			break;
 		}
+
+		nameIt++;
 	}
 
 	if (sub->Node) {
@@ -86,6 +88,8 @@ bool OsirisCallbackManager::Unsubscribe(SubscriptionId id)
 				nodeSubscriberRefs_.erase(it);
 				break;
 			}
+
+			it++;
 		}
 	}
 

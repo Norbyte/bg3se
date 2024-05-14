@@ -13,6 +13,14 @@ class IMGUIObjectManager;
 class IMGUIManager
 {
 public:
+    struct FontData
+    {
+        FixedString Key;
+        STDString Path;
+        float SizePixels;
+        ImFont* Font{ nullptr };
+    };
+
     IMGUIManager(SDLManager& sdl);
     ~IMGUIManager();
 
@@ -25,6 +33,9 @@ public:
     void SetObjects(IMGUIObjectManager* objects);
     std::optional<ImTextureID> RegisterTexture(FixedString id);
     void UnregisterTexture(ImTextureID id, FixedString guid);
+    bool LoadFont(FixedString const& name, char const* path, float size);
+    FontData* GetFont(FixedString const& name);
+    void SetScale(float scale);
 
     void OnRenderBackendInitialized();
     void Update();
@@ -32,11 +43,16 @@ public:
 private:
     SDLManager& sdl_;
     std::unique_ptr<RenderingBackend> renderer_;
+    MultiHashMap<FixedString, FontData> fonts_;
+    float scale_{ 1.0f };
+    float requestedScale_{ 1.0f };
 
     IMGUIObjectManager* objects_{ nullptr };
 
     bool initialized_{ false };
     bool enableUI_{ false };
+
+    bool LoadFont(FontData& request);
 };
 
 END_NS()

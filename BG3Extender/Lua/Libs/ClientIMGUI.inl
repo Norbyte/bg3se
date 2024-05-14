@@ -17,12 +17,24 @@ void EnableDemo(lua_State* L, bool enabled)
 	ClientState::FromLua(L)->IMGUI().EnableDemo(enabled);
 }
 
+bool LoadFont(FixedString const& name, char const* path, float size)
+{
+	return gExtender->IMGUI().LoadFont(name, path, size);
+}
+
+void SetScale(float scale)
+{
+	return gExtender->IMGUI().SetScale(scale);
+}
+
 void RegisterIMGUILib()
 {
 	DECLARE_MODULE(IMGUI, Client)
 	BEGIN_MODULE()
 	MODULE_FUNCTION(NewWindow)
 	MODULE_FUNCTION(EnableDemo)
+	MODULE_FUNCTION(LoadFont)
+	MODULE_FUNCTION(SetScale)
 	END_MODULE()
 }
 

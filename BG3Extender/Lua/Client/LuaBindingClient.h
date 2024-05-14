@@ -27,6 +27,23 @@ namespace bg3se::ecl::lua
 		bool Repeat;
 	};
 
+	struct MouseButtonEvent : public EventBase
+	{
+		int Button;
+		bool Pressed;
+		int Clicks;
+		int X;
+		int Y;
+	};
+
+	struct MouseWheelEvent : public EventBase
+	{
+		float ScrollX;
+		float ScrollY;
+		int X;
+		int Y;
+	};
+
 	class ExtensionLibraryClient : public ExtensionLibrary
 	{
 	public:

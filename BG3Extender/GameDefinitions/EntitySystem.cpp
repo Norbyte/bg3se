@@ -527,6 +527,7 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 
 	MapQueryIndex("ecs::query::spec::Spec<struct ls::TypeList<struct ls::uuid::ToHandleMappingComponent>,struct ls::TypeList<>,struct ls::TypeList<>,struct ls::TypeList<>,struct ls::TypeList<>,struct ls::TypeList<>,struct ecs::QueryTypePersistentTag,struct ecs::QueryTypeAliveTag>", ExtQueryType::UuidToHandleMapping);
 	MapSystemIndex("ecl::UISystem", ExtSystemType::UISystem);
+	MapSystemIndex("ecl::PickingHelperManager", ExtSystemType::PickingHelperManager);
 
 #define FOR_RESOURCE_TYPE(cls) MapResourceManagerIndex(resource::cls::EngineClass, resource::cls::ResourceManagerType);
 	FOR_EACH_GUID_RESOURCE_TYPE()
