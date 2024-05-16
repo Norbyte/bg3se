@@ -161,6 +161,19 @@ public:
         requestReloadFonts_ = true;
     }
 
+
+    std::optional<ImTextureID> RegisterTexture(FixedString id) override
+    {
+        void* unused = 0;
+        auto descriptor = (*GetStaticSymbols().ls__TextureInitOrIncRef)(&unused, &id);
+        if (!descriptor) return {};
+
+        auto view = descriptor->DX11.Views[0].View;
+        if (!view) return {};
+
+        return { view };
+    }
+
 private:
     struct ViewportInfo
     {

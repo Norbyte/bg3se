@@ -2,7 +2,7 @@ import re
 
 ns_start_re = r'^BEGIN(_BARE)?_NS\(\s*(.*)\s*\)$'
 ns_end_re = r'^END(_BARE)?_NS\(\s*\)$'
-struct_re = r'^(struct|class)\s+(?P<attributes>\[\[(\s*[a-zA-Z0-9:_]+\s*(\([^)]*\))?\s*,?\s*)+\]\])?\s*(?P<class>[a-zA-Z0-9_]+)(\s*:(\s*public)?\s+(?P<baseclass>[a-zA-Z0-9_<>:]+))?$'
+struct_re = r'^(struct|union|class)\s+(?P<attributes>\[\[(\s*[a-zA-Z0-9:_]+\s*(\([^)]*\))?\s*,?\s*)+\]\])?\s*(?P<class>[a-zA-Z0-9_]+)(\s*:(\s*public)?\s+(?P<baseclass>[a-zA-Z0-9_<>:]+))?$'
 struct_start_re = r'^{$'
 struct_end_re = r'^(};|}\))$'
 static_property_re = r'^static\s+constexpr\s+(?P<type>.+)\s+(?P<name>.+)\s*=\s*(?P<value>.+)\s*;?$'

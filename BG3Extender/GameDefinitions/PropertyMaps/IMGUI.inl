@@ -31,6 +31,9 @@ P_FUN(AddTree, extui::TreeParent::AddTree)
 P_FUN(AddTable, extui::TreeParent::AddTable)
 P_FUN(AddPopup, extui::TreeParent::AddPopup)
 
+P_FUN(AddImage, extui::TreeParent::AddImage)
+P_FUN(AddIcon, extui::TreeParent::AddIcon)
+
 P_FUN(AddButton, extui::TreeParent::AddButton)
 P_FUN(AddText, extui::TreeParent::AddText)
 P_FUN(AddBulletText, extui::TreeParent::AddBulletText)
@@ -168,6 +171,24 @@ INHERIT(extui::StyledRenderable)
 P(Enabled)
 P(Shortcut)
 P(OnClick)
+END_CLS()
+
+
+BEGIN_CLS(extui::Image)
+INHERIT(extui::StyledRenderable)
+P(Width)
+P(Height)
+P(U1)
+P(V1)
+P(U2)
+P(V2)
+END_CLS()
+
+
+BEGIN_CLS(extui::Icon)
+INHERIT(extui::StyledRenderable)
+P(Width)
+P(Height)
 END_CLS()
 
 

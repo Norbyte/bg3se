@@ -15,6 +15,8 @@ public:
     virtual void NewFrame() = 0;
     virtual void FinishFrame() = 0;
     virtual void ClearFrame() = 0;
+    virtual std::optional<ImTextureID> RegisterTexture(FixedString id) = 0;
+    virtual void UnregisterTexture(ImTextureID id) {}
     virtual bool IsInitialized() = 0;
     virtual void ReloadFonts() = 0;
 };
