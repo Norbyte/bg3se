@@ -85,7 +85,7 @@ public:
         VkDescriptorPoolSize poolSize
         {
             .type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-            .descriptorCount = 1024,
+            .descriptorCount = 2048,
         };
 
         VkDescriptorPoolCreateInfo createInfo
@@ -93,7 +93,7 @@ public:
             .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
             .pNext = nullptr,
             .flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT,
-            .maxSets = 1024,
+            .maxSets = 2048,
             .poolSizeCount = 1,
             .pPoolSizes = &poolSize
         };
@@ -195,6 +195,15 @@ public:
         auto view = descriptor->Vulkan.Views[0]->View;
         if (!view) return {};
 
+        if (registeredTextures_ > 2000) {
+            if (!textureLimitWarningShown_) {
+                ERR("UI texture limit reached. Newly loaded textures may not load or render correctly");
+                textureLimitWarningShown_ = true;
+            }
+            return {};
+        }
+
+        registeredTextures_++;
         auto id = ImGui_ImplVulkan_AddTexture(sampler_, VkImageView(view), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
         return TextureLoadResult{ id, descriptor->Vulkan.ImageData.Width, descriptor->Vulkan.ImageData.Height };
     }
@@ -202,6 +211,7 @@ public:
     void UnregisterTexture(ImTextureID id) override
     {
         ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(id));
+        registeredTextures_--;
     }
 
     bool IsInitialized() override
@@ -691,6 +701,8 @@ private:
     std::array<ViewportInfo, 3> viewports_;
     int32_t drawViewport_{ -1 };
     int32_t curViewport_{ 0 };
+    uint32_t registeredTextures_{ 0 };
+    bool textureLimitWarningShown_{ false };
 
     bool initialized_{ false };
     bool uiFrameworkStarted_{ false };
