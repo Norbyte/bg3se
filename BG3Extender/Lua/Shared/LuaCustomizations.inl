@@ -441,6 +441,10 @@ FixedString do_get(lua_State* L, int index, Overload<FixedString>)
 		}
 	}
 
+	if (ttisnil(o)) {
+		return FixedString{};
+	}
+
 	size_t len;
 	auto str = luaL_tolstring(L, index, &len);
 	auto fs = FixedString(StringView(str, len));
