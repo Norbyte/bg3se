@@ -31,6 +31,8 @@ public:
     void DestroyUI();
     void EnableUI(bool enabled);
     void SetObjects(IMGUIObjectManager* objects);
+    std::optional<ImTextureID> RegisterTexture(FixedString id);
+    void UnregisterTexture(ImTextureID id, FixedString guid);
     bool LoadFont(FixedString const& name, char const* path, float size);
     FontData* GetFont(FixedString const& name);
     void SetScale(float scale);
