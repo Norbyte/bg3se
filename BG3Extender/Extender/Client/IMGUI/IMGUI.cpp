@@ -18,7 +18,12 @@ inline ImVec2 ToImVec(glm::vec2 const& v)
     return ImVec2(v.x, v.y);
 }
 
-inline ImVec2 ToImVec(std::optional<glm::vec2> const& v, ImVec2 defaultVal)
+inline ImVec4 ToImVec(glm::vec4 const& v)
+{
+    return ImVec4(v.x, v.y, v.z, v.w);
+}
+
+inline ImVec2 ToImVec(std::optional<glm::vec2> const& v, ImVec2 defaultVal = ImVec2(0.0f, 0.0f))
 {
     return v ? ImVec2(v->x, v->y) : defaultVal;
 }
@@ -215,30 +220,33 @@ lua::ImguiHandle TreeParent::AddButton(char const* label)
 }
 
 
-std::optional<lua::ImguiHandle> TreeParent::AddImage(
-    FixedString textureGuid,
-    std::optional<float> width,
-    std::optional<float> height,
-    std::optional<float> U1,
-    std::optional<float> V1,
-    std::optional<float> U2,
-    std::optional<float> V2
-)
+lua::ImguiHandle TreeParent::AddImageButton(char const* label, FixedString textureGuid,
+    std::optional<glm::vec2> size, std::optional<glm::vec2> uv0, std::optional<glm::vec2> uv1)
+{
+    auto btn = AddChild<ImageButton>();
+    btn->SetImage(textureGuid);
+    if (size) btn->Size = *size;
+    if (uv0) btn->UV0 = *uv0;
+    if (uv1) btn->UV1 = *uv1;
+    btn->Label = label;
+    return btn;
+}
+
+
+std::optional<lua::ImguiHandle> TreeParent::AddImage(FixedString textureGuid,
+    std::optional<glm::vec2> size, std::optional<glm::vec2> uv0, std::optional<glm::vec2> uv1)
 {
     auto img = AddChild<Image>();
     img->SetImage(textureGuid);
-    if (width) img->Width = *width;
-    if (height) img->Height = *height;
-    if (U1) img->U1 = *U1;
-	if (V1) img->V1 = *V1;
-	if (U2) img->U2 = *U2;
-	if (V2) img->V2 = *V2;
+    if (size) img->Size = *size;
+    if (uv0) img->UV0 = *uv0;
+    if (uv1) img->UV1 = *uv1;
 
     return img;
 }
 
 
-std::optional<lua::ImguiHandle> TreeParent::AddIcon(FixedString iconName, std::optional<float> width, std::optional<float> height)
+std::optional<lua::ImguiHandle> TreeParent::AddIcon(FixedString iconName, std::optional<glm::vec2> size)
 {
     auto atlas = (*GetStaticSymbols().ls__gTextureAtlasMap)->IconMap.try_get(iconName);
     if (!atlas) {
@@ -260,25 +268,19 @@ std::optional<lua::ImguiHandle> TreeParent::AddIcon(FixedString iconName, std::o
 
     auto icon = AddChild<Icon>();
 
-    float iconWidth;
-    if (!width) {
-        iconWidth = static_cast<float>(atlas->IconWidth);
+    glm::vec2 iconSize;
+    if (size) {
+        iconSize = *size;
     } else {
-        iconWidth = *width;
-    }
-    float iconHeight;
-    if (!height) {
-        iconHeight = static_cast<float>(atlas->IconHeight);
-    } else {
-        iconHeight = *height;
+        iconSize = glm::vec2(
+            static_cast<float>(atlas->IconWidth),
+            static_cast<float>(atlas->IconHeight)
+        );
     }
 
-    icon->Width = iconWidth;
-    icon->Height = iconHeight;
-    icon->U1 = uvs->U1;
-    icon->V1 = uvs->V1;
-    icon->U2 = uvs->U2;
-    icon->V2 = uvs->V2;
+    icon->Size = iconSize;
+    icon->UV0 = uvs->UV0;
+    icon->UV1 = uvs->UV1;
 
     icon->Id = texture->Id;
     icon->TextureUuid = atlas->TextureUuid;
@@ -541,7 +543,7 @@ void Window::SetPos(glm::vec2 pos, std::optional<GuiCond> cond, std::optional<gl
 {
     req_.Pos = WindowRenderRequests::SetPos { 
         ToImVec(pos),
-        ToImVec(pivot, ImVec2(0.0f, 0.0f)),
+        ToImVec(pivot),
         cond ? (ImGuiCond )*cond : ImGuiCond_Always
     };
 }
@@ -555,8 +557,8 @@ void Window::SetSizeConstraints(std::optional<glm::vec2> size_min, std::optional
 {
     if (size_min || size_max) {
         req_.SizeConstraints = WindowRenderRequests::SetSizeConstraints{ 
-            ToImVec(size_min, ImVec2(0.0f, 0.0f)),
-            ToImVec(size_max, ImVec2(0.0f, 0.0f))
+            ToImVec(size_min),
+            ToImVec(size_max)
         };
     } else {
         req_.SizeConstraints = {};
@@ -876,8 +878,7 @@ void Image::SetImage(FixedString const& textureUuid)
     auto result = gExtender->IMGUI().RegisterTexture(textureUuid);
     if (result) {
         id_ = result->Id;
-        Width = (float)result->Width;
-        Height = (float)result->Height;
+        Size = glm::vec2((float)result->Width, (float)result->Height);
     } else {
         WARN("Unable to load texture resource '%s'", textureUuid.GetString());
     }
@@ -888,9 +889,9 @@ void Image::StyledRender()
     if (id_) {
         ImGui::Image(
             id_,
-            ImVec2(Width, Height),
-            ImVec2(U1, V1),
-            ImVec2(U2, V2),
+            ToImVec(Size),
+            ToImVec(UV0),
+            ToImVec(UV1),
             ImVec4(1.0, 1.0, 1.0, 1.0),
             ImVec4(0.0, 0.0, 0.0, 0.0)
         );
@@ -903,9 +904,9 @@ void Icon::StyledRender()
 {
     ImGui::Image(
         Id,
-        ImVec2(Width, Height),
-        ImVec2(U1, V1),
-        ImVec2(U2, V2),
+        ToImVec(Size),
+        ToImVec(UV0),
+        ToImVec(UV1),
         ImVec4(1.0, 1.0, 1.0, 1.0),
         ImVec4(0.0, 0.0, 0.0, 0.0)
     );
@@ -968,10 +969,35 @@ void Separator::StyledRender()
 
 void Button::StyledRender()
 {
-    if (ImGui::Button(Label.c_str())) {
+    if (ImGui::ButtonEx(Label.c_str(), ToImVec(Size), (ImGuiButtonFlags)Flags)) {
         if (OnClick) {
             Manager->GetEventQueue().Call(OnClick, lua::ImguiHandle(Handle));
         }
+    }
+}
+
+
+void ImageButton::StyledRender()
+{
+    if (!id_) return;
+
+    auto id = ImGui::GetCurrentWindow()->GetID(Label.c_str());
+    if (ImGui::ImageButtonEx(id, id_, ToImVec(Size), ToImVec(UV0), ToImVec(UV1), ToImVec(Background), ToImVec(Tint), (ImGuiButtonFlags)Flags)) {
+        if (OnClick) {
+            Manager->GetEventQueue().Call(OnClick, lua::ImguiHandle(Handle));
+        }
+    }
+}
+
+void ImageButton::SetImage(FixedString const& textureUuid)
+{
+    TextureUuid = textureUuid;
+    auto result = gExtender->IMGUI().RegisterTexture(textureUuid);
+    if (result) {
+        id_ = result->Id;
+        Size = glm::vec2((float)result->Width, (float)result->Height);
+    } else {
+        WARN("Unable to load texture resource '%s'", textureUuid.GetString());
     }
 }
 
@@ -1004,7 +1030,7 @@ InputText::InputText()
 
 void InputText::StyledRender()
 {
-    if (ImGui::InputTextEx(Label.c_str(), Hint ? Hint->c_str() : nullptr, Text.data(), Text.capacity(), ToImVec(SizeHint, ImVec2(0, 0)), (ImGuiInputTextFlags)Flags, nullptr, nullptr)) {
+    if (ImGui::InputTextEx(Label.c_str(), Hint ? Hint->c_str() : nullptr, Text.data(), Text.capacity(), ToImVec(SizeHint), (ImGuiInputTextFlags)Flags, nullptr, nullptr)) {
         Text.resize((uint32_t)strlen(Text.data()));
         if (OnChange) {
             Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Text);
@@ -1173,6 +1199,7 @@ IMGUIObjectManager::IMGUIObjectManager()
     pools_[(unsigned)IMGUIObjectType::Separator] = std::make_unique<IMGUIObjectPool<Separator>>();
 
     pools_[(unsigned)IMGUIObjectType::Button] = std::make_unique<IMGUIObjectPool<Button>>();
+    pools_[(unsigned)IMGUIObjectType::ImageButton] = std::make_unique<IMGUIObjectPool<ImageButton>>();
     pools_[(unsigned)IMGUIObjectType::Checkbox] = std::make_unique<IMGUIObjectPool<Checkbox>>();
     pools_[(unsigned)IMGUIObjectType::RadioButton] = std::make_unique<IMGUIObjectPool<RadioButton>>();
     pools_[(unsigned)IMGUIObjectType::InputText] = std::make_unique<IMGUIObjectPool<InputText>>();

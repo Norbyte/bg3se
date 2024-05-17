@@ -223,10 +223,8 @@ struct [[bg3::hidden]] TextureManager
 
 struct [[bg3::hidden]] UVValues
 {
-    float U1;
-    float V1;
-    float U2;
-    float V2;
+	glm::vec2 UV0;
+	glm::vec2 UV1;
 };
 
 struct [[bg3::hidden]] TextureAtlas

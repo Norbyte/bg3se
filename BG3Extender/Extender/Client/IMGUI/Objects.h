@@ -52,6 +52,7 @@ enum class IMGUIObjectType : uint8_t
 
     // 
     Button,
+    ImageButton,
     Checkbox,
     RadioButton,
     InputText,
@@ -141,17 +142,12 @@ public:
     lua::ImguiHandle AddPopup(char const* label);
 
     lua::ImguiHandle AddButton(char const* label);
+    lua::ImguiHandle AddImageButton(char const* label, FixedString textureGuid,
+        std::optional<glm::vec2> size, std::optional<glm::vec2> uv0, std::optional<glm::vec2> uv1);
 
-    std::optional<lua::ImguiHandle> AddImage(
-        FixedString textureGuid,
-        std::optional<float> width,
-        std::optional<float> height,
-        std::optional<float> U1,
-        std::optional<float> V1,
-        std::optional<float> U2,
-        std::optional<float> V2
-    );
-    std::optional<lua::ImguiHandle> AddIcon(FixedString iconName, std::optional<float> width, std::optional<float> height);
+    std::optional<lua::ImguiHandle> AddImage(FixedString textureGuid,
+        std::optional<glm::vec2> size, std::optional<glm::vec2> uv0, std::optional<glm::vec2> uv1);
+    std::optional<lua::ImguiHandle> AddIcon(FixedString iconName, std::optional<glm::vec2> height);
 
     lua::ImguiHandle AddText(char const* label);
     lua::ImguiHandle AddBulletText(char const* label);
@@ -465,13 +461,9 @@ public:
     void SetImage(FixedString const& textureGuid);
     void StyledRender() override;
 
-    float Width{ 0.0f };
-    float Height{ 0.0f };
-
-    float U1{ 0.0f };
-    float V1{ 0.0f };
-    float U2{ 1.0f };
-    float V2{ 1.0f };
+    glm::vec2 Size{ 0.0f, 0.0f };
+    glm::vec2 UV0{ 0.0f, 0.0f };
+    glm::vec2 UV1{ 1.0f, 1.0f };
 
     FixedString TextureUuid;
 
@@ -487,13 +479,9 @@ public:
 	~Icon();
     void StyledRender() override;
 
-    float Width;
-    float Height;
-
-    float U1;
-    float V1;
-    float U2;
-    float V2;
+    glm::vec2 Size{ 0.0f, 0.0f };
+    glm::vec2 UV0{ 0.0f, 0.0f };
+    glm::vec2 UV1{ 1.0f, 1.0f };
 
     ImTextureID Id{ nullptr };
     FixedString TextureUuid;
@@ -572,7 +560,34 @@ public:
 
     void StyledRender() override;
 
+    std::optional<glm::vec2> Size;
+    GuiButtonFlags Flags;
+
     lua::LuaDelegate<void (lua::ImguiHandle)> OnClick;
+};
+
+
+class ImageButton : public StyledRenderable
+{
+public:
+    DECL_UI_TYPE(ImageButton)
+
+    void StyledRender() override;
+    void SetImage(FixedString const& textureGuid);
+
+    glm::vec2 Size{ 0.0f, 0.0f };
+    glm::vec2 UV0{ 0.0f, 0.0f };
+    glm::vec2 UV1{ 1.0f, 1.0f };
+    glm::vec4 Background{ 0.0f };
+    glm::vec4 Tint{ 1.0f };
+    GuiButtonFlags Flags;
+
+    FixedString TextureUuid;
+
+    lua::LuaDelegate<void(lua::ImguiHandle)> OnClick;
+
+private:
+    ImTextureID id_{ nullptr };
 };
 
 

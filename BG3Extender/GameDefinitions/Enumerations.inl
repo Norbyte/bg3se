@@ -3600,4 +3600,9 @@ BEGIN_BITMASK(GuiCond, uint32_t)
 	EV(Appearing, (uint32_t)ImGuiCond_Appearing)
 END_ENUM()
 
+BEGIN_BITMASK(GuiButtonFlags, uint32_t)
+	EV(MouseButtonRight, (uint32_t)ImGuiButtonFlags_MouseButtonRight)
+	EV(MouseButtonMiddle, (uint32_t)ImGuiButtonFlags_MouseButtonMiddle)
+END_ENUM()
+
 #endif
