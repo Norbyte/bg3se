@@ -52,6 +52,7 @@ struct CacheTemplateManagerBase;
 struct UuidComponent;
 struct UuidToHandleMappingComponent;
 
+union TextureDescriptor;
 struct MoveableObject;
 struct RenderableObject;
 struct Visual;

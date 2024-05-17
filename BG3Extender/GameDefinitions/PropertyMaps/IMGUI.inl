@@ -182,6 +182,7 @@ P(U1)
 P(V1)
 P(U2)
 P(V2)
+P_RO(TextureUuid)
 END_CLS()
 
 

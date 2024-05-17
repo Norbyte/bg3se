@@ -143,15 +143,15 @@ public:
     lua::ImguiHandle AddButton(char const* label);
 
     std::optional<lua::ImguiHandle> AddImage(
-        char const* name,
-        float width,
-        float height,
+        FixedString textureGuid,
+        std::optional<float> width,
+        std::optional<float> height,
         std::optional<float> U1,
         std::optional<float> V1,
         std::optional<float> U2,
         std::optional<float> V2
     );
-    std::optional<lua::ImguiHandle> AddIcon(char const* name, std::optional<float> width, std::optional<float> height);
+    std::optional<lua::ImguiHandle> AddIcon(FixedString iconName, std::optional<float> width, std::optional<float> height);
 
     lua::ImguiHandle AddText(char const* label);
     lua::ImguiHandle AddBulletText(char const* label);
@@ -462,18 +462,21 @@ public:
     DECL_UI_TYPE(Image)
 
 	~Image() override;
+    void SetImage(FixedString const& textureGuid);
     void StyledRender() override;
 
-    float Width;
-    float Height;
+    float Width{ 0.0f };
+    float Height{ 0.0f };
 
     float U1{ 0.0f };
     float V1{ 0.0f };
     float U2{ 1.0f };
     float V2{ 1.0f };
 
-    ImTextureID Id;
-    FixedString Guid;
+    FixedString TextureUuid;
+
+private:
+    ImTextureID id_{ nullptr };
 };
 
 class Icon : public StyledRenderable
@@ -492,8 +495,8 @@ public:
     float U2;
     float V2;
 
-    ImTextureID Id;
-    FixedString Guid;
+    ImTextureID Id{ nullptr };
+    FixedString TextureUuid;
 };
 
 class Text : public StyledRenderable

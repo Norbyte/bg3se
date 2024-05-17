@@ -339,6 +339,8 @@ struct ActiveMaterial
 
 struct AppliedMaterial : public ActiveMaterial
 {
+	using LoadTextureProc = TextureDescriptor* (void* self, FixedString const& textureGuid);
+
 	glm::vec4 MeshVertexColor;
 	glm::vec4 DynamicParameter;
 };

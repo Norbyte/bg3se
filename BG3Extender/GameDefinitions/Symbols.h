@@ -9,6 +9,7 @@
 #include <GameDefinitions/RootTemplates.h>
 #include <GameDefinitions/Stats/Stats.h>
 #include <GameDefinitions/Resources.h>
+#include <GameDefinitions/Render.h>
 #include <GameDefinitions/Status.h>
 #include <GameDefinitions/Surface.h>
 #include <GameDefinitions/EntitySystemHelpers.h>
@@ -120,8 +121,7 @@ namespace bg3se
 		ResourceManager** ls__gGlobalResourceManager{ nullptr };
 		TextureAtlasMap** ls__gTextureAtlasMap{ nullptr };
 
-        TextureData::InitOrIncRefProc* ls__TextureInitOrIncRef{ nullptr };
-
+        AppliedMaterial::LoadTextureProc* ls__AppliedMaterial__LoadTexture{ nullptr };
         TextureManager::UnloadTextureProc* ls__TextureManager__UnloadTexture{ nullptr };
 
 		resource::LoadableResource::LoadProc* ls__VirtualTextureResource__Load{ nullptr };

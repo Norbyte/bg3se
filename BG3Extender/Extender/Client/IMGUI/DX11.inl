@@ -161,17 +161,16 @@ public:
         requestReloadFonts_ = true;
     }
 
-
-    std::optional<ImTextureID> RegisterTexture(FixedString id) override
+    std::optional<TextureLoadResult> RegisterTexture(TextureDescriptor* descriptor) override
     {
-        void* unused = 0;
-        auto descriptor = (*GetStaticSymbols().ls__TextureInitOrIncRef)(&unused, &id);
-        if (!descriptor) return {};
-
         auto view = descriptor->DX11.Views[0].View;
         if (!view) return {};
 
-        return { view };
+        return TextureLoadResult{ view, descriptor->DX11.Width, descriptor->DX11.Height };
+    }
+
+    void UnregisterTexture(ImTextureID id) override
+    {
     }
 
 private:

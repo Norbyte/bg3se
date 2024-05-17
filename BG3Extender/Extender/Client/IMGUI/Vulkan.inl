@@ -190,16 +190,13 @@ public:
         drawViewport_ = -1;
     }
 
-    std::optional<ImTextureID> RegisterTexture(FixedString id) override
+    std::optional<TextureLoadResult> RegisterTexture(TextureDescriptor* descriptor) override
     {
-        void* unused = 0;
-        auto descriptor = (*GetStaticSymbols().ls__TextureInitOrIncRef)(&unused, &id);
-        if (!descriptor) return {};
-
         auto view = descriptor->Vulkan.Views[0]->View;
         if (!view) return {};
 
-        return { ImGui_ImplVulkan_AddTexture(sampler_, VkImageView(view), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) };
+        auto id = ImGui_ImplVulkan_AddTexture(sampler_, VkImageView(view), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+        return TextureLoadResult{ id, descriptor->Vulkan.ImageData.Width, descriptor->Vulkan.ImageData.Height };
     }
 
     void UnregisterTexture(ImTextureID id) override

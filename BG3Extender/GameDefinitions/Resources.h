@@ -198,8 +198,6 @@ union [[bg3::hidden]] TextureDescriptor
 
 struct [[bg3::hidden]] TextureData
 {
-    using InitOrIncRefProc = TextureDescriptor* (void** unused, FixedString* guid);
-
 	TextureDescriptor* Descriptor;
     uint32_t LoadRequestCount;
     uint32_t RefCount;
@@ -216,7 +214,7 @@ struct [[bg3::hidden]] TextureData
 
 struct [[bg3::hidden]] TextureManager
 {
-    using UnloadTextureProc = void (TextureManager* self, FixedString* guid, void* unused1, void* unused2);
+    using UnloadTextureProc = bool (TextureManager* self, FixedString const& textureGuid);
 
     SRWLOCK Lock;
     MultiHashMap<TextureDescriptor*, FixedString> Names;
@@ -241,7 +239,7 @@ struct [[bg3::hidden]] TextureAtlas
     uint32_t IconHeight;
     uint32_t TextureWidth;
     uint32_t TextureHeight;
-    FixedString Name;
+    FixedString TextureUuid;
 };
 
 struct [[bg3::hidden]] TextureAtlasMap

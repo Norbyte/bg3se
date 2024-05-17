@@ -4,6 +4,13 @@
 
 BEGIN_NS(extui)
 
+struct TextureLoadResult
+{
+    ImTextureID Id;
+    uint32_t Width;
+    uint32_t Height;
+};
+
 class RenderingBackend
 {
 public:
@@ -15,8 +22,8 @@ public:
     virtual void NewFrame() = 0;
     virtual void FinishFrame() = 0;
     virtual void ClearFrame() = 0;
-    virtual std::optional<ImTextureID> RegisterTexture(FixedString id) = 0;
-    virtual void UnregisterTexture(ImTextureID id) {}
+    virtual std::optional<TextureLoadResult> RegisterTexture(TextureDescriptor* descriptor) = 0;
+    virtual void UnregisterTexture(ImTextureID id) = 0;
     virtual bool IsInitialized() = 0;
     virtual void ReloadFonts() = 0;
 };

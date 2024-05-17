@@ -216,55 +216,45 @@ lua::ImguiHandle TreeParent::AddButton(char const* label)
 
 
 std::optional<lua::ImguiHandle> TreeParent::AddImage(
-    char const* name,
-    float width,
-    float height,
+    FixedString textureGuid,
+    std::optional<float> width,
+    std::optional<float> height,
     std::optional<float> U1,
     std::optional<float> V1,
     std::optional<float> U2,
     std::optional<float> V2
 )
 {
-    auto str = FixedString(name);
-    auto id = gExtender->IMGUI().RegisterTexture(str);
-    if (!id) {
-        WARN("failed to find texture '%s'", name);
-        return {};
-    }
-
     auto img = AddChild<Image>();
-    img->Width = width;
-    img->Height = height;
+    img->SetImage(textureGuid);
+    if (width) img->Width = *width;
+    if (height) img->Height = *height;
     if (U1) img->U1 = *U1;
 	if (V1) img->V1 = *V1;
 	if (U2) img->U2 = *U2;
 	if (V2) img->V2 = *V2;
 
-    img->Id = *id;
-    img->Guid = str;
-
     return img;
 }
 
 
-std::optional<lua::ImguiHandle> TreeParent::AddIcon(char const* name, std::optional<float> width, std::optional<float> height)
+std::optional<lua::ImguiHandle> TreeParent::AddIcon(FixedString iconName, std::optional<float> width, std::optional<float> height)
 {
-    auto str = FixedString(name);
-    auto atlas = (*GetStaticSymbols().ls__gTextureAtlasMap)->IconMap.try_get(str);
+    auto atlas = (*GetStaticSymbols().ls__gTextureAtlasMap)->IconMap.try_get(iconName);
     if (!atlas) {
-        WARN("failed to find atlas for icon '%s'", name);
+        WARN("Failed to find atlas for icon '%s'", iconName.GetString());
         return {};
     }
 
-    auto uvs = atlas->Icons.try_get(str);
+    auto uvs = atlas->Icons.try_get(iconName);
     if (!uvs) {
-        WARN("failed to find UVs for icon '%s'", name);
+        WARN("Failed to find UVs for icon '%s'", iconName.GetString());
         return {};
     }
 
-    auto id = gExtender->IMGUI().RegisterTexture(atlas->Name);
-    if (!id) {
-        WARN("failed to find texture for icon '%s'", name);
+    auto texture = gExtender->IMGUI().RegisterTexture(atlas->TextureUuid);
+    if (!texture) {
+        WARN("Failed to load texture '%s' for icon '%s'", atlas->TextureUuid.GetString(), iconName.GetString());
         return {};
     }
 
@@ -290,8 +280,8 @@ std::optional<lua::ImguiHandle> TreeParent::AddIcon(char const* name, std::optio
     icon->U2 = uvs->U2;
     icon->V2 = uvs->V2;
 
-    icon->Id = *id;
-    icon->Guid = atlas->Name;
+    icon->Id = texture->Id;
+    icon->TextureUuid = atlas->TextureUuid;
 
     return icon;
 }
@@ -873,23 +863,40 @@ void Popup::Open(std::optional<GuiPopupFlags> flags)
 }
 
 
-void Image::StyledRender()
-{
-    ImGui::Image(
-        Id,
-        ImVec2(Width, Height),
-        ImVec2(U1, V1),
-        ImVec2(U2, V2),
-        ImVec4(1.0, 1.0, 1.0, 1.0),
-        ImVec4(0.0, 0.0, 0.0, 0.0)
-    );
-}
-
-
 Image::~Image()
 {
-    gExtender->IMGUI().UnregisterTexture(Id, Guid);
+    if (id_) {
+        gExtender->IMGUI().UnregisterTexture(id_, TextureUuid);
+    }
 }
+
+void Image::SetImage(FixedString const& textureUuid)
+{
+    TextureUuid = textureUuid;
+    auto result = gExtender->IMGUI().RegisterTexture(textureUuid);
+    if (result) {
+        id_ = result->Id;
+        Width = (float)result->Width;
+        Height = (float)result->Height;
+    } else {
+        WARN("Unable to load texture resource '%s'", textureUuid.GetString());
+    }
+}
+
+void Image::StyledRender()
+{
+    if (id_) {
+        ImGui::Image(
+            id_,
+            ImVec2(Width, Height),
+            ImVec2(U1, V1),
+            ImVec2(U2, V2),
+            ImVec4(1.0, 1.0, 1.0, 1.0),
+            ImVec4(0.0, 0.0, 0.0, 0.0)
+        );
+    }
+}
+
 
 
 void Icon::StyledRender()
@@ -907,7 +914,9 @@ void Icon::StyledRender()
 
 Icon::~Icon()
 {
-    gExtender->IMGUI().UnregisterTexture(Id, Guid);
+    if (Id) {
+        gExtender->IMGUI().UnregisterTexture(Id, TextureUuid);
+    }
 }
 
 
@@ -1389,16 +1398,19 @@ void IMGUIManager::Update()
     objects_->ClientUpdate();
 }
 
-std::optional<ImTextureID> IMGUIManager::RegisterTexture(FixedString id)
+std::optional<TextureLoadResult> IMGUIManager::RegisterTexture(FixedString const& textureGuid)
 {
-    return renderer_->RegisterTexture(id);
+    auto descriptor = (*GetStaticSymbols().ls__AppliedMaterial__LoadTexture)(nullptr, textureGuid);
+    if (!descriptor) return {};
+
+    return renderer_->RegisterTexture(descriptor);
 }
 
-void IMGUIManager::UnregisterTexture(ImTextureID id, FixedString guid)
+void IMGUIManager::UnregisterTexture(ImTextureID id, FixedString const& textureGuid)
 {
     renderer_->UnregisterTexture(id);
-    auto texture_manager = (*GetStaticSymbols().ls__gGlobalResourceManager)->TextureManager;
-    (*GetStaticSymbols().ls__TextureManager__UnloadTexture)(texture_manager, &guid, 0, 0);
+    auto textureManager = (*GetStaticSymbols().ls__gGlobalResourceManager)->TextureManager;
+    (*GetStaticSymbols().ls__TextureManager__UnloadTexture)(textureManager, textureGuid);
 }
 
 END_NS()

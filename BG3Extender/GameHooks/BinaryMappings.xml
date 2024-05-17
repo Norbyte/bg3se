@@ -686,7 +686,7 @@
         <Target Type="Absolute" Offset="0" Symbol="ls__VirtualTextureResource__Unload" />
       </Mapping>
 
-      <Mapping Name="ls::TextureInitOrIncRef">
+      <Mapping Name="ls::AppliedMaterial::LoadTexture">
         48 89 5c 24 10              // mov qword ptr ss:[rsp+10],rbx                                                                             |
         48 89 4c 24 08              // mov qword ptr ss:[rsp+8],rcx                                                                              | rcx:__wine_unixlib_handle+930
         57                          // push rdi                                                                                                  |
@@ -694,7 +694,7 @@
         65 48 8b 04 25 58 00 00 00  // mov rax,qword ptr gs:[58]                                                                                 |
         48 8b 3d ?? ?? ?? ??        // mov rdi,qword ptr ds:[ls__gGlobalResourceManager]                                                                          |
         41 b8 d8 05 00 00           // mov r8d,5D8                                                                                               |
-        <Target Type="Absolute" Offset="0" Symbol="ls__TextureInitOrIncRef" />
+        <Target Type="Absolute" Offset="0" Symbol="ls__AppliedMaterial__LoadTexture" />
       </Mapping>
 
       <Mapping Name="ls::TextureManager::UnloadTexture">
