@@ -1246,6 +1246,7 @@ void IMGUIManager::Update()
             LoadFont(font->Value());
         }
         scale_ = requestedScale_;
+        renderer_->ReloadFonts();
     }
 
     {
