@@ -503,6 +503,17 @@ bool TreeParent::AttachChild(HandleType child)
     return true;
 }
 
+// Lua helper for making a copy of children without returning a reference to the internal child list.
+// Needed until Lua read-only container proxies are added
+Array<lua::ImguiHandle> TreeParent::GetChildren()
+{
+    Array<lua::ImguiHandle> handles;
+    for (auto h : Children) {
+        handles.push_back(lua::ImguiHandle(h));
+    }
+    return handles;
+}
+
 bool Window::BeginRender()
 {
     if (!Open) return false;

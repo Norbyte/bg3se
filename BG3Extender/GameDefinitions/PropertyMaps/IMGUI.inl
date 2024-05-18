@@ -23,6 +23,7 @@ END_CLS()
 
 BEGIN_CLS(extui::TreeParent)
 INHERIT(extui::StyledRenderable)
+P_GETTER(Children, GetChildren)
 
 P_FUN(AddGroup, extui::TreeParent::AddGroup)
 P_FUN(AddCollapsingHeader, extui::TreeParent::AddCollapsingHeader)

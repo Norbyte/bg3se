@@ -174,6 +174,7 @@ public:
     bool RemoveChild(HandleType child);
     bool DetachChild(HandleType child);
     bool AttachChild(HandleType child);
+    Array<lua::ImguiHandle> GetChildren();
 
     Array<HandleType> Children;
 
