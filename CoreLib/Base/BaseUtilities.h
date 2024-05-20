@@ -218,6 +218,12 @@ inline typename std::enable_if_t<std::is_enum_v<T>, uint64_t> Hash(T v)
 	return Hash(std::underlying_type_t<T>(v));
 }
 
+template <class T>
+inline typename std::enable_if_t<std::is_pointer_v<T>, uint64_t> Hash(T v)
+{
+	return Hash(std::uintptr_t(v));
+}
+
 inline constexpr uint64_t HashMix(uint64_t x, uint64_t y)
 {
 	constexpr uint64_t K = 0x9ddfea08eb382d69ull;

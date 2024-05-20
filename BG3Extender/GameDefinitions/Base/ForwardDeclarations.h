@@ -71,6 +71,7 @@ namespace resource
 
 	struct Resource;
 	struct VisualSet;
+	struct TextureResource;
 }
 
 namespace net

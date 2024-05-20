@@ -38,6 +38,12 @@ BEGIN_NS(extui)
 class VulkanBackend : public RenderingBackend
 {
 public:
+    struct TextureRefCount
+    {
+        TextureDescriptor* Descriptor;
+        uint32_t RefCount;
+    };
+
     VulkanBackend(IMGUIManager& ui) : ui_(ui) {}
 
     ~VulkanBackend() override
@@ -195,23 +201,40 @@ public:
         auto view = descriptor->Vulkan.Views[0]->View;
         if (!view) return {};
 
-        if (registeredTextures_ > 2000) {
-            if (!textureLimitWarningShown_) {
-                ERR("UI texture limit reached. Newly loaded textures may not load or render correctly");
-                textureLimitWarningShown_ = true;
+        auto tex = textures_.find(descriptor);
+        if (tex != textures_.end()) {
+            auto desc = tex.Value();
+            auto refCount = textureRefCounts_.find(desc);
+            refCount.Value().RefCount++;
+            return TextureLoadResult{ desc, descriptor->Vulkan.ImageData.Width, descriptor->Vulkan.ImageData.Height };
+        } else {
+            if (textures_.size() > 2000) {
+                if (!textureLimitWarningShown_) {
+                    ERR("UI texture limit reached. Newly loaded textures may not load or render correctly");
+                    textureLimitWarningShown_ = true;
+                }
+                return {};
             }
-            return {};
-        }
 
-        registeredTextures_++;
-        auto id = ImGui_ImplVulkan_AddTexture(sampler_, VkImageView(view), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-        return TextureLoadResult{ id, descriptor->Vulkan.ImageData.Width, descriptor->Vulkan.ImageData.Height };
+            auto desc = ImGui_ImplVulkan_AddTexture(sampler_, VkImageView(view), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+            textures_.set(descriptor, desc);
+            textureRefCounts_.set(desc, TextureRefCount{ descriptor, 1 });
+            return TextureLoadResult{ desc, descriptor->Vulkan.ImageData.Width, descriptor->Vulkan.ImageData.Height };
+        }
     }
 
     void UnregisterTexture(ImTextureID id) override
     {
-        ImGui_ImplVulkan_RemoveTexture(static_cast<VkDescriptorSet>(id));
-        registeredTextures_--;
+        auto desc = static_cast<VkDescriptorSet>(id);
+        auto refCount = textureRefCounts_.find(desc);
+        if (refCount != textureRefCounts_.end()) {
+            refCount.Value().RefCount--;
+            if (refCount.Value().RefCount == 0) {
+                ImGui_ImplVulkan_RemoveTexture(desc);
+                textures_.remove(refCount.Value().Descriptor);
+                textureRefCounts_.remove(desc);
+            }
+        }
     }
 
     bool IsInitialized() override
@@ -701,7 +724,6 @@ private:
     std::array<ViewportInfo, 3> viewports_;
     int32_t drawViewport_{ -1 };
     int32_t curViewport_{ 0 };
-    uint32_t registeredTextures_{ 0 };
     bool textureLimitWarningShown_{ false };
 
     bool initialized_{ false };
@@ -717,6 +739,9 @@ private:
     VkQueuePresentKHRHookType QueuePresentKHRHook_;
 
     SwapchainInfo swapchain_;
+
+    MultiHashMap<TextureDescriptor*, VkDescriptorSet> textures_;
+    MultiHashMap<VkDescriptorSet, TextureRefCount> textureRefCounts_;
 };
 
 END_NS()

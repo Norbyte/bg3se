@@ -238,6 +238,7 @@ struct [[bg3::hidden]] TextureAtlas
     uint32_t TextureWidth;
     uint32_t TextureHeight;
     FixedString TextureUuid;
+	resource::TextureResource* Texture;
 };
 
 struct [[bg3::hidden]] TextureAtlasMap
@@ -245,6 +246,7 @@ struct [[bg3::hidden]] TextureAtlasMap
     void* VMT;
     RefMap<STDString, TextureAtlas*> AtlasMap;
     Map<FixedString, TextureAtlas*> IconMap;
+	uint32_t Unknown;
 };
 
 struct [[bg3::hidden]] Bank : public ProtectedGameObject<Bank>
