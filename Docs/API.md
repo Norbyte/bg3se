@@ -593,7 +593,7 @@ end)
 ## Stats (Ext.Stats module)
 
 <a id="stats-GetStatEntries"></a>
-### Ext.Stats.GetAllStats(type: string): string[]
+### Ext.Stats.GetStats(type: string): string[]
 
 Returns a table with the names of all stat entries.
 When the optional parameter `type` is specified, it'll only return stats with the specified type.
@@ -642,7 +642,7 @@ The behavior of getting a table entry is identical to that of `StatGetAttribute`
 The `StatSetAttribute` example rewritten using `Stats.Get`:
 ```lua
 -- Swap DamageType from Poison to Air on all skills
-for i,name in pairs(Ext.Stats.GetAllStats("SkillData")) do
+for i,name in pairs(Ext.Stats.GetStats("SkillData")) do
     local stat = Ext.Stats.Get(name)
     if stat.DamageType == "Poison" then
         stat.DamageType = "Air"
