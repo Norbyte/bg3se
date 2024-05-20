@@ -5,6 +5,7 @@ FS(Level);
 FS(Name);
 FS(Using);
 FS(AIFlags);
+FS(ModifierList);
 
 // Stat modifier types
 FS(Character);

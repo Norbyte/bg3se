@@ -190,6 +190,9 @@ namespace bg3se::lua::stats
 		if (attributeName == GFS.strName) {
 			push(L, object->Name);
 			return 1;
+		} else if (attributeName == GFS.strModifierList) {
+			push(L, stats->ModifierLists.Find(object->ModifierListIndex)->Name);
+			return 1;
 		} else if (attributeName == GFS.strModId) {
 			push(L, gExtender->GetStatLoadOrderHelper().GetStatsEntryMod(object->Name));
 			return 1;
