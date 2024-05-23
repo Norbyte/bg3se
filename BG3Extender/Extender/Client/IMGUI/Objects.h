@@ -121,7 +121,6 @@ public:
 
 private:
     lua::ImguiHandle tooltip_;
-    ImFont* font_{ nullptr };
 };
 
 

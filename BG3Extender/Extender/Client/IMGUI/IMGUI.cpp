@@ -73,7 +73,11 @@ void StyledRenderable::Render()
         ImGui::PushStyleColor((ImGuiCol)var.Key, ImVec4(var.Value.r, var.Value.g, var.Value.b, var.Value.a));
     }
 
-    if (!IDContext.empty()) ImGui::PushID(IDContext.data(), IDContext.data() + IDContext.size());
+    if (!IDContext.empty()) {
+        ImGui::PushID(IDContext.data(), IDContext.data() + IDContext.size());
+    } else if (Label.empty()) {
+        ImGui::PushID((int32_t)Handle | (int32_t)(Handle >> 32));
+    }
 
     if (SameLine) ImGui::SameLine();
 
@@ -94,7 +98,9 @@ void StyledRenderable::Render()
         if (tooltip) tooltip->Render();
     }
 
-    if (!IDContext.empty()) ImGui::PopID();
+    if (!IDContext.empty() || Label.empty()) {
+        ImGui::PopID();
+    }
 
     if (ImGui::IsItemActivated() && OnActivate) {
         Manager->GetEventQueue().Call(OnActivate, lua::ImguiHandle(Handle));
