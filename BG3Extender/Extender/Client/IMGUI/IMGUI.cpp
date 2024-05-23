@@ -772,7 +772,9 @@ bool Tree::BeginRender()
 
 void Tree::EndRender()
 {
-    if (rendering_) ImGui::TreePop();
+    if (rendering_ && !(Flags & GuiTreeNodeFlags::NoTreePushOnOpen)) {
+        ImGui::TreePop();
+    }
     rendering_ = false;
 }
 
