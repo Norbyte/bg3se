@@ -247,6 +247,11 @@ public:
         requestReloadFonts_ = true;
     }
 
+    glm::ivec2 GetViewportSize() override
+    {
+        return glm::ivec2(swapchain_.width_, swapchain_.height_);
+    }
+
 private:
     struct SwapchainImageInfo
     {
@@ -702,6 +707,7 @@ private:
             
                 GImGui->Viewports[0] = &viewports_[0].Viewport;
             } else {
+                ui_.OnRenderBackendInitialized();
                 InitializeUI();
             }
         }

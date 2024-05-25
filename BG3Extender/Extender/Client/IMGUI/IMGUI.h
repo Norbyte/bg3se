@@ -53,6 +53,8 @@ private:
     bool enableUI_{ false };
 
     bool LoadFont(FontData& request);
+    void OnViewportUpdated();
+    void UpdateStyle();
 };
 
 END_NS()

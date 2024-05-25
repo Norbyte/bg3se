@@ -24,7 +24,7 @@ bool LoadFont(FixedString const& name, char const* path, float size)
 
 void SetScale(float scale)
 {
-	return gExtender->IMGUI().SetScale(scale);
+	WARN("Ext.IMGUI.SetScale() is deprecated; UI scaling is managed by SE");
 }
 
 void RegisterIMGUILib()

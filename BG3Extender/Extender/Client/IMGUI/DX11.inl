@@ -161,6 +161,11 @@ public:
         requestReloadFonts_ = true;
     }
 
+    glm::ivec2 GetViewportSize() override
+    {
+        return glm::ivec2(width_, height_);
+    }
+
     std::optional<TextureLoadResult> RegisterTexture(TextureDescriptor* descriptor) override
     {
         auto view = descriptor->DX11.Views[0].View;
@@ -226,6 +231,8 @@ private:
         if (!SUCCEEDED(result)) return;
         
         swapChain_ = *ppSwapChain;
+        width_ = pDesc->Width;
+        height_ = pDesc->Height;
 
         if (DXGISwapChainPresentHook_.IsWrapped()) return;
 
@@ -268,6 +275,8 @@ private:
 
     bool initialized_{ false };
     bool requestReloadFonts_{ false };
+    uint32_t width_{ 0 };
+    uint32_t height_{ 0 };
 
     D3D11CreateDeviceHookType CreateDeviceHook_;
     CreateDXGIFactory1HookType CreateDxgiFactoryHook_;

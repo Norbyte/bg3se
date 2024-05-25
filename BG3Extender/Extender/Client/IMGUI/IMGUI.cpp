@@ -1323,6 +1323,16 @@ void IMGUIManager::InitializeUI()
 
     sdl_.InitializeUI();
     renderer_->InitializeUI();
+
+    UpdateStyle();
+
+    LoadFont(GFS.strTiny, "Public/Game/GUI/Assets/Fonts/QuadraatOffcPro/QuadraatOffcPro.ttf", 24.0f);
+    LoadFont(GFS.strSmall, "Public/Game/GUI/Assets/Fonts/QuadraatOffcPro/QuadraatOffcPro.ttf", 28.0f);
+    LoadFont(GFS.strMedium, "Public/Game/GUI/Assets/Fonts/QuadraatOffcPro/QuadraatOffcPro.ttf", 32.0f);
+    LoadFont(GFS.strDefault, "Public/Game/GUI/Assets/Fonts/QuadraatOffcPro/QuadraatOffcPro.ttf", 36.0f);
+    LoadFont(GFS.strLarge, "Public/Game/GUI/Assets/Fonts/QuadraatOffcPro/QuadraatOffcPro.ttf", 40.0f);
+    LoadFont(GFS.strBig, "Public/Game/GUI/Assets/Fonts/QuadraatOffcPro/QuadraatOffcPro.ttf", 44.0f);
+
     initialized_ = true;
 }
 
@@ -1381,12 +1391,14 @@ bool IMGUIManager::LoadFont(FontData& request)
     ImFontConfig cfg;
     cfg.FontDataOwnedByAtlas = false;
     cfg.RasterizerDensity = requestedScale_;
-    cfg.SizePixels = request.SizePixels * requestedScale_;
+    cfg.SizePixels = request.SizePixels;
 
     request.Font = io.Fonts->AddFontFromMemoryTTF(blob->data(), blob->size(), 0.0f, &cfg);
     if (!request.Font) {
         OsiError("Failed to load font file (not a valid TTF font?): " << request.Path);
         return false;
+    } else {
+        request.Font->Scale = requestedScale_;
     }
 
     renderer_->ReloadFonts();
@@ -1405,7 +1417,32 @@ void IMGUIManager::SetScale(float scale)
 
 void IMGUIManager::OnRenderBackendInitialized()
 {
-    InitializeUI();
+    OnViewportUpdated();
+
+    if (!initialized_) {
+        InitializeUI();
+    }
+}
+
+void IMGUIManager::OnViewportUpdated()
+{
+    auto viewport = renderer_->GetViewportSize();
+
+    requestedScale_ = (float)viewport.y / 1610.0f;
+}
+
+void IMGUIManager::UpdateStyle()
+{
+    ImGui::GetStyle() = ImGuiStyle();
+    ImGui::GetStyle().ScaleAllSizes(requestedScale_);
+    scale_ = requestedScale_;
+
+    ImGui::GetIO().Fonts->Clear();
+    for (auto& font : fonts_) {
+        font->Value().Font = nullptr;
+        LoadFont(font->Value());
+    }
+    renderer_->ReloadFonts();
 }
 
 void IMGUIManager::Update()
@@ -1418,19 +1455,17 @@ void IMGUIManager::Update()
     }
 
     if (scale_ != requestedScale_) {
-        ImGui::GetStyle().ScaleAllSizes(requestedScale_ / scale_);
-        ImGui::GetIO().Fonts->Clear();
-        for (auto& font : fonts_) {
-            font->Value().Font = nullptr;
-            LoadFont(font->Value());
-        }
-        scale_ = requestedScale_;
-        renderer_->ReloadFonts();
+        UpdateStyle();
     }
 
     {
         std::lock_guard _(sdl_.GetSDLMutex());
         sdl_.NewFrame();
+    }
+
+    auto defaultFont = GetFont(GFS.strMedium);
+    if (defaultFont != nullptr && defaultFont->Font != nullptr) {
+        ImGui::GetIO().FontDefault = defaultFont->Font;
     }
 
     renderer_->NewFrame();

@@ -124,3 +124,10 @@ FS(trigger);
 FS(decal);
 FS(prefab);
 FS(light);
+
+// Default IMGUI fonts
+FS(Tiny);
+FS(Small);
+FS(Medium);
+FS(Large);
+FS(Big);

@@ -26,6 +26,7 @@ public:
     virtual void UnregisterTexture(ImTextureID id) = 0;
     virtual bool IsInitialized() = 0;
     virtual void ReloadFonts() = 0;
+    virtual glm::ivec2 GetViewportSize() = 0;
 };
 
 END_NS()
