@@ -66,7 +66,7 @@ void StyledRenderable::Render()
     if (font) ImGui::PushFont(font);
 
     for (auto const& var : StyleVars) {
-        ImGui::PushStyleVar((ImGuiStyleVar)var.Key, var.Value);
+        ImGui::PushStyleVar((ImGuiStyleVar)var.Key, ToImVec(var.Value));
     }
 
     for (auto const& var : StyleColors) {
@@ -112,16 +112,16 @@ void StyledRenderable::Render()
 }
 
 
-void StyledRenderable::SetStyleVar(GuiStyleVar var, float value)
+void StyledRenderable::SetStyleVar(GuiStyleVar var, float value, std::optional<float> value2)
 {
     for (auto& kv : StyleVars) {
         if (kv.Key == var) {
-            kv.Value = value;
+            kv.Value = glm::vec2(value, value2 ? *value2 : value);
             return;
         }
     }
 
-    StyleVars.push_back(StyleVar{ var, value });
+    StyleVars.push_back(StyleVar{ var, glm::vec2(value, value2 ? *value2 : value) });
 }
 
 

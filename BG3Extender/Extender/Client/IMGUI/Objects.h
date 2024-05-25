@@ -94,7 +94,7 @@ struct StyleColor
 struct StyleVar
 {
     GuiStyleVar Key;
-    float Value;
+    glm::vec2 Value;
 };
 
 
@@ -104,7 +104,7 @@ public:
     virtual void StyledRender() = 0;
 
     void Render() override;
-    void SetStyleVar(GuiStyleVar var, float value);
+    void SetStyleVar(GuiStyleVar var, float value, std::optional<float> value2);
     void SetStyleColor(GuiColor color, glm::vec4 value);
     lua::ImguiHandle Tooltip();
 
