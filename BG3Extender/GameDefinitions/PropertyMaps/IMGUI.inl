@@ -1,4 +1,13 @@
 
+BEGIN_CLS(extui::ImageReference)
+P(Size)
+P(UV0)
+P(UV1)
+P_RO(TextureResource)
+P_RO(Icon)
+END_CLS()
+
+
 BEGIN_CLS(extui::Renderable)
 P_FUN(Destroy, extui::Renderable::Destroy)
 P_RO(Handle)
@@ -178,19 +187,9 @@ END_CLS()
 
 BEGIN_CLS(extui::Image)
 INHERIT(extui::StyledRenderable)
-P(Size)
-P(UV0)
-P(UV1)
-P_RO(TextureUuid)
-END_CLS()
-
-
-BEGIN_CLS(extui::Icon)
-INHERIT(extui::StyledRenderable)
-P(Size)
-P(UV0)
-P(UV1)
-P_RO(TextureUuid)
+P(ImageData)
+P(Border)
+P(Tint)
 END_CLS()
 
 
@@ -241,13 +240,10 @@ END_CLS()
 
 BEGIN_CLS(extui::ImageButton)
 INHERIT(extui::StyledRenderable)
-P(Size)
-P(UV0)
-P(UV1)
+P(Image)
 P(Background)
 P(Tint)
 P_BITMASK(Flags)
-P_RO(TextureUuid)
 P(OnClick)
 END_CLS()
 

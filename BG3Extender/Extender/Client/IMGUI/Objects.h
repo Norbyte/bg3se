@@ -37,7 +37,6 @@ enum class IMGUIObjectType : uint8_t
     MenuItem,
 
     Image,
-    Icon,
 
     // Texts
     Text,
@@ -66,6 +65,28 @@ enum class IMGUIObjectType : uint8_t
     ColorEdit,
     ColorPicker,
     Max = ColorPicker
+};
+
+
+struct ImageReference : Noncopyable<ImageReference>
+{
+    ~ImageReference();
+    bool Bind(FixedString const& iconOrTexture);
+    bool BindTexture(FixedString const& textureUuid);
+    bool BindIcon(FixedString const& iconName);
+
+    inline bool IsValid() const
+    {
+        return TextureId != nullptr;
+    }
+
+    glm::vec2 Size{ 0.0f, 0.0f };
+    glm::vec2 UV0{ 0.0f, 0.0f };
+    glm::vec2 UV1{ 1.0f, 1.0f };
+
+    FixedString TextureResource;
+    FixedString Icon;
+    ImTextureID TextureId{ nullptr };
 };
 
 
@@ -141,12 +162,12 @@ public:
     lua::ImguiHandle AddPopup(char const* label);
 
     lua::ImguiHandle AddButton(char const* label);
-    lua::ImguiHandle AddImageButton(char const* label, FixedString textureGuid,
+    lua::ImguiHandle AddImageButton(char const* label, FixedString iconOrTexture,
         std::optional<glm::vec2> size, std::optional<glm::vec2> uv0, std::optional<glm::vec2> uv1);
 
-    std::optional<lua::ImguiHandle> AddImage(FixedString textureGuid,
+    lua::ImguiHandle AddImage(FixedString iconOrTexture,
         std::optional<glm::vec2> size, std::optional<glm::vec2> uv0, std::optional<glm::vec2> uv1);
-    std::optional<lua::ImguiHandle> AddIcon(FixedString iconName, std::optional<glm::vec2> height);
+    lua::ImguiHandle AddIcon(FixedString iconName, std::optional<glm::vec2> height);
 
     lua::ImguiHandle AddText(char const* label);
     lua::ImguiHandle AddBulletText(char const* label);
@@ -457,34 +478,11 @@ class Image : public StyledRenderable
 public:
     DECL_UI_TYPE(Image)
 
-	~Image() override;
-    void SetImage(FixedString const& textureGuid);
     void StyledRender() override;
 
-    glm::vec2 Size{ 0.0f, 0.0f };
-    glm::vec2 UV0{ 0.0f, 0.0f };
-    glm::vec2 UV1{ 1.0f, 1.0f };
-
-    FixedString TextureUuid;
-
-private:
-    ImTextureID id_{ nullptr };
-};
-
-class Icon : public StyledRenderable
-{
-public:
-    DECL_UI_TYPE(Icon)
-
-	~Icon();
-    void StyledRender() override;
-
-    glm::vec2 Size{ 0.0f, 0.0f };
-    glm::vec2 UV0{ 0.0f, 0.0f };
-    glm::vec2 UV1{ 1.0f, 1.0f };
-
-    ImTextureID Id{ nullptr };
-    FixedString TextureUuid;
+    ImageReference ImageData;
+    glm::vec4 Border{ 0.0f };
+    glm::vec4 Tint{ 1.0f };
 };
 
 class Text : public StyledRenderable
@@ -573,21 +571,13 @@ public:
     DECL_UI_TYPE(ImageButton)
 
     void StyledRender() override;
-    void SetImage(FixedString const& textureGuid);
 
-    glm::vec2 Size{ 0.0f, 0.0f };
-    glm::vec2 UV0{ 0.0f, 0.0f };
-    glm::vec2 UV1{ 1.0f, 1.0f };
+    ImageReference Image;
     glm::vec4 Background{ 0.0f };
     glm::vec4 Tint{ 1.0f };
     GuiButtonFlags Flags;
 
-    FixedString TextureUuid;
-
     lua::LuaDelegate<void(lua::ImguiHandle)> OnClick;
-
-private:
-    ImTextureID id_{ nullptr };
 };
 
 

@@ -28,6 +28,70 @@ inline ImVec2 ToImVec(std::optional<glm::vec2> const& v, ImVec2 defaultVal = ImV
     return v ? ImVec2(v->x, v->y) : defaultVal;
 }
 
+ImageReference::~ImageReference()
+{
+    if (TextureId) {
+        gExtender->IMGUI().UnregisterTexture(TextureId, TextureResource);
+    }
+}
+
+bool ImageReference::Bind(FixedString const& iconOrTexture)
+{
+    if (!BindIcon(iconOrTexture) && !BindTexture(iconOrTexture)) {
+        WARN("Unable to load icon or texture resource '%s'", iconOrTexture.GetString());
+        return false;
+    }
+
+    return true;
+}
+
+bool ImageReference::BindTexture(FixedString const& textureUuid)
+{
+    TextureResource = textureUuid;
+    auto result = gExtender->IMGUI().RegisterTexture(textureUuid);
+    if (result) {
+        TextureId = result->Id;
+        Size = glm::vec2((float)result->Width, (float)result->Height);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool ImageReference::BindIcon(FixedString const& iconName)
+{
+    auto atlas = (*GetStaticSymbols().ls__gTextureAtlasMap)->IconMap.try_get(iconName);
+    if (!atlas) {
+        return false;
+    }
+
+    auto uvs = atlas->Icons.try_get(iconName);
+    if (!uvs) {
+        WARN("Failed to find UVs for icon '%s'", iconName.GetString());
+        return false;
+    }
+
+    auto texture = gExtender->IMGUI().RegisterTexture(atlas->TextureUuid);
+    if (!texture) {
+        WARN("Failed to load texture '%s' for icon '%s'", atlas->TextureUuid.GetString(), iconName.GetString());
+        return false;
+    }
+
+    Size = glm::vec2(
+        static_cast<float>(atlas->IconWidth),
+        static_cast<float>(atlas->IconHeight)
+    );
+
+    UV0 = uvs->UV0;
+    UV1 = uvs->UV1;
+
+    TextureResource = atlas->TextureUuid;
+    Icon = iconName;
+    TextureId = texture->Id;
+    return true;
+}
+
+
 template <class T>
 T* TreeParent::AddChild()
 {
@@ -226,72 +290,36 @@ lua::ImguiHandle TreeParent::AddButton(char const* label)
 }
 
 
-lua::ImguiHandle TreeParent::AddImageButton(char const* label, FixedString textureGuid,
+lua::ImguiHandle TreeParent::AddImageButton(char const* label, FixedString iconOrTexture,
     std::optional<glm::vec2> size, std::optional<glm::vec2> uv0, std::optional<glm::vec2> uv1)
 {
     auto btn = AddChild<ImageButton>();
-    btn->SetImage(textureGuid);
-    if (size) btn->Size = *size;
-    if (uv0) btn->UV0 = *uv0;
-    if (uv1) btn->UV1 = *uv1;
+    btn->Image.Bind(iconOrTexture);
+    if (size) btn->Image.Size = *size;
+    if (uv0) btn->Image.UV0 = *uv0;
+    if (uv1) btn->Image.UV1 = *uv1;
     btn->Label = label;
     return btn;
 }
 
 
-std::optional<lua::ImguiHandle> TreeParent::AddImage(FixedString textureGuid,
+lua::ImguiHandle TreeParent::AddImage(FixedString iconOrTexture,
     std::optional<glm::vec2> size, std::optional<glm::vec2> uv0, std::optional<glm::vec2> uv1)
 {
     auto img = AddChild<Image>();
-    img->SetImage(textureGuid);
-    if (size) img->Size = *size;
-    if (uv0) img->UV0 = *uv0;
-    if (uv1) img->UV1 = *uv1;
+    img->ImageData.Bind(iconOrTexture);
+    if (size) img->ImageData.Size = *size;
+    if (uv0) img->ImageData.UV0 = *uv0;
+    if (uv1) img->ImageData.UV1 = *uv1;
 
     return img;
 }
 
 
-std::optional<lua::ImguiHandle> TreeParent::AddIcon(FixedString iconName, std::optional<glm::vec2> size)
+lua::ImguiHandle TreeParent::AddIcon(FixedString iconName, std::optional<glm::vec2> size)
 {
-    auto atlas = (*GetStaticSymbols().ls__gTextureAtlasMap)->IconMap.try_get(iconName);
-    if (!atlas) {
-        WARN("Failed to find atlas for icon '%s'", iconName.GetString());
-        return {};
-    }
-
-    auto uvs = atlas->Icons.try_get(iconName);
-    if (!uvs) {
-        WARN("Failed to find UVs for icon '%s'", iconName.GetString());
-        return {};
-    }
-
-    auto texture = gExtender->IMGUI().RegisterTexture(atlas->TextureUuid);
-    if (!texture) {
-        WARN("Failed to load texture '%s' for icon '%s'", atlas->TextureUuid.GetString(), iconName.GetString());
-        return {};
-    }
-
-    auto icon = AddChild<Icon>();
-
-    glm::vec2 iconSize;
-    if (size) {
-        iconSize = *size;
-    } else {
-        iconSize = glm::vec2(
-            static_cast<float>(atlas->IconWidth),
-            static_cast<float>(atlas->IconHeight)
-        );
-    }
-
-    icon->Size = iconSize;
-    icon->UV0 = uvs->UV0;
-    icon->UV1 = uvs->UV1;
-
-    icon->Id = texture->Id;
-    icon->TextureUuid = atlas->TextureUuid;
-
-    return icon;
+    WARN("TreeParent::AddIcon() is deprecated; use TreeParent::AddImage() instead");
+    return AddImage(iconName, size, {}, {});
 }
 
 
@@ -884,58 +912,17 @@ void Popup::Open(std::optional<GuiPopupFlags> flags)
 }
 
 
-Image::~Image()
-{
-    if (id_) {
-        gExtender->IMGUI().UnregisterTexture(id_, TextureUuid);
-    }
-}
-
-void Image::SetImage(FixedString const& textureUuid)
-{
-    TextureUuid = textureUuid;
-    auto result = gExtender->IMGUI().RegisterTexture(textureUuid);
-    if (result) {
-        id_ = result->Id;
-        Size = glm::vec2((float)result->Width, (float)result->Height);
-    } else {
-        WARN("Unable to load texture resource '%s'", textureUuid.GetString());
-    }
-}
-
 void Image::StyledRender()
 {
-    if (id_) {
+    if (ImageData.IsValid()) {
         ImGui::Image(
-            id_,
-            ToImVec(Size),
-            ToImVec(UV0),
-            ToImVec(UV1),
-            ImVec4(1.0, 1.0, 1.0, 1.0),
-            ImVec4(0.0, 0.0, 0.0, 0.0)
+            ImageData.TextureId,
+            ToImVec(ImageData.Size),
+            ToImVec(ImageData.UV0),
+            ToImVec(ImageData.UV1),
+            ToImVec(Tint),
+            ToImVec(Border)
         );
-    }
-}
-
-
-
-void Icon::StyledRender()
-{
-    ImGui::Image(
-        Id,
-        ToImVec(Size),
-        ToImVec(UV0),
-        ToImVec(UV1),
-        ImVec4(1.0, 1.0, 1.0, 1.0),
-        ImVec4(0.0, 0.0, 0.0, 0.0)
-    );
-}
-
-
-Icon::~Icon()
-{
-    if (Id) {
-        gExtender->IMGUI().UnregisterTexture(Id, TextureUuid);
     }
 }
 
@@ -998,25 +985,13 @@ void Button::StyledRender()
 
 void ImageButton::StyledRender()
 {
-    if (!id_) return;
+    if (!Image.IsValid()) return;
 
     auto id = ImGui::GetCurrentWindow()->GetID(Label.c_str());
-    if (ImGui::ImageButtonEx(id, id_, ToImVec(Size), ToImVec(UV0), ToImVec(UV1), ToImVec(Background), ToImVec(Tint), (ImGuiButtonFlags)Flags)) {
+    if (ImGui::ImageButtonEx(id, Image.TextureId, ToImVec(Image.Size), ToImVec(Image.UV0), ToImVec(Image.UV1), ToImVec(Background), ToImVec(Tint), (ImGuiButtonFlags)Flags)) {
         if (OnClick) {
             Manager->GetEventQueue().Call(OnClick, lua::ImguiHandle(Handle));
         }
-    }
-}
-
-void ImageButton::SetImage(FixedString const& textureUuid)
-{
-    TextureUuid = textureUuid;
-    auto result = gExtender->IMGUI().RegisterTexture(textureUuid);
-    if (result) {
-        id_ = result->Id;
-        Size = glm::vec2((float)result->Width, (float)result->Height);
-    } else {
-        WARN("Unable to load texture resource '%s'", textureUuid.GetString());
     }
 }
 
@@ -1206,7 +1181,6 @@ IMGUIObjectManager::IMGUIObjectManager()
     pools_[(unsigned)IMGUIObjectType::MenuItem] = std::make_unique<IMGUIObjectPool<MenuItem>>();
 
     pools_[(unsigned)IMGUIObjectType::Image] = std::make_unique<IMGUIObjectPool<Image>>();
-    pools_[(unsigned)IMGUIObjectType::Icon] = std::make_unique<IMGUIObjectPool<Icon>>();
 
     pools_[(unsigned)IMGUIObjectType::Text] = std::make_unique<IMGUIObjectPool<Text>>();
     pools_[(unsigned)IMGUIObjectType::BulletText] = std::make_unique<IMGUIObjectPool<BulletText>>();
