@@ -631,7 +631,7 @@ stat.SurfaceType = "Fire"
 stat:Sync()
 ```
 
-### Ext.Stats.Get(stat, type, [level]): StatEntry
+### Ext.Stats.Get(stat, [level], [warnOnError]): StatEntry
 
 Returns the specified stats entry as an object for easier manipulation.
 If the `level` argument is not specified or is `nil`, the table will contain stat values as specified in the stat entry.
@@ -655,7 +655,7 @@ end
 Stat attributes can be retrieved by reading the appropriate property of the StatEntry object:
 
 ```lua
-local spell = Ext.Stats.Get("Shout_FlameBlade", "SpellData")
+local spell = Ext.Stats.Get("Shout_FlameBlade")
 local useCosts = spell.UseCosts
 ```
 
@@ -669,7 +669,7 @@ The list of attributes each stat type supports can be found in `Public\Shared\St
 Stat attributes can be updated using simple table assignment:
 
 ```lua
-local spell = Ext.Stats.Get("Shout_FlameBlade", "SpellData")
+local spell = Ext.Stats.Get("Shout_FlameBlade")
 spell.UseCosts = "BonusActionPoint:1;SpellSlot:1:1:2"
 ```
 
@@ -681,8 +681,8 @@ If the function is called while the module is loading (i.e. from a `ModuleLoadin
 
 Example usage of stats read/write (Disable autocast on all spells):
 ```lua
-for i,name in pairs(Ext.Stats.Gets("SpellData")) do
-    local spell = Ext.Stats.Get(name, "SpellData")
+for i,name in pairs(Ext.Stats.GetStats("SpellData")) do
+    local spell = Ext.Stats.Get(name)
     if spell.Autocast == "Yes" then
         spell.Autocast = "No"
     end
@@ -707,7 +707,7 @@ The `AttributeFlags`, `SpellFlagList`, `WeaponFlags`, `ResistanceFlags`, `Passiv
 
 Reading flags:
 ```lua
-local spell = Ext.Stats.Get("Shout_ArmorOfAgathys", "SpellData")
+local spell = Ext.Stats.Get("Shout_ArmorOfAgathys")
 _D(spell.SpellFlags)
 -- Prints:
 -- ["HasSomaticComponent", "HasVerbalComponent", "IsSpell"]
@@ -715,7 +715,7 @@ _D(spell.SpellFlags)
 
 Writing flags:
 ```lua
-local spell = Ext.Stats.Get("Shout_ArmorOfAgathys", "SpellData")
+local spell = Ext.Stats.Get("Shout_ArmorOfAgathys")
 spell.SpellFlags = {"HasVerbalComponent", "IsSpell"}
 ```
 
