@@ -1412,10 +1412,81 @@ void IMGUIManager::OnViewportUpdated()
     requestedScale_ = (float)viewport.y / 1610.0f;
 }
 
+#define DEFAULT_COLOR(name, value) style.Colors[ImGuiCol_##name] = value;
+
 void IMGUIManager::UpdateStyle()
 {
-    ImGui::GetStyle() = ImGuiStyle();
-    ImGui::GetStyle().ScaleAllSizes(requestedScale_);
+    auto& style = ImGui::GetStyle();
+    style = ImGuiStyle();
+
+    style.WindowPadding = ImVec2(10.0f, 8.0f);
+    style.WindowRounding = 4.0f;
+    style.ChildRounding = 4.0f;
+    style.PopupRounding = 2.0f;
+    style.FrameRounding = 3.0f;
+    style.ScrollbarSize = 20.0f;
+    style.ScrollbarRounding = 9.0f;
+    style.GrabMinSize = 16.0f;
+    style.GrabRounding = 4.0f;
+    style.TabRounding = 6.0f;
+    style.TabBarBorderSize = 1.0f;
+    style.SeparatorTextBorderSize = 4.0f;
+
+    DEFAULT_COLOR(Text, ImVec4(0.86f, 0.79f, 0.68f, 0.78f));
+    DEFAULT_COLOR(TextDisabled, ImVec4(0.86f, 0.79f, 0.68f, 0.28f));
+    DEFAULT_COLOR(WindowBg, ImVec4(0.07f, 0.07f, 0.07f, 0.90f));
+    DEFAULT_COLOR(ChildBg, ImVec4(0.18f, 0.15f, 0.15f, 0.78f));
+    DEFAULT_COLOR(PopupBg, ImVec4(0.18f, 0.15f, 0.15f, 0.90f));
+    DEFAULT_COLOR(Border, ImVec4(0.24f, 0.15f, 0.08f, 0.00f));
+    DEFAULT_COLOR(BorderShadow, ImVec4(0.07f, 0.07f, 0.07f, 0.78f));
+    DEFAULT_COLOR(FrameBg, ImVec4(0.18f, 0.15f, 0.15f, 1.00f));
+    DEFAULT_COLOR(FrameBgHovered, ImVec4(0.41f, 0.28f, 0.22f, 0.78f));
+    DEFAULT_COLOR(FrameBgActive, ImVec4(0.32f, 0.24f, 0.16f, 1.00f));
+    DEFAULT_COLOR(TitleBg, ImVec4(0.07f, 0.07f, 0.07f, 1.00f));
+    DEFAULT_COLOR(TitleBgActive, ImVec4(0.32f, 0.24f, 0.16f, 1.00f));
+    DEFAULT_COLOR(TitleBgCollapsed, ImVec4(0.05f, 0.05f, 0.05f, 0.75f));
+    DEFAULT_COLOR(MenuBarBg, ImVec4(0.07f, 0.07f, 0.07f, 0.47f));
+    DEFAULT_COLOR(ScrollbarBg, ImVec4(0.18f, 0.15f, 0.15f, 1.00f));
+    DEFAULT_COLOR(ScrollbarGrab, ImVec4(0.18f, 0.15f, 0.15f, 1.00f));
+    DEFAULT_COLOR(ScrollbarGrabHovered, ImVec4(0.41f, 0.28f, 0.22f, 0.78f));
+    DEFAULT_COLOR(ScrollbarGrabActive, ImVec4(0.32f, 0.24f, 0.16f, 1.00f));
+    DEFAULT_COLOR(CheckMark, ImVec4(0.86f, 0.79f, 0.68f, 0.78f));
+    DEFAULT_COLOR(SliderGrab, ImVec4(0.95f, 0.82f, 0.60f, 0.14f));
+    DEFAULT_COLOR(SliderGrabActive, ImVec4(0.32f, 0.24f, 0.16f, 1.00f));
+    DEFAULT_COLOR(Button, ImVec4(0.95f, 0.82f, 0.60f, 0.14f));
+    DEFAULT_COLOR(ButtonHovered, ImVec4(0.12f, 0.80f, 0.93f, 0.86f));
+    DEFAULT_COLOR(ButtonActive, ImVec4(0.05f, 0.29f, 0.38f, 1.00f));
+    DEFAULT_COLOR(Header, ImVec4(0.36f, 0.30f, 0.27f, 0.76f));
+    DEFAULT_COLOR(HeaderHovered, ImVec4(0.41f, 0.28f, 0.22f, 0.86f));
+    DEFAULT_COLOR(HeaderActive, ImVec4(0.32f, 0.24f, 0.16f, 1.00f));
+    DEFAULT_COLOR(Separator, ImVec4(0.18f, 0.15f, 0.15f, 1.00f));
+    DEFAULT_COLOR(SeparatorHovered, ImVec4(0.41f, 0.28f, 0.22f, 0.78f));
+    DEFAULT_COLOR(SeparatorActive, ImVec4(0.32f, 0.24f, 0.16f, 1.00f));
+    DEFAULT_COLOR(ResizeGrip, ImVec4(0.95f, 0.82f, 0.60f, 0.04f));
+    DEFAULT_COLOR(ResizeGripHovered, ImVec4(0.41f, 0.28f, 0.22f, 0.78f));
+    DEFAULT_COLOR(ResizeGripActive, ImVec4(0.32f, 0.24f, 0.16f, 1.00f));
+    DEFAULT_COLOR(Tab, ImVec4(0.57f, 0.21f, 0.21f, 0.78f));
+    DEFAULT_COLOR(TabHovered, ImVec4(0.12f, 0.80f, 0.93f, 0.78f));
+    DEFAULT_COLOR(TabActive, ImVec4(0.05f, 0.29f, 0.38f, 0.78f));
+    DEFAULT_COLOR(TabUnfocused, ImVec4(0.05f, 0.05f, 0.05f, 0.78f));
+    DEFAULT_COLOR(TabUnfocusedActive, ImVec4(0.05f, 0.05f, 0.05f, 0.78f));
+    DEFAULT_COLOR(PlotLines, ImVec4(0.86f, 0.79f, 0.68f, 0.63f));
+    DEFAULT_COLOR(PlotLinesHovered, ImVec4(0.41f, 0.28f, 0.22f, 1.00f));
+    DEFAULT_COLOR(PlotHistogram, ImVec4(0.86f, 0.79f, 0.68f, 0.63f));
+    DEFAULT_COLOR(PlotHistogramHovered, ImVec4(0.41f, 0.28f, 0.22f, 1.00f));
+    DEFAULT_COLOR(TableHeaderBg, ImVec4(0.82f, 0.69f, 0.47f, 0.47f));
+    DEFAULT_COLOR(TableBorderStrong, ImVec4(0.66f, 0.37f, 0.09f, 0.78f));
+    DEFAULT_COLOR(TableBorderLight, ImVec4(0.56f, 0.46f, 0.26f, 0.78f));
+    DEFAULT_COLOR(TableRowBg, ImVec4(0.63f, 0.69f, 0.34f, 0.43f));
+    DEFAULT_COLOR(TableRowBgAlt, ImVec4(0.52f, 0.29f, 0.15f, 0.43f));
+    DEFAULT_COLOR(TextSelectedBg, ImVec4(0.57f, 0.21f, 0.21f, 0.43f));
+    DEFAULT_COLOR(DragDropTarget, ImVec4(0.07f, 0.07f, 0.07f, 0.78f));
+    DEFAULT_COLOR(NavHighlight, ImVec4(0.55f, 0.00f, 0.00f, 0.78f));
+    DEFAULT_COLOR(NavWindowingHighlight, ImVec4(0.55f, 0.00f, 0.00f, 0.78f));
+    DEFAULT_COLOR(NavWindowingDimBg, ImVec4(0.07f, 0.07f, 0.07f, 0.78f));
+    DEFAULT_COLOR(ModalWindowDimBg, ImVec4(0.18f, 0.15f, 0.15f, 0.73f));
+
+    style.ScaleAllSizes(requestedScale_);
     scale_ = requestedScale_;
 
     ImGui::GetIO().Fonts->Clear();
