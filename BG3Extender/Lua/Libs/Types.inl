@@ -295,6 +295,8 @@ UserReturn Serialize(lua_State* L)
 				return luaL_error(L, "Object class '%s' does not support serialization", pm.Name.GetString());
 			}
 		}
+
+		return luaL_error(L, "Don't know how to serialize legacy objects of this type");
 	} else if (type == LUA_TLIGHTCPPOBJECT) {
 		CppObjectMetadata meta;
 		lua_get_cppobject(L, 1, meta);
@@ -327,10 +329,13 @@ UserReturn Serialize(lua_State* L)
 				impl->Serialize(L, meta);
 				return 1;
 			}
+
+			default:
+				return luaL_error(L, "Don't know how to serialize userdata of metatype %d", (unsigned)meta.MetatableTag);
 		}
 	}
 
-	return luaL_error(L, "Don't know how to serialize objects of this type");
+	return luaL_error(L, "Don't know how to serialize values of type %s", lua_typename(L, type));
 }
 
 void Unserialize(lua_State* L)
