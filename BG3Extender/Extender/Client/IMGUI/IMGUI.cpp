@@ -130,7 +130,12 @@ void StyledRenderable::Render()
     if (font) ImGui::PushFont(font);
 
     for (auto const& var : StyleVars) {
-        ImGui::PushStyleVar((ImGuiStyleVar)var.Key, ToImVec(var.Value));
+        auto varInfo = ImGui::GetStyleVarInfo((ImGuiStyleVar)var.Key);
+        if (varInfo->Count == 2) {
+            ImGui::PushStyleVar((ImGuiStyleVar)var.Key, ToImVec(var.Value));
+        } else {
+            ImGui::PushStyleVar((ImGuiStyleVar)var.Key, var.Value.x);
+        }
     }
 
     for (auto const& var : StyleColors) {
@@ -151,6 +156,8 @@ void StyledRenderable::Render()
     } else if (AbsolutePosition) {
         ImGui::SetCursorPos(ToImVec(*AbsolutePosition));
     }
+
+    if (ItemWidth) ImGui::SetNextItemWidth(*ItemWidth);
 
     StyledRender();
 
