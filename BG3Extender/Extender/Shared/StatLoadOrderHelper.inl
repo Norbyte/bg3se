@@ -39,11 +39,12 @@ void StatLoadOrderHelper::OnStatFileOpened()
 		auto entry = statsEntryToModMap_.find(kv.Key);
 		if (entry == statsEntryToModMap_.end()) {
 			StatsEntryModMapping mapping;
-			mapping.Mod = statLastTxtMod_;
+			mapping.FirstMod = statLastTxtMod_;
+			mapping.LastMod = statLastTxtMod_;
 			mapping.PreParseBuf = preParseBuf;
 			statsEntryToModMap_.insert(std::make_pair(kv.Key, mapping));
 		} else if (entry->second.PreParseBuf != preParseBuf) {
-			entry->second.Mod = statLastTxtMod_;
+			entry->second.LastMod = statLastTxtMod_;
 			entry->second.PreParseBuf = preParseBuf;
 		}
 	}
@@ -69,13 +70,13 @@ void StatLoadOrderHelper::OnStatFileOpened(Path const& path)
 	}
 }
 
-FixedString StatLoadOrderHelper::GetStatsEntryMod(FixedString statId) const
+StatLoadOrderHelper::StatsEntryModMapping const* StatLoadOrderHelper::GetStatsEntryMod(FixedString statId) const
 {
 	auto entryIt = statsEntryToModMap_.find(statId);
 	if (entryIt != statsEntryToModMap_.end()) {
-		return entryIt->second.Mod;
+		return &entryIt->second;
 	} else {
-		return {};
+		return nullptr;
 	}
 }
 
@@ -103,7 +104,7 @@ std::vector<Object*> StatLoadOrderHelper::GetStatsLoadedBefore(FixedString modId
 	auto stats = GetStaticSymbols().GetStats();
 	for (auto const& object : stats->Objects.Primitives) {
 		auto statEntryMod = GetStatsEntryMod(object->Name);
-		if (statEntryMod && modsLoadedBefore.find(statEntryMod) != modsLoadedBefore.end()) {
+		if (statEntryMod && modsLoadedBefore.find(statEntryMod->LastMod) != modsLoadedBefore.end()) {
 			statsLoadedBefore.push_back(object);
 		}
 	}

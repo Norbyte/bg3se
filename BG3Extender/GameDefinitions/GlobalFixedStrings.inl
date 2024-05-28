@@ -6,6 +6,7 @@ FS(Name);
 FS(Using);
 FS(AIFlags);
 FS(ModifierList);
+FS(OriginalModId);
 
 // Stat modifier types
 FS(Character);

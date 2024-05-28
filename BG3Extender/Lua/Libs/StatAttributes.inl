@@ -194,7 +194,12 @@ namespace bg3se::lua::stats
 			push(L, stats->ModifierLists.Find(object->ModifierListIndex)->Name);
 			return 1;
 		} else if (attributeName == GFS.strModId) {
-			push(L, gExtender->GetStatLoadOrderHelper().GetStatsEntryMod(object->Name));
+			auto mod = gExtender->GetStatLoadOrderHelper().GetStatsEntryMod(object->Name);
+			push(L, mod ? mod->LastMod : FixedString{});
+			return 1;
+		} else if (attributeName == GFS.strOriginalModId) {
+			auto mod = gExtender->GetStatLoadOrderHelper().GetStatsEntryMod(object->Name);
+			push(L, mod ? mod->FirstMod : FixedString{});
 			return 1;
 		} else if (attributeName == GFS.strUsing) {
 			if (object->Using) {
