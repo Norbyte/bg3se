@@ -61,8 +61,8 @@ void StatLoadOrderHelper::OnStatFileOpened(Path const& path)
 
 		auto modIt = modDirectoryToModMap_.find(match[1].str().c_str());
 		if (modIt != modDirectoryToModMap_.end()) {
-			statLastTxtMod_ = modIt->second;
 			OnStatFileOpened();
+			statLastTxtMod_ = modIt->second;
 		} else {
 			WARN("Unable to resolve mod while loading stats .txt: %s", path.Name.c_str());
 		}
