@@ -103,6 +103,7 @@ public:
     HandleType Handle{ InvalidHandle };
     HandleType Parent{ InvalidHandle };
     IMGUIObjectManager* Manager{ nullptr };
+    lua::RegistryEntry UserData;
 };
 
 
