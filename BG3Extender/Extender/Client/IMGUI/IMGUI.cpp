@@ -145,6 +145,13 @@ void StyledRenderable::Render()
 
     if (SameLine) ImGui::SameLine();
 
+    if (PositionOffset) {
+        auto pos = ImGui::GetCursorPos();
+        ImGui::SetCursorPos(ImVec2(pos.x + PositionOffset->x, pos.y + PositionOffset->y));
+    } else if (AbsolutePosition) {
+        ImGui::SetCursorPos(ToImVec(*AbsolutePosition));
+    }
+
     StyledRender();
 
     if (!StyleColors.empty()) {

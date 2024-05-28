@@ -136,6 +136,8 @@ public:
     bool SameLine{ false };
     bool Visible{ true };
     FixedString Font;
+    std::optional<glm::vec2> PositionOffset;
+    std::optional<glm::vec2> AbsolutePosition;
 
     lua::LuaDelegate<void(lua::ImguiHandle)> OnActivate;
     lua::LuaDelegate<void(lua::ImguiHandle)> OnDeactivate;
