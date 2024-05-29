@@ -86,8 +86,8 @@ Osi = {}
 --- @class EntityHandle
 --- @field CreateComponent fun(self:EntityHandle, type:ExtComponentType):BaseComponent
 --- @field GetComponent fun(self:EntityHandle, type:ExtComponentType):BaseComponent
---- @field GetAllComponents fun(self:EntityHandle, warnOnMissing:bool?):table<ExtComponentType,BaseComponent>
---- @field GetAllComponentNames fun(self:EntityHandle, mapped:bool?):table<number,string>
+--- @field GetAllComponents fun(self:EntityHandle, warnOnMissing:boolean?):table<ExtComponentType,BaseComponent>
+--- @field GetAllComponentNames fun(self:EntityHandle, mapped:boolean?):table<number,string>
 --- @field GetEntityType fun(self:EntityHandle):number
 --- @field GetSalt fun(self:EntityHandle):number
 --- @field GetIndex fun(self:EntityHandle):number
@@ -6462,9 +6462,9 @@ Osi = {}
 --- @field AddTable fun(self:ExtuiTreeParent, a1:string, a2:uint32):ExtuiTable
 --- @field AddText fun(self:ExtuiTreeParent, a1:string):ExtuiText
 --- @field AddTree fun(self:ExtuiTreeParent, a1:string):ExtuiTree
---- @field AttachChild fun(self:ExtuiTreeParent, a1:uint64):boolean
---- @field DetachChild fun(self:ExtuiTreeParent, a1:uint64):boolean
---- @field RemoveChild fun(self:ExtuiTreeParent, a1:uint64):boolean
+--- @field AttachChild fun(self:ExtuiTreeParent, a1:ImguiHandle):boolean
+--- @field DetachChild fun(self:ExtuiTreeParent, a1:ImguiHandle):boolean
+--- @field RemoveChild fun(self:ExtuiTreeParent, a1:ImguiHandle):boolean
 
 
 --- @class ExtuiWindow:ExtuiTreeParent

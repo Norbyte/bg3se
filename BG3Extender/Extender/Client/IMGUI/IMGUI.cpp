@@ -110,7 +110,7 @@ void Renderable::Destroy()
     if (Parent) {
         auto parent = Manager->GetRenderable(Parent);
         if (parent != nullptr) {
-            static_cast<TreeParent*>(parent)->RemoveChild(Handle);
+            static_cast<TreeParent*>(parent)->RemoveChild(lua::ImguiHandle(Handle));
         }
     } else {
         Manager->DestroyRenderable(Handle);
@@ -505,23 +505,23 @@ lua::ImguiHandle TreeParent::AddColorPicker(char const* label, std::optional<glm
     return e;
 }
 
-bool TreeParent::RemoveChild(HandleType child)
+bool TreeParent::RemoveChild(lua::ImguiHandle child)
 {
-    auto it = Children.find(child);
+    auto it = Children.find(child.Handle);
     if (it != Children.end()) {
         Children.erase(it);
-        return Manager->DestroyRenderable(child);
+        return Manager->DestroyRenderable(child.Handle);
     } else {
         return false;
     }
 }
 
-bool TreeParent::DetachChild(HandleType child)
+bool TreeParent::DetachChild(lua::ImguiHandle child)
 {
-    auto it = Children.find(child);
+    auto it = Children.find(child.Handle);
     if (it != Children.end()) {
         Children.erase(it);
-        auto ele = Manager->GetRenderable(child);
+        auto ele = Manager->GetRenderable(child.Handle);
         if (ele != nullptr) {
             ele->Parent = InvalidHandle;
             return true;
@@ -533,9 +533,9 @@ bool TreeParent::DetachChild(HandleType child)
     }
 }
 
-bool TreeParent::AttachChild(HandleType child)
+bool TreeParent::AttachChild(lua::ImguiHandle child)
 {
-    auto ele = Manager->GetRenderable(child);
+    auto ele = Manager->GetRenderable(child.Handle);
     if (ele == nullptr) {
         ERR("Tried to attach nonexistent child UI element");
         return false;

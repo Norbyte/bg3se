@@ -81,8 +81,8 @@ function Ext.RegisterConsoleCommand(cmd, handler) end
 --- @class EntityHandle
 --- @field CreateComponent fun(self:EntityHandle, type:ExtComponentType):BaseComponent
 --- @field GetComponent fun(self:EntityHandle, type:ExtComponentType):BaseComponent
---- @field GetAllComponents fun(self:EntityHandle, warnOnMissing:bool?):table<ExtComponentType,BaseComponent>
---- @field GetAllComponentNames fun(self:EntityHandle, mapped:bool?):table<number,string>
+--- @field GetAllComponents fun(self:EntityHandle, warnOnMissing:boolean?):table<ExtComponentType,BaseComponent>
+--- @field GetAllComponentNames fun(self:EntityHandle, mapped:boolean?):table<number,string>
 --- @field GetEntityType fun(self:EntityHandle):number
 --- @field GetSalt fun(self:EntityHandle):number
 --- @field GetIndex fun(self:EntityHandle):number
