@@ -14,6 +14,7 @@ Ext_Types = {
 --- @return string fileContents Returns the file contents, for use with Ext.IO.SaveFile
 function Ext_Types.GenerateIdeHelpers(outputPath, opts) end
 ]]},
+
 Ext_Json = {
 	After = [[
 --- @class JsonStringifyOptions
@@ -24,5 +25,11 @@ Ext_Json = {
 --- @field MaxDepth integer Defaults to 64, the maximum value.
 --- @field LimitDepth integer Defaults to -1 (off).
 --- @field LimitArrayElements integer Defaults to -1 (off).]]
+},
+
+ImguiHandle = {
+	Replace = [[
+--- @alias ImguiHandle ExtuiStyledRenderable
+]]
 },
 }

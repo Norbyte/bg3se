@@ -7,10 +7,10 @@ local NEWLINE = "\r\n"
 ---@type {Specific:table<string,string>, Misc:string[]}
 local _CustomEntries = Ext.Utils.Include(nil, "builtin://Libs/HelpersGenerator/CustomEntries.lua")
 
----@type table<string,{Before:string?, After:string?}>
+---@type table<string,{Before:string?, After:string?, Replace:string?}>
 local _CustomTypeEntries = Ext.Utils.Include(nil, "builtin://Libs/HelpersGenerator/CustomTypeEntries.lua")
 
----@type table<string,{Before:string?, After:string?}>
+---@type table<string,{Before:string?, After:string?, Replace:string?, ReplaceReturnValue:string?}>
 
 local _CustomFunctionExtras = Ext.Utils.Include(nil, "builtin://Libs/HelpersGenerator/CustomFunctionExtras.lua")
 
@@ -438,10 +438,15 @@ local function _TableIsNullOrEmpty(tbl)
     return tbl == nil or tbl[1] == nil
 end
 
-function Generator:MakeTypeSignature(cls, type, forceExpand, nativeDefn)
+function Generator:MakeTypeSignature(cls, type, forceExpand, nativeDefn, overrides)
     if _TypeReplace[type.TypeName] then
         return _TypeReplace[type.TypeName]
     end
+
+    if overrides and overrides.ReplaceSignature then
+        return overrides.ReplaceSignature
+    end
+
     if type.IsBuiltin and forceExpand ~= true then
         return type.TypeName
     elseif type.Kind == "Any" then
@@ -485,7 +490,9 @@ function Generator:MakeTypeSignature(cls, type, forceExpand, nativeDefn)
             end
         end
 
-        if not _TableIsNullOrEmpty(missingFuncData.Return) then
+        if overrides and overrides.ReplaceReturnValue then
+            table.insert(retval, overrides.ReplaceReturnValue)
+        elseif not _TableIsNullOrEmpty(missingFuncData.Return) then
             for i,arg in ipairs(missingFuncData.Return) do
                 table.insert(retval, arg)
             end
@@ -611,23 +618,23 @@ function Generator:MethodNeedsFullSignature(nativeMethod)
     return false
 end
 
-function Generator:EmitMethod(type, fname, nativeDefn)
+function Generator:EmitMethod(type, fname, nativeDefn, overrides)
     local nativeMethod = self:FindNativeMethod(fname, nativeDefn)
 
     if self:MethodNeedsFullSignature(nativeMethod) then
-        self:EmitFullMethodSignature(type, fname, type.Methods[fname], nativeMethod)
+        self:EmitFullMethodSignature(type, fname, type.Methods[fname], nativeMethod, overrides)
     else
         local clsName = self:MakeTypeSignature(nil, type)
         local fieldOverride = _FuncData.Field[clsName] and _FuncData.Field[clsName][fname]
         if fieldOverride then
             self:EmitFieldComment(fname .. " " .. fieldOverride)
         else
-            self:EmitFieldComment(fname .. " " .. self:MakeTypeSignature(type, type.Methods[fname],  false, nativeMethod))
+            self:EmitFieldComment(fname .. " " .. self:MakeTypeSignature(type, type.Methods[fname],  false, nativeMethod, overrides))
         end
     end
 end
 
-function Generator:EmitModuleFunction(type, fname, nativeDefn, afterText)
+function Generator:EmitModuleFunction(type, fname, nativeDefn, overrides)
     local nativeFunc = self:FindNativeFunction(fname, nativeDefn)
 
     if nativeFunc == nil then
@@ -636,15 +643,15 @@ function Generator:EmitModuleFunction(type, fname, nativeDefn, afterText)
         if _FuncData.Field[clsName] and _FuncData.Field[clsName][fname] then
             typeSig = _FuncData.Field[clsName][fname]
         else
-            typeSig = self:MakeTypeSignature(nil, type.Methods[fname])
+            typeSig = self:MakeTypeSignature(nil, type.Methods[fname], nil, nil, overrides)
         end
         self:EmitFieldComment(fname .. " " .. typeSig)
     else
-        self:EmitFullMethodSignature(type, fname, type.Methods[fname], nativeFunc, afterText)
+        self:EmitFullMethodSignature(type, fname, type.Methods[fname], nativeFunc, overrides)
     end
 end
 
-function Generator:EmitFullMethodSignature(cls, funcName, fun, nativeMethod, afterText)
+function Generator:EmitFullMethodSignature(cls, funcName, fun, nativeMethod, overrides)
     local argDescs = {}
     local args = {}
     local overloads = {}
@@ -729,8 +736,8 @@ function Generator:EmitFullMethodSignature(cls, funcName, fun, nativeMethod, aft
     else
         self.Text = self.Text .. fun
     end
-    if afterText then
-        self.Text = self.Text .. NEWLINE .. afterText
+    if overrides and overrides.After then
+        self.Text = self.Text .. NEWLINE .. overrides.After
     end
     self.Text = self.Text .. NEWLINE .. NEWLINE
 end
@@ -822,6 +829,11 @@ function Generator:EmitClass(type)
     local nativeDefn = self:FindNativeClass(type)
 
     local customText = _CustomTypeEntries[name]
+    if customText and customText.Replace then
+        self:EmitLine(customText.Replace)
+        return
+    end
+
     --TODO Hacky output fixes [_CustomTypeEntries.Before(EmitClass)]. May not be required later on.
     if customText and customText.Before then
         self:EmitLine(customText.Before)
@@ -869,7 +881,8 @@ function Generator:EmitClass(type)
     end
     
     for i,fname in ipairs(basicMethodSigs) do
-        self:EmitMethod(type, fname, nativeDefn)
+        local overrides = _CustomFunctionExtras[name.."."..fname]
+        self:EmitMethod(type, fname, nativeDefn, overrides)
     end
 
     if #extendedMethodSigs > 0 then
@@ -877,7 +890,8 @@ function Generator:EmitClass(type)
         self:EmitLine("")
         
         for i,fname in ipairs(extendedMethodSigs) do
-            self:EmitMethod(type, fname, nativeDefn)
+            local overrides = _CustomFunctionExtras[name.."."..fname]
+            self:EmitMethod(type, fname, nativeDefn, overrides)
         end
     end
 
@@ -951,7 +965,8 @@ function Generator:EmitModule(type, moduleToClassField)
     end
     
     for i,fname in ipairs(basicFuncSigs) do
-        self:EmitModuleFunction(type, fname, nativeDefn)
+        local overrides = _CustomFunctionExtras[helpersModuleName.."."..fname]
+        self:EmitModuleFunction(type, fname, nativeDefn, overrides)
     end
 
     self:EmitLine('local ' .. helpersModuleName .. ' = {}')
@@ -965,23 +980,23 @@ function Generator:EmitModule(type, moduleToClassField)
         --TODO Hacky output fixes [_CustomFunctionExtras(EmitModule)]. May not be required later on.
         local replaceText = nil
         local afterText = nil
-        if nativeDefn ~= nil then
-            local functionAdditions = _CustomFunctionExtras[helpersModuleName.."."..fname]
-            if functionAdditions then
-                if functionAdditions.Before then
-                    self:EmitLine(functionAdditions.Before, true)
-                end
-                afterText = functionAdditions.After
-                replaceText = functionAdditions.Replace
+
+        local overrides = _CustomFunctionExtras[helpersModuleName.."."..fname]
+        if overrides then
+            if overrides.Before then
+                self:EmitLine(overrides.Before, true)
             end
+            afterText = overrides.After
+            replaceText = overrides.Replace
         end
+
         if replaceText then
             self:EmitLine(replaceText, true)
             if afterText then
                 self:EmitLine(afterText, true)
             end
         else
-            self:EmitModuleFunction(type, fname, nativeDefn, afterText)
+            self:EmitModuleFunction(type, fname, nativeDefn, overrides)
         end
     end
 end

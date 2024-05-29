@@ -1586,7 +1586,8 @@ Osi = {}
 --- @field SurfaceType SurfaceType
 
 
---- @class ImguiHandle
+--- @alias ImguiHandle ExtuiStyledRenderable
+
 
 
 --- @class IncreaseMaxHPComponent:BaseComponent
@@ -5671,12 +5672,12 @@ Osi = {}
 
 
 --- @class ExtuiMenu:ExtuiTreeParent
---- @field AddItem fun(self:ExtuiMenu, a1:string, a2:string?):ImguiHandle
---- @field AddMenu fun(self:ExtuiMenu, a1:string):ImguiHandle
+--- @field AddItem fun(self:ExtuiMenu, a1:string, a2:string?):ExtuiMenuItem
+--- @field AddMenu fun(self:ExtuiMenu, a1:string):ExtuiMenu
 
 
 --- @class ExtuiMenuBar:ExtuiTreeParent
---- @field AddMenu fun(self:ExtuiMenuBar, a1:string):ImguiHandle
+--- @field AddMenu fun(self:ExtuiMenuBar, a1:string):ExtuiMenu
 
 
 --- @class ExtuiMenuItem:ExtuiStyledRenderable
@@ -5772,7 +5773,7 @@ Osi = {}
 --- @field Visible boolean
 --- @field SetColor fun(self:ExtuiStyledRenderable, a1:GuiColor, a2:vec4)
 --- @field SetStyle fun(self:ExtuiStyledRenderable, a1:GuiStyleVar, a2:number, a3:number?)
---- @field Tooltip fun(self:ExtuiStyledRenderable):ImguiHandle
+--- @field Tooltip fun(self:ExtuiStyledRenderable):ExtuiTooltip
 
 
 --- @class ExtuiTabBar:ExtuiTreeParent
@@ -5786,7 +5787,7 @@ Osi = {}
 --- @field NoTooltip boolean
 --- @field Reorderable boolean
 --- @field TabListPopupButton boolean
---- @field AddTabItem fun(self:ExtuiTabBar, a1:string):ImguiHandle
+--- @field AddTabItem fun(self:ExtuiTabBar, a1:string):ExtuiTabItem
 
 
 --- @class ExtuiTabItem:ExtuiTreeParent
@@ -5839,7 +5840,7 @@ Osi = {}
 --- @field SortMulti boolean
 --- @field SortTristate boolean
 --- @field Sortable boolean
---- @field AddRow fun(self:ExtuiTable):ImguiHandle
+--- @field AddRow fun(self:ExtuiTable):ExtuiTableRow
 
 
 --- @class ExtuiTableCell:ExtuiTreeParent
@@ -5847,7 +5848,7 @@ Osi = {}
 
 --- @class ExtuiTableRow:ExtuiTreeParent
 --- @field Headers boolean
---- @field AddCell fun(self:ExtuiTableRow):ImguiHandle
+--- @field AddCell fun(self:ExtuiTableRow):ExtuiTableCell
 
 
 --- @class ExtuiText:ExtuiStyledRenderable
@@ -5879,35 +5880,35 @@ Osi = {}
 
 --- @class ExtuiTreeParent:ExtuiStyledRenderable
 --- @field Children ImguiHandle[]
---- @field AddBulletText fun(self:ExtuiTreeParent, a1:string):ImguiHandle
---- @field AddButton fun(self:ExtuiTreeParent, a1:string):ImguiHandle
---- @field AddCheckbox fun(self:ExtuiTreeParent, a1:string, a2:boolean?):ImguiHandle
---- @field AddCollapsingHeader fun(self:ExtuiTreeParent, a1:string):ImguiHandle
---- @field AddColorEdit fun(self:ExtuiTreeParent, a1:string, a2:vec3?):ImguiHandle
---- @field AddColorPicker fun(self:ExtuiTreeParent, a1:string, a2:vec3?):ImguiHandle
---- @field AddCombo fun(self:ExtuiTreeParent, a1:string):ImguiHandle
---- @field AddDrag fun(self:ExtuiTreeParent, a1:string, a2:number?, a3:number?, a4:number?):ImguiHandle
---- @field AddDragInt fun(self:ExtuiTreeParent, a1:string, a2:int32?, a3:int32?, a4:int32?):ImguiHandle
---- @field AddDummy fun(self:ExtuiTreeParent, a1:number, a2:number):ImguiHandle
---- @field AddGroup fun(self:ExtuiTreeParent, a1:string):ImguiHandle
---- @field AddIcon fun(self:ExtuiTreeParent, a1:FixedString, a2:vec2?):ImguiHandle
---- @field AddImage fun(self:ExtuiTreeParent, a1:FixedString, a2:vec2?, a3:vec2?, a4:vec2?):ImguiHandle
---- @field AddImageButton fun(self:ExtuiTreeParent, a1:string, a2:FixedString, a3:vec2?, a4:vec2?, a5:vec2?):ImguiHandle
---- @field AddInputInt fun(self:ExtuiTreeParent, a1:string, a2:int32?):ImguiHandle
---- @field AddInputScalar fun(self:ExtuiTreeParent, a1:string, a2:number?):ImguiHandle
---- @field AddInputText fun(self:ExtuiTreeParent, a1:string, a2:string?):ImguiHandle
---- @field AddNewLine fun(self:ExtuiTreeParent):ImguiHandle
---- @field AddPopup fun(self:ExtuiTreeParent, a1:string):ImguiHandle
---- @field AddRadioButton fun(self:ExtuiTreeParent, a1:string, a2:boolean?):ImguiHandle
---- @field AddSeparator fun(self:ExtuiTreeParent):ImguiHandle
---- @field AddSeparatorText fun(self:ExtuiTreeParent, a1:string):ImguiHandle
---- @field AddSlider fun(self:ExtuiTreeParent, a1:string, a2:number?, a3:number?, a4:number?):ImguiHandle
---- @field AddSliderInt fun(self:ExtuiTreeParent, a1:string, a2:int32?, a3:int32?, a4:int32?):ImguiHandle
---- @field AddSpacing fun(self:ExtuiTreeParent):ImguiHandle
---- @field AddTabBar fun(self:ExtuiTreeParent, a1:string):ImguiHandle
---- @field AddTable fun(self:ExtuiTreeParent, a1:string, a2:uint32):ImguiHandle
---- @field AddText fun(self:ExtuiTreeParent, a1:string):ImguiHandle
---- @field AddTree fun(self:ExtuiTreeParent, a1:string):ImguiHandle
+--- @field AddBulletText fun(self:ExtuiTreeParent, a1:string):ExtuiBulletText
+--- @field AddButton fun(self:ExtuiTreeParent, a1:string):ExtuiButton
+--- @field AddCheckbox fun(self:ExtuiTreeParent, a1:string, a2:boolean?):ExtuiCheckbox
+--- @field AddCollapsingHeader fun(self:ExtuiTreeParent, a1:string):ExtuiCollapsingHeader
+--- @field AddColorEdit fun(self:ExtuiTreeParent, a1:string, a2:vec3?):ExtuiColorEdit
+--- @field AddColorPicker fun(self:ExtuiTreeParent, a1:string, a2:vec3?):ExtuiColorPicker
+--- @field AddCombo fun(self:ExtuiTreeParent, a1:string):ExtuiCombo
+--- @field AddDrag fun(self:ExtuiTreeParent, a1:string, a2:number?, a3:number?, a4:number?):ExtuiDrag
+--- @field AddDragInt fun(self:ExtuiTreeParent, a1:string, a2:int32?, a3:int32?, a4:int32?):ExtuiDragInt
+--- @field AddDummy fun(self:ExtuiTreeParent, a1:number, a2:number):ExtuiDummy
+--- @field AddGroup fun(self:ExtuiTreeParent, a1:string):ExtuiGroup
+--- @field AddIcon fun(self:ExtuiTreeParent, a1:FixedString, a2:vec2?):ExtuiIcon
+--- @field AddImage fun(self:ExtuiTreeParent, a1:FixedString, a2:vec2?, a3:vec2?, a4:vec2?):ExtuiImage
+--- @field AddImageButton fun(self:ExtuiTreeParent, a1:string, a2:FixedString, a3:vec2?, a4:vec2?, a5:vec2?):ExtuiImageButton
+--- @field AddInputInt fun(self:ExtuiTreeParent, a1:string, a2:int32?):ExtuiInputInt
+--- @field AddInputScalar fun(self:ExtuiTreeParent, a1:string, a2:number?):ExtuiInputScalar
+--- @field AddInputText fun(self:ExtuiTreeParent, a1:string, a2:string?):ExtuiInputText
+--- @field AddNewLine fun(self:ExtuiTreeParent):ExtuiNewLine
+--- @field AddPopup fun(self:ExtuiTreeParent, a1:string):ExtuiPopup
+--- @field AddRadioButton fun(self:ExtuiTreeParent, a1:string, a2:boolean?):ExtuiRadioButton
+--- @field AddSeparator fun(self:ExtuiTreeParent):ExtuiSeparator
+--- @field AddSeparatorText fun(self:ExtuiTreeParent, a1:string):ExtuiSeparatorText
+--- @field AddSlider fun(self:ExtuiTreeParent, a1:string, a2:number?, a3:number?, a4:number?):ExtuiSlider
+--- @field AddSliderInt fun(self:ExtuiTreeParent, a1:string, a2:int32?, a3:int32?, a4:int32?):ExtuiSliderInt
+--- @field AddSpacing fun(self:ExtuiTreeParent):ExtuiSpacing
+--- @field AddTabBar fun(self:ExtuiTreeParent, a1:string):ExtuiTabBar
+--- @field AddTable fun(self:ExtuiTreeParent, a1:string, a2:uint32):ExtuiTable
+--- @field AddText fun(self:ExtuiTreeParent, a1:string):ExtuiText
+--- @field AddTree fun(self:ExtuiTreeParent, a1:string):ExtuiTree
 --- @field AttachChild fun(self:ExtuiTreeParent, a1:uint64):boolean
 --- @field DetachChild fun(self:ExtuiTreeParent, a1:uint64):boolean
 --- @field RemoveChild fun(self:ExtuiTreeParent, a1:uint64):boolean
@@ -5939,7 +5940,7 @@ Osi = {}
 --- @field OnClose RegistryEntry
 --- @field Open boolean
 --- @field UnsavedDocument boolean
---- @field AddMainMenu fun(self:ExtuiWindow):ImguiHandle
+--- @field AddMainMenu fun(self:ExtuiWindow):ExtuiMenu
 --- @field SetBgAlpha fun(self:ExtuiWindow, a1:number?)
 --- @field SetCollapsed fun(self:ExtuiWindow, a1:boolean, a2:GuiCond?)
 --- @field SetContentSize fun(self:ExtuiWindow, a1:vec2?)
@@ -11579,7 +11580,7 @@ local Ext_ClientAudio = {}
 --- @class Ext_ClientIMGUI
 --- @field EnableDemo fun(a1:boolean)
 --- @field LoadFont fun(a1:FixedString, a2:string, a3:number):boolean
---- @field NewWindow fun(a1:string):ImguiHandle
+--- @field NewWindow fun(a1:string):ExtuiWindow
 --- @field SetScale fun(a1:number)
 local Ext_ClientIMGUI = {}
 
