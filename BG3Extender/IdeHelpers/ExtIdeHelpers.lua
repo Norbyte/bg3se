@@ -5840,6 +5840,7 @@ Osi = {}
 --- @field SortMulti boolean
 --- @field SortTristate boolean
 --- @field Sortable boolean
+--- @field AddColumn fun(self:ExtuiTable, a1:string, a2:GuiTableColumnFlags?, a3:number?)
 --- @field AddRow fun(self:ExtuiTable):ExtuiTableRow
 
 
@@ -11647,8 +11648,8 @@ local Ext_IO = {}
 
 
 --- @class Ext_Json
---- @field Parse fun()
---- @field Stringify fun()
+--- @field Parse fun(str:string):table parsedTable
+--- @field Stringify fun(data:table, opts:JsonStringifyOptions?):string tableAsString
 local Ext_Json = {}
 --- @class JsonStringifyOptions
 --- @field Beautify boolean Sorts the output table, and indents with tabs. Defaults to true.
@@ -11773,7 +11774,7 @@ local Ext_StaticData = {}
 --- @field Create fun(a1:FixedString, a2:FixedString, a3:FixedString?, a4:boolean?)
 --- @field EnumIndexToLabel fun(a1:FixedString, a2:int32):FixedString?
 --- @field EnumLabelToIndex fun(a1:FixedString, a2:FixedString)
---- @field Get fun(a1:string, a2:int32?, a3:boolean?, a4:boolean?)
+--- @field Get fun(a1:string, a2:int32?, a3:boolean?, a4:boolean?):FixedString[]
 --- @field GetCachedInterrupt fun(a1:FixedString):StatsInterruptPrototype
 --- @field GetCachedPassive fun(a1:FixedString):StatsPassivePrototype
 --- @field GetCachedSpell fun(a1:FixedString):StatsSpellPrototype
@@ -11806,7 +11807,7 @@ local Ext_StatsTreasureTable = {}
 --- @class Ext_Types
 --- @field Construct fun(a1:FixedString)
 --- @field GetAllTypes fun():FixedString[]
---- @field GetObjectType fun(a1:AnyRef):string?
+--- @field GetObjectType fun(a1:AnyRef):FixedString|"userdata"|"lightuserdata" objectType
 --- @field GetTypeInfo fun(a1:FixedString):TypeInformation
 --- @field IsA fun(a1:AnyRef, a2:FixedString):boolean
 --- @field Serialize fun()
@@ -11832,17 +11833,17 @@ function Ext_Types.GenerateIdeHelpers(outputPath, opts) end
 --- @field GameVersion fun():string?
 --- @field GetCommandLineParams fun():string[]
 --- @field GetGlobalSwitches fun():GlobalSwitches
---- @field GetValueType fun():string
+--- @field GetValueType fun(value:any):string|"nil"|"number"|"string"|"boolean"|"table"|"function"|"thread"|"userdata"|"lightuserdata" valueType # Returns a base type, lightuserdata, or an extender type.
 --- @field HandleToInteger fun(a1:EntityHandle):int64
---- @field Include fun()
+--- @field Include fun(modGUID:string?, path:string, replaceGlobals:table?):any returnedValue Whatever the script returned, if anything
 --- @field IntegerToHandle fun(a1:int64):EntityHandle
---- @field IsValidHandle fun():boolean
+--- @field IsValidHandle fun(handle:ComponentHandle):boolean
 --- @field LoadString fun(str:string):UserReturn Similar to lua `loadstring`, with extra safeguards.
 --- @field MicrosecTime fun():number
 --- @field MonotonicTime fun():int64
---- @field Print fun()
---- @field PrintError fun()
---- @field PrintWarning fun()
+--- @field Print fun(...:any)
+--- @field PrintError fun(...:any)
+--- @field PrintWarning fun(...:any)
 --- @field ShowError fun(a1:string)
 --- @field ShowErrorAndExitGame fun(a1:string)
 --- @field Version fun():int32

@@ -20,9 +20,6 @@ local _Aliases = Ext.Utils.Include(nil, "builtin://Libs/HelpersGenerator/Aliases
 ---@type {Regular:table<string, table<string, {Params:{name:string, arg:string, description:string}, Return:{}}>>, Field:table<string, table<string, string>>}
 local _FuncData = Ext.Utils.Include(nil, "builtin://Libs/HelpersGenerator/FunctionFixes.lua")
 
-local _PreventableEvent = {
-}
-
 local _TypeAliasReplace = {
     ComponentHandle = "userdata",
     EntityHandle = "userdata",
@@ -438,7 +435,7 @@ local function _TableIsNullOrEmpty(tbl)
     return tbl == nil or tbl[1] == nil
 end
 
-function Generator:MakeTypeSignature(cls, type, forceExpand, nativeDefn, overrides)
+function Generator:MakeTypeSignature(cls, type, forceExpand, nativeDefn, overrides, missingFuncData)
     if _TypeReplace[type.TypeName] then
         return _TypeReplace[type.TypeName]
     end
@@ -471,7 +468,7 @@ function Generator:MakeTypeSignature(cls, type, forceExpand, nativeDefn, overrid
             table.insert(args, "self:" .. clsName)
         end
 
-        local missingFuncData = {}
+        missingFuncData = missingFuncData or {}
         if _FuncData.Regular[clsName] and _FuncData.Regular[clsName][type.TypeName] then
             missingFuncData = _FuncData.Regular[clsName][type.TypeName]
         end
@@ -643,7 +640,8 @@ function Generator:EmitModuleFunction(type, fname, nativeDefn, overrides)
         if _FuncData.Field[clsName] and _FuncData.Field[clsName][fname] then
             typeSig = _FuncData.Field[clsName][fname]
         else
-            typeSig = self:MakeTypeSignature(nil, type.Methods[fname], nil, nil, overrides)
+            local missingFuncData = _FuncData.Regular[clsName] and _FuncData.Regular[clsName][fname] or nil
+            typeSig = self:MakeTypeSignature(nil, type.Methods[fname], nil, nil, overrides, missingFuncData)
         end
         self:EmitFieldComment(fname .. " " .. typeSig)
     else
@@ -819,9 +817,7 @@ end
 function Generator:EmitClass(type)
     local name = self:MakeTypeName(type.TypeName)
     local nameWithParent = name
-    -- if _PreventableEvent[name] then
-    --     nameWithParent = name .. ":PreventableSubscribableEventParams"
-    -- end
+    
     if type.ParentType ~= nil then
         nameWithParent = nameWithParent .. ":" .. self:MakeTypeName(type.ParentType.TypeName)
     end

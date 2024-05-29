@@ -141,6 +141,7 @@ P(Columns)
 P_BITMASK(Flags)
 P(ColumnDefs)
 P_FUN(AddRow, extui::Table::AddRow)
+P_FUN(AddColumn, extui::Table::AddColumn)
 END_CLS()
 
 
