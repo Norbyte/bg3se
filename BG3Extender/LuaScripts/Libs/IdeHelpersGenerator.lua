@@ -548,8 +548,15 @@ end
 
 function Generator:EmitEnumeration(type)
     local decl = "string"
-    
+
+    local orderedKeys = {}
     for key,value in pairs(type.EnumValues) do
+        table.insert(orderedKeys, key)
+    end
+
+    table.sort(orderedKeys)
+    
+    for _,key in pairs(orderedKeys) do
         decl = _format("%s|\"%s\"", decl, key)
     end
     self:EmitAlias(type.TypeName, decl)
