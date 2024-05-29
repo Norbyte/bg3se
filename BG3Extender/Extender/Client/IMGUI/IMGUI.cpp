@@ -296,6 +296,14 @@ lua::ImguiHandle TreeParent::AddPopup(char const* label)
 }
 
 
+lua::ImguiHandle TreeParent::AddChildWindow(char const* label)
+{
+    auto e = AddChild<ChildWindow>();
+    e->Label = label;
+    return e;
+}
+
+
 lua::ImguiHandle TreeParent::AddButton(char const* label)
 {
     auto btn = AddChild<Button>();
@@ -944,6 +952,19 @@ void Popup::Open(std::optional<GuiPopupFlags> flags)
 }
 
 
+bool ChildWindow::BeginRender()
+{
+    ImGuiID id = ImGui::GetCurrentWindow()->GetID(Label.c_str());
+    return ImGui::BeginChildEx(Label.c_str(), id, ToImVec(Size), (ImGuiWindowFlags)Flags, (ImGuiChildFlags)ChildFlags);
+}
+
+
+void ChildWindow::EndRender()
+{
+    ImGui::EndChild();
+}
+
+
 void Image::StyledRender()
 {
     if (ImageData.IsValid()) {
@@ -1197,6 +1218,7 @@ IMGUIObjectPoolInterface::~IMGUIObjectPoolInterface() {}
 IMGUIObjectManager::IMGUIObjectManager()
 {
     pools_[(unsigned)IMGUIObjectType::Window] = std::make_unique<IMGUIObjectPool<Window>>();
+    pools_[(unsigned)IMGUIObjectType::ChildWindow] = std::make_unique<IMGUIObjectPool<ChildWindow>>();
     pools_[(unsigned)IMGUIObjectType::Group] = std::make_unique<IMGUIObjectPool<Group>>();
     pools_[(unsigned)IMGUIObjectType::CollapsingHeader] = std::make_unique<IMGUIObjectPool<CollapsingHeader>>();
     pools_[(unsigned)IMGUIObjectType::TabBar] = std::make_unique<IMGUIObjectPool<TabBar>>();

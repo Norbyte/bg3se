@@ -18,6 +18,7 @@ class IMGUIObjectManager;
 enum class IMGUIObjectType : uint8_t
 {
     Window,
+    ChildWindow,
     Group,
     CollapsingHeader,
 
@@ -164,6 +165,7 @@ public:
     lua::ImguiHandle AddTree(char const* label);
     lua::ImguiHandle AddTable(char const* label, uint32_t columns);
     lua::ImguiHandle AddPopup(char const* label);
+    lua::ImguiHandle AddChildWindow(char const* label);
 
     lua::ImguiHandle AddButton(char const* label);
     lua::ImguiHandle AddImageButton(char const* label, FixedString iconOrTexture,
@@ -483,6 +485,20 @@ private:
     bool rendering_{ false };
     bool requestOpen_{ false };
     GuiPopupFlags openFlags_{ 0 };
+};
+
+
+class ChildWindow : public TreeParent
+{
+public:
+    DECL_UI_TYPE(ChildWindow)
+
+    bool BeginRender() override;
+    void EndRender() override;
+
+    GuiWindowFlags Flags{ 0 };
+    GuiChildFlags ChildFlags{ 0 };
+    std::optional<glm::vec2> Size;
 };
 
 

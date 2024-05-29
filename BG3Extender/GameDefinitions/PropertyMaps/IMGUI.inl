@@ -44,6 +44,7 @@ P_FUN(AddTabBar, extui::TreeParent::AddTabBar)
 P_FUN(AddTree, extui::TreeParent::AddTree)
 P_FUN(AddTable, extui::TreeParent::AddTable)
 P_FUN(AddPopup, extui::TreeParent::AddPopup)
+P_FUN(AddChildWindow, extui::TreeParent::AddChildWindow)
 
 P_FUN(AddImage, extui::TreeParent::AddImage)
 P_FUN(AddIcon, extui::TreeParent::AddIcon)
@@ -168,6 +169,14 @@ BEGIN_CLS(extui::Popup)
 INHERIT(extui::TreeParent)
 P_BITMASK(Flags)
 P_FUN(Open, extui::Popup::Open)
+END_CLS()
+
+
+BEGIN_CLS(extui::ChildWindow)
+INHERIT(extui::TreeParent)
+P_BITMASK(Flags)
+P_BITMASK(ChildFlags)
+P(Size)
 END_CLS()
 
 
