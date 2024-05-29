@@ -807,14 +807,25 @@ void TabItem::EndRender()
 
 bool Tree::BeginRender()
 {
+    if (open_) {
+        ImGui::SetNextItemOpen(open_->Open, open_->Cond);
+        open_ = {};
+    }
+
     rendering_ = ImGui::TreeNodeEx(Label.c_str(), (ImGuiTreeNodeFlags)Flags);
-    if (ImGui::IsItemClicked()) {
-        if (!ImGui::IsItemToggledOpen() && OnClick) {
-            Manager->GetEventQueue().Call(OnClick, lua::ImguiHandle(Handle));
-        } else if (ImGui::IsItemToggledOpen() && OnExpand) {
+
+    if (ImGui::IsItemToggledOpen()) {
+        if (rendering_ && OnExpand) {
             Manager->GetEventQueue().Call(OnExpand, lua::ImguiHandle(Handle));
+        } else if (!rendering_ && OnCollapse) {
+            Manager->GetEventQueue().Call(OnCollapse, lua::ImguiHandle(Handle));
         }
     }
+
+    if (ImGui::IsItemClicked() && OnClick) {
+        Manager->GetEventQueue().Call(OnClick, lua::ImguiHandle(Handle));
+    }
+
     return rendering_;
 }
 
@@ -826,6 +837,13 @@ void Tree::EndRender()
     rendering_ = false;
 }
 
+void Tree::SetOpen(bool open, std::optional<GuiCond> cond)
+{
+    open_ = SetOpenRequest{
+        .Open = open,
+        .Cond = cond ? (ImGuiCond)*cond : ImGuiCond_Once
+    };
+}
 
 bool Table::BeginRender()
 {

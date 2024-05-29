@@ -122,9 +122,11 @@ END_CLS()
 
 BEGIN_CLS(extui::Tree)
 INHERIT(extui::TreeParent)
+P_FUN(SetOpen, extui::Tree::SetOpen)
 P_BITMASK(Flags)
 P(OnClick)
 P(OnExpand)
+P(OnCollapse)
 END_CLS()
 
 

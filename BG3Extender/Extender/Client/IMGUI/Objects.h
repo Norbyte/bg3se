@@ -383,14 +383,23 @@ public:
 
     bool BeginRender() override;
     void EndRender() override;
+    void SetOpen(bool open, std::optional<GuiCond> cond);
 
     GuiTreeNodeFlags Flags{ 0 };
 
     lua::LuaDelegate<void(lua::ImguiHandle)> OnClick;
     lua::LuaDelegate<void(lua::ImguiHandle)> OnExpand;
+    lua::LuaDelegate<void(lua::ImguiHandle)> OnCollapse;
 
 private:
+    struct SetOpenRequest
+    {
+        bool Open;
+        ImGuiCond Cond;
+    };
+
     bool rendering_{ false };
+    std::optional<SetOpenRequest> open_;
 };
 
 struct ColumnDefinition
