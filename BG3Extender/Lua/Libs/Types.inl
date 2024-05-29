@@ -411,10 +411,38 @@ UserReturn Construct(lua_State* L, FixedString const& typeName)
 	return 0;
 }
 
+std::optional<STDString> GetValueType(lua_State* L, AnyRef object)
+{
+	if (lua_type(L, object.Index) == LUA_TLIGHTCPPOBJECT) {
+		CppObjectMetadata meta;
+		lua_get_cppobject(L, object.Index, meta);
+
+		switch (meta.MetatableTag) {
+		case MetatableTag::ObjectProxyByRef: return "CppObject";
+		case MetatableTag::ArrayProxy: return "Array";
+		case MetatableTag::MapProxy: return "Map";
+		case MetatableTag::SetProxy: return "Set";
+		case MetatableTag::EnumValue: return "Enum";
+		case MetatableTag::BitfieldValue: return "Bitfield";
+		case MetatableTag::UserVariableHolder: return "UserVariableHolder";
+		case MetatableTag::ModVariableHolder: return "ModVariableHolder";
+		case MetatableTag::Entity: return "Entity";
+	#if defined(ENABLE_IMGUI)
+		case MetatableTag::ImguiObject: return "ImguiObject";
+	#endif
+
+		default: return {};
+		}
+	} else {
+		return lua_typename(L, lua_type(L, object.Index));
+	}
+}
+
 void RegisterTypesLib()
 {
 	DECLARE_MODULE(Types, Both)
 	BEGIN_MODULE()
+	MODULE_FUNCTION(GetValueType)
 	MODULE_FUNCTION(GetObjectType)
 	MODULE_FUNCTION(GetTypeInfo)
 	MODULE_FUNCTION(TypeOf)
