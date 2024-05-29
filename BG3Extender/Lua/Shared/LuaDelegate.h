@@ -147,6 +147,8 @@ public:
     template <class TRet, class... TArgs>
     void Call(LuaDelegate<TRet(TArgs...)> const& delegate, TArgs... args)
     {
+        if (!delegate) return;
+
         auto call = new DeferredLuaDelegateCallImpl<TRet, TArgs...>(delegate, args...);
         queue_.push_back(call);
     }
