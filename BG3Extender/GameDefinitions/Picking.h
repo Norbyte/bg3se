@@ -13,7 +13,7 @@ struct PlayerPickingHelperInner2
 	EntityHandle Character;
 	EntityHandle DeadCharacter;
 	EntityHandle Item;
-	EntityHandle field_48;
+	[[bg3::legacy(field_48)]] EntityHandle Tooltip;
 	EntityHandle GameObject;
 	EntityHandle field_58;
 	uint8_t Flags;

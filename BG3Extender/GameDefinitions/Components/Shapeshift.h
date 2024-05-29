@@ -4,8 +4,7 @@ BEGIN_NS(esv::shapeshift)
 
 struct HealthReservationComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ShapeshiftHealthReservation;
-	static constexpr auto EngineClass = "esv::shapeshift::HealthReservationComponent";
+	DEFINE_COMPONENT(ShapeshiftHealthReservation, "esv::shapeshift::HealthReservationComponent")
 
 	MultiHashMap<Guid, int32_t> Reservations;
 };
@@ -101,8 +100,7 @@ struct State
 
 struct StatesComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerShapeshiftStates;
-	static constexpr auto EngineClass = "esv::shapeshift::StatesComponent";
+	DEFINE_COMPONENT(ServerShapeshiftStates, "esv::shapeshift::StatesComponent")
 
 	int field_0;
 	Array<State> States;

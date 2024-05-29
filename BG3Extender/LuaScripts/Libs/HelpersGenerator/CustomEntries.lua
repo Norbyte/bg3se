@@ -77,4 +77,18 @@ function Ext.RegisterConsoleCommand(cmd, handler) end
 ]],
 },
 
+	Entity = [[
+--- @class EntityHandle
+--- @field CreateComponent fun(self:EntityHandle, type:ExtComponentType):BaseComponent
+--- @field GetComponent fun(self:EntityHandle, type:ExtComponentType):BaseComponent
+--- @field GetAllComponents fun(self:EntityHandle, warnOnMissing:bool?):table<ExtComponentType,BaseComponent>
+--- @field GetAllComponentNames fun(self:EntityHandle, mapped:bool?):table<number,string>
+--- @field GetEntityType fun(self:EntityHandle):number
+--- @field GetSalt fun(self:EntityHandle):number
+--- @field GetIndex fun(self:EntityHandle):number
+--- @field IsAlive fun(self:EntityHandle):boolean
+--- @field GetReplicationFlags fun(self:EntityHandle, type:ExtComponentType, qword:number?):number
+--- @field SetReplicationFlags fun(self:EntityHandle, type:ExtComponentType, flags:number, qword:number?)
+--- @field Replicate fun(self:EntityHandle, type:ExtComponentType)
+--- @field Vars table User variables registered using Ext.Vars]]
 }

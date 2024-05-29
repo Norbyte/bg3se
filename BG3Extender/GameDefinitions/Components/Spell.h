@@ -8,8 +8,7 @@ BEGIN_NS(interrupt)
 
 struct ActionStateComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::InterruptActionState;
-	static constexpr auto EngineClass = "eoc::interrupt::ActionStateComponent";
+	DEFINE_COMPONENT(InterruptActionState, "eoc::interrupt::ActionStateComponent")
 
 	InterruptVariant2 Variant;
 	Array<InterruptEntities> Arr_EHx2;
@@ -18,24 +17,21 @@ struct ActionStateComponent : public BaseComponent
 
 struct ConditionallyDisabledComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::InterruptConditionallyDisabled;
-	static constexpr auto EngineClass = "eoc::interrupt::ConditionallyDisabledComponent";
+	DEFINE_COMPONENT(InterruptConditionallyDisabled, "eoc::interrupt::ConditionallyDisabledComponent")
 
 	uint8_t Dummy;
 };
 
 struct ContainerComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::InterruptContainer;
-	static constexpr auto EngineClass = "eoc::interrupt::ContainerComponent";
+	DEFINE_COMPONENT(InterruptContainer, "eoc::interrupt::ContainerComponent")
 
 	Array<EntityHandle> Interrupts;
 };
 
 struct DataComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::InterruptData;
-	static constexpr auto EngineClass = "eoc::interrupt::DataComponent";
+	DEFINE_COMPONENT(InterruptData, "eoc::interrupt::DataComponent")
 
 	FixedString Interrupt;
 	uint8_t field_4;
@@ -46,48 +42,42 @@ struct DataComponent : public BaseComponent
 
 struct DecisionComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::InterruptDecision;
-	static constexpr auto EngineClass = "eoc::interrupt::DecisionComponent";
+	DEFINE_COMPONENT(InterruptDecision, "eoc::interrupt::DecisionComponent")
 
 	MultiHashMap<InterruptVariant2, uint8_t> Decisions;
 };
 
 struct PreferencesComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::InterruptPreferences;
-	static constexpr auto EngineClass = "eoc::interrupt::PreferencesComponent";
+	DEFINE_COMPONENT(InterruptPreferences, "eoc::interrupt::PreferencesComponent")
 
 	MultiHashMap<FixedString, uint8_t> Preferences;
 };
 
 struct PreparedComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::InterruptPrepared;
-	static constexpr auto EngineClass = "eoc::interrupt::PreparedComponent";
+	DEFINE_COMPONENT(InterruptPrepared, "eoc::interrupt::PreparedComponent")
 
 	uint8_t Dummy;
 };
 
 struct ZoneComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::InterruptZone;
-	static constexpr auto EngineClass = "eoc::interrupt::ZoneComponent";
+	DEFINE_COMPONENT(InterruptZone, "eoc::interrupt::ZoneComponent")
 
 	Guid field_0;
 };
 
 struct ZoneParticipantComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::InterruptZoneParticipant;
-	static constexpr auto EngineClass = "eoc::interrupt::ZoneParticipantComponent";
+	DEFINE_COMPONENT(InterruptZoneParticipant, "eoc::interrupt::ZoneParticipantComponent")
 
 	MultiHashMap<EntityHandle, uint8_t> field_0;
 };
 
 struct ZoneSourceComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::InterruptZoneSource;
-	static constexpr auto EngineClass = "eoc::interrupt::ZoneSourceComponent";
+	DEFINE_COMPONENT(InterruptZoneSource, "eoc::interrupt::ZoneSourceComponent")
 
 	uint8_t Dummy;
 };
@@ -185,8 +175,7 @@ struct Modification
 
 struct SpellContainerComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::SpellContainer;
-	static constexpr auto EngineClass = "eoc::spell::ContainerComponent";
+	DEFINE_COMPONENT(SpellContainer, "eoc::spell::ContainerComponent")
 
 	struct Spell
 	{
@@ -206,8 +195,7 @@ struct SpellContainerComponent : public BaseComponent
 
 struct PlayerPrepareSpellComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::PlayerPrepareSpell;
-	static constexpr auto EngineClass = "eoc::spell::PlayerPrepareSpellComponent";
+	DEFINE_COMPONENT(PlayerPrepareSpell, "eoc::spell::PlayerPrepareSpellComponent")
 
 	Array<SpellIdBase> Spells;
 	uint8_t field_30;
@@ -215,32 +203,28 @@ struct PlayerPrepareSpellComponent : public BaseComponent
 
 struct CCPrepareSpellComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CCPrepareSpell;
-	static constexpr auto EngineClass = "eoc::spell::CCPrepareSpellComponent";
+	DEFINE_COMPONENT(CCPrepareSpell, "eoc::spell::CCPrepareSpellComponent")
 
 	Array<SpellIdBase> Spells;
 };
 
 struct SpellModificationContainerComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::SpellModificationContainer;
-	static constexpr auto EngineClass = "eoc::spell::ModificationContainerComponent";
+	DEFINE_COMPONENT(SpellModificationContainer, "eoc::spell::ModificationContainerComponent")
 
 	MultiHashMap<FixedString, Array<Modification>> Modifications;
 };
 
 struct AddedSpellsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::AddedSpells;
-	static constexpr auto EngineClass = "eoc::spell::AddedSpellsComponent";
+	DEFINE_COMPONENT(AddedSpells, "eoc::spell::AddedSpellsComponent")
 
 	Array<SpellContainerComponent::Spell> Spells;
 };
 
 struct SpellBookCooldownsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::SpellBookCooldowns;
-	static constexpr auto EngineClass = "eoc::spell::BookCooldownsComponent";
+	DEFINE_COMPONENT(SpellBookCooldowns, "eoc::spell::BookCooldownsComponent")
 
 	struct Cooldown
 	{
@@ -256,8 +240,7 @@ struct SpellBookCooldownsComponent : public BaseComponent
 
 struct LearnedSpellsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::LearnedSpells;
-	static constexpr auto EngineClass = "eoc::spell::LearnedSpellsComponent";
+	DEFINE_COMPONENT(LearnedSpells, "eoc::spell::LearnedSpellsComponent")
 
 	MultiHashMap<Guid, MultiHashSet<FixedString>> field_18;
 	MultiHashSet<uint8_t> field_70;
@@ -265,8 +248,7 @@ struct LearnedSpellsComponent : public BaseComponent
 
 struct SpellAiConditionsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::SpellAiConditions;
-	static constexpr auto EngineClass = "eoc::spell::AiConditionsComponent";
+	DEFINE_COMPONENT(SpellAiConditions, "eoc::spell::AiConditionsComponent")
 
 	MultiHashMap<FixedString, uint64_t> field_18;
 };
@@ -292,8 +274,7 @@ struct SpellBookEntry
 
 struct BookComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::SpellBook;
-	static constexpr auto EngineClass = "eoc::spell::BookComponent";
+	DEFINE_COMPONENT(SpellBook, "eoc::spell::BookComponent")
 
 	uint64_t field_0;
 	Array<SpellBookEntry> Spells;
@@ -301,8 +282,7 @@ struct BookComponent : public BaseComponent
 
 struct BookPreparesComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::SpellBookPrepares;
-	static constexpr auto EngineClass = "eoc::spell::BookPreparesComponent";
+	DEFINE_COMPONENT(SpellBookPrepares, "eoc::spell::BookPreparesComponent")
 
 	Array<SpellIdBase> PreparedSpells;
 	MultiHashMap<Guid, int> field_30;
@@ -315,8 +295,7 @@ BEGIN_NS(spell_cast)
 
 struct AnimationInfoComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::SpellCastAnimationInfo;
-	static constexpr auto EngineClass = "eoc::spell_cast::AnimationInfoComponent";
+	DEFINE_COMPONENT(SpellCastAnimationInfo, "eoc::spell_cast::AnimationInfoComponent")
 
 	uint8_t field_0;
 	glm::vec3 TargetPosition;
@@ -334,8 +313,7 @@ struct AnimationInfoComponent : public BaseComponent
 
 struct CacheComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::SpellCastCache;
-	static constexpr auto EngineClass = "eoc::spell_cast::CacheComponent";
+	DEFINE_COMPONENT(SpellCastCache, "eoc::spell_cast::CacheComponent")
 
 	uint8_t field_0;
 	uint32_t field_4;
@@ -343,24 +321,21 @@ struct CacheComponent : public BaseComponent
 
 struct CanBeTargetedComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::SpellCastCanBeTargeted;
-	static constexpr auto EngineClass = "eoc::spell_cast::CanBeTargetedComponent";
+	DEFINE_COMPONENT(SpellCastCanBeTargeted, "eoc::spell_cast::CanBeTargetedComponent")
 
 	uint8_t Dummy;
 };
 
 struct IsCastingComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::SpellCastIsCasting;
-	static constexpr auto EngineClass = "eoc::spell_cast::IsCastingComponent";
+	DEFINE_COMPONENT(SpellCastIsCasting, "eoc::spell_cast::IsCastingComponent")
 	
 	EntityHandle Cast;
 };
 
 struct InterruptResultsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::SpellCastInterruptResults;
-	static constexpr auto EngineClass = "eoc::spell_cast::InterruptResultsComponent";
+	DEFINE_COMPONENT(SpellCastInterruptResults, "eoc::spell_cast::InterruptResultsComponent")
 	
 	char field_0;
 	MultiHashSet<EntityHandle> Results;
@@ -368,8 +343,7 @@ struct InterruptResultsComponent : public BaseComponent
 
 struct MovementComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::SpellCastMovement;
-	static constexpr auto EngineClass = "eoc::spell_cast::MovementComponent";
+	DEFINE_COMPONENT(SpellCastMovement, "eoc::spell_cast::MovementComponent")
 
 	glm::vec3 field_0;
 	glm::vec3 field_C;
@@ -378,8 +352,7 @@ struct MovementComponent : public BaseComponent
 
 struct RollsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::SpellCastRolls;
-	static constexpr auto EngineClass = "eoc::spell_cast::RollsComponent";
+	DEFINE_COMPONENT(SpellCastRolls, "eoc::spell_cast::RollsComponent")
 
 	struct RollHit
 	{
@@ -426,8 +399,7 @@ struct MultiTargetInfo2 : public TargetInfo
 
 struct StateComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::SpellCastState;
-	static constexpr auto EngineClass = "eoc::spell_cast::StateComponent";
+	DEFINE_COMPONENT(SpellCastState, "eoc::spell_cast::StateComponent")
 
 	StateComponent(const StateComponent&) = delete;
 	StateComponent& operator = (const StateComponent&) = delete;
@@ -448,8 +420,7 @@ struct StateComponent : public BaseComponent
 
 struct SyncTargetingComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::SpellSyncTargeting;
-	static constexpr auto EngineClass = "eoc::spell_cast::SyncTargetingComponent";
+	DEFINE_COMPONENT(SpellSyncTargeting, "eoc::spell_cast::SyncTargetingComponent")
 
 	SyncTargetingComponent(const SyncTargetingComponent&) = delete;
 	SyncTargetingComponent& operator = (const SyncTargetingComponent&) = delete;
@@ -517,8 +488,7 @@ struct OnDamageSpell
 
 struct OnDamageSpellsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::OnDamageSpells;
-	static constexpr auto EngineClass = "esv::spell::OnDamageSpellsComponent";
+	DEFINE_COMPONENT(OnDamageSpells, "esv::spell::OnDamageSpellsComponent")
 
 	Array<OnDamageSpell> Spells;
 };
@@ -539,8 +509,7 @@ struct CastState
 
 struct CastHitDelayComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerSpellCastHitDelay;
-	static constexpr auto EngineClass = "esv::spell_cast::CastHitDelayComponent";
+	DEFINE_COMPONENT(ServerSpellCastHitDelay, "esv::spell_cast::CastHitDelayComponent")
 
 	struct CastHitDelay
 	{
@@ -560,8 +529,7 @@ struct CastHitDelayComponent : public BaseComponent
 
 struct CastResponsibleComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerSpellCastResponsible;
-	static constexpr auto EngineClass = "esv::spell_cast::CastResponsibleComponent";
+	DEFINE_COMPONENT(ServerSpellCastResponsible, "esv::spell_cast::CastResponsibleComponent")
 
 	EntityHandle Entity;
 };
@@ -570,24 +538,21 @@ DEFINE_TAG_COMPONENT(esv::spell_cast, ClientInitiatedComponent, ServerSpellClien
 
 struct ExternalsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerSpellExternals;
-	static constexpr auto EngineClass = "esv::spell_cast::ExternalsComponent";
+	DEFINE_COMPONENT(ServerSpellExternals, "esv::spell_cast::ExternalsComponent")
 
 	Array<Guid> Externals;
 };
 
 struct HitRegisterComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerSpellHitRegister;
-	static constexpr auto EngineClass = "esv::spell_cast::HitRegisterComponent";
+	DEFINE_COMPONENT(ServerSpellHitRegister, "esv::spell_cast::HitRegisterComponent")
 
 	Array<Guid> Hits;
 };
 
 struct InterruptRequestsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerSpellInterruptRequests;
-	static constexpr auto EngineClass = "esv::spell_cast::InterruptRequestsComponent";
+	DEFINE_COMPONENT(ServerSpellInterruptRequests, "esv::spell_cast::InterruptRequestsComponent")
 
 	Array<interrupt::ActionRequest1> Requests1;
 	Array<interrupt::ActionRequest2> Requests2;
@@ -643,8 +608,7 @@ struct InterruptResult2
 
 struct InterruptResultsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerSpellInterruptResults;
-	static constexpr auto EngineClass = "esv::spell_cast::InterruptResultsComponent";
+	DEFINE_COMPONENT(ServerSpellInterruptResults, "esv::spell_cast::InterruptResultsComponent")
 
 	MultiHashMap<InterruptIdentifier, InterruptResult> Results;
 	Array<InterruptResult2> Results2;
@@ -652,8 +616,7 @@ struct InterruptResultsComponent : public BaseComponent
 
 struct StateComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerSpellCastState;
-	static constexpr auto EngineClass = "esv::spell_cast::StateComponent";
+	DEFINE_COMPONENT(ServerSpellCastState, "esv::spell_cast::StateComponent")
 
 	uint8_t Status;
 	int field_4;
@@ -668,16 +631,14 @@ BEGIN_NS(esv::interrupt)
 
 struct AddRemoveRequestsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerInterruptAddRemoveRequests;
-	static constexpr auto EngineClass = "esv::interrupt::AddRemoveRequestsComponent";
+	DEFINE_COMPONENT(ServerInterruptAddRemoveRequests, "esv::interrupt::AddRemoveRequestsComponent")
 
 	MultiHashMap<EntityHandle, uint8_t> Requests;
 };
 
 struct ActionRequestsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerInterruptActionRequests;
-	static constexpr auto EngineClass = "esv::interrupt::ActionRequestsComponent";
+	DEFINE_COMPONENT(ServerInterruptActionRequests, "esv::interrupt::ActionRequestsComponent")
 
 	Array<ActionRequest1> Requests1;
 	Array<ActionRequest2> Requests2;
@@ -686,8 +647,7 @@ struct ActionRequestsComponent : public BaseComponent
 
 struct ZoneRequestsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerInterruptZoneRequests;
-	static constexpr auto EngineClass = "esv::interrupt::ZoneRequestsComponent";
+	DEFINE_COMPONENT(ServerInterruptZoneRequests, "esv::interrupt::ZoneRequestsComponent")
 
 	Array<ActionRequest1> Requests1;
 	Array<ActionRequest2> Requests2;
@@ -695,8 +655,7 @@ struct ZoneRequestsComponent : public BaseComponent
 
 struct InitialParticipantsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerInterruptInitialParticipants;
-	static constexpr auto EngineClass = "esv::interrupt::InitialParticipantsComponent";
+	DEFINE_COMPONENT(ServerInterruptInitialParticipants, "esv::interrupt::InitialParticipantsComponent")
 	
 	struct Participant
 	{
@@ -709,8 +668,7 @@ struct InitialParticipantsComponent : public BaseComponent
 
 struct TurnOrderInZoneComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerInterruptTurnOrderInZone;
-	static constexpr auto EngineClass = "esv::interrupt::TurnOrderInZoneComponent";
+	DEFINE_COMPONENT(ServerInterruptTurnOrderInZone, "esv::interrupt::TurnOrderInZoneComponent")
 	
 	MultiHashSet<EntityHandle> InZone;
 };

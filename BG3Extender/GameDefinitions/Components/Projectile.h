@@ -9,8 +9,7 @@ BEGIN_NS(eoc::projectile)
 
 struct SourceInfoComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ProjectileSource;
-	static constexpr auto EngineClass = "eoc::projectile::SourceInfoComponent";
+	DEFINE_COMPONENT(ProjectileSource, "eoc::projectile::SourceInfoComponent")
 
 	SpellId Spell;
 };
@@ -113,16 +112,14 @@ struct ForkOnHit : public OnHitActionBase
 
 struct AttachmentComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerProjectileAttachment;
-	static constexpr auto EngineClass = "esv::projectile::AttachmentComponent";
+	DEFINE_COMPONENT(ServerProjectileAttachment, "esv::projectile::AttachmentComponent")
 
 	EntityHandle Attachment;
 };
 
 struct SpellComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerProjectileSpell;
-	static constexpr auto EngineClass = "esv::projectile::SpellComponent";
+	DEFINE_COMPONENT(ServerProjectileSpell, "esv::projectile::SpellComponent")
 
 	EntityHandle Spell;
 	bg3se::spell_cast::MultiTargetInfo2 Target;
@@ -172,8 +169,7 @@ struct InitializationData
 
 struct InitializationComponent : public BaseProxyComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerProjectileInitialization;
-	static constexpr auto EngineClass = "esv::projectile::InitializationComponent";
+	DEFINE_COMPONENT(ServerProjectileInitialization, "esv::projectile::InitializationComponent")
 
 	[[bg3::hidden]] void* field_0;
 	InitializationData Data;
@@ -182,8 +178,7 @@ struct InitializationComponent : public BaseProxyComponent
 
 struct Projectile : public BaseProxyComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerProjectile;
-	static constexpr auto EngineClass = "esv::Projectile";
+	DEFINE_COMPONENT(ServerProjectile, "esv::Projectile")
 
 	[[bg3::hidden]] void* VMT;
 	__int64 field_8;

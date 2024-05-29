@@ -29,8 +29,7 @@ struct TargetInfo
 
 struct TargetComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::HitTarget;
-	static constexpr auto EngineClass = "eoc::hit::TargetComponent";
+	DEFINE_COMPONENT(HitTarget, "eoc::hit::TargetComponent")
 
 	EntityHandle field_0;
 	EntityHandle field_8;
@@ -40,8 +39,7 @@ struct TargetComponent : public BaseComponent
 
 struct AttackerComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::HitAttacker;
-	static constexpr auto EngineClass = "eoc::hit::AttackerComponent";
+	DEFINE_COMPONENT(HitAttacker, "eoc::hit::AttackerComponent")
 
 	EntityHandle Attacker;
 };
@@ -49,8 +47,7 @@ struct AttackerComponent : public BaseComponent
 
 struct WeaponComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::HitWeapon;
-	static constexpr auto EngineClass = "eoc::hit::WeaponComponent";
+	DEFINE_COMPONENT(HitWeapon, "eoc::hit::WeaponComponent")
 
 	EntityHandle Weapon;
 };
@@ -58,8 +55,7 @@ struct WeaponComponent : public BaseComponent
 
 struct ThrownObjectComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::HitThrownObject;
-	static constexpr auto EngineClass = "eoc::hit::ThrownObjectComponent";
+	DEFINE_COMPONENT(HitThrownObject, "eoc::hit::ThrownObjectComponent")
 
 	EntityHandle ThrownObject;
 };
@@ -67,8 +63,7 @@ struct ThrownObjectComponent : public BaseComponent
 
 struct ProxyComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::HitProxy;
-	static constexpr auto EngineClass = "eoc::hit::ProxyComponent";
+	DEFINE_COMPONENT(HitProxy, "eoc::hit::ProxyComponent")
 
 	EntityHandle Owner;
 	FixedString field_8;
@@ -77,8 +72,7 @@ struct ProxyComponent : public BaseComponent
 
 struct ProxyOwnerComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::HitProxyOwner;
-	static constexpr auto EngineClass = "eoc::hit::ProxyOwnerComponent";
+	DEFINE_COMPONENT(HitProxyOwner, "eoc::hit::ProxyOwnerComponent")
 
 	Array<EntityHandle> Owners;
 };
@@ -86,8 +80,7 @@ struct ProxyOwnerComponent : public BaseComponent
 
 struct ReactionComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::HitReaction;
-	static constexpr auto EngineClass = "eoc::hit::ReactionComponent";
+	DEFINE_COMPONENT(HitReaction, "eoc::hit::ReactionComponent")
 
 	struct Reaction
 	{

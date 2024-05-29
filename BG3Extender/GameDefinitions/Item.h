@@ -7,8 +7,7 @@ BEGIN_NS(esv)
 
 struct Item : public BaseProxyComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerItem;
-	static constexpr auto EngineClass = "esv::Item";
+	DEFINE_COMPONENT(ServerItem, "esv::Item")
 
 	void* VMT;
 	void* VMT2;

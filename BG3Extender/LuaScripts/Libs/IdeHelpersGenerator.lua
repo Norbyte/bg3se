@@ -4,7 +4,7 @@ local _format = string.format
 
 local NEWLINE = "\r\n"
 
----@type {Specific:table<string,string>, Misc:string[]}
+---@type {Specific:table<string,string>, Misc:string[], Entity:string}
 local _CustomEntries = Ext.Utils.Include(nil, "builtin://Libs/HelpersGenerator/CustomEntries.lua")
 
 ---@type table<string,{Before:string?, After:string?, Replace:string?}>
@@ -138,6 +138,7 @@ function Generator:New()
     o.Builtins = {}
     o.Enumerations = {}
     o.Classes = {}
+    o.Components = {}
     o.Modules = {}
     o.NativeClasses = {}
     o.NativeModules = {}
@@ -327,7 +328,23 @@ function Generator:Build(opts)
 
     for i,typeName in ipairs(sortedTypes) do
         local type = Ext.Types.GetTypeInfo(typeName)
-        if type.Kind == "Object" then
+        if typeName == "EntityHandle" then
+            -- EntityHandle generation handled separately
+        elseif type.Kind == "Object" then
+            local isComponent = false
+            local parent = type.ParentType
+            while parent ~= nil do
+                if parent.TypeName == "BaseComponent" then
+                    isComponent = true
+                    break
+                end
+                parent = parent.ParentType
+            end
+
+            if isComponent then
+                table.insert(self.Components, type)
+            end
+
             table.insert(self.Classes, type)
         elseif type.Kind == "Module" then
             local index = #self.Modules+1
@@ -356,6 +373,11 @@ function Generator:Build(opts)
     for i,type in ipairs(self.Builtins) do
         self:EmitBuiltinType(type)
     end
+
+    self:EmitEmptyLine()
+    self:EmitEmptyLine()
+
+    self:EmitEntityClass()
 
     self:EmitEmptyLine()
     self:EmitEmptyLine()
@@ -564,6 +586,14 @@ function Generator:EmitEnumeration(type)
         decl = _format("%s|\"%s\"", decl, key)
     end
     self:EmitAlias(type.TypeName, decl)
+end
+
+function Generator:EmitEntityClass()
+    self:EmitLine(_CustomEntries.Entity)
+
+    for _,type in ipairs(self.Components) do
+        self:EmitFieldComment(type.ComponentName .. " " .. self:MakeTypeName(type.TypeName) .. "?")
+    end
 end
 
 function Generator:FindNativeClass(type)

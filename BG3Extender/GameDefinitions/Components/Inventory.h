@@ -4,8 +4,7 @@ BEGIN_NS(inventory)
 
 struct DataComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryData;
-	static constexpr auto EngineClass = "eoc::inventory::DataComponent";
+	DEFINE_COMPONENT(InventoryData, "eoc::inventory::DataComponent")
 
 	uint8_t field_0;
 	uint16_t Flags;
@@ -13,8 +12,7 @@ struct DataComponent : public BaseComponent
 
 struct OwnerComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryOwner;
-	static constexpr auto EngineClass = "eoc::inventory::OwnerComponent";
+	DEFINE_COMPONENT(InventoryOwner, "eoc::inventory::OwnerComponent")
 
 	Array<EntityHandle> Inventories;
 	EntityHandle PrimaryInventory;
@@ -22,16 +20,14 @@ struct OwnerComponent : public BaseComponent
 
 struct IsOwnedComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryIsOwned;
-	static constexpr auto EngineClass = "eoc::inventory::IsOwnedComponent";
+	DEFINE_COMPONENT(InventoryIsOwned, "eoc::inventory::IsOwnedComponent")
 
 	EntityHandle Owner;
 };
 
 struct ContainerComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryContainer;
-	static constexpr auto EngineClass = "eoc::inventory::ContainerComponent";
+	DEFINE_COMPONENT(InventoryContainer, "eoc::inventory::ContainerComponent")
 
 	struct Item
 	{
@@ -44,8 +40,7 @@ struct ContainerComponent : public BaseComponent
 
 struct MemberComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryMember;
-	static constexpr auto EngineClass = "eoc::inventory::MemberComponent";
+	DEFINE_COMPONENT(InventoryMember, "eoc::inventory::MemberComponent")
 
 	EntityHandle Inventory;
 	int16_t EquipmentSlot;
@@ -53,16 +48,14 @@ struct MemberComponent : public BaseComponent
 
 struct MemberTransformComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryMemberTransform;
-	static constexpr auto EngineClass = "eoc::inventory::MemberTransformComponent";
+	DEFINE_COMPONENT(InventoryMemberTransform, "eoc::inventory::MemberTransformComponent")
 
 	Transform Transform;
 };
 
 struct StackComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryStack;
-	static constexpr auto EngineClass = "eoc::inventory::StackComponent";
+	DEFINE_COMPONENT(InventoryStack, "eoc::inventory::StackComponent")
 
 	[[bg3::legacy(Arr_u64)]] Array<EntityHandle> Elements;
 	Array<uint8_t> Arr_u8;
@@ -70,24 +63,21 @@ struct StackComponent : public BaseComponent
 
 struct StackMemberComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryStackMember;
-	static constexpr auto EngineClass = "eoc::inventory::StackMemberComponent";
+	DEFINE_COMPONENT(InventoryStackMember, "eoc::inventory::StackMemberComponent")
 
 	EntityHandle Stack;
 };
 
 struct WeightComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryWeight;
-	static constexpr auto EngineClass = "eoc::inventory::WeightComponent";
+	DEFINE_COMPONENT(InventoryWeight, "eoc::inventory::WeightComponent")
 
 	int Weight;
 };
 
 struct WieldedComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Wielded;
-	static constexpr auto EngineClass = "eoc::inventory::WieldedComponent";
+	DEFINE_COMPONENT(Wielded, "eoc::inventory::WieldedComponent")
 
 	Guid field_0;
 };
@@ -106,8 +96,7 @@ BEGIN_NS(esv::inventory)
 
 struct ContainerDataComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerInventoryContainerData;
-	static constexpr auto EngineClass = "esv::inventory::ContainerDataComponent";
+	DEFINE_COMPONENT(ServerInventoryContainerData, "esv::inventory::ContainerDataComponent")
 
 	uint16_t Flags;
 	int field_4;
@@ -115,16 +104,14 @@ struct ContainerDataComponent : public BaseComponent
 
 struct GroupCheckComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerInventoryGroupCheck;
-	static constexpr auto EngineClass = "esv::inventory::GroupCheckComponent";
+	DEFINE_COMPONENT(ServerInventoryGroupCheck, "esv::inventory::GroupCheckComponent")
 
 	int32_t ConditionId;
 };
 
 struct ShapeshiftEquipmentHistoryComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerShapeshiftEquipmentHistory;
-	static constexpr auto EngineClass = "esv::inventory::ShapeshiftEquipmentHistoryComponent";
+	DEFINE_COMPONENT(ServerShapeshiftEquipmentHistory, "esv::inventory::ShapeshiftEquipmentHistoryComponent")
 
 	Array<Guid> History;
 };
@@ -140,24 +127,21 @@ BEGIN_NS(esv)
 
 struct InventoryPropertyCanBePickpocketedComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryPropertyCanBePickpocketed;
-	static constexpr auto EngineClass = "esv::InventoryPropertyCanBePickpocketedComponent";
+	DEFINE_COMPONENT(InventoryPropertyCanBePickpocketed, "esv::InventoryPropertyCanBePickpocketedComponent")
 
 	GenericPropertyTag Tag;
 };
 
 struct InventoryPropertyIsDroppedOnDeathComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryPropertyIsDroppedOnDeath;
-	static constexpr auto EngineClass = "esv::InventoryPropertyIsDroppedOnDeathComponent";
+	DEFINE_COMPONENT(InventoryPropertyIsDroppedOnDeath, "esv::InventoryPropertyIsDroppedOnDeathComponent")
 
 	GenericPropertyTag Tag;
 };
 
 struct InventoryPropertyIsTradableComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::InventoryPropertyIsTradable;
-	static constexpr auto EngineClass = "esv::InventoryPropertyIsTradableComponent";
+	DEFINE_COMPONENT(InventoryPropertyIsTradable, "esv::InventoryPropertyIsTradableComponent")
 
 	GenericPropertyTag Tag;
 };

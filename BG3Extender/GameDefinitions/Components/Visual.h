@@ -4,8 +4,7 @@ BEGIN_SE()
 
 struct CustomIconComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CustomIcon;
-	static constexpr auto EngineClass = "eoc::CustomIconComponent";
+	DEFINE_COMPONENT(CustomIcon, "eoc::CustomIconComponent")
 
 	[[bg3::hidden]]
 	ScratchBuffer Buffer;
@@ -13,24 +12,21 @@ struct CustomIconComponent : public BaseComponent
 
 struct IconComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Icon;
-	static constexpr auto EngineClass = "eoc::IconComponent";
+	DEFINE_COMPONENT(Icon, "eoc::IconComponent")
 
 	FixedString Icon;
 };
 
 struct ActiveCharacterLightComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ActiveCharacterLight;
-	static constexpr auto EngineClass = "eoc::light::ActiveCharacterLightComponent";
+	DEFINE_COMPONENT(ActiveCharacterLight, "eoc::light::ActiveCharacterLightComponent")
 
 	FixedString Light;
 };
 
 struct VisualComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Visual;
-	static constexpr auto EngineClass = "ls::VisualComponent";
+	DEFINE_COMPONENT(Visual, "ls::VisualComponent")
 
 	Visual* Visual;
 	uint8_t field_8;
@@ -63,8 +59,7 @@ struct GameObjectVisualData
 
 struct GameObjectVisualComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::GameObjectVisual;
-	static constexpr auto EngineClass = "eoc::GameObjectVisualComponent";
+	DEFINE_COMPONENT(GameObjectVisual, "eoc::GameObjectVisualComponent")
 
 	FixedString RootTemplateId;
 	uint8_t RootTemplateType;
@@ -75,24 +70,21 @@ struct GameObjectVisualComponent : public BaseComponent
 
 struct AppearanceOverrideComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::AppearanceOverride;
-	static constexpr auto EngineClass = "eoc::object_visual::AppearanceOverrideComponent";
+	DEFINE_COMPONENT(AppearanceOverride, "eoc::object_visual::AppearanceOverrideComponent")
 
 	GameObjectVisualData Visual;
 };
 
 struct CharacterCreationTemplateOverrideComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CharacterCreationTemplateOverride;
-	static constexpr auto EngineClass = "eoc::object_visual::CharacterCreationTemplateOverrideComponent";
+	DEFINE_COMPONENT(CharacterCreationTemplateOverride, "eoc::object_visual::CharacterCreationTemplateOverrideComponent")
 
 	FixedString Template;
 };
 
 struct DisplayNameComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::DisplayName;
-	static constexpr auto EngineClass = "eoc::DisplayNameComponent";
+	DEFINE_COMPONENT(DisplayName, "eoc::DisplayNameComponent")
 
 	TranslatedString NameKey;
 	TranslatedString UnknownKey;
@@ -100,16 +92,14 @@ struct DisplayNameComponent : public BaseComponent
 
 struct CustomNameComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CustomName;
-	static constexpr auto EngineClass = "eoc::CustomNameComponent";
+	DEFINE_COMPONENT(CustomName, "eoc::CustomNameComponent")
 
 	STDString Name;
 };
 
 struct GameplayLightComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::GameplayLight;
-	static constexpr auto EngineClass = "eoc::GameplayLightComponent";
+	DEFINE_COMPONENT(GameplayLight, "eoc::GameplayLightComponent")
 
 	int field_18;
 	uint8_t field_1C;
@@ -120,8 +110,7 @@ struct GameplayLightComponent : public BaseComponent
 
 struct StaticPhysicsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::StaticPhysics;
-	static constexpr auto EngineClass = "ls::StaticPhysicsComponent";
+	DEFINE_COMPONENT(StaticPhysics, "ls::StaticPhysicsComponent")
 
 	[[bg3::hidden]]
 	void* field_0;
@@ -129,8 +118,7 @@ struct StaticPhysicsComponent : public BaseComponent
 
 struct PhysicsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Physics;
-	static constexpr auto EngineClass = "ls::PhysicsComponent";
+	DEFINE_COMPONENT(Physics, "ls::PhysicsComponent")
 
 	[[bg3::hidden]]
 	void* Physics;
@@ -144,8 +132,7 @@ struct PhysicsComponent : public BaseComponent
 
 struct CharacterCreationAppearanceComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CharacterCreationAppearance;
-	static constexpr auto EngineClass = "eoc::character_creation::AppearanceComponent";
+	DEFINE_COMPONENT(CharacterCreationAppearance, "eoc::character_creation::AppearanceComponent")
 
 	Array<Guid> Visuals;
 	Array<GameObjectVisualData::AppearanceElement> Elements;
@@ -175,8 +162,7 @@ struct DisplayNameTranslatedString
 
 struct DisplayNameListComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerDisplayNameList;
-	static constexpr auto EngineClass = "esv::DisplayNameListComponent";
+	DEFINE_COMPONENT(ServerDisplayNameList, "esv::DisplayNameListComponent")
 
 	Array<DisplayName> Names;
 	Array<DisplayNameTranslatedString> TranslatedStrings;
@@ -184,8 +170,7 @@ struct DisplayNameListComponent : public BaseComponent
 
 struct IconListComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerIconList;
-	static constexpr auto EngineClass = "esv::IconListComponent";
+	DEFINE_COMPONENT(ServerIconList, "esv::IconListComponent")
 
 	struct Icon
 	{
@@ -238,8 +223,7 @@ struct EquipmentVisualRequest
 
 struct EquipmentVisualsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ClientEquipmentVisuals;
-	static constexpr auto EngineClass = "ecl::EquipmentVisualsComponent";
+	DEFINE_COMPONENT(ClientEquipmentVisuals, "ecl::EquipmentVisualsComponent")
 
 	struct VisualElement
 	{

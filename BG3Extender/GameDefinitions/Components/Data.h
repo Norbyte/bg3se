@@ -14,8 +14,7 @@ struct GenericPropertyTag
 
 struct ArmorComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Armor;
-	static constexpr auto EngineClass = "eoc::ArmorComponent";
+	DEFINE_COMPONENT(Armor, "eoc::ArmorComponent")
 
 	int ArmorType;
 	int ArmorClass;
@@ -26,16 +25,14 @@ struct ArmorComponent : public BaseComponent
 
 struct ArmorSetStateComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ArmorSetState;
-	static constexpr auto EngineClass = "eoc::armor_set::StateComponent";
+	DEFINE_COMPONENT(ArmorSetState, "eoc::armor_set::StateComponent")
 
 	uint8_t State;
 };
 
 struct BaseHpComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::BaseHp;
-	static constexpr auto EngineClass = "eoc::BaseHpComponent";
+	DEFINE_COMPONENT(BaseHp, "eoc::BaseHpComponent")
 
 	int Vitality;
 	int VitalityBoost;
@@ -62,24 +59,21 @@ struct Bound
 
 struct BoundComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Bound;
-	static constexpr auto EngineClass = "eoc::BoundComponent";
+	DEFINE_COMPONENT(Bound, "eoc::BoundComponent")
 
 	Bound* Bound;
 };
 
 struct CustomStatsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CustomStats;
-	static constexpr auto EngineClass = "eoc::CustomStatsComponent";
+	DEFINE_COMPONENT(CustomStats, "eoc::CustomStatsComponent")
 
 	Map<FixedString, int> Stats;
 };
 
 struct DataComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Data;
-	static constexpr auto EngineClass = "eoc::DataComponent";
+	DEFINE_COMPONENT(Data, "eoc::DataComponent")
 
 	int32_t Weight;
 	FixedString StatsId;
@@ -88,8 +82,7 @@ struct DataComponent : public BaseComponent
 
 struct DetachedComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Detached;
-	static constexpr auto EngineClass = "eoc::DetachedComponent";
+	DEFINE_COMPONENT(Detached, "eoc::DetachedComponent")
 
 	uint32_t Flags;
 };
@@ -97,8 +90,7 @@ struct DetachedComponent : public BaseComponent
 
 struct ExperienceComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Experience;
-	static constexpr auto EngineClass = "eoc::exp::ExperienceComponent";
+	DEFINE_COMPONENT(Experience, "eoc::exp::ExperienceComponent")
 
 	int CurrentLevelExperience;
 	int NextLevelExperience;
@@ -109,8 +101,7 @@ struct ExperienceComponent : public BaseComponent
 
 struct HealthComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Health;
-	static constexpr auto EngineClass = "eoc::HealthComponent";
+	DEFINE_COMPONENT(Health, "eoc::HealthComponent")
 
 	int Hp;
 	int MaxHp;
@@ -122,8 +113,7 @@ struct HealthComponent : public BaseComponent
 
 struct ResistancesComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Resistances;
-	static constexpr auto EngineClass = "eoc::ResistancesComponent";
+	DEFINE_COMPONENT(Resistances, "eoc::ResistancesComponent")
 
 	std::array<ResistanceBoostFlags, 14> Resistances;
 	uint8_t field_E;
@@ -134,8 +124,7 @@ struct ResistancesComponent : public BaseComponent
 
 struct DifficultyCheckComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::DifficultyCheck;
-	static constexpr auto EngineClass = "eoc::DifficultyCheckComponent";
+	DEFINE_COMPONENT(DifficultyCheck, "eoc::DifficultyCheckComponent")
 
 	int SpellDC;
 	int field_4;
@@ -144,16 +133,14 @@ struct DifficultyCheckComponent : public BaseComponent
 
 struct AttributeFlagsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::AttributeFlags;
-	static constexpr auto EngineClass = "eoc::AttributeFlagsComponent";
+	DEFINE_COMPONENT(AttributeFlags, "eoc::AttributeFlagsComponent")
 
 	uint32_t AttributeFlags;
 };
 
 struct BodyTypeComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::BodyType;
-	static constexpr auto EngineClass = "eoc::BodyTypeComponent";
+	DEFINE_COMPONENT(BodyType, "eoc::BodyTypeComponent")
 
 	uint8_t BodyType;
 	uint8_t BodyType2;
@@ -161,8 +148,7 @@ struct BodyTypeComponent : public BaseComponent
 
 struct ObjectSizeComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ObjectSize;
-	static constexpr auto EngineClass = "eoc::ObjectSizeComponent";
+	DEFINE_COMPONENT(ObjectSize, "eoc::ObjectSizeComponent")
 
 	uint8_t Size;
 	[[bg3::legacy(field_1)]] uint8_t SoundSize;
@@ -170,24 +156,21 @@ struct ObjectSizeComponent : public BaseComponent
 
 struct BaseStatsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::BaseStats;
-	static constexpr auto EngineClass = "eoc::BaseStatsComponent";
+	DEFINE_COMPONENT(BaseStats, "eoc::BaseStatsComponent")
 
 	std::array<int, 7> BaseAbilities;
 };
 
 struct ExpertiseComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Expertise;
-	static constexpr auto EngineClass = "eoc::expertise::ExpertiseComponent";
+	DEFINE_COMPONENT(Expertise, "eoc::expertise::ExpertiseComponent")
 
 	MultiHashSet<SkillId> Expertise;
 };
 
 struct StatsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Stats;
-	static constexpr auto EngineClass = "eoc::StatsComponent";
+	DEFINE_COMPONENT(Stats, "eoc::StatsComponent")
 
 	int InitiativeBonus;
 	std::array<int, 7> Abilities;
@@ -205,16 +188,14 @@ struct StatsComponent : public BaseComponent
 
 struct StatusImmunitiesComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::StatusImmunities;
-	static constexpr auto EngineClass = "eoc::StatusImmunitiesComponent";
+	DEFINE_COMPONENT(StatusImmunities, "eoc::StatusImmunitiesComponent")
 
 	MultiHashMap<FixedString, Guid> PersonalStatusImmunities;
 };
 
 struct ValueComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Value;
-	static constexpr auto EngineClass = "eoc::ValueComponent";
+	DEFINE_COMPONENT(Value, "eoc::ValueComponent")
 
 	int Value;
 	uint8_t Rarity;
@@ -223,8 +204,7 @@ struct ValueComponent : public BaseComponent
 
 struct WeaponComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Weapon;
-	static constexpr auto EngineClass = "eoc::WeaponComponent";
+	DEFINE_COMPONENT(Weapon, "eoc::WeaponComponent")
 
 	struct Element1 : public StatsExpressionParam
 	{
@@ -251,32 +231,28 @@ struct WeaponComponent : public BaseComponent
 
 struct BackgroundComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Background;
-	static constexpr auto EngineClass = "eoc::BackgroundComponent";
+	DEFINE_COMPONENT(Background, "eoc::BackgroundComponent")
 
 	Guid Background;
 };
 	
 struct GodComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::God;
-	static constexpr auto EngineClass = "eoc::god::GodComponent";
+	DEFINE_COMPONENT(God, "eoc::god::GodComponent")
 
 	Guid God;
 };
 	
 struct ProficiencyComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Proficiency;
-	static constexpr auto EngineClass = "eoc::stats::proficiency::ProficiencyComponent";
+	DEFINE_COMPONENT(Proficiency, "eoc::stats::proficiency::ProficiencyComponent")
 
 	__int64 field_0;
 };
 	
 struct ProficiencyGroupComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ProficiencyGroup;
-	static constexpr auto EngineClass = "eoc::stats::proficiency::ProficiencyGroupComponent";
+	DEFINE_COMPONENT(ProficiencyGroup, "eoc::stats::proficiency::ProficiencyGroupComponent")
 
 	__int64 field_0;
 };
@@ -393,8 +369,7 @@ struct LevelUpData
 
 struct FloatingComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Floating;
-	static constexpr auto EngineClass = "eoc::FloatingComponent";
+	DEFINE_COMPONENT(Floating, "eoc::FloatingComponent")
 
 	int field_18;
 	int field_1C;
@@ -402,16 +377,14 @@ struct FloatingComponent : public BaseComponent
 
 struct VoiceComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Voice;
-	static constexpr auto EngineClass = "eoc::VoiceComponent";
+	DEFINE_COMPONENT(Voice, "eoc::VoiceComponent")
 
 	Guid Voice;
 };
 
 struct CharacterCreationStatsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CharacterCreationStats;
-	static constexpr auto EngineClass = "eoc::CharacterCreationStatsComponent";
+	DEFINE_COMPONENT(CharacterCreationStats, "eoc::CharacterCreationStatsComponent")
 
 	Guid Race;
 	Guid SubRace;
@@ -424,8 +397,7 @@ struct CharacterCreationStatsComponent : public BaseComponent
 
 struct DisarmableComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Disarmable;
-	static constexpr auto EngineClass = "eoc::DisarmableComponent";
+	DEFINE_COMPONENT(Disarmable, "eoc::DisarmableComponent")
 
 	Guid field_0;
 	uint8_t field_10;
@@ -434,24 +406,21 @@ struct DisarmableComponent : public BaseComponent
 
 struct ShortRestComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ShortRest;
-	static constexpr auto EngineClass = "eoc::rest::ShortRestComponent";
+	DEFINE_COMPONENT(ShortRest, "eoc::rest::ShortRestComponent")
 
 	uint8_t StateId;
 };
 
 struct IsSummonComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::IsSummon;
-	static constexpr auto EngineClass = "eoc::summon::IsSummonComponent";
+	DEFINE_COMPONENT(IsSummon, "eoc::summon::IsSummonComponent")
 
 	EntityHandle Owner_M;
 };
 
 struct SummonContainerComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::SummonContainer;
-	static constexpr auto EngineClass = "eoc::summon::ContainerComponent";
+	DEFINE_COMPONENT(SummonContainer, "eoc::summon::ContainerComponent")
 
 	[[bg3::legacy(field_18)]] MultiHashMap<FixedString, Array<EntityHandle>> ByTag;
 	MultiHashSet<EntityHandle> Characters;
@@ -460,8 +429,7 @@ struct SummonContainerComponent : public BaseComponent
 
 struct StealthComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Stealth;
-	static constexpr auto EngineClass = "eoc::StealthComponent";
+	DEFINE_COMPONENT(Stealth, "eoc::StealthComponent")
 
 	bool SeekHiddenFlag;
 	glm::vec3 Position;
@@ -475,16 +443,14 @@ DEFINE_TAG_COMPONENT(ls, SavegameComponent, Savegame)
 
 struct DisabledEquipmentComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::DisabledEquipment;
-	static constexpr auto EngineClass = "eoc::DisabledEquipmentComponent";
+	DEFINE_COMPONENT(DisabledEquipment, "eoc::DisabledEquipmentComponent")
 
 	bool ShapeshiftFlag;
 };
 
 struct LootingStateComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::LootingState;
-	static constexpr auto EngineClass = "eoc::LootingStateComponent";
+	DEFINE_COMPONENT(LootingState, "eoc::LootingStateComponent")
 
 	EntityHandle Looter_M;
 	uint8_t State;
@@ -493,8 +459,7 @@ struct LootingStateComponent : public BaseComponent
 
 struct LootComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Loot;
-	static constexpr auto EngineClass = "eoc::LootComponent";
+	DEFINE_COMPONENT(Loot, "eoc::LootComponent")
 
 	uint8_t Flags;
 	uint8_t InventoryType;
@@ -502,8 +467,7 @@ struct LootComponent : public BaseComponent
 
 struct LockComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Lock;
-	static constexpr auto EngineClass = "eoc::lock::LockComponent";
+	DEFINE_COMPONENT(Lock, "eoc::lock::LockComponent")
 
 	FixedString Key_M;
 	int LockDC;
@@ -513,24 +477,21 @@ struct LockComponent : public BaseComponent
 
 struct KeyComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Key;
-	static constexpr auto EngineClass = "eoc::lock::KeyComponent";
+	DEFINE_COMPONENT(Key, "eoc::lock::KeyComponent")
 
 	FixedString Key;
 };
 
 struct SummonLifetimeComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::SummonLifetime;
-	static constexpr auto EngineClass = "eoc::summon::LifetimeComponent";
+	DEFINE_COMPONENT(SummonLifetime, "eoc::summon::LifetimeComponent")
 
 	std::variant<uint8_t, float> Lifetime;
 };
 
 struct HotbarContainerComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::HotbarContainer;
-	static constexpr auto EngineClass = "eoc::hotbar::ContainerComponent";
+	DEFINE_COMPONENT(HotbarContainer, "eoc::hotbar::ContainerComponent")
 
 	struct Element
 	{
@@ -557,16 +518,14 @@ struct HotbarContainerComponent : public BaseComponent
 
 struct HotbarCurrentDecksComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::HotbarDecks;
-	static constexpr auto EngineClass = "eoc::hotbar::CurrentDecksComponent";
+	DEFINE_COMPONENT(HotbarDecks, "eoc::hotbar::CurrentDecksComponent")
 
 	MultiHashMap<FixedString, int32_t> Decks;
 };
 
 struct OriginTagComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::OriginTag;
-	static constexpr auto EngineClass = "eoc::OriginTagComponent";
+	DEFINE_COMPONENT(OriginTag, "eoc::OriginTagComponent")
 
 	Array<Guid> Tags;
 };
@@ -579,82 +538,71 @@ struct PassiveInfo
 
 struct OriginPassivesComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::OriginPassives;
-	static constexpr auto EngineClass = "eoc::OriginPassivesComponent";
+	DEFINE_COMPONENT(OriginPassives, "eoc::OriginPassivesComponent")
 
 	Array<PassiveInfo> field_18;
 };
 
 struct ClassTagComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ClassTag;
-	static constexpr auto EngineClass = "eoc::ClassTagComponent";
+	DEFINE_COMPONENT(ClassTag, "eoc::ClassTagComponent")
 
 	Array<Guid> Tags;
 };
 
 struct BackgroundTagComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::BackgroundTag;
-	static constexpr auto EngineClass = "eoc::BackgroundTagComponent";
+	DEFINE_COMPONENT(BackgroundTag, "eoc::BackgroundTagComponent")
 
 	Array<Guid> Tags;
 };
 
 struct OriginAppearanceTagComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::OriginAppearanceTag;
-	static constexpr auto EngineClass = "eoc::OriginAppearanceTagComponent";
+	DEFINE_COMPONENT(OriginAppearanceTag, "eoc::OriginAppearanceTagComponent")
 
 	Array<Guid> Tags;
 };
 
 struct VoiceTagComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::VoiceTag;
-	static constexpr auto EngineClass = "eoc::VoiceTagComponent";
+	DEFINE_COMPONENT(VoiceTag, "eoc::VoiceTagComponent")
 
 	Array<Guid> Tags;
 };
 
 struct GodTagComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::GodTag;
-	static constexpr auto EngineClass = "eoc::god::TagComponent";
+	DEFINE_COMPONENT(GodTag, "eoc::god::TagComponent")
 
 	Array<Guid> Tags;
 };
 
 struct BackgroundPassivesComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::BackgroundPassives;
-	static constexpr auto EngineClass = "eoc::BackgroundPassivesComponent";
+	DEFINE_COMPONENT(BackgroundPassives, "eoc::BackgroundPassivesComponent")
 
 	Array<PassiveInfo> field_18;
 };
 
 struct GlobalShortRestDisabledComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::GlobalShortRestDisabled;
-	static constexpr auto EngineClass = "eoc::GlobalShortRestDisabledComponent";
+	DEFINE_COMPONENT(GlobalShortRestDisabled, "eoc::GlobalShortRestDisabledComponent")
 };
 
 struct GlobalLongRestDisabledComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::GlobalLongRestDisabled;
-	static constexpr auto EngineClass = "eoc::GlobalLongRestDisabledComponent";
+	DEFINE_COMPONENT(GlobalLongRestDisabled, "eoc::GlobalLongRestDisabledComponent")
 };
 
 struct StoryShortRestDisabledComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::StoryShortRestDisabled;
-	static constexpr auto EngineClass = "eoc::StoryShortRestDisabledComponent";
+	DEFINE_COMPONENT(StoryShortRestDisabled, "eoc::StoryShortRestDisabledComponent")
 };
 
 struct FleeCapabilityComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::FleeCapability;
-	static constexpr auto EngineClass = "eoc::FleeCapabilityComponent";
+	DEFINE_COMPONENT(FleeCapability, "eoc::FleeCapabilityComponent")
 
 	FleeErrorFlags Flags;
 	[[bg3::legacy(field_1C)]] float FleeDistance;
@@ -663,8 +611,7 @@ struct FleeCapabilityComponent : public BaseComponent
 
 struct CanDoRestComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CanDoRest;
-	static constexpr auto EngineClass = "eoc::CanDoRestComponent";
+	DEFINE_COMPONENT(CanDoRest, "eoc::CanDoRestComponent")
 
 	RestFlags Flags;
 	RestErrorFlags RestErrorFlags1;
@@ -673,32 +620,28 @@ struct CanDoRestComponent : public BaseComponent
 
 struct CanModifyHealthComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CanModifyHealth;
-	static constexpr auto EngineClass = "eoc::CanModifyHealthComponent";
+	DEFINE_COMPONENT(CanModifyHealth, "eoc::CanModifyHealthComponent")
 		
 	uint16_t Flags;
 };
 
 struct AvailableLevelComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::AvailableLevel;
-	static constexpr auto EngineClass = "eoc::exp::AvailableLevelComponent";
+	DEFINE_COMPONENT(AvailableLevel, "eoc::exp::AvailableLevelComponent")
 
 	int Level;
 };
 
 struct CanBeLootedComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CanBeLooted;
-	static constexpr auto EngineClass = "eoc::CanBeLootedComponent";
+	DEFINE_COMPONENT(CanBeLooted, "eoc::CanBeLootedComponent")
 
 	uint16_t Flags;
 };
 
 struct CanBeDisarmedComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CanBeDisarmed;
-	static constexpr auto EngineClass = "eoc::CanBeDisarmedComponent";
+	DEFINE_COMPONENT(CanBeDisarmed, "eoc::CanBeDisarmedComponent")
 
 	uint16_t Flags;
 };
@@ -707,16 +650,14 @@ DEFINE_TAG_COMPONENT(eoc, CanTriggerRandomCastsComponent, CanTriggerRandomCasts)
 
 struct CanDoActionsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CanDoActions;
-	static constexpr auto EngineClass = "eoc::CanDoActionsComponent";
+	DEFINE_COMPONENT(CanDoActions, "eoc::CanDoActionsComponent")
 
 	uint16_t Flags;
 };
 
 struct ActionUseConditionsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ActionUseConditions;
-	static constexpr auto EngineClass = "eoc::action::ActionUseConditionsComponent";
+	DEFINE_COMPONENT(ActionUseConditions, "eoc::action::ActionUseConditionsComponent")
 
 	Array<int32_t> Conditions;
 };
@@ -724,24 +665,21 @@ struct ActionUseConditionsComponent : public BaseComponent
 
 struct CanMoveComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CanMove;
-	static constexpr auto EngineClass = "eoc::CanMoveComponent";
+	DEFINE_COMPONENT(CanMove, "eoc::CanMoveComponent")
 
 	uint16_t Flags;
 };
 
 struct CanSenseComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CanSense;
-	static constexpr auto EngineClass = "eoc::CanSenseComponent";
+	DEFINE_COMPONENT(CanSense, "eoc::CanSenseComponent")
 
 	uint16_t Flags;
 };
 
 struct ConcentrationComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Concentration;
-	static constexpr auto EngineClass = "eoc::concentration::ConcentrationComponent";
+	DEFINE_COMPONENT(Concentration, "eoc::concentration::ConcentrationComponent")
 
 	struct TargetInfo
 	{
@@ -759,8 +697,7 @@ struct ConcentrationComponent : public BaseComponent
 
 struct DarknessComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Darkness;
-	static constexpr auto EngineClass = "eoc::DarknessComponent";
+	DEFINE_COMPONENT(Darkness, "eoc::DarknessComponent")
 
 	uint8_t Sneaking;
 	uint8_t Obscurity;
@@ -773,8 +710,7 @@ struct DarknessComponent : public BaseComponent
 
 struct DualWieldingComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::DualWielding;
-	static constexpr auto EngineClass = "eoc::DualWieldingComponent";
+	DEFINE_COMPONENT(DualWielding, "eoc::DualWieldingComponent")
 
 	bool Melee;
 	bool RangedUI;
@@ -795,8 +731,7 @@ DEFINE_TAG_COMPONENT(eoc::ambush, AmbushingComponent, Ambushing)
 
 struct InteractionFilterComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::InteractionFilter;
-	static constexpr auto EngineClass = "eoc::InteractionFilterComponent";
+	DEFINE_COMPONENT(InteractionFilter, "eoc::InteractionFilterComponent")
 
 	MultiHashSet<Guid> field_0;
 	uint8_t field_30;
@@ -805,8 +740,7 @@ struct InteractionFilterComponent : public BaseComponent
 
 struct InvisibilityComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Invisibility;
-	static constexpr auto EngineClass = "eoc::InvisibilityComponent";
+	DEFINE_COMPONENT(Invisibility, "eoc::InvisibilityComponent")
 
 	uint8_t field_0;
 	glm::vec3 field_4;
@@ -817,16 +751,14 @@ DEFINE_TAG_COMPONENT(eoc, IsInTurnBasedModeComponent, IsInTurnBasedMode)
 
 struct ItemBoostsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ItemBoosts;
-	static constexpr auto EngineClass = "eoc::ItemBoostsComponent";
+	DEFINE_COMPONENT(ItemBoosts, "eoc::ItemBoostsComponent")
 
 	Array<EntityHandle> Boosts;
 };
 
 struct EquipableComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Equipable;
-	static constexpr auto EngineClass = "eoc::EquipableComponent";
+	DEFINE_COMPONENT(Equipable, "eoc::EquipableComponent")
 
 	[[bg3::legacy(field_18)]] Guid EquipmentTypeID;
 	ItemSlot Slot;
@@ -834,16 +766,14 @@ struct EquipableComponent : public BaseComponent
 
 struct RaceComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Race;
-	static constexpr auto EngineClass = "eoc::RaceComponent";
+	DEFINE_COMPONENT(Race, "eoc::RaceComponent")
 
 	Guid Race;
 };
 
 struct CanTravelComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CanTravel;
-	static constexpr auto EngineClass = "eoc::CanTravelComponent";
+	DEFINE_COMPONENT(CanTravel, "eoc::CanTravelComponent")
 
 	TravelFlags Flags;
 	uint16_t field_2;
@@ -852,8 +782,7 @@ struct CanTravelComponent : public BaseComponent
 
 struct MovementComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Movement;
-	static constexpr auto EngineClass = "eoc::MovementComponent";
+	DEFINE_COMPONENT(Movement, "eoc::MovementComponent")
 
 	glm::vec3 Direction;
 	float Acceleration;
@@ -863,24 +792,21 @@ struct MovementComponent : public BaseComponent
 
 struct ObjectInteractionComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ObjectInteraction;
-	static constexpr auto EngineClass = "eoc::ObjectInteractionComponent";
+	DEFINE_COMPONENT(ObjectInteraction, "eoc::ObjectInteractionComponent")
 
 	Array<EntityHandle> Interactions;
 };
 
 struct CanDeflectProjectilesComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CanDeflectProjectiles;
-	static constexpr auto EngineClass = "eoc::CanDeflectProjectilesComponent";
+	DEFINE_COMPONENT(CanDeflectProjectiles, "eoc::CanDeflectProjectilesComponent")
 
 	uint16_t Flags;
 };
 
 struct ActiveSkeletonSlotsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ActiveSkeletonSlots;
-	static constexpr auto EngineClass = "ls::ActiveSkeletonSlotsComponent";
+	DEFINE_COMPONENT(ActiveSkeletonSlots, "ls::ActiveSkeletonSlotsComponent")
 
 	Array<FixedString> Slots;
 };
@@ -900,8 +826,7 @@ struct SomeSharedServerClientObjId2 : public SomeSharedServerClientObjId
 
 struct ApprovalRatingsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ApprovalRatings;
-	static constexpr auto EngineClass = "eoc::approval::RatingsComponent";
+	DEFINE_COMPONENT(ApprovalRatings, "eoc::approval::RatingsComponent")
 
 	MultiHashMap<EntityHandle, int> Ratings;
 	MultiHashSet<Guid> field_70;
@@ -910,8 +835,7 @@ struct ApprovalRatingsComponent : public BaseComponent
 
 struct AttitudesToPlayersComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::AttitudesToPlayers;
-	static constexpr auto EngineClass = "eoc::attitude::AttitudesToPlayersComponent";
+	DEFINE_COMPONENT(AttitudesToPlayers, "eoc::attitude::AttitudesToPlayersComponent")
 
 	struct Key
 	{
@@ -944,8 +868,7 @@ BEGIN_NS(eoc::background)
 
 struct GoalsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::BackgroundGoals;
-	static constexpr auto EngineClass = "eoc::background::GoalsComponent";
+	DEFINE_COMPONENT(BackgroundGoals, "eoc::background::GoalsComponent")
 
 	struct Goal
 	{
@@ -964,16 +887,14 @@ BEGIN_NS(eoc::calendar)
 
 struct DaysPassedComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CalendarDaysPassed;
-	static constexpr auto EngineClass = "eoc::calendar::DaysPassedComponent";
+	DEFINE_COMPONENT(CalendarDaysPassed, "eoc::calendar::DaysPassedComponent")
 
 	int Days;
 };
 
 struct StartingDateComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CalendarStartingDate;
-	static constexpr auto EngineClass = "eoc::calendar::StartingDateComponent";
+	DEFINE_COMPONENT(CalendarStartingDate, "eoc::calendar::StartingDateComponent")
 
 	int Day;
 	int Year;
@@ -985,16 +906,14 @@ BEGIN_NS(eoc::ftb)
 
 struct ParticipantComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::FTBParticipant;
-	static constexpr auto EngineClass = "eoc::ftb::ParticipantComponent";
+	DEFINE_COMPONENT(FTBParticipant, "eoc::ftb::ParticipantComponent")
 
 	EntityHandle field_18;
 };
 
 struct ZoneBlockReasonComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::FTBZoneBlockReason;
-	static constexpr auto EngineClass = "eoc::ftb::ZoneBlockReasonComponent";
+	DEFINE_COMPONENT(FTBZoneBlockReason, "eoc::ftb::ZoneBlockReasonComponent")
 
 	uint8_t Reason;
 };

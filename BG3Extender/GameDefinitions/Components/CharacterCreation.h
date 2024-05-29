@@ -54,8 +54,7 @@ struct CharacterDefinition
 
 struct CompanionDefinitionComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CCCompanionDefinition;
-	static constexpr auto EngineClass = "eoc::character_creation::CompanionDefinitionComponent";
+	DEFINE_COMPONENT(CCCompanionDefinition, "eoc::character_creation::CompanionDefinitionComponent")
 
 	Guid field_0;
 	Guid field_10;
@@ -71,8 +70,7 @@ struct CompanionDefinitionComponent : public BaseComponent
 
 struct DefinitionCommonComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CCDefinitionCommon;
-	static constexpr auto EngineClass = "eoc::character_creation::DefinitionCommonComponent";
+	DEFINE_COMPONENT(CCDefinitionCommon, "eoc::character_creation::DefinitionCommonComponent")
 
 	[[bg3::legacy(field_0)]] int ChangeId;
 	__int64 field_8;
@@ -100,8 +98,7 @@ struct FullRespecDefinition
 
 struct FullRespecDefinitionComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CCFullRespecDefinition;
-	static constexpr auto EngineClass = "eoc::character_creation::FullRespecDefinitionComponent";
+	DEFINE_COMPONENT(CCFullRespecDefinition, "eoc::character_creation::FullRespecDefinitionComponent")
 
 	FullRespecDefinition Definition;
 	Guid field_1C0;
@@ -115,8 +112,7 @@ struct FullRespecDefinitionComponent : public BaseComponent
 
 struct RespecDefinitionComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CCRespecDefinition;
-	static constexpr auto EngineClass = "eoc::character_creation::RespecDefinitionComponent";
+	DEFINE_COMPONENT(CCRespecDefinition, "eoc::character_creation::RespecDefinitionComponent")
 
 	Guid field_0;
 	CharacterDefinition Definition;
@@ -136,8 +132,7 @@ struct ChangeAppearanceDefinitionBase
 
 struct ChangeAppearanceDefinitionComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CCChangeAppearanceDefinition;
-	static constexpr auto EngineClass = "eoc::character_creation::ChangeAppearanceDefinitionComponent";
+	DEFINE_COMPONENT(CCChangeAppearanceDefinition, "eoc::character_creation::ChangeAppearanceDefinitionComponent")
 
 	FullRespecDefinition Definition;
 	ChangeAppearanceDefinitionBase Appearance;
@@ -149,8 +144,7 @@ struct ChangeAppearanceDefinitionComponent : public BaseComponent
 
 struct CharacterDefinitionComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CCCharacterDefinition;
-	static constexpr auto EngineClass = "eoc::character_creation::CharacterDefinitionComponent";
+	DEFINE_COMPONENT(CCCharacterDefinition, "eoc::character_creation::CharacterDefinitionComponent")
 
 	CharacterDefinition Definition;
 	uint8_t field_288;
@@ -161,8 +155,7 @@ struct CharacterDefinitionComponent : public BaseComponent
 
 struct SessionCommonComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CCSessionCommon;
-	static constexpr auto EngineClass = "eoc::character_creation::SessionCommonComponent";
+	DEFINE_COMPONENT(CCSessionCommon, "eoc::character_creation::SessionCommonComponent")
 
 	int NetId;
 	int field_4;
@@ -172,8 +165,7 @@ struct SessionCommonComponent : public BaseComponent
 
 struct StateComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CCState;
-	static constexpr auto EngineClass = "eoc::character_creation::StateComponent";
+	DEFINE_COMPONENT(CCState, "eoc::character_creation::StateComponent")
 
 	bool HasDummy;
 	bool Canceled;
@@ -194,8 +186,7 @@ struct LevelUpDefinitionExtra
 
 struct LevelUpDefinitionComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CCLevelUpDefinition;
-	static constexpr auto EngineClass = "eoc::character_creation::LevelUpDefinitionComponent";
+	DEFINE_COMPONENT(CCLevelUpDefinition, "eoc::character_creation::LevelUpDefinitionComponent")
 
 	FullRespecDefinition Definition;
 	LevelUpDefinitionExtra LevelUp;
@@ -209,8 +200,7 @@ struct LevelUpDefinitionComponent : public BaseComponent
 
 struct LevelUpComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CCLevelUp;
-	static constexpr auto EngineClass = "eoc::character_creation::LevelUpComponent";
+	DEFINE_COMPONENT(CCLevelUp, "eoc::character_creation::LevelUpComponent")
 
 	Array<LevelUpData> LevelUps;
 };
@@ -221,8 +211,7 @@ BEGIN_NS(character_creation::definition)
 
 struct FullRespecComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CCFullRespec;
-	static constexpr auto EngineClass = "eoc::character_creation::definition::FullRespecComponent";
+	DEFINE_COMPONENT(CCFullRespec, "eoc::character_creation::definition::FullRespecComponent")
 
 	[[bg3::legacy(field_0)]] EntityHandle Character;
 	[[bg3::legacy(field_8)]] EntityHandle Respec;
@@ -231,8 +220,7 @@ struct FullRespecComponent : public BaseComponent
 
 struct RespecComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CCRespec;
-	static constexpr auto EngineClass = "eoc::character_creation::definition::RespecComponent";
+	DEFINE_COMPONENT(CCRespec, "eoc::character_creation::definition::RespecComponent")
 
 	[[bg3::legacy(field_0)]] EntityHandle Character;
 	[[bg3::legacy(field_8)]] EntityHandle Respec;
@@ -241,8 +229,7 @@ struct RespecComponent : public BaseComponent
 
 struct CreationComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CCCreation;
-	static constexpr auto EngineClass = "eoc::character_creation::definition::CreationComponent";
+	DEFINE_COMPONENT(CCCreation, "eoc::character_creation::definition::CreationComponent")
 
 	Array<EntityHandle> field_0;
 	uint8_t field_10;
@@ -251,8 +238,7 @@ struct CreationComponent : public BaseComponent
 
 struct LevelUpComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CCDefinitionLevelUp;
-	static constexpr auto EngineClass = "eoc::character_creation::definition::LevelUpComponent";
+	DEFINE_COMPONENT(CCDefinitionLevelUp, "eoc::character_creation::definition::LevelUpComponent")
 
 	EntityHandle field_0;
 	EntityHandle field_8;
@@ -267,8 +253,7 @@ BEGIN_NS(ecl::character_creation)
 
 struct DefinitionStateComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ClientCCDefinitionState;
-	static constexpr auto EngineClass = "ecl::character_creation::DefinitionStateComponent";
+	DEFINE_COMPONENT(ClientCCDefinitionState, "ecl::character_creation::DefinitionStateComponent")
 
 	[[bg3::legacy(field_0)]] EntityHandle Entity;
 	float field_8;
@@ -279,8 +264,7 @@ struct DefinitionStateComponent : public BaseComponent
 
 struct DefinitionStateExComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ClientCCDefinitionStateEx;
-	static constexpr auto EngineClass = "ecl::character_creation::DefinitionStateExComponent";
+	DEFINE_COMPONENT(ClientCCDefinitionStateEx, "ecl::character_creation::DefinitionStateExComponent")
 
 	uint8_t field_0;
 	uint8_t field_1;
@@ -293,16 +277,14 @@ struct DefinitionStateExComponent : public BaseComponent
 
 struct BaseDefinitionComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ClientCCBaseDefinitionState;
-	static constexpr auto EngineClass = "ecl::character_creation::BaseDefinitionComponent";
+	DEFINE_COMPONENT(ClientCCBaseDefinitionState, "ecl::character_creation::BaseDefinitionComponent")
 
 	bg3se::character_creation::CharacterDefinition Definition;
 };
 
 struct CompanionDefinitionComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ClientCCCompanionDefinition;
-	static constexpr auto EngineClass = "ecl::character_creation::CompanionDefinitionComponent";
+	DEFINE_COMPONENT(ClientCCCompanionDefinition, "ecl::character_creation::CompanionDefinitionComponent")
 
 	Guid field_0;
 	Guid field_10;
@@ -317,24 +299,21 @@ struct CompanionDefinitionComponent : public BaseComponent
 
 struct LevelUpDefinitionComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ClientCCLevelUpDefinition;
-	static constexpr auto EngineClass = "ecl::character_creation::LevelUpDefinitionComponent";
+	DEFINE_COMPONENT(ClientCCLevelUpDefinition, "ecl::character_creation::LevelUpDefinitionComponent")
 
 	bg3se::character_creation::LevelUpDefinitionExtra Definition;
 };
 
 struct ChangeAppearanceDefinitionComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ClientCCChangeAppearanceDefinition;
-	static constexpr auto EngineClass = "ecl::character_creation::ChangeAppearanceDefinitionComponent";
+	DEFINE_COMPONENT(ClientCCChangeAppearanceDefinition, "ecl::character_creation::ChangeAppearanceDefinitionComponent")
 
 	bg3se::character_creation::ChangeAppearanceDefinitionBase Definition;
 };
 
 struct FullRespecDefinitionComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ClientCCFullRespecDefinition;
-	static constexpr auto EngineClass = "ecl::character_creation::FullRespecDefinitionComponent";
+	DEFINE_COMPONENT(ClientCCFullRespecDefinition, "ecl::character_creation::FullRespecDefinitionComponent")
 
 	Guid field_0;
 	Guid field_10;
@@ -345,8 +324,7 @@ struct FullRespecDefinitionComponent : public BaseComponent
 
 struct DummyDefinitionComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ClientCCDummyDefinition;
-	static constexpr auto EngineClass = "ecl::character_creation::DummyDefinitionComponent";
+	DEFINE_COMPONENT(ClientCCDummyDefinition, "ecl::character_creation::DummyDefinitionComponent")
 
 	[[bg3::legacy(field_0)]] EntityHandle Dummy;
 	[[bg3::legacy(field_8)]] int ChangeId;
@@ -378,32 +356,28 @@ BEGIN_NS(esv::character_creation)
 
 struct AppearanceVisualTagComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerCCAppearanceVisualTag;
-	static constexpr auto EngineClass = "esv::character_creation::AppearanceVisualTagComponent";
+	DEFINE_COMPONENT(ServerCCAppearanceVisualTag, "esv::character_creation::AppearanceVisualTagComponent")
 
 	Array<Guid> Tags;
 };
 
 struct EquipmentSetRequestComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerCCEquipmentSetRequest;
-	static constexpr auto EngineClass = "esv::character_creation::EquipmentSetRequestComponent";
+	DEFINE_COMPONENT(ServerCCEquipmentSetRequest, "esv::character_creation::EquipmentSetRequestComponent")
 
 	MultiHashMap<EntityHandle, Array<FixedString>> Requests;
 };
 
 struct GodComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerCCGod;
-	static constexpr auto EngineClass = "esv::character_creation::GodComponent";
+	DEFINE_COMPONENT(ServerCCGod, "esv::character_creation::GodComponent")
 
 	Guid God;
 };
 
 struct UpdatesComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerCCUpdates;
-	static constexpr auto EngineClass = "esv::character_creation::UpdatesComponent";
+	DEFINE_COMPONENT(ServerCCUpdates, "esv::character_creation::UpdatesComponent")
 
 	MultiHashMap<EntityHandle, int32_t> Updates;
 };

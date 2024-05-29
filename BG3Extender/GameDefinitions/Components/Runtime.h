@@ -4,8 +4,7 @@ BEGIN_SE()
 
 struct PathingComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Pathing;
-	static constexpr auto EngineClass = "eoc::PathingComponent";
+	DEFINE_COMPONENT(Pathing, "eoc::PathingComponent")
 
 	struct Param
 	{
@@ -32,8 +31,7 @@ struct PathingComponent : public BaseComponent
 
 struct SteeringComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Steering;
-	static constexpr auto EngineClass = "eoc::SteeringComponent";
+	DEFINE_COMPONENT(Steering, "eoc::SteeringComponent")
 
 	glm::vec3 field_0;
 	float field_C;
@@ -49,8 +47,7 @@ BEGIN_NS(esv)
 
 struct AnubisExecutorComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerAnubisExecutor;
-	static constexpr auto EngineClass = "esv::AnubisExecutorComponent";
+	DEFINE_COMPONENT(ServerAnubisExecutor, "esv::AnubisExecutorComponent")
 
 	__int64 field_18;
 	__int64 field_20;
@@ -60,16 +57,14 @@ struct AnubisExecutorComponent : public BaseComponent
 
 struct ReplicationDependencyComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerReplicationDependency;
-	static constexpr auto EngineClass = "esv::replication::ReplicationDependencyComponent";
+	DEFINE_COMPONENT(ServerReplicationDependency, "esv::replication::ReplicationDependencyComponent")
 
 	EntityHandle Dependency;
 };
 
 struct ReplicationDependencyOwnerComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerReplicationDependencyOwner;
-	static constexpr auto EngineClass = "esv::replication::ReplicationDependencyOwnerComponent";
+	DEFINE_COMPONENT(ServerReplicationDependencyOwner, "esv::replication::ReplicationDependencyOwnerComponent")
 
 	Array<EntityHandle> Dependents;
 };

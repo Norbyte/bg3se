@@ -27,10 +27,16 @@
 #include <GameDefinitions/TranslatedString.h>
 #include <GameDefinitions/GlobalFixedStrings.h>
 
+#define DEFINE_COMPONENT(componentType, cls) \
+	static constexpr ExtComponentType ComponentType = ExtComponentType::componentType; \
+	static constexpr auto ComponentName = #componentType; \
+	static constexpr auto EngineClass = cls;
+
 #define DEFINE_TAG_COMPONENT(ns, name, componentType) \
 	struct name : public BaseComponent \
 	{ \
 		static constexpr ExtComponentType ComponentType = ExtComponentType::componentType; \
+		static constexpr auto ComponentName = #componentType; \
 		static constexpr auto EngineClass = #ns "::" #name; \
 		uint8_t Dummy; \
 	};
@@ -41,6 +47,7 @@
 	struct name##BoostComponent : public name##BoostComponent_Base \
 	{ \
 		static constexpr ExtComponentType ComponentType = ExtComponentType::name##Boost; \
+		static constexpr auto ComponentName = #name "Boost"; \
 		static constexpr auto BoostType = BoostType::boostType; \
 		static constexpr auto EngineClass = "eoc::" #name "BoostComponent"; \
 	};

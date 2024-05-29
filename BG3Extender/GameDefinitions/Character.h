@@ -71,8 +71,7 @@ namespace bg3se
 
 		struct Character : public BaseProxyComponent
 		{
-			static constexpr ExtComponentType ComponentType = ExtComponentType::ServerCharacter;
-			static constexpr auto EngineClass = "esv::Character";
+			DEFINE_COMPONENT(ServerCharacter, "esv::Character")
 
 			Status* GetStatus(FixedString statusId);
 			Status* GetStatusByType(StatusType type);

@@ -8,16 +8,14 @@ BEGIN_NS(esv)
 
 struct RecruitedByComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerRecruitedBy;
-	static constexpr auto EngineClass = "esv::recruit::RecruitedByComponent";
+	DEFINE_COMPONENT(ServerRecruitedBy, "esv::recruit::RecruitedByComponent")
 
 	EntityHandle RecruitedBy;
 };
 
 struct GameTimerComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerGameTimer;
-	static constexpr auto EngineClass = "esv::GameTimerComponent";
+	DEFINE_COMPONENT(ServerGameTimer, "esv::GameTimerComponent")
 
 	FixedString field_18;
 	EntityHandle field_20;
@@ -30,8 +28,7 @@ struct GameTimerComponent : public BaseComponent
 
 struct ExperienceGaveOutComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerExperienceGaveOut;
-	static constexpr auto EngineClass = "esv::exp::ExperienceGaveOutComponent";
+	DEFINE_COMPONENT(ServerExperienceGaveOut, "esv::exp::ExperienceGaveOutComponent")
 
 	int Experience;
 };
@@ -40,8 +37,7 @@ DEFINE_TAG_COMPONENT(esv::summon, IsUnsummoningComponent, ServerIsUnsummoning)
 
 struct ActivationGroupContainerComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerActivationGroupContainer;
-	static constexpr auto EngineClass = "esv::ActivationGroupContainerComponent";
+	DEFINE_COMPONENT(ServerActivationGroupContainer, "esv::ActivationGroupContainerComponent")
 
 	struct ActivationGroup
 	{
@@ -54,48 +50,42 @@ struct ActivationGroupContainerComponent : public BaseComponent
 
 struct AnubisTagComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerAnubisTag;
-	static constexpr auto EngineClass = "esv::tags::AnubisTagComponent";
+	DEFINE_COMPONENT(ServerAnubisTag, "esv::tags::AnubisTagComponent")
 
 	Array<Guid> Tags;
 };
 
 struct DialogTagComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerDialogTag;
-	static constexpr auto EngineClass = "esv::tags::DialogTagComponent";
+	DEFINE_COMPONENT(ServerDialogTag, "esv::tags::DialogTagComponent")
 
 	Array<Guid> Tags;
 };
 
 struct RaceTagComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerRaceTag;
-	static constexpr auto EngineClass = "esv::tags::RaceTagComponent";
+	DEFINE_COMPONENT(ServerRaceTag, "esv::tags::RaceTagComponent")
 
 	Array<Guid> Tags;
 };
 
 struct TemplateTagComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerTemplateTag;
-	static constexpr auto EngineClass = "esv::tags::TemplateTagComponent";
+	DEFINE_COMPONENT(ServerTemplateTag, "esv::tags::TemplateTagComponent")
 
 	Array<Guid> Tags;
 };
 
 struct BoostTagComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerBoostTag;
-	static constexpr auto EngineClass = "esv::tags::BoostTagComponent";
+	DEFINE_COMPONENT(ServerBoostTag, "esv::tags::BoostTagComponent")
 
 	Array<Guid> Tags;
 };
 
 struct SafePositionComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerSafePosition;
-	static constexpr auto EngineClass = "esv::SafePositionComponent";
+	DEFINE_COMPONENT(ServerSafePosition, "esv::SafePositionComponent")
 
 	glm::vec3 Position;
 	bool field_24;
@@ -103,16 +93,14 @@ struct SafePositionComponent : public BaseComponent
 
 struct LeaderComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerLeader;
-	static constexpr auto EngineClass = "esv::LeaderComponent";
+	DEFINE_COMPONENT(ServerLeader, "esv::LeaderComponent")
 
 	MultiHashSet<EntityHandle> Followers_M;
 };
 
 struct BreadcrumbComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerBreadcrumb;
-	static constexpr auto EngineClass = "esv::BreadcrumbComponent";
+	DEFINE_COMPONENT(ServerBreadcrumb, "esv::BreadcrumbComponent")
 
 	struct Element
 	{
@@ -129,8 +117,7 @@ struct BreadcrumbComponent : public BaseComponent
 
 struct DelayDeathCauseComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerDelayDeathCause;
-	static constexpr auto EngineClass = "esv::death::DelayDeathCauseComponent";
+	DEFINE_COMPONENT(ServerDelayDeathCause, "esv::death::DelayDeathCauseComponent")
 
 	int DelayCount;
 	int Blocked_M;
@@ -138,16 +125,14 @@ struct DelayDeathCauseComponent : public BaseComponent
 
 struct KillerComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerKiller;
-	static constexpr auto EngineClass = "esv::death::KillerComponent";
+	DEFINE_COMPONENT(ServerKiller, "esv::death::KillerComponent")
 
 	MultiHashSet<EntityHandle> Killers;
 };
 
 struct StateComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerDeathState;
-	static constexpr auto EngineClass = "esv::death::StateComponent";
+	DEFINE_COMPONENT(ServerDeathState, "esv::death::StateComponent")
 
 	uint32_t Flags;
 };
@@ -157,8 +142,7 @@ DEFINE_TAG_COMPONENT(esv::death, DeathContinueComponent, ServerDeathContinue)
 
 struct PickpocketComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerPickpocket;
-	static constexpr auto EngineClass = "esv::pickpocket::PickpocketComponent";
+	DEFINE_COMPONENT(ServerPickpocket, "esv::pickpocket::PickpocketComponent")
 
 	struct PickpocketEntry
 	{
@@ -174,8 +158,7 @@ struct PickpocketComponent : public BaseComponent
 
 struct BaseDataComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerBaseData;
-	static constexpr auto EngineClass = "esv::BaseDataComponent";
+	DEFINE_COMPONENT(ServerBaseData, "esv::BaseDataComponent")
 
 	std::array<std::array<ResistanceBoostFlags, 7>, 2> Resistances;
 	int Weight;
@@ -184,8 +167,7 @@ struct BaseDataComponent : public BaseComponent
 
 struct BaseSizeComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerBaseSize;
-	static constexpr auto EngineClass = "esv::BaseSizeComponent";
+	DEFINE_COMPONENT(ServerBaseSize, "esv::BaseSizeComponent")
 
 	uint8_t GameSize;
 	uint8_t SoundSize;
@@ -193,16 +175,14 @@ struct BaseSizeComponent : public BaseComponent
 
 struct BaseStatsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerBaseStats;
-	static constexpr auto EngineClass = "esv::BaseStatsComponent";
+	DEFINE_COMPONENT(ServerBaseStats, "esv::BaseStatsComponent")
 
 	int Initiative;
 };
 
 struct BaseWeaponComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerBaseWeapon;
-	static constexpr auto EngineClass = "esv::BaseWeaponComponent";
+	DEFINE_COMPONENT(ServerBaseWeapon, "esv::BaseWeaponComponent")
 
 	struct Damage
 	{
@@ -216,8 +196,7 @@ struct BaseWeaponComponent : public BaseComponent
 
 struct BaseProficiencyComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerBaseProficiency;
-	static constexpr auto EngineClass = "esv::stats::proficiency::BaseProficiencyComponent";
+	DEFINE_COMPONENT(ServerBaseProficiency, "esv::stats::proficiency::BaseProficiencyComponent")
 
 	ProficiencyGroupFlags ProficiencyGroup;
 	FixedString Proficiency;
@@ -225,32 +204,28 @@ struct BaseProficiencyComponent : public BaseComponent
 
 struct ProficiencyGroupStatsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerProficiencyGroupStats;
-	static constexpr auto EngineClass = "esv::stats::proficiency::ProficiencyGroupStatsComponent";
+	DEFINE_COMPONENT(ServerProficiencyGroupStats, "esv::stats::proficiency::ProficiencyGroupStatsComponent")
 
 	FixedString Stats;
 };
 
 struct GameplayLightEquipmentComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerGameplayLightEquipment;
-	static constexpr auto EngineClass = "esv::GameplayLightEquipmentComponent";
+	DEFINE_COMPONENT(ServerGameplayLightEquipment, "esv::GameplayLightEquipmentComponent")
 
 	MultiHashSet<EntityHandle> field_0;
 };
 
 struct TargetUUIDComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::HistoryTargetUUID;
-	static constexpr auto EngineClass = "esv::history::TargetUUIDComponent";
+	DEFINE_COMPONENT(HistoryTargetUUID, "esv::history::TargetUUIDComponent")
 
 	Guid Target;
 };
 
 struct GameplayLightChangesComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerGameplayLightChanges;
-	static constexpr auto EngineClass = "esv::light::GameplayLightChangesComponent";
+	DEFINE_COMPONENT(ServerGameplayLightChanges, "esv::light::GameplayLightChangesComponent")
 
   __int64 field_0;
   uint8_t field_8;
@@ -260,16 +235,14 @@ struct GameplayLightChangesComponent : public BaseComponent
 
 struct PeersInRangeComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerPeersInRange;
-	static constexpr auto EngineClass = "esv::replication::PeersInRangeComponent";
+	DEFINE_COMPONENT(ServerPeersInRange, "esv::replication::PeersInRangeComponent")
 
 	Array<int32_t> Peers;
 };
 
 struct SurfaceComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerSurface;
-	static constexpr auto EngineClass = "esv::surface::SurfaceComponent";
+	DEFINE_COMPONENT(ServerSurface, "esv::surface::SurfaceComponent")
 
 	__int64 field_0;
 	__int64 field_8;
@@ -287,16 +260,14 @@ struct DisarmAttempt
 
 struct DisarmAttemptComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerDisarmAttempt;
-	static constexpr auto EngineClass = "esv::trap::DisarmAttemptComponent";
+	DEFINE_COMPONENT(ServerDisarmAttempt, "esv::trap::DisarmAttemptComponent")
 
 	Array<DisarmAttempt> Attempts;
 };
 
 struct UnsheathDefaultComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerUnsheath;
-	static constexpr auto EngineClass = "esv::unsheath::DefaultComponent";
+	DEFINE_COMPONENT(ServerUnsheath, "esv::unsheath::DefaultComponent")
 
 	int field_0;
 	bool field_4;
@@ -304,8 +275,7 @@ struct UnsheathDefaultComponent : public BaseComponent
 
 struct UnsheathScriptOverrideComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerUnsheathScriptOverride;
-	static constexpr auto EngineClass = "esv::unsheath::ScriptOverrideComponent";
+	DEFINE_COMPONENT(ServerUnsheathScriptOverride, "esv::unsheath::ScriptOverrideComponent")
 
 	Array<int32_t> field_0;
 };
@@ -323,8 +293,7 @@ DEFINE_TAG_COMPONENT(esv, NetComponent, Net)
 
 struct JumpFollowComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::JumpFollow;
-	static constexpr auto EngineClass = "esv::JumpFollowComponent";
+	DEFINE_COMPONENT(JumpFollow, "esv::JumpFollowComponent")
 
 	glm::vec3 field_0;
 	glm::vec3 field_C;

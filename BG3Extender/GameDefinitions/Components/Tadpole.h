@@ -4,8 +4,7 @@ BEGIN_NS(tadpole_tree)
 
 struct TreeStateComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::TadpoleTreeState;
-	static constexpr auto EngineClass = "eoc::tadpole_tree::TreeStateComponent";
+	DEFINE_COMPONENT(TadpoleTreeState, "eoc::tadpole_tree::TreeStateComponent")
 
 	uint8_t State;
 };
@@ -13,8 +12,7 @@ struct TreeStateComponent : public BaseComponent
 
 struct PowerContainerComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::TadpolePowers;
-	static constexpr auto EngineClass = "eoc::tadpole_tree::PowerContainerComponent";
+	DEFINE_COMPONENT(TadpolePowers, "eoc::tadpole_tree::PowerContainerComponent")
 
 	Array<FixedString> Powers;
 };

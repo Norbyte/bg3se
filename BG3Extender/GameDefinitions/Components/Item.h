@@ -10,32 +10,28 @@ struct DestroyInfo
 
 struct DestroyedComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ItemDestroyed;
-	static constexpr auto EngineClass = "eoc::item::DestroyedComponent";
+	DEFINE_COMPONENT(ItemDestroyed, "eoc::item::DestroyedComponent")
 
 	std::optional<DestroyInfo> Info;
 };
 
 struct DyeComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ItemDye;
-	static constexpr auto EngineClass = "eoc::item::DyeComponent";
+	DEFINE_COMPONENT(ItemDye, "eoc::item::DyeComponent")
 
 	Guid Color;
 };
 
 struct MapMarkerStyleComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::MapMarkerStyle;
-	static constexpr auto EngineClass = "eoc::item::MapMarkerStyleComponent";
+	DEFINE_COMPONENT(MapMarkerStyle, "eoc::item::MapMarkerStyleComponent")
 
 	FixedString Style;
 };
 
 struct PortalComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ItemPortal;
-	static constexpr auto EngineClass = "eoc::item::PortalComponent";
+	DEFINE_COMPONENT(ItemPortal, "eoc::item::PortalComponent")
 
 	uint8_t field_0;
 	uint8_t field_1;
@@ -58,16 +54,14 @@ BEGIN_NS(item_template)
 
 struct ActionTypeComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ActionType;
-	static constexpr auto EngineClass = "eoc::item_template::ActionTypeComponent";
+	DEFINE_COMPONENT(ActionType, "eoc::item_template::ActionTypeComponent")
 
 	MultiHashSet<uint8_t> ActionTypes;
 };
 
 struct UseActionComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::UseAction;
-	static constexpr auto EngineClass = "eoc::item_template::UseActionComponent";
+	DEFINE_COMPONENT(UseAction, "eoc::item_template::UseActionComponent")
 
 	[[bg3::hidden]] Array<void*> UseActions;
 };
@@ -88,8 +82,7 @@ BEGIN_NS(ownership)
 
 struct OwneeCurrentComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::OwneeCurrent;
-	static constexpr auto EngineClass = "eoc::ownership::OwneeCurrentComponent";
+	DEFINE_COMPONENT(OwneeCurrent, "eoc::ownership::OwneeCurrentComponent")
 
 	EntityHandle Ownee;
 };
@@ -104,8 +97,7 @@ BEGIN_NS(esv::item)
 
 struct DynamicLayerOwnerComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerDynamicLayerOwner;
-	static constexpr auto EngineClass = "esv::item::DynamicLayerOwnerComponent";
+	DEFINE_COMPONENT(ServerDynamicLayerOwner, "esv::item::DynamicLayerOwnerComponent")
 
 	FixedString Owner;
 };
@@ -117,40 +109,35 @@ BEGIN_NS(esv::ownership)
 
 struct IsCurrentOwnerComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerIsCurrentOwner;
-	static constexpr auto EngineClass = "esv::ownership::IsCurrentOwnerComponent";
+	DEFINE_COMPONENT(ServerIsCurrentOwner, "esv::ownership::IsCurrentOwnerComponent")
 
 	MultiHashSet<EntityHandle> Owner;
 };
 
 struct IsLatestOwnerComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerIsLatestOwner;
-	static constexpr auto EngineClass = "esv::ownership::IsLatestOwnerComponent";
+	DEFINE_COMPONENT(ServerIsLatestOwner, "esv::ownership::IsLatestOwnerComponent")
 
 	MultiHashSet<EntityHandle> Owner;
 };
 
 struct IsPreviousOwnerComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerIsPreviousOwner;
-	static constexpr auto EngineClass = "esv::ownership::IsPreviousOwnerComponent";
+	DEFINE_COMPONENT(ServerIsPreviousOwner, "esv::ownership::IsPreviousOwnerComponent")
 
 	MultiHashSet<EntityHandle> Owner;
 };
 
 struct IsOriginalOwnerComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerIsOriginalOwner;
-	static constexpr auto EngineClass = "esv::ownership::IsOriginalOwnerComponent";
+	DEFINE_COMPONENT(ServerIsOriginalOwner, "esv::ownership::IsOriginalOwnerComponent")
 
 	MultiHashSet<EntityHandle> Owner;
 };
 
 struct OwneeHistoryComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerOwneeHistory;
-	static constexpr auto EngineClass = "esv::ownership::OwneeHistoryComponent";
+	DEFINE_COMPONENT(ServerOwneeHistory, "esv::ownership::OwneeHistoryComponent")
 
 	EntityHandle OriginalOwner;
 	EntityHandle LatestOwner;
@@ -160,8 +147,7 @@ struct OwneeHistoryComponent : public BaseComponent
 
 struct OwneeRequestComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerOwneeRequest;
-	static constexpr auto EngineClass = "esv::ownership::OwneeRequestComponent";
+	DEFINE_COMPONENT(ServerOwneeRequest, "esv::ownership::OwneeRequestComponent")
 
 	EntityHandle NewCurrentOwnee;
 	bool RequestChangeCurrentOwnee;

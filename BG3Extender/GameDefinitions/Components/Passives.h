@@ -7,16 +7,14 @@ BEGIN_SE()
 
 struct PassiveContainerComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::PassiveContainer;
-	static constexpr auto EngineClass = "eoc::PassiveContainerComponent";
+	DEFINE_COMPONENT(PassiveContainer, "eoc::PassiveContainerComponent")
 
 	Array<EntityHandle> Passives;
 };
 
 struct PassiveComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::Passive;
-	static constexpr auto EngineClass = "eoc::PassiveComponent";
+	DEFINE_COMPONENT(Passive, "eoc::PassiveComponent")
 
 	uint8_t field_0;
 	FixedString PassiveId;
@@ -38,8 +36,7 @@ struct PassiveUsageCount
 
 struct UsageCountComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::PassiveUsageCount;
-	static constexpr auto EngineClass = "eoc::passive::UsageCountComponent";
+	DEFINE_COMPONENT(PassiveUsageCount, "eoc::passive::UsageCountComponent")
 
 	MultiHashMap<FixedString, PassiveUsageCount> Passives;
 };
@@ -50,24 +47,21 @@ BEGIN_NS(esv::passive)
 
 struct ToggledPassivesComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerToggledPassives;
-	static constexpr auto EngineClass = "esv::passive::ToggledPassivesComponent";
+	DEFINE_COMPONENT(ServerToggledPassives, "esv::passive::ToggledPassivesComponent")
 
 	MultiHashMap<FixedString, bool> Passives;
 };
 
 struct PassiveBaseComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerPassiveBase;
-	static constexpr auto EngineClass = "esv::passive::BaseComponent";
+	DEFINE_COMPONENT(ServerPassiveBase, "esv::passive::BaseComponent")
 
 	Array<FixedString> field_0;
 };
 
 struct PersistentDataComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerPassivePersistentData;
-	static constexpr auto EngineClass = "esv::passive::PersistentDataComponent";
+	DEFINE_COMPONENT(ServerPassivePersistentData, "esv::passive::PersistentDataComponent")
 
 	int field_0;
 	int field_4;
@@ -75,8 +69,7 @@ struct PersistentDataComponent : public BaseComponent
 
 struct ScriptPassivesComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerScriptPassives;
-	static constexpr auto EngineClass = "esv::passive::ScriptPassivesComponent";
+	DEFINE_COMPONENT(ServerScriptPassives, "esv::passive::ScriptPassivesComponent")
 
 	MultiHashSet<FixedString> Passives;
 };

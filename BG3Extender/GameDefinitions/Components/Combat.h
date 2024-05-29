@@ -9,8 +9,7 @@ DEFINE_TAG_COMPONENT(eoc::combat, IsInCombatComponent, IsInCombat)
 
 struct ParticipantComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CombatParticipant;
-	static constexpr auto EngineClass = "eoc::combat::ParticipantComponent";
+	DEFINE_COMPONENT(CombatParticipant, "eoc::combat::ParticipantComponent")
 
 	EntityHandle CombatHandle;
 	FixedString CombatGroupId;
@@ -21,8 +20,7 @@ struct ParticipantComponent : public BaseComponent
 
 struct StateComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CombatState;
-	static constexpr auto EngineClass = "eoc::combat::StateComponent";
+	DEFINE_COMPONENT(CombatState, "eoc::combat::StateComponent")
 
 	Guid MyGuid;
 	MultiHashMap<EntityHandle, int32_t> Initiatives;
@@ -38,8 +36,7 @@ struct StateComponent : public BaseComponent
 
 struct TurnBasedComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::TurnBased;
-	static constexpr auto EngineClass = "eoc::TurnBasedComponent";
+	DEFINE_COMPONENT(TurnBased, "eoc::TurnBasedComponent")
 
 	BYTE field_8;
 	bool IsInCombat_M;
@@ -60,8 +57,7 @@ struct TurnBasedComponent : public BaseComponent
 
 struct TurnOrderComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::TurnOrder;
-	static constexpr auto EngineClass = "eoc::TurnOrderComponent";
+	DEFINE_COMPONENT(TurnOrder, "eoc::TurnOrderComponent")
 
 	struct ParticipantHandleInfo
 	{
@@ -88,16 +84,14 @@ struct TurnOrderComponent : public BaseComponent
 
 struct IsCombatPausedComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::IsCombatPaused;
-	static constexpr auto EngineClass = "eoc::combat::IsCombatPausedComponent";
+	DEFINE_COMPONENT(IsCombatPaused, "eoc::combat::IsCombatPausedComponent")
 
 	bool Paused;
 };
 
 struct ThreatRangeComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ThreatRange;
-	static constexpr auto EngineClass = "eoc::combat::ThreatRangeComponent";
+	DEFINE_COMPONENT(ThreatRange, "eoc::combat::ThreatRangeComponent")
 
 	float field_0;
 	int field_4;
@@ -111,8 +105,7 @@ BEGIN_NS(esv::combat)
 
 struct CombatGroupMappingComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerCombatGroupMapping;
-	static constexpr auto EngineClass = "esv::combat::CombatGroupMappingComponent";
+	DEFINE_COMPONENT(ServerCombatGroupMapping, "esv::combat::CombatGroupMappingComponent")
 
 	EntityHandle Entity;
 	MultiHashMap<FixedString, MultiHashSet<EntityHandle>> CombatGroups;
@@ -120,8 +113,7 @@ struct CombatGroupMappingComponent : public BaseComponent
 
 struct EnterRequestComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerEnterRequest;
-	static constexpr auto EngineClass = "esv::combat::EnterRequestComponent";
+	DEFINE_COMPONENT(ServerEnterRequest, "esv::combat::EnterRequestComponent")
 
 	MultiHashSet<EntityHandle> EnterRequests;
 };
@@ -136,23 +128,20 @@ BEGIN_NS(esv::ai::combat)
 
 struct InterestedInItemsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerAiInterestedInItems;
-	static constexpr auto EngineClass = "esv::ai::combat::InterestedInItemsComponent";
+	DEFINE_COMPONENT(ServerAiInterestedInItems, "esv::ai::combat::InterestedInItemsComponent")
 
 	MultiHashSet<EntityHandle> Items;
 };
 
 struct InterestingItemComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerAiInterestingItem;
-	static constexpr auto EngineClass = "esv::ai::combat::InterestingItemComponent";
+	DEFINE_COMPONENT(ServerAiInterestingItem, "esv::ai::combat::InterestingItemComponent")
 
 	MultiHashSet<EntityHandle> Items;
 };
 struct ArchetypeComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerAiArchetype;
-	static constexpr auto EngineClass = "esv::ai::combat::ArchetypeComponent";
+	DEFINE_COMPONENT(ServerAiArchetype, "esv::ai::combat::ArchetypeComponent")
 
 	FixedString field_0;
 	FixedString field_4;
@@ -162,8 +151,7 @@ struct ArchetypeComponent : public BaseComponent
 
 struct AiModifiersComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerAiModifiers;
-	static constexpr auto EngineClass = "esv::ai::combat::AiModifiersComponent";
+	DEFINE_COMPONENT(ServerAiModifiers, "esv::ai::combat::AiModifiersComponent")
 
 	MultiHashMap<FixedString, Guid> Modifiers;
 };

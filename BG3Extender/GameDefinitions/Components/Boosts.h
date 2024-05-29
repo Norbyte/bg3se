@@ -8,8 +8,7 @@ BEGIN_SE()
 
 struct BoostConditionComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::BoostCondition;
-	static constexpr auto EngineClass = "eoc::BoostConditionComponent";
+	DEFINE_COMPONENT(BoostCondition, "eoc::BoostConditionComponent")
 
 	int ConditionFlags;
 	uint8_t field_1C;
@@ -17,8 +16,7 @@ struct BoostConditionComponent : public BaseComponent
 
 struct BoostsContainerComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::BoostsContainer;
-	static constexpr auto EngineClass = "eoc::BoostsContainerComponent";
+	DEFINE_COMPONENT(BoostsContainer, "eoc::BoostsContainerComponent")
 
 	struct BoostTypeInfo
 	{
@@ -31,8 +29,7 @@ struct BoostsContainerComponent : public BaseComponent
 
 struct BoostInfoComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::BoostInfo;
-	static constexpr auto EngineClass = "eoc::BoostInfoComponent";
+	DEFINE_COMPONENT(BoostInfo, "eoc::BoostInfoComponent")
 
 	Guid field_10;
 	uint8_t field_20;
@@ -131,8 +128,7 @@ DEFN_BOOST(Proficiency, Proficiency, {
 
 struct IncreaseMaxHPComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::IncreaseMaxHPBoost;
-	static constexpr auto EngineClass = "eoc::IncreaseMaxHPBoostComponent";
+	DEFINE_COMPONENT(IncreaseMaxHPBoost, "eoc::IncreaseMaxHPBoostComponent")
 
 	std::variant<int32_t, StatsExpressionParam> Amount;
 	int32_t field_30;
@@ -150,8 +146,7 @@ DEFN_BOOST(StatusImmunity, StatusImmunity, {
 
 struct UseBoostsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::UseBoosts;
-	static constexpr auto EngineClass = "eoc::UseBoostsComponent";
+	DEFINE_COMPONENT(UseBoosts, "eoc::UseBoostsComponent")
 
 	Array<BoostParameters> Boosts;
 };
@@ -351,9 +346,8 @@ DEFN_BOOST(DetectCrimesBlock, DetectDisturbancesBlock, {
 
 struct BlockAbilityModifierFromACComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::BlockAbilityModifierFromACBoost;
+	DEFINE_COMPONENT(BlockAbilityModifierFromACBoost, "eoc::BlockAbilityModifierFromACComponent")
 	static constexpr auto BoostType = BoostType::BlockAbilityModifierFromAC;
-	static constexpr auto EngineClass = "eoc::BlockAbilityModifierFromACComponent";
 
 	AbilityId Ability;
 };
@@ -364,9 +358,8 @@ DEFN_BOOST(ScaleMultiplier, ScaleMultiplier, {
 
 struct DamageReductionBoostComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::DamageReductionBoost;
+	DEFINE_COMPONENT(DamageReductionBoost, "eoc::DamageReductionBoostComponent")
 	static constexpr auto BoostType = BoostType::DamageReduction;
-	static constexpr auto EngineClass = "eoc::DamageReductionBoostComponent";
 
 	DamageType DamageType;
 	std::variant<int32_t, StatsExpressionParam> Amount;
@@ -551,8 +544,7 @@ BEGIN_NS(esv::boost)
 
 struct BoostBaseComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ServerBoostBase;
-	static constexpr auto EngineClass = "esv::boost::BaseComponent";
+	DEFINE_COMPONENT(ServerBoostBase, "esv::boost::BaseComponent")
 
 	Array<FixedString> field_0;
 };

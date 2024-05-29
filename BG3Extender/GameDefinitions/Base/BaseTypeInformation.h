@@ -88,6 +88,7 @@ struct TypeInformation
 	bool Validated{ false };
 	FixedString ModuleRole;
 	lua::GenericPropertyMap* PropertyMap{ nullptr };
+	FixedString ComponentName;
 
 	void DeferredInitialize();
 	void Validate();

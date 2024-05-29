@@ -4,8 +4,7 @@ BEGIN_NS(camp)
 
 struct ChestComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CampChest;
-	static constexpr auto EngineClass = "eoc::camp::ChestComponent";
+	DEFINE_COMPONENT(CampChest, "eoc::camp::ChestComponent")
 
 	STDString field_0;
 	int UserID;
@@ -16,8 +15,7 @@ struct ChestComponent : public BaseComponent
 
 struct EndTheDayStateComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CampEndTheDayState;
-	static constexpr auto EngineClass = "eoc::camp::EndTheDayStateComponent";
+	DEFINE_COMPONENT(CampEndTheDayState, "eoc::camp::EndTheDayStateComponent")
 
 	uint8_t State;
 	EntityHandle field_8;
@@ -25,8 +23,7 @@ struct EndTheDayStateComponent : public BaseComponent
 
 struct QualityComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CampQuality;
-	static constexpr auto EngineClass = "eoc::camp::QualityComponent";
+	DEFINE_COMPONENT(CampQuality, "eoc::camp::QualityComponent")
 
 	int field_0;
 	int field_4;
@@ -34,8 +31,7 @@ struct QualityComponent : public BaseComponent
 
 struct SettingsComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CampSettings;
-	static constexpr auto EngineClass = "eoc::camp::SettingsComponent";
+	DEFINE_COMPONENT(CampSettings, "eoc::camp::SettingsComponent")
 
 	uint8_t field_0;
 	uint8_t field_1;
@@ -44,16 +40,14 @@ struct SettingsComponent : public BaseComponent
 
 struct SupplyComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CampSupply;
-	static constexpr auto EngineClass = "eoc::camp::SupplyComponent";
+	DEFINE_COMPONENT(CampSupply, "eoc::camp::SupplyComponent")
 
 	int Amount;
 };
 
 struct TotalSuppliesComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::CampTotalSupplies;
-	static constexpr auto EngineClass = "eoc::camp::TotalSuppliesComponent";
+	DEFINE_COMPONENT(CampTotalSupplies, "eoc::camp::TotalSuppliesComponent")
 
 	int Amount;
 };

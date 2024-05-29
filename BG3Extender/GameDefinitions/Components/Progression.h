@@ -4,24 +4,21 @@ BEGIN_NS(progression)
 
 struct LevelUpComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::LevelUp;
-	static constexpr auto EngineClass = "eoc::progression::LevelUpComponent";
+	DEFINE_COMPONENT(LevelUp, "eoc::progression::LevelUpComponent")
 
 	[[bg3::legacy(field_18)]] Array<LevelUpData> LevelUps;
 };
 
 struct ContainerComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ProgressionContainer;
-	static constexpr auto EngineClass = "eoc::ProgressionContainerComponent";
+	DEFINE_COMPONENT(ProgressionContainer, "eoc::ProgressionContainerComponent")
 
 	Array<Array<EntityHandle>> Progressions;
 };
 
 struct MetaComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ProgressionMeta;
-	static constexpr auto EngineClass = "eoc::progression::MetaComponent";
+	DEFINE_COMPONENT(ProgressionMeta, "eoc::progression::MetaComponent")
 
 	uint8_t field_18;
 	Guid Progression;
@@ -38,8 +35,7 @@ BEGIN_NS(esv::progression)
 
 struct ChangedContainersComponent : public BaseComponent
 {
-	static constexpr ExtComponentType ComponentType = ExtComponentType::ProgressionChangedContainers;
-	static constexpr auto EngineClass = "esv::progression::ChangedContainersComponent";
+	DEFINE_COMPONENT(ProgressionChangedContainers, "esv::progression::ChangedContainersComponent")
 
 	MultiHashMap<EntityHandle, MultiHashMap<EntityHandle, Array<EntityHandle>>> Changes;
 };
