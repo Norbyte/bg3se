@@ -254,7 +254,7 @@ struct ProtectedFunctionCallerBase
 	ProtectedFunctionCallerBase(Ref const& fun) : Function(fun) {}
 
 	bool ProtectedCall(lua_State* L, lua_CFunction fun, char const* funcDescription = nullptr);
-	int CallUserFunctionWithTraceback(lua_State* L, lua_CFunction fun);
+	int CallUserFunction(lua_State* L, lua_CFunction fun);
 };
 
 template <class TArgs, class TReturn>
@@ -286,10 +286,15 @@ struct ProtectedFunctionCaller : public ProtectedFunctionCallerBase
 
 		LifetimeStackPin _p(State::FromLua(L)->GetStack());
 
+		lua_pushcfunction(L, &TracebackHandler);
+		int tracebackHandlerIdx = lua_gettop(L);
+
 		lua_pushvalue(L, 2);
 		PushUserCallArg(L, self->Args);
 
-		if (lua_pcall(L, TupleSize(Overload<TArgs>{}), TupleSize(Overload<TReturn>{}), 0) != LUA_OK) {
+		auto result = lua_pcall(L, TupleSize(Overload<TArgs>{}), TupleSize(Overload<TReturn>{}), tracebackHandlerIdx);
+		lua_remove(L, tracebackHandlerIdx);
+		if (result != LUA_OK) {
 			return luaL_error(L, "%s", lua_tostring(L, -1));
 		}
 

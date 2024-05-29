@@ -105,7 +105,7 @@ int ProtectedMethodCallerBase::CallUserFunctionWithTraceback(lua_State* L, lua_C
 bool ProtectedFunctionCallerBase::ProtectedCall(lua_State* L, lua_CFunction fun, char const* funcDescription)
 {
 	StackCheck _(L);
-	auto ret = CallUserFunctionWithTraceback(L, fun);
+	auto ret = CallUserFunction(L, fun);
 	if (ret != LUA_OK) {
 		if (funcDescription) {
 			ERR("Error while dispatching user function call for %s: %s", funcDescription, lua_tostring(L, -1));
@@ -119,16 +119,12 @@ bool ProtectedFunctionCallerBase::ProtectedCall(lua_State* L, lua_CFunction fun,
 	}
 }
 
-int ProtectedFunctionCallerBase::CallUserFunctionWithTraceback(lua_State* L, lua_CFunction fun)
+int ProtectedFunctionCallerBase::CallUserFunction(lua_State* L, lua_CFunction fun)
 {
-	lua_pushcfunction(L, &TracebackHandler);
-	int tracebackHandlerIdx = lua_gettop(L);
 	lua_pushcfunction(L, fun);
 	lua_pushlightuserdata(L, this);
 	Function.Push(L);
-	int status = lua_pcall(L, 2, 0, tracebackHandlerIdx);
-	lua_remove(L, tracebackHandlerIdx);
-	return status;
+	return lua_pcall(L, 2, 0, 0);
 }
 
 int TracebackHandler(lua_State* L);
