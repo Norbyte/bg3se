@@ -671,6 +671,7 @@ Osi = {}
 --- @alias GameActionType string|"GameObjectMoveAction"|"PathAction"|"RainAction"|"StatusDomeAction"|"StormAction"|"TornadoAction"|"WallAction"
 --- @alias Gender string|"Female"|"Male"
 --- @alias GuiButtonFlags string|"MouseButtonMiddle"|"MouseButtonRight"
+--- @alias GuiChildFlags string|"AlwaysUseWindowPadding"|"AutoResizeX"|"AutoResizeY"|"Border"|"ChildAlwaysAutoResize"|"FrameStyle"|"ResizeX"|"ResizeY"
 --- @alias GuiColor string|"Border"|"BorderShadow"|"Button"|"ButtonActive"|"ButtonHovered"|"CheckMark"|"ChildBg"|"DragDropTarget"|"FrameBg"|"FrameBgActive"|"FrameBgHovered"|"Header"|"HeaderActive"|"HeaderHovered"|"MenuBarBg"|"ModalWindowDimBg"|"NavHighlight"|"NavWindowingDimBg"|"NavWindowingHighlight"|"PlotHistogram"|"PlotHistogramHovered"|"PlotLines"|"PlotLinesHovered"|"PopupBg"|"ResizeGrip"|"ResizeGripActive"|"ResizeGripHovered"|"ScrollbarBg"|"ScrollbarGrab"|"ScrollbarGrabActive"|"ScrollbarGrabHovered"|"Separator"|"SeparatorActive"|"SeparatorHovered"|"SliderGrab"|"SliderGrabActive"|"Tab"|"TabActive"|"TabHovered"|"TabUnfocused"|"TabUnfocusedActive"|"TableBorderLight"|"TableBorderStrong"|"TableHeaderBg"|"TableRowBg"|"TableRowBgAlt"|"Text"|"TextDisabled"|"TextSelectedBg"|"TitleBg"|"TitleBgActive"|"TitleBgCollapsed"|"WindowBg"
 --- @alias GuiColorEditFlags string|"AlphaBar"|"AlphaPreview"|"AlphaPreviewHalf"|"DisplayHSV"|"DisplayHex"|"DisplayRGB"|"Float"|"HDR"|"InputHSV"|"InputRGB"|"NoAlpha"|"NoBorder"|"NoDragDrop"|"NoInputs"|"NoLabel"|"NoOptions"|"NoPicker"|"NoSidePreview"|"NoSmallPreview"|"NoTooltip"|"PickerHueBar"|"PickerHueWheel"|"Uint8"
 --- @alias GuiComboFlags string|"HeightLarge"|"HeightLargest"|"HeightRegular"|"HeightSmall"|"NoArrowButton"|"NoPreview"|"PopupAlignLeft"|"WidthFitPreview"
@@ -5970,6 +5971,40 @@ Osi = {}
 --- @field OnChange RegistryEntry
 
 
+--- @class ExtuiChildWindow:ExtuiTreeParent
+--- @field AlwaysAutoResize boolean
+--- @field AlwaysHorizontalScrollbar boolean
+--- @field AlwaysUseWindowPadding boolean
+--- @field AlwaysVerticalScrollbar boolean
+--- @field AutoResizeX boolean
+--- @field AutoResizeY boolean
+--- @field Border boolean
+--- @field ChildAlwaysAutoResize boolean
+--- @field FrameStyle boolean
+--- @field HorizontalScrollbar boolean
+--- @field MenuBar boolean
+--- @field NoBackground boolean
+--- @field NoBringToFrontOnFocus boolean
+--- @field NoCollapse boolean
+--- @field NoDecoration boolean
+--- @field NoFocusOnAppearing boolean
+--- @field NoInputs boolean
+--- @field NoMouseInputs boolean
+--- @field NoMove boolean
+--- @field NoNav boolean
+--- @field NoNavFocus boolean
+--- @field NoNavInputs boolean
+--- @field NoResize boolean
+--- @field NoSavedSettings boolean
+--- @field NoScrollWithMouse boolean
+--- @field NoScrollbar boolean
+--- @field NoTitleBar boolean
+--- @field ResizeX boolean
+--- @field ResizeY boolean
+--- @field Size vec2?
+--- @field UnsavedDocument boolean
+
+
 --- @class ExtuiCollapsingHeader:ExtuiTreeParent
 --- @field AllowOverlap boolean
 --- @field Bullet boolean
@@ -6422,6 +6457,7 @@ Osi = {}
 --- @field NoAutoOpenOnLog boolean
 --- @field NoTreePushOnOpen boolean
 --- @field OnClick RegistryEntry
+--- @field OnCollapse RegistryEntry
 --- @field OnExpand RegistryEntry
 --- @field OpenOnArrow boolean
 --- @field OpenOnDoubleClick boolean
@@ -6429,6 +6465,7 @@ Osi = {}
 --- @field SpanAllColumns boolean
 --- @field SpanAvailWidth boolean
 --- @field SpanFullWidth boolean
+--- @field SetOpen fun(self:ExtuiTree, a1:boolean, a2:GuiCond?)
 
 
 --- @class ExtuiTreeParent:ExtuiStyledRenderable
@@ -6436,6 +6473,7 @@ Osi = {}
 --- @field AddBulletText fun(self:ExtuiTreeParent, a1:string):ExtuiBulletText
 --- @field AddButton fun(self:ExtuiTreeParent, a1:string):ExtuiButton
 --- @field AddCheckbox fun(self:ExtuiTreeParent, a1:string, a2:boolean?):ExtuiCheckbox
+--- @field AddChildWindow fun(self:ExtuiTreeParent, a1:string):ExtuiChildWindow
 --- @field AddCollapsingHeader fun(self:ExtuiTreeParent, a1:string):ExtuiCollapsingHeader
 --- @field AddColorEdit fun(self:ExtuiTreeParent, a1:string, a2:vec3?):ExtuiColorEdit
 --- @field AddColorPicker fun(self:ExtuiTreeParent, a1:string, a2:vec3?):ExtuiColorPicker
@@ -12361,6 +12399,7 @@ local Ext_StatsTreasureTable = {}
 --- @field GetAllTypes fun():FixedString[]
 --- @field GetObjectType fun(a1:AnyRef):FixedString|"userdata"|"lightuserdata" objectType
 --- @field GetTypeInfo fun(a1:FixedString):TypeInformation
+--- @field GetValueType fun(a1:AnyRef):string?
 --- @field IsA fun(a1:AnyRef, a2:FixedString):boolean
 --- @field Serialize fun()
 --- @field TypeOf fun(a1:AnyRef):TypeInformation
@@ -14860,6 +14899,26 @@ Ext_Enums.GuiButtonFlags = {
 	[4] = "MouseButtonMiddle",
 }
 
+--- @enum GuiChildFlags
+Ext_Enums.GuiChildFlags = {
+	Border = 1,
+	AlwaysUseWindowPadding = 2,
+	ResizeX = 4,
+	ResizeY = 8,
+	AutoResizeX = 16,
+	AutoResizeY = 32,
+	ChildAlwaysAutoResize = 64,
+	FrameStyle = 128,
+	[1] = "Border",
+	[2] = "AlwaysUseWindowPadding",
+	[4] = "ResizeX",
+	[8] = "ResizeY",
+	[16] = "AutoResizeX",
+	[32] = "AutoResizeY",
+	[64] = "ChildAlwaysAutoResize",
+	[128] = "FrameStyle",
+}
+
 --- @enum GuiColor
 Ext_Enums.GuiColor = {
 	Text = 0,
@@ -15200,18 +15259,18 @@ Ext_Enums.GuiTabBarFlags = {
 	NoCloseWithMiddleMouseButton = 8,
 	NoTabListScrollingButtons = 16,
 	NoTooltip = 32,
-	FittingPolicyResizeDown = 64,
+	FittingPolicyDefault = 64,
 	FittingPolicyScroll = 128,
-	FittingPolicyMask = 192,
+	FittingPolicyDefault = 192,
 	[1] = "Reorderable",
 	[2] = "AutoSelectNewTabs",
 	[4] = "TabListPopupButton",
 	[8] = "NoCloseWithMiddleMouseButton",
 	[16] = "NoTabListScrollingButtons",
 	[32] = "NoTooltip",
-	[64] = "FittingPolicyResizeDown",
+	[64] = "FittingPolicyDefault",
 	[128] = "FittingPolicyScroll",
-	[192] = "FittingPolicyMask",
+	[192] = "FittingPolicyDefault",
 }
 
 --- @enum GuiTabItemFlags
@@ -15291,16 +15350,16 @@ Ext_Enums.GuiTableFlags = {
 	BordersOuterH = 256,
 	BordersOuterH = 384,
 	BordersInnerV = 512,
-	BordersInnerV = 640,
+	BordersInnerH = 640,
 	BordersOuterV = 1024,
-	BordersOuter = 1280,
-	BordersInnerV = 1536,
-	BordersOuter = 1920,
+	BordersOuterH = 1280,
+	BordersV = 1536,
+	BordersOuterH = 1920,
 	NoBordersInBody = 2048,
 	NoBordersInBodyUntilResize = 4096,
 	SizingFixedFit = 8192,
 	SizingFixedSame = 16384,
-	SizingFixedSame = 24576,
+	SizingFixedFit = 24576,
 	SizingStretchSame = 32768,
 	NoHostExtendX = 65536,
 	NoHostExtendY = 131072,
@@ -15326,16 +15385,16 @@ Ext_Enums.GuiTableFlags = {
 	[256] = "BordersOuterH",
 	[384] = "BordersOuterH",
 	[512] = "BordersInnerV",
-	[640] = "BordersInnerV",
+	[640] = "BordersInnerH",
 	[1024] = "BordersOuterV",
-	[1280] = "BordersOuter",
-	[1536] = "BordersInnerV",
-	[1920] = "BordersOuter",
+	[1280] = "BordersOuterH",
+	[1536] = "BordersV",
+	[1920] = "BordersOuterH",
 	[2048] = "NoBordersInBody",
 	[4096] = "NoBordersInBodyUntilResize",
 	[8192] = "SizingFixedFit",
 	[16384] = "SizingFixedSame",
-	[24576] = "SizingFixedSame",
+	[24576] = "SizingFixedFit",
 	[32768] = "SizingStretchSame",
 	[65536] = "NoHostExtendX",
 	[131072] = "NoHostExtendY",
@@ -15365,7 +15424,7 @@ Ext_Enums.GuiTreeNodeFlags = {
 	AllowOverlap = 4,
 	NoTreePushOnOpen = 8,
 	NoAutoOpenOnLog = 16,
-	NoAutoOpenOnLog = 26,
+	Framed = 26,
 	DefaultOpen = 32,
 	OpenOnDoubleClick = 64,
 	OpenOnArrow = 128,
@@ -15381,7 +15440,7 @@ Ext_Enums.GuiTreeNodeFlags = {
 	[4] = "AllowOverlap",
 	[8] = "NoTreePushOnOpen",
 	[16] = "NoAutoOpenOnLog",
-	[26] = "NoAutoOpenOnLog",
+	[26] = "Framed",
 	[32] = "DefaultOpen",
 	[64] = "OpenOnDoubleClick",
 	[128] = "OpenOnArrow",

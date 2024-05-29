@@ -105,6 +105,9 @@ function Ext_ServerOsiris.RegisterListener(name, arity, typeName, callback) end
     ["ExtuiTreeParent.AddPopup"] = {
         ReplaceReturnValue = "ExtuiPopup"
     },
+    ["ExtuiTreeParent.AddChildWindow"] = {
+        ReplaceReturnValue = "ExtuiChildWindow"
+    },
     ["ExtuiTreeParent.AddRadioButton"] = {
         ReplaceReturnValue = "ExtuiRadioButton"
     },
