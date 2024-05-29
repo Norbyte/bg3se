@@ -84,145 +84,148 @@ Osi = {}
 --- @alias vec4 number[]
 
 
---- @alias AIFlags string|"CanNotUse"|"IgnoreSelf"|"IgnoreDebuff"|"IgnoreBuff"|"StatusIsSecondary"|"IgnoreControl"|"CanNotTargetFrozen"
---- @alias AbilityId string|"None"|"Charisma"|"Wisdom"|"Intelligence"|"Constitution"|"Sentinel"|"Dexterity"|"Strength"
+--- @alias AIFlags string|"CanNotTargetFrozen"|"CanNotUse"|"IgnoreBuff"|"IgnoreControl"|"IgnoreDebuff"|"IgnoreSelf"|"StatusIsSecondary"
+--- @alias AbilityId string|"Charisma"|"Constitution"|"Dexterity"|"Intelligence"|"None"|"Sentinel"|"Strength"|"Wisdom"
 --- @alias AdvantageBoostType string|"Advantage"|"Disadvantage"
---- @alias AdvantageTypeId string|"Skill"|"AttackTarget"|"AttackRoll"|"DeathSavingThrow"|"SavingThrow"|"Concentration"|"AllSavingThrows"|"AllAbilities"|"AllSkills"|"SourceDialogue"|"Ability"
---- @alias AnimationEventPropertyType string|"SoundObject"|"BoneEffect"|"Foot"|"BoneAttachBone"|"WeaponEffect"|"Unknown7"|"Unknown8"|"Prop9"|"Prop10"|"FloatData"|"EFoleySoundObject"|"EVocalSoundObject"|"U8Data"|"Unknown15"
+--- @alias AdvantageTypeId string|"Ability"|"AllAbilities"|"AllSavingThrows"|"AllSkills"|"AttackRoll"|"AttackTarget"|"Concentration"|"DeathSavingThrow"|"SavingThrow"|"Skill"|"SourceDialogue"
+--- @alias AnimationEventPropertyType string|"BoneAttachBone"|"BoneEffect"|"EFoleySoundObject"|"EVocalSoundObject"|"FloatData"|"Foot"|"Prop10"|"Prop9"|"SoundObject"|"U8Data"|"Unknown15"|"Unknown7"|"Unknown8"|"WeaponEffect"
 --- @alias AnimationSetAnimationFlags string|"AlwaysIgnore"|"NoFallback"
---- @alias ArmorType string|"HalfPlate"|"Plate"|"Leather"|"None"|"Cloth"|"ChainShirt"|"RingMail"|"Splint"|"Padded"|"BreastPlate"|"Sentinel"|"ScaleMail"|"ChainMail"|"StuddedLeather"|"Hide"
---- @alias AttackRoll string|"WeaponAttackAbility"|"SpellCastingAbility"|"None"|"Charisma"|"Wisdom"|"Intelligence"|"UnarmedAttackAbility"|"Constitution"|"Dexterity"|"Strength"
---- @alias AttributeFlags string|"PickpocketableWhenEquipped"|"SlippingImmunity"|"LoseDurabilityOnCharacterHit"|"Torch"|"InvulnerableAndInteractive"|"Unbreakable"|"EnableObscurityEvents"|"Unrepairable"|"ObscurityWithoutSneaking"|"Unstorable"|"Grounded"|"IgnoreClouds"|"LootableWhenEquipped"|"Floating"|"ThrownImmunity"|"InvisibilityImmunity"|"Backstab"|"BackstabImmunity"|"ForceMainhandAlternativeEquipBones"|"FloatingWhileMoving"|"UseMusicalInstrumentForCasting"|"InventoryBound"|"Arrow"
---- @alias BoostCauseType string|"Status"|"Passive"|"Progression"|"Item"|"Stats"|"Character"|"Osiris"|"Unknown5"|"Undefined"
---- @alias BoostType string|"AddProficiencyToDamage"|"BlockVerbalComponent"|"SourceAdvantageOnAttack"|"IncreaseMaxHP"|"Skill"|"WeightCategory"|"BlockTravel"|"SightRangeOverride"|"ReduceCriticalAttackThreshold"|"ActionResourceReplenishTypeOverride"|"IgnoreSurfaceCover"|"BlockSpellCast"|"SightRangeMaximum"|"ActionResourcePreventReduction"|"IgnoreResistance"|"ReceivingCriticalDamageOnHit"|"ActionResourceOverride"|"BlockRegainHP"|"IgnoreFallDamage"|"SightRangeMinimum"|"ProficiencyBonusIncrease"|"ProficiencyBonusOverride"|"HalveWeaponDamage"|"ActionResourceMultiplier"|"BlockGatherAtCamp"|"SightRangeAdditive"|"ActionResourceConsumeMultiplier"|"Attribute"|"ScaleMultiplier"|"PhysicalForceRangeBonus"|"GameplayObscurity"|"ActionResource"|"GameplayLight"|"Savant"|"AbilityOverrideMinimum"|"MonkWeaponDamageDiceOverride"|"AbilityFailedSavingThrow"|"Resistance"|"MonkWeaponAttackOverride"|"AttackSpellOverride"|"JumpMaxDistanceMultiplier"|"Reroll"|"FactionOverride"|"RedirectDamage"|"IntrinsicSummonerProficiency"|"AreaDamageEvade"|"ProjectileDeflect"|"ExpertiseBonus"|"IntrinsicSourceProficiency"|"ProficiencyBonus"|"AiArchetypeOverride"|"EntityThrowDamage"|"IgnorePointBlankDisadvantage"|"RollBonus"|"Advantage"|"Proficiency"|"DualWielding"|"ObjectSize"|"IgnoreLowGroundPenalty"|"DownedStatus"|"IgnoreLeaveAttackRange"|"ObjectSizeOverride"|"AdvanceSpells"|"AddProficiencyToAC"|"NullifyAbilityScore"|"IgnoreEnterAttackRange"|"DodgeAttackRoll"|"Weight"|"IgnoreDamageThreshold"|"ActiveCharacterLight"|"NonLethal"|"ActionResourceBlock"|"DialogueBlock"|"WeaponProperty"|"HorizontalFOVOverride"|"NoDamageOnThrown"|"WeaponEnchantment"|"ACOverrideFormula"|"HiddenDuringCinematic"|"Detach"|"NoAOEDamageOnLand"|"AC"|"DarkvisionRangeMin"|"Tag"|"WeaponDamage"|"GuaranteedChanceRollOutcome"|"DarkvisionRange"|"FallDamageMultiplier"|"VoicebarkBlock"|"MovementSpeedLimit"|"EnableBasicItemInteractions"|"UseBoosts"|"MinimumRollResult"|"DetectDisturbancesBlock"|"DamageTakenBonus"|"DarkvisionRangeOverride"|"UnlockSpellVariant"|"DamageReduction"|"MaximumRollResult"|"UnlockSpell"|"WeaponDamageTypeOverride"|"MaximizeHealing"|"DamageBonus"|"ConcentrationIgnoreDamage"|"WeaponDamageResistance"|"Lootable"|"CharacterWeaponDamage"|"CriticalHitExtraDice"|"UnlockInterrupt"|"TwoWeaponFighting"|"WeaponDamageDieOverride"|"CriticalDamageOnHit"|"CharacterUnarmedDamage"|"Lock"|"CriticalHit"|"TemporaryHP"|"WeaponAttackTypeOverride"|"CarryCapacityMultiplier"|"LeaveTriggers"|"CannotHarmCauseEntity"|"WeaponAttackRollAbilityOverride"|"ConsumeItemBlock"|"JumpMaxDistanceBonus"|"BlockSomaticComponent"|"StatusImmunity"|"ItemReturnToOwner"|"WeaponAttackRollBonus"|"CanWalkThrough"|"Ability"|"Invulnerable"|"BlockAbilityModifierFromAC"|"SpellSaveDC"|"CanShootThrough"|"UnarmedMagicalProperty"|"Invisibility"|"BlockAbilityModifierDamageBonus"|"SpellResistance"|"CanSeeThrough"|"SourceAllyAdvantageOnAttack"|"Initiative"|"CannotBeDisarmed"|"ArmorAbilityModifierCapOverride"|"SoundsBlocked"
---- @alias CauseType string|"SurfaceMove"|"SurfaceCreate"|"SurfaceStatus"|"None"|"StatusEnter"|"StatusTick"|"Offhand"|"AURA"|"WorldItemThrow"|"Attack"|"InventoryItem"
---- @alias ClientGameState string|"Lobby"|"BuildStory"|"GeneratePsoCache"|"LoadPsoCache"|"LoadModule"|"AnalyticsSessionEnd"|"Init"|"InitMenu"|"InitNetwork"|"InitConnection"|"Idle"|"LoadMenu"|"Menu"|"Exit"|"SwapLevel"|"LoadLevel"|"Unknown"|"LoadSession"|"UnloadLevel"|"UnloadModule"|"UnloadSession"|"Paused"|"PrepareRunning"|"Running"|"Disconnect"|"Join"|"Save"|"StartLoading"|"StopLoading"|"StartServer"|"Movie"|"Installation"|"ModReceiving"
---- @alias CombatParticipantFlags string|"CanJoinCombat"|"StayInAiHints"|"IsBoss"|"IsInspector"|"CanFight"
---- @alias ConditionRollType string|"AttackRoll"|"DifficultyRoll"|"SavingThrowRoll"|"SkillCheckRoll"|"AbilityCheckRoll"
---- @alias CraftingStationType string|"Anvil"|"Oven"|"Wetstone"|"None"|"Well"|"BoilingPot"|"Beehive"|"SpinningWheel"|"Cauldron"|"Misc1"|"Misc2"|"Misc3"|"Misc4"
---- @alias CriticalHitBoostFlags string|"AttackTarget"|"Failure"|"AttackRoll"|"SuccessNever"|"FailureNever"|"Success"
---- @alias DamageFlags string|"Status"|"StatusEnter"|"Hit"|"SavingThrow"|"Backstab"|"Dodge"|"Miss"|"Critical"|"Invisible"|"HitpointsDamaged"|"Projectile"|"Surface"|"AttackAdvantage"|"AttackDisadvantage"|"Magical"|"Invulnerable"
---- @alias DamageType string|"Necrotic"|"None"|"Acid"|"Fire"|"Lightning"|"Poison"|"Bludgeoning"|"Slashing"|"Piercing"|"Thunder"|"Force"|"Sentinel"|"Cold"|"Radiant"|"Psychic"
---- @alias DealDamageWeaponDamageType string|"SourceWeaponDamageType"|"ThrownWeaponDamageType"|"None"|"MainWeaponDamageType"|"OffhandWeaponDamageType"|"MainMeleeWeaponDamageType"|"OffhandMeleeWeaponDamageType"|"MainRangedWeaponDamageType"|"OffhandRangedWeaponDamageType"
---- @alias DealDamageWeaponType string|"UnarmedDamage"|"None"|"MainWeapon"|"OffhandWeapon"|"MainMeleeWeapon"|"OffhandMeleeWeapon"|"MainRangedWeapon"|"OffhandRangedWeapon"|"ThrownWeapon"|"ImprovisedWeapon"|"SourceWeapon"
---- @alias DiceSizeId string|"D10"|"D12"|"D20"|"D100"|"Default"|"D4"|"D6"|"D8"
---- @alias ESurfaceFlag string|"CloudCursed"|"CloudPurified"|"Electrified"|"CloudElectrified"|"ElectrifiedDecay"|"Lava"|"SomeDecay"|"Irreplaceable"|"Blood"|"Oil"|"IrreplaceableCloud"|"Fire"|"MovementBlock"|"WaterCloud"|"ProjectileBlock"|"PoisonCloud"|"HasCharacter"|"Source"|"ExplosionCloud"|"HasItem"|"ShockwaveCloud"|"GroundSurfaceBlock"|"Poison"|"CloudSurfaceBlock"|"HasInteractableObject"|"Occupied"|"BloodCloud"|"SurfaceExclude"|"Web"|"Sulfurium"|"Deepwater"|"FireCloud"|"SmokeCloud"|"FrostCloud"|"Deathfog"|"Blessed"|"Frozen"|"Water"|"Cursed"|"Purified"|"CloudBlessed"
---- @alias EffectPropertyType string|"Vector3"|"FunctionType"|"Bool"|"Frames"|"FixedString"|"Base"|"Float"|"Int32"|"Int32Range"|"ColoredFrames"|"FloatRange"|"STDString"
---- @alias EquipmentStatsType string|"Weapon"|"Armor"|"Shield"
---- @alias ExecuteWeaponFunctorsType string|"BothHands"|"Undefined"|"OffHand"|"MainHand"
---- @alias ExtComponentType string|"SpellBook"|"ServerStatusBoostsProcessed"|"Player"|"ItemPortal"|"DropOnDeathBlocked"|"DeathState"|"ServerAiInterestedInItems"|"SpellCastState"|"CCState"|"ClientCCLevelUpDefinition"|"IsInTurnBasedMode"|"EquipmentVisual"|"ServerDisarmAttempt"|"ServerProjectileAttachment"|"FactionOverrideBoost"|"SightRangeMaximumBoost"|"Uuid"|"StatusImmunities"|"Weapon"|"ActionResourceConsumeMultiplierBoost"|"IsDoor"|"NewItemsInside"|"DeadByDefault"|"ServerAiInterestingItem"|"SpellSyncTargeting"|"CCLevelUp"|"ClientCCChangeAppearanceDefinition"|"ItemBoosts"|"Physics"|"Repose"|"ServerUnsheath"|"ServerProjectileSpell"|"BlockRegainHPBoost"|"SightRangeOverrideBoost"|"UuidToHandleMapping"|"Use"|"MaterialParameterOverride"|"ExamineDisabled"|"NonTradable"|"ServerKiller"|"SpellModificationContainer"|"ServerSpellExternals"|"CCLevelUpDefinition"|"ClientCCFullRespecDefinition"|"IsSummon"|"AnimationBlueprint"|"CanEnterChasm"|"ServerIsLightBlocker"|"ServerProjectileInitialization"|"InitiativeBoost"|"MovementSpeedLimitBoost"|"Data"|"Wielding"|"ServerBaseProficiency"|"Passive"|"ItemHasMoved"|"PartyView"|"ServerDeathState"|"SpellCastAnimationInfo"|"ServerSpellCastState"|"CCFullRespec"|"ClientCCDummyDefinition"|"Stealth"|"CanModifyHealth"|"DialogState"|"ServerDarknessActive"|"ActionResourceValueBoost"|"DarkvisionRangeBoost"|"UnlockSpellVariantBoost"|"CustomStats"|"ServerProficiencyGroupStats"|"HasOpened"|"IsItem"|"PartyComposition"|"ServerDeathContinue"|"SpellCastCanBeTargeted"|"InterruptActionState"|"CCRespec"|"ServerCCAppearanceVisualTag"|"ShortRest"|"AvailableLevel"|"EncumbranceState"|"ServerHotbarOrder"|"AbilityFailedSavingThrowBoost"|"AddTagBoost"|"DetectCrimesBlockBoost"|"ActionResources"|"BoostCondition"|"ShapeshiftHealthReservation"|"MapMarkerStyle"|"IsGold"|"PartyPortals"|"HitTarget"|"SpellCastInterruptResults"|"InterruptContainer"|"CCCreation"|"ServerCCEquipmentSetRequest"|"IsGlobal"|"CanBeLooted"|"EncumbranceStats"|"IsMarkedForDeletion"|"WeaponDamageResistanceBoost"|"SkillBoost"|"BlockAbilityModifierFromACBoost"|"BoostsContainer"|"ServerShapeshiftStates"|"NewInInventory"|"PartyRecipes"|"HitAttacker"|"ServerSpellCastHitDelay"|"InterruptDecision"|"CCDefinitionLevelUp"|"CharacterCreationStats"|"CanBeDisarmed"|"GameplayLight"|"Unsheath"|"JumpFollow"|"ProficiencyBonusOverrideBoost"|"WeaponDamageBoost"|"ReduceCriticalAttackThresholdBoost"|"ServerBoostBase"|"Origin"|"Speaker"|"TemplateAnimationSetOverride"|"ItemCanMove"|"PartyWaypoints"|"HitWeapon"|"ServerSpellCastResponsible"|"InterruptPreferences"|"ServerCCGod"|"GlobalShortRestDisabled"|"CanDoActions"|"UseSocket"|"ServerPassiveBase"|"JumpMaxDistanceMultiplierBoost"|"NullifyAbilityBoost"|"PhysicalForceRangeBonusBoost"|"IsCharacter"|"Value"|"SpellBookPrepares"|"ShouldDestroyOnSpellCast"|"ClimbOn"|"PartyMember"|"HitThrownObject"|"ServerSpellClientInitiated"|"InterruptPrepared"|"Sight"|"ServerCCUpdates"|"GlobalLongRestDisabled"|"ActionUseConditions"|"UserAvatar"|"ServerScriptPassives"|"HalveWeaponDamageBoost"|"RerollBoost"|"ObjectSizeOverrideBoost"|"Hearing"|"BoostInfo"|"ItemTemplateDestroyed"|"InteractionDisabled"|"PartyFollower"|"HitProxy"|"ServerSpellHitRegister"|"InterruptZone"|"ServerCCIsCustom"|"StoryShortRestDisabled"|"CanMove"|"UserReservedFor"|"ServerCharacter"|"ProficiencyBonusBoost"|"DownedStatusBoost"|"AiArchetypeOverrideBoost"|"Experience"|"Faction"|"CanInteract"|"IsStoryItem"|"ServerDynamicLayerOwner"|"BlockFollow"|"HitProxyOwner"|"ServerSpellInterruptRequests"|"InterruptZoneSource"|"ProficiencyGroup"|"Savegame"|"ClientEquipmentVisuals"|"CanSense"|"CalendarDaysPassed"|"ServerItem"|"ActionResourceBlockBoost"|"AttributeBoost"|"EntityThrowDamageBoost"|"CanSpeak"|"Ladder"|"ServerIsPreviousLatestOwner"|"Recruiter"|"HitReaction"|"ServerSpellInterruptResults"|"InterruptData"|"SightData"|"LevelUp"|"Floating"|"Key"|"CanTriggerRandomCasts"|"Darkness"|"CalendarStartingDate"|"ProjectileSource"|"CannotHarmCauseEntityBoost"|"GameplayLightBoost"|"WeaponDamageTypeOverrideBoost"|"Max"|"Bound"|"Health"|"Stats"|"EocLevel"|"ObjectSize"|"ActionType"|"UseAction"|"ServerIsPreviousOwner"|"ServerUserSnapshot"|"IdentityState"|"LearnedSpells"|"InterruptConditionallyDisabled"|"SightEntityViewshed"|"Proficiency"|"Disarmable"|"DualWielding"|"GameObjectVisual"|"CharacterCreationTemplateOverride"|"ProgressionContainer"|"ServerProjectile"|"ActionResourceMultiplierBoost"|"DualWieldingBoost"|"WeaponAttackRollBonusBoost"|"Armor"|"BaseHp"|"Classes"|"OwnedAsLoot"|"ServerIsOriginalOwner"|"EscortFollower"|"Identity"|"OriginalIdentity"|"InterruptZoneParticipant"|"StatusContainer"|"SummonContainer"|"AppearanceOverride"|"GravityDisabledUntilMoved"|"ProgressionMeta"|"ServerOsirisTag"|"DarkvisionRangeMinBoost"|"SavantBoost"|"MonkWeaponDamageDiceOverrideBoost"|"Transform"|"OffStage"|"OwneeCurrent"|"InventoryMemberTransform"|"EscortLeader"|"ServerCanStartCombat"|"ServerInterruptAddRemoveRequests"|"StatusCause"|"ClientControl"|"GravityDisabled"|"CanDeflectProjectiles"|"ServerRecruitedBy"|"ClientCharacter"|"DarkvisionRangeOverrideBoost"|"WeaponPropertyBoost"|"HorizontalFOVOverrideBoost"|"PickingState"|"WalkOn"|"ServerIsCurrentOwner"|"ServerInventoryContainerData"|"EscortLeaderPriority"|"ServerEnterRequest"|"ServerInterruptActionRequests"|"StatusIncapacitated"|"DisabledEquipment"|"ActiveCharacterLight"|"Visual"|"CanBeWielded"|"CharacterCreationAppearance"|"Active"|"ServerGameTimer"|"ClientItem"|"IgnoreDamageThresholdMinBoost"|"ScaleMultiplierBoost"|"CharacterUnarmedDamageBoost"|"SimpleCharacter"|"ServerIsLatestOwner"|"ServerInventoryGroupCheck"|"EscortMember"|"ServerFleeBlocked"|"ServerInterruptZoneRequests"|"StatusLifetime"|"LootingState"|"Avatar"|"ProgressionChangedContainers"|"ServerIsUnsummoning"|"ClientProjectile"|"WeaponEnchantmentBoost"|"DamageReductionBoost"|"ActionResourcePreventReductionBoost"|"WeaponSet"|"DynamicAnimationTags"|"ServerOwneeHistory"|"ServerShapeshiftEquipmentHistory"|"EscortHasStragglers"|"ServerImmediateJoin"|"ServerInterruptInitialParticipants"|"StatusVisualDisabled"|"Loot"|"Concentration"|"HasExclamationDialog"|"ServerExperienceGaveOut"|"ServerAnubisTag"|"ArmorClassBoost"|"GuaranteedChanceRollOutcomeBoost"|"ObjectSizeBoost"|"AttackSpellOverrideBoost"|"Tag"|"DifficultyCheck"|"ServerOwneeRequest"|"CharacterHasGeneratedTradeTreasure"|"CampChest"|"Death"|"ServerAiArchetype"|"ServerInterruptTurnOrderInZone"|"ServerStatusCause"|"SummonLifetime"|"Trader"|"Ambushing"|"OriginalTemplate"|"ServerReplicationDependency"|"ServerDialogTag"|"AbilityBoost"|"MinimumRollResultBoost"|"ExpertiseBonusBoost"|"IgnorePointBlankDisadvantageBoost"|"BaseStats"|"InventoryMember"|"ServerInventoryIsReplicatedWith"|"CampEndTheDayState"|"ServerAiModifiers"|"ServerStatus"|"ServerStatusOwnership"|"HotbarContainer"|"CustomName"|"Equipable"|"Race"|"ServerActivationGroupContainer"|"ServerIconList"|"RollBonusBoost"|"CharacterWeaponDamageBoost"|"MaximizeHealingBoost"|"CriticalHitExtraDiceBoost"|"Expertise"|"InventoryData"|"ItemHasGeneratedTreasure"|"CampSettings"|"SpellContainer"|"StatusID"|"ServerStatusDifficultyModifiers"|"ServerStatusUnique"|"Voice"|"CustomIcon"|"HotbarDecks"|"CanTravel"|"ShootThroughType"|"ServerDisplayNameList"|"ServerRaceTag"|"AdvantageBoost"|"UseBoosts"|"ProjectileDeflectBoost"|"DamageBonusBoost"|"GameplayObscurityBoost"|"HealBlock"|"InventoryOwner"|"ReadyToBeAddedToInventory"|"CampSupply"|"PlayerPrepareSpell"|"ServerStatusPerforming"|"ServerStatusActive"|"Icon"|"OriginTag"|"ObjectInteraction"|"ServerTemplateTag"|"ServerDelayDeathCause"|"CriticalHitBoost"|"AbilityOverrideMinimumBoost"|"AdvanceSpellsBoost"|"MaximumRollResultBoost"|"ServerBaseData"|"InventoryIsOwned"|"InventoryPropertyCanBePickpocketed"|"CampTotalSupplies"|"CCPrepareSpell"|"ServerStatusAddedFromSaveLoad"|"ServerStatusAura"|"Background"|"OriginPassives"|"DisplayName"|"StaticPhysics"|"Steering"|"ServerBoostTag"|"ServerReplicationDependencyOwner"|"ResistanceBoost"|"ACOverrideFormulaBoost"|"SpellResistanceBoost"|"JumpMaxDistanceBonusBoost"|"Level"|"ServerBaseSize"|"InventoryContainer"|"ScriptPropertyCanBePickpocketed"|"CampPresence"|"AddedSpells"|"TadpoleTreeState"|"CCCompanionDefinition"|"ClassTag"|"InteractionFilter"|"Pathing"|"ServerSafePosition"|"ServerGameplayLightEquipment"|"UnlockSpellBoost"|"FallDamageMultiplierBoost"|"SpellSaveDCBoost"|"ArmorAbilityModifierCapOverrideBoost"|"ServerBaseStats"|"InventoryStack"|"InventoryPropertyIsDroppedOnDeath"|"IsInCombat"|"SpellBookCooldowns"|"TadpolePowers"|"CCFullRespecDefinition"|"Lock"|"BackgroundTag"|"ActiveSkeletonSlots"|"ServerAnubisExecutor"|"ServerGameplayLightChanges"|"SourceAdvantageBoost"|"ActiveCharacterLightBoost"|"RedirectDamageBoost"|"IgnoreResistanceBoost"|"ServerBaseWeapon"|"InventoryStackMember"|"ScriptPropertyIsDroppedOnDeath"|"CombatParticipant"|"SpellAiConditions"|"Tadpoled"|"CCChangeAppearanceDefinition"|"OriginAppearanceTag"|"Net"|"ServerLeader"|"ServerUnsheathScriptOverride"|"ProficiencyBoost"|"WeaponAttackTypeOverrideBoost"|"CanSeeThroughBoost"|"ConcentrationIgnoreDamageBoost"|"AttributeFlags"|"RulesetModifiers"|"ShapeshiftState"|"AnimationWaterfall"|"InventoryWeight"|"InventoryPropertyIsTradable"|"CombatState"|"OnDamageSpells"|"HalfIllithid"|"CCCharacterDefinition"|"VoiceTag"|"AnimationSet"|"Movement"|"FTBParticipant"|"ServerBreadcrumb"|"ServerIsVisionBlocker"|"IncreaseMaxHPBoost"|"WeaponDamageDieOverrideBoost"|"CanShootThroughBoost"|"IgnoreLowGroundPenaltyBoost"|"PassiveContainer"|"Wielded"|"ScriptPropertyIsTradable"|"TurnBased"|"SpellCastCache"|"FullIllithid"|"ClientCCDefinitionState"|"GodTag"|"FTBZoneBlockReason"|"CanWalkThrough"|"ServerPickpocket"|"ServerInventoryItemDataPopulated"|"StatusImmunityBoost"|"CarryCapacityMultiplierBoost"|"CanWalkThroughBoost"|"IgnoreSurfaceCoverBoost"|"ArmorSetState"|"Relation"|"BodyType"|"PassiveUsageCount"|"CanBeInInventory"|"CurrentlyFollowingParty"|"TurnOrder"|"SpellCastIsCasting"|"CCDefinitionCommon"|"ClientCCDefinitionStateEx"|"God"|"BackgroundPassives"|"FTBRespect"|"CanShootThrough"|"HistoryTargetUUID"|"ServerVariableManager"|"TemporaryHPBoost"|"WeaponAttackRollAbilityOverrideBoost"|"ActionResourceReplenishTypeOverrideBoost"|"LockBoost"|"Detached"|"Ruleset"|"ItemDestroyed"|"CannotBePickpocketed"|"EscortStragglersTracker"|"CampQuality"|"IsCombatPaused"|"SpellCastMovement"|"CCRespecDefinition"|"ClientCCBaseDefinitionState"|"Invisibility"|"FleeCapability"|"ApprovalRatings"|"CanSeeThrough"|"ServerPeersInRange"|"ServerToggledPassives"|"WeightBoost"|"SightRangeAdditiveBoost"|"DodgeAttackRollBoost"|"Resistances"|"SurfacePathInfluences"|"ItemDye"|"CannotBeTakenOut"|"ThreatRange"|"ServerCombatGroupMapping"|"SpellCastRolls"|"CCSessionCommon"|"ClientCCCompanionDefinition"|"CanDoRest"|"AttitudesToPlayers"|"BackgroundGoals"|"ServerSurface"|"ServerPassivePersistentData"|"WeightCategoryBoost"|"SightRangeMinimumBoost"|"UnlockInterruptBoost"
---- @alias ExtQueryType string|"UuidToHandleMapping"|"Max"
---- @alias ExtResourceManagerType string|"AvatarContainerTemplate"|"BackgroundGoal"|"RulesetModifierOption"|"WeightCategory"|"Flag"|"AreaLevelOverride"|"ProgressionDescription"|"ActionResourceGroup"|"FixedHotBarSlot"|"WeaponAnimationSet"|"AnimationSetPriority"|"ApprovalRating"|"ProjectileDefault"|"AbilityDistributionPreset"|"CalendarDayRange"|"CinematicArenaFrequencyGroup"|"FeatSoundState"|"TooltipUpcastDescription"|"ActionResource"|"AbilityDefaultValues"|"FeatDefaultValues"|"CharacterCreationPreset"|"CharacterCreationVOLine"|"Origin"|"PassiveDefaultValues"|"FeatDescription"|"Gossip"|"PassiveList"|"SkillDefaultValues"|"CharacterCreationSkinColor"|"Feat"|"Progression"|"TutorialEvent"|"SpellDefaultValues"|"Faction"|"CharacterCreationSharedVisual"|"ConditionError"|"ExperienceReward"|"Max"|"DeathTypeEffect"|"TrajectoryRules"|"OriginIntroEntity"|"CharacterCreationPassiveAppearance"|"EncumbranceType"|"EquipmentList"|"DLC"|"GoldReward"|"MultiEffectInfo"|"CharacterCreationMaterialOverride"|"DisturbanceProperty"|"ItemWallTemplate"|"LevelMap"|"TagSoundState"|"CharacterCreationHairColor"|"DifficultyClass"|"PassiveVFX"|"LongRestCost"|"RandomCastOutcome"|"Tag"|"CharacterCreationEyeColor"|"EquipmentType"|"LimbsMapping"|"Race"|"SpellSoundTrajectory"|"CharacterCreationEquipmentIcons"|"TadpolePower"|"Voice"|"SurfaceCursorMessage"|"TooltipExtraText"|"Background"|"CharacterCreationIconSettings"|"ClassDescription"|"CustomDice"|"TutorialEntries"|"StatusSoundState"|"TutorialModalEntries"|"VisualLocatorAttachment"|"AbilityList"|"ItemThrowParams"|"TutorialUnifiedEntry"|"CharacterCreationAppearanceVisual"|"CompanionPreset"|"ShapeshiftRule"|"RulesetValue"|"EquipmentDefaultValues"|"VFX"|"SpellMetaCondition"|"PreparedSpellDefaultValues"|"CharacterCreationAppearanceMaterial"|"ColorDefinition"|"RulesetModifier"|"God"|"ScriptMaterialParameterOverride"|"CampChestTemplate"|"CharacterCreationAccessorySet"|"ManagedStatusVFX"|"SkillList"|"SpellList"|"ScriptMaterialPresetOverride"|"Ruleset"|"RulesetSelectionPreset"|"FlagSoundState"
---- @alias ExtSystemType string|"UISystem"|"Max"
---- @alias FleeErrorFlags string|"Region"|"Condition"|"PartyFollower"|"Summon"|"EnemyTooClose"|"CantMove"|"Downed"|"Incapacitated"
---- @alias ForceFunctorAggression string|"Friendly"|"Neutral"|"Undefined"|"Aggressive"
---- @alias ForceFunctorOrigin string|"Undefined"|"OriginToEntity"|"OriginToTarget"|"TargetToEntity"
---- @alias FunctorExecParamsType string|"Type3"|"Type4"|"Type5"|"Type6"|"Type7"|"Type8"|"Type1"|"Type2"
---- @alias GameActionType string|"RainAction"|"StormAction"|"WallAction"|"TornadoAction"|"PathAction"|"GameObjectMoveAction"|"StatusDomeAction"
---- @alias Gender string|"Male"|"Female"
---- @alias GuiColor string|"TextDisabled"|"Tab"|"WindowBg"|"TabHovered"|"ChildBg"|"TabActive"|"PopupBg"|"TabUnfocused"|"BorderShadow"|"TabUnfocusedActive"|"FrameBg"|"PlotLines"|"FrameBgHovered"|"PlotLinesHovered"|"FrameBgActive"|"PlotHistogram"|"TitleBg"|"PlotHistogramHovered"|"TitleBgActive"|"TableHeaderBg"|"TitleBgCollapsed"|"TableBorderStrong"|"MenuBarBg"|"TableBorderLight"|"ScrollbarBg"|"TableRowBg"|"ScrollbarGrab"|"TableRowBgAlt"|"ScrollbarGrabHovered"|"TextSelectedBg"|"ScrollbarGrabActive"|"DragDropTarget"|"CheckMark"|"NavHighlight"|"SliderGrab"|"NavWindowingDimBg"|"SliderGrabActive"|"ModalWindowDimBg"|"Button"|"ButtonHovered"|"ButtonActive"|"Header"|"Text"|"HeaderHovered"|"HeaderActive"|"NavWindowingHighlight"|"Separator"|"SeparatorHovered"|"SeparatorActive"|"ResizeGrip"|"Border"|"ResizeGripHovered"|"ResizeGripActive"
---- @alias GuiColorEditFlags string|"NoLabel"|"NoSidePreview"|"NoDragDrop"|"NoBorder"|"AlphaBar"|"AlphaPreview"|"AlphaPreviewHalf"|"NoInputs"|"HDR"|"DisplayRGB"|"DisplayHSV"|"DisplayHex"|"Uint8"|"PickerHueBar"|"PickerHueWheel"|"InputRGB"|"Float"|"InputHSV"|"NoAlpha"|"NoPicker"|"NoTooltip"|"NoOptions"|"NoSmallPreview"
---- @alias GuiComboFlags string|"PopupAlignLeft"|"HeightSmall"|"HeightRegular"|"HeightLarge"|"HeightLargest"|"NoArrowButton"|"NoPreview"|"WidthFitPreview"
---- @alias GuiInputTextFlags string|"CallbackAlways"|"CallbackCharFilter"|"AllowTabInput"|"CtrlEnterForNewLine"|"NoHorizontalScroll"|"AlwaysOverwrite"|"Password"|"NoUndoRedo"|"CharsScientific"|"CallbackResize"|"CallbackEdit"|"EscapeClearsAll"|"ReadOnly"|"CharsDecimal"|"CharsHexadecimal"|"CharsUppercase"|"CharsNoBlank"|"AutoSelectAll"|"EnterReturnsTrue"|"CallbackCompletion"|"CallbackHistory"
---- @alias GuiPopupFlags string|"NoOpenOverExistingPopup"|"MouseButtonLeft"|"MouseButtonRight"|"MouseButtonMiddle"|"MouseButtonMask_"|"MouseButtonDefault_"|"NoReopen"|"NoOpenOverItems"|"AnyPopupId"|"AnyPopupLevel"|"AnyPopup"
---- @alias GuiSliderFlags string|"AlwaysClamp"|"Logarithmic"|"NoRoundToFormat"|"NoInput"
---- @alias GuiStyleVar string|"Alpha"|"DisabledAlpha"|"WindowPadding"|"WindowRounding"|"WindowBorderSize"|"WindowMinSize"|"WindowTitleAlign"|"ChildRounding"|"ChildBorderSize"|"PopupRounding"|"PopupBorderSize"|"FramePadding"|"FrameRounding"|"FrameBorderSize"|"ItemSpacing"|"ItemInnerSpacing"|"IndentSpacing"|"CellPadding"|"ScrollbarSize"|"ScrollbarRounding"|"GrabMinSize"|"GrabRounding"|"SeparatorTextBorderSize"|"TabRounding"|"TabBarBorderSize"|"ButtonTextAlign"|"SelectableTextAlign"|"SeparatorTextAlign"|"SeparatorTextPadding"
---- @alias GuiTabBarFlags string|"FittingPolicyDefault"|"Reorderable"|"AutoSelectNewTabs"|"TabListPopupButton"|"NoCloseWithMiddleMouseButton"|"NoTooltip"|"NoTabListScrollingButtons"|"FittingPolicyScroll"|"FittingPolicyResizeDown"|"FittingPolicyMask"
---- @alias GuiTabItemFlags string|"SetSelected"|"NoPushId"|"UnsavedDocument"|"NoReorder"|"Leading"|"Trailing"|"NoAssumedClosure"|"NoCloseWithMiddleMouseButton"|"NoTooltip"
---- @alias GuiTableFlags string|"NoBordersInBodyUntilResize"|"PreciseWidths"|"NoClip"|"HighlightHoveredColumn"|"PadOuterX"|"NoPadOuterX"|"NoPadInnerX"|"ScrollX"|"ScrollY"|"SortMulti"|"SortTristate"|"Resizable"|"Hideable"|"Sortable"|"ContextMenuInBody"|"RowBg"|"BordersInnerH"|"BordersOuterH"|"BordersInnerV"|"BordersOuterV"|"BordersH"|"BordersV"|"BordersInner"|"BordersOuter"|"Borders"|"NoBordersInBody"|"SizingFixedFit"|"Reorderable"|"SizingFixedSame"|"SizingStretchProp"|"SizingStretchSame"|"NoSavedSettings"|"NoHostExtendX"|"NoHostExtendY"|"NoKeepColumnsVisible"
+--- @alias ArmorType string|"BreastPlate"|"ChainMail"|"ChainShirt"|"Cloth"|"HalfPlate"|"Hide"|"Leather"|"None"|"Padded"|"Plate"|"RingMail"|"ScaleMail"|"Sentinel"|"Splint"|"StuddedLeather"
+--- @alias AttackRoll string|"Charisma"|"Constitution"|"Dexterity"|"Intelligence"|"None"|"SpellCastingAbility"|"Strength"|"UnarmedAttackAbility"|"WeaponAttackAbility"|"Wisdom"
+--- @alias AttributeFlags string|"Arrow"|"Backstab"|"BackstabImmunity"|"EnableObscurityEvents"|"Floating"|"FloatingWhileMoving"|"ForceMainhandAlternativeEquipBones"|"Grounded"|"IgnoreClouds"|"InventoryBound"|"InvisibilityImmunity"|"InvulnerableAndInteractive"|"LootableWhenEquipped"|"LoseDurabilityOnCharacterHit"|"ObscurityWithoutSneaking"|"PickpocketableWhenEquipped"|"SlippingImmunity"|"ThrownImmunity"|"Torch"|"Unbreakable"|"Unrepairable"|"Unstorable"|"UseMusicalInstrumentForCasting"
+--- @alias BoostCauseType string|"Character"|"Item"|"Osiris"|"Passive"|"Progression"|"Stats"|"Status"|"Undefined"|"Unknown5"
+--- @alias BoostType string|"AC"|"ACOverrideFormula"|"Ability"|"AbilityFailedSavingThrow"|"AbilityOverrideMinimum"|"ActionResource"|"ActionResourceBlock"|"ActionResourceConsumeMultiplier"|"ActionResourceMultiplier"|"ActionResourceOverride"|"ActionResourcePreventReduction"|"ActionResourceReplenishTypeOverride"|"ActiveCharacterLight"|"AddProficiencyToAC"|"AddProficiencyToDamage"|"AdvanceSpells"|"Advantage"|"AiArchetypeOverride"|"AreaDamageEvade"|"ArmorAbilityModifierCapOverride"|"AttackSpellOverride"|"Attribute"|"BlockAbilityModifierDamageBonus"|"BlockAbilityModifierFromAC"|"BlockGatherAtCamp"|"BlockRegainHP"|"BlockSomaticComponent"|"BlockSpellCast"|"BlockTravel"|"BlockVerbalComponent"|"CanSeeThrough"|"CanShootThrough"|"CanWalkThrough"|"CannotBeDisarmed"|"CannotHarmCauseEntity"|"CarryCapacityMultiplier"|"CharacterUnarmedDamage"|"CharacterWeaponDamage"|"ConcentrationIgnoreDamage"|"ConsumeItemBlock"|"CriticalDamageOnHit"|"CriticalHit"|"CriticalHitExtraDice"|"DamageBonus"|"DamageReduction"|"DamageTakenBonus"|"DarkvisionRange"|"DarkvisionRangeMin"|"DarkvisionRangeOverride"|"Detach"|"DetectDisturbancesBlock"|"DialogueBlock"|"DodgeAttackRoll"|"DownedStatus"|"DualWielding"|"EnableBasicItemInteractions"|"EntityThrowDamage"|"ExpertiseBonus"|"FactionOverride"|"FallDamageMultiplier"|"GameplayLight"|"GameplayObscurity"|"GuaranteedChanceRollOutcome"|"HalveWeaponDamage"|"HiddenDuringCinematic"|"HorizontalFOVOverride"|"IgnoreDamageThreshold"|"IgnoreEnterAttackRange"|"IgnoreFallDamage"|"IgnoreLeaveAttackRange"|"IgnoreLowGroundPenalty"|"IgnorePointBlankDisadvantage"|"IgnoreResistance"|"IgnoreSurfaceCover"|"IncreaseMaxHP"|"Initiative"|"IntrinsicSourceProficiency"|"IntrinsicSummonerProficiency"|"Invisibility"|"Invulnerable"|"ItemReturnToOwner"|"JumpMaxDistanceBonus"|"JumpMaxDistanceMultiplier"|"LeaveTriggers"|"Lock"|"Lootable"|"MaximizeHealing"|"MaximumRollResult"|"MinimumRollResult"|"MonkWeaponAttackOverride"|"MonkWeaponDamageDiceOverride"|"MovementSpeedLimit"|"NoAOEDamageOnLand"|"NoDamageOnThrown"|"NonLethal"|"NullifyAbilityScore"|"ObjectSize"|"ObjectSizeOverride"|"PhysicalForceRangeBonus"|"Proficiency"|"ProficiencyBonus"|"ProficiencyBonusIncrease"|"ProficiencyBonusOverride"|"ProjectileDeflect"|"ReceivingCriticalDamageOnHit"|"RedirectDamage"|"ReduceCriticalAttackThreshold"|"Reroll"|"Resistance"|"RollBonus"|"Savant"|"ScaleMultiplier"|"SightRangeAdditive"|"SightRangeMaximum"|"SightRangeMinimum"|"SightRangeOverride"|"Skill"|"SoundsBlocked"|"SourceAdvantageOnAttack"|"SourceAllyAdvantageOnAttack"|"SpellResistance"|"SpellSaveDC"|"StatusImmunity"|"Tag"|"TemporaryHP"|"TwoWeaponFighting"|"UnarmedMagicalProperty"|"UnlockInterrupt"|"UnlockSpell"|"UnlockSpellVariant"|"UseBoosts"|"VoicebarkBlock"|"WeaponAttackRollAbilityOverride"|"WeaponAttackRollBonus"|"WeaponAttackTypeOverride"|"WeaponDamage"|"WeaponDamageDieOverride"|"WeaponDamageResistance"|"WeaponDamageTypeOverride"|"WeaponEnchantment"|"WeaponProperty"|"Weight"|"WeightCategory"
+--- @alias CauseType string|"AURA"|"Attack"|"InventoryItem"|"None"|"Offhand"|"StatusEnter"|"StatusTick"|"SurfaceCreate"|"SurfaceMove"|"SurfaceStatus"|"WorldItemThrow"
+--- @alias ClientGameState string|"AnalyticsSessionEnd"|"BuildStory"|"Disconnect"|"Exit"|"GeneratePsoCache"|"Idle"|"Init"|"InitConnection"|"InitMenu"|"InitNetwork"|"Installation"|"Join"|"LoadLevel"|"LoadMenu"|"LoadModule"|"LoadPsoCache"|"LoadSession"|"Lobby"|"Menu"|"ModReceiving"|"Movie"|"Paused"|"PrepareRunning"|"Running"|"Save"|"StartLoading"|"StartServer"|"StopLoading"|"SwapLevel"|"Unknown"|"UnloadLevel"|"UnloadModule"|"UnloadSession"
+--- @alias CombatParticipantFlags string|"CanFight"|"CanJoinCombat"|"IsBoss"|"IsInspector"|"StayInAiHints"
+--- @alias ConditionRollType string|"AbilityCheckRoll"|"AttackRoll"|"DifficultyRoll"|"SavingThrowRoll"|"SkillCheckRoll"
+--- @alias CraftingStationType string|"Anvil"|"Beehive"|"BoilingPot"|"Cauldron"|"Misc1"|"Misc2"|"Misc3"|"Misc4"|"None"|"Oven"|"SpinningWheel"|"Well"|"Wetstone"
+--- @alias CriticalHitBoostFlags string|"AttackRoll"|"AttackTarget"|"Failure"|"FailureNever"|"Success"|"SuccessNever"
+--- @alias DamageFlags string|"AttackAdvantage"|"AttackDisadvantage"|"Backstab"|"Critical"|"Dodge"|"Hit"|"HitpointsDamaged"|"Invisible"|"Invulnerable"|"Magical"|"Miss"|"Projectile"|"SavingThrow"|"Status"|"StatusEnter"|"Surface"
+--- @alias DamageType string|"Acid"|"Bludgeoning"|"Cold"|"Fire"|"Force"|"Lightning"|"Necrotic"|"None"|"Piercing"|"Poison"|"Psychic"|"Radiant"|"Sentinel"|"Slashing"|"Thunder"
+--- @alias DealDamageWeaponDamageType string|"MainMeleeWeaponDamageType"|"MainRangedWeaponDamageType"|"MainWeaponDamageType"|"None"|"OffhandMeleeWeaponDamageType"|"OffhandRangedWeaponDamageType"|"OffhandWeaponDamageType"|"SourceWeaponDamageType"|"ThrownWeaponDamageType"
+--- @alias DealDamageWeaponType string|"ImprovisedWeapon"|"MainMeleeWeapon"|"MainRangedWeapon"|"MainWeapon"|"None"|"OffhandMeleeWeapon"|"OffhandRangedWeapon"|"OffhandWeapon"|"SourceWeapon"|"ThrownWeapon"|"UnarmedDamage"
+--- @alias DiceSizeId string|"D10"|"D100"|"D12"|"D20"|"D4"|"D6"|"D8"|"Default"
+--- @alias ESurfaceFlag string|"Blessed"|"Blood"|"BloodCloud"|"CloudBlessed"|"CloudCursed"|"CloudElectrified"|"CloudPurified"|"CloudSurfaceBlock"|"Cursed"|"Deathfog"|"Deepwater"|"Electrified"|"ElectrifiedDecay"|"ExplosionCloud"|"Fire"|"FireCloud"|"FrostCloud"|"Frozen"|"GroundSurfaceBlock"|"HasCharacter"|"HasInteractableObject"|"HasItem"|"Irreplaceable"|"IrreplaceableCloud"|"Lava"|"MovementBlock"|"Occupied"|"Oil"|"Poison"|"PoisonCloud"|"ProjectileBlock"|"Purified"|"ShockwaveCloud"|"SmokeCloud"|"SomeDecay"|"Source"|"Sulfurium"|"SurfaceExclude"|"Water"|"WaterCloud"|"Web"
+--- @alias EffectPropertyType string|"Base"|"Bool"|"ColoredFrames"|"FixedString"|"Float"|"FloatRange"|"Frames"|"FunctionType"|"Int32"|"Int32Range"|"STDString"|"Vector3"
+--- @alias EquipmentStatsType string|"Armor"|"Shield"|"Weapon"
+--- @alias ExecuteWeaponFunctorsType string|"BothHands"|"MainHand"|"OffHand"|"Undefined"
+--- @alias ExtComponentType string|"ACOverrideFormulaBoost"|"AbilityBoost"|"AbilityFailedSavingThrowBoost"|"AbilityOverrideMinimumBoost"|"ActionResourceBlockBoost"|"ActionResourceConsumeMultiplierBoost"|"ActionResourceMultiplierBoost"|"ActionResourcePreventReductionBoost"|"ActionResourceReplenishTypeOverrideBoost"|"ActionResourceValueBoost"|"ActionResources"|"ActionType"|"ActionUseConditions"|"Active"|"ActiveCharacterLight"|"ActiveCharacterLightBoost"|"ActiveSkeletonSlots"|"AddTagBoost"|"AddedSpells"|"AdvanceSpellsBoost"|"AdvantageBoost"|"AiArchetypeOverrideBoost"|"Ambushing"|"AnimationBlueprint"|"AnimationSet"|"AnimationWaterfall"|"AppearanceOverride"|"ApprovalRatings"|"Armor"|"ArmorAbilityModifierCapOverrideBoost"|"ArmorClassBoost"|"ArmorSetState"|"AttackSpellOverrideBoost"|"AttitudesToPlayers"|"AttributeBoost"|"AttributeFlags"|"AvailableLevel"|"Avatar"|"Background"|"BackgroundGoals"|"BackgroundPassives"|"BackgroundTag"|"BaseHp"|"BaseStats"|"BlockAbilityModifierFromACBoost"|"BlockFollow"|"BlockRegainHPBoost"|"BodyType"|"BoostCondition"|"BoostInfo"|"BoostsContainer"|"Bound"|"CCChangeAppearanceDefinition"|"CCCharacterDefinition"|"CCCompanionDefinition"|"CCCreation"|"CCDefinitionCommon"|"CCDefinitionLevelUp"|"CCFullRespec"|"CCFullRespecDefinition"|"CCLevelUp"|"CCLevelUpDefinition"|"CCPrepareSpell"|"CCRespec"|"CCRespecDefinition"|"CCSessionCommon"|"CCState"|"CalendarDaysPassed"|"CalendarStartingDate"|"CampChest"|"CampEndTheDayState"|"CampPresence"|"CampQuality"|"CampSettings"|"CampSupply"|"CampTotalSupplies"|"CanBeDisarmed"|"CanBeInInventory"|"CanBeLooted"|"CanBeWielded"|"CanDeflectProjectiles"|"CanDoActions"|"CanDoRest"|"CanEnterChasm"|"CanInteract"|"CanModifyHealth"|"CanMove"|"CanSeeThrough"|"CanSeeThroughBoost"|"CanSense"|"CanShootThrough"|"CanShootThroughBoost"|"CanSpeak"|"CanTravel"|"CanTriggerRandomCasts"|"CanWalkThrough"|"CanWalkThroughBoost"|"CannotBePickpocketed"|"CannotBeTakenOut"|"CannotHarmCauseEntityBoost"|"CarryCapacityMultiplierBoost"|"CharacterCreationAppearance"|"CharacterCreationStats"|"CharacterCreationTemplateOverride"|"CharacterHasGeneratedTradeTreasure"|"CharacterUnarmedDamageBoost"|"CharacterWeaponDamageBoost"|"ClassTag"|"Classes"|"ClientCCBaseDefinitionState"|"ClientCCChangeAppearanceDefinition"|"ClientCCCompanionDefinition"|"ClientCCDefinitionState"|"ClientCCDefinitionStateEx"|"ClientCCDummyDefinition"|"ClientCCFullRespecDefinition"|"ClientCCLevelUpDefinition"|"ClientCharacter"|"ClientControl"|"ClientEquipmentVisuals"|"ClientItem"|"ClientProjectile"|"ClimbOn"|"CombatParticipant"|"CombatState"|"Concentration"|"ConcentrationIgnoreDamageBoost"|"CriticalHitBoost"|"CriticalHitExtraDiceBoost"|"CurrentlyFollowingParty"|"CustomIcon"|"CustomName"|"CustomStats"|"DamageBonusBoost"|"DamageReductionBoost"|"Darkness"|"DarkvisionRangeBoost"|"DarkvisionRangeMinBoost"|"DarkvisionRangeOverrideBoost"|"Data"|"DeadByDefault"|"Death"|"DeathState"|"Detached"|"DetectCrimesBlockBoost"|"DialogState"|"DifficultyCheck"|"DisabledEquipment"|"Disarmable"|"DisplayName"|"DodgeAttackRollBoost"|"DownedStatusBoost"|"DropOnDeathBlocked"|"DualWielding"|"DualWieldingBoost"|"DynamicAnimationTags"|"EncumbranceState"|"EncumbranceStats"|"EntityThrowDamageBoost"|"EocLevel"|"Equipable"|"EquipmentVisual"|"EscortFollower"|"EscortHasStragglers"|"EscortLeader"|"EscortLeaderPriority"|"EscortMember"|"EscortStragglersTracker"|"ExamineDisabled"|"Experience"|"Expertise"|"ExpertiseBonusBoost"|"FTBParticipant"|"FTBRespect"|"FTBZoneBlockReason"|"Faction"|"FactionOverrideBoost"|"FallDamageMultiplierBoost"|"FleeCapability"|"Floating"|"FullIllithid"|"GameObjectVisual"|"GameplayLight"|"GameplayLightBoost"|"GameplayObscurityBoost"|"GlobalLongRestDisabled"|"GlobalShortRestDisabled"|"God"|"GodTag"|"GravityDisabled"|"GravityDisabledUntilMoved"|"GuaranteedChanceRollOutcomeBoost"|"HalfIllithid"|"HalveWeaponDamageBoost"|"HasExclamationDialog"|"HasOpened"|"HealBlock"|"Health"|"Hearing"|"HistoryTargetUUID"|"HitAttacker"|"HitProxy"|"HitProxyOwner"|"HitReaction"|"HitTarget"|"HitThrownObject"|"HitWeapon"|"HorizontalFOVOverrideBoost"|"HotbarContainer"|"HotbarDecks"|"Icon"|"Identity"|"IdentityState"|"IgnoreDamageThresholdMinBoost"|"IgnoreLowGroundPenaltyBoost"|"IgnorePointBlankDisadvantageBoost"|"IgnoreResistanceBoost"|"IgnoreSurfaceCoverBoost"|"IncreaseMaxHPBoost"|"InitiativeBoost"|"InteractionDisabled"|"InteractionFilter"|"InterruptActionState"|"InterruptConditionallyDisabled"|"InterruptContainer"|"InterruptData"|"InterruptDecision"|"InterruptPreferences"|"InterruptPrepared"|"InterruptZone"|"InterruptZoneParticipant"|"InterruptZoneSource"|"InventoryContainer"|"InventoryData"|"InventoryIsOwned"|"InventoryMember"|"InventoryMemberTransform"|"InventoryOwner"|"InventoryPropertyCanBePickpocketed"|"InventoryPropertyIsDroppedOnDeath"|"InventoryPropertyIsTradable"|"InventoryStack"|"InventoryStackMember"|"InventoryWeight"|"Invisibility"|"IsCharacter"|"IsCombatPaused"|"IsDoor"|"IsGlobal"|"IsGold"|"IsInCombat"|"IsInTurnBasedMode"|"IsItem"|"IsMarkedForDeletion"|"IsStoryItem"|"IsSummon"|"ItemBoosts"|"ItemCanMove"|"ItemDestroyed"|"ItemDye"|"ItemHasGeneratedTreasure"|"ItemHasMoved"|"ItemPortal"|"ItemTemplateDestroyed"|"JumpFollow"|"JumpMaxDistanceBonusBoost"|"JumpMaxDistanceMultiplierBoost"|"Key"|"Ladder"|"LearnedSpells"|"Level"|"LevelUp"|"Lock"|"LockBoost"|"Loot"|"LootingState"|"MapMarkerStyle"|"MaterialParameterOverride"|"Max"|"MaximizeHealingBoost"|"MaximumRollResultBoost"|"MinimumRollResultBoost"|"MonkWeaponDamageDiceOverrideBoost"|"Movement"|"MovementSpeedLimitBoost"|"Net"|"NewInInventory"|"NewItemsInside"|"NonTradable"|"NullifyAbilityBoost"|"ObjectInteraction"|"ObjectSize"|"ObjectSizeBoost"|"ObjectSizeOverrideBoost"|"OffStage"|"OnDamageSpells"|"Origin"|"OriginAppearanceTag"|"OriginPassives"|"OriginTag"|"OriginalIdentity"|"OriginalTemplate"|"OwnedAsLoot"|"OwneeCurrent"|"PartyComposition"|"PartyFollower"|"PartyMember"|"PartyPortals"|"PartyRecipes"|"PartyView"|"PartyWaypoints"|"Passive"|"PassiveContainer"|"PassiveUsageCount"|"Pathing"|"PhysicalForceRangeBonusBoost"|"Physics"|"PickingState"|"Player"|"PlayerPrepareSpell"|"Proficiency"|"ProficiencyBonusBoost"|"ProficiencyBonusOverrideBoost"|"ProficiencyBoost"|"ProficiencyGroup"|"ProgressionChangedContainers"|"ProgressionContainer"|"ProgressionMeta"|"ProjectileDeflectBoost"|"ProjectileSource"|"Race"|"ReadyToBeAddedToInventory"|"Recruiter"|"RedirectDamageBoost"|"ReduceCriticalAttackThresholdBoost"|"Relation"|"Repose"|"RerollBoost"|"ResistanceBoost"|"Resistances"|"RollBonusBoost"|"Ruleset"|"RulesetModifiers"|"SavantBoost"|"Savegame"|"ScaleMultiplierBoost"|"ScriptPropertyCanBePickpocketed"|"ScriptPropertyIsDroppedOnDeath"|"ScriptPropertyIsTradable"|"ServerActivationGroupContainer"|"ServerAiArchetype"|"ServerAiInterestedInItems"|"ServerAiInterestingItem"|"ServerAiModifiers"|"ServerAnubisExecutor"|"ServerAnubisTag"|"ServerBaseData"|"ServerBaseProficiency"|"ServerBaseSize"|"ServerBaseStats"|"ServerBaseWeapon"|"ServerBoostBase"|"ServerBoostTag"|"ServerBreadcrumb"|"ServerCCAppearanceVisualTag"|"ServerCCEquipmentSetRequest"|"ServerCCGod"|"ServerCCIsCustom"|"ServerCCUpdates"|"ServerCanStartCombat"|"ServerCharacter"|"ServerCombatGroupMapping"|"ServerDarknessActive"|"ServerDeathContinue"|"ServerDeathState"|"ServerDelayDeathCause"|"ServerDialogTag"|"ServerDisarmAttempt"|"ServerDisplayNameList"|"ServerDynamicLayerOwner"|"ServerEnterRequest"|"ServerExperienceGaveOut"|"ServerFleeBlocked"|"ServerGameTimer"|"ServerGameplayLightChanges"|"ServerGameplayLightEquipment"|"ServerHotbarOrder"|"ServerIconList"|"ServerImmediateJoin"|"ServerInterruptActionRequests"|"ServerInterruptAddRemoveRequests"|"ServerInterruptInitialParticipants"|"ServerInterruptTurnOrderInZone"|"ServerInterruptZoneRequests"|"ServerInventoryContainerData"|"ServerInventoryGroupCheck"|"ServerInventoryIsReplicatedWith"|"ServerInventoryItemDataPopulated"|"ServerIsCurrentOwner"|"ServerIsLatestOwner"|"ServerIsLightBlocker"|"ServerIsOriginalOwner"|"ServerIsPreviousLatestOwner"|"ServerIsPreviousOwner"|"ServerIsUnsummoning"|"ServerIsVisionBlocker"|"ServerItem"|"ServerKiller"|"ServerLeader"|"ServerOsirisTag"|"ServerOwneeHistory"|"ServerOwneeRequest"|"ServerPassiveBase"|"ServerPassivePersistentData"|"ServerPeersInRange"|"ServerPickpocket"|"ServerProficiencyGroupStats"|"ServerProjectile"|"ServerProjectileAttachment"|"ServerProjectileInitialization"|"ServerProjectileSpell"|"ServerRaceTag"|"ServerRecruitedBy"|"ServerReplicationDependency"|"ServerReplicationDependencyOwner"|"ServerSafePosition"|"ServerScriptPassives"|"ServerShapeshiftEquipmentHistory"|"ServerShapeshiftStates"|"ServerSpellCastHitDelay"|"ServerSpellCastResponsible"|"ServerSpellCastState"|"ServerSpellClientInitiated"|"ServerSpellExternals"|"ServerSpellHitRegister"|"ServerSpellInterruptRequests"|"ServerSpellInterruptResults"|"ServerStatus"|"ServerStatusActive"|"ServerStatusAddedFromSaveLoad"|"ServerStatusAura"|"ServerStatusBoostsProcessed"|"ServerStatusCause"|"ServerStatusDifficultyModifiers"|"ServerStatusOwnership"|"ServerStatusPerforming"|"ServerStatusUnique"|"ServerSurface"|"ServerTemplateTag"|"ServerToggledPassives"|"ServerUnsheath"|"ServerUnsheathScriptOverride"|"ServerUserSnapshot"|"ServerVariableManager"|"ShapeshiftHealthReservation"|"ShapeshiftState"|"ShootThroughType"|"ShortRest"|"ShouldDestroyOnSpellCast"|"Sight"|"SightData"|"SightEntityViewshed"|"SightRangeAdditiveBoost"|"SightRangeMaximumBoost"|"SightRangeMinimumBoost"|"SightRangeOverrideBoost"|"SimpleCharacter"|"SkillBoost"|"SourceAdvantageBoost"|"Speaker"|"SpellAiConditions"|"SpellBook"|"SpellBookCooldowns"|"SpellBookPrepares"|"SpellCastAnimationInfo"|"SpellCastCache"|"SpellCastCanBeTargeted"|"SpellCastInterruptResults"|"SpellCastIsCasting"|"SpellCastMovement"|"SpellCastRolls"|"SpellCastState"|"SpellContainer"|"SpellModificationContainer"|"SpellResistanceBoost"|"SpellSaveDCBoost"|"SpellSyncTargeting"|"StaticPhysics"|"Stats"|"StatusCause"|"StatusContainer"|"StatusID"|"StatusImmunities"|"StatusImmunityBoost"|"StatusIncapacitated"|"StatusLifetime"|"StatusVisualDisabled"|"Stealth"|"Steering"|"StoryShortRestDisabled"|"SummonContainer"|"SummonLifetime"|"SurfacePathInfluences"|"TadpolePowers"|"TadpoleTreeState"|"Tadpoled"|"Tag"|"TemplateAnimationSetOverride"|"TemporaryHPBoost"|"ThreatRange"|"Trader"|"Transform"|"TurnBased"|"TurnOrder"|"UnlockInterruptBoost"|"UnlockSpellBoost"|"UnlockSpellVariantBoost"|"Unsheath"|"Use"|"UseAction"|"UseBoosts"|"UseSocket"|"UserAvatar"|"UserReservedFor"|"Uuid"|"UuidToHandleMapping"|"Value"|"Visual"|"Voice"|"VoiceTag"|"WalkOn"|"Weapon"|"WeaponAttackRollAbilityOverrideBoost"|"WeaponAttackRollBonusBoost"|"WeaponAttackTypeOverrideBoost"|"WeaponDamageBoost"|"WeaponDamageDieOverrideBoost"|"WeaponDamageResistanceBoost"|"WeaponDamageTypeOverrideBoost"|"WeaponEnchantmentBoost"|"WeaponPropertyBoost"|"WeaponSet"|"WeightBoost"|"WeightCategoryBoost"|"Wielded"|"Wielding"
+--- @alias ExtQueryType string|"Max"|"UuidToHandleMapping"
+--- @alias ExtResourceManagerType string|"AbilityDefaultValues"|"AbilityDistributionPreset"|"AbilityList"|"ActionResource"|"ActionResourceGroup"|"AnimationSetPriority"|"ApprovalRating"|"AreaLevelOverride"|"AvatarContainerTemplate"|"Background"|"BackgroundGoal"|"CalendarDayRange"|"CampChestTemplate"|"CharacterCreationAccessorySet"|"CharacterCreationAppearanceMaterial"|"CharacterCreationAppearanceVisual"|"CharacterCreationEquipmentIcons"|"CharacterCreationEyeColor"|"CharacterCreationHairColor"|"CharacterCreationIconSettings"|"CharacterCreationMaterialOverride"|"CharacterCreationPassiveAppearance"|"CharacterCreationPreset"|"CharacterCreationSharedVisual"|"CharacterCreationSkinColor"|"CharacterCreationVOLine"|"CinematicArenaFrequencyGroup"|"ClassDescription"|"ColorDefinition"|"CompanionPreset"|"ConditionError"|"CustomDice"|"DLC"|"DeathTypeEffect"|"DifficultyClass"|"DisturbanceProperty"|"EncumbranceType"|"EquipmentDefaultValues"|"EquipmentList"|"EquipmentType"|"ExperienceReward"|"Faction"|"Feat"|"FeatDefaultValues"|"FeatDescription"|"FeatSoundState"|"FixedHotBarSlot"|"Flag"|"FlagSoundState"|"God"|"GoldReward"|"Gossip"|"ItemThrowParams"|"ItemWallTemplate"|"LevelMap"|"LimbsMapping"|"LongRestCost"|"ManagedStatusVFX"|"Max"|"MultiEffectInfo"|"Origin"|"OriginIntroEntity"|"PassiveDefaultValues"|"PassiveList"|"PassiveVFX"|"PreparedSpellDefaultValues"|"Progression"|"ProgressionDescription"|"ProjectileDefault"|"Race"|"RandomCastOutcome"|"Ruleset"|"RulesetModifier"|"RulesetModifierOption"|"RulesetSelectionPreset"|"RulesetValue"|"ScriptMaterialParameterOverride"|"ScriptMaterialPresetOverride"|"ShapeshiftRule"|"SkillDefaultValues"|"SkillList"|"SpellDefaultValues"|"SpellList"|"SpellMetaCondition"|"SpellSoundTrajectory"|"StatusSoundState"|"SurfaceCursorMessage"|"TadpolePower"|"Tag"|"TagSoundState"|"TooltipExtraText"|"TooltipUpcastDescription"|"TrajectoryRules"|"TutorialEntries"|"TutorialEvent"|"TutorialModalEntries"|"TutorialUnifiedEntry"|"VFX"|"VisualLocatorAttachment"|"Voice"|"WeaponAnimationSet"|"WeightCategory"
+--- @alias ExtSystemType string|"Max"|"PickingHelperManager"|"UISystem"
+--- @alias FleeErrorFlags string|"CantMove"|"Condition"|"Downed"|"EnemyTooClose"|"Incapacitated"|"PartyFollower"|"Region"|"Summon"
+--- @alias ForceFunctorAggression string|"Aggressive"|"Friendly"|"Neutral"|"Undefined"
+--- @alias ForceFunctorOrigin string|"OriginToEntity"|"OriginToTarget"|"TargetToEntity"|"Undefined"
+--- @alias FunctorExecParamsType string|"Type1"|"Type2"|"Type3"|"Type4"|"Type5"|"Type6"|"Type7"|"Type8"
+--- @alias GameActionType string|"GameObjectMoveAction"|"PathAction"|"RainAction"|"StatusDomeAction"|"StormAction"|"TornadoAction"|"WallAction"
+--- @alias Gender string|"Female"|"Male"
+--- @alias GuiButtonFlags string|"MouseButtonMiddle"|"MouseButtonRight"
+--- @alias GuiColor string|"Border"|"BorderShadow"|"Button"|"ButtonActive"|"ButtonHovered"|"CheckMark"|"ChildBg"|"DragDropTarget"|"FrameBg"|"FrameBgActive"|"FrameBgHovered"|"Header"|"HeaderActive"|"HeaderHovered"|"MenuBarBg"|"ModalWindowDimBg"|"NavHighlight"|"NavWindowingDimBg"|"NavWindowingHighlight"|"PlotHistogram"|"PlotHistogramHovered"|"PlotLines"|"PlotLinesHovered"|"PopupBg"|"ResizeGrip"|"ResizeGripActive"|"ResizeGripHovered"|"ScrollbarBg"|"ScrollbarGrab"|"ScrollbarGrabActive"|"ScrollbarGrabHovered"|"Separator"|"SeparatorActive"|"SeparatorHovered"|"SliderGrab"|"SliderGrabActive"|"Tab"|"TabActive"|"TabHovered"|"TabUnfocused"|"TabUnfocusedActive"|"TableBorderLight"|"TableBorderStrong"|"TableHeaderBg"|"TableRowBg"|"TableRowBgAlt"|"Text"|"TextDisabled"|"TextSelectedBg"|"TitleBg"|"TitleBgActive"|"TitleBgCollapsed"|"WindowBg"
+--- @alias GuiColorEditFlags string|"AlphaBar"|"AlphaPreview"|"AlphaPreviewHalf"|"DisplayHSV"|"DisplayHex"|"DisplayRGB"|"Float"|"HDR"|"InputHSV"|"InputRGB"|"NoAlpha"|"NoBorder"|"NoDragDrop"|"NoInputs"|"NoLabel"|"NoOptions"|"NoPicker"|"NoSidePreview"|"NoSmallPreview"|"NoTooltip"|"PickerHueBar"|"PickerHueWheel"|"Uint8"
+--- @alias GuiComboFlags string|"HeightLarge"|"HeightLargest"|"HeightRegular"|"HeightSmall"|"NoArrowButton"|"NoPreview"|"PopupAlignLeft"|"WidthFitPreview"
+--- @alias GuiCond string|"Always"|"Appearing"|"FirstUseEver"|"Once"
+--- @alias GuiInputTextFlags string|"AllowTabInput"|"AlwaysOverwrite"|"AutoSelectAll"|"CallbackAlways"|"CallbackCharFilter"|"CallbackCompletion"|"CallbackEdit"|"CallbackHistory"|"CallbackResize"|"CharsDecimal"|"CharsHexadecimal"|"CharsNoBlank"|"CharsScientific"|"CharsUppercase"|"CtrlEnterForNewLine"|"EnterReturnsTrue"|"EscapeClearsAll"|"Multiline"|"NoHorizontalScroll"|"NoUndoRedo"|"Password"|"ReadOnly"
+--- @alias GuiPopupFlags string|"AnyPopupId"|"AnyPopupLevel"|"MouseButtonMiddle"|"MouseButtonRight"|"NoOpenOverExistingPopup"|"NoOpenOverItems"|"NoReopen"
+--- @alias GuiSliderFlags string|"AlwaysClamp"|"Logarithmic"|"NoInput"|"NoRoundToFormat"
+--- @alias GuiStyleVar string|"Alpha"|"ButtonTextAlign"|"CellPadding"|"ChildBorderSize"|"ChildRounding"|"DisabledAlpha"|"FrameBorderSize"|"FramePadding"|"FrameRounding"|"GrabMinSize"|"GrabRounding"|"IndentSpacing"|"ItemInnerSpacing"|"ItemSpacing"|"PopupBorderSize"|"PopupRounding"|"ScrollbarRounding"|"ScrollbarSize"|"SelectableTextAlign"|"SeparatorTextAlign"|"SeparatorTextBorderSize"|"SeparatorTextPadding"|"TabBarBorderSize"|"TabRounding"|"WindowBorderSize"|"WindowMinSize"|"WindowPadding"|"WindowRounding"|"WindowTitleAlign"
+--- @alias GuiTabBarFlags string|"AutoSelectNewTabs"|"FittingPolicyDefault"|"FittingPolicyMask"|"FittingPolicyResizeDown"|"FittingPolicyScroll"|"NoCloseWithMiddleMouseButton"|"NoTabListScrollingButtons"|"NoTooltip"|"Reorderable"|"TabListPopupButton"
+--- @alias GuiTabItemFlags string|"Leading"|"NoAssumedClosure"|"NoCloseWithMiddleMouseButton"|"NoPushId"|"NoReorder"|"NoTooltip"|"SetSelected"|"Trailing"|"UnsavedDocument"
+--- @alias GuiTableColumnFlags string|"AngledHeader"|"DefaultHide"|"DefaultSort"|"Disabled"|"IndentDisable"|"IndentEnable"|"NoClip"|"NoHeaderLabel"|"NoHeaderWidth"|"NoHide"|"NoReorder"|"NoResize"|"NoSort"|"NoSortAscending"|"NoSortDescending"|"PreferSortAscending"|"PreferSortDescending"|"WidthFixed"|"WidthStretch"
+--- @alias GuiTableFlags string|"Borders"|"BordersH"|"BordersInner"|"BordersInnerH"|"BordersInnerV"|"BordersOuter"|"BordersOuterH"|"BordersOuterV"|"BordersV"|"ContextMenuInBody"|"Hideable"|"HighlightHoveredColumn"|"NoBordersInBody"|"NoBordersInBodyUntilResize"|"NoClip"|"NoHostExtendX"|"NoHostExtendY"|"NoKeepColumnsVisible"|"NoPadInnerX"|"NoPadOuterX"|"NoSavedSettings"|"PadOuterX"|"PreciseWidths"|"Reorderable"|"Resizable"|"RowBg"|"ScrollX"|"ScrollY"|"SizingFixedFit"|"SizingFixedSame"|"SizingStretchProp"|"SizingStretchSame"|"SortMulti"|"SortTristate"|"Sortable"
 --- @alias GuiTableRowFlags string|"Headers"
---- @alias GuiTreeNodeFlags string|"Selected"|"Framed"|"AllowOverlap"|"NoTreePushOnOpen"|"NoAutoOpenOnLog"|"FramePadding"|"DefaultOpen"|"OpenOnDoubleClick"|"OpenOnArrow"|"Leaf"|"Bullet"|"SpanAvailWidth"|"SpanFullWidth"|"SpanAllColumns"|"NavLeftJumpsBackHere"|"CollapsingHeader"
---- @alias GuiWindowFlags string|"HorizontalScrollbar"|"NoFocusOnAppearing"|"NoNavInputs"|"NoNavFocus"|"UnsavedDocument"|"NoNav"|"NoDecoration"|"NoInputs"|"NoTitleBar"|"NoResize"|"NoMove"|"NoScrollbar"|"NoScrollWithMouse"|"NoCollapse"|"NoBringToFrontOnFocus"|"AlwaysAutoResize"|"AlwaysVerticalScrollbar"|"NoBackground"|"AlwaysHorizontalScrollbar"|"NoSavedSettings"|"NoMouseInputs"|"MenuBar"
---- @alias HandednessType string|"Any"|"Two"|"One"
+--- @alias GuiTreeNodeFlags string|"AllowOverlap"|"Bullet"|"CollapsingHeader"|"DefaultOpen"|"FramePadding"|"Framed"|"Leaf"|"NavLeftJumpsBackHere"|"NoAutoOpenOnLog"|"NoTreePushOnOpen"|"OpenOnArrow"|"OpenOnDoubleClick"|"Selected"|"SpanAllColumns"|"SpanAvailWidth"|"SpanFullWidth"
+--- @alias GuiWindowFlags string|"AlwaysAutoResize"|"AlwaysHorizontalScrollbar"|"AlwaysVerticalScrollbar"|"HorizontalScrollbar"|"MenuBar"|"NoBackground"|"NoBringToFrontOnFocus"|"NoCollapse"|"NoDecoration"|"NoFocusOnAppearing"|"NoInputs"|"NoMouseInputs"|"NoMove"|"NoNav"|"NoNavFocus"|"NoNavInputs"|"NoResize"|"NoSavedSettings"|"NoScrollWithMouse"|"NoScrollbar"|"NoTitleBar"|"UnsavedDocument"
+--- @alias HandednessType string|"Any"|"One"|"Two"
 --- @alias HealDirection string|"Incoming"|"Outgoing"
---- @alias HealEffect string|"Lifesteal"|"NegativeDamage"|"Unknown9"|"HealSharing"|"Necromantic"|"HealSharingReflected"|"Script"|"None"|"Heal"|"Surface"|"ResistDeath"|"Behavior"|"Unknown4"|"Sitting"
---- @alias HitType string|"Melee"|"Ranged"|"DoT"|"WeaponDamage"|"Surface"|"Magic"|"Reflected"
---- @alias HitWith string|"FallDamage"|"Weapon"|"CrushByFall"|"Unknown10"|"Unknown11"|"Trap"|"None"|"Item"|"Unknown"|"Projectile"|"Surface"|"Magic"|"Redirection"
---- @alias IngredientTransformType string|"None"|"Boost"|"Transform"|"Poison"|"Consume"
---- @alias IngredientType string|"None"|"Property"|"Category"|"Object"
---- @alias InputType string|"AcceleratedRepeat"|"Unknown"|"Press"|"Release"|"ValueChange"|"Hold"|"Repeat"
---- @alias ItemDataRarity string|"Legendary"|"Rare"|"Uncommon"|"Common"|"Unique"|"Sentinel"|"Epic"|"Divine"
---- @alias ItemSlot string|"MusicalInstrument"|"Horns"|"Helmet"|"Breast"|"Cloak"|"MeleeMainHand"|"MeleeOffHand"|"RangedMainHand"|"RangedOffHand"|"Ring"|"Boots"|"Amulet"|"Ring2"|"Overhead"|"VanityBoots"|"Wings"|"VanityBody"|"Underwear"|"Gloves"|"OffHand"|"MainHand"
---- @alias LuaTypeId string|"Void"|"Boolean"|"Integer"|"Array"|"String"|"Set"|"Map"|"Tuple"|"Enumeration"|"Any"|"Nullable"|"Function"|"Variant"|"Unknown"|"Float"|"Module"|"Object"
---- @alias NetMessage string|"NETMSG_PLAYER_DISCONNECT"|"NETMSG_LOAD_STARTED"|"NETMSG_CHARACTER_TRANSFORM"|"NETMSG_TURNBASED_BEGIN_CANCEL_ENDTURN_REQUEST"|"NETMSG_INVENTORY_CREATE_AND_OPEN"|"NETMSG_OPEN_MESSAGE_BOX_MESSAGE"|"NETMSG_NOTIFICATION"|"NETMSG_DIALOG_ACTORJOINS_MESSAGE"|"NETMSG_LEVEL_UP_UPDATE"|"NETMSG_CHARACTER_DROP_ENTITY"|"NETMSG_PLAYER_CHANGENAME"|"NETMSG_LEVEL_START"|"NETMSG_CHARACTER_PICKPOCKET"|"NETMSG_TURNBASED_END_CANCEL_ENDTURN_REQUEST"|"NETMSG_INVENTORY_DESTROY"|"NETMSG_CLOSED_MESSAGE_BOX_MESSAGE"|"NETMSG_LOCK_WAYPOINT"|"NETMSG_DIALOG_ACTORLEAVES_MESSAGE"|"NETMSG_FULL_RESPEC_UPDATE"|"NETMSG_CHARACTER_CANCEL_DROP_ENTITY"|"NETMSG_PLAYER_NAMECHANGED"|"NETMSG_CHARACTER_AOO"|"NETMSG_CHARACTER_OFFSTAGE"|"NETMSG_TURNBASED_STARTTURN_CONFIRMATION"|"NETMSG_INVENTORY_VIEW_CREATE"|"NETMSG_OPEN_WAYPOINT_UI_MESSAGE"|"NETMSG_FLAG_UPDATE"|"NETMSG_DIALOG_REPLACESPEAKER_MESSAGE"|"NETMSG_CHARACTER_CREATION_LEVELUP"|"NETMSG_CHARACTER_LOCKPICK"|"NETMSG_ECS_REPLICATION"|"NETMSG_CHARACTER_IN_DIALOG"|"NETMSG_PARTYGROUP"|"NETMSG_UI_FORCETURNBASED_TURN_STARTED"|"NETMSG_INVENTORY_VIEW_DESTROY"|"NETMSG_CLOSE_UI_MESSAGE"|"NETMSG_CAMERA_ROTATE"|"NETMSG_DIALOG_INVALID_ANSWER"|"NETMSG_CHARACTER_CREATION_RESPEC"|"NETMSG_CHARACTER_TRAPDISARM"|"NETMSG_SKIPMOVIE_RESULT"|"NETMSG_CHARACTER_LOOT"|"NETMSG_PARTYORDER"|"NETMSG_INVENTORY_VIEW_UPDATE_ITEMS"|"NETMSG_OPEN_CRAFT_UI_MESSAGE"|"NETMSG_CAMERA_TARGET"|"NETMSG_DIALOG_ANSWER_HIGHLIGHT_MESSAGE"|"NETMSG_DIALOG_SUGGESTANSWER_MESSAGE"|"NETMSG_UI_INTERACTION_STOPPED"|"NETMSG_CHARACTER_IMPROV_WEAPON"|"NETMSG_PEER_DEACTIVATE"|"NETMSG_CHARACTER_ITEM_USED"|"NETMSG_ITEM_CREATE"|"NETMSG_INVENTORY_VIEW_UPDATE_PARENTS"|"NETMSG_TELEPORT_WAYPOINT"|"NETMSG_SHROUD_UPDATE"|"NETMSG_DIALOG_REQUEST_IN_DIALOGUE_ATTACK_MESSAGE"|"NETMSG_DIALOG_INSTANCEDIALOGCHANGED"|"NETMSG_PASSIVE_TOGGLE"|"NETMSG_CHARACTER_STOWED_VISIBILITY"|"NETMSG_SESSION_LOADED"|"NETMSG_CHARACTER_UNSHEATHING"|"NETMSG_ITEM_DESTROY"|"NETMSG_INVENTORY_VIEW_SORT"|"NETMSG_QUEST_CATEGORY_UPDATE"|"NETMSG_PLAYMOVIE"|"NETMSG_DIALOG_TIMELINE_UNLOADED_MESSAGE"|"NETMSG_LOBBY_DATAUPDATE"|"NETMSG_DUALWIELDING_TOGGLE"|"NETMSG_DECLUTTERED_ITEMS"|"NETMSG_SESSION_UNLOADED"|"NETMSG_CHARACTER_END_REPOSE"|"NETMSG_ITEM_ACTIVATE"|"NETMSG_INVENTORY_ITEM_UPDATE"|"NETMSG_QUEST_PROGRESS"|"NETMSG_TRADE_ACTION"|"NETMSG_LOBBY_USERUPDATE"|"NETMSG_CUSTOM_STATS_DEFINITION_CREATE"|"NETMSG_UI_COMBINE_OPEN"|"NETMSG_SPELL_CAST_START_PREVIEW"|"NETMSG_LEVEL_INSTANTIATE_SWAP"|"NETMSG_CHARACTER_BEHAVIOR"|"NETMSG_ITEM_UPDATE"|"NETMSG_INVENTORY_LOCKSTATE_SYNC"|"NETMSG_JOURNALRECIPE_UPDATE"|"NETMSG_GAMETIME_SYNC"|"NETMSG_LOBBY_STARTGAME"|"NETMSG_CUSTOM_STATS_DEFINITION_REMOVE"|"NETMSG_TUTORIAL_CLOSED"|"NETMSG_SPELL_CAST_UPDATE_PREVIEW"|"NETMSG_LEVEL_SWAP_READY"|"NETMSG_PARTY_BLOCKFOLLOW"|"NETMSG_ITEM_ACTION"|"NETMSG_SURFACE_CREATE"|"NETMSG_MARKER_UI_UPDATE"|"NETMSG_TELEPORT_ACK"|"NETMSG_NET_ENTITY_CREATE"|"NETMSG_CUSTOM_STATS_DEFINITION_UPDATE"|"NETMSG_TUTORIAL_UI_EVENT"|"NETMSG_SPELL_CAST_CONFIRM"|"NETMSG_HANDSHAKE"|"NETMSG_LEVEL_SWAP_COMPLETE"|"NETMSG_PROJECTILE_CREATE"|"NETMSG_ITEM_STATUS"|"NETMSG_DARKNESSTILE_UPDATE"|"NETMSG_MARKER_UI_CREATE"|"NETMSG_UNLOCK_ITEM"|"NETMSG_NET_ENTITY_DESTROY"|"NETMSG_TIMELINE_WORLD_CINEMATIC_COMPLETED"|"NETMSG_TUTORIAL_USER_ACTION"|"NETMSG_SPELL_CAST_CANCEL"|"NETMSG_HOST_WELCOME"|"NETMSG_CHARACTER_CREATE"|"NETMSG_PROJECTILE_UPDATE"|"NETMSG_ITEM_OFFSTAGE"|"NETMSG_SPELL_REMOVE_LEARNED"|"NETMSG_JOURNALDIALOGLOG_UPDATE"|"NETMSG_DIALOG_LISTEN"|"NETMSG_TRIGGER_CREATE"|"NETMSG_CLIENT_DIALOG_JOIN_PRIVACY_FAILED"|"NETMSG_TUTORIALS_SHOWING"|"NETMSG_SPELL_CAST_CAST"|"NETMSG_HOST_REFUSE"|"NETMSG_CHARACTER_DESTROY"|"NETMSG_MULTIPLE_TARGET_OPERATION"|"NETMSG_SURFACE_META"|"NETMSG_TADPOLE_POWER_ADD"|"NETMSG_UI_QUESTSELECTED"|"NETMSG_CAMERA_SPLINE"|"NETMSG_TRIGGER_DESTROY"|"NETMSG_FORCE_TURN_BASED_END_PLAYER_TURN_REQUEST"|"NETMSG_TUTORIALS_RESET"|"NETMSG_USE_ITEM_ACTION"|"NETMSG_CLIENT_JOINED"|"NETMSG_CHARACTER_CONFIRMATION"|"NETMSG_TURNBASED_FINISHTEAM"|"NETMSG_GAMEACTION"|"NETMSG_TADPOLE_POWERS_REMOVE"|"NETMSG_MYSTERY_ADVANCED"|"NETMSG_MUSIC_EVENT"|"NETMSG_TRIGGER_UPDATE"|"NETMSG_FORCE_TURN_BASED_TOGGLE_REQUEST"|"NETMSG_SNEAKING_CONES_VISIBLE_TOGGLE"|"NETMSG_INVENTORY_CREATE_NEW"|"NETMSG_CLIENT_LEFT"|"NETMSG_CHARACTER_ACTIVATE"|"NETMSG_TURNBASED_SETTEAM"|"NETMSG_GAMEOVER"|"NETMSG_GAMECONTROL_UPDATE_S2C"|"NETMSG_MYSTERY_DISABLED"|"NETMSG_MUSIC_STATE"|"NETMSG_CUSTOM_STATS_CREATE"|"NETMSG_CHARACTER_REQUEST_WEAPON_SET_SWITCH"|"NETMSG_HOTBAR_SLOT_SET"|"NETMSG_INVENTORY_DESTROY_NEW"|"NETMSG_HOST_LEFT"|"NETMSG_CHARACTER_DEACTIVATE"|"NETMSG_TURNBASED_FLEECOMBATRESULT"|"NETMSG_ACT_OVER"|"NETMSG_GAMECONTROL_UPDATE_C2S"|"NETMSG_REGISTER_WAYPOINT"|"NETMSG_PAUSE"|"NETMSG_CUSTOM_STATS_UPDATE"|"NETMSG_CHARACTER_REQUEST_ARMOR_SET_SWITCH"|"NETMSG_HOTBAR_COLUMN_SET"|"NETMSG_INVENTORY_MOVETOSLOT"|"NETMSG_CLIENT_ACCEPT"|"NETMSG_CHARACTER_ASSIGN"|"NETMSG_TURNBASED_FLEE_REQUEST"|"NETMSG_SPELL_LEARN"|"NETMSG_GAMECONTROL_PRICETAG"|"NETMSG_UNLOCK_WAYPOINT"|"NETMSG_UNPAUSE"|"NETMSG_LOAD_GAME_WITH_ADDONS"|"NETMSG_CHARACTER_CREATION_PLAYORIGINTIMELINE"|"NETMSG_HOTBAR_ROWS_SET"|"NETMSG_INVENTORY_TRANSFER"|"NETMSG_PLAYER_JOINED"|"NETMSG_CHARACTER_CHANGE_OWNERSHIP"|"NETMSG_TURNBASED_ENDTURN_REQUEST"|"NETMSG_SPELL_PREPARE"|"NETMSG_CHANGE_RULESETS"|"NETMSG_LIGHTING_OVERRIDE"|"NETMSG_READYCHECK"|"NETMSG_LOAD_GAME_WITH_ADDONS_FAIL"|"NETMSG_HOTBAR_SLOT_REMOVE_IS_NEW_FLAG"|"NETMSG_HOTBAR_ROW_REMOVE"|"NETMSG_INVENTORY_SORT"|"NETMSG_PLAYER_ACCEPT"|"NETMSG_CHARACTER_STEERING"|"NETMSG_TURNBASED_SKIP_START_DELAY"|"NETMSG_SPELL_CANCEL"|"NETMSG_REALTIME_MULTIPLAY"|"NETMSG_ATMOSPHERE_OVERRIDE"|"NETMSG_DIPLOMACY"|"NETMSG_CLIENT_GAME_SETTINGS"|"NETMSG_HOTBAR_LOCK_SET"|"NETMSG_INVENTORY_EQUIP"|"NETMSG_CHARACTER_ORIGINAL_TEMPLATE_UPDATE"|"NETMSG_PLAYER_LEFT"|"NETMSG_CHARACTER_MOVEMENT_FALLING"|"NETMSG_UI_FORCETURNBASED_ENTERED"|"NETMSG_CHARACTER_ERROR"|"NETMSG_SHOW_ERROR"|"NETMSG_CAMERA_ACTIVATE"|"NETMSG_PING_REQUEST"|"NETMSG_TIMELINE_HANDSHAKE"|"NETMSG_HOTBAR_CUSTOM_DECK"|"NETMSG_INVENTORY_UNEQUIP"|"NETMSG_VOICEDATA"|"NETMSG_CHARACTER_ACTION"|"NETMSG_UI_FORCETURNBASED_LEFT"|"NETMSG_REQUESTAUTOSAVE"|"NETMSG_SAVEGAME"|"NETMSG_ACHIEVEMENT_UNLOCKED_MESSAGE"|"NETMSG_GIVE_REWARD"|"NETMSG_TIMELINE_ACTOR_HANDSHAKE"|"NETMSG_HOTBAR_CURRENT_DECK_SET"|"NETMSG_INVENTORY_LOCK"|"NETMSG_MIC_DISABLED"|"NETMSG_CHARACTER_ACTION_DATA"|"NETMSG_UI_FORCETURNBASED_TURN_ENDED"|"NETMSG_SAVEGAMEHANDSHAKE"|"NETMSG_EFFECT_CREATE"|"NETMSG_SAVEGAME_LOAD_FAIL"|"NETMSG_DLC_UPDATE"|"NETMSG_TIMELINE_NODECOMPLETED"|"NETMSG_PARTY_PRESET_SAVE"|"NETMSG_INTERRUPT_DECISION"|"NETMSG_CHAT"|"NETMSG_CHARACTER_STATUS"|"NETMSG_ITEM_DEACTIVATE"|"NETMSG_SAVEGAMEHANDSHAKE_SCREENSHOT"|"NETMSG_EFFECT_FORGET"|"NETMSG_SERVER_COMMAND"|"NETMSG_TIMELINE_PLAYER_WATCHING"|"NETMSG_RESPEC_UPDATE"|"NETMSG_PARTY_PRESET_LOAD"|"NETMSG_INTERRUPT_SET_ASK_DATA"|"NETMSG_PEER_ACTIVATE"|"NETMSG_CHARACTER_STATUS_LIFETIME"|"NETMSG_ITEM_DESTINATION"|"NETMSG_EFFECT_DESTROY"|"NETMSG_CACHETEMPLATE"|"NETMSG_SERVER_NOTIFICATION"|"NETMSG_TIMELINE_REQUEST_FASTFORWARD"|"NETMSG_PARTY_PRESET_LEVELUP"|"NETMSG_CAST_ALL"|"NETMSG_INTERRUPT_SET_ENABLED_DATA"|"NETMSG_MODULE_LOAD"|"NETMSG_CHARACTER_DIALOG"|"NETMSG_ITEM_USE_REMOTELY"|"NETMSG_OVERHEADTEXT"|"NETMSG_COMBATLOGITEMINTERACTION"|"NETMSG_STORY_ELEMENT_UI"|"NETMSG_CLIENT_DIALOG_PRIVACY_CHANGED"|"NETMSG_PARTY_PRESET_SPELL"|"NETMSG_END_THE_DAY"|"NETMSG_CAMERA_ARRIVED"|"NETMSG_MODULE_LOADED"|"NETMSG_CHARACTER_USE_MOVEMENT"|"NETMSG_ITEM_MOVE_TO_WORLD"|"NETMSG_COMBATLOG"|"NETMSG_COMBATLOGENTRIES"|"NETMSG_ACHIEVEMENT_PROGRESS_MESSAGE"|"NETMSG_REQUESTED_ROLL"|"NETMSG_STORY_FLAGS_LOAD"|"NETMSG_SHORT_REST"|"NETMSG_CLEAR_RECIPE_NEW_FLAG"|"NETMSG_SESSION_LOAD"|"NETMSG_CHARACTER_MOVE_FAILED"|"NETMSG_ITEM_STATUS_LIFETIME"|"NETMSG_SHOW_ENTER_REGION_UI_MESSAGE"|"NETMSG_JOURNAL_RESET"|"NETMSG_COMBINE_RESULT"|"NETMSG_PASSIVE_ROLL_SEQUENCE"|"NETMSG_ACTIVE_ROLL_MODIFIERS"|"NETMSG_INVENTORY_ADD"|"NETMSG_NEW_ITEMS_INSIDE"|"NETMSG_LEVEL_LOAD"|"NETMSG_CHARACTER_SELECTED_CLIMB_ON"|"NETMSG_ITEM_TRANSFORM"|"NETMSG_CHARACTER_TELEPORT"|"NETMSG_QUEST_STEP"|"NETMSG_DIALOG_STATE_MESSAGE"|"NETMSG_CHARACTER_PATHING"|"NETMSG_ITEM_TOGGLE_IS_WARE"|"NETMSG_SELECT_DICE"|"NETMSG_SCRIPT_EXTENDER"|"NETMSG_HOST_REFUSEPLAYER"|"NETMSG_LEVEL_CREATED"|"NETMSG_FOLLOWER_CANT_USE_ITEM"|"NETMSG_ITEM_CONFIRMATION"|"NETMSG_SCREEN_FADE_FINISHED"|"NETMSG_QUESTS_LOADED"|"NETMSG_DIALOG_NODE_MESSAGE"|"NETMSG_CHARACTER_CREATION_ABORT"|"NETMSG_LONG_REST_DECISION"|"NETMSG_COMBINE_ITEMS"|"NETMSG_CLIENT_CONNECT"|"NETMSG_LEVEL_LOADED"|"NETMSG_CHARACTER_ACTION_REQUEST_RESULT"|"NETMSG_CHARACTER_UPDATE"|"NETMSG_ITEM_MOVED_INFORM"|"NETMSG_OPEN_CUSTOM_BOOK_UI_MESSAGE"|"NETMSG_TROPHY_UPDATE"|"NETMSG_DIALOG_ANSWER_MESSAGE"|"NETMSG_CHARACTER_CREATION_READY"|"NETMSG_REQUEST_RELEASE_CONCENTRATION"|"NETMSG_PLAYER_CONNECT"|"NETMSG_LOAD_START"|"NETMSG_CHARACTER_CONTROL"|"NETMSG_TURNBASED_CANCEL_ENDTURN_REQUEST"|"NETMSG_INVENTORY_CREATE"|"NETMSG_CLOSE_CUSTOM_BOOK_UI_MESSAGE"|"NETMSG_QUEST_TRACK"|"NETMSG_DIALOG_HISTORY_MESSAGE"|"NETMSG_CHARACTER_CREATION_UPDATE"|"NETMSG_ROLL_STREAM_ROLL_MODE_TYPE"
---- @alias NsDragAction string|"DragAction_Continue"|"DragAction_Drop"|"DragAction_Cancel"
---- @alias NsHoldingState string|"HoldingState_Completed"|"HoldingState_Canceled"|"HoldingState_Started"
---- @alias NsKey string|"Key_Home"|"Key_J"|"Key_Multiply"|"Key_Scroll"|"Key_OemOpenBrackets"|"Key_GamepadPageLeft"|"Key_Left"|"Key_K"|"Key_Add"|"Key_LeftShift"|"Key_OemPipe"|"Key_GamepadPageRight"|"Key_Up"|"Key_L"|"Key_Separator"|"Key_RightShift"|"Key_OemCloseBrackets"|"Key_GamepadContext1"|"Key_Right"|"Key_M"|"Key_Subtract"|"Key_LeftCtrl"|"Key_OemQuotes"|"Key_GamepadContext2"|"Key_Down"|"Key_N"|"Key_Decimal"|"Key_RightCtrl"|"Key_Oem8"|"Key_GamepadContext3"|"Key_Select"|"Key_O"|"Key_Divide"|"Key_LeftAlt"|"Key_OemBackslash"|"Key_GamepadContext4"|"Key_Print"|"Key_P"|"Key_F1"|"Key_RightAlt"|"Key_ImeProcessed"|"Key_Execute"|"Key_Q"|"Key_F2"|"Key_BrowserBack"|"Key_System"|"Key_PrintScreen"|"Key_R"|"Key_F3"|"Key_BrowserForward"|"Key_DbeAlphanumeric"|"Key_None"|"Key_Insert"|"Key_S"|"Key_F4"|"Key_BrowserRefresh"|"Key_DbeKatakana"|"Key_Cancel"|"Key_Delete"|"Key_T"|"Key_F5"|"Key_BrowserStop"|"Key_DbeHiragana"|"Key_Back"|"Key_Help"|"Key_U"|"Key_F6"|"Key_BrowserSearch"|"Key_DbeSbcsChar"|"Key_Tab"|"Key_D0"|"Key_V"|"Key_F7"|"Key_BrowserFavorites"|"Key_DbeDbcsChar"|"Key_LineFeed"|"Key_D1"|"Key_W"|"Key_F8"|"Key_BrowserHome"|"Key_DbeRoman"|"Key_Clear"|"Key_D2"|"Key_X"|"Key_F9"|"Key_VolumeMute"|"Key_DbeNoRoman"|"Key_Enter"|"Key_D3"|"Key_Y"|"Key_F10"|"Key_VolumeDown"|"Key_DbeFlushString"|"Key_Pause"|"Key_D4"|"Key_Z"|"Key_F11"|"Key_VolumeUp"|"Key_MediaPreviousTrack"|"Key_DbeCodeInput"|"Key_CapsLock"|"Key_D5"|"Key_LWin"|"Key_F12"|"Key_MediaNextTrack"|"Key_LaunchApplication1"|"Key_DbeNoCodeInput"|"Key_HangulMode"|"Key_D6"|"Key_RWin"|"Key_F13"|"Key_MediaStop"|"Key_LaunchApplication2"|"Key_OemClear"|"Key_JunjaMode"|"Key_D7"|"Key_Apps"|"Key_F14"|"Key_MediaPlayPause"|"Key_DbeEnterWordRegisterMode"|"Key_PageLeft"|"Key_FinalMode"|"Key_D8"|"Key_Sleep"|"Key_F15"|"Key_LaunchMail"|"Key_DbeEnterImeConfigureMode"|"Key_PageRight"|"Key_KanjiMode"|"Key_D9"|"Key_NumPad0"|"Key_F16"|"Key_SelectMedia"|"Key_DbeDetermineString"|"Key_GamepadLeft"|"Key_Escape"|"Key_A"|"Key_NumPad1"|"Key_F17"|"Key_OemSemicolon"|"Key_DbeEnterDialogConversionMode"|"Key_GamepadUp"|"Key_ImeConvert"|"Key_B"|"Key_NumPad2"|"Key_F18"|"Key_OemPlus"|"Key_DeadCharProcessed"|"Key_GamepadRight"|"Key_ImeNonConvert"|"Key_C"|"Key_NumPad3"|"Key_F19"|"Key_OemComma"|"Key_GamepadDown"|"Key_ImeAccept"|"Key_D"|"Key_NumPad4"|"Key_F20"|"Key_OemMinus"|"Key_GamepadAccept"|"Key_ImeModeChange"|"Key_E"|"Key_NumPad5"|"Key_F21"|"Key_OemPeriod"|"Key_GamepadCancel"|"Key_Space"|"Key_F"|"Key_NumPad6"|"Key_F22"|"Key_OemQuestion"|"Key_GamepadMenu"|"Key_PageUp"|"Key_G"|"Key_NumPad7"|"Key_F23"|"Key_OemTilde"|"Key_GamepadView"|"Key_PageDown"|"Key_H"|"Key_NumPad8"|"Key_F24"|"Key_AbntC1"|"Key_GamepadPageUp"|"Key_End"|"Key_I"|"Key_NumPad9"|"Key_NumLock"|"Key_AbntC2"|"Key_GamepadPageDown"
---- @alias NsKeyStates string|"KeyStates_None"|"KeyStates_Down"|"KeyStates_Toggled"
---- @alias NsManipulationModes string|"ManipulationModes_TranslateX"|"ManipulationModes_TranslateY"|"ManipulationModes_Rotate"|"ManipulationModes_Scale"
+--- @alias HealEffect string|"Behavior"|"Heal"|"HealSharing"|"HealSharingReflected"|"Lifesteal"|"Necromantic"|"NegativeDamage"|"None"|"ResistDeath"|"Script"|"Sitting"|"Surface"|"Unknown4"|"Unknown9"
+--- @alias HitType string|"DoT"|"Magic"|"Melee"|"Ranged"|"Reflected"|"Surface"|"WeaponDamage"
+--- @alias HitWith string|"CrushByFall"|"FallDamage"|"Item"|"Magic"|"None"|"Projectile"|"Redirection"|"Surface"|"Trap"|"Unknown"|"Unknown10"|"Unknown11"|"Weapon"
+--- @alias IngredientTransformType string|"Boost"|"Consume"|"None"|"Poison"|"Transform"
+--- @alias IngredientType string|"Category"|"None"|"Object"|"Property"
+--- @alias InputType string|"AcceleratedRepeat"|"Hold"|"Press"|"Release"|"Repeat"|"Unknown"|"ValueChange"
+--- @alias ItemDataRarity string|"Common"|"Divine"|"Epic"|"Legendary"|"Rare"|"Sentinel"|"Uncommon"|"Unique"
+--- @alias ItemSlot string|"Amulet"|"Boots"|"Breast"|"Cloak"|"Gloves"|"Helmet"|"Horns"|"MainHand"|"MeleeMainHand"|"MeleeOffHand"|"MusicalInstrument"|"OffHand"|"Overhead"|"RangedMainHand"|"RangedOffHand"|"Ring"|"Ring2"|"Underwear"|"VanityBody"|"VanityBoots"|"Wings"
+--- @alias LuaTypeId string|"Any"|"Array"|"Boolean"|"Enumeration"|"Float"|"Function"|"Integer"|"Map"|"Module"|"Nullable"|"Object"|"Set"|"String"|"Tuple"|"Unknown"|"Variant"|"Void"
+--- @alias NetMessage string|"NETMSG_ACHIEVEMENT_PROGRESS_MESSAGE"|"NETMSG_ACHIEVEMENT_UNLOCKED_MESSAGE"|"NETMSG_ACTIVE_ROLL_MODIFIERS"|"NETMSG_ACT_OVER"|"NETMSG_ATMOSPHERE_OVERRIDE"|"NETMSG_CACHETEMPLATE"|"NETMSG_CAMERA_ACTIVATE"|"NETMSG_CAMERA_ARRIVED"|"NETMSG_CAMERA_ROTATE"|"NETMSG_CAMERA_SPLINE"|"NETMSG_CAMERA_TARGET"|"NETMSG_CAST_ALL"|"NETMSG_CHANGE_RULESETS"|"NETMSG_CHARACTER_ACTION"|"NETMSG_CHARACTER_ACTION_DATA"|"NETMSG_CHARACTER_ACTION_REQUEST_RESULT"|"NETMSG_CHARACTER_ACTIVATE"|"NETMSG_CHARACTER_AOO"|"NETMSG_CHARACTER_ASSIGN"|"NETMSG_CHARACTER_BEHAVIOR"|"NETMSG_CHARACTER_CANCEL_DROP_ENTITY"|"NETMSG_CHARACTER_CHANGE_OWNERSHIP"|"NETMSG_CHARACTER_CONFIRMATION"|"NETMSG_CHARACTER_CONTROL"|"NETMSG_CHARACTER_CREATE"|"NETMSG_CHARACTER_CREATION_ABORT"|"NETMSG_CHARACTER_CREATION_LEVELUP"|"NETMSG_CHARACTER_CREATION_PLAYORIGINTIMELINE"|"NETMSG_CHARACTER_CREATION_READY"|"NETMSG_CHARACTER_CREATION_RESPEC"|"NETMSG_CHARACTER_CREATION_UPDATE"|"NETMSG_CHARACTER_DEACTIVATE"|"NETMSG_CHARACTER_DESTROY"|"NETMSG_CHARACTER_DIALOG"|"NETMSG_CHARACTER_DROP_ENTITY"|"NETMSG_CHARACTER_END_REPOSE"|"NETMSG_CHARACTER_ERROR"|"NETMSG_CHARACTER_IMPROV_WEAPON"|"NETMSG_CHARACTER_IN_DIALOG"|"NETMSG_CHARACTER_ITEM_USED"|"NETMSG_CHARACTER_LOCKPICK"|"NETMSG_CHARACTER_LOOT"|"NETMSG_CHARACTER_MOVEMENT_FALLING"|"NETMSG_CHARACTER_MOVE_FAILED"|"NETMSG_CHARACTER_OFFSTAGE"|"NETMSG_CHARACTER_ORIGINAL_TEMPLATE_UPDATE"|"NETMSG_CHARACTER_PATHING"|"NETMSG_CHARACTER_PICKPOCKET"|"NETMSG_CHARACTER_REQUEST_ARMOR_SET_SWITCH"|"NETMSG_CHARACTER_REQUEST_WEAPON_SET_SWITCH"|"NETMSG_CHARACTER_SELECTED_CLIMB_ON"|"NETMSG_CHARACTER_STATUS"|"NETMSG_CHARACTER_STATUS_LIFETIME"|"NETMSG_CHARACTER_STEERING"|"NETMSG_CHARACTER_STOWED_VISIBILITY"|"NETMSG_CHARACTER_TELEPORT"|"NETMSG_CHARACTER_TRANSFORM"|"NETMSG_CHARACTER_TRAPDISARM"|"NETMSG_CHARACTER_UNSHEATHING"|"NETMSG_CHARACTER_UPDATE"|"NETMSG_CHARACTER_USE_MOVEMENT"|"NETMSG_CHAT"|"NETMSG_CLEAR_RECIPE_NEW_FLAG"|"NETMSG_CLIENT_ACCEPT"|"NETMSG_CLIENT_CONNECT"|"NETMSG_CLIENT_DIALOG_JOIN_PRIVACY_FAILED"|"NETMSG_CLIENT_DIALOG_PRIVACY_CHANGED"|"NETMSG_CLIENT_GAME_SETTINGS"|"NETMSG_CLIENT_JOINED"|"NETMSG_CLIENT_LEFT"|"NETMSG_CLOSED_MESSAGE_BOX_MESSAGE"|"NETMSG_CLOSE_CUSTOM_BOOK_UI_MESSAGE"|"NETMSG_CLOSE_UI_MESSAGE"|"NETMSG_COMBATLOG"|"NETMSG_COMBATLOGENTRIES"|"NETMSG_COMBATLOGITEMINTERACTION"|"NETMSG_COMBINE_ITEMS"|"NETMSG_COMBINE_RESULT"|"NETMSG_CUSTOM_STATS_CREATE"|"NETMSG_CUSTOM_STATS_DEFINITION_CREATE"|"NETMSG_CUSTOM_STATS_DEFINITION_REMOVE"|"NETMSG_CUSTOM_STATS_DEFINITION_UPDATE"|"NETMSG_CUSTOM_STATS_UPDATE"|"NETMSG_DARKNESSTILE_UPDATE"|"NETMSG_DECLUTTERED_ITEMS"|"NETMSG_DIALOG_ACTORJOINS_MESSAGE"|"NETMSG_DIALOG_ACTORLEAVES_MESSAGE"|"NETMSG_DIALOG_ANSWER_HIGHLIGHT_MESSAGE"|"NETMSG_DIALOG_ANSWER_MESSAGE"|"NETMSG_DIALOG_HISTORY_MESSAGE"|"NETMSG_DIALOG_INSTANCEDIALOGCHANGED"|"NETMSG_DIALOG_INVALID_ANSWER"|"NETMSG_DIALOG_LISTEN"|"NETMSG_DIALOG_NODE_MESSAGE"|"NETMSG_DIALOG_REPLACESPEAKER_MESSAGE"|"NETMSG_DIALOG_REQUEST_IN_DIALOGUE_ATTACK_MESSAGE"|"NETMSG_DIALOG_STATE_MESSAGE"|"NETMSG_DIALOG_SUGGESTANSWER_MESSAGE"|"NETMSG_DIALOG_TIMELINE_UNLOADED_MESSAGE"|"NETMSG_DIPLOMACY"|"NETMSG_DLC_UPDATE"|"NETMSG_DUALWIELDING_TOGGLE"|"NETMSG_ECS_REPLICATION"|"NETMSG_EFFECT_CREATE"|"NETMSG_EFFECT_DESTROY"|"NETMSG_EFFECT_FORGET"|"NETMSG_END_THE_DAY"|"NETMSG_FLAG_UPDATE"|"NETMSG_FOLLOWER_CANT_USE_ITEM"|"NETMSG_FORCE_TURN_BASED_END_PLAYER_TURN_REQUEST"|"NETMSG_FORCE_TURN_BASED_TOGGLE_REQUEST"|"NETMSG_FULL_RESPEC_UPDATE"|"NETMSG_GAMEACTION"|"NETMSG_GAMECONTROL_PRICETAG"|"NETMSG_GAMECONTROL_UPDATE_C2S"|"NETMSG_GAMECONTROL_UPDATE_S2C"|"NETMSG_GAMEOVER"|"NETMSG_GAMETIME_SYNC"|"NETMSG_GIVE_REWARD"|"NETMSG_HANDSHAKE"|"NETMSG_HOST_LEFT"|"NETMSG_HOST_REFUSE"|"NETMSG_HOST_REFUSEPLAYER"|"NETMSG_HOST_WELCOME"|"NETMSG_HOTBAR_COLUMN_SET"|"NETMSG_HOTBAR_CURRENT_DECK_SET"|"NETMSG_HOTBAR_CUSTOM_DECK"|"NETMSG_HOTBAR_LOCK_SET"|"NETMSG_HOTBAR_ROWS_SET"|"NETMSG_HOTBAR_ROW_REMOVE"|"NETMSG_HOTBAR_SLOT_REMOVE_IS_NEW_FLAG"|"NETMSG_HOTBAR_SLOT_SET"|"NETMSG_INTERRUPT_DECISION"|"NETMSG_INTERRUPT_SET_ASK_DATA"|"NETMSG_INTERRUPT_SET_ENABLED_DATA"|"NETMSG_INVENTORY_ADD"|"NETMSG_INVENTORY_CREATE"|"NETMSG_INVENTORY_CREATE_AND_OPEN"|"NETMSG_INVENTORY_CREATE_NEW"|"NETMSG_INVENTORY_DESTROY"|"NETMSG_INVENTORY_DESTROY_NEW"|"NETMSG_INVENTORY_EQUIP"|"NETMSG_INVENTORY_ITEM_UPDATE"|"NETMSG_INVENTORY_LOCK"|"NETMSG_INVENTORY_LOCKSTATE_SYNC"|"NETMSG_INVENTORY_MOVETOSLOT"|"NETMSG_INVENTORY_SORT"|"NETMSG_INVENTORY_TRANSFER"|"NETMSG_INVENTORY_UNEQUIP"|"NETMSG_INVENTORY_VIEW_CREATE"|"NETMSG_INVENTORY_VIEW_DESTROY"|"NETMSG_INVENTORY_VIEW_SORT"|"NETMSG_INVENTORY_VIEW_UPDATE_ITEMS"|"NETMSG_INVENTORY_VIEW_UPDATE_PARENTS"|"NETMSG_ITEM_ACTION"|"NETMSG_ITEM_ACTIVATE"|"NETMSG_ITEM_CONFIRMATION"|"NETMSG_ITEM_CREATE"|"NETMSG_ITEM_DEACTIVATE"|"NETMSG_ITEM_DESTINATION"|"NETMSG_ITEM_DESTROY"|"NETMSG_ITEM_MOVED_INFORM"|"NETMSG_ITEM_MOVE_TO_WORLD"|"NETMSG_ITEM_OFFSTAGE"|"NETMSG_ITEM_STATUS"|"NETMSG_ITEM_STATUS_LIFETIME"|"NETMSG_ITEM_TOGGLE_IS_WARE"|"NETMSG_ITEM_TRANSFORM"|"NETMSG_ITEM_UPDATE"|"NETMSG_ITEM_USE_REMOTELY"|"NETMSG_JOURNALDIALOGLOG_UPDATE"|"NETMSG_JOURNALRECIPE_UPDATE"|"NETMSG_JOURNAL_RESET"|"NETMSG_LEVEL_CREATED"|"NETMSG_LEVEL_INSTANTIATE_SWAP"|"NETMSG_LEVEL_LOAD"|"NETMSG_LEVEL_LOADED"|"NETMSG_LEVEL_START"|"NETMSG_LEVEL_SWAP_COMPLETE"|"NETMSG_LEVEL_SWAP_READY"|"NETMSG_LEVEL_UP_UPDATE"|"NETMSG_LIGHTING_OVERRIDE"|"NETMSG_LOAD_GAME_WITH_ADDONS"|"NETMSG_LOAD_GAME_WITH_ADDONS_FAIL"|"NETMSG_LOAD_START"|"NETMSG_LOAD_STARTED"|"NETMSG_LOBBY_DATAUPDATE"|"NETMSG_LOBBY_STARTGAME"|"NETMSG_LOBBY_USERUPDATE"|"NETMSG_LOCK_WAYPOINT"|"NETMSG_LONG_REST_DECISION"|"NETMSG_MARKER_UI_CREATE"|"NETMSG_MARKER_UI_UPDATE"|"NETMSG_MIC_DISABLED"|"NETMSG_MODULE_LOAD"|"NETMSG_MODULE_LOADED"|"NETMSG_MULTIPLE_TARGET_OPERATION"|"NETMSG_MUSIC_EVENT"|"NETMSG_MUSIC_STATE"|"NETMSG_MYSTERY_ADVANCED"|"NETMSG_MYSTERY_DISABLED"|"NETMSG_NET_ENTITY_CREATE"|"NETMSG_NET_ENTITY_DESTROY"|"NETMSG_NEW_ITEMS_INSIDE"|"NETMSG_NOTIFICATION"|"NETMSG_OPEN_CRAFT_UI_MESSAGE"|"NETMSG_OPEN_CUSTOM_BOOK_UI_MESSAGE"|"NETMSG_OPEN_MESSAGE_BOX_MESSAGE"|"NETMSG_OPEN_WAYPOINT_UI_MESSAGE"|"NETMSG_OVERHEADTEXT"|"NETMSG_PARTYGROUP"|"NETMSG_PARTYORDER"|"NETMSG_PARTY_BLOCKFOLLOW"|"NETMSG_PARTY_PRESET_LEVELUP"|"NETMSG_PARTY_PRESET_LOAD"|"NETMSG_PARTY_PRESET_SAVE"|"NETMSG_PARTY_PRESET_SPELL"|"NETMSG_PASSIVE_ROLL_SEQUENCE"|"NETMSG_PASSIVE_TOGGLE"|"NETMSG_PAUSE"|"NETMSG_PEER_ACTIVATE"|"NETMSG_PEER_DEACTIVATE"|"NETMSG_PING_REQUEST"|"NETMSG_PLAYER_ACCEPT"|"NETMSG_PLAYER_CHANGENAME"|"NETMSG_PLAYER_CONNECT"|"NETMSG_PLAYER_DISCONNECT"|"NETMSG_PLAYER_JOINED"|"NETMSG_PLAYER_LEFT"|"NETMSG_PLAYER_NAMECHANGED"|"NETMSG_PLAYMOVIE"|"NETMSG_PROJECTILE_CREATE"|"NETMSG_PROJECTILE_UPDATE"|"NETMSG_QUESTS_LOADED"|"NETMSG_QUEST_CATEGORY_UPDATE"|"NETMSG_QUEST_PROGRESS"|"NETMSG_QUEST_STEP"|"NETMSG_QUEST_TRACK"|"NETMSG_READYCHECK"|"NETMSG_REALTIME_MULTIPLAY"|"NETMSG_REGISTER_WAYPOINT"|"NETMSG_REQUESTAUTOSAVE"|"NETMSG_REQUESTED_ROLL"|"NETMSG_REQUEST_RELEASE_CONCENTRATION"|"NETMSG_RESPEC_UPDATE"|"NETMSG_ROLL_STREAM_ROLL_MODE_TYPE"|"NETMSG_SAVEGAME"|"NETMSG_SAVEGAMEHANDSHAKE"|"NETMSG_SAVEGAMEHANDSHAKE_SCREENSHOT"|"NETMSG_SAVEGAME_LOAD_FAIL"|"NETMSG_SCREEN_FADE_FINISHED"|"NETMSG_SCRIPT_EXTENDER"|"NETMSG_SELECT_DICE"|"NETMSG_SERVER_COMMAND"|"NETMSG_SERVER_NOTIFICATION"|"NETMSG_SESSION_LOAD"|"NETMSG_SESSION_LOADED"|"NETMSG_SESSION_UNLOADED"|"NETMSG_SHORT_REST"|"NETMSG_SHOW_ENTER_REGION_UI_MESSAGE"|"NETMSG_SHOW_ERROR"|"NETMSG_SHROUD_UPDATE"|"NETMSG_SKIPMOVIE_RESULT"|"NETMSG_SNEAKING_CONES_VISIBLE_TOGGLE"|"NETMSG_SPELL_CANCEL"|"NETMSG_SPELL_CAST_CANCEL"|"NETMSG_SPELL_CAST_CAST"|"NETMSG_SPELL_CAST_CONFIRM"|"NETMSG_SPELL_CAST_START_PREVIEW"|"NETMSG_SPELL_CAST_UPDATE_PREVIEW"|"NETMSG_SPELL_LEARN"|"NETMSG_SPELL_PREPARE"|"NETMSG_SPELL_REMOVE_LEARNED"|"NETMSG_STORY_ELEMENT_UI"|"NETMSG_STORY_FLAGS_LOAD"|"NETMSG_SURFACE_CREATE"|"NETMSG_SURFACE_META"|"NETMSG_TADPOLE_POWERS_REMOVE"|"NETMSG_TADPOLE_POWER_ADD"|"NETMSG_TELEPORT_ACK"|"NETMSG_TELEPORT_WAYPOINT"|"NETMSG_TIMELINE_ACTOR_HANDSHAKE"|"NETMSG_TIMELINE_HANDSHAKE"|"NETMSG_TIMELINE_NODECOMPLETED"|"NETMSG_TIMELINE_PLAYER_WATCHING"|"NETMSG_TIMELINE_REQUEST_FASTFORWARD"|"NETMSG_TIMELINE_WORLD_CINEMATIC_COMPLETED"|"NETMSG_TRADE_ACTION"|"NETMSG_TRIGGER_CREATE"|"NETMSG_TRIGGER_DESTROY"|"NETMSG_TRIGGER_UPDATE"|"NETMSG_TROPHY_UPDATE"|"NETMSG_TURNBASED_BEGIN_CANCEL_ENDTURN_REQUEST"|"NETMSG_TURNBASED_CANCEL_ENDTURN_REQUEST"|"NETMSG_TURNBASED_ENDTURN_REQUEST"|"NETMSG_TURNBASED_END_CANCEL_ENDTURN_REQUEST"|"NETMSG_TURNBASED_FINISHTEAM"|"NETMSG_TURNBASED_FLEECOMBATRESULT"|"NETMSG_TURNBASED_FLEE_REQUEST"|"NETMSG_TURNBASED_SETTEAM"|"NETMSG_TURNBASED_SKIP_START_DELAY"|"NETMSG_TURNBASED_STARTTURN_CONFIRMATION"|"NETMSG_TUTORIALS_RESET"|"NETMSG_TUTORIALS_SHOWING"|"NETMSG_TUTORIAL_CLOSED"|"NETMSG_TUTORIAL_UI_EVENT"|"NETMSG_TUTORIAL_USER_ACTION"|"NETMSG_UI_COMBINE_OPEN"|"NETMSG_UI_FORCETURNBASED_ENTERED"|"NETMSG_UI_FORCETURNBASED_LEFT"|"NETMSG_UI_FORCETURNBASED_TURN_ENDED"|"NETMSG_UI_FORCETURNBASED_TURN_STARTED"|"NETMSG_UI_INTERACTION_STOPPED"|"NETMSG_UI_QUESTSELECTED"|"NETMSG_UNLOCK_ITEM"|"NETMSG_UNLOCK_WAYPOINT"|"NETMSG_UNPAUSE"|"NETMSG_USE_ITEM_ACTION"|"NETMSG_VOICEDATA"
+--- @alias NsDragAction string|"DragAction_Cancel"|"DragAction_Continue"|"DragAction_Drop"
+--- @alias NsHoldingState string|"HoldingState_Canceled"|"HoldingState_Completed"|"HoldingState_Started"
+--- @alias NsKey string|"Key_A"|"Key_AbntC1"|"Key_AbntC2"|"Key_Add"|"Key_Apps"|"Key_B"|"Key_Back"|"Key_BrowserBack"|"Key_BrowserFavorites"|"Key_BrowserForward"|"Key_BrowserHome"|"Key_BrowserRefresh"|"Key_BrowserSearch"|"Key_BrowserStop"|"Key_C"|"Key_Cancel"|"Key_CapsLock"|"Key_Clear"|"Key_D"|"Key_D0"|"Key_D1"|"Key_D2"|"Key_D3"|"Key_D4"|"Key_D5"|"Key_D6"|"Key_D7"|"Key_D8"|"Key_D9"|"Key_DbeAlphanumeric"|"Key_DbeCodeInput"|"Key_DbeDbcsChar"|"Key_DbeDetermineString"|"Key_DbeEnterDialogConversionMode"|"Key_DbeEnterImeConfigureMode"|"Key_DbeEnterWordRegisterMode"|"Key_DbeFlushString"|"Key_DbeHiragana"|"Key_DbeKatakana"|"Key_DbeNoCodeInput"|"Key_DbeNoRoman"|"Key_DbeRoman"|"Key_DbeSbcsChar"|"Key_DeadCharProcessed"|"Key_Decimal"|"Key_Delete"|"Key_Divide"|"Key_Down"|"Key_E"|"Key_End"|"Key_Enter"|"Key_Escape"|"Key_Execute"|"Key_F"|"Key_F1"|"Key_F10"|"Key_F11"|"Key_F12"|"Key_F13"|"Key_F14"|"Key_F15"|"Key_F16"|"Key_F17"|"Key_F18"|"Key_F19"|"Key_F2"|"Key_F20"|"Key_F21"|"Key_F22"|"Key_F23"|"Key_F24"|"Key_F3"|"Key_F4"|"Key_F5"|"Key_F6"|"Key_F7"|"Key_F8"|"Key_F9"|"Key_FinalMode"|"Key_G"|"Key_GamepadAccept"|"Key_GamepadCancel"|"Key_GamepadContext1"|"Key_GamepadContext2"|"Key_GamepadContext3"|"Key_GamepadContext4"|"Key_GamepadDown"|"Key_GamepadLeft"|"Key_GamepadMenu"|"Key_GamepadPageDown"|"Key_GamepadPageLeft"|"Key_GamepadPageRight"|"Key_GamepadPageUp"|"Key_GamepadRight"|"Key_GamepadUp"|"Key_GamepadView"|"Key_H"|"Key_HangulMode"|"Key_Help"|"Key_Home"|"Key_I"|"Key_ImeAccept"|"Key_ImeConvert"|"Key_ImeModeChange"|"Key_ImeNonConvert"|"Key_ImeProcessed"|"Key_Insert"|"Key_J"|"Key_JunjaMode"|"Key_K"|"Key_KanjiMode"|"Key_L"|"Key_LWin"|"Key_LaunchApplication1"|"Key_LaunchApplication2"|"Key_LaunchMail"|"Key_Left"|"Key_LeftAlt"|"Key_LeftCtrl"|"Key_LeftShift"|"Key_LineFeed"|"Key_M"|"Key_MediaNextTrack"|"Key_MediaPlayPause"|"Key_MediaPreviousTrack"|"Key_MediaStop"|"Key_Multiply"|"Key_N"|"Key_None"|"Key_NumLock"|"Key_NumPad0"|"Key_NumPad1"|"Key_NumPad2"|"Key_NumPad3"|"Key_NumPad4"|"Key_NumPad5"|"Key_NumPad6"|"Key_NumPad7"|"Key_NumPad8"|"Key_NumPad9"|"Key_O"|"Key_Oem8"|"Key_OemBackslash"|"Key_OemClear"|"Key_OemCloseBrackets"|"Key_OemComma"|"Key_OemMinus"|"Key_OemOpenBrackets"|"Key_OemPeriod"|"Key_OemPipe"|"Key_OemPlus"|"Key_OemQuestion"|"Key_OemQuotes"|"Key_OemSemicolon"|"Key_OemTilde"|"Key_P"|"Key_PageDown"|"Key_PageLeft"|"Key_PageRight"|"Key_PageUp"|"Key_Pause"|"Key_Print"|"Key_PrintScreen"|"Key_Q"|"Key_R"|"Key_RWin"|"Key_Right"|"Key_RightAlt"|"Key_RightCtrl"|"Key_RightShift"|"Key_S"|"Key_Scroll"|"Key_Select"|"Key_SelectMedia"|"Key_Separator"|"Key_Sleep"|"Key_Space"|"Key_Subtract"|"Key_System"|"Key_T"|"Key_Tab"|"Key_U"|"Key_Up"|"Key_V"|"Key_VolumeDown"|"Key_VolumeMute"|"Key_VolumeUp"|"Key_W"|"Key_X"|"Key_Y"|"Key_Z"
+--- @alias NsKeyStates string|"KeyStates_Down"|"KeyStates_None"|"KeyStates_Toggled"
+--- @alias NsManipulationModes string|"ManipulationModes_Rotate"|"ManipulationModes_Scale"|"ManipulationModes_TranslateX"|"ManipulationModes_TranslateY"
 --- @alias NsModifierKeys string|"ModifierKeys_Alt"|"ModifierKeys_Control"|"ModifierKeys_Shift"|"ModifierKeys_Windows"
---- @alias NsMouseAction string|"MouseAction_None"|"MouseAction_LeftClick"|"MouseAction_RightClick"|"MouseAction_MiddleClick"|"MouseAction_WheelClick"|"MouseAction_LeftDoubleClick"|"MouseAction_RightDoubleClick"|"MouseAction_MiddleDoubleClick"
---- @alias NsMouseButton string|"MouseButton_Middle"|"MouseButton_XButton1"|"MouseButton_XButton2"|"MouseButton_Left"|"MouseButton_Right"
---- @alias NsMouseButtonState string|"MouseButtonState_Released"|"MouseButtonState_Pressed"
+--- @alias NsMouseAction string|"MouseAction_LeftClick"|"MouseAction_LeftDoubleClick"|"MouseAction_MiddleClick"|"MouseAction_MiddleDoubleClick"|"MouseAction_None"|"MouseAction_RightClick"|"MouseAction_RightDoubleClick"|"MouseAction_WheelClick"
+--- @alias NsMouseButton string|"MouseButton_Left"|"MouseButton_Middle"|"MouseButton_Right"|"MouseButton_XButton1"|"MouseButton_XButton2"
+--- @alias NsMouseButtonState string|"MouseButtonState_Pressed"|"MouseButtonState_Released"
 --- @alias NsOrientation string|"Orientation_Horizontal"|"Orientation_Vertical"
---- @alias PathRootType string|"Debug"|"Data"|"Scripts"|"Public"|"Mods"|"LocalAppData"|"UserProfile"|"Localization"|"Bin"|"Bin2"|"Projects"|"Root"|"Public2"|"GameMod"|"EngineMod"|"WorkingDir"
---- @alias ProficiencyBonusBoostType string|"Skill"|"AttackTarget"|"AttackRoll"|"SavingThrow"|"WeaponActionDC"|"AllSavingThrows"|"AllAbilities"|"AllSkills"|"SourceDialogue"|"Ability"
---- @alias ProficiencyGroupFlags string|"Halberds"|"HandCrossbows"|"MusicalInstrument"|"Handaxes"|"HeavyArmor"|"HeavyCrossbows"|"Javelins"|"LightArmor"|"LightCrossbows"|"LightHammers"|"Longbows"|"Longswords"|"Maces"|"MartialWeapons"|"Mauls"|"MediumArmor"|"Morningstars"|"Pikes"|"Quarterstaffs"|"Rapiers"|"Scimitars"|"Shields"|"Shortbows"|"Battleaxes"|"Shortswords"|"Clubs"|"Sickles"|"Daggers"|"SimpleWeapons"|"Darts"|"Slings"|"Flails"|"Spears"|"Glaives"|"Tridents"|"Greataxes"|"Warhammers"|"Greatclubs"|"Warpicks"|"Greatswords"
---- @alias ProjectileTypeIds string|"Physical"|"Magical"
---- @alias RecipeCategory string|"Arrows"|"Armour"|"Food"|"Objects"|"Runes"|"Grimoire"|"Common"|"Weapons"|"Potions"|"Grenades"
---- @alias RequirementType string|"Persuasion"|"Ranged"|"Intimidate"|"None"|"Vitality"|"Pickpocket"|"PainReflection"|"Reflexes"|"Tag"|"Sourcery"|"Wisdom"|"Telekinesis"|"Intelligence"|"Summoning"|"Sneaking"|"Constitution"|"Loremaster"|"Combat"|"Level"|"Dexterity"|"Barter"|"Strength"|"Charm"|"Reason"|"Immobile"|"Necromancy"|"TurnBased"
---- @alias ResistanceBoostFlags string|"BelowDamageThreshold"|"ResistantToNonMagical"|"ResistantToMagical"|"VulnerableToNonMagical"|"ImmuneToMagical"|"VulnerableToMagical"|"ImmuneToNonMagical"
---- @alias ResourceBankType string|"Material"|"Physics"|"TileSet"|"AnimationBlueprint"|"MeshProxy"|"DiffusionProfile"|"MaterialSet"|"BlendSpace"|"FCurve"|"Script"|"IKRig"|"Skeleton"|"VirtualTexture"|"TerrainBrush"|"ColorList"|"SkinPreset"|"ClothCollider"|"LightCookie"|"Effect"|"TimelineScene"|"Visual"|"SkeletonMirrorTable"|"VisualSet"|"MaterialPreset"|"Sound"|"Lighting"|"Dialog"|"Sentinel"|"Animation"|"Atmosphere"|"VoiceBark"|"Timeline"|"AnimationSet"|"Texture"|"CharacterVisual"
---- @alias ResourceReplenishType string|"ExhaustedRest"|"FullRest"|"ShortRest"|"Default"|"Rest"|"Never"|"Combat"
---- @alias RestErrorFlags string|"Script"|"GlobalDisabled"|"FTB"|"NotEnoughResources"|"DownedOrDead"|"Dialog"|"Combat"
---- @alias RestFlags string|"CanShortRest"|"CanLongRest"|"Unknown0x04"
---- @alias RollCritical string|"None"|"Fail"|"Success"
+--- @alias PathRootType string|"Bin"|"Bin2"|"Data"|"Debug"|"EngineMod"|"GameMod"|"LocalAppData"|"Localization"|"Mods"|"Projects"|"Public"|"Public2"|"Root"|"Scripts"|"UserProfile"|"WorkingDir"
+--- @alias ProficiencyBonusBoostType string|"Ability"|"AllAbilities"|"AllSavingThrows"|"AllSkills"|"AttackRoll"|"AttackTarget"|"SavingThrow"|"Skill"|"SourceDialogue"|"WeaponActionDC"
+--- @alias ProficiencyGroupFlags string|"Battleaxes"|"Clubs"|"Daggers"|"Darts"|"Flails"|"Glaives"|"Greataxes"|"Greatclubs"|"Greatswords"|"Halberds"|"HandCrossbows"|"Handaxes"|"HeavyArmor"|"HeavyCrossbows"|"Javelins"|"LightArmor"|"LightCrossbows"|"LightHammers"|"Longbows"|"Longswords"|"Maces"|"MartialWeapons"|"Mauls"|"MediumArmor"|"Morningstars"|"MusicalInstrument"|"Pikes"|"Quarterstaffs"|"Rapiers"|"Scimitars"|"Shields"|"Shortbows"|"Shortswords"|"Sickles"|"SimpleWeapons"|"Slings"|"Spears"|"Tridents"|"Warhammers"|"Warpicks"
+--- @alias ProjectileTypeIds string|"Magical"|"Physical"
+--- @alias RecipeCategory string|"Armour"|"Arrows"|"Common"|"Food"|"Grenades"|"Grimoire"|"Objects"|"Potions"|"Runes"|"Weapons"
+--- @alias RequirementType string|"Barter"|"Charm"|"Combat"|"Constitution"|"Dexterity"|"Immobile"|"Intelligence"|"Intimidate"|"Level"|"Loremaster"|"Necromancy"|"None"|"PainReflection"|"Persuasion"|"Pickpocket"|"Ranged"|"Reason"|"Reflexes"|"Sneaking"|"Sourcery"|"Strength"|"Summoning"|"Tag"|"Telekinesis"|"TurnBased"|"Vitality"|"Wisdom"
+--- @alias ResistanceBoostFlags string|"BelowDamageThreshold"|"ImmuneToMagical"|"ImmuneToNonMagical"|"ResistantToMagical"|"ResistantToNonMagical"|"VulnerableToMagical"|"VulnerableToNonMagical"
+--- @alias ResourceBankType string|"Animation"|"AnimationBlueprint"|"AnimationSet"|"Atmosphere"|"BlendSpace"|"CharacterVisual"|"ClothCollider"|"ColorList"|"Dialog"|"DiffusionProfile"|"Effect"|"FCurve"|"IKRig"|"LightCookie"|"Lighting"|"Material"|"MaterialPreset"|"MaterialSet"|"MeshProxy"|"Physics"|"Script"|"Sentinel"|"Skeleton"|"SkeletonMirrorTable"|"SkinPreset"|"Sound"|"TerrainBrush"|"Texture"|"TileSet"|"Timeline"|"TimelineScene"|"VirtualTexture"|"Visual"|"VisualSet"|"VoiceBark"
+--- @alias ResourceReplenishType string|"Combat"|"Default"|"ExhaustedRest"|"FullRest"|"Never"|"Rest"|"ShortRest"
+--- @alias RestErrorFlags string|"Combat"|"Dialog"|"DownedOrDead"|"FTB"|"GlobalDisabled"|"NotEnoughResources"|"Script"
+--- @alias RestFlags string|"CanLongRest"|"CanShortRest"|"Unknown0x04"
+--- @alias RollCritical string|"Fail"|"None"|"Success"
 --- @alias SDLKeyEvent string|"KeyDown"|"KeyUp"
---- @alias SDLKeyModifier string|"RShift"|"LCtrl"|"RCtrl"|"LAlt"|"RAlt"|"LGui"|"RGui"|"Num"|"Caps"|"Mode"|"Scroll"|"LShift"
---- @alias SDLScanCode string|"NUM_2"|"F5"|"KP_5"|"COPY"|"RETURN2"|"KP_DBLAMPERSAND"|"AUDIONEXT"|"CALL"|"NUM_3"|"F6"|"KP_6"|"PASTE"|"SEPARATOR"|"KP_VERTICALBAR"|"AUDIOPREV"|"ENDCALL"|"NUM_4"|"F7"|"KP_7"|"FIND"|"KEY_OUT"|"KP_DBLVERTICALBAR"|"AUDIOSTOP"|"NUM_5"|"F8"|"KP_8"|"MUTE"|"OPER"|"KP_COLON"|"AUDIOPLAY"|"NUM_6"|"F9"|"KP_9"|"VOLUMEUP"|"CLEARAGAIN"|"KP_HASH"|"AUDIOMUTE"|"UNKNOWN"|"NUM_7"|"F10"|"KP_0"|"VOLUMEDOWN"|"CRSEL"|"KP_SPACE"|"MEDIASELECT"|"NUM_8"|"F11"|"KP_PERIOD"|"KP_COMMA"|"EXSEL"|"KP_AT"|"WWW"|"NUM_9"|"F12"|"NONUSBACKSLASH"|"KP_EQUALSAS400"|"KP_00"|"KP_EXCLAM"|"MAIL"|"NUM_0"|"PRINTSCREEN"|"APPLICATION"|"INTERNATIONAL1"|"KP_000"|"KP_MEMSTORE"|"CALCULATOR"|"RETURN"|"SCROLLLOCK"|"POWER"|"INTERNATIONAL2"|"THOUSANDSSEPARATOR"|"KP_MEMRECALL"|"COMPUTER"|"E"|"ESCAPE"|"PAUSE"|"KP_EQUALS"|"INTERNATIONAL3"|"DECIMALSEPARATOR"|"KP_MEMCLEAR"|"AC_SEARCH"|"F"|"BACKSPACE"|"INSERT"|"F13"|"INTERNATIONAL4"|"CURRENCYUNIT"|"KP_MEMADD"|"AC_HOME"|"G"|"TAB"|"HOME"|"F14"|"INTERNATIONAL5"|"CURRENCYSUBUNIT"|"KP_MEMSUBTRACT"|"AC_BACK"|"H"|"SPACE"|"PAGEUP"|"F15"|"INTERNATIONAL6"|"KP_LEFTPAREN"|"KP_MEMMULTIPLY"|"AC_FORWARD"|"D"|"I"|"MINUS"|"DEL"|"F16"|"INTERNATIONAL7"|"KP_RIGHTPAREN"|"KP_MEMDIVIDE"|"AC_STOP"|"C"|"J"|"EQUALS"|"END"|"F17"|"INTERNATIONAL8"|"KP_LEFTBRACE"|"KP_PLUSMINUS"|"AC_REFRESH"|"B"|"K"|"LEFTBRACKET"|"PAGEDOWN"|"F18"|"INTERNATIONAL9"|"KP_RIGHTBRACE"|"KP_CLEAR"|"AC_BOOKMARKS"|"A"|"L"|"RIGHTBRACKET"|"RIGHT"|"F19"|"LANG1"|"KP_TAB"|"KP_CLEARENTRY"|"BRIGHTNESSDOWN"|"M"|"BACKSLASH"|"LEFT"|"F20"|"LANG2"|"KP_BACKSPACE"|"KP_BINARY"|"BRIGHTNESSUP"|"N"|"NONUSHASH"|"DOWN"|"F21"|"LANG3"|"KP_A"|"KP_OCTAL"|"DISPLAYSWITCH"|"O"|"SEMICOLON"|"UP"|"F22"|"LANG4"|"KP_B"|"KP_DECIMAL"|"KBDILLUMTOGGLE"|"P"|"APOSTROPHE"|"NUMLOCKCLEAR"|"F23"|"LANG5"|"KP_C"|"KP_HEXADECIMAL"|"KBDILLUMDOWN"|"Q"|"GRAVE"|"KP_DIVIDE"|"F24"|"LANG6"|"KP_D"|"LCTRL"|"KBDILLUMUP"|"R"|"COMMA"|"KP_MULTIPLY"|"EXECUTE"|"LANG7"|"KP_E"|"LSHIFT"|"EJECT"|"T"|"PERIOD"|"KP_MINUS"|"HELP"|"LANG8"|"KP_F"|"LALT"|"SLEEP"|"U"|"SLASH"|"KP_PLUS"|"MENU"|"LANG9"|"KP_XOR"|"LGUI"|"APP1"|"W"|"CAPSLOCK"|"KP_ENTER"|"SELECT"|"ALTERASE"|"KP_POWER"|"RCTRL"|"APP2"|"S"|"X"|"F1"|"KP_1"|"STOP"|"SYSREQ"|"KP_PERCENT"|"RSHIFT"|"AUDIOREWIND"|"Y"|"F2"|"KP_2"|"AGAIN"|"CANCEL"|"KP_LESS"|"RALT"|"AUDIOFASTFORWARD"|"V"|"Z"|"F3"|"KP_3"|"UNDO"|"CLEAR"|"KP_GREATER"|"RGUI"|"SOFTLEFT"|"NUM_1"|"F4"|"KP_4"|"CUT"|"PRIOR"|"KP_AMPERSAND"|"MODE"|"SOFTRIGHT"
---- @alias ServerCharacterFlags string|"IsPlayer"|"Dead"|"HasOwner"|"InDialog"|"CannotDie"|"StoryNPC"|"CharacterControl"|"Unknown8000"|"CoverAmount"|"ForceNonzeroSpeed"|"Temporary"|"CannotAttachToGroups"|"Loaded"|"FindValidPositionOnActivate"|"FightMode"|"PartyFollower"|"CharCreationInProgress"|"CannotMove"|"CannotRun"|"CharacterCreationFinished"|"Floating"|"Unknown80000000"|"Summon"|"DontCacheTemplate"|"NeedsMakePlayerUpdate"|"WalkThrough"|"ReservedForDialog"|"DeferredRemoveEscapist"|"OffStage"|"DisableWaypointUsage"|"LevelTransitionPending"|"IgnoresTriggers"|"RegisteredForAutomatedDialog"|"Totem"|"Unknown80000000000000"|"Invisible"|"IsTrading"|"SteeringEnabled"|"InParty"|"Unknown10000000000"|"IsCompanion_M"|"Unknown40000000000"|"Deactivated"|"CustomLookEnabled"|"IsHuge"|"DisableCulling"|"SpotSneakers"|"DoNotFaceFlag"|"GMReroll"|"Multiplayer"|"Invulnerable"|"CanShootThrough"|"RequestStartTurn"|"HostControl"|"Detached"|"Activated"
---- @alias ServerCharacterFlags2 string|"Unknown0x40"|"TreasureGeneratedForTrader"|"CanGossip"|"Trader"|"IsResurrected"|"IsPet"|"Global"|"Unknown0x10"
+--- @alias SDLKeyModifier string|"Caps"|"LAlt"|"LCtrl"|"LGui"|"LShift"|"Mode"|"Num"|"RAlt"|"RCtrl"|"RGui"|"RShift"|"Scroll"
+--- @alias SDLScanCode string|"A"|"AC_BACK"|"AC_BOOKMARKS"|"AC_FORWARD"|"AC_HOME"|"AC_REFRESH"|"AC_SEARCH"|"AC_STOP"|"AGAIN"|"ALTERASE"|"APOSTROPHE"|"APP1"|"APP2"|"APPLICATION"|"AUDIOFASTFORWARD"|"AUDIOMUTE"|"AUDIONEXT"|"AUDIOPLAY"|"AUDIOPREV"|"AUDIOREWIND"|"AUDIOSTOP"|"B"|"BACKSLASH"|"BACKSPACE"|"BRIGHTNESSDOWN"|"BRIGHTNESSUP"|"C"|"CALCULATOR"|"CALL"|"CANCEL"|"CAPSLOCK"|"CLEAR"|"CLEARAGAIN"|"COMMA"|"COMPUTER"|"COPY"|"CRSEL"|"CURRENCYSUBUNIT"|"CURRENCYUNIT"|"CUT"|"D"|"DECIMALSEPARATOR"|"DEL"|"DISPLAYSWITCH"|"DOWN"|"E"|"EJECT"|"END"|"ENDCALL"|"EQUALS"|"ESCAPE"|"EXECUTE"|"EXSEL"|"F"|"F1"|"F10"|"F11"|"F12"|"F13"|"F14"|"F15"|"F16"|"F17"|"F18"|"F19"|"F2"|"F20"|"F21"|"F22"|"F23"|"F24"|"F3"|"F4"|"F5"|"F6"|"F7"|"F8"|"F9"|"FIND"|"G"|"GRAVE"|"H"|"HELP"|"HOME"|"I"|"INSERT"|"INTERNATIONAL1"|"INTERNATIONAL2"|"INTERNATIONAL3"|"INTERNATIONAL4"|"INTERNATIONAL5"|"INTERNATIONAL6"|"INTERNATIONAL7"|"INTERNATIONAL8"|"INTERNATIONAL9"|"J"|"K"|"KBDILLUMDOWN"|"KBDILLUMTOGGLE"|"KBDILLUMUP"|"KEY_OUT"|"KP_0"|"KP_00"|"KP_000"|"KP_1"|"KP_2"|"KP_3"|"KP_4"|"KP_5"|"KP_6"|"KP_7"|"KP_8"|"KP_9"|"KP_A"|"KP_AMPERSAND"|"KP_AT"|"KP_B"|"KP_BACKSPACE"|"KP_BINARY"|"KP_C"|"KP_CLEAR"|"KP_CLEARENTRY"|"KP_COLON"|"KP_COMMA"|"KP_D"|"KP_DBLAMPERSAND"|"KP_DBLVERTICALBAR"|"KP_DECIMAL"|"KP_DIVIDE"|"KP_E"|"KP_ENTER"|"KP_EQUALS"|"KP_EQUALSAS400"|"KP_EXCLAM"|"KP_F"|"KP_GREATER"|"KP_HASH"|"KP_HEXADECIMAL"|"KP_LEFTBRACE"|"KP_LEFTPAREN"|"KP_LESS"|"KP_MEMADD"|"KP_MEMCLEAR"|"KP_MEMDIVIDE"|"KP_MEMMULTIPLY"|"KP_MEMRECALL"|"KP_MEMSTORE"|"KP_MEMSUBTRACT"|"KP_MINUS"|"KP_MULTIPLY"|"KP_OCTAL"|"KP_PERCENT"|"KP_PERIOD"|"KP_PLUS"|"KP_PLUSMINUS"|"KP_POWER"|"KP_RIGHTBRACE"|"KP_RIGHTPAREN"|"KP_SPACE"|"KP_TAB"|"KP_VERTICALBAR"|"KP_XOR"|"L"|"LALT"|"LANG1"|"LANG2"|"LANG3"|"LANG4"|"LANG5"|"LANG6"|"LANG7"|"LANG8"|"LANG9"|"LCTRL"|"LEFT"|"LEFTBRACKET"|"LGUI"|"LSHIFT"|"M"|"MAIL"|"MEDIASELECT"|"MENU"|"MINUS"|"MODE"|"MUTE"|"N"|"NONUSBACKSLASH"|"NONUSHASH"|"NUMLOCKCLEAR"|"NUM_0"|"NUM_1"|"NUM_2"|"NUM_3"|"NUM_4"|"NUM_5"|"NUM_6"|"NUM_7"|"NUM_8"|"NUM_9"|"O"|"OPER"|"P"|"PAGEDOWN"|"PAGEUP"|"PASTE"|"PAUSE"|"PERIOD"|"POWER"|"PRINTSCREEN"|"PRIOR"|"Q"|"R"|"RALT"|"RCTRL"|"RETURN"|"RETURN2"|"RGUI"|"RIGHT"|"RIGHTBRACKET"|"RSHIFT"|"S"|"SCROLLLOCK"|"SELECT"|"SEMICOLON"|"SEPARATOR"|"SLASH"|"SLEEP"|"SOFTLEFT"|"SOFTRIGHT"|"SPACE"|"STOP"|"SYSREQ"|"T"|"TAB"|"THOUSANDSSEPARATOR"|"U"|"UNDO"|"UNKNOWN"|"UP"|"V"|"VOLUMEDOWN"|"VOLUMEUP"|"W"|"WWW"|"X"|"Y"|"Z"
+--- @alias ServerCharacterFlags string|"Activated"|"CanShootThrough"|"CannotAttachToGroups"|"CannotDie"|"CannotMove"|"CannotRun"|"CharCreationInProgress"|"CharacterControl"|"CharacterCreationFinished"|"CoverAmount"|"CustomLookEnabled"|"Deactivated"|"Dead"|"DeferredRemoveEscapist"|"Detached"|"DisableCulling"|"DisableWaypointUsage"|"DoNotFaceFlag"|"DontCacheTemplate"|"FightMode"|"FindValidPositionOnActivate"|"Floating"|"ForceNonzeroSpeed"|"GMReroll"|"HasOwner"|"HostControl"|"IgnoresTriggers"|"InDialog"|"InParty"|"Invisible"|"Invulnerable"|"IsCompanion_M"|"IsHuge"|"IsPlayer"|"IsTrading"|"LevelTransitionPending"|"Loaded"|"Multiplayer"|"NeedsMakePlayerUpdate"|"OffStage"|"PartyFollower"|"RegisteredForAutomatedDialog"|"RequestStartTurn"|"ReservedForDialog"|"SpotSneakers"|"SteeringEnabled"|"StoryNPC"|"Summon"|"Temporary"|"Totem"|"Unknown10000000000"|"Unknown40000000000"|"Unknown8000"|"Unknown80000000"|"Unknown80000000000000"|"WalkThrough"
+--- @alias ServerCharacterFlags2 string|"CanGossip"|"Global"|"IsPet"|"IsResurrected"|"Trader"|"TreasureGeneratedForTrader"|"Unknown0x10"|"Unknown0x40"
 --- @alias ServerCharacterFlags3 string|"CrimeWarningsEnabled"|"NeedsPlacementSnapping"
---- @alias ServerGameState string|"BuildStory"|"LoadModule"|"Init"|"Uninitialized"|"ReloadStory"|"Idle"|"Exit"|"LoadLevel"|"Unknown"|"LoadSession"|"UnloadLevel"|"UnloadModule"|"UnloadSession"|"Paused"|"Running"|"Disconnect"|"Save"|"Sync"
---- @alias ServerItemFlags string|"IsDoor"|"CanBeMoved"|"NoCover"|"TransformChanged"|"CanOnlyBeUsedByOwner"|"LoadedTemplate"|"ClientSync1"|"InteractionDisabled"|"IsContainer"|"IsSurfaceBlocker"|"HideHP"|"LuckyFind"|"FreezeGravity"|"Floating"|"StoryItem"|"Summon"|"ForceSync"|"WalkThrough"|"Invisible2"|"ReservedForDialog"|"OffStage"|"CanBePickedUp"|"Known"|"DisableSync"|"LevelTransitionPending"|"WalkOn"|"Destroyed"|"IsLadder"|"IsSurfaceCloudBlocker"|"WakePhysics"|"DontAddToHotbar"|"Totem"|"Invisible"|"PositionChanged"|"Destroy"|"DisableInventoryView80"|"GMFolding"|"CanUse"|"InUse"|"Sticky"|"IsSecretDoor"|"Invulnerable2"|"ForceClientSync"|"InPartyInventory"|"SourceContainer"|"IsMoving"|"Frozen"|"CanShootThrough"|"Invulnerable"|"TeleportOnUse"|"InAutomatedDialog"|"Activated"|"PinnedContainer"
---- @alias ServerItemFlags2 string|"UnsoldGenerated"|"TreasureGenerated"|"UnEquipLocked"|"UseRemotely"|"Global"
---- @alias ServerStatusFlags string|"RequestDeleteAtTurnEnd"|"Started"|"IgnoreStacking"|"RequestClientSync"|"Loaded"|"ForceStatus"|"ForceFailStatus"|"RequestDelete"
---- @alias ServerStatusFlags2 string|"KeepAlive"|"DontTickWhileOnSurface"|"InitiateCombat"|"Influence"|"IsOnSourceSurface"|"IsFromItem"|"IsChanneled"|"IsLifeTimeSet"
---- @alias ServerStatusFlags3 string|"IsUnique"|"DisableImmunityOverhead"|"NotifiedPlanManager"|"StatusFlags3_0x08"|"StatusFlags3_0x10"|"StatusFlags3_0x20"|"StatusFlags3_0x40"|"StatusFlags3_0x80"
---- @alias ServerStatusFlags4 string|"IsInvulnerable"|"IsInvulnerableVisible"|"BringIntoCombat"|"IsHostileAct"|"StatusFlags4_0x04"|"CausedByEquipment"|"CauseIsOrigin"|"StatusFlags4_0x80"
+--- @alias ServerGameState string|"BuildStory"|"Disconnect"|"Exit"|"Idle"|"Init"|"LoadLevel"|"LoadModule"|"LoadSession"|"Paused"|"ReloadStory"|"Running"|"Save"|"Sync"|"Uninitialized"|"Unknown"|"UnloadLevel"|"UnloadModule"|"UnloadSession"
+--- @alias ServerItemFlags string|"Activated"|"CanBeMoved"|"CanBePickedUp"|"CanOnlyBeUsedByOwner"|"CanShootThrough"|"CanUse"|"ClientSync1"|"Destroy"|"Destroyed"|"DisableInventoryView80"|"DisableSync"|"DontAddToHotbar"|"Floating"|"ForceClientSync"|"ForceSync"|"FreezeGravity"|"Frozen"|"GMFolding"|"HideHP"|"InAutomatedDialog"|"InPartyInventory"|"InUse"|"InteractionDisabled"|"Invisible"|"Invisible2"|"Invulnerable"|"Invulnerable2"|"IsContainer"|"IsDoor"|"IsLadder"|"IsMoving"|"IsSecretDoor"|"IsSurfaceBlocker"|"IsSurfaceCloudBlocker"|"Known"|"LevelTransitionPending"|"LoadedTemplate"|"LuckyFind"|"NoCover"|"OffStage"|"PinnedContainer"|"PositionChanged"|"ReservedForDialog"|"SourceContainer"|"Sticky"|"StoryItem"|"Summon"|"TeleportOnUse"|"Totem"|"TransformChanged"|"WakePhysics"|"WalkOn"|"WalkThrough"
+--- @alias ServerItemFlags2 string|"Global"|"TreasureGenerated"|"UnEquipLocked"|"UnsoldGenerated"|"UseRemotely"
+--- @alias ServerStatusFlags string|"ForceFailStatus"|"ForceStatus"|"IgnoreStacking"|"Loaded"|"RequestClientSync"|"RequestDelete"|"RequestDeleteAtTurnEnd"|"Started"
+--- @alias ServerStatusFlags2 string|"DontTickWhileOnSurface"|"Influence"|"InitiateCombat"|"IsChanneled"|"IsFromItem"|"IsLifeTimeSet"|"IsOnSourceSurface"|"KeepAlive"
+--- @alias ServerStatusFlags3 string|"DisableImmunityOverhead"|"IsUnique"|"NotifiedPlanManager"|"StatusFlags3_0x08"|"StatusFlags3_0x10"|"StatusFlags3_0x20"|"StatusFlags3_0x40"|"StatusFlags3_0x80"
+--- @alias ServerStatusFlags4 string|"BringIntoCombat"|"CauseIsOrigin"|"CausedByEquipment"|"IsHostileAct"|"IsInvulnerable"|"IsInvulnerableVisible"|"StatusFlags4_0x04"|"StatusFlags4_0x80"
 --- @alias ServerStatusFlags5 string|"HasTriedEntering"
---- @alias SetStatusDurationType string|"Unknown"|"Add"|"SetMinimum"|"ForceSet"|"Multiply"
---- @alias ShroudType string|"Shroud"|"RegionMask"|"Sneak"|"Sight"
---- @alias SkillId string|"Investigation"|"History"|"Arcana"|"Stealth"|"SleightOfHand"|"Acrobatics"|"Invalid"|"Persuasion"|"Performance"|"Deception"|"Sentinel"|"Survival"|"Intimidation"|"Perception"|"Medicine"|"Insight"|"AnimalHandling"|"Athletics"|"Religion"|"Nature"
+--- @alias SetStatusDurationType string|"Add"|"ForceSet"|"Multiply"|"SetMinimum"|"Unknown"
+--- @alias ShroudType string|"RegionMask"|"Shroud"|"Sight"|"Sneak"
+--- @alias SkillId string|"Acrobatics"|"AnimalHandling"|"Arcana"|"Athletics"|"Deception"|"History"|"Insight"|"Intimidation"|"Invalid"|"Investigation"|"Medicine"|"Nature"|"Perception"|"Performance"|"Persuasion"|"Religion"|"Sentinel"|"SleightOfHand"|"Stealth"|"Survival"
 --- @alias SourceAdvantageType string|"SourceAdvantageOnAttack"|"SourceAllyAdvantageOnAttack"
---- @alias SpellAttackType string|"None"|"RangedUnarmedAttack"|"MeleeUnarmedAttack"|"RangedSpellAttack"|"MeleeSpellAttack"|"RangedWeaponAttack"|"MeleeWeaponAttack"|"DirectHit"|"RangedOffHandWeaponAttack"|"MeleeOffHandWeaponAttack"
---- @alias SpellAttackTypeOverride string|"Target_MainHandAttack"|"Projectile_MainHandAttack"|"Target_UnarmedAttack"|"Target_OffhandAttack"|"Projectile_OffhandAttack"
---- @alias SpellChildSelectionType string|"Singular"|"AddChildren"|"MostPowerful"
---- @alias SpellCooldownType string|"Default"|"OncePerTurn"|"OncePerCombat"|"UntilRest"|"UntilShortRest"|"UntilPerRestPerItem"|"OncePerTurnNoRealtime"|"OncePerShortRestPerItem"
---- @alias SpellFlags string|"HasSomaticComponent"|"NoCooldownOnMiss"|"IgnorePreviouslyPickedEntities"|"IsJump"|"IsSwarmAttack"|"IsAttack"|"DisplayInItemTooltip"|"IsMelee"|"Stealth"|"HideInItemTooltip"|"IsConcentration"|"DisableBlood"|"AddFallDamageOnLand"|"IgnoreAoO"|"InventorySelection"|"IsSpell"|"IsTrap"|"Temporary"|"IsEnemySpell"|"CannotTargetItems"|"CannotTargetTerrain"|"IgnoreVisionBlock"|"AddWeaponRange"|"TrajectoryRules"|"IgnoreSilence"|"ImmediateCast"|"NoSurprise"|"IsHarmful"|"CallAlliesSpell"|"Invisible"|"NoAOEDamageOnLand"|"CannotRotate"|"NoCameraMove"|"HasHighGroundRangeExtension"|"CanDualWield"|"ConcentrationIgnoresResting"|"AllowMoveAndCast"|"CombatLogSetSingleLineRoll"|"UNUSED_D"|"CannotTargetCharacter"|"Wildshape"|"RangeIgnoreSourceBounds"|"UNUSED_E"|"RangeIgnoreTargetBounds"|"UnavailableInDialogs"|"RangeIgnoreVerticalThreshold"|"PickupEntityAndMove"|"IsDefaultWeaponAction"|"RangeIgnoreBlindness"|"TargetClosestEqualGroundSurface"|"AbortOnSpellRollFail"|"IsLinkedSpellContainer"|"CanAreaDamageEvade"|"HasVerbalComponent"|"AbortOnSecondarySpellRollFail"|"DontAbortPerforming"
+--- @alias SpellAttackType string|"DirectHit"|"MeleeOffHandWeaponAttack"|"MeleeSpellAttack"|"MeleeUnarmedAttack"|"MeleeWeaponAttack"|"None"|"RangedOffHandWeaponAttack"|"RangedSpellAttack"|"RangedUnarmedAttack"|"RangedWeaponAttack"
+--- @alias SpellAttackTypeOverride string|"Projectile_MainHandAttack"|"Projectile_OffhandAttack"|"Target_MainHandAttack"|"Target_OffhandAttack"|"Target_UnarmedAttack"
+--- @alias SpellChildSelectionType string|"AddChildren"|"MostPowerful"|"Singular"
+--- @alias SpellCooldownType string|"Default"|"OncePerCombat"|"OncePerShortRestPerItem"|"OncePerTurn"|"OncePerTurnNoRealtime"|"UntilPerRestPerItem"|"UntilRest"|"UntilShortRest"
+--- @alias SpellFlags string|"AbortOnSecondarySpellRollFail"|"AbortOnSpellRollFail"|"AddFallDamageOnLand"|"AddWeaponRange"|"AllowMoveAndCast"|"CallAlliesSpell"|"CanAreaDamageEvade"|"CanDualWield"|"CannotRotate"|"CannotTargetCharacter"|"CannotTargetItems"|"CannotTargetTerrain"|"CombatLogSetSingleLineRoll"|"ConcentrationIgnoresResting"|"DisableBlood"|"DisplayInItemTooltip"|"DontAbortPerforming"|"HasHighGroundRangeExtension"|"HasSomaticComponent"|"HasVerbalComponent"|"HideInItemTooltip"|"IgnoreAoO"|"IgnorePreviouslyPickedEntities"|"IgnoreSilence"|"IgnoreVisionBlock"|"ImmediateCast"|"InventorySelection"|"Invisible"|"IsAttack"|"IsConcentration"|"IsDefaultWeaponAction"|"IsEnemySpell"|"IsHarmful"|"IsJump"|"IsLinkedSpellContainer"|"IsMelee"|"IsSpell"|"IsSwarmAttack"|"IsTrap"|"NoAOEDamageOnLand"|"NoCameraMove"|"NoCooldownOnMiss"|"NoSurprise"|"PickupEntityAndMove"|"RangeIgnoreBlindness"|"RangeIgnoreSourceBounds"|"RangeIgnoreTargetBounds"|"RangeIgnoreVerticalThreshold"|"Stealth"|"TargetClosestEqualGroundSurface"|"Temporary"|"TrajectoryRules"|"UNUSED_D"|"UNUSED_E"|"UnavailableInDialogs"|"Wildshape"
 --- @alias SpellPrepareType string|"AlwaysPrepared"|"RequiresPreparation"|"Unknown"
---- @alias SpellSchoolId string|"None"|"Abjuration"|"Conjuration"|"Divination"|"Enchantment"|"Evocation"|"Illusion"|"Necromancy"|"Transmutation"
---- @alias SpellSourceType string|"Unknown1A"|"GameActionCreateSurface"|"CreateExplosion"|"Shapeshift"|"Progression"|"Boost"|"Progression0"|"Progression1"|"Progression2"|"SpellSet"|"SpellSet2"|"WeaponAttack"|"UnarmedAttack"|"Osiris"|"Anubis"|"EquippedItem"|"Spell"|"Sentinel"|"AiTest"|"ActiveDefense"|"Learned"|"Unknown15"|"Unknown16"|"Behavior"|"Unknown17"|"PartyPreset"|"Unknown18"|"Unknown19"
---- @alias SpellType string|"Zone"|"Rush"|"Wall"|"Throw"|"Shout"|"ProjectileStrike"|"Storm"|"MultiStrike"|"Projectile"|"Target"|"Teleportation"
---- @alias StatAttributeFlags string|"PickpocketableWhenEquipped"|"SlippingImmunity"|"LoseDurabilityOnCharacterHit"|"Torch"|"InvulnerableAndInteractive"|"Unbreakable"|"EnableObscurityEvents"|"Unrepairable"|"ObscurityWithoutSneaking"|"Unstorable"|"Grounded"|"EMPTY"|"IgnoreClouds"|"LootableWhenEquipped"|"Floating"|"ThrownImmunity"|"InvisibilityImmunity"|"Backstab"|"BackstabImmunity"|"FloatingWhileMoving"|"Arrow"
---- @alias StatCharacterFlags string|"IsPlayer"|"Invisible"|"InParty"|"IsSneaking"|"Blind"|"DrinkedPotion"|"EquipmentValidated"
---- @alias StatsDeathType string|"Physical"|"Necrotic"|"Lifetime"|"KnockedDown"|"Incinerate"|"Falling"|"Explode"|"Electrocution"|"DoT"|"None"|"Chasm"|"Acid"|"Disintegrate"|"Cold"|"CinematicDeath"|"Radiant"|"Psychic"
---- @alias StatsExpressionParamType string|"StatsExpressionVariableDataType"|"StatsExpressionVariableDataModifier"|"Int"|"ResourceRollDefinition"|"Bool"|"StatsExpressionType"|"RollDefinition"|"Type1"|"StatsContextType"
---- @alias StatsExpressionParamType2 string|"Skill"|"StatsExpressionVariableData"|"StatusGroup"|"STDString"|"Ability"
---- @alias StatsFunctorFlags string|"Swap"|"Self"|"Owner"
---- @alias StatsFunctorId string|"ResetCombatTurn"|"Unsummon"|"Unlock"|"RemoveUniqueStatus"|"RemoveStatusByLevel"|"CustomDescription"|"RemoveStatus"|"TriggerRandomCast"|"RegainHitPoints"|"TeleportSource"|"ShortRest"|"CreateZone"|"CreateWall"|"CreateSurface"|"SwitchDeathType"|"SwapPlaces"|"CreateExplosion"|"CreateConeSurface"|"SurfaceClearLayer"|"Extender"|"SurfaceChange"|"Pickup"|"Counterspell"|"TutorialEvent"|"Douse"|"SummonInInventory"|"SpawnExtraProjectiles"|"Summon"|"RemoveAuraByChildStatus"|"MaximizeRoll"|"RegainTemporaryHitPoints"|"CameraWait"|"BreakConcentration"|"GainTemporaryHitPoints"|"Kill"|"ExecuteWeaponFunctors"|"Stabilize"|"ApplyStatus"|"SpawnInInventory"|"ApplyEquipmentStatus"|"Spawn"|"Force"|"SetStatusDuration"|"FireProjectile"|"SetRoll"|"AdjustRoll"|"SetReroll"|"SetDisadvantage"|"Drop"|"SetDamageResistance"|"DoTeleport"|"SetAdvantage"|"Sabotage"|"DisarmWeapon"|"ResetCooldowns"|"UseSpell"|"DisarmAndStealWeapon"|"Resurrect"|"DealDamage"|"UseAttack"|"UseActionResource"|"RestoreResource"
---- @alias StatsItemSlot string|"MusicalInstrument"|"Horns"|"Helmet"|"Breast"|"Cloak"|"MeleeMainHand"|"MeleeOffHand"|"RangedMainHand"|"RangedOffHand"|"Max"|"Ring"|"Boots"|"Amulet"|"Ring2"|"Overhead"|"VanityBoots"|"Wings"|"VanityBody"|"Underwear"|"Gloves"|"Sentinel"|"OffHand"|"MainHand"
---- @alias StatsObserverType string|"None"|"Source"|"Target"|"Observer"
---- @alias StatsPropertyContext string|"DAMAGE_PREVENTED"|"DAMAGED"|"DAMAGE"|"TURN"|"TARGET"|"PUSHED"|"PUSH"|"PROJECTILE"|"PROFICIENCY_CHANGED"|"OBSCURITY_CHANGED"|"SURFACE_ENTER"|"MOVED_DISTANCE"|"COMBAT_ENDED"|"CAST_RESOLVED"|"CAST"|"STATUS_REMOVED"|"LONG_REST"|"LEAVE_ATTACK_RANGE"|"STATUS_REMOVE"|"LOCKPICKING_SUCCEEDED"|"STATUS_APPLY"|"STATUS_APPLIED"|"ATTACKED"|"INVENTORY_CHANGED"|"ATTACKING_IN_MELEE_RANGE"|"ATTACK"|"INTERRUPT_USED"|"ATTACKED_IN_MELEE_RANGE"|"HEALED"|"HEAL"|"ACTION_RESOURCES_CHANGED"|"AOE"|"GROUND"|"SHORT_REST"|"CREATE"|"AI_ONLY"|"AI_IGNORE"|"EQUIP"|"ABILITY_CHECK"|"ENTER_ATTACK_RANGE"|"DAMAGED_PREVENTED"
+--- @alias SpellSchoolId string|"Abjuration"|"Conjuration"|"Divination"|"Enchantment"|"Evocation"|"Illusion"|"Necromancy"|"None"|"Transmutation"
+--- @alias SpellSourceType string|"ActiveDefense"|"AiTest"|"Anubis"|"Behavior"|"Boost"|"CreateExplosion"|"EquippedItem"|"GameActionCreateSurface"|"Learned"|"Osiris"|"PartyPreset"|"Progression"|"Progression0"|"Progression1"|"Progression2"|"Sentinel"|"Shapeshift"|"Spell"|"SpellSet"|"SpellSet2"|"UnarmedAttack"|"Unknown15"|"Unknown16"|"Unknown17"|"Unknown18"|"Unknown19"|"Unknown1A"|"WeaponAttack"
+--- @alias SpellType string|"MultiStrike"|"Projectile"|"ProjectileStrike"|"Rush"|"Shout"|"Storm"|"Target"|"Teleportation"|"Throw"|"Wall"|"Zone"
+--- @alias StatAttributeFlags string|"Arrow"|"Backstab"|"BackstabImmunity"|"EMPTY"|"EnableObscurityEvents"|"Floating"|"FloatingWhileMoving"|"Grounded"|"IgnoreClouds"|"InvisibilityImmunity"|"InvulnerableAndInteractive"|"LootableWhenEquipped"|"LoseDurabilityOnCharacterHit"|"ObscurityWithoutSneaking"|"PickpocketableWhenEquipped"|"SlippingImmunity"|"ThrownImmunity"|"Torch"|"Unbreakable"|"Unrepairable"|"Unstorable"
+--- @alias StatCharacterFlags string|"Blind"|"DrinkedPotion"|"EquipmentValidated"|"InParty"|"Invisible"|"IsPlayer"|"IsSneaking"
+--- @alias StatsDeathType string|"Acid"|"Chasm"|"CinematicDeath"|"Cold"|"Disintegrate"|"DoT"|"Electrocution"|"Explode"|"Falling"|"Incinerate"|"KnockedDown"|"Lifetime"|"Necrotic"|"None"|"Physical"|"Psychic"|"Radiant"
+--- @alias StatsExpressionParamType string|"Bool"|"Int"|"ResourceRollDefinition"|"RollDefinition"|"StatsContextType"|"StatsExpressionType"|"StatsExpressionVariableDataModifier"|"StatsExpressionVariableDataType"|"Type1"
+--- @alias StatsExpressionParamType2 string|"Ability"|"STDString"|"Skill"|"StatsExpressionVariableData"|"StatusGroup"
+--- @alias StatsFunctorFlags string|"Owner"|"Self"|"Swap"
+--- @alias StatsFunctorId string|"AdjustRoll"|"ApplyEquipmentStatus"|"ApplyStatus"|"BreakConcentration"|"CameraWait"|"Counterspell"|"CreateConeSurface"|"CreateExplosion"|"CreateSurface"|"CreateWall"|"CreateZone"|"CustomDescription"|"DealDamage"|"DisarmAndStealWeapon"|"DisarmWeapon"|"DoTeleport"|"Douse"|"Drop"|"ExecuteWeaponFunctors"|"Extender"|"FireProjectile"|"Force"|"GainTemporaryHitPoints"|"Kill"|"MaximizeRoll"|"Pickup"|"RegainHitPoints"|"RegainTemporaryHitPoints"|"RemoveAuraByChildStatus"|"RemoveStatus"|"RemoveStatusByLevel"|"RemoveUniqueStatus"|"ResetCombatTurn"|"ResetCooldowns"|"RestoreResource"|"Resurrect"|"Sabotage"|"SetAdvantage"|"SetDamageResistance"|"SetDisadvantage"|"SetReroll"|"SetRoll"|"SetStatusDuration"|"ShortRest"|"Spawn"|"SpawnExtraProjectiles"|"SpawnInInventory"|"Stabilize"|"Summon"|"SummonInInventory"|"SurfaceChange"|"SurfaceClearLayer"|"SwapPlaces"|"SwitchDeathType"|"TeleportSource"|"TriggerRandomCast"|"TutorialEvent"|"Unlock"|"Unsummon"|"UseActionResource"|"UseAttack"|"UseSpell"
+--- @alias StatsItemSlot string|"Amulet"|"Boots"|"Breast"|"Cloak"|"Gloves"|"Helmet"|"Horns"|"MainHand"|"Max"|"MeleeMainHand"|"MeleeOffHand"|"MusicalInstrument"|"OffHand"|"Overhead"|"RangedMainHand"|"RangedOffHand"|"Ring"|"Ring2"|"Sentinel"|"Underwear"|"VanityBody"|"VanityBoots"|"Wings"
+--- @alias StatsObserverType string|"None"|"Observer"|"Source"|"Target"
+--- @alias StatsPropertyContext string|"ABILITY_CHECK"|"ACTION_RESOURCES_CHANGED"|"AI_IGNORE"|"AI_ONLY"|"AOE"|"ATTACK"|"ATTACKED"|"ATTACKED_IN_MELEE_RANGE"|"ATTACKING_IN_MELEE_RANGE"|"CAST"|"CAST_RESOLVED"|"COMBAT_ENDED"|"CREATE"|"DAMAGE"|"DAMAGED"|"DAMAGED_PREVENTED"|"DAMAGE_PREVENTED"|"ENTER_ATTACK_RANGE"|"EQUIP"|"GROUND"|"HEAL"|"HEALED"|"INTERRUPT_USED"|"INVENTORY_CHANGED"|"LEAVE_ATTACK_RANGE"|"LOCKPICKING_SUCCEEDED"|"LONG_REST"|"MOVED_DISTANCE"|"OBSCURITY_CHANGED"|"PROFICIENCY_CHANGED"|"PROJECTILE"|"PUSH"|"PUSHED"|"SHORT_REST"|"STATUS_APPLIED"|"STATUS_APPLY"|"STATUS_REMOVE"|"STATUS_REMOVED"|"SURFACE_ENTER"|"TARGET"|"TURN"
 --- @alias StatsRollAdjustmentType string|"All"|"Distribute"
---- @alias StatsRollType string|"Damage"|"RangedUnarmedDamage"|"MeleeUnarmedDamage"|"RangedSpellDamage"|"DeathSavingThrow"|"MeleeSpellDamage"|"None"|"RangedUnarmedAttack"|"RangedWeaponDamage"|"MeleeUnarmedAttack"|"MeleeWeaponDamage"|"RangedSpellAttack"|"RawAbility"|"MeleeSpellAttack"|"SavingThrow"|"RangedWeaponAttack"|"SkillCheck"|"Attack"|"MeleeWeaponAttack"|"RangedOffHandWeaponAttack"|"MeleeOffHandWeaponAttack"|"Sentinel"
---- @alias StatsStatusGroup string|"SG_Prone"|"SG_Possessed"|"SG_Polymorph"|"SG_Poisoned"|"SG_Petrified"|"SG_Paralyzed"|"SG_Mad"|"SG_Light"|"SG_Invisible"|"SG_ScriptedPeaceBehaviour"|"SG_Incapacitated"|"SG_Polymorph_BeastShape_NPC"|"SG_Polymorph_BeastShape"|"SG_HexbladeCurse"|"SG_Frightened"|"SG_Poisoned_Story_Removable"|"SG_Poisoned_Story_NonRemovable"|"SG_Fleeing"|"SG_Exhausted"|"SG_Helpable_Condition"|"SG_DropForNonMutingDialog"|"SG_Doppelganger"|"SG_Dominated"|"SG_Disguise"|"SG_Disease"|"SG_DifficultTerrain"|"SG_DetectThoughts"|"SG_Cursed"|"SG_Ignore_AOO"|"SG_Confused"|"SG_RemoveOnRespec"|"SG_Condition"|"SG_Sleeping"|"SG_Charmed_Subtle"|"SG_Drunk"|"SG_Charmed"|"SG_WeaponCoating"|"SG_Unconscious"|"SG_CanBePickedUp"|"SG_Blinded"|"SG_Taunted"|"SG_Surface"|"SG_Approaching"|"SG_Stunned"|"SG_Restrained"|"SG_Rage"
---- @alias StatsTargetTypeFlags string|"Living"|"Guaranteed"|"Construct"|"Undead"
---- @alias StatsUnsheathState string|"Melee"|"Ranged"|"Instrument"|"Sheathed"
---- @alias StatsZoneShape string|"Square"|"Cone"
---- @alias StatusHealType string|"All"|"None"|"Vitality"|"PhysicalArmor"|"Source"|"MagicArmor"|"AllArmor"
---- @alias StatusMaterialApplyFlags string|"ApplyOnBody"|"ApplyOnArmor"|"ApplyOnWeapon"|"ApplyOnWings"|"ApplyOnHorns"|"ApplyOnOverhead"
---- @alias StatusType string|"FEAR"|"BOOST"|"TELEPORT_FALLING"|"EFFECT"|"DEACTIVATED"|"REACTION"|"SMELLY"|"DYING"|"HEAL"|"INVISIBLE"|"ROTATE"|"MATERIAL"|"CLIMBING"|"KNOCKED_DOWN"|"INCAPACITATED"|"DOWNED"|"INSURFACE"|"STORY_FROZEN"|"POLYMORPHED"|"SNEAKING"|"UNLOCK"
---- @alias SurfaceActionType string|"CreateSurfaceAction"|"CreatePuddleAction"|"ExtinguishFireAction"|"ZoneAction"|"PolygonSurfaceAction"|"TransformSurfaceAction"|"ChangeSurfaceOnPathAction"|"RectangleSurfaceAction"
---- @alias SurfaceChange string|"DestroyWater"|"Condense"|"Vaporize"|"Melt"|"Freeze"|"Deelectrify"|"None"|"Electrify"|"Douse"|"Ignite"
---- @alias SurfaceLayer string|"Ground"|"None"|"Cloud"
---- @alias SurfaceLayer8 string|"Ground"|"None"|"Cloud"
---- @alias SurfaceTransformActionType string|"Condense"|"Vaporize"|"Melt"|"Freeze"|"Deelectrify"|"None"|"Electrify"|"Douse"|"Ignite"
---- @alias SurfaceType string|"InvisibleWeb"|"PotionVitalityCloud"|"BloodSilver"|"PotionAntitoxinCloud"|"Hellfire"|"SporePinkCloud"|"CausticBrine"|"WaterCloudElectrified"|"VoidCloud"|"BloodExploding"|"GithPheromoneGasCloud"|"CrawlerMucusCloud"|"Lava"|"SpikeGrowth"|"PotionHealingGreaterCloud"|"Cloudkill6Cloud"|"HolyFire"|"PotionHealingSuperiorCloud"|"Blood"|"Oil"|"BlackTentacles"|"PotionHealingSupremeCloud"|"Overgrowth"|"PotionInvisibilityCloud"|"None"|"Chasm"|"PurpleWormPoison"|"PotionResistanceAcidCloud"|"Fire"|"Acid"|"SerpentVenom"|"PotionResistanceColdCloud"|"InvisibleGithAcid"|"PotionResistanceFireCloud"|"BladeBarrier"|"PotionResistanceForceCloud"|"Sewer"|"PotionResistanceLightningCloud"|"WaterCloud"|"PotionResistancePoisonCloud"|"PoisonCloud"|"BlackPowderDetonationCloud"|"WaterElectrified"|"ExplosionCloud"|"WaterFrozen"|"ShockwaveCloud"|"BloodElectrified"|"Poison"|"CloudkillCloud"|"BloodFrozen"|"MaliceCloud"|"Grease"|"BloodCloud"|"WyvernPoison"|"StinkingCloud"|"Web"|"DarknessCloud"|"Sentinel"|"Deepwater"|"FogCloud"|"Vines"|"Ash"|"SporeWhiteCloud"|"TrialFire"|"SporeGreenCloud"|"BlackPowder"|"SporeBlackCloud"|"ShadowCursedVines"|"DrowPoisonCloud"|"Water"|"AlienOil"|"IceCloud"|"Mud"|"PotionHealingCloud"|"Alcohol"|"PotionSpeedCloud"
---- @alias TravelErrorFlags string|"Condition"|"FTB"|"InDanger"|"DangerZone"|"CannotFastTravel"|"Dialog"
---- @alias TravelFlags string|"BlockFastTravel"|"BlockCampTravel"
---- @alias WeaponFlags string|"Heavy"|"Range"|"Torch"|"Ammunition"|"Finesse"|"Loading"|"Melee"|"Reach"|"Lance"|"Thrown"|"Twohanded"|"Versatile"|"Dippable"|"NeedDualWieldingBoost"|"NoDualWield"|"NotSheathable"|"Light"|"Unstowable"|"AddToHotbar"|"Net"|"Magical"
---- @alias WeaponType string|"Staff"|"Crossbow"|"Spear"|"Knife"|"Wand"|"Rifle"|"Bow"|"None"|"Sentinel"|"Sword"|"Club"|"Arrow"|"Axe"
+--- @alias StatsRollType string|"Attack"|"Damage"|"DeathSavingThrow"|"MeleeOffHandWeaponAttack"|"MeleeSpellAttack"|"MeleeSpellDamage"|"MeleeUnarmedAttack"|"MeleeUnarmedDamage"|"MeleeWeaponAttack"|"MeleeWeaponDamage"|"None"|"RangedOffHandWeaponAttack"|"RangedSpellAttack"|"RangedSpellDamage"|"RangedUnarmedAttack"|"RangedUnarmedDamage"|"RangedWeaponAttack"|"RangedWeaponDamage"|"RawAbility"|"SavingThrow"|"Sentinel"|"SkillCheck"
+--- @alias StatsStatusGroup string|"SG_Approaching"|"SG_Blinded"|"SG_CanBePickedUp"|"SG_Charmed"|"SG_Charmed_Subtle"|"SG_Condition"|"SG_Confused"|"SG_Cursed"|"SG_DetectThoughts"|"SG_DifficultTerrain"|"SG_Disease"|"SG_Disguise"|"SG_Dominated"|"SG_Doppelganger"|"SG_DropForNonMutingDialog"|"SG_Drunk"|"SG_Exhausted"|"SG_Fleeing"|"SG_Frightened"|"SG_Helpable_Condition"|"SG_HexbladeCurse"|"SG_Ignore_AOO"|"SG_Incapacitated"|"SG_Invisible"|"SG_Light"|"SG_Mad"|"SG_Paralyzed"|"SG_Petrified"|"SG_Poisoned"|"SG_Poisoned_Story_NonRemovable"|"SG_Poisoned_Story_Removable"|"SG_Polymorph"|"SG_Polymorph_BeastShape"|"SG_Polymorph_BeastShape_NPC"|"SG_Possessed"|"SG_Prone"|"SG_Rage"|"SG_RemoveOnRespec"|"SG_Restrained"|"SG_ScriptedPeaceBehaviour"|"SG_Sleeping"|"SG_Stunned"|"SG_Surface"|"SG_Taunted"|"SG_Unconscious"|"SG_WeaponCoating"
+--- @alias StatsTargetTypeFlags string|"Construct"|"Guaranteed"|"Living"|"Undead"
+--- @alias StatsUnsheathState string|"Instrument"|"Melee"|"Ranged"|"Sheathed"
+--- @alias StatsZoneShape string|"Cone"|"Square"
+--- @alias StatusHealType string|"All"|"AllArmor"|"MagicArmor"|"None"|"PhysicalArmor"|"Source"|"Vitality"
+--- @alias StatusMaterialApplyFlags string|"ApplyOnArmor"|"ApplyOnBody"|"ApplyOnHorns"|"ApplyOnOverhead"|"ApplyOnWeapon"|"ApplyOnWings"
+--- @alias StatusType string|"BOOST"|"CLIMBING"|"DEACTIVATED"|"DOWNED"|"DYING"|"EFFECT"|"FEAR"|"HEAL"|"INCAPACITATED"|"INSURFACE"|"INVISIBLE"|"KNOCKED_DOWN"|"MATERIAL"|"POLYMORPHED"|"REACTION"|"ROTATE"|"SMELLY"|"SNEAKING"|"STORY_FROZEN"|"TELEPORT_FALLING"|"UNLOCK"
+--- @alias SurfaceActionType string|"ChangeSurfaceOnPathAction"|"CreatePuddleAction"|"CreateSurfaceAction"|"ExtinguishFireAction"|"PolygonSurfaceAction"|"RectangleSurfaceAction"|"TransformSurfaceAction"|"ZoneAction"
+--- @alias SurfaceChange string|"Condense"|"Deelectrify"|"DestroyWater"|"Douse"|"Electrify"|"Freeze"|"Ignite"|"Melt"|"None"|"Vaporize"
+--- @alias SurfaceLayer string|"Cloud"|"Ground"|"None"
+--- @alias SurfaceLayer8 string|"Cloud"|"Ground"|"None"
+--- @alias SurfaceTransformActionType string|"Condense"|"Deelectrify"|"Douse"|"Electrify"|"Freeze"|"Ignite"|"Melt"|"None"|"Vaporize"
+--- @alias SurfaceType string|"Acid"|"Alcohol"|"AlienOil"|"Ash"|"BlackPowder"|"BlackPowderDetonationCloud"|"BlackTentacles"|"BladeBarrier"|"Blood"|"BloodCloud"|"BloodElectrified"|"BloodExploding"|"BloodFrozen"|"BloodSilver"|"CausticBrine"|"Chasm"|"Cloudkill6Cloud"|"CloudkillCloud"|"CrawlerMucusCloud"|"DarknessCloud"|"Deepwater"|"DrowPoisonCloud"|"ExplosionCloud"|"Fire"|"FogCloud"|"GithPheromoneGasCloud"|"Grease"|"Hellfire"|"HolyFire"|"IceCloud"|"InvisibleGithAcid"|"InvisibleWeb"|"Lava"|"MaliceCloud"|"Mud"|"None"|"Oil"|"Overgrowth"|"Poison"|"PoisonCloud"|"PotionAntitoxinCloud"|"PotionHealingCloud"|"PotionHealingGreaterCloud"|"PotionHealingSuperiorCloud"|"PotionHealingSupremeCloud"|"PotionInvisibilityCloud"|"PotionResistanceAcidCloud"|"PotionResistanceColdCloud"|"PotionResistanceFireCloud"|"PotionResistanceForceCloud"|"PotionResistanceLightningCloud"|"PotionResistancePoisonCloud"|"PotionSpeedCloud"|"PotionVitalityCloud"|"PurpleWormPoison"|"Sentinel"|"SerpentVenom"|"Sewer"|"ShadowCursedVines"|"ShockwaveCloud"|"SpikeGrowth"|"SporeBlackCloud"|"SporeGreenCloud"|"SporePinkCloud"|"SporeWhiteCloud"|"StinkingCloud"|"TrialFire"|"Vines"|"VoidCloud"|"Water"|"WaterCloud"|"WaterCloudElectrified"|"WaterElectrified"|"WaterFrozen"|"Web"|"WyvernPoison"
+--- @alias TravelErrorFlags string|"CannotFastTravel"|"Condition"|"DangerZone"|"Dialog"|"FTB"|"InDanger"
+--- @alias TravelFlags string|"BlockCampTravel"|"BlockFastTravel"
+--- @alias WeaponFlags string|"AddToHotbar"|"Ammunition"|"Dippable"|"Finesse"|"Heavy"|"Lance"|"Light"|"Loading"|"Magical"|"Melee"|"NeedDualWieldingBoost"|"Net"|"NoDualWield"|"NotSheathable"|"Range"|"Reach"|"Thrown"|"Torch"|"Twohanded"|"Unstowable"|"Versatile"
+--- @alias WeaponType string|"Arrow"|"Axe"|"Bow"|"Club"|"Crossbow"|"Knife"|"None"|"Rifle"|"Sentinel"|"Spear"|"Staff"|"Sword"|"Wand"
 
 
 --- @class AABound
@@ -1313,6 +1316,95 @@ Osi = {}
 
 
 --- @class GlobalSwitches
+--- @field AlwaysShowSplitter boolean
+--- @field AnimationBlueprintSpeedScale_M number
+--- @field AutoListenEnabled boolean
+--- @field CameraShakeEnabled boolean
+--- @field CanAutoSave boolean
+--- @field CanCrossSave boolean
+--- @field CanLoadDuringTimeline boolean
+--- @field CanSaveDuringTimeline boolean
+--- @field CentreDialogue boolean
+--- @field CheckRequirements boolean
+--- @field CombatTimelines boolean
+--- @field ControllerCharacterRunThreshold number
+--- @field ControllerCharacterWalkThreshold number
+--- @field ControllerLayout boolean
+--- @field ControllerMode uint8
+--- @field ControllerRumbleStrength int32
+--- @field ControllerSensitivity int32
+--- @field ControllerStickDeadZone int32
+--- @field ControllerStickPressDeadZone int32
+--- @field ControllerTriggerDeadZone int32
+--- @field DialogueFontSizeModifier int32
+--- @field DisableArmorSavingThrows boolean
+--- @field DisableEdgePanning boolean
+--- @field DisableStoryPatching boolean
+--- @field DisplaySpeaker boolean
+--- @field EnableLongPressAndHold boolean
+--- @field EnablePortmapping boolean
+--- @field EnableVoiceLogging boolean
+--- @field EscClosesAllUI boolean
+--- @field ExtraTooltipDescriptions boolean
+--- @field FirstTimeWithCrossSave boolean
+--- @field ForceMono boolean
+--- @field ForcePort int16
+--- @field ForceSplitscreen boolean
+--- @field ForceStoryPatching boolean
+--- @field GameCameraAutoRotateEnabled boolean
+--- @field GameCameraAutoRotateSpeed number
+--- @field GameCameraEnableAttackCameraOtherPlayers boolean
+--- @field GameCameraEnableCloseUpDialog boolean
+--- @field GameCameraEnableDynamicCombatCamera boolean
+--- @field GameCameraEnableFlyFollow boolean
+--- @field GameCameraRotation int32
+--- @field GameCameraRotationLocked boolean
+--- @field GameCameraSpeedMultiplier number
+--- @field GameVisibilityDirect uint32
+--- @field GameVisibilityLAN uint32
+--- @field GameVisibilityOnline uint32
+--- @field HasSeenEAMsg boolean
+--- @field HoldToEndTurn boolean
+--- @field Language string
+--- @field LoadAllEffectPools boolean
+--- @field LogSaveLoadErrors boolean
+--- @field LongRestDefaultTimeline string
+--- @field LongRestScriptWaitingTime number
+--- @field MaxAmountDialogsInLog int32
+--- @field MaxNrOfAutoSaves int32
+--- @field MaxNrOfQuickSaves int32
+--- @field MouseLock boolean
+--- @field MouseScrollSensitivity int32
+--- @field MouseSensitivity int32
+--- @field MuteSoundWhenNotFocused boolean
+--- @field NodeWaitTimeMultiplier number
+--- @field NorthFacingMinimap boolean
+--- @field NrOfAutoSaves int32
+--- @field NrOfQuickSaves int32
+--- @field OverheadFontSizeModifier int32
+--- @field RandomStartOrigin_M boolean
+--- @field ResetTutorialsOnNewGame boolean
+--- @field ScriptLog boolean
+--- @field ShowCharacterCreation boolean
+--- @field ShowLocalizationMarkers uint8
+--- @field ShowOriginIntroInCC boolean
+--- @field ShowSubtitles boolean
+--- @field ShowTextBackground boolean
+--- @field ShroudEnabled boolean
+--- @field SoundOcclusionQuality int32
+--- @field SoundPartyLosingThreshold int32
+--- @field SoundPartyWinningThreshold int32
+--- @field SoundVolumeDynamicRange int32
+--- @field Stats boolean
+--- @field Story boolean
+--- @field StoryEvents boolean
+--- @field StoryLog boolean
+--- @field TextBackgroundOpacity int32
+--- @field TwitchEnableOverlay boolean
+--- @field UIScaling int32
+--- @field UseEndTurnFallback boolean
+--- @field UseLevelCache boolean
+--- @field UseRadialContextMenu boolean
 
 
 --- @class GodComponent:BaseComponent
@@ -3533,6 +3625,92 @@ Osi = {}
 --- @field field_20 boolean
 
 
+--- @class EclPlayerPickingHelper
+--- @field ControllerNudge number
+--- @field ControllerNudge2 number
+--- @field Inner EclPlayerPickingHelperInner
+--- @field IsMoving boolean
+--- @field PlayerId uint16
+--- @field WindowCursorPos vec2
+--- @field field_16A uint8
+--- @field field_170 EclPlayerPickingHelperField170Entry[]
+--- @field field_180 EclPlayerPickingHelperField170Entry?
+--- @field field_1AC number
+--- @field field_1B0 number
+--- @field field_1B4 uint8
+--- @field field_1B5 uint8
+--- @field field_1B6 uint8
+--- @field field_1B7 uint8
+--- @field field_1B8 uint8
+--- @field field_1B9 uint8
+--- @field field_1C0 EntityHandle
+--- @field field_1C8_SteeringRotM number
+--- @field field_1CC int32
+--- @field field_1D0_SteeringRotM2 number
+--- @field field_1DC boolean
+--- @field field_210 uint8
+--- @field field_218 vec3
+--- @field field_228_EH_unk table<EntityHandle, EclPlayerPickingHelperMHEntry>
+--- @field field_268_NextIndex int32
+--- @field field_26C number
+--- @field field_270_EH_unk table<EntityHandle, EclPlayerPickingHelperMHEntry>
+--- @field field_2B0 int32
+--- @field field_2B4 number
+--- @field field_2B8_EH_MHentry table<EntityHandle, EclPlayerPickingHelperMHEntry>
+--- @field field_2F8 int32
+
+
+--- @class EclPlayerPickingHelperField170Entry
+--- @field field_0_Entity EntityHandle
+--- @field field_10 number
+--- @field field_14 number
+--- @field field_18 number
+--- @field field_1C number
+--- @field field_20 number
+--- @field field_24 number
+--- @field field_8_TurnOrder int32
+--- @field field_C_InCombat uint8
+
+
+--- @class EclPlayerPickingHelperMHEntry
+--- @field field_0 int32
+--- @field field_4 int32
+--- @field field_8 uint8
+
+
+--- @class EclPlayerPickingHelperInner
+--- @field Direction0 vec3
+--- @field Direction1 vec3
+--- @field Direction2 vec3
+--- @field Inner EclPlayerPickingHelperInner2[]
+--- @field Position0 vec3
+--- @field Position1 vec3
+--- @field Position2 vec3
+--- @field field_118 vec3
+--- @field field_124 vec3
+--- @field field_130_EH EntityHandle
+--- @field field_138_EH EntityHandle
+--- @field field_140_Flags2 uint64
+--- @field field_148 number
+--- @field field_14C number
+--- @field field_150 number
+--- @field field_154_Flags uint8
+
+
+--- @class EclPlayerPickingHelperInner2
+--- @field Character EntityHandle
+--- @field CharacterPosition vec3
+--- @field DeadCharacter EntityHandle
+--- @field DeadCharacterPosition vec3
+--- @field Flags uint8
+--- @field GameObject EntityHandle
+--- @field Item EntityHandle
+--- @field ItemPosition vec3
+--- @field field_24 vec3
+--- @field field_48 EntityHandle
+--- @field field_58 EntityHandle
+
+
 --- @class EclCharacterCreationBaseDefinitionComponent:BaseComponent
 --- @field Definition CharacterCreationCharacterDefinition
 
@@ -3638,6 +3816,21 @@ Osi = {}
 --- @field RShift boolean
 --- @field Repeat boolean
 --- @field Scroll boolean
+
+
+--- @class EclLuaMouseButtonEvent:LuaEventBase
+--- @field Button int32
+--- @field Clicks int32
+--- @field Pressed boolean
+--- @field X int32
+--- @field Y int32
+
+
+--- @class EclLuaMouseWheelEvent:LuaEventBase
+--- @field ScrollX number
+--- @field ScrollY number
+--- @field X int32
+--- @field Y int32
 
 
 --- @class EocPlayerCustomData
@@ -5213,7 +5406,10 @@ Osi = {}
 
 
 --- @class ExtuiButton:ExtuiStyledRenderable
+--- @field MouseButtonMiddle boolean
+--- @field MouseButtonRight boolean
 --- @field OnClick RegistryEntry
+--- @field Size vec2?
 
 
 --- @class ExtuiCheckbox:ExtuiStyledRenderable
@@ -5296,6 +5492,30 @@ Osi = {}
 --- @field Uint8 boolean
 
 
+--- @class ExtuiColumnDefinition
+--- @field AngledHeader boolean
+--- @field DefaultHide boolean
+--- @field DefaultSort boolean
+--- @field Disabled boolean
+--- @field IndentDisable boolean
+--- @field IndentEnable boolean
+--- @field Name string
+--- @field NoClip boolean
+--- @field NoHeaderLabel boolean
+--- @field NoHeaderWidth boolean
+--- @field NoHide boolean
+--- @field NoReorder boolean
+--- @field NoResize boolean
+--- @field NoSort boolean
+--- @field NoSortAscending boolean
+--- @field NoSortDescending boolean
+--- @field PreferSortAscending boolean
+--- @field PreferSortDescending boolean
+--- @field Width number
+--- @field WidthFixed boolean
+--- @field WidthStretch boolean
+
+
 --- @class ExtuiCombo:ExtuiStyledRenderable
 --- @field HeightLarge boolean
 --- @field HeightLargest boolean
@@ -5342,6 +5562,29 @@ Osi = {}
 --- @class ExtuiGroup:ExtuiTreeParent
 
 
+--- @class ExtuiImage:ExtuiStyledRenderable
+--- @field Border vec4
+--- @field ImageData ExtuiImageReference
+--- @field Tint vec4
+
+
+--- @class ExtuiImageButton:ExtuiStyledRenderable
+--- @field Background vec4
+--- @field Image ExtuiImageReference
+--- @field MouseButtonMiddle boolean
+--- @field MouseButtonRight boolean
+--- @field OnClick RegistryEntry
+--- @field Tint vec4
+
+
+--- @class ExtuiImageReference
+--- @field Icon FixedString
+--- @field Size vec2
+--- @field TextureResource FixedString
+--- @field UV0 vec2
+--- @field UV1 vec2
+
+
 --- @class ExtuiInputInt:ExtuiStyledRenderable
 --- @field AllowTabInput boolean
 --- @field AlwaysOverwrite boolean
@@ -5361,6 +5604,7 @@ Osi = {}
 --- @field CtrlEnterForNewLine boolean
 --- @field EnterReturnsTrue boolean
 --- @field EscapeClearsAll boolean
+--- @field Multiline boolean
 --- @field NoHorizontalScroll boolean
 --- @field NoUndoRedo boolean
 --- @field OnChange RegistryEntry
@@ -5388,6 +5632,7 @@ Osi = {}
 --- @field CtrlEnterForNewLine boolean
 --- @field EnterReturnsTrue boolean
 --- @field EscapeClearsAll boolean
+--- @field Multiline boolean
 --- @field NoHorizontalScroll boolean
 --- @field NoUndoRedo boolean
 --- @field OnChange RegistryEntry
@@ -5414,11 +5659,14 @@ Osi = {}
 --- @field CtrlEnterForNewLine boolean
 --- @field EnterReturnsTrue boolean
 --- @field EscapeClearsAll boolean
+--- @field Hint string?
+--- @field Multiline boolean
 --- @field NoHorizontalScroll boolean
 --- @field NoUndoRedo boolean
 --- @field OnChange RegistryEntry
 --- @field Password boolean
 --- @field ReadOnly boolean
+--- @field SizeHint vec2?
 --- @field Text string
 
 
@@ -5474,6 +5722,8 @@ Osi = {}
 --- @class ExtuiRenderable
 --- @field Handle uint64
 --- @field Parent uint64
+--- @field UserData RegistryEntry
+--- @field Destroy fun(self:ExtuiRenderable)
 
 
 --- @class ExtuiSeparator:ExtuiStyledRenderable
@@ -5510,14 +5760,18 @@ Osi = {}
 
 
 --- @class ExtuiStyledRenderable:ExtuiRenderable
+--- @field AbsolutePosition vec2?
+--- @field Font FixedString
 --- @field IDContext string
+--- @field ItemWidth number?
 --- @field Label string
 --- @field OnActivate RegistryEntry
 --- @field OnDeactivate RegistryEntry
+--- @field PositionOffset vec2?
 --- @field SameLine boolean
 --- @field Visible boolean
 --- @field SetColor fun(self:ExtuiStyledRenderable, a1:GuiColor, a2:vec4)
---- @field SetStyle fun(self:ExtuiStyledRenderable, a1:GuiStyleVar, a2:number)
+--- @field SetStyle fun(self:ExtuiStyledRenderable, a1:GuiStyleVar, a2:number, a3:number?)
 --- @field Tooltip fun(self:ExtuiStyledRenderable):ImguiHandle
 
 
@@ -5557,6 +5811,7 @@ Osi = {}
 --- @field BordersOuterH boolean
 --- @field BordersOuterV boolean
 --- @field BordersV boolean
+--- @field ColumnDefs ExtuiColumnDefinition[]
 --- @field Columns uint32
 --- @field ContextMenuInBody boolean
 --- @field Hideable boolean
@@ -5612,6 +5867,8 @@ Osi = {}
 --- @field NavLeftJumpsBackHere boolean
 --- @field NoAutoOpenOnLog boolean
 --- @field NoTreePushOnOpen boolean
+--- @field OnClick RegistryEntry
+--- @field OnExpand RegistryEntry
 --- @field OpenOnArrow boolean
 --- @field OpenOnDoubleClick boolean
 --- @field Selected boolean
@@ -5621,6 +5878,7 @@ Osi = {}
 
 
 --- @class ExtuiTreeParent:ExtuiStyledRenderable
+--- @field Children ImguiHandle[]
 --- @field AddBulletText fun(self:ExtuiTreeParent, a1:string):ImguiHandle
 --- @field AddButton fun(self:ExtuiTreeParent, a1:string):ImguiHandle
 --- @field AddCheckbox fun(self:ExtuiTreeParent, a1:string, a2:boolean?):ImguiHandle
@@ -5632,6 +5890,9 @@ Osi = {}
 --- @field AddDragInt fun(self:ExtuiTreeParent, a1:string, a2:int32?, a3:int32?, a4:int32?):ImguiHandle
 --- @field AddDummy fun(self:ExtuiTreeParent, a1:number, a2:number):ImguiHandle
 --- @field AddGroup fun(self:ExtuiTreeParent, a1:string):ImguiHandle
+--- @field AddIcon fun(self:ExtuiTreeParent, a1:FixedString, a2:vec2?):ImguiHandle
+--- @field AddImage fun(self:ExtuiTreeParent, a1:FixedString, a2:vec2?, a3:vec2?, a4:vec2?):ImguiHandle
+--- @field AddImageButton fun(self:ExtuiTreeParent, a1:string, a2:FixedString, a3:vec2?, a4:vec2?, a5:vec2?):ImguiHandle
 --- @field AddInputInt fun(self:ExtuiTreeParent, a1:string, a2:int32?):ImguiHandle
 --- @field AddInputScalar fun(self:ExtuiTreeParent, a1:string, a2:number?):ImguiHandle
 --- @field AddInputText fun(self:ExtuiTreeParent, a1:string, a2:string?):ImguiHandle
@@ -5647,6 +5908,9 @@ Osi = {}
 --- @field AddTable fun(self:ExtuiTreeParent, a1:string, a2:uint32):ImguiHandle
 --- @field AddText fun(self:ExtuiTreeParent, a1:string):ImguiHandle
 --- @field AddTree fun(self:ExtuiTreeParent, a1:string):ImguiHandle
+--- @field AttachChild fun(self:ExtuiTreeParent, a1:uint64):boolean
+--- @field DetachChild fun(self:ExtuiTreeParent, a1:uint64):boolean
+--- @field RemoveChild fun(self:ExtuiTreeParent, a1:uint64):boolean
 
 
 --- @class ExtuiWindow:ExtuiTreeParent
@@ -5676,6 +5940,14 @@ Osi = {}
 --- @field Open boolean
 --- @field UnsavedDocument boolean
 --- @field AddMainMenu fun(self:ExtuiWindow):ImguiHandle
+--- @field SetBgAlpha fun(self:ExtuiWindow, a1:number?)
+--- @field SetCollapsed fun(self:ExtuiWindow, a1:boolean, a2:GuiCond?)
+--- @field SetContentSize fun(self:ExtuiWindow, a1:vec2?)
+--- @field SetFocus fun(self:ExtuiWindow)
+--- @field SetPos fun(self:ExtuiWindow, a1:vec2, a2:GuiCond?, a3:vec2?)
+--- @field SetScroll fun(self:ExtuiWindow, a1:vec2?)
+--- @field SetSize fun(self:ExtuiWindow, a1:vec2, a2:GuiCond?)
+--- @field SetSizeConstraints fun(self:ExtuiWindow, a1:vec2?, a2:vec2?)
 
 
 --- @class HealBlockComponent:BaseComponent
@@ -9784,15 +10056,17 @@ Osi = {}
 
 
 --- @class SpellSpellBookEntry
+--- @field Charged boolean
 --- @field CooldownType SpellCooldownType
 --- @field Id SpellId
 --- @field InnerEntries SpellSpellBookEntryInnerEntry[]
+--- @field PrepareType SpellPrepareType
 --- @field SpellCastingAbility AbilityId
 --- @field SpellUUID Guid
 --- @field field_38 int32
 --- @field field_3C int32
---- @field field_41 uint8
---- @field field_42 uint8
+--- @field field_41 boolean
+--- @field field_42 SpellPrepareType
 
 
 --- @class SpellSpellBookEntryInnerEntry
@@ -11304,7 +11578,9 @@ local Ext_ClientAudio = {}
 
 --- @class Ext_ClientIMGUI
 --- @field EnableDemo fun(a1:boolean)
+--- @field LoadFont fun(a1:FixedString, a2:string, a3:number):boolean
 --- @field NewWindow fun(a1:string):ImguiHandle
+--- @field SetScale fun(a1:number)
 local Ext_ClientIMGUI = {}
 
 
@@ -11324,6 +11600,7 @@ local Ext_ClientTemplate = {}
 
 
 --- @class Ext_ClientUI
+--- @field GetPickingHelper fun(a1:uint16):EclPlayerPickingHelper
 --- @field GetRoot fun():NoesisFrameworkElement
 --- @field GetStateMachine fun():UiUIStateMachine
 --- @field SetState fun(a1:FixedString, a2:FixedString?, a3:boolean?)
@@ -13924,9 +14201,11 @@ Ext_Enums.ExtResourceManagerType = {
 --- @enum ExtSystemType
 Ext_Enums.ExtSystemType = {
 	UISystem = 0,
-	Max = 1,
+	PickingHelperManager = 1,
+	Max = 2,
 	[0] = "UISystem",
-	[1] = "Max",
+	[1] = "PickingHelperManager",
+	[2] = "Max",
 }
 
 --- @enum FleeErrorFlags
@@ -14017,6 +14296,14 @@ Ext_Enums.Gender = {
 	Female = 1,
 	[0] = "Male",
 	[1] = "Female",
+}
+
+--- @enum GuiButtonFlags
+Ext_Enums.GuiButtonFlags = {
+	MouseButtonRight = 2,
+	MouseButtonMiddle = 4,
+	[2] = "MouseButtonRight",
+	[4] = "MouseButtonMiddle",
 }
 
 --- @enum GuiColor
@@ -14199,6 +14486,18 @@ Ext_Enums.GuiComboFlags = {
 	[128] = "WidthFitPreview",
 }
 
+--- @enum GuiCond
+Ext_Enums.GuiCond = {
+	Always = 1,
+	Once = 2,
+	FirstUseEver = 4,
+	Appearing = 8,
+	[1] = "Always",
+	[2] = "Once",
+	[4] = "FirstUseEver",
+	[8] = "Appearing",
+}
+
 --- @enum GuiInputTextFlags
 Ext_Enums.GuiInputTextFlags = {
 	CharsDecimal = 1,
@@ -14222,6 +14521,7 @@ Ext_Enums.GuiInputTextFlags = {
 	CallbackResize = 262144,
 	CallbackEdit = 524288,
 	EscapeClearsAll = 1048576,
+	Multiline = 67108864,
 	[1] = "CharsDecimal",
 	[2] = "CharsHexadecimal",
 	[4] = "CharsUppercase",
@@ -14243,30 +14543,25 @@ Ext_Enums.GuiInputTextFlags = {
 	[262144] = "CallbackResize",
 	[524288] = "CallbackEdit",
 	[1048576] = "EscapeClearsAll",
+	[67108864] = "Multiline",
 }
 
 --- @enum GuiPopupFlags
 Ext_Enums.GuiPopupFlags = {
-	MouseButtonLeft = 0,
-	MouseButtonLeft = 1,
-	MouseButtonLeft = 2,
-	MouseButtonLeft = 31,
+	MouseButtonRight = 1,
+	MouseButtonMiddle = 2,
 	NoReopen = 32,
-	MouseButtonLeft = 128,
-	MouseButtonLeft = 256,
-	MouseButtonLeft = 1024,
-	MouseButtonLeft = 2048,
-	AnyPopup = 3072,
-	[0] = "MouseButtonLeft",
-	[1] = "MouseButtonLeft",
-	[2] = "MouseButtonLeft",
-	[31] = "MouseButtonLeft",
+	NoOpenOverExistingPopup = 128,
+	NoOpenOverItems = 256,
+	AnyPopupId = 1024,
+	AnyPopupLevel = 2048,
+	[1] = "MouseButtonRight",
+	[2] = "MouseButtonMiddle",
 	[32] = "NoReopen",
-	[128] = "MouseButtonLeft",
-	[256] = "MouseButtonLeft",
-	[1024] = "MouseButtonLeft",
-	[2048] = "MouseButtonLeft",
-	[3072] = "AnyPopup",
+	[128] = "NoOpenOverExistingPopup",
+	[256] = "NoOpenOverItems",
+	[1024] = "AnyPopupId",
+	[2048] = "AnyPopupLevel",
 }
 
 --- @enum GuiSliderFlags
@@ -14351,18 +14646,18 @@ Ext_Enums.GuiTabBarFlags = {
 	NoCloseWithMiddleMouseButton = 8,
 	NoTabListScrollingButtons = 16,
 	NoTooltip = 32,
-	FittingPolicyDefault = 64,
+	FittingPolicyResizeDown = 64,
 	FittingPolicyScroll = 128,
-	FittingPolicyDefault = 192,
+	FittingPolicyMask = 192,
 	[1] = "Reorderable",
 	[2] = "AutoSelectNewTabs",
 	[4] = "TabListPopupButton",
 	[8] = "NoCloseWithMiddleMouseButton",
 	[16] = "NoTabListScrollingButtons",
 	[32] = "NoTooltip",
-	[64] = "FittingPolicyDefault",
+	[64] = "FittingPolicyResizeDown",
 	[128] = "FittingPolicyScroll",
-	[192] = "FittingPolicyDefault",
+	[192] = "FittingPolicyMask",
 }
 
 --- @enum GuiTabItemFlags
@@ -14387,6 +14682,48 @@ Ext_Enums.GuiTabItemFlags = {
 	[256] = "NoAssumedClosure",
 }
 
+--- @enum GuiTableColumnFlags
+Ext_Enums.GuiTableColumnFlags = {
+	Disabled = 1,
+	DefaultHide = 2,
+	DefaultSort = 4,
+	WidthStretch = 8,
+	WidthFixed = 16,
+	NoResize = 32,
+	NoReorder = 64,
+	NoHide = 128,
+	NoClip = 256,
+	NoSort = 512,
+	NoSortAscending = 1024,
+	NoSortDescending = 2048,
+	NoHeaderLabel = 4096,
+	NoHeaderWidth = 8192,
+	PreferSortAscending = 16384,
+	PreferSortDescending = 32768,
+	IndentEnable = 65536,
+	IndentDisable = 131072,
+	AngledHeader = 262144,
+	[1] = "Disabled",
+	[2] = "DefaultHide",
+	[4] = "DefaultSort",
+	[8] = "WidthStretch",
+	[16] = "WidthFixed",
+	[32] = "NoResize",
+	[64] = "NoReorder",
+	[128] = "NoHide",
+	[256] = "NoClip",
+	[512] = "NoSort",
+	[1024] = "NoSortAscending",
+	[2048] = "NoSortDescending",
+	[4096] = "NoHeaderLabel",
+	[8192] = "NoHeaderWidth",
+	[16384] = "PreferSortAscending",
+	[32768] = "PreferSortDescending",
+	[65536] = "IndentEnable",
+	[131072] = "IndentDisable",
+	[262144] = "AngledHeader",
+}
+
 --- @enum GuiTableFlags
 Ext_Enums.GuiTableFlags = {
 	Resizable = 1,
@@ -14402,14 +14739,14 @@ Ext_Enums.GuiTableFlags = {
 	BordersInnerV = 512,
 	BordersInnerV = 640,
 	BordersOuterV = 1024,
-	BordersOuterV = 1280,
-	BordersOuterV = 1536,
-	BordersOuterV = 1920,
+	BordersOuter = 1280,
+	BordersInnerV = 1536,
+	BordersOuter = 1920,
 	NoBordersInBody = 2048,
 	NoBordersInBodyUntilResize = 4096,
 	SizingFixedFit = 8192,
 	SizingFixedSame = 16384,
-	SizingStretchProp = 24576,
+	SizingFixedSame = 24576,
 	SizingStretchSame = 32768,
 	NoHostExtendX = 65536,
 	NoHostExtendY = 131072,
@@ -14437,14 +14774,14 @@ Ext_Enums.GuiTableFlags = {
 	[512] = "BordersInnerV",
 	[640] = "BordersInnerV",
 	[1024] = "BordersOuterV",
-	[1280] = "BordersOuterV",
-	[1536] = "BordersOuterV",
-	[1920] = "BordersOuterV",
+	[1280] = "BordersOuter",
+	[1536] = "BordersInnerV",
+	[1920] = "BordersOuter",
 	[2048] = "NoBordersInBody",
 	[4096] = "NoBordersInBodyUntilResize",
 	[8192] = "SizingFixedFit",
 	[16384] = "SizingFixedSame",
-	[24576] = "SizingStretchProp",
+	[24576] = "SizingFixedSame",
 	[32768] = "SizingStretchSame",
 	[65536] = "NoHostExtendX",
 	[131072] = "NoHostExtendY",
@@ -14524,8 +14861,8 @@ Ext_Enums.GuiWindowFlags = {
 	AlwaysHorizontalScrollbar = 32768,
 	NoNavInputs = 65536,
 	NoNavFocus = 131072,
-	NoNav = 196608,
-	NoNav = 197120,
+	NoNavFocus = 196608,
+	NoNavFocus = 197120,
 	UnsavedDocument = 262144,
 	[1] = "NoTitleBar",
 	[2] = "NoResize",
@@ -14546,8 +14883,8 @@ Ext_Enums.GuiWindowFlags = {
 	[32768] = "AlwaysHorizontalScrollbar",
 	[65536] = "NoNavInputs",
 	[131072] = "NoNavFocus",
-	[196608] = "NoNav",
-	[197120] = "NoNav",
+	[196608] = "NoNavFocus",
+	[197120] = "NoNavFocus",
 	[262144] = "UnsavedDocument",
 }
 
@@ -14676,19 +15013,19 @@ Ext_Enums.IngredientType = {
 --- @enum InputType
 Ext_Enums.InputType = {
 	Unknown = 0,
-	Press = 1,
-	Release = 2,
+	Unknown = 1,
+	Unknown = 2,
 	ValueChange = 4,
 	Unknown = 8,
-	Repeat = 16,
-	AcceleratedRepeat = 32,
+	Unknown = 16,
+	Unknown = 32,
 	[0] = "Unknown",
-	[1] = "Press",
-	[2] = "Release",
+	[1] = "Unknown",
+	[2] = "Unknown",
 	[4] = "ValueChange",
 	[8] = "Unknown",
-	[16] = "Repeat",
-	[32] = "AcceleratedRepeat",
+	[16] = "Unknown",
+	[32] = "Unknown",
 }
 
 --- @enum ItemDataRarity
@@ -18693,6 +19030,12 @@ Ext.Events.EclLuaGameStateChanged = {}
 --- 🔨🔧**Server/Client**🔧🔨  
 --- @type SubscribableEvent<EclLuaKeyInputEvent>  
 Ext.Events.EclLuaKeyInput = {}
+--- 🔨🔧**Server/Client**🔧🔨  
+--- @type SubscribableEvent<EclLuaMouseButtonEvent>  
+Ext.Events.EclLuaMouseButton = {}
+--- 🔨🔧**Server/Client**🔧🔨  
+--- @type SubscribableEvent<EclLuaMouseWheelEvent>  
+Ext.Events.EclLuaMouseWheel = {}
 --- 🔨🔧**Server/Client**🔧🔨  
 --- @type SubscribableEvent<LuaEmptyEvent>  
 Ext.Events.Empty = {}
