@@ -102,6 +102,8 @@ std::optional<STDString> FindLuaSourcePath(STDString const& name)
 void DebugMessageHandler::SendBreakpointTriggered(DbgContext context, BkBreakpointTriggered_Reason reason, 
 	lua_State* L, char const* message)
 {
+	StackCheck _(L);
+
 	lua_Debug ar;
 	memset(&ar, 0, sizeof(ar));
 
@@ -118,7 +120,7 @@ void DebugMessageHandler::SendBreakpointTriggered(DbgContext context, BkBreakpoi
 			break;
 		}
 
-		if (lua_getinfo(L, "fnuSl", &ar) == 0) {
+		if (lua_getinfo(L, "nuSl", &ar) == 0) {
 			ERR("DebugMessageHandler::SendBreakpointTriggered(): Couldn't get function info for breakpoint?");
 		}
 
@@ -452,7 +454,7 @@ void DebugMessageHandler::HandleGetVariables(uint32_t seq, DbgGetVariables const
 	DBGMSG(" --> DbgGetVariables(%d, %d, %d)", req.variableref(), req.frame(), req.local());
 
 	if (!debugger_) {
-		WARN("GetVariables: Not attached to story debugger!");
+		WARN("GetVariables: Not attached to Lua debugger!");
 		SendResult(seq, ResultCode::EvalEngineNotReady);
 		return;
 	}
