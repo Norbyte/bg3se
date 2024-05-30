@@ -1296,7 +1296,7 @@ public:
 		return &pool_[(uint32_t)index];
 	}
 
-	bool Free(TId& id)
+	bool Free(TId id)
 	{
 		auto index = id & ((TId(1) << IdBits) - 1);
 		auto salt = TSalt(id >> IdBits) & ((TSalt(1) << SaltBits) - 1);
@@ -1321,6 +1321,18 @@ public:
 		} else {
 			return nullptr;
 		}
+	}
+
+	T* Next(uint32_t& index)
+	{
+		for (auto i = index; i < pool_.size(); i++) {
+			if ((salts_[i] & DeletedFlag) == 0) {
+				index = i + 1;
+				return &pool_[i];
+			}
+		}
+
+		return nullptr;
 	}
 
 private:

@@ -33,9 +33,18 @@ void SavegameSerializer::Serialize(ObjectVisitor* visitor, uint32_t version)
 	// FIXME - persistent stat support disabled for now
 	// SerializeStatObjects(visitor, version);
 
+	auto& state = gExtender->GetServer().GetExtensionState();
+
 	if (version >= SavegameVerAddedUserVars) {
-		gExtender->GetServer().GetExtensionState().GetUserVariables().SavegameVisit(visitor);
-		gExtender->GetServer().GetExtensionState().GetModVariables().SavegameVisit(visitor);
+		state.GetUserVariables().SavegameVisit(visitor);
+		state.GetModVariables().SavegameVisit(visitor);
+	}
+
+	if (version >= SavegameVerAddedTimers) {
+		auto lua = state.GetLua();
+		if (lua) {
+			lua->GetTimers().SavegameVisit(visitor);
+		}
 	}
 }
 

@@ -61,6 +61,11 @@ namespace bg3se
 			return StatLoadTriggered;
 		}
 
+		inline GameTime const& Time() const
+		{
+			return time_;
+		}
+
 		virtual void OnGameSessionLoading();
 		void OnGameSessionLoaded();
 		void OnModuleLoadStarted();
@@ -135,6 +140,7 @@ namespace bg3se
 
 		UserVariableManager userVariables_;
 		ModVariableManager modVariables_;
+		GameTime time_;
 
 		void LuaResetInternal();
 		virtual void DoLuaReset() = 0;

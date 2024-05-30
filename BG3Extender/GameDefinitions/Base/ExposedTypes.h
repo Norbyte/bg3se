@@ -6,10 +6,10 @@ BEGIN_SE()
 
 struct GameTime
 {
-	double Time;
-	float DeltaTime;
-	int32_t Ticks;
-	double Unknown;
+	double Time{ 0 };
+	float DeltaTime{ 0 };
+	int32_t Ticks{ 0 };
+	double Unknown{ 0 };
 };
 
 struct ActionOriginator

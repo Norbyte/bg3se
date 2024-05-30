@@ -106,6 +106,15 @@ FS(ModVariables);
 FS(ModVariable);
 FS(Module);
 
+// Timers
+FS(PersistentTimers);
+FS(GameTimers);
+FS(RealtimeTimers);
+FS(Timer);
+FS(Time);
+FS(Handler);
+FS(Args);
+
 // Enums
 FS(Label);
 FS(EnumValue);

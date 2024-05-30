@@ -228,6 +228,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="Lua\Helpers\LuaUnserialize.h" />
     <ClInclude Include="Lua\Libs\Json.h" />
     <ClInclude Include="Lua\Libs\LibraryRegistrationHelpers.h" />
+    <ClInclude Include="Lua\Libs\Timer.h" />
     <ClInclude Include="Lua\LuaBinding.h" />
     <ClInclude Include="Lua\Helpers\LuaGet.h" />
     <ClInclude Include="Lua\LuaHelpers.h" />
@@ -429,6 +430,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="Lua\Libs\ServerTemplate.inl" />
     <None Include="Lua\Libs\StaticData.inl" />
     <None Include="Lua\Libs\Stats.inl" />
+    <None Include="Lua\Libs\Timer.inl" />
     <None Include="Lua\Libs\Types.inl" />
     <None Include="Lua\Libs\Utils.inl" />
     <None Include="Lua\Libs\Vars.inl" />

@@ -285,7 +285,8 @@ namespace bg3se::lua
 		globalLifetime_(lifetimePool_.Allocate()),
 		variableManager_(isServer ? gExtender->GetServer().GetExtensionState().GetUserVariables() : gExtender->GetClient().GetExtensionState().GetUserVariables(), isServer),
 		modVariableManager_(isServer ? gExtender->GetServer().GetExtensionState().GetModVariables() : gExtender->GetClient().GetExtensionState().GetModVariables(), isServer),
-		entityHooks_(*this)
+		entityHooks_(*this),
+		timers_(*this, isServer)
 	{
 		*reinterpret_cast<State**>(lua_getextraspace(L.L)) = this;
 		OpenLibs();
@@ -441,6 +442,8 @@ namespace bg3se::lua
 
 	void State::OnUpdate(GameTime const& time)
 	{
+		timers_.Update(time.Time);
+
 		TickEvent params{ .Time = time };
 		ThrowEvent("Tick", params, false, 0);
 

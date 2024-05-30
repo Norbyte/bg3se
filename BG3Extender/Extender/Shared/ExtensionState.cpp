@@ -261,6 +261,8 @@ namespace bg3se
 
 	void ExtensionStateBase::OnUpdate(GameTime const& time)
 	{
+		time_ = time;
+
 		LuaVirtualPin lua(*this);
 		if (lua) {
 			lua->OnUpdate(time);

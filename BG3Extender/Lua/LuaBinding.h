@@ -17,6 +17,7 @@
 #endif
 #include <Lua/Shared/EntityComponentEvents.h>
 #include <Extender/Shared/UserVariables.h>
+#include <Lua/Libs/Timer.h>
 
 #include <mutex>
 #include <unordered_set>
@@ -148,6 +149,11 @@ namespace bg3se::lua
 			return modVariableManager_;
 		}
 
+		inline timer::TimerSystem& GetTimers()
+		{
+			return timers_;
+		}
+
 		virtual void Initialize();
 		virtual void Shutdown();
 		virtual bool IsClient() = 0;
@@ -229,6 +235,7 @@ namespace bg3se::lua
 		CachedUserVariableManager variableManager_;
 		CachedModVariableManager modVariableManager_;
 		EntityComponentEventHooks entityHooks_;
+		timer::TimerSystem timers_;
 
 		void OpenLibs();
 		EventResult DispatchEvent(EventBase& evt, char const* eventName, bool canPreventAction, uint32_t restrictions);

@@ -474,6 +474,7 @@
     <ClInclude Include="Lua\Shared\LuaDelegate.h" />
     <ClInclude Include="Extender\Client\SDLManager.h" />
     <ClInclude Include="GameDefinitions\Picking.h" />
+    <ClInclude Include="Lua\Libs\Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -712,6 +713,7 @@
     <None Include="Lua\Shared\Proxies\LuaImguiProxy.inl" />
     <None Include="Extender\Client\IMGUI\DX11.inl" />
     <None Include="Lua\Libs\ClientInput.inl" />
+    <None Include="Lua\Libs\Timer.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

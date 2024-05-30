@@ -131,6 +131,11 @@ double MicrosecTime()
 	return (perf.QuadPart - AppStartCounter.QuadPart) / (double(freq.QuadPart) / 1000000.0);
 }
 
+double GameTime(lua_State* L)
+{
+	return GetCurrentExtensionState()->Time().Time;
+}
+
 void Print(lua_State* L)
 {
 	std::stringstream ss;
@@ -244,6 +249,7 @@ void RegisterUtilsLib()
 	MODULE_FUNCTION(GameVersion)
 	MODULE_FUNCTION(MonotonicTime)
 	MODULE_FUNCTION(MicrosecTime)
+	MODULE_FUNCTION(GameTime)
 	MODULE_FUNCTION(Include)
 	MODULE_FUNCTION(LoadString)
 	MODULE_FUNCTION(Print)

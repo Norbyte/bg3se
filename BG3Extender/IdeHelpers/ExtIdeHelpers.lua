@@ -12394,6 +12394,16 @@ local Ext_StatsTreasureTable = {}
 
 
 
+--- @class Ext_Timer
+--- @field Cancel fun(a1:uint64):boolean
+--- @field RegisterPersistentHandler fun(a1:FixedString, a2:Ref)
+--- @field WaitFor fun(a1:number, a2:Ref, a3:number?):uint64
+--- @field WaitForPersistent fun(a1:number, a2:FixedString, a3:Ref):uint64
+--- @field WaitForRealtime fun(a1:number, a2:Ref, a3:number?):uint64
+local Ext_Timer = {}
+
+
+
 --- @class Ext_Types
 --- @field Construct fun(a1:FixedString)
 --- @field GetAllTypes fun():FixedString[]
@@ -12421,6 +12431,7 @@ function Ext_Types.GenerateIdeHelpers(outputPath, opts) end
 
 
 --- @class Ext_Utils
+--- @field GameTime fun():number
 --- @field GameVersion fun():string?
 --- @field GetCommandLineParams fun():string[]
 --- @field GetGlobalSwitches fun():GlobalSwitches
@@ -12476,6 +12487,7 @@ local Ext_Vars = {}
 --- @field Resource Ext_Resource
 --- @field StaticData Ext_StaticData
 --- @field Stats Ext_Stats
+--- @field Timer Ext_Timer
 --- @field Types Ext_Types
 --- @field Utils Ext_Utils
 --- @field Vars Ext_Vars
@@ -12495,6 +12507,7 @@ local Ext_Vars = {}
 --- @field ServerTemplate Ext_ServerTemplate
 --- @field StaticData Ext_StaticData
 --- @field Stats Ext_Stats
+--- @field Timer Ext_Timer
 --- @field Types Ext_Types
 --- @field Utils Ext_Utils
 --- @field Vars Ext_Vars
@@ -15348,18 +15361,18 @@ Ext_Enums.GuiTableFlags = {
 	RowBg = 64,
 	BordersInnerH = 128,
 	BordersOuterH = 256,
-	BordersOuterH = 384,
+	BordersInnerH = 384,
 	BordersInnerV = 512,
 	BordersInnerH = 640,
 	BordersOuterV = 1024,
-	BordersOuterH = 1280,
+	BordersOuterV = 1280,
 	BordersV = 1536,
-	BordersOuterH = 1920,
+	BordersV = 1920,
 	NoBordersInBody = 2048,
 	NoBordersInBodyUntilResize = 4096,
 	SizingFixedFit = 8192,
 	SizingFixedSame = 16384,
-	SizingFixedFit = 24576,
+	SizingStretchProp = 24576,
 	SizingStretchSame = 32768,
 	NoHostExtendX = 65536,
 	NoHostExtendY = 131072,
@@ -15383,18 +15396,18 @@ Ext_Enums.GuiTableFlags = {
 	[64] = "RowBg",
 	[128] = "BordersInnerH",
 	[256] = "BordersOuterH",
-	[384] = "BordersOuterH",
+	[384] = "BordersInnerH",
 	[512] = "BordersInnerV",
 	[640] = "BordersInnerH",
 	[1024] = "BordersOuterV",
-	[1280] = "BordersOuterH",
+	[1280] = "BordersOuterV",
 	[1536] = "BordersV",
-	[1920] = "BordersOuterH",
+	[1920] = "BordersV",
 	[2048] = "NoBordersInBody",
 	[4096] = "NoBordersInBodyUntilResize",
 	[8192] = "SizingFixedFit",
 	[16384] = "SizingFixedSame",
-	[24576] = "SizingFixedFit",
+	[24576] = "SizingStretchProp",
 	[32768] = "SizingStretchSame",
 	[65536] = "NoHostExtendX",
 	[131072] = "NoHostExtendY",
@@ -19620,6 +19633,7 @@ Ext_Enums.WeaponType = {
 --- @field ServerTemplate Ext_ServerTemplate
 --- @field StaticData Ext_StaticData
 --- @field Stats Ext_Stats
+--- @field Timer Ext_Timer
 --- @field Types Ext_Types
 --- @field Utils Ext_Utils
 --- @field Vars Ext_Vars
