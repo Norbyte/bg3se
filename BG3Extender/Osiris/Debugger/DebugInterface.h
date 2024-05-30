@@ -43,6 +43,7 @@ namespace bg3se
 		uint32_t receivePos_;
 		std::function<void()> connectHandler_;
 		std::function<void()> disconnectHandler_;
+		std::mutex sendMutex_;
 	};
 
 

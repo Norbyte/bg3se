@@ -69,6 +69,8 @@ namespace bg3se
 			return;
 		}
 
+		std::lock_guard _(sendMutex_);
+
 		uint32_t packetSize = length + 4;
 		Send((uint8_t*)&packetSize, 4);
 		Send(buf, length);
