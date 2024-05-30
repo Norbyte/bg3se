@@ -38,7 +38,7 @@ namespace bg3se::lua::dbg
 	class DebugMessageHandler
 	{
 	public:
-		static const uint32_t ProtocolVersion = 3;
+		static const uint32_t ProtocolVersion = 4;
 
 		DebugMessageHandler(LuaDebugInterface& intf);
 
@@ -85,6 +85,7 @@ namespace bg3se::lua::dbg
 		void HandleFetchMods(uint32_t seq, DbgFetchMods const& req);
 		void HandleRequestSource(uint32_t seq, DbgRequestSource const& req);
 		void HandleGetVariables(uint32_t seq, DbgGetVariables const& req);
+		void HandleReset(uint32_t seq, DbgReset const& req);
 
 		void Send(dbg::BackendToDebugger& msg);
 	};

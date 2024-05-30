@@ -149,6 +149,11 @@ message DbgGetVariables {
   repeated MsgTableKey key = 5;
 }
 
+// Requests the debugger reload the Lua context
+message DbgReset {
+  DbgContext context = 1;
+}
+
 // Response to an evaluation request
 message BkEvaluateResponse {
   MsgValue result = 1;
@@ -235,6 +240,7 @@ message DebuggerToBackend {
     DbgFetchMods fetchMods = 8;
     DbgRequestSource requestSource = 9;
     DbgGetVariables getVariables = 10;
+    DbgReset reset = 11;
   }
 }
 

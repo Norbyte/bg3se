@@ -490,6 +490,29 @@ void DebugMessageHandler::HandleGetVariables(uint32_t seq, DbgGetVariables const
 	debugger_->GetVariables(varsReq);
 }
 
+void DebugMessageHandler::HandleReset(uint32_t seq, DbgReset const& req)
+{
+	DBGMSG(" --> DbgReset(%d)", req.context());
+
+	if (req.context() == DbgContext::SERVER) {
+		if (gExtender->GetServer().HasExtensionState() && gExtender->GetServer().GetExtensionState().GetLua()) {
+			gExtender->GetServer().EnqueueTask([]() {
+				gExtender->GetServer().ResetLuaState();
+			});
+		} else {
+			WARN("DebugMessageHandler::HandleReset(): Cannot reset - server is not running");
+		}
+	} else {
+		if (gExtender->GetClient().HasExtensionState() && gExtender->GetClient().GetExtensionState().GetLua()) {
+			gExtender->GetClient().EnqueueTask([]() {
+				gExtender->GetClient().ResetLuaState();
+			});
+		} else {
+			WARN("DebugMessageHandler::HandleReset(): Cannot reset - client is not running");
+		}
+	}
+}
+
 bool DebugMessageHandler::HandleMessage(DebuggerToBackend const* msg)
 {
 	uint32_t seq = msg->seq_no();
@@ -531,6 +554,10 @@ bool DebugMessageHandler::HandleMessage(DebuggerToBackend const* msg)
 
 	case DebuggerToBackend::kGetVariables:
 		HandleGetVariables(seq, msg->getvariables());
+		break;
+
+	case DebuggerToBackend::kReset:
+		HandleReset(seq, msg->reset());
 		break;
 
 	default:

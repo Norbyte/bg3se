@@ -283,6 +283,18 @@ namespace NSE.DebuggerFrontend
             return Send(msg);
         }
 
+        public void SendReset(DbgContext context)
+        {
+            var msg = new DebuggerToBackend
+            {
+                Reset = new DbgReset
+                {
+                    Context = context
+                }
+            };
+            Send(msg);
+        }
+
         private void BreakpointTriggered(BkBreakpointTriggered message)
         {
             OnBreakpointTriggered(message);

@@ -70,7 +70,7 @@ namespace NSE.DebuggerFrontend
     public class DAPMessageHandler
     {
         // DBG protocol version (game/editor backend to debugger frontend communication)
-        private const UInt32 DBGProtocolVersion = 3;
+        private const UInt32 DBGProtocolVersion = 4;
 
         // DAP protocol version (VS Code to debugger frontend communication)
         private const int DAPProtocolVersion = 1;
@@ -721,6 +721,39 @@ namespace NSE.DebuggerFrontend
             Stream.SendReply(request, reply);
         }
 
+        private void HandleEvaluateRequest(DAPRequest request, DAPEvaulateRequest msg)
+        {
+            if (msg.expression == "reset" || msg.expression == "reset client" || msg.expression == "reset server")
+            {
+                if (msg.expression == "reset")
+                {
+                    DbgCli.SendReset(DbgContext.Client);
+                    DbgCli.SendReset(DbgContext.Server);
+                }
+                else if (msg.expression == "reset client")
+                {
+                    DbgCli.SendReset(DbgContext.Client);
+                }
+                else if (msg.expression == "reset server")
+                {
+                    DbgCli.SendReset(DbgContext.Server);
+                }
+
+                DAPEvaluateResponse evalResponse = new DAPEvaluateResponse
+                {
+                    result = "",
+                    namedVariables = 0,
+                    indexedVariables = 0,
+                    variablesReference = 0,
+                };
+                Stream.SendReply(request, evalResponse);
+            }
+            else
+            {
+                Evaluator.OnDAPEvaluateRequested(request, msg);
+            }
+        }
+
         private void HandleSourceRequest(DAPRequest request, DAPSourceRequest req)
         {
             if (req.source == null || req.source.path == null)
@@ -848,7 +881,7 @@ namespace NSE.DebuggerFrontend
                     break;
 
                 case "evaluate":
-                    Evaluator.OnDAPEvaluateRequested(request, request.arguments as DAPEvaulateRequest);
+                    HandleEvaluateRequest(request, request.arguments as DAPEvaulateRequest);
                     break;
 
                 case "source":
