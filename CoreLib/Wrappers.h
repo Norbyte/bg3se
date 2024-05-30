@@ -40,9 +40,7 @@ namespace bg3se {
 			// FIXME - move to BinaryMappings
 			FARPROC ExportProc = GetProcAddress(Module, ProcName);
 			if (ExportProc == NULL) {
-				std::string errmsg("Could not locate export ");
-				errmsg += ProcName;
-				Fail(errmsg.c_str());
+				ERR("Could not locate export '%s'", ProcName);
 			}
 
 			Wrap(ExportProc, NewFunction);
@@ -60,7 +58,11 @@ namespace bg3se {
 			gRegisteredTrampolines.insert(NewFunction);
 			auto status = DetourAttachEx((PVOID *)&TrampolineFunc, (PVOID)NewFunc, (PDETOUR_TRAMPOLINE *)&FuncTrampoline, NULL, NULL);
 			if (status != NO_ERROR) {
-				Fail("Detour attach failed");
+				ERR("Detour attach failed on %p", Function);
+				OriginalFunc = nullptr;
+				TrampolineFunc = nullptr;
+				NewFunc = nullptr;
+				FuncTrampoline = nullptr;
 			}
 		}
 
@@ -69,7 +71,7 @@ namespace bg3se {
 			if (IsWrapped()) {
 				DWORD result = DetourDetach((PVOID *)&TrampolineFunc, (PVOID)NewFunc);
 				if (result != NO_ERROR) {
-					Fail("DetourDetach failed!");
+					ERR("DetourDetach failed on %p", OriginalFunc);
 				}
 
 				OriginalFunc = nullptr;
