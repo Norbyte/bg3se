@@ -529,10 +529,10 @@ struct SightBaseComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(Sight, "eoc::sight::BaseComponent")
 
-	int field_0;
-	int field_4;
-	int field_8;
-	int field_C;
+	float field_0;
+	float field_4;
+	float field_8;
+	float field_C;
 };
 
 
@@ -541,10 +541,10 @@ struct DataComponent : public BaseComponent
 	DEFINE_COMPONENT(SightData, "eoc::sight::DataComponent")
 
 	Guid field_0;
-	int field_10;
-	int field_14;
-	int field_18;
-	int field_1C;
+	float field_10;
+	float field_14;
+	float field_18;
+	float field_1C;
 	int field_20;
 	int field_24;
 };
