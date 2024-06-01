@@ -166,6 +166,7 @@ public:
     lua::ImguiHandle AddTable(char const* label, uint32_t columns);
     lua::ImguiHandle AddPopup(char const* label);
     lua::ImguiHandle AddChildWindow(char const* label);
+    lua::ImguiHandle AddMenu(char const* label);
 
     lua::ImguiHandle AddButton(char const* label);
     lua::ImguiHandle AddImageButton(char const* label, FixedString iconOrTexture,
@@ -288,8 +289,6 @@ public:
     bool BeginRender() override;
     void EndRender() override;
 
-    lua::ImguiHandle AddMenu(char const* label);
-
 private:
     bool rendering_{ false };
 };
@@ -304,7 +303,6 @@ public:
     void EndRender() override;
 
     lua::ImguiHandle AddItem(char const* label, std::optional<char const*> shortcut);
-    lua::ImguiHandle AddMenu(char const* label);
 
 private:
     bool rendering_{ false };

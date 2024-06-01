@@ -304,6 +304,14 @@ lua::ImguiHandle TreeParent::AddChildWindow(char const* label)
 }
 
 
+lua::ImguiHandle TreeParent::AddMenu(char const* label)
+{
+    auto menu = AddChild<Menu>();
+    menu->Label = label;
+    return menu;
+}
+
+
 lua::ImguiHandle TreeParent::AddButton(char const* label)
 {
     auto btn = AddChild<Button>();
@@ -715,13 +723,6 @@ void MenuBar::EndRender()
     }
 }
 
-lua::ImguiHandle MenuBar::AddMenu(char const* label)
-{
-    auto menu = AddChild<Menu>();
-    menu->Label = label;
-    return menu;
-}
-
 bool Menu::BeginRender()
 {
     rendering_ = ImGui::BeginMenu(Label.c_str());
@@ -741,13 +742,6 @@ lua::ImguiHandle Menu::AddItem(char const* label, std::optional<char const*> sho
     auto menu = AddChild<MenuItem>();
     menu->Label = label;
     if (shortcut) menu->Shortcut = shortcut;
-    return menu;
-}
-
-lua::ImguiHandle Menu::AddMenu(char const* label)
-{
-    auto menu = AddChild<Menu>();
-    menu->Label = label;
     return menu;
 }
 
