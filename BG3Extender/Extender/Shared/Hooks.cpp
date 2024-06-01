@@ -44,13 +44,14 @@ void Hooks::HookNetworkMessages(net::MessageFactory* factory)
 
 void Hooks::OnParseDataFolder(stats::RPGStats::ParseStructureFolderProc* next, stats::RPGStats* self, Array<STDString>* paths)
 {
-	gExtender->GetStatLoadOrderHelper().OnLoadFinished();
-	next(self, paths);
-
 	LuaVirtualPin lua(gExtender->GetCurrentExtensionState());
 	if (lua) {
 		lua->OnStatsStructureLoaded();
 	}
+
+	next(self, paths);
+
+	gExtender->GetStatLoadOrderHelper().OnLoadFinished();
 }
 
 void Hooks::OnClientConnectMessage(net::Message::SerializeProc* wrapped, net::Message* msg, net::BitstreamSerializer* serializer)
