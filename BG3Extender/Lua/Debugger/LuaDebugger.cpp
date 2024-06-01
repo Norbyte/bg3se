@@ -766,6 +766,7 @@ namespace bg3se::lua::dbg
 				EnableDebugging(enabled);
 			}
 		});
+		breakpointCv_.notify_one();
 	}
 
 	void ContextDebugger::EnableDebugging(bool enabled)
@@ -779,7 +780,10 @@ namespace bg3se::lua::dbg
 			pauseMaxStackDepth_ = -1;
 			breakOnError_ = false;
 			if (isPaused_) {
-				ContinueExecution(DbgContinue_Action_CONTINUE);
+				// Can't use ContinueExecution() here as it would recursively take the breakpoint lock
+				DBGMSG("ContextDebugger::EnableDebugging(): Continuing");
+				isPaused_ = false;
+				breakpointCv_.notify_one();
 			}
 		}
 
