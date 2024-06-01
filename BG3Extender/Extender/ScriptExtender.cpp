@@ -217,7 +217,6 @@ void ScriptExtender::OnStatsLoad(stats::RPGStats::LoadProc* wrapped, stats::RPGS
 
 	wrapped(mgr, paths);
 
-	statLoadOrderHelper_.OnLoadFinished();
 	client_.LoadExtensionState(ExtensionStateContext::Game);
 
 	if (client_.HasExtensionState()) {

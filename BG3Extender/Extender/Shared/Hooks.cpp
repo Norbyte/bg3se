@@ -14,7 +14,7 @@ void Hooks::Startup()
 	}
 
 	auto& lib = gExtender->GetEngineHooks();
-	lib.RPGStats__PreParseDataFolder.SetPreHook(&Hooks::OnParseStructureFolder, this);
+	lib.RPGStats__PreParseDataFolder.SetWrapper(&Hooks::OnParseDataFolder, this);
 	eocnet__ClientConnectMessage__Serialize.SetWrapper(&Hooks::OnClientConnectMessage, this);
 	
 	loaded_ = true;
@@ -42,8 +42,11 @@ void Hooks::HookNetworkMessages(net::MessageFactory* factory)
 	networkingInitialized_ = true;
 }
 
-void Hooks::OnParseStructureFolder(stats::RPGStats* self, Array<STDString>* paths)
+void Hooks::OnParseDataFolder(stats::RPGStats::ParseStructureFolderProc* next, stats::RPGStats* self, Array<STDString>* paths)
 {
+	gExtender->GetStatLoadOrderHelper().OnLoadFinished();
+	next(self, paths);
+
 	LuaVirtualPin lua(gExtender->GetCurrentExtensionState());
 	if (lua) {
 		lua->OnStatsStructureLoaded();
