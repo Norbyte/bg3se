@@ -55,6 +55,8 @@ public:
 
     void EnableHooks() override
     {
+        if (CreateInstanceHook_.IsWrapped()) return;
+
         DetourTransactionBegin();
         DetourUpdateThread(GetCurrentThread());
         auto createInstance = vkGetInstanceProcAddr(nullptr, "vkCreateInstance");
@@ -72,6 +74,8 @@ public:
 
     void DisableHooks() override
     {
+        if (!CreateInstanceHook_.IsWrapped()) return;
+
         DetourTransactionBegin();
         DetourUpdateThread(GetCurrentThread());
         CreateInstanceHook_.Unwrap();

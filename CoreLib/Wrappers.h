@@ -41,6 +41,7 @@ namespace bg3se {
 			FARPROC ExportProc = GetProcAddress(Module, ProcName);
 			if (ExportProc == NULL) {
 				ERR("Could not locate export '%s'", ProcName);
+				return;
 			}
 
 			Wrap(ExportProc, NewFunction);
@@ -49,7 +50,8 @@ namespace bg3se {
 		void Wrap(void * Function, FuncType NewFunction)
 		{
 			if (IsWrapped()) {
-				throw std::runtime_error("Tried to wrap function multiple times");
+				ERR("[%s] Tried to wrap function multiple times", typeid(*this).name());
+				return;
 			}
 
 			OriginalFunc = Function;
@@ -58,7 +60,7 @@ namespace bg3se {
 			gRegisteredTrampolines.insert(NewFunction);
 			auto status = DetourAttachEx((PVOID *)&TrampolineFunc, (PVOID)NewFunc, (PDETOUR_TRAMPOLINE *)&FuncTrampoline, NULL, NULL);
 			if (status != NO_ERROR) {
-				ERR("Detour attach failed on %p", Function);
+				ERR("[%s] Detour attach failed on %p", typeid(*this).name(), Function);
 				OriginalFunc = nullptr;
 				TrampolineFunc = nullptr;
 				NewFunc = nullptr;
@@ -71,7 +73,7 @@ namespace bg3se {
 			if (IsWrapped()) {
 				DWORD result = DetourDetach((PVOID *)&TrampolineFunc, (PVOID)NewFunc);
 				if (result != NO_ERROR) {
-					ERR("DetourDetach failed on %p", OriginalFunc);
+					ERR("[%s] DetourDetach failed on %p", typeid(*this).name(), OriginalFunc);
 				}
 
 				OriginalFunc = nullptr;
@@ -160,22 +162,22 @@ namespace bg3se {
 
 		void Wrap(HMODULE Module, char const * ProcName)
 		{
-			this->wrapped_.Wrap(Module, ProcName, &CallToTrampoline);
-
 			if (gHook != nullptr) {
-				Fail("Hook already registered");
+				ERR("[%s] Hook already registered", typeid(*this).name());
+				return;
 			}
 
+			this->wrapped_.Wrap(Module, ProcName, &CallToTrampoline);
 			gHook = this;
 		}
 
 		void Wrap(void * Function)
 		{
-			this->wrapped_.Wrap(Function, &CallToTrampoline);
-
 			if (gHook != nullptr) {
-				Fail("Hook already registered");
+				ERR("[%s] Hook already registered", typeid(*this).name());
 			}
+
+			this->wrapped_.Wrap(Function, &CallToTrampoline);
 
 			gHook = this;
 		}
@@ -194,7 +196,8 @@ namespace bg3se {
 		void SetWrapper(NoContextHookFuncType* wrapper)
 		{
 			if (hook_ != nullptr) {
-				throw std::runtime_error("Function already wrapped");
+				ERR("[%s] Function already wrapped", typeid(*this).name());
+				return;
 			}
 
 			gRegisteredTrampolines.insert(ResolveRealFunctionAddress(&NoContextHook));
@@ -208,7 +211,8 @@ namespace bg3se {
 		void SetWrapper(R (* wrapper)(TContext*, BaseFuncType*, Params...), TContext* context)
 		{
 			if (hook_ != nullptr) {
-				throw std::runtime_error("Function already wrapped");
+				ERR("[%s] Function already wrapped", typeid(*this).name());
+				return;
 			}
 
 			gRegisteredTrampolines.insert(ResolveRealFunctionAddress(wrapper));
@@ -221,7 +225,8 @@ namespace bg3se {
 		void SetWrapper(R (TContext::* wrapper)(BaseFuncType*, Params...), TContext* context)
 		{
 			if (hook_ != nullptr) {
-				throw std::runtime_error("Function already wrapped");
+				ERR("[%s] Function already wrapped", typeid(*this).name());
+				return;
 			}
 
 			auto fun = MethodPtrHelpers<TContext, R (BaseFuncType*, Params...)>::ToFunction(wrapper);
@@ -235,7 +240,8 @@ namespace bg3se {
 		void SetPreHook(void (TContext::* wrapper)(Params...), TContext* context)
 		{
 			if (hook_ != nullptr) {
-				throw std::runtime_error("Function already wrapped");
+				ERR("[%s] Function already wrapped", typeid(*this).name());
+				return;
 			}
 
 			gRegisteredTrampolines.insert(ResolveRealFunctionAddress(&StaticPreHook));
@@ -248,7 +254,8 @@ namespace bg3se {
 		void SetPostHook(PostHookCallbackSignature<TContext, R, Params...>::Type wrapper, TContext* context)
 		{
 			if (hook_ != nullptr) {
-				throw std::runtime_error("Function already wrapped");
+				ERR("[%s] Function already wrapped", typeid(*this).name());
+				return;
 			}
 
 			gRegisteredTrampolines.insert(ResolveRealFunctionAddress(&StaticPostHook));

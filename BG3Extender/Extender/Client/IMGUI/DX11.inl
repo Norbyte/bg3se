@@ -68,6 +68,8 @@ public:
 
     void EnableHooks() override
     {
+        if (CreateDeviceHook_.IsWrapped()) return;
+
         DetourTransactionBegin();
         DetourUpdateThread(GetCurrentThread());
         auto dx11Lib = LoadLibraryW(L"d3d11.dll");
@@ -88,9 +90,12 @@ public:
 
     void DisableHooks() override
     {
+        if (!CreateDeviceHook_.IsWrapped()) return;
+
         DetourTransactionBegin();
         DetourUpdateThread(GetCurrentThread());
         CreateDeviceHook_.Unwrap();
+        CreateDxgiFactoryHook_.Unwrap();
         DetourTransactionCommit();
     }
 
