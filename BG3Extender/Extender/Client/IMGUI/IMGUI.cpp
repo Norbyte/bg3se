@@ -1401,6 +1401,20 @@ bool IMGUIManager::LoadFont(FixedString const& name, char const* path, float siz
     }
 }
 
+const ImWchar* GetGlyphRangesTurkish()
+{
+    static const ImWchar ranges[] =
+    {
+        0x0020, 0x00FF, // Basic Latin + Latin Supplement
+        0x011E, 0x011F, // Turkish characters
+        0x0130, 0x0131,
+        0x015E, 0x015F,
+        0x2010, 0x2033,
+        0,
+    };
+    return &ranges[0];
+}
+
 bool IMGUIManager::LoadFont(FontData& request)
 {
     auto path = request.Path;
@@ -1422,6 +1436,8 @@ bool IMGUIManager::LoadFont(FontData& request)
         } else {
             if (language == "Russian" || language == "Ukrainian") {
                 glyphRanges = ImGui::GetIO().Fonts->GetGlyphRangesCyrillic();
+            } else if (language == "Turkish") {
+                glyphRanges = GetGlyphRangesTurkish();
             }
 
             path = "Public/Game/GUI/Assets/Fonts/QuadraatOffcPro/QuadraatOffcPro.ttf";
