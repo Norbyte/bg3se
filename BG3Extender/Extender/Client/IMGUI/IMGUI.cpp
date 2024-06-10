@@ -1348,12 +1348,12 @@ void IMGUIManager::InitializeUI()
 
     UpdateStyle();
 
-    LoadFont(GFS.strTiny, "Public/Game/GUI/Assets/Fonts/QuadraatOffcPro/QuadraatOffcPro.ttf", 24.0f);
-    LoadFont(GFS.strSmall, "Public/Game/GUI/Assets/Fonts/QuadraatOffcPro/QuadraatOffcPro.ttf", 28.0f);
-    LoadFont(GFS.strMedium, "Public/Game/GUI/Assets/Fonts/QuadraatOffcPro/QuadraatOffcPro.ttf", 32.0f);
-    LoadFont(GFS.strDefault, "Public/Game/GUI/Assets/Fonts/QuadraatOffcPro/QuadraatOffcPro.ttf", 36.0f);
-    LoadFont(GFS.strLarge, "Public/Game/GUI/Assets/Fonts/QuadraatOffcPro/QuadraatOffcPro.ttf", 40.0f);
-    LoadFont(GFS.strBig, "Public/Game/GUI/Assets/Fonts/QuadraatOffcPro/QuadraatOffcPro.ttf", 44.0f);
+    LoadFont(GFS.strTiny, "", 24.0f);
+    LoadFont(GFS.strSmall, "", 28.0f);
+    LoadFont(GFS.strMedium, "", 32.0f);
+    LoadFont(GFS.strDefault, "", 36.0f);
+    LoadFont(GFS.strLarge, "", 40.0f);
+    LoadFont(GFS.strBig, "", 44.0f);
 
     initialized_ = true;
 }
@@ -1403,9 +1403,34 @@ bool IMGUIManager::LoadFont(FixedString const& name, char const* path, float siz
 
 bool IMGUIManager::LoadFont(FontData& request)
 {
-    auto blob = script::LoadExternalFile(request.Path, PathRootType::Data);
+    auto path = request.Path;
+    auto glyphRanges = ImGui::GetIO().Fonts->GetGlyphRangesDefault();
+    if (path.empty()) {
+        auto const& language = GetStaticSymbols().GetGlobalSwitches()->Language;
+        if (language == "Korean") {
+            path = "Public/Game/GUI/Assets/Fonts/NotoSerifKR-Regular.otf";
+            glyphRanges = ImGui::GetIO().Fonts->GetGlyphRangesKorean();
+        } else if (language == "Japanese") {
+            path = "Public/Game/GUI/Assets/Fonts/NotoSerifKR-Regular.otf";
+            glyphRanges = ImGui::GetIO().Fonts->GetGlyphRangesJapanese();
+        } else if (language == "Chinese") {
+            path = "Public/Game/GUI/Assets/Fonts/NotoSerifSC-Regular.otf";
+            glyphRanges = ImGui::GetIO().Fonts->GetGlyphRangesChineseSimplifiedCommon();
+        } else if (language == "ChineseTraditional") {
+            path = "Public/Game/GUI/Assets/Fonts/NotoSerifSC-Regular.otf";
+            glyphRanges = ImGui::GetIO().Fonts->GetGlyphRangesChineseFull();
+        } else {
+            if (language == "Russian" || language == "Ukrainian") {
+                glyphRanges = ImGui::GetIO().Fonts->GetGlyphRangesCyrillic();
+            }
+
+            path = "Public/Game/GUI/Assets/Fonts/QuadraatOffcPro/QuadraatOffcPro.ttf";
+        }
+    }
+
+    auto blob = script::LoadExternalFile(path, PathRootType::Data);
     if (!blob) {
-        OsiError("Failed to open font file: " << request.Path);
+        OsiError("Failed to open font file: " << path);
         return false;
     }
 
@@ -1414,10 +1439,11 @@ bool IMGUIManager::LoadFont(FontData& request)
     cfg.FontDataOwnedByAtlas = false;
     cfg.RasterizerDensity = requestedScale_;
     cfg.SizePixels = request.SizePixels;
+    cfg.GlyphRanges = glyphRanges;
 
     request.Font = io.Fonts->AddFontFromMemoryTTF(blob->data(), blob->size(), 0.0f, &cfg);
     if (!request.Font) {
-        OsiError("Failed to load font file (not a valid TTF font?): " << request.Path);
+        OsiError("Failed to load font file (not a valid TTF font?): " << path);
         return false;
     } else {
         request.Font->Scale = requestedScale_;
