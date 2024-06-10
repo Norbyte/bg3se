@@ -1065,14 +1065,29 @@ void RadioButton::StyledRender()
 
 InputText::InputText()
 {
-    Text.reserve(256);
+    Text.reserve(GrowSize);
 }
 
 
 void InputText::StyledRender()
 {
+    if (reloadText_) {
+        auto id = ImGui::GetCurrentWindow()->GetID(Label.c_str());
+        auto state = ImGui::GetInputTextState(id);
+        if (state != nullptr) {
+            state->ReloadUserBufAndKeepSelection();
+        }
+        reloadText_ = false;
+    }
+
     if (ImGui::InputTextEx(Label.c_str(), Hint ? Hint->c_str() : nullptr, Text.data(), Text.capacity(), ToImVec(SizeHint), (ImGuiInputTextFlags)Flags, nullptr, nullptr)) {
         Text.resize((uint32_t)strlen(Text.data()));
+
+        if (Text.size() + GrowSize - 64 > Text.capacity() && Text.capacity() < MaxSize) {
+            Text.reserve(std::min(MaxSize, Text.size() + GrowSize));
+            reloadText_ = true;
+        }
+
         if (OnChange) {
             Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Text);
         }
@@ -1087,7 +1102,8 @@ STDString InputText::GetText()
 void InputText::SetText(STDString text)
 {
     Text = text;
-    Text.reserve(256);
+    Text.reserve(text.size() + GrowSize);
+    reloadText_ = true;
 }
 
 

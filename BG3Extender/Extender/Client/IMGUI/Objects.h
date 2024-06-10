@@ -637,6 +637,9 @@ class InputText : public StyledRenderable
 public:
     DECL_UI_TYPE(InputText)
 
+    static constexpr unsigned GrowSize = 512;
+    static constexpr unsigned MaxSize = 0x10000;
+
     InputText();
     void StyledRender() override;
 
@@ -648,6 +651,9 @@ public:
     std::optional<glm::vec2> SizeHint;
     GuiInputTextFlags Flags{ 0 };
     lua::LuaDelegate<void (lua::ImguiHandle, STDString)> OnChange;
+
+private:
+    bool reloadText_{ false };
 };
 
 
