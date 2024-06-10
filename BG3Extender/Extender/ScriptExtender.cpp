@@ -67,7 +67,9 @@ void ScriptExtender::Initialize()
 	}
 
 #if defined(ENABLE_IMGUI)
-	imgui_.EnableHooks();
+	if (!Libraries.CriticalInitializationFailed()) {
+		imgui_.EnableHooks();
+	}
 #endif
 
 	server_.Initialize();
@@ -351,7 +353,7 @@ void ScriptExtender::OnAppLoadGraphicSettings(App * self)
 
 void ScriptExtender::HookStateMachineUpdates()
 {
-	if (updateHooksAdded_) return;
+	if (updateHooksAdded_ || Libraries.CriticalInitializationFailed()) return;
 
 	auto clientEvtMgr = GetStaticSymbols().ecl__gGameStateEventManager;
 	if (clientEvtMgr && *clientEvtMgr) {

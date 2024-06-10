@@ -13,12 +13,23 @@ namespace bg3se
 {
 	void* BG3Alloc(std::size_t size)
 	{
-		return GetStaticSymbols().ls__GlobalAllocator__Alloc(GetStaticSymbols().ls__gGlobalAllocator, size, 2, 0, 8);
+		auto const& sym = GetStaticSymbols();
+		// Fallback in case allocator is not available
+		if (sym.ls__GlobalAllocator__Alloc && sym.ls__GlobalAllocator__Free && sym.ls__gGlobalAllocator) {
+			return sym.ls__GlobalAllocator__Alloc(sym.ls__gGlobalAllocator, size, 2, 0, 8);
+		} else {
+			return malloc(size);
+		}
 	}
 
 	void BG3Free(void* ptr)
 	{
-		GetStaticSymbols().ls__GlobalAllocator__Free(GetStaticSymbols().ls__gGlobalAllocator, ptr);
+		auto const& sym = GetStaticSymbols();
+		if (sym.ls__GlobalAllocator__Alloc && sym.ls__GlobalAllocator__Free && sym.ls__gGlobalAllocator) {
+			sym.ls__GlobalAllocator__Free(sym.ls__gGlobalAllocator, ptr);
+		} else {
+			return free(ptr);
+		}
 	}
 
 	LibraryManager::LibraryManager()
