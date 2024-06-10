@@ -80,12 +80,56 @@ void VirtualTextureHelpers::Load()
 {
 	std::lock_guard _(lock_);
 
-	gtsPaths_.clear();
+	auto remaps = CollectRemaps();
+
+	std::unordered_set<FixedString> gtsFiles;
+	for (auto const& path : remaps) {
+		gtsFiles.insert(path.Value());
+	}
+
+	// Check if we need to rebuild, or the merged set already matches the requested one
+	if (built_ && !NeedsRebuild(gtsFiles)) {
+		DEBUG("Merged tileset is already up to date, skipping build");
+		return;
+	}
+
+	gtsPaths_ = std::move(remaps);
+	sourceTileSets_ = gtsFiles;
+	built_ = false;
+
+	if (gtsPaths_.size() > 0) {
+		DEBUG("Loaded %d virtual texture mappings", gtsPaths_.size());
+	}
+
+	built_ = Stitch();
+	if (!built_) {
+		gtsPaths_.clear();
+		sourceTileSets_.clear();
+	}
+}
+
+bool VirtualTextureHelpers::NeedsRebuild(std::unordered_set<FixedString> const& newTileSets)
+{
+	if (newTileSets.size() != sourceTileSets_.size()) {
+		return true;
+	}
+
+	for (auto const& path : newTileSets) {
+		if (sourceTileSets_.find(path) == sourceTileSets_.end()) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+MultiHashMap<FixedString, FixedString> VirtualTextureHelpers::CollectRemaps()
+{
+	MultiHashMap<FixedString, FixedString> remaps;
 
 	auto modManager = GetStaticSymbols().GetModManagerClient();
 	for (auto const& mod : modManager->BaseModule.LoadOrderedModules) {
-		auto dir = mod.Info.Directory;
-		auto virtualTextureConfig = "Mods/" + dir + "/ScriptExtender/VirtualTextures.json";
+		auto virtualTextureConfig = "Mods/" + mod.Info.Directory + "/ScriptExtender/VirtualTextures.json";
 		auto reader = GetStaticSymbols().MakeFileReader(virtualTextureConfig);
 
 		if (reader.IsLoaded()) {
@@ -107,7 +151,7 @@ void VirtualTextureHelpers::Load()
 							auto gTex = mapping["GTexName"].asString();
 							auto gts = mapping["GTS"].asString();
 							if (!gTex.empty() && !gts.empty()) {
-								gtsPaths_.set(FixedString(gTex), FixedString(gts));
+								remaps.set(FixedString(gTex), FixedString(gts));
 							}
 						}
 					}
@@ -116,29 +160,20 @@ void VirtualTextureHelpers::Load()
 		}
 	}
 
-	if (gtsPaths_.size() > 0) {
-		DEBUG("Loaded %d virtual texture mappings", gtsPaths_.size());
-	}
-
-	Stitch();
+	return remaps;
 }
 
-void VirtualTextureHelpers::Stitch()
+bool VirtualTextureHelpers::Stitch()
 {
-	std::unordered_set<FixedString> gtsFiles;
-	for (auto const& path : gtsPaths_) {
-		gtsFiles.insert(path.Value());
-	}
-
-	if (gtsFiles.size() < 2) {
+	if (sourceTileSets_.size() < 2) {
 		// No need to stitch if we only have 1 tile set
-		return;
+		return false;
 	}
 
 	DEBUG("Creating merged virtual texture tile set");
 
 	vt::GTSStitchedFile stitched;
-	for (auto const& path : gtsFiles) {
+	for (auto const& path : sourceTileSets_) {
 		auto reader = GetStaticSymbols().MakeFileReader(path, PathRootType::Data);
 		if (reader.IsLoaded()) {
 			auto gts = GameAlloc<vt::GTSFile>();
@@ -158,8 +193,7 @@ void VirtualTextureHelpers::Stitch()
 	geom.TileSets = stitched.TileSets;
 	if (!geom.DoAutoPlacement()) {
 		ERR("Failed to calculate merged tileset geometry, virtual textures will not be available!");
-		gtsPaths_.clear();
-		return;
+		return false;
 	}
 
 	DEBUG("Merged geometry: %d x %d tiles (%d x %d px)",
@@ -175,9 +209,11 @@ void VirtualTextureHelpers::Stitch()
 		for (auto& path : gtsPaths_) {
 			path.Value() = outputPath;
 		}
+
+		return true;
 	} else {
 		ERR("Merged tile set build failed, virtual textures will not be available!");
-		gtsPaths_.clear();
+		return false;
 	}
 }
 

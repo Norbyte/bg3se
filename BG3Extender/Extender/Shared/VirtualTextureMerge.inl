@@ -288,8 +288,8 @@ class MergedTileSetGeometryCalculator
 public:
     Array<GTSFile*> TileSets;
 
-    uint32_t PlacementTileWidth = 0x1000;
-    uint32_t PlacementTileHeight = 0x1000;
+	uint32_t PlacementTileWidth{ 1 };
+	uint32_t PlacementTileHeight{ 1 };
 	uint32_t PlacementGridWidth{ 0 };
 	uint32_t PlacementGridHeight{ 0 };
     Array<GTSFile*> PlacementGrid;
@@ -312,7 +312,8 @@ public:
 		auto w = PlacementGridWidth * PlacementTileWidth;
 		auto h = PlacementGridHeight * PlacementTileHeight;
 
-		if (w >= 0x1000 || h >= 0x1000) {
+		if (w >= 0x1000 && h >= 0x1000) {
+			ERR("Placement grid exceeds maximal GTS size: %d x %d!", w, h);
 			return false;
 		}
 
@@ -386,8 +387,8 @@ public:
         uint32_t startingY = 0;
 
         for (auto tileSet : TileSets) {
-            PlacementTileWidth = std::min(PlacementTileWidth, tileSet->Levels[0].Width);
-            PlacementTileHeight = std::min(PlacementTileHeight, tileSet->Levels[0].Height);
+            PlacementTileWidth = std::min(PlacementTileWidth, std::max(1u, tileSet->Levels[0].Width));
+            PlacementTileHeight = std::min(PlacementTileHeight, std::max(1u, tileSet->Levels[0].Height));
             startingX = std::max(startingX, tileSet->Levels[0].Width);
             startingY = std::max(startingY, tileSet->Levels[0].Height);
         }
@@ -759,6 +760,7 @@ struct GTSStitchedFile
 			OutputPath = "SEMergedTileSet_";
 			OutputPath += std::to_string(GetCurrentProcessId());
 			OutputPath += ".gts";
+			gtsPath = GetStaticSymbols().ToPath(OutputPath, PathRootType::Data, true);
 			f.open(gtsPath.c_str(), std::ios::out | std::ios::binary);
 
 			if (!f.good()) {
