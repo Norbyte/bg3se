@@ -147,7 +147,7 @@ struct FactionComponent : public BaseComponent
 	EntityHandle field_0;
 	Guid field_8;
 	Guid field_18;
-	EntityHandle field_28;
+	[[bg3::legacy(field_28)]] EntityHandle SummonOwner;
 };
 
 
@@ -420,7 +420,7 @@ struct UserAvatarComponent : public BaseComponent
 	DEFINE_COMPONENT(UserAvatar, "eoc::user::AvatarComponent")
 
 	int UserID;
-	FixedString field_4;
+	[[bg3::legacy(field_4)]] FixedString OwnerProfileID;
 	uint8_t field_8;
 };
 
