@@ -202,6 +202,8 @@ public:
 
     std::optional<TextureLoadResult> RegisterTexture(TextureDescriptor* descriptor) override
     {
+        if (!initialized_) return {};
+
         auto view = descriptor->Vulkan.Views[0]->View;
         if (!view) return {};
 
@@ -229,6 +231,8 @@ public:
 
     void UnregisterTexture(ImTextureID id) override
     {
+        if (!initialized_) return;
+
         auto desc = static_cast<VkDescriptorSet>(id);
         auto refCount = textureRefCounts_.find(desc);
         if (refCount != textureRefCounts_.end()) {
