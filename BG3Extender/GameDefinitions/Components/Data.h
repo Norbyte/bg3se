@@ -247,9 +247,9 @@ struct ProficiencyComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(Proficiency, "eoc::stats::proficiency::ProficiencyComponent")
 
-	__int64 field_0;
+	[[bg3::legacy(field_0)]] ProficiencyGroupFlags Flags;
 };
-	
+
 struct ProficiencyGroupComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ProficiencyGroup, "eoc::stats::proficiency::ProficiencyGroupComponent")
