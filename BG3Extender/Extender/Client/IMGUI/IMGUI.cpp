@@ -1364,12 +1364,25 @@ void IMGUIManager::InitializeUI()
 
     UpdateStyle();
 
-    LoadFont(GFS.strTiny, "", 24.0f);
-    LoadFont(GFS.strSmall, "", 28.0f);
-    LoadFont(GFS.strMedium, "", 32.0f);
-    LoadFont(GFS.strDefault, "", 36.0f);
-    LoadFont(GFS.strLarge, "", 40.0f);
-    LoadFont(GFS.strBig, "", 44.0f);
+    auto const& language = GetStaticSymbols().GetGlobalSwitches()->Language;
+    // Disable very small font sizes for fonts with small glyphs
+    reducedFontAtlas_ =
+        language == "Japanese"
+        || language == "Chinese"
+        || language == "ChineseTraditional";
+
+    if (reducedFontAtlas_) {
+        LoadFont(GFS.strMedium, "", 32.0f);
+        LoadFont(GFS.strDefault, "", 36.0f);
+        LoadFont(GFS.strLarge, "", 40.0f);
+    } else {
+        LoadFont(GFS.strTiny, "", 24.0f);
+        LoadFont(GFS.strSmall, "", 28.0f);
+        LoadFont(GFS.strMedium, "", 32.0f);
+        LoadFont(GFS.strDefault, "", 36.0f);
+        LoadFont(GFS.strLarge, "", 40.0f);
+        LoadFont(GFS.strBig, "", 44.0f);
+    }
 
     initialized_ = true;
 }
@@ -1491,6 +1504,16 @@ bool IMGUIManager::LoadFont(FontData& request)
 
 IMGUIManager::FontData* IMGUIManager::GetFont(FixedString const& name)
 {
+    if (reducedFontAtlas_) {
+        if (name == GFS.strTiny || GFS.strSmall) {
+            return fonts_.try_get(GFS.strMedium);
+        }
+
+        if (name == GFS.strLarge) {
+            return fonts_.try_get(GFS.strBig);
+        }
+    }
+
     return fonts_.try_get(name);
 }
 
