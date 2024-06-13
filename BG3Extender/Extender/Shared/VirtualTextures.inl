@@ -101,10 +101,12 @@ void VirtualTextureHelpers::Load()
 		DEBUG("Loaded %d virtual texture mappings", gtsPaths_.size());
 	}
 
-	built_ = Stitch();
-	if (!built_) {
-		gtsPaths_.clear();
-		sourceTileSets_.clear();
+	if (sourceTileSets_.size() > 1) {
+		built_ = Stitch();
+		if (!built_) {
+			gtsPaths_.clear();
+			sourceTileSets_.clear();
+		}
 	}
 }
 
@@ -167,6 +169,7 @@ bool VirtualTextureHelpers::Stitch()
 {
 	if (sourceTileSets_.size() < 2) {
 		// No need to stitch if we only have 1 tile set
+		ERR("Trying to stitch VT with only a single tile set loaded?");
 		return false;
 	}
 
