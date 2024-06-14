@@ -1748,6 +1748,7 @@ Osi = {}
 
 
 --- @class FactionComponent:BaseComponent
+--- @field SummonOwner EntityHandle
 --- @field field_0 EntityHandle
 --- @field field_18 Guid
 --- @field field_28 EntityHandle
@@ -3070,7 +3071,8 @@ Osi = {}
 
 
 --- @class ProficiencyComponent:BaseComponent
---- @field field_0 int64
+--- @field Flags ProficiencyGroupFlags
+--- @field field_0 ProficiencyGroupFlags
 
 
 --- @class ProficiencyGroupComponent:BaseComponent
@@ -3668,6 +3670,7 @@ Osi = {}
 
 
 --- @class UserAvatarComponent:BaseComponent
+--- @field OwnerProfileID FixedString
 --- @field UserID int32
 --- @field field_4 FixedString
 --- @field field_8 uint8
@@ -6260,11 +6263,9 @@ Osi = {}
 
 --- @class ExtuiMenu:ExtuiTreeParent
 --- @field AddItem fun(self:ExtuiMenu, a1:string, a2:string?):ExtuiMenuItem
---- @field AddMenu fun(self:ExtuiMenu, a1:string):ExtuiMenu
 
 
 --- @class ExtuiMenuBar:ExtuiTreeParent
---- @field AddMenu fun(self:ExtuiMenuBar, a1:string):ExtuiMenu
 
 
 --- @class ExtuiMenuItem:ExtuiStyledRenderable
@@ -6488,6 +6489,7 @@ Osi = {}
 --- @field AddInputInt fun(self:ExtuiTreeParent, a1:string, a2:int32?):ExtuiInputInt
 --- @field AddInputScalar fun(self:ExtuiTreeParent, a1:string, a2:number?):ExtuiInputScalar
 --- @field AddInputText fun(self:ExtuiTreeParent, a1:string, a2:string?):ExtuiInputText
+--- @field AddMenu fun(self:ExtuiTreeParent, a1:string):ImguiHandle
 --- @field AddNewLine fun(self:ExtuiTreeParent):ExtuiNewLine
 --- @field AddPopup fun(self:ExtuiTreeParent, a1:string):ExtuiPopup
 --- @field AddRadioButton fun(self:ExtuiTreeParent, a1:string, a2:boolean?):ExtuiRadioButton
@@ -10513,10 +10515,10 @@ Osi = {}
 
 --- @class SightDataComponent:BaseComponent
 --- @field field_0 Guid
---- @field field_10 int32
---- @field field_14 int32
---- @field field_18 int32
---- @field field_1C int32
+--- @field field_10 number
+--- @field field_14 number
+--- @field field_18 number
+--- @field field_1C number
 --- @field field_20 int32
 --- @field field_24 int32
 
@@ -10526,10 +10528,10 @@ Osi = {}
 
 
 --- @class SightSightBaseComponent:BaseComponent
---- @field field_0 int32
---- @field field_4 int32
---- @field field_8 int32
---- @field field_C int32
+--- @field field_0 number
+--- @field field_4 number
+--- @field field_8 number
+--- @field field_C number
 
 
 --- @class SpellAddedSpellsComponent:BaseComponent
@@ -11492,657 +11494,657 @@ Osi = {}
 
 
 --- @class Armor:StatsObject
---- @field Ability Modifier Cap string
---- @field Armor Class Ability Weapon Group
---- @field ArmorClass string
---- @field ArmorType AttributeFlags
---- @field Boosts StatsConditions
---- @field Charges string
---- @field ColorPresetResource StatsConditions
---- @field ComboCategory StatsConditions
---- @field DefaultBoosts StatsConditions
---- @field Durability string
---- @field DurabilityDegradeSpeed Damage Type
---- @field ExtraProperties StatsConditions
---- @field FallingHitEffect StatsConditions
---- @field FallingLandEffect StatsConditions
---- @field Flags Itemslot
---- @field GameSize StatsConditions
---- @field InstrumentType RestErrorFlags
---- @field InventoryTab StepsType
---- @field ItemColor StatsConditions
---- @field ItemGroup StatsConditions
---- @field Level string
---- @field MaxAmount string
---- @field MaxCharges string
---- @field MaxLevel string
---- @field MinAmount string
---- @field MinLevel string
---- @field NeedsIdentification FormatStringColor
---- @field ObjectCategory StatsConditions
---- @field PassivesOnEquip StatsConditions
---- @field PersonalStatusImmunities SpellActionType
---- @field Priority string
---- @field Proficiency Group DisturbanceInvestigationKind
---- @field Rarity SpellAnimationIntentType
---- @field Requirements string
---- @field RootTemplate StatsConditions
---- @field Shield FormatStringColor
---- @field Slot Act
---- @field SoundSize StatsConditions
---- @field Spells StatsConditions
---- @field StatusInInventory StatsConditions
---- @field StatusOnEquip StatsConditions
---- @field Tags StatsConditions
---- @field Unique string
---- @field UseConditions MemorizationRequirements
---- @field UseCosts StatsConditions
---- @field ValueOverride string
---- @field ValueLevel string
---- @field ValueRounding string
---- @field ValueScale HitAnimationType
---- @field ValueUUID integer
---- @field Weight HitAnimationType
+--- @field Ability Modifier Cap integer
+--- @field Armor Class Ability Ability
+--- @field ArmorClass integer
+--- @field ArmorType ArmorType
+--- @field Boosts string
+--- @field Charges integer
+--- @field ColorPresetResource string
+--- @field ComboCategory string
+--- @field DefaultBoosts string
+--- @field Durability integer
+--- @field DurabilityDegradeSpeed Qualifier
+--- @field ExtraProperties string
+--- @field FallingHitEffect string
+--- @field FallingLandEffect string
+--- @field Flags AttributeFlags
+--- @field GameSize string
+--- @field InstrumentType InstrumentType
+--- @field InventoryTab InventoryTabs
+--- @field ItemColor string
+--- @field ItemGroup string
+--- @field Level integer
+--- @field MaxAmount integer
+--- @field MaxCharges integer
+--- @field MaxLevel integer
+--- @field MinAmount integer
+--- @field MinLevel integer
+--- @field NeedsIdentification YesNo
+--- @field ObjectCategory string
+--- @field PassivesOnEquip string
+--- @field PersonalStatusImmunities StatusIDs
+--- @field Priority integer
+--- @field Proficiency Group ProficiencyGroupFlags
+--- @field Rarity Rarity
+--- @field Requirements StatsRequirements
+--- @field RootTemplate string
+--- @field Shield YesNo
+--- @field Slot Itemslot
+--- @field SoundSize string
+--- @field Spells string
+--- @field StatusInInventory string
+--- @field StatusOnEquip string
+--- @field Tags string
+--- @field Unique integer
+--- @field UseConditions Conditions
+--- @field UseCosts string
+--- @field ValueOverride integer
+--- @field ValueLevel integer
+--- @field ValueRounding integer
+--- @field ValueScale number
+--- @field ValueUUID string
+--- @field Weight number
 
 
 --- @class Character:StatsObject
---- @field AcidResistance ObjectSize
---- @field ActionResources StatsConditions
---- @field Armor string
---- @field ArmorType AttributeFlags
---- @field BludgeoningResistance ObjectSize
---- @field Charisma string
---- @field Class StatsConditions
---- @field ColdResistance ObjectSize
---- @field Constitution string
---- @field DarkvisionRange StatsConditions
---- @field DefaultBoosts StatsConditions
---- @field Dexterity string
---- @field DifficultyStatuses StatsConditions
---- @field DynamicAnimationTag integer
---- @field ExtraProperties StatsConditions
---- @field FallingHitEffect StatsConditions
---- @field FallingLandEffect StatsConditions
---- @field FireResistance ObjectSize
---- @field Flags Itemslot
---- @field ForceResistance ObjectSize
---- @field FOV string
---- @field GameSize StatsConditions
---- @field Hearing string
---- @field Initiative string
---- @field Intelligence string
---- @field Level string
---- @field LightningResistance ObjectSize
---- @field MinimumDetectionRange StatsConditions
---- @field NecroticResistance ObjectSize
---- @field Passives StatsConditions
---- @field PathInfluence StatsConditions
---- @field PersonalStatusImmunities SpellActionType
---- @field PiercingResistance ObjectSize
---- @field PoisonResistance ObjectSize
---- @field ProficiencyBonusScaling integer
---- @field Proficiency Group DisturbanceInvestigationKind
---- @field ProficiencyBonus string
---- @field Progression Type Surface Type
---- @field Progressions StatsConditions
---- @field PsychicResistance ObjectSize
---- @field RadiantResistance ObjectSize
---- @field Sight string
---- @field SlashingResistance ObjectSize
---- @field SoundSize StatsConditions
---- @field SpellCastingAbility Weapon Group
---- @field StepsType SpellSchool
---- @field Strength string
---- @field ThunderResistance ObjectSize
---- @field UnarmedAttackAbility Weapon Group
---- @field UnarmedRangedAttackAbility Weapon Group
---- @field VerticalFOV string
---- @field Vitality string
---- @field Weight HitAnimationType
---- @field Wisdom string
---- @field XPReward integer
+--- @field AcidResistance ResistanceFlags
+--- @field ActionResources string
+--- @field Armor integer
+--- @field ArmorType ArmorType
+--- @field BludgeoningResistance ResistanceFlags
+--- @field Charisma integer
+--- @field Class string
+--- @field ColdResistance ResistanceFlags
+--- @field Constitution integer
+--- @field DarkvisionRange string
+--- @field DefaultBoosts string
+--- @field Dexterity integer
+--- @field DifficultyStatuses string
+--- @field DynamicAnimationTag string
+--- @field ExtraProperties string
+--- @field FallingHitEffect string
+--- @field FallingLandEffect string
+--- @field FireResistance ResistanceFlags
+--- @field Flags AttributeFlags
+--- @field ForceResistance ResistanceFlags
+--- @field FOV integer
+--- @field GameSize string
+--- @field Hearing integer
+--- @field Initiative integer
+--- @field Intelligence integer
+--- @field Level integer
+--- @field LightningResistance ResistanceFlags
+--- @field MinimumDetectionRange string
+--- @field NecroticResistance ResistanceFlags
+--- @field Passives string
+--- @field PathInfluence string
+--- @field PersonalStatusImmunities StatusIDs
+--- @field PiercingResistance ResistanceFlags
+--- @field PoisonResistance ResistanceFlags
+--- @field ProficiencyBonusScaling string
+--- @field Proficiency Group ProficiencyGroupFlags
+--- @field ProficiencyBonus integer
+--- @field Progression Type Progression Type
+--- @field Progressions string
+--- @field PsychicResistance ResistanceFlags
+--- @field RadiantResistance ResistanceFlags
+--- @field Sight integer
+--- @field SlashingResistance ResistanceFlags
+--- @field SoundSize string
+--- @field SpellCastingAbility Ability
+--- @field StepsType StepsType
+--- @field Strength integer
+--- @field ThunderResistance ResistanceFlags
+--- @field UnarmedAttackAbility Ability
+--- @field UnarmedRangedAttackAbility Ability
+--- @field VerticalFOV integer
+--- @field Vitality integer
+--- @field Weight number
+--- @field Wisdom integer
+--- @field XPReward string
 
 
 --- @class CriticalHitTypeData:StatsObject
---- @field AcidFX integer
---- @field BludgeoningFX integer
---- @field ColdFX integer
---- @field FireFX integer
---- @field ForceFX integer
---- @field LightningFX integer
---- @field NecroticFX integer
---- @field PiercingFX integer
---- @field PoisonFX integer
---- @field PsychicFX integer
---- @field RadiantFX integer
---- @field SlashingFX integer
---- @field ThunderFX integer
+--- @field AcidFX string
+--- @field BludgeoningFX string
+--- @field ColdFX string
+--- @field FireFX string
+--- @field ForceFX string
+--- @field LightningFX string
+--- @field NecroticFX string
+--- @field PiercingFX string
+--- @field PoisonFX string
+--- @field PsychicFX string
+--- @field RadiantFX string
+--- @field SlashingFX string
+--- @field ThunderFX string
 
 
 --- @class InterruptData:StatsObject
---- @field Conditions MemorizationRequirements
---- @field Container StatsConditions
---- @field Cooldown StillAnimPriority
---- @field Cost StatsConditions
---- @field Description AuraFlags
---- @field DescriptionRef AuraFlags
---- @field DescriptionParams StatsConditions
---- @field DisplayName AuraFlags
---- @field DisplayNameRef AuraFlags
---- @field EnableCondition MemorizationRequirements
---- @field EnableContext PassiveFlags
---- @field ExtraDescription AuraFlags
---- @field ExtraDescriptionRef AuraFlags
---- @field ExtraDescriptionParams StatsConditions
---- @field Failure AIFlags
---- @field Icon StatsConditions
---- @field InterruptContext AlchemyCombinationType
---- @field InterruptContextScope InterruptContext
---- @field InterruptDefaultValue ThrowOrigin
---- @field InterruptFlags string
---- @field LoreDescription AuraFlags
---- @field LoreDescriptionRef AuraFlags
---- @field Properties AIFlags
---- @field Roll MemorizationRequirements
---- @field ShortDescription AuraFlags
---- @field ShortDescriptionRef AuraFlags
---- @field ShortDescriptionParams StatsConditions
---- @field Stack StatsConditions
---- @field Success AIFlags
---- @field TooltipAttackSave StatsConditions
---- @field TooltipDamageList StatsConditions
---- @field TooltipOnMiss StatsConditions
---- @field TooltipOnSave StatsConditions
---- @field TooltipPermanentWarnings StatsConditions
---- @field TooltipStatusApply StatsConditions
+--- @field Conditions Conditions
+--- @field Container string
+--- @field Cooldown CooldownType
+--- @field Cost string
+--- @field Description string
+--- @field DescriptionRef string
+--- @field DescriptionParams string
+--- @field DisplayName string
+--- @field DisplayNameRef string
+--- @field EnableCondition Conditions
+--- @field EnableContext StatsFunctorContext
+--- @field ExtraDescription string
+--- @field ExtraDescriptionRef string
+--- @field ExtraDescriptionParams string
+--- @field Failure StatsFunctors
+--- @field Icon string
+--- @field InterruptContext InterruptContext
+--- @field InterruptContextScope InterruptContextScope
+--- @field InterruptDefaultValue InterruptDefaultValue
+--- @field InterruptFlags InterruptFlagsList
+--- @field LoreDescription string
+--- @field LoreDescriptionRef string
+--- @field Properties StatsFunctors
+--- @field Roll Conditions
+--- @field ShortDescription string
+--- @field ShortDescriptionRef string
+--- @field ShortDescriptionParams string
+--- @field Stack string
+--- @field Success StatsFunctors
+--- @field TooltipAttackSave string
+--- @field TooltipDamageList string
+--- @field TooltipOnMiss string
+--- @field TooltipOnSave string
+--- @field TooltipPermanentWarnings string
+--- @field TooltipStatusApply string
 
 
 --- @class Object:StatsObject
---- @field AcidResistance ObjectSize
---- @field AddToBottomBar FormatStringColor
---- @field Armor string
---- @field BludgeoningResistance ObjectSize
---- @field ColdResistance ObjectSize
---- @field ComboCategory StatsConditions
---- @field DarkvisionRange string
---- @field DefaultBoosts StatsConditions
---- @field FallingHitEffect StatsConditions
---- @field FallingLandEffect StatsConditions
---- @field FireResistance ObjectSize
---- @field Flags Itemslot
---- @field ForceResistance ObjectSize
---- @field FOV string
---- @field GameSize StatsConditions
---- @field IgnoredByAI FormatStringColor
---- @field InventoryTab StepsType
---- @field ItemUseType Tension
---- @field Level string
---- @field LightningResistance ObjectSize
---- @field MaxAmount string
---- @field MaxLevel string
---- @field MinAmount string
---- @field MinimumDetectionRange string
---- @field MinLevel string
---- @field NecroticResistance ObjectSize
---- @field ObjectCategory StatsConditions
---- @field PassivesOnEquip StatsConditions
---- @field PersonalStatusImmunities SpellActionType
---- @field PiercingResistance ObjectSize
---- @field PoisonResistance ObjectSize
---- @field Priority string
---- @field PsychicResistance ObjectSize
---- @field RadiantResistance ObjectSize
---- @field Rarity SpellAnimationIntentType
---- @field Requirements string
---- @field RootTemplate StatsConditions
---- @field Sight string
---- @field SlashingResistance ObjectSize
---- @field SoundSize StatsConditions
---- @field StatusInInventory StatsConditions
---- @field SupplyValue string
---- @field ThunderResistance ObjectSize
---- @field Unique string
---- @field UseConditions MemorizationRequirements
---- @field UseCosts StatsConditions
---- @field ValueOverride string
---- @field ValueLevel string
---- @field ValueRounding string
---- @field ValueScale HitAnimationType
---- @field ValueUUID integer
---- @field VerticalFOV string
---- @field Vitality string
---- @field Weight HitAnimationType
+--- @field AcidResistance ResistanceFlags
+--- @field AddToBottomBar YesNo
+--- @field Armor integer
+--- @field BludgeoningResistance ResistanceFlags
+--- @field ColdResistance ResistanceFlags
+--- @field ComboCategory string
+--- @field DarkvisionRange integer
+--- @field DefaultBoosts string
+--- @field FallingHitEffect string
+--- @field FallingLandEffect string
+--- @field FireResistance ResistanceFlags
+--- @field Flags AttributeFlags
+--- @field ForceResistance ResistanceFlags
+--- @field FOV integer
+--- @field GameSize string
+--- @field IgnoredByAI YesNo
+--- @field InventoryTab InventoryTabs
+--- @field ItemUseType ItemUseTypes
+--- @field Level integer
+--- @field LightningResistance ResistanceFlags
+--- @field MaxAmount integer
+--- @field MaxLevel integer
+--- @field MinAmount integer
+--- @field MinimumDetectionRange integer
+--- @field MinLevel integer
+--- @field NecroticResistance ResistanceFlags
+--- @field ObjectCategory string
+--- @field PassivesOnEquip string
+--- @field PersonalStatusImmunities StatusIDs
+--- @field PiercingResistance ResistanceFlags
+--- @field PoisonResistance ResistanceFlags
+--- @field Priority integer
+--- @field PsychicResistance ResistanceFlags
+--- @field RadiantResistance ResistanceFlags
+--- @field Rarity Rarity
+--- @field Requirements StatsRequirements
+--- @field RootTemplate string
+--- @field Sight integer
+--- @field SlashingResistance ResistanceFlags
+--- @field SoundSize string
+--- @field StatusInInventory string
+--- @field SupplyValue integer
+--- @field ThunderResistance ResistanceFlags
+--- @field Unique integer
+--- @field UseConditions Conditions
+--- @field UseCosts string
+--- @field ValueOverride integer
+--- @field ValueLevel integer
+--- @field ValueRounding integer
+--- @field ValueScale number
+--- @field ValueUUID string
+--- @field VerticalFOV integer
+--- @field Vitality integer
+--- @field Weight number
 
 
 --- @class PassiveData:StatsObject
---- @field BoostConditions MemorizationRequirements
---- @field BoostContext PassiveFlags
---- @field Boosts StatsConditions
---- @field Conditions MemorizationRequirements
---- @field Description AuraFlags
---- @field DescriptionRef AuraFlags
---- @field DescriptionParams StatsConditions
---- @field DisplayName AuraFlags
---- @field DisplayNameRef AuraFlags
---- @field DynamicAnimationTag integer
---- @field EnabledConditions MemorizationRequirements
---- @field EnabledContext PassiveFlags
---- @field ExtraDescription AuraFlags
---- @field ExtraDescriptionRef AuraFlags
---- @field ExtraDescriptionParams StatsConditions
---- @field Icon StatsConditions
---- @field LoreDescription AuraFlags
---- @field LoreDescriptionRef AuraFlags
---- @field PriorityOrder string
---- @field Properties SpellFlagList
---- @field StatsFunctorContext PassiveFlags
---- @field StatsFunctors AIFlags
---- @field ToggleGroup StatsConditions
---- @field ToggleOffContext PassiveFlags
---- @field ToggleOffEffect StatsConditions
---- @field ToggleOffFunctors AIFlags
---- @field ToggleOnEffect StatsConditions
---- @field ToggleOnFunctors AIFlags
---- @field TooltipConditionalDamage StatsConditions
---- @field TooltipPermanentWarnings StatsConditions
---- @field TooltipSave StatsConditions
---- @field TooltipUseCosts StatsConditions
+--- @field BoostConditions Conditions
+--- @field BoostContext StatsFunctorContext
+--- @field Boosts string
+--- @field Conditions Conditions
+--- @field Description string
+--- @field DescriptionRef string
+--- @field DescriptionParams string
+--- @field DisplayName string
+--- @field DisplayNameRef string
+--- @field DynamicAnimationTag string
+--- @field EnabledConditions Conditions
+--- @field EnabledContext StatsFunctorContext
+--- @field ExtraDescription string
+--- @field ExtraDescriptionRef string
+--- @field ExtraDescriptionParams string
+--- @field Icon string
+--- @field LoreDescription string
+--- @field LoreDescriptionRef string
+--- @field PriorityOrder integer
+--- @field Properties PassiveFlags
+--- @field StatsFunctorContext StatsFunctorContext
+--- @field StatsFunctors StatsFunctors
+--- @field ToggleGroup string
+--- @field ToggleOffContext StatsFunctorContext
+--- @field ToggleOffEffect string
+--- @field ToggleOffFunctors StatsFunctors
+--- @field ToggleOnEffect string
+--- @field ToggleOnFunctors StatsFunctors
+--- @field TooltipConditionalDamage string
+--- @field TooltipPermanentWarnings string
+--- @field TooltipSave string
+--- @field TooltipUseCosts string
 
 
 --- @class SpellData:StatsObject
---- @field SpellType StatsConditions
---- @field Acceleration string
---- @field AddRangeFromAbility StatsConditions
---- @field AiCalculationSpellOverride StatsConditions
---- @field AIFlags StatsRollConditions
---- @field AlternativeCastTextEvents StatsConditions
---- @field AmountOfTargets StatsConditions
---- @field Angle string
---- @field SpellAnimationIntentType number
---- @field AoEConditions VerbalIntent
---- @field AreaRadius string
---- @field Autocast FormatStringColor
---- @field Base string
---- @field BeamEffect StatsConditions
---- @field CastEffect StatsConditions
---- @field CastEffectTextEvent StatsConditions
---- @field CastSound StatsConditions
---- @field CastTargetHitDelay string
---- @field CastTextEvent StatsConditions
---- @field CinematicArenaFlags SpellStyleGroup
---- @field CinematicArenaTimelineOverride integer
---- @field CombatAIOverrideSpell StatsConditions
---- @field ConcentrationSpellID StatsConditions
---- @field ContainerSpells StatsConditions
---- @field Cooldown StillAnimPriority
---- @field CycleConditions VerbalIntent
---- @field Damage StatsConditions
---- @field Damage Range string
---- @field DamageType Spell Attack Type
---- @field DeathType YesNo
---- @field DelayRollDie InstrumentType
---- @field DelayRollTarget string
---- @field DelayTurnsCount string
---- @field Description AuraFlags
---- @field DescriptionRef AuraFlags
---- @field DescriptionParams StatsConditions
---- @field DisappearEffect StatsConditions
---- @field DisplayName AuraFlags
---- @field DisplayNameRef AuraFlags
---- @field Distribution ProjectileType
---- @field DualWieldingSpellAnimation StatsConditions
---- @field DualWieldingUseCosts StatsConditions
---- @field EndPosRadius string
---- @field ExplodeRadius string
---- @field ExtraDescription AuraFlags
---- @field ExtraDescriptionRef AuraFlags
---- @field ExtraDescriptionParams StatsConditions
---- @field FemaleImpactEffects StatsConditions
---- @field FollowUpOriginalSpell StatsConditions
---- @field ForceTarget string
---- @field ForkChance string
---- @field ForkingConditions VerbalIntent
---- @field ForkLevels string
---- @field FrontOffset string
---- @field FXScale string
---- @field Height string
---- @field HighlightConditions VerbalIntent
---- @field HitAnimationType SpellJumpType
---- @field HitCosts StatsConditions
---- @field HitDelay string
---- @field HitEffect StatsConditions
---- @field HitExtension HitAnimationType
---- @field HitRadius HitAnimationType
---- @field Icon StatsConditions
---- @field IgnoreTeleport FormatStringColor
---- @field ImpactEffect StatsConditions
---- @field InstrumentComponentCastSound StatsConditions
---- @field InstrumentComponentImpactSound StatsConditions
---- @field InstrumentComponentLoopingSound StatsConditions
---- @field InstrumentComponentPrepareSound StatsConditions
---- @field InterruptPrototype StatsConditions
---- @field ItemWall StatsConditions
---- @field ItemWallStatus StatsConditions
---- @field JumpDelay string
---- @field Level string
---- @field Lifetime string
---- @field LineOfSightFlags SoundVocalType
---- @field Magic Cost string
---- @field MaleImpactEffects StatsConditions
---- @field MaxAttacks string
---- @field MaxDistance string
---- @field MaxForkCount string
---- @field MaxHitsPerTurn string
---- @field MaximumTargets string
---- @field MaximumTotalTargetHP string
---- @field MemorizationRequirements Properties
---- @field Memory Cost string
---- @field MinHitsPerTurn string
---- @field MinJumpDistance HitAnimationType
---- @field MovementSpeed string
---- @field MovingObjectSummonTemplate StatsConditions
---- @field NextAttackChance string
---- @field NextAttackChanceDivider string
---- @field OnlyHit1Target string
---- @field OriginSpellFail AIFlags
---- @field OriginSpellProperties AIFlags
---- @field OriginSpellRoll WeaponFlags
---- @field OriginSpellSuccess AIFlags
---- @field OriginTargetConditions VerbalIntent
---- @field OverrideSpellLevel FormatStringColor
---- @field PositionEffect StatsConditions
---- @field PowerLevel string
---- @field PrepareEffect StatsConditions
---- @field PrepareEffectBone StatsConditions
---- @field PrepareLoopSound StatsConditions
---- @field PrepareSound StatsConditions
---- @field PreviewCursor StatusAnimationType
---- @field PreviewEffect StatsConditions
---- @field PreviewStrikeHits FormatStringColor
---- @field ProjectileCount StatsConditions
---- @field ProjectileDelay string
---- @field ProjectileSpells StatsConditions
---- @field ProjectileTerrainOffset FormatStringColor
---- @field ProjectileType DamageSourceType
---- @field Range string
---- @field ReappearEffect StatsConditions
---- @field ReappearEffectTextEvent StatsConditions
---- @field RechargeValues StatsConditions
---- @field Requirement AtmosphereType
---- @field RequirementConditions VerbalIntent
---- @field RequirementEvents ProjectileDistribution
---- @field Requirements string
---- @field RitualCosts StatsConditions
---- @field RootSpellID StatsConditions
---- @field SelectedCharacterEffect StatsConditions
---- @field SelectedObjectEffect StatsConditions
---- @field SelectedPositionEffect StatsConditions
---- @field Shape StatsConditions
---- @field Sheathing SpellSoundMagnitude
---- @field ShortDescription AuraFlags
---- @field ShortDescriptionRef AuraFlags
---- @field ShortDescriptionParams StatsConditions
---- @field Shuffle FormatStringColor
---- @field SingleSource FormatStringColor
---- @field SourceLimbIndex string
---- @field SpawnEffect StatsConditions
---- @field SpellActionType CursorMode
---- @field SpellActionTypePriority string
---- @field SpellAnimation StatsConditions
---- @field SpellAnimationType FlagType
---- @field Spellbook StatsConditions
---- @field SpellCategory DisturbanceDialogueCapability
---- @field SpellContainerID StatsConditions
---- @field SpellEffect StatsConditions
---- @field SpellFail AIFlags
---- @field SpellFlags Conditions
---- @field SpellJumpType LineOfSightFlags
---- @field MemoryCost string
---- @field SpellProperties AIFlags
---- @field SpellRoll WeaponFlags
---- @field SpellSchool PickingState
---- @field SpellSoundAftermathTrajectory StatsConditions
---- @field SpellSoundMagnitude DieType
---- @field SpellStyleGroup SpellCategoryFlags
---- @field SpellSuccess AIFlags
---- @field Stealth FormatStringColor
---- @field SteerSpeedMultipler HitAnimationType
---- @field StopAtFirstContact string
---- @field StormEffect StatsConditions
---- @field StrikeCount string
---- @field SurfaceGrowInterval string
---- @field SurfaceGrowStep string
---- @field SurfaceLifetime string
---- @field SurfaceRadius string
---- @field SurfaceType Custom Properties
---- @field TargetCeiling StatsConditions
---- @field TargetConditions VerbalIntent
---- @field TargetEffect StatsConditions
---- @field TargetFloor StatsConditions
---- @field TargetGroundEffect StatsConditions
---- @field TargetHitEffect StatsConditions
---- @field TargetProjectiles FormatStringColor
---- @field TargetRadius StatsConditions
---- @field TargetSound StatsConditions
---- @field TeleportDelay string
---- @field TeleportSelf FormatStringColor
---- @field TeleportSurface FormatStringColor
---- @field Template StatsConditions
---- @field ThrowableSpellFail AIFlags
---- @field ThrowableSpellProperties AIFlags
---- @field ThrowableSpellRoll WeaponFlags
---- @field ThrowableSpellSuccess AIFlags
---- @field ThrowableTargetConditions VerbalIntent
---- @field ThrowOrigin StatusSheathing
---- @field TooltipAttackSave StatsConditions
---- @field TooltipDamageList StatsConditions
---- @field TooltipOnMiss StatsConditions
---- @field TooltipOnSave StatsConditions
---- @field TooltipPermanentWarnings StatsConditions
---- @field TooltipSpellDCAbilities InterruptFlagsList
---- @field TooltipStatusApply StatsConditions
---- @field TooltipUpcastDescription integer
---- @field TooltipUpcastDescriptionParams StatsConditions
---- @field Trajectories StatsConditions
---- @field UseCosts StatsConditions
---- @field UseWeaponDamage FormatStringColor
---- @field UseWeaponProperties FormatStringColor
---- @field VerbalIntent ResistanceFlags
---- @field VocalComponentSound StatsConditions
---- @field WallEndEffect StatsConditions
---- @field WallStartEffect StatsConditions
---- @field WeaponBones StatsConditions
---- @field WeaponTypes CastCheckType
+--- @field SpellType string
+--- @field Acceleration integer
+--- @field AddRangeFromAbility string
+--- @field AiCalculationSpellOverride string
+--- @field AIFlags AIFlags
+--- @field AlternativeCastTextEvents string
+--- @field AmountOfTargets string
+--- @field Angle integer
+--- @field SpellAnimationIntentType SpellAnimationIntentType
+--- @field AoEConditions StatsConditions
+--- @field AreaRadius integer
+--- @field Autocast YesNo
+--- @field Base integer
+--- @field BeamEffect string
+--- @field CastEffect string
+--- @field CastEffectTextEvent string
+--- @field CastSound string
+--- @field CastTargetHitDelay integer
+--- @field CastTextEvent string
+--- @field CinematicArenaFlags CinematicArenaFlags
+--- @field CinematicArenaTimelineOverride string
+--- @field CombatAIOverrideSpell string
+--- @field ConcentrationSpellID string
+--- @field ContainerSpells string
+--- @field Cooldown CooldownType
+--- @field CycleConditions StatsConditions
+--- @field Damage string
+--- @field Damage Range integer
+--- @field DamageType Damage Type
+--- @field DeathType Death Type
+--- @field DelayRollDie DieType
+--- @field DelayRollTarget integer
+--- @field DelayTurnsCount integer
+--- @field Description string
+--- @field DescriptionRef string
+--- @field DescriptionParams string
+--- @field DisappearEffect string
+--- @field DisplayName string
+--- @field DisplayNameRef string
+--- @field Distribution ProjectileDistribution
+--- @field DualWieldingSpellAnimation string
+--- @field DualWieldingUseCosts string
+--- @field EndPosRadius integer
+--- @field ExplodeRadius integer
+--- @field ExtraDescription string
+--- @field ExtraDescriptionRef string
+--- @field ExtraDescriptionParams string
+--- @field FemaleImpactEffects string
+--- @field FollowUpOriginalSpell string
+--- @field ForceTarget integer
+--- @field ForkChance integer
+--- @field ForkingConditions StatsConditions
+--- @field ForkLevels integer
+--- @field FrontOffset integer
+--- @field FXScale integer
+--- @field Height integer
+--- @field HighlightConditions StatsConditions
+--- @field HitAnimationType HitAnimationType
+--- @field HitCosts string
+--- @field HitDelay integer
+--- @field HitEffect string
+--- @field HitExtension number
+--- @field HitRadius number
+--- @field Icon string
+--- @field IgnoreTeleport YesNo
+--- @field ImpactEffect string
+--- @field InstrumentComponentCastSound string
+--- @field InstrumentComponentImpactSound string
+--- @field InstrumentComponentLoopingSound string
+--- @field InstrumentComponentPrepareSound string
+--- @field InterruptPrototype string
+--- @field ItemWall string
+--- @field ItemWallStatus string
+--- @field JumpDelay integer
+--- @field Level integer
+--- @field Lifetime integer
+--- @field LineOfSightFlags LineOfSightFlags
+--- @field Magic Cost integer
+--- @field MaleImpactEffects string
+--- @field MaxAttacks integer
+--- @field MaxDistance integer
+--- @field MaxForkCount integer
+--- @field MaxHitsPerTurn integer
+--- @field MaximumTargets integer
+--- @field MaximumTotalTargetHP integer
+--- @field MemorizationRequirements MemorizationRequirements
+--- @field Memory Cost integer
+--- @field MinHitsPerTurn integer
+--- @field MinJumpDistance number
+--- @field MovementSpeed integer
+--- @field MovingObjectSummonTemplate string
+--- @field NextAttackChance integer
+--- @field NextAttackChanceDivider integer
+--- @field OnlyHit1Target integer
+--- @field OriginSpellFail StatsFunctors
+--- @field OriginSpellProperties StatsFunctors
+--- @field OriginSpellRoll StatsRollConditions
+--- @field OriginSpellSuccess StatsFunctors
+--- @field OriginTargetConditions StatsConditions
+--- @field OverrideSpellLevel YesNo
+--- @field PositionEffect string
+--- @field PowerLevel integer
+--- @field PrepareEffect string
+--- @field PrepareEffectBone string
+--- @field PrepareLoopSound string
+--- @field PrepareSound string
+--- @field PreviewCursor CursorMode
+--- @field PreviewEffect string
+--- @field PreviewStrikeHits YesNo
+--- @field ProjectileCount string
+--- @field ProjectileDelay integer
+--- @field ProjectileSpells string
+--- @field ProjectileTerrainOffset YesNo
+--- @field ProjectileType ProjectileType
+--- @field Range integer
+--- @field ReappearEffect string
+--- @field ReappearEffectTextEvent string
+--- @field RechargeValues string
+--- @field Requirement SpellRequirement
+--- @field RequirementConditions StatsConditions
+--- @field RequirementEvents StatusEvent
+--- @field Requirements StatsRequirements
+--- @field RitualCosts string
+--- @field RootSpellID string
+--- @field SelectedCharacterEffect string
+--- @field SelectedObjectEffect string
+--- @field SelectedPositionEffect string
+--- @field Shape string
+--- @field Sheathing SpellSheathing
+--- @field ShortDescription string
+--- @field ShortDescriptionRef string
+--- @field ShortDescriptionParams string
+--- @field Shuffle YesNo
+--- @field SingleSource YesNo
+--- @field SourceLimbIndex integer
+--- @field SpawnEffect string
+--- @field SpellActionType SpellActionType
+--- @field SpellActionTypePriority integer
+--- @field SpellAnimation string
+--- @field SpellAnimationType SpellAnimationType
+--- @field Spellbook string
+--- @field SpellCategory SpellCategoryFlags
+--- @field SpellContainerID string
+--- @field SpellEffect string
+--- @field SpellFail StatsFunctors
+--- @field SpellFlags SpellFlagList
+--- @field SpellJumpType SpellJumpType
+--- @field MemoryCost integer
+--- @field SpellProperties StatsFunctors
+--- @field SpellRoll StatsRollConditions
+--- @field SpellSchool SpellSchool
+--- @field SpellSoundAftermathTrajectory string
+--- @field SpellSoundMagnitude SpellSoundMagnitude
+--- @field SpellStyleGroup SpellStyleGroup
+--- @field SpellSuccess StatsFunctors
+--- @field Stealth YesNo
+--- @field SteerSpeedMultipler number
+--- @field StopAtFirstContact integer
+--- @field StormEffect string
+--- @field StrikeCount integer
+--- @field SurfaceGrowInterval integer
+--- @field SurfaceGrowStep integer
+--- @field SurfaceLifetime integer
+--- @field SurfaceRadius integer
+--- @field SurfaceType Surface Type
+--- @field TargetCeiling string
+--- @field TargetConditions StatsConditions
+--- @field TargetEffect string
+--- @field TargetFloor string
+--- @field TargetGroundEffect string
+--- @field TargetHitEffect string
+--- @field TargetProjectiles YesNo
+--- @field TargetRadius string
+--- @field TargetSound string
+--- @field TeleportDelay integer
+--- @field TeleportSelf YesNo
+--- @field TeleportSurface YesNo
+--- @field Template string
+--- @field ThrowableSpellFail StatsFunctors
+--- @field ThrowableSpellProperties StatsFunctors
+--- @field ThrowableSpellRoll StatsRollConditions
+--- @field ThrowableSpellSuccess StatsFunctors
+--- @field ThrowableTargetConditions StatsConditions
+--- @field ThrowOrigin ThrowOrigin
+--- @field TooltipAttackSave string
+--- @field TooltipDamageList string
+--- @field TooltipOnMiss string
+--- @field TooltipOnSave string
+--- @field TooltipPermanentWarnings string
+--- @field TooltipSpellDCAbilities AbilityFlags
+--- @field TooltipStatusApply string
+--- @field TooltipUpcastDescription string
+--- @field TooltipUpcastDescriptionParams string
+--- @field Trajectories string
+--- @field UseCosts string
+--- @field UseWeaponDamage YesNo
+--- @field UseWeaponProperties YesNo
+--- @field VerbalIntent VerbalIntent
+--- @field VocalComponentSound string
+--- @field WallEndEffect string
+--- @field WallStartEffect string
+--- @field WeaponBones string
+--- @field WeaponTypes WeaponFlags
 
 
 --- @class StatusData:StatsObject
---- @field StatusType StatsConditions
---- @field AbsorbSurfaceRange string
---- @field AbsorbSurfaceType StatsConditions
---- @field AiCalculationSpellOverride StatsConditions
---- @field AnimationEnd StatsConditions
---- @field AnimationLoop StatsConditions
---- @field AnimationStart StatsConditions
---- @field ApplyEffect StatsConditions
---- @field AuraFlags InterruptDefaultValue
---- @field AuraFX StatsConditions
---- @field AuraRadius string
---- @field AuraStatuses AIFlags
---- @field BeamEffect StatsConditions
---- @field BonusFromSkill ArmorType
---- @field Boosts StatsConditions
---- @field Charges string
---- @field DefendTargetPosition FormatStringColor
---- @field Description AuraFlags
---- @field DescriptionRef AuraFlags
---- @field DescriptionParams StatsConditions
---- @field DieAction StatsConditions
---- @field DisableInteractions FormatStringColor
---- @field DisplayName AuraFlags
---- @field DisplayNameRef AuraFlags
---- @field DynamicAnimationTag integer
---- @field EndEffect StatsConditions
---- @field ForceStackOverwrite FormatStringColor
---- @field FormatColor Penalty PreciseQualifier
---- @field FreezeTime string
---- @field HealEffectId StatsConditions
---- @field HealMultiplier string
---- @field HealStat StatusStackType
---- @field HealType Action Type
---- @field HealValue StatsConditions
---- @field HideOverheadUI string
---- @field HitAnimationType SpellJumpType
---- @field Icon StatsConditions
---- @field ImmuneFlag Itemslot
---- @field Instant FormatStringColor
---- @field IsUnique string
---- @field Items StatsConditions
---- @field LeaveAction StatsConditions
---- @field LEDEffect SpellAnimationType
---- @field ManagedStatusEffectGroup StatsConditions
---- @field ManagedStatusEffectType CinematicArenaFlags
---- @field Material StatsConditions
---- @field MaterialApplyArmor FormatStringColor
---- @field MaterialApplyBody FormatStringColor
---- @field MaterialApplyNormalMap FormatStringColor
---- @field MaterialApplyWeapon FormatStringColor
---- @field MaterialFadeAmount string
---- @field MaterialOverlayOffset string
---- @field MaterialParameters StatsConditions
---- @field MaterialType Qualifier
---- @field MeshEffect StatsConditions
---- @field Necromantic FormatStringColor
---- @field NumStableFailed string
---- @field NumStableSuccess string
---- @field OnApplyConditions MemorizationRequirements
---- @field OnApplyFail AIFlags
---- @field OnApplyFunctors AIFlags
---- @field OnApplyRoll MemorizationRequirements
---- @field OnApplySuccess AIFlags
---- @field OnRemoveFail AIFlags
---- @field OnRemoveFunctors AIFlags
---- @field OnRemoveRoll MemorizationRequirements
---- @field OnRemoveSuccess AIFlags
---- @field OnRollsFailed AIFlags
---- @field OnSuccess AIFlags
---- @field OnTickFail AIFlags
---- @field OnTickRoll MemorizationRequirements
---- @field OnTickSuccess AIFlags
---- @field Passives StatsConditions
---- @field PeaceOnly FormatStringColor
---- @field PerformEventName StatsConditions
---- @field PlayerHasTag StatsConditions
---- @field PlayerSameParty FormatStringColor
---- @field PolymorphResult StatsConditions
---- @field Projectile StatsConditions
---- @field Radius string
---- @field RemoveConditions MemorizationRequirements
---- @field RemoveEvents ProjectileDistribution
---- @field ResetCooldowns StatsConditions
---- @field RetainSpells StatsConditions
---- @field Rules integer
---- @field Sheathing InterruptContextScope
---- @field SoundLoop StatsConditions
---- @field SoundStart StatsConditions
---- @field SoundStop StatsConditions
---- @field SoundVocalEnd Relation
---- @field SoundVocalLoop Relation
---- @field SoundVocalStart Relation
---- @field Spells StatsConditions
---- @field SplatterBloodAmount HitAnimationType
---- @field SplatterDirtAmount HitAnimationType
---- @field SplatterSweatAmount HitAnimationType
---- @field StableRoll StatsConditions
---- @field StableRollDC string
---- @field StackId StatsConditions
---- @field StackPriority string
---- @field StackType ModifierType
---- @field StatsId StatsConditions
---- @field StatusEffect StatsConditions
---- @field StatusEffectOnTurn StatsConditions
---- @field StatusEffectOverride StatsConditions
---- @field StatusEffectOverrideForItems StatsConditions
---- @field StatusGroups ProficiencyGroupFlags
---- @field StatusPropertyFlags CooldownType
---- @field StatusSoundState StatsConditions
---- @field StillAnimationPriority StatsFunctorContext
---- @field StillAnimationType StatusPropertyFlags
---- @field SurfaceChange StatsConditions
---- @field TargetConditions StatsConditions
---- @field TargetEffect StatsConditions
---- @field TemplateID StatsConditions
---- @field TickFunctors AIFlags
---- @field TickType StatsFunctors
---- @field Toggle FormatStringColor
---- @field TooltipDamage StatsConditions
---- @field TooltipPermanentWarnings StatsConditions
---- @field TooltipSave StatsConditions
---- @field UseLyingPickingState FormatStringColor
---- @field WeaponOverride StatsConditions
+--- @field StatusType string
+--- @field AbsorbSurfaceRange integer
+--- @field AbsorbSurfaceType string
+--- @field AiCalculationSpellOverride string
+--- @field AnimationEnd string
+--- @field AnimationLoop string
+--- @field AnimationStart string
+--- @field ApplyEffect string
+--- @field AuraFlags AuraFlags
+--- @field AuraFX string
+--- @field AuraRadius integer
+--- @field AuraStatuses StatsFunctors
+--- @field BeamEffect string
+--- @field BonusFromSkill Skill
+--- @field Boosts string
+--- @field Charges integer
+--- @field DefendTargetPosition YesNo
+--- @field Description string
+--- @field DescriptionRef string
+--- @field DescriptionParams string
+--- @field DieAction string
+--- @field DisableInteractions YesNo
+--- @field DisplayName string
+--- @field DisplayNameRef string
+--- @field DynamicAnimationTag string
+--- @field EndEffect string
+--- @field ForceStackOverwrite YesNo
+--- @field FormatColor FormatStringColor
+--- @field FreezeTime integer
+--- @field HealEffectId string
+--- @field HealMultiplier integer
+--- @field HealStat StatusHealType
+--- @field HealType HealValueType
+--- @field HealValue string
+--- @field HideOverheadUI integer
+--- @field HitAnimationType HitAnimationType
+--- @field Icon string
+--- @field ImmuneFlag AttributeFlags
+--- @field Instant YesNo
+--- @field IsUnique integer
+--- @field Items string
+--- @field LeaveAction string
+--- @field LEDEffect LEDEffectType
+--- @field ManagedStatusEffectGroup string
+--- @field ManagedStatusEffectType ManagedStatusEffectType
+--- @field Material string
+--- @field MaterialApplyArmor YesNo
+--- @field MaterialApplyBody YesNo
+--- @field MaterialApplyNormalMap YesNo
+--- @field MaterialApplyWeapon YesNo
+--- @field MaterialFadeAmount integer
+--- @field MaterialOverlayOffset integer
+--- @field MaterialParameters string
+--- @field MaterialType MaterialType
+--- @field MeshEffect string
+--- @field Necromantic YesNo
+--- @field NumStableFailed integer
+--- @field NumStableSuccess integer
+--- @field OnApplyConditions Conditions
+--- @field OnApplyFail StatsFunctors
+--- @field OnApplyFunctors StatsFunctors
+--- @field OnApplyRoll Conditions
+--- @field OnApplySuccess StatsFunctors
+--- @field OnRemoveFail StatsFunctors
+--- @field OnRemoveFunctors StatsFunctors
+--- @field OnRemoveRoll Conditions
+--- @field OnRemoveSuccess StatsFunctors
+--- @field OnRollsFailed StatsFunctors
+--- @field OnSuccess StatsFunctors
+--- @field OnTickFail StatsFunctors
+--- @field OnTickRoll Conditions
+--- @field OnTickSuccess StatsFunctors
+--- @field Passives string
+--- @field PeaceOnly YesNo
+--- @field PerformEventName string
+--- @field PlayerHasTag string
+--- @field PlayerSameParty YesNo
+--- @field PolymorphResult string
+--- @field Projectile string
+--- @field Radius integer
+--- @field RemoveConditions Conditions
+--- @field RemoveEvents StatusEvent
+--- @field ResetCooldowns string
+--- @field RetainSpells string
+--- @field Rules string
+--- @field Sheathing StatusSheathing
+--- @field SoundLoop string
+--- @field SoundStart string
+--- @field SoundStop string
+--- @field SoundVocalEnd SoundVocalType
+--- @field SoundVocalLoop SoundVocalType
+--- @field SoundVocalStart SoundVocalType
+--- @field Spells string
+--- @field SplatterBloodAmount number
+--- @field SplatterDirtAmount number
+--- @field SplatterSweatAmount number
+--- @field StableRoll string
+--- @field StableRollDC integer
+--- @field StackId string
+--- @field StackPriority integer
+--- @field StackType StatusStackType
+--- @field StatsId string
+--- @field StatusEffect string
+--- @field StatusEffectOnTurn string
+--- @field StatusEffectOverride string
+--- @field StatusEffectOverrideForItems string
+--- @field StatusGroups StatusGroupFlags
+--- @field StatusPropertyFlags StatusPropertyFlags
+--- @field StatusSoundState string
+--- @field StillAnimationPriority StillAnimPriority
+--- @field StillAnimationType StatusAnimationType
+--- @field SurfaceChange string
+--- @field TargetConditions string
+--- @field TargetEffect string
+--- @field TemplateID string
+--- @field TickFunctors StatsFunctors
+--- @field TickType TickType
+--- @field Toggle YesNo
+--- @field TooltipDamage string
+--- @field TooltipPermanentWarnings string
+--- @field TooltipSave string
+--- @field UseLyingPickingState YesNo
+--- @field WeaponOverride string
 
 
 --- @class Weapon:StatsObject
---- @field Boosts StatsConditions
---- @field BoostsOnEquipMainHand StatsConditions
---- @field BoostsOnEquipOffHand StatsConditions
---- @field Charges string
---- @field ColorPresetResource StatsConditions
---- @field ComboCategory StatsConditions
---- @field Damage StatsConditions
---- @field Damage Range string
---- @field Damage Type Spell Attack Type
---- @field DefaultBoosts StatsConditions
---- @field Durability string
---- @field DurabilityDegradeSpeed Damage Type
---- @field ExtraProperties StatsConditions
---- @field FallingHitEffect StatsConditions
---- @field FallingLandEffect StatsConditions
---- @field Flags Itemslot
---- @field GameSize StatsConditions
---- @field IgnoreVisionBlock FormatStringColor
---- @field InventoryTab StepsType
---- @field ItemColor StatsConditions
---- @field ItemGroup StatsConditions
---- @field Level string
---- @field MaxAmount string
---- @field MaxCharges string
---- @field MaxLevel string
---- @field MinAmount string
---- @field MinLevel string
---- @field NeedsIdentification FormatStringColor
---- @field ObjectCategory StatsConditions
---- @field PassivesMainHand StatsConditions
---- @field PassivesOffHand StatsConditions
---- @field PassivesOnEquip StatsConditions
---- @field PersonalStatusImmunities SpellActionType
---- @field Priority string
---- @field Proficiency Group DisturbanceInvestigationKind
---- @field Projectile StatsConditions
---- @field Rarity SpellAnimationIntentType
---- @field Requirements string
---- @field RootTemplate StatsConditions
---- @field Slot Act
---- @field SoundSize StatsConditions
---- @field Spells StatsConditions
---- @field StatusInInventory StatsConditions
---- @field StatusOnEquip StatsConditions
---- @field SupplyValue string
---- @field Tags StatsConditions
---- @field Unique string
---- @field UniqueWeaponSoundSwitch StatsConditions
---- @field UseConditions MemorizationRequirements
---- @field UseCosts StatsConditions
---- @field ValueOverride string
---- @field ValueLevel string
---- @field ValueRounding string
---- @field ValueScale HitAnimationType
---- @field ValueUUID integer
---- @field VersatileDamage StatsConditions
---- @field Weapon Group Progression Type
---- @field Weapon Properties CastCheckType
---- @field WeaponFunctors AIFlags
---- @field WeaponRange string
---- @field Weight HitAnimationType
+--- @field Boosts string
+--- @field BoostsOnEquipMainHand string
+--- @field BoostsOnEquipOffHand string
+--- @field Charges integer
+--- @field ColorPresetResource string
+--- @field ComboCategory string
+--- @field Damage string
+--- @field Damage Range integer
+--- @field Damage Type Damage Type
+--- @field DefaultBoosts string
+--- @field Durability integer
+--- @field DurabilityDegradeSpeed Qualifier
+--- @field ExtraProperties string
+--- @field FallingHitEffect string
+--- @field FallingLandEffect string
+--- @field Flags AttributeFlags
+--- @field GameSize string
+--- @field IgnoreVisionBlock YesNo
+--- @field InventoryTab InventoryTabs
+--- @field ItemColor string
+--- @field ItemGroup string
+--- @field Level integer
+--- @field MaxAmount integer
+--- @field MaxCharges integer
+--- @field MaxLevel integer
+--- @field MinAmount integer
+--- @field MinLevel integer
+--- @field NeedsIdentification YesNo
+--- @field ObjectCategory string
+--- @field PassivesMainHand string
+--- @field PassivesOffHand string
+--- @field PassivesOnEquip string
+--- @field PersonalStatusImmunities StatusIDs
+--- @field Priority integer
+--- @field Proficiency Group ProficiencyGroupFlags
+--- @field Projectile string
+--- @field Rarity Rarity
+--- @field Requirements StatsRequirements
+--- @field RootTemplate string
+--- @field Slot Itemslot
+--- @field SoundSize string
+--- @field Spells string
+--- @field StatusInInventory string
+--- @field StatusOnEquip string
+--- @field SupplyValue integer
+--- @field Tags string
+--- @field Unique integer
+--- @field UniqueWeaponSoundSwitch string
+--- @field UseConditions Conditions
+--- @field UseCosts string
+--- @field ValueOverride integer
+--- @field ValueLevel integer
+--- @field ValueRounding integer
+--- @field ValueScale number
+--- @field ValueUUID string
+--- @field VersatileDamage string
+--- @field Weapon Group Weapon Group
+--- @field Weapon Properties WeaponFlags
+--- @field WeaponFunctors StatsFunctors
+--- @field WeaponRange integer
+--- @field Weight number
 
 
 
@@ -15272,18 +15274,18 @@ Ext_Enums.GuiTabBarFlags = {
 	NoCloseWithMiddleMouseButton = 8,
 	NoTabListScrollingButtons = 16,
 	NoTooltip = 32,
-	FittingPolicyDefault = 64,
+	FittingPolicyResizeDown = 64,
 	FittingPolicyScroll = 128,
-	FittingPolicyDefault = 192,
+	FittingPolicyMask = 192,
 	[1] = "Reorderable",
 	[2] = "AutoSelectNewTabs",
 	[4] = "TabListPopupButton",
 	[8] = "NoCloseWithMiddleMouseButton",
 	[16] = "NoTabListScrollingButtons",
 	[32] = "NoTooltip",
-	[64] = "FittingPolicyDefault",
+	[64] = "FittingPolicyResizeDown",
 	[128] = "FittingPolicyScroll",
-	[192] = "FittingPolicyDefault",
+	[192] = "FittingPolicyMask",
 }
 
 --- @enum GuiTabItemFlags
@@ -15361,18 +15363,18 @@ Ext_Enums.GuiTableFlags = {
 	RowBg = 64,
 	BordersInnerH = 128,
 	BordersOuterH = 256,
-	BordersInnerH = 384,
+	BordersOuterH = 384,
 	BordersInnerV = 512,
-	BordersInnerH = 640,
+	BordersInnerV = 640,
 	BordersOuterV = 1024,
-	BordersOuterV = 1280,
-	BordersV = 1536,
-	BordersV = 1920,
+	BordersOuter = 1280,
+	BordersInnerV = 1536,
+	BordersOuter = 1920,
 	NoBordersInBody = 2048,
 	NoBordersInBodyUntilResize = 4096,
 	SizingFixedFit = 8192,
 	SizingFixedSame = 16384,
-	SizingStretchProp = 24576,
+	SizingFixedSame = 24576,
 	SizingStretchSame = 32768,
 	NoHostExtendX = 65536,
 	NoHostExtendY = 131072,
@@ -15396,18 +15398,18 @@ Ext_Enums.GuiTableFlags = {
 	[64] = "RowBg",
 	[128] = "BordersInnerH",
 	[256] = "BordersOuterH",
-	[384] = "BordersInnerH",
+	[384] = "BordersOuterH",
 	[512] = "BordersInnerV",
-	[640] = "BordersInnerH",
+	[640] = "BordersInnerV",
 	[1024] = "BordersOuterV",
-	[1280] = "BordersOuterV",
-	[1536] = "BordersV",
-	[1920] = "BordersV",
+	[1280] = "BordersOuter",
+	[1536] = "BordersInnerV",
+	[1920] = "BordersOuter",
 	[2048] = "NoBordersInBody",
 	[4096] = "NoBordersInBodyUntilResize",
 	[8192] = "SizingFixedFit",
 	[16384] = "SizingFixedSame",
-	[24576] = "SizingStretchProp",
+	[24576] = "SizingFixedSame",
 	[32768] = "SizingStretchSame",
 	[65536] = "NoHostExtendX",
 	[131072] = "NoHostExtendY",
@@ -15437,7 +15439,7 @@ Ext_Enums.GuiTreeNodeFlags = {
 	AllowOverlap = 4,
 	NoTreePushOnOpen = 8,
 	NoAutoOpenOnLog = 16,
-	Framed = 26,
+	NoTreePushOnOpen = 26,
 	DefaultOpen = 32,
 	OpenOnDoubleClick = 64,
 	OpenOnArrow = 128,
@@ -15453,7 +15455,7 @@ Ext_Enums.GuiTreeNodeFlags = {
 	[4] = "AllowOverlap",
 	[8] = "NoTreePushOnOpen",
 	[16] = "NoAutoOpenOnLog",
-	[26] = "Framed",
+	[26] = "NoTreePushOnOpen",
 	[32] = "DefaultOpen",
 	[64] = "OpenOnDoubleClick",
 	[128] = "OpenOnArrow",
@@ -15474,7 +15476,7 @@ Ext_Enums.GuiWindowFlags = {
 	NoScrollbar = 8,
 	NoScrollWithMouse = 16,
 	NoCollapse = 32,
-	NoResize = 43,
+	NoScrollbar = 43,
 	AlwaysAutoResize = 64,
 	NoBackground = 128,
 	NoSavedSettings = 256,
@@ -15487,8 +15489,8 @@ Ext_Enums.GuiWindowFlags = {
 	AlwaysHorizontalScrollbar = 32768,
 	NoNavInputs = 65536,
 	NoNavFocus = 131072,
-	NoNavFocus = 196608,
-	NoNavFocus = 197120,
+	NoNav = 196608,
+	NoNav = 197120,
 	UnsavedDocument = 262144,
 	[1] = "NoTitleBar",
 	[2] = "NoResize",
@@ -15496,7 +15498,7 @@ Ext_Enums.GuiWindowFlags = {
 	[8] = "NoScrollbar",
 	[16] = "NoScrollWithMouse",
 	[32] = "NoCollapse",
-	[43] = "NoResize",
+	[43] = "NoScrollbar",
 	[64] = "AlwaysAutoResize",
 	[128] = "NoBackground",
 	[256] = "NoSavedSettings",
@@ -15509,8 +15511,8 @@ Ext_Enums.GuiWindowFlags = {
 	[32768] = "AlwaysHorizontalScrollbar",
 	[65536] = "NoNavInputs",
 	[131072] = "NoNavFocus",
-	[196608] = "NoNavFocus",
-	[197120] = "NoNavFocus",
+	[196608] = "NoNav",
+	[197120] = "NoNav",
 	[262144] = "UnsavedDocument",
 }
 
@@ -15642,15 +15644,15 @@ Ext_Enums.InputType = {
 	Unknown = 1,
 	Unknown = 2,
 	ValueChange = 4,
-	Unknown = 8,
-	Unknown = 16,
+	Hold = 8,
+	Repeat = 16,
 	Unknown = 32,
 	[0] = "Unknown",
 	[1] = "Unknown",
 	[2] = "Unknown",
 	[4] = "ValueChange",
-	[8] = "Unknown",
-	[16] = "Unknown",
+	[8] = "Hold",
+	[16] = "Repeat",
 	[32] = "Unknown",
 }
 

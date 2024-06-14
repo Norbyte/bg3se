@@ -839,7 +839,7 @@ function Generator:EmitModifierList(modifierList)
 
     local modifiers = Ext.Stats.GetStatsManager().ModifierValueLists
     for _,attr in ipairs(modifierList.Attributes.Primitives) do
-        local modifier = modifiers.Primitives[attr.EnumerationIndex]
+        local modifier = modifiers.Primitives[attr.EnumerationIndex+1]
         self:EmitModifier(attr, modifier)
     end
 end
