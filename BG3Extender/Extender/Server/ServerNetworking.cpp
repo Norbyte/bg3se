@@ -149,6 +149,22 @@ void NetworkManager::Send(net::ExtenderMessage * msg, UserId userId)
 	}
 }
 
+void NetworkManager::Kick(UserId userId, const char* kickText)
+{
+	auto server = GetServer();
+
+	if (server != nullptr) {
+		auto kickMsg = GetFreeMessage();
+		auto kick = kickMsg->GetMessage().mutable_s2c_kick();
+
+		if (kickText != nullptr) {
+			kick->set_message(kickText);
+		}
+
+		server->SendMessageSingleRecipient(userId.Id, kickMsg);
+	}
+}
+
 void NetworkManager::Broadcast(net::ExtenderMessage * msg, UserId excludeUserId, bool excludeLocalPeer)
 {
 	auto server = GetServer();
