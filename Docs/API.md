@@ -900,6 +900,7 @@ Usage notes:
  - Although the variables registered server-side and client-side can differ, it is recommended to register all variables on both sides (even if they're server-only or client-only) for consistency
  - Variable names, much like Osiris DB names are global; it is recommended to prefix them with your mod name to ensure they're unique
  - Variables must be registered with the same settings on both client and server, otherwise various synchronization issues may occur.
+ - Client-only variables cannot be persistent.
 
 
 After registration, custom variables can be read/written through the `Vars` property on entities:
