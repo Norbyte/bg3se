@@ -7,6 +7,11 @@ inline void push(lua_State* L, nullptr_t v)
 	lua_pushnil(L);
 }
 
+inline void push(lua_State* L, std::monostate v)
+{
+	lua_pushnil(L);
+}
+
 inline void push(lua_State* L, bool v)
 {
 	lua_pushboolean(L, v ? 1 : 0);

@@ -252,10 +252,10 @@ void OsirisCallbackManager::StorySetMerging(bool isMerging)
 
 void OsirisCallbackManager::RegisterNodeHandler(OsirisHookSignature const& sig, SubscriptionId handlerId)
 {
-	auto func = LookupOsiFunction(sig.name, sig.arity);
+	auto func = gExtender->GetServer().Osiris().LookupFunction(sig.name, sig.arity);
 	if (func != nullptr && func->Type == FunctionType::UserQuery) {
 		// We need to find the backing node for the user query
-		func = LookupOsiFunction(sig.name + "__DEF__", sig.arity);
+		func = gExtender->GetServer().Osiris().LookupFunction(sig.name + "__DEF__", sig.arity);
 	}
 
 	if (func == nullptr) {
