@@ -29,6 +29,48 @@ bool IsModLoaded(char const* modNameGuid)
 }
 
 /// <summary>
+/// Returns whether the module with the specified GUID is available, i.e. in the mod directory.
+/// 
+/// Example:
+/// ```lua
+/// if (Ext.IsModAvailable("5cc23efe-f451-c414-117d-b68fbc53d32d")) then
+///     Ext.Print("Mod available")
+/// end
+/// ```
+/// </summary>
+/// <param name="modNameGuid">UUID of mod to check</param>
+bool IsModAvailable(char const* modNameGuid)
+{
+	auto modUuid = Guid::Parse(modNameGuid);
+	if (modUuid) {
+		auto modManager = gExtender->GetCurrentExtensionState()->GetModManager();
+		for (auto const& mod : modManager->AvailableMods) {
+			if (mod.Info.ModuleUUID == *modUuid) {
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+/// <summary>
+/// Returns the list of available module UUIDs.
+/// </summary>
+/// <returns></returns>
+ObjectSet<Guid> GetAvailableMods()
+{
+	ObjectSet<Guid> mods;
+	auto modManager = gExtender->GetCurrentExtensionState()->GetModManager();
+
+	for (auto const& mod : modManager->AvailableMods) {
+		mods.Add(mod.Info.ModuleUUID);
+	}
+
+	return mods;
+}
+
+/// <summary>
 /// Returns the list of loaded module UUIDs in the order they're loaded in.
 /// </summary>
 /// <returns></returns>
@@ -45,7 +87,7 @@ ObjectSet<Guid> GetLoadOrder()
 }
 
 /// <summary>
-/// Returns detailed information about the specified (loaded) module.
+/// Returns detailed information about the specified (available) module.
 /// </summary>
 /// <param name="modNameGuid">Mod UUID to query</param>
 Module* GetMod(char const* modNameGuid)
@@ -54,7 +96,7 @@ Module* GetMod(char const* modNameGuid)
 	auto modUuid = Guid::Parse(modNameGuid);
 	if (modUuid) {
 		auto modManager = gExtender->GetCurrentExtensionState()->GetModManager();
-		for (auto& mod : modManager->BaseModule.LoadOrderedModules) {
+		for (auto& mod : modManager->AvailableMods) {
 			if (mod.Info.ModuleUUID == *modUuid) {
 				return &mod;
 			}
@@ -79,7 +121,9 @@ void RegisterModLib()
 	DECLARE_MODULE(Mod, Both)
 	BEGIN_MODULE()
 	MODULE_FUNCTION(IsModLoaded)
+	MODULE_FUNCTION(IsModAvailable)
 	MODULE_FUNCTION(GetLoadOrder)
+	MODULE_FUNCTION(GetAvailableMods)
 	MODULE_FUNCTION(GetMod)
 	MODULE_FUNCTION(GetBaseMod)
 	MODULE_FUNCTION(GetModManager)
