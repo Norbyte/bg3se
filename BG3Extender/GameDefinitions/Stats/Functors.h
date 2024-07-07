@@ -322,8 +322,8 @@ struct ForceFunctor : public Functor
 	ForceFunctorOrigin Origin{ ForceFunctorOrigin::OriginToEntity }; // Arg1
 	ForceFunctorAggression Aggression{ ForceFunctorAggression::Aggressive }; // Arg2
 	StatsExpressionParamEx* DistanceExpression{ nullptr };
-	bool Arg3{ false };
-	bool Arg4{ false };
+	bool ControlArc{ false };
+	bool PullToOrigin{ false };
 };
 
 struct DouseFunctor : public Functor
@@ -399,10 +399,10 @@ struct DealDamageFunctor : public Functor
 	int CoinMultiplier{ 0 };
 	bool Nonlethal{ false }; // Arg4
 	bool Magical{ false }; // Arg3
-	bool Arg7{ false };
-	bool Arg8{ false };
-	bool Arg9{ false };
-	bool Arg10{ false };
+	bool IgnoreDamageBonus{ false };
+	bool IgnoreEvents{ false };
+	bool ConsumeCoin{ false };
+	bool IgnoreImmunities{ false };
 };
 
 struct ExecuteWeaponFunctorsFunctor : public Functor
@@ -457,7 +457,7 @@ struct UseActionResourceFunctor : public Functor
 	double Amount{ 0.0 }; // Arg1
 	int Level{ 0 }; // Arg2
 	bool IsPercentage{ false }; // Arg1
-	bool Arg4{ false }; // Arg3
+	bool IgnoreResourceConsumeBoosts{ false }; // Arg3
 };
 
 struct UseAttackFunctor : public Functor
@@ -540,8 +540,8 @@ struct SummonInInventoryFunctor : public Functor
 	std::variant<SummonLifetimeType, float> Lifetime;
 	MultiHashSet<FixedString> AdditionalArgs;
 	FixedString Arg9;
-	int32_t Arg3{ 0 };
-	bool Arg4{ false };
+	int32_t Amount{ 0 };
+	bool Equip{ false };
 	bool Arg5{ false };
 	bool Arg6{ false };
 	bool Arg7{ false };

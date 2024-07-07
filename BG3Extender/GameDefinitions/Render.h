@@ -288,11 +288,10 @@ struct ActiveMaterial
 	struct Texture2DParam
 	{
 		[[bg3::hidden]] void* TextureResource;
-		[[bg3::hidden]] void* field_8;
 		FixedString Name;
 		int16_t Index;
 		bool IsStub;
-		[[bg3::hidden]] char field_17;
+		[[bg3::hidden]] uint8_t field_17;
 	};
 
 	struct VirtualTextureParam

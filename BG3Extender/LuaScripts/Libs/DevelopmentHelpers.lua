@@ -65,6 +65,48 @@ local function ValidateEntities()
     _P("Done.")
 end
 
+local function ValidateAppliedMaterial(mat)
+    if Ext.Types.Validate(mat) then
+        Ext.Types.Validate(mat.Material)
+    end
+end
+
+local function ValidateRenderable(r)
+    if Ext.Types.Validate(r) then
+        if r.ActiveMaterial ~= nil then
+            ValidateAppliedMaterial(r.ActiveMaterial)
+        end
+        for i,obj in pairs(r.AppliedMaterials) do
+            ValidateAppliedMaterial(obj)
+        end
+        for i,obj in pairs(r.AppliedOverlayMaterials) do
+            ValidateAppliedMaterial(obj)
+        end
+    end
+end
+
+local function ValidateVisual(visual)
+    if Ext.Types.Validate(visual) then
+        for i,obj in pairs(visual.ObjectDescs) do
+            ValidateRenderable(obj.Renderable)
+        end
+        for i,obj in pairs(visual.Attachments) do
+            if obj.Visual ~= nil then
+                ValidateVisual(obj.Visual)
+            end
+        end
+    end
+end
+
+local function ValidateVisuals()
+    local counters = {}
+    for i,entity in ipairs(Ext.Entity.GetAllEntitiesWithComponent("Visual")) do
+        if entity.Visual ~= nil and entity.Visual.Visual ~= nil then
+            ValidateVisual(entity.Visual.Visual)
+        end
+    end
+end
+
 local function TryToReserializeObject(obj)
     local serializer = function ()
         local serialized = Ext.Types.Serialize(obj)
@@ -251,6 +293,11 @@ end)
 
 Ext.RegisterConsoleCommand("se_staticdataserializertest", function ()
     ReserializeStaticData()
+end)
+
+Ext.RegisterConsoleCommand("se_visualtest", function ()
+    Ext.Debug.SetEntityRuntimeCheckLevel(0)
+    ValidateVisuals()
 end)
 
 Ext.RegisterConsoleCommand("se_deepfry", function ()

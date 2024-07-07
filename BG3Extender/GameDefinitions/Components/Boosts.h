@@ -46,7 +46,7 @@ DEFN_BOOST(ArmorClass, AC, {
 DEFN_BOOST(Ability, Ability, {
 	AbilityId Ability;
 	int32_t Value;
-	int32_t field_8;
+	[[bg3::legacy(field_8)]] int32_t ValueCap;
 	int8_t field_C;
 })
 
@@ -225,13 +225,13 @@ DEFN_BOOST(NullifyAbility, NullifyAbilityScore, {
 
 DEFN_BOOST(Reroll, Reroll, {
 	stats::RollType RollType;
-	int8_t field_1;
-	bool field_2;
+	[[bg3::legacy(field_1)]] int8_t RollBelow;
+	[[bg3::legacy(field_2)]] bool AlwaysReroll;
 })
 
 DEFN_BOOST(DownedStatus, DownedStatus, {
 	FixedString StatusId;
-	int32_t field_4;
+	[[bg3::legacy(field_4)]] int32_t Priority;
 })
 
 DEFN_BOOST(WeaponEnchantment, WeaponEnchantment, {
@@ -248,10 +248,10 @@ DEFN_BOOST(Attribute, Attribute, {
 })
 
 DEFN_BOOST(GameplayLight, GameplayLight, {
-	int field_0;
+	[[bg3::legacy(field_0)]] int Distance;
 	bool field_4;
 	int field_8;
-	uint8_t field_C;
+	[[bg3::legacy(field_C)]] uint8_t Sunlight;
 })
 
 DEFN_BOOST(DualWielding, DualWielding, {
@@ -436,7 +436,7 @@ DEFN_BOOST(RedirectDamage, RedirectDamage, {
 	int32_t Amount;
 	DamageType DamageType1;
 	DamageType DamageType2;
-	bool field_6;
+	[[bg3::legacy(field_6)]] bool RedirectToDamageSource;
 })
 
 DEFN_BOOST(CanSeeThrough, CanSeeThrough, {
