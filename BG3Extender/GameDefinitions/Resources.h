@@ -2566,7 +2566,7 @@ struct MaterialResource : public TwoStepLoadableResource
 		FixedString ID;
 	};
 
-	MaterialInstance* Instance;
+	Material* Instance;
 	Array<ScalarParameter> ScalarParameters;
 	Array<Vector2Parameter> Vector2Parameters;
 	Array<Vector3Parameter> Vector3Parameters;

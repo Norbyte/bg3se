@@ -57,7 +57,8 @@ struct MoveableObject;
 struct RenderableObject;
 struct Visual;
 struct Scene;
-struct MaterialInstance;
+struct Material;
+struct IActionData;
 
 struct SoundManager;
 struct WwiseManager;

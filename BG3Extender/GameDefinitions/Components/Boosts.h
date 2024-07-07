@@ -107,8 +107,8 @@ DEFN_BOOST(HalveWeaponDamage, HalveWeaponDamage, {
 DEFN_BOOST(UnlockSpell, UnlockSpell, {
 	FixedString SpellId;
 	AbilityId Ability;
-	Guid SomeUUID;
-	SpellChildSelectionType SpellChildSelection;
+	[[bg3::legacy(SomeUUID)]] Guid CastResource;
+	[[bg3::legacy(SpellChildSelection)]] SpellLearningStrategy LearningStrategy;
 	SpellCooldownType CooldownType;
 })
 

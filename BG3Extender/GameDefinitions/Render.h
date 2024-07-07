@@ -50,12 +50,13 @@ struct MoveableObject : ProtectedGameObject<MoveableObject>
 	uint8_t DirtyFlags;
 	AABound WorldBound;
 	AABound BaseBound;
-	glm::vec2 SceneSize_M;
-	int SceneNodeIndex_M;
+	float MinLODDistance;
+	float MaxLODDistance;
+	int CullDataHandleIndex;
 };
 
 
-struct MaterialInstance
+struct Material : public ProtectedGameObject<Material>
 {
 	struct ShaderParamBinding
 	{
@@ -184,7 +185,7 @@ struct MaterialInstance
 
 	struct ParametersSet
 	{
-		MaterialInstance* Material;
+		Material* Material;
 		Array<ScalarParameter> ScalarParameters;
 		Array<Vector2Parameter> Vector2Parameters;
 		Array<Vector3Parameter> Vector3Parameters;
@@ -217,30 +218,30 @@ struct MaterialInstance
 	uint8_t MaterialUsage;
 	FixedString DiffusionProfileUUID;
 	ParametersSet Parameters;
-	MaterialInstance* Parent;
+	Material* Parent;
 	uint64_t Version64;
 
-	//# P_FUN(SetScalar, MaterialInstance::SetScalar)
-	//# P_FUN(SetVector2, MaterialInstance::SetVector2)
-	//# P_FUN(SetVector3, MaterialInstance::SetVector3)
-	//# P_FUN(SetVector4, MaterialInstance::SetVector4)
+	//# P_FUN(SetScalar, Material::SetScalar)
+	//# P_FUN(SetVector2, Material::SetVector2)
+	//# P_FUN(SetVector3, Material::SetVector3)
+	//# P_FUN(SetVector4, Material::SetVector4)
 	bool SetScalar(FixedString const& param, float value);
 	bool SetVector2(FixedString const& param, glm::vec2 value);
 	bool SetVector3(FixedString const& param, glm::vec3 value);
 	bool SetVector4(FixedString const& param, glm::vec4 value);
 
 	template <class T>
-	void SetUniformParam(MaterialInstance::UniformBindingData const& binding, T value);
+	void SetUniformParam(UniformBindingData const& binding, T value);
 
 	void* GetOrCreateConstantBuffer(uint8_t shaderIndex);
 };
 
 
-struct MaterialParameterSet
+struct MaterialRenderingData
 {
 	EntityHandle Handle;
 	EntityHandle field_8;
-	uint64_t MaterialHash;
+	uint64_t InstancingHash;
 	uint8_t ShaderIndex;
 	uint8_t field_19;
 	uint16_t EngineCBSize;
@@ -267,12 +268,12 @@ struct MaterialParameterSet
 	[[bg3::hidden]] uint64_t MaterialCBBufferSize;
 
 	template <class T>
-	void SetUniformParam(MaterialInstance& instance, MaterialInstance::UniformBindingData const& binding, T value);
-	bool CheckConstantBuffer(MaterialInstance& instance);
+	void SetUniformParam(Material& instance, Material::UniformBindingData const& binding, T value);
+	bool CheckConstantBuffer(Material& instance);
 };
 
 
-struct PrimaryMaterialParameterSet : public MaterialParameterSet
+struct PrimaryMaterialRenderingData : public MaterialRenderingData
 {
 	__int64 field_40;
 	__int64 field_48;
@@ -303,26 +304,26 @@ struct ActiveMaterial
 	};
 
 
-	[[bg3::hidden]] PrimaryMaterialParameterSet* DefaultParameterSet;
-	[[bg3::hidden]] std::array<MaterialParameterSet, 5> ParameterSets;
-	[[bg3::hidden]] std::array<void*, 13> SomeObjects;
+	[[bg3::hidden]] PrimaryMaterialRenderingData* PrimaryRenderingData;
+	[[bg3::hidden]] std::array<MaterialRenderingData, 5> RenderingData;
+	[[bg3::hidden]] std::array<void*, 13> PipelineStates;
 	Array<Texture2DParam> Texture2DParams;
 	Array<VirtualTextureParam> VirtualTextureParams;
 	RenderableObject* RenderableObject;
-	MaterialInstance* MaterialInstance;
+	[[bg3::legacy(MaterialInstance)]] Material* Material;
 	[[bg3::hidden]] __int64 field_1E0;
-	[[bg3::hidden]] __int64 field_1E8;
+	[[bg3::hidden]] __int64 ShaderCallback;
 	uint64_t Hash;
 	[[bg3::hidden]] void* DiffusionProfile;
-	uint8_t BlendFlags;
+	uint8_t DirtyFlags;
 	uint8_t BlendStateID;
 	uint8_t RasterizerStateID;
-	uint8_t UVCount_M;
-	[[bg3::hidden]] int field_204;
+	uint8_t DebugMaterial;
+	float OverlayOffset;
 	FixedString MaterialName;
-	uint8_t Flags;
-	[[bg3::hidden]] uint8_t field_20D;
-	[[bg3::hidden]] uint8_t field_20E;
+	AppliedMaterialFlags Flags;
+	bool Initialized;
+	uint8_t AlphaChannel;
 
 	//# P_FUN(SetScalar, ActiveMaterial::SetScalar)
 	//# P_FUN(SetVector2, ActiveMaterial::SetVector2)
@@ -334,7 +335,7 @@ struct ActiveMaterial
 	bool SetVector4(FixedString const& param, glm::vec4 value);
 
 	template <class T>
-	void SetUniformParam(MaterialInstance::UniformBindingData const& binding, T value);
+	void SetUniformParam(Material::UniformBindingData const& binding, T value);
 };
 
 
@@ -366,8 +367,8 @@ struct Visual : public MoveableObject
 		FixedString Bone1;
 		FixedString Bone2;
 		uint32_t Flags;
-		bool HasBone1;
-		bool HasBone2;
+		uint8_t BoneType1;
+		uint8_t BoneType2;
 		uint8_t field_1E;
 		uint8_t field_1F;
 		FixedString field_20;
@@ -375,7 +376,7 @@ struct Visual : public MoveableObject
 	};
 
 
-	struct [[bg3::hidden]] Bone
+	struct [[bg3::hidden]] SkeletonSlot
 	{
 		struct Remap
 		{
@@ -383,35 +384,35 @@ struct Visual : public MoveableObject
 			int16_t field_2;
 		};
 
-		FixedString SlotName;
+		FixedString RemapperSlot;
 		int field_4;
-		uint64_t field_8;
-		Remap* Indices;
-		uint8_t IndicesCapacity;
-		char NumIndices;
+		void* Skeleton;
+		Remap* Remaps;
+		uint8_t RemapsCapacity;
+		uint8_t RemapsSize;
 	};
 
 
-	[[bg3::hidden]] Bone** Skeleton;
-	[[bg3::hidden]] uint8_t BonesCapacity;
-	[[bg3::hidden]] uint8_t BonesSize;
+	[[bg3::hidden]] SkeletonSlot** SkeletonSlots;
+	[[bg3::hidden]] uint8_t SkeletonSlotsCapacity;
+	[[bg3::hidden]] uint8_t SkeletonSlotsSize;
 	Array<ObjectDesc> ObjectDescs;
 	Array<float> LODDistances;
 	Array<Attachment> Attachments;
 	Visual* Parent;
 	resource::VisualResource* VisualResource;
-	[[bg3::hidden]] void* GameObject_M;
-	[[bg3::hidden]] void* field_E0;
-	[[bg3::hidden]] void* field_E8;
+	[[bg3::hidden]] void* GameObject;
+	[[bg3::hidden]] void* PhysicsScene;
+	[[bg3::hidden]] void* ClothScene;
 	uint32_t VisualFlags;
 	uint16_t CullFlags;
-	uint8_t field_F6;
-	uint8_t field_F7;
-	uint8_t OwnsNode;
-	int16_t WrinkleBase;
-	int16_t Wrinkle01;
-	int16_t Wrinkle02;
-	int16_t Wrinkle03;
+	uint8_t PhysicsFlags;
+	uint8_t LightChannel;
+	bool HasValidPose;
+	int16_t WrinkleBaseBoneIndex;
+	int16_t Wrinkle01BoneIndex;
+	int16_t Wrinkle02BoneIndex;
+	int16_t Wrinkle03BoneIndex;
 	int16_t BlendShapeBase;
 	ecs::EntityRef VisualEntity;
 };

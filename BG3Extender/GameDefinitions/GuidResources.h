@@ -173,8 +173,8 @@ struct ClassDescription : public resource::GuidResource
 	TranslatedString Description;
 	Guid ProgressionTableUUID;
 	FixedString SoundClassType;
-	uint8_t PrimaryAbility; // FIXME - map to enumeration
-	uint8_t SpellCastingAbility; // FIXME - map to enumeration
+	AbilityId PrimaryAbility;
+	AbilityId SpellCastingAbility;
 	bool MustPrepareSpells;
 	bool CanLearnSpells;
 	bool HasGod;
@@ -183,7 +183,7 @@ struct ClassDescription : public resource::GuidResource
 	Array<Guid> Tags;
 	FixedString ClassEquipment;
 	FixedString CharacterCreationPose;
-	uint8_t LearningStrategy; // FIXME - map to enumeration
+	SpellLearningStrategy LearningStrategy;
 	uint8_t field_71;
 	int BaseHp;
 	int HpPerLevel;
