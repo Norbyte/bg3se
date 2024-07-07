@@ -714,6 +714,11 @@
     <None Include="Extender\Client\IMGUI\DX11.inl" />
     <None Include="Lua\Libs\ClientInput.inl" />
     <None Include="Lua\Libs\Timer.inl" />
+    <None Include="GameDefinitions\Enumerations\IMGUI.inl" />
+    <None Include="GameDefinitions\Enumerations\Stats.inl" />
+    <None Include="GameDefinitions\Enumerations\Engine.inl" />
+    <None Include="GameDefinitions\Enumerations\ECS.inl" />
+    <None Include="GameDefinitions\Enumerations\NetMessage.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">
