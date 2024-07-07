@@ -82,10 +82,12 @@ struct Object : public Noncopyable<Object>
 {
 	using SetPropertyStringProc = void(Object* self, FixedString const& propertyName, char const* value);
 
-	struct FunctorInfo
+	struct FunctorGroup
 	{
-		FixedString Name;
-		Functors* Functor;
+		FixedString TextKey;
+		Functors* Functors;
+
+		Array<Functor*> GetFunctors();
 	};
 		
 	struct RollCondition
@@ -97,7 +99,7 @@ struct Object : public Noncopyable<Object>
 	void* VMT{ nullptr };
 	Vector<int32_t> IndexedProperties;
 	FixedString Name;
-	MultiHashMap<FixedString, Array<FunctorInfo>> Functors;
+	MultiHashMap<FixedString, Array<FunctorGroup>> Functors;
 	MultiHashMap<FixedString, Array<RollCondition>> RollConditions;
 	FixedString AIFlags;
 	Array<Requirement> Requirements;
@@ -115,7 +117,7 @@ struct Object : public Noncopyable<Object>
 	std::optional<Guid> GetGuid(FixedString const& attributeName);
 	std::optional<TranslatedString> GetTranslatedString(FixedString const& attributeName);
 	std::optional<Array<FixedString>> GetFlags(FixedString const& attributeName);
-	std::optional<Array<FunctorInfo>*> GetFunctors(FixedString const& attributeName);
+	std::optional<Array<FunctorGroup>*> GetFunctors(FixedString const& attributeName);
 	std::optional<Array<RollCondition>*> GetRollConditions(FixedString const& attributeName);
 	bool SetString(FixedString const& attributeName, const char* value);
 	bool SetInt(FixedString const& attributeName, int32_t value);
@@ -124,7 +126,7 @@ struct Object : public Noncopyable<Object>
 	bool SetGuid(FixedString const& attributeName, std::optional<Guid> value);
 	bool SetTranslatedString(FixedString const& attributeName, std::optional<TranslatedString> value);
 	bool SetFlags(FixedString const& attributeName, Array<STDString> const& value);
-	bool SetFunctors(FixedString const& attributeName, std::optional<Array<FunctorInfo>> const& value);
+	bool SetFunctors(FixedString const& attributeName, std::optional<Array<FunctorGroup>> const& value);
 	bool SetRollConditions(FixedString const& attributeName, std::optional<Array<RollCondition>> const& value);
 
 	bool CopyFrom(Object* source);

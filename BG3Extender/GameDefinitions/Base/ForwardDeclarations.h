@@ -101,6 +101,7 @@ namespace stats
 	struct Modifier;
 	struct ModifierList;
 	struct Requirement;
+	struct Functor;
 	struct Functors;
 	struct SpellPrototype;
 	struct RPGEnumeration;

@@ -1,6 +1,12 @@
 // Property lists for stats functors
 // (anything extending Functor)
 
+BEGIN_CLS(stats::Object::FunctorGroup)
+P(TextKey)
+// Lua read-only helper until RO properties or transparent index support is added
+P_GETTER(Functors, GetFunctors)
+END_CLS()
+
 BEGIN_CLS(stats::Functors)
 // TODO - make functor list
 P_RO(NextFunctorIndex)
@@ -19,7 +25,7 @@ P_RO(FunctorUuid)
 P(RollConditions)
 // TODO - Conditions object access
 P_RO(StatsConditionsId)
-P_BITMASK(PropertyContext)
+P(PropertyContext)
 P(StoryActionId)
 P(ObserverType)
 P_RO(TypeId)

@@ -181,7 +181,7 @@ struct SpellContainerComponent : public BaseComponent
 	{
 		SpellIdBase SpellId;
 		EntityHandle ItemHandle;
-		SpellChildSelectionType SelectionType;
+		[[bg3::legacy(SelectionType)]] SpellLearningStrategy LearningStrategy;
 		uint8_t field_29;
 		Guid SpellUUID;
 		AbilityId SpellCastingAbility;

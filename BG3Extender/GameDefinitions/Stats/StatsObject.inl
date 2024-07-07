@@ -8,6 +8,11 @@
 
 BEGIN_NS(stats)
 
+Array<Functor*> Object::FunctorGroup::GetFunctors()
+{
+	return Functors->FunctorList;
+}
+
 RPGEnumeration* Object::GetAttributeInfo(FixedString const& attributeName, int& attributeIndex)
 {
 	auto stats = GetStaticSymbols().GetStats();
@@ -183,7 +188,7 @@ std::optional<Array<FixedString>> Object::GetFlags(FixedString const& attributeN
 	return {};
 }
 
-std::optional<Array<Object::FunctorInfo>*> Object::GetFunctors(FixedString const& attributeName)
+std::optional<Array<Object::FunctorGroup>*> Object::GetFunctors(FixedString const& attributeName)
 {
 	int attributeIndex;
 	auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
@@ -195,15 +200,12 @@ std::optional<Array<Object::FunctorInfo>*> Object::GetFunctors(FixedString const
 		return {};
 	}
 
-	OsiErrorS("Temporarily disabled until functors are mapped");
-	return {};
-
-	/*auto functors = Functors.Find(attributeName);
+	auto functors = Functors.try_get(attributeName);
 	if (functors) {
-		return *functors;
+		return functors;
 	} else {
 		return {};
-	}*/
+	}
 }
 
 std::optional<Array<Object::RollCondition>*> Object::GetRollConditions(FixedString const& attributeName)
@@ -470,7 +472,7 @@ bool Object::SetFlags(FixedString const& attributeName, Array<STDString> const& 
 	return true;
 }
 
-bool Object::SetFunctors(FixedString const& attributeName, std::optional<Array<FunctorInfo>> const& value)
+bool Object::SetFunctors(FixedString const& attributeName, std::optional<Array<FunctorGroup>> const& value)
 {
 	int attributeIndex;
 	auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);

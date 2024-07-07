@@ -304,16 +304,16 @@ namespace bg3se::lua::stats
 			break;
 		}
 
-		/*case RPGEnumerationType::StatsFunctors:
+		case RPGEnumerationType::StatsFunctors:
 		{
 			auto functors = object->GetFunctors(attributeName);
-			if (functors && (*functors)->Size() == 1 && (**functors)[0].Name == GFS.strDefault) {
-				LuaWrite(L, (**functors)[0].Functor);
+			if (functors) {
+				push(L, **functors, lua::GetCurrentLifetime());
 			} else {
 				push(L, nullptr);
 			}
 			break;
-		}*/
+		}
 
 		default:
 			OsiError("Don't know how to fetch values of type '" << attrInfo->Name << "'");

@@ -440,7 +440,7 @@ BEGIN_ENUM(DiceSizeId, uint8_t)
 	EV(Default, 8)
 END_ENUM()
 
-BEGIN_ENUM(SpellChildSelectionType, uint8_t)
+BEGIN_ENUM(SpellLearningStrategy, uint8_t)
 	EV(Singular, 0)
 	EV(AddChildren, 1)
 	EV(MostPowerful, 2)
