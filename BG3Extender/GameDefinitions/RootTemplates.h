@@ -146,6 +146,50 @@ struct CombatComponentTemplate : public ProtectedGameObject<CombatComponentTempl
 };
 
 
+struct AiTargetConditions
+{
+    int32_t MinimumHealthPercentage;
+    int32_t MaximumHealthPercentage;
+    Array<Guid> Tags;
+};
+
+struct AiActionConditions
+{
+    float ScoreModifier;
+    int32_t StartRound;
+    int32_t FallbackStartRound;
+    int32_t MinimumImpact;
+    bool OnlyCastOnSelf;
+    uint16_t AIFlags;
+    AiTargetConditions SourceConditions;
+    AiTargetConditions TargetConditions;
+    Array<Guid> ExcludeInNPCLoadout;
+    Array<Guid> OnlyInNPCLoadout;
+};
+
+struct InventoryItemData
+{
+    FixedString UUID;
+    FixedString TemplateID;
+    STDString field_8;
+    STDString ItemName;
+    uint8_t Type;
+    STDString LevelName;
+    int Amount;
+    AiActionConditions Conditions;
+    uint8_t IsTradable;
+    bool CanBePickpocketed;
+    bool IsDroppedOnDeath;
+};
+
+struct CharacterSpellData
+{
+    FixedString Spell;
+    AbilityId SpellCastingAbility;
+    SpellLearningStrategy LearningStrategy;
+    AiActionConditions Conditions;
+};
+
 struct CharacterTemplate : public EoCGameObjectTemplate
 {
     CombatComponentTemplate CombatComponent;
@@ -204,10 +248,8 @@ struct CharacterTemplate : public EoCGameObjectTemplate
     OverrideableProperty<FixedString> DisintegratedResourceID;
     OverrideableProperty<FixedString> DisintegrateFX;
     OverrideableProperty<FixedString> AnubisConfigName;
-    [[bg3::hidden]]
-    OverrideableProperty<Array<void*>> SkillList;
-    [[bg3::hidden]]
-    OverrideableProperty<Array<void*>> ItemList;
+    OverrideableProperty<Array<CharacterSpellData>> SkillList;
+    OverrideableProperty<Array<InventoryItemData>> ItemList;
     OverrideableProperty<Array<FixedString>> StatusList;
     OverrideableProperty<FixedString> TrophyID;
 
@@ -384,7 +426,7 @@ struct ItemTemplate : public SceneryTemplate
     [[bg3::hidden]] OverrideableProperty<Array<void*>> ScriptConfigGlobalParameters;
     OverrideableProperty<FixedString> ConstellationConfigName;
     [[bg3::hidden]] OverrideableProperty<Array<void*>> ConstellationConfigGlobalParameters;
-    [[bg3::hidden]] OverrideableProperty<Array<void*>> ItemList;
+    OverrideableProperty<Array<InventoryItemData>> ItemList;
     OverrideableProperty<Array<FixedString>> StatusList;
     OverrideableProperty<FixedString> DefaultState;
     OverrideableProperty<FixedString> Owner;
