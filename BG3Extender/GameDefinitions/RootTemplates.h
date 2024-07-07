@@ -236,8 +236,7 @@ struct CharacterTemplate : public EoCGameObjectTemplate
     OverrideableProperty<uint8_t> BloodSurfaceType;
     OverrideableProperty<bool> ForceLifetimeDeath;
     OverrideableProperty<Guid> EquipmentRace;
-    [[bg3::hidden]]
-    OverrideableProperty<Array<void*>> OnDeathActions;
+    OverrideableProperty<Array<IActionData*>> OnDeathActions;
     OverrideableProperty<float> DeathRaycastMinLength;
     OverrideableProperty<float> DeathRaycastMaxLength;
     OverrideableProperty<float> DeathRaycastHeight;
@@ -415,8 +414,8 @@ struct ItemTemplate : public SceneryTemplate
     uint8_t FreezeGravity;
     OverrideableProperty<uint32_t> Tooltip;
     OverrideableProperty<FixedString> Stats;
-    [[bg3::hidden]] OverrideableProperty<Array<void*>> OnUsePeaceActions;
-    [[bg3::hidden]] OverrideableProperty<Array<void*>> OnDestroyActions;
+    OverrideableProperty<Array<IActionData*>> OnUsePeaceActions;
+    OverrideableProperty<Array<IActionData*>> OnDestroyActions;
     OverrideableProperty<TranslatedString> OnUseDescription;
     OverrideableProperty<bool> IsPortal;
     OverrideableProperty<bool> AttackableWhenClickThrough;

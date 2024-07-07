@@ -114,10 +114,25 @@ local function ReserializeEntities()
     _P("Done.")
 end
 
+local function ValidateUseActions(key, actions)
+    for i,action in pairs(actions) do
+        if not Ext.Types.Validate(action) then
+            _PE("Validation failed: Template " .. key .. ", action " .. tostring(action))
+        end
+    end
+end
+
 local function ValidateTemplateList(templates)
     for key,tmpl in pairs(templates) do
         if not Ext.Types.Validate(tmpl) then
             _PE("Validation failed: Template " .. key)
+        else
+            if Ext.Types.IsA(tmpl, "CharacterTemplate") then
+                ValidateUseActions(key, tmpl.OnDeathActions)
+            elseif Ext.Types.IsA(tmpl, "ItemTemplate") then
+                ValidateUseActions(key, tmpl.OnUsePeaceActions)
+                ValidateUseActions(key, tmpl.OnDestroyActions)
+            end
         end
     end
 end

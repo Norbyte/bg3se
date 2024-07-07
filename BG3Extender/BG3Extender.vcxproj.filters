@@ -475,6 +475,7 @@
     <ClInclude Include="Extender\Client\SDLManager.h" />
     <ClInclude Include="GameDefinitions\Picking.h" />
     <ClInclude Include="Lua\Libs\Timer.h" />
+    <ClInclude Include="GameDefinitions\Stats\UseActions.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

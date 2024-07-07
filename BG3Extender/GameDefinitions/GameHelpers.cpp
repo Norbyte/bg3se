@@ -5,6 +5,7 @@
 #include <Lua/Shared/Proxies/LuaPropertyMapHelpers.h>
 #include <Extender/ScriptExtender.h>
 #include <GameDefinitions/Resources.h>
+#include <GameDefinitions/Stats/UseActions.h>
 
 namespace bg3se
 {
@@ -269,6 +270,53 @@ void LuaPolymorphic<stats::BaseFunctorExecParams>::MakeRef(lua_State* L, stats::
 #undef V
 }
 
+void LuaPolymorphic<IActionData>::MakeRef(lua_State* L, IActionData* value, LifetimeHandle const& lifetime)
+{
+#define V(type) case ActionDataType::type: \
+			MakeDirectObjectRef(L, static_cast<type##ActionData*>(value), lifetime); break;
+
+	switch (value->Type) {
+		V(OpenClose)
+		V(Destroy)
+		V(Teleport)
+		V(CreateSurface)
+		V(DestroyParameters)
+		V(Equip)
+		V(Consume)
+		V(StoryUse)
+		V(Door)
+		V(CreatePuddle)
+		V(Book)
+		V(UseSpell)
+		V(SpellBook)
+		V(Sit)
+		V(Lie)
+		V(Insert)
+		V(Stand)
+		V(Lockpick)
+		V(StoryUseInInventory)
+		V(DisarmTrap)
+		V(ShowStoryElementUI)
+		V(Combine)
+		V(Ladder)
+		V(PlaySound)
+		V(SpawnCharacter)
+		V(Constrain)
+		V(Recipe)
+		V(Unknown31)
+		V(Throw)
+		V(LearnSpell)
+		V(Unknown34)
+		V(Unknown35)
+
+	default:
+		MakeDirectObjectRef(L, value, lifetime);
+		break;
+	}
+
+#undef V
+}
+
 void LuaPolymorphic<resource::AnimationResource::Event::PropertiesHolder>::MakeRef(lua_State* L, resource::AnimationResource::Event::PropertiesHolder* value, LifetimeHandle const& lifetime)
 {
 #define V(type) case AnimationEventPropertyType::type: \
@@ -490,7 +538,7 @@ END_NS()
 BEGIN_SE()
 
 template <class T>
-void MaterialInstance::SetUniformParam(MaterialInstance::UniformBindingData const& binding, T value)
+void Material::SetUniformParam(Material::UniformBindingData const& binding, T value)
 {
 	for (unsigned i = 0; i < std::size(ShaderDescriptions); i++) {
 		if (binding.PerShaderCBOffsets[i] != -1 && ShaderDescriptions[i].MaterialCBSize > 0 && MaterialCBs[i].MaterialCB != nullptr) {
@@ -499,7 +547,7 @@ void MaterialInstance::SetUniformParam(MaterialInstance::UniformBindingData cons
 	}
 }
 
-bool MaterialInstance::SetScalar(FixedString const& paramName, float value)
+bool Material::SetScalar(FixedString const& paramName, float value)
 {
 	for (auto& param : Parameters.ScalarParameters) {
 		if (param.ParameterName == paramName) {
@@ -513,7 +561,7 @@ bool MaterialInstance::SetScalar(FixedString const& paramName, float value)
 	return false;
 }
 
-bool MaterialInstance::SetVector2(FixedString const& paramName, glm::vec2 value)
+bool Material::SetVector2(FixedString const& paramName, glm::vec2 value)
 {
 	for (auto& param : Parameters.Vector2Parameters) {
 		if (param.ParameterName == paramName) {
@@ -527,7 +575,7 @@ bool MaterialInstance::SetVector2(FixedString const& paramName, glm::vec2 value)
 	return false;
 }
 
-bool MaterialInstance::SetVector3(FixedString const& paramName, glm::vec3 value)
+bool Material::SetVector3(FixedString const& paramName, glm::vec3 value)
 {
 	for (auto& param : Parameters.Vector3Parameters) {
 		if (param.ParameterName == paramName) {
@@ -541,7 +589,7 @@ bool MaterialInstance::SetVector3(FixedString const& paramName, glm::vec3 value)
 	return false;
 }
 
-bool MaterialInstance::SetVector4(FixedString const& paramName, glm::vec4 value)
+bool Material::SetVector4(FixedString const& paramName, glm::vec4 value)
 {
 	for (auto& param : Parameters.VectorParameters) {
 		if (param.ParameterName == paramName) {
@@ -555,7 +603,7 @@ bool MaterialInstance::SetVector4(FixedString const& paramName, glm::vec4 value)
 	return false;
 }
 
-void* MaterialInstance::GetOrCreateConstantBuffer(uint8_t shaderIndex)
+void* Material::GetOrCreateConstantBuffer(uint8_t shaderIndex)
 {
 	assert(shaderIndex < std::size(ShaderDescriptions));
 
@@ -596,7 +644,7 @@ void* MaterialInstance::GetOrCreateConstantBuffer(uint8_t shaderIndex)
 	return cb;
 }
 
-bool MaterialParameterSet::CheckConstantBuffer(MaterialInstance& instance)
+bool MaterialRenderingData::CheckConstantBuffer(Material& instance)
 {
 	if (MaterialCB == nullptr && MaterialCBSize > 0 && MaterialVkDescriptorSet != -1) {
 		auto cb = instance.GetOrCreateConstantBuffer(ShaderIndex);
@@ -609,32 +657,32 @@ bool MaterialParameterSet::CheckConstantBuffer(MaterialInstance& instance)
 }
 
 template <class T>
-void MaterialParameterSet::SetUniformParam(MaterialInstance& instance, MaterialInstance::UniformBindingData const& binding, T value)
+void MaterialRenderingData::SetUniformParam(Material& instance, Material::UniformBindingData const& binding, T value)
 {
 	if (!CheckConstantBuffer(instance)) return;
 
 	if (binding.PerShaderCBOffsets[ShaderIndex] != -1) {
 		*(T*)((uint8_t*)MaterialCB + binding.PerShaderCBOffsets[ShaderIndex]) = value;
 		// FIXME - VERY JANKY
-		MaterialHash += rand();
+		InstancingHash += rand();
 	}
 }
 
 template <class T>
-void ActiveMaterial::SetUniformParam(MaterialInstance::UniformBindingData const& binding, T value)
+void ActiveMaterial::SetUniformParam(Material::UniformBindingData const& binding, T value)
 {
-	if (DefaultParameterSet != nullptr) {
-		DefaultParameterSet->SetUniformParam(*MaterialInstance, binding, value);
+	if (PrimaryRenderingData != nullptr) {
+		PrimaryRenderingData->SetUniformParam(*Material, binding, value);
 	}
 
-	for (auto i = 0; i < std::size(ParameterSets); i++) {
-		ParameterSets[i].SetUniformParam(*MaterialInstance, binding, value);
+	for (auto i = 0; i < std::size(RenderingData); i++) {
+		RenderingData[i].SetUniformParam(*Material, binding, value);
 	}
 }
 
 bool ActiveMaterial::SetScalar(FixedString const& paramName, float value)
 {
-	for (auto const& param : MaterialInstance->Parameters.ScalarParameters) {
+	for (auto const& param : Material->Parameters.ScalarParameters) {
 		if (param.ParameterName == paramName) {
 			SetUniformParam(param.Binding, value);
 			return true;
@@ -647,7 +695,7 @@ bool ActiveMaterial::SetScalar(FixedString const& paramName, float value)
 
 bool ActiveMaterial::SetVector2(FixedString const& paramName, glm::vec2 value)
 {
-	for (auto const& param : MaterialInstance->Parameters.Vector2Parameters) {
+	for (auto const& param : Material->Parameters.Vector2Parameters) {
 		if (param.ParameterName == paramName) {
 			SetUniformParam(param.Binding, value);
 			return true;
@@ -660,7 +708,7 @@ bool ActiveMaterial::SetVector2(FixedString const& paramName, glm::vec2 value)
 
 bool ActiveMaterial::SetVector3(FixedString const& paramName, glm::vec3 value)
 {
-	for (auto const& param : MaterialInstance->Parameters.Vector3Parameters) {
+	for (auto const& param : Material->Parameters.Vector3Parameters) {
 		if (param.ParameterName == paramName) {
 			SetUniformParam(param.Binding, value);
 			return true;
@@ -673,7 +721,7 @@ bool ActiveMaterial::SetVector3(FixedString const& paramName, glm::vec3 value)
 
 bool ActiveMaterial::SetVector4(FixedString const& paramName, glm::vec4 value)
 {
-	for (auto const& param : MaterialInstance->Parameters.VectorParameters) {
+	for (auto const& param : Material->Parameters.VectorParameters) {
 		if (param.ParameterName == paramName) {
 			SetUniformParam(param.Binding, value);
 			return true;

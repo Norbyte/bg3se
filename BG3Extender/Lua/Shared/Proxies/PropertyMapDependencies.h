@@ -6,6 +6,7 @@
 #include <GameDefinitions/Resources.h>
 #include <GameDefinitions/Render.h>
 #include <GameDefinitions/Components/All.h>
+#include <GameDefinitions/Stats/UseActions.h>
 #if defined(ENABLE_UI)
 #include <GameDefinitions/UI.h>
 #endif

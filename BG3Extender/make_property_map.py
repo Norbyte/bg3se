@@ -556,6 +556,7 @@ sources = [
     'GameDefinitions/Components/Status.h',
     'GameDefinitions/Components/Tadpole.h',
     'GameDefinitions/Stats/Prototype.h',
+    'GameDefinitions/Stats/UseActions.h',
     'GameDefinitions/Picking.h',
     'GameDefinitions/Render.h',
     'GameDefinitions/Resources.h'
