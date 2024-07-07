@@ -636,10 +636,12 @@ Osi = {}
 
 --- @alias AIFlags string|"CanNotTargetFrozen"|"CanNotUse"|"IgnoreBuff"|"IgnoreControl"|"IgnoreDebuff"|"IgnoreSelf"|"StatusIsSecondary"
 --- @alias AbilityId string|"Charisma"|"Constitution"|"Dexterity"|"Intelligence"|"None"|"Sentinel"|"Strength"|"Wisdom"
+--- @alias ActionDataType string|"Book"|"Combine"|"Constrain"|"Consume"|"CreatePuddle"|"CreateSurface"|"Destroy"|"DestroyParameters"|"DisarmTrap"|"Door"|"Equip"|"Insert"|"Ladder"|"LearnSpell"|"Lie"|"Lockpick"|"OpenClose"|"PlaySound"|"Recipe"|"ShowStoryElementUI"|"Sit"|"SpawnCharacter"|"SpellBook"|"Stand"|"StoryUse"|"StoryUseInInventory"|"Teleport"|"Throw"|"Unknown"|"Unknown31"|"Unknown34"|"Unknown35"|"UseSpell"
 --- @alias AdvantageBoostType string|"Advantage"|"Disadvantage"
 --- @alias AdvantageTypeId string|"Ability"|"AllAbilities"|"AllSavingThrows"|"AllSkills"|"AttackRoll"|"AttackTarget"|"Concentration"|"DeathSavingThrow"|"SavingThrow"|"Skill"|"SourceDialogue"
 --- @alias AnimationEventPropertyType string|"BoneAttachBone"|"BoneEffect"|"EFoleySoundObject"|"EVocalSoundObject"|"FloatData"|"Foot"|"Prop10"|"Prop9"|"SoundObject"|"U8Data"|"Unknown15"|"Unknown7"|"Unknown8"|"WeaponEffect"
 --- @alias AnimationSetAnimationFlags string|"AlwaysIgnore"|"NoFallback"
+--- @alias AppliedMaterialFlags string|"Instantiated"|"IsOverlay"|"OverlayOriginalMapsSet"
 --- @alias ArmorType string|"BreastPlate"|"ChainMail"|"ChainShirt"|"Cloth"|"HalfPlate"|"Hide"|"Leather"|"None"|"Padded"|"Plate"|"RingMail"|"ScaleMail"|"Sentinel"|"Splint"|"StuddedLeather"
 --- @alias AttackRoll string|"Charisma"|"Constitution"|"Dexterity"|"Intelligence"|"None"|"SpellCastingAbility"|"Strength"|"UnarmedAttackAbility"|"WeaponAttackAbility"|"Wisdom"
 --- @alias AttributeFlags string|"Arrow"|"Backstab"|"BackstabImmunity"|"EnableObscurityEvents"|"Floating"|"FloatingWhileMoving"|"ForceMainhandAlternativeEquipBones"|"Grounded"|"IgnoreClouds"|"InventoryBound"|"InvisibilityImmunity"|"InvulnerableAndInteractive"|"LootableWhenEquipped"|"LoseDurabilityOnCharacterHit"|"ObscurityWithoutSneaking"|"PickpocketableWhenEquipped"|"SlippingImmunity"|"ThrownImmunity"|"Torch"|"Unbreakable"|"Unrepairable"|"Unstorable"|"UseMusicalInstrumentForCasting"
@@ -649,7 +651,6 @@ Osi = {}
 --- @alias ClientGameState string|"AnalyticsSessionEnd"|"BuildStory"|"Disconnect"|"Exit"|"GeneratePsoCache"|"Idle"|"Init"|"InitConnection"|"InitMenu"|"InitNetwork"|"Installation"|"Join"|"LoadLevel"|"LoadMenu"|"LoadModule"|"LoadPsoCache"|"LoadSession"|"Lobby"|"Menu"|"ModReceiving"|"Movie"|"Paused"|"PrepareRunning"|"Running"|"Save"|"StartLoading"|"StartServer"|"StopLoading"|"SwapLevel"|"Unknown"|"UnloadLevel"|"UnloadModule"|"UnloadSession"
 --- @alias CombatParticipantFlags string|"CanFight"|"CanJoinCombat"|"IsBoss"|"IsInspector"|"StayInAiHints"
 --- @alias ConditionRollType string|"AbilityCheckRoll"|"AttackRoll"|"DifficultyRoll"|"SavingThrowRoll"|"SkillCheckRoll"
---- @alias CraftingStationType string|"Anvil"|"Beehive"|"BoilingPot"|"Cauldron"|"Misc1"|"Misc2"|"Misc3"|"Misc4"|"None"|"Oven"|"SpinningWheel"|"Well"|"Wetstone"
 --- @alias CriticalHitBoostFlags string|"AttackRoll"|"AttackTarget"|"Failure"|"FailureNever"|"Success"|"SuccessNever"
 --- @alias DamageFlags string|"AttackAdvantage"|"AttackDisadvantage"|"Backstab"|"Critical"|"Dodge"|"Hit"|"HitpointsDamaged"|"Invisible"|"Invulnerable"|"Magical"|"Miss"|"Projectile"|"SavingThrow"|"Status"|"StatusEnter"|"Surface"
 --- @alias DamageType string|"Acid"|"Bludgeoning"|"Cold"|"Fire"|"Force"|"Lightning"|"Necrotic"|"None"|"Piercing"|"Poison"|"Psychic"|"Radiant"|"Sentinel"|"Slashing"|"Thunder"
@@ -713,7 +714,6 @@ Osi = {}
 --- @alias ProficiencyBonusBoostType string|"Ability"|"AllAbilities"|"AllSavingThrows"|"AllSkills"|"AttackRoll"|"AttackTarget"|"SavingThrow"|"Skill"|"SourceDialogue"|"WeaponActionDC"
 --- @alias ProficiencyGroupFlags string|"Battleaxes"|"Clubs"|"Daggers"|"Darts"|"Flails"|"Glaives"|"Greataxes"|"Greatclubs"|"Greatswords"|"Halberds"|"HandCrossbows"|"Handaxes"|"HeavyArmor"|"HeavyCrossbows"|"Javelins"|"LightArmor"|"LightCrossbows"|"LightHammers"|"Longbows"|"Longswords"|"Maces"|"MartialWeapons"|"Mauls"|"MediumArmor"|"Morningstars"|"MusicalInstrument"|"Pikes"|"Quarterstaffs"|"Rapiers"|"Scimitars"|"Shields"|"Shortbows"|"Shortswords"|"Sickles"|"SimpleWeapons"|"Slings"|"Spears"|"Tridents"|"Warhammers"|"Warpicks"
 --- @alias ProjectileTypeIds string|"Magical"|"Physical"
---- @alias RecipeCategory string|"Armour"|"Arrows"|"Common"|"Food"|"Grenades"|"Grimoire"|"Objects"|"Potions"|"Runes"|"Weapons"
 --- @alias RequirementType string|"Barter"|"Charm"|"Combat"|"Constitution"|"Dexterity"|"Immobile"|"Intelligence"|"Intimidate"|"Level"|"Loremaster"|"Necromancy"|"None"|"PainReflection"|"Persuasion"|"Pickpocket"|"Ranged"|"Reason"|"Reflexes"|"Sneaking"|"Sourcery"|"Strength"|"Summoning"|"Tag"|"Telekinesis"|"TurnBased"|"Vitality"|"Wisdom"
 --- @alias ResistanceBoostFlags string|"BelowDamageThreshold"|"ImmuneToMagical"|"ImmuneToNonMagical"|"ResistantToMagical"|"ResistantToNonMagical"|"VulnerableToMagical"|"VulnerableToNonMagical"
 --- @alias ResourceBankType string|"Animation"|"AnimationBlueprint"|"AnimationSet"|"Atmosphere"|"BlendSpace"|"CharacterVisual"|"ClothCollider"|"ColorList"|"Dialog"|"DiffusionProfile"|"Effect"|"FCurve"|"IKRig"|"LightCookie"|"Lighting"|"Material"|"MaterialPreset"|"MaterialSet"|"MeshProxy"|"Physics"|"Script"|"Sentinel"|"Skeleton"|"SkeletonMirrorTable"|"SkinPreset"|"Sound"|"TerrainBrush"|"Texture"|"TileSet"|"Timeline"|"TimelineScene"|"VirtualTexture"|"Visual"|"VisualSet"|"VoiceBark"
@@ -736,14 +736,13 @@ Osi = {}
 --- @alias ServerStatusFlags4 string|"BringIntoCombat"|"CauseIsOrigin"|"CausedByEquipment"|"IsHostileAct"|"IsInvulnerable"|"IsInvulnerableVisible"|"StatusFlags4_0x04"|"StatusFlags4_0x80"
 --- @alias ServerStatusFlags5 string|"HasTriedEntering"
 --- @alias SetStatusDurationType string|"Add"|"ForceSet"|"Multiply"|"SetMinimum"|"Unknown"
---- @alias ShroudType string|"RegionMask"|"Shroud"|"Sight"|"Sneak"
 --- @alias SkillId string|"Acrobatics"|"AnimalHandling"|"Arcana"|"Athletics"|"Deception"|"History"|"Insight"|"Intimidation"|"Invalid"|"Investigation"|"Medicine"|"Nature"|"Perception"|"Performance"|"Persuasion"|"Religion"|"Sentinel"|"SleightOfHand"|"Stealth"|"Survival"
 --- @alias SourceAdvantageType string|"SourceAdvantageOnAttack"|"SourceAllyAdvantageOnAttack"
 --- @alias SpellAttackType string|"DirectHit"|"MeleeOffHandWeaponAttack"|"MeleeSpellAttack"|"MeleeUnarmedAttack"|"MeleeWeaponAttack"|"None"|"RangedOffHandWeaponAttack"|"RangedSpellAttack"|"RangedUnarmedAttack"|"RangedWeaponAttack"
 --- @alias SpellAttackTypeOverride string|"Projectile_MainHandAttack"|"Projectile_OffhandAttack"|"Target_MainHandAttack"|"Target_OffhandAttack"|"Target_UnarmedAttack"
---- @alias SpellChildSelectionType string|"AddChildren"|"MostPowerful"|"Singular"
 --- @alias SpellCooldownType string|"Default"|"OncePerCombat"|"OncePerShortRestPerItem"|"OncePerTurn"|"OncePerTurnNoRealtime"|"UntilPerRestPerItem"|"UntilRest"|"UntilShortRest"
 --- @alias SpellFlags string|"AbortOnSecondarySpellRollFail"|"AbortOnSpellRollFail"|"AddFallDamageOnLand"|"AddWeaponRange"|"AllowMoveAndCast"|"CallAlliesSpell"|"CanAreaDamageEvade"|"CanDualWield"|"CannotRotate"|"CannotTargetCharacter"|"CannotTargetItems"|"CannotTargetTerrain"|"CombatLogSetSingleLineRoll"|"ConcentrationIgnoresResting"|"DisableBlood"|"DisplayInItemTooltip"|"DontAbortPerforming"|"HasHighGroundRangeExtension"|"HasSomaticComponent"|"HasVerbalComponent"|"HideInItemTooltip"|"IgnoreAoO"|"IgnorePreviouslyPickedEntities"|"IgnoreSilence"|"IgnoreVisionBlock"|"ImmediateCast"|"InventorySelection"|"Invisible"|"IsAttack"|"IsConcentration"|"IsDefaultWeaponAction"|"IsEnemySpell"|"IsHarmful"|"IsJump"|"IsLinkedSpellContainer"|"IsMelee"|"IsSpell"|"IsSwarmAttack"|"IsTrap"|"NoAOEDamageOnLand"|"NoCameraMove"|"NoCooldownOnMiss"|"NoSurprise"|"PickupEntityAndMove"|"RangeIgnoreBlindness"|"RangeIgnoreSourceBounds"|"RangeIgnoreTargetBounds"|"RangeIgnoreVerticalThreshold"|"Stealth"|"TargetClosestEqualGroundSurface"|"Temporary"|"TrajectoryRules"|"UNUSED_D"|"UNUSED_E"|"UnavailableInDialogs"|"Wildshape"
+--- @alias SpellLearningStrategy string|"AddChildren"|"MostPowerful"|"Singular"
 --- @alias SpellPrepareType string|"AlwaysPrepared"|"RequiresPreparation"|"Unknown"
 --- @alias SpellSchoolId string|"Abjuration"|"Conjuration"|"Divination"|"Enchantment"|"Evocation"|"Illusion"|"Necromancy"|"None"|"Transmutation"
 --- @alias SpellSourceType string|"ActiveDefense"|"AiTest"|"Anubis"|"Behavior"|"Boost"|"CreateExplosion"|"EquippedItem"|"GameActionCreateSurface"|"Learned"|"Osiris"|"PartyPreset"|"Progression"|"Progression0"|"Progression1"|"Progression2"|"Sentinel"|"Shapeshift"|"Spell"|"SpellSet"|"SpellSet2"|"UnarmedAttack"|"Unknown15"|"Unknown16"|"Unknown17"|"Unknown18"|"Unknown19"|"Unknown1A"|"WeaponAttack"
@@ -757,10 +756,12 @@ Osi = {}
 --- @alias StatsFunctorId string|"AdjustRoll"|"ApplyEquipmentStatus"|"ApplyStatus"|"BreakConcentration"|"CameraWait"|"Counterspell"|"CreateConeSurface"|"CreateExplosion"|"CreateSurface"|"CreateWall"|"CreateZone"|"CustomDescription"|"DealDamage"|"DisarmAndStealWeapon"|"DisarmWeapon"|"DoTeleport"|"Douse"|"Drop"|"ExecuteWeaponFunctors"|"Extender"|"FireProjectile"|"Force"|"GainTemporaryHitPoints"|"Kill"|"MaximizeRoll"|"Pickup"|"RegainHitPoints"|"RegainTemporaryHitPoints"|"RemoveAuraByChildStatus"|"RemoveStatus"|"RemoveStatusByLevel"|"RemoveUniqueStatus"|"ResetCombatTurn"|"ResetCooldowns"|"RestoreResource"|"Resurrect"|"Sabotage"|"SetAdvantage"|"SetDamageResistance"|"SetDisadvantage"|"SetReroll"|"SetRoll"|"SetStatusDuration"|"ShortRest"|"Spawn"|"SpawnExtraProjectiles"|"SpawnInInventory"|"Stabilize"|"Summon"|"SummonInInventory"|"SurfaceChange"|"SurfaceClearLayer"|"SwapPlaces"|"SwitchDeathType"|"TeleportSource"|"TriggerRandomCast"|"TutorialEvent"|"Unlock"|"Unsummon"|"UseActionResource"|"UseAttack"|"UseSpell"
 --- @alias StatsItemSlot string|"Amulet"|"Boots"|"Breast"|"Cloak"|"Gloves"|"Helmet"|"Horns"|"MainHand"|"Max"|"MeleeMainHand"|"MeleeOffHand"|"MusicalInstrument"|"OffHand"|"Overhead"|"RangedMainHand"|"RangedOffHand"|"Ring"|"Ring2"|"Sentinel"|"Underwear"|"VanityBody"|"VanityBoots"|"Wings"
 --- @alias StatsObserverType string|"None"|"Observer"|"Source"|"Target"
---- @alias StatsPropertyContext string|"ABILITY_CHECK"|"ACTION_RESOURCES_CHANGED"|"AI_IGNORE"|"AI_ONLY"|"AOE"|"ATTACK"|"ATTACKED"|"ATTACKED_IN_MELEE_RANGE"|"ATTACKING_IN_MELEE_RANGE"|"CAST"|"CAST_RESOLVED"|"COMBAT_ENDED"|"CREATE"|"DAMAGE"|"DAMAGED"|"DAMAGED_PREVENTED"|"DAMAGE_PREVENTED"|"ENTER_ATTACK_RANGE"|"EQUIP"|"GROUND"|"HEAL"|"HEALED"|"INTERRUPT_USED"|"INVENTORY_CHANGED"|"LEAVE_ATTACK_RANGE"|"LOCKPICKING_SUCCEEDED"|"LONG_REST"|"MOVED_DISTANCE"|"OBSCURITY_CHANGED"|"PROFICIENCY_CHANGED"|"PROJECTILE"|"PUSH"|"PUSHED"|"SHORT_REST"|"STATUS_APPLIED"|"STATUS_APPLY"|"STATUS_REMOVE"|"STATUS_REMOVED"|"SURFACE_ENTER"|"TARGET"|"TURN"
+--- @alias StatsPropertyContext string|"ABILITY_CHECK"|"ACTION_RESOURCES_CHANGED"|"AI_IGNORE"|"AI_ONLY"|"AOE"|"ATTACK"|"ATTACKED"|"ATTACKED_IN_MELEE_RANGE"|"ATTACKING_IN_MELEE_RANGE"|"CAST"|"CAST_RESOLVED"|"COMBAT_ENDED"|"COMBAT_STARTED"|"CONSUMED"|"CREATE"|"DAMAGE"|"DAMAGED"|"DAMAGED_PREVENTED"|"DAMAGE_PREVENTED"|"ENTER_ATTACK_RANGE"|"EQUIP"|"GROUND"|"HEAL"|"HEALED"|"INTERRUPT_USED"|"INVENTORY_CHANGED"|"LEAVE_ATTACK_RANGE"|"LOCKPICKING_SUCCEEDED"|"LONG_REST"|"MOVED_DISTANCE"|"OBSCURITY_CHANGED"|"PROFICIENCY_CHANGED"|"PROJECTILE"|"PUSH"|"PUSHED"|"ROUND"|"SHORT_REST"|"STATUS_APPLIED"|"STATUS_APPLY"|"STATUS_REMOVE"|"STATUS_REMOVED"|"SURFACE_ENTER"|"TARGET"|"TURN"
+--- @alias StatsRestoreResourceAmountType string|"Lua"|"None"|"Percentage"
 --- @alias StatsRollAdjustmentType string|"All"|"Distribute"
 --- @alias StatsRollType string|"Attack"|"Damage"|"DeathSavingThrow"|"MeleeOffHandWeaponAttack"|"MeleeSpellAttack"|"MeleeSpellDamage"|"MeleeUnarmedAttack"|"MeleeUnarmedDamage"|"MeleeWeaponAttack"|"MeleeWeaponDamage"|"None"|"RangedOffHandWeaponAttack"|"RangedSpellAttack"|"RangedSpellDamage"|"RangedUnarmedAttack"|"RangedUnarmedDamage"|"RangedWeaponAttack"|"RangedWeaponDamage"|"RawAbility"|"SavingThrow"|"Sentinel"|"SkillCheck"
 --- @alias StatsStatusGroup string|"SG_Approaching"|"SG_Blinded"|"SG_CanBePickedUp"|"SG_Charmed"|"SG_Charmed_Subtle"|"SG_Condition"|"SG_Confused"|"SG_Cursed"|"SG_DetectThoughts"|"SG_DifficultTerrain"|"SG_Disease"|"SG_Disguise"|"SG_Dominated"|"SG_Doppelganger"|"SG_DropForNonMutingDialog"|"SG_Drunk"|"SG_Exhausted"|"SG_Fleeing"|"SG_Frightened"|"SG_Helpable_Condition"|"SG_HexbladeCurse"|"SG_Ignore_AOO"|"SG_Incapacitated"|"SG_Invisible"|"SG_Light"|"SG_Mad"|"SG_Paralyzed"|"SG_Petrified"|"SG_Poisoned"|"SG_Poisoned_Story_NonRemovable"|"SG_Poisoned_Story_Removable"|"SG_Polymorph"|"SG_Polymorph_BeastShape"|"SG_Polymorph_BeastShape_NPC"|"SG_Possessed"|"SG_Prone"|"SG_Rage"|"SG_RemoveOnRespec"|"SG_Restrained"|"SG_ScriptedPeaceBehaviour"|"SG_Sleeping"|"SG_Stunned"|"SG_Surface"|"SG_Taunted"|"SG_Unconscious"|"SG_WeaponCoating"
+--- @alias StatsSummonLifetimeType string|"Permanent"|"UntilLongRest"
 --- @alias StatsTargetTypeFlags string|"Construct"|"Guaranteed"|"Living"|"Undead"
 --- @alias StatsUnsheathState string|"Instrument"|"Melee"|"Ranged"|"Sheathed"
 --- @alias StatsZoneShape string|"Cone"|"Square"
@@ -768,7 +769,7 @@ Osi = {}
 --- @alias StatusMaterialApplyFlags string|"ApplyOnArmor"|"ApplyOnBody"|"ApplyOnHorns"|"ApplyOnOverhead"|"ApplyOnWeapon"|"ApplyOnWings"
 --- @alias StatusType string|"BOOST"|"CLIMBING"|"DEACTIVATED"|"DOWNED"|"DYING"|"EFFECT"|"FEAR"|"HEAL"|"INCAPACITATED"|"INSURFACE"|"INVISIBLE"|"KNOCKED_DOWN"|"MATERIAL"|"POLYMORPHED"|"REACTION"|"ROTATE"|"SMELLY"|"SNEAKING"|"STORY_FROZEN"|"TELEPORT_FALLING"|"UNLOCK"
 --- @alias SurfaceActionType string|"ChangeSurfaceOnPathAction"|"CreatePuddleAction"|"CreateSurfaceAction"|"ExtinguishFireAction"|"PolygonSurfaceAction"|"RectangleSurfaceAction"|"TransformSurfaceAction"|"ZoneAction"
---- @alias SurfaceChange string|"Condense"|"Deelectrify"|"DestroyWater"|"Douse"|"Electrify"|"Freeze"|"Ignite"|"Melt"|"None"|"Vaporize"
+--- @alias SurfaceChange string|"Clear"|"Condense"|"Daylight"|"Deelectrify"|"DestroyWater"|"Douse"|"Electrify"|"Freeze"|"Ignite"|"Melt"|"None"|"TurnHellfire"|"UnturnHellfire"|"Vaporize"
 --- @alias SurfaceLayer string|"Cloud"|"Ground"|"None"
 --- @alias SurfaceLayer8 string|"Cloud"|"Ground"|"None"
 --- @alias SurfaceTransformActionType string|"Condense"|"Deelectrify"|"Douse"|"Electrify"|"Freeze"|"Ignite"|"Melt"|"None"|"Vaporize"
@@ -896,16 +897,20 @@ Osi = {}
 
 
 --- @class ActiveMaterial
---- @field BlendFlags uint8
+--- @field AlphaChannel uint8
 --- @field BlendStateID uint8
---- @field Flags uint8
+--- @field DebugMaterial uint8
+--- @field DirtyFlags uint8
+--- @field Flags AppliedMaterialFlags
 --- @field Hash uint64
---- @field MaterialInstance MaterialInstance
+--- @field Initialized boolean
+--- @field Material Material
+--- @field MaterialInstance Material
 --- @field MaterialName FixedString
+--- @field OverlayOffset number
 --- @field RasterizerStateID uint8
 --- @field RenderableObject RenderableObject
 --- @field Texture2DParams ActiveMaterialTexture2DParam[]
---- @field UVCount_M uint8
 --- @field VirtualTextureParams ActiveMaterialVirtualTextureParam[]
 --- @field SetScalar fun(self:ActiveMaterial, a1:FixedString, a2:number):boolean
 --- @field SetVector2 fun(self:ActiveMaterial, a1:FixedString, a2:vec2):boolean
@@ -946,9 +951,28 @@ Osi = {}
 --- @field Type AdvantageBoostType
 
 
+--- @class AiActionConditions
+--- @field AIFlags uint16
+--- @field ExcludeInNPCLoadout Guid[]
+--- @field FallbackStartRound int32
+--- @field MinimumImpact int32
+--- @field OnlyCastOnSelf boolean
+--- @field OnlyInNPCLoadout Guid[]
+--- @field ScoreModifier number
+--- @field SourceConditions AiTargetConditions
+--- @field StartRound int32
+--- @field TargetConditions AiTargetConditions
+
+
 --- @class AiArchetypeOverrideBoostComponent:BaseComponent
 --- @field Archetype FixedString
 --- @field Priority int32
+
+
+--- @class AiTargetConditions
+--- @field MaximumHealthPercentage int32
+--- @field MinimumHealthPercentage int32
+--- @field Tags Guid[]
 
 
 --- @class AmbushingComponent:BaseComponent
@@ -1082,6 +1106,10 @@ Osi = {}
 --- @class BodyTypeComponent:BaseComponent
 --- @field BodyType uint8
 --- @field BodyType2 uint8
+
+
+--- @class BookActionData:IActionData
+--- @field BookId FixedString
 
 
 --- @class BoostCause
@@ -1254,6 +1282,13 @@ Osi = {}
 --- @field Template FixedString
 
 
+--- @class CharacterSpellData
+--- @field Conditions AiActionConditions
+--- @field LearningStrategy SpellLearningStrategy
+--- @field Spell FixedString
+--- @field SpellCastingAbility AbilityId
+
+
 --- @class CharacterTemplate:EoCGameObjectTemplate
 --- @field ActivationGroupId FixedString
 --- @field AliveInventoryType uint8
@@ -1309,6 +1344,7 @@ Osi = {}
 --- @field IsSteeringEnabled boolean
 --- @field IsTradable uint8
 --- @field IsWorldClimbingEnabled boolean
+--- @field ItemList InventoryItemData[]
 --- @field JumpUpLadders boolean
 --- @field LadderAttachOffset number
 --- @field LadderBlendspace_Attach_Down FixedString
@@ -1327,6 +1363,7 @@ Osi = {}
 --- @field MovementSpeedWalk number
 --- @field MovementStepUpHeight number
 --- @field MovementTiltToRemap FixedString
+--- @field OnDeathActions IActionData[]
 --- @field OnlyInDifficulty Guid[]
 --- @field PickingPhysicsTemplates table<FixedString, FixedString>
 --- @field ProbeLookAtOffset number
@@ -1336,6 +1373,7 @@ Osi = {}
 --- @field Race Guid
 --- @field RagdollTemplate FixedString
 --- @field ShootThroughType uint8
+--- @field SkillList CharacterSpellData[]
 --- @field SoftBodyCollisionTemplate FixedString
 --- @field SoundAttenuation int16
 --- @field SoundInitEvent FixedString
@@ -1452,6 +1490,11 @@ Osi = {}
 --- @field Unknown2 uint8
 
 
+--- @class CombineActionData:IActionData
+--- @field CombineSlots int8
+--- @field IsBase boolean
+
+
 --- @class ConcentrationComponent:BaseComponent
 --- @field Caster EntityHandle
 --- @field SpellId SpellId
@@ -1489,6 +1532,35 @@ Osi = {}
 --- @field SkillCheckRoll boolean
 --- @field field_120 Guid
 --- @field field_130 boolean
+
+
+--- @class ConstrainActionData:IActionData
+--- @field Damage number
+
+
+--- @class ConsumeActionData:IActionData
+--- @field Consume boolean
+--- @field IsHiddenStatus boolean
+--- @field StatsId FixedString
+--- @field StatusDuration int32
+
+
+--- @class CreatePuddleActionData:IActionData
+--- @field ApplyDeathTypeBloodCheck boolean
+--- @field CellsAtGrow int32
+--- @field ExternalCauseAsSurfaceOwner boolean
+--- @field GrowTimer number
+--- @field LifeTime number
+--- @field SurfaceType SurfaceType
+--- @field Timeout number
+--- @field TotalCells int32
+
+
+--- @class CreateSurfaceActionData:IActionData
+--- @field ExternalCauseAsSurfaceOwner boolean
+--- @field LifeTime number
+--- @field Radius number
+--- @field SurfaceType SurfaceType
 
 
 --- @class CriticalHitBoostComponent:BaseComponent
@@ -1614,6 +1686,20 @@ Osi = {}
 --- @field State uint32
 
 
+--- @class DestroyActionData:IActionData
+
+
+--- @class DestroyParametersActionData:IActionData
+--- @field ExplodeFX FixedString
+--- @field FadeOutDelay number
+--- @field FadeOutFX FixedString
+--- @field SnapToGround boolean
+--- @field TargetItemState uint8
+--- @field TemplateAfterDestruction FixedString
+--- @field VisualDestruction FixedString
+--- @field VisualWithDynamicPhysics FixedString
+
+
 --- @class DetachedComponent:BaseComponent
 --- @field Flags uint32
 
@@ -1647,6 +1733,10 @@ Osi = {}
 --- @field ShapeshiftFlag boolean
 
 
+--- @class DisarmTrapActionData:IActionData
+--- @field Consume boolean
+
+
 --- @class DisarmableComponent:BaseComponent
 --- @field field_0 Guid
 --- @field field_10 uint8
@@ -1663,6 +1753,10 @@ Osi = {}
 --- @field StatusType StatusType
 --- @field field_0 uint8
 --- @field field_4 int32
+
+
+--- @class DoorActionData:IActionData
+--- @field SecretDoor boolean
 
 
 --- @class DownedStatusBoostComponent:BaseComponent
@@ -1719,6 +1813,9 @@ Osi = {}
 
 --- @class EocLevelComponent:BaseComponent
 --- @field Level int32
+
+
+--- @class EquipActionData:IActionData
 
 
 --- @class EquipableComponent:BaseComponent
@@ -2102,6 +2199,12 @@ Osi = {}
 --- @field Decks table<FixedString, int32>
 
 
+--- @class IActionData
+--- @field Animation FixedString
+--- @field Conditions string
+--- @field Type ActionDataType
+
+
 --- @class IconComponent:BaseComponent
 --- @field Icon FixedString
 
@@ -2151,10 +2254,28 @@ Osi = {}
 --- @field Amount int32
 
 
+--- @class InsertActionData:IActionData
+--- @field InsertSlots int8
+
+
 --- @class InteractionFilterComponent:BaseComponent
 --- @field field_0 Array_Guid
 --- @field field_30 uint8
 --- @field field_31 uint8
+
+
+--- @class InventoryItemData
+--- @field Amount int32
+--- @field CanBePickpocketed boolean
+--- @field Conditions AiActionConditions
+--- @field IsDroppedOnDeath boolean
+--- @field IsTradable uint8
+--- @field ItemName string
+--- @field LevelName string
+--- @field TemplateID FixedString
+--- @field Type uint8
+--- @field UUID FixedString
+--- @field field_8 string
 
 
 --- @class InvisibilityComponent:BaseComponent
@@ -2234,6 +2355,7 @@ Osi = {}
 --- @field IsSurfaceBlocker boolean
 --- @field IsSurfaceCloudBlocker boolean
 --- @field IsTrap boolean
+--- @field ItemList InventoryItemData[]
 --- @field Key FixedString
 --- @field LevelOverride int32
 --- @field LightChannel uint8
@@ -2241,7 +2363,9 @@ Osi = {}
 --- @field MapMarkerStyle FixedString
 --- @field MaterialPreset Guid
 --- @field MaxStackAmount int32
+--- @field OnDestroyActions IActionData[]
 --- @field OnUseDescription TranslatedString
+--- @field OnUsePeaceActions IActionData[]
 --- @field OnlyInDifficulty Guid[]
 --- @field Owner FixedString
 --- @field PermanentWarnings FixedString
@@ -2300,6 +2424,24 @@ Osi = {}
 
 --- @class KeyComponent:BaseComponent
 --- @field Key FixedString
+
+
+--- @class LadderActionData:IActionData
+--- @field AllowScaling boolean
+--- @field BottomHorizontalOffset number
+--- @field BottomVerticalOffset number
+--- @field ClimbDirection int32
+--- @field NodeLadderOffest number
+--- @field TopAttachNearOffset number
+--- @field TopDetachOffset number
+--- @field TopLineTolerance number
+--- @field TopMidOffset number
+--- @field TopMidToPlatformFixedLength number
+
+
+--- @class LearnSpellActionData:IActionData
+--- @field Consume boolean
+--- @field Spell FixedString
 
 
 --- @class LevelComponent:BaseComponent
@@ -2426,6 +2568,10 @@ Osi = {}
 --- @field To FixedString
 
 
+--- @class LieActionData:IActionData
+--- @field Heal number
+
+
 --- @class LocalTransform
 --- @field LocalBound AABound
 --- @field LocalTransform Transform
@@ -2442,6 +2588,10 @@ Osi = {}
 --- @field field_8 Guid
 
 
+--- @class LockpickActionData:IActionData
+--- @field Consume boolean
+
+
 --- @class LootComponent:BaseComponent
 --- @field Flags uint8
 --- @field InventoryType uint8
@@ -2453,7 +2603,7 @@ Osi = {}
 --- @field field_24 int32
 
 
---- @class MaterialInstance
+--- @class Material
 --- @field BlendStateID uint8
 --- @field DepthStateID uint8
 --- @field DiffusionProfileUUID FixedString
@@ -2463,8 +2613,8 @@ Osi = {}
 --- @field MaterialType uint8
 --- @field MaterialUsage uint8
 --- @field Name FixedString
---- @field Parameters MaterialInstanceParametersSet
---- @field Parent MaterialInstance
+--- @field Parameters MaterialParametersSet
+--- @field Parent Material
 --- @field RasterizerStateID uint8
 --- @field RenderChannel uint8
 --- @field Shaders FixedString[]
@@ -2473,13 +2623,13 @@ Osi = {}
 --- @field UsedWithFlags uint32
 --- @field Version64 uint64
 --- @field field_510 uint32
---- @field SetScalar fun(self:MaterialInstance, a1:FixedString, a2:number):boolean
---- @field SetVector2 fun(self:MaterialInstance, a1:FixedString, a2:vec2):boolean
---- @field SetVector3 fun(self:MaterialInstance, a1:FixedString, a2:vec3):boolean
---- @field SetVector4 fun(self:MaterialInstance, a1:FixedString, a2:vec4):boolean
+--- @field SetScalar fun(self:Material, a1:FixedString, a2:number):boolean
+--- @field SetVector2 fun(self:Material, a1:FixedString, a2:vec2):boolean
+--- @field SetVector3 fun(self:Material, a1:FixedString, a2:vec3):boolean
+--- @field SetVector4 fun(self:Material, a1:FixedString, a2:vec4):boolean
 
 
---- @class MaterialInstanceDecalParameters
+--- @class MaterialDecalParameters
 --- @field DecalDeferredProperties int16
 --- @field DecalDimensions int16
 --- @field DecalTiling int16
@@ -2488,40 +2638,40 @@ Osi = {}
 --- @field NormalMatrix int16
 
 
---- @class MaterialInstanceMaterialCB
+--- @class MaterialMaterialCB
 --- @field MaterialCBSize uint64
 
 
---- @class MaterialInstanceParametersSet
---- @field Material MaterialInstance
---- @field SamplerStateParameters MaterialInstanceSamplerStateParameter[]
---- @field ScalarParameters MaterialInstanceScalarParameter[]
---- @field Texture2DParameters MaterialInstanceTexture2DParameter[]
---- @field Vector2Parameters MaterialInstanceVector2Parameter[]
---- @field Vector3Parameters MaterialInstanceVector3Parameter[]
---- @field VectorParameters MaterialInstanceVector4Parameter[]
---- @field VirtualTextureParameters MaterialInstanceVirtualTextureParameter[]
+--- @class MaterialParametersSet
+--- @field Material Material
+--- @field SamplerStateParameters MaterialSamplerStateParameter[]
+--- @field ScalarParameters MaterialScalarParameter[]
+--- @field Texture2DParameters MaterialTexture2DParameter[]
+--- @field Vector2Parameters MaterialVector2Parameter[]
+--- @field Vector3Parameters MaterialVector3Parameter[]
+--- @field VectorParameters MaterialVector4Parameter[]
+--- @field VirtualTextureParameters MaterialVirtualTextureParameter[]
 
 
---- @class MaterialInstanceSamplerStateParameter:ResourceMaterialResourceParameter
+--- @class MaterialSamplerStateParameter:ResourceMaterialResourceParameter
 --- @field TextureAddressMode uint8
 --- @field TextureFilterOverride uint8
 
 
---- @class MaterialInstanceScalarParameter:ResourceMaterialResourceScalarParameter
+--- @class MaterialScalarParameter:ResourceMaterialResourceScalarParameter
 
 
---- @class MaterialInstanceShaderDescription
---- @field DecalParameters MaterialInstanceDecalParameters
+--- @class MaterialShaderDescription
+--- @field DecalParameters MaterialDecalParameters
 --- @field DiffusionProfileIndex int16
---- @field EngineCBBinding MaterialInstanceShaderParamBinding
+--- @field EngineCBBinding MaterialShaderParamBinding
 --- @field EngineCBSize uint16
 --- @field EngineParamFlags uint16
 --- @field FadeOpacity int16
 --- @field LightChannel int16
 --- @field LocalBoundsMax int16
 --- @field LocalBoundsMin int16
---- @field MaterialCBBinding MaterialInstanceShaderParamBinding
+--- @field MaterialCBBinding MaterialShaderParamBinding
 --- @field MaterialCBSize uint16
 --- @field MeshRandom int16
 --- @field ReceiveDecal int16
@@ -2541,49 +2691,49 @@ Osi = {}
 --- @field field_36 uint16
 
 
---- @class MaterialInstanceShaderParamBinding
+--- @class MaterialShaderParamBinding
 --- @field DxPsIndex int8
 --- @field DxVsIndex int8
 --- @field VkBindingIndex int8
 --- @field VkDescriptorSet int8
 
 
---- @class MaterialInstanceTexture2DParameter:ResourceMaterialResourceTexture2DParameter
+--- @class MaterialTexture2DParameter:ResourceMaterialResourceTexture2DParameter
 
 
---- @class MaterialInstanceTextureBindingData
---- @field PerShaderBindings MaterialInstanceShaderParamBinding[]
+--- @class MaterialTextureBindingData
+--- @field PerShaderBindings MaterialShaderParamBinding[]
 --- @field UniformName FixedString
 
 
---- @class MaterialInstanceUniformBindingData
+--- @class MaterialUniformBindingData
 --- @field PerShaderCBOffsets int16[]
 --- @field UniformName FixedString
 
 
---- @class MaterialInstanceVector2Parameter:ResourceMaterialResourceVector2Parameter
+--- @class MaterialVector2Parameter:ResourceMaterialResourceVector2Parameter
 
 
---- @class MaterialInstanceVector3Parameter:ResourceMaterialResourceVector3Parameter
+--- @class MaterialVector3Parameter:ResourceMaterialResourceVector3Parameter
 
 
---- @class MaterialInstanceVector4Parameter:ResourceMaterialResourceVector4Parameter
+--- @class MaterialVector4Parameter:ResourceMaterialResourceVector4Parameter
 
 
---- @class MaterialInstanceVirtualTextureBindingData
---- @field PerShaderBindings MaterialInstanceShaderParamBinding[]
---- @field PerShaderVTBindings MaterialInstanceVirtualTextureShaderParamBinding[]
+--- @class MaterialVirtualTextureBindingData
+--- @field PerShaderBindings MaterialShaderParamBinding[]
+--- @field PerShaderVTBindings MaterialVirtualTextureShaderParamBinding[]
 --- @field UniformName FixedString
 
 
---- @class MaterialInstanceVirtualTextureParameter:ResourceMaterialResourceVirtualTextureParameter
+--- @class MaterialVirtualTextureParameter:ResourceMaterialResourceVirtualTextureParameter
 
 
---- @class MaterialInstanceVirtualTextureShaderParamBinding
---- @field Cache MaterialInstanceShaderParamBinding
---- @field Cache1 MaterialInstanceShaderParamBinding
---- @field Cache2 MaterialInstanceShaderParamBinding
---- @field Cache3 MaterialInstanceShaderParamBinding
+--- @class MaterialVirtualTextureShaderParamBinding
+--- @field Cache MaterialShaderParamBinding
+--- @field Cache1 MaterialShaderParamBinding
+--- @field Cache2 MaterialShaderParamBinding
+--- @field Cache3 MaterialShaderParamBinding
 
 
 --- @class MaterialParameterOverrideComponent:BaseComponent
@@ -2596,17 +2746,17 @@ Osi = {}
 --- @field field_18 FixedString
 
 
---- @class MaterialParameterSet
+--- @class MaterialRenderingData
 --- @field EngineCBSize uint16
 --- @field EngineDxPsIndex uint8
 --- @field EngineDxVsIndex uint8
 --- @field EngineVkBindingIndex uint8
 --- @field EngineVkDescriptorSet uint8
 --- @field Handle EntityHandle
+--- @field InstancingHash uint64
 --- @field MaterialCBSize uint16
 --- @field MaterialDxPsIndex uint8
 --- @field MaterialDxVsIndex uint8
---- @field MaterialHash uint64
 --- @field MaterialVkBindingIndex uint8
 --- @field MaterialVkDescriptorSet uint8
 --- @field ShaderIndex uint8
@@ -2700,10 +2850,11 @@ Osi = {}
 
 --- @class MoveableObject
 --- @field BaseBound AABound
+--- @field CullDataHandleIndex int32
 --- @field DirtyFlags uint8
 --- @field LocalTransform LocalTransform
---- @field SceneNodeIndex_M int32
---- @field SceneSize_M vec2
+--- @field MaxLODDistance number
+--- @field MinLODDistance number
 --- @field WorldBound AABound
 --- @field WorldTransform Transform
 
@@ -2951,6 +3102,9 @@ Osi = {}
 --- @class OffStageComponent:BaseComponent
 
 
+--- @class OpenCloseActionData:IActionData
+
+
 --- @class OriginAppearanceTagComponent:BaseComponent
 --- @field Tags Guid[]
 
@@ -3046,10 +3200,15 @@ Osi = {}
 --- @class PickingStateComponent:BaseComponent
 
 
+--- @class PlaySoundActionData:IActionData
+--- @field ActivateSoundEvent FixedString
+--- @field PlayOnHUD boolean
+
+
 --- @class PlayerComponent:BaseComponent
 
 
---- @class PrimaryMaterialParameterSet:MaterialParameterSet
+--- @class PrimaryMaterialRenderingData:MaterialRenderingData
 --- @field field_40 int64
 --- @field field_48 int64
 --- @field field_50 int64
@@ -3125,6 +3284,10 @@ Osi = {}
 
 --- @class RaceComponent:BaseComponent
 --- @field Race Guid
+
+
+--- @class RecipeActionData:IActionData
+--- @field Recipe FixedString
 
 
 --- @class RedirectDamageBoostComponent:BaseComponent
@@ -3290,6 +3453,11 @@ Osi = {}
 --- @field StateId uint8
 
 
+--- @class ShowStoryElementUIActionData:IActionData
+--- @field UIStoryInstance string
+--- @field UIType int32
+
+
 --- @class SightRangeAdditiveBoostComponent:BaseComponent
 --- @field Range number
 
@@ -3307,6 +3475,10 @@ Osi = {}
 
 
 --- @class SimpleCharacterComponent:BaseComponent
+
+
+--- @class SitActionData:IActionData
+--- @field Heal number
 
 
 --- @class SkillBoostComponent:BaseComponent
@@ -3328,8 +3500,19 @@ Osi = {}
 --- @field Type SourceAdvantageType
 
 
+--- @class SpawnCharacterActionData:IActionData
+--- @field LocalTemplate FixedString
+--- @field RootTemplate FixedString
+--- @field SpawnFX FixedString
+
+
 --- @class SpeakerComponent:BaseComponent
 --- @field field_0 FixedString[]
+
+
+--- @class SpellBookActionData:IActionData
+--- @field Consume boolean
+--- @field Spell FixedString
 
 
 --- @class SpellId
@@ -3356,6 +3539,9 @@ Osi = {}
 
 --- @class SpellSaveDCBoostComponent:BaseComponent
 --- @field DC int32
+
+
+--- @class StandActionData:IActionData
 
 
 --- @class StaticPhysicsComponent:BaseComponent
@@ -3463,6 +3649,12 @@ Osi = {}
 --- @class StoryShortRestDisabledComponent:BaseComponent
 
 
+--- @class StoryUseActionData:IActionData
+
+
+--- @class StoryUseInInventoryActionData:IActionData
+
+
 --- @class SummonContainerComponent:BaseComponent
 --- @field ByTag table<FixedString, EntityHandle[]>
 --- @field Characters Array_EntityHandle
@@ -3549,6 +3741,18 @@ Osi = {}
 --- @field Tags Guid[]
 
 
+--- @class TeleportActionData:IActionData
+--- @field AiUseInCombat boolean
+--- @field BlockMapMarkerNavigation boolean
+--- @field EventID FixedString
+--- @field SnapToGround boolean
+--- @field Source FixedString
+--- @field SourceType uint8
+--- @field Target FixedString
+--- @field TargetType uint8
+--- @field Visibility uint8
+
+
 --- @class TemplateAnimationSetOverrideComponent:BaseComponent
 --- @field Overrides AnimationWaterfallElement[]
 
@@ -3560,6 +3764,10 @@ Osi = {}
 --- @class TextureLayerConfigId
 --- @field Flag uint8
 --- @field TextureLayerConfig uint32
+
+
+--- @class ThrowActionData:IActionData
+--- @field FallbackPreviewRadius number
 
 
 --- @class TraderComponent:BaseComponent
@@ -3603,15 +3811,26 @@ Osi = {}
 --- @class TypeInformationRef:TypeInformation
 
 
+--- @class Unknown31ActionData:IActionData
+
+
+--- @class Unknown34ActionData:IActionData
+
+
+--- @class Unknown35ActionData:IActionData
+
+
 --- @class UnlockInterruptBoostComponent:BaseComponent
 --- @field Interrupt FixedString
 
 
 --- @class UnlockSpellBoostComponent:BaseComponent
 --- @field Ability AbilityId
+--- @field CastResource Guid
 --- @field CooldownType SpellCooldownType
+--- @field LearningStrategy SpellLearningStrategy
 --- @field SomeUUID Guid
---- @field SpellChildSelection SpellChildSelectionType
+--- @field SpellChildSelection SpellLearningStrategy
 --- @field SpellId FixedString
 
 
@@ -3669,6 +3888,12 @@ Osi = {}
 --- @field Sockets table<uint32, UseSocket>
 
 
+--- @class UseSpellActionData:IActionData
+--- @field Class Guid
+--- @field Consume boolean
+--- @field Spell FixedString
+
+
 --- @class UserAvatarComponent:BaseComponent
 --- @field OwnerProfileID FixedString
 --- @field UserID int32
@@ -3704,19 +3929,19 @@ Osi = {}
 --- @field Attachments VisualAttachment[]
 --- @field BlendShapeBase int16
 --- @field CullFlags uint16
+--- @field HasValidPose boolean
 --- @field LODDistances number[]
+--- @field LightChannel uint8
 --- @field ObjectDescs VisualObjectDesc[]
---- @field OwnsNode uint8
 --- @field Parent Visual
+--- @field PhysicsFlags uint8
 --- @field VisualEntity EntityRef
 --- @field VisualFlags uint32
 --- @field VisualResource ResourceVisualResource
---- @field Wrinkle01 int16
---- @field Wrinkle02 int16
---- @field Wrinkle03 int16
---- @field WrinkleBase int16
---- @field field_F6 uint8
---- @field field_F7 uint8
+--- @field Wrinkle01BoneIndex int16
+--- @field Wrinkle02BoneIndex int16
+--- @field Wrinkle03BoneIndex int16
+--- @field WrinkleBaseBoneIndex int16
 
 
 --- @class VisualAttachment
@@ -3724,9 +3949,9 @@ Osi = {}
 --- @field Bone2 FixedString
 --- @field BoneIndex1 int32
 --- @field BoneIndex2 int32
+--- @field BoneType1 uint8
+--- @field BoneType2 uint8
 --- @field Flags uint32
---- @field HasBone1 boolean
---- @field HasBone2 boolean
 --- @field Visual Visual
 --- @field field_1E uint8
 --- @field field_1F uint8
@@ -3734,15 +3959,15 @@ Osi = {}
 --- @field field_24 vec3
 
 
---- @class VisualBoneRemap
---- @field field_0 int16
---- @field field_2 int16
-
-
 --- @class VisualObjectDesc
 --- @field Flags uint8
 --- @field Renderable RenderableObject
 --- @field field_8 uint8
+
+
+--- @class VisualSkeletonSlotRemap
+--- @field field_0 int16
+--- @field field_2 int16
 
 
 --- @class VisualComponent:BaseComponent
@@ -7630,15 +7855,15 @@ Osi = {}
 --- @field IsDefaultForUseSpellAction boolean
 --- @field IsSomaticWithInstrument boolean
 --- @field ItemsHotbarColumns int32
---- @field LearningStrategy uint8
+--- @field LearningStrategy SpellLearningStrategy
 --- @field MulticlassSpellcasterModifier number
 --- @field MustPrepareSpells boolean
 --- @field Name FixedString
 --- @field ParentGuid Guid
---- @field PrimaryAbility uint8
+--- @field PrimaryAbility AbilityId
 --- @field ProgressionTableUUID Guid
 --- @field SoundClassType FixedString
---- @field SpellCastingAbility uint8
+--- @field SpellCastingAbility AbilityId
 --- @field SpellList Guid
 --- @field SubclassTitle TranslatedString
 --- @field Tags Guid[]
@@ -8276,7 +8501,7 @@ Osi = {}
 
 --- @class ResourceMaterialResource:ResourceTwoStepLoadableResource
 --- @field DiffusionProfileUUID FixedString
---- @field Instance MaterialInstance
+--- @field Instance Material
 --- @field MaterialType uint8
 --- @field RenderChannel uint8
 --- @field ScalarParameters ResourceMaterialResourceScalarParameter[]
@@ -10676,7 +10901,8 @@ Osi = {}
 --- @field ContainerSpell FixedString
 --- @field CooldownType SpellCooldownType
 --- @field ItemHandle EntityHandle
---- @field SelectionType SpellChildSelectionType
+--- @field LearningStrategy SpellLearningStrategy
+--- @field SelectionType SpellLearningStrategy
 --- @field SpellCastingAbility AbilityId
 --- @field SpellId SpellIdBase
 --- @field SpellUUID Guid
@@ -10794,15 +11020,23 @@ Osi = {}
 --- @field field_10 EntityHandle?
 
 
+--- @class StatsAdjustRollFunctor:StatsFunctor
+--- @field DamageType DamageType
+--- @field Type StatsRollAdjustmentType
+
+
 --- @class StatsApplyEquipmentStatusFunctor:StatsApplyStatusFunctor
 --- @field EquipmentSlot StatsItemSlot
 
 
 --- @class StatsApplyStatusFunctor:StatsFunctor
 --- @field HasParam6 boolean
+--- @field RequiresConcentration boolean
 --- @field StatsConditions string
 --- @field StatusId FixedString
---- @field StringParam FixedString
+--- @field StatusSpecificParam1 FixedString
+--- @field StatusSpecificParam2 int32
+--- @field StatusSpecificParam3 int32
 
 
 --- @class StatsBaseFunctorExecParams
@@ -10840,11 +11074,19 @@ Osi = {}
 --- @field Primitives StatsTreasureTable[]
 
 
---- @class StatsCreateConeSurfaceFunctor:StatsFunctor
---- @field Arg0 number
+--- @class StatsCameraWaitFunctor:StatsFunctor
 --- @field Arg1 number
---- @field Arg2 FixedString
---- @field Arg3 boolean
+
+
+--- @class StatsCounterspellFunctor:StatsFunctor
+
+
+--- @class StatsCreateConeSurfaceFunctor:StatsFunctor
+--- @field Duration number
+--- @field IsControlledByConcentration boolean
+--- @field Radius number
+--- @field SurfaceType FixedString
+--- @field field_55 boolean
 
 
 --- @class StatsCreateExplosionFunctor:StatsFunctor
@@ -10853,10 +11095,22 @@ Osi = {}
 
 --- @class StatsCreateSurfaceFunctor:StatsFunctor
 --- @field Arg4 number
+--- @field Arg5 boolean
 --- @field Duration number
 --- @field IsControlledByConcentration boolean
 --- @field Radius number
 --- @field SurfaceType FixedString
+
+
+--- @class StatsCreateWallFunctor:StatsFunctor
+
+
+--- @class StatsCreateZoneFunctor:StatsFunctor
+--- @field Arg2 number
+--- @field Arg4 FixedString
+--- @field Arg5 boolean
+--- @field Duration number
+--- @field Shape StatsZoneShape
 
 
 --- @class StatsCustomDescriptionFunctor:StatsFunctor
@@ -10864,12 +11118,16 @@ Osi = {}
 
 
 --- @class StatsDealDamageFunctor:StatsFunctor
+--- @field Arg10 boolean
+--- @field Arg7 boolean
+--- @field Arg8 boolean
+--- @field Arg9 boolean
+--- @field CoinMultiplier int32
 --- @field DamageType DamageType
 --- @field Magical boolean
 --- @field Nonlethal boolean
 --- @field WeaponDamageType DealDamageWeaponDamageType
 --- @field WeaponType DealDamageWeaponType
---- @field field_34 int32
 
 
 --- @class StatsDescriptionInfo
@@ -10884,12 +11142,23 @@ Osi = {}
 --- @field ShortDescriptionParams string
 
 
+--- @class StatsDisarmAndStealWeaponFunctor:StatsFunctor
+
+
 --- @class StatsDisarmWeaponFunctor:StatsFunctor
+
+
+--- @class StatsDoTeleportFunctor:StatsFunctor
+--- @field Arg1 number
 
 
 --- @class StatsDouseFunctor:StatsFunctor
 --- @field field_20 number
 --- @field field_24 number
+
+
+--- @class StatsDropFunctor:StatsFunctor
+--- @field Arg1 FixedString
 
 
 --- @class StatsExecuteWeaponFunctorsFunctor:StatsFunctor
@@ -10899,15 +11168,28 @@ Osi = {}
 --- @class StatsExtenderFunctor:StatsFunctor
 
 
+--- @class StatsFireProjectileFunctor:StatsFunctor
+--- @field Arg1 FixedString
+
+
 --- @class StatsForceFunctor:StatsFunctor
 --- @field Aggression ForceFunctorAggression
+--- @field Arg3 boolean
+--- @field Arg4 boolean
+--- @field Distance FixedString
 --- @field Origin ForceFunctorOrigin
 
 
 --- @class StatsFunctor
+--- @field FunctorUuid Guid
 --- @field ObserverType StatsObserverType
+--- @field Owner boolean
+--- @field PropertyContext StatsPropertyContext
 --- @field RollConditions StatsFunctorRollCondition[]
+--- @field Self boolean
 --- @field StatsConditionsId int32
+--- @field StoryActionId uint32
+--- @field Swap boolean
 --- @field TypeId StatsFunctorId
 --- @field UniqueName FixedString
 
@@ -11028,6 +11310,9 @@ Osi = {}
 --- @field UniqueName FixedString
 
 
+--- @class StatsGainTemporaryHitPointsFunctor:StatsFunctor
+
+
 --- @class StatsInterruptPrototype
 --- @field Conditions int32
 --- @field Container FixedString
@@ -11046,6 +11331,13 @@ Osi = {}
 --- @field SuccessFunctors StatsFunctors
 
 
+--- @class StatsKillFunctor:StatsFunctor
+
+
+--- @class StatsMaximizeRollFunctor:StatsFunctor
+--- @field DamageType DamageType
+
+
 --- @class StatsModifier
 --- @field EnumerationIndex int32
 --- @field LevelMapIndex int32
@@ -11055,6 +11347,11 @@ Osi = {}
 --- @class StatsModifierList
 --- @field Attributes StatsCNamedElementManager_StatsModifier
 --- @field Name FixedString
+
+
+--- @class StatsObjectFunctorGroup
+--- @field Functors StatsFunctor[]
+--- @field TextKey FixedString
 
 
 --- @class StatsPassivePrototype
@@ -11095,10 +11392,23 @@ Osi = {}
 
 
 --- @class StatsRegainHitPointsFunctor:StatsFunctor
+--- @field Construct boolean
+--- @field Guaranteed boolean
+--- @field Living boolean
+--- @field Undead boolean
+
+
+--- @class StatsRegainTemporaryHitPointsFunctor:StatsFunctor
 
 
 --- @class StatsRemoveAuraByChildStatusFunctor:StatsFunctor
 --- @field StatusId FixedString
+
+
+--- @class StatsRemoveStatusByLevelFunctor:StatsFunctor
+--- @field Ability AbilityId?
+--- @field Arg2 int8
+--- @field NameOrStatusGroup Variant<FixedString,StatsStatusGroup>
 
 
 --- @class StatsRemoveStatusFunctor:StatsFunctor
@@ -11119,35 +11429,80 @@ Osi = {}
 --- @class StatsResetCombatTurnFunctor:StatsFunctor
 
 
+--- @class StatsResetCooldownsFunctor:StatsFunctor
+--- @field CooldownType SpellCooldownType
+
+
 --- @class StatsRestoreResourceFunctor:StatsFunctor
---- @field ActionResourceUUID Guid
+--- @field ActionResource Guid
 --- @field Amount number
+--- @field AmountType StatsRestoreResourceAmountType
 --- @field Hex int32
---- @field IsPercentage boolean
 --- @field field_34 int32
 
 
 --- @class StatsResurrectFunctor:StatsFunctor
+--- @field Construct boolean
+--- @field Guaranteed boolean
 --- @field HealthPercentage number
+--- @field Living boolean
 --- @field Probability number
+--- @field Undead boolean
 
 
 --- @class StatsSabotageFunctor:StatsFunctor
 --- @field Amount int32
 
 
+--- @class StatsSetAdvantageFunctor:StatsFunctor
+
+
+--- @class StatsSetDamageResistanceFunctor:StatsFunctor
+--- @field DamageType DamageType
+
+
+--- @class StatsSetDisadvantageFunctor:StatsFunctor
+
+
+--- @class StatsSetRerollFunctor:StatsFunctor
+--- @field Arg2 boolean
+--- @field Roll uint8
+
+
+--- @class StatsSetRollFunctor:StatsFunctor
+--- @field DamageType DamageType
+--- @field Roll int32
+--- @field Type StatsRollAdjustmentType
+
+
 --- @class StatsSetStatusDurationFunctor:StatsFunctor
+--- @field ChangeType SetStatusDurationType
 --- @field Duration number
 --- @field StatusId FixedString
 
 
---- @class StatsSpawnFunctor:StatsFunctor
+--- @class StatsShortRestFunctor:StatsFunctor
+
+
+--- @class StatsSpawnExtraProjectilesFunctor:StatsFunctor
 --- @field Arg1 FixedString
+
+
+--- @class StatsSpawnFunctor:StatsFunctor
+--- @field AIHelper FixedString
+--- @field Arg7 boolean
 --- @field StatusesToApply Array_FixedString
 --- @field TemplateId FixedString
 
 
 --- @class StatsSpawnInInventoryFunctor:StatsFunctor
+--- @field AdditionalArgs Array_FixedString
+--- @field Arg3 int32
+--- @field Arg4 boolean
+--- @field Arg5 boolean
+--- @field Arg6 boolean
+--- @field Arg7 FixedString
+--- @field TemplateId FixedString
 
 
 --- @class StatsSpellPrototype
@@ -11262,14 +11617,26 @@ Osi = {}
 
 
 --- @class StatsSummonFunctor:StatsFunctor
---- @field Arg3 FixedString
+--- @field AIHelper FixedString
 --- @field Arg5 boolean
---- @field SpawnLifetime number
+--- @field Arg9 boolean
+--- @field SpawnLifetime Variant<StatsSummonLifetimeType,float>
+--- @field StackId FixedString
 --- @field StatusesToApply Array_FixedString
 --- @field Template FixedString
 
 
 --- @class StatsSummonInInventoryFunctor:StatsFunctor
+--- @field AdditionalArgs Array_FixedString
+--- @field Arg3 int32
+--- @field Arg4 boolean
+--- @field Arg5 boolean
+--- @field Arg6 boolean
+--- @field Arg7 boolean
+--- @field Arg8 FixedString
+--- @field Arg9 FixedString
+--- @field Lifetime Variant<StatsSummonLifetimeType,float>
+--- @field TemplateId FixedString
 
 
 --- @class StatsSurfaceChangeFunctor:StatsFunctor
@@ -11280,10 +11647,23 @@ Osi = {}
 --- @field field_2C number
 
 
+--- @class StatsSurfaceClearLayerFunctor:StatsFunctor
+--- @field Layers Array_SurfaceLayer8
+
+
 --- @class StatsSwapPlacesFunctor:StatsFunctor
+--- @field Animation FixedString
+--- @field Arg1 boolean
+--- @field Arg2 boolean
+
+
+--- @class StatsSwitchDeathTypeFunctor:StatsFunctor
+--- @field DeathType StatsDeathType
 
 
 --- @class StatsTeleportSourceFunctor:StatsFunctor
+--- @field Arg1 boolean
+--- @field Arg2 boolean
 
 
 --- @class StatsTreasureCategory
@@ -11337,24 +11717,41 @@ Osi = {}
 --- @field UseTreasureGroupContainers boolean
 
 
+--- @class StatsTriggerRandomCastFunctor:StatsFunctor
+--- @field Arg1 uint8
+--- @field Arg2 number
+--- @field RandomCastOutcomes FixedString[]
+
+
+--- @class StatsTutorialEventFunctor:StatsFunctor
+--- @field Event Guid
+
+
 --- @class StatsUnlockFunctor:StatsFunctor
 
 
+--- @class StatsUnsummonFunctor:StatsFunctor
+
+
 --- @class StatsUseActionResourceFunctor:StatsFunctor
---- @field ActionResourceUUID Guid
+--- @field ActionResource Guid
 --- @field Amount number
+--- @field Arg4 boolean
 --- @field IsPercentage boolean
---- @field ResourceIndex int32
+--- @field Level int32
 
 
 --- @class StatsUseAttackFunctor:StatsFunctor
+--- @field Arg2 boolean
 --- @field IgnoreChecks boolean
 
 
 --- @class StatsUseSpellFunctor:StatsFunctor
---- @field Arg3 boolean
+--- @field Arg4 boolean
+--- @field Arg6 boolean
 --- @field IgnoreChecks boolean
 --- @field IgnoreHasSpell boolean
+--- @field SpellCastGuid Guid
 --- @field SpellId FixedString
 
 
@@ -12558,6 +12955,76 @@ Ext_Enums.AbilityId = {
 	[7] = "Sentinel",
 }
 
+--- @enum ActionDataType
+Ext_Enums.ActionDataType = {
+	Unknown = 0,
+	OpenClose = 1,
+	Destroy = 2,
+	Teleport = 3,
+	CreateSurface = 4,
+	DestroyParameters = 5,
+	Equip = 6,
+	Consume = 7,
+	StoryUse = 8,
+	Door = 9,
+	CreatePuddle = 10,
+	Book = 11,
+	UseSpell = 12,
+	SpellBook = 13,
+	Sit = 14,
+	Lie = 15,
+	Insert = 16,
+	Stand = 17,
+	Lockpick = 18,
+	StoryUseInInventory = 19,
+	DisarmTrap = 20,
+	ShowStoryElementUI = 22,
+	Combine = 23,
+	Ladder = 24,
+	PlaySound = 26,
+	SpawnCharacter = 27,
+	Constrain = 28,
+	Recipe = 30,
+	Unknown31 = 31,
+	Throw = 32,
+	LearnSpell = 33,
+	Unknown34 = 34,
+	Unknown35 = 35,
+	[0] = "Unknown",
+	[1] = "OpenClose",
+	[2] = "Destroy",
+	[3] = "Teleport",
+	[4] = "CreateSurface",
+	[5] = "DestroyParameters",
+	[6] = "Equip",
+	[7] = "Consume",
+	[8] = "StoryUse",
+	[9] = "Door",
+	[10] = "CreatePuddle",
+	[11] = "Book",
+	[12] = "UseSpell",
+	[13] = "SpellBook",
+	[14] = "Sit",
+	[15] = "Lie",
+	[16] = "Insert",
+	[17] = "Stand",
+	[18] = "Lockpick",
+	[19] = "StoryUseInInventory",
+	[20] = "DisarmTrap",
+	[22] = "ShowStoryElementUI",
+	[23] = "Combine",
+	[24] = "Ladder",
+	[26] = "PlaySound",
+	[27] = "SpawnCharacter",
+	[28] = "Constrain",
+	[30] = "Recipe",
+	[31] = "Unknown31",
+	[32] = "Throw",
+	[33] = "LearnSpell",
+	[34] = "Unknown34",
+	[35] = "Unknown35",
+}
+
 --- @enum AdvantageBoostType
 Ext_Enums.AdvantageBoostType = {
 	Advantage = 1,
@@ -12630,6 +13097,16 @@ Ext_Enums.AnimationSetAnimationFlags = {
 	NoFallback = 2,
 	[1] = "AlwaysIgnore",
 	[2] = "NoFallback",
+}
+
+--- @enum AppliedMaterialFlags
+Ext_Enums.AppliedMaterialFlags = {
+	Instantiated = 1,
+	IsOverlay = 2,
+	OverlayOriginalMapsSet = 4,
+	[1] = "Instantiated",
+	[2] = "IsOverlay",
+	[4] = "OverlayOriginalMapsSet",
 }
 
 --- @enum ArmorType
@@ -13174,36 +13651,6 @@ Ext_Enums.ConditionRollType = {
 	[4] = "SavingThrowRoll",
 	[8] = "SkillCheckRoll",
 	[16] = "AbilityCheckRoll",
-}
-
---- @enum CraftingStationType
-Ext_Enums.CraftingStationType = {
-	None = 0,
-	Anvil = 1,
-	Oven = 2,
-	Wetstone = 3,
-	Well = 4,
-	BoilingPot = 5,
-	Beehive = 6,
-	SpinningWheel = 7,
-	Cauldron = 8,
-	Misc1 = 9,
-	Misc2 = 10,
-	Misc3 = 11,
-	Misc4 = 12,
-	[0] = "None",
-	[1] = "Anvil",
-	[2] = "Oven",
-	[3] = "Wetstone",
-	[4] = "Well",
-	[5] = "BoilingPot",
-	[6] = "Beehive",
-	[7] = "SpinningWheel",
-	[8] = "Cauldron",
-	[9] = "Misc1",
-	[10] = "Misc2",
-	[11] = "Misc3",
-	[12] = "Misc4",
 }
 
 --- @enum CriticalHitBoostFlags
@@ -15274,18 +15721,18 @@ Ext_Enums.GuiTabBarFlags = {
 	NoCloseWithMiddleMouseButton = 8,
 	NoTabListScrollingButtons = 16,
 	NoTooltip = 32,
-	FittingPolicyResizeDown = 64,
+	FittingPolicyDefault = 64,
 	FittingPolicyScroll = 128,
-	FittingPolicyMask = 192,
+	FittingPolicyScroll = 192,
 	[1] = "Reorderable",
 	[2] = "AutoSelectNewTabs",
 	[4] = "TabListPopupButton",
 	[8] = "NoCloseWithMiddleMouseButton",
 	[16] = "NoTabListScrollingButtons",
 	[32] = "NoTooltip",
-	[64] = "FittingPolicyResizeDown",
+	[64] = "FittingPolicyDefault",
 	[128] = "FittingPolicyScroll",
-	[192] = "FittingPolicyMask",
+	[192] = "FittingPolicyScroll",
 }
 
 --- @enum GuiTabItemFlags
@@ -15365,16 +15812,16 @@ Ext_Enums.GuiTableFlags = {
 	BordersOuterH = 256,
 	BordersOuterH = 384,
 	BordersInnerV = 512,
-	BordersInnerV = 640,
+	BordersInner = 640,
 	BordersOuterV = 1024,
-	BordersOuter = 1280,
-	BordersInnerV = 1536,
-	BordersOuter = 1920,
+	BordersOuterH = 1280,
+	BordersV = 1536,
+	BordersInner = 1920,
 	NoBordersInBody = 2048,
 	NoBordersInBodyUntilResize = 4096,
 	SizingFixedFit = 8192,
 	SizingFixedSame = 16384,
-	SizingFixedSame = 24576,
+	SizingFixedFit = 24576,
 	SizingStretchSame = 32768,
 	NoHostExtendX = 65536,
 	NoHostExtendY = 131072,
@@ -15400,16 +15847,16 @@ Ext_Enums.GuiTableFlags = {
 	[256] = "BordersOuterH",
 	[384] = "BordersOuterH",
 	[512] = "BordersInnerV",
-	[640] = "BordersInnerV",
+	[640] = "BordersInner",
 	[1024] = "BordersOuterV",
-	[1280] = "BordersOuter",
-	[1536] = "BordersInnerV",
-	[1920] = "BordersOuter",
+	[1280] = "BordersOuterH",
+	[1536] = "BordersV",
+	[1920] = "BordersInner",
 	[2048] = "NoBordersInBody",
 	[4096] = "NoBordersInBodyUntilResize",
 	[8192] = "SizingFixedFit",
 	[16384] = "SizingFixedSame",
-	[24576] = "SizingFixedSame",
+	[24576] = "SizingFixedFit",
 	[32768] = "SizingStretchSame",
 	[65536] = "NoHostExtendX",
 	[131072] = "NoHostExtendY",
@@ -15439,7 +15886,7 @@ Ext_Enums.GuiTreeNodeFlags = {
 	AllowOverlap = 4,
 	NoTreePushOnOpen = 8,
 	NoAutoOpenOnLog = 16,
-	NoTreePushOnOpen = 26,
+	Framed = 26,
 	DefaultOpen = 32,
 	OpenOnDoubleClick = 64,
 	OpenOnArrow = 128,
@@ -15455,7 +15902,7 @@ Ext_Enums.GuiTreeNodeFlags = {
 	[4] = "AllowOverlap",
 	[8] = "NoTreePushOnOpen",
 	[16] = "NoAutoOpenOnLog",
-	[26] = "NoTreePushOnOpen",
+	[26] = "Framed",
 	[32] = "DefaultOpen",
 	[64] = "OpenOnDoubleClick",
 	[128] = "OpenOnArrow",
@@ -15476,7 +15923,7 @@ Ext_Enums.GuiWindowFlags = {
 	NoScrollbar = 8,
 	NoScrollWithMouse = 16,
 	NoCollapse = 32,
-	NoScrollbar = 43,
+	NoResize = 43,
 	AlwaysAutoResize = 64,
 	NoBackground = 128,
 	NoSavedSettings = 256,
@@ -15489,8 +15936,8 @@ Ext_Enums.GuiWindowFlags = {
 	AlwaysHorizontalScrollbar = 32768,
 	NoNavInputs = 65536,
 	NoNavFocus = 131072,
-	NoNav = 196608,
-	NoNav = 197120,
+	NoNavFocus = 196608,
+	NoNavFocus = 197120,
 	UnsavedDocument = 262144,
 	[1] = "NoTitleBar",
 	[2] = "NoResize",
@@ -15498,7 +15945,7 @@ Ext_Enums.GuiWindowFlags = {
 	[8] = "NoScrollbar",
 	[16] = "NoScrollWithMouse",
 	[32] = "NoCollapse",
-	[43] = "NoScrollbar",
+	[43] = "NoResize",
 	[64] = "AlwaysAutoResize",
 	[128] = "NoBackground",
 	[256] = "NoSavedSettings",
@@ -15511,8 +15958,8 @@ Ext_Enums.GuiWindowFlags = {
 	[32768] = "AlwaysHorizontalScrollbar",
 	[65536] = "NoNavInputs",
 	[131072] = "NoNavFocus",
-	[196608] = "NoNav",
-	[197120] = "NoNav",
+	[196608] = "NoNavFocus",
+	[197120] = "NoNavFocus",
 	[262144] = "UnsavedDocument",
 }
 
@@ -17044,30 +17491,6 @@ Ext_Enums.ProjectileTypeIds = {
 	[2] = "Magical",
 }
 
---- @enum RecipeCategory
-Ext_Enums.RecipeCategory = {
-	Common = 0,
-	Weapons = 1,
-	Potions = 2,
-	Grenades = 3,
-	Arrows = 4,
-	Armour = 5,
-	Food = 6,
-	Objects = 7,
-	Runes = 8,
-	Grimoire = 9,
-	[0] = "Common",
-	[1] = "Weapons",
-	[2] = "Potions",
-	[3] = "Grenades",
-	[4] = "Arrows",
-	[5] = "Armour",
-	[6] = "Food",
-	[7] = "Objects",
-	[8] = "Runes",
-	[9] = "Grimoire",
-}
-
 --- @enum RequirementType
 Ext_Enums.RequirementType = {
 	None = 0,
@@ -18216,18 +18639,6 @@ Ext_Enums.SetStatusDurationType = {
 	[4] = "Unknown",
 }
 
---- @enum ShroudType
-Ext_Enums.ShroudType = {
-	Shroud = 0,
-	Sight = 1,
-	Sneak = 2,
-	RegionMask = 3,
-	[0] = "Shroud",
-	[1] = "Sight",
-	[2] = "Sneak",
-	[3] = "RegionMask",
-}
-
 --- @enum SkillId
 Ext_Enums.SkillId = {
 	Deception = 0,
@@ -18316,16 +18727,6 @@ Ext_Enums.SpellAttackTypeOverride = {
 	[2] = "Projectile_MainHandAttack",
 	[3] = "Projectile_OffhandAttack",
 	[4] = "Target_UnarmedAttack",
-}
-
---- @enum SpellChildSelectionType
-Ext_Enums.SpellChildSelectionType = {
-	Singular = 0,
-	AddChildren = 1,
-	MostPowerful = 2,
-	[0] = "Singular",
-	[1] = "AddChildren",
-	[2] = "MostPowerful",
 }
 
 --- @enum SpellCooldownType
@@ -18462,6 +18863,16 @@ Ext_Enums.SpellFlags = {
 	[9007199254740992] = "DisableBlood",
 	[18014398509481984] = "IgnorePreviouslyPickedEntities",
 	[36028797018963968] = "IgnoreAoO",
+}
+
+--- @enum SpellLearningStrategy
+Ext_Enums.SpellLearningStrategy = {
+	Singular = 0,
+	AddChildren = 1,
+	MostPowerful = 2,
+	[0] = "Singular",
+	[1] = "AddChildren",
+	[2] = "MostPowerful",
 }
 
 --- @enum SpellPrepareType
@@ -18961,6 +19372,9 @@ Ext_Enums.StatsPropertyContext = {
 	INTERRUPT_USED = 274877906944,
 	DAMAGE_PREVENTED = 549755813888,
 	DAMAGED_PREVENTED = 1099511627776,
+	ROUND = 2199023255552,
+	COMBAT_STARTED = 4398046511104,
+	CONSUMED = 8796093022208,
 	[1] = "TARGET",
 	[2] = "AOE",
 	[4] = "CAST",
@@ -19002,6 +19416,19 @@ Ext_Enums.StatsPropertyContext = {
 	[274877906944] = "INTERRUPT_USED",
 	[549755813888] = "DAMAGE_PREVENTED",
 	[1099511627776] = "DAMAGED_PREVENTED",
+	[2199023255552] = "ROUND",
+	[4398046511104] = "COMBAT_STARTED",
+	[8796093022208] = "CONSUMED",
+}
+
+--- @enum StatsRestoreResourceAmountType
+Ext_Enums.StatsRestoreResourceAmountType = {
+	Lua = 0,
+	Percentage = 1,
+	None = 2,
+	[0] = "Lua",
+	[1] = "Percentage",
+	[2] = "None",
 }
 
 --- @enum StatsRollAdjustmentType
@@ -19156,6 +19583,14 @@ Ext_Enums.StatsStatusGroup = {
 	[35184372088832] = "SG_Ignore_AOO",
 }
 
+--- @enum StatsSummonLifetimeType
+Ext_Enums.StatsSummonLifetimeType = {
+	Permanent = 0,
+	UntilLongRest = 1,
+	[0] = "Permanent",
+	[1] = "UntilLongRest",
+}
+
 --- @enum StatsTargetTypeFlags
 Ext_Enums.StatsTargetTypeFlags = {
 	Living = 1,
@@ -19300,6 +19735,10 @@ Ext_Enums.SurfaceChange = {
 	Vaporize = 7,
 	Condense = 8,
 	DestroyWater = 9,
+	Clear = 10,
+	Daylight = 11,
+	TurnHellfire = 12,
+	UnturnHellfire = 13,
 	[0] = "None",
 	[1] = "Ignite",
 	[2] = "Douse",
@@ -19310,6 +19749,10 @@ Ext_Enums.SurfaceChange = {
 	[7] = "Vaporize",
 	[8] = "Condense",
 	[9] = "DestroyWater",
+	[10] = "Clear",
+	[11] = "Daylight",
+	[12] = "TurnHellfire",
+	[13] = "UnturnHellfire",
 }
 
 --- @enum SurfaceLayer
