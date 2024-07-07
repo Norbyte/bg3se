@@ -72,14 +72,14 @@ struct GameObjectTemplate
 
 struct AIBound
 {
-    int Type;
-    float Height;
-    float Radius2;
+    [[bg3::legacy(Type)]] float Height;
+    float ActualHeight;
+    [[bg3::legacy(Radius2)]] float Size;
     glm::vec3 Min;
     glm::vec3 Max;
     float Radius;
-    uint8_t field_28;
-    uint8_t AiType;
+    [[bg3::legacy(field_28)]] AIBoundType Type;
+    [[bg3::legacy(AiType)]] AIShapeType Shape;
     uint8_t field_2A;
 };
 

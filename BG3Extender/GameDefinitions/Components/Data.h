@@ -41,20 +41,20 @@ struct BaseHpComponent : public BaseComponent
 struct Bound
 {
 	EntityHandle Entity;
-	RefMap<uint16_t, AIBound> AIBounds;
-	[[bg3::hidden]] void* SomeContainer;
-	[[bg3::hidden]] void* GameObject;
-	MultiHashSet<uint32_t> field_28;
+	RefMap<AIBoundType, AIBound> AIBounds;
+	[[bg3::hidden]] void* AiGrid;
+	[[bg3::hidden]] void* Parent;
+	MultiHashSet<uint32_t> GridPoints;
 	glm::vec3 Translate;
 	glm::quat RotationQuat;
 	float Scale;
-	int16_t field_78;
-	uint16_t SomeRefCount;
+	int16_t MetaDataIndex;
+	uint16_t CollidingRefCount;
 	glm::vec3 TranslateOverride;
 	uint8_t Flags;
 	uint8_t field_89;
-	uint16_t Flags2;
-	FixedString field_8C;
+	uint16_t BoundFlags;
+	FixedString OwnerPlatform;
 };
 
 struct BoundComponent : public BaseComponent
