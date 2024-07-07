@@ -15,13 +15,15 @@ END_CLS()
 
 BEGIN_CLS(stats::Functor)
 P_RO(UniqueName)
+P_RO(FunctorUuid)
 P(RollConditions)
 // TODO - Conditions object access
 P_RO(StatsConditionsId)
-// P_BITMASK(PropertyContext)
+P_BITMASK(PropertyContext)
+P(StoryActionId)
 P(ObserverType)
 P_RO(TypeId)
-// P_BITMASK(Flags)
+P_BITMASK(Flags)
 END_CLS()
 
 
@@ -34,10 +36,11 @@ END_CLS()
 BEGIN_CLS(stats::ApplyStatusFunctor)
 INHERIT(stats::Functor)
 P(StatusId)
-P(StringParam)
+P(StatusSpecificParam1)
 P_RO(StatsConditions) // TODO - later write support for Conditions + StatsConditionsId
-//P(Param1)
-//P(Param2)
+P(StatusSpecificParam2)
+P(StatusSpecificParam3)
+P(RequiresConcentration)
 // TODO - Duration expression!
 // P(Arg2_DurationLuaExpression) 
 P(HasParam6)
@@ -58,6 +61,7 @@ BEGIN_CLS(stats::ResurrectFunctor)
 INHERIT(stats::Functor)
 P(Probability)
 P(HealthPercentage)
+P_BITMASK(HealingType)
 END_CLS()
 
 
@@ -70,18 +74,23 @@ END_CLS()
 BEGIN_CLS(stats::SummonFunctor)
 INHERIT(stats::Functor)
 P(Template)
-P(Arg3)
+P(AIHelper)
 P(SpawnLifetime)
 P(StatusesToApply)
+P(StackId)
 P(Arg5)
+P(Arg9)
 END_CLS()
 
 
 BEGIN_CLS(stats::ForceFunctor)
 INHERIT(stats::Functor)
-//P(Arg0)
+P(Distance)
 P(Origin)
 P(Aggression)
+// FIXME - DistanceExpression
+P(Arg3)
+P(Arg4)
 END_CLS()
 
 
@@ -94,7 +103,9 @@ END_CLS()
 
 BEGIN_CLS(stats::SwapPlacesFunctor)
 INHERIT(stats::Functor)
-////P(Arg0)
+P(Animation)
+P(Arg1)
+P(Arg2)
 END_CLS()
 
 
@@ -111,15 +122,17 @@ P(Radius)
 P(Arg4)
 P(Duration)
 P(IsControlledByConcentration)
+P(Arg5)
 END_CLS()
 
 
 BEGIN_CLS(stats::CreateConeSurfaceFunctor)
 INHERIT(stats::Functor)
-P(Arg2)
-P(Arg0)
-P(Arg1)
-P(Arg3)
+P(SurfaceType)
+P(Radius)
+P(Duration)
+P(IsControlledByConcentration)
+P(field_55)
 END_CLS()
 
 
@@ -135,9 +148,13 @@ P(DamageType)
 P(WeaponType)
 P(WeaponDamageType)
 // TODO - Damage expression access
+P(CoinMultiplier)
 P(Nonlethal)
 P(Magical)
-P(field_34)
+P(Arg7)
+P(Arg8)
+P(Arg9)
+P(Arg10)
 END_CLS()
 
 
@@ -150,11 +167,14 @@ END_CLS()
 BEGIN_CLS(stats::RegainHitPointsFunctor)
 INHERIT(stats::Functor)
 // TODO - lua expr --  P(HitPoints)
+P_BITMASK(HealingType)
 END_CLS()
 
 
 BEGIN_CLS(stats::TeleportSourceFunctor)
 INHERIT(stats::Functor)
+P(Arg1)
+P(Arg2)
 END_CLS()
 
 
@@ -162,6 +182,7 @@ BEGIN_CLS(stats::SetStatusDurationFunctor)
 INHERIT(stats::Functor)
 P(StatusId)
 P(Duration)
+P(ChangeType)
 END_CLS()
 
 
@@ -170,22 +191,26 @@ INHERIT(stats::Functor)
 P(SpellId)
 P(IgnoreHasSpell)
 P(IgnoreChecks)
-P(Arg3)
+P(Arg4)
+P(SpellCastGuid)
+P(Arg6)
 END_CLS()
 
 
 BEGIN_CLS(stats::UseActionResourceFunctor)
 INHERIT(stats::Functor)
-P(ActionResourceUUID)
+P(ActionResource)
 P(Amount)
-P(ResourceIndex)
+P(Level)
 P(IsPercentage)
+P(Arg4)
 END_CLS()
 
 
 BEGIN_CLS(stats::UseAttackFunctor)
 INHERIT(stats::Functor)
 P(IgnoreChecks)
+P(Arg2)
 END_CLS()
 
 
@@ -208,20 +233,21 @@ END_CLS()
 
 BEGIN_CLS(stats::RestoreResourceFunctor)
 INHERIT(stats::Functor)
-P(ActionResourceUUID)
+P(ActionResource)
 P(Hex)
 P(field_34)
 // TODO -- P(LuaAmount)
 P(Amount)
-P(IsPercentage)
+P(AmountType)
 END_CLS()
 
 
 BEGIN_CLS(stats::SpawnFunctor)
 INHERIT(stats::Functor)
 P(TemplateId)
-P(Arg1)
+P(AIHelper)
 P(StatusesToApply)
+P(Arg7)
 END_CLS()
 
 
@@ -248,11 +274,28 @@ END_CLS()
 
 BEGIN_CLS(stats::SummonInInventoryFunctor)
 INHERIT(stats::Functor)
+P(TemplateId)
+P(Arg8)
+P(Lifetime)
+P(AdditionalArgs)
+P(Arg9)
+P(Arg3)
+P(Arg4)
+P(Arg5)
+P(Arg6)
+P(Arg7)
 END_CLS()
 
 
 BEGIN_CLS(stats::SpawnInInventoryFunctor)
 INHERIT(stats::Functor)
+P(TemplateId)
+P(Arg7)
+P(Arg3)
+P(AdditionalArgs)
+P(Arg4)
+P(Arg5)
+P(Arg6)
 END_CLS()
 
 
@@ -264,6 +307,173 @@ END_CLS()
 
 BEGIN_CLS(stats::DisarmWeaponFunctor)
 INHERIT(stats::Functor)
+END_CLS()
+
+
+BEGIN_CLS(stats::DisarmAndStealWeaponFunctor)
+INHERIT(stats::Functor)
+END_CLS()
+
+
+BEGIN_CLS(stats::SwitchDeathTypeFunctor)
+INHERIT(stats::Functor)
+P(DeathType)
+END_CLS()
+
+
+BEGIN_CLS(stats::TriggerRandomCastFunctor)
+INHERIT(stats::Functor)
+P(Arg1)
+P(Arg2)
+P(RandomCastOutcomes)
+END_CLS()
+
+
+BEGIN_CLS(stats::GainTemporaryHitPointsFunctor)
+INHERIT(stats::Functor)
+// FIXME - HitPointsExpression
+END_CLS()
+
+
+BEGIN_CLS(stats::FireProjectileFunctor)
+INHERIT(stats::Functor)
+P(Arg1)
+END_CLS()
+
+
+BEGIN_CLS(stats::ShortRestFunctor)
+INHERIT(stats::Functor)
+END_CLS()
+
+
+BEGIN_CLS(stats::CreateZoneFunctor)
+INHERIT(stats::Functor)
+P(Shape)
+P(Arg4)
+P(Arg2)
+P(Duration)
+P(Arg5)
+END_CLS()
+
+
+BEGIN_CLS(stats::DoTeleportFunctor)
+INHERIT(stats::Functor)
+P(Arg1)
+END_CLS()
+
+
+BEGIN_CLS(stats::RegainTemporaryHitPointsFunctor)
+INHERIT(stats::Functor)
+// FIXME - HitPointsExpression
+END_CLS()
+
+
+BEGIN_CLS(stats::RemoveStatusByLevelFunctor)
+INHERIT(stats::Functor)
+P(NameOrStatusGroup)
+P(Arg2)
+P(Ability)
+END_CLS()
+
+
+BEGIN_CLS(stats::SurfaceClearLayerFunctor)
+INHERIT(stats::Functor)
+P(Layers)
+END_CLS()
+
+
+BEGIN_CLS(stats::UnsummonFunctor)
+INHERIT(stats::Functor)
+END_CLS()
+
+
+BEGIN_CLS(stats::CreateWallFunctor)
+INHERIT(stats::Functor)
+END_CLS()
+
+
+BEGIN_CLS(stats::CounterspellFunctor)
+INHERIT(stats::Functor)
+END_CLS()
+
+
+BEGIN_CLS(stats::AdjustRollFunctor)
+INHERIT(stats::Functor)
+// FIXME - Expression
+P(Type)
+P(DamageType)
+END_CLS()
+
+
+BEGIN_CLS(stats::SpawnExtraProjectilesFunctor)
+INHERIT(stats::Functor)
+P(Arg1)
+END_CLS()
+
+
+BEGIN_CLS(stats::KillFunctor)
+INHERIT(stats::Functor)
+END_CLS()
+
+
+BEGIN_CLS(stats::TutorialEventFunctor)
+INHERIT(stats::Functor)
+P(Event)
+END_CLS()
+
+
+BEGIN_CLS(stats::DropFunctor)
+INHERIT(stats::Functor)
+P(Arg1)
+END_CLS()
+
+
+BEGIN_CLS(stats::ResetCooldownsFunctor)
+INHERIT(stats::Functor)
+P(CooldownType)
+END_CLS()
+
+
+BEGIN_CLS(stats::SetRollFunctor)
+INHERIT(stats::Functor)
+P(Roll)
+P(Type)
+P(DamageType)
+END_CLS()
+
+
+BEGIN_CLS(stats::SetDamageResistanceFunctor)
+INHERIT(stats::Functor)
+P(DamageType)
+END_CLS()
+
+
+BEGIN_CLS(stats::SetRerollFunctor)
+INHERIT(stats::Functor)
+P(Roll)
+P(Arg2)
+END_CLS()
+
+
+BEGIN_CLS(stats::SetAdvantageFunctor)
+INHERIT(stats::Functor)
+END_CLS()
+
+
+BEGIN_CLS(stats::SetDisadvantageFunctor)
+INHERIT(stats::Functor)
+END_CLS()
+
+
+BEGIN_CLS(stats::MaximizeRollFunctor)
+INHERIT(stats::Functor)
+P(DamageType)
+END_CLS()
+
+
+BEGIN_CLS(stats::CameraWaitFunctor)
+INHERIT(stats::Functor)
+P(Arg1)
 END_CLS()
 
 

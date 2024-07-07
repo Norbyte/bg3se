@@ -30,8 +30,7 @@ struct Functor
 
 	FunctorVMT* VMT{ nullptr };
 	FixedString UniqueName;
-	uint64_t Unknown1{ 0 };
-	uint64_t Unknown2{ 0 };
+	Guid FunctorUuid;
 	Array<RollCondition> RollConditions;
 	int32_t StatsConditionsId{ -1 };
 	PropertyContext PropertyContext{ 0 };
@@ -260,13 +259,39 @@ struct CustomDescriptionFunctor : public Functor
 	FixedString Description; // Arg0
 };
 
+struct ApplyStatusFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::ApplyStatus;
+
+	FixedString StatusId; // Arg1
+	FixedString StatusSpecificParam1; // Arg4
+	STDString StatsConditions; // Arg7
+	int StatsConditionsId{ -1 }; // Arg7
+	int StatusSpecificParam2{ -1 }; // Arg5
+	int StatusSpecificParam3{ -1 }; // Arg6
+	bool RequiresConcentration{ false };
+	void* DurationLuaExpression{ nullptr }; // Arg3
+	bool HasParam6{ false };
+};
+
+struct SurfaceChangeFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::SurfaceChange;
+
+	float Chance{ 1.0f };
+	float field_24{ 0.0f };
+	float field_28{ 0.0f };	
+	float field_2C{ -1.0f };
+	SurfaceChange SurfaceChange{ SurfaceChange::None };
+};
+
 struct ResurrectFunctor : public Functor
 {
 	static constexpr auto FunctorType = FunctorId::Resurrect;
 
 	float Probability{ 1.0f }; // Arg0
 	float HealthPercentage{ 1.0f }; // Arg1
-	TargetTypeFlags Flags{ 0 };
+	TargetTypeFlags HealingType{ 0 };
 };
 
 struct SabotageFunctor : public Functor
@@ -281,11 +306,10 @@ struct SummonFunctor : public Functor
 	static constexpr auto FunctorType = FunctorId::Summon;
 
 	FixedString Template; // Arg1
-	FixedString Arg3; // Arg 3
-	float SpawnLifetime{ 6.0f }; // Arg 2
-	uint8_t LifetimeType{ 0 };
+	FixedString AIHelper; // Arg 3
+	std::variant<SummonLifetimeType, float> SpawnLifetime;
 	MultiHashSet<FixedString> StatusesToApply;
-	FixedString Arg4;
+	FixedString StackId;
 	bool Arg5;
 	bool Arg9;
 };
@@ -342,10 +366,10 @@ struct CreateConeSurfaceFunctor : public Functor
 {
 	static constexpr auto FunctorType = FunctorId::CreateConeSurface;
 
-	FixedString Arg2;
-	float Arg0{ -1.0f };
-	float Arg1{ -1.0f };
-	bool Arg3{ false };
+	FixedString SurfaceType;
+	float Radius{ -1.0f };
+	float Duration{ -1.0f };
+	bool IsControlledByConcentration{ false };
 	bool field_55{ false };
 };
 
@@ -354,105 +378,6 @@ struct RemoveStatusFunctor : public Functor
 	static constexpr auto FunctorType = FunctorId::RemoveStatus;
 
 	FixedString StatusId; // Arg0
-};
-
-struct ExecuteWeaponFunctorsFunctor : public Functor
-{
-	static constexpr auto FunctorType = FunctorId::ExecuteWeaponFunctors;
-
-	ExecuteWeaponFunctorsType WeaponType;
-};
-
-struct TeleportSourceFunctor : public Functor
-{
-	static constexpr auto FunctorType = FunctorId::TeleportSource;
-
-	bool Arg1{ false };
-	bool Arg2{ false };
-};
-
-struct SetStatusDurationFunctor : public Functor
-{
-	static constexpr auto FunctorType = FunctorId::SetStatusDuration;
-
-	FixedString StatusId; // Arg0
-	float Duration{ 6.0f }; // Arg1
-	SetStatusDurationType ChangeType{ false }; // Arg2
-};
-
-struct UseAttackFunctor : public Functor
-{
-	static constexpr auto FunctorType = FunctorId::UseAttack;
-
-	bool IgnoreChecks{ false }; // Arg0
-};
-
-struct BreakConcentrationFunctor : public Functor
-{
-	static constexpr auto FunctorType = FunctorId::BreakConcentration;
-
-};
-
-struct RestoreResourceFunctor : public Functor
-{
-	static constexpr auto FunctorType = FunctorId::RestoreResource;
-
-	Guid ActionResourceUUID; // Arg0
-	int Hex{ 0 }; // Arg2
-	int field_34{ 0 };
-	StatsExpressionParam* LuaAmount{ nullptr }; // Arg1
-	double Amount{ 0.0 }; // Arg1
-	bool IsPercentage{ false }; // Arg1
-};
-
-struct SpawnFunctor : public Functor
-{
-	static constexpr auto FunctorType = FunctorId::Spawn;
-
-	FixedString TemplateId; // Arg0
-	FixedString Arg1;
-	MultiHashSet<FixedString> StatusesToApply;
-	bool Arg6{ false };
-};
-
-struct StabilizeFunctor : public Functor
-{
-	static constexpr auto FunctorType = FunctorId::Stabilize;
-
-};
-
-struct UnlockFunctor : public Functor
-{
-	static constexpr auto FunctorType = FunctorId::Unlock;
-
-};
-
-struct ResetCombatTurnFunctor : public Functor
-{
-	static constexpr auto FunctorType = FunctorId::ResetCombatTurn;
-
-};
-
-struct RemoveAuraByChildStatusFunctor : public Functor
-{
-	static constexpr auto FunctorType = FunctorId::RemoveAuraByChildStatus;
-
-	FixedString StatusId; // Arg0
-};
-
-struct ApplyStatusFunctor : public Functor
-{
-	static constexpr auto FunctorType = FunctorId::ApplyStatus;
-
-	FixedString StatusId; // Arg1
-	FixedString StringParam; // Arg4
-	STDString StatsConditions; // Arg7
-	int StatsConditionsId{ -1 }; // Arg7
-	int Param5{ -1 }; // Arg5
-	int Param6{ -1 }; // Arg6
-	bool Param8{ false };
-	void* DurationLuaExpression{ nullptr }; // Arg3
-	bool HasParam6{ false };
 };
 
 using StatsSystem_ThrowDamageEventProc = void (void* statsSystem, void* temp5, Hit* hit, DamageSums* damageAmounts, bool a5, bool a6);
@@ -471,45 +396,20 @@ struct DealDamageFunctor : public Functor
 	DealDamageWeaponType WeaponType{ DealDamageWeaponType::None }; // Arg1
 	DealDamageWeaponDamageType WeaponDamageType{ DealDamageWeaponDamageType::None }; // Arg2
 	StatsExpressionParam* Damage{ nullptr }; // Arg1
+	int CoinMultiplier{ 0 };
 	bool Nonlethal{ false }; // Arg4
 	bool Magical{ false }; // Arg3
-	int32_t field_34{ 0 }; // Arg5
+	bool Arg7{ false };
+	bool Arg8{ false };
+	bool Arg9{ false };
+	bool Arg10{ false };
 };
 
-struct UseActionResourceFunctor : public Functor
+struct ExecuteWeaponFunctorsFunctor : public Functor
 {
-	static constexpr auto FunctorType = FunctorId::UseActionResource;
+	static constexpr auto FunctorType = FunctorId::ExecuteWeaponFunctors;
 
-	Guid ActionResourceUUID; // Arg0
-	double Amount{ 0.0 }; // Arg1
-	int ResourceIndex{ 0 }; // Arg2
-	bool IsPercentage{ false }; // Arg1
-	bool Arg3{ false }; // Arg3
-};
-
-struct CreateExplosionFunctor : public Functor
-{
-	static constexpr auto FunctorType = FunctorId::CreateExplosion;
-
-	FixedString SpellId; // Arg0
-};
-
-struct SurfaceChangeFunctor : public Functor
-{
-	static constexpr auto FunctorType = FunctorId::SurfaceChange;
-
-	float Chance{ 1.0f };
-	float field_24{ 0.0f };
-	float field_28{ 0.0f };	
-	float field_2C{ -1.0f };
-	SurfaceChange SurfaceChange{ SurfaceChange::None };
-};
-
-struct ApplyEquipmentStatusFunctor : public ApplyStatusFunctor
-{
-	static constexpr auto FunctorType = FunctorId::ApplyEquipmentStatus;
-
-	StatsItemSlot EquipmentSlot{ StatsItemSlot::MainHand };
+	ExecuteWeaponFunctorsType WeaponType;
 };
 
 struct RegainHitPointsFunctor : public Functor
@@ -517,7 +417,24 @@ struct RegainHitPointsFunctor : public Functor
 	static constexpr auto FunctorType = FunctorId::RegainHitPoints;
 
 	StatsExpressionParam* HitPoints{ nullptr };
-	TargetTypeFlags Flags{ 0 };
+	TargetTypeFlags HealingType{ TargetTypeFlags::Living };
+};
+
+struct TeleportSourceFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::TeleportSource;
+
+	bool Arg1{ false };
+	bool Arg2{ false };
+};
+
+struct SetStatusDurationFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::SetStatusDuration;
+
+	FixedString StatusId; // Arg0
+	float Duration{ 6.0f }; // Arg1
+	SetStatusDurationType ChangeType{ SetStatusDurationType::ForceSet }; // Arg2
 };
 
 struct UseSpellFunctor : public Functor
@@ -527,13 +444,91 @@ struct UseSpellFunctor : public Functor
 	FixedString SpellId; // Arg0
 	bool IgnoreHasSpell{ false }; // Arg1
 	bool IgnoreChecks{ false }; // Arg2
-	bool Arg3{ false };
+	bool Arg4{ false };
 	Guid SpellCastGuid;
+	bool Arg6{ false };
 };
 
-struct ExtenderFunctor : public Functor
+struct UseActionResourceFunctor : public Functor
 {
-	static constexpr auto FunctorType = FunctorId::Extender;
+	static constexpr auto FunctorType = FunctorId::UseActionResource;
+
+	Guid ActionResource; // Arg0
+	double Amount{ 0.0 }; // Arg1
+	int Level{ 0 }; // Arg2
+	bool IsPercentage{ false }; // Arg1
+	bool Arg4{ false }; // Arg3
+};
+
+struct UseAttackFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::UseAttack;
+
+	bool IgnoreChecks{ false }; // Arg1
+	bool Arg2{ false };
+};
+
+struct CreateExplosionFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::CreateExplosion;
+
+	FixedString SpellId; // Arg0
+};
+
+struct BreakConcentrationFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::BreakConcentration;
+};
+
+struct ApplyEquipmentStatusFunctor : public ApplyStatusFunctor
+{
+	static constexpr auto FunctorType = FunctorId::ApplyEquipmentStatus;
+
+	StatsItemSlot EquipmentSlot{ StatsItemSlot::MainHand };
+};
+
+struct RestoreResourceFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::RestoreResource;
+
+	Guid ActionResource; // Arg0
+	int Hex{ 0 }; // Arg2
+	int field_34{ 0 };
+	StatsExpressionParam* LuaAmount{ nullptr }; // Arg1
+	double Amount{ 0.0 }; // Arg1
+	RestoreResourceAmountType AmountType{ RestoreResourceAmountType::None };
+};
+
+struct SpawnFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::Spawn;
+
+	FixedString TemplateId; // Arg0
+	FixedString AIHelper;
+	MultiHashSet<FixedString> StatusesToApply;
+	bool Arg7{ false };
+};
+
+struct StabilizeFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::Stabilize;
+};
+
+struct UnlockFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::Unlock;
+};
+
+struct ResetCombatTurnFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::ResetCombatTurn;
+};
+
+struct RemoveAuraByChildStatusFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::RemoveAuraByChildStatus;
+
+	FixedString StatusId; // Arg0
 };
 
 struct SummonInInventoryFunctor : public Functor
@@ -542,11 +537,10 @@ struct SummonInInventoryFunctor : public Functor
 
 	FixedString TemplateId;
 	FixedString Arg8;
-	float Duration{ 0.0f }; // Arg2
-	uint8_t DurationType{ 0 };
+	std::variant<SummonLifetimeType, float> Lifetime;
 	MultiHashSet<FixedString> AdditionalArgs;
 	FixedString Arg9;
-	float Arg3{ 0.0f };
+	int32_t Arg3{ 0 };
 	bool Arg4{ false };
 	bool Arg5{ false };
 	bool Arg6{ false };
@@ -558,11 +552,11 @@ struct SpawnInInventoryFunctor : public Functor
 	static constexpr auto FunctorType = FunctorId::SpawnInInventory;
 
 	FixedString TemplateId;
-	FixedString Arg6;
-	float Arg2{ 0.0f };
-	bool Arg3{ false };
+	FixedString Arg7;
+	int32_t Arg3{ 0 };
 	bool Arg4{ false };
 	bool Arg5{ false };
+	bool Arg6{ false };
 	MultiHashSet<FixedString> AdditionalArgs;
 };
 
@@ -576,6 +570,11 @@ struct RemoveUniqueStatusFunctor : public Functor
 struct DisarmWeaponFunctor : public Functor
 {
 	static constexpr auto FunctorType = FunctorId::DisarmWeapon;
+};
+
+struct DisarmAndStealWeaponFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::DisarmAndStealWeapon;
 };
 
 struct SwitchDeathTypeFunctor : public Functor
@@ -642,27 +641,9 @@ struct RemoveStatusByLevelFunctor : public Functor
 {
 	static constexpr auto FunctorType = FunctorId::RemoveStatusByLevel;
 
-	struct NameOrStatusGroup
-	{
-		~NameOrStatusGroup()
-		{
-			if (!IsStatusGroup) {
-				String.~FixedString();
-			}
-		}
-
-		union {
-			FixedString String;
-			StatusGroup SG;
-		};
-		bool IsStatusGroup;
-	};
-
-	NameOrStatusGroup SG; // Arg1
-	bool HasArg1;
-	bool Arg2;
-	AbilityId Ability; // Arg3
-	bool HasAbility;
+	std::variant<FixedString, StatusGroup> NameOrStatusGroup; // Arg1
+	int8_t Arg2;
+	std::optional<AbilityId> Ability;
 };
 
 struct SurfaceClearLayerFunctor : public Functor
@@ -733,7 +714,7 @@ struct SetRollFunctor : public Functor
 {
 	static constexpr auto FunctorType = FunctorId::SetRoll;
 
-	int Arg1;
+	int Roll;
 	RollAdjustmentType Type; // Arg2
 	DamageType DamageType; // Arg2
 };
@@ -777,11 +758,17 @@ struct CameraWaitFunctor : public Functor
 	float Arg1;
 };
 
+struct ExtenderFunctor : public Functor
+{
+	static constexpr auto FunctorType = FunctorId::Extender;
+};
+
 
 END_NS()
 
 BEGIN_NS(lua)
 
 LUA_POLYMORPHIC(bg3se::stats::BaseFunctorExecParams)
+LUA_POLYMORPHIC(bg3se::stats::Functor)
 
 END_NS()

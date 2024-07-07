@@ -6,6 +6,7 @@
 #include <Extender/ScriptExtender.h>
 #include <GameDefinitions/Resources.h>
 #include <GameDefinitions/Stats/UseActions.h>
+#include <GameDefinitions/Stats/Functors.h>
 
 namespace bg3se
 {
@@ -261,6 +262,83 @@ void LuaPolymorphic<stats::BaseFunctorExecParams>::MakeRef(lua_State* L, stats::
 		V(Type6)
 		V(Type7)
 		V(Type8)
+
+	default:
+		MakeDirectObjectRef(L, value, lifetime);
+		break;
+	}
+
+#undef V
+}
+
+void LuaPolymorphic<stats::Functor>::MakeRef(lua_State* L, stats::Functor* value, LifetimeHandle const& lifetime)
+{
+#define V(type) case stats::FunctorId::type: \
+			MakeDirectObjectRef(L, static_cast<stats::type##Functor*>(value), lifetime); break;
+
+	switch (value->TypeId) {
+		V(CustomDescription)
+		V(ApplyStatus)
+		V(SurfaceChange)
+		V(Resurrect)
+		V(Sabotage)
+		V(Summon)
+		V(Force)
+		V(Douse)
+		V(SwapPlaces)
+		V(Pickup)
+		V(CreateSurface)
+		V(CreateConeSurface)
+		V(RemoveStatus)
+		V(DealDamage)
+		V(ExecuteWeaponFunctors)
+		V(RegainHitPoints)
+		V(TeleportSource)
+		V(SetStatusDuration)
+		V(UseSpell)
+		V(UseActionResource)
+		V(UseAttack)
+		V(CreateExplosion)
+		V(BreakConcentration)
+		V(ApplyEquipmentStatus)
+		V(RestoreResource)
+		V(Spawn)
+		V(Stabilize)
+		V(Unlock)
+		V(ResetCombatTurn)
+		V(RemoveAuraByChildStatus)
+		V(SummonInInventory)
+		V(SpawnInInventory)
+		V(RemoveUniqueStatus)
+		V(DisarmWeapon)
+		V(DisarmAndStealWeapon)
+		V(SwitchDeathType)
+		V(TriggerRandomCast)
+		V(GainTemporaryHitPoints)
+		V(FireProjectile)
+		V(ShortRest)
+		V(CreateZone)
+		V(DoTeleport)
+		V(RegainTemporaryHitPoints)
+		V(RemoveStatusByLevel)
+		V(SurfaceClearLayer)
+		V(Unsummon)
+		V(CreateWall)
+		V(Counterspell)
+		V(AdjustRoll)
+		V(SpawnExtraProjectiles)
+		V(Kill)
+		V(TutorialEvent)
+		V(Drop)
+		V(ResetCooldowns)
+		V(SetRoll)
+		V(SetDamageResistance)
+		V(SetReroll)
+		V(SetAdvantage)
+		V(SetDisadvantage)
+		V(MaximizeRoll)
+		V(CameraWait)
+		V(Extender)
 
 	default:
 		MakeDirectObjectRef(L, value, lifetime);
