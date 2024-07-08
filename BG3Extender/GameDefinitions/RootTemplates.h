@@ -78,7 +78,7 @@ struct AIBound
     glm::vec3 Min;
     glm::vec3 Max;
     float Radius;
-    [[bg3::legacy(field_28)]] AIBoundType Type;
+    [[bg3::legacy(field_28)]] AIBoundType BoundType;
     [[bg3::legacy(AiType)]] AIShapeType Shape;
     uint8_t field_2A;
 };

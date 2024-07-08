@@ -157,9 +157,14 @@ void StyledRenderable::Render()
         ImGui::SetCursorPos(ToImVec(*AbsolutePosition));
     }
 
+    if (ItemFlags != (GuiItemFlags)0) ImGui::PushItemFlag((ImGuiItemFlags)ItemFlags, true);
+    if (TextWrapPos) ImGui::PushTextWrapPos(*TextWrapPos);
     if (ItemWidth) ImGui::SetNextItemWidth(*ItemWidth);
 
     StyledRender();
+
+    if (ItemFlags != (GuiItemFlags)0) ImGui::PopItemFlag();
+    if (TextWrapPos) ImGui::PopTextWrapPos();
 
     if (!StyleColors.empty()) {
         ImGui::PopStyleColor(StyleColors.size());

@@ -141,6 +141,8 @@ public:
     std::optional<glm::vec2> PositionOffset;
     std::optional<glm::vec2> AbsolutePosition;
     std::optional<float> ItemWidth;
+    std::optional<float> TextWrapPos;
+    GuiItemFlags ItemFlags{ 0 };
 
     lua::LuaDelegate<void(lua::ImguiHandle)> OnActivate;
     lua::LuaDelegate<void(lua::ImguiHandle)> OnDeactivate;
