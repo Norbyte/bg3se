@@ -73,7 +73,7 @@ struct FunctorExecParamsType1 : public BaseFunctorExecParams
 	glm::vec3 Position;
 	bool IsFromItem;
 	SpellIdWithPrototype SpellId;
-	Hit Hit;
+	HitDesc Hit;
 	DamageSums DamageSums;
 	uint64_t field_2F8;
 	uint64_t field_300;
@@ -92,7 +92,7 @@ struct FunctorExecParamsType2 : public BaseFunctorExecParams
 	float ExplodeRadius;
 	bool IsFromItem;
 	SpellIdWithPrototype SpellId;
-	Hit Hit;
+	HitDesc Hit;
 	DamageSums DamageSums;
 	float SomeRadius;
 };
@@ -112,7 +112,7 @@ struct FunctorExecParamsType4 : public BaseFunctorExecParams
 	ecs::EntityRef field_B0;
 	glm::vec3 Position;
 	SpellIdWithPrototype SpellId;
-	Hit Hit;
+	HitDesc Hit;
 	DamageSums DamageSums;
 	uint64_t field_2D8;
 	uint64_t field_2E0;
@@ -131,7 +131,7 @@ struct FunctorExecParamsType5 : public BaseFunctorExecParams
 	glm::vec3 Position;
 	bool IsFromItem;
 	SpellIdWithPrototype SpellId;
-	Hit Hit;
+	HitDesc Hit;
 	DamageSums DamageSums;
 };
 
@@ -145,7 +145,7 @@ struct FunctorExecParamsType6 : public BaseFunctorExecParams
 	glm::vec3 Position;
 	bool IsFromItem;
 	SpellIdWithPrototype SpellId;
-	Hit Hit;
+	HitDesc Hit;
 	DamageSums DamageSums;
 };
 
@@ -173,7 +173,7 @@ struct FunctorExecParamsType9 : public BaseFunctorExecParams
 	ecs::EntityRef ObserverProxy;
 	std::optional<interrupt::ResolveData> ResolveData;
 	interrupt::InterruptVariant2 Interrupt;
-	Hit Hit;
+	HitDesc Hit;
 	DamageSums DamageSums;
 	Array<DamagePair> DamageList;
 	interrupt::ExecuteResult ExecuteInterruptResult;
@@ -380,7 +380,7 @@ struct RemoveStatusFunctor : public Functor
 	FixedString StatusId; // Arg0
 };
 
-using StatsSystem_ThrowDamageEventProc = void (void* statsSystem, void* temp5, Hit* hit, DamageSums* damageAmounts, bool a5, bool a6);
+using StatsSystem_ThrowDamageEventProc = void (void* statsSystem, void* temp5, HitDesc* hit, DamageSums* damageAmounts, bool a5, bool a6);
 
 struct DealDamageFunctor : public Functor
 {
@@ -389,7 +389,7 @@ struct DealDamageFunctor : public Functor
 	using ApplyDamageProc = HitResult * (HitResult* result, DealDamageFunctor* functor, ecs::EntityRef* casterHandle,
 		ecs::EntityRef* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId, 
 		int storyActionId, ActionOriginator* originator, resource::GuidResourceBankBase* classResourceMgr, 
-		Hit* hit, DamageSums* damageSums, EntityHandle* sourceHandle2, HitWith hitWith, int conditionRollIndex,
+		HitDesc* hit, DamageSums* damageSums, EntityHandle* sourceHandle2, HitWith hitWith, int conditionRollIndex,
 		bool entityDamagedEventParam, __int64 a17, SpellId* spellId2);
 
 	DamageType DamageType{ DamageType::None }; // Arg2

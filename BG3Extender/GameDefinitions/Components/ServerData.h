@@ -187,7 +187,7 @@ struct BaseWeaponComponent : public BaseComponent
 	struct Damage
 	{
 		DamageType DamageType;
-		DiceValues Roll;
+		RollDefinition Roll;
 		uint8_t field_10;
 	};
 

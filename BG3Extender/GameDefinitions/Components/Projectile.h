@@ -153,7 +153,7 @@ struct InitializationData
 	int StoryActionId;
 	ActionOriginator Originator;
 	FixedString TextKey;
-	Hit Hit;
+	HitDesc Hit;
 	std::optional<glm::vec3> BeamTargetPos;
 	EntityHandle TargetObject;
 	float ExplodeRadius;
@@ -194,7 +194,7 @@ struct Projectile : public BaseProxyComponent
 	glm::vec3 TargetPos;
 	glm::vec3 TargetObjectPos;
 	FixedString TextKey;
-	Hit Hit;
+	HitDesc Hit;
 	DamageType MainDamageType;
 	CauseType Cause;
 	float LifeTime;

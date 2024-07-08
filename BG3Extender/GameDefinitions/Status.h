@@ -135,7 +135,7 @@ namespace bg3se
 			ecs::EntityRef Source;
 			__int64 field_128;
 			EntityHandle field_130;
-			Hit HitDescription;
+			HitDesc HitDescription;
 			Guid Combat;
 			uint8_t DyingFlags;
 		};

@@ -300,7 +300,7 @@ DEFN_BOOST(WeaponAttackTypeOverride, WeaponAttackTypeOverride, {
 })
 
 DEFN_BOOST(WeaponDamageDieOverride, WeaponDamageDieOverride, {
-	DiceValues Roll;
+	RollDefinition Roll;
 })
 
 DEFN_BOOST(CarryCapacityMultiplier, CarryCapacityMultiplier, {
@@ -396,7 +396,7 @@ DEFN_BOOST(ExpertiseBonus, ExpertiseBonus, {
 })
 
 DEFN_BOOST(EntityThrowDamage, EntityThrowDamage, {
-	DiceValues Roll;
+	RollDefinition Roll;
 	uint8_t field_C;
 })
 

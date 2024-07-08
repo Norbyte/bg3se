@@ -28,7 +28,7 @@ struct ResolveData
 	};
 
 	int field_0;
-	Array<ResolvedUnknown> ResolvedRolls;
+	[[bg3::legacy(ResolvedRolls)]] Array<FixedRollBonus> FixedRollBonuses;
 	std::optional<int> field_18;
 	uint8_t field_20;
 	Array<Element> Arr_2b;

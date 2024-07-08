@@ -215,8 +215,8 @@ struct WeaponComponent : public BaseComponent
 	};
 
 
-	RefMap<AbilityId, Array<DiceValues>> Rolls;
-	RefMap<AbilityId, Array<DiceValues>> Rolls2;
+	RefMap<AbilityId, Array<RollDefinition>> Rolls;
+	RefMap<AbilityId, Array<RollDefinition>> Rolls2;
 	float WeaponRange;
 	float DamageRange;
 	[[bg3::hidden]]

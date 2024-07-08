@@ -15,13 +15,25 @@ struct DamageSums
 	int8_t field_A;
 };
 
-struct StatsRollRoll
+struct RerollCondition
 {
-	DiceValues Roll;
+	uint8_t RollValue;
+	bool KeepNew;
+};
+
+struct RerollValue
+{
+	uint8_t RollValue;
+	uint8_t RerollType;
+};
+
+struct Roll
+{
+	RollDefinition Roll;
 	stats::RollType RollType;
 	bool Advantage;
 	bool Disadvantage;
-	Array<int16_t> field_10;
+	Array<RerollCondition> RerollConditions;
 };
 
 struct StatsRollResult
@@ -30,9 +42,8 @@ struct StatsRollResult
 	int NaturalRoll;
 	int DiscardedDiceTotal;
 	RollCritical Critical;
-	uint32_t DiceSize;
-	uint8_t field_14;
-	Array<int16_t> field_18;
+	std::optional<uint32_t> CriticalThreshold;
+	Array<RerollValue> RollsCount;
 };
 
 struct ResolvedRollBonus
@@ -40,22 +51,22 @@ struct ResolvedRollBonus
 	DiceSizeId DiceSize;
 	uint8_t NumDice;
 	int ResolvedRollBonus;
-	TranslatedString Description;
+	[[bg3::legacy(Description)]] TranslatedString SourceName;
 };
 
-struct ResolvedUnknown
+struct FixedRollBonus
 {
-	int field_0;
-	TranslatedString Description;
+	[[bg3::legacy(field_0)]] int RollBonus;
+	[[bg3::legacy(Description)]] TranslatedString SourceName;
 };
 
 struct StatsRollMetadata
 {
 	int ProficiencyBonus;
 	int RollBonus;
-	__int64 field_8;
-	int field_10;
-	int field_14;
+	int HighGroundBonus;
+	int LowGroundPenalty;
+	[[bg3::legacy(field_10)]] int BaseUnarmedDamage;
 	MultiHashMap<AbilityId, int32_t> AbilityBoosts;
 	MultiHashMap<SkillId, int32_t> SkillBonuses;
 	bool AutoSkillCheckFail;
@@ -64,23 +75,23 @@ struct StatsRollMetadata
 	bool HasCustomMetadata;
 	bool IsCritical;
 	Array<ResolvedRollBonus> ResolvedRollBonuses;
-	Array<ResolvedUnknown> ResolvedUnknowns;
+	[[bg3::legacy(ResolvedUnknowns)]] Array<FixedRollBonus> FixedRollBonuses;
 };
 
-struct StatsRollType0
+struct StatsRoll
 {
-	StatsRollRoll Roll;
+	Roll Roll;
 	StatsRollResult Result;
 	StatsRollMetadata Metadata;
 };
 
-struct StatsRollType1
+struct StatsExpressionResolved
 {
 	[[bg3::hidden]]
 	StatsExpressionParamEx* CachedStatExpression;
 	STDString StatExpression;
 	Array<int32_t> IntParams;
-	Array<StatsRollType0> RollParams;
+	Array<StatsRoll> RollParams;
 	Array<DamageType> DamageTypeParams;
 	int IntIndex;
 	int RollIndex;
@@ -92,7 +103,7 @@ struct ConditionRoll
 	uint8_t DataType;
 	//# P_BITMASK(RollType)
 	ConditionRollType RollType;
-	std::variant<StatsRollType0, StatsRollType1> Roll;
+	std::variant<StatsRoll, StatsExpressionResolved> Roll;
 	int Difficulty;
 	Guid field_120;
 	bool field_130;
@@ -106,35 +117,42 @@ struct DamageModifierMetadata
 	int Value;
 	DamageType DamageType;
 	uint8_t SourceType;
-	std::variant<DiceValues, int32_t, StatsRollType1> Argument;
-	TranslatedString Description;
-	FixedString Description2;
+	[[bg3::legacy(Argument)]] std::variant<RollDefinition, int32_t, StatsExpressionResolved> Source;
+	[[bg3::legacy(Description)]] TranslatedString SourceName;
+	[[bg3::legacy(Description2)]] FixedString SourceId;
 };
 
 struct DamageResistance
 {
-	uint32_t Flags;
+	[[bg3::legacy(Flags)]] uint8_t Type;
 	DamageModifierMetadata Meta;
 };
 
-struct Hit
+struct StatsDamage
 {
-	struct ResultMetadata
+	RefMap<DamageType, Array<StatsRoll>> DamageRolls;
+	Array<DamageModifierMetadata> Modifiers;
+	StatsExpressionResolved ConditionRoll;
+	Array<DamageModifierMetadata> Modifiers2;
+	Array<DamageResistance> Resistances;
+	int AdditionalDamage;
+	int TotalDamage;
+	int FinalDamage;
+	RefMap<DamageType, int32_t> TotalDamagePerType;
+	RefMap<DamageType, int32_t> FinalDamagePerType;
+	[[bg3::legacy(field_D0)]] uint32_t Multiplier;
+	[[bg3::legacy(field_D4)]] uint32_t BaseValue;
+	[[bg3::legacy(field_D8)]] uint32_t SecondaryValue;
+	[[bg3::legacy(field_DC)]] uint8_t DamageMultiplierType;
+};
+
+struct HitDesc
+{
+	struct OverrideEntry
 	{
-		RefMap<DamageType, Array<StatsRollType0>> DamageRolls;
-		Array<DamageModifierMetadata> Modifiers;
-		StatsRollType1 ConditionRoll;
-		Array<DamageModifierMetadata> Modifiers2;
-		Array<DamageResistance> Resistances;
-		int AdditionalDamage;
-		int TotalDamage;
-		int FinalDamage;
-		RefMap<DamageType, int32_t> TotalDamagePerType;
-		RefMap<DamageType, int32_t> FinalDamagePerType;
-		uint32_t field_D0;
-		uint32_t field_D4;
-		uint32_t field_D8;
-		uint8_t field_DC;
+		uint8_t DamageType;
+		int OriginalValue;
+		int OverriddenValue;
 	};
 
 	int TotalDamageDone;
@@ -155,28 +173,28 @@ struct Hit
 	HitWith HitWith;
 	AbilityId AttackRollAbility;
 	AbilityId SaveAbility;
-	uint8_t field_4F;
+	[[bg3::legacy(field_4F)]] uint8_t SpellAttackType;
 	Array<ConditionRoll> ConditionRolls;
-	ResultMetadata Results;
+	[[bg3::legacy(Results)]] StatsDamage Damage;
 	Guid SpellCastGuid;
 	FixedString SpellId;
 	FixedString field_150;
 	EntityHandle field_158;
 	uint8_t field_160;
 	SpellSchoolId SpellSchool;
-	uint8_t HitDescFlags;
+	[[bg3::legacy(HitDescFlags)]] uint8_t HealingTypes;
 	uint8_t AttackFlags;
 	int SpellLevel;
 	int SpellPowerLevel;
 	int TotalHealDone;
-	int field_174;
+	[[bg3::legacy(field_174)]] float RedirectedDamage;
 	int OriginalDamageValue;
-	int field_178;
-	int field_17C;
-	int field_180;
-	int field_184;
+	[[bg3::legacy(field_178)]] float FallHeight;
+	[[bg3::legacy(field_17C)]] float FallDamageMultiplier;
+	[[bg3::legacy(field_180)]] float FallMaxDamage;
+	[[bg3::legacy(field_184)]] float FallWeight;
 	uint8_t field_188;
-	Array<glm::vec3> field_190;
+	Array<OverrideEntry> OverriddenDamage;
 	Array<DamagePair> DamageList;
 };
 
@@ -190,7 +208,7 @@ struct HitResultData
 
 struct HitResult
 {
-	Hit Hit;
+	HitDesc Hit;
 	DamageSums DamageSums;
 	Array<DamagePair> DamageList;
 	HitResultData Results;

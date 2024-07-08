@@ -38,7 +38,7 @@ HitResult* FunctorEventHooks::OnDealDamage(bg3se::stats::DealDamageFunctor::Appl
 	HitResult* result, bg3se::stats::DealDamageFunctor* functor, ecs::EntityRef* casterHandle,
 	ecs::EntityRef* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId,
 	int storyActionId, ActionOriginator* originator, resource::GuidResourceBankBase* classResourceMgr,
-	Hit* hit, DamageSums* damageSums, EntityHandle* sourceHandle2, HitWith hitWith, int conditionRollIndex,
+	HitDesc* hit, DamageSums* damageSums, EntityHandle* sourceHandle2, HitWith hitWith, int conditionRollIndex,
 	bool entityDamagedEventParam, __int64 a17, SpellId* spellId2)
 {
 	{
@@ -85,7 +85,7 @@ HitResult* FunctorEventHooks::OnDealDamage(bg3se::stats::DealDamageFunctor::Appl
 }
 
 void FunctorEventHooks::OnEntityDamageEvent(bg3se::stats::StatsSystem_ThrowDamageEventProc* next, void* statsSystem,
-	void* temp5, Hit* hit, DamageSums* damageAmounts, bool a5, bool a6)
+	void* temp5, HitDesc* hit, DamageSums* damageAmounts, bool a5, bool a6)
 {
 	{
 		BeforeDealDamageEvent evt;

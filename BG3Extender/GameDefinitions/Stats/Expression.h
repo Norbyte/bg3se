@@ -12,7 +12,7 @@ struct StatsExpressionParam
 	using StatsContextType = uint8_t;
 
 	using Variant2 = std::variant<StatsExpressionVariableData, AbilityId, SkillId, StatusGroup, STDString>;
-	using Param = std::variant<StatsExpressionType, Variant2, StatsExpressionVariableDataType, StatsExpressionVariableDataModifier, DiceValues, ResourceRollDefinition, StatsContextType, int32_t, bool>;
+	using Param = std::variant<StatsExpressionType, Variant2, StatsExpressionVariableDataType, StatsExpressionVariableDataModifier, RollDefinition, ResourceRollDefinition, StatsContextType, int32_t, bool>;
 
 	Array<Param> Params;
 	STDString Code;

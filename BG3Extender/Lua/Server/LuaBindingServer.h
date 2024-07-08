@@ -151,7 +151,7 @@ namespace bg3se::esv::lua
 		SpellIdWithPrototype* SpellId;
 		int StoryActionId;
 		ActionOriginator* Originator;
-		Hit* Hit;
+		HitDesc* Hit;
 		DamageSums* DamageSums;
 		uint64_t* UnknownThothParam;
 		HitWith HitWith;
@@ -166,7 +166,7 @@ namespace bg3se::esv::lua
 
 	struct BeforeDealDamageEvent : public EventBase
 	{
-		Hit* Hit;
+		HitDesc* Hit;
 		DamageSums* DamageSums;
 	};
 
@@ -195,10 +195,10 @@ namespace bg3se::esv::lua
 		HitResult* OnDealDamage(bg3se::stats::DealDamageFunctor::ApplyDamageProc* next, HitResult* result, bg3se::stats::DealDamageFunctor* functor, ecs::EntityRef* casterHandle,
 			ecs::EntityRef* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId,
 			int storyActionId, ActionOriginator* originator, resource::GuidResourceBankBase* classResourceMgr,
-			Hit* hit, DamageSums* damageSums, EntityHandle* sourceHandle2, HitWith hitWith, int conditionRollIndex,
+			HitDesc* hit, DamageSums* damageSums, EntityHandle* sourceHandle2, HitWith hitWith, int conditionRollIndex,
 			bool entityDamagedEventParam, __int64 a17, SpellId* spellId2);
 		void OnEntityDamageEvent(bg3se::stats::StatsSystem_ThrowDamageEventProc* next, void* statsSystem, void* temp5, 
-			Hit* hit, DamageSums* damageAmounts, bool a5, bool a6);
+			HitDesc* hit, DamageSums* damageAmounts, bool a5, bool a6);
 
 		template <class TParams>
 		void LuaTriggerFunctorPreExecEvent(bg3se::stats::Functors* self, TParams* params)

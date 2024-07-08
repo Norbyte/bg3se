@@ -65,12 +65,12 @@ struct DamagePair
 	DamageType DamageType;
 };
 
-struct DiceValues
+struct RollDefinition
 {
 	DiceSizeId DiceValue;
 	uint8_t AmountOfDices;
 	int DiceAdditionalValue;
-	uint8_t field_8;
+	[[bg3::legacy(field_8)]] bool DiceNegative;
 };
 
 struct BoostParameters

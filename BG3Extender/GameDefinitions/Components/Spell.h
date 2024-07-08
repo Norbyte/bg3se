@@ -357,7 +357,7 @@ struct RollsComponent : public BaseComponent
 	struct RollHit
 	{
 		FixedString field_0;
-		Hit Hit;
+		HitDesc Hit;
 	};
 
 	struct Roll
@@ -575,7 +575,7 @@ struct InterruptIdentifier
 struct InterruptRollData
 {
 	__int64 field_0;
-	Array<ResolvedUnknown> field_8;
+	[[bg3::legacy(field_8)]] Array<FixedRollBonus> FixedRollBonuses;
 };
 
 struct InterruptResult
@@ -597,7 +597,7 @@ struct InterruptResult2
 	uint32_t _Pad;
 	uint8_t field_20;
 	uint8_t field_21;
-	std::variant<StatsRollType0, StatsRollType1> Roll;
+	std::variant<StatsRoll, StatsExpressionResolved> Roll;
 	int field_138;
 	__int64 field_140;
 	__int64 field_148;
