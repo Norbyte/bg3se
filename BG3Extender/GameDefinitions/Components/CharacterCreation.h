@@ -105,7 +105,7 @@ struct FullRespecDefinitionComponent : public BaseComponent
 	Guid field_1D0;
 	int field_1E0;
 	LevelUpUpgrades LevelUpUpgrades;
-	Array<SpellIdBase> Spells;
+	Array<SpellMetaId> Spells;
 	uint8_t field_268;
 };
 

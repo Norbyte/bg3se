@@ -172,7 +172,7 @@ struct FunctorExecParamsType9 : public BaseFunctorExecParams
 	ecs::EntityRef Observer;
 	ecs::EntityRef ObserverProxy;
 	std::optional<interrupt::ResolveData> ResolveData;
-	interrupt::InterruptVariant2 Interrupt;
+	interrupt::InterruptEvent Interrupt;
 	HitDesc Hit;
 	DamageSums DamageSums;
 	Array<DamagePair> DamageList;

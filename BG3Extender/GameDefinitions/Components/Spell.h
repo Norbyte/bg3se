@@ -10,7 +10,7 @@ struct ActionStateComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(InterruptActionState, "eoc::interrupt::ActionStateComponent")
 
-	InterruptVariant2 Variant;
+	InterruptEvent Variant;
 	Array<InterruptEntities> Arr_EHx2;
 	Guid field_118;
 };
@@ -44,7 +44,7 @@ struct DecisionComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(InterruptDecision, "eoc::interrupt::DecisionComponent")
 
-	MultiHashMap<InterruptVariant2, uint8_t> Decisions;
+	MultiHashMap<InterruptEvent, uint8_t> Decisions;
 };
 
 struct PreferencesComponent : public BaseComponent
@@ -179,7 +179,7 @@ struct SpellContainerComponent : public BaseComponent
 
 	struct Spell
 	{
-		SpellIdBase SpellId;
+		SpellMetaId SpellId;
 		EntityHandle ItemHandle;
 		[[bg3::legacy(SelectionType)]] SpellLearningStrategy LearningStrategy;
 		uint8_t field_29;
@@ -197,7 +197,7 @@ struct PlayerPrepareSpellComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(PlayerPrepareSpell, "eoc::spell::PlayerPrepareSpellComponent")
 
-	Array<SpellIdBase> Spells;
+	Array<SpellMetaId> Spells;
 	uint8_t field_30;
 };
 
@@ -205,7 +205,7 @@ struct CCPrepareSpellComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(CCPrepareSpell, "eoc::spell::CCPrepareSpellComponent")
 
-	Array<SpellIdBase> Spells;
+	Array<SpellMetaId> Spells;
 };
 
 struct SpellModificationContainerComponent : public BaseComponent
@@ -255,7 +255,7 @@ struct SpellAiConditionsComponent : public BaseComponent
 
 struct SpellBookEntry
 {
-	struct InnerEntry
+	struct CastRequirement
 	{
 		uint8_t field_0;
 		int32_t field_4;
@@ -269,7 +269,9 @@ struct SpellBookEntry
 	[[bg3::legacy(field_41)]] bool Charged;
 	[[bg3::legacy(field_42)]] SpellPrepareType PrepareType;
 	AbilityId SpellCastingAbility;
-	Array<InnerEntry> InnerEntries;
+	Array<CastRequirement> CastRequirementss;
+	// uint32_t NumCharges;
+	// uint32_t UsedCharges;
 };
 
 struct BookComponent : public BaseComponent
@@ -284,7 +286,7 @@ struct BookPreparesComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(SpellBookPrepares, "eoc::spell::BookPreparesComponent")
 
-	Array<SpellIdBase> PreparedSpells;
+	Array<SpellMetaId> PreparedSpells;
 	MultiHashMap<Guid, int> field_30;
 	MultiHashMap<Guid, int> field_88;
 };
@@ -448,7 +450,7 @@ struct ActionRequest1
 {
 	__int64 field_0;
 	__int64 field_8;
-	bg3se::interrupt::InterruptVariant2 field_10;
+	bg3se::interrupt::InterruptEvent field_10;
 	MultiHashMap<EntityHandle, MultiHashSet<EntityHandle>> MHM_EH_MHS_EH;
 	__int64 field_158;
 };
@@ -457,7 +459,7 @@ struct ActionRequest2
 {
 	__int64 field_0;
 	__int64 field_8;
-	bg3se::interrupt::InterruptVariant2 field_10;
+	bg3se::interrupt::InterruptEvent field_10;
 	__int64 field_118;
 };
 
@@ -472,7 +474,7 @@ struct ActionRequest4
 {
 	__int64 field_0;
 	Array<stats::SpellPrototype::UseCostGroup> UseCosts;
-	MultiHashMap<EntityHandle, MultiHashMap<bg3se::interrupt::InterruptVariant2, ConditionRoll>> field_18;
+	MultiHashMap<EntityHandle, MultiHashMap<bg3se::interrupt::InterruptEvent, ConditionRoll>> field_18;
 };
 
 END_NS()

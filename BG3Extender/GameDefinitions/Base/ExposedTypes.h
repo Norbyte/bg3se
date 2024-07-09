@@ -21,7 +21,7 @@ struct ActionOriginator
 	bool CanApplyConcentration;
 };
 
-struct SpellIdBase
+struct SpellMetaId
 {
 	FixedString OriginatorPrototype;
 	uint8_t _Pad[4];

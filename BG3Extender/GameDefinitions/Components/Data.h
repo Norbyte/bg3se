@@ -364,7 +364,7 @@ struct LevelUpData
 	Guid AccessorySet;
 	std::array<int, 7> Abilities;
 	LevelUpUpgrades Upgrades;
-	[[bg3::legacy(field_B0)]] Array<SpellIdBase> Spells;
+	[[bg3::legacy(field_B0)]] Array<SpellMetaId> Spells;
 };
 
 struct FloatingComponent : public BaseComponent

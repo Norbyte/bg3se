@@ -170,7 +170,7 @@ struct InterruptEntities
 	EntityHandle field_8;
 };
 
-struct InterruptVariant2
+struct InterruptEvent
 {
 	std::variant<InterruptType0, InterruptType1, InterruptType2, InterruptType3, InterruptType4, InterruptType5, InterruptType6, InterruptType7, InterruptType8> Variant;
 	EntityHandle Source;
@@ -183,7 +183,7 @@ struct InterruptVariant2
 	uint8_t field_100;
 
 	// FIXME - needs adjustment depending on variant
-	inline bool operator == (InterruptVariant2 const& o) const
+	inline bool operator == (InterruptEvent const& o) const
 	{
 		return Source == o.Source
 			&& Target == o.Target;
@@ -192,9 +192,9 @@ struct InterruptVariant2
 
 struct InterruptVariantContainer
 {
-	InterruptVariant2 Variant;
+	InterruptEvent Variant;
 	bool field_108;
-	InterruptVariant2 field_110;
+	InterruptEvent field_110;
 	MultiHashMap<EntityHandle, MultiHashSet<EntityHandle>> MHM_EH_MHS_EH;
 };
 
@@ -203,7 +203,7 @@ END_NS()
 BEGIN_SE()
 
 template <>
-inline uint64_t MultiHashMapHash<interrupt::InterruptVariant2>(interrupt::InterruptVariant2 const& v)
+inline uint64_t MultiHashMapHash<interrupt::InterruptEvent>(interrupt::InterruptEvent const& v)
 {
 	// FIXME - needs adjustment depending on variant
 	return HashMulti(v.Source, v.Target);
