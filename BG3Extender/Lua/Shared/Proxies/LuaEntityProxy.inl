@@ -76,9 +76,9 @@ Array<ExtComponentType> EntityHelper::GetAllComponentTypes() const
 	Array<ExtComponentType> types;
 
 	auto world = ecs_->GetEntityWorld();
-	auto entityClass = world->GetEntityClass(handle_);
-	if (entityClass != nullptr) {
-		for (auto typeInfo : entityClass->ComponentTypeToIndex) {
+	auto storage = world->GetEntityStorage(handle_);
+	if (storage != nullptr) {
+		for (auto typeInfo : storage->ComponentTypeToIndex) {
 			auto extType = ecs_->GetComponentType(typeInfo.Key());
 			if (extType) {
 				types.push_back(*extType);
@@ -110,8 +110,8 @@ int EntityProxyMetatable::CreateComponent(lua_State* L)
 	auto ecs = GetEntitySystem(L);
 	auto typeId = (uint16_t)*ecs->GetComponentIndex(componentType);
 	auto world = ecs->GetEntityWorld();
-	if (typeId < world->ComponentOpsList.size()) {
-		auto ops = world->ComponentOpsList[typeId];
+	if (typeId < world->ComponentOps.size()) {
+		auto ops = world->ComponentOps[typeId];
 		if (ops != nullptr) {
 			ops->AddImmediateDefaultComponent(handle.Handle, 0);
 			PushComponent(L, ecs, handle, componentType, GetCurrentLifetime(L));
@@ -148,15 +148,15 @@ int EntityProxyMetatable::GetAllComponents(lua_State* L)
 
 	auto ecs = GetEntitySystem(L);
 	auto world = ecs->GetEntityWorld();
-	auto entityClass = world->GetEntityClass(handle);
-	if (entityClass != nullptr) {
-		auto componentPtr = entityClass->InstanceToPageMap.try_get(handle);
+	auto storage = world->GetEntityStorage(handle);
+	if (storage != nullptr) {
+		auto componentPtr = storage->InstanceToPageMap.try_get(handle);
 		if (componentPtr) {
-			for (auto typeInfo : entityClass->ComponentTypeToIndex) {
+			for (auto typeInfo : storage->ComponentTypeToIndex) {
 				auto extType = ecs->GetComponentType(typeInfo.Key());
 				if (extType) {
 					auto const& meta = ecs->GetComponentMeta(*extType);
-					auto component = entityClass->GetComponent(*componentPtr, typeInfo.Value(), meta.Size, meta.IsProxy);
+					auto component = storage->GetComponent(*componentPtr, typeInfo.Value(), meta.Size, meta.IsProxy);
 
 					push(L, *extType);
 					PushComponent(L, component, *extType, GetCurrentLifetime(L));
@@ -186,9 +186,9 @@ int EntityProxyMetatable::GetAllComponentNames(lua_State* L)
 
 	auto ecs = GetEntitySystem(L);
 	auto world = ecs->GetEntityWorld();
-	auto entityClass = world->GetEntityClass(handle);
-	if (entityClass != nullptr) {
-		for (auto componentIdx : entityClass->ComponentTypeToIndex.keys()) {
+	auto storage = world->GetEntityStorage(handle);
+	if (storage != nullptr) {
+		for (auto componentIdx : storage->ComponentTypeToIndex.keys()) {
 			auto name = ecs->GetComponentName(componentIdx);
 			if (name) {
 				auto mapped = ecs->GetComponentType(componentIdx).has_value();
@@ -234,9 +234,9 @@ int EntityProxyMetatable::IsAlive(lua_State* L)
 	auto handle = Get(L, 1);
 	auto world = GetEntitySystem(L)->GetEntityWorld();
 	bool alive{ false };
-	auto entityClass = world->GetEntityClass(handle);
-	if (entityClass != nullptr) {
-		alive = (bool)entityClass->InstanceToPageMap.try_get(handle);
+	auto storage = world->GetEntityStorage(handle);
+	if (storage != nullptr) {
+		alive = (bool)storage->InstanceToPageMap.try_get(handle);
 	}
 
 	push(L, alive);

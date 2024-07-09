@@ -125,28 +125,28 @@ bool ComponentCallbackList::Remove(uint64_t registrantIndex)
 }
 
 
-void* Query::GetFirstMatchingComponent(std::size_t componentSize, bool isProxy)
+void* QueryDescription::GetFirstMatchingComponent(std::size_t componentSize, bool isProxy)
 {
 	for (auto const& cls : EntityClasses) {
-		if (cls.EntityClass->InstanceToPageMap.size() > 0) {
-			auto const& instPage = cls.EntityClass->InstanceToPageMap.values()[0];
+		if (cls.Storage->InstanceToPageMap.size() > 0) {
+			auto const& instPage = cls.Storage->InstanceToPageMap.values()[0];
 			auto componentIdx = cls.GetComponentIndex(0);
-			assert(cls.EntityClass->ComponentPools.size() >= 1);
-			return cls.EntityClass->GetComponent(instPage, componentIdx, componentSize, isProxy);
+			assert(cls.Storage->Components.size() >= 1);
+			return cls.Storage->GetComponent(instPage, componentIdx, componentSize, isProxy);
 		}
 	}
 
 	return {};
 }
 
-Array<void*> Query::GetAllMatchingComponents(std::size_t componentSize, bool isProxy)
+Array<void*> QueryDescription::GetAllMatchingComponents(std::size_t componentSize, bool isProxy)
 {
 	Array<void*> hits;
 
 	for (auto const& cls : EntityClasses) {
 		auto componentIdx = cls.GetComponentIndex(0);
-		for (auto const& instance : cls.EntityClass->InstanceToPageMap) {
-			auto component = cls.EntityClass->GetComponent(instance.Value(), componentIdx, componentSize, isProxy);
+		for (auto const& instance : cls.Storage->InstanceToPageMap) {
+			auto component = cls.Storage->GetComponent(instance.Value(), componentIdx, componentSize, isProxy);
 			hits.push_back(component);
 		}
 	}
@@ -154,6 +154,7 @@ Array<void*> Query::GetAllMatchingComponents(std::size_t componentSize, bool isP
 	return hits;
 }
 
+/*
 uint64_t NewEntityPool::Add()
 {
 	if (NumFreeSlots < (1u << FreePool.BitsPerBucket) / 2) {
@@ -200,9 +201,9 @@ EntityHandle NewEntityPools::Add(uint32_t classIndex)
 {
 	auto index = Pools[classIndex].Add();
 	return EntityHandle(classIndex, index);
-}
+}*/
 
-void* EntityClass::GetComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy) const
+void* EntityStorageData::GetComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy) const
 {
 	auto ref = InstanceToPageMap.try_get(entityHandle);
 	if (ref) {
@@ -212,7 +213,7 @@ void* EntityClass::GetComponent(EntityHandle entityHandle, ComponentTypeIndex ty
 	}
 }
 
-void* EntityClass::GetComponent(InstanceComponentPointer const& entityPtr, ComponentTypeIndex type, std::size_t componentSize, bool isProxy) const
+void* EntityStorageData::GetComponent(EntityStorageIndex const& entityPtr, ComponentTypeIndex type, std::size_t componentSize, bool isProxy) const
 {
 	auto compIndex = ComponentTypeToIndex.try_get((uint16_t)type.Value());
 	if (compIndex) {
@@ -222,9 +223,9 @@ void* EntityClass::GetComponent(InstanceComponentPointer const& entityPtr, Compo
 	}
 }
 
-void* EntityClass::GetComponent(InstanceComponentPointer const& entityPtr, uint8_t componentSlot, std::size_t componentSize, bool isProxy) const
+void* EntityStorageData::GetComponent(EntityStorageIndex const& entityPtr, uint8_t componentSlot, std::size_t componentSize, bool isProxy) const
 {
-	auto& page = ComponentPools[entityPtr.PageIndex][componentSlot];
+	auto& page = Components[entityPtr.PageIndex][componentSlot];
 	auto buf = (uint8_t*)page.ComponentBuffer;
 	assert(buf != nullptr);
 	if (isProxy) {
@@ -237,16 +238,16 @@ void* EntityClass::GetComponent(InstanceComponentPointer const& entityPtr, uint8
 	
 void* EntityWorld::GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy)
 {
-	auto entityClass = GetEntityClass(entityHandle);
-	if (entityClass != nullptr) {
-		auto component = entityClass->GetComponent(entityHandle, type, componentSize, isProxy);
+	auto storage = GetEntityStorage(entityHandle);
+	if (storage != nullptr) {
+		auto component = storage->GetComponent(entityHandle, type, componentSize, isProxy);
 		if (component != nullptr) {
 			return component;
 		}
 	}
 
 	auto typeIdx = (uint16_t)type;
-	auto& pool1 = Components->Components;
+	auto& pool1 = Cache->WriteChanges;
 	if (pool1.AvailableComponentTypes[typeIdx]) {
 		auto& compPool = pool1.ComponentsByType[typeIdx];
 		auto transientRef = compPool.Components.Find(entityHandle);
@@ -255,7 +256,7 @@ void* EntityWorld::GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex
 		}
 	}
 
-	auto& pool2 = Components->Components;
+	auto& pool2 = Cache->ReadChanges;
 	if (pool2.AvailableComponentTypes[typeIdx]) {
 		auto& compPool = pool2.ComponentsByType[typeIdx];
 		auto transientRef = compPool.Components.Find(entityHandle);
@@ -270,9 +271,9 @@ void* EntityWorld::GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex
 bool EntityWorld::IsValid(EntityHandle entityHandle) const
 {
 	if (entityHandle.GetType() < 0x40) {
-		auto& salts = (*EntitySalts)[entityHandle.GetType()];
-		if (entityHandle.GetIndex() < salts.NumElements) {
-			auto salt = salts.Buckets[entityHandle.GetIndex() >> salts.BitsPerBucket][entityHandle.GetIndex() & ((1 << salts.BitsPerBucket) - 1)];
+		auto& state = HandleGenerator->ThreadStates[entityHandle.GetType()];
+		if (entityHandle.GetIndex() < state.Salts.Used) {
+			auto const& salt = state.Salts[entityHandle.GetIndex()];
 			return salt.Salt == entityHandle.GetSalt() && salt.Index == entityHandle.GetIndex();
 		}
 	}
@@ -280,26 +281,26 @@ bool EntityWorld::IsValid(EntityHandle entityHandle) const
 	return false;
 }
 
-EntityClass* EntityStore::GetEntityClass(EntityHandle entityHandle) const
+EntityStorageData* EntityStorageContainer::GetEntityStorage(EntityHandle entityHandle) const
 {
 	auto& componentSalts = Salts.Buckets[entityHandle.GetType()];
-	if (entityHandle.GetIndex() < componentSalts.NumElements) {
-		auto salt = componentSalts.Buckets[entityHandle.GetIndex() >> componentSalts.BitsPerBucket][entityHandle.GetIndex() & ((1 << componentSalts.BitsPerBucket) - 1)];
+	if (entityHandle.GetIndex() < componentSalts.Used) {
+		auto const& salt = componentSalts[entityHandle.GetIndex()];
 		if (salt.Salt == entityHandle.GetSalt()) {
-			return EntityClasses[salt.EntityClassIndex];
+			return Entities[salt.EntityClassIndex];
 		}
 	}
 
 	return nullptr;
 }
 
-EntityClass* EntityWorld::GetEntityClass(EntityHandle entityHandle) const
+EntityStorageData* EntityWorld::GetEntityStorage(EntityHandle entityHandle) const
 {
 	if (!IsValid(entityHandle)) {
 		return nullptr;
 	}
 
-	return EntityTypes->GetEntityClass(entityHandle);
+	return Storage->GetEntityStorage(entityHandle);
 }
 
 #if defined(NDEBUG)
@@ -631,7 +632,7 @@ void* EntitySystemHelpersBase::GetRawSystem(ExtSystemType type)
 	}
 
 	auto index = systemIndices_[(unsigned)type];
-	if (index != UndefinedComponent) {
+	if (index != UndefinedComponent.Value()) {
 		return world->Systems.Systems[index].System;
 	} else {
 		return nullptr;
@@ -651,28 +652,37 @@ UuidToHandleMappingComponent* EntitySystemHelpersBase::GetUuidMappings()
 
 void EntitySystemHelpersBase::Update()
 {
-	if (CheckLevel != RuntimeCheckLevel::FullECS) return;
+	if (CheckLevel == RuntimeCheckLevel::FullECS) {
+		ValidateEntityChanges();
+	}
+}
 
+void EntitySystemHelpersBase::ValidateEntityChanges()
+{
 	auto world = GetEntityWorld();
-	auto& pool1 = world->Components->Components;
+	ValidateEntityChanges(world->Cache->WriteChanges);
+	ValidateEntityChanges(world->Cache->ReadChanges);
+}
+
+void EntitySystemHelpersBase::ValidateEntityChanges(ImmediateWorldCache::Changes& changes)
+{
 	for (auto i = 0; i < components_.size(); i++) {
 		auto const& componentInfo = components_[i];
 		if (componentInfo.ComponentIndex != UndefinedComponent) {
-			if (pool1.AvailableComponentTypes[componentInfo.ComponentIndex.Value()]) {
-				auto const& pool = pool1.ComponentsByType[componentInfo.ComponentIndex.Value()];
+			if (changes.AvailableComponentTypes[componentInfo.ComponentIndex.Value()]) {
+				auto const& pool = changes.ComponentsByType[componentInfo.ComponentIndex.Value()];
 				auto name = componentIndexToNameMappings_[componentInfo.ComponentIndex];
 				auto componentSize = componentInfo.IsProxy ? sizeof(void*) : componentInfo.Size;
-				if (pool.Pool.ComponentSizeInBytes != componentSize) {
-					ERR("[ECS INTEGRITY CHECK] Component size mismatch (%s): local %d, ECS %d", name->c_str(), componentSize, pool.Pool.ComponentSizeInBytes);
+				if (pool.FrameStorage.ComponentSizeInBytes != componentSize) {
+					ERR("[ECS INTEGRITY CHECK] Component size mismatch (%s): local %d, ECS %d", name->c_str(), componentSize, pool.FrameStorage.ComponentSizeInBytes);
 				}
 			}
 		}
 	}
 
-	auto& pool2 = world->Components->Components2;
-	for (uint32_t componentId = 0; componentId < pool2.AvailableComponentTypes.size(); componentId++) {
-		if (pool2.AvailableComponentTypes[componentId]) {
-			auto const& components = pool2.ComponentsByType[componentId].Components;
+	for (uint32_t componentId = 0; componentId < changes.AvailableComponentTypes.size(); componentId++) {
+		if (changes.AvailableComponentTypes[componentId]) {
+			auto const& components = changes.ComponentsByType[componentId].Components;
 			auto componentType = GetComponentType(ComponentTypeIndex(componentId));
 			if (componentType) {
 				auto pm = GetPropertyMap(*componentType);
@@ -759,7 +769,7 @@ resource::GuidResourceBankBase* EntitySystemHelpersBase::GetRawResourceManager(E
 	return *res;
 }
 
-Query* EntitySystemHelpersBase::GetQuery(ExtQueryType type)
+QueryDescription* EntitySystemHelpersBase::GetQuery(ExtQueryType type)
 {
 	auto index = queryIndices_[(unsigned)type];
 	if (index == UndefinedIndex) {

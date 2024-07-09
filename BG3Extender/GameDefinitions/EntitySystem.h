@@ -19,10 +19,10 @@ END_SE()
 BEGIN_NS(ecs)
 
 struct EntityWorld;
-struct EntityClass;
+struct EntityStorageData;
 
 using ComponentTypeMask = std::array<uint64_t, 32>;
-using UnknownMask = std::array<uint64_t, 40>;
+using QueryMask = std::array<uint64_t, 40>;
 using EntityTypeMask = std::array<uint64_t, 4>;
 
 // Component type index, registered statically during game startup
@@ -52,126 +52,184 @@ inline uint64_t MultiHashMapHash<ecs::ComponentTypeIndex>(ecs::ComponentTypeInde
 		| (uint64_t)(((v.Value() & 0x7FFF) + 0x780 * (v.Value() >> 15)) << 16);
 }
 
+
+template <class T>
+struct PagedArray
+{
+	T** Buckets;
+	uint16_t BitsPerBucket;
+	uint16_t NumBuckets;
+	uint32_t Used;
+
+	void Resize(uint32_t newSize)
+	{
+		if (newSize) {
+			auto bucketSize = 1u << BitsPerBucket;
+			auto newNumBuckets = (~bucketSize & (bucketSize + newSize - 1)) >> BitsPerBucket;
+			if (newNumBuckets != NumBuckets) {
+				for (auto i = newNumBuckets; i < NumBuckets; i++) {
+					GameFree(Buckets[i]);
+				}
+
+				auto newAllocBuckets = (newNumBuckets + 15) & 0xFFF0;
+				if (newAllocBuckets < NumBuckets) {
+					auto newBuckets = GameAllocArray<T*>(newAllocBuckets);
+					if (Buckets) {
+						if ((unsigned int)NumBuckets < NumBuckets)
+							NumBuckets = NumBuckets;
+						memcpy(newBuckets, Buckets, sizeof(T*) * std::min(newNumBuckets, (uint32_t)NumBuckets));
+						GameFree(Buckets);
+					}
+					Buckets = newBuckets;
+				}
+
+				for (auto i = NumBuckets; i < newNumBuckets; i++) {
+					Buckets[i] = GameAllocArray<T>(bucketSize);
+				}
+
+				NumBuckets = newNumBuckets;
+			}
+		} else {
+			if (NumBuckets) {
+				for (auto i = 0; i < NumBuckets; i++) {
+					GameFree(Buckets[i]);
+				}
+
+				if (Buckets != nullptr) {
+					GameFree(Buckets);
+				}
+			}
+
+			NumBuckets = 0;
+		}
+	}
+
+	inline T const& operator [] (uint32_t index) const
+	{
+		assert(index < ((uint32_t)NumBuckets << BitsPerBucket));
+		return Buckets[index >> BitsPerBucket][index & ((1 << BitsPerBucket) - 1)];
+	}
+
+	inline T& operator [] (uint32_t index)
+	{
+		assert(index < ((uint32_t)NumBuckets << BitsPerBucket));
+		return Buckets[index >> BitsPerBucket][index & ((1 << BitsPerBucket) - 1)];
+	}
+};
+
+template <class T>
+struct alignas(64) MPMCQueueBounded : public ProtectedGameObject<MPMCQueueBounded<T>>
+{
+	uint64_t Capacity;
+	T* Slots;
+	struct alignas(64) {
+		uint64_t SomeIndex;
+	};
+	struct alignas(64) {
+		uint64_t Position;
+	};
+};
+
 END_SE()
 
 BEGIN_NS(ecs)
 
-struct UpdateInfo
+struct ComponentTypeEntry : public ProtectedGameObject<ComponentTypeEntry>
 {
-	__int64 field_50;
-	__int64 field_58;
-	__int64 field_60;
-	__int64 field_68;
-	__int64 field_70;
-	__int64 field_78;
-	__int64 field_80;
-	__int64 field_88;
-	__int64 field_90;
-	__int64 field_98;
-	__int64 field_A0;
-	__int64 field_A8;
-	__int64 field_B0;
-	__int64 field_B8;
-	__int64 field_C0;
-	__int64 field_C8;
-	__int64 field_D0;
-	__int64 field_D8;
-	__int64 field_E0;
-	__int64 field_E8;
-	__int64 field_F0;
-	__int64 field_F8;
-	__int64 field_100;
-	__int64 field_108;
-	__int64 field_110;
-	__int64 field_118;
-	__int64 field_120;
-};
-
-struct ComponentType : public ProtectedGameObject<ComponentType>
-{
-	__int16 field_0;
-	int field_4;
-	BYTE field_8;
-	char field_9;
-	char field_A;
+	ComponentTypeIndex TypeId;
+	int NameId;
+	uint8_t field_8;
+	uint8_t field_9;
+	uint8_t field_A;
 	bool QueryFlags[4];
-	uint16_t field_10;
-	__int16 field_12;
+	uint16_t InlineSize;
+	uint16_t ComponentSize;
 	void* DtorProc;
-	Array<int16_t> DependentComponentIndices;
-	Array<int16_t> DependencyComponentIndices;
+#if 0
+	void* CountProc;
+	void* ModifiedCountProc;
+#endif
+	Array<ComponentTypeIndex> DependentComponentIndices;
+	Array<ComponentTypeIndex> DependencyComponentIndices;
+#if 0
+	uint64_t field_50;
+	uint32_t field_58;
+#endif
 };
 
-struct Query : public ProtectedGameObject<Query>
+struct StorageComponentMap : public ProtectedGameObject<StorageComponentMap>
 {
-	struct EntityClassMatch : public ProtectedGameObject<EntityClassMatch>
-	{
-		EntityTypeMask ComponentTypeIdMask;
-		union {
-			uint8_t* ComponentIndices;
-			std::array<uint8_t, 8> InlineComponentIndices;
-		};
-		uint8_t LastIndex1;
-		uint8_t LastIndex2;
-		uint8_t LastIndex3;
-		uint8_t LastIndex4;
-		uint8_t LastIndex5;
-		uint8_t NumIndices;
-		EntityClass* EntityClass;
-		void* field_38;
-
-		uint8_t GetComponentIndex(uint8_t idx) const
-		{
-			assert(idx < NumIndices);
-			if (NumIndices > 8) {
-				return ComponentIndices[idx];
-			} else {
-				return InlineComponentIndices[idx];
-			}
-		}
+	EntityTypeMask WriteMask;
+	union {
+		uint8_t* ComponentIndices;
+		std::array<uint8_t, 8> InlineComponentIndices;
 	};
+	uint8_t OptionalStart;
+	uint8_t OptionalEnd;
+	uint8_t FrameOptionalsStart;
+	uint8_t FrameOptionalsEnd;
+	uint8_t FilterOrEnd;
+	uint8_t FilterAndEnd;
+	EntityStorageData* Storage;
+	uint16_t StorageId;
+
+	uint8_t GetComponentIndex(uint8_t idx) const
+	{
+		assert(idx < FilterAndEnd);
+		if (FilterAndEnd > 8) {
+			return ComponentIndices[idx];
+		} else {
+			return InlineComponentIndices[idx];
+		}
+	}
+};
+
+struct QueryDescription : public ProtectedGameObject<QueryDescription>
+{
+	using ID = uint16_t;
 
 	// TypeList template parameters to ecs::query::spec::Spec<...>
-	StaticArray<int32_t> A1;
-	StaticArray<int32_t> A2;
-	StaticArray<uint64_t> A3;
-	StaticArray<EntityClassMatch> EntityClasses;
-	uint64_t* A5;
-	uint32_t A6;
-	uint8_t A7;
-	uint8_t A8;
-	uint8_t A9;
-	uint8_t A10;
-	uint8_t FirstComponentTypeIndex;
-	uint8_t LastComponentTypeIndex;
-	uint8_t field_652;
-	uint8_t NextComponentTypeIndex;
-	uint8_t ComponentTypesCapacity;
-	uint8_t ComponentTypesCapacityUnk;
+	MultiHashSet<int32_t> StorageFrameIDs;
+	StaticArray<StorageComponentMap> EntityClasses;
+#if 0
+	STDString Name;
+#endif
+	uint64_t* ComponentIndices;
+	uint32_t Flags;
+	uint8_t IncludeEnd;
+	uint8_t IncludeAndEnd;
+	uint8_t ExcludeEnd;
+	uint8_t AddOrEnd;
+	uint8_t FrameStart;
+	uint8_t FrameOptionalStart;
+	uint8_t OptionalStart;
+	uint8_t OptionalEnd;
+	uint8_t WriteStart;
+	uint8_t WriteEnd;
 
 	void* GetFirstMatchingComponent(std::size_t componentSize, bool isProxy);
 	Array<void*> GetAllMatchingComponents(std::size_t componentSize, bool isProxy);
 };
 
 
-struct QueryManager : public ProtectedGameObject<QueryManager>
+struct QueryRegistry : public ProtectedGameObject<QueryRegistry>
 {
-	Array<Query> Queries;
-	Array<int16_t> ComponentTypes1;
-	Array<int16_t> ComponentTypes2;
-	Array<int16_t> ComponentTypes3;
-	Array<int16_t> ComponentTypes4;
-	Array<int16_t> ComponentTypes5;
-	Array<int16_t> ComponentTypes6;
+	Array<QueryDescription> Queries;
+	Array<QueryDescription::ID> PersistentQueries;
+	Array<QueryDescription::ID> AliveQueries;
+	Array<QueryDescription::ID> RemovedQueries;
+	Array<QueryDescription::ID> ComponentTypes4;
+	Array<QueryDescription::ID> ComponentTypes5;
+	Array<QueryDescription::ID> FrameData;
 };
 
 struct ComponentRegistry : public ProtectedGameObject<ComponentRegistry>
 {
 	BitSet<> Bitmask;
-	Array<ComponentType> Types;
+	Array<ComponentTypeEntry> Types;
 };
 
-struct SystemType : public ProtectedGameObject<SystemType>
+struct SystemTypeEntry : public ProtectedGameObject<SystemTypeEntry>
 {
 	using ID = uint32_t;
 
@@ -179,50 +237,62 @@ struct SystemType : public ProtectedGameObject<SystemType>
 	int32_t SystemIndex0;
 	int32_t SystemIndex1;
 	__int16 field_10;
-	char field_12;
+	bool Activated;
 	void* UpdateProc;
 	void* SomeProc2;
 	void* SomeProc3;
-	void* SomeProc4;
-	MultiHashSet<SystemType::ID> DependencySystems;
-	MultiHashSet<SystemType::ID> DependentSystems;
+	void* ECBFlushJob;
+	MultiHashSet<SystemTypeEntry::ID> DependencySystems;
+	MultiHashSet<SystemTypeEntry::ID> DependentSystems;
 	MultiHashSet<uint32_t> HandleMappings2;
 	MultiHashSet<uint32_t> HandleMappings;
+#if 0
+	StringView Name;
+	uint64_t field_108;
+	QueryMask SomeBitfield;
+	QueryMask SomeBitfield2;
+#endif
 };
 
 struct SystemRegistry : public ProtectedGameObject<SystemRegistry>
 {
 	void* VMT;
-	Array<SystemType> Systems;
+	Array<SystemTypeEntry> Systems;
 	uint32_t Unknown;
 	uint32_t GrowSize;
 };
 
-struct ComponentReplication : public ProtectedGameObject<ComponentReplication>
+struct SyncBuffers : public ProtectedGameObject<SyncBuffers>
 {
 	Array<MultiHashMap<EntityHandle, BitSet<>>> ComponentPools;
 	bool Dirty;
 };
 
-struct EntityTypeSalts : public ProtectedGameObject<EntityTypeSalts>
+struct EntityHandleGenerator : public ProtectedGameObject<EntityHandleGenerator>
 {
-	struct Entry
+	struct alignas(64) ThreadState : public ProtectedGameObject<ThreadState>
 	{
-		int Index;
-		int Salt;
+		struct Entry
+		{
+			int Index;
+			int Salt;
+		};
+
+		PagedArray<Entry> Salts;
+		uint32_t NextFreeSlotIndex;
+		uint32_t HighestIndex;
+		uint32_t NumFreeSlots;
+
+		uint64_t Add();
+		void Grow();
 	};
 
-	Entry** Buckets;
-	uint16_t BitsPerBucket;
-	uint16_t NumBuckets;
-	uint32_t NumElements;
-	uint32_t field_10;
-	uint32_t field_14;
-	uint32_t field_18;
-	uint64_t field_20[4];
+	std::array<ThreadState, 0x40> ThreadStates;
+
+	EntityHandle Add(uint32_t classIndex);
 };
 		
-struct EntityClass : public ProtectedGameObject<EntityClass>
+struct EntityStorageData : public ProtectedGameObject<EntityStorageData>
 {
 	static constexpr std::size_t PageSize = 64;
 
@@ -230,12 +300,12 @@ struct EntityClass : public ProtectedGameObject<EntityClass>
 	{
 		uint16_t Index;
 		ComponentTypeIndex ComponentTypeId;
-		char field_4;
-		char field_5;
+		bool QueryFlag1;
+		bool QueryFlag3;
 		void* DtorProc;
 	};
 			
-	struct InstanceComponentPointer
+	struct EntityStorageIndex
 	{
 		uint16_t PageIndex;
 		uint16_t EntryIndex;
@@ -252,41 +322,50 @@ struct EntityClass : public ProtectedGameObject<EntityClass>
 		EntityHandle Pool[PageSize];
 	};
 
+	struct PageInfo
+	{
+		uint64_t CapacityMask;
+		uint64_t UsedMask;
+	};
+
 
 	ComponentTypeMask ComponentsInClass;
-	uint64_t SomeEntityMask;
-	ComponentTypeIndex* ComponentIndices; // List of indices into ComponentTypeToIndex/ComponentPoolsByType
+	uint64_t EntityTypesMask;
+	uint16_t* ComponentSizes;
 	ComponentEntry* ComponentDtors;
 	uint16_t EntityClassId;
-	__int16 field_10A;
+	uint16_t TotalSize;
 	uint16_t ComponentIndexListSize;
-	char field_10E;
-	char field_10F;
-	char field_110;
-	Array<ComponentPage*> ComponentPools;
-	Array<HandlePage*> InstanceHandles;
-	BitSet<> field_138;
-	int field_148;
-	Array<void*> field_150;
+	bool SomeQueryFlag;
+	bool AggregateQueryFlag3;
+	bool RegisteredForQueries;
+	bool RegisteredForQueries2;
+	Array<ComponentPage*> Components;
+	Array<HandlePage*> Handles;
+	Array<PageInfo> PageInfos;
+	int16_t field_148;
+	int16_t SmallPageIndex;
+	Array<uint16_t> PageToComponentPoolIndex;
 	MultiHashMap<ComponentTypeIndex, uint8_t> ComponentTypeToIndex;
-	MultiHashMap<EntityHandle, InstanceComponentPointer> InstanceToPageMap;
-	MultiHashMap<EntityHandle, uint64_t> field_1E0;
-	MultiHashMap<EntityHandle, uint64_t> field_220;
-	Array<void*> field_260;
-	Array<void*> field_270;
+	MultiHashMap<EntityHandle, EntityStorageIndex> InstanceToPageMap;
+	MultiHashMap<uint64_t, uint16_t> AddedComponentFrameStorageIDs;
+	MultiHashMap<uint64_t, uint16_t> RemovedComponentFrameStorageIDs2;
+	Array<Array<EntityHandle>> ComponentAddedEntityMap;
+	Array<Array<EntityHandle>> ComponentRemovedEntityMap;
+	// FIXME - SparseArray<ComponentTypeEntry> instead?
 	MultiHashMap<ComponentTypeIndex, MultiHashMap<uint16_t, ComponentPage*>*> ComponentPoolsByType;
-	char field_2C0;
+	bool HasComponentPoolsByType;
 	__int64 field_2C8;
 	EntityTypeMask ComponentMask; // Valid indices into Components pool
-	Array<int16_t> field_2F0;
-	Array<int16_t> field_300;
-	UnknownMask field_310;
-	Array<void*> field_440;
-	UnknownMask field_450;
+	Array<uint16_t> RegisteredQueries;
+	Array<uint16_t> AddComponentQueries;
+	QueryMask AddComponentQueryMap;
+	Array<uint16_t> RemoveComponentQueries;
+	QueryMask RemoveComponentQueryMap;
 
 	void* GetComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy) const;
-	void* GetComponent(InstanceComponentPointer const& entityPtr, ComponentTypeIndex type, std::size_t componentSize, bool isProxy) const;
-	void* GetComponent(InstanceComponentPointer const& entityPtr, uint8_t componentSlot, std::size_t componentSize, bool isProxy) const;
+	void* GetComponent(EntityStorageIndex const& entityPtr, ComponentTypeIndex type, std::size_t componentSize, bool isProxy) const;
+	void* GetComponent(EntityStorageIndex const& entityPtr, uint8_t componentSlot, std::size_t componentSize, bool isProxy) const;
 
 	inline bool HasComponent(ComponentTypeIndex type) const
 	{
@@ -295,40 +374,32 @@ struct EntityClass : public ProtectedGameObject<EntityClass>
 };
 
 
-struct EntityStore : public ProtectedGameObject<EntityStore>
+struct EntityStorageContainer : public ProtectedGameObject<EntityStorageContainer>
 {
-	struct TypeSalts : public ProtectedGameObject<TypeSalts>
+	struct TypeSalt
 	{
-		struct Entry
-		{
-			int Salt;
-			uint16_t EntityClassIndex;
-		};
-
-		Entry** Buckets;
-		uint16_t BitsPerBucket;
-		uint16_t NumBuckets;
-		uint32_t NumElements;
+		int32_t Salt;
+		uint16_t EntityClassIndex;
 	};
 
 	struct SaltMap : public ProtectedGameObject<SaltMap>
 	{
-		std::array<TypeSalts, 0x40> Buckets;
+		std::array<PagedArray<TypeSalt>, 0x40> Buckets;
 		uint32_t Size;
 	};
 
-	Array<EntityClass*> EntityClasses;
-	MultiHashMap<uint64_t, uint16_t> TypeHashToClassIndex;
+	Array<EntityStorageData*> Entities;
+	MultiHashMap<uint64_t, uint16_t> TypeHashToEntityTypeIndex;
 	SaltMap Salts;
 	MultiHashMap<uint64_t, uint64_t> field_458;
-	BitSet<> UsedTypeIndices;
+	BitSet<> UsedFrameDataStorages;
 	ComponentRegistry* ComponentRegistry;
-	QueryManager* Queries;
+	QueryRegistry* Queries;
 
-	EntityClass* GetEntityClass(EntityHandle entityHandle) const;
+	EntityStorageData* GetEntityStorage(EntityHandle entityHandle) const;
 };
 
-struct ComponentDataStore : public ProtectedGameObject<ComponentDataStore>
+struct alignas(64) FrameAllocator : public ProtectedGameObject<FrameAllocator>
 {
 	__int64 FastLock;
 	__int64 FastLock2;
@@ -356,7 +427,7 @@ struct ComponentPool : public ProtectedGameObject<ComponentPool>
 	Array<void*> Pages;
 	void* GrowProc;
 	uint64_t field_18;
-	ComponentDataStore* Store;
+	FrameAllocator* Allocator;
 	uint32_t NextFreeIndex;
 	uint16_t ComponentSize;
 	ComponentTypeIndex ComponentTypeId;
@@ -430,7 +501,7 @@ struct BucketedRawStaticArray
 template <class T>
 struct BucketedStaticArray
 {
-	ComponentDataStore* Store;
+	FrameAllocator* Store;
 	T** Buckets;
 	uint16_t BitsPerBucket;
 	uint16_t NumBuckets;
@@ -452,7 +523,7 @@ struct BucketedStaticArray
 template <class TKey>
 struct BucketedHashSet
 {
-	ComponentDataStore* Store;
+	FrameAllocator* Store;
 	int32_t** HashKeys;
 	int32_t** NextIds;
 	TKey** Keys;
@@ -532,7 +603,7 @@ struct BucketedBitSet
 template <class TKey, class TValue>
 struct BucketedSparseHashSet
 {
-	ComponentDataStore* Store;
+	FrameAllocator* Store;
 	BucketedBitSet Bitmap;
 
 	BucketedRawStaticArray<uint16_t> LookupTable;
@@ -642,7 +713,33 @@ struct ComponentCallbacks : public ProtectedGameObject<ComponentCallbacks>
 	ComponentCallbackList OnDestroy;
 };
 
-struct EntityComponents : public ProtectedGameObject<EntityComponents>
+struct ECBEntityChangeSet
+{
+	struct ComponentRef
+	{
+		// -1 = removed
+		int32_t PoolIndex;
+		uint16_t field_4;
+		uint16_t ComponentTypeId;
+	};
+
+	BucketedStaticArray<ComponentRef> Store;
+	uint64_t X;
+	uint64_t Y;
+	EntityChangeFlags Flags;
+	__int16 field_2A;
+};
+
+struct ComponentFrameStorage
+{
+	BucketedStaticArray<void*> Components;
+	uint32_t NumComponents;
+	uint16_t ComponentSizeInBytes;
+	uint16_t ComponentTypeId;
+	void* DestructorProc;
+};
+
+struct ImmediateWorldCache : public ProtectedGameObject<ImmediateWorldCache>
 {
 	struct ComponentRef
 	{
@@ -660,123 +757,108 @@ struct EntityComponents : public ProtectedGameObject<EntityComponents>
 		__int16 field_2A;
 	};
 
-	struct ComponentPoolInfo
-	{
-		BucketedStaticArray<void*> Components;
-		uint32_t NumComponents;
-		uint16_t ComponentSizeInBytes;
-		uint16_t ComponentTypeId;
-		void* DestructorProc;
-	};
-
 	struct ComponentPtr
 	{
 		void* Ptr;
 		uint64_t Unknown;
 	};
 
-	struct ComponentMap
+	struct ComponentChanges
 	{
 		BucketedHashMap<EntityHandle, ComponentPtr> Components;
-		ComponentPoolInfo Pool;
+		ComponentFrameStorage FrameStorage;
 		void* field_70;
 		void* field_78;
 	};
 
-	struct TransientComponents
+	struct Changes
 	{
-		BitArray<uint64_t, 32> AvailableComponentTypes;
-		ComponentMap* ComponentsByType;
+		ComponentTypeMask AvailableComponentTypes;
+		ComponentChanges* ComponentsByType;
 		uint64_t Unknown;
 	};
 
-	TransientComponents Components;
-	TransientComponents Components2;
+	Changes WriteChanges;
+	Changes ReadChanges;
 	Array<ComponentCallbacks*>* Callbacks;
-	ComponentDataStore* Store;
+	FrameAllocator* Allocator;
 	EntityWorld* EntityWorld;
-	EntityTypeSalts* Salts;
+	EntityHandleGenerator* HandleGenerator;
 	__int64 field_158;
 };
 
-struct NewEntityPool : public ProtectedGameObject<NewEntityPool>
+struct EntityCommandBuffer : public ProtectedGameObject<EntityCommandBuffer>
 {
-	BucketedRawStaticArray<uint64_t> FreePool;
-	uint32_t NextFreeSlotIndex;
-	uint32_t HighestIndex;
-	uint32_t NumFreeSlots;
-	__int64 field_20;
-	__int64 field_28;
-	__int64 field_30;
-	__int64 field_38;
-
-	uint64_t Add();
-	void Grow();
-};
-
-struct NewEntityPools : public ProtectedGameObject<NewEntityPools>
-{
-	std::array<NewEntityPool, 0x40> Pools;
-
-	EntityHandle Add(uint32_t classIndex);
-};
-
-struct ComponentUpdates : public ProtectedGameObject<ComponentUpdates>
-{
-	NewEntityPools* NewEntities;
-	ComponentDataStore* Store;
-	BucketedHashMap<EntityHandle, EntityComponents::EntityComponentMap> Entities;
-	BucketedSparseHashSet<ComponentTypeIndex, EntityComponents::ComponentPoolInfo> ComponentPools;
+	EntityHandleGenerator* HandleGenerator;
+	FrameAllocator* Allocator;
+	BucketedHashMap<EntityHandle, ECBEntityChangeSet> EntityChanges;
+	BucketedSparseHashSet<ComponentTypeIndex, ComponentFrameStorage> ComponentPools;
 	bool field_A0;
-	uint64_t field_B8;
+	uint32_t ThreadId;
+};
+
+struct GroupAllocator : public ProtectedGameObject<GroupAllocator>
+{
+	CriticalSection CS;
+#if 0
+	uint64_t PendingAcquire;
+	uint64_t PendingRelease;
+#endif
+};
+
+struct EntityWorldSettings
+{
+	int JobPriority;
+	int UpdateJobPriority;
+#if 0
+	// FIXME - check if correct?
+	STDString Path;
+	__int64 field_20;
+	uint8_t field_28;
+	uint8_t field_30;
+#endif
 };
 
 struct EntityWorld : public ProtectedGameObject<EntityWorld>
 {
 	using UpdateProc = void (EntityWorld* self, GameTime const& time);
 
-	ComponentReplication* Replication;
+	SyncBuffers* Replication;
 	ComponentRegistry ComponentRegistry_;
 	SystemRegistry Systems;
-	__int64 field_48;
-	UpdateInfo UpdateInfos;
-	__int64 field_128;
-	__int64 field_130;
-	__int64 field_138;
+	Array<SystemTypeEntry*> ActiveSystems;
+	Array<void*> ECBFlushJobs;
+	void* SystemDependencyExecutor;
+	MPMCQueueBounded<void*> DependencyExecutorQueue;
 	GameTime Time;
 	void* ECSUpdateBatch;
 	int field_160;
-	Array<ComponentUpdates*> ComponentUpdates;
+	Array<EntityCommandBuffer*> CommandBuffers;
 	Array<ComponentCallbacks*> ComponentCallbacks;
-	bool field_190;
-	bool NeedsUpdate;
-	bool field_192;
-	bool field_193;
-	QueryManager Queries;
-	std::array<EntityTypeSalts, 0x40>* EntitySalts;
-	EntityStore* EntityTypes;
-	__int64 field_218[6];
-	ComponentDataStore ComponentData;
-	__int64 field_298;
-	__int64 field_2A0;
-	__int64 field_2A8;
-	__int64 field_2B0;
-	__int64 field_2B8;
-	Array<void*> field_2C0;
-	Array<ComponentOps*> ComponentOpsList;
-	Array<void*> field_2E0;
-	void* field_2F0;
-	bool field_2F8;
-	bool field_2F9;
-	void* UpdateBatches;
-	CriticalSection CS;
-	EntityComponents* Components;
-	uint64_t InitFlags;
-	uint32_t InitFlags2;
+	bool RegisterPhaseEnded;
+	bool Active;
+	bool NeedsOptimize;
+	bool PerformingECSUpdate;
+	QueryRegistry Queries;
+	EntityHandleGenerator* HandleGenerator;
+	EntityStorageContainer* Storage;
+	FrameAllocator ComponentData;
+	Array<void*> SystemDependencyExecutors;
+	Array<ComponentOps*> ComponentOps;
+	ScratchString field_2E0;
+	void* ECBExecutor;
+	GroupAllocator GroupAllocator;
+	ImmediateWorldCache* Cache;
+	EntityWorldSettings Settings;
+#if 0
+	uint32_t DebugUpdateFrame;
+	void* LegacyWorldViewChecker;
+	CRITICAL_SECTION CS2;
+#endif
 
 	void* GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy);
 
-	EntityClass* GetEntityClass(EntityHandle entityHandle) const;
+	EntityStorageData* GetEntityStorage(EntityHandle entityHandle) const;
 	bool IsValid(EntityHandle entityHandle) const;
 };
 

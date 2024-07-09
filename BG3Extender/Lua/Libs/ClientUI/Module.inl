@@ -75,9 +75,9 @@ void SetState(lua_State* L, FixedString state, std::optional<FixedString> subSta
 	auto world = State::FromLua(L)->GetEntityWorld();
 	ecs.EntityWorld = world;
 	ecs.EntityWorld2 = world;
-	ecs.EntityTypes = world->EntityTypes;
+	ecs.Storage = world->Storage;
 	ecs.QuerySystem = &world->Queries;
-	ecs.CriticalSection = &world->CS;
+	ecs.GroupAllocator = &world->GroupAllocator;
 
 	bg3se::ui::UIStateMachine::EntityContext context;
 	context.ECS = &ecs;

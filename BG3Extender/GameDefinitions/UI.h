@@ -456,9 +456,9 @@ struct UIStateMachine : public ProtectedGameObject<UIStateMachine>
 	{
 		ecs::EntityWorld* EntityWorld{ nullptr };
 		ecs::EntityWorld* EntityWorld2{ nullptr };
-		ecs::EntityStore* EntityTypes{ nullptr };
-		ecs::QueryManager* QuerySystem{ nullptr };
-		CRITICAL_SECTION* CriticalSection{ nullptr };
+		ecs::EntityStorageContainer* Storage{ nullptr };
+		ecs::QueryRegistry* QuerySystem{ nullptr };
+		ecs::GroupAllocator* GroupAllocator{ nullptr };
 	};
 
 	struct EntityContext

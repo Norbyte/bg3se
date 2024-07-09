@@ -176,7 +176,7 @@ public:
 		}
 	}
 
-	Query* GetQuery(ExtQueryType type);
+	QueryDescription* GetQuery(ExtQueryType type);
 
 	BitSet<> * GetReplicationFlags(EntityHandle const& entity, ExtComponentType type);
 	BitSet<> * GetOrCreateReplicationFlags(EntityHandle const& entity, ExtComponentType type);
@@ -201,6 +201,8 @@ protected:
 	void MapResourceManagerIndex(char const* componentName, ExtResourceManagerType type);
 	void MapSystemIndex(char const* systemName, ExtSystemType type);
 	void UpdateComponentMappings();
+	void ValidateEntityChanges();
+	void ValidateEntityChanges(ImmediateWorldCache::Changes& changes);
 
 private:
 	struct IndexMappings
