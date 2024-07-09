@@ -17,8 +17,7 @@ struct PathingComponent : public BaseComponent
 
 	RefMap<FixedString, glm::vec4> VectorParameters;
 	RefMap<FixedString, Param> PathParameters;
-	__int64 field_20;
-	int field_28;
+	glm::vec3 field_20;
 	FixedString MovementTiltToRemap;
 	__int64 field_30;
 	int field_38;
