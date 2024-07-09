@@ -34,7 +34,7 @@ struct SteeringComponent : public BaseComponent
 	DEFINE_COMPONENT(Steering, "eoc::SteeringComponent")
 
 	glm::vec3 field_0;
-	float field_C;
+	[[bg3::legacy(field_C)]] float YAxisRot;
 	float field_10;
 	uint8_t field_14;
 	float field_18;
