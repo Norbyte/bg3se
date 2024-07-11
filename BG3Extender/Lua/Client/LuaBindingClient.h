@@ -44,6 +44,12 @@ namespace bg3se::ecl::lua
 		int Y;
 	};
 
+	struct ViewportResizedEvent : public EventBase
+	{
+		int Width;
+		int Height;
+	};
+
 	class ExtensionLibraryClient : public ExtensionLibrary
 	{
 	public:

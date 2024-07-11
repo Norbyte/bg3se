@@ -175,6 +175,12 @@ void ClientState::OnInputEvent(SDL_Event* event, int& result)
 		if (res == EventResult::ActionPrevented) {
 			result = 0;
 		}
+	} else if (event->type == SDL_WINDOWEVENT && event->window.event == SDL_WINDOWEVENT_RESIZED) {
+		ViewportResizedEvent params{
+			.Width = event->window.data1,
+			.Height = event->window.data2,
+		};
+		ThrowEvent("ViewportResized", params);
 	}
 }
 

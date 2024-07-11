@@ -44,6 +44,12 @@ P_RO(X)
 P_RO(Y)
 END_CLS()
 
+BEGIN_CLS(ecl::lua::ViewportResizedEvent)
+INHERIT(lua::EventBase)
+P_RO(Width)
+P_RO(Height)
+END_CLS()
+
 BEGIN_CLS(esv::lua::GameStateChangedEvent)
 INHERIT(lua::EventBase)
 P_RO(FromState)
