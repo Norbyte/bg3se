@@ -12,6 +12,7 @@ BEGIN_CLS(extui::Renderable)
 P_FUN(Destroy, extui::Renderable::Destroy)
 P_RO(Handle)
 P_RO(Parent)
+P_GETTER(ParentElement, GetParent)
 P(UserData)
 END_CLS()
 

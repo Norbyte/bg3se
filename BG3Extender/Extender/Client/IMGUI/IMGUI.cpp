@@ -117,6 +117,11 @@ void Renderable::Destroy()
     }
 }
 
+lua::ImguiHandle Renderable::GetParent()
+{
+    return lua::ImguiHandle(Parent);
+}
+
 void StyledRenderable::Render()
 {
     if (!Visible) return;

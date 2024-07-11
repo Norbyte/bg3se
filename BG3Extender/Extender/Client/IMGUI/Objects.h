@@ -101,6 +101,8 @@ public:
     virtual void Render() = 0;
     void Destroy();
 
+    lua::ImguiHandle GetParent();
+
     HandleType Handle{ InvalidHandle };
     HandleType Parent{ InvalidHandle };
     IMGUIObjectManager* Manager{ nullptr };
