@@ -1527,6 +1527,11 @@ void IMGUIManager::SetScale(float scale)
     requestedScale_ = scale;
 }
 
+glm::ivec2 IMGUIManager::GetViewportSize()
+{
+    return renderer_->GetViewportSize();
+}
+
 void IMGUIManager::OnRenderBackendInitialized()
 {
     OnViewportUpdated();

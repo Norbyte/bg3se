@@ -36,6 +36,7 @@ public:
     bool LoadFont(FixedString const& name, char const* path, float size);
     FontData* GetFont(FixedString const& name);
     void SetScale(float scale);
+    glm::ivec2 GetViewportSize();
 
     void OnRenderBackendInitialized();
     void Update();

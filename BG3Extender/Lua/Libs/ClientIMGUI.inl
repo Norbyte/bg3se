@@ -27,6 +27,11 @@ void SetScale(float scale)
 	WARN("Ext.IMGUI.SetScale() is deprecated; UI scaling is managed by SE");
 }
 
+glm::ivec2 GetViewportSize()
+{
+	return gExtender->IMGUI().GetViewportSize();
+}
+
 void RegisterIMGUILib()
 {
 	DECLARE_MODULE(IMGUI, Client)
@@ -35,6 +40,7 @@ void RegisterIMGUILib()
 	MODULE_FUNCTION(EnableDemo)
 	MODULE_FUNCTION(LoadFont)
 	MODULE_FUNCTION(SetScale)
+	MODULE_FUNCTION(GetViewportSize)
 	END_MODULE()
 }
 
