@@ -206,15 +206,6 @@ struct WeaponComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(Weapon, "eoc::WeaponComponent")
 
-	struct Element1 : public StatsExpressionParam
-	{
-		uint8_t field_28;
-		BoostCause Cause;
-		TranslatedString field_48;
-		uint8_t field_58;
-	};
-
-
 	RefMap<AbilityId, Array<RollDefinition>> Rolls;
 	RefMap<AbilityId, Array<RollDefinition>> Rolls2;
 	float WeaponRange;
@@ -224,7 +215,7 @@ struct WeaponComponent : public BaseComponent
 	uint32_t WeaponProperties;
 	uint8_t WeaponGroup;
 	AbilityId Ability;
-	Array<Element1> field_38;
+	Array<StatsExpressionWithMetadata> field_38;
 	DiceSizeId DamageDice;
 	DiceSizeId VersatileDamageDice;
 };

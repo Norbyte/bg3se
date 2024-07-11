@@ -51,6 +51,15 @@ INHERIT(StatsExpressionParam)
 END_CLS()
 
 
+BEGIN_CLS(StatsExpressionWithMetadata)
+INHERIT(StatsExpressionParam)
+P(field_28)
+P(Cause)
+P(field_48)
+P(field_58)
+END_CLS()
+
+
 BEGIN_CLS(stats::Requirement)
 P(RequirementId)
 P(IntParam)

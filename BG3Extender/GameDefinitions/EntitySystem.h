@@ -291,6 +291,17 @@ struct EntityHandleGenerator : public ProtectedGameObject<EntityHandleGenerator>
 
 	EntityHandle Add(uint32_t classIndex);
 };
+
+struct EntityStorageComponentPage
+{
+	struct ComponentInfo
+	{
+		void* ComponentBuffer;
+		void* ModificationInfo;
+	};
+
+	std::array<ComponentInfo, 256> Components;
+};
 		
 struct EntityStorageData : public ProtectedGameObject<EntityStorageData>
 {
@@ -309,12 +320,6 @@ struct EntityStorageData : public ProtectedGameObject<EntityStorageData>
 	{
 		uint16_t PageIndex;
 		uint16_t EntryIndex;
-	};
-			
-	struct ComponentPage
-	{
-		void* ComponentBuffer;
-		void* B;
 	};
 
 	struct HandlePage
@@ -340,7 +345,7 @@ struct EntityStorageData : public ProtectedGameObject<EntityStorageData>
 	bool AggregateQueryFlag3;
 	bool RegisteredForQueries;
 	bool RegisteredForQueries2;
-	Array<ComponentPage*> Components;
+	Array<EntityStorageComponentPage*> Components;
 	Array<HandlePage*> Handles;
 	Array<PageInfo> PageInfos;
 	int16_t field_148;
@@ -353,7 +358,7 @@ struct EntityStorageData : public ProtectedGameObject<EntityStorageData>
 	Array<Array<EntityHandle>> ComponentAddedEntityMap;
 	Array<Array<EntityHandle>> ComponentRemovedEntityMap;
 	// FIXME - SparseArray<ComponentTypeEntry> instead?
-	MultiHashMap<ComponentTypeIndex, MultiHashMap<uint16_t, ComponentPage*>*> ComponentPoolsByType;
+	MultiHashMap<ComponentTypeIndex, MultiHashMap<uint16_t, EntityStorageComponentPage*>*> ComponentPoolsByType;
 	bool HasComponentPoolsByType;
 	__int64 field_2C8;
 	EntityTypeMask ComponentMask; // Valid indices into Components pool

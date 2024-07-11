@@ -225,7 +225,7 @@ void* EntityStorageData::GetComponent(EntityStorageIndex const& entityPtr, Compo
 
 void* EntityStorageData::GetComponent(EntityStorageIndex const& entityPtr, uint8_t componentSlot, std::size_t componentSize, bool isProxy) const
 {
-	auto& page = Components[entityPtr.PageIndex][componentSlot];
+	auto& page = Components[entityPtr.PageIndex]->Components[componentSlot];
 	auto buf = (uint8_t*)page.ComponentBuffer;
 	assert(buf != nullptr);
 	if (isProxy) {

@@ -29,6 +29,7 @@ struct StateComponent : public BaseComponent
 	EntityHandle field_A0;
 	FixedString Level;
 	uint8_t field_AC;
+	bool IsInNarrativeCombat;
 	float field_B0;
 	Array<EntityHandle> field_B8;
 	uint8_t field_D0;

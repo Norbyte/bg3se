@@ -23,6 +23,14 @@ struct StatsExpressionParamEx : public StatsExpressionParam
 	int FastLock;
 };
 
+struct StatsExpressionWithMetadata : public StatsExpressionParam
+{
+	uint8_t field_28;
+	BoostCause Cause;
+	TranslatedString field_48;
+	uint8_t field_58;
+};
+
 struct LuaExpressionManager : public ProtectedGameObject<LuaExpressionManager>
 {
 	void* VMT;
