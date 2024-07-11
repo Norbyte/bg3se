@@ -15,12 +15,18 @@ void PostMessageToServer(char const* channel, char const* payload)
 	}
 }
 
+bool IsHost()
+{
+	auto state = GetStaticSymbols().GetServerState();
+	return state && state != esv::GameState::Uninitialized;
+}
 
 void RegisterNetLib()
 {
 	DECLARE_MODULE(Net, Client)
 	BEGIN_MODULE()
 	MODULE_FUNCTION(PostMessageToServer)
+	MODULE_FUNCTION(IsHost)
 	END_MODULE()
 }
 

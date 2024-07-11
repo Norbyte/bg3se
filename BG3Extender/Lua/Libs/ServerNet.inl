@@ -67,6 +67,12 @@ std::optional<bool> PlayerHasExtender(lua_State* L, Guid characterGuid)
 	return networkMgr.CanSendExtenderMessages(character->UserID.GetPeerId());
 }
 
+// Kinda pointless on the server, but we'll leave it here for consistency between client/server APIs
+bool IsHost()
+{
+	return true;
+}
+
 void RegisterNetLib()
 {
 	DECLARE_MODULE(Net, Server)
@@ -75,6 +81,7 @@ void RegisterNetLib()
 	MODULE_FUNCTION(PostMessageToClient)
 	MODULE_FUNCTION(PostMessageToUser)
 	MODULE_FUNCTION(PlayerHasExtender)
+	MODULE_FUNCTION(IsHost)
 	END_MODULE()
 }
 
