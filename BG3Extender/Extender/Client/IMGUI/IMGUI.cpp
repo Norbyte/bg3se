@@ -859,7 +859,7 @@ void Tree::SetOpen(bool open, std::optional<GuiCond> cond)
 
 bool Table::BeginRender()
 {
-    rendering_ = ImGui::BeginTable(Label.c_str(), (int)Columns, (ImGuiTableFlags)Flags);
+    rendering_ = ImGui::BeginTable(Label.c_str(), (int)Columns, (ImGuiTableFlags)Flags, ToImVec(Size));
 
     if (rendering_) {
         for (auto const& def : ColumnDefs) {

@@ -427,6 +427,7 @@ public:
     uint32_t Columns{ 1 };
     GuiTableFlags Flags{ 0 };
     Array<ColumnDefinition> ColumnDefs;
+    std::optional<glm::vec2> Size;
 
 private:
     bool rendering_{ false };
