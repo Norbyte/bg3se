@@ -101,11 +101,20 @@ struct GameplayLightComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(GameplayLight, "eoc::GameplayLightComponent")
 
-	int field_18;
+	uint8_t field_0;
+	float field_4;
+	int field_8;
+	int field_C;
+	glm::vec3 field_10;
 	uint8_t field_1C;
-	int field_20;
-	int field_24;
-	int field_28;
+	uint8_t field_1D;
+	uint8_t field_1E;
+	glm::vec3 field_20;
+	glm::vec3 field_2C;
+	FixedString field_38;
+	float field_3C;
+	int field_40;
+	uint8_t field_44;
 };
 
 struct StaticPhysicsComponent : public BaseComponent

@@ -27,6 +27,7 @@ struct MetaComponent : public BaseComponent
 	uint8_t field_44;
 	int field_48;
 	EntityHandle Owner;
+	MultiHashMap<Guid, Guid> field_50;
 };
 
 END_NS()

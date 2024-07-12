@@ -114,6 +114,7 @@ DEFN_BOOST(UnlockSpell, UnlockSpell, {
 
 DEFN_BOOST(SourceAdvantage, SourceAllyAdvantageOnAttack, {
 	SourceAdvantageType Type;
+	EntityHandle field_8;
 })
 
 DEFN_BOOST(ProficiencyBonus, ProficiencyBonus, {
@@ -279,6 +280,7 @@ DEFN_BOOST(ProjectileDeflect, ProjectileDeflect, {
 DEFN_BOOST(AbilityOverrideMinimum, AbilityOverrideMinimum, {
 	AbilityId Ability;
 	int Amount;
+	bool field_8;
 })
 
 DEFN_BOOST(ACOverrideFormula, ACOverrideFormula, {
@@ -368,9 +370,8 @@ struct DamageReductionBoostComponent : public BaseComponent
 };
 
 DEFN_BOOST(ReduceCriticalAttackThreshold, ReduceCriticalAttackThreshold, {
-	int32_t field_0;
-	int32_t field_4;
-	int64_t field_8;
+	[[bg3::legacy(field_0)]] int32_t Reduction;
+	FixedString Status;
 })
 
 DEFN_BOOST(PhysicalForceRangeBonus, PhysicalForceRangeBonus, {
@@ -493,10 +494,9 @@ DEFN_BOOST(CriticalHitExtraDice, CriticalHitExtraDice, {
 })
 
 DEFN_BOOST(DodgeAttackRoll, DodgeAttackRoll, {
-	uint8_t field_0;
+	[[bg3::legacy(field_0)]] uint8_t Roll;
 	int32_t field_4;
-	StatusType StatusType;
-	stats::StatusGroup StatusGroup;
+	FixedString StatusType;
 })
 
 DEFN_BOOST(GameplayObscurity, GameplayObscurity, {

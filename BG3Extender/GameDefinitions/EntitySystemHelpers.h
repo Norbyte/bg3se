@@ -201,6 +201,9 @@ protected:
 	void MapResourceManagerIndex(char const* componentName, ExtResourceManagerType type);
 	void MapSystemIndex(char const* systemName, ExtSystemType type);
 	void UpdateComponentMappings();
+	void ValidateReplication();
+	void ValidateMappedComponentSizes();
+	bool ValidateMappedComponentSize(ecs::EntityWorld* world, ComponentTypeIndex typeId, ExtComponentType extType);
 	void ValidateEntityChanges();
 	void ValidateEntityChanges(ImmediateWorldCache::Changes& changes);
 
@@ -228,6 +231,7 @@ private:
 	std::vector<STDString const*> staticDataIdToName_;
 
 	bool initialized_{ false };
+	bool validated_{ false };
 
 	void BindSystem(std::string_view name, int32_t id);
 	void BindQuery(std::string_view name, int32_t id);

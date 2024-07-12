@@ -12,7 +12,6 @@ struct ActionStateComponent : public BaseComponent
 
 	InterruptEvent Variant;
 	Array<InterruptEntities> Arr_EHx2;
-	Guid field_118;
 };
 
 struct ConditionallyDisabledComponent : public BaseComponent

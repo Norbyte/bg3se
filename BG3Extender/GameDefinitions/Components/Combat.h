@@ -66,7 +66,7 @@ struct TurnOrderComponent : public BaseComponent
 		int32_t Initiative;
 	};
 
-	struct Participant
+	struct TurnBasedGroup
 	{
 		Array<ParticipantHandleInfo> Handles;
 		Guid Participant;
@@ -76,11 +76,13 @@ struct TurnOrderComponent : public BaseComponent
 	};
 
 	Array<uint64_t> TurnOrderIndices;
-	Array<Participant> Participants;
+	[[bg3::legacy(Participants)]] Array<TurnBasedGroup> Groups;
 	Array<uint64_t> TurnOrderIndices2;
-	Array<Participant> Participants2;
-	int field_78;
-	int field_7C;
+	[[bg3::legacy(Participants2)]] Array<TurnBasedGroup> Groups2;
+	int field_40;
+	int field_44;
+	int field_48;
+	int field_4C;
 };
 
 struct IsCombatPausedComponent : public BaseComponent
@@ -155,6 +157,7 @@ struct AiModifiersComponent : public BaseComponent
 	DEFINE_COMPONENT(ServerAiModifiers, "esv::ai::combat::AiModifiersComponent")
 
 	MultiHashMap<FixedString, Guid> Modifiers;
+	uint64_t field_40;
 };
 
 END_NS()

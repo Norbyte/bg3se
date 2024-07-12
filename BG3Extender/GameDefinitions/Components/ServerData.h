@@ -121,6 +121,7 @@ struct DelayDeathCauseComponent : public BaseComponent
 
 	int DelayCount;
 	int Blocked_M;
+	int field_8;
 };
 
 struct KillerComponent : public BaseComponent
@@ -227,10 +228,11 @@ struct GameplayLightChangesComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerGameplayLightChanges, "esv::light::GameplayLightChangesComponent")
 
-  __int64 field_0;
-  uint8_t field_8;
-  uint8_t field_9;
-  uint8_t field_A;
+	uint32_t field_0;
+	uint32_t field_4;
+	uint8_t field_8;
+	uint8_t field_9;
+	uint8_t field_A;
 };
 
 struct PeersInRangeComponent : public BaseComponent

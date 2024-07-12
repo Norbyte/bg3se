@@ -162,6 +162,7 @@ struct CanInteractComponent : public BaseComponent
 	DEFINE_COMPONENT(CanInteract, "eoc::CanInteractComponent")
 
 	uint16_t Flags;
+	uint16_t Flags2;
 };
 
 struct CanSpeakComponent : public BaseComponent

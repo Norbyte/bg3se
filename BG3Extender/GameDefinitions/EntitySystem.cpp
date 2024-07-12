@@ -154,6 +154,15 @@ Array<void*> QueryDescription::GetAllMatchingComponents(std::size_t componentSiz
 	return hits;
 }
 
+ComponentTypeEntry const* ComponentRegistry::Get(ComponentTypeIndex index) const
+{
+	if (Bitmask[index.Value()]) {
+		return &Types[index.Value()];
+	} else {
+		return nullptr;
+	}
+}
+
 /*
 uint64_t NewEntityPool::Add()
 {
@@ -657,6 +666,97 @@ void EntitySystemHelpersBase::Update()
 	}
 }
 
+void EntitySystemHelpersBase::PostUpdate()
+{
+	if (!validated_ && GetEntityWorld() != nullptr) {
+		ValidateMappedComponentSizes();
+		validated_ = true;
+	}
+
+	if (CheckLevel == RuntimeCheckLevel::FullECS) {
+		ValidateReplication();
+	}
+}
+
+void EntitySystemHelpersBase::ValidateReplication()
+{
+	auto world = GetEntityWorld();
+	if (!world->Replication || !world->Replication->Dirty) return;
+
+	for (unsigned i = 0; i < world->Replication->ComponentPools.size(); i++) {
+		auto const& pool = world->Replication->ComponentPools[i];
+		auto componentType = GetComponentType(ReplicationTypeIndex(i));
+		if (componentType && pool.size() > 0) {
+			auto pm = GetPropertyMap(*componentType);
+			if (pm != nullptr) {
+				for (auto const& entity : pool) {
+					auto component = GetRawComponent(entity.Key(), *componentType);
+					if (component) {
+						pm->ValidateObject(component);
+					}
+				}
+			}
+		}
+	}
+}
+
+void EntitySystemHelpersBase::ValidateMappedComponentSizes()
+{
+	auto world = GetEntityWorld();
+
+	Array<ComponentTypeIndex> deletions;
+	for (auto const& mapping : componentIndexToTypeMappings_) {
+		if (!ValidateMappedComponentSize(world, mapping.first, mapping.second)) {
+			deletions.push_back(mapping.first);
+		}
+	}
+
+	for (auto typeId : deletions) {
+		auto name = componentIndexToNameMappings_[typeId.Value()];
+		ERR("[ECS INTEGRITY CHECK] Force unmap component %s", name->c_str());
+		auto it = componentIndexToTypeMappings_.find(typeId);
+		components_[(unsigned)it->second].ComponentIndex = UndefinedComponent;
+		componentIndexToTypeMappings_.erase(it);
+	}
+}
+
+bool EntitySystemHelpersBase::ValidateMappedComponentSize(ecs::EntityWorld* world, ComponentTypeIndex typeId, ExtComponentType extType)
+{
+	auto mapped = world->ComponentRegistry_.Get(typeId);
+	auto const& local = components_[(unsigned)extType];
+	auto name = componentIndexToNameMappings_[typeId.Value()];
+	if (mapped != nullptr) {
+		if (local.IsProxy) {
+			if (mapped->InlineSize != sizeof(void*)) {
+				ERR("[ECS INTEGRITY CHECK] '%s' marked as proxy, but entity only has inline data (%d)", 
+					name->c_str(), mapped->InlineSize);
+				return false;
+			}
+
+			if (mapped->InlineSize != sizeof(void*) || mapped->ComponentSize != local.Size) {
+				ERR("[ECS INTEGRITY CHECK] '%s' OOB size mismatch: local %d, ECS %d", 
+					name->c_str(), local.Size, mapped->ComponentSize);
+				// Don't unmap since OOB mismatch doesn't invalidate component store layout
+				return true;
+			}
+		} else {
+			if (mapped->InlineSize != mapped->ComponentSize) {
+				ERR("[ECS INTEGRITY CHECK] '%s' marked as non-proxy, but entity has OOB data (inline %d, OOB %d)",
+					name->c_str(), mapped->InlineSize, mapped->ComponentSize);
+				return false;
+			}
+
+			if (mapped->ComponentSize != local.Size) {
+				ERR("[ECS INTEGRITY CHECK] '%s' size mismatch: local %d, ECS %d",
+					name->c_str(), local.Size, mapped->ComponentSize);
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
 void EntitySystemHelpersBase::ValidateEntityChanges()
 {
 	auto world = GetEntityWorld();
@@ -692,30 +792,6 @@ void EntitySystemHelpersBase::ValidateEntityChanges(ImmediateWorldCache::Changes
 						if (component.Ptr != nullptr) {
 							pm->ValidateObject(component.Ptr);
 						}
-					}
-				}
-			}
-		}
-	}
-}
-
-void EntitySystemHelpersBase::PostUpdate()
-{
-	if (CheckLevel != RuntimeCheckLevel::FullECS) return;
-
-	auto world = GetEntityWorld();
-	if (!world->Replication || !world->Replication->Dirty) return;
-
-	for (unsigned i = 0; i < world->Replication->ComponentPools.size(); i++) {
-		auto const& pool = world->Replication->ComponentPools[i];
-		auto componentType = GetComponentType(ReplicationTypeIndex(i));
-		if (componentType && pool.size() > 0) {
-			auto pm = GetPropertyMap(*componentType);
-			if (pm != nullptr) {
-				for (auto const& entity : pool) {
-					auto component = GetRawComponent(entity.Key(), *componentType);
-					if (component) {
-						pm->ValidateObject(component);
 					}
 				}
 			}

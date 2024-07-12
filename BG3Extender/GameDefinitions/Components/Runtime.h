@@ -33,9 +33,9 @@ struct SteeringComponent : public BaseComponent
 	DEFINE_COMPONENT(Steering, "eoc::SteeringComponent")
 
 	glm::vec3 field_0;
-	float TargetRotation;
-	float Speed;
-	uint8_t RequestSteering;
+	[[bg3::legacy(field_C)]] float TargetRotation;
+	[[bg3::legacy(field_10)]] float Speed;
+	[[bg3::legacy(field_14)]] uint8_t RequestSteering;
 	float field_18;
 	uint8_t field_1C;
 };
@@ -44,7 +44,7 @@ END_SE()
 
 BEGIN_NS(esv)
 
-struct AnubisExecutorComponent : public BaseComponent
+struct AnubisExecutorComponent : public BaseProxyComponent
 {
 	DEFINE_COMPONENT(ServerAnubisExecutor, "esv::AnubisExecutorComponent")
 

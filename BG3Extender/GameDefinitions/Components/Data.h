@@ -55,13 +55,14 @@ struct Bound
 	uint8_t field_89;
 	uint16_t BoundFlags;
 	FixedString OwnerPlatform;
+	uint64_t field_90;
 };
 
-struct BoundComponent : public BaseComponent
+struct BoundComponent : public BaseProxyComponent
 {
 	DEFINE_COMPONENT(Bound, "eoc::BoundComponent")
 
-	Bound* Bound;
+	Bound Bound;
 };
 
 struct CustomStatsComponent : public BaseComponent
@@ -95,7 +96,6 @@ struct ExperienceComponent : public BaseComponent
 	int CurrentLevelExperience;
 	int NextLevelExperience;
 	int TotalExperience;
-	int SomeExperience;
 	uint8_t field_28;
 };
 
@@ -126,9 +126,12 @@ struct DifficultyCheckComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(DifficultyCheck, "eoc::DifficultyCheckComponent")
 
-	int SpellDC;
-	int field_4;
-	int field_8;
+	Array<int32_t> field_0;
+	Array<int32_t> field_10;
+	Array<AbilityId> Abilities;
+	Array<uint32_t> field_30;
+	int field_40;
+	int field_44;
 };
 
 struct AttributeFlagsComponent : public BaseComponent
@@ -232,6 +235,9 @@ struct GodComponent : public BaseComponent
 	DEFINE_COMPONENT(God, "eoc::god::GodComponent")
 
 	Guid God;
+	Guid field_10;
+	uint8_t field_20;
+	int field_24;
 };
 	
 struct ProficiencyComponent : public BaseComponent
@@ -407,6 +413,10 @@ struct IsSummonComponent : public BaseComponent
 	DEFINE_COMPONENT(IsSummon, "eoc::summon::IsSummonComponent")
 
 	EntityHandle Owner_M;
+	EntityHandle field_8;
+	Guid field_10;
+	EntityHandle field_20;
+	FixedString field_28;
 };
 
 struct SummonContainerComponent : public BaseComponent
@@ -425,7 +435,10 @@ struct StealthComponent : public BaseComponent
 	bool SeekHiddenFlag;
 	glm::vec3 Position;
 	float SeekHiddenTimeout;
-	int field_2C;
+	int field_14;
+	int field_18;
+	int field_1C;
+	int field_20;
 };
 
 DEFINE_TAG_COMPONENT(eoc, ClientControlComponent, ClientControl)
@@ -659,6 +672,8 @@ struct CanMoveComponent : public BaseComponent
 	DEFINE_COMPONENT(CanMove, "eoc::CanMoveComponent")
 
 	uint16_t Flags;
+	uint16_t field_4;
+	uint8_t field_6;
 };
 
 struct CanSenseComponent : public BaseComponent
@@ -713,7 +728,6 @@ struct DualWieldingComponent : public BaseComponent
 };
 
 DEFINE_TAG_COMPONENT(eoc, GravityDisabledComponent, GravityDisabled)
-DEFINE_TAG_COMPONENT(eoc, GravityDisabledUntilMovedComponent, GravityDisabledUntilMoved)
 DEFINE_TAG_COMPONENT(eoc::improvised_weapon, CanBeWieldedComponent, CanBeWielded)
 DEFINE_TAG_COMPONENT(eoc::tag, AvatarComponent, Avatar)
 DEFINE_TAG_COMPONENT(eoc::tag, HasExclamationDialogComponent, HasExclamationDialog)

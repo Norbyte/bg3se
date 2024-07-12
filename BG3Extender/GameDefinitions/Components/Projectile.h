@@ -12,6 +12,7 @@ struct SourceInfoComponent : public BaseComponent
 	DEFINE_COMPONENT(ProjectileSource, "eoc::projectile::SourceInfoComponent")
 
 	SpellId Spell;
+	EntityHandle Entity;
 };
 
 END_NS()

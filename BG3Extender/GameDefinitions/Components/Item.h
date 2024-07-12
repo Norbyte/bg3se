@@ -142,7 +142,6 @@ struct OwneeHistoryComponent : public BaseComponent
 	EntityHandle OriginalOwner;
 	EntityHandle LatestOwner;
 	EntityHandle PreviousOwner;
-	EntityHandle PreviousLatestOwner;
 };
 
 struct OwneeRequestComponent : public BaseComponent

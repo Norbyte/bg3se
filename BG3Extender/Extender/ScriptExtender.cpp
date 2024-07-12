@@ -234,14 +234,13 @@ void ScriptExtender::OnStatsLoad(stats::RPGStats::LoadProc* wrapped, stats::RPGS
 
 void ScriptExtender::OnECSUpdate(ecs::EntityWorld::UpdateProc* wrapped, ecs::EntityWorld* entityWorld, GameTime const& time)
 {
-	if (entityWorld->Replication && GetServer().HasExtensionState()) {
-		GetServer().GetEntityHelpers().Update();
-	}
+	GetECS().Update();
 
 	wrapped(entityWorld, time);
 
+	GetECS().PostUpdate();
+
 	if (entityWorld->Replication && GetServer().HasExtensionState()) {
-		GetServer().GetEntityHelpers().PostUpdate();
 		esv::LuaServerPin lua(GetServer().GetExtensionState());
 		if (lua) {
 			lua->GetReplicationEventHooks()->OnEntityReplication(*entityWorld);
@@ -276,6 +275,18 @@ ExtensionStateBase* ScriptExtender::GetCurrentExtensionState()
 		} else {
 			return nullptr;
 		}
+	}
+}
+
+ecs::EntitySystemHelpersBase& ScriptExtender::GetECS()
+{
+	if (server_.IsInServerThread()) {
+		return server_.GetEntityHelpers();
+	} else if (client_.IsInClientThread()) {
+		return client_.GetEntityHelpers();
+	} else {
+		WARN("Called from unknown thread %d?", GetCurrentThreadId());
+		return client_.GetEntityHelpers();
 	}
 }
 

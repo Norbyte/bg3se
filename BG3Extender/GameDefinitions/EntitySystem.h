@@ -227,6 +227,8 @@ struct ComponentRegistry : public ProtectedGameObject<ComponentRegistry>
 {
 	BitSet<> Bitmask;
 	Array<ComponentTypeEntry> Types;
+
+	ComponentTypeEntry const* Get(ComponentTypeIndex index) const;
 };
 
 struct SystemTypeEntry : public ProtectedGameObject<SystemTypeEntry>
