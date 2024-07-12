@@ -24,6 +24,11 @@ public:
 	void EnableOutput(bool enabled);
 	void SetLogCallback(LogCallbackProc* callback);
 
+	inline bool WasCreated() const
+	{
+		return created_;
+	}
+
 protected:
 	bool created_{ false };
 	bool silence_{ false };

@@ -79,6 +79,8 @@ int SDLManager::SDLPollEventHooked(SDLPollEventProc* wrapped, SDL_Event* event)
 {
     int result = wrapped(event);
 
+    gExtender->OnSDLEvent(event);
+
     if (enableUI_ && result == 1) {
         {
             std::lock_guard _(mutex_);

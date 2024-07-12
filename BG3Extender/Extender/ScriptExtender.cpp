@@ -501,4 +501,18 @@ void ScriptExtender::InitRuntimeLogging()
 	DEBUG("Extender runtime log written to '%s'", ToStdUTF8(path).c_str());
 }
 
+void ScriptExtender::OnSDLEvent(SDL_Event* event)
+{
+	if (event->type == SDL_KEYDOWN 
+		&& event->key.keysym.scancode == SDL_SCANCODE_F12 
+		&& (unsigned)((SDLKeyModifier)event->key.keysym.mod & (SDLKeyModifier::LCtrl | SDLKeyModifier::RCtrl)) != 0) {
+		
+		auto console = gCoreLibPlatformInterface.GlobalConsole;
+		if (!console->WasCreated()) {
+			console->Create();
+		}
+
+	}
+}
+
 }

@@ -80,6 +80,8 @@ void Console::SetLogCallback(LogCallbackProc* callback)
 
 void Console::Create()
 {
+	if (created_) return;
+
 	AllocConsole();
 
 	if (IsValidCodePage(CP_UTF8)) {

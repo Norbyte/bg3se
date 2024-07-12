@@ -129,6 +129,8 @@ public:
 	std::wstring MakeLogFilePath(std::wstring const& Type, std::wstring const& Extension);
 	void InitRuntimeLogging();
 
+	void OnSDLEvent(SDL_Event* event);
+
 	enum class CoreLibInitTag {};
 	WrappableFunction<CoreLibInitTag, CoreLibInitProc> CoreLibInit;
 	enum class AppUpdatePathsTag {};
