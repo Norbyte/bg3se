@@ -16,3 +16,12 @@ Ext.IsServer = function ()
 end
 
 _I._DoStartup()
+
+-- Test runner helper
+if Ext.Debug.IsDeveloperMode() then
+	Ext.Utils.LoadTestLibrary()
+	Ext.Utils.Include(nil, "builtin://Libs/DevelopmentHelpers.lua")
+end
+
+-- FIXME - should be called from global load finalizer
+-- _I.ModEventManager:FinishedLoading()

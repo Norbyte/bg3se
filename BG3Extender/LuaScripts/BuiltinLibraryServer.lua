@@ -55,3 +55,12 @@ end
 function _W()
 	return Ext.Entity.Get(Osi.GetEquippedWeapon(Osi.GetHostCharacter()) or "00000000-0000-0000-0000-000000000000")
 end
+
+-- Test runner helper
+if Ext.Debug.IsDeveloperMode() then
+	Ext.Utils.LoadTestLibrary()
+	Ext.Utils.Include(nil, "builtin://Libs/DevelopmentHelpers.lua")
+end
+
+-- FIXME - should be called from global load finalizer
+-- _I.ModEventManager:FinishedLoading()

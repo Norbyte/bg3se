@@ -3,7 +3,8 @@ local _G = _G
 Ext._Internal = {}
 local _I = Ext._Internal
 
-_I._LoadedFiles = {}
+_I.LoadedMods = {}
+
 Mods = {}
 
 _I._PublishedSharedEvents = {
@@ -20,51 +21,7 @@ _I._PublishedSharedEvents = {
 }
 
 _I._DoStartup = function ()
-	_I._RegisterEvents()
-end
-
-_I._NetMessageReceived = function (channel, payload, userId)
-	if _I._NetListeners[channel] ~= nil then
-		for i,callback in pairs(_I._NetListeners[channel]) do
-			local ok, err = xpcall(callback, debug.traceback, channel, payload, userId)
-			if not ok then
-				Ext.Utils.PrintError("Error during NetMessageReceived: ", err)
-			end
-		end
-	end
-end
-
-Ext.Require = function (mod, path)
-	if ModuleUUID == nil then
-		error("Cannot call Ext.Require() after a module was loaded!");
-	end
-
-	local fullName
-	if path == nil then
-		fullName = ModuleUUID .. "/" .. mod
-	else
-		fullName = mod .. "/" .. path
-	end
-
-	if _I._LoadedFiles[fullName] ~= nil then
-		return _I._LoadedFiles[fullName]
-	end
-	
-	local env
-	-- LuaJIT workaround
-	if getfenv ~= nil then
-		env = getfenv(2)
-	end
-
-	local loaded
-	if path == nil then
-		loaded = {Ext.Utils.Include(ModuleUUID, mod, env)}
-	else
-		loaded = {Ext.Utils.Include(mod, path, env)}
-	end
-
-	_I._LoadedFiles[fullName] = loaded
-	return table.unpack(loaded)
+	_I.EventManager:RegisterEvents()
 end
 
 _I._LoadBootstrap = function (path, modTable)
@@ -93,9 +50,12 @@ _I._LoadBootstrap = function (path, modTable)
 	-- The rest are accessed via __index
 	setmetatable(env, {__index = _G})
 	Mods[modTable] = env
+	_I.LoadedMods[modTable] = true
+	_I.BootstrappingMod = modTable
 	
 	env._G = env
 	Ext.Utils.Include(ModuleUUID, path, env)
+	_I.BootstrappingMod = nil
 end
 
 -- Helper for dumping variables in console
