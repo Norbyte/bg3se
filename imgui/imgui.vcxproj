@@ -19,26 +19,26 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\External\imgui-1.90.4\backends\imgui_impl_sdl2.h" />
-    <ClInclude Include="..\External\imgui-1.90.4\backends\imgui_impl_vulkan.h" />
-    <ClInclude Include="..\External\imgui-1.90.4\backends\imgui_impl_win32.h" />
-    <ClInclude Include="..\External\imgui-1.90.4\imconfig.h" />
-    <ClInclude Include="..\External\imgui-1.90.4\imgui.h" />
-    <ClInclude Include="..\External\imgui-1.90.4\imgui_internal.h" />
-    <ClInclude Include="..\External\imgui-1.90.4\imstb_rectpack.h" />
-    <ClInclude Include="..\External\imgui-1.90.4\imstb_textedit.h" />
-    <ClInclude Include="..\External\imgui-1.90.4\imstb_truetype.h" />
+    <ClInclude Include="..\External\imgui-1.90.9\backends\imgui_impl_sdl2.h" />
+    <ClInclude Include="..\External\imgui-1.90.9\backends\imgui_impl_vulkan.h" />
+    <ClInclude Include="..\External\imgui-1.90.9\backends\imgui_impl_win32.h" />
+    <ClInclude Include="..\External\imgui-1.90.9\imconfig.h" />
+    <ClInclude Include="..\External\imgui-1.90.9\imgui.h" />
+    <ClInclude Include="..\External\imgui-1.90.9\imgui_internal.h" />
+    <ClInclude Include="..\External\imgui-1.90.9\imstb_rectpack.h" />
+    <ClInclude Include="..\External\imgui-1.90.9\imstb_textedit.h" />
+    <ClInclude Include="..\External\imgui-1.90.9\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\External\imgui-1.90.4\backends\imgui_impl_dx11.cpp" />
-    <ClCompile Include="..\External\imgui-1.90.4\backends\imgui_impl_sdl2.cpp" />
-    <ClCompile Include="..\External\imgui-1.90.4\backends\imgui_impl_vulkan.cpp" />
-    <ClCompile Include="..\External\imgui-1.90.4\backends\imgui_impl_win32.cpp" />
-    <ClCompile Include="..\External\imgui-1.90.4\imgui.cpp" />
-    <ClCompile Include="..\External\imgui-1.90.4\imgui_demo.cpp" />
-    <ClCompile Include="..\External\imgui-1.90.4\imgui_draw.cpp" />
-    <ClCompile Include="..\External\imgui-1.90.4\imgui_tables.cpp" />
-    <ClCompile Include="..\External\imgui-1.90.4\imgui_widgets.cpp" />
+    <ClCompile Include="..\External\imgui-1.90.9\backends\imgui_impl_dx11.cpp" />
+    <ClCompile Include="..\External\imgui-1.90.9\backends\imgui_impl_sdl2.cpp" />
+    <ClCompile Include="..\External\imgui-1.90.9\backends\imgui_impl_vulkan.cpp" />
+    <ClCompile Include="..\External\imgui-1.90.9\backends\imgui_impl_win32.cpp" />
+    <ClCompile Include="..\External\imgui-1.90.9\imgui.cpp" />
+    <ClCompile Include="..\External\imgui-1.90.9\imgui_demo.cpp" />
+    <ClCompile Include="..\External\imgui-1.90.9\imgui_draw.cpp" />
+    <ClCompile Include="..\External\imgui-1.90.9\imgui_tables.cpp" />
+    <ClCompile Include="..\External\imgui-1.90.9\imgui_widgets.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -134,7 +134,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)External\VulkanSDK\Include;$(SolutionDir)External\imgui-1.90.4;$(SolutionDir)External\SDL2-2.30.1\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)External\VulkanSDK\Include;$(SolutionDir)External\imgui-1.90.9;$(SolutionDir)External\SDL2-2.30.1\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -152,7 +152,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)External\VulkanSDK\Include;$(SolutionDir)External\SDL2-2.30.1\include;$(SolutionDir)External\imgui-1.90.4</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)External\VulkanSDK\Include;$(SolutionDir)External\SDL2-2.30.1\include;$(SolutionDir)External\imgui-1.90.9</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
