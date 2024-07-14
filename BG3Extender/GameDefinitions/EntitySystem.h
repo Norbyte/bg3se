@@ -21,9 +21,9 @@ BEGIN_NS(ecs)
 struct EntityWorld;
 struct EntityStorageData;
 
-using ComponentTypeMask = std::array<uint64_t, 32>;
-using QueryMask = std::array<uint64_t, 40>;
-using EntityTypeMask = std::array<uint64_t, 4>;
+using ComponentTypeMask = BitArray<uint64_t, 32>;
+using QueryMask = BitArray<uint64_t, 40>;
+using EntityTypeMask = BitArray<uint64_t, 4>;
 
 // Component type index, registered statically during game startup
 enum class ComponentTypeIndexTag {};
@@ -376,7 +376,7 @@ struct EntityStorageData : public ProtectedGameObject<EntityStorageData>
 
 	inline bool HasComponent(ComponentTypeIndex type) const
 	{
-		return (ComponentsInClass[(uint16_t)type >> 6] & (1ull << ((uint16_t)type & 0x3f))) != 0;
+		return ComponentsInClass[(uint16_t)type];
 	}
 };
 
@@ -748,31 +748,15 @@ struct ComponentFrameStorage
 
 struct ImmediateWorldCache : public ProtectedGameObject<ImmediateWorldCache>
 {
-	struct ComponentRef
-	{
-		int32_t PoolIndex;
-		uint16_t field_4;
-		uint16_t ComponentTypeId;
-	};
-
-	struct EntityComponentMap
-	{
-		BucketedStaticArray<ComponentRef> Store;
-		uint64_t X;
-		uint64_t Y;
-		uint16_t Flags;
-		__int16 field_2A;
-	};
-
-	struct ComponentPtr
+	struct ComponentChange
 	{
 		void* Ptr;
-		uint64_t Unknown;
+		EntityStorageData::EntityStorageIndex StorageIndex;
 	};
 
 	struct ComponentChanges
 	{
-		BucketedHashMap<EntityHandle, ComponentPtr> Components;
+		BucketedHashMap<EntityHandle, ComponentChange> Components;
 		ComponentFrameStorage FrameStorage;
 		void* field_70;
 		void* field_78;
