@@ -15,10 +15,10 @@ struct TargetInfo
 	uint8_t field_30;
 	uint8_t field_31;
 	uint8_t field_32;
-	Array<uint8_t> field_38;
+	Array<DamagePair> field_38;
 	uint8_t field_48;
-	Array<uint8_t> field_50;
-	MultiHashSet<uint8_t> field_60;
+	Array<bool> field_50;
+	MultiHashSet<uint8_t> ResistanceTypes;
 	Guid field_90;
 	uint8_t field_A0;
 	uint8_t field_A1;

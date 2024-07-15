@@ -574,16 +574,7 @@ struct InterruptResult2
 	__int64 field_10;
 	int field_18;
 	uint8_t field_1C;
-	uint32_t _Pad;
-	uint8_t field_20;
-	uint8_t field_21;
-	std::variant<StatsRoll, StatsExpressionResolved> Roll;
-	int field_138;
-	__int64 field_140;
-	__int64 field_148;
-	uint8_t field_150;
-	uint8_t field_151;
-	uint8_t field_152;
+	ConditionRoll Roll;
 };
 
 struct InterruptResultsComponent : public BaseComponent

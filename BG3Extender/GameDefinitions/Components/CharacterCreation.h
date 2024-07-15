@@ -5,8 +5,15 @@
 
 BEGIN_NS(character_creation)
 
-struct DefinitionCommon
+struct ValidationError
 {
+	using SelectorSlotError = uint8_t;
+
+	struct SelectorError
+	{
+		Array<SelectorSlotError> SlotErrors;
+	};
+
 	[[bg3::legacy(field_0)]] uint64_t Flags;
 	__int64 field_8;
 	__int64 field_10;
@@ -15,13 +22,13 @@ struct DefinitionCommon
 	__int64 field_28;
 	__int64 field_30;
 	__int64 field_38;
-	Array<Array<uint8_t>> field_40;
-	[[bg3::legacy(field_50)]] Array<Array<uint8_t>> AbilityPointBonuses;
-	[[bg3::legacy(field_60)]] Array<Array<uint8_t>> Proficiencies;
-	Array<Array<uint8_t>> field_70;
-	Array<Array<uint8_t>> field_80;
-	Array<Array<uint8_t>> field_90;
-	[[bg3::legacy(field_A0)]] Array<Array<uint8_t>> Cantrips;
+	Array<SelectorError> field_40;
+	[[bg3::legacy(field_50)]] Array<SelectorError> AbilityPointBonuses;
+	[[bg3::legacy(field_60)]] Array<SelectorError> Proficiencies;
+	Array<SelectorError> field_70;
+	Array<SelectorError> field_80;
+	Array<SelectorError> field_90;
+	[[bg3::legacy(field_A0)]] Array<SelectorError> Cantrips;
 };
 
 
@@ -74,7 +81,7 @@ struct DefinitionCommonComponent : public BaseComponent
 
 	[[bg3::legacy(field_0)]] int ChangeId;
 	__int64 field_8;
-	DefinitionCommon Definition;
+	ValidationError Error;
 };
 
 
@@ -259,7 +266,7 @@ struct DefinitionStateComponent : public BaseComponent
 	float field_8;
 	uint32_t field_C;
 	[[bg3::legacy(field_10)]] uint32_t ChangeId;
-	bg3se::character_creation::DefinitionCommon Definition;
+	bg3se::character_creation::ValidationError Errors;
 };
 
 struct DefinitionStateExComponent : public BaseComponent

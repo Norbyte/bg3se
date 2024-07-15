@@ -63,7 +63,7 @@ struct UseActionComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(UseAction, "eoc::item_template::UseActionComponent")
 
-	[[bg3::hidden]] Array<void*> UseActions;
+	Array<IActionData*> UseActions;
 };
 
 

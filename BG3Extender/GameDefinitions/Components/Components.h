@@ -22,29 +22,29 @@ struct RulesetModifiersComponent : public BaseComponent
 	MultiHashMap<Guid, std::variant<uint8_t, int32_t, float, FixedString, bool>> Modifiers;
 };
 
+struct ActionResourceEntry
+{
+	struct ActionResourceDiceValue
+	{
+		double Amount;
+		double MaxAmount;
+	};
+
+	Guid ResourceUUID;
+	[[bg3::legacy(ResourceId)]] int Level;
+	double Amount;
+	double MaxAmount;
+	[[bg3::legacy(field_28)]] ResourceReplenishType ReplenishType;
+	[[bg3::legacy(SubAmounts)]] std::optional<std::array<ActionResourceDiceValue, 7>> DiceValues;
+	uint8_t field_A8;
+};
+
 struct ActionResourcesComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ActionResources, "eoc::ActionResourcesComponent")
 
-	struct Amount
-	{
-		struct SubAmount
-		{
-			double Amount;
-			double MaxAmount;
-		};
 
-		Guid ResourceUUID;
-		int ResourceId;
-		double Amount;
-		double MaxAmount;
-		uint64_t field_28;
-		uint64_t field_30;
-		std::optional<std::array<SubAmount, 7>> SubAmounts;
-	};
-
-
-	MultiHashMap<Guid, Array<Amount>> Resources;
+	MultiHashMap<Guid, Array<ActionResourceEntry>> Resources;
 };
 
 struct HearingComponent : public BaseComponent
@@ -76,10 +76,10 @@ struct UseComponent : public BaseComponent
 	Array<stats::Requirement> Requirements;
 	int Charges;
 	int MaxCharges;
-	uint8_t ItemUseType;
-	uint8_t field_19;
-	uint8_t field_1A;
-	uint8_t field_1B;
+	ItemUseType ItemUseType;
+	[[bg3::legacy(field_19)]] uint8_t ItemUseBlocked;
+	[[bg3::legacy(field_1A)]] uint8_t CanCombine;
+	[[bg3::legacy(field_1B)]] uint8_t CombineFlag;
 	Array<BoostParameters> Boosts;
 	Array<BoostParameters> BoostsOnEquipMainHand;
 	Array<BoostParameters> BoostsOnEquipOffHand;
@@ -90,15 +90,6 @@ struct WieldingComponent : public BaseComponent
 	DEFINE_COMPONENT(Wielding, "eoc::WieldingComponent")
 
 	EntityHandle Owner;
-};
-
-struct ActionResourceConsumeMultiplierBoostComponent : public BaseComponent
-{
-	DEFINE_COMPONENT(ActionResourceConsumeMultiplierBoost, "eoc::ActionResourceConsumeMultiplierBoostComponent")
-
-	Guid ResourceUUID;
-	int Multiplier;
-	__int64 field_30;
 };
 
 struct TagComponent : public BaseComponent
@@ -264,18 +255,17 @@ struct DeathComponent : public BaseComponent
 	uint8_t field_23;
 	uint8_t field_24;
 	int field_28;
-	BYTE field_2C;
+	uint8_t field_2C;
 	glm::vec3 field_30;
 	glm::vec3 field_3C;
 	uint8_t field_48;
 	int field_4C;
-	Guid field_50;
+	Guid Combat;
 	uint8_t field_60;
 	uint8_t field_61;
 	uint8_t field_62;
-	int field_64;
-	__int64 field_68;
-	__int64 field_70;
+	bool LeaveTrace;
+	std::optional<glm::vec3> field_64;
 };
 
 

@@ -516,6 +516,12 @@ DEFN_BOOST(JumpMaxDistanceBonus, JumpMaxDistanceBonus, {
 	float DistanceBonus;
 })
 
+DEFN_BOOST(ActionResourceConsumeMultiplier, ActionResourceConsumeMultiplier, {
+	Guid ResourceUUID;
+	int Level;
+	double Multiplier;
+})
+
 DEFN_BOOST(ArmorAbilityModifierCapOverride, ArmorAbilityModifierCapOverride, {
 	ArmorType ArmorType;
 	int32_t Value;

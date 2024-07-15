@@ -257,36 +257,34 @@ struct ProficiencyGroupComponent : public BaseComponent
 
 struct LevelUpUpgrades
 {
-	struct Reference
+	struct Selector
 	{
 		[[bg3::legacy(field_0)]] uint8_t Type;
 		Guid Class;
 		Guid Subclass;
 		[[bg3::legacy(field_28)]] int Level;
 		[[bg3::legacy(field_2C)]] bool Multiclass;
+		int field_30;
 	};
 
-	struct FeatData : public LevelUpUpgrades::Reference
+	struct FeatSelector : public Selector
 	{
-		int field_30;
 		Guid Feat;
 		Array<uint8_t> Array_b8;
 		STDString FeatName;
 		int field_80;
 	};
 
-	struct SkillData : public LevelUpUpgrades::Reference
+	struct SkillSelector : public Selector
 	{
-		int field_30;
 		Guid Skill;
 		[[bg3::legacy(Array_b8)]] Array<SkillId> Proficiencies;
 		STDString field_60;
 		int field_80;
 	};
 		
-	struct SkillBonusData : public LevelUpUpgrades::Reference
+	struct SkillExpertiseSelector : public Selector
 	{
-		int field_30;
 		[[bg3::legacy(field_38)]] Guid Skill;
 		uint8_t field_48;
 		[[bg3::legacy(Array_b8)]] Array<SkillId> Expertise;
@@ -294,9 +292,8 @@ struct LevelUpUpgrades
 		int field_80;
 	};
 		
-	struct AbilityBonusData : public LevelUpUpgrades::Reference
+	struct AbilityBonusSelector : public Selector
 	{
-		int field_30;
 		Guid AbilityBonus;
 		[[bg3::legacy(Array_b8)]] Array<AbilityId> Bonuses;
 		[[bg3::legacy(Array_i32)]] Array<uint32_t> BonusAmounts;
@@ -304,7 +301,7 @@ struct LevelUpUpgrades
 		int field_80;
 	};
 		
-	struct SpellData : public LevelUpUpgrades::Reference
+	struct SpellSelector : public Selector
 	{
 		struct StringPair
 		{
@@ -312,14 +309,13 @@ struct LevelUpUpgrades
 			FixedString To;
 		};
 
-		int field_30;
 		Guid SpellList;
 		Array<FixedString> Spells;
 		[[bg3::legacy(Array_FS2)]] Array<StringPair> ReplaceSpells;
 		[[bg3::legacy(field_78)]] STDString SelectorId;
 	};
 		
-	struct PassiveData : public LevelUpUpgrades::Reference
+	struct PassiveSelector : public Selector
 	{
 		struct StringPair
 		{
@@ -327,7 +323,6 @@ struct LevelUpUpgrades
 			FixedString To;
 		};
 
-		int field_30;
 		[[bg3::legacy(SpellList)]] Guid PassiveList;
 		[[bg3::legacy(Spells)]] Array<FixedString> Passives;
 		[[bg3::legacy(Array_FS2)]] Array<StringPair> ReplacePassives;
@@ -335,22 +330,21 @@ struct LevelUpUpgrades
 		int field_80;
 	};
 		
-	struct EquipmentData : public LevelUpUpgrades::Reference
+	struct EquipmentSelector : public Selector
 	{
-		int field_30;
 		[[bg3::legacy(field_38)]] Guid EquipmentList;
 		[[bg3::legacy(Array_FS)]] Array<FixedString> Equipment;
 		[[bg3::legacy(field_60)]] STDString SelectorId;
 		int field_80;
 	};
 
-	Array<FeatData> Feats;
-	Array<AbilityBonusData> AbilityBonuses;
-	Array<SkillData> Skills;
-	[[bg3::legacy(Unknowns2)]] Array<SkillBonusData> SkillBonuses;
-	Array<SpellData> Spells;
-	[[bg3::legacy(Spells2)]] Array<PassiveData> Passives;
-	[[bg3::legacy(Unknowns4)]] Array<EquipmentData> Equipment;
+	Array<FeatSelector> Feats;
+	Array<AbilityBonusSelector> AbilityBonuses;
+	Array<SkillSelector> Skills;
+	[[bg3::legacy(Unknowns2), bg3::legacy(SkillBonuses)]] Array<SkillExpertiseSelector> SkillExpertise;
+	Array<SpellSelector> Spells;
+	[[bg3::legacy(Spells2)]] Array<PassiveSelector> Passives;
+	[[bg3::legacy(Unknowns4)]] Array<EquipmentSelector> Equipment;
 };
 
 struct LevelUpData

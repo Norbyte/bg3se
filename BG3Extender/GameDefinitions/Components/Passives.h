@@ -16,12 +16,12 @@ struct PassiveComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(Passive, "eoc::PassiveComponent")
 
-	uint8_t field_0;
+	[[bg3::legacy(field_0)]] uint8_t Type;
 	FixedString PassiveId;
-	EntityHandle field_8;
-	EntityHandle field_10;
-	uint8_t field_18;
-	uint8_t field_19;
+	[[bg3::legacy(field_8)]] EntityHandle Source;
+	[[bg3::legacy(field_10)]] EntityHandle Item;
+	[[bg3::legacy(field_18)]] bool ToggledOn;
+	[[bg3::legacy(field_19)]] bool Disabled;
 	uint32_t field_1C;
 };
 
