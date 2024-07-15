@@ -111,6 +111,7 @@ public:
         IMGUI_DEBUG("DX11Backend::InitializeUI()");
         ImGui_ImplDX11_Init(device_, context_);
 
+        initializationFailed_ = false;
         initialized_ = true;
     }
 
@@ -132,9 +133,20 @@ public:
             IMGUI_DEBUG("Rebuilding font atlas");
             ImGui_ImplDX11_InvalidateDeviceObjects();
             requestReloadFonts_ = false;
+            initializationFailed_ = false;
         }
 
-        ImGui_ImplDX11_NewFrame();
+        if (!initializationFailed_ && !ImGui_ImplDX11_RenderObjectsInitialized()) {
+            IMGUI_DEBUG("Re-initializing DX11 render objects");
+            initializationFailed_ = !ImGui_ImplDX11_CreateDeviceObjects();
+            if (initializationFailed_) {
+                ERR("Failed to initialize IMGUI DX11 backend!");
+            }
+        }
+
+        if (!initializationFailed_) {
+            ImGui_ImplDX11_NewFrame();
+        }
     }
 
     void FinishFrame() override
@@ -286,7 +298,7 @@ private:
         if (pSwapChain != swapChain_ || !initialized_ || drawViewport_ == -1) return;
 
         auto& vp = viewports_[drawViewport_].Viewport;
-        if (!vp.DrawDataP.Valid) return;
+        if (!vp.DrawDataP.Valid || initializationFailed_) return;
 
         ImGui_ImplDX11_RenderDrawData(&vp.DrawDataP);
     }
@@ -304,6 +316,7 @@ private:
     IDXGISwapChain* swapChain_{ nullptr };
 
     bool initialized_{ false };
+    bool initializationFailed_{ false };
     bool requestReloadFonts_{ false };
     uint32_t width_{ 0 };
     uint32_t height_{ 0 };
