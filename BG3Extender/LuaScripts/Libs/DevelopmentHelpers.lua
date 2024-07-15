@@ -182,9 +182,11 @@ end
 local function ValidateTemplates()
     _P("Validating all root templates ...")
     ValidateTemplateList(Ext.Template.GetAllRootTemplates())
-    ValidateTemplateList(Ext.Template.GetAllLocalTemplates())
-    ValidateTemplateList(Ext.Template.GetAllCacheTemplates())
-    ValidateTemplateList(Ext.Template.GetAllLocalCacheTemplates())
+    if Ext.IsServer() then
+        ValidateTemplateList(Ext.Template.GetAllLocalTemplates())
+        ValidateTemplateList(Ext.Template.GetAllCacheTemplates())
+        ValidateTemplateList(Ext.Template.GetAllLocalCacheTemplates())
+    end
 end
 
 local function ReserializeTemplateList(templates)
@@ -200,9 +202,11 @@ end
 local function ReserializeTemplates()
     _P("Serializing all root templates ...")
     ReserializeTemplateList(Ext.Template.GetAllRootTemplates())
-    ReserializeTemplateList(Ext.Template.GetAllLocalTemplates())
-    ReserializeTemplateList(Ext.Template.GetAllCacheTemplates())
-    ReserializeTemplateList(Ext.Template.GetAllLocalCacheTemplates())
+    if Ext.IsServer() then
+        ReserializeTemplateList(Ext.Template.GetAllLocalTemplates())
+        ReserializeTemplateList(Ext.Template.GetAllCacheTemplates())
+        ReserializeTemplateList(Ext.Template.GetAllLocalCacheTemplates())
+    end
 end
 
 local function ValidateStaticData()

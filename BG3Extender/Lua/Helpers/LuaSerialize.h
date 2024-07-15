@@ -172,7 +172,7 @@ template <class T>
 inline void Serialize(lua_State* L, T const* obj)
 {
 	if constexpr (std::is_pointer_v<T>) {
-		if (obj) {
+		if (*obj) {
 			Serialize(L, *obj);
 		} else {
 			push(L, nullptr);
