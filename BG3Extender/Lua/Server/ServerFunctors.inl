@@ -71,23 +71,24 @@ namespace bg3se::esv::lua
 	{
 		StackCheck _(L, 1);
 
-		auto type = get<FunctorExecParamsType>(L, 1);
+		auto type = get<FunctorContextType>(L, 1);
 		auto& pool = GetServerLifetimePool();
 
-#define V(ty) case FunctorExecParamsType::ty: { \
-			auto params = LegacyObjectProxy::MakeOwner<bg3se::stats::FunctorExecParams##ty>(L, pool); \
-			params->Get()->ParamsTypeId = type; \
+#define V(ty) case FunctorContextType::ty: { \
+			auto params = LegacyObjectProxy::MakeOwner<bg3se::stats::ty##ContextData>(L, pool); \
+			params->Get()->Type = type; \
 			break; }
 
 		switch (type) {
-			V(Type1)
-			V(Type2)
-			V(Type3)
-			V(Type4)
-			V(Type5)
-			V(Type6)
-			V(Type7)
-			V(Type8)
+			V(AttackTarget)
+			V(AttackPosition)
+			V(Move)
+			V(Target)
+			V(NearbyAttacked)
+			V(NearbyAttacking)
+			V(Equip)
+			V(Source)
+			V(Interrupt)
 
 		default:
 			LuaError("Functor params type not supported: " << type);
@@ -103,29 +104,30 @@ namespace bg3se::esv::lua
 	{
 		StackCheck _(L, 1);
 		auto functor = checked_get_proxy<bg3se::stats::Functor>(L, 1);
-		auto params = checked_get_proxy<bg3se::stats::BaseFunctorExecParams>(L, 2);
+		auto params = checked_get_proxy<bg3se::stats::ContextData>(L, 2);
 		auto& pool = GetServerLifetimePool();
 
 		auto hit = LegacyObjectProxy::MakeOwner<HitResult>(L, pool)->Get();
 		auto functorSet = GetStaticSymbols().GetStats()->ConstructFunctorSet(GFS.strEmpty);
 		functorSet->VMT->AddOrUpdate(functorSet, functor);
 
-#define V(type) case FunctorExecParamsType::type: \
+#define V(type) case FunctorContextType::type: \
 			GetStaticSymbols().stats__Functors__Execute##type(hit, \
-				functorSet, static_cast<bg3se::stats::FunctorExecParams##type*>(params)); break;
+				functorSet, static_cast<bg3se::stats::type##ContextData*>(params)); break;
 
-		switch (params->ParamsTypeId) {
-			V(Type1)
-			V(Type2)
-			V(Type3)
-			V(Type4)
-			V(Type5)
-			V(Type6)
-			V(Type7)
-			V(Type8)
+		switch (params->Type) {
+			V(AttackTarget)
+			V(AttackPosition)
+			V(Move)
+			V(Target)
+			V(NearbyAttacked)
+			V(NearbyAttacking)
+			V(Equip)
+			V(Source)
+			V(Interrupt)
 
 		default:
-			LuaError("Functor params type not supported: " << params->ParamsTypeId);
+			LuaError("Functor params type not supported: " << params->Type);
 		}
 
 #undef V

@@ -86,14 +86,15 @@ namespace bg3se
 		stats::DealDamageFunctor::ApplyDamageProc* stats__DealDamageFunctor__ApplyDamage{ nullptr };
 		stats::StatsSystem_ThrowDamageEventProc* esv__StatsSystem__ThrowDamageEvent{ nullptr };
 
-		stats::Functors::ExecuteType1Proc* stats__Functors__ExecuteType1{ nullptr };
-		stats::Functors::ExecuteType2Proc* stats__Functors__ExecuteType2{ nullptr };
-		stats::Functors::ExecuteType3Proc* stats__Functors__ExecuteType3{ nullptr };
-		stats::Functors::ExecuteType4Proc* stats__Functors__ExecuteType4{ nullptr };
-		stats::Functors::ExecuteType5Proc* stats__Functors__ExecuteType5{ nullptr };
-		stats::Functors::ExecuteType6Proc* stats__Functors__ExecuteType6{ nullptr };
-		stats::Functors::ExecuteType7Proc* stats__Functors__ExecuteType7{ nullptr };
-		stats::Functors::ExecuteType8Proc* stats__Functors__ExecuteType8{ nullptr };
+		stats::ExecuteFunctorProc<stats::AttackTargetContextData>* stats__Functors__ExecuteAttackTarget{ nullptr };
+		stats::ExecuteFunctorProc<stats::AttackPositionContextData>* stats__Functors__ExecuteAttackPosition{ nullptr };
+		stats::ExecuteFunctorProc<stats::MoveContextData>* stats__Functors__ExecuteMove{ nullptr };
+		stats::ExecuteFunctorProc<stats::TargetContextData>* stats__Functors__ExecuteTarget{ nullptr };
+		stats::ExecuteFunctorProc<stats::NearbyAttackedContextData>* stats__Functors__ExecuteNearbyAttacked{ nullptr };
+		stats::ExecuteFunctorProc<stats::NearbyAttackingContextData>* stats__Functors__ExecuteNearbyAttacking{ nullptr };
+		stats::ExecuteFunctorProc<stats::EquipContextData>* stats__Functors__ExecuteEquip{ nullptr };
+		stats::ExecuteFunctorProc<stats::SourceContextData>* stats__Functors__ExecuteSource{ nullptr };
+		stats::ExecuteFunctorProc<stats::InterruptContextData>* stats__Functors__ExecuteInterrupt{ nullptr };
 
 		stats::RPGStats** gRPGStats{ nullptr };
 		stats::RPGStats::LoadProc* RPGStats__Load{ nullptr };

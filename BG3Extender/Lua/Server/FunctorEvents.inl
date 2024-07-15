@@ -9,14 +9,16 @@ FunctorEventHooks::FunctorEventHooks(lua::State& state)
 	auto& hooks = gExtender->GetEngineHooks();
 	hooks.stats__DealDamageFunctor__ApplyDamage.SetWrapper(&FunctorEventHooks::OnDealDamage, this);
 	hooks.esv__StatsSystem__ThrowDamageEvent.SetWrapper(&FunctorEventHooks::OnEntityDamageEvent, this);
-	hooks.stats__Functors__ExecuteType1.SetWrapper(&FunctorEventHooks::OnFunctorExecute<bg3se::stats::FunctorExecParamsType1, bg3se::stats::Functors::ExecuteType1Proc>, this);
-	hooks.stats__Functors__ExecuteType2.SetWrapper(&FunctorEventHooks::OnFunctorExecute<bg3se::stats::FunctorExecParamsType2, bg3se::stats::Functors::ExecuteType2Proc>, this);
-	hooks.stats__Functors__ExecuteType3.SetWrapper(&FunctorEventHooks::OnFunctorExecute<bg3se::stats::FunctorExecParamsType3, bg3se::stats::Functors::ExecuteType3Proc>, this);
-	hooks.stats__Functors__ExecuteType4.SetWrapper(&FunctorEventHooks::OnFunctorExecute<bg3se::stats::FunctorExecParamsType4, bg3se::stats::Functors::ExecuteType4Proc>, this);
-	hooks.stats__Functors__ExecuteType5.SetWrapper(&FunctorEventHooks::OnFunctorExecute<bg3se::stats::FunctorExecParamsType5, bg3se::stats::Functors::ExecuteType5Proc>, this);
-	hooks.stats__Functors__ExecuteType6.SetWrapper(&FunctorEventHooks::OnFunctorExecute<bg3se::stats::FunctorExecParamsType6, bg3se::stats::Functors::ExecuteType6Proc>, this);
-	hooks.stats__Functors__ExecuteType7.SetWrapper(&FunctorEventHooks::OnFunctorExecute<bg3se::stats::FunctorExecParamsType7, bg3se::stats::Functors::ExecuteType7Proc>, this);
-	hooks.stats__Functors__ExecuteType8.SetWrapper(&FunctorEventHooks::OnFunctorExecute<bg3se::stats::FunctorExecParamsType8, bg3se::stats::Functors::ExecuteType8Proc>, this);
+
+	hooks.stats__Functors__ExecuteAttackTarget.SetWrapper(&FunctorEventHooks::OnFunctorExecute<bg3se::stats::AttackTargetContextData>, this);
+	hooks.stats__Functors__ExecuteAttackPosition.SetWrapper(&FunctorEventHooks::OnFunctorExecute<bg3se::stats::AttackPositionContextData>, this);
+	hooks.stats__Functors__ExecuteMove.SetWrapper(&FunctorEventHooks::OnFunctorExecute<bg3se::stats::MoveContextData>, this);
+	hooks.stats__Functors__ExecuteTarget.SetWrapper(&FunctorEventHooks::OnFunctorExecute<bg3se::stats::TargetContextData>, this);
+	hooks.stats__Functors__ExecuteNearbyAttacked.SetWrapper(&FunctorEventHooks::OnFunctorExecute<bg3se::stats::NearbyAttackedContextData>, this);
+	hooks.stats__Functors__ExecuteNearbyAttacking.SetWrapper(&FunctorEventHooks::OnFunctorExecute<bg3se::stats::NearbyAttackingContextData>, this);
+	hooks.stats__Functors__ExecuteEquip.SetWrapper(&FunctorEventHooks::OnFunctorExecute<bg3se::stats::EquipContextData>, this);
+	hooks.stats__Functors__ExecuteSource.SetWrapper(&FunctorEventHooks::OnFunctorExecute<bg3se::stats::SourceContextData>, this);
+	hooks.stats__Functors__ExecuteInterrupt.SetWrapper(&FunctorEventHooks::OnFunctorExecute<bg3se::stats::InterruptContextData>, this);
 }
 
 FunctorEventHooks::~FunctorEventHooks()
@@ -24,14 +26,16 @@ FunctorEventHooks::~FunctorEventHooks()
 	auto& hooks = gExtender->GetEngineHooks();
 	hooks.stats__DealDamageFunctor__ApplyDamage.ClearHook();
 	hooks.esv__StatsSystem__ThrowDamageEvent.ClearHook();
-	hooks.stats__Functors__ExecuteType1.ClearHook();
-	hooks.stats__Functors__ExecuteType2.ClearHook();
-	hooks.stats__Functors__ExecuteType3.ClearHook();
-	hooks.stats__Functors__ExecuteType4.ClearHook();
-	hooks.stats__Functors__ExecuteType5.ClearHook();
-	hooks.stats__Functors__ExecuteType6.ClearHook();
-	hooks.stats__Functors__ExecuteType7.ClearHook();
-	hooks.stats__Functors__ExecuteType8.ClearHook();
+
+	hooks.stats__Functors__ExecuteAttackTarget.ClearHook();
+	hooks.stats__Functors__ExecuteAttackPosition.ClearHook();
+	hooks.stats__Functors__ExecuteMove.ClearHook();
+	hooks.stats__Functors__ExecuteTarget.ClearHook();
+	hooks.stats__Functors__ExecuteNearbyAttacked.ClearHook();
+	hooks.stats__Functors__ExecuteNearbyAttacking.ClearHook();
+	hooks.stats__Functors__ExecuteEquip.ClearHook();
+	hooks.stats__Functors__ExecuteSource.ClearHook();
+	hooks.stats__Functors__ExecuteInterrupt.ClearHook();
 }
 
 HitResult* FunctorEventHooks::OnDealDamage(bg3se::stats::DealDamageFunctor::ApplyDamageProc* next, 

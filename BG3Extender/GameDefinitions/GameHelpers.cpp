@@ -248,20 +248,21 @@ namespace bg3se
 
 BEGIN_NS(lua)
 
-void LuaPolymorphic<stats::BaseFunctorExecParams>::MakeRef(lua_State* L, stats::BaseFunctorExecParams* value, LifetimeHandle const& lifetime)
+void LuaPolymorphic<stats::ContextData>::MakeRef(lua_State* L, stats::ContextData* value, LifetimeHandle const& lifetime)
 {
-#define V(type) case FunctorExecParamsType::type: \
-			MakeDirectObjectRef(L, static_cast<stats::FunctorExecParams##type*>(value), lifetime); break;
+#define V(type) case FunctorContextType::type: \
+			MakeDirectObjectRef(L, static_cast<stats::type##ContextData*>(value), lifetime); break;
 
-	switch (value->ParamsTypeId) {
-		V(Type1)
-		V(Type2)
-		V(Type3)
-		V(Type4)
-		V(Type5)
-		V(Type6)
-		V(Type7)
-		V(Type8)
+	switch (value->Type) {
+		V(AttackTarget)
+		V(AttackPosition)
+		V(Move)
+		V(Target)
+		V(NearbyAttacked)
+		V(NearbyAttacking)
+		V(Equip)
+		V(Source)
+		V(Interrupt)
 
 	default:
 		MakeDirectObjectRef(L, value, lifetime);

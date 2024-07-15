@@ -15,7 +15,7 @@ struct Functor
 	using ParseParamsProc = void (Functor *, std::span<StringView>& params, STDString& key, uint64_t unkn);
 	using CloneProc = Functor * (Functor *);
 
-	struct FunctorVMT
+	struct [[bg3::hidden]] FunctorVMT
 	{
 		DtorProc* Destroy;
 		ParseParamsProc* ParseParams;
@@ -28,11 +28,12 @@ struct Functor
 		int32_t ConditionId{ -1 };
 	};
 
-	FunctorVMT* VMT{ nullptr };
+	[[bg3::hidden]] FunctorVMT* VMT{ nullptr };
 	FixedString UniqueName;
 	Guid FunctorUuid;
 	Array<RollCondition> RollConditions;
-	int32_t StatsConditionsId{ -1 };
+	// FIXME expose conditions
+	[[bg3::hidden]] int32_t StatsConditionsId{ -1 };
 	PropertyContext PropertyContext{ 0 };
 	uint32_t StoryActionId{ 0 };
 	ObserverType ObserverType{ ObserverType::None };
@@ -50,22 +51,25 @@ struct Functor
 	}
 };
 
-struct BaseFunctorExecParams
+
+struct ContextData
 {
-	FunctorExecParamsType ParamsTypeId{ 0 };
+	FunctorContextType Type{ 0 };
 	PropertyContext PropertyContext{ 0 };
 	int32_t StoryActionId{ 0 };
 	ActionOriginator Originator;
-	resource::GuidResourceBankBase* ClassResources{ nullptr };
+	[[bg3::hidden]] resource::GuidResourceBankBase* ClassResources{ nullptr };
 	EntityHandle HistoryEntity;
 	EntityHandle StatusSource;
 	MultiHashMap<EntityHandle, int32_t> EntityToThothContextIndex;
 	int field_98;
-	bool field_9C;
+	uint8_t ConditionCategory;
 };
 
-struct FunctorExecParamsType1 : public BaseFunctorExecParams
+struct AttackTargetContextData : public ContextData
 {
+	static constexpr auto ContextType = FunctorContextType::AttackTarget;
+
 	ecs::EntityRef Caster;
 	ecs::EntityRef CasterProxy;
 	ecs::EntityRef Target;
@@ -74,9 +78,7 @@ struct FunctorExecParamsType1 : public BaseFunctorExecParams
 	bool IsFromItem;
 	SpellIdWithPrototype SpellId;
 	HitDesc Hit;
-	DamageSums DamageSums;
-	uint64_t field_2F8;
-	uint64_t field_300;
+	AttackDesc Attack;
 	float SomeRadius;
 	HitWith HitWith;
 	uint32_t field_310;
@@ -85,20 +87,24 @@ struct FunctorExecParamsType1 : public BaseFunctorExecParams
 	uint8_t field_31C;
 };
 
-struct FunctorExecParamsType2 : public BaseFunctorExecParams
+struct AttackPositionContextData : public ContextData
 {
+	static constexpr auto ContextType = FunctorContextType::AttackPosition;
+
 	ecs::EntityRef Caster;
 	glm::vec3 Position;
 	float ExplodeRadius;
 	bool IsFromItem;
 	SpellIdWithPrototype SpellId;
 	HitDesc Hit;
-	DamageSums DamageSums;
+	AttackDesc Attack;
 	float SomeRadius;
 };
 
-struct FunctorExecParamsType3 : public BaseFunctorExecParams
+struct MoveContextData : public ContextData
 {
+	static constexpr auto ContextType = FunctorContextType::Move;
+
 	ecs::EntityRef Caster;
 	ecs::EntityRef Target;
 	ecs::EntityRef field_C0;
@@ -106,23 +112,25 @@ struct FunctorExecParamsType3 : public BaseFunctorExecParams
 	float Distance;
 };
 
-struct FunctorExecParamsType4 : public BaseFunctorExecParams
+struct TargetContextData : public ContextData
 {
+	static constexpr auto ContextType = FunctorContextType::Target;
+
 	ecs::EntityRef Caster;
 	ecs::EntityRef field_B0;
 	glm::vec3 Position;
 	SpellIdWithPrototype SpellId;
 	HitDesc Hit;
-	DamageSums DamageSums;
-	uint64_t field_2D8;
-	uint64_t field_2E0;
+	AttackDesc Attack;
 	uint32_t field_2E8;
 	FixedString field_2EC;
 	uint8_t field_2F0;
 };
 
-struct FunctorExecParamsType5 : public BaseFunctorExecParams
+struct NearbyAttackedContextData : public ContextData
 {
+	static constexpr auto ContextType = FunctorContextType::NearbyAttacked;
+
 	ecs::EntityRef Owner_M;
 	ecs::EntityRef Target;
 	ecs::EntityRef Caster;
@@ -132,11 +140,13 @@ struct FunctorExecParamsType5 : public BaseFunctorExecParams
 	bool IsFromItem;
 	SpellIdWithPrototype SpellId;
 	HitDesc Hit;
-	DamageSums DamageSums;
+	AttackDesc Attack;
 };
 
-struct FunctorExecParamsType6 : public BaseFunctorExecParams
+struct NearbyAttackingContextData : public ContextData
 {
+	static constexpr auto ContextType = FunctorContextType::NearbyAttacking;
+
 	ecs::EntityRef Target;
 	ecs::EntityRef TargetProxy;
 	ecs::EntityRef Caster;
@@ -146,24 +156,30 @@ struct FunctorExecParamsType6 : public BaseFunctorExecParams
 	bool IsFromItem;
 	SpellIdWithPrototype SpellId;
 	HitDesc Hit;
-	DamageSums DamageSums;
+	AttackDesc Attack;
 };
 
-struct FunctorExecParamsType7 : public BaseFunctorExecParams
+struct EquipContextData : public ContextData
 {
+	static constexpr auto ContextType = FunctorContextType::Equip;
+
 	ecs::EntityRef Caster;
 	ecs::EntityRef Target;
 	bool UseCasterStats;
 };
 
-struct FunctorExecParamsType8 : public BaseFunctorExecParams
+struct SourceContextData : public ContextData
 {
+	static constexpr auto ContextType = FunctorContextType::Source;
+
 	ecs::EntityRef Caster;
 	ecs::EntityRef Target;
 };
 
-struct FunctorExecParamsType9 : public BaseFunctorExecParams
+struct InterruptContextData : public ContextData
 {
+	static constexpr auto ContextType = FunctorContextType::Interrupt;
+
 	bool OnlyAllowRollAdjustments;
 	ecs::EntityRef Source;
 	ecs::EntityRef SourceProxy;
@@ -171,28 +187,20 @@ struct FunctorExecParamsType9 : public BaseFunctorExecParams
 	ecs::EntityRef TargetProxy;
 	ecs::EntityRef Observer;
 	ecs::EntityRef ObserverProxy;
-	std::optional<interrupt::ResolveData> ResolveData;
+	std::optional<interrupt::RollAdjustments> RollAdjustments;
 	interrupt::InterruptEvent Interrupt;
 	HitDesc Hit;
-	DamageSums DamageSums;
-	Array<DamagePair> DamageList;
-	interrupt::ExecuteResult ExecuteInterruptResult;
+	AttackDesc Attack;
+	uint8_t field_428;
+	interrupt::AppliedChange Changes;
 };
 
 
+template <class TContext>
+using ExecuteFunctorProc = void(HitResult* hit, Functors* self, TContext* params);
 
 struct Functors
 {
-	using ExecuteType1Proc = void (HitResult* hit, Functors* self, FunctorExecParamsType1 * params);
-	using ExecuteType2Proc = void (HitResult* hit, Functors* self, FunctorExecParamsType2 * params);
-	using ExecuteType3Proc = void (HitResult* hit, Functors* self, FunctorExecParamsType3 * params);
-	using ExecuteType4Proc = void (HitResult* hit, Functors* self, FunctorExecParamsType4 * params);
-	using ExecuteType5Proc = void (HitResult* hit, Functors* self, FunctorExecParamsType5 * params);
-	using ExecuteType6Proc = void (HitResult* hit, Functors* self, FunctorExecParamsType6 * params);
-	using ExecuteType7Proc = void (HitResult* hit, Functors* self, FunctorExecParamsType7 * params);
-	using ExecuteType8Proc = void (HitResult* hit, Functors* self, FunctorExecParamsType8 * params);
-	using ExecuteType9Proc = void (HitResult* hit, Functors* self, FunctorExecParamsType9 * params);
-
 	struct BaseVMT
 	{
 		void (*Destroy)(Functors*);
@@ -226,7 +234,7 @@ struct Functors
 	virtual Functor* GetByIndex3(int64_t) = 0;
 	virtual void UpdateNameMap() = 0;*/
 
-	BaseVMT* VMT{ nullptr };
+	[[bg3::hidden]] BaseVMT* VMT{ nullptr };
 	Array<Functor*> FunctorList;
 	MultiHashMap<FixedString, Functor*> FunctorsByName;
 	int NextFunctorIndex{ 0 };
@@ -270,7 +278,7 @@ struct ApplyStatusFunctor : public Functor
 	int StatusSpecificParam2{ -1 }; // Arg5
 	int StatusSpecificParam3{ -1 }; // Arg6
 	bool RequiresConcentration{ false };
-	void* DurationLuaExpression{ nullptr }; // Arg3
+	[[bg3::hidden]] void* DurationLuaExpression{ nullptr }; // Arg3
 	bool HasParam6{ false };
 };
 
@@ -321,7 +329,7 @@ struct ForceFunctor : public Functor
 	FixedString Distance; // Arg0
 	ForceFunctorOrigin Origin{ ForceFunctorOrigin::OriginToEntity }; // Arg1
 	ForceFunctorAggression Aggression{ ForceFunctorAggression::Aggressive }; // Arg2
-	StatsExpressionParamEx* DistanceExpression{ nullptr };
+	[[bg3::hidden]] StatsExpressionParamEx* DistanceExpression{ nullptr };
 	bool ControlArc{ false };
 	bool PullToOrigin{ false };
 };
@@ -380,7 +388,7 @@ struct RemoveStatusFunctor : public Functor
 	FixedString StatusId; // Arg0
 };
 
-using StatsSystem_ThrowDamageEventProc = void (void* statsSystem, void* temp5, HitDesc* hit, DamageSums* damageAmounts, bool a5, bool a6);
+using StatsSystem_ThrowDamageEventProc = void (void* statsSystem, void* temp5, HitDesc* hit, AttackDesc* attack, bool a5, bool a6);
 
 struct DealDamageFunctor : public Functor
 {
@@ -389,13 +397,13 @@ struct DealDamageFunctor : public Functor
 	using ApplyDamageProc = HitResult * (HitResult* result, DealDamageFunctor* functor, ecs::EntityRef* casterHandle,
 		ecs::EntityRef* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId, 
 		int storyActionId, ActionOriginator* originator, resource::GuidResourceBankBase* classResourceMgr, 
-		HitDesc* hit, DamageSums* damageSums, EntityHandle* sourceHandle2, HitWith hitWith, int conditionRollIndex,
+		HitDesc* hit, AttackDesc* attack, EntityHandle* sourceHandle2, HitWith hitWith, int conditionRollIndex,
 		bool entityDamagedEventParam, __int64 a17, SpellId* spellId2);
 
 	DamageType DamageType{ DamageType::None }; // Arg2
 	DealDamageWeaponType WeaponType{ DealDamageWeaponType::None }; // Arg1
 	DealDamageWeaponDamageType WeaponDamageType{ DealDamageWeaponDamageType::None }; // Arg2
-	StatsExpressionParam* Damage{ nullptr }; // Arg1
+	[[bg3::hidden]] StatsExpressionParam* Damage{ nullptr }; // Arg1
 	int CoinMultiplier{ 0 };
 	bool Nonlethal{ false }; // Arg4
 	bool Magical{ false }; // Arg3
@@ -416,7 +424,7 @@ struct RegainHitPointsFunctor : public Functor
 {
 	static constexpr auto FunctorType = FunctorId::RegainHitPoints;
 
-	StatsExpressionParam* HitPoints{ nullptr };
+	[[bg3::hidden]] StatsExpressionParam* HitPoints{ nullptr };
 	TargetTypeFlags HealingType{ TargetTypeFlags::Living };
 };
 
@@ -494,7 +502,7 @@ struct RestoreResourceFunctor : public Functor
 	Guid ActionResource; // Arg0
 	int Hex{ 0 }; // Arg2
 	int field_34{ 0 };
-	StatsExpressionParam* LuaAmount{ nullptr }; // Arg1
+	[[bg3::hidden]] StatsExpressionParam* LuaAmount{ nullptr }; // Arg1
 	double Amount{ 0.0 }; // Arg1
 	RestoreResourceAmountType AmountType{ RestoreResourceAmountType::None };
 };
@@ -597,7 +605,7 @@ struct GainTemporaryHitPointsFunctor : public Functor
 {
 	static constexpr auto FunctorType = FunctorId::GainTemporaryHitPoints;
 
-	StatsExpressionParam* HitPointsExpression;
+	[[bg3::hidden]] StatsExpressionParam* HitPointsExpression;
 };
 
 struct FireProjectileFunctor : public Functor
@@ -634,7 +642,7 @@ struct RegainTemporaryHitPointsFunctor : public Functor
 {
 	static constexpr auto FunctorType = FunctorId::RegainTemporaryHitPoints;
 
-	StatsExpressionParam* HitPoints;
+	[[bg3::hidden]] StatsExpressionParam* HitPoints;
 };
 
 struct RemoveStatusByLevelFunctor : public Functor
@@ -672,7 +680,7 @@ struct AdjustRollFunctor : public Functor
 {
 	static constexpr auto FunctorType = FunctorId::AdjustRoll;
 
-	StatsExpressionParam* Expression; // Arg1
+	[[bg3::hidden]] StatsExpressionParam* Expression; // Arg1
 	RollAdjustmentType Type; // Arg2
 	DamageType DamageType; // Arg2
 };
@@ -768,7 +776,7 @@ END_NS()
 
 BEGIN_NS(lua)
 
-LUA_POLYMORPHIC(bg3se::stats::BaseFunctorExecParams)
+LUA_POLYMORPHIC(bg3se::stats::ContextData)
 LUA_POLYMORPHIC(bg3se::stats::Functor)
 
 END_NS()

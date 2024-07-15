@@ -173,13 +173,13 @@ namespace bg3se::esv::lua
 	struct ExecuteFunctorEvent : public EventBase
 	{
 		bg3se::stats::Functors* Functor;
-		bg3se::stats::BaseFunctorExecParams* Params;
+		bg3se::stats::ContextData* Params;
 	};
 
 	struct AfterExecuteFunctorEvent : public EventBase
 	{
 		bg3se::stats::Functors* Functor;
-		bg3se::stats::BaseFunctorExecParams* Params;
+		bg3se::stats::ContextData* Params;
 		HitResult* Hit;
 	};
 	
@@ -221,8 +221,8 @@ namespace bg3se::esv::lua
 			state_.ThrowEvent("AfterExecuteFunctor", evt, false, 0);
 		}
 
-		template <class TParams, class TNext>
-		void OnFunctorExecute(TNext* next, HitResult* hit, bg3se::stats::Functors* self, TParams* params)
+		template <class TParams>
+		void OnFunctorExecute(bg3se::stats::ExecuteFunctorProc<TParams>* next, HitResult* hit, bg3se::stats::Functors* self, TParams* params)
 		{
 			LuaTriggerFunctorPreExecEvent<TParams>(self, params);
 			next(hit, self, params);
