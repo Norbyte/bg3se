@@ -1732,6 +1732,7 @@ struct RulesetSelectionPreset : public resource::GuidResource
 	TranslatedString DisplayName;
 	TranslatedString Description;
 	STDString Asset;
+	bool IsCustom;
 };
 
 

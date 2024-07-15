@@ -142,6 +142,7 @@ struct InterestingItemComponent : public BaseComponent
 
 	MultiHashSet<EntityHandle> Items;
 };
+
 struct ArchetypeComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerAiArchetype, "esv::ai::combat::ArchetypeComponent")
@@ -152,12 +153,20 @@ struct ArchetypeComponent : public BaseComponent
 	FixedString field_C;
 };
 
+struct ModifierChange
+{
+	STDString field_0;
+	STDString field_18;
+	float field_30;
+};
+
 struct AiModifiersComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerAiModifiers, "esv::ai::combat::AiModifiersComponent")
 
-	MultiHashMap<FixedString, Guid> Modifiers;
-	uint64_t field_40;
+	uint64_t field_0;
+	MultiHashMap<FixedString, float> Modifiers;
+	//MultiHashMap<FixedString, MultiHashMap<int, ModifierChange>> Changes;
 };
 
 END_NS()

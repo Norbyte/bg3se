@@ -445,7 +445,7 @@ END_NS()
 
 BEGIN_NS(esv::interrupt)
 
-struct ActionRequest1
+struct StartRequestData
 {
 	__int64 field_0;
 	__int64 field_8;
@@ -454,7 +454,7 @@ struct ActionRequest1
 	__int64 field_158;
 };
 
-struct ActionRequest2
+struct StopRequestData
 {
 	__int64 field_0;
 	__int64 field_8;
@@ -462,14 +462,14 @@ struct ActionRequest2
 	__int64 field_118;
 };
 
-struct ActionRequest3
+struct CombatLogRequestData
 {
 	__int64 field_0;
 	__int64 field_8;
 	MultiHashMap<EntityHandle, MultiHashSet<EntityHandle>> MHM_EH_MHS_EH;
 };
 
-struct ActionRequest4
+struct UpdateInterruptorsRequestData
 {
 	__int64 field_0;
 	Array<stats::SpellPrototype::UseCostGroup> UseCosts;
@@ -555,10 +555,10 @@ struct InterruptRequestsComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerSpellInterruptRequests, "esv::spell_cast::InterruptRequestsComponent")
 
-	Array<interrupt::ActionRequest1> Requests1;
-	Array<interrupt::ActionRequest2> Requests2;
-	Array<interrupt::ActionRequest4> Requests4;
-	Array<interrupt::ActionRequest3> Requests3;
+	Array<interrupt::StartRequestData> StartRequests;
+	Array<interrupt::StopRequestData> StopRequests;
+	Array<interrupt::CombatLogRequestData> CombatLogRequests;
+	Array<interrupt::UpdateInterruptorsRequestData> UpdateInterruptorsRequests;
 };
 
 struct InterruptRollData
@@ -620,17 +620,17 @@ struct ActionRequestsComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerInterruptActionRequests, "esv::interrupt::ActionRequestsComponent")
 
-	Array<ActionRequest1> Requests1;
-	Array<ActionRequest2> Requests2;
-	Array<ActionRequest3> Requests3;
+	Array<StartRequestData> StartRequests;
+	Array<StopRequestData> StopRequests;
+	Array<CombatLogRequestData> CombatLogRequests;
 };
 
 struct ZoneRequestsComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerInterruptZoneRequests, "esv::interrupt::ZoneRequestsComponent")
 
-	Array<ActionRequest1> Requests1;
-	Array<ActionRequest2> Requests2;
+	Array<StartRequestData> StartRequests;
+	Array<StopRequestData> StopRequests;
 };
 
 struct InitialParticipantsComponent : public BaseComponent
@@ -639,7 +639,7 @@ struct InitialParticipantsComponent : public BaseComponent
 	
 	struct Participant
 	{
-		ActionRequest1 Request1;
+		StartRequestData StartRequest;
 		MultiHashSet<EntityHandle> Entities;
 	};
 

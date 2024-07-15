@@ -527,12 +527,6 @@
     <None Include="GameDefinitions\PropertyMaps\ServerObjects.inl">
       <Filter>GameDefinitions\PropertyMaps</Filter>
     </None>
-    <None Include="GameDefinitions\PropertyMaps\FunctorExecParams.inl">
-      <Filter>GameDefinitions\PropertyMaps</Filter>
-    </None>
-    <None Include="GameDefinitions\PropertyMaps\Functors.inl">
-      <Filter>GameDefinitions\PropertyMaps</Filter>
-    </None>
     <None Include="GameDefinitions\PropertyMaps\CommonTypes.inl">
       <Filter>GameDefinitions\PropertyMaps</Filter>
     </None>
