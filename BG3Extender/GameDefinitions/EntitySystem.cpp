@@ -244,6 +244,19 @@ void* EntityStorageData::GetComponent(EntityStorageIndex const& entityPtr, uint8
 		return buf + componentSize * entityPtr.EntryIndex;
 	}
 }
+
+void* ImmediateWorldCache::Changes::GetChange(EntityHandle entityHandle, ComponentTypeIndex type) const
+{
+	auto typeIdx = (uint16_t)type;
+	if (AvailableComponentTypes[typeIdx]) {
+		auto change = ComponentsByType[typeIdx].Components.Find(entityHandle);
+		if (change) {
+			return change->Ptr;
+		}
+	}
+
+	return nullptr;
+}
 	
 void* EntityWorld::GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy)
 {
@@ -255,23 +268,14 @@ void* EntityWorld::GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex
 		}
 	}
 
-	auto typeIdx = (uint16_t)type;
-	auto& pool1 = Cache->WriteChanges;
-	if (pool1.AvailableComponentTypes[typeIdx]) {
-		auto& compPool = pool1.ComponentsByType[typeIdx];
-		auto transientRef = compPool.Components.Find(entityHandle);
-		if (transientRef) {
-			return transientRef->Ptr;
-		}
+	auto change = Cache->WriteChanges.GetChange(entityHandle, type);
+	if (change != nullptr) {
+		return change;
 	}
 
-	auto& pool2 = Cache->ReadChanges;
-	if (pool2.AvailableComponentTypes[typeIdx]) {
-		auto& compPool = pool2.ComponentsByType[typeIdx];
-		auto transientRef = compPool.Components.Find(entityHandle);
-		if (transientRef) {
-			return transientRef->Ptr;
-		}
+	change = Cache->ReadChanges.GetChange(entityHandle, type);
+	if (change != nullptr) {
+		return change;
 	}
 
 	return nullptr;

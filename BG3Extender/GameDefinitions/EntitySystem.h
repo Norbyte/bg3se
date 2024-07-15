@@ -767,6 +767,8 @@ struct ImmediateWorldCache : public ProtectedGameObject<ImmediateWorldCache>
 		ComponentTypeMask AvailableComponentTypes;
 		ComponentChanges* ComponentsByType;
 		uint64_t Unknown;
+
+		void* GetChange(EntityHandle entityHandle, ComponentTypeIndex type) const;
 	};
 
 	Changes WriteChanges;
