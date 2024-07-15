@@ -549,6 +549,7 @@ bool Object::CopyFrom(Object* source)
 	}
 
 	Requirements = source->Requirements;
+	ComboProperties = source->ComboProperties;
 	ComboCategories = source->ComboCategories;
 	return true;
 }

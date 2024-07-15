@@ -6,13 +6,13 @@
 
 BEGIN_SE()
 
-struct DamageSums
+struct AttackDesc
 {
 	int TotalDamageDone;
 	int TotalHealDone;
-	int8_t DamagePercentage;
-	int8_t field_9;
-	int8_t field_A;
+	[[bg3::legacy(DamagePercentage)]] uint8_t InitialHPPercentage;
+	uint8_t field_9;
+	Array<DamagePair> DamageList;
 };
 
 struct RerollCondition
@@ -206,11 +206,17 @@ struct HitResultData
 	Array<int32_t> field_30;
 };
 
+struct SpellFunctorResult
+{
+	HitDesc Hit;
+	AttackDesc Attack;
+	uint8_t field_1D0;
+};
+
 struct HitResult
 {
 	HitDesc Hit;
-	DamageSums DamageSums;
-	Array<DamagePair> DamageList;
+	AttackDesc Attack;
 	HitResultData Results;
 	uint32_t NumConditionRolls;
 };

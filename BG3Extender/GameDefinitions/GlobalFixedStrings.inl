@@ -7,6 +7,8 @@ FS(Using);
 FS(AIFlags);
 FS(ModifierList);
 FS(OriginalModId);
+FS(ComboProperties);
+FS(ComboCategories);
 
 // Stat modifier types
 FS(Character);

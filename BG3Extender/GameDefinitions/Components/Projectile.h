@@ -123,7 +123,7 @@ struct SpellComponent : public BaseComponent
 	DEFINE_COMPONENT(ServerProjectileSpell, "esv::projectile::SpellComponent")
 
 	EntityHandle Spell;
-	bg3se::spell_cast::MultiTargetInfo2 Target;
+	bg3se::spell_cast::IntermediateTarget Target;
 	int field_B0;
 	uint8_t field_B4;
 };

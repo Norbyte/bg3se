@@ -38,7 +38,7 @@ HitResult* FunctorEventHooks::OnDealDamage(bg3se::stats::DealDamageFunctor::Appl
 	HitResult* result, bg3se::stats::DealDamageFunctor* functor, ecs::EntityRef* casterHandle,
 	ecs::EntityRef* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId,
 	int storyActionId, ActionOriginator* originator, resource::GuidResourceBankBase* classResourceMgr,
-	HitDesc* hit, DamageSums* damageSums, EntityHandle* sourceHandle2, HitWith hitWith, int conditionRollIndex,
+	HitDesc* hit, AttackDesc* attack, EntityHandle* sourceHandle2, HitWith hitWith, int conditionRollIndex,
 	bool entityDamagedEventParam, __int64 a17, SpellId* spellId2)
 {
 	{
@@ -52,7 +52,7 @@ HitResult* FunctorEventHooks::OnDealDamage(bg3se::stats::DealDamageFunctor::Appl
 		evt.StoryActionId = storyActionId;
 		evt.Originator = originator;
 		evt.Hit = hit;
-		evt.DamageSums = damageSums;
+		evt.Attack = attack;
 		evt.HitWith = hitWith;
 		evt.Caster2 = *sourceHandle2;
 		evt.SpellId2 = spellId2;
@@ -60,7 +60,7 @@ HitResult* FunctorEventHooks::OnDealDamage(bg3se::stats::DealDamageFunctor::Appl
 	}
 
 	auto ret = next(result, functor, casterHandle, targetHandle, position, isFromItem, spellId, storyActionId, originator, classResourceMgr, 
-		hit, damageSums, sourceHandle2, hitWith, conditionRollIndex, entityDamagedEventParam, a17, spellId2);
+		hit, attack, sourceHandle2, hitWith, conditionRollIndex, entityDamagedEventParam, a17, spellId2);
 
 	{
 		DealtDamageEvent evt;
@@ -73,7 +73,7 @@ HitResult* FunctorEventHooks::OnDealDamage(bg3se::stats::DealDamageFunctor::Appl
 		evt.StoryActionId = storyActionId;
 		evt.Originator = originator;
 		evt.Hit = hit;
-		evt.DamageSums = damageSums;
+		evt.Attack = attack;
 		evt.HitWith = hitWith;
 		evt.Caster2 = *sourceHandle2;
 		evt.SpellId2 = spellId2;
@@ -85,16 +85,16 @@ HitResult* FunctorEventHooks::OnDealDamage(bg3se::stats::DealDamageFunctor::Appl
 }
 
 void FunctorEventHooks::OnEntityDamageEvent(bg3se::stats::StatsSystem_ThrowDamageEventProc* next, void* statsSystem,
-	void* temp5, HitDesc* hit, DamageSums* damageAmounts, bool a5, bool a6)
+	void* temp5, HitDesc* hit, AttackDesc* attack, bool a5, bool a6)
 {
 	{
 		BeforeDealDamageEvent evt;
 		evt.Hit = hit;
-		evt.DamageSums = damageAmounts;
+		evt.Attack = attack;
 		state_.ThrowEvent("BeforeDealDamage", evt, false, 0);
 	}
 
-	next(statsSystem, temp5, hit, damageAmounts, a5, a6);
+	next(statsSystem, temp5, hit, attack, a5, a6);
 }
 
 END_NS()

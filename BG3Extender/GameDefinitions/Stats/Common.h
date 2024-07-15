@@ -103,11 +103,11 @@ struct Object : public Noncopyable<Object>
 	MultiHashMap<FixedString, Array<RollCondition>> RollConditions;
 	FixedString AIFlags;
 	Array<Requirement> Requirements;
-	Array<FixedString> Arr2;
+	Array<FixedString> ComboProperties;
 	Array<FixedString> ComboCategories;
 	int32_t Using{ -1 };
 	uint32_t ModifierListIndex{ 0 };
-	uint32_t field_E8{ 0 };
+	uint32_t Level{ 0 };
 
 	RPGEnumeration* GetAttributeInfo(FixedString const& attributeName, int& attributeIndex);
 	std::optional<STDString> GetString(FixedString const& attributeName);

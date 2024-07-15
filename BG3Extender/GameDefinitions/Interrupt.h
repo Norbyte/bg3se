@@ -5,166 +5,199 @@
 
 BEGIN_NS(interrupt)
 
-struct InterruptIdentifier
+struct Dependency
 {
-	uint64_t field_0;
-	uint64_t field_8;
-	uint64_t field_10;
+	Guid field_0;
+	uint8_t field_10;
+};
 
-	inline bool operator == (InterruptIdentifier const& o) const
+struct DamageFunctorKey
+{
+	Guid field_0;
+	EntityHandle field_10;
+
+	inline bool operator == (DamageFunctorKey const& o) const
 	{
 		return field_0 == o.field_0
-			&& field_8 == o.field_8
 			&& field_10 == o.field_10;
 	}
 };
 
-struct ResolveData
+struct RollAdjustmentMetadata
 {
-	struct Element
-	{
-		uint8_t A;
-		uint8_t B;
-	};
+	int Adjustment;
+	TranslatedString Source;
+};
 
+struct TotalRollAdjustments
+{
 	int field_0;
-	[[bg3::legacy(ResolvedRolls)]] Array<FixedRollBonus> FixedRollBonuses;
-	std::optional<int> field_18;
-	uint8_t field_20;
-	Array<Element> Arr_2b;
-	Array<Element> Arr2_2b;
-	std::optional<int> field_48;
-	uint8_t field_50;
+	int field_4;
+	Array<RollAdjustmentMetadata> Metadata;
 };
 
-struct ExecuteResult
+struct RollAdjustments
 {
-	uint8_t field_0;
-	MultiHashMap<Guid, ResolveData> ResolveData;
-	[[bg3::hidden]]
-	MultiHashMap<InterruptIdentifier, void*> MHM_u24_unk; // FIXME
+	int BaseAdjustment;
+	[[bg3::legacy(ResolvedRolls)]] Array<FixedRollBonus> FixedRollBonuses;
+	std::optional<int> FixedAdjustment;
+	uint8_t RerollType;
+	Array<RerollCondition> RerollConditions;
+	Array<RerollValue> RerollValues;
+	std::optional<int> ResolvedRoll;
+	uint8_t UseMaxRoll;
 };
 
-struct InterruptType0
+struct DamageRollAdjustments
+{
+	// StatsFunctorAdjustRollMode
+	MultiHashMap<uint8_t, MultiHashMap<DamageType, TotalRollAdjustments>> TotalAdjustments;
+	MultiHashMap<uint8_t, MultiHashMap<DamageType, int32_t>> field_40;
+	Array<RerollCondition> RerollConditions;
+	MultiHashSet<DamageType> DamageTypes;
+	MultiHashSet<DamageType> DamageTypes2;
+};
+
+
+struct AppliedChange
+{
+	uint8_t Flags;
+	Array<RollAdjustments> Adjustments;
+	MultiHashMap<DamageFunctorKey, DamageRollAdjustments> DamageRollAdjustments;
+};
+
+struct RollData
+{
+	uint8_t DiceValue;
+	uint8_t AmountOfDices;
+	int DiceAdditionalValue;
+	int Total;
+	int NaturalRoll;
+	uint8_t ResultCritical;
+	uint8_t RerollType;
+	int InitialReroll_M;
+};
+
+
+struct SpellCastEvent
 {
 	FixedString field_0;
 	Guid field_8;
 	SpellId field_18;
 };
 
-struct InterruptType1
+struct CastHitEvent
 {
-	__int64 field_0;
+	FixedString field_0;
 	Guid field_8;
-	int field_18;
-	uint8_t field_1C;
+	DamageFlags DamageEffectFlags;
+	uint8_t SpellAttackType;
 	int field_20;
-	Array<EntityHandle> field_28;
+	Array<DamagePair> DamageRolls;
 	EntityHandle field_38;
-	SpellId field_40;
+	SpellId Spell;
 	uint8_t field_68;
-	uint8_t field_69;
+	uint8_t HitDescFlags;
 };
 
-struct InterruptType2
+struct SpellRollEvent
 {
-	Guid field_0;
+	Guid RollUuid;
 	FixedString field_10;
 	Guid field_18;
-	uint8_t field_28;
-	uint8_t _Pad[3];
-	uint8_t field_2C;
-	uint8_t field_2D;
-	int field_30;
-	int field_34;
-	int field_38;
-	uint8_t field_3C;
-	uint8_t field_3D;
-	int field_40;
-	uint8_t field_44;
-	int field_48;
-	uint8_t field_4C;
-	uint8_t _Pad2[3];
-	uint8_t field_50;
-	uint8_t field_51;
-	uint8_t field_52;
+	uint8_t ConditionRollType;
+	RollData Roll;
+	int Difficulty;
+	std::optional<int> field_48;
+	AbilityId Ability;
+	SpellAttackType SpellAttackType;
+	bool field_52;
 	Guid field_58;
-	SpellId field_68;
+	SpellId Spell;
 };
 
-struct InterruptType3
+struct ConditionalRollEvent
 {
-	__int64 field_0;
-	__int64 field_8;
-	__int64 field_10;
-	__int64 field_18;
+	Guid RollUuid;
+	Guid field_10;
 	__int64 field_20;
-	__int64 field_28;
+	EntityHandle field_28;
 	FixedString field_30;
-	uint8_t field_34;
-	__int64 field_38;
-	__int64 field_40;
-	__int64 field_48;
+	uint8_t ConditionRollType;
+	RollData Roll;
 	int field_50;
-	uint8_t field_54;
-	uint8_t field_55;
+	AbilityId Ability;
+	bool field_55;
 };
 
-struct InterruptType4
+struct EnterAttackRangeEvent
 {
 	FixedString field_0;
 	glm::vec3 field_4;
 };
 
-struct InterruptType5
+struct LeaveAttackRangeEvent
 {
 	FixedString field_0;
 	glm::vec3 field_4;
 };
 
-struct InterruptType6
+struct SpellPreDamageEvent
 {
 	Guid field_0;
 	FixedString field_10;
 	Guid field_18;
 	STDString field_28;
-	char field_40;
-	int field_44;
-	char field_48;
-	char field_49;
-	Guid field_50;
-	char field_60;
-	Guid field_68;
-	char field_78;
-	SpellId field_80;
+	DamageType DamageType;
+	DamageFlags DamageEffectFlags;
+	AbilityId Ability;
+	SpellAttackType SpellAttackType;
+	Dependency Dependency1;
+	Dependency Dependency2;
+	SpellId Spell;
 };
 
-struct InterruptType7
+struct PlaceholderSpellRollEvent
 {
 	Guid field_0;
 	Guid field_10;
 	FixedString field_20;
 	Guid field_28;
-	Guid field_38;
-	uint8_t field_48;
-	__int64 field_50;
+	Dependency Dependency;
+	stats::PropertyContext StatsFunctorContext;
 	FixedString field_58;
 	int field_5C;
 };
 
-struct InterruptType8
+struct ConditionResultEvent
 {
 	Guid field_0;
 	FixedString field_10;
 	Guid field_18;
 	Guid field_28;
 	int field_38;
-	__int64 field_40;
+	stats::PropertyContext StatsFunctorContext;
 	char field_48;
-	int field_4C;
+	DamageFlags DamageEffectFlags;
 };
 
-struct InterruptEntities
+struct StatusAppliedEvent
+{
+	FixedString field_0;
+};
+
+struct DeathEvent
+{
+	uint8_t field_0;
+};
+
+struct DebugEvent
+{
+	uint8_t field_0;
+};
+
+
+struct ActionEntry
 {
 	EntityHandle field_0;
 	EntityHandle field_8;
@@ -172,12 +205,12 @@ struct InterruptEntities
 
 struct InterruptEvent
 {
-	std::variant<InterruptType0, InterruptType1, InterruptType2, InterruptType3, InterruptType4, InterruptType5, InterruptType6, InterruptType7, InterruptType8> Variant;
+	std::variant<SpellCastEvent, CastHitEvent, SpellRollEvent, ConditionalRollEvent, EnterAttackRangeEvent, LeaveAttackRangeEvent, SpellPreDamageEvent, PlaceholderSpellRollEvent, ConditionResultEvent, StatusAppliedEvent, DeathEvent, DebugEvent> Variant;
 	EntityHandle Source;
 	EntityHandle SourceProxy;
 	EntityHandle Target;
 	EntityHandle TargetProxy;
-	Array<InterruptEntities> field_D0;
+	Array<ActionEntry> field_D0;
 	std::optional<glm::vec3> SourcePos;
 	std::optional<glm::vec3> TargetPos;
 	uint8_t field_100;
@@ -190,14 +223,6 @@ struct InterruptEvent
 	}
 };
 
-struct InterruptVariantContainer
-{
-	InterruptEvent Variant;
-	bool field_108;
-	InterruptEvent field_110;
-	MultiHashMap<EntityHandle, MultiHashSet<EntityHandle>> MHM_EH_MHS_EH;
-};
-
 END_NS()
 
 BEGIN_SE()
@@ -207,6 +232,12 @@ inline uint64_t MultiHashMapHash<interrupt::InterruptEvent>(interrupt::Interrupt
 {
 	// FIXME - needs adjustment depending on variant
 	return HashMulti(v.Source, v.Target);
+}
+
+template <>
+inline uint64_t MultiHashMapHash<interrupt::DamageFunctorKey>(interrupt::DamageFunctorKey const& v)
+{
+	return HashMulti(v.field_0, v.field_10);
 }
 
 END_SE()

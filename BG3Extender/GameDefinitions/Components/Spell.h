@@ -10,8 +10,8 @@ struct ActionStateComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(InterruptActionState, "eoc::interrupt::ActionStateComponent")
 
-	InterruptEvent Variant;
-	Array<InterruptEntities> Arr_EHx2;
+	InterruptEvent Event;
+	Array<ActionEntry> Actions;
 };
 
 struct ConditionallyDisabledComponent : public BaseComponent
@@ -242,14 +242,14 @@ struct LearnedSpellsComponent : public BaseComponent
 	DEFINE_COMPONENT(LearnedSpells, "eoc::spell::LearnedSpellsComponent")
 
 	MultiHashMap<Guid, MultiHashSet<FixedString>> field_18;
-	MultiHashSet<uint8_t> field_70;
+	MultiHashSet<SpellSchoolId> SpellSchools;
 };
 
 struct SpellAiConditionsComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(SpellAiConditions, "eoc::spell::AiConditionsComponent")
 
-	MultiHashMap<FixedString, uint64_t> field_18;
+	MultiHashMap<FixedString, AiActionConditions> Conditions;
 };
 
 struct SpellBookEntry
@@ -268,7 +268,7 @@ struct SpellBookEntry
 	[[bg3::legacy(field_41)]] bool Charged;
 	[[bg3::legacy(field_42)]] SpellPrepareType PrepareType;
 	AbilityId SpellCastingAbility;
-	Array<CastRequirement> CastRequirementss;
+	Array<CastRequirement> CastRequirements;
 	// uint32_t NumCharges;
 	// uint32_t UsedCharges;
 };
@@ -351,34 +351,34 @@ struct MovementComponent : public BaseComponent
 	bool field_18;
 };
 
+struct SpellRollData
+{
+	struct CastEventData
+	{
+		[[bg3::legacy(field_0)]] FixedString CastKey;
+		HitDesc Hit;
+	};
+
+	EntityHandle Target;
+	std::optional<EntityHandle> field_8;
+	[[bg3::legacy(Hits)]] Array<CastEventData> Casts;
+	MultiHashMap<FixedString, int32_t> NameToCastIndex;
+	int NextReaction;
+	uint8_t field_6C;
+	__int64 field_70;
+	__int64 field_78;
+	__int64 field_80;
+	uint8_t field_88;
+};
+
 struct RollsComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(SpellCastRolls, "eoc::spell_cast::RollsComponent")
 
-	struct RollHit
-	{
-		FixedString field_0;
-		HitDesc Hit;
-	};
-
-	struct Roll
-	{
-		EntityHandle Target;
-		std::optional<EntityHandle> field_8;
-		Array<RollHit> Hits;
-		MultiHashMap<FixedString, int32_t> MHS_FS_i32;
-		int field_68;
-		uint8_t field_6C;
-		__int64 field_70;
-		__int64 field_78;
-		__int64 field_80;
-		uint8_t field_88;
-	};
-
-	Array<Roll> Rolls;
+	Array<SpellRollData> Rolls;
 };
 
-struct TargetInfo : public ProtectedGameObject<TargetInfo>
+struct BaseTarget : public ProtectedGameObject<BaseTarget>
 {
 	[[bg3::hidden]] void* VMT;
 	EntityHandle Target;
@@ -386,15 +386,15 @@ struct TargetInfo : public ProtectedGameObject<TargetInfo>
 	std::optional<glm::vec3> Position;
 };
 
-struct MultiTargetInfo : public TargetInfo
+struct InitialTarget : public BaseTarget
 {
 	SpellType SpellType;
-	std::optional<TargetInfo> Target2;
+	std::optional<BaseTarget> Target2;
 };
 
-struct MultiTargetInfo2 : public TargetInfo
+struct IntermediateTarget : public BaseTarget
 {
-	MultiTargetInfo Target2;
+	[[bg3::legacy(Target2)]] InitialTarget InitialTarget;
 	uint8_t field_A0;
 };
 
@@ -409,7 +409,7 @@ struct StateComponent : public BaseComponent
 	EntityHandle Caster;
 	SpellId SpellId;
 	int field_38;
-	Array<MultiTargetInfo> Targets;
+	Array<InitialTarget> Targets;
 	std::optional<glm::vec3> CasterMoveToPosition;
 	std::optional<glm::vec3> field_60;
 	glm::vec3 CasterStartPosition;
@@ -431,7 +431,7 @@ struct SyncTargetingComponent : public BaseComponent
 	EntityHandle field_8;
 	std::optional<EntityHandle> field_10;
 	std::optional<glm::vec3> field_20;
-	Array<MultiTargetInfo> Targets;
+	Array<InitialTarget> Targets;
 	uint8_t field_40;
 	int field_44;
 	std::optional<glm::vec3> field_48;
@@ -449,7 +449,7 @@ struct ActionRequest1
 {
 	__int64 field_0;
 	__int64 field_8;
-	bg3se::interrupt::InterruptEvent field_10;
+	bg3se::interrupt::InterruptEvent Event;
 	MultiHashMap<EntityHandle, MultiHashSet<EntityHandle>> MHM_EH_MHS_EH;
 	__int64 field_158;
 };
@@ -458,7 +458,7 @@ struct ActionRequest2
 {
 	__int64 field_0;
 	__int64 field_8;
-	bg3se::interrupt::InterruptEvent field_10;
+	bg3se::interrupt::InterruptEvent Event;
 	__int64 field_118;
 };
 
@@ -561,31 +561,10 @@ struct InterruptRequestsComponent : public BaseComponent
 	Array<interrupt::ActionRequest3> Requests3;
 };
 
-struct InterruptIdentifier
-{
-	Guid field_0;
-	uint64_t field_10;
-
-	inline bool operator == (InterruptIdentifier const& o) const
-	{
-		return field_0 == o.field_0
-			&& field_10 == o.field_10;
-	}
-};
-
 struct InterruptRollData
 {
 	__int64 field_0;
 	[[bg3::legacy(field_8)]] Array<FixedRollBonus> FixedRollBonuses;
-};
-
-struct InterruptResult
-{
-	MultiHashMap<uint8_t, MultiHashMap<uint8_t, InterruptRollData>> field_0;
-	MultiHashMap<uint8_t, MultiHashMap<uint8_t, uint64_t>> field_40;
-	Array<uint16_t> field_50;
-	MultiHashSet<uint8_t> field_60;
-	MultiHashSet<uint8_t> field_90;
 };
 
 struct InterruptResult2
@@ -611,7 +590,7 @@ struct InterruptResultsComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerSpellInterruptResults, "esv::spell_cast::InterruptResultsComponent")
 
-	MultiHashMap<InterruptIdentifier, InterruptResult> Results;
+	MultiHashMap<bg3se::interrupt::DamageFunctorKey, bg3se::interrupt::DamageRollAdjustments> Results;
 	Array<InterruptResult2> Results2;
 };
 
@@ -675,13 +654,3 @@ struct TurnOrderInZoneComponent : public BaseComponent
 };
 
 END_NS()
-
-BEGIN_SE()
-
-template <>
-inline uint64_t MultiHashMapHash<esv::spell_cast::InterruptIdentifier>(esv::spell_cast::InterruptIdentifier const& v)
-{
-	return HashMulti(v.field_0, v.field_10);
-}
-
-END_SE()
