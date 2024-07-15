@@ -7,6 +7,9 @@
 #include <Extender/Shared/ScriptHelpers.h>
 #include <CoreLib/Wrappers.h>
 
+// #define IMGUI_DEBUG(msg, ...) DEBUG("[IMGUI] " msg, __VA_ARGS__)
+#define IMGUI_DEBUG(msg, ...)
+
 #include <Extender/Client/IMGUI/Vulkan.inl>
 #include <Extender/Client/IMGUI/DX11.inl>
 #include <Lua/Shared/LuaMethodCallHelpers.h>
@@ -1363,6 +1366,8 @@ void IMGUIManager::InitializeUI()
 {
     if (initialized_) return;
 
+    IMGUI_DEBUG("IMGUIManager::InitializeUI()");
+
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
@@ -1539,6 +1544,7 @@ glm::ivec2 IMGUIManager::GetViewportSize()
 
 void IMGUIManager::OnRenderBackendInitialized()
 {
+    IMGUI_DEBUG("IMGUIManager::OnRenderBackendInitialized()");
     OnViewportUpdated();
 
     if (!initialized_) {
@@ -1664,6 +1670,12 @@ void IMGUIManager::Update()
     if (defaultFont != nullptr && defaultFont->Font != nullptr) {
         ImGui::GetIO().FontDefault = defaultFont->Font;
     }
+
+    if (frameNo_ == 0) {
+        IMGUI_DEBUG("Draw initial frame");
+    }
+
+    frameNo_++;
 
     renderer_->NewFrame();
     ImGui::NewFrame();

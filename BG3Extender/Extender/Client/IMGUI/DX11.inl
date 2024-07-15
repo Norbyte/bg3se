@@ -62,6 +62,7 @@ public:
 
     ~DX11Backend() override
     {
+        IMGUI_DEBUG("Destroying DX backend");
         DestroyUI();
         DisableHooks();
     }
@@ -69,6 +70,8 @@ public:
     void EnableHooks() override
     {
         if (CreateDeviceHook_.IsWrapped()) return;
+
+        IMGUI_DEBUG("DX11Backend::EnableHooks()");
 
         DetourTransactionBegin();
         DetourUpdateThread(GetCurrentThread());
@@ -92,6 +95,8 @@ public:
     {
         if (!CreateDeviceHook_.IsWrapped()) return;
 
+        IMGUI_DEBUG("DX11Backend::DisableHooks()");
+
         DetourTransactionBegin();
         DetourUpdateThread(GetCurrentThread());
         CreateDeviceHook_.Unwrap();
@@ -103,6 +108,7 @@ public:
     {
         if (initialized_) return;
 
+        IMGUI_DEBUG("DX11Backend::InitializeUI()");
         ImGui_ImplDX11_Init(device_, context_);
 
         initialized_ = true;
@@ -112,6 +118,7 @@ public:
     {
         if (!initialized_) return;
 
+        IMGUI_DEBUG("DX11Backend::DestroyUI()");
         ImGui_ImplDX11_Shutdown();
         initialized_ = false;
     }
@@ -122,6 +129,7 @@ public:
         GImGui->Viewports[0] = &viewports_[curViewport_].Viewport;
 
         if (requestReloadFonts_) {
+            IMGUI_DEBUG("Rebuilding font atlas");
             ImGui_ImplDX11_InvalidateDeviceObjects();
             requestReloadFonts_ = false;
         }
@@ -195,6 +203,13 @@ private:
         UINT FeatureLevels, UINT SDKVersion, ID3D11Device** ppDevice,
         D3D_FEATURE_LEVEL* pFeatureLevel, ID3D11DeviceContext** ppImmediateContext, HRESULT result)
     {
+        IMGUI_DEBUG("D3D11CreateDevice -> %p, %d", *ppDevice, result);
+        IMGUI_DEBUG("DriverType %x, Software %p, Flags %x, FeatureLevels %d, SDKVersion %x, ppImmediateContext %p", DriverType, Software, Flags, FeatureLevels, SDKVersion, ppImmediateContext);
+
+        for (uint32_t i = 0; i < FeatureLevels; i++) {
+            IMGUI_DEBUG("FeatureLevel=%x", pFeatureLevels[i]);
+        }
+
         if (!SUCCEEDED(result)) return;
 
         if (device_ == nullptr && ppImmediateContext != nullptr 
@@ -204,11 +219,15 @@ private:
             adapter_ = pAdapter;
             context_ = *ppImmediateContext;
             device_ = *ppDevice;
+            IMGUI_DEBUG("Bind: Adapter %p, Context %p, Device %p", adapter_, context_, device_);
         }
     }
 
     void WINAPI CreateDXGIFactory1Hooked(REFIID riid, _COM_Outptr_ void** ppFactory, HRESULT result)
     {
+        IMGUI_DEBUG("CreateDXGIFactory1 -> %p, %d", *ppFactory, result);
+        IMGUI_DEBUG("RIID: %08x %04x %04x %16llx", riid.Data1, riid.Data2, riid.Data3, *(uint64_t*)&riid.Data4[0]);
+
         if (!SUCCEEDED(result)) return;
         if (riid != IID_IDXGIFactory1) return;
 
@@ -217,6 +236,7 @@ private:
         factory_ = (IDXGIFactory2*)*ppFactory;
         auto createSwapChain = (*(void***)factory_)[15];
 
+        IMGUI_DEBUG("Hooking DXGICreateSwapChainForHwnd");
         DetourTransactionBegin();
         DetourUpdateThread(GetCurrentThread());
         DXGICreateSwapChainForHwndHook_.Wrap(ResolveFunctionTrampoline(createSwapChain));
@@ -233,6 +253,10 @@ private:
         _COM_Outptr_  IDXGISwapChain1** ppSwapChain, 
         HRESULT result)
     {
+        IMGUI_DEBUG("DXGICreateSwapChainForHwnd -> %p, %d", *ppSwapChain, result);
+        IMGUI_DEBUG("Device %p, HWND %d, %d x %d, fmt %d, usage %d, flags %x", pDevice, hWnd, pDesc->Width, pDesc->Height,
+            pDesc->Format, pDesc->BufferUsage, pDesc->Flags);
+
         if (!SUCCEEDED(result)) return;
         
         swapChain_ = *ppSwapChain;
@@ -243,6 +267,7 @@ private:
 
         auto createSwapChain = (*(void***)swapChain_)[8];
 
+        IMGUI_DEBUG("Hooking DXGISwapChainPresent");
         DetourTransactionBegin();
         DetourUpdateThread(GetCurrentThread());
         DXGISwapChainPresentHook_.Wrap(ResolveFunctionTrampoline(createSwapChain));

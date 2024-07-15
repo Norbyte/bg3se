@@ -33,6 +33,8 @@ END_SE()
    VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | \
    VK_ACCESS_TRANSFER_READ_BIT | VK_ACCESS_HOST_READ_BIT | VK_ACCESS_MEMORY_READ_BIT)
 
+#define VK_CHECK(expr) { auto _rval = (expr); if (_rval != VK_SUCCESS) { ERR(#expr " failed: %d", _rval); } }
+
 BEGIN_NS(extui)
 
 class VulkanBackend : public RenderingBackend
@@ -48,6 +50,7 @@ public:
 
     ~VulkanBackend() override
     {
+        IMGUI_DEBUG("Destroying VK backend");
         releaseSwapChain(swapchain_);
         DestroyUI();
         DisableHooks();
@@ -56,6 +59,8 @@ public:
     void EnableHooks() override
     {
         if (CreateInstanceHook_.IsWrapped()) return;
+
+        IMGUI_DEBUG("VulkanBackend::EnableHooks()");
 
         DetourTransactionBegin();
         DetourUpdateThread(GetCurrentThread());
@@ -76,6 +81,8 @@ public:
     {
         if (!CreateInstanceHook_.IsWrapped()) return;
 
+        IMGUI_DEBUG("VulkanBackend::DisableHooks()");
+
         DetourTransactionBegin();
         DetourUpdateThread(GetCurrentThread());
         CreateInstanceHook_.Unwrap();
@@ -92,6 +99,8 @@ public:
     {
         if (initialized_) return;
 
+        IMGUI_DEBUG("VulkanBackend::InitializeUI()");
+
         VkDescriptorPoolSize poolSize
         {
             .type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
@@ -107,7 +116,7 @@ public:
             .poolSizeCount = 1,
             .pPoolSizes = &poolSize
         };
-        auto result = vkCreateDescriptorPool(device_, &createInfo, nullptr, &descriptorPool_);
+        VK_CHECK(vkCreateDescriptorPool(device_, &createInfo, nullptr, &descriptorPool_));
 
         VkSamplerCreateInfo samplerInfo
         {
@@ -120,8 +129,9 @@ public:
             .addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
             .maxLod = VK_LOD_CLAMP_NONE,
         };
-        vkCreateSampler(device_, &samplerInfo, nullptr, &sampler_);
+        VK_CHECK(vkCreateSampler(device_, &samplerInfo, nullptr, &sampler_));
 
+        IMGUI_DEBUG("VK initialization: desc pool %p, sampler %p", descriptorPool_, sampler_);
 
         ImGui_ImplVulkan_InitInfo init_info = {};
         init_info.Instance = instance_;
@@ -136,7 +146,12 @@ public:
         init_info.ImageCount = swapchain_.images_.size();
         init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
         init_info.Allocator = nullptr;
-        init_info.CheckVkResultFn = nullptr;
+        init_info.CheckVkResultFn = [](VkResult err) {
+            if (err != VK_SUCCESS) {
+                ERR("[IMGUI] VK operation failed: %d", err);
+                TryDebugBreak();
+            }
+        };
         // init_info.RenderPass = presentRenderPass_;
         init_info.RenderPass = swapchain_.renderPass_;
         ImGui_ImplVulkan_Init(&init_info);
@@ -148,6 +163,8 @@ public:
     void DestroyUI() override
     {
         if (!initialized_) return;
+
+        IMGUI_DEBUG("VK shutdown");
 
         ImGui_ImplVulkan_Shutdown();
         drawViewport_ = -1;
@@ -162,6 +179,7 @@ public:
         GImGui->Viewports[0] = &viewports_[curViewport_].Viewport;
 
         if (requestReloadFonts_) {
+            IMGUI_DEBUG("Rebuilding font atlas");
             ImGui_ImplVulkan_DestroyFontsTexture();
             requestReloadFonts_ = false;
         }
@@ -292,11 +310,26 @@ private:
         VkInstance* pInstance,
         VkResult result)
     {
+        IMGUI_DEBUG("vkCreateInstance -> %p, %d", *pInstance, result);
+        if (pCreateInfo->pApplicationInfo != nullptr && pCreateInfo->pApplicationInfo->pApplicationName != nullptr) {
+            IMGUI_DEBUG("App=%s", pCreateInfo->pApplicationInfo->pApplicationName);
+        }
+
+        for (uint32_t i = 0; i < pCreateInfo->enabledLayerCount; i++) {
+            IMGUI_DEBUG("Layer=%s", pCreateInfo->ppEnabledLayerNames[i]);
+        }
+
+        for (uint32_t i = 0; i < pCreateInfo->enabledExtensionCount; i++) {
+            IMGUI_DEBUG("Extension=%s", pCreateInfo->ppEnabledExtensionNames[i]);
+        }
+
         if (result != VK_SUCCESS) return;
 
         instance_ = *pInstance;
 
         if (!CreateDeviceHook_.IsWrapped()) {
+            IMGUI_DEBUG("Hooking CreateDevice()");
+
             DetourTransactionBegin();
             DetourUpdateThread(GetCurrentThread());
             auto createDevice = vkGetInstanceProcAddr(instance_, "vkCreateDevice");
@@ -314,6 +347,21 @@ private:
         VkDevice* pDevice,
         VkResult result)
     {
+        IMGUI_DEBUG("vkCreateDevice flags=%x -> %p, %d", pCreateInfo->flags, *pDevice, result);
+
+        for (uint32_t i = 0; i < pCreateInfo->queueCreateInfoCount; i++) {
+            auto const& queue = pCreateInfo->pQueueCreateInfos[i];
+            IMGUI_DEBUG("Queue=%x, %d, %d", queue.flags, queue.queueFamilyIndex, queue.queueCount);
+        }
+
+        for (uint32_t i = 0; i < pCreateInfo->enabledLayerCount; i++) {
+            IMGUI_DEBUG("Layer=%s", pCreateInfo->ppEnabledLayerNames[i]);
+        }
+
+        for (uint32_t i = 0; i < pCreateInfo->enabledExtensionCount; i++) {
+            IMGUI_DEBUG("Extension=%s", pCreateInfo->ppEnabledExtensionNames[i]);
+        }
+
         if (result != VK_SUCCESS) return;
 
         physicalDevice_ = physicalDevice;
@@ -338,12 +386,16 @@ private:
             queueFamily++;
         }
 
+        IMGUI_DEBUG("Detected graphics queue family %d, %p", queueFamily, queue);
+
         auto createPipelineCache = (PFN_vkCreatePipelineCache*)vkGetDeviceProcAddr(*pDevice, "vkCreatePipelineCache");
         auto createSwapchainKHR = (PFN_vkCreatePipelineCache*)vkGetDeviceProcAddr(*pDevice, "vkCreateSwapchainKHR");
         auto destroySwapchainKHR = (PFN_vkCreatePipelineCache*)vkGetDeviceProcAddr(*pDevice, "vkDestroySwapchainKHR");
         auto queuePresentKHR = (PFN_vkQueuePresentKHR*)vkGetDeviceProcAddr(*pDevice, "vkQueuePresentKHR");
 
         if (!CreatePipelineCacheHook_.IsWrapped()) {
+            IMGUI_DEBUG("Hooking CreatePipelineCache()");
+
             DetourTransactionBegin();
             DetourUpdateThread(GetCurrentThread());
             CreatePipelineCacheHook_.Wrap(ResolveFunctionTrampoline(createPipelineCache));
@@ -357,6 +409,8 @@ private:
     void vkDestroyDeviceHooked(VkDevice device, const VkAllocationCallbacks* pAllocator)
     {
         if (device != device_) return;
+
+        IMGUI_DEBUG("VK device destroyed");
 
         DestroyUI();
         releaseSwapChain(swapchain_);
@@ -386,6 +440,7 @@ private:
     {
         if (result != VK_SUCCESS) return;
 
+        IMGUI_DEBUG("VK pipeline cache created: %p", *pPipelineCache);
         pipelineCache_ = *pPipelineCache;
     }
 
@@ -398,6 +453,7 @@ private:
     {
         if (result != VK_SUCCESS) return;
 
+        IMGUI_DEBUG("VK swap chain created: %p", *pSwapchain);
         swapChain_ = *pSwapchain;
         collectSwapChainInfo(pCreateInfo);
     }
@@ -409,6 +465,7 @@ private:
     {
         if (device != device_) return;
 
+        IMGUI_DEBUG("VK swap chain destroyed");
         DestroyUI();
         releaseSwapChain(swapchain_);
 
@@ -445,6 +502,7 @@ private:
 
         swapInfo.width_ = pCreateInfo->imageExtent.width;
         swapInfo.height_ = pCreateInfo->imageExtent.height;
+        IMGUI_DEBUG("Swap chain size: %d x %d", swapInfo.width_, swapInfo.height_);
 
         {
             VkAttachmentDescription attDesc = {
@@ -482,8 +540,7 @@ private:
                 NULL,    // dependencies
             };
 
-            auto vkr = vkCreateRenderPass(device_, &rpinfo, NULL, &swapInfo.renderPass_);
-            // CheckVkResult(vkr);
+            VK_CHECK(vkCreateRenderPass(device_, &rpinfo, NULL, &swapInfo.renderPass_));
         }
 
         {
@@ -493,14 +550,13 @@ private:
                 VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
                 queueFamily_
             };
-            vkCreateCommandPool(device_, &createInfo, nullptr, &swapchain_.commandPool_);
+            VK_CHECK(vkCreateCommandPool(device_, &createInfo, nullptr, &swapchain_.commandPool_));
         }
 
         // serialise out the swap chain images
         {
-            uint32_t numSwapImages;
-            auto vkr = vkGetSwapchainImagesKHR(device_, swapChain_, &numSwapImages, NULL);
-            // CheckVkResult(vkr);
+            uint32_t numSwapImages{ 0 };
+            VK_CHECK(vkGetSwapchainImagesKHR(device_, swapChain_, &numSwapImages, NULL));
 
             swapInfo.images_.resize(numSwapImages);
 
@@ -508,8 +564,7 @@ private:
             images.resize(numSwapImages);
 
             // go through our own function so we assign these images IDs
-            vkr = vkGetSwapchainImagesKHR(device_, swapChain_, &numSwapImages, images.raw_buf());
-            // CheckVkResult(vkr);
+            VK_CHECK(vkGetSwapchainImagesKHR(device_, swapChain_, &numSwapImages, images.raw_buf()));
 
             for (uint32_t i = 0; i < numSwapImages; i++)
             {
@@ -532,23 +587,20 @@ private:
                         VK_COMMAND_BUFFER_LEVEL_PRIMARY,
                         1
                     };
-                    vkAllocateCommandBuffers(device_, &allocInfo, &imInfo.commandBuffer);
+                    VK_CHECK(vkAllocateCommandBuffers(device_, &allocInfo, &imInfo.commandBuffer));
                 }
 
                 {
                     VkFenceCreateInfo fenceInfo = { VK_STRUCTURE_TYPE_FENCE_CREATE_INFO, NULL,
                                                     VK_FENCE_CREATE_SIGNALED_BIT };
 
-                    vkr = vkCreateFence(device_, &fenceInfo, NULL, &imInfo.fence);
-                    // CheckVkResult(vkr);
+                    VK_CHECK(vkCreateFence(device_, &fenceInfo, NULL, &imInfo.fence));
                 }
 
                 {
                     VkSemaphoreCreateInfo semInfo = { VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO };
 
-                    vkr = vkCreateSemaphore(device_, &semInfo, NULL,
-                        &imInfo.uiDoneSemaphore);
-                    //CheckVkResult(vkr);
+                    VK_CHECK(vkCreateSemaphore(device_, &semInfo, NULL, &imInfo.uiDoneSemaphore));
                 }
 
                 {
@@ -564,8 +616,7 @@ private:
                         {VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1},
                     };
 
-                    vkr = vkCreateImageView(device_, &info, NULL, &imInfo.view);
-                    //CheckVkResult(vkr);
+                    VK_CHECK(vkCreateImageView(device_, &info, NULL, &imInfo.view));
 
                     VkFramebufferCreateInfo fbinfo = {
                         VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
@@ -579,8 +630,7 @@ private:
                         1,
                     };
 
-                    vkr = vkCreateFramebuffer(device_, &fbinfo, NULL, &imInfo.framebuffer);
-                    //CheckVkResult(vkr);
+                    VK_CHECK(vkCreateFramebuffer(device_, &fbinfo, NULL, &imInfo.framebuffer));
                 }
             }
         }
@@ -596,18 +646,16 @@ private:
         // wait for this command buffer to be free
         // If this ring has never been used the fence is signalled on creation.
         // this should generally be a no-op because we only get here when we've acquired the image
-        auto vkr = vkWaitForFences(device_, 1, &image.fence, VK_TRUE, 50000000);
-        //CheckVkResult(vkr);
+        VK_CHECK(vkWaitForFences(device_, 1, &image.fence, VK_TRUE, 50000000));
 
-        vkr = vkResetFences(device_, 1, &image.fence);
+        VK_CHECK(vkResetFences(device_, 1, &image.fence));
 
-        vkResetCommandBuffer(image.commandBuffer, 0);
+        VK_CHECK(vkResetCommandBuffer(image.commandBuffer, 0));
 
         VkCommandBufferBeginInfo beginInfo = { VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO, NULL,
                                               VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT };
 
-        vkr = vkBeginCommandBuffer(image.commandBuffer, &beginInfo);
-        //CheckVkResult(vkr);
+        VK_CHECK(vkBeginCommandBuffer(image.commandBuffer, &beginInfo));
 
         VkImageMemoryBarrier bbBarrier = {
             VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
@@ -679,14 +727,13 @@ private:
             0, NULL,
             1, &bbBarrier);
 
-        vkEndCommandBuffer(image.commandBuffer);
+        VK_CHECK(vkEndCommandBuffer(image.commandBuffer));
 
         {
             submitInfo.commandBufferCount = 1;
             submitInfo.pCommandBuffers = &image.commandBuffer;
 
-            vkr = vkQueueSubmit(renderQueue_, 1, &submitInfo, image.fence);
-            // CheckVkResult(vkr);
+            VK_CHECK(vkQueueSubmit(renderQueue_, 1, &submitInfo, image.fence));
         }
 
         // the next thing waits on our new semaphore - whether a subsequent overlay render or the

@@ -53,6 +53,7 @@ private:
     bool reducedFontAtlas_{ false };
     bool initialized_{ false };
     bool enableUI_{ false };
+    unsigned frameNo_{ 0 };
 
     bool LoadFont(FontData& request);
     void OnViewportUpdated();
