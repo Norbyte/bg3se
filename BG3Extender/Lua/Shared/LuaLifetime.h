@@ -1,6 +1,6 @@
 #pragma once
 
-#define DEBUG_LIFETIMES
+#undef DEBUG_LIFETIMES
 #undef TRACE_LIFETIMES
 
 BEGIN_NS(lua)
