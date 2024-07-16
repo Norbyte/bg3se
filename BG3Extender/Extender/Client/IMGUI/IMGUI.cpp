@@ -1469,7 +1469,7 @@ bool IMGUIManager::LoadFont(FontData& request)
             path = "Public/Game/GUI/Assets/Fonts/NotoSerifKR-Regular.otf";
             glyphRanges = ImGui::GetIO().Fonts->GetGlyphRangesKorean();
         } else if (language == "Japanese") {
-            path = "Public/Game/GUI/Assets/Fonts/NotoSerifKR-Regular.otf";
+            path = "Public/Game/GUI/Assets/Fonts/NotoSerifSC-Regular.otf";
             glyphRanges = ImGui::GetIO().Fonts->GetGlyphRangesJapanese();
         } else if (language == "Chinese") {
             path = "Public/Game/GUI/Assets/Fonts/NotoSerifSC-Regular.otf";
