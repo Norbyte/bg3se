@@ -38,6 +38,28 @@ ScriptExtender::ScriptExtender()
 	gCoreLibPlatformInterface.GlobalConsole = new DebugConsole();
 }
 
+void ScriptExtender::WarnIfOffline()
+{
+	// Check if we were loaded through the updaters BG3ScriptExtender.dll postload mechanism.
+	// If not, show a note that it's not an auto-updating build
+	wchar_t path[1024];
+	auto len = GetModuleFileNameW(gCoreLibPlatformInterface.ThisModule, path, std::size(path));
+	if (len == 0) return;
+
+	path[len] = 0;
+	auto sep = wcsrchr(path, L'\\');
+	if (sep == nullptr) return;
+	sep++;
+
+	auto end = wcschr(path, L'.');
+	if (end == nullptr) return;
+	*end = 0;
+
+	if (_wcsicmp(sep, L"BG3ScriptExtender") != 0) {
+		WARN("NOTICE: Script Extender loaded without an updater present; new updates will not be fetched automatically");
+	}
+}
+
 void ScriptExtender::Initialize()
 {
 	if (config_.SendCrashReports) {
@@ -56,6 +78,8 @@ void ScriptExtender::Initialize()
 	} else {
 		ERR("Failed to retrieve game version info.");
 	}
+
+	WarnIfOffline();
 
 	DEBUG("ScriptExtender::Initialize: Starting");
 	auto initStart = std::chrono::high_resolution_clock::now();

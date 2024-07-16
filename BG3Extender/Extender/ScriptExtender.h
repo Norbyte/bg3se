@@ -167,6 +167,7 @@ private:
 	std::unique_ptr<lua::dbg::Debugger> luaDebugger_;
 #endif
 
+	void WarnIfOffline();
 	void OnCoreLibInit(void * self);
 	void OnAppUpdatePaths(void * self);
 	void OnAppLoadGraphicSettings(App* self);
