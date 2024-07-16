@@ -88,7 +88,7 @@ int SDLManager::SDLPollEventHooked(SDLPollEventProc* wrapped, SDL_Event* event)
         }
 
         ImGuiIO& io = ImGui::GetIO();
-        if (io.WantCaptureKeyboard
+        if (io.WantTextInput
             && (event->type == SDL_KEYDOWN || event->type == SDL_KEYUP || event->type == SDL_TEXTEDITING || event->type == SDL_TEXTINPUT)) {
             result = 0;
         }
