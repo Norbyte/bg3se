@@ -72,8 +72,8 @@ void ScriptExtender::Initialize()
 			INFO("Game version v%d.%d.%d.%d OK", gameVersion.Major, gameVersion.Minor, gameVersion.Revision, gameVersion.Build);
 		} else {
 			ERR("Game version v%d.%d.%d.%d is not supported, please upgrade!", gameVersion.Major, gameVersion.Minor, gameVersion.Revision, gameVersion.Build);
-			// Hard exit below a certain version as th EoCClient error display UI won't work anymore
-			Fail("Script Extender doesn't support game versions below v4.37, please upgrade!");
+			// Hard exit below a certain version as the EoCClient error display UI won't work anymore
+			Fail("Script Extender doesn't support game versions below v4.50, please upgrade!");
 		}
 	} else {
 		ERR("Failed to retrieve game version info.");
