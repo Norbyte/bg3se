@@ -10,7 +10,7 @@
     - [Multiline Mode](#multiline-mode)
     - [Saving output to a file](#save-console-output)
  - [Calling Lua from Osiris](#calling-lua-from-osiris)
-    * [Capturing Events/Calls](#)
+    * [Capturing Events/Calls](#l2o_captures)
  - [Calling Osiris from Lua](#calling-osiris-from-lua)
     * [Calls](#o2l_calls)
     * [Queries](#o2l_queries)
