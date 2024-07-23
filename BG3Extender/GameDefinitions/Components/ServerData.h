@@ -121,7 +121,7 @@ struct DelayDeathCauseComponent : public BaseComponent
 
 	int DelayCount;
 	int Blocked_M;
-	int field_8;
+	Guid field_8;
 };
 
 struct KillerComponent : public BaseComponent
