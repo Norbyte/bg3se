@@ -185,6 +185,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\Components\Visual.h" />
     <ClInclude Include="GameDefinitions\EntityManager.h" />
     <ClInclude Include="GameDefinitions\EntitySystemHelpers.h" />
+    <ClInclude Include="GameDefinitions\EnumRepository.h" />
     <ClInclude Include="GameDefinitions\GameState.h" />
     <ClInclude Include="GameDefinitions\GlobalFixedStrings.h" />
     <ClInclude Include="GameDefinitions\Hit.h" />
@@ -383,13 +384,12 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="Extender\Shared\VirtualTextures.inl" />
     <None Include="GameDefinitions\Base\TypeInformation.inl" />
     <None Include="GameDefinitions\Components\AllComponentTypes.inl" />
-    <None Include="GameDefinitions\Enumerations.inl" />
     <None Include="GameDefinitions\Enumerations\ECS.inl" />
     <None Include="GameDefinitions\Enumerations\Engine.inl" />
     <None Include="GameDefinitions\Enumerations\IMGUI.inl" />
     <None Include="GameDefinitions\Enumerations\NetMessage.inl" />
     <None Include="GameDefinitions\Enumerations\Stats.inl" />
-    <None Include="GameDefinitions\ExternalEnumerations.inl" />
+    <None Include="GameDefinitions\ExternalEnumerations\GUI.inl" />
     <None Include="GameDefinitions\GlobalFixedStrings.inl" />
     <None Include="GameDefinitions\PropertyMaps\AllPropertyMaps.inl" />
     <None Include="GameDefinitions\PropertyMaps\CommonTypes.inl" />

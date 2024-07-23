@@ -55,7 +55,7 @@ void InheritProperties(GenericPropertyMap const& base, GenericPropertyMap& child
 template <class T>
 void AddBitmaskProperty(GenericPropertyMap& pm, std::size_t offset)
 {
-	for (auto const& label : EnumInfo<T>::Store->Values) {
+	for (auto const& label : BitfieldInfo<T>::GetStore().Values) {
 		pm.AddRawProperty(label.Key.GetString(),
 			&(GenericGetOffsetBitmaskFlag<std::underlying_type_t<T>>),
 			&(GenericSetOffsetBitmaskFlag<std::underlying_type_t<T>>),
@@ -73,7 +73,7 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 	typename LuaPropertyMap<TCls>::PropertyAccessors::Getter* getter,
 	typename LuaPropertyMap<TCls>::PropertyAccessors::Setter* setter)
 {
-	for (auto const& label : EnumInfo<TEnum>::Store->Values) {
+	for (auto const& label : BitfieldInfo<TEnum>::GetStore().Values) {
 		pm.AddProperty(label.Key.GetString(),
 			getter,
 			setter,

@@ -181,21 +181,12 @@ inline void push(lua_State* L, Noesis::Vector3 const& v)
 #endif
 
 template <class T>
-inline void push_bitfield(lua_State* L, T value)
-{
-	static_assert(std::is_base_of_v<BitmaskInfoBase<T>, EnumInfo<T>>, "Can only push bitmask fields!");
-	push_bitfield_value(L, (typename EnumInfo<T>::UnderlyingType)value, *EnumInfo<T>::Store);
-}
-
-template <class T>
 inline typename std::enable_if_t<std::is_enum_v<T>, void> push(lua_State* L, T v)
 {
-	if constexpr (std::is_base_of_v<BitmaskInfoBase<T>, EnumInfo<T>>) {
-		push_bitfield(L, v);
+	if constexpr (IsBitfieldV<T>) {
+		push_bitfield_value(L, static_cast<EnumUnderlyingType>(v), BitfieldID<T>::ID);
 	} else {
-		static_assert(std::is_base_of_v<EnumInfoBase<T>, EnumInfo<T>>, "Cannot push an enumeration that has no EnumInfo!");
-		auto ei = EnumInfo<T>::Store;
-		push_enum_value(L, static_cast<EnumUnderlyingType>(v), *ei);
+		push_enum_value(L, static_cast<EnumUnderlyingType>(v), EnumID<T>::ID);
 	}
 }
 

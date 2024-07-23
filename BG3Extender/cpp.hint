@@ -7,14 +7,12 @@
 #define BEGIN_NS(ns) namespace bg3se::ns {
 #define END_NS() }
 
-#define BEGIN_BITMASK_NS(NS, T, luaName, type) namespace NS { \
+#define BEGIN_BITMASK_NS(NS, T, luaName, type, id) namespace NS { \
 	enum class T : type {
-#define BEGIN_ENUM_NS(NS, T, luaName, type) namespace NS { \
+#define BEGIN_ENUM_NS(NS, T, luaName, type, id) namespace NS { \
 	enum class T : type {
-#define BEGIN_BITMASK(T, type) enum class T : type {
-#define BEGIN_ENUM(T, type) enum class T : type {
-#define E(label) label,
+#define BEGIN_BITMASK(T, type, id) enum class T : type {
+#define BEGIN_ENUM(T, type, id) enum class T : type {
 #define EV(label, value) label = value,
-#define ER(label, value) label = value,
 #define END_ENUM_NS() }; };
 #define END_ENUM() };

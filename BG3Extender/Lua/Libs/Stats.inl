@@ -672,8 +672,8 @@ std::optional<FixedString> EnumIndexToLabel(FixedString const& enumName, int ind
 		}
 	}
 	
-	auto bitfieldInfo = BitmaskRegistry::Get().BitfieldsByName.find(enumName);
-	if (bitfieldInfo != BitmaskRegistry::Get().BitfieldsByName.end()) {
+	auto bitfieldInfo = BitfieldRegistry::Get().BitfieldsByName.find(enumName);
+	if (bitfieldInfo != BitfieldRegistry::Get().BitfieldsByName.end()) {
 		auto value = bitfieldInfo.Value()->Find((EnumUnderlyingType)index);
 		if (value) {
 			return value;
@@ -715,8 +715,8 @@ std::optional<int64_t> EnumLabelToIndex(FixedString const& enumName, FixedString
 		}
 	}
 	
-	auto bitfieldInfo = BitmaskRegistry::Get().BitfieldsByName.find(enumName);
-	if (bitfieldInfo != BitmaskRegistry::Get().BitfieldsByName.end()) {
+	auto bitfieldInfo = BitfieldRegistry::Get().BitfieldsByName.find(enumName);
+	if (bitfieldInfo != BitfieldRegistry::Get().BitfieldsByName.end()) {
 		auto key = bitfieldInfo.Value()->Find(label);
 		if (key) {
 			return (int64_t)*key;

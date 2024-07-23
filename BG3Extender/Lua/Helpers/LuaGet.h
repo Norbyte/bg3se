@@ -103,12 +103,10 @@ inline typename std::enable_if_t<std::is_floating_point_v<T>, T> do_get(lua_Stat
 template <class T>
 typename std::enable_if_t<std::is_enum_v<T>, T> do_get(lua_State * L, int index, Overload<T>)
 {
-	if constexpr (std::is_base_of_v<BitmaskInfoBase<T>, EnumInfo<T>>) {
-		return (T)get_bitfield_value(L, index, *EnumInfo<T>::Store);
-	} else if constexpr (std::is_base_of_v<EnumInfoBase<T>, EnumInfo<T>>) {
-		return (T)get_enum_value(L, index, *EnumInfo<T>::Store);
+	if constexpr (IsBitfieldV<T>) {
+		return (T)get_bitfield_value(L, index, BitfieldID<T>::ID);
 	} else {
-		assert(false && *T{});
+		return (T)get_enum_value(L, index, EnumID<T>::ID);
 	}
 }
 
@@ -247,17 +245,17 @@ inline typename std::optional<T> do_get(lua_State* L, int index, Overload<std::o
 template <class T>
 inline T checked_get_flags(lua_State* L, int index)
 {
-	static_assert(std::is_base_of_v<BitmaskInfoBase<T>, EnumInfo<T>>, "Can only fetch bitmask fields!");
+	static_assert(IsBitfieldV<T>, "Can only fetch bitfield fields!");
 
 	luaL_checktype(L, index, LUA_TTABLE);
 	T flags = (T)0;
 	for (auto idx : iterate(L, index)) {
 		auto label = do_get(L, idx, Overload<FixedString>{});
-		auto val = EnumInfo<T>::Find(label);
+		auto val = BitfieldInfo<T>::Find(label);
 		if (val) {
 			flags |= *val;
 		} else {
-			luaL_error(L, "Label '%s' is not valid for enumeration '%s'", label.GetString(), EnumInfo<T>::Name);
+			luaL_error(L, "Label '%s' is not valid for enumeration '%s'", label.GetString(), BitfieldInfo<T>::GetStore().LuaName);
 		}
 	}
 

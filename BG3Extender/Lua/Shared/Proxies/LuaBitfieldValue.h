@@ -19,11 +19,10 @@ public:
 	template <class T>
 	inline static void Make(lua_State* L, T value)
 	{
-		using ei = EnumInfo<T>;
-		Make(L, static_cast<typename ei::UnderlyingType>(value), ei::Storage.RegistryIndex);
+		Make(L, static_cast<EnumUnderlyingType>(value), BitfieldID<T>::ID);
 	}
 
-	static BitmaskInfoStore<EnumUnderlyingType>* GetBitfieldInfo(CppValueMetadata const& val);
+	static BitfieldInfoStore* GetBitfieldInfo(CppValueMetadata const& val);
 	static EnumUnderlyingType GetValue(CppValueMetadata const& self);
 	static std::optional<EnumUnderlyingType> GetValueAtIndex(CppValueMetadata const& self, int index);
 	static Json::Value ToJson(CppValueMetadata& self);

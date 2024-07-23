@@ -79,7 +79,7 @@ uint64_t Subscribe(lua_State* L, ExtComponentType type, FunctionRef func, std::o
 
 	auto replicationType = State::FromLua(L)->GetEntitySystemHelpers()->GetReplicationIndex(type);
 	if (!replicationType) {
-		luaL_error(L, "No events are available for components of type %s", EnumInfo<ExtComponentType>::Store->Find((EnumUnderlyingType)type).GetString());
+		luaL_error(L, "No events are available for components of type %s", EnumInfo<ExtComponentType>::GetStore().Find((EnumUnderlyingType)type).GetString());
 	}
 
 	auto index = hooks->Subscribe(*replicationType, entity ? *entity : EntityHandle{}, flags ? *flags : 0xffffffffffffffffull, RegistryEntry(L, func.Index));
@@ -90,7 +90,7 @@ uint64_t OnCreate(lua_State* L, ExtComponentType type, FunctionRef func, std::op
 {
 	auto componentType = State::FromLua(L)->GetEntitySystemHelpers()->GetComponentIndex(type);
 	if (!componentType) {
-		luaL_error(L, "No events are available for components of type %s", EnumInfo<ExtComponentType>::Store->Find((EnumUnderlyingType)type).GetString());
+		luaL_error(L, "No events are available for components of type %s", EnumInfo<ExtComponentType>::GetStore().Find((EnumUnderlyingType)type).GetString());
 	}
 
 	auto& hooks = State::FromLua(L)->GetComponentEventHooks();
@@ -102,7 +102,7 @@ uint64_t OnDestroy(lua_State* L, ExtComponentType type, FunctionRef func, std::o
 {
 	auto componentType = State::FromLua(L)->GetEntitySystemHelpers()->GetComponentIndex(type);
 	if (!componentType) {
-		luaL_error(L, "No events are available for components of type %s", EnumInfo<ExtComponentType>::Store->Find((EnumUnderlyingType)type).GetString());
+		luaL_error(L, "No events are available for components of type %s", EnumInfo<ExtComponentType>::GetStore().Find((EnumUnderlyingType)type).GetString());
 	}
 
 	auto& hooks = State::FromLua(L)->GetComponentEventHooks();

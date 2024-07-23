@@ -7,7 +7,7 @@ BEGIN_SE()
 // Type information registration
 
 template <class UnderlyingType>
-void AddBitmaskTypeInfo(TypeInformation& ty, Map<FixedString, UnderlyingType> const& values)
+void AddBitfieldTypeInfo(TypeInformation& ty, Map<FixedString, UnderlyingType> const& values)
 {
 	for (auto const& label : values) {
 		ty.Members.insert(std::make_pair(label.Key, GetTypeInfoRef<bool>()));
@@ -15,9 +15,9 @@ void AddBitmaskTypeInfo(TypeInformation& ty, Map<FixedString, UnderlyingType> co
 }
 
 template <class T>
-void AddBitmaskTypeInfo(TypeInformation& ty)
+void AddBitfieldTypeInfo(TypeInformation& ty)
 {
-	AddBitmaskTypeInfo(ty, EnumInfo<T>::Store->Values);
+	AddBitfieldTypeInfo(ty, BitfieldInfo<T>::GetStore().Values);
 }
 
 template <class Fun>
@@ -54,8 +54,8 @@ void RegisterObjectProxyTypeInformation()
 #define P_RENAMED(prop, oldName) ty.Members.insert(std::make_pair(FixedString(#prop), GetTypeInfoRef<decltype(TClass::prop)>())); \
 	ty.Members.insert(std::make_pair(FixedString(#oldName), GetTypeInfoRef<decltype(TClass::prop)>()));
 #define P_RO(prop) ty.Members.insert(std::make_pair(FixedString(#prop), GetTypeInfoRef<decltype(TClass::prop)>()));
-#define P_BITMASK(prop) AddBitmaskTypeInfo<decltype(TClass::prop)>(ty);
-#define P_BITMASK_GETTER_SETTER(prop, getter, setter) AddBitmaskTypeInfo<decltype(TClass::prop)>(ty);
+#define P_BITMASK(prop) AddBitfieldTypeInfo<decltype(TClass::prop)>(ty);
+#define P_BITMASK_GETTER_SETTER(prop, getter, setter) AddBitfieldTypeInfo<decltype(TClass::prop)>(ty);
 #define PN(name, prop) ty.Members.insert(std::make_pair(FixedString(#name), GetTypeInfoRef<decltype(TClass::prop)>()));
 #define PN_RO(name, prop) ty.Members.insert(std::make_pair(FixedString(#name), GetTypeInfoRef<decltype(TClass::prop)>()));
 #define P_GETTER(prop, fun) ty.Members.insert(std::make_pair(FixedString(#prop), GetTypeInfoRef<decltype(GetFunctionReturnType(&TClass::fun))>()));
@@ -85,31 +85,29 @@ void RegisterObjectProxyTypeInformation()
 #undef P_FALLBACK
 
 
-#define BEGIN_BITMASK_NS(NS, T, luaName, type) ([]() { \
+#define BEGIN_BITMASK_NS(NS, T, luaName, type, id) ([]() { \
 	using TEnum = NS::T; \
 	auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(#luaName)); \
 	ty.Kind = LuaTypeId::Enumeration; \
 	ty.IsBitfield = true;
 
-#define BEGIN_ENUM_NS(NS, T, luaName, type) ([]() { \
+#define BEGIN_ENUM_NS(NS, T, luaName, type, id) ([]() { \
 	using TEnum = NS::T; \
 	auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(#luaName)); \
 	ty.Kind = LuaTypeId::Enumeration;
 
-#define BEGIN_BITMASK(T, type) ([]() { \
+#define BEGIN_BITMASK(T, type, id) ([]() { \
 	using TEnum = T; \
 	auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(#T)); \
 	ty.Kind = LuaTypeId::Enumeration; \
 	ty.IsBitfield = true;
 
-#define BEGIN_ENUM(T, type) ([]() { \
+#define BEGIN_ENUM(T, type, id) ([]() { \
 	using TEnum = T; \
 	auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(#T)); \
 	ty.Kind = LuaTypeId::Enumeration;
 
-#define E(label) ty.EnumValues.insert(std::make_pair(FixedString(#label), (uint64_t)TEnum::label));
 #define EV(label, value) ty.EnumValues.insert(std::make_pair(FixedString(#label), (uint64_t)TEnum::label));
-#define ER(label, value) ty.EnumValues.insert(std::make_pair(FixedString(#label), (uint64_t)value));
 #define END_ENUM_NS() GetStaticTypeInfo(Overload<TEnum>{}).Type = &ty; })();
 #define END_ENUM() GetStaticTypeInfo(Overload<TEnum>{}).Type = &ty; })(); 
 
@@ -120,9 +118,7 @@ void RegisterObjectProxyTypeInformation()
 #undef BEGIN_ENUM_NS
 #undef BEGIN_BITMASK
 #undef BEGIN_ENUM
-#undef E
 #undef EV
-#undef ER
 #undef END_ENUM_NS
 #undef END_ENUM
 }
