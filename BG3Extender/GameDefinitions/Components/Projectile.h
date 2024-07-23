@@ -174,6 +174,7 @@ struct InitializationComponent : public BaseProxyComponent
 
 	[[bg3::hidden]] void* field_0;
 	InitializationData Data;
+	[[bg3::hidden]] void* _PAD;
 };
 
 
@@ -246,6 +247,7 @@ struct Projectile : public BaseProxyComponent
 	[[bg3::hidden]] Array<void*> field_590;
 	ecs::EntityRef Owner;
 	bool ShouldFall;
+	[[bg3::hidden]] void* _PAD;
 };
 
 

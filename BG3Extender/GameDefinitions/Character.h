@@ -133,7 +133,7 @@ namespace bg3se
 			uint8_t NumConsumables;
 			CharacterFlags2 Flags2;
 			CharacterFlags3 Flags3;
-			uint64_t Unused;
+			[[bg3::hidden]] void* _PAD;
 
 			RefReturn<Character> LuaGetSelf();
 		};

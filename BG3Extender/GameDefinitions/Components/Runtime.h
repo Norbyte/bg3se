@@ -48,10 +48,11 @@ struct AnubisExecutorComponent : public BaseProxyComponent
 {
 	DEFINE_COMPONENT(ServerAnubisExecutor, "esv::AnubisExecutorComponent")
 
-	__int64 field_18;
-	__int64 field_20;
-	uint8_t field_28;
-	uint8_t field_29;
+	[[bg3::hidden]] void* field_0;
+	[[bg3::hidden]] void* Task;
+	uint8_t field_10;
+	uint8_t field_11;
+	[[bg3::hidden]] void* field_18; // Unknown?
 };
 
 struct ReplicationDependencyComponent : public BaseComponent
