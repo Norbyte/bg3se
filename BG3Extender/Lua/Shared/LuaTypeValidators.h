@@ -7,6 +7,10 @@
 #endif
 #define CHECKR(expr) if (!(expr)) return false;
 
+#if defined(_DEBUG)
+#define ENABLE_FLAKY_HEURISTICS
+#endif
+
 BEGIN_NS(lua)
 
 template <class T>
@@ -131,12 +135,14 @@ inline bool Validate(Guid const* g, Overload<Guid>)
 template <class T>
 typename std::enable_if_t<std::is_enum_v<T>, bool> Validate(T const* v, Overload<T>)
 {
+#if defined(ENABLE_FLAKY_HEURISTICS)
 	if constexpr (IsBitfieldV<T>) {
 		// Disabled for now as it causes unmapped enum elements to be flagged all the time
-		// CHECK(((uint64_t)*v & ~BitfieldInfo<T>::Store->AllowedFlags) == 0);
+		CHECK(((uint64_t)*v & ~BitfieldInfo<T>::GetStore()->AllowedFlags) == 0);
 	} else {
-		// CHECK((int64_t)*v < EnumInfo<T>::Store->Labels.size());
+		CHECK((int64_t)*v < EnumInfo<T>::GetStore()->Labels.size());
 	}
+#endif
 
 	return true;
 }
