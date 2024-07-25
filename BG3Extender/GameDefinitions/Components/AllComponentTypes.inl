@@ -1,4 +1,4 @@
-#include <GameDefinitions/Components/GeneratedComponentTypes.inl>
+#include <GameDefinitions/Generated/ComponentTypes.inl>
 
 T(esv::Character)
 T(esv::Item)

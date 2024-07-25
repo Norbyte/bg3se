@@ -78,18 +78,17 @@ struct ProxyOwnerComponent : public BaseComponent
 };
 
 
+struct ReactionSource
+{
+	uint64_t field_0;
+	TargetInfo Target;
+};
+
 struct ReactionComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(HitReaction, "eoc::hit::ReactionComponent")
 
-	struct Reaction
-	{
-		uint64_t field_0;
-		TargetInfo Target;
-	};
-
-
-	MultiHashMap<EntityHandle, Reaction> Reactions;
+	MultiHashMap<EntityHandle, ReactionSource> Reactions;
 };
 
 

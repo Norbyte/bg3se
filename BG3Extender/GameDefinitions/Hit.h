@@ -146,15 +146,15 @@ struct StatsDamage
 	[[bg3::legacy(field_DC)]] uint8_t DamageMultiplierType;
 };
 
+struct HitDamageOverride
+{
+	uint8_t DamageType;
+	int OriginalValue;
+	int OverriddenValue;
+};
+
 struct HitDesc
 {
-	struct OverrideEntry
-	{
-		uint8_t DamageType;
-		int OriginalValue;
-		int OverriddenValue;
-	};
-
 	int TotalDamageDone;
 	stats::DeathType DeathType;
 	DamageType DamageType;
@@ -194,7 +194,7 @@ struct HitDesc
 	[[bg3::legacy(field_180)]] float FallMaxDamage;
 	[[bg3::legacy(field_184)]] float FallWeight;
 	uint8_t field_188;
-	Array<OverrideEntry> OverriddenDamage;
+	Array<HitDamageOverride> OverriddenDamage;
 	Array<DamagePair> DamageList;
 };
 

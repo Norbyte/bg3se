@@ -2,21 +2,20 @@
 
 BEGIN_SE()
 
+struct AiPathProbeGroup
+{
+	Array<int32_t> Values1;
+	Array<float> Values2;
+	Array<glm::vec3> Values3;
+	int field_30;
+};
+
 struct PathingComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(Pathing, "eoc::PathingComponent")
 
-	struct Param
-	{
-		Array<int32_t> Values1;
-		Array<float> Values2;
-		Array<glm::vec3> Values3;
-		int field_30;
-	};
-
-
 	RefMap<FixedString, glm::vec4> VectorParameters;
-	RefMap<FixedString, Param> PathParameters;
+	RefMap<FixedString, AiPathProbeGroup> PathParameters;
 	glm::vec3 field_20;
 	FixedString MovementTiltToRemap;
 	__int64 field_30;

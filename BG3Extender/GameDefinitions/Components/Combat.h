@@ -56,24 +56,24 @@ struct TurnBasedComponent : public BaseComponent
 	Guid Combat;
 };
 
+struct TurnBasedEntityInfo
+{
+	EntityHandle Entity;
+	int32_t Initiative;
+};
+
+struct TurnBasedGroup
+{
+	Array<TurnBasedEntityInfo> Handles;
+	Guid Participant;
+	uint32_t field_28;
+	int32_t Initiative;
+	uint8_t field_30;
+};
+
 struct TurnOrderComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(TurnOrder, "eoc::TurnOrderComponent")
-
-	struct ParticipantHandleInfo
-	{
-		EntityHandle Entity;
-		int32_t Initiative;
-	};
-
-	struct TurnBasedGroup
-	{
-		Array<ParticipantHandleInfo> Handles;
-		Guid Participant;
-		uint32_t field_28;
-		int32_t Initiative;
-		uint8_t field_30;
-	};
 
 	Array<uint64_t> TurnOrderIndices;
 	[[bg3::legacy(Participants)]] Array<TurnBasedGroup> Groups;

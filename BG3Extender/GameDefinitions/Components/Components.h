@@ -22,14 +22,14 @@ struct RulesetModifiersComponent : public BaseComponent
 	MultiHashMap<Guid, std::variant<uint8_t, int32_t, float, FixedString, bool>> Modifiers;
 };
 
+struct ActionResourceDiceValue
+{
+	double Amount;
+	double MaxAmount;
+};
+
 struct ActionResourceEntry
 {
-	struct ActionResourceDiceValue
-	{
-		double Amount;
-		double MaxAmount;
-	};
-
 	Guid ResourceUUID;
 	[[bg3::legacy(ResourceId)]] int Level;
 	double Amount;
@@ -106,26 +106,26 @@ struct OsirisTagComponent : public BaseComponent
 	Array<Guid> Tags;
 };
 
+struct RelationId
+{
+	Guid field_0;
+	EntityHandle field_10;
+
+	inline bool operator == (RelationId const& o) const
+	{
+		return field_0 == o.field_0
+			&& field_10 == o.field_10;
+	}
+};
+
 struct RelationComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(Relation, "eoc::relation::RelationComponent")
 
-	struct GuidAndHandle
-	{
-		Guid field_0;
-		EntityHandle field_10;
-
-		inline bool operator == (GuidAndHandle const& o) const
-		{
-			return field_0 == o.field_0
-				&& field_10 == o.field_10;
-		}
-	};
-
 	MultiHashMap<uint32_t, uint8_t> field_0;
 	MultiHashMap<uint32_t, uint8_t> field_40;
 	MultiHashMap<uint32_t, uint8_t> field_80;
-	MultiHashMap<GuidAndHandle, uint8_t> field_C0;
+	MultiHashMap<RelationId, uint8_t> field_C0;
 	MultiHashMap<uint32_t, uint8_t> field_100;
 	MultiHashSet<uint32_t> field_140;
 	MultiHashSet<uint32_t> field_170;
@@ -143,7 +143,7 @@ struct FactionComponent : public BaseComponent
 
 
 template <>
-inline uint64_t MultiHashMapHash<RelationComponent::GuidAndHandle>(RelationComponent::GuidAndHandle const& v)
+inline uint64_t MultiHashMapHash<RelationId>(RelationId const& v)
 {
 	return HashMulti(v.field_0, v.field_10);
 }
@@ -183,32 +183,32 @@ struct EocLevelComponent : public BaseComponent
 	int Level;
 };
 
+struct ClassInfo
+{
+	Guid ClassUUID;
+	Guid SubClassUUID;
+	int Level;
+};
+
 struct ClassesComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(Classes, "eoc::ClassesComponent")
 
-	struct Class
-	{
-		Guid ClassUUID;
-		Guid SubClassUUID;
-		int Level;
-	};
+	Array<ClassInfo> Classes;
+};
 
-	Array<Class> Classes;
+struct MaterialParameterOverride
+{
+	STDString field_0;
+	FixedString field_18;
 };
 
 struct MaterialParameterOverrideComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(MaterialParameterOverride, "eoc::MaterialParameterOverrideComponent")
 
-	struct Param
-	{
-		STDString field_0;
-		FixedString field_18;
-	};
-
 	Array<Guid> field_0;
-	Array<Param> field_10;
+	Array<MaterialParameterOverride> field_10;
 };
 
 DEFINE_TAG_COMPONENT(eoc, OffStageComponent, OffStage)

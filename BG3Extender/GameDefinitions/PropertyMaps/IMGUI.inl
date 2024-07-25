@@ -1,3 +1,4 @@
+#if defined(ENABLE_IMGUI)
 
 BEGIN_CLS(extui::ImageReference)
 P(Size)
@@ -376,3 +377,4 @@ P_BITMASK(Flags)
 P(OnChange)
 END_CLS()
 
+#endif

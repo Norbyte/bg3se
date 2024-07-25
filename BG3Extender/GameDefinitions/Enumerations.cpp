@@ -35,8 +35,8 @@ namespace bg3se
 #define EV(label, value) { .Name = #label, .Value = (EnumUnderlyingType)value, .Type = EnumRegistrationType::Value },
 #define END_ENUM_NS()
 #define END_ENUM()
-#include <GameDefinitions/Enumerations.inl>
-#include <GameDefinitions/ExternalEnumerations.inl>
+#include <GameDefinitions/Generated/Enumerations.inl>
+#include <GameDefinitions/Generated/ExternalEnumerations.inl>
 #undef BEGIN_BITMASK_NS
 #undef BEGIN_ENUM_NS
 #undef BEGIN_BITMASK

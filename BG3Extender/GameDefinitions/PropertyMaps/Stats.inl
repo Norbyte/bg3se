@@ -1,19 +1,3 @@
-// Wrapper file for including all property map files
-
-#include <GameDefinitions/PropertyMaps/CommonTypes.inl>
-#include <GameDefinitions/PropertyMaps/ServerObjects.inl>
-#include <GameDefinitions/PropertyMaps/SurfaceActions.inl>
-#include <GameDefinitions/PropertyMaps/Statuses.inl>
-#include <GameDefinitions/PropertyMaps/Events.inl>
-
-#if defined(ENABLE_UI)
-#include <GameDefinitions/PropertyMaps/UI.inl>
-#endif
-
-#if defined(ENABLE_IMGUI)
-#include <GameDefinitions/PropertyMaps/IMGUI.inl>
-#endif
-
 // WIP - not exported yet!
 BEGIN_CLS(GlobalSwitches)
 P_RO(UIScaling)
@@ -128,7 +112,7 @@ P(StartLevel)
 P(EndLevel)
 END_CLS()
 
-BEGIN_CLS(stats::TreasureSubTable::Category)
+BEGIN_CLS(stats::TreasureSubTableCategory)
 P(Index)
 P(Frequency)
 P(Frequencies)
@@ -137,7 +121,7 @@ P(IsTreasureTable)
 P(IsTreasureTable2)
 END_CLS()
 
-BEGIN_CLS(stats::TreasureSubTable::DropCount)
+BEGIN_CLS(stats::TreasureSubTableDropCount)
 P(Chance)
 P(Amount)
 END_CLS()
@@ -147,7 +131,7 @@ P(Category)
 P(Items)
 END_CLS()
 
-BEGIN_CLS(stats::TreasureCategory::Item)
+BEGIN_CLS(stats::TreasureCategoryItem)
 P(Name)
 P(Priority)
 P(MinAmount)
@@ -200,5 +184,3 @@ P(ModifierLists)
 P(TreasureTables)
 P(ExtraData)
 END_CLS()
-
-#include <GameDefinitions/PropertyMaps/Generated.inl>

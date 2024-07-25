@@ -8,6 +8,7 @@
 #include <NsCore/Symbol.h>
 #include <NsCore/String.h>
 #include <NsCore/Vector.h>
+#include <NsCore/Interface.h>
 #include <NsMath/Vector.h>
 #include <NsDrawing/Color.h>
 #include <NsDrawing/Point.h>

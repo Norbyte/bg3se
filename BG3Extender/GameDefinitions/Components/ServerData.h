@@ -35,17 +35,17 @@ struct ExperienceGaveOutComponent : public BaseComponent
 
 DEFINE_TAG_COMPONENT(esv::summon, IsUnsummoningComponent, ServerIsUnsummoning)
 
+struct ActivationGroupData
+{
+	FixedString field_0;
+	FixedString field_4;
+};
+
 struct ActivationGroupContainerComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerActivationGroupContainer, "esv::ActivationGroupContainerComponent")
 
-	struct ActivationGroup
-	{
-		FixedString field_0;
-		FixedString field_4;
-	};
-
-	Array<ActivationGroup> Groups;
+	Array<ActivationGroupData> Groups;
 };
 
 struct AnubisTagComponent : public BaseComponent
@@ -98,19 +98,19 @@ struct LeaderComponent : public BaseComponent
 	MultiHashSet<EntityHandle> Followers_M;
 };
 
+struct BreadcrumbEvent
+{
+	int Index;
+	uint8_t field_4;
+	glm::vec3 Position;
+	glm::vec3 CompletedPosition;
+};
+
 struct BreadcrumbComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerBreadcrumb, "esv::BreadcrumbComponent")
 
-	struct Element
-	{
-		int field_0;
-		uint8_t field_4;
-		glm::vec3 field_8;
-		glm::vec3 field_14;
-	};
-
-	std::array<Element, 8> field_18;
+	std::array<BreadcrumbEvent, 8> field_18;
 	glm::vec3 field_118;
 };
 
@@ -141,20 +141,20 @@ struct StateComponent : public BaseComponent
 DEFINE_TAG_COMPONENT(esv::death, DeathContinueComponent, ServerDeathContinue)
 
 
+struct PickpocketAttempt
+{
+	[[bg3::legacy(field_0)]] EntityHandle Target;
+	[[bg3::legacy(field_8)]] EntityHandle Item;
+	[[bg3::legacy(field_10)]] int Amount;
+	bool field_14;
+	EntityHandle field_18;
+};
+
 struct PickpocketComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerPickpocket, "esv::pickpocket::PickpocketComponent")
 
-	struct PickpocketEntry
-	{
-		[[bg3::legacy(field_0)]] EntityHandle Target;
-		[[bg3::legacy(field_8)]] EntityHandle Item;
-		[[bg3::legacy(field_10)]] int Amount;
-		bool field_14;
-		EntityHandle field_18;
-	};
-
-	[[bg3::legacy(field_18)]] Array<PickpocketEntry> Items;
+	[[bg3::legacy(field_18)]] Array<PickpocketAttempt> Items;
 };
 
 struct BaseDataComponent : public BaseComponent
@@ -181,18 +181,18 @@ struct BaseStatsComponent : public BaseComponent
 	int Initiative;
 };
 
+struct BaseWeaponDamage
+{
+	DamageType DamageType;
+	RollDefinition Roll;
+	uint8_t field_10;
+};
+
 struct BaseWeaponComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerBaseWeapon, "esv::BaseWeaponComponent")
 
-	struct Damage
-	{
-		DamageType DamageType;
-		RollDefinition Roll;
-		uint8_t field_10;
-	};
-
-	Array<Damage> DamageList;
+	Array<BaseWeaponDamage> DamageList;
 };
 
 struct BaseProficiencyComponent : public BaseComponent

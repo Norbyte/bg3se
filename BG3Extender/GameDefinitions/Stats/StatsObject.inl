@@ -8,7 +8,7 @@
 
 BEGIN_NS(stats)
 
-Array<Functor*> Object::FunctorGroup::GetFunctors()
+Array<Functor*> FunctorGroup::GetFunctors()
 {
 	return Functors->FunctorList;
 }
@@ -188,7 +188,7 @@ std::optional<Array<FixedString>> Object::GetFlags(FixedString const& attributeN
 	return {};
 }
 
-std::optional<Array<Object::FunctorGroup>*> Object::GetFunctors(FixedString const& attributeName)
+std::optional<Array<FunctorGroup>*> Object::GetFunctors(FixedString const& attributeName)
 {
 	int attributeIndex;
 	auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);

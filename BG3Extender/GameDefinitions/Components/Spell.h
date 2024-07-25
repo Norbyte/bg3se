@@ -1,87 +1,8 @@
 #pragma once
 
 #include <GameDefinitions/Base/Base.h>
+#include <GameDefinitions/RootTemplates.h>
 #include <GameDefinitions/Hit.h>
-#include <GameDefinitions/Interrupt.h>
-
-BEGIN_NS(interrupt)
-
-struct ActionStateComponent : public BaseComponent
-{
-	DEFINE_COMPONENT(InterruptActionState, "eoc::interrupt::ActionStateComponent")
-
-	InterruptEvent Event;
-	Array<ActionEntry> Actions;
-};
-
-struct ConditionallyDisabledComponent : public BaseComponent
-{
-	DEFINE_COMPONENT(InterruptConditionallyDisabled, "eoc::interrupt::ConditionallyDisabledComponent")
-
-	uint8_t Dummy;
-};
-
-struct ContainerComponent : public BaseComponent
-{
-	DEFINE_COMPONENT(InterruptContainer, "eoc::interrupt::ContainerComponent")
-
-	Array<EntityHandle> Interrupts;
-};
-
-struct DataComponent : public BaseComponent
-{
-	DEFINE_COMPONENT(InterruptData, "eoc::interrupt::DataComponent")
-
-	FixedString Interrupt;
-	uint8_t field_4;
-	EntityHandle field_8;
-	EntityHandle field_10;
-	FixedString field_18;
-};
-
-struct DecisionComponent : public BaseComponent
-{
-	DEFINE_COMPONENT(InterruptDecision, "eoc::interrupt::DecisionComponent")
-
-	MultiHashMap<InterruptEvent, uint8_t> Decisions;
-};
-
-struct PreferencesComponent : public BaseComponent
-{
-	DEFINE_COMPONENT(InterruptPreferences, "eoc::interrupt::PreferencesComponent")
-
-	MultiHashMap<FixedString, uint8_t> Preferences;
-};
-
-struct PreparedComponent : public BaseComponent
-{
-	DEFINE_COMPONENT(InterruptPrepared, "eoc::interrupt::PreparedComponent")
-
-	uint8_t Dummy;
-};
-
-struct ZoneComponent : public BaseComponent
-{
-	DEFINE_COMPONENT(InterruptZone, "eoc::interrupt::ZoneComponent")
-
-	Guid field_0;
-};
-
-struct ZoneParticipantComponent : public BaseComponent
-{
-	DEFINE_COMPONENT(InterruptZoneParticipant, "eoc::interrupt::ZoneParticipantComponent")
-
-	MultiHashMap<EntityHandle, uint8_t> field_0;
-};
-
-struct ZoneSourceComponent : public BaseComponent
-{
-	DEFINE_COMPONENT(InterruptZoneSource, "eoc::interrupt::ZoneSourceComponent")
-
-	uint8_t Dummy;
-};
-
-END_NS()
 
 BEGIN_NS(spell)
 
@@ -172,24 +93,24 @@ struct Modification
 	MultiHashSet<SpellId> Spells;
 };
 
+struct SpellMeta
+{
+	SpellMetaId SpellId;
+	EntityHandle ItemHandle;
+	[[bg3::legacy(SelectionType)]] SpellLearningStrategy LearningStrategy;
+	uint8_t field_29;
+	Guid SpellUUID;
+	AbilityId SpellCastingAbility;
+	SpellCooldownType CooldownType;
+	FixedString ContainerSpell;
+	uint8_t field_48;
+};
+
 struct SpellContainerComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(SpellContainer, "eoc::spell::ContainerComponent")
 
-	struct Spell
-	{
-		SpellMetaId SpellId;
-		EntityHandle ItemHandle;
-		[[bg3::legacy(SelectionType)]] SpellLearningStrategy LearningStrategy;
-		uint8_t field_29;
-		Guid SpellUUID;
-		AbilityId SpellCastingAbility;
-		SpellCooldownType CooldownType;
-		FixedString ContainerSpell;
-		uint8_t field_48;
-	};
-
-	Array<Spell> Spells;
+	Array<SpellMeta> Spells;
 };
 
 struct PlayerPrepareSpellComponent : public BaseComponent
@@ -218,23 +139,23 @@ struct AddedSpellsComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(AddedSpells, "eoc::spell::AddedSpellsComponent")
 
-	Array<SpellContainerComponent::Spell> Spells;
+	Array<SpellMeta> Spells;
+};
+
+struct CooldownData
+{
+	SpellId SpellId;
+	SpellCooldownType CooldownType;
+	uint8_t field_29;
+	float Cooldown;
+	Guid field_30;
 };
 
 struct SpellBookCooldownsComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(SpellBookCooldowns, "eoc::spell::BookCooldownsComponent")
 
-	struct Cooldown
-	{
-		SpellId SpellId;
-		SpellCooldownType CooldownType;
-		uint8_t field_29;
-		float Cooldown;
-		Guid field_30;
-	};
-
-	Array<Cooldown> Cooldowns;
+	Array<CooldownData> Cooldowns;
 };
 
 struct LearnedSpellsComponent : public BaseComponent
@@ -252,14 +173,14 @@ struct SpellAiConditionsComponent : public BaseComponent
 	MultiHashMap<FixedString, AiActionConditions> Conditions;
 };
 
-struct SpellBookEntry
+struct CastRequirements
 {
-	struct CastRequirement
-	{
-		uint8_t field_0;
-		int32_t field_4;
-	};
+	uint8_t field_0;
+	int32_t field_4;
+};
 
+struct SpellData
+{
 	SpellId Id;
 	Guid SpellUUID;
 	int32_t field_38;
@@ -268,7 +189,7 @@ struct SpellBookEntry
 	[[bg3::legacy(field_41)]] bool Charged;
 	[[bg3::legacy(field_42)]] SpellPrepareType PrepareType;
 	AbilityId SpellCastingAbility;
-	Array<CastRequirement> CastRequirements;
+	Array<CastRequirements> CastRequirements;
 	// uint32_t NumCharges;
 	// uint32_t UsedCharges;
 };
@@ -278,7 +199,7 @@ struct BookComponent : public BaseComponent
 	DEFINE_COMPONENT(SpellBook, "eoc::spell::BookComponent")
 
 	uint64_t field_0;
-	Array<SpellBookEntry> Spells;
+	Array<SpellData> Spells;
 };
 
 struct BookPreparesComponent : public BaseComponent
@@ -351,17 +272,17 @@ struct MovementComponent : public BaseComponent
 	bool field_18;
 };
 
+struct SpellRollCastEventData
+{
+	[[bg3::legacy(field_0)]] FixedString CastKey;
+	HitDesc Hit;
+};
+
 struct SpellRollData
 {
-	struct CastEventData
-	{
-		[[bg3::legacy(field_0)]] FixedString CastKey;
-		HitDesc Hit;
-	};
-
 	EntityHandle Target;
 	std::optional<EntityHandle> field_8;
-	[[bg3::legacy(Hits)]] Array<CastEventData> Casts;
+	[[bg3::legacy(Hits)]] Array<SpellRollCastEventData> Casts;
 	MultiHashMap<FixedString, int32_t> NameToCastIndex;
 	int NextReaction;
 	uint8_t field_6C;
@@ -443,41 +364,6 @@ struct SyncTargetingComponent : public BaseComponent
 
 END_NS()
 
-BEGIN_NS(esv::interrupt)
-
-struct StartRequestData
-{
-	__int64 field_0;
-	__int64 field_8;
-	bg3se::interrupt::InterruptEvent Event;
-	MultiHashMap<EntityHandle, MultiHashSet<EntityHandle>> MHM_EH_MHS_EH;
-	__int64 field_158;
-};
-
-struct StopRequestData
-{
-	__int64 field_0;
-	__int64 field_8;
-	bg3se::interrupt::InterruptEvent Event;
-	__int64 field_118;
-};
-
-struct CombatLogRequestData
-{
-	__int64 field_0;
-	__int64 field_8;
-	MultiHashMap<EntityHandle, MultiHashSet<EntityHandle>> MHM_EH_MHS_EH;
-};
-
-struct UpdateInterruptorsRequestData
-{
-	__int64 field_0;
-	Array<stats::SpellPrototype::UseCostGroup> UseCosts;
-	MultiHashMap<EntityHandle, MultiHashMap<bg3se::interrupt::InterruptEvent, ConditionRoll>> field_18;
-};
-
-END_NS()
-
 BEGIN_NS(esv::spell)
 
 struct OnDamageSpell
@@ -508,22 +394,22 @@ struct CastState
 	uint8_t field_1C;
 };
 
+struct CastHitDelayInfo
+{
+	int HitNumber;
+	int field_4;
+	int field_8;
+	int field_C;
+	float field_10;
+	FixedString TextKey;
+	int field_18;
+};
+
 struct CastHitDelayComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerSpellCastHitDelay, "esv::spell_cast::CastHitDelayComponent")
 
-	struct CastHitDelay
-	{
-		int HitNumber;
-		int field_4;
-		int field_8;
-		int field_C;
-		float field_10;
-		FixedString TextKey;
-		int field_18;
-	};
-
-	Array<CastHitDelay> CastHitDelays;
+	Array<CastHitDelayInfo> CastHitDelays;
 	float CastTargetHitDelay;
 	float CastTargetHitDelay2;
 };
@@ -551,40 +437,6 @@ struct HitRegisterComponent : public BaseComponent
 	Array<Guid> Hits;
 };
 
-struct InterruptRequestsComponent : public BaseComponent
-{
-	DEFINE_COMPONENT(ServerSpellInterruptRequests, "esv::spell_cast::InterruptRequestsComponent")
-
-	Array<interrupt::StartRequestData> StartRequests;
-	Array<interrupt::StopRequestData> StopRequests;
-	Array<interrupt::CombatLogRequestData> CombatLogRequests;
-	Array<interrupt::UpdateInterruptorsRequestData> UpdateInterruptorsRequests;
-};
-
-struct InterruptRollData
-{
-	__int64 field_0;
-	[[bg3::legacy(field_8)]] Array<FixedRollBonus> FixedRollBonuses;
-};
-
-struct InterruptResult2
-{
-	__int64 field_0;
-	__int64 field_8;
-	__int64 field_10;
-	int field_18;
-	uint8_t field_1C;
-	ConditionRoll Roll;
-};
-
-struct InterruptResultsComponent : public BaseComponent
-{
-	DEFINE_COMPONENT(ServerSpellInterruptResults, "esv::spell_cast::InterruptResultsComponent")
-
-	MultiHashMap<bg3se::interrupt::DamageFunctorKey, bg3se::interrupt::DamageRollAdjustments> Results;
-	Array<InterruptResult2> Results2;
-};
-
 struct StateComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerSpellCastState, "esv::spell_cast::StateComponent")
@@ -593,55 +445,6 @@ struct StateComponent : public BaseComponent
 	int field_4;
 	CastState State;
 	int field_28;
-};
-
-
-END_NS()
-
-BEGIN_NS(esv::interrupt)
-
-struct AddRemoveRequestsComponent : public BaseComponent
-{
-	DEFINE_COMPONENT(ServerInterruptAddRemoveRequests, "esv::interrupt::AddRemoveRequestsComponent")
-
-	MultiHashMap<EntityHandle, uint8_t> Requests;
-};
-
-struct ActionRequestsComponent : public BaseComponent
-{
-	DEFINE_COMPONENT(ServerInterruptActionRequests, "esv::interrupt::ActionRequestsComponent")
-
-	Array<StartRequestData> StartRequests;
-	Array<StopRequestData> StopRequests;
-	Array<CombatLogRequestData> CombatLogRequests;
-};
-
-struct ZoneRequestsComponent : public BaseComponent
-{
-	DEFINE_COMPONENT(ServerInterruptZoneRequests, "esv::interrupt::ZoneRequestsComponent")
-
-	Array<StartRequestData> StartRequests;
-	Array<StopRequestData> StopRequests;
-};
-
-struct InitialParticipantsComponent : public BaseComponent
-{
-	DEFINE_COMPONENT(ServerInterruptInitialParticipants, "esv::interrupt::InitialParticipantsComponent")
-	
-	struct Participant
-	{
-		StartRequestData StartRequest;
-		MultiHashSet<EntityHandle> Entities;
-	};
-
-	MultiHashMap<EntityHandle, Participant> Participants;
-};
-
-struct TurnOrderInZoneComponent : public BaseComponent
-{
-	DEFINE_COMPONENT(ServerInterruptTurnOrderInZone, "esv::interrupt::TurnOrderInZoneComponent")
-	
-	MultiHashSet<EntityHandle> InZone;
 };
 
 END_NS()

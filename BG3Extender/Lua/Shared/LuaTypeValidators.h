@@ -138,9 +138,9 @@ typename std::enable_if_t<std::is_enum_v<T>, bool> Validate(T const* v, Overload
 #if defined(ENABLE_FLAKY_HEURISTICS)
 	if constexpr (IsBitfieldV<T>) {
 		// Disabled for now as it causes unmapped enum elements to be flagged all the time
-		CHECK(((uint64_t)*v & ~BitfieldInfo<T>::GetStore()->AllowedFlags) == 0);
+		CHECK(((uint64_t)*v & ~BitfieldInfo<T>::GetStore().AllowedFlags) == 0);
 	} else {
-		CHECK((int64_t)*v < EnumInfo<T>::GetStore()->Labels.size());
+		CHECK((int64_t)*v < EnumInfo<T>::GetStore().Labels.size());
 	}
 #endif
 

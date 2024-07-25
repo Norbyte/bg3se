@@ -29,7 +29,7 @@ BEGIN_SE()
 #define EV(label, value) label = value,
 #define END_ENUM_NS() }; };
 #define END_ENUM() };
-#include <GameDefinitions/Enumerations.inl>
+#include <GameDefinitions/Generated/Enumerations.inl>
 #undef BEGIN_BITMASK_NS
 #undef BEGIN_ENUM_NS
 #undef BEGIN_BITMASK
@@ -47,8 +47,8 @@ BEGIN_SE()
 #define EV(label, value)
 #define END_ENUM_NS()
 #define END_ENUM()
-#include <GameDefinitions/Enumerations.inl>
-#include <GameDefinitions/ExternalEnumerations.inl>
+#include <GameDefinitions/Generated/Enumerations.inl>
+#include <GameDefinitions/Generated/ExternalEnumerations.inl>
 #undef BEGIN_BITMASK_NS
 #undef BEGIN_ENUM_NS
 #undef BEGIN_BITMASK
@@ -74,8 +74,8 @@ void InitializeEnumerations();
 #define EV(label, value)
 #define END_ENUM_NS()
 #define END_ENUM()
-#include <GameDefinitions/Enumerations.inl>
-#include <GameDefinitions/ExternalEnumerations.inl>
+#include <GameDefinitions/Generated/Enumerations.inl>
+#include <GameDefinitions/Generated/ExternalEnumerations.inl>
 #undef BEGIN_BITMASK_NS
 #undef BEGIN_ENUM_NS
 #undef BEGIN_BITMASK

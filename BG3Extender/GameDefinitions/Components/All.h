@@ -12,6 +12,7 @@
 #include <GameDefinitions/Components/Data.h>
 #include <GameDefinitions/Components/Party.h>
 #include <GameDefinitions/Components/Spell.h>
+#include <GameDefinitions/Components/Interrupt.h>
 #include <GameDefinitions/Components/Status.h>
 #include <GameDefinitions/Components/Tadpole.h>
 #include <GameDefinitions/Components/Visual.h>

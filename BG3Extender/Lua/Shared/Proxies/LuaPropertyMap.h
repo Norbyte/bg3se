@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Lua/Shared/Proxies/LuaStructIDs.h>
+
 BEGIN_NS(lua)
 
 enum class PropertyNotification

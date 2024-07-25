@@ -20,37 +20,43 @@ struct DescriptionInfo
 	TranslatedString LoreDescription;
 };
 
+struct ActionResourceCost
+{
+	Array<Guid> Resources;
+	double Amount;
+	int SubResourceId;
+	Guid ResourceGroup;
+};
+
+struct TextKeyHitCosts
+{
+	FixedString TextKey;
+	Array<ActionResourceCost> Costs;
+};
+
+struct VariableResourceCost
+{
+	Guid Resource;
+	float Amount;
+};
+
+struct SpellPrototypeAnimationData
+{
+	std::array<FixedString, 3> Part0;
+	std::array<FixedString, 3> Part6;
+	std::array<FixedString, 3> Part4;
+	std::array<FixedString, 3> Part1;
+	std::array<FixedString, 3> Part5;
+	Array<std::array<FixedString, 3>> Part2;
+	std::array<FixedString, 3> Part3;
+	std::array<FixedString, 3> Part7;
+	std::array<FixedString, 3> Part8;
+	uint8_t Flags;
+};
+
 struct SpellPrototype : public Noncopyable<SpellPrototype>
 {
 	using InitProc = void(SpellPrototype* self, FixedString const& spellId);
-
-	struct UseCost
-	{
-		Guid Resource;
-		float Amount;
-	};
-
-	struct UseCostGroup
-	{
-		Array<Guid> Resources;
-		double Amount;
-		int SubResourceId;
-		Guid ResourceGroup;
-	};
-
-	struct Animation
-	{
-		std::array<FixedString, 3> Part0;
-		std::array<FixedString, 3> Part6;
-		std::array<FixedString, 3> Part4;
-		std::array<FixedString, 3> Part1;
-		std::array<FixedString, 3> Part5;
-		Array<std::array<FixedString, 3>> Part2;
-		std::array<FixedString, 3> Part3;
-		std::array<FixedString, 3> Part7;
-		std::array<FixedString, 3> Part8;
-		uint8_t Flags;
-	};
 
 	[[bg3::readonly]] int StatsObjectIndex;
 	SpellType SpellTypeId;
@@ -82,16 +88,16 @@ struct SpellPrototype : public Noncopyable<SpellPrototype>
 	DamageType DamageType;
 	SpellPrototype* ParentPrototype;
 	Array<SpellPrototype*> ChildPrototypes;
-	Array<UseCostGroup> UseCostGroups;
-	Array<UseCostGroup> RitualCostGroups;
-	Array<UseCostGroup> DualWieldingUseCostsGroups;
-	Array<UseCost> HitCostGroups;
-	Array<UseCost> UseCosts;
-	Array<UseCost> DualWieldingUseCosts;
-	Array<UseCost> RitualCosts;
+	Array<ActionResourceCost> UseCosts;
+	Array<ActionResourceCost> RitualCosts;
+	Array<ActionResourceCost> DualWieldingUseCosts;
+	Array<TextKeyHitCosts> HitCostGroups;
+	Array<VariableResourceCost> VariableUseCosts;
+	Array<VariableResourceCost> VariableDualWieldingUseCosts;
+	Array<VariableResourceCost> VariableRitualCosts;
 	uint32_t VerbalIntent;
-	Animation SpellAnimation;
-	Animation DualWieldingSpellAnimation;
+	SpellPrototypeAnimationData SpellAnimation;
+	SpellPrototypeAnimationData DualWieldingSpellAnimation;
 	FixedString PrepareEffect;
 	FixedString PrepareSound;
 	FixedString PrepareLoopSound;
@@ -104,7 +110,7 @@ struct SpellPrototype : public Noncopyable<SpellPrototype>
 	Array<FixedString> ContainerSpells;
 	Array<Array<FixedString>> Trajectories;
 	uint32_t RequirementEvents;
-	[[bg3::hidden]] MultiHashMap<uint8_t, void*> field_2E0;
+	[[bg3::hidden]] MultiHashMap<uint8_t, Array<uint64_t>> MetaConditions;
 	FixedString ItemWall;
 	FixedString InterruptPrototype;
 	FixedString CombatAIOverrideSpell;

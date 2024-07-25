@@ -1,7 +1,5 @@
 #pragma once
 
-#include <CoreLib/Base/Base.h>
-
 BEGIN_SE()
 
 struct RuntimeStringHandle

@@ -33,7 +33,7 @@ void RegisterObjectProxyTypeInformation()
 #define GENERATING_TYPE_INFO
 #define ADD_TYPE(prop, type) ty.Members.insert(std::make_pair(FixedString(prop), GetTypeInfoRef<type>()));
 
-#define BEGIN_CLS_TN(clsName, typeName) ([]() { \
+#define BEGIN_CLS_TN(clsName, typeName, id) ([]() { \
 	using TClass = clsName;\
 	auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(#typeName)); \
 	ty.Kind = LuaTypeId::Object; \
@@ -45,7 +45,7 @@ void RegisterObjectProxyTypeInformation()
 	lua::StaticLuaPropertyMap<TClass>::PropertyMap.TypeInfo = &ty; \
 	assert(FixedString(#typeName) == ty.PropertyMap->Name);
 
-#define BEGIN_CLS(clsName) BEGIN_CLS_TN(clsName, clsName)
+#define BEGIN_CLS(clsName, id) BEGIN_CLS_TN(clsName, clsName, id)
 
 #define END_CLS() GetStaticTypeInfo(Overload<TClass>{}).Type = &ty; })();
 #define INHERIT(base) ty.ParentType = GetTypeInfoRef<base>();
@@ -64,7 +64,7 @@ void RegisterObjectProxyTypeInformation()
 #define P_FUN(prop, fun) AddFunctionSignature(ty, #prop, &fun);
 #define P_FALLBACK(getter, setter) ty.HasWildcardProperties = true;
 
-#include <GameDefinitions/PropertyMaps/AllPropertyMaps.inl>
+#include <GameDefinitions/Generated/PropertyMaps.inl>
 
 #undef BEGIN_CLS
 #undef BEGIN_CLS_TN
@@ -111,8 +111,8 @@ void RegisterObjectProxyTypeInformation()
 #define END_ENUM_NS() GetStaticTypeInfo(Overload<TEnum>{}).Type = &ty; })();
 #define END_ENUM() GetStaticTypeInfo(Overload<TEnum>{}).Type = &ty; })(); 
 
-#include <GameDefinitions/Enumerations.inl>
-#include <GameDefinitions/ExternalEnumerations.inl>
+#include <GameDefinitions/Generated/Enumerations.inl>
+#include <GameDefinitions/Generated/ExternalEnumerations.inl>
 
 #undef BEGIN_BITMASK_NS
 #undef BEGIN_ENUM_NS

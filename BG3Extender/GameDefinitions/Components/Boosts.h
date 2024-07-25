@@ -14,17 +14,17 @@ struct BoostConditionComponent : public BaseComponent
 	uint8_t field_1C;
 };
 
+struct BoostEntry
+{
+	BoostType Type;
+	Array<EntityHandle> Boosts;
+};
+
 struct BoostsContainerComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(BoostsContainer, "eoc::BoostsContainerComponent")
 
-	struct BoostTypeInfo
-	{
-		BoostType Type;
-		Array<EntityHandle> Boosts;
-	};
-
-	Array<BoostTypeInfo> Boosts;
+	Array<BoostEntry> Boosts;
 };
 
 struct BoostInfoComponent : public BaseComponent

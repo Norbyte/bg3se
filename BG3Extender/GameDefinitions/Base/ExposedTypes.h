@@ -1,7 +1,5 @@
 #pragma once
 
-#include <GameDefinitions/Base/Base.h>
-
 BEGIN_SE()
 
 struct GameTime

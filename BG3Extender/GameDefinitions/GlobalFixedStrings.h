@@ -1,7 +1,5 @@
 #pragma once
 
-#include <GameDefinitions/Base/Base.h>
-
 namespace bg3se
 {
 	class GlobalFixedStrings

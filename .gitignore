@@ -345,8 +345,5 @@ package-signer.key
 TestModule/Mods/BG3Ext_Testsuite/.vscode/settings.json
 *.symtab
 BG3Extender/Lua.bundle
-BG3Extender/GameDefinitions/PropertyMaps/Generated.inl
-BG3Extender/GameDefinitions/Components/GeneratedComponentTypes.inl
 BG3Extender/LuaScripts/.vscode
-BG3Extender/GameDefinitions/Enumerations.inl
-BG3Extender/GameDefinitions/ExternalEnumerations.inl
+BG3Extender/GameDefinitions/Generated

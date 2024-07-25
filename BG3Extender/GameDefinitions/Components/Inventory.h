@@ -25,17 +25,17 @@ struct IsOwnedComponent : public BaseComponent
 	EntityHandle Owner;
 };
 
+struct ContainerSlotData
+{
+	EntityHandle Item;
+	uint32_t field_8;
+};
+
 struct ContainerComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(InventoryContainer, "eoc::inventory::ContainerComponent")
 
-	struct Item
-	{
-		EntityHandle Item;
-		uint32_t field_8;
-	};
-
-	MultiHashMap<uint16_t, Item> Items;
+	MultiHashMap<uint16_t, ContainerSlotData> Items;
 };
 
 struct MemberComponent : public BaseComponent

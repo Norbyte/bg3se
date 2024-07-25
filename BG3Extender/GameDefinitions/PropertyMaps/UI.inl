@@ -1,3 +1,4 @@
+#if defined(ENABLE_UI)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// BASE CLASSES
@@ -53,7 +54,6 @@ BEGIN_CLS(Noesis::TypeClass)
 INHERIT(Noesis::TypeMeta)
 P_FREE_GETTER(Base, Noesis::TypeHelpers::GetBase)
 P_FREE_GETTER(IsInterface, Noesis::TypeHelpers::IsInterface)
-P_FREE_GETTER(Interfaces, Noesis::TypeHelpers::GetInterfaces)
 P_FREE_GETTER(Properties, Noesis::TypeHelpers::GetProperties)
 P_FREE_GETTER(Events, Noesis::TypeHelpers::GetEvents)
 P_FREE_GETTER(Dependency, Noesis::TypeHelpers::GetDependencyData)
@@ -62,10 +62,6 @@ P_FUN(GetDependencyProperties, Noesis::TypeHelpers::GetDependencyProperties)
 P_FUN(GetRoutedEvents, Noesis::TypeHelpers::GetRoutedEvents)
 // FindProperty
 // FindEvent
-END_CLS()
-
-BEGIN_CLS(Noesis::TypeClass::AncestorInfo)
-P_RO(type)
 END_CLS()
 
 
@@ -380,3 +376,5 @@ PN(KeyStates, keyStates)
 PN(AllowedEffects, allowedEffects)
 PN(Effects, effects)
 END_CLS()
+
+#endif

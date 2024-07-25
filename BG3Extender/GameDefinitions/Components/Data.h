@@ -3,6 +3,7 @@
 #include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/EntitySystem.h>
 #include <GameDefinitions/RootTemplates.h>
+#include <GameDefinitions/Progression.h>
 
 BEGIN_SE()
 
@@ -255,109 +256,6 @@ struct ProficiencyGroupComponent : public BaseComponent
 };
 
 
-struct LevelUpUpgrades
-{
-	struct Selector
-	{
-		[[bg3::legacy(field_0)]] uint8_t Type;
-		Guid Class;
-		Guid Subclass;
-		[[bg3::legacy(field_28)]] int Level;
-		[[bg3::legacy(field_2C)]] bool Multiclass;
-		int field_30;
-	};
-
-	struct FeatSelector : public Selector
-	{
-		Guid Feat;
-		Array<uint8_t> Array_b8;
-		STDString FeatName;
-		int field_80;
-	};
-
-	struct SkillSelector : public Selector
-	{
-		Guid Skill;
-		[[bg3::legacy(Array_b8)]] Array<SkillId> Proficiencies;
-		STDString field_60;
-		int field_80;
-	};
-		
-	struct SkillExpertiseSelector : public Selector
-	{
-		[[bg3::legacy(field_38)]] Guid Skill;
-		uint8_t field_48;
-		[[bg3::legacy(Array_b8)]] Array<SkillId> Expertise;
-		STDString field_60;
-		int field_80;
-	};
-		
-	struct AbilityBonusSelector : public Selector
-	{
-		Guid AbilityBonus;
-		[[bg3::legacy(Array_b8)]] Array<AbilityId> Bonuses;
-		[[bg3::legacy(Array_i32)]] Array<uint32_t> BonusAmounts;
-		[[bg3::legacy(field_60)]] STDString BonusType;
-		int field_80;
-	};
-		
-	struct SpellSelector : public Selector
-	{
-		struct StringPair
-		{
-			FixedString From;
-			FixedString To;
-		};
-
-		Guid SpellList;
-		Array<FixedString> Spells;
-		[[bg3::legacy(Array_FS2)]] Array<StringPair> ReplaceSpells;
-		[[bg3::legacy(field_78)]] STDString SelectorId;
-	};
-		
-	struct PassiveSelector : public Selector
-	{
-		struct StringPair
-		{
-			FixedString From;
-			FixedString To;
-		};
-
-		[[bg3::legacy(SpellList)]] Guid PassiveList;
-		[[bg3::legacy(Spells)]] Array<FixedString> Passives;
-		[[bg3::legacy(Array_FS2)]] Array<StringPair> ReplacePassives;
-		[[bg3::legacy(field_78)]] STDString SelectorId;
-		int field_80;
-	};
-		
-	struct EquipmentSelector : public Selector
-	{
-		[[bg3::legacy(field_38)]] Guid EquipmentList;
-		[[bg3::legacy(Array_FS)]] Array<FixedString> Equipment;
-		[[bg3::legacy(field_60)]] STDString SelectorId;
-		int field_80;
-	};
-
-	Array<FeatSelector> Feats;
-	Array<AbilityBonusSelector> AbilityBonuses;
-	Array<SkillSelector> Skills;
-	[[bg3::legacy(Unknowns2), bg3::legacy(SkillBonuses)]] Array<SkillExpertiseSelector> SkillExpertise;
-	Array<SpellSelector> Spells;
-	[[bg3::legacy(Spells2)]] Array<PassiveSelector> Passives;
-	[[bg3::legacy(Unknowns4)]] Array<EquipmentSelector> Equipment;
-};
-
-struct LevelUpData
-{
-	Guid Class;
-	Guid SubClass;
-	Guid Feat;
-	Guid AccessorySet;
-	std::array<int, 7> Abilities;
-	LevelUpUpgrades Upgrades;
-	[[bg3::legacy(field_B0)]] Array<SpellMetaId> Spells;
-};
-
 struct FloatingComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(Floating, "eoc::FloatingComponent")
@@ -485,40 +383,6 @@ struct SummonLifetimeComponent : public BaseComponent
 	DEFINE_COMPONENT(SummonLifetime, "eoc::summon::LifetimeComponent")
 
 	std::variant<uint8_t, float> Lifetime;
-};
-
-struct HotbarContainerComponent : public BaseComponent
-{
-	DEFINE_COMPONENT(HotbarContainer, "eoc::hotbar::ContainerComponent")
-
-	struct Element
-	{
-		EntityHandle Item;
-		SpellId SpellId;
-		FixedString Passive;
-		uint32_t Slot;
-		bool IsNew;
-	};
-
-	struct Bar
-	{
-		uint8_t Index;
-		uint8_t field_1;
-		Array<Element> Elements;
-		uint8_t Width;
-		uint32_t Height;
-		STDString field_20;
-	};
-
-	MultiHashMap<FixedString, Array<Bar>> Containers;
-	FixedString ActiveContainer;
-};
-
-struct HotbarCurrentDecksComponent : public BaseComponent
-{
-	DEFINE_COMPONENT(HotbarDecks, "eoc::hotbar::CurrentDecksComponent")
-
-	MultiHashMap<FixedString, int32_t> Decks;
 };
 
 struct OriginTagComponent : public BaseComponent
@@ -677,21 +541,21 @@ struct CanSenseComponent : public BaseComponent
 	uint16_t Flags;
 };
 
+struct ConcentrationTarget
+{
+	[[bg3::legacy(field_0)]] EntityHandle Target;
+	[[bg3::legacy(field_8)]] EntityHandle Concentration;
+	[[bg3::legacy(field_10)]] EntityHandle Status;
+	int16_t field_18;
+	bool field_1A;
+};
+
 struct ConcentrationComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(Concentration, "eoc::concentration::ConcentrationComponent")
 
-	struct TargetInfo
-	{
-		[[bg3::legacy(field_0)]] EntityHandle Target;
-		[[bg3::legacy(field_8)]] EntityHandle Concentration;
-		[[bg3::legacy(field_10)]] EntityHandle Status;
-		int16_t field_18;
-		bool field_1A;
-	};
-
 	[[bg3::legacy(field_0)]] EntityHandle Caster;
-	[[bg3::legacy(field_8)]] Array<TargetInfo> Targets;
+	[[bg3::legacy(field_8)]] Array<ConcentrationTarget> Targets;
 	SpellId SpellId;
 };
 
@@ -832,31 +696,31 @@ struct ApprovalRatingsComponent : public BaseComponent
 };
 
 
+struct AttitudeIdentifier
+{
+	EntityHandle field_0;
+	uint8_t field_8;
+	Guid field_10;
+	uint8_t field_20;
+
+	inline bool operator == (AttitudeIdentifier const& o) const
+	{
+		return field_0 == o.field_0
+			&& field_8 == o.field_8
+			&& field_10 == o.field_10
+			&& field_20 == o.field_20;
+	}
+};
+
 struct AttitudesToPlayersComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(AttitudesToPlayers, "eoc::attitude::AttitudesToPlayersComponent")
 
-	struct Key
-	{
-		EntityHandle field_0;
-		uint8_t field_8;
-		Guid field_10;
-		uint8_t field_20;
-
-		inline bool operator == (Key const& o) const
-		{
-			return field_0 == o.field_0
-				&& field_8 == o.field_8
-				&& field_10 == o.field_10
-				&& field_20 == o.field_20;
-		}
-	};
-
-	MultiHashMap<Key, int> Attitudes;
+	MultiHashMap<AttitudeIdentifier, int> Attitudes;
 };
 
 template <>
-inline uint64_t MultiHashMapHash<AttitudesToPlayersComponent::Key>(AttitudesToPlayersComponent::Key const& v)
+inline uint64_t MultiHashMapHash<AttitudeIdentifier>(AttitudeIdentifier const& v)
 {
 	return HashMulti(v.field_0, v.field_8, v.field_10, v.field_20);
 }
@@ -865,19 +729,57 @@ END_SE()
 
 BEGIN_NS(eoc::background)
 
+struct GoalRecord
+{
+	Guid Goal;
+	Guid Entity;
+	FixedString CategoryId;
+	uint64_t field_28;
+};
+
 struct GoalsComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(BackgroundGoals, "eoc::background::GoalsComponent")
 
-	struct Goal
-	{
-		Guid Goal;
-		Guid Entity;
-		FixedString CategoryId;
-		uint64_t field_28;
-	};
+	MultiHashMap<Guid, Array<GoalRecord>> Goals;
+};
 
-	MultiHashMap<Guid, Array<Goal>> Goals;
+END_NS()
+
+BEGIN_NS(eoc::hotbar)
+
+struct Slot
+{
+	EntityHandle Item;
+	SpellId SpellId;
+	FixedString Passive;
+	uint32_t Slot;
+	bool IsNew;
+};
+
+struct Bar
+{
+	uint8_t Index;
+	uint8_t field_1;
+	Array<Slot> Elements;
+	uint8_t Width;
+	uint32_t Height;
+	STDString field_20;
+};
+
+struct ContainerComponent : public BaseComponent
+{
+	DEFINE_COMPONENT(HotbarContainer, "eoc::hotbar::ContainerComponent")
+
+	MultiHashMap<FixedString, Array<Bar>> Containers;
+	FixedString ActiveContainer;
+};
+
+struct HotbarCurrentDecksComponent : public BaseComponent
+{
+	DEFINE_COMPONENT(HotbarDecks, "eoc::hotbar::CurrentDecksComponent")
+
+	MultiHashMap<FixedString, int32_t> Decks;
 };
 
 END_NS()

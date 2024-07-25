@@ -70,8 +70,8 @@ for file in os.listdir('GameDefinitions/ExternalEnumerations'):
     if file.endswith('.inl'):
         external_preprocessor.load_file('GameDefinitions/ExternalEnumerations/' + file)
 
-with open('GameDefinitions/Enumerations.inl', 'w') as f:
+with open('GameDefinitions/Generated/Enumerations.inl', 'w') as f:
     f.write(preprocessor.lines)
     
-with open('GameDefinitions/ExternalEnumerations.inl', 'w') as f:
+with open('GameDefinitions/Generated/ExternalEnumerations.inl', 'w') as f:
     f.write(external_preprocessor.lines)

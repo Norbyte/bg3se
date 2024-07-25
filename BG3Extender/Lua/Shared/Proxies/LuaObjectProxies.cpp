@@ -89,44 +89,17 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 
 // Lua property map and object proxy template specialization declarations
 
-#define BEGIN_CLS(name) LuaPropertyMap<name> StaticLuaPropertyMap<name>::PropertyMap;
-#define BEGIN_CLS_TN(name, typeName) LuaPropertyMap<name> StaticLuaPropertyMap<name>::PropertyMap;
-
-#define END_CLS()
-#define INHERIT(base)
-#define P(prop)
-#define P_NOTIFY(prop, notification)
-#define P_RENAMED(prop, oldName)
-#define P_RO(prop)
-#define P_BITMASK(prop)
-#define P_BITMASK_GETTER_SETTER(prop, getter, setter)
-#define PN(name, prop)
-#define PN_RO(name, prop)
-#define P_GETTER(prop, fun)
-#define P_FREE_GETTER(prop, fun)
-#define P_GETTER_SETTER(prop, getter, setter)
-#define P_FUN(prop, fun)
-#define P_FALLBACK(getter, setter)
-
-#include <GameDefinitions/PropertyMaps/AllPropertyMaps.inl>
-
-#undef BEGIN_CLS
-#undef BEGIN_CLS_TN
-#undef END_CLS
-#undef INHERIT
-#undef P
-#undef P_NOTIFY
-#undef P_RENAMED
-#undef P_RO
-#undef P_BITMASK
-#undef P_BITMASK_GETTER_SETTER
-#undef PN
-#undef PN_RO
-#undef P_GETTER
-#undef P_FREE_GETTER
-#undef P_GETTER_SETTER
-#undef P_FUN
-#undef P_FALLBACK
+#define DECLARE_CLS(id, ...) LuaPropertyMap<__VA_ARGS__> StaticLuaPropertyMap<__VA_ARGS__>::PropertyMap;
+#define DECLARE_CLS_FWD(id, name) LuaPropertyMap<name> StaticLuaPropertyMap<name>::PropertyMap;
+#define DECLARE_CLS_NS_FWD(id, ns, name) LuaPropertyMap<ns::name> StaticLuaPropertyMap<ns::name>::PropertyMap;
+#define DECLARE_CLS_BARE_NS_FWD(id, ns, name) LuaPropertyMap<ns::name> StaticLuaPropertyMap<ns::name>::PropertyMap;
+#define DECLARE_STRUCT_BARE_NS_FWD(id, ns, name) LuaPropertyMap<ns::name> StaticLuaPropertyMap<ns::name>::PropertyMap;
+#include <GameDefinitions/Generated/PropertyMapNames.inl>
+#undef DECLARE_CLS
+#undef DECLARE_CLS_FWD
+#undef DECLARE_CLS_NS_FWD
+#undef DECLARE_CLS_BARE_NS_FWD
+#undef DECLARE_STRUCT_BARE_NS_FWD
 
 // Property registrations
 
@@ -137,7 +110,7 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 
 #define GENERATING_PROPMAP
 
-#define BEGIN_CLS(cls) ([]() { \
+#define BEGIN_CLS(cls, id) ([]() { \
 	using PM = StaticLuaPropertyMap<cls>; \
 	auto& pm = StaticLuaPropertyMap<cls>::PropertyMap; \
 	pm.Init(gExtender->GetPropertyMapManager().RegisterPropertyMap(&pm)); \
@@ -147,7 +120,7 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 		pm.ComponentType = cls::ComponentType; \
 	}
 
-#define BEGIN_CLS_TN(cls, typeName) ([]() { \
+#define BEGIN_CLS_TN(cls, typeName, id) ([]() { \
 	using PM = StaticLuaPropertyMap<cls>; \
 	auto& pm = StaticLuaPropertyMap<cls>::PropertyMap; \
 	pm.Init(gExtender->GetPropertyMapManager().RegisterPropertyMap(&pm)); \
@@ -284,7 +257,7 @@ void AddBitmaskProperty(LuaPropertyMap<TCls>& pm, std::size_t offset,
 
 #define P_FALLBACK(getter, setter) pm.SetFallback(getter, setter);
 
-#include <GameDefinitions/PropertyMaps/AllPropertyMaps.inl>
+#include <GameDefinitions/Generated/PropertyMaps.inl>
 
 #undef GENERATING_PROPMAP
 #undef BEGIN_CLS
