@@ -450,7 +450,7 @@ bool ValidateRef(T* const* v, Overload<T*>)
 template <class T>
 bool ValidateRef(T const* v, Overload<T>)
 {
-	return StaticLuaPropertyMap<T>::PropertyMap.ValidateObject(v);
+	return GetStaticPropertyMap<T>().ValidateObject(v);
 }
 
 template <class... Args>

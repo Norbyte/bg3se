@@ -2,11 +2,24 @@
 
 BEGIN_NS(lua)
 
-void GenericPropertyMap::Init(int registryIndex)
+StructRegistry gStructRegistry;
+
+void StructRegistry::Register(GenericPropertyMap* pm, StructTypeId id)
+{
+	assert(pm->IsInitializing);
+	pm->RegistryIndex = id;
+
+	if (StructsById.size() < (uint32_t)id + 1) {
+		StructsById.resize(id + 1);
+	}
+
+	StructsById[id] = pm;
+}
+
+void GenericPropertyMap::Init()
 {
 	assert(!IsInitializing && !Initialized);
 	IsInitializing = true;
-	RegistryIndex = registryIndex;
 }
 
 void GenericPropertyMap::Finish()

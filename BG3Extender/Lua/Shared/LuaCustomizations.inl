@@ -491,9 +491,4 @@ void LuaReleaseString(lua_State* L, TString* s)
 	}
 }
 
-GenericPropertyMap& LuaGetPropertyMap(int propertyMapIndex)
-{
-	return *gExtender->GetPropertyMapManager().GetPropertyMap(propertyMapIndex);
-}
-
 END_NS()

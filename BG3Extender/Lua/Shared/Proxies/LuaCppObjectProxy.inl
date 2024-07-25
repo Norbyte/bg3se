@@ -76,7 +76,7 @@ void* ObjectProxy::GetRaw(lua_State* L, int index, GenericPropertyMap const& pm)
 		return obj;
 	} else {
 
-		auto& objPm = LuaGetPropertyMap(meta.PropertyMapTag);
+		auto& objPm = *gStructRegistry.Get(meta.PropertyMapTag);
 		if (!objPm.IsA(pm.RegistryIndex)) {
 			luaL_error(L, "Argument %d: Expected object of type '%s', got '%s'", index,
 				pm.Name.GetString(), objPm.Name.GetString());
@@ -93,7 +93,7 @@ void* ObjectProxy::GetRaw(lua_State* L, int index, GenericPropertyMap const& pm)
 GenericPropertyMap& LightObjectProxyByRefMetatable::GetPropertyMap(CppObjectMetadata const& meta)
 {
 	assert(meta.MetatableTag == MetaTag);
-	return LuaGetPropertyMap(meta.PropertyMapTag);
+	return *gStructRegistry.Get(meta.PropertyMapTag);
 }
 
 
@@ -101,7 +101,7 @@ void* LightObjectProxyByRefMetatable::TryGetGeneric(lua_State* L, int index, int
 {
 	CppObjectMetadata meta;
 	if (lua_try_get_cppobject(L, index, MetaTag, meta)) {
-		auto& pm = LuaGetPropertyMap(meta.PropertyMapTag);
+		auto& pm = *gStructRegistry.Get(meta.PropertyMapTag);
 		if (pm.IsA(meta.PropertyMapTag) && meta.Lifetime.IsAlive(L)) {
 			return meta.Ptr;
 		}
@@ -114,7 +114,7 @@ void* LightObjectProxyByRefMetatable::GetGeneric(lua_State* L, int index, int pr
 {
 	CppObjectMetadata meta;
 	if (lua_try_get_cppobject(L, index, meta)) {
-		auto& pm = LuaGetPropertyMap(meta.PropertyMapTag);
+		auto& pm = *gStructRegistry.Get(meta.PropertyMapTag);
 		if (pm.IsA(propertyMapIndex)) {
 			if (!meta.Lifetime.IsAlive(L)) {
 				luaL_error(L, "Attempted to fetch '%s' whose lifetime has expired", GetTypeName(L, meta));
@@ -124,13 +124,13 @@ void* LightObjectProxyByRefMetatable::GetGeneric(lua_State* L, int index, int pr
 			return meta.Ptr;
 		} else {
 			luaL_error(L, "Argument %d: Expected object of type '%s', got '%s'", index,
-				LuaGetPropertyMap(propertyMapIndex).Name.GetString(),
+				gStructRegistry.Get(propertyMapIndex)->Name.GetString(),
 				pm.Name.GetString());
 			return nullptr;
 		}
 	} else {
 		luaL_error(L, "Argument %d: Expected object of type '%s', got '%s'", index,
-			LuaGetPropertyMap(propertyMapIndex).Name.GetString(),
+			gStructRegistry.Get(propertyMapIndex)->Name.GetString(),
 			lua_typename(L, lua_type(L, index)));
 		return nullptr;
 	}
@@ -138,7 +138,7 @@ void* LightObjectProxyByRefMetatable::GetGeneric(lua_State* L, int index, int pr
 
 int LightObjectProxyByRefMetatable::Index(lua_State* L, CppObjectMetadata& self)
 {
-	auto pm = gExtender->GetPropertyMapManager().GetPropertyMap(self.PropertyMapTag);
+	auto pm = gStructRegistry.Get(self.PropertyMapTag);
 	auto prop = get<FixedString>(L, 2);
 	auto result = pm->GetRawProperty(L, self.Lifetime, self.Ptr, prop);
 	switch (result) {
@@ -162,7 +162,7 @@ int LightObjectProxyByRefMetatable::Index(lua_State* L, CppObjectMetadata& self)
 
 int LightObjectProxyByRefMetatable::NewIndex(lua_State* L, CppObjectMetadata& self)
 {
-	auto pm = gExtender->GetPropertyMapManager().GetPropertyMap(self.PropertyMapTag);
+	auto pm = gStructRegistry.Get(self.PropertyMapTag);
 	auto prop = get<FixedString>(L, 2);
 	auto result = pm->SetRawProperty(L, self.Ptr, prop, 3);
 	switch (result) {
@@ -210,7 +210,7 @@ bool LightObjectProxyByRefMetatable::IsEqual(lua_State* L, CppObjectMetadata& se
 
 int LightObjectProxyByRefMetatable::Next(lua_State* L, CppObjectMetadata& self)
 {
-	auto pm = gExtender->GetPropertyMapManager().GetPropertyMap(self.PropertyMapTag);
+	auto pm = gStructRegistry.Get(self.PropertyMapTag);
 	if (lua_type(L, 2) == LUA_TNIL) {
 		return CppObjectProxyHelpers::Next(L, *pm, self.Ptr, self.Lifetime, FixedString{});
 	} else {
@@ -221,7 +221,7 @@ int LightObjectProxyByRefMetatable::Next(lua_State* L, CppObjectMetadata& self)
 
 char const* LightObjectProxyByRefMetatable::GetTypeName(lua_State* L, CppObjectMetadata& self)
 {
-	auto pm = gExtender->GetPropertyMapManager().GetPropertyMap(self.PropertyMapTag);
+	auto pm = gStructRegistry.Get(self.PropertyMapTag);
 	return pm->Name.GetString();
 }
 

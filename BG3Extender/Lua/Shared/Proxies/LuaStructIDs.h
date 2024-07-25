@@ -38,16 +38,17 @@ BEGIN_SE()
 #undef DECLARE_STRUCT_BARE_NS_FWD
 
 
+using StructTypeId = int32_t;
 
 template <class T> struct StructID {};
 
 // Struct ID values
 
-#define DECLARE_CLS(id, ...) template <> struct StructID<__VA_ARGS__> { static constexpr int32_t ID = id; };
-#define DECLARE_CLS_FWD(id, cls) template <> struct StructID<cls> { static constexpr int32_t ID = id; };
-#define DECLARE_CLS_NS_FWD(id, ns, cls) template <> struct StructID<ns::cls> { static constexpr int32_t ID = id; };
-#define DECLARE_CLS_BARE_NS_FWD(id, ns, cls) template <> struct StructID<ns::cls> { static constexpr int32_t ID = id; };
-#define DECLARE_STRUCT_BARE_NS_FWD(id, ns, cls) template <> struct StructID<ns::cls> { static constexpr int32_t ID = id; };
+#define DECLARE_CLS(id, ...) template <> struct StructID<__VA_ARGS__> { static constexpr StructTypeId ID = id; };
+#define DECLARE_CLS_FWD(id, cls) template <> struct StructID<cls> { static constexpr StructTypeId ID = id; };
+#define DECLARE_CLS_NS_FWD(id, ns, cls) template <> struct StructID<ns::cls> { static constexpr StructTypeId ID = id; };
+#define DECLARE_CLS_BARE_NS_FWD(id, ns, cls) template <> struct StructID<ns::cls> { static constexpr StructTypeId ID = id; };
+#define DECLARE_STRUCT_BARE_NS_FWD(id, ns, cls) template <> struct StructID<ns::cls> { static constexpr StructTypeId ID = id; };
 #include <GameDefinitions/Generated/PropertyMapNames.inl>
 #undef DECLARE_CLS
 #undef DECLARE_CLS_FWD

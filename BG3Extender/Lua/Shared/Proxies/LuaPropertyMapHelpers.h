@@ -98,17 +98,4 @@ bool GenericValidateOffsetProperty(void const* obj, std::size_t offset, uint64_t
 
 void InheritProperties(GenericPropertyMap const& base, GenericPropertyMap& child);
 
-template <class T, class T2>
-inline void MarkAsInherited(LuaPropertyMap<T> const& base, LuaPropertyMap<T2>& child)
-{
-	static_assert(std::is_base_of_v<T, T2>, "Can only copy properties from base class");
-	static_assert(static_cast<T*>(reinterpret_cast<T2*>(nullptr)) == reinterpret_cast<T*>(nullptr), "Base and child class should start at same base ptr");
-
-	assert(!child.InheritanceUpdated);
-	assert(child.IsInitializing);
-	assert(child.Parent == nullptr);
-
-	child.Parent = &base;
-}
-
 END_NS()

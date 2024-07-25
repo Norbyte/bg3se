@@ -22,8 +22,8 @@ namespace bg3se::lua
 	{
 		static bool GetProperty(lua_State* L, T* object, LifetimeHandle const& lifetime, FixedString const& prop)
 		{
-			auto const& map = StaticLuaPropertyMap<T>::PropertyMap;
-			auto result = map.GetProperty(L, lifetime, object, prop);
+			auto const& map = GetStaticPropertyMap<T>();
+			auto result = map.GetRawProperty(L, lifetime, object, prop);
 			switch (result) {
 			case PropertyOperationResult::Success:
 				break;
@@ -45,8 +45,8 @@ namespace bg3se::lua
 
 		static bool SetProperty(lua_State* L, T* object, FixedString const& prop, int index)
 		{
-			auto const& map = StaticLuaPropertyMap<T>::PropertyMap;
-			auto result = map.SetProperty(L, object, prop, index);
+			auto const& map = GetStaticPropertyMap<T>();
+			auto result = map.SetRawProperty(L, object, prop, index);
 			switch (result) {
 			case PropertyOperationResult::Success:
 				return true;
@@ -72,14 +72,14 @@ namespace bg3se::lua
 
 		static int Next(lua_State* L, T* object, LifetimeHandle const& lifetime, FixedString const& key)
 		{
-			auto const& map = StaticLuaPropertyMap<T>::PropertyMap;
+			auto const& map = GetStaticPropertyMap<T>();
 			if (!key) {
 				if (!map.IterableProperties.empty()) {
 					StackCheck _(L, 2);
 					auto it = map.IterableProperties.begin();
 					push(L, it.Key());
 					auto const& prop = map.Properties.values()[it.Value()];
-					if (map.GetProperty(L, lifetime, object, prop) != PropertyOperationResult::Success) {
+					if (map.GetRawProperty(L, lifetime, object, prop) != PropertyOperationResult::Success) {
 						push(L, nullptr);
 					}
 
@@ -93,7 +93,7 @@ namespace bg3se::lua
 						StackCheck _(L, 2);
 						push(L, it.Key());
 						auto const& prop = map.Properties.values()[it.Value()];
-						if (map.GetProperty(L, lifetime, object, prop) != PropertyOperationResult::Success) {
+						if (map.GetRawProperty(L, lifetime, object, prop) != PropertyOperationResult::Success) {
 							push(L, nullptr);
 						}
 
@@ -107,7 +107,7 @@ namespace bg3se::lua
 
 		static bool IsA(FixedString const& typeName)
 		{
-			auto const& map = StaticLuaPropertyMap<T>::PropertyMap;
+			auto const& map = GetStaticPropertyMap<T>();
 			if (map.Name == typeName) {
 				return true;
 			}
@@ -147,7 +147,7 @@ namespace bg3se::lua
 
 		FixedString const& GetTypeName() const override
 		{
-			return StaticLuaPropertyMap<T>::PropertyMap.Name;
+			return GetStaticPropertyMap<T>().Name;
 		}
 
 		bool GetProperty(lua_State* L, FixedString const& prop) override
@@ -172,7 +172,7 @@ namespace bg3se::lua
 
 		GenericPropertyMap& GetPropertyMap() override
 		{
-			return StaticLuaPropertyMap<T>::PropertyMap;
+			return GetStaticPropertyMap<T>();
 		}
 
 	private:
@@ -208,7 +208,7 @@ namespace bg3se::lua
 
 		FixedString const& GetTypeName() const override
 		{
-			return StaticLuaPropertyMap<T>::PropertyMap.Name;
+			return GetStaticPropertyMap<T>().Name;
 		}
 
 		bool GetProperty(lua_State* L, FixedString const& prop) override
@@ -233,7 +233,7 @@ namespace bg3se::lua
 
 		GenericPropertyMap& GetPropertyMap() override
 		{
-			return StaticLuaPropertyMap<T>::PropertyMap;
+			return GetStaticPropertyMap<T>();
 		}
 
 	private:
@@ -251,7 +251,7 @@ namespace bg3se::lua
 		template <class T>
 		inline static ObjectProxyRefImpl<T>* MakeRef(lua_State* L, T* object, LifetimeHandle const& lifetime)
 		{
-			if (!StaticLuaPropertyMap<T>::PropertyMap.ValidatePropertyMap(object)) {
+			if (!GetStaticPropertyMap<T>().ValidatePropertyMap(object)) {
 				push(L, nullptr);
 				return nullptr;
 			} else {
@@ -306,7 +306,7 @@ namespace bg3se::lua
 				return nullptr;
 			}
 
-			if (GetImpl()->IsA(StaticLuaPropertyMap<T>::PropertyMap.Name)) {
+			if (GetImpl()->IsA(GetStaticPropertyMap<T>().Name)) {
 				return reinterpret_cast<T*>(GetImpl()->GetRaw(L));
 			} else {
 				return nullptr;
@@ -316,7 +316,7 @@ namespace bg3se::lua
 		template <class T>
 		inline static T* Get(lua_State* L, int index)
 		{
-			auto const& typeName = StaticLuaPropertyMap<T>::PropertyMap.Name;
+			auto const& typeName = GetStaticPropertyMap<T>().Name;
 			auto obj = GetRaw(L, index, typeName);
 			return reinterpret_cast<T*>(obj);
 		}
@@ -324,7 +324,7 @@ namespace bg3se::lua
 		template <class T>
 		inline static T* TryGet(lua_State* L, int index)
 		{
-			auto const& typeName = StaticLuaPropertyMap<T>::PropertyMap.Name;
+			auto const& typeName = GetStaticPropertyMap<T>().Name;
 			auto obj = TryGetRaw(L, index, typeName);
 			return reinterpret_cast<T*>(obj);
 		}
@@ -354,7 +354,7 @@ namespace bg3se::lua
 	inline T* checked_get_proxy(lua_State* L, int index)
 	{
 		auto proxy = Userdata<LegacyObjectProxy>::CheckUserData(L, index);
-		auto const& typeName = StaticLuaPropertyMap<T>::PropertyMap.Name;
+		auto const& typeName = GetStaticPropertyMap<T>().Name;
 		if (proxy->GetImpl()->IsA(typeName)) {
 			auto obj = proxy->Get<T>(L);
 			if (obj == nullptr) {

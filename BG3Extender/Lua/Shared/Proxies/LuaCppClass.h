@@ -12,9 +12,6 @@ class SetProxyImplBase;
 class CppPropertyMapManager
 {
 public:
-	int RegisterPropertyMap(GenericPropertyMap* mt);
-	GenericPropertyMap* GetPropertyMap(int index);
-	void UpdateInheritance();
 	void RegisterComponents(ecs::EntitySystemHelpersBase& helpers);
 	
 	int RegisterArrayProxy(ArrayProxyImplBase* mt);
@@ -27,7 +24,6 @@ public:
 	SetProxyImplBase* GetSetProxy(int index);
 
 private:
-	Array<GenericPropertyMap*> propertyMaps_;
 	Array<ArrayProxyImplBase*> arrayProxies_;
 	Array<MapProxyImplBase*> mapProxies_;
 	Array<SetProxyImplBase*> setProxies_;

@@ -12,7 +12,7 @@ class IMGUIObjectManager;
 #define DECL_UI_TYPE(ty) static constexpr auto ObjectType = IMGUIObjectType::ty; \
     inline IMGUIObjectType GetType() override { return ObjectType; } \
     inline char const* GetTypeName() override { return #ty; } \
-    inline lua::GenericPropertyMap& GetRTTI() override { return lua::StaticLuaPropertyMap<ty>::PropertyMap; }
+    inline lua::GenericPropertyMap& GetRTTI() override { return lua::GetStaticPropertyMap<ty>(); }
 
 
 enum class IMGUIObjectType : uint8_t

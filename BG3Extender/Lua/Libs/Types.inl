@@ -19,7 +19,7 @@ std::optional<STDString> GetCppObjectTypeName(lua_State * L, int index)
 	switch (meta.MetatableTag) {
 	case MetatableTag::ObjectProxyByRef:
 	{
-		auto propertyMap = gExtender->GetPropertyMapManager().GetPropertyMap(meta.PropertyMapTag);
+		auto propertyMap = gStructRegistry.Get(meta.PropertyMapTag);
 		return propertyMap->Name.GetString();
 	}
 
@@ -118,7 +118,7 @@ TypeInformation const* GetCppObjectType(lua_State * L, int index)
 	switch (meta.MetatableTag) {
 	case MetatableTag::ObjectProxyByRef:
 	{
-		auto propertyMap = gExtender->GetPropertyMapManager().GetPropertyMap(meta.PropertyMapTag);
+		auto propertyMap = gStructRegistry.Get(meta.PropertyMapTag);
 		return propertyMap->TypeInfo;
 	}
 
