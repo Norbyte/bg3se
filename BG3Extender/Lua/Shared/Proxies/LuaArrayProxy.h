@@ -18,6 +18,9 @@ BY_VAL(ecs::EntityRef);
 BY_VAL(FixedString);
 BY_VAL(STDString);
 BY_VAL(STDWString);
+BY_VAL(std::monostate);
+BY_VAL(StringView);
+BY_VAL(WStringView);
 #if defined(ENABLE_UI)
 BY_VAL(Noesis::String);
 BY_VAL(Noesis::Symbol);

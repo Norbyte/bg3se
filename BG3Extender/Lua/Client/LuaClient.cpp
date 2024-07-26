@@ -4,6 +4,7 @@
 #include <Lua/Shared/LuaModule.h>
 #include <Extender/ScriptExtender.h>
 #include <Extender/Client/ExtensionStateClient.h>
+#include <Lua/Client/LuaOsirisBinding.h>
 #include "resource.h"
 #if defined(ENABLE_UI)
 #include <Lua/Client/UIEvents.inl>
@@ -33,6 +34,9 @@ LifetimePool& GetClientLifetimePool()
 void ExtensionLibraryClient::Register(lua_State * L)
 {
 	ExtensionLibrary::Register(L);
+	AsyncOsiFunctionNameProxy::RegisterMetatable(L);
+	RegisterNameResolverMetatable(L);
+	CreateNameResolver(L);
 }
 
 void ExtensionLibraryClient::RegisterLib(lua_State * L)

@@ -4,6 +4,7 @@
 #if defined(ENABLE_UI)
 #include <Lua/Client/UIEvents.h>
 #endif
+#include <Lua/Client/LuaOsirisBinding.h>
 
 namespace bg3se::ecl::lua
 {
@@ -55,6 +56,14 @@ namespace bg3se::ecl::lua
 	public:
 		void Register(lua_State * L) override;
 		void RegisterLib(lua_State * L) override;
+
+	private:
+		static char const * const NameResolverMetatableName;
+
+		void RegisterNameResolverMetatable(lua_State * L);
+		void CreateNameResolver(lua_State * L);
+
+		static int LuaIndexResolverTable(lua_State* L);
 	};
 
 

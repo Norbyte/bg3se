@@ -58,6 +58,81 @@ void ExtenderProtocol::ProcessExtenderMessage(net::MessageContext& context, net:
 		break;
 	}
 
+	case net::MessageWrapper::kS2COsirisQueryResponse:
+	{
+		ecl::LuaClientPin pin(ecl::ExtensionState::Get());
+		if (pin)
+		{
+			const auto& response = msg.s2c_osiris_query_response();
+
+			if (response.response_case() == net::MsgS2COsirisQueryResponse::ResponseCase::kError)
+			{
+				pin->ResolveOsirisFuture(response.responseid(), response.error());
+			}
+			else if (!response.succeeded())
+			{
+				pin->ResolveOsirisFuture(response.responseid(), "Unknown error occurred in query");
+			}
+			else
+			{
+				Array<Array<std::variant<std::monostate, StringView, int64_t, float>>> respdata;
+
+				respdata.Reallocate(response.results_size());
+
+				bool resultError = false;
+
+				for (const auto& result : response.results())
+				{
+					respdata.Add({});
+					auto& currResp = *(respdata.begin() + respdata.size() - 1);
+					currResp.Reallocate(result.num_retvals());
+					for (const auto& val : result.retvals())
+					{
+						// Note: for some reason assigning to/emplacing to a variant crashes the game.
+						// So... don't
+						while (val.index() > currResp.size())
+						{
+							currResp.Add({});
+						}
+						switch (val.val_case())
+						{
+							case std::remove_cvref_t<decltype(val)>::ValCase::kIntv:
+								currResp.Add({val.intv()});
+								break;
+							case std::remove_cvref_t<decltype(val)>::ValCase::kNumv:
+								currResp.Add({val.numv()});
+								break;
+							case std::remove_cvref_t<decltype(val)>::ValCase::kStrv:
+								currResp.Add({val.strv()});
+								break;
+						}
+					}
+
+					while (currResp.size() < result.num_retvals())
+					{
+						currResp.Add({});
+					}
+
+					if (currResp.size() > result.num_retvals())
+					{
+						resultError = true;
+						break;
+					}
+				}
+
+				if (resultError)
+				{
+					pin->ResolveOsirisFuture(response.responseid(), "Malformed response: values not in order");
+				}
+				else
+				{
+					pin->ResolveOsirisFuture(response.responseid(), respdata);
+				}
+			}
+		}
+		break;
+	}
+
 	default:
 		OsiErrorS("Unknown extension message type received!");
 	}

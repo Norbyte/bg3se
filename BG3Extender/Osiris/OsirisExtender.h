@@ -38,6 +38,13 @@ public:
 	void LogWarning(std::string_view msg);
 	void LogMessage(std::string_view msg);
 
+	Function const* LookupFunction(const STDString& name, uint32_t arity);
+	
+	inline ValueType GetBaseType(ValueType type)
+	{
+		return (*GetGlobals().Types)->ResolveAlias((uint16_t)type);
+	}
+
 	inline OsirisStaticGlobals const & GetGlobals() const
 	{
 		return wrappers_.Globals;

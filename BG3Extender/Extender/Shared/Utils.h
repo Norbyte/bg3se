@@ -13,19 +13,19 @@ BEGIN_SE()
 #if !defined(OSI_NO_DEBUG_LOG)
 #define LuaError(msg) { \
 	std::stringstream ss; \
-	ss << __FUNCTION__ "(): " msg; \
+	ss << __FUNCTION__ "(): " << msg; \
 	LogLuaError(ss.str()); \
 }
 
 #define OsiError(msg) { \
 	std::stringstream ss; \
-	ss << __FUNCTION__ "(): " msg; \
+	ss << __FUNCTION__ "(): " << msg; \
 	LogOsirisError(ss.str()); \
 }
 
 #define OsiWarn(msg) { \
 	std::stringstream ss; \
-	ss << __FUNCTION__ "(): " msg; \
+	ss << __FUNCTION__ "(): " << msg; \
 	LogOsirisWarning(ss.str()); \
 }
 

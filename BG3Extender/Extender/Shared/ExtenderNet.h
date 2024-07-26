@@ -12,8 +12,9 @@ public:
 	static constexpr uint32_t MaxPayloadLength = 0xfffff;
 
 	static constexpr uint32_t VerInitial = 1;
+	static constexpr uint32_t VerClientOsirisQuery = VerInitial + 1;
 	// Version of protocol, increment each time the protobuf changes
-	static constexpr uint32_t ProtoVersion = VerInitial;
+	static constexpr uint32_t ProtoVersion = VerClientOsirisQuery;
 
 	ExtenderMessage();
 	~ExtenderMessage() override;
