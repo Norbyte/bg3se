@@ -9,8 +9,13 @@
  - [Console](#console)
     - [Multiline Mode](#multiline-mode)
     - [Saving output to a file](#save-console-output)
- - [Calling Lua from Osiris](#calling-lua-from-osiris)
-    * [Capturing Events/Calls](#l2o_captures)
+- [General Lua Rules](#lua-general)
+    * [Object Scopes](#lua-scopes)
+    * [Object Behavior](#lua-objects)
+    * [Parameter Passing](#lua-parameters)
+    * [Enumerations](#lua-enumerations)
+    * [Bitfields](#lua-bitfields)
+    * [Events](#lua-events)
  - [Calling Osiris from Lua](#calling-osiris-from-lua)
     * [Calls](#o2l_calls)
     * [Queries](#o2l_queries)
@@ -18,13 +23,8 @@
     * [PROCs](#o2l_procs)
     * [User Queries](#o2l_qrys)
     * [Databases](#o2l_dbs)
- - [General Lua Rules](#lua-general)
-    * [Object Scopes](#lua-scopes)
-    * [Object Behavior](#lua-objects)
-    * [Parameter Passing](#lua-parameters)
-    * [Enumerations](#lua-enumerations)
-    * [Bitfields](#lua-bitfields)
-    * [Events](#lua-events)
+ - [Calling Lua from Osiris](#calling-lua-from-osiris)
+    * [Capturing Events/Calls](#l2o_captures)
  - [Stats](#stats)
  - [ECS](#ecs)
  - [Networking](#networking)
@@ -474,8 +474,8 @@ local handlerId = Ext.Events.GameStateChanged:Subscribe(handler)
 ...
 Ext.Events.GameStateChanged:Unsubscribe(handlerId)
 ```
-
-## Calling Osiris from Lua <sup>S</sup>
+<a id="calling-osiris-from-lua"></a>
+## Calling Osiris from Lua
 
 Lua server contexts have a special global table called `Osi` that contains every Osiris symbol. In addition, built-in engine functions (calls, queries, events) are also added to the global table.
 
@@ -568,6 +568,9 @@ Osi.DB_GiveTemplateFromNpcToPlayerDialogEvent:Delete(nil, nil, nil)
 -- Delete rows where the first column is CON_Drink_Cup_A_Tea_080d0e93-12e0-481f-9a71-f0e84ac4d5a9
 Osi.DB_GiveTemplateFromNpcToPlayerDialogEvent:Delete("CON_Drink_Cup_A_Tea_080d0e93-12e0-481f-9a71-f0e84ac4d5a9", nil, nil)
 ```
+
+<a id="calling-lua-from-osiris"></a>
+## Calling Lua from Osiris
 
 <a id="l2o_captures"></a>
 ### Capturing Events/Calls
@@ -772,21 +775,21 @@ NetMessages can be sent from either the server or client. They consist of a chan
 ```lua
 --Server context
 local channel = "MyModChannel_SomethingSpecific"
-local payload = {["somedata"]=somevalue,["supertable"]={1,2,3,4,5}}
+local payload = {["somedata"] = somevalue, ["supertable"]={1,2,3,4,5}}
 
 --We need to stringify our payload in this case since it is a table and not a string
 payload=Ext.Json.Stringify(payload)
 
 --If we want to send the message to ALL the clients
-Ext.ServerNet.BroadcastMessage(channel,payload)
+Ext.ServerNet.BroadcastMessage(channel, payload)
 
 --If we wanted to send the message to a specific userId
-local somePeer=9999
+local somePeer = 9999
 Ext.ServerNet.PostMessageToUser(somePeer, channel, payload)
 
 --If we wanted to send the message to the client controlling a specific character
 local someUUID = "c774d764-4a17-48dc-b470-32ace9ce447d" -- Wyll's uuid
-Ext.ServerNet.PostMessageToClient(characterUUID,channel,payload)
+Ext.ServerNet.PostMessageToClient(characterUUID, channel, payload)
 
 ```
 
@@ -795,7 +798,7 @@ Ext.ServerNet.PostMessageToClient(characterUUID,channel,payload)
 local channel = "MyModChannel_SomethingSpecific"
 local payload = "I'm a cute message"
 --No need to stringify since we're sending a simple string
-Ext.ClientNet.PostMessageToServer(channel,payload)
+Ext.ClientNet.PostMessageToServer(channel, payload)
 ```
 
 
@@ -811,9 +814,9 @@ To handle incoming messages, we can listen to a channel on either side and use t
 --Client context
 local channel = "MyModChannel_SomethingSpecific"
 Ext.Events.NetMessage:Subscribe(function(data)
- if data.Channel==channel then
+ if data.Channel == channel then
   --Parse the string back into a table if it was stringified
-  local data=Ext.Json.Parse(data.Payload)
+  local data = Ext.Json.Parse(data.Payload)
   --Do whatever you want with the data in the client context
   someFunction(data)
  end
@@ -824,9 +827,9 @@ end)
 ```lua
 --wrapper for Ext.Events.NetMessage:Subscribe(function(data) ...end) 
 --which removes the need to check for the channel
-Ext.RegisterNetListener(channel, function(channel,payload,userID)
+Ext.RegisterNetListener(channel, function(channel, payload, userID)
   --Parse the string back into a table
-  local data=Ext.Json.Parse(payload)
+  local data = Ext.Json.Parse(payload)
   --Do whatever you want with the data in the client context
   someFunction(data)
 end)
