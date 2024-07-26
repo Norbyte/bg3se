@@ -32,6 +32,11 @@ public:
 		return "BootstrapClient.lua";
 	}
 
+	inline char const * GetUnconditionalFileName() override
+	{
+		return "OverrideClient.lua";
+	}
+
 protected:
 	friend LuaStatePin<ExtensionState, lua::ClientState>;
 	std::unique_ptr<lua::ClientState> Lua;
