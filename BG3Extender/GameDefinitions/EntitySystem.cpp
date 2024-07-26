@@ -328,6 +328,16 @@ EntitySystemHelpersBase::EntitySystemHelpersBase()
 	systemIndices_{ UndefinedIndex }
 {}
 
+std::optional<ComponentTypeIndex> EntitySystemHelpersBase::GetComponentIndex(ExtComponentType type) const
+{
+	auto idx = components_[(unsigned)type].ComponentIndex;
+	if (idx != UndefinedIndex && GetEntityWorld()->ComponentOps[idx.Value()] != nullptr) {
+		return idx;
+	} else {
+		return {};
+	}
+}
+
 STDString SimplifyComponentName(StringView name)
 {
 	STDString key{ name };
@@ -877,12 +887,12 @@ void ClientEntitySystemHelpers::Setup()
 
 
 
-EntityWorld* ServerEntitySystemHelpers::GetEntityWorld()
+EntityWorld* ServerEntitySystemHelpers::GetEntityWorld() const
 {
 	return GetStaticSymbols().GetServerEntityWorld();
 }
 
-EntityWorld* ClientEntitySystemHelpers::GetEntityWorld()
+EntityWorld* ClientEntitySystemHelpers::GetEntityWorld() const
 {
 	return GetStaticSymbols().GetClientEntityWorld();
 }

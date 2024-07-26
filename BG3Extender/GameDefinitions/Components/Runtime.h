@@ -2,21 +2,20 @@
 
 BEGIN_SE()
 
+struct AiPathProbeGroup
+{
+	Array<int32_t> Values1;
+	Array<float> Values2;
+	Array<glm::vec3> Values3;
+	int field_30;
+};
+
 struct PathingComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(Pathing, "eoc::PathingComponent")
 
-	struct Param
-	{
-		Array<int32_t> Values1;
-		Array<float> Values2;
-		Array<glm::vec3> Values3;
-		int field_30;
-	};
-
-
 	RefMap<FixedString, glm::vec4> VectorParameters;
-	RefMap<FixedString, Param> PathParameters;
+	RefMap<FixedString, AiPathProbeGroup> PathParameters;
 	glm::vec3 field_20;
 	FixedString MovementTiltToRemap;
 	__int64 field_30;
@@ -48,10 +47,11 @@ struct AnubisExecutorComponent : public BaseProxyComponent
 {
 	DEFINE_COMPONENT(ServerAnubisExecutor, "esv::AnubisExecutorComponent")
 
-	__int64 field_18;
-	__int64 field_20;
-	uint8_t field_28;
-	uint8_t field_29;
+	[[bg3::hidden]] void* field_0;
+	[[bg3::hidden]] void* Task;
+	uint8_t field_10;
+	uint8_t field_11;
+	[[bg3::hidden]] void* field_18; // Unknown?
 };
 
 struct ReplicationDependencyComponent : public BaseComponent

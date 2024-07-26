@@ -7,7 +7,7 @@ BEGIN_SE()
 // Type information registration
 
 template <class UnderlyingType>
-void AddBitmaskTypeInfo(TypeInformation& ty, Map<FixedString, UnderlyingType> const& values)
+void AddBitfieldTypeInfo(TypeInformation& ty, Map<FixedString, UnderlyingType> const& values)
 {
 	for (auto const& label : values) {
 		ty.Members.insert(std::make_pair(label.Key, GetTypeInfoRef<bool>()));
@@ -15,9 +15,9 @@ void AddBitmaskTypeInfo(TypeInformation& ty, Map<FixedString, UnderlyingType> co
 }
 
 template <class T>
-void AddBitmaskTypeInfo(TypeInformation& ty)
+void AddBitfieldTypeInfo(TypeInformation& ty)
 {
-	AddBitmaskTypeInfo(ty, EnumInfo<T>::Store->Values);
+	AddBitfieldTypeInfo(ty, BitfieldInfo<T>::GetStore().Values);
 }
 
 template <class Fun>
@@ -33,19 +33,19 @@ void RegisterObjectProxyTypeInformation()
 #define GENERATING_TYPE_INFO
 #define ADD_TYPE(prop, type) ty.Members.insert(std::make_pair(FixedString(prop), GetTypeInfoRef<type>()));
 
-#define BEGIN_CLS_TN(clsName, typeName) ([]() { \
+#define BEGIN_CLS_TN(clsName, typeName, id) ([]() { \
 	using TClass = clsName;\
 	auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(#typeName)); \
 	ty.Kind = LuaTypeId::Object; \
 	ty.NativeName = FixedString(typeid(TClass).name()); \
-	ty.PropertyMap = &lua::StaticLuaPropertyMap<TClass>::PropertyMap; \
+	ty.PropertyMap = &lua::GetStaticPropertyMap<TClass>(); \
 	if constexpr (std::is_base_of_v<BaseComponent, TClass> && !std::is_same_v<BaseComponent, TClass> && !std::is_same_v<BaseProxyComponent, TClass>) { \
 		ty.ComponentName = FixedString(TClass::ComponentName); \
 	} \
-	lua::StaticLuaPropertyMap<TClass>::PropertyMap.TypeInfo = &ty; \
+	ty.PropertyMap->TypeInfo = &ty; \
 	assert(FixedString(#typeName) == ty.PropertyMap->Name);
 
-#define BEGIN_CLS(clsName) BEGIN_CLS_TN(clsName, clsName)
+#define BEGIN_CLS(clsName, id) BEGIN_CLS_TN(clsName, clsName, id)
 
 #define END_CLS() GetStaticTypeInfo(Overload<TClass>{}).Type = &ty; })();
 #define INHERIT(base) ty.ParentType = GetTypeInfoRef<base>();
@@ -54,8 +54,8 @@ void RegisterObjectProxyTypeInformation()
 #define P_RENAMED(prop, oldName) ty.Members.insert(std::make_pair(FixedString(#prop), GetTypeInfoRef<decltype(TClass::prop)>())); \
 	ty.Members.insert(std::make_pair(FixedString(#oldName), GetTypeInfoRef<decltype(TClass::prop)>()));
 #define P_RO(prop) ty.Members.insert(std::make_pair(FixedString(#prop), GetTypeInfoRef<decltype(TClass::prop)>()));
-#define P_BITMASK(prop) AddBitmaskTypeInfo<decltype(TClass::prop)>(ty);
-#define P_BITMASK_GETTER_SETTER(prop, getter, setter) AddBitmaskTypeInfo<decltype(TClass::prop)>(ty);
+#define P_BITMASK(prop) AddBitfieldTypeInfo<decltype(TClass::prop)>(ty);
+#define P_BITMASK_GETTER_SETTER(prop, getter, setter) AddBitfieldTypeInfo<decltype(TClass::prop)>(ty);
 #define PN(name, prop) ty.Members.insert(std::make_pair(FixedString(#name), GetTypeInfoRef<decltype(TClass::prop)>()));
 #define PN_RO(name, prop) ty.Members.insert(std::make_pair(FixedString(#name), GetTypeInfoRef<decltype(TClass::prop)>()));
 #define P_GETTER(prop, fun) ty.Members.insert(std::make_pair(FixedString(#prop), GetTypeInfoRef<decltype(GetFunctionReturnType(&TClass::fun))>()));
@@ -64,7 +64,7 @@ void RegisterObjectProxyTypeInformation()
 #define P_FUN(prop, fun) AddFunctionSignature(ty, #prop, &fun);
 #define P_FALLBACK(getter, setter) ty.HasWildcardProperties = true;
 
-#include <GameDefinitions/PropertyMaps/AllPropertyMaps.inl>
+#include <GameDefinitions/Generated/PropertyMaps.inl>
 
 #undef BEGIN_CLS
 #undef BEGIN_CLS_TN
@@ -85,44 +85,40 @@ void RegisterObjectProxyTypeInformation()
 #undef P_FALLBACK
 
 
-#define BEGIN_BITMASK_NS(NS, T, luaName, type) ([]() { \
+#define BEGIN_BITMASK_NS(NS, T, luaName, type, id) ([]() { \
 	using TEnum = NS::T; \
 	auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(#luaName)); \
 	ty.Kind = LuaTypeId::Enumeration; \
 	ty.IsBitfield = true;
 
-#define BEGIN_ENUM_NS(NS, T, luaName, type) ([]() { \
+#define BEGIN_ENUM_NS(NS, T, luaName, type, id) ([]() { \
 	using TEnum = NS::T; \
 	auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(#luaName)); \
 	ty.Kind = LuaTypeId::Enumeration;
 
-#define BEGIN_BITMASK(T, type) ([]() { \
+#define BEGIN_BITMASK(T, type, id) ([]() { \
 	using TEnum = T; \
 	auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(#T)); \
 	ty.Kind = LuaTypeId::Enumeration; \
 	ty.IsBitfield = true;
 
-#define BEGIN_ENUM(T, type) ([]() { \
+#define BEGIN_ENUM(T, type, id) ([]() { \
 	using TEnum = T; \
 	auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(#T)); \
 	ty.Kind = LuaTypeId::Enumeration;
 
-#define E(label) ty.EnumValues.insert(std::make_pair(FixedString(#label), (uint64_t)TEnum::label));
 #define EV(label, value) ty.EnumValues.insert(std::make_pair(FixedString(#label), (uint64_t)TEnum::label));
-#define ER(label, value) ty.EnumValues.insert(std::make_pair(FixedString(#label), (uint64_t)value));
 #define END_ENUM_NS() GetStaticTypeInfo(Overload<TEnum>{}).Type = &ty; })();
 #define END_ENUM() GetStaticTypeInfo(Overload<TEnum>{}).Type = &ty; })(); 
 
-#include <GameDefinitions/Enumerations.inl>
-#include <GameDefinitions/ExternalEnumerations.inl>
+#include <GameDefinitions/Generated/Enumerations.inl>
+#include <GameDefinitions/Generated/ExternalEnumerations.inl>
 
 #undef BEGIN_BITMASK_NS
 #undef BEGIN_ENUM_NS
 #undef BEGIN_BITMASK
 #undef BEGIN_ENUM
-#undef E
 #undef EV
-#undef ER
 #undef END_ENUM_NS
 #undef END_ENUM
 }

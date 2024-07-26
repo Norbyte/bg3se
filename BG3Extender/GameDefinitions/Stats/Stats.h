@@ -83,28 +83,29 @@ struct CEquipmentSetManager : public CNamedElementManager<CEquipmentSet>
 };
 */
 
+struct TreasureSubTableCategory
+{
+	int32_t Index;
+	int32_t Frequency;
+	std::array<uint16_t, 7> Frequencies;
+	std::array<uint16_t, 7> Frequencies2;
+	bool IsTreasureTable;
+	bool IsTreasureTable2;
+};
+
+struct TreasureSubTableDropCount
+{
+	int32_t Chance;
+	int32_t Amount;
+};
+
+
 struct TreasureSubTable
 {
-	struct Category
-	{
-		int32_t Index;
-		int32_t Frequency;
-		std::array<uint16_t, 7> Frequencies;
-		std::array<uint16_t, 7> Frequencies2;
-		bool IsTreasureTable;
-		bool IsTreasureTable2;
-	};
-
-	struct DropCount
-	{
-		int32_t Chance;
-		int32_t Amount;
-	};
-
-	Array<Category*> Categories;
+	Array<TreasureSubTableCategory*> Categories;
 	Array<int32_t> CategoryFrequencies;
 	int32_t TotalFrequency;
-	Array<DropCount> DropCounts;
+	Array<TreasureSubTableDropCount> DropCounts;
 	Array<int32_t> Amounts;
 	int32_t TotalCount;
 	int32_t StartLevel;
@@ -124,22 +125,22 @@ struct TreasureTable
 	Array<TreasureSubTable*> SubTables;
 };
 
+struct TreasureCategoryItem
+{
+	FixedString Name;
+	int Priority;
+	int MinAmount;
+	int MaxAmount;
+	int ActPart;
+	int Unique;
+	int MinLevel;
+	int MaxLevel;
+};
+
 struct TreasureCategory
 {
-	struct Item
-	{
-		FixedString Name;
-		int Priority;
-		int MinAmount;
-		int MaxAmount;
-		int ActPart;
-		int Unique;
-		int MinLevel;
-		int MaxLevel;
-	};
-
 	FixedString Category;
-	Vector<Item*> Items;
+	Vector<TreasureCategoryItem*> Items;
 	uint64_t Unknown[3];
 };
 
@@ -219,10 +220,10 @@ MARK_ALLOCATABLE(CSkillSet);
 MARK_ALLOCATABLE(CEquipmentGroup);
 MARK_ALLOCATABLE(CEquipmentSet);*/
 MARK_ALLOCATABLE(TreasureSubTable);
-MARK_ALLOCATABLE(TreasureSubTable::Category);
+MARK_ALLOCATABLE(TreasureSubTableCategory);
 MARK_ALLOCATABLE(TreasureTable);
 MARK_ALLOCATABLE(TreasureCategory);
-MARK_ALLOCATABLE(TreasureCategory::Item);
+MARK_ALLOCATABLE(TreasureCategoryItem);
 /*MARK_ALLOCATABLE(CNameGroupName);
 MARK_ALLOCATABLE(CNameGroup);
 MARK_ALLOCATABLE(CNameGroupLink);

@@ -34,7 +34,7 @@ struct [[bg3::hidden]] VirtualTextureManagerBase : public ProtectedGameObject<Vi
 		int32_t RefCount;
 	};
 
-	struct LayerConfig
+	struct [[bg3::hidden]] LayerConfig
 	{
 		uint64_t A;
 		uint64_t B;

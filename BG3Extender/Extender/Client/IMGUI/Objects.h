@@ -12,7 +12,7 @@ class IMGUIObjectManager;
 #define DECL_UI_TYPE(ty) static constexpr auto ObjectType = IMGUIObjectType::ty; \
     inline IMGUIObjectType GetType() override { return ObjectType; } \
     inline char const* GetTypeName() override { return #ty; } \
-    inline lua::GenericPropertyMap& GetRTTI() override { return lua::StaticLuaPropertyMap<ty>::PropertyMap; }
+    inline lua::GenericPropertyMap& GetRTTI() override { return lua::GetStaticPropertyMap<ty>(); }
 
 
 enum class IMGUIObjectType : uint8_t
@@ -91,7 +91,7 @@ struct ImageReference : Noncopyable<ImageReference>
 };
 
 
-class Renderable : public Noncopyable<Renderable>
+struct Renderable : public Noncopyable<Renderable>
 {
 public:
     virtual ~Renderable();
@@ -123,7 +123,7 @@ struct StyleVar
 };
 
 
-class StyledRenderable : public Renderable
+struct StyledRenderable : public Renderable
 {
 public:
     virtual void StyledRender() = 0;
@@ -154,7 +154,7 @@ private:
 };
 
 
-class TreeParent : public StyledRenderable
+struct TreeParent : public StyledRenderable
 {
 public:
     virtual ~TreeParent();
@@ -252,7 +252,7 @@ struct WindowRenderRequests
     std::optional<float> BgAlpha;
 };
 
-class Window : public TreeParent
+struct Window : public TreeParent
 {
 public:
     DECL_UI_TYPE(Window)
@@ -285,7 +285,7 @@ private:
 };
 
 
-class MenuBar : public TreeParent
+struct MenuBar : public TreeParent
 {
 public:
     DECL_UI_TYPE(MenuBar)
@@ -298,7 +298,7 @@ private:
 };
 
 
-class Menu : public TreeParent
+struct Menu : public TreeParent
 {
 public:
     DECL_UI_TYPE(Menu)
@@ -313,7 +313,7 @@ private:
 };
 
 
-class MenuItem : public StyledRenderable
+struct MenuItem : public StyledRenderable
 {
 public:
     DECL_UI_TYPE(MenuItem)
@@ -326,7 +326,7 @@ public:
 };
 
 
-class Group : public TreeParent
+struct Group : public TreeParent
 {
 public:
     DECL_UI_TYPE(Group)
@@ -336,7 +336,7 @@ public:
 };
 
 
-class CollapsingHeader : public TreeParent
+struct CollapsingHeader : public TreeParent
 {
 public:
     DECL_UI_TYPE(CollapsingHeader)
@@ -348,7 +348,7 @@ public:
 };
 
 
-class TabBar : public TreeParent
+struct TabBar : public TreeParent
 {
 public:
     DECL_UI_TYPE(TabBar)
@@ -365,7 +365,7 @@ private:
 };
 
 
-class TabItem : public TreeParent
+struct TabItem : public TreeParent
 {
 public:
     DECL_UI_TYPE(TabItem)
@@ -380,7 +380,7 @@ private:
 };
 
 
-class Tree : public TreeParent
+struct Tree : public TreeParent
 {
 public:
     DECL_UI_TYPE(Tree)
@@ -413,7 +413,7 @@ struct ColumnDefinition
     float Width;
 };
 
-class Table : public TreeParent
+struct Table : public TreeParent
 {
 public:
     DECL_UI_TYPE(Table)
@@ -434,7 +434,7 @@ private:
 };
 
 
-class TableRow : public TreeParent
+struct TableRow : public TreeParent
 {
 public:
     DECL_UI_TYPE(TableRow)
@@ -449,7 +449,7 @@ public:
 };
 
 
-class TableCell : public TreeParent
+struct TableCell : public TreeParent
 {
 public:
     DECL_UI_TYPE(TableCell)
@@ -459,7 +459,7 @@ public:
 };
 
 
-class Tooltip : public TreeParent
+struct Tooltip : public TreeParent
 {
 public:
     DECL_UI_TYPE(Tooltip)
@@ -472,7 +472,7 @@ private:
 };
 
 
-class Popup : public TreeParent
+struct Popup : public TreeParent
 {
 public:
     DECL_UI_TYPE(Popup)
@@ -491,7 +491,7 @@ private:
 };
 
 
-class ChildWindow : public TreeParent
+struct ChildWindow : public TreeParent
 {
 public:
     DECL_UI_TYPE(ChildWindow)
@@ -505,7 +505,7 @@ public:
 };
 
 
-class Image : public StyledRenderable
+struct Image : public StyledRenderable
 {
 public:
     DECL_UI_TYPE(Image)
@@ -517,7 +517,7 @@ public:
     glm::vec4 Tint{ 1.0f };
 };
 
-class Text : public StyledRenderable
+struct Text : public StyledRenderable
 {
 public:
     DECL_UI_TYPE(Text)
@@ -526,7 +526,7 @@ public:
 };
 
 
-class BulletText : public StyledRenderable
+struct BulletText : public StyledRenderable
 {
 public:
     DECL_UI_TYPE(BulletText)
@@ -535,7 +535,7 @@ public:
 };
 
 
-class SeparatorText : public StyledRenderable
+struct SeparatorText : public StyledRenderable
 {
 public:
     DECL_UI_TYPE(SeparatorText)
@@ -544,7 +544,7 @@ public:
 };
 
 
-class Spacing : public StyledRenderable
+struct Spacing : public StyledRenderable
 {
 public:
     DECL_UI_TYPE(Spacing)
@@ -553,7 +553,7 @@ public:
 };
 
 
-class Dummy : public StyledRenderable
+struct Dummy : public StyledRenderable
 {
 public:
     DECL_UI_TYPE(Dummy)
@@ -565,7 +565,7 @@ public:
 };
 
 
-class NewLine : public StyledRenderable
+struct NewLine : public StyledRenderable
 {
 public:
     DECL_UI_TYPE(NewLine)
@@ -574,7 +574,7 @@ public:
 };
 
 
-class Separator : public StyledRenderable
+struct Separator : public StyledRenderable
 {
 public:
     DECL_UI_TYPE(Separator)
@@ -583,7 +583,7 @@ public:
 };
 
 
-class Button : public StyledRenderable
+struct Button : public StyledRenderable
 {
 public:
     DECL_UI_TYPE(Button)
@@ -597,7 +597,7 @@ public:
 };
 
 
-class ImageButton : public StyledRenderable
+struct ImageButton : public StyledRenderable
 {
 public:
     DECL_UI_TYPE(ImageButton)
@@ -613,7 +613,7 @@ public:
 };
 
 
-class Checkbox : public StyledRenderable
+struct Checkbox : public StyledRenderable
 {
 public:
     DECL_UI_TYPE(Checkbox)
@@ -625,7 +625,7 @@ public:
 };
 
 
-class RadioButton : public StyledRenderable
+struct RadioButton : public StyledRenderable
 {
 public:
     DECL_UI_TYPE(RadioButton)
@@ -637,7 +637,7 @@ public:
 };
 
 
-class InputText : public StyledRenderable
+struct InputText : public StyledRenderable
 {
 public:
     DECL_UI_TYPE(InputText)
@@ -662,7 +662,7 @@ private:
 };
 
 
-class Combo : public StyledRenderable
+struct Combo : public StyledRenderable
 {
 public:
     DECL_UI_TYPE(Combo)
@@ -676,7 +676,7 @@ public:
 };
 
 
-class DragScalar : public StyledRenderable
+struct DragScalar : public StyledRenderable
 {
 public:
     DECL_UI_TYPE(DragScalar)
@@ -692,7 +692,7 @@ public:
 };
 
 
-class DragInt : public StyledRenderable
+struct DragInt : public StyledRenderable
 {
 public:
     DECL_UI_TYPE(DragInt)
@@ -708,7 +708,7 @@ public:
 };
 
 
-class SliderScalar : public StyledRenderable
+struct SliderScalar : public StyledRenderable
 {
 public:
     DECL_UI_TYPE(SliderScalar)
@@ -724,7 +724,7 @@ public:
 };
 
 
-class SliderInt : public StyledRenderable
+struct SliderInt : public StyledRenderable
 {
 public:
     DECL_UI_TYPE(SliderInt)
@@ -740,7 +740,7 @@ public:
 };
 
 
-class InputScalar : public StyledRenderable
+struct InputScalar : public StyledRenderable
 {
 public:
     DECL_UI_TYPE(InputScalar)
@@ -754,7 +754,7 @@ public:
 };
 
 
-class InputInt : public StyledRenderable
+struct InputInt : public StyledRenderable
 {
 public:
     DECL_UI_TYPE(InputInt)
@@ -768,7 +768,7 @@ public:
 };
 
 
-class ColorEdit : public StyledRenderable
+struct ColorEdit : public StyledRenderable
 {
 public:
     DECL_UI_TYPE(ColorEdit)
@@ -781,7 +781,7 @@ public:
 };
 
 
-class ColorPicker : public StyledRenderable
+struct ColorPicker : public StyledRenderable
 {
 public:
     DECL_UI_TYPE(ColorPicker)

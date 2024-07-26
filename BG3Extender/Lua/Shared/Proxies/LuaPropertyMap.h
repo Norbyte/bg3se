@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Lua/Shared/Proxies/LuaStructIDs.h>
+
 BEGIN_NS(lua)
 
 enum class PropertyNotification
@@ -58,7 +60,7 @@ public:
 		Invalid
 	};
 
-	void Init(int registryIndex);
+	void Init();
 	void Finish();
 	bool HasProperty(FixedString const& prop) const;
 	PropertyOperationResult GetRawProperty(lua_State* L, LifetimeHandle const& lifetime, void* object, FixedString const& prop) const;
@@ -95,7 +97,7 @@ public:
 	bool Initialized{ false };
 	bool InheritanceUpdated{ false };
 	ValidationState Validated{ ValidationState::Unknown };
-	int RegistryIndex{ -1 };
+	StructTypeId RegistryIndex{ -1 };
 	std::optional<ExtComponentType> ComponentType;
 	TypeInformation* TypeInfo{ nullptr };
 };
@@ -110,7 +112,7 @@ inline PropertyOperationResult GenericSetReadOnlyProperty(lua_State* L, void* ob
 	return PropertyOperationResult::ReadOnly;
 }
 
-inline PropertyOperationResult GenericNullSerializeProperty(lua_State* L, void* object, RawPropertyAccessors const&)
+inline PropertyOperationResult GenericNullSerializeProperty(lua_State* L, void const* object, RawPropertyAccessors const&)
 {
 	return PropertyOperationResult::UnsupportedType;
 }
@@ -279,18 +281,26 @@ public:
 	}
 };
 
-template <class T>
-struct StaticLuaPropertyMap
+struct StructRegistry
 {
-	static_assert(!std::is_pointer_v<T>, "StaticLuaPropertyMap type should not be a pointer type!");
-	static_assert(!IsByVal<T>, "StaticLuaPropertyMap type should not be a by-val type!");
-	static_assert(!IsOptional<T>::Value, "StaticLuaPropertyMap type should not be an optional<T> type!");
-	static_assert(!IsArrayLike<T>::Value && !IsSetLike<T>::Value && !IsMapLike<T>::Value && !IsVariantLike<T>::Value, "StaticLuaPropertyMap type should not be a container type!");
+	Array<GenericPropertyMap*> StructsById;
 
-	using ObjectType = T;
-	using TPropertyMap = LuaPropertyMap<T>;
+	void Register(GenericPropertyMap* ei, StructTypeId id);
 
-	static TPropertyMap PropertyMap;
+	inline GenericPropertyMap* Get(StructTypeId id) const
+	{
+		assert(id < (int)StructsById.size());
+		return StructsById[id];
+	}
 };
+
+extern StructRegistry gStructRegistry;
+
+
+template <class T>
+inline GenericPropertyMap& GetStaticPropertyMap()
+{
+	return *gStructRegistry.Get(StructID<T>::ID);
+}
 
 END_NS()

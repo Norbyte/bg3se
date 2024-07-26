@@ -135,7 +135,7 @@ T* get_object(lua_State* L, int index)
 
 	default:
 		luaL_error(L, "Argument %d: Expected object of type '%s', got '%s'", index, 
-			StaticLuaPropertyMap<T>::PropertyMap.Name.GetString(), lua_typename(L, lua_type(L, index)));
+			GetStaticPropertyMap<T>().Name.GetString(), lua_typename(L, lua_type(L, index)));
 		return nullptr;
 	}
 }

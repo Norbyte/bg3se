@@ -429,13 +429,13 @@ void UnserializeRawObjectFromUserdata(lua_State* L, int index, void* obj, Generi
 template <class T>
 inline void UnserializeObjectFromTable(lua_State* L, int index, T* obj)
 {
-	UnserializeRawObjectFromTable(L, index, obj, StaticLuaPropertyMap<T>::PropertyMap);
+	UnserializeRawObjectFromTable(L, index, obj, GetStaticPropertyMap<T>());
 }
 
 template <class T>
 inline void UnserializeObjectFromUserdata(lua_State* L, int index, T* obj)
 {
-	UnserializeRawObjectFromUserdata(L, index, obj, StaticLuaPropertyMap<T>::PropertyMap);
+	UnserializeRawObjectFromUserdata(L, index, obj, GetStaticPropertyMap<T>());
 }
 
 template <class T>

@@ -38,7 +38,6 @@ void LuaCppFree(lua_State* L, void* block, size_t size);
 CMetatable* LuaCppGetLightMetatable(lua_State* L, unsigned long long val, unsigned long long extra);
 CMetatable* LuaCppGetMetatable(lua_State* L, void* val, unsigned long long extra);
 void* LuaCppCanonicalize(lua_State* L, void* val);
-class GenericPropertyMap& LuaGetPropertyMap(int propertyMapIndex);
 
 void LuaCacheString(lua_State* L, TString* s);
 void LuaReleaseString(lua_State* L, TString* s);

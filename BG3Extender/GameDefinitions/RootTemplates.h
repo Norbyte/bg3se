@@ -356,29 +356,30 @@ struct CharacterTemplate : public EoCGameObjectTemplate
 };
 
 
+struct EquipmentData : public ProtectedGameObject<EquipmentData>
+{
+    MultiHashMap<Guid, FixedString> ShortHair;
+    MultiHashMap<Guid, FixedString> LongHair;
+    MultiHashMap<Guid, FixedString> WavyShortHair;
+    MultiHashMap<Guid, FixedString> WavyLongHair;
+    MultiHashMap<Guid, FixedString> CurlyShortHair;
+    MultiHashMap<Guid, FixedString> CurlyLongHair;
+    MultiHashMap<Guid, FixedString> DreadShortHair;
+    MultiHashMap<Guid, FixedString> DreadLongHair;
+    MultiHashMap<Guid, FixedString> AfroShortHair;
+    MultiHashMap<Guid, FixedString> AfroLongHair;
+    MultiHashMap<Guid, Array<FixedString>> Visuals;
+    MultiHashMap<Guid, Guid> ParentRace;
+    MultiHashSet<Guid> SyncWithParent;
+    resource::VisualSet* VisualSet;
+    [[bg3::hidden]] void* Slot_VMT;
+    Array<FixedString> Slot;
+    [[bg3::hidden]] void* Slot_junk;
+};
+
+
 struct ItemTemplate : public SceneryTemplate
 {
-    struct EquipmentData : public ProtectedGameObject<EquipmentData>
-    {
-        MultiHashMap<Guid, FixedString> ShortHair;
-        MultiHashMap<Guid, FixedString> LongHair;
-        MultiHashMap<Guid, FixedString> WavyShortHair;
-        MultiHashMap<Guid, FixedString> WavyLongHair;
-        MultiHashMap<Guid, FixedString> CurlyShortHair;
-        MultiHashMap<Guid, FixedString> CurlyLongHair;
-        MultiHashMap<Guid, FixedString> DreadShortHair;
-        MultiHashMap<Guid, FixedString> DreadLongHair;
-        MultiHashMap<Guid, FixedString> AfroShortHair;
-        MultiHashMap<Guid, FixedString> AfroLongHair;
-        MultiHashMap<Guid, Array<FixedString>> Visuals;
-        MultiHashMap<Guid, Guid> ParentRace;
-        MultiHashSet<Guid> SyncWithParent;
-        resource::VisualSet* VisualSet;
-        [[bg3::hidden]] void* Slot_VMT;
-        Array<FixedString> Slot;
-        [[bg3::hidden]] void* Slot_junk;
-    };
-
     CombatComponentTemplate CombatComponent;
     OverrideableProperty<Array<FixedString>> InventoryList;
     MultiHashSet<Guid>* SpeakerGroups;
@@ -522,37 +523,38 @@ struct ProjectileTemplate : public EoCGameObjectTemplate
     OverrideableProperty<FixedString> CurveResourceId;
 };
 
+struct SurfaceVisualData
+{
+    FixedString Visual;
+    glm::vec2 Height;
+    glm::ivec2 Rotation;
+    glm::vec2 Scale;
+    float GridSize;
+    int SpawnCell;
+    int RandomPlacement;
+    int SurfaceNeeded;
+    int SurfaceRadiusMax;
+};
+
+struct SurfaceStatusData
+{
+    FixedString StatusId;
+    uint8_t ApplyTypes;
+    float Chance;
+    float Duration;
+    bool Remove;
+    bool ApplyToCharacters;
+    bool ApplyToItems;
+    bool KeepAlive;
+    bool VanishOnApply;
+    bool Force;
+    bool AffectedByRoll;
+    bool OnlyOncePerTurn;
+};
+
+
 struct SurfaceTemplate : public GameObjectTemplate
 {
-    struct VisualData
-    {
-        FixedString Visual;
-        glm::vec2 Height;
-        glm::ivec2 Rotation;
-        glm::vec2 Scale;
-        float GridSize;
-        int SpawnCell;
-        int RandomPlacement;
-        int SurfaceNeeded;
-        int SurfaceRadiusMax;
-    };
-
-    struct StatusData
-    {
-        FixedString StatusId;
-        uint8_t ApplyTypes;
-        float Chance;
-        float Duration;
-        bool Remove;
-        bool ApplyToCharacters;
-        bool ApplyToItems;
-        bool KeepAlive;
-        bool VanishOnApply;
-        bool Force;
-        bool AffectedByRoll;
-        bool OnlyOncePerTurn;
-    };
-
     SurfaceType SurfaceType;
     FixedString SurfaceName;
     uint64_t field_158[4];
@@ -571,10 +573,10 @@ struct SurfaceTemplate : public GameObjectTemplate
     OverrideableProperty<float> FallDamageMultiplier;
     OverrideableProperty<int32_t> Seed;
     OverrideableProperty<float> NormalBlendingFactor;
-    Array<VisualData> InstanceVisual;
-    Array<VisualData> IntroFX;
-    Array<VisualData> FX;
-    Array<StatusData> Statuses;
+    Array<SurfaceVisualData> InstanceVisual;
+    Array<SurfaceVisualData> IntroFX;
+    Array<SurfaceVisualData> FX;
+    Array<SurfaceStatusData> Statuses;
     OverrideableProperty<FixedString> Summon;
     OverrideableProperty<bool> RemoveDestroyedItems;
     OverrideableProperty<bool> CanSeeThrough;

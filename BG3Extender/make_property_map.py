@@ -1,4 +1,4 @@
-import re
+import os, re
 
 ns_start_re = r'^BEGIN(_BARE)?_NS\(\s*(.*)\s*\)$'
 ns_end_re = r'^END(_BARE)?_NS\(\s*\)$'
@@ -27,6 +27,16 @@ template_individual_types_re = r'(?:<|,|^)\s*(?P<paramused>[a-zA-Z0-9_:]+)\s*(?=
 alnum_re = re.compile('[a-zA-Z0-9_]')
 
     
+class SharedData:
+    def __init__(self):
+        self.next_struct_id = 0
+
+    def alloc_id(self):
+        id = self.next_struct_id
+        self.next_struct_id += 1
+        return id
+
+
 class Attribute:
     def __init__(self, name: str, args: str):
         self.name : str = name
@@ -35,8 +45,39 @@ class Attribute:
 def get_attr(attrs: list[Attribute], name: str):
     return next((attr for attr in attrs if attr.name == name), None)
 
+
+def make_struct_forward_decl(name: str, id: int):
+    # Cannot forward-declare template classes
+    if name.find('<') != -1:
+        return 'DECLARE_CLS(' + str(id) + ', ' + name + ')'
+
+    pos = name.rfind('::')
+    if pos != -1:
+        ns = name[0:pos]
+        parent_pos = ns.rfind('::')
+        if parent_pos != -1:
+            parent_ns = ns[parent_pos+2:]
+        else:
+            parent_ns = ns
+
+        if parent_ns == "Noesis":
+            if name.endswith("Args") or name == "Noesis::Point":
+                return 'DECLARE_STRUCT_BARE_NS_FWD(' + str(id) + ', ' + name[0:pos] + ', ' + name[pos+2:] + ')'
+            else:
+                return 'DECLARE_CLS_BARE_NS_FWD(' + str(id) + ', ' + name[0:pos] + ', ' + name[pos+2:] + ')'
+        elif parent_ns[0].islower():
+            return 'DECLARE_CLS_NS_FWD(' + str(id) + ', ' + name[0:pos] + ', ' + name[pos+2:] + ')'
+        else:
+            # Cannot forward-declare classes nested inside other classes
+            return 'DECLARE_CLS(' + str(id) + ', ' + name + ')'
+    
+    return 'DECLARE_CLS_FWD(' + str(id) + ', ' + name + ')'
+
+
 class Structure:
-    def __init__(self, ns_stack : list[str], base : str, attributes : list[Attribute]):
+    def __init__(self, shared : SharedData, ns_stack : list[str], base : str, attributes : list[Attribute]):
+        self.shared : SharedData = shared
+        self.id = self.shared.alloc_id()
         self.name_ns : list[str] = ns_stack.copy()
         self.ns_stack : list[str] = []
         self.base : str = base
@@ -55,8 +96,15 @@ class Structure:
                 nsname = nsname + '::' + ns
             return nsname
         
+    def is_hidden(self) -> bool:
+        return get_attr(self.attributes, 'bg3::hidden') is not None
+        
+    def generate_property_map_header(self) -> str:
+        return make_struct_forward_decl(self.name(), self.id)
+
+        
     def generate_property_map(self) -> str:
-        pm = 'BEGIN_CLS(' + self.name() + ')\n'
+        pm = 'BEGIN_CLS(' + self.name() + ', ' + str(self.id) + ')\n'
         if self.base and not self.base.startswith('ProtectedGameObject<') and not self.base.startswith('Noncopyable<'):
             pm += 'INHERIT(' + self.base + ')\n'
         for name,member in self.members.items():
@@ -90,7 +138,7 @@ class Structure:
             self.base = newbase
     
     def clone(self):
-        ret = Structure(self.name_ns, self.base, self.attributes)
+        ret = Structure(self.shared, self.name_ns, self.base, self.attributes)
         ret.members = self.members.copy()
         ret.raw_lines = self.raw_lines.copy()
         ret.getters = self.getters.copy()
@@ -98,15 +146,15 @@ class Structure:
         return ret
         
 class Template(Structure):
-    def __init__(self, ns_stack : list[str], base : str, attributes : list[Attribute], template_args : list[str]):
-        Structure.__init__(self, ns_stack, base, attributes)
+    def __init__(self, shared: SharedData, ns_stack : list[str], base : str, attributes : list[Attribute], template_args : list[str]):
+        Structure.__init__(self, shared, ns_stack, base, attributes)
         self.children : dict[str, Structure] = {}
         self.templates : dict[str, Template] = {}
         self.template_list : list[Template] = []
         self.template_args : list[str] = template_args
 
     def clone(self):
-        ret = Template(self.name_ns, self.base, self.attributes, self.template_args.copy())
+        ret = Template(self.shared, self.name_ns, self.base, self.attributes, self.template_args.copy())
         ret.members = self.members.copy()
         ret.raw_lines = self.raw_lines.copy()
         ret.getters = self.getters.copy()
@@ -218,7 +266,8 @@ def expand_namespaces(ns_stack : list[str], structs : dict[str, Structure], type
 
 
 class DefinitionLoader:
-    def __init__(self, structs):
+    def __init__(self, shared : SharedData, structs):
+        self.shared : SharedData = shared
         self.ns_stack : list[str] = []
         self.cur_struct : Structure = None
         self.struct_stack : list[Structure] = []
@@ -269,7 +318,7 @@ class DefinitionLoader:
         struct = None
 
         if self.next_template_args is not None:
-            struct = Template(self.ns_stack, base, attrs, self.next_template_args)
+            struct = Template(self.shared, self.ns_stack, base, attrs, self.next_template_args)
             nsname = self.ns_stack[-1]
             self.templates[nsname] = struct
             for ns in reversed(self.ns_stack[:-1]):
@@ -277,7 +326,7 @@ class DefinitionLoader:
                 self.templates[nsname] = struct
             self.cur_template = struct
         else:
-            struct = Structure(self.ns_stack, base, attrs)
+            struct = Structure(self.shared, self.ns_stack, base, attrs)
             self.structs[struct.name()] = struct
             self.instantiate_if_necessary(base)
         self.cur_struct = struct
@@ -297,7 +346,7 @@ class DefinitionLoader:
         
         if self.next_template_args is not None:
             self.template_stack.append(self.cur_template)
-            struct = Template(self.cur_template.ns_stack, base, attrs, self.next_template_args)
+            struct = Template(self.shared, self.cur_template.ns_stack, base, attrs, self.next_template_args)
             self.cur_template.template_list.append(struct)
             nsname = self.cur_template.ns_stack[-1]
             self.cur_template.templates[nsname] = struct
@@ -306,7 +355,7 @@ class DefinitionLoader:
                 self.cur_template.templates[nsname] = struct
             self.cur_template = struct
         else:
-            struct = Structure(self.cur_template.ns_stack, base, attrs)
+            struct = Structure(self.shared, self.cur_template.ns_stack, base, attrs)
             self.cur_template.children[struct.name()] = struct
             self.instantiate_if_necessary(base)
         self.cur_struct = struct
@@ -528,12 +577,38 @@ def generate_member(name, member):
     return 'P(' + name + ')\n'
 
 
+pm_cls_start_re = r'^BEGIN_CLS\((?P<args>[^)]+)\).*$'
+
+class PropertyMapPreprocessor:
+    def __init__(self, sd : SharedData):
+        self.lines = ''
+        self.names = ''
+        self.shared : SharedData = sd
+
+    def load_file(self, path):
+        with open(path, 'r') as header:
+            for line in header.readlines():
+                line = line.strip()
+                self.lines += self.preprocess_line(line) + "\n"
+
+    def preprocess_line(self, line):
+        match = re.match(pm_cls_start_re, line)
+        if match is not None:
+            id = self.shared.alloc_id()
+            self.names += make_struct_forward_decl(match.group('args'), id) + '\n'
+            return 'BEGIN_CLS(' + match.group('args') + ', ' + str(id) + ')'
+        
+        return line
+
+
 sources = [
     'GameDefinitions/Base/ExposedTypes.h',
     'GameDefinitions/GuidResources.h',
     'GameDefinitions/Module.h',
+    'GameDefinitions/CharacterCreation.h',
     'GameDefinitions/Hit.h',
     'GameDefinitions/Interrupt.h',
+    'GameDefinitions/Progression.h',
     'GameDefinitions/RootTemplates.h',
     'GameDefinitions/Components/Boosts.h',
     'GameDefinitions/Components/Camp.h',
@@ -541,6 +616,7 @@ sources = [
     'GameDefinitions/Components/Combat.h',
     'GameDefinitions/Components/Components.h',
     'GameDefinitions/Components/Spell.h',
+    'GameDefinitions/Components/Interrupt.h',
     'GameDefinitions/Components/Data.h',
     'GameDefinitions/Components/Hit.h',
     'GameDefinitions/Components/Item.h',
@@ -564,15 +640,17 @@ sources = [
 ]
 
 structs : dict[str, Structure] = {}
+shared = SharedData()
 
 for source in sources:
-    loader = DefinitionLoader(structs)
+    loader = DefinitionLoader(shared, structs)
     loader.load_file(source)
 
 propmap = ''
+propmap_names = ''
 component_names = ''
 for n,struct in structs.items():
-    if get_attr(struct.attributes, 'bg3::hidden') is None:
+    if not struct.is_hidden():
         if struct.base == 'BaseComponent' or struct.base == 'BaseProxyComponent':
             component_names += 'T(' + n + ')\n'
         if struct.base is not None:
@@ -581,10 +659,20 @@ for n,struct in structs.items():
         struct.name_ns = to_namespaces(expand_namespaces(struct.name_ns, structs, struct.name()))
         
         propmap += struct.generate_property_map() + '\n'
+        propmap_names += struct.generate_property_map_header() + '\n'
 
 
-with open('GameDefinitions/PropertyMaps/Generated.inl', 'w') as f:
-    f.write(propmap)
+preprocessor = PropertyMapPreprocessor(shared)
 
-with open('GameDefinitions/Components/GeneratedComponentTypes.inl', 'w') as f:
+for file in os.listdir('GameDefinitions/PropertyMaps'):
+    if file.endswith('.inl'):
+        preprocessor.load_file('GameDefinitions/PropertyMaps/' + file)
+
+with open('GameDefinitions/Generated/PropertyMapNames.inl', 'w') as f:
+    f.write(propmap_names + preprocessor.names)
+
+with open('GameDefinitions/Generated/PropertyMaps.inl', 'w') as f:
+    f.write(propmap + preprocessor.lines)
+
+with open('GameDefinitions/Generated/ComponentTypes.inl', 'w') as f:
     f.write(component_names)

@@ -2,48 +2,10 @@
 
 BEGIN_NS(lua)
 
-int CppPropertyMapManager::RegisterPropertyMap(GenericPropertyMap* mt)
-{
-	propertyMaps_.push_back(mt);
-	return (int)(propertyMaps_.Size() - 1);
-}
-
-GenericPropertyMap* CppPropertyMapManager::GetPropertyMap(int index)
-{
-	assert(index >= 0 && (uint32_t)index < propertyMaps_.Size());
-	return propertyMaps_[index];
-}
-
-void CppPropertyMapManager::UpdateInheritance()
-{
-	auto pendingUpdates = propertyMaps_;
-	Array<GenericPropertyMap*> nextBatchUpdates;
-
-	do {
-		bool progressed{ false };
-		for (auto pm : pendingUpdates) {
-			assert(!pm->InheritanceUpdated);
-			if (pm->Parent == nullptr) {
-				pm->InheritanceUpdated = true;
-				progressed = true;
-			} else if (pm->Parent->InheritanceUpdated) {
-				InheritProperties(*pm->Parent, *pm);
-				progressed = true;
-			} else {
-				nextBatchUpdates.push_back(pm);
-			}
-		}
-
-		pendingUpdates = nextBatchUpdates;
-		nextBatchUpdates.clear();
-		assert(progressed && "Recursion in property map inheritance tree?");
-	} while (!pendingUpdates.empty());
-}
-
 void CppPropertyMapManager::RegisterComponents(ecs::EntitySystemHelpersBase& helpers)
 {
-	for (auto pm : propertyMaps_) {
-		if (pm->ComponentType) {
+	for (auto pm : gStructRegistry.StructsById) {
+		if (pm != nullptr && pm->ComponentType) {
 			helpers.BindPropertyMap(*pm->ComponentType, pm);
 		}
 	}

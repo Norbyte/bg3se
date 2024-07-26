@@ -24,6 +24,7 @@ struct StaticTypeInformation
 	TypeInformation* Type{ nullptr };
 	InitializerProc* Initializer{ nullptr };
 
+	StaticTypeInformation(TypeInformation* type, InitializerProc* initializer);
 	void DeferredInitialize();
 };
 
@@ -259,6 +260,12 @@ StaticTypeInformation& GetStaticTypeInfoInternal(Overload<ObjectSet<T, Allocator
 	return GetStaticTypeInfoInternal(Overload<Set<T, Allocator, StoreSize>>{});
 }
 
+template <class T, class Tag>
+StaticTypeInformation& GetStaticTypeInfoInternal(Overload<TypedIntegral<T, Tag>>)
+{
+	return GetStaticTypeInfoInternal(Overload<T>{});
+}
+
 template <class T>
 StaticTypeInformation& GetStaticTypeInfo(Overload<T>)
 {
@@ -326,6 +333,7 @@ public:
 	void Initialize();
 	TypeInformation& RegisterType(FixedString const& typeName);
 	void RegisterType(TypeInformation* typeInfo);
+	void RegisterInitializer(StaticTypeInformation* typeInfo);
 	TypeInformation const* TryGetType(FixedString const& typeName);
 	TypeInformation const& GetType(FixedString const& typeName);
 	TypeInformation const& GetUndefinedType();
@@ -339,6 +347,7 @@ public:
 
 private:
 	Map<FixedString, TypeInformation*> types_;
+	Array<StaticTypeInformation*> initializers_;
 	TypeInformation undefinedType_;
 	bool initialized_;
 

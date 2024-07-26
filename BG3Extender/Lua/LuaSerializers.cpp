@@ -104,7 +104,7 @@ namespace bg3se::lua
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, TreasureSubTable::Category& v)
+	LuaSerializer& operator << (LuaSerializer& s, TreasureSubTableCategory& v)
 	{
 		auto stats = GetStaticSymbols().GetStats();
 
@@ -159,13 +159,13 @@ namespace bg3se::lua
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::TreasureSubTable::Category* v)
+	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::TreasureSubTableCategory* v)
 	{
 		s << *v;
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, TreasureSubTable::DropCount& v)
+	LuaSerializer& operator << (LuaSerializer& s, TreasureSubTableDropCount& v)
 	{
 		s.BeginObject();
 		P(Chance);
@@ -209,7 +209,7 @@ namespace bg3se::lua
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, TreasureCategory::Item& v)
+	LuaSerializer& operator << (LuaSerializer& s, TreasureCategoryItem& v)
 	{
 		s.BeginObject();
 		P(Name);
@@ -224,7 +224,7 @@ namespace bg3se::lua
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, TreasureCategory::Item* v)
+	LuaSerializer& operator << (LuaSerializer& s, TreasureCategoryItem* v)
 	{
 		s << *v;
 		return s;

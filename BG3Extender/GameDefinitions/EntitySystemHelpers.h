@@ -88,7 +88,9 @@ public:
 		}
 	}
 
-	inline std::optional<ComponentTypeIndex> GetComponentIndex(ExtComponentType type) const
+	std::optional<ComponentTypeIndex> GetComponentIndex(ExtComponentType type) const;
+
+	inline std::optional<ComponentTypeIndex> GetComponentIndexUnchecked(ExtComponentType type) const
 	{
 		auto idx = components_[(unsigned)type].ComponentIndex;
 		if (idx != UndefinedIndex) {
@@ -153,7 +155,7 @@ public:
 		return reinterpret_cast<T*>(GetRawSystem(T::SystemType));
 	}
 
-	virtual EntityWorld* GetEntityWorld() = 0;
+	virtual EntityWorld* GetEntityWorld() const = 0;
 
 	template <class T>
 	std::optional<resource::GuidResourceBank<T>*> GetResourceManager()
@@ -248,7 +250,7 @@ class ServerEntitySystemHelpers : public EntitySystemHelpersBase
 public:
 	void Setup();
 
-	EntityWorld* GetEntityWorld() override;
+	EntityWorld* GetEntityWorld() const override;
 };
 
 class ClientEntitySystemHelpers : public EntitySystemHelpersBase
@@ -256,7 +258,7 @@ class ClientEntitySystemHelpers : public EntitySystemHelpersBase
 public:
 	void Setup();
 
-	EntityWorld* GetEntityWorld() override;
+	EntityWorld* GetEntityWorld() const override;
 };
 
 END_NS()

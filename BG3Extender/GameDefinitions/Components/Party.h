@@ -20,19 +20,17 @@ struct ViewComponent : public BaseComponent
 	Array<EntityHandle> Characters;
 };
 
+struct Member
+{
+	[[bg3::legacy(field_0)]] int32_t UserId;
+	[[bg3::legacy(field_8)]] Guid UserUuid;
+	[[bg3::legacy(field_18)]] Guid ViewUuid;
+	Array<uint8_t> field_28;
+};
 
 struct CompositionComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(PartyComposition, "eoc::party::CompositionComponent")
-
-	struct Member
-	{
-		[[bg3::legacy(field_0)]] int32_t UserId;
-		[[bg3::legacy(field_8)]] Guid UserUuid;
-		[[bg3::legacy(field_18)]] Guid ViewUuid;
-		Array<uint8_t> field_28;
-	};
-
 
 	EntityHandle Party;
 	[[bg3::legacy(field_8)]] Guid PartyUuid;

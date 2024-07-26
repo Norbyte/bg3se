@@ -75,7 +75,7 @@ BEGIN_CLS(BaseProxyComponent)
 END_CLS()
 
 
-BEGIN_CLS(stats::Object::FunctorGroup)
+BEGIN_CLS(stats::FunctorGroup)
 P(TextKey)
 // Lua read-only helper until RO properties or transparent index support is added
 P_GETTER(Functors, GetFunctors)

@@ -25,7 +25,7 @@ public:
 	template <class T>
 	inline static void Make(lua_State* L, T* object, LifetimeHandle const& lifetime)
 	{
-		auto const& pm = StaticLuaPropertyMap<T>::PropertyMap;
+		auto const& pm = GetStaticPropertyMap<T>();
 		lua_push_cppobject(L, MetaTag, pm.RegistryIndex, object, lifetime);
 	}
 
@@ -36,14 +36,14 @@ public:
 	template <class T>
 	static T* TryGet(lua_State* L, int index)
 	{
-		auto const& pm = StaticLuaPropertyMap<T>::PropertyMap;
+		auto const& pm = GetStaticPropertyMap<T>();
 		return reinterpret_cast<T*>(TryGetGeneric(L, index, pm.PropertyMapTag));
 	}
 
 	template <class T>
 	static T* Get(lua_State* L, int index)
 	{
-		auto ptr = GetGeneric(L, index, StaticLuaPropertyMap<T>::PropertyMap.RegistryIndex);
+		auto ptr = GetGeneric(L, index, GetStaticPropertyMap<T>().RegistryIndex);
 		return reinterpret_cast<T*>(ptr);
 	}
 
@@ -71,7 +71,7 @@ public:
 	template <class T>
 	inline static void MakeRef(lua_State* L, T* object, LifetimeHandle const& lifetime)
 	{
-		if (!StaticLuaPropertyMap<T>::PropertyMap.ValidatePropertyMap(object)) {
+		if (!GetStaticPropertyMap<T>().ValidatePropertyMap(object)) {
 			push(L, nullptr);
 		} else {
 			LightObjectProxyByRefMetatable::Make(L, object, lifetime);
@@ -83,7 +83,7 @@ public:
 	template <class T>
 	inline static T* Get(lua_State* L, int index)
 	{
-		return reinterpret_cast<T*>(GetRaw(L, index, StaticLuaPropertyMap<T>::PropertyMap));
+		return reinterpret_cast<T*>(GetRaw(L, index, GetStaticPropertyMap<T>()));
 	}
 };
 

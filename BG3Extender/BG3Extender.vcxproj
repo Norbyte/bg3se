@@ -162,6 +162,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\Base\ForwardDeclarations.h" />
     <ClInclude Include="GameDefinitions\Character.h" />
     <ClInclude Include="GameDefinitions\Base\CommonTypes.h" />
+    <ClInclude Include="GameDefinitions\CharacterCreation.h" />
     <ClInclude Include="GameDefinitions\Components\All.h" />
     <ClInclude Include="GameDefinitions\Components\Boosts.h" />
     <ClInclude Include="GameDefinitions\Components\Camp.h" />
@@ -169,6 +170,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\Components\Combat.h" />
     <ClInclude Include="GameDefinitions\Components\Components.h" />
     <ClInclude Include="GameDefinitions\Components\Hit.h" />
+    <ClInclude Include="GameDefinitions\Components\Interrupt.h" />
     <ClInclude Include="GameDefinitions\Components\Inventory.h" />
     <ClInclude Include="GameDefinitions\Components\Item.h" />
     <ClInclude Include="GameDefinitions\Components\Party.h" />
@@ -185,6 +187,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\Components\Visual.h" />
     <ClInclude Include="GameDefinitions\EntityManager.h" />
     <ClInclude Include="GameDefinitions\EntitySystemHelpers.h" />
+    <ClInclude Include="GameDefinitions\EnumRepository.h" />
     <ClInclude Include="GameDefinitions\GameState.h" />
     <ClInclude Include="GameDefinitions\GlobalFixedStrings.h" />
     <ClInclude Include="GameDefinitions\Hit.h" />
@@ -199,6 +202,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\Osiris.h" />
     <ClInclude Include="GameDefinitions\GuidResources.h" />
     <ClInclude Include="GameDefinitions\Picking.h" />
+    <ClInclude Include="GameDefinitions\Progression.h" />
     <ClInclude Include="GameDefinitions\Render.h" />
     <ClInclude Include="GameDefinitions\Resources.h" />
     <ClInclude Include="GameDefinitions\RootTemplates.h" />
@@ -263,6 +267,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="Lua\Shared\Proxies\LuaPropertyMap.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaPropertyMapHelpers.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaSetProxy.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaStructIDs.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaUserVariableHolder.h" />
     <ClInclude Include="Lua\Shared\Proxies\PropertyMapDependencies.h" />
     <ClInclude Include="Lua\Shared\RawComponentRef.h" />
@@ -383,15 +388,14 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="Extender\Shared\VirtualTextures.inl" />
     <None Include="GameDefinitions\Base\TypeInformation.inl" />
     <None Include="GameDefinitions\Components\AllComponentTypes.inl" />
-    <None Include="GameDefinitions\Enumerations.inl" />
     <None Include="GameDefinitions\Enumerations\ECS.inl" />
     <None Include="GameDefinitions\Enumerations\Engine.inl" />
     <None Include="GameDefinitions\Enumerations\IMGUI.inl" />
     <None Include="GameDefinitions\Enumerations\NetMessage.inl" />
     <None Include="GameDefinitions\Enumerations\Stats.inl" />
-    <None Include="GameDefinitions\ExternalEnumerations.inl" />
+    <None Include="GameDefinitions\ExternalEnumerations\GUI.inl" />
     <None Include="GameDefinitions\GlobalFixedStrings.inl" />
-    <None Include="GameDefinitions\PropertyMaps\AllPropertyMaps.inl" />
+    <None Include="GameDefinitions\PropertyMaps\Stats.inl" />
     <None Include="GameDefinitions\PropertyMaps\CommonTypes.inl" />
     <None Include="GameDefinitions\PropertyMaps\Events.inl" />
     <None Include="GameDefinitions\PropertyMaps\IMGUI.inl" />

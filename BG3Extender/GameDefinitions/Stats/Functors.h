@@ -9,6 +9,13 @@
 
 BEGIN_NS(stats)
 
+struct ExportedConditionalRoll
+{
+	RollType Type;
+	// FIXME expose conditions
+	[[bg3::hidden]] int32_t ConditionId{ -1 };
+};
+
 struct Functor
 {
 	using DtorProc = void (Functor *, bool);
@@ -22,16 +29,10 @@ struct Functor
 		CloneProc* Clone;
 	};
 
-	struct RollCondition
-	{
-		RollType Type;
-		int32_t ConditionId{ -1 };
-	};
-
 	[[bg3::hidden]] FunctorVMT* VMT{ nullptr };
 	FixedString UniqueName;
 	Guid FunctorUuid;
-	Array<RollCondition> RollConditions;
+	Array<ExportedConditionalRoll> RollConditions;
 	// FIXME expose conditions
 	[[bg3::hidden]] int32_t StatsConditionsId{ -1 };
 	PropertyContext PropertyContext{ 0 };
@@ -201,7 +202,7 @@ using ExecuteFunctorProc = void(HitResult* hit, Functors* self, TContext* params
 
 struct Functors
 {
-	struct BaseVMT
+	struct [[bg3::hidden]] BaseVMT
 	{
 		void (*Destroy)(Functors*);
 		void (*ClearNextIndex)(Functors*);

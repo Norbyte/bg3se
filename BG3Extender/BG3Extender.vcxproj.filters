@@ -476,6 +476,11 @@
     <ClInclude Include="GameDefinitions\Picking.h" />
     <ClInclude Include="Lua\Libs\Timer.h" />
     <ClInclude Include="GameDefinitions\Stats\UseActions.h" />
+    <ClInclude Include="GameDefinitions\EnumRepository.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaStructIDs.h" />
+    <ClInclude Include="GameDefinitions\CharacterCreation.h" />
+    <ClInclude Include="GameDefinitions\Components\Interrupt.h" />
+    <ClInclude Include="GameDefinitions\Progression.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -506,9 +511,6 @@
     <None Include="Lua\Server\ServerStatus.inl">
       <Filter>Lua\Server</Filter>
     </None>
-    <None Include="GameDefinitions\Enumerations.inl">
-      <Filter>GameDefinitions</Filter>
-    </None>
     <None Include="LuaScripts\BuiltinLibrary.lua">
       <Filter>LuaScripts</Filter>
     </None>
@@ -518,7 +520,7 @@
     <None Include="LuaScripts\BuiltinLibraryServer.lua">
       <Filter>LuaScripts</Filter>
     </None>
-    <None Include="GameDefinitions\PropertyMaps\AllPropertyMaps.inl">
+    <None Include="GameDefinitions\PropertyMaps\Stats.inl">
       <Filter>GameDefinitions\PropertyMaps</Filter>
     </None>
     <None Include="Lua\LevelIteratorFunctions.inl">
@@ -691,7 +693,7 @@
     <None Include="Lua\Client\UIEvents.inl">
       <Filter>Lua\Client</Filter>
     </None>
-    <None Include="GameDefinitions\ExternalEnumerations.inl">
+    <None Include="GameDefinitions\ExternalEnumerations\GUI.inl">
       <Filter>GameDefinitions</Filter>
     </None>
     <None Include="Lua\Libs\ClientUI\Symbols.inl">

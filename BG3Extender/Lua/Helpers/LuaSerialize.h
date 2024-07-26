@@ -155,7 +155,7 @@ void SerializeRawObject(lua_State* L, void const* obj, GenericPropertyMap const&
 template <class T>
 inline void SerializeObject(lua_State* L, T const* obj)
 {
-	SerializeRawObject(L, obj, StaticLuaPropertyMap<T>::PropertyMap);
+	SerializeRawObject(L, obj, GetStaticPropertyMap<T>());
 }
 
 template <class T>

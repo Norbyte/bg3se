@@ -19,7 +19,7 @@ std::optional<STDString> GetCppObjectTypeName(lua_State * L, int index)
 	switch (meta.MetatableTag) {
 	case MetatableTag::ObjectProxyByRef:
 	{
-		auto propertyMap = gExtender->GetPropertyMapManager().GetPropertyMap(meta.PropertyMapTag);
+		auto propertyMap = gStructRegistry.Get(meta.PropertyMapTag);
 		return propertyMap->Name.GetString();
 	}
 
@@ -118,7 +118,7 @@ TypeInformation const* GetCppObjectType(lua_State * L, int index)
 	switch (meta.MetatableTag) {
 	case MetatableTag::ObjectProxyByRef:
 	{
-		auto propertyMap = gExtender->GetPropertyMapManager().GetPropertyMap(meta.PropertyMapTag);
+		auto propertyMap = gStructRegistry.Get(meta.PropertyMapTag);
 		return propertyMap->TypeInfo;
 	}
 
@@ -222,7 +222,7 @@ Array<FixedString> GetAllTypes()
 	return types;
 }
 
-void RegisterEnumeration(lua_State* L, EnumInfoStore<EnumUnderlyingType> const& ty)
+void RegisterEnumeration(lua_State* L, EnumInfoStore const& ty)
 {
 	lua_newtable(L);
 
@@ -238,7 +238,7 @@ void RegisterEnumeration(lua_State* L, EnumInfoStore<EnumUnderlyingType> const& 
 	lua_setfield(L, -2, ty.LuaName.GetString());
 }
 
-void RegisterEnumeration(lua_State* L, BitmaskInfoStore<EnumUnderlyingType> const& ty)
+void RegisterEnumeration(lua_State* L, BitfieldInfoStore const& ty)
 {
 	lua_newtable(L);
 
@@ -264,7 +264,7 @@ void RegisterEnumerations(lua_State* L)
 		RegisterEnumeration(L, *ty);
 	}
 	
-	for (auto const& ty : BitmaskRegistry::Get().BitfieldsById) {
+	for (auto const& ty : BitfieldRegistry::Get().BitfieldsById) {
 		RegisterEnumeration(L, *ty);
 	}
 

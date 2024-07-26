@@ -2,18 +2,19 @@
 
 #include <GameDefinitions/Components/Data.h>
 #include <GameDefinitions/Components/Visual.h>
+#include <GameDefinitions/CharacterCreation.h>
 
 BEGIN_NS(character_creation)
 
-struct ValidationError
+struct ValidationSelectorError
 {
 	using SelectorSlotError = uint8_t;
 
-	struct SelectorError
-	{
-		Array<SelectorSlotError> SlotErrors;
-	};
+	Array<SelectorSlotError> SlotErrors;
+};
 
+struct ValidationError
+{
 	[[bg3::legacy(field_0)]] uint64_t Flags;
 	__int64 field_8;
 	__int64 field_10;
@@ -22,13 +23,13 @@ struct ValidationError
 	__int64 field_28;
 	__int64 field_30;
 	__int64 field_38;
-	Array<SelectorError> field_40;
-	[[bg3::legacy(field_50)]] Array<SelectorError> AbilityPointBonuses;
-	[[bg3::legacy(field_60)]] Array<SelectorError> Proficiencies;
-	Array<SelectorError> field_70;
-	Array<SelectorError> field_80;
-	Array<SelectorError> field_90;
-	[[bg3::legacy(field_A0)]] Array<SelectorError> Cantrips;
+	Array<ValidationSelectorError> field_40;
+	[[bg3::legacy(field_50)]] Array<ValidationSelectorError> AbilityPointBonuses;
+	[[bg3::legacy(field_60)]] Array<ValidationSelectorError> Proficiencies;
+	Array<ValidationSelectorError> field_70;
+	Array<ValidationSelectorError> field_80;
+	Array<ValidationSelectorError> field_90;
+	[[bg3::legacy(field_A0)]] Array<ValidationSelectorError> Cantrips;
 };
 
 
@@ -53,7 +54,7 @@ struct CharacterDefinition
 	int field_0;
 	[[bg3::legacy(field_8)]] STDString Name;
 	[[bg3::legacy(field_20)]] BaseCharacterDefinition Definition;
-	GameObjectVisualData Visual;
+	Appearance Visual;
 	std::array<int, 7> Abilities;
 	LevelUpData LevelUpData;
 };
@@ -68,7 +69,7 @@ struct CompanionDefinitionComponent : public BaseComponent
 	uint8_t field_20;
 	uint8_t field_21;
 	Guid field_28;
-	GameObjectVisualData Visual;
+	Appearance Visual;
 	Guid field_110;
 	Guid field_120;
 	uint8_t field_130;
@@ -96,7 +97,7 @@ struct FullRespecDefinition
 {
 	[[bg3::legacy(field_0)]] STDString Name;
 	BaseCharacterDefinition Definition;
-	GameObjectVisualData Visual;
+	Appearance Visual;
 	std::array<int, 7> Abilities;
 	Array<LevelUpData> LevelUpData;
 	[[bg3::legacy(field_1B0)]] Array<LevelUpKnownSpell> KnownSpells;
@@ -134,7 +135,7 @@ struct ChangeAppearanceDefinitionBase
 	Guid RootTemplate;
 	Guid Voice;
 	uint8_t field_40;
-	GameObjectVisualData Visual;
+	Appearance Visual;
 };
 
 struct ChangeAppearanceDefinitionComponent : public BaseComponent
@@ -186,7 +187,7 @@ struct LevelUpDefinitionExtra
 	Guid field_8;
 	[[bg3::hidden]]
 	ScratchBuffer Scratch;
-	Array<GameObjectVisualData::AppearanceElement> AppearanceElements;
+	Array<character_creation::AppearanceMaterialSetting> AppearanceElements;
 	LevelUpData LevelUpData;
 };
 
@@ -298,7 +299,7 @@ struct CompanionDefinitionComponent : public BaseComponent
 	uint8_t field_20;
 	uint8_t field_21;
 	Guid field_28;
-	GameObjectVisualData Visual;
+	bg3se::character_creation::Appearance Visual;
 	Guid field_110;
 	Guid field_120;
 	uint8_t field_130;
@@ -350,7 +351,7 @@ struct DummyDefinitionComponent : public BaseComponent
 	[[bg3::legacy(field_98)]] Guid Subrace;
 	[[bg3::hidden]] Array<void*> field_A8;
 	[[bg3::hidden]] Array<void*> field_B8;
-	GameObjectVisualData Visual;
+	bg3se::character_creation::Appearance Visual;
 	uint8_t field_1A0;
 	EntityHandle field_1A8;
 };

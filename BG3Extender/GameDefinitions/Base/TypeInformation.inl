@@ -11,6 +11,14 @@ TypeInformation const& TypeInformationRef::Get() const
 	}
 }
 
+StaticTypeInformation::StaticTypeInformation(TypeInformation* type, InitializerProc* initializer)
+	: Type(type), Initializer(initializer)
+{
+	if (initializer != nullptr) {
+		TypeInformationRepository::GetInstance().RegisterInitializer(this);
+	}
+}
+
 void StaticTypeInformation::DeferredInitialize()
 {
 	if (Type == nullptr && Initializer != nullptr) {
@@ -241,6 +249,10 @@ void TypeInformationRepository::Initialize()
 
 	lua::gModuleRegistry.RegisterTypeInformation();
 
+	for (auto type : initializers_) {
+		type->DeferredInitialize();
+	}
+
 	for (auto& type : types_) {
 		type.Value->DeferredInitialize();
 	}
@@ -264,6 +276,11 @@ TypeInformation& TypeInformationRepository::RegisterType(FixedString const& type
 void TypeInformationRepository::RegisterType(TypeInformation* typeInfo)
 {
 	types_.insert(typeInfo->TypeName, typeInfo);
+}
+
+void TypeInformationRepository::RegisterInitializer(StaticTypeInformation* typeInfo)
+{
+	initializers_.push_back(typeInfo);
 }
 
 TypeInformation const* TypeInformationRepository::TryGetType(FixedString const& typeName)

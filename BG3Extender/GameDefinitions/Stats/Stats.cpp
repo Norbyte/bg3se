@@ -15,15 +15,15 @@ bool SpellPrototypeManager::SyncStat(Object* object, SpellPrototype* proto)
 		return false;
 	}
 
-	proto->UseCostGroups.clear();
-	proto->RitualCostGroups.clear();
-	proto->DualWieldingUseCostsGroups.clear();
-	proto->HitCostGroups.clear();
 	proto->UseCosts.clear();
-	proto->DualWieldingUseCosts.clear();
 	proto->RitualCosts.clear();
-	proto->SpellAnimation = SpellPrototype::Animation{};
-	proto->DualWieldingSpellAnimation = SpellPrototype::Animation{};
+	proto->DualWieldingUseCosts.clear();
+	proto->HitCostGroups.clear();
+	proto->VariableUseCosts.clear();
+	proto->VariableDualWieldingUseCosts.clear();
+	proto->VariableRitualCosts.clear();
+	proto->SpellAnimation = SpellPrototypeAnimationData{};
+	proto->DualWieldingSpellAnimation = SpellPrototypeAnimationData{};
 	proto->AlternativeCastTextEvents.clear();
 	proto->ContainerSpells.clear();
 	proto->Trajectories.clear();

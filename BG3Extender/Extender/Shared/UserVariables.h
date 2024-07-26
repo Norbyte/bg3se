@@ -49,7 +49,7 @@ enum class UserVariableFlags
 	Persistent = 1 << 9
 };
 
-template<> struct IsBitmask<UserVariableFlags>
+template<> struct IsBitfield<UserVariableFlags>
 {
 	static const bool value = true;
 };

@@ -122,13 +122,13 @@ struct ImguiHandle
 bool ProtectedCallC(lua_State* L, lua_CFunction fun, void* context, void* context2, char const* funcDescription, char const*& error);
 
 // LuaEnumValue forward declarations
-void push_enum_value(lua_State* L, EnumUnderlyingType value, EnumInfoStore<EnumUnderlyingType> const& store);
-EnumUnderlyingType get_enum_value(lua_State* L, int index, EnumInfoStore<EnumUnderlyingType> const& store);
-std::optional<EnumUnderlyingType> try_get_enum_value(lua_State* L, int index, EnumInfoStore<EnumUnderlyingType> const& store);
+void push_enum_value(lua_State* L, EnumUnderlyingType value, EnumTypeId id);
+EnumUnderlyingType get_enum_value(lua_State* L, int index, EnumTypeId typeId);
+std::optional<EnumUnderlyingType> try_get_enum_value(lua_State* L, int index, EnumTypeId typeId);
 
-EnumUnderlyingType get_bitfield_value(lua_State* L, int index, BitmaskInfoStore<EnumUnderlyingType> const& store, bool maskInvalidBits = false);
-std::optional<EnumUnderlyingType> try_get_bitfield_value(lua_State* L, int index, BitmaskInfoStore<EnumUnderlyingType> const& store, bool maskInvalidBits);
-void push_bitfield_value(lua_State* L, EnumUnderlyingType value, BitmaskInfoStore<EnumUnderlyingType> const& store);
+EnumUnderlyingType get_bitfield_value(lua_State* L, int index, BitfieldTypeId typeId, bool maskInvalidBits = false);
+std::optional<EnumUnderlyingType> try_get_bitfield_value(lua_State* L, int index, BitfieldTypeId typeId, bool maskInvalidBits);
+void push_bitfield_value(lua_State* L, EnumUnderlyingType value, BitfieldTypeId id);
 
 struct MathParam
 {

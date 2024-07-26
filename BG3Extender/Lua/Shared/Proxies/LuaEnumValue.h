@@ -19,11 +19,10 @@ public:
 	template <class T>
 	inline static void Make(lua_State* L, T value)
 	{
-		using ei = EnumInfo<T>;
-		Make(L, static_cast<typename ei::UnderlyingType>(value), ei::Storage.RegistryIndex);
+		Make(L, static_cast<EnumUnderlyingType>(value), EnumID<T>::ID);
 	}
 
-	static EnumInfoStore<EnumUnderlyingType>* GetEnumInfo(CppValueMetadata const& val);
+	static EnumInfoStore* GetEnumInfo(CppValueMetadata const& val);
 	static FixedString GetLabel(CppValueMetadata const& self);
 	static EnumUnderlyingType GetValue(CppValueMetadata const& self);
 

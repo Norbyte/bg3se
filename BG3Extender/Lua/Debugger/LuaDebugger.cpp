@@ -121,7 +121,7 @@ namespace bg3se::lua::dbg
 			switch (meta.MetatableTag) {
 			case MetatableTag::ObjectProxyByRef:
 				value->set_type_id(MsgValueType::USERDATA);
-				value->set_stringval(gExtender->GetPropertyMapManager().GetPropertyMap(meta.PropertyMapTag)->Name.GetString());
+				value->set_stringval(gStructRegistry.Get(meta.PropertyMapTag)->Name.GetString());
 				break;
 
 			case MetatableTag::ArrayProxy:

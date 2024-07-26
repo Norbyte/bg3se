@@ -173,7 +173,7 @@ namespace extui
 {
 	class IMGUIManager;
 	class IMGUIObjectManager;
-	class Renderable;
+	struct Renderable;
 }
 
 namespace osidbg

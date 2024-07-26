@@ -16,27 +16,37 @@ namespace bg3se
 		return reg;
 	}
 
-	void EnumRegistry::Register(EnumInfoStore<EnumUnderlyingType>* ei)
+	void EnumRegistry::Register(EnumInfoStore* ei, int32_t id)
 	{
 		assert(EnumsByName.find(ei->EnumName) == EnumsByName.end());
 		EnumsByName.insert(ei->EnumName, ei);
-		ei->RegistryIndex = (int32_t)EnumsById.Size;
-		EnumsById.Add(ei);
+		ei->RegistryIndex = id;
+
+		if (EnumsById.size() < (uint32_t)id + 1) {
+			EnumsById.resize(id + 1);
+		}
+
+		EnumsById[id] = ei;
 	}
 
 
-	BitmaskRegistry& BitmaskRegistry::Get()
+	BitfieldRegistry& BitfieldRegistry::Get()
 	{
-		static BitmaskRegistry reg;
+		static BitfieldRegistry reg;
 		return reg;
 	}
 	
-	void BitmaskRegistry::Register(BitmaskInfoStore<EnumUnderlyingType>* ei)
+	void BitfieldRegistry::Register(BitfieldInfoStore* ei, int32_t id)
 	{
 		assert(BitfieldsByName.find(ei->EnumName) == BitfieldsByName.end());
 		BitfieldsByName.insert(ei->EnumName, ei);
-		ei->RegistryIndex = (int32_t)BitfieldsById.Size;
-		BitfieldsById.Add(ei);
+		ei->RegistryIndex = id;
+
+		if (BitfieldsById.size() < (uint32_t)id + 1) {
+			BitfieldsById.resize(id + 1);
+		}
+
+		BitfieldsById[id] = ei;
 	}
 
 	StaticSymbols* gStaticSymbols{ nullptr };

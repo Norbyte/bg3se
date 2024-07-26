@@ -78,18 +78,18 @@ struct Requirement
 	bool Not;
 };
 
+struct FunctorGroup
+{
+	FixedString TextKey;
+	Functors* Functors;
+
+	Array<Functor*> GetFunctors();
+};
+
 struct Object : public Noncopyable<Object>
 {
 	using SetPropertyStringProc = void(Object* self, FixedString const& propertyName, char const* value);
 
-	struct FunctorGroup
-	{
-		FixedString TextKey;
-		Functors* Functors;
-
-		Array<Functor*> GetFunctors();
-	};
-		
 	struct RollCondition
 	{
 		FixedString Name;
