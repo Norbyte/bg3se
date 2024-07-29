@@ -111,6 +111,11 @@ struct ConditionRoll
 	SkillId Skill;
 };
 
+struct ConditionRolls
+{
+	Array<ConditionRoll> Rolls;
+};
+
 struct DamageModifierMetadata
 {
 	uint8_t MetadataType;

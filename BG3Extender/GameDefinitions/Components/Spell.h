@@ -3,6 +3,7 @@
 #include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/RootTemplates.h>
 #include <GameDefinitions/Hit.h>
+#include <GameDefinitions/Stats/Common.h>
 
 BEGIN_NS(spell)
 
@@ -10,85 +11,92 @@ struct Modification
 {
 	struct ModifyAreaRadius
 	{
-		uint64_t Value;
+		SpellModificationValueType ValueType;
+		float AreaRadius;
 	};
 
 	struct ModifyMaximumTargets
 	{
-		uint64_t Value;
+		SpellModificationValueType ValueType;
+		int32_t MaximumTargets;
 	};
 
 	struct ModifyNumberOfTargets
 	{
-		glm::vec3 Value;
+		SpellModificationValueType ValueType;
+		int32_t NumberOfTargets;
 	};
 
 	struct ModifySavingThrowDisadvantage
 	{
-		uint8_t Value;
+		uint8_t SavingThrowDisadvantage;
 	};
 
 	struct ModifySpellFlags
 	{
-		uint8_t Value;
+		uint8_t SpellFlags;
 		uint8_t field_1;
 	};
 
 	struct ModifySpellRoll
 	{
-		STDString field_0;
-		STDString field_18;
+		STDString Conditions;
+		STDString Conditions2;
 		int field_30;
 	};
 
 	struct ModifyStatusDuration
 	{
-		uint64_t Value;
+		SpellModificationValueType ValueType;
+		float StatusDuration;
 	};
 
 	struct ModifySummonDuration
 	{
-		uint64_t Value;
+		SpellModificationValueType ValueType;
+		float SummonDuration;
 	};
 
 	struct ModifySurfaceDuration
 	{
-		uint64_t Value;
+		SpellModificationValueType ValueType;
+		float SurfaceDuration;
 	};
 
 	struct ModifyTargetRadius
 	{
-		uint64_t Value;
+		SpellModificationValueType ValueType;
+		float TargetRadius;
 	};
 
 	struct ModifyUseCosts
 	{
 		uint8_t Type;
-		Guid field_10;
-		STDString field_18;
-		int field_30;
-		Guid field_38;
+		Guid Resource;
+		STDString Expression;
+		int Level;
+		Guid Resource2;
 	};
 
 	struct ModifyVisuals
 	{
-		uint8_t Value;
+		uint8_t Visuals;
 	};
 
 	struct ModifyIconGlow
 	{
-		uint8_t Value;
+		uint8_t IconGlow;
 	};
 
 	struct ModifyTooltipDescription
 	{
-		uint8_t Value;
+		uint8_t TooltipDescription;
 	};
 
 	using Variant = std::variant<ModifyAreaRadius, ModifyMaximumTargets, ModifyNumberOfTargets, ModifySavingThrowDisadvantage, ModifySpellFlags, ModifySpellRoll, ModifyStatusDuration, ModifySummonDuration, ModifySurfaceDuration, ModifyTargetRadius, ModifyUseCosts, ModifyVisuals, ModifyIconGlow, ModifyTooltipDescription>;
 
 	uint8_t field_0;
-	FixedString field_4;
+	FixedString Source;
 	Variant Modification;
 	MultiHashSet<SpellId> Spells;
 };
@@ -278,6 +286,12 @@ struct SpellRollCastEventData
 	HitDesc Hit;
 };
 
+struct SpellRollTargetInfo
+{
+	uint64_t Flags;
+	glm::vec3 Position;
+};
+
 struct SpellRollData
 {
 	EntityHandle Target;
@@ -285,11 +299,8 @@ struct SpellRollData
 	[[bg3::legacy(Hits)]] Array<SpellRollCastEventData> Casts;
 	MultiHashMap<FixedString, int32_t> NameToCastIndex;
 	int NextReaction;
-	uint8_t field_6C;
-	__int64 field_70;
-	__int64 field_78;
-	__int64 field_80;
-	uint8_t field_88;
+	SpellMetaConditionType SpellConditionsType;
+	std::optional<SpellRollTargetInfo> TargetInfo;
 };
 
 struct RollsComponent : public BaseComponent
@@ -336,7 +347,7 @@ struct StateComponent : public BaseComponent
 	glm::vec3 CasterStartPosition;
 	EntityHandle field_80;
 	int field_88;
-	Guid field_90;
+	Guid SpellCastGuid;
 	STDString field_A0;
 };
 
@@ -430,11 +441,17 @@ struct ExternalsComponent : public BaseComponent
 	Array<Guid> Externals;
 };
 
+struct HitRegister
+{
+	EntityHandle field_0;
+	uint64_t field_8;
+};
+
 struct HitRegisterComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerSpellHitRegister, "esv::spell_cast::HitRegisterComponent")
 
-	Array<Guid> Hits;
+	Array<HitRegister> Hits;
 };
 
 struct StateComponent : public BaseComponent
@@ -446,5 +463,18 @@ struct StateComponent : public BaseComponent
 	CastState State;
 	int field_28;
 };
+
+struct CacheComponent : public BaseComponent
+{
+	DEFINE_COMPONENT(ServerSpellCastCache, "esv::spell_cast::CacheComponent")
+
+	Array<stats::ActionResourceCost> Costs;
+	[[bg3::hidden]] MultiHashMap<int, void*> field_10_MHM_FS_unk;
+	__int64 field_50;
+	// MultiHashMap<FixedString, MultiHashMap<int, Array<bg3se::spell_cast::IntermediateTarget>>>
+	[[bg3::hidden]] MultiHashMap<FixedString, MultiHashMap<int, Array<void*>>> Targets;
+	[[bg3::hidden]] MultiHashMap<int, void*> field_98_MHM_FS_unk;
+};
+
 
 END_NS()

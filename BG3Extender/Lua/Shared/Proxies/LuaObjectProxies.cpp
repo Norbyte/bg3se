@@ -70,19 +70,6 @@ void AddBitfieldProperty(GenericPropertyMap& pm, BitfieldTypeId typeId, std::siz
 	}
 }
 
-template <class T, class T2>
-inline void MarkAsInherited(LuaPropertyMap<T> const& base, LuaPropertyMap<T2>& child)
-{
-	static_assert(std::is_base_of_v<T, T2>, "Can only copy properties from base class");
-	static_assert(static_cast<T*>(reinterpret_cast<T2*>(nullptr)) == reinterpret_cast<T*>(nullptr), "Base and child class should start at same base ptr");
-
-	assert(!child.InheritanceUpdated);
-	assert(child.IsInitializing);
-	assert(child.Parent == nullptr);
-
-	child.Parent = &base;
-}
-
 inline void MarkAsInherited(GenericPropertyMap const& base, GenericPropertyMap& child)
 {
 	assert(!child.InheritanceUpdated);
@@ -98,12 +85,15 @@ enum class PropertyMapEntryType
 	Inheritance,
 	Fallback,
 	Property,
-	Bitfield
+	Bitfield,
+	End
 };
 
 struct PropertyMapClassEntry
 {
 	char const* Name;
+	char const* TypeName;
+	char const* ComponentName;
 	StructTypeId Id;
 	ExtComponentType ComponentType;
 	size_t Size;
@@ -188,12 +178,23 @@ inline constexpr StructTypeId CheckedGetDeclStructId()
 
 
 template <class T>
-inline constexpr ExtComponentType GetParentComponentType()
+inline constexpr ExtComponentType GetComponentType()
 {
 	if constexpr (std::is_base_of_v<bg3se::BaseComponent, T> && !std::is_same_v<T, bg3se::BaseComponent> && !std::is_same_v<T, bg3se::BaseProxyComponent>) {
 		return T::ComponentType;
 	} else {
 		return (ExtComponentType)0xffffffff;
+	}
+}
+
+
+template <class T>
+inline constexpr char const* GetComponentName()
+{
+	if constexpr (std::is_base_of_v<bg3se::BaseComponent, T> && !std::is_same_v<T, bg3se::BaseComponent> && !std::is_same_v<T, bg3se::BaseProxyComponent>) {
+		return T::ComponentName;
+	} else {
+		return nullptr;
 	}
 }
 
@@ -229,15 +230,25 @@ inline constexpr GenericPropertyMap::TAssigner* GetAssigner()
 }
 
 
-void ProcessPropertyMapDefinitions(std::span<PropertyMapRegistrationEntry const> defn)
+void ProcessPropertyMapDefinitions(PropertyMapRegistrationEntry const* defn)
 {
 	GenericPropertyMap* pm{ nullptr };
+	TypeInformation* typeInfo{ nullptr };
 
-	for (auto const& entry : defn) {
+	while (defn->Type != PropertyMapEntryType::End) {
+		auto const& entry = *defn;
 		switch (entry.Type) {
 		case PropertyMapEntryType::Class:
 		{
 			pm = new GenericPropertyMap();
+
+			/*auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(entry.Cls.TypeName));
+			ty.Kind = LuaTypeId::Object;
+			ty.PropertyMap = pm;
+			if (entry.Cls.ComponentName != nullptr) {			
+				ty.ComponentName = FixedString(entry.Cls.ComponentName);
+			}*/
+
 			pm->Init();
 			pm->Name = FixedString(entry.Cls.Name);
 			if (entry.Cls.ComponentType != (ExtComponentType)0xffffffff) {
@@ -248,6 +259,7 @@ void ProcessPropertyMapDefinitions(std::span<PropertyMapRegistrationEntry const>
 			pm->Assign = entry.Cls.Assign;
 			pm->Serialize = entry.Cls.Serialize;
 			pm->Unserialize = entry.Cls.Unserialize;
+			//pm->TypeInfo = typeInfo;
 			gStructRegistry.Register(pm, entry.Cls.Id);
 			break;
 		}
@@ -288,35 +300,40 @@ void ProcessPropertyMapDefinitions(std::span<PropertyMapRegistrationEntry const>
 		default:
 			assert(false);
 		}
+
+		defn++;
 	}
 
 	pm->Finish();
 }
 
 
-bool IsResolved(std::span<PropertyMapRegistrationEntry const> defn)
+bool IsResolved(PropertyMapRegistrationEntry const* defn)
 {
-	for (auto const& entry : defn) {
-		if (entry.Type == PropertyMapEntryType::Inheritance) {
-			if (entry.Inherit.ParentId >= (int)gStructRegistry.StructsById.size()
-				|| gStructRegistry.StructsById[entry.Inherit.ParentId] == nullptr) {
+	while (defn->Type != PropertyMapEntryType::End) {
+		if (defn->Type == PropertyMapEntryType::Inheritance) {
+			if (defn->Inherit.ParentId >= (int)gStructRegistry.StructsById.size()
+				|| gStructRegistry.StructsById[defn->Inherit.ParentId] == nullptr) {
 				return false;
 			}
 		}
+
+		defn++;
 	}
 
 	return true;
 }
 
 
-void ProcessClassRegistrations(Array<std::span<const PropertyMapRegistrationEntry>> const& classDefns)
+void ProcessClassRegistrations(std::span<PropertyMapRegistrationEntry const* const> const& classDefns)
 {
-	auto pending = classDefns;
+	Array<PropertyMapRegistrationEntry const*> pending;
+	for (auto defn : classDefns) pending.push_back(defn);
 
 	while (!pending.empty()) {
-		Array<std::span<const PropertyMapRegistrationEntry>> nextGen;
+		Array<PropertyMapRegistrationEntry const*> nextGen;
 
-		for (auto const& cls : pending) {
+		for (auto cls : pending) {
 			if (!IsResolved(cls)) {
 				nextGen.push_back(cls);
 			} else {
@@ -358,23 +375,21 @@ void UpdateInheritance()
 }
 
 
-void InitObjectProxyPropertyMaps()
-{
-	static bool initialized{ false };
-	if (initialized) return;
+template <class T>
+struct PropertyMapRegistrations;
 
-	Array<std::span<const PropertyMapRegistrationEntry>> classDefns;
 	
 #define GENERATING_PROPMAP
 
-#define BEGIN_CLS_TN(cls, typeName, id) { \
-	using PM = LuaPropertyMap<cls>; \
+#define BEGIN_CLS_TN(cls, typeName, id) template <> struct PropertyMapRegistrations<cls> { \
 	using ObjectType = cls; \
-	static constexpr PropertyMapRegistrationEntry defn[] = { \
+	static constexpr PropertyMapRegistrationEntry Definitions[] = { \
 		{ .Type = PropertyMapEntryType::Class, .Cls = { \
 			.Name = #cls, \
+			.TypeName = #typeName, \
+			.ComponentName = GetComponentName<cls>(), \
 			.Id = CheckedGetDeclStructId<cls>(), \
-			.ComponentType = GetParentComponentType<cls>(), \
+			.ComponentType = GetComponentType<cls>(), \
 			.Construct = GetConstructor<cls>(), \
 			.Destroy = GetDestructor<cls>(), \
 			.Assign = GetAssigner<cls>(), \
@@ -384,9 +399,10 @@ void InitObjectProxyPropertyMaps()
 
 #define BEGIN_CLS(cls, id) BEGIN_CLS_TN(cls, cls, id)
 
-#define END_CLS() }; \
-		classDefns.push_back(defn); \
-	}
+#define END_CLS() \
+			{ .Type = PropertyMapEntryType::End }, \
+		}; \
+	};
 
 #define INHERIT(base) \
 		{ .Type = PropertyMapEntryType::Inheritance, .Inherit = { \
@@ -525,7 +541,31 @@ void InitObjectProxyPropertyMaps()
 #undef P_FUN
 #undef P_FALLBACK
 
-	ProcessClassRegistrations(classDefns);
+
+static constexpr PropertyMapRegistrationEntry const* AllClassDefns[] = {
+
+
+#define DECLARE_CLS(id, ...) PropertyMapRegistrations<__VA_ARGS__>::Definitions,
+#define DECLARE_CLS_FWD(id, cls) PropertyMapRegistrations<cls>::Definitions,
+#define DECLARE_CLS_NS_FWD(id, ns, cls) PropertyMapRegistrations<ns::cls>::Definitions,
+#define DECLARE_CLS_BARE_NS_FWD(id, ns, cls) PropertyMapRegistrations<::ns::cls>::Definitions,
+#define DECLARE_STRUCT_BARE_NS_FWD(id, ns, cls) PropertyMapRegistrations<::ns::cls>::Definitions,
+#include <GameDefinitions/Generated/PropertyMapNames.inl>
+#undef DECLARE_CLS
+#undef DECLARE_CLS_FWD
+#undef DECLARE_CLS_NS_FWD
+#undef DECLARE_CLS_BARE_NS_FWD
+#undef DECLARE_STRUCT_BARE_NS_FWD
+
+};
+
+
+void InitObjectProxyPropertyMaps()
+{
+	static bool initialized{ false };
+	if (initialized) return;
+
+	ProcessClassRegistrations(std::span(AllClassDefns));
 	UpdateInheritance();
 
 	initialized = true;

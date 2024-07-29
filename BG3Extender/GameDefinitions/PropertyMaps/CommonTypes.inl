@@ -1,6 +1,5 @@
 BEGIN_CLS(Transform)
-// TODO - P(Matrix)
-// TODO - P(Rotate)
+P(RotationQuat)
 P(Translate)
 P(Scale)
 END_CLS()

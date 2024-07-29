@@ -366,6 +366,8 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 	E(ServerSpellInterruptRequests)
 	E(ServerSpellInterruptResults)
 	E(ServerSpellCastState)
+	E(ServerSpellCastCache)
+	E(ServerSpellCastInterrupt)
 
 	// Interrupts
 	E(InterruptActionState)
@@ -385,6 +387,7 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 	E(ServerInterruptZoneRequests)
 	E(ServerInterruptInitialParticipants)
 	E(ServerInterruptTurnOrderInZone)
+	E(ServerInterruptDataSingleton)
 
 	// Sight
 	E(Sight)

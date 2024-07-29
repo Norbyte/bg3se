@@ -10,6 +10,7 @@ struct ActionStateComponent : public BaseComponent
 
 	InterruptEvent Event;
 	Array<ActionEntry> Actions;
+	Guid SpellCastGuid;
 };
 
 struct ConditionallyDisabledComponent : public BaseComponent
@@ -32,9 +33,9 @@ struct DataComponent : public BaseComponent
 
 	FixedString Interrupt;
 	uint8_t field_4;
-	EntityHandle field_8;
-	EntityHandle field_10;
-	FixedString field_18;
+	[[bg3::legacy(field_8)]] EntityHandle InterruptEntity;
+	[[bg3::legacy(field_10)]] EntityHandle Caster;
+	[[bg3::legacy(field_18)]] FixedString Spell;
 };
 
 struct DecisionComponent : public BaseComponent
@@ -114,6 +115,19 @@ struct UpdateInterruptorsRequestData
 	MultiHashMap<EntityHandle, MultiHashMap<bg3se::interrupt::InterruptEvent, ConditionRoll>> field_18;
 };
 
+struct InterruptDataComponent : public BaseComponent
+{
+	DEFINE_COMPONENT(ServerSpellCastInterrupt, "esv::spell_cast::InterruptDataComponent")
+
+	std::optional<bg3se::interrupt::UndecidedEventWithId> Event;
+	int32_t field_250;
+	int32_t field_254;
+	Array<bg3se::interrupt::PausedAnimationEvent> PausedAnimationEvents;
+	Array<bg3se::interrupt::AnimationInterruptData> AnimationInterrupts;
+	int32_t field_278;
+	int32_t field_27C;
+};
+
 END_NS()
 
 BEGIN_NS(esv::spell_cast)
@@ -134,11 +148,11 @@ struct InterruptRollData
 	[[bg3::legacy(field_8)]] Array<FixedRollBonus> FixedRollBonuses;
 };
 
-struct InterruptResult2
+struct FunctorConditional
 {
-	__int64 field_0;
-	__int64 field_8;
-	__int64 field_10;
+	glm::vec3 field_0;
+	float field_C;
+	EntityHandle field_10;
 	int field_18;
 	uint8_t field_1C;
 	ConditionRoll Roll;
@@ -149,7 +163,7 @@ struct InterruptResultsComponent : public BaseComponent
 	DEFINE_COMPONENT(ServerSpellInterruptResults, "esv::spell_cast::InterruptResultsComponent")
 
 	MultiHashMap<bg3se::interrupt::DamageFunctorKey, bg3se::interrupt::DamageRollAdjustments> Results;
-	Array<InterruptResult2> Results2;
+	Array<FunctorConditional> Results2;
 };
 
 END_NS()
@@ -199,5 +213,14 @@ struct TurnOrderInZoneComponent : public BaseComponent
 	
 	MultiHashSet<EntityHandle> InZone;
 };
+
+struct DataSingletonComponent : public BaseComponent
+{
+	DEFINE_COMPONENT(ServerInterruptDataSingleton, "esv::interrupt::DataSingletonComponent")
+
+	Array<bg3se::interrupt::UndecidedEventWithId> Events;
+	Array<bg3se::interrupt::DelayedTargetHitInterruptEvent> TargetHitInterrupts;
+};
+
 
 END_NS()

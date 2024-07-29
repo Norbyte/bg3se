@@ -1613,7 +1613,7 @@ struct SpellMetaCondition : public resource::GuidResource
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::SpellMetaCondition;
 	static constexpr auto EngineClass = "eoc::SpellMetaConditionManager";
 
-	uint8_t ConditionType;
+	SpellMetaConditionType ConditionType;
 	STDString Filter;
 	STDString AdditionalConditions;
 	bool OverrideOriginalCondition;
