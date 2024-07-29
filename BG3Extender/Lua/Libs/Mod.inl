@@ -13,15 +13,22 @@ BEGIN_NS(lua::mod)
 /// ```
 /// </summary>
 /// <param name="modNameGuid">UUID of mod to check</param>
-bool IsModLoaded(char const* modNameGuid)
+bool IsModLoaded(FixedString modNameGuid)
 {
-	auto modUuid = Guid::Parse(modNameGuid);
+	auto modManager = gExtender->GetCurrentExtensionState()->GetModManager();
+
+	auto modUuid = Guid::Parse(modNameGuid.GetStringView());
 	if (modUuid) {
-		auto modManager = gExtender->GetCurrentExtensionState()->GetModManager();
 		for (auto const& mod : modManager->BaseModule.LoadOrderedModules) {
 			if (mod.Info.ModuleUUID == *modUuid) {
 				return true;
 			}
+		}
+	}
+	
+	for (auto const& mod : modManager->BaseModule.LoadOrderedModules) {
+		if (mod.Info.ModuleUUIDString == modNameGuid) {
+			return true;
 		}
 	}
 
@@ -32,13 +39,13 @@ bool IsModLoaded(char const* modNameGuid)
 /// Returns the list of loaded module UUIDs in the order they're loaded in.
 /// </summary>
 /// <returns></returns>
-ObjectSet<Guid> GetLoadOrder()
+Array<FixedString> GetLoadOrder()
 {
-	ObjectSet<Guid> loadOrder;
+	Array<FixedString> loadOrder;
 	auto modManager = gExtender->GetCurrentExtensionState()->GetModManager();
 
 	for (auto const& mod : modManager->BaseModule.LoadOrderedModules) {
-		loadOrder.Add(mod.Info.ModuleUUID);
+		loadOrder.Add(mod.Info.ModuleUUIDString);
 	}
 
 	return loadOrder;
@@ -48,16 +55,22 @@ ObjectSet<Guid> GetLoadOrder()
 /// Returns detailed information about the specified (loaded) module.
 /// </summary>
 /// <param name="modNameGuid">Mod UUID to query</param>
-Module* GetMod(char const* modNameGuid)
+Module* GetMod(FixedString modNameGuid)
 {
-	Module const * module{ nullptr };
-	auto modUuid = Guid::Parse(modNameGuid);
+	auto modManager = gExtender->GetCurrentExtensionState()->GetModManager();
+
+	auto modUuid = Guid::Parse(modNameGuid.GetStringView());
 	if (modUuid) {
-		auto modManager = gExtender->GetCurrentExtensionState()->GetModManager();
 		for (auto& mod : modManager->BaseModule.LoadOrderedModules) {
 			if (mod.Info.ModuleUUID == *modUuid) {
 				return &mod;
 			}
+		}
+	}
+
+	for (auto& mod : modManager->BaseModule.LoadOrderedModules) {
+		if (mod.Info.ModuleUUIDString == modNameGuid) {
+			return &mod;
 		}
 	}
 
