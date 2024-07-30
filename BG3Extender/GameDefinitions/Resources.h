@@ -648,15 +648,15 @@ struct AnimationResource : public TwoStepLoadableResource
 	FixedString AdditiveLoopingAnimationID;
 	FixedString LeftTransitionAnimation;
 	FixedString RightTransitionAnimation;
+	// FixedString PreviewVisualResource;
 	FixedString SkeletonResource;
 	float TimeStep;
 	float Duration;
 	float Offset;
 	bool Looping;
+	// bool IsPoseBank;
 	uint8_t AnchorHand;
 	uint8_t SupportingLeg;
-	[[bg3::hidden]] __int8 field_7b;
-	[[bg3::hidden]] __int32 field_7c;
 };
 
 struct AnimationBlueprintResource : public TwoStepLoadableResource

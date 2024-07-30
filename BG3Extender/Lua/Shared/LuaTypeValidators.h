@@ -30,8 +30,15 @@ inline typename std::enable_if_t<std::is_integral_v<T>, bool> Validate(T const*,
 	return true;
 }
 
-template <class T>
-inline typename std::enable_if_t<std::is_floating_point_v<T>, bool> Validate(T const*, Overload<T>)
+inline bool Validate(float const* v, Overload<float>)
+{
+#if defined(ENABLE_FLAKY_HEURISTICS)
+	CHECK((*v > -100000000.0f && *v < 100000000.0f) || *v == 3.40282347e+38f);
+#endif
+	return true;
+}
+
+inline bool Validate(double const*, Overload<double>)
 {
 	return true;
 }

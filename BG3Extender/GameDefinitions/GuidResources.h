@@ -1184,8 +1184,9 @@ struct ItemWallTemplate : public resource::GuidResource
 	STDString LowMiddle;
 	STDString LowRight;
 	float Padding;
-	float RandomRotation;
+	bool RandomRotation;
 	FixedString Animation;
+	float TimeBetweenItems;
 };
 
 
