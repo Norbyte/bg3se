@@ -237,7 +237,7 @@ struct Functors
 
 	[[bg3::hidden]] BaseVMT* VMT{ nullptr };
 	Array<Functor*> FunctorList;
-	MultiHashMap<FixedString, Functor*> FunctorsByName;
+	MultiHashMap<FixedString, int> FunctorsByName;
 	int NextFunctorIndex{ 0 };
 	int Unknown{ 0 };
 	FixedString UniqueName;
@@ -474,7 +474,7 @@ struct UseAttackFunctor : public Functor
 	static constexpr auto FunctorType = FunctorId::UseAttack;
 
 	bool IgnoreChecks{ false }; // Arg1
-	bool Arg2{ false };
+	// bool Arg2{ false };
 };
 
 struct CreateExplosionFunctor : public Functor

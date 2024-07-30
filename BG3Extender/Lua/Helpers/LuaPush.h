@@ -9,7 +9,7 @@ inline void push(lua_State* L, nullptr_t v)
 
 // Prevent implicit typecast to bool from pointer types
 template <class T>
-inline typename std::enable_if_t<std::is_same_v<T, bool>, void> push(lua_State* L, bool v)
+inline typename std::enable_if_t<std::is_same_v<T, bool>, void> push(lua_State* L, T v)
 {
 	lua_pushboolean(L, v ? 1 : 0);
 }
