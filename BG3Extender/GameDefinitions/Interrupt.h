@@ -2,6 +2,7 @@
 
 #include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/Hit.h>
+#include <GameDefinitions/Stats/Common.h>
 
 BEGIN_NS(interrupt)
 
@@ -81,15 +82,15 @@ struct RollData
 
 struct SpellCastEvent
 {
-	FixedString field_0;
-	Guid field_8;
-	SpellId field_18;
+	FixedString Cause;
+	Guid SpellCastGuid;
+	SpellId Spell;
 };
 
 struct CastHitEvent
 {
-	FixedString field_0;
-	Guid field_8;
+	FixedString Cause;
+	Guid SpellCastGuid;
 	DamageFlags DamageEffectFlags;
 	uint8_t SpellAttackType;
 	int field_20;
@@ -104,7 +105,7 @@ struct SpellRollEvent
 {
 	Guid RollUuid;
 	FixedString field_10;
-	Guid field_18;
+	Guid SpellCastGuid;
 	uint8_t ConditionRollType;
 	RollData Roll;
 	int Difficulty;
@@ -132,22 +133,21 @@ struct ConditionalRollEvent
 
 struct EnterAttackRangeEvent
 {
-	FixedString field_0;
-	glm::vec3 field_4;
+	FixedString Event;
+	glm::vec3 Position;
 };
 
 struct LeaveAttackRangeEvent
 {
-	FixedString field_0;
-	glm::vec3 field_4;
+	FixedString Event;
+	glm::vec3 Position;
 };
 
 struct SpellPreDamageEvent
 {
 	Guid field_0;
-	FixedString field_10;
-	Guid field_18;
-	STDString field_28;
+	FixedString Cause;
+	Guid SpellCastGuid;
 	DamageType DamageType;
 	DamageFlags DamageEffectFlags;
 	AbilityId Ability;
@@ -155,6 +155,7 @@ struct SpellPreDamageEvent
 	Dependency Dependency1;
 	Dependency Dependency2;
 	SpellId Spell;
+	uint8_t field_90;
 };
 
 struct PlaceholderSpellRollEvent
@@ -199,18 +200,18 @@ struct DebugEvent
 
 struct ActionEntry
 {
-	EntityHandle field_0;
-	EntityHandle field_8;
+	EntityHandle Observer;
+	EntityHandle Interrupt;
 };
 
 struct InterruptEvent
 {
-	std::variant<SpellCastEvent, CastHitEvent, SpellRollEvent, ConditionalRollEvent, EnterAttackRangeEvent, LeaveAttackRangeEvent, SpellPreDamageEvent, PlaceholderSpellRollEvent, ConditionResultEvent, StatusAppliedEvent, DeathEvent, DebugEvent> Variant;
+	std::variant<SpellCastEvent, CastHitEvent, SpellRollEvent, ConditionalRollEvent, EnterAttackRangeEvent, LeaveAttackRangeEvent, SpellPreDamageEvent, PlaceholderSpellRollEvent, ConditionResultEvent, StatusAppliedEvent, DeathEvent, DebugEvent> Event;
 	EntityHandle Source;
 	EntityHandle SourceProxy;
 	EntityHandle Target;
 	EntityHandle TargetProxy;
-	Array<ActionEntry> field_D0;
+	Array<Guid> field_D0;
 	std::optional<glm::vec3> SourcePos;
 	std::optional<glm::vec3> TargetPos;
 	uint8_t field_100;
@@ -221,6 +222,94 @@ struct InterruptEvent
 		return Source == o.Source
 			&& Target == o.Target;
 	}
+};
+
+struct UndecidedEventWithId
+{
+	glm::vec3 field_0;
+	float field_C;
+	InterruptEvent Event;
+	__int64 field_108;
+	InterruptEvent Event2;
+	MultiHashMap<EntityHandle, MultiHashSet<EntityHandle>> field_208;
+};
+
+struct DelayedTargetHitInterruptEvent
+{
+	__int64 field_0;
+	__int64 field_8;
+	__int64 field_10;
+	HitDesc Hit;
+	AttackDesc Attack;
+	__int64 field_1E8;
+	__int64 field_1F0;
+	__int64 field_1F8;
+	__int64 field_200;
+	__int64 field_208;
+	__int64 field_210;
+	SpellId Spell;
+};
+
+
+struct PausedAnimationEvent
+{
+	FixedString field_0;
+	int field_4;
+};
+
+struct PrecalculatedInterruptEvent : public InterruptEvent
+{
+	MultiHashMap<EntityHandle, MultiHashSet<EntityHandle>> field_F8;
+	MultiHashMap<EntityHandle, MultiHashSet<EntityHandle>> field_138;
+};
+
+struct ResolvedData
+{
+	__int64 field_0;
+	Array<RerollValue> RerollValues;
+};
+
+struct InterruptUsageEntry
+{
+	__int64 field_0;
+	ConditionRolls ConditionRolls;
+	__int64 field_18;
+	Array<RollAdjustmentMetadata> RollAdjustmentMetadata;
+	__int64 field_30;
+	__int64 field_38;
+	Array<RerollCondition> RerollConditions;
+	Array<RerollValue> RerollValues;
+	__int64 field_60;
+	__int64 field_68;
+	__int64 field_70;
+};
+
+struct ExecutedDependency
+{
+	// UNKNOWN
+};
+
+struct InterruptUsage
+{
+	Array<stats::ActionResourceCost> Costs;
+	MultiHashMap<EntityHandle, MultiHashMap<InterruptEvent, InterruptUsageEntry>> Usage;
+};
+
+struct AnimationInterruptData
+{
+	Array<InterruptEvent> Events;
+	Array<PrecalculatedInterruptEvent> PrecalculatedInterrupts;
+	__int64 field_20;
+	MultiHashMap<Guid, ResolvedData> Resolved;
+	MultiHashMap<EntityHandle, MultiHashMap<InterruptEvent, InterruptUsageEntry>> Usage;
+	[[bg3::hidden]] MultiHashMap<Guid, ExecutedDependency> ExecutedDependencies;
+	MultiHashMap<InterruptEvent, MultiHashMap<EntityHandle, EntityHandle>> field_E8;
+	int32_t field_128;
+	float field_12C;
+	MultiHashMap<Guid, RollAdjustments> RollAdjustments;
+	MultiHashMap<DamageFunctorKey, DamageRollAdjustments> DamageRollAdjustments;
+	MultiHashMap<EntityHandle, InterruptUsage> InterruptUsage;
+	[[bg3::hidden]] MultiHashMap<Guid, ExecutedDependency> ExecutedDependencies2;
 };
 
 END_NS()

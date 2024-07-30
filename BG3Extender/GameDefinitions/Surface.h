@@ -4,10 +4,31 @@
 #include <GameDefinitions/EntitySystem.h>
 #include <GameDefinitions/Misc.h>
 
+BEGIN_SE()
+
+struct AiTilePos
+{
+	int16_t X;
+	int16_t Y;
+	int32_t SubgridId;
+};
+
+struct SurfaceMetaData
+{
+	Guid TeamId;
+	EntityHandle field_10;
+	EntityHandle field_18;
+	float LifeTime;
+	uint8_t Level;
+};
+
+END_SE()
+
 namespace bg3se::esv
 {
 	struct Level;
 	struct Surface;
+	struct SurfaceManager;
 
 	struct SurfaceCell
 	{
@@ -18,40 +39,35 @@ namespace bg3se::esv
 	{
 		Surface* Surface;
 		uint64_t SurfaceStateFlags;
-		PrimitiveSmallSet<SurfaceCell> SurfaceCells1;
-		PrimitiveSmallSet<SurfaceCell> SurfaceCells2;
+		PrimitiveSmallSet<SurfaceCell> Cells;
+		PrimitiveSmallSet<SurfaceCell> GrpwCells;
 		uint16_t SurfaceIndex;
-		uint8_t Position[2];
-		int field_44;
+		int16_t SurfaceConcentrationTarget_M;
+		AiTilePos Pos;
 	};
 
 	struct Surface : ProtectedGameObject<Surface>
 	{
-		FixedString MyGuid_M;
-		NetId NetID;
-		ecs::EntityRef MyHandle;
-		SurfaceType SurfaceType;
+		EntityHandle field_0;
+		EntityHandle field_8;
+		SurfaceType Type;
 		uint8_t Flags;
-		Guid TeamId;
-		ecs::EntityRef field_30;
-		ecs::EntityRef OwnerHandle;
-		float LifeTime;
-		int8_t Level;
-		uint8_t _Pad[3];
-		bool LifeTimeOverride;
+		SurfaceMetaData Meta;
+		bool HasLifeTime;
 		bool IsControlledByConcentration;
-		Array<SurfaceCell> PrimSetSurfaceCell;
-		EntityHandle SurfaceTransformActions[9];
+		Array<AiTilePos> NeighbourMergeCells;
+		std::array<EntityHandle, 14> TransformActions;
 		int16_t Index;
 		int16_t SurfaceConcentrationTarget;
-		void* SurfaceManager;
+		SurfaceManager* SurfaceManager;
 		bool NeedsSplitEvaluation;
-		int32_t OwnershipTimer;
-		uint8_t field_C8;
-		int32_t StoryActionID;
+		float OwnershipTimer;
+		int StoryActionID;
 		ActionOriginator Originator;
-		FixedString Parent;
-		ObjectSet<SubSurface*> SubSurfaces;
+		AbilityId SpellCastingAbility;
+		Guid SpellCastSourceUuid;
+		Guid Parent;
+		Array<SubSurface*> SubSurfaces;
 	};
 
 	struct SurfaceAction;

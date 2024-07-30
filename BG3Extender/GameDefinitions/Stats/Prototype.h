@@ -20,14 +20,6 @@ struct DescriptionInfo
 	TranslatedString LoreDescription;
 };
 
-struct ActionResourceCost
-{
-	Array<Guid> Resources;
-	double Amount;
-	int SubResourceId;
-	Guid ResourceGroup;
-};
-
 struct TextKeyHitCosts
 {
 	FixedString TextKey;

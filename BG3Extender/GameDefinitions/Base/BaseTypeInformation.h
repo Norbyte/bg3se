@@ -17,7 +17,7 @@ BEGIN_SE()
 
 struct TypeInformation;
 
-struct StaticTypeInformation
+struct StaticTypeInformation : Noncopyable<StaticTypeInformation>
 {
 	using InitializerProc = TypeInformation * ();
 
@@ -313,7 +313,10 @@ StaticTypeInformation& GetStaticTypeInfo(Overload<ProxyParam<T>>)
 template <class T>
 TypeInformation const& GetTypeInfo()
 {
-	auto type = GetStaticTypeInfo(Overload<T>{});
+	auto& type = GetStaticTypeInfo(Overload<T>{});
+	if (type.Type == nullptr) {
+		type.DeferredInitialize();
+	}
 	assert(type.Type != nullptr);
 	return *type.Type;
 }

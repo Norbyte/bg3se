@@ -160,15 +160,6 @@ Functors::Functors(Functors const& o)
 	for (auto& functor : FunctorList) {
 		functor = functor->VMT->Clone(functor);
 	}
-
-	for (auto& functor : FunctorsByName) {
-		for (uint32_t i = 0; i < FunctorList.size(); i++) {
-			if (functor.Value() == o.FunctorList[i]) {
-				functor.Value() = FunctorList[i];
-				break;
-			}
-		}
-	}
 }
 
 Functors::Functors(Functors&& o) noexcept
@@ -191,15 +182,6 @@ Functors& Functors::operator = (Functors const& o)
 
 	for (auto& functor : FunctorList) {
 		functor = functor->VMT->Clone(functor);
-	}
-
-	for (auto& functor : FunctorsByName) {
-		for (uint32_t i = 0; i < FunctorList.size(); i++) {
-			if (functor.Value() == o.FunctorList[i]) {
-				functor.Value() = FunctorList[i];
-				break;
-			}
-		}
 	}
 
 	return *this;

@@ -554,7 +554,7 @@ class DefinitionLoader:
             self.next_template_args = None
             return
     
-        print('UNKNOWN: ', line)
+        #print('UNKNOWN: ', line)
         self.next_template = False
 
 def generate_member(name, member):
@@ -668,11 +668,42 @@ for file in os.listdir('GameDefinitions/PropertyMaps'):
     if file.endswith('.inl'):
         preprocessor.load_file('GameDefinitions/PropertyMaps/' + file)
 
-with open('GameDefinitions/Generated/PropertyMapNames.inl', 'w') as f:
-    f.write(propmap_names + preprocessor.names)
 
-with open('GameDefinitions/Generated/PropertyMaps.inl', 'w') as f:
-    f.write(propmap + preprocessor.lines)
+cur_names = ''
+try:
+    with open('GameDefinitions/Generated/PropertyMapNames.inl', 'r') as f:
+        cur_names = f.read()
+except FileNotFoundError:
+    pass
+    
+cur_maps = ''
+try:
+    with open('GameDefinitions/Generated/PropertyMaps.inl', 'r') as f:
+        cur_maps = f.read()
+except FileNotFoundError:
+    pass
+    
+cur_components = ''
+try:
+    with open('GameDefinitions/Generated/ComponentTypes.inl', 'r') as f:
+        cur_components = f.read()
+except FileNotFoundError:
+    pass
 
-with open('GameDefinitions/Generated/ComponentTypes.inl', 'w') as f:
-    f.write(component_names)
+if cur_names != propmap_names + preprocessor.names:
+    with open('GameDefinitions/Generated/PropertyMapNames.inl', 'w') as f:
+        f.write(propmap_names + preprocessor.names)
+else:
+    print("No property map name changes detected")
+
+if cur_maps != propmap + preprocessor.lines:
+    with open('GameDefinitions/Generated/PropertyMaps.inl', 'w') as f:
+        f.write(propmap + preprocessor.lines)
+else:
+    print("No property map changes detected")
+
+if cur_components != component_names:
+    with open('GameDefinitions/Generated/ComponentTypes.inl', 'w') as f:
+        f.write(component_names)
+else:
+    print("No component changes detected")

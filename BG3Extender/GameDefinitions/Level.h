@@ -40,25 +40,31 @@ namespace bg3se
 	{
 		void* VMT;
 		void* LevelManager;
-		void* LevelManager2;
+		void* LevelAllocator;
 		LevelData* LevelData;
 		LocalTemplateManager* LocalTemplateManager;
-		void* Scene_M;
+		void* Scene;
 		void* SimplePhysXScene;
 		FixedString LevelGuid;
 	};
 
 
-	struct EoCLevel : public LevelBase
+	struct LSLevel : public LevelBase
 	{
-		EntityHandle field_40;
+		EntityHandle Root;
 		FixedString field_48;
 		Array<void*> ActiveLevelTemplates;
 		Array<void*> LocalTemplateTraces;
-		int field_70;
-		void* ServerField_290;
-		void* AiGrid_M;
-		void* VisionGrid_M;
+		void* LayerManager;
+		int LoadState;
+	};
+
+
+	struct EoCLevel : public LSLevel
+	{
+		void* EntityManager;
+		void* AiGrid;
+		void* CoverManager;
 	};
 
 	struct LevelManagerBase

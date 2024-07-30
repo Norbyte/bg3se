@@ -4,6 +4,14 @@
 
 BEGIN_NS(stats)
 
+struct ActionResourceCost
+{
+	Array<Guid> Resources;
+	double Amount;
+	int SubResourceId;
+	Guid ResourceGroup;
+};
+
 template <class T>
 struct CNamedElementManager : public Noncopyable<CNamedElementManager<T>>
 {

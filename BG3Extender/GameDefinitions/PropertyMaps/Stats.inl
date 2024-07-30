@@ -142,6 +142,13 @@ P(MinLevel)
 P(MaxLevel)
 END_CLS()
 
+BEGIN_CLS(stats::ActionResourceCost)
+P(Resources)
+P(Amount)
+P(SubResourceId)
+P(ResourceGroup)
+END_CLS()
+
 BEGIN_CLS(stats::RPGEnumeration)
 P(Name)
 P(Values)

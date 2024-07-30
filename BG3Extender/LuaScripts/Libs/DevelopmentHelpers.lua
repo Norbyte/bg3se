@@ -267,6 +267,71 @@ local function ReserializeResources()
     end
 end
 
+local function ValidateFunctorGroups(groups)
+    if groups == nil then return end
+
+    for i,group in pairs(groups) do
+        for j,functor in pairs(group.Functors) do
+            Ext.Types.Validate(functor)
+        end
+    end
+end
+
+local function ValidateStats()
+    _P("Validating stats entries ...")
+    for i,name in pairs(Ext.Stats.GetStats("SpellData")) do
+        local spell = Ext.Stats.Get(name)
+        ValidateFunctorGroups(spell.OriginSpellFail)
+        ValidateFunctorGroups(spell.OriginSpellProperties)
+        ValidateFunctorGroups(spell.OriginSpellSuccess)
+        ValidateFunctorGroups(spell.SpellFail)
+        ValidateFunctorGroups(spell.SpellProperties)
+        ValidateFunctorGroups(spell.SpellSuccess)
+        ValidateFunctorGroups(spell.ThrowableSpellFail)
+        ValidateFunctorGroups(spell.ThrowableSpellProperties)
+        ValidateFunctorGroups(spell.ThrowableSpellSuccess)
+        Ext.Types.Validate(Ext.Stats.GetCachedSpell(name))
+    end
+
+    for i,name in pairs(Ext.Stats.GetStats("InterruptData")) do
+        local int = Ext.Stats.Get(name)
+        ValidateFunctorGroups(int.Failure)
+        ValidateFunctorGroups(int.Properties)
+        ValidateFunctorGroups(int.Success)
+        Ext.Types.Validate(Ext.Stats.GetCachedInterrupt(name))
+    end
+
+    for i,name in pairs(Ext.Stats.GetStats("PassiveData")) do
+        local int = Ext.Stats.Get(name)
+        ValidateFunctorGroups(int.StatsFunctors)
+        ValidateFunctorGroups(int.ToggleOffFunctors)
+        ValidateFunctorGroups(int.ToggleOnFunctors)
+        Ext.Types.Validate(Ext.Stats.GetCachedPassive(name))
+    end
+
+    for i,name in pairs(Ext.Stats.GetStats("StatusData")) do
+        local int = Ext.Stats.Get(name)
+        ValidateFunctorGroups(int.AuraStatuses)
+        ValidateFunctorGroups(int.OnApplyFail)
+        ValidateFunctorGroups(int.OnApplyFunctors)
+        ValidateFunctorGroups(int.OnApplySuccess)
+        ValidateFunctorGroups(int.OnRemoveFail)
+        ValidateFunctorGroups(int.OnRemoveFunctors)
+        ValidateFunctorGroups(int.OnRemoveSuccess)
+        ValidateFunctorGroups(int.OnRollsFailed)
+        ValidateFunctorGroups(int.OnSuccess)
+        ValidateFunctorGroups(int.OnTickFail)
+        ValidateFunctorGroups(int.OnTickSuccess)
+        ValidateFunctorGroups(int.TickFunctors)
+        Ext.Types.Validate(Ext.Stats.GetCachedStatus(name))
+    end
+
+    for i,name in pairs(Ext.Stats.GetStats("Weapon")) do
+        local int = Ext.Stats.Get(name)
+        ValidateFunctorGroups(int.WeaponFunctors)
+    end
+end
+
 Ext.RegisterConsoleCommand("se_entitytest", function ()
     ValidateEntities()
 end)
@@ -299,6 +364,10 @@ Ext.RegisterConsoleCommand("se_staticdataserializertest", function ()
     ReserializeStaticData()
 end)
 
+Ext.RegisterConsoleCommand("se_statstest", function ()
+    ValidateStats()
+end)
+
 Ext.RegisterConsoleCommand("se_visualtest", function ()
     Ext.Debug.SetEntityRuntimeCheckLevel(0)
     ValidateVisuals()
@@ -309,6 +378,7 @@ Ext.RegisterConsoleCommand("se_deepfry", function ()
     ValidateTemplates()
     ValidateStaticData()
     ValidateResources()
+    ValidateStats()
     ValidateEntities()
     ReserializeTemplates()
     ReserializeStaticData()
