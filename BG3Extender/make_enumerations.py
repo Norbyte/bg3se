@@ -70,8 +70,28 @@ for file in os.listdir('GameDefinitions/ExternalEnumerations'):
     if file.endswith('.inl'):
         external_preprocessor.load_file('GameDefinitions/ExternalEnumerations/' + file)
 
-with open('GameDefinitions/Generated/Enumerations.inl', 'w') as f:
-    f.write(preprocessor.lines)
+cur_enumerations = ''
+try:
+    with open('GameDefinitions/Generated/Enumerations.inl', 'r') as f:
+        cur_enumerations = f.read()
+except FileNotFoundError:
+    pass
     
-with open('GameDefinitions/Generated/ExternalEnumerations.inl', 'w') as f:
-    f.write(external_preprocessor.lines)
+cur_extenumerations = ''
+try:
+    with open('GameDefinitions/Generated/ExternalEnumerations.inl', 'r') as f:
+        cur_extenumerations = f.read()
+except FileNotFoundError:
+    pass
+
+if cur_enumerations != preprocessor.lines:
+    with open('GameDefinitions/Generated/Enumerations.inl', 'w') as f:
+        f.write(preprocessor.lines)
+else:
+    print("No enumeration changes detected")
+
+if cur_extenumerations != external_preprocessor.lines:
+    with open('GameDefinitions/Generated/ExternalEnumerations.inl', 'w') as f:
+        f.write(external_preprocessor.lines)
+else:
+    print("No external enumeration changes detected")
