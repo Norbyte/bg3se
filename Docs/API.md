@@ -763,7 +763,7 @@ Ext.Utils.Print(Ext.Stats.ExtraData.WisdomTierHigh)
 
 ### TODO - WIP
 
-<a id="Networking"></a>
+<a id="networking"></a>
 ## Networking
 To exchange data between the server and client(s), we use NetMessages. These can be sent and received from either context to facilitate communication. This allows us to share data between the server and the client(s) and vice versa.
 
