@@ -89,7 +89,7 @@ struct UniqueComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerStatusUnique, "esv::status::UniqueComponent")
 
-	MultiHashMap<FixedString, EntityHandle> Unique;
+	MultiHashMap<FixedString, ComponentHandle> Unique;
 };
 
 struct PerformingComponent : public BaseComponent

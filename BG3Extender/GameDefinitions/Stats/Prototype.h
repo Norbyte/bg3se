@@ -125,6 +125,11 @@ struct [[bg3::hidden]] SpellPrototypeManager : public ProtectedGameObject<SpellP
 	bool SyncStat(Object* object, SpellPrototype* proto);
 };
 
+struct StatsSoundInfo
+{
+	FixedString Key;
+	uint8_t Type;
+};
 
 struct StatusPrototype : public Noncopyable<StatusPrototype>
 {
@@ -144,9 +149,9 @@ struct StatusPrototype : public Noncopyable<StatusPrototype>
 	ObjectSet<SurfaceType>* AbsorbSurfaceTypes{ nullptr };
 	Array<Guid> Boosts;
 	uint32_t RemoveEvents;
-	Array<FixedString> SoundStart;
-	Array<FixedString> SoundLoop;
-	Array<FixedString> SoundStop;
+	Array<StatsSoundInfo> SoundStart;
+	Array<StatsSoundInfo> SoundLoop;
+	Array<StatsSoundInfo> SoundStop;
 	uint8_t HitAnimationType;
 	uint8_t Sheathing;
 	uint8_t AuraFlags;

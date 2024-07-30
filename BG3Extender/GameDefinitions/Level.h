@@ -52,11 +52,11 @@ namespace bg3se
 	struct LSLevel : public LevelBase
 	{
 		EntityHandle Root;
-		FixedString field_48;
+		uint32_t field_48;
 		Array<void*> ActiveLevelTemplates;
 		Array<void*> LocalTemplateTraces;
-		void* LayerManager;
-		int LoadState;
+		// void* LayerManager;
+		uint32_t LoadState;
 	};
 
 

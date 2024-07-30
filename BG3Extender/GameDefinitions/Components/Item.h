@@ -148,12 +148,9 @@ struct OwneeRequestComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerOwneeRequest, "esv::ownership::OwneeRequestComponent")
 
-	EntityHandle NewCurrentOwnee;
-	bool RequestChangeCurrentOwnee;
-	EntityHandle LatestOwner;
-	bool RequestChangeLatestOwner;
-	EntityHandle OriginalOwner;
-	bool RequestChangeOriginalOwner;
+	std::optional<EntityHandle> NewCurrentOwnee;
+	std::optional<EntityHandle> LatestOwner;
+	std::optional<EntityHandle> OriginalOwner;
 };
 
 END_NS()

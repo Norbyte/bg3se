@@ -246,9 +246,8 @@ struct SurfaceComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerSurface, "esv::surface::SurfaceComponent")
 
-	__int64 field_0;
-	__int64 field_8;
-	EntityHandle field_10;
+	Guid field_0;
+	ComponentHandle field_10;
 };
 
 struct DisarmAttempt

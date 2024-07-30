@@ -283,7 +283,7 @@ void* EntityWorld::GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex
 
 bool EntityWorld::IsValid(EntityHandle entityHandle) const
 {
-	if (entityHandle.GetType() < 0x40) {
+	if (entityHandle.GetType() < std::size(HandleGenerator->ThreadStates)) {
 		auto& state = HandleGenerator->ThreadStates[entityHandle.GetType()];
 		if (entityHandle.GetIndex() < state.Salts.Used) {
 			auto const& salt = state.Salts[entityHandle.GetIndex()];

@@ -474,6 +474,9 @@ struct CacheComponent : public BaseComponent
 	// MultiHashMap<FixedString, MultiHashMap<int, Array<bg3se::spell_cast::IntermediateTarget>>>
 	[[bg3::hidden]] MultiHashMap<FixedString, MultiHashMap<int, Array<void*>>> Targets;
 	[[bg3::hidden]] MultiHashMap<int, void*> field_98_MHM_FS_unk;
+	__int64 field_D8;
+	__int64 field_E0;
+	__int64 field_E8;
 };
 
 

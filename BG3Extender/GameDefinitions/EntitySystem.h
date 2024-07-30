@@ -276,8 +276,8 @@ struct EntityHandleGenerator : public ProtectedGameObject<EntityHandleGenerator>
 	{
 		struct Entry
 		{
-			int Index;
-			int Salt;
+			uint32_t Index;
+			uint32_t Salt;
 		};
 
 		PagedArray<Entry> Salts;

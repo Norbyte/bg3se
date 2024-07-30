@@ -50,7 +50,7 @@ inline bool Validate(glm::mat4x3 const* b, Overload<glm::mat4x3>) { return true;
 inline bool Validate(glm::mat4 const* b, Overload<glm::mat4>) { return true; }
 
 // TODO - might add some validation heuristic later?
-inline bool Validate(EntityHandle const* b, Overload<EntityHandle>) { return true; }
+bool Validate(EntityHandle const* b, Overload<EntityHandle>);
 inline bool Validate(ComponentHandle const* b, Overload<ComponentHandle>) { return true; }
 inline bool Validate(NetId const* b, Overload<NetId>) { return true; }
 inline bool Validate(UserId const* b, Overload<UserId>) { return true; }

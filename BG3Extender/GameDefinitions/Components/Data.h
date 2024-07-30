@@ -545,7 +545,7 @@ struct ConcentrationTarget
 {
 	[[bg3::legacy(field_0)]] EntityHandle Target;
 	[[bg3::legacy(field_8)]] EntityHandle Concentration;
-	[[bg3::legacy(field_10)]] EntityHandle Status;
+	[[bg3::legacy(field_10)]] ComponentHandle Status;
 	int16_t field_18;
 	bool field_1A;
 };

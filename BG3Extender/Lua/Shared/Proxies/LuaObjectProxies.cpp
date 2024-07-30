@@ -7,6 +7,49 @@
 
 BEGIN_NS(lua)
 
+#if defined(_DEBUG)
+#define CHECK(expr) if (!(expr)) { TryDebugBreak(); return false; }
+#else
+#define CHECK(expr) if (!(expr)) return false;
+#endif
+
+bool Validate(EntityHandle const& handle, ecs::EntityWorld& world)
+{
+	if (!handle) return true;
+
+	CHECK(handle.GetType() < std::size(world.HandleGenerator->ThreadStates));
+
+	// There is no observed shrink logic in per-thread paged pools, so index cannot be greater than pool size
+	auto& state = world.HandleGenerator->ThreadStates[handle.GetType()];
+	CHECK(handle.GetIndex() < state.Salts.Used);
+
+	// Allow salt mismatches if the handle has an old salt.
+	// It should never have a salt value that is newer than the current one in ECS
+	auto const& salt = state.Salts[handle.GetIndex()];
+	CHECK(salt.Index == handle.GetIndex());
+	CHECK(salt.Salt <= handle.GetSalt());
+
+	return true;
+}
+
+bool Validate(EntityHandle const* handle, Overload<EntityHandle>)
+{
+	auto lua = GetCurrentExtensionState()->GetLua();
+	if (lua) {
+		auto world = GetCurrentExtensionState()->GetLua()->GetEntitySystemHelpers()->GetEntityWorld();
+		if (world) {
+			return Validate(*handle, *world);
+		}
+	}
+
+#if defined(_DEBUG)
+	WARN("Validating entity handles whout an EntityWorld?");
+#endif
+
+	return true;
+}
+
+
 void InheritProperties(GenericPropertyMap const& base, GenericPropertyMap& child)
 {
 	// Check to make sure that the property map we're inheriting from is already initialized
