@@ -70,7 +70,7 @@ struct GameObjectTemplate
 };
 
 
-struct AIBound
+struct BoundData
 {
     [[bg3::legacy(Type)]] float Height;
     float ActualHeight;
@@ -86,7 +86,7 @@ struct AIBound
 
 struct EoCGameObjectTemplate : public GameObjectTemplate
 {
-    OverrideableProperty<Array<AIBound>> AIBounds;
+    OverrideableProperty<Array<BoundData>> AIBounds;
     OverrideableProperty<TranslatedString> DisplayName;
     OverrideableProperty<bool> Fadeable;
     OverrideableProperty<bool> SeeThrough;

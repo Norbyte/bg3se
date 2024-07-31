@@ -6,13 +6,6 @@
 
 BEGIN_SE()
 
-struct AiTilePos
-{
-	int16_t X;
-	int16_t Y;
-	int32_t SubgridId;
-};
-
 struct SurfaceMetaData
 {
 	Guid TeamId;
@@ -40,7 +33,7 @@ namespace bg3se::esv
 		Surface* Surface;
 		uint64_t SurfaceStateFlags;
 		PrimitiveSmallSet<SurfaceCell> Cells;
-		PrimitiveSmallSet<SurfaceCell> GrpwCells;
+		PrimitiveSmallSet<SurfaceCell> GrowCells;
 		uint16_t SurfaceIndex;
 		int16_t SurfaceConcentrationTarget_M;
 		AiTilePos Pos;

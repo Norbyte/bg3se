@@ -104,10 +104,10 @@ struct Modification
 struct SpellMeta
 {
 	SpellMetaId SpellId;
-	EntityHandle ItemHandle;
+	EntityHandle BoostHandle;
 	[[bg3::legacy(SelectionType)]] SpellLearningStrategy LearningStrategy;
 	uint8_t field_29;
-	Guid SpellUUID;
+	[[bg3::legacy(SpellUUID)]] Guid PreferredCastingResource;
 	AbilityId SpellCastingAbility;
 	SpellCooldownType CooldownType;
 	FixedString ContainerSpell;
@@ -190,7 +190,7 @@ struct CastRequirements
 struct SpellData
 {
 	SpellId Id;
-	Guid SpellUUID;
+	[[bg3::legacy(SpellUUID)]] Guid PreferredCastingResource;
 	int32_t field_38;
 	int32_t field_3C;
 	SpellCooldownType CooldownType;

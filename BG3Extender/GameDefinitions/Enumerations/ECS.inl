@@ -1099,3 +1099,9 @@ BEGIN_ENUM_NS(ecs, EntityChangeFlags, ECSEntityChangeFlags, uint8_t)
 	EV(Dead, 8)
 	EV(Ignore, 0x10)
 END_ENUM_NS()
+
+
+BEGIN_BITMASK(BoundBaseFlags, uint8_t)
+	EV(UseTranslateOverride, 1)
+	EV(UseOnDistance, 2)
+END_ENUM()

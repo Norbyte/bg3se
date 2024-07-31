@@ -79,3 +79,10 @@ P(TextKey)
 // Lua read-only helper until RO properties or transparent index support is added
 P_GETTER(Functors, GetFunctors)
 END_CLS()
+
+
+BEGIN_CLS(AiTilePos)
+P(X)
+P(Y)
+P(SubgridId)
+END_CLS()
