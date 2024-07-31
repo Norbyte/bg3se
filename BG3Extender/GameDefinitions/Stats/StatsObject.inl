@@ -69,6 +69,26 @@ std::optional<STDString> Object::GetString(FixedString const& attributeName)
 	return {};
 }
 
+std::optional<FixedString> Object::GetFixedString(FixedString const& attributeName)
+{
+	int attributeIndex;
+	auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
+	if (typeInfo == nullptr) {
+		return {};
+	}
+
+	auto index = IndexedProperties[attributeIndex];
+	if (typeInfo->Name == GFS.strFixedString
+		|| typeInfo->Name == GFS.strStatusIDs) {
+		auto val = GetStaticSymbols().GetStats()->GetFixedString(index);
+		if (val) {
+			return **val;
+		}
+	}
+
+	return {};
+}
+
 std::optional<int> Object::GetInt(FixedString const& attributeName)
 {
 	int attributeIndex;

@@ -164,7 +164,7 @@ struct [[bg3::hidden]] StatusPrototypeManager : public ProtectedGameObject<Statu
 {
 	void* VMT;
 	MultiHashMap<FixedString, StatusPrototype*> Statuses;
-	Array<FixedString> Unk;
+	Array<FixedString> StatusNames;
 	bool Initialized;
 
 	void SyncStat(Object* object);

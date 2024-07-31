@@ -119,6 +119,7 @@ struct Object : public Noncopyable<Object>
 
 	RPGEnumeration* GetAttributeInfo(FixedString const& attributeName, int& attributeIndex);
 	std::optional<STDString> GetString(FixedString const& attributeName);
+	std::optional<FixedString> GetFixedString(FixedString const& attributeName);
 	std::optional<int> GetInt(FixedString const& attributeName);
 	std::optional<float> GetFloat(FixedString const& attributeName);
 	std::optional<int64_t> GetInt64(FixedString const& attributeName);

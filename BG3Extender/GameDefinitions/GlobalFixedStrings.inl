@@ -9,6 +9,8 @@ FS(ModifierList);
 FS(OriginalModId);
 FS(ComboProperties);
 FS(ComboCategories);
+FS(StatusType);
+FS(SpellType);
 
 // Stat modifier types
 FS(Character);

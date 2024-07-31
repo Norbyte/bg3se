@@ -15,6 +15,7 @@ bool SpellPrototypeManager::SyncStat(Object* object, SpellPrototype* proto)
 		return false;
 	}
 
+	proto->SpellTypeId = EnumInfo<SpellType>::Find(object->GetFixedString(GFS.strSpellType).value_or(GFS.strEmpty)).value_or((SpellType)0);
 	proto->UseCosts.clear();
 	proto->RitualCosts.clear();
 	proto->DualWieldingUseCosts.clear();
@@ -63,13 +64,14 @@ bool StatusPrototypeManager::SyncStat(Object* object, StatusPrototype* proto)
 		return false;
 	}
 
+	proto->StatusId = EnumInfo<StatusType>::Find(object->GetFixedString(GFS.strStatusType).value_or(GFS.strEmpty)).value_or((StatusType)0);
 	proto->StatusPropertyFlags = 0;
 	proto->StatusGroups = 0;
 	proto->Flags = 0;
 	proto->RemoveEvents = 0;
 	proto->Boosts.clear();
 
-	sync(proto, object->Name, 1);
+	sync(proto, object->Name, 0);
 	return true;
 }
 
@@ -82,6 +84,7 @@ void StatusPrototypeManager::SyncStat(Object* object)
 		auto proto = GameAlloc<StatusPrototype>();
 		if (SyncStat(object, proto)) {
 			Statuses.set(proto->StatusName, proto);
+			StatusNames.push_back(proto->StatusName);
 		}
 	} else {
 		SyncStat(object, *pProto);
