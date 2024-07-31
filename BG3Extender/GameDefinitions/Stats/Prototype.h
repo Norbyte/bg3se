@@ -131,6 +131,8 @@ struct StatsSoundInfo
 	uint8_t Type;
 };
 
+using ParseStaticBoostsProc = bool (LSStringView& str, Array<Guid>& boosts, void* temp);
+
 struct StatusPrototype : public Noncopyable<StatusPrototype>
 {
 	using InitProc = void(StatusPrototype* self, FixedString const& statusId, uint8_t flags);

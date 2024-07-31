@@ -11,6 +11,7 @@ FS(ComboProperties);
 FS(ComboCategories);
 FS(StatusType);
 FS(SpellType);
+FS(Boosts);
 
 // Stat modifier types
 FS(Character);

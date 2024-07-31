@@ -72,6 +72,15 @@ bool StatusPrototypeManager::SyncStat(Object* object, StatusPrototype* proto)
 	proto->Boosts.clear();
 
 	sync(proto, object->Name, 0);
+
+	auto parseBoosts = GetStaticSymbols().eoc__ParseStaticBoosts;
+	auto boosts = object->GetFixedString(GFS.strBoosts);
+	if (parseBoosts != nullptr && boosts) {
+		LSStringView sv(boosts->GetStringView());
+		uint64_t temp[0x10]{ 0 };
+		parseBoosts(sv, proto->Boosts, &temp);
+	}
+
 	return true;
 }
 

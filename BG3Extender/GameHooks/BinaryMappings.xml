@@ -862,6 +862,15 @@
       <Condition Type="FixedString" Offset="@str1" Value="INSURFACE" />
       <Target Type="Indirect" Offset="@ref1" Symbol="eoc__StatusPrototype__Init" />
     </Mapping>
+
+    <Mapping Name="eoc::ParseStaticBoosts">
+      49 8d 94 24 d8 00 00 00 // lea     rdx, [r12+0D8h]
+      4c 8d 45 cf // lea     r8, [rbp+57h+var_88]
+      48 8d 4d af // lea     rcx, [rbp+57h+var_A8]
+      @ref2 e8 ?? ?? ?? ?? // call    eoc__ParseStaticBoosts
+      48 83 c3 08 // add     rbx, 8
+      <Target Type="Indirect" Offset="@ref2" Symbol="eoc__ParseStaticBoosts" />
+    </Mapping>
       
       <Mapping Name="eoc::SpellPrototype::Init">
         49 8d 54 24 20 // lea     rdx, [r12+20h]
