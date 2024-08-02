@@ -162,6 +162,40 @@ PropertyOperationResult ObjectHelpers::FallbackSet(lua_State* L, Object* object,
 }
 
 
+int ObjectHelpers::FallbackNext(lua_State* L, LifetimeHandle const& lifetime, Object* object, FixedString const& prop)
+{
+	auto stats = GetStaticSymbols().GetStats();
+
+	auto modifiers = stats->ModifierLists.Find(object->ModifierListIndex);
+
+	Modifier* next;
+	if (!prop) {
+		if (modifiers->Attributes.Primitives.empty()) {
+			return 0;
+		}
+
+		next = modifiers->Attributes.Primitives[0];
+	} else {
+		auto index = modifiers->Attributes.FindIndex(prop);
+		if (!index) {
+			next = modifiers->Attributes.Primitives[0];
+		} else if ((uint32_t)*index < modifiers->Attributes.Primitives.size() - 1) {
+			next = modifiers->Attributes.Primitives[*index + 1];
+		} else {
+			return 0;
+		}
+	}
+
+	push(L, next->Name);
+	auto result = LuaStatGetAttribute(L, object, next->Name);
+	if (result != PropertyOperationResult::Success) {
+		push(L, nullptr);
+	}
+
+	return 2;
+}
+
+
 PropertyOperationResult LuaStatGetAttribute(lua_State* L, stats::Object* object, FixedString const& attributeName)
 {
 	StackCheck _(L, 1);
@@ -229,6 +263,13 @@ PropertyOperationResult LuaStatGetAttribute(lua_State* L, stats::Object* object,
 		break;
 	}
 
+	// Deprecated type
+	case RPGEnumerationType::MemorizationRequirements:
+	{
+		push(L, nullptr);
+		break;
+	}
+
 	case RPGEnumerationType::TranslatedString:
 	{
 		auto value = object->GetTranslatedString(attributeName);
@@ -277,7 +318,8 @@ PropertyOperationResult LuaStatGetAttribute(lua_State* L, stats::Object* object,
 PropertyOperationResult LuaStatSetAttribute(lua_State* L, stats::Object* object, FixedString const& attributeName, int valueIdx)
 {
 	StackCheck _(L);
-	LuaVirtualPin lua(gExtender->GetCurrentExtensionState());
+	auto lua = State::FromLua(L);
+
 	if (lua->RestrictionFlags & State::ScopeModulePreLoad) {
 		luaL_error(L, "Stat functions unavailable during module preload");
 		return PropertyOperationResult::Unknown;

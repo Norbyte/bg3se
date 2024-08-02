@@ -91,6 +91,10 @@ void InheritProperties(GenericPropertyMap const& base, GenericPropertyMap& child
 		child.FallbackSetter = base.FallbackSetter;
 	}
 
+	if (child.FallbackNext == nullptr) {
+		child.FallbackNext = base.FallbackNext;
+	}
+
 	child.IsInitializing = false;
 	child.InheritanceUpdated = true;
 }
@@ -159,6 +163,7 @@ struct PropertyMapFallbackEntry
 	//GenericPropertyMap::TFallbackSetter* Setter{ nullptr };
 	void* Getter{ nullptr };
 	void* Setter{ nullptr };
+	void* Next{ nullptr };
 };
 
 struct PropertyMapPropertyEntry
@@ -318,6 +323,7 @@ void ProcessPropertyMapDefinitions(PropertyMapRegistrationEntry const* defn)
 		{
 			pm->FallbackGetter = (GenericPropertyMap::TFallbackGetter*)entry.Fallback.Getter;
 			pm->FallbackSetter = (GenericPropertyMap::TFallbackSetter*)entry.Fallback.Setter;
+			pm->FallbackNext = (GenericPropertyMap::TFallbackNext*)entry.Fallback.Next;
 			break;
 		}
 
@@ -557,10 +563,11 @@ struct PropertyMapRegistrations;
 			.Serialize = &GenericNullSerializeProperty, \
 		} },
 
-#define P_FALLBACK(getter, setter) \
+#define P_FALLBACK(getter, setter, next) \
 		{ .Type = PropertyMapEntryType::Fallback, .Fallback = { \
-			.Getter = &getter, \
-			.Setter = &setter \
+			.Getter = getter, \
+			.Setter = setter, \
+			.Next = next \
 		} },
 
 #include <GameDefinitions/Generated/PropertyMaps.inl>

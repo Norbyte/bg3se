@@ -406,6 +406,10 @@ RPGEnumerationType RPGEnumeration::GetPropertyType() const
 		return RPGEnumerationType::Requirements;
 	}
 
+	if (Name == GFS.strMemorizationRequirements) {
+		return RPGEnumerationType::MemorizationRequirements;
+	}
+
 	if (Name == GFS.strTranslatedString) {
 		return RPGEnumerationType::TranslatedString;
 	}

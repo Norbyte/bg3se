@@ -11,7 +11,7 @@ P_FUN(ToString, Noesis::ObjectHelpers::ToString)
 P_FUN(GetProperty, Noesis::ObjectHelpers::GetNamedProperty)
 P_FUN(GetAllProperties, Noesis::ObjectHelpers::GetAllProperties)
 P_FUN(SetProperty, Noesis::ObjectHelpers::SetNamedProperty)
-P_FALLBACK(Noesis::ObjectHelpers::FallbackGetProperty, Noesis::ObjectHelpers::FallbackSetProperty)
+P_FALLBACK(&Noesis::ObjectHelpers::FallbackGetProperty, &Noesis::ObjectHelpers::FallbackSetProperty, nullptr)
 END_CLS()
 
 

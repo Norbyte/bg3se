@@ -37,6 +37,7 @@ class GenericPropertyMap : Noncopyable<GenericPropertyMap>
 public:
 	using TFallbackGetter = PropertyOperationResult (lua_State* L, LifetimeHandle const& lifetime, void* object, FixedString const& prop);
 	using TFallbackSetter = PropertyOperationResult (lua_State* L, void* object, FixedString const& prop, int index);
+	using TFallbackNext = int (lua_State* L, LifetimeHandle const& lifetime, void* object, FixedString const& prop);
 	using TConstructor = void (void*);
 	using TDestructor = void (void*);
 	using TSerializer = void (lua_State* L, void const*);
@@ -86,6 +87,7 @@ public:
 	Array<int> ParentRegistryIndices;
 	TFallbackGetter* FallbackGetter{ nullptr };
 	TFallbackSetter* FallbackSetter{ nullptr };
+	TFallbackNext* FallbackNext{ nullptr };
 	TConstructor* Construct{ nullptr };
 	TDestructor* Destroy{ nullptr };
 	TAssigner* Assign{ nullptr };

@@ -19,6 +19,8 @@ enum class RPGEnumerationType
 	Conditions,
 	RollConditions,
 	Requirements,
+	// Legacy DOS2 type, unused
+	MemorizationRequirements,
 	TranslatedString,
 	Unknown
 };

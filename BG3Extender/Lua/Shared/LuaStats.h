@@ -26,6 +26,7 @@ struct ObjectHelpers
 
 	static PropertyOperationResult FallbackGet(lua_State* L, lua::LifetimeHandle const& lifetime, Object* object, bg3se::FixedString const& prop);
 	static PropertyOperationResult FallbackSet(lua_State* L, Object* object, bg3se::FixedString const& prop, int index);
+	static int FallbackNext(lua_State* L, LifetimeHandle const& lifetime, Object* object, FixedString const& prop);
 };
 
 

@@ -69,6 +69,7 @@ FS(TargetConditions);
 FS(UseConditions);
 FS(RollConditions);
 FS(Requirements);
+FS(MemorizationRequirements);
 FS(TranslatedString);
 
 FS(AttributeFlags);
