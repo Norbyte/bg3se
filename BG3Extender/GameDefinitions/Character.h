@@ -38,8 +38,8 @@ namespace bg3se
 		uint16_t NextPlayerId;
 		ObjectSet<PlayerId> FreePlayerIds;
 		ObjectSet<PlayerId> PlayerList;
-		RefMap<PlayerId, PlayerInfo> PlayerIds;
-		RefMap<InputPlayerIndex, PlayerId> InputPlayerIndices;
+		LegacyRefMap<PlayerId, PlayerInfo> PlayerIds;
+		LegacyRefMap<InputPlayerIndex, PlayerId> InputPlayerIndices;
 		ObjectSet<void *> RenderViews; // rf::RenderView*
 	};*/
 
@@ -54,7 +54,7 @@ namespace bg3se
 		struct PlayerData : public ProtectedGameObject<PlayerData>
 		{
 			EntityHandle PlayerHandle;
-			MultiHashMap<EntityHandle, void*> ShapeShiftVariableManager;
+			HashMap<EntityHandle, void*> ShapeShiftVariableManager;
 			FixedString QuestSelected;
 			int field_4C;
 			eoc::PlayerCustomData CustomData;
@@ -146,8 +146,8 @@ namespace bg3se
 			void* VMT_IProfileSelector;
 			void* VMT_EventListener;
 			void* VMT_PlayerManager2;
-			RefMap<PlayerId, FixedString> PlayerIdToProfileGuid;
-			RefMap<PlayerId, NetId> PlayerIdToNetIdMap;
+			LegacyRefMap<PlayerId, FixedString> PlayerIdToProfileGuid;
+			LegacyRefMap<PlayerId, NetId> PlayerIdToNetIdMap;
 			ObjectSet<InputPlayerIndex> InputPlayerIndices;
 			uint64_t Unknown[3];
 			ObjectSet<void*> field_F0;
@@ -160,7 +160,7 @@ namespace bg3se
 		{
 			ObjectSet<void*> SkillBarItems; // ecl::SkillBarItem
 			ObjectSet<uint32_t> LockedAbilities;
-			Map<FixedString, void*> AttitudeOverrideMap; // ObjectHandleMap<int>*
+			LegacyMap<FixedString, void*> AttitudeOverrideMap; // ObjectHandleMap<int>*
 			uint8_t SelectedSkillSet;
 			__int64 field_60;
 			char field_68;
@@ -299,7 +299,7 @@ namespace bg3se
 			int field_498;
 			char field_49C;
 			ObjectSet<ComponentHandle> ObjectHandles;
-			Map<FixedString, void*> field_4C0;
+			LegacyMap<FixedString, void*> field_4C0;
 			__int64 field_4D8;
 			__int64 field_4E0;
 			ObjectSet<FixedString> ItemTags;

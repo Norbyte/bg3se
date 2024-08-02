@@ -79,8 +79,8 @@ public:
 	bool ValidateObject(void const* object);
 
 	FixedString Name;
-	MultiHashMap<FixedString, RawPropertyAccessors> Properties;
-	MultiHashMap<FixedString, uint32_t> IterableProperties;
+	HashMap<FixedString, RawPropertyAccessors> Properties;
+	HashMap<FixedString, uint32_t> IterableProperties;
 	Array<RawPropertyValidators> Validators;
 	Array<FixedString> Parents;
 	Array<int> ParentRegistryIndices;

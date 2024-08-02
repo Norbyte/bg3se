@@ -134,7 +134,7 @@ class UserVariableManager : public UserVariableInterface
 public:
 	struct EntityVariables
 	{
-		MultiHashMap<FixedString, UserVariable> Vars;
+		HashMap<FixedString, UserVariable> Vars;
 	};
 
 	inline UserVariableManager(bool isServer, ecs::EntitySystemHelpersBase& entityHelpers)
@@ -152,8 +152,8 @@ public:
 	EntityHandle GuidToEntity(Guid const& guid) const;
 	UserVariable* Get(Guid const& entity, FixedString const& key) override;
 
-	MultiHashMap<FixedString, UserVariable>* GetAll(Guid const& entity);
-	MultiHashMap<Guid, EntityVariables>& GetAll();
+	HashMap<FixedString, UserVariable>* GetAll(Guid const& entity);
+	HashMap<Guid, EntityVariables>& GetAll();
 	EntityVariables* Set(Guid const& entity, FixedString const& key, UserVariablePrototype const& proto, UserVariable&& value);
 	void MarkDirty(Guid const& entity, FixedString const& key, UserVariable& value);
 	UserVariablePrototype const* GetPrototype(FixedString const& key) const;
@@ -166,8 +166,8 @@ public:
 	void NetworkSync(net::UserVar const& var);
 
 private:
-	MultiHashMap<Guid, EntityVariables> vars_;
-	MultiHashMap<FixedString, UserVariablePrototype> prototypes_;
+	HashMap<Guid, EntityVariables> vars_;
+	HashMap<FixedString, UserVariablePrototype> prototypes_;
 	UserVariableSyncWriter sync_;
 	bool isServer_;
 	lua::CachedUserVariableManager* cache_{ nullptr };
@@ -177,7 +177,7 @@ private:
 class ModVariableMap
 {
 public:
-	using VariableMap = MultiHashMap<FixedString, UserVariable>;
+	using VariableMap = HashMap<FixedString, UserVariable>;
 
 	inline ModVariableMap()
 	{}
@@ -203,7 +203,7 @@ public:
 private:
 	Guid moduleUuid_;
 	VariableMap vars_;
-	MultiHashMap<FixedString, UserVariablePrototype> prototypes_;
+	HashMap<FixedString, UserVariablePrototype> prototypes_;
 	bool isServer_;
 };
 
@@ -219,7 +219,7 @@ public:
 	UserVariable* Get(Guid const& modUuid, FixedString const& key) override;
 
 	ModVariableMap::VariableMap* GetAll(Guid const& modUuid);
-	MultiHashMap<Guid, ModVariableMap>& GetAll();
+	HashMap<Guid, ModVariableMap>& GetAll();
 	ModVariableMap* GetMod(Guid const& modUuid);
 	ModVariableMap* GetOrCreateMod(Guid const& modUuid);
 	UserVariablePrototype const* GetPrototype(Guid const& modUuid, FixedString const& key) const;
@@ -236,8 +236,8 @@ public:
 	void NetworkSync(net::UserVar const& var);
 
 private:
-	MultiHashMap<Guid, uint32_t> modIndices_;
-	MultiHashMap<Guid, ModVariableMap> vars_;
+	HashMap<Guid, uint32_t> modIndices_;
+	HashMap<Guid, ModVariableMap> vars_;
 	UserVariableSyncWriter sync_;
 	bool isServer_;
 	lua::CachedModVariableManager* cache_{ nullptr };
@@ -317,12 +317,12 @@ private:
 	struct EntityVariables
 	{
 		Guid CachedGuid;
-		MultiHashMap<FixedString, CachedUserVariable> Vars;
+		HashMap<FixedString, CachedUserVariable> Vars;
 	};
 
 	UserVariableManager& global_;
 	bool isServer_;
-	MultiHashMap<EntityHandle, EntityVariables> vars_;
+	HashMap<EntityHandle, EntityVariables> vars_;
 	Array<FlushRequest> flushQueue_;
 
 	CachedUserVariable* GetFromCache(EntityHandle entity, FixedString const& key, Guid& entityGuid);
@@ -368,12 +368,12 @@ private:
 	struct ModVariables
 	{
 		Guid CachedGuid;
-		MultiHashMap<FixedString, CachedUserVariable> Vars;
+		HashMap<FixedString, CachedUserVariable> Vars;
 	};
 
 	ModVariableManager& global_;
 	bool isServer_;
-	MultiHashMap<uint32_t, ModVariables> vars_;
+	HashMap<uint32_t, ModVariables> vars_;
 	Array<FlushRequest> flushQueue_;
 
 	CachedUserVariable* GetFromCache(uint32_t modIndex, FixedString const& key, Guid& modUuid);

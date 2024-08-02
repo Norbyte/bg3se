@@ -30,7 +30,7 @@ class MultiHashMapProxyImpl : public MapProxyImplBase
 public:
 	static_assert(!std::is_pointer_v<TKey>, "MultiHashMapProxyImpl template parameter should not be a pointer type!");
 
-	using ContainerType = MultiHashMap<TKey, TValue>;
+	using ContainerType = HashMap<TKey, TValue>;
 	static constexpr unsigned ContainerClassId = 1;
 
 	unsigned GetContainerClass() const override
@@ -139,7 +139,7 @@ class RefMapProxyImpl : public MapProxyImplBase
 public:
 	static_assert(!std::is_pointer_v<TKey>, "RefMapProxyImpl template parameter should not be a pointer type!");
 
-	using ContainerType = MapBase<TInternals>;
+	using ContainerType = LegacyMapBase<TInternals>;
 	static constexpr unsigned ContainerClassId = TContainerClassId;
 
 	unsigned GetContainerClass() const override
@@ -266,19 +266,19 @@ public:
 	}
 
 	template <class TKey, class TValue>
-	inline static void Make(lua_State* L, MultiHashMap<TKey, TValue>* object, LifetimeHandle const& lifetime)
+	inline static void Make(lua_State* L, HashMap<TKey, TValue>* object, LifetimeHandle const& lifetime)
 	{
 		MakeImpl(L, object, lifetime, GetImplementation<MultiHashMapProxyImpl<TKey, TValue>>());
 	}
 
 	template <class TKey, class TValue>
-	inline static void Make(lua_State* L, RefMap<TKey, TValue>* object, LifetimeHandle const& lifetime)
+	inline static void Make(lua_State* L, LegacyRefMap<TKey, TValue>* object, LifetimeHandle const& lifetime)
 	{
 		MakeImpl(L, object, lifetime, GetImplementation<RefMapProxyImpl<TKey, TValue, RefMapInternals<TKey, TValue>, 2>>());
 	}
 
 	template <class TKey, class TValue>
-	inline static void Make(lua_State* L, Map<TKey, TValue>* object, LifetimeHandle const& lifetime)
+	inline static void Make(lua_State* L, LegacyMap<TKey, TValue>* object, LifetimeHandle const& lifetime)
 	{
 		MakeImpl(L, object, lifetime, GetImplementation<RefMapProxyImpl<TKey, TValue, MapInternals<TKey, TValue>, 3>>());
 	}

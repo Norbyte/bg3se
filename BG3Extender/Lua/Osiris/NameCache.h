@@ -30,7 +30,7 @@ private:
 	OsirisStaticGlobals const& globals_;
 	OsirisBinding& binding_;
 	Array<OsirisNameCache> caches_;
-	MultiHashMap<FixedString, uint32_t> nameToCache_;
+	HashMap<FixedString, uint32_t> nameToCache_;
 
 	void Register(Function& fun);
 };

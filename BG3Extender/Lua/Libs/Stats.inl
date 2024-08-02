@@ -445,7 +445,7 @@ void UpdateItemSet(lua_State* L)
 	}
 }
 
-RefMap<FixedString, ItemColorDefinition>* GetAllItemColors()
+LegacyRefMap<FixedString, ItemColorDefinition>* GetAllItemColors()
 {
 	return &GetStaticSymbols().GetStats()->Colors;
 }

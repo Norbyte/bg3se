@@ -52,11 +52,11 @@ struct RollAdjustments
 struct DamageRollAdjustments
 {
 	// StatsFunctorAdjustRollMode
-	MultiHashMap<uint8_t, MultiHashMap<DamageType, TotalRollAdjustments>> TotalAdjustments;
-	MultiHashMap<uint8_t, MultiHashMap<DamageType, int32_t>> field_40;
+	HashMap<uint8_t, HashMap<DamageType, TotalRollAdjustments>> TotalAdjustments;
+	HashMap<uint8_t, HashMap<DamageType, int32_t>> field_40;
 	Array<RerollCondition> RerollConditions;
-	MultiHashSet<DamageType> DamageTypes;
-	MultiHashSet<DamageType> DamageTypes2;
+	HashSet<DamageType> DamageTypes;
+	HashSet<DamageType> DamageTypes2;
 };
 
 
@@ -64,7 +64,7 @@ struct AppliedChange
 {
 	uint8_t Flags;
 	Array<RollAdjustments> Adjustments;
-	MultiHashMap<DamageFunctorKey, DamageRollAdjustments> DamageRollAdjustments;
+	HashMap<DamageFunctorKey, DamageRollAdjustments> DamageRollAdjustments;
 };
 
 struct RollData
@@ -231,7 +231,7 @@ struct UndecidedEventWithId
 	InterruptEvent Event;
 	__int64 field_108;
 	InterruptEvent Event2;
-	MultiHashMap<EntityHandle, MultiHashSet<EntityHandle>> field_208;
+	HashMap<EntityHandle, HashSet<EntityHandle>> field_208;
 };
 
 struct DelayedTargetHitInterruptEvent
@@ -259,8 +259,8 @@ struct PausedAnimationEvent
 
 struct PrecalculatedInterruptEvent : public InterruptEvent
 {
-	MultiHashMap<EntityHandle, MultiHashSet<EntityHandle>> field_F8;
-	MultiHashMap<EntityHandle, MultiHashSet<EntityHandle>> field_138;
+	HashMap<EntityHandle, HashSet<EntityHandle>> field_F8;
+	HashMap<EntityHandle, HashSet<EntityHandle>> field_138;
 };
 
 struct ResolvedData
@@ -292,7 +292,7 @@ struct ExecutedDependency
 struct InterruptUsage
 {
 	Array<stats::ActionResourceCost> Costs;
-	MultiHashMap<EntityHandle, MultiHashMap<InterruptEvent, InterruptUsageEntry>> Usage;
+	HashMap<EntityHandle, HashMap<InterruptEvent, InterruptUsageEntry>> Usage;
 };
 
 struct AnimationInterruptData
@@ -300,16 +300,16 @@ struct AnimationInterruptData
 	Array<InterruptEvent> Events;
 	Array<PrecalculatedInterruptEvent> PrecalculatedInterrupts;
 	__int64 field_20;
-	MultiHashMap<Guid, ResolvedData> Resolved;
-	MultiHashMap<EntityHandle, MultiHashMap<InterruptEvent, InterruptUsageEntry>> Usage;
-	[[bg3::hidden]] MultiHashMap<Guid, ExecutedDependency> ExecutedDependencies;
-	MultiHashMap<InterruptEvent, MultiHashMap<EntityHandle, EntityHandle>> field_E8;
+	HashMap<Guid, ResolvedData> Resolved;
+	HashMap<EntityHandle, HashMap<InterruptEvent, InterruptUsageEntry>> Usage;
+	[[bg3::hidden]] HashMap<Guid, ExecutedDependency> ExecutedDependencies;
+	HashMap<InterruptEvent, HashMap<EntityHandle, EntityHandle>> field_E8;
 	int32_t field_128;
 	float field_12C;
-	MultiHashMap<Guid, RollAdjustments> RollAdjustments;
-	MultiHashMap<DamageFunctorKey, DamageRollAdjustments> DamageRollAdjustments;
-	MultiHashMap<EntityHandle, InterruptUsage> InterruptUsage;
-	[[bg3::hidden]] MultiHashMap<Guid, ExecutedDependency> ExecutedDependencies2;
+	HashMap<Guid, RollAdjustments> RollAdjustments;
+	HashMap<DamageFunctorKey, DamageRollAdjustments> DamageRollAdjustments;
+	HashMap<EntityHandle, InterruptUsage> InterruptUsage;
+	[[bg3::hidden]] HashMap<Guid, ExecutedDependency> ExecutedDependencies2;
 };
 
 END_NS()
@@ -317,14 +317,14 @@ END_NS()
 BEGIN_SE()
 
 template <>
-inline uint64_t MultiHashMapHash<interrupt::InterruptEvent>(interrupt::InterruptEvent const& v)
+inline uint64_t HashMapHash<interrupt::InterruptEvent>(interrupt::InterruptEvent const& v)
 {
 	// FIXME - needs adjustment depending on variant
 	return HashMulti(v.Source, v.Target);
 }
 
 template <>
-inline uint64_t MultiHashMapHash<interrupt::DamageFunctorKey>(interrupt::DamageFunctorKey const& v)
+inline uint64_t HashMapHash<interrupt::DamageFunctorKey>(interrupt::DamageFunctorKey const& v)
 {
 	return HashMulti(v.field_0, v.field_10);
 }

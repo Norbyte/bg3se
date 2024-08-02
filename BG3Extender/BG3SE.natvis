@@ -31,7 +31,7 @@
     </Expand>
   </Type>
   
-  <Type Name="bg3se::MultiHashSet&lt;*&gt;">
+  <Type Name="bg3se::HashSet&lt;*&gt;">
     <Intrinsic Name="size" Expression="Keys.size_" />
     <DisplayString>{{ size={Keys.size_} }}</DisplayString>
     <Expand>
@@ -43,7 +43,7 @@
     </Expand>
   </Type>
 
-  <Type Name="bg3se::MultiHashMap&lt;*&gt;">
+  <Type Name="bg3se::HashMap&lt;*&gt;">
     <Intrinsic Name="size" Expression="Keys.size_" />
     <DisplayString>{{ size={Keys.size_} }}</DisplayString>
     <Expand>

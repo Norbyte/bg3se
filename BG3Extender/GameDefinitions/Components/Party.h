@@ -42,7 +42,7 @@ struct PortalsComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(PartyPortals, "eoc::party::PortalsComponent")
 
-	MultiHashSet<EntityHandle> Portals;
+	HashSet<EntityHandle> Portals;
 };
 
 
@@ -78,7 +78,7 @@ struct WaypointsComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(PartyWaypoints, "eoc::party::WaypointsComponent")
 
-	MultiHashSet<Waypoint> Waypoints;
+	HashSet<Waypoint> Waypoints;
 };
 
 
@@ -111,9 +111,9 @@ END_NS()
 BEGIN_SE()
 
 template <>
-inline uint64_t MultiHashMapHash<party::Waypoint>(party::Waypoint const& v)
+inline uint64_t HashMapHash<party::Waypoint>(party::Waypoint const& v)
 {
-	return MultiHashMapHash(v.Name);
+	return HashMapHash(v.Name);
 }
 
 END_SE()
@@ -125,7 +125,7 @@ struct RecruiterComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(Recruiter, "eoc::recruit::RecruiterComponent")
 
-	MultiHashSet<EntityHandle> Recruiters;
+	HashSet<EntityHandle> Recruiters;
 };
 
 END_NS()
@@ -137,7 +137,7 @@ struct UserSnapshotComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerUserSnapshot, "esv::party::UserSnapshotComponent")
 
-	[[bg3::legacy(Snapshot)]] MultiHashMap<Guid, Array<Array<EntityHandle>>> PerUserCharacters;
+	[[bg3::legacy(Snapshot)]] HashMap<Guid, Array<Array<EntityHandle>>> PerUserCharacters;
 };
 
 END_NS()
@@ -163,7 +163,7 @@ struct LeaderPriorityComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(EscortLeaderPriority, "esv::escort::LeaderPriorityComponent")
 
-	MultiHashMap<FixedString, int32_t> Priorities;
+	HashMap<FixedString, int32_t> Priorities;
 };
 
 struct MemberComponent : public BaseComponent

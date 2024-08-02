@@ -38,7 +38,7 @@ struct UsageCountComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(PassiveUsageCount, "eoc::passive::UsageCountComponent")
 
-	MultiHashMap<FixedString, PassiveUsageCount> Passives;
+	HashMap<FixedString, PassiveUsageCount> Passives;
 };
 
 END_SE()
@@ -49,7 +49,7 @@ struct ToggledPassivesComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerToggledPassives, "esv::passive::ToggledPassivesComponent")
 
-	MultiHashMap<FixedString, bool> Passives;
+	HashMap<FixedString, bool> Passives;
 };
 
 struct PassiveBaseComponent : public BaseComponent
@@ -71,7 +71,7 @@ struct ScriptPassivesComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerScriptPassives, "esv::passive::ScriptPassivesComponent")
 
-	MultiHashSet<FixedString> Passives;
+	HashSet<FixedString> Passives;
 };
 
 END_NS()

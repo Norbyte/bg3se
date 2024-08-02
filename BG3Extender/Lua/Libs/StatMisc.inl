@@ -77,7 +77,7 @@ namespace bg3se::lua::stats
 	}
 
 
-	Map<FixedString, FixedString> GetModifierAttributes(FixedString const& modifierName)
+	LegacyMap<FixedString, FixedString> GetModifierAttributes(FixedString const& modifierName)
 	{
 		auto stats = GetStaticSymbols().GetStats();
 		if (!stats) {
@@ -91,7 +91,7 @@ namespace bg3se::lua::stats
 			return {};
 		}
 
-		Map<FixedString, FixedString> modifiers;
+		LegacyMap<FixedString, FixedString> modifiers;
 		for (auto const& modifier : modifierList->Attributes.Primitives) {
 			auto enumeration = GetStaticSymbols().GetStats()->ModifierValueLists.Find(modifier->EnumerationIndex);
 			modifiers.insert(modifier->Name, enumeration->Name);

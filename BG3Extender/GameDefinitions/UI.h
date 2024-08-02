@@ -320,7 +320,7 @@ struct UIState : public Noesis::BaseComponent
 	__int64 field_1D8;
 	__int64 field_1E0;
 	uint8_t field_1E8[2048];
-	Map<int, int> field_9E8;
+	LegacyMap<int, int> field_9E8;
 };
 
 
@@ -395,22 +395,22 @@ struct UIStateMachine : public ProtectedGameObject<UIStateMachine>
 	UIStateInstance* State;
 	UIManager_Sub1F0* Sub1F0;
 	UIManager_Sub198* Sub198;
-	MultiHashMap<Guid, uint64_t> field_A8;
-	MultiHashMap<Guid, UIStateInstance*> field_E8;
-	MultiHashMap<Guid, UIStateInstance*> field_128;
-	MultiHashSet<uint64_t> field_168;
-	MultiHashSet<uint64_t> field_198;
-	MultiHashSet<uint64_t> field_1C8;
+	HashMap<Guid, uint64_t> field_A8;
+	HashMap<Guid, UIStateInstance*> field_E8;
+	HashMap<Guid, UIStateInstance*> field_128;
+	HashSet<uint64_t> field_168;
+	HashSet<uint64_t> field_198;
+	HashSet<uint64_t> field_1C8;
 	String RootState;
 	BaseObservableCollection* States;
-	MultiHashMap<PlayerId, Array<Guid>> field_220;
-	MultiHashSet<PlayerId> field_260;
-	MultiHashSet<PlayerId> field_290;
+	HashMap<PlayerId, Array<Guid>> field_220;
+	HashSet<PlayerId> field_260;
+	HashSet<PlayerId> field_290;
 	Array<Guid> field_2C0;
 	__int64 field_2D0;
-	MultiHashMap<PlayerId, uint8_t> field_2D8;
-	MultiHashMap<PlayerId, Array<Guid>> field_318;
-	MultiHashSet<PlayerId> field_358;
+	HashMap<PlayerId, uint8_t> field_2D8;
+	HashMap<PlayerId, Array<Guid>> field_318;
+	HashSet<PlayerId> field_358;
 	__int64 field_388;
 	__int64 field_390;
 	__int64 field_398;
@@ -516,7 +516,7 @@ struct UIManager_Sub168
 struct UIManager_Sub198
 {
 	ecs::ComponentCallbackList field_0;
-	MultiHashSet<uint64_t> field_18;
+	HashSet<uint64_t> field_18;
 	Array<void*> field_48;
 };
 

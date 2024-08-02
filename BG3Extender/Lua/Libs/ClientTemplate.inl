@@ -1,7 +1,7 @@
 /// <lua_module>Template</lua_module>
 BEGIN_NS(ecl::lua::tmpl)
 
-Map<FixedString, GameObjectTemplate*>* GetAllRootTemplates()
+LegacyMap<FixedString, GameObjectTemplate*>* GetAllRootTemplates()
 {
 	auto bank = GetStaticSymbols().GetGlobalTemplateBank();
 	return &bank->Templates;

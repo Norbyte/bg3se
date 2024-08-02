@@ -34,7 +34,7 @@ struct StatsExpressionWithMetadata : public StatsExpressionParam
 struct LuaExpressionManager : public ProtectedGameObject<LuaExpressionManager>
 {
 	void* VMT;
-	RefMap<Guid, StatsExpressionParamEx*> Expressions;
+	LegacyRefMap<Guid, StatsExpressionParamEx*> Expressions;
 	char field_18;
 };
 

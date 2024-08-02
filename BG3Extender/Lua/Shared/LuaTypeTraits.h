@@ -50,7 +50,7 @@ template <class T>
 struct IsMapLike { static constexpr bool Value = false; };
 
 template <class TK, class TV>
-struct IsMapLike<Map<TK, TV>>
+struct IsMapLike<LegacyMap<TK, TV>>
 { 
 	static constexpr bool Value = true; 
 	using TKey = TK;
@@ -58,7 +58,7 @@ struct IsMapLike<Map<TK, TV>>
 };
 
 template <class TK, class TV>
-struct IsMapLike<RefMap<TK, TV>>
+struct IsMapLike<LegacyRefMap<TK, TV>>
 { 
 	static constexpr bool Value = true;
 	using TKey = TK;
@@ -66,7 +66,7 @@ struct IsMapLike<RefMap<TK, TV>>
 };
 
 template <class TK, class TV>
-struct IsMapLike<MultiHashMap<TK, TV>>
+struct IsMapLike<HashMap<TK, TV>>
 { 
 	static constexpr bool Value = true;
 	using TKey = TK;
@@ -74,7 +74,7 @@ struct IsMapLike<MultiHashMap<TK, TV>>
 };
 
 template <class TK, class TV>
-struct IsMapLike<VirtualMultiHashMap<TK, TV>>
+struct IsMapLike<VirtualHashMap<TK, TV>>
 { 
 	static constexpr bool Value = true;
 	using TKey = TK;
@@ -85,7 +85,7 @@ template <class T>
 struct IsSetLike { static constexpr bool Value = false; };
 
 template <class TK>
-struct IsSetLike<MultiHashSet<TK>>
+struct IsSetLike<HashSet<TK>>
 { 
 	static constexpr bool Value = true;
 	using TKey = TK;

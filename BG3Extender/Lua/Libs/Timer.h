@@ -49,7 +49,7 @@ public:
 private:
 	SaltedPool<EphemeralTimer> ephemeralTimers_;
 	SaltedPool<PersistentTimer> persistentTimers_;
-	MultiHashMap<FixedString, LuaDelegate<void(RegistryEntry, TimerHandle)>> persistentCallbacks_;
+	HashMap<FixedString, LuaDelegate<void(RegistryEntry, TimerHandle)>> persistentCallbacks_;
 	std::priority_queue<TimerQueueEntry, Vector<TimerQueueEntry>, std::greater<TimerQueueEntry>> queue_;
 
 	State& state_;

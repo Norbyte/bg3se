@@ -57,6 +57,7 @@ void ScriptExtender::WarnIfOffline()
 
 	if (_wcsicmp(sep, L"BG3ScriptExtender") != 0) {
 		WARN("NOTICE: Script Extender loaded without an updater present; new updates will not be fetched automatically");
+		std::wcout << sep << std::endl;
 	}
 }
 

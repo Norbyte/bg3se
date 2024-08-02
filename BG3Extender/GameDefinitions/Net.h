@@ -126,7 +126,7 @@ struct Protocol
 
 struct PacketHandlers : ProtectedGameObject<PacketHandlers>
 {
-	RefMap<int32_t, void*> field_0;
+	LegacyRefMap<int32_t, void*> field_0;
 	AbstractPeer* Peer;
 	double LastUpdate;
 	__int64 field_20;
@@ -193,8 +193,8 @@ struct AbstractPeer : public AbstractPeerBase
 	STDString PeerHost2;
 	void* field_58;
 	void* field_60;
-	MultiHashMap<int32_t, void*> field_68;
-	MultiHashMap<int32_t, void*> field_A8;
+	HashMap<int32_t, void*> field_68;
+	HashMap<int32_t, void*> field_A8;
 	bool field_E8;
 	uint8_t _Pad1[7];
 	bool field_F0;
@@ -239,7 +239,7 @@ struct AbstractPeer : public AbstractPeerBase
 	uint16_t Port1;
 	uint16_t Port2;
 	Array<Protocol*> ProtocolList;
-	MultiHashMap<uint32_t, Protocol*> ProtocolMap;
+	HashMap<uint32_t, Protocol*> ProtocolMap;
 	QueueCS<Message*> PacketsToSend;
 	QueueCS<Message*> Ring2;
 	QueueCS<Message*> Ring3;
@@ -278,17 +278,17 @@ struct GameServer : public Host
 		int field_68;
 		BitSet<> field_70;
 		Array<void*> field_80;
-		MultiHashMap<EntityHandle, void*> field_90;
-		MultiHashMap<EntityHandle, void*> field_D0;
-		MultiHashMap<EntityHandle, void*> field_110;
-		MultiHashSet<EntityHandle> field_150;
-		MultiHashSet<EntityHandle> field_180;
+		HashMap<EntityHandle, void*> field_90;
+		HashMap<EntityHandle, void*> field_D0;
+		HashMap<EntityHandle, void*> field_110;
+		HashSet<EntityHandle> field_150;
+		HashSet<EntityHandle> field_180;
 		BitSet<> field_1B0;
 		Array<void*> field_1C0;
 		Array<void*> field_1D0;
 		Array<void*> field_1E0;
 		Array<void*> field_1F0;
-		MultiHashMap<int32_t, void*> field_200;
+		HashMap<int32_t, void*> field_200;
 	};
 
 	struct Inner2
@@ -296,7 +296,7 @@ struct GameServer : public Host
 		Array<void*> field_0;
 		Array<void*> field_10;
 		Array<void*> field_20;
-		Map<int32_t, void*> field_30;
+		LegacyMap<int32_t, void*> field_30;
 	};
 
 	void* VMT3;
@@ -343,7 +343,7 @@ struct ClientConnectMessage : public Message
 	char field_5C;
 	Guid field_60;
 	uint8_t field_70;
-	MultiHashSet<Guid> field_78;
+	HashSet<Guid> field_78;
 	int field_A8;
 	uint8_t field_AC;
 };

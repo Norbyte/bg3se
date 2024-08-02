@@ -52,7 +52,7 @@ inline void PushReturnValue(lua_State* L, ObjectSet<T>* v)
 }
 
 template <class TKey, class TValue>
-inline void PushReturnValue(lua_State* L, RefMap<TKey, TValue>* v)
+inline void PushReturnValue(lua_State* L, LegacyRefMap<TKey, TValue>* v)
 {
 	if constexpr (!IsByVal<TValue>) {
 		MakeObjectRef(L, v);
@@ -62,7 +62,7 @@ inline void PushReturnValue(lua_State* L, RefMap<TKey, TValue>* v)
 }
 
 template <class TKey, class TValue>
-inline void PushReturnValue(lua_State* L, Map<TKey, TValue>* v)
+inline void PushReturnValue(lua_State* L, LegacyMap<TKey, TValue>* v)
 {
 	if constexpr (!IsByVal<TValue>) {
 		MakeObjectRef(L, v);

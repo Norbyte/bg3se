@@ -46,7 +46,7 @@ inline uint64_t SparseHashMapHash<ecs::ComponentTypeIndex>(ecs::ComponentTypeInd
 }
 
 template <>
-inline uint64_t MultiHashMapHash<ecs::ComponentTypeIndex>(ecs::ComponentTypeIndex const& v)
+inline uint64_t HashMapHash<ecs::ComponentTypeIndex>(ecs::ComponentTypeIndex const& v)
 {
 	return ((v.Value() & 0x7FFF) + 0x780 * (v.Value() >> 15))
 		| (uint64_t)(((v.Value() & 0x7FFF) + 0x780 * (v.Value() >> 15)) << 16);
@@ -189,7 +189,7 @@ struct QueryDescription : public ProtectedGameObject<QueryDescription>
 	using ID = uint16_t;
 
 	// TypeList template parameters to ecs::query::spec::Spec<...>
-	MultiHashSet<int32_t> StorageFrameIDs;
+	HashSet<int32_t> StorageFrameIDs;
 	StaticArray<StorageComponentMap> EntityClasses;
 #if 0
 	STDString Name;
@@ -244,10 +244,10 @@ struct SystemTypeEntry : public ProtectedGameObject<SystemTypeEntry>
 	void* SomeProc2;
 	void* SomeProc3;
 	void* ECBFlushJob;
-	MultiHashSet<SystemTypeEntry::ID> DependencySystems;
-	MultiHashSet<SystemTypeEntry::ID> DependentSystems;
-	MultiHashSet<uint32_t> HandleMappings2;
-	MultiHashSet<uint32_t> HandleMappings;
+	HashSet<SystemTypeEntry::ID> DependencySystems;
+	HashSet<SystemTypeEntry::ID> DependentSystems;
+	HashSet<uint32_t> HandleMappings2;
+	HashSet<uint32_t> HandleMappings;
 #if 0
 	StringView Name;
 	uint64_t field_108;
@@ -266,7 +266,7 @@ struct SystemRegistry : public ProtectedGameObject<SystemRegistry>
 
 struct SyncBuffers : public ProtectedGameObject<SyncBuffers>
 {
-	Array<MultiHashMap<EntityHandle, BitSet<>>> ComponentPools;
+	Array<HashMap<EntityHandle, BitSet<>>> ComponentPools;
 	bool Dirty;
 };
 
@@ -353,14 +353,14 @@ struct EntityStorageData : public ProtectedGameObject<EntityStorageData>
 	int16_t field_148;
 	int16_t SmallPageIndex;
 	Array<uint16_t> PageToComponentPoolIndex;
-	MultiHashMap<ComponentTypeIndex, uint8_t> ComponentTypeToIndex;
-	MultiHashMap<EntityHandle, EntityStorageIndex> InstanceToPageMap;
-	MultiHashMap<uint64_t, uint16_t> AddedComponentFrameStorageIDs;
-	MultiHashMap<uint64_t, uint16_t> RemovedComponentFrameStorageIDs2;
+	HashMap<ComponentTypeIndex, uint8_t> ComponentTypeToIndex;
+	HashMap<EntityHandle, EntityStorageIndex> InstanceToPageMap;
+	HashMap<uint64_t, uint16_t> AddedComponentFrameStorageIDs;
+	HashMap<uint64_t, uint16_t> RemovedComponentFrameStorageIDs2;
 	Array<Array<EntityHandle>> ComponentAddedEntityMap;
 	Array<Array<EntityHandle>> ComponentRemovedEntityMap;
 	// FIXME - SparseArray<ComponentTypeEntry> instead?
-	MultiHashMap<ComponentTypeIndex, MultiHashMap<uint16_t, EntityStorageComponentPage*>*> ComponentPoolsByType;
+	HashMap<ComponentTypeIndex, HashMap<uint16_t, EntityStorageComponentPage*>*> ComponentPoolsByType;
 	bool HasComponentPoolsByType;
 	__int64 field_2C8;
 	EntityTypeMask ComponentMask; // Valid indices into Components pool
@@ -396,9 +396,9 @@ struct EntityStorageContainer : public ProtectedGameObject<EntityStorageContaine
 	};
 
 	Array<EntityStorageData*> Entities;
-	MultiHashMap<uint64_t, uint16_t> TypeHashToEntityTypeIndex;
+	HashMap<uint64_t, uint16_t> TypeHashToEntityTypeIndex;
 	SaltMap Salts;
-	MultiHashMap<uint64_t, uint64_t> field_458;
+	HashMap<uint64_t, uint64_t> field_458;
 	BitSet<> UsedFrameDataStorages;
 	ComponentRegistry* ComponentRegistry;
 	QueryRegistry* Queries;
@@ -552,7 +552,7 @@ struct BucketedHashSet
 	{
 		if (HashTableSize == 0) return -1;
 
-		auto hash = MultiHashMapHash(key) % HashTableSize;
+		auto hash = HashMapHash(key) % HashTableSize;
 		auto keyIndex = HashKeys[hash >> BitsPerHashBucket][hash & ((1 << BitsPerHashBucket) - 1)];
 		while (keyIndex >= 0) {
 			auto keyTable = keyIndex >> BitsPerKeyBucket;

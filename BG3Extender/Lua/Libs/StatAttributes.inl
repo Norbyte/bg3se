@@ -412,7 +412,7 @@ namespace bg3se::lua::stats
 
 			case RPGEnumerationType::RollConditions:
 			{
-				MultiHashMap<FixedString, STDString> rolls;
+				HashMap<FixedString, STDString> rolls;
 				lua_pushvalue(L, valueIdx);
 				LuaRead(L, rolls);
 				lua_pop(L, 1);

@@ -46,7 +46,7 @@ struct SpellId
 };
 
 template <>
-inline uint64_t MultiHashMapHash<SpellId>(SpellId const& v)
+inline uint64_t HashMapHash<SpellId>(SpellId const& v)
 {
 	return HashMulti(v.ProgressionSource, v.SourceType, v.Prototype, v.OriginatorPrototype);
 }

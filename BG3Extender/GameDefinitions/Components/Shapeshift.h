@@ -6,7 +6,7 @@ struct HealthReservationComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ShapeshiftHealthReservation, "esv::shapeshift::HealthReservationComponent")
 
-	MultiHashMap<Guid, int32_t> Reservations;
+	HashMap<Guid, int32_t> Reservations;
 };
 
 struct IntOverride
@@ -58,7 +58,7 @@ struct State
 	bool ApplyVisualInCC;
 	bool MuteEquipmentSound;
 	bool OverrideSpeaker;
-	MultiHashMap<ShapeshiftSpellSource, Array<FixedString>> SpellsAdd;
+	HashMap<ShapeshiftSpellSource, Array<FixedString>> SpellsAdd;
 	Array<FixedString> SpellsRemove;
 	bool RemovePrevSpells;
 	std::optional<Guid> AiHint;

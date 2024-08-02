@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include <Osiris/Shared/NodeHooks.h>
 #include <Osiris/Debugger/Debugger.h>
-#include <Lua/Server/LuaOsirisBinding.h>
+#include <Lua/Osiris/CallbackManager.h>
 
 namespace bg3se
 {

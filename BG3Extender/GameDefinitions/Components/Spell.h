@@ -98,7 +98,7 @@ struct Modification
 	uint8_t field_0;
 	FixedString Source;
 	Variant Modification;
-	MultiHashSet<SpellId> Spells;
+	HashSet<SpellId> Spells;
 };
 
 struct SpellMeta
@@ -140,7 +140,7 @@ struct SpellModificationContainerComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(SpellModificationContainer, "eoc::spell::ModificationContainerComponent")
 
-	MultiHashMap<FixedString, Array<Modification>> Modifications;
+	HashMap<FixedString, Array<Modification>> Modifications;
 };
 
 struct AddedSpellsComponent : public BaseComponent
@@ -170,15 +170,15 @@ struct LearnedSpellsComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(LearnedSpells, "eoc::spell::LearnedSpellsComponent")
 
-	MultiHashMap<Guid, MultiHashSet<FixedString>> field_18;
-	MultiHashSet<SpellSchoolId> SpellSchools;
+	HashMap<Guid, HashSet<FixedString>> field_18;
+	HashSet<SpellSchoolId> SpellSchools;
 };
 
 struct SpellAiConditionsComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(SpellAiConditions, "eoc::spell::AiConditionsComponent")
 
-	MultiHashMap<FixedString, AiActionConditions> Conditions;
+	HashMap<FixedString, AiActionConditions> Conditions;
 };
 
 struct CastRequirements
@@ -215,8 +215,8 @@ struct BookPreparesComponent : public BaseComponent
 	DEFINE_COMPONENT(SpellBookPrepares, "eoc::spell::BookPreparesComponent")
 
 	Array<SpellMetaId> PreparedSpells;
-	MultiHashMap<Guid, int> field_30;
-	MultiHashMap<Guid, int> field_88;
+	HashMap<Guid, int> field_30;
+	HashMap<Guid, int> field_88;
 };
 
 END_NS()
@@ -268,7 +268,7 @@ struct InterruptResultsComponent : public BaseComponent
 	DEFINE_COMPONENT(SpellCastInterruptResults, "eoc::spell_cast::InterruptResultsComponent")
 	
 	char field_0;
-	MultiHashSet<EntityHandle> Results;
+	HashSet<EntityHandle> Results;
 };
 
 struct MovementComponent : public BaseComponent
@@ -297,7 +297,7 @@ struct SpellRollData
 	EntityHandle Target;
 	std::optional<EntityHandle> field_8;
 	[[bg3::legacy(Hits)]] Array<SpellRollCastEventData> Casts;
-	MultiHashMap<FixedString, int32_t> NameToCastIndex;
+	HashMap<FixedString, int32_t> NameToCastIndex;
 	int NextReaction;
 	SpellMetaConditionType SpellConditionsType;
 	std::optional<SpellRollTargetInfo> TargetInfo;
@@ -469,11 +469,11 @@ struct CacheComponent : public BaseComponent
 	DEFINE_COMPONENT(ServerSpellCastCache, "esv::spell_cast::CacheComponent")
 
 	Array<stats::ActionResourceCost> Costs;
-	[[bg3::hidden]] MultiHashMap<int, void*> field_10_MHM_FS_unk;
+	[[bg3::hidden]] HashMap<int, void*> field_10_MHM_FS_unk;
 	__int64 field_50;
-	// MultiHashMap<FixedString, MultiHashMap<int, Array<bg3se::spell_cast::IntermediateTarget>>>
-	[[bg3::hidden]] MultiHashMap<FixedString, MultiHashMap<int, Array<void*>>> Targets;
-	[[bg3::hidden]] MultiHashMap<int, void*> field_98_MHM_FS_unk;
+	// HashMap<FixedString, HashMap<int, Array<bg3se::spell_cast::IntermediateTarget>>>
+	[[bg3::hidden]] HashMap<FixedString, HashMap<int, Array<void*>>> Targets;
+	[[bg3::hidden]] HashMap<int, void*> field_98_MHM_FS_unk;
 	__int64 field_D8;
 	__int64 field_E0;
 	__int64 field_E8;

@@ -801,8 +801,8 @@ private:
 
     SwapchainInfo swapchain_;
 
-    MultiHashMap<TextureDescriptor*, VkDescriptorSet> textures_;
-    MultiHashMap<VkDescriptorSet, TextureRefCount> textureRefCounts_;
+    HashMap<TextureDescriptor*, VkDescriptorSet> textures_;
+    HashMap<VkDescriptorSet, TextureRefCount> textureRefCounts_;
 };
 
 END_NS()

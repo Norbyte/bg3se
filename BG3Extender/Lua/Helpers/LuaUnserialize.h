@@ -290,7 +290,7 @@ PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, Bi
 }
 
 template <class TK, class TV>
-PropertyOperationResult UnserializeMapFromTable(lua_State* L, int index, MultiHashMap<TK, TV>* obj)
+PropertyOperationResult UnserializeMapFromTable(lua_State* L, int index, HashMap<TK, TV>* obj)
 {
 	if constexpr (std::is_pointer_v<TK> || std::is_pointer_v<TV>
 		|| !std::is_default_constructible_v<TK> || !std::is_default_constructible_v<TV>) {
@@ -311,7 +311,7 @@ PropertyOperationResult UnserializeMapFromTable(lua_State* L, int index, MultiHa
 }
 
 template <class TK, class TV>
-PropertyOperationResult UnserializeMapFromUserdata(lua_State* L, int index, MultiHashMap<TK, TV>* obj)
+PropertyOperationResult UnserializeMapFromUserdata(lua_State* L, int index, HashMap<TK, TV>* obj)
 {
 	if constexpr (std::is_pointer_v<TK> || std::is_pointer_v<TV>
 		|| !std::is_default_constructible_v<TK> || !std::is_default_constructible_v<TV>) {
@@ -325,7 +325,7 @@ PropertyOperationResult UnserializeMapFromUserdata(lua_State* L, int index, Mult
 }
 
 template <class TK, class TV>
-PropertyOperationResult UnserializeMapFromTable(lua_State* L, int index, RefMap<TK, TV>* obj)
+PropertyOperationResult UnserializeMapFromTable(lua_State* L, int index, LegacyRefMap<TK, TV>* obj)
 {
 	if constexpr (std::is_pointer_v<TK> || std::is_pointer_v<TV>
 		|| !std::is_default_constructible_v<TK> || !std::is_default_constructible_v<TV>) {
@@ -346,7 +346,7 @@ PropertyOperationResult UnserializeMapFromTable(lua_State* L, int index, RefMap<
 }
 
 template <class TK, class TV>
-PropertyOperationResult UnserializeMapFromUserdata(lua_State* L, int index, RefMap<TK, TV>* obj)
+PropertyOperationResult UnserializeMapFromUserdata(lua_State* L, int index, LegacyRefMap<TK, TV>* obj)
 {
 	if constexpr (std::is_pointer_v<TK> || std::is_pointer_v<TV>
 		|| !std::is_default_constructible_v<TK> || !std::is_default_constructible_v<TV>) {
@@ -360,7 +360,7 @@ PropertyOperationResult UnserializeMapFromUserdata(lua_State* L, int index, RefM
 }
 
 template <class TK, class TV>
-PropertyOperationResult UnserializeMapFromTable(lua_State* L, int index, Map<TK, TV>* obj)
+PropertyOperationResult UnserializeMapFromTable(lua_State* L, int index, LegacyMap<TK, TV>* obj)
 {
 	if constexpr (std::is_pointer_v<TK> || std::is_pointer_v<TV>
 		|| !std::is_default_constructible_v<TK> || !std::is_default_constructible_v<TV>) {
@@ -381,7 +381,7 @@ PropertyOperationResult UnserializeMapFromTable(lua_State* L, int index, Map<TK,
 }
 
 template <class TK, class TV>
-PropertyOperationResult UnserializeMapFromUserdata(lua_State* L, int index, Map<TK, TV>* obj)
+PropertyOperationResult UnserializeMapFromUserdata(lua_State* L, int index, LegacyMap<TK, TV>* obj)
 {
 	if constexpr (std::is_pointer_v<TK> || std::is_pointer_v<TV>
 		|| !std::is_default_constructible_v<TK> || !std::is_default_constructible_v<TV>) {
@@ -395,7 +395,7 @@ PropertyOperationResult UnserializeMapFromUserdata(lua_State* L, int index, Map<
 }
 
 template <class TK>
-void UnserializeSetFromTable(lua_State* L, int index, MultiHashSet<TK>* obj)
+void UnserializeSetFromTable(lua_State* L, int index, HashSet<TK>* obj)
 {
 	StackCheck _(L);
 	luaL_checktype(L, index, LUA_TTABLE);
@@ -407,7 +407,7 @@ void UnserializeSetFromTable(lua_State* L, int index, MultiHashSet<TK>* obj)
 }
 
 template <class TK>
-void UnserializeSetFromUserdata(lua_State* L, int index, MultiHashSet<TK>* obj)
+void UnserializeSetFromUserdata(lua_State* L, int index, HashSet<TK>* obj)
 {
 	StackCheck _(L);
 	auto set = SetProxyMetatable::Get<MultiHashSetProxyImpl<TK>>(L, index);

@@ -102,7 +102,7 @@ struct SpellPrototype : public Noncopyable<SpellPrototype>
 	Array<FixedString> ContainerSpells;
 	Array<Array<FixedString>> Trajectories;
 	uint32_t RequirementEvents;
-	[[bg3::hidden]] MultiHashMap<uint8_t, Array<uint64_t>> MetaConditions;
+	[[bg3::hidden]] HashMap<uint8_t, Array<uint64_t>> MetaConditions;
 	FixedString ItemWall;
 	FixedString InterruptPrototype;
 	FixedString CombatAIOverrideSpell;
@@ -116,8 +116,8 @@ struct SpellPrototype : public Noncopyable<SpellPrototype>
 struct [[bg3::hidden]] SpellPrototypeManager : public ProtectedGameObject<SpellPrototypeManager>
 {
 	void* VMT;
-	MultiHashMap<FixedString, SpellPrototype*> Spells;
-	MultiHashMap<FixedString, SpellPrototype*> CombatAIOverrideSpells;
+	HashMap<FixedString, SpellPrototype*> Spells;
+	HashMap<FixedString, SpellPrototype*> CombatAIOverrideSpells;
 	Array<FixedString> SpellNames;
 	bool Initialized;
 
@@ -165,7 +165,7 @@ struct StatusPrototype : public Noncopyable<StatusPrototype>
 struct [[bg3::hidden]] StatusPrototypeManager : public ProtectedGameObject<StatusPrototypeManager>
 {
 	void* VMT;
-	MultiHashMap<FixedString, StatusPrototype*> Statuses;
+	HashMap<FixedString, StatusPrototype*> Statuses;
 	Array<FixedString> StatusNames;
 	bool Initialized;
 
@@ -203,7 +203,7 @@ struct PassivePrototype : public Noncopyable<PassivePrototype>
 struct [[bg3::hidden]] PassivePrototypeManager : public ProtectedGameObject<PassivePrototypeManager>
 {
 	void* VMT;
-	RefMap<FixedString, PassivePrototype> Passives;
+	LegacyRefMap<FixedString, PassivePrototype> Passives;
 	bool Initialized;
 
 	void SyncStat(stats::Object* object);
@@ -237,7 +237,7 @@ struct InterruptPrototype
 struct [[bg3::hidden]] InterruptPrototypeManager : public ProtectedGameObject<InterruptPrototypeManager>
 {
 	void* VMT;
-	MultiHashMap<FixedString, InterruptPrototype> Interrupts;
+	HashMap<FixedString, InterruptPrototype> Interrupts;
 	bool IsLoaded;
 
 	void SyncStat(Object* object);

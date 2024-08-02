@@ -31,7 +31,7 @@ UserReturn Get(lua_State* L, Guid uuid)
 	return 1;
 }
 
-MultiHashMap<Guid, EntityHandle> GetAllEntitiesWithUuid(lua_State* L)
+HashMap<Guid, EntityHandle> GetAllEntitiesWithUuid(lua_State* L)
 {
 	auto mappings = State::FromLua(L)->GetEntitySystemHelpers()->GetUuidMappings();
 	if (mappings) {

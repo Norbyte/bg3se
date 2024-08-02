@@ -21,7 +21,7 @@ namespace bg3se
 		LevelDesc* LevelDesc;
 		void* SomeDesc;
 		LevelManager* LevelManager;
-		RefMap<FixedString, void*> field_18;
+		LegacyRefMap<FixedString, void*> field_18;
 		int LockCount;
 		int field_2C;
 		__int64 field_30;
@@ -78,7 +78,7 @@ namespace bg3se
 		LevelManagerBase b;
 		LocalTemplateManager* LocalTemplateManager;
 		EoCLevel* CurrentLevel;
-		Map<FixedString, EoCLevel*> Levels;
+		LegacyMap<FixedString, EoCLevel*> Levels;
 		void* field_B0;
 	};
 

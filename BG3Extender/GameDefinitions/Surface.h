@@ -185,8 +185,8 @@ namespace bg3se::esv
 		ecs::EntityRef OwnerHandle;
 		glm::vec3 Position;
 		float SurfaceLifetime;
-		RefMap<SurfaceType, ComponentHandle> SurfaceMap;
-		RefMap<SurfaceType, PrimitiveSet<SurfaceCell>> SurfaceCellMap;
+		LegacyRefMap<SurfaceType, ComponentHandle> SurfaceMap;
+		LegacyRefMap<SurfaceType, PrimitiveSet<SurfaceCell>> SurfaceCellMap;
 		ObjectSet<SurfaceCell> SurfaceRemoveGroundCellMap;
 		ObjectSet<SurfaceCell> SurfaceRemoveCloudCellMap;
 		bool PlayerCharacterNearby;
@@ -277,8 +277,8 @@ namespace bg3se::esv
 		ObjectSet<void*> SurfaceConcentrationTargets;
 		int64_t field_280[16];
 		ObjectSet<void*> pAiTilePosSets;
-		RefMap<void*, void*> field_318;
-		RefMap<void*, void*> field_328;
+		LegacyRefMap<void*, void*> field_318;
+		LegacyRefMap<void*, void*> field_328;
 		int64_t field_338[10];
 	};*/
 }

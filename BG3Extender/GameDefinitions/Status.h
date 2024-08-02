@@ -170,7 +170,7 @@ namespace bg3se
 
 			SurfaceLayerCheck LayerChecks[2];
 			glm::vec3 Translate;
-			MultiHashMap<FixedString, bool> Unknown;
+			HashMap<FixedString, bool> Unknown;
 		};
 
 		struct StatusInvisible : public StatusBoost

@@ -35,7 +35,7 @@ struct ContainerComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(InventoryContainer, "eoc::inventory::ContainerComponent")
 
-	MultiHashMap<uint16_t, ContainerSlotData> Items;
+	HashMap<uint16_t, ContainerSlotData> Items;
 };
 
 struct MemberComponent : public BaseComponent

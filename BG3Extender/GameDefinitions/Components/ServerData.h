@@ -95,7 +95,7 @@ struct LeaderComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerLeader, "esv::LeaderComponent")
 
-	MultiHashSet<EntityHandle> Followers_M;
+	HashSet<EntityHandle> Followers_M;
 };
 
 struct BreadcrumbEvent
@@ -128,7 +128,7 @@ struct KillerComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerKiller, "esv::death::KillerComponent")
 
-	MultiHashSet<EntityHandle> Killers;
+	HashSet<EntityHandle> Killers;
 };
 
 struct StateComponent : public BaseComponent
@@ -214,7 +214,7 @@ struct GameplayLightEquipmentComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerGameplayLightEquipment, "esv::GameplayLightEquipmentComponent")
 
-	MultiHashSet<EntityHandle> field_0;
+	HashSet<EntityHandle> field_0;
 };
 
 struct TargetUUIDComponent : public BaseComponent

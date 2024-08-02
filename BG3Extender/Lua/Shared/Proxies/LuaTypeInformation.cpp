@@ -7,7 +7,7 @@ BEGIN_SE()
 // Type information registration
 
 template <class UnderlyingType>
-void AddBitfieldTypeInfo(TypeInformation& ty, Map<FixedString, UnderlyingType> const& values)
+void AddBitfieldTypeInfo(TypeInformation& ty, LegacyMap<FixedString, UnderlyingType> const& values)
 {
 	for (auto const& label : values) {
 		ty.Members.insert(std::make_pair(label.Key, GetTypeInfoRef<bool>()));

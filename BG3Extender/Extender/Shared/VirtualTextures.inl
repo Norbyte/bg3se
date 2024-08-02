@@ -125,9 +125,9 @@ bool VirtualTextureHelpers::NeedsRebuild(std::unordered_set<FixedString> const& 
 	return false;
 }
 
-MultiHashMap<FixedString, FixedString> VirtualTextureHelpers::CollectRemaps()
+HashMap<FixedString, FixedString> VirtualTextureHelpers::CollectRemaps()
 {
-	MultiHashMap<FixedString, FixedString> remaps;
+	HashMap<FixedString, FixedString> remaps;
 
 	auto modManager = GetStaticSymbols().GetModManagerClient();
 	for (auto const& mod : modManager->BaseModule.LoadOrderedModules) {

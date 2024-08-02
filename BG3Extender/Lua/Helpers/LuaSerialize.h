@@ -97,7 +97,7 @@ void SerializeArray(lua_State* L, std::span<T, Extent> const* obj)
 }
 
 template <class TK, class TV>
-void SerializeMap(lua_State* L, MultiHashMap<TK, TV> const* obj)
+void SerializeMap(lua_State* L, HashMap<TK, TV> const* obj)
 {
 	StackCheck _(L, 1);
 	lua_createtable(L, 0, (int)obj->size());
@@ -109,7 +109,7 @@ void SerializeMap(lua_State* L, MultiHashMap<TK, TV> const* obj)
 }
 
 template <class TK, class TV>
-void SerializeMap(lua_State* L, RefMap<TK, TV> const* obj)
+void SerializeMap(lua_State* L, LegacyRefMap<TK, TV> const* obj)
 {
 	StackCheck _(L, 1);
 	lua_createtable(L, 0, (int)obj->size());
@@ -121,7 +121,7 @@ void SerializeMap(lua_State* L, RefMap<TK, TV> const* obj)
 }
 
 template <class TK, class TV>
-void SerializeMap(lua_State* L, Map<TK, TV> const* obj)
+void SerializeMap(lua_State* L, LegacyMap<TK, TV> const* obj)
 {
 	StackCheck _(L, 1);
 	lua_createtable(L, 0, (int)obj->size());
@@ -133,7 +133,7 @@ void SerializeMap(lua_State* L, Map<TK, TV> const* obj)
 }
 
 template <class TK>
-void SerializeSet(lua_State* L, MultiHashSet<TK> const* obj)
+void SerializeSet(lua_State* L, HashSet<TK> const* obj)
 {
 	StackCheck _(L, 1);
 	lua_createtable(L, (int)obj->size(), 0);

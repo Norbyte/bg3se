@@ -31,7 +31,7 @@ public:
 	static_assert(!std::is_pointer_v<T>, "MultiHashSetProxyImpl template parameter should not be a pointer type!");
 
 	using ElementType = T;
-	using ContainerType = MultiHashSet<T>;
+	using ContainerType = HashSet<T>;
 
 	TypeInformation const& GetContainerType() const override
 	{
@@ -135,7 +135,7 @@ public:
 	}
 
 	template <class T>
-	inline static void Make(lua_State* L, MultiHashSet<T>* object, LifetimeHandle const& lifetime)
+	inline static void Make(lua_State* L, HashSet<T>* object, LifetimeHandle const& lifetime)
 	{
 		MakeImpl(L, object, lifetime, GetImplementation<MultiHashSetProxyImpl<T>>());
 	}

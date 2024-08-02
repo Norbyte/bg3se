@@ -10,7 +10,7 @@ namespace bg3se
 	{
 		void* VMT;
 		LevelManager* LevelManager;
-		Map<FixedString, void*> field_10;
+		LegacyMap<FixedString, void*> field_10;
 		ecs::EntityWorld* EntityWorld;
 		FixedString FS1;
 		uint64_t Unknown[3];
@@ -41,13 +41,13 @@ namespace bg3se
 		{
 			EntityManager* EntityManager;
 			void* TriggerFactory;
-			Map<FixedString, ObjectSet<Trigger*>*> RegisteredTriggers;
+			LegacyMap<FixedString, ObjectSet<Trigger*>*> RegisteredTriggers;
 		};
 
 		struct ProjectileConversionHelpers : ProtectedGameObject<ProjectileConversionHelpers>
 		{
 			EntityManager* EntityManager;
-			Map<FixedString, ObjectSet<Projectile*>*> RegisteredProjectiles;
+			LegacyMap<FixedString, ObjectSet<Projectile*>*> RegisteredProjectiles;
 		};
 
 
