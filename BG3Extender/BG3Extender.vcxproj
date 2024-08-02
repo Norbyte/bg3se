@@ -269,7 +269,6 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="Lua\Shared\Proxies\LuaEvent.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaImguiProxy.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaMapProxy.h" />
-    <ClInclude Include="Lua\Shared\Proxies\LuaObjectProxy.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaPropertyMap.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaPropertyMapHelpers.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaSetProxy.h" />
@@ -474,7 +473,6 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="Lua\Shared\Proxies\LuaEvent.inl" />
     <None Include="Lua\Shared\Proxies\LuaImguiProxy.inl" />
     <None Include="Lua\Shared\Proxies\LuaMapProxy.inl" />
-    <None Include="Lua\Shared\Proxies\LuaObjectProxy.inl" />
     <None Include="Lua\Shared\Proxies\LuaPropertyMap.inl" />
     <None Include="Lua\Shared\Proxies\LuaSetProxy.inl" />
     <None Include="Lua\Libs\StatAttributes.inl" />

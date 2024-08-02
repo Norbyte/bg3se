@@ -9,7 +9,6 @@
 #include <Lua/Shared/Proxies/LuaArrayProxy.inl>
 #include <Lua/Shared/Proxies/LuaEntityProxy.inl>
 #include <Lua/Shared/Proxies/LuaMapProxy.inl>
-#include <Lua/Shared/Proxies/LuaObjectProxy.inl>
 #include <Lua/Shared/Proxies/LuaSetProxy.inl>
 #include <Lua/Shared/Proxies/LuaEvent.inl>
 #include <Lua/Shared/Proxies/LuaCppObjectProxy.inl>

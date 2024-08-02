@@ -449,7 +449,6 @@ TypeInformationRef do_get(lua_State* L, int index, Overload<TypeInformationRef>)
 
 EntityHelper do_get(lua_State* L, int index, Overload<EntityHelper>)
 {
-	luaL_checktype(L, index, LUA_TUSERDATA);
 	return EntityProxyMetatable::GetHelper(L, index);
 }
 

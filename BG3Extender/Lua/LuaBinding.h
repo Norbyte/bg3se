@@ -2,7 +2,6 @@
 
 #include <Lua/LuaHelpers.h>
 #include <Lua/Shared/LuaLifetime.h>
-#include <Lua/Shared/Proxies/LuaObjectProxy.h>
 #include <Lua/Shared/Proxies/LuaEvent.h>
 #include <Lua/Shared/Proxies/LuaEntityProxy.h>
 #include <Lua/Shared/Proxies/LuaPropertyMapHelpers.h>

@@ -5,6 +5,7 @@ namespace bg3se::esv::lua
 {
 	using namespace bg3se::lua;
 
+	/*
 	int CreateFunctor(lua_State* L)
 	{
 		StackCheck _(L, 1);
@@ -146,4 +147,5 @@ namespace bg3se::esv::lua
 
 		RegisterLib(L, "Functor", functorLib);
 	}
+	*/
 }

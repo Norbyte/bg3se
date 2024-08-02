@@ -364,9 +364,6 @@
     <ClInclude Include="Lua\Shared\Proxies\LuaMapProxy.h">
       <Filter>Lua\Shared\Proxies</Filter>
     </ClInclude>
-    <ClInclude Include="Lua\Shared\Proxies\LuaObjectProxy.h">
-      <Filter>Lua\Shared\Proxies</Filter>
-    </ClInclude>
     <ClInclude Include="Lua\Shared\Proxies\LuaPropertyMapHelpers.h">
       <Filter>Lua\Shared\Proxies</Filter>
     </ClInclude>
@@ -581,9 +578,6 @@
       <Filter>Lua\Shared\Proxies</Filter>
     </None>
     <None Include="Lua\Shared\Proxies\LuaMapProxy.inl">
-      <Filter>Lua\Shared\Proxies</Filter>
-    </None>
-    <None Include="Lua\Shared\Proxies\LuaObjectProxy.inl">
       <Filter>Lua\Shared\Proxies</Filter>
     </None>
     <None Include="Lua\Shared\Proxies\LuaSetProxy.inl">

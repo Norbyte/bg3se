@@ -36,29 +36,6 @@ namespace bg3se::esv::lua
 		esv::GameState ToState;
 	};
 
-	class StatusHandleProxy : public Userdata<StatusHandleProxy>, public Indexable, public NewIndexable
-	{
-	public:
-		static char const * const MetatableName;
-
-		inline StatusHandleProxy(EntityHandle character, ComponentHandle status)
-			: character_(character), statusHandle_(status)
-		{}
-
-		inline StatusHandleProxy(EntityHandle character, NetId status)
-			: character_(character), statusNetId_(status)
-		{}
-
-		int Index(lua_State * L);
-		int NewIndex(lua_State * L);
-		esv::Status* Get(lua_State* L);
-
-	private:
-		EntityHandle character_;
-		ComponentHandle statusHandle_;
-		NetId statusNetId_;
-	};
-
 	struct DealDamageEvent : public EventBase
 	{
 		bg3se::stats::DealDamageFunctor* Functor;
