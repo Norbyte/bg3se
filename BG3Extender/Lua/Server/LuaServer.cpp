@@ -115,6 +115,7 @@ namespace bg3se::esv::lua
 		lua_setglobal(L, "Ext"); // stack: -
 
 		RegisterSharedMetatables(L);
+		RegisterServerMetatables(L);
 		RegisterOsirisLibrary(L);
 		gModuleRegistry.ConstructState(L, ModuleRole::Server);
 	}
@@ -122,11 +123,15 @@ namespace bg3se::esv::lua
 	void ExtensionLibraryServer::Register(lua_State * L)
 	{
 		ExtensionLibrary::Register(L);
-		OsiFunctionNameProxy::RegisterMetatable(L);
 		RegisterNameResolverMetatable(L);
 		CreateNameResolver(L);
 	}
 
+
+	ServerState* ServerState::FromLua(lua_State* L)
+	{
+		return *reinterpret_cast<ServerState**>(lua_getextraspace(L));
+	}
 
 	ServerState::ServerState(ExtensionState& state, uint32_t generationId)
 		: State(generationId, true),

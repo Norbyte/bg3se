@@ -50,6 +50,13 @@ FS(SetReplicationFlags);
 FS(Replicate);
 FS(Vars);
 
+// Osi proxy functions
+FS(Get);
+FS(Delete);
+FS(Exists);
+FS(Arities);
+FS(InputArities);
+
 // Stat modifier value types
 FS(FixedString);
 FS(StatusIDs);

@@ -2,6 +2,7 @@
 #include <Lua/Libs/LibraryRegistrationHelpers.h>
 #include <Lua/Shared/LuaModule.h>
 #include <Lua/Shared/LuaMethodCallHelpers.h>
+#include <Lua/Osiris/FunctionProxy.h>
 #include <Lua/Libs/Debug.inl>
 #include <Lua/Libs/Entity.inl>
 #include <Lua/Libs/IO.inl>
@@ -52,6 +53,11 @@ void RegisterServerLibraries()
 {
 	net::RegisterNetLib();
 	tmpl::RegisterTemplateLib();
+}
+
+void RegisterServerMetatables(lua_State* L)
+{
+	OsiFunctionNameMetatable::RegisterMetatable(L);
 }
 
 END_NS()

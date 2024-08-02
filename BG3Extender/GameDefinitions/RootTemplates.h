@@ -49,6 +49,7 @@ struct GameObjectTemplate
     [[bg3::readonly]] FixedString Id;
     [[bg3::readonly]] FixedString TemplateName;
     [[bg3::readonly]] FixedString ParentTemplateId;
+    [[bg3::readonly]] uint32_t TemplateHandle;
     [[bg3::readonly]] STDString Name;
     OverrideableProperty<uint32_t> GroupID;
     FixedString LevelName;

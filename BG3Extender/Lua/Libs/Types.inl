@@ -83,6 +83,11 @@ std::optional<STDString> GetCppObjectTypeName(lua_State * L, int index)
 	}
 #endif
 
+	case MetatableTag::OsiFunctionName:
+	{
+		return "OsiFunction";
+	}
+
 	default:
 		return {};
 	}
@@ -430,6 +435,7 @@ std::optional<STDString> GetValueType(lua_State* L, AnyRef object)
 	#if defined(ENABLE_IMGUI)
 		case MetatableTag::ImguiObject: return "ImguiObject";
 	#endif
+		case MetatableTag::OsiFunctionName: return "OsiFunction";
 
 		default: return {};
 		}

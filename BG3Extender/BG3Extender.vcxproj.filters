@@ -13,9 +13,6 @@
     <ClCompile Include="Lua\LuaBinding.cpp">
       <Filter>Lua</Filter>
     </ClCompile>
-    <ClCompile Include="Lua\LuaOsiBridge.cpp">
-      <Filter>Lua</Filter>
-    </ClCompile>
     <ClCompile Include="GameDefinitions\GameHelpers.cpp">
       <Filter>GameDefinitions</Filter>
     </ClCompile>
@@ -146,7 +143,7 @@
     <ClCompile Include="Extender\Client\ExtensionStateClient.cpp">
       <Filter>Extender\Client</Filter>
     </ClCompile>
-    <ClCompile Include="Lua\Server\LuaOsirisBinding.cpp">
+    <ClCompile Include="Lua\Osiris\LuaOsirisBinding.cpp">
       <Filter>Lua\Server</Filter>
     </ClCompile>
     <ClCompile Include="Lua\Libs\LuaSharedLibs.cpp" />
@@ -391,7 +388,7 @@
     <ClInclude Include="GameDefinitions\Base\ForwardDeclarations.h">
       <Filter>GameDefinitions\Base</Filter>
     </ClInclude>
-    <ClInclude Include="Lua\Server\LuaOsirisBinding.h">
+    <ClInclude Include="Lua\Osiris\Binding.h">
       <Filter>Lua\Server</Filter>
     </ClInclude>
     <ClInclude Include="Lua\Libs\LibraryRegistrationHelpers.h">
@@ -481,6 +478,12 @@
     <ClInclude Include="GameDefinitions\CharacterCreation.h" />
     <ClInclude Include="GameDefinitions\Components\Interrupt.h" />
     <ClInclude Include="GameDefinitions\Progression.h" />
+    <ClInclude Include="Lua\Osiris\FunctionProxy.h" />
+    <ClInclude Include="Lua\Osiris\CallbackManager.h" />
+    <ClInclude Include="Lua\Osiris\NameCache.h" />
+    <ClInclude Include="Lua\Osiris\Function.h" />
+    <ClInclude Include="Lua\Osiris\CustomFunction.h" />
+    <ClInclude Include="Lua\Osiris\ValueHelpers.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -716,6 +719,13 @@
     <None Include="GameDefinitions\Enumerations\Engine.inl" />
     <None Include="GameDefinitions\Enumerations\ECS.inl" />
     <None Include="GameDefinitions\Enumerations\NetMessage.inl" />
+    <None Include="Lua\Osiris\FunctionProxy.inl" />
+    <None Include="Lua\Osiris\CallbackManager.inl" />
+    <None Include="Lua\Osiris\NameCache.inl" />
+    <None Include="Lua\Osiris\Function.inl" />
+    <None Include="Lua\Osiris\CustomFunction.inl" />
+    <None Include="Lua\Osiris\ValueHelpers.inl" />
+    <None Include="Lua\Osiris\LuaNameResolver.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

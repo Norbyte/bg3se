@@ -1150,6 +1150,16 @@ public:
 		}
 	}
 
+	TValue* get_or_add(TKey const& key)
+	{
+		auto index = this->find_index(key);
+		if (index == -1) {
+			return add_key(key);
+		} else {
+			return &Values[index];
+		}
+	}
+
 	TValue get_or_default(TKey const& key, TValue const& defaultv = TValue{}) const
 	{
 		auto index = this->find_index(key);

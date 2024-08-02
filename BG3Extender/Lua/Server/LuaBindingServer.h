@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Lua/LuaBinding.h>
-#include <Lua/Server/LuaOsirisBinding.h>
+#include <Lua/Osiris/Binding.h>
 #include <Lua/Server/EntityEvents.h>
 #include <GameDefinitions/Stats/Functors.h>
 #include <GameDefinitions/Status.h>
@@ -28,6 +28,7 @@ namespace bg3se::esv::lua
 
 	LifetimeHandle GetServerLifetime();
 	LifetimePool& GetServerLifetimePool();
+	void RegisterServerMetatables(lua_State* L);
 
 	struct GameStateChangedEvent : public EventBase
 	{
@@ -243,13 +244,13 @@ namespace bg3se::esv::lua
 
 		void RegisterNameResolverMetatable(lua_State * L);
 		void CreateNameResolver(lua_State * L);
-
-		static int LuaIndexResolverTable(lua_State* L);
 	};
 
 	class ServerState : public State
 	{
 	public:
+		static ServerState* FromLua(lua_State* L);
+
 		ServerState(ExtensionState& state, uint32_t generationId);
 		~ServerState();
 

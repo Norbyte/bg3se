@@ -9,6 +9,7 @@
 #if defined(ENABLE_IMGUI)
 #include <Extender/Client/IMGUI/Objects.h>
 #endif
+#include <Lua/Osiris/FunctionProxy.h>
 
 #if !defined(OSI_NO_DEBUGGER)
 
@@ -183,6 +184,17 @@ namespace bg3se::lua::dbg
 				break;
 			}
 #endif
+
+			case MetatableTag::OsiFunctionName:
+			{
+				CppValueMetadata val;
+				lua_get_cppvalue(L, idx, val);
+				value->set_type_id(MsgValueType::USERDATA);
+				char name[200];
+				sprintf_s(name, "OsiFunction (%s)", esv::lua::OsiFunctionNameMetatable::Get(L, val)->name.GetString());
+				value->set_stringval(name);
+				break;
+			}
 
 			default:
 				value->set_type_id(MsgValueType::UNKNOWN);

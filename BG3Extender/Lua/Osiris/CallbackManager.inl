@@ -1,6 +1,4 @@
-#include <stdafx.h>
-#include <Lua/Server/LuaOsirisBinding.h>
-#include <Extender/ScriptExtender.h>
+#include <Lua/Osiris/CallbackManager.h>
 
 BEGIN_NS(esv::lua)
 
@@ -375,37 +373,4 @@ void OsirisCallbackManager::EventPostHook(Function* node, OsiArgumentDesc* args)
 	RunHandlers(nodeRef, args);
 }
 
-
-
-OsirisBinding::OsirisBinding(ExtensionState& state)
-	: identityAdapters_(gExtender->GetServer().Osiris().GetGlobals()),
-	osirisCallbacks_(state)
-{
-	identityAdapters_.UpdateAdapters();
-}
-
-OsirisBinding::~OsirisBinding()
-{
-	if (gExtender) {
-		// FIXME - HANDLE IN SERVER LOGIC!
-		gExtender->GetServer().Osiris().GetCustomFunctionManager().ClearDynamicEntries();
-	}
-}
-
-void OsirisBinding::StoryLoaded()
-{
-	generationId_++;
-	identityAdapters_.UpdateAdapters();
-	if (!identityAdapters_.HasAllAdapters()) {
-		OsiWarn("Not all identity adapters are available - some queries may not work!");
-	}
-
-	osirisCallbacks_.StoryLoaded();
-}
-
-void OsirisBinding::StorySetMerging(bool isMerging)
-{
-	osirisCallbacks_.StorySetMerging(isMerging);
-}
-
-}
+END_NS()
