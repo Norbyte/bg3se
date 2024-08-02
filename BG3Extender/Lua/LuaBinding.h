@@ -285,6 +285,6 @@ namespace bg3se::lua
 
 namespace bg3se::lua::stats
 {
-	int LuaStatGetAttribute(lua_State* L, bg3se::stats::Object* object, FixedString const& attributeName, std::optional<int> level);
-	int LuaStatSetAttribute(lua_State* L, bg3se::stats::Object* object, FixedString const& attributeName, int valueIdx);
+	PropertyOperationResult LuaStatGetAttribute(lua_State* L, bg3se::stats::Object* object, FixedString const& attributeName);
+	PropertyOperationResult LuaStatSetAttribute(lua_State* L, bg3se::stats::Object* object, FixedString const& attributeName, int valueIdx);
 }

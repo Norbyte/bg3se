@@ -499,16 +499,9 @@ void UpdateItemColor(lua_State* L)
 /// <param name="warnOnError">Log a warning in the console if the stats object could not be found?</param>
 /// <param name="byRef">Specifies whether the returned object should use by-value or by-ref properties (default: by-value)</param>
 /// <returns></returns>
-UserReturn Get(lua_State * L, char const* statName, std::optional<int> level, std::optional<bool> warnOnError, std::optional<bool> byRef)
+Object* Get(lua_State * L, char const* statName, std::optional<int> level, std::optional<bool> warnOnError, std::optional<bool> byRef)
 {
-	auto object = StatFindObject(statName, warnOnError.value_or(false));
-	if (object != nullptr) {
-		StatsProxy::New(L, object, -1, GetCurrentLifetime(L));
-		return 1;
-	} else {
-		push(L, nullptr);
-		return 1;
-	}
+	return StatFindObject(statName, warnOnError.value_or(false));
 }
 
 SpellPrototype* GetCachedSpell(lua_State * L, FixedString name)
@@ -566,11 +559,12 @@ bool CopyStats(Object* obj, FixedString const& copyFrom)
 /// <param name="copyFromTemplate">If this parameter is not `nil`, stats properties are copied from the specified stats entry to the newly created entry</param>
 /// <param name="byRef">Specifies whether the created object should use by-value or by-ref properties (default: by-value)</param>
 /// <returns>stats::Object</returns>
-UserReturn Create(lua_State * L, FixedString const& statName, FixedString const& modifierList, std::optional<FixedString> copyFromTemplate, std::optional<bool> byRef)
+Object* Create(lua_State * L, FixedString const& statName, FixedString const& modifierList, std::optional<FixedString> copyFromTemplate, std::optional<bool> byRef)
 {
 	auto lua = State::FromLua(L);
 	if (lua->RestrictionFlags & State::ScopeModulePreLoad) {
-		return luaL_error(L, "Stat functions unavailable during module preload");
+		luaL_error(L, "Stat functions unavailable during module preload");
+		return nullptr;
 	}
 
 	if (!(lua->RestrictionFlags & State::ScopeModuleLoad)) {
@@ -586,19 +580,16 @@ UserReturn Create(lua_State * L, FixedString const& statName, FixedString const&
 	auto stats = GetStaticSymbols().GetStats();
 	auto object = stats->CreateObject(statName, modifierList);
 	if (!object) {
-		push(L, nullptr);
-		return 1;
+		return nullptr;
 	}
 
 	if (copyFromTemplate) {
 		if (!CopyStats(*object, *copyFromTemplate)) {
-			push(L, nullptr);
-			return 1;
+			return nullptr;
 		}
 	}
 
-	StatsProxy::New(L, *object, -1, GetCurrentLifetime(L));
-	return 1;
+	return *object;
 }
 
 /// <summary>

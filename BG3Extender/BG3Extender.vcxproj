@@ -478,7 +478,6 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="Lua\Shared\Proxies\LuaPropertyMap.inl" />
     <None Include="Lua\Shared\Proxies\LuaSetProxy.inl" />
     <None Include="Lua\Libs\StatAttributes.inl" />
-    <None Include="Lua\Libs\StatEntries.inl" />
     <None Include="Lua\Libs\StatEnumerators.inl" />
     <None Include="Lua\Libs\StatMisc.inl" />
     <None Include="Lua\Shared\Proxies\LuaUserVariableHolder.inl" />
