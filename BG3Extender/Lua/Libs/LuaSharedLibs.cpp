@@ -81,9 +81,7 @@ void RegisterSharedMetatables(lua_State* L)
 #if defined(ENABLE_IMGUI)
 	ImguiObjectProxyMetatable::RegisterMetatable(L);
 #endif
-	stats::StatsExtraDataProxy::RegisterMetatable(L);
 	stats::StatsProxy::RegisterMetatable(L);
-	stats::SpellPrototypeProxy::RegisterMetatable(L);
 	types::RegisterEnumerations(L);
 }
 
