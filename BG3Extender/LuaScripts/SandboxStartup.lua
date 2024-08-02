@@ -30,7 +30,8 @@ end
 
 local oldDebug = debug
 debug = {
-	traceback = oldDebug.traceback
+	traceback = oldDebug.traceback,
+	getinfo = oldDebug.getinfo
 }
 oldDebug = nil
 
