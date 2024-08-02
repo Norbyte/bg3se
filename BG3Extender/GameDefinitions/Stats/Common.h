@@ -150,3 +150,9 @@ struct ObjectInstance : public Object
 };
 
 END_NS()
+
+BEGIN_NS(lua)
+
+LUA_INFINITE_LIFETIME(stats::Object)
+
+END_NS()

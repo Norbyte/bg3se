@@ -78,6 +78,12 @@ inline void PushReturnValue(lua_State* L, RefReturn<T> v)
 }
 
 template <class T>
+inline void PushReturnValue(lua_State* L, GlobalRefReturn<T> v)
+{
+	MakeObjectRef(L, v.Object, State::FromLua(L)->GetGlobalLifetime());
+}
+
+template <class T>
 inline void PushReturnValue(lua_State* L, ByValReturn<T> v)
 {
 	LuaWrite(L, v.Object);
