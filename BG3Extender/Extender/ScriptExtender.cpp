@@ -51,13 +51,12 @@ void ScriptExtender::WarnIfOffline()
 	if (sep == nullptr) return;
 	sep++;
 
-	auto end = wcschr(path, L'.');
+	auto end = wcschr(sep, L'.');
 	if (end == nullptr) return;
 	*end = 0;
 
 	if (_wcsicmp(sep, L"BG3ScriptExtender") != 0) {
 		WARN("NOTICE: Script Extender loaded without an updater present; new updates will not be fetched automatically");
-		std::wcout << sep << std::endl;
 	}
 }
 
