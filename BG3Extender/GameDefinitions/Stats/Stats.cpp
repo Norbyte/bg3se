@@ -152,14 +152,16 @@ void InterruptPrototypeManager::SyncStat(Object* object)
 {
 	auto proto = Interrupts.try_get(object->Name);
 	if (!proto) {
-		auto proto = Interrupts.add_key(object->Name);
+		proto = Interrupts.add_key(object->Name);
 	}
 
 	SyncStat(object, proto);
 }
 
 
-Functors::Functors() noexcept {}
+Functors::Functors() noexcept
+	: VMT(GetStaticSymbols().stats__Functors__VMT)
+{}
 
 Functors::Functors(Functors const& o)
 	: VMT(o.VMT),
