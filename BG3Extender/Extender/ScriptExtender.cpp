@@ -273,6 +273,11 @@ void ScriptExtender::OnECSUpdate(ecs::EntityWorld::UpdateProc* wrapped, ecs::Ent
 	}
 }
 
+void ScriptExtender::OnECSFlushECBs(ecs::EntityWorld* entityWorld)
+{
+	GetECS().OnFlushECBs();
+}
+
 bool ScriptExtender::HasFeatureFlag(char const * flag) const
 {
 	return (server_.HasExtensionState() && server_.GetExtensionState().HasFeatureFlag(flag))
@@ -498,6 +503,7 @@ void ScriptExtender::PostStartup()
 		//engineHooks_.Kernel_FindClose.SetWrapper(&ScriptExtender::OnFindClose, this);
 		engineHooks_.RPGStats__Load.SetWrapper(&ScriptExtender::OnStatsLoad, this);
 		engineHooks_.ecs__EntityWorld__Update.SetWrapper(&ScriptExtender::OnECSUpdate, this);
+		engineHooks_.ecs__EntityWorld__FlushECBs.SetPreHook(&ScriptExtender::OnECSFlushECBs, this);
 	}
 
 	GameVersionInfo gameVersion;

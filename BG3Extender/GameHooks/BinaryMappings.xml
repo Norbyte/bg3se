@@ -166,6 +166,19 @@
           <Target Type="Indirect" Offset="@ref6" Symbol="ecs__EntityWorld__Update" />
         </Mapping>
 
+        <Mapping Name="ecs__EntityWorld__FlushECBs">
+          48 83 be 00 03 00 00 00 // cmp     qword ptr [rsi+300h], 0
+          74 08 // jz      short loc_143693C93
+          48 8b ce // mov     rcx, rsi
+          @ref1 e8 ?? ?? ?? ?? // call    ecs__EntityWorld__FlushECBs
+          48 8b 5e 30 // mov     rbx, [rsi+30h]
+          8b 46 3c // mov     eax, [rsi+3Ch]
+          48 69 f8 f8 00 00 00 // imul    rdi, rax, 0F8h ; 'ø'
+          48 03 fb // add     rdi, rbx
+          48 3b df // cmp     rbx, rdi
+          <Target Type="Indirect" Offset="@ref1" Symbol="ecs__EntityWorld__FlushECBs" />
+        </Mapping>
+
         <!-- Sig: reference to string "MoveController" -->
         <Mapping Name="ls__gTranslatedStringRepository" Critical="true">
           40 53 // push    rbx

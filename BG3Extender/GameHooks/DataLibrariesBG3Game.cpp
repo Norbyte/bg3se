@@ -146,6 +146,7 @@ namespace bg3se
 		SYM_OFF(App__LoadGraphicSettings);
 
 		SYM_OFF(ecs__EntityWorld__Update);
+		SYM_OFF(ecs__EntityWorld__FlushECBs);
 
 		/*SYM_OFF(esv__SurfaceActionFactory);
 		SYM_OFF(esv__SurfaceActionFactory__CreateAction);

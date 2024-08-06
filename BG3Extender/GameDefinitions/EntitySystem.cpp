@@ -678,6 +678,52 @@ void EntitySystemHelpersBase::Update()
 	if (CheckLevel == RuntimeCheckLevel::FullECS) {
 		ValidateEntityChanges();
 	}
+
+	if (!logging_) {
+		DebugLogUpdateChanges();
+	}
+}
+
+void EntitySystemHelpersBase::DebugLogUpdateChanges()
+{
+	auto world = GetEntityWorld();
+
+	for (auto& ecb : world->CommandBuffers) {
+		for (unsigned i = 0; i < ecb.Data.EntityChanges.KeysSize; i++) {
+			auto const& k = ecb.Data.EntityChanges.KeyAt(i);
+			auto const& v = ecb.Data.EntityChanges.Values[i];
+
+			std::cout << k << " - ";
+			if (((unsigned)v.Flags & (unsigned)EntityChangeFlags::Create)) std::cout << "Create ";
+			if (((unsigned)v.Flags & (unsigned)EntityChangeFlags::Destroy)) std::cout << "Destroy ";
+			if (((unsigned)v.Flags & (unsigned)EntityChangeFlags::Immediate)) std::cout << "Immediate ";
+			if (((unsigned)v.Flags & (unsigned)EntityChangeFlags::Dead)) std::cout << "Dead ";
+			std::cout << std::endl;
+
+			for (unsigned j = 0; j < v.Store.Used; j++) {
+				auto const& upd = v.Store[j];
+				auto name = this->componentIndexToNameMappings_[upd.ComponentTypeId];
+
+				std::cout << "\t" << (name ? name->c_str() : "???") << " - " << (upd.PoolIndex.PageIndex != 0xffff ? "Create" : "Destroy");
+				std::cout << std::endl;
+			}
+		}
+	}
+
+	auto const& changes = world->Cache->WriteChanges;
+	for (unsigned i = 0; i < changes.AvailableComponentTypes.NumBits; i++) {
+		if (changes.AvailableComponentTypes[i]) {
+			auto const& changeSet = changes.ComponentsByType[i];
+			for (unsigned j = 0; j < changeSet.Components.KeysSize; j++) {
+				auto const& k = changeSet.Components.KeyAt(j);
+				auto const& v = changeSet.Components.Values[j];
+
+				auto name = this->componentIndexToNameMappings_[i];
+
+				std::cout << k << " - " << (name ? name->c_str() : "???") << " - " << (v.Ptr ? "Create" : "Destroy") << std::endl;
+			}
+		}
+	}
 }
 
 void EntitySystemHelpersBase::PostUpdate()
@@ -689,6 +735,74 @@ void EntitySystemHelpersBase::PostUpdate()
 
 	if (CheckLevel == RuntimeCheckLevel::FullECS) {
 		ValidateReplication();
+	}
+
+	if (logging_) {
+		DebugLogReplicationChanges();
+	}
+}
+
+void EntitySystemHelpersBase::DebugLogReplicationChanges()
+{
+	auto world = GetEntityWorld();
+	if (!logging_ || !world->Replication) return;
+
+	for (unsigned i = 0; i < world->Replication->ComponentPools.size(); i++) {
+		auto const& pool = world->Replication->ComponentPools[i];
+		auto componentType = GetComponentType(ReplicationTypeIndex(i));
+		if (componentType && pool.size() > 0) {
+			auto name = EnumInfo<ExtComponentType>::Find(*componentType);
+			if (*componentType != ExtComponentType::CanSpeak && *componentType != ExtComponentType::InventoryMemberTransform && *componentType != ExtComponentType::SightEntityViewshed)
+			{
+				for (auto const& entity : pool) {
+					std::cout << entity.Key() << " - " << name.GetString() << " - Replicate" << std::endl;
+				}
+			}
+		}
+	}
+}
+
+void EntitySystemHelpersBase::OnFlushECBs()
+{
+	auto world = GetEntityWorld();
+
+	if (!logging_) return;
+
+	EntityHandle last{};
+
+	for (auto& ecb : world->CommandBuffers) {
+		for (unsigned i = 0; i < ecb.Data.EntityChanges.KeysSize; i++) {
+			auto const& k = ecb.Data.EntityChanges.KeyAt(i);
+			auto const& v = ecb.Data.EntityChanges.Values[i];
+
+			for (unsigned j = 0; j < v.Store.Used; j++) {
+				auto const& upd = v.Store[j];
+				auto name = this->componentIndexToNameMappings_[upd.ComponentTypeId];
+
+				if (upd.ComponentTypeId < 0x7fff 
+					&& upd.ComponentTypeId != 1095
+					&& upd.ComponentTypeId != 1761
+					&& upd.ComponentTypeId != 1829
+					&& upd.ComponentTypeId != 1502) {
+
+					if (last != k) {
+						std::cout << "FlushECBs " << k << " - ";
+						if (((unsigned)v.Flags & (unsigned)EntityChangeFlags::Create)) std::cout << "Create ";
+						if (((unsigned)v.Flags & (unsigned)EntityChangeFlags::Destroy)) std::cout << "Destroy ";
+						if (((unsigned)v.Flags & (unsigned)EntityChangeFlags::Immediate)) std::cout << "Immediate ";
+						if (((unsigned)v.Flags & (unsigned)EntityChangeFlags::Dead)) std::cout << "Dead ";
+						std::cout << std::endl;
+						last = k;
+					}
+
+					std::cout << "\t";
+					std::cout << (name ? name->c_str() : "???") << " [" << upd.ComponentTypeId << "] - ";
+					std::cout << ((upd.PoolIndex.PageIndex != 0xffff) ? "ADD" : "DELETE");
+					std::cout << " " << upd.field_4;
+					std::cout << std::endl;
+				}
+			}
+		}
 	}
 }
 

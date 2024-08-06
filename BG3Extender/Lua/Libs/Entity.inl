@@ -134,6 +134,11 @@ bool Unsubscribe(lua_State* L, uint64_t index)
 	}
 }
 
+void EnableLogging(lua_State* L, bool enable)
+{
+	State::FromLua(L)->GetEntitySystemHelpers()->EnableLogging(enable);
+}
+
 void RegisterEntityLib()
 {
 	DECLARE_MODULE(Entity, Both)
@@ -149,6 +154,7 @@ void RegisterEntityLib()
 	MODULE_FUNCTION(OnCreate)
 	MODULE_FUNCTION(OnDestroy)
 	MODULE_FUNCTION(Unsubscribe)
+	MODULE_FUNCTION(EnableLogging)
 	END_MODULE()
 }
 

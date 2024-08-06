@@ -168,6 +168,11 @@ public:
 		}
 	}
 
+	inline void EnableLogging(bool enable)
+	{
+		logging_ = enable;
+	}
+
 	inline std::optional<int32_t> GetQueryIndex(STDString const& type) const
 	{
 		auto it = queryMappings_.find(type);
@@ -194,6 +199,7 @@ public:
 
 	void Update();
 	void PostUpdate();
+	void OnFlushECBs();
 
 protected:
 	static constexpr int32_t UndefinedIndex{ -1 };
@@ -234,6 +240,7 @@ private:
 
 	bool initialized_{ false };
 	bool validated_{ false };
+	bool logging_{ false };
 
 	void BindSystem(std::string_view name, int32_t id);
 	void BindQuery(std::string_view name, int32_t id);
@@ -243,6 +250,9 @@ private:
 	void* GetRawComponent(Guid const& guid, ExtComponentType type);
 	void* GetRawComponent(FixedString const& guid, ExtComponentType type);
 	resource::GuidResourceBankBase* GetRawResourceManager(ExtResourceManagerType type);
+
+	void DebugLogUpdateChanges();
+	void DebugLogReplicationChanges();
 };
 
 class ServerEntitySystemHelpers : public EntitySystemHelpersBase

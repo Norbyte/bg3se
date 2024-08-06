@@ -720,17 +720,17 @@ struct ComponentCallbacks : public ProtectedGameObject<ComponentCallbacks>
 	ComponentCallbackList OnDestroy;
 };
 
+struct ECBEntityComponentChange
+{
+	// -1 = removed
+	EntityStorageData::EntityStorageIndex PoolIndex;
+	uint16_t field_4;
+	uint16_t ComponentTypeId;
+};
+
 struct ECBEntityChangeSet
 {
-	struct ComponentRef
-	{
-		// -1 = removed
-		int32_t PoolIndex;
-		uint16_t field_4;
-		uint16_t ComponentTypeId;
-	};
-
-	BucketedStaticArray<ComponentRef> Store;
+	BucketedStaticArray<ECBEntityComponentChange> Store;
 	uint64_t X;
 	uint64_t Y;
 	EntityChangeFlags Flags;
@@ -780,13 +780,18 @@ struct ImmediateWorldCache : public ProtectedGameObject<ImmediateWorldCache>
 	__int64 field_158;
 };
 
+struct ECBData : public ProtectedGameObject<ECBData>
+{
+	BucketedHashMap<EntityHandle, ECBEntityChangeSet> EntityChanges;
+	BucketedSparseHashSet<ComponentTypeIndex, ComponentFrameStorage> ComponentPools;
+	bool field_A0;
+};
+
 struct EntityCommandBuffer : public ProtectedGameObject<EntityCommandBuffer>
 {
 	EntityHandleGenerator* HandleGenerator;
 	FrameAllocator* Allocator;
-	BucketedHashMap<EntityHandle, ECBEntityChangeSet> EntityChanges;
-	BucketedSparseHashSet<ComponentTypeIndex, ComponentFrameStorage> ComponentPools;
-	bool field_A0;
+	ECBData Data;
 	uint32_t ThreadId;
 };
 
@@ -815,6 +820,7 @@ struct EntityWorldSettings
 struct EntityWorld : public ProtectedGameObject<EntityWorld>
 {
 	using UpdateProc = void (EntityWorld* self, GameTime const& time);
+	using FlushECBsProc = bool (EntityWorld* self);
 
 	SyncBuffers* Replication;
 	ComponentRegistry ComponentRegistry_;
@@ -826,7 +832,7 @@ struct EntityWorld : public ProtectedGameObject<EntityWorld>
 	GameTime Time;
 	void* ECSUpdateBatch;
 	int field_160;
-	Array<EntityCommandBuffer*> CommandBuffers;
+	Array<EntityCommandBuffer> CommandBuffers;
 	Array<ComponentCallbacks*> ComponentCallbacks;
 	bool RegisterPhaseEnded;
 	bool Active;
