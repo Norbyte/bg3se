@@ -58,34 +58,19 @@ public:
 		}
 	}
 
-	inline std::optional<STDString const*> GetComponentName(ComponentTypeIndex index) const
+	inline STDString const* GetComponentName(ComponentTypeIndex index) const
 	{
-		auto it = componentIndexToNameMappings_.find(index);
-		if (it != componentIndexToNameMappings_.end()) {
-			return it->second;
-		} else {
-			return {};
-		}
+		return ecsComponentData_.Get(index).Name;
 	}
 
 	inline std::optional<ExtComponentType> GetComponentType(ComponentTypeIndex index) const
 	{
-		auto it = componentIndexToTypeMappings_.find(index);
-		if (it != componentIndexToTypeMappings_.end()) {
-			return it->second;
-		} else {
-			return {};
-		}
+		return ecsComponentData_.Get(index).ExtType;
 	}
 
 	inline std::optional<ExtComponentType> GetComponentType(ReplicationTypeIndex index) const
 	{
-		auto it = replicationIndexToTypeMappings_.find(index);
-		if (it != replicationIndexToTypeMappings_.end()) {
-			return it->second;
-		} else {
-			return {};
-		}
+		return ecsComponentData_.Get(index).ExtType;
 	}
 
 	std::optional<ComponentTypeIndex> GetComponentIndex(ExtComponentType type) const;
@@ -222,15 +207,8 @@ private:
 		ReplicationTypeIndex ReplicationIndex{ UndefinedReplicationComponent };
 	};
 
-	std::array<PerComponentData, (size_t)ExtComponentType::Max> components_;
-	std::array<int32_t, (size_t)ExtQueryType::Max> queryIndices_;
-	std::array<int32_t, (size_t)ExtResourceManagerType::Max> staticDataIndices_;
-	std::array<int32_t, (size_t)ExtSystemType::Max> systemIndices_;
-
 	std::unordered_map<STDString, IndexMappings> componentNameToIndexMappings_;
-	std::unordered_map<ComponentTypeIndex, STDString const*> componentIndexToNameMappings_;
-	std::unordered_map<ComponentTypeIndex, ExtComponentType> componentIndexToTypeMappings_;
-	std::unordered_map<ReplicationTypeIndex, ExtComponentType> replicationIndexToTypeMappings_;
+	ECSComponentDataMap ecsComponentData_;
 	std::unordered_map<STDString, int32_t> systemIndexMappings_;
 	std::vector<STDString const*> systemTypeIdToName_;
 	std::unordered_map<STDString, int32_t> queryMappings_;
@@ -241,6 +219,11 @@ private:
 	bool initialized_{ false };
 	bool validated_{ false };
 	bool logging_{ false };
+
+	std::array<PerComponentData, (size_t)ExtComponentType::Max> components_;
+	std::array<int32_t, (size_t)ExtQueryType::Max> queryIndices_;
+	std::array<int32_t, (size_t)ExtResourceManagerType::Max> staticDataIndices_;
+	std::array<int32_t, (size_t)ExtSystemType::Max> systemIndices_;
 
 	void BindSystem(std::string_view name, int32_t id);
 	void BindQuery(std::string_view name, int32_t id);
