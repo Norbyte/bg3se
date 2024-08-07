@@ -32,6 +32,62 @@ enum class RuntimeCheckLevel
 	FullECS
 };
 
+struct PerECSComponentData
+{
+	STDString const* Name{ nullptr };
+	std::optional<ExtComponentType> ExtType;
+	ReplicationTypeIndex ReplicationType{ UndefinedReplicationComponent };
+};
+
+struct PerECSReplicationData
+{
+	STDString const* Name{ nullptr };
+	std::optional<ExtComponentType> ExtType;
+	ComponentTypeIndex ComponentType{ UndefinedComponent };
+};
+
+class ECSComponentDataMap
+{
+public:
+	PerECSComponentData const& Get(ComponentTypeIndex type) const;
+	PerECSComponentData& GetOrAdd(ComponentTypeIndex type);
+	
+	PerECSReplicationData const& Get(ReplicationTypeIndex type) const;
+	PerECSReplicationData& GetOrAdd(ReplicationTypeIndex type);
+
+	void Clear();
+
+private:
+	std::vector<PerECSComponentData> componentData_;
+	std::vector<PerECSReplicationData> replicationData_;
+	PerECSComponentData nullComponentData_;
+	PerECSReplicationData nullReplicationData_;
+};
+
+struct ECSComponentLog
+{
+	ComponentTypeIndex ComponentType;
+	ComponentChangeFlags Flags{ 0 };
+
+	STDString GetName();
+};
+
+struct ECSEntityLog
+{
+	HashMap<uint16_t, ECSComponentLog> Components;
+	EntityHandle Entity;
+	EntityChangeFlags Flags{ 0 };
+};
+
+struct ECSChangeLog
+{
+	HashMap<EntityHandle, ECSEntityLog> Entities;
+
+	void Clear();
+	void AddEntityChange(EntityHandle entity, EntityChangeFlags flags);
+	void AddComponentChange(EntityWorld* world, EntityHandle entity, ComponentTypeIndex type, ComponentChangeFlags flags);
+};
+
 class EntitySystemHelpersBase : public Noncopyable<EntitySystemHelpersBase>
 {
 public:

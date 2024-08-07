@@ -50,8 +50,15 @@ Array<EntityHandle> GetAllEntitiesWithComponent(lua_State* L, ExtComponentType c
 	Array<EntityHandle> entities;
 	auto world = State::FromLua(L)->GetEntitySystemHelpers()->GetEntityWorld();
 	for (auto cls : world->Storage->Entities) {
-		if (cls->ComponentTypeToIndex.try_get(*componentType)) {
-			std::copy(cls->InstanceToPageMap.keys().begin(), cls->InstanceToPageMap.keys().end(), std::back_inserter(entities));
+		if (cls->HasComponentPoolsByType) {
+			auto pool = cls->ComponentPoolsByType.try_get(*componentType);
+			if (pool) {
+				std::copy(pool->keys().begin(), pool->keys().end(), std::back_inserter(entities));
+			}
+		} else {
+			if (cls->ComponentTypeToIndex.try_get(*componentType)) {
+				std::copy(cls->InstanceToPageMap.keys().begin(), cls->InstanceToPageMap.keys().end(), std::back_inserter(entities));
+			}
 		}
 	}
 

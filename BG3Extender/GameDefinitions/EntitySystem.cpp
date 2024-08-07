@@ -223,6 +223,16 @@ void* EntityStorageData::GetComponent(EntityHandle entityHandle, ComponentTypeIn
 	}
 }
 
+void* EntityStorageData::GetOneFrameComponent(EntityHandle entityHandle, ComponentTypeIndex type) const
+{
+	auto pool = ComponentPoolsByType.try_get(type);
+	if (pool) {
+		return pool->get_or_default(entityHandle);
+	}
+
+	return nullptr;
+}
+
 void* EntityStorageData::GetComponent(EntityStorageIndex const& entityPtr, ComponentTypeIndex type, std::size_t componentSize, bool isProxy) const
 {
 	auto compIndex = ComponentTypeToIndex.try_get((uint16_t)type.Value());
@@ -314,21 +324,27 @@ ComponentOps* ComponentOpsRegistry::Get(ComponentTypeIndex id) const
 void* EntityWorld::GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy)
 {
 	auto storage = GetEntityStorage(entityHandle);
-	if (storage != nullptr) {
-		auto component = storage->GetComponent(entityHandle, type, componentSize, isProxy);
-		if (component != nullptr) {
-			return component;
+	if (IsOneFrame(type)) {
+		if (storage != nullptr) {
+			return storage->GetOneFrameComponent(entityHandle, type);
 		}
-	}
+	} else {
+		if (storage != nullptr) {
+			auto component = storage->GetComponent(entityHandle, type, componentSize, isProxy);
+			if (component != nullptr) {
+				return component;
+			}
+		}
 
-	auto change = Cache->WriteChanges.GetChange(entityHandle, type);
-	if (change != nullptr) {
-		return change;
-	}
+		auto change = Cache->WriteChanges.GetChange(entityHandle, type);
+		if (change != nullptr) {
+			return change;
+		}
 
-	change = Cache->ReadChanges.GetChange(entityHandle, type);
-	if (change != nullptr) {
-		return change;
+		change = Cache->ReadChanges.GetChange(entityHandle, type);
+		if (change != nullptr) {
+			return change;
+		}
 	}
 
 	return nullptr;
@@ -577,6 +593,10 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 
 				case TypeIdContext::Component:
 					BindComponent(name, *mapping.first);
+					break;
+
+				case TypeIdContext::OneFrameComponent:
+					BindComponent(name, *mapping.first | 0x8000);
 					break;
 
 				case TypeIdContext::Replication:

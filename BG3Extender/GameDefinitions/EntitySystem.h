@@ -35,6 +35,11 @@ using ReplicationTypeIndex = TypedIntegral<uint16_t, ReplicationTypeIndexTag>;
 static constexpr ReplicationTypeIndex UndefinedReplicationComponent{ 0xffff };
 static constexpr ComponentTypeIndex UndefinedComponent{ 0xffff };
 
+inline constexpr bool IsOneFrame(ComponentTypeIndex idx)
+{
+	return (idx.Value() & 0x8000) == 0x8000;
+}
+
 END_NS()
 
 BEGIN_SE()
@@ -137,10 +142,10 @@ BEGIN_NS(ecs)
 struct ComponentTypeEntry : public ProtectedGameObject<ComponentTypeEntry>
 {
 	ComponentTypeIndex TypeId;
-	int NameId;
-	uint8_t field_8;
-	uint8_t field_9;
-	uint8_t field_A;
+	int UncheckedId;
+	bool Replicated;
+	bool OneFrame;
+	bool field_A;
 	bool QueryFlags[4];
 	uint16_t InlineSize;
 	uint16_t ComponentSize;
@@ -152,8 +157,7 @@ struct ComponentTypeEntry : public ProtectedGameObject<ComponentTypeEntry>
 	Array<ComponentTypeIndex> DependentComponentIndices;
 	Array<ComponentTypeIndex> DependencyComponentIndices;
 #if 0
-	uint64_t field_50;
-	uint32_t field_58;
+	LSStringView Name;
 #endif
 };
 
@@ -360,17 +364,18 @@ struct EntityStorageData : public ProtectedGameObject<EntityStorageData>
 	Array<Array<EntityHandle>> ComponentAddedEntityMap;
 	Array<Array<EntityHandle>> ComponentRemovedEntityMap;
 	// FIXME - SparseArray<ComponentTypeEntry> instead?
-	HashMap<ComponentTypeIndex, HashMap<uint16_t, EntityStorageComponentPage*>*> ComponentPoolsByType;
+	HashMap<ComponentTypeIndex, HashMap<EntityHandle, void*>> ComponentPoolsByType;
 	bool HasComponentPoolsByType;
 	__int64 field_2C8;
 	EntityTypeMask ComponentMask; // Valid indices into Components pool
-	Array<uint16_t> RegisteredQueries;
-	Array<uint16_t> AddComponentQueries;
+	Array<QueryDescription::ID> RegisteredQueries;
+	Array<QueryDescription::ID> AddComponentQueries;
 	QueryMask AddComponentQueryMap;
-	Array<uint16_t> RemoveComponentQueries;
+	Array<QueryDescription::ID> RemoveComponentQueries;
 	QueryMask RemoveComponentQueryMap;
 
 	void* GetComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy) const;
+	void* GetOneFrameComponent(EntityHandle entityHandle, ComponentTypeIndex type) const;
 	void* GetComponent(EntityStorageIndex const& entityPtr, ComponentTypeIndex type, std::size_t componentSize, bool isProxy) const;
 	void* GetComponent(EntityStorageIndex const& entityPtr, uint8_t componentSlot, std::size_t componentSize, bool isProxy) const;
 
@@ -725,7 +730,7 @@ struct ECBEntityComponentChange
 	// -1 = removed
 	EntityStorageData::EntityStorageIndex PoolIndex;
 	uint16_t field_4;
-	uint16_t ComponentTypeId;
+	ComponentTypeIndex ComponentTypeId;
 };
 
 struct ECBEntityChangeSet
@@ -742,7 +747,7 @@ struct ComponentFrameStorage
 	BucketedStaticArray<void*> Components;
 	uint32_t NumComponents;
 	uint16_t ComponentSizeInBytes;
-	uint16_t ComponentTypeId;
+	ComponentTypeIndex ComponentTypeId;
 	void* DestructorProc;
 };
 
