@@ -156,8 +156,9 @@ Array<void*> QueryDescription::GetAllMatchingComponents(std::size_t componentSiz
 
 ComponentTypeEntry const* ComponentRegistry::Get(ComponentTypeIndex index) const
 {
-	if (Bitmask[index.Value()]) {
-		return &Types[index.Value()];
+	auto idx = (uint32_t)SparseHashMapHash(index);
+	if (Bitmask[idx]) {
+		return &Types[idx];
 	} else {
 		return nullptr;
 	}
@@ -383,7 +384,7 @@ EntitySystemHelpersBase::EntitySystemHelpersBase()
 std::optional<ComponentTypeIndex> EntitySystemHelpersBase::GetComponentIndex(ExtComponentType type) const
 {
 	auto idx = components_[(unsigned)type].ComponentIndex;
-	if (idx != UndefinedIndex && GetEntityWorld()->ComponentOps[idx.Value()] != nullptr) {
+	if (idx != UndefinedIndex && GetEntityWorld()->ComponentOps.Get(idx) != nullptr) {
 		return idx;
 	} else {
 		return {};

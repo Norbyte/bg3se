@@ -48,8 +48,8 @@ inline uint64_t SparseHashMapHash<ecs::ComponentTypeIndex>(ecs::ComponentTypeInd
 template <>
 inline uint64_t HashMapHash<ecs::ComponentTypeIndex>(ecs::ComponentTypeIndex const& v)
 {
-	return ((v.Value() & 0x7FFF) + 0x780 * (v.Value() >> 15))
-		| (uint64_t)(((v.Value() & 0x7FFF) + 0x780 * (v.Value() >> 15)) << 16);
+	auto h0 = ((uint64_t)v.Value() & 0x7FFF) + ((uint64_t)v.Value() >> 15 << 11);
+	return h0 | (h0 << 16);
 }
 
 
@@ -817,6 +817,13 @@ struct EntityWorldSettings
 #endif
 };
 
+struct ComponentOpsRegistry
+{
+	Array<ComponentOps*> Ops;
+
+	ComponentOps* Get(ComponentTypeIndex id) const;
+};
+
 struct EntityWorld : public ProtectedGameObject<EntityWorld>
 {
 	using UpdateProc = void (EntityWorld* self, GameTime const& time);
@@ -843,7 +850,7 @@ struct EntityWorld : public ProtectedGameObject<EntityWorld>
 	EntityStorageContainer* Storage;
 	FrameAllocator ComponentData;
 	Array<void*> SystemDependencyExecutors;
-	Array<ComponentOps*> ComponentOps;
+	ComponentOpsRegistry ComponentOps;
 	ScratchString field_2E0;
 	void* ECBExecutor;
 	GroupAllocator GroupAllocator;
