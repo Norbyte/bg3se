@@ -92,7 +92,7 @@ struct PlayerPickingHelper : public ProtectedGameObject<PlayerPickingHelper>
 	std::optional<glm::vec3> TargetOverride;
 	HashMap<EntityHandle, PlayerPickingCacheValue> SpellConditionsCache;
 	int field_268_NextIndex;
-	float field_26C;
+	uint32_t field_26C;
 	HashMap<EntityHandle, PlayerPickingCacheValue> Cache;
 	int field_2B0;
 	float field_2B4;

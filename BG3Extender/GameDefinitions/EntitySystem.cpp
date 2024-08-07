@@ -385,6 +385,43 @@ EntityStorageData* EntityWorld::GetEntityStorage(EntityHandle entityHandle) cons
 	return Storage->GetEntityStorage(entityHandle);
 }
 
+
+STDString ECSComponentLog::GetName()
+{
+	auto name = GetCurrentExtensionState()->GetLua()->GetEntitySystemHelpers()->GetComponentName(ComponentType);
+	return name ? *name : STDString{};
+}
+
+void ECSChangeLog::Clear()
+{
+	Entities.clear();
+}
+
+void ECSChangeLog::AddEntityChange(EntityHandle entity, EntityChangeFlags flags)
+{
+	auto entry = Entities.get_or_add(entity);
+	entry->Flags = entry->Flags | flags;
+}
+
+void ECSChangeLog::AddComponentChange(EntityWorld* world, EntityHandle entity, ComponentTypeIndex type, ComponentChangeFlags flags)
+{
+	auto componentInfo = world->ComponentRegistry_.Get(type);
+
+	if (componentInfo->OneFrame) {
+		flags |= ComponentChangeFlags::OneFrame;
+	}
+	
+	if (componentInfo->Replicated) {
+		flags |= ComponentChangeFlags::ReplicatedComponent;
+	}
+
+	auto entry = Entities.get_or_add(entity);
+	auto componentEntry = entry->Components.get_or_add(type.Value());
+	componentEntry->ComponentType = type;
+	componentEntry->Flags = componentEntry->Flags | flags;
+}
+
+
 #if defined(NDEBUG)
 RuntimeCheckLevel EntitySystemHelpersBase::CheckLevel{ RuntimeCheckLevel::Once };
 #else
@@ -757,7 +794,7 @@ void EntitySystemHelpersBase::Update()
 		ValidateEntityChanges();
 	}
 
-	if (!logging_) {
+	if (logging_) {
 		DebugLogUpdateChanges();
 	}
 }
@@ -768,22 +805,15 @@ void EntitySystemHelpersBase::DebugLogUpdateChanges()
 
 	for (auto& ecb : world->CommandBuffers) {
 		for (unsigned i = 0; i < ecb.Data.EntityChanges.KeysSize; i++) {
-			auto const& k = ecb.Data.EntityChanges.KeyAt(i);
-			auto const& v = ecb.Data.EntityChanges.Values[i];
+			auto entityHandle = ecb.Data.EntityChanges.KeyAt(i);
+			auto entityChanges = ecb.Data.EntityChanges.Values[i];
 
-			std::cout << k << " - ";
-			if (((unsigned)v.Flags & (unsigned)EntityChangeFlags::Create)) std::cout << "Create ";
-			if (((unsigned)v.Flags & (unsigned)EntityChangeFlags::Destroy)) std::cout << "Destroy ";
-			if (((unsigned)v.Flags & (unsigned)EntityChangeFlags::Immediate)) std::cout << "Immediate ";
-			if (((unsigned)v.Flags & (unsigned)EntityChangeFlags::Dead)) std::cout << "Dead ";
-			std::cout << std::endl;
+			log_.AddEntityChange(entityHandle, entityChanges.Flags);
 
-			for (unsigned j = 0; j < v.Store.Used; j++) {
-				auto const& upd = v.Store[j];
-				auto name = this->componentIndexToNameMappings_[upd.ComponentTypeId];
-
-				std::cout << "\t" << (name ? name->c_str() : "???") << " - " << (upd.PoolIndex.PageIndex != 0xffff ? "Create" : "Destroy");
-				std::cout << std::endl;
+			for (unsigned j = 0; j < entityChanges.Store.Used; j++) {
+				auto const& upd = entityChanges.Store[j];
+				log_.AddComponentChange(world, entityHandle, upd.ComponentTypeId, 
+					(upd.PoolIndex.PageIndex != 0xffff) ? ComponentChangeFlags::Create : ComponentChangeFlags::Destroy);
 			}
 		}
 	}
@@ -793,12 +823,10 @@ void EntitySystemHelpersBase::DebugLogUpdateChanges()
 		if (changes.AvailableComponentTypes[i]) {
 			auto const& changeSet = changes.ComponentsByType[i];
 			for (unsigned j = 0; j < changeSet.Components.KeysSize; j++) {
-				auto const& k = changeSet.Components.KeyAt(j);
-				auto const& v = changeSet.Components.Values[j];
+				auto entityHandle = changeSet.Components.KeyAt(j);
+				auto const& change = changeSet.Components.Values[j];
 
-				auto name = this->componentIndexToNameMappings_[i];
-
-				std::cout << k << " - " << (name ? name->c_str() : "???") << " - " << (v.Ptr ? "Create" : "Destroy") << std::endl;
+				log_.AddComponentChange(world, entityHandle, ComponentTypeIndex{ (uint16_t)i }, change.Ptr ? ComponentChangeFlags::Create : ComponentChangeFlags::Destroy);
 			}
 		}
 	}
@@ -827,13 +855,12 @@ void EntitySystemHelpersBase::DebugLogReplicationChanges()
 
 	for (unsigned i = 0; i < world->Replication->ComponentPools.size(); i++) {
 		auto const& pool = world->Replication->ComponentPools[i];
-		auto componentType = GetComponentType(ReplicationTypeIndex(i));
-		if (componentType && pool.size() > 0) {
-			auto name = EnumInfo<ExtComponentType>::Find(*componentType);
-			if (*componentType != ExtComponentType::CanSpeak && *componentType != ExtComponentType::InventoryMemberTransform && *componentType != ExtComponentType::SightEntityViewshed)
-			{
-				for (auto const& entity : pool) {
-					std::cout << entity.Key() << " - " << name.GetString() << " - Replicate" << std::endl;
+		if (pool.size() > 0) {
+			for (auto const& entity : pool) {
+				auto type = ecsComponentData_.Get(ReplicationTypeIndex{ (uint16_t)i }).ComponentType;
+
+				if (type != UndefinedComponent) {
+					log_.AddComponentChange(world, entity.Key(), type, ComponentChangeFlags::Replicate);
 				}
 			}
 		}
@@ -842,43 +869,32 @@ void EntitySystemHelpersBase::DebugLogReplicationChanges()
 
 void EntitySystemHelpersBase::OnFlushECBs()
 {
+	if (CheckLevel == RuntimeCheckLevel::FullECS) {
+		ValidateECBFlushChanges();
+	}
+
+	if (logging_) {
+		DebugLogECBFlushChanges();
+	}
+}
+
+void EntitySystemHelpersBase::DebugLogECBFlushChanges()
+{
 	auto world = GetEntityWorld();
-
-	if (!logging_) return;
-
 	EntityHandle last{};
 
 	for (auto& ecb : world->CommandBuffers) {
 		for (unsigned i = 0; i < ecb.Data.EntityChanges.KeysSize; i++) {
-			auto const& k = ecb.Data.EntityChanges.KeyAt(i);
-			auto const& v = ecb.Data.EntityChanges.Values[i];
+			auto entityHandle = ecb.Data.EntityChanges.KeyAt(i);
+			auto const& entityChanges = ecb.Data.EntityChanges.Values[i];
 
-			for (unsigned j = 0; j < v.Store.Used; j++) {
-				auto const& upd = v.Store[j];
-				auto name = this->componentIndexToNameMappings_[upd.ComponentTypeId];
+			log_.AddEntityChange(entityHandle, entityChanges.Flags);
 
-				if (upd.ComponentTypeId < 0x7fff 
-					&& upd.ComponentTypeId != 1095
-					&& upd.ComponentTypeId != 1761
-					&& upd.ComponentTypeId != 1829
-					&& upd.ComponentTypeId != 1502) {
+			for (unsigned j = 0; j < entityChanges.Store.Used; j++) {
+				auto const& upd = entityChanges.Store[j];
 
-					if (last != k) {
-						std::cout << "FlushECBs " << k << " - ";
-						if (((unsigned)v.Flags & (unsigned)EntityChangeFlags::Create)) std::cout << "Create ";
-						if (((unsigned)v.Flags & (unsigned)EntityChangeFlags::Destroy)) std::cout << "Destroy ";
-						if (((unsigned)v.Flags & (unsigned)EntityChangeFlags::Immediate)) std::cout << "Immediate ";
-						if (((unsigned)v.Flags & (unsigned)EntityChangeFlags::Dead)) std::cout << "Dead ";
-						std::cout << std::endl;
-						last = k;
-					}
-
-					std::cout << "\t";
-					std::cout << (name ? name->c_str() : "???") << " [" << upd.ComponentTypeId << "] - ";
-					std::cout << ((upd.PoolIndex.PageIndex != 0xffff) ? "ADD" : "DELETE");
-					std::cout << " " << upd.field_4;
-					std::cout << std::endl;
-				}
+				log_.AddComponentChange(world, entityHandle, upd.ComponentTypeId, 
+					(upd.PoolIndex.PageIndex != 0xffff) ? ComponentChangeFlags::Create : ComponentChangeFlags::Destroy);
 			}
 		}
 	}

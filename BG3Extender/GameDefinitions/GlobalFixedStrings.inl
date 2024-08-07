@@ -39,6 +39,7 @@ FS(CopyFrom);
 // Entity proxy functions
 FS(CreateComponent);
 FS(GetComponent);
+FS(HasRawComponent);
 FS(GetAllComponents);
 FS(GetAllComponentNames);
 FS(GetEntityType);

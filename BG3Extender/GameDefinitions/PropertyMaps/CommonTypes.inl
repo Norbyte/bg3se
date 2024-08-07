@@ -86,3 +86,21 @@ P(X)
 P(Y)
 P(SubgridId)
 END_CLS()
+
+
+BEGIN_CLS(ecs::ECSComponentLog)
+P_BITMASK(Flags)
+P_GETTER(Name, GetName)
+END_CLS()
+
+
+BEGIN_CLS(ecs::ECSEntityLog)
+P(Components)
+P(Entity)
+P_BITMASK(Flags)
+END_CLS()
+
+
+BEGIN_CLS(ecs::ECSChangeLog)
+P(Entities)
+END_CLS()

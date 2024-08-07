@@ -214,6 +214,11 @@ public:
 		logging_ = enable;
 	}
 
+	inline ECSChangeLog& GetLog()
+	{
+		return log_;
+	}
+
 	inline std::optional<int32_t> GetQueryIndex(STDString const& type) const
 	{
 		auto it = queryMappings_.find(type);
@@ -253,6 +258,7 @@ protected:
 	void ValidateReplication();
 	void ValidateMappedComponentSizes();
 	bool ValidateMappedComponentSize(ecs::EntityWorld* world, ComponentTypeIndex typeId, ExtComponentType extType);
+	void ValidateECBFlushChanges();
 	void ValidateEntityChanges();
 	void ValidateEntityChanges(ImmediateWorldCache::Changes& changes);
 
@@ -281,6 +287,8 @@ private:
 	std::array<int32_t, (size_t)ExtResourceManagerType::Max> staticDataIndices_;
 	std::array<int32_t, (size_t)ExtSystemType::Max> systemIndices_;
 
+	ECSChangeLog log_;
+
 	void BindSystem(std::string_view name, int32_t id);
 	void BindQuery(std::string_view name, int32_t id);
 	void BindStaticData(std::string_view name, int32_t id);
@@ -292,6 +300,7 @@ private:
 
 	void DebugLogUpdateChanges();
 	void DebugLogReplicationChanges();
+	void DebugLogECBFlushChanges();
 };
 
 class ServerEntitySystemHelpers : public EntitySystemHelpersBase

@@ -141,9 +141,31 @@ bool Unsubscribe(lua_State* L, uint64_t index)
 	}
 }
 
-void EnableLogging(lua_State* L, bool enable)
+void EnableTracing(lua_State* L, bool enable)
 {
+	if (!gExtender->GetConfig().DeveloperMode) {
+		ERR("Entity tracing is only available in developer mode");
+		return;
+	}
+
+	static bool DevelWarningShown = false;
+
+	if (!DevelWarningShown) {
+		DevelWarningShown = true;
+		WARN("Entity tracing is a development tool designed for tracking entity changes; it should not be used in production!");
+	}
+
 	State::FromLua(L)->GetEntitySystemHelpers()->EnableLogging(enable);
+}
+
+ecs::ECSChangeLog* GetTrace(lua_State* L)
+{
+	return &State::FromLua(L)->GetEntitySystemHelpers()->GetLog();
+}
+
+void ClearTrace(lua_State* L)
+{
+	State::FromLua(L)->GetEntitySystemHelpers()->GetLog().Clear();
 }
 
 void RegisterEntityLib()
@@ -161,7 +183,9 @@ void RegisterEntityLib()
 	MODULE_FUNCTION(OnCreate)
 	MODULE_FUNCTION(OnDestroy)
 	MODULE_FUNCTION(Unsubscribe)
-	MODULE_FUNCTION(EnableLogging)
+	MODULE_FUNCTION(EnableTracing)
+	MODULE_FUNCTION(GetTrace)
+	MODULE_FUNCTION(ClearTrace)
 	END_MODULE()
 }
 

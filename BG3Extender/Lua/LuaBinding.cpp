@@ -308,6 +308,9 @@ namespace bg3se::lua
 	{
 		variableManager_.Invalidate();
 		modVariableManager_.Invalidate();
+
+		GetEntitySystemHelpers()->EnableLogging(false);
+		GetEntitySystemHelpers()->GetLog().Clear();
 	}
 
 	State* State::FromLua(lua_State* L)

@@ -141,6 +141,23 @@ int EntityProxyMetatable::GetComponent(lua_State* L)
 	return 1;
 }
 
+int EntityProxyMetatable::HasRawComponent(lua_State* L)
+{
+	StackCheck _(L, 1);
+	auto handle = Get(L, 1);
+	auto componentName = get<STDString>(L, 2);
+	auto ecs = GetEntitySystem(L);
+	auto index = ecs->GetComponentIndex(componentName);
+	if (!index) {
+		push(L, false);
+	} else {
+		auto ptr = ecs->GetEntityWorld()->GetRawComponent(handle, *index, 1, false);
+		push(L, ptr != nullptr);
+	}
+
+	return 1;
+}
+
 int EntityProxyMetatable::GetAllComponents(lua_State* L)
 {
 	StackCheck _(L, 1);
@@ -375,6 +392,11 @@ int EntityProxyMetatable::Index(lua_State* L, CppValueMetadata& self)
 
 	if (key == GFS.strGetComponent) {
 		push(L, &GetComponent);
+		return 1;
+	}
+
+	if (key == GFS.strHasRawComponent) {
+		push(L, &HasRawComponent);
 		return 1;
 	}
 
