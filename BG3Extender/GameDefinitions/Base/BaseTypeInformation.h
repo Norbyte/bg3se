@@ -260,12 +260,6 @@ StaticTypeInformation& GetStaticTypeInfoInternal(Overload<ObjectSet<T, Allocator
 	return GetStaticTypeInfoInternal(Overload<Set<T, Allocator, StoreSize>>{});
 }
 
-template <class T, class Tag>
-StaticTypeInformation& GetStaticTypeInfoInternal(Overload<TypedIntegral<T, Tag>>)
-{
-	return GetStaticTypeInfoInternal(Overload<T>{});
-}
-
 template <class T>
 StaticTypeInformation& GetStaticTypeInfo(Overload<T>)
 {

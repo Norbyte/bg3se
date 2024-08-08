@@ -191,7 +191,7 @@ int EntityProxyMetatable::GetAllComponents(lua_State* L)
 						if (name) {
 							OsiWarn("No model found for component: " << *name);
 						} else {
-							OsiWarn("No model found for component ID: " << pool.Key().Value());
+							OsiWarn("No model found for component ID: " << (unsigned)pool.Key());
 						}
 					}
 				}
@@ -210,7 +210,7 @@ int EntityProxyMetatable::GetAllComponents(lua_State* L)
 						if (name) {
 							OsiWarn("No model found for component: " << *name);
 						} else {
-							OsiWarn("No model found for component ID: " << typeInfo.Key().Value());
+							OsiWarn("No model found for component ID: " << (unsigned)typeInfo.Key());
 						}
 					}
 				}

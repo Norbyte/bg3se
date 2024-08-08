@@ -531,7 +531,7 @@ class DefinitionLoader:
             return
         
         match = re.match(property_re, line)
-        if match is not None:
+        if match is not None and self.cur_struct is not None:
             self.parse_attributes(match.group('attributes'))
             self.cur_struct.members[match.group('name')] = {
                 'type': match.group('type'),

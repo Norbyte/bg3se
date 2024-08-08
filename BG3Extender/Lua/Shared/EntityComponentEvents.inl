@@ -27,14 +27,14 @@ void EntityComponentEventHooks::BindECS()
 void EntityComponentEventHooks::OnComponentCreated(void* object, ecs::ComponentCallbackParams const& params, void* component)
 {
 	auto self = reinterpret_cast<EntityComponentEventHooks*>((uintptr_t)object & 0x0000ffffffffffffull);
-	auto componentType = (uint16_t)((uintptr_t)object >> 48);
+	auto componentType = (ecs::ComponentTypeIndex)((uintptr_t)object >> 48);
 	self->OnEntityEvent(*params.World, params.Entity, componentType, EntityComponentEvent::Create, component);
 }
 
 void EntityComponentEventHooks::OnComponentDestroyed(void* object, ecs::ComponentCallbackParams const& params, void* component)
 {
 	auto self = reinterpret_cast<EntityComponentEventHooks*>((uintptr_t)object & 0x0000ffffffffffffull);
-	auto componentType = (uint16_t)((uintptr_t)object >> 48);
+	auto componentType = (ecs::ComponentTypeIndex)((uintptr_t)object >> 48);
 	self->OnEntityEvent(*params.World, params.Entity, componentType, EntityComponentEvent::Destroy, component);
 }
 
@@ -91,7 +91,7 @@ bool EntityComponentEventHooks::Unsubscribe(SubscriptionIndex index)
 		return false;
 	}
 
-	auto& pool = hookedComponents_[(unsigned)sub->Type.Value()];
+	auto& pool = hookedComponents_[(unsigned)sub->Type];
 	if (!sub->Entity) {
 		for (unsigned i = 0; i < pool.GlobalHooks.size(); i++) {
 			if (pool.GlobalHooks[i] == index) {
@@ -117,7 +117,7 @@ bool EntityComponentEventHooks::Unsubscribe(SubscriptionIndex index)
 
 void EntityComponentEventHooks::OnEntityEvent(ecs::EntityWorld& world, EntityHandle entity, ecs::ComponentTypeIndex type, EntityComponentEvent events, void* component)
 {
-	auto& hooks = hookedComponents_[type.Value()];
+	auto& hooks = hookedComponents_[(unsigned)type];
 	if ((unsigned)(hooks.Events & events) == 0) return;
 
 	for (auto index : hooks.GlobalHooks) {

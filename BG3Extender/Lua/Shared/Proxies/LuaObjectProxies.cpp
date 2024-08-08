@@ -23,11 +23,15 @@ bool Validate(EntityHandle const& handle, ecs::EntityWorld& world)
 	auto& state = world.HandleGenerator->ThreadStates[handle.GetType()];
 	CHECK(handle.GetIndex() < state.Salts.Used);
 
+	// Check that handle are within rational bounds
+	CHECK(handle.GetSalt() < 0x1000);
+
 	// Allow salt mismatches if the handle has an old salt.
 	// It should never have a salt value that is newer than the current one in ECS
 	auto const& salt = state.Salts[handle.GetIndex()];
-	CHECK(salt.Index == handle.GetIndex());
-	CHECK(salt.Salt <= handle.GetSalt());
+	// FIXME This is weird - sometimes the index can change after an entity gets deleted?
+	// CHECK(salt.Index == handle.GetIndex());
+	// CHECK(salt.Salt <= handle.GetSalt());
 
 	return true;
 }

@@ -74,6 +74,7 @@ struct ECSComponentLog
 
 struct ECSEntityLog
 {
+	// Keep the key untyped on purpose to allow Lua serialization
 	HashMap<uint16_t, ECSComponentLog> Components;
 	EntityHandle Entity;
 	EntityChangeFlags Flags{ 0 };
@@ -107,7 +108,7 @@ public:
 	inline std::optional<ComponentTypeIndex> GetComponentIndex(STDString const& type) const
 	{
 		auto it = componentNameToIndexMappings_.find(type);
-		if (it != componentNameToIndexMappings_.end() && it->second.ComponentIndex != UndefinedIndex) {
+		if (it != componentNameToIndexMappings_.end() && it->second.ComponentIndex != UndefinedComponent) {
 			return it->second.ComponentIndex;
 		} else {
 			return {};
@@ -134,7 +135,7 @@ public:
 	inline std::optional<ComponentTypeIndex> GetComponentIndexUnchecked(ExtComponentType type) const
 	{
 		auto idx = components_[(unsigned)type].ComponentIndex;
-		if (idx != UndefinedIndex) {
+		if (idx != UndefinedComponent) {
 			return idx;
 		} else {
 			return {};
@@ -154,7 +155,7 @@ public:
 	std::optional<ReplicationTypeIndex> GetReplicationIndex(ExtComponentType type) const
 	{
 		auto idx = components_[(unsigned)type].ReplicationIndex;
-		if (idx != -1) {
+		if (idx != UndefinedReplicationComponent) {
 			return idx;
 		} else {
 			return {};
@@ -219,10 +220,10 @@ public:
 		return log_;
 	}
 
-	inline std::optional<int32_t> GetQueryIndex(STDString const& type) const
+	inline std::optional<QueryIndex> GetQueryIndex(STDString const& type) const
 	{
 		auto it = queryMappings_.find(type);
-		if (it != queryMappings_.end() && it->second != UndefinedIndex) {
+		if (it != queryMappings_.end() && it->second != UndefinedQuery) {
 			return it->second;
 		} else {
 			return {};
@@ -248,8 +249,6 @@ public:
 	void OnFlushECBs();
 
 protected:
-	static constexpr int32_t UndefinedIndex{ -1 };
-
 	void MapComponentIndices(char const* componentName, ExtComponentType type, std::size_t size, bool isProxy);
 	void MapQueryIndex(char const* name, ExtQueryType type);
 	void MapResourceManagerIndex(char const* componentName, ExtResourceManagerType type);
@@ -271,11 +270,11 @@ private:
 
 	std::unordered_map<STDString, IndexMappings> componentNameToIndexMappings_;
 	ECSComponentDataMap ecsComponentData_;
-	std::unordered_map<STDString, int32_t> systemIndexMappings_;
+	std::unordered_map<STDString, SystemTypeIndex> systemIndexMappings_;
 	std::vector<STDString const*> systemTypeIdToName_;
-	std::unordered_map<STDString, int32_t> queryMappings_;
+	std::unordered_map<STDString, QueryIndex> queryMappings_;
 	std::vector<STDString const*> queryTypeIdToName_;
-	std::unordered_map<STDString, int32_t> staticDataMappings_;
+	std::unordered_map<STDString, resource::StaticDataTypeIndex> staticDataMappings_;
 	std::vector<STDString const*> staticDataIdToName_;
 
 	bool initialized_{ false };
@@ -283,17 +282,17 @@ private:
 	bool logging_{ false };
 
 	std::array<PerComponentData, (size_t)ExtComponentType::Max> components_;
-	std::array<int32_t, (size_t)ExtQueryType::Max> queryIndices_;
-	std::array<int32_t, (size_t)ExtResourceManagerType::Max> staticDataIndices_;
-	std::array<int32_t, (size_t)ExtSystemType::Max> systemIndices_;
+	std::array<QueryIndex, (size_t)ExtQueryType::Max> queryIndices_;
+	std::array<resource::StaticDataTypeIndex, (size_t)ExtResourceManagerType::Max> staticDataIndices_;
+	std::array<SystemTypeIndex, (size_t)ExtSystemType::Max> systemIndices_;
 
 	ECSChangeLog log_;
 
-	void BindSystem(std::string_view name, int32_t id);
-	void BindQuery(std::string_view name, int32_t id);
-	void BindStaticData(std::string_view name, int32_t id);
-	void BindComponent(std::string_view name, int32_t id);
-	void BindReplication(std::string_view name, int32_t id);
+	void BindSystem(std::string_view name, SystemTypeIndex id);
+	void BindQuery(std::string_view name, QueryIndex id);
+	void BindStaticData(std::string_view name, resource::StaticDataTypeIndex id);
+	void BindComponent(std::string_view name, ComponentTypeIndex id);
+	void BindReplication(std::string_view name, ReplicationTypeIndex id);
 	void* GetRawComponent(Guid const& guid, ExtComponentType type);
 	void* GetRawComponent(FixedString const& guid, ExtComponentType type);
 	resource::GuidResourceBankBase* GetRawResourceManager(ExtResourceManagerType type);

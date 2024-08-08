@@ -10,7 +10,7 @@ EntityReplicationEventHooks::~EntityReplicationEventHooks() {}
 
 EntityReplicationEventHooks::ReplicationHooks& EntityReplicationEventHooks::AddComponentType(ecs::ReplicationTypeIndex type)
 {
-	auto index = (unsigned)type.Value();
+	auto index = (unsigned)type;
 	if (!hookedReplicationComponentMask_[index]) {
 		hookedReplicationComponentMask_.Set(index);
 		while (hookedReplicationComponents_.size() <= index) {
@@ -54,7 +54,7 @@ bool EntityReplicationEventHooks::Unsubscribe(SubscriptionIndex index)
 		return false;
 	}
 
-	auto& pool = hookedReplicationComponents_[(unsigned)sub->Type.Value()];
+	auto& pool = hookedReplicationComponents_[(unsigned)sub->Type];
 	if (!sub->Entity) {
 		for (unsigned i = 0; i < pool.GlobalHooks.size(); i++) {
 			if (pool.GlobalHooks[i] == index) {
@@ -86,7 +86,7 @@ void EntityReplicationEventHooks::OnEntityReplication(ecs::EntityWorld& world)
 		auto const& pool = world.Replication->ComponentPools[i];
 		if (hookedReplicationComponentMask_[i] && pool.size() > 0) {
 			for (auto const& entity : pool) {
-				OnEntityReplication(world, entity.Key(), entity.Value(), i);
+				OnEntityReplication(world, entity.Key(), entity.Value(), ecs::ReplicationTypeIndex{ (uint16_t)i });
 			}
 		}
 	}
@@ -94,7 +94,7 @@ void EntityReplicationEventHooks::OnEntityReplication(ecs::EntityWorld& world)
 
 void EntityReplicationEventHooks::OnEntityReplication(ecs::EntityWorld& world, EntityHandle entity, BitSet<> const& flags, ecs::ReplicationTypeIndex type)
 {
-	auto& hooks = hookedReplicationComponents_[type.Value()];
+	auto& hooks = hookedReplicationComponents_[(unsigned)type];
 	auto word1 = *flags.GetBuf();
 	if ((hooks.InvalidationFlags & word1) == 0) return;
 

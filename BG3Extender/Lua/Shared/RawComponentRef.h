@@ -12,7 +12,7 @@ public:
 	{}
 	
 	inline RawComponentRef(void* ptr, ecs::ComponentTypeIndex type)
-		: ptr_(ptr ? (void*)((uintptr_t)ptr | ((uintptr_t)type.Value() << 48)) : nullptr)
+		: ptr_(ptr ? (void*)((uintptr_t)ptr | ((uintptr_t)type << 48)) : nullptr)
 	{}
 
 	explicit inline operator bool() const

@@ -26,18 +26,27 @@ using QueryMask = BitArray<uint64_t, 40>;
 using EntityTypeMask = BitArray<uint64_t, 4>;
 
 // Component type index, registered statically during game startup
-enum class ComponentTypeIndexTag {};
-using ComponentTypeIndex = TypedIntegral<uint16_t, ComponentTypeIndexTag>;
+using TComponentTypeIndex = uint16_t;
+enum class ComponentTypeIndex : TComponentTypeIndex {};
+
 // Replication component type index, registered statically during game startup
-enum class ReplicationTypeIndexTag {};
-using ReplicationTypeIndex = TypedIntegral<uint16_t, ReplicationTypeIndexTag>;
+using TReplicationTypeIndex = uint16_t;
+enum class ReplicationTypeIndex : TReplicationTypeIndex {};
+
+using TSystemTypeIndex = int32_t;
+enum class SystemTypeIndex : TSystemTypeIndex {};
+
+using TQueryIndex = uint16_t;
+enum class QueryIndex : TQueryIndex {};
 
 static constexpr ReplicationTypeIndex UndefinedReplicationComponent{ 0xffff };
 static constexpr ComponentTypeIndex UndefinedComponent{ 0xffff };
+static constexpr SystemTypeIndex UndefinedSystem{ -1 };
+static constexpr QueryIndex UndefinedQuery{ 0xffff };
 
 inline constexpr bool IsOneFrame(ComponentTypeIndex idx)
 {
-	return (idx.Value() & 0x8000) == 0x8000;
+	return (TComponentTypeIndex(idx) & 0x8000) == 0x8000;
 }
 
 END_NS()
@@ -47,13 +56,13 @@ BEGIN_SE()
 template <>
 inline uint64_t SparseHashMapHash<ecs::ComponentTypeIndex>(ecs::ComponentTypeIndex const& v)
 {
-	return (v.Value() & 0x7FFF) + (v.Value() >> 15 << 11);
+	return (ecs::TComponentTypeIndex(v) & 0x7FFF) + (ecs::TComponentTypeIndex(v) >> 15 << 11);
 }
 
 template <>
 inline uint64_t HashMapHash<ecs::ComponentTypeIndex>(ecs::ComponentTypeIndex const& v)
 {
-	auto h0 = ((uint64_t)v.Value() & 0x7FFF) + ((uint64_t)v.Value() >> 15 << 11);
+	auto h0 = ((uint64_t)v & 0x7FFF) + ((uint64_t)v >> 15 << 11);
 	return h0 | (h0 << 16);
 }
 
@@ -190,8 +199,6 @@ struct StorageComponentMap : public ProtectedGameObject<StorageComponentMap>
 
 struct QueryDescription : public ProtectedGameObject<QueryDescription>
 {
-	using ID = uint16_t;
-
 	// TypeList template parameters to ecs::query::spec::Spec<...>
 	HashSet<int32_t> StorageFrameIDs;
 	StaticArray<StorageComponentMap> EntityClasses;
@@ -219,12 +226,12 @@ struct QueryDescription : public ProtectedGameObject<QueryDescription>
 struct QueryRegistry : public ProtectedGameObject<QueryRegistry>
 {
 	Array<QueryDescription> Queries;
-	Array<QueryDescription::ID> PersistentQueries;
-	Array<QueryDescription::ID> AliveQueries;
-	Array<QueryDescription::ID> RemovedQueries;
-	Array<QueryDescription::ID> ComponentTypes4;
-	Array<QueryDescription::ID> ComponentTypes5;
-	Array<QueryDescription::ID> FrameData;
+	Array<QueryIndex> PersistentQueries;
+	Array<QueryIndex> AliveQueries;
+	Array<QueryIndex> RemovedQueries;
+	Array<QueryIndex> ComponentTypes4;
+	Array<QueryIndex> ComponentTypes5;
+	Array<QueryIndex> FrameData;
 };
 
 struct ComponentRegistry : public ProtectedGameObject<ComponentRegistry>
@@ -237,19 +244,17 @@ struct ComponentRegistry : public ProtectedGameObject<ComponentRegistry>
 
 struct SystemTypeEntry : public ProtectedGameObject<SystemTypeEntry>
 {
-	using ID = uint32_t;
-
 	void* System;
-	int32_t SystemIndex0;
-	int32_t SystemIndex1;
+	SystemTypeIndex SystemIndex0;
+	SystemTypeIndex SystemIndex1;
 	__int16 field_10;
 	bool Activated;
 	void* UpdateProc;
 	void* SomeProc2;
 	void* SomeProc3;
 	void* ECBFlushJob;
-	HashSet<SystemTypeEntry::ID> DependencySystems;
-	HashSet<SystemTypeEntry::ID> DependentSystems;
+	HashSet<SystemTypeIndex> DependencySystems;
+	HashSet<SystemTypeIndex> DependentSystems;
 	HashSet<uint32_t> HandleMappings2;
 	HashSet<uint32_t> HandleMappings;
 #if 0
@@ -368,10 +373,10 @@ struct EntityStorageData : public ProtectedGameObject<EntityStorageData>
 	bool HasComponentPoolsByType;
 	__int64 field_2C8;
 	EntityTypeMask ComponentMask; // Valid indices into Components pool
-	Array<QueryDescription::ID> RegisteredQueries;
-	Array<QueryDescription::ID> AddComponentQueries;
+	Array<QueryIndex> RegisteredQueries;
+	Array<QueryIndex> AddComponentQueries;
 	QueryMask AddComponentQueryMap;
-	Array<QueryDescription::ID> RemoveComponentQueries;
+	Array<QueryIndex> RemoveComponentQueries;
 	QueryMask RemoveComponentQueryMap;
 
 	void* GetComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy) const;

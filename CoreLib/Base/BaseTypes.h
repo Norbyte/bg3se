@@ -46,10 +46,10 @@ namespace bg3se
 		}
 	};
 
-	enum class PeerIdTag {};
 	using TPeerId = uint32_t;
 	using TUserId = uint32_t;
-	using PeerId = TypedIntegral<TPeerId, PeerIdTag>;
+	enum class PeerId : TPeerId {};
+	static constexpr PeerId LocalPeerId = PeerId{ 1 };
 
 	struct UserId
 	{

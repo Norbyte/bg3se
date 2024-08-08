@@ -99,12 +99,11 @@ END_NS()
 
 BEGIN_NS(lua)
 
-enum class SoundObjectIdTag {};
-using LuaSoundObjectId = TypedIntegral<SoundObjectId, SoundObjectIdTag>;
+enum class LuaSoundObjectId : SoundObjectId {};
 
 LuaSoundObjectId do_get(lua_State* L, int index, Overload<LuaSoundObjectId>)
 {
-	return ecl::lua::audio::GetSoundObjectId(L, index);
+	return LuaSoundObjectId{ ecl::lua::audio::GetSoundObjectId(L, index) };
 }
 
 END_NS()
@@ -115,7 +114,7 @@ using namespace bg3se::lua;
 
 bool SetSwitch(LuaSoundObjectId soundObject, char const* switchGroup, char const* state)
 {
-	return GetSoundManager()->SetSwitch(switchGroup, state, soundObject.Value());
+	return GetSoundManager()->SetSwitch(switchGroup, state, (SoundObjectId)soundObject);
 }
 
 bool SetState(char const* stateGroup, char const* state)
@@ -125,17 +124,17 @@ bool SetState(char const* stateGroup, char const* state)
 
 bool SetRTPC(LuaSoundObjectId soundObject, char const* rtpcName, float value, std::optional<bool> bypassInternalValueInterpolation)
 {
-	return GetSoundManager()->SetRTPCValue(soundObject.Value(), rtpcName, value, bypassInternalValueInterpolation ? *bypassInternalValueInterpolation : false);
+	return GetSoundManager()->SetRTPCValue((SoundObjectId)soundObject, rtpcName, value, bypassInternalValueInterpolation ? *bypassInternalValueInterpolation : false);
 }
 
 float GetRTPC(LuaSoundObjectId soundObject, char const* rtpcName)
 {
-	return GetSoundManager()->GetRTPCValue(soundObject.Value(), rtpcName);
+	return GetSoundManager()->GetRTPCValue((SoundObjectId)soundObject, rtpcName);
 }
 
 void ResetRTPC(LuaSoundObjectId soundObject, char const* rtpcName)
 {
-	GetSoundManager()->ResetRTPCValue(soundObject.Value(), rtpcName);
+	GetSoundManager()->ResetRTPCValue((SoundObjectId)soundObject, rtpcName);
 }
 
 void Stop(std::optional<LuaSoundObjectId> soundObject)
@@ -146,7 +145,7 @@ void Stop(std::optional<LuaSoundObjectId> soundObject)
 	}
 
 	if (soundObject) {
-		snd->StopAllOnObject(soundObject->Value());
+		snd->StopAllOnObject((SoundObjectId)*soundObject);
 	} else {
 		snd->StopAll();
 	}
@@ -174,7 +173,7 @@ void ResumeAllSounds()
 
 bool PostEvent(LuaSoundObjectId soundObject, char const* eventName, std::optional<float> positionSec)
 {
-	return GetSoundManager()->PostEventByName(soundObject.Value(), eventName, positionSec.value_or(0.0f), false, nullptr);
+	return GetSoundManager()->PostEventByName((SoundObjectId)soundObject, eventName, positionSec.value_or(0.0f), false, nullptr);
 }
 
 bool LoadEvent(char const* eventName)
@@ -193,7 +192,7 @@ bool PlayExternalSound(LuaSoundObjectId soundObject, char const* eventName, char
 {
 	STDString lsPath = GetStaticSymbols().ToPath(path, PathRootType::Data);
 	auto eventId = GetSoundManager()->GetIDFromString(eventName);
-	return GetSoundManager()->PlayExternalSound(soundObject.Value(), eventId, lsPath, (uint8_t)codecId, positionSec.value_or(0.0f), false, nullptr);
+	return GetSoundManager()->PlayExternalSound((SoundObjectId)soundObject, eventId, lsPath, (uint8_t)codecId, positionSec.value_or(0.0f), false, nullptr);
 }
 
 bool LoadBank(const char* bankName)

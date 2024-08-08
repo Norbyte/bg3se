@@ -109,6 +109,10 @@ BEGIN_NS(resource)
 	FOR_RESOURCE_TYPE(RulesetSelectionPreset)
 
 
+using TStaticDataTypeIndex = int32_t;
+enum class StaticDataTypeIndex : TStaticDataTypeIndex {};
+static constexpr StaticDataTypeIndex UndefinedStaticDataType{ -1 };
+
 struct GuidResource : ProtectedGameObject<GuidResource>
 {
 	[[bg3::hidden]]
@@ -135,7 +139,7 @@ struct [[bg3::hidden]] GuidResourceBank : public GuidResourceBankBase
 
 struct [[bg3::hidden]] GuidResourceManager
 {
-	HashMap<int32_t, GuidResourceBankBase*> Definitions;
+	HashMap<StaticDataTypeIndex, GuidResourceBankBase*> Definitions;
 };
 
 

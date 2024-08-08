@@ -157,7 +157,7 @@ void NetworkManager::Broadcast(net::ExtenderMessage * msg, UserId excludeUserId,
 	Array<PeerId> peerIds;
 	for (auto peerId : server->ActivePeerIds) {
 		if (CanSendExtenderMessages(peerId)) {
-			if (peerId != 1 || !excludeLocalPeer) {
+			if (peerId != LocalPeerId || !excludeLocalPeer) {
 				peerIds.push_back(peerId);
 			}
 		} else {
@@ -176,7 +176,7 @@ void NetworkManager::BroadcastToConnectedPeers(net::ExtenderMessage* msg, UserId
 	Array<PeerId> peerIds;
 	for (auto peerId : server->ConnectedPeerIds) {
 		if (CanSendExtenderMessages(peerId)) {
-			if (peerId != TPeerId(1) || !excludeLocalPeer) {
+			if (peerId != LocalPeerId || !excludeLocalPeer) {
 				peerIds.push_back(peerId);
 			}
 		} else {

@@ -235,7 +235,7 @@ void* EntityStorageData::GetOneFrameComponent(EntityHandle entityHandle, Compone
 
 void* EntityStorageData::GetComponent(EntityStorageIndex const& entityPtr, ComponentTypeIndex type, std::size_t componentSize, bool isProxy) const
 {
-	auto compIndex = ComponentTypeToIndex.try_get((uint16_t)type.Value());
+	auto compIndex = ComponentTypeToIndex.try_get(type);
 	if (compIndex) {
 		return GetComponent(entityPtr, *compIndex, componentSize, isProxy);
 	} else {
@@ -291,7 +291,7 @@ PerECSComponentData& ECSComponentDataMap::GetOrAdd(ComponentTypeIndex type)
 
 PerECSReplicationData const& ECSComponentDataMap::Get(ReplicationTypeIndex type) const
 {
-	auto idx = type.Value();
+	auto idx = (unsigned)type;
 	if (idx < replicationData_.size()) {
 		return replicationData_[idx];
 	} else {
@@ -301,7 +301,7 @@ PerECSReplicationData const& ECSComponentDataMap::Get(ReplicationTypeIndex type)
 
 PerECSReplicationData& ECSComponentDataMap::GetOrAdd(ReplicationTypeIndex type)
 {
-	auto idx = type.Value();
+	auto idx = (unsigned)type;
 	if (idx > replicationData_.size()) {
 		replicationData_.resize(idx + 1);
 	}
@@ -416,7 +416,7 @@ void ECSChangeLog::AddComponentChange(EntityWorld* world, EntityHandle entity, C
 	}
 
 	auto entry = Entities.get_or_add(entity);
-	auto componentEntry = entry->Components.get_or_add(type.Value());
+	auto componentEntry = entry->Components.get_or_add((uint16_t)type);
 	componentEntry->ComponentType = type;
 	componentEntry->Flags = componentEntry->Flags | flags;
 }
@@ -429,15 +429,15 @@ RuntimeCheckLevel EntitySystemHelpersBase::CheckLevel{ RuntimeCheckLevel::Always
 #endif
 
 EntitySystemHelpersBase::EntitySystemHelpersBase()
-	: queryIndices_{ UndefinedIndex },
-	staticDataIndices_{ UndefinedIndex },
-	systemIndices_{ UndefinedIndex }
+	: queryIndices_{ UndefinedQuery },
+	staticDataIndices_{ resource::UndefinedStaticDataType },
+	systemIndices_{ UndefinedSystem }
 {}
 
 std::optional<ComponentTypeIndex> EntitySystemHelpersBase::GetComponentIndex(ExtComponentType type) const
 {
 	auto idx = components_[(unsigned)type].ComponentIndex;
-	if (idx != UndefinedIndex && GetEntityWorld()->ComponentOps.Get(idx) != nullptr) {
+	if (idx != UndefinedComponent && GetEntityWorld()->ComponentOps.Get(idx) != nullptr) {
 		return idx;
 	} else {
 		return {};
@@ -527,59 +527,59 @@ void EntitySystemHelpersBase::NotifyReplicationFlagsDirtied()
 	world->Replication->Dirty = true;
 }
 
-void EntitySystemHelpersBase::BindSystem(StringView name, int32_t systemId)
+void EntitySystemHelpersBase::BindSystem(StringView name, SystemTypeIndex systemId)
 {
 	auto it = systemIndexMappings_.insert(std::make_pair(name, systemId));
-	if (systemTypeIdToName_.size() <= systemId) {
-		systemTypeIdToName_.resize(systemId + 1);
+	if (systemTypeIdToName_.size() <= (unsigned)systemId) {
+		systemTypeIdToName_.resize((unsigned)systemId + 1);
 	}
 
-	systemTypeIdToName_[systemId] = &it.first->first;
+	systemTypeIdToName_[(unsigned)systemId] = &it.first->first;
 }
 
-void EntitySystemHelpersBase::BindQuery(StringView name, int32_t queryId)
+void EntitySystemHelpersBase::BindQuery(StringView name, QueryIndex queryId)
 {
 	auto it = queryMappings_.insert(std::make_pair(name, queryId));
-	if (queryTypeIdToName_.size() <= queryId) {
-		queryTypeIdToName_.resize(queryId + 1);
+	if (queryTypeIdToName_.size() <= (unsigned)queryId) {
+		queryTypeIdToName_.resize((unsigned)queryId + 1);
 	}
 
-	queryTypeIdToName_[queryId] = &it.first->first;
+	queryTypeIdToName_[(unsigned)queryId] = &it.first->first;
 }
 
-void EntitySystemHelpersBase::BindStaticData(StringView name, int32_t id)
+void EntitySystemHelpersBase::BindStaticData(StringView name, resource::StaticDataTypeIndex id)
 {
 	auto it = staticDataMappings_.insert(std::make_pair(name, id));
-	if (staticDataIdToName_.size() <= id) {
-		staticDataIdToName_.resize(id + 1);
+	if (staticDataIdToName_.size() <= (unsigned)id) {
+		staticDataIdToName_.resize((unsigned)id + 1);
 	}
 
-	staticDataIdToName_[id] = &it.first->first;
+	staticDataIdToName_[(unsigned)id] = &it.first->first;
 }
 
-void EntitySystemHelpersBase::BindComponent(StringView name, int32_t id)
+void EntitySystemHelpersBase::BindComponent(StringView name, ComponentTypeIndex id)
 {
 	STDString const* pName;
 	auto it = componentNameToIndexMappings_.find(STDString(name));
 	if (it == componentNameToIndexMappings_.end()) {
-		auto iit = componentNameToIndexMappings_.insert(std::make_pair(name, IndexMappings{(ComponentTypeIndex)id, UndefinedReplicationComponent}));
+		auto iit = componentNameToIndexMappings_.insert(std::make_pair(name, IndexMappings{id, UndefinedReplicationComponent}));
 		pName = &iit.first->first;
 	} else {
-		it->second.ComponentIndex = (ComponentTypeIndex)id;
+		it->second.ComponentIndex = id;
 		pName = &it->first;
 	}
 
-	auto& binding = ecsComponentData_.GetOrAdd(ComponentTypeIndex((uint16_t)id));
+	auto& binding = ecsComponentData_.GetOrAdd(id);
 	binding.Name = pName;
 }
 
-void EntitySystemHelpersBase::BindReplication(StringView name, int32_t id)
+void EntitySystemHelpersBase::BindReplication(StringView name, ReplicationTypeIndex id)
 {
 	auto it = componentNameToIndexMappings_.find(STDString(name));
 	if (it == componentNameToIndexMappings_.end()) {
-		componentNameToIndexMappings_.insert(std::make_pair(name, IndexMappings{UndefinedComponent, (ReplicationTypeIndex)id}));
+		componentNameToIndexMappings_.insert(std::make_pair(name, IndexMappings{UndefinedComponent, id}));
 	} else {
-		it->second.ReplicationIndex = (ReplicationTypeIndex)id;
+		it->second.ReplicationIndex = id;
 	}
 }
 
@@ -590,9 +590,9 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 	componentNameToIndexMappings_.clear();
 	ecsComponentData_.Clear();
 	components_.fill(PerComponentData{});
-	queryIndices_.fill(UndefinedIndex);
-	staticDataIndices_.fill(UndefinedIndex);
-	systemIndices_.fill(UndefinedIndex);
+	queryIndices_.fill(UndefinedQuery);
+	staticDataIndices_.fill(resource::UndefinedStaticDataType);
+	systemIndices_.fill(UndefinedSystem);
 
 	std::unordered_map<int32_t*, TypeIdContext> contexts;
 	for (auto const& context : GetStaticSymbols().IndexSymbolToContextMaps) {
@@ -614,30 +614,30 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
 	for (auto const& mapping : symbolMaps) {
 		auto name = SimplifyComponentName(mapping.second.name);
 		if (name.starts_with("ecs::query::spec::Spec<")) {
-			BindQuery(name, *mapping.first);
+			BindQuery(name, QueryIndex(*mapping.first));
 		}
 		else {
 			auto contextIt = contexts.find(mapping.second.context);
 			if (contextIt != contexts.end()) {
 				switch (contextIt->second) {
 				case TypeIdContext::System:
-					BindSystem(name, *mapping.first);
+					BindSystem(name, SystemTypeIndex(*mapping.first));
 					break;
 
 				case TypeIdContext::ImmutableData:
-					BindStaticData(name, *mapping.first);
+					BindStaticData(name, resource::StaticDataTypeIndex(*mapping.first));
 					break;
 
 				case TypeIdContext::Component:
-					BindComponent(name, *mapping.first);
+					BindComponent(name, ComponentTypeIndex(*mapping.first));
 					break;
 
 				case TypeIdContext::OneFrameComponent:
-					BindComponent(name, *mapping.first | 0x8000);
+					BindComponent(name, ComponentTypeIndex(*mapping.first | 0x8000));
 					break;
 
 				case TypeIdContext::Replication:
-					BindReplication(name, *mapping.first);
+					BindReplication(name, ReplicationTypeIndex(*mapping.first));
 					break;
 				}
 			}
@@ -770,8 +770,8 @@ void* EntitySystemHelpersBase::GetRawSystem(ExtSystemType type)
 	}
 
 	auto index = systemIndices_[(unsigned)type];
-	if (index != UndefinedComponent.Value()) {
-		return world->Systems.Systems[index].System;
+	if (index != UndefinedSystem) {
+		return world->Systems.Systems[(unsigned)index].System;
 	} else {
 		return nullptr;
 	}
@@ -1024,8 +1024,8 @@ void EntitySystemHelpersBase::ValidateEntityChanges(ImmediateWorldCache::Changes
 	for (auto i = 0; i < components_.size(); i++) {
 		auto const& componentInfo = components_[i];
 		if (componentInfo.ComponentIndex != UndefinedComponent) {
-			if (changes.AvailableComponentTypes[componentInfo.ComponentIndex.Value()]) {
-				auto const& pool = changes.ComponentsByType[componentInfo.ComponentIndex.Value()];
+			if (changes.AvailableComponentTypes[(unsigned)componentInfo.ComponentIndex]) {
+				auto const& pool = changes.ComponentsByType[(unsigned)componentInfo.ComponentIndex];
 				auto name = ecsComponentData_.Get(componentInfo.ComponentIndex).Name;
 				auto componentSize = componentInfo.IsProxy ? sizeof(void*) : componentInfo.Size;
 				if (pool.FrameStorage.ComponentSizeInBytes != componentSize) {
@@ -1080,7 +1080,7 @@ EntityHandle EntitySystemHelpersBase::GetEntityHandle(Guid const& uuid)
 resource::GuidResourceBankBase* EntitySystemHelpersBase::GetRawResourceManager(ExtResourceManagerType type)
 {
 	auto index = staticDataIndices_[(unsigned)type];
-	if (index == UndefinedIndex) {
+	if (index == resource::UndefinedStaticDataType) {
 		OsiError("No resource manager index mapping registered for " << type);
 		return {};
 	}
@@ -1103,7 +1103,7 @@ resource::GuidResourceBankBase* EntitySystemHelpersBase::GetRawResourceManager(E
 QueryDescription* EntitySystemHelpersBase::GetQuery(ExtQueryType type)
 {
 	auto index = queryIndices_[(unsigned)type];
-	if (index == UndefinedIndex) {
+	if (index == UndefinedQuery) {
 		OsiError("No query index mapping registered for " << type);
 		return {};
 	}
@@ -1113,7 +1113,7 @@ QueryDescription* EntitySystemHelpersBase::GetQuery(ExtQueryType type)
 		return {};
 	}
 
-	return &world->Queries.Queries[index];
+	return &world->Queries.Queries[(unsigned)index];
 }
 
 void ServerEntitySystemHelpers::Setup()
