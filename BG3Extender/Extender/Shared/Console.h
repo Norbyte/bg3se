@@ -20,8 +20,13 @@ private:
 	bool multiLineMode_{ false };
 	std::thread* consoleThread_{ nullptr };
 	std::string multiLineCommand_;
+	uint32_t width_{ 0 };
+	uint32_t height_{ 0 };
+	uint32_t resized_{ false };
 
 	void ConsoleThread();
+	void InputLoop();
+	void UpdateConsoleSize();
 	void SubmitTaskAndWait(bool server, std::function<void()> fun);
 	void PrintHelp();
 	void ResetLua();

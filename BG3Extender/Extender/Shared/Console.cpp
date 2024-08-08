@@ -182,10 +182,9 @@ void DebugConsole::Print(DebugMessageType type, char const* msg)
 
 void DebugConsole::ConsoleThread()
 {
-	std::string line;
 	while (consoleRunning_) {
 		wchar_t tempBuf;
-		DWORD tempRead;
+		DWORD tempRead{ 0 };
 		if (!ReadConsoleW(GetStdHandle(STD_INPUT_HANDLE), &tempBuf, 1, &tempRead, NULL)
 			|| !tempRead
 			|| tempBuf != '\r') {
@@ -194,48 +193,80 @@ void DebugConsole::ConsoleThread()
 
 		DEBUG("Entering server Lua console.");
 
-		while (consoleRunning_) {
-			inputEnabled_ = true;
-			if (serverContext_) {
-				std::cout << "S";
-			} else {
-				std::cout << "C";
-			}
-
-			if (multiLineMode_) {
-				std::cout << " -->> ";
-			} else {
-				std::cout << " >> ";
-			}
-
-			std::cout.flush();
-			std::getline(std::cin, line);
-			inputEnabled_ = false;
-
-			if (!multiLineMode_) {
-				if (line == "exit") {
-					break;
-				}
-
-				if (line == "--[[") {
-					multiLineMode_ = true;
-					multiLineCommand_.clear();
-					continue;
-				}
-
-				HandleCommand(line);
-			} else {
-				if (line == "]]--") {
-					multiLineMode_ = false;
-					HandleCommand(multiLineCommand_);
-				} else {
-					multiLineCommand_ += line;
-					multiLineCommand_ += '\n';
-				}
-			}
-		}
+		InputLoop();
 
 		DEBUG("Exiting console mode.");
+	}
+}
+
+void DebugConsole::InputLoop()
+{
+	std::string line;
+	while (consoleRunning_) {
+		UpdateConsoleSize();
+
+		inputEnabled_ = true;
+		if (serverContext_) {
+			std::cout << "S";
+		} else {
+			std::cout << "C";
+		}
+
+		if (multiLineMode_) {
+			std::cout << " -->> ";
+		} else {
+			std::cout << " >> ";
+		}
+
+		std::cout.flush();
+		std::getline(std::cin, line);
+
+		if (std::cin.fail() || std::cin.eof()) {
+			std::cin.clear();
+			multiLineMode_ = false;
+			multiLineCommand_.clear();
+			std::cout << std::endl;
+		}
+
+		inputEnabled_ = false;
+
+		if (!multiLineMode_) {
+			if (line == "exit") {
+				break;
+			}
+
+			if (line == "--[[") {
+				multiLineMode_ = true;
+				multiLineCommand_.clear();
+				continue;
+			}
+
+			HandleCommand(line);
+		} else {
+			if (line == "]]--") {
+				multiLineMode_ = false;
+				HandleCommand(multiLineCommand_);
+			} else {
+				multiLineCommand_ += line;
+				multiLineCommand_ += '\n';
+			}
+		}
+	}
+}
+
+void DebugConsole::UpdateConsoleSize()
+{
+	CONSOLE_SCREEN_BUFFER_INFOEX buf;
+	buf.cbSize = sizeof(buf);
+	GetConsoleScreenBufferInfoEx(GetStdHandle(STD_OUTPUT_HANDLE), &buf);
+
+	auto width = buf.srWindow.Right - buf.srWindow.Left + 1;
+	auto height = buf.srWindow.Bottom - buf.srWindow.Top + 1;
+
+	if (width_ != width || height_ != height) {
+		width_ = width;
+		height_ = height;
+		resized_ = true;
 	}
 }
 
