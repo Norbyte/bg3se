@@ -77,6 +77,7 @@ void RegisterSharedMetatables(lua_State* L)
 	UserVariableHolderMetatable::RegisterMetatable(L);
 	ModVariableHolderMetatable::RegisterMetatable(L);
 	EntityProxyMetatable::RegisterMetatable(L);
+	EntityProxyMetatable::StaticInitialize();
 #if defined(ENABLE_IMGUI)
 	ImguiObjectProxyMetatable::RegisterMetatable(L);
 #endif

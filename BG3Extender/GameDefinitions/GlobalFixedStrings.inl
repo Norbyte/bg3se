@@ -37,18 +37,6 @@ FS(SetRawAttribute);
 FS(CopyFrom);
 
 // Entity proxy functions
-FS(CreateComponent);
-FS(GetComponent);
-FS(HasRawComponent);
-FS(GetAllComponents);
-FS(GetAllComponentNames);
-FS(GetEntityType);
-FS(GetSalt);
-FS(GetIndex);
-FS(IsAlive);
-FS(GetReplicationFlags);
-FS(SetReplicationFlags);
-FS(Replicate);
 FS(Vars);
 
 // Osi proxy functions

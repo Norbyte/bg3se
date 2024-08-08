@@ -66,20 +66,23 @@ public:
 	static int ToString(lua_State* L, CppValueMetadata& self);
 	static bool IsEqual(lua_State* L, CppValueMetadata& self, int otherIndex);
 	static char const* GetTypeName(lua_State* L, CppValueMetadata& self);
+	static void StaticInitialize();
 
 private:
-	static int CreateComponent(lua_State* L);
-	static int GetComponent(lua_State* L);
-	static int HasRawComponent(lua_State* L);
-	static int GetAllComponents(lua_State* L);
-	static int GetAllComponentNames(lua_State* L);
-	static int GetEntityType(lua_State* L);
-	static int GetSalt(lua_State* L);
-	static int GetIndex(lua_State* L);
-	static int IsAlive(lua_State* L);
-	static int Replicate(lua_State* L);
-	static int SetReplicationFlags(lua_State* L);
-	static int GetReplicationFlags(lua_State* L);
+	static UserReturn CreateComponent(lua_State* L, EntityHandle entity, ExtComponentType component);
+	static UserReturn GetComponent(lua_State* L, EntityHandle entity, ExtComponentType component);
+	static bool HasRawComponent(lua_State* L, EntityHandle entity, STDString componentName);
+	static UserReturn GetAllComponents(lua_State* L, EntityHandle entity, std::optional<bool> warnOnMissing);
+	static Array<STDString> GetAllComponentNames(lua_State* L, EntityHandle entity, std::optional<bool> requireMapped);
+	static uint32_t GetEntityType(EntityHandle entity);
+	static uint32_t GetSalt(EntityHandle entity);
+	static uint32_t GetIndex(EntityHandle entity);
+	static bool IsAlive(lua_State* L, EntityHandle entity);
+	static void Replicate(lua_State* L, EntityHandle entity, ExtComponentType component);
+	static void SetReplicationFlags(lua_State* L, EntityHandle entity, ExtComponentType component, uint64_t flags, std::optional<uint32_t> qword);
+	static uint64_t GetReplicationFlags(lua_State* L, EntityHandle entity, ExtComponentType component, std::optional<uint32_t> qword);
+
+	static HashMap<FixedString, lua_CFunction> functions_;
 };
 
 END_NS()
