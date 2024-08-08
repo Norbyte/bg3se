@@ -43,7 +43,7 @@ public:
 	template <class T>
 	static T* Get(lua_State* L, int index)
 	{
-		auto ptr = GetGeneric(L, index, GetStaticPropertyMap<T>().RegistryIndex);
+		auto ptr = GetGeneric(L, index, StructID<T>::ID);
 		return reinterpret_cast<T*>(ptr);
 	}
 

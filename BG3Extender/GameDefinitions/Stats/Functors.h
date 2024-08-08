@@ -62,7 +62,7 @@ struct ContextData
 	[[bg3::hidden]] resource::GuidResourceBankBase* ClassResources{ nullptr };
 	EntityHandle HistoryEntity;
 	EntityHandle StatusSource;
-	MultiHashMap<EntityHandle, int32_t> EntityToThothContextIndex;
+	HashMap<EntityHandle, int32_t> EntityToThothContextIndex;
 	int field_98;
 	uint8_t ConditionCategory;
 };
@@ -237,7 +237,7 @@ struct Functors
 
 	[[bg3::hidden]] BaseVMT* VMT{ nullptr };
 	Array<Functor*> FunctorList;
-	MultiHashMap<FixedString, int> FunctorsByName;
+	HashMap<FixedString, int> FunctorsByName;
 	int NextFunctorIndex{ 0 };
 	int Unknown{ 0 };
 	FixedString UniqueName;
@@ -317,7 +317,7 @@ struct SummonFunctor : public Functor
 	FixedString Template; // Arg1
 	FixedString AIHelper; // Arg 3
 	std::variant<SummonLifetimeType, float> SpawnLifetime;
-	MultiHashSet<FixedString> StatusesToApply;
+	HashSet<FixedString> StatusesToApply;
 	FixedString StackId;
 	bool Arg5;
 	bool Arg9;
@@ -514,7 +514,7 @@ struct SpawnFunctor : public Functor
 
 	FixedString TemplateId; // Arg0
 	FixedString AIHelper;
-	MultiHashSet<FixedString> StatusesToApply;
+	HashSet<FixedString> StatusesToApply;
 	bool Arg7{ false };
 };
 
@@ -547,7 +547,7 @@ struct SummonInInventoryFunctor : public Functor
 	FixedString TemplateId;
 	FixedString Arg8;
 	std::variant<SummonLifetimeType, float> Lifetime;
-	MultiHashSet<FixedString> AdditionalArgs;
+	HashSet<FixedString> AdditionalArgs;
 	FixedString Arg9;
 	int32_t Amount{ 0 };
 	bool Equip{ false };
@@ -566,7 +566,7 @@ struct SpawnInInventoryFunctor : public Functor
 	bool Arg4{ false };
 	bool Arg5{ false };
 	bool Arg6{ false };
-	MultiHashSet<FixedString> AdditionalArgs;
+	HashSet<FixedString> AdditionalArgs;
 };
 
 struct RemoveUniqueStatusFunctor : public Functor
@@ -659,7 +659,7 @@ struct SurfaceClearLayerFunctor : public Functor
 {
 	static constexpr auto FunctorType = FunctorId::SurfaceClearLayer;
 
-	MultiHashSet<SurfaceLayer8> Layers;
+	HashSet<SurfaceLayer8> Layers;
 };
 
 struct UnsummonFunctor : public Functor

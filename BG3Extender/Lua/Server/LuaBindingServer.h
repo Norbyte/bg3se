@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Lua/LuaBinding.h>
-#include <Lua/Server/LuaOsirisBinding.h>
+#include <Lua/Osiris/Binding.h>
 #include <Lua/Server/EntityEvents.h>
 #include <GameDefinitions/Stats/Functors.h>
 #include <GameDefinitions/Status.h>
@@ -28,118 +28,13 @@ namespace bg3se::esv::lua
 
 	LifetimeHandle GetServerLifetime();
 	LifetimePool& GetServerLifetimePool();
+	void RegisterServerMetatables(lua_State* L);
 
 	struct GameStateChangedEvent : public EventBase
 	{
 		esv::GameState FromState;
 		esv::GameState ToState;
 	};
-
-	class StatusHandleProxy : public Userdata<StatusHandleProxy>, public Indexable, public NewIndexable
-	{
-	public:
-		static char const * const MetatableName;
-
-		inline StatusHandleProxy(EntityHandle character, ComponentHandle status)
-			: character_(character), statusHandle_(status)
-		{}
-
-		inline StatusHandleProxy(EntityHandle character, NetId status)
-			: character_(character), statusNetId_(status)
-		{}
-
-		int Index(lua_State * L);
-		int NewIndex(lua_State * L);
-		esv::Status* Get(lua_State* L);
-
-	private:
-		EntityHandle character_;
-		ComponentHandle statusHandle_;
-		NetId statusNetId_;
-	};
-
-	/*class TurnManagerCombatProxy : public Userdata<TurnManagerCombatProxy>, public Indexable<PushPolicy::None>
-	{
-	public:
-		static char const * const MetatableName;
-
-		static void PopulateMetatable(lua_State * L);
-
-		inline TurnManagerCombatProxy(uint8_t combatId)
-			: combatId_(combatId)
-		{}
-
-		inline esv::TurnManager::Combat * Get()
-		{
-			return GetEntityWorld()->GetTurnManager()->Combats.Find(combatId_);
-		}
-
-		int Index(lua_State * L);
-
-	private:
-		uint8_t combatId_;
-
-		static int GetCurrentTurnOrder(lua_State * L);
-		static int GetNextTurnOrder(lua_State * L);
-		static int UpdateCurrentTurnOrder(lua_State * L);
-		static int UpdateNextTurnOrder(lua_State * L);
-		static int GetAllTeams(lua_State * L);
-	};
-
-	class TurnManagerTeamProxy : public Userdata<TurnManagerTeamProxy>, public Indexable<PushPolicy::None>
-	{
-	public:
-		static char const * const MetatableName;
-
-		inline TurnManagerTeamProxy(eoc::CombatTeamId teamId)
-			: teamId_(teamId)
-		{}
-
-		inline eoc::CombatTeamId TeamId() const
-		{
-			return teamId_;
-		}
-
-		inline esv::TurnManager::CombatTeam * Get()
-		{
-			auto combat = GetEntityWorld()->GetTurnManager()->Combats.Find(teamId_.CombatId);
-			if (combat) {
-				auto team = combat->Teams.Find((uint32_t)teamId_);
-				if (team) {
-					return *team;
-				} else {
-					return nullptr;
-				}
-			} else {
-				return nullptr;
-			}
-		}
-
-		int Index(lua_State * L);
-
-	private:
-		eoc::CombatTeamId teamId_;
-	};
-
-
-	class ItemConstructor : public Userdata<ItemConstructor>, public Indexable<PushPolicy::None>
-	{
-	public:
-		static char const* const MetatableName;
-
-		inline ItemConstructor()
-		{}
-
-		inline ObjectSet<eoc::ItemDefinition>& Get()
-		{
-			return definition_;
-		}
-
-		int Index(lua_State* L);
-
-	private:
-		ObjectSet<eoc::ItemDefinition> definition_;
-	};*/
 
 	struct DealDamageEvent : public EventBase
 	{
@@ -243,13 +138,13 @@ namespace bg3se::esv::lua
 
 		void RegisterNameResolverMetatable(lua_State * L);
 		void CreateNameResolver(lua_State * L);
-
-		static int LuaIndexResolverTable(lua_State* L);
 	};
 
 	class ServerState : public State
 	{
 	public:
+		static ServerState* FromLua(lua_State* L);
+
 		ServerState(ExtensionState& state, uint32_t generationId);
 		~ServerState();
 

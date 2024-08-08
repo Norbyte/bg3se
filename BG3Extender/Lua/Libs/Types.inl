@@ -1,16 +1,6 @@
 /// <lua_module>Types</lua_module>
 BEGIN_NS(lua::types)
 
-std::optional<STDString> GetUserdataObjectTypeName(lua_State * L, int index)
-{
-	auto object = Userdata<LegacyObjectProxy>::AsUserData(L, index);
-	if (object) {
-		return object->GetImpl()->GetTypeName().GetString();
-	}
-
-	return {};
-}
-
 std::optional<STDString> GetCppObjectTypeName(lua_State * L, int index)
 {
 	CppObjectMetadata meta;
@@ -83,19 +73,14 @@ std::optional<STDString> GetCppObjectTypeName(lua_State * L, int index)
 	}
 #endif
 
+	case MetatableTag::OsiFunctionName:
+	{
+		return "OsiFunction";
+	}
+
 	default:
 		return {};
 	}
-}
-
-TypeInformation* GetUserdataObjectType(lua_State * L, int index)
-{
-	auto object = Userdata<LegacyObjectProxy>::AsUserData(L, index);
-	if (object) {
-		return object->GetImpl()->GetPropertyMap().TypeInfo;
-	}
-
-	return {};
 }
 
 TypeInformation const* GetCppObjectType(lua_State * L, int index)
@@ -155,8 +140,6 @@ TypeInformation const* GetCppObjectType(lua_State * L, int index)
 std::optional<STDString> GetObjectType(lua_State* L, AnyRef object)
 {
 	switch (lua_type(L, object.Index)) {
-	case LUA_TUSERDATA:
-		return GetUserdataObjectTypeName(L, 1);
 	case LUA_TLIGHTCPPOBJECT:
 	case LUA_TCPPOBJECT:
 		return GetCppObjectTypeName(L, 1);
@@ -168,8 +151,6 @@ std::optional<STDString> GetObjectType(lua_State* L, AnyRef object)
 TypeInformation* TypeOf(lua_State* L, AnyRef object)
 {
 	switch (lua_type(L, object.Index)) {
-	case LUA_TUSERDATA:
-		return GetUserdataObjectType(L, 1);
 	case LUA_TLIGHTCPPOBJECT:
 	case LUA_TCPPOBJECT:
 		return const_cast<TypeInformation*>(GetCppObjectType(L, 1));
@@ -284,58 +265,45 @@ UserReturn Serialize(lua_State* L)
 {
 	auto type = lua_type(L, 1);
 
-	if (type == LUA_TUSERDATA) {
-		auto proxy = Userdata<LegacyObjectProxy>::AsUserData(L, 1);
-		if (proxy != nullptr) {
-			auto& pm = proxy->GetImpl()->GetPropertyMap();
-			if (pm.Serialize != nullptr) {
-				pm.Serialize(L, proxy->GetRaw(L));
-				return 1;
-			} else {
-				return luaL_error(L, "Object class '%s' does not support serialization", pm.Name.GetString());
-			}
-		}
-
-		return luaL_error(L, "Don't know how to serialize legacy objects of this type");
-	} else if (type == LUA_TLIGHTCPPOBJECT) {
-		CppObjectMetadata meta;
-		lua_get_cppobject(L, 1, meta);
-
-		switch (meta.MetatableTag) {
-			case MetatableTag::ObjectProxyByRef:
-			{
-				auto& pm = LightObjectProxyByRefMetatable::GetPropertyMap(meta);
-				pm.Serialize(L, meta.Ptr);
-				return 1;
-			}
-			
-			case MetatableTag::ArrayProxy:
-			{
-				auto impl = ArrayProxyMetatable::GetImpl(meta);
-				impl->Serialize(L, meta);
-				return 1;
-			}
-
-			case MetatableTag::MapProxy:
-			{
-				auto impl = MapProxyMetatable::GetImpl(meta);
-				impl->Serialize(L, meta);
-				return 1;
-			}
-
-			case MetatableTag::SetProxy:
-			{
-				auto impl = SetProxyMetatable::GetImpl(meta);
-				impl->Serialize(L, meta);
-				return 1;
-			}
-
-			default:
-				return luaL_error(L, "Don't know how to serialize userdata of metatype %d", (unsigned)meta.MetatableTag);
-		}
+	if (type != LUA_TLIGHTCPPOBJECT) {
+		return luaL_error(L, "Don't know how to serialize values of type %s", lua_typename(L, type));
 	}
 
-	return luaL_error(L, "Don't know how to serialize values of type %s", lua_typename(L, type));
+	CppObjectMetadata meta;
+	lua_get_cppobject(L, 1, meta);
+
+	switch (meta.MetatableTag) {
+		case MetatableTag::ObjectProxyByRef:
+		{
+			auto& pm = LightObjectProxyByRefMetatable::GetPropertyMap(meta);
+			pm.Serialize(L, meta.Ptr);
+			return 1;
+		}
+			
+		case MetatableTag::ArrayProxy:
+		{
+			auto impl = ArrayProxyMetatable::GetImpl(meta);
+			impl->Serialize(L, meta);
+			return 1;
+		}
+
+		case MetatableTag::MapProxy:
+		{
+			auto impl = MapProxyMetatable::GetImpl(meta);
+			impl->Serialize(L, meta);
+			return 1;
+		}
+
+		case MetatableTag::SetProxy:
+		{
+			auto impl = SetProxyMetatable::GetImpl(meta);
+			impl->Serialize(L, meta);
+			return 1;
+		}
+
+		default:
+			return luaL_error(L, "Don't know how to serialize userdata of metatype %d", (unsigned)meta.MetatableTag);
+	}
 }
 
 void Unserialize(lua_State* L)
@@ -343,53 +311,42 @@ void Unserialize(lua_State* L)
 	auto type = lua_type(L, 1);
 	luaL_checktype(L, 2, LUA_TTABLE);
 
-	if (type == LUA_TUSERDATA) {
-		auto proxy = Userdata<LegacyObjectProxy>::AsUserData(L, 1);
-		if (proxy) {
-			auto const& pm = proxy->GetImpl()->GetPropertyMap();
-			if (pm.Unserialize == nullptr) {
-				luaL_error(L, "No serializer available for type '%s'", proxy->GetImpl()->GetTypeName().GetString());
-			}
-
-			pm.Unserialize(L, 2, proxy->GetRaw(L));
-			return;
-		}
-	} else if (type == LUA_TLIGHTCPPOBJECT) {
-		CppObjectMetadata meta;
-		lua_get_cppobject(L, 1, meta);
-
-		switch (meta.MetatableTag) {
-			case MetatableTag::ObjectProxyByRef:
-			{
-				auto& pm = LightObjectProxyByRefMetatable::GetPropertyMap(meta);
-				pm.Unserialize(L, 2, meta.Ptr);
-				return;
-			}
-
-			case MetatableTag::ArrayProxy:
-			{
-				auto impl = ArrayProxyMetatable::GetImpl(meta);
-				impl->Unserialize(L, meta, 2);
-				return;
-			}
-
-			case MetatableTag::MapProxy:
-			{
-				auto impl = MapProxyMetatable::GetImpl(meta);
-				impl->Unserialize(L, meta, 2);
-				return;
-			}
-
-			case MetatableTag::SetProxy:
-			{
-				auto impl = SetProxyMetatable::GetImpl(meta);
-				impl->Unserialize(L, meta, 2);
-				return;
-			}
-		}
+	if (type != LUA_TLIGHTCPPOBJECT) {
+		luaL_error(L, "Don't know how to unserialize objects of this type");
 	}
 
-	luaL_error(L, "Don't know how to unserialize objects of this type");
+	CppObjectMetadata meta;
+	lua_get_cppobject(L, 1, meta);
+
+	switch (meta.MetatableTag) {
+		case MetatableTag::ObjectProxyByRef:
+		{
+			auto& pm = LightObjectProxyByRefMetatable::GetPropertyMap(meta);
+			pm.Unserialize(L, 2, meta.Ptr);
+			return;
+		}
+
+		case MetatableTag::ArrayProxy:
+		{
+			auto impl = ArrayProxyMetatable::GetImpl(meta);
+			impl->Unserialize(L, meta, 2);
+			return;
+		}
+
+		case MetatableTag::MapProxy:
+		{
+			auto impl = MapProxyMetatable::GetImpl(meta);
+			impl->Unserialize(L, meta, 2);
+			return;
+		}
+
+		case MetatableTag::SetProxy:
+		{
+			auto impl = SetProxyMetatable::GetImpl(meta);
+			impl->Unserialize(L, meta, 2);
+			return;
+		}
+	}
 }
 
 UserReturn Construct(lua_State* L, FixedString const& typeName)
@@ -430,6 +387,7 @@ std::optional<STDString> GetValueType(lua_State* L, AnyRef object)
 	#if defined(ENABLE_IMGUI)
 		case MetatableTag::ImguiObject: return "ImguiObject";
 	#endif
+		case MetatableTag::OsiFunctionName: return "OsiFunction";
 
 		default: return {};
 		}

@@ -23,7 +23,7 @@ struct StateComponent : public BaseComponent
 	DEFINE_COMPONENT(CombatState, "eoc::combat::StateComponent")
 
 	Guid MyGuid;
-	MultiHashMap<EntityHandle, int32_t> Initiatives;
+	HashMap<EntityHandle, int32_t> Initiatives;
 	Array<EntityHandle> Participants;
 	EntityHandle field_98;
 	EntityHandle field_A0;
@@ -111,14 +111,14 @@ struct CombatGroupMappingComponent : public BaseComponent
 	DEFINE_COMPONENT(ServerCombatGroupMapping, "esv::combat::CombatGroupMappingComponent")
 
 	EntityHandle Entity;
-	MultiHashMap<FixedString, MultiHashSet<EntityHandle>> CombatGroups;
+	HashMap<FixedString, HashSet<EntityHandle>> CombatGroups;
 };
 
 struct EnterRequestComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerEnterRequest, "esv::combat::EnterRequestComponent")
 
-	MultiHashSet<EntityHandle> EnterRequests;
+	HashSet<EntityHandle> EnterRequests;
 };
 
 DEFINE_TAG_COMPONENT(esv::combat, CanStartCombatComponent, ServerCanStartCombat)
@@ -133,14 +133,14 @@ struct InterestedInItemsComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerAiInterestedInItems, "esv::ai::combat::InterestedInItemsComponent")
 
-	MultiHashSet<EntityHandle> Items;
+	HashSet<EntityHandle> Items;
 };
 
 struct InterestingItemComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerAiInterestingItem, "esv::ai::combat::InterestingItemComponent")
 
-	MultiHashSet<EntityHandle> Items;
+	HashSet<EntityHandle> Items;
 };
 
 struct ArchetypeComponent : public BaseComponent
@@ -165,8 +165,8 @@ struct AiModifiersComponent : public BaseComponent
 	DEFINE_COMPONENT(ServerAiModifiers, "esv::ai::combat::AiModifiersComponent")
 
 	uint64_t field_0;
-	MultiHashMap<FixedString, float> Modifiers;
-	//MultiHashMap<FixedString, MultiHashMap<int, ModifierChange>> Changes;
+	HashMap<FixedString, float> Modifiers;
+	//HashMap<FixedString, HashMap<int, ModifierChange>> Changes;
 };
 
 END_NS()

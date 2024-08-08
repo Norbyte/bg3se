@@ -49,6 +49,7 @@ struct GameObjectTemplate
     [[bg3::readonly]] FixedString Id;
     [[bg3::readonly]] FixedString TemplateName;
     [[bg3::readonly]] FixedString ParentTemplateId;
+    [[bg3::readonly]] uint32_t TemplateHandle;
     [[bg3::readonly]] STDString Name;
     OverrideableProperty<uint32_t> GroupID;
     FixedString LevelName;
@@ -70,7 +71,7 @@ struct GameObjectTemplate
 };
 
 
-struct AIBound
+struct BoundData
 {
     [[bg3::legacy(Type)]] float Height;
     float ActualHeight;
@@ -86,7 +87,7 @@ struct AIBound
 
 struct EoCGameObjectTemplate : public GameObjectTemplate
 {
-    OverrideableProperty<Array<AIBound>> AIBounds;
+    OverrideableProperty<Array<BoundData>> AIBounds;
     OverrideableProperty<TranslatedString> DisplayName;
     OverrideableProperty<bool> Fadeable;
     OverrideableProperty<bool> SeeThrough;
@@ -205,7 +206,7 @@ struct CharacterTemplate : public EoCGameObjectTemplate
     OverrideableProperty<FixedString> BloodType;
     OverrideableProperty<FixedString> CriticalHitType;
     OverrideableProperty<FixedString> DefaultDialog;
-    MultiHashSet<Guid>* SpeakerGroupList;
+    HashSet<Guid>* SpeakerGroupList;
     OverrideableProperty<STDString> GeneratePortrait;
     OverrideableProperty<float> LadderAttachOffset;
     OverrideableProperty<float> LadderLoopSpeed;
@@ -297,7 +298,7 @@ struct CharacterTemplate : public EoCGameObjectTemplate
     OverrideableProperty<FixedString> ActivationGroupId;
     OverrideableProperty<uint8_t> AliveInventoryType;
     OverrideableProperty<uint8_t> InventoryType;
-    OverrideableProperty<RefMap<FixedString, FixedString>> PickingPhysicsTemplates;
+    OverrideableProperty<LegacyRefMap<FixedString, FixedString>> PickingPhysicsTemplates;
     OverrideableProperty<FixedString> SoftBodyCollisionTemplate;
     OverrideableProperty<FixedString> RagdollTemplate;
     [[bg3::hidden]]
@@ -358,19 +359,19 @@ struct CharacterTemplate : public EoCGameObjectTemplate
 
 struct EquipmentData : public ProtectedGameObject<EquipmentData>
 {
-    MultiHashMap<Guid, FixedString> ShortHair;
-    MultiHashMap<Guid, FixedString> LongHair;
-    MultiHashMap<Guid, FixedString> WavyShortHair;
-    MultiHashMap<Guid, FixedString> WavyLongHair;
-    MultiHashMap<Guid, FixedString> CurlyShortHair;
-    MultiHashMap<Guid, FixedString> CurlyLongHair;
-    MultiHashMap<Guid, FixedString> DreadShortHair;
-    MultiHashMap<Guid, FixedString> DreadLongHair;
-    MultiHashMap<Guid, FixedString> AfroShortHair;
-    MultiHashMap<Guid, FixedString> AfroLongHair;
-    MultiHashMap<Guid, Array<FixedString>> Visuals;
-    MultiHashMap<Guid, Guid> ParentRace;
-    MultiHashSet<Guid> SyncWithParent;
+    HashMap<Guid, FixedString> ShortHair;
+    HashMap<Guid, FixedString> LongHair;
+    HashMap<Guid, FixedString> WavyShortHair;
+    HashMap<Guid, FixedString> WavyLongHair;
+    HashMap<Guid, FixedString> CurlyShortHair;
+    HashMap<Guid, FixedString> CurlyLongHair;
+    HashMap<Guid, FixedString> DreadShortHair;
+    HashMap<Guid, FixedString> DreadLongHair;
+    HashMap<Guid, FixedString> AfroShortHair;
+    HashMap<Guid, FixedString> AfroLongHair;
+    HashMap<Guid, Array<FixedString>> Visuals;
+    HashMap<Guid, Guid> ParentRace;
+    HashSet<Guid> SyncWithParent;
     resource::VisualSet* VisualSet;
     [[bg3::hidden]] void* Slot_VMT;
     Array<FixedString> Slot;
@@ -382,7 +383,7 @@ struct ItemTemplate : public SceneryTemplate
 {
     CombatComponentTemplate CombatComponent;
     OverrideableProperty<Array<FixedString>> InventoryList;
-    MultiHashSet<Guid>* SpeakerGroups;
+    HashSet<Guid>* SpeakerGroups;
     OverrideableProperty<FixedString> Icon;
     OverrideableProperty<bool> CanBePickedUp;
     OverrideableProperty<bool> CanBePickpocketed;
@@ -421,7 +422,7 @@ struct ItemTemplate : public SceneryTemplate
     OverrideableProperty<bool> IsPortal;
     OverrideableProperty<bool> AttackableWhenClickThrough;
     [[bg3::hidden]] OverrideableProperty<Array<void*>> Scripts;
-    [[bg3::hidden]] OverrideableProperty<MultiHashMap<FixedString, void*>> ScriptOverrides;
+    [[bg3::hidden]] OverrideableProperty<HashMap<FixedString, void*>> ScriptOverrides;
     OverrideableProperty<FixedString> AnubisConfigName;
     [[bg3::hidden]] OverrideableProperty<Array<void*>> ScriptConfigGlobalParameters;
     OverrideableProperty<FixedString> ConstellationConfigName;
@@ -462,7 +463,7 @@ struct ItemTemplate : public SceneryTemplate
     OverrideableProperty<FixedString> PermanentWarnings;
     OverrideableProperty<bool> ContainerAutoAddOnPickup;
     OverrideableProperty<STDString> ContainerContentFilterCondition;
-    MultiHashSet<Guid>* InteractionFilterList;
+    HashSet<Guid>* InteractionFilterList;
     OverrideableProperty<uint8_t> InteractionFilterType;
     OverrideableProperty<uint8_t> InteractionFilterRequirement;
     OverrideableProperty<FixedString> ActivationGroupId;
@@ -593,7 +594,7 @@ struct SurfaceTemplate : public GameObjectTemplate
 struct [[bg3::hidden]] GlobalTemplateBank
 {
     void* VMT;
-    Map<FixedString, GameObjectTemplate*> Templates;
+    LegacyMap<FixedString, GameObjectTemplate*> Templates;
     Array<void*> field_20;
     Array<void*> field_30;
     Array<void*> field_40;
@@ -607,7 +608,7 @@ struct [[bg3::hidden]] GlobalTemplateBank
 struct [[bg3::hidden]] GlobalTemplateManager
 {
     void* VMT;
-    Map<FixedString, GameObjectTemplate*> Templates;
+    LegacyMap<FixedString, GameObjectTemplate*> Templates;
     std::array<GlobalTemplateBank*, 2> Banks;
 };
 
@@ -616,9 +617,9 @@ struct [[bg3::hidden]] CacheTemplateManagerBase
 {
     void* VMT;
     uint8_t TemplateManagerType;
-    MultiHashMap<FixedString, GameObjectTemplate*> Templates;
-    MultiHashMap<uint32_t, GameObjectTemplate*> TemplatesByHandle;
-    MultiHashMap<uint32_t, uint32_t> RefCountsByHandle;
+    HashMap<FixedString, GameObjectTemplate*> Templates;
+    HashMap<uint32_t, GameObjectTemplate*> TemplatesByHandle;
+    HashMap<uint32_t, uint32_t> RefCountsByHandle;
     SRWLock Lock;
     Array<void*> NewTemplates;
     Array<void*> CacheTemplateRemovers;
@@ -629,12 +630,12 @@ struct [[bg3::hidden]] CacheTemplateManagerBase
 struct [[bg3::hidden]] LocalTemplateManager
 {
     SRWLOCK Lock;
-    RefMap<FixedString, GameObjectTemplate*> Templates;
-    RefMap<uint16_t, Array<GameObjectTemplate*>*> TemplatesByType;
-    RefMap<uint32_t, GameObjectTemplate*> TemplatesByHandle;
+    LegacyRefMap<FixedString, GameObjectTemplate*> Templates;
+    LegacyRefMap<uint16_t, Array<GameObjectTemplate*>*> TemplatesByType;
+    LegacyRefMap<uint32_t, GameObjectTemplate*> TemplatesByHandle;
     void* LocalLoadHelper;
     CRITICAL_SECTION CriticalSection;
-    RefMap<FixedString, RefMap<FixedString, GameObjectTemplate*>> TemplatesByLevel;
+    LegacyRefMap<FixedString, LegacyRefMap<FixedString, GameObjectTemplate*>> TemplatesByLevel;
     int field_78;
 };
 
@@ -644,5 +645,12 @@ END_SE()
 BEGIN_NS(lua)
 
 LUA_POLYMORPHIC(GameObjectTemplate)
+LUA_INFINITE_LIFETIME(GameObjectTemplate)
+LUA_INFINITE_LIFETIME(EoCGameObjectTemplate)
+LUA_INFINITE_LIFETIME(SceneryTemplate)
+LUA_INFINITE_LIFETIME(ItemTemplate)
+LUA_INFINITE_LIFETIME(CharacterTemplate)
+LUA_INFINITE_LIFETIME(ProjectileTemplate)
+LUA_INFINITE_LIFETIME(SurfaceTemplate)
 
 END_NS()

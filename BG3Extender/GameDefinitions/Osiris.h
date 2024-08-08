@@ -767,7 +767,7 @@ using NodeDb = TypedDb<Node>;
 
 struct OsirisRef
 {
-	uint32_t Id;
+	uint32_t Id{ 0 };
 };
 
 struct DatabaseRef : OsirisRef

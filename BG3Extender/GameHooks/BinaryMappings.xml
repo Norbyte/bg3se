@@ -166,6 +166,19 @@
           <Target Type="Indirect" Offset="@ref6" Symbol="ecs__EntityWorld__Update" />
         </Mapping>
 
+        <Mapping Name="ecs__EntityWorld__FlushECBs">
+          48 83 be 00 03 00 00 00 // cmp     qword ptr [rsi+300h], 0
+          74 08 // jz      short loc_143693C93
+          48 8b ce // mov     rcx, rsi
+          @ref1 e8 ?? ?? ?? ?? // call    ecs__EntityWorld__FlushECBs
+          48 8b 5e 30 // mov     rbx, [rsi+30h]
+          8b 46 3c // mov     eax, [rsi+3Ch]
+          48 69 f8 f8 00 00 00 // imul    rdi, rax, 0F8h ; 'ø'
+          48 03 fb // add     rdi, rbx
+          48 3b df // cmp     rbx, rdi
+          <Target Type="Indirect" Offset="@ref1" Symbol="ecs__EntityWorld__FlushECBs" />
+        </Mapping>
+
         <!-- Sig: reference to string "MoveController" -->
         <Mapping Name="ls__gTranslatedStringRepository" Critical="true">
           40 53 // push    rbx
@@ -852,6 +865,20 @@
         <Target Type="Absolute" Offset="0" NextSymbol="eoc::PassivePrototype::Init" NextSymbolSeekSize="0x100" />
         <Target Type="Indirect" Offset="@load" NextSymbol="RPGStats::PreParseDataFolder" NextSymbolSeekSize="0x180" />
       </Mapping>
+      
+      <Mapping Name="stats__Functors__VMT">
+        4c 89 49 30 // mov     [rcx+30h], r9
+        4c 89 49 38 // mov     [rcx+38h], r9
+        44 89 4a 58 // mov     [rdx+58h], r9d
+        @ref1 4c 8d 05 ?? ?? ?? ?? // lea     r8, stats__Functors__VMT
+        4c 89 02 // mov     [rdx], r8
+        c7 42 60 ff ff ff ff // mov     dword ptr [rdx+60h], 0FFFFFFFFh
+        48 8d 93 38 01 00 00 // lea     rdx, [rbx+138h]
+        48 89 54 24 30 // mov     [rsp+28h+arg_0], rdx
+        48 8d 42 08 // lea     rax, [rdx+8]
+        48 89 44 24 30 // mov     [rsp+28h+arg_0], rax
+        <Target Type="Indirect" Offset="@ref1" Symbol="stats__Functors__VMT" />
+      </Mapping>
 
     <Mapping Name="eoc::StatusPrototype::Init">
       41 c7 46 04 11 00 00 00 // mov     dword ptr [r14+4], 11h
@@ -861,6 +888,15 @@
       @ref1 e8 ?? ?? ?? ?? // call    eoc__StatusPrototype__Init
       <Condition Type="FixedString" Offset="@str1" Value="INSURFACE" />
       <Target Type="Indirect" Offset="@ref1" Symbol="eoc__StatusPrototype__Init" />
+    </Mapping>
+
+    <Mapping Name="eoc::ParseStaticBoosts">
+      49 8d 94 24 d8 00 00 00 // lea     rdx, [r12+0D8h]
+      4c 8d 45 cf // lea     r8, [rbp+57h+var_88]
+      48 8d 4d af // lea     rcx, [rbp+57h+var_A8]
+      @ref2 e8 ?? ?? ?? ?? // call    eoc__ParseStaticBoosts
+      48 83 c3 08 // add     rbx, 8
+      <Target Type="Indirect" Offset="@ref2" Symbol="eoc__ParseStaticBoosts" />
     </Mapping>
       
       <Mapping Name="eoc::SpellPrototype::Init">

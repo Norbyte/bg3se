@@ -61,10 +61,13 @@ namespace bg3se
 		App::LoadGraphicSettingsProc* App__LoadGraphicSettings{ nullptr };
 
 		ecs::EntityWorld::UpdateProc* ecs__EntityWorld__Update{ nullptr };
+		ecs::EntityWorld::FlushECBsProc* ecs__EntityWorld__FlushECBs{ nullptr };
 
 		/*esv::SurfaceActionFactory** esv__SurfaceActionFactory{nullptr};
 		esv::SurfaceActionFactory::CreateActionProc* esv__SurfaceActionFactory__CreateAction{ nullptr };
 		esv::SurfaceManager::AddActionProc* esv__SurfaceManager__AddAction{ nullptr };*/
+
+		stats::Functors::BaseVMT* stats__Functors__VMT{ nullptr };
 
 		stats::SpellPrototypeManager** eoc__SpellPrototypeManager{ nullptr };
 		stats::SpellPrototype::InitProc* eoc__SpellPrototype__Init{ nullptr };
@@ -77,6 +80,8 @@ namespace bg3se
 
 		stats::InterruptPrototypeManager** eoc__InterruptPrototypeManager{ nullptr };
 		stats::InterruptPrototype::InitProc* eoc__InterruptPrototype__Init{ nullptr };
+
+		stats::ParseStaticBoostsProc* eoc__ParseStaticBoosts{ nullptr };
 
 		esv::OsirisVariableHelper__SavegameVisitProc* esv__OsirisVariableHelper__SavegameVisit{ nullptr };
 

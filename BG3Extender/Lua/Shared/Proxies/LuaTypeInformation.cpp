@@ -7,7 +7,7 @@ BEGIN_SE()
 // Type information registration
 
 template <class UnderlyingType>
-void AddBitfieldTypeInfo(TypeInformation& ty, Map<FixedString, UnderlyingType> const& values)
+void AddBitfieldTypeInfo(TypeInformation& ty, LegacyMap<FixedString, UnderlyingType> const& values)
 {
 	for (auto const& label : values) {
 		ty.Members.insert(std::make_pair(label.Key, GetTypeInfoRef<bool>()));
@@ -62,7 +62,7 @@ void RegisterObjectProxyTypeInformation()
 #define P_FREE_GETTER(prop, fun) ty.Members.insert(std::make_pair(FixedString(#prop), GetTypeInfoRef<decltype(GetFunctionReturnType(&fun))>()));
 #define P_GETTER_SETTER(prop, getter, setter) ty.Members.insert(std::make_pair(FixedString(#prop), GetTypeInfoRef<decltype(GetFunctionReturnType(&TClass::getter))>()));
 #define P_FUN(prop, fun) AddFunctionSignature(ty, #prop, &fun);
-#define P_FALLBACK(getter, setter) ty.HasWildcardProperties = true;
+#define P_FALLBACK(getter, setter, next) ty.HasWildcardProperties = true;
 
 #include <GameDefinitions/Generated/PropertyMaps.inl>
 

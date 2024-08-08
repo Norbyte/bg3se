@@ -31,9 +31,9 @@ struct RuntimeStringHandle
 };
 
 template <>
-inline uint64_t MultiHashMapHash<RuntimeStringHandle>(RuntimeStringHandle const& v)
+inline uint64_t HashMapHash<RuntimeStringHandle>(RuntimeStringHandle const& v)
 {
-	return MultiHashMapHash(v.Handle);
+	return HashMapHash(v.Handle);
 }
 
 struct TranslatedString
@@ -122,7 +122,7 @@ struct TranslatedStringRepository : public ProtectedGameObject<TranslatedStringR
 	struct TextPool
 	{
 		Array<STDString*> Strings;
-		MultiHashMap<RuntimeStringHandle, LSStringView> Texts;
+		HashMap<RuntimeStringHandle, LSStringView> Texts;
 	};
 
 	int field_0;
@@ -130,8 +130,8 @@ struct TranslatedStringRepository : public ProtectedGameObject<TranslatedStringR
 	TextPool* FallbackPool;
 	TextPool* VersionedFallbackPool;
 	Array<void*> field_60;
-	MultiHashMap<FixedString, TranslatedArgumentStringBuffer> ArgumentStrings;
-	MultiHashMap<FixedString, RuntimeStringHandle> TextToStringKey;
+	HashMap<FixedString, TranslatedArgumentStringBuffer> ArgumentStrings;
+	HashMap<FixedString, RuntimeStringHandle> TextToStringKey;
 	ThreadedFastLock Lock;
 	bool IsLoaded;
 

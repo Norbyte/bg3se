@@ -29,7 +29,7 @@ private:
 	{
 		uint64_t InvalidationFlags;
 		Array<SubscriptionIndex> GlobalHooks;
-		MultiHashMap<EntityHandle, Array<SubscriptionIndex>> EntityHooks;
+		HashMap<EntityHandle, Array<SubscriptionIndex>> EntityHooks;
 	};
 
 	lua::State& state_;

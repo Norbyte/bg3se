@@ -14,8 +14,8 @@ struct PathingComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(Pathing, "eoc::PathingComponent")
 
-	RefMap<FixedString, glm::vec4> VectorParameters;
-	RefMap<FixedString, AiPathProbeGroup> PathParameters;
+	LegacyRefMap<FixedString, glm::vec4> VectorParameters;
+	LegacyRefMap<FixedString, AiPathProbeGroup> PathParameters;
 	glm::vec3 field_20;
 	FixedString MovementTiltToRemap;
 	__int64 field_30;

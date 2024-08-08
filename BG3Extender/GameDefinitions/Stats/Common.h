@@ -17,7 +17,7 @@ struct CNamedElementManager : public Noncopyable<CNamedElementManager<T>>
 {
 	void* VMT{ nullptr };
 	Array<T *> Primitives;
-	MultiHashMap<FixedString, uint32_t> NameHashMap;
+	HashMap<FixedString, uint32_t> NameHashMap;
 	uint32_t NextHandle{ 0 };
 	uint32_t NumSomeItems{ 0 };
 
@@ -107,8 +107,8 @@ struct Object : public Noncopyable<Object>
 	void* VMT{ nullptr };
 	Vector<int32_t> IndexedProperties;
 	FixedString Name;
-	MultiHashMap<FixedString, Array<FunctorGroup>> Functors;
-	MultiHashMap<FixedString, Array<RollCondition>> RollConditions;
+	HashMap<FixedString, Array<FunctorGroup>> Functors;
+	HashMap<FixedString, Array<RollCondition>> RollConditions;
 	FixedString AIFlags;
 	Array<Requirement> Requirements;
 	Array<FixedString> ComboProperties;
@@ -119,6 +119,7 @@ struct Object : public Noncopyable<Object>
 
 	RPGEnumeration* GetAttributeInfo(FixedString const& attributeName, int& attributeIndex);
 	std::optional<STDString> GetString(FixedString const& attributeName);
+	std::optional<FixedString> GetFixedString(FixedString const& attributeName);
 	std::optional<int> GetInt(FixedString const& attributeName);
 	std::optional<float> GetFloat(FixedString const& attributeName);
 	std::optional<int64_t> GetInt64(FixedString const& attributeName);
@@ -147,5 +148,11 @@ struct ObjectInstance : public Object
 {
 	uint32_t InstanceId;
 };
+
+END_NS()
+
+BEGIN_NS(lua)
+
+LUA_INFINITE_LIFETIME(stats::Object)
 
 END_NS()

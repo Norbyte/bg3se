@@ -952,22 +952,22 @@ public:
 		new (&buf_[size_++]) T(value);
 	}
 
-	void push_back(T const& value)
+	T& push_back(T const& value)
 	{
 		if (capacity_ <= size_) {
 			Reallocate(CapacityIncrement());
 		}
 
-		new (&buf_[size_++]) T(value);
+		return *(new (&buf_[size_++]) T(value));
 	}
 
-	void push_back(T&& value)
+	T& push_back(T&& value)
 	{
 		if (capacity_ <= size_) {
 			Reallocate(CapacityIncrement());
 		}
 
-		new (&buf_[size_++]) T(std::move(value));
+		return *(new (&buf_[size_++]) T(std::move(value)));
 	}
 
 	void ordered_insert_at(size_type index, T const& value)

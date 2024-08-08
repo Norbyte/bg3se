@@ -26,9 +26,13 @@ namespace bg3se
 		inline constexpr LSBaseStringView& operator=(const LSBaseStringView&) noexcept = default;
 
 		inline constexpr LSBaseStringView(const_pointer s) noexcept
-            : data_(s), size_(strlen(s)) {}
+            : data_(s), size_((int32_t)strlen(s)) {}
 
 		LSBaseStringView(nullptr_t) = delete;
+
+		inline constexpr LSBaseStringView(std::basic_string_view<T> const& sv) noexcept
+			: data_(sv.data()), size_((int32_t)sv.size())
+        {}
 
 		inline constexpr LSBaseStringView(const_pointer s, size_type size) noexcept
             : data_(s), size_(size)

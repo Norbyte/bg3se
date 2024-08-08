@@ -24,6 +24,12 @@ struct ModuleSettings : public ProtectedGameObject<ModuleSettings>
 	Array<FixedString> ModOrder;
 };
 
+struct UGCModDependency
+{
+	uint64_t DependencyHandle;
+	STDString DependencyName;
+};
+
 struct ModuleInfo
 {
 	FixedString ModuleUUIDString;

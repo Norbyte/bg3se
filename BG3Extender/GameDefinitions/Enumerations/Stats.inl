@@ -515,6 +515,18 @@ BEGIN_ENUM(ProficiencyBonusBoostType, uint32_t)
 	EV(WeaponActionDC, 9)
 END_ENUM()
 
+BEGIN_ENUM(ShapeshiftSpellSource, uint64_t)
+	EV(ShapeshiftRule, 0)
+	EV(Unknown, 1)
+	EV(Template, 2)
+END_ENUM()
+
+BEGIN_ENUM(ShapeshiftChangeType, uint8_t)
+	EV(Add, 0)
+	EV(Multiply, 1)
+	EV(Override, 2)
+END_ENUM()
+
 BEGIN_ENUM(Gender, uint8_t)
 	EV(Male, 0)
 	EV(Female, 1)

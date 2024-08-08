@@ -9,6 +9,7 @@
 #if defined(ENABLE_IMGUI)
 #include <Extender/Client/IMGUI/Objects.h>
 #endif
+#include <Lua/Osiris/FunctionProxy.h>
 
 #if !defined(OSI_NO_DEBUGGER)
 
@@ -33,8 +34,7 @@ namespace bg3se::lua::dbg
 				|| meta.MetatableTag == MetatableTag::Entity
 				|| meta.MetatableTag == MetatableTag::ImguiObject;
 		} else {
-			return tt == LUA_TTABLE
-				|| tt == LUA_TUSERDATA;
+			return tt == LUA_TTABLE;
 		}
 	}
 
@@ -107,12 +107,6 @@ namespace bg3se::lua::dbg
 			value->set_type_id(MsgValueType::FUNCTION);
 			break;
 
-		case LUA_TUSERDATA:
-			value->set_type_id(MsgValueType::USERDATA);
-			value->set_stringval(luaL_tolstring(L, idx, nullptr));
-			lua_pop(L, 1);
-			break;
-
 		case LUA_TCPPOBJECT:
 		case LUA_TLIGHTCPPOBJECT:
 		{
@@ -183,6 +177,17 @@ namespace bg3se::lua::dbg
 				break;
 			}
 #endif
+
+			case MetatableTag::OsiFunctionName:
+			{
+				CppValueMetadata val;
+				lua_get_cppvalue(L, idx, val);
+				value->set_type_id(MsgValueType::USERDATA);
+				char name[200];
+				sprintf_s(name, "OsiFunction (%s)", esv::lua::OsiFunctionNameMetatable::Get(L, val)->name.GetString());
+				value->set_stringval(name);
+				break;
+			}
 
 			default:
 				value->set_type_id(MsgValueType::UNKNOWN);
@@ -407,28 +412,6 @@ namespace bg3se::lua::dbg
 	}
 #endif
 
-	void LuaUserdataToEvalResults(lua_State* L, int index, LegacyObjectProxy* proxy, DebuggerGetVariablesRequest const& req)
-	{
-		StackCheck _(L);
-		if (!proxy->IsAlive(L)) {
-			luaL_error(L, "Attempted to dump dead object of type '%s'", proxy->GetImpl()->GetTypeName().GetString());
-		}
-
-		auto const& pm = proxy->GetImpl()->GetPropertyMap();
-		auto obj = proxy->GetImpl()->GetRaw(L);
-		auto lifetime = State::FromLua(L)->GetGlobalLifetime();
-
-		for (auto it : pm.IterableProperties) {
-			auto const& prop = pm.Properties.values()[it.Value()];
-			auto result = prop.Get(L, lifetime, obj, prop);
-			if (result == PropertyOperationResult::Success) {
-				push(L, it.Key());
-				LuaElementToEvalResults(L, -1, -2, req);
-				lua_pop(L, 2);
-			}
-		}
-	}
-
 	void LuaEntityToEvalResults(lua_State* L, int index, CppObjectMetadata& meta, DebuggerGetVariablesRequest const& req)
 	{
 		StackCheck _(L);
@@ -511,17 +494,6 @@ namespace bg3se::lua::dbg
 		}
 	}
 
-	void LuaUserdataToEvalResults(lua_State* L, int index, DebuggerGetVariablesRequest const& req)
-	{
-		auto proxy = Userdata<LegacyObjectProxy>::AsUserData(L, index);
-		if (proxy != nullptr) {
-			LuaUserdataToEvalResults(L, index, proxy, req);
-			return;
-		}
-
-		WARN("LuaValueToEvalResults(): Evaluating unrecognized userdata type");
-	}
-
 	void LuaLightCppObjectToEvalResults(lua_State* L, int index, DebuggerGetVariablesRequest const& req)
 	{
 		CppObjectMetadata meta;
@@ -570,17 +542,13 @@ namespace bg3se::lua::dbg
 			LuaTableToEvalResults(L, index, req);
 			break;
 
-		case LUA_TUSERDATA:
-			LuaUserdataToEvalResults(L, index, req);
-			break;
-
 		case LUA_TLIGHTCPPOBJECT:
 		case LUA_TCPPOBJECT:
 			LuaLightCppObjectToEvalResults(L, index, req);
 			break;
 
 		default:
-			WARN("LuaValueToEvalResults(): Evaluating non-table/userdata recursively?");
+			WARN("LuaValueToEvalResults(): Evaluating non-table/cppobject recursively?");
 			break;
 		}
 	}
@@ -1180,7 +1148,7 @@ namespace bg3se::lua::dbg
 				lua_pop(L, 1);
 				return ResultCode::Success;
 			} else {
-				req.Response->set_error_message("Can only enumerate table or userdata types");
+				req.Response->set_error_message("Can only enumerate table or cppobject types");
 				lua_pop(L, 1);
 				return ResultCode::EvalFailed;
 			}

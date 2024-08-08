@@ -75,10 +75,10 @@ struct TypeInformation
 	TypeInformationRef KeyType;
 	TypeInformationRef ElementType;
 	TypeInformationRef ParentType;
-	Map<FixedString, TypeInformationRef> Members;
-	Map<FixedString, TypeInformation> Methods;
+	LegacyMap<FixedString, TypeInformationRef> Members;
+	LegacyMap<FixedString, TypeInformation> Methods;
 	bool HasWildcardProperties{ false };
-	Map<FixedString, uint64_t> EnumValues;
+	LegacyMap<FixedString, uint64_t> EnumValues;
 	Array<TypeInformationRef> ReturnValues;
 	Array<TypeInformationRef> Params;
 	bool VarargParams{ false };
@@ -194,7 +194,7 @@ inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overl
 }
 
 template <class T>
-inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<MultiHashSet<T>>)
+inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<HashSet<T>>)
 {
 	return &MakeDeferredSetType<T>;
 }
@@ -206,25 +206,25 @@ inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overl
 }
 
 template <class TKey, class TValue>
-inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<Map<TKey, TValue>>)
+inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<LegacyMap<TKey, TValue>>)
 {
 	return &MakeDeferredMapType<TKey, TValue>;
 }
 
 template <class TKey, class TValue>
-inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<RefMap<TKey, TValue>>)
+inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<LegacyRefMap<TKey, TValue>>)
 {
 	return &MakeDeferredMapType<TKey, TValue>;
 }
 
 template <class TKey, class TValue>
-inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<MultiHashMap<TKey, TValue>>)
+inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<HashMap<TKey, TValue>>)
 {
 	return &MakeDeferredMapType<TKey, TValue>;
 }
 
 template <class TKey, class TValue>
-inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<VirtualMultiHashMap<TKey, TValue>>)
+inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<VirtualHashMap<TKey, TValue>>)
 {
 	return &MakeDeferredMapType<TKey, TValue>;
 }
@@ -299,6 +299,12 @@ StaticTypeInformation& GetStaticTypeInfo(Overload<RefReturn<T>>)
 }
 
 template <class T>
+StaticTypeInformation& GetStaticTypeInfo(Overload<GlobalRefReturn<T>>)
+{
+	return GetStaticTypeInfo(Overload<T>{});
+}
+
+template <class T>
 StaticTypeInformation& GetStaticTypeInfo(Overload<ByValReturn<T>>)
 {
 	return GetStaticTypeInfo(Overload<T>{});
@@ -340,7 +346,7 @@ public:
 	TypeInformation const* TryGetType(FixedString const& typeName);
 	TypeInformation const& GetType(FixedString const& typeName);
 	TypeInformation const& GetUndefinedType();
-	Map<FixedString, TypeInformation*> const& GetAllTypes();
+	LegacyMap<FixedString, TypeInformation*> const& GetAllTypes();
 
 	template <class T>
 	void DeferredRegister(Overload<Array<T>>)
@@ -349,7 +355,7 @@ public:
 	}
 
 private:
-	Map<FixedString, TypeInformation*> types_;
+	LegacyMap<FixedString, TypeInformation*> types_;
 	Array<StaticTypeInformation*> initializers_;
 	TypeInformation undefinedType_;
 	bool initialized_;

@@ -69,8 +69,8 @@ struct [[bg3::hidden]] VirtualTextureManagerBase : public ProtectedGameObject<Vi
 
 	bool UseChunkedVirtualTextures;
 	SRWLOCK GTSLock;
-	RefMap<STDString, GTSInfo> LoadedGTS;
-	MultiHashMap<TextureLayerConfigId, Array<LayerConfig>> LayerConfigs;
+	LegacyRefMap<STDString, GTSInfo> LoadedGTS;
+	HashMap<TextureLayerConfigId, Array<LayerConfig>> LayerConfigs;
 };
 
 struct [[bg3::hidden]] VirtualTextureSet
@@ -217,8 +217,8 @@ struct [[bg3::hidden]] TextureManager
     using UnloadTextureProc = bool (TextureManager* self, FixedString const& textureGuid);
 
     SRWLOCK Lock;
-    MultiHashMap<TextureDescriptor*, FixedString> Names;
-    MultiHashMap<FixedString, TextureData*> Textures;
+    HashMap<TextureDescriptor*, FixedString> Names;
+    HashMap<FixedString, TextureData*> Textures;
 };
 
 struct [[bg3::hidden]] UVValues
@@ -230,7 +230,7 @@ struct [[bg3::hidden]] UVValues
 struct [[bg3::hidden]] TextureAtlas
 {
     void* VMT;
-    Map<FixedString, UVValues*> Icons;
+    LegacyMap<FixedString, UVValues*> Icons;
     STDString Path;
     STDString TexturePath;
     uint32_t IconWidth;
@@ -244,15 +244,15 @@ struct [[bg3::hidden]] TextureAtlas
 struct [[bg3::hidden]] TextureAtlasMap
 {
     void* VMT;
-    RefMap<STDString, TextureAtlas*> AtlasMap;
-    Map<FixedString, TextureAtlas*> IconMap;
+    LegacyRefMap<STDString, TextureAtlas*> AtlasMap;
+    LegacyMap<FixedString, TextureAtlas*> IconMap;
 	uint32_t Unknown;
 };
 
 struct [[bg3::hidden]] Bank : public ProtectedGameObject<Bank>
 {
 	void* VMT;
-	Map<FixedString, resource::Resource*> Resources;
+	LegacyMap<FixedString, resource::Resource*> Resources;
 	SRWLOCK SRWLock;
 	ResourceBankType BankTypeId;
 };
@@ -269,7 +269,7 @@ struct [[bg3::hidden]] ResourceBank
 {
 	void* VMT;
 	ResourceContainer Container;
-	Map<FixedString, ResourcePackage*> Packages;
+	LegacyMap<FixedString, ResourcePackage*> Packages;
 	void* LoadHelper;
 	FixedString ModName;
 };
@@ -280,13 +280,13 @@ struct [[bg3::hidden]] ResourcePackage
 	ResourceBank* Bank;
 	FixedString PackageName;
 	STDString Path;
-	RefMap<FixedString, void*> field_38;
+	LegacyRefMap<FixedString, void*> field_38;
 };
 
 struct [[bg3::hidden]] ResourceManager
 {
 	__int64 field_0;
-	Map<FixedString, resource::Resource*> Resources;
+	LegacyMap<FixedString, resource::Resource*> Resources;
 	std::array<ResourceBank*, 2> ResourceBanks;
 	void* MeshProxyFactory;
 	void* VisualFactory;
@@ -304,10 +304,10 @@ struct [[bg3::hidden]] ResourceManager
 	__int64 GameAnalytics;
 	VirtualTextureManager* VirtualTextureManager;
 	CRITICAL_SECTION CriticalSection;
-	RefMap<STDString, void*> ResourceDependencies;
-	Map<FixedString, Path*> Sources;
+	LegacyRefMap<STDString, void*> ResourceDependencies;
+	LegacyMap<FixedString, Path*> Sources;
 	Array<void*> VisualLoaders;
-	Map<FixedString, void*> GenomeAnimationManagers;
+	LegacyMap<FixedString, void*> GenomeAnimationManagers;
 	void* BlueprintManager;
 	ui::UIManager* UIManager;
 	ui::UIManager* UIManagerSwap;
@@ -493,7 +493,7 @@ struct PresetData
 	FixedString MaterialResource;
 	[[bg3::hidden]] __int32 field_64;
 
-	MultiHashMap<FixedString, Mapped> MaterialPresets;
+	HashMap<FixedString, Mapped> MaterialPresets;
 };
 
 struct AnimationResource : public TwoStepLoadableResource
@@ -648,15 +648,15 @@ struct AnimationResource : public TwoStepLoadableResource
 	FixedString AdditiveLoopingAnimationID;
 	FixedString LeftTransitionAnimation;
 	FixedString RightTransitionAnimation;
+	// FixedString PreviewVisualResource;
 	FixedString SkeletonResource;
 	float TimeStep;
 	float Duration;
 	float Offset;
 	bool Looping;
+	// bool IsPoseBank;
 	uint8_t AnchorHand;
 	uint8_t SupportingLeg;
-	[[bg3::hidden]] __int8 field_7b;
-	[[bg3::hidden]] __int32 field_7c;
 };
 
 struct AnimationBlueprintResource : public TwoStepLoadableResource
@@ -664,7 +664,7 @@ struct AnimationBlueprintResource : public TwoStepLoadableResource
 	[[bg3::hidden]] void* field_48;              // Deleter
 	Array<__int64> field_50; // Vtable pointers??? Why???
 
-	RefMap<bg3se::Guid, GenomeVariant> Params;
+	LegacyRefMap<bg3se::Guid, GenomeVariant> Params;
 };
 
 struct AnimationSetResource : public LoadableResource
@@ -680,14 +680,14 @@ struct AnimationSetResource : public LoadableResource
 			[[bg3::hidden]] __int32 field_8;
 		};
 
-		RefMap<FixedString, Animations> Animation;
+		LegacyRefMap<FixedString, Animations> Animation;
 		FixedString FallBackSubSet;
 		[[bg3::hidden]] __int32 field_14;
 	};
 
 	struct Bank
 	{
-		RefMap<FixedString, Subset> AnimationSubSets;
+		LegacyRefMap<FixedString, Subset> AnimationSubSets;
 		bg3se::Guid ShortNameSetId;
 	};
 
@@ -916,9 +916,9 @@ struct VisualSet
 	Array<Slot> Slots;
 	Array<LocatorAttachment> LocatorAttachments;
 	PresetData MaterialOverrides;
-	Map<FixedString, PresetData> Materials;
-	MultiHashMap<FixedString, FixedString> RealMaterialOverrides;
-	MultiHashMap<FixedString, FixedString> field_158;
+	LegacyMap<FixedString, PresetData> Materials;
+	HashMap<FixedString, FixedString> RealMaterialOverrides;
+	HashMap<FixedString, FixedString> field_158;
 	FixedString ID;
 	bool ShowEquipmentVisuals;
 };
@@ -1190,7 +1190,7 @@ BEGIN_BARE_NS(effects)
 		__int64 field_58;
 		__int64 field_60;
 		__int64 field_68;
-		Map<FixedString, Property*> PropertiesByFullName;
+		LegacyMap<FixedString, Property*> PropertiesByFullName;
 		Array<Module*> Modules;
 		Array<Property*> Properties;
 		__int64 field_a8;
@@ -2300,7 +2300,7 @@ struct IKRigResource : public LoadableResource
 		[[bg3::hidden]] __int16 field_3e;
 	};
 
-	RefMap<FixedString, BoneProperty> BoneProperties;
+	LegacyRefMap<FixedString, BoneProperty> BoneProperties;
 
 	[[bg3::hidden]] void* field_40; // DynamicArray VMT
 	Array<IKTask> IKTasks;
@@ -2310,7 +2310,7 @@ struct IKRigResource : public LoadableResource
 	[[bg3::hidden]] __int8 field_61;
 	[[bg3::hidden]] __int16 field_62;
 	[[bg3::hidden]] __int32 field_64;
-	MultiHashMap<bg3se::Guid, FixedString> BoneCategories;
+	HashMap<bg3se::Guid, FixedString> BoneCategories;
 };
 
 struct LightCookieResource : public TwoStepLoadableResource
@@ -2653,7 +2653,7 @@ struct ScriptResource : public LoadableResource
 		STDString Value;
 	};
 
-	Map<FixedString, Parameter*> Parameters;
+	LegacyMap<FixedString, Parameter*> Parameters;
 };
 
 struct SkeletonResource : public TwoStepLoadableResource
@@ -2687,7 +2687,7 @@ struct SkeletonResource : public TwoStepLoadableResource
 		[[bg3::hidden]] __int32 field_34;
 	};
 
-	RefMap<FixedString, Bone> Bones;
+	LegacyRefMap<FixedString, Bone> Bones;
 	[[bg3::hidden]] void* field_58; // DynamicArray VMT
 	Array<Socket> Sockets;
 	[[bg3::hidden]] __int64 field_70; // DynamicArray extra data
@@ -2779,7 +2779,7 @@ struct TileSetResource : public LoadableResource
 
 	struct ExtendedRefMap
 	{
-		RefMap<bg3se::Guid, Tile> Tiles;
+		LegacyRefMap<bg3se::Guid, Tile> Tiles;
 		bool IsRoof;
 		[[bg3::hidden]] __int8 field_11;
 		[[bg3::hidden]] __int16 field_12;
@@ -2914,7 +2914,7 @@ struct VisualResource : public TwoStepLoadableResource
 	Array<ClothParam> ClothParams;
 	Array<AnimationSetOverride> AnimationSetOverrides;
 	Array<FixedString> AnimationWaterfall;
-	RefMap<FixedString, Bone> Bones;
+	LegacyRefMap<FixedString, Bone> Bones;
 	[[bg3::hidden]] void* field_c8; // DynamicArray VMT
 	Array<FixedString> VertexColorMaskSlots;
 	[[bg3::hidden]] __int64 field_e0; // DynamicArray extra data
@@ -2931,7 +2931,7 @@ struct VisualResource : public TwoStepLoadableResource
 	FixedString BlueprintInstanceResourceID;
 	[[bg3::hidden]] __int32 field_114;
 
-	MultiHashMap<FixedString, Array<ClothProxy>> ClothProxyMapping;
+	HashMap<FixedString, Array<ClothProxy>> ClothProxyMapping;
 
 	glm::fvec3 BoundsMin;
 	glm::fvec3 BoundsMax;

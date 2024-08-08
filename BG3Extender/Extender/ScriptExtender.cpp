@@ -51,7 +51,7 @@ void ScriptExtender::WarnIfOffline()
 	if (sep == nullptr) return;
 	sep++;
 
-	auto end = wcschr(path, L'.');
+	auto end = wcschr(sep, L'.');
 	if (end == nullptr) return;
 	*end = 0;
 
@@ -270,6 +270,11 @@ void ScriptExtender::OnECSUpdate(ecs::EntityWorld::UpdateProc* wrapped, ecs::Ent
 			lua->GetReplicationEventHooks()->OnEntityReplication(*entityWorld);
 		}
 	}
+}
+
+void ScriptExtender::OnECSFlushECBs(ecs::EntityWorld* entityWorld)
+{
+	GetECS().OnFlushECBs();
 }
 
 bool ScriptExtender::HasFeatureFlag(char const * flag) const
@@ -497,6 +502,7 @@ void ScriptExtender::PostStartup()
 		//engineHooks_.Kernel_FindClose.SetWrapper(&ScriptExtender::OnFindClose, this);
 		engineHooks_.RPGStats__Load.SetWrapper(&ScriptExtender::OnStatsLoad, this);
 		engineHooks_.ecs__EntityWorld__Update.SetWrapper(&ScriptExtender::OnECSUpdate, this);
+		engineHooks_.ecs__EntityWorld__FlushECBs.SetPreHook(&ScriptExtender::OnECSFlushECBs, this);
 	}
 
 	GameVersionInfo gameVersion;

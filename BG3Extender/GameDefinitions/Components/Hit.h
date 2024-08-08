@@ -18,7 +18,7 @@ struct TargetInfo
 	Array<DamagePair> field_38;
 	uint8_t field_48;
 	Array<bool> field_50;
-	MultiHashSet<uint8_t> ResistanceTypes;
+	HashSet<uint8_t> ResistanceTypes;
 	Guid field_90;
 	uint8_t field_A0;
 	uint8_t field_A1;
@@ -88,7 +88,7 @@ struct ReactionComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(HitReaction, "eoc::hit::ReactionComponent")
 
-	MultiHashMap<EntityHandle, ReactionSource> Reactions;
+	HashMap<EntityHandle, ReactionSource> Reactions;
 };
 
 

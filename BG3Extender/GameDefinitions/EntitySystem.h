@@ -35,6 +35,11 @@ using ReplicationTypeIndex = TypedIntegral<uint16_t, ReplicationTypeIndexTag>;
 static constexpr ReplicationTypeIndex UndefinedReplicationComponent{ 0xffff };
 static constexpr ComponentTypeIndex UndefinedComponent{ 0xffff };
 
+inline constexpr bool IsOneFrame(ComponentTypeIndex idx)
+{
+	return (idx.Value() & 0x8000) == 0x8000;
+}
+
 END_NS()
 
 BEGIN_SE()
@@ -46,10 +51,10 @@ inline uint64_t SparseHashMapHash<ecs::ComponentTypeIndex>(ecs::ComponentTypeInd
 }
 
 template <>
-inline uint64_t MultiHashMapHash<ecs::ComponentTypeIndex>(ecs::ComponentTypeIndex const& v)
+inline uint64_t HashMapHash<ecs::ComponentTypeIndex>(ecs::ComponentTypeIndex const& v)
 {
-	return ((v.Value() & 0x7FFF) + 0x780 * (v.Value() >> 15))
-		| (uint64_t)(((v.Value() & 0x7FFF) + 0x780 * (v.Value() >> 15)) << 16);
+	auto h0 = ((uint64_t)v.Value() & 0x7FFF) + ((uint64_t)v.Value() >> 15 << 11);
+	return h0 | (h0 << 16);
 }
 
 
@@ -137,10 +142,10 @@ BEGIN_NS(ecs)
 struct ComponentTypeEntry : public ProtectedGameObject<ComponentTypeEntry>
 {
 	ComponentTypeIndex TypeId;
-	int NameId;
-	uint8_t field_8;
-	uint8_t field_9;
-	uint8_t field_A;
+	int UncheckedId;
+	bool Replicated;
+	bool OneFrame;
+	bool field_A;
 	bool QueryFlags[4];
 	uint16_t InlineSize;
 	uint16_t ComponentSize;
@@ -152,8 +157,7 @@ struct ComponentTypeEntry : public ProtectedGameObject<ComponentTypeEntry>
 	Array<ComponentTypeIndex> DependentComponentIndices;
 	Array<ComponentTypeIndex> DependencyComponentIndices;
 #if 0
-	uint64_t field_50;
-	uint32_t field_58;
+	LSStringView Name;
 #endif
 };
 
@@ -189,7 +193,7 @@ struct QueryDescription : public ProtectedGameObject<QueryDescription>
 	using ID = uint16_t;
 
 	// TypeList template parameters to ecs::query::spec::Spec<...>
-	MultiHashSet<int32_t> StorageFrameIDs;
+	HashSet<int32_t> StorageFrameIDs;
 	StaticArray<StorageComponentMap> EntityClasses;
 #if 0
 	STDString Name;
@@ -244,10 +248,10 @@ struct SystemTypeEntry : public ProtectedGameObject<SystemTypeEntry>
 	void* SomeProc2;
 	void* SomeProc3;
 	void* ECBFlushJob;
-	MultiHashSet<SystemTypeEntry::ID> DependencySystems;
-	MultiHashSet<SystemTypeEntry::ID> DependentSystems;
-	MultiHashSet<uint32_t> HandleMappings2;
-	MultiHashSet<uint32_t> HandleMappings;
+	HashSet<SystemTypeEntry::ID> DependencySystems;
+	HashSet<SystemTypeEntry::ID> DependentSystems;
+	HashSet<uint32_t> HandleMappings2;
+	HashSet<uint32_t> HandleMappings;
 #if 0
 	StringView Name;
 	uint64_t field_108;
@@ -266,7 +270,7 @@ struct SystemRegistry : public ProtectedGameObject<SystemRegistry>
 
 struct SyncBuffers : public ProtectedGameObject<SyncBuffers>
 {
-	Array<MultiHashMap<EntityHandle, BitSet<>>> ComponentPools;
+	Array<HashMap<EntityHandle, BitSet<>>> ComponentPools;
 	bool Dirty;
 };
 
@@ -276,8 +280,8 @@ struct EntityHandleGenerator : public ProtectedGameObject<EntityHandleGenerator>
 	{
 		struct Entry
 		{
-			int Index;
-			int Salt;
+			uint32_t Index;
+			uint32_t Salt;
 		};
 
 		PagedArray<Entry> Salts;
@@ -353,24 +357,25 @@ struct EntityStorageData : public ProtectedGameObject<EntityStorageData>
 	int16_t field_148;
 	int16_t SmallPageIndex;
 	Array<uint16_t> PageToComponentPoolIndex;
-	MultiHashMap<ComponentTypeIndex, uint8_t> ComponentTypeToIndex;
-	MultiHashMap<EntityHandle, EntityStorageIndex> InstanceToPageMap;
-	MultiHashMap<uint64_t, uint16_t> AddedComponentFrameStorageIDs;
-	MultiHashMap<uint64_t, uint16_t> RemovedComponentFrameStorageIDs2;
+	HashMap<ComponentTypeIndex, uint8_t> ComponentTypeToIndex;
+	HashMap<EntityHandle, EntityStorageIndex> InstanceToPageMap;
+	HashMap<uint64_t, uint16_t> AddedComponentFrameStorageIDs;
+	HashMap<uint64_t, uint16_t> RemovedComponentFrameStorageIDs2;
 	Array<Array<EntityHandle>> ComponentAddedEntityMap;
 	Array<Array<EntityHandle>> ComponentRemovedEntityMap;
 	// FIXME - SparseArray<ComponentTypeEntry> instead?
-	MultiHashMap<ComponentTypeIndex, MultiHashMap<uint16_t, EntityStorageComponentPage*>*> ComponentPoolsByType;
+	HashMap<ComponentTypeIndex, HashMap<EntityHandle, void*>> ComponentPoolsByType;
 	bool HasComponentPoolsByType;
 	__int64 field_2C8;
 	EntityTypeMask ComponentMask; // Valid indices into Components pool
-	Array<uint16_t> RegisteredQueries;
-	Array<uint16_t> AddComponentQueries;
+	Array<QueryDescription::ID> RegisteredQueries;
+	Array<QueryDescription::ID> AddComponentQueries;
 	QueryMask AddComponentQueryMap;
-	Array<uint16_t> RemoveComponentQueries;
+	Array<QueryDescription::ID> RemoveComponentQueries;
 	QueryMask RemoveComponentQueryMap;
 
 	void* GetComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy) const;
+	void* GetOneFrameComponent(EntityHandle entityHandle, ComponentTypeIndex type) const;
 	void* GetComponent(EntityStorageIndex const& entityPtr, ComponentTypeIndex type, std::size_t componentSize, bool isProxy) const;
 	void* GetComponent(EntityStorageIndex const& entityPtr, uint8_t componentSlot, std::size_t componentSize, bool isProxy) const;
 
@@ -396,9 +401,9 @@ struct EntityStorageContainer : public ProtectedGameObject<EntityStorageContaine
 	};
 
 	Array<EntityStorageData*> Entities;
-	MultiHashMap<uint64_t, uint16_t> TypeHashToEntityTypeIndex;
+	HashMap<uint64_t, uint16_t> TypeHashToEntityTypeIndex;
 	SaltMap Salts;
-	MultiHashMap<uint64_t, uint64_t> field_458;
+	HashMap<uint64_t, uint64_t> field_458;
 	BitSet<> UsedFrameDataStorages;
 	ComponentRegistry* ComponentRegistry;
 	QueryRegistry* Queries;
@@ -552,7 +557,7 @@ struct BucketedHashSet
 	{
 		if (HashTableSize == 0) return -1;
 
-		auto hash = MultiHashMapHash(key) % HashTableSize;
+		auto hash = HashMapHash(key) % HashTableSize;
 		auto keyIndex = HashKeys[hash >> BitsPerHashBucket][hash & ((1 << BitsPerHashBucket) - 1)];
 		while (keyIndex >= 0) {
 			auto keyTable = keyIndex >> BitsPerKeyBucket;
@@ -720,17 +725,17 @@ struct ComponentCallbacks : public ProtectedGameObject<ComponentCallbacks>
 	ComponentCallbackList OnDestroy;
 };
 
+struct ECBEntityComponentChange
+{
+	// -1 = removed
+	EntityStorageData::EntityStorageIndex PoolIndex;
+	uint16_t field_4;
+	ComponentTypeIndex ComponentTypeId;
+};
+
 struct ECBEntityChangeSet
 {
-	struct ComponentRef
-	{
-		// -1 = removed
-		int32_t PoolIndex;
-		uint16_t field_4;
-		uint16_t ComponentTypeId;
-	};
-
-	BucketedStaticArray<ComponentRef> Store;
+	BucketedStaticArray<ECBEntityComponentChange> Store;
 	uint64_t X;
 	uint64_t Y;
 	EntityChangeFlags Flags;
@@ -742,7 +747,7 @@ struct ComponentFrameStorage
 	BucketedStaticArray<void*> Components;
 	uint32_t NumComponents;
 	uint16_t ComponentSizeInBytes;
-	uint16_t ComponentTypeId;
+	ComponentTypeIndex ComponentTypeId;
 	void* DestructorProc;
 };
 
@@ -780,13 +785,18 @@ struct ImmediateWorldCache : public ProtectedGameObject<ImmediateWorldCache>
 	__int64 field_158;
 };
 
+struct ECBData : public ProtectedGameObject<ECBData>
+{
+	BucketedHashMap<EntityHandle, ECBEntityChangeSet> EntityChanges;
+	BucketedSparseHashSet<ComponentTypeIndex, ComponentFrameStorage> ComponentPools;
+	bool field_A0;
+};
+
 struct EntityCommandBuffer : public ProtectedGameObject<EntityCommandBuffer>
 {
 	EntityHandleGenerator* HandleGenerator;
 	FrameAllocator* Allocator;
-	BucketedHashMap<EntityHandle, ECBEntityChangeSet> EntityChanges;
-	BucketedSparseHashSet<ComponentTypeIndex, ComponentFrameStorage> ComponentPools;
-	bool field_A0;
+	ECBData Data;
 	uint32_t ThreadId;
 };
 
@@ -812,9 +822,17 @@ struct EntityWorldSettings
 #endif
 };
 
+struct ComponentOpsRegistry
+{
+	Array<ComponentOps*> Ops;
+
+	ComponentOps* Get(ComponentTypeIndex id) const;
+};
+
 struct EntityWorld : public ProtectedGameObject<EntityWorld>
 {
 	using UpdateProc = void (EntityWorld* self, GameTime const& time);
+	using FlushECBsProc = bool (EntityWorld* self);
 
 	SyncBuffers* Replication;
 	ComponentRegistry ComponentRegistry_;
@@ -826,7 +844,7 @@ struct EntityWorld : public ProtectedGameObject<EntityWorld>
 	GameTime Time;
 	void* ECSUpdateBatch;
 	int field_160;
-	Array<EntityCommandBuffer*> CommandBuffers;
+	Array<EntityCommandBuffer> CommandBuffers;
 	Array<ComponentCallbacks*> ComponentCallbacks;
 	bool RegisterPhaseEnded;
 	bool Active;
@@ -837,7 +855,7 @@ struct EntityWorld : public ProtectedGameObject<EntityWorld>
 	EntityStorageContainer* Storage;
 	FrameAllocator ComponentData;
 	Array<void*> SystemDependencyExecutors;
-	Array<ComponentOps*> ComponentOps;
+	ComponentOpsRegistry ComponentOps;
 	ScratchString field_2E0;
 	void* ECBExecutor;
 	GroupAllocator GroupAllocator;

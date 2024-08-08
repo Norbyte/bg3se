@@ -59,6 +59,32 @@ struct SRWLock
 	uint32_t EnterCount;
 };
 
+struct AiTilePos
+{
+	int16_t X;
+	int16_t Y;
+	int32_t SubgridId;
+
+	inline bool operator == (AiTilePos const& o) const
+	{
+		return SubgridId == o.SubgridId &&
+			X == o.X &&
+			Y == o.Y;
+	}
+
+	inline bool operator != (AiTilePos const& o) const
+	{
+		return SubgridId != o.SubgridId ||
+			X != o.X ||
+			Y != o.Y;
+	}
+};
+
+inline constexpr uint64_t Hash(AiTilePos const& v)
+{
+	return v.X | ((uint64_t)v.Y << 16) | ((uint64_t)v.SubgridId << 32);
+}
+
 END_SE()
 
 BEGIN_NS(ecs)

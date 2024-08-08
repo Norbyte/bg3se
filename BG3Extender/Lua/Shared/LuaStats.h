@@ -12,91 +12,23 @@ BEGIN_NS(lua::stats)
 
 using namespace bg3se::stats;
 
-class StatsProxy : public Userdata<StatsProxy>, public Indexable, public NewIndexable
+struct ObjectHelpers
 {
-public:
-	static char const * const MetatableName;
+	static FixedString GetModifierList(Object* obj);
+	static FixedString GetModId(Object* obj);
+	static FixedString GetOriginalModId(Object* obj);
+	static FixedString GetUsing(Object* obj);
 
-	StatsProxy(Object * obj, std::optional<int> level, LifetimeHandle const& lifetime)
-		: obj_(obj), level_(level), lifetime_(lifetime)
-	{}
+	static void Sync(Object* obj, std::optional<bool> persist);
+	static void SetPersistence(Object* obj, bool persist);
+	static bool SetRawAttribute(Object* obj, FixedString key, char const* value);
+	static bool CopyFrom(Object* obj, FixedString parent);
 
-	int Index(lua_State * L);
-	int NewIndex(lua_State * L);
-
-	inline Object* Get() const
-	{
-		return obj_;
-	}
-
-private:
-	Object * obj_;
-	std::optional<int> level_;
-	LifetimeHandle lifetime_;
-
-	static int Sync(lua_State* L);
-	static int SetPersistence(lua_State* L);
-	static int SetRawAttribute(lua_State* L);
-	static int CopyFrom(lua_State* L);
+	static PropertyOperationResult FallbackGet(lua_State* L, lua::LifetimeHandle const& lifetime, Object* object, bg3se::FixedString const& prop);
+	static PropertyOperationResult FallbackSet(lua_State* L, Object* object, bg3se::FixedString const& prop, int index);
+	static int FallbackNext(lua_State* L, LifetimeHandle const& lifetime, Object* object, FixedString const& prop);
 };
 
-class SpellPrototypeProxy : public Userdata<SpellPrototypeProxy>, public Indexable
-{
-public:
-	static char const * const MetatableName;
-
-	SpellPrototypeProxy(SpellPrototype* obj, std::optional<int> level, LifetimeHandle& lifetime);
-
-	int Index(lua_State * L);
-
-private:
-	SpellPrototype * obj_;
-	Object * stats_;
-	std::optional<int> level_;
-	LifetimeHandle lifetime_;
-};
-
-
-class StatsExtraDataProxy : public Userdata<StatsExtraDataProxy>, public Indexable, 
-	public NewIndexable
-{
-public:
-	static char const * const MetatableName;
-
-	int Index(lua_State * L);
-	int NewIndex(lua_State * L);
-};
-
-
-/*
-class DamageList : public Userdata<DamageList><PushPolicy::None>
-{
-public:
-	static char const * const MetatableName;
-
-	static void PopulateMetatable(lua_State * L);
-
-	inline DamagePairList & Get()
-	{
-		return damages_;
-	}
-
-private:
-	DamagePairList damages_;
-
-	static int GetByType(lua_State * L);
-	static int Add(lua_State * L);
-	static int Clear(lua_State * L);
-	static int Multiply(lua_State * L);
-	static int Merge(lua_State * L);
-	static int ConvertDamageType(lua_State * L);
-	static int AggregateSameTypeDamages(lua_State * L);
-	static int ToTable(lua_State * L);
-};
-*/
-
-/*int NewDamageList(lua_State* L);
-int GetSurfaceTemplate(lua_State* L);*/
 
 END_NS()
 

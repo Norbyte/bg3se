@@ -338,7 +338,7 @@ struct DummyDefinitionComponent : public BaseComponent
 	[[bg3::legacy(field_8)]] int ChangeId;
 	[[bg3::legacy(field_C)]] int ChangeId2;
 	int field_10;
-	MultiHashMap<uint64_t, FixedString> field_18_Map_unk_FS;
+	HashMap<uint64_t, FixedString> field_18_Map_unk_FS;
 	uint8_t field_58;
 	uint8_t field_59;
 	uint8_t field_5A;
@@ -373,7 +373,7 @@ struct EquipmentSetRequestComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerCCEquipmentSetRequest, "esv::character_creation::EquipmentSetRequestComponent")
 
-	MultiHashMap<EntityHandle, Array<FixedString>> Requests;
+	HashMap<EntityHandle, Array<FixedString>> Requests;
 };
 
 struct GodComponent : public BaseComponent
@@ -387,7 +387,7 @@ struct UpdatesComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerCCUpdates, "esv::character_creation::UpdatesComponent")
 
-	MultiHashMap<EntityHandle, int32_t> Updates;
+	HashMap<EntityHandle, int32_t> Updates;
 };
 
 DEFINE_TAG_COMPONENT(esv::character_creation, IsCustomComponent, ServerCCIsCustom)

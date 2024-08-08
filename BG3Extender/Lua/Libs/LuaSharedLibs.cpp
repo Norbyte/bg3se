@@ -2,6 +2,7 @@
 #include <Lua/Libs/LibraryRegistrationHelpers.h>
 #include <Lua/Shared/LuaModule.h>
 #include <Lua/Shared/LuaMethodCallHelpers.h>
+#include <Lua/Osiris/FunctionProxy.h>
 #include <Lua/Libs/Debug.inl>
 #include <Lua/Libs/Entity.inl>
 #include <Lua/Libs/IO.inl>
@@ -54,6 +55,11 @@ void RegisterServerLibraries()
 	tmpl::RegisterTemplateLib();
 }
 
+void RegisterServerMetatables(lua_State* L)
+{
+	OsiFunctionNameMetatable::RegisterMetatable(L);
+}
+
 END_NS()
 
 BEGIN_NS(lua)
@@ -62,7 +68,6 @@ void InitObjectProxyPropertyMaps();
 
 void RegisterSharedMetatables(lua_State* L)
 {
-	Userdata<LegacyObjectProxy>::RegisterMetatable(L);
 	ArrayProxyMetatable::RegisterMetatable(L);
 	SetProxyMetatable::RegisterMetatable(L);
 	MapProxyMetatable::RegisterMetatable(L);
@@ -75,9 +80,6 @@ void RegisterSharedMetatables(lua_State* L)
 #if defined(ENABLE_IMGUI)
 	ImguiObjectProxyMetatable::RegisterMetatable(L);
 #endif
-	stats::StatsExtraDataProxy::RegisterMetatable(L);
-	stats::StatsProxy::RegisterMetatable(L);
-	stats::SpellPrototypeProxy::RegisterMetatable(L);
 	types::RegisterEnumerations(L);
 }
 

@@ -27,7 +27,7 @@ struct MetaComponent : public BaseComponent
 	uint8_t field_44;
 	int field_48;
 	EntityHandle Owner;
-	MultiHashMap<Guid, Guid> field_50;
+	HashMap<Guid, Guid> field_50;
 };
 
 END_NS()
@@ -38,7 +38,7 @@ struct ChangedContainersComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ProgressionChangedContainers, "esv::progression::ChangedContainersComponent")
 
-	MultiHashMap<EntityHandle, MultiHashMap<EntityHandle, Array<EntityHandle>>> Changes;
+	HashMap<EntityHandle, HashMap<EntityHandle, Array<EntityHandle>>> Changes;
 };
 
 END_NS()

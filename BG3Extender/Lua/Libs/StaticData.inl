@@ -54,7 +54,7 @@ int GetGuidResourceProxy(lua_State* L, Guid const& resourceGuid)
 
 	auto resource = (*resourceMgr)->Resources.try_get(resourceGuid);
 	if (resource) {
-		MakeObjectRef(L, resource);
+		MakeObjectRef(L, resource, State::FromLua(L)->GetGlobalLifetime());
 	} else {
 		push(L, nullptr);
 	}

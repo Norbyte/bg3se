@@ -52,7 +52,7 @@ inline void PushReturnValue(lua_State* L, ObjectSet<T>* v)
 }
 
 template <class TKey, class TValue>
-inline void PushReturnValue(lua_State* L, RefMap<TKey, TValue>* v)
+inline void PushReturnValue(lua_State* L, LegacyRefMap<TKey, TValue>* v)
 {
 	if constexpr (!IsByVal<TValue>) {
 		MakeObjectRef(L, v);
@@ -62,7 +62,7 @@ inline void PushReturnValue(lua_State* L, RefMap<TKey, TValue>* v)
 }
 
 template <class TKey, class TValue>
-inline void PushReturnValue(lua_State* L, Map<TKey, TValue>* v)
+inline void PushReturnValue(lua_State* L, LegacyMap<TKey, TValue>* v)
 {
 	if constexpr (!IsByVal<TValue>) {
 		MakeObjectRef(L, v);
@@ -75,6 +75,12 @@ template <class T>
 inline void PushReturnValue(lua_State* L, RefReturn<T> v)
 {
 	MakeObjectRef(L, v.Object);
+}
+
+template <class T>
+inline void PushReturnValue(lua_State* L, GlobalRefReturn<T> v)
+{
+	MakeObjectRef(L, v.Object, State::FromLua(L)->GetGlobalLifetime());
 }
 
 template <class T>
@@ -127,9 +133,6 @@ template <class T>
 T* get_object(lua_State* L, int index)
 {
 	switch (lua_type(L, index)) {
-	case LUA_TUSERDATA:
-		return LegacyObjectProxy::Get<T>(L, index);
-		
 	case LUA_TLIGHTCPPOBJECT:
 		return ObjectProxy::Get<T>(L, index);
 

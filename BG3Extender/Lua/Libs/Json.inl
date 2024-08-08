@@ -129,16 +129,6 @@ void* GetTablePointer(lua_State* L, int index)
 	}
 }
 
-void* GetUserdataPointer(lua_State* L, int index)
-{
-	auto proxy = Userdata<LegacyObjectProxy>::AsUserData(L, index);
-	if (proxy) {
-		return (void*)((std::uintptr_t)proxy->GetRaw(L) ^ ((std::uintptr_t)&proxy->GetImpl()->GetPropertyMap() << 32));
-	}
-
-	return lua_touserdata(L, index);
-}
-
 void* GetLightCppObjectPointer(lua_State* L, int index)
 {
 	CppObjectMetadata meta;
@@ -148,7 +138,8 @@ void* GetLightCppObjectPointer(lua_State* L, int index)
 	if (meta.MetatableTag == MetatableTag::EnumValue
 		|| meta.MetatableTag == MetatableTag::BitfieldValue
 		|| meta.MetatableTag == MetatableTag::Entity
-		|| meta.MetatableTag == MetatableTag::ImguiObject) {
+		|| meta.MetatableTag == MetatableTag::ImguiObject
+		|| meta.MetatableTag == MetatableTag::OsiFunctionName) {
 		return nullptr;
 	}
 
@@ -160,9 +151,6 @@ void* GetPointerValue(lua_State* L, int index)
 	switch (lua_type(L, index)) {
 	case LUA_TTABLE:
 		return GetTablePointer(L, index);
-
-	case LUA_TUSERDATA:
-		return GetUserdataPointer(L, index);
 
 	case LUA_TLIGHTCPPOBJECT:
 	case LUA_TCPPOBJECT:
@@ -192,28 +180,11 @@ bool CheckForRecursion(lua_State* L, int index, StringifyContext& ctx)
 
 bool TryGetUserdataPairs(lua_State* L, int index)
 {
-	if (lua_type(L, index) == LUA_TUSERDATA) {
-		if (!lua_getmetatable(L, index)) {
-			return false;
-		}
-
-		push(L, "__pairs");
-		lua_gettable(L, -2);
-		lua_remove(L, -2);
-		// No __pairs function, can't iterate this object
-		if (lua_type(L, -1) != LUA_TNIL) {
-			return true;
-		} else {
-			lua_pop(L, 1);
-			return false;
-		}
-	} else {
-		CppObjectMetadata meta;
-		lua_get_cppobject(L, index, meta);
-		auto mt = State::FromLua(L)->GetMetatableManager().GetMetatable(meta.MetatableTag);
-		if (lua_cmetatable_push(L, mt, (int)MetamethodName::Pairs)) {
-			return true;
-		}
+	CppObjectMetadata meta;
+	lua_get_cppobject(L, index, meta);
+	auto mt = State::FromLua(L)->GetMetatableManager().GetMetatable(meta.MetatableTag);
+	if (lua_cmetatable_push(L, mt, (int)MetamethodName::Pairs)) {
+		return true;
 	}
 
 	return false;
@@ -323,7 +294,7 @@ Json::Value StringifyUserdata(lua_State * L, int index, unsigned depth, Stringif
 				arr[key] = val;
 				lua_pop(L, 1);
 			}
-		} else if ((type == LUA_TUSERDATA || type == LUA_TLIGHTCPPOBJECT || type == LUA_TCPPOBJECT) && ctx.StringifyInternalTypes) {
+		} else if ((type == LUA_TLIGHTCPPOBJECT || type == LUA_TCPPOBJECT) && ctx.StringifyInternalTypes) {
 			int top = lua_gettop(L);
 			lua_getglobal(L, "tostring");  /* function to be called */
 			lua_pushvalue(L, -3);   /* value to print */
@@ -525,7 +496,6 @@ Json::Value Stringify(lua_State * L, int index, unsigned depth, StringifyContext
 
 		return StringifyTable(L, index, depth, ctx);
 
-	case LUA_TUSERDATA:
 	case LUA_TLIGHTCPPOBJECT:
 	case LUA_TCPPOBJECT:
 		return TryStringifyUserdata(L, index, depth, ctx);

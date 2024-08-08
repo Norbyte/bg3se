@@ -66,7 +66,7 @@ public:
 #endif
 
 private:
-	MultiHashMap<FixedString, FixedString> gtsPaths_;
+	HashMap<FixedString, FixedString> gtsPaths_;
 	std::unordered_set<FixedString> sourceTileSets_;
 	bool built_{ false };
 	std::mutex lock_;
@@ -75,7 +75,7 @@ private:
 	void DecRefGTS(VirtualTextureManager* vt, unsigned int textureLayerConfig, std::optional<char> gtsSuffix, bool a4, FixedString const& gTexId);
 	STDString GetVirtualTexturePath(unsigned int textureLayerConfig, std::optional<char> gtsSuffix, bool a4, FixedString const& gTexId, bool isLoad);
 	bool Stitch();
-	MultiHashMap<FixedString, FixedString> CollectRemaps();
+	HashMap<FixedString, FixedString> CollectRemaps();
 	bool NeedsRebuild(std::unordered_set<FixedString> const& newTileSets);
 };
 

@@ -9,6 +9,9 @@ FS(ModifierList);
 FS(OriginalModId);
 FS(ComboProperties);
 FS(ComboCategories);
+FS(StatusType);
+FS(SpellType);
+FS(Boosts);
 
 // Stat modifier types
 FS(Character);
@@ -36,6 +39,7 @@ FS(CopyFrom);
 // Entity proxy functions
 FS(CreateComponent);
 FS(GetComponent);
+FS(HasRawComponent);
 FS(GetAllComponents);
 FS(GetAllComponentNames);
 FS(GetEntityType);
@@ -46,6 +50,13 @@ FS(GetReplicationFlags);
 FS(SetReplicationFlags);
 FS(Replicate);
 FS(Vars);
+
+// Osi proxy functions
+FS(Get);
+FS(Delete);
+FS(Exists);
+FS(Arities);
+FS(InputArities);
 
 // Stat modifier value types
 FS(FixedString);
@@ -59,6 +70,7 @@ FS(TargetConditions);
 FS(UseConditions);
 FS(RollConditions);
 FS(Requirements);
+FS(MemorizationRequirements);
 FS(TranslatedString);
 
 FS(AttributeFlags);

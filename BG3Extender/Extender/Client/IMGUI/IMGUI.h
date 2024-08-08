@@ -44,7 +44,7 @@ public:
 private:
     SDLManager& sdl_;
     std::unique_ptr<RenderingBackend> renderer_;
-    MultiHashMap<FixedString, FontData> fonts_;
+    HashMap<FixedString, FontData> fonts_;
     float scale_{ 1.0f };
     float requestedScale_{ 1.0f };
 

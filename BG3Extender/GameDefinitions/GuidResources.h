@@ -121,21 +121,21 @@ struct [[bg3::hidden]] GuidResourceBankBase : ProtectedGameObject<GuidResourceBa
 	void* VMT;
 	FixedString LSXRegionName;
 	FixedString LSXResourceNodeName;
-	MultiHashMap<Guid, Array<Guid>> ResourceGuidsByMod;
+	HashMap<Guid, Array<Guid>> ResourceGuidsByMod;
 };
 
 template <class T>
 struct [[bg3::hidden]] GuidResourceBank : public GuidResourceBankBase
 {
-	MultiHashMap<Guid, T> Resources;
+	HashMap<Guid, T> Resources;
 	STDString Path;
-	RefMap<Guid, void*> field_E0;
+	LegacyRefMap<Guid, void*> field_E0;
 };
 
 
 struct [[bg3::hidden]] GuidResourceManager
 {
-	MultiHashMap<int32_t, GuidResourceBankBase*> Definitions;
+	HashMap<int32_t, GuidResourceBankBase*> Definitions;
 };
 
 
@@ -581,7 +581,7 @@ struct SpellList : public resource::GuidResource
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::SpellList;
 	static constexpr auto EngineClass = "eoc::SpellListManager";
 
-	MultiHashSet<FixedString> Spells;
+	HashSet<FixedString> Spells;
 };
 
 
@@ -1036,7 +1036,7 @@ struct DeathTypeEffect : public resource::GuidResource
 	STDString Name;
 	Guid ParentUuid;
 	FixedString Fallback;
-	MultiHashMap<uint8_t, FixedString> Effects;
+	HashMap<uint8_t, FixedString> Effects;
 };
 
 
@@ -1184,8 +1184,9 @@ struct ItemWallTemplate : public resource::GuidResource
 	STDString LowMiddle;
 	STDString LowRight;
 	float Padding;
-	float RandomRotation;
+	bool RandomRotation;
 	FixedString Animation;
+	float TimeBetweenItems;
 };
 
 

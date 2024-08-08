@@ -56,7 +56,7 @@ struct ActionTypeComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ActionType, "eoc::item_template::ActionTypeComponent")
 
-	MultiHashSet<uint8_t> ActionTypes;
+	HashSet<uint8_t> ActionTypes;
 };
 
 struct UseActionComponent : public BaseComponent
@@ -111,28 +111,28 @@ struct IsCurrentOwnerComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerIsCurrentOwner, "esv::ownership::IsCurrentOwnerComponent")
 
-	MultiHashSet<EntityHandle> Owner;
+	HashSet<EntityHandle> Owner;
 };
 
 struct IsLatestOwnerComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerIsLatestOwner, "esv::ownership::IsLatestOwnerComponent")
 
-	MultiHashSet<EntityHandle> Owner;
+	HashSet<EntityHandle> Owner;
 };
 
 struct IsPreviousOwnerComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerIsPreviousOwner, "esv::ownership::IsPreviousOwnerComponent")
 
-	MultiHashSet<EntityHandle> Owner;
+	HashSet<EntityHandle> Owner;
 };
 
 struct IsOriginalOwnerComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerIsOriginalOwner, "esv::ownership::IsOriginalOwnerComponent")
 
-	MultiHashSet<EntityHandle> Owner;
+	HashSet<EntityHandle> Owner;
 };
 
 struct OwneeHistoryComponent : public BaseComponent
@@ -148,12 +148,9 @@ struct OwneeRequestComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerOwneeRequest, "esv::ownership::OwneeRequestComponent")
 
-	EntityHandle NewCurrentOwnee;
-	bool RequestChangeCurrentOwnee;
-	EntityHandle LatestOwner;
-	bool RequestChangeLatestOwner;
-	EntityHandle OriginalOwner;
-	bool RequestChangeOriginalOwner;
+	std::optional<EntityHandle> NewCurrentOwnee;
+	std::optional<EntityHandle> LatestOwner;
+	std::optional<EntityHandle> OriginalOwner;
 };
 
 END_NS()

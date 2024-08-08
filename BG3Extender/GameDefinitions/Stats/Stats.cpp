@@ -15,6 +15,7 @@ bool SpellPrototypeManager::SyncStat(Object* object, SpellPrototype* proto)
 		return false;
 	}
 
+	proto->SpellTypeId = EnumInfo<SpellType>::Find(object->GetFixedString(GFS.strSpellType).value_or(GFS.strEmpty)).value_or((SpellType)0);
 	proto->UseCosts.clear();
 	proto->RitualCosts.clear();
 	proto->DualWieldingUseCosts.clear();
@@ -63,13 +64,23 @@ bool StatusPrototypeManager::SyncStat(Object* object, StatusPrototype* proto)
 		return false;
 	}
 
+	proto->StatusId = EnumInfo<StatusType>::Find(object->GetFixedString(GFS.strStatusType).value_or(GFS.strEmpty)).value_or((StatusType)0);
 	proto->StatusPropertyFlags = 0;
 	proto->StatusGroups = 0;
 	proto->Flags = 0;
 	proto->RemoveEvents = 0;
 	proto->Boosts.clear();
 
-	sync(proto, object->Name, 1);
+	sync(proto, object->Name, 0);
+
+	auto parseBoosts = GetStaticSymbols().eoc__ParseStaticBoosts;
+	auto boosts = object->GetFixedString(GFS.strBoosts);
+	if (parseBoosts != nullptr && boosts) {
+		LSStringView sv(boosts->GetStringView());
+		uint64_t temp[0x10]{ 0 };
+		parseBoosts(sv, proto->Boosts, &temp);
+	}
+
 	return true;
 }
 
@@ -82,6 +93,7 @@ void StatusPrototypeManager::SyncStat(Object* object)
 		auto proto = GameAlloc<StatusPrototype>();
 		if (SyncStat(object, proto)) {
 			Statuses.set(proto->StatusName, proto);
+			StatusNames.push_back(proto->StatusName);
 		}
 	} else {
 		SyncStat(object, *pProto);
@@ -140,14 +152,16 @@ void InterruptPrototypeManager::SyncStat(Object* object)
 {
 	auto proto = Interrupts.try_get(object->Name);
 	if (!proto) {
-		auto proto = Interrupts.add_key(object->Name);
+		proto = Interrupts.add_key(object->Name);
 	}
 
 	SyncStat(object, proto);
 }
 
 
-Functors::Functors() noexcept {}
+Functors::Functors() noexcept
+	: VMT(GetStaticSymbols().stats__Functors__VMT)
+{}
 
 Functors::Functors(Functors const& o)
 	: VMT(o.VMT),
@@ -392,6 +406,10 @@ RPGEnumerationType RPGEnumeration::GetPropertyType() const
 
 	if (Name == GFS.strRequirements) {
 		return RPGEnumerationType::Requirements;
+	}
+
+	if (Name == GFS.strMemorizationRequirements) {
+		return RPGEnumerationType::MemorizationRequirements;
 	}
 
 	if (Name == GFS.strTranslatedString) {

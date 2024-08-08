@@ -78,10 +78,19 @@ Array<ExtComponentType> EntityHelper::GetAllComponentTypes() const
 	auto world = ecs_->GetEntityWorld();
 	auto storage = world->GetEntityStorage(handle_);
 	if (storage != nullptr) {
-		for (auto typeInfo : storage->ComponentTypeToIndex) {
-			auto extType = ecs_->GetComponentType(typeInfo.Key());
-			if (extType) {
-				types.push_back(*extType);
+		if (storage->HasComponentPoolsByType) {
+			for (auto pool : storage->ComponentPoolsByType) {
+				auto extType = ecs_->GetComponentType(pool.Key());
+				if (extType && pool->Value().find(handle_) != pool->Value().end()) {
+					types.push_back(*extType);
+				}
+			}
+		} else {
+			for (auto typeInfo : storage->ComponentTypeToIndex) {
+				auto extType = ecs_->GetComponentType(typeInfo.Key());
+				if (extType) {
+					types.push_back(*extType);
+				}
 			}
 		}
 	}
@@ -108,15 +117,13 @@ int EntityProxyMetatable::CreateComponent(lua_State* L)
 	auto handle = Get(L, 1);
 	auto componentType = get<ExtComponentType>(L, 2);
 	auto ecs = GetEntitySystem(L);
-	auto typeId = (uint16_t)*ecs->GetComponentIndex(componentType);
-	auto world = ecs->GetEntityWorld();
-	if (typeId < world->ComponentOps.size()) {
-		auto ops = world->ComponentOps[typeId];
-		if (ops != nullptr) {
-			ops->AddImmediateDefaultComponent(handle.Handle, 0);
-			PushComponent(L, ecs, handle, componentType, GetCurrentLifetime(L));
-			return 1;
-		}
+	auto typeId = *ecs->GetComponentIndex(componentType);
+	auto ops = ecs->GetEntityWorld()->ComponentOps.Get(typeId);
+
+	if (ops != nullptr) {
+		ops->AddImmediateDefaultComponent(handle.Handle, 0);
+		PushComponent(L, ecs, handle, componentType, GetCurrentLifetime(L));
+		return 1;
 	}
 
 	OsiError("Unable to construct components of this type: " << componentType);
@@ -131,6 +138,23 @@ int EntityProxyMetatable::GetComponent(lua_State* L)
 	auto componentType = get<ExtComponentType>(L, 2);
 	auto ecs = GetEntitySystem(L);
 	PushComponent(L, ecs, handle, componentType, GetCurrentLifetime(L));
+	return 1;
+}
+
+int EntityProxyMetatable::HasRawComponent(lua_State* L)
+{
+	StackCheck _(L, 1);
+	auto handle = Get(L, 1);
+	auto componentName = get<STDString>(L, 2);
+	auto ecs = GetEntitySystem(L);
+	auto index = ecs->GetComponentIndex(componentName);
+	if (!index) {
+		push(L, false);
+	} else {
+		auto ptr = ecs->GetEntityWorld()->GetRawComponent(handle, *index, 1, false);
+		push(L, ptr != nullptr);
+	}
+
 	return 1;
 }
 
@@ -152,21 +176,42 @@ int EntityProxyMetatable::GetAllComponents(lua_State* L)
 	if (storage != nullptr) {
 		auto componentPtr = storage->InstanceToPageMap.try_get(handle);
 		if (componentPtr) {
-			for (auto typeInfo : storage->ComponentTypeToIndex) {
-				auto extType = ecs->GetComponentType(typeInfo.Key());
-				if (extType) {
-					auto const& meta = ecs->GetComponentMeta(*extType);
-					auto component = storage->GetComponent(*componentPtr, typeInfo.Value(), meta.Size, meta.IsProxy);
+			if (storage->HasComponentPoolsByType) {
+				for (auto pool : storage->ComponentPoolsByType) {
+					auto extType = ecs->GetComponentType(pool.Key());
+					if (extType) {
+						auto const& meta = ecs->GetComponentMeta(*extType);
+						auto component = pool->Value().get_or_default(handle);
 
-					push(L, *extType);
-					PushComponent(L, component, *extType, GetCurrentLifetime(L));
-					lua_rawset(L, -3);
-				} else if (warnOnMissing) {
-					auto name = ecs->GetComponentName(typeInfo.Key());
-					if (name) {
-						OsiWarn("No model found for component: " << **name);
-					} else {
-						OsiWarn("No model found for component ID: " << typeInfo.Key().Value());
+						push(L, *extType);
+						PushComponent(L, component, *extType, GetCurrentLifetime(L));
+						lua_rawset(L, -3);
+					} else if (warnOnMissing) {
+						auto name = ecs->GetComponentName(pool.Key());
+						if (name) {
+							OsiWarn("No model found for component: " << *name);
+						} else {
+							OsiWarn("No model found for component ID: " << pool.Key().Value());
+						}
+					}
+				}
+			} else {
+				for (auto typeInfo : storage->ComponentTypeToIndex) {
+					auto extType = ecs->GetComponentType(typeInfo.Key());
+					if (extType) {
+						auto const& meta = ecs->GetComponentMeta(*extType);
+						auto component = storage->GetComponent(*componentPtr, typeInfo.Value(), meta.Size, meta.IsProxy);
+
+						push(L, *extType);
+						PushComponent(L, component, *extType, GetCurrentLifetime(L));
+						lua_rawset(L, -3);
+					} else if (warnOnMissing) {
+						auto name = ecs->GetComponentName(typeInfo.Key());
+						if (name) {
+							OsiWarn("No model found for component: " << *name);
+						} else {
+							OsiWarn("No model found for component ID: " << typeInfo.Key().Value());
+						}
 					}
 				}
 			}
@@ -188,14 +233,30 @@ int EntityProxyMetatable::GetAllComponentNames(lua_State* L)
 	auto world = ecs->GetEntityWorld();
 	auto storage = world->GetEntityStorage(handle);
 	if (storage != nullptr) {
-		for (auto componentIdx : storage->ComponentTypeToIndex.keys()) {
-			auto name = ecs->GetComponentName(componentIdx);
-			if (name) {
-				auto mapped = ecs->GetComponentType(componentIdx).has_value();
-				if (!reqMapped || *reqMapped == mapped) {
-					push(L, componentIdx.Value());
-					push(L, **name);
-					lua_rawset(L, -3);
+		if (storage->HasComponentPoolsByType) {
+			for (auto it : storage->ComponentPoolsByType) {
+				if (it->Value().find(handle) != it->Value().end()) {
+					auto name = ecs->GetComponentName(it->Key());
+					if (name) {
+						auto mapped = ecs->GetComponentType(it->Key()).has_value();
+						if (!reqMapped || *reqMapped == mapped) {
+							push(L, it->Key().Value());
+							push(L, *name);
+							lua_rawset(L, -3);
+						}
+					}
+				}
+			}
+		} else {
+			for (auto componentIdx : storage->ComponentTypeToIndex.keys()) {
+				auto name = ecs->GetComponentName(componentIdx);
+				if (name) {
+					auto mapped = ecs->GetComponentType(componentIdx).has_value();
+					if (!reqMapped || *reqMapped == mapped) {
+						push(L, componentIdx.Value());
+						push(L, *name);
+						lua_rawset(L, -3);
+					}
 				}
 			}
 		}
@@ -334,6 +395,11 @@ int EntityProxyMetatable::Index(lua_State* L, CppValueMetadata& self)
 		return 1;
 	}
 
+	if (key == GFS.strHasRawComponent) {
+		push(L, &HasRawComponent);
+		return 1;
+	}
+
 	if (key == GFS.strGetAllComponents) {
 		push(L, &GetAllComponents);
 		return 1;
@@ -449,7 +515,6 @@ TypeInformationRef do_get(lua_State* L, int index, Overload<TypeInformationRef>)
 
 EntityHelper do_get(lua_State* L, int index, Overload<EntityHelper>)
 {
-	luaL_checktype(L, index, LUA_TUSERDATA);
 	return EntityProxyMetatable::GetHelper(L, index);
 }
 

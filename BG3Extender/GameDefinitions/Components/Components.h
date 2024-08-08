@@ -11,7 +11,7 @@ struct RulesetComponent : public BaseComponent
 
 	Array<Guid> Rulesets;
 	// FIXME: First variant is void
-	MultiHashMap<Guid, std::variant<uint8_t, int32_t, float, FixedString, bool>> Modifiers;
+	HashMap<Guid, std::variant<uint8_t, int32_t, float, FixedString, bool>> Modifiers;
 };
 
 struct RulesetModifiersComponent : public BaseComponent
@@ -19,7 +19,7 @@ struct RulesetModifiersComponent : public BaseComponent
 	DEFINE_COMPONENT(RulesetModifiers, "eoc::ruleset::RulesetModifiersComponent")
 
 	// FIXME: First variant is void
-	MultiHashMap<Guid, std::variant<uint8_t, int32_t, float, FixedString, bool>> Modifiers;
+	HashMap<Guid, std::variant<uint8_t, int32_t, float, FixedString, bool>> Modifiers;
 };
 
 struct ActionResourceDiceValue
@@ -44,7 +44,7 @@ struct ActionResourcesComponent : public BaseComponent
 	DEFINE_COMPONENT(ActionResources, "eoc::ActionResourcesComponent")
 
 
-	MultiHashMap<Guid, Array<ActionResourceEntry>> Resources;
+	HashMap<Guid, Array<ActionResourceEntry>> Resources;
 };
 
 struct HearingComponent : public BaseComponent
@@ -122,13 +122,13 @@ struct RelationComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(Relation, "eoc::relation::RelationComponent")
 
-	MultiHashMap<uint32_t, uint8_t> field_0;
-	MultiHashMap<uint32_t, uint8_t> field_40;
-	MultiHashMap<uint32_t, uint8_t> field_80;
-	MultiHashMap<RelationId, uint8_t> field_C0;
-	MultiHashMap<uint32_t, uint8_t> field_100;
-	MultiHashSet<uint32_t> field_140;
-	MultiHashSet<uint32_t> field_170;
+	HashMap<uint32_t, uint8_t> field_0;
+	HashMap<uint32_t, uint8_t> field_40;
+	HashMap<uint32_t, uint8_t> field_80;
+	HashMap<RelationId, uint8_t> field_C0;
+	HashMap<uint32_t, uint8_t> field_100;
+	HashSet<uint32_t> field_140;
+	HashSet<uint32_t> field_170;
 };
 
 struct FactionComponent : public BaseComponent
@@ -143,7 +143,7 @@ struct FactionComponent : public BaseComponent
 
 
 template <>
-inline uint64_t MultiHashMapHash<RelationId>(RelationId const& v)
+inline uint64_t HashMapHash<RelationId>(RelationId const& v)
 {
 	return HashMulti(v.field_0, v.field_10);
 }
@@ -402,7 +402,7 @@ struct UseSocketComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(UseSocket, "eoc::use::SocketComponent")
 
-	MultiHashMap<uint32_t, UseSocket> Sockets;
+	HashMap<uint32_t, UseSocket> Sockets;
 };
 
 
@@ -423,15 +423,19 @@ struct UserReservedForComponent : public BaseComponent
 	int UserID;
 };
 
+struct ShapeshiftStateInner
+{
+	FixedString field_0;
+	uint32_t field_4;
+};
 
 struct ShapeshiftStateComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ShapeshiftState, "eoc::shapeshift::StateComponent")
 
-	std::optional<uint8_t> field_0;
-	std::optional<FixedString> field_4;
-	std::optional<FixedString> field_C;
-	uint8_t field_14;
+	std::optional<uint8_t> BloodSurfaceType;
+	std::optional<FixedString> BloodType;
+	std::optional<ShapeshiftStateInner> field_C;
 };
 
 
@@ -451,7 +455,7 @@ struct UuidToHandleMappingComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(UuidToHandleMapping, "ls::uuid::ToHandleMappingComponent")
 
-	MultiHashMap<Guid, EntityHandle> Mappings;
+	HashMap<Guid, EntityHandle> Mappings;
 };
 
 struct LevelComponent : public BaseComponent
@@ -545,7 +549,7 @@ struct EntityViewshedComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(SightEntityViewshed, "eoc::sight::EntityViewshedComponent")
 
-	MultiHashSet<Guid> field_0;
+	HashSet<Guid> field_0;
 };
 
 

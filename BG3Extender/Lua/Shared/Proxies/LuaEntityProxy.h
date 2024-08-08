@@ -70,6 +70,7 @@ public:
 private:
 	static int CreateComponent(lua_State* L);
 	static int GetComponent(lua_State* L);
+	static int HasRawComponent(lua_State* L);
 	static int GetAllComponents(lua_State* L);
 	static int GetAllComponentNames(lua_State* L);
 	static int GetEntityType(lua_State* L);

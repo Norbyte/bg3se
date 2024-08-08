@@ -90,13 +90,13 @@ struct PlayerPickingHelper : public ProtectedGameObject<PlayerPickingHelper>
 	[[bg3::hidden]] void* field_208;
 	uint8_t field_210;
 	std::optional<glm::vec3> TargetOverride;
-	MultiHashMap<EntityHandle, PlayerPickingCacheValue> SpellConditionsCache;
+	HashMap<EntityHandle, PlayerPickingCacheValue> SpellConditionsCache;
 	int field_268_NextIndex;
-	float field_26C;
-	MultiHashMap<EntityHandle, PlayerPickingCacheValue> Cache;
+	uint32_t field_26C;
+	HashMap<EntityHandle, PlayerPickingCacheValue> Cache;
 	int field_2B0;
 	float field_2B4;
-	MultiHashMap<EntityHandle, PlayerPickingCacheValue> SightCheckCache;
+	HashMap<EntityHandle, PlayerPickingCacheValue> SightCheckCache;
 	int field_2F8;
 	bool IsMoving;
 };
@@ -108,7 +108,7 @@ struct [[bg3::hidden]] PickingHelperManager : public ProtectedGameObject<Picking
 
 	void* VMT;
 	void* field_8;
-	RefMap<uint16_t, PlayerPickingHelper*> PlayerHelpers;
+	LegacyRefMap<uint16_t, PlayerPickingHelper*> PlayerHelpers;
 	void* field_20;
 };
 

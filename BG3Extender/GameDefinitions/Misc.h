@@ -10,7 +10,7 @@ BEGIN_NS(esv)
 
 struct SavegameVisitor : public ObjectVisitor
 {
-	MultiHashMap<uint64_t, uint64_t> field_48;
+	HashMap<uint64_t, uint64_t> field_48;
 	__int64 field_88;
 	ModuleSettings Settings;
 	STDString ModuleHash;
@@ -39,7 +39,7 @@ namespace bg3se
 		{
 			float ConfigValue[3];
 			FixedString ConfigKey;
-			MultiHashSet<FixedString> RTPCs;
+			HashSet<FixedString> RTPCs;
 			char field_40;
 			TranslatedString field_44;
 			void* UpdateProc;
@@ -501,10 +501,10 @@ namespace bg3se
 
 		void* VMT;
 		int field_8;
-		Map<FixedString, STDWString*>* TranslatedStrings[4];
-		Map<FixedString, STDWString*>* TranslatedStringOverrides[4];
-		Map<FixedString, TranslatedArgumentString*> TranslatedArgumentStrings;
-		Map<FixedString, RuntimeStringHandle> StringHandles;
+		LegacyMap<FixedString, STDWString*>* TranslatedStrings[4];
+		LegacyMap<FixedString, STDWString*>* TranslatedStringOverrides[4];
+		LegacyMap<FixedString, TranslatedArgumentString*> TranslatedArgumentStrings;
+		LegacyMap<FixedString, RuntimeStringHandle> StringHandles;
 		CRITICAL_SECTION CriticalSection;
 		ScratchBuffer ScratchBuf;
 		bool DoDecoration;
@@ -519,8 +519,8 @@ namespace bg3se
 
 		void* VMT;
 		ObjectSet<Path> Paths;
-		Map<FixedString, TranslatedString> StringKeys;
-		Map<FixedString, FixedString> StringSpeakers;
+		LegacyMap<FixedString, TranslatedString> StringKeys;
+		LegacyMap<FixedString, FixedString> StringSpeakers;
 		bool Unknown;
 	};*/
 
@@ -558,7 +558,7 @@ namespace bg3se
 		struct SpeakerManager
 		{
 			void * VMT;
-			RefMap<FixedString, RefMap<FixedString, VoiceTextMetaData>> * SpeakerMetaDataHashMap;
+			LegacyRefMap<FixedString, LegacyRefMap<FixedString, VoiceTextMetaData>> * SpeakerMetaDataHashMap;
 		};*/
 	}
 
@@ -604,7 +604,7 @@ namespace bg3se
 		int field_50;
 		int field_54;
 		__int64 field_58;
-		Map<FixedString, void*> field_60;
+		LegacyMap<FixedString, void*> field_60;
 		STDWString field_78;
 		ObjectSet<void*> ComponentFactories;
 		BYTE field_B0;

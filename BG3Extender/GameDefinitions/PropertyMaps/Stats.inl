@@ -191,3 +191,23 @@ P(ModifierLists)
 P(TreasureTables)
 P(ExtraData)
 END_CLS()
+
+
+BEGIN_CLS(stats::Object)
+P_RO(Name)
+P(ComboProperties)
+P(ComboCategories)
+P_RO(ModifierListIndex)
+
+P_FREE_GETTER(ModifierList, lua::stats::ObjectHelpers::GetModifierList)
+P_FREE_GETTER(ModId, lua::stats::ObjectHelpers::GetModId)
+P_FREE_GETTER(OriginalModId, lua::stats::ObjectHelpers::GetOriginalModId)
+P_FREE_GETTER(Using, lua::stats::ObjectHelpers::GetUsing)
+
+P_FUN(Sync, lua::stats::ObjectHelpers::Sync)
+P_FUN(SetPersistence, lua::stats::ObjectHelpers::SetPersistence)
+P_FUN(SetRawAttribute, lua::stats::ObjectHelpers::SetRawAttribute)
+P_FUN(CopyFrom, lua::stats::ObjectHelpers::CopyFrom)
+
+P_FALLBACK(&lua::stats::ObjectHelpers::FallbackGet, &lua::stats::ObjectHelpers::FallbackSet, &lua::stats::ObjectHelpers::FallbackNext)
+END_CLS()

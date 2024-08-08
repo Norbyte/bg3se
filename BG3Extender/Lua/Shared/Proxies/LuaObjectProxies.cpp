@@ -7,6 +7,49 @@
 
 BEGIN_NS(lua)
 
+#if defined(_DEBUG)
+#define CHECK(expr) if (!(expr)) { TryDebugBreak(); return false; }
+#else
+#define CHECK(expr) if (!(expr)) return false;
+#endif
+
+bool Validate(EntityHandle const& handle, ecs::EntityWorld& world)
+{
+	if (!handle) return true;
+
+	CHECK(handle.GetType() < std::size(world.HandleGenerator->ThreadStates));
+
+	// There is no observed shrink logic in per-thread paged pools, so index cannot be greater than pool size
+	auto& state = world.HandleGenerator->ThreadStates[handle.GetType()];
+	CHECK(handle.GetIndex() < state.Salts.Used);
+
+	// Allow salt mismatches if the handle has an old salt.
+	// It should never have a salt value that is newer than the current one in ECS
+	auto const& salt = state.Salts[handle.GetIndex()];
+	CHECK(salt.Index == handle.GetIndex());
+	CHECK(salt.Salt <= handle.GetSalt());
+
+	return true;
+}
+
+bool Validate(EntityHandle const* handle, Overload<EntityHandle>)
+{
+	auto lua = GetCurrentExtensionState()->GetLua();
+	if (lua) {
+		auto world = GetCurrentExtensionState()->GetLua()->GetEntitySystemHelpers()->GetEntityWorld();
+		if (world) {
+			return Validate(*handle, *world);
+		}
+	}
+
+#if defined(_DEBUG)
+	WARN("Validating entity handles whout an EntityWorld?");
+#endif
+
+	return true;
+}
+
+
 void InheritProperties(GenericPropertyMap const& base, GenericPropertyMap& child)
 {
 	// Check to make sure that the property map we're inheriting from is already initialized
@@ -46,6 +89,10 @@ void InheritProperties(GenericPropertyMap const& base, GenericPropertyMap& child
 
 	if (child.FallbackSetter == nullptr) {
 		child.FallbackSetter = base.FallbackSetter;
+	}
+
+	if (child.FallbackNext == nullptr) {
+		child.FallbackNext = base.FallbackNext;
 	}
 
 	child.IsInitializing = false;
@@ -116,6 +163,7 @@ struct PropertyMapFallbackEntry
 	//GenericPropertyMap::TFallbackSetter* Setter{ nullptr };
 	void* Getter{ nullptr };
 	void* Setter{ nullptr };
+	void* Next{ nullptr };
 };
 
 struct PropertyMapPropertyEntry
@@ -275,6 +323,7 @@ void ProcessPropertyMapDefinitions(PropertyMapRegistrationEntry const* defn)
 		{
 			pm->FallbackGetter = (GenericPropertyMap::TFallbackGetter*)entry.Fallback.Getter;
 			pm->FallbackSetter = (GenericPropertyMap::TFallbackSetter*)entry.Fallback.Setter;
+			pm->FallbackNext = (GenericPropertyMap::TFallbackNext*)entry.Fallback.Next;
 			break;
 		}
 
@@ -514,10 +563,11 @@ struct PropertyMapRegistrations;
 			.Serialize = &GenericNullSerializeProperty, \
 		} },
 
-#define P_FALLBACK(getter, setter) \
+#define P_FALLBACK(getter, setter, next) \
 		{ .Type = PropertyMapEntryType::Fallback, .Fallback = { \
-			.Getter = &getter, \
-			.Setter = &setter \
+			.Getter = getter, \
+			.Setter = setter, \
+			.Next = next \
 		} },
 
 #include <GameDefinitions/Generated/PropertyMaps.inl>

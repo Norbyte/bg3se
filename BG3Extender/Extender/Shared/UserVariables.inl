@@ -313,7 +313,7 @@ UserVariable* UserVariableManager::Get(Guid const& entity, FixedString const& ke
 	return nullptr;
 }
 
-MultiHashMap<FixedString, UserVariable>* UserVariableManager::GetAll(Guid const& entity)
+HashMap<FixedString, UserVariable>* UserVariableManager::GetAll(Guid const& entity)
 {
 	auto vars = vars_.try_get(entity);
 	if (vars) {
@@ -323,7 +323,7 @@ MultiHashMap<FixedString, UserVariable>* UserVariableManager::GetAll(Guid const&
 	}
 }
 
-MultiHashMap<Guid, UserVariableManager::EntityVariables>& UserVariableManager::GetAll()
+HashMap<Guid, UserVariableManager::EntityVariables>& UserVariableManager::GetAll()
 {
 	return vars_;
 }
@@ -626,7 +626,7 @@ ModVariableMap::VariableMap* ModVariableManager::GetAll(Guid const& modUuid)
 	}
 }
 
-MultiHashMap<Guid, ModVariableMap>& ModVariableManager::GetAll()
+HashMap<Guid, ModVariableMap>& ModVariableManager::GetAll()
 {
 	return vars_;
 }

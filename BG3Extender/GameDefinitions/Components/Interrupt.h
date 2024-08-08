@@ -42,14 +42,14 @@ struct DecisionComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(InterruptDecision, "eoc::interrupt::DecisionComponent")
 
-	MultiHashMap<InterruptEvent, uint8_t> Decisions;
+	HashMap<InterruptEvent, uint8_t> Decisions;
 };
 
 struct PreferencesComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(InterruptPreferences, "eoc::interrupt::PreferencesComponent")
 
-	MultiHashMap<FixedString, uint8_t> Preferences;
+	HashMap<FixedString, uint8_t> Preferences;
 };
 
 struct PreparedComponent : public BaseComponent
@@ -70,7 +70,7 @@ struct ZoneParticipantComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(InterruptZoneParticipant, "eoc::interrupt::ZoneParticipantComponent")
 
-	MultiHashMap<EntityHandle, uint8_t> field_0;
+	HashMap<EntityHandle, uint8_t> field_0;
 };
 
 struct ZoneSourceComponent : public BaseComponent
@@ -89,7 +89,7 @@ struct StartRequestData
 	__int64 field_0;
 	__int64 field_8;
 	bg3se::interrupt::InterruptEvent Event;
-	MultiHashMap<EntityHandle, MultiHashSet<EntityHandle>> MHM_EH_MHS_EH;
+	HashMap<EntityHandle, HashSet<EntityHandle>> MHM_EH_MHS_EH;
 	__int64 field_158;
 };
 
@@ -105,14 +105,14 @@ struct CombatLogRequestData
 {
 	__int64 field_0;
 	__int64 field_8;
-	MultiHashMap<EntityHandle, MultiHashSet<EntityHandle>> MHM_EH_MHS_EH;
+	HashMap<EntityHandle, HashSet<EntityHandle>> MHM_EH_MHS_EH;
 };
 
 struct UpdateInterruptorsRequestData
 {
 	__int64 field_0;
 	Array<stats::ActionResourceCost> UseCosts;
-	MultiHashMap<EntityHandle, MultiHashMap<bg3se::interrupt::InterruptEvent, ConditionRoll>> field_18;
+	HashMap<EntityHandle, HashMap<bg3se::interrupt::InterruptEvent, ConditionRoll>> field_18;
 };
 
 struct InterruptDataComponent : public BaseComponent
@@ -162,7 +162,7 @@ struct InterruptResultsComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerSpellInterruptResults, "esv::spell_cast::InterruptResultsComponent")
 
-	MultiHashMap<bg3se::interrupt::DamageFunctorKey, bg3se::interrupt::DamageRollAdjustments> Results;
+	HashMap<bg3se::interrupt::DamageFunctorKey, bg3se::interrupt::DamageRollAdjustments> Results;
 	Array<FunctorConditional> Results2;
 };
 
@@ -174,7 +174,7 @@ struct AddRemoveRequestsComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerInterruptAddRemoveRequests, "esv::interrupt::AddRemoveRequestsComponent")
 
-	MultiHashMap<EntityHandle, uint8_t> Requests;
+	HashMap<EntityHandle, uint8_t> Requests;
 };
 
 struct ActionRequestsComponent : public BaseComponent
@@ -197,21 +197,21 @@ struct ZoneRequestsComponent : public BaseComponent
 struct InitialParticipantData
 {
 	StartRequestData StartRequest;
-	MultiHashSet<EntityHandle> Entities;
+	HashSet<EntityHandle> Entities;
 };
 
 struct InitialParticipantsComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerInterruptInitialParticipants, "esv::interrupt::InitialParticipantsComponent")
 
-	MultiHashMap<EntityHandle, InitialParticipantData> Participants;
+	HashMap<EntityHandle, InitialParticipantData> Participants;
 };
 
 struct TurnOrderInZoneComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerInterruptTurnOrderInZone, "esv::interrupt::TurnOrderInZoneComponent")
 	
-	MultiHashSet<EntityHandle> InZone;
+	HashSet<EntityHandle> InZone;
 };
 
 struct DataSingletonComponent : public BaseComponent

@@ -19,6 +19,8 @@ enum class RPGEnumerationType
 	Conditions,
 	RollConditions,
 	Requirements,
+	// Legacy DOS2 type, unused
+	MemorizationRequirements,
 	TranslatedString,
 	Unknown
 };
@@ -26,7 +28,7 @@ enum class RPGEnumerationType
 struct RPGEnumeration : public ProtectedGameObject<RPGEnumeration>
 {
 	FixedString Name;
-	Map<FixedString, int32_t> Values;
+	LegacyMap<FixedString, int32_t> Values;
 
 	static bool IsFlagType(FixedString const& typeName);
 	RPGEnumerationType GetPropertyType() const;
@@ -207,8 +209,8 @@ struct CItemGroup
 
 struct CItemProgressionManager : public ProtectedGameObject<CItemProgressionManager>
 {
-	Map<FixedString, CItemGroup*> ItemGroups;
-	Map<FixedString, CNameGroup*> NameGroups;
+	LegacyMap<FixedString, CItemGroup*> ItemGroups;
+	LegacyMap<FixedString, CNameGroup*> NameGroups;
 	CItemGroup* CurrentItemGroup;
 	CLevelGroup* CurrentLevelGroup;
 	CRootGroup* CurrentRootGroup;
@@ -288,14 +290,14 @@ struct RPGStats : public ProtectedGameObject<RPGStats>
 	CNamedElementManager<TreasureCategory> TreasureCategories;
 	CNamedElementManager<TreasureTable> TreasureTables;
 	ItemTypeManager ItemTypes;
-	Map<FixedString, Functors*> StatsFunctors;
+	LegacyMap<FixedString, Functors*> StatsFunctors;
 	uint64_t Unkn1[9];
-	MultiHashMap<FixedString, float>* ExtraData;
-	Map<FixedString, FixedString> field_290;
-	Map<FixedString, void*> field_2A8;
-	Map<FixedString, void*> field_2C0;
-	Map<FixedString, void*> field_2D8;
-	RefMap<FixedString, void*> field_2F0;
+	HashMap<FixedString, float>* ExtraData;
+	LegacyMap<FixedString, FixedString> field_290;
+	LegacyMap<FixedString, void*> field_2A8;
+	LegacyMap<FixedString, void*> field_2C0;
+	LegacyMap<FixedString, void*> field_2D8;
+	LegacyRefMap<FixedString, void*> field_2F0;
 	FixedString TreasureRarities[7];
 	Array<FixedString> FixedStrings;
 	Array<int64_t*> Int64s;
@@ -308,9 +310,9 @@ struct RPGStats : public ProtectedGameObject<RPGStats>
 	void* ItemCombinationManager;
 	void* CurrentDataBuffer;
 	FixedString CurrentDataBufferPath;
-	Map<FixedString, int32_t> PreParsedDataBufferMap;
+	LegacyMap<FixedString, int32_t> PreParsedDataBufferMap;
 	Array<PreParsedDataBuffer*> PreParsedDataBuffers;
-	Map<FixedString, BloodType*> BloodTypes;
+	LegacyMap<FixedString, BloodType*> BloodTypes;
 	bool field_3E0;
 	bool IsLoading;
 	bool Loaded;

@@ -146,10 +146,13 @@ namespace bg3se
 		SYM_OFF(App__LoadGraphicSettings);
 
 		SYM_OFF(ecs__EntityWorld__Update);
+		SYM_OFF(ecs__EntityWorld__FlushECBs);
 
 		/*SYM_OFF(esv__SurfaceActionFactory);
 		SYM_OFF(esv__SurfaceActionFactory__CreateAction);
 		SYM_OFF(esv__SurfaceManager__AddAction);*/
+
+		SYM_OFF(stats__Functors__VMT);
 
 		SYM_OFF(eoc__SpellPrototypeManager);
 		SYM_OFF(eoc__SpellPrototype__Init);
@@ -162,6 +165,8 @@ namespace bg3se
 
 		SYM_OFF(eoc__InterruptPrototypeManager);
 		SYM_OFF(eoc__InterruptPrototype__Init);
+
+		SYM_OFF(eoc__ParseStaticBoosts);
 
 		SYM_OFF(esv__OsirisVariableHelper__SavegameVisit);
 

@@ -6,13 +6,6 @@
 
 BEGIN_SE()
 
-struct AiTilePos
-{
-	int16_t X;
-	int16_t Y;
-	int32_t SubgridId;
-};
-
 struct SurfaceMetaData
 {
 	Guid TeamId;
@@ -40,7 +33,7 @@ namespace bg3se::esv
 		Surface* Surface;
 		uint64_t SurfaceStateFlags;
 		PrimitiveSmallSet<SurfaceCell> Cells;
-		PrimitiveSmallSet<SurfaceCell> GrpwCells;
+		PrimitiveSmallSet<SurfaceCell> GrowCells;
 		uint16_t SurfaceIndex;
 		int16_t SurfaceConcentrationTarget_M;
 		AiTilePos Pos;
@@ -192,8 +185,8 @@ namespace bg3se::esv
 		ecs::EntityRef OwnerHandle;
 		glm::vec3 Position;
 		float SurfaceLifetime;
-		RefMap<SurfaceType, ComponentHandle> SurfaceMap;
-		RefMap<SurfaceType, PrimitiveSet<SurfaceCell>> SurfaceCellMap;
+		LegacyRefMap<SurfaceType, ComponentHandle> SurfaceMap;
+		LegacyRefMap<SurfaceType, PrimitiveSet<SurfaceCell>> SurfaceCellMap;
 		ObjectSet<SurfaceCell> SurfaceRemoveGroundCellMap;
 		ObjectSet<SurfaceCell> SurfaceRemoveCloudCellMap;
 		bool PlayerCharacterNearby;
@@ -284,8 +277,8 @@ namespace bg3se::esv
 		ObjectSet<void*> SurfaceConcentrationTargets;
 		int64_t field_280[16];
 		ObjectSet<void*> pAiTilePosSets;
-		RefMap<void*, void*> field_318;
-		RefMap<void*, void*> field_328;
+		LegacyRefMap<void*, void*> field_318;
+		LegacyRefMap<void*, void*> field_328;
 		int64_t field_338[10];
 	};*/
 }

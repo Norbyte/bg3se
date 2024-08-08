@@ -34,6 +34,10 @@ int CppObjectProxyHelpers::Next(lua_State* L, GenericPropertyMap const& pm, void
 		}
 	}
 
+	if (pm.FallbackNext) {
+		return pm.FallbackNext(L, lifetime, object, key);
+	}
+
 	return 0;
 }
 

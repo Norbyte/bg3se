@@ -6,7 +6,7 @@ struct ContainerComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(StatusContainer, "eoc::status::ContainerComponent")
 
-	MultiHashMap<EntityHandle, FixedString> Statuses;
+	HashMap<EntityHandle, FixedString> Statuses;
 };
 
 struct CauseComponent : public BaseComponent
@@ -28,7 +28,7 @@ struct IncapacitatedComponent : public BaseComponent
 	DEFINE_COMPONENT(StatusIncapacitated, "eoc::status::IncapacitatedComponent")
 
 	uint32_t field_0;
-	MultiHashMap<int32_t, Array<int32_t>> field_8;
+	HashMap<int32_t, Array<int32_t>> field_8;
 	uint8_t field_48;
 };
 
@@ -44,7 +44,7 @@ struct VisualDisabledComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(StatusVisualDisabled, "eoc::status::visual::DisabledComponent")
 
-	MultiHashSet<FixedString> Visuals;
+	HashSet<FixedString> Visuals;
 };
 
 END_NS()
@@ -82,14 +82,14 @@ struct DifficultyModifiersComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerStatusDifficultyModifiers, "esv::status::DifficultyModifiersComponent")
 
-	MultiHashMap<FixedString, MultiHashSet<FixedString>> Modifiers;
+	HashMap<FixedString, HashSet<FixedString>> Modifiers;
 };
 
 struct UniqueComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerStatusUnique, "esv::status::UniqueComponent")
 
-	MultiHashMap<FixedString, EntityHandle> Unique;
+	HashMap<FixedString, ComponentHandle> Unique;
 };
 
 struct PerformingComponent : public BaseComponent

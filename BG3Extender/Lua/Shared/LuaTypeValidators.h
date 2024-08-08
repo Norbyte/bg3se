@@ -30,8 +30,15 @@ inline typename std::enable_if_t<std::is_integral_v<T>, bool> Validate(T const*,
 	return true;
 }
 
-template <class T>
-inline typename std::enable_if_t<std::is_floating_point_v<T>, bool> Validate(T const*, Overload<T>)
+inline bool Validate(float const* v, Overload<float>)
+{
+#if defined(ENABLE_FLAKY_HEURISTICS)
+	CHECK((*v > -100000000.0f && *v < 100000000.0f) || *v == 3.40282347e+38f);
+#endif
+	return true;
+}
+
+inline bool Validate(double const*, Overload<double>)
 {
 	return true;
 }
@@ -50,7 +57,7 @@ inline bool Validate(glm::mat4x3 const* b, Overload<glm::mat4x3>) { return true;
 inline bool Validate(glm::mat4 const* b, Overload<glm::mat4>) { return true; }
 
 // TODO - might add some validation heuristic later?
-inline bool Validate(EntityHandle const* b, Overload<EntityHandle>) { return true; }
+bool Validate(EntityHandle const* b, Overload<EntityHandle>);
 inline bool Validate(ComponentHandle const* b, Overload<ComponentHandle>) { return true; }
 inline bool Validate(NetId const* b, Overload<NetId>) { return true; }
 inline bool Validate(UserId const* b, Overload<UserId>) { return true; }
@@ -351,7 +358,7 @@ bool ValidateRef(UninitializedStaticArray<TE> const* v, uint32_t initializedSize
 }
 
 template <class TK, class TV>
-bool ValidateRef(Map<TK, TV> const* v, Overload<Map<TK, TV>>)
+bool ValidateRef(LegacyMap<TK, TV> const* v, Overload<LegacyMap<TK, TV>>)
 {
 	auto m = reinterpret_cast<MapInternals<TK, TV> const*>(v);
 	if (m->HashTable == nullptr) {
@@ -376,7 +383,7 @@ bool ValidateRef(Map<TK, TV> const* v, Overload<Map<TK, TV>>)
 }
 
 template <class TK, class TV>
-bool ValidateRef(RefMap<TK, TV> const* v, Overload<RefMap<TK, TV>>)
+bool ValidateRef(LegacyRefMap<TK, TV> const* v, Overload<LegacyRefMap<TK, TV>>)
 {
 	auto m = reinterpret_cast<RefMapInternals<TK, TV> const*>(v);
 	if (m->HashTable == nullptr) {
@@ -401,7 +408,7 @@ bool ValidateRef(RefMap<TK, TV> const* v, Overload<RefMap<TK, TV>>)
 }
 
 template <class TK>
-bool ValidateRef(MultiHashSet<TK> const* v, Overload<MultiHashSet<TK>>)
+bool ValidateRef(HashSet<TK> const* v, Overload<HashSet<TK>>)
 {
 	CHECKR(ValidateRef(&v->hash_keys(), Overload<StaticArray<int32_t>>{}));
 	CHECKR(ValidateRef(&v->next_ids(), Overload<Array<int32_t>>{}));
@@ -415,14 +422,14 @@ bool ValidateRef(MultiHashSet<TK> const* v, Overload<MultiHashSet<TK>>)
 template <class TK>
 bool ValidateRef(VirtualMultiHashSet<TK> const* v, Overload<VirtualMultiHashSet<TK>>)
 {
-	return ValidateRef(v, Overload<MultiHashSet<TK>>{});
+	return ValidateRef(v, Overload<HashSet<TK>>{});
 }
 
 template <class TK, class TV>
-bool ValidateRef(MultiHashMap<TK, TV> const* v, Overload<MultiHashMap<TK, TV>>)
+bool ValidateRef(HashMap<TK, TV> const* v, Overload<HashMap<TK, TV>>)
 {
-	auto set = reinterpret_cast<MultiHashSet<TK> const*>(v);
-	CHECKR(ValidateRef(set, Overload<MultiHashSet<TK>>{}));
+	auto set = reinterpret_cast<HashSet<TK> const*>(v);
+	CHECKR(ValidateRef(set, Overload<HashSet<TK>>{}));
 	CHECKR(ValidateRef(&v->values(), v->keys().size(), Overload<UninitializedStaticArray<TV>>{}));
 
 	CHECK(v->values().size() >= v->keys().size());
@@ -431,9 +438,9 @@ bool ValidateRef(MultiHashMap<TK, TV> const* v, Overload<MultiHashMap<TK, TV>>)
 }
 
 template <class TK, class TV>
-bool ValidateRef(VirtualMultiHashMap<TK, TV> const* v, Overload<VirtualMultiHashMap<TK, TV>>)
+bool ValidateRef(VirtualHashMap<TK, TV> const* v, Overload<VirtualHashMap<TK, TV>>)
 {
-	return ValidateRef(v, Overload<MultiHashMap<TK, TV>>{});
+	return ValidateRef(v, Overload<HashMap<TK, TV>>{});
 }
 
 template <class T>
@@ -481,27 +488,27 @@ bool Validate(Noesis::Vector<TE, N> const* v, Overload<Noesis::Vector<TE, N>>)
 #endif
 
 template <class TK, class TV>
-bool Validate(Map<TK, TV> const* v, Overload<Map<TK, TV>>)
+bool Validate(LegacyMap<TK, TV> const* v, Overload<LegacyMap<TK, TV>>)
 {
-	return ValidateRef(v, Overload<Map<TK, TV>>{});
+	return ValidateRef(v, Overload<LegacyMap<TK, TV>>{});
 }
 
 template <class TK, class TV>
-bool Validate(RefMap<TK, TV> const* v, Overload<RefMap<TK, TV>>)
+bool Validate(LegacyRefMap<TK, TV> const* v, Overload<LegacyRefMap<TK, TV>>)
 {
-	return ValidateRef(v, Overload<RefMap<TK, TV>>{});
+	return ValidateRef(v, Overload<LegacyRefMap<TK, TV>>{});
 }
 
 template <class TE>
-bool Validate(MultiHashSet<TE> const* v, Overload<MultiHashSet<TE>>)
+bool Validate(HashSet<TE> const* v, Overload<HashSet<TE>>)
 {
-	return ValidateRef(v, Overload<MultiHashSet<TE>>{});
+	return ValidateRef(v, Overload<HashSet<TE>>{});
 }
 
 template <class TK, class TV>
-bool Validate(MultiHashMap<TK, TV> const* v, Overload<MultiHashMap<TK, TV>>)
+bool Validate(HashMap<TK, TV> const* v, Overload<HashMap<TK, TV>>)
 {
-	return ValidateRef(v, Overload<MultiHashMap<TK, TV>>{});
+	return ValidateRef(v, Overload<HashMap<TK, TV>>{});
 }
 
 template <class T>

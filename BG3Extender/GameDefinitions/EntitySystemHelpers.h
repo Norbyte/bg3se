@@ -32,6 +32,62 @@ enum class RuntimeCheckLevel
 	FullECS
 };
 
+struct PerECSComponentData
+{
+	STDString const* Name{ nullptr };
+	std::optional<ExtComponentType> ExtType;
+	ReplicationTypeIndex ReplicationType{ UndefinedReplicationComponent };
+};
+
+struct PerECSReplicationData
+{
+	STDString const* Name{ nullptr };
+	std::optional<ExtComponentType> ExtType;
+	ComponentTypeIndex ComponentType{ UndefinedComponent };
+};
+
+class ECSComponentDataMap
+{
+public:
+	PerECSComponentData const& Get(ComponentTypeIndex type) const;
+	PerECSComponentData& GetOrAdd(ComponentTypeIndex type);
+	
+	PerECSReplicationData const& Get(ReplicationTypeIndex type) const;
+	PerECSReplicationData& GetOrAdd(ReplicationTypeIndex type);
+
+	void Clear();
+
+private:
+	std::vector<PerECSComponentData> componentData_;
+	std::vector<PerECSReplicationData> replicationData_;
+	PerECSComponentData nullComponentData_;
+	PerECSReplicationData nullReplicationData_;
+};
+
+struct ECSComponentLog
+{
+	ComponentTypeIndex ComponentType;
+	ComponentChangeFlags Flags{ 0 };
+
+	STDString GetName();
+};
+
+struct ECSEntityLog
+{
+	HashMap<uint16_t, ECSComponentLog> Components;
+	EntityHandle Entity;
+	EntityChangeFlags Flags{ 0 };
+};
+
+struct ECSChangeLog
+{
+	HashMap<EntityHandle, ECSEntityLog> Entities;
+
+	void Clear();
+	void AddEntityChange(EntityHandle entity, EntityChangeFlags flags);
+	void AddComponentChange(EntityWorld* world, EntityHandle entity, ComponentTypeIndex type, ComponentChangeFlags flags);
+};
+
 class EntitySystemHelpersBase : public Noncopyable<EntitySystemHelpersBase>
 {
 public:
@@ -58,34 +114,19 @@ public:
 		}
 	}
 
-	inline std::optional<STDString const*> GetComponentName(ComponentTypeIndex index) const
+	inline STDString const* GetComponentName(ComponentTypeIndex index) const
 	{
-		auto it = componentIndexToNameMappings_.find(index);
-		if (it != componentIndexToNameMappings_.end()) {
-			return it->second;
-		} else {
-			return {};
-		}
+		return ecsComponentData_.Get(index).Name;
 	}
 
 	inline std::optional<ExtComponentType> GetComponentType(ComponentTypeIndex index) const
 	{
-		auto it = componentIndexToTypeMappings_.find(index);
-		if (it != componentIndexToTypeMappings_.end()) {
-			return it->second;
-		} else {
-			return {};
-		}
+		return ecsComponentData_.Get(index).ExtType;
 	}
 
 	inline std::optional<ExtComponentType> GetComponentType(ReplicationTypeIndex index) const
 	{
-		auto it = replicationIndexToTypeMappings_.find(index);
-		if (it != replicationIndexToTypeMappings_.end()) {
-			return it->second;
-		} else {
-			return {};
-		}
+		return ecsComponentData_.Get(index).ExtType;
 	}
 
 	std::optional<ComponentTypeIndex> GetComponentIndex(ExtComponentType type) const;
@@ -168,6 +209,16 @@ public:
 		}
 	}
 
+	inline void EnableLogging(bool enable)
+	{
+		logging_ = enable;
+	}
+
+	inline ECSChangeLog& GetLog()
+	{
+		return log_;
+	}
+
 	inline std::optional<int32_t> GetQueryIndex(STDString const& type) const
 	{
 		auto it = queryMappings_.find(type);
@@ -194,6 +245,7 @@ public:
 
 	void Update();
 	void PostUpdate();
+	void OnFlushECBs();
 
 protected:
 	static constexpr int32_t UndefinedIndex{ -1 };
@@ -206,6 +258,7 @@ protected:
 	void ValidateReplication();
 	void ValidateMappedComponentSizes();
 	bool ValidateMappedComponentSize(ecs::EntityWorld* world, ComponentTypeIndex typeId, ExtComponentType extType);
+	void ValidateECBFlushChanges();
 	void ValidateEntityChanges();
 	void ValidateEntityChanges(ImmediateWorldCache::Changes& changes);
 
@@ -216,15 +269,8 @@ private:
 		ReplicationTypeIndex ReplicationIndex{ UndefinedReplicationComponent };
 	};
 
-	std::array<PerComponentData, (size_t)ExtComponentType::Max> components_;
-	std::array<int32_t, (size_t)ExtQueryType::Max> queryIndices_;
-	std::array<int32_t, (size_t)ExtResourceManagerType::Max> staticDataIndices_;
-	std::array<int32_t, (size_t)ExtSystemType::Max> systemIndices_;
-
 	std::unordered_map<STDString, IndexMappings> componentNameToIndexMappings_;
-	std::unordered_map<ComponentTypeIndex, STDString const*> componentIndexToNameMappings_;
-	std::unordered_map<ComponentTypeIndex, ExtComponentType> componentIndexToTypeMappings_;
-	std::unordered_map<ReplicationTypeIndex, ExtComponentType> replicationIndexToTypeMappings_;
+	ECSComponentDataMap ecsComponentData_;
 	std::unordered_map<STDString, int32_t> systemIndexMappings_;
 	std::vector<STDString const*> systemTypeIdToName_;
 	std::unordered_map<STDString, int32_t> queryMappings_;
@@ -234,6 +280,14 @@ private:
 
 	bool initialized_{ false };
 	bool validated_{ false };
+	bool logging_{ false };
+
+	std::array<PerComponentData, (size_t)ExtComponentType::Max> components_;
+	std::array<int32_t, (size_t)ExtQueryType::Max> queryIndices_;
+	std::array<int32_t, (size_t)ExtResourceManagerType::Max> staticDataIndices_;
+	std::array<int32_t, (size_t)ExtSystemType::Max> systemIndices_;
+
+	ECSChangeLog log_;
 
 	void BindSystem(std::string_view name, int32_t id);
 	void BindQuery(std::string_view name, int32_t id);
@@ -243,6 +297,10 @@ private:
 	void* GetRawComponent(Guid const& guid, ExtComponentType type);
 	void* GetRawComponent(FixedString const& guid, ExtComponentType type);
 	resource::GuidResourceBankBase* GetRawResourceManager(ExtResourceManagerType type);
+
+	void DebugLogUpdateChanges();
+	void DebugLogReplicationChanges();
+	void DebugLogECBFlushChanges();
 };
 
 class ServerEntitySystemHelpers : public EntitySystemHelpersBase

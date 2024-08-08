@@ -1,7 +1,7 @@
 /// <lua_module>Template</lua_module>
 BEGIN_NS(esv::lua::tmpl)
 
-Map<FixedString, GameObjectTemplate*>* GetAllRootTemplates()
+LegacyMap<FixedString, GameObjectTemplate*>* GetAllRootTemplates()
 {
 	auto bank = GetStaticSymbols().GetGlobalTemplateBank();
 	return &bank->Templates;
@@ -13,7 +13,7 @@ GameObjectTemplate* GetRootTemplate(FixedString const& templateId)
 	return bank->Templates.try_get(templateId);
 }
 
-MultiHashMap<FixedString, GameObjectTemplate*>* GetAllCacheTemplates()
+HashMap<FixedString, GameObjectTemplate*>* GetAllCacheTemplates()
 {
 	auto cache = *GetStaticSymbols().esv__CacheTemplateManager;
 	if (cache) {
@@ -23,7 +23,7 @@ MultiHashMap<FixedString, GameObjectTemplate*>* GetAllCacheTemplates()
 	return nullptr;
 }
 
-RefMap<FixedString, GameObjectTemplate*>* GetAllLocalTemplates()
+LegacyRefMap<FixedString, GameObjectTemplate*>* GetAllLocalTemplates()
 {
 	auto level = GetStaticSymbols().GetCurrentServerLevel();
 	if (level) {
@@ -54,7 +54,7 @@ GameObjectTemplate* GetCacheTemplate(FixedString const& templateId)
 	return nullptr;
 }
 
-MultiHashMap<FixedString, GameObjectTemplate*>* GetAllLocalCacheTemplates()
+HashMap<FixedString, GameObjectTemplate*>* GetAllLocalCacheTemplates()
 {
 	auto level = GetStaticSymbols().GetCurrentServerLevel();
 	if (level) {

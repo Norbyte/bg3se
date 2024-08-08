@@ -42,17 +42,17 @@ struct BaseHpComponent : public BaseComponent
 struct Bound
 {
 	EntityHandle Entity;
-	RefMap<AIBoundType, AIBound> AIBounds;
+	LegacyRefMap<AIBoundType, BoundData> AIBounds;
 	[[bg3::hidden]] void* AiGrid;
 	[[bg3::hidden]] void* Parent;
-	MultiHashSet<uint32_t> GridPoints;
+	HashSet<AiTilePos> GridPoints;
 	glm::vec3 Translate;
 	glm::quat RotationQuat;
 	float Scale;
-	int16_t MetaDataIndex;
-	uint16_t CollidingRefCount;
+	[[bg3::readonly]] int16_t MetaDataIndex;
+	[[bg3::readonly]] uint16_t CollidingRefCount;
 	glm::vec3 TranslateOverride;
-	uint8_t Flags;
+	BoundBaseFlags Flags;
 	uint8_t field_89;
 	uint16_t BoundFlags;
 	FixedString OwnerPlatform;
@@ -70,7 +70,7 @@ struct CustomStatsComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(CustomStats, "eoc::CustomStatsComponent")
 
-	Map<FixedString, int> Stats;
+	LegacyMap<FixedString, int> Stats;
 };
 
 struct DataComponent : public BaseComponent
@@ -169,7 +169,7 @@ struct ExpertiseComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(Expertise, "eoc::expertise::ExpertiseComponent")
 
-	MultiHashSet<SkillId> Expertise;
+	HashSet<SkillId> Expertise;
 };
 
 struct StatsComponent : public BaseComponent
@@ -194,7 +194,7 @@ struct StatusImmunitiesComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(StatusImmunities, "eoc::StatusImmunitiesComponent")
 
-	MultiHashMap<FixedString, Guid> PersonalStatusImmunities;
+	HashMap<FixedString, Guid> PersonalStatusImmunities;
 };
 
 struct ValueComponent : public BaseComponent
@@ -210,8 +210,8 @@ struct WeaponComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(Weapon, "eoc::WeaponComponent")
 
-	RefMap<AbilityId, Array<RollDefinition>> Rolls;
-	RefMap<AbilityId, Array<RollDefinition>> Rolls2;
+	LegacyRefMap<AbilityId, Array<RollDefinition>> Rolls;
+	LegacyRefMap<AbilityId, Array<RollDefinition>> Rolls2;
 	float WeaponRange;
 	float DamageRange;
 	[[bg3::hidden]]
@@ -315,9 +315,9 @@ struct SummonContainerComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(SummonContainer, "eoc::summon::ContainerComponent")
 
-	[[bg3::legacy(field_18)]] MultiHashMap<FixedString, Array<EntityHandle>> ByTag;
-	MultiHashSet<EntityHandle> Characters;
-	MultiHashSet<EntityHandle> Items;
+	[[bg3::legacy(field_18)]] HashMap<FixedString, Array<EntityHandle>> ByTag;
+	HashSet<EntityHandle> Characters;
+	HashSet<EntityHandle> Items;
 };
 
 struct StealthComponent : public BaseComponent
@@ -545,7 +545,7 @@ struct ConcentrationTarget
 {
 	[[bg3::legacy(field_0)]] EntityHandle Target;
 	[[bg3::legacy(field_8)]] EntityHandle Concentration;
-	[[bg3::legacy(field_10)]] EntityHandle Status;
+	[[bg3::legacy(field_10)]] ComponentHandle Status;
 	int16_t field_18;
 	bool field_1A;
 };
@@ -596,7 +596,7 @@ struct InteractionFilterComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(InteractionFilter, "eoc::InteractionFilterComponent")
 
-	MultiHashSet<Guid> field_0;
+	HashSet<Guid> field_0;
 	uint8_t field_30;
 	uint8_t field_31;
 };
@@ -691,8 +691,8 @@ struct ApprovalRatingsComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ApprovalRatings, "eoc::approval::RatingsComponent")
 
-	MultiHashMap<EntityHandle, int> Ratings;
-	MultiHashSet<Guid> field_70;
+	HashMap<EntityHandle, int> Ratings;
+	HashSet<Guid> field_70;
 };
 
 
@@ -716,11 +716,11 @@ struct AttitudesToPlayersComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(AttitudesToPlayers, "eoc::attitude::AttitudesToPlayersComponent")
 
-	MultiHashMap<AttitudeIdentifier, int> Attitudes;
+	HashMap<AttitudeIdentifier, int> Attitudes;
 };
 
 template <>
-inline uint64_t MultiHashMapHash<AttitudeIdentifier>(AttitudeIdentifier const& v)
+inline uint64_t HashMapHash<AttitudeIdentifier>(AttitudeIdentifier const& v)
 {
 	return HashMulti(v.field_0, v.field_8, v.field_10, v.field_20);
 }
@@ -741,7 +741,7 @@ struct GoalsComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(BackgroundGoals, "eoc::background::GoalsComponent")
 
-	MultiHashMap<Guid, Array<GoalRecord>> Goals;
+	HashMap<Guid, Array<GoalRecord>> Goals;
 };
 
 END_NS()
@@ -771,7 +771,7 @@ struct ContainerComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(HotbarContainer, "eoc::hotbar::ContainerComponent")
 
-	MultiHashMap<FixedString, Array<Bar>> Containers;
+	HashMap<FixedString, Array<Bar>> Containers;
 	FixedString ActiveContainer;
 };
 
@@ -779,7 +779,7 @@ struct HotbarCurrentDecksComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(HotbarDecks, "eoc::hotbar::CurrentDecksComponent")
 
-	MultiHashMap<FixedString, int32_t> Decks;
+	HashMap<FixedString, int32_t> Decks;
 };
 
 END_NS()

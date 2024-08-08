@@ -33,11 +33,11 @@ inline void MakeObjectRef(lua_State* L, T* value, LifetimeHandle const& lifetime
 			push(L, nullptr);
 		}
 	} else {
-		//if constexpr (LuaLifetimeInfo<T>::HasInfiniteLifetime) {
-		//	ObjectProxy::MakeRef<T>(L, value, State::FromLua(L)->GetGlobalLifetime());
-		//} else {
+		if constexpr (LuaLifetimeInfo<T>::HasInfiniteLifetime) {
+			ObjectProxy::MakeRef<T>(L, value, State::FromLua(L)->GetGlobalLifetime());
+		} else {
 			ObjectProxy::MakeRef<T>(L, value, lifetime);
-		//}
+		}
 	}
 }
 
@@ -55,8 +55,8 @@ inline void MakeDirectObjectRef(lua_State* L, T* value, LifetimeHandle const& li
 {
 	if (value == nullptr) {
 		push(L, nullptr);
-	//} else if constexpr (LuaLifetimeInfo<T>::HasInfiniteLifetime) {
-	//	ObjectProxy::MakeRef<T>(L, value, State::FromLua(L)->GetGlobalLifetime());
+	} else if constexpr (LuaLifetimeInfo<T>::HasInfiniteLifetime) {
+		ObjectProxy::MakeRef<T>(L, value, State::FromLua(L)->GetGlobalLifetime());
 	} else {
 		ObjectProxy::MakeRef<T>(L, value, lifetime);
 	}

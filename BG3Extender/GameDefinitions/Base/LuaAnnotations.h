@@ -57,6 +57,26 @@ struct RefReturn
 	T* Object;
 };
 
+// Return type indicating that the return value should be passed to Lua using an object proxy with infinite (global) lifetime
+template <class T>
+struct GlobalRefReturn
+{
+	inline constexpr GlobalRefReturn()
+		: Object(nullptr)
+	{}
+	
+	inline constexpr GlobalRefReturn(T* obj)
+		: Object(obj)
+	{}
+
+	inline constexpr operator T*() const
+	{
+		return Object;
+	}
+
+	T* Object;
+};
+
 // Parameter type indicating that the value should be passed from Lua using an object proxy
 template <class T>
 struct ProxyParam

@@ -33,7 +33,7 @@ private:
 	{
 		EntityComponentEvent Events;
 		Array<SubscriptionIndex> GlobalHooks;
-		MultiHashMap<EntityHandle, Array<SubscriptionIndex>> EntityHooks;
+		HashMap<EntityHandle, Array<SubscriptionIndex>> EntityHooks;
 		uint64_t ConstructRegistrant{ 0 };
 		uint64_t DestructRegistrant{ 0 };
 	};

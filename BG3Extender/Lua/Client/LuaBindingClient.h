@@ -58,30 +58,6 @@ namespace bg3se::ecl::lua
 	};
 
 
-	/*class StatusHandleProxy : public Userdata<StatusHandleProxy>, public Indexable, public NewIndexable<PushPolicy::None>
-	{
-	public:
-		static char const* const MetatableName;
-
-		inline StatusHandleProxy(ComponentHandle character, NetId status)
-			: character_(character), statusNetId_(status)
-		{}
-
-		inline StatusHandleProxy(ComponentHandle character, ComponentHandle status)
-			: character_(character), statusHandle_(status)
-		{}
-
-		ecl::Status* Get(lua_State* L);
-		int Index(lua_State* L);
-		int NewIndex(lua_State* L);
-
-	private:
-		ComponentHandle character_;
-		ComponentHandle statusHandle_;
-		NetId statusNetId_;
-	};*/
-
-
 	class ClientState : public State
 	{
 	public:

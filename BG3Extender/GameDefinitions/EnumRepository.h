@@ -19,7 +19,7 @@ template <class T>
 struct BitfieldInfoStoreBase
 {
 	Vector<FixedString> Labels;
-	Map<FixedString, T> Values;
+	LegacyMap<FixedString, T> Values;
 	T AllowedFlags{ 0 };
 	FixedString EnumName;
 	FixedString LuaName;
@@ -84,7 +84,7 @@ template <class T>
 struct EnumInfoStoreBase
 {
 	Vector<FixedString> Labels;
-	Map<FixedString, T> Values;
+	LegacyMap<FixedString, T> Values;
 	FixedString EnumName;
 	FixedString LuaName;
 	int RegistryIndex{ -1 };
@@ -139,7 +139,7 @@ struct EnumRegistry
 {
 	static EnumRegistry& Get();
 
-	Map<FixedString, EnumInfoStore*> EnumsByName;
+	LegacyMap<FixedString, EnumInfoStore*> EnumsByName;
 	Array<EnumInfoStore*> EnumsById;
 
 	void Register(EnumInfoStore* ei, EnumTypeId id);
@@ -149,7 +149,7 @@ struct BitfieldRegistry
 {
 	static BitfieldRegistry& Get();
 
-	Map<FixedString, BitfieldInfoStore*> BitfieldsByName;
+	LegacyMap<FixedString, BitfieldInfoStore*> BitfieldsByName;
 	Array<BitfieldInfoStore*> BitfieldsById;
 
 	void Register(BitfieldInfoStore* ei, BitfieldTypeId id);

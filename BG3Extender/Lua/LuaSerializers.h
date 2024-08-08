@@ -244,7 +244,7 @@ namespace bg3se::lua
 #endif
 
 	template <class T>
-	LuaSerializer& operator << (LuaSerializer& s, MultiHashSet<T>& v)
+	LuaSerializer& operator << (LuaSerializer& s, HashSet<T>& v)
 	{
 		s.BeginObject();
 		if (s.IsWriting) {
@@ -269,7 +269,7 @@ namespace bg3se::lua
 	}
 
 	template <class TKey, class TValue>
-	LuaSerializer& operator << (LuaSerializer& s, MultiHashMap<TKey, TValue>& v)
+	LuaSerializer& operator << (LuaSerializer& s, HashMap<TKey, TValue>& v)
 	{
 		s.BeginObject();
 		if (s.IsWriting) {
@@ -298,7 +298,7 @@ namespace bg3se::lua
 	}
 
 	template <class TKey, class TValue>
-	LuaSerializer& operator << (LuaSerializer& s, RefMap<TKey, TValue>& v)
+	LuaSerializer& operator << (LuaSerializer& s, LegacyRefMap<TKey, TValue>& v)
 	{
 		s.BeginObject();
 		if (s.IsWriting) {
@@ -326,7 +326,7 @@ namespace bg3se::lua
 	}
 
 	template <class TKey, class TValue>
-	LuaSerializer& operator << (LuaSerializer& s, Map<TKey, TValue>& v)
+	LuaSerializer& operator << (LuaSerializer& s, LegacyMap<TKey, TValue>& v)
 	{
 		s.BeginObject();
 		if (s.IsWriting) {

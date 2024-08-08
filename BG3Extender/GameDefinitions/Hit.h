@@ -67,8 +67,8 @@ struct StatsRollMetadata
 	int HighGroundBonus;
 	int LowGroundPenalty;
 	[[bg3::legacy(field_10)]] int BaseUnarmedDamage;
-	MultiHashMap<AbilityId, int32_t> AbilityBoosts;
-	MultiHashMap<SkillId, int32_t> SkillBonuses;
+	HashMap<AbilityId, int32_t> AbilityBoosts;
+	HashMap<SkillId, int32_t> SkillBonuses;
 	bool AutoSkillCheckFail;
 	bool AutoAbilityCheckFail;
 	bool AutoAbilitySavingThrowFail;
@@ -135,7 +135,7 @@ struct DamageResistance
 
 struct StatsDamage
 {
-	RefMap<DamageType, Array<StatsRoll>> DamageRolls;
+	LegacyRefMap<DamageType, Array<StatsRoll>> DamageRolls;
 	Array<DamageModifierMetadata> Modifiers;
 	StatsExpressionResolved ConditionRoll;
 	Array<DamageModifierMetadata> Modifiers2;
@@ -143,8 +143,8 @@ struct StatsDamage
 	int AdditionalDamage;
 	int TotalDamage;
 	int FinalDamage;
-	RefMap<DamageType, int32_t> TotalDamagePerType;
-	RefMap<DamageType, int32_t> FinalDamagePerType;
+	LegacyRefMap<DamageType, int32_t> TotalDamagePerType;
+	LegacyRefMap<DamageType, int32_t> FinalDamagePerType;
 	[[bg3::legacy(field_D0)]] uint32_t Multiplier;
 	[[bg3::legacy(field_D4)]] uint32_t BaseValue;
 	[[bg3::legacy(field_D8)]] uint32_t SecondaryValue;
