@@ -15,6 +15,12 @@ END_NS();
 
 BEGIN_SE()
 
+template <class T>
+constexpr bool IsIntegralAlias = false;
+
+#define MARK_INTEGRAL_ALIAS(ty) template <> constexpr bool IsIntegralAlias<ty> = true;
+
+
 struct TypeInformation;
 
 struct StaticTypeInformation : Noncopyable<StaticTypeInformation>
@@ -269,6 +275,8 @@ StaticTypeInformation& GetStaticTypeInfo(Overload<T>)
 		return GetStaticTypeInfo(Overload<std::remove_reference_t<T>>{});
 	} else if constexpr (std::is_const_v<T> || std::is_volatile_v<T>) {
 		return GetStaticTypeInfo(Overload<std::remove_cv_t<T>>{});
+	} else if constexpr (IsIntegralAlias<T>) {
+		return GetStaticTypeInfo(Overload<std::underlying_type_t<T>>{});
 	} else {
 		return GetStaticTypeInfoInternal(Overload<T>{});
 	}

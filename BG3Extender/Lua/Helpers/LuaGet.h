@@ -103,7 +103,9 @@ inline typename std::enable_if_t<std::is_floating_point_v<T>, T> do_get(lua_Stat
 template <class T>
 typename std::enable_if_t<std::is_enum_v<T>, T> do_get(lua_State * L, int index, Overload<T>)
 {
-	if constexpr (IsBitfieldV<T>) {
+	if constexpr (IsIntegralAlias<T>) {
+		return (T)do_get(L, index, Overload<std::underlying_type_t<T>>{});
+	} else if constexpr (IsBitfieldV<T>) {
 		return (T)get_bitfield_value(L, index, BitfieldID<T>::ID);
 	} else {
 		return (T)get_enum_value(L, index, EnumID<T>::ID);

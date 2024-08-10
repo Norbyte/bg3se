@@ -97,9 +97,14 @@ SoundObjectId GetSoundObjectId(lua_State* L, int idx)
 
 END_NS()
 
-BEGIN_NS(lua)
+BEGIN_SE()
 
 enum class LuaSoundObjectId : SoundObjectId {};
+MARK_INTEGRAL_ALIAS(LuaSoundObjectId)
+
+END_SE()
+
+BEGIN_NS(lua)
 
 LuaSoundObjectId do_get(lua_State* L, int index, Overload<LuaSoundObjectId>)
 {
