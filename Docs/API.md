@@ -9,8 +9,13 @@
  - [Console](#console)
     - [Multiline Mode](#multiline-mode)
     - [Saving output to a file](#save-console-output)
- - [Calling Lua from Osiris](#calling-lua-from-osiris)
-    * [Capturing Events/Calls](#l2o_captures)
+- [General Lua Rules](#lua-general)
+    * [Object Scopes](#lua-scopes)
+    * [Object Behavior](#lua-objects)
+    * [Parameter Passing](#lua-parameters)
+    * [Enumerations](#lua-enumerations)
+    * [Bitfields](#lua-bitfields)
+    * [Events](#lua-events)
  - [Calling Osiris from Lua](#calling-osiris-from-lua)
     * [Calls](#o2l_calls)
     * [Queries](#o2l_queries)
@@ -18,15 +23,14 @@
     * [PROCs](#o2l_procs)
     * [User Queries](#o2l_qrys)
     * [Databases](#o2l_dbs)
- - [General Lua Rules](#lua-general)
-    * [Object Scopes](#lua-scopes)
-    * [Object Behavior](#lua-objects)
-    * [Parameter Passing](#lua-parameters)
-    * [Enumerations](#lua-enumerations)
-    * [Bitfields](#lua-bitfields)
-    * [Events](#lua-events)
+ - [Calling Lua from Osiris](#calling-lua-from-osiris)
+    * [Capturing Events/Calls](#l2o_captures)
  - [Stats](#stats)
  - [ECS](#ecs)
+ - [Networking](#networking)
+    * [Sending NetMessages](#net-send)
+    * [Listening for NetMessages](#net-receive)
+    * [Utility functions](#net-utils)
  - [Custom Variables](#custom-variables)
  - [Utility functions](#ext-utility)
  - [JSON Support](#json-support)
@@ -470,8 +474,8 @@ local handlerId = Ext.Events.GameStateChanged:Subscribe(handler)
 ...
 Ext.Events.GameStateChanged:Unsubscribe(handlerId)
 ```
-
-## Calling Osiris from Lua <sup>S</sup>
+<a id="calling-osiris-from-lua"></a>
+## Calling Osiris from Lua
 
 Lua server contexts have a special global table called `Osi` that contains every Osiris symbol. In addition, built-in engine functions (calls, queries, events) are also added to the global table.
 
@@ -564,6 +568,9 @@ Osi.DB_GiveTemplateFromNpcToPlayerDialogEvent:Delete(nil, nil, nil)
 -- Delete rows where the first column is CON_Drink_Cup_A_Tea_080d0e93-12e0-481f-9a71-f0e84ac4d5a9
 Osi.DB_GiveTemplateFromNpcToPlayerDialogEvent:Delete("CON_Drink_Cup_A_Tea_080d0e93-12e0-481f-9a71-f0e84ac4d5a9", nil, nil)
 ```
+
+<a id="calling-lua-from-osiris"></a>
+## Calling Lua from Osiris
 
 <a id="l2o_captures"></a>
 ### Capturing Events/Calls
@@ -756,6 +763,104 @@ Ext.Utils.Print(Ext.Stats.ExtraData.WisdomTierHigh)
 
 ### TODO - WIP
 
+<a id="networking"></a>
+## Networking
+To exchange data between the server and client(s), we use NetMessages. These can be sent and received from either context to facilitate communication. This allows us to share data between the server and the client(s) and vice versa.
+
+<a id="net-send"></a>
+### Sending NetMessages
+NetMessages can be sent from either the server or client. They consist of a channel and a payload. The channel is a string used to distinguish your messages from others, and the payload is the data being sent. Currently, the payload must be a string. Here are some examples:
+
+**Sending data from the server to the client(s) :**
+```lua
+--Server context
+local channel = "MyModChannel_SomethingSpecific"
+local payload = {["somedata"] = somevalue, ["supertable"]={1,2,3,4,5}}
+
+--We need to stringify our payload in this case since it is a table and not a string
+payload=Ext.Json.Stringify(payload)
+
+--If we want to send the message to ALL the clients
+Ext.ServerNet.BroadcastMessage(channel, payload)
+
+--If we wanted to send the message to a specific userId
+local somePeer = 9999
+Ext.ServerNet.PostMessageToUser(somePeer, channel, payload)
+
+--If we wanted to send the message to the client controlling a specific character
+local someUUID = "c774d764-4a17-48dc-b470-32ace9ce447d" -- Wyll's uuid
+Ext.ServerNet.PostMessageToClient(characterUUID, channel, payload)
+
+```
+
+**Sending data from the client to the server :**
+```lua
+local channel = "MyModChannel_SomethingSpecific"
+local payload = "I'm a cute message"
+--No need to stringify since we're sending a simple string
+Ext.ClientNet.PostMessageToServer(channel, payload)
+```
+
+
+
+<a id="net-receive"></a>
+### Listening for NetMessages
+
+To handle incoming messages, we can listen to a channel on either side and use the received data. If the payload was stringified, use `Ext.Json.Parse` to convert it back into a table; otherwise, it remains a string.
+
+**Listening for a Message from the Server in the Client Context :**
+
+```lua
+--Client context
+local channel = "MyModChannel_SomethingSpecific"
+Ext.Events.NetMessage:Subscribe(function(data)
+ if data.Channel == channel then
+  --Parse the string back into a table if it was stringified
+  local data = Ext.Json.Parse(data.Payload)
+  --Do whatever you want with the data in the client context
+  someFunction(data)
+ end
+end)
+```
+
+**Alternatively :**
+```lua
+--wrapper for Ext.Events.NetMessage:Subscribe(function(data) ...end) 
+--which removes the need to check for the channel
+Ext.RegisterNetListener(channel, function(channel, payload, userID)
+  --Parse the string back into a table
+  local data = Ext.Json.Parse(payload)
+  --Do whatever you want with the data in the client context
+  someFunction(data)
+end)
+```
+
+*The code to listen for messages from the client on the server context would be similar.*
+
+Note that the `userId` in these examples is actually a peerId. Osiris functions usually expect a different userId, which is typically `peerId + 1`. Use the following function to convert between the peerId used by network functions and the userId expected by Osiris functions:
+
+```lua
+function PeerToUserID(peerID)
+ -- usually just userid+1
+ return (u & 0xffff0000) | 0x0001
+end
+--Example usage, Server context, pretend the client just sent something on the whatever channel
+--And that we need to get which character they're controlling
+Ext.Events.NetMessage:Subscribe(function(data)
+ if data.Channel == "whatever" then
+  local character = Osi.GetCurrentCharacter(PeerToUserID(data.UserID)) -- returns the character the client was using when the client sent the message
+  _P(character ) --Prints the character of the user the message originates from
+ end  
+end)
+```
+
+<a id="net-utils"></a>
+### Utility functions 
+
+### Ext.Net.IsHost()
+
+Returns true if the client it was called from is the host, always return true from the server context.
+
 ## Entity class
 
 Game objects in BG3 are called entities. Each entity consists of multiple components that describes certain properties or behaviors of the entity.
@@ -900,6 +1005,7 @@ Usage notes:
  - Although the variables registered server-side and client-side can differ, it is recommended to register all variables on both sides (even if they're server-only or client-only) for consistency
  - Variable names, much like Osiris DB names are global; it is recommended to prefix them with your mod name to ensure they're unique
  - Variables must be registered with the same settings on both client and server, otherwise various synchronization issues may occur.
+ - Client-only variables cannot be persistent.
 
 
 After registration, custom variables can be read/written through the `Vars` property on entities:
