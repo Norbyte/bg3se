@@ -88,6 +88,13 @@ P(SubgridId)
 END_CLS()
 
 
+BEGIN_CLS(SurfacePathInfluence)
+P(SurfaceType)
+P(IsCloud)
+P(Influence)
+END_CLS()
+
+
 BEGIN_CLS(ecs::ECSComponentLog)
 P_BITMASK(Flags)
 P_GETTER(Name, GetName)

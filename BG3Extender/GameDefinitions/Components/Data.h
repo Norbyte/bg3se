@@ -109,7 +109,7 @@ struct HealthComponent : public BaseComponent
 	int TemporaryHp;
 	int MaxTemporaryHp;
 	Guid field_10;
-	uint8_t field_20;
+	bool IsInvulnerable;
 };
 
 struct ResistancesComponent : public BaseComponent
@@ -127,7 +127,7 @@ struct DifficultyCheckComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(DifficultyCheck, "eoc::DifficultyCheckComponent")
 
-	Array<int32_t> field_0;
+	[[bg3::legacy(field_0)]] Array<int32_t> AbilityDC;
 	Array<int32_t> field_10;
 	Array<AbilityId> Abilities;
 	Array<uint32_t> field_30;
@@ -214,12 +214,11 @@ struct WeaponComponent : public BaseComponent
 	LegacyRefMap<AbilityId, Array<RollDefinition>> Rolls2;
 	float WeaponRange;
 	float DamageRange;
-	[[bg3::hidden]]
-	void* WeaponFunctors;
+	stats::Functors* WeaponFunctors;
 	uint32_t WeaponProperties;
 	uint8_t WeaponGroup;
 	AbilityId Ability;
-	Array<StatsExpressionWithMetadata> field_38;
+	[[bg3::legacy(field_38)]] Array<StatsExpressionWithMetadata> DamageValues;
 	DiceSizeId DamageDice;
 	DiceSizeId VersatileDamageDice;
 };
@@ -252,7 +251,7 @@ struct ProficiencyGroupComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ProficiencyGroup, "eoc::stats::proficiency::ProficiencyGroupComponent")
 
-	__int64 field_0;
+	[[bg3::legacy(field_0)]] ProficiencyGroupFlags Flags;
 };
 
 
@@ -304,8 +303,8 @@ struct IsSummonComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(IsSummon, "eoc::summon::IsSummonComponent")
 
-	EntityHandle Owner_M;
-	EntityHandle field_8;
+	[[bg3::legacy(Owner_M)]] EntityHandle Owner;
+	[[bg3::legacy(field_8)]] EntityHandle Summoner;
 	Guid field_10;
 	EntityHandle field_20;
 	FixedString field_28;
@@ -392,17 +391,11 @@ struct OriginTagComponent : public BaseComponent
 	Array<Guid> Tags;
 };
 
-struct PassiveInfo
-{
-	uint32_t field_0;
-	uint32_t Passive;
-};
-
 struct OriginPassivesComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(OriginPassives, "eoc::OriginPassivesComponent")
 
-	Array<PassiveInfo> field_18;
+	Array<stats::PassivePrototype*> Passives;
 };
 
 struct ClassTagComponent : public BaseComponent
@@ -444,7 +437,7 @@ struct BackgroundPassivesComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(BackgroundPassives, "eoc::BackgroundPassivesComponent")
 
-	Array<PassiveInfo> field_18;
+	Array<stats::PassivePrototype*> field_18;
 };
 
 struct GlobalShortRestDisabledComponent : public BaseComponent
@@ -514,7 +507,7 @@ struct CanDoActionsComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(CanDoActions, "eoc::CanDoActionsComponent")
 
-	uint16_t Flags;
+	CanDoActionsFlags Flags;
 };
 
 struct ActionUseConditionsComponent : public BaseComponent
@@ -529,7 +522,7 @@ struct CanMoveComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(CanMove, "eoc::CanMoveComponent")
 
-	uint16_t Flags;
+	CanMoveFlags Flags;
 	uint16_t field_4;
 	uint8_t field_6;
 };
@@ -546,7 +539,7 @@ struct ConcentrationTarget
 	[[bg3::legacy(field_0)]] EntityHandle Target;
 	[[bg3::legacy(field_8)]] EntityHandle Concentration;
 	[[bg3::legacy(field_10)]] ComponentHandle Status;
-	int16_t field_18;
+	[[bg3::legacy(field_18)]] int16_t SurfaceIndex;
 	bool field_1A;
 };
 
@@ -564,25 +557,25 @@ struct DarknessComponent : public BaseComponent
 	DEFINE_COMPONENT(Darkness, "eoc::DarknessComponent")
 
 	uint8_t Sneaking;
-	uint8_t Obscurity;
-	uint8_t field_2;
-	uint8_t field_3;
-	uint8_t field_4;
-	float field_8;
-	float field_C;
+	ObscurityState Obscurity;
+	[[bg3::legacy(field_2)]] bool SneakingConesVisibility;
+	[[bg3::legacy(field_3)]] bool CharacterSneaking;
+	[[bg3::legacy(field_4)]] bool ActuallySneaking;
+	[[bg3::legacy(field_8)]] float GracePeriod;
+	[[bg3::legacy(field_C)]] float GraceFrames;
 };
 
 struct DualWieldingComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(DualWielding, "eoc::DualWieldingComponent")
 
-	bool Melee;
-	bool RangedUI;
-	uint8_t field_1A;
-	bool Ranged;
+	[[bg3::legacy(Melee)]] bool MeleeToggledOn;
 	bool MeleeUI;
-	uint8_t field_1D;
-	bool DisableDualWielding;
+	[[bg3::legacy(field_1A)]] bool HasMeleeBoosts;
+	[[bg3::legacy(Ranged)]] bool RangedToggledOn;
+	bool RangedUI;
+	[[bg3::legacy(field_1D)]] bool HasRangedBoosts;
+	[[bg3::legacy(DisableDualWielding)]] bool ToggledOn;
 };
 
 DEFINE_TAG_COMPONENT(eoc, GravityDisabledComponent, GravityDisabled)

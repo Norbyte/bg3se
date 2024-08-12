@@ -330,22 +330,22 @@ struct [[bg3::hidden]] GenomeType
 
 	void (*Destroy)(void* data);
 	void (*operator_less)(void* this_, void* other);
-	FixedString NormalTypeName;
-	__int32 field_3c;
-	uint64_t size;
-	uint64_t alignment;
+
+	uint32_t TypeHash;
+	uint32_t TypeHash2;
+	uint64_t Size;
+	uint64_t Alignment;
 	FixedString TypeName;
 	bool Trivial;
-	[[bg3::hidden]] __int8 field_55;
-	[[bg3::hidden]] __int16 field_56;
 	GenomeVariant* DefaultValue;
 };
 
-struct GenomeVariant
+struct [[bg3::hidden]] GenomeVariant
 {
-	__int64 Value;
-	__int64 Type;
-	// GenomeType* Type
+	void* Value;
+	GenomeType* Type;
+	bool Assigned;
+	bool Constant;
 };
 
 struct Resource : public ProtectedGameObject<Resource>
@@ -664,7 +664,7 @@ struct AnimationBlueprintResource : public TwoStepLoadableResource
 	[[bg3::hidden]] void* field_48;              // Deleter
 	Array<__int64> field_50; // Vtable pointers??? Why???
 
-	LegacyRefMap<bg3se::Guid, GenomeVariant> Params;
+	[[bg3::hidden]] LegacyRefMap<bg3se::Guid, GenomeVariant> Params;
 };
 
 struct AnimationSetResource : public LoadableResource

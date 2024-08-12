@@ -224,3 +224,14 @@ struct DataSingletonComponent : public BaseComponent
 
 
 END_NS()
+
+BEGIN_NS(ecl::interrupt)
+
+struct PlayerDecisionComponent : public BaseComponent
+{
+	DEFINE_COMPONENT(ClientInterruptPlayerDecision, "ecl::interrupt::PlayerDecisionComponent")
+
+	HashMap<EntityHandle, uint8_t> Decisions;
+};
+
+END_NS()

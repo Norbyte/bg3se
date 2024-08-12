@@ -340,13 +340,13 @@ struct StateComponent : public BaseComponent
 	EntityHandle Entity;
 	EntityHandle Caster;
 	SpellId SpellId;
-	int field_38;
+	[[bg3::legacy(field_38)]] uint32_t Flags;
 	Array<InitialTarget> Targets;
 	std::optional<glm::vec3> CasterMoveToPosition;
 	std::optional<glm::vec3> field_60;
 	glm::vec3 CasterStartPosition;
 	EntityHandle field_80;
-	int field_88;
+	[[bg3::legacy(field_88)]] uint32_t StartTime;
 	Guid SpellCastGuid;
 	STDString field_A0;
 };
@@ -364,10 +364,10 @@ struct SyncTargetingComponent : public BaseComponent
 	std::optional<EntityHandle> field_10;
 	std::optional<glm::vec3> field_20;
 	Array<InitialTarget> Targets;
-	uint8_t field_40;
+	[[bg3::legacy(field_40)]] bool CanMoveToThrowTarget;
 	int field_44;
 	std::optional<glm::vec3> field_48;
-	std::optional<glm::vec3> field_58;
+	[[bg3::legacy(field_58)]] std::optional<glm::vec3> HoverPosition;
 	std::optional<glm::vec3> CasterPosition;
 	std::optional<glm::vec3> CasterMoveToPosition;
 	std::optional<glm::vec3> field_88;
@@ -395,15 +395,6 @@ struct OnDamageSpellsComponent : public BaseComponent
 END_NS()
 
 BEGIN_NS(esv::spell_cast)
-
-struct CastState
-{
-	Guid field_0;
-	FixedString field_10;
-	FixedString field_14;
-	FixedString field_18;
-	uint8_t field_1C;
-};
 
 struct CastHitDelayInfo
 {
@@ -460,8 +451,8 @@ struct StateComponent : public BaseComponent
 
 	uint8_t Status;
 	int field_4;
-	CastState State;
-	int field_28;
+	ActionOriginator Originator;
+	int StoryActionId;
 };
 
 struct CacheComponent : public BaseComponent

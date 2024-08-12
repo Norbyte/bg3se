@@ -84,7 +84,7 @@ namespace bg3se
 			FixedString Level;
 			FixedString VisualResource;
 			Array<PeerId> UpdatePeerIds;
-			Array<void*> SurfacePathInfluences;
+			Array<SurfacePathInfluence> SurfacePathInfluences;
 			Array<void*> field_58;
 			Array<EntityHandle> Summons;
 			Array<FixedString> CreatedTemplateItems;
@@ -141,171 +141,82 @@ namespace bg3se
 
 	namespace ecl 
 	{
-		/*struct PlayerManager : public bg3se::PlayerManager
+		struct PlayerCustomData : public ProtectedGameObject<PlayerCustomData>
 		{
-			void* VMT_IProfileSelector;
-			void* VMT_EventListener;
-			void* VMT_PlayerManager2;
-			LegacyRefMap<PlayerId, FixedString> PlayerIdToProfileGuid;
-			LegacyRefMap<PlayerId, NetId> PlayerIdToNetIdMap;
-			ObjectSet<InputPlayerIndex> InputPlayerIndices;
-			uint64_t Unknown[3];
-			ObjectSet<void*> field_F0;
-			uint64_t Unknown2[6];
-		};
-
-		struct PlayerCustomData : public eoc::PlayerCustomData {};
-
-		struct PlayerData : public ProtectedGameObject<PlayerData>
-		{
-			ObjectSet<void*> SkillBarItems; // ecl::SkillBarItem
-			ObjectSet<uint32_t> LockedAbilities;
-			LegacyMap<FixedString, void*> AttitudeOverrideMap; // ObjectHandleMap<int>*
-			uint8_t SelectedSkillSet;
-			__int64 field_60;
-			char field_68;
-			PlayerCustomData CustomData;
-			char field_1C8;
-			__int64 field_1D0;
-			NetId PickpocketTargetNetID;
-			NetId CorpseLootTargetNetID;
-			bool HelmetOptionState;
-			bool ArmorOptionState;
-			int CachedTension;
+			uint8_t field_0;
+			__int64 field_8;
+			eoc::PlayerCustomData Base;
+			int field_24;
+			uint8_t field_28;
+			int field_2C;
+			NetId PickpocketTarget;
+			NetId LootTarget;
+			uint8_t field_40;
+			uint8_t ArmorOptionState;
+			uint8_t CachedTension;
 			FixedString QuestSelected;
-			ObjectSet<FixedString> MemorisedSkills;
-			char field_210;
-			char field_211;
-			int NetID3;
-			FixedString OriginalTemplate;
-			FixedString Region;
+			Array<FixedString> MemorizedSpells;
+			char field_58;
+			FixedString field_5C;
 		};
 
 
 
-		struct Character : public IEocClientObject
+		struct Character : public BaseProxyComponent
 		{
-			Status* GetStatus(ComponentHandle statusHandle) const;
-			Status* GetStatus(NetId handle) const;
+			DEFINE_COMPONENT(ClientCharacter, "ecl::Character")
 
-			glm::vec3 WorldPos; // Saved
-			uint32_t _Pad2;
-			uint64_t Flags; // Saved
-			uint32_t U2;
-			FixedString CurrentLevel; // Saved
-			glm::mat3 WorldRot;
-			float Scale;
-			glm::vec3 Velocity;
-			int field_34;
-			int field_38;
-			uint64_t field_40;
-			__int64 field_48;
-			__int64 field_50;
-			void* PhysicsObject;
-			void* Light;
-			void* AiObject;
-			int field_70;
-			UserId UserID;
-			int32_t UserId2;
-			NetId NetID2;
-			NetId NetID3;
+			void* VMT;
+			void* VMT2;
+			EntityHandle Entity;
+
+			CharacterFlags Flags;
+			FixedString Level;
+			ecs::EntityRef SelfEntity;
+
+			Array<SurfacePathInfluence> SurfacePathInfluences;
+			uint64_t DialogRequest;
+			uint64_t ListenRequest;
 			CharacterTemplate* Template;
 			CharacterTemplate* OriginalTemplate;
-			CDivinityStats_Character* Stats;
-			ComponentHandle InventoryHandle;
-			void* MovementMachine;
-			void* ActionStateMachine;
-			void* SteeringMachine;
-			void* BehaviourMachine;
+			void* AiAction;
+			void* AiBehaviour;
+			void* AiMovement;
+			void* AiSteering;
+			void* AiSupervisor;
+			void* DialogController;
+			void* FallbackController;
 			void* InputController;
 			void* NetworkController;
-			void* StatusController;
-			void* DialogController;
-			void* CharacterSupervisir;
-			StatusMachine* StatusMachine;
-			void* SkillManager;
-			int field_100;
-			__int64 field_108;
-			void* CharacterBody;
-			ComponentHandle OwnerCharacterHandle;
-			ComponentHandle OH3;
-			ComponentHandle CorpseCharacterHandle;
-			ComponentHandle OH5;
-			int field_138;
-			ComponentHandle HighlightCircleEffect;
-			ComponentHandle OH7;
-			ComponentHandle ViewConeEffectHandle;
-			__int64 field_158;
-			__int64 field_160;
-			ecl::PlayerData* PlayerData;
-			__int64 field_170;
-			int AttributeGrowthBonus;
-			int CombatAbilityBonus;
-			int CivilAbilityBonus;
-			int TalentGrowthBonus;
-			__int64 field_188;
-			__int64 field_190;
-			__int64 field_198;
-			__int64 field_1A0;
-			__int64 field_1A8;
-			__int64 field_1B0;
-			__int64 field_1B8;
-			__int64 field_1C0;
-			__int64 field_1C8;
-			__int64 field_1D0;
-			__int64 field_1D8;
-			__int64 field_1E0;
-			__int64 field_1E8;
-			__int64 field_1F0;
-			__int64 field_1F8;
-			char field_200;
-			ObjectSet<void*> SurfacePathInfluences;
-			ObjectSet<FixedString> Tags;
-			__int64 field_248;
-			float field_250;
-			SoundObjectId SoundObjectHandles[3];
-			ComponentHandle OH9;
-			ComponentHandle FollowCharacterHandle;
-			char PickpocketNLootingFlags;
-			char Flags2;
-			int Flags3;
-			char field_288;
-			char field_289;
-			TranslatedString* DisplayNameOverride;
-			TranslatedString StoryDisplayName;
-			TranslatedString OriginalDisplayName;
-			ComponentHandle TalkingIconEffect;
-			float field_3F0;
-			int SoundBoneIndex;
-			int field_3F8;
-			int field_3FC;
-			ObjectSet<FixedString> FixedStrings2;
-			FixedString AnimationSetOverride;
-			float WalkSpeedOverride;
-			float RunSpeedOverride;
-			__int64 field_430;
-			__int64 OH12;
-			__int64 field_440;
-			void* ResourceTemplate2;
-			char Cloth;
-			void* ResourceTemplate1;
-			int field_460;
-			__int64 field_468;
-			__int64 field_470;
-			__int64 field_478;
-			ComponentHandle OH13;
-			FixedString Archetype;
-			FixedString FS3;
-			int field_498;
-			char field_49C;
-			ObjectSet<ComponentHandle> ObjectHandles;
-			LegacyMap<FixedString, void*> field_4C0;
-			__int64 field_4D8;
-			__int64 field_4E0;
-			ObjectSet<FixedString> ItemTags;
-			void* VisualSetIndices;
-			bool CorpseLootable;
-		};*/
-
+			void* GameplayController;
+			void* StatusManager;
+			void* CharacterMover;
+			PlayerCustomData* PlayerData;
+			Visual* ClothVisual;
+			void* PhysicsTemplate;
+			uint64_t VertexColorMaskTextureID;
+			EntityHandle Owner;
+			EntityHandle InUseByCharacter;
+			Array<void*> FXCircles_Arr_EntityRef;
+			EntityHandle ObscurementIndicationEffect;
+			EntityHandle FollowCharacter;
+			EntityHandle DialogEffect;
+			EntityHandle Light;
+			UserId OwnerUserID;
+			UserId ReservedUserID;
+			Array<void*> CircleColors_Arr_EntityRef;
+			float LastTick;
+			float SneakCheck;
+			int field_110;
+			int DialogData;
+			__int16 PhysicsFlags_M;
+			uint8_t BloodType;
+			CharacterFlags2 Flags2;
+			CharacterFlags3 Flags3;
+			Array<FixedString> field_120;
+			Array<FixedString> field_130;
+			bool OffstageVisibilityVisualLoaded;
+			bool IsInvisible;
+		};
 	}
 }

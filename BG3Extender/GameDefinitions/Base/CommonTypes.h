@@ -85,6 +85,14 @@ inline constexpr uint64_t Hash(AiTilePos const& v)
 	return v.X | ((uint64_t)v.Y << 16) | ((uint64_t)v.SubgridId << 32);
 }
 
+
+struct SurfacePathInfluence
+{
+	SurfaceType SurfaceType;
+	bool IsCloud;
+	int Influence;
+};
+
 END_SE()
 
 BEGIN_NS(ecs)

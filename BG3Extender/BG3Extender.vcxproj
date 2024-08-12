@@ -397,6 +397,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="GameDefinitions\Enumerations\Stats.inl" />
     <None Include="GameDefinitions\ExternalEnumerations\GUI.inl" />
     <None Include="GameDefinitions\GlobalFixedStrings.inl" />
+    <None Include="GameDefinitions\PropertyMaps\ClientObjects.inl" />
     <None Include="GameDefinitions\PropertyMaps\Stats.inl" />
     <None Include="GameDefinitions\PropertyMaps\CommonTypes.inl" />
     <None Include="GameDefinitions\PropertyMaps\Events.inl" />

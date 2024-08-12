@@ -885,6 +885,13 @@ BEGIN_ENUM(HitWith, uint8_t)
 END_ENUM()
 
 
+BEGIN_ENUM(ObscurityState, uint8_t)
+	EV(Clear, 0)
+	EV(LightlyObscured, 1)
+	EV(HeavilyObscured, 2)
+END_ENUM()
+
+
 BEGIN_ENUM(ItemSlot, uint8_t)
 	EV(Helmet, 0)
 	EV(Breast, 1)

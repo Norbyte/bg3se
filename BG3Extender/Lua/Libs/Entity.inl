@@ -168,6 +168,25 @@ void ClearTrace(lua_State* L)
 	State::FromLua(L)->GetEntitySystemHelpers()->GetLog().Clear();
 }
 
+Array<STDString> GetRegisteredComponentTypes(lua_State* L, bool oneFrame)
+{
+	Array<STDString> types;
+	
+	auto helpers = State::FromLua(L)->GetEntitySystemHelpers();
+	auto const& registry = helpers->GetEntityWorld()->ComponentRegistry_;
+	for (unsigned i = 0; i < registry.Bitmask.Size; i++) {
+		if (registry.Bitmask[i]) {
+			auto const& component = registry.Types[i];
+			auto name = helpers->GetComponentName(component.TypeId);
+			if (name && IsOneFrame(component.TypeId) == oneFrame) {
+				types.push_back(*name);
+			}
+		}
+	}
+
+	return types;
+}
+
 void RegisterEntityLib()
 {
 	DECLARE_MODULE(Entity, Both)
@@ -186,6 +205,7 @@ void RegisterEntityLib()
 	MODULE_FUNCTION(EnableTracing)
 	MODULE_FUNCTION(GetTrace)
 	MODULE_FUNCTION(ClearTrace)
+	MODULE_FUNCTION(GetRegisteredComponentTypes)
 	END_MODULE()
 }
 

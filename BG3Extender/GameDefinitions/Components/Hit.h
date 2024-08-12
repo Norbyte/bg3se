@@ -4,22 +4,22 @@ BEGIN_NS(hit)
 
 struct TargetInfo
 {
-	FixedString field_0;
+	FixedString SpellId;
 	FixedString field_4;
 	uint8_t field_8;
-	glm::vec3 field_C;
-	glm::vec3 field_18;
-	int field_24;
-	int field_28;
-	int field_2C;
-	uint8_t field_30;
-	uint8_t field_31;
-	uint8_t field_32;
-	Array<DamagePair> field_38;
-	uint8_t field_48;
-	Array<bool> field_50;
+	glm::vec3 ImpactPosition;
+	glm::vec3 ImpactDirection;
+	int TotalDamageDone;
+	int ArmorAbsorption;
+	uint32_t EffectFlags;
+	DamageType MainDamageType;
+	CauseType CauseType;
+	HitWith HitWith;
+	Array<DamagePair> Damage;
+	uint8_t AttackFlags;
+	Array<bool> ConditionRollResults;
 	HashSet<uint8_t> ResistanceTypes;
-	Guid field_90;
+	Guid SpellCastGuid;
 	uint8_t field_A0;
 	uint8_t field_A1;
 	uint8_t field_A2;

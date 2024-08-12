@@ -717,6 +717,7 @@
     <None Include="Lua\Osiris\CustomFunction.inl" />
     <None Include="Lua\Osiris\ValueHelpers.inl" />
     <None Include="Lua\Osiris\LuaNameResolver.inl" />
+    <None Include="GameDefinitions\PropertyMaps\ClientObjects.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">
