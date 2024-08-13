@@ -33,7 +33,7 @@ inline typename std::enable_if_t<std::is_integral_v<T>, bool> Validate(T const*,
 inline bool Validate(float const* v, Overload<float>)
 {
 #if defined(ENABLE_FLAKY_HEURISTICS)
-	CHECK((*v > -100000000.0f && *v < 100000000.0f) || *v == 3.40282347e+38f);
+	CHECK((*v > -100000000.0f && *v < 100000000.0f) || *v == 3.40282347e+38f || *v == 3.78091496e+37f);
 #endif
 	return true;
 }
@@ -44,17 +44,77 @@ inline bool Validate(double const*, Overload<double>)
 }
 
 // No validation possible for vector types
-inline bool Validate(glm::ivec2 const* b, Overload<glm::ivec2>) { return true; }
+inline bool Validate(glm::ivec2 const* b, Overload<glm::ivec2>) {return true; }
 inline bool Validate(glm::ivec4 const* b, Overload<glm::ivec4>) { return true; }
 inline bool Validate(glm::i16vec2 const* b, Overload<glm::i16vec2>) { return true; }
-inline bool Validate(glm::vec2 const* b, Overload<glm::vec2>) { return true; }
-inline bool Validate(glm::vec3 const* b, Overload<glm::vec3>) { return true; }
-inline bool Validate(glm::vec4 const* b, Overload<glm::vec4>) { return true; }
-inline bool Validate(glm::quat const* b, Overload<glm::quat>) { return true; }
-inline bool Validate(glm::mat3 const* b, Overload<glm::mat3>) { return true; }
-inline bool Validate(glm::mat3x4 const* b, Overload<glm::mat3x4>) { return true; }
-inline bool Validate(glm::mat4x3 const* b, Overload<glm::mat4x3>) { return true; }
-inline bool Validate(glm::mat4 const* b, Overload<glm::mat4>) { return true; }
+
+inline bool Validate(glm::vec2 const* b, Overload<glm::vec2>)
+{
+	CHECKR(Validate(&b->x, Overload<float>{}));
+	CHECKR(Validate(&b->y, Overload<float>{}));
+	return true;
+}
+
+inline bool Validate(glm::vec3 const* b, Overload<glm::vec3>)
+{
+	CHECKR(Validate(&b->x, Overload<float>{}));
+	CHECKR(Validate(&b->y, Overload<float>{}));
+	CHECKR(Validate(&b->z, Overload<float>{}));
+	return true;
+}
+
+inline bool Validate(glm::vec4 const* b, Overload<glm::vec4>)
+{
+	CHECKR(Validate(&b->x, Overload<float>{}));
+	CHECKR(Validate(&b->y, Overload<float>{}));
+	CHECKR(Validate(&b->z, Overload<float>{}));
+	CHECKR(Validate(&b->w, Overload<float>{}));
+	return true;
+}
+
+inline bool Validate(glm::quat const* b, Overload<glm::quat>)
+{
+	CHECKR(Validate(&b->x, Overload<float>{}));
+	CHECKR(Validate(&b->y, Overload<float>{}));
+	CHECKR(Validate(&b->z, Overload<float>{}));
+	CHECKR(Validate(&b->w, Overload<float>{}));
+	return true;
+}
+
+inline bool Validate(glm::mat3 const* b, Overload<glm::mat3>)
+{
+	CHECKR(Validate(&(*b)[0], Overload<glm::vec3>{}));
+	CHECKR(Validate(&(*b)[1], Overload<glm::vec3>{}));
+	CHECKR(Validate(&(*b)[2], Overload<glm::vec3>{}));
+	return true;
+}
+
+inline bool Validate(glm::mat3x4 const* b, Overload<glm::mat3x4>)
+{
+	CHECKR(Validate(&(*b)[0], Overload<glm::vec4>{}));
+	CHECKR(Validate(&(*b)[1], Overload<glm::vec4>{}));
+	CHECKR(Validate(&(*b)[2], Overload<glm::vec4>{}));
+	return true;
+}
+
+inline bool Validate(glm::mat4x3 const* b, Overload<glm::mat4x3>)
+{
+	CHECKR(Validate(&(*b)[0], Overload<glm::vec3>{}));
+	CHECKR(Validate(&(*b)[1], Overload<glm::vec3>{}));
+	CHECKR(Validate(&(*b)[2], Overload<glm::vec3>{}));
+	CHECKR(Validate(&(*b)[3], Overload<glm::vec3>{}));
+	return true;
+}
+
+inline bool Validate(glm::mat4 const* b, Overload<glm::mat4>)
+{
+	CHECKR(Validate(&(*b)[0], Overload<glm::vec4>{}));
+	CHECKR(Validate(&(*b)[1], Overload<glm::vec4>{}));
+	CHECKR(Validate(&(*b)[2], Overload<glm::vec4>{}));
+	CHECKR(Validate(&(*b)[3], Overload<glm::vec4>{}));
+	return true;
+}
+
 
 // TODO - might add some validation heuristic later?
 bool Validate(EntityHandle const* b, Overload<EntityHandle>);

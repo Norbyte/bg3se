@@ -89,10 +89,11 @@ struct GameplayLightComponent : public BaseComponent
 	uint8_t field_1D;
 	uint8_t field_1E;
 	glm::vec3 field_20;
-	glm::vec3 field_2C;
+	std::optional<float> field_2C;
+	bool field_34;
 	FixedString field_38;
 	float field_3C;
-	int field_40;
+	float field_40;
 	uint8_t field_44;
 };
 

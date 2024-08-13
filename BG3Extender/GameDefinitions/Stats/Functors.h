@@ -272,7 +272,7 @@ struct ApplyStatusFunctor : public Functor
 
 	FixedString StatusId; // Arg1
 	FixedString StatusSpecificParam1; // Arg4
-	STDString StatsConditions; // Arg7
+	STDString StatusConditions; // Arg7
 	stats::ConditionId Conditions; // Arg7
 	int StatusSpecificParam2{ -1 }; // Arg5
 	int StatusSpecificParam3{ -1 }; // Arg6
