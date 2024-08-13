@@ -678,6 +678,20 @@ void ShutdownCrashReporting()
 	CrashReporter::Shutdown();
 }
 
+LONG HandleGuardedException(DWORD code, EXCEPTION_POINTERS* info)
+{
+	if (CrashReporter::Initialized || code == 0xE06D7363L /* STATUS_CPP_EH_EXCEPTION */) {
+#if defined(DEBUG_CRASH_REPORTER) || !defined(_DEBUG)
+		return CrashReporter::OnUnhandledException(info);
+#else
+		DebugBreak();
+		return EXCEPTION_CONTINUE_SEARCH;
+#endif
+	} else {
+		return EXCEPTION_CONTINUE_SEARCH;
+	}
+}
+
 void DumpCurrentStack()
 {
 	CrashReporter::Dumper.SnapshotThread();

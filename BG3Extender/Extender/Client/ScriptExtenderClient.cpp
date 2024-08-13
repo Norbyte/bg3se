@@ -259,6 +259,7 @@ void ScriptExtender::GameStateWorkerWrapper(void (*wrapped)(void*), void* self)
 
 void ScriptExtender::OnUpdate(void* self, GameTime* time)
 {
+	BEGIN_GUARDED()
 	// In case we're loaded too late to see LoadModule transition
 	AddThread(GetCurrentThreadId());
 
@@ -270,6 +271,7 @@ void ScriptExtender::OnUpdate(void* self, GameTime* time)
 			gExtender->GetLuaDebugger()->ClientTick();
 		}
 	}
+	END_GUARDED()
 }
 
 void ScriptExtender::OnIncLocalProgress(void* self, int progress, char const* state)

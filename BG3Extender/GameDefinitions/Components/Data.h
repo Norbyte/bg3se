@@ -557,7 +557,7 @@ struct DarknessComponent : public BaseComponent
 	DEFINE_COMPONENT(Darkness, "eoc::DarknessComponent")
 
 	uint8_t Sneaking;
-	ObscurityState Obscurity;
+	uint8_t Obscurity;
 	[[bg3::legacy(field_2)]] bool SneakingConesVisibility;
 	[[bg3::legacy(field_3)]] bool CharacterSneaking;
 	[[bg3::legacy(field_4)]] bool ActuallySneaking;

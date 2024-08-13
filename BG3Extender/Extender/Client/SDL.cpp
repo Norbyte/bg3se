@@ -79,6 +79,15 @@ int SDLManager::SDLPollEventHooked(SDLPollEventProc* wrapped, SDL_Event* event)
 {
     int result = wrapped(event);
 
+    BEGIN_GUARDED()
+    result = SDLPollEventInternal(event, result);
+    END_GUARDED()
+
+    return result;
+}
+
+int SDLManager::SDLPollEventInternal(SDL_Event* event, int result)
+{
     gExtender->OnSDLEvent(event);
 
     if (enableUI_ && result == 1) {

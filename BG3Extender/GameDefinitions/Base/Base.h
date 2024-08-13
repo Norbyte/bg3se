@@ -4,6 +4,15 @@
 #include <GameDefinitions/Enumerations.h>
 #include <GameDefinitions/Base/ForwardDeclarations.h>
 
+// The game has a jank SEH handler that silently swallows STATUS_CPP_EH_EXCEPTION without passing it
+// to the top-level handler, so we need to have additional checks at the common SE entry points
+#define BEGIN_GUARDED() __try {
+#define END_GUARDED() } __except (HandleGuardedException(GetExceptionCode(), GetExceptionInformation())) {}
+
+BEGIN_SE()
+LONG HandleGuardedException(DWORD code, EXCEPTION_POINTERS* info);
+END_SE()
+
 #if defined(ENABLE_UI)
 #include <NsCore/Symbol.h>
 #include <NsCore/String.h>

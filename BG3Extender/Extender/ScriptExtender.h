@@ -86,7 +86,7 @@ public:
 #endif
 
 	ExtensionStateBase* GetCurrentExtensionState();
-	ecs::EntitySystemHelpersBase& GetECS();
+	ecs::EntitySystemHelpersBase& GetECS(ecs::EntityWorld* world);
 
 	bool HasFeatureFlag(char const *) const;
 

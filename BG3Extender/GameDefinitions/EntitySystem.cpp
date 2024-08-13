@@ -425,7 +425,7 @@ void ECSChangeLog::AddComponentChange(EntityWorld* world, EntityHandle entity, C
 #if defined(NDEBUG)
 RuntimeCheckLevel EntitySystemHelpersBase::CheckLevel{ RuntimeCheckLevel::Once };
 #else
-RuntimeCheckLevel EntitySystemHelpersBase::CheckLevel{ RuntimeCheckLevel::Always };
+RuntimeCheckLevel EntitySystemHelpersBase::CheckLevel{ RuntimeCheckLevel::FullECS };
 #endif
 
 EntitySystemHelpersBase::EntitySystemHelpersBase()
@@ -791,10 +791,12 @@ UuidToHandleMappingComponent* EntitySystemHelpersBase::GetUuidMappings()
 void EntitySystemHelpersBase::Update()
 {
 	if (CheckLevel == RuntimeCheckLevel::FullECS) {
+		ValidateECBFlushChanges();
 		ValidateEntityChanges();
 	}
 
 	if (logging_) {
+		DebugLogECBFlushChanges();
 		DebugLogUpdateChanges();
 	}
 }
@@ -802,21 +804,6 @@ void EntitySystemHelpersBase::Update()
 void EntitySystemHelpersBase::DebugLogUpdateChanges()
 {
 	auto world = GetEntityWorld();
-
-	for (auto& ecb : world->CommandBuffers) {
-		for (unsigned i = 0; i < ecb.Data.EntityChanges.KeysSize; i++) {
-			auto entityHandle = ecb.Data.EntityChanges.KeyAt(i);
-			auto entityChanges = ecb.Data.EntityChanges.Values[i];
-
-			log_.AddEntityChange(entityHandle, entityChanges.Flags);
-
-			for (unsigned j = 0; j < entityChanges.Store.Used; j++) {
-				auto const& upd = entityChanges.Store[j];
-				log_.AddComponentChange(world, entityHandle, upd.ComponentTypeId, 
-					(upd.PoolIndex.PageIndex != 0xffff) ? ComponentChangeFlags::Create : ComponentChangeFlags::Destroy);
-			}
-		}
-	}
 
 	auto const& changes = world->Cache->WriteChanges;
 	for (unsigned i = 0; i < changes.AvailableComponentTypes.NumBits; i++) {

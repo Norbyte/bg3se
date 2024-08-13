@@ -228,6 +228,7 @@ std::wstring ScriptExtender::MakeLogFilePath(std::wstring const & Type, std::wst
 
 void ScriptExtender::OnStatsLoad(stats::RPGStats::LoadProc* wrapped, stats::RPGStats* mgr, Array<STDString>* paths)
 {
+	BEGIN_GUARDED()
 	// Stats load is scheduled from the client on the shared worker pool
 	client_.AddThread(GetCurrentThreadId());
 
@@ -254,15 +255,16 @@ void ScriptExtender::OnStatsLoad(stats::RPGStats::LoadProc* wrapped, stats::RPGS
 #endif
 
 	client_.RemoveThread(GetCurrentThreadId());
+	END_GUARDED()
 }
 
 void ScriptExtender::OnECSUpdate(ecs::EntityWorld::UpdateProc* wrapped, ecs::EntityWorld* entityWorld, GameTime const& time)
 {
-	GetECS().Update();
+	GetECS(entityWorld).Update();
 
 	wrapped(entityWorld, time);
 
-	GetECS().PostUpdate();
+	GetECS(entityWorld).PostUpdate();
 
 	if (entityWorld->Replication && GetServer().HasExtensionState()) {
 		esv::LuaServerPin lua(GetServer().GetExtensionState());
@@ -274,7 +276,7 @@ void ScriptExtender::OnECSUpdate(ecs::EntityWorld::UpdateProc* wrapped, ecs::Ent
 
 void ScriptExtender::OnECSFlushECBs(ecs::EntityWorld* entityWorld)
 {
-	GetECS().OnFlushECBs();
+	GetECS(entityWorld).OnFlushECBs();
 }
 
 bool ScriptExtender::HasFeatureFlag(char const * flag) const
@@ -307,15 +309,14 @@ ExtensionStateBase* ScriptExtender::GetCurrentExtensionState()
 	}
 }
 
-ecs::EntitySystemHelpersBase& ScriptExtender::GetECS()
+ecs::EntitySystemHelpersBase& ScriptExtender::GetECS(ecs::EntityWorld* world)
 {
-	if (server_.IsInServerThread()) {
+	if (world == GetStaticSymbols().GetServerEntityWorld()) {
 		return server_.GetEntityHelpers();
-	} else if (client_.IsInClientThread()) {
+	} else if (world == GetStaticSymbols().GetClientEntityWorld()) {
 		return client_.GetEntityHelpers();
 	} else {
-		WARN("Called from unknown thread %d?", GetCurrentThreadId());
-		return client_.GetEntityHelpers();
+		throw std::runtime_error("Called with unknown EntityWorld?");
 	}
 }
 
@@ -348,7 +349,10 @@ public:
 
 	virtual bool OnGameStateChanged(GameStates& states)
 	{
+		BEGIN_GUARDED()
 		gExtender->GetClient().OnGameStateChanged(states.From, states.To);
+		END_GUARDED()
+
 		return true;
 	}
 
@@ -374,7 +378,10 @@ public:
 
 	virtual bool OnGameStateChanged(GameStates& states)
 	{
+		BEGIN_GUARDED()
 		gExtender->GetServer().OnGameStateChanged(states.From, states.To);
+		END_GUARDED()
+
 		return true;
 	}
 

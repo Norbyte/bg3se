@@ -44,6 +44,7 @@ private:
         int h, uint32_t flags,
         SDL_Window* window);
     int SDLPollEventHooked(SDLPollEventProc* wrapped, SDL_Event* event);
+    int SDLPollEventInternal(SDL_Event* event, int result);
     void SDLIsTextInputActiveHooked(SDL_bool active);
     void SDLStartTextInputHooked(SDLStartTextInputProc* wrapped);
     void SDLStopTextInputHooked(SDLStartTextInputProc* wrapped);
