@@ -139,6 +139,12 @@ inline bool Validate(Guid const* g, Overload<Guid>)
 	return true;
 }
 
+inline bool Validate(bg3se::stats::ConditionId const* s, Overload<bg3se::stats::ConditionId>)
+{
+	CHECK(s->Id >= -1);
+	return true;
+}
+
 template <class T>
 typename std::enable_if_t<std::is_enum_v<T>, bool> Validate(T const* v, Overload<T>)
 {

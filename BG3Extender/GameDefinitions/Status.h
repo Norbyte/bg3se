@@ -49,7 +49,7 @@ namespace bg3se
 			ecs::EntityRef RootCause;
 			EntityHandle field_E0;
 			Guid field_E8;
-			int RemoveConditionsId;
+			stats::ConditionId RemoveConditions;
 			uint32_t RemoveEvents;
 			StatusFlags Flags;
 			StatusFlags2 Flags2;

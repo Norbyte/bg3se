@@ -106,7 +106,7 @@ struct GroupCheckComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerInventoryGroupCheck, "esv::inventory::GroupCheckComponent")
 
-	int32_t ConditionId;
+	stats::ConditionId Conditions;
 };
 
 struct ShapeshiftEquipmentHistoryComponent : public BaseComponent

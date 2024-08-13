@@ -8,6 +8,15 @@
 
 BEGIN_NS(stats)
 
+STDString* ConditionId::Get() const
+{
+	if (Id == -1) {
+		return nullptr;
+	}
+
+	return &GetStaticSymbols().GetStats()->Conditions[Id];
+}
+
 Array<Functor*> FunctorGroup::GetFunctors()
 {
 	return Functors->FunctorList;
@@ -54,7 +63,7 @@ std::optional<STDString> Object::GetString(FixedString const& attributeName)
 	} else if (typeInfo->Name == GFS.strRollConditions) {
 		auto rollConditions = GetRollConditions(attributeName);
 		if (rollConditions && (*rollConditions)->Size() == 1 && (**rollConditions)[0].Name == GFS.strDefault) {
-			auto val = GetStaticSymbols().GetStats()->GetConditions((**rollConditions)[0].ConditionsId);
+			auto val = GetStaticSymbols().GetStats()->GetConditions((**rollConditions)[0].Conditions.Id);
 			if (val) {
 				return **val;
 			}
@@ -290,7 +299,7 @@ bool Object::SetString(FixedString const& attributeName, const char * value)
 			if (index >= 0) {
 				RollCondition cond;
 				cond.Name = GFS.strDefault;
-				cond.ConditionsId = index;
+				cond.Conditions.Id = index;
 				Array<RollCondition> conditions;
 				conditions.Add(cond);
 				SetRollConditions(attributeName, conditions);

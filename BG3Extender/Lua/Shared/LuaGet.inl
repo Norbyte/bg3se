@@ -245,6 +245,12 @@ MathParam do_get(lua_State* L, int index, Overload<MathParam>)
 	return val;
 }
 
+stats::ConditionId do_get(lua_State* L, int index, Overload<stats::ConditionId>)
+{
+	luaL_error(L, "Setting ConditionId values is not supported");
+	return {};
+}
+
 Ref do_get(lua_State* L, int index, Overload<Ref>)
 {
 	return Ref(L, index);

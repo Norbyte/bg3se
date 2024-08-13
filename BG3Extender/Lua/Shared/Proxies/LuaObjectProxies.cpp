@@ -53,7 +53,6 @@ bool Validate(EntityHandle const* handle, Overload<EntityHandle>)
 	return true;
 }
 
-
 void InheritProperties(GenericPropertyMap const& base, GenericPropertyMap& child)
 {
 	// Check to make sure that the property map we're inheriting from is already initialized

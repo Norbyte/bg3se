@@ -283,7 +283,7 @@ PropertyOperationResult LuaStatGetAttribute(lua_State* L, stats::Object* object,
 		if (conditions && *conditions) {
 			lua_newtable(L);
 			for (auto const& cond : **conditions) {
-				auto condition = stats->GetConditions(cond.ConditionsId);
+				auto condition = stats->GetConditions(cond.Conditions.Id);
 				if (condition && *condition) {
 					settable(L, cond.Name, **condition);
 				}
@@ -396,7 +396,7 @@ PropertyOperationResult LuaStatSetAttribute(lua_State* L, stats::Object* object,
 				if (conditionsId >= 0) {
 					stats::Object::RollCondition roll;
 					roll.Name = kv.Key();
-					roll.ConditionsId = conditionsId;
+					roll.Conditions.Id = conditionsId;
 					conditions.Add(roll);
 				}
 			}

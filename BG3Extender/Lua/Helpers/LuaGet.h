@@ -193,6 +193,7 @@ glm::mat4x3 do_get(lua_State* L, int index, Overload<glm::mat4x3>);
 glm::mat4 do_get(lua_State* L, int index, Overload<glm::mat4>);
 MathParam do_get(lua_State* L, int index, Overload<MathParam>);
 EntityHelper do_get(lua_State* L, int index, Overload<EntityHelper>);
+stats::ConditionId do_get(lua_State* L, int index, Overload<stats::ConditionId>);
 
 inline Version do_get(lua_State* L, int index, Overload<Version>)
 {

@@ -103,6 +103,7 @@ namespace stats
 	struct Requirement;
 	struct Functor;
 	struct Functors;
+	struct ConditionId;
 	struct SpellPrototype;
 	struct RPGEnumeration;
 	struct Object;

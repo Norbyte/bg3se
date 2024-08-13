@@ -245,6 +245,8 @@ void TypeInformationRepository::Initialize()
 	auto& nsCollection = RegisterStaticType<Noesis::BaseCollection>("Noesis::BaseCollection", LuaTypeId::Array);
 	nsCollection.ElementType = GetStaticTypeInfo(Overload<Noesis::BaseObject>{});
 
+	RegisterStaticType<stats::ConditionId>("stats::ConditionId", LuaTypeId::String);
+
 	RegisterObjectProxyTypeInformation();
 
 	lua::gModuleRegistry.RegisterTypeInformation();

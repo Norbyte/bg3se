@@ -78,6 +78,13 @@ struct CNamedElementManager : public Noncopyable<CNamedElementManager<T>>
 	}
 };
 
+struct ConditionId
+{
+	int32_t Id{ -1 };
+
+	STDString* Get() const;
+};
+
 struct Requirement
 {
 	RequirementType RequirementId;
@@ -101,7 +108,7 @@ struct Object : public Noncopyable<Object>
 	struct RollCondition
 	{
 		FixedString Name;
-		int ConditionsId;
+		stats::ConditionId Conditions;
 	};
 
 	void* VMT{ nullptr };
@@ -156,3 +163,7 @@ BEGIN_NS(lua)
 LUA_INFINITE_LIFETIME(stats::Object)
 
 END_NS()
+
+BEGIN_SE()
+BY_VAL(stats::ConditionId);
+END_SE()

@@ -12,8 +12,7 @@ BEGIN_NS(stats)
 struct ExportedConditionalRoll
 {
 	RollType Type;
-	// FIXME expose conditions
-	[[bg3::hidden]] int32_t ConditionId{ -1 };
+	stats::ConditionId Conditions;
 };
 
 struct Functor
@@ -33,8 +32,7 @@ struct Functor
 	FixedString UniqueName;
 	Guid FunctorUuid;
 	Array<ExportedConditionalRoll> RollConditions;
-	// FIXME expose conditions
-	[[bg3::hidden]] int32_t StatsConditionsId{ -1 };
+	stats::ConditionId StatsConditions;
 	PropertyContext PropertyContext{ 0 };
 	uint32_t StoryActionId{ 0 };
 	ObserverType ObserverType{ ObserverType::None };
@@ -275,7 +273,7 @@ struct ApplyStatusFunctor : public Functor
 	FixedString StatusId; // Arg1
 	FixedString StatusSpecificParam1; // Arg4
 	STDString StatsConditions; // Arg7
-	int StatsConditionsId{ -1 }; // Arg7
+	stats::ConditionId Conditions; // Arg7
 	int StatusSpecificParam2{ -1 }; // Arg5
 	int StatusSpecificParam3{ -1 }; // Arg6
 	bool RequiresConcentration{ false };

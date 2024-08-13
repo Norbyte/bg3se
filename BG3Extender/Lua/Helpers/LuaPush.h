@@ -90,6 +90,7 @@ void push(lua_State* L, EntityHandle const& h);
 void push(lua_State* L, ComponentHandle const& h);
 void push(lua_State* L, ecs::EntityRef const& h);
 void push(lua_State* L, TypeInformationRef const& h);
+void push(lua_State* L, stats::ConditionId const& h);
 #if defined(ENABLE_IMGUI)
 void push(lua_State* L, ImguiHandle const& h);
 void push(lua_State* L, extui::Renderable* o);
