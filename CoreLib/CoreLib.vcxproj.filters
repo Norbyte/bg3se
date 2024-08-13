@@ -72,6 +72,9 @@
     <ClInclude Include="Base\LegacyMap.h">
       <Filter>Header Files\Base</Filter>
     </ClInclude>
+    <ClInclude Include="Base\PagedArray.h">
+      <Filter>Header Files\Base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

@@ -354,7 +354,7 @@ bool EntityWorld::IsValid(EntityHandle entityHandle) const
 {
 	if (entityHandle.GetType() < std::size(HandleGenerator->ThreadStates)) {
 		auto& state = HandleGenerator->ThreadStates[entityHandle.GetType()];
-		if (entityHandle.GetIndex() < state.Salts.Used) {
+		if (entityHandle.GetIndex() < state.Salts.Size) {
 			auto const& salt = state.Salts[entityHandle.GetIndex()];
 			return salt.Salt == entityHandle.GetSalt() && salt.Index == entityHandle.GetIndex();
 		}
@@ -366,7 +366,7 @@ bool EntityWorld::IsValid(EntityHandle entityHandle) const
 EntityStorageData* EntityStorageContainer::GetEntityStorage(EntityHandle entityHandle) const
 {
 	auto& componentSalts = Salts.Buckets[entityHandle.GetType()];
-	if (entityHandle.GetIndex() < componentSalts.Used) {
+	if (entityHandle.GetIndex() < componentSalts.Size) {
 		auto const& salt = componentSalts[entityHandle.GetIndex()];
 		if (salt.Salt == entityHandle.GetSalt()) {
 			return Entities[salt.EntityClassIndex];
@@ -877,7 +877,7 @@ void EntitySystemHelpersBase::DebugLogECBFlushChanges()
 
 			log_.AddEntityChange(entityHandle, entityChanges.Flags);
 
-			for (unsigned j = 0; j < entityChanges.Store.Used; j++) {
+			for (unsigned j = 0; j < entityChanges.Store.Size; j++) {
 				auto const& upd = entityChanges.Store[j];
 
 				log_.AddComponentChange(world, entityHandle, upd.ComponentTypeId, 
@@ -978,7 +978,7 @@ void EntitySystemHelpersBase::ValidateECBFlushChanges()
 			auto entityHandle = ecb.Data.EntityChanges.KeyAt(i);
 			auto const& entityChanges = ecb.Data.EntityChanges.Values[i];
 
-			for (unsigned j = 0; j < entityChanges.Store.Used; j++) {
+			for (unsigned j = 0; j < entityChanges.Store.Size; j++) {
 				auto const& change = entityChanges.Store[j];
 
 				if (change.PoolIndex.PageIndex != 0xffff) {
@@ -1028,8 +1028,8 @@ void EntitySystemHelpersBase::ValidateEntityChanges(ImmediateWorldCache::Changes
 			auto componentType = GetComponentType(ComponentTypeIndex(componentId));
 			if (componentType) {
 				auto pm = GetPropertyMap(*componentType);
-				if (pm != nullptr && components.Values.Used > 0) {
-					for (uint32_t j = 0; j < components.Values.Used; j++) {
+				if (pm != nullptr && components.Values.Size > 0) {
+					for (uint32_t j = 0; j < components.Values.Size; j++) {
 						auto const& component = components.Values[j];
 						if (component.Ptr != nullptr) {
 							pm->ValidateObject(component.Ptr);

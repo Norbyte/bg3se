@@ -21,7 +21,7 @@ bool Validate(EntityHandle const& handle, ecs::EntityWorld& world)
 
 	// There is no observed shrink logic in per-thread paged pools, so index cannot be greater than pool size
 	auto& state = world.HandleGenerator->ThreadStates[handle.GetType()];
-	CHECK(handle.GetIndex() < state.Salts.Used);
+	CHECK(handle.GetIndex() < state.Salts.Size);
 
 	// Check that handle are within rational bounds
 	CHECK(handle.GetSalt() < 0x1000);

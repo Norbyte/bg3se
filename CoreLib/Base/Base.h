@@ -8,3 +8,4 @@
 #include <CoreLib/Base/BaseMap.h>
 #include <CoreLib/Base/BaseTypes.h>
 #include <CoreLib/Base/BaseInterface.h>
+#include <CoreLib/Base/PagedArray.h>
