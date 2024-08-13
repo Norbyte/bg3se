@@ -6738,6 +6738,7 @@ Osi = {}
 --- @field IDContext string
 --- @field ItemReadOnly boolean
 --- @field ItemWidth number?
+--- @field TextWrapPos number?
 --- @field Label string
 --- @field NoItemNav boolean
 --- @field NoNavDefaultFocus boolean
