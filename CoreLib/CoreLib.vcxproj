@@ -153,6 +153,7 @@
     <ClInclude Include="Base\BaseString.h" />
     <ClInclude Include="Base\BaseTypes.h" />
     <ClInclude Include="Base\BaseUtilities.h" />
+    <ClInclude Include="Base\EnumHelpers.h" />
     <ClInclude Include="Base\LegacyMap.h" />
     <ClInclude Include="Base\PagedArray.h" />
     <ClInclude Include="Console.h" />
