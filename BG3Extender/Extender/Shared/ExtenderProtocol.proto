@@ -83,6 +83,7 @@ message UserVar {
     double dblval = 5;
     string strval = 6;
     bytes luaval = 7;
+    bool boolval = 9;
   };
   UserVarType type = 8;
 }

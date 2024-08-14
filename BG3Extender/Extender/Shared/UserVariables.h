@@ -11,16 +11,18 @@ enum class UserVariableType
 	Int64 = 1,
 	Double = 2,
 	String = 3,
-	Composite = 4
+	Composite = 4,
+	Boolean = 5,
 };
 
 struct UserVariable
 {
 	UserVariable() : Type(UserVariableType::Null) {}
-	UserVariable(int64_t v) : Type(UserVariableType::Int64), Int(v) {}
-	UserVariable(double v) : Type(UserVariableType::Double), Dbl(v) {}
-	UserVariable(FixedString const& v) : Type(UserVariableType::String), Str(v) {}
-	UserVariable(STDString const& v) : Type(UserVariableType::Composite), CompositeStr(v) {}
+	UserVariable(bool v) : Type(UserVariableType::Boolean), Value(v) {}
+	UserVariable(int64_t v) : Type(UserVariableType::Int64), Value(v) {}
+	UserVariable(double v) : Type(UserVariableType::Double), Value(v) {}
+	UserVariable(FixedString const& v) : Type(UserVariableType::String), Value(v) {}
+	UserVariable(STDString const& v) : Type(UserVariableType::Composite), Value(v) {}
 
 	void SavegameVisit(ObjectVisitor* visitor);
 	void ToNetMessage(net::UserVar& var) const;
@@ -29,10 +31,7 @@ struct UserVariable
 
 	UserVariableType Type{ UserVariableType::Null };
 	bool Dirty{ false };
-	int64_t Int{ 0ll };
-	double Dbl{ 0.0 };
-	FixedString Str;
-	STDString CompositeStr;
+	std::variant<bool, int64_t, double, FixedString, STDString> Value;
 };
 
 enum class UserVariableFlags
@@ -249,19 +248,21 @@ BEGIN_NS(lua)
 
 enum class CachedUserVariableType
 {
-	Null = 0,
-	Int64 = 1,
-	Double = 2,
-	String = 3,
-	Reference = 4
+	Null,
+	Boolean,
+	Int64,
+	Double,
+	String,
+	Reference
 };
 
 struct CachedUserVariable
 {
 	CachedUserVariable() : Type(CachedUserVariableType::Null) {}
-	CachedUserVariable(int64_t v) : Type(CachedUserVariableType::Int64), Int(v) {}
-	CachedUserVariable(double v) : Type(CachedUserVariableType::Double), Dbl(v) {}
-	CachedUserVariable(FixedString const& v) : Type(CachedUserVariableType::String), Str(v) {}
+	CachedUserVariable(bool v) : Type(CachedUserVariableType::Boolean), Value(v) {}
+	CachedUserVariable(int64_t v) : Type(CachedUserVariableType::Int64), Value(v) {}
+	CachedUserVariable(double v) : Type(CachedUserVariableType::Double), Value(v) {}
+	CachedUserVariable(FixedString const& v) : Type(CachedUserVariableType::String), Value(v) {}
 	CachedUserVariable(lua_State* L, Ref const& v);
 	CachedUserVariable(lua_State* L, UserVariable const& v);
 	CachedUserVariable(CachedUserVariable&& o);
@@ -270,10 +271,7 @@ struct CachedUserVariable
 
 	CachedUserVariableType Type{ CachedUserVariableType::Null };
 	bool Dirty{ false };
-	int64_t Int{ 0ll };
-	double Dbl{ 0.0 };
-	FixedString Str;
-	RegistryEntry Reference;
+	std::variant<bool, int64_t, double, FixedString, RegistryEntry> Value;
 
 	void Push(lua_State* L) const;
 	bool LikelyChanged(CachedUserVariable const& o) const;

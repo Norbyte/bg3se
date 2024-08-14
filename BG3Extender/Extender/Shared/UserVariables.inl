@@ -32,35 +32,76 @@ void UserVariable::SavegameVisit(ObjectVisitor* visitor)
 		Type = (UserVariableType)type;
 
 		switch (Type) {
+		case UserVariableType::Boolean:
+		{
+			bool value{ false };
+			visitor->VisitBool(GFS.strValue, value, false);
+			Value = value;
+			break;
+		}
 		case UserVariableType::Int64:
-			visitor->VisitInt64(GFS.strValue, Int, 0ll);
+		{
+			int64_t value{ 0 };
+			visitor->VisitInt64(GFS.strValue, value, 0ll);
+			Value = value;
 			break;
+		}
 		case UserVariableType::Double:
-			visitor->VisitDouble(GFS.strValue, Dbl, 0.0);
+		{
+			double value{ 0.0 };
+			visitor->VisitDouble(GFS.strValue, value, 0.0);
+			Value = value;
 			break;
+		}
 		case UserVariableType::String:
-			visitor->VisitFixedString(GFS.strValue, Str, GFS.strEmpty);
+		{
+			FixedString value;
+			visitor->VisitFixedString(GFS.strValue, value, GFS.strEmpty);
+			Value = value;
 			break;
+		}
 		case UserVariableType::Composite:
-			visitor->VisitSTDString(GFS.strValue, CompositeStr, STDString{});
+		{
+			STDString value;
+			visitor->VisitSTDString(GFS.strValue, value, STDString{});
+			Value = value;
 			break;
+		}
 		}
 	} else {
 		auto type = (uint8_t)Type;
 		visitor->VisitUInt8(GFS.strType, type, (uint8_t)UserVariableType::Null);
 		switch (Type) {
+		case UserVariableType::Boolean:
+		{
+			auto value = std::get<bool>(Value);
+			visitor->VisitBool(GFS.strValue, value, false);
+			break;
+		}
 		case UserVariableType::Int64:
-			visitor->VisitInt64(GFS.strValue, Int, 0ll);
+		{
+			auto value = std::get<int64_t>(Value);
+			visitor->VisitInt64(GFS.strValue, value, 0ll);
 			break;
+		}
 		case UserVariableType::Double:
-			visitor->VisitDouble(GFS.strValue, Dbl, 0.0);
+		{
+			auto value = std::get<double>(Value);
+			visitor->VisitDouble(GFS.strValue, value, 0.0);
 			break;
+		}
 		case UserVariableType::String:
-			visitor->VisitFixedString(GFS.strValue, Str, GFS.strEmpty);
+		{
+			auto value = std::get<FixedString>(Value);
+			visitor->VisitFixedString(GFS.strValue, value, GFS.strEmpty);
 			break;
+		}
 		case UserVariableType::Composite:
-			visitor->VisitSTDString(GFS.strValue, CompositeStr, STDString{});
+		{
+			auto value = std::get<STDString>(Value);
+			visitor->VisitSTDString(GFS.strValue, value, STDString{});
 			break;
+		}
 		}
 	}
 }
@@ -71,45 +112,57 @@ void UserVariable::ToNetMessage(net::UserVar& var) const
 	case UserVariableType::Null:
 		break;
 
+	case UserVariableType::Boolean:
+		var.set_boolval(std::get<bool>(Value));
+		break;
+
 	case UserVariableType::Int64:
-		var.set_intval(Int);
+		var.set_intval(std::get<int64_t>(Value));
 		break;
 
 	case UserVariableType::Double:
-		var.set_dblval(Dbl);
+		var.set_dblval(std::get<double>(Value));
 		break;
 
 	case UserVariableType::String:
-		var.set_strval(Str.GetString());
+		var.set_strval(std::get<FixedString>(Value).GetString());
 		break;
 
 	case UserVariableType::Composite:
-		var.set_luaval(CompositeStr.c_str(), CompositeStr.size());
+	{
+		auto const& s = std::get<STDString>(Value);
+		var.set_luaval(s.c_str(), s.size());
 		break;
+	}
 	}
 }
 
 void UserVariable::FromNetMessage(net::UserVar const& var)
 {
 	switch (var.val_case()) {
+	case net::UserVar::kBoolval:
+		Type = UserVariableType::Boolean;
+		Value = var.boolval();
+		break;
+		
 	case net::UserVar::kIntval:
 		Type = UserVariableType::Int64;
-		Int = var.intval();
+		Value = var.intval();
 		break;
 
 	case net::UserVar::kDblval:
 		Type = UserVariableType::Double;
-		Dbl = var.dblval();
+		Value = var.dblval();
 		break;
 
 	case net::UserVar::kStrval:
 		Type = UserVariableType::String;
-		Str = FixedString(var.strval());
+		Value = FixedString(var.strval());
 		break;
 
 	case net::UserVar::kLuaval:
 		Type = UserVariableType::Composite;
-		CompositeStr = var.luaval();
+		Value = STDString(var.luaval());
 		break;
 
 	case net::UserVar::VAL_NOT_SET:
@@ -125,10 +178,11 @@ size_t UserVariable::Budget() const
 	size_t budget = 12;
 	switch (Type) {
 	case UserVariableType::Null: budget += 0; break;
+	case UserVariableType::Boolean: budget += 1; break;
 	case UserVariableType::Int64: budget += 8; break;
 	case UserVariableType::Double: budget += 8; break;
-	case UserVariableType::String: budget += Str.GetLength(); break;
-	case UserVariableType::Composite: budget += CompositeStr.size(); break;
+	case UserVariableType::String: budget += std::get<FixedString>(Value).GetLength(); break;
+	case UserVariableType::Composite: budget += std::get<STDString>(Value).size(); break;
 	}
 
 	return budget;
@@ -809,23 +863,28 @@ BEGIN_NS(lua)
 CachedUserVariable::CachedUserVariable(lua_State* L, UserVariable const& v)
 {
 	switch (v.Type) {
+	case UserVariableType::Boolean:
+		Type = CachedUserVariableType::Boolean;
+		Value = std::get<bool>(v.Value);
+		break;
+		
 	case UserVariableType::Int64:
 		Type = CachedUserVariableType::Int64;
-		Int = v.Int;
+		Value = std::get<int64_t>(v.Value);
 		break;
 
 	case UserVariableType::Double:
 		Type = CachedUserVariableType::Double;
-		Dbl = v.Dbl;
+		Value = std::get<double>(v.Value);
 		break;
 
 	case UserVariableType::String:
 		Type = CachedUserVariableType::String;
-		Str = v.Str;
+		Value = std::get<FixedString>(v.Value);
 		break;
 
 	case UserVariableType::Composite:
-		ParseReference(L, v.CompositeStr);
+		ParseReference(L, std::get<STDString>(v.Value));
 		break;
 
 	case UserVariableType::Null:
@@ -847,25 +906,30 @@ CachedUserVariable::CachedUserVariable(lua_State* L, Ref const& v)
 	case LUA_TNIL:
 		Type = CachedUserVariableType::Null;
 		break;
+
+	case LUA_TBOOLEAN:
+		Type = CachedUserVariableType::Boolean;
+		Value = get<bool>(L, v.Index());
+		break;
 		
 	case LUA_TNUMBER:
 		if (lua_isinteger(L, v.Index())) {
 			Type = CachedUserVariableType::Int64;
-			Int = get<int64_t>(L, v.Index());
+			Value = get<int64_t>(L, v.Index());
 		} else {
 			Type = CachedUserVariableType::Double;
-			Dbl = get<double>(L, v.Index());
+			Value = get<double>(L, v.Index());
 		}
 		break;
 
 	case LUA_TSTRING:
 		Type = CachedUserVariableType::String;
-		Str = get<FixedString>(L, v.Index());
+		Value = get<FixedString>(L, v.Index());
 		break;
 
 	case LUA_TTABLE:
 		Type = CachedUserVariableType::Reference;
-		Reference = RegistryEntry(L, v);
+		Value = RegistryEntry(L, v);
 		break;
 
 	default:
@@ -878,45 +942,15 @@ CachedUserVariable::CachedUserVariable(lua_State* L, Ref const& v)
 CachedUserVariable::CachedUserVariable(CachedUserVariable&& o)
 {
 	Type = o.Type;
-	switch (o.Type) {
-	case CachedUserVariableType::Int64:
-		Int = o.Int;
-		break;
-
-	case CachedUserVariableType::Double:
-		Dbl = o.Dbl;
-		break;
-
-	case CachedUserVariableType::String:
-		Str = std::move(o.Str);
-		break;
-
-	case CachedUserVariableType::Reference:
-		Reference = std::move(o.Reference);
-		break;
-	}
+	Dirty = o.Dirty;
+	Value = std::move(o.Value);
 }
 
 CachedUserVariable& CachedUserVariable::operator = (CachedUserVariable&& o)
 {
 	Type = o.Type;
-	switch (o.Type) {
-	case CachedUserVariableType::Int64:
-		Int = o.Int;
-		break;
-
-	case CachedUserVariableType::Double:
-		Dbl = o.Dbl;
-		break;
-
-	case CachedUserVariableType::String:
-		Str = std::move(o.Str);
-		break;
-
-	case CachedUserVariableType::Reference:
-		Reference = std::move(o.Reference);
-		break;
-	}
+	Dirty = o.Dirty;
+	Value = o.Value;
 
 	return *this;
 }
@@ -924,7 +958,7 @@ CachedUserVariable& CachedUserVariable::operator = (CachedUserVariable&& o)
 void CachedUserVariable::ParseReference(lua_State* L, StringView json)
 {
 	if (json::Parse(L, json)) {
-		Reference = RegistryEntry(L, -1);
+		Value = RegistryEntry(L, -1);
 		lua_pop(L, 1);
 		Type = CachedUserVariableType::Reference;
 	} else {
@@ -936,10 +970,11 @@ void CachedUserVariable::ParseReference(lua_State* L, StringView json)
 void CachedUserVariable::Push(lua_State* L) const
 {
 	switch (Type) {
-	case CachedUserVariableType::Int64: push(L, Int); break;
-	case CachedUserVariableType::Double: push(L, Dbl); break;
-	case CachedUserVariableType::String: push(L, Str); break;
-	case CachedUserVariableType::Reference: push(L, Reference); break;
+	case CachedUserVariableType::Boolean: push(L, std::get<bool>(Value)); break;
+	case CachedUserVariableType::Int64: push(L, std::get<int64_t>(Value)); break;
+	case CachedUserVariableType::Double: push(L, std::get<double>(Value)); break;
+	case CachedUserVariableType::String: push(L, std::get<FixedString>(Value)); break;
+	case CachedUserVariableType::Reference: push(L, std::get<RegistryEntry>(Value)); break;
 	case CachedUserVariableType::Null:
 	default: 
 		push(L, nullptr);
@@ -952,12 +987,14 @@ bool CachedUserVariable::LikelyChanged(CachedUserVariable const& o) const
 	if (Type != o.Type) return true;
 
 	switch (Type) {
+	case CachedUserVariableType::Boolean:
+		return std::get<bool>(Value) != std::get<bool>(o.Value);
 	case CachedUserVariableType::Int64:
-		return Int != o.Int;
+		return std::get<int64_t>(Value) != std::get<int64_t>(o.Value);
 	case CachedUserVariableType::Double:
-		return Dbl != o.Dbl;
+		return std::get<double>(Value) != std::get<double>(o.Value);
 	case CachedUserVariableType::String:
-		return Str != o.Str;
+		return std::get<FixedString>(Value) != std::get<FixedString>(o.Value);
 	case CachedUserVariableType::Reference:
 		// There is no fast way to compare values apart from serializing the values on both sides;
 		// assume that a write to a composite value is an explicit way to indicate that the value changed.
@@ -977,24 +1014,29 @@ UserVariable CachedUserVariable::ToUserVariable(lua_State* L) const
 		var.Type = UserVariableType::Null;
 		break;
 		
+	case CachedUserVariableType::Boolean:
+		var.Type = UserVariableType::Boolean;
+		var.Value = std::get<bool>(Value);
+		break;
+		
 	case CachedUserVariableType::Int64:
 		var.Type = UserVariableType::Int64;
-		var.Int = Int;
+		var.Value = std::get<int64_t>(Value);
 		break;
 		
 	case CachedUserVariableType::Double:
 		var.Type = UserVariableType::Double;
-		var.Dbl = Dbl;
+		var.Value = std::get<double>(Value);
 		break;
 		
 	case CachedUserVariableType::String:
 		var.Type = UserVariableType::String;
-		var.Str = Str;
+		var.Value = std::get<FixedString>(Value);
 		break;
 		
 	case CachedUserVariableType::Reference:
-		var.CompositeStr = StringifyReference(L);
-		if (!var.CompositeStr.empty()) {
+		var.Value = StringifyReference(L);
+		if (!std::get<STDString>(var.Value).empty()) {
 			var.Type = UserVariableType::Composite;
 		} else {
 			var.Type = UserVariableType::Null;
@@ -1008,7 +1050,7 @@ UserVariable CachedUserVariable::ToUserVariable(lua_State* L) const
 
 STDString CachedUserVariable::StringifyReference(lua_State* L) const
 {
-	Reference.Push();
+	std::get<RegistryEntry>(Value).Push();
 	json::StringifyContext ctx;
 	ctx.Beautify = false;
 
