@@ -481,6 +481,7 @@
     <ClInclude Include="Lua\Osiris\Function.h" />
     <ClInclude Include="Lua\Osiris\CustomFunction.h" />
     <ClInclude Include="Lua\Osiris\ValueHelpers.h" />
+    <ClInclude Include="Lua\Shared\EntityEventHelpers.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -718,6 +719,7 @@
     <None Include="Lua\Osiris\ValueHelpers.inl" />
     <None Include="Lua\Osiris\LuaNameResolver.inl" />
     <None Include="GameDefinitions\PropertyMaps\ClientObjects.inl" />
+    <None Include="Lua\Shared\EntityEventHelpers.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

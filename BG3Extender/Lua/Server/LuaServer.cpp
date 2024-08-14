@@ -372,7 +372,7 @@ namespace bg3se::esv
 				lua->RestoreModPersistentVars(*modTable, vars);
 			}
 		} else {
-			ERR("Savegame has persistent variables for mod %s, but it is not loaded or has no ModTable! Variables may be lost on next save!", mod.GetString());
+			WARN("Savegame has persistent variables for mod %s, but it is not loaded or has no ModTable! Variables may be lost on next save!", mod.GetString());
 		}
 	}
 

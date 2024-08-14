@@ -8,6 +8,12 @@ enum class EntityComponentEvent
 	Destroy = 1 >> 1
 };
 
+enum class EntityComponentEventFlags
+{
+	Deferred = 1 >> 0,
+	Once = 1 >> 1
+};
+
 class EntityComponentEventHooks
 {
 public:
@@ -17,15 +23,18 @@ public:
 	~EntityComponentEventHooks();
 
 	void BindECS();
-	SubscriptionIndex Subscribe(ecs::ComponentTypeIndex type, EntityHandle entity, EntityComponentEvent events, RegistryEntry&& hook);
+	void FireDeferredEvents();
+	SubscriptionIndex Subscribe(ecs::ComponentTypeIndex type, EntityHandle entity, EntityComponentEvent events, 
+		EntityComponentEventFlags flags, RegistryEntry&& hook);
 	bool Unsubscribe(SubscriptionIndex index);
 
 private:
 	struct ComponentHook
 	{
 		EntityComponentEvent Events;
-		RegistryEntry Hook;
+		EntityComponentEventFlags Flags;
 		ecs::ComponentTypeIndex Type;
+		RegistryEntry Hook;
 		EntityHandle Entity;
 	};
 
@@ -38,14 +47,25 @@ private:
 		uint64_t DestructRegistrant{ 0 };
 	};
 
+	struct DeferredEvent
+	{
+		EntityHandle Entity;
+		ecs::ComponentTypeIndex Type;
+		EntityComponentEvent Event;
+		SubscriptionIndex Index;
+	};
+
 	State& state_;
 	BitSet<> hookedComponentMask_;
 	Array<ComponentHooks> hookedComponents_;
 	SaltedPool<ComponentHook> subscriptions_;
 	ecs::EntityWorld* world_{ nullptr };
+	Array<DeferredEvent> deferredEvents_;
+	Array<SubscriptionIndex> deferredUnsubscriptions_;
 
 	void OnEntityEvent(ecs::EntityWorld& world, EntityHandle entity, ecs::ComponentTypeIndex type, EntityComponentEvent events, void* component);
-	void CallHandler(EntityHandle entity, ecs::ComponentTypeIndex type, EntityComponentEvent events, void* component, ComponentHook const& hook);
+	void CallHandler(EntityHandle entity, ecs::ComponentTypeIndex type, EntityComponentEvent events, void* component, ComponentHook& hook, SubscriptionIndex index);
+	void DeferHandler(EntityHandle entity, ecs::ComponentTypeIndex type, EntityComponentEvent events, SubscriptionIndex index);
 	ComponentHooks& AddComponentType(ecs::ComponentTypeIndex type);
 
 	static void OnComponentCreated(void* object, ecs::ComponentCallbackParams const& params, void* component);

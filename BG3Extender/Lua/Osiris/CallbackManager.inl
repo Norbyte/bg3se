@@ -257,7 +257,7 @@ void OsirisCallbackManager::RegisterNodeHandler(OsirisHookSignature const& sig, 
 	}
 
 	if (func == nullptr) {
-		OsiWarn("Couldn't register Osiris subscriber for " << sig.name << "/" << sig.arity << ": Symbol not found in story.");
+		OsiError("Couldn't register Osiris subscriber for " << sig.name << "/" << sig.arity << ": Symbol not found in story.");
 		return;
 	}
 
@@ -275,7 +275,7 @@ void OsirisCallbackManager::RegisterNodeHandler(OsirisHookSignature const& sig, 
 			&& func->Type != FunctionType::Database
 			&& func->Type != FunctionType::Proc
 		)) {
-		OsiWarn("Couldn't register Osiris subscriber for " << sig.name << "/" << sig.arity << ": Symbol must be an event, query, call, DB, PROC or QRY.");
+		OsiError("Couldn't register Osiris subscriber for " << sig.name << "/" << sig.arity << ": Symbol must be an event, query, call, DB, PROC or QRY.");
 		return;
 	}
 
@@ -288,7 +288,7 @@ void OsirisCallbackManager::RegisterNodeHandler(OsirisHookSignature const& sig, 
 		} else if (sig.type == OsirisHookSignature::AfterTrigger) {
 			nodeRef |= AfterFunctionRef;
 		} else {
-			OsiWarn("Couldn't register Osiris subscriber for " << sig.name << "/" << sig.arity << ": Delete triggers not supported on events.");
+			OsiError("Couldn't register Osiris subscriber for " << sig.name << "/" << sig.arity << ": Delete triggers not supported on events.");
 			return;
 		}
 	} else {

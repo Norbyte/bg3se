@@ -24,6 +24,30 @@ void EntityComponentEventHooks::BindECS()
 	world_ = state_.GetEntityWorld();
 }
 
+void EntityComponentEventHooks::FireDeferredEvents()
+{
+	for (auto index : deferredUnsubscriptions_) {
+		Unsubscribe(index);
+	}
+
+	deferredUnsubscriptions_.clear();
+
+
+	Array<DeferredEvent> events;
+	std::swap(events, deferredEvents_);
+
+	auto ecs = state_.GetEntitySystemHelpers();
+	
+	for (auto& e : events) {
+		auto hook = subscriptions_.Find(e.Index);
+		if (hook != nullptr) {
+			auto componentType = ecs->GetComponentType(e.Type);
+			auto component = ecs->GetRawComponent(e.Entity, *componentType);
+			CallHandler(e.Entity, e.Type, e.Event, component, *hook, e.Index);
+		}
+	}
+}
+
 void EntityComponentEventHooks::OnComponentCreated(void* object, ecs::ComponentCallbackParams const& params, void* component)
 {
 	auto self = reinterpret_cast<EntityComponentEventHooks*>((uintptr_t)object & 0x0000ffffffffffffull);
@@ -58,13 +82,15 @@ EntityComponentEventHooks::ComponentHooks& EntityComponentEventHooks::AddCompone
 	return hookedComponents_[index];
 }
 
-EntityComponentEventHooks::SubscriptionIndex EntityComponentEventHooks::Subscribe(ecs::ComponentTypeIndex type, EntityHandle entity, EntityComponentEvent events, RegistryEntry&& hook)
+EntityComponentEventHooks::SubscriptionIndex EntityComponentEventHooks::Subscribe(ecs::ComponentTypeIndex type, EntityHandle entity, 
+	EntityComponentEvent events, EntityComponentEventFlags flags, RegistryEntry&& hook)
 {
 	SubscriptionIndex index;
 	auto sub = subscriptions_.Add(index);
 	sub->Events = events;
-	sub->Hook = std::move(hook);
+	sub->Flags = flags;
 	sub->Type = type;
+	sub->Hook = std::move(hook);
 	sub->Entity = entity;
 
 	auto& pool = AddComponentType(type);
@@ -123,7 +149,11 @@ void EntityComponentEventHooks::OnEntityEvent(ecs::EntityWorld& world, EntityHan
 	for (auto index : hooks.GlobalHooks) {
 		auto hook = subscriptions_.Find(index);
 		if (hook != nullptr && (unsigned)(hook->Events & events) != 0) {
-			CallHandler(entity, type, events, component, *hook);
+			if ((unsigned)(hook->Flags & EntityComponentEventFlags::Deferred)) {
+				DeferHandler(entity, type, events, index);
+			} else {
+				CallHandler(entity, type, events, component, *hook, index);
+			}
 		}
 	}
 
@@ -132,14 +162,23 @@ void EntityComponentEventHooks::OnEntityEvent(ecs::EntityWorld& world, EntityHan
 		for (auto index : *entityHooks) {
 			auto hook = subscriptions_.Find(index);
 			if (hook != nullptr && (unsigned)(hook->Events & events) != 0) {
-				CallHandler(entity, type, events, component, *hook);
+				if ((unsigned)(hook->Flags & EntityComponentEventFlags::Deferred)) {
+					DeferHandler(entity, type, events, index);
+				} else {
+					CallHandler(entity, type, events, component, *hook, index);
+				}
 			}
 		}
 	}
 }
 
-void EntityComponentEventHooks::CallHandler(EntityHandle entity, ecs::ComponentTypeIndex type, EntityComponentEvent events, void* component, ComponentHook const& hook)
+void EntityComponentEventHooks::CallHandler(EntityHandle entity, ecs::ComponentTypeIndex type, EntityComponentEvent events, void* component, ComponentHook& hook, SubscriptionIndex index)
 {
+	if ((unsigned)(hook.Flags & EntityComponentEventFlags::Once)) {
+		deferredUnsubscriptions_.push_back(index);
+		hook.Events = (EntityComponentEvent)0;
+	}
+
 	auto L = state_.GetState();
 	auto componentType = state_.GetEntitySystemHelpers()->GetComponentType(type);
 	hook.Hook.Push();
@@ -149,6 +188,16 @@ void EntityComponentEventHooks::CallHandler(EntityHandle entity, ecs::ComponentT
 	ProtectedFunctionCaller<std::tuple<EntityHandle, ExtComponentType, RawComponentRef>, void> caller{ func, std::tuple(entity, *componentType, componentRef) };
 	caller.Call(L, "Component event dispatch");
 	lua_pop(L, 1);
+}
+
+void EntityComponentEventHooks::DeferHandler(EntityHandle entity, ecs::ComponentTypeIndex type, EntityComponentEvent events, SubscriptionIndex index)
+{
+	deferredEvents_.push_back(DeferredEvent{
+		.Entity = entity,
+		.Type = type,
+		.Event = events,
+		.Index = index
+	});
 }
 
 END_NS()

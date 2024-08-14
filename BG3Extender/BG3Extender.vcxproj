@@ -250,6 +250,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="Lua\Osiris\Binding.h" />
     <ClInclude Include="Lua\Osiris\FunctionProxy.h" />
     <ClInclude Include="Lua\Shared\EntityComponentEvents.h" />
+    <ClInclude Include="Lua\Shared\EntityEventHelpers.h" />
     <ClInclude Include="Lua\Shared\LuaBundle.h" />
     <ClInclude Include="Lua\Shared\LuaCustomizations.h" />
     <ClInclude Include="Lua\Shared\LuaDelegate.h" />
@@ -457,6 +458,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="Lua\Server\ServerFunctors.inl" />
     <None Include="Lua\Server\ServerStatus.inl" />
     <None Include="Lua\Shared\EntityComponentEvents.inl" />
+    <None Include="Lua\Shared\EntityEventHelpers.inl" />
     <None Include="Lua\Shared\LuaCustomizations.inl" />
     <None Include="Lua\Shared\LuaGet.inl" />
     <None Include="Lua\Shared\LuaMethodCallHelpers.h" />

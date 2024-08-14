@@ -15,6 +15,7 @@
 #include <Lua/Shared/Proxies/LuaImguiProxy.h>
 #endif
 #include <Lua/Shared/EntityComponentEvents.h>
+#include <Lua/Shared/EntityEventHelpers.h>
 #include <Extender/Shared/UserVariables.h>
 #include <Lua/Libs/Timer.h>
 

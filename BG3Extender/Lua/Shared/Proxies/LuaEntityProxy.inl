@@ -311,6 +311,64 @@ void EntityProxyMetatable::Replicate(lua_State* L, EntityHandle entity, ExtCompo
 	ReplicateComponent(entity, component, 0, 0xffffffffffffffffull);
 }
 
+LuaEntitySubscriptionId EntityProxyMetatable::OnCreate(lua_State* L, EntityHandle entity, ExtComponentType component, 
+	FunctionRef func, std::optional<bool> deferred, std::optional<bool> once)
+{
+	auto flags = ((deferred && *deferred) ? EntityComponentEventFlags::Deferred : (EntityComponentEventFlags)0)
+		| ((once && *once) ? EntityComponentEventFlags::Once : (EntityComponentEventFlags)0);
+	return EntityEventHelpers::Subscribe(L, entity, component, EntityComponentEvent::Create, flags, func.MakePersistent(L));
+}
+
+LuaEntitySubscriptionId EntityProxyMetatable::OnCreateDeferred(lua_State* L, EntityHandle entity, ExtComponentType component, FunctionRef func)
+{
+	return EntityEventHelpers::Subscribe(L, entity, component, EntityComponentEvent::Create, 
+		EntityComponentEventFlags::Deferred, func.MakePersistent(L));
+}
+
+LuaEntitySubscriptionId EntityProxyMetatable::OnCreateDeferredOnce(lua_State* L, EntityHandle entity, ExtComponentType component, FunctionRef func)
+{
+	return EntityEventHelpers::Subscribe(L, entity, component, EntityComponentEvent::Create,
+		EntityComponentEventFlags::Deferred | EntityComponentEventFlags::Once, func.MakePersistent(L));
+}
+
+LuaEntitySubscriptionId EntityProxyMetatable::OnCreateOnce(lua_State* L, EntityHandle entity, ExtComponentType component, FunctionRef func)
+{
+	return EntityEventHelpers::Subscribe(L, entity, component, EntityComponentEvent::Create,
+		EntityComponentEventFlags::Once, func.MakePersistent(L));
+}
+
+LuaEntitySubscriptionId EntityProxyMetatable::OnDestroy(lua_State* L, EntityHandle entity, ExtComponentType component,
+	FunctionRef func, std::optional<bool> deferred, std::optional<bool> once)
+{
+	auto flags = ((deferred && *deferred) ? EntityComponentEventFlags::Deferred : (EntityComponentEventFlags)0)
+		| ((once && *once) ? EntityComponentEventFlags::Once : (EntityComponentEventFlags)0);
+	return EntityEventHelpers::Subscribe(L, entity, component, EntityComponentEvent::Destroy, flags, func.MakePersistent(L));
+}
+
+LuaEntitySubscriptionId EntityProxyMetatable::OnDestroyDeferred(lua_State* L, EntityHandle entity, ExtComponentType component, FunctionRef func)
+{
+	return EntityEventHelpers::Subscribe(L, entity, component, EntityComponentEvent::Destroy,
+		EntityComponentEventFlags::Deferred, func.MakePersistent(L));
+}
+
+LuaEntitySubscriptionId EntityProxyMetatable::OnDestroyDeferredOnce(lua_State* L, EntityHandle entity, ExtComponentType component, FunctionRef func)
+{
+	return EntityEventHelpers::Subscribe(L, entity, component, EntityComponentEvent::Destroy,
+		EntityComponentEventFlags::Deferred | EntityComponentEventFlags::Once, func.MakePersistent(L));
+}
+
+LuaEntitySubscriptionId EntityProxyMetatable::OnDestroyOnce(lua_State* L, EntityHandle entity, ExtComponentType component, FunctionRef func)
+{
+	return EntityEventHelpers::Subscribe(L, entity, component, EntityComponentEvent::Destroy,
+		EntityComponentEventFlags::Once, func.MakePersistent(L));
+}
+
+LuaEntitySubscriptionId EntityProxyMetatable::OnChanged(lua_State* L, EntityHandle entity, ExtComponentType component, 
+	FunctionRef func, std::optional<uint64_t> flags)
+{
+	return EntityEventHelpers::SubscribeReplication(L, entity, component, func.MakePersistent(L), flags);
+}
+
 #define ADD_FUNC(fun) \
 	functions_.set( \
 		FixedString(#fun), \
@@ -323,13 +381,27 @@ void EntityProxyMetatable::StaticInitialize()
 	ADD_FUNC(HasRawComponent);
 	ADD_FUNC(GetAllComponents);
 	ADD_FUNC(GetAllComponentNames);
+
 	ADD_FUNC(GetEntityType);
 	ADD_FUNC(GetSalt);
 	ADD_FUNC(GetIndex);
 	ADD_FUNC(IsAlive);
+
 	ADD_FUNC(GetReplicationFlags);
 	ADD_FUNC(SetReplicationFlags);
 	ADD_FUNC(Replicate);
+
+	ADD_FUNC(OnCreate);
+	ADD_FUNC(OnCreateDeferred);
+	ADD_FUNC(OnCreateDeferredOnce);
+	ADD_FUNC(OnCreateOnce);
+
+	ADD_FUNC(OnDestroy);
+	ADD_FUNC(OnDestroyDeferred);
+	ADD_FUNC(OnDestroyDeferredOnce);
+	ADD_FUNC(OnDestroyOnce);
+
+	ADD_FUNC(OnChanged);
 }
 
 int EntityProxyMetatable::Index(lua_State* L, CppValueMetadata& self)

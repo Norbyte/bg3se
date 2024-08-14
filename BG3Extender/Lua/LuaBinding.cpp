@@ -6,6 +6,7 @@
 #include <fstream>
 #include <lstate.h>
 #include <Lua/Shared/EntityComponentEvents.inl>
+#include <Lua/Shared/EntityEventHelpers.inl>
 
 // Callback from the Lua runtime when a handled (i.e. pcall/xpcall'd) error was thrown.
 // This is needed to capture errors for the Lua debugger, as there is no

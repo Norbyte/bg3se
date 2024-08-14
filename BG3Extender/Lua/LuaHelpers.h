@@ -11,6 +11,13 @@
 #include <Lua/Shared/RawComponentRef.h>
 #include <Lua/Shared/LuaTypeTraits.h>
 
+BEGIN_SE()
+
+enum class LuaEntitySubscriptionId : uint64_t {};
+MARK_INTEGRAL_ALIAS(LuaEntitySubscriptionId)
+
+END_SE()
+
 BEGIN_NS(lua)
 
 #if !defined(NDEBUG)
@@ -59,23 +66,27 @@ END_NS()
 
 BEGIN_NS(lua)
 
-// Helper type for getting any Lua value as parameter
-struct AnyRef
+struct LocalRef
 {
+	inline LocalRef() : Index(-1) {} 
+	inline LocalRef(int index) : Index(index) {} 
+
 	int Index;
+
+	inline RegistryEntry MakePersistent(lua_State* L) const
+	{
+		return RegistryEntry(L, Index);
+	}
 };
+
+// Helper type for getting any Lua value as parameter
+struct AnyRef : public LocalRef {};
 
 // Helper type for getting functions as parameters
-struct FunctionRef
-{
-	int Index;
-};
+struct FunctionRef : public LocalRef {};
 
 // Helper type for getting userdata/cpplightuserdata as parameters
-struct AnyUserdataRef
-{
-	int Index;
-};
+struct AnyUserdataRef : public LocalRef {};
 
 #if defined(ENABLE_IMGUI)
 struct ImguiHandle
