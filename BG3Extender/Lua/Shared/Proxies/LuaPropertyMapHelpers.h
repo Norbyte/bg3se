@@ -19,7 +19,7 @@ PropertyOperationResult GenericGetOffsetProperty(lua_State* L, LifetimeHandle co
 	}
 
 	auto* value = (T*)((std::uintptr_t)obj + prop.Offset);
-	push(L, value, lifetime);
+	push(L, *value, lifetime);
 	return PropertyOperationResult::Success;
 }
 
