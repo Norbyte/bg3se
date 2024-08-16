@@ -137,6 +137,7 @@ public:
     Array<StyleColor> StyleColors;
     STDString Label;
     STDString IDContext;
+    bool Enabled{ true };
     bool SameLine{ false };
     bool Visible{ true };
     FixedString Font;

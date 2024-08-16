@@ -169,7 +169,11 @@ void StyledRenderable::Render()
     if (TextWrapPos) ImGui::PushTextWrapPos(*TextWrapPos);
     if (ItemWidth) ImGui::SetNextItemWidth(*ItemWidth);
 
+    if (!Enabled) ImGui::BeginDisabled();
+
     StyledRender();
+
+    if (!Enabled) ImGui::EndDisabled();
 
     if (ItemFlags != (GuiItemFlags)0) ImGui::PopItemFlag();
     if (TextWrapPos) ImGui::PopTextWrapPos();
