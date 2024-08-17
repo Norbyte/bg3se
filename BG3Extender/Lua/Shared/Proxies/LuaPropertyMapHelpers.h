@@ -12,13 +12,13 @@ void DisablePropertyWarnings();
 void EnablePropertyWarnings();
 
 template <class T>
-PropertyOperationResult GenericGetOffsetProperty(lua_State* L, LifetimeHandle const& lifetime, void* obj, RawPropertyAccessors const& prop)
+PropertyOperationResult GenericGetOffsetProperty(lua_State* L, LifetimeHandle const& lifetime, void const* obj, RawPropertyAccessors const& prop)
 {
 	if (prop.PendingNotifications != PropertyNotification::None) [[unlikely]] {
 		ProcessPropertyNotifications(prop, false);
 	}
 
-	auto* value = (T*)((std::uintptr_t)obj + prop.Offset);
+	auto* value = (T const*)((std::uintptr_t)obj + prop.Offset);
 	push(L, *value, lifetime);
 	return PropertyOperationResult::Success;
 }
@@ -68,9 +68,9 @@ PropertyOperationResult GenericSetOffsetProperty(lua_State* L, void* obj, int in
 }
 
 template <class UnderlyingType>
-PropertyOperationResult GenericGetOffsetBitmaskFlag(lua_State* L, LifetimeHandle const& lifetime, void* obj, RawPropertyAccessors const& prop)
+PropertyOperationResult GenericGetOffsetBitmaskFlag(lua_State* L, LifetimeHandle const& lifetime, void const* obj, RawPropertyAccessors const& prop)
 {
-	auto value = *(UnderlyingType*)((std::uintptr_t)obj + prop.Offset);
+	auto value = *(UnderlyingType const*)((std::uintptr_t)obj + prop.Offset);
 	push(L, (value & (UnderlyingType)prop.Flag) == (UnderlyingType)prop.Flag);
 	return PropertyOperationResult::Success;
 }

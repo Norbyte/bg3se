@@ -22,9 +22,23 @@ public:
 		lua_push_cppobject(L, MetaTag, pm.RegistryIndex, object, lifetime);
 	}
 
+	inline static void Make(lua_State* L, GenericPropertyMap& pm, void const* object, LifetimeHandle const& lifetime)
+	{
+		// TODO - add RO tag
+		lua_push_cppobject(L, MetaTag, pm.RegistryIndex, object, lifetime);
+	}
+
 	template <class T>
 	inline static void Make(lua_State* L, T* object, LifetimeHandle const& lifetime)
 	{
+		auto const& pm = GetStaticPropertyMap<T>();
+		lua_push_cppobject(L, MetaTag, pm.RegistryIndex, object, lifetime);
+	}
+
+	template <class T>
+	inline static void Make(lua_State* L, T const* object, LifetimeHandle const& lifetime)
+	{
+		// TODO - add RO tag
 		auto const& pm = GetStaticPropertyMap<T>();
 		lua_push_cppobject(L, MetaTag, pm.RegistryIndex, object, lifetime);
 	}

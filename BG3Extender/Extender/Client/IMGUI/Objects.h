@@ -101,7 +101,7 @@ public:
     virtual void Render() = 0;
     void Destroy();
 
-    lua::ImguiHandle GetParent();
+    lua::ImguiHandle GetParent() const;
 
     HandleType Handle{ InvalidHandle };
     HandleType Parent{ InvalidHandle };
@@ -205,7 +205,7 @@ public:
     bool RemoveChild(lua::ImguiHandle child);
     bool DetachChild(lua::ImguiHandle child);
     bool AttachChild(lua::ImguiHandle child);
-    Array<lua::ImguiHandle> GetChildren();
+    Array<lua::ImguiHandle> GetChildren() const;
 
     Array<HandleType> Children;
 
@@ -648,7 +648,7 @@ public:
     InputText();
     void StyledRender() override;
 
-    STDString GetText();
+    STDString GetText() const;
     void SetText(STDString text);
 
     STDString Text;

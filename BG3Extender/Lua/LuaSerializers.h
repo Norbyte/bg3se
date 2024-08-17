@@ -5,6 +5,7 @@
 #include <GameDefinitions/Stats/Stats.h>
 #include <GameDefinitions/RootTemplates.h>
 
+
 namespace bg3se::lua
 {
 	class LuaSerializer : Noncopyable<LuaSerializer>
@@ -32,15 +33,21 @@ namespace bg3se::lua
 		}
 
 		template <class T>
+		LuaSerializer& Visit(T const& v)
+		{
+			return this->Visit(const_cast<T&>(v));
+		}
+
+		template <class T>
 		void VisitProperty(char const* key, T& val)
 		{
 			StackCheck _(L);
 			if (IsWriting) {
-				*this << val;
+				serialize(*this, val);
 				lua_setfield(L, -2, key);
 			} else {
 				lua_getfield(L, -1, key);
-				*this << val;
+				serialize(*this, val);
 				lua_pop(L, 1);
 			}
 		}
@@ -50,14 +57,14 @@ namespace bg3se::lua
 		{
 			StackCheck _(L);
 			if (IsWriting) {
-				*this << val;
+				serialize(*this, val);
 				lua_setfield(L, -2, key);
 			} else {
 				lua_getfield(L, -1, key);
 				if (lua_isnil(L, -1)) {
 					val = defaultValue;
 				} else {
-					*this << val;
+					serialize(*this, val);
 				}
 				lua_pop(L, 1);
 			}
@@ -80,7 +87,7 @@ namespace bg3se::lua
 	{
 		StackCheck _(L, 1);
 		LuaSerializer serializer(L, true);
-		serializer << const_cast<T&>(val);
+		serialize(serializer, const_cast<T&>(val));
 		return 1;
 	}
 
@@ -89,77 +96,79 @@ namespace bg3se::lua
 	{
 		StackCheck _(L);
 		LuaSerializer serializer(L, false);
-		serializer << val;
+		serialize(serializer, val);
 	}
 
-	inline LuaSerializer& operator << (LuaSerializer& s, bool& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, int8_t& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, uint8_t& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, int16_t& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, uint16_t& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, int32_t& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, uint32_t& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, int64_t& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, uint64_t& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, float& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, double& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, FixedString& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, STDString& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, STDWString& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, bool& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, int8_t& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, uint8_t& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, int16_t& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, uint16_t& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, int32_t& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, uint32_t& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, int64_t& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, uint64_t& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, float& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, double& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, FixedString& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, STDString& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, STDWString& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, StringView& v) { return s.Visit(v); }
 #if defined(ENABLE_UI)
-	inline LuaSerializer& operator << (LuaSerializer& s, Noesis::Symbol& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, Noesis::Symbol& v) { return s.Visit(v); }
 #endif
 #if defined(ENABLE_IMGUI)
-	inline LuaSerializer& operator << (LuaSerializer& s, ImguiHandle& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, ImguiHandle& v) { return s.Visit(v); }
 #endif
-	inline LuaSerializer& operator << (LuaSerializer& s, Path& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, Guid& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, NetId& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, UserId& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, ComponentHandle& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, EntityHandle& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, glm::ivec2& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, glm::ivec4& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, glm::vec2& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, glm::vec3& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, glm::vec4& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, glm::quat& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, glm::mat3& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, glm::mat3x4& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, glm::mat4x3& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, glm::mat4& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, Version& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, Path& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, Guid& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, NetId& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, UserId& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, ComponentHandle& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, EntityHandle& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, glm::ivec2& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, glm::ivec4& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, glm::vec2& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, glm::vec3& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, glm::vec4& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, glm::quat& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, glm::mat3& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, glm::mat3x4& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, glm::mat4x3& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, glm::mat4& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, Version& v) { return s.Visit(v); }
 
-	inline LuaSerializer& operator << (LuaSerializer& s, Ref& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, RegistryEntry& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, PersistentRef& v) { return s.Visit(v); }
-	inline LuaSerializer& operator << (LuaSerializer& s, PersistentRegistryEntry& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, Ref& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, RegistryEntry& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, PersistentRef& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, PersistentRegistryEntry& v) { return s.Visit(v); }
 
 	template <class T>
-	inline LuaSerializer& operator << (LuaSerializer& s, LuaDelegate<T>& v) { return s.Visit(v); }
+	inline LuaSerializer& serialize(LuaSerializer& s, LuaDelegate<T>& v) { return s.Visit(v); }
 	
 
-	LuaSerializer& operator << (LuaSerializer& s, ecs::EntityRef& v);
-	LuaSerializer& operator << (LuaSerializer& s, TranslatedString& v);
-	LuaSerializer& operator << (LuaSerializer& s, TypeInformationRef& v);
-/*	LuaSerializer& operator << (LuaSerializer& s, CEquipmentSet& v);
-	LuaSerializer& operator << (LuaSerializer& s, CEquipmentGroup& v);
-	LuaSerializer& operator << (LuaSerializer& s, CSkillSet& v);*/
-	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::Requirement& v);
-	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::TreasureTable& v);
-	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::TreasureSubTable& v);
-	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::TreasureCategory& v);
-/*	LuaSerializer& operator << (LuaSerializer& s, CItemGroup& v);
-	LuaSerializer& operator << (LuaSerializer& s, CLevelGroup& v);
-	LuaSerializer& operator << (LuaSerializer& s, CRootGroup& v);
-	LuaSerializer& operator << (LuaSerializer& s, CNameGroupLink& v);
-	LuaSerializer& operator << (LuaSerializer& s, CNameGroup& v);
-	LuaSerializer& operator << (LuaSerializer& s, CNameGroupName& v);*/
+	LuaSerializer& serialize(LuaSerializer& s, ecs::EntityRef& v);
+	LuaSerializer& serialize(LuaSerializer& s, TranslatedString& v);
+	LuaSerializer& serialize(LuaSerializer& s, TypeInformationRef& v);
+	LuaSerializer& serialize(LuaSerializer& s, bg3se::stats::Requirement& v);
+	LuaSerializer& serialize(LuaSerializer& s, bg3se::stats::TreasureTable& v);
+	LuaSerializer& serialize(LuaSerializer& s, bg3se::stats::TreasureSubTable& v);
+	LuaSerializer& serialize(LuaSerializer& s, bg3se::stats::TreasureCategory& v);
 
 	template <class T>
-	LuaSerializer& operator << (LuaSerializer& s, OverrideableProperty<T>& v)
+	LuaSerializer& serialize(LuaSerializer& s, OverrideableProperty<T>& v)
 	{
-		s << v.Value;
+		serialize(s, v.Value);
+		if (!s.IsWriting) {
+			v.IsOverridden = true;
+		}
+		return s;
+	}
+
+	template <class T>
+	LuaSerializer& serialize(LuaSerializer& s, OverrideableProperty<T> const& v)
+	{
+		serialize(s, v.Value);
 		if (!s.IsWriting) {
 			v.IsOverridden = true;
 		}
@@ -167,7 +176,7 @@ namespace bg3se::lua
 	}
 
 	template <class T, class Allocator, bool StoreSize>
-	LuaSerializer& operator << (LuaSerializer& s, ObjectSet<T, Allocator, StoreSize>& v)
+	LuaSerializer& serialize(LuaSerializer& s, ObjectSet<T, Allocator, StoreSize>& v)
 	{
 		s.BeginObject();
 		if (s.IsWriting) {
@@ -175,7 +184,7 @@ namespace bg3se::lua
 			for (auto& val : v) {
 				StackCheck _(s.L);
 				push(s.L, i++);
-				s << val;
+				serialize(s, val);
 				lua_rawset(s.L, -3);
 			}
 		} else {
@@ -183,7 +192,7 @@ namespace bg3se::lua
 			for (auto idx : iterate(s.L, -1)) {
 				StackCheck _(s.L);
 				T temp{};
-				s << temp;
+				serialize(s, temp);
 				v.Add(temp);
 			}
 		}
@@ -192,7 +201,7 @@ namespace bg3se::lua
 	}
 
 	template <class T>
-	LuaSerializer& operator << (LuaSerializer& s, Array<T>& v)
+	LuaSerializer& serialize(LuaSerializer& s, Array<T>& v)
 	{
 		s.BeginObject();
 		if (s.IsWriting) {
@@ -200,7 +209,7 @@ namespace bg3se::lua
 			for (auto& val : v) {
 				StackCheck _(s.L);
 				push(s.L, i++);
-				s << val;
+				serialize(s, val);
 				lua_rawset(s.L, -3);
 			}
 		} else {
@@ -208,7 +217,7 @@ namespace bg3se::lua
 			for (auto idx : iterate(s.L, -1)) {
 				StackCheck _(s.L);
 				T temp{};
-				s << temp;
+				serialize(s, temp);
 				v.Add(temp);
 			}
 		}
@@ -216,9 +225,26 @@ namespace bg3se::lua
 		return s;
 	}
 
+	template <class T>
+	LuaSerializer& serialize(LuaSerializer& s, Array<T> const& v)
+	{
+		assert(!s.IsWriting);
+
+		s.BeginObject();
+		int i = 1;
+		for (auto const& val : v) {
+			StackCheck _(s.L);
+			push(s.L, i++);
+			serialize(s, const_cast<T&>(val));
+			lua_rawset(s.L, -3);
+		}
+		s.EndObject();
+		return s;
+	}
+
 #if defined(ENABLE_UI)
 	template <class T, unsigned N>
-	LuaSerializer& operator << (LuaSerializer& s, Noesis::Vector<T, N>& v)
+	LuaSerializer& serialize(LuaSerializer& s, Noesis::Vector<T, N>& v)
 	{
 		s.BeginObject();
 		if (s.IsWriting) {
@@ -226,7 +252,7 @@ namespace bg3se::lua
 			for (auto& val : v) {
 				StackCheck _(s.L);
 				push(s.L, i++);
-				s << val;
+				serialize(s, val);
 				lua_rawset(s.L, -3);
 			}
 		} else {
@@ -234,7 +260,7 @@ namespace bg3se::lua
 			for (auto idx : iterate(s.L, -1)) {
 				StackCheck _(s.L);
 				T temp{};
-				s << temp;
+				serialize(s, temp);
 				v.PushBack(temp);
 			}
 		}
@@ -244,7 +270,7 @@ namespace bg3se::lua
 #endif
 
 	template <class T>
-	LuaSerializer& operator << (LuaSerializer& s, HashSet<T>& v)
+	LuaSerializer& serialize(LuaSerializer& s, HashSet<T>& v)
 	{
 		s.BeginObject();
 		if (s.IsWriting) {
@@ -252,7 +278,7 @@ namespace bg3se::lua
 			for (auto& val : v) {
 				StackCheck _(s.L);
 				push(s.L, i++);
-				s << val;
+				serialize(s, val);
 				lua_rawset(s.L, -3);
 			}
 		} else {
@@ -260,7 +286,7 @@ namespace bg3se::lua
 			for (auto idx : iterate(s.L, -1)) {
 				StackCheck _(s.L);
 				T temp{};
-				s << temp;
+				serialize(s, temp);
 				v.Add(temp);
 			}
 		}
@@ -269,15 +295,15 @@ namespace bg3se::lua
 	}
 
 	template <class TKey, class TValue>
-	LuaSerializer& operator << (LuaSerializer& s, HashMap<TKey, TValue>& v)
+	LuaSerializer& serialize(LuaSerializer& s, HashMap<TKey, TValue>& v)
 	{
 		s.BeginObject();
 		if (s.IsWriting) {
 			int i = 1;
 			for (auto it = v.begin(); it != v.end(); ++it) {
 				StackCheck _(s.L);
-				s << const_cast<TKey&>(it.Key());
-				s << it.Value();
+				serialize(s, const_cast<TKey&>(it.Key()));
+				serialize(s, it.Value());
 				lua_rawset(s.L, -3);
 			}
 		} else {
@@ -287,9 +313,9 @@ namespace bg3se::lua
 				TKey key{};
 				TValue value{};
 				lua_pushvalue(s.L, -2);
-				s << key;
+				serialize(s, key);
 				lua_pop(s.L, 1);
-				s << value;
+				serialize(s, value);
 				v.set(std::move(key), std::move(value));
 			}
 		}
@@ -298,14 +324,15 @@ namespace bg3se::lua
 	}
 
 	template <class TKey, class TValue>
-	LuaSerializer& operator << (LuaSerializer& s, LegacyRefMap<TKey, TValue>& v)
+	LuaSerializer& serialize(LuaSerializer& s, LegacyRefMap<TKey, TValue>& v)
 	{
 		s.BeginObject();
 		if (s.IsWriting) {
 			int i = 1;
 			for (auto& it : v) {
 				StackCheck _(s.L);
-				s << it.Key << it.Value;
+				serialize(s, it.Key);
+				serialize(s, it.Value);
 				lua_rawset(s.L, -3);
 			}
 		} else {
@@ -315,9 +342,9 @@ namespace bg3se::lua
 				TKey key{};
 				TValue value{};
 				lua_pushvalue(s.L, -2);
-				s << key;
+				serialize(s, key);
 				lua_pop(s.L, 1);
-				s << value;
+				serialize(s, value);
 				v.insert(std::move(key), std::move(value));
 			}
 		}
@@ -326,14 +353,15 @@ namespace bg3se::lua
 	}
 
 	template <class TKey, class TValue>
-	LuaSerializer& operator << (LuaSerializer& s, LegacyMap<TKey, TValue>& v)
+	LuaSerializer& serialize(LuaSerializer& s, LegacyMap<TKey, TValue>& v)
 	{
 		s.BeginObject();
 		if (s.IsWriting) {
 			int i = 1;
 			for (auto& it : v) {
 				StackCheck _(s.L);
-				s << it.Key << it.Value;
+				serialize(s, it.Key);
+				serialize(s, it.Value);
 				lua_rawset(s.L, -3);
 			}
 		} else {
@@ -343,9 +371,9 @@ namespace bg3se::lua
 				TKey key{};
 				TValue value{};
 				lua_pushvalue(s.L, -2);
-				s << key;
+				serialize(s, key);
 				lua_pop(s.L, 1);
-				s << value;
+				serialize(s, value);
 				v.insert(std::move(key), std::move(value));
 			}
 		}
@@ -354,7 +382,7 @@ namespace bg3se::lua
 	}
 
 	template <class T>
-	LuaSerializer& operator << (LuaSerializer& s, Vector<T>& v)
+	LuaSerializer& serialize(LuaSerializer& s, Vector<T>& v)
 	{
 		s.BeginObject();
 		if (s.IsWriting) {
@@ -362,7 +390,7 @@ namespace bg3se::lua
 			for (auto& val : v) {
 				StackCheck _(s.L);
 				push(s.L, i++);
-				s << val;
+				serialize(s, val);
 				lua_rawset(s.L, -3);
 			}
 		} else {
@@ -370,7 +398,7 @@ namespace bg3se::lua
 			for (auto idx : iterate(s.L, -1)) {
 				StackCheck _(s.L);
 				T temp{};
-				s << temp;
+				serialize(s, temp);
 				v.push_back(temp);
 			}
 		}
@@ -379,11 +407,11 @@ namespace bg3se::lua
 	}
 
 	template <class T>
-	LuaSerializer& operator << (LuaSerializer& s, std::optional<T>& v)
+	LuaSerializer& serialize(LuaSerializer& s, std::optional<T>& v)
 	{
 		if (s.IsWriting) {
 			if (v) {
-				s << *v;
+				serialize(s, *v);
 			} else {
 				push(s.L, nullptr);
 			}
@@ -392,7 +420,7 @@ namespace bg3se::lua
 				v = T();
 			}
 
-			s << *v;
+			serialize(s, *v);
 		}
 
 		return s;
@@ -400,13 +428,13 @@ namespace bg3se::lua
 
 	
 	template <class T>
-	typename std::enable_if_t<std::is_pointer_v<T>, LuaSerializer&> operator << (LuaSerializer& s, T& v)
+	typename std::enable_if_t<std::is_pointer_v<T>, LuaSerializer&> serialize(LuaSerializer& s, T& v)
 	{
 		if (s.IsWriting) {
 			if (v == nullptr) {
 				lua_pushnil(s.L);
 			} else {
-				s << *v;
+				serialize(s, *v);
 			}
 		} else {
 			if constexpr (decltype(IsAllocatable<std::remove_pointer_t<T>>(nullptr))::value) {
@@ -416,7 +444,7 @@ namespace bg3se::lua
 			}
 
 			if (v != nullptr) {
-				s << *v;
+				serialize(s, *v);
 			}
 		}
 
@@ -425,7 +453,7 @@ namespace bg3se::lua
 
 
 	template <class T>
-	typename std::enable_if_t<std::is_enum_v<T>, LuaSerializer&> operator << (LuaSerializer& s, T& v)
+	typename std::enable_if_t<std::is_enum_v<T>, LuaSerializer&> serialize(LuaSerializer& s, T& v)
 	{
 		if (s.IsWriting) {
 			push(s.L, v);
@@ -436,12 +464,12 @@ namespace bg3se::lua
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::TreasureTable* v);
-	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::TreasureSubTable* v);
-	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::TreasureCategory* v);
+	LuaSerializer& serialize(LuaSerializer& s, bg3se::stats::TreasureTable* v);
+	LuaSerializer& serialize(LuaSerializer& s, bg3se::stats::TreasureSubTable* v);
+	LuaSerializer& serialize(LuaSerializer& s, bg3se::stats::TreasureCategory* v);
 
 	template <class T>
-	std::enable_if_t<!IsByVal<T>, LuaSerializer&> operator << (LuaSerializer& s, T* v)
+	std::enable_if_t<!IsByVal<T>, LuaSerializer&> serialize(LuaSerializer& s, T* v)
 	{
 		MakeObjectRef(s.L, v);
 		return s;

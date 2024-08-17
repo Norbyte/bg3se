@@ -159,7 +159,7 @@ namespace bg3se
 		return contents;
 	}
 
-	FixedString GameObjectTemplate::GetTemplateType()
+	FixedString GameObjectTemplate::GetTemplateType() const
 	{
 		return *GetType();
 	}
@@ -193,26 +193,26 @@ namespace bg3se
 
 	static bool CharacterGetSelfCalled{ false };
 
-	RefReturn<esv::Character> esv::Character::LuaGetSelf()
+	RefReturn<esv::Character> esv::Character::LuaGetSelf() const
 	{
 		if (!CharacterGetSelfCalled) {
 			CharacterGetSelfCalled = true;
 			WARN("entity.ServerCharacter.Character is deprecated; use entity.ServerCharacter instead");
 		}
 
-		return this;
+		return const_cast<esv::Character*>(this);
 	}
 
 	static bool ItemGetSelfCalled{ false };
 
-	RefReturn<esv::Item> esv::Item::LuaGetSelf()
+	RefReturn<esv::Item> esv::Item::LuaGetSelf() const
 	{
 		if (!ItemGetSelfCalled) {
 			ItemGetSelfCalled = true;
 			WARN("entity.ServerItem.Item is deprecated; use entity.ServerItem instead");
 		}
 
-		return this;
+		return const_cast<esv::Item*>(this);
 	}
 
 	esv::Status * esv::Character::GetStatus(FixedString statusId)

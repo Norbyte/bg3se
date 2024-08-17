@@ -71,7 +71,7 @@ struct CppPointerVal
 		return (lua::MetatableTag)(extra & TypeTagMask);
 	}
 
-	static inline uint64_t MakeRaw(void* ptr, uint16_t propertyMapTag)
+	static inline uint64_t MakeRaw(void const* ptr, uint16_t propertyMapTag)
 	{
 		return ((uint64_t)ptr & PointerMask) | (((uint64_t)propertyMapTag & PropertyMapTagMask) << PointerBits);
 	}
@@ -231,6 +231,15 @@ struct CppValue
 
 void lua_push_cppobject(lua_State* L, MetatableTag metatableTag, int propertyMapIndex, void* object, LifetimeHandle const& lifetime)
 {
+	assert(propertyMapIndex >= 0);
+	auto val = CppPointerVal::MakeRaw(object, propertyMapIndex);
+	auto extra = CppPointerVal::MakeExtra(metatableTag, lifetime);
+	lua_pushlightcppobject(L, val, extra);
+}
+
+void lua_push_cppobject(lua_State* L, MetatableTag metatableTag, int propertyMapIndex, void const* object, LifetimeHandle const& lifetime)
+{
+	// TODO - add RO tag
 	assert(propertyMapIndex >= 0);
 	auto val = CppPointerVal::MakeRaw(object, propertyMapIndex);
 	auto extra = CppPointerVal::MakeExtra(metatableTag, lifetime);

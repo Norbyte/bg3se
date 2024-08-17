@@ -120,7 +120,7 @@ void Renderable::Destroy()
     }
 }
 
-lua::ImguiHandle Renderable::GetParent()
+lua::ImguiHandle Renderable::GetParent() const
 {
     return lua::ImguiHandle(Parent);
 }
@@ -582,7 +582,7 @@ bool TreeParent::AttachChild(lua::ImguiHandle child)
 
 // Lua helper for making a copy of children without returning a reference to the internal child list.
 // Needed until Lua read-only container proxies are added
-Array<lua::ImguiHandle> TreeParent::GetChildren()
+Array<lua::ImguiHandle> TreeParent::GetChildren() const
 {
     Array<lua::ImguiHandle> handles;
     for (auto h : Children) {
@@ -1107,7 +1107,7 @@ void InputText::StyledRender()
     }
 }
 
-STDString InputText::GetText()
+STDString InputText::GetText() const
 {
     return Text;
 }

@@ -135,7 +135,7 @@ namespace bg3se
 			CharacterFlags3 Flags3;
 			[[bg3::hidden]] void* _PAD;
 
-			RefReturn<Character> LuaGetSelf();
+			RefReturn<Character> LuaGetSelf() const;
 		};
 	}
 

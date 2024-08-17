@@ -386,10 +386,10 @@ EntityStorageData* EntityWorld::GetEntityStorage(EntityHandle entityHandle) cons
 }
 
 
-STDString ECSComponentLog::GetName()
+StringView ECSComponentLog::GetName() const
 {
 	auto name = GetCurrentExtensionState()->GetLua()->GetEntitySystemHelpers()->GetComponentName(ComponentType);
-	return name ? *name : STDString{};
+	return name ? *name : StringView{};
 }
 
 void ECSChangeLog::Clear()

@@ -5,6 +5,7 @@
 #include <Extender/Shared/ExtensionHelpers.h>
 #include <Extender/ScriptExtender.h>
 
+
 #define P(name) s.VisitProperty(#name, v.name)
 #define PO(name, default) s.VisitOptionalProperty(#name, v.name, default)
 
@@ -13,14 +14,14 @@ namespace bg3se::lua
 {
 	using namespace bg3se::stats;
 
-	LuaSerializer& operator << (LuaSerializer& s, TranslatedString& v)
+	LuaSerializer& serialize(LuaSerializer& s, TranslatedString& v)
 	{
 		//  FIXME - migrate TranslatedStrings to by-ref types later
-		s << v.Handle.Handle;
+		serialize(s, v.Handle.Handle);
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, TypeInformationRef& v)
+	LuaSerializer& serialize(LuaSerializer& s, TypeInformationRef& v)
 	{
 		if (s.IsWriting) {
 			if (v) {
@@ -33,9 +34,9 @@ namespace bg3se::lua
 		return s;
 	}
 	
-	LuaSerializer& operator << (LuaSerializer& s, ecs::EntityRef& v)
+	LuaSerializer& serialize(LuaSerializer& s, ecs::EntityRef& v)
 	{
-		s << v.Handle;
+		serialize(s, v.Handle);
 		if (v.World == nullptr && !s.IsWriting) {
 			auto state = State::FromLua(s.L);
 			v.World = state->GetEntityWorld();
@@ -43,54 +44,25 @@ namespace bg3se::lua
 		return s;
 	}
 
-	/*
-	LuaSerializer& operator << (LuaSerializer& s, CEquipmentSet& v)
+	LuaSerializer& serialize(LuaSerializer& s, bg3se::stats::TreasureTable* v)
 	{
-		s.BeginObject();
-		P(Name);
-		P(Groups);
-		s.EndObject();
+		serialize(s, *v);
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, CEquipmentGroup& v)
+	LuaSerializer& serialize(LuaSerializer& s, bg3se::stats::TreasureSubTable* v)
 	{
-		s.BeginObject();
-		// Name property is unused
-		// P(Name);
-		P(Equipment);
-		s.EndObject();
+		serialize(s, *v);
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, CSkillSet& v)
+	LuaSerializer& serialize(LuaSerializer& s, bg3se::stats::TreasureCategory* v)
 	{
-		s.BeginObject();
-		P(Name);
-		P(Skills);
-		s.EndObject();
-		return s;
-	}*/
-
-	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::TreasureTable* v)
-	{
-		s << *v;
+		serialize(s, *v);
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::TreasureSubTable* v)
-	{
-		s << *v;
-		return s;
-	}
-
-	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::TreasureCategory* v)
-	{
-		s << *v;
-		return s;
-	}
-
-	LuaSerializer& operator << (LuaSerializer& s, TreasureTable& v)
+	LuaSerializer& serialize(LuaSerializer& s, TreasureTable& v)
 	{
 		s.BeginObject();
 		P(Name);
@@ -104,7 +76,7 @@ namespace bg3se::lua
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, TreasureSubTableCategory& v)
+	LuaSerializer& serialize(LuaSerializer& s, TreasureSubTableCategory& v)
 	{
 		auto stats = GetStaticSymbols().GetStats();
 
@@ -159,13 +131,13 @@ namespace bg3se::lua
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::TreasureSubTableCategory* v)
+	LuaSerializer& serialize(LuaSerializer& s, bg3se::stats::TreasureSubTableCategory* v)
 	{
-		s << *v;
+		serialize(s, *v);
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, TreasureSubTableDropCount& v)
+	LuaSerializer& serialize(LuaSerializer& s, TreasureSubTableDropCount& v)
 	{
 		s.BeginObject();
 		P(Chance);
@@ -174,7 +146,7 @@ namespace bg3se::lua
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, TreasureSubTable& v)
+	LuaSerializer& serialize(LuaSerializer& s, TreasureSubTable& v)
 	{
 		s.BeginObject();
 		P(TotalCount);
@@ -209,7 +181,7 @@ namespace bg3se::lua
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, TreasureCategoryItem& v)
+	LuaSerializer& serialize(LuaSerializer& s, TreasureCategoryItem& v)
 	{
 		s.BeginObject();
 		P(Name);
@@ -224,13 +196,13 @@ namespace bg3se::lua
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, TreasureCategoryItem* v)
+	LuaSerializer& serialize(LuaSerializer& s, TreasureCategoryItem* v)
 	{
-		s << *v;
+		serialize(s, *v);
 		return s;
 	}
 
-	LuaSerializer& operator << (LuaSerializer& s, bg3se::stats::TreasureCategory& v)
+	LuaSerializer& serialize(LuaSerializer& s, bg3se::stats::TreasureCategory& v)
 	{
 		s.BeginObject();
 		P(Category);
@@ -239,90 +211,7 @@ namespace bg3se::lua
 		return s;
 	}
 
-	/*
-	LuaSerializer& operator << (LuaSerializer& s, CItemGroup& v)
-	{
-		s.BeginObject();
-		P(Name);
-		P(LevelGroups);
-		s.EndObject();
-		return s;
-	}
-
-	LuaSerializer& operator << (LuaSerializer& s, CLevelGroup& v)
-	{
-		s.BeginObject();
-		P(MinLevel);
-		P(MaxLevel);
-		P(Name);
-		P(RootGroups);
-		s.EndObject();
-		return s;
-	}
-
-	LuaSerializer& operator << (LuaSerializer& s, CRootGroup& v)
-	{
-		s.BeginObject();
-		P(MinLevel);
-		P(MaxLevel);
-		P(RootGroup);
-		P(NameGroupLinks);
-		s.VisitOptionalProperty("Unknown", v.field_10, GFS.strEmpty);
-		s.EndObject();
-		return s;
-	}
-
-	LuaSerializer& operator << (LuaSerializer& s, CNameGroupLink& v)
-	{
-		s.BeginObject();
-		P(NameGroup);
-		P(NoneCoolSuffix);
-		P(ItemName);
-		s.VisitOptionalProperty("Unknown", v.field_0, 0);
-		s.EndObject();
-		return s;
-	}
-
-	LuaSerializer& operator << (LuaSerializer& s, CNameGroup& v)
-	{
-		s.BeginObject();
-		P(Name);
-		P(Names);
-		P(NamesCool);
-		s.EndObject();
-		return s;
-	}
-
-	LuaSerializer& operator << (LuaSerializer& s, CNameGroupName& v)
-	{
-		s.BeginObject();
-		s.VisitProperty("Name", v.Name.Handle.ReferenceString);
-		s.VisitProperty("Name2", v.Name2.Handle.ReferenceString);
-		s.EndObject();
-		return s;
-	}
-
-	void LuaSerializeStatsEnum(LuaSerializer& s, char const* key, FixedString const& enumName, int& v)
-	{
-		auto stats = GetStaticSymbols().GetStats();
-
-		if (s.IsWriting) {
-			push(s.L, stats->EnumIndexToLabel(enumName, v));
-			lua_setfield(s.L, -2, key);
-		} else {
-			lua_getfield(s.L, -1, key);
-			auto str = luaL_checkstring(s.L, -1);
-			auto idx = stats->EnumLabelToIndex(enumName, str);
-			if (idx) {
-				v = *idx;
-			} else {
-				luaL_error(s.L, "'%s' is not a valid value for enumeration '%s'", enumName.Str, str);
-			}
-			lua_pop(s.L, 1);
-		}
-	}*/
-
-	LuaSerializer& operator << (LuaSerializer& s, Requirement& v)
+	LuaSerializer& serialize(LuaSerializer& s, Requirement& v)
 	{
 		s.BeginObject();
 		s.VisitProperty("Requirement", v.RequirementId);

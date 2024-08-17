@@ -34,6 +34,18 @@ inline STDString do_get(lua_State* L, int index, Overload<STDString>)
 	return STDString(str, (uint32_t)len);
 }
 
+inline StringView do_get(lua_State* L, int index, Overload<StringView>)
+{
+	luaL_error(L, "Cannot unserialize Lua strings into a StringView");
+	return {};
+}
+
+inline LSStringView do_get(lua_State* L, int index, Overload<LSStringView>)
+{
+	luaL_error(L, "Cannot unserialize Lua strings into a StringView");
+	return {};
+}
+
 #if defined(ENABLE_UI)
 inline Noesis::String do_get(lua_State* L, int index, Overload<Noesis::String>)
 {

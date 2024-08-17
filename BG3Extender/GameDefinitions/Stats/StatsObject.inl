@@ -17,12 +17,12 @@ STDString* ConditionId::Get() const
 	return &GetStaticSymbols().GetStats()->Conditions[Id];
 }
 
-Array<Functor*> FunctorGroup::GetFunctors()
+Array<Functor*> FunctorGroup::GetFunctors() const
 {
 	return Functors->FunctorList;
 }
 
-RPGEnumeration* Object::GetAttributeInfo(FixedString const& attributeName, int& attributeIndex)
+RPGEnumeration* Object::GetAttributeInfo(FixedString const& attributeName, int& attributeIndex) const
 {
 	auto stats = GetStaticSymbols().GetStats();
 	auto objModifiers = stats->ModifierLists.Find(ModifierListIndex);
@@ -38,7 +38,7 @@ RPGEnumeration* Object::GetAttributeInfo(FixedString const& attributeName, int& 
 	return stats->ModifierValueLists.Find(modifierInfo->EnumerationIndex);
 }
 
-std::optional<STDString> Object::GetString(FixedString const& attributeName)
+std::optional<STDString> Object::GetString(FixedString const& attributeName) const
 {
 	int attributeIndex;
 	auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
@@ -78,7 +78,7 @@ std::optional<STDString> Object::GetString(FixedString const& attributeName)
 	return {};
 }
 
-std::optional<FixedString> Object::GetFixedString(FixedString const& attributeName)
+std::optional<FixedString> Object::GetFixedString(FixedString const& attributeName) const
 {
 	int attributeIndex;
 	auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
@@ -98,7 +98,7 @@ std::optional<FixedString> Object::GetFixedString(FixedString const& attributeNa
 	return {};
 }
 
-std::optional<int> Object::GetInt(FixedString const& attributeName)
+std::optional<int> Object::GetInt(FixedString const& attributeName) const
 {
 	int attributeIndex;
 	auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
@@ -114,7 +114,7 @@ std::optional<int> Object::GetInt(FixedString const& attributeName)
 	}
 }
 
-std::optional<float> Object::GetFloat(FixedString const& attributeName)
+std::optional<float> Object::GetFloat(FixedString const& attributeName) const
 {
 	int attributeIndex;
 	auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
@@ -133,7 +133,7 @@ std::optional<float> Object::GetFloat(FixedString const& attributeName)
 	return {};
 }
 
-std::optional<int64_t> Object::GetInt64(FixedString const& attributeName)
+std::optional<int64_t> Object::GetInt64(FixedString const& attributeName) const
 {
 	int attributeIndex;
 	auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
@@ -152,7 +152,7 @@ std::optional<int64_t> Object::GetInt64(FixedString const& attributeName)
 	return {};
 }
 
-std::optional<Guid> Object::GetGuid(FixedString const& attributeName)
+std::optional<Guid> Object::GetGuid(FixedString const& attributeName) const
 {
 	int attributeIndex;
 	auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
@@ -171,7 +171,7 @@ std::optional<Guid> Object::GetGuid(FixedString const& attributeName)
 	return {};
 }
 
-std::optional<TranslatedString> Object::GetTranslatedString(FixedString const& attributeName)
+std::optional<TranslatedString> Object::GetTranslatedString(FixedString const& attributeName) const
 {
 	int attributeIndex;
 	auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
@@ -190,7 +190,7 @@ std::optional<TranslatedString> Object::GetTranslatedString(FixedString const& a
 	return {};
 }
 
-std::optional<Array<FixedString>> Object::GetFlags(FixedString const& attributeName)
+std::optional<Array<FixedString>> Object::GetFlags(FixedString const& attributeName) const
 {
 	int attributeIndex;
 	auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
@@ -217,6 +217,26 @@ std::optional<Array<FixedString>> Object::GetFlags(FixedString const& attributeN
 	return {};
 }
 
+std::optional<Array<FunctorGroup> const*> Object::GetFunctors(FixedString const& attributeName) const
+{
+	int attributeIndex;
+	auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
+	if (typeInfo == nullptr) {
+		return {};
+	}
+
+	if (typeInfo->Name != GFS.strStatsFunctors) {
+		return {};
+	}
+
+	auto functors = Functors.try_get(attributeName);
+	if (functors) {
+		return functors;
+	} else {
+		return {};
+	}
+}
+
 std::optional<Array<FunctorGroup>*> Object::GetFunctors(FixedString const& attributeName)
 {
 	int attributeIndex;
@@ -235,6 +255,21 @@ std::optional<Array<FunctorGroup>*> Object::GetFunctors(FixedString const& attri
 	} else {
 		return {};
 	}
+}
+
+std::optional<Array<Object::RollCondition> const*> Object::GetRollConditions(FixedString const& attributeName) const
+{
+	int attributeIndex;
+	auto typeInfo = GetAttributeInfo(attributeName, attributeIndex);
+	if (typeInfo == nullptr) {
+		return {};
+	}
+
+	if (typeInfo->Name != GFS.strRollConditions) {
+		return {};
+	}
+
+	return RollConditions.try_get(attributeName);
 }
 
 std::optional<Array<Object::RollCondition>*> Object::GetRollConditions(FixedString const& attributeName)

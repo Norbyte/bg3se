@@ -16,7 +16,7 @@ class GenericPropertyMap;
 
 struct RawPropertyAccessors
 {
-	using Getter = PropertyOperationResult (lua_State* L, LifetimeHandle const& lifetime, void* object, RawPropertyAccessors const& prop);
+	using Getter = PropertyOperationResult (lua_State* L, LifetimeHandle const& lifetime, void const* object, RawPropertyAccessors const& prop);
 	using Setter = PropertyOperationResult (lua_State* L, void* object, int index, RawPropertyAccessors const& prop);
 	using Serializer = PropertyOperationResult (lua_State* L, void const* object, RawPropertyAccessors const& prop);
 
@@ -35,9 +35,9 @@ struct RawPropertyAccessors
 class GenericPropertyMap : Noncopyable<GenericPropertyMap>
 {
 public:
-	using TFallbackGetter = PropertyOperationResult (lua_State* L, LifetimeHandle const& lifetime, void* object, FixedString const& prop);
+	using TFallbackGetter = PropertyOperationResult (lua_State* L, LifetimeHandle const& lifetime, void const* object, FixedString const& prop);
 	using TFallbackSetter = PropertyOperationResult (lua_State* L, void* object, FixedString const& prop, int index);
-	using TFallbackNext = int (lua_State* L, LifetimeHandle const& lifetime, void* object, FixedString const& prop);
+	using TFallbackNext = int (lua_State* L, LifetimeHandle const& lifetime, void const* object, FixedString const& prop);
 	using TConstructor = void (void*);
 	using TDestructor = void (void*);
 	using TSerializer = void (lua_State* L, void const*);
@@ -64,8 +64,8 @@ public:
 	void Init();
 	void Finish();
 	bool HasProperty(FixedString const& prop) const;
-	PropertyOperationResult GetRawProperty(lua_State* L, LifetimeHandle const& lifetime, void* object, FixedString const& prop) const;
-	PropertyOperationResult GetRawProperty(lua_State* L, LifetimeHandle const& lifetime, void* object, RawPropertyAccessors const& prop) const;
+	PropertyOperationResult GetRawProperty(lua_State* L, LifetimeHandle const& lifetime, void const* object, FixedString const& prop) const;
+	PropertyOperationResult GetRawProperty(lua_State* L, LifetimeHandle const& lifetime, void const* object, RawPropertyAccessors const& prop) const;
 	PropertyOperationResult SetRawProperty(lua_State* L, void* object, FixedString const& prop, int index) const;
 	void AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter, typename RawPropertyAccessors::Setter* setter,
 		typename RawPropertyAccessors::Serializer* serialize, std::size_t offset, uint64_t flag, 
@@ -177,7 +177,7 @@ extern StructRegistry gStructRegistry;
 template <class T>
 inline GenericPropertyMap& GetStaticPropertyMap()
 {
-	return *gStructRegistry.Get(StructID<T>::ID);
+	return *gStructRegistry.Get(StructID<std::remove_cv_t<T>>::ID);
 }
 
 END_NS()

@@ -103,40 +103,40 @@ inline bool TypeClass::IsInterface() const
 
 struct ObjectHelpers
 {
-	static PropertyOperationResult FallbackGetProperty(lua_State* L, lua::LifetimeHandle const& lifetime, BaseObject* object, bg3se::FixedString const& prop);
+	static PropertyOperationResult FallbackGetProperty(lua_State* L, lua::LifetimeHandle const& lifetime, BaseObject const* object, bg3se::FixedString const& prop);
 	static PropertyOperationResult FallbackSetProperty(lua_State* L, BaseObject* object, bg3se::FixedString const& prop, int index);
-	static UserReturn GetNamedProperty(lua_State* L, BaseObject* o, Symbol name);
-	static UserReturn GetProperty(lua_State* L, BaseObject* o, TypeProperty const* prop);
+	static UserReturn GetNamedProperty(lua_State* L, BaseObject const* o, Symbol name);
+	static UserReturn GetProperty(lua_State* L, BaseObject const* o, TypeProperty const* prop);
 	static void SetNamedProperty(lua_State* L, BaseObject* o, Symbol name, lua::AnyRef value);
 	static void SetProperty(lua_State* L, BaseObject* o, TypeProperty const* prop, lua::AnyRef value);
-	static UserReturn GetAllProperties(lua_State* L, BaseObject* o);
+	static UserReturn GetAllProperties(lua_State* L, BaseObject const* o);
 
-	static TypeClass* GetClassType(BaseObject* o);
-	static Symbol GetClassTypeName(BaseObject* o);
-	static STDString ToString(BaseObject* o);
-	static uint32_t GetNumReferences(BaseRefCounted* o);
+	static TypeClass* GetClassType(BaseObject const* o);
+	static Symbol GetClassTypeName(BaseObject const* o);
+	static STDString ToString(BaseObject const* o);
+	static uint32_t GetNumReferences(BaseRefCounted const* o);
 };
 
 struct RoutedEventHelpers
 {
-	static Symbol GetName(RoutedEvent* o);
-	static TypeClass* GetOwnerType(RoutedEvent* o);
+	static Symbol GetName(RoutedEvent const* o);
+	static TypeClass* GetOwnerType(RoutedEvent const* o);
 };
 
 struct DependencyObjectHelpers
 {
-	static UserReturn GetProperty(lua_State* L, DependencyObject* o, Symbol name);
-	static UserReturn GetDependencyProperty(lua_State* L, DependencyObject* o, DependencyProperty const* prop);
+	static UserReturn GetProperty(lua_State* L, DependencyObject const* o, Symbol name);
+	static UserReturn GetDependencyProperty(lua_State* L, DependencyObject const* o, DependencyProperty const* prop);
 	static void SetProperty(lua_State* L, DependencyObject* o, Symbol name, lua::AnyRef value);
 	static void SetDependencyProperty(lua_State* L, DependencyObject* o, DependencyProperty const* prop, lua::AnyRef value);
 };
 
 struct DependencyPropertyHelpers
 {
-	static Symbol GetName(DependencyProperty* o);
-	static Type* GetType(DependencyProperty* o);
-	static TypeClass* GetOwnerType(DependencyProperty* o);
-	static bool IsReadOnly(DependencyProperty* o);
+	static Symbol GetName(DependencyProperty const* o);
+	static Type* GetType(DependencyProperty const* o);
+	static TypeClass* GetOwnerType(DependencyProperty const* o);
+	static bool IsReadOnly(DependencyProperty const* o);
 };
 
 struct StoredValueHolder
@@ -158,7 +158,7 @@ struct StoredValueHelpers
 	static std::optional<int64_t> TryParseIntegralValue(lua_State* L, Type const* type, void* val);
 	static void PushValue(lua_State* L, Type const* type, StoredValue const* o, Type const* objectType = nullptr, Symbol* propertyName = nullptr);
 	static void PushValue(lua_State* L, Type const* type, void* val, Type const* objectType = nullptr, Symbol* propertyName = nullptr);
-	static void PushProperty(lua_State* L, BaseObject* obj, TypeClass const* objType, TypeProperty const* prop);
+	static void PushProperty(lua_State* L, BaseObject const* obj, TypeClass const* objType, TypeProperty const* prop);
 	static void PushValue(lua_State* L, TypeEnum const* type, uint64_t val);
 
 	template <class T>
@@ -174,21 +174,21 @@ struct StoredValueHelpers
 
 struct CommandHelpers
 {
-	static bool CanExecute(lua_State* L, BaseCommand* o, std::optional<BaseComponent*> arg);
-	static void Execute(lua_State* L, BaseCommand* o, std::optional<BaseComponent*> arg);
+	static bool CanExecute(lua_State* L, BaseCommand const* o, std::optional<BaseComponent*> arg);
+	static void Execute(lua_State* L, BaseCommand const* o, std::optional<BaseComponent*> arg);
 };
 
 struct VisualHelpers
 {
-	static Visual* GetVisualParent(Visual* o);
-	static uint32_t GetVisualChildrenCount(Visual* o);
-	static Visual* GetVisualChild(Visual* o, uint32_t index);
+	static Visual* GetVisualParent(Visual const* o);
+	static uint32_t GetVisualChildrenCount(Visual const* o);
+	static Visual* GetVisualChild(Visual const* o, uint32_t index);
 };
 
 struct UIElementDataHelpers
 {
-	static RoutedEvent* GetEvent(UIElementData* o, Symbol evt);
-	static Array<RoutedEvent*> GetAllEvents(UIElementData* o);
+	static RoutedEvent* GetEvent(UIElementData const* o, Symbol evt);
+	static Array<RoutedEvent*> GetAllEvents(UIElementData const* o);
 };
 
 struct UIElementHelpers
@@ -199,43 +199,43 @@ struct UIElementHelpers
 
 struct FrameworkElementHelpers
 {
-	static FrameworkElement* GetLogicalParent(FrameworkElement* o);
-	static uint32_t GetLogicalChildrenCount(FrameworkElement* o);
-	static BaseComponent* GetLogicalChild(FrameworkElement* o, uint32_t index);
-	static BaseComponent* FindNodeName(FrameworkElement* o, char const* name);
-	static BaseComponent* GetResource(FrameworkElement* o, char const* key, std::optional<bool> fullElementSearch);
-	static BaseObject* GetTreeParent(FrameworkElement* o);
+	static FrameworkElement* GetLogicalParent(FrameworkElement const* o);
+	static uint32_t GetLogicalChildrenCount(FrameworkElement const* o);
+	static BaseComponent* GetLogicalChild(FrameworkElement const* o, uint32_t index);
+	static BaseComponent* FindNodeName(FrameworkElement const* o, char const* name);
+	static BaseComponent* GetResource(FrameworkElement const* o, char const* key, std::optional<bool> fullElementSearch);
+	static BaseObject* GetTreeParent(FrameworkElement const* o);
 	static FrameworkElement* AttachXamlChild(FrameworkElement* o, char const* path);
 	static FrameworkElement* SetXamlProperty(FrameworkElement* o, char const* prop, char const* path);
 };
 
 struct TypePropertyHelpers
 {
-	static Symbol GetName(TypeProperty* o);
-	static Type* GetContentType(TypeProperty* o);
-	static Vector<TypeMetaData*>* GetMeta(TypeProperty* o);
-	static bool IsReadOnly(TypeProperty* o);
+	static Symbol GetName(TypeProperty const* o);
+	static Type* GetContentType(TypeProperty const* o);
+	static Vector<TypeMetaData*> const* GetMeta(TypeProperty const* o);
+	static bool IsReadOnly(TypeProperty const* o);
 };
 
 struct TypeHelpers
 {
-	static STDString GetName(Type* o);
+	static STDString GetName(Type const* o);
 	static bool IsDescendantOf(Type const* type, TypeClass const* base);
 	static bool IsDescendantOf(TypeClass const* type, TypeClass const* base);
-	static TypeClass* GetBase(TypeClass* o);
-	static bool IsInterface(TypeClass* o);
-	static TypeClass::AncestorVector* GetInterfaces(TypeClass* o);
-	static TypeClass::PropertyVector* GetProperties(TypeClass* o);
-	static TypeClass::PropertyVector* GetEvents(TypeClass* o);
+	static TypeClass* GetBase(TypeClass const* o);
+	static bool IsInterface(TypeClass const* o);
+	static TypeClass::AncestorVector const* GetInterfaces(TypeClass const* o);
+	static TypeClass::PropertyVector const* GetProperties(TypeClass const* o);
+	static TypeClass::PropertyVector const* GetEvents(TypeClass const* o);
 	static TypeProperty const* GetProperty(TypeClass const* o, Symbol name);
 	static TypeMetaData* FindMetaRecursive(TypeClass const* o, const TypeClass* metaDataType);
 	static TypeMetaData* FindMetaOrDescendant(TypeClass const* o, const TypeClass* metaDataType);
-	static DependencyData* GetDependencyData(TypeClass* o);
+	static DependencyData* GetDependencyData(TypeClass const* o);
 	static DependencyProperty const* GetDependencyProperty(TypeClass const* o, Symbol name);
 	static RoutedEvent const* GetRoutedEvent(TypeClass const* o, Symbol name);
-	static UIElementData* GetUIElementData(TypeClass* o);
-	static Array<DependencyProperty*> GetDependencyProperties(TypeClass* o);
-	static Array<RoutedEvent*> GetRoutedEvents(TypeClass* o);
+	static UIElementData* GetUIElementData(TypeClass const* o);
+	static Array<DependencyProperty*> GetDependencyProperties(TypeClass const* o);
+	static Array<RoutedEvent*> GetRoutedEvents(TypeClass const* o);
 
 	static std::optional<uint64_t> StringToEnum(TypeEnum const* e, char const* value);
 	static std::optional<uint64_t> StringToEnum(TypeEnum const* e, Symbol value);

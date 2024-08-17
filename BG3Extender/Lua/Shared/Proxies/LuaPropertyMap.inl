@@ -34,7 +34,7 @@ bool GenericPropertyMap::HasProperty(FixedString const& prop) const
 	return Properties.find(prop) != Properties.end();
 }
 
-PropertyOperationResult GenericPropertyMap::GetRawProperty(lua_State* L, LifetimeHandle const& lifetime, void* object, FixedString const& prop) const
+PropertyOperationResult GenericPropertyMap::GetRawProperty(lua_State* L, LifetimeHandle const& lifetime, void const* object, FixedString const& prop) const
 {
 	auto it = Properties.try_get(prop);
 	if (it == nullptr) {
@@ -48,7 +48,7 @@ PropertyOperationResult GenericPropertyMap::GetRawProperty(lua_State* L, Lifetim
 	return it->Get(L, lifetime, object, *it);
 }
 
-PropertyOperationResult GenericPropertyMap::GetRawProperty(lua_State* L, LifetimeHandle const& lifetime, void* object, RawPropertyAccessors const& prop) const
+PropertyOperationResult GenericPropertyMap::GetRawProperty(lua_State* L, LifetimeHandle const& lifetime, void const* object, RawPropertyAccessors const& prop) const
 {
 	return prop.Get(L, lifetime, object, prop);
 }

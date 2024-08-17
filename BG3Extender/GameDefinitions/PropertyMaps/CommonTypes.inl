@@ -36,6 +36,7 @@ END_CLS()
 BEGIN_CLS(TranslatedString)
 P(Handle)
 P(ArgumentString)
+P_FUN(Get, TranslatedString::Get)
 END_CLS()
 
 

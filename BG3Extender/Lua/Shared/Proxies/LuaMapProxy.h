@@ -265,8 +265,19 @@ public:
 		lua_push_cppobject(L, MetatableTag::MapProxy, impl->GetRegistryIndex(), object, lifetime);
 	}
 
+	inline static void MakeImpl(lua_State* L, void const* object, LifetimeHandle const& lifetime, MapProxyImplBase* impl)
+	{
+		lua_push_cppobject(L, MetatableTag::MapProxy, impl->GetRegistryIndex(), object, lifetime);
+	}
+
 	template <class TKey, class TValue>
 	inline static void Make(lua_State* L, HashMap<TKey, TValue>* object, LifetimeHandle const& lifetime)
+	{
+		MakeImpl(L, object, lifetime, GetImplementation<MultiHashMapProxyImpl<TKey, TValue>>());
+	}
+
+	template <class TKey, class TValue>
+	inline static void Make(lua_State* L, HashMap<TKey, TValue> const* object, LifetimeHandle const& lifetime)
 	{
 		MakeImpl(L, object, lifetime, GetImplementation<MultiHashMapProxyImpl<TKey, TValue>>());
 	}
@@ -278,7 +289,19 @@ public:
 	}
 
 	template <class TKey, class TValue>
+	inline static void Make(lua_State* L, LegacyRefMap<TKey, TValue> const* object, LifetimeHandle const& lifetime)
+	{
+		MakeImpl(L, object, lifetime, GetImplementation<RefMapProxyImpl<TKey, TValue, RefMapInternals<TKey, TValue>, 2>>());
+	}
+
+	template <class TKey, class TValue>
 	inline static void Make(lua_State* L, LegacyMap<TKey, TValue>* object, LifetimeHandle const& lifetime)
+	{
+		MakeImpl(L, object, lifetime, GetImplementation<RefMapProxyImpl<TKey, TValue, MapInternals<TKey, TValue>, 3>>());
+	}
+
+	template <class TKey, class TValue>
+	inline static void Make(lua_State* L, LegacyMap<TKey, TValue> const* object, LifetimeHandle const& lifetime)
 	{
 		MakeImpl(L, object, lifetime, GetImplementation<RefMapProxyImpl<TKey, TValue, MapInternals<TKey, TValue>, 3>>());
 	}

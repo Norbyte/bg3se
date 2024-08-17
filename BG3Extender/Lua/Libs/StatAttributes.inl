@@ -7,28 +7,28 @@
 BEGIN_NS(lua::stats)
 
 
-FixedString ObjectHelpers::GetModifierList(Object* obj)
+FixedString ObjectHelpers::GetModifierList(Object const* obj)
 {
 	auto stats = GetStaticSymbols().GetStats();
 	return stats->ModifierLists.Find(obj->ModifierListIndex)->Name;
 }
 
 
-FixedString ObjectHelpers::GetModId(Object* obj)
+FixedString ObjectHelpers::GetModId(Object const* obj)
 {
 	auto mod = gExtender->GetStatLoadOrderHelper().GetStatsEntryMod(obj->Name);
 	return mod ? mod->LastMod : FixedString{};
 }
 
 
-FixedString ObjectHelpers::GetOriginalModId(Object* obj)
+FixedString ObjectHelpers::GetOriginalModId(Object const* obj)
 {
 	auto mod = gExtender->GetStatLoadOrderHelper().GetStatsEntryMod(obj->Name);
 	return mod ? mod->FirstMod : FixedString{};
 }
 
 
-FixedString ObjectHelpers::GetUsing(Object* obj)
+FixedString ObjectHelpers::GetUsing(Object const* obj)
 {
 	auto stats = GetStaticSymbols().GetStats();
 	if (obj->Using) {
@@ -150,7 +150,7 @@ bool ObjectHelpers::CopyFrom(Object* object, FixedString parent)
 }
 
 
-PropertyOperationResult ObjectHelpers::FallbackGet(lua_State* L, lua::LifetimeHandle const& lifetime, Object* object, bg3se::FixedString const& prop)
+PropertyOperationResult ObjectHelpers::FallbackGet(lua_State* L, lua::LifetimeHandle const& lifetime, Object const* object, bg3se::FixedString const& prop)
 {
 	return LuaStatGetAttribute(L, object, prop);
 }
@@ -162,7 +162,7 @@ PropertyOperationResult ObjectHelpers::FallbackSet(lua_State* L, Object* object,
 }
 
 
-int ObjectHelpers::FallbackNext(lua_State* L, LifetimeHandle const& lifetime, Object* object, FixedString const& prop)
+int ObjectHelpers::FallbackNext(lua_State* L, LifetimeHandle const& lifetime, Object const* object, FixedString const& prop)
 {
 	auto stats = GetStaticSymbols().GetStats();
 
@@ -196,7 +196,7 @@ int ObjectHelpers::FallbackNext(lua_State* L, LifetimeHandle const& lifetime, Ob
 }
 
 
-PropertyOperationResult LuaStatGetAttribute(lua_State* L, stats::Object* object, FixedString const& attributeName)
+PropertyOperationResult LuaStatGetAttribute(lua_State* L, stats::Object const* object, FixedString const& attributeName)
 {
 	StackCheck _(L, 1);
 	auto stats = GetStaticSymbols().GetStats();

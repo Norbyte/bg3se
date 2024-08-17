@@ -7,41 +7,41 @@ BEGIN_SE()
 struct GameObjectTemplate
 {
     virtual ~GameObjectTemplate() = 0;
-    virtual void* GetName(void*) = 0;
+    virtual void* GetName(void*) const = 0;
     virtual void* DebugDump(void*) = 0;
-    virtual FixedString* GetType() = 0;
-    virtual FixedString* GetRealType() = 0;
+    virtual FixedString* GetType() const = 0;
+    virtual FixedString* GetRealType() const = 0;
     virtual void SetTransform(Transform const&, void*) = 0;
     virtual bool IsValidV40026() = 0;
     virtual GameObjectTemplate* RealClone() = 0;
-    virtual bool HasRotation() = 0;
+    virtual bool HasRotation() const = 0;
     virtual void UpdateTransformFromLevel() = 0;
     virtual void Visit(ObjectVisitor&) = 0;
     virtual void Noop() = 0;
-    virtual bool IsValid() = 0;
+    virtual bool IsValid() const = 0;
     virtual Guid* GetHLOD() = 0;
     virtual GameObjectTemplate* Clone() = 0;
     virtual GameObjectTemplate* PartialClone(GameObjectTemplate* other) = 0;
     virtual void OverrideFromParent(GameObjectTemplate* other, bool force) = 0;
     virtual void UpdateOverrideFlagsFromParent(GameObjectTemplate* other) = 0;
     virtual bool PostLoad() = 0;
-    virtual bool HasAIBounds() = 0;
-    virtual void* GetAIBounds1(void*, uint16_t) = 0;
-    virtual void* GetAIBounds2(void*, uint16_t) = 0;
-    virtual double GetAIBounds3(void*, uint16_t) = 0;
-    virtual void* GetAIBounds4(void*, uint16_t) = 0;
-    virtual double GetAIBounds5(void*, uint16_t) = 0;
+    virtual bool HasAIBounds() const = 0;
+    virtual void* GetAIBounds1(void*, uint16_t) const = 0;
+    virtual void* GetAIBounds2(void*, uint16_t) const = 0;
+    virtual double GetAIBounds3(void*, uint16_t) const = 0;
+    virtual void* GetAIBounds4(void*, uint16_t) const = 0;
+    virtual double GetAIBounds5(void*, uint16_t) const = 0;
     virtual void UpdateFadeFromParent(GameObjectTemplate* parent, bool) = 0;
     virtual void UpdateHierarchyOnlyFadeFromParent(GameObjectTemplate* parent, bool) = 0;
     virtual void UpdateSeeThroughFromParent(GameObjectTemplate* parent, bool) = 0;
     virtual void UpdateCollideWithCameraFromParent(GameObjectTemplate* parent, bool) = 0;
     virtual void UnknownFunc(bool) = 0;
-    virtual uint16_t* GetVisualFlags(uint16_t&) = 0;
-    virtual OverrideableProperty<bool>* IsPlatformOwner() = 0;
-    virtual void* GetOnUsePeaceActions() = 0;
-    virtual OverrideableProperty<bool>* IsTrap() = 0;
+    virtual uint16_t* GetVisualFlags(uint16_t&) const = 0;
+    virtual OverrideableProperty<bool>* IsPlatformOwner() const = 0;
+    virtual void* GetOnUsePeaceActions() const = 0;
+    virtual OverrideableProperty<bool>* IsTrap() const = 0;
 
-    FixedString GetTemplateType();
+    FixedString GetTemplateType() const;
 
     //# P_GETTER(TemplateType, GetTemplateType)
 

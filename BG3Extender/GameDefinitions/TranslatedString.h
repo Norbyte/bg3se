@@ -42,6 +42,7 @@ struct TranslatedString
 	RuntimeStringHandle ArgumentString;
 
 	static TranslatedString FromString(StringView const& sv);
+	std::optional<StringView> Get() const;
 };
 
 template <class Pred>

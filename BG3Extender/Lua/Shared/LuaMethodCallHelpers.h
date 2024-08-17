@@ -16,6 +16,16 @@ inline void PushReturnValue(lua_State* L, T& v)
 }
 
 template <class T>
+inline void PushReturnValue(lua_State* L, T const& v)
+{
+	if constexpr (std::is_pointer_v<T>) {
+		MakeObjectRef(L, v);
+	} else {
+		LuaWrite(L, v);
+	}
+}
+
+template <class T>
 inline void PushReturnValue(lua_State* L, std::span<T>& v)
 {
 	MakeObjectRef(L, &v);
@@ -317,10 +327,27 @@ inline int CallMethodHelper(lua_State* L, void (T::* fun)(lua_State*, Args...), 
 	return 0;
 }
 
+// Const, No return value, lua_State passed
+template <class T, class ...Args, size_t ...Indices>
+inline int CallMethodHelper(lua_State* L, void (T::* fun)(lua_State*, Args...) const, std::index_sequence<Indices...>) {
+	StackCheck _(L, 0);
+	auto obj = get_object<T const>(L, 1);
+	(obj->*fun)(L, get_param_cv<Args>(L, 2 + (int)Indices)...);
+	return 0;
+}
+
 // Return values pushed by callee, lua_State passed
 template <class T, class ...Args, size_t ...Indices>
 inline int CallMethodHelper(lua_State* L, UserReturn (T::* fun)(lua_State*, Args...), std::index_sequence<Indices...>) {
 	auto obj = get_object<T>(L, 1);
+	auto nret = (obj->*fun)(L, get_param_cv<Args>(L, 2 + (int)Indices)...);
+	return (int)nret;
+}
+
+// Const, Return values pushed by callee, lua_State passed
+template <class T, class ...Args, size_t ...Indices>
+inline int CallMethodHelper(lua_State* L, UserReturn (T::* fun)(lua_State*, Args...) const, std::index_sequence<Indices...>) {
+	auto obj = get_object<T const>(L, 1);
 	auto nret = (obj->*fun)(L, get_param_cv<Args>(L, 2 + (int)Indices)...);
 	return (int)nret;
 }
@@ -335,9 +362,25 @@ inline int CallMethodHelper(lua_State* L, R (T::* fun)(lua_State*, Args...), std
 	return TupleSize(Overload<R>{});
 }
 
+// Const, 1 return value, lua_State passed
+template <class R, class T, class ...Args, size_t ...Indices>
+inline int CallMethodHelper(lua_State* L, R (T::* fun)(lua_State*, Args...) const, std::index_sequence<Indices...>) {
+	StackCheck _(L, TupleSize(Overload<R>{}));
+	auto obj = get_object<T const>(L, 1);
+	auto retval = (obj->*fun)(L, get_param_cv<Args>(L, 2 + (int)Indices)...);
+	PushReturnValue(L, retval);
+	return TupleSize(Overload<R>{});
+}
+
 // Index_sequence wrapper for CallMethodHelper(), lua_State passed
 template <class R, class T, class ...Args>
 inline int CallMethod(lua_State* L, R(T::* fun)(lua_State*, Args...)) {
+	return CallMethodHelper(L, fun, std::index_sequence_for<Args...>());
+}
+
+// Const, Index_sequence wrapper for CallMethodHelper(), lua_State passed
+template <class R, class T, class ...Args>
+inline int CallMethod(lua_State* L, R(T::* fun)(lua_State*, Args...) const) {
 	return CallMethodHelper(L, fun, std::index_sequence_for<Args...>());
 }
 
@@ -346,6 +389,15 @@ template <class T, class ...Args, size_t ...Indices>
 inline int CallMethodHelper(lua_State* L, void (T::* fun)(Args...), std::index_sequence<Indices...>) {
 	StackCheck _(L, 0);
 	auto obj = get_object<T>(L, 1);
+	(obj->*fun)(get_param_cv<Args>(L, 2 + (int)Indices)...);
+	return 0;
+}
+
+// Const, No return value, lua_State not passed
+template <class T, class ...Args, size_t ...Indices>
+inline int CallMethodHelper(lua_State* L, void (T::* fun)(Args...) const, std::index_sequence<Indices...>) {
+	StackCheck _(L, 0);
+	auto obj = get_object<T const>(L, 1);
 	(obj->*fun)(get_param_cv<Args>(L, 2 + (int)Indices)...);
 	return 0;
 }
@@ -360,9 +412,25 @@ inline int CallMethodHelper(lua_State* L, R (T::* fun)(Args...), std::index_sequ
 	return TupleSize(Overload<R>{});
 }
 
+// Const, 1 return value, lua_State not passed
+template <class R, class T, class ...Args, size_t ...Indices>
+inline int CallMethodHelper(lua_State* L, R (T::* fun)(Args...) const, std::index_sequence<Indices...>) {
+	StackCheck _(L, TupleSize(Overload<R>{}));
+	auto obj = get_object<T const>(L, 1);
+	auto retval = (obj->*fun)(get_param_cv<Args>(L, 2 + (int)Indices)...);
+	PushReturnValue(L, retval);
+	return TupleSize(Overload<R>{});
+}
+
 // Index_sequence wrapper for CallMethodHelper(), lua_State not passed
 template <class R, class T, class ...Args>
 inline int CallMethod(lua_State* L, R (T::* fun)(Args...)) {
+	return CallMethodHelper(L, fun, std::index_sequence_for<Args...>());
+}
+
+// Const, Index_sequence wrapper for CallMethodHelper(), lua_State not passed
+template <class R, class T, class ...Args>
+inline int CallMethod(lua_State* L, R (T::* fun)(Args...) const) {
 	return CallMethodHelper(L, fun, std::index_sequence_for<Args...>());
 }
 
@@ -376,10 +444,27 @@ inline int CallMethodHelper(lua_State* L, void (* fun)(lua_State*, T*, Args...),
 	return 0;
 }
 
+// Const, No return value, lua_State passed
+template <class T, class ...Args, size_t ...Indices>
+inline int CallMethodHelper(lua_State* L, void (* fun)(lua_State*, T const*, Args...), std::index_sequence<Indices...>) {
+	StackCheck _(L, 0);
+	auto obj = get_object<T const>(L, 1);
+	fun(L, obj, get_param_cv<Args>(L, 2 + (int)Indices)...);
+	return 0;
+}
+
 // Return values pushed by callee, lua_State passed
 template <class T, class ...Args, size_t ...Indices>
 inline int CallMethodHelper(lua_State* L, UserReturn (* fun)(lua_State*, T*, Args...), std::index_sequence<Indices...>) {
 	auto obj = get_object<T>(L, 1);
+	auto nret = fun(L, obj, get_param_cv<Args>(L, 2 + (int)Indices)...);
+	return (int)nret;
+}
+
+// Const, Return values pushed by callee, lua_State passed
+template <class T, class ...Args, size_t ...Indices>
+inline int CallMethodHelper(lua_State* L, UserReturn (* fun)(lua_State*, T const*, Args...), std::index_sequence<Indices...>) {
+	auto obj = get_object<T const>(L, 1);
 	auto nret = fun(L, obj, get_param_cv<Args>(L, 2 + (int)Indices)...);
 	return (int)nret;
 }
@@ -394,9 +479,25 @@ inline int CallMethodHelper(lua_State* L, R (* fun)(lua_State*, T*, Args...), st
 	return TupleSize(Overload<R>{});
 }
 
+// Const, 1 return value, lua_State passed
+template <class R, class T, class ...Args, size_t ...Indices>
+inline int CallMethodHelper(lua_State* L, R (* fun)(lua_State*, T const*, Args...), std::index_sequence<Indices...>) {
+	StackCheck _(L, TupleSize(Overload<R>{}));
+	auto obj = get_object<T const>(L, 1);
+	auto retval = fun(L, obj, get_param_cv<Args>(L, 2 + (int)Indices)...);
+	PushReturnValue(L, retval);
+	return TupleSize(Overload<R>{});
+}
+
 // Index_sequence wrapper for CallFunctionHelper(), lua_State passed
 template <class R, class T, class ...Args>
 inline int CallMethod(lua_State* L, R(* fun)(lua_State*, T*, Args...)) {
+	return CallMethodHelper(L, fun, std::index_sequence_for<Args...>());
+}
+
+// Const, Index_sequence wrapper for CallFunctionHelper(), lua_State passed
+template <class R, class T, class ...Args>
+inline int CallMethod(lua_State* L, R(* fun)(lua_State*, T const*, Args...)) {
 	return CallMethodHelper(L, fun, std::index_sequence_for<Args...>());
 }
 
@@ -405,6 +506,15 @@ template <class T, class ...Args, size_t ...Indices>
 inline int CallMethodHelper(lua_State* L, void (* fun)(T*, Args...), std::index_sequence<Indices...>) {
 	StackCheck _(L, 0);
 	auto obj = get_object<T>(L, 1);
+	fun(obj, get_param_cv<Args>(L, 2 + (int)Indices)...);
+	return 0;
+}
+
+// Const, No return value, lua_State not passed
+template <class T, class ...Args, size_t ...Indices>
+inline int CallMethodHelper(lua_State* L, void (* fun)(T const*, Args...), std::index_sequence<Indices...>) {
+	StackCheck _(L, 0);
+	auto obj = get_object<T const>(L, 1);
 	fun(obj, get_param_cv<Args>(L, 2 + (int)Indices)...);
 	return 0;
 }
@@ -419,15 +529,31 @@ inline int CallMethodHelper(lua_State* L, R (* fun)(T*, Args...), std::index_seq
 	return TupleSize(Overload<R>{});
 }
 
+// Const, 1 return value, lua_State not passed
+template <class R, class T, class ...Args, size_t ...Indices>
+inline int CallMethodHelper(lua_State* L, R (* fun)(T const*, Args...), std::index_sequence<Indices...>) {
+	StackCheck _(L, TupleSize(Overload<R>{}));
+	auto obj = get_object<T const>(L, 1);
+	auto retval = fun(obj, get_param_cv<Args>(L, 2 + (int)Indices)...);
+	PushReturnValue(L, retval);
+	return TupleSize(Overload<R>{});
+}
+
 // Index_sequence wrapper for CallFunctionHelper(), lua_State not passed
 template <class R, class T, class ...Args>
 inline int CallMethod(lua_State* L, R (* fun)(T*, Args...)) {
 	return CallMethodHelper(L, fun, std::index_sequence_for<Args...>());
 }
 
+// Const, Index_sequence wrapper for CallFunctionHelper(), lua_State not passed
+template <class R, class T, class ...Args>
+inline int CallMethod(lua_State* L, R (* fun)(T const*, Args...)) {
+	return CallMethodHelper(L, fun, std::index_sequence_for<Args...>());
+}
+
 
 template <class R, class T>
-inline void CallGetter(lua_State* L, T* obj, R(T::* fun)()) {
+inline void CallGetter(lua_State* L, T const* obj, R(T::* fun)() const) {
 	static_assert(TupleSize(Overload<R>{}) == 1, "Can only push 1 value to stack in a getter.");
 	StackCheck _(L, 1);
 	auto retval = (obj->*fun)();
@@ -435,7 +561,7 @@ inline void CallGetter(lua_State* L, T* obj, R(T::* fun)()) {
 }
 
 template <class R, class T>
-inline void CallGetter(lua_State* L, T* obj, R(* fun)(T*)) {
+inline void CallGetter(lua_State* L, T const* obj, R(* fun)(T const*)) {
 	static_assert(TupleSize(Overload<R>{}) == 1, "Can only push 1 value to stack in a getter.");
 	StackCheck _(L, 1);
 	auto retval = (*fun)(obj);
@@ -443,20 +569,20 @@ inline void CallGetter(lua_State* L, T* obj, R(* fun)(T*)) {
 }
 
 template <class T>
-inline void CallGetter(lua_State* L, T* obj, UserReturn (T::* fun)(lua_State* L)) {
+inline void CallGetter(lua_State* L, T const* obj, UserReturn (T::* fun)(lua_State* L) const) {
 	StackCheck _(L, 1);
 	(obj->*fun)(L);
 }
 
 template <class T>
-inline void CallGetter(lua_State* L, T* obj, UserReturn (* fun)(lua_State* L, T*)) {
+inline void CallGetter(lua_State* L, T const* obj, UserReturn (* fun)(lua_State* L, T const*)) {
 	StackCheck _(L, 1);
 	(*fun)(L, obj);
 }
 
 
 template <class R, class T, class TEnum>
-inline void CallFlagGetter(lua_State* L, T* obj, R(T::* fun)(TEnum), TEnum flag) {
+inline void CallFlagGetter(lua_State* L, T const* obj, R(T::* fun)(TEnum) const, TEnum flag) {
 	static_assert(TupleSize(Overload<R>{}) == 1, "Can only push 1 value to stack in a getter.");
 	StackCheck _(L, 1);
 	auto retval = (obj->*fun)(flag);

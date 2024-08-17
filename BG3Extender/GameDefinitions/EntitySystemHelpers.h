@@ -69,7 +69,7 @@ struct ECSComponentLog
 	ComponentTypeIndex ComponentType;
 	ComponentChangeFlags Flags{ 0 };
 
-	STDString GetName();
+	StringView GetName() const;
 };
 
 struct ECSEntityLog

@@ -98,7 +98,7 @@ struct FunctorGroup
 	FixedString TextKey;
 	Functors* Functors;
 
-	Array<Functor*> GetFunctors();
+	Array<Functor*> GetFunctors() const;
 };
 
 struct Object : public Noncopyable<Object>
@@ -124,16 +124,18 @@ struct Object : public Noncopyable<Object>
 	uint32_t ModifierListIndex{ 0 };
 	uint32_t Level{ 0 };
 
-	RPGEnumeration* GetAttributeInfo(FixedString const& attributeName, int& attributeIndex);
-	std::optional<STDString> GetString(FixedString const& attributeName);
-	std::optional<FixedString> GetFixedString(FixedString const& attributeName);
-	std::optional<int> GetInt(FixedString const& attributeName);
-	std::optional<float> GetFloat(FixedString const& attributeName);
-	std::optional<int64_t> GetInt64(FixedString const& attributeName);
-	std::optional<Guid> GetGuid(FixedString const& attributeName);
-	std::optional<TranslatedString> GetTranslatedString(FixedString const& attributeName);
-	std::optional<Array<FixedString>> GetFlags(FixedString const& attributeName);
+	RPGEnumeration* GetAttributeInfo(FixedString const& attributeName, int& attributeIndex) const;
+	std::optional<STDString> GetString(FixedString const& attributeName) const;
+	std::optional<FixedString> GetFixedString(FixedString const& attributeName) const;
+	std::optional<int> GetInt(FixedString const& attributeName) const;
+	std::optional<float> GetFloat(FixedString const& attributeName) const;
+	std::optional<int64_t> GetInt64(FixedString const& attributeName) const;
+	std::optional<Guid> GetGuid(FixedString const& attributeName) const;
+	std::optional<TranslatedString> GetTranslatedString(FixedString const& attributeName) const;
+	std::optional<Array<FixedString>> GetFlags(FixedString const& attributeName) const;
+	std::optional<Array<FunctorGroup> const*> GetFunctors(FixedString const& attributeName) const;
 	std::optional<Array<FunctorGroup>*> GetFunctors(FixedString const& attributeName);
+	std::optional<Array<RollCondition> const*> GetRollConditions(FixedString const& attributeName) const;
 	std::optional<Array<RollCondition>*> GetRollConditions(FixedString const& attributeName);
 	bool SetString(FixedString const& attributeName, const char* value);
 	bool SetInt(FixedString const& attributeName, int32_t value);

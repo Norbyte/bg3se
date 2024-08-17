@@ -530,8 +530,8 @@ struct PropertyMapRegistrations;
 #define P_FREE_GETTER(name, fun) \
 		{ .Type = PropertyMapEntryType::Property, .Property = { \
 			.Name = #name, \
-			.Getter = [](lua_State* L, LifetimeHandle const& lifetime, void* obj, RawPropertyAccessors const& prop) { \
-				CallGetter(L, reinterpret_cast<ObjectType*>(obj), &fun); \
+			.Getter = [](lua_State* L, LifetimeHandle const& lifetime, void const* obj, RawPropertyAccessors const& prop) { \
+				CallGetter(L, reinterpret_cast<ObjectType const*>(obj), &fun); \
 				return PropertyOperationResult::Success; \
 			}, \
 			.Setter = &GenericSetNonWriteableProperty, \
@@ -542,8 +542,8 @@ struct PropertyMapRegistrations;
 #define P_GETTER_SETTER(name, getter, setter) \
 		{ .Type = PropertyMapEntryType::Property, .Property = { \
 			.Name = #name, \
-			.Getter = [](lua_State* L, LifetimeHandle const& lifetime, void* obj, RawPropertyAccessors const& prop) { \
-				CallGetter(L, reinterpret_cast<ObjectType*>(obj), &ObjectType::getter); \
+			.Getter = [](lua_State* L, LifetimeHandle const& lifetime, void const* obj, RawPropertyAccessors const& prop) { \
+				CallGetter(L, reinterpret_cast<ObjectType const*>(obj), &ObjectType::getter); \
 				return PropertyOperationResult::Success; \
 			}, \
 			.Setter = [](lua_State* L, void* obj, int index, RawPropertyAccessors const& prop) { \
@@ -556,7 +556,7 @@ struct PropertyMapRegistrations;
 #define P_FUN(name, fun) \
 		{ .Type = PropertyMapEntryType::Property, .Property = { \
 			.Name = #name, \
-			.Getter = [](lua_State* L, LifetimeHandle const& lifetime, void* obj, RawPropertyAccessors const& prop) { \
+			.Getter = [](lua_State* L, LifetimeHandle const& lifetime, void const* obj, RawPropertyAccessors const& prop) { \
 				lua_pushcfunction(L, [](lua_State* L) -> int { \
 					return CallMethod(L, &fun); \
 				}); \

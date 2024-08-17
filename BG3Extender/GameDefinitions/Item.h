@@ -35,7 +35,7 @@ struct Item : public BaseProxyComponent
 	ItemFlags2 Flags2;
 	[[bg3::hidden]] void* _PAD;
 
-	RefReturn<Item> LuaGetSelf();
+	RefReturn<Item> LuaGetSelf() const;
 };
 
 END_NS()

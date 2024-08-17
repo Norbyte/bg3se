@@ -134,8 +134,19 @@ public:
 		lua_push_cppobject(L, MetatableTag::SetProxy, impl->GetRegistryIndex(), object, lifetime);
 	}
 
+	inline static void MakeImpl(lua_State* L, void const* object, LifetimeHandle const& lifetime, SetProxyImplBase* impl)
+	{
+		lua_push_cppobject(L, MetatableTag::SetProxy, impl->GetRegistryIndex(), object, lifetime);
+	}
+
 	template <class T>
 	inline static void Make(lua_State* L, HashSet<T>* object, LifetimeHandle const& lifetime)
+	{
+		MakeImpl(L, object, lifetime, GetImplementation<MultiHashSetProxyImpl<T>>());
+	}
+
+	template <class T>
+	inline static void Make(lua_State* L, HashSet<T> const* object, LifetimeHandle const& lifetime)
 	{
 		MakeImpl(L, object, lifetime, GetImplementation<MultiHashSetProxyImpl<T>>());
 	}

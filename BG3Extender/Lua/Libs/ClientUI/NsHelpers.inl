@@ -105,27 +105,27 @@ Symbol StaticSymbol()
 	return SymbolInfo<T>::Name;
 }
 
-TypeClass* ObjectHelpers::GetClassType(BaseObject* o)
+TypeClass* ObjectHelpers::GetClassType(BaseObject const* o)
 {
 	return const_cast<TypeClass*>(o->GetClassType());
 }
 
-Symbol ObjectHelpers::GetClassTypeName(BaseObject* o)
+Symbol ObjectHelpers::GetClassTypeName(BaseObject const* o)
 {
 	return o->GetClassType()->GetTypeId();
 }
 
-bg3se::STDString ObjectHelpers::ToString(BaseObject* o)
+bg3se::STDString ObjectHelpers::ToString(BaseObject const* o)
 {
 	return o->ToString().Str();
 }
 
-uint32_t ObjectHelpers::GetNumReferences(BaseRefCounted* o)
+uint32_t ObjectHelpers::GetNumReferences(BaseRefCounted const* o)
 {
 	return o->GetNumReferences();
 }
 
-PropertyOperationResult ObjectHelpers::FallbackGetProperty(lua_State* L, lua::LifetimeHandle const& lifetime, BaseObject* object, bg3se::FixedString const& prop)
+PropertyOperationResult ObjectHelpers::FallbackGetProperty(lua_State* L, lua::LifetimeHandle const& lifetime, BaseObject const* object, bg3se::FixedString const& prop)
 {
 	auto typeProp = TypeHelpers::GetProperty(object->GetClassType(), Symbol(prop.GetString(), Symbol::NullIfNotFound{}));
 	if (typeProp != nullptr) {
@@ -135,7 +135,7 @@ PropertyOperationResult ObjectHelpers::FallbackGetProperty(lua_State* L, lua::Li
 
 	auto dependencyProp = TypeHelpers::GetDependencyProperty(object->GetClassType(), Symbol(prop.GetString(), Symbol::NullIfNotFound{}));
 	if (dependencyProp != nullptr) {
-		DependencyObjectHelpers::GetDependencyProperty(L, static_cast<DependencyObject*>(object), dependencyProp);
+		DependencyObjectHelpers::GetDependencyProperty(L, static_cast<DependencyObject const*>(object), dependencyProp);
 		return PropertyOperationResult::Success;
 	}
 
@@ -159,13 +159,13 @@ PropertyOperationResult ObjectHelpers::FallbackSetProperty(lua_State* L, BaseObj
 	return PropertyOperationResult::NoSuchProperty;
 }
 
-UserReturn ObjectHelpers::GetNamedProperty(lua_State* L, BaseObject* o, Symbol name)
+UserReturn ObjectHelpers::GetNamedProperty(lua_State* L, BaseObject const* o, Symbol name)
 {
 	auto prop = TypeHelpers::GetProperty(o->GetClassType(), name);
 	if (prop == nullptr) {
 		// Check DependencyObject path for dependency properties
 		if (TypeHelpers::IsDescendantOf(o->GetClassType(), gStaticSymbols.TypeClasses.DependencyObject.Type)) {
-			auto dep = static_cast<DependencyObject*>(o);
+			auto dep = static_cast<DependencyObject const*>(o);
 			return DependencyObjectHelpers::GetProperty(L, dep, name);
 		}
 
@@ -177,7 +177,7 @@ UserReturn ObjectHelpers::GetNamedProperty(lua_State* L, BaseObject* o, Symbol n
 	return GetProperty(L, o, prop);
 }
 
-UserReturn ObjectHelpers::GetProperty(lua_State* L, BaseObject* o, TypeProperty const* prop)
+UserReturn ObjectHelpers::GetProperty(lua_State* L, BaseObject const* o, TypeProperty const* prop)
 {
 	StoredValueHelpers::PushProperty(L, o, o->GetClassType(), prop);
 	return 1;
@@ -217,7 +217,7 @@ void ObjectHelpers::SetProperty(lua_State* L, BaseObject* o, TypeProperty const*
 	prop->Set(o, pValue);
 }
 
-UserReturn ObjectHelpers::GetAllProperties(lua_State* L, BaseObject* o)
+UserReturn ObjectHelpers::GetAllProperties(lua_State* L, BaseObject const* o)
 {
 	lua_newtable(L);
 
@@ -229,7 +229,7 @@ UserReturn ObjectHelpers::GetAllProperties(lua_State* L, BaseObject* o)
 	}
 
 	if (TypeHelpers::IsDescendantOf(type, gStaticSymbols.TypeClasses.DependencyObject.Type)) {
-		auto dep = static_cast<DependencyObject*>(o);
+		auto dep = static_cast<DependencyObject const*>(o);
 		for (auto& prop : dep->mValues) {
 			auto name = prop.key->GetName();
 			lua::push(L, name);
@@ -242,18 +242,18 @@ UserReturn ObjectHelpers::GetAllProperties(lua_State* L, BaseObject* o)
 }
 
 
-Symbol RoutedEventHelpers::GetName(RoutedEvent* o)
+Symbol RoutedEventHelpers::GetName(RoutedEvent const* o)
 {
 	return o->GetName();
 }
 
-TypeClass* RoutedEventHelpers::GetOwnerType(RoutedEvent* o)
+TypeClass* RoutedEventHelpers::GetOwnerType(RoutedEvent const* o)
 {
 	return const_cast<TypeClass*>(o->GetOwnerType());
 }
 
 
-UserReturn DependencyObjectHelpers::GetProperty(lua_State* L, DependencyObject* o, Symbol name)
+UserReturn DependencyObjectHelpers::GetProperty(lua_State* L, DependencyObject const* o, Symbol name)
 {
 	auto prop = TypeHelpers::GetDependencyProperty(o->GetClassType(), name);
 	if (prop == nullptr) {
@@ -265,7 +265,7 @@ UserReturn DependencyObjectHelpers::GetProperty(lua_State* L, DependencyObject* 
 	return GetDependencyProperty(L, o, prop);
 }
 
-UserReturn DependencyObjectHelpers::GetDependencyProperty(lua_State* L, DependencyObject* o, DependencyProperty const* prop)
+UserReturn DependencyObjectHelpers::GetDependencyProperty(lua_State* L, DependencyObject const* o, DependencyProperty const* prop)
 {
 	auto valIt = o->mValues.Find(prop);
 	if (valIt == o->mValues.End()) {
@@ -302,22 +302,22 @@ void DependencyObjectHelpers::SetDependencyProperty(lua_State* L, DependencyObje
 	prop->GetValueManager()->SetValue(o, prop, pValue, 0, nullptr, nullptr, Value::Destination_BaseValue);
 }
 
-Symbol DependencyPropertyHelpers::GetName(DependencyProperty* o)
+Symbol DependencyPropertyHelpers::GetName(DependencyProperty const* o)
 {
 	return o->GetName();
 }
 
-Type* DependencyPropertyHelpers::GetType(DependencyProperty* o)
+Type* DependencyPropertyHelpers::GetType(DependencyProperty const* o)
 {
 	return const_cast<Type *>(o->GetType());
 }
 
-TypeClass* DependencyPropertyHelpers::GetOwnerType(DependencyProperty* o)
+TypeClass* DependencyPropertyHelpers::GetOwnerType(DependencyProperty const* o)
 {
 	return const_cast<TypeClass*>(o->GetOwnerType());
 }
 
-bool DependencyPropertyHelpers::IsReadOnly(DependencyProperty* o)
+bool DependencyPropertyHelpers::IsReadOnly(DependencyProperty const* o)
 {
 	return o->IsReadOnly();
 }
@@ -450,7 +450,7 @@ void StoredValueHelpers::PushValue(lua_State* L, Type const* type, void* val, Ty
 }
 
 template <class T>
-void PushTyped(lua_State* L, TypeProperty const* prop, BaseObject* obj)
+void PushTyped(lua_State* L, TypeProperty const* prop, BaseObject const* obj)
 {
 	T value;
 	prop->GetCopy(obj, &value);
@@ -458,7 +458,7 @@ void PushTyped(lua_State* L, TypeProperty const* prop, BaseObject* obj)
 }
 
 template <class T>
-void PushTypedRef(lua_State* L, TypeProperty const* prop, BaseObject* obj)
+void PushTypedRef(lua_State* L, TypeProperty const* prop, BaseObject const* obj)
 {
 	auto value = reinterpret_cast<T*>(const_cast<void*>(prop->Get(obj)));
 	lua::push(L, *value);
@@ -471,7 +471,7 @@ StoredValueHolder::~StoredValueHolder()
 	}
 }
 
-void StoredValueHelpers::PushProperty(lua_State* L, BaseObject* obj, TypeClass const* objType, TypeProperty const* prop)
+void StoredValueHelpers::PushProperty(lua_State* L, BaseObject const* obj, TypeClass const* objType, TypeProperty const* prop)
 {
 	auto& types = gStaticSymbols.Types;
 	auto& classes = gStaticSymbols.TypeClasses;
@@ -650,27 +650,27 @@ std::optional<StoredValueHolder> StoredValueHelpers::GetValue(lua_State* L, Type
 	}
 }
 
-bool CommandHelpers::CanExecute(lua_State* L, BaseCommand* o, std::optional<BaseComponent*> arg)
+bool CommandHelpers::CanExecute(lua_State* L, BaseCommand const* o, std::optional<BaseComponent*> arg)
 {
 	return o->CanExecute(arg ? * arg : nullptr);
 }
 
-void CommandHelpers::Execute(lua_State* L, BaseCommand* o, std::optional<BaseComponent*> arg)
+void CommandHelpers::Execute(lua_State* L, BaseCommand const* o, std::optional<BaseComponent*> arg)
 {
 	o->Execute(arg ? *arg : nullptr);
 }
 
-Visual* VisualHelpers::GetVisualParent(Visual* o)
+Visual* VisualHelpers::GetVisualParent(Visual const* o)
 {
 	return o->mVisualParent;
 }
 
-uint32_t VisualHelpers::GetVisualChildrenCount(Visual* o)
+uint32_t VisualHelpers::GetVisualChildrenCount(Visual const* o)
 {
 	return o->GetVisualChildrenCount();
 }
 
-Visual* VisualHelpers::GetVisualChild(Visual* o, uint32_t index)
+Visual* VisualHelpers::GetVisualChild(Visual const* o, uint32_t index)
 {
 	if (index > 0 && index <= o->GetVisualChildrenCount()) {
 		return o->GetVisualChild(index - 1);
@@ -679,7 +679,7 @@ Visual* VisualHelpers::GetVisualChild(Visual* o, uint32_t index)
 	}
 }
 
-RoutedEvent* UIElementDataHelpers::GetEvent(UIElementData* o, Symbol evt)
+RoutedEvent* UIElementDataHelpers::GetEvent(UIElementData const* o, Symbol evt)
 {
 	auto it = o->mEvents.Find(evt);
 	if (it == o->mEvents.End()) {
@@ -689,7 +689,7 @@ RoutedEvent* UIElementDataHelpers::GetEvent(UIElementData* o, Symbol evt)
 	}
 }
 
-Array<RoutedEvent*> UIElementDataHelpers::GetAllEvents(UIElementData* o)
+Array<RoutedEvent*> UIElementDataHelpers::GetAllEvents(UIElementData const* o)
 {
 	Array<RoutedEvent*> events;
 	for (auto evt : o->mEvents) {
@@ -717,17 +717,17 @@ bool UIElementHelpers::Unsubscribe(lua_State* L, UIElement* o, uint64_t index)
 	return state->GetUIEvents().Unsubscribe((ecl::lua::UIEventHooks::SubscriptionIndex)index);
 }
 
-FrameworkElement* FrameworkElementHelpers::GetLogicalParent(FrameworkElement* o)
+FrameworkElement* FrameworkElementHelpers::GetLogicalParent(FrameworkElement const* o)
 {
 	return o->mParent;
 }
 
-uint32_t FrameworkElementHelpers::GetLogicalChildrenCount(FrameworkElement* o)
+uint32_t FrameworkElementHelpers::GetLogicalChildrenCount(FrameworkElement const* o)
 {
 	return o->GetLogicalChildrenCount();
 }
 
-BaseComponent* FrameworkElementHelpers::GetLogicalChild(FrameworkElement* o, uint32_t index)
+BaseComponent* FrameworkElementHelpers::GetLogicalChild(FrameworkElement const* o, uint32_t index)
 {
 	if (index > 0 && index <= o->GetLogicalChildrenCount()) {
 		return o->GetLogicalChild(index - 1).GetPtr();
@@ -736,17 +736,17 @@ BaseComponent* FrameworkElementHelpers::GetLogicalChild(FrameworkElement* o, uin
 	}
 }
 
-BaseComponent* FrameworkElementHelpers::FindNodeName(FrameworkElement* o, char const* name)
+BaseComponent* FrameworkElementHelpers::FindNodeName(FrameworkElement const* o, char const* name)
 {
 	return o->FindNodeName(name);
 }
 
-BaseComponent* FrameworkElementHelpers::GetResource(FrameworkElement* o, char const* key, std::optional<bool> fullElementSearch)
+BaseComponent* FrameworkElementHelpers::GetResource(FrameworkElement const* o, char const* key, std::optional<bool> fullElementSearch)
 {
 	return o->FindNodeResource(key, fullElementSearch ? *fullElementSearch : false);
 }
 
-BaseObject* FrameworkElementHelpers::GetTreeParent(FrameworkElement* o)
+BaseObject* FrameworkElementHelpers::GetTreeParent(FrameworkElement const* o)
 {
 	auto parent = o->GetNodeParent();
 	if (parent) {
@@ -788,28 +788,28 @@ FrameworkElement* FrameworkElementHelpers::SetXamlProperty(FrameworkElement* o, 
 	return element.GetPtr();
 }
 
-Symbol TypePropertyHelpers::GetName(TypeProperty* o)
+Symbol TypePropertyHelpers::GetName(TypeProperty const* o)
 {
 	return o->mName;
 }
 
-Type* TypePropertyHelpers::GetContentType(TypeProperty* o)
+Type* TypePropertyHelpers::GetContentType(TypeProperty const* o)
 {
 	return const_cast<Type*>(o->GetContentType());
 }
 
-Vector<TypeMetaData*>* TypePropertyHelpers::GetMeta(TypeProperty* o)
+Vector<TypeMetaData*> const* TypePropertyHelpers::GetMeta(TypeProperty const* o)
 {
 	return &o->mMetaData;
 }
 
-bool TypePropertyHelpers::IsReadOnly(TypeProperty* o)
+bool TypePropertyHelpers::IsReadOnly(TypeProperty const* o)
 {
 	return o->IsReadOnly();
 }
 
 
-bg3se::STDString TypeHelpers::GetName(Type* o)
+bg3se::STDString TypeHelpers::GetName(Type const* o)
 {
 	return o->GetName();
 }
@@ -839,17 +839,17 @@ bool TypeHelpers::IsDescendantOf(TypeClass const* type, TypeClass const* base)
 	return false;
 }
 
-TypeClass* TypeHelpers::GetBase(TypeClass* o)
+TypeClass* TypeHelpers::GetBase(TypeClass const* o)
 {
 	return const_cast<TypeClass *>(o->GetBase());
 }
 
-bool TypeHelpers::IsInterface(TypeClass* o)
+bool TypeHelpers::IsInterface(TypeClass const* o)
 {
 	return o->IsInterface();
 }
 
-DependencyData* TypeHelpers::GetDependencyData(TypeClass* o)
+DependencyData* TypeHelpers::GetDependencyData(TypeClass const* o)
 {
 	gStaticSymbols.Initialize();
 	return static_cast<DependencyData *>(TypeHelpers::FindMetaRecursive(o, (TypeClass const*)Reflection::GetType(StaticSymbol<DependencyData>())));
@@ -903,7 +903,7 @@ RoutedEvent const* TypeHelpers::GetRoutedEvent(TypeClass const* o, Symbol name)
 	return nullptr;
 }
 
-UIElementData* TypeHelpers::GetUIElementData(TypeClass* o)
+UIElementData* TypeHelpers::GetUIElementData(TypeClass const* o)
 {
 	gStaticSymbols.Initialize();
 	return static_cast<UIElementData*>(TypeHelpers::FindMetaRecursive(o, (TypeClass const*)Reflection::GetType(StaticSymbol<UIElementData>())));
@@ -922,7 +922,7 @@ void TypeHelpers::ForEachMeta(TypeClass const* cls, const TypeClass* metaDataTyp
 	} while (cls != nullptr);
 }
 
-Array<DependencyProperty*> TypeHelpers::GetDependencyProperties(TypeClass* o)
+Array<DependencyProperty*> TypeHelpers::GetDependencyProperties(TypeClass const* o)
 {
 	Array<DependencyProperty*> props;
 
@@ -936,7 +936,7 @@ Array<DependencyProperty*> TypeHelpers::GetDependencyProperties(TypeClass* o)
 	return props;
 }
 
-Array<RoutedEvent*> TypeHelpers::GetRoutedEvents(TypeClass* o)
+Array<RoutedEvent*> TypeHelpers::GetRoutedEvents(TypeClass const* o)
 {
 	Array<RoutedEvent*> events;
 
@@ -971,12 +971,12 @@ std::optional<uint64_t> TypeHelpers::StringToEnum(TypeEnum const* e, Symbol valu
 	return {};
 }
 
-TypeClass::AncestorVector* TypeHelpers::GetInterfaces(TypeClass* o)
+TypeClass::AncestorVector const* TypeHelpers::GetInterfaces(TypeClass const* o)
 {
 	return &o->mInterfaces;
 }
 
-TypeClass::PropertyVector* TypeHelpers::GetProperties(TypeClass* o)
+TypeClass::PropertyVector const* TypeHelpers::GetProperties(TypeClass const* o)
 {
 	return &o->mProperties;
 }
@@ -992,7 +992,7 @@ TypeProperty const* TypeHelpers::GetProperty(TypeClass const* o, Symbol name)
 	return nullptr;
 }
 
-TypeClass::PropertyVector* TypeHelpers::GetEvents(TypeClass* o)
+TypeClass::PropertyVector const* TypeHelpers::GetEvents(TypeClass const* o)
 {
 	return &o->mEvents;
 }

@@ -189,6 +189,8 @@ void TypeInformationRepository::Initialize()
 	RegisterStaticType<FixedString>("FixedString", LuaTypeId::String);
 	RegisterStaticType<STDString>("STDString", LuaTypeId::String);
 	RegisterStaticType<STDWString>("STDWString", LuaTypeId::String);
+	RegisterStaticType<StringView>("StringView", LuaTypeId::String);
+	RegisterStaticType<LSStringView>("LSStringView", LuaTypeId::String);
 #if defined(ENABLE_UI)
 	RegisterStaticType<Noesis::Symbol>("Noesis::Symbol", LuaTypeId::String);
 	RegisterStaticType<Noesis::String>("Noesis::String", LuaTypeId::String);

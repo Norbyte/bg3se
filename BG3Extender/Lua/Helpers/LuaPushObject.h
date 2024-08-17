@@ -7,18 +7,20 @@ LifetimeHandle GetCurrentLifetime(lua_State* L);
 template <class T>
 inline void MakeObjectRef(lua_State* L, T* value, LifetimeHandle const& lifetime)
 {
+	using TVal = std::remove_cv_t<T>;
+
 	if (value == nullptr) {
 		push(L, nullptr);
 		return;
 	}
 
-	if constexpr (LuaPolymorphic<T>::IsPolymorphic) {
-		return LuaPolymorphic<T>::MakeRef(L, value, lifetime);
-	} else if constexpr (IsArrayLike<T>::Value) {
+	if constexpr (LuaPolymorphic<TVal>::IsPolymorphic) {
+		return LuaPolymorphic<TVal>::MakeRef(L, value, lifetime);
+	} else if constexpr (IsArrayLike<TVal>::Value) {
 		ArrayProxyMetatable::Make(L, value, lifetime);
-	} else if constexpr (IsMapLike<T>::Value) {
+	} else if constexpr (IsMapLike<TVal>::Value) {
 		MapProxyMetatable::Make(L, value, lifetime);
-	} else if constexpr (IsSetLike<T>::Value) {
+	} else if constexpr (IsSetLike<TVal>::Value) {
 		SetProxyMetatable::Make(L, value, lifetime);
 	} else if constexpr (std::is_pointer_v<T>) {
 		if constexpr (std::is_const_v<std::remove_pointer_t<T>>) {
@@ -26,14 +28,14 @@ inline void MakeObjectRef(lua_State* L, T* value, LifetimeHandle const& lifetime
 		} else {
 			MakeObjectRef(L, *value, lifetime);
 		}
-	} else if constexpr (IsOptional<T>::Value) {
+	} else if constexpr (IsOptional<TVal>::Value) {
 		if (value->has_value()) {
 			MakeObjectRef(L, &value->value(), lifetime);
 		} else {
 			push(L, nullptr);
 		}
 	} else {
-		if constexpr (LuaLifetimeInfo<T>::HasInfiniteLifetime) {
+		if constexpr (LuaLifetimeInfo<TVal>::HasInfiniteLifetime) {
 			ObjectProxy::MakeRef<T>(L, value, State::FromLua(L)->GetGlobalLifetime());
 		} else {
 			ObjectProxy::MakeRef<T>(L, value, lifetime);
@@ -69,6 +71,12 @@ inline auto MakeObjectRef(lua_State* L, OverrideableProperty<T>* value, Lifetime
 }
 
 template <class T>
+inline auto MakeObjectRef(lua_State* L, OverrideableProperty<T> const* value, LifetimeHandle const& lifetime)
+{
+	return MakeObjectRef(L, &value->Value, lifetime);
+}
+
+template <class T>
 inline auto MakeObjectRef(lua_State* L, T* value)
 {
 	return MakeObjectRef(L, value, GetCurrentLifetime(L));
@@ -80,10 +88,16 @@ inline auto MakeObjectRef(lua_State* L, std::variant<Args...>* value, LifetimeHa
 	std::visit([=](auto& arg) { push(L, &arg, lifetime); }, *value);
 }
 
+template <class... Args>
+inline auto MakeObjectRef(lua_State* L, std::variant<Args...> const* value, LifetimeHandle const& lifetime)
+{
+	std::visit([=](auto& arg) { push(L, &arg, lifetime); }, *value);
+}
+
 template <class T>
 inline void push(lua_State* L, T& value, LifetimeHandle const& lifetime)
 {
-	if constexpr (IsByVal<T>) {
+	if constexpr (IsByVal<std::remove_cv_t<T>>) {
 		push(L, value);
 	} else {
 		MakeObjectRef(L, &value, lifetime);
@@ -95,7 +109,7 @@ inline void push(lua_State* L, T* value, LifetimeHandle const& lifetime)
 {
 	if (value == nullptr) {
 		push(L, nullptr);
-	} else if constexpr (IsByVal<T>) {
+	} else if constexpr (IsByVal<std::remove_cv_t<T>>) {
 		push(L, *value);
 	} else {
 		MakeObjectRef(L, value, lifetime);

@@ -424,6 +424,9 @@ R GetFunctionReturnType(R (*)(Args...)) {}
 template <class R, class T, class... Args>
 R GetFunctionReturnType(R (T::*)(Args...)) {}
 
+template <class R, class T, class... Args>
+R GetFunctionReturnType(R (T::*)(Args...) const) {}
+
 template <class T>
 inline void AddFunctionReturnType(TypeInformation& ty, Overload<T>)
 {
@@ -458,9 +461,27 @@ void ConstructFunctionSignature(TypeInformation& sig, R (T::*)(Args...))
 	(AddFunctionParamType(sig, Overload<Args>{}), ...);
 }
 
+// Const pointer to member function without Lua state parameter
+template <class R, class T, class... Args>
+void ConstructFunctionSignature(TypeInformation& sig, R (T::*)(Args...) const)
+{
+	sig.Kind = LuaTypeId::Function;
+	AddFunctionReturnType(sig, Overload<R>{});
+	(AddFunctionParamType(sig, Overload<Args>{}), ...);
+}
+
 // Pointer to member function with Lua state parameter
 template <class R, class T, class... Args>
 void ConstructFunctionSignature(TypeInformation& sig, R (T::*)(lua_State* L, Args...))
+{
+	sig.Kind = LuaTypeId::Function;
+	AddFunctionReturnType(sig, Overload<R>{});
+	(AddFunctionParamType(sig, Overload<Args>{}), ...);
+}
+
+// Const pointer to member function with Lua state parameter
+template <class R, class T, class... Args>
+void ConstructFunctionSignature(TypeInformation& sig, R (T::*)(lua_State* L, Args...) const)
 {
 	sig.Kind = LuaTypeId::Function;
 	AddFunctionReturnType(sig, Overload<R>{});
