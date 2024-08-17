@@ -84,7 +84,26 @@ LuaEntitySubscriptionId OnCreate(lua_State* L, ExtComponentType type, FunctionRe
 {
 	auto flags = ((deferred && *deferred) ? EntityComponentEventFlags::Deferred : (EntityComponentEventFlags)0)
 		| ((once && *once) ? EntityComponentEventFlags::Once : (EntityComponentEventFlags)0);
-	return EntityEventHelpers::Subscribe(L, entity ? *entity : EntityHandle{}, type, EntityComponentEvent::Create, flags, func.MakePersistent(L));
+	return EntityEventHelpers::Subscribe(L, entity ? *entity : EntityHandle{}, type, EntityComponentEvent::Create, 
+		flags, func.MakePersistent(L));
+}
+
+LuaEntitySubscriptionId OnCreateDeferred(lua_State* L, ExtComponentType type, FunctionRef func, std::optional<EntityHandle> entity)
+{
+	return EntityEventHelpers::Subscribe(L, entity ? *entity : EntityHandle{}, type, EntityComponentEvent::Create, 
+		EntityComponentEventFlags::Deferred, func.MakePersistent(L));
+}
+
+LuaEntitySubscriptionId OnCreateOnce(lua_State* L, ExtComponentType type, FunctionRef func, std::optional<EntityHandle> entity)
+{
+	return EntityEventHelpers::Subscribe(L, entity ? *entity : EntityHandle{}, type, EntityComponentEvent::Create, 
+		EntityComponentEventFlags::Once, func.MakePersistent(L));
+}
+
+LuaEntitySubscriptionId OnCreateDeferredOnce(lua_State* L, ExtComponentType type, FunctionRef func, std::optional<EntityHandle> entity)
+{
+	return EntityEventHelpers::Subscribe(L, entity ? *entity : EntityHandle{}, type, EntityComponentEvent::Create, 
+		EntityComponentEventFlags::Once | EntityComponentEventFlags::Deferred, func.MakePersistent(L));
 }
 
 LuaEntitySubscriptionId OnDestroy(lua_State* L, ExtComponentType type, FunctionRef func, std::optional<EntityHandle> entity, 
@@ -92,7 +111,26 @@ LuaEntitySubscriptionId OnDestroy(lua_State* L, ExtComponentType type, FunctionR
 {
 	auto flags = ((deferred && *deferred) ? EntityComponentEventFlags::Deferred : (EntityComponentEventFlags)0)
 		| ((once && *once) ? EntityComponentEventFlags::Once : (EntityComponentEventFlags)0);
-	return EntityEventHelpers::Subscribe(L, entity ? *entity : EntityHandle{}, type, EntityComponentEvent::Destroy, flags, func.MakePersistent(L));
+	return EntityEventHelpers::Subscribe(L, entity ? *entity : EntityHandle{}, type, EntityComponentEvent::Destroy, 
+		flags, func.MakePersistent(L));
+}
+
+LuaEntitySubscriptionId OnDestroyDeferred(lua_State* L, ExtComponentType type, FunctionRef func, std::optional<EntityHandle> entity)
+{
+	return EntityEventHelpers::Subscribe(L, entity ? *entity : EntityHandle{}, type, EntityComponentEvent::Destroy, 
+		EntityComponentEventFlags::Deferred, func.MakePersistent(L));
+}
+
+LuaEntitySubscriptionId OnDestroyOnce(lua_State* L, ExtComponentType type, FunctionRef func, std::optional<EntityHandle> entity)
+{
+	return EntityEventHelpers::Subscribe(L, entity ? *entity : EntityHandle{}, type, EntityComponentEvent::Destroy, 
+		EntityComponentEventFlags::Once, func.MakePersistent(L));
+}
+
+LuaEntitySubscriptionId OnDestroyDeferredOnce(lua_State* L, ExtComponentType type, FunctionRef func, std::optional<EntityHandle> entity)
+{
+	return EntityEventHelpers::Subscribe(L, entity ? *entity : EntityHandle{}, type, EntityComponentEvent::Destroy, 
+		EntityComponentEventFlags::Once | EntityComponentEventFlags::Deferred, func.MakePersistent(L));
 }
 
 bool Unsubscribe(lua_State* L, LuaEntitySubscriptionId handle)
@@ -159,7 +197,13 @@ void RegisterEntityLib()
 	MODULE_FUNCTION(Subscribe)
 	MODULE_NAMED_FUNCTION("OnChange", Subscribe)
 	MODULE_FUNCTION(OnCreate)
+	MODULE_FUNCTION(OnCreateDeferred)
+	MODULE_FUNCTION(OnCreateOnce)
+	MODULE_FUNCTION(OnCreateDeferredOnce)
 	MODULE_FUNCTION(OnDestroy)
+	MODULE_FUNCTION(OnDestroyDeferred)
+	MODULE_FUNCTION(OnDestroyOnce)
+	MODULE_FUNCTION(OnDestroyDeferredOnce)
 	MODULE_FUNCTION(Unsubscribe)
 	MODULE_FUNCTION(EnableTracing)
 	MODULE_FUNCTION(GetTrace)
