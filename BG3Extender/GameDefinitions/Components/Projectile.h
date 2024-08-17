@@ -142,8 +142,7 @@ struct InitializationData
 	EntityHandle Source;
 	EntityHandle BeamSource;
 	EntityHandle SourceWeapon;
-	EntityHandle TargetTracking_M;
-	EntityHandle TargetTracking2_M;
+	Guid HistoryUuid;
 	bool MainDamageType;
 	AbilityId SpellCastingAbility;
 	bool IsTrap;

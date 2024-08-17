@@ -89,7 +89,7 @@ struct IsCombatPausedComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(IsCombatPaused, "eoc::combat::IsCombatPausedComponent")
 
-	bool Paused;
+	[[bg3::legacy(Paused)]] uint8_t PauseSourceTypes;
 };
 
 struct ThreatRangeComponent : public BaseComponent

@@ -227,18 +227,17 @@ struct AnimationInfoComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(SpellCastAnimationInfo, "eoc::spell_cast::AnimationInfoComponent")
 
-	uint8_t field_0;
-	glm::vec3 TargetPosition;
-	uint8_t field_10;
+	[[bg3::legacy(field_0)]] uint8_t Event;
+	std::optional<glm::vec3> TargetPosition;
 	glm::vec3 TargetRotation;
 	EntityHandle Target;
 	uint8_t field_28;
 	uint8_t field_29;
-	uint8_t field_2A;
+	[[bg3::legacy(field_2A)]] uint8_t LoopingCastAnimation;
 	uint8_t field_2B;
-	uint8_t field_2C;
-	uint8_t field_2D;
-	uint8_t field_2E;
+	[[bg3::legacy(field_2C)]] uint8_t DualWielding;
+	[[bg3::legacy(field_2D)]] uint8_t HasWeapon;
+	[[bg3::legacy(field_2E)]] uint8_t ObjectSize;
 };
 
 struct CacheComponent : public BaseComponent
@@ -276,8 +275,8 @@ struct MovementComponent : public BaseComponent
 	DEFINE_COMPONENT(SpellCastMovement, "eoc::spell_cast::MovementComponent")
 
 	glm::vec3 field_0;
-	glm::vec3 field_C;
-	bool field_18;
+	std::optional<glm::vec3> field_C;
+	// FixedString TextKey;
 };
 
 struct SpellRollCastEventData

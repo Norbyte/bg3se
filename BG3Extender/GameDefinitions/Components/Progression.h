@@ -22,10 +22,10 @@ struct MetaComponent : public BaseComponent
 
 	uint8_t field_18;
 	Guid Progression;
-	Guid Race;
-	int field_40;
-	uint8_t field_44;
-	int field_48;
+	[[bg3::legacy(Race)]] Guid Source;
+	[[bg3::legacy(field_40)]] int ClassLevel;
+	[[bg3::legacy(field_44)]] uint8_t ProgressionType;
+	[[bg3::legacy(field_48)]] int Level;
 	EntityHandle Owner;
 	HashMap<Guid, Guid> field_50;
 };
