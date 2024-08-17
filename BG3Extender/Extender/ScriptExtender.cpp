@@ -266,6 +266,22 @@ void ScriptExtender::OnECSUpdate(ecs::EntityWorld::UpdateProc* wrapped, ecs::Ent
 
 	GetECS(entityWorld).PostUpdate();
 
+	if (entityWorld->Replication) {
+		if (GetServer().HasExtensionState()) {
+			esv::LuaServerPin lua(GetServer().GetExtensionState());
+			if (lua) {
+				lua->GetComponentEventHooks().FireDeferredEvents();
+			}
+		}
+	} else {
+		if (GetClient().HasExtensionState()) {
+			ecl::LuaClientPin lua(GetClient().GetExtensionState());
+			if (lua) {
+				lua->GetComponentEventHooks().FireDeferredEvents();
+			}
+		}
+	}
+
 	if (entityWorld->Replication && GetServer().HasExtensionState()) {
 		esv::LuaServerPin lua(GetServer().GetExtensionState());
 		if (lua) {
