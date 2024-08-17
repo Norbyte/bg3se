@@ -984,13 +984,19 @@ void EntitySystemHelpersBase::ValidateECBFlushChanges()
 				if (change.PoolIndex.PageIndex != 0xffff) {
 					auto componentType = GetComponentType(change.ComponentTypeId);
 					if (componentType) {
+						auto const& meta = GetComponentMeta(*componentType);
 						auto pm = GetPropertyMap(*componentType);
 						if (pm != nullptr) {
 							auto pool = ecb.Data.ComponentPools.Find(change.ComponentTypeId);
 							if (pool) {
 								auto page = pool->Components[change.PoolIndex.PageIndex];
 								auto component = reinterpret_cast<uint8_t*>(page) + (pool->ComponentSizeInBytes * change.PoolIndex.EntryIndex);
-								pm->ValidateObject(component);
+								if (meta.IsProxy) {
+									assert(pool->ComponentSizeInBytes == sizeof(void*));
+									pm->ValidateObject(*(void**)component);
+								} else {
+									pm->ValidateObject(component);
+								}
 							}
 						}
 					}
