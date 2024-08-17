@@ -316,9 +316,8 @@ struct EntityStorageData : public ProtectedGameObject<EntityStorageData>
 	HashMap<uint64_t, uint16_t> RemovedComponentFrameStorageIDs2;
 	Array<Array<EntityHandle>> ComponentAddedEntityMap;
 	Array<Array<EntityHandle>> ComponentRemovedEntityMap;
-	// FIXME - SparseArray<ComponentTypeEntry> instead?
-	HashMap<ComponentTypeIndex, HashMap<EntityHandle, void*>> ComponentPoolsByType;
-	bool HasComponentPoolsByType;
+	HashMap<ComponentTypeIndex, HashMap<EntityHandle, void*>> OneFrameComponents;
+	bool HasOneFrameComponents;
 	__int64 field_2C8;
 	EntityTypeMask ComponentMask; // Valid indices into Components pool
 	Array<QueryIndex> RegisteredQueries;

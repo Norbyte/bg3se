@@ -81,17 +81,17 @@ Array<ExtComponentType> EntityHelper::GetAllComponentTypes() const
 	auto world = ecs_->GetEntityWorld();
 	auto storage = world->GetEntityStorage(handle_);
 	if (storage != nullptr) {
-		if (storage->HasComponentPoolsByType) {
-			for (auto pool : storage->ComponentPoolsByType) {
+		for (auto typeInfo : storage->ComponentTypeToIndex) {
+			auto extType = ecs_->GetComponentType(typeInfo.Key());
+			if (extType) {
+				types.push_back(*extType);
+			}
+		}
+
+		if (storage->HasOneFrameComponents) {
+			for (auto pool : storage->OneFrameComponents) {
 				auto extType = ecs_->GetComponentType(pool.Key());
 				if (extType && pool->Value().find(handle_) != pool->Value().end()) {
-					types.push_back(*extType);
-				}
-			}
-		} else {
-			for (auto typeInfo : storage->ComponentTypeToIndex) {
-				auto extType = ecs_->GetComponentType(typeInfo.Key());
-				if (extType) {
 					types.push_back(*extType);
 				}
 			}
@@ -162,8 +162,27 @@ UserReturn EntityProxyMetatable::GetAllComponents(lua_State* L, EntityHandle ent
 	if (storage != nullptr) {
 		auto componentPtr = storage->InstanceToPageMap.try_get(entity);
 		if (componentPtr) {
-			if (storage->HasComponentPoolsByType) {
-				for (auto pool : storage->ComponentPoolsByType) {
+			for (auto typeInfo : storage->ComponentTypeToIndex) {
+				auto extType = ecs->GetComponentType(typeInfo.Key());
+				if (extType) {
+					auto const& meta = ecs->GetComponentMeta(*extType);
+					auto component = storage->GetComponent(*componentPtr, typeInfo.Value(), meta.Size, meta.IsProxy);
+
+					push(L, *extType);
+					PushComponent(L, component, *extType, GetCurrentLifetime(L));
+					lua_rawset(L, -3);
+				} else if (warnOnMissing) {
+					auto name = ecs->GetComponentName(typeInfo.Key());
+					if (name) {
+						OsiWarn("No model found for component: " << *name);
+					} else {
+						OsiWarn("No model found for component ID: " << (unsigned)typeInfo.Key());
+					}
+				}
+			}
+
+			if (storage->HasOneFrameComponents) {
+				for (auto pool : storage->OneFrameComponents) {
 					auto extType = ecs->GetComponentType(pool.Key());
 					if (extType) {
 						auto const& meta = ecs->GetComponentMeta(*extType);
@@ -178,25 +197,6 @@ UserReturn EntityProxyMetatable::GetAllComponents(lua_State* L, EntityHandle ent
 							OsiWarn("No model found for component: " << *name);
 						} else {
 							OsiWarn("No model found for component ID: " << (unsigned)pool.Key());
-						}
-					}
-				}
-			} else {
-				for (auto typeInfo : storage->ComponentTypeToIndex) {
-					auto extType = ecs->GetComponentType(typeInfo.Key());
-					if (extType) {
-						auto const& meta = ecs->GetComponentMeta(*extType);
-						auto component = storage->GetComponent(*componentPtr, typeInfo.Value(), meta.Size, meta.IsProxy);
-
-						push(L, *extType);
-						PushComponent(L, component, *extType, GetCurrentLifetime(L));
-						lua_rawset(L, -3);
-					} else if (warnOnMissing) {
-						auto name = ecs->GetComponentName(typeInfo.Key());
-						if (name) {
-							OsiWarn("No model found for component: " << *name);
-						} else {
-							OsiWarn("No model found for component ID: " << (unsigned)typeInfo.Key());
 						}
 					}
 				}
@@ -215,8 +215,18 @@ Array<STDString> EntityProxyMetatable::GetAllComponentNames(lua_State* L, Entity
 	auto world = ecs->GetEntityWorld();
 	auto storage = world->GetEntityStorage(entity);
 	if (storage != nullptr) {
-		if (storage->HasComponentPoolsByType) {
-			for (auto it : storage->ComponentPoolsByType) {
+		for (auto componentIdx : storage->ComponentTypeToIndex.keys()) {
+			auto name = ecs->GetComponentName(componentIdx);
+			if (name) {
+				auto mapped = ecs->GetComponentType(componentIdx).has_value();
+				if (!requireMapped || *requireMapped == mapped) {
+					names.push_back(*name);
+				}
+			}
+		}
+
+		if (storage->HasOneFrameComponents) {
+			for (auto it : storage->OneFrameComponents) {
 				if (it->Value().find(entity) != it->Value().end()) {
 					auto name = ecs->GetComponentName(it->Key());
 					if (name) {
@@ -224,16 +234,6 @@ Array<STDString> EntityProxyMetatable::GetAllComponentNames(lua_State* L, Entity
 						if (!requireMapped || *requireMapped == mapped) {
 							names.push_back(*name);
 						}
-					}
-				}
-			}
-		} else {
-			for (auto componentIdx : storage->ComponentTypeToIndex.keys()) {
-				auto name = ecs->GetComponentName(componentIdx);
-				if (name) {
-					auto mapped = ecs->GetComponentType(componentIdx).has_value();
-					if (!requireMapped || *requireMapped == mapped) {
-						names.push_back(*name);
 					}
 				}
 			}

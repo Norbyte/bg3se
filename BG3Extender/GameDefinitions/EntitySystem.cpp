@@ -225,7 +225,7 @@ void* EntityStorageData::GetComponent(EntityHandle entityHandle, ComponentTypeIn
 
 void* EntityStorageData::GetOneFrameComponent(EntityHandle entityHandle, ComponentTypeIndex type) const
 {
-	auto pool = ComponentPoolsByType.try_get(type);
+	auto pool = OneFrameComponents.try_get(type);
 	if (pool) {
 		return pool->get_or_default(entityHandle);
 	}
