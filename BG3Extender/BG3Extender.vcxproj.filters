@@ -482,6 +482,8 @@
     <ClInclude Include="Lua\Osiris\CustomFunction.h" />
     <ClInclude Include="Lua\Osiris\ValueHelpers.h" />
     <ClInclude Include="Lua\Shared\EntityEventHelpers.h" />
+    <ClInclude Include="Lua\Client\ClientEvents.h" />
+    <ClInclude Include="Lua\Server\ServerEvents.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

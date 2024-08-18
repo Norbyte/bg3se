@@ -222,6 +222,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="GameHooks\DataLibraries.h" />
     <ClInclude Include="GameHooks\EngineHooks.h" />
     <ClInclude Include="GameHooks\OsirisWrappers.h" />
+    <ClInclude Include="Lua\Client\ClientEvents.h" />
     <ClInclude Include="Lua\Client\LuaBindingClient.h" />
     <ClInclude Include="Lua\Client\UIEvents.h" />
     <ClInclude Include="Lua\Debugger\LuaDebug.pb.h" />
@@ -249,6 +250,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="Lua\Server\LuaBindingServer.h" />
     <ClInclude Include="Lua\Osiris\Binding.h" />
     <ClInclude Include="Lua\Osiris\FunctionProxy.h" />
+    <ClInclude Include="Lua\Server\ServerEvents.h" />
     <ClInclude Include="Lua\Shared\EntityComponentEvents.h" />
     <ClInclude Include="Lua\Shared\EntityEventHelpers.h" />
     <ClInclude Include="Lua\Shared\LuaBundle.h" />

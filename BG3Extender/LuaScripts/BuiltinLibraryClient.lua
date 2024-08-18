@@ -4,6 +4,8 @@ _I._PublishedEvents = {
 	"KeyInput",
 	"MouseButtonInput",
 	"MouseWheelInput",
+	"ControllerAxisInput",
+	"ControllerButtonInput",
 	"ViewportResized"
 }
 

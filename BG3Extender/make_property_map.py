@@ -636,7 +636,9 @@ sources = [
     'GameDefinitions/Stats/UseActions.h',
     'GameDefinitions/Picking.h',
     'GameDefinitions/Render.h',
-    'GameDefinitions/Resources.h'
+    'GameDefinitions/Resources.h',
+    'Lua/Client/ClientEvents.h',
+    'Lua/Server/ServerEvents.h',
 ]
 
 structs : dict[str, Structure] = {}

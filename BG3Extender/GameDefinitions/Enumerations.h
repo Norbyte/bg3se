@@ -6,6 +6,7 @@
 #if defined(ENABLE_SDL)
 #include <SDL_scancode.h>
 #include <SDL_keycode.h>
+#include <SDL_gamecontroller.h>
 #endif
 
 #if defined(ENABLE_UI)

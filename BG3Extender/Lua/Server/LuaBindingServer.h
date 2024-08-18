@@ -7,6 +7,7 @@
 #include <GameDefinitions/Status.h>
 #include <Extender/Shared/ExtensionHelpers.h>
 #include <Lua/Shared/LuaStats.h>
+#include <Lua/Server/ServerEvents.h>
 
 BEGIN_NS(lua)
 
@@ -22,205 +23,158 @@ namespace bg3se::esv
 	class ExtensionState;
 }
 
-namespace bg3se::esv::lua
+BEGIN_NS(esv::lua)
+
+using namespace ::bg3se::lua;
+
+LifetimeHandle GetServerLifetime();
+LifetimePool& GetServerLifetimePool();
+void RegisterServerMetatables(lua_State* L);
+
+class FunctorEventHooks
 {
-	using namespace ::bg3se::lua;
+public:
+	FunctorEventHooks(lua::State& state);
+	~FunctorEventHooks();
 
-	LifetimeHandle GetServerLifetime();
-	LifetimePool& GetServerLifetimePool();
-	void RegisterServerMetatables(lua_State* L);
+private:
+	lua::State& state_;
 
-	struct GameStateChangedEvent : public EventBase
+	HitResult* OnDealDamage(bg3se::stats::DealDamageFunctor::ApplyDamageProc* next, HitResult* result, bg3se::stats::DealDamageFunctor* functor, ecs::EntityRef* casterHandle,
+		ecs::EntityRef* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId,
+		int storyActionId, ActionOriginator* originator, resource::GuidResourceBankBase* classResourceMgr,
+		HitDesc* hit, AttackDesc* attack, EntityHandle* sourceHandle2, HitWith hitWith, int conditionRollIndex,
+		bool entityDamagedEventParam, __int64 a17, SpellId* spellId2);
+	void OnEntityDamageEvent(bg3se::stats::StatsSystem_ThrowDamageEventProc* next, void* statsSystem, void* temp5, 
+		HitDesc* hit, AttackDesc* attack, bool a5, bool a6);
+
+	template <class TParams>
+	void LuaTriggerFunctorPreExecEvent(bg3se::stats::Functors* self, TParams* params)
 	{
-		esv::GameState FromState;
-		esv::GameState ToState;
-	};
+		ExecuteFunctorEvent evt{ 
+			.Functor = self, 
+			.Params = params 
+		};
+		state_.ThrowEvent("ExecuteFunctor", evt, false, 0);
+	}
 
-	struct DealDamageEvent : public EventBase
+	template <class TParams>
+	void LuaTriggerFunctorPostExecEvent(bg3se::stats::Functors* self, TParams* params, HitResult* hit)
 	{
-		bg3se::stats::DealDamageFunctor* Functor;
-		EntityHandle Caster;
-		EntityHandle Target;
-		glm::vec3 Position;
-		bool IsFromItem;
-		SpellIdWithPrototype* SpellId;
-		int StoryActionId;
-		ActionOriginator* Originator;
-		HitDesc* Hit;
-		[[bg3::legacy(DamageSums)]] AttackDesc* Attack;
-		uint64_t* UnknownThothParam;
-		HitWith HitWith;
-		EntityHandle Caster2;
-		bg3se::SpellId* SpellId2;
-	};
+		AfterExecuteFunctorEvent evt{ 
+			.Functor = self, 
+			.Params = params, 
+			.Hit = hit
+		};
+		state_.ThrowEvent("AfterExecuteFunctor", evt, false, 0);
+	}
 
-	struct DealtDamageEvent : public DealDamageEvent
+	template <class TParams>
+	void OnFunctorExecute(bg3se::stats::ExecuteFunctorProc<TParams>* next, HitResult* hit, bg3se::stats::Functors* self, TParams* params)
 	{
-		HitResult* Result;
-	};
+		LuaTriggerFunctorPreExecEvent<TParams>(self, params);
+		next(hit, self, params);
+		LuaTriggerFunctorPostExecEvent<TParams>(self, params, hit);
+	}
+};
 
-	struct BeforeDealDamageEvent : public EventBase
+
+class ExtensionLibraryServer : public ExtensionLibrary
+{
+public:
+	void Register(lua_State * L) override;
+	void RegisterLib(lua_State * L) override;
+	STDString GenerateOsiHelpers();
+
+private:
+	static char const * const NameResolverMetatableName;
+
+	void RegisterNameResolverMetatable(lua_State * L);
+	void CreateNameResolver(lua_State * L);
+};
+
+class ServerState : public State
+{
+public:
+	static ServerState* FromLua(lua_State* L);
+
+	ServerState(ExtensionState& state, uint32_t generationId);
+	~ServerState();
+
+	void Initialize() override;
+	bool IsClient() override;
+
+	inline OsirisBinding& Osiris()
 	{
-		HitDesc* Hit;
-		[[bg3::legacy(DamageSums)]] AttackDesc* Attack;
-	};
+		return osiris_;
+	}
 
-	struct ExecuteFunctorEvent : public EventBase
+	void OnGameSessionLoading() override;
+	void StoryFunctionMappingsUpdated();
+
+	ecs::EntityWorld* GetEntityWorld() override;
+	ecs::EntitySystemHelpersBase* GetEntitySystemHelpers() override;
+	EntityReplicationEventHooks* GetReplicationEventHooks() override;
+
+	template <class TArg>
+	void Call(char const* mod, char const* func, std::vector<TArg> const & args)
 	{
-		bg3se::stats::Functors* Functor;
-		bg3se::stats::ContextData* Params;
-	};
+		auto L = GetState();
+		LifetimeStackPin _(GetStack());
+		lua_checkstack(L, (int)args.size() + 1);
+		auto stackSize = lua_gettop(L);
 
-	struct AfterExecuteFunctorEvent : public EventBase
-	{
-		bg3se::stats::Functors* Functor;
-		bg3se::stats::ContextData* Params;
-		HitResult* Hit;
-	};
-	
-	class FunctorEventHooks
-	{
-	public:
-		FunctorEventHooks(lua::State& state);
-		~FunctorEventHooks();
+		try {
+			if (mod != nullptr) {
+				PushModFunction(L, mod, func); // stack: func
+			} else {
+				lua_getglobal(L, func); // stack: func
+			}
 
-	private:
-		lua::State& state_;
+			for (auto & arg : args) {
+				OsiToLua(L, arg); // stack: func, arg0 ... argn
+			}
 
-		HitResult* OnDealDamage(bg3se::stats::DealDamageFunctor::ApplyDamageProc* next, HitResult* result, bg3se::stats::DealDamageFunctor* functor, ecs::EntityRef* casterHandle,
-			ecs::EntityRef* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId,
-			int storyActionId, ActionOriginator* originator, resource::GuidResourceBankBase* classResourceMgr,
-			HitDesc* hit, AttackDesc* attack, EntityHandle* sourceHandle2, HitWith hitWith, int conditionRollIndex,
-			bool entityDamagedEventParam, __int64 a17, SpellId* spellId2);
-		void OnEntityDamageEvent(bg3se::stats::StatsSystem_ThrowDamageEventProc* next, void* statsSystem, void* temp5, 
-			HitDesc* hit, AttackDesc* attack, bool a5, bool a6);
-
-		template <class TParams>
-		void LuaTriggerFunctorPreExecEvent(bg3se::stats::Functors* self, TParams* params)
-		{
-			ExecuteFunctorEvent evt{ 
-				.Functor = self, 
-				.Params = params 
-			};
-			state_.ThrowEvent("ExecuteFunctor", evt, false, 0);
-		}
-
-		template <class TParams>
-		void LuaTriggerFunctorPostExecEvent(bg3se::stats::Functors* self, TParams* params, HitResult* hit)
-		{
-			AfterExecuteFunctorEvent evt{ 
-				.Functor = self, 
-				.Params = params, 
-				.Hit = hit
-			};
-			state_.ThrowEvent("AfterExecuteFunctor", evt, false, 0);
-		}
-
-		template <class TParams>
-		void OnFunctorExecute(bg3se::stats::ExecuteFunctorProc<TParams>* next, HitResult* hit, bg3se::stats::Functors* self, TParams* params)
-		{
-			LuaTriggerFunctorPreExecEvent<TParams>(self, params);
-			next(hit, self, params);
-			LuaTriggerFunctorPostExecEvent<TParams>(self, params, hit);
-		}
-	};
-
-
-	class ExtensionLibraryServer : public ExtensionLibrary
-	{
-	public:
-		void Register(lua_State * L) override;
-		void RegisterLib(lua_State * L) override;
-		STDString GenerateOsiHelpers();
-
-	private:
-		static char const * const NameResolverMetatableName;
-
-		void RegisterNameResolverMetatable(lua_State * L);
-		void CreateNameResolver(lua_State * L);
-	};
-
-	class ServerState : public State
-	{
-	public:
-		static ServerState* FromLua(lua_State* L);
-
-		ServerState(ExtensionState& state, uint32_t generationId);
-		~ServerState();
-
-		void Initialize() override;
-		bool IsClient() override;
-
-		inline OsirisBinding& Osiris()
-		{
-			return osiris_;
-		}
-
-		void OnGameSessionLoading() override;
-		void StoryFunctionMappingsUpdated();
-
-		ecs::EntityWorld* GetEntityWorld() override;
-		ecs::EntitySystemHelpersBase* GetEntitySystemHelpers() override;
-		EntityReplicationEventHooks* GetReplicationEventHooks() override;
-
-		template <class TArg>
-		void Call(char const* mod, char const* func, std::vector<TArg> const & args)
-		{
-			auto L = GetState();
-			LifetimeStackPin _(GetStack());
-			lua_checkstack(L, (int)args.size() + 1);
-			auto stackSize = lua_gettop(L);
-
-			try {
+			auto status = CallWithTraceback(L, (int)args.size(), 0);
+			if (status != LUA_OK) {
+				LuaError("Failed to call function '" << func << "': " << lua_tostring(L, -1));
+				// stack: errmsg
+				lua_pop(L, 1); // stack: -
+			}
+		} catch (Exception &) {
+			auto stackRemaining = lua_gettop(L) - stackSize;
+			if (stackRemaining > 0) {
 				if (mod != nullptr) {
-					PushModFunction(L, mod, func); // stack: func
+					LuaError("Call to mod function '" << mod << "'.'" << func << "' failed: " << lua_tostring(L, -1));
 				} else {
-					lua_getglobal(L, func); // stack: func
+					LuaError("Call to mod function '" << func << "' failed: " << lua_tostring(L, -1));
 				}
-
-				for (auto & arg : args) {
-					OsiToLua(L, arg); // stack: func, arg0 ... argn
-				}
-
-				auto status = CallWithTraceback(L, (int)args.size(), 0);
-				if (status != LUA_OK) {
-					LuaError("Failed to call function '" << func << "': " << lua_tostring(L, -1));
-					// stack: errmsg
-					lua_pop(L, 1); // stack: -
-				}
-			} catch (Exception &) {
-				auto stackRemaining = lua_gettop(L) - stackSize;
-				if (stackRemaining > 0) {
-					if (mod != nullptr) {
-						LuaError("Call to mod function '" << mod << "'.'" << func << "' failed: " << lua_tostring(L, -1));
-					} else {
-						LuaError("Call to mod function '" << func << "' failed: " << lua_tostring(L, -1));
-					}
-					lua_pop(L, stackRemaining);
+				lua_pop(L, stackRemaining);
+			} else {
+				if (mod != nullptr) {
+					LuaError("Internal error during call to mod function '" << mod << "'.'" << func << "'");
 				} else {
-					if (mod != nullptr) {
-						LuaError("Internal error during call to mod function '" << mod << "'.'" << func << "'");
-					} else {
-						LuaError("Internal error during call to mod function '" << func << "'");
-					}
+					LuaError("Internal error during call to mod function '" << func << "'");
 				}
 			}
 		}
+	}
 
-		std::optional<STDString> GetModPersistentVars(STDString const& modTable);
-		void RestoreModPersistentVars(STDString const& modTable, STDString const& vars);
-		void OnGameStateChanged(GameState fromState, GameState toState);
+	std::optional<STDString> GetModPersistentVars(STDString const& modTable);
+	void RestoreModPersistentVars(STDString const& modTable, STDString const& vars);
+	void OnGameStateChanged(GameState fromState, GameState toState);
 
-		bool Query(char const* mod, char const* name, RegistryEntry * func,
-			std::vector<CustomFunctionParam> const & signature, OsiArgumentDesc & params);
+	bool Query(char const* mod, char const* name, RegistryEntry * func,
+		std::vector<CustomFunctionParam> const & signature, OsiArgumentDesc & params);
 
-	private:
-		ExtensionLibraryServer library_;
-		OsirisBinding osiris_;
-		FunctorEventHooks functorHooks_;
-		EntityReplicationEventHooks replicationHooks_;
+private:
+	ExtensionLibraryServer library_;
+	OsirisBinding osiris_;
+	FunctorEventHooks functorHooks_;
+	EntityReplicationEventHooks replicationHooks_;
 
-		bool QueryInternal(char const* mod, char const* name, RegistryEntry * func,
-			std::vector<CustomFunctionParam> const & signature, OsiArgumentDesc & params);
-	};
-}
+	bool QueryInternal(char const* mod, char const* name, RegistryEntry * func,
+		std::vector<CustomFunctionParam> const & signature, OsiArgumentDesc & params);
+};
+
+END_NS()

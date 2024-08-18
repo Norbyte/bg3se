@@ -152,6 +152,7 @@ void ClientState::OnInputEvent(SDL_Event* event, int& result)
 		if (res == EventResult::ActionPrevented) {
 			result = 0;
 		}
+
 	} else if (event->type == SDL_MOUSEBUTTONDOWN || event->type == SDL_MOUSEBUTTONUP) {
 		MouseButtonEvent params{
 			.Button = event->button.button,
@@ -164,6 +165,7 @@ void ClientState::OnInputEvent(SDL_Event* event, int& result)
 		if (res == EventResult::ActionPrevented) {
 			result = 0;
 		}
+
 	} else if (event->type == SDL_MOUSEWHEEL) {
 		MouseWheelEvent params{
 			.ScrollX = event->wheel.preciseX,
@@ -175,6 +177,30 @@ void ClientState::OnInputEvent(SDL_Event* event, int& result)
 		if (res == EventResult::ActionPrevented) {
 			result = 0;
 		}
+
+	} else if (event->type == SDL_CONTROLLERAXISMOTION) {
+		ControllerAxisEvent params{
+			.DeviceId = event->caxis.which,
+			.Axis = (SDLControllerAxis)event->caxis.axis,
+			.Value = event->caxis.value / 32768.0f,
+		};
+		auto res = ThrowEvent("ControllerAxisInput", params, true, 0);
+		if (res == EventResult::ActionPrevented) {
+			result = 0;
+		}
+
+	} else if (event->type == SDL_CONTROLLERBUTTONDOWN || event->type == SDL_CONTROLLERBUTTONUP) {
+		ControllerButtonEvent params{
+			.DeviceId = event->cbutton.which,
+			.Event = (event->type == SDL_CONTROLLERBUTTONDOWN) ? SDLKeyEvent::KeyDown : SDLKeyEvent::KeyUp,
+			.Button = (SDLControllerButton)event->cbutton.button,
+			.Pressed = event->cbutton.state == SDL_PRESSED,
+		};
+		auto res = ThrowEvent("ControllerButtonInput", params, true, 0);
+		if (res == EventResult::ActionPrevented) {
+			result = 0;
+		}
+
 	} else if (event->type == SDL_WINDOWEVENT && event->window.event == SDL_WINDOWEVENT_RESIZED) {
 		ViewportResizedEvent params{
 			.Width = event->window.data1,
