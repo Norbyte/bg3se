@@ -288,7 +288,6 @@ namespace bg3se
 		TranslatedString ts;
 		ts.Handle.Handle = FixedString("h11018635g3003g46c6g8013g4630abe55cad");
 		ts.Handle.Version = 1;
-		ts.ArgumentString.Handle = FixedString("ls::TranslatedStringRepository::s_HandleUnknown");
 
 		// Create a new entry in the string repository text pool
 		auto& texts = (*GetStaticSymbols().ls__gTranslatedStringRepository)->TranslatedStrings[0];

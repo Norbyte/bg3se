@@ -1,5 +1,10 @@
 BEGIN_SE()
 
+RuntimeStringHandle::RuntimeStringHandle()
+	: Handle(GFS.strUnknownTSHandle),
+	Version(0)
+{}
+
 std::optional<StringView> TranslatedStringRepository::GetTranslatedString(RuntimeStringHandle const& handle)
 {
 	auto text = TranslatedStrings[0]->Texts.try_get(handle);

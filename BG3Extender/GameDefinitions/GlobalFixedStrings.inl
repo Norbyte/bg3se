@@ -1,4 +1,5 @@
 FS_NAME(Empty, "");
+FS_NAME(UnknownTSHandle, "ls::TranslatedStringRepository::s_HandleUnknown");
 
 // Stat attributes
 FS(Level);

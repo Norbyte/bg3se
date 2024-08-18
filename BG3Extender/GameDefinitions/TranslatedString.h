@@ -7,7 +7,7 @@ struct RuntimeStringHandle
 	FixedString Handle;
 	uint16_t Version{ 0 };
 
-	inline RuntimeStringHandle() {}
+	RuntimeStringHandle();
 
 	inline RuntimeStringHandle(FixedString const& handle)
 		: Handle(handle),
