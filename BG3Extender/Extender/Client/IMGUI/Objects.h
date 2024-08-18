@@ -129,7 +129,9 @@ public:
     virtual void StyledRender() = 0;
 
     void Render() override;
+    std::optional<float> GetStyleVar(GuiStyleVar var);
     void SetStyleVar(GuiStyleVar var, float value, std::optional<float> value2);
+    std::optional<glm::vec4> GetStyleColor(GuiColor color);
     void SetStyleColor(GuiColor color, glm::vec4 value);
     lua::ImguiHandle Tooltip();
 

@@ -203,6 +203,18 @@ void StyledRenderable::Render()
 }
 
 
+std::optional<float> StyledRenderable::GetStyleVar(GuiStyleVar var)
+{
+    for (auto& kv : StyleVars) {
+        if (kv.Key == var) {
+            return kv.Value.x;
+        }
+    }
+
+    return {};
+}
+
+
 void StyledRenderable::SetStyleVar(GuiStyleVar var, float value, std::optional<float> value2)
 {
     for (auto& kv : StyleVars) {
@@ -213,6 +225,18 @@ void StyledRenderable::SetStyleVar(GuiStyleVar var, float value, std::optional<f
     }
 
     StyleVars.push_back(StyleVar{ var, glm::vec2(value, value2 ? *value2 : value) });
+}
+
+
+std::optional<glm::vec4> StyledRenderable::GetStyleColor(GuiColor color)
+{
+    for (auto& kv : StyleColors) {
+        if (kv.Key == color) {
+            return kv.Value;
+        }
+    }
+
+    return {};
 }
 
 
