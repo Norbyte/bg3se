@@ -46,16 +46,41 @@ Array<EntityHandle> GetAllEntitiesWithComponent(lua_State* L, ExtComponentType c
 
 	Array<EntityHandle> entities;
 	auto world = State::FromLua(L)->GetEntitySystemHelpers()->GetEntityWorld();
-	for (auto cls : world->Storage->Entities) {
-		if (cls->ComponentTypeToIndex.try_get(*componentType)) {
-			std::copy(cls->InstanceToPageMap.keys().begin(), cls->InstanceToPageMap.keys().end(), std::back_inserter(entities));
-		} else if (cls->HasOneFrameComponents) {
-			auto pool = cls->OneFrameComponents.try_get(*componentType);
-			if (pool) {
-				std::copy(pool->keys().begin(), pool->keys().end(), std::back_inserter(entities));
+
+	auto const& meta = ecs->GetComponentMeta(component);
+	if (meta.SingleComponentQuery != ecs::UndefinedQuery) {
+		auto& query = world->Queries.Queries[(unsigned)meta.SingleComponentQuery];
+		if (ecs::IsOneFrame(*componentType)) {
+			for (auto const& storage : query.EntityStorages.values()) {
+				auto pool = storage.Storage->OneFrameComponents.try_get(*componentType);
+				if (pool) {
+					std::copy(pool->keys().begin(), pool->keys().end(), std::back_inserter(entities));
+				}
+			}
+		} else {
+			for (auto const& storage : query.EntityStorages.values()) {
+				std::copy(storage.Storage->InstanceToPageMap.keys().begin(), storage.Storage->InstanceToPageMap.keys().end(), std::back_inserter(entities));
+			}
+		}
+	} else {
+		if (ecs::IsOneFrame(*componentType)) {
+			for (auto cls : world->Storage->Entities) {
+				if (cls->HasOneFrameComponents) {
+					auto pool = cls->OneFrameComponents.try_get(*componentType);
+					if (pool) {
+						std::copy(pool->keys().begin(), pool->keys().end(), std::back_inserter(entities));
+					}
+				}
+			}
+		} else {
+			for (auto cls : world->Storage->Entities) {
+				if (cls->ComponentTypeToIndex.try_get(*componentType)) {
+					std::copy(cls->InstanceToPageMap.keys().begin(), cls->InstanceToPageMap.keys().end(), std::back_inserter(entities));
+				}
 			}
 		}
 	}
+
 
 	return entities;
 }

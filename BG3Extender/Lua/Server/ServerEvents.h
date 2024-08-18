@@ -20,7 +20,6 @@ struct DealDamageEvent : public lua::EventBase
 	ActionOriginator* Originator;
 	HitDesc* Hit;
 	[[bg3::legacy(DamageSums)]] AttackDesc* Attack;
-	uint64_t* UnknownThothParam;
 	HitWith HitWith;
 	EntityHandle Caster2;
 	bg3se::SpellId* SpellId2;

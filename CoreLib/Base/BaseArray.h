@@ -699,7 +699,12 @@ public:
 		return *this;
 	}
 
-	inline T* raw_buf() const
+	inline T* raw_buf()
+	{
+		return buf_;
+	}
+
+	inline T const* raw_buf() const
 	{
 		return buf_;
 	}

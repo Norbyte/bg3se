@@ -127,7 +127,7 @@ bool ComponentCallbackList::Remove(uint64_t registrantIndex)
 
 void* QueryDescription::GetFirstMatchingComponent(std::size_t componentSize, bool isProxy)
 {
-	for (auto const& cls : EntityClasses) {
+	for (auto const& cls : EntityStorages.values()) {
 		if (cls.Storage->InstanceToPageMap.size() > 0) {
 			auto const& instPage = cls.Storage->InstanceToPageMap.values()[0];
 			auto componentIdx = cls.GetComponentIndex(0);
@@ -139,19 +139,35 @@ void* QueryDescription::GetFirstMatchingComponent(std::size_t componentSize, boo
 	return {};
 }
 
-Array<void*> QueryDescription::GetAllMatchingComponents(std::size_t componentSize, bool isProxy)
+void PrintRange(EntitySystemHelpersBase& eh, char const* name, std::span<ComponentTypeIndex const> inds)
 {
-	Array<void*> hits;
-
-	for (auto const& cls : EntityClasses) {
-		auto componentIdx = cls.GetComponentIndex(0);
-		for (auto const& instance : cls.Storage->InstanceToPageMap) {
-			auto component = cls.Storage->GetComponent(instance.Value(), componentIdx, componentSize, isProxy);
-			hits.push_back(component);
-		}
+	if (!inds.empty()) std::cout << "\t" << name << ": ";
+	for (auto i : inds) {
+		std::cout << " " << *eh.GetComponentName(i);
 	}
+	if (!inds.empty()) std::cout << std::endl;
+}
 
-	return hits;
+void QueryDescription::DebugPrint(EntitySystemHelpersBase& eh) const
+{
+	std::cout << "Query ";
+	if ((Flags & QueryFlags::Modified) == QueryFlags::Modified) std::cout << " Modified";
+	if ((Flags & QueryFlags::Added) == QueryFlags::Added) std::cout << " Added";
+	if ((Flags & QueryFlags::Removed) == QueryFlags::Removed) std::cout << " Removed";
+	std::cout << std::endl;
+
+	PrintRange(eh, "Includes", GetIncludes());
+	PrintRange(eh, "IncludeAny", GetIncludeAny());
+	PrintRange(eh, "Excludes", GetExcludes());
+	PrintRange(eh, "AddOrs", GetAddOrs());
+	PrintRange(eh, "AddAnds", GetAddAnds());
+	PrintRange(eh, "OneFrames", GetOneFrames());
+	PrintRange(eh, "OptionalOneFrames", GetOptionalOneFrames());
+	PrintRange(eh, "Optionals", GetOptionals());
+	PrintRange(eh, "Immediates", GetImmediates());
+	PrintRange(eh, "Writes", GetWrites());
+
+	std::cout << std::endl;
 }
 
 ComponentTypeEntry const* ComponentRegistry::Get(ComponentTypeIndex index) const
@@ -690,7 +706,8 @@ void EntitySystemHelpersBase::MapComponentIndices(char const* componentName, Ext
 			binding.ComponentType = it->second.ComponentIndex;
 		}
 
-		components_[(unsigned)type].Size = size;
+		assert(size < 0x10000);
+		components_[(unsigned)type].Size = (uint16_t)size;
 		components_[(unsigned)type].IsProxy = isProxy;
 	} else {
 		OsiWarn("Could not find index for component: " << componentName);
@@ -823,6 +840,7 @@ void EntitySystemHelpersBase::PostUpdate()
 {
 	if (!validated_ && GetEntityWorld() != nullptr) {
 		ValidateMappedComponentSizes();
+		UpdateQueryCache();
 		validated_ = true;
 	}
 
@@ -1045,6 +1063,39 @@ void EntitySystemHelpersBase::ValidateEntityChanges(ImmediateWorldCache::Changes
 			}
 		}
 	}
+}
+
+void EntitySystemHelpersBase::MapSingleComponentQuery(QueryIndex query, ComponentTypeIndex component)
+{
+	auto extComponent = GetComponentType(component);
+	if (!extComponent) return;
+
+	components_[(unsigned)*extComponent].SingleComponentQuery = query;
+}
+
+void EntitySystemHelpersBase::UpdateQueryCache()
+{
+	if (queryCacheInitialized_) return;
+
+	auto world = GetEntityWorld();
+	unsigned queryIndex = 0;
+	for (auto const& query : world->Queries.Queries) {
+		// Only include "normal" single-component include queries
+		if ((unsigned)query.Flags == 0 
+			&& query.GetIncludeAny().empty()
+			&& query.GetExcludes().empty()) {
+
+			if (query.GetIncludes().size() == 1 && query.GetOneFrames().empty()) {
+				MapSingleComponentQuery((QueryIndex)queryIndex, query.GetIncludes()[0]);
+			} else if  (query.GetOneFrames().size() == 1 && query.GetIncludes().size() == 0) {
+				MapSingleComponentQuery((QueryIndex)queryIndex, query.GetOneFrames()[0]);
+			}
+		}
+
+		queryIndex++;
+	}
+
+	queryCacheInitialized_ = true;
 }
 
 EntityHandle EntitySystemHelpersBase::GetEntityHandle(FixedString const& guidString)

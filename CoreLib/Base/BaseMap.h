@@ -462,12 +462,22 @@ public:
 		return this->Keys;
 	}
 
-	UninitializedStaticArray<TValue>& values()
+	std::span<TValue> values()
+	{
+		return std::span(Values.raw_buf(), Values.raw_buf() + this->Keys.size());
+	}
+
+	std::span<TValue const> values() const
+	{
+		return std::span(Values.raw_buf(), Values.raw_buf() + this->Keys.size());
+	}
+
+	UninitializedStaticArray<TValue>& raw_values()
 	{
 		return Values;
 	}
 
-	UninitializedStaticArray<TValue> const& values() const
+	UninitializedStaticArray<TValue> const& raw_values() const
 	{
 		return Values;
 	}

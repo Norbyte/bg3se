@@ -496,9 +496,9 @@ bool ValidateRef(HashMap<TK, TV> const* v, Overload<HashMap<TK, TV>>)
 {
 	auto set = reinterpret_cast<HashSet<TK> const*>(v);
 	CHECKR(ValidateRef(set, Overload<HashSet<TK>>{}));
-	CHECKR(ValidateRef(&v->values(), v->keys().size(), Overload<UninitializedStaticArray<TV>>{}));
+	CHECKR(ValidateRef(&v->raw_values(), v->keys().size(), Overload<UninitializedStaticArray<TV>>{}));
 
-	CHECK(v->values().size() >= v->keys().size());
+	CHECK(v->raw_values().size() >= v->keys().size());
 
 	return true;
 }

@@ -98,7 +98,10 @@ public:
 	{
 		ComponentTypeIndex ComponentIndex{ UndefinedComponent };
 		ReplicationTypeIndex ReplicationIndex{ UndefinedReplicationComponent };
-		std::size_t Size{ 0 };
+		// ID of ECS query that only returns this single component;
+		// this is used to avoid brute-forcing the ECS when looking for all entities with a particular component
+		QueryIndex SingleComponentQuery{ UndefinedQuery };
+		uint16_t Size{ 0 };
 		lua::GenericPropertyMap* Properties{ nullptr };
 		bool IsProxy{ false };
 	};
@@ -260,6 +263,8 @@ protected:
 	void ValidateECBFlushChanges();
 	void ValidateEntityChanges();
 	void ValidateEntityChanges(ImmediateWorldCache::Changes& changes);
+	void UpdateQueryCache();
+	void MapSingleComponentQuery(QueryIndex query, ComponentTypeIndex component);
 
 private:
 	struct IndexMappings
@@ -278,6 +283,7 @@ private:
 	std::vector<STDString const*> staticDataIdToName_;
 
 	bool initialized_{ false };
+	bool queryCacheInitialized_{ false };
 	bool validated_{ false };
 	bool logging_{ false };
 

@@ -125,49 +125,146 @@ struct StorageComponentMap : public ProtectedGameObject<StorageComponentMap>
 		uint8_t* ComponentIndices;
 		std::array<uint8_t, 8> InlineComponentIndices;
 	};
-	uint8_t OptionalStart;
-	uint8_t OptionalEnd;
-	uint8_t FrameOptionalsStart;
-	uint8_t FrameOptionalsEnd;
-	uint8_t FilterOrEnd;
-	uint8_t FilterAndEnd;
+	uint8_t Optionals;
+	uint8_t OneFrame;
+	uint8_t OneFrameOptionals;
+	uint8_t FilterOr;
+	uint8_t FilterAnd;
+	uint8_t NumComponents;
 	EntityStorageData* Storage;
 	uint16_t StorageId;
 
 	uint8_t GetComponentIndex(uint8_t idx) const
 	{
-		assert(idx < FilterAndEnd);
-		if (FilterAndEnd > 8) {
+		assert(idx < NumComponents);
+		if (NumComponents > 8) {
 			return ComponentIndices[idx];
-		} else {
+		}
+		else {
 			return InlineComponentIndices[idx];
 		}
 	}
+
+	uint8_t const* GetComponentIndexPtr(uint8_t idx) const
+	{
+		assert(idx < NumComponents);
+		if (NumComponents > 8) {
+			return ComponentIndices + idx;
+		} else {
+			return &InlineComponentIndices[idx];
+		}
+	}
+
+	inline std::span<uint8_t const> GetComponents() const
+	{
+		return std::span(GetComponentIndexPtr(0), GetComponentIndexPtr(Optionals));
+	}
+
+	inline std::span<uint8_t const> GetOptionals() const
+	{
+		return std::span(GetComponentIndexPtr(Optionals), GetComponentIndexPtr(OneFrame));
+	}
+
+	inline std::span<uint8_t const> GetOneFrameComponents() const
+	{
+		return std::span(GetComponentIndexPtr(OneFrame), GetComponentIndexPtr(OneFrameOptionals));
+	}
+
+	inline std::span<uint8_t const> GetOneFrameOptionals() const
+	{
+		return std::span(GetComponentIndexPtr(OneFrameOptionals), GetComponentIndexPtr(FilterOr));
+	}
+
+	inline std::span<uint8_t const> GetFilterOr() const
+	{
+		return std::span(GetComponentIndexPtr(FilterOr), GetComponentIndexPtr(FilterAnd));
+	}
+
+	inline std::span<uint8_t const> GetFilterAnd() const
+	{
+		return std::span(GetComponentIndexPtr(FilterAnd), GetComponentIndexPtr(NumComponents));
+	}
+};
+
+enum class QueryFlags : uint32_t
+{
+	Modified = 1,
+	Added = 2,
+	Removed = 4
 };
 
 struct QueryDescription : public ProtectedGameObject<QueryDescription>
 {
 	// TypeList template parameters to ecs::query::spec::Spec<...>
-	HashSet<int32_t> StorageFrameIDs;
-	StaticArray<StorageComponentMap> EntityClasses;
+	HashMap<int32_t, StorageComponentMap> EntityStorages;
 #if 0
 	STDString Name;
 #endif
-	uint64_t* ComponentIndices;
-	uint32_t Flags;
-	uint8_t IncludeEnd;
-	uint8_t IncludeAndEnd;
-	uint8_t ExcludeEnd;
-	uint8_t AddOrEnd;
-	uint8_t FrameStart;
-	uint8_t FrameOptionalStart;
-	uint8_t OptionalStart;
-	uint8_t OptionalEnd;
-	uint8_t WriteStart;
+	ComponentTypeIndex* ComponentIndices;
+	QueryFlags Flags;
+	uint8_t IncludeAny;
+	uint8_t Excludes;
+	uint8_t AddOrs;
+	uint8_t AddAnds;
+	uint8_t OneFrames;
+	uint8_t OptionalOneFrames;
+	uint8_t Optionals;
+	uint8_t Immediates;
+	uint8_t Writes;
 	uint8_t WriteEnd;
 
+	inline std::span<ComponentTypeIndex const> GetIncludes() const
+	{
+		return std::span(ComponentIndices, ComponentIndices + IncludeAny);
+	}
+
+	inline std::span<ComponentTypeIndex const> GetIncludeAny() const
+	{
+		return std::span(ComponentIndices + IncludeAny, ComponentIndices + Excludes);
+	}
+
+	inline std::span<ComponentTypeIndex const> GetExcludes() const
+	{
+		return std::span(ComponentIndices + Excludes, ComponentIndices + AddOrs);
+	}
+
+	inline std::span<ComponentTypeIndex const> GetAddOrs() const
+	{
+		return std::span(ComponentIndices + AddOrs, ComponentIndices + AddAnds);
+	}
+
+	inline std::span<ComponentTypeIndex const> GetAddAnds() const
+	{
+		return std::span(ComponentIndices + AddAnds, ComponentIndices + OneFrames);
+	}
+
+	inline std::span<ComponentTypeIndex const> GetOneFrames() const
+	{
+		return std::span(ComponentIndices + OneFrames, ComponentIndices + OptionalOneFrames);
+	}
+
+	inline std::span<ComponentTypeIndex const> GetOptionalOneFrames() const
+	{
+		return std::span(ComponentIndices + OptionalOneFrames, ComponentIndices + Optionals);
+	}
+
+	inline std::span<ComponentTypeIndex const> GetOptionals() const
+	{
+		return std::span(ComponentIndices + Optionals, ComponentIndices + Immediates);
+	}
+
+	inline std::span<ComponentTypeIndex const> GetImmediates() const
+	{
+		return std::span(ComponentIndices + Immediates, ComponentIndices + Writes);
+	}
+
+	inline std::span<ComponentTypeIndex const> GetWrites() const
+	{
+		return std::span(ComponentIndices + Writes, ComponentIndices + WriteEnd);
+	}
+
 	void* GetFirstMatchingComponent(std::size_t componentSize, bool isProxy);
-	Array<void*> GetAllMatchingComponents(std::size_t componentSize, bool isProxy);
+	void DebugPrint(EntitySystemHelpersBase& eh) const;
 };
 
 
