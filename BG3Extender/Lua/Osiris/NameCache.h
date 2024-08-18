@@ -31,6 +31,7 @@ private:
 	OsirisBinding& binding_;
 	Array<OsirisNameCache> caches_;
 	HashMap<FixedString, uint32_t> nameToCache_;
+	uint32_t nextCache_{ 0 };
 
 	void Register(Function& fun);
 };

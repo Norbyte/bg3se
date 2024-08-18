@@ -38,7 +38,7 @@ OsirisNameResolver::OsirisNameResolver(OsirisBinding& binding, OsirisStaticGloba
 void OsirisNameResolver::UpdateCache()
 {
 	caches_.clear();
-	nameToCache_.clear();
+	caches_.resize(nextCache_);
 
 	if ((*globals_.Functions) == nullptr) {
 		return;
@@ -85,9 +85,12 @@ void OsirisNameResolver::Register(Function& fun)
 	FixedString name{ fun.Signature->Name };
 	auto index = nameToCache_.try_get(name);
 	if (index) {
-		caches_[*index].Register(fun, binding_);
+		auto& cache = caches_[*index];
+		cache.name = name;
+		cache.Register(fun, binding_);
 	} else {
 		nameToCache_.set(name, caches_.size());
+		nextCache_ = caches_.size();
 		auto& cache = caches_.push_back(OsirisNameCache{});
 		cache.name = name;
 		cache.Register(fun, binding_);
