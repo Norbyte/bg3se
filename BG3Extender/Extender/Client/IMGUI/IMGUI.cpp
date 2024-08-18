@@ -1602,6 +1602,7 @@ void IMGUIManager::UpdateStyle()
     style.TabRounding = 6.0f;
     style.TabBarBorderSize = 1.0f;
     style.SeparatorTextBorderSize = 4.0f;
+    style.SeparatorTextPadding = ImVec2(5.0f, 3.f);
 
     auto BoxColor = ImVec4(0.18f, 0.15f, 0.15f, 0.78f);
     auto BoxHoverColor = ImVec4(0.38f, 0.26f, 0.21f, 0.78f);
