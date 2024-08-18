@@ -11,7 +11,7 @@ EntityComponentEventHooks::~EntityComponentEventHooks()
 	for (uint32_t i = 0; i < hookedComponents_.size(); i++) {
 		if (hookedComponentMask_[i]) {
 			auto& hooks = hookedComponents_[i];
-			auto callbacks = world_->ComponentCallbacks[i];
+			auto callbacks = world_->ComponentCallbacks.Get((ecs::ComponentTypeIndex)i);
 			callbacks->OnConstruct.Remove(hooks.ConstructRegistrant);
 			callbacks->OnDestroy.Remove(hooks.DestructRegistrant);
 			hookedComponentMask_.Clear(i);
@@ -71,7 +71,7 @@ EntityComponentEventHooks::ComponentHooks& EntityComponentEventHooks::AddCompone
 			hookedComponents_.push_back(ComponentHooks{});
 		}
 
-		auto callbacks = world_->ComponentCallbacks[index];
+		auto callbacks = world_->ComponentCallbacks.Get(type);
 
 		auto& hooks = hookedComponents_[index];
 		auto self = (void*)((uintptr_t)this | ((uint64_t)index << 48));

@@ -549,6 +549,13 @@ struct ComponentCallbacks : public ProtectedGameObject<ComponentCallbacks>
 	ComponentCallbackList OnDestroy;
 };
 
+struct ComponentCallbackRegistry : public ProtectedGameObject<ComponentCallbackRegistry>
+{
+	Array<ComponentCallbacks*> Callbacks;
+
+	ComponentCallbacks* Get(ComponentTypeIndex index);
+};
+
 struct ECBEntityComponentChange
 {
 	// -1 = removed
@@ -602,7 +609,7 @@ struct ImmediateWorldCache : public ProtectedGameObject<ImmediateWorldCache>
 
 	Changes WriteChanges;
 	Changes ReadChanges;
-	Array<ComponentCallbacks*>* Callbacks;
+	ComponentCallbackRegistry* Callbacks;
 	FrameAllocator* Allocator;
 	EntityWorld* EntityWorld;
 	EntityHandleGenerator* HandleGenerator;
@@ -669,7 +676,7 @@ struct EntityWorld : public ProtectedGameObject<EntityWorld>
 	void* ECSUpdateBatch;
 	int field_160;
 	Array<EntityCommandBuffer> CommandBuffers;
-	Array<ComponentCallbacks*> ComponentCallbacks;
+	ComponentCallbackRegistry ComponentCallbacks;
 	bool RegisterPhaseEnded;
 	bool Active;
 	bool NeedsOptimize;

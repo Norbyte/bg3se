@@ -40,7 +40,14 @@ END_SE()
 #define DEFINE_COMPONENT(componentType, cls) \
 	static constexpr ExtComponentType ComponentType = ExtComponentType::componentType; \
 	static constexpr auto ComponentName = #componentType; \
-	static constexpr auto EngineClass = cls;
+	static constexpr auto EngineClass = cls; \
+	static constexpr auto OneFrame = false;
+
+#define DEFINE_ONEFRAME_COMPONENT(componentType, cls) \
+	static constexpr ExtComponentType ComponentType = ExtComponentType::componentType; \
+	static constexpr auto ComponentName = #componentType; \
+	static constexpr auto EngineClass = cls; \
+	static constexpr auto OneFrame = true;
 
 #define DEFINE_TAG_COMPONENT(ns, name, componentType) \
 	struct name : public BaseComponent \
@@ -48,6 +55,17 @@ END_SE()
 		static constexpr ExtComponentType ComponentType = ExtComponentType::componentType; \
 		static constexpr auto ComponentName = #componentType; \
 		static constexpr auto EngineClass = #ns "::" #name; \
+		static constexpr auto OneFrame = false; \
+		uint8_t Dummy; \
+	};
+
+#define DEFINE_ONEFRAME_TAG_COMPONENT(ns, name, componentType) \
+	struct name : public BaseComponent \
+	{ \
+		static constexpr ExtComponentType ComponentType = ExtComponentType::componentType; \
+		static constexpr auto ComponentName = #componentType; \
+		static constexpr auto EngineClass = #ns "::" #name; \
+		static constexpr auto OneFrame = true; \
 		uint8_t Dummy; \
 	};
 
@@ -60,4 +78,5 @@ END_SE()
 		static constexpr auto ComponentName = #name "Boost"; \
 		static constexpr auto BoostType = BoostType::boostType; \
 		static constexpr auto EngineClass = "eoc::" #name "BoostComponent"; \
+		static constexpr auto OneFrame = false; \
 	};

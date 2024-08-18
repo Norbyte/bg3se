@@ -10,7 +10,7 @@ typedef_re = r'^using\s+.*=.*;?$'
 attributes_re = r'^(\[\[(\s*[a-zA-Z0-9:_]+\s*(\([^)]*\))?\s*,?\s*)+\]\])$'
 attribute_re = r'(?P<name>[a-zA-Z0-9:_]+)\s*(\(\s*(?P<args>[^)]*)\s*\))?'
 property_re = r'^(?P<attributes>\[\[(\s*[a-zA-Z0-9:_]+\s*(\([^)]*\))?\s*,?\s*)+\]\])?\s*(?P<type>[a-zA-Z0-9_<>*:, ]+)\s+(?P<name>[a-zA-Z0-9_]+)\s*(?P<initval>{.*})?\s*;\s*(?P<comment>//.*)?$'
-tag_component_re = r'^DEFINE_TAG_COMPONENT\((?P<ns>[^,]+), (?P<name>[^,]+), (?P<type>[^,]+)\)$'
+tag_component_re = r'^(DEFINE_TAG_COMPONENT|DEFINE_ONEFRAME_TAG_COMPONENT)\((?P<ns>[^,]+), (?P<name>[^,]+), (?P<type>[^,]+)\)$'
 boost_re = r'^DEFN_BOOST\(\s*(?P<name>[^,]+),\s*(?P<boostType>[^,]+),\s*{$'
 ignore_re = r'^(BEGIN_SE|END_SE).*$'
 

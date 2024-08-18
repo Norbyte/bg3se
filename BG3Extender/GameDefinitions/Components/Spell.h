@@ -372,6 +372,113 @@ struct SyncTargetingComponent : public BaseComponent
 	std::optional<glm::vec3> field_88;
 };
 
+
+struct CastTextKeyEventOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(SpellCastTextKeyEvent, "eoc::spell_cast::CastTextKeyEventOneFrameComponent")
+
+	EntityHandle CastEntity;
+	FixedString TextKey;
+};
+
+struct CastHitEventOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(SpellCastHitEvent, "eoc::spell_cast::CastHitEventOneFrameComponent")
+
+	EntityHandle CastEntity;
+	FixedString TextKey;
+};
+
+struct DestroyEventOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(SpellCastDestroyEvent, "eoc::spell_cast::DestroyEventOneFrameComponent")
+
+	Guid SpellCastGuid;
+};
+
+struct SpellRollAbortEventOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(SpellCastSpellRollAbortEvent, "eoc::spell_cast::SpellRollAbortEventOneFrameComponent")
+
+	HitDesc Hit;
+	EntityHandle field_1B0;
+	__int64 field_1B8;
+	uint8_t field_1C0;
+};
+
+struct TargetHitEventOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(SpellCastTargetHitEvent, "eoc::spell_cast::TargetHitEventOneFrameComponent")
+
+	HitDesc Hit;
+	AttackDesc Attack;
+	EntityHandle field_1D0;
+	__int64 field_1D8;
+	char field_1E0;
+	EntityHandle field_1E8;
+	__int64 field_1F0;
+	__int64 field_1F8;
+};
+
+struct TargetHitInterruptEventOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(SpellCastTargetHitInterruptEvent, "eoc::spell_cast::TargetHitInterruptEventOneFrameComponent")
+
+	HitDesc Hit;
+	AttackDesc Attack;
+	EntityHandle field_1D0;
+	EntityHandle field_1D8;
+	std::optional<glm::vec3> field_1E0;
+	std::optional<glm::vec3> field_1F0;
+	SpellId Spell;
+};
+
+struct TargetReactionEventOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(SpellCastTargetReactionEvent, "eoc::spell_cast::TargetReactionEventOneFrameComponent")
+
+	HitDesc Hit;
+	EntityHandle field_1B0;
+	std::optional<glm::vec3> field_1B8;
+	EntityHandle CastEntity;
+};
+
+struct TargetsChangedEventOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(SpellCastTargetsChangedEvent, "eoc::spell_cast::TargetsChangedEventOneFrameComponent")
+
+	TargetsChangedEventOneFrameComponent(const TargetsChangedEventOneFrameComponent&) = delete;
+	TargetsChangedEventOneFrameComponent& operator = (const TargetsChangedEventOneFrameComponent&) = delete;
+
+	Array<InitialTarget> Targets;
+};
+
+struct AnimationRequestOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(SpellCastAnimationRequest, "eoc::spell_cast::AnimationRequestOneFrameComponent")
+
+	uint8_t Event;
+	std::optional<glm::vec3> TargetHitPosition;
+	glm::vec3 field_14;
+	EntityHandle Target;
+	uint8_t field_28;
+	uint8_t field_29;
+	bool LoopingCastAnimation;
+	bool CacheFlag256;
+	bool DualWielding;
+	bool HasWeapon;
+	uint8_t ObjectSize;
+};
+
+DEFINE_ONEFRAME_TAG_COMPONENT(eoc::spell_cast, CounteredEventOneFrameComponent, SpellCastCounteredEvent)
+DEFINE_ONEFRAME_TAG_COMPONENT(eoc::spell_cast, JumpStartEventOneFrameComponent, SpellCastJumpStartEvent)
+DEFINE_ONEFRAME_TAG_COMPONENT(eoc::spell_cast, LogicExecutionEndEventOneFrameComponent, SpellCastLogicExecutionEndEvent)
+DEFINE_ONEFRAME_TAG_COMPONENT(eoc::spell_cast, PrepareEndEventOneFrameComponent, SpellCastPrepareEndEvent)
+DEFINE_ONEFRAME_TAG_COMPONENT(eoc::spell_cast, PrepareStartEventOneFrameComponent, SpellCastPrepareStartEvent)
+DEFINE_ONEFRAME_TAG_COMPONENT(eoc::spell_cast, PreviewEndEventOneFrameComponent, SpellCastPreviewEndEvent)
+DEFINE_ONEFRAME_TAG_COMPONENT(eoc::spell_cast, ThrowPickupPositionChangedEventOneFrameComponent, SpellCastThrowPickupPositionChangedEvent)
+
+
 END_NS()
 
 BEGIN_NS(esv::spell)

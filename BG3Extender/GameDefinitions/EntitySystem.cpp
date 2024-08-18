@@ -180,6 +180,16 @@ ComponentTypeEntry const* ComponentRegistry::Get(ComponentTypeIndex index) const
 	}
 }
 
+ComponentCallbacks* ComponentCallbackRegistry::Get(ComponentTypeIndex index)
+{
+	auto idx = (uint32_t)SparseHashMapHash(index);
+	if (idx < Callbacks.size()) {
+		return Callbacks[idx];
+	} else {
+		return nullptr;
+	}
+}
+
 /*
 uint64_t NewEntityPool::Add()
 {
