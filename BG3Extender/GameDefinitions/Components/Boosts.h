@@ -36,6 +36,7 @@ struct BoostInfoComponent : public BaseComponent
 	BoostCause Cause;
 	EntityHandle Owner;
 	BoostParameters Params;
+	uint8_t field_44;
 	Guid field_80;
 };
 

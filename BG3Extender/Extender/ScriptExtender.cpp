@@ -73,7 +73,7 @@ void ScriptExtender::Initialize()
 		} else {
 			ERR("Game version v%d.%d.%d.%d is not supported, please upgrade!", gameVersion.Major, gameVersion.Minor, gameVersion.Revision, gameVersion.Build);
 			// Hard exit below a certain version as the EoCClient error display UI won't work anymore
-			Fail("Script Extender doesn't support game versions below v4.47, please upgrade!");
+			Fail("Script Extender doesn't support game versions below v4.57, please upgrade!");
 		}
 	} else {
 		ERR("Failed to retrieve game version info.");
@@ -260,39 +260,56 @@ void ScriptExtender::OnStatsLoad(stats::RPGStats::LoadProc* wrapped, stats::RPGS
 
 void ScriptExtender::OnECSUpdate(ecs::EntityWorld::UpdateProc* wrapped, ecs::EntityWorld* entityWorld, GameTime const& time)
 {
-	GetECS(entityWorld).Update();
+	BEGIN_GUARDED()
+	OnECSUpdateGuarded(wrapped, entityWorld, time);
+	END_GUARDED()
+}
 
-	wrapped(entityWorld, time);
+void ScriptExtender::OnECSUpdateGuarded(ecs::EntityWorld::UpdateProc* wrapped, ecs::EntityWorld* entityWorld, GameTime const& time)
+{
+	auto ecs = GetECS(entityWorld);
+	if (ecs != nullptr) {
+		ecs->Update();
 
-	GetECS(entityWorld).PostUpdate();
+		wrapped(entityWorld, time);
 
-	if (entityWorld->Replication) {
-		if (GetServer().HasExtensionState()) {
+		ecs->PostUpdate();
+
+		if (entityWorld->Replication) {
+			if (GetServer().HasExtensionState()) {
+				esv::LuaServerPin lua(GetServer().GetExtensionState());
+				if (lua) {
+					lua->GetComponentEventHooks().FireDeferredEvents();
+				}
+			}
+		} else {
+			if (GetClient().HasExtensionState()) {
+				ecl::LuaClientPin lua(GetClient().GetExtensionState());
+				if (lua) {
+					lua->GetComponentEventHooks().FireDeferredEvents();
+				}
+			}
+		}
+
+		if (entityWorld->Replication && GetServer().HasExtensionState()) {
 			esv::LuaServerPin lua(GetServer().GetExtensionState());
 			if (lua) {
-				lua->GetComponentEventHooks().FireDeferredEvents();
+				lua->GetReplicationEventHooks()->OnEntityReplication(*entityWorld);
 			}
 		}
 	} else {
-		if (GetClient().HasExtensionState()) {
-			ecl::LuaClientPin lua(GetClient().GetExtensionState());
-			if (lua) {
-				lua->GetComponentEventHooks().FireDeferredEvents();
-			}
-		}
-	}
-
-	if (entityWorld->Replication && GetServer().HasExtensionState()) {
-		esv::LuaServerPin lua(GetServer().GetExtensionState());
-		if (lua) {
-			lua->GetReplicationEventHooks()->OnEntityReplication(*entityWorld);
-		}
+		wrapped(entityWorld, time);
 	}
 }
 
 void ScriptExtender::OnECSFlushECBs(ecs::EntityWorld* entityWorld)
 {
-	GetECS(entityWorld).OnFlushECBs();
+	BEGIN_GUARDED()
+	auto ecs = GetECS(entityWorld);
+	if (ecs != nullptr) {
+		ecs->OnFlushECBs();
+	}
+	END_GUARDED()
 }
 
 bool ScriptExtender::HasFeatureFlag(char const * flag) const
@@ -325,14 +342,15 @@ ExtensionStateBase* ScriptExtender::GetCurrentExtensionState()
 	}
 }
 
-ecs::EntitySystemHelpersBase& ScriptExtender::GetECS(ecs::EntityWorld* world)
+ecs::EntitySystemHelpersBase* ScriptExtender::GetECS(ecs::EntityWorld* world)
 {
 	if (world == GetStaticSymbols().GetServerEntityWorld()) {
-		return server_.GetEntityHelpers();
+		return &server_.GetEntityHelpers();
 	} else if (world == GetStaticSymbols().GetClientEntityWorld()) {
-		return client_.GetEntityHelpers();
+		return &client_.GetEntityHelpers();
 	} else {
-		throw std::runtime_error("Called with unknown EntityWorld?");
+		ERR("Called with unknown EntityWorld?");
+		return nullptr;
 	}
 }
 
@@ -523,6 +541,7 @@ void ScriptExtender::PostStartup()
 		//engineHooks_.Kernel_FindFirstFileW.SetWrapper(&ScriptExtender::OnFindFirstFileW, this);
 		//engineHooks_.Kernel_FindNextFileW.SetWrapper(&ScriptExtender::OnFindNextFileW, this);
 		//engineHooks_.Kernel_FindClose.SetWrapper(&ScriptExtender::OnFindClose, this);
+		
 		engineHooks_.RPGStats__Load.SetWrapper(&ScriptExtender::OnStatsLoad, this);
 		engineHooks_.ecs__EntityWorld__Update.SetWrapper(&ScriptExtender::OnECSUpdate, this);
 		engineHooks_.ecs__EntityWorld__FlushECBs.SetPreHook(&ScriptExtender::OnECSFlushECBs, this);

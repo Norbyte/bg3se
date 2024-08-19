@@ -1,6 +1,6 @@
 param($Channel)
 
-if ($Channel -ne "Devel" -And $Channel -ne "Release" -And $Channel -ne "Nightly") {
+if ($Channel -ne "Devel" -And $Channel -ne "Release" -And $Channel -ne "NextVersion") {
 	Write-Error -Message "Usage: publish.ps1 <Channel>"
 	Exit 1
 }
@@ -35,10 +35,10 @@ $GameDebugAdapterBuildDir = Join-Path "$BuildRoot" "TempGameDebugAdapter"
 $EditorBuildDir = Join-Path "$BuildRoot" "TempEditorBuild"
 $PDBDir = Join-Path "$PDBRoot" "TempPDB"
 	
-$EditorMinVersion = "4.47.63.0"
+$EditorMinVersion = "4.57.26.0"
 $EditorMaxVersion = "-"
 
-$GameMinVersion = "4.47.63.0"
+$GameMinVersion = "4.57.26.0"
 $GameMaxVersion = "-"
 
 function Build-Extender
@@ -76,7 +76,7 @@ function Create-PDBDir
 	#Copy-Item "x64\Editor Release\BG3EditorScriptExtender.dll" -Destination $PDBDir\BG3EditorScriptExtender.dll
 	Copy-Item External\protobuf\bin\libprotobuf-lite.dll -Destination $PDBDir\libprotobuf-lite.dll
 
-	if ($Channel -eq "Devel" -Or $Channel -ne "Nightly") {
+	if ($Channel -eq "Devel" -Or $Channel -eq "NextVersion") {
 		New-Item $PDBDir\DAP -ItemType "directory"
 		Copy-Item "LuaDebugger\bin\Release\Google.Protobuf.dll" -Destination $PDBDir\DAP\Google.Protobuf.dll
 		Copy-Item "LuaDebugger\bin\Release\Newtonsoft.Json.dll" -Destination $PDBDir\DAP\Newtonsoft.Json.dll

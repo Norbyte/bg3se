@@ -1071,7 +1071,7 @@ BEGIN_ENUM(ItemUseType, uint8_t)
 	EV(Consumable, 7)
 END_ENUM()
 
-BEGIN_ENUM(BoostCauseType, uint32_t)
+BEGIN_ENUM(BoostCauseType, uint8_t)
 	EV(Undefined, 0)
 	EV(Item, 1)
 	EV(Status, 2)

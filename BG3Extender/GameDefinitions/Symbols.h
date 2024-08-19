@@ -75,6 +75,8 @@ namespace bg3se
 		stats::StatusPrototypeManager** eoc__StatusPrototypeManager{ nullptr };
 		stats::StatusPrototype::InitProc* eoc__StatusPrototype__Init{ nullptr };
 
+		void* eoc__BoostPrototypeManager{ nullptr };
+
 		stats::PassivePrototypeManager** eoc__PassivePrototypeManager{ nullptr };
 		stats::PassivePrototype::InitProc* eoc__PassivePrototype__Init{ nullptr };
 
@@ -120,6 +122,7 @@ namespace bg3se
 		std::map<uint8_t const *, EoCLibraryInfo> Libraries;
 
 		void* ls__gGlobalAllocator{ nullptr };
+		ls__GlobalAllocator__GetProc* ls__GlobalAllocator__Get{ nullptr };
 		ls__GlobalAllocator__AllocProc* ls__GlobalAllocator__Alloc{ nullptr };
 		ls__GlobalAllocator__FreeProc* ls__GlobalAllocator__Free{ nullptr };
 

@@ -2811,11 +2811,14 @@ struct TimelineSceneResource : public LoadableResource
 
 struct VirtualTextureResource : public LoadableResource
 {
-	[[bg3::readonly]] uint32_t GTSHandle;
-	uint32_t VirtualTextureLayerConfig;
-	uint32_t LoadedVirtualTextureLayerConfig;
-	bool LoadedField52;
-	std::optional<char> GTSSuffix;
+	[[bg3::readonly]] uint8_t field_80;
+	[[bg3::readonly]] uint32_t VirtualTextureLayerConfig;
+	[[bg3::readonly]] uint32_t LoadedVirtualTextureLayerConfig;
+	[[bg3::readonly]] uint8_t LoadedField52;
+	[[bg3::readonly]] std::optional<char> GTSSuffix;
+	STDString Path2;
+	[[bg3::hidden]] SRWLOCK Lock;
+	FixedString TileSetFileName;
 	FixedString GTexFileName;
 	[[bg3::hidden]] void* GraphineTextureData;
 	bool Prefetch;
@@ -2897,7 +2900,7 @@ struct VisualResource : public TwoStepLoadableResource
 		glm::fvec4 Rotation;
 	};
 
-	struct ClothProxy
+	struct ClothHighResInfo
 	{
 		FixedString Name;
 		[[bg3::hidden]] Array<uint16_t> ClosestVertices;
@@ -2906,12 +2909,19 @@ struct VisualResource : public TwoStepLoadableResource
 		[[bg3::hidden]] uint32_t NbClosestVertices;
 	};
 
+	struct ClothData
+	{
+		HashMap<FixedString, Array<ClothHighResInfo>> Mappings;
+		Array<ClothParam> Params;
+		FixedString ClothColliderResourceID;
+	};
+
 	[[bg3::hidden]] void* field_48; // DynamicArray VMT
 	Array<FixedString> Tags;
 	[[bg3::hidden]] __int64 field_60; // DynamicArray extra data
 	Array<Object> Objects;
 	Array<Attachment> Attachments;
-	Array<ClothParam> ClothParams;
+	ClothData* Cloth;
 	Array<AnimationSetOverride> AnimationSetOverrides;
 	Array<FixedString> AnimationWaterfall;
 	LegacyRefMap<FixedString, Bone> Bones;
@@ -2919,7 +2929,6 @@ struct VisualResource : public TwoStepLoadableResource
 	Array<FixedString> VertexColorMaskSlots;
 	[[bg3::hidden]] __int64 field_e0; // DynamicArray extra data
 	FixedString SkeletonResource;
-	FixedString ClothColliderResourceID;
 	FixedString Template;
 	FixedString SkeletonSlot;
 	FixedString SoftbodyResourceID;
@@ -2929,9 +2938,6 @@ struct VisualResource : public TwoStepLoadableResource
 	FixedString RemapperSlotId;
 	FixedString AttachBone;
 	FixedString BlueprintInstanceResourceID;
-	[[bg3::hidden]] __int32 field_114;
-
-	HashMap<FixedString, Array<ClothProxy>> ClothProxyMapping;
 
 	glm::fvec3 BoundsMin;
 	glm::fvec3 BoundsMax;

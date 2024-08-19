@@ -157,6 +157,8 @@ namespace bg3se
 		SYM_OFF(eoc__SpellPrototypeManager);
 		SYM_OFF(eoc__SpellPrototype__Init);
 
+		SYM_OFF(eoc__BoostPrototypeManager);
+
 		SYM_OFF(eoc__StatusPrototypeManager);
 		SYM_OFF(eoc__StatusPrototype__Init);
 
@@ -209,6 +211,7 @@ namespace bg3se
 		SYM_OFF(AppInstance);
 
 		SYM_OFF(ls__gGlobalAllocator);
+		SYM_OFF(ls__GlobalAllocator__Get);
 		SYM_OFF(ls__GlobalAllocator__Alloc);
 		SYM_OFF(ls__GlobalAllocator__Free);
 

@@ -101,6 +101,8 @@ struct SpellPrototype : public Noncopyable<SpellPrototype>
 	int8_t SourceLimbIndex;
 	Array<FixedString> ContainerSpells;
 	Array<Array<FixedString>> Trajectories;
+	uint32_t PathfindTemplateId;
+	bool HasTrajectoryRules;
 	uint32_t RequirementEvents;
 	[[bg3::hidden]] HashMap<uint8_t, Array<uint64_t>> MetaConditions;
 	FixedString ItemWall;

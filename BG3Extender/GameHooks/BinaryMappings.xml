@@ -6,331 +6,325 @@
     <DllImport Module="Kernel32" Proc="FindClose" Symbol="Kernel_FindClose" />
 
     <Mapping Name="ls__GlobalAllocator" Critical="true">
-          48 89 6c 24 18 // mov     [rsp+arg_10], rbp
-          48 89 74 24 20 // mov     [rsp+arg_18], rsi
-          41 56 // push    r14
-          48 83 ec 20 // sub     rsp, 20h
-          65 48 8b 04 25 58 00 00 00 // mov     rax, gs:58h
-          @ref2 4c 8d 35 ?? ?? ?? ?? // lea     r14, ls__gGlobalAllocator
-          ba 88 04 00 00 // mov     edx, 488h
-          48 8b 08 // mov     rcx, [rax]
-          8b 04 0a // mov     eax, [rdx+rcx]
-          <Target Type="Indirect" Offset="@ref2" Symbol="ls__gGlobalAllocator" />
-        </Mapping>
+      48 89 5c 24 08 // mov     [rsp+arg_0], rbx
+      57 // push    rdi
+      48 83 ec 30 // sub     rsp, 30h
+      48 8b d9 // mov     rbx, rcx
+      83 79 08 00 // cmp     dword ptr [rcx+8], 0
+      74 47 // jz      short loc_14052B63A
+      83 79 0c 00 // cmp     dword ptr [rcx+0Ch], 0
+      7e 07 // jle     short loc_14052B600
+      c7 41 0c 00 00 00 00 // mov     dword ptr [rcx+0Ch], 0
+      48 8b 39 // mov     rdi, [rcx]
+      48 85 ff // test    rdi, rdi
+      74 10 // jz      short loc_14052B618
+      @ref1 e8 ?? ?? ?? ?? // call    ls__GlobalAllocator__Get
+      48 8b d7 // mov     rdx, rdi; a2
+      48 8b c8 // mov     rcx, rax; a1
+      @ref2 e8 ?? ?? ?? ?? // call    ls__GlobalAllocator__Free
+      @ref3 e8 ?? ?? ?? ?? // call    ls__GlobalAllocator__Get
+      48 c7 44 24 20 10 00 00 00 // mov     [rsp+38h+var_18], 10h
+      33 d2 // xor     edx, edx
+      48 8b c8 // mov     rcx, rax
+      @ref4 e8 ?? ?? ?? ?? // call    ls__GlobalAllocator__Alloc
+      48 89 03 // mov     [rbx], rax
+      c7 43 08 00 00 00 00 // mov     dword ptr [rbx+8], 0
+      <Target Type="Indirect" Offset="@ref1" Symbol="ls__GlobalAllocator__Get" />
+      <Target Type="Indirect" Offset="@ref2" Symbol="ls__GlobalAllocator__Free" />
+      <Target Type="Indirect" Offset="@ref4" Symbol="ls__GlobalAllocator__Alloc" />
+    </Mapping>
 
-        <Mapping Name="ls__GlobalAllocator__Alloc" Critical="true">
-          83 79 0c 00 // cmp     dword ptr [rcx+0Ch], 0
-          7e 07 // jle     short loc_140572680
-          c7 41 0c 00 00 00 00 // mov     dword ptr [rcx+0Ch], 0
-          48 8b 39 // mov     rdi, [rcx]
-          48 85 ff // test    rdi, rdi
-          74 10 // jz      short loc_140572698
-          e8 ?? ?? ?? ?? // call    ls__GlobalAllocator__Get
-          48 8b d7 // mov     rdx, rdi; a2
-          48 8b c8 // mov     rcx, rax; a1
-          @ref2 e8 ?? ?? ?? ?? // call    ls__GlobalMemoryManager__Free
-          e8 ?? ?? ?? ?? // call    ls__GlobalAllocator__Get
-          48 c7 44 24 20 10 00 00 00 // mov     [rsp+38h+alignment], 10h; alignment
-          33 d2 // xor     edx, edx; size
-          48 8b c8 // mov     rcx, rax; a1
-          @ref4 e8 ?? ?? ?? ?? // call    ls__GlobalAllocator__Alloc2
-          <Target Type="Indirect" Offset="@ref2" Symbol="ls__GlobalAllocator__Free" />
-          <Target Type="Indirect" Offset="@ref4" Symbol="ls__GlobalAllocator__Alloc" />
-        </Mapping>
+    <Mapping Name="ls::FixedString::IncRef" Critical="true">
+      83 f8 ff // cmp     eax, 0FFFFFFFFh
+      74 0b // jz      short loc_140EC1A4F
+      8b c8 // mov     ecx, eax; a1
+      @ref1 e8 ?? ?? ?? ?? // call    ls__FixedString__AddRef
+      8b 44 24 58 // mov     eax, [rsp+48h+a1]
+      8b 0b // mov     ecx, [rbx]
+      83 f9 ff // cmp     ecx, 0FFFFFFFFh
+      74 20 // jz      short loc_140EC1A76
+      89 4c 24 20 // mov     [rsp+48h+var_28], ecx
+      @ref2 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:ls__gGlobalStringTable
+      48 81 c1 00 c6 00 00 // add     rcx, 0C600h
+      48 8d 54 24 20 // lea     rdx, [rsp+48h+var_28]
+      @ref3 e8 ?? ?? ?? ?? // call    ls__GlobalStringTable__MainTable__DecRef
+      <Target Type="Indirect" Offset="@ref1" Symbol="ls__FixedString__IncRef" />
+      <Target Type="Indirect" Offset="@ref2" Symbol="ls__gGlobalStringTable" />
+      <Target Type="Indirect" Offset="@ref3" Symbol="ls__GlobalStringTable__MainTable__DecRef" />
+    </Mapping>
 
-        <Mapping Name="ls::FixedString::IncRef" Critical="true">
-          83 f8 ff // cmp     eax, 0FFFFFFFFh
-          74 0b // jz      short loc_140EC1A4F
-          8b c8 // mov     ecx, eax; a1
-          @ref1 e8 ?? ?? ?? ?? // call    ls__FixedString__AddRef
-          8b 44 24 58 // mov     eax, [rsp+48h+a1]
-          8b 0b // mov     ecx, [rbx]
-          83 f9 ff // cmp     ecx, 0FFFFFFFFh
-          74 20 // jz      short loc_140EC1A76
-          89 4c 24 20 // mov     [rsp+48h+var_28], ecx
-          @ref2 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:ls__gGlobalStringTable
-          48 81 c1 00 c6 00 00 // add     rcx, 0C600h
-          48 8d 54 24 20 // lea     rdx, [rsp+48h+var_28]
-          @ref3 e8 ?? ?? ?? ?? // call    ls__GlobalStringTable__MainTable__DecRef
-          <Target Type="Indirect" Offset="@ref1" Symbol="ls__FixedString__IncRef" />
-          <Target Type="Indirect" Offset="@ref2" Symbol="ls__gGlobalStringTable" />
-          <Target Type="Indirect" Offset="@ref3" Symbol="ls__GlobalStringTable__MainTable__DecRef" />
-        </Mapping>
+    <Mapping Name="ls::FixedString::CreateFromString" Critical="true">
+      @str1 48 8d 05 ?? ?? ?? ?? // lea     rax, aH8e3f9e82g8fda; "h8e3f9e82g8fdag437cg99c1g4988a6aeccff"
+      48 89 44 24 28 // mov     [rsp+58h+a3.Str], rax
+      c7 44 24 30 25 00 00 00 // mov     [rsp+58h+a3.Length], 25h ; '%'
+      c7 44 24 78 ff ff ff ff // mov     [rsp+58h+arg_18], 0FFFFFFFFh
+      c7 44 24 20 02 00 00 00 // mov     [rsp+58h+var_38], 2
+      48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:ls__gGlobalStringTable
+      48 81 c1 00 c6 00 00 // add     rcx, 0C600h; a1
+      4c 8d 44 24 28 // lea     r8, [rsp+58h+a3]; a3
+      48 8d 54 24 70 // lea     rdx, [rsp+58h+a1]; a2
+      @ref2 e8 ?? ?? ?? ?? // call    ls__GlobalStringTable__MainTable__FromString
+      <Condition Type="String" Offset="@str1" Value="h8e3f9e82g8fdag437cg99c1g4988a6aeccff" />
+      <Target Type="Indirect" Offset="@ref2" Symbol="ls__GlobalStringTable__MainTable__CreateFromString" />
+    </Mapping>
 
-        <Mapping Name="ls::FixedString::CreateFromString" Critical="true">
-          @str1 48 8d 05 ?? ?? ?? ?? // lea     rax, aH8e3f9e82g8fda; "h8e3f9e82g8fdag437cg99c1g4988a6aeccff"
-          48 89 44 24 28 // mov     [rsp+58h+a3.Str], rax
-          c7 44 24 30 25 00 00 00 // mov     [rsp+58h+a3.Length], 25h ; '%'
-          c7 44 24 78 ff ff ff ff // mov     [rsp+58h+arg_18], 0FFFFFFFFh
-          c7 44 24 20 02 00 00 00 // mov     [rsp+58h+var_38], 2
-          48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:ls__gGlobalStringTable
-          48 81 c1 00 c6 00 00 // add     rcx, 0C600h; a1
-          4c 8d 44 24 28 // lea     r8, [rsp+58h+a3]; a3
-          48 8d 54 24 70 // lea     rdx, [rsp+58h+a1]; a2
-          @ref2 e8 ?? ?? ?? ?? // call    ls__GlobalStringTable__MainTable__FromString
-          <Condition Type="String" Offset="@str1" Value="h8e3f9e82g8fdag437cg99c1g4988a6aeccff" />
-          <Target Type="Indirect" Offset="@ref2" Symbol="ls__GlobalStringTable__MainTable__CreateFromString" />
-        </Mapping>
+    <Mapping Name="ls::FixedString::GetString" Critical="true">
+      48 8d 54 24 40 // lea     rdx, [rsp+58h+var_18]; a2
+      48 8b d8 // mov     rbx, rax
+      @ref1 e8 ?? ?? ?? ?? // call    ls__FixedString__ToString
+      0f 10 07 // movups  xmm0, xmmword ptr [rdi]
+      0f 11 05 ?? ?? ?? ?? // movups  cs:xmmword_145B17160, xmm0
+      0f 10 0b // movups  xmm1, xmmword ptr [rbx]
+      48 8b 5c 24 60 // mov     rbx, [rsp+58h+arg_0]
+      <Target Type="Indirect" Offset="@ref1" Symbol="ls__FixedString__GetString" />
+    </Mapping>
 
-        <Mapping Name="ls::FixedString::GetString" Critical="true">
-          48 8d 54 24 40 // lea     rdx, [rsp+58h+var_18]; a2
-          48 8b d8 // mov     rbx, rax
-          @ref1 e8 ?? ?? ?? ?? // call    ls__FixedString__ToString
-          0f 10 07 // movups  xmm0, xmmword ptr [rdi]
-          0f 11 05 ?? ?? ?? ?? // movups  cs:xmmword_145B17160, xmm0
-          0f 10 0b // movups  xmm1, xmmword ptr [rbx]
-          48 8b 5c 24 60 // mov     rbx, [rsp+58h+arg_0]
-          <Target Type="Indirect" Offset="@ref1" Symbol="ls__FixedString__GetString" />
-        </Mapping>
+    <Mapping Name="ls::FileReader::ctor" Critical="true">
+      48 03 d3 // add     rdx, rbx
+      @str1 4c 8d 05 ?? ?? ?? ?? // lea     r8, aItemcombosTxt; "ItemCombos.txt"
+      48 8d 8d b0 01 00 00 // lea     rcx, [rbp+1B0h]
+      e8 ?? ?? ?? ?? // call    sub_140E37FE0
+      90 // nop
+      45 8b ce // mov     r9d, r14d
+      45 8b c7 // mov     r8d, r15d
+      48 8d 95 b0 01 00 00 // lea     rdx, [rbp+1B0h]
+      48 8d 8d 80 00 00 00 // lea     rcx, [rbp+80h]
+      @ref1 e8 ?? ?? ?? ?? // call    ls__FileReader__ctor
+      <Condition Type="String" Offset="@str1" Value="ItemCombos.txt" />
+      <Target Type="Indirect" Offset="@ref1" Symbol="ls__FileReader__ctor" />
+    </Mapping>
 
-        <Mapping Name="ls::FileReader::ctor" Critical="true">
-          45 33 ed // xor     r13d, r13d
-          45 8b cd // mov     r9d, r13d
-          45 33 c0 // xor     r8d, r8d
-          48 8b d3 // mov     rdx, rbx
-          48 8d 4d c0 // lea     rcx, [rbp+1B0h+var_1F0]
-          @ref1 e8 ?? ?? ?? ?? // call    ls__FileReader__ctor
-          90 // nop
-          48 8d 55 90 // lea     rdx, [rbp+1B0h+var_220]
-          48 8b cb // mov     rcx, rbx
-          e8 ?? ?? ?? ?? // call    sub_143859020
-          0f 57 c0 // xorps   xmm0, xmm0
-          <Target Type="Indirect" Offset="@ref1" Symbol="ls__FileReader__ctor" />
-        </Mapping>
+    <Mapping Name="ls::FileReader::dtor" Critical="true">
+      48 63 c6 // movsxd  rax, esi
+      48 8d 1c c0 // lea     rbx, [rax+rax*8]
+      48 c1 e3 04 // shl     rbx, 4
+      48 03 1f // add     rbx, [rdi]
+      48 8b cb // mov     rcx, rbx
+      @ref1 e8 ?? ?? ?? ?? // call    ls__FileReader__dtorIntenal
+      48 8d 4b 28 // lea     rcx, [rbx+28h]; a1
+      e8 ?? ?? ?? ?? // call    ls__ScratchBuffer__dtor
+      8b 47 0c // mov     eax, [rdi+0Ch]
+      ff c6 // inc     esi
+      3b f0 // cmp     esi, eax
+      <Target Type="Indirect" Offset="@ref1" Symbol="ls__FileReader__dtor" />
+    </Mapping>
 
-        <Mapping Name="ls::FileReader::dtor" Critical="true">
-          48 63 c6 // movsxd  rax, esi
-          48 8d 1c c0 // lea     rbx, [rax+rax*8]
-          48 c1 e3 04 // shl     rbx, 4
-          48 03 1f // add     rbx, [rdi]
-          48 8b cb // mov     rcx, rbx
-          @ref1 e8 ?? ?? ?? ?? // call    ls__FileReader__dtorIntenal
-          48 8d 4b 28 // lea     rcx, [rbx+28h]; a1
-          e8 ?? ?? ?? ?? // call    ls__ScratchBuffer__dtor
-          8b 47 0c // mov     eax, [rdi+0Ch]
-          ff c6 // inc     esi
-          3b f0 // cmp     esi, eax
-          <Target Type="Indirect" Offset="@ref1" Symbol="ls__FileReader__dtor" />
-        </Mapping>
+    <Mapping Name="ls__PathRoots" Critical="true">
+      0f b6 81 a6 00 00 00 // movzx   eax, byte ptr [rcx+0A6h]
+      24 fe // and     al, 0FEh
+      24 fd // and     al, 0FDh
+      24 fb // and     al, 0FBh
+      88 81 a6 00 00 00 // mov     [rcx+0A6h], al
+      c7 81 a7 00 00 00 04 00 00 00 // mov     dword ptr [rcx+0A7h], 4
+      48 81 c1 b0 00 00 00 // add     rcx, 0B0h ; '°'; a1
+      @ref1 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:cpath_Roots
+      <Target Type="Indirect" Offset="@ref1" Symbol="ls__PathRoots" />
+    </Mapping>
 
-        <Mapping Name="ls__PathRoots" Critical="true">
-          0f b6 81 a6 00 00 00 // movzx   eax, byte ptr [rcx+0A6h]
-          24 fe // and     al, 0FEh
-          24 fd // and     al, 0FDh
-          24 fb // and     al, 0FBh
-          88 81 a6 00 00 00 // mov     [rcx+0A6h], al
-          c7 81 a7 00 00 00 04 00 00 00 // mov     dword ptr [rcx+0A7h], 4
-          48 81 c1 b0 00 00 00 // add     rcx, 0B0h ; '°'; a1
-          @ref1 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:cpath_Roots
-          <Target Type="Indirect" Offset="@ref1" Symbol="ls__PathRoots" />
-        </Mapping>
+    <Mapping Name="App::UpdatePaths">
+      @ref1 e8 ?? ?? ?? ?? // call    App__UpdatePaths
+      @ref2 48 8d 15 ?? ?? ?? ?? // lea     rdx, Locale; Locale
+      33 c9 // xor     ecx, ecx; Category
+      @ref3 ff 15 ?? ?? ?? ?? // call    cs:_wsetlocale
+      b9 fc ff ff ff // mov     ecx, 0FFFFFFFCh; CodePage
+      @ref4 ff 15 ?? ?? ?? ?? // call    cs:_setmbcp
+      @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, str_C; "C"
+      b9 04 00 00 00 // mov     ecx, 4; Category
+      <Condition Type="String" Offset="@str1" Value="C" />
+      <Target Type="Indirect" Offset="@ref1" Symbol="App__UpdatePaths" />
+    </Mapping>
 
-        <Mapping Name="App::UpdatePaths">
-          @ref1 e8 ?? ?? ?? ?? // call    App__UpdatePaths
-          @ref2 48 8d 15 ?? ?? ?? ?? // lea     rdx, Locale; Locale
-          33 c9 // xor     ecx, ecx; Category
-          @ref3 ff 15 ?? ?? ?? ?? // call    cs:_wsetlocale
-          b9 fc ff ff ff // mov     ecx, 0FFFFFFFCh; CodePage
-          @ref4 ff 15 ?? ?? ?? ?? // call    cs:_setmbcp
-          @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, str_C; "C"
-          b9 04 00 00 00 // mov     ecx, 4; Category
-          <Condition Type="String" Offset="@str1" Value="C" />
-          <Target Type="Indirect" Offset="@ref1" Symbol="App__UpdatePaths" />
-        </Mapping>
+    <!-- Sig: reference to strings "gr2", "lsm" -->
+    <Mapping Name="EoCServer2/EoCClient2" Critical="true">
+      48 89 44 24 58 // mov     [rsp+78h+var_20], rax
+      0f b7 f2 // movzx   esi, dx
+      48 8b e9 // mov     rbp, rcx
+      45 33 ff // xor     r15d, r15d
+      @ref1 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:ecl__gEocClient
+      4c 8b b0 98 00 00 00 // mov     r14, [rax+98h]
+      @ref2 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:ls__gGlobalSwitches
+      44 38 b8 ee 00 00 00 // cmp     [rax+0EEh], r15b
+      75 7e // jnz     short loc_1405629BC
+      @ref3 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:esv__gEocServer
+      48 8b b8 a8 00 00 00 // mov     rdi, [rax+0A8h]
+      48 8b 4f 20 // mov     rcx, [rdi+20h]
+      <Target Type="Indirect" Offset="@ref1" Symbol="ecl__EoCClient" />
+      <Target Type="Indirect" Offset="@ref2" Symbol="ls__GlobalSwitches" />
+      <Target Type="Indirect" Offset="@ref3" Symbol="esv__EoCServer" />
+    </Mapping>
 
-        <!-- Sig: reference to strings "gr2", "lsm" -->
-        <Mapping Name="EoCServer2/EoCClient2" Critical="true">
-          @ref1 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:ls__gGlobalSwitches
-          83 b8 8c 07 00 00 02 // cmp     dword ptr [rax+78Ch], 2
-          74 0f // jz      short loc_1404F9525
-          48 8b d3 // mov     rdx, rbx
-          @ref2 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:esv__gEocServer
-          e8 ?? ?? ?? ?? // call    sub_1406D3DB0
-          @ref3 48 8b 3d ?? ?? ?? ?? // mov     rdi, cs:ecl__gEoCClient
-          48 8b d3 // mov     rdx, rbx
-          48 8b 8f 98 00 00 00 // mov     rcx, [rdi+98h]
-          e8 ?? ?? ?? ?? // call    sub_1427A2EB0
-          48 8b d3 // mov     rdx, rbx
-          48 8b 8f 98 01 00 00 // mov     rcx, [rdi+198h]
-          @ref4 e8 ?? ?? ?? ?? // call    ecs__EntityWorld__PreUpdate
-          48 8b d3 // mov     rdx, rbx
-          48 8b 8f 90 00 00 00 // mov     rcx, [rdi+90h]
-          @ref5 e8 ?? ?? ?? ?? // call    ecl__GameStateMachine__Update
-          48 8b d3 // mov     rdx, rbx
-          48 8b 8f 98 01 00 00 // mov     rcx, [rdi+198h]
-          @ref6 e8 ?? ?? ?? ?? // call    ecs__EntityWorld__Update
-          <Target Type="Indirect" Offset="@ref1" Symbol="ls__GlobalSwitches" />
-          <Target Type="Indirect" Offset="@ref2" Symbol="esv__EoCServer" />
-          <Target Type="Indirect" Offset="@ref3" Symbol="ecl__EoCClient" />
-          <Target Type="Indirect" Offset="@ref5" Symbol="ecl__GameStateMachine__Update" />
-          <Target Type="Indirect" Offset="@ref6" Symbol="ecs__EntityWorld__Update" />
-        </Mapping>
+    <!-- Sig: reference to strings "gr2", "lsm" -->
+    <Mapping Name="EoCServerUpdateProcs" Critical="true">
+      @ref1 48 8b 3d ?? ?? ?? ?? // mov     rdi, cs:ecl__gEocClient
+      48 8b d3 // mov     rdx, rbx
+      48 8b 8f 98 00 00 00 // mov     rcx, [rdi+98h]
+      e8 ?? ?? ?? ?? // call    sub_141668CD0
+      48 8b d3 // mov     rdx, rbx
+      48 8b 8f 90 01 00 00 // mov     rcx, [rdi+190h]
+      @ref2 e8 ?? ?? ?? ?? // call    ecs__EntityWorld__PreUpdate
+      48 8b d3 // mov     rdx, rbx
+      48 8b 8f 90 00 00 00 // mov     rcx, [rdi+90h]
+      @ref3 e8 ?? ?? ?? ?? // call    ecl__GameStateMachine__Update
+      48 8b d3 // mov     rdx, rbx
+      48 8b 8f 90 01 00 00 // mov     rcx, [rdi+190h]
+      @ref4 e8 ?? ?? ?? ?? // call    ecs__EntityWorld__PostUpdate
+      48 8b 8f a8 00 00 00 // mov     rcx, [rdi+0A8h]
+      48 85 c9 // test    rcx, rcx
+      74 0c // jz      short loc_140520D46
+      48 8b 01 // mov     rax, [rcx]
+      48 8b d3 // mov     rdx, rbx
+      ff 90 f0 00 00 00 // call    qword ptr [rax+0F0h]
+      <Target Type="Indirect" Offset="@ref3" Symbol="ecl__GameStateMachine__Update" />
+      <Target Type="Indirect" Offset="@ref4" Symbol="ecs__EntityWorld__Update" />
+    </Mapping>
 
-        <Mapping Name="ecs__EntityWorld__FlushECBs">
-          48 83 be 00 03 00 00 00 // cmp     qword ptr [rsi+300h], 0
-          74 08 // jz      short loc_143693C93
-          48 8b ce // mov     rcx, rsi
-          @ref1 e8 ?? ?? ?? ?? // call    ecs__EntityWorld__FlushECBs
-          48 8b 5e 30 // mov     rbx, [rsi+30h]
-          8b 46 3c // mov     eax, [rsi+3Ch]
-          48 69 f8 f8 00 00 00 // imul    rdi, rax, 0F8h ; 'ø'
-          48 03 fb // add     rdi, rbx
-          48 3b df // cmp     rbx, rdi
-          <Target Type="Indirect" Offset="@ref1" Symbol="ecs__EntityWorld__FlushECBs" />
-        </Mapping>
+    <Mapping Name="ecs__EntityWorld__FlushECBs">
+      48 83 be 00 03 00 00 00 // cmp     qword ptr [rsi+300h], 0
+      74 08 // jz      short loc_143693C93
+      48 8b ce // mov     rcx, rsi
+      @ref1 e8 ?? ?? ?? ?? // call    ecs__EntityWorld__FlushECBs
+      48 8b 5e 30 // mov     rbx, [rsi+30h]
+      8b 46 3c // mov     eax, [rsi+3Ch]
+      48 69 f8 f8 00 00 00 // imul    rdi, rax, 0F8h ; 'ø'
+      48 03 fb // add     rdi, rbx
+      48 3b df // cmp     rbx, rdi
+      <Target Type="Indirect" Offset="@ref1" Symbol="ecs__EntityWorld__FlushECBs" />
+    </Mapping>
 
-        <!-- Sig: reference to string "MoveController" -->
-        <Mapping Name="ls__gTranslatedStringRepository" Critical="true">
-          40 53 // push    rbx
-          48 83 ec 40 // sub     rsp, 40h
-          @ref1 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:ls__gTranslatedStringRepository
-          @str1 48 8d 05 ?? ?? ?? ?? // lea     rax, aMovecontroller; "MoveController"
-          4c 8d 44 24 28 // lea     r8, [rsp+48h+var_20]
-          <Condition Type="String" Offset="@str1" Value="MoveController" />
-          <Target Type="Indirect" Offset="@ref1" Symbol="ls__gTranslatedStringRepository" />
-        </Mapping>
+    <!-- Sig: reference to string "MoveController" -->
+    <Mapping Name="ls__gTranslatedStringRepository" Critical="true">
+      40 53 // push    rbx
+      48 83 ec 40 // sub     rsp, 40h
+      @ref1 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:ls__gTranslatedStringRepository
+      @str1 48 8d 05 ?? ?? ?? ?? // lea     rax, aMovecontroller; "MoveController"
+      4c 8d 44 24 28 // lea     r8, [rsp+48h+var_20]
+      <Condition Type="String" Offset="@str1" Value="MoveController" />
+      <Target Type="Indirect" Offset="@ref1" Symbol="ls__gTranslatedStringRepository" />
+    </Mapping>
 
-        <Mapping Name="ecl::EoCClient::HandleError" Critical="true">
-          41 b0 01 // mov     r8b, 1
-          48 8d 54 24 60 // lea     rdx, [rsp+3A0h+var_340]
-          48 8b cf // mov     rcx, rdi
-          @ref1 e8 ?? ?? ?? ?? // call    ecl__EocClient__HandleError
-          90 // nop
-          48 8d 4c 24 38 // lea     rcx, [rsp+3A0h+var_368]
-          e9 e6 01 00 00 // jmp     loc_1428032B1
-          48 c7 44 24 38 05 00 00 00 // mov     [rsp+3A0h+var_368], 5
-          44 8b c8 // mov     r9d, eax
-          @str1 4c 8d 05 ?? ?? ?? ?? // lea     r8, a4x; "%.4x"
-          <Condition Type="String" Offset="@str1" Value="%.4x" />
-          <Target Type="Indirect" Offset="@ref1" Symbol="ecl__EoCClient__HandleError" />
-        </Mapping>
+    <Mapping Name="ecl::EoCClient::HandleError">
+      41 b0 01 // mov     r8b, 1
+      48 8d 54 24 48 // lea     rdx, [rsp+3B0h+var_368]
+      48 8b cf // mov     rcx, rdi
+      @ref1 e8 ?? ?? ?? ?? // call    ecl__EocClient__HandleError
+      90 // nop
+      48 8d 4c 24 38 // lea     rcx, [rsp+3B0h+var_378]
+      e9 3e 01 00 00 // jmp     loc_1416CFC8B
+      48 c7 44 24 38 05 00 00 00 // mov     [rsp+3B0h+var_378], 5
+      44 8b c8 // mov     r9d, eax
+      @str1 4c 8d 05 ?? ?? ?? ?? // lea     r8, a4x; "%.4x"
+      <Condition Type="String" Offset="@str1" Value="%.4x" />
+      <Target Type="Indirect" Offset="@ref1" Symbol="ecl__EoCClient__HandleError" />
+    </Mapping>
 
-        <Mapping Name="ecl__gGameStateEventManager" Critical="true">
-          @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, aClientStateSwa; "CLIENT STATE SWAP - from: %s, to: %s"
-          48 8d 4c 24 38 // lea     rcx, [rsp+3B0h+var_378]
-          e8 ?? ?? ?? ?? // call    sub_1438650C0
-          45 84 f6 // test    r14b, r14b
-          74 00 // jz      short $+2
-          44 89 6d b0 // mov     dword ptr [rbp+2B0h+var_300], r13d
-          8b 47 08 // mov     eax, [rdi+8]
-          89 45 b4 // mov     dword ptr [rbp+2B0h+var_300+4], eax
-          @ref2 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:ecl__gGameStateEventManager
-          <Condition Type="String" Offset="@str1" Value="CLIENT STATE SWAP - from: %s, to: %s" />
-          <Target Type="Indirect" Offset="@ref2" Symbol="ecl__gGameStateEventManager" />
-        </Mapping>
+    <Mapping Name="ecl__gGameStateEventManager" Critical="true">
+      @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, aClientStateSwa; "CLIENT STATE SWAP - from: %s, to: %s"
+      48 8d 4c 24 38 // lea     rcx, [rsp+3B0h+var_378]
+      e8 ?? ?? ?? ?? // call    sub_1438650C0
+      45 84 f6 // test    r14b, r14b
+      74 00 // jz      short $+2
+      44 89 6d b0 // mov     dword ptr [rbp+2B0h+var_300], r13d
+      8b 47 08 // mov     eax, [rdi+8]
+      89 45 b4 // mov     dword ptr [rbp+2B0h+var_300+4], eax
+      @ref2 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:ecl__gGameStateEventManager
+      <Condition Type="String" Offset="@str1" Value="CLIENT STATE SWAP - from: %s, to: %s" />
+      <Target Type="Indirect" Offset="@ref2" Symbol="ecl__gGameStateEventManager" />
+    </Mapping>
 
-        <Mapping Name="esv__gGameStateEventManager" Critical="true">
-          @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, aServerStateSwa; "SERVER STATE SWAP - from: %s, to: %s\n"
-          48 8d 4c 24 30 // lea     rcx, [rsp+98h+var_68]
-          e8 ?? ?? ?? ?? // call    sub_1438650C0
-          40 84 ed // test    bpl, bpl
-          74 00 // jz      short $+2
-          44 89 a4 24 a0 00 00 00 // mov     [rsp+98h+arg_0], r12d
-          8b 47 10 // mov     eax, [rdi+10h]
-          89 84 24 a4 00 00 00 // mov     [rsp+98h+arg_4], eax
-          @ref2 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:esv__gGameStateEventManager
-          <Condition Type="String" Offset="@str1" Value="SERVER STATE SWAP - from: %s, to: %s&#10;" />
-          <Target Type="Indirect" Offset="@ref2" Symbol="esv__gGameStateEventManager" />
-        </Mapping>
+    <Mapping Name="esv__gGameStateEventManager" Critical="true">
+      @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, aServerStateSwa; "SERVER STATE SWAP - from: %s, to: %s\n"
+      48 8d 4c 24 30 // lea     rcx, [rsp+98h+var_68]
+      e8 ?? ?? ?? ?? // call    sub_1438650C0
+      40 84 ed // test    bpl, bpl
+      74 00 // jz      short $+2
+      44 89 a4 24 a0 00 00 00 // mov     [rsp+98h+arg_0], r12d
+      8b 47 10 // mov     eax, [rdi+10h]
+      89 84 24 a4 00 00 00 // mov     [rsp+98h+arg_4], eax
+      @ref2 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:esv__gGameStateEventManager
+      <Condition Type="String" Offset="@str1" Value="SERVER STATE SWAP - from: %s, to: %s&#10;" />
+      <Target Type="Indirect" Offset="@ref2" Symbol="esv__gGameStateEventManager" />
+    </Mapping>
 
-        <Mapping Name="esv::GameStateMachine::Update" Critical="true">
-          48 89 03 // mov     [rbx], rax
-          48 8b d3 // mov     rdx, rbx
-          48 8b ce // mov     rcx, rsi
-          e8 ?? ?? ?? ?? // call    esv__GameStateMachine__SetTargetState
-          48 8d 15 ?? ?? ?? ?? // lea     rdx, unk_145C9A298
-          48 8b 8f a0 00 00 00 // mov     rcx, [rdi+0A0h]
-          @ref3 e8 ?? ?? ?? ?? // call    esv__GameStateMachine__Update
-          8b 05 ?? ?? ?? ?? // mov     eax, cs:ls__AnimationBlueprintSystemID
-          48 69 d0 f8 00 00 00 // imul    rdx, rax, 0F8h
-          <Target Type="Indirect" Offset="@ref3" Symbol="esv__GameStateMachine__Update" />
-        </Mapping>
+    <Mapping Name="esv::GameStateMachine::Update" Critical="true">
+      48 89 03 // mov     [rbx], rax
+      48 8b d3 // mov     rdx, rbx
+      48 8b ce // mov     rcx, rsi
+      e8 ?? ?? ?? ?? // call    esv__GameStateMachine__SetTargetState
+      48 8d 15 ?? ?? ?? ?? // lea     rdx, unk_145C9A298
+      48 8b 8f a0 00 00 00 // mov     rcx, [rdi+0A0h]
+      @ref3 e8 ?? ?? ?? ?? // call    esv__GameStateMachine__Update
+      8b 05 ?? ?? ?? ?? // mov     eax, cs:ls__AnimationBlueprintSystemID
+      48 69 d0 f8 00 00 00 // imul    rdx, rax, 0F8h
+      <Target Type="Indirect" Offset="@ref3" Symbol="esv__GameStateMachine__Update" />
+    </Mapping>
 
-        <Mapping Name="App::LoadGraphicSettings" Critical="true">
-          48 89 5c 24 10 // mov     [rsp+arg_8], rbx
-          57 // push    rdi
-          48 83 ec 60 // sub     rsp, 60h
-          48 8b 05 ?? ?? ?? ?? // mov     rax, cs:__security_cookie
-          48 33 c4 // xor     rax, rsp
-          48 89 44 24 58 // mov     [rsp+68h+var_10], rax
-          48 8b f9 // mov     rdi, rcx
-          ba 04 00 00 00 // mov     edx, 4
-          @str1 4c 8d 05 ?? ?? ?? ?? // lea     r8, aGraphicsetting_0; "graphicSettings.lsx"
-          <Condition Type="String" Offset="@str1" Value="graphicSettings.lsx" />
-          <Target Type="Absolute" Offset="0" Symbol="App__LoadGraphicSettings" />
-        </Mapping>
+    <Mapping Name="App::LoadGraphicSettings" Critical="true">
+      48 89 5c 24 10 // mov     [rsp+arg_8], rbx
+      57 // push    rdi
+      48 83 ec 60 // sub     rsp, 60h
+      48 8b 05 ?? ?? ?? ?? // mov     rax, cs:__security_cookie
+      48 33 c4 // xor     rax, rsp
+      48 89 44 24 58 // mov     [rsp+68h+var_10], rax
+      48 8b f9 // mov     rdi, rcx
+      ba 04 00 00 00 // mov     edx, 4
+      @str1 4c 8d 05 ?? ?? ?? ?? // lea     r8, aGraphicsetting_0; "graphicSettings.lsx"
+      <Condition Type="String" Offset="@str1" Value="graphicSettings.lsx" />
+      <Target Type="Absolute" Offset="0" Symbol="App__LoadGraphicSettings" />
+    </Mapping>
 
-        <!-- Sig: Ref to esv::platform::MovementSystemID -->
-        <Mapping Name="esv::GameStateThreaded::GameStateWorker::DoWork" Critical="true">
-          48 8b c4 // mov     rax, rsp
-          48 89 58 10 // mov     [rax+10h], rbx
-          48 89 70 18 // mov     [rax+18h], rsi
-          55 // push    rbp
-          57 // push    rdi
-          41 55 // push    r13
-          41 56 // push    r14
-          41 57 // push    r15
-          48 8d 68 98 // lea     rbp, [rax-68h]
-          48 81 ec 40 01 00 00 // sub     rsp, 140h
-          0f 29 70 c8 // movaps  xmmword ptr [rax-38h], xmm6
-          0f 29 78 b8 // movaps  xmmword ptr [rax-48h], xmm7
-          48 8b f1 // mov     rsi, rcx
-          48 8b 99 e8 00 00 00 // mov     rbx, [rcx+0E8h]
-          @ref1 ff 15 ?? ?? ?? ?? // call    cs:GetCurrentThreadId
-          <Target Type="Absolute" Offset="0" Symbol="esv__GameStateThreaded__GameStateWorker__DoWork" />
-        </Mapping>
+    <!-- Sig: Ref to esv::platform::MovementSystemID -->
+    <Mapping Name="esv::GameStateThreaded::GameStateWorker::DoWork" Critical="true">
+      48 8b c4 // mov     rax, rsp
+      55 // push    rbp
+      53 // push    rbx
+      56 // push    rsi
+      57 // push    rdi
+      41 54 // push    r12
+      41 56 // push    r14
+      41 57 // push    r15
+      48 8d a8 88 fb ff ff // lea     rbp, [rax-478h]
+      48 81 ec 40 05 00 00 // sub     rsp, 540h
+      0f 29 70 b8 // movaps  xmmword ptr [rax-48h], xmm6
+      0f 29 78 a8 // movaps  xmmword ptr [rax-58h], xmm7
+      48 8b f1 // mov     rsi, rcx
+      48 8b 99 e8 00 00 00 // mov     rbx, [rcx+0E8h]
+      @ref1 ff 15 ?? ?? ?? ?? // call    cs:GetCurrentThreadId
+      <Target Type="Absolute" Offset="0" Symbol="esv__GameStateThreaded__GameStateWorker__DoWork" />
+    </Mapping>
 
-        <Mapping Name="ecl::GameStateThreaded::GameStateWorker::DoWork" Scope="Custom" Critical="true">
-          48 8b c4 // mov     rax, rsp
-          48 89 70 10 // mov     [rax+10h], rsi
-          48 89 78 18 // mov     [rax+18h], rdi
-          <Target Type="Absolute" Offset="0" Symbol="ecl__GameStateThreaded__GameStateWorker__DoWork" />
-        </Mapping>
+    <Mapping Name="ecl::GameStateThreaded::GameStateWorker::DoWork" Scope="Custom" Critical="true">
+      48 8b c4 // mov     rax, rsp
+      48 89 70 10 // mov     [rax+10h], rsi
+      48 89 78 18 // mov     [rax+18h], rdi
+      <Target Type="Absolute" Offset="0" Symbol="ecl__GameStateThreaded__GameStateWorker__DoWork" />
+    </Mapping>
 
-        <Mapping Name="ecl::GameStateThreaded::GameStateWorker::DoWork - Outer" Critical="true">
-            4C 8D 3D ?? ?? ?? ?? // lea     rbp, aEclGamestateth ; "ecl::GameStateThreaded::GameStateWorker::DoWork"
-            <Condition Type="String" Offset="0" Value="ecl::GameStateThreaded::GameStateWorker::DoWork" />
-            <Target Type="Absolute" Offset="-80" NextSymbol="ecl::GameStateThreaded::GameStateWorker::DoWork" NextSymbolSeekSize="80" />
-        </Mapping>
+    <Mapping Name="ecl::GameStateThreaded::GameStateWorker::DoWork - Outer" Critical="true">
+      4C 8D 3D ?? ?? ?? ?? // lea     rbp, aEclGamestateth ; "ecl::GameStateThreaded::GameStateWorker::DoWork"
+      <Condition Type="String" Offset="0" Value="ecl::GameStateThreaded::GameStateWorker::DoWork" />
+      <Target Type="Absolute" Offset="-80" NextSymbol="ecl::GameStateThreaded::GameStateWorker::DoWork" NextSymbolSeekSize="80" />
+    </Mapping>
 
-        <Mapping Name="ls::ModuleSettings::IsModded" AllowFail="true">
-          48 89 5c 24 08 // mov     [rsp+arg_0], rbx
-          48 89 7c 24 10 // mov     [rsp+arg_8], rdi
-          8b 79 14 // mov     edi, [rcx+14h]
-          33 db // xor     ebx, ebx
-          48 85 ff // test    rdi, rdi
-          @ref 74 4c // jz      short loc_1431B59D0
-          4c 8b 59 08 // mov     r11, [rcx+8]
-          @str 8b 0d ?? ?? ?? ?? // mov     ecx, cs:dword_1459B4F50
-          <Condition Type="FixedString" Offset="@str" Value="991c9c7a-fb80-40cb-8f0d-b92d4e80e9b1" />
-          <Patch Type="Absolute" Offset="@ref">
-            EB 4C
-          </Patch>
-        </Mapping>
+    <Mapping Name="ls::ModuleSettings::IsModded" AllowFail="true">
+      48 89 5c 24 08 // mov     [rsp+arg_0], rbx
+      48 89 7c 24 10 // mov     [rsp+arg_8], rdi
+      8b 79 14 // mov     edi, [rcx+14h]
+      33 db // xor     ebx, ebx
+      48 85 ff // test    rdi, rdi
+      @ref 74 4c // jz      short loc_1431B59D0
+      4c 8b 59 08 // mov     r11, [rcx+8]
+      @str 8b 0d ?? ?? ?? ?? // mov     ecx, cs:dword_1459B4F50
+      <Condition Type="FixedString" Offset="@str" Value="991c9c7a-fb80-40cb-8f0d-b92d4e80e9b1" />
+      <Patch Type="Absolute" Offset="@ref">
+        EB 4C
+      </Patch>
+    </Mapping>
 
-        <Mapping Name="esv::SavegamePostVisit_DisableStoryMerge" AllowFail="true">
-          4c 8d 45 b0 // lea     r8, [rbp+370h+Src]
-          49 8b d6 // mov     rdx, r14
-          49 8b cc // mov     rcx, r12
-          83 bd cc 01 00 00 00 // cmp     [rbp+370h+var_1A4], 0
-          @ref 0f 85 cc 02 00 00 // jnz     loc_1419DDD0B
-          e8 ?? ?? ?? ?? // call    sub_141EAD2D0
-          84 c0 // test    al, al
-          75 64 // jnz     short loc_1419DDAAC
-          @ref1 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:ls__gGlobalSwitches
-          80 b8 b3 00 00 00 00 // cmp     byte ptr [rax+0B3h], 0
-          75 54 // jnz     short loc_1419DDAAC
-          4d 8b 4f 10 // mov     r9, [r15+10h]
-          <Patch Type="Absolute" Offset="@ref">
-            90 90 90 90 90 90
-          </Patch>
-        </Mapping>
-
-        <!--
+    <!--
             Sig: Only caller to eoc::FunctorList::ExecuteType8
             - ExecuteType8 refs fs_Surface_Type
         -->
-      <!--
+    <!--
         <Mapping Name="esv::PassiveSystem::ExecFunctorsBaseCtx">
             <Target Type="Indirect" Offset="15" Symbol="eoc__StatsFunctorSet__ExecuteType1" />
             <Target Type="Indirect" Offset="34" Symbol="eoc__StatsFunctorSet__ExecuteType2" />
@@ -406,187 +400,187 @@
         </Mapping>
         -->
 
-      <!-- Sig: call from DealDamageFunctor::ApplyDamage, near ref to PassiveSystemID -->
-      <Mapping Name="esv::StatsSystem::ThrowDamageEvent">
-        88 44 24 20 // mov     [rsp+0FE0h+a5], al; a5
-        4c 8d 8d 50 09 00 00 // lea     r9, [rbp+0EE0h+damageAmounts]; damageAmounts
-        4c 8d 85 60 05 00 00 // lea     r8, [rbp+0EE0h+var_980]; hit
-        48 8d 95 40 02 00 00 // lea     rdx, [rbp+0EE0h+temp5]; temp5
-        48 8b 4d 50 // mov     rcx, [rbp+0EE0h+rcx0]; rcx0
-        @ref1 e8 ?? ?? ?? ?? // call    esv__StatsSystem__ThrowEntityDamagedEvent
-        80 bd 66 05 00 00 0a // cmp     [rbp+0EE0h+var_980.CauseType], 0Ah
-        0f 84 9f 01 00 00 // jz      loc_1424F4B27
-        83 bd 60 05 00 00 00 // cmp     [rbp+0EE0h+var_980.TotalDamageDone], 0
-        41 0f 9f c4 // setnle  r12b
-        <Target Type="Indirect" Offset="@ref1" Symbol="esv__StatsSystem__ThrowDamageEvent" />
-      </Mapping>
+    <!-- Sig: call from DealDamageFunctor::ApplyDamage, near ref to PassiveSystemID -->
+    <Mapping Name="esv::StatsSystem::ThrowDamageEvent">
+      88 44 24 20 // mov     [rsp+0FE0h+a5], al; a5
+      4c 8d 8d 50 09 00 00 // lea     r9, [rbp+0EE0h+damageAmounts]; damageAmounts
+      4c 8d 85 60 05 00 00 // lea     r8, [rbp+0EE0h+var_980]; hit
+      48 8d 95 40 02 00 00 // lea     rdx, [rbp+0EE0h+temp5]; temp5
+      48 8b 4d 50 // mov     rcx, [rbp+0EE0h+rcx0]; rcx0
+      @ref1 e8 ?? ?? ?? ?? // call    esv__StatsSystem__ThrowEntityDamagedEvent
+      80 bd 66 05 00 00 0a // cmp     [rbp+0EE0h+var_980.CauseType], 0Ah
+      0f 84 9f 01 00 00 // jz      loc_1424F4B27
+      83 bd 60 05 00 00 00 // cmp     [rbp+0EE0h+var_980.TotalDamageDone], 0
+      41 0f 9f c4 // setnle  r12b
+      <Target Type="Indirect" Offset="@ref1" Symbol="esv__StatsSystem__ThrowDamageEvent" />
+    </Mapping>
 
-      <!-- Sig: call from osi::ApplyDamage -->
-        <Mapping Name="eoc::DealDamageFunctor::ApplyDamage">
-          48 8d 4d a0 // lea     rcx, [rbp+50h+var_B0]
-          48 89 4c 24 30 // mov     [rsp+160h+spellId2], rcx; spellId2
-          88 44 24 28 // mov     [rsp+160h+var_138], al; char
-          4c 89 7c 24 20 // mov     [rsp+160h+position], r15; position
-          4d 8b cc // mov     r9, r12; target
-          4d 8b c5 // mov     r8, r13; cause
-          48 8b 7d 80 // mov     rdi, qword ptr [rbp+50h+a2.ID]
-          48 8b d7 // mov     rdx, rdi; functor
-          48 8b 5d 90 // mov     rbx, [rbp+50h+hitResult]
-          48 8b cb // mov     rcx, rbx; hitResult
-          @ref1 e8 ?? ?? ?? ?? // call    esv__ExecuteDamageFunctor
-          90 // nop
-          8b 45 c0 // mov     eax, [rbp+50h+var_B0.baseclass_0.Prototype.ID]
-          83 f8 ff // cmp     eax, 0FFFFFFFFh
-          <Target Type="Indirect" Offset="@ref1" Symbol="stats__DealDamageFunctor__ApplyDamage" />
-        </Mapping>
-      
-        <Mapping Name="App::Instance">
-          @str1 48 8d 0d ?? ?? ?? ?? // lea     rcx, aCreatingApp; "Creating App\n"
-          ff 15 ?? ?? ?? ?? // call    cs:OutputDebugStringA
-          b9 c8 01 00 00 // mov     ecx, 1C8h
-          ff 15 ?? ?? ?? ?? // call    cs:malloc
-          4c 8b e0 // mov     r12, rax
-          @ref1 48 89 05 ?? ?? ?? ?? // mov     cs:ls__gApp2, rax
-          48 8b c8 // mov     rcx, rax
-          @ref2 e8 ?? ?? ?? ?? // call    App__ctor
-          <Condition Type="String" Offset="@str1" Value="Creating App&#10;" />
-          <Target Type="Indirect" Offset="@ref1" Symbol="AppInstance" />
-          <Target Type="Indirect" Offset="@ref2" Symbol="App__Ctor" />
-        </Mapping>
+    <!-- Sig: call from osi::ApplyDamage -->
+    <Mapping Name="eoc::DealDamageFunctor::ApplyDamage">
+      48 8d 4d a0 // lea     rcx, [rbp+50h+var_B0]
+      48 89 4c 24 30 // mov     [rsp+160h+spellId2], rcx; spellId2
+      88 44 24 28 // mov     [rsp+160h+var_138], al; char
+      4c 89 7c 24 20 // mov     [rsp+160h+position], r15; position
+      4d 8b cc // mov     r9, r12; target
+      4d 8b c5 // mov     r8, r13; cause
+      48 8b 7d 80 // mov     rdi, qword ptr [rbp+50h+a2.ID]
+      48 8b d7 // mov     rdx, rdi; functor
+      48 8b 5d 90 // mov     rbx, [rbp+50h+hitResult]
+      48 8b cb // mov     rcx, rbx; hitResult
+      @ref1 e8 ?? ?? ?? ?? // call    esv__ExecuteDamageFunctor
+      90 // nop
+      8b 45 c0 // mov     eax, [rbp+50h+var_B0.baseclass_0.Prototype.ID]
+      83 f8 ff // cmp     eax, 0FFFFFFFFh
+      <Target Type="Indirect" Offset="@ref1" Symbol="stats__DealDamageFunctor__ApplyDamage" />
+    </Mapping>
 
-        <Mapping Name="esv::SavegameManager">
-            <Target Type="Indirect" Offset="18" Symbol="esv__SavegameManager" />
-            48 89 03 // mov     [rbx], rax
-            4C 8B CB // mov     r9, rbx
-            44 8B 05 ?? ?? ?? ?? // mov     r8d, cs:esv__SurfaceActionIndex
-            BA 15 00 00 00 // mov     edx, 15h
-            48 8B 0D ?? ?? ?? ?? // mov     rcx, cs:esv__gSavegameManager
-            E8 ?? ?? ?? ?? // call    esv__SavegameManager__RegisterFactory
-            90 // nop
-        </Mapping>
+    <Mapping Name="App::Instance">
+      @str1 48 8d 0d ?? ?? ?? ?? // lea     rcx, aCreatingApp; "Creating App\n"
+      ff 15 ?? ?? ?? ?? // call    cs:OutputDebugStringA
+      b9 c8 01 00 00 // mov     ecx, 1C8h
+      ff 15 ?? ?? ?? ?? // call    cs:malloc
+      4c 8b e0 // mov     r12, rax
+      @ref1 48 89 05 ?? ?? ?? ?? // mov     cs:ls__gApp2, rax
+      48 8b c8 // mov     rcx, rax
+      @ref2 e8 ?? ?? ?? ?? // call    App__ctor
+      <Condition Type="String" Offset="@str1" Value="Creating App&#10;" />
+      <Target Type="Indirect" Offset="@ref1" Symbol="AppInstance" />
+      <Target Type="Indirect" Offset="@ref2" Symbol="App__Ctor" />
+    </Mapping>
 
-        <Mapping Name="stats::Object::SetPropertyString">
-          49 8b 4f 20 // mov     rcx, [r15+20h]; this
-          @str1 3b 05 ?? ?? ?? ?? // cmp     eax, cs:fs_ComboCategory.ID
-          75 0a // jnz     short loc_140EF9214
-          48 8b d1 // mov     rdx, rcx
-          e8 ?? ?? ?? ?? // call    sub_140EF9600
-          eb 0b // jmp     short loc_140EF921F
-          48 8d 54 24 30 // lea     rdx, [rsp+211E0h+propertyName]; propertyName
-          @ref2 e8 ?? ?? ?? ?? // call    stats__Object__SetPropertyString
-          90 // nop
-          <Condition Type="FixedString" Offset="@str1" Value="ComboCategory" />
-          <Target Type="Indirect" Offset="@ref2" Symbol="stats__Object__SetPropertyString" />
-        </Mapping>
-      
-      <!-- NOTE: Adjust LibraryManager::BindECSContext after changing this -->
-      <Mapping Name="ecs::StaticContextRegistrant" AllowFail="true">
-        @ref1 0f 11 05 ?? ?? ?? ?? // movups  cs:xmmword_145B2D7A0, xmm0
-        48 8d 05 ?? ?? ?? ?? // lea     rax, ls__ComponentIdInitTemp2
-        48 89 05 ?? ?? ?? ?? // mov     cs:qword_145B2D798, rax
-        48 8d 05 ?? ?? ?? ?? // lea     rax, qword_145BB7478
-        48 89 05 ?? ?? ?? ?? // mov     cs:qword_145B2D790, rax
-        48 8b 05 ?? ?? ?? ?? // mov     rax, cs:qword_145BB28B0
-        48 89 05 ?? ?? ?? ?? // mov     cs:qword_145B2D7B0, rax
-        48 8d 05 ?? ?? ?? ?? // lea     rax, qword_145B2D790
-        48 89 05 ?? ?? ?? ?? // mov     cs:qword_145BB28B0, rax
-        48 8b 5c 24 40 // mov     rbx, [rsp+38h+arg_0]
-        48 83 c4 30 // add     rsp, 30h
-        5f // pop     rdi
-        c3 // retn
-        48 8d 0d ?? ?? ?? ?? // lea     rcx, dword_145BB5A70
-        e8 ?? ?? ?? ?? // call    _Init_thread_header
-        83 3d ?? ?? ?? ?? ff // cmp     cs:dword_145BB5A70, 0FFFFFFFFh
-        0f 85 7a ff ff ff // jnz     loc_14002E90A
-        @str1 48 8d 05 ?? ?? ?? ?? // lea     rax, aClassLsStringv_1; "class ls::_StringView...
-        <Target Type="Absolute" Offset="@ref1" EngineCallback="BindECSContext" />
-      </Mapping>
+    <Mapping Name="esv::SavegameManager">
+      <Target Type="Indirect" Offset="18" Symbol="esv__SavegameManager" />
+      48 89 03 // mov     [rbx], rax
+      4C 8B CB // mov     r9, rbx
+      44 8B 05 ?? ?? ?? ?? // mov     r8d, cs:esv__SurfaceActionIndex
+      BA 15 00 00 00 // mov     edx, 15h
+      48 8B 0D ?? ?? ?? ?? // mov     rcx, cs:esv__gSavegameManager
+      E8 ?? ?? ?? ?? // call    esv__SavegameManager__RegisterFactory
+      90 // nop
+    </Mapping>
 
-      <!-- NOTE: Adjust LibraryManager::BindECSIndex after changing this -->
-      <Mapping Name="ecs::StaticIDRegistrant" AllowFail="true">
-        @ref1 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:ecs__EntityWorld__SystemsContext
-        48 89 05 ?? ?? ?? ?? // mov     cs:qword_145B2D018, rax
-        48 8d 05 ?? ?? ?? ?? // lea     rax, qword_145B2D000
-        48 89 05 ?? ?? ?? ?? // mov     cs:ecs__EntityWorld__SystemsContext, rax
-        c7 05 ?? ?? ?? ?? ff ff ff 7f // mov     cs:ls__InstancingSystemID, 7FFFFFFFh
-        48 8b 5c 24 40 // mov     rbx, [rsp+38h+arg_0]
-        48 83 c4 30 // add     rsp, 30h
-        5f // pop     rdi
-        c3 // retn
-        48 8d 0d ?? ?? ?? ?? // lea     rcx, dword_145BB51D0
-        e8 ?? ?? ?? ?? // call    _Init_thread_header
-        83 3d ?? ?? ?? ?? ff // cmp     cs:dword_145BB51D0, 0FFFFFFFFh
-        75 90 // jnz     short loc_14002F0A8
-        @str1 48 8d 05 ?? ?? ?? ?? // lea     rax, aClassLsStringv_7; "class ls::_StringView
-        <Target Type="Absolute" Offset="@ref1" EngineCallback="BindECSIndex" />
-      </Mapping>
+    <Mapping Name="stats::Object::SetPropertyString">
+      49 8b 4f 20 // mov     rcx, [r15+20h]; this
+      @str1 3b 05 ?? ?? ?? ?? // cmp     eax, cs:fs_ComboCategory.ID
+      75 0a // jnz     short loc_140EF9214
+      48 8b d1 // mov     rdx, rcx
+      e8 ?? ?? ?? ?? // call    sub_140EF9600
+      eb 0b // jmp     short loc_140EF921F
+      48 8d 54 24 30 // lea     rdx, [rsp+211E0h+propertyName]; propertyName
+      @ref2 e8 ?? ?? ?? ?? // call    stats__Object__SetPropertyString
+      90 // nop
+      <Condition Type="FixedString" Offset="@str1" Value="ComboCategory" />
+      <Target Type="Indirect" Offset="@ref2" Symbol="stats__Object__SetPropertyString" />
+    </Mapping>
 
-      <!-- NOTE: Adjust LibraryManager::BindECSStaticStringConstructor after changing this -->
-      <Mapping Name="ecs::StaticStringConstructor" AllowFail="true">
-        @ref1 83 3d ?? ?? ?? ?? ff // cmp     cs:dword_145C08178, 0FFFFFFFFh
-        75 c2 // jnz     short loc_141463440
-        48 8d 05 ?? ?? ?? ?? // lea     rax, aClassLsStringv_4229; "class ls::_StringView...
-        48 89 44 24 20 // mov     qword ptr [rsp+38h+var_18], rax
-        c7 44 24 28 ?? ?? 00 00 // mov     dword ptr [rsp+38h+var_18+8], 6Ch ; 'l'
-        0f 28 44 24 20 // movaps  xmm0, [rsp+38h+var_18]
-        66 0f 7f 44 24 20 // movdqa  [rsp+38h+var_18], xmm0
-        48 8d 54 24 20 // lea     rdx, [rsp+38h+var_18]
-        48 8b cb // mov     rcx, rbx; Src
-        e8 ?? ?? ?? ?? // call    ls__ComponentNameFromSymbolName
-        48 8d 0d ?? ?? ?? ?? // lea     rcx, sub_144BF5630; void (__cdecl *)()
-        e8 ?? ?? ?? ?? // call    atexit
-        90 // nop
-        <Target Type="Absolute" Offset="@ref1" EngineCallback="BindECSStaticStringConstructor" />
-      </Mapping>
+    <!-- NOTE: Adjust LibraryManager::BindECSContext after changing this -->
+    <Mapping Name="ecs::StaticContextRegistrant" AllowFail="true">
+      @ref1 0f 11 05 ?? ?? ?? ?? // movups  cs:xmmword_145B2D7A0, xmm0
+      48 8d 05 ?? ?? ?? ?? // lea     rax, ls__ComponentIdInitTemp2
+      48 89 05 ?? ?? ?? ?? // mov     cs:qword_145B2D798, rax
+      48 8d 05 ?? ?? ?? ?? // lea     rax, qword_145BB7478
+      48 89 05 ?? ?? ?? ?? // mov     cs:qword_145B2D790, rax
+      48 8b 05 ?? ?? ?? ?? // mov     rax, cs:qword_145BB28B0
+      48 89 05 ?? ?? ?? ?? // mov     cs:qword_145B2D7B0, rax
+      48 8d 05 ?? ?? ?? ?? // lea     rax, qword_145B2D790
+      48 89 05 ?? ?? ?? ?? // mov     cs:qword_145BB28B0, rax
+      48 8b 5c 24 40 // mov     rbx, [rsp+38h+arg_0]
+      48 83 c4 30 // add     rsp, 30h
+      5f // pop     rdi
+      c3 // retn
+      48 8d 0d ?? ?? ?? ?? // lea     rcx, dword_145BB5A70
+      e8 ?? ?? ?? ?? // call    _Init_thread_header
+      83 3d ?? ?? ?? ?? ff // cmp     cs:dword_145BB5A70, 0FFFFFFFFh
+      0f 85 7a ff ff ff // jnz     loc_14002E90A
+      @str1 48 8d 05 ?? ?? ?? ?? // lea     rax, aClassLsStringv_1; "class ls::_StringView...
+      <Target Type="Absolute" Offset="@ref1" EngineCallback="BindECSContext" />
+    </Mapping>
 
-      <!-- NOTE: Adjust LibraryManager::BindECSStaticRegistrant after changing this -->
-      <Mapping Name="ecs::StaticIDRegistrant2" AllowFail="true">
-        @ref1 48 8d 05 ?? ?? ?? ?? // lea     rax, ls__model__game__inventory__v0__WieldedComponentID2
-        48 8d 4c 24 20 // lea     rcx, [rsp+38h+var_18]
-        48 89 05 ?? ?? ?? ?? // mov     cs:qword_145B6FA28, rax
-        e8 ?? ?? ?? ?? // call    ls__SV__ls__model__game__inventory__v0__WieldedComponent
-        0f 10 00 // movups  xmm0, xmmword ptr [rax]
-        48 8b 05 ?? ?? ?? ?? // mov     rax, cs:ls__model__TypeIdContext
-        48 89 05 ?? ?? ?? ?? // mov     cs:qword_145B6FA40, rax
-        48 8d 05 ?? ?? ?? ?? // lea     rax, qword_145B6FA28
-        48 89 05 ?? ?? ?? ?? // mov     cs:ls__model__TypeIdContext, rax
-        0f 11 05 ?? ?? ?? ?? // movups  cs:xmmword_145B6FA30, xmm0
-        c7 05 ?? ?? ?? ?? ff ff ff 7f // mov     cs:ls__model__game__inventory__v0__WieldedComponentID2, 7FFFFFFFh
-        48 83 c4 38 // add     rsp, 38h
-        c3 // retn
-        <Target Type="Absolute" Offset="@ref1" EngineCallback="BindECSStaticRegistrant" />
-      </Mapping>
+    <!-- NOTE: Adjust LibraryManager::BindECSIndex after changing this -->
+    <Mapping Name="ecs::StaticIDRegistrant" AllowFail="true">
+      @ref1 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:ecs__EntityWorld__SystemsContext
+      48 89 05 ?? ?? ?? ?? // mov     cs:qword_145B2D018, rax
+      48 8d 05 ?? ?? ?? ?? // lea     rax, qword_145B2D000
+      48 89 05 ?? ?? ?? ?? // mov     cs:ecs__EntityWorld__SystemsContext, rax
+      c7 05 ?? ?? ?? ?? ff ff ff 7f // mov     cs:ls__InstancingSystemID, 7FFFFFFFh
+      48 8b 5c 24 40 // mov     rbx, [rsp+38h+arg_0]
+      48 83 c4 30 // add     rsp, 30h
+      5f // pop     rdi
+      c3 // retn
+      48 8d 0d ?? ?? ?? ?? // lea     rcx, dword_145BB51D0
+      e8 ?? ?? ?? ?? // call    _Init_thread_header
+      83 3d ?? ?? ?? ?? ff // cmp     cs:dword_145BB51D0, 0FFFFFFFFh
+      75 90 // jnz     short loc_14002F0A8
+      @str1 48 8d 05 ?? ?? ?? ?? // lea     rax, aClassLsStringv_7; "class ls::_StringView
+      <Target Type="Absolute" Offset="@ref1" EngineCallback="BindECSIndex" />
+    </Mapping>
 
-      <!-- NOTE: Adjust LibraryManager::BindComponentReplicationIDRef after changing this -->
-      <Mapping Name="ecs::ComponentReplicationIDRef" AllowFail="true">
-        @ref1 48 89 05 ?? ?? ?? ?? // mov     cs:ecs__sync__ReplicatedTypeContext, rax
-        c7 05 ?? ?? ?? ?? ff ff ff 7f // mov     cs:eoc__summon__ContainerComponentID, 7FFFFFFFh
-        48 8b 5c 24 40 // mov     rbx, [rsp+38h+arg_0]
-        48 83 c4 30 // add     rsp, 30h
-        5f // pop     rdi
-        c3 // retn
-        48 8d 0d ?? ?? ?? ?? // lea     rcx, dword_145BB9C48
-        @ref3 e8 ?? ?? ?? ?? // call    _Init_thread_header
-        83 3d ?? ?? ?? ?? ff // cmp     cs:dword_145BB9C48, 0FFFFFFFFh
-        75 90 // jnz     short loc_14004DF58
-        @str1 48 8d 05 ?? ?? ?? ?? // lea     rax, aClassLsStringv_309; "class ls::_StringView
-        <Target Type="Absolute" Offset="@ref1" EngineCallback="BindComponentReplicationIDRef" />
-      </Mapping>
+    <!-- NOTE: Adjust LibraryManager::BindECSStaticStringConstructor after changing this -->
+    <Mapping Name="ecs::StaticStringConstructor" AllowFail="true">
+      @ref1 83 3d ?? ?? ?? ?? ff // cmp     cs:dword_145C08178, 0FFFFFFFFh
+      75 c2 // jnz     short loc_141463440
+      48 8d 05 ?? ?? ?? ?? // lea     rax, aClassLsStringv_4229; "class ls::_StringView...
+      48 89 44 24 20 // mov     qword ptr [rsp+38h+var_18], rax
+      c7 44 24 28 ?? ?? 00 00 // mov     dword ptr [rsp+38h+var_18+8], 6Ch ; 'l'
+      0f 28 44 24 20 // movaps  xmm0, [rsp+38h+var_18]
+      66 0f 7f 44 24 20 // movdqa  [rsp+38h+var_18], xmm0
+      48 8d 54 24 20 // lea     rdx, [rsp+38h+var_18]
+      48 8b cb // mov     rcx, rbx; Src
+      e8 ?? ?? ?? ?? // call    ls__ComponentNameFromSymbolName
+      48 8d 0d ?? ?? ?? ?? // lea     rcx, sub_144BF5630; void (__cdecl *)()
+      e8 ?? ?? ?? ?? // call    atexit
+      90 // nop
+      <Target Type="Absolute" Offset="@ref1" EngineCallback="BindECSStaticStringConstructor" />
+    </Mapping>
 
-      <Mapping Name="KillLauncher" AllowFail="true">
-        b9 dc 95 10 00 // mov     ecx, 1095DCh
-        @ref1 ff 15 ?? ?? ?? ?? // call    cs:SteamAPI_RestartAppIfNecessary
-        84 c0 // test    al, al
-        74 09 // jz      short loc_141187B18
-        33 c9 // xor     ecx, ecx; Code
-        @ref2 ff 15 ?? ?? ?? ?? // call    cs:__imp_exit
-        cc // align 8
-        <Patch Type="Absolute" Offset="@ref1">
-          90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
-        </Patch>
-      </Mapping>
+    <!-- NOTE: Adjust LibraryManager::BindECSStaticRegistrant after changing this -->
+    <Mapping Name="ecs::StaticIDRegistrant2" AllowFail="true">
+      @ref1 48 8d 05 ?? ?? ?? ?? // lea     rax, ls__model__game__inventory__v0__WieldedComponentID2
+      48 8d 4c 24 20 // lea     rcx, [rsp+38h+var_18]
+      48 89 05 ?? ?? ?? ?? // mov     cs:qword_145B6FA28, rax
+      e8 ?? ?? ?? ?? // call    ls__SV__ls__model__game__inventory__v0__WieldedComponent
+      0f 10 00 // movups  xmm0, xmmword ptr [rax]
+      48 8b 05 ?? ?? ?? ?? // mov     rax, cs:ls__model__TypeIdContext
+      48 89 05 ?? ?? ?? ?? // mov     cs:qword_145B6FA40, rax
+      48 8d 05 ?? ?? ?? ?? // lea     rax, qword_145B6FA28
+      48 89 05 ?? ?? ?? ?? // mov     cs:ls__model__TypeIdContext, rax
+      0f 11 05 ?? ?? ?? ?? // movups  cs:xmmword_145B6FA30, xmm0
+      c7 05 ?? ?? ?? ?? ff ff ff 7f // mov     cs:ls__model__game__inventory__v0__WieldedComponentID2, 7FFFFFFFh
+      48 83 c4 38 // add     rsp, 38h
+      c3 // retn
+      <Target Type="Absolute" Offset="@ref1" EngineCallback="BindECSStaticRegistrant" />
+    </Mapping>
 
-      <!--
+    <!-- NOTE: Adjust LibraryManager::BindComponentReplicationIDRef after changing this -->
+    <Mapping Name="ecs::ComponentReplicationIDRef" AllowFail="true">
+      @ref1 48 89 05 ?? ?? ?? ?? // mov     cs:ecs__sync__ReplicatedTypeContext, rax
+      c7 05 ?? ?? ?? ?? ff ff ff 7f // mov     cs:eoc__summon__ContainerComponentID, 7FFFFFFFh
+      48 8b 5c 24 40 // mov     rbx, [rsp+38h+arg_0]
+      48 83 c4 30 // add     rsp, 30h
+      5f // pop     rdi
+      c3 // retn
+      48 8d 0d ?? ?? ?? ?? // lea     rcx, dword_145BB9C48
+      @ref3 e8 ?? ?? ?? ?? // call    _Init_thread_header
+      83 3d ?? ?? ?? ?? ff // cmp     cs:dword_145BB9C48, 0FFFFFFFFh
+      75 90 // jnz     short loc_14004DF58
+      @str1 48 8d 05 ?? ?? ?? ?? // lea     rax, aClassLsStringv_309; "class ls::_StringView
+      <Target Type="Absolute" Offset="@ref1" EngineCallback="BindComponentReplicationIDRef" />
+    </Mapping>
+
+    <Mapping Name="KillLauncher" AllowFail="true">
+      b9 dc 95 10 00 // mov     ecx, 1095DCh
+      @ref1 ff 15 ?? ?? ?? ?? // call    cs:SteamAPI_RestartAppIfNecessary
+      84 c0 // test    al, al
+      74 09 // jz      short loc_141187B18
+      33 c9 // xor     ecx, ecx; Code
+      @ref2 ff 15 ?? ?? ?? ?? // call    cs:__imp_exit
+      cc // align 8
+      <Patch Type="Absolute" Offset="@ref1">
+        90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
+      </Patch>
+    </Mapping>
+
+    <!--
 
       <Mapping Name="esv::StatusMachine::CreateStatus">
         <Condition Type="FixedString" Offset="0" Value="STORY_FROZEN" />
@@ -636,7 +630,7 @@
         </Mapping>
         -->
 
-    <Mapping Name="ls::VirtualTextureResource::Transcode">
+    <Mapping Name="ls::VirtualTextureResource::Transcode" AllowFail="true">
       48 89 5c 24 08 // mov     [rsp-8+arg_0], rbx
       55 // push    rbp
       56 // push    rsi
@@ -660,225 +654,231 @@
       <Target Type="Absolute" Offset="0" Symbol="ls__VirtualTextureResource__Transcode" />
     </Mapping>
 
-      <Mapping Name="ls::VirtualTextureResource::Load">
-        48 89 5c 24 10 // mov     [rsp+arg_8], rbx
-        48 89 74 24 18 // mov     [rsp+arg_10], rsi
-        57 // push    rdi
-        48 83 ec 30 // sub     rsp, 30h
-        48 8b b2 a8 00 00 00 // mov     rsi, [rdx+0A8h]
-        48 8b d9 // mov     rbx, rcx
-        c6 44 24 41 00 // mov     byte ptr [rsp+38h+arg_0+1], 0
-        80 7e 08 00 // cmp     byte ptr [rsi+8], 0
-        74 1d // jz      short loc_143453F81
-        48 8d 54 24 20 // lea     rdx, [rsp+38h+a2]; a2
-        48 83 c1 40 // add     rcx, 40h ; '@'; a1
-        e8 ?? ?? ?? ?? // call    ls__FixedString__ToString
-        c6 44 24 41 01 // mov     byte ptr [rsp+38h+arg_0+1], 1
-        48 8b 10 // mov     rdx, [rax]
-        0f b6 02 // movzx   eax, byte ptr [rdx]
-        88 44 24 40 // mov     byte ptr [rsp+38h+arg_0], al
-        <Target Type="Absolute" Offset="0" Symbol="ls__VirtualTextureResource__Load" />
-      </Mapping>
+    <Mapping Name="ls::VirtualTextureResource::Load" AllowFail="true">
+      48 89 5c 24 10 // mov     [rsp+arg_8], rbx
+      48 89 74 24 18 // mov     [rsp+arg_10], rsi
+      57 // push    rdi
+      48 83 ec 30 // sub     rsp, 30h
+      48 8b b2 a8 00 00 00 // mov     rsi, [rdx+0A8h]
+      48 8b d9 // mov     rbx, rcx
+      c6 44 24 41 00 // mov     byte ptr [rsp+38h+arg_0+1], 0
+      80 7e 08 00 // cmp     byte ptr [rsi+8], 0
+      74 1d // jz      short loc_143453F81
+      48 8d 54 24 20 // lea     rdx, [rsp+38h+a2]; a2
+      48 83 c1 40 // add     rcx, 40h ; '@'; a1
+      e8 ?? ?? ?? ?? // call    ls__FixedString__ToString
+      c6 44 24 41 01 // mov     byte ptr [rsp+38h+arg_0+1], 1
+      48 8b 10 // mov     rdx, [rax]
+      0f b6 02 // movzx   eax, byte ptr [rdx]
+      88 44 24 40 // mov     byte ptr [rsp+38h+arg_0], al
+      <Target Type="Absolute" Offset="0" Symbol="ls__VirtualTextureResource__Load" />
+    </Mapping>
 
-      <Mapping Name="ls::VirtualTextureResource::Unload">
-        48 89 5c 24 08 // mov     [rsp+arg_0], rbx
-        48 89 74 24 10 // mov     [rsp+arg_8], rsi
-        57 // push    rdi
-        48 83 ec 20 // sub     rsp, 20h
-        4c 8b 41 48 // mov     r8, [rcx+48h]
-        48 8b d9 // mov     rbx, rcx
-        48 8b b2 a8 00 00 00 // mov     rsi, [rdx+0A8h]
-        4d 85 c0 // test    r8, r8
-        74 14 // jz      short loc_143454036
-        8b 51 30 // mov     edx, [rcx+30h]
-        48 8b ce // mov     rcx, rsi
-        48 8b 06 // mov     rax, [rsi]
-        ff 50 48 // call    qword ptr [rax+48h]
-        48 c7 43 48 00 00 00 00 // mov     qword ptr [rbx+48h], 0
-        44 0f b6 4b 3c // movzx   r9d, byte ptr [rbx+3Ch]
-        <Target Type="Absolute" Offset="0" Symbol="ls__VirtualTextureResource__Unload" />
-      </Mapping>
+    <Mapping Name="ls::VirtualTextureResource::Unload" AllowFail="true">
+      48 89 5c 24 08 // mov     [rsp+arg_0], rbx
+      48 89 74 24 10 // mov     [rsp+arg_8], rsi
+      57 // push    rdi
+      48 83 ec 20 // sub     rsp, 20h
+      4c 8b 41 48 // mov     r8, [rcx+48h]
+      48 8b d9 // mov     rbx, rcx
+      48 8b b2 a8 00 00 00 // mov     rsi, [rdx+0A8h]
+      4d 85 c0 // test    r8, r8
+      74 14 // jz      short loc_143454036
+      8b 51 30 // mov     edx, [rcx+30h]
+      48 8b ce // mov     rcx, rsi
+      48 8b 06 // mov     rax, [rsi]
+      ff 50 48 // call    qword ptr [rax+48h]
+      48 c7 43 48 00 00 00 00 // mov     qword ptr [rbx+48h], 0
+      44 0f b6 4b 3c // movzx   r9d, byte ptr [rbx+3Ch]
+      <Target Type="Absolute" Offset="0" Symbol="ls__VirtualTextureResource__Unload" />
+    </Mapping>
 
-      <Mapping Name="ls::AppliedMaterial::LoadTexture">
-        48 89 5c 24 10              // mov qword ptr ss:[rsp+10],rbx                                                                             |
-        48 89 4c 24 08              // mov qword ptr ss:[rsp+8],rcx                                                                              | rcx:__wine_unixlib_handle+930
-        57                          // push rdi                                                                                                  |
-        48 83 ec 40                 // sub rsp,40                                                                                                |
-        65 48 8b 04 25 58 00 00 00  // mov rax,qword ptr gs:[58]                                                                                 |
-        48 8b 3d ?? ?? ?? ??        // mov rdi,qword ptr ds:[ls__gGlobalResourceManager]                                                                          |
-        41 b8 d8 05 00 00           // mov r8d,5D8                                                                                               |
-        <Target Type="Absolute" Offset="0" Symbol="ls__AppliedMaterial__LoadTexture" />
-      </Mapping>
+    <Mapping Name="ls::AppliedMaterial::LoadTexture">
+      48 89 5c 24 10              // mov qword ptr ss:[rsp+10],rbx                                                                             |
+      48 89 4c 24 08              // mov qword ptr ss:[rsp+8],rcx                                                                              | rcx:__wine_unixlib_handle+930
+      57                          // push rdi                                                                                                  |
+      48 83 ec 40                 // sub rsp,40                                                                                                |
+      65 48 8b 04 25 58 00 00 00  // mov rax,qword ptr gs:[58]                                                                                 |
+      48 8b 3d ?? ?? ?? ??        // mov rdi,qword ptr ds:[ls__gGlobalResourceManager]                                                                          |
+      41 b8 d8 05 00 00           // mov r8d,5D8                                                                                               |
+      <Target Type="Absolute" Offset="0" Symbol="ls__AppliedMaterial__LoadTexture" />
+    </Mapping>
 
-      <Mapping Name="ls::TextureManager::UnloadTexture">
-        40 53                 // push rbx                                                                                                  |
-        57                    // push rdi                                                                                                  |
-        41 56                 // push r14                                                                                                  |
-        41 57                 // push r15                                                                                                  |
-        48 83 EC 58           // sub rsp,58                                                                                                |
-        48 8B 05 ?? ?? ?? ??  // mov rax,qword ptr ds:[__security_cookie]                                                                          |
-        48 33 C4              // xor rax,rsp                                                                                               |
-        48 89 44 24 40        // mov qword ptr ss:[rsp+40],rax                                                                             |
-        <Target Type="Absolute" Offset="0" Symbol="ls__TextureManager__UnloadTexture" />
-      </Mapping>
+    <Mapping Name="ls::TextureManager::UnloadTexture">
+      40 53                 // push rbx                                                                                                  |
+      57                    // push rdi                                                                                                  |
+      41 56                 // push r14                                                                                                  |
+      41 57                 // push r15                                                                                                  |
+      48 83 EC 58           // sub rsp,58                                                                                                |
+      48 8B 05 ?? ?? ?? ??  // mov rax,qword ptr ds:[__security_cookie]                                                                          |
+      48 33 C4              // xor rax,rsp                                                                                               |
+      48 89 44 24 40        // mov qword ptr ss:[rsp+40],rax                                                                             |
+      <Target Type="Absolute" Offset="0" Symbol="ls__TextureManager__UnloadTexture" />
+    </Mapping>
 
-      <Mapping Name="eoc::gResourceManager">
-        4c 8b 1c 0a // mov     r11, [rdx+rcx]
-        4c 8b d5 // mov     r10, rbp
-        @ref1 4c 8b 0d ?? ?? ?? ?? // mov     r9, cs:ls__gGlobalResourceManager
-        33 d2 // xor     edx, edx
-        @str1 8b 0d ?? ?? ?? ?? // mov     ecx, cs:fs_lsbs.ID
-        8b c1 // mov     eax, ecx
-        <Condition Type="FixedString" Offset="@str1" Value="lsbs" />
-        <Target Type="Indirect" Offset="@ref1" Symbol="ls__gGlobalResourceManager" />
-      </Mapping>
+    <Mapping Name="eoc::gResourceManager">
+      4c 8b 1c 0a // mov     r11, [rdx+rcx]
+      4c 8b d5 // mov     r10, rbp
+      @ref1 4c 8b 0d ?? ?? ?? ?? // mov     r9, cs:ls__gGlobalResourceManager
+      33 d2 // xor     edx, edx
+      @str1 8b 0d ?? ?? ?? ?? // mov     ecx, cs:fs_lsbs.ID
+      8b c1 // mov     eax, ecx
+      <Condition Type="FixedString" Offset="@str1" Value="lsbs" />
+      <Target Type="Indirect" Offset="@ref1" Symbol="ls__gGlobalResourceManager" />
+    </Mapping>
 
-      <Mapping Name="eoc::gGuidResourceManager">
-        48 83 ec 20 // sub     rsp, 20h
-        @ref1 48 8b 3d ?? ?? ?? ?? // mov     rdi, cs:ls__gGuidResourceManager
-        48 8b f1 // mov     rsi, rcx
-        48 8b cf // mov     rcx, rdi
-        e8 ?? ?? ?? ?? // call    sub_140EC42E0
-        4c 8b d0 // mov     r10, rax
-        4c 8d 0d ?? ?? ?? ?? // lea     r9, xmmword_145B288E0
-        44 8b 98 ac 00 00 00 // mov     r11d, [rax+0ACh]
-        45 85 db // test    r11d, r11d
-        74 3c // jz      short loc_140EDF433
-        @str1 44 8b 05 ?? ?? ?? ?? // mov     r8d, cs:fs_MALE.ID
-        <Target Type="Indirect" Offset="@ref1" Symbol="eoc__gGuidResourceManager" />
-        <Condition Type="FixedString" Offset="@str1" Value="MALE" />
-      </Mapping>
+    <Mapping Name="eoc::gGuidResourceManager">
+      48 83 ec 20 // sub     rsp, 20h
+      @ref1 48 8b 3d ?? ?? ?? ?? // mov     rdi, cs:ls__gGuidResourceManager
+      48 8b f1 // mov     rsi, rcx
+      48 8b cf // mov     rcx, rdi
+      e8 ?? ?? ?? ?? // call    sub_140EC42E0
+      4c 8b d0 // mov     r10, rax
+      4c 8d 0d ?? ?? ?? ?? // lea     r9, xmmword_145B288E0
+      44 8b 98 ac 00 00 00 // mov     r11d, [rax+0ACh]
+      45 85 db // test    r11d, r11d
+      74 3c // jz      short loc_140EDF433
+      @str1 44 8b 05 ?? ?? ?? ?? // mov     r8d, cs:fs_MALE.ID
+      <Target Type="Indirect" Offset="@ref1" Symbol="eoc__gGuidResourceManager" />
+      <Condition Type="FixedString" Offset="@str1" Value="MALE" />
+    </Mapping>
 
-      <Mapping Name="esv::LevelManager">
-        48 89 54 24 40 // mov     qword ptr [rsp+0D8h+a2.ID], rdx
-        49 8b 0c 24 // mov     rcx, [r12]
-        e8 ?? ?? ?? ?? // call    sub_140A7A5F0
-        @ref1 4c 8b 15 ?? ?? ?? ?? // mov     r10, cs:esv__gLevelManager
-        48 8d 50 0c // lea     rdx, [rax+0Ch]
-        c6 44 24 28 01 // mov     [rsp+0D8h+var_B0], 1
-        4c 89 54 24 20 // mov     [rsp+0D8h+var_B8], r10
-        @ref2 4c 8b 0d ?? ?? ?? ?? // mov     r9, cs:esv__gLocalTemplateManager
-        @ref3 4c 8b 05 ?? ?? ?? ?? // mov     r8, cs:esv__gGlobalTemplateManager
-        0f b6 48 08 // movzx   ecx, byte ptr [rax+8]
-        @ref4 e8 ?? ?? ?? ?? // call    esv__DoResolveRootTemplate
-        48 8b f8 // mov     rdi, rax
-        c7 44 24 74 ff ff ff ff // mov     [rsp+0D8h+var_64], 0FFFFFFFFh
-        <Target Type="Indirect" Offset="@ref1" Symbol="esv__LevelManager" />
-        <Target Type="Indirect" Offset="@ref2" Symbol="esv__CacheTemplateManager" />
-        <Target Type="Indirect" Offset="@ref3" Symbol="ls__GlobalTemplateManager" />
-      </Mapping>
+    <Mapping Name="esv::LevelManager">
+      48 89 54 24 40 // mov     qword ptr [rsp+0D8h+a2.ID], rdx
+      49 8b 0c 24 // mov     rcx, [r12]
+      e8 ?? ?? ?? ?? // call    sub_140A7A5F0
+      @ref1 4c 8b 15 ?? ?? ?? ?? // mov     r10, cs:esv__gLevelManager
+      48 8d 50 0c // lea     rdx, [rax+0Ch]
+      c6 44 24 28 01 // mov     [rsp+0D8h+var_B0], 1
+      4c 89 54 24 20 // mov     [rsp+0D8h+var_B8], r10
+      @ref2 4c 8b 0d ?? ?? ?? ?? // mov     r9, cs:esv__gLocalTemplateManager
+      @ref3 4c 8b 05 ?? ?? ?? ?? // mov     r8, cs:esv__gGlobalTemplateManager
+      0f b6 48 08 // movzx   ecx, byte ptr [rax+8]
+      @ref4 e8 ?? ?? ?? ?? // call    esv__DoResolveRootTemplate
+      48 8b f8 // mov     rdi, rax
+      c7 44 24 74 ff ff ff ff // mov     [rsp+0D8h+var_64], 0FFFFFFFFh
+      <Target Type="Indirect" Offset="@ref1" Symbol="esv__LevelManager" />
+      <Target Type="Indirect" Offset="@ref2" Symbol="esv__CacheTemplateManager" />
+      <Target Type="Indirect" Offset="@ref3" Symbol="ls__GlobalTemplateManager" />
+    </Mapping>
 
-      <Mapping Name="ls__TextureAtlasMap" Critical="true">
-        e8 ?? ?? ?? ??              // call bg3.1433BE8F0
-        48 8b 53 20                 // mov rdx,qword ptr ds:[rbx+20]
-        @ref1 48 8b 0d ?? ?? ?? ??  // mov rcx,qword ptr ds:[ls__gTextureAtlasMap]
-        e8 ?? ?? ?? ??              // call bg3.1433C08A0
-        48 8b 43 18                 // mov rax,qword ptr ds:[rbx+18]
-        <Target Type="Indirect" Offset="@ref1" Symbol="ls__gTextureAtlasMap" />
-      </Mapping>
+    <Mapping Name="ls__TextureAtlasMap">
+      e8 ?? ?? ?? ?? // call    sub_143AE3050
+      48 8b 43 18 // mov     rax, [rbx+18h]
+      @ref1 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:ls__gTextureAtlasMap
+      48 8b 50 10 // mov     rdx, [rax+10h]
+      48 8b 92 28 01 00 00 // mov     rdx, [rdx+128h]
+      e8 ?? ?? ?? ?? // call    ls__TextureAtlasMap__Load
+      <Target Type="Indirect" Offset="@ref1" Symbol="ls__gTextureAtlasMap" />
+    </Mapping>
 
-      <Mapping Name="esv::OsirisVariableHelper::SavegameVisit">
-        48 89 5c 24 08 // mov     [rsp+arg_0], rbx
-        55 // push    rbp
-        56 // push    rsi
-        57 // push    rdi
-        41 56 // push    r14
-        41 57 // push    r15
-        48 83 ec 20 // sub     rsp, 20h
-        48 8b ea // mov     rbp, rdx
-        48 8b d9 // mov     rbx, rcx
-        45 33 f6 // xor     r14d, r14d
-        44 89 74 24 60 // mov     [rsp+48h+a2.ID], r14d
-        40 b7 01 // mov     dil, 1
-        48 8b 8a d0 00 00 00 // mov     rcx, [rdx+0D0h]
-        48 8b 01 // mov     rax, [rcx]
-        @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, fs_OsirisVariableHelper
-        <Condition Type="FixedString" Offset="@str1" Value="OsirisVariableHelper" />
-        <Target Type="Absolute" Offset="0" Symbol="esv__OsirisVariableHelper__SavegameVisit" />
-      </Mapping>
+    <Mapping Name="esv::OsirisVariableHelper::SavegameVisit">
+      48 89 5c 24 08 // mov     [rsp+arg_0], rbx
+      55 // push    rbp
+      56 // push    rsi
+      57 // push    rdi
+      41 56 // push    r14
+      41 57 // push    r15
+      48 83 ec 20 // sub     rsp, 20h
+      48 8b ea // mov     rbp, rdx
+      48 8b d9 // mov     rbx, rcx
+      45 33 f6 // xor     r14d, r14d
+      44 89 74 24 60 // mov     [rsp+48h+arg_10], r14d
+      40 b7 01 // mov     dil, 1
+      48 8b 8a c0 00 00 00 // mov     rcx, [rdx+0C0h]
+      48 8b 01 // mov     rax, [rcx]
+      @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, fs_OsirisVariableHelper
+      <Condition Type="FixedString" Offset="@str1" Value="OsirisVariableHelper" />
+      <Target Type="Absolute" Offset="0" Symbol="esv__OsirisVariableHelper__SavegameVisit" />
+    </Mapping>
 
-      <Mapping Name="eoc::InterruptPrototypeManager" Scope="Custom">
-        @ref1 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:eoc__gInterruptPrototypeManager
-        e8 ?? ?? ?? ?? // call    sub_140E4ECD0
-        @ref2 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:eoc__gSpellPrototypeManager
-        e8 ?? ?? ?? ?? // call    sub_140E11FA0
-        48 8b 15 ?? ?? ?? ?? // mov     rdx, cs:gRPGStats
-        @ref3 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:eoc__gCriticalHitTypeManager
-        e8 ?? ?? ?? ?? // call    sub_140E4D460
-        48 8b 4d bf // mov     rcx, [rbp+57h+var_98]
-        48 8b 01 // mov     rax, [rcx]
-        f0 ff 48 18 // lock dec dword ptr [rax+18h]
-        <Target Type="Indirect" Offset="@ref1" Symbol="eoc__InterruptPrototypeManager" />
-        <Target Type="Indirect" Offset="@ref2" Symbol="eoc__SpellPrototypeManager" />
-      </Mapping>
-      
-      <Mapping Name="eoc::PassivePrototype::Init" Scope="Custom">
-        48 8b d3 // mov     rdx, rbx
-        48 8b c8 // mov     rcx, rax
-        @ref1 e8 ?? ?? ?? ?? // call    eoc__PassivePrototype__Init
-        48 ff c6 // inc     rsi
-        41 8b 86 d4 00 00 00 // mov     eax, [r14+0D4h]
-        <Target Type="Indirect" Offset="@ref1" Symbol="eoc__PassivePrototype__Init" />
-      </Mapping>
+    <Mapping Name="eoc::PassivePrototype::Init" Scope="Custom">
+      48 8b d3 // mov     rdx, rbx
+      48 8b c8 // mov     rcx, rax
+      @ref1 e8 ?? ?? ?? ?? // call    eoc__PassivePrototype__Init
+      48 ff c7 // inc     rdi
+      41 8b 86 d4 00 00 00 // mov     eax, [r14+0D4h]
+      <Target Type="Indirect" Offset="@ref1" Symbol="eoc__PassivePrototype__Init" />
+    </Mapping>
 
-      <Mapping Name="RPGStats::PreParseDataFolder" Scope="Custom">
-        48 83 c6 18 // add     rsi, 18h
-        49 83 ef 01 // sub     r15, 1
-        0f 85 ?? ff ff ff // jnz     loc_140EA8070
-        49 8b d4 // mov     rdx, r12
-        49 8b ce // mov     rcx, r14
-        @ref1 e8 ?? ?? ?? ?? // call    RPGStats__PreParseDataFolder
-        <Target Type="Indirect" Offset="@ref1" Symbol="RPGStats__PreParseDataFolder" />
-      </Mapping>
+    <Mapping Name="RPGStats::PreParseDataFolder" Scope="Custom">
+      48 83 c6 18 // add     rsi, 18h
+      49 83 ef 01 // sub     r15, 1
+      0f 85 ?? ff ff ff // jnz     loc_140EA8070
+      49 8b d4 // mov     rdx, r12
+      49 8b ce // mov     rcx, r14
+      @ref1 e8 ?? ?? ?? ?? // call    RPGStats__PreParseDataFolder
+      <Target Type="Indirect" Offset="@ref1" Symbol="RPGStats__PreParseDataFolder" />
+    </Mapping>
 
-      <!-- Sig: "Stats/Generated" string -->
-      <Mapping Name="StatsShared">
-        @stats 48 8b 1d ?? ?? ?? ?? // mov     rbx, cs:gRPGStats
-        48 8b cb // mov     rcx, rbx
-        e8 ?? ?? ?? ?? // call    RPGStats__Clear
-        48 8b cb // mov     rcx, rbx
-        e8 ?? ?? ?? ?? // call    RPGStats__ClearDynamicEntries
-        48 8d 55 a7 // lea     rdx, [rbp+57h+var_B0]
-        48 8b cb // mov     rcx, rbx
-        @load e8 ?? ?? ?? ?? // call    RPGStats__Load
-        48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:qword_145BC3920
-        e8 ?? ?? ?? ?? // call    sub_14385AAF0
-        @ref1 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:eoc__gStatusPrototypeManager
-        e8 ?? ?? ?? ?? // call    eoc__StatusPrototypeManager__Init
-        @ref3 48 8b 3d ?? ?? ?? ?? // mov     rdi, cs:eoc__gPassiveManager
-        80 7f 18 00 // cmp     byte ptr [rdi+18h], 0
-        0f 85 a1 00 00 00 // jnz     loc_1428A2201
-        4c 8b 35 ?? ?? ?? ?? // mov     r14, cs:gRPGStats
-        49 8d 4e 60 // lea     rcx, [r14+60h]
-        48 8b 01 // mov     rax, [rcx]
-        @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, fs_PassiveData
-        ff 50 20 // call    qword ptr [rax+20h]
-        44 8b f8 // mov     r15d, eax
-        41 83 be d4 00 00 00 00 // cmp     dword ptr [r14+0D4h], 0
-        76 7c // jbe     short loc_1428A2201
-        <Condition Type="FixedString" Offset="@str1" Value="PassiveData" />
-        <Target Type="Indirect" Offset="@ref1" Symbol="eoc__StatusPrototypeManager" />
-        <Target Type="Indirect" Offset="@ref3" Symbol="eoc__PassivePrototypeManager" />
-        <Target Type="Indirect" Offset="@stats" Symbol="gRPGStats" />
-        <Target Type="Indirect" Offset="@load" Symbol="RPGStats__Load" />
-        <Target Type="Absolute" Offset="0" NextSymbol="eoc::InterruptPrototypeManager" NextSymbolSeekSize="0x200" />
-        <Target Type="Absolute" Offset="0" NextSymbol="eoc::PassivePrototype::Init" NextSymbolSeekSize="0x100" />
-        <Target Type="Indirect" Offset="@load" NextSymbol="RPGStats::PreParseDataFolder" NextSymbolSeekSize="0x180" />
-      </Mapping>
-      
-      <Mapping Name="stats__Functors__VMT">
-        4c 89 49 30 // mov     [rcx+30h], r9
-        4c 89 49 38 // mov     [rcx+38h], r9
-        44 89 4a 58 // mov     [rdx+58h], r9d
-        @ref1 4c 8d 05 ?? ?? ?? ?? // lea     r8, stats__Functors__VMT
-        4c 89 02 // mov     [rdx], r8
-        c7 42 60 ff ff ff ff // mov     dword ptr [rdx+60h], 0FFFFFFFFh
-        48 8d 93 38 01 00 00 // lea     rdx, [rbx+138h]
-        48 89 54 24 30 // mov     [rsp+28h+arg_0], rdx
-        48 8d 42 08 // lea     rax, [rdx+8]
-        48 89 44 24 30 // mov     [rsp+28h+arg_0], rax
-        <Target Type="Indirect" Offset="@ref1" Symbol="stats__Functors__VMT" />
-      </Mapping>
+    <!-- Sig: "Stats/Generated" string -->
+    <Mapping Name="StatsShared">
+      @stats 48 8b 1d ?? ?? ?? ?? // mov     rbx, cs:gRPGStats
+      48 8b cb // mov     rcx, rbx
+      e8 ?? ?? ?? ?? // call    RPGStats__Clear
+      48 8b cb // mov     rcx, rbx
+      e8 ?? ?? ?? ?? // call    RPGStats__ClearDynamicEntries
+      48 8d 55 bf // lea     rdx, [rbp+57h+var_98]
+      48 8b cb // mov     rcx, rbx
+      @load e8 ?? ?? ?? ?? // call    RPGStats__Load
+      48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:qword_145F29418
+      e8 ?? ?? ?? ?? // call    sub_143FF6920
+      @ref5 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:eoc__gStatusPrototypeManager
+      e8 ?? ?? ?? ?? // call    eoc__StatusPrototypeManager__Init
+      @ref7 48 8b 35 ?? ?? ?? ?? // mov     rsi, cs:eoc__gPassiveManager
+      80 7e 18 00 // cmp     byte ptr [rsi+18h], 0
+      0f 85 ?? 00 00 00 // jnz     loc_1417631F1
+      4c 8b 35 ?? ?? ?? ?? // mov     r14, cs:gRPGStats
+      49 8d 4e 60 // lea     rcx, [r14+60h]
+      48 8b 01 // mov     rax, [rcx]
+      @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, fs_PassiveData
+      ff 50 20 // call    qword ptr [rax+20h]
+      44 8b f8 // mov     r15d, eax
+      41 83 be d4 00 00 00 00 // cmp     dword ptr [r14+0D4h], 0
+      0f 86 ?? 00 00 00 // jbe     loc_1417631F1
+      <Condition Type="FixedString" Offset="@str1" Value="PassiveData" />
+      <Target Type="Indirect" Offset="@stats" Symbol="gRPGStats" />
+      <Target Type="Indirect" Offset="@load" Symbol="RPGStats__Load" />
+      <Target Type="Absolute" Offset="0" NextSymbol="eoc::PassivePrototype::Init" NextSymbolSeekSize="0x100" />
+      <Target Type="Indirect" Offset="@load" NextSymbol="RPGStats::PreParseDataFolder" NextSymbolSeekSize="0x180" />
+    </Mapping>
+
+    <Mapping Name="StatsPrototypeManagers">
+      66 44 89 23 // mov     [rbx], r12w
+      @ref1 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:eoc__gSpellPrototypeManager
+      e8 ?? ?? ?? ?? // call    eoc__SpellPrototypeManager__Terminate
+      @ref3 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:eoc__gStatusPrototypeManager
+      e8 ?? ?? ?? ?? // call    eoc__StatusPrototypeManager__Terminate
+      @ref5 48 8b 1d ?? ?? ?? ?? // mov     rbx, cs:eoc__gBoostPrototypeManager
+      48 8b cb // mov     rcx, rbx
+      e8 ?? ?? ?? ?? // call    eoc__BoostPrototypeManager__Destroy
+      4c 89 63 08 // mov     [rbx+8], r12
+      @ref7 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:eoc__gPassiveManager
+      44 88 61 18 // mov     [rcx+18h], r12b
+      48 83 c1 08 // add     rcx, 8
+      e8 ?? ?? ?? ?? // call    eoc__Passives__Terminate
+      @ref9 48 8b 0d ?? ?? ?? ?? // mov     rcx, cs:eoc__gInterruptPrototypeManager
+      e8 ?? ?? ?? ?? // call    eoc__InterruptPrototypeManager__Terminate
+      <Target Type="Indirect" Offset="@ref1" Symbol="eoc__SpellPrototypeManager" />
+      <Target Type="Indirect" Offset="@ref3" Symbol="eoc__StatusPrototypeManager" />
+      <Target Type="Indirect" Offset="@ref7" Symbol="eoc__BoostPrototypeManager" />
+      <Target Type="Indirect" Offset="@ref7" Symbol="eoc__PassivePrototypeManager" />
+      <Target Type="Indirect" Offset="@ref9" Symbol="eoc__InterruptPrototypeManager" />
+    </Mapping>
+
+    <Mapping Name="stats__Functors__VMT">
+      4c 89 49 30 // mov     [rcx+30h], r9
+      4c 89 49 38 // mov     [rcx+38h], r9
+      44 89 4a 58 // mov     [rdx+58h], r9d
+      @ref1 4c 8d 05 ?? ?? ?? ?? // lea     r8, stats__Functors__VMT
+      4c 89 02 // mov     [rdx], r8
+      c7 42 60 ff ff ff ff // mov     dword ptr [rdx+60h], 0FFFFFFFFh
+      48 8d 93 38 01 00 00 // lea     rdx, [rbx+138h]
+      48 89 54 24 30 // mov     [rsp+28h+arg_0], rdx
+      48 8d 42 08 // lea     rax, [rdx+8]
+      48 89 44 24 30 // mov     [rsp+28h+arg_0], rax
+      <Target Type="Indirect" Offset="@ref1" Symbol="stats__Functors__VMT" />
+    </Mapping>
 
     <Mapping Name="eoc::StatusPrototype::Init">
       41 c7 46 04 11 00 00 00 // mov     dword ptr [r14+4], 11h
@@ -898,165 +898,109 @@
       48 83 c3 08 // add     rbx, 8
       <Target Type="Indirect" Offset="@ref2" Symbol="eoc__ParseStaticBoosts" />
     </Mapping>
-      
-      <Mapping Name="eoc::SpellPrototype::Init">
-        49 8d 54 24 20 // lea     rdx, [r12+20h]
-        49 8b cd // mov     rcx, r13
-        @ref1 e8 ?? ?? ?? ?? // call    eoc__SpellPrototype__Init
-        4d 8d 44 24 20 // lea     r8, [r12+20h]
-        48 8d 55 b7 // lea     rdx, [rbp+57h+var_A0]
-        48 8d 4e 08 // lea     rcx, [rsi+8]
-        e8 ?? ?? ?? ?? // call    sub_140EC91F0
-        48 8b 4e 38 // mov     rcx, [rsi+38h]
-        48 63 45 bb // movsxd  rax, [rbp+57h+var_9C]
-        4c 89 2c c1 // mov     [rcx+rax*8], r13
-        48 8d 8e 88 00 00 00 // lea     rcx, [rsi+88h]
-        49 8d 54 24 20 // lea     rdx, [r12+20h]
-        e8 ?? ?? ?? ?? // call    sub_140735650
-        @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, fs_RootSpellID
-        <Condition Type="FixedString" Offset="@str1" Value="RootSpellID" />
-        <Target Type="Indirect" Offset="@ref1" Symbol="eoc__SpellPrototype__Init" />
-      </Mapping>
-      
-      <Mapping Name="eoc::InterruptPrototype::Init">
-        48 8b 4e 30 // mov     rcx, [rsi+30h]
-        48 03 cf // add     rcx, rdi
-        eb 0a // jmp     short loc_140EAF824
-        48 69 c8 20 02 00 00 // imul    rcx, rax, 220h
-        48 03 ca // add     rcx, rdx; a1
-        49 8b d7 // mov     rdx, r15; rdx0
-        @ref1 e8 ?? ?? ?? ?? // call    eoc__InterruptPrototype__Init
-        48 8b 7c 24 70 // mov     rdi, [rsp+68h+arg_0]
-        41 8b 85 d4 00 00 00 // mov     eax, [r13+0D4h]
-        49 ff c4 // inc     r12
-        <Target Type="Indirect" Offset="@ref1" Symbol="eoc__InterruptPrototype__Init" />
-      </Mapping>
-      
-      <Mapping Name="Noesis::SymbolManager">
-        48 c1 e0 04 // shl     rax, 4
-        48 03 05 ?? ?? ?? ?? // add     rax, cs:qword_14597F9A8
-        48 8b 4c 24 20 // mov     rcx, [rsp+68h+var_48]
-        48 3b c8 // cmp     rcx, rax
-        74 09 // jz      short loc_14493759F
-        44 8b 61 0c // mov     r12d, [rcx+0Ch]
-        e9 f5 01 00 00 // jmp     loc_144937794
-        8b 1d ?? ?? ?? ?? // mov     ebx, cs:dword_14597F9A4
-        81 e3 ff ff ff 00 // and     ebx, 0FFFFFFh
-        @ref1 8b 05 ?? ?? ?? ?? // mov     eax, cs:dword_14597F9A0
-        3b c3 // cmp     eax, ebx
-        <Target Type="Indirect" Offset="@ref1" Symbol="Noesis__SymbolManager__Buf1" />
-      </Mapping>
-      
-      <Mapping Name="Noesis::Reflection">
-        40 53 // push    rbx
-        48 83 ec 40 // sub     rsp, 40h
-        @ref1 4c 8b 1d ?? ?? ?? ?? // mov     r11, cs:Noesis__gReflection.Types.mBegin
-        8b 05 ?? ?? ?? ?? // mov     eax, cs:Noesis__gReflection.Types.mSize
-        44 8b 0d ?? ?? ?? ?? // mov     r9d, dword ptr cs:qword_14597F98C
-        48 ff c8 // dec     rax
-        49 8d 1c 83 // lea     rbx, [r11+rax*4]
-        49 8d 43 fc // lea     rax, [r11-4]
-        48 3b d8 // cmp     rbx, rax
-        48 8b 05 ?? ?? ?? ?? // mov     rax, cs:Noesis__gReflection.field_10.mBuckets
-        0f 84 d0 00 00 00 // jz      loc_144936FD5
-        48 89 7c 24 50 // mov     [rsp+48h+arg_0], rdi
-        66 0f 1f 44 00 00 // nop     word ptr [rax+rax+00h]
-        <Target Type="Indirect" Offset="@ref1" Symbol="Noesis__gReflection" />
-      </Mapping>
-      
-      <Mapping Name="Noesis::UI::LoadXaml">
-        48 83 ec 58 // sub     rsp, 58h
-        48 8b f9 // mov     rdi, rcx
-        c7 40 10 00 00 00 00 // mov     dword ptr [rax+10h], 0
-        @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, aMaincanvasXaml; "MainCanvas.xaml"
-        48 8d 48 20 // lea     rcx, [rax+20h]
-        @ref1 e8 ?? ?? ?? ?? // call    Noesis__GUI__LoadXaml
-        90 // nop
-        <Condition Type="String" Offset="@str1" Value="MainCanvas.xaml" />
-        <Target Type="Indirect" Offset="@ref1" Symbol="Noesis__GUI__LoadXaml" />
-      </Mapping>
-      
-      <Mapping Name="Noesis::Visual::AddVisualChild">
-        48 8b 97 78 02 00 00 // mov     rdx, [rdi+278h]
-        48 8b cf // mov     rcx, rdi
-        48 8b 5c 24 30 // mov     rbx, [rsp+28h+arg_0]
-        48 8b 74 24 38 // mov     rsi, [rsp+28h+arg_8]
-        48 83 c4 20 // add     rsp, 20h
-        5f // pop     rdi
-        @ref1 e9 ?? ?? ?? ?? // jmp     Noesis::Visual::RemoveVisualChild(Noesis::Visual *)
-        48 85 f6 // test    rsi, rsi
-        74 0f // jz      short loc_14486F209
-        48 8b 97 78 02 00 00 // mov     rdx, [rdi+278h]
-        48 8b cf // mov     rcx, rdi
-        @ref2 e8 ?? ?? ?? ?? // call    Noesis::Visual::AddVisualChild(Noesis::Visual *)
-        <Target Type="Indirect" Offset="@ref1" Symbol="Noesis__Visual__RemoveVisualChild" />
-        <Target Type="Indirect" Offset="@ref2" Symbol="Noesis__Visual__AddVisualChild" />
-      </Mapping>
-      
-      <Mapping Name="ls::UIStateMachine::FireStateEvent2">
-        44 0f b7 03 // movzx   r8d, word ptr [rbx]
-        @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, pfs_OpenTrade
-        48 8d 4c 24 30 // lea     rcx, [rsp+0A8h+var_78]
-        e8 ?? ?? ?? ?? // call    ls__UIStateMachine__EventArgs__Make
-        90 // nop
-        4c 8b c8 // mov     r9, rax
-        4c 8b c5 // mov     r8, rbp
-        48 8d 54 24 50 // lea     rdx, [rsp+0A8h+var_58]
-        48 8b ce // mov     rcx, rsi
-        @ref3 e8 ?? ?? ?? ?? // call    ls__UIStateMachine__FireStateEvent2
-        <Target Type="Indirect" Offset="@ref3" Symbol="ls__UIStateMachine__FireStateEvent2" />
-      </Mapping>
-    
-    
 
-      <!--
+    <Mapping Name="eoc::SpellPrototype::Init">
+      49 8d 54 24 20 // lea     rdx, [r12+20h]
+      49 8b cd // mov     rcx, r13
+      @ref1 e8 ?? ?? ?? ?? // call    eoc__SpellPrototype__Init
+      4d 8d 44 24 20 // lea     r8, [r12+20h]
+      48 8d 55 b7 // lea     rdx, [rbp+57h+var_A0]
+      48 8d 4e 08 // lea     rcx, [rsi+8]
+      e8 ?? ?? ?? ?? // call    sub_140EC91F0
+      48 8b 4e 38 // mov     rcx, [rsi+38h]
+      48 63 45 bb // movsxd  rax, [rbp+57h+var_9C]
+      4c 89 2c c1 // mov     [rcx+rax*8], r13
+      48 8d 8e 88 00 00 00 // lea     rcx, [rsi+88h]
+      49 8d 54 24 20 // lea     rdx, [r12+20h]
+      e8 ?? ?? ?? ?? // call    sub_140735650
+      @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, fs_RootSpellID
+      <Condition Type="FixedString" Offset="@str1" Value="RootSpellID" />
+      <Target Type="Indirect" Offset="@ref1" Symbol="eoc__SpellPrototype__Init" />
+    </Mapping>
 
-      <Mapping Name="eoc::StatusPrototype::Init">
-        <Condition Type="FixedString" Offset="10" Value="DESTROYING" />
-        <Target Type="Indirect" Offset="20" Symbol="eoc__StatusPrototype__Init" />
-        C7 47 04 02 00 00 00 // mov     dword ptr [rdi+4], 2
-        41 B0 01 // mov     r8b, 1
-        48 8D 15 ?? ?? ?? ?? // lea     rdx, fs_DESTROYING
-        48 8B CF // mov     rcx, rdi
-        E8 ?? ?? ?? ?? // call    eoc__StatusPrototype__Init
-      </Mapping>
+    <Mapping Name="eoc::InterruptPrototype::Init">
+      48 8b 4e 30 // mov     rcx, [rsi+30h]
+      48 03 cf // add     rcx, rdi
+      eb 0a // jmp     short loc_140EAF824
+      48 69 c8 20 02 00 00 // imul    rcx, rax, 220h
+      48 03 ca // add     rcx, rdx; a1
+      49 8b d7 // mov     rdx, r15; rdx0
+      @ref1 e8 ?? ?? ?? ?? // call    eoc__InterruptPrototype__Init
+      48 8b 7c 24 70 // mov     rdi, [rsp+68h+arg_0]
+      41 8b 85 d4 00 00 00 // mov     eax, [r13+0D4h]
+      49 ff c4 // inc     r12
+      <Target Type="Indirect" Offset="@ref1" Symbol="eoc__InterruptPrototype__Init" />
+    </Mapping>
 
-      <Mapping Name="eoc::Passive::Init" Scope="Custom">
-        <Target Type="Absolute" Offset="0" Symbol="eoc__Passive__Init" />
-        48 89 5C 24 10 // mov     [rsp+arg_8], rbx
-        48 89 6C 24 18 // mov     [rsp+arg_10], rbp
-      </Mapping>
+    <Mapping Name="Noesis::SymbolManager">
+      48 c1 e0 04 // shl     rax, 4
+      48 03 05 ?? ?? ?? ?? // add     rax, cs:qword_14597F9A8
+      48 8b 4c 24 20 // mov     rcx, [rsp+68h+var_48]
+      48 3b c8 // cmp     rcx, rax
+      74 09 // jz      short loc_14493759F
+      44 8b 61 0c // mov     r12d, [rcx+0Ch]
+      e9 ?? ?? 00 00 // jmp     loc_144937794
+      8b 1d ?? ?? ?? ?? // mov     ebx, cs:dword_14597F9A4
+      81 e3 ff ff ff 00 // and     ebx, 0FFFFFFh
+      @ref1 8b 05 ?? ?? ?? ?? // mov     eax, cs:dword_14597F9A0
+      3b c3 // cmp     eax, ebx
+      <Target Type="Indirect" Offset="@ref1" Symbol="Noesis__SymbolManager__Buf1" />
+    </Mapping>
 
-      <Mapping Name="eoc::Passive::Init Outer">
-        <Condition Type="FixedStringIndirect" Offset="12" Value="ToggleOnEffect" />
-        <Target Type="Absolute" Offset="-128" NextSymbol="eoc::Passive::Init" NextSymbolSeekSize="128" />
-        48 8D 4B 08 // lea     rcx, [rbx+8]
-        49 8B D5 // mov     rdx, r13
-        E8 ?? ?? ?? ?? // call    eoc__DescriptionInfo__FromStats
-        48 8B 15 ?? ?? ?? ?? // mov     rdx, cs:pffs_ToggleOnEffect
-        49 8B CD // mov     rcx, r13
-        E8 ?? ?? ?? ?? // call    CRPGStats_Object__GetModifierString
-      </Mapping>
+    <Mapping Name="Noesis::Reflection">
+      @ref1 4c 8b 1d ?? ?? ?? ?? // mov     r11, cs:Noesis__gReflection.Types.mBegin
+      8b 05 ?? ?? ?? ?? // mov     eax, cs:Noesis__gReflection.Types.mSize
+      44 8b 0d ?? ?? ?? ?? // mov     r9d, dword ptr cs:qword_14597F98C
+      48 ff c8 // dec     rax
+      49 8d 1c 83 // lea     rbx, [r11+rax*4]
+      49 8d 43 fc // lea     rax, [r11-4]
+      48 3b d8 // cmp     rbx, rax
+      48 8b 05 ?? ?? ?? ?? // mov     rax, cs:Noesis__gReflection.field_10.mBuckets
+      0f 84 ?? 00 00 00 // jz      loc_144936FD5
+      48 89 7c 24 50 // mov     [rsp+48h+arg_0], rdi
+      <Target Type="Indirect" Offset="@ref1" Symbol="Noesis__gReflection" />
+    </Mapping>
 
-      <Mapping Name="eoc::gStatusPrototypeManager">
-        <Condition Type="String" Offset="0" Value="Statuses" />
-        <Target Type="Indirect" Offset="18" Symbol="eoc__StatusPrototypeManager" />
-        4C 8D 05 ?? ?? ?? ?? // lea     r8, str_Statuses
-        BA 01 00 00 00 // mov     edx, 1
-        49 8B CF // mov     rcx, r15
-        FF 50 78 // call    qword ptr [rax+78h]
-        48 8B 0D ?? ?? ?? ?? // mov     rcx, cs:eoc__gStatusPrototypeManager
-      </Mapping>
+    <Mapping Name="Noesis::UI::LoadXaml">
+      48 8b f9 // mov     rdi, rcx
+      c7 44 24 28 00 00 00 00 // mov     dword ptr [rsp+78h+var_50], 0
+      @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, aMaincanvasXaml; "MainCanvas.xaml"
+      48 8d 4c 24 40 // lea     rcx, [rsp+78h+var_38]
+      @ref1 e8 ?? ?? ?? ?? // call    Noesis__GUI__LoadXaml
+      90 // nop
+      <Condition Type="String" Offset="@str1" Value="MainCanvas.xaml" />
+      <Target Type="Indirect" Offset="@ref1" Symbol="Noesis__GUI__LoadXaml" />
+    </Mapping>
 
-      <Mapping Name="eoc::gPassiveManager">
-        <Condition Type="String" Offset="0" Value="Passives" />
-        <Target Type="Indirect" Offset="18" Symbol="eoc__PassiveManager" />
-        4C 8D 05 ?? ?? ?? ?? // lea     r8, str_Passives
-        BA 01 00 00 00 // mov     edx, 1
-        49 8B CF // mov     rcx, r15
-        FF 50 78 // call    qword ptr [rax+78h]
-        48 8B 0D ?? ?? ?? ?? // mov     rcx, cs:eoc__gPassiveManager
-      </Mapping>
-      -->
-    </Mappings>
+    <Mapping Name="Noesis::Visual::AddVisualChild">
+      48 8b 97 78 02 00 00 // mov     rdx, [rdi+278h]
+      48 8b cf // mov     rcx, rdi
+      48 8b 5c 24 30 // mov     rbx, [rsp+28h+arg_0]
+      48 8b 74 24 38 // mov     rsi, [rsp+28h+arg_8]
+      48 83 c4 20 // add     rsp, 20h
+      5f // pop     rdi
+      @ref1 e9 ?? ?? ?? ?? // jmp     Noesis::Visual::RemoveVisualChild(Noesis::Visual *)
+      48 85 f6 // test    rsi, rsi
+      74 0f // jz      short loc_14486F209
+      48 8b 97 78 02 00 00 // mov     rdx, [rdi+278h]
+      48 8b cf // mov     rcx, rdi
+      @ref2 e8 ?? ?? ?? ?? // call    Noesis::Visual::AddVisualChild(Noesis::Visual *)
+      <Target Type="Indirect" Offset="@ref1" Symbol="Noesis__Visual__RemoveVisualChild" />
+      <Target Type="Indirect" Offset="@ref2" Symbol="Noesis__Visual__AddVisualChild" />
+    </Mapping>
+
+    <Mapping Name="ls::UIStateMachine::FireStateEvent2" AllowFail="true">
+      44 0f b7 03 // movzx   r8d, word ptr [rbx]
+      @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, pfs_OpenTrade
+      48 8d 4c 24 30 // lea     rcx, [rsp+0A8h+var_78]
+      e8 ?? ?? ?? ?? // call    ls__UIStateMachine__EventArgs__Make
+      90 // nop
+      4c 8b c8 // mov     r9, rax
+      4c 8b c5 // mov     r8, rbp
+      48 8d 54 24 50 // lea     rdx, [rsp+0A8h+var_58]
+      48 8b ce // mov     rcx, rsi
+      @ref3 e8 ?? ?? ?? ?? // call    ls__UIStateMachine__FireStateEvent2
+      <Target Type="Indirect" Offset="@ref3" Symbol="ls__UIStateMachine__FireStateEvent2" />
+    </Mapping>
+  </Mappings>
 </BinaryMappings>

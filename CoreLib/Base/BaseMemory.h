@@ -6,6 +6,7 @@
 
 namespace bg3se
 {
+	using ls__GlobalAllocator__GetProc = void* ();
 	using ls__GlobalAllocator__AllocProc = void* (void* globalAllocator, std::size_t size, int pool, int unused2, uint64_t alignment);
 	using ls__GlobalAllocator__FreeProc = void (void* globalAllocator, void* ptr);
 

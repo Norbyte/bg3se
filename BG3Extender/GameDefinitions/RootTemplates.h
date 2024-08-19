@@ -170,15 +170,14 @@ struct AiActionConditions
 
 struct InventoryItemData
 {
+    AiActionConditions Conditions;
+    STDString ItemName;
+    STDString LevelName;
     FixedString UUID;
     FixedString TemplateID;
-    STDString field_8;
-    STDString ItemName;
-    uint8_t Type;
-    STDString LevelName;
     int Amount;
-    AiActionConditions Conditions;
     uint8_t IsTradable;
+    uint8_t Type;
     bool CanBePickpocketed;
     bool IsDroppedOnDeath;
 };

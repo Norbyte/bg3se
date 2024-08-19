@@ -222,7 +222,7 @@ bool VirtualTextureHelpers::Stitch()
 
 bool VirtualTextureHelpers::OnTextureLoad(resource::LoadableResource::LoadProc* next, resource::LoadableResource* self, ResourceManager* mgr)
 {
-	auto res = static_cast<resource::VirtualTextureResource*>(self);
+	/*auto res = static_cast<resource::VirtualTextureResource*>(self);
 	auto vt = mgr->VirtualTextureManager;
 
 	std::optional<char> gtsSuffix;
@@ -245,12 +245,13 @@ bool VirtualTextureHelpers::OnTextureLoad(resource::LoadableResource::LoadProc* 
 	res->LoadedVirtualTextureLayerConfig = res->VirtualTextureLayerConfig;
 	res->LoadedField52 = res->field_52;
 	res->GTSSuffix = gtsSuffix;
-	return res->GTSHandle != -1;
+	return res->GTSHandle != -1;*/
+	return false;
 }
 
 bool VirtualTextureHelpers::OnTextureUnload(resource::LoadableResource::UnloadProc* next, resource::LoadableResource* self, ResourceManager* mgr)
 {
-	auto res = static_cast<resource::VirtualTextureResource*>(self);
+	/*auto res = static_cast<resource::VirtualTextureResource*>(self);
 	auto vt = mgr->VirtualTextureManager;
 
 	if (res->GraphineTextureData != nullptr) {
@@ -259,7 +260,7 @@ bool VirtualTextureHelpers::OnTextureUnload(resource::LoadableResource::UnloadPr
 	}
 
 	DecRefGTS(vt, res->LoadedVirtualTextureLayerConfig, res->GTSSuffix, res->LoadedField52, res->GTexFileName);
-	res->GTSHandle = -1;
+	res->GTSHandle = -1;*/
 	return true;
 }
 

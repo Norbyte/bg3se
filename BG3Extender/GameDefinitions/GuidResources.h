@@ -233,6 +233,7 @@ struct Race : public resource::GuidResource
 	FixedString Name;
 	TranslatedString DisplayName;
 	TranslatedString Description;
+	Guid MergedInto;
 	Guid ParentGuid;
 	Guid DisplayTypeUUID;
 	Array<Guid> Tags;
@@ -319,6 +320,7 @@ struct God : public resource::GuidResource
 	TranslatedString DisplayName;
 	TranslatedString Description;
 	Array<Guid> Tags;
+	Guid MergedInto;
 };
 
 
@@ -567,7 +569,9 @@ struct PassiveList : public resource::GuidResource
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::PassiveList;
 	static constexpr auto EngineClass = "eoc::PassiveListManager";
 
+	FixedString Name;
 	Array<FixedString> Passives;
+	Guid MergedInto;
 };
 
 
@@ -576,7 +580,9 @@ struct SkillList : public resource::GuidResource
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::SkillList;
 	static constexpr auto EngineClass = "eoc::SkillListManager";
 
+	FixedString Name;
 	Array<SkillId> Skills;
+	Guid MergedInto;
 };
 
 
@@ -585,7 +591,9 @@ struct SpellList : public resource::GuidResource
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::SpellList;
 	static constexpr auto EngineClass = "eoc::SpellListManager";
 
+	FixedString Name;
 	HashSet<FixedString> Spells;
+	Guid MergedInto;
 };
 
 
@@ -594,7 +602,9 @@ struct AbilityList : public resource::GuidResource
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::AbilityList;
 	static constexpr auto EngineClass = "eoc::AbilityListManager";
 
-	Array<AbilityId> Spells;
+	FixedString Name;
+	Array<AbilityId> Abilities;
+	Guid MergedInto;
 };
 
 
@@ -1094,7 +1104,9 @@ struct EquipmentList : public resource::GuidResource
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::EquipmentList;
 	static constexpr auto EngineClass = "eoc::EquipmentListManager";
 
+	FixedString Name;
 	Array<FixedString> Items;
+	Guid MergedInto;
 };
 
 

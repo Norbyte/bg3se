@@ -28,7 +28,6 @@ struct ExtenderConfig
 	bool ForceCrashReporting{ false };
 	bool EnableAchievements{ true };
 	bool DisableLauncher{ false };
-	bool DisableStoryMerge{ true };
 	bool DisableStoryPatching{ false };
 	bool DisableStoryCompilation{ true };
 
