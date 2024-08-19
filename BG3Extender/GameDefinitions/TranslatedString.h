@@ -45,6 +45,12 @@ struct TranslatedString
 	std::optional<StringView> Get() const;
 };
 
+struct TranslatedFSString
+{
+	RuntimeStringHandle Handle;
+	void* ArgumentString;
+};
+
 template <class Pred>
 inline void SpinWait(Pred pred)
 {
