@@ -581,6 +581,18 @@ public:
 		MakeImpl(L, object, lifetime, GetImplementation<DynamicArrayProxyImpl<Array<T>, T, 2>>());
 	}
 
+	template <class T>
+	inline static void Make(lua_State* L, LegacyArray<T>* object, LifetimeHandle const& lifetime)
+	{
+		MakeImpl(L, object, lifetime, GetImplementation<DynamicArrayProxyImpl<Array<T>, T, 2>>());
+	}
+
+	template <class T>
+	inline static void Make(lua_State* L, LegacyArray<T> const* object, LifetimeHandle const& lifetime)
+	{
+		MakeImpl(L, object, lifetime, GetImplementation<DynamicArrayProxyImpl<Array<T>, T, 2>>());
+	}
+
 #if defined(ENABLE_UI)
 	template <class T, unsigned N>
 	inline static void Make(lua_State* L, Noesis::Vector<T, N>* object, LifetimeHandle const& lifetime)

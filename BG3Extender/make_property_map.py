@@ -609,6 +609,8 @@ sources = [
     'GameDefinitions/Hit.h',
     'GameDefinitions/Interrupt.h',
     'GameDefinitions/Progression.h',
+    'GameDefinitions/Animation.h',
+    'GameDefinitions/AllSpark.h',
     'GameDefinitions/RootTemplates.h',
     'GameDefinitions/Components/Boosts.h',
     'GameDefinitions/Components/Camp.h',

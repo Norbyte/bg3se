@@ -508,6 +508,22 @@ struct TemplateAnimationSetOverrideComponent : public BaseComponent
 };
 
 
+struct AnimationReceivedGameplayEvent
+{
+	EntityHandle Entity;
+	FixedString Event;
+	[[bg3::hidden]] gn::GenomeParametrizedEventArgs Args;
+};
+
+struct AnimationReceivedTextKeyEvent
+{
+	EntityHandle Entity;
+	TextKeyEvent* Event;
+	[[bg3::hidden]] void* Skeleton;
+};
+
+
+
 END_SE()
 
 BEGIN_NS(sight)

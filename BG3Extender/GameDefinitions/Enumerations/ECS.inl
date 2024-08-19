@@ -185,6 +185,8 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 	E(AnimationWaterfall)
 	E(DynamicAnimationTags)
 	E(TemplateAnimationSetOverride)
+	E(AnimationGameplayEvents)
+	E(AnimationTextKeyEvents)
 
 	// Passives
 	E(PassiveContainer)
@@ -585,6 +587,7 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 	E(ProgressionContainer)
 	E(ProgressionMeta)
 	E(ProgressionChangedContainers)
+	E(ProgressionLevelUpChanged)
 
 	// Through
 	E(CanSeeThrough)

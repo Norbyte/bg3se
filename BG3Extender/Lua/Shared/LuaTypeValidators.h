@@ -294,6 +294,13 @@ bool ValidateRef(Array<TE> const* v, Overload<Array<TE>>)
 	return true;
 }
 
+template <class TE>
+bool ValidateRef(LegacyArray<TE> const* v, Overload<LegacyArray<TE>>)
+{
+	CHECKR(ValidateRef(v, Overload<Array<TE>>{}));
+	return true;
+}
+
 template <class TE, class TAllocator>
 bool ValidateRef(std::vector<TE, TAllocator> const* v, Overload<std::vector<TE, TAllocator>>)
 {

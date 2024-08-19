@@ -154,6 +154,8 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="Extender\Shared\VirtualTextures.h" />
     <ClInclude Include="Extender\Client\IMGUI\IMGUI.h" />
     <ClInclude Include="Extender\Version.h" />
+    <ClInclude Include="GameDefinitions\AllSpark.h" />
+    <ClInclude Include="GameDefinitions\Animation.h" />
     <ClInclude Include="GameDefinitions\Base\Base.h" />
     <ClInclude Include="GameDefinitions\Base\ExposedTypes.h" />
     <ClInclude Include="GameDefinitions\Base\LuaAnnotations.h" />

@@ -134,6 +134,12 @@ inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overl
 	return &MakeDeferredArrayType<T>;
 }
 
+template <class T>
+inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<LegacyArray<T>>)
+{
+	return &MakeDeferredArrayType<T>;
+}
+
 template <class TWord, unsigned Words>
 inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<BitArray<TWord, Words>>)
 {
