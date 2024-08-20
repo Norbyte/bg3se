@@ -499,20 +499,20 @@ void LuaPolymorphic<resource::PhysicsResource::ObjectTemplate::PhysicsObject>::M
 
 void LuaPolymorphic<aspk::Component>::MakeRef(lua_State* L, aspk::Component* value, LifetimeHandle const& lifetime)
 {
-#define V(type) else if (value->GetType().GetStringView() == #type) \
+#define V(type) else if (value->GetTypeName().GetStringView() == #type) \
 					MakeDirectObjectRef(L, static_cast<aspk::type##Component*>(value), lifetime);
-#define V_timeline(type) else if (value->GetType().GetStringView() == #type) \
+#define V_timeline(type) else if (value->GetTypeName().GetStringView() == #type) \
 					MakeDirectObjectRef(L, static_cast<aspk::type##Component*>(value), lifetime);
-#define V_tlkeybase(type) else if (value->GetType().GetStringView() == #type) \
+#define V_tlkeybase(type) else if (value->GetTypeName().GetStringView() == #type) \
 					MakeDirectObjectRef(L, static_cast<aspk::type##Component<aspk::keys::KeyBase>*>(value), lifetime);
-#define V_tlchannel(type) else if (value->GetType().GetStringView() == #type) \
+#define V_tlchannel(type) else if (value->GetTypeName().GetStringView() == #type) \
 					MakeDirectObjectRef(L, static_cast<aspk::channels::type##Component*>(value), lifetime);
-	if (value->GetType().GetStringView() == "BaseComponent")
+	if (value->GetTypeName().GetStringView() == "BaseComponent")
 	{
 		MakeDirectObjectRef(L, static_cast<aspk::Component*>(value), lifetime);
 	}
 	// Special case for this one because it can't be its own V
-	else if (value->GetType().GetStringView() == "Ribbon 2.0")
+	else if (value->GetTypeName().GetStringView() == "Ribbon 2.0")
 	{
 		MakeDirectObjectRef(L, static_cast<aspk::Ribbon2Component*>(value), lifetime);
 	}
@@ -576,15 +576,15 @@ void LuaPolymorphic<aspk::Component>::MakeRef(lua_State* L, aspk::Component* val
 	V_timeline(TLSwitchStageEvent)
 	V_timeline(TLTransform)
 	V_timeline(TLVoice)
-	V_tlkeybase(TLEventKeyComponent)
-	V_tlkeybase(TLInterpolationKeyComponent)
-	V_tlkeybase(TLKeyBaseComponent)
-	V_tlchannel(TimelineActorPropertiesReflectionKeyComponent)
+	V_tlkeybase(TLEventKey)
+	V_tlkeybase(TLInterpolationKey)
+	V_tlkeybase(TLKeyBase)
+	V_tlchannel(TimelineActorPropertiesReflectionKey)
 	V_tlchannel(TLAtmosphereAndLightingChannel)
 	V_tlchannel(TLCameraDoFChannel)
 	V_tlchannel(TLCameraExposureChannel)
-	V_tlchannel(TLMaterialKeyComponent)
-	V_tlchannel(TLMaterialTextureKeyComponent)
+	V_tlchannel(TLMaterialKey)
+	V_tlchannel(TLMaterialTextureKey)
 	V_tlchannel(TLShowArmorChannel)
 	V_tlchannel(TLSplatterChannel)
 	// Theoretically there are a lot of other EffectComponents that could get output here; haven't finished researching them
@@ -607,12 +607,12 @@ void LuaPolymorphic<aspk::TLMaterialComponent::Parameter>::MakeRef(lua_State* L,
 	{
 		MakeDirectObjectRef(L, value, lifetime);
 	}
-	else if ((*range.begin)->GetType().GetStringView() == "TLMaterialKeyComponent")
+	else if ((*range.begin)->GetTypeName().GetStringView() == "TLMaterialKeyComponent")
 	{
 		MakeDirectObjectRef(L, static_cast<aspk::TLMaterialComponent::MaterialParameter*>(value), lifetime);
 	}
 	// For some reason, this takes the name TLInterpolationKeyComponent. I have no idea how it's supposed to be distinguished in actual code
-	else if ((*range.begin)->GetType().GetStringView() == "TLInterpolationKeyComponent")
+	else if ((*range.begin)->GetTypeName().GetStringView() == "TLInterpolationKeyComponent")
 	{
 		MakeDirectObjectRef(L, static_cast<aspk::TLMaterialComponent::TextureParameter*>(value), lifetime);
 	}

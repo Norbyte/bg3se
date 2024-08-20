@@ -170,7 +170,6 @@ struct FixedFunctionProperty : public Property
 struct FixedStringProperty : public Property
 {
 	FixedString Value;
-	[[bg3::hidden]] __int32 field_44;
 };
 
 struct BaseProperty : public Property
@@ -180,12 +179,40 @@ struct BaseProperty : public Property
 struct Component : public ProtectedGameObject<Component>
 {
 	virtual ~Component() = 0;
-	virtual void Unknown1() = 0;
-	virtual bool parseXML(void* XMLReader) = 0;
-	virtual bool Unknown2() = 0;
-	virtual const FixedString& GetType() = 0;
+	virtual void Clone(Component const&) = 0;
+	virtual bool Visit(ObjectVisitor*) = 0;
+	virtual uint32_t GetPriorityIndex() const = 0;
+	virtual FixedString const& GetTypeName() = 0;
+	virtual bool SetStayAlive(float) = 0;
+	virtual void Update(float) = 0;
+	virtual void PostUpdate(float) = 0;
+	virtual void Preload(void*, double) = 0;
+	virtual void Activate() = 0;
+	virtual void Deactivate() = 0;
+	virtual void Reset() = 0;
+	virtual void Reload() = 0;
+	virtual void OnPause(bool) = 0;
+	virtual void SetTimelineOwner(Timeline*) = 0;
+	virtual void SetPreRollData(Component const&) = 0;
+	virtual void SetTargetVisual(uint64_t) = 0;
+	virtual void ResetTargetVisual(uint64_t) = 0;
+	virtual void UpdateTargetVisual() = 0;
+	virtual bool HasResource(Guid const&) = 0;
+	virtual void OnPreviewUpdated() = 0;
+	virtual void ResetState() = 0;
+	virtual bool VisitProperties(ObjectVisitor*) = 0;
+	virtual void CreateVisual() = 0;
+	virtual void DestroyVisual() = 0;
+	virtual void Unknown01() = 0;
+	virtual void FillSnapshotValidChannels(Array<int>&) const = 0;
+	virtual void UpdateInternal(float) = 0;
+	virtual void PostUpdateInternal(float) = 0;
+	virtual void Unknown02() = 0;
+	virtual void AttachMaterial() = 0;
+	virtual void DetachMaterial() = 0;
+	virtual void Unknown05() = 0;
 
-	Guid GU;
+	Guid ID;
 	[[bg3::hidden]] Timeline* Timeline;
 	uint32_t TrackGroupIndex;
 	float StartTime;
@@ -196,7 +223,7 @@ struct Component : public ProtectedGameObject<Component>
 
 // Note: There are a LOT of different EffectComponents, all seemingly over 0x100 in size
 // The polymorphic choice should be made based on vtable[4]'s FixedString return value
-struct BaseEffectComponent : public Component
+struct FxBaseComponent : public Component
 {
 	struct Module
 	{
@@ -204,16 +231,18 @@ struct BaseEffectComponent : public Component
 		Array<FixedString> FullName;
 		Array<Property*> Properties;
 	};
-	__int64 field_48;
-	__int64 field_50;
-	__int64 field_58;
-	__int64 field_60;
-	__int64 field_68;
+
+	float LastUpdateTimeStep;
+	float LastUpdate;
+	float TimeStepEdge0;
+	float TimeStep;
+	float TimeStepEdge1;
+	ecs::EntityRef Entity;
 	LegacyMap<FixedString, Property*> PropertiesByFullName;
 	Array<Module*> Modules;
 	Array<Property*> Properties;
-	__int64 field_a8;
-	__int64 field_b0;
+	uint32_t FxType;
+	uint64_t field_98;
 };
 
 struct TLActor
@@ -236,16 +265,17 @@ struct TLBaseComponent : public Component
 BEGIN_BARE_NS(keys)
 	struct KeyBase : public ProtectedGameObject<KeyBase>
 	{
-		[[bg3::hidden]] void* vtable;
+		virtual ~KeyBase() = 0;
+		virtual void Clone(KeyBase const&) = 0;
+		virtual bool Visit(ObjectVisitor*) = 0;
+
 		float Time;
 		uint8_t InterpolationType;
-		[[bg3::hidden]] __int8 field_d;
-		[[bg3::hidden]] __int16 field_e;
 	};
 END_BARE_NS()
 
 template<typename Key>
-struct TLKeyBaseComponentComponent : public TLBaseComponent
+struct TLKeyBaseComponent : public TLBaseComponent
 {
 	float field_68;
 	[[bg3::hidden]] Array<Key*> Keys;
@@ -256,21 +286,21 @@ struct TLKeyBaseComponentComponent : public TLBaseComponent
 	std::array<uint32_t, 2> Random;
 };
 
-template struct TLKeyBaseComponentComponent<keys::KeyBase>;
+template struct TLKeyBaseComponent<keys::KeyBase>;
 
 template<typename Key>
-struct TLInterpolationKeyComponentComponent : public TLKeyBaseComponentComponent<Key>
+struct TLInterpolationKeyComponent : public TLKeyBaseComponent<Key>
 {
 };
 
-template struct TLInterpolationKeyComponentComponent<keys::KeyBase>;
+template struct TLInterpolationKeyComponent<keys::KeyBase>;
 
 template<typename Key>
-struct TLEventKeyComponentComponent : public TLKeyBaseComponentComponent<Key>
+struct TLEventKeyComponent : public TLKeyBaseComponent<Key>
 {
 };
 
-template struct TLEventKeyComponentComponent<keys::KeyBase>;
+template struct TLEventKeyComponent<keys::KeyBase>;
 
 BEGIN_BARE_NS(keys)
 	template <typename T>
@@ -281,9 +311,8 @@ BEGIN_BARE_NS(keys)
 
 	struct AtmosphereAndLightingChannelKey : public KeyBase
 	{
-		bg3se::Guid id;
-		float fadeTime;
-		[[bg3::hidden]] __int32 field_24;
+		bg3se::Guid Id;
+		float FadeTime;
 	};
 
 	struct AttachToEventKey : public KeyBase
@@ -291,10 +320,7 @@ BEGIN_BARE_NS(keys)
 		bg3se::Guid Target;
 		FixedString Bone;
 		bool IsPersistent;
-		[[bg3::hidden]] __int8 field_25;
-		[[bg3::hidden]] __int16 field_26;
 		glm::fvec3 offset;
-		[[bg3::hidden]] __int32 field_34;
 	};
 
 	struct AttitudeEventKey : public KeyBase
@@ -306,13 +332,11 @@ BEGIN_BARE_NS(keys)
 	struct CameraDoFChannelKey : public KeyBase
 	{
 		float Value;
-		[[bg3::hidden]] __int32 field_14;
 	};
 
 	struct CameraFoVKey : public KeyBase
 	{
 		float FoV;
-		[[bg3::hidden]] __int32 field_14;
 	};
 
 	struct CameraLookAtKey : public KeyBase
@@ -327,13 +351,11 @@ BEGIN_BARE_NS(keys)
 		float FreeZoneDelay;
 		float SoftZoneDelay;
 		float SoftZoneRampTime;
-		[[bg3::hidden]] __int32 field_54;
 	};
 
 	struct EffectPhaseEventKey : public KeyBase
 	{
 		int32_t EffectPhase;
-		[[bg3::hidden]] __int32 field_14;
 	};
 
 	struct EmotionEventKey : public KeyBase
@@ -342,28 +364,21 @@ BEGIN_BARE_NS(keys)
 		int32_t Variation;
 		bool IsSustainedEmotion;
 		bool AppliesMaterials;
-		[[bg3::hidden]] __int16 field_1a;
-		[[bg3::hidden]] __int32 field_1c;
 	};
 
 	struct FloatRTPCKey : public KeyBase
 	{
 		float FloatRTPCValue;
-		[[bg3::hidden]] __int32 field_14;
 	};
 
 	struct GenomeTextEventKey : public KeyBase
 	{
 		FixedString EventName;
-		[[bg3::hidden]] __int32 field_14;
 	};
 
 	struct HandsIKKey : public KeyBase
 	{
 		bool InverseKinematics;
-		[[bg3::hidden]] __int8 field_11;
-		[[bg3::hidden]] __int16 field_12;
-		[[bg3::hidden]] __int32 field_14;
 	};
 
 	struct LookAtEventKey : public KeyBase
@@ -372,11 +387,9 @@ BEGIN_BARE_NS(keys)
 		FixedString Bone;
 		uint8_t TurnMode;
 		uint8_t TrackingMode;
-		[[bg3::hidden]] __int16 field_26;
 		float TurnSpeedMultiplier;
 		float TorsoTurnSpeedMultiplier;
 		float HeadTurnSpeedMultiplier;
-		[[bg3::hidden]] __int32 field_34;
 		std::optional<double> Weight;
 		std::optional<double> SaveZoneAngle;
 		std::optional<double> HeadSafeZoneAngle;
@@ -398,23 +411,16 @@ BEGIN_BARE_NS(keys)
 	struct PhysicsKey : public KeyBase
 	{
 		bool InverseKinematics;
-		[[bg3::hidden]] __int8 field_11;
-		[[bg3::hidden]] __int16 field_12;
-		[[bg3::hidden]] __int32 field_14;
 	};
 
 	struct PlayEffectEventKey : public KeyBase
 	{
 		bool PlayEffect;
-		[[bg3::hidden]] __int8 field_11;
-		[[bg3::hidden]] __int16 field_12;
-		[[bg3::hidden]] __int32 field_14;
 	};
 
 	struct PlayRateKey : public KeyBase
 	{
 		float Speed;
-		[[bg3::hidden]] __int32 field_14;
 	};
 
 	struct ShapeShiftKey : public KeyBase
@@ -425,41 +431,26 @@ BEGIN_BARE_NS(keys)
 	struct ShowArmorChannelKey : public KeyBase
 	{
 		bool Value;
-		[[bg3::hidden]] __int8 field_11;
-		[[bg3::hidden]] __int16 field_12;
-		[[bg3::hidden]] __int32 field_14;
 	};
 
 	struct ShowHUDKey : public KeyBase
 	{
 		bool ShowHUD;
-		[[bg3::hidden]] __int8 field_11;
-		[[bg3::hidden]] __int16 field_12;
-		[[bg3::hidden]] __int32 field_14;
 	};
 
 	struct ShowPeanutsKey : public KeyBase
 	{
 		bool ShowPeanuts;
-		[[bg3::hidden]] __int8 field_11;
-		[[bg3::hidden]] __int16 field_12;
-		[[bg3::hidden]] __int32 field_14;
 	};
 
 	struct ShowVisualKey : public KeyBase
 	{
 		bool ShowVisual;
-		[[bg3::hidden]] __int8 field_11;
-		[[bg3::hidden]] __int16 field_12;
-		[[bg3::hidden]] __int32 field_14;
 	};
 
 	struct ShowWeaponKey : public KeyBase
 	{
 		bool ShowWeapon;
-		[[bg3::hidden]] __int8 field_11;
-		[[bg3::hidden]] __int16 field_12;
-		[[bg3::hidden]] __int32 field_14;
 	};
 
 	struct SoundEventKey : public KeyBase
@@ -469,7 +460,6 @@ BEGIN_BARE_NS(keys)
 			bg3se::Guid SoundEventID;
 			uint8_t SoundObjectIndex;
 			bool KeepAlive;
-			__int16 field_2a;
 			float LoopLifetime;
 		};
 		struct Type2
@@ -494,24 +484,16 @@ BEGIN_BARE_NS(keys)
 	{
 		float Value;
 		uint8_t SplatterChangeMode;
-		[[bg3::hidden]] __int8 field_15;
-		[[bg3::hidden]] __int16 field_16;
 	};
 
 	struct SpringsKey : public KeyBase
 	{
 		bool EnableSprings;
-		[[bg3::hidden]] __int8 field_11;
-		[[bg3::hidden]] __int16 field_12;
-		[[bg3::hidden]] __int32 field_14;
 	};
 
 	struct SteppingFadeKey : public KeyBase
 	{
 		bool SteppingInOut;
-		[[bg3::hidden]] __int8 field_11;
-		[[bg3::hidden]] __int16 field_12;
-		[[bg3::hidden]] __int32 field_14;
 	};
 
 	struct SwitchLocationEventKey : public KeyBase
@@ -525,14 +507,11 @@ BEGIN_BARE_NS(keys)
 		bg3se::Guid SwitchStageEventID;
 		bool ForceTransformUpdate;
 		bool ForceUpdateCameraBehavior;
-		[[bg3::hidden]] __int16 field_22;
-		[[bg3::hidden]] __int32 field_24;
 	};
 
 	struct TransformChannelFloatKey : public KeyBase
 	{
 		float Value;
-		[[bg3::hidden]] __int32 field_14;
 	};
 
 	struct TransformChannelFrameOfReferenceKey : public KeyBase
@@ -543,7 +522,6 @@ BEGIN_BARE_NS(keys)
 			FixedString targetBone;
 			bool OneFrameOnly;
 			bool KeepScale;
-			[[bg3::hidden]] __int16 field_16;
 		};
 		FrameOfReference frameOfReference;
 	};
@@ -556,25 +534,24 @@ END_BARE_NS()
 
 BEGIN_BARE_NS(channels)
 	template <typename T>
-	struct EventKeyChannel : public TLEventKeyComponentComponent<keys::ValueKey<T>>
+	struct EventKeyChannel : public TLEventKeyComponent<keys::ValueKey<T>>
 	{
 		T defaultVal;
 	};
 			
-	struct TimelineActorPropertiesReflectionKeyComponentComponent : public TLInterpolationKeyComponentComponent<keys::ValueKey<float>>
+	struct TimelineActorPropertiesReflectionKeyComponent : public TLInterpolationKeyComponent<keys::ValueKey<float>>
 	{
 		float KeyDefault;
-		[[bg3::hidden]] __int32 field_b4;
 	};
 
-	struct TLAtmosphereAndLightingChannelComponent : public TLInterpolationKeyComponentComponent<keys::AtmosphereAndLightingChannelKey>
+	struct TLAtmosphereAndLightingChannelComponent : public TLInterpolationKeyComponent<keys::AtmosphereAndLightingChannelKey>
 	{
 		__int64 field_b0;
 		__int64 field_b8;
 		__int64 field_c0;
 	};
 
-	struct TLCameraDoFChannelComponent : public TLInterpolationKeyComponentComponent<keys::CameraDoFChannelKey>
+	struct TLCameraDoFChannelComponent : public TLInterpolationKeyComponent<keys::CameraDoFChannelKey>
 	{
 		float field_b0;
 		uint8_t channelNum;
@@ -586,46 +563,43 @@ BEGIN_BARE_NS(channels)
 	{
 	};
 
-	struct TLMaterialKeyComponentComponent : public TLInterpolationKeyComponentComponent<keys::ValueKey<float>>
+	struct TLMaterialKeyComponent : public TLInterpolationKeyComponent<keys::ValueKey<float>>
 	{
 		float defaultVal;
 		__int32 field_b4;
 	};
 
-	struct TLMaterialTextureKeyComponentComponent : public TLInterpolationKeyComponentComponent<keys::MaterialTextureKeyKey>
+	struct TLMaterialTextureKeyComponent : public TLInterpolationKeyComponent<keys::MaterialTextureKeyKey>
 	{
 		__int64 field_b0;
 		__int64 field_b8;
 	};
 
-	struct TLShowArmorChannelComponent : public TLEventKeyComponentComponent<keys::ShowArmorChannelKey>
+	struct TLShowArmorChannelComponent : public TLEventKeyComponent<keys::ShowArmorChannelKey>
 	{
 		__int64 field_b0;
 	};
 
-	struct TLSplatterChannelComponent : public TLInterpolationKeyComponentComponent<keys::SplatterChannelKey>
+	struct TLSplatterChannelComponent : public TLInterpolationKeyComponent<keys::SplatterChannelKey>
 	{
 		__int64 field_b0;
 		uint8_t SplatterType;
-		[[bg3::hidden]] __int8 field_b9;
-		[[bg3::hidden]] __int16 field_ba;
-		[[bg3::hidden]] __int32 field_bc;
 	};
 
-	struct TLTransformChannelFloatComponent : public TLInterpolationKeyComponentComponent<keys::TransformChannelFloatKey>
+	struct TLTransformChannelFloatComponent : public TLInterpolationKeyComponent<keys::TransformChannelFloatKey>
 	{
 		float defaultVal;
 		__int32 field_b4;
 		Array<__int64> field_b8;
 	};
 
-	struct TLTransformChannelFrameOfReferenceComponent : public TLInterpolationKeyComponentComponent<keys::TransformChannelFrameOfReferenceKey>
+	struct TLTransformChannelFrameOfReferenceComponent : public TLInterpolationKeyComponent<keys::TransformChannelFrameOfReferenceKey>
 	{
 		keys::TransformChannelFrameOfReferenceKey::FrameOfReference defaultVal;
 		Array<__int64> field_b8;
 	};
 
-	struct TLTransformChannelQuatComponent : public TLInterpolationKeyComponentComponent<keys::TransformChannelQuatKey>
+	struct TLTransformChannelQuatComponent : public TLInterpolationKeyComponent<keys::TransformChannelQuatKey>
 	{
 		glm::fvec4 defaultVal;
 		Array<__int64> field_c0;
@@ -638,8 +612,8 @@ struct TimelineActorPropertiesReflectionComponent : public TLBaseComponent
 	{
 		struct Range
 		{
-			channels::TimelineActorPropertiesReflectionKeyComponentComponent** begin;
-			channels::TimelineActorPropertiesReflectionKeyComponentComponent** end;
+			channels::TimelineActorPropertiesReflectionKeyComponent** begin;
+			channels::TimelineActorPropertiesReflectionKeyComponent** end;
 		};
 		virtual ~Parameter() = 0;
 		virtual bool readData(void* dataReader) = 0;
@@ -658,7 +632,7 @@ struct TimelineActorPropertiesReflectionComponent : public TLBaseComponent
 		__int64 field_48;
         __int64 field_50;
 
-		[[bg3::getter]] inline std::span<channels::TimelineActorPropertiesReflectionKeyComponentComponent*> PropertyParameters()
+		[[bg3::getter]] inline std::span<channels::TimelineActorPropertiesReflectionKeyComponent*> PropertyParameters()
 		{
 			[[bg3::hidden]] Range range;
             getRange(range);
@@ -730,11 +704,11 @@ struct TLAtmosphereAndLightingComponent : public TLBaseComponent
 	std::array<channels::TLAtmosphereAndLightingChannelComponent*, 2> Channels;
 };
 
-struct TLAttachToEventComponent : public TLInterpolationKeyComponentComponent<keys::AttachToEventKey>
+struct TLAttachToEventComponent : public TLInterpolationKeyComponent<keys::AttachToEventKey>
 {
 };
 
-struct TLAttitudeEventComponent : public TLKeyBaseComponentComponent<keys::AttitudeEventKey>
+struct TLAttitudeEventComponent : public TLKeyBaseComponent<keys::AttitudeEventKey>
 {
 	FixedString field_b0;
 	__int32 field_b4;
@@ -751,23 +725,23 @@ struct TLCameraExposureComponent : public TLBaseComponent
 	__int64 field_90;
 };
 
-struct TLCameraFoVComponent : public TLInterpolationKeyComponentComponent<keys::CameraFoVKey>
+struct TLCameraFoVComponent : public TLInterpolationKeyComponent<keys::CameraFoVKey>
 {
 };
 
-struct TLCameraLookAtComponent : public TLInterpolationKeyComponentComponent<keys::CameraLookAtKey>
+struct TLCameraLookAtComponent : public TLInterpolationKeyComponent<keys::CameraLookAtKey>
 {
 };
 
-struct TLEffectPhaseEventComponent : public TLEventKeyComponentComponent<keys::EffectPhaseEventKey>
+struct TLEffectPhaseEventComponent : public TLEventKeyComponent<keys::EffectPhaseEventKey>
 {
 };
 
-struct TLEmotionEventComponent : public TLEventKeyComponentComponent<keys::EmotionEventKey>
+struct TLEmotionEventComponent : public TLEventKeyComponent<keys::EmotionEventKey>
 {
 };
 
-struct TLFloatRTPCComponent : public TLInterpolationKeyComponentComponent<keys::FloatRTPCKey>
+struct TLFloatRTPCComponent : public TLInterpolationKeyComponent<keys::FloatRTPCKey>
 {
 	__int64 field_b0;
 	FixedString RTPCName;
@@ -776,11 +750,11 @@ struct TLFloatRTPCComponent : public TLInterpolationKeyComponentComponent<keys::
 	[[bg3::hidden]] __int16 field_be;
 };
 
-struct TLGenomeTextEventComponent : public TLEventKeyComponentComponent<keys::GenomeTextEventKey>
+struct TLGenomeTextEventComponent : public TLEventKeyComponent<keys::GenomeTextEventKey>
 {
 };
 
-struct TLHandsIKComponent : public TLEventKeyComponentComponent<keys::HandsIKKey>
+struct TLHandsIKComponent : public TLEventKeyComponent<keys::HandsIKKey>
 {
 };
 
@@ -788,7 +762,7 @@ struct TLLayeredAnimationComponent : public TLAnimationComponent
 {
 };
 
-struct TLLookAtEventComponent : public TLEventKeyComponentComponent<keys::LookAtEventKey>
+struct TLLookAtEventComponent : public TLEventKeyComponent<keys::LookAtEventKey>
 {
 };
 
@@ -816,21 +790,21 @@ struct TLMaterialComponent : public TLBaseComponent
 		__int16 field_1a;
 		__int32 field_1c;
 
-		[[bg3::getter]] inline std::span<channels::TLMaterialTextureKeyComponentComponent*> PropertyParameters()
+		[[bg3::getter]] inline std::span<channels::TLMaterialTextureKeyComponent*> PropertyParameters()
 		{
 			[[bg3::hidden]] Range range;
             getRange(range);
-            return std::span((channels::TLMaterialTextureKeyComponentComponent**)range.begin, range.end - range.begin);
+            return std::span((channels::TLMaterialTextureKeyComponent**)range.begin, range.end - range.begin);
 		}
 	};
 
 	struct MaterialParameter : public Parameter
 	{
-		[[bg3::getter]] inline std::span<channels::TLMaterialKeyComponentComponent*> PropertyParameters()
+		[[bg3::getter]] inline std::span<channels::TLMaterialKeyComponent*> PropertyParameters()
 		{
 			[[bg3::hidden]] Range range;
             getRange(range);
-            return std::span((channels::TLMaterialKeyComponentComponent**)range.begin, range.end - range.begin);
+            return std::span((channels::TLMaterialKeyComponent**)range.begin, range.end - range.begin);
 		}
 	};
 
@@ -848,20 +822,20 @@ struct TLMaterialComponent : public TLBaseComponent
 	float OverlayPriority;
 };
 
-struct TLPhysicsComponent : public TLEventKeyComponentComponent<keys::PhysicsKey>
+struct TLPhysicsComponent : public TLEventKeyComponent<keys::PhysicsKey>
 {
 };
 
-struct TLPlayEffectEventComponent : public TLEventKeyComponentComponent<keys::PlayEffectEventKey>
+struct TLPlayEffectEventComponent : public TLEventKeyComponent<keys::PlayEffectEventKey>
 {
 	__int64 field_b0;
 };
 
-struct TLPlayRateComponent : public TLKeyBaseComponentComponent<keys::PlayRateKey>
+struct TLPlayRateComponent : public TLKeyBaseComponent<keys::PlayRateKey>
 {
 };
 
-struct TLShapeShiftComponent : public TLEventKeyComponentComponent<keys::ShapeShiftKey>
+struct TLShapeShiftComponent : public TLEventKeyComponent<keys::ShapeShiftKey>
 {
 };
 
@@ -918,23 +892,23 @@ struct TLShowArmorComponent : public TLBaseComponent
 	__int64 field_98;
 };
 
-struct TLShowHUDComponent : public TLEventKeyComponentComponent<keys::ShowHUDKey>
+struct TLShowHUDComponent : public TLEventKeyComponent<keys::ShowHUDKey>
 {
 };
 
-struct TLShowPeanutsComponent : public TLEventKeyComponentComponent<keys::ShowPeanutsKey>
+struct TLShowPeanutsComponent : public TLEventKeyComponent<keys::ShowPeanutsKey>
 {
 };
 
-struct TLShowVisualComponent : public TLEventKeyComponentComponent<keys::ShowVisualKey>
+struct TLShowVisualComponent : public TLEventKeyComponent<keys::ShowVisualKey>
 {
 };
 
-struct TLShowWeaponComponent : public TLEventKeyComponentComponent<keys::ShowWeaponKey>
+struct TLShowWeaponComponent : public TLEventKeyComponent<keys::ShowWeaponKey>
 {
 };
 
-struct TLSoundEventComponent : public TLEventKeyComponentComponent<keys::SoundEventKey>
+struct TLSoundEventComponent : public TLEventKeyComponent<keys::SoundEventKey>
 {
 	Array<TLFloatRTPCComponent*> RTPCChannels;
 };
@@ -944,21 +918,21 @@ struct TLSplatterComponent : public TLBaseComponent
 	Array<channels::TLSplatterChannelComponent*> Channels;
 };
 
-struct TLSpringsComponent : public TLEventKeyComponentComponent<keys::SpringsKey>
+struct TLSpringsComponent : public TLEventKeyComponent<keys::SpringsKey>
 {
 	uint32_t VisualFlag;
 	__int32 field_b4;
 };
 
-struct TLSteppingFadeComponent : public TLEventKeyComponentComponent<keys::SteppingFadeKey>
+struct TLSteppingFadeComponent : public TLEventKeyComponent<keys::SteppingFadeKey>
 {
 };
 
-struct TLSwitchLocationEventComponent : public TLEventKeyComponentComponent<keys::SwitchLocationEventKey>
+struct TLSwitchLocationEventComponent : public TLEventKeyComponent<keys::SwitchLocationEventKey>
 {
 };
 
-struct TLSwitchStageEventComponent : public TLEventKeyComponentComponent<keys::SwitchStageEventKey>
+struct TLSwitchStageEventComponent : public TLEventKeyComponent<keys::SwitchStageEventKey>
 {
 	__int64 field_b0;
 	__int64 field_b8;
@@ -1008,52 +982,52 @@ struct TLVoiceComponent : public TLBaseComponent
 };
 
 
-struct BillboardComponent : public BaseEffectComponent
+struct BillboardComponent : public FxBaseComponent
 {
 	std::array<__int64, 77> field_b8;
 };
 
-struct BoundingBoxComponent : public BaseEffectComponent
+struct BoundingBoxComponent : public FxBaseComponent
 {
 	std::array<__int64, 6> field_b8;
 };
 
-struct BoundingSphereComponent : public BaseEffectComponent
+struct BoundingSphereComponent : public FxBaseComponent
 {
 	std::array<__int64, 4> field_b8;
 };
 
-struct CameraShakeComponent : public BaseEffectComponent
+struct CameraShakeComponent : public FxBaseComponent
 {
 	std::array<__int64, 7> field_b8;
 };
 
-struct DecalComponent : public BaseEffectComponent
+struct DecalComponent : public FxBaseComponent
 {
 	std::array<__int64, 39> field_b8;
 };
 
-struct DeflectorComponent : public BaseEffectComponent
+struct DeflectorComponent : public FxBaseComponent
 {
 	std::array<__int64, 7> field_b8;
 };
 
-struct DragForceComponent : public BaseEffectComponent
+struct DragForceComponent : public FxBaseComponent
 {
 	std::array<__int64, 10> field_b8;
 };
 
-struct GravityForceComponent : public BaseEffectComponent
+struct GravityForceComponent : public FxBaseComponent
 {
 	std::array<__int64, 10> field_b8;
 };
 
-struct LightComponent : public BaseEffectComponent
+struct LightComponent : public FxBaseComponent
 {
 	std::array<__int64, 35> field_b8;
 };
 
-struct ModelComponent : public BaseEffectComponent
+struct ModelComponent : public FxBaseComponent
 {
 	std::array<__int64, 4> field_b8;
 	__int32 field_d8;
@@ -1063,18 +1037,18 @@ struct ModelComponent : public BaseEffectComponent
 	std::array<__int64, 55> field_e8;
 };
 
-struct MovingLevelComponent : public BaseEffectComponent
+struct MovingLevelComponent : public FxBaseComponent
 {
 	STDString field_b8;
 	std::array<__int64, 5> field_d0;
 };
 
-struct OrbitForceComponent : public BaseEffectComponent
+struct OrbitForceComponent : public FxBaseComponent
 {
 	std::array<__int64, 8> field_b8;
 };
 
-struct OverlayMaterialComponent : public BaseEffectComponent
+struct OverlayMaterialComponent : public FxBaseComponent
 {
 	std::array<__int64, 10> field_b8;
 	FixedString field_108;
@@ -1082,7 +1056,7 @@ struct OverlayMaterialComponent : public BaseEffectComponent
 	std::array<__int64, 18> field_110;
 };
 
-struct ParticleSystemComponent : public BaseEffectComponent
+struct ParticleSystemComponent : public FxBaseComponent
 {
 	struct ParticleDatas
 	{
@@ -1111,26 +1085,26 @@ struct ParticleSystemComponent : public BaseEffectComponent
 	std::array<__int64, 8> field_4d0;
 };
 
-struct PostProcessComponent : public BaseEffectComponent
+struct PostProcessComponent : public FxBaseComponent
 {
 	std::array<__int64, 2> field_b8;
 };
 
-struct PreRollComponent : public BaseEffectComponent
+struct PreRollComponent : public FxBaseComponent
 {
 };
 
-struct RadialForceComponent : public BaseEffectComponent
+struct RadialForceComponent : public FxBaseComponent
 {
 	std::array<__int64, 10> field_b8;
 };
 
-struct Ribbon2Component : public BaseEffectComponent
+struct Ribbon2Component : public FxBaseComponent
 {
 	std::array<__int64, 63> field_b8;
 };
 
-struct SoundComponent : public BaseEffectComponent
+struct SoundComponent : public FxBaseComponent
 {
 	std::array<__int64, 5> field_b8;
 	FixedString field_f0;
@@ -1140,22 +1114,22 @@ struct SoundComponent : public BaseEffectComponent
 	std::array<__int64, 3> field_100;
 };
 
-struct SpinForceComponent : public BaseEffectComponent
+struct SpinForceComponent : public FxBaseComponent
 {
 	std::array<__int64, 10> field_b8;
 };
 
-struct TurbulentForceComponent : public BaseEffectComponent
+struct TurbulentForceComponent : public FxBaseComponent
 {
 	std::array<__int64, 9> field_b8;
 };
 
-struct VortexForceComponent : public BaseEffectComponent
+struct VortexForceComponent : public FxBaseComponent
 {
 	std::array<__int64, 10> field_b8;
 };
 
-struct WindForceComponent : public BaseEffectComponent
+struct WindForceComponent : public FxBaseComponent
 {
 	std::array<__int64, 4> field_b8;
 };
