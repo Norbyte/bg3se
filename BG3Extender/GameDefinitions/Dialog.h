@@ -10,7 +10,6 @@ struct DialogManager;
 struct DialogInstance;
 struct DefaultDialogNode;
 struct DialogVisitor;
-struct IGameData;
 struct IInputNode;
 struct DialogueVisualTag;
 struct Flag;
@@ -25,13 +24,24 @@ struct FlagDescription
 {
 	FixedString Name;
 	bool HasFlagParamInfo;
-	FlagParamInfo* ParamInfo;
+	[[bg3::hidden]] FlagParamInfo* ParamInfo;
+};
+
+
+struct Flag : public ProtectedGameObject<Flag>
+{
+	virtual ~Flag() = 0;
+
+	Guid Uuid;
+	FixedString Type;
+	bool Value;
+	[[bg3::hidden]] uint32_t _Pad;
 };
 
 
 struct FlagCollection
 {
-	Dialog* Dialog;
+	[[bg3::hidden]] DialogManager* DialogManager;
 	LegacyRefMap<FixedString, Array<Flag*>> Flags;
 };
 
@@ -41,10 +51,12 @@ struct ScriptFlag
 	Guid Uuid;
 	STDString Script;
 	uint64_t field_28;
-	STDString Name;
-	STDString Description;
-	STDString Path;
-	STDString ModName;
+#if 0
+	//STDString Name;
+	//STDString Description;
+	//STDString Path;
+	//STDString ModName;
+#endif
 };
 
 
@@ -52,10 +64,12 @@ struct SpeakerGroup
 {
 	Guid Uuid;
 	Guid OverwriteSpeakerUuid;
-	STDString SpeakerName;
-	STDString Description;
-	STDString Path;
-	STDString ModName;
+#if 0
+	//STDString SpeakerName;
+	//STDString Description;
+	//STDString Path;
+	//STDString ModName;
+#endif
 };
 
 
@@ -64,10 +78,12 @@ struct Variable
 	Guid Uuid;
 	uint8_t Type;
 	STDString DefaultValue;
-	STDString Name;
-	STDString Description;
-	STDString Path;
-	STDString ModName;
+#if 0
+	//STDString Name;
+	//STDString Description;
+	//STDString Path;
+	//STDString ModName;
+#endif
 };
 
 
@@ -93,6 +109,65 @@ struct TaggedText
 };
 
 
+struct TagRuleEntry : public ProtectedGameObject<TagRuleGroup>
+{
+	virtual ~TagRuleEntry() = 0;
+};
+
+
+struct TagRule : public TagRuleEntry
+{
+	int SpeakerIndex;
+	Array<Guid> CheckedTags;
+	int CombineOp;
+};
+
+
+struct TagRuleGroup : public TagRuleEntry
+{
+	int Operator;
+	Array<TagRuleEntry*> ChildRules;
+};
+
+
+struct LookAtInfo
+{
+	int16_t Speaker;
+	int16_t Target;
+};
+
+
+struct DialogGameData : public ProtectedGameObject<DialogGameData>
+{
+	virtual ~DialogGameData() = 0;
+	virtual DialogNode* GetParentNode() const = 0;
+	virtual void SetParentNode(DialogNode&) = 0;
+	virtual bool OnVisit(ObjectVisitor&) = 0;
+	virtual void SerializeToBuffer(ScratchBuffer&) = 0;
+	virtual void DeserializeFromBuffer(ScratchBuffer&) = 0;
+	virtual void Unknown0() = 0;
+	virtual void Unknown1() = 0;
+	virtual bool ValidateNode(DialogInstance const&) = 0;
+	virtual bool OnNodeStarted(DialogInstance&) = 0;
+	virtual TranslatedFSString GetCustomDisplayText(DialogInstance const&, FixedString const&, unsigned int, TranslatedFSString&&) const = 0;
+	virtual void* GetOverridenTag(DialogInstance const&, FixedString const&, unsigned int) const = 0;
+	virtual void Clone(DialogGameData const*) = 0;
+
+	DialogNode* ParentNode;
+	Array<FixedString> AiPersonality;
+	Array<LookAtInfo> LookAt;
+	STDString SoundEvent;
+	STDString SoundPerMusicInstrument[4];
+	FixedString OriginTheme;
+	FixedString OriginOnly;
+	bool OriginThemeAddInstrument;
+	STDString CustomMovie;
+	[[bg3::hidden]] IGameInterface* GameInterface;
+	int CameraTarget;
+	int ExtraWaitTime;
+};
+
+
 struct NodeData
 {
 	FixedString UUID;
@@ -115,7 +190,7 @@ struct Dialog : public ProtectedGameObject<Dialog>
 	bool IsSubsAnonymous;
 	bool IsPrivateDialog;
 	LegacyRefMap<FixedString, DialogNode*> Nodes;
-	DialogManager* DialogManager;
+	[[bg3::hidden]] DialogManager* DialogManager;
 	STDString Category;
 	Array<STDString> SpeakerGroups;
 	Array<STDString> SpeakerTags;
@@ -147,8 +222,8 @@ struct DialogNode : public ProtectedGameObject<DialogNode>
 	virtual void GetReferencedNodes(ObjectSet<FixedString>&) const = 0;
 	virtual PrimitiveSet<TaggedText*> const* GetTaggedTexts() const = 0;
 	virtual bool Visit(DialogVisitor&) = 0;
-	virtual IGameData* GetGameData() const = 0;
-	virtual void SetGameData(IGameData*) = 0;
+	virtual DialogGameData* GetGameData() const = 0;
+	virtual void SetGameData(DialogGameData*) = 0;
 	virtual bool IsPresentable() const = 0;
 	virtual ObjectSet<Guid> const& GetTags() const = 0;
 	virtual void ClearTags() = 0;
@@ -189,7 +264,7 @@ struct DialogNode : public ProtectedGameObject<DialogNode>
 	FlagCollection SetFlags;
 	FlagCollection CheckFlags;
 	Dialog* ParentDialog;
-	void* GameData;
+	[[bg3::hidden]] void* GameData;
 	Array<FixedString> Children;
 	float WaitTime;
 	Array<Guid> Tags;
@@ -218,9 +293,11 @@ struct VisualStateNode : public DialogNode
 
 struct DefaultDialogNode : public DialogNode
 {
-	FixedString Speaker;
-	FixedString AddressedSpeaker;
-	STDString Value;
+	int32_t Speaker;
+	int32_t AddressedSpeaker;
+#if 0
+	// STDString Value;
+#endif
 	bool Stub;
 };
 
@@ -258,10 +335,49 @@ struct SelectSpeakerNode : public BaseTaggedNode
 
 struct TaggedQuestionNode : public BaseTaggedNode
 {
-	void* InputNode;
+	[[bg3::hidden]] void* InputNodeVMT;
 	int SpeakerId2;
-	FlagCollection ValidatedFlags;
-	bool ValidatedHasValue;
+	std::optional<FlagCollection> ValidatedFlags;
+};
+
+
+struct DialogRoll : public ProtectedGameObject<DialogRoll>
+{
+	[[bg3::hidden]] void* VMT;
+	stats::RollType RollType;
+	SkillId Skill;
+	AbilityId Ability;
+	uint8_t Advantage;
+	Guid DifficultyClass;
+	int RollTargetSpeaker;
+	bool ExcludeCompanionsOptionalBonuses;
+	bool ExcludeSpeakerOptionalBonuses;
+	Array<Guid> ExcludedBonusesTags;
+};
+
+
+struct ActiveRollNode : public TaggedQuestionNode
+{
+	DialogRoll Roll;
+	bool DetectThoughts;
+	TranslatedString AdvantageReason;
+	uint8_t Flags2;
+	STDString AdvantageReasonReferenceString;
+};
+
+
+struct PassiveRollNode : public DefaultDialogNode
+{
+	DialogRoll Roll;
+	bool IsFlatSkillCheck;
+};
+
+
+struct TradeNode : public DefaultDialogNode
+{
+	STDString ItemsTagFilter;
+	int PlayerOverride;
+	bool DefaultToBarter;
 };
 
 
@@ -304,6 +420,9 @@ struct NodeSelectionInfo
 	bool field_C;
 };
 
+struct EmptyTarget
+{
+};
 
 struct DialogInstance : public ProtectedGameObject<DialogInstance>
 {
@@ -318,19 +437,14 @@ struct DialogInstance : public ProtectedGameObject<DialogInstance>
 	HashMap<FixedString, uint32_t> NodeCustomData;
 	HashSet<FixedString> PlayedDialogs;
 	NodeData CurrentNode;
-	void* CustomNodeVisitor;
-	void* CustomNodeVisitData;
-	void* ActiveDialog2;
+	[[bg3::hidden]] void* CustomNodeVisitor;
+	[[bg3::hidden]] void* CustomNodeVisitData;
+	Dialog* ActiveDialog;
 	FixedString DialogResourceUUID;
-	void* OverriddenDialog;
-	HashMap<FixedString, Dialog*> Dialogs_FS_pDialog;
+	Dialog* OverriddenDialog;
+	HashMap<FixedString, Dialog*> Dialogs;
 	int32_t State;
-	int32_t _Pad;
-	FixedString PartyTeleportTargetOnEnd;
-	int field_164;
-	__int64 field_168;
-	bool PartyTeleportTargetOnEndType;
-	int32_t _Pad2;
+	std::variant<EmptyTarget, Guid, FixedString> PartyTeleportOnEnd;
 	bool WasActivated;
 	bool AutomatedDialog;
 	bool AllowDeadSpeakers;
@@ -348,9 +462,9 @@ struct DialogInstance : public ProtectedGameObject<DialogInstance>
 	bool WorldHadTriggered;
 	bool IsPlayerWatchingTimeline;
 	bool TimelineConfirmed;
-	bool IsPreview;
-	uint8_t LocalHighlightedAnswer;
-	uint8_t HostHighlightedAnswer;
+	// bool IsPreview; - maybe?
+	int8_t LocalHighlightedAnswer;
+	int8_t HostHighlightedAnswer;
 	uint8_t Flags;
 	int LastPlayerSpeakerIndex;
 	bool CanAttack;
@@ -383,52 +497,51 @@ struct ActorRefCount
 
 struct DialogManager : public ProtectedGameObject<DialogManager>
 {
-	Array<DialogEventListener*> EventListeners;
+	[[bg3::hidden]] Array<DialogEventListener*> EventListeners;
 	Array<int32_t> PendingInstanceLoads;
 	LegacyRefMap<int, DialogInstance*> Dialogs;
 	LegacyRefMap<FixedString, FlagDescription*> FlagDescriptions;
-	LegacyRefMap<FixedString, INodeConstructor*> NodeConstructorMap;
-	void* NodeLogic;
+	[[bg3::hidden]] LegacyRefMap<FixedString, INodeConstructor*> NodeConstructorMap;
+	[[bg3::hidden]] void* NodeLogic;
 	uint8_t field_58;
-	IGameInterface* GameInterface;
+	[[bg3::hidden]] IGameInterface* GameInterface;
 	int NextInstanceId;
-	Array<INodeConstructor*> NodeConstructors;
+	[[bg3::hidden]] Array<INodeConstructor*> NodeConstructors;
 	Array<Dialog*> CachedDialogs;
 	LegacyRefMap<EntityHandle, ActorRefCount> ActorRefCounts;
-	FlagParamInfo* TagFlagParamInfo;
-	void* KeywordParser;
-	void* KeywordParseCallback;
+	[[bg3::hidden]] FlagParamInfo* TagFlagParamInfo;
+	[[bg3::hidden]] void* KeywordParser;
+	[[bg3::hidden]] void* KeywordParseCallback;
 	LegacyRefMap<Guid, ScriptFlag> ScriptFlags;
 	LegacyRefMap<Guid, Variable> DialogVariables;
 	LegacyRefMap<Guid, SpeakerGroup> SpeakerGroups;
 	LegacyRefMap<int, Guid> DialogToVariable;
 	Array<int32_t> field_F8;
-	CRITICAL_SECTION CriticalSection;
-	ModManager* ModManager;
+	[[bg3::hidden]] CRITICAL_SECTION CriticalSection;
+	[[bg3::hidden]] ModManager* ModManager;
 };
 
 
 
-struct SharedDialogGameInterface : public ProtectedGameObject<SharedDialogGameInterface>
+struct [[bg3::hidden]] SharedDialogGameInterface : public ProtectedGameObject<SharedDialogGameInterface>
 {
 	using DialogPreloadCallbackProc = void (DialogInstance&, DialogManager&, bool);
 
-	virtual ~SharedDialogGameInterface() = 0;
-	virtual void fun00() = 0;
-	virtual void fun01() = 0;
-	virtual IGameData* CreateGameData() = 0;
-	virtual IGameData* CloneGameData(IGameData const*) = 0;
-	virtual void DestroyGameData(IGameData*) = 0;
-	virtual void PreLoadDialog(DialogInstance&, DialogPreloadCallbackProc*, bool) = 0;
-	virtual void fun02() = 0;
-	virtual void OnManagerShutdown(DialogManager*) = 0;
-	virtual void OnManagerStart(DialogManager*) = 0;
-	virtual float GetDefaultNodeWaitTime() const = 0;
-	virtual void fun03() = 0;
+	virtual ~SharedDialogGameInterface();
+	virtual void fun00();
+	virtual void fun01();
+	virtual DialogGameData* CreateGameData();
+	virtual DialogGameData* CloneGameData(DialogGameData const*);
+	virtual void DestroyGameData(DialogGameData*);
+	virtual void PreLoadDialog(DialogInstance&, DialogPreloadCallbackProc*, bool);
+	virtual void fun02();
+	virtual void OnManagerShutdown(DialogManager*);
+	virtual void OnManagerStart(DialogManager*);
+	virtual float GetDefaultNodeWaitTime() const;
+	virtual void fun03();
 
-
-	uint8_t DialogIOLoadRequests_MPSCQueue[0xE8];
-	uint8_t DialogIOLoadRequests_MPSCQueue2[0xE8];
+	uint64_t DialogIOLoadRequests_MPSCQueue[27];
+	uint64_t DialogIOLoadRequests_MPSCQueue2[27];
 	Array<void*> DialogIOLoadRequests;
 	DialogManager* DialogManager;
 	Pool DialogGameData_Pool;
@@ -441,5 +554,63 @@ struct SharedDialogGameInterface : public ProtectedGameObject<SharedDialogGameIn
 };
 
 
+END_NS()
+
+BEGIN_NS(esv)
+
+
+struct [[bg3::hidden]] DialogNodeConstructor : public ProtectedGameObject<DialogNodeConstructor>
+{
+	void* VMT;
+	FixedString Name;
+};
+
+struct [[bg3::hidden]] DialogGameInterface : public dlg::SharedDialogGameInterface
+{
+	__int64 field_248;
+	void* FlagParamInfo;
+	dlg::FlagDescription GlobalFlag;
+	dlg::FlagDescription ObjectFlag;
+	dlg::FlagDescription PartyFlag;
+	dlg::FlagDescription DialogFlag;
+	dlg::FlagDescription UserFlag;
+	dlg::FlagDescription UserShapeFlag;
+	dlg::FlagDescription QuestFlag;
+	dlg::FlagDescription DialogInstanceFlag;
+	DialogNodeConstructor PopNodeConstructor;
+	DialogNodeConstructor ActiveRollNodeConstructor;
+	DialogNodeConstructor PassiveRollNodeConstructor;
+	DialogNodeConstructor RollResultNodeConstructor;
+	DialogNodeConstructor TradeNodeConstructor;
+	HashMap<EntityHandle, void*> field_328_EH_pVariableManager;
+};
+
+
+struct [[bg3::hidden]] DialogSystem : public ProtectedGameObject<DialogSystem>
+{
+	static constexpr auto SystemType = ExtSystemType::ServerDialogSystem;
+
+	void* VMT;
+	void* field_8;
+#if 0
+	void* TimelineSystem;
+	void* CombatLogSystem;
+	void* RollSystem;
+	void* DialogEventsSystem;
+#endif
+	DialogGameInterface GameInterface;
+	void* DialogEventListener1;
+	void* DialogEventListenerAdapter2;
+	void* DialogEventListenerAdapter;
+	void* RequestedRollCallbacks;
+	void* field_3B8_arr_TradeInstance;
+	ScratchString Scratch;
+};
+
+END_NS()
+
+BEGIN_NS(lua)
+
+LUA_POLYMORPHIC(dlg::DialogNode);
 
 END_NS()

@@ -5,6 +5,7 @@
 #include <Lua/Shared/Proxies/LuaPropertyMapHelpers.h>
 #include <Extender/ScriptExtender.h>
 #include <GameDefinitions/Resources.h>
+#include <GameDefinitions/Dialog.h>
 #include <GameDefinitions/Stats/UseActions.h>
 #include <GameDefinitions/Stats/Functors.h>
 
@@ -495,6 +496,40 @@ void LuaPolymorphic<resource::PhysicsResource::ObjectTemplate::PhysicsObject>::M
 	{
 		MakeDirectObjectRef(L, value, lifetime);
 	}
+}
+
+void LuaPolymorphic<dlg::DialogNode>::MakeRef(lua_State* L, dlg::DialogNode* value, LifetimeHandle const& lifetime)
+{
+#define V(type) if (value->ConstructorID == GFS.str##type) { MakeDirectObjectRef(L, static_cast<dlg::type##Node*>(value), lifetime); return; }
+
+	V(Alias)
+	V(Jump)
+	V(CinematicTagged)
+	V(SelectSpeaker)
+	V(FallibleQuestionResult)
+	V(VisualState)
+	V(NestedDialog)
+
+	V(ActiveRoll)
+	V(PassiveRoll)
+	V(Trade)
+
+#undef V
+
+	if (value->ConstructorID == GFS.strTagQuestion) {
+		MakeDirectObjectRef(L, static_cast<dlg::TaggedQuestionNode*>(value), lifetime);
+		return;
+	}
+
+	if (value->ConstructorID == GFS.strTagGreeting || value->ConstructorID == GFS.strTagAnswer) {
+		MakeDirectObjectRef(L, static_cast<dlg::BaseTaggedNode*>(value), lifetime);
+		return;
+	}
+	
+	// TODO - map client/server-specific parts
+	// V(PopNode)
+
+	MakeDirectObjectRef(L, value, lifetime);
 }
 
 void LuaPolymorphic<aspk::Component>::MakeRef(lua_State* L, aspk::Component* value, LifetimeHandle const& lifetime)

@@ -276,7 +276,7 @@ struct DialogStateComponent : public BaseComponent
 	uint8_t field_0;
 	uint8_t field_1;
 	uint8_t field_2;
-	int field_4;
+	[[bg3::legacy(field_4)]] int DialogId;
 	uint8_t field_8;
 };
 

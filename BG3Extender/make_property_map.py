@@ -611,6 +611,7 @@ sources = [
     'GameDefinitions/Progression.h',
     'GameDefinitions/Animation.h',
     'GameDefinitions/AllSpark.h',
+    'GameDefinitions/Dialog.h',
     'GameDefinitions/RootTemplates.h',
     'GameDefinitions/Components/Boosts.h',
     'GameDefinitions/Components/Camp.h',

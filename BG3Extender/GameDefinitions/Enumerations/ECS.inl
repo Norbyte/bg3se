@@ -1,6 +1,7 @@
 BEGIN_ENUM(ExtSystemType, uint32_t)
 	E(UISystem)
 	E(PickingHelperManager)
+	E(ServerDialogSystem)
 	E(Max)
 END_ENUM()
 

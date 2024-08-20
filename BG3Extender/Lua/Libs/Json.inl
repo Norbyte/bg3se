@@ -282,10 +282,6 @@ Json::Value StringifyUserdata(lua_State * L, int index, unsigned depth, Stringif
 			arr[key] = val;
 		} else if (type == LUA_TNUMBER) {
 			auto key = lua_tointeger(L, -2);
-			if (ctx.LimitArrayElements != -1 && key > ctx.LimitArrayElements) {
-				break;
-			}
-
 			if (arr.type() == Json::arrayValue) {
 				arr[(uint32_t)key - 1] = val;
 			} else {

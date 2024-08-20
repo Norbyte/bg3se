@@ -49,6 +49,8 @@ struct TranslatedFSString
 {
 	RuntimeStringHandle Handle;
 	void* ArgumentString;
+
+	std::optional<StringView> Get() const;
 };
 
 template <class Pred>

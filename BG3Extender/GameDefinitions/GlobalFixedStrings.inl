@@ -144,3 +144,19 @@ FS(Small);
 FS(Medium);
 FS(Large);
 FS(Big);
+
+// Dialog node types
+FS(Alias);
+FS(Jump);
+FS(TagQuestion);
+FS(TagAnswer);
+FS(TagGreeting);
+FS(CinematicTagged);
+FS(SelectSpeaker);
+FS(FallibleQuestionResult);
+FS(VisualState);
+FS(NestedDialog);
+FS(ActiveRoll);
+FS(PassiveRoll);
+FS(Trade);
+FS(Pop);
