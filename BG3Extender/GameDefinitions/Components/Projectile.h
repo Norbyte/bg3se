@@ -5,19 +5,7 @@
 #include <GameDefinitions/EntitySystem.h>
 #include <GameDefinitions/Hit.h>
 
-BEGIN_NS(eoc::projectile)
-
-struct SourceInfoComponent : public BaseComponent
-{
-	DEFINE_COMPONENT(ProjectileSource, "eoc::projectile::SourceInfoComponent")
-
-	SpellId Spell;
-	EntityHandle Entity;
-};
-
-END_NS()
-
-BEGIN_NS(esv::projectile)
+BEGIN_NS(path)
 
 struct Bezier3Trajectory
 {
@@ -59,7 +47,7 @@ struct MappedVelocity
 	FixedString Mapping;
 };
 
-struct MovementSettings
+struct Settings
 {
 	std::variant<Bezier3Trajectory, Bezier4Trajectory> Trajectory;
 	[[bg3::hidden]] uint32_t _Pad;
@@ -67,26 +55,43 @@ struct MovementSettings
 	std::variant<ConstantVelocity, LinearVelocity, MappedVelocity> Velocity;
 };
 
-struct PathDescription : public MovementSettings
+struct PathMover : public Settings
 {
 	glm::vec3 SourcePosition;
 	glm::vec4 SourceRotation;
 	glm::vec3 TargetPosition;
 	glm::vec4 TargetRotation;
 	float InterpolateValue;
-    std::array<float, 32> ComputedTrajectoryValues;
+	std::array<float, 32> ComputedTrajectoryValues;
 	Array<glm::vec3> ComputedVelocityValues;
-	bool Active;
+	bool Initialized;
 };
 
-struct ProjectileMovementSettings : public MovementSettings
+END_NS()
+
+BEGIN_NS(projectile)
+
+struct ProjectileResult : public path::Settings
 {
-	FixedString field_50;
+	[[bg3::legacy(field_50)]] FixedString TemplateId;
 	EntityHandle field_58;
-	__int64 field_60;
-	int field_68;
+	float field_60;
+	float field_64;
+	float field_68;
 	float InterpolateValue;
 };
+
+struct SourceInfoComponent : public BaseComponent
+{
+	DEFINE_COMPONENT(ProjectileSource, "eoc::projectile::SourceInfoComponent")
+
+	SpellId Spell;
+	EntityHandle Entity;
+};
+
+END_NS()
+
+BEGIN_NS(esv::projectile)
 
 struct OnHitActionBase : public ProtectedGameObject<OnHitActionBase>
 {
@@ -146,7 +151,7 @@ struct InitializationData
 	bool MainDamageType;
 	AbilityId SpellCastingAbility;
 	bool IsTrap;
-	uint8_t field_93;
+	[[bg3::legacy(field_93)]] bool MovesProjectileFromCaster;
 	bool CanDeflect;
 	bool IgnoreObjects;
 	CauseType CauseType;
@@ -161,8 +166,8 @@ struct InitializationData
 	OnHitActionBase* HitAction;
 	EntityHandle ThrownObject;
 	bool DamageMovingObjectOnLand;
-	std::optional<ProjectileMovementSettings> Path;
-	std::optional<MovementSettings> MovementSettings;
+	std::optional<bg3se::projectile::ProjectileResult> Path;
+	std::optional<path::Settings> MovementSettings;
 	EntityHandle MovingObject;
 	SpellComponent SpellData;
 };
@@ -201,8 +206,8 @@ struct Projectile : public BaseProxyComponent
 	float LifeTime;
 	float HitInterpolation;
 	float FallbackTimer;
-	PathDescription Path;
-	PathDescription Path2;
+	path::PathMover Path;
+	path::PathMover Path2;
 	float ExplodeRadius;
 	float ExplodeRadius2;
 	SpellId Spell;
@@ -249,5 +254,46 @@ struct Projectile : public BaseProxyComponent
 	[[bg3::hidden]] void* _PAD;
 };
 
+
+END_NS()
+
+BEGIN_NS(spell_cast)
+
+struct ProjectileTargetData
+{
+	glm::vec3 field_0;
+	IntermediateTarget Target;
+	FixedString TextKey;
+	int field_BC;
+	HitDesc Hit;
+	path::Settings PathSettings;
+	char PathSettingsOpt;
+	projectile::ProjectileResult Result;
+	char ResultOpt;
+	EntityHandle ThrownObject;
+};
+
+END_NS()
+
+BEGIN_NS(esv::spell_cast)
+
+struct ProjectileResultsExtraData
+{
+	__int64 field_0;
+	__int64 field_8;
+	__int64 field_10;
+	Array<bg3se::projectile::ProjectileResult> Results;
+};
+
+
+struct ProjectileCacheComponent : public BaseComponent
+{
+	DEFINE_COMPONENT(ServerProjectileCache, "esv::spell_cast::ProjectileCacheComponent")
+
+	std::optional<bg3se::spell_cast::ProjectileTargetData> Target;
+	HashMap<int, float> field_350;
+	[[bg3::hidden]] HashMap<int, void*> field_390; // ObjectQueue<ProjectileTargetData>
+	Array<ProjectileResultsExtraData> ExtraData;
+};
 
 END_NS()
