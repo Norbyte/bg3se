@@ -58,9 +58,9 @@ struct Settings
 struct PathMover : public Settings
 {
 	glm::vec3 SourcePosition;
-	glm::vec4 SourceRotation;
+	glm::quat SourceRotation;
 	glm::vec3 TargetPosition;
-	glm::vec4 TargetRotation;
+	glm::quat TargetRotation;
 	float InterpolateValue;
 	std::array<float, 32> ComputedTrajectoryValues;
 	Array<glm::vec3> ComputedVelocityValues;
