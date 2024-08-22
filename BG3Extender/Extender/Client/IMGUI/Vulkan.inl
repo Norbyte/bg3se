@@ -175,6 +175,7 @@ public:
     {
         if (!initialized_) return;
 
+        std::lock_guard _(globalResourceLock_);
         curViewport_ = (curViewport_ + 1) % viewports_.size();
         GImGui->Viewports[0] = &viewports_[curViewport_].Viewport;
 
@@ -191,6 +192,7 @@ public:
     {
         if (!initialized_) return;
 
+        std::lock_guard _(globalResourceLock_);
         auto& vp = viewports_[curViewport_].Viewport;
         auto& drawLists = viewports_[curViewport_].ClonedDrawLists;
 
@@ -364,6 +366,7 @@ private:
 
         if (result != VK_SUCCESS) return;
 
+        std::lock_guard _(globalResourceLock_);
         physicalDevice_ = physicalDevice;
         device_ = *pDevice;
         
@@ -410,6 +413,7 @@ private:
     {
         if (device != device_) return;
 
+        std::lock_guard _(globalResourceLock_);
         IMGUI_DEBUG("VK device destroyed");
 
         DestroyUI();
@@ -453,6 +457,7 @@ private:
     {
         if (result != VK_SUCCESS) return;
 
+        std::lock_guard _(globalResourceLock_);
         IMGUI_DEBUG("VK swap chain created: %p", *pSwapchain);
         swapChain_ = *pSwapchain;
         collectSwapChainInfo(pCreateInfo);
@@ -463,8 +468,9 @@ private:
         VkSwapchainKHR swapchain,
         const VkAllocationCallbacks* pAllocator)
     {
-        if (device != device_) return;
+        if (device != device_ || swapchain != swapChain_) return;
 
+        std::lock_guard _(globalResourceLock_);
         IMGUI_DEBUG("VK swap chain destroyed");
         DestroyUI();
         releaseSwapChain(swapchain_);
@@ -751,6 +757,7 @@ private:
             return;
         }
 
+        std::lock_guard _(globalResourceLock_);
         if (!initialized_) {
             if (!uiFrameworkStarted_) {
                 ui_.OnRenderBackendInitialized();
@@ -790,6 +797,7 @@ private:
     bool initialized_{ false };
     bool uiFrameworkStarted_{ false };
     bool requestReloadFonts_{ false };
+    std::mutex globalResourceLock_;
 
     VkCreateInstanceHookType CreateInstanceHook_;
     VkCreateDeviceHookType CreateDeviceHook_;
