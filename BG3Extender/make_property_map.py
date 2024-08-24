@@ -629,6 +629,7 @@ sources = [
     'GameDefinitions/Components/Party.h',
     'GameDefinitions/Components/Progression.h',
     'GameDefinitions/Components/Projectile.h',
+    'GameDefinitions/Components/Roll.h',
     'GameDefinitions/Components/Runtime.h',
     'GameDefinitions/Components/ServerData.h',
     'GameDefinitions/Components/Shapeshift.h',

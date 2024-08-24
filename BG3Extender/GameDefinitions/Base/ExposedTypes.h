@@ -78,9 +78,9 @@ struct BoostParameters
 	FixedString Params2;
 };
 
-struct BoostCause
+struct BoostSource
 {
-	BoostCauseType Type;
+	BoostSourceType Type;
 	FixedString Cause;
 	EntityHandle Entity;
 	uint64_t field_10;

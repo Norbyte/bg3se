@@ -226,5 +226,13 @@ struct EquipmentVisualsComponent : public BaseComponent
 	std::array<EquipmentVisual, 19> Equipment;
 };
 
+struct PaperdollComponent : public BaseComponent
+{
+	DEFINE_COMPONENT(ClientPaperdoll, "ecl::PaperdollComponent")
+
+	EntityHandle Entity;
+	uint8_t field_8;
+};
+
 
 END_NS()

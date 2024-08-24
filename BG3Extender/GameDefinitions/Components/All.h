@@ -21,3 +21,4 @@
 #include <GameDefinitions/Components/Progression.h>
 #include <GameDefinitions/Components/Shapeshift.h>
 #include <GameDefinitions/Components/ServerData.h>
+#include <GameDefinitions/Components/Roll.h>

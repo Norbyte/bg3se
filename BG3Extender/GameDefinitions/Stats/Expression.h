@@ -26,7 +26,7 @@ struct StatsExpressionParamEx : public StatsExpressionParam
 struct StatsExpressionWithMetadata : public StatsExpressionParam
 {
 	uint8_t field_28;
-	BoostCause Cause;
+	BoostSource Cause;
 	TranslatedString field_48;
 	uint8_t field_58;
 };
