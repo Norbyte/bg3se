@@ -41,4 +41,6 @@ struct ChangedContainersComponent : public BaseComponent
 	HashMap<EntityHandle, HashMap<EntityHandle, Array<EntityHandle>>> Changes;
 };
 
+DEFINE_ONEFRAME_TAG_COMPONENT(esv::progression, LevelUpChangedOneFrameComponent, ProgressionLevelUpChanged)
+
 END_NS()

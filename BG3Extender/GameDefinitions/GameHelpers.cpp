@@ -5,6 +5,7 @@
 #include <Lua/Shared/Proxies/LuaPropertyMapHelpers.h>
 #include <Extender/ScriptExtender.h>
 #include <GameDefinitions/Resources.h>
+#include <GameDefinitions/Dialog.h>
 #include <GameDefinitions/Stats/UseActions.h>
 #include <GameDefinitions/Stats/Functors.h>
 
@@ -406,26 +407,26 @@ void LuaPolymorphic<IActionData>::MakeRef(lua_State* L, IActionData* value, Life
 #undef V
 }
 
-void LuaPolymorphic<resource::AnimationResource::Event::PropertiesHolder>::MakeRef(lua_State* L, resource::AnimationResource::Event::PropertiesHolder* value, LifetimeHandle const& lifetime)
+void LuaPolymorphic<TextKeyProperties>::MakeRef(lua_State* L, TextKeyProperties* value, LifetimeHandle const& lifetime)
 {
-#define V(type) case AnimationEventPropertyType::type: \
-			MakeDirectObjectRef(L, static_cast<resource::AnimationResource::Event::type##Properties*>(value), lifetime); break;
+#define V(type) case TextKeyPropertiesType::type: \
+			MakeDirectObjectRef(L, static_cast<TextKey##type##TypeProperties*>(value), lifetime); break;
 
 	switch (value->GetPropertyType()) {
-		V(SoundObject)
-		V(BoneEffect)
-		V(Foot)
-		V(BoneAttachBone)
+		V(Sound)
+		V(Effect)
+		V(FootStep)
+		V(Attach)
 		V(WeaponEffect)
-		V(Unknown7)
-		V(Unknown8)
-		V(Prop9)
-		V(Prop10)
+		V(Genome)
+		V(Attack)
+		V(Ragdoll)
+		V(VisualCullFlag)
 		V(FloatData)
-		V(EFoleySoundObject)
-		V(EVocalSoundObject)
-		V(U8Data)
-		V(Unknown15)
+		V(Foley)
+		V(Vocal)
+		V(FootMove)
+		V(React)
 
 	default:
 		MakeDirectObjectRef(L, value, lifetime);
@@ -435,22 +436,22 @@ void LuaPolymorphic<resource::AnimationResource::Event::PropertiesHolder>::MakeR
 #undef V
 }
 
-void LuaPolymorphic<resource::effects::Property>::MakeRef(lua_State* L, resource::effects::Property* value, LifetimeHandle const& lifetime)
+void LuaPolymorphic<aspk::Property>::MakeRef(lua_State* L, aspk::Property* value, LifetimeHandle const& lifetime)
 {
-#define V(type) case EffectPropertyType::type: \
-			MakeDirectObjectRef(L, static_cast<resource::effects::type##Property*>(value), lifetime); break;
+#define V(type) case aspk::PropertyType::type: \
+			MakeDirectObjectRef(L, static_cast<aspk::type##Property*>(value), lifetime); break;
 
 	switch (value->GetPropertyType()) {
-		V(Bool)
-		V(Int32)
-		V(Int32Range)
-		V(ColoredFrames)
+		V(Boolean)
+		V(Integer)
+		V(IntegerRange)
+		V(ColorARGBKeyFrame)
 		V(Float)
 		V(FloatRange)
-		V(Frames)
-		V(STDString)
+		V(FloatKeyFrame)
+		V(String)
 		V(Vector3)
-		V(FunctionType)
+		V(FixedFunction)
 		V(FixedString)
 		V(Base)
 
@@ -462,14 +463,16 @@ void LuaPolymorphic<resource::effects::Property>::MakeRef(lua_State* L, resource
 #undef V
 }
 
-void LuaPolymorphic<resource::effects::FramesProperty::VirtualFrames>::MakeRef(lua_State* L, resource::effects::FramesProperty::VirtualFrames* value, LifetimeHandle const& lifetime)
+void LuaPolymorphic<aspk::KeyFrameData>::MakeRef(lua_State* L, aspk::KeyFrameData* value, LifetimeHandle const& lifetime)
 {
-#define V(type) case type: \
-			MakeDirectObjectRef(L, static_cast<resource::effects::FramesProperty::Frames##type*>(value), lifetime); break;
-
 	switch (value->GetType()) {
-		V(0)
-		V(1)
+	case 0:
+		MakeDirectObjectRef(L, static_cast<aspk::LinearFloatKeyFrameData*>(value), lifetime);
+		break;
+
+	case 1:
+		MakeDirectObjectRef(L, static_cast<aspk::CubicFloatKeyFrameData*>(value), lifetime);
+		break;
 
 	default:
 		MakeDirectObjectRef(L, value, lifetime);
@@ -495,24 +498,58 @@ void LuaPolymorphic<resource::PhysicsResource::ObjectTemplate::PhysicsObject>::M
 	}
 }
 
-void LuaPolymorphic<resource::effects::EffectComponentBase>::MakeRef(lua_State* L, resource::effects::EffectComponentBase* value, LifetimeHandle const& lifetime)
+void LuaPolymorphic<dlg::DialogNode>::MakeRef(lua_State* L, dlg::DialogNode* value, LifetimeHandle const& lifetime)
 {
-#define V(type) else if (value->GetType().GetStringView() == #type) \
-					MakeDirectObjectRef(L, static_cast<resource::effects::type##Component*>(value), lifetime);
-#define V_timeline(type) else if (value->GetType().GetStringView() == #type) \
-					MakeDirectObjectRef(L, static_cast<resource::effects::timeline::type##Component*>(value), lifetime);
-#define V_tlkeybase(type) else if (value->GetType().GetStringView() == #type) \
-					MakeDirectObjectRef(L, static_cast<resource::effects::timeline::type##Component<resource::effects::timeline::keys::KeyBase>*>(value), lifetime);
-#define V_tlchannel(type) else if (value->GetType().GetStringView() == #type) \
-					MakeDirectObjectRef(L, static_cast<resource::effects::timeline::channels::type##Component*>(value), lifetime);
-	if (value->GetType().GetStringView() == "BaseComponent")
+#define V(type) if (value->ConstructorID == GFS.str##type) { MakeDirectObjectRef(L, static_cast<dlg::type##Node*>(value), lifetime); return; }
+
+	V(Alias)
+	V(Jump)
+	V(CinematicTagged)
+	V(SelectSpeaker)
+	V(FallibleQuestionResult)
+	V(VisualState)
+	V(NestedDialog)
+
+	V(ActiveRoll)
+	V(PassiveRoll)
+	V(Trade)
+
+#undef V
+
+	if (value->ConstructorID == GFS.strTagQuestion) {
+		MakeDirectObjectRef(L, static_cast<dlg::TaggedQuestionNode*>(value), lifetime);
+		return;
+	}
+
+	if (value->ConstructorID == GFS.strTagGreeting || value->ConstructorID == GFS.strTagAnswer) {
+		MakeDirectObjectRef(L, static_cast<dlg::BaseTaggedNode*>(value), lifetime);
+		return;
+	}
+	
+	// TODO - map client/server-specific parts
+	// V(PopNode)
+
+	MakeDirectObjectRef(L, value, lifetime);
+}
+
+void LuaPolymorphic<aspk::Component>::MakeRef(lua_State* L, aspk::Component* value, LifetimeHandle const& lifetime)
+{
+#define V(type) else if (value->GetTypeName().GetStringView() == #type) \
+					MakeDirectObjectRef(L, static_cast<aspk::type##Component*>(value), lifetime);
+#define V_timeline(type) else if (value->GetTypeName().GetStringView() == #type) \
+					MakeDirectObjectRef(L, static_cast<aspk::type##Component*>(value), lifetime);
+#define V_tlkeybase(type) else if (value->GetTypeName().GetStringView() == #type) \
+					MakeDirectObjectRef(L, static_cast<aspk::type##Component<aspk::keys::KeyBase>*>(value), lifetime);
+#define V_tlchannel(type) else if (value->GetTypeName().GetStringView() == #type) \
+					MakeDirectObjectRef(L, static_cast<aspk::channels::type##Component*>(value), lifetime);
+	if (value->GetTypeName().GetStringView() == "BaseComponent")
 	{
-		MakeDirectObjectRef(L, static_cast<resource::effects::BaseEffectComponent*>(value), lifetime);
+		MakeDirectObjectRef(L, static_cast<aspk::Component*>(value), lifetime);
 	}
 	// Special case for this one because it can't be its own V
-	else if (value->GetType().GetStringView() == "Ribbon 2.0")
+	else if (value->GetTypeName().GetStringView() == "Ribbon 2.0")
 	{
-		MakeDirectObjectRef(L, static_cast<resource::effects::Ribbon2Component*>(value), lifetime);
+		MakeDirectObjectRef(L, static_cast<aspk::Ribbon2Component*>(value), lifetime);
 	}
 	V(Billboard)
 	V(BoundingBox)
@@ -535,7 +572,7 @@ void LuaPolymorphic<resource::effects::EffectComponentBase>::MakeRef(lua_State* 
 	V(TurbulentForce)
 	V(VortexForce)
 	V(WindForce)
-	V_timeline(TLBaseComponent)
+	V(TLBase)
 	V_timeline(TimelineActorPropertiesReflection)
 	V_timeline(TLAdditiveAnimation)
 	V_timeline(TLAnimation)
@@ -574,15 +611,15 @@ void LuaPolymorphic<resource::effects::EffectComponentBase>::MakeRef(lua_State* 
 	V_timeline(TLSwitchStageEvent)
 	V_timeline(TLTransform)
 	V_timeline(TLVoice)
-	V_tlkeybase(TLEventKeyComponent)
-	V_tlkeybase(TLInterpolationKeyComponent)
-	V_tlkeybase(TLKeyBaseComponent)
-	V_tlchannel(TimelineActorPropertiesReflectionKeyComponent)
+	V_tlkeybase(TLEventKey)
+	V_tlkeybase(TLInterpolationKey)
+	V_tlkeybase(TLKeyBase)
+	V_tlchannel(TimelineActorPropertiesReflectionKey)
 	V_tlchannel(TLAtmosphereAndLightingChannel)
 	V_tlchannel(TLCameraDoFChannel)
 	V_tlchannel(TLCameraExposureChannel)
-	V_tlchannel(TLMaterialKeyComponent)
-	V_tlchannel(TLMaterialTextureKeyComponent)
+	V_tlchannel(TLMaterialKey)
+	V_tlchannel(TLMaterialTextureKey)
 	V_tlchannel(TLShowArmorChannel)
 	V_tlchannel(TLSplatterChannel)
 	// Theoretically there are a lot of other EffectComponents that could get output here; haven't finished researching them
@@ -597,22 +634,22 @@ void LuaPolymorphic<resource::effects::EffectComponentBase>::MakeRef(lua_State* 
 #undef V
 }
 
-void LuaPolymorphic<resource::effects::timeline::TLMaterialComponent::Parameter>::MakeRef(lua_State* L, resource::effects::timeline::TLMaterialComponent::Parameter* value, LifetimeHandle const& lifetime)
+void LuaPolymorphic<aspk::TLMaterialComponent::Parameter>::MakeRef(lua_State* L, aspk::TLMaterialComponent::Parameter* value, LifetimeHandle const& lifetime)
 {
-	resource::effects::timeline::TLMaterialComponent::Parameter::Range range;
+	aspk::TLMaterialComponent::Parameter::Range range;
 	value->getRange(range);
 	if (range.begin == nullptr || range.end == nullptr)
 	{
 		MakeDirectObjectRef(L, value, lifetime);
 	}
-	else if ((*range.begin)->GetType().GetStringView() == "TLMaterialKeyComponent")
+	else if ((*range.begin)->GetTypeName().GetStringView() == "TLMaterialKeyComponent")
 	{
-		MakeDirectObjectRef(L, static_cast<resource::effects::timeline::TLMaterialComponent::MaterialParameter*>(value), lifetime);
+		MakeDirectObjectRef(L, static_cast<aspk::TLMaterialComponent::MaterialParameter*>(value), lifetime);
 	}
 	// For some reason, this takes the name TLInterpolationKeyComponent. I have no idea how it's supposed to be distinguished in actual code
-	else if ((*range.begin)->GetType().GetStringView() == "TLInterpolationKeyComponent")
+	else if ((*range.begin)->GetTypeName().GetStringView() == "TLInterpolationKeyComponent")
 	{
-		MakeDirectObjectRef(L, static_cast<resource::effects::timeline::TLMaterialComponent::TextureParameter*>(value), lifetime);
+		MakeDirectObjectRef(L, static_cast<aspk::TLMaterialComponent::TextureParameter*>(value), lifetime);
 	}
 	else
 	{

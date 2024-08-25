@@ -154,6 +154,8 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="Extender\Shared\VirtualTextures.h" />
     <ClInclude Include="Extender\Client\IMGUI\IMGUI.h" />
     <ClInclude Include="Extender\Version.h" />
+    <ClInclude Include="GameDefinitions\AllSpark.h" />
+    <ClInclude Include="GameDefinitions\Animation.h" />
     <ClInclude Include="GameDefinitions\Base\Base.h" />
     <ClInclude Include="GameDefinitions\Base\ExposedTypes.h" />
     <ClInclude Include="GameDefinitions\Base\LuaAnnotations.h" />
@@ -177,6 +179,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\Components\Passives.h" />
     <ClInclude Include="GameDefinitions\Components\Progression.h" />
     <ClInclude Include="GameDefinitions\Components\Projectile.h" />
+    <ClInclude Include="GameDefinitions\Components\Roll.h" />
     <ClInclude Include="GameDefinitions\Components\Runtime.h" />
     <ClInclude Include="GameDefinitions\Components\ServerData.h" />
     <ClInclude Include="GameDefinitions\Components\Shapeshift.h" />
@@ -185,6 +188,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\Components\Status.h" />
     <ClInclude Include="GameDefinitions\Components\Tadpole.h" />
     <ClInclude Include="GameDefinitions\Components\Visual.h" />
+    <ClInclude Include="GameDefinitions\Dialog.h" />
     <ClInclude Include="GameDefinitions\EntityManager.h" />
     <ClInclude Include="GameDefinitions\EntitySystemHelpers.h" />
     <ClInclude Include="GameDefinitions\EnumRepository.h" />

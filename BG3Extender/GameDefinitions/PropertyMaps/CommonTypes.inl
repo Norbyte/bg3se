@@ -40,6 +40,12 @@ P_FUN(Get, TranslatedString::Get)
 END_CLS()
 
 
+BEGIN_CLS(TranslatedFSString)
+P(Handle)
+P_FUN(Get, TranslatedFSString::Get)
+END_CLS()
+
+
 BEGIN_CLS(StatsExpressionParam)
 P(Params)
 P(Code)

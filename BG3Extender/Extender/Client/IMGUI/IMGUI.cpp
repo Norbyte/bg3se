@@ -1495,10 +1495,7 @@ bool IMGUIManager::LoadFont(FontData& request)
         } else if (language == "Japanese") {
             path = "Public/Game/GUI/Assets/Fonts/NotoSerifSC-Regular.otf";
             glyphRanges = ImGui::GetIO().Fonts->GetGlyphRangesJapanese();
-        } else if (language == "Chinese") {
-            path = "Public/Game/GUI/Assets/Fonts/NotoSerifSC-Regular.otf";
-            glyphRanges = ImGui::GetIO().Fonts->GetGlyphRangesChineseSimplifiedCommon();
-        } else if (language == "ChineseTraditional") {
+        } else if (language == "Chinese" || language == "ChineseTraditional") {
             path = "Public/Game/GUI/Assets/Fonts/NotoSerifSC-Regular.otf";
             glyphRanges = ImGui::GetIO().Fonts->GetGlyphRangesChineseFull();
             // IMGUI creates a texture with small width so height will be 32768 for CN fonts.

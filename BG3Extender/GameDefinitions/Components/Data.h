@@ -109,7 +109,7 @@ struct HealthComponent : public BaseComponent
 	int TemporaryHp;
 	int MaxTemporaryHp;
 	Guid field_10;
-	bool IsInvulnerable;
+	[[bg3::legacy(field_20)]] bool IsInvulnerable;
 };
 
 struct ResistancesComponent : public BaseComponent

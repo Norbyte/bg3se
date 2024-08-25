@@ -1,6 +1,7 @@
 BEGIN_ENUM(ExtSystemType, uint32_t)
 	E(UISystem)
 	E(PickingHelperManager)
+	E(ServerDialogSystem)
 	E(Max)
 END_ENUM()
 
@@ -185,6 +186,8 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 	E(AnimationWaterfall)
 	E(DynamicAnimationTags)
 	E(TemplateAnimationSetOverride)
+	E(AnimationGameplayEvents)
+	E(AnimationTextKeyEvents)
 
 	// Passives
 	E(PassiveContainer)
@@ -517,6 +520,7 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 	E(ActiveCharacterLight)
 	E(Visual)
 	E(ClientEquipmentVisuals)
+	E(ClientPaperdoll)
 	E(AnimationSet)
 	E(AnimationBlueprint)
 	E(CanModifyHealth)
@@ -585,6 +589,7 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 	E(ProgressionContainer)
 	E(ProgressionMeta)
 	E(ProgressionChangedContainers)
+	E(ProgressionLevelUpChanged)
 
 	// Through
 	E(CanSeeThrough)
@@ -645,11 +650,20 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 	E(ServerProjectileAttachment)
 	E(ServerProjectileSpell)
 	E(ServerProjectileInitialization)
+	E(ServerProjectileCache)
 	E(ServerOsirisTag)
 
 	E(ClientCharacter)
 	E(ClientItem)
 	E(ClientProjectile)
+
+	// Rolls
+	E(RequestedRoll)
+	E(RollInProgress)
+	E(ServerRollFinishedEvent)
+	E(RollModifiers)
+	E(ServerRollInProgress)
+	E(ServerRollStartRequest)
 
 	// Boost components
 	E(ArmorClassBoost)
@@ -1180,6 +1194,14 @@ BEGIN_BITMASK_NS(ecs, ComponentChangeFlags, ECSComponentChangeFlags, uint8_t)
 	EV(OneFrame, 8)
 	EV(ReplicatedComponent, 0x10)
 END_ENUM_NS()
+
+BEGIN_BITMASK(DynamicModifierType, uint8_t)
+	EV(None, 0)
+	EV(Consumable, 1)
+	EV(ItemSpell, 2)
+	EV(Spell, 3)
+	EV(ToggledPassive, 4)
+END_ENUM()
 
 BEGIN_BITMASK(BoundBaseFlags, uint8_t)
 	EV(UseTranslateOverride, 1)

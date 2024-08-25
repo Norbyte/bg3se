@@ -484,6 +484,10 @@
     <ClInclude Include="Lua\Shared\EntityEventHelpers.h" />
     <ClInclude Include="Lua\Client\ClientEvents.h" />
     <ClInclude Include="Lua\Server\ServerEvents.h" />
+    <ClInclude Include="GameDefinitions\Dialog.h" />
+    <ClInclude Include="GameDefinitions\Animation.h" />
+    <ClInclude Include="GameDefinitions\AllSpark.h" />
+    <ClInclude Include="GameDefinitions\Components\Roll.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

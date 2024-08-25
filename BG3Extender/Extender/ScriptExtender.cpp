@@ -270,8 +270,11 @@ void ScriptExtender::OnECSUpdateGuarded(ecs::EntityWorld::UpdateProc* wrapped, e
 	auto ecs = GetECS(entityWorld);
 	if (ecs != nullptr) {
 		ecs->Update();
-
-		wrapped(entityWorld, time);
+		
+		{
+			DisableCrashReporting _;
+			wrapped(entityWorld, time);
+		}
 
 		ecs->PostUpdate();
 

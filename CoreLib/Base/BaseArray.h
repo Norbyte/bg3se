@@ -1080,6 +1080,17 @@ private:
 
 
 template <class T>
+class LegacyArray : public Array<T>
+{
+public:
+	virtual ~LegacyArray() {}
+
+private:
+	uint32_t Used{ 0 };
+};
+
+
+template <class T>
 class Queue
 {
 public:

@@ -1,4 +1,5 @@
 #include <Extender/Version.h>
+#include <GameDefinitions/Dialog.h>
 
 /// <lua_module>Utils</lua_module>
 BEGIN_NS(lua::utils)
@@ -239,6 +240,16 @@ Array<STDString> GetCommandLineParams()
 	return params;
 }
 
+dlg::DialogManager* GetDialogManager(lua_State* L)
+{
+	if (gExtender->GetServer().IsInServerThread()) {
+		auto ds = State::FromLua(L)->GetEntitySystemHelpers()->GetSystem<esv::DialogSystem>();
+		return ds ? ds->GameInterface.DialogManager : nullptr;
+	} else {
+		return nullptr;
+	}
+}
+
 void RegisterUtilsLib()
 {
 	QueryPerformanceCounter(&AppStartCounter);
@@ -263,6 +274,7 @@ void RegisterUtilsLib()
 	MODULE_FUNCTION(ShowError)
 	MODULE_FUNCTION(GetGlobalSwitches)
 	MODULE_FUNCTION(GetCommandLineParams)
+	MODULE_FUNCTION(GetDialogManager)
 	END_MODULE()
 }
 

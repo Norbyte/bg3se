@@ -276,7 +276,7 @@ struct DialogStateComponent : public BaseComponent
 	uint8_t field_0;
 	uint8_t field_1;
 	uint8_t field_2;
-	int field_4;
+	[[bg3::legacy(field_4)]] int DialogId;
 	uint8_t field_8;
 };
 
@@ -506,6 +506,22 @@ struct TemplateAnimationSetOverrideComponent : public BaseComponent
 
 	Array<AnimationWaterfallElement> Overrides;
 };
+
+
+struct AnimationReceivedGameplayEvent
+{
+	EntityHandle Entity;
+	FixedString Event;
+	[[bg3::hidden]] gn::GenomeParametrizedEventArgs Args;
+};
+
+struct AnimationReceivedTextKeyEvent
+{
+	EntityHandle Entity;
+	TextKeyEvent* Event;
+	[[bg3::hidden]] void* Skeleton;
+};
+
 
 
 END_SE()

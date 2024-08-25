@@ -25,4 +25,9 @@ std::optional<StringView> TranslatedString::Get() const
 	return GetStaticSymbols().GetTranslatedStringRepository()->GetTranslatedString(Handle);
 }
 
+std::optional<StringView> TranslatedFSString::Get() const
+{
+	return GetStaticSymbols().GetTranslatedStringRepository()->GetTranslatedString(Handle);
+}
+
 END_SE()
