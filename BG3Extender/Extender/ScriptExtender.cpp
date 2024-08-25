@@ -262,7 +262,10 @@ void ScriptExtender::OnECSUpdate(ecs::EntityWorld::UpdateProc* wrapped, ecs::Ent
 {
 	GetECS(entityWorld).Update();
 
-	wrapped(entityWorld, time);
+	{
+		DisableCrashReporting _;
+		wrapped(entityWorld, time);
+	}
 
 	GetECS(entityWorld).PostUpdate();
 

@@ -1,4 +1,5 @@
 #include <Extender/Version.h>
+#include <GameDefinitions/Dialog.h>
 
 /// <lua_module>Utils</lua_module>
 BEGIN_NS(lua::utils)
