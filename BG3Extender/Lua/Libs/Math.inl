@@ -597,6 +597,101 @@ glm::mat4 BuildScale(glm::vec3 const& v)
 	return glm::scale(v);
 }
 
+glm::quat QuatFromEuler(glm::vec3 const& e)
+{
+	return glm::quat(e);
+}
+
+glm::quat QuatFromToRotation(glm::vec3 const& a, glm::vec3 const& b)
+{
+	return glm::quat(a, b);
+}
+
+float QuatDot(glm::quat const& a, glm::quat const& b)
+{
+	return glm::dot(a, b);
+}
+
+glm::quat QuatSlerp(glm::quat const& a, glm::quat const& b, float alpha)
+{
+	return glm::mix(a, b, alpha);
+}
+
+glm::mat3 QuatToMat3(glm::quat const& a)
+{
+	return glm::mat3_cast(a);
+}
+
+glm::mat4 QuatToMat4(glm::quat const& a)
+{
+	return glm::mat4_cast(a);
+}
+
+glm::quat Mat3ToQuat(glm::mat3 const& a)
+{
+	return glm::quat_cast(a);
+}
+
+glm::quat Mat4ToQuat(glm::mat4 const& a)
+{
+	return glm::quat_cast(a);
+}
+
+glm::quat QuatNormalize(glm::quat const& a)
+{
+	return glm::normalize(a);
+}
+
+glm::quat QuatInverse(glm::quat const& a)
+{
+	return glm::inverse(a);
+}
+
+float QuatLength(glm::quat const& a)
+{
+	return glm::length(a);
+}
+
+UserReturn QuatRotate(lua_State* L, glm::quat const& a, MathParam const& b)
+{
+	if (b.Arity == 4) {
+		push(L, glm::rotate(a, b.vec4));
+		return 1;
+	}
+
+	if (b.Arity == 3) {
+		push(L, glm::rotate(a, b.vec3));
+		return 1;
+	}
+
+	return luaL_error(L, "Expected a vec3 or vec4 value");
+}
+
+glm::quat QuatRotateAxisAngle(glm::quat const& a, glm::vec3 const& axis, float angle)
+{
+	return glm::rotate(a, angle, axis);
+}
+
+UserReturn QuatMul(lua_State* L, MathParam const& a, MathParam const& b)
+{
+	if (a.Arity == 3 && b.Arity == 4) {
+		push(L, a.vec3 * b.quat);
+		return 1;
+	}
+
+	if (a.Arity == 4 && b.Arity == 4) {
+		push(L, a.quat * b.quat);
+		return 1;
+	}
+
+	if (a.Arity == 4 && b.Arity == 3) {
+		push(L, a.quat * b.vec3);
+		return 1;
+	}
+
+	return luaL_error(L, "Expected a vec3 or quat value");
+}
+
 /// <summary>
 /// Extracts the `(X * Y * Z)` Euler angles from the rotation matrix M.
 /// </summary>
@@ -930,6 +1025,21 @@ void RegisterMathLib()
 	MODULE_FUNCTION(BuildRotation4)
 	MODULE_FUNCTION(BuildTranslation)
 	MODULE_FUNCTION(BuildScale)
+
+	MODULE_FUNCTION(QuatFromEuler)
+	MODULE_FUNCTION(QuatFromToRotation)
+	MODULE_FUNCTION(QuatDot)
+	MODULE_FUNCTION(QuatSlerp)
+	MODULE_FUNCTION(QuatToMat3)
+	MODULE_FUNCTION(QuatToMat4)
+	MODULE_FUNCTION(Mat3ToQuat)
+	MODULE_FUNCTION(Mat4ToQuat)
+	MODULE_FUNCTION(QuatNormalize)
+	MODULE_FUNCTION(QuatInverse)
+	MODULE_FUNCTION(QuatRotate)
+	MODULE_FUNCTION(QuatRotateAxisAngle)
+	MODULE_FUNCTION(QuatLength)
+	MODULE_FUNCTION(QuatMul)
 
 	MODULE_FUNCTION(Random)
 	MODULE_FUNCTION(Round)
