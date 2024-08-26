@@ -22,6 +22,7 @@ public:
 
 	void UpdateCache();
 	std::optional<uint32_t> GetNameIndex(FixedString const& name) const;
+	std::optional<uint32_t> GetLegacyNameIndex(FixedString const& name) const;
 	FixedString GetName(uint32_t index) const;
 	OsirisNameCache const* GetCache(uint32_t index) const;
 	OsiFunction const* GetFunction(uint32_t index, uint32_t callerArity) const;
@@ -31,6 +32,7 @@ private:
 	OsirisBinding& binding_;
 	Array<OsirisNameCache> caches_;
 	HashMap<FixedString, uint32_t> nameToCache_;
+	HashMap<FixedString, uint32_t> legacyNameToCache_;
 	uint32_t nextCache_{ 0 };
 
 	void Register(Function& fun);

@@ -12,7 +12,16 @@ int LuaIndexResolverTable(lua_State* L)
 	auto name = get<FixedString>(L, 2);
 
 	auto state = ServerState::FromLua(L);
-	auto index = state->Osiris().GetNameResolver().GetNameIndex(name);
+	auto const& resolver = state->Osiris().GetNameResolver();
+	auto index = resolver.GetNameIndex(name);
+	if (!index) {
+		index = resolver.GetLegacyNameIndex(name);
+		if (index) {
+			WARN("COMPATIBILITY WARNING: Osiris symbol '%s' referenced using incorrect case; the correct name is '%s'",
+				name.GetString(), resolver.GetCache(*index)->name.GetString());
+		}
+	}
+
 	if (index) {
 		OsiFunctionNameMetatable::Make(L, *index);
 

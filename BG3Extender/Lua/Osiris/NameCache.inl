@@ -62,6 +62,20 @@ std::optional<uint32_t> OsirisNameResolver::GetNameIndex(FixedString const& name
 }
 
 
+std::optional<uint32_t> OsirisNameResolver::GetLegacyNameIndex(FixedString const& name) const
+{
+	STDString legacyName(name.GetStringView());
+	std::transform(legacyName.begin(), legacyName.end(), legacyName.begin(), [](unsigned char c) { return std::tolower(c); });
+
+	auto it = legacyNameToCache_.find(FixedString(legacyName));
+	if (it != legacyNameToCache_.end()) {
+		return it.Value();
+	} else {
+		return {};
+	}
+}
+
+
 FixedString OsirisNameResolver::GetName(uint32_t index) const
 {
 	return caches_[index].name;
@@ -90,6 +104,10 @@ void OsirisNameResolver::Register(Function& fun)
 		cache.Register(fun, binding_);
 	} else {
 		nameToCache_.set(name, caches_.size());
+		STDString legacyName(fun.Signature->Name);
+		std::transform(legacyName.begin(), legacyName.end(), legacyName.begin(), [](unsigned char c) { return std::tolower(c); });
+		legacyNameToCache_.set(FixedString(legacyName), caches_.size());
+
 		nextCache_ = caches_.size();
 		auto& cache = caches_.push_back(OsirisNameCache{});
 		cache.name = name;
