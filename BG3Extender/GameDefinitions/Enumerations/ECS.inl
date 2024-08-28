@@ -769,6 +769,9 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 	E(ConcentrationIgnoreDamageBoost)
 	E(IgnoreLowGroundPenaltyBoost)
 	E(IgnoreSurfaceCoverBoost)
+	E(ProficiencyBonusIncreaseBoost)
+	E(DamageTakenBonusBoost)
+	E(ReceivingCriticalDamageOnHitBoost)
 
 	E(Uuid)
 

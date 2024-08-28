@@ -401,7 +401,7 @@ BEGIN_BITMASK(ProjectileTypeIds, uint8_t)
 	EV(Magical, 2)
 END_ENUM()
 
-BEGIN_ENUM(AdvantageTypeId, uint32_t)
+BEGIN_ENUM(AdvantageContext, uint32_t)
 	EV(AttackRoll, 0)
 	EV(AttackTarget, 1)
 	EV(SavingThrow, 2)
