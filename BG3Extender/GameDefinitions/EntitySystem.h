@@ -282,7 +282,7 @@ struct QueryRegistry : public ProtectedGameObject<QueryRegistry>
 struct ComponentRegistry : public ProtectedGameObject<ComponentRegistry>
 {
 	BitSet<> Bitmask;
-	Array<ComponentTypeEntry> Types;
+	StaticArray<ComponentTypeEntry> Types;
 
 	ComponentTypeEntry const* Get(ComponentTypeIndex index) const;
 };
