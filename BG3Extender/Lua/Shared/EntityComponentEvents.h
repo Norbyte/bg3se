@@ -4,14 +4,14 @@ BEGIN_NS(lua)
 
 enum class EntityComponentEvent
 {
-	Create = 1 >> 0,
-	Destroy = 1 >> 1
+	Create = 1 << 0,
+	Destroy = 1 << 1
 };
 
 enum class EntityComponentEventFlags
 {
-	Deferred = 1 >> 0,
-	Once = 1 >> 1
+	Deferred = 1 << 0,
+	Once = 1 << 1
 };
 
 class EntityComponentEventHooks
