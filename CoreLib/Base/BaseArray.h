@@ -551,11 +551,13 @@ public:
 
 	inline T const& operator [] (size_type index) const
 	{
+		assert(index < size_);
 		return buf_[index];
 	}
 
 	inline T& operator [] (size_type index)
 	{
+		assert(index < size_);
 		return buf_[index];
 	}
 
@@ -716,11 +718,13 @@ public:
 
 	inline T const& operator [] (size_type index) const
 	{
+		assert(index < size_);
 		return buf_[index];
 	}
 
 	inline T& operator [] (size_type index)
 	{
+		assert(index < size_);
 		return buf_[index];
 	}
 
@@ -884,11 +888,13 @@ public:
 
 	inline T const& operator [] (size_type index) const
 	{
+		assert(index < size_);
 		return buf_[index];
 	}
 
 	inline T& operator [] (size_type index)
 	{
+		assert(index < size_);
 		return buf_[index];
 	}
 
