@@ -230,7 +230,7 @@ struct DeadByDefaultComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(DeadByDefault, "eoc::death::DeadByDefaultComponent")
 
-	bool DeadByDefault;
+	uint8_t DeadByDefault;
 };
 
 
