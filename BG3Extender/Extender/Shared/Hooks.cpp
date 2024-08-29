@@ -49,7 +49,10 @@ void Hooks::OnParseDataFolder(stats::RPGStats::ParseStructureFolderProc* next, s
 		lua->OnStatsStructureLoaded();
 	}
 
-	next(self, paths);
+	{
+		DisableCrashReporting _;
+		next(self, paths);
+	}
 
 	gExtender->GetStatLoadOrderHelper().OnLoadFinished();
 }

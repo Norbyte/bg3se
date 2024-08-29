@@ -242,7 +242,10 @@ void ScriptExtender::OnStatsLoad(stats::RPGStats::LoadProc* wrapped, stats::RPGS
 	client_.LoadExtensionState(ExtensionStateContext::Load);
 	virtualTextures_.Load();
 
-	wrapped(mgr, paths);
+	{
+		DisableCrashReporting _;
+		wrapped(mgr, paths);
+	}
 
 	client_.LoadExtensionState(ExtensionStateContext::Game);
 
