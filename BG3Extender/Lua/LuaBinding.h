@@ -170,7 +170,7 @@ namespace bg3se::lua
 		void FinishStartup();
 		void LoadBootstrap(STDString const& path, STDString const& modTable);
 		virtual void OnGameSessionLoading();
-		void OnGameSessionLoaded();
+		virtual void OnGameSessionLoaded();
 		void OnModuleLoadStarted();
 		void OnStatsLoaded();
 		void OnModuleResume();

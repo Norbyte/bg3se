@@ -343,6 +343,7 @@ bool OsirisExtender::MergeWrapper(bool (*next)(void*, wchar_t*), void * Osiris, 
 
 	if (gExtender->GetServer().HasExtensionState()) {
 		gExtender->GetServer().GetExtensionState().StorySetMerging(false);
+		gExtender->GetServer().GetExtensionState().StoryLoaded();
 	}
 
 	DEBUG("ScriptExtender::MergeWrapper() - Finished merge");

@@ -18,21 +18,26 @@ public:
 	static constexpr MetatableTag MetaTag = MetatableTag::OsiFunctionName;
 	static constexpr bool HasLifetime = false;
 
-	inline static void Make(lua_State* L, uint32_t functionIndex)
+	inline static void Make(lua_State* L, uint64_t handle)
 	{
-		lua_push_cppvalue(L, MetaTag, 0, functionIndex);
+		lua_push_cppvalue(L, MetaTag, 0, handle);
 	}
 
 	inline static OsirisNameCache const* Get(lua_State* L)
 	{
 		CppValueMetadata self;
 		lua_get_cppvalue(L, 1, MetaTag, self);
-		return ServerState::FromLua(L)->Osiris().GetNameResolver().GetCache((uint32_t)self.Value);
+		return Get(L, self);
 	}
 
 	inline static OsirisNameCache const* Get(lua_State* L, CppValueMetadata& self)
 	{
-		return ServerState::FromLua(L)->Osiris().GetNameResolver().GetCache((uint32_t)self.Value);
+		auto cache = ServerState::FromLua(L)->Osiris().GetNameResolver().GetCache(self.Value);
+		if (!cache) {
+			luaL_error(L, "Osi cache entry %08x references nonexistent function", self.Value);
+		}
+
+		return cache;
 	}
 
 	static int Index(lua_State* L, CppValueMetadata& self);

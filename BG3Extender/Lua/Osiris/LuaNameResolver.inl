@@ -12,7 +12,7 @@ int LuaIndexResolverTable(lua_State* L)
 	auto name = get<FixedString>(L, 2);
 
 	auto state = ServerState::FromLua(L);
-	auto const& resolver = state->Osiris().GetNameResolver();
+	auto& resolver = state->Osiris().GetNameResolver();
 	auto index = resolver.GetNameIndex(name);
 	if (!index) {
 		index = resolver.GetLegacyNameIndex(name);

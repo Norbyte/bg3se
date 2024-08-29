@@ -225,11 +225,12 @@ namespace bg3se::esv::lua
 	}
 
 
-	void ServerState::OnGameSessionLoading()
+	void ServerState::OnGameSessionLoaded()
 	{
 		osiris_.GetIdentityAdapterMap().UpdateAdapters();
+		osiris_.GetNameResolver().RebuildCacheIfNecessary();
 
-		State::OnGameSessionLoading();
+		State::OnGameSessionLoaded();
 	}
 
 	void ServerState::StoryFunctionMappingsUpdated()

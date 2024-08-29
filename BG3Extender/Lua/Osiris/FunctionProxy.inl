@@ -28,6 +28,7 @@ int OsiFunctionNameMetatable::Index(lua_State* L, CppValueMetadata& self)
 int OsiFunctionNameMetatable::Call(lua_State* L, CppValueMetadata& self)
 {
 	auto cache = Get(L, self);
+
 	auto func = cache->GetFunction(lua_gettop(L) - 1);
 	if (func) {
 		return func->LuaCall(L);

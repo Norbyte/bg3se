@@ -109,7 +109,7 @@ public:
 		return osiris_;
 	}
 
-	void OnGameSessionLoading() override;
+	void OnGameSessionLoaded() override;
 	void StoryFunctionMappingsUpdated();
 
 	ecs::EntityWorld* GetEntityWorld() override;
