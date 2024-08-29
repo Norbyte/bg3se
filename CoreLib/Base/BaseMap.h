@@ -122,17 +122,13 @@ public:
 
 		int keyIdx = (int)Keys.size();
 		Keys.Add(key);
+		NextIds.Add(-1);
 
-		if (NextIds.size() < Keys.size()) {
-			NextIds.resize(Keys.size());
-		}
-
-		NextIds[keyIdx] = -1;
-
-		if (HashKeys.size() >= Keys.size() * 2) {
+		auto desiredSize = Keys.size() + (Keys.size() >> 1);
+		if (HashKeys.size() >= desiredSize) {
 			InsertToHashMap(key, keyIdx);
 		} else {
-			ResizeHashMap(Keys.size());
+			ResizeHashMap(desiredSize);
 		}
 
 		return keyIdx;
@@ -486,8 +482,8 @@ public:
 	TValue* set(TKey const& key, TValue&& value)
 	{
 		auto index = this->insert(key);
-		if (Values.size() <= (uint32_t)index) {
-			Values.resize(Values.grow_size(), index, index);
+		if (Values.size() < this->Keys.capacity()) {
+			Values.resize(this->Keys.capacity(), index, index);
 		}
 
 		return new (&Values[index]) TValue(std::move(value));
@@ -496,8 +492,8 @@ public:
 	TValue* set(TKey const& key, TValue const& value)
 	{
 		auto index = this->insert(key);
-		if (Values.size() <= (uint32_t)index) {
-			Values.resize(Values.grow_size(), index, index);
+		if (Values.size() < this->Keys.capacity()) {
+			Values.resize(this->Keys.capacity(), index, index);
 		}
 
 		return new (&Values[index]) TValue(value);
@@ -506,8 +502,8 @@ public:
 	TValue* add_key(TKey const& key)
 	{
 		auto index = this->insert(key);
-		if (Values.size() <= (uint32_t)index) {
-			Values.resize(Values.grow_size(), index, index);
+		if (Values.size() < this->Keys.capacity()) {
+			Values.resize(this->Keys.capacity(), index, index);
 		}
 
 		return new (&Values[index]) TValue();
