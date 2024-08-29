@@ -226,9 +226,8 @@ std::wstring ScriptExtender::MakeLogFilePath(std::wstring const & Type, std::wst
 	return ss.str();
 }
 
-void ScriptExtender::OnStatsLoad(stats::RPGStats::LoadProc* wrapped, stats::RPGStats* mgr, Array<STDString>* paths)
+void ScriptExtender::OnStatsLoadGuarded(stats::RPGStats::LoadProc* wrapped, stats::RPGStats* mgr, Array<STDString>* paths)
 {
-	BEGIN_GUARDED()
 	// Stats load is scheduled from the client on the shared worker pool
 	client_.AddThread(GetCurrentThreadId());
 
@@ -258,6 +257,12 @@ void ScriptExtender::OnStatsLoad(stats::RPGStats::LoadProc* wrapped, stats::RPGS
 #endif
 
 	client_.RemoveThread(GetCurrentThreadId());
+}
+
+void ScriptExtender::OnStatsLoad(stats::RPGStats::LoadProc* wrapped, stats::RPGStats* mgr, Array<STDString>* paths)
+{
+	BEGIN_GUARDED()
+	OnStatsLoadGuarded(wrapped, mgr, paths);
 	END_GUARDED()
 }
 
