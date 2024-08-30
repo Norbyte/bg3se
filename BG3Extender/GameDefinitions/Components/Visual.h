@@ -156,6 +156,7 @@ struct DisplayNameListComponent : public BaseComponent
 
 	Array<DisplayName> Names;
 	Array<DisplayNameTranslatedString> TranslatedStrings;
+	uint64_t Unknown;
 };
 
 struct IconInfo

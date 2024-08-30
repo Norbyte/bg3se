@@ -331,9 +331,6 @@
       <Filter>GameDefinitions</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="Extender\Shared\ModuleHasher.h">
-      <Filter>Extender\Shared</Filter>
-    </ClInclude>
     <ClInclude Include="Extender\Shared\StatLoadOrderHelper.h">
       <Filter>Extender\Shared</Filter>
     </ClInclude>
@@ -563,9 +560,6 @@
     </None>
     <None Include="GameDefinitions\GlobalFixedStrings.inl">
       <Filter>GameDefinitions</Filter>
-    </None>
-    <None Include="Extender\Shared\ModuleHasher.inl">
-      <Filter>Extender\Shared</Filter>
     </None>
     <None Include="Extender\Shared\StatLoadOrderHelper.inl">
       <Filter>Extender\Shared</Filter>

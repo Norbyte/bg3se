@@ -143,7 +143,6 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="Extender\Shared\ExtensionHelpers.h" />
     <ClInclude Include="Extender\Shared\ExtensionState.h" />
     <ClInclude Include="Extender\Shared\Hooks.h" />
-    <ClInclude Include="Extender\Shared\ModuleHasher.h" />
     <ClInclude Include="Extender\Shared\SavegameSerializer.h" />
     <ClInclude Include="Extender\Shared\ScriptExtenderBase.h" />
     <ClInclude Include="Extender\Shared\ScriptHelpers.h" />
@@ -388,7 +387,6 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="Extender\Client\IMGUI\DX11.inl" />
     <ClCompile Include="Extender\Client\SDL.cpp" />
     <None Include="Extender\Client\IMGUI\Vulkan.inl" />
-    <None Include="Extender\Shared\ModuleHasher.inl" />
     <None Include="Extender\Shared\SavegameSerializer.inl" />
     <None Include="Extender\Shared\ExtenderProtocol.proto" />
     <None Include="Extender\Shared\StatLoadOrderHelper.inl" />

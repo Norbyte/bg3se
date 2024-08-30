@@ -53,20 +53,23 @@ BEGIN_NS(ecl::lua::ui)
 Noesis::FrameworkElement* GetRoot()
 {
 	Noesis::gStaticSymbols.Initialize();
-	return (*GetStaticSymbols().ls__gGlobalResourceManager)->UIManager->field_70.MainCanvasGrid;
+
+	//auto t38 = (*GetStaticSymbols().ls__gGlobalResourceManager)->UIManager->field_88.field_38->GetClassType();
+
+	return (*GetStaticSymbols().ls__gGlobalResourceManager)->UIManager->field_88.Canvas;
 }
 
 bg3se::ui::UIStateMachine* GetStateMachine()
 {
 	Noesis::gStaticSymbols.Initialize();
-	return (*GetStaticSymbols().ls__gGlobalResourceManager)->UIManager->field_358.StateMachine;
+	return (*GetStaticSymbols().ls__gGlobalResourceManager)->UIManager->field_3B8.StateMachine;
 }
 
 using FireStateEventProc = void(bg3se::ui::UIStateMachine*, bg3se::ui::UIStateMachine::EventResult&, bg3se::ui::UIStateMachine::EntityContext const&, bg3se::ui::UIStateMachine::EventArgs const&);
 
 void SetState(lua_State* L, FixedString state, std::optional<FixedString> subState, std::optional<bool> clearState, std::optional<int16_t> playerId)
 {
-	auto stateMachine = (*GetStaticSymbols().ls__gGlobalResourceManager)->UIManager->field_358.StateMachine;
+	auto stateMachine = (*GetStaticSymbols().ls__gGlobalResourceManager)->UIManager->field_3B8.StateMachine;
 	auto fireStateEvent = (FireStateEventProc*)GetStaticSymbols().ls__UIStateMachine__FireStateEvent2;
 
 	bg3se::ui::UIStateMachine::EventResult result;

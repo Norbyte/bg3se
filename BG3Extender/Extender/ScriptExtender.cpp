@@ -355,12 +355,11 @@ ExtensionStateBase* ScriptExtender::GetCurrentExtensionState()
 
 ecs::EntitySystemHelpersBase* ScriptExtender::GetECS(ecs::EntityWorld* world)
 {
-	if (world == GetStaticSymbols().GetServerEntityWorld()) {
-		return &server_.GetEntityHelpers();
-	} else if (world == GetStaticSymbols().GetClientEntityWorld()) {
+	if (world == GetStaticSymbols().GetClientEntityWorld()) {
 		return &client_.GetEntityHelpers();
-	} else {
-		ERR("Called with unknown EntityWorld?");
+	} else if (world == GetStaticSymbols().GetServerEntityWorld()) {
+		return &server_.GetEntityHelpers();
+	} else  {
 		return nullptr;
 	}
 }
@@ -501,7 +500,7 @@ FileReader * ScriptExtender::OnFileReaderCreate(FileReader::CtorProc* next, File
 	if (!pathOverrides_.empty()) {
 		std::shared_lock lock(pathOverrideMutex_);
 		auto it = pathOverrides_.find(path.Name);
-		if (it != pathOverrides_.end() && !client_.Hasher().isHashing()) {
+		if (it != pathOverrides_.end()) {
 			DEBUG("FileReader path override: %s -> %s", path.Name.c_str(), it->second.c_str());
 			Path overriddenPath;
 			overriddenPath.Name = it->second;

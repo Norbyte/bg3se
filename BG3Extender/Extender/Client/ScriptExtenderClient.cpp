@@ -8,7 +8,6 @@ STATIC_HOOK(gameStateWorkerStart_)
 STATIC_HOOK(gameStateMachineUpdate_)
 
 #include <Extender/Shared/ThreadedExtenderState.inl>
-#include <Extender/Shared/ModuleHasher.inl>
 
 BEGIN_SE()
 
@@ -203,10 +202,6 @@ void ScriptExtender::OnGameStateChanged(GameState fromState, GameState toState)
 	case GameState::InitNetwork:
 	case GameState::Disconnect:
 		network_.Reset();
-		break;
-
-	case GameState::UnloadModule:
-		hasher_.ClearCaches();
 		break;
 
 	case GameState::UnloadSession:

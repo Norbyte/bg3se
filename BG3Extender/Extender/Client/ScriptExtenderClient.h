@@ -5,7 +5,6 @@
 #include <Extender/Client/ExtensionStateClient.h>
 #include <Extender/Client/ClientNetworking.h>
 #include <Extender/Client/SDLManager.h>
-#include <Extender/Shared/ModuleHasher.h>
 #include <GameDefinitions/Symbols.h>
 #include <GameDefinitions/EntitySystemHelpers.h>
 #include <CoreLib/Wrappers.h>
@@ -41,11 +40,6 @@ public:
 		return entityHelpers_;
 	}
 
-	inline ModuleHasher& Hasher()
-	{
-		return hasher_;
-	}
-
 	inline NetworkManager& GetNetworkManager()
 	{
 		return network_;
@@ -77,7 +71,6 @@ private:
 	bool extensionLoaded_{ false };
 	bool postStartupDone_{ false };
 	ecs::ClientEntitySystemHelpers entityHelpers_;
-	ModuleHasher hasher_;
 	STDString serverStatus_;
 	STDString clientStatus_;
 	NetworkManager network_;
