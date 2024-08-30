@@ -48,7 +48,7 @@ DEFN_BOOST(Ability, Ability, {
 	AbilityId Ability;
 	int32_t Value;
 	[[bg3::legacy(field_8)]] int32_t ValueCap;
-	int8_t field_C;
+	bool field_C;
 })
 
 DEFN_BOOST(RollBonus, RollBonus, {
@@ -59,7 +59,7 @@ DEFN_BOOST(RollBonus, RollBonus, {
 })
 
 DEFN_BOOST(Advantage, Advantage, {
-	AdvantageTypeId AdvantageType;
+	AdvantageContext AdvantageType;
 	AdvantageBoostType Type;
 	AbilityId Ability;
 	SkillId Skill;
@@ -138,7 +138,7 @@ struct IncreaseMaxHPComponent : public BaseComponent
 
 DEFN_BOOST(ActionResourceBlock, ActionResourceBlock, {
 	Guid ResourceUUID;
-	int IntParam;
+	[[bg3::legacy(IntParam)]] int Level;
 })
 
 DEFN_BOOST(StatusImmunity, StatusImmunity, {
@@ -542,7 +542,21 @@ DEFN_BOOST(IgnoreLowGroundPenalty, IgnoreLowGroundPenalty, {
 })
 
 DEFN_BOOST(IgnoreSurfaceCover, IgnoreSurfaceCover, {
-	SurfaceType SurfaceType;
+	SurfaceType Surface;
+})
+
+DEFN_BOOST(ProficiencyBonusIncrease, ProficiencyBonusIncrease, {
+	int32_t Amount;
+})
+
+DEFN_BOOST(DamageTakenBonus, DamageTakenBonus, {
+	StatsExpressionParam Amount;
+	DamageType DamageType;
+	bool Arg3;
+})
+
+DEFN_BOOST(ReceivingCriticalDamageOnHit, ReceivingCriticalDamageOnHit, {
+	float Arg1;
 })
 
 END_SE()

@@ -173,9 +173,14 @@ public:
 
     void NewFrame() override
     {
+        // Speculative check to avoid unnecessary locking
         if (!initialized_) return;
 
         std::lock_guard _(globalResourceLock_);
+
+        // Locked check (at this point we're certain noone is manipulating the initialized flag)
+        if (!initialized_) return;
+
         curViewport_ = (curViewport_ + 1) % viewports_.size();
         GImGui->Viewports[0] = &viewports_[curViewport_].Viewport;
 
@@ -190,9 +195,14 @@ public:
 
     void FinishFrame() override
     {
+        // Speculative check to avoid unnecessary locking
         if (!initialized_) return;
 
         std::lock_guard _(globalResourceLock_);
+
+        // Locked check (at this point we're certain noone is manipulating the initialized flag)
+        if (!initialized_) return;
+
         auto& vp = viewports_[curViewport_].Viewport;
         auto& drawLists = viewports_[curViewport_].ClonedDrawLists;
 

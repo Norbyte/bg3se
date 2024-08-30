@@ -63,7 +63,7 @@ namespace bg3se
 	struct EoCLevel : public LSLevel
 	{
 		void* EntityManager;
-		void* AiGrid;
+		AiGrid* AiGrid;
 		void* CoverManager;
 	};
 

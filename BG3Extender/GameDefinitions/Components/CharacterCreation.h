@@ -264,7 +264,7 @@ struct DefinitionStateComponent : public BaseComponent
 	DEFINE_COMPONENT(ClientCCDefinitionState, "ecl::character_creation::DefinitionStateComponent")
 
 	[[bg3::legacy(field_0)]] EntityHandle Entity;
-	float field_8;
+	uint32_t field_8;
 	uint32_t field_C;
 	[[bg3::legacy(field_10)]] uint32_t ChangeId;
 	bg3se::character_creation::ValidationError Errors;

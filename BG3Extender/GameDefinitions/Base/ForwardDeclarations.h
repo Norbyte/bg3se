@@ -49,6 +49,8 @@ struct GlobalTemplateBank;
 struct LocalTemplateManager;
 struct CacheTemplateManagerBase;
 
+struct AiGrid;
+
 struct UuidComponent;
 struct UuidToHandleMappingComponent;
 

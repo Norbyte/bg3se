@@ -18,7 +18,7 @@ OsirisBinding::OsirisBinding(ExtensionState& state)
 	osirisCallbacks_(state)
 {
 	identityAdapters_.UpdateAdapters();
-	resolver_.UpdateCache();
+	resolver_.InvalidateCache();
 }
 
 OsirisBinding::~OsirisBinding()
@@ -37,7 +37,7 @@ void OsirisBinding::StoryLoaded()
 		OsiWarn("Not all identity adapters are available - some queries may not work!");
 	}
 
-	resolver_.UpdateCache();
+	resolver_.InvalidateCache();
 	osirisCallbacks_.StoryLoaded();
 }
 

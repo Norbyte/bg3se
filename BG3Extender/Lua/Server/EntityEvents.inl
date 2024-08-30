@@ -58,7 +58,7 @@ bool EntityReplicationEventHooks::Unsubscribe(SubscriptionIndex index)
 	if (!sub->Entity) {
 		for (unsigned i = 0; i < pool.GlobalHooks.size(); i++) {
 			if (pool.GlobalHooks[i] == index) {
-				pool.GlobalHooks.remove_at(i);
+				pool.GlobalHooks.ordered_remove_at(i);
 				break;
 			}
 		}
@@ -67,7 +67,7 @@ bool EntityReplicationEventHooks::Unsubscribe(SubscriptionIndex index)
 		if (entityHooks) {
 			for (unsigned i = 0; i < entityHooks->size(); i++) {
 				if ((*entityHooks)[i] == index) {
-					entityHooks->remove_at(i);
+					entityHooks->ordered_remove_at(i);
 					break;
 				}
 			}

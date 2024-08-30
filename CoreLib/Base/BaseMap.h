@@ -102,9 +102,9 @@ public:
 
 	int find_index(T const& key) const
 	{
-		if (HashKeys.Size() == 0) return -1;
+		if (HashKeys.size() == 0) return -1;
 
-		auto keyIndex = HashKeys[HashMapHash(key) % HashKeys.Size()];
+		auto keyIndex = HashKeys[HashMapHash(key) % HashKeys.size()];
 		while (keyIndex >= 0) {
 			if (Keys[keyIndex] == key) return keyIndex;
 			keyIndex = NextIds[keyIndex];
@@ -120,19 +120,15 @@ public:
 			return index;
 		}
 
-		int keyIdx = (int)Keys.Size();
+		int keyIdx = (int)Keys.size();
 		Keys.Add(key);
+		NextIds.Add(-1);
 
-		if (NextIds.size() < Keys.size()) {
-			NextIds.resize(Keys.size());
-		}
-
-		NextIds[keyIdx] = -1;
-
-		if (HashKeys.Size() >= Keys.Size() * 2) {
+		auto desiredSize = Keys.size() + (Keys.size() >> 1);
+		if (HashKeys.size() >= desiredSize) {
 			InsertToHashMap(key, keyIdx);
 		} else {
-			ResizeHashMap(2 * (unsigned)Keys.Size());
+			ResizeHashMap(desiredSize);
 		}
 
 		return keyIdx;
@@ -172,7 +168,13 @@ public:
 
 	bool remove(T const& key)
 	{
-		return removeKeyInternal(key) >= 0;
+		auto idx = find_index(key);
+		if (idx != -1) {
+			removeAt(idx);
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	bool contains(T const& key) const
@@ -185,64 +187,53 @@ protected:
 	Array<int32_t> NextIds;
 	Array<T> Keys;
 
-	int removeKeyInternal(T const& key)
+	uint32_t bucketFromIndex(int32_t index)
 	{
-		if (HashKeys.Size() == 0) return -1;
-
-		auto hash = (uint32_t)(HashMapHash(key) % HashKeys.Size());
-		auto keyIndex = HashKeys[hash];
-		auto prevKeyIndex = keyIndex;
-		while (keyIndex >= 0) {
-			if (Keys[keyIndex] == key) {
-				if (prevKeyIndex == keyIndex) {
-					// Remove first element in the hash table
-					HashKeys[hash] = NextIds[keyIndex];
-				} else {
-					// Remove intermediate element in the chain
-					NextIds[prevKeyIndex] = NextIds[keyIndex];
-				}
-
-				NextIds[keyIndex] = -1;
-				Keys[keyIndex] = T{};
-				if (keyIndex != size() - 1) {
-					migrateKey(size() - 1, keyIndex);
-				}
-
-				Keys.pop_last();
-				return keyIndex;
-			}
-
-			prevKeyIndex = keyIndex;
-			keyIndex = NextIds[keyIndex];
+		while (index >= 0) {
+			index = NextIds[index];
 		}
 
-		return -1;
+		assert(index < -1);
+		return (uint32_t)(-2 - index);
 	}
 
-	void migrateKey(int32_t from, int32_t to)
+	void swapKeyInHashTable(uint32_t bucket, int32_t indexToRemove, int32_t nextIndex)
 	{
-		// Backrefs in NextIds are inconsistent, so we need to rehash the key we're moving
-		auto slot = (uint32_t)(HashMapHash(Keys[from]) % HashKeys.Size());
-
-		Keys[to] = std::move(Keys[from]);
-
-		int32_t prev = HashKeys[slot];
-		if (prev == from) {
-			HashKeys[slot] = to;
+		auto index = HashKeys[bucket];
+		if (indexToRemove == index) {
+			HashKeys[bucket] = nextIndex;
 		} else {
-			while (NextIds[prev] != from) {
-				prev = NextIds[prev];
-			}
+			int32_t lastIndex = -1;
+			do {
+				assert(index >= 0);
+				lastIndex = index;
+				index = NextIds[index];
+			} while (index != indexToRemove);
 
-			assert(NextIds[prev] == from);
-			NextIds[prev] = to;
+			NextIds[lastIndex] = nextIndex;
+		}
+	}
+
+	void removeAt(int32_t index)
+	{
+		auto bucketIndex = bucketFromIndex(index);
+		auto nextIndex = NextIds[index];
+		swapKeyInHashTable(bucketIndex, index, nextIndex);
+		Keys.remove_at(index);
+		auto followUpIndex = NextIds.pop_last();
+		auto removedIndex = NextIds.size();
+
+		if (index != removedIndex) {
+			NextIds[index] = followUpIndex;
+			auto removedBucketIndex = bucketFromIndex(followUpIndex);
+			swapKeyInHashTable(removedBucketIndex, removedIndex, index);
 		}
 	}
 
 private:
 	void InsertToHashMap(T const& key, int keyIdx)
 	{
-		auto bucket = (uint32_t)(HashMapHash(key) % HashKeys.Size());
+		auto bucket = (uint32_t)(HashMapHash(key) % HashKeys.size());
 		auto prevKeyIdx = HashKeys[bucket];
 		if (prevKeyIdx < 0) {
 			prevKeyIdx = -2 - (int)bucket;
@@ -257,7 +248,7 @@ private:
 		auto numBuckets = GetNearestMultiHashMapPrime(newSize);
 
 		HashKeys = StaticArray<int32_t>(numBuckets, -1);
-		for (unsigned k = 0; k < Keys.Size(); k++) {
+		for (unsigned k = 0; k < Keys.size(); k++) {
 			InsertToHashMap(Keys[k], k);
 		}
 	}
@@ -491,8 +482,8 @@ public:
 	TValue* set(TKey const& key, TValue&& value)
 	{
 		auto index = this->insert(key);
-		if (Values.size() <= (uint32_t)index) {
-			Values.resize(Values.grow_size(), index, index);
+		if (Values.size() < this->Keys.capacity()) {
+			Values.resize(this->Keys.capacity(), index, index);
 		}
 
 		return new (&Values[index]) TValue(std::move(value));
@@ -501,8 +492,8 @@ public:
 	TValue* set(TKey const& key, TValue const& value)
 	{
 		auto index = this->insert(key);
-		if (Values.size() <= (uint32_t)index) {
-			Values.resize(Values.grow_size(), index, index);
+		if (Values.size() < this->Keys.capacity()) {
+			Values.resize(this->Keys.capacity(), index, index);
 		}
 
 		return new (&Values[index]) TValue(value);
@@ -511,8 +502,8 @@ public:
 	TValue* add_key(TKey const& key)
 	{
 		auto index = this->insert(key);
-		if (Values.size() <= (uint32_t)index) {
-			Values.resize(Values.grow_size(), index, index);
+		if (Values.size() < this->Keys.capacity()) {
+			Values.resize(this->Keys.capacity(), index, index);
 		}
 
 		return new (&Values[index]) TValue();
@@ -520,12 +511,13 @@ public:
 
 	bool remove(TKey const& key)
 	{
-		auto index = this->removeKeyInternal(key);
+		auto index = find_index(key);
 		if (index >= 0) {
+			this->removeAt(index);
 			auto lastIndex = this->Keys.size();
-			if (index < (int32_t)this->Keys.size()) {
-				Values[index] = std::move(Values[this->Keys.size()]);
-				Values[this->Keys.size()].~TValue();
+			if (index < (int32_t)lastIndex) {
+				Values[index] = std::move(Values[lastIndex]);
+				Values[lastIndex].~TValue();
 			}
 
 			return true;
@@ -546,12 +538,12 @@ public:
 
 	Iterator end()
 	{
-		return Iterator(this, this->Keys.Size());
+		return Iterator(this, this->Keys.size());
 	}
 
 	ConstIterator end() const
 	{
-		return ConstIterator(this, this->Keys.Size());
+		return ConstIterator(this, this->Keys.size());
 	}
 
 	Iterator find(TKey const& key)

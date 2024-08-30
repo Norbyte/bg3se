@@ -255,7 +255,7 @@ struct CompactSet
 		FreeBuffer(oldBuf);
 	}
 
-	void remove_at(uint32_t index)
+	void ordered_remove_at(uint32_t index)
 	{
 		assert(index < Size);
 
@@ -270,7 +270,7 @@ struct CompactSet
 	void erase(iterator const& it)
 	{
 		assert(it != end());
-		remove_at((size_type)(it.get() - Buf));
+		ordered_remove_at((size_type)(it.get() - Buf));
 	}
 
 	void clear()
@@ -551,11 +551,13 @@ public:
 
 	inline T const& operator [] (size_type index) const
 	{
+		assert(index < size_);
 		return buf_[index];
 	}
 
 	inline T& operator [] (size_type index)
 	{
+		assert(index < size_);
 		return buf_[index];
 	}
 
@@ -716,11 +718,13 @@ public:
 
 	inline T const& operator [] (size_type index) const
 	{
+		assert(index < size_);
 		return buf_[index];
 	}
 
 	inline T& operator [] (size_type index)
 	{
+		assert(index < size_);
 		return buf_[index];
 	}
 
@@ -884,11 +888,13 @@ public:
 
 	inline T const& operator [] (size_type index) const
 	{
+		assert(index < size_);
 		return buf_[index];
 	}
 
 	inline T& operator [] (size_type index)
 	{
+		assert(index < size_);
 		return buf_[index];
 	}
 
@@ -985,7 +991,7 @@ public:
 		new (&buf_[size_++]) T();
 
 		for (size_type i = size_ - 1; i > index; i++) {
-			buf_[i] = buf_[i - 1];
+			buf_[i] = std::move(buf_[i - 1]);
 		}
 
 		buf_[index] = value;
@@ -1007,8 +1013,20 @@ public:
 	{
 		assert(index < size_);
 
+		if (index + 1 < size_) {
+			buf_[index] = std::move(buf_[size_ - 1]);
+		}
+
+		buf_[size_ - 1].~T();
+		size_--;
+	}
+
+	void ordered_remove_at(size_type index)
+	{
+		assert(index < size_);
+
 		for (size_type i = index; i < size_ - 1; i++) {
-			buf_[i] = buf_[i + 1];
+			buf_[i] = std::move(buf_[i + 1]);
 		}
 
 		buf_[size_ - 1].~T();
@@ -1018,7 +1036,7 @@ public:
 	void erase(iterator const& it)
 	{
 		assert(it != end());
-		remove_at((size_type)(it.get() - buf_));
+		ordered_remove_at((size_type)(it.get() - buf_));
 	}
 
 	void remove_last()

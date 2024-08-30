@@ -2,6 +2,7 @@
 
 #include <GameDefinitions/Symbols.h>
 
+#include <GameDefinitions/Ai.h>
 #include <GameDefinitions/Dialog.h>
 #include <GameDefinitions/Picking.h>
 #include <GameDefinitions/Resources.h>

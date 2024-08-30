@@ -1653,7 +1653,7 @@ void IMGUIManager::UpdateStyle()
     DEFAULT_COLOR(TableRowBg, ImVec4(0.63f, 0.69f, 0.34f, 0.43f));
     DEFAULT_COLOR(TableRowBgAlt, ImVec4(0.52f, 0.29f, 0.15f, 0.43f));
     DEFAULT_COLOR(TextSelectedBg, ImVec4(0.57f, 0.21f, 0.21f, 0.43f));
-    DEFAULT_COLOR(DragDropTarget, ImVec4(0.07f, 0.07f, 0.07f, 0.78f));
+    DEFAULT_COLOR(DragDropTarget, ImVec4(0.6f, 0.45f, 0.3f, 1.0f));
     DEFAULT_COLOR(NavHighlight, ImVec4(0.55f, 0.00f, 0.00f, 0.78f));
     DEFAULT_COLOR(NavWindowingHighlight, ImVec4(0.55f, 0.00f, 0.00f, 0.78f));
     DEFAULT_COLOR(NavWindowingDimBg, ImVec4(0.07f, 0.07f, 0.07f, 0.78f));

@@ -116,7 +116,7 @@ bool ComponentCallbackList::Remove(uint64_t registrantIndex)
 {
 	for (uint32_t i = 0; i < Callbacks.size(); i++) {
 		if (Callbacks[i].RegistrantIndex == registrantIndex) {
-			Callbacks.remove_at(i);
+			Callbacks.ordered_remove_at(i);
 			return true;
 		}
 	}
