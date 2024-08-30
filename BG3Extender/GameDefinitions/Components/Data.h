@@ -43,7 +43,7 @@ struct Bound
 {
 	EntityHandle Entity;
 	LegacyRefMap<AIBoundType, BoundData> AIBounds;
-	[[bg3::hidden]] void* AiGrid;
+	[[bg3::hidden]] AiGrid* AiGrid;
 	[[bg3::hidden]] void* Parent;
 	HashSet<AiTilePos> GridPoints;
 	glm::vec3 Translate;
