@@ -592,12 +592,10 @@ struct [[bg3::hidden]] DialogSystem : public ProtectedGameObject<DialogSystem>
 
 	void* VMT;
 	void* field_8;
-#if 0
 	void* TimelineSystem;
 	void* CombatLogSystem;
 	void* RollSystem;
 	void* DialogEventsSystem;
-#endif
 	DialogGameInterface GameInterface;
 	void* DialogEventListener1;
 	void* DialogEventListenerAdapter2;

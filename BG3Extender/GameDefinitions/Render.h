@@ -391,7 +391,7 @@ struct Visual : public MoveableObject
 		uint8_t RemapsSize;
 	};
 
-
+	[[bg3::hidden]] void* field_80;
 	[[bg3::hidden]] SkeletonSlot** SkeletonSlots;
 	[[bg3::hidden]] uint8_t SkeletonSlotsCapacity;
 	[[bg3::hidden]] uint8_t SkeletonSlotsSize;

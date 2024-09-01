@@ -472,7 +472,7 @@ struct UseAttackFunctor : public Functor
 	static constexpr auto FunctorType = FunctorId::UseAttack;
 
 	bool IgnoreChecks{ false }; // Arg1
-	// bool Arg2{ false };
+	bool IgnoreBlindness{ false }; // Arg2
 };
 
 struct CreateExplosionFunctor : public Functor

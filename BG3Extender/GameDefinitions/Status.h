@@ -204,11 +204,13 @@ namespace bg3se
 			ecs::EntityRef Source;
 			ecs::EntityRef Target;
 			glm::vec3 TargetPosition;
-			EntityHandle Partner;
-			bool ShowOverhead;
+			ComponentHandle PartnerStatus;
 			SpellId Spell;
 			bool IgnoreHasSpell;
 			bool IgnoreChecks;
+			bool FromInterrupt;
+			bool ShowOverhead;
+			bool CheckProjectileTargets;
 		};
 
 		struct StatusStoryFrozen : public Status

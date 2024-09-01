@@ -338,6 +338,7 @@ struct Resource : public ProtectedGameObject<Resource>
 
 	Path SourceFile;
 	[[bg3::readonly]] FixedString Guid;
+	[[bg3::readonly]] bool IsModded;
 };
 
 struct TwoStepLoadableResource : public Resource
