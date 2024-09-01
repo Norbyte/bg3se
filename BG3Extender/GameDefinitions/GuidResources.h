@@ -1209,7 +1209,7 @@ struct ItemWallTemplate : public resource::GuidResource
 struct TrajectoryRule : public resource::GuidResource
 {
 	static constexpr auto ResourceManagerType = ExtResourceManagerType::TrajectoryRules;
-	static constexpr auto EngineClass = "eoc::jump::TrajectoryRules";
+	static constexpr auto EngineClass = "eoc::projectile::TrajectoryRules";
 
 	FixedString Template;
 	int32_t Priority;
