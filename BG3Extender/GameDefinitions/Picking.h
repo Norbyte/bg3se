@@ -9,7 +9,7 @@ struct PlayerPickingHelperInner2
 	glm::vec3 CharacterPosition;
 	glm::vec3 DeadCharacterPosition;
 	glm::vec3 ItemPosition;
-	glm::vec3 field_24;
+	[[bg3::legacy(field_24)]] glm::vec3 TooltipPosition;
 	EntityHandle Character;
 	EntityHandle DeadCharacter;
 	EntityHandle Item;
@@ -23,34 +23,29 @@ struct PlayerPickingHelperInner2
 struct PlayerPickingHelperInner
 {
 	std::array<PlayerPickingHelperInner2, 2> Inner;
-	glm::vec3 Position0;
-	glm::vec3 Direction0;
-	glm::vec3 Position1;
-	glm::vec3 Direction1;
-	glm::vec3 Position2;
-	glm::vec3 Direction2;
-	glm::vec3 field_118;
-	glm::vec3 field_124;
-	EntityHandle field_130_EH;
-	EntityHandle field_138_EH;
-	uint64_t field_140_Flags2;
-	float field_148;
-	float field_14C;
-	float field_150;
+	[[bg3::legacy(Position0)]] glm::vec3 PlaceablePosition;
+	[[bg3::legacy(Direction0)]] glm::vec3 PlaceableNormal;
+	[[bg3::legacy(Position1)]] glm::vec3 Position;
+	[[bg3::legacy(Direction1)]] glm::vec3 Normal;
+	[[bg3::legacy(Position2)]] glm::vec3 SceneryPosition;
+	[[bg3::legacy(Direction2)]] glm::vec3 SceneryNormal;
+	[[bg3::legacy(field_118)]] glm::vec3 WorldPosition;
+	[[bg3::legacy(field_124)]] glm::vec3 WorldNormal;
+	[[bg3::legacy(field_130_EH)]] EntityHandle PlaceableObject;
+	[[bg3::legacy(field_138_EH)]] EntityHandle PlaceableEntity;
+	[[bg3::legacy(field_140_Flags2)]] uint64_t AiGridTile;
+	[[bg3::legacy(field_148)]] float PlaceableFraction;
+	[[bg3::legacy(field_14C)]] float Fraction;
+	[[bg3::legacy(field_150)]] float SceneryFraction;
 	uint8_t field_154_Flags;
 };
 
 struct PlayerPickingInRangeEntity
 {
 	EntityHandle field_0_Entity;
-	int field_8_TurnOrder;
-	uint8_t field_C_InCombat;
-	float field_10;
+	std::optional<int> field_8_TurnOrder;
 	float field_14;
-	float field_18;
-	float field_1C;
-	float field_20;
-	float field_24;
+	glm::vec3 field_18;
 };
 
 struct PlayerPickingCacheValue
