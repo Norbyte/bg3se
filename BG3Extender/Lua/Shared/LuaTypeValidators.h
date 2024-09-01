@@ -489,6 +489,15 @@ bool ValidateRef(HashSet<TK> const* v, Overload<HashSet<TK>>)
 
 	CHECK(v->keys().size() <= v->next_ids().size());
 
+	for (auto k : v->hash_keys()) {
+		CHECK(k < (int)v->keys().size());
+	}
+
+	for (auto k : v->next_ids()) {
+		CHECK(k < (int)v->keys().size());
+		CHECK(k >= -1 || (-2 - k) < (int)v->hash_keys().size());
+	}
+
 	return true;
 }
 
