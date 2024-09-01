@@ -72,7 +72,8 @@ struct [[bg3::hidden]] VirtualTextureManagerBase : public ProtectedGameObject<Vi
 	bool UseChunkedVirtualTextures;
 	SRWLOCK GTSLock;
 	LegacyRefMap<STDString, GTSInfo> LoadedGTS;
-	HashMap<TextureLayerConfigId, Array<LayerConfig>> LayerConfigs;
+	HashMap<TextureLayerConfigId, Array<STDString>> field_28;
+	HashMap<Guid, STDString> TileSets;
 };
 
 struct [[bg3::hidden]] VirtualTextureSet
@@ -1482,17 +1483,14 @@ struct VirtualTextureResource : public LoadableResource
 	[[bg3::readonly]] uint8_t field_80;
 	[[bg3::readonly]] uint32_t VirtualTextureLayerConfig;
 	[[bg3::readonly]] uint32_t LoadedVirtualTextureLayerConfig;
-	[[bg3::readonly]] uint8_t LoadedField52;
-	[[bg3::readonly]] std::optional<char> GTSSuffix;
-	STDString Path2;
+	STDString RootPath;
 	[[bg3::hidden]] SRWLOCK Lock;
 	FixedString TileSetFileName;
 	FixedString GTexFileName;
 	[[bg3::hidden]] void* GraphineTextureData;
 	bool Prefetch;
 	int8_t PrefetchMipLevel;
-	uint8_t field_52;
-	uint8_t field_53;
+	[[bg3::readonly]] uint8_t field_52;
 	uint32_t ReferencedColorSpaces;
 };
 

@@ -140,6 +140,20 @@ namespace bg3se
 #endif
 	}
 
+	ResourceBank* StaticSymbols::GetCurrentResourceBank() const
+	{
+		auto resMgr = ls__gGlobalResourceManager;
+		if (!resMgr || !*resMgr || !(*resMgr)->ResourceBanks[0]) {
+			return nullptr;
+		}
+
+		if ((*resMgr)->ResourceBanks[0]->Packages.size() > 0) {
+			return (*resMgr)->ResourceBanks[0];
+		} else {
+			return (*resMgr)->ResourceBanks[1];
+		}
+	}
+
 	FileReaderPin::~FileReaderPin()
 	{
 		if (reader_ != nullptr) {

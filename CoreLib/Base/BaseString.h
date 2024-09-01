@@ -305,6 +305,7 @@ namespace bg3se
 		STDString ToString() const;
 		static std::optional<Guid> Parse(StringView s);
 		static std::optional<Guid> ParseGuidString(StringView nameGuid);
+		static Guid Generate();
 	};
 
 	inline constexpr uint64_t Hash(Guid const& h)

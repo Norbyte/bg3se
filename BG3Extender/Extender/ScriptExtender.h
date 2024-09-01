@@ -115,6 +115,11 @@ public:
 		return propertyMapManager_;
 	}
 
+	inline VirtualTextureHelpers& GetVirtualTextureHelpers()
+	{
+		return virtualTextures_;
+	}
+
 #if defined(ENABLE_IMGUI)
 	inline extui::IMGUIManager& IMGUI()
 	{

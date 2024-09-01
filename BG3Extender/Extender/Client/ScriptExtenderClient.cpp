@@ -174,6 +174,7 @@ void ScriptExtender::OnGameStateChanged(GameState fromState, GameState toState)
 	switch (fromState) {
 	case GameState::LoadModule:
 		INFO("ecl::ScriptExtender::OnGameStateChanged(): Loaded module");
+		gExtender->GetVirtualTextureHelpers().Load();
 		ShowVersionNumber();
 		LoadExtensionState(ExtensionStateContext::Game);
 		break;

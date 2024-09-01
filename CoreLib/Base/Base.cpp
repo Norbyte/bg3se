@@ -57,6 +57,13 @@ STDString Guid::ToString() const
 	return s;
 }
 
+Guid Guid::Generate()
+{
+	UUID uuid;
+	UuidCreate(&uuid);
+	return *reinterpret_cast<Guid*>(&uuid);
+}
+
 void LSAcquireSRWLockExclusive(PSRWLOCK SRWLock)
 {
 	if (!TryAcquireSRWLockExclusive(SRWLock))

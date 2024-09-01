@@ -61,9 +61,9 @@ struct Module
 	Array<Module> LoadOrderedModules;
 	Array<Module> DependentModules;
 	Array<Module> AddonModules;
-	Array<ModuleShortDesc> Unknown1;
-	Array<ModuleShortDesc> Unknown2;
-	Array<ModuleShortDesc> Unknown3;
+	Array<ModuleShortDesc> Dependencies;
+	Array<ModuleShortDesc> ModConflicts;
+	Array<ModuleShortDesc> Addons;
 	uint8_t UnknownFlag;
 };
 

@@ -239,7 +239,6 @@ void ScriptExtender::OnStatsLoadGuarded(stats::RPGStats::LoadProc* wrapped, stat
 
 	statLoadOrderHelper_.OnLoadStarted();
 	client_.LoadExtensionState(ExtensionStateContext::Load);
-	virtualTextures_.Load();
 
 	{
 		DisableCrashReporting _;
@@ -543,11 +542,6 @@ void ScriptExtender::PostStartup()
 		}
 
 		engineHooks_.FileReader__ctor.SetWrapper(&ScriptExtender::OnFileReaderCreate, this);
-		engineHooks_.ls__VirtualTextureResource__Load.SetWrapper(&VirtualTextureHelpers::OnTextureLoad, &virtualTextures_);
-		engineHooks_.ls__VirtualTextureResource__Unload.SetWrapper(&VirtualTextureHelpers::OnTextureUnload, &virtualTextures_);
-#if defined(VT_DEBUG_TRANSCODE)
-		engineHooks_.ls__VirtualTextureResource__Transcode.SetWrapper(&VirtualTextureHelpers::OnTranscode, &virtualTextures_);
-#endif
 		//engineHooks_.Kernel_FindFirstFileW.SetWrapper(&ScriptExtender::OnFindFirstFileW, this);
 		//engineHooks_.Kernel_FindNextFileW.SetWrapper(&ScriptExtender::OnFindNextFileW, this);
 		//engineHooks_.Kernel_FindClose.SetWrapper(&ScriptExtender::OnFindClose, this);

@@ -40,11 +40,7 @@ HOOK_DEFN(FileReader__ctor, ls__FileReader__ctor, FileReader::CtorProc)
 HOOK_DEFN(Kernel_FindFirstFileW, Kernel_FindFirstFileW, FindFirstFileWProc)
 HOOK_DEFN(Kernel_FindNextFileW, Kernel_FindNextFileW, FindNextFileWProc)
 HOOK_DEFN(Kernel_FindClose, Kernel_FindClose, FindCloseProc)
-HOOK_DEFN(ls__VirtualTextureResource__Load, ls__VirtualTextureResource__Load, resource::VirtualTextureResource::LoadProc)
-HOOK_DEFN(ls__VirtualTextureResource__Unload, ls__VirtualTextureResource__Unload, resource::VirtualTextureResource::UnloadProc)
-#if defined(VT_DEBUG_TRANSCODE)
-HOOK_DEFN(ls__VirtualTextureResource__Transcode, ls__VirtualTextureResource__Transcode, resource::VirtualTextureResource::TranscodeProc)
-#endif
+
 HOOK_DEFN(ecs__EntityWorld__Update, ecs__EntityWorld__Update, ecs::EntityWorld::UpdateProc)
 HOOK_DEFN(ecs__EntityWorld__FlushECBs, ecs__EntityWorld__FlushECBs, ecs::EntityWorld::FlushECBsProc)
 HOOK_DEFN(esv__OsirisVariableHelper__SavegameVisit, esv__OsirisVariableHelper__SavegameVisit, esv::OsirisVariableHelper__SavegameVisitProc)

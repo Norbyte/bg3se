@@ -133,10 +133,6 @@ namespace bg3se
         AppliedMaterial::LoadTextureProc* ls__AppliedMaterial__LoadTexture{ nullptr };
         TextureManager::UnloadTextureProc* ls__TextureManager__UnloadTexture{ nullptr };
 
-		resource::LoadableResource::LoadProc* ls__VirtualTextureResource__Load{ nullptr };
-		resource::LoadableResource::UnloadProc* ls__VirtualTextureResource__Unload{ nullptr };
-		resource::LoadableResource::TranscodeProc* ls__VirtualTextureResource__Transcode{ nullptr };
-
 #if defined(ENABLE_UI)
 		void* Noesis__gReflection{ nullptr };
 		void* Noesis__SymbolManager__Buf1{ nullptr };
@@ -314,6 +310,7 @@ namespace bg3se
 		}
 
 		GlobalTemplateBank* GetGlobalTemplateBank() const;
+		ResourceBank* GetCurrentResourceBank() const;
 
 		void CanonicalizePath(STDString & path) const;
 		STDString ToPath(StringView path, PathRootType root, bool canonicalize = true) const;

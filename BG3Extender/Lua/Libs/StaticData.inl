@@ -109,26 +109,12 @@ Array<Guid> GetAllGuidResources(lua_State* L, ExtResourceManagerType type)
 #undef FOR_RESOURCE_TYPE
 
 
-ResourceBank* GetCurrentResourceBank()
-{
-	auto resMgr = GetStaticSymbols().ls__gGlobalResourceManager;
-	if (!resMgr || !*resMgr || !(*resMgr)->ResourceBanks[0]) {
-		return nullptr;
-	}
-
-	if ((*resMgr)->ResourceBanks[0]->Packages.size() > 0) {
-		return (*resMgr)->ResourceBanks[0];
-	} else {
-		return (*resMgr)->ResourceBanks[1];
-	}
-}
-
 #define FOR_RESOURCE_TYPE(ty)																	  \
 	case ResourceBankType::ty: MakeObjectRef(L, (ty##Resource*)resource.Value()); break;
 
 UserReturn GetResource(lua_State* L, FixedString const& resourceGuid, ResourceBankType type)
 {
-	auto bank = GetCurrentResourceBank();
+	auto bank = GetStaticSymbols().GetCurrentResourceBank();
 	if (!bank) {
 		LuaError("Resource manager not available");
 		push(L, nullptr);
@@ -150,7 +136,7 @@ UserReturn GetResource(lua_State* L, FixedString const& resourceGuid, ResourceBa
 
 Array<FixedString> GetAllResources(ResourceBankType type)
 {
-	auto bank = GetCurrentResourceBank();
+	auto bank = GetStaticSymbols().GetCurrentResourceBank();
 	if (!bank) {
 		LuaError("Resource manager not available");
 		return {};

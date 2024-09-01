@@ -222,10 +222,6 @@ namespace bg3se
 		SYM_OFF(ls__AppliedMaterial__LoadTexture);
 		SYM_OFF(ls__TextureManager__UnloadTexture);
 
-		SYM_OFF(ls__VirtualTextureResource__Load);
-		SYM_OFF(ls__VirtualTextureResource__Unload);
-		SYM_OFF(ls__VirtualTextureResource__Transcode);
-
 		SYM_OFF(ls__GlobalSwitches);
 
 		SYM_OFF(Kernel_FindFirstFileW);
