@@ -306,17 +306,15 @@
     </Mapping>
 
     <Mapping Name="ls::ModuleSettings::IsModded" AllowFail="true">
-      48 89 5c 24 08 // mov     [rsp+arg_0], rbx
-      48 89 7c 24 10 // mov     [rsp+arg_8], rdi
-      8b 79 14 // mov     edi, [rcx+14h]
-      33 db // xor     ebx, ebx
-      48 85 ff // test    rdi, rdi
-      @ref 74 4c // jz      short loc_1431B59D0
-      4c 8b 59 08 // mov     r11, [rcx+8]
-      @str 8b 0d ?? ?? ?? ?? // mov     ecx, cs:dword_1459B4F50
-      <Condition Type="FixedString" Offset="@str" Value="991c9c7a-fb80-40cb-8f0d-b92d4e80e9b1" />
+      @str 3B 05 ?? ?? ?? ?? // cmp     eax, cs:dword_145E0D6FC
+      74 05 // jz      short loc_1439AEB6F
+      @ref 40 b7 01 // mov     dil, 1
+      eb 03 // jmp     short loc_1439AEB72
+      40 32 ff // xor     dil, dil
+      83 f8 ff // cmp     eax, 0FFFFFFFFh
+      <Condition Type="FixedString" Offset="@str" Value="d65cf1b6-23a8-f0db-0a56-4b479a559748" />
       <Patch Type="Absolute" Offset="@ref">
-        EB 4C
+        40 32 ff
       </Patch>
     </Mapping>
 
