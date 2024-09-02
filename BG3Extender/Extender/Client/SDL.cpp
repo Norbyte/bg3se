@@ -109,10 +109,7 @@ int SDLManager::SDLPollEventInternal(SDL_Event* event, int result)
     }
 
     if (result == 1 && gExtender->GetClient().HasExtensionState()) {
-        ecl::LuaClientPin lua(ecl::ExtensionState::Get());
-        if (lua) {
-            lua->OnInputEvent(event, result);
-        }
+        ecl::ExtensionState::Get().OnInputEvent(event, result);
     }
 
     return result;

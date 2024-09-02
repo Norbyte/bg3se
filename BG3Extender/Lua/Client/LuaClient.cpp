@@ -138,8 +138,22 @@ void ClientState::OnGameStateChanged(GameState fromState, GameState toState)
 	ThrowEvent("GameStateChanged", params, false, 0);
 }
 
-void ClientState::OnInputEvent(SDL_Event* event, int& result)
+bool ClientState::IsEventCancelable(SDL_Event* event)
 {
+	return event->type == SDL_KEYDOWN
+		|| event->type == SDL_KEYUP
+		|| event->type == SDL_MOUSEBUTTONDOWN
+		|| event->type == SDL_MOUSEBUTTONUP
+		|| event->type == SDL_MOUSEWHEEL
+		|| event->type == SDL_CONTROLLERBUTTONDOWN 
+		|| event->type == SDL_CONTROLLERBUTTONUP;
+}
+
+void ClientState::OnInputEvent(SDL_Event* event, int* result)
+{
+	EventResult res{ EventResult::Successful };
+	bool canPrevent = (result != nullptr) && IsEventCancelable(event);
+
 	if (event->type == SDL_KEYDOWN || event->type == SDL_KEYUP) {
 		KeyInputEvent params{
 			.Event = (event->key.type == SDL_KEYDOWN) ? SDLKeyEvent::KeyDown : SDLKeyEvent::KeyUp,
@@ -148,10 +162,7 @@ void ClientState::OnInputEvent(SDL_Event* event, int& result)
 			.Pressed = event->key.state == SDL_PRESSED,
 			.Repeat = event->key.repeat != 0,
 		};
-		auto res = ThrowEvent("KeyInput", params, true, 0);
-		if (res == EventResult::ActionPrevented) {
-			result = 0;
-		}
+		res = ThrowEvent("KeyInput", params, canPrevent, 0);
 
 	} else if (event->type == SDL_MOUSEBUTTONDOWN || event->type == SDL_MOUSEBUTTONUP) {
 		MouseButtonEvent params{
@@ -161,10 +172,7 @@ void ClientState::OnInputEvent(SDL_Event* event, int& result)
 			.X = event->button.x,
 			.Y = event->button.y,
 		};
-		auto res = ThrowEvent("MouseButtonInput", params, true, 0);
-		if (res == EventResult::ActionPrevented) {
-			result = 0;
-		}
+		res = ThrowEvent("MouseButtonInput", params, canPrevent, 0);
 
 	} else if (event->type == SDL_MOUSEWHEEL) {
 		MouseWheelEvent params{
@@ -173,10 +181,7 @@ void ClientState::OnInputEvent(SDL_Event* event, int& result)
 			.X = event->wheel.x,
 			.Y = event->wheel.y,
 		};
-		auto res = ThrowEvent("MouseWheelInput", params, true, 0);
-		if (res == EventResult::ActionPrevented) {
-			result = 0;
-		}
+		res = ThrowEvent("MouseWheelInput", params, canPrevent, 0);
 
 	} else if (event->type == SDL_CONTROLLERAXISMOTION) {
 		ControllerAxisEvent params{
@@ -184,10 +189,7 @@ void ClientState::OnInputEvent(SDL_Event* event, int& result)
 			.Axis = (SDLControllerAxis)event->caxis.axis,
 			.Value = event->caxis.value / 32768.0f,
 		};
-		auto res = ThrowEvent("ControllerAxisInput", params, true, 0);
-		if (res == EventResult::ActionPrevented) {
-			result = 0;
-		}
+		res = ThrowEvent("ControllerAxisInput", params, canPrevent, 0);
 
 	} else if (event->type == SDL_CONTROLLERBUTTONDOWN || event->type == SDL_CONTROLLERBUTTONUP) {
 		ControllerButtonEvent params{
@@ -196,17 +198,18 @@ void ClientState::OnInputEvent(SDL_Event* event, int& result)
 			.Button = (SDLControllerButton)event->cbutton.button,
 			.Pressed = event->cbutton.state == SDL_PRESSED,
 		};
-		auto res = ThrowEvent("ControllerButtonInput", params, true, 0);
-		if (res == EventResult::ActionPrevented) {
-			result = 0;
-		}
+		res = ThrowEvent("ControllerButtonInput", params, canPrevent, 0);
 
 	} else if (event->type == SDL_WINDOWEVENT && event->window.event == SDL_WINDOWEVENT_RESIZED) {
 		ViewportResizedEvent params{
 			.Width = event->window.data1,
 			.Height = event->window.data2,
 		};
-		ThrowEvent("ViewportResized", params);
+		res = ThrowEvent("ViewportResized", params, canPrevent, 0);
+	}
+
+	if (res == EventResult::ActionPrevented) {
+		*result = 0;
 	}
 }
 

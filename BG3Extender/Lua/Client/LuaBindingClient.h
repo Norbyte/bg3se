@@ -38,7 +38,8 @@ public:
 	ecs::EntitySystemHelpersBase* GetEntitySystemHelpers() override;
 	EntityReplicationEventHooks* GetReplicationEventHooks() override;
 	void OnGameStateChanged(GameState fromState, GameState toState);
-	void OnInputEvent(SDL_Event* event, int& result);
+	bool IsEventCancelable(SDL_Event* event);
+	void OnInputEvent(SDL_Event* event, int* result);
 
 #if defined(ENABLE_UI)
 	UIEventHooks& GetUIEvents()

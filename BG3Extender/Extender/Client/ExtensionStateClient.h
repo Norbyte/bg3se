@@ -17,6 +17,7 @@ public:
 
 	lua::State * GetLua() override;
 	ModManager * GetModManager() override;
+	void OnUpdate(GameTime const& time) override;
 
 	lua::ClientState* GetClientLua()
 	{
@@ -32,13 +33,18 @@ public:
 		return "BootstrapClient.lua";
 	}
 
+	void OnInputEvent(SDL_Event* event, int& result);
+
 protected:
 	friend LuaStatePin<ExtensionState, lua::ClientState>;
 	std::unique_ptr<lua::ClientState> Lua;
 	uint32_t nextGenerationId_{ 1 };
 
+	Array<SDL_Event> deferredInputEvents_;
+
 	void DoLuaReset() override;
 	void LuaStartup() override;
+	void FireInputEvents();
 };
 
 END_NS()
