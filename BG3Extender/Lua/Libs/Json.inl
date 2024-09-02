@@ -203,14 +203,16 @@ bool IsArrayLikeUserdata(lua_State* L, int index)
 	return false;
 }
 
-bool IsMapLikeUserdata(lua_State* L, int index)
+bool IsMapOrArrayLikeUserdata(lua_State* L, int index)
 {
 	StackCheck _(L, 0);
 
 	if (lua_type(L, index) == LUA_TLIGHTCPPOBJECT) {
 		CppObjectMetadata meta;
 		lua_get_cppobject(L, index, meta);
-		return meta.MetatableTag == MetatableTag::MapProxy;
+		return meta.MetatableTag == MetatableTag::MapProxy
+			|| meta.MetatableTag == MetatableTag::SetProxy
+			|| meta.MetatableTag == MetatableTag::ArrayProxy;
 	}
 
 	return false;
@@ -235,7 +237,7 @@ Json::Value StringifyUserdata(lua_State * L, int index, unsigned depth, Stringif
 		arr = Json::Value(Json::objectValue);
 	}
 
-	bool isMap = IsMapLikeUserdata(L, index);
+	bool isMapOrArray = IsMapOrArrayLikeUserdata(L, index);
 
 	if (!TryGetUserdataPairs(L, index)) {
 		return Json::Value();
@@ -259,7 +261,7 @@ Json::Value StringifyUserdata(lua_State * L, int index, unsigned depth, Stringif
 
 	int numElements{ 0 };
 	while (lua_type(L, -2) != LUA_TNIL) {
-		if (isMap && ctx.LimitArrayElements != -1 && numElements > ctx.LimitArrayElements) {
+		if (isMapOrArray && ctx.LimitArrayElements != -1 && numElements > ctx.LimitArrayElements) {
 			break;
 		}
 
