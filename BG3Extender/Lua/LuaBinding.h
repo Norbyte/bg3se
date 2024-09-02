@@ -87,7 +87,7 @@ namespace bg3se::lua
 		uint32_t RestrictionFlags{ 0 };
 		std::unordered_set<int32_t> OverriddenLevelMaps;
 
-		State(uint32_t generationId, bool isServer);
+		State(ExtensionStateBase& state, uint32_t generationId, bool isServer);
 		~State();
 
 		State(State const &) = delete;
@@ -105,6 +105,11 @@ namespace bg3se::lua
 		inline uint32_t GetGenerationId()
 		{
 			return generationId_;
+		}
+
+		inline ExtensionStateBase& GetExtensionState() const
+		{
+			return state_;
 		}
 
 		inline LuaInternalState* GetInternalState()
@@ -225,6 +230,7 @@ namespace bg3se::lua
 		LuaStateWrapper L;
 		bool startupDone_{ false };
 		uint32_t generationId_;
+		ExtensionStateBase& state_;
 
 		LifetimePool lifetimePool_;
 		LifetimeStack lifetimeStack_;

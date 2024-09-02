@@ -66,6 +66,8 @@ struct SoundManager;
 struct WwiseManager;
 class SDLManager;
 
+class ExtensionStateBase;
+
 namespace resource
 {
 	struct GuidResource;

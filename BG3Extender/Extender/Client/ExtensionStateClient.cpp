@@ -28,7 +28,7 @@ lua::State * ExtensionState::GetLua()
 	}
 }
 
-ModManager * ExtensionState::GetModManager()
+ModManager* ExtensionState::GetModManager()
 {
 	return GetStaticSymbols().GetModManagerClient();
 }
@@ -40,7 +40,7 @@ void ExtensionState::DoLuaReset()
 
 	context_ = nextContext_;
 	assert(context_ != ExtensionStateContext::Uninitialized);
-	Lua = std::make_unique<lua::ClientState>(nextGenerationId_++);
+	Lua = std::make_unique<lua::ClientState>(*this, nextGenerationId_++);
 	Lua->Initialize();
 }
 

@@ -98,10 +98,17 @@ void EntityReplicationEventHooks::OnEntityReplication(ecs::EntityWorld& world, E
 	auto word1 = *flags.GetBuf();
 	if ((hooks.InvalidationFlags & word1) == 0) return;
 
+	Array<DeferredEvent> events;
+
 	for (auto index : hooks.GlobalHooks) {
 		auto hook = subscriptions_.Find(index);
 		if (hook != nullptr && (hook->InvalidationFlags & word1) != 0) {
-			CallHandler(entity, flags, type, *hook);
+			events.push_back({
+				.Entity = entity,
+				.Flags = flags,
+				.Type = type,
+				.Hook = *hook
+			});
 		}
 	}
 
@@ -110,7 +117,21 @@ void EntityReplicationEventHooks::OnEntityReplication(ecs::EntityWorld& world, E
 		for (auto index : *entityHooks) {
 			auto hook = subscriptions_.Find(index);
 			if (hook != nullptr && (hook->InvalidationFlags & word1) != 0) {
-				CallHandler(entity, flags, type, *hook);
+				events.push_back({
+					.Entity = entity,
+					.Flags = flags,
+					.Type = type,
+					.Hook = *hook
+				});
+			}
+		}
+	}
+
+	if (!events.empty()) {
+		LuaVirtualPin lua(state_.GetExtensionState());
+		if (lua) {
+			for (auto const& e : events) {
+				CallHandler(e.Entity, e.Flags, e.Type, e.Hook);
 			}
 		}
 	}

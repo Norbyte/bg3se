@@ -55,8 +55,8 @@ ClientState* ClientState::FromLua(lua_State* L)
 	return static_cast<ClientState*>(State::FromLua(L));
 }
 
-ClientState::ClientState(uint32_t generationId)
-	: State(generationId, false)
+ClientState::ClientState(ExtensionState& state, uint32_t generationId)
+	: State(state, generationId, false)
 #if defined(ENABLE_UI)
 	, uiEvents_(*this)
 #endif

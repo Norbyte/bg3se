@@ -334,6 +334,7 @@ auto CheckedPopReturnValues(lua_State * L, std::tuple<Ret...>& ret)
 }
 
 int CallWithTraceback(lua_State* L, int narg, int nres);
+void EnterVMCheck(lua_State* L);
 
 // Calls Lua function.
 // Function and arguments must be already pushed to the Lua stack.

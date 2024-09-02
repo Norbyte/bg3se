@@ -34,12 +34,10 @@ void RegisterServerMetatables(lua_State* L);
 class FunctorEventHooks
 {
 public:
-	FunctorEventHooks(lua::State& state);
+	FunctorEventHooks();
 	~FunctorEventHooks();
 
 private:
-	lua::State& state_;
-
 	HitResult* OnDealDamage(bg3se::stats::DealDamageFunctor::ApplyDamageProc* next, HitResult* result, bg3se::stats::DealDamageFunctor* functor, ecs::EntityRef* casterHandle,
 		ecs::EntityRef* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId,
 		int storyActionId, ActionOriginator* originator, resource::GuidResourceBankBase* classResourceMgr,
@@ -49,33 +47,7 @@ private:
 		HitDesc* hit, AttackDesc* attack, bool a5, bool a6);
 
 	template <class TParams>
-	void LuaTriggerFunctorPreExecEvent(bg3se::stats::Functors* self, TParams* params)
-	{
-		ExecuteFunctorEvent evt{ 
-			.Functor = self, 
-			.Params = params 
-		};
-		state_.ThrowEvent("ExecuteFunctor", evt, false, 0);
-	}
-
-	template <class TParams>
-	void LuaTriggerFunctorPostExecEvent(bg3se::stats::Functors* self, TParams* params, HitResult* hit)
-	{
-		AfterExecuteFunctorEvent evt{ 
-			.Functor = self, 
-			.Params = params, 
-			.Hit = hit
-		};
-		state_.ThrowEvent("AfterExecuteFunctor", evt, false, 0);
-	}
-
-	template <class TParams>
-	void OnFunctorExecute(bg3se::stats::ExecuteFunctorProc<TParams>* next, HitResult* hit, bg3se::stats::Functors* self, TParams* params)
-	{
-		LuaTriggerFunctorPreExecEvent<TParams>(self, params);
-		next(hit, self, params);
-		LuaTriggerFunctorPostExecEvent<TParams>(self, params, hit);
-	}
+	void OnFunctorExecute(bg3se::stats::ExecuteFunctorProc<TParams>* next, HitResult* hit, bg3se::stats::Functors* self, TParams* params);
 };
 
 

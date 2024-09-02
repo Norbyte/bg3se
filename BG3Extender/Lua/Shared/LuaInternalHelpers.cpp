@@ -105,6 +105,7 @@ int ProtectedMethodCallerBase::CallUserFunctionWithTraceback(lua_State* L, lua_C
 bool ProtectedFunctionCallerBase::ProtectedCall(lua_State* L, lua_CFunction fun, char const* funcDescription)
 {
 	StackCheck _(L);
+	EnterVMCheck(L);
 	auto ret = CallUserFunction(L, fun);
 	if (ret != LUA_OK) {
 		if (funcDescription) {
@@ -132,6 +133,7 @@ int TracebackHandler(lua_State* L);
 bool ProtectedCallC(lua_State* L, lua_CFunction fun, void* context, void* context2, char const* funcDescription, char const*& error)
 {
 	StackCheck _(L);
+	EnterVMCheck(L);
 
 	lua_pushcfunction(L, &TracebackHandler);
 	int tracebackHandlerIdx = lua_gettop(L);

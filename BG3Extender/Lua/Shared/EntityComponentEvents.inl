@@ -32,18 +32,20 @@ void EntityComponentEventHooks::FireDeferredEvents()
 
 	deferredUnsubscriptions_.clear();
 
-
 	Array<DeferredEvent> events;
 	std::swap(events, deferredEvents_);
 
 	auto ecs = state_.GetEntitySystemHelpers();
 	
-	for (auto& e : events) {
-		auto hook = subscriptions_.Find(e.Index);
-		if (hook != nullptr) {
-			auto componentType = ecs->GetComponentType(e.Type);
-			auto component = ecs->GetRawComponent(e.Entity, *componentType);
-			CallHandler(e.Entity, e.Type, e.Event, component, *hook, e.Index);
+	LuaVirtualPin lua(state_.GetExtensionState());
+	if (lua) {
+		for (auto& e : events) {
+			auto hook = subscriptions_.Find(e.Index);
+			if (hook != nullptr) {
+				auto componentType = ecs->GetComponentType(e.Type);
+				auto component = ecs->GetRawComponent(e.Entity, *componentType);
+				CallHandlerUnsafe(e.Entity, e.Type, e.Event, component, *hook, e.Index);
+			}
 		}
 	}
 }
@@ -172,7 +174,7 @@ void EntityComponentEventHooks::OnEntityEvent(ecs::EntityWorld& world, EntityHan
 	}
 }
 
-void EntityComponentEventHooks::CallHandler(EntityHandle entity, ecs::ComponentTypeIndex type, EntityComponentEvent events, void* component, ComponentHook& hook, SubscriptionIndex index)
+void EntityComponentEventHooks::CallHandlerUnsafe(EntityHandle entity, ecs::ComponentTypeIndex type, EntityComponentEvent events, void* component, ComponentHook& hook, SubscriptionIndex index)
 {
 	if ((unsigned)(hook.Flags & EntityComponentEventFlags::Once)) {
 		deferredUnsubscriptions_.push_back(index);
@@ -188,6 +190,19 @@ void EntityComponentEventHooks::CallHandler(EntityHandle entity, ecs::ComponentT
 	ProtectedFunctionCaller<std::tuple<EntityHandle, ExtComponentType, RawComponentRef>, void> caller{ func, std::tuple(entity, *componentType, componentRef) };
 	caller.Call(L, "Component event dispatch");
 	lua_pop(L, 1);
+}
+
+void EntityComponentEventHooks::CallHandler(EntityHandle entity, ecs::ComponentTypeIndex type, EntityComponentEvent events, void* component, ComponentHook& hook, SubscriptionIndex index)
+{
+	if ((unsigned)(hook.Flags & EntityComponentEventFlags::Once)) {
+		deferredUnsubscriptions_.push_back(index);
+		hook.Events = (EntityComponentEvent)0;
+	}
+
+	LuaVirtualPin lua(state_.GetExtensionState());
+	if (lua) {
+		CallHandlerUnsafe(entity, type, events, component, hook, index);
+	}
 }
 
 void EntityComponentEventHooks::DeferHandler(EntityHandle entity, ecs::ComponentTypeIndex type, EntityComponentEvent events, SubscriptionIndex index)

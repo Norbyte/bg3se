@@ -128,8 +128,19 @@ int TracebackHandler(lua_State * L)
 	return 1;  /* return the traceback */
 }
 
+void EnterVMCheck(lua_State* L)
+{
+#if !defined(_NDEBUG)
+	auto state = GetCurrentExtensionState();
+	assert(state->GetLua() == State::FromLua(L));
+	assert(state->GetEnterCount() > 0);
+#endif
+}
+
 int CallWithTraceback(lua_State * L, int narg, int nres)
 {
+	EnterVMCheck(L);
+
 	int base = lua_gettop(L) - narg;  /* function index */
 	lua_pushcfunction(L, &TracebackHandler);  /* push message handler */
 	lua_insert(L, base);  /* put it under function and args */
@@ -287,8 +298,9 @@ LuaStateWrapper::~LuaStateWrapper()
 	lua_close(L);
 }
 
-State::State(uint32_t generationId, bool isServer)
+State::State(ExtensionStateBase& state, uint32_t generationId, bool isServer)
 	: generationId_(generationId),
+	state_(state),
 	lifetimeStack_(lifetimePool_),
 	globalLifetime_(lifetimePool_.Allocate()),
 	variableManager_(isServer ? gExtender->GetServer().GetExtensionState().GetUserVariables() : gExtender->GetClient().GetExtensionState().GetUserVariables(), isServer),

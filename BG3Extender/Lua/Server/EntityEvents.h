@@ -32,6 +32,14 @@ private:
 		HashMap<EntityHandle, Array<SubscriptionIndex>> EntityHooks;
 	};
 
+	struct DeferredEvent
+	{
+		EntityHandle Entity;
+		BitSet<> const& Flags;
+		ecs::ReplicationTypeIndex Type;
+		ReplicationHook const& Hook;
+	};
+
 	lua::State& state_;
 	BitSet<> hookedReplicationComponentMask_;
 	Array<ReplicationHooks> hookedReplicationComponents_;

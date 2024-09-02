@@ -2,9 +2,42 @@
 
 BEGIN_NS(esv::lua)
 
+template <class TParams>
+void LuaTriggerFunctorPreExecEvent(bg3se::stats::Functors* self, TParams* params)
+{
+	LuaServerPin lua(gExtender->GetServer().GetExtensionState());
+	if (lua) {
+		ExecuteFunctorEvent evt{
+			.Functor = self,
+			.Params = params
+		};
+		lua->ThrowEvent("ExecuteFunctor", evt, false, 0);
+	}
+}
 
-FunctorEventHooks::FunctorEventHooks(lua::State& state)
-	: state_(state)
+template <class TParams>
+void LuaTriggerFunctorPostExecEvent(bg3se::stats::Functors* self, TParams* params, HitResult* hit)
+{
+	LuaServerPin lua(gExtender->GetServer().GetExtensionState());
+	if (lua) {
+		AfterExecuteFunctorEvent evt{ 
+			.Functor = self, 
+			.Params = params, 
+			.Hit = hit
+		};
+		lua->ThrowEvent("AfterExecuteFunctor", evt, false, 0);
+	}
+}
+
+template <class TParams>
+void FunctorEventHooks::OnFunctorExecute(bg3se::stats::ExecuteFunctorProc<TParams>* next, HitResult* hit, bg3se::stats::Functors* self, TParams* params)
+{
+	LuaTriggerFunctorPreExecEvent<TParams>(self, params);
+	next(hit, self, params);
+	LuaTriggerFunctorPostExecEvent<TParams>(self, params, hit);
+}
+
+FunctorEventHooks::FunctorEventHooks()
 {
 	auto& hooks = gExtender->GetEngineHooks();
 	hooks.stats__DealDamageFunctor__ApplyDamage.SetWrapper(&FunctorEventHooks::OnDealDamage, this);
@@ -46,43 +79,49 @@ HitResult* FunctorEventHooks::OnDealDamage(bg3se::stats::DealDamageFunctor::Appl
 	bool entityDamagedEventParam, __int64 a17, SpellId* spellId2)
 {
 	{
-		DealDamageEvent evt;
-		evt.Functor = functor;
-		evt.Caster = casterHandle->Handle;
-		evt.Target = targetHandle->Handle;
-		evt.Position = *position;
-		evt.IsFromItem = isFromItem;
-		evt.SpellId = spellId;
-		evt.StoryActionId = storyActionId;
-		evt.Originator = originator;
-		evt.Hit = hit;
-		evt.Attack = attack;
-		evt.HitWith = hitWith;
-		evt.Caster2 = *sourceHandle2;
-		evt.SpellId2 = spellId2;
-		state_.ThrowEvent("DealDamage", evt, false, 0);
+		LuaServerPin lua(gExtender->GetServer().GetExtensionState());
+		if (lua) {
+			DealDamageEvent evt;
+			evt.Functor = functor;
+			evt.Caster = casterHandle->Handle;
+			evt.Target = targetHandle->Handle;
+			evt.Position = *position;
+			evt.IsFromItem = isFromItem;
+			evt.SpellId = spellId;
+			evt.StoryActionId = storyActionId;
+			evt.Originator = originator;
+			evt.Hit = hit;
+			evt.Attack = attack;
+			evt.HitWith = hitWith;
+			evt.Caster2 = *sourceHandle2;
+			evt.SpellId2 = spellId2;
+			lua->ThrowEvent("DealDamage", evt, false, 0);
+		}
 	}
 
 	auto ret = next(result, functor, casterHandle, targetHandle, position, isFromItem, spellId, storyActionId, originator, classResourceMgr, 
 		hit, attack, sourceHandle2, hitWith, conditionRollIndex, entityDamagedEventParam, a17, spellId2);
 
 	{
-		DealtDamageEvent evt;
-		evt.Functor = functor;
-		evt.Caster = casterHandle->Handle;
-		evt.Target = targetHandle->Handle;
-		evt.Position = *position;
-		evt.IsFromItem = isFromItem;
-		evt.SpellId = spellId;
-		evt.StoryActionId = storyActionId;
-		evt.Originator = originator;
-		evt.Hit = hit;
-		evt.Attack = attack;
-		evt.HitWith = hitWith;
-		evt.Caster2 = *sourceHandle2;
-		evt.SpellId2 = spellId2;
-		evt.Result = result;
-		state_.ThrowEvent("DealtDamage", evt, false, 0);
+		LuaServerPin lua(gExtender->GetServer().GetExtensionState());
+		if (lua) {
+			DealtDamageEvent evt;
+			evt.Functor = functor;
+			evt.Caster = casterHandle->Handle;
+			evt.Target = targetHandle->Handle;
+			evt.Position = *position;
+			evt.IsFromItem = isFromItem;
+			evt.SpellId = spellId;
+			evt.StoryActionId = storyActionId;
+			evt.Originator = originator;
+			evt.Hit = hit;
+			evt.Attack = attack;
+			evt.HitWith = hitWith;
+			evt.Caster2 = *sourceHandle2;
+			evt.SpellId2 = spellId2;
+			evt.Result = result;
+			lua->ThrowEvent("DealtDamage", evt, false, 0);
+		}
 	}
 
 	return ret;
@@ -92,10 +131,13 @@ void FunctorEventHooks::OnEntityDamageEvent(bg3se::stats::StatsSystem_ThrowDamag
 	void* temp5, HitDesc* hit, AttackDesc* attack, bool a5, bool a6)
 {
 	{
-		BeforeDealDamageEvent evt;
-		evt.Hit = hit;
-		evt.Attack = attack;
-		state_.ThrowEvent("BeforeDealDamage", evt, false, 0);
+		LuaServerPin lua(gExtender->GetServer().GetExtensionState());
+		if (lua) {
+			BeforeDealDamageEvent evt;
+			evt.Hit = hit;
+			evt.Attack = attack;
+			lua->ThrowEvent("BeforeDealDamage", evt, false, 0);
+		}
 	}
 
 	next(statsSystem, temp5, hit, attack, a5, a6);

@@ -134,9 +134,8 @@ namespace bg3se::esv::lua
 	}
 
 	ServerState::ServerState(ExtensionState& state, uint32_t generationId)
-		: State(generationId, true),
+		: State(state, generationId, true),
 		osiris_(state),
-		functorHooks_(*this),
 		replicationHooks_(*this)
 	{}
 

@@ -27,7 +27,7 @@ class ClientState : public State
 public:
 	static ClientState* FromLua(lua_State* L);
 
-	ClientState(uint32_t generationId);
+	ClientState(ExtensionState& state, uint32_t generationId);
 	~ClientState();
 
 	void Initialize() override;

@@ -72,7 +72,7 @@ namespace bg3se
 		void OnStatsLoaded();
 		void OnModuleResume();
 		void OnResetCompleted();
-		void OnUpdate(GameTime const& time);
+		virtual void OnUpdate(GameTime const& time);
 
 		void IncLuaRefs();
 		void DecLuaRefs();
@@ -115,6 +115,11 @@ namespace bg3se
 		inline ModVariableManager& GetModVariables()
 		{
 			return modVariables_;
+		}
+
+		inline uint32_t GetEnterCount()
+		{
+			return luaRefs_;
 		}
 
 	protected:
