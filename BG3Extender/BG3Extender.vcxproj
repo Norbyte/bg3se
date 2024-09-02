@@ -394,6 +394,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="Extender\Shared\UserVariables.inl" />
     <None Include="Extender\Shared\VirtualTextureMerge.inl" />
     <None Include="Extender\Shared\VirtualTextures.inl" />
+    <None Include="GameDefinitions\Ai.inl" />
     <None Include="GameDefinitions\Base\TypeInformation.inl" />
     <None Include="GameDefinitions\Components\AllComponentTypes.inl" />
     <None Include="GameDefinitions\Enumerations\ECS.inl" />

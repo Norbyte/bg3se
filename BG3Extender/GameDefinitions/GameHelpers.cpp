@@ -9,6 +9,8 @@
 #include <GameDefinitions/Stats/UseActions.h>
 #include <GameDefinitions/Stats/Functors.h>
 
+#include <GameDefinitions/Ai.inl>
+
 namespace bg3se
 {
 	EnumRegistry& EnumRegistry::Get()

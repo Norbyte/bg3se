@@ -2,6 +2,14 @@
 
 BEGIN_SE()
 
+using AiSubgridId = uint32_t;
+using AiMetaDataId = uint16_t;
+using AiSurfaceMetaDataId = uint16_t;
+using AiGridLayerId = uint16_t;
+
+static constexpr AiMetaDataId AiNullMetaData = 0xffff;
+
+
 struct SomeArray2int
 {
 	int32_t A;
@@ -25,7 +33,7 @@ struct AiMetaData
 	Array<EntityHandle> Entities;
 	Array<AiGridPortal*> Portals;
 	Array<AiGridPortal*> EndPortals;
-	uint16_t SomeGlobalId;
+	AiGridLayerId LayerId;
 	AiTilePos Position;
 };
 
@@ -63,8 +71,8 @@ struct AiGridTile
 	uint64_t AiFlags;
 	uint16_t MinHeight;
 	uint16_t MaxHeight;
-	int16_t MetaDataIndex;
-	int16_t SurfaceMetaDataIndex;
+	AiMetaDataId MetaDataIndex;
+	AiSurfaceMetaDataId SurfaceMetaDataIndex;
 };
 
 
@@ -84,6 +92,8 @@ struct AiGridTileData : public ProtectedGameObject<AiGridTileData>
 	int Height;
 	AiGridTile* Tiles;
 	AiGridTile* TilesEnd;
+
+	AiGridTile const* GetTileAt(int x, int y) const;
 };
 
 
@@ -106,9 +116,6 @@ struct AiWorldPos
 	float Y;
 };
 
-
-using AiSubgridId = uint32_t;
-
 struct AiSubgrid : public DataGrid
 {
 	FixedString SomeGuid;
@@ -126,6 +133,8 @@ struct AiSubgrid : public DataGrid
 	Array<glm::ivec2> field_B0;
 	bool PatchesDirty;
 	[[bg3::hidden]] void* Visual; // AiGridVisual*
+
+	bool WorldToTilePos(AiWorldPos const& pos, glm::ivec2& localPos) const;
 };
 
 
@@ -135,14 +144,13 @@ struct AiGridLayerDelta
 	float Height;
 };
 
-using AiGridLayerId = uint16_t;
 
 struct AiGridLayer
 {
 	HashMap<AiTilePos, AiGridLayerDelta> Deltas;
 	Guid field_40;
 	bool Activated;
-	uint16_t MetaDataIndex;
+	AiMetaDataId MetaDataIndex;
 };
 
 
@@ -191,7 +199,7 @@ struct AiFullTile
 struct AiGridChangeLayersTaskDelta
 {
 	uint16_t Height;
-	uint16_t LayerId;
+	AiGridLayerId LayerId;
 	__int64 AiFlags;
 	__int64 AiFlags2;
 	__int64 field_18;
@@ -218,7 +226,7 @@ struct AiGrid : public ProtectedGameObject<AiGrid>
 	[[bg3::hidden]] Pool AiSurfaceMetaDataPool;
 	Array<BoundComponent*> Objects;
 	Array<AiGridPortal*> Portals;
-	LegacyRefMap<uint32_t, AiSubgrid*> Subgrids;
+	LegacyRefMap<AiSubgridId, AiSubgrid*> Subgrids;
 	Array<AiGridLayer*> Layers;
 	HashMap<Guid, AiGridLayerId> LayerMap;
 	[[bg3::hidden]] ecs::EntityWorld* EntityWorld;
@@ -285,6 +293,10 @@ struct AiGrid : public ProtectedGameObject<AiGrid>
 	HashMap<AiTilePos, glm::vec2> TileHeightAndStateDirty;
 	__int64 field_448;
 	__int64 field_450;
+
+	static AiWorldPos ToWorldPos(glm::vec3 pos);
+	std::span<AiSubgridId const> GetSubgridsAt(AiWorldPos const& pos) const;
+	bool ToTilePos(AiWorldPos const& pos, AiTilePos& tilePos, AiGridTile const*& tileInfo) const;
 };
 
 
