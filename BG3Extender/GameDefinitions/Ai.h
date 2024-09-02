@@ -24,7 +24,7 @@ struct AiMetaData
 {
 	Array<EntityHandle> Entities;
 	Array<AiGridPortal*> Portals;
-	Array<void*> field_20;
+	Array<AiGridPortal*> EndPortals;
 	uint16_t SomeGlobalId;
 	AiTilePos Position;
 };
@@ -39,7 +39,7 @@ struct AiSurfaceMetaData
 
 struct AiGridPortal
 {
-	void* PortalData; // AIPortalObjectData*
+	[[bg3::hidden]] void* PortalData; // AIPortalObjectData*
 	AiGrid* AiGrid;
 	AiTilePos SourceAIPosition;
 	AiTilePos TargetAIPosition;
@@ -50,7 +50,7 @@ struct AiGridPortal
 
 struct DataGrid : public ProtectedGameObject<DataGrid>
 {
-	void* VMT;
+	[[bg3::hidden]] void* VMT;
 	glm::vec3 Translate;
 	float CellSize;
 	int SizeX;
@@ -58,22 +58,11 @@ struct DataGrid : public ProtectedGameObject<DataGrid>
 };
 
 
-template <class T>
-struct AiGridData : public ProtectedGameObject<AiGridData<T>>
-{
-	void* LevelAllocator;
-	int Width;
-	int Height;
-	T* Tiles;
-	T* TilesEnd;
-};
-
-
 struct AiGridTile
 {
 	uint64_t AiFlags;
-	uint16_t Height;
-	int16_t field_A;
+	uint16_t MinHeight;
+	uint16_t MaxHeight;
 	int16_t MetaDataIndex;
 	int16_t SurfaceMetaDataIndex;
 };
@@ -85,6 +74,26 @@ struct AiInternalTile
 	uint8_t field_1;
 	int16_t field_2;
 	int32_t NodeId;
+};
+
+
+struct AiGridTileData : public ProtectedGameObject<AiGridTileData>
+{
+	[[bg3::hidden]] void* LevelAllocator;
+	int Width;
+	int Height;
+	AiGridTile* Tiles;
+	AiGridTile* TilesEnd;
+};
+
+
+struct AiGridInternalTileData : public ProtectedGameObject<AiGridInternalTileData>
+{
+	[[bg3::hidden]] void* LevelAllocator;
+	int Width;
+	int Height;
+	AiInternalTile* Tiles;
+	AiInternalTile* TilesEnd;
 };
 
 
@@ -102,11 +111,10 @@ using AiSubgridId = uint32_t;
 
 struct AiSubgrid : public DataGrid
 {
-	DataGrid Grid;
 	FixedString SomeGuid;
-	void* LevelAllocator;
-	AiGridData<AiGridTile>* TileGrid;
-	AiGridData<AiInternalTile>* InternalTileGrid;
+	[[bg3::hidden]] void* LevelAllocator;
+	AiGridTileData* TileGrid;
+	AiGridInternalTileData* InternalTileGrid;
 	AiWorldPos WorldPos;
 	std::array<uint16_t, 2> TraversedTiles0;
 	std::array<uint16_t, 2> TraversedTiles1;
@@ -117,7 +125,7 @@ struct AiSubgrid : public DataGrid
 	HashMap<EntityHandle, uint64_t> AttachedObjectRefCounts;
 	Array<glm::ivec2> field_B0;
 	bool PatchesDirty;
-	void* Visual; // AiGridVisual*
+	[[bg3::hidden]] void* Visual; // AiGridVisual*
 };
 
 
@@ -145,7 +153,7 @@ struct AiPath : public ProtectedGameObject<AiPath>
 
 
 template <class T>
-struct AiGridRequestMap
+struct [[bg3::hidden]] AiGridRequestMap
 {
 	uint16_t NextRequestId;
 	Array<T*> Requests;
@@ -157,12 +165,12 @@ struct AiGridRequestMap
 struct AiSomeFloodObj
 {
 	__int64 field_0;
-	Array<void*> field_8;
-	Array<void*> field_18;
+	[[bg3::hidden]] StaticArray<void*> field_8;
+	[[bg3::hidden]] StaticArray<void*> field_18;
 	__int64 field_28;
 	__int64 field_30;
 	__int64 field_38;
-	HashMap<AiTilePos, void* /* AiFloodTile */> FloodTiles;
+	[[bg3::hidden]] HashMap<AiTilePos, void* /* AiFloodTile */> FloodTiles;
 };
 
 
@@ -176,7 +184,7 @@ struct AiFullTile
 	EntityHandle Portal;
 	int field_20;
 	int Sibling;
-	__int64 Flags;
+	//__int64 Flags;
 };
 
 
@@ -201,70 +209,75 @@ struct AiGridChangeLayersTask
 
 struct AiGrid : public ProtectedGameObject<AiGrid>
 {
-	void* VMT;
+	[[bg3::hidden]] void* VMT;
 	__int64 field_8;
 	int MaxIterations;
 	Array<AiMetaData*> MetaData;
-	Pool AiMetaDataPool;
+	[[bg3::hidden]] Pool AiMetaDataPool;
 	Array<AiSurfaceMetaData*> SurfaceMetaData;
-	Pool AiSurfaceMetaDataPool;
+	[[bg3::hidden]] Pool AiSurfaceMetaDataPool;
 	Array<BoundComponent*> Objects;
 	Array<AiGridPortal*> Portals;
 	LegacyRefMap<uint32_t, AiSubgrid*> Subgrids;
 	Array<AiGridLayer*> Layers;
 	HashMap<Guid, AiGridLayerId> LayerMap;
-	ecs::EntityWorld* EntityWorld;
-	void* ThothMachine;
+	[[bg3::hidden]] ecs::EntityWorld* EntityWorld;
+	[[bg3::hidden]] void* ThothMachine;
 	int NextPathHandle;
 	int field_EC;
 	Array<AiPath*> FreePaths;
 	LegacyRefMap<int, AiPath*> PathMap_int_pAiPath;
 	Array<AiPath*> Paths;
-	AiGridRequestMap<void*> TileStates;
-	AiGridRequestMap<void*> Floods;
-	AiGridRequestMap<void*> TileHeights;
+	[[bg3::hidden]] AiGridRequestMap<void*> TileStates;
+	[[bg3::hidden]] AiGridRequestMap<void*> Floods;
+	[[bg3::hidden]] AiGridRequestMap<void*> TileHeights;
 	uint8_t field_1C8;
 	int NumIterations;
 	__int64 PreciseClock;
 	__int64 field_1D8;
 	__int64 field_1E0;
 	Array<AiFullTile> FullTiles;
-	Array<SomeArray2int> field_1F8_Arr_2xint;
-	Array<SomeArray2int> field_208_Arr_2xint;
+	StaticArray<SomeArray2int> field_1F8_Arr_2xint;
+	StaticArray<SomeArray2int> field_208_Arr_2xint;
 	AiIgnoreMask IgnoreMask;
 	int field_248_SomeNodeId;
 	int field_24C_SomeNodeId;
 	int PathDistanceToClosestPortal;
 	int field_254;
-	Array<void*> PathHistory;
-	Array<void*> PathHistory2;
-	int field_278;
-	int field_27C;
-	void* LevelAllocator;
+	//[[bg3::hidden]] Array<void*> PathHistory;
+	//[[bg3::hidden]] Array<void*> PathHistory2;
+	//int field_278;
+	//int field_27C;
+	[[bg3::hidden]] void* LevelAllocator;
 	FixedString UUID;
 	int Version;
-	void* NavigationPortalManager;
-	Array<AiTilePos> CellToUpdateTextureFrom;
-	bool DynamicsDirty;
-	bool PaintedDirty;
-	bool SurfacesDirty;
-	uint8_t field_2AB;
-	bool HeightDirty;
-	bool LayersDirty;
-	bool ModifiedDirty;
-	bool GameplayLightDirty;
+	[[bg3::hidden]] void* NavigationPortalManager;
+	//Array<AiTilePos> CellToUpdateTextureFrom;
+	//bool DynamicsDirty;
+	//bool PaintedDirty;
+	//bool SurfacesDirty;
+	//uint8_t field_2AB;
+	//bool HeightDirty;
+	//bool LayersDirty;
+	//bool ModifiedDirty;
+	//bool GameplayLightDirty;
+	int field_298;
+	int field_29C;
+	int field_2A0;
+	int field_2A4;
 	glm::vec3 VisualSourcePos;
 	int VisualRadius;
-	bool VisualVisible;
-	int field_2C4;
-	void* Scene;
-	int NumAiMetaData;
-	int NumAiSurfaceMetaData;
-	AiSomeFloodObj SomeFloodObj;
-	glm::ivec2 WorldBoundMin;
-	glm::ivec2 WorldBoundMax;
-	glm::vec3 AiWorldMin;
-	LegacyRefMap<uint64_t, Array<AiSubgridId>> Map;
+	//bool VisualVisible;
+	//int field_2C0;
+	//int field_2C4;
+	//[[bg3::hidden]] void* Scene;
+	//int NumAiMetaData;
+	//int NumAiSurfaceMetaData;
+	//AiSomeFloodObj SomeFloodObj;
+	//glm::ivec2 WorldBoundMin;
+	//glm::ivec2 WorldBoundMax;
+	//glm::vec3 AiWorldMin;
+	LegacyRefMap<uint64_t, Array<AiSubgridId>> SubgridsAtPatch;
 	bool SubgridBoundsDirty;
 	AiSomeFloodObj* field_390;
 	AiSomeFloodObj* field_398;
