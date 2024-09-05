@@ -130,7 +130,7 @@ int TracebackHandler(lua_State * L)
 
 void EnterVMCheck(lua_State* L)
 {
-#if !defined(_NDEBUG)
+#if !defined(NDEBUG)
 	auto state = GetCurrentExtensionState();
 	assert(state->GetLua() == State::FromLua(L));
 	assert(state->GetEnterCount() > 0);
