@@ -237,12 +237,6 @@ void OsirisExtender::OnAssert(bool Successful, char const * Message, bool Unknow
 
 bool OsirisExtender::CompileWrapper(bool (* next)(void *, wchar_t const *, wchar_t const *), void * Osiris, wchar_t const * Path, wchar_t const * Mode)
 {
-	auto ts = GetStaticSymbols().GetTranslatedStringRepository();
-	if (ts) {
-		RuntimeStringHandle storyErrorTsk(FixedString("h966d6fabgc29cg4602gad0dg0c50f9418e24"), 1);
-		ts->UpdateTranslatedString(storyErrorTsk, "Script Extender was loaded successfully, have a nice day :)");
-	}
-
 	if (!config_.ExtendStory) {
 		return next(Osiris, Path, Mode);
 	}
