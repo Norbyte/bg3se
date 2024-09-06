@@ -156,6 +156,39 @@ struct EventNames
 	}
 };
 
+struct DeferredNames
+{
+	struct DeferredName
+	{
+		char const* Name;
+		Symbol Sym;
+
+		DeferredName(char const* name)
+			: Name(name)
+		{}
+
+		Symbol Get()
+		{
+			if (!Sym) Sym = Symbol(Name, Symbol::NullIfNotFound{});
+			return Sym;
+		}
+
+		operator Symbol()
+		{
+			return Get();
+		}
+
+		bool operator == (Symbol const& sym)
+		{
+			return Get() == sym;
+		}
+	};
+
+	#define DEFN_NAME(k, v) DeferredName k{v};
+	#include <Lua/Libs/ClientUI/Names.inl>
+	#undef DEFN_NAME
+};
+
 struct ExtStaticSymbols
 {
 	void Initialize()
@@ -204,6 +237,7 @@ struct ExtStaticSymbols
 	StaticTypes Types;
 	StaticTypeClasses TypeClasses;
 	EventNames Events;
+	DeferredNames DeferredNames;
 	bool Initialized{ false };
 };
 

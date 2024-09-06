@@ -722,6 +722,7 @@
     <None Include="GameDefinitions\PropertyMaps\ClientObjects.inl" />
     <None Include="Lua\Shared\EntityEventHelpers.inl" />
     <None Include="GameDefinitions\Ai.inl" />
+    <None Include="Lua\Libs\ClientUI\Names.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

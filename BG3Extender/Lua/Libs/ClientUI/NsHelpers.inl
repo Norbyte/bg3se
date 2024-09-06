@@ -420,6 +420,26 @@ void StoredValueHelpers::PushValue(lua_State* L, Type const* type, void* val, Ty
 	} else if (TypeHelpers::IsDescendantOf(type, classes.BaseObject.Type)) {
 		auto obj = reinterpret_cast<BaseObject*>(val);
 
+		if (objectType != nullptr
+			&& obj != nullptr
+			&& obj->GetClassType()->GetBase() == classes.BaseCommand.Type) {
+
+			if (objectType->GetTypeId() == gStaticSymbols.DeferredNames.DCSavegames) {
+				lua::push(L, nullptr);
+				return;
+			}
+
+			if (objectType->GetTypeId() == gStaticSymbols.DeferredNames.DCModBrowser
+				&& (*propertyName == gStaticSymbols.DeferredNames.EndorseModCommand
+					|| *propertyName == gStaticSymbols.DeferredNames.ReportModCommand
+					|| *propertyName == gStaticSymbols.DeferredNames.SubscribeModCommand
+					|| *propertyName == gStaticSymbols.DeferredNames.UninstallModCommand
+					|| *propertyName == gStaticSymbols.DeferredNames.UnsubscribeModCommand)) {
+				lua::push(L, nullptr);
+				return;
+			}
+		}
+
 		if (obj == nullptr) {
 			lua::push(L, nullptr);
 		} else if (obj->GetClassType()->GetBase() == classes.BoxedValue.Type) {

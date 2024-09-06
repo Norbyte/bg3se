@@ -434,6 +434,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="Lua\Libs\ClientNet.inl" />
     <None Include="Lua\Libs\ClientTemplate.inl" />
     <None Include="Lua\Libs\ClientUI\Module.inl" />
+    <None Include="Lua\Libs\ClientUI\Names.inl" />
     <None Include="Lua\Libs\ClientUI\NsHelpers.inl" />
     <None Include="Lua\Libs\ClientUI\Events.inl" />
     <None Include="Lua\Libs\ClientUI\Symbols.inl" />
