@@ -8636,6 +8636,7 @@ Osi = {}
 --- @field PositionOffset vec2?
 --- @field SameLine boolean
 --- @field Visible boolean
+--- @field TextWrapPos number
 --- @field GetColor fun(self:ExtuiStyledRenderable, a1:GuiColor):vec4?
 --- @field GetStyle fun(self:ExtuiStyledRenderable, a1:GuiStyleVar):number?
 --- @field SetColor fun(self:ExtuiStyledRenderable, a1:GuiColor, a2:vec4)
@@ -9549,7 +9550,7 @@ Osi = {}
 
 
 --- @class ResourceAbilityList:ResourceGuidResource
---- @field Spells AbilityId[]
+--- @field Abilities AbilityId[]
 
 
 --- @class ResourceActionResource:ResourceGuidResource
