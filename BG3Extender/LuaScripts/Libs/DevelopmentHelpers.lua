@@ -332,6 +332,45 @@ local function ValidateStats()
     end
 end
 
+local function ValidateDialogManager(dialogMgr)
+    Ext.Types.Validate(dialogMgr)
+
+    for i,inst in pairs(dialogMgr.Dialogs) do
+        Ext.Types.Validate(inst)
+    end
+
+    for i,flag in pairs(dialogMgr.FlagDescriptions) do
+        Ext.Types.Validate(flag)
+    end
+
+    for i,dlg in pairs(dialogMgr.CachedDialogs) do
+        Ext.Types.Validate(dlg)
+
+        for j,node in pairs(dlg.Nodes) do
+            Ext.Types.Validate(node)
+        end
+    end
+end
+
+local function ValidateGlobals()
+    Ext.Types.Validate(Ext.Utils.GetGlobalSwitches())
+    Ext.Types.Validate(Ext.Stats.GetStatsManager())
+    Ext.Types.Validate(Ext.Mod.GetModManager())
+    Ext.Types.Validate(Ext.Mod.GetBaseMod())
+
+    if Ext.UI then
+        local helpers = Ext.UI.GetPickingHelper(1)
+        if helpers ~= nil then
+            Ext.Types.Validate(helpers)
+        end
+    end
+
+    local dialogMgr = Ext.Utils.GetDialogManager()
+    if dialogMgr ~= nil then
+        ValidateDialogManager(dialogMgr)
+    end
+end
+
 Ext.RegisterConsoleCommand("se_entitytest", function ()
     ValidateEntities()
 end)
@@ -375,11 +414,13 @@ end)
 
 Ext.RegisterConsoleCommand("se_deepfry", function ()
     Ext.Debug.SetEntityRuntimeCheckLevel(0)
+    ValidateGlobals()
     ValidateTemplates()
     ValidateStaticData()
     ValidateResources()
     ValidateStats()
     ValidateEntities()
+    ValidateVisuals()
     ReserializeTemplates()
     ReserializeStaticData()
     ReserializeResources()
