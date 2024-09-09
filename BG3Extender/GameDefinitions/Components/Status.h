@@ -37,7 +37,7 @@ struct LifetimeComponent : public BaseComponent
 	DEFINE_COMPONENT(StatusLifetime, "eoc::status::LifetimeComponent")
 
 	int field_0;
-	int field_4;
+	[[bg3::legacy(field_4)]] float Lifetime;
 };
 
 struct VisualDisabledComponent : public BaseComponent

@@ -22,3 +22,4 @@
 #include <GameDefinitions/Components/Shapeshift.h>
 #include <GameDefinitions/Components/ServerData.h>
 #include <GameDefinitions/Components/Roll.h>
+#include <GameDefinitions/Components/Timeline.h>

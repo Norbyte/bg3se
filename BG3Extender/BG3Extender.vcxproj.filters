@@ -486,6 +486,7 @@
     <ClInclude Include="GameDefinitions\AllSpark.h" />
     <ClInclude Include="GameDefinitions\Components\Roll.h" />
     <ClInclude Include="GameDefinitions\Ai.h" />
+    <ClInclude Include="GameDefinitions\Components\Timeline.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
