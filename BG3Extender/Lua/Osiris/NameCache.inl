@@ -49,15 +49,19 @@ void OsirisNameResolver::RebuildCacheIfNecessary()
 		return;
 	}
 
+	needsRebuild_ = false;
 	caches_.clear();
 	caches_.resize(nextCache_);
+
+	if (!binding_.GetIdentityAdapterMap().HasAnyAdapters()) {
+		OsiErrorS("Couldn't bind Osiris queries - no adapters available (maybe story compile or merge failed?)");
+		return;
+	}
 
 	auto const& db = *globals_.Functions;
 	db->Iterate([&](OsiString const&, Function* fun) {
 		Register(*fun);
 	});
-
-	needsRebuild_ = false;
 }
 
 
