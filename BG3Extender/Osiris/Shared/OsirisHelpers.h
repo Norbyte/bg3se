@@ -16,8 +16,9 @@ namespace bg3se
 		IdentityAdapterMap(OsirisStaticGlobals const &);
 
 		void UpdateAdapters();
-		bool HasAllAdapters();
-		Adapter * FindAdapter(uint8_t columns);
+		bool HasAnyAdapters() const;
+		bool HasAllAdapters() const;
+		Adapter * FindAdapter(uint8_t columns) const;
 
 	private:
 		void TryAddAdapter(Adapter * adapter);

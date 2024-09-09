@@ -21,7 +21,17 @@ namespace bg3se
 		}
 	}
 
-	bool IdentityAdapterMap::HasAllAdapters()
+	bool IdentityAdapterMap::HasAnyAdapters() const
+	{
+		for (unsigned i = 0; i <= MaxColumns; i++) {
+			auto it = adapters_.find(i);
+			if (it != adapters_.end()) return true;
+		}
+
+		return false;
+	}
+
+	bool IdentityAdapterMap::HasAllAdapters() const
 	{
 		for (unsigned i = 0; i <= MaxColumns; i++) {
 			auto it = adapters_.find(i);
@@ -31,7 +41,7 @@ namespace bg3se
 		return true;
 	}
 
-	Adapter * IdentityAdapterMap::FindAdapter(uint8_t columns)
+	Adapter * IdentityAdapterMap::FindAdapter(uint8_t columns) const
 	{
 		auto it = adapters_.find(columns);
 		if (it == adapters_.end()) return nullptr;

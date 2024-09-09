@@ -312,7 +312,9 @@ struct JumpFollowComponent : public BaseComponent
 	float ProjectileTerrainOffset;
 	[[bg3::hidden]] uint64_t DangerousAuras[4];
 	uint8_t HasSpell;
-	glm::vec3 field_A4;
+	uint32_t field_A4;
+	uint32_t field_A8;
+	uint32_t field_AC;
 	[[bg3::hidden]] Array<void*> field_B0_AvoidArea;
 	[[bg3::hidden]] Array<void*> field_C0_AvoidArea;
 	uint8_t field_D0;

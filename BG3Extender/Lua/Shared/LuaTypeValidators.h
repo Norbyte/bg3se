@@ -33,7 +33,11 @@ inline typename std::enable_if_t<std::is_integral_v<T>, bool> Validate(T const*,
 inline bool Validate(float const* v, Overload<float>)
 {
 #if defined(ENABLE_FLAKY_HEURISTICS)
-	CHECK((*v > -100000000.0f && *v < 100000000.0f) || *v == 3.40282347e+38f || *v == 3.78091496e+37f);
+	CHECK((*v > -100000000.0f && *v < 100000000.0f) 
+		// Various max boundary values seen in the game
+		|| *v == 3.06254467e+38f // max LOD distance
+		|| *v == 3.40282347e+38f 
+		|| *v == 3.78091496e+37f);
 #endif
 	return true;
 }

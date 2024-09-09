@@ -236,5 +236,4 @@ struct PaperdollComponent : public BaseComponent
 	uint8_t field_8;
 };
 
-
 END_NS()

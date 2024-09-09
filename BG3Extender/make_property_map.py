@@ -635,6 +635,7 @@ sources = [
     'GameDefinitions/Components/Shapeshift.h',
     'GameDefinitions/Components/Status.h',
     'GameDefinitions/Components/Tadpole.h',
+    'GameDefinitions/Components/Timeline.h',
     'GameDefinitions/Stats/Functors.h',
     'GameDefinitions/Stats/Prototype.h',
     'GameDefinitions/Stats/UseActions.h',

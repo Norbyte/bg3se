@@ -109,6 +109,7 @@ namespace stats
 	struct Functors;
 	struct ConditionId;
 	struct SpellPrototype;
+	struct PassivePrototype;
 	struct RPGEnumeration;
 	struct Object;
 	struct TreasureTable;
