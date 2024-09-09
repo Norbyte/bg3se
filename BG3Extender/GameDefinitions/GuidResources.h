@@ -403,14 +403,11 @@ struct Progression : public resource::GuidResource
 	Guid TableUUID;
 	STDString Name;
 	Array<Guid> SubClasses;
-	[[bg3::hidden]]
-	Array<void*> field_50;
+	Array<stats::PassivePrototype*> PassivePrototypesAdded;
 	STDString PassivesAdded;
-	[[bg3::hidden]]
-	Array<void*> field_78;
+	Array<stats::PassivePrototype*> PassivePrototypesRemoved;
 	STDString PassivesRemoved;
-	[[bg3::hidden]]
-	Array<void*> field_A0;
+	Array<Guid> BoostPrototypes;
 	STDString Boosts;
 	uint8_t ProgressionType; // FIXME - map to enumeration
 	uint8_t Level;
@@ -516,6 +513,15 @@ struct Flag : public resource::GuidResource
 	uint8_t Usage; // FIXME - map to flags
 };
 
+struct FeatRequirement
+{
+	STDString Requirement;
+	uint8_t Type;
+	std::optional<uint64_t> ProficiencyGroupFlags;
+	std::optional<AbilityId> Ability;
+	std::optional<int> AbilityValue;
+};
+
 
 struct Feat : public resource::GuidResource
 {
@@ -524,17 +530,13 @@ struct Feat : public resource::GuidResource
 
 	FixedString Name;
 	STDString Requirements;
-	[[bg3::hidden]]
-	Array<void*> field_40;
+	Array<FeatRequirement> FeatRequirements;
 	STDString PassivesAdded;
-	[[bg3::hidden]]
-	Array<void*> field_78;
+	Array<stats::PassivePrototype*> PassivePrototypesAdded;
 	STDString PassivesRemoved;
-	[[bg3::hidden]]
-	Array<void*> field_B0;
+	Array<stats::PassivePrototype*> PassivePrototypesRemoved;
 	STDString Boosts;
-	[[bg3::hidden]]
-	Array<void*> field_E8;
+	Array<Guid> BoostPrototypes;
 	bool CanBeTakenMultipleTimes;
 	Array<Progression::Ability> SelectAbilities;
 	Array<Progression::AbilityBonus> SelectAbilityBonus;
