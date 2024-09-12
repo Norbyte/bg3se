@@ -31,7 +31,7 @@ struct BoostInfoComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(BoostInfo, "eoc::BoostInfoComponent")
 
-	Guid field_10;
+	[[bg3::legacy(field_10)]] Guid CauseUuid;
 	uint8_t field_20;
 	BoostSource Cause;
 	EntityHandle Owner;
