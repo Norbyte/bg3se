@@ -58,7 +58,7 @@ UserVariableFlags ParseUserVariableFlags(lua_State* L, int index)
 
 void RegisterUserVariable(lua_State* L, FixedString name)
 {
-	auto& vars = gExtender->GetCurrentExtensionState()->GetUserVariables();
+	auto& vars = ExtensionStateBase::FromLua(L).GetUserVariables();
 	UserVariablePrototype proto;
 
 	luaL_checktype(L, 2, LUA_TTABLE);
@@ -67,15 +67,15 @@ void RegisterUserVariable(lua_State* L, FixedString name)
 	vars.RegisterPrototype(name, proto);
 }
 
-void SyncUserVariables()
+void SyncUserVariables(lua_State* L)
 {
-	auto& vars = gExtender->GetCurrentExtensionState()->GetUserVariables();
+	auto& vars = ExtensionStateBase::FromLua(L).GetUserVariables();
 	vars.Flush(true);
 }
 
-void DirtyUserVariables(std::optional<Guid> entityGuid, std::optional<FixedString> key)
+void DirtyUserVariables(lua_State* L, std::optional<Guid> entityGuid, std::optional<FixedString> key)
 {
-	auto& vars = gExtender->GetCurrentExtensionState()->GetUserVariables();
+	auto& vars = ExtensionStateBase::FromLua(L).GetUserVariables();
 	if (!entityGuid) {
 		for (auto& entity : vars.GetAll()) {
 			for (auto& var : entity.Value().Vars) {
@@ -97,11 +97,11 @@ void DirtyUserVariables(std::optional<Guid> entityGuid, std::optional<FixedStrin
 	}
 }
 
-Array<Guid> GetEntitiesWithVariable(FixedString variable)
+Array<Guid> GetEntitiesWithVariable(lua_State* L, FixedString variable)
 {
 	Array<Guid> entities;
 
-	auto& vars = gExtender->GetCurrentExtensionState()->GetUserVariables();
+	auto& vars = ExtensionStateBase::FromLua(L).GetUserVariables();
 	for (auto& entity : vars.GetAll()) {
 		auto const& vars = entity.Value().Vars;
 		auto var = vars.try_get(variable);
@@ -115,7 +115,7 @@ Array<Guid> GetEntitiesWithVariable(FixedString variable)
 
 void RegisterModVariable(lua_State* L, Guid moduleUuid, FixedString name)
 {
-	auto vars = gExtender->GetCurrentExtensionState()->GetModVariables().GetOrCreateMod(moduleUuid);
+	auto vars = ExtensionStateBase::FromLua(L).GetModVariables().GetOrCreateMod(moduleUuid);
 	UserVariablePrototype proto;
 
 	luaL_checktype(L, 3, LUA_TTABLE);
@@ -126,7 +126,7 @@ void RegisterModVariable(lua_State* L, Guid moduleUuid, FixedString name)
 
 UserReturn GetModVariables(lua_State* L, Guid moduleUuid)
 {
-	auto& mv = gExtender->GetCurrentExtensionState()->GetModVariables();
+	auto& mv = ExtensionStateBase::FromLua(L).GetModVariables();
 	auto modIndex = mv.GuidToModId(moduleUuid);
 	if (!modIndex) {
 		OsiError("Module '" << moduleUuid << "' is not loaded!");
@@ -139,15 +139,15 @@ UserReturn GetModVariables(lua_State* L, Guid moduleUuid)
 	return 1;
 }
 
-void SyncModVariables()
+void SyncModVariables(lua_State* L)
 {
-	auto& vars = gExtender->GetCurrentExtensionState()->GetModVariables();
+	auto& vars = ExtensionStateBase::FromLua(L).GetModVariables();
 	vars.Flush(true);
 }
 
-void DirtyModVariables(std::optional<Guid> moduleUuid, std::optional<FixedString> key)
+void DirtyModVariables(lua_State* L, std::optional<Guid> moduleUuid, std::optional<FixedString> key)
 {
-	auto& vars = gExtender->GetCurrentExtensionState()->GetModVariables();
+	auto& vars = ExtensionStateBase::FromLua(L).GetModVariables();
 	if (!moduleUuid) {
 		for (auto& mod : vars.GetAll()) {
 			for (auto& var : mod.Value().GetAll()) {

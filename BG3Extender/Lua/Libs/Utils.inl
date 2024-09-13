@@ -23,11 +23,9 @@ UserReturn Include(lua_State * L)
 
 	std::optional<int> nret;
 	if (modGuid) {
-		nret = gExtender->GetCurrentExtensionState()
-			->LuaLoadModScript(*modGuid, fileName, true, replaceGlobals ? 3 : 0);
+		nret = ExtensionStateBase::FromLua(L).LuaLoadModScript(*modGuid, fileName, true, replaceGlobals ? 3 : 0);
 	} else {
-		nret = gExtender->GetCurrentExtensionState()
-			->LuaLoadFile(fileName, "", true, replaceGlobals ? 3 : 0);
+		nret = ExtensionStateBase::FromLua(L).LuaLoadFile(fileName, "", true, replaceGlobals ? 3 : 0);
 	}
 
 	if (replaceGlobals) {
@@ -134,7 +132,7 @@ double MicrosecTime()
 
 double GameTime(lua_State* L)
 {
-	return GetCurrentExtensionState()->Time().Time;
+	return ExtensionStateBase::FromLua(L).Time().Time;
 }
 
 void Print(lua_State* L)
