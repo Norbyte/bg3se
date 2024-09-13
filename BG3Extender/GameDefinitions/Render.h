@@ -288,7 +288,8 @@ struct ActiveMaterial
 	struct Texture2DParam
 	{
 		[[bg3::hidden]] void* TextureResource;
-		[[bg3::hidden]] void* TextureResource2;
+		// Not here in dx11 build
+		[[bg3::hidden]] void* VkTextureResource;
 		FixedString Name;
 		int16_t Index;
 		bool IsStub;
@@ -307,7 +308,7 @@ struct ActiveMaterial
 	[[bg3::hidden]] PrimaryMaterialRenderingData* PrimaryRenderingData;
 	[[bg3::hidden]] std::array<MaterialRenderingData, 5> RenderingData;
 	[[bg3::hidden]] std::array<void*, 13> PipelineStates;
-	Array<Texture2DParam> Texture2DParams;
+	[[bg3::hidden]] Array<Texture2DParam> Texture2DParams;
 	Array<VirtualTextureParam> VirtualTextureParams;
 	RenderableObject* RenderableObject;
 	[[bg3::legacy(MaterialInstance)]] Material* Material;
