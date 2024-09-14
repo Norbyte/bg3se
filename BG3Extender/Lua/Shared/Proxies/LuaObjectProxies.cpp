@@ -40,7 +40,7 @@ bool Validate(EntityHandle const* handle, Overload<EntityHandle>)
 {
 	auto lua = GetCurrentExtensionState()->GetLua();
 	if (lua) {
-		auto world = GetCurrentExtensionState()->GetLua()->GetEntitySystemHelpers()->GetEntityWorld();
+		auto world = lua->GetEntitySystemHelpers()->GetEntityWorld();
 		if (world) {
 			return Validate(*handle, *world);
 		}

@@ -182,7 +182,7 @@ void TimerSystem::SavegameVisit(ObjectVisitor* visitor)
 TimerHandle WaitFor(lua_State* L, float delay, Ref callback, std::optional<float> repeat)
 {
 	auto state = State::FromLua(L);
-	double time = GetCurrentExtensionState()->Time().Time + delay / 1000.0f;
+	double time = ExtensionStateBase::FromLua(L).Time().Time + delay / 1000.0f;
 
 	return state->GetTimers().GameTimer().Add(time, callback, repeat ? (*repeat / 1000.0f) : 0.0f);
 }
@@ -190,7 +190,7 @@ TimerHandle WaitFor(lua_State* L, float delay, Ref callback, std::optional<float
 TimerHandle WaitForPersistent(lua_State* L, float delay, FixedString callback, Ref args)
 {
 	auto state = State::FromLua(L);
-	double time = GetCurrentExtensionState()->Time().Time + delay / 1000.0f;
+	double time = ExtensionStateBase::FromLua(L).Time().Time + delay / 1000.0f;
 
 	if (!state->GetTimers().SupportsPersistence()) {
 		luaL_error(L, "Persistent timers are only supported on the server");
@@ -205,7 +205,7 @@ TimerHandle WaitForPersistent(lua_State* L, float delay, FixedString callback, R
 TimerHandle WaitForRealtime(lua_State* L, float delay, Ref callback, std::optional<float> repeat)
 {
 	auto state = State::FromLua(L);
-	double time = GetCurrentExtensionState()->Time().Time + delay / 1000.0f;
+	double time = ExtensionStateBase::FromLua(L).Time().Time + delay / 1000.0f;
 
 	auto handle = state->GetTimers().RealtimeTimer().Add(time, callback, repeat ? (*repeat / 1000.0f) : 0.0f);
 	return handle | TimerManager::RealtimeFlag;

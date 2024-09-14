@@ -279,9 +279,9 @@ uint64_t EntityProxyMetatable::GetReplicationFlags(lua_State* L, EntityHandle en
 	return flags;
 }
 
-void ReplicateComponent(EntityHandle entity, ExtComponentType component, uint32_t qword, uint64_t flags)
+void ReplicateComponent(lua_State* L, EntityHandle entity, ExtComponentType component, uint32_t qword, uint64_t flags)
 {
-	auto ecs = gExtender->GetCurrentExtensionState()->GetLua()->GetEntitySystemHelpers();
+	auto ecs = State::FromLua(L)->GetEntitySystemHelpers();
 	if (!ecs->GetEntityWorld()->Replication) {
 		OsiError("Replication system is unavailable");
 		return;
@@ -303,12 +303,12 @@ void ReplicateComponent(EntityHandle entity, ExtComponentType component, uint32_
 void EntityProxyMetatable::SetReplicationFlags(lua_State* L, EntityHandle entity, ExtComponentType component, uint64_t flags, std::optional<uint32_t> qword)
 {
 	unsigned qw = qword ? *qword : 0;
-	ReplicateComponent(entity, component, qw, flags);
+	ReplicateComponent(L, entity, component, qw, flags);
 }
 
 void EntityProxyMetatable::Replicate(lua_State* L, EntityHandle entity, ExtComponentType component)
 {
-	ReplicateComponent(entity, component, 0, 0xffffffffffffffffull);
+	ReplicateComponent(L, entity, component, 0, 0xffffffffffffffffull);
 }
 
 LuaEntitySubscriptionId EntityProxyMetatable::OnCreate(lua_State* L, EntityHandle entity, ExtComponentType component, 

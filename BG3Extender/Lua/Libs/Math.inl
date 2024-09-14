@@ -951,13 +951,13 @@ bool IsInf(lua_Number x)
 // Variation of Lua builtin math_random() with custom RNG
 UserReturn Random(lua_State *L)
 {
-	auto state = gExtender->GetCurrentExtensionState();
+	auto& state = ExtensionStateBase::FromLua(L);
 
 	lua_Integer low, up;
 	switch (lua_gettop(L)) {  /* check number of arguments */
 	case 0: {  /* no arguments */
 		std::uniform_real_distribution<double> dist(0.0, 1.0);
-		push(L, (lua_Number)dist(state->OsiRng));  /* Number between 0 and 1 */
+		push(L, (lua_Number)dist(state.OsiRng));  /* Number between 0 and 1 */
 		return 1;
 	}
 	case 1: {  /* only upper limit */
@@ -980,7 +980,7 @@ UserReturn Random(lua_State *L)
 #endif
 
 	std::uniform_int_distribution<int64_t> dist(low, up);
-	push(L, dist(state->OsiRng));
+	push(L, dist(state.OsiRng));
 	return 1;
 }
 

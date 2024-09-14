@@ -10,6 +10,26 @@ using AiGridLayerId = uint16_t;
 static constexpr AiMetaDataId AiNullMetaData = 0xffff;
 
 
+struct AIPortalObjectData : public ProtectedGameObject<AIPortalObjectData>
+{
+	[[bg3::hidden]] void* VMT;
+	EntityHandle Target;
+	EntityHandle Source;
+	EntityHandle PortalID;
+	FixedString Level;
+	FixedString TargetLevel_M;
+	int PortalType;
+	glm::vec3 StartPos;
+	glm::vec3 field_38;
+	glm::vec3 EndPos;
+	glm::vec3 field_50;
+	float ActionResourceCost;
+	char IsProhibitedToPlayers;
+	bool IsAttached_M;
+	bool field_62;
+};
+
+
 struct SomeArray2int
 {
 	int32_t A;
@@ -47,7 +67,7 @@ struct AiSurfaceMetaData
 
 struct AiGridPortal
 {
-	[[bg3::hidden]] void* PortalData; // AIPortalObjectData*
+	AIPortalObjectData* PortalData;
 	AiGrid* AiGrid;
 	AiTilePos SourceAIPosition;
 	AiTilePos TargetAIPosition;
@@ -154,10 +174,7 @@ struct AiGridLayer
 };
 
 
-struct AiPath : public ProtectedGameObject<AiPath>
-{
-	// FIXME - needs to be mapped
-};
+struct AiPath;
 
 
 template <class T>
@@ -212,6 +229,160 @@ struct AiGridChangeLayersTask
 	Array<Guid> Layers;
 	Array<Guid> Layers2;
 	HashMap<AiTilePos, AiGridChangeLayersTaskDelta> Deltas;
+};
+
+
+struct AoERangeFilterTargetData
+{
+	glm::vec3 Position;
+	float Radius;
+	float HeightRange;
+};
+
+
+struct DangerousAuras
+{
+	AoERangeFilterTargetData Target;
+	int field_14;
+	Array<AoERangeFilterTargetData> Auras;
+	uint8_t Avoidance;
+};
+
+
+struct AiPathAoOPosition
+{
+	int field_0;
+	int field_4;
+	int field_8;
+	int field_C;
+};
+
+
+struct AiPathEntityPosition
+{
+	int field_0;
+	int field_4;
+	int field_8;
+	int field_C;
+};
+
+
+struct AiPathNode
+{
+	glm::vec3 Position;
+	EntityHandle Entity;
+	int field_18;
+	int field_1C;
+	uint8_t Flags;
+};
+
+
+struct AiPathCheckpoint : public ProtectedGameObject<AiPathCheckpoint>
+{
+	[[bg3::hidden]] void* field_0;
+	glm::vec3 field_8;
+	EntityHandle field_18;
+	EntityHandle field_20;
+	uint8_t Flags;
+};
+
+
+
+struct AiPath : public ProtectedGameObject<AiPath>
+{
+	Array<SurfacePathInfluence> SurfacePathInfluences;
+	EntityHandle Source;
+	EntityHandle Target;
+	float BoundType4;
+	float BoundType2;
+	uint64_t CollisionMask;
+	uint64_t CollisionMaskMove;
+	uint64_t CollisionMaskStand;
+#if 0
+	// STDString CallerLocation;
+	// int CallerLine;
+	// __int64 field_60;
+	// __int64 field_68;
+#endif
+	float BoundType0;
+	float CloseEnoughMin;
+	float CloseEnoughMax;
+	float CloseEnoughFloor;
+	float CloseEnoughCeiling;
+	float CloseEnoughPreference;
+	int PathType;
+	uint16_t CoverFlags;
+	int field_90;
+	glm::vec3 SourceAdjusted;
+	glm::vec3 SourceOriginal;
+	glm::vec3 TargetAdjusted;
+	glm::vec3 ProjectileTarget;
+	float Height;
+	int SearchHorizon;
+#if 0
+	// int field_CC;
+#endif
+	bool IsPlayer;
+	bool CanUseLadders;
+	bool CanUsePortals;
+	bool CanUseCombatPortals;
+	char CheckLockedDoors;
+	[[bg3::hidden]] Array<void*> AvailableKeys;
+	Array<int32_t> field_E8;
+	Array<FixedString> field_F8;
+	bool UseSmoothing;
+	uint8_t field_109;
+	bool AddSourceBoundsToMargin;
+	float StepHeight;
+	float WorldClimbingHeight;
+	float WorldClimbingRadius;
+	float TurningNodeAngle;
+	float TurningNodeOffset;
+	float FallDamageMinimumDistance;
+	float FallDamageDistanceEstimate;
+	float FallMinDamagePathfindingCost;
+	float FallMaxDamagePathfindingCost;
+	int FallDeadPathfindingCost;
+	bool CanWorldClimb;
+	bool CanWorldDrop;
+	uint8_t field_136;
+	bool IsBidirectionalSearch;
+	bool UseTurning;
+	bool PreciseItemInteraction;
+	bool UseSplines;
+	bool UseStandAtDestination;
+	uint8_t field_13C;
+	[[bg3::hidden]] void* CoverManager;
+	EntityHandle field_148;
+	uint8_t field_150;
+	int field_154;
+	Array<AiPathEntityPosition> MovedEntities;
+	Array<EntityHandle> IgnoreEntities;
+	float field_178;
+	float field_17C;
+	float field_180;
+	int field_184;
+	[[bg3::hidden]] void* DestinationFunc[8];
+	[[bg3::hidden]] void* WeightFunc[8];
+	HashMap<AiTilePos, uint64_t> field_208;
+	Array<AiPathAoOPosition> field_248;
+	DangerousAuras DangerousAuras;
+	int BoundTilesType4;
+	int BoundTilesType2;
+	int BoundTilesType0;
+	int field_294;
+	int32_t field_298;
+	float field_29C;
+	bool SearchStarted;
+	bool SearchComplete;
+	bool GoalFound;
+	uint8_t field_2A3;
+	uint8_t field_2A4;
+	Array<AiPathNode> Nodes;
+	Array<AiPathCheckpoint> Checkpoints;
+	__int64 LimitNodeIndex;
+	bool HasLimitNode;
+	int field_2D4;
 };
 
 

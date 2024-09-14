@@ -26,6 +26,11 @@ namespace bg3se
 		return sContextNames[(unsigned)ctx];
 	}
 
+	ExtensionStateBase& ExtensionStateBase::FromLua(lua_State* L)
+	{
+		return lua::State::FromLua(L)->GetExtensionState();
+	}
+
 	ExtensionStateBase::ExtensionStateBase(bool isServer)
 		: userVariables_(isServer, isServer ? (ecs::EntitySystemHelpersBase &)gExtender->GetServer().GetEntityHelpers() : gExtender->GetClient().GetEntityHelpers()),
 		modVariables_(isServer)

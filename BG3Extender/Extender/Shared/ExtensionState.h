@@ -38,6 +38,8 @@ namespace bg3se
 		using PostResetCallback = std::function<void()>;
 		std::mt19937_64 OsiRng;
 
+		static ExtensionStateBase& FromLua(lua_State* L);
+
 		ExtensionStateBase(bool isServer);
 		virtual ~ExtensionStateBase();
 
