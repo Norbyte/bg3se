@@ -176,6 +176,11 @@ void StyledRenderable::Render()
 
     StyledRender();
 
+    auto status = (GuiItemStatusFlags)ImGui::GetItemStatusFlags();
+    if (ImGui::IsItemFocused()) status |= GuiItemStatusFlags::Focused;
+    if (ImGui::IsItemActive()) status |= GuiItemStatusFlags::Active;
+    if (StatusFlags != status) StatusFlags = status;
+
     if (ItemFlags != (GuiItemFlags)0) ImGui::PopItemFlag();
     if (TextWrapPos) ImGui::PopTextWrapPos();
 

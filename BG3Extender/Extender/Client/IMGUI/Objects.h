@@ -150,6 +150,7 @@ public:
     std::optional<float> ItemWidth;
     std::optional<float> TextWrapPos;
     GuiItemFlags ItemFlags{ 0 };
+    GuiItemStatusFlags StatusFlags{ 0 };
 
     lua::LuaDelegate<void(lua::ImguiHandle)> OnActivate;
     lua::LuaDelegate<void(lua::ImguiHandle)> OnDeactivate;
