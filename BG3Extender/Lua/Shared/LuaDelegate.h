@@ -153,15 +153,7 @@ public:
         queue_.push_back(call);
     }
 
-    void Flush()
-    {
-        Array<GenericDeferredLuaDelegateCall*> cur;
-        std::swap(cur, queue_);
-        for (auto const& call : cur) {
-            call->Call();
-            delete call;
-        }
-    }
+    void Flush();
 
 private:
     Array<GenericDeferredLuaDelegateCall*> queue_;

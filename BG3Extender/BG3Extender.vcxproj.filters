@@ -724,6 +724,7 @@
     <None Include="Lua\Shared\EntityEventHelpers.inl" />
     <None Include="GameDefinitions\Ai.inl" />
     <None Include="Lua\Libs\ClientUI\Names.inl" />
+    <None Include="Lua\Shared\LuaDelegate.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

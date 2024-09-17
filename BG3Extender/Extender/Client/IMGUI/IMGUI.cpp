@@ -1357,7 +1357,10 @@ void IMGUIObjectManager::EnableDemo(bool enable)
 
 void IMGUIObjectManager::ClientUpdate()
 {
-    eventQueue_.Flush();
+    LuaVirtualPin lua(ecl::ExtensionState::Get());
+    if (lua) {
+        eventQueue_.Flush();
+    }
 }
 
 IMGUIManager::IMGUIManager(SDLManager& sdl)

@@ -173,3 +173,4 @@ END_NS()
 #include <Lua/Shared/LuaGet.inl>
 #include <Lua/Shared/LuaPush.inl>
 #include <Lua/Shared/LuaCustomizations.inl>
+#include <Lua/Shared/LuaDelegate.inl>

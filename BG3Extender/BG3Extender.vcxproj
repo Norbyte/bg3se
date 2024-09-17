@@ -468,6 +468,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="Lua\Shared\EntityComponentEvents.inl" />
     <None Include="Lua\Shared\EntityEventHelpers.inl" />
     <None Include="Lua\Shared\LuaCustomizations.inl" />
+    <None Include="Lua\Shared\LuaDelegate.inl" />
     <None Include="Lua\Shared\LuaGet.inl" />
     <None Include="Lua\Shared\LuaMethodCallHelpers.h" />
     <None Include="Lua\Shared\LuaModule.inl" />
