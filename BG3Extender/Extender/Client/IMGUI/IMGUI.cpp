@@ -203,11 +203,11 @@ void StyledRenderable::Render()
         ImGui::PopID();
     }
 
-    if (ImGui::IsItemActivated() && OnActivate) {
+    if (OnActivate && ImGui::IsItemActivated()) {
         Manager->GetEventQueue().Call(OnActivate, lua::ImguiHandle(Handle));
     }
 
-    if (ImGui::IsItemDeactivated() && OnDeactivate) {
+    if (OnDeactivate && ImGui::IsItemDeactivated()) {
         Manager->GetEventQueue().Call(OnDeactivate, lua::ImguiHandle(Handle));
     }
 
