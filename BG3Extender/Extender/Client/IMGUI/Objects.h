@@ -134,6 +134,7 @@ public:
     std::optional<glm::vec4> GetStyleColor(GuiColor color);
     void SetStyleColor(GuiColor color, glm::vec4 value);
     lua::ImguiHandle Tooltip();
+    void Activate();
 
     Array<StyleVar> StyleVars;
     Array<StyleColor> StyleColors;
@@ -141,6 +142,7 @@ public:
     STDString IDContext;
     bool SameLine{ false };
     bool Visible{ true };
+    bool RequestActivate{ false };
     FixedString Font;
     std::optional<glm::vec2> PositionOffset;
     std::optional<glm::vec2> AbsolutePosition;

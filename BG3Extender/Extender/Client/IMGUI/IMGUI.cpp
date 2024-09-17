@@ -169,6 +169,11 @@ void StyledRenderable::Render()
     if (TextWrapPos) ImGui::PushTextWrapPos(*TextWrapPos);
     if (ItemWidth) ImGui::SetNextItemWidth(*ItemWidth);
 
+    if (RequestActivate) {
+        ImGui::ActivateItemByID(ImGui::GetCurrentWindow()->GetID(Label.c_str()));
+        RequestActivate = false;
+    }
+
     StyledRender();
 
     if (ItemFlags != (GuiItemFlags)0) ImGui::PopItemFlag();
@@ -259,6 +264,11 @@ lua::ImguiHandle StyledRenderable::Tooltip()
 
     tooltip_ = Manager->CreateRenderable<extui::Tooltip>();
     return tooltip_;
+}
+
+void StyledRenderable::Activate()
+{
+    RequestActivate = true;
 }
 
 TreeParent::~TreeParent()
