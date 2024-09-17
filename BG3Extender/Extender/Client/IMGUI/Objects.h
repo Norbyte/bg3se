@@ -65,7 +65,8 @@ enum class IMGUIObjectType : uint8_t
     InputInt,
     ColorEdit,
     ColorPicker,
-    Max = ColorPicker
+    ProgressBar,
+    Max = ProgressBar
 };
 
 
@@ -205,6 +206,8 @@ public:
     lua::ImguiHandle AddInputInt(char const* label, std::optional<int> value);
     lua::ImguiHandle AddColorEdit(char const* label, std::optional<glm::vec3> value);
     lua::ImguiHandle AddColorPicker(char const* label, std::optional<glm::vec3> value);
+
+    lua::ImguiHandle AddProgressBar();
 
     bool RemoveChild(lua::ImguiHandle child);
     bool DetachChild(lua::ImguiHandle child);
@@ -795,6 +798,19 @@ public:
     glm::vec4 Color{ 0.0f };
     GuiColorEditFlags Flags{ ImGuiColorEditFlags_DefaultOptions_ };
     lua::LuaDelegate<void (lua::ImguiHandle, glm::vec4)> OnChange;
+};
+
+
+struct ProgressBar : public StyledRenderable
+{
+public:
+    DECL_UI_TYPE(ProgressBar)
+
+    void StyledRender() override;
+
+    float Value{ 0.0f };
+    glm::vec2 Size{ 0.0f };
+    STDString Overlay;
 };
 
 

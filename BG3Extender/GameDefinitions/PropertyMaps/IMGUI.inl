@@ -381,4 +381,12 @@ P_BITMASK(Flags)
 P(OnChange)
 END_CLS()
 
+
+BEGIN_CLS(extui::ProgressBar)
+INHERIT(extui::StyledRenderable)
+P(Value)
+P(Size)
+P(Overlay)
+END_CLS()
+
 #endif

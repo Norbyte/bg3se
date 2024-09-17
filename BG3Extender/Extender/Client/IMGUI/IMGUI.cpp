@@ -568,6 +568,13 @@ lua::ImguiHandle TreeParent::AddColorPicker(char const* label, std::optional<glm
     return e;
 }
 
+
+lua::ImguiHandle TreeParent::AddProgressBar()
+{
+    return AddChild<ProgressBar>();
+}
+
+
 bool TreeParent::RemoveChild(lua::ImguiHandle child)
 {
     auto it = Children.find(child.Handle);
@@ -1270,6 +1277,12 @@ void ColorPicker::StyledRender()
 }
 
 
+void ProgressBar::StyledRender()
+{
+    ImGui::ProgressBar(Value, ToImVec(Size), Overlay.empty() ? nullptr : Overlay.c_str());
+}
+
+
 IMGUIObjectPoolInterface::~IMGUIObjectPoolInterface() {}
 
 IMGUIObjectManager::IMGUIObjectManager()
@@ -1318,6 +1331,8 @@ IMGUIObjectManager::IMGUIObjectManager()
 
     pools_[(unsigned)IMGUIObjectType::ColorEdit] = std::make_unique<IMGUIObjectPool<ColorEdit>>();
     pools_[(unsigned)IMGUIObjectType::ColorPicker] = std::make_unique<IMGUIObjectPool<ColorPicker>>();
+
+    pools_[(unsigned)IMGUIObjectType::ProgressBar] = std::make_unique<IMGUIObjectPool<ProgressBar>>();
 }
 
 Renderable* IMGUIObjectManager::CreateRenderable(IMGUIObjectType type)
