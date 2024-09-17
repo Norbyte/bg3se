@@ -930,6 +930,9 @@ bool Table::BeginRender()
         }
     }
 
+    if (ShowHeader && AngledHeader) ImGui::TableAngledHeadersRow();
+    if (ShowHeader) ImGui::TableHeadersRow();
+
     return rendering_;
 }
 
