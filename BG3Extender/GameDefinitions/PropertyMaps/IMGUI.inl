@@ -39,6 +39,8 @@ P_BITMASK(ItemFlags)
 P(StatusFlags)
 P(OnActivate)
 P(OnDeactivate)
+P(OnHoverEnter)
+P(OnHoverLeave)
 END_CLS()
 
 

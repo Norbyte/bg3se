@@ -210,6 +210,20 @@ void StyledRenderable::Render()
     if (ImGui::IsItemDeactivated() && OnDeactivate) {
         Manager->GetEventQueue().Call(OnDeactivate, lua::ImguiHandle(Handle));
     }
+
+    // IsItemHovered() is expensive so we need to make sure we have a handler before doing a hover check
+    if (OnHoverEnter || OnHoverLeave) {
+        auto hovered = ImGui::IsItemHovered();
+        if (WasHovered != hovered) {
+            if (hovered && OnHoverEnter) {
+                Manager->GetEventQueue().Call(OnHoverEnter, lua::ImguiHandle(Handle));
+            }
+            if (!hovered && OnHoverLeave) {
+                Manager->GetEventQueue().Call(OnHoverLeave, lua::ImguiHandle(Handle));
+            }
+        }
+        WasHovered = hovered;
+    }
 }
 
 

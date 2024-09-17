@@ -144,6 +144,7 @@ public:
     bool SameLine{ false };
     bool Visible{ true };
     bool RequestActivate{ false };
+    bool WasHovered{ false };
     FixedString Font;
     std::optional<glm::vec2> PositionOffset;
     std::optional<glm::vec2> AbsolutePosition;
@@ -154,6 +155,8 @@ public:
 
     lua::LuaDelegate<void(lua::ImguiHandle)> OnActivate;
     lua::LuaDelegate<void(lua::ImguiHandle)> OnDeactivate;
+    lua::LuaDelegate<void(lua::ImguiHandle)> OnHoverEnter;
+    lua::LuaDelegate<void(lua::ImguiHandle)> OnHoverLeave;
 
 private:
     lua::ImguiHandle tooltip_;
