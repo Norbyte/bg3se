@@ -733,6 +733,8 @@ public:
     glm::vec4 Max{ 1.0f };
     int Components{ 1 };
     GuiSliderFlags Flags{ 0 };
+    bool Vertical{ false };
+    glm::vec2 VerticalSize{ 1.0f };
     lua::LuaDelegate<void (lua::ImguiHandle, glm::vec4)> OnChange;
 };
 
@@ -749,6 +751,8 @@ public:
     glm::ivec4 Max{ 1 };
     int Components{ 1 };
     GuiSliderFlags Flags{ 0 };
+    bool Vertical{ false };
+    glm::vec2 VerticalSize{ 1.0f };
     lua::LuaDelegate<void (lua::ImguiHandle, glm::ivec4)> OnChange;
 };
 

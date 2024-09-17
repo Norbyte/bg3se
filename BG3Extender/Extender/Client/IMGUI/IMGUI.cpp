@@ -1241,9 +1241,17 @@ void DragInt::StyledRender()
 
 void SliderScalar::StyledRender()
 {
-    if (ImGui::SliderScalarN(Label.c_str(), ImGuiDataType_Float, &Value, Components, &Min, &Max, nullptr, (ImGuiSliderFlags)Flags)) {
-        if (OnChange) {
-            Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Value);
+    if (Vertical) {
+        if (ImGui::VSliderScalar(Label.c_str(), ToImVec(VerticalSize), ImGuiDataType_Float, &Value, &Min, &Max, nullptr, (ImGuiSliderFlags)Flags)) {
+            if (OnChange) {
+                Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Value);
+            }
+        }
+    } else {
+        if (ImGui::SliderScalarN(Label.c_str(), ImGuiDataType_Float, &Value, Components, &Min, &Max, nullptr, (ImGuiSliderFlags)Flags)) {
+            if (OnChange) {
+                Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Value);
+            }
         }
     }
 }
@@ -1251,9 +1259,17 @@ void SliderScalar::StyledRender()
 
 void SliderInt::StyledRender()
 {
-    if (ImGui::SliderScalarN(Label.c_str(), ImGuiDataType_S32, &Value, Components, &Min, &Max, nullptr, (ImGuiSliderFlags)Flags)) {
-        if (OnChange) {
-            Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Value);
+    if (Vertical) {
+        if (ImGui::VSliderInt(Label.c_str(), ToImVec(VerticalSize), &Value.x, Min.x, Max.x, nullptr, (ImGuiSliderFlags)Flags)) {
+            if (OnChange) {
+                Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Value);
+            }
+        }
+    } else {
+        if (ImGui::SliderScalarN(Label.c_str(), ImGuiDataType_S32, &Value, Components, &Min, &Max, nullptr, (ImGuiSliderFlags)Flags)) {
+            if (OnChange) {
+                Manager->GetEventQueue().Call(OnChange, lua::ImguiHandle(Handle), Value);
+            }
         }
     }
 }
