@@ -14,9 +14,11 @@ void VirtualTextureHelpers::Load()
 	auto banks = GetStaticSymbols().GetCurrentResourceBank();
 	auto vtManager = (*GetStaticSymbols().ls__gGlobalResourceManager)->VirtualTextureManager;
 	auto bank = banks->Container.Banks[(unsigned)ResourceBankType::VirtualTexture];
+	resource::VirtualTextureResource* firstTex{ nullptr };
 
 	for (auto const& res : bank->Resources) {
 		auto tex = static_cast<resource::VirtualTextureResource*>(res.Value);
+		firstTex = tex;
 		auto remap = pendingRemaps.try_get(tex->GTexFileName);
 		if (remap) {
 			auto gtsGuid = gtsToGuid_.try_get(*remap);
@@ -32,6 +34,10 @@ void VirtualTextureHelpers::Load()
 			tex->TileSetFileName = FixedString(gtsGuid->ToString());
 			pendingRemaps.remove(tex->GTexFileName);
 ;		}
+	}
+
+	if (firstTex != nullptr) {
+		firstTex->Load(*GetStaticSymbols().ls__gGlobalResourceManager);
 	}
 
 	for (auto const& remap : pendingRemaps) {
