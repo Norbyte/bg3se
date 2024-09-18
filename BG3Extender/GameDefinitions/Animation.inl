@@ -9,12 +9,17 @@ using namespace bg3se::lua;
 
 FixedString GenomeVariant::GetTypeName() const
 {
-	return Type->TypeName;
+	return Type ? Type->TypeName : FixedString{};
 }
 
 
 UserReturn GenomeVariant::LuaGetValue(lua_State* L) const
 {
+	if (Type == nullptr) {
+		push(L, nullptr);
+		return 1;
+	}
+
 	if (Type->TypeName == GFS.strInt 
 		|| Type->TypeName == GFS.strEnum) {
 		push(L, *reinterpret_cast<int32_t const*>(&Value));

@@ -37,8 +37,11 @@ struct [[bg3::hidden]] GenomeVariant
 {
 	void* Value;
 	GenomeVarTypeDesc* Type;
-	bool Assigned;
-	bool Constant;
+#if 0
+	// Only present in editor build
+	// bool Assigned;
+	// bool Constant;
+#endif
 
 	FixedString GetTypeName() const;
 	UserReturn LuaGetValue(lua_State* L) const;
