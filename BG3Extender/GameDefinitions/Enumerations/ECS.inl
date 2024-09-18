@@ -187,8 +187,10 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 	E(AnimationWaterfall)
 	E(DynamicAnimationTags)
 	E(TemplateAnimationSetOverride)
+	E(AnimationTextKeyEventsSingleton)
 	E(AnimationGameplayEvents)
 	E(AnimationTextKeyEvents)
+	E(AnimationTriggeredEvents)
 
 	// Passives
 	E(PassiveContainer)
@@ -638,6 +640,12 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 	E(ServerVariableManager)
 	E(IsMarkedForDeletion)
 	E(JumpFollow)
+
+	// Server events
+	E(ServerTemplateChangedEvent)
+	E(ServerTemplateTransformedEvent)
+	E(TagsChangedEvent)
+	E(SummonCreatedEvent)
 
 	// Passives
 	E(ServerToggledPassives)

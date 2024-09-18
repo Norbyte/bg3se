@@ -4,12 +4,13 @@
 #include <GameDefinitions/Components/CharacterCreation.h>
 #include <GameDefinitions/Components/Combat.h>
 #include <GameDefinitions/Components/Components.h>
+#include <GameDefinitions/Components/Data.h>
 #include <GameDefinitions/Components/Inventory.h>
 #include <GameDefinitions/Components/Item.h>
 #include <GameDefinitions/Components/Hit.h>
 #include <GameDefinitions/Components/Passives.h>
 #include <GameDefinitions/Components/Runtime.h>
-#include <GameDefinitions/Components/Data.h>
+#include <GameDefinitions/Components/Events.h>
 #include <GameDefinitions/Components/Party.h>
 #include <GameDefinitions/Components/Spell.h>
 #include <GameDefinitions/Components/Interrupt.h>

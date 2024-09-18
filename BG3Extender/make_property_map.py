@@ -621,6 +621,7 @@ sources = [
     'GameDefinitions/Components/Spell.h',
     'GameDefinitions/Components/Interrupt.h',
     'GameDefinitions/Components/Data.h',
+    'GameDefinitions/Components/Events.h',
     'GameDefinitions/Components/Hit.h',
     'GameDefinitions/Components/Item.h',
     'GameDefinitions/Components/Inventory.h',

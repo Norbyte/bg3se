@@ -194,6 +194,64 @@ struct AnimationReceivedTextKeyEvent
 
 END_SE()
 
+BEGIN_NS(animation)
+
+struct ReceivedEvent
+{
+	FixedString Event;
+	Array<gn::GenomeVariant> Args;
+};
+
+
+struct TextKeyEventValue
+{
+	FixedString field_0;
+	uint8_t field_4;
+};
+
+
+struct TextKeyEventInfo
+{
+	FixedString TextKey;
+	uint8_t field_4;
+	std::optional<TextKeyEventValue> field_8;
+};
+
+
+struct TextKeyEventsSingletonComponent : public BaseComponent
+{
+	DEFINE_COMPONENT(AnimationTextKeyEventsSingleton, "ls::animation::TextKeyEventsSingletonComponent")
+
+	Array<AnimationReceivedTextKeyEvent> Events;
+};
+
+
+struct GameplayEventsOneFrameComponent : public BaseComponent
+{
+	DEFINE_COMPONENT(AnimationGameplayEvents, "eoc::animation::GameplayEventsOneFrameComponent")
+
+	HashMap<EntityHandle, Array<ReceivedEvent>> Events;
+};
+
+
+struct TextKeyEventsOneFrameComponent : public BaseComponent
+{
+	DEFINE_COMPONENT(AnimationTextKeyEvents, "eoc::animation::TextKeyEventsOneFrameComponent")
+
+	HashMap<EntityHandle, Array<TextKeyEventInfo>> Events;
+};
+
+
+struct TriggeredEventsOneFrameComponent : public BaseComponent
+{
+	DEFINE_COMPONENT(AnimationTriggeredEvents, "eoc::animation::TriggeredEventsOneFrameComponent")
+
+	HashMap<EntityHandle, Array<FixedString>> Events;
+};
+
+END_NS()
+
+
 BEGIN_NS(esv)
 
 struct DisplayName

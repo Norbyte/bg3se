@@ -156,6 +156,7 @@
     <ClCompile Include="Extender\Server\ServerNetworking.cpp" />
     <ClCompile Include="Extender\Client\IMGUI\IMGUI.cpp" />
     <ClCompile Include="Extender\Client\SDL.cpp" />
+    <ClCompile Include="GameDefinitions\GameDefinitionHelpers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -487,6 +488,7 @@
     <ClInclude Include="GameDefinitions\Components\Roll.h" />
     <ClInclude Include="GameDefinitions\Ai.h" />
     <ClInclude Include="GameDefinitions\Components\Timeline.h" />
+    <ClInclude Include="GameDefinitions\Components\Events.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -725,6 +727,7 @@
     <None Include="GameDefinitions\Ai.inl" />
     <None Include="Lua\Libs\ClientUI\Names.inl" />
     <None Include="Lua\Shared\LuaDelegate.inl" />
+    <None Include="GameDefinitions\Animation.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

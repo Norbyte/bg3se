@@ -171,6 +171,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\Components\CharacterCreation.h" />
     <ClInclude Include="GameDefinitions\Components\Combat.h" />
     <ClInclude Include="GameDefinitions\Components\Components.h" />
+    <ClInclude Include="GameDefinitions\Components\Events.h" />
     <ClInclude Include="GameDefinitions\Components\Hit.h" />
     <ClInclude Include="GameDefinitions\Components\Interrupt.h" />
     <ClInclude Include="GameDefinitions\Components\Inventory.h" />
@@ -324,6 +325,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClCompile Include="GameDefinitions\Base\Base.cpp" />
     <ClCompile Include="GameDefinitions\EntitySystem.cpp" />
     <ClCompile Include="GameDefinitions\Enumerations.cpp" />
+    <ClCompile Include="GameDefinitions\GameDefinitionHelpers.cpp" />
     <ClCompile Include="GameDefinitions\GameHelpers.cpp" />
     <ClCompile Include="GameDefinitions\GlobalFixedStrings.cpp" />
     <ClCompile Include="GameDefinitions\Stats\Stats.cpp" />
@@ -396,6 +398,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="Extender\Shared\VirtualTextureMerge.inl" />
     <None Include="Extender\Shared\VirtualTextures.inl" />
     <None Include="GameDefinitions\Ai.inl" />
+    <None Include="GameDefinitions\Animation.inl" />
     <None Include="GameDefinitions\Base\TypeInformation.inl" />
     <None Include="GameDefinitions\Components\AllComponentTypes.inl" />
     <None Include="GameDefinitions\Enumerations\ECS.inl" />
