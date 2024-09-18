@@ -145,6 +145,8 @@ bool EntityComponentEventHooks::Unsubscribe(SubscriptionIndex index)
 
 void EntityComponentEventHooks::OnEntityEvent(ecs::EntityWorld& world, EntityHandle entity, ecs::ComponentTypeIndex type, EntityComponentEvent events, void* component)
 {
+	if (!hookedComponentMask_[(unsigned)type]) return;
+
 	auto& hooks = hookedComponents_[(unsigned)type];
 	if ((unsigned)(hooks.Events & events) == 0) return;
 

@@ -823,6 +823,8 @@ void EntitySystemHelpersBase::Update()
 		ValidateEntityChanges();
 	}
 
+	ThrowECBFlushEvents();
+
 	if (logging_) {
 		DebugLogECBFlushChanges();
 		DebugLogUpdateChanges();
@@ -889,6 +891,8 @@ void EntitySystemHelpersBase::OnFlushECBs()
 		ValidateECBFlushChanges();
 	}
 
+	ThrowECBFlushEvents();
+
 	if (logging_) {
 		DebugLogECBFlushChanges();
 	}
@@ -897,7 +901,6 @@ void EntitySystemHelpersBase::OnFlushECBs()
 void EntitySystemHelpersBase::DebugLogECBFlushChanges()
 {
 	auto world = GetEntityWorld();
-	EntityHandle last{};
 
 	for (auto& ecb : world->CommandBuffers) {
 		for (unsigned i = 0; i < ecb.Data.EntityChanges.KeysSize; i++) {
@@ -911,6 +914,32 @@ void EntitySystemHelpersBase::DebugLogECBFlushChanges()
 
 				log_.AddComponentChange(world, entityHandle, upd.ComponentTypeId, 
 					(upd.PoolIndex.PageIndex != 0xffff) ? ComponentChangeFlags::Create : ComponentChangeFlags::Destroy);
+			}
+		}
+	}
+}
+
+void EntitySystemHelpersBase::ThrowECBFlushEvents()
+{
+	auto state = GetExtensionState();
+	if (state == nullptr || !state->GetLua()) return;
+
+	auto world = GetEntityWorld();
+	auto& hooks = state->GetLua()->GetComponentEventHooks();
+
+	for (auto& ecb : world->CommandBuffers) {
+		for (unsigned i = 0; i < ecb.Data.EntityChanges.KeysSize; i++) {
+			auto entity = ecb.Data.EntityChanges.KeyAt(i);
+			auto const& entityChanges = ecb.Data.EntityChanges.Values[i];
+
+			for (unsigned j = 0; j < entityChanges.Store.Size; j++) {
+				auto const& upd = entityChanges.Store[j];
+				if (upd.PoolIndex.PageIndex != 0xffff) {
+					auto typeInfo = GetComponentMeta(upd.ComponentTypeId);
+					if (typeInfo && typeInfo->OneFrame) {
+						hooks.OnEntityEvent(*world, entity, upd.ComponentTypeId, lua::EntityComponentEvent::Create, nullptr);
+					}
+				}
 			}
 		}
 	}
@@ -944,9 +973,16 @@ void EntitySystemHelpersBase::ValidateMappedComponentSizes()
 
 	Array<ComponentTypeIndex> deletions;
 	for (unsigned componentIdx = 0; componentIdx < components_.size(); componentIdx++) {
-		if (components_[componentIdx].ComponentIndex != UndefinedComponent
-			&& !ValidateMappedComponentSize(world, components_[componentIdx].ComponentIndex, ExtComponentType{componentIdx})) {
-			deletions.push_back(components_[componentIdx].ComponentIndex);
+		auto componentType = components_[componentIdx].ComponentIndex;
+		if (componentType != UndefinedComponent) {
+			if (!ValidateMappedComponentSize(world, componentType, ExtComponentType{ componentIdx })) {
+				deletions.push_back(componentType);
+			}
+
+			auto registryEntry = world->ComponentRegistry_.Get(componentType);
+			if (registryEntry) {
+				components_[componentIdx].OneFrame = registryEntry->OneFrame;
+			}
 		}
 	}
 
@@ -1188,9 +1224,19 @@ EntityWorld* ServerEntitySystemHelpers::GetEntityWorld() const
 	return GetStaticSymbols().GetServerEntityWorld();
 }
 
+ExtensionStateBase* ServerEntitySystemHelpers::GetExtensionState() const
+{
+	return gExtender->GetServer().HasExtensionState() ? &gExtender->GetServer().GetExtensionState() : nullptr;
+}
+
 EntityWorld* ClientEntitySystemHelpers::GetEntityWorld() const
 {
 	return GetStaticSymbols().GetClientEntityWorld();
+}
+
+ExtensionStateBase* ClientEntitySystemHelpers::GetExtensionState() const
+{
+	return gExtender->GetClient().HasExtensionState() ? &gExtender->GetClient().GetExtensionState() : nullptr;
 }
 
 END_NS()

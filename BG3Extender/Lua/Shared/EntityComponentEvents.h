@@ -27,6 +27,7 @@ public:
 	SubscriptionIndex Subscribe(ecs::ComponentTypeIndex type, EntityHandle entity, EntityComponentEvent events, 
 		EntityComponentEventFlags flags, RegistryEntry&& hook);
 	bool Unsubscribe(SubscriptionIndex index);
+	void OnEntityEvent(ecs::EntityWorld& world, EntityHandle entity, ecs::ComponentTypeIndex type, EntityComponentEvent events, void* component);
 
 private:
 	struct ComponentHook
@@ -63,7 +64,6 @@ private:
 	Array<DeferredEvent> deferredEvents_;
 	Array<SubscriptionIndex> deferredUnsubscriptions_;
 
-	void OnEntityEvent(ecs::EntityWorld& world, EntityHandle entity, ecs::ComponentTypeIndex type, EntityComponentEvent events, void* component);
 	void CallHandler(EntityHandle entity, ecs::ComponentTypeIndex type, EntityComponentEvent events, void* component, ComponentHook& hook, SubscriptionIndex index);
 	void CallHandlerUnsafe(EntityHandle entity, ecs::ComponentTypeIndex type, EntityComponentEvent events, void* component, ComponentHook& hook, SubscriptionIndex index);
 	void DeferHandler(EntityHandle entity, ecs::ComponentTypeIndex type, EntityComponentEvent events, SubscriptionIndex index);

@@ -104,6 +104,7 @@ public:
 		uint16_t Size{ 0 };
 		lua::GenericPropertyMap* Properties{ nullptr };
 		bool IsProxy{ false };
+		bool OneFrame{ false };
 	};
 
 	EntitySystemHelpersBase();
@@ -143,6 +144,12 @@ public:
 		} else {
 			return {};
 		}
+	}
+
+	inline PerComponentData const* GetComponentMeta(ComponentTypeIndex type) const
+	{
+		auto extType = ecsComponentData_.Get(type).ExtType;
+		return extType ? &components_[(unsigned)*extType] : nullptr;
 	}
 
 	inline PerComponentData const& GetComponentMeta(ExtComponentType type) const
@@ -201,6 +208,7 @@ public:
 	}
 
 	virtual EntityWorld* GetEntityWorld() const = 0;
+	virtual ExtensionStateBase* GetExtensionState() const = 0;
 
 	template <class T>
 	std::optional<resource::GuidResourceBank<T>*> GetResourceManager()
@@ -306,6 +314,7 @@ private:
 	void DebugLogUpdateChanges();
 	void DebugLogReplicationChanges();
 	void DebugLogECBFlushChanges();
+	void ThrowECBFlushEvents();
 };
 
 class ServerEntitySystemHelpers : public EntitySystemHelpersBase
@@ -314,6 +323,7 @@ public:
 	void Setup();
 
 	EntityWorld* GetEntityWorld() const override;
+	ExtensionStateBase* GetExtensionState() const override;
 };
 
 class ClientEntitySystemHelpers : public EntitySystemHelpersBase
@@ -322,6 +332,7 @@ public:
 	void Setup();
 
 	EntityWorld* GetEntityWorld() const override;
+	ExtensionStateBase* GetExtensionState() const override;
 };
 
 END_NS()

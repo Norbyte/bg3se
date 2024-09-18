@@ -19,12 +19,26 @@ LuaEntitySubscriptionId EntityEventHelpers::SubscribeReplication(lua_State* L, E
 LuaEntitySubscriptionId EntityEventHelpers::Subscribe(lua_State* L, EntityHandle entity, ExtComponentType component, 
 	EntityComponentEvent event, EntityComponentEventFlags flags, RegistryEntry&& hook)
 {
-	auto componentType = State::FromLua(L)->GetEntitySystemHelpers()->GetComponentIndex(component);
+	auto state = State::FromLua(L);
+	auto componentType = state->GetEntitySystemHelpers()->GetComponentIndex(component);
 	if (!componentType) {
 		luaL_error(L, "No events are available for components of type %s", EnumInfo<ExtComponentType>::GetStore().Find((EnumUnderlyingType)component).GetString());
 	}
 
-	auto& hooks = State::FromLua(L)->GetComponentEventHooks();
+	auto const& meta = state->GetEntitySystemHelpers()->GetComponentMeta(component);
+	if (meta.OneFrame) {
+		if ((event & EntityComponentEvent::Destroy) == EntityComponentEvent::Destroy) {
+			luaL_error(L, "Destroy events are not available for one-frame components (%s)", EnumInfo<ExtComponentType>::GetStore().Find((EnumUnderlyingType)component).GetString());
+		}
+
+		if ((event & EntityComponentEvent::Create) == EntityComponentEvent::Create
+			&& (flags & EntityComponentEventFlags::Deferred) != EntityComponentEventFlags::Deferred) {
+			flags |= EntityComponentEventFlags::Deferred;
+			WARN("Only deferred create events are available for one-frame components (%s)", EnumInfo<ExtComponentType>::GetStore().Find((EnumUnderlyingType)component).GetString());
+		}
+	}
+
+	auto& hooks = state->GetComponentEventHooks();
 	auto index = hooks.Subscribe(*componentType, entity, event, flags, std::move(hook));
 	return LuaEntitySubscriptionId((ComponentEventHandleType << 32) | index);
 }
