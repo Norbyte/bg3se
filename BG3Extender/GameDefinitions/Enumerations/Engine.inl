@@ -150,7 +150,7 @@ BEGIN_BITMASK(AnimationSetAnimationFlags, uint8_t)
 	EV(NoFallback, 2)
 END_ENUM()
 
-BEGIN_ENUM(TextKeyPropertiesType, uint8_t)
+BEGIN_ENUM(TextKeyType, uint8_t)
 	EV(Sound, 1)
 	EV(Effect, 2)
 	EV(FootStep, 3)

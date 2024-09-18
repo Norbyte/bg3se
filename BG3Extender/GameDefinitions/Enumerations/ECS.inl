@@ -168,6 +168,7 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 	E(HealBlock)
 	E(Ruleset)
 	E(RulesetModifiers)
+	E(TimeFactor)
 
 	// Stats
 	E(ServerBaseData)

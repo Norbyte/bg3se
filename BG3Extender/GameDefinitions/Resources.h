@@ -323,18 +323,20 @@ BEGIN_NS(resource)
 struct Resource : public ProtectedGameObject<Resource>
 {
 	virtual ~Resource() = 0;
-	virtual void* GetMetadata(void*) = 0;
-	virtual STDString* DebugDump(STDString&) = 0;
-	virtual void SetGuid(FixedString const&) = 0;
+	virtual void* GetLogInfo(void*) = 0;
+	virtual STDString* ToLogString(STDString&) = 0;
+	virtual void SetUUID(FixedString const&) = 0;
 	virtual void VMT18(FixedString const&) = 0;
-	virtual void ForceUnload(ResourceManager* mgr) = 0;
-	virtual bool IncRef(ResourceManager* mgr) = 0;
-	virtual bool DecRef(ResourceManager* mgr) = 0;
-	virtual bool IsInState2() = 0;
-	virtual bool IsInState3() = 0;
+	virtual void Destroy(ResourceManager* mgr) = 0;
+	virtual bool Load(ResourceManager* mgr) = 0;
+	virtual bool Release(ResourceManager* mgr) = 0;
+	virtual bool IsLoaded() = 0;
+	virtual bool IsLoadFailed() = 0;
 	virtual uint32_t GetType() = 0;
 	virtual Resource* Clone() = 0;
 	virtual bool Visit(ObjectVisitor& visitor) = 0;
+	virtual bool DoLoad(ResourceManager* mgr) = 0;
+	virtual bool DoUnload(ResourceManager* mgr) = 0;
 
 	Path SourceFile;
 	[[bg3::readonly]] FixedString Guid;
@@ -478,7 +480,7 @@ struct AnimationResource : public TwoStepLoadableResource
 		float Length;
 		uint8_t Track;
 
-		TextKeyProperties* Properties;
+		TextKeyTypeProperties* Properties;
 	};
 
 	Array<Event*> Events;

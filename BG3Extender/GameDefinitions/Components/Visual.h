@@ -133,6 +133,65 @@ struct CharacterCreationAppearanceComponent : public BaseComponent
 	Guid HairColor;
 };
 
+struct AnimationWaterfallElement
+{
+	FixedString Slot;
+	FixedString Resource;
+	FixedString Type;
+};
+
+struct AnimationWaterfallOverride
+{
+	Guid AnimationTag;
+	uint8_t OverrideType;
+	Array<AnimationWaterfallElement> Overrides;
+};
+
+struct AnimationTag
+{
+	Guid Tag;
+	uint8_t field_10;
+};
+
+
+struct AnimationWaterfallComponent : public BaseComponent
+{
+	DEFINE_COMPONENT(AnimationWaterfall, "ls::animation::AnimationWaterfallComponent")
+
+	Array<AnimationWaterfallElement> Waterfall;
+	Array<AnimationWaterfallOverride> Overrides;
+};
+
+struct DynamicAnimationTagsComponent : public BaseComponent
+{
+	DEFINE_COMPONENT(DynamicAnimationTags, "ls::animation::DynamicAnimationTagsComponent")
+
+	Array<AnimationTag> Tags;
+};
+
+struct TemplateAnimationSetOverrideComponent : public BaseComponent
+{
+	DEFINE_COMPONENT(TemplateAnimationSetOverride, "ls::animation::TemplateAnimationSetOverrideComponent")
+
+	Array<AnimationWaterfallElement> Overrides;
+};
+
+
+struct AnimationReceivedGameplayEvent
+{
+	EntityHandle Entity;
+	FixedString Event;
+	[[bg3::hidden]] gn::GenomeParametrizedEventArgs Args;
+};
+
+struct AnimationReceivedTextKeyEvent
+{
+	EntityHandle Entity;
+	TextKeyEvent* Event;
+	[[bg3::hidden]] void* Skeleton;
+};
+
+
 END_SE()
 
 BEGIN_NS(esv)

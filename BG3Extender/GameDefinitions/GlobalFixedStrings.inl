@@ -160,3 +160,16 @@ FS(ActiveRoll);
 FS(PassiveRoll);
 FS(Trade);
 FS(Pop);
+
+// Genome type names
+FS(Int);
+FS(Enum);
+FS(String);
+FS(Path);
+FS(Vector3);
+FS(Rotator3);
+FS(Float3x3);
+FS(Float4x4);
+FS(AnimationSimpleName);
+FS(AnimationSetID);
+FS(AnimationComplexName);

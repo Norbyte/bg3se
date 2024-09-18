@@ -423,12 +423,12 @@ void LuaPolymorphic<IActionData>::MakeRef(lua_State* L, IActionData* value, Life
 #undef V
 }
 
-void LuaPolymorphic<TextKeyProperties>::MakeRef(lua_State* L, TextKeyProperties* value, LifetimeHandle const& lifetime)
+void LuaPolymorphic<TextKeyTypeProperties>::MakeRef(lua_State* L, TextKeyTypeProperties* value, LifetimeHandle const& lifetime)
 {
-#define V(type) case TextKeyPropertiesType::type: \
+#define V(type) case TextKeyType::type: \
 			MakeDirectObjectRef(L, static_cast<TextKey##type##TypeProperties*>(value), lifetime); break;
 
-	switch (value->GetPropertyType()) {
+	switch (value->GetType()) {
 		V(Sound)
 		V(Effect)
 		V(FootStep)
