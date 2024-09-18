@@ -8,15 +8,21 @@ struct [[bg3::hidden]] GenomeVariant;
 
 struct [[bg3::hidden]] GenomeVarTypeDesc
 {
-	void (*Assign)(GenomeVariant* this_, GenomeVariant* other_);
-	void (*AssignFromRawValue)(GenomeVariant* this_, void* data);
-	bool (*ParseXMLNode)(void* XMLReader, FixedString NodeID, GenomeVariant* this_);
+	using AssignProc = void (GenomeVariant* variant, GenomeVariant* other);
+	using AssignFromRawValueProc = void (GenomeVariant* this_, void* data);
+	using VisitProc = bool (ObjectVisitor* visitor, FixedString const& node, GenomeVariant* variant);
+	using FromStringProc = void (GenomeVariant* variant, char const* str);
+	using ToStringProc = void (GenomeVariant* variant, STDString* out);
+	using DestroyProc = void (GenomeVariant* variant);
+	using ComparatorProc = void (void* this_, void* other);
 
-	void (*FromString)(void* data, char* str);
-	void (*ToString)(void* data, STDString* out);
-
-	void (*Destroy)(void* data);
-	void (*operator_less)(void* this_, void* other);
+	AssignProc* Assign;
+	AssignFromRawValueProc* AssignFromRawValue;
+	VisitProc* Visit;
+	FromStringProc* FromString;
+	ToStringProc* ToString;
+	DestroyProc* Destroy;
+	ComparatorProc* Comparator;
 
 	uint32_t TypeHash;
 	uint32_t TypeHash2;
@@ -33,6 +39,9 @@ struct [[bg3::hidden]] GenomeVariant
 	GenomeVarTypeDesc* Type;
 	bool Assigned;
 	bool Constant;
+
+	FixedString GetTypeName() const;
+	UserReturn LuaGetValue(lua_State* L) const;
 };
 
 struct [[bg3::hidden]] GenomeParametrizedEventArgs
@@ -45,29 +54,33 @@ END_NS()
 
 BEGIN_SE()
 
-struct TextKeyProperties : public ProtectedGameObject<TextKeyProperties>
+struct TextKeyTypeProperties : public ProtectedGameObject<TextKeyTypeProperties>
 {
-	virtual ~TextKeyProperties() = 0;
-	virtual bool ParseXML(void* XMLReader) = 0;
-	virtual TextKeyPropertiesType GetPropertyType() = 0;
+	virtual ~TextKeyTypeProperties() = 0;
+	virtual bool Visit(ObjectVisitor* visitor) = 0;
+	virtual TextKeyType GetType() = 0;
+	virtual void Init(TextKeyTypeProperties* props) = 0;
+	virtual void Prepare(void* prepareData) = 0;
+	virtual void Unprepare() = 0;
 };
 
-struct TextKeySoundTypeProperties : public TextKeyProperties
+struct TextKeySoundTypeProperties : public TextKeyTypeProperties
 {
 	uint8_t SoundObjectIndex;
 	FixedString Resource;
 };
 
-struct TextKeyEffectTypeProperties : public TextKeyProperties
+struct TextKeyEffectTypeProperties : public TextKeyTypeProperties
 {
 	FixedString Effect;
 	FixedString Bone;
-	[[bg3::hidden]] __int32 field_10;
+	FixedString field_10;
 	bool HardAttach;
 	bool InterruptLoopAtEnd;
+	int16_t BoneId;
 };
 
-struct TextKeyFootStepTypeProperties : public TextKeyProperties
+struct TextKeyFootStepTypeProperties : public TextKeyTypeProperties
 {
 	uint8_t FootID;
 	bool Slide;
@@ -78,30 +91,30 @@ struct TextKeyFootStepTypeProperties : public TextKeyProperties
 	bool PlayHearingFX;
 };
 
-struct TextKeyAttachTypeProperties : public TextKeyProperties
+struct TextKeyAttachTypeProperties : public TextKeyTypeProperties
 {
 	FixedString Bone;
 	FixedString AttachBone;
 	bool Detach;
 };
 
-struct TextKeyWeaponEffectTypeProperties : public TextKeyProperties
+struct TextKeyWeaponEffectTypeProperties : public TextKeyTypeProperties
 {
-	int Weapon;
-	int EffectType;
+	uint32_t Weapon;
+	uint32_t EffectType;
 };
 
-struct TextKeyGenomeTypeProperties : public TextKeyProperties
-{
-	// Empty
-};
-
-struct TextKeyAttackTypeProperties : public TextKeyProperties
+struct TextKeyGenomeTypeProperties : public TextKeyTypeProperties
 {
 	// Empty
 };
 
-struct TextKeyRagdollTypeProperties : public TextKeyProperties
+struct TextKeyAttackTypeProperties : public TextKeyTypeProperties
+{
+	// Empty
+};
+
+struct TextKeyRagdollTypeProperties : public TextKeyTypeProperties
 {
 	float AngularVelocityModifier;
 	float LinearVelocityModifier;
@@ -115,45 +128,45 @@ struct TextKeyRagdollTypeProperties : public TextKeyProperties
 	bool LockLimits;
 };
 
-struct TextKeyVisualCullFlagTypeProperties : public TextKeyProperties
+struct TextKeyVisualCullFlagTypeProperties : public TextKeyTypeProperties
 {
 	uint32_t VisualFlag;
 	bool Enabled;
 };
 
-struct TextKeyFloatDataTypeProperties : public TextKeyProperties
+struct TextKeyFloatDataTypeProperties : public TextKeyTypeProperties
 {
 	float Data;
 };
 
-struct TextKeyFoleyTypeProperties : public TextKeyProperties
+struct TextKeyFoleyTypeProperties : public TextKeySoundTypeProperties
 {
 	uint8_t FoleyType;
 	uint8_t FoleyIntensity;
 };
 
-struct TextKeyVocalTypeProperties : public TextKeyProperties
+struct TextKeyVocalTypeProperties : public TextKeyTypeProperties
 {
 	uint8_t VocalType;
 };
 
-struct TextKeyFootMoveTypeProperties : public TextKeyProperties
+struct TextKeyFootMoveTypeProperties : public TextKeyTypeProperties
 {
 	uint8_t Data;
 };
 
-struct TextKeyReactTypeProperties : public TextKeyProperties
+struct TextKeyReactTypeProperties : public TextKeyTypeProperties
 {
 	// Empty
 };
 
 struct TextKeyEvent
 {
-	FixedString TextKey;
-	int field_4;
-	int field_8;
-	uint8_t field_C;
-	TextKeyProperties* Properties;
+	FixedString ID;
+	float Time;
+	float Length;
+	uint8_t Track;
+	TextKeyTypeProperties* Properties;
 };
 
 
@@ -161,6 +174,6 @@ END_SE()
 
 BEGIN_NS(lua)
 
-LUA_POLYMORPHIC(TextKeyProperties);
+LUA_POLYMORPHIC(TextKeyTypeProperties);
 
 END_NS()
