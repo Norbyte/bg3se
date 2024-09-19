@@ -148,6 +148,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="Extender\Shared\ScriptHelpers.h" />
     <ClInclude Include="Extender\Shared\StatLoadOrderHelper.h" />
     <ClInclude Include="Extender\Shared\tinyxml2.h" />
+    <ClInclude Include="Extender\Shared\UseActions.h" />
     <ClInclude Include="Extender\Shared\UserVariables.h" />
     <ClInclude Include="Extender\Shared\Utils.h" />
     <ClInclude Include="Extender\Shared\VirtualTextures.h" />
@@ -394,6 +395,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="Extender\Shared\ExtenderProtocol.proto" />
     <None Include="Extender\Shared\StatLoadOrderHelper.inl" />
     <None Include="Extender\Shared\ThreadedExtenderState.inl" />
+    <None Include="Extender\Shared\UseActions.inl" />
     <None Include="Extender\Shared\UserVariables.inl" />
     <None Include="Extender\Shared\VirtualTextureMerge.inl" />
     <None Include="Extender\Shared\VirtualTextures.inl" />
@@ -417,6 +419,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="GameDefinitions\PropertyMaps\Statuses.inl" />
     <None Include="GameDefinitions\PropertyMaps\SurfaceActions.inl" />
     <None Include="GameDefinitions\PropertyMaps\UI.inl" />
+    <None Include="GameDefinitions\RootTemplates.inl" />
     <None Include="GameHooks\EngineHooks.inl" />
     <None Include="LuaScripts\BuiltinLibrary.lua" />
     <None Include="LuaScripts\BuiltinLibraryClient.lua" />

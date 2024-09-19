@@ -7,6 +7,7 @@
 
 #include <Extender/Shared/StatLoadOrderHelper.inl>
 #include <Extender/Shared/UserVariables.inl>
+#include <Extender/Shared/UseActions.inl>
 #include <Extender/Shared/VirtualTextures.inl>
 
 #undef DEBUG_SERVER_CLIENT

@@ -10,6 +10,7 @@
 #include <Extender/Server/ScriptExtenderServer.h>
 #include <Extender/Shared/StatLoadOrderHelper.h>
 #include <Extender/Shared/VirtualTextures.h>
+#include <Extender/Shared/UseActions.h>
 #include <Extender/Shared/Hooks.h>
 #if !defined(OSI_NO_DEBUGGER)
 #include <Lua/Debugger/LuaDebugger.h>
@@ -120,6 +121,11 @@ public:
 		return virtualTextures_;
 	}
 
+	inline UseActionHelpers& GetUseActionHelpers()
+	{
+		return useActions_;
+	}
+
 #if defined(ENABLE_IMGUI)
 	inline extui::IMGUIManager& IMGUI()
 	{
@@ -157,6 +163,7 @@ private:
 	lua::LuaBundle luaBuiltinBundle_;
 	lua::CppPropertyMapManager propertyMapManager_;
 	VirtualTextureHelpers virtualTextures_;
+	UseActionHelpers useActions_;
 #if defined(ENABLE_IMGUI)
 	extui::IMGUIManager imgui_;
 #endif

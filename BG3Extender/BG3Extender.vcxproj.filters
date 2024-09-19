@@ -489,6 +489,7 @@
     <ClInclude Include="GameDefinitions\Ai.h" />
     <ClInclude Include="GameDefinitions\Components\Timeline.h" />
     <ClInclude Include="GameDefinitions\Components\Events.h" />
+    <ClInclude Include="Extender\Shared\UseActions.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -728,6 +729,8 @@
     <None Include="Lua\Libs\ClientUI\Names.inl" />
     <None Include="Lua\Shared\LuaDelegate.inl" />
     <None Include="GameDefinitions\Animation.inl" />
+    <None Include="Extender\Shared\UseActions.inl" />
+    <None Include="GameDefinitions\RootTemplates.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">
