@@ -105,11 +105,12 @@ struct ConditionRoll
 	ConditionRollType RollType;
 	std::variant<StatsRoll, StatsExpressionResolved> Roll;
 	int Difficulty;
-	Guid field_120;
-	bool field_130;
+	Guid RollUuid;
+	bool SwappedSourceAndTarget;
 	AbilityId Ability;
 	SkillId Skill;
 };
+
 
 struct ConditionRolls
 {

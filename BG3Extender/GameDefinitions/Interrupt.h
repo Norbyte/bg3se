@@ -106,7 +106,7 @@ struct SpellRollEvent
 	Guid RollUuid;
 	FixedString field_10;
 	Guid SpellCastGuid;
-	uint8_t ConditionRollType;
+	ConditionRollType ConditionRollType;
 	RollData Roll;
 	int Difficulty;
 	std::optional<int> field_48;
@@ -124,7 +124,7 @@ struct ConditionalRollEvent
 	__int64 field_20;
 	EntityHandle field_28;
 	FixedString field_30;
-	uint8_t ConditionRollType;
+	ConditionRollType ConditionRollType;
 	RollData Roll;
 	int field_50;
 	AbilityId Ability;

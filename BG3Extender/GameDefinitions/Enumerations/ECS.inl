@@ -178,6 +178,17 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 	E(ServerBaseProficiency)
 	E(ServerProficiencyGroupStats)
 
+	// Stats events
+	E(AbilityCheckEvent)
+	E(EquipmentSlotChangedEvent)
+	E(LevelChanged)
+	E(SavingThrowRolledEvent)
+	E(SkillCheckEvent)
+	E(WeaponPropertiesChangedEvent)
+	E(AttributeFlagsChangedEvent)
+	E(ClassesChangedEvent)
+	E(StatsAppliedEvent)
+
 	// Shapeshift
 	E(ShapeshiftState)
 	E(ShapeshiftHealthReservation)
