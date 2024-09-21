@@ -662,7 +662,18 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 	E(ServerTemplateChangedEvent)
 	E(ServerTemplateTransformedEvent)
 	E(TagsChangedEvent)
+
+	// Summons
 	E(SummonCreatedEvent)
+	E(SummonAddConcentrationRequest)
+	E(SummonAddToExistingConcentrationRequest)
+	E(SummonAttachToProjectileRequest)
+	E(SummonOwnerSetEvent)
+	E(SummonPlaceInInventoryRequest)
+	E(SummonSetLifetimeRequest)
+	E(SummonDespawnRequest)
+	E(SummonExpiredRequest)
+	E(SummonLateJoinPenalty)
 
 	// Passives
 	E(ServerToggledPassives)

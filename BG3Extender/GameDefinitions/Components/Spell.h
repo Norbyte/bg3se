@@ -363,7 +363,7 @@ struct SyncTargetingComponent : public BaseComponent
 	std::optional<EntityHandle> field_10;
 	std::optional<glm::vec3> field_20;
 	Array<InitialTarget> Targets;
-	[[bg3::legacy(field_40)]] bool CanMoveToThrowTarget;
+	[[bg3::legacy(field_40)]] uint8_t CanMoveToThrowTarget;
 	int field_44;
 	std::optional<glm::vec3> field_48;
 	[[bg3::legacy(field_58)]] std::optional<glm::vec3> HoverPosition;

@@ -96,7 +96,7 @@ struct PerformingComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerStatusPerforming, "esv::status::PerformingComponent")
 
-	FixedString field_0;
+	FixedString PerformEvent;
 };
 
 struct Aura
@@ -139,7 +139,7 @@ struct AddEventOneFrameComponent : public BaseComponent
 
 	EntityHandle Target;
 	FixedString StatusId;
-	float Duration;
+	int32_t Duration;
 };
 
 struct ApplyEventOneFrameComponent : public BaseComponent
