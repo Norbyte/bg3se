@@ -438,6 +438,23 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 	E(ServerStatusActive)
 	E(ServerStatusAddedFromSaveLoad)
 	E(ServerStatusAura)
+	E(ServerStatusAuraContainer)
+
+	// Status events
+	E(ServerAddedStatusAuraEffectEvent)
+	E(ServerRemovedStatusAuraEffectEvent)
+	E(ServerStatusAddEvent)
+	E(ServerStatusApplyEvent)
+	E(ServerStatusAttemptEvent)
+	E(ServerStatusAttemptFailedEvent)
+	E(ServerStatusDispelRollCheck)
+	E(ServerStatusDownedChangedEvent)
+	E(ServerStatusRefreshed)
+	E(ServerStatusRemoveEvent)
+	E(ServerStatusScheduledForDeletion)
+	E(ServerStatusEvent)
+	E(ServerStatusTurnStartEvent)
+	E(ServerStatusUpdateTargetTracking)
 
 	// Tadpole
 	E(TadpoleTreeState)
