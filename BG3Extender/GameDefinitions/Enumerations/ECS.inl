@@ -404,6 +404,11 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 	E(ServerSpellCastCache)
 	E(ServerSpellCastInterrupt)
 
+	// Concentration events
+	E(ConcentrationChanged)
+	E(ConcentrationDamageCheck)
+	E(ConcentrationClearedEvent)
+
 	// Interrupts
 	E(InterruptActionState)
 	E(InterruptConditionallyDisabled)

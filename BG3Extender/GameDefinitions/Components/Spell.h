@@ -578,3 +578,33 @@ struct CacheComponent : public BaseComponent
 
 
 END_NS()
+
+BEGIN_NS(esv::concentration)
+
+struct ConcentrationChangedOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(ConcentrationChanged, "esv::concentration::ConcentrationChangedOneFrameComponent")
+
+	SpellId Started;
+	SpellId Ended;
+	bool Interrupted;
+};
+
+struct DamageCheckOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(ConcentrationDamageCheck, "esv::concentration::DamageCheckOneFrameComponent")
+
+	Array<HitDesc> Hits;
+};
+
+struct OnConcentrationClearedEventOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(ConcentrationClearedEvent, "esv::concentration::OnConcentrationClearedEventOneFrameComponent")
+
+	EntityHandle Target;
+	EntityHandle Status;
+	int16_t SurfaceIndex;
+	bool field_12;
+};
+
+END_NS()
