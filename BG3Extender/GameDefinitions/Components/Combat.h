@@ -125,6 +125,37 @@ DEFINE_TAG_COMPONENT(esv::combat, CanStartCombatComponent, ServerCanStartCombat)
 DEFINE_TAG_COMPONENT(esv::combat, ImmediateJoinComponent, ServerImmediateJoin)
 DEFINE_TAG_COMPONENT(esv::combat, FleeBlockedComponent, ServerFleeBlocked)
 
+
+
+struct CombatantKilledEventOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(CombatantKilledEvent, "esv::combat::CombatantKilledEventOneFrameComponent")
+
+	EntityHandle field_0;
+	EntityHandle field_8;
+	uint8_t field_10;
+	uint8_t field_11;
+	uint8_t field_12;
+};
+
+struct LeftEventOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(CombatLeftEvent, "esv::combat::LeftEventOneFrameComponent")
+
+	EntityHandle field_0;
+	Guid field_8;
+};
+
+DEFINE_ONEFRAME_TAG_COMPONENT(esv::combat, CombatScheduledForDeleteOneFrameComponent, CombatScheduledForDelete)
+DEFINE_ONEFRAME_TAG_COMPONENT(esv::combat, CombatStartedEventOneFrameComponent, CombatStartedEvent)
+DEFINE_ONEFRAME_TAG_COMPONENT(esv::combat, DelayedFanfareRemovedDuringCombatEventOneFrameComponent, DelayedFanfareRemovedDuringCombatEvent)
+DEFINE_ONEFRAME_TAG_COMPONENT(esv::combat, JoinInCurrentRoundFailedEventOneFrameComponent, CombatJoinInCurrentRoundFailedEvent)
+DEFINE_ONEFRAME_TAG_COMPONENT(esv::combat, JoinInCurrentRoundOneFrameComponent, CombatJoinInCurrentRound)
+DEFINE_ONEFRAME_TAG_COMPONENT(esv::combat, RequestCompletedEventOneFrameComponent, CombatRequestCompletedEvent)
+DEFINE_ONEFRAME_TAG_COMPONENT(esv::combat, SurprisedJoinRequestOneFrameComponent, CombatSurprisedJoinRequest)
+DEFINE_ONEFRAME_TAG_COMPONENT(esv::combat, SurprisedStealthRequestOneFrameComponent, CombatSurprisedStealthRequest)
+DEFINE_ONEFRAME_TAG_COMPONENT(esv::combat, ThreatRangeChangedEventOneFrameComponent, CombatThreatRangeChangedEvent)
+
 END_NS()
 
 BEGIN_NS(esv::ai::combat)
@@ -168,5 +199,23 @@ struct AiModifiersComponent : public BaseComponent
 	HashMap<FixedString, float> Modifiers;
 	//HashMap<FixedString, HashMap<int, ModifierChange>> Changes;
 };
+
+END_NS()
+
+
+BEGIN_NS(esv::ftb)
+
+struct ModeChangedEventOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(FTBModeChangedEvent, "esv::ftb::ModeChangedEventOneFrameComponent")
+
+	EntityHandle Entity;
+	bool InFTB;
+	uint8_t field_9;
+};
+
+DEFINE_ONEFRAME_TAG_COMPONENT(esv::ftb, PlayersTurnEndedEventOneFrameComponent, FTBPlayersTurnEndedEvent)
+DEFINE_ONEFRAME_TAG_COMPONENT(esv::ftb, PlayersTurnStartedEventOneFrameComponent, FTBPlayersTurnStartedEvent)
+DEFINE_ONEFRAME_TAG_COMPONENT(esv::ftb, RoundEndedEventOneFrameComponent, FTBRoundEndedEvent)
 
 END_NS()

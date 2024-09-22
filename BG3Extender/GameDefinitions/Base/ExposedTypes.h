@@ -83,7 +83,14 @@ struct BoostSource
 	BoostSourceType Type;
 	FixedString Cause;
 	EntityHandle Entity;
-	uint64_t field_10;
+	ComponentHandle Status;
+};
+
+struct BoostDescription
+{
+	FixedString field_0;
+	FixedString field_4;
+	FixedString field_8;
 };
 
 struct ResourceRollDefinition

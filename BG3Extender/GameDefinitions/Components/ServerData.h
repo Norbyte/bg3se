@@ -141,6 +141,38 @@ struct StateComponent : public BaseComponent
 DEFINE_TAG_COMPONENT(esv::death, DeathContinueComponent, ServerDeathContinue)
 
 
+
+struct DeathApplyKnockedOutOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(DeathApplyKnockedOut, "esv::death::ApplyKnockedOutOneFrameComponent")
+
+	EntityHandle field_0;
+	uint8_t field_8;
+	int field_C;
+	char field_10;
+};
+
+struct DeathAssignEntityToUserRequestOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(DeathAssignEntityToUserRequest, "esv::death::AssignEntityToUserRequestOneFrameComponent")
+
+	int UserID;
+};
+
+struct DeathDeadByDefaultRequestOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(DeathDeadByDefaultRequest, "esv::death::DeadByDefaultRequestOneFrameComponent")
+
+	EntityHandle field_0;
+	uint8_t field_8;
+	uint8_t field_9;
+};
+
+DEFINE_ONEFRAME_TAG_COMPONENT(esv::death, DiedEventOneFrameComponent, DiedEvent)
+
+DEFINE_ONEFRAME_TAG_COMPONENT(esv::falling, FallToProneOneFrameComponent, FallToProne)
+
+
 struct PickpocketAttempt
 {
 	[[bg3::legacy(field_0)]] EntityHandle Target;

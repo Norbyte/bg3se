@@ -497,6 +497,27 @@ struct OnDamageSpellsComponent : public BaseComponent
 	Array<OnDamageSpell> Spells;
 };
 
+struct NewSpellsAddedEventOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(NewSpellsAddedEvent, "esv::spell::NewSpellsAddedEventOneFrameComponent")
+
+	Array<SpellMetaId> Spells;
+};
+
+struct LearnedSpell
+{
+	FixedString SpellId;
+	Guid ProgressionSource;
+};
+
+struct SpellsLearnedEventOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(SpellsLearnedEvent, "esv::spell::SpellsLearnedEventOneFrameComponent")
+
+	Array<LearnedSpell> Spells;
+};
+
+DEFINE_ONEFRAME_TAG_COMPONENT(esv::spell, BookChangedOneFrameComponent, SpellBookChanged)
 
 END_NS()
 
@@ -576,6 +597,38 @@ struct CacheComponent : public BaseComponent
 	__int64 field_E8;
 };
 
+struct MoveDuringCastUpdateEventOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(SpellCastMoveDuringCastUpdateEvent, "esv::spell_cast::MoveDuringCastUpdateEventOneFrameComponent")
+
+	glm::vec3 field_0;
+	glm::vec3 field_C;
+	glm::vec3 SurfaceTrail;
+};
+
+struct MovementAndPrecalculationEndEventOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(SpellCastMovementAndPrecalculationEndEvent, "esv::spell_cast::MovementAndPrecalculationEndEventOneFrameComponent")
+
+	uint8_t field_0;
+	int field_4;
+};
+
+struct RequestTargetTrackingOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(SpellCastRequestTargetTracking, "esv::spell_cast::RequestTargetTrackingOneFrameComponent")
+
+	Guid field_0;
+	HashSet<EntityHandle> Targets;
+};
+
+struct UpdateTargetTrackingOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(SpellCastUpdateTargetTracking, "esv::spell_cast::UpdateTargetTrackingOneFrameComponent")
+
+	Guid field_0;
+	HashSet<EntityHandle> Targets;
+};
 
 END_NS()
 

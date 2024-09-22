@@ -180,6 +180,28 @@ struct StartRequestOneFrameComponent : public BaseComponent
 	uint8_t field_10;
 };
 
+struct StartSpellRequestOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(ServerRollStartSpellRequest, "esv::active_roll::StartSpellRequestOneFrameComponent")
+
+	StartSpellRequestOneFrameComponent(const StartSpellRequestOneFrameComponent&) = delete;
+	StartSpellRequestOneFrameComponent& operator = (const StartSpellRequestOneFrameComponent&) = delete;
+
+	SpellId Spell;
+	int field_28;
+	EntityHandle field_30;
+	Array<bg3se::spell_cast::InitialTarget> Targets;
+	ActionOriginator Originator;
+	EntityHandle field_68;
+	EntityHandle field_70;
+	__int64 field_78;
+	int field_80;
+	uint8_t field_84;
+	int field_88;
+	STDString NetGUID;
+	uint8_t field_A8;
+};
+
 END_NS()
 
 

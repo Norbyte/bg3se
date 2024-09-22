@@ -74,4 +74,43 @@ struct ScriptPassivesComponent : public BaseComponent
 	HashSet<FixedString> Passives;
 };
 
+struct RequestTargetTrackingOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(PassiveRequestTargetTracking, "esv::passive::RequestTargetTrackingOneFrameComponent")
+
+	Guid field_0;
+	HashSet<EntityHandle> Targets;
+};
+
+struct UpdateTargetTrackingOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(PassiveUpdateTargetTracking, "esv::passive::UpdateTargetTrackingOneFrameComponent")
+
+	Guid field_0;
+	HashSet<EntityHandle> Targets;
+};
+
+struct PostponedConditionalRoll
+{
+	__int64 field_0;
+	__int64 field_8;
+	ConditionRoll Roll;
+	uint8_t field_148;
+};
+
+struct ConditionalRollInterruptEventOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(PassiveConditionalRollInterruptEvent, "esv::passive::ConditionalRollInterruptEventOneFrameComponent")
+
+	Guid field_0;
+	EntityHandle field_10;
+	EntityHandle field_18;
+	EntityHandle field_20;
+	FixedString field_28;
+	Array<PostponedConditionalRoll> PostponedRolls;
+};
+
+DEFINE_ONEFRAME_TAG_COMPONENT(esv::passive, PassivesUpdatedEventOneFrameComponent, PassivesUpdatedEvent)
+DEFINE_ONEFRAME_TAG_COMPONENT(esv::passive, UsageCountIncrementedEventOneFrameComponent, PasssiveUsageCountIncrementedEvent)
+
 END_NS()

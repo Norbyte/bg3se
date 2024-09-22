@@ -43,9 +43,24 @@ struct ActionResourcesComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ActionResources, "eoc::ActionResourcesComponent")
 
-
 	HashMap<Guid, Array<ActionResourceEntry>> Resources;
 };
+
+struct ActionResourceSpendResult
+{
+	__int64 field_0;
+	__int64 field_8;
+	uint32_t field_10;
+	uint32_t field_14;
+};
+
+struct ActionResourceSpendEventOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(ActionResourceSpendEvent, "eoc::ActionResourceSpendEventOneFrameComponent")
+
+	Array<ActionResourceSpendResult> Results;
+};
+
 
 struct HearingComponent : public BaseComponent
 {

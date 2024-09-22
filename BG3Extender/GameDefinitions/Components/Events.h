@@ -68,7 +68,7 @@ struct SavingThrowRolledEventOneFrameComponent : public BaseComponent
 	ConditionRoll ConditionRoll;
 	Guid SpellCastUuid;
 	FixedString field_178;
-	char field_17C;
+	uint8_t field_17C;
 };
 
 struct SkillCheckEventOneFrameComponent : public BaseComponent

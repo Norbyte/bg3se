@@ -254,6 +254,31 @@ struct Projectile : public BaseProxyComponent
 	[[bg3::hidden]] void* _PAD;
 };
 
+struct ImpactEventOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(ProjectileImpactEvent, "esv::projectile::ImpactEventOneFrameComponent")
+
+	bg3se::spell_cast::IntermediateTarget Target;
+	EntityHandle field_A8;
+};
+
+struct RequestTargetTrackingOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(ProjectileRequestTargetTracking, "esv::projectile::RequestTargetTrackingOneFrameComponent")
+
+	Guid field_0;
+	HashSet<EntityHandle> Targets;
+};
+
+struct UpdateTargetTrackingOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(ProjectileUpdateTargetTracking, "esv::projectile::UpdateTargetTrackingOneFrameComponent")
+
+	Guid field_0;
+	HashSet<EntityHandle> Targets;
+};
+
+DEFINE_ONEFRAME_TAG_COMPONENT(esv::projectile, SplitThrowableObjectRequestOneFrameComponent, ProjectileSplitThrowableObjectRequest)
 
 END_NS()
 

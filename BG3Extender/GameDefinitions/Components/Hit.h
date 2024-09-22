@@ -91,5 +91,47 @@ struct ReactionComponent : public BaseComponent
 	HashMap<EntityHandle, ReactionSource> Reactions;
 };
 
+END_NS()
+
+BEGIN_NS(esv::hit)
+
+struct AnimationEventRequestsData
+{
+	uint8_t HitAnimationType;
+	uint8_t field_1;
+	bool field_2;
+	glm::vec3 field_4;
+	glm::vec3 field_10;
+	glm::vec3 field_1C;
+	EntityHandle field_28;
+};
+
+struct HitAnimationRequestOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(HitAnimationRequest, "esv::hit::HitAnimationRequestOneFrameComponent")
+
+	Array<AnimationEventRequestsData> Requests;
+};
+
+struct HitResultEventOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(HitResultEvent, "esv::hit::HitResultEventOneFrameComponent")
+
+	ActionOriginator field_0;
+	HitDesc field_20;
+	uint8_t field_1D0;
+	EntityHandle Target;
+	bool Lethal;
+	bool ShouldBeDowned;
+	int AC;
+	uint8_t field_1E8;
+};
+
+struct OnHitJoinCombatRequestOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(HitJoinCombatRequest, "esv::hit::OnHitJoinCombatRequestOneFrameComponent")
+
+	HashSet<EntityHandle> Entities;
+};
 
 END_NS()

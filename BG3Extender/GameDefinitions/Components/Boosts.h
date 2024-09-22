@@ -572,4 +572,36 @@ struct BoostBaseComponent : public BaseComponent
 
 DEFINE_TAG_COMPONENT(esv::boost, StatusBoostsProcessedComponent, ServerStatusBoostsProcessed)
 
+
+struct BoostChangedEvent
+{
+	BoostType Type;
+	int field_4;
+	EntityHandle field_8;
+	EntityHandle Owner;
+	BoostSource Source;
+	BoostDescription Description;
+	int field_3C;
+	Guid field_40;
+	Guid field_50;
+	__int64 field_60;
+};
+
+struct ChangedEventOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(BoostChangedEvent, "esv::boost::ChangedEventOneFrameComponent")
+
+	Array<BoostChangedEvent> Events;
+};
+
+
+struct StatusBoostsRefreshedOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(StatusBoostsRefreshed, "esv::boost::StatusBoostsRefreshedOneFrameComponent")
+
+	Array<esv::status::RefreshCause> Causes;
+};
+
+DEFINE_ONEFRAME_TAG_COMPONENT(esv::boost, BaseUpdatedOneFrameComponent, BoostBaseUpdated)
+
 END_NS()

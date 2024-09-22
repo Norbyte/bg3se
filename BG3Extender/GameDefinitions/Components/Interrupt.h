@@ -166,6 +166,14 @@ struct InterruptResultsComponent : public BaseComponent
 	Array<FunctorConditional> Results2;
 };
 
+struct InterruptsUsedOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(SpellCastInterruptsUsed, "esv::spell_cast::InterruptsUsedOneFrameComponent")
+
+	Array<stats::ActionResourceCost> Costs;
+	HashMap<EntityHandle, HashMap<bg3se::interrupt::InterruptEvent, bg3se::interrupt::InterruptUsageEntry>> Interrupts;
+};
+
 END_NS()
 
 BEGIN_NS(esv::interrupt)
@@ -220,6 +228,14 @@ struct DataSingletonComponent : public BaseComponent
 
 	Array<bg3se::interrupt::UndecidedEventWithId> Events;
 	Array<bg3se::interrupt::DelayedTargetHitInterruptEvent> TargetHitInterrupts;
+};
+
+struct UsedOneFrameComponent : public BaseComponent
+{
+	DEFINE_ONEFRAME_COMPONENT(ServerInterruptUsed, "esv::interrupt::UsedOneFrameComponent")
+
+	Array<stats::ActionResourceCost> Costs;
+	HashMap<EntityHandle, HashMap<bg3se::interrupt::InterruptEvent, bg3se::interrupt::InterruptUsageEntry>> Interrupts;
 };
 
 
