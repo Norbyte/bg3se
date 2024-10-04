@@ -93,6 +93,31 @@ struct AiGridTile
 	uint16_t MaxHeight;
 	AiMetaDataId MetaDataIndex;
 	AiSurfaceMetaDataId SurfaceMetaDataIndex;
+
+	AiBaseFlags GetFlags() const
+	{
+		return (AiBaseFlags)(AiFlags & 0xffffff);
+	}
+
+	SurfaceType GetGroundSurface() const
+	{
+		return (SurfaceType)((AiFlags >> 24) & 0xff);
+	}
+
+	SurfaceType GetCloudSurface() const
+	{
+		return (SurfaceType)((AiFlags >> 32) & 0xff);
+	}
+
+	uint8_t GetMaterial() const
+	{
+		return (uint8_t)((AiFlags >> 40) & 0x3f);
+	}
+
+	uint32_t GetExtraFlags() const
+	{
+		return (uint32_t)(AiFlags >> 46);
+	}
 };
 
 
@@ -468,6 +493,22 @@ struct AiGrid : public ProtectedGameObject<AiGrid>
 	static AiWorldPos ToWorldPos(glm::vec3 pos);
 	std::span<AiSubgridId const> GetSubgridsAt(AiWorldPos const& pos) const;
 	bool ToTilePos(AiWorldPos const& pos, AiTilePos& tilePos, AiGridTile const*& tileInfo) const;
+};
+
+
+struct AiGridLuaTile
+{
+	AiBaseFlags Flags;
+	SurfaceType GroundSurface;
+	SurfaceType CloudSurface;
+	uint8_t Material;
+	uint32_t UnmappedFlags;
+	uint32_t ExtraFlags;
+	float MinHeight;
+	float MaxHeight;
+	uint16_t MetaDataIndex;
+	uint16_t SurfaceMetaDataIndex;
+	Array<EntityHandle> Entities;
 };
 
 
