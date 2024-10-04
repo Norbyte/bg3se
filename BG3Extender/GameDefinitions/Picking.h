@@ -83,7 +83,7 @@ struct PlayerPickingHelper : public ProtectedGameObject<PlayerPickingHelper>
 	uint32_t field_26C;
 	HashMap<EntityHandle, PlayerPickingCacheValue> Cache;
 	int field_2B0;
-	float field_2B4;
+	int field_2B4;
 	HashMap<EntityHandle, PlayerPickingCacheValue> SightCheckCache;
 	int field_2F8;
 	bool IsMoving;

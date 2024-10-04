@@ -33,7 +33,7 @@ void VirtualTextureHelpers::Load()
 
 			tex->TileSetFileName = FixedString(gtsGuid->ToString());
 			pendingRemaps.remove(tex->GTexFileName);
-;		}
+		}
 	}
 
 	if (firstTex != nullptr) {

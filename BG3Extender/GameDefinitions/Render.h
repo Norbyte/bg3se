@@ -370,8 +370,6 @@ struct Visual : public MoveableObject
 		uint32_t Flags;
 		uint8_t BoneType1;
 		uint8_t BoneType2;
-		uint8_t field_1E;
-		uint8_t field_1F;
 		FixedString field_20;
 		glm::vec3 field_24;
 	};

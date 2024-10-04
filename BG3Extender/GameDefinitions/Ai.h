@@ -20,11 +20,11 @@ struct AIPortalObjectData : public ProtectedGameObject<AIPortalObjectData>
 	FixedString TargetLevel_M;
 	int PortalType;
 	glm::vec3 StartPos;
-	glm::vec3 field_38;
+	glm::vec3 StartPosAdjusted;
 	glm::vec3 EndPos;
-	glm::vec3 field_50;
+	glm::vec3 EndPosAdjusted;
 	float ActionResourceCost;
-	char IsProhibitedToPlayers;
+	bool IsProhibitedToPlayers;
 	bool IsAttached_M;
 	bool field_62;
 };
