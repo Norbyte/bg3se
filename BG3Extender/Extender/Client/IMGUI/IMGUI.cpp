@@ -378,6 +378,16 @@ lua::ImguiHandle TreeParent::AddMenu(char const* label)
 }
 
 
+lua::ImguiHandle TreeParent::AddSelectable(char const* label, std::optional<GuiSelectableFlags> flags, std::optional<glm::vec2> size)
+{
+    auto sel = AddChild<Selectable>();
+    sel->Label = label;
+    if (flags) sel->Flags = *flags;
+    if (size) sel->Size = size;
+    return sel;
+}
+
+
 lua::ImguiHandle TreeParent::AddButton(char const* label)
 {
     auto btn = AddChild<Button>();
@@ -1096,6 +1106,16 @@ void Separator::StyledRender()
 }
 
 
+void Selectable::StyledRender()
+{
+    if (ImGui::Selectable(Label.c_str(), &Selected, (ImGuiSelectableFlags)Flags, ToImVec(Size))) {
+        if (OnClick) {
+            Manager->GetEventQueue().Call(OnClick, lua::ImguiHandle(Handle));
+        }
+    }
+}
+
+
 void Button::StyledRender()
 {
     if (ImGui::ButtonEx(Label.c_str(), ToImVec(Size), (ImGuiButtonFlags)Flags)) {
@@ -1353,6 +1373,7 @@ IMGUIObjectManager::IMGUIObjectManager()
     pools_[(unsigned)IMGUIObjectType::NewLine] = std::make_unique<IMGUIObjectPool<NewLine>>();
     pools_[(unsigned)IMGUIObjectType::Separator] = std::make_unique<IMGUIObjectPool<Separator>>();
 
+    pools_[(unsigned)IMGUIObjectType::Selectable] = std::make_unique<IMGUIObjectPool<Selectable>>();
     pools_[(unsigned)IMGUIObjectType::Button] = std::make_unique<IMGUIObjectPool<Button>>();
     pools_[(unsigned)IMGUIObjectType::ImageButton] = std::make_unique<IMGUIObjectPool<ImageButton>>();
     pools_[(unsigned)IMGUIObjectType::Checkbox] = std::make_unique<IMGUIObjectPool<Checkbox>>();

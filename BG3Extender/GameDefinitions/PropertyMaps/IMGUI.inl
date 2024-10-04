@@ -60,6 +60,7 @@ P_FUN(AddMenu, extui::TreeParent::AddMenu)
 P_FUN(AddImage, extui::TreeParent::AddImage)
 P_FUN(AddIcon, extui::TreeParent::AddIcon)
 
+P_FUN(AddSelectable, extui::TreeParent::AddSelectable)
 P_FUN(AddButton, extui::TreeParent::AddButton)
 P_FUN(AddImageButton, extui::TreeParent::AddImageButton)
 P_FUN(AddText, extui::TreeParent::AddText)
@@ -257,6 +258,15 @@ END_CLS()
 
 BEGIN_CLS(extui::Separator)
 INHERIT(extui::StyledRenderable)
+END_CLS()
+
+
+BEGIN_CLS(extui::Selectable)
+INHERIT(extui::StyledRenderable)
+P(Size)
+P_BITMASK(Flags)
+P(Selected)
+P(OnClick)
 END_CLS()
 
 

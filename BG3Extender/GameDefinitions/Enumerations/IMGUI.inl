@@ -685,4 +685,12 @@ BEGIN_BITMASK(GuiItemStatusFlags, uint32_t)
 	EV(Active, (uint32_t)(1 << 21))
 END_ENUM()
 
+BEGIN_BITMASK(GuiSelectableFlags, uint32_t)
+	EV(DontClosePopups, (uint32_t)(1 << 0))
+	EV(SpanAllColumns, (uint32_t)(1 << 1))
+	EV(AllowDoubleClick, (uint32_t)(1 << 2))
+	EV(SelectableDisabled, (uint32_t)(1 << 3))
+	EV(AllowOverlap, (uint32_t)(1 << 4))
+END_ENUM()
+
 #endif

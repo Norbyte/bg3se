@@ -51,6 +51,7 @@ enum class IMGUIObjectType : uint8_t
     Separator,
 
     // 
+    Selectable,
     Button,
     ImageButton,
     Checkbox,
@@ -181,6 +182,8 @@ public:
     lua::ImguiHandle AddChildWindow(char const* label);
     lua::ImguiHandle AddMenu(char const* label);
 
+    lua::ImguiHandle AddSelectable(char const* label, std::optional<GuiSelectableFlags> flags, 
+        std::optional<glm::vec2> size);
     lua::ImguiHandle AddButton(char const* label);
     lua::ImguiHandle AddImageButton(char const* label, FixedString iconOrTexture,
         std::optional<glm::vec2> size, std::optional<glm::vec2> uv0, std::optional<glm::vec2> uv1);
@@ -593,6 +596,21 @@ public:
     DECL_UI_TYPE(Separator)
 
     void StyledRender() override;
+};
+
+
+struct Selectable : public StyledRenderable
+{
+public:
+    DECL_UI_TYPE(Selectable)
+
+    void StyledRender() override;
+
+    std::optional<glm::vec2> Size;
+    GuiSelectableFlags Flags;
+    bool Selected{ false };
+
+    lua::LuaDelegate<void (lua::ImguiHandle)> OnClick;
 };
 
 
