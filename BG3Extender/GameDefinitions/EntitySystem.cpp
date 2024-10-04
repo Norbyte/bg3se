@@ -418,6 +418,11 @@ StringView ECSComponentLog::GetName() const
 	return name ? *name : StringView{};
 }
 
+std::optional<ExtComponentType> ECSComponentLog::GetType() const
+{
+	return GetCurrentExtensionState()->GetLua()->GetEntitySystemHelpers()->GetComponentType(ComponentType);
+}
+
 void ECSChangeLog::Clear()
 {
 	Entities.clear();

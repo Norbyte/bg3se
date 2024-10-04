@@ -70,6 +70,7 @@ struct ECSComponentLog
 	ComponentChangeFlags Flags{ 0 };
 
 	StringView GetName() const;
+	std::optional<ExtComponentType> GetType() const;
 };
 
 struct ECSEntityLog
