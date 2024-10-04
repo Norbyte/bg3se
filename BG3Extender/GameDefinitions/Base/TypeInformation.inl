@@ -54,10 +54,17 @@ void TypeInformation::DeferredInitialize()
 		break;
 
 	case LuaTypeId::Array:
-	case LuaTypeId::Set:
 		ElementType.GetStatic()->DeferredInitialize();
 		if (!TypeName && ElementType) {
 			TypeName = FixedString(STDString("Array<") + ElementType.Get().TypeName.GetString() + ">");
+			TypeInformationRepository::GetInstance().RegisterType(this);
+		}
+		break;
+
+	case LuaTypeId::Set:
+		ElementType.GetStatic()->DeferredInitialize();
+		if (!TypeName && ElementType) {
+			TypeName = FixedString(STDString("Set<") + ElementType.Get().TypeName.GetString() + ">");
 			TypeInformationRepository::GetInstance().RegisterType(this);
 		}
 		break;
