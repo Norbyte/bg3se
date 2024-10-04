@@ -973,6 +973,9 @@ bool TableRow::BeginRender()
 
 void TableRow::EndRender()
 {
+    if (GImGui->CurrentTable && GImGui->CurrentTable->IsInsideRow) {
+        ImGui::TableEndRow(GImGui->CurrentTable);
+    }
 }
 
 lua::ImguiHandle TableRow::AddCell()
