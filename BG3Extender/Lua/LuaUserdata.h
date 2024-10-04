@@ -9,6 +9,7 @@ class Lengthable {};
 class Iterable {};
 class Stringifiable {};
 class EqualityComparable {};
+class LessThanComparable {};
 class HasBinaryOps {};
 
 END_NS()

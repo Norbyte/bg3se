@@ -111,9 +111,31 @@ public:
 		}
 	}
 
+	static int LessThanProxy(lua_State* L)
+	{
+		if constexpr (std::is_base_of_v<LessThanComparable, T>) {
+			StackCheck _(L, 1);
+
+			// __lt is called for both (TValue < x) and (x < TValue) scenarios, i.e.
+			// the CppValue can be either in the 1st, 2nd or both arguments.
+			// We'll always try to cast the first argument first and if it fails check the second.
+			CppValueMetadata self;
+			if (lua_try_get_cppvalue(L, 1, T::MetaTag, self)) {
+				push(L, T::IsLessThan(L, self, 2));
+			} else {
+				lua_get_cppvalue(L, 2, T::MetaTag, self);
+				push(L, T::IsLessThan(L, 1, self));
+			}
+
+			return 1;
+		} else {
+			return luaL_error(L, "Not comparable!");
+		}
+	}
+
 	static int BAndProxy(lua_State* L)
 	{
-		if constexpr (std::is_base_of_v<EqualityComparable, T>) {
+		if constexpr (std::is_base_of_v<HasBinaryOps, T>) {
 			StackCheck _(L, 1);
 			CppValueMetadata self;
 			if (lua_try_get_cppvalue(L, 1, T::MetaTag, self)) {
@@ -129,7 +151,7 @@ public:
 
 	static int BOrProxy(lua_State* L)
 	{
-		if constexpr (std::is_base_of_v<EqualityComparable, T>) {
+		if constexpr (std::is_base_of_v<HasBinaryOps, T>) {
 			StackCheck _(L, 1);
 			CppValueMetadata self;
 			if (lua_try_get_cppvalue(L, 1, T::MetaTag, self)) {
@@ -145,7 +167,7 @@ public:
 
 	static int BXorProxy(lua_State* L)
 	{
-		if constexpr (std::is_base_of_v<EqualityComparable, T>) {
+		if constexpr (std::is_base_of_v<HasBinaryOps, T>) {
 			StackCheck _(L, 1);
 			CppValueMetadata self;
 			if (lua_try_get_cppvalue(L, 1, T::MetaTag, self)) {
@@ -161,7 +183,7 @@ public:
 
 	static int BNotProxy(lua_State* L)
 	{
-		if constexpr (std::is_base_of_v<EqualityComparable, T>) {
+		if constexpr (std::is_base_of_v<HasBinaryOps, T>) {
 			StackCheck _(L, 1);
 			CppValueMetadata self;
 			lua_get_cppvalue(L, 2, T::MetaTag, self);
@@ -239,6 +261,10 @@ public:
 
 		if constexpr (std::is_base_of_v<EqualityComparable, T>) {
 			lua_cmetatable_set(L, mt, (int)MetamethodName::Eq, &EqualProxy);
+		}
+
+		if constexpr (std::is_base_of_v<LessThanComparable, T>) {
+			lua_cmetatable_set(L, mt, (int)MetamethodName::Lt, &LessThanProxy);
 		}
 
 		if constexpr (std::is_base_of_v<HasBinaryOps, T>) {

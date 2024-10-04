@@ -43,7 +43,7 @@ private:
 };
 
 class EntityProxyMetatable : public LightCppValueMetatable<EntityProxyMetatable>,
-	public Indexable, public Stringifiable, public EqualityComparable
+	public Indexable, public Stringifiable, public EqualityComparable, public LessThanComparable
 {
 public:
 	static constexpr MetatableTag MetaTag = MetatableTag::Entity;
@@ -65,6 +65,8 @@ public:
 	static int Index(lua_State* L, CppValueMetadata& self);
 	static int ToString(lua_State* L, CppValueMetadata& self);
 	static bool IsEqual(lua_State* L, CppValueMetadata& self, int otherIndex);
+	static bool IsLessThan(lua_State* L, CppValueMetadata& self, int otherIndex);
+	static bool IsLessThan(lua_State* L, int selfIndex, CppValueMetadata& other);
 	static char const* GetTypeName(lua_State* L, CppValueMetadata& self);
 	static void StaticInitialize();
 

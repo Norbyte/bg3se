@@ -445,6 +445,20 @@ bool EntityProxyMetatable::IsEqual(lua_State* L, CppValueMetadata& self, int oth
 		&& GetHandle(other) == GetHandle(self);
 }
 
+bool EntityProxyMetatable::IsLessThan(lua_State* L, CppValueMetadata& self, int otherIndex)
+{
+	CppValueMetadata other;
+	return lua_try_get_cppvalue(L, otherIndex, MetatableTag::Entity, other)
+		&& GetHandle(self).Handle < GetHandle(other).Handle;
+}
+
+bool EntityProxyMetatable::IsLessThan(lua_State* L, int selfIndex, CppValueMetadata& other)
+{
+	CppValueMetadata self;
+	return lua_try_get_cppvalue(L, selfIndex, MetatableTag::Entity, self)
+		&& GetHandle(self).Handle < GetHandle(other).Handle;
+}
+
 char const* EntityProxyMetatable::GetTypeName(lua_State* L, CppValueMetadata& self)
 {
 	return "EntityProxy";

@@ -219,6 +219,27 @@ public:
 		}
 	}
 
+	static int LessThanProxy(lua_State* L)
+	{
+		if constexpr (std::is_base_of_v<LessThanComparable, TSubclass>) {
+			StackCheck _(L, 1);
+			CppObjectMetadata self, other;
+			lua_get_cppobject(L, 1, TSubclass::MetaTag, self);
+
+			bool lt;
+			if (lua_try_get_cppobject(L, 2, TSubclass::MetaTag, other)) {
+				lt = TSubclass::IsLessThan(L, self, other);
+			} else {
+				lt = false;
+			}
+
+			push(L, lt);
+			return 1;
+		} else {
+			return luaL_error(L, "Not comparable!");
+		}
+	}
+
 	// Default __pairs implementation
 	static int Pairs(lua_State* L, CppObjectMetadata const& self)
 	{
@@ -293,6 +314,10 @@ public:
 
 		if constexpr (std::is_base_of_v<EqualityComparable, TSubclass>) {
 			lua_cmetatable_set(L, mt, (int)MetamethodName::Eq, &EqualProxy);
+		}
+
+		if constexpr (std::is_base_of_v<LessThanComparable, TSubclass>) {
+			lua_cmetatable_set(L, mt, (int)MetamethodName::Lt, &LessThanProxy);
 		}
 
 		lua_cmetatable_set(L, mt, (int)MetamethodName::Name, &NameProxy);
