@@ -463,6 +463,12 @@ void State::OnResetCompleted()
 	ThrowEvent("ResetCompleted", params, false, 0);
 }
 
+void State::OnShutdown()
+{
+	EmptyEvent params;
+	ThrowEvent("Shutdown", params, false, 0);
+}
+
 void State::OnUpdate(GameTime const& time)
 {
 	timers_.Update(time.Time);

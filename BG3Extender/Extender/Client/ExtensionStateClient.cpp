@@ -46,7 +46,13 @@ void ExtensionState::OnUpdate(GameTime const& time)
 
 void ExtensionState::DoLuaReset()
 {
-	if (Lua) Lua->Shutdown();
+	if (Lua) {
+		// Keep around a fake reference during the reset callback
+		luaRefs_++;
+		Lua->OnShutdown();
+		luaRefs_--;
+		Lua->Shutdown();
+	}
 	Lua.reset();
 
 	context_ = nextContext_;

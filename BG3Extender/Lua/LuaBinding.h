@@ -181,6 +181,7 @@ namespace bg3se::lua
 		void OnModuleResume();
 		void OnLevelLoading();
 		void OnResetCompleted();
+		void OnShutdown();
 		virtual void OnUpdate(GameTime const& time);
 		void OnStatsStructureLoaded();
 		void OnNetMessageReceived(STDString const& channel, STDString const& payload, UserId userId);

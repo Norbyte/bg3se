@@ -15,6 +15,7 @@ _I._PublishedSharedEvents = {
 	"SessionLoaded",
 	"GameStateChanged",
 	"ResetCompleted",
+	"Shutdown",
 	"DoConsoleCommand",
 	"Tick",
 	"StatsStructureLoaded"
