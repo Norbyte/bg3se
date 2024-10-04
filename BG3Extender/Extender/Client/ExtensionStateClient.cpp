@@ -87,6 +87,8 @@ void ExtensionState::OnInputEvent(SDL_Event* event, int& result)
 	// (i.e. where we need immediate feedback from Lua code); 
 	// others are deferred to the client update loop
 	if (Lua && Lua->IsEventCancelable(event)) {
+		gExtender->GetClient().AddThread(GetCurrentThreadId());
+
 		LuaClientPin lua(*this);
 		if (lua) {
 			lua->OnInputEvent(event, &result);
