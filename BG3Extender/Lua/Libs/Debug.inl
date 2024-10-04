@@ -270,6 +270,22 @@ void SetEntityRuntimeCheckLevel(int level)
 	}
 }
 
+void Reset()
+{
+	if (!gExtender->GetConfig().DeveloperMode) {
+		ERR("Reset() only available in developer mode");
+		return;
+	}
+
+	gExtender->GetServer().EnqueueTask([]() {
+		gExtender->GetServer().ResetLuaState();
+	});
+
+	gExtender->GetClient().EnqueueTask([]() {
+		gExtender->GetClient().ResetLuaState();
+	});
+}
+
 void RegisterDebugLib()
 {
 	DECLARE_MODULE(Debug, Both)
@@ -281,6 +297,7 @@ void RegisterDebugLib()
 	MODULE_FUNCTION(IsDeveloperMode)
 	MODULE_FUNCTION(SetEntityRuntimeCheckLevel)
 	MODULE_FUNCTION(Crash)
+	MODULE_FUNCTION(Reset)
 	END_MODULE()
 }
 
