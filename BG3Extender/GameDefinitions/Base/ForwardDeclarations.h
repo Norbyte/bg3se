@@ -35,6 +35,7 @@ struct LightTemplate;
 
 struct LevelBase;
 struct EoCLevel;
+struct LevelManager;
 
 struct ModuleInfo;
 struct Module;

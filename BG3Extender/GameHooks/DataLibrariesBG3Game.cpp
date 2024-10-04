@@ -194,6 +194,7 @@ namespace bg3se
 		SYM_OFF(stats__Object__SetPropertyString);
 
 		SYM_OFF(esv__LevelManager);
+		SYM_OFF(ecl__LevelManager);
 		SYM_OFF(ls__GlobalTemplateManager);
 		SYM_OFF(esv__CacheTemplateManager);
 

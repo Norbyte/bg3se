@@ -697,6 +697,21 @@
       <Target Type="Indirect" Offset="@ref3" Symbol="ls__GlobalTemplateManager" />
     </Mapping>
 
+    <Mapping Name="ecl::LevelManager">
+      @ref1 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:ecl__gLevelManager
+      48 8b b8 90 00 00 00 // mov     rdi, [rax+90h]
+      48 85 ff // test    rdi, rdi
+      0f 84 ?? ?? ?? ?? // jz      loc_14161334B
+      48 8b 05 ?? ?? ?? ?? // mov     rax, cs:qword_145FEABB8
+      48 85 c0 // test    rax, rax
+      75 21 // jnz     short loc_1416131EE
+      4c 8d 05 ?? ?? ?? ?? // lea     r8, sub_1413F71D0
+      48 8d 15 ?? ?? ?? ?? // lea     rdx, sub_14117A260
+      @str1 48 8d 0d ?? ?? ?? ?? // lea     rcx, aLsMapmarker; "ls.MapMarker"
+      <Condition Type="String" Offset="@str1" Value="ls.MapMarker" />
+      <Target Type="Indirect" Offset="@ref1" Symbol="ecl__LevelManager" />
+    </Mapping>
+
     <Mapping Name="ls__TextureAtlasMap">
       e8 ?? ?? ?? ?? // call    sub_143AE3050
       48 8b 43 18 // mov     rax, [rbx+18h]

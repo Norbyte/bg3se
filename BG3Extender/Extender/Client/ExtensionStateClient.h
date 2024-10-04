@@ -17,6 +17,7 @@ public:
 
 	lua::State * GetLua() override;
 	ModManager * GetModManager() override;
+	bg3se::LevelManager * GetLevelManager() override;
 	void OnUpdate(GameTime const& time) override;
 
 	lua::ClientState* GetClientLua()

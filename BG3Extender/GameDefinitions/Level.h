@@ -109,4 +109,17 @@ namespace bg3se
 			ecs::EntityWorld* EntityWorld;
 		};
 	}
+
+
+	namespace ecl
+	{
+		struct Level : public EoCLevel
+		{
+			// TODO
+		};
+
+		struct LevelManager : public bg3se::LevelManager
+		{
+		};
+	}
 }

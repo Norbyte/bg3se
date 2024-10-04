@@ -33,6 +33,11 @@ ModManager* ExtensionState::GetModManager()
 	return GetStaticSymbols().GetModManagerClient();
 }
 
+bg3se::LevelManager* ExtensionState::GetLevelManager()
+{
+	return GetStaticSymbols().GetClientLevelManager();
+}
+
 void ExtensionState::OnUpdate(GameTime const& time)
 {
 	FireInputEvents();

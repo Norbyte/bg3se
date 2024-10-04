@@ -275,6 +275,11 @@ namespace bg3se::esv
 		}
 	}
 
+	bg3se::LevelManager* ExtensionState::GetLevelManager()
+	{
+		return GetStaticSymbols().GetServerLevelManager();
+	}
+
 	void ExtensionState::OnGameSessionLoading()
 	{
 		dynamicStats_.clear();

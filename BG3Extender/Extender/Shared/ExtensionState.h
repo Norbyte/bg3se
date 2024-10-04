@@ -46,6 +46,7 @@ namespace bg3se
 		virtual void Reset();
 		virtual lua::State * GetLua() = 0;
 		virtual ModManager * GetModManager() = 0;
+		virtual LevelManager* GetLevelManager() = 0;
 		virtual char const * GetBootstrapFileName() = 0;
 
 		void LoadConfigs();

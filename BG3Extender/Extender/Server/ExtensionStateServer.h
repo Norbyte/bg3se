@@ -19,6 +19,7 @@ namespace bg3se::esv
 		void Reset() override;
 		lua::State * GetLua() override;
 		ModManager * GetModManager() override;
+		bg3se::LevelManager* GetLevelManager() override;
 		void OnGameSessionLoading() override;
 
 		inline char const * GetBootstrapFileName() override

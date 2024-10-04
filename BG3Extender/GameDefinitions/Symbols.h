@@ -112,6 +112,7 @@ namespace bg3se
 		StatusPrototypeManager** eoc__StatusPrototypeManager{ nullptr };*/
 
 		esv::LevelManager** esv__LevelManager{ nullptr };
+		ecl::LevelManager** ecl__LevelManager{ nullptr };
 		GlobalTemplateManager** ls__GlobalTemplateManager{ nullptr };
 		CacheTemplateManagerBase** esv__CacheTemplateManager{ nullptr };
 
@@ -304,6 +305,26 @@ namespace bg3se
 		{
 			if (ls__GlobalTemplateManager) {
 				return *ls__GlobalTemplateManager;
+			} else {
+				return nullptr;
+			}
+		}
+
+		inline ecl::LevelManager* GetClientLevelManager() const
+		{
+			if (ecl__LevelManager != nullptr
+				&& *ecl__LevelManager != nullptr) {
+				return *ecl__LevelManager;
+			} else {
+				return {};
+			}
+		}
+
+		inline ecl::Level* GetCurrentClientLevel() const
+		{
+			auto levelMgr = GetClientLevelManager();
+			if (levelMgr) {
+				return static_cast<ecl::Level*>(levelMgr->CurrentLevel);
 			} else {
 				return nullptr;
 			}
