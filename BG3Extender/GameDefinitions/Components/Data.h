@@ -52,9 +52,9 @@ struct Bound
 	[[bg3::readonly]] int16_t MetaDataIndex;
 	[[bg3::readonly]] uint16_t CollidingRefCount;
 	glm::vec3 TranslateOverride;
-	BoundBaseFlags Flags;
+	BoundBaseFlags BaseFlags;
 	uint8_t field_89;
-	uint16_t BoundFlags;
+	BoundFlags Flags;
 	FixedString OwnerPlatform;
 	uint64_t field_90;
 };
