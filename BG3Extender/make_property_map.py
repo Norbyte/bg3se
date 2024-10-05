@@ -614,6 +614,7 @@ sources = [
     'GameDefinitions/Dialog.h',
     'GameDefinitions/RootTemplates.h',
     'GameDefinitions/Components/Boosts.h',
+    'GameDefinitions/Components/Camera.h',
     'GameDefinitions/Components/Camp.h',
     'GameDefinitions/Components/CharacterCreation.h',
     'GameDefinitions/Components/Combat.h',

@@ -490,6 +490,7 @@
     <ClInclude Include="GameDefinitions\Components\Timeline.h" />
     <ClInclude Include="GameDefinitions\Components\Events.h" />
     <ClInclude Include="Extender\Shared\UseActions.h" />
+    <ClInclude Include="GameDefinitions\Components\Camera.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

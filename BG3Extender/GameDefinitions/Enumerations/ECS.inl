@@ -307,6 +307,17 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 	E(EscortStragglersTracker)
 	E(EscortHasStragglers)
 
+	// Camera components
+	E(Camera)
+	E(DefaultCameraBehavior)
+	E(EffectCameraBehavior)
+	E(GameCameraBehavior)
+	E(CameraSelectorMode)
+	E(CameraTarget)
+	E(CameraCombatTarget)
+	E(CameraInSelectorMode)
+	E(CameraSpellTracking)
+
 	// Camp components
 	E(CampChest)
 	E(CampEndTheDayState)
