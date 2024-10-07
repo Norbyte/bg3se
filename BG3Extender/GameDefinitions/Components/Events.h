@@ -86,7 +86,7 @@ struct SkillCheckEventOneFrameComponent : public BaseComponent
 	bool Success;
 	STDString StatsExpression;
 	Guid SpellCastUuid;
-	bool Critical;
+	uint8_t Critical;
 };
 
 struct WeaponPropertiesChangedEventOneFrameComponent : public BaseComponent

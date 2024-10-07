@@ -355,7 +355,7 @@ struct Visual : public MoveableObject
 	struct ObjectDesc
 	{
 		RenderableObject* Renderable;
-		uint8_t field_8;
+		[[bg3::legacy(field_8)]] uint8_t LOD;
 		uint8_t Flags;
 	};
 
