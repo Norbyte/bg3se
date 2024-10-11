@@ -156,35 +156,28 @@ void FixedString::DecRef()
 	}
 }
 
-static const char base64_chars[] =
-"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-"abcdefghijklmnopqrstuvwxyz"
-"0123456789+/";
-
 STDString ScratchBuffer::GetBufferString() const
 {	
+	static const char base64_chars[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 	std::string result;
-	if (Size > 0) {
-		const unsigned char* byteBuffer = static_cast<const unsigned char*>(Buffer);
-		// Base64 encoding logic
-		std::string encoded;
+	if (Size > 0 && Buffer != nullptr) {
+		const unsigned char* byteBuffer = static_cast<const unsigned char*>(Buffer);	
 		int val = 0;
 		int valb = -6;
 		for (size_t i = 0; i < Size; i++) {
 			val = (val << 8) + byteBuffer[i];
 			valb += 8;
 			while (valb >= 0) {
-				encoded.push_back(base64_chars[(val >> valb) & 0x3F]);
+				result.push_back(base64_chars[(val >> valb) & 0x3F]);
 				valb -= 6;
 			}
 		}
 		if (valb > -6) {
-			encoded.push_back(base64_chars[((val << 8) >> (valb + 8)) & 0x3F]);
+			result.push_back(base64_chars[((val << 8) >> (valb + 8)) & 0x3F]);
 		}
-		while (encoded.size() % 4) {
-			encoded.push_back('=');
+		while (result.size() % 4) {
+			result.push_back('=');
 		}
-		result = encoded;
 	}
 	else {
 		result = "";
