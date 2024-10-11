@@ -156,4 +156,41 @@ void FixedString::DecRef()
 	}
 }
 
+static const char base64_chars[] =
+"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+"abcdefghijklmnopqrstuvwxyz"
+"0123456789+/";
+
+STDString ScratchBuffer::GetBufferString() const
+{	
+	std::string result;
+	if (Size > 0) {
+		const unsigned char* byteBuffer = static_cast<const unsigned char*>(Buffer);
+		// Base64 encoding logic
+		std::string encoded;
+		int val = 0;
+		int valb = -6;
+		for (size_t i = 0; i < Size; i++) {
+			val = (val << 8) + byteBuffer[i];
+			valb += 8;
+			while (valb >= 0) {
+				encoded.push_back(base64_chars[(val >> valb) & 0x3F]);
+				valb -= 6;
+			}
+		}
+		if (valb > -6) {
+			encoded.push_back(base64_chars[((val << 8) >> (valb + 8)) & 0x3F]);
+		}
+		while (encoded.size() % 4) {
+			encoded.push_back('=');
+		}
+		result = encoded;
+	}
+	else {
+		result = "";
+	}
+
+	return STDString(result);
+}
+
 END_SE()

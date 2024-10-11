@@ -263,6 +263,8 @@ namespace bg3se
 		void* ReadEnd_M{ nullptr };
 		void* field_48{ nullptr };
 		uint64_t Size2{ 0 };
+
+		STDString GetBufferString() const;
 	};
 
 	struct ScratchString : public Noncopyable<ScratchString>

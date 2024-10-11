@@ -8,7 +8,7 @@ struct CustomIconComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(CustomIcon, "eoc::CustomIconComponent")
 
-	[[bg3::hidden]]
+	[[bg3::readonly]]
 	ScratchBuffer Buffer;
 	uint64_t Unknown;
 };
