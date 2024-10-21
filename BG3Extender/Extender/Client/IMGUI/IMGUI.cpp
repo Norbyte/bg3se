@@ -10,6 +10,8 @@
 // #define IMGUI_DEBUG(msg, ...) DEBUG("[IMGUI] " msg, __VA_ARGS__)
 #define IMGUI_DEBUG(msg, ...)
 
+#define IMGUI_FRAME_DEBUG(msg, ...) if ((frameNo_ % 100) == 0) { IMGUI_DEBUG(msg, __VA_ARGS__); }
+
 #include <Extender/Client/IMGUI/Vulkan.inl>
 #include <Extender/Client/IMGUI/DX11.inl>
 #include <Lua/Shared/LuaMethodCallHelpers.h>
@@ -1520,6 +1522,8 @@ void IMGUIManager::DestroyUI()
 {
     if (!initialized_) return;
 
+    IMGUI_DEBUG("IMGUIManager::DestroyUI()");
+
     initialized_ = false;
     renderer_->DestroyUI();
     sdl_.DestroyUI();
@@ -1529,6 +1533,7 @@ void IMGUIManager::DestroyUI()
 void IMGUIManager::EnableUI(bool enabled)
 {
     enableUI_ = enabled;
+    IMGUI_DEBUG("IMGUIManager::EnableUI: %d", enabled ? 1 : 0);
 }
 
 void IMGUIManager::SetObjects(IMGUIObjectManager* objects)
@@ -1538,6 +1543,8 @@ void IMGUIManager::SetObjects(IMGUIObjectManager* objects)
     if (objects_ == nullptr) {
         renderer_->ClearFrame();
     }
+
+    IMGUI_DEBUG("IMGUIManager::SetObjects() - Binding object manager");
 }
 
 bool IMGUIManager::LoadFont(FixedString const& name, char const* path, float size)
@@ -1657,10 +1664,14 @@ void IMGUIManager::OnRenderBackendInitialized()
 {
     IMGUI_DEBUG("IMGUIManager::OnRenderBackendInitialized()");
     OnViewportUpdated();
+    frameNo_ = 0;
 
     if (!initialized_) {
         InitializeUI();
     }
+
+    IMGUI_DEBUG("READY STATE CHECK - enableUI %d, initialized %d, objects %d, rendererInitialized %d",
+        enableUI_ ? 1 : 0, initialized_ ? 1 : 0, objects_ ? 1 : 0, renderer_->IsInitialized() ? 1 : 0);
 }
 
 void IMGUIManager::OnViewportUpdated()
@@ -1674,6 +1685,7 @@ void IMGUIManager::OnViewportUpdated()
 
 void IMGUIManager::UpdateStyle()
 {
+    IMGUI_DEBUG("Recalculating IMGUI style");
     auto& style = ImGui::GetStyle();
     style = ImGuiStyle();
 
@@ -1766,6 +1778,10 @@ void IMGUIManager::Update()
         || !initialized_
         || !objects_
         || !renderer_->IsInitialized()) {
+
+        IMGUI_FRAME_DEBUG("Skip drawing - enableUI %d, initialized %d, objects %d, rendererInitialized %d",
+            enableUI_ ? 1 : 0, initialized_ ? 1 : 0, objects_ ? 1 : 0, renderer_->IsInitialized() ? 1 : 0);
+        frameNo_++;
         return;
     }
 
