@@ -328,7 +328,7 @@ struct ForceFunctor : public Functor
 	FixedString Distance; // Arg0
 	ForceFunctorOrigin Origin{ ForceFunctorOrigin::OriginToEntity }; // Arg1
 	ForceFunctorAggression Aggression{ ForceFunctorAggression::Aggressive }; // Arg2
-	[[bg3::hidden]] StatsExpressionParamEx* DistanceExpression{ nullptr };
+	StatsExpressionParamEx* DistanceExpression{ nullptr };
 	bool ControlArc{ false };
 	bool PullToOrigin{ false };
 };
@@ -402,7 +402,7 @@ struct DealDamageFunctor : public Functor
 	DamageType DamageType{ DamageType::None }; // Arg2
 	DealDamageWeaponType WeaponType{ DealDamageWeaponType::None }; // Arg1
 	DealDamageWeaponDamageType WeaponDamageType{ DealDamageWeaponDamageType::None }; // Arg2
-	[[bg3::hidden]] StatsExpressionParam* Damage{ nullptr }; // Arg1
+	StatsExpressionParam* Damage{ nullptr }; // Arg1
 	int CoinMultiplier{ 0 };
 	bool Nonlethal{ false }; // Arg4
 	bool Magical{ false }; // Arg3
@@ -423,7 +423,7 @@ struct RegainHitPointsFunctor : public Functor
 {
 	static constexpr auto FunctorType = FunctorId::RegainHitPoints;
 
-	[[bg3::hidden]] StatsExpressionParam* HitPoints{ nullptr };
+	StatsExpressionParam* HitPoints{ nullptr };
 	TargetTypeFlags HealingType{ TargetTypeFlags::Living };
 };
 
@@ -501,7 +501,7 @@ struct RestoreResourceFunctor : public Functor
 	Guid ActionResource; // Arg0
 	int Hex{ 0 }; // Arg2
 	int field_34{ 0 };
-	[[bg3::hidden]] StatsExpressionParam* LuaAmount{ nullptr }; // Arg1
+	StatsExpressionParam* LuaAmount{ nullptr }; // Arg1
 	double Amount{ 0.0 }; // Arg1
 	RestoreResourceAmountType AmountType{ RestoreResourceAmountType::None };
 };
@@ -604,7 +604,7 @@ struct GainTemporaryHitPointsFunctor : public Functor
 {
 	static constexpr auto FunctorType = FunctorId::GainTemporaryHitPoints;
 
-	[[bg3::hidden]] StatsExpressionParam* HitPointsExpression;
+	StatsExpressionParam* HitPointsExpression;
 };
 
 struct FireProjectileFunctor : public Functor
@@ -641,7 +641,7 @@ struct RegainTemporaryHitPointsFunctor : public Functor
 {
 	static constexpr auto FunctorType = FunctorId::RegainTemporaryHitPoints;
 
-	[[bg3::hidden]] StatsExpressionParam* HitPoints;
+	StatsExpressionParam* HitPoints;
 };
 
 struct RemoveStatusByLevelFunctor : public Functor
@@ -679,7 +679,7 @@ struct AdjustRollFunctor : public Functor
 {
 	static constexpr auto FunctorType = FunctorId::AdjustRoll;
 
-	[[bg3::hidden]] StatsExpressionParam* Expression; // Arg1
+	StatsExpressionParam* Expression; // Arg1
 	RollAdjustmentType Type; // Arg2
 	DamageType DamageType; // Arg2
 };

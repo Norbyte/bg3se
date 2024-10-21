@@ -393,8 +393,8 @@ struct Visual : public MoveableObject
 	{
 		struct Remap
 		{
-			int16_t field_0;
-			int16_t field_2;
+			int16_t MapFrom;
+			int16_t MapTo;
 		};
 
 		FixedString RemapperSlot;
