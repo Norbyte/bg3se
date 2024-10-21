@@ -39,3 +39,33 @@ struct Item : public BaseProxyComponent
 };
 
 END_NS()
+
+BEGIN_NS(ecl)
+
+struct SceneryInitSound
+{
+	int16_t Attenuation;
+	FixedString InitSound;
+	FixedString LoopSound;
+};
+
+struct Scenery : public BaseProxyComponent
+{
+	DEFINE_COMPONENT(Scenery, "ecl::Scenery")
+
+	void* VMT;
+	void* VMT2;
+	EntityHandle Entity2;
+	SceneryFlags Flags;
+	FixedString CurrentLevel;
+	ecs::EntityRef Entity;
+	Guid Uuid;
+	SceneryInitSound* Sound;
+	SceneryTemplate* Template;
+	FixedString Visual;
+	uint16_t field_54;
+	STDString field_58;
+	Guid TemplateId;
+};
+
+END_NS()

@@ -26,6 +26,7 @@ struct EoCGameObjectTemplate;
 struct CharacterTemplate;
 struct ItemTemplate;
 struct ProjectileTemplate;
+struct SceneryTemplate;
 struct SurfaceTemplate;
 struct TriggerTemplate;
 struct LevelTemplate;
