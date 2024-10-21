@@ -559,7 +559,7 @@ EntityHandle UserVariableManager::GuidToEntity(Guid const& uuid) const
 	auto entity = entityHelpers_.GetEntityHandle(uuid);
 
 	if (!entity) {
-		ERR("Tried to sync variables of unknown game object %s!", uuid.ToString().c_str());
+		USER_VAR_DBG("Tried to sync variables of unknown game object %s!", uuid.ToString().c_str());
 	}
 
 	return entity;
