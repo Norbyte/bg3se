@@ -868,6 +868,16 @@ BEGIN_ENUM(HitType, uint32_t)
 END_ENUM()
 
 
+BEGIN_ENUM(AttackFlags, uint8_t)
+	EV(InstantKill, 0x01)
+	EV(FirstAttack, 0x02)
+	EV(FromSneak, 0x04)
+	EV(Reaction, 0x08)
+	EV(LastAttack, 0x10)
+	EV(DamagedAfterMiss, 0x20)
+END_ENUM()
+
+
 BEGIN_ENUM(HitWith, uint8_t)
 	EV(None, 0)
 	EV(Weapon, 1)

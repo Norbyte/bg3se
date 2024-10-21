@@ -189,7 +189,7 @@ struct HitDesc
 	uint8_t field_160;
 	SpellSchoolId SpellSchool;
 	[[bg3::legacy(HitDescFlags)]] uint8_t HealingTypes;
-	uint8_t AttackFlags;
+	AttackFlags AttackFlags;
 	int SpellLevel;
 	int SpellPowerLevel;
 	int TotalHealDone;
