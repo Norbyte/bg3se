@@ -41,8 +41,9 @@ struct MoveableObject : ProtectedGameObject<MoveableObject>
 	virtual bool AttachToScene(Scene* scene) = 0;
 	virtual bool DetachFromScene() = 0;
 	virtual bool IsAttachedToScene() = 0;
-	virtual void NotifyBoundChange() = 0;
-	virtual void UpdateBoundChange() = 0;
+	virtual char const* GetDebugName() const = 0;
+	virtual StringView GetStrDebugName() = 0;
+	virtual void GetDebugInfo(ScratchString &) const = 0;
 
 	Transform WorldTransform;
 	LocalTransform* LocalTransform;
@@ -352,11 +353,16 @@ struct AppliedMaterial : public ActiveMaterial
 
 struct Visual : public MoveableObject
 {
+	virtual bool AddObject(RenderableObject*, uint8_t flags) = 0;
+	virtual void SetLODDistances(RenderableObject*) const = 0;
+	virtual void Pick(void const* ray, void* result) = 0;
+	virtual void UpdateCullFlags() = 0;
+
 	struct ObjectDesc
 	{
 		RenderableObject* Renderable;
 		[[bg3::legacy(field_8)]] uint8_t LOD;
-		uint8_t Flags;
+		VisualObjectType Flags;
 	};
 
 
@@ -367,7 +373,7 @@ struct Visual : public MoveableObject
 		int BoneIndex2;
 		FixedString Bone1;
 		FixedString Bone2;
-		uint32_t Flags;
+		VisualAttachmentFlags Flags;
 		uint8_t BoneType1;
 		uint8_t BoneType2;
 		FixedString field_20;
@@ -403,8 +409,8 @@ struct Visual : public MoveableObject
 	[[bg3::hidden]] void* GameObject;
 	[[bg3::hidden]] void* PhysicsScene;
 	[[bg3::hidden]] void* ClothScene;
-	uint32_t VisualFlags;
-	uint16_t CullFlags;
+	VisualFlags VisualFlags;
+	VisualCullFlags CullFlags;
 	uint8_t PhysicsFlags;
 	uint8_t LightChannel;
 	bool HasValidPose;
@@ -430,6 +436,23 @@ struct RenderPropertyList
 
 struct RenderableObject : public MoveableObject
 {
+	virtual void Render(void const* RenderObjectData, void const* RenderContext, void const* InstancingDrawData) const = 0;
+	virtual void NotifyTextureIDAdded(void const* Texture, bool) = 0;
+	virtual void NotifyTextureIDRemoved(void const* Texture, bool) = 0;
+	virtual void* SetupMaterialParameters(void const* RenderObjectData, void const* RenderContext) const = 0;
+	virtual glm::mat4 GetRenderingTransform() const = 0;
+	virtual void SetupTransformedVerticesOffset(void* TempReflectedCB, void const* MaterialShaderDesc, void const* RenderContext) const = 0;
+	virtual bool GetAnimatableTransform(glm::mat3x4 const*&, uint64_t&) const = 0;
+	virtual void CalculateRenderPass() = 0;
+	virtual void BuildVertexFormatDesc() = 0;
+	virtual void BuildVelocityVertexFormatDesc() = 0;
+	virtual bool Ret0_2() const = 0;
+	virtual bool IsBlendShape() const = 0;
+	virtual bool IsSkinned() const = 0;
+	virtual bool Ret0_4() const = 0;
+	virtual bool Ret0_5() const = 0;
+	virtual bool CanUseOverlayBoneTransforms() const = 0;
+
 	[[bg3::hidden]] void* Model;
 	RenderPropertyList PropertyList;
 	[[bg3::hidden]] void* ModelData;
