@@ -436,12 +436,16 @@ public:
 		auto elem = *it.CurrentNode;
 		if (elem == it.Element) {
 			*it.CurrentNode = it.Element->Next;
+			GameDelete(it.Element);
 		} else {
-			while (elem->Next != it.Element) {
+			while (elem && elem->Next != it.Element) {
 				elem = elem->Next;
 			}
 
-			elem->Next = it.Element->Next;
+			if (elem) {
+				elem->Next = it.Element->Next;
+				GameDelete(it.Element);
+			}
 		}
 	}
 
