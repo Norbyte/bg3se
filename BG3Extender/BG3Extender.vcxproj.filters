@@ -732,6 +732,7 @@
     <None Include="GameDefinitions\Animation.inl" />
     <None Include="Extender\Shared\UseActions.inl" />
     <None Include="GameDefinitions\RootTemplates.inl" />
+    <None Include="GameDefinitions\Render.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

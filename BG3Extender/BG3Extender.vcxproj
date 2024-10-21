@@ -420,6 +420,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="GameDefinitions\PropertyMaps\Statuses.inl" />
     <None Include="GameDefinitions\PropertyMaps\SurfaceActions.inl" />
     <None Include="GameDefinitions\PropertyMaps\UI.inl" />
+    <None Include="GameDefinitions\Render.inl" />
     <None Include="GameDefinitions\RootTemplates.inl" />
     <None Include="GameHooks\EngineHooks.inl" />
     <None Include="LuaScripts\BuiltinLibrary.lua" />

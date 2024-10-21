@@ -54,6 +54,14 @@ struct MoveableObject : ProtectedGameObject<MoveableObject>
 	float MinLODDistance;
 	float MaxLODDistance;
 	int CullDataHandleIndex;
+
+	// Lua call helpers
+	//# P_FUN(SetWorldTranslate, MoveableObject::LuaSetWorldTranslate)
+	//# P_FUN(SetWorldRotate, MoveableObject::LuaSetWorldRotate)
+	//# P_FUN(SetWorldScale, MoveableObject::LuaSetWorldScale)
+	void LuaSetWorldTranslate(glm::vec3 const& translate);
+	void LuaSetWorldRotate(glm::quat const& rotate);
+	void LuaSetWorldScale(glm::vec3 const& scale);
 };
 
 
