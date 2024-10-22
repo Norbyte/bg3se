@@ -48,9 +48,11 @@ struct ActionResourcesComponent : public BaseComponent
 
 struct ActionResourceSpendResult
 {
-	__int64 field_0;
-	__int64 field_8;
-	uint32_t field_10;
+	Guid Resource;
+	uint8_t field_10;
+	uint8_t field_11;
+	uint8_t field_12;
+	uint8_t field_13;
 	uint32_t field_14;
 };
 
@@ -397,8 +399,8 @@ struct UseSocket
 	int field_0;
 	uint8_t field_4;
 	uint8_t field_5;
-	std::array<uint32_t, 10> field_8;
-	std::array<uint32_t, 10> field_30;
+	std::array<float, 10> field_8;
+	std::array<float, 10> field_30;
 	FixedString field_58;
 	FixedString field_5C;
 	EntityHandle field_60;

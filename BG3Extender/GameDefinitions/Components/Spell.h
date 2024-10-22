@@ -586,14 +586,21 @@ struct CacheComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerSpellCastCache, "esv::spell_cast::CacheComponent")
 
+	CacheComponent(const CacheComponent&) = delete;
+	CacheComponent& operator = (const CacheComponent&) = delete;
+
 	Array<stats::ActionResourceCost> Costs;
 	HashMap<int, bool> field_10;
-	uint64_t field_50;
-	HashMap<FixedString, HashMap<int, Array<bg3se::spell_cast::IntermediateTarget>>> Targets;
+	uint32_t field_50;
+	uint32_t field_54;
+	[[bg3::hidden]] HashMap<FixedString, HashMap<int, Array<bg3se::spell_cast::IntermediateTarget>>> Targets;
 	HashMap<FixedString, int> field_98;
-	uint64_t field_D8;
+	uint32_t field_D8;
+	uint32_t field_DC;
 	[[bg3::hidden]] void* field_E0;
-	__int64 field_E8;
+	uint32_t field_E8;
+	uint16_t field_EC;
+	uint16_t field_EE;
 };
 
 struct MoveDuringCastUpdateEventOneFrameComponent : public BaseComponent

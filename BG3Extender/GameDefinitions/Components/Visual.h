@@ -66,8 +66,8 @@ struct DisplayNameComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(DisplayName, "eoc::DisplayNameComponent")
 
-	TranslatedString NameKey;
-	TranslatedString UnknownKey;
+	[[bg3::legacy(NameKey)]] TranslatedString Name;
+	[[bg3::legacy(UnknownKey)]] TranslatedString Title;
 };
 
 struct CustomNameComponent : public BaseComponent
@@ -261,7 +261,7 @@ struct DisplayName
 	STDString Name;
 };
 
-struct DisplayNameTranslatedString
+struct DisplayTitle
 {
 	TranslatedString NameKey;
 	uint8_t field_10;
@@ -272,7 +272,7 @@ struct DisplayNameListComponent : public BaseComponent
 	DEFINE_COMPONENT(ServerDisplayNameList, "esv::DisplayNameListComponent")
 
 	Array<DisplayName> Names;
-	[[bg3::legacy(TranslatedStrings)]] Array<DisplayNameTranslatedString> Titles;
+	[[bg3::legacy(TranslatedStrings)]] Array<DisplayTitle> Titles;
 	[[bg3::legacy(Unknown)]] uint8_t HideTitle;
 };
 

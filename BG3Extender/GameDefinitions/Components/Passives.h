@@ -56,15 +56,15 @@ struct PassiveBaseComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerPassiveBase, "esv::passive::BaseComponent")
 
-	Array<FixedString> field_0;
+	[[bg3::legacy(field_0)]] Array<FixedString> Passives;
 };
 
 struct PersistentDataComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerPassivePersistentData, "esv::passive::PersistentDataComponent")
 
-	int field_0;
-	int field_4;
+	float field_0;
+	float field_4;
 };
 
 struct ScriptPassivesComponent : public BaseComponent

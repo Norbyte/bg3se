@@ -187,7 +187,8 @@ struct Projectile : public BaseProxyComponent
 	DEFINE_COMPONENT(ServerProjectile, "esv::Projectile")
 
 	[[bg3::hidden]] void* VMT;
-	__int64 field_8;
+	uint32_t field_8;
+	uint32_t field_C;
 	EntityHandle Entity;
 	EntityHandle Caster;
 	EntityHandle Source;
@@ -304,9 +305,8 @@ BEGIN_NS(esv::spell_cast)
 
 struct ProjectileResultsExtraData
 {
-	__int64 field_0;
-	__int64 field_8;
-	__int64 field_10;
+	glm::vec3 field_0;
+	glm::vec3 field_C;
 	Array<bg3se::projectile::ProjectileResult> Results;
 };
 

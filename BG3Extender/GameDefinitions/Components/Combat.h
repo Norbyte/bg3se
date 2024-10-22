@@ -82,7 +82,7 @@ struct TurnOrderComponent : public BaseComponent
 	int field_40;
 	int field_44;
 	int field_48;
-	int field_4C;
+	float field_4C;
 };
 
 struct IsCombatPausedComponent : public BaseComponent
@@ -98,7 +98,7 @@ struct ThreatRangeComponent : public BaseComponent
 
 	float field_0;
 	int field_4;
-	int field_8;
+	float field_8;
 };
 
 
@@ -195,7 +195,7 @@ struct AiModifiersComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerAiModifiers, "esv::ai::combat::AiModifiersComponent")
 
-	EntityHandle field_0;
+	uint8_t field_0;
 	HashMap<FixedString, float> Modifiers;
 	//HashMap<FixedString, HashMap<int, ModifierChange>> Changes;
 };

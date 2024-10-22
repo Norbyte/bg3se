@@ -80,7 +80,7 @@ struct ProxyOwnerComponent : public BaseComponent
 
 struct ReactionSource
 {
-	uint64_t field_0;
+	EntityHandle field_0;
 	TargetInfo Target;
 };
 

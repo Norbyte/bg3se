@@ -53,12 +53,18 @@ struct MemberTransformComponent : public BaseComponent
 	Transform Transform;
 };
 
+struct StackEntry
+{
+	uint16_t EntityIndex;
+	uint32_t Quantity;
+};
+
 struct StackComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(InventoryStack, "eoc::inventory::StackComponent")
 
 	[[bg3::legacy(Arr_u64)]] Array<EntityHandle> Elements;
-	Array<uint8_t> Arr_u8;
+	[[bg3::legacy(Arr_u8)]] Array<StackEntry> Entries;
 };
 
 struct StackMemberComponent : public BaseComponent
@@ -106,7 +112,7 @@ struct GroupCheckComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerInventoryGroupCheck, "esv::inventory::GroupCheckComponent")
 
-	stats::ConditionId Conditions;
+	uint32_t Conditions;
 };
 
 struct ShapeshiftEquipmentHistoryComponent : public BaseComponent

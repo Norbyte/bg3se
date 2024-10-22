@@ -76,7 +76,7 @@ DEFN_BOOST(ActionResourceValue, ActionResource, {
 DEFN_BOOST(CriticalHit, CriticalHit, {
 	CriticalHitBoostFlags Flags;
 	uint8_t field_1;
-	int Value;
+	float Value;
 })
 
 DEFN_BOOST(AbilityFailedSavingThrow, AbilityFailedSavingThrow, {

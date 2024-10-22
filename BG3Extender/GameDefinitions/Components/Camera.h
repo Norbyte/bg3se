@@ -7,12 +7,14 @@ BEGIN_NS(rf)
 
 struct Camera
 {
+	float field_0;
+	glm::vec3 field_4;
 	glm::mat4 ViewMatrix;
 	glm::mat4 InvViewMatrix;
 	glm::mat4 ProjectionMatrix;
 	glm::mat4 InvProjectionMatrix;
-	glm::mat4 GetViewProjectionMatrix;
-	glm::mat4 GetOffsetViewProjectionMatrix;
+	//glm::mat4 GetViewProjectionMatrix;
+	//glm::mat4 GetOffsetViewProjectionMatrix;
 	std::array<glm::vec4, 10> CullingPlanes;
 };
 

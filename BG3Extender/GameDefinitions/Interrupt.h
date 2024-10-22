@@ -275,7 +275,7 @@ struct InterruptUsageEntry
 	ConditionRolls ConditionRolls;
 	__int64 field_18;
 	Array<RollAdjustmentMetadata> RollAdjustmentMetadata;
-	__int64 field_30;
+	EntityHandle field_30;
 	__int64 field_38;
 	Array<RerollCondition> RerollConditions;
 	Array<RerollValue> RerollValues;

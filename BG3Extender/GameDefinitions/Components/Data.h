@@ -128,7 +128,7 @@ struct DifficultyCheckComponent : public BaseComponent
 	DEFINE_COMPONENT(DifficultyCheck, "eoc::DifficultyCheckComponent")
 
 	[[bg3::legacy(field_0)]] Array<int32_t> AbilityDC;
-	Array<int32_t> field_10;
+	[[bg3::legacy(field_10)]] Array<int32_t> AbilityModifiers;
 	Array<AbilityId> Abilities;
 	Array<uint32_t> field_30;
 	int field_40;
@@ -154,8 +154,8 @@ struct ObjectSizeComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ObjectSize, "eoc::ObjectSizeComponent")
 
-	uint8_t Size;
-	[[bg3::legacy(field_1)]] uint8_t SoundSize;
+	int8_t Size;
+	[[bg3::legacy(field_1)]] int8_t SoundSize;
 };
 
 struct BaseStatsComponent : public BaseComponent
