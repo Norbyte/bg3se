@@ -1656,7 +1656,7 @@ bool IMGUIManager::LoadFont(FontData& request)
             // IMGUI creates a texture with small width so height will be 32768 for CN fonts.
             // (DX11 can't create textures larger than 16384).
             // Compensate by using a larger width than default
-            ImGui::GetIO().Fonts->TexDesiredWidth = 8192;
+            ImGui::GetIO().Fonts->TexDesiredWidth = 16384;
         } else {
             if (language == "Russian" || language == "Ukrainian") {
                 glyphRanges = ImGui::GetIO().Fonts->GetGlyphRangesCyrillic();
