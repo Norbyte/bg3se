@@ -556,16 +556,28 @@ template <class R, class T>
 inline void CallGetter(lua_State* L, T const* obj, R(T::* fun)() const) {
 	static_assert(TupleSize(Overload<R>{}) == 1, "Can only push 1 value to stack in a getter.");
 	StackCheck _(L, 1);
-	auto retval = (obj->*fun)();
-	PushReturnValue(L, retval);
+	PushReturnValue(L, (obj->*fun)());
+}
+
+template <class R, class T>
+inline void CallGetter(lua_State* L, T const* obj, R const& (T::* fun)() const) {
+	static_assert(TupleSize(Overload<R>{}) == 1, "Can only push 1 value to stack in a getter.");
+	StackCheck _(L, 1);
+	PushReturnValue(L, (obj->*fun)());
 }
 
 template <class R, class T>
 inline void CallGetter(lua_State* L, T const* obj, R(* fun)(T const*)) {
 	static_assert(TupleSize(Overload<R>{}) == 1, "Can only push 1 value to stack in a getter.");
 	StackCheck _(L, 1);
-	auto retval = (*fun)(obj);
-	PushReturnValue(L, retval);
+	PushReturnValue(L, (*fun)(obj));
+}
+
+template <class R, class T>
+inline void CallGetter(lua_State* L, T const* obj, R const& (* fun)(T const*)) {
+	static_assert(TupleSize(Overload<R>{}) == 1, "Can only push 1 value to stack in a getter.");
+	StackCheck _(L, 1);
+	PushReturnValue(L, (*fun)(obj));
 }
 
 template <class T>
@@ -594,8 +606,31 @@ template <class T, class TArg>
 inline void CallSetter(lua_State* L, T* obj, int index, void(T::* fun)(TArg)) {
 	static_assert(TupleSize(Overload<TArg>{}) == 1, "Can only get 1 value from stack in a setter.");
 	StackCheck _(L, 0);
-	auto val = get_param_cv<TArg>(L, index);
-	(obj->*fun)(val);
+	(obj->*fun)(get_param_cv<TArg>(L, index));
+}
+
+
+template <class T, class TArg>
+inline void CallSetter(lua_State* L, T* obj, int index, void(T::* fun)(TArg const&)) {
+	static_assert(TupleSize(Overload<TArg>{}) == 1, "Can only get 1 value from stack in a setter.");
+	StackCheck _(L, 0);
+	(obj->*fun)(get_param_cv<TArg>(L, index));
+}
+
+
+template <class T, class TArg>
+inline void CallSetter(lua_State* L, T* obj, int index, void(T::* fun)(lua_State*, TArg)) {
+	static_assert(TupleSize(Overload<TArg>{}) == 1, "Can only get 1 value from stack in a setter.");
+	StackCheck _(L, 0);
+	(obj->*fun)(L, get_param_cv<TArg>(L, index));
+}
+
+
+template <class T, class TArg>
+inline void CallSetter(lua_State* L, T* obj, int index, void(T::* fun)(lua_State*, TArg const&)) {
+	static_assert(TupleSize(Overload<TArg>{}) == 1, "Can only get 1 value from stack in a setter.");
+	StackCheck _(L, 0);
+	(obj->*fun)(L, get_param_cv<TArg>(L, index));
 }
 
 
