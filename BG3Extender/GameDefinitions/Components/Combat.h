@@ -195,7 +195,7 @@ struct AiModifiersComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(ServerAiModifiers, "esv::ai::combat::AiModifiersComponent")
 
-	uint64_t field_0;
+	EntityHandle field_0;
 	HashMap<FixedString, float> Modifiers;
 	//HashMap<FixedString, HashMap<int, ModifierChange>> Changes;
 };

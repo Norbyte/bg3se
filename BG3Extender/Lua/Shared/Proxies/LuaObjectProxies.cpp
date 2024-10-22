@@ -13,7 +13,40 @@ BEGIN_NS(lua)
 #define CHECK(expr) if (!(expr)) return false;
 #endif
 
-bool Validate(EntityHandle const& handle, ecs::EntityWorld& world)
+bool IsAliveEntity(EntityHandle const& handle, ecs::EntityWorld& world)
+{
+	if (!handle) return true;
+
+	CHECKR(handle.GetType() < std::size(world.HandleGenerator->ThreadStates));
+
+	// There is no observed shrink logic in per-thread paged pools, so index cannot be greater than pool size
+	auto& state = world.HandleGenerator->ThreadStates[handle.GetType()];
+	CHECKR(handle.GetIndex() < state.Salts.Size);
+
+	auto const& salt = state.Salts[handle.GetIndex()];
+	CHECKR(salt.Index == handle.GetIndex());
+	CHECKR(salt.Salt == handle.GetSalt());
+
+	return true;
+}
+
+bool IsAliveEntity(EntityHandle const& handle)
+{
+	auto state = GetCurrentExtensionState();
+	if (state) {
+		auto lua = state->GetLua();
+		if (lua) {
+			auto world = lua->GetEntitySystemHelpers()->GetEntityWorld();
+			if (world) {
+				return IsAliveEntity(handle, *world);
+			}
+		}
+	}
+
+	return true;
+}
+
+bool WasValidEntity(EntityHandle const& handle, ecs::EntityWorld& world)
 {
 	if (!handle) return true;
 
@@ -38,17 +71,16 @@ bool Validate(EntityHandle const& handle, ecs::EntityWorld& world)
 
 bool Validate(EntityHandle const* handle, Overload<EntityHandle>)
 {
-	auto lua = GetCurrentExtensionState()->GetLua();
-	if (lua) {
-		auto world = lua->GetEntitySystemHelpers()->GetEntityWorld();
-		if (world) {
-			return Validate(*handle, *world);
+	auto state = GetCurrentExtensionState();
+	if (state) {
+		auto lua = state->GetLua();
+		if (lua) {
+			auto world = lua->GetEntitySystemHelpers()->GetEntityWorld();
+			if (world) {
+				return WasValidEntity(*handle, *world);
+			}
 		}
 	}
-
-#if defined(_DEBUG)
-	WARN("Validating entity handles whout an EntityWorld?");
-#endif
 
 	return true;
 }

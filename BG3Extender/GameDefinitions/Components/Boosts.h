@@ -584,7 +584,8 @@ struct BoostChangedEvent
 	int field_3C;
 	Guid field_40;
 	Guid field_50;
-	__int64 field_60;
+	uint32_t field_60;
+	uint32_t field_64;
 };
 
 struct ChangedEventOneFrameComponent : public BaseComponent

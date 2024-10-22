@@ -9,12 +9,15 @@
 
 #if defined(_DEBUG)
 #define ENABLE_FLAKY_HEURISTICS
+#define ENABLE_GUESSWORK_HEURISTICS
 #endif
 
 BEGIN_NS(lua)
 
 template <class T>
 bool ValidateAny(T const* v);
+
+bool IsAliveEntity(EntityHandle const& handle);
 
 inline bool Validate(bool const* b, Overload<bool>)
 {
@@ -27,6 +30,24 @@ inline bool Validate(bool const* b, Overload<bool>)
 template <class T>
 inline typename std::enable_if_t<std::is_integral_v<T>, bool> Validate(T const*, Overload<T>)
 {
+	return true;
+}
+
+inline bool Validate(int64_t const* v, Overload<int64_t>)
+{
+#if defined(ENABLE_GUESSWORK_HEURISTICS)
+	CHECK(!IsAliveEntity(*reinterpret_cast<EntityHandle const*>(v)));
+	CHECK(*v < 0x10000000 || *v > 0x0000ffffffffffffull || IsBadReadPtr(v, 1));
+#endif
+	return true;
+}
+
+inline bool Validate(uint64_t const* v, Overload<uint64_t>)
+{
+#if defined(ENABLE_GUESSWORK_HEURISTICS)
+	CHECK(!IsAliveEntity(*reinterpret_cast<EntityHandle const*>(v)));
+	CHECK(*v < 0x10000000 || *v > 0x0000ffffffffffffull || IsBadReadPtr(v, 1));
+#endif
 	return true;
 }
 
@@ -120,7 +141,6 @@ inline bool Validate(glm::mat4 const* b, Overload<glm::mat4>)
 }
 
 
-// TODO - might add some validation heuristic later?
 bool Validate(EntityHandle const* b, Overload<EntityHandle>);
 inline bool Validate(ComponentHandle const* b, Overload<ComponentHandle>) { return true; }
 inline bool Validate(NetId const* b, Overload<NetId>) { return true; }

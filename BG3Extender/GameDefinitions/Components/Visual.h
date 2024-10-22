@@ -272,8 +272,8 @@ struct DisplayNameListComponent : public BaseComponent
 	DEFINE_COMPONENT(ServerDisplayNameList, "esv::DisplayNameListComponent")
 
 	Array<DisplayName> Names;
-	Array<DisplayNameTranslatedString> TranslatedStrings;
-	uint64_t Unknown;
+	[[bg3::legacy(TranslatedStrings)]] Array<DisplayNameTranslatedString> Titles;
+	[[bg3::legacy(Unknown)]] uint8_t HideTitle;
 };
 
 struct IconInfo

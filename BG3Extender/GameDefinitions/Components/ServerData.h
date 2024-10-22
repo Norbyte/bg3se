@@ -362,7 +362,8 @@ struct JumpFollowComponent : public BaseComponent
 	glm::vec3 field_11C;
 	int field_128;
 	int field_12C;
-	__int64 field_130;
+	uint32_t field_130;
+	uint32_t field_134;
 	uint8_t field_138;
 	uint8_t field_139;
 	uint8_t field_13A;

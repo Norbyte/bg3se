@@ -206,7 +206,7 @@ struct BookComponent : public BaseComponent
 {
 	DEFINE_COMPONENT(SpellBook, "eoc::spell::BookComponent")
 
-	uint64_t field_0;
+	EntityHandle field_0;
 	Array<SpellData> Spells;
 };
 
@@ -414,9 +414,9 @@ struct TargetHitEventOneFrameComponent : public BaseComponent
 	AttackDesc Attack;
 	EntityHandle field_1D0;
 	__int64 field_1D8;
-	char field_1E0;
+	uint8_t field_1E0;
 	EntityHandle field_1E8;
-	__int64 field_1F0;
+	uint64_t field_1F0;
 	__int64 field_1F8;
 };
 
@@ -587,13 +587,12 @@ struct CacheComponent : public BaseComponent
 	DEFINE_COMPONENT(ServerSpellCastCache, "esv::spell_cast::CacheComponent")
 
 	Array<stats::ActionResourceCost> Costs;
-	[[bg3::hidden]] HashMap<int, void*> field_10_MHM_FS_unk;
-	__int64 field_50;
-	// HashMap<FixedString, HashMap<int, Array<bg3se::spell_cast::IntermediateTarget>>>
-	[[bg3::hidden]] HashMap<FixedString, HashMap<int, Array<void*>>> Targets;
-	[[bg3::hidden]] HashMap<int, void*> field_98_MHM_FS_unk;
-	__int64 field_D8;
-	__int64 field_E0;
+	HashMap<int, bool> field_10;
+	uint64_t field_50;
+	HashMap<FixedString, HashMap<int, Array<bg3se::spell_cast::IntermediateTarget>>> Targets;
+	HashMap<FixedString, int> field_98;
+	uint64_t field_D8;
+	[[bg3::hidden]] void* field_E0;
 	__int64 field_E8;
 };
 

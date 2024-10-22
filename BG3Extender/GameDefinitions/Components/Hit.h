@@ -117,8 +117,8 @@ struct HitResultEventOneFrameComponent : public BaseComponent
 {
 	DEFINE_ONEFRAME_COMPONENT(HitResultEvent, "esv::hit::HitResultEventOneFrameComponent")
 
-	ActionOriginator field_0;
-	HitDesc field_20;
+	[[bg3::legacy(field_0)]] ActionOriginator Originator;
+	[[bg3::legacy(field_20)]] HitDesc Hit;
 	uint8_t field_1D0;
 	EntityHandle Target;
 	bool Lethal;

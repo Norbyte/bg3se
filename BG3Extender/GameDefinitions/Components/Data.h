@@ -56,7 +56,7 @@ struct Bound
 	uint8_t field_89;
 	BoundFlags Flags;
 	FixedString OwnerPlatform;
-	uint64_t field_90;
+	[[bg3::hidden]] void* field_90;
 };
 
 struct BoundComponent : public BaseProxyComponent
