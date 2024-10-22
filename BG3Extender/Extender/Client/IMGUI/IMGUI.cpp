@@ -127,6 +127,26 @@ lua::ImguiHandle Renderable::GetParent() const
     return lua::ImguiHandle(Parent);
 }
 
+lua::ImguiHandle StyledRenderable::GetDragPreview() const
+{
+    return lua::ImguiHandle(DragPreview);
+}
+
+FixedString StyledRenderable::GetDragDropType() const
+{
+    return DragDropType;
+}
+
+void StyledRenderable::SetDragDropType(lua_State* L, FixedString type)
+{
+    if (type.GetLength() >= IM_ARRAYSIZE(ImGuiPayload::DataType)) {
+        luaL_error(L, "Drag drop type must be at most %d characters", IM_ARRAYSIZE(ImGuiPayload::DataType));
+        return;
+    }
+
+    DragDropType = type;
+}
+
 void StyledRenderable::Render()
 {
     if (!Visible) return;
@@ -195,6 +215,44 @@ void StyledRenderable::Render()
     }
 
     if (font) ImGui::PopFont();
+
+    if (CanDrag && DragDropType) {
+        if (ImGui::BeginDragDropSource((ImGuiDragDropFlags)DragFlags)) {
+            if (!IsDragging) {
+                if (OnDragStart) {
+                    DragPreview = Manager->CreateRenderable<Group>()->Handle;
+                    Manager->GetEventQueue().Call(OnDragStart, lua::ImguiHandle(Handle), lua::ImguiHandle(DragPreview));
+                }
+                IsDragging = true;
+            }
+
+            ImGui::SetDragDropPayload(DragDropType.GetString(), &Handle, sizeof(Handle));
+            if (DragPreview) {
+                auto preview = Manager->GetRenderable(DragPreview);
+                if (preview) {
+                    preview->Render();
+                }
+            }
+            ImGui::EndDragDropSource();
+        } else if (IsDragging) {
+            Manager->GetEventQueue().Call(OnDragEnd, lua::ImguiHandle(Handle));
+            if (DragPreview) {
+                Manager->DestroyRenderable(DragPreview);
+                DragPreview = InvalidHandle;
+            }
+            IsDragging = false;
+        }
+    }
+
+    if (DragDropType && OnDragDrop && ImGui::BeginDragDropTarget())
+    {
+        auto payload = ImGui::AcceptDragDropPayload(DragDropType.GetString());
+        if (payload) {
+            auto source = *reinterpret_cast<HandleType*>(payload->Data);
+            Manager->GetEventQueue().Call(OnDragDrop, lua::ImguiHandle(Handle), lua::ImguiHandle(source));
+        }
+        ImGui::EndDragDropTarget();
+    }
 
     if (tooltip_) {
         auto tooltip = Manager->GetRenderable(tooltip_.Handle);

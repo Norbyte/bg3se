@@ -693,4 +693,16 @@ BEGIN_BITMASK(GuiSelectableFlags, uint32_t)
 	EV(AllowOverlap, (uint32_t)(1 << 4))
 END_ENUM()
 
+BEGIN_BITMASK(GuiDragFlags, uint32_t)
+	EV(NoPreviewTooltip, (uint32_t)ImGuiDragDropFlags_SourceNoPreviewTooltip)
+	EV(NoDisableHover, (uint32_t)ImGuiDragDropFlags_SourceNoDisableHover)
+	EV(NoHoldToOpenOthers, (uint32_t)ImGuiDragDropFlags_SourceNoHoldToOpenOthers)
+	EV(AllowNullID, (uint32_t)ImGuiDragDropFlags_SourceAllowNullID)
+END_ENUM()
+
+BEGIN_BITMASK(GuiDropFlags, uint32_t)
+	EV(NoDrawDefaultRect, (uint32_t)ImGuiDragDropFlags_AcceptNoDrawDefaultRect)
+	EV(NoPreviewTooltip, (uint32_t)ImGuiDragDropFlags_AcceptNoPreviewTooltip)
+END_ENUM()
+
 #endif
