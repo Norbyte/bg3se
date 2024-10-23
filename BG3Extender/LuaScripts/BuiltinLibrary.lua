@@ -1,9 +1,6 @@
 local _G = _G
 
-Ext._Internal = {}
 local _I = Ext._Internal
-
-_I.LoadedMods = {}
 
 Mods = {}
 
@@ -26,37 +23,7 @@ _I._DoStartup = function ()
 end
 
 _I._LoadBootstrap = function (path, modTable)
-	local env = {
-		-- Put frequently used items directly into the table for faster access
-		type = type,
-		tostring = tostring,
-		tonumber = tonumber,
-		pairs = pairs,
-		ipairs = ipairs,
-		print = print,
-		error = error,
-		next = next,
-
-		string = string,
-		math = math,
-		table = table,
-
-		Ext = Ext,
-		Osi = Osi,
-		Game = Game,
-		Sandboxed = true,
-
-		ModuleUUID = ModuleUUID
-	}
-	-- The rest are accessed via __index
-	setmetatable(env, {__index = _G})
-	Mods[modTable] = env
-	_I.LoadedMods[modTable] = true
-	_I.BootstrappingMod = modTable
-	
-	env._G = env
-	Ext.Utils.Include(ModuleUUID, path, env)
-	_I.BootstrappingMod = nil
+	_I.ModLoader:LoadBootstrap(path, modTable)
 end
 
 -- Helper for dumping variables in console
@@ -71,7 +38,7 @@ Ext.DumpExport = function (val)
 end
 
 Ext.Dump = function (val)
-	Ext.Utils.Print(Ext.DumpExport(val))
+	Ext.Log.Print(Ext.DumpExport(val))
 end
 
 Ext.DumpShallow = function (val)
@@ -83,7 +50,7 @@ Ext.DumpShallow = function (val)
 		LimitDepth = 1,
 		LimitArrayElements = 3
 	}
-	Ext.Utils.Print(Ext.Json.Stringify(val, opts))
+	Ext.Log.Print(Ext.Json.Stringify(val, opts))
 end
 
 Ext.Utils.LoadTestLibrary = function ()
@@ -103,14 +70,27 @@ Ext.OnNextTick = function (fun)
 	Ext.Events.Tick:Subscribe(fun, {Once = true})
 end
 
--- Global helper aliases for Ext.Dump, Ext.Utils.Print
+-- v20 compatibility wrappers for Ext.Utils.Print{x}
+Ext.Utils.Print = function (...)
+	Ext.Log.Print(...)
+end
+Ext.Utils.PrintWarning = function (...)
+	Ext.Log.PrintWarning(...)
+end
+Ext.Utils.PrintError = function (...)
+	Ext.Log.PrintError(...)
+end
+
+-- Global helper aliases for Ext.Dump, Ext.Log.Print
 _D = Ext.Dump
 _DS = Ext.DumpShallow
-_P = Ext.Utils.Print
-_PW = Ext.Utils.PrintWarning
-_PE = Ext.Utils.PrintError
-Print = Ext.Utils.Print
-print = Ext.Utils.Print
+_P = Ext.Log.Print
+_PW = Ext.Log.PrintWarning
+_PE = Ext.Log.PrintError
+Print = Ext.Log.Print
+print = Ext.Log.Print
+
+require = Ext.Require
 
 -- Backward compatibility with v3
 Ext.Definition = Ext.StaticData

@@ -1,3 +1,5 @@
+--- @class SubscribableEvent
+--- @field Name string
 local SubscribableEvent = {}
 
 function SubscribableEvent:Instantiate(name)
@@ -99,7 +101,7 @@ function SubscribableEvent:DoUnsubscribe(handlerIndex)
 		cur = cur.Next
 	end
 	
-	Ext.Utils.PrintWarning("Attempted to remove subscriber ID " .. handlerIndex .. " for event '" .. self.Name .. "', but no such subscriber exists (maybe it was removed already?)")
+	Ext.Log.PrintWarning("Attempted to remove subscriber ID " .. handlerIndex .. " for event '" .. self.Name .. "', but no such subscriber exists (maybe it was removed already?)")
 end
 
 function SubscribableEvent:ProcessUnsubscriptions()
@@ -123,7 +125,7 @@ function SubscribableEvent:Throw(event)
 
         local ok, result = xpcall(cur.Handler, debug.traceback, event)
         if not ok then
-            Ext.Utils.PrintError("Error while dispatching event " .. self.Name .. ": ", result)
+            Ext.Log.PrintError("Error while dispatching event " .. self.Name .. ": ", result)
         end
 
 		if cur.Once then

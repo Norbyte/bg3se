@@ -11,16 +11,16 @@ function RegisterTests(category, tests)
 end
 
 function RunTests()
-    Ext.Utils.Print(" --- STARTING TESTS --- ")
+    _P(" --- STARTING TESTS --- ")
 
     for category,tests in pairs(RegisteredTests) do
-        Ext.Utils.Print(" --- Category: " .. category)
+        _P(" --- Category: " .. category)
         for i,test in ipairs(tests) do
             RunTest(test, _G[test])
         end
     end
 
-    Ext.Utils.Print(" --- FINISHING TESTS --- ")
+    _P(" --- FINISHING TESTS --- ")
 end
 
 Ext.RegisterConsoleCommand("se_test", function ()
@@ -144,9 +144,9 @@ end
 function RunTest(name, fun)
     local result, err = xpcall(fun, debug.traceback)
     if result then
-        Ext.Utils.Print("Test OK: " .. name)
+        _P("Test OK: " .. name)
     else
-        Ext.Utils.PrintError("Test FAILED: " .. name)
-        Ext.Utils.PrintError(err)
+        _PE("Test FAILED: " .. name)
+        _PE(err)
     end
 end

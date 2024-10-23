@@ -2,6 +2,10 @@ local _I = Ext._Internal
 local SubscribableEvent = Ext.CoreLib("Events/SubscribableEvent")
 local MissingSubscribableEvent = Ext.CoreLib("Events/MissingSubscribableEvent")
 
+--- @class EventManager
+--- @field Events table<string, SubscribableEvent>
+--- @field NetListeners table<string, fun(string, string, number)[]>
+--- @field ConsoleCommandListeners table<string, fun(...)[]>
 local EventManager = {}
 
 function EventManager:Instantiate()
@@ -60,7 +64,7 @@ function EventManager:NetMessageReceived(channel, payload, userId)
 		for i,callback in pairs(self.NetListeners[channel]) do
 			local ok, err = xpcall(callback, debug.traceback, channel, payload, userId)
 			if not ok then
-				Ext.Utils.PrintError("Error during NetMessage dispatch: ", err)
+				_PE("Error during NetMessage dispatch: ", err)
 			end
 		end
 	end
@@ -78,7 +82,7 @@ function EventManager:DoConsoleCommand(cmd)
 		for i,callback in pairs(listeners) do
 			local status, result = xpcall(callback, debug.traceback, table.unpack(params))
 			if not status then
-				Ext.Utils.PrintError("Error during console command callback: ", result)
+				_PE("Error during console command callback: ", result)
 			end
 		end
 	end

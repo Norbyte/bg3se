@@ -1,5 +1,5 @@
 Ext.RegisterConsoleCommand("se_dyntest", function ()
-    Ext.Utils.Print(" --- STARTING TESTS --- ")
+    _P(" --- STARTING TESTS --- ")
 
     local tests = {
         "TestCharacterEnumeration",
@@ -11,7 +11,7 @@ Ext.RegisterConsoleCommand("se_dyntest", function ()
         RunTest(test, _G[test])
     end
 
-    Ext.Utils.Print(" --- FINISHING TESTS --- ")
+    _P(" --- FINISHING TESTS --- ")
 end)
 
 local function DebugValidate(obj, entity, counters)
