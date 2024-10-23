@@ -121,7 +121,7 @@ struct InterruptDataComponent : public BaseComponent
 
 	std::optional<bg3se::interrupt::UndecidedEventWithId> Event;
 	int32_t field_250;
-	int32_t field_254;
+	uint8_t field_254;
 	Array<bg3se::interrupt::PausedAnimationEvent> PausedAnimationEvents;
 	Array<bg3se::interrupt::AnimationInterruptData> AnimationInterrupts;
 	int32_t field_278;

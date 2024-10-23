@@ -101,9 +101,9 @@ struct PerformingComponent : public BaseComponent
 
 struct Aura
 {
-	FixedString field_0;
+	[[bg3::legacy(field_0)]] FixedString Status;
 	int field_4;
-	HashSet<EntityHandle> field_8;
+	[[bg3::legacy(field_8)]] HashSet<EntityHandle> Targets;
 };
 
 struct AuraContainerComponent : public BaseComponent

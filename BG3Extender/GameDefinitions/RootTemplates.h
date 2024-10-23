@@ -45,7 +45,7 @@ struct GameObjectTemplate
 
     //# P_GETTER(TemplateType, GetTemplateType)
 
-    [[bg3::readonly]] uint64_t field_8;
+    [[bg3::hidden]] void* field_8;
     [[bg3::readonly]] FixedString Id;
     [[bg3::readonly]] FixedString TemplateName;
     [[bg3::readonly]] FixedString ParentTemplateId;

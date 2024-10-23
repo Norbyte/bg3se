@@ -236,17 +236,15 @@ struct UndecidedEventWithId
 
 struct DelayedTargetHitInterruptEvent
 {
-	__int64 field_0;
-	__int64 field_8;
-	__int64 field_10;
+	Guid field_0;
+	uint8_t field_10;
+	uint32_t field_14;
 	HitDesc Hit;
 	AttackDesc Attack;
-	__int64 field_1E8;
-	__int64 field_1F0;
-	__int64 field_1F8;
-	__int64 field_200;
-	__int64 field_208;
-	__int64 field_210;
+	EntityHandle field_1E8;
+	EntityHandle field_1F0;
+	std::optional<glm::vec3> field_1F8;
+	std::optional<glm::vec3> field_208;
 	SpellId Spell;
 };
 

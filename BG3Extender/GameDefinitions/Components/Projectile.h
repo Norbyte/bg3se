@@ -75,9 +75,7 @@ struct ProjectileResult : public path::Settings
 {
 	[[bg3::legacy(field_50)]] FixedString TemplateId;
 	EntityHandle field_58;
-	float field_60;
-	float field_64;
-	float field_68;
+	glm::vec3 field_60;
 	float InterpolateValue;
 };
 

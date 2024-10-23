@@ -326,10 +326,10 @@ struct StealthComponent : public BaseComponent
 	bool SeekHiddenFlag;
 	glm::vec3 Position;
 	float SeekHiddenTimeout;
-	int field_14;
+	float field_14;
 	int field_18;
-	int field_1C;
-	int field_20;
+	float field_1C;
+	float field_20;
 };
 
 DEFINE_TAG_COMPONENT(eoc, ClientControlComponent, ClientControl)

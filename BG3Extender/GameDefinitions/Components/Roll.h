@@ -68,11 +68,11 @@ struct ModifierSourceInfo
 	FixedString Source;
 	FixedString StackId;
 	int StackPriority;
-	__int64 field_10;
+	EntityHandle field_10;
 	__int64 field_18;
 	uint8_t field_20;
-	__int64 field_28;
-	__int64 field_30;
+	EntityHandle field_28;
+	EntityHandle field_30;
 };
 
 
@@ -98,9 +98,10 @@ struct Modifier
 struct StaticModifier
 {
 	Guid ModifierGuid;
-	__int64 field_10;
+	uint8_t field_10;
 	Modifier Modifier;
-	__int64 field_88;
+	uint32_t field_88;
+	uint32_t field_8C;
 };
 
 struct ConsumableModifier

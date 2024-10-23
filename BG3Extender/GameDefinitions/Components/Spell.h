@@ -416,8 +416,7 @@ struct TargetHitEventOneFrameComponent : public BaseComponent
 	__int64 field_1D8;
 	uint8_t field_1E0;
 	EntityHandle field_1E8;
-	uint64_t field_1F0;
-	__int64 field_1F8;
+	glm::vec3 field_1F0;
 };
 
 struct TargetHitInterruptEventOneFrameComponent : public BaseComponent
@@ -592,13 +591,13 @@ struct CacheComponent : public BaseComponent
 	Array<stats::ActionResourceCost> Costs;
 	HashMap<int, bool> field_10;
 	uint32_t field_50;
-	uint32_t field_54;
+	int32_t field_54;
 	[[bg3::hidden]] HashMap<FixedString, HashMap<int, Array<bg3se::spell_cast::IntermediateTarget>>> Targets;
 	HashMap<FixedString, int> field_98;
 	uint32_t field_D8;
-	uint32_t field_DC;
+	int32_t field_DC;
 	[[bg3::hidden]] void* field_E0;
-	uint32_t field_E8;
+	uint8_t field_E8;
 	uint16_t field_EC;
 	uint16_t field_EE;
 };
