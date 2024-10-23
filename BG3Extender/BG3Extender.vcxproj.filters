@@ -733,6 +733,7 @@
     <None Include="Extender\Shared\UseActions.inl" />
     <None Include="GameDefinitions\RootTemplates.inl" />
     <None Include="GameDefinitions\Render.inl" />
+    <None Include="Lua\Libs\Log.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

@@ -8,6 +8,7 @@
 #include <Lua/Libs/IO.inl>
 #include <Lua/Libs/Json.inl>
 #include <Lua/Libs/Localization.inl>
+#include <Lua/Libs/Log.inl>
 #include <Lua/Libs/Math.inl>
 #include <Lua/Libs/Mod.inl>
 #include <Lua/Libs/StatAttributes.inl>
@@ -92,6 +93,7 @@ void RegisterSharedLibraries()
 	types::RegisterTypesLib();
 	io::RegisterIOLib();
 	loca::RegisterLocalizationLib();
+	log::RegisterLogLib();
 	math::RegisterMathLib();
 	mod::RegisterModLib();
 	debug::RegisterDebugLib();
