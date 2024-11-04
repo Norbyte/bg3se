@@ -13,7 +13,7 @@ function Logger:Log(moduleUuid, level, topic, ...)
     if self.EnabledMods[moduleUuid] == false then return end
     if self.EnabledTopics[topic] == false then return end
 
-    Ext.Log.Print("[" .. moduleUuid .. "] " .. "[" .. level .. "] " .. "[" .. topic .. "] " .. ...)
+    Ext.Log.Print(...)
 end
 
 function Logger:CreateLogModule(moduleUuid)

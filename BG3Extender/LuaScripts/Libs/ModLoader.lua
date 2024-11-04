@@ -11,7 +11,7 @@ function ModLoader:CreateModExtensionTable(moduleUuid)
 	local ext = {
 		Log = Logger:CreateLogModule(moduleUuid)
 	}
-	ext.Utils = Logger:CreateUtilsCompatModule(ext)
+	ext.Utils = Logger:CreateUtilsCompatModule(Ext)
 	setmetatable(ext, {
 		__index = Ext,
 		
