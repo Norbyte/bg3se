@@ -14,7 +14,6 @@ struct Property : public ProtectedGameObject<Property>
 	{
 		STDString Name;
 		float Value;
-		[[bg3::hidden]] __int32 field_1c;
 	};
 
 	virtual ~Property() = 0;
@@ -29,8 +28,17 @@ struct Property : public ProtectedGameObject<Property>
 
 	FixedString FullName;
 	FixedString AttributeName;
-	LegacyArray<Parameter> Parameters;
+	LegacyArray<Parameter*> Parameters;
 	FixedString Input;
+};
+
+struct Input : public ProtectedGameObject<Input>
+{
+	virtual ~Input() = 0;
+	virtual PropertyType GetInputType() = 0;
+
+	FixedString Name;
+	Property* Input;
 };
 
 struct BooleanProperty : public Property
@@ -238,11 +246,11 @@ struct FxBaseComponent : public Component
 	float TimeStep;
 	float TimeStepEdge1;
 	ecs::EntityRef Entity;
-	LegacyMap<FixedString, Property*> PropertiesByFullName;
+	LegacyMap<FixedString, Property*> Properties;
 	Array<Module*> Modules;
-	Array<Property*> Properties;
+	[[bg3::hidden]] Array<Property*> PropertyList;
 	uint32_t FxType;
-	uint64_t field_98;
+	[[bg3::hidden]] resource::EffectResource* EffectResource;
 };
 
 struct TLActor
@@ -984,76 +992,76 @@ struct TLVoiceComponent : public TLBaseComponent
 
 struct BillboardComponent : public FxBaseComponent
 {
-	std::array<__int64, 77> field_b8;
+	[[bg3::hidden]] std::array<__int64, 77> field_b8;
 };
 
 struct BoundingBoxComponent : public FxBaseComponent
 {
-	std::array<__int64, 6> field_b8;
+	[[bg3::hidden]] std::array<__int64, 6> field_b8;
 };
 
 struct BoundingSphereComponent : public FxBaseComponent
 {
-	std::array<__int64, 4> field_b8;
+	[[bg3::hidden]] std::array<__int64, 4> field_b8;
 };
 
 struct CameraShakeComponent : public FxBaseComponent
 {
-	std::array<__int64, 7> field_b8;
+	[[bg3::hidden]] std::array<__int64, 7> field_b8;
 };
 
 struct DecalComponent : public FxBaseComponent
 {
-	std::array<__int64, 39> field_b8;
+	[[bg3::hidden]] std::array<__int64, 39> field_b8;
 };
 
 struct DeflectorComponent : public FxBaseComponent
 {
-	std::array<__int64, 7> field_b8;
+	[[bg3::hidden]] std::array<__int64, 7> field_b8;
 };
 
 struct DragForceComponent : public FxBaseComponent
 {
-	std::array<__int64, 10> field_b8;
+	[[bg3::hidden]] std::array<__int64, 10> field_b8;
 };
 
 struct GravityForceComponent : public FxBaseComponent
 {
-	std::array<__int64, 10> field_b8;
+	[[bg3::hidden]] std::array<__int64, 10> field_b8;
 };
 
 struct LightComponent : public FxBaseComponent
 {
-	std::array<__int64, 35> field_b8;
+	[[bg3::hidden]] std::array<__int64, 35> field_b8;
 };
 
 struct ModelComponent : public FxBaseComponent
 {
-	std::array<__int64, 4> field_b8;
+	[[bg3::hidden]] std::array<__int64, 4> field_b8;
 	__int32 field_d8;
 	FixedString field_dc;
 	FixedString field_e0;
 	FixedString field_e4;
-	std::array<__int64, 55> field_e8;
+	[[bg3::hidden]] std::array<__int64, 55> field_e8;
 };
 
 struct MovingLevelComponent : public FxBaseComponent
 {
 	STDString field_b8;
-	std::array<__int64, 5> field_d0;
+	[[bg3::hidden]] std::array<__int64, 5> field_d0;
 };
 
 struct OrbitForceComponent : public FxBaseComponent
 {
-	std::array<__int64, 8> field_b8;
+	[[bg3::hidden]] std::array<__int64, 8> field_b8;
 };
 
 struct OverlayMaterialComponent : public FxBaseComponent
 {
-	std::array<__int64, 10> field_b8;
+	[[bg3::hidden]] std::array<__int64, 10> field_b8;
 	FixedString field_108;
 	__int32 field_10c;
-	std::array<__int64, 18> field_110;
+	[[bg3::hidden]] std::array<__int64, 18> field_110;
 };
 
 struct ParticleSystemComponent : public FxBaseComponent
@@ -1080,14 +1088,14 @@ struct ParticleSystemComponent : public FxBaseComponent
 		Array<glm::fvec3> Scales;
 		Array<glm::fvec3> AppliedForces;
 	};
-	std::array<__int64, 98> field_b8;
+	[[bg3::hidden]] std::array<__int64, 98> field_b8;
 	ParticleDatas ParticleData;
-	std::array<__int64, 8> field_4d0;
+	[[bg3::hidden]] std::array<__int64, 8> field_4d0;
 };
 
 struct PostProcessComponent : public FxBaseComponent
 {
-	std::array<__int64, 2> field_b8;
+	[[bg3::hidden]] std::array<__int64, 2> field_b8;
 };
 
 struct PreRollComponent : public FxBaseComponent
@@ -1096,42 +1104,128 @@ struct PreRollComponent : public FxBaseComponent
 
 struct RadialForceComponent : public FxBaseComponent
 {
-	std::array<__int64, 10> field_b8;
+	[[bg3::hidden]] std::array<__int64, 10> field_b8;
 };
 
 struct Ribbon2Component : public FxBaseComponent
 {
-	std::array<__int64, 63> field_b8;
+	[[bg3::hidden]] std::array<__int64, 63> field_b8;
 };
 
 struct SoundComponent : public FxBaseComponent
 {
-	std::array<__int64, 5> field_b8;
+	[[bg3::hidden]] std::array<__int64, 5> field_b8;
 	FixedString field_f0;
 	FixedString field_f4;
 	FixedString field_f8;
 	__int32 field_fc;
-	std::array<__int64, 3> field_100;
+	[[bg3::hidden]] std::array<__int64, 3> field_100;
 };
 
 struct SpinForceComponent : public FxBaseComponent
 {
-	std::array<__int64, 10> field_b8;
+	[[bg3::hidden]] std::array<__int64, 10> field_b8;
 };
 
 struct TurbulentForceComponent : public FxBaseComponent
 {
-	std::array<__int64, 9> field_b8;
+	[[bg3::hidden]] std::array<__int64, 9> field_b8;
 };
 
 struct VortexForceComponent : public FxBaseComponent
 {
-	std::array<__int64, 10> field_b8;
+	[[bg3::hidden]] std::array<__int64, 10> field_b8;
 };
 
 struct WindForceComponent : public FxBaseComponent
 {
-	std::array<__int64, 4> field_b8;
+	[[bg3::hidden]] std::array<__int64, 4> field_b8;
+};
+
+
+struct QuestionHoldAutomationSettings
+{
+	QuestionHoldAutomationSettings() = delete;
+
+	[[bg3::hidden]] void* VMT;
+	bool IsEnabled;
+	float CycleSpeed;
+	float CycleSpeedDeviation;
+	float StartOffset;
+	float StartOffsetDeviation;
+};
+
+
+struct TimelinePhase
+{
+	TimelinePhase() = delete;
+
+	[[bg3::hidden]] void* VMT;
+	float Duration;
+	float EndTime;
+	int PlayCount;
+	int field_14;
+	Guid DialogNodeId;
+	bool IsOverridingTimelineQuestionHoldAutomationSettings;
+	QuestionHoldAutomationSettings QuestionHoldAutomation;
+};
+
+
+struct TimelineHeader : public ProtectedGameObject<TimelineHeader>
+{
+	float Duration;
+	[[bg3::hidden]] void* PhasesVMT;
+	Array<TimelinePhase> Phases;
+	[[bg3::hidden]] uint64_t PhasesExtra;
+};
+
+
+struct Timeline : public ProtectedGameObject<Timeline>
+{
+	virtual ~Timeline() = 0;
+	virtual void Play() = 0;
+	virtual bool IsStopped() const = 0;
+	virtual void Clear() = 0;
+	virtual void Reset(bool) = 0;
+	virtual void PostUpdate() = 0;
+	virtual void SetTargetVisual(uint64_t) = 0;
+	virtual void ResetTargetVisual(uint64_t) = 0;
+	virtual void Stop() = 0;
+	virtual void InitializeInternal() = 0;
+	virtual bool IsPhaseValid() const = 0;
+	virtual void UpdateTargetVisual() const = 0;
+	virtual void UpdateTargetVisual2() const = 0;
+	virtual void SortComponents() const = 0;
+	virtual void UpdateComponents(float) const = 0;
+	virtual bool IsComponentInPhase(Component*, uint64_t) const = 0;
+	virtual void ResetComponents() = 0;
+
+	uint64_t PhaseIndex;
+	TimelineHeader* Header;
+	Array<Component*>* Components;
+	uint8_t State;
+	bool PlayToEnd;
+	bool IsPaused;
+	bool field_23;
+	bool field_24;
+	bool NeedsPostUpdate_M;
+	float PlayingSpeed;
+	float TimePlayed;
+	float Duration;
+	float RemainingPhaseTime;
+	float JumpToTime;
+	int JumpToPhase;
+	int CurrentPlayCount;
+	Array<Input*> Inputs;
+};
+
+
+struct EffectTimeline : public Timeline
+{
+	// This is already exposed in aspk::Timeline
+	[[bg3::hidden]] TimelineHeader Header;
+	// This is already exposed in aspk::Timeline
+	[[bg3::hidden]] Array<Component*> Components;
 };
 
 END_NS()

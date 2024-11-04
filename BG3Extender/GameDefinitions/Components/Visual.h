@@ -191,6 +191,31 @@ struct AnimationReceivedTextKeyEvent
 	[[bg3::hidden]] void* Skeleton;
 };
 
+struct EffectComponent : public BaseProxyComponent
+{
+	DEFINE_COMPONENT(Effect, "ls::EffectComponent")
+
+	[[bg3::hidden]] void* VMT;
+	[[bg3::hidden]] void* WorkerThreadJob;
+	EntityHandle Entity;
+	resource::EffectResource* EffectResource;
+	aspk::EffectTimeline* Timeline;
+	bool field_28;
+	bool PreviewEffect;
+	// bool OverridingFadeOpacity;
+	EffectFlags Flags;
+	FixedString EffectName;
+	FixedString AnimationName;
+	bool UpdateQueued;
+	EntityHandle SoundEntity;
+	EntityHandle field_48;
+	std::array<float, 2> OverrideFadeCapacity;
+	std::array<bool, 2> OverrideFadeShadowEnabled;
+	[[bg3::hidden]] void* ConstructionJob;
+	[[bg3::readonly]] uint16_t ConstructFlags;
+	[[bg3::hidden]] uint64_t _Pad;
+};
+
 
 END_SE()
 

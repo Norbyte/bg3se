@@ -822,74 +822,31 @@ struct DiffusionProfileResource : public LoadableResource
 	float DualSpecularMix;
 };
 
+struct TimelineConstructor
+{
+	aspk::TimelineHeader Header;
+	Array<aspk::Input*> Inputs;
+	Array<aspk::Component*> EffectComponents;
+	bool Loaded;
+	FixedString EffectName;
+};
+
 struct EffectResource : public TwoStepLoadableResource
 {
-	struct TimelineContentEffects
-	{
-		struct Phase
-		{
-			struct QuestionHoldAutomationSettings
-			{
-				[[bg3::hidden]] void* QuestionHoldAutomationVMT;
-				bool IsEnabled;
-				[[bg3::hidden]] __int8 field_9;
-				[[bg3::hidden]] __int16 field_a;
-				float CycleSpeed;
-				float CycleSpeedDeviation;
-				float StartOffset;
-				float StartOffsetDeviation;
-				[[bg3::hidden]] __int32 field_1c;
-			};
-			[[bg3::hidden]] void* VMT;
-			float Duration;
-			float StartTime;
-			int32_t PlayCount;
-			__int32 field_14;
-			bg3se::Guid DialogNodeId;
-			bool IsOverridingTimelineQuestionHoldAutomationSettings;
-			[[bg3::hidden]] __int8 field_31;
-			[[bg3::hidden]] __int16 field_32;
-			[[bg3::hidden]] __int32 field_34;
-			QuestionHoldAutomationSettings QuestionHoldAutomation;
-		};
-
-		struct Input
-		{
-			virtual ~Input() = 0;
-			virtual int GetType() = 0;
-			FixedString Name;
-			[[bg3::hidden]] __int32 field_c;
-			aspk::Property* Input;
-		};
-
-		float Duration;
-		[[bg3::hidden]] __int32 field_4;
-		[[bg3::hidden]] __int64 field_8; // Dynamic array VMT
-		Array<Phase> Phases;
-		[[bg3::hidden]] __int64 field_20; // Dynamic array extra data
-		Array<Input*> Inputs;
-		Array<aspk::Component*> EffectComponents;
-		bool filled;
-		[[bg3::hidden]] __int8 field_49;
-		[[bg3::hidden]] __int16 field_4a;
-		FixedString EffectName;
-	};
-
 	FixedString EffectName;
-	[[bg3::hidden]] __int32 field_4c;
 	Array<aspk::Component*> EffectComponents;
 	Array<FixedString> Dependencies;
-	TimelineContentEffects* TimelineContentEffect;
-	// TImelineContent?
-	__int64 TimelineContent;
+	TimelineConstructor* Constructor;
+	[[bg3::hidden]] void* TimelineContent;
 	glm::fvec3 BoundsMin;
 	glm::fvec3 BoundsMax;
 	float CullingDistance;
 	float Duration;
 	bool Looping;
 	bool UseSoundOcclusion;
-	[[bg3::hidden]] __int16 field_a2;
 	uint32_t InterruptionMode;
+	bool PreRollMode;
+	[[bg3::hidden]] Array<void*> TimelineDependencies;
 };
 
 struct FCurveResource : public TwoStepLoadableResource

@@ -165,6 +165,7 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 	E(Ruleset)
 	E(RulesetModifiers)
 	E(TimeFactor)
+	E(Clock)
 
 	// Boosts
 	E(BoostCondition)
@@ -210,6 +211,9 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
 	E(AnimationGameplayEvents)
 	E(AnimationTextKeyEvents)
 	E(AnimationTriggeredEvents)
+
+	// Effects
+	E(Effect)
 
 	// Passives
 	E(PassiveContainer)

@@ -78,6 +78,7 @@ namespace resource
 
 	struct Resource;
 	struct VisualSet;
+	struct EffectResource;
 	struct TextureResource;
 }
 
