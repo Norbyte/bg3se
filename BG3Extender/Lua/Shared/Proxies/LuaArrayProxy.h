@@ -584,13 +584,13 @@ public:
 	template <class T>
 	inline static void Make(lua_State* L, LegacyArray<T>* object, LifetimeHandle const& lifetime)
 	{
-		MakeImpl(L, object, lifetime, GetImplementation<DynamicArrayProxyImpl<Array<T>, T, 2>>());
+		MakeImpl(L, static_cast<Array<T>*>(object), lifetime, GetImplementation<DynamicArrayProxyImpl<Array<T>, T, 2>>());
 	}
 
 	template <class T>
 	inline static void Make(lua_State* L, LegacyArray<T> const* object, LifetimeHandle const& lifetime)
 	{
-		MakeImpl(L, object, lifetime, GetImplementation<DynamicArrayProxyImpl<Array<T>, T, 2>>());
+		MakeImpl(L, static_cast<Array<T> const*>(object), lifetime, GetImplementation<DynamicArrayProxyImpl<Array<T>, T, 2>>());
 	}
 
 #if defined(ENABLE_UI)
