@@ -198,6 +198,7 @@ inline glm::i16vec2 do_get(lua_State* L, int index, Overload<glm::i16vec2>)
 glm::vec2 do_get(lua_State* L, int index, Overload<glm::vec2>);
 glm::vec3 do_get(lua_State* L, int index, Overload<glm::vec3>);
 glm::vec4 do_get(lua_State* L, int index, Overload<glm::vec4>);
+glm::aligned_highp_vec4 do_get(lua_State* L, int index, Overload<glm::aligned_highp_vec4>);
 glm::quat do_get(lua_State* L, int index, Overload<glm::quat>);
 glm::mat3 do_get(lua_State* L, int index, Overload<glm::mat3>);
 glm::mat3x4 do_get(lua_State* L, int index, Overload<glm::mat3x4>);

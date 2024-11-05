@@ -75,6 +75,16 @@ glm::vec4 get_raw(lua_State* L, Table* arr, Overload<glm::vec4>)
 	};
 }
 
+glm::aligned_highp_vec4 get_raw(lua_State* L, Table* arr, Overload<glm::aligned_highp_vec4>)
+{
+	return glm::aligned_highp_vec4{
+		lua_val_get_float(L, arr->array),
+		lua_val_get_float(L, arr->array + 1),
+		lua_val_get_float(L, arr->array + 2),
+		lua_val_get_float(L, arr->array + 3),
+	};
+}
+
 glm::quat get_raw(lua_State* L, Table* arr, Overload<glm::quat>)
 {
 	// quat constructor uses W,X,Y,Z
@@ -178,6 +188,13 @@ glm::vec4 do_get(lua_State* L, int index, Overload<glm::vec4>)
 	auto i = lua_absindex(L, index);
 	auto arr = lua_get_array_n(L, i, 4);
 	return get_raw(L, arr, Overload<glm::vec4>{});
+}
+
+glm::aligned_highp_vec4 do_get(lua_State* L, int index, Overload<glm::aligned_highp_vec4>)
+{
+	auto i = lua_absindex(L, index);
+	auto arr = lua_get_array_n(L, i, 4);
+	return get_raw(L, arr, Overload<glm::aligned_highp_vec4>{});
 }
 
 glm::quat do_get(lua_State* L, int index, Overload<glm::quat>)

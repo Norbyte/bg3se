@@ -21,6 +21,14 @@ void set_raw(Table* tab, glm::vec4 const& v)
 	setfltvalue(tab->array + 3, v.w);
 }
 
+void set_raw(Table* tab, glm::aligned_highp_vec4 const& v)
+{
+	setfltvalue(tab->array + 0, v.x);
+	setfltvalue(tab->array + 1, v.y);
+	setfltvalue(tab->array + 2, v.z);
+	setfltvalue(tab->array + 3, v.w);
+}
+
 void set_raw(Table* tab, glm::quat const& v)
 {
 	setfltvalue(tab->array + 0, v.x);
@@ -115,6 +123,13 @@ void push(lua_State* L, glm::vec4 const& v)
 	set_raw(tab, v);
 }
 
+void push(lua_State* L, glm::aligned_highp_vec4 const& v)
+{
+	lua_createtable(L, 4, 0);
+	auto tab = lua_get_top_table_unsafe(L);
+	set_raw(tab, v);
+}
+
 void push(lua_State* L, glm::quat const& v)
 {
 	lua_createtable(L, 4, 0);
@@ -194,6 +209,12 @@ void assign(lua_State* L, int idx, glm::vec3 const& v)
 }
 
 void assign(lua_State* L, int idx, glm::vec4 const& v)
+{
+	auto tab = lua_get_array_n(L, idx, 4);
+	set_raw(tab, v);
+}
+
+void assign(lua_State* L, int idx, glm::aligned_highp_vec4 const& v)
 {
 	auto tab = lua_get_array_n(L, idx, 4);
 	set_raw(tab, v);

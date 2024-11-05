@@ -97,6 +97,15 @@ inline bool Validate(glm::vec4 const* b, Overload<glm::vec4>)
 	return true;
 }
 
+inline bool Validate(glm::aligned_highp_vec4 const* b, Overload<glm::aligned_highp_vec4>)
+{
+	CHECKR(Validate(&b->x, Overload<float>{}));
+	CHECKR(Validate(&b->y, Overload<float>{}));
+	CHECKR(Validate(&b->z, Overload<float>{}));
+	CHECKR(Validate(&b->w, Overload<float>{}));
+	return true;
+}
+
 inline bool Validate(glm::quat const* b, Overload<glm::quat>)
 {
 	CHECKR(Validate(&b->x, Overload<float>{}));

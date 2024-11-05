@@ -121,6 +121,7 @@ void push(lua_State* L, glm::ivec4 const& v);
 void push(lua_State* L, glm::vec2 const& v);
 void push(lua_State* L, glm::vec3 const& v);
 void push(lua_State* L, glm::vec4 const& v);
+void push(lua_State* L, glm::aligned_highp_vec4 const& v);
 void push(lua_State* L, glm::quat const& v);
 void push(lua_State* L, glm::mat3 const& m);
 void push(lua_State* L, glm::mat3x4 const& m);
@@ -145,6 +146,7 @@ void push(lua_State* L, LuaDelegate<T> const& v)
 void assign(lua_State* L, int idx, glm::vec2 const& v);
 void assign(lua_State* L, int idx, glm::vec3 const& v);
 void assign(lua_State* L, int idx, glm::vec4 const& v);
+void assign(lua_State* L, int idx, glm::aligned_highp_vec4 const& v);
 void assign(lua_State* L, int idx, glm::quat const& v);
 void assign(lua_State* L, int idx, glm::mat3 const& m);
 void assign(lua_State* L, int idx, glm::mat3x4 const& m);

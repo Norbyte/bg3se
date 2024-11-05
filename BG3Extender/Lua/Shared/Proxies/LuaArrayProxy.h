@@ -32,6 +32,7 @@ BY_VAL(glm::ivec4);
 BY_VAL(glm::vec2);
 BY_VAL(glm::vec3);
 BY_VAL(glm::vec4);
+BY_VAL(glm::aligned_highp_vec4);
 BY_VAL(glm::quat);
 BY_VAL(glm::mat3);
 BY_VAL(glm::mat3x4);

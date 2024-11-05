@@ -1,5 +1,7 @@
 #pragma once
 
+#define GLM_FORCE_ALIGNED_GENTYPES
+
 #include <array>
 #include <string>
 #include <cassert>
@@ -7,6 +9,7 @@
 #include <atomic>
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <glm/gtc/type_aligned.hpp>
 
 namespace bg3se
 {
