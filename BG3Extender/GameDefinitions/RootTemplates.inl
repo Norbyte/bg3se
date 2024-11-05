@@ -5,6 +5,11 @@
 
 BEGIN_SE()
 
+FixedString GameObjectTemplate::GetTemplateType() const
+{
+	return *GetType();
+}
+
 IActionData* ItemTemplate::AddUseAction(ActionDataType type)
 {
 	auto action = gExtender->GetUseActionHelpers().Create(type);

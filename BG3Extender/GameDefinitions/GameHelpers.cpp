@@ -176,11 +176,6 @@ namespace bg3se
 		return contents;
 	}
 
-	FixedString GameObjectTemplate::GetTemplateType() const
-	{
-		return *GetType();
-	}
-
 	Module const * ModManager::FindModByNameGuid(char const * nameGuid) const
 	{
 		auto modUuidFS = NameGuidToFixedString(nameGuid);
@@ -472,6 +467,7 @@ void LuaPolymorphic<aspk::Property>::MakeRef(lua_State* L, aspk::Property* value
 		V(Base)
 
 	default:
+		WARN("Fetching unknown AllSpark property type: %d", value->GetPropertyType());
 		MakeDirectObjectRef(L, value, lifetime);
 		break;
 	}
@@ -491,6 +487,7 @@ void LuaPolymorphic<aspk::KeyFrameData>::MakeRef(lua_State* L, aspk::KeyFrameDat
 		break;
 
 	default:
+		WARN("Fetching unknown AllSpark keyframe type: %d", value->GetType());
 		MakeDirectObjectRef(L, value, lifetime);
 		break;
 	}
@@ -574,6 +571,7 @@ void LuaPolymorphic<aspk::Component>::MakeRef(lua_State* L, aspk::Component* val
 	V(CameraShake)
 	V(Decal)
 	V(Deflector)
+	V(DragForce)
 	V(GravityForce)
 	V(Light)
 	V(Model)
@@ -586,7 +584,7 @@ void LuaPolymorphic<aspk::Component>::MakeRef(lua_State* L, aspk::Component* val
 	V(RadialForce)
 	V(Sound)
 	V(SpinForce)
-	V(TurbulentForce)
+	V(TurbulenceForce)
 	V(VortexForce)
 	V(WindForce)
 	V(TLBase)
@@ -642,6 +640,7 @@ void LuaPolymorphic<aspk::Component>::MakeRef(lua_State* L, aspk::Component* val
 	// Theoretically there are a lot of other EffectComponents that could get output here; haven't finished researching them
 	else
 	{
+		WARN("Fetching unknown AllSpark component type: '%s'", componentType.data());
 		MakeDirectObjectRef(L, value, lifetime);
 	}
 

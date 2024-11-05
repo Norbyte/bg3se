@@ -491,6 +491,7 @@
     <ClInclude Include="GameDefinitions\Components\Events.h" />
     <ClInclude Include="Extender\Shared\UseActions.h" />
     <ClInclude Include="GameDefinitions\Components\Camera.h" />
+    <ClInclude Include="GameDefinitions\AllSparkShared.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -734,6 +735,7 @@
     <None Include="GameDefinitions\RootTemplates.inl" />
     <None Include="GameDefinitions\Render.inl" />
     <None Include="Lua\Libs\Log.inl" />
+    <None Include="GameDefinitions\AllSpark.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

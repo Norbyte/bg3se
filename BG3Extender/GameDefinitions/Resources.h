@@ -3,7 +3,7 @@
 #include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/EntitySystem.h>
 #include <GameDefinitions/Animation.h>
-#include <GameDefinitions/AllSpark.h>
+#include <GameDefinitions/AllSparkShared.h>
 #include <Lua/LuaHelpers.h>
 #include <d3d11.h>
 #include <synchapi.h>

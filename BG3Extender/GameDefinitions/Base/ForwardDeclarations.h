@@ -173,6 +173,12 @@ namespace lua
 	class LuaDelegate;
 }
 
+namespace aspk
+{
+	struct Input;
+	struct Component;
+}
+
 namespace ui
 {
 	struct UIManager;

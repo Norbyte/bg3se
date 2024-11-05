@@ -156,6 +156,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="Extender\Version.h" />
     <ClInclude Include="GameDefinitions\Ai.h" />
     <ClInclude Include="GameDefinitions\AllSpark.h" />
+    <ClInclude Include="GameDefinitions\AllSparkShared.h" />
     <ClInclude Include="GameDefinitions\Animation.h" />
     <ClInclude Include="GameDefinitions\Base\Base.h" />
     <ClInclude Include="GameDefinitions\Base\ExposedTypes.h" />
@@ -401,6 +402,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="Extender\Shared\VirtualTextureMerge.inl" />
     <None Include="Extender\Shared\VirtualTextures.inl" />
     <None Include="GameDefinitions\Ai.inl" />
+    <None Include="GameDefinitions\AllSpark.inl" />
     <None Include="GameDefinitions\Animation.inl" />
     <None Include="GameDefinitions\Base\TypeInformation.inl" />
     <None Include="GameDefinitions\Components\AllComponentTypes.inl" />

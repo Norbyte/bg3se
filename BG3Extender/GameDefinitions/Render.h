@@ -1,5 +1,7 @@
 #pragma once
 
+#include <GameDefinitions/AllSparkShared.h>
+
 BEGIN_SE()
 
 struct AABound
@@ -428,17 +430,6 @@ struct Visual : public MoveableObject
 	int16_t Wrinkle03BoneIndex;
 	int16_t BlendShapeBase;
 	ecs::EntityRef VisualEntity;
-};
-
-
-struct RenderPropertyList
-{
-	uint32_t RenderPasses;
-	uint8_t OpaqueChannel;
-	uint8_t AlphaChannel;
-	uint8_t field_6;
-	uint8_t field_7;
-	uint32_t TransformType;
 };
 
 

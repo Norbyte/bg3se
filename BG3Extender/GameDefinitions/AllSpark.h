@@ -1,5 +1,7 @@
 #pragma once
 
+#include <GameDefinitions/AllSparkShared.h>
+
 BEGIN_SE()
 
 struct Timeline;
@@ -139,40 +141,40 @@ struct Vector3Property : public Property
 	[[bg3::hidden]] __int32 field_44;
 };
 
+// Types: 0, 1, 2, 3 is null
+struct FixedFunction : public ProtectedGameObject<FixedFunction>
+{
+	virtual ~FixedFunction() = 0;
+	virtual void unknown1() = 0;
+	virtual void unknown2() = 0;
+	virtual void unknown3() = 0;
+	virtual int GetFunctionType() = 0;
+};
+
+struct FixedFunction0 : public FixedFunction
+{
+	float A;
+	float B;
+};
+
+struct FixedFunction1 : public FixedFunction
+{
+	float A;
+	float B;
+	float C;
+};
+
+struct FixedFunction2 : public FixedFunction
+{
+	float A;
+	float B;
+	float C;
+	float D;
+};
+
 struct FixedFunctionProperty : public Property
 {
-	// Types: 0, 1, 2, 3 is null
-	struct VirtualFunction : public ProtectedGameObject<VirtualFunction>
-	{
-		virtual ~VirtualFunction() = 0;
-		virtual void unknown1() = 0;
-		virtual void unknown2() = 0;
-		virtual void unknown3() = 0;
-		virtual int GetFunctionType() = 0;
-	};
-
-	struct Function0 : public VirtualFunction
-	{
-		float A;
-		float B;
-	};
-
-	struct Function1 : public VirtualFunction
-	{
-		float A;
-		float B;
-		float C;
-	};
-
-	struct Function2 : public VirtualFunction
-	{
-		float A;
-		float B;
-		float C;
-		float D;
-	};
-
-	VirtualFunction* Function;
+	FixedFunction* Function;
 };
 
 struct FixedStringProperty : public Property
@@ -184,13 +186,19 @@ struct BaseProperty : public Property
 {
 };
 
+struct CustomModules
+{
+	[[bg3::hidden]] Array<void*> CustomFloatModules;
+	[[bg3::hidden]] Array<void*> CustomFloat3Modules;
+};
+
 struct Component : public ProtectedGameObject<Component>
 {
 	virtual ~Component() = 0;
 	virtual void Clone(Component const&) = 0;
 	virtual bool Visit(ObjectVisitor*) = 0;
 	virtual uint32_t GetPriorityIndex() const = 0;
-	virtual FixedString const& GetTypeName() = 0;
+	virtual FixedString const& GetTypeName() const = 0;
 	virtual bool SetStayAlive(float) = 0;
 	virtual void Update(float) = 0;
 	virtual void PostUpdate(float) = 0;
@@ -220,6 +228,11 @@ struct Component : public ProtectedGameObject<Component>
 	virtual void DetachMaterial() = 0;
 	virtual void Unknown05() = 0;
 
+	// Lua getter helpers
+	FixedString LuaGetTypeName() const;
+
+	//# P_GETTER(TypeName, LuaGetTypeName)
+
 	Guid ID;
 	[[bg3::hidden]] Timeline* Timeline;
 	uint32_t TrackGroupIndex;
@@ -229,17 +242,17 @@ struct Component : public ProtectedGameObject<Component>
 	bool StayAlive;
 };
 
+struct Module
+{
+	STDString Name;
+	Array<FixedString> FullName;
+	Array<Property*> Properties;
+};
+
 // Note: There are a LOT of different EffectComponents, all seemingly over 0x100 in size
 // The polymorphic choice should be made based on vtable[4]'s FixedString return value
 struct FxBaseComponent : public Component
 {
-	struct Module
-	{
-		STDString Name;
-		Array<FixedString> FullName;
-		Array<Property*> Properties;
-	};
-
 	float LastUpdateTimeStep;
 	float LastUpdate;
 	float TimeStepEdge0;
@@ -992,57 +1005,232 @@ struct TLVoiceComponent : public TLBaseComponent
 
 struct BillboardComponent : public FxBaseComponent
 {
-	[[bg3::hidden]] std::array<__int64, 77> field_b8;
+	Transform Transform;
+	RenderableObject* BillboardRenderable;
+	FloatKeyFrameProperty* KeyframedOffsetProperty;
+	FloatKeyFrameProperty* OrientationProperty;
+	StringProperty* TextProperty;
+	ColorARGBKeyFrameProperty* ColorProperty;
+	FloatKeyFrameProperty* BrightnessProperty;
+	FloatKeyFrameProperty* SizeProperty;
+	FloatProperty* UniformScaleProperty;
+	FloatKeyFrameProperty* DynamicValueProperty;
+	FloatKeyFrameProperty* AlphaProperty;
+	FloatProperty* ModifierXProperty;
+	FloatProperty* ModifierYProperty;
+	FloatProperty* ModifierZProperty;
+	FloatProperty* ModifierWProperty;
+	Vector3Property* OffsetProperty;
+	float UniformScale;
+	float SnapToTop;
+	float SnapToBottom;
+	float Brightness;
+	bool SnapToGround;
+	bool MaterialApplied;
+	uint8_t Facing;
+	CustomModules CustomModules;
+	glm::vec3 field_178;
+	glm::vec3 field_184;
+	glm::vec3 Position;
+	glm::vec3 KeyframedPosition;
+	glm::aligned_highp_vec4 Color;
+	RenderPropertyList PropertyList;
+	[[bg3::hidden]] uint16_t field_1C0;
 };
 
 struct BoundingBoxComponent : public FxBaseComponent
 {
-	[[bg3::hidden]] std::array<__int64, 6> field_b8;
+	glm::vec3 Center;
+	glm::vec3 Size;
+	glm::vec3 Position;
+	glm::vec3 RequiredSize;
+	// RenderableObject* BoxVisual;
 };
 
 struct BoundingSphereComponent : public FxBaseComponent
 {
-	[[bg3::hidden]] std::array<__int64, 4> field_b8;
+	glm::vec3 Center;
+	float Radius;
+	glm::vec3 Position;
+	float RequiredRadius;
+	// RenderableObject* SphereVisual;
 };
 
 struct CameraShakeComponent : public FxBaseComponent
 {
-	[[bg3::hidden]] std::array<__int64, 7> field_b8;
+	aspk::FloatRangeProperty* FalloffStartEndProperty;
+	aspk::FloatKeyFrameProperty* ShakeStrengthProperty;
+	aspk::FloatKeyFrameProperty* ShakeVibrationFrequencyProperty;
+	uint64_t field_B8;
+	float ShakeStrength;
+	float ShakeFrequency;
+	float field_C8;
+	float field_CC;
+	float UpdateTime;
+	uint8_t Flags;
 };
 
 struct DecalComponent : public FxBaseComponent
 {
-	[[bg3::hidden]] std::array<__int64, 39> field_b8;
+	ColorARGBKeyFrameProperty* ColorProperty;
+	FloatKeyFrameProperty* AlphaProperty;
+	FloatKeyFrameProperty* BrightnessProperty;
+	FloatKeyFrameProperty* DimensionsProperty;
+	FloatKeyFrameProperty* ProjectedOffsetProperty;
+	FloatKeyFrameProperty* OffsetProperty;
+	FloatKeyFrameProperty* RotationProperty;
+	FloatProperty* UniformScaleProperty;
+	FloatKeyFrameProperty* DynamicValueProperty;
+	FloatProperty* ModifierXProperty;
+	FloatProperty* ModifierYProperty;
+	FloatProperty* ModifierZProperty;
+	FloatProperty* ModifierWProperty;
+	[[bg3::hidden]] void* field_108;
+	Material* Material;
+	EntityHandle DecalEntity;
+	float Distance;
+	float NormalBlendingFactor;
+	float Brightness;
+	float UniformScale;
+	glm::vec3 Offset;
+	glm::mat3x3 Axis;
+	glm::vec3 Position;
+	glm::vec3 KeyframedPosition;
+	glm::aligned_highp_vec4 Color;
+	CustomModules CustomModules;
+	uint8_t CoordinateSpace;
+	bool IgnoreParentRotation;
 };
 
 struct DeflectorComponent : public FxBaseComponent
 {
-	[[bg3::hidden]] std::array<__int64, 7> field_b8;
+	bool Visible;
+	glm::vec3 Normal;
+	glm::vec3 Position;
+	FloatProperty* PositionModifierXProperty;
+	FloatProperty* PositionModifierYProperty;
+	FloatProperty* PositionModifierZProperty;
+	RenderableObject* PlaneVisual1;
+	RenderableObject* PlaneVisual2;
 };
 
 struct DragForceComponent : public FxBaseComponent
 {
-	[[bg3::hidden]] std::array<__int64, 10> field_b8;
+	FloatKeyFrameProperty* InfluenceRadiusProperty;
+	FloatKeyFrameProperty* KeyframedOffsetProperty;
+	FloatKeyFrameProperty* DampingProperty;
+	glm::vec3 Offset;
+	bool InfluenceRadiusApplied;
+	float InfluenceRadius;
+	glm::vec3 Position;
+	glm::vec3 KeyframedPosition;
+	glm::vec3 field_E4;
 };
 
 struct GravityForceComponent : public FxBaseComponent
 {
-	[[bg3::hidden]] std::array<__int64, 10> field_b8;
+	FloatKeyFrameProperty* InfluenceRadiusProperty;
+	FloatKeyFrameProperty* KeyframedOffsetProperty;
+	FloatKeyFrameProperty* AccelerationProperty;
+	glm::vec3 Offset;
+	glm::vec3 Direction;
+	bool InfluenceRadiusApplied;
+	float InfluenceRadius;
+	glm::vec3 Position;
+	glm::vec3 KeyframedPosition;
 };
 
 struct LightComponent : public FxBaseComponent
 {
-	[[bg3::hidden]] std::array<__int64, 35> field_b8;
+	ColorARGBKeyFrameProperty* ColorProperty;
+	FloatKeyFrameProperty* IntensityProperty;
+	FloatKeyFrameProperty* RadiusProperty;
+	FloatKeyFrameProperty* PositionProperty;
+	FloatKeyFrameProperty* RotationProperty;
+	FloatKeyFrameProperty* FlickerAmountProperty;
+	FloatKeyFrameProperty* FlickerSpeedProperty;
+	FloatKeyFrameProperty* InitialRotationProperty;
+	FloatKeyFrameProperty* RotationLifeProperty;
+	[[bg3::hidden]] void* field_E8;
+	EntityHandle LightEntity;
+	float SnapToTop;
+	float SnapToBottom;
+	glm::vec3 CalculatedPosition;
+	glm::vec3 LastPosition;
+	glm::vec3 field_120;
+	glm::vec3 Velocity;
+	glm::vec3 Offset;
+	glm::vec3 Position;
+	glm::vec3 KeyframedPosition;
+	glm::vec3 field_15C;
+	glm::vec3 field_168;
+	glm::quat Rotation;
+	bool WasActive;
+	bool IgnoreParentRotation;
+	bool ModulateLightTemplateRadius;
+	bool OverrideLightTemplateColor;
+	bool OverrideLightTemplateFlickerSpeed;
+	bool SnapToGround;
+	bool field_18A;
+	bool AnimateManually;
+	uint8_t CoordinateSpace;
 };
 
 struct ModelComponent : public FxBaseComponent
 {
-	[[bg3::hidden]] std::array<__int64, 4> field_b8;
-	__int32 field_d8;
-	FixedString field_dc;
-	FixedString field_e0;
-	FixedString field_e4;
-	[[bg3::hidden]] std::array<__int64, 55> field_e8;
+	EntityHandle VisualEntity;
+	CustomModules CustomModules;
+	float field_C8;
+	float FadeOutTime;
+	float Alpha;
+	float Brightness;
+	float UniformScale;
+	float SnapTop;
+	float SnapBottom;
+	bool LoopAnimation;
+	bool Active;
+	bool SnapToGround;
+	bool HasVisual;
+	FixedString Animation;
+	FixedString field_EC;
+	FixedString field_F0;
+	aspk::FloatKeyFrameProperty* KeyframedOffsetProperty;
+	aspk::FloatKeyFrameProperty* ScaleRotationDurationProperty;
+	aspk::FloatKeyFrameProperty* InitialRotationProperty;
+	aspk::FloatKeyFrameProperty* RotationLifeProperty;
+	aspk::ColorARGBKeyFrameProperty* ColorProperty;
+	aspk::FloatKeyFrameProperty* BrightnessProperty;
+	aspk::FloatKeyFrameProperty* UniformScaleProperty;
+	aspk::FloatKeyFrameProperty* AxisScaleProperty;
+	aspk::FloatProperty* AnimationSpeedProperty;
+	aspk::BooleanProperty* SyncAnimationResourceTimeProperty;
+	aspk::FloatKeyFrameProperty* DynamicValueProperty;
+	aspk::FloatKeyFrameProperty* ModelAlphaProperty;
+	aspk::FloatProperty* ModelModifierXProperty;
+	aspk::FloatProperty* ModelModifierYProperty;
+	aspk::FloatProperty* ModelModifierZProperty;
+	aspk::FloatProperty* ModelModifierWProperty;
+	aspk::FloatProperty* ScaleModifierXProperty;
+	aspk::FloatProperty* ScaleModifierYProperty;
+	aspk::FloatProperty* ScaleModifierZProperty;
+	aspk::FloatProperty* KeyframedPositionModifierXProperty;
+	aspk::FloatProperty* KeyframedPositionModifierYProperty;
+	aspk::FloatProperty* KeyframedPositionModifierZProperty;
+	aspk::BooleanProperty* ShowSkeletonProperty;
+	[[bg3::hidden]] __int64 field_1B0;
+	[[bg3::hidden]] __int64 field_1B8;
+	[[bg3::hidden]] __int64 field_1C0;
+	[[bg3::hidden]] __int64 field_1C8;
+	glm::vec3 AxisScale;
+	glm::vec3 Position;
+	glm::vec3 KeyframedPosition;
+	glm::vec3 Rotation;
+	glm::vec3 Offset;
+	glm::vec3 field_20C;
+	glm::vec3 field_218;
+	glm::aligned_highp_vec4 Color;
+	glm::quat PivotRotation;
+	glm::quat PostRotation;
 };
 
 struct MovingLevelComponent : public FxBaseComponent
@@ -1053,49 +1241,229 @@ struct MovingLevelComponent : public FxBaseComponent
 
 struct OrbitForceComponent : public FxBaseComponent
 {
-	[[bg3::hidden]] std::array<__int64, 8> field_b8;
+	FloatKeyFrameProperty* KeyframedOffsetProperty;
+	FloatKeyFrameProperty* OrbitRadiusProperty;
+	glm::vec3 Offset;
+	glm::vec3 Position;
+	glm::vec3 KeyframedPosition;
+	glm::vec3 field_D4;
 };
 
 struct OverlayMaterialComponent : public FxBaseComponent
 {
-	[[bg3::hidden]] std::array<__int64, 10> field_b8;
-	FixedString field_108;
-	__int32 field_10c;
-	[[bg3::hidden]] std::array<__int64, 18> field_110;
+	ColorARGBKeyFrameProperty* ColorProperty;
+	FloatKeyFrameProperty* BrightnessProperty;
+	FloatProperty* AnimationSpeedProperty;
+	FloatKeyFrameProperty* DynamicValueProperty;
+	FloatKeyFrameProperty* AlphaProperty;
+	FloatProperty* ModifierXProperty;
+	FloatProperty* ModifierYProperty;
+	FloatProperty* ModifierZProperty;
+	FloatProperty* ModifierWProperty;
+	EntityHandle EffectEntity;
+	FixedString Material;
+	uint32_t ApplyMaps;
+	CustomModules CustomModules;
+	uint64_t Applied;
+	uint32_t ApplyTo;
+	uint32_t OverlayType;
+	glm::aligned_highp_vec4 Color;
+	glm::vec3 VisualPosition;
+	float Brightness;
+	int32_t OverlayPriority;
+	float FadeTime;
+	uint8_t field_150;
+	uint8_t field_151;
+	bool Active;
+	bool HasCustomVectors;
+	uint8_t field_154;
+	uint8_t AlphaChannel;
+	[[bg3::hidden]] uint64_t field_158;
+	glm::vec4 field_160;
+	glm::vec4 field_170;
+	bool HasPreview;
+	EntityHandle VisualEntity;
+	FixedString Animation;
+};
+
+struct PackedUnitVector
+{
+	uint16_t X;
+	uint16_t Y;
+	uint16_t Z;
+};
+
+struct FxParticleData
+{
+	uint32_t Flags;
+	uint32_t Count;
+	Array<float> Lifespan;
+	Array<float> Ages;
+	Array<glm::vec3> Positions;
+	Array<glm::vec3> Velocities;
+	Array<uint16_t> Rotations;
+	Array<PackedUnitVector> Normals;
+	Array<PackedUnitVector> UpVectors;
+	Array<uint16_t> FlipbookImageIndices;
+	Array<EntityHandle> field_88;
+	Array<uint16_t> InitialRotationSpeeds;
+	Array<uint32_t> FixedColors;
+	Array<uint16_t> FixedScalars;
+	Array<float> DiscardValues;
+	Array<float> UnitAges;
+	Array<glm::vec3> Scales;
+	Array<glm::vec3> AppliedForces;
+	[[bg3::hidden]] Array<void*> MoveInstructions;
+	Array<uint32_t> DiedParticles;
+};
+
+struct ParticleRenderStyle1
+{
+	Vector3Property* AxisAlignedOrientation;
+	uint8_t Flags;
+};
+
+struct ParticleFlipbookData
+{
+	uint16_t InitialFrame;
+	uint16_t HorizontalImages;
+	uint16_t VerticalImages;
+	uint16_t FrameRate;
+	uint16_t FrameRangeMin;
+	uint16_t FrameRangeMax;
+	FloatKeyFrameProperty* ImageController;
+	uint8_t Flags;
+};
+
+struct ParticleSystemSnapBehavior
+{
+	glm::vec3 field_0;
+	glm::vec3 field_C;
+	glm::mat3x3 field_18;
+	float field_3C;
+	float Top;
+	float Bottom;
+};
+
+struct ParticleDistanceScale
+{
+	float Min;
+	float Max;
+	FloatKeyFrameProperty* Scale;
 };
 
 struct ParticleSystemComponent : public FxBaseComponent
 {
-	struct ParticleDatas
-	{
-		__int32 field_0;
-		int32_t Count;
-		Array<float> Lifespan;
-		Array<float> Ages;
-		Array<glm::fvec3> Positions;
-		Array<glm::fvec3> Velocities;
-		Array<uint16_t> Rotations;
-		Array<glm::fvec3> Normals;
-		Array<glm::fvec3> UpVectors;
-		Array<uint16_t> FlipbookImageIndices;
-		__int64 field_88;
-		__int64 field_90;
-		Array<uint16_t> InitialRotationSpeeds;
-		Array<uint32_t> FixedColors;
-		Array<uint16_t> FixedScalars;
-		Array<float> DiscardValues;
-		Array<float> UnitAges;
-		Array<glm::fvec3> Scales;
-		Array<glm::fvec3> AppliedForces;
-	};
-	[[bg3::hidden]] std::array<__int64, 98> field_b8;
-	ParticleDatas ParticleData;
-	[[bg3::hidden]] std::array<__int64, 8> field_4d0;
+	ParticleRenderStyle1* RenderStyle1;
+	ParticleFlipbookData* Flipbook;
+	[[bg3::hidden]] void* Emitter;
+	ParticleSystemSnapBehavior* SnapBehavior;
+	FloatKeyFrameProperty* KeyframedOffsetProperty;
+	ColorARGBKeyFrameProperty* ParticleColorProperty;
+	FloatKeyFrameProperty* ParticleBrightnessProperty;
+	FloatKeyFrameProperty* ParticleAlphaProperty;
+	FloatKeyFrameProperty* ParticleScaleProperty;
+	FloatKeyFrameProperty* ParticleLocalOriginProperty;
+	FloatKeyFrameProperty* ParticleVelocityOffsetProperty;
+	FloatKeyFrameProperty* ParticleInitialRotationProperty;
+	FloatKeyFrameProperty* ParticleRotationProperty;
+	FloatKeyFrameProperty* ParticleInitialRotationSpeedProperty;
+	FloatKeyFrameProperty* ParticleRotationSpeedProperty;
+	FloatKeyFrameProperty* ParticleAxisScaleProperty;
+	FloatKeyFrameProperty* EmitRateProperty;
+	FloatKeyFrameProperty* EmitStutterProperty;
+	FloatKeyFrameProperty* LifespanProperty;
+	FloatKeyFrameProperty* InitialVelocityProperty;
+	FloatKeyFrameProperty* EmitVelocityAnglesProperty;
+	FloatKeyFrameProperty* EmitVelocityAxisRotationProperty;
+	ColorARGBKeyFrameProperty* ColorProperty;
+	FloatKeyFrameProperty* BrightnessProperty;
+	FloatKeyFrameProperty* UniformScaleProperty;
+	FloatKeyFrameProperty* AxisScaleProperty;
+	FloatKeyFrameProperty* MaterialDynamicValueProperty;
+	FloatProperty* MaterialModifierXProperty;
+	FloatProperty* MaterialModifierYProperty;
+	FloatProperty* MaterialModifierZProperty;
+	FloatProperty* MaterialModifierWProperty;
+	FloatProperty* MaterialScaleModifierXProperty;
+	FloatProperty* MaterialScaleModifierYProperty;
+	FloatProperty* MaterialScaleModifierZProperty;
+	FloatProperty* KeyframedPositionModifierXProperty;
+	FloatProperty* KeyframedPositionModifierYProperty;
+	FloatProperty* KeyframedPositionModifierZProperty;
+	FloatProperty* EmitRateModifierProperty;
+	FloatKeyFrameProperty* InheritVelocityPercentProperty;
+	glm::vec3 Offset;
+	glm::vec3 LastPosition;
+	glm::vec3 EmitVelocityAxis;
+	glm::vec3 EmitPosition;
+	float WarmUpTime;
+	float RemainingParticleCount;
+	float RecycleRadius;
+	float RotationRateOverLife;
+	float InitialVelocity;
+	float Brightness_;
+	float MinLifespan;
+	float MaxLifespan;
+	float UniformScale;
+	glm::vec3 AxisScale;
+	glm::vec3 Position;
+	glm::vec3 KeyframedPosition;
+	float ColorOverEffectLife;
+	float ScaleOverEffectLife;
+	glm::vec3 ScaleOverEffectLifeAxis;
+	glm::aligned_highp_vec4 Color;
+	float PhysicalMaterialFriction;
+	float PhysicalMaterialBounce;
+	float PhysicalMaterialLifetimeLoss;
+	float PhysicalMaterialRadiusScale;
+	glm::mat3x3 PivotRotation;
+	// int field_2C4;
+	Material* Material;
+	FixedString Visual;
+	[[bg3::hidden]] void* field_2D8;
+	[[bg3::hidden]] void* MeshRenderList;
+	[[bg3::hidden]] void* RenderBatch;
+	[[bg3::hidden]] uint64_t field_2F0;
+	uint8_t BlendStateID;
+	uint8_t field_2F9;
+	uint16_t field_2FA;
+	uint16_t MaximumParticleCount;
+	uint16_t InitialParticleCountMin;
+	uint16_t InitialParticleCountMax;
+	uint16_t RecycleRadius_;
+	uint8_t RenderStyle;
+	uint8_t CoordinateSpace;
+	uint8_t EmitterType;
+	uint8_t RenderOrder;
+	uint8_t AttachedFXOnly;
+	uint8_t Flags;
+	uint8_t Flags2;
+	// Array<void*> DebugShapes;
+	// void* RecycleRadiusDebugShape;
+	glm::aligned_highp_vec4 FixedColor;
+	glm::vec3 ExternalVelocity;
+	glm::vec3 ScaleMultiplier;
+	glm::aligned_highp_vec4 ColorMultiplier;
+	[[bg3::hidden]] Array<void*> CustomFloatModules;
+	[[bg3::hidden]] Array<void*> CustomFloat3Modules;
+	ParticleDistanceScale AlphaByEffectDistance;
+	ParticleDistanceScale AlphaByParticleDistance;
+	ParticleDistanceScale ScaleByEffectDistance;
+	ParticleDistanceScale ScaleByParticleDistance;
+	bool ParticleDiscardByDistanceEnabled;
+	float ParticleDiscardByDistanceMin;
+	float ParticleDiscardByDistanceMax;
+	FloatKeyFrameProperty* ParticleDiscardByDistanceScale;
+	FxParticleData ParticleData;
+	[[bg3::hidden]] void* ParticleDeathSpawnFx;
+	[[bg3::hidden]] void* AttachedFx;
+	[[bg3::hidden]] void* field_500;
 };
 
 struct PostProcessComponent : public FxBaseComponent
 {
-	[[bg3::hidden]] std::array<__int64, 2> field_b8;
+	[[bg3::hidden]] Array<void*> field_A0; // FxPostProcessObject*
 };
 
 struct PreRollComponent : public FxBaseComponent
@@ -1104,7 +1472,16 @@ struct PreRollComponent : public FxBaseComponent
 
 struct RadialForceComponent : public FxBaseComponent
 {
-	[[bg3::hidden]] std::array<__int64, 10> field_b8;
+	FloatKeyFrameProperty* InfluenceRadiusProperty;
+	FloatKeyFrameProperty* KeyframedOffsetProperty;
+	FloatKeyFrameProperty* AccelerationProperty;
+	FloatKeyFrameProperty* LockDistanceProperty;
+	glm::vec3 Offset;
+	bool InfluenceRadiusApplied;
+	bool LockDistanceApplied;
+	float InfluenceRadius;
+	glm::vec3 Position;
+	glm::vec3 KeyframedPosition;
 };
 
 struct Ribbon2Component : public FxBaseComponent
@@ -1114,69 +1491,63 @@ struct Ribbon2Component : public FxBaseComponent
 
 struct SoundComponent : public FxBaseComponent
 {
-	[[bg3::hidden]] std::array<__int64, 5> field_b8;
-	FixedString field_f0;
-	FixedString field_f4;
-	FixedString field_f8;
-	__int32 field_fc;
-	[[bg3::hidden]] std::array<__int64, 3> field_100;
+	[[bg3::hidden]] void* App;
+	[[bg3::hidden]] void* TransformSystem;
+	[[bg3::hidden]] void* ResourceManager;
+	[[bg3::hidden]] void* SoundManager;
+	[[bg3::hidden]] void* SoundEvent;
+	[[bg3::hidden]] void* SoundEvent2;
+	[[bg3::hidden]] void* SoundEvent3;
+	FixedString SoundEventName;
+	FixedString SoundEventName2;
+	FixedString SoundEventName3;
+	int32_t PlayOn;
+	uint8_t Flags;
+	uint8_t Flags2;
 };
 
 struct SpinForceComponent : public FxBaseComponent
 {
-	[[bg3::hidden]] std::array<__int64, 10> field_b8;
+	FloatKeyFrameProperty* InfluenceRadiusProperty;
+	FloatKeyFrameProperty* KeyframedOffsetProperty;
+	FloatKeyFrameProperty* SpinVelocityProperty;
+	glm::vec3 Offset;
+	glm::vec3 SpinAxis;
+	bool InfluenceRadiusApplied;
+	float InfluenceRadius;
+	glm::vec3 Position;
+	glm::vec3 KeyframedPosition;
 };
 
-struct TurbulentForceComponent : public FxBaseComponent
+struct TurbulenceForceComponent : public FxBaseComponent
 {
-	[[bg3::hidden]] std::array<__int64, 9> field_b8;
+	FloatKeyFrameProperty* InfluenceRadiusProperty;
+	FloatKeyFrameProperty* KeyframedOffsetProperty;
+	FloatKeyFrameProperty* AccelerationProperty;
+	glm::vec3 Offset;
+	bool InfluenceRadiusApplied;
+	float InfluenceRadius;
+	glm::vec3 Position;
+	glm::vec3 KeyframedPosition;
 };
 
 struct VortexForceComponent : public FxBaseComponent
 {
-	[[bg3::hidden]] std::array<__int64, 10> field_b8;
+	FloatKeyFrameProperty* InfluenceRadiusProperty;
+	FloatKeyFrameProperty* KeyframedOffsetProperty;
+	FloatKeyFrameProperty* SpinVelocityProperty;
+	glm::vec3 Offset;
+	glm::vec3 RotationAxis;
+	bool InfluenceRadiusApplied;
+	float InfluenceRadius;
+	glm::vec3 Position;
+	glm::vec3 KeyframedPosition;
 };
 
 struct WindForceComponent : public FxBaseComponent
 {
-	[[bg3::hidden]] std::array<__int64, 4> field_b8;
-};
-
-
-struct QuestionHoldAutomationSettings
-{
-	QuestionHoldAutomationSettings() = delete;
-
-	[[bg3::hidden]] void* VMT;
-	bool IsEnabled;
-	float CycleSpeed;
-	float CycleSpeedDeviation;
-	float StartOffset;
-	float StartOffsetDeviation;
-};
-
-
-struct TimelinePhase
-{
-	TimelinePhase() = delete;
-
-	[[bg3::hidden]] void* VMT;
-	float Duration;
-	float EndTime;
-	int PlayCount;
-	int field_14;
-	Guid DialogNodeId;
-	bool IsOverridingTimelineQuestionHoldAutomationSettings;
-	QuestionHoldAutomationSettings QuestionHoldAutomation;
-};
-
-
-struct TimelineHeader : public ProtectedGameObject<TimelineHeader>
-{
-	float Duration;
-	[[bg3::hidden]] void* PhasesVMT;
-	Array<TimelinePhase> Phases;
-	[[bg3::hidden]] uint64_t PhasesExtra;
+	aspk::FloatKeyFrameProperty* SpeedMultiplier;
+	float UpdateTime;
 };
 
 

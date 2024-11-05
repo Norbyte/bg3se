@@ -610,6 +610,7 @@ sources = [
     'GameDefinitions/Interrupt.h',
     'GameDefinitions/Progression.h',
     'GameDefinitions/Animation.h',
+    'GameDefinitions/AllSparkShared.h',
     'GameDefinitions/AllSpark.h',
     'GameDefinitions/Dialog.h',
     'GameDefinitions/RootTemplates.h',

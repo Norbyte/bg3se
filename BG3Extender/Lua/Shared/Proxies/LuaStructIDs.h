@@ -4,6 +4,7 @@
 #include <GameDefinitions/GuidResources.h>
 #include <GameDefinitions/Components/Spell.h>
 #include <GameDefinitions/Progression.h>
+#include <GameDefinitions/AllSpark.h>
 #include <GameDefinitions/Render.h>
 #include <GameDefinitions/Stats/Common.h>
 
