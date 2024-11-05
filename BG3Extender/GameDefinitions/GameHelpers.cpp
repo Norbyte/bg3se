@@ -550,20 +550,21 @@ void LuaPolymorphic<dlg::DialogNode>::MakeRef(lua_State* L, dlg::DialogNode* val
 
 void LuaPolymorphic<aspk::Component>::MakeRef(lua_State* L, aspk::Component* value, LifetimeHandle const& lifetime)
 {
-#define V(type) else if (value->GetTypeName().GetStringView() == #type) \
+	auto componentType = value->GetTypeName().GetStringView();
+#define V(type) else if (componentType == #type) \
 					MakeDirectObjectRef(L, static_cast<aspk::type##Component*>(value), lifetime);
-#define V_timeline(type) else if (value->GetTypeName().GetStringView() == #type) \
+#define V_timeline(type) else if (componentType == #type) \
 					MakeDirectObjectRef(L, static_cast<aspk::type##Component*>(value), lifetime);
-#define V_tlkeybase(type) else if (value->GetTypeName().GetStringView() == #type) \
+#define V_tlkeybase(type) else if (componentType == #type) \
 					MakeDirectObjectRef(L, static_cast<aspk::type##Component<aspk::keys::KeyBase>*>(value), lifetime);
-#define V_tlchannel(type) else if (value->GetTypeName().GetStringView() == #type) \
+#define V_tlchannel(type) else if (componentType == #type) \
 					MakeDirectObjectRef(L, static_cast<aspk::channels::type##Component*>(value), lifetime);
-	if (value->GetTypeName().GetStringView() == "BaseComponent")
+	if (componentType == "BaseComponent")
 	{
 		MakeDirectObjectRef(L, static_cast<aspk::Component*>(value), lifetime);
 	}
 	// Special case for this one because it can't be its own V
-	else if (value->GetTypeName().GetStringView() == "Ribbon 2.0")
+	else if (componentType == "Ribbon 2.0")
 	{
 		MakeDirectObjectRef(L, static_cast<aspk::Ribbon2Component*>(value), lifetime);
 	}
