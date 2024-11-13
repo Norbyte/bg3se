@@ -10,7 +10,7 @@ struct CustomIconComponent : public BaseComponent
 
 	[[bg3::hidden]]
 	ScratchBuffer Buffer;
-	uint64_t Unknown;
+	uint8_t Unknown;
 };
 
 struct IconComponent : public BaseComponent
