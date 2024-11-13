@@ -1235,8 +1235,12 @@ struct ModelComponent : public FxBaseComponent
 
 struct MovingLevelComponent : public FxBaseComponent
 {
-	STDString field_b8;
-	[[bg3::hidden]] std::array<__int64, 5> field_d0;
+	STDString LevelTemplate;
+	glm::vec3 Offset;
+	glm::vec3 ScrollingDirection;
+	float ScrollingSpeed;
+	float ScrollingDistance;
+	float UpdateTime;
 };
 
 struct OrbitForceComponent : public FxBaseComponent
@@ -1484,9 +1488,76 @@ struct RadialForceComponent : public FxBaseComponent
 	glm::vec3 KeyframedPosition;
 };
 
+struct RibbonParticleData
+{
+	int field_0;
+	int Size;
+	int ParticleCount;
+	int NextParticle;
+	Array<uint16_t> Particles;
+};
+
+struct RibbonParticleHolder
+{
+	RibbonParticleData* Data;
+	int field_8;
+};
+
 struct Ribbon2Component : public FxBaseComponent
 {
-	[[bg3::hidden]] std::array<__int64, 63> field_b8;
+	[[bg3::hidden]] void* EffectManager;
+	[[bg3::hidden]] void* ResourceManager;
+	[[bg3::hidden]] void* MaterialSystem;
+	uint32_t field_B8;
+	uint32_t CoordinateSpace;
+	uint32_t EmissionBehavior;
+	uint32_t TexCoordType;
+	[[bg3::hidden]] RibbonParticleData ParticleData;
+	uint32_t DynamicParametersType;
+	FloatKeyFrameProperty* DynamicParameterValueProperty;
+	FloatProperty* DynamicParameterModifierXProperty;
+	FloatProperty* DynamicParameterModifierYProperty;
+	FloatProperty* DynamicParameterModifierZProperty;
+	FloatProperty* DynamicParameterModifierWProperty;
+	float field_118;
+	float field_11C;
+	float field_120;
+	float field_124;
+	uint32_t ColorType;
+	ColorARGBKeyFrameProperty* ColorProperty;
+	FloatKeyFrameProperty* BrightnessProperty;
+	FloatKeyFrameProperty* AlphaProperty;
+	uint32_t ScaleType;
+	FloatKeyFrameProperty* ScaleProperty;
+	FloatProperty* ScaleModifierProperty;
+	float field_160;
+	uint32_t field_164;
+	glm::vec3 InitialVelocity;
+	bool UseObjectOrientation;
+	glm::quat ExtraRotation;
+	bool InfiniteParticleLife;
+	float ParticleLife;
+	EntityHandle VisualEntity;
+	Visual* Visuals;
+	RenderableObject* Effect;
+	uint32_t MaxParticleCount;
+	float EmitRate;
+	float EmitDistance;
+	float UpdateTime;
+	float field_1B8;
+	float UnitTime;
+	bool InvertTexcoord;
+	bool ConnectToEmitter;
+	glm::vec3 field_1C4;
+	glm::vec3 Velocity;
+	glm::vec3 Translate;
+	glm::quat Rotation;
+	uint32_t Flags;
+	[[bg3::hidden]] std::array<RibbonParticleHolder, 6> ParticleHolders;
+	Array<Visual*> DebugShapes;
+	Array<Visual*> DebugShapes2;
+	glm::vec3 BoundMin;
+	glm::vec3 BoundMax;
 };
 
 struct SoundComponent : public FxBaseComponent
