@@ -527,7 +527,7 @@ void CustomFunctionInjector::ThrowEvent(FunctionHandle handle, OsiArgumentDesc *
 	}
 }
 
-void OsiFunctionToSymbolInfo(Function & func, OsiSymbolInfo & symbol)
+void OsiFunctionToSymbolInfo(OsiFunctionDef& func, OsiSymbolInfo & symbol)
 {
 	symbol.name = func.Signature->Name;
 	symbol.type = func.Type;
@@ -553,7 +553,7 @@ void CustomFunctionInjector::CreateOsirisSymbolMap(MappingInfo ** Mappings, uint
 
 	std::unordered_map<FunctionNameAndArity, uint32_t> symbolMap;
 	auto funcs = *gExtender->GetServer().Osiris().GetGlobals().Functions;
-	auto visit = [&symbolMap, this](OsiString const & str, Function * func) {
+	auto visit = [&symbolMap, this](OsiString const & str, OsiFunctionDef* func) {
 		OsiSymbolInfo symbol;
 		OsiFunctionToSymbolInfo(*func, symbol);
 

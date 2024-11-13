@@ -361,13 +361,13 @@ void OsirisCallbackManager::CallPostHook(uint32_t functionId, OsiArgumentDesc* a
 	RunHandlers(nodeRef, args);
 }
 
-void OsirisCallbackManager::EventPreHook(Function* node, OsiArgumentDesc* args)
+void OsirisCallbackManager::EventPreHook(OsiFunctionDef* node, OsiArgumentDesc* args)
 {
 	uint64_t nodeRef = node->OsiFunctionId | BeforeFunctionRef;
 	RunHandlers(nodeRef, args);
 }
 
-void OsirisCallbackManager::EventPostHook(Function* node, OsiArgumentDesc* args)
+void OsirisCallbackManager::EventPostHook(OsiFunctionDef* node, OsiArgumentDesc* args)
 {
 	uint64_t nodeRef = node->OsiFunctionId | AfterFunctionRef;
 	RunHandlers(nodeRef, args);

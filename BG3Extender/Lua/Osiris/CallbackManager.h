@@ -86,8 +86,8 @@ public:
 	void CallQueryPostHook(Node* node, OsiArgumentDesc* args, bool succeeded);
 	void CallPreHook(uint32_t functionId, OsiArgumentDesc* args);
 	void CallPostHook(uint32_t functionId, OsiArgumentDesc* args, bool succeeded);
-	void EventPreHook(Function* node, OsiArgumentDesc* args);
-	void EventPostHook(Function* node, OsiArgumentDesc* args);
+	void EventPreHook(OsiFunctionDef* node, OsiArgumentDesc* args);
+	void EventPostHook(OsiFunctionDef* node, OsiArgumentDesc* args);
 
 private:
 	static constexpr uint64_t AfterTriggerNodeRef = 0x8000000000000000ull;

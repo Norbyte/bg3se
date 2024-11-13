@@ -864,7 +864,7 @@ enum class FunctionType : uint32_t
 	UserQuery = 8
 };
 
-struct Function : public ProtectedGameObject<Function>
+struct OsiFunctionDef : public ProtectedGameObject<OsiFunctionDef>
 {
 	void * VMT;
 	uint32_t Line;
@@ -975,7 +975,7 @@ public:
 
 
 	uint32_t Id;
-	Function * Function;
+	OsiFunctionDef* Function;
 	DatabaseRef Database;
 };
 
@@ -1149,15 +1149,15 @@ typedef int (* COsirisDeleteAllDataProc)(void * Osiris, bool DeleteTypes);
 typedef int (* COsirisReadHeaderProc)(void * Osiris, void * OsiSmartBuf, unsigned __int8 * MajorVersion, unsigned __int8 * MinorVersion, unsigned __int8 * BigEndian, unsigned __int8 * Unused, char * StoryFileVersion, unsigned int * DebugFlags);
 typedef void (* RuleActionCallProc)(RuleActionNode * Action, void * a1, void * a2, void * a3, void * a4);
 
-struct FunctionDb : public TypeDb<Function*>
+struct FunctionDb : public TypeDb<OsiFunctionDef*>
 {
 	struct FunctionIdHashSlot
 	{
-		TMap<uint32_t, Function*> NodeMap;
+		TMap<uint32_t, OsiFunctionDef*> NodeMap;
 		void* Unknown;
 	};
 
-	Function** FindById(uint32_t id)
+	OsiFunctionDef** FindById(uint32_t id)
 	{
 		auto& bucket = FunctionIdHash[id % 0x3FF];
 		return bucket.NodeMap.Find(id);

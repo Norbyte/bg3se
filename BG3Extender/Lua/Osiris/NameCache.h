@@ -14,7 +14,7 @@ struct OsirisNameCache
 	Array<OsiFunction> namesByArity;
 	Array<std::optional<uint32_t>> inputArgsToArity;
 
-	void Register(Function& fun, OsirisBinding& binding);
+	void Register(OsiFunctionDef& fun, OsirisBinding& binding);
 	OsiFunction const* GetFunction(uint32_t callerArity) const;
 };
 
@@ -45,7 +45,7 @@ private:
 	uint32_t nextCache_{ 0 };
 	bool needsRebuild_{ true };
 
-	void Register(Function& fun);
+	void Register(OsiFunctionDef& fun);
 };
 
 END_NS()

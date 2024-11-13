@@ -107,7 +107,7 @@ STDString DoGenerateIdeHelpers(bool builtinOnly)
 
 	auto functions = gExtender->GetServer().Osiris().GetGlobals().Functions;
 
-	(*functions)->Iterate([&helpers, &functionComment, &functionDefn, builtinOnly](OsiString const & key, Function const * func) {
+	(*functions)->Iterate([&helpers, &functionComment, &functionDefn, builtinOnly](OsiString const & key, OsiFunctionDef const * func) {
 		if (builtinOnly
 			&& func->Type != FunctionType::Event
 			&& func->Type != FunctionType::Call

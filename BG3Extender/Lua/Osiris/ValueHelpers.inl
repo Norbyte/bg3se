@@ -257,7 +257,7 @@ uint32_t FunctionNameHash(char const * str)
 	return hash;
 }
 
-Function const* LookupOsiFunction(STDString const& name, uint32_t arity)
+OsiFunctionDef const* LookupOsiFunction(STDString const& name, uint32_t arity)
 {
 	auto functions = gExtender->GetServer().Osiris().GetGlobals().Functions;
 	if (!functions) {

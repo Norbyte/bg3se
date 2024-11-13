@@ -22,12 +22,12 @@ public:
 		return IsBound() && function_->Type == FunctionType::Database;
 	}
 
-	inline Function const* GetOsiFunction() const
+	inline OsiFunctionDef const* GetOsiFunction() const
 	{
 		return function_;
 	}
 
-	bool Bind(Function const * func, OsirisBinding & binding);
+	bool Bind(OsiFunctionDef const * func, OsirisBinding & binding);
 	void Unbind();
 
 	int LuaCall(lua_State * L) const;
@@ -36,7 +36,7 @@ public:
 	int LuaDeferredNotification(lua_State * L) const;
 
 private:
-	Function const * function_{ nullptr };
+	OsiFunctionDef const * function_{ nullptr };
 	AdapterRef adapter_;
 
 	void OsiCall(lua_State * L) const;

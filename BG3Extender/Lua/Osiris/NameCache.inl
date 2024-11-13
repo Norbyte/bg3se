@@ -2,7 +2,7 @@
 
 BEGIN_NS(esv::lua)
 
-void OsirisNameCache::Register(Function& fun, OsirisBinding& binding)
+void OsirisNameCache::Register(OsiFunctionDef& fun, OsirisBinding& binding)
 {
 	auto arity = (uint32_t)fun.Signature->Params->Params.Size;
 	if (namesByArity.size() < arity + 1) {
@@ -59,7 +59,7 @@ void OsirisNameResolver::RebuildCacheIfNecessary()
 	}
 
 	auto const& db = *globals_.Functions;
-	db->Iterate([&](OsiString const&, Function* fun) {
+	db->Iterate([&](OsiString const&, OsiFunctionDef* fun) {
 		Register(*fun);
 	});
 }
@@ -121,7 +121,7 @@ OsiFunction const* OsirisNameResolver::GetFunction(OsirisNameCache::NameHandle h
 }
 
 
-void OsirisNameResolver::Register(Function& fun)
+void OsirisNameResolver::Register(OsiFunctionDef& fun)
 {
 	FixedString name{ fun.Signature->Name };
 	auto index = nameToCache_.try_get(name);

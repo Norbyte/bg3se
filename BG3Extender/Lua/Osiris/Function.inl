@@ -4,7 +4,7 @@ BEGIN_NS(esv::lua)
 
 using namespace bg3se::lua;
 
-bool OsiFunction::Bind(Function const * func, OsirisBinding& binding)
+bool OsiFunction::Bind(OsiFunctionDef const * func, OsirisBinding& binding)
 {
 	if (func->Type == FunctionType::Query
 		|| func->Type == FunctionType::SysQuery
