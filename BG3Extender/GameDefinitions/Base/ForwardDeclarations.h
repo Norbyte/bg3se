@@ -93,6 +93,7 @@ namespace net
 	struct AbstractPeer;
 	struct Host;
 	struct Client;
+	struct GameClient;
 	struct GameServer;
 }
 

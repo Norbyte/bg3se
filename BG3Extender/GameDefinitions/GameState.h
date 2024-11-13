@@ -171,7 +171,7 @@ struct EoCClient : public ProtectedGameObject<EoCClient>
 	//ecs::ComponentCallbackList field_88;
 	void* Eoc;
 	GameStateMachine* GameStateMachine;
-	net::Client* GameClient;
+	net::GameClient* GameClient;
 	__int64 field_B0;
 	void* LobbyLogicManager;
 	__int64 field_B8Y;

@@ -33,7 +33,7 @@ private:
 	// (i.e. the server supports the message ID and won't crash)
 	bool extenderSupport_{ false };
 
-	net::Client* GetClient() const;
+	net::GameClient* GetClient() const;
 };
 
 END_NS()

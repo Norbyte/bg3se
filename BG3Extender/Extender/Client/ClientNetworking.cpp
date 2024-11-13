@@ -98,7 +98,7 @@ void NetworkManager::ExtendNetworking()
 	DEBUG("Registered custom client network protocol");
 }
 
-net::Client * NetworkManager::GetClient() const
+net::GameClient* NetworkManager::GetClient() const
 {
 	auto client = GetStaticSymbols().GetEoCClient();
 	if (client != nullptr) {

@@ -3,6 +3,8 @@
 #include <windows.h>
 #include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/Enumerations.h>
+// Temporarily, for ComponentCallbakcList
+#include <GameDefinitions/EntitySystem.h>
 
 BEGIN_NS(net)
 
@@ -334,6 +336,28 @@ struct Client : public AbstractPeer
 	void* VMT5;
 	PeerId HostPeerId;
 };
+
+struct GameClient : public Client
+{
+	UnknownSignal OnPlayerConnected;
+	UnknownSignal OnPlayerDisconnected;
+	UnknownSignal field_508;
+	UnknownSignal field_520;
+	ecs::EntityReplicationPeer ReplicationPeer;
+	void* LobbyManager;
+	uint32_t Status;
+	bool field_5FC;
+	void* VoiceChatPeer;
+	Array<PeerId> ClientPeers;
+	Array<UserId> Users;
+	Array<uint64_t> UserIdToUserSlot;
+	Array<uint64_t> UserSlotToUserId;
+	LegacyRefMap<UserId, STDString> UserToName;
+	LegacyRefMap<UserId, uint64_t> UserToCommunityUserId;
+	__int64 field_668;
+	uint32_t LastAttemptNo;
+};
+
 
 struct ClientConnectMessage : public Message
 {
