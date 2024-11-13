@@ -147,6 +147,7 @@
   <ItemGroup>
     <ClInclude Include="Base\Base.h" />
     <ClInclude Include="Base\BaseArray.h" />
+    <ClInclude Include="Base\BaseFunction.h" />
     <ClInclude Include="Base\BaseInterface.h" />
     <ClInclude Include="Base\BaseMap.h" />
     <ClInclude Include="Base\BaseMemory.h" />

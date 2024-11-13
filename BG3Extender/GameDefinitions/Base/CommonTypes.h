@@ -2,6 +2,9 @@
 
 BEGIN_SE()
 
+// Placeholder type for functors where we haven't mapped (or don't care about) the signature
+using UnknownSignal = Signal<>;
+
 struct Version
 {
 	inline Version() : Ver(0) {}

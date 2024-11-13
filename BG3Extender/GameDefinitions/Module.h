@@ -71,8 +71,8 @@ struct ModManager : public ProtectedGameObject<ModManager>
 {
 	[[bg3::hidden]] void* VMT;
 	// FIXME - swap this to a generic callback list
-	[[bg3::hidden]] ecs::ComponentCallbackList LoadCallbacks;
-	[[bg3::hidden]] ecs::ComponentCallbackList UnloadCallbacks;
+	[[bg3::hidden]] UnknownSignal LoadCallbacks;
+	[[bg3::hidden]] UnknownSignal UnloadCallbacks;
 	Module BaseModule;
 	uint8_t Flag;
 	uint8_t Flag2;

@@ -27,6 +27,9 @@ public:
 	SubscriptionIndex Subscribe(ecs::ComponentTypeIndex type, EntityHandle entity, EntityComponentEvent events, 
 		EntityComponentEventFlags flags, RegistryEntry&& hook);
 	bool Unsubscribe(SubscriptionIndex index);
+
+	void OnComponentCreated(ecs::ComponentTypeIndex type, ecs::EntityRef* entity, void* component);
+	void OnComponentDestroyed(ecs::ComponentTypeIndex type, ecs::EntityRef* entity, void* component);
 	void OnEntityEvent(ecs::EntityWorld& world, EntityHandle entity, ecs::ComponentTypeIndex type, EntityComponentEvent events, void* component);
 
 private:
@@ -68,9 +71,6 @@ private:
 	void CallHandlerUnsafe(EntityHandle entity, ecs::ComponentTypeIndex type, EntityComponentEvent events, void* component, ComponentHook& hook, SubscriptionIndex index);
 	void DeferHandler(EntityHandle entity, ecs::ComponentTypeIndex type, EntityComponentEvent events, SubscriptionIndex index);
 	ComponentHooks& AddComponentType(ecs::ComponentTypeIndex type);
-
-	static void OnComponentCreated(void* object, ecs::ComponentCallbackParams const& params, void* component);
-	static void OnComponentDestroyed(void* object, ecs::ComponentCallbackParams const& params, void* component);
 };
 
 END_SE()

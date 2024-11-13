@@ -78,6 +78,9 @@
     <ClInclude Include="Base\EnumHelpers.h">
       <Filter>Header Files\Base</Filter>
     </ClInclude>
+    <ClInclude Include="Base\BaseFunction.h">
+      <Filter>Header Files\Base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

@@ -50,18 +50,14 @@ void EntityComponentEventHooks::FireDeferredEvents()
 	}
 }
 
-void EntityComponentEventHooks::OnComponentCreated(void* object, ecs::ComponentCallbackParams const& params, void* component)
+void EntityComponentEventHooks::OnComponentCreated(ecs::ComponentTypeIndex type, ecs::EntityRef* entity, void* component)
 {
-	auto self = reinterpret_cast<EntityComponentEventHooks*>((uintptr_t)object & 0x0000ffffffffffffull);
-	auto componentType = (ecs::ComponentTypeIndex)((uintptr_t)object >> 48);
-	self->OnEntityEvent(*params.World, params.Entity, componentType, EntityComponentEvent::Create, component);
+	OnEntityEvent(*entity->World, entity->Handle, type, EntityComponentEvent::Create, component);
 }
 
-void EntityComponentEventHooks::OnComponentDestroyed(void* object, ecs::ComponentCallbackParams const& params, void* component)
+void EntityComponentEventHooks::OnComponentDestroyed(ecs::ComponentTypeIndex type, ecs::EntityRef* entity, void* component)
 {
-	auto self = reinterpret_cast<EntityComponentEventHooks*>((uintptr_t)object & 0x0000ffffffffffffull);
-	auto componentType = (ecs::ComponentTypeIndex)((uintptr_t)object >> 48);
-	self->OnEntityEvent(*params.World, params.Entity, componentType, EntityComponentEvent::Destroy, component);
+	OnEntityEvent(*entity->World, entity->Handle, type, EntityComponentEvent::Destroy, component);
 }
 
 EntityComponentEventHooks::ComponentHooks& EntityComponentEventHooks::AddComponentType(ecs::ComponentTypeIndex type)
@@ -76,9 +72,8 @@ EntityComponentEventHooks::ComponentHooks& EntityComponentEventHooks::AddCompone
 		auto callbacks = world_->ComponentCallbacks.Get(type);
 
 		auto& hooks = hookedComponents_[index];
-		auto self = (void*)((uintptr_t)this | ((uint64_t)index << 48));
-		hooks.ConstructRegistrant = callbacks->OnConstruct.Add(ecs::ComponentCallbackHandler{ &OnComponentCreated, self });
-		hooks.DestructRegistrant = callbacks->OnDestroy.Add(ecs::ComponentCallbackHandler{ &OnComponentDestroyed, self });
+		hooks.ConstructRegistrant = callbacks->OnConstruct.Add(MakeFunction(&EntityComponentEventHooks::OnComponentCreated, this, type));
+		hooks.DestructRegistrant = callbacks->OnDestroy.Add(MakeFunction(&EntityComponentEventHooks::OnComponentDestroyed, this, type));
 	}
 
 	return hookedComponents_[index];

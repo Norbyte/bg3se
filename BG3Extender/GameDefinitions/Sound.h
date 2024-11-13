@@ -93,7 +93,7 @@ struct SoundManager : public ProtectedGameObject<SoundManager>
 	virtual bool PlayExternalSound(SoundObjectId gameObjectId, SoundNameId eventId, STDString const& path, uint8_t codecId, float seekPosition, bool enableGetSourcePlayPosition, void* callback) = 0;
 
 
-	ecs::ComponentCallbackList field_10;
+	UnknownSignal field_10;
 	Module Module;
 	Array<FixedString> OS_SoundbankSearchPath_SfxSoundbankSearchPaths;
 	Array<FixedString> OS_SoundbankSearchPath2_LocaSoundbankSearchPaths;

@@ -16,6 +16,11 @@
 
 BEGIN_SE()
 
+template <class>
+// false value attached to a dependent name (for static_assert)
+constexpr bool AlwaysFalse = false;
+
+
 // Helper struct to allow function overloading without (real) template-dependent parameters
 template <class>
 struct Overload {};

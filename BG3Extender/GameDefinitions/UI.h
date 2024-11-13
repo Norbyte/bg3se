@@ -381,11 +381,11 @@ struct UIStateInstance : public ProtectedGameObject<UIStateInstance>
 
 struct UIStateMachine : public Noesis::BaseComponent
 {
-	ecs::ComponentCallbackList StateActivatedCallbacks;
-	ecs::ComponentCallbackList StateDeactivatedCallbacks;
-	ecs::ComponentCallbackList StateCallbacks;
-	ecs::ComponentCallbackList field_58;
-	ecs::ComponentCallbackList field_70;
+	UnknownSignal StateActivatedCallbacks;
+	UnknownSignal StateDeactivatedCallbacks;
+	UnknownSignal StateCallbacks;
+	UnknownSignal field_58;
+	UnknownSignal field_70;
 	int field_88;
 	bool CanProcessEvents;
 	bool IsProcessingEvent;
@@ -509,8 +509,8 @@ struct UIManager_Sub70
 struct UIManager_Sub120
 {
 	__int64 field_0;
-	ecs::ComponentCallbackList field_8;
-	ecs::ComponentCallbackList field_20;
+	UnknownSignal field_8;
+	UnknownSignal field_20;
 };
 
 struct UIManager_Sub168
@@ -522,18 +522,18 @@ struct UIManager_Sub168
 
 struct UIManager_Sub198
 {
-	ecs::ComponentCallbackList field_0;
+	UnknownSignal field_0;
 	HashSet<uint64_t> field_18;
 	Array<void*> field_48;
 };
 
 struct UIManager_Sub1F0
 {
-	ecs::ComponentCallbackList field_0;
-	ecs::ComponentCallbackList field_18;
-	ecs::ComponentCallbackList field_30;
-	ecs::ComponentCallbackList field_48;
-	ecs::ComponentCallbackList field_60;
+	UnknownSignal field_0;
+	UnknownSignal field_18;
+	UnknownSignal field_30;
+	UnknownSignal field_48;
+	UnknownSignal field_60;
 	__int64 field_78;
 	__int64 field_80;
 	Noesis::BaseComponent* field_88;
@@ -574,19 +574,19 @@ struct UIManager : public ProtectedGameObject<UIManager>
 	void* VMT4;
 	__int64 field_28;
 	void* VMT5;
-	ecs::ComponentCallbackList field_38;
+	UnknownSignal field_38;
 	UIManager_Sub50 field_50;
 	UIManager_Sub70 field_88;
 	__int64 field_120;
-	ecs::ComponentCallbackList field_148;
-	ecs::ComponentCallbackList field_160x;
-	ecs::ComponentCallbackList field_160;
+	UnknownSignal field_148;
+	UnknownSignal field_160x;
+	UnknownSignal field_160;
 	__int64 field_198x[8];
 	//__int64 field_180;
 	//__int64 field_1A8;
-	//ecs::ComponentCallbackList field_190;
+	//UnknownSignal field_190;
 	//__int64 field_1C8;
-	ecs::ComponentCallbackList field_1D0;
+	UnknownSignal field_1D0;
 	HashMap<int16_t, void*> field_1E8_MHM_short_PlayerContextMenu;
 	__int64 field_228;
 	Array<void*> field_230_Arr_ModData;
@@ -647,7 +647,7 @@ struct DCWidget : public ViewModel
 	uint8_t Layout;
 	Symbol LayoutSymbol;
 	__int64 field_B0;
-	Array<ecs::ComponentCallbackList> field_B8;
+	Array<UnknownSignal> field_B8;
 	__int64 field_C8;
 	__int64 field_D0;
 	PlayerId PlayerId;

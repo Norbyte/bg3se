@@ -164,11 +164,11 @@ struct EoCClient : public ProtectedGameObject<EoCClient>
 	void* field_10;
 	void* VMT_DLCEventListener;
 	void* VMT_MessageBoxOwner;
-	ecs::ComponentCallbackList ComponentCallbacks;
-	ecs::ComponentCallbackList SetControllerModeCallbacks;
-	ecs::ComponentCallbackList IncrementAchievementCallbacks;
-	ecs::ComponentCallbackList UnlockedAchievementCallbacks;
-	//ecs::ComponentCallbackList field_88;
+	UnknownSignal ComponentCallbacks;
+	UnknownSignal SetControllerModeCallbacks;
+	UnknownSignal IncrementAchievementCallbacks;
+	UnknownSignal UnlockedAchievementCallbacks;
+	//UnknownSignal field_88;
 	void* Eoc;
 	GameStateMachine* GameStateMachine;
 	net::GameClient* GameClient;
