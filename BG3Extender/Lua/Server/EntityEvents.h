@@ -13,7 +13,7 @@ public:
 	SubscriptionIndex Subscribe(ecs::ReplicationTypeIndex type, EntityHandle entity, uint64_t flags, RegistryEntry&& hook);
 	bool Unsubscribe(SubscriptionIndex index);
 
-	void OnEntityReplication(ecs::EntityWorld& world);
+	void OnEntityReplication(ecs::EntityWorld& world, ecs::SyncBuffers* buffers);
 
 private:
 	struct ReplicationHook

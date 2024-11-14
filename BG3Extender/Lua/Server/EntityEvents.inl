@@ -78,12 +78,12 @@ bool EntityReplicationEventHooks::Unsubscribe(SubscriptionIndex index)
 	return true;
 }
 
-void EntityReplicationEventHooks::OnEntityReplication(ecs::EntityWorld& world)
+void EntityReplicationEventHooks::OnEntityReplication(ecs::EntityWorld& world, ecs::SyncBuffers* buffers)
 {
-	if (!world.Replication || !world.Replication->Dirty) return;
+	if (!buffers || !buffers->Dirty) return;
 
-	for (unsigned i = 0; i < world.Replication->ComponentPools.size(); i++) {
-		auto const& pool = world.Replication->ComponentPools[i];
+	for (unsigned i = 0; i < buffers->ComponentPools.size(); i++) {
+		auto const& pool = buffers->ComponentPools[i];
 		if (hookedReplicationComponentMask_[i] && pool.size() > 0) {
 			for (auto const& entity : pool) {
 				OnEntityReplication(world, entity.Key(), entity.Value(), ecs::ReplicationTypeIndex{ (uint16_t)i });

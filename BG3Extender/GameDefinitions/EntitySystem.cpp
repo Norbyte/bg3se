@@ -766,10 +766,17 @@ void EntitySystemHelpersBase::PostUpdate()
 void EntitySystemHelpersBase::DebugLogReplicationChanges()
 {
 	auto world = GetEntityWorld();
-	if (!logging_ || !world->Replication) return;
+	if (!logging_) return;
 
-	for (unsigned i = 0; i < world->Replication->ComponentPools.size(); i++) {
-		auto const& pool = world->Replication->ComponentPools[i];
+	ecs::SyncBuffers* buffers = world->Replication;
+	if (!buffers) {
+		buffers = *GetStaticSymbols().GetEoCClient()->GameClient->ReplicationPeer.Buffers;
+	}
+
+	if (!buffers) return;
+
+	for (unsigned i = 0; i < buffers->ComponentPools.size(); i++) {
+		auto const& pool = buffers->ComponentPools[i];
 		if (pool.size() > 0) {
 			for (auto const& entity : pool) {
 				auto type = ecsComponentData_.Get(ReplicationTypeIndex{ (uint16_t)i }).ComponentType;
