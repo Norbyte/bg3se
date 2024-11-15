@@ -269,17 +269,10 @@ struct ResolvedData
 
 struct InterruptUsageEntry
 {
-	__int64 field_0;
+	uint8_t field_0;
 	ConditionRolls ConditionRolls;
-	__int64 field_18;
-	Array<RollAdjustmentMetadata> RollAdjustmentMetadata;
-	EntityHandle field_30;
-	__int64 field_38;
-	Array<RerollCondition> RerollConditions;
-	Array<RerollValue> RerollValues;
-	__int64 field_60;
-	__int64 field_68;
-	__int64 field_70;
+	RollAdjustments RollAdjustments;
+	uint8_t field_70;
 };
 
 struct ExecutedDependency
