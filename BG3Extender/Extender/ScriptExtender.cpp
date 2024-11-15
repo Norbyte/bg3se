@@ -291,7 +291,7 @@ void ScriptExtender::OnECSUpdateGuarded(ecs::EntityWorld::UpdateProc* wrapped, e
 				esv::LuaServerPin lua(GetServer().GetExtensionState());
 				if (lua) {
 					lua->GetComponentEventHooks().FireDeferredEvents();
-					lua->GetReplicationEventHooks()->OnEntityReplication(*entityWorld, entityWorld->Replication);
+					lua->GetServerReplicationEventHooks().OnEntityReplication(*entityWorld, entityWorld->Replication);
 				}
 			}
 		} else {
@@ -299,8 +299,6 @@ void ScriptExtender::OnECSUpdateGuarded(ecs::EntityWorld::UpdateProc* wrapped, e
 				ecl::LuaClientPin lua(GetClient().GetExtensionState());
 				if (lua) {
 					lua->GetComponentEventHooks().FireDeferredEvents();
-					auto client = GetStaticSymbols().GetEoCClient()->GameClient;
-					lua->GetReplicationEventHooks()->OnEntityReplication(*entityWorld, *client->ReplicationPeer.Buffers);
 				}
 			}
 		}

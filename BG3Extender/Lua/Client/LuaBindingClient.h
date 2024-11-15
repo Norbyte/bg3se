@@ -3,6 +3,7 @@
 #include <Lua/LuaBinding.h>
 #include <Lua/Shared/Proxies/LuaEvent.h>
 #include <Lua/Client/ClientEvents.h>
+#include <Lua/Client/ClientEntityReplicationEvents.h>
 #if defined(ENABLE_UI)
 #include <Lua/Client/UIEvents.h>
 #endif
@@ -37,6 +38,12 @@ public:
 	ecs::EntityWorld* GetEntityWorld() override;
 	ecs::EntitySystemHelpersBase* GetEntitySystemHelpers() override;
 	EntityReplicationEventHooks* GetReplicationEventHooks() override;
+
+	inline ClientEntityReplicationEventHooks& GetClientReplicationEventHooks()
+	{
+		return replicationHooks_;
+	}
+
 	void OnGameStateChanged(GameState fromState, GameState toState);
 	bool IsEventCancelable(SDL_Event* event);
 	void OnInputEvent(SDL_Event* event, int* result);
@@ -54,6 +61,7 @@ public:
 
 private:
 	ExtensionLibraryClient library_;
+	ClientEntityReplicationEventHooks replicationHooks_;
 #if defined(ENABLE_UI)
 	UIEventHooks uiEvents_;
 #endif

@@ -430,7 +430,7 @@
     <ClInclude Include="Extender\Shared\ExtenderProtocol.pb.h" />
     <ClInclude Include="Extender\Client\ClientNetworking.h" />
     <ClInclude Include="Extender\Server\ServerNetworking.h" />
-    <ClInclude Include="Lua\Server\EntityEvents.h" />
+    <ClInclude Include="Lua\Server\ServerEntityReplicationEvents.h" />
     <ClInclude Include="Extender\Shared\UserVariables.h" />
     <ClInclude Include="Lua\Shared\LuaCustomizations.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaCppObjectProxy.h" />
@@ -492,6 +492,8 @@
     <ClInclude Include="Extender\Shared\UseActions.h" />
     <ClInclude Include="GameDefinitions\Components\Camera.h" />
     <ClInclude Include="GameDefinitions\AllSparkShared.h" />
+    <ClInclude Include="Lua\Shared\EntityReplicationEvents.h" />
+    <ClInclude Include="Lua\Client\ClientEntityReplicationEvents.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -638,7 +640,7 @@
     <None Include="Lua\Libs\Localization.inl">
       <Filter>Lua\Libs</Filter>
     </None>
-    <None Include="Lua\Server\EntityEvents.inl">
+    <None Include="Lua\Server\ServerEntityReplicationEvents.inl">
       <Filter>Lua\Server</Filter>
     </None>
     <None Include="Extender\Shared\UserVariables.inl">
@@ -726,7 +728,7 @@
     <None Include="Lua\Osiris\ValueHelpers.inl" />
     <None Include="Lua\Osiris\LuaNameResolver.inl" />
     <None Include="GameDefinitions\PropertyMaps\ClientObjects.inl" />
-    <None Include="Lua\Shared\EntityEventHelpers.inl" />
+    <None Include="Lua\Shared\EntityEventHelpersServer.inl" />
     <None Include="GameDefinitions\Ai.inl" />
     <None Include="Lua\Libs\ClientUI\Names.inl" />
     <None Include="Lua\Shared\LuaDelegate.inl" />
@@ -736,6 +738,8 @@
     <None Include="GameDefinitions\Render.inl" />
     <None Include="Lua\Libs\Log.inl" />
     <None Include="GameDefinitions\AllSpark.inl" />
+    <None Include="Lua\Shared\EntityEventHelpersClient.inl" />
+    <None Include="Lua\Client\ClientEntityReplicationEvents.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

@@ -1,14 +1,17 @@
 #include <Lua/Shared/LuaMethodCallHelpers.h>
+#include <Lua/Server/ServerEntityReplicationEvents.h>
 
-BEGIN_NS(lua)
+BEGIN_NS(esv::lua)
 
-EntityReplicationEventHooks::EntityReplicationEventHooks(lua::State& state)
+using namespace bg3se::lua;
+
+ServerEntityReplicationEventHooks::ServerEntityReplicationEventHooks(State& state)
 	: state_(state)
 {}
 
-EntityReplicationEventHooks::~EntityReplicationEventHooks() {}
+ServerEntityReplicationEventHooks::~ServerEntityReplicationEventHooks() {}
 
-EntityReplicationEventHooks::ReplicationHooks& EntityReplicationEventHooks::AddComponentType(ecs::ReplicationTypeIndex type)
+EntityReplicationEventHooks::ReplicationHooks& ServerEntityReplicationEventHooks::AddComponentType(ecs::ReplicationTypeIndex type)
 {
 	auto index = (unsigned)type;
 	if (!hookedReplicationComponentMask_[index]) {
@@ -21,17 +24,17 @@ EntityReplicationEventHooks::ReplicationHooks& EntityReplicationEventHooks::AddC
 	return hookedReplicationComponents_[index];
 }
 
-EntityReplicationEventHooks::SubscriptionIndex EntityReplicationEventHooks::Subscribe(ecs::ReplicationTypeIndex type, EntityHandle entity, uint64_t flags, RegistryEntry&& hook)
+std::optional<EntityReplicationEventHooks::SubscriptionIndex> ServerEntityReplicationEventHooks::Subscribe(ecs::ReplicationTypeIndex type, EntityHandle entity, uint64_t fields, RegistryEntry&& hook)
 {
 	SubscriptionIndex index;
 	auto sub = subscriptions_.Add(index);
-	sub->InvalidationFlags = flags;
+	sub->Fields = fields;
 	sub->Hook = std::move(hook);
 	sub->Type = type;
 	sub->Entity = entity;
 
 	auto& pool = AddComponentType(type);
-	pool.InvalidationFlags |= flags;
+	pool.Fields |= fields;
 	if (!entity) {
 		pool.GlobalHooks.Add(index);
 	} else {
@@ -47,7 +50,7 @@ EntityReplicationEventHooks::SubscriptionIndex EntityReplicationEventHooks::Subs
 	return index;
 }
 
-bool EntityReplicationEventHooks::Unsubscribe(SubscriptionIndex index)
+bool ServerEntityReplicationEventHooks::Unsubscribe(SubscriptionIndex index)
 {
 	auto sub = subscriptions_.Find(index);
 	if (sub == nullptr) {
@@ -78,7 +81,7 @@ bool EntityReplicationEventHooks::Unsubscribe(SubscriptionIndex index)
 	return true;
 }
 
-void EntityReplicationEventHooks::OnEntityReplication(ecs::EntityWorld& world, ecs::SyncBuffers* buffers)
+void ServerEntityReplicationEventHooks::OnEntityReplication(ecs::EntityWorld& world, ecs::SyncBuffers* buffers)
 {
 	if (!buffers || !buffers->Dirty) return;
 
@@ -86,26 +89,25 @@ void EntityReplicationEventHooks::OnEntityReplication(ecs::EntityWorld& world, e
 		auto const& pool = buffers->ComponentPools[i];
 		if (hookedReplicationComponentMask_[i] && pool.size() > 0) {
 			for (auto const& entity : pool) {
-				OnEntityReplication(world, entity.Key(), entity.Value(), ecs::ReplicationTypeIndex{ (uint16_t)i });
+				OnEntityReplication(world, entity.Key(), *entity.Value().GetBuf(), ecs::ReplicationTypeIndex{(uint16_t)i});
 			}
 		}
 	}
 }
 
-void EntityReplicationEventHooks::OnEntityReplication(ecs::EntityWorld& world, EntityHandle entity, BitSet<> const& flags, ecs::ReplicationTypeIndex type)
+void ServerEntityReplicationEventHooks::OnEntityReplication(ecs::EntityWorld& world, EntityHandle entity, uint64_t fields, ecs::ReplicationTypeIndex type)
 {
 	auto& hooks = hookedReplicationComponents_[(unsigned)type];
-	auto word1 = *flags.GetBuf();
-	if ((hooks.InvalidationFlags & word1) == 0) return;
+	if ((hooks.Fields & fields) == 0) return;
 
 	Array<DeferredEvent> events;
 
 	for (auto index : hooks.GlobalHooks) {
 		auto hook = subscriptions_.Find(index);
-		if (hook != nullptr && (hook->InvalidationFlags & word1) != 0) {
+		if (hook != nullptr && (hook->Fields & fields) != 0) {
 			events.push_back({
 				.Entity = entity,
-				.Flags = flags,
+				.Fields = fields,
 				.Type = type,
 				.Hook = *hook
 			});
@@ -116,10 +118,10 @@ void EntityReplicationEventHooks::OnEntityReplication(ecs::EntityWorld& world, E
 	if (entityHooks) {
 		for (auto index : *entityHooks) {
 			auto hook = subscriptions_.Find(index);
-			if (hook != nullptr && (hook->InvalidationFlags & word1) != 0) {
+			if (hook != nullptr && (hook->Fields & fields) != 0) {
 				events.push_back({
 					.Entity = entity,
-					.Flags = flags,
+					.Fields = fields,
 					.Type = type,
 					.Hook = *hook
 				});
@@ -128,24 +130,23 @@ void EntityReplicationEventHooks::OnEntityReplication(ecs::EntityWorld& world, E
 	}
 
 	if (!events.empty()) {
-		LuaVirtualPin lua(state_.GetExtensionState());
+		esv::LuaServerPin lua(gExtender->GetServer().GetExtensionState());
 		if (lua) {
 			for (auto const& e : events) {
-				CallHandler(e.Entity, e.Flags, e.Type, e.Hook);
+				CallHandler(e.Entity, e.Fields, e.Type, e.Hook);
 			}
 		}
 	}
 }
 
-void EntityReplicationEventHooks::CallHandler(EntityHandle entity, BitSet<> const& flags, ecs::ReplicationTypeIndex type, ReplicationHook const& hook)
+void ServerEntityReplicationEventHooks::CallHandler(EntityHandle entity, uint64_t fields, ecs::ReplicationTypeIndex type, ReplicationHook const& hook)
 {
 	auto L = state_.GetState();
 	auto componentType = state_.GetEntitySystemHelpers()->GetComponentType(type);
-	auto word1 = *flags.GetBuf();
 	hook.Hook.Push();
 	Ref func(L, lua_absindex(L, -1));
 
-	ProtectedFunctionCaller<std::tuple<EntityHandle, ExtComponentType, uint64_t>, void> caller{ func, std::tuple(entity, *componentType, word1) };
+	ProtectedFunctionCaller<std::tuple<EntityHandle, ExtComponentType, uint64_t>, void> caller{ func, std::tuple(entity, *componentType, fields) };
 	caller.Call(L, "Entity replication event dispatch");
 	lua_pop(L, 1);
 }

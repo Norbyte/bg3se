@@ -98,7 +98,7 @@ private:
 	static LuaEntitySubscriptionId OnDestroyDeferredOnce(lua_State* L, EntityHandle entity, ExtComponentType component, FunctionRef func);
 	static LuaEntitySubscriptionId OnDestroyOnce(lua_State* L, EntityHandle entity, ExtComponentType component, FunctionRef func);
 
-	static LuaEntitySubscriptionId OnChanged(lua_State* L, EntityHandle entity, ExtComponentType component, 
+	static std::optional<LuaEntitySubscriptionId> OnChanged(lua_State* L, EntityHandle entity, ExtComponentType component,
 		FunctionRef func, std::optional<uint64_t> flags);
 
 

@@ -98,7 +98,7 @@ Array<EntityHandle> GetAllEntities(lua_State* L)
 	return entities;
 }
 
-LuaEntitySubscriptionId Subscribe(lua_State* L, ExtComponentType type, FunctionRef func, std::optional<EntityHandle> entity, std::optional<uint64_t> flags)
+std::optional<LuaEntitySubscriptionId> Subscribe(lua_State* L, ExtComponentType type, FunctionRef func, std::optional<EntityHandle> entity, std::optional<uint64_t> flags)
 {
 	return EntityEventHelpers::SubscribeReplication(L, entity ? *entity : EntityHandle{}, type, func.MakePersistent(L), flags);
 }

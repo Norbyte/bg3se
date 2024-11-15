@@ -125,6 +125,11 @@ public:
 		return ecsComponentData_.Get(index).Name;
 	}
 
+	inline STDString const* GetComponentName(ReplicationTypeIndex index) const
+	{
+		return ecsComponentData_.Get(index).Name;
+	}
+
 	inline std::optional<ExtComponentType> GetComponentType(ComponentTypeIndex index) const
 	{
 		return ecsComponentData_.Get(index).ExtType;

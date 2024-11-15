@@ -131,6 +131,8 @@ EntityHandle NewEntityPools::Add(uint32_t classIndex)
 	return EntityHandle(classIndex, index);
 }*/
 
+FieldTracker::~FieldTracker() {}
+
 void* EntityStorageData::GetComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy) const
 {
 	auto ref = InstanceToPageMap.try_get(entityHandle);

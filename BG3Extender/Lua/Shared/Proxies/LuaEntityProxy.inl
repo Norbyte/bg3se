@@ -363,7 +363,7 @@ LuaEntitySubscriptionId EntityProxyMetatable::OnDestroyOnce(lua_State* L, Entity
 		EntityComponentEventFlags::Once, func.MakePersistent(L));
 }
 
-LuaEntitySubscriptionId EntityProxyMetatable::OnChanged(lua_State* L, EntityHandle entity, ExtComponentType component, 
+std::optional<LuaEntitySubscriptionId> EntityProxyMetatable::OnChanged(lua_State* L, EntityHandle entity, ExtComponentType component,
 	FunctionRef func, std::optional<uint64_t> flags)
 {
 	return EntityEventHelpers::SubscribeReplication(L, entity, component, func.MakePersistent(L), flags);

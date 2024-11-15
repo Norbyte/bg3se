@@ -16,7 +16,7 @@
 #include <Lua/Server/ServerStatus.inl>
 #include <Lua/Server/FunctorEvents.inl>
 #include <Lua/Server/ServerFunctors.inl>
-#include <Lua/Server/EntityEvents.inl>
+#include <Lua/Server/ServerEntityReplicationEvents.inl>
 
 
 

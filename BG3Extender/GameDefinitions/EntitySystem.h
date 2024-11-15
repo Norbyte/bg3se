@@ -324,16 +324,16 @@ struct SyncBuffers : public ProtectedGameObject<SyncBuffers>
 	bool Dirty;
 };
 
-struct FieldTracker : public ProtectedGameObject<FieldTracker>
+struct FieldTracker
 {
 	struct FieldChangeData
 	{
 		uint64_t Value; // Changes based on field type
-		uint64_t Offset;
+		EntityHandle Entity;
 		void* Component;
 	};
 
-	virtual ~FieldTracker() = 0;
+	virtual ~FieldTracker();
 	virtual void Add(EntityHandle entity, EntityHandle entity2, void* component) = 0;
 	virtual void FireEvents() = 0;
 	virtual void Remove(EntityHandle entity) = 0;
@@ -358,8 +358,7 @@ struct EntityReplicationPeer : public ProtectedGameObject<EntityReplicationPeer>
 	net::GameClient* Client;
 	HashMap<NetId, EntityHandle> NetIDToEntity;
 	HashMap<EntityHandle, NetId> EntityToNetID;
-	BitSet<> DeserializerMap;
-	Array<void*> Deserializers;
+	SparseArray<ComponentDeserializer*> Deserializers;
 };
 
 

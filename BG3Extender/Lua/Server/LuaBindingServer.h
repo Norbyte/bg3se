@@ -2,7 +2,7 @@
 
 #include <Lua/LuaBinding.h>
 #include <Lua/Osiris/Binding.h>
-#include <Lua/Server/EntityEvents.h>
+#include <Lua/Server/ServerEntityReplicationEvents.h>
 #include <GameDefinitions/Stats/Functors.h>
 #include <GameDefinitions/Status.h>
 #include <Extender/Shared/ExtensionHelpers.h>
@@ -88,6 +88,11 @@ public:
 	ecs::EntitySystemHelpersBase* GetEntitySystemHelpers() override;
 	EntityReplicationEventHooks* GetReplicationEventHooks() override;
 
+	inline ServerEntityReplicationEventHooks& GetServerReplicationEventHooks()
+	{
+		return replicationHooks_;
+	}
+
 	template <class TArg>
 	void Call(char const* mod, char const* func, std::vector<TArg> const & args)
 	{
@@ -143,7 +148,7 @@ private:
 	ExtensionLibraryServer library_;
 	OsirisBinding osiris_;
 	FunctorEventHooks functorHooks_;
-	EntityReplicationEventHooks replicationHooks_;
+	ServerEntityReplicationEventHooks replicationHooks_;
 
 	bool QueryInternal(char const* mod, char const* name, RegistryEntry * func,
 		std::vector<CustomFunctionParam> const & signature, OsiArgumentDesc & params);

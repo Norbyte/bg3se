@@ -14,6 +14,8 @@
 #endif
 #include <SDL_events.h>
 
+#include <Lua/Client/ClientEntityReplicationEvents.inl>
+
 BEGIN_NS(ecl::lua)
 
 using namespace bg3se::lua;
@@ -56,7 +58,8 @@ ClientState* ClientState::FromLua(lua_State* L)
 }
 
 ClientState::ClientState(ExtensionState& state, uint32_t generationId)
-	: State(state, generationId, false)
+	: State(state, generationId, false),
+	replicationHooks_(*this)
 #if defined(ENABLE_UI)
 	, uiEvents_(*this)
 #endif
@@ -110,6 +113,7 @@ bool ClientState::IsClient()
 void ClientState::OnUpdate(GameTime const& time)
 {
 	State::OnUpdate(time);
+	replicationHooks_.PostUpdate();
 }
 
 
@@ -126,7 +130,7 @@ ecs::EntitySystemHelpersBase* ClientState::GetEntitySystemHelpers()
 
 EntityReplicationEventHooks* ClientState::GetReplicationEventHooks()
 {
-	return nullptr;
+	return &replicationHooks_;
 }
 
 void ClientState::OnGameStateChanged(GameState fromState, GameState toState)
