@@ -62,18 +62,36 @@ public:
 
 	inline T const& operator [] (size_type index) const
 	{
-		assert(index < mask_.size());
-		assert(index < values_.size());
 		assert(mask_[index]);
+		assert(index < values_.size());
 		return values_[index];
 	}
 
 	inline T& operator [] (size_type index)
 	{
-		assert(index < mask_.size());
-		assert(index < values_.size());
 		assert(mask_[index]);
+		assert(index < values_.size());
 		return values_[index];
+	}
+
+	inline T const* try_get(size_type index) const
+	{
+		if (!mask_[index]) {
+			return nullptr;
+		} else {
+			assert(index < values_.size());
+			return &values_[index];
+		}
+	}
+
+	inline T* try_get(size_type index)
+	{
+		if (!mask_[index]) {
+			return nullptr;
+		} else {
+			assert(index < values_.size());
+			return &values_[index];
+		}
 	}
 
 	void clear()
@@ -82,15 +100,36 @@ public:
 		values_.clear();
 	}
 
+	void clear(uint32_t index)
+	{
+		assert(index < values_.size());
+		mask_.Clear(index);
+		values_[index] = T{};
+	}
+
+	void set(uint32_t index, T const& value)
+	{
+		assert(index < values_.size());
+		mask_.Set(index);
+		values_[index] = value;
+	}
+
+	void set(uint32_t index, T&& value)
+	{
+		assert(index < values_.size());
+		mask_.Set(index);
+		values_[index] = std::move(value);
+	}
+
 	T& push_back(T const& value)
 	{
-		mask_.push_back(true);
+		mask_.Set(values_.size());
 		return values_.push_back(value);
 	}
 
 	T& push_back(T&& value)
 	{
-		mask_.push_back(true);
+		mask_.Set(values_.size());
 		return values_.push_back(std::move(value));
 	}
 

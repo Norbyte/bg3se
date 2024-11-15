@@ -57,6 +57,15 @@ public:
 		move_(*this, std::move(*this), nullptr);
 	}
 
+	R operator ()(Args&&... args) const
+	{
+		if constexpr (std::is_same_v<R, void>) {
+			return call_(*this, std::forward<Args>(args)...);
+		} else {
+			call_(*this, std::forward<Args>(args)...);
+		}
+	}
+
 protected:
 	friend FunctionImpl;
 
@@ -342,7 +351,7 @@ struct Signal
 		return false;
 	}
 
-	void Invoke(Args&&... args)
+	void Invoke(Args... args)
 	{
 		for (auto const& conn : Connections) {
 			conn.Handler(std::forward<Args>(args)...);

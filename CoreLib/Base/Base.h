@@ -8,6 +8,7 @@
 #include <CoreLib/Base/LegacyArray.h>
 #include <CoreLib/Base/Queue.h>
 #include <CoreLib/Base/Pool.h>
+#include <CoreLib/Base/BitSet.h>
 #include <CoreLib/Base/LegacyMap.h>
 #include <CoreLib/Base/BaseMap.h>
 #include <CoreLib/Base/BaseTypes.h>
