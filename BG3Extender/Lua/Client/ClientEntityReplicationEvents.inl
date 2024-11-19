@@ -101,21 +101,23 @@ EntityReplicationEventHooks::ReplicationHooks* ClientEntityReplicationEventHooks
 void ClientEntityReplicationEventHooks::RemoveComponentType(ecs::ReplicationTypeIndex type)
 {
 	auto index = (unsigned)type;
-	if (hookedReplicationComponentMask_[index]) return;
+	if (!hookedReplicationComponentMask_[index]) return;
 
 	auto& peer = GetStaticSymbols().GetEoCClient()->GameClient->ReplicationPeer;
 	auto& trackers = peer.Deserializers[(uint16_t)type]->FieldTrackers;
 
 	// Restore original trackers
 	for (uint32_t i = 0; i < trackers.size(); i++) {
-		auto tracker = trackers.try_get(i);
+		auto tracker = trackers[i];
 		if (tracker) {
-			auto base = static_cast<DummyFieldTracker*>(*tracker)->Base;
+			auto base = static_cast<DummyFieldTracker*>(tracker)->Base;
 			if (base) {
 				trackers.set(i, base);
 			} else {
 				trackers.clear(i);
 			}
+
+			GameDelete(tracker);
 		}
 	}
 
