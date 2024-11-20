@@ -87,7 +87,7 @@ struct CompactSet
 				Buf = (T*)((std::ptrdiff_t)newBuf + 8);
 			}
 			else {
-				Buf = Allocator::New<T>(newCapacity);
+				Buf = Allocator::template New<T>(newCapacity);
 			}
 		} else {
 			Buf = nullptr;

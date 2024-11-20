@@ -145,7 +145,7 @@ struct BitSet
 		auto oldInline = InlineValue;
 
 		if (newCapacity > 64) {
-			Buf = Allocator::New<uint64_t>(newCapacity);
+			Buf = Allocator::template New<uint64_t>(newCapacity);
 		} else {
 			// Don't touch inline value
 		}
