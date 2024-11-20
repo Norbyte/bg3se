@@ -94,14 +94,14 @@ void* ObjectProxy::GetRaw(lua_State* L, int index, GenericPropertyMap const& pm)
 	}
 }
 
-GenericPropertyMap& LightObjectProxyByRefMetatable::GetPropertyMap(CppObjectMetadata const& meta)
+GenericPropertyMap& LightObjectProxyMetatable::GetPropertyMap(CppObjectMetadata const& meta)
 {
 	assert(meta.MetatableTag == MetaTag);
 	return *gStructRegistry.Get(meta.PropertyMapTag);
 }
 
 
-void* LightObjectProxyByRefMetatable::TryGetGeneric(lua_State* L, int index, int propertyMapIndex)
+void* LightObjectProxyMetatable::TryGetGeneric(lua_State* L, int index, int propertyMapIndex)
 {
 	CppObjectMetadata meta;
 	if (lua_try_get_cppobject(L, index, MetaTag, meta)) {
@@ -114,7 +114,7 @@ void* LightObjectProxyByRefMetatable::TryGetGeneric(lua_State* L, int index, int
 	return nullptr;
 }
 
-void* LightObjectProxyByRefMetatable::GetGeneric(lua_State* L, int index, int propertyMapIndex)
+void* LightObjectProxyMetatable::GetGeneric(lua_State* L, int index, int propertyMapIndex)
 {
 	CppObjectMetadata meta;
 	if (lua_try_get_cppobject(L, index, meta)) {
@@ -140,7 +140,7 @@ void* LightObjectProxyByRefMetatable::GetGeneric(lua_State* L, int index, int pr
 	}
 }
 
-int LightObjectProxyByRefMetatable::Index(lua_State* L, CppObjectMetadata& self)
+int LightObjectProxyMetatable::Index(lua_State* L, CppObjectMetadata& self)
 {
 	auto pm = gStructRegistry.Get(self.PropertyMapTag);
 	auto prop = get<FixedString>(L, 2);
@@ -164,7 +164,7 @@ int LightObjectProxyByRefMetatable::Index(lua_State* L, CppObjectMetadata& self)
 	return 1;
 }
 
-int LightObjectProxyByRefMetatable::NewIndex(lua_State* L, CppObjectMetadata& self)
+int LightObjectProxyMetatable::NewIndex(lua_State* L, CppObjectMetadata& self)
 {
 	auto pm = gStructRegistry.Get(self.PropertyMapTag);
 	auto prop = get<FixedString>(L, 2);
@@ -194,7 +194,7 @@ int LightObjectProxyByRefMetatable::NewIndex(lua_State* L, CppObjectMetadata& se
 	return 0;
 }
 
-int LightObjectProxyByRefMetatable::ToString(lua_State* L, CppObjectMetadata& self)
+int LightObjectProxyMetatable::ToString(lua_State* L, CppObjectMetadata& self)
 {
 	char entityName[200];
 	if (self.Lifetime.IsAlive(L)) {
@@ -207,12 +207,12 @@ int LightObjectProxyByRefMetatable::ToString(lua_State* L, CppObjectMetadata& se
 	return 1;
 }
 
-bool LightObjectProxyByRefMetatable::IsEqual(lua_State* L, CppObjectMetadata& self, CppObjectMetadata& other)
+bool LightObjectProxyMetatable::IsEqual(lua_State* L, CppObjectMetadata& self, CppObjectMetadata& other)
 {
 	return self.Ptr == other.Ptr && self.PropertyMapTag == other.PropertyMapTag;
 }
 
-int LightObjectProxyByRefMetatable::Next(lua_State* L, CppObjectMetadata& self)
+int LightObjectProxyMetatable::Next(lua_State* L, CppObjectMetadata& self)
 {
 	auto pm = gStructRegistry.Get(self.PropertyMapTag);
 	if (lua_type(L, 2) == LUA_TNIL) {
@@ -223,7 +223,7 @@ int LightObjectProxyByRefMetatable::Next(lua_State* L, CppObjectMetadata& self)
 	}
 }
 
-char const* LightObjectProxyByRefMetatable::GetTypeName(lua_State* L, CppObjectMetadata& self)
+char const* LightObjectProxyMetatable::GetTypeName(lua_State* L, CppObjectMetadata& self)
 {
 	auto pm = gStructRegistry.Get(self.PropertyMapTag);
 	return pm->Name.GetString();

@@ -10,11 +10,11 @@ struct CppObjectProxyHelpers
 };
 
 
-class LightObjectProxyByRefMetatable : public LightCppObjectMetatable<LightObjectProxyByRefMetatable>,
+class LightObjectProxyMetatable : public LightCppObjectMetatable<LightObjectProxyMetatable>,
 	public Indexable, public NewIndexable, public Iterable, public Stringifiable, public EqualityComparable
 {
 public:
-	static constexpr MetatableTag MetaTag = MetatableTag::ObjectProxyByRef;
+	static constexpr MetatableTag MetaTag = MetatableTag::ObjectRef;
 	static constexpr bool HasLifetime = true;
 
 	inline static void Make(lua_State* L, GenericPropertyMap& pm, void* object, LifetimeHandle const& lifetime)
@@ -78,7 +78,7 @@ public:
 		if (!pm.ValidatePropertyMap(object)) {
 			push(L, nullptr);
 		} else {
-			LightObjectProxyByRefMetatable::Make(L, pm, object, lifetime);
+			LightObjectProxyMetatable::Make(L, pm, object, lifetime);
 		}
 	}
 	
@@ -88,7 +88,7 @@ public:
 		if (!GetStaticPropertyMap<T>().ValidatePropertyMap(object)) {
 			push(L, nullptr);
 		} else {
-			LightObjectProxyByRefMetatable::Make(L, object, lifetime);
+			LightObjectProxyMetatable::Make(L, object, lifetime);
 		}
 	}
 

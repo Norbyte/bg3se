@@ -2,10 +2,10 @@ BEGIN_NS(lua)
 
 enum class MetatableTag : uint8_t
 {
-	ObjectProxyByRef = 0,
-	ArrayProxy = 1,
-	MapProxy = 2,
-	SetProxy = 3,
+	ObjectRef = 0,
+	Array = 1,
+	Map = 2,
+	Set = 3,
 	EnumValue = 4,
 	BitfieldValue = 5,
 	UserVariableHolder = 6,

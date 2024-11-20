@@ -23,7 +23,7 @@ int ArrayProxyImplBase::GetRegistryIndex() const
 void* ArrayProxyMetatable::GetRaw(lua_State* L, int index, int propertyMapIndex)
 {
 	CppObjectMetadata meta;
-	lua_get_cppobject(L, index, MetatableTag::ArrayProxy, meta);
+	lua_get_cppobject(L, index, MetatableTag::Array, meta);
 
 	if (meta.PropertyMapTag != propertyMapIndex) {
 		auto curTy = gExtender->GetPropertyMapManager().GetArrayProxy(meta.PropertyMapTag);

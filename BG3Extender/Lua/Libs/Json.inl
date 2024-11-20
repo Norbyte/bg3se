@@ -197,7 +197,7 @@ bool IsArrayLikeUserdata(lua_State* L, int index)
 	if (lua_type(L, index) == LUA_TLIGHTCPPOBJECT) {
 		CppObjectMetadata meta;
 		lua_get_cppobject(L, index, meta);
-		return meta.MetatableTag == MetatableTag::ArrayProxy || meta.MetatableTag == MetatableTag::SetProxy;
+		return meta.MetatableTag == MetatableTag::Array || meta.MetatableTag == MetatableTag::Set;
 	}
 
 	return false;
@@ -210,9 +210,9 @@ bool IsMapOrArrayLikeUserdata(lua_State* L, int index)
 	if (lua_type(L, index) == LUA_TLIGHTCPPOBJECT) {
 		CppObjectMetadata meta;
 		lua_get_cppobject(L, index, meta);
-		return meta.MetatableTag == MetatableTag::MapProxy
-			|| meta.MetatableTag == MetatableTag::SetProxy
-			|| meta.MetatableTag == MetatableTag::ArrayProxy;
+		return meta.MetatableTag == MetatableTag::Map
+			|| meta.MetatableTag == MetatableTag::Set
+			|| meta.MetatableTag == MetatableTag::Array;
 	}
 
 	return false;

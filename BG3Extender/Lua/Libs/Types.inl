@@ -7,25 +7,25 @@ std::optional<STDString> GetCppObjectTypeName(lua_State * L, int index)
 	lua_get_cppobject(L, index, meta);
 
 	switch (meta.MetatableTag) {
-	case MetatableTag::ObjectProxyByRef:
+	case MetatableTag::ObjectRef:
 	{
 		auto propertyMap = gStructRegistry.Get(meta.PropertyMapTag);
 		return propertyMap->Name.GetString();
 	}
 
-	case MetatableTag::ArrayProxy:
+	case MetatableTag::Array:
 	{
 		auto impl = gExtender->GetPropertyMapManager().GetArrayProxy(meta.PropertyMapTag);
 		return impl->GetContainerType().TypeName.GetString();
 	}
 
-	case MetatableTag::MapProxy:
+	case MetatableTag::Map:
 	{
 		auto impl = gExtender->GetPropertyMapManager().GetMapProxy(meta.PropertyMapTag);
 		return impl->GetContainerType().TypeName.GetString();
 	}
 
-	case MetatableTag::SetProxy:
+	case MetatableTag::Set:
 	{
 		auto impl = gExtender->GetPropertyMapManager().GetSetProxy(meta.PropertyMapTag);
 		return impl->GetContainerType().TypeName.GetString();
@@ -101,25 +101,25 @@ TypeInformation const* GetCppObjectType(lua_State * L, int index)
 	lua_get_cppobject(L, index, meta);
 
 	switch (meta.MetatableTag) {
-	case MetatableTag::ObjectProxyByRef:
+	case MetatableTag::ObjectRef:
 	{
 		auto propertyMap = gStructRegistry.Get(meta.PropertyMapTag);
 		return propertyMap->TypeInfo;
 	}
 
-	case MetatableTag::ArrayProxy:
+	case MetatableTag::Array:
 	{
 		auto impl = gExtender->GetPropertyMapManager().GetArrayProxy(meta.PropertyMapTag);
 		return &impl->GetContainerType();
 	}
 
-	case MetatableTag::MapProxy:
+	case MetatableTag::Map:
 	{
 		auto impl = gExtender->GetPropertyMapManager().GetMapProxy(meta.PropertyMapTag);
 		return &impl->GetContainerType();
 	}
 
-	case MetatableTag::SetProxy:
+	case MetatableTag::Set:
 	{
 		auto impl = gExtender->GetPropertyMapManager().GetSetProxy(meta.PropertyMapTag);
 		return &impl->GetContainerType();
@@ -256,8 +256,8 @@ void RegisterEnumerations(lua_State* L)
 bool Validate(lua_State* L)
 {
 	CppObjectMetadata meta;
-	lua_get_cppobject(L, 1, MetatableTag::ObjectProxyByRef, meta);
-	auto& pm = LightObjectProxyByRefMetatable::GetPropertyMap(meta);
+	lua_get_cppobject(L, 1, MetatableTag::ObjectRef, meta);
+	auto& pm = LightObjectProxyMetatable::GetPropertyMap(meta);
 	return pm.ValidateObject(meta.Ptr);
 }
 
@@ -273,28 +273,28 @@ UserReturn Serialize(lua_State* L)
 	lua_get_cppobject(L, 1, meta);
 
 	switch (meta.MetatableTag) {
-		case MetatableTag::ObjectProxyByRef:
+		case MetatableTag::ObjectRef:
 		{
-			auto& pm = LightObjectProxyByRefMetatable::GetPropertyMap(meta);
+			auto& pm = LightObjectProxyMetatable::GetPropertyMap(meta);
 			pm.Serialize(L, meta.Ptr);
 			return 1;
 		}
 			
-		case MetatableTag::ArrayProxy:
+		case MetatableTag::Array:
 		{
 			auto impl = ArrayProxyMetatable::GetImpl(meta);
 			impl->Serialize(L, meta);
 			return 1;
 		}
 
-		case MetatableTag::MapProxy:
+		case MetatableTag::Map:
 		{
 			auto impl = MapProxyMetatable::GetImpl(meta);
 			impl->Serialize(L, meta);
 			return 1;
 		}
 
-		case MetatableTag::SetProxy:
+		case MetatableTag::Set:
 		{
 			auto impl = SetProxyMetatable::GetImpl(meta);
 			impl->Serialize(L, meta);
@@ -319,28 +319,28 @@ void Unserialize(lua_State* L)
 	lua_get_cppobject(L, 1, meta);
 
 	switch (meta.MetatableTag) {
-		case MetatableTag::ObjectProxyByRef:
+		case MetatableTag::ObjectRef:
 		{
-			auto& pm = LightObjectProxyByRefMetatable::GetPropertyMap(meta);
+			auto& pm = LightObjectProxyMetatable::GetPropertyMap(meta);
 			pm.Unserialize(L, 2, meta.Ptr);
 			return;
 		}
 
-		case MetatableTag::ArrayProxy:
+		case MetatableTag::Array:
 		{
 			auto impl = ArrayProxyMetatable::GetImpl(meta);
 			impl->Unserialize(L, meta, 2);
 			return;
 		}
 
-		case MetatableTag::MapProxy:
+		case MetatableTag::Map:
 		{
 			auto impl = MapProxyMetatable::GetImpl(meta);
 			impl->Unserialize(L, meta, 2);
 			return;
 		}
 
-		case MetatableTag::SetProxy:
+		case MetatableTag::Set:
 		{
 			auto impl = SetProxyMetatable::GetImpl(meta);
 			impl->Unserialize(L, meta, 2);
@@ -375,10 +375,10 @@ std::optional<STDString> GetValueType(lua_State* L, AnyRef object)
 		lua_get_cppobject(L, object.Index, meta);
 
 		switch (meta.MetatableTag) {
-		case MetatableTag::ObjectProxyByRef: return "CppObject";
-		case MetatableTag::ArrayProxy: return "Array";
-		case MetatableTag::MapProxy: return "Map";
-		case MetatableTag::SetProxy: return "Set";
+		case MetatableTag::ObjectRef: return "CppObject";
+		case MetatableTag::Array: return "Array";
+		case MetatableTag::Map: return "Map";
+		case MetatableTag::Set: return "Set";
 		case MetatableTag::EnumValue: return "Enum";
 		case MetatableTag::BitfieldValue: return "Bitfield";
 		case MetatableTag::UserVariableHolder: return "UserVariableHolder";

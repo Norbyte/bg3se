@@ -538,7 +538,7 @@ class ArrayProxyMetatable : public LightCppObjectMetatable<ArrayProxyMetatable>,
 	public Lengthable, public Iterable, public Stringifiable, public EqualityComparable
 {
 public:
-	static constexpr MetatableTag MetaTag = MetatableTag::ArrayProxy;
+	static constexpr MetatableTag MetaTag = MetatableTag::Array;
 	static constexpr bool HasLifetime = true;
 
 	template <class TImpl>
@@ -550,12 +550,12 @@ public:
 
 	inline static void MakeImpl(lua_State* L, void* object, LifetimeHandle const& lifetime, ArrayProxyImplBase* impl)
 	{
-		lua_push_cppobject(L, MetatableTag::ArrayProxy, impl->GetRegistryIndex(), object, lifetime);
+		lua_push_cppobject(L, MetatableTag::Array, impl->GetRegistryIndex(), object, lifetime);
 	}
 
 	inline static void MakeImpl(lua_State* L, void const* object, LifetimeHandle const& lifetime, ArrayProxyImplBase* impl)
 	{
-		lua_push_cppobject(L, MetatableTag::ArrayProxy, impl->GetRegistryIndex(), object, lifetime);
+		lua_push_cppobject(L, MetatableTag::Array, impl->GetRegistryIndex(), object, lifetime);
 	}
 
 	template <class T>
@@ -689,7 +689,7 @@ public:
 
 	inline static ArrayProxyImplBase* GetImpl(CppObjectMetadata const& meta)
 	{
-		assert(meta.MetatableTag == MetatableTag::ArrayProxy);
+		assert(meta.MetatableTag == MetatableTag::Array);
 		return GetImpl(meta.PropertyMapTag);
 	}
 

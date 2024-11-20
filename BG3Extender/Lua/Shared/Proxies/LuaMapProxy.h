@@ -250,7 +250,7 @@ class MapProxyMetatable : public LightCppObjectMetatable<MapProxyMetatable>, pub
 	public Lengthable, public Iterable, public Stringifiable, public EqualityComparable
 {
 public:
-	static constexpr MetatableTag MetaTag = MetatableTag::MapProxy;
+	static constexpr MetatableTag MetaTag = MetatableTag::Map;
 	static constexpr bool HasLifetime = true;
 
 	template <class TImpl>
@@ -262,12 +262,12 @@ public:
 
 	inline static void MakeImpl(lua_State* L, void* object, LifetimeHandle const& lifetime, MapProxyImplBase* impl)
 	{
-		lua_push_cppobject(L, MetatableTag::MapProxy, impl->GetRegistryIndex(), object, lifetime);
+		lua_push_cppobject(L, MetatableTag::Map, impl->GetRegistryIndex(), object, lifetime);
 	}
 
 	inline static void MakeImpl(lua_State* L, void const* object, LifetimeHandle const& lifetime, MapProxyImplBase* impl)
 	{
-		lua_push_cppobject(L, MetatableTag::MapProxy, impl->GetRegistryIndex(), object, lifetime);
+		lua_push_cppobject(L, MetatableTag::Map, impl->GetRegistryIndex(), object, lifetime);
 	}
 
 	template <class TKey, class TValue>
@@ -315,7 +315,7 @@ public:
 
 	inline static MapProxyImplBase* GetImpl(CppObjectMetadata const& meta)
 	{
-		assert(meta.MetatableTag == MetatableTag::MapProxy);
+		assert(meta.MetatableTag == MetatableTag::Map);
 		return GetImpl(meta.PropertyMapTag);
 	}
 

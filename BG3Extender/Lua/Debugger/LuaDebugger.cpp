@@ -27,10 +27,10 @@ namespace bg3se::lua::dbg
 		if (tt == LUA_TLIGHTCPPOBJECT || tt == LUA_TCPPOBJECT) {
 			CppObjectMetadata meta;
 			lua_get_cppobject(L, index, meta);
-			return meta.MetatableTag == MetatableTag::ObjectProxyByRef
-				|| meta.MetatableTag == MetatableTag::ArrayProxy
-				|| meta.MetatableTag == MetatableTag::MapProxy
-				|| meta.MetatableTag == MetatableTag::SetProxy
+			return meta.MetatableTag == MetatableTag::ObjectRef
+				|| meta.MetatableTag == MetatableTag::Array
+				|| meta.MetatableTag == MetatableTag::Map
+				|| meta.MetatableTag == MetatableTag::Set
 				|| meta.MetatableTag == MetatableTag::Entity
 				|| meta.MetatableTag == MetatableTag::ImguiObject;
 		} else {
@@ -113,22 +113,22 @@ namespace bg3se::lua::dbg
 			CppObjectMetadata meta;
 			lua_get_cppobject(L, idx, meta);
 			switch (meta.MetatableTag) {
-			case MetatableTag::ObjectProxyByRef:
+			case MetatableTag::ObjectRef:
 				value->set_type_id(MsgValueType::USERDATA);
 				value->set_stringval(gStructRegistry.Get(meta.PropertyMapTag)->Name.GetString());
 				break;
 
-			case MetatableTag::ArrayProxy:
+			case MetatableTag::Array:
 				value->set_type_id(MsgValueType::USERDATA);
 				value->set_stringval(gExtender->GetPropertyMapManager().GetArrayProxy(meta.PropertyMapTag)->GetContainerType().TypeName.GetString());
 				break;
 
-			case MetatableTag::MapProxy:
+			case MetatableTag::Map:
 				value->set_type_id(MsgValueType::USERDATA);
 				value->set_stringval(gExtender->GetPropertyMapManager().GetMapProxy(meta.PropertyMapTag)->GetContainerType().TypeName.GetString());
 				break;
 
-			case MetatableTag::SetProxy:
+			case MetatableTag::Set:
 				value->set_type_id(MsgValueType::USERDATA);
 				value->set_stringval(gExtender->GetPropertyMapManager().GetSetProxy(meta.PropertyMapTag)->GetContainerType().TypeName.GetString());
 				break;
@@ -376,7 +376,7 @@ namespace bg3se::lua::dbg
 		StackCheck _(L);
 		// TODO - liveliness check
 
-		auto const& pm = LightObjectProxyByRefMetatable::GetPropertyMap(meta);
+		auto const& pm = LightObjectProxyMetatable::GetPropertyMap(meta);
 		auto obj = meta.Ptr;
 
 		for (auto it : pm.IterableProperties) {
@@ -500,25 +500,25 @@ namespace bg3se::lua::dbg
 		lua_get_cppobject(L, index, meta);
 
 		switch (meta.MetatableTag) {
-		case MetatableTag::ObjectProxyByRef:
+		case MetatableTag::ObjectRef:
 		{
 			LuaCppRefObjectToEvalResults(L, index, meta, req);
 			break;
 		}
 		
-		case MetatableTag::ArrayProxy:
+		case MetatableTag::Array:
 		{
 			LuaArrayToEvalResults(L, index, meta, req);
 			break;
 		}
 		
-		case MetatableTag::MapProxy:
+		case MetatableTag::Map:
 		{
 			LuaMapToEvalResults(L, index, meta, req);
 			break;
 		}
 		
-		case MetatableTag::SetProxy:
+		case MetatableTag::Set:
 		{
 			LuaSetToEvalResults(L, index, meta, req);
 			break;

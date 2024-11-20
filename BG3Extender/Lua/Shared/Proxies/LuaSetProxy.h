@@ -119,7 +119,7 @@ class SetProxyMetatable : public LightCppObjectMetatable<SetProxyMetatable>, pub
 	public Lengthable, public Iterable, public Stringifiable, public EqualityComparable
 {
 public:
-	static constexpr MetatableTag MetaTag = MetatableTag::SetProxy;
+	static constexpr MetatableTag MetaTag = MetatableTag::Set;
 	static constexpr bool HasLifetime = true;
 
 	template <class TImpl>
@@ -131,12 +131,12 @@ public:
 
 	inline static void MakeImpl(lua_State* L, void* object, LifetimeHandle const& lifetime, SetProxyImplBase* impl)
 	{
-		lua_push_cppobject(L, MetatableTag::SetProxy, impl->GetRegistryIndex(), object, lifetime);
+		lua_push_cppobject(L, MetatableTag::Set, impl->GetRegistryIndex(), object, lifetime);
 	}
 
 	inline static void MakeImpl(lua_State* L, void const* object, LifetimeHandle const& lifetime, SetProxyImplBase* impl)
 	{
-		lua_push_cppobject(L, MetatableTag::SetProxy, impl->GetRegistryIndex(), object, lifetime);
+		lua_push_cppobject(L, MetatableTag::Set, impl->GetRegistryIndex(), object, lifetime);
 	}
 
 	template <class T>
@@ -160,7 +160,7 @@ public:
 
 	inline static SetProxyImplBase* GetImpl(CppObjectMetadata const& meta)
 	{
-		assert(meta.MetatableTag == MetatableTag::SetProxy);
+		assert(meta.MetatableTag == MetatableTag::Set);
 		return GetImpl(meta.PropertyMapTag);
 	}
 
