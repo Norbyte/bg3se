@@ -308,8 +308,8 @@ struct AiPathNode
 {
 	glm::vec3 Position;
 	EntityHandle Portal;
-	float field_18;
-	int field_1C;
+	float Distance;
+	float DistanceModifier;
 	uint8_t Flags;
 };
 

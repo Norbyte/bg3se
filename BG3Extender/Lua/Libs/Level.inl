@@ -70,8 +70,11 @@ AiPath* BeginPath(lua_State* L, EntityHandle source, glm::vec3 target)
 	auto aiGrid = GetAiGrid(L);
 
 	auto path = aiGrid->CreatePath();
-	path->SetSourceEntity(*State::FromLua(L)->GetEntitySystemHelpers(), source);
-	path->SetTarget(target);
+	if (path) {
+		path->SetSourceEntity(*State::FromLua(L)->GetEntitySystemHelpers(), source);
+		path->SetTarget(target);
+		aiGrid->Paths.push_back(path);
+	}
 
 	return path;
 }
