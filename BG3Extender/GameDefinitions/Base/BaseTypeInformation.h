@@ -313,6 +313,12 @@ StaticTypeInformation& GetStaticTypeInfo(Overload<GlobalRefReturn<T>>)
 }
 
 template <class T>
+StaticTypeInformation& GetStaticTypeInfo(Overload<CopyReturn<T>>)
+{
+	return GetStaticTypeInfo(Overload<T>{});
+}
+
+template <class T>
 StaticTypeInformation& GetStaticTypeInfo(Overload<ByValReturn<T>>)
 {
 	return GetStaticTypeInfo(Overload<T>{});

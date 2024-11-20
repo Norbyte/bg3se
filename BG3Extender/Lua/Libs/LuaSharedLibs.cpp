@@ -7,6 +7,7 @@
 #include <Lua/Libs/Entity.inl>
 #include <Lua/Libs/IO.inl>
 #include <Lua/Libs/Json.inl>
+#include <Lua/Libs/Level.inl>
 #include <Lua/Libs/Localization.inl>
 #include <Lua/Libs/Log.inl>
 #include <Lua/Libs/Math.inl>
@@ -101,6 +102,7 @@ void RegisterSharedLibraries()
 	res::RegisterStaticDataLib();
 	vars::RegisterVarsLib();
 	timer::RegisterTimerLib();
+	level::RegisterLevelLib();
 }
 
 void RegisterLibraries()

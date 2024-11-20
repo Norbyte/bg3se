@@ -88,33 +88,45 @@ struct DataGrid : public ProtectedGameObject<DataGrid>
 
 struct AiGridTile
 {
+	static constexpr float HeightScale = 1.0f/50.0f;
+
 	uint64_t AiFlags;
-	uint16_t MinHeight;
 	uint16_t MaxHeight;
+	uint16_t MinHeight;
 	AiMetaDataId MetaDataIndex;
 	AiSurfaceMetaDataId SurfaceMetaDataIndex;
 
-	AiBaseFlags GetFlags() const
+	inline float GetLocalMinHeight() const
+	{
+		return (float)MinHeight * HeightScale;
+	}
+
+	inline float GetLocalMaxHeight() const
+	{
+		return (float)MaxHeight * HeightScale;
+	}
+
+	inline AiBaseFlags GetFlags() const
 	{
 		return (AiBaseFlags)(AiFlags & 0xffffff);
 	}
 
-	SurfaceType GetGroundSurface() const
+	inline SurfaceType GetGroundSurface() const
 	{
 		return (SurfaceType)((AiFlags >> 24) & 0xff);
 	}
 
-	SurfaceType GetCloudSurface() const
+	inline SurfaceType GetCloudSurface() const
 	{
 		return (SurfaceType)((AiFlags >> 32) & 0xff);
 	}
 
-	uint8_t GetMaterial() const
+	inline uint8_t GetMaterial() const
 	{
 		return (uint8_t)((AiFlags >> 40) & 0x3f);
 	}
 
-	uint32_t GetExtraFlags() const
+	inline uint32_t GetExtraFlags() const
 	{
 		return (uint32_t)(AiFlags >> 46);
 	}
@@ -295,8 +307,8 @@ struct AiPathEntityPosition
 struct AiPathNode
 {
 	glm::vec3 Position;
-	EntityHandle Entity;
-	int field_18;
+	EntityHandle Portal;
+	float field_18;
 	int field_1C;
 	uint8_t Flags;
 };
@@ -305,8 +317,8 @@ struct AiPathNode
 struct AiPathCheckpoint : public ProtectedGameObject<AiPathCheckpoint>
 {
 	[[bg3::hidden]] void* field_0;
-	glm::vec3 field_8;
-	EntityHandle field_18;
+	glm::vec3 Position;
+	EntityHandle Portal;
 	EntityHandle field_20;
 	uint8_t Flags;
 };
@@ -318,8 +330,8 @@ struct AiPath : public ProtectedGameObject<AiPath>
 	Array<SurfacePathInfluence> SurfacePathInfluences;
 	EntityHandle Source;
 	EntityHandle Target;
-	float BoundType4;
-	float BoundType2;
+	float MovingBound;
+	float StandingBound;
 	uint64_t CollisionMask;
 	uint64_t CollisionMaskMove;
 	uint64_t CollisionMaskStand;
@@ -329,7 +341,7 @@ struct AiPath : public ProtectedGameObject<AiPath>
 	// __int64 field_60;
 	// __int64 field_68;
 #endif
-	float BoundType0;
+	float MovingBound2;
 	float CloseEnoughMin;
 	float CloseEnoughMax;
 	float CloseEnoughFloor;
@@ -343,7 +355,8 @@ struct AiPath : public ProtectedGameObject<AiPath>
 	glm::vec3 TargetAdjusted;
 	glm::vec3 ProjectileTarget;
 	float Height;
-	int SearchHorizon;
+	int16_t SearchHorizon;
+	int16_t SearchHorizon2;
 #if 0
 	// int field_CC;
 #endif
@@ -351,12 +364,10 @@ struct AiPath : public ProtectedGameObject<AiPath>
 	bool CanUseLadders;
 	bool CanUsePortals;
 	bool CanUseCombatPortals;
-	char CheckLockedDoors;
-	[[bg3::hidden]] Array<void*> AvailableKeys;
-	Array<int32_t> field_E8;
-	Array<FixedString> field_F8;
+	bool CheckLockedDoors;
+	HashSet<FixedString> AvailableKeys;
 	bool UseSmoothing;
-	uint8_t field_109;
+	bool AddBoundsToMargin;
 	bool AddSourceBoundsToMargin;
 	float StepHeight;
 	float WorldClimbingHeight;
@@ -368,33 +379,30 @@ struct AiPath : public ProtectedGameObject<AiPath>
 	float FallMinDamagePathfindingCost;
 	float FallMaxDamagePathfindingCost;
 	int FallDeadPathfindingCost;
-	bool CanWorldClimb;
-	bool CanWorldDrop;
+	uint8_t WorldClimbType;
+	uint8_t WorldDropType;
 	uint8_t field_136;
 	bool IsBidirectionalSearch;
 	bool UseTurning;
 	bool PreciseItemInteraction;
 	bool UseSplines;
 	bool UseStandAtDestination;
-	uint8_t field_13C;
+	bool PickUpTarget;
 	[[bg3::hidden]] void* CoverManager;
 	EntityHandle field_148;
 	uint8_t field_150;
 	int field_154;
 	Array<AiPathEntityPosition> MovedEntities;
 	Array<EntityHandle> IgnoreEntities;
-	float field_178;
-	float field_17C;
-	float field_180;
-	int field_184;
-	[[bg3::hidden]] void* DestinationFunc[8];
-	[[bg3::hidden]] void* WeightFunc[8];
-	HashMap<AiTilePos, uint64_t> field_208;
-	Array<AiPathAoOPosition> field_248;
+	glm::vec3 field_178;
+	[[bg3::hidden]] UnknownFunction DestinationFunc;
+	[[bg3::hidden]] UnknownFunction WeightFunc;
+	HashMap<AiTilePos, uint64_t> AoOTiles;
+	Array<AiPathAoOPosition> AoOPositions;
 	DangerousAuras DangerousAuras;
-	int BoundTilesType4;
-	int BoundTilesType2;
-	int BoundTilesType0;
+	int MovingBoundTiles;
+	int StandingBoundTiles;
+	int MovingBoundTiles2;
 	int field_294;
 	int32_t field_298;
 	float field_29C;
@@ -402,17 +410,27 @@ struct AiPath : public ProtectedGameObject<AiPath>
 	bool SearchComplete;
 	bool GoalFound;
 	uint8_t field_2A3;
-	uint8_t field_2A4;
+	bool InUse;
 	Array<AiPathNode> Nodes;
 	Array<AiPathCheckpoint> Checkpoints;
-	__int64 LimitNodeIndex;
+	uint64_t LimitNodeIndex;
 	bool HasLimitNode;
-	int field_2D4;
+	uint32_t ErrorCause;
+
+	void Reset();
+	void SetSourceEntity(ecs::EntitySystemHelpersBase& helpers, EntityHandle entity);
+	void SetSourceTemplate(CharacterTemplate* tmpl);
+	void SetSource(glm::vec3 position);
+	void SetTargetEntity(EntityHandle entity);
+	void SetTarget(glm::vec3 position);
+	void SetBounds(float movingBound, float standingBound);
 };
 
 
 struct AiGrid : public ProtectedGameObject<AiGrid>
 {
+	static constexpr float PatchSize = 25.0f;
+
 	[[bg3::hidden]] void* VMT;
 	__int64 field_8;
 	int MaxIterations;
@@ -429,8 +447,8 @@ struct AiGrid : public ProtectedGameObject<AiGrid>
 	[[bg3::hidden]] void* ThothMachine;
 	int NextPathHandle;
 	int field_EC;
-	Array<AiPath*> FreePaths;
-	LegacyRefMap<int, AiPath*> PathMap_int_pAiPath;
+	Array<AiPath*> PathPool;
+	LegacyRefMap<int, AiPath*> PathMap;
 	Array<AiPath*> Paths;
 	[[bg3::hidden]] AiGridRequestMap<void*> TileStates;
 	[[bg3::hidden]] AiGridRequestMap<void*> Floods;
@@ -492,7 +510,8 @@ struct AiGrid : public ProtectedGameObject<AiGrid>
 
 	static AiWorldPos ToWorldPos(glm::vec3 pos);
 	std::span<AiSubgridId const> GetSubgridsAt(AiWorldPos const& pos) const;
-	bool ToTilePos(AiWorldPos const& pos, AiTilePos& tilePos, AiGridTile const*& tileInfo) const;
+	bool ToTilePos(AiWorldPos const& pos, AiSubgrid*& pSubgrid, AiTilePos& tilePos, AiGridTile const*& tileInfo) const;
+	AiPath* CreatePath();
 };
 
 
@@ -504,6 +523,9 @@ struct AiGridLuaTile
 	uint8_t Material;
 	uint32_t UnmappedFlags;
 	uint32_t ExtraFlags;
+	uint32_t SubgridId;
+	int16_t TileX;
+	int16_t TileY;
 	float MinHeight;
 	float MaxHeight;
 	uint16_t MetaDataIndex;

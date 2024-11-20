@@ -92,7 +92,11 @@ print = Ext.Log.Print
 
 require = Ext.Require
 
--- Backward compatibility with v3
+-- Backwards compatibility with v3
 Ext.Definition = Ext.StaticData
 Ext.Utils.Round = Ext.Math.Round
 Ext.Utils.Random = Ext.Math.Random
+
+-- Backwards compatibility with v21 beta
+Ext.Entity.GetTile = Ext.Level.GetTile
+Ext.Entity.GetEntitiesOnTile = Ext.Level.GetEntitiesOnTile

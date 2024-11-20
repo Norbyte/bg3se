@@ -43,6 +43,18 @@ inline void MakeObjectRef(lua_State* L, T* value, LifetimeHandle const& lifetime
 	}
 }
 
+template <class T>
+inline void MakeObjectCopy(lua_State* L, T&& value)
+{
+	using TVal = std::remove_cv_t<T>;
+
+	static_assert(!LuaPolymorphic<TVal>::IsPolymorphic, "Copying polymorphic types not supported");
+	static_assert(
+		!IsArrayLike<TVal>::Value && !IsMapLike<TVal>::Value && !IsSetLike<TVal>::Value && !std::is_pointer_v<T> && !IsOptional<TVal>::Value,
+		"Copying special types not supported");
+	// FIXME - ObjectProxy::MakeRef<T>(L, std::move(value));
+}
+
 inline void MakeDirectObjectRef(lua_State* L, GenericPropertyMap& pm, void* value, LifetimeHandle const& lifetime)
 {
 	if (value == nullptr) {

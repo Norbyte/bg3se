@@ -13,7 +13,8 @@ enum class MetatableTag : uint8_t
 	Entity = 8,
 	ImguiObject = 9,
 	OsiFunctionName = 10,
-	Max = OsiFunctionName
+	ObjectVal = 11,
+	Max = ObjectVal
 };
 
 struct LuaInternalState;

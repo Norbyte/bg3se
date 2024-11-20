@@ -18,6 +18,9 @@ template <class R, class... Args>
 class Function<R (Args...)>
 {
 public:
+	// Seems to be 4 for editor, 5 for release?
+	static constexpr unsigned UserDataSize = 5;
+
 	Function(Function const& o)
 	{
 		call_ = o.call_;
@@ -79,7 +82,7 @@ private:
 	CallProc* call_;
 	CopyProc* copy_;
 	MoveProc* move_;
-	std::uintptr_t data_[4];
+	std::uintptr_t data_[UserDataSize];
 };
 
 
@@ -95,7 +98,7 @@ private:
 		UserCallProc* Handler;
 	};
 
-	static_assert(sizeof(Context) <= sizeof(void*) * 4);
+	static_assert(sizeof(Context) <= sizeof(void*) * Base::UserDataSize);
 
 public:
 	FunctionImpl(UserCallProc* handler) : Function()
@@ -160,7 +163,7 @@ private:
 		UserCallProc Handler;
 	};
 
-	static_assert(sizeof(Context) <= sizeof(void*) * 4);
+	static_assert(sizeof(Context) <= sizeof(void*) * Base::UserDataSize);
 
 public:
 	FunctionImpl(T* this_, UserCallProc handler)
@@ -229,7 +232,7 @@ private:
 		TData Data;
 	};
 
-	static_assert(sizeof(Context) <= sizeof(void*) * 4);
+	static_assert(sizeof(Context) <= sizeof(void*) * Base::UserDataSize);
 
 public:
 	FunctionImpl(T* this_, UserCallProc handler, TData const& data)

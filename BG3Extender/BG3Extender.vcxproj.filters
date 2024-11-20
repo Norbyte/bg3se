@@ -740,6 +740,7 @@
     <None Include="GameDefinitions\AllSpark.inl" />
     <None Include="Lua\Shared\EntityEventHelpersClient.inl" />
     <None Include="Lua\Client\ClientEntityReplicationEvents.inl" />
+    <None Include="Lua\Libs\Level.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

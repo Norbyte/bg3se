@@ -57,6 +57,25 @@ struct RefReturn
 	T* Object;
 };
 
+// Return type indicating that the return value should be passed to Lua using an object proxy backed by Lua store
+template <class T>
+struct CopyReturn
+{
+	inline constexpr CopyReturn()
+	{}
+	
+	inline constexpr CopyReturn(T&& obj)
+		: Object(std::move(obj))
+	{}
+
+	inline constexpr operator T*() const
+	{
+		return &Object;
+	}
+
+	T Object;
+};
+
 // Return type indicating that the return value should be passed to Lua using an object proxy with infinite (global) lifetime
 template <class T>
 struct GlobalRefReturn
