@@ -431,6 +431,9 @@ struct AiGrid : public ProtectedGameObject<AiGrid>
 {
 	static constexpr float PatchSize = 25.0f;
 
+	using FindPathProc = void (AiGrid* self, int32_t pathId);
+	using FindPathImmediateProc = bool (AiGrid* self, int32_t pathId);
+
 	[[bg3::hidden]] void* VMT;
 	__int64 field_8;
 	int MaxIterations;

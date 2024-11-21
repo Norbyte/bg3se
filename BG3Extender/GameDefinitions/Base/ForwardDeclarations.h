@@ -53,6 +53,7 @@ struct CacheTemplateManagerBase;
 
 struct AiGrid;
 
+struct BoundComponent;
 struct UuidComponent;
 struct UuidToHandleMappingComponent;
 

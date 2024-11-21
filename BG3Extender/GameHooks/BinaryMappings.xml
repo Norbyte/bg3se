@@ -952,5 +952,27 @@
       @ref3 e8 ?? ?? ?? ?? // call    ls__UIStateMachine__FireStateEvent2
       <Target Type="Indirect" Offset="@ref3" Symbol="ls__UIStateMachine__FireStateEvent2" />
     </Mapping>
+
+    <!-- Sigs: exposed as "IsReachable" -->
+    <Mapping Name="eoc::AiGrid::FindPath">
+      48 8b 83 a0 01 00 00 // mov     rax, [rbx+1A0h]
+      48 8b 98 90 00 00 00 // mov     rbx, [rax+90h]
+      48 85 db // test    rbx, rbx
+      0f 84 b7 00 00 00 // jz      loc_142628DF3
+      48 8b 9b 80 00 00 00 // mov     rbx, [rbx+80h]
+      8b d7 // mov     edx, edi
+      48 8b cb // mov     rcx, rbx
+      @ref1 e8 ?? ?? ?? ?? // call    eoc__AiGrid__FindPath
+      8b d7 // mov     edx, edi
+      48 8b cb // mov     rcx, rbx
+      @ref2 e8 ?? ?? ?? ?? // call    eoc__AiGrid__FindPathImmediate
+      0f b6 f8 // movzx   edi, al
+      48 8d 4d 40 // lea     rcx, [rbp+180h+var_140]
+      e8 ?? ?? ?? ?? // call    sub_141A26EE0
+      90 // nop
+      48 8b 4d b0 // mov     rcx, [rbp+180h+var_1D0]
+      <Target Type="Indirect" Offset="@ref1" Symbol="eoc__AiGrid__FindPath" />
+      <Target Type="Indirect" Offset="@ref2" Symbol="eoc__AiGrid__FindPathImmediate" />
+    </Mapping>
   </Mappings>
 </BinaryMappings>

@@ -79,6 +79,32 @@ AiPath* BeginPath(lua_State* L, EntityHandle source, glm::vec3 target)
 	return path;
 }
 
+bool FindPath(lua_State* L, AiPath* path)
+{
+	if (!path->SearchComplete) {
+		auto aiGrid = GetAiGrid(L);
+
+		// Find path ID
+		int32_t pathId{ -1 };
+		for (auto const& it : aiGrid->PathMap) {
+			if (it.Value == path) {
+				pathId = it.Key;
+				break;
+			}
+		}
+
+		if (pathId == -1) {
+			ERR("Couldn't find PathId mapping for path?");
+			return false;
+		}
+
+		auto find = GetStaticSymbols().eoc__AiGrid__FindPathImmediate;
+		find(aiGrid, pathId);
+	}
+
+	return path->GoalFound;
+}
+
 void RegisterLevelLib()
 {
 	DECLARE_MODULE(Level, Both)
@@ -86,6 +112,7 @@ void RegisterLevelLib()
 	MODULE_FUNCTION(GetEntitiesOnTile)
 	MODULE_FUNCTION(GetTile)
 	MODULE_FUNCTION(BeginPath)
+	MODULE_FUNCTION(FindPath)
 	END_MODULE()
 }
 

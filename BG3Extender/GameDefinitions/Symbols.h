@@ -1,5 +1,6 @@
 #pragma once
 
+#include <GameDefinitions/Ai.h>
 #include <GameDefinitions/Character.h>
 #include <GameDefinitions/EntityManager.h>
 #include <GameDefinitions/Item.h>
@@ -115,6 +116,9 @@ namespace bg3se
 		ecl::LevelManager** ecl__LevelManager{ nullptr };
 		GlobalTemplateManager** ls__GlobalTemplateManager{ nullptr };
 		CacheTemplateManagerBase** esv__CacheTemplateManager{ nullptr };
+
+		AiGrid::FindPathProc* eoc__AiGrid__FindPath{ nullptr };
+		AiGrid::FindPathImmediateProc* eoc__AiGrid__FindPathImmediate{ nullptr };
 
 		esv::SavegameManager** esv__SavegameManager{ nullptr };
 

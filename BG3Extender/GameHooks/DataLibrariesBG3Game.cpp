@@ -198,6 +198,9 @@ namespace bg3se
 		SYM_OFF(ls__GlobalTemplateManager);
 		SYM_OFF(esv__CacheTemplateManager);
 
+		SYM_OFF(eoc__AiGrid__FindPath);
+		SYM_OFF(eoc__AiGrid__FindPathImmediate);
+
 		SYM_OFF(esv__SavegameManager);
 
 #if defined(ENABLE_UI)
