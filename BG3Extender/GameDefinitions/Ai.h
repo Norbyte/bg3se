@@ -516,6 +516,7 @@ struct AiGrid : public ProtectedGameObject<AiGrid>
 	static AiWorldPos ToWorldPos(glm::vec3 pos);
 	std::span<AiSubgridId const> GetSubgridsAt(AiWorldPos const& pos) const;
 	bool ToTilePos(AiWorldPos const& pos, AiSubgrid*& pSubgrid, AiTilePos& tilePos, AiGridTile const*& tileInfo) const;
+	Array<float> GetHeightsAt(AiWorldPos const& pos) const;
 	AiPath* CreatePath();
 	std::optional<PathId> GetPathId(AiPath* path);
 	void FreePath(AiPath* path);

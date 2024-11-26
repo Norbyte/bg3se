@@ -156,6 +156,13 @@ AiGridLuaTile* GetTile(lua_State* L, glm::vec3 pos)
 	return &gTestTile;
 }
 
+Array<float> GetHeightsAt(lua_State* L, float x, float z)
+{
+	auto aiGrid = GetAiGrid(L);
+	auto worldPos = AiGrid::ToWorldPos(glm::vec3(x, 0.0f, z));
+	return aiGrid->GetHeightsAt(worldPos);
+}
+
 AiPath* BeginPathfinding(lua_State* L, EntityHandle source, glm::vec3 target, LuaDelegate<void(AiPath*)> callback)
 {
 	auto path = State::FromLua(L)->GetPathfinding().CreatePathRequest(std::move(callback));
@@ -213,6 +220,7 @@ void RegisterLevelLib()
 	BEGIN_MODULE()
 	MODULE_FUNCTION(GetEntitiesOnTile)
 	MODULE_FUNCTION(GetTile)
+	MODULE_FUNCTION(GetHeightsAt)
 	MODULE_FUNCTION(BeginPathfinding)
 	MODULE_FUNCTION(BeginPathfindingImmediate)
 	MODULE_FUNCTION(FindPath)

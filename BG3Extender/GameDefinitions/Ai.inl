@@ -206,13 +206,13 @@ bool AiGrid::ToTilePos(AiWorldPos const& pos, AiSubgrid*& pSubgrid, AiTilePos& t
 
 	auto subgrids = GetSubgridsAt(pos);
 	for (auto subgridId : subgrids) {
-		auto subgrid = Subgrids.find(subgridId);
-		if (subgrid != Subgrids.end()) {
-			if (subgrid.Value()->WorldToTilePos(pos, localPos)) {
-				auto tile = subgrid.Value()->TileGrid->GetTileAt(localPos.x, localPos.y);
+		auto subgrid = Subgrids.try_get(subgridId);
+		if (subgrid) {
+			if (subgrid->WorldToTilePos(pos, localPos)) {
+				auto tile = subgrid->TileGrid->GetTileAt(localPos.x, localPos.y);
 				if ((tile->AiFlags & 1) == 0) {
-					auto minY = subgrid.Value()->Translate.y + tile->GetLocalMinHeight();
-					auto maxY = subgrid.Value()->Translate.y + tile->GetLocalMaxHeight();
+					auto minY = subgrid->Translate.y + tile->GetLocalMinHeight();
+					auto maxY = subgrid->Translate.y + tile->GetLocalMaxHeight();
 
 					auto curYdiff = fabs(pos.Y - minY);
 					if (curYdiff < ydiff) {
@@ -221,7 +221,7 @@ bool AiGrid::ToTilePos(AiWorldPos const& pos, AiSubgrid*& pSubgrid, AiTilePos& t
 						tilePos.X = localPos.x;
 						tilePos.Y = localPos.y;
 						tileInfo = tile;
-						pSubgrid = subgrid.Value();
+						pSubgrid = subgrid;
 					}
 				}
 			}
@@ -229,6 +229,27 @@ bool AiGrid::ToTilePos(AiWorldPos const& pos, AiSubgrid*& pSubgrid, AiTilePos& t
 	}
 
 	return ydiff < 3.40282347e+38f;
+}
+
+Array<float> AiGrid::GetHeightsAt(AiWorldPos const& pos) const
+{
+	glm::ivec2 localPos;
+	Array<float> heights;
+
+	auto subgrids = GetSubgridsAt(pos);
+	for (auto subgridId : subgrids) {
+		auto subgrid = Subgrids.try_get(subgridId);
+		if (subgrid) {
+			if (subgrid->WorldToTilePos(pos, localPos)) {
+				auto tile = subgrid->TileGrid->GetTileAt(localPos.x, localPos.y);
+				if ((tile->AiFlags & 1) == 0) {
+					heights.push_back(subgrid->Translate.y + tile->GetLocalMinHeight());
+				}
+			}
+		}
+	}
+
+	return heights;
 }
 
 AiPath* AiGrid::CreatePath()
@@ -248,7 +269,7 @@ AiPath* AiGrid::CreatePath()
 
 	auto handle = NextPathHandle++;
 	path->Reset();
-	p->InUse = true;
+	path->InUse = true;
 	PathMap.insert(handle, path);
 
 	return path;
