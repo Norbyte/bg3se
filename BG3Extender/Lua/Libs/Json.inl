@@ -132,7 +132,7 @@ void* GetTablePointer(lua_State* L, int index)
 void* GetLightCppObjectPointer(lua_State* L, int index)
 {
 	CppObjectMetadata meta;
-	lua_get_cppobject(L, index, meta);
+	lua_get_lightcppobject(L, index, meta);
 
 	// Value-type userdata has no pointer (we don't want to mark same enum values/entities as false recursion)
 	if (meta.MetatableTag == MetatableTag::EnumValue
@@ -181,7 +181,7 @@ bool CheckForRecursion(lua_State* L, int index, StringifyContext& ctx)
 bool TryGetUserdataPairs(lua_State* L, int index)
 {
 	CppObjectMetadata meta;
-	lua_get_cppobject(L, index, meta);
+	lua_get_lightcppobject(L, index, meta);
 	auto mt = State::FromLua(L)->GetMetatableManager().GetMetatable(meta.MetatableTag);
 	if (lua_cmetatable_push(L, mt, (int)MetamethodName::Pairs)) {
 		return true;
@@ -196,7 +196,7 @@ bool IsArrayLikeUserdata(lua_State* L, int index)
 
 	if (lua_type(L, index) == LUA_TLIGHTCPPOBJECT) {
 		CppObjectMetadata meta;
-		lua_get_cppobject(L, index, meta);
+		lua_get_lightcppobject(L, index, meta);
 		return meta.MetatableTag == MetatableTag::Array || meta.MetatableTag == MetatableTag::Set;
 	}
 
@@ -209,7 +209,7 @@ bool IsMapOrArrayLikeUserdata(lua_State* L, int index)
 
 	if (lua_type(L, index) == LUA_TLIGHTCPPOBJECT) {
 		CppObjectMetadata meta;
-		lua_get_cppobject(L, index, meta);
+		lua_get_lightcppobject(L, index, meta);
 		return meta.MetatableTag == MetatableTag::Map
 			|| meta.MetatableTag == MetatableTag::Set
 			|| meta.MetatableTag == MetatableTag::Array;

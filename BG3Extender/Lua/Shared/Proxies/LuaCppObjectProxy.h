@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Lua/Shared/Proxies/LuaCppClass.h>
+#include <Lua/Shared/Proxies/LuaLightCppObjectMeta.h>
 
 BEGIN_NS(lua)
 
@@ -19,20 +19,20 @@ public:
 
 	inline static void Make(lua_State* L, GenericPropertyMap& pm, void* object, LifetimeHandle const& lifetime)
 	{
-		lua_push_cppobject(L, MetaTag, pm.RegistryIndex, object, lifetime);
+		lua_push_lightcppobject(L, MetaTag, pm.RegistryIndex, object, lifetime);
 	}
 
 	inline static void Make(lua_State* L, GenericPropertyMap& pm, void const* object, LifetimeHandle const& lifetime)
 	{
 		// TODO - add RO tag
-		lua_push_cppobject(L, MetaTag, pm.RegistryIndex, object, lifetime);
+		lua_push_lightcppobject(L, MetaTag, pm.RegistryIndex, object, lifetime);
 	}
 
 	template <class T>
 	inline static void Make(lua_State* L, T* object, LifetimeHandle const& lifetime)
 	{
 		auto const& pm = GetStaticPropertyMap<T>();
-		lua_push_cppobject(L, MetaTag, pm.RegistryIndex, object, lifetime);
+		lua_push_lightcppobject(L, MetaTag, pm.RegistryIndex, object, lifetime);
 	}
 
 	template <class T>
@@ -40,7 +40,16 @@ public:
 	{
 		// TODO - add RO tag
 		auto const& pm = GetStaticPropertyMap<T>();
-		lua_push_cppobject(L, MetaTag, pm.RegistryIndex, object, lifetime);
+		lua_push_lightcppobject(L, MetaTag, pm.RegistryIndex, object, lifetime);
+	}
+
+	template <class T>
+	inline static T* Copy(lua_State* L, T&& object)
+	{
+		auto const& pm = GetStaticPropertyMap<T>();
+		void* p = reinterpret_cast<T*>(lua_push_newcppobject(L, MetaTag, pm.RegistryIndex, sizeof(T)));
+		*p = std::move(object);
+		return p;
 	}
 
 	static GenericPropertyMap& GetPropertyMap(CppObjectMetadata const& meta);
@@ -90,6 +99,12 @@ public:
 		} else {
 			LightObjectProxyMetatable::Make(L, object, lifetime);
 		}
+	}
+	
+	template <class T>
+	inline static T* MakeCopy(lua_State* L, T&& object)
+	{
+		return LightObjectProxyMetatable::Copy(L, std::forward(object));
 	}
 
 	static void* GetRaw(lua_State* L, int index, GenericPropertyMap const& pm);

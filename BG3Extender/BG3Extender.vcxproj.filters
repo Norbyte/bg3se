@@ -495,6 +495,8 @@
     <ClInclude Include="Lua\Shared\EntityReplicationEvents.h" />
     <ClInclude Include="Lua\Client\ClientEntityReplicationEvents.h" />
     <ClInclude Include="Lua\Libs\Level.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaLightCppObjectMeta.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaCppObjectMeta.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

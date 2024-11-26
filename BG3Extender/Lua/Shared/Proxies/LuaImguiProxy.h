@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Lua/Shared/Proxies/LuaCppClass.h>
 #include <Extender/Client/IMGUI/Objects.h>
 
 BEGIN_NS(lua)

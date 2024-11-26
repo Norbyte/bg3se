@@ -66,7 +66,7 @@ CppMetatableManager& CppMetatableManager::FromLua(lua_State* L)
 void* ObjectProxy::GetRaw(lua_State* L, int index, GenericPropertyMap const& pm)
 {
 	CppObjectMetadata meta;
-	lua_get_cppobject(L, index, meta);
+	lua_get_lightcppobject(L, index, meta);
 
 	if (meta.MetatableTag == MetatableTag::ImguiObject) {
 		// Temporary jank to support imgui objects
@@ -104,7 +104,7 @@ GenericPropertyMap& LightObjectProxyMetatable::GetPropertyMap(CppObjectMetadata 
 void* LightObjectProxyMetatable::TryGetGeneric(lua_State* L, int index, int propertyMapIndex)
 {
 	CppObjectMetadata meta;
-	if (lua_try_get_cppobject(L, index, MetaTag, meta)) {
+	if (lua_try_get_lightcppobject(L, index, MetaTag, meta)) {
 		auto& pm = *gStructRegistry.Get(meta.PropertyMapTag);
 		if (pm.IsA(meta.PropertyMapTag) && meta.Lifetime.IsAlive(L)) {
 			return meta.Ptr;
@@ -117,7 +117,7 @@ void* LightObjectProxyMetatable::TryGetGeneric(lua_State* L, int index, int prop
 void* LightObjectProxyMetatable::GetGeneric(lua_State* L, int index, int propertyMapIndex)
 {
 	CppObjectMetadata meta;
-	if (lua_try_get_cppobject(L, index, meta)) {
+	if (lua_try_get_lightcppobject(L, index, meta)) {
 		auto& pm = *gStructRegistry.Get(meta.PropertyMapTag);
 		if (pm.IsA(propertyMapIndex)) {
 			if (!meta.Lifetime.IsAlive(L)) {

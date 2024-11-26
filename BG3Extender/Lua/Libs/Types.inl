@@ -4,7 +4,7 @@ BEGIN_NS(lua::types)
 std::optional<STDString> GetCppObjectTypeName(lua_State * L, int index)
 {
 	CppObjectMetadata meta;
-	lua_get_cppobject(L, index, meta);
+	lua_get_lightcppobject(L, index, meta);
 
 	switch (meta.MetatableTag) {
 	case MetatableTag::ObjectRef:
@@ -98,7 +98,7 @@ TypeInformation const* GetCppObjectType(lua_State * L, int index)
 #endif
 
 	CppObjectMetadata meta;
-	lua_get_cppobject(L, index, meta);
+	lua_get_lightcppobject(L, index, meta);
 
 	switch (meta.MetatableTag) {
 	case MetatableTag::ObjectRef:
@@ -256,7 +256,7 @@ void RegisterEnumerations(lua_State* L)
 bool Validate(lua_State* L)
 {
 	CppObjectMetadata meta;
-	lua_get_cppobject(L, 1, MetatableTag::ObjectRef, meta);
+	lua_get_lightcppobject(L, 1, MetatableTag::ObjectRef, meta);
 	auto& pm = LightObjectProxyMetatable::GetPropertyMap(meta);
 	return pm.ValidateObject(meta.Ptr);
 }
@@ -270,7 +270,7 @@ UserReturn Serialize(lua_State* L)
 	}
 
 	CppObjectMetadata meta;
-	lua_get_cppobject(L, 1, meta);
+	lua_get_lightcppobject(L, 1, meta);
 
 	switch (meta.MetatableTag) {
 		case MetatableTag::ObjectRef:
@@ -316,7 +316,7 @@ void Unserialize(lua_State* L)
 	}
 
 	CppObjectMetadata meta;
-	lua_get_cppobject(L, 1, meta);
+	lua_get_lightcppobject(L, 1, meta);
 
 	switch (meta.MetatableTag) {
 		case MetatableTag::ObjectRef:
@@ -372,7 +372,7 @@ std::optional<STDString> GetValueType(lua_State* L, AnyRef object)
 {
 	if (lua_type(L, object.Index) == LUA_TLIGHTCPPOBJECT) {
 		CppObjectMetadata meta;
-		lua_get_cppobject(L, object.Index, meta);
+		lua_get_lightcppobject(L, object.Index, meta);
 
 		switch (meta.MetatableTag) {
 		case MetatableTag::ObjectRef: return "CppObject";

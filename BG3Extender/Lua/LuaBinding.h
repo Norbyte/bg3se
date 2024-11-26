@@ -6,6 +6,7 @@
 #include <Lua/Shared/Proxies/LuaEntityProxy.h>
 #include <Lua/Shared/Proxies/LuaPropertyMapHelpers.h>
 #include <Lua/Shared/Proxies/LuaCppClass.h>
+#include <Lua/Shared/Proxies/LuaLightCppObjectMeta.h>
 #include <Lua/Shared/Proxies/LuaCppObjectProxy.h>
 #include <Lua/Shared/Proxies/LuaCppValue.h>
 #include <Lua/Shared/Proxies/LuaEnumValue.h>

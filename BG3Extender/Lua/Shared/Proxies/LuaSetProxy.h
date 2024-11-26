@@ -131,12 +131,12 @@ public:
 
 	inline static void MakeImpl(lua_State* L, void* object, LifetimeHandle const& lifetime, SetProxyImplBase* impl)
 	{
-		lua_push_cppobject(L, MetatableTag::Set, impl->GetRegistryIndex(), object, lifetime);
+		lua_push_lightcppobject(L, MetatableTag::Set, impl->GetRegistryIndex(), object, lifetime);
 	}
 
 	inline static void MakeImpl(lua_State* L, void const* object, LifetimeHandle const& lifetime, SetProxyImplBase* impl)
 	{
-		lua_push_cppobject(L, MetatableTag::Set, impl->GetRegistryIndex(), object, lifetime);
+		lua_push_lightcppobject(L, MetatableTag::Set, impl->GetRegistryIndex(), object, lifetime);
 	}
 
 	template <class T>

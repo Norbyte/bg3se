@@ -277,12 +277,14 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="Lua\Shared\Proxies\LuaArrayProxy.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaBitfieldValue.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaCppClass.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaCppObjectMeta.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaCppObjectProxy.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaCppValue.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaEntityProxy.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaEnumValue.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaEvent.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaImguiProxy.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaLightCppObjectMeta.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaMapProxy.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaPropertyMap.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaPropertyMapHelpers.h" />

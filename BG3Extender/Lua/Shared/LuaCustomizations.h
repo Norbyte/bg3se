@@ -22,12 +22,14 @@ LuaInternalState* lua_new_internal_state();
 void lua_release_internal_state(LuaInternalState* state);
 
 // Object API for storing pointer-like data in a Lua TValue.
-void lua_push_cppobject(lua_State* L, MetatableTag metatableTag, int propertyMapIndex, void* object, LifetimeHandle const& lifetime);
-void lua_push_cppobject(lua_State* L, MetatableTag metatableTag, int propertyMapIndex, void const* object, LifetimeHandle const& lifetime);
-void lua_get_cppobject(lua_State* L, int idx, MetatableTag expectedMetatableTag, CppObjectMetadata& obj);
-void lua_get_cppobject(lua_State* L, int idx, CppObjectMetadata& obj);
-bool lua_try_get_cppobject(lua_State* L, int idx, CppObjectMetadata& obj);
-bool lua_try_get_cppobject(lua_State* L, int idx, MetatableTag expectedMetatableTag, CppObjectMetadata& obj);
+void lua_push_lightcppobject(lua_State* L, MetatableTag metatableTag, int propertyMapIndex, void* object, LifetimeHandle const& lifetime);
+void lua_push_lightcppobject(lua_State* L, MetatableTag metatableTag, int propertyMapIndex, void const* object, LifetimeHandle const& lifetime);
+void lua_get_lightcppobject(lua_State* L, int idx, MetatableTag expectedMetatableTag, CppObjectMetadata& obj);
+void lua_get_lightcppobject(lua_State* L, int idx, CppObjectMetadata& obj);
+bool lua_try_get_lightcppobject(lua_State* L, int idx, CppObjectMetadata& obj);
+bool lua_try_get_lightcppobject(lua_State* L, int idx, MetatableTag expectedMetatableTag, CppObjectMetadata& obj);
+
+void* lua_push_newcppobject(lua_State* L, MetatableTag metatableTag, int propertyMapIndex, uint32_t size);
 
 // Value API for storing raw 64-bit data in a Lua TValue.
 void lua_push_cppvalue(lua_State* L, MetatableTag metatableTag, int propertyMapIndex, uint64_t object);

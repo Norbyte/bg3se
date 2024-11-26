@@ -262,12 +262,12 @@ public:
 
 	inline static void MakeImpl(lua_State* L, void* object, LifetimeHandle const& lifetime, MapProxyImplBase* impl)
 	{
-		lua_push_cppobject(L, MetatableTag::Map, impl->GetRegistryIndex(), object, lifetime);
+		lua_push_lightcppobject(L, MetatableTag::Map, impl->GetRegistryIndex(), object, lifetime);
 	}
 
 	inline static void MakeImpl(lua_State* L, void const* object, LifetimeHandle const& lifetime, MapProxyImplBase* impl)
 	{
-		lua_push_cppobject(L, MetatableTag::Map, impl->GetRegistryIndex(), object, lifetime);
+		lua_push_lightcppobject(L, MetatableTag::Map, impl->GetRegistryIndex(), object, lifetime);
 	}
 
 	template <class TKey, class TValue>

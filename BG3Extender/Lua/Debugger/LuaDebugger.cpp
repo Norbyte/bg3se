@@ -26,7 +26,7 @@ namespace bg3se::lua::dbg
 
 		if (tt == LUA_TLIGHTCPPOBJECT || tt == LUA_TCPPOBJECT) {
 			CppObjectMetadata meta;
-			lua_get_cppobject(L, index, meta);
+			lua_get_lightcppobject(L, index, meta);
 			return meta.MetatableTag == MetatableTag::ObjectRef
 				|| meta.MetatableTag == MetatableTag::Array
 				|| meta.MetatableTag == MetatableTag::Map
@@ -111,7 +111,7 @@ namespace bg3se::lua::dbg
 		case LUA_TLIGHTCPPOBJECT:
 		{
 			CppObjectMetadata meta;
-			lua_get_cppobject(L, idx, meta);
+			lua_get_lightcppobject(L, idx, meta);
 			switch (meta.MetatableTag) {
 			case MetatableTag::ObjectRef:
 				value->set_type_id(MsgValueType::USERDATA);
@@ -497,7 +497,7 @@ namespace bg3se::lua::dbg
 	void LuaLightCppObjectToEvalResults(lua_State* L, int index, DebuggerGetVariablesRequest const& req)
 	{
 		CppObjectMetadata meta;
-		lua_get_cppobject(L, index, meta);
+		lua_get_lightcppobject(L, index, meta);
 
 		switch (meta.MetatableTag) {
 		case MetatableTag::ObjectRef:
