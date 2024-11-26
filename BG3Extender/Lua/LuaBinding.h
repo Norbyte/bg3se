@@ -18,6 +18,7 @@
 #include <Lua/Shared/EntityEventHelpers.h>
 #include <Extender/Shared/UserVariables.h>
 #include <Lua/Libs/Timer.h>
+#include <Lua/Libs/Level.h>
 
 #include <mutex>
 #include <unordered_set>
@@ -159,6 +160,11 @@ namespace bg3se::lua
 			return timers_;
 		}
 
+		inline level::PathfindingSystem& GetPathfinding()
+		{
+			return pathfinding_;
+		}
+
 		virtual void Initialize();
 		virtual void Shutdown();
 		virtual bool IsClient() = 0;
@@ -243,6 +249,7 @@ namespace bg3se::lua
 		CachedModVariableManager modVariableManager_;
 		EntityComponentEventHooks entityHooks_;
 		timer::TimerSystem timers_;
+		level::PathfindingSystem pathfinding_;
 
 		void OpenLibs();
 		EventResult DispatchEvent(EventBase& evt, char const* eventName, bool canPreventAction, uint32_t restrictions);

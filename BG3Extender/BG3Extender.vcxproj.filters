@@ -494,6 +494,7 @@
     <ClInclude Include="GameDefinitions\AllSparkShared.h" />
     <ClInclude Include="Lua\Shared\EntityReplicationEvents.h" />
     <ClInclude Include="Lua\Client\ClientEntityReplicationEvents.h" />
+    <ClInclude Include="Lua\Libs\Level.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -506,9 +507,6 @@
     <None Include="LuaScripts\Game.Tooltip.lua" />
     <None Include="LuaScripts\SandboxStartup.lua" />
     <None Include="Misc\ExtIdeHelpers.lua" />
-    <None Include="Lua\Shared\LuaShared.inl">
-      <Filter>Lua\Shared</Filter>
-    </None>
     <None Include="Lua\Libs\StatAttributes.inl">
       <Filter>Lua\Shared</Filter>
     </None>

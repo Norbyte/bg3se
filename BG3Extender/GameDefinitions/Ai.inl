@@ -242,16 +242,51 @@ AiPath* AiGrid::CreatePath()
 	}
 
 	if (!path) {
-		ERR("Failed to find a free AiPath");
+		ERR("No free AiPath available; make sure you released paths that are no longer in use");
 		return nullptr;
 	}
 
 	auto handle = NextPathHandle++;
 	path->Reset();
+	p->InUse = true;
 	PathMap.insert(handle, path);
 
 	return path;
+}
 
+std::optional<AiGrid::PathId> AiGrid::GetPathId(AiPath* path)
+{
+	for (auto const& it : PathMap) {
+		if (it.Value == path) {
+			return it.Key;
+		}
+	}
+
+	return {};
+}
+
+void AiGrid::FreePath(AiPath* path)
+{
+	if (!path->InUse) {
+		WARN("Trying to free path that is not in use?");
+		return;
+	}
+
+	auto pathId = GetPathId(path);
+	if (!pathId) {
+		ERR("Trying to free path that has no ID?");
+		return;
+	}
+
+	for (uint32_t i = 0; i < Paths.size(); i++) {
+		if (Paths[i] == path) {
+			Paths.ordered_remove_at(i);
+			break;
+		}
+	}
+
+	PathMap.erase(PathMap.find(*pathId));
+	path->InUse = false;
 }
 
 END_SE()

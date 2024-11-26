@@ -306,7 +306,8 @@ State::State(ExtensionStateBase& state, uint32_t generationId, bool isServer)
 	variableManager_(isServer ? gExtender->GetServer().GetExtensionState().GetUserVariables() : gExtender->GetClient().GetExtensionState().GetUserVariables(), isServer),
 	modVariableManager_(isServer ? gExtender->GetServer().GetExtensionState().GetModVariables() : gExtender->GetClient().GetExtensionState().GetModVariables(), isServer),
 	entityHooks_(*this),
-	timers_(*this, isServer)
+	timers_(*this, isServer),
+	pathfinding_(*state_.GetLevelManager())
 {
 	*reinterpret_cast<State**>(lua_getextraspace(L.L)) = this;
 	OpenLibs();
@@ -472,6 +473,7 @@ void State::OnShutdown()
 void State::OnUpdate(GameTime const& time)
 {
 	timers_.Update(time.Time);
+	pathfinding_.Update();
 
 	TickEvent params{ .Time = time };
 	ThrowEvent("Tick", params, false, 0);

@@ -431,8 +431,10 @@ struct AiGrid : public ProtectedGameObject<AiGrid>
 {
 	static constexpr float PatchSize = 25.0f;
 
-	using FindPathProc = void (AiGrid* self, int32_t pathId);
-	using FindPathImmediateProc = bool (AiGrid* self, int32_t pathId);
+	using PathId = int32_t;
+
+	using FindPathProc = void (AiGrid* self, PathId pathId);
+	using FindPathImmediateProc = bool (AiGrid* self, PathId pathId);
 
 	[[bg3::hidden]] void* VMT;
 	__int64 field_8;
@@ -448,10 +450,10 @@ struct AiGrid : public ProtectedGameObject<AiGrid>
 	HashMap<Guid, AiGridLayerId> LayerMap;
 	[[bg3::hidden]] ecs::EntityWorld* EntityWorld;
 	[[bg3::hidden]] void* ThothMachine;
-	int NextPathHandle;
+	PathId NextPathHandle;
 	int field_EC;
 	Array<AiPath*> PathPool;
-	LegacyRefMap<int, AiPath*> PathMap;
+	LegacyRefMap<PathId, AiPath*> PathMap;
 	Array<AiPath*> Paths;
 	[[bg3::hidden]] AiGridRequestMap<void*> TileStates;
 	[[bg3::hidden]] AiGridRequestMap<void*> Floods;
@@ -515,6 +517,8 @@ struct AiGrid : public ProtectedGameObject<AiGrid>
 	std::span<AiSubgridId const> GetSubgridsAt(AiWorldPos const& pos) const;
 	bool ToTilePos(AiWorldPos const& pos, AiSubgrid*& pSubgrid, AiTilePos& tilePos, AiGridTile const*& tileInfo) const;
 	AiPath* CreatePath();
+	std::optional<PathId> GetPathId(AiPath* path);
+	void FreePath(AiPath* path);
 };
 
 

@@ -1,7 +1,98 @@
 #include <GameDefinitions/Ai.h>
+#include <Lua/Libs/Level.h>
 
 /// <lua_module>Level</lua_module>
 BEGIN_NS(lua::level)
+
+
+PathfindingSystem::PathfindingSystem(LevelManager& levelManager)
+	: levelManager_(levelManager)
+{}
+
+PathfindingSystem::~PathfindingSystem()
+{
+	for (auto& req : pendingRequests_) {
+		req.Release(levelManager_);
+	}
+}
+
+void PathfindingSystem::PathRequest::Release(LevelManager& levelManager)
+{
+	if (path_->InUse) {
+		levelManager.CurrentLevel->AiGrid->FreePath(path_);
+	} else {
+		ERR("Trying to release path %p that is no longer in use?", path_);
+	}
+}
+
+AiPath* PathfindingSystem::CreatePathRequestImmediate()
+{
+	auto path = levelManager_.CurrentLevel->AiGrid->CreatePath();
+	if (path) {
+		pendingRequests_.push_back(PathRequest{ path, LuaDelegate<void(AiPath*)>{}, true });
+		levelManager_.CurrentLevel->AiGrid->Paths.push_back(path);
+	}
+
+	return path;
+}
+
+AiPath* PathfindingSystem::CreatePathRequest(LuaDelegate<void(AiPath*)>&& callback)
+{
+	auto path = levelManager_.CurrentLevel->AiGrid->CreatePath();
+	if (path) {
+		pendingRequests_.push_back(PathRequest{ path, std::move(callback), false });
+		levelManager_.CurrentLevel->AiGrid->Paths.push_back(path);
+	}
+
+	return path;
+}
+
+void PathfindingSystem::ReleasePath(AiPath* path)
+{
+	for (uint32_t i = 0; i < pendingRequests_.size(); i++) {
+		if (pendingRequests_[i].path_ == path) {
+			pendingRequests_[i].Release(levelManager_);
+			pendingRequests_.ordered_remove_at(i);
+		}
+	}
+}
+
+bool PathfindingSystem::ProcessRequest(PathRequest& request)
+{
+	if (request.immediate_) {
+		// Always release immediate-use paths, even if pathfinding was not performed on them
+		if (!request.path_->SearchComplete) {
+			WARN("BeginPathfindingImmediate() was called on path %p, but no pathfinding was performed", request.path_);
+		}
+		return true;
+	}
+	
+	if (request.path_->SearchComplete) {
+		// Otherwise wait for async search completion
+		eventQueue_.Call(request.callback_, request.path_);
+		return true;
+	}
+
+	return false;
+}
+
+void PathfindingSystem::Update()
+{
+	Array<PathRequest> pending;
+
+	for (auto& req : pendingRequests_) {
+		if (ProcessRequest(req)) {
+			req.Release(levelManager_);
+		} else {
+			pending.push_back(req);
+		}
+	}
+
+	pendingRequests_ = pending;
+	eventQueue_.Flush();
+}
+
+
 
 AiGrid* GetAiGrid(lua_State* L)
 {
@@ -65,15 +156,23 @@ AiGridLuaTile* GetTile(lua_State* L, glm::vec3 pos)
 	return &gTestTile;
 }
 
-AiPath* BeginPath(lua_State* L, EntityHandle source, glm::vec3 target)
+AiPath* BeginPathfinding(lua_State* L, EntityHandle source, glm::vec3 target, LuaDelegate<void(AiPath*)> callback)
 {
-	auto aiGrid = GetAiGrid(L);
-
-	auto path = aiGrid->CreatePath();
+	auto path = State::FromLua(L)->GetPathfinding().CreatePathRequest(std::move(callback));
 	if (path) {
 		path->SetSourceEntity(*State::FromLua(L)->GetEntitySystemHelpers(), source);
 		path->SetTarget(target);
-		aiGrid->Paths.push_back(path);
+	}
+
+	return path;
+}
+
+AiPath* BeginPathfindingImmediate(lua_State* L, EntityHandle source, glm::vec3 target)
+{
+	auto path = State::FromLua(L)->GetPathfinding().CreatePathRequestImmediate();
+	if (path) {
+		path->SetSourceEntity(*State::FromLua(L)->GetEntitySystemHelpers(), source);
+		path->SetTarget(target);
 	}
 
 	return path;
@@ -81,28 +180,31 @@ AiPath* BeginPath(lua_State* L, EntityHandle source, glm::vec3 target)
 
 bool FindPath(lua_State* L, AiPath* path)
 {
+	if (!path->InUse) {
+		ERR("Trying to pathfind on released path %p?", path);
+		return false;
+	}
+
 	if (!path->SearchComplete) {
 		auto aiGrid = GetAiGrid(L);
-
-		// Find path ID
-		int32_t pathId{ -1 };
-		for (auto const& it : aiGrid->PathMap) {
-			if (it.Value == path) {
-				pathId = it.Key;
-				break;
-			}
-		}
-
-		if (pathId == -1) {
-			ERR("Couldn't find PathId mapping for path?");
+		auto pathId = aiGrid->GetPathId(path);
+		if (!pathId) {
+			ERR("Couldn't find PathId mapping for path %p?", path);
 			return false;
 		}
 
 		auto find = GetStaticSymbols().eoc__AiGrid__FindPathImmediate;
-		find(aiGrid, pathId);
+		find(aiGrid, *pathId);
 	}
 
 	return path->GoalFound;
+}
+
+void ReleasePath(lua_State* L, AiPath* path)
+{
+	if (path->InUse) {
+		State::FromLua(L)->GetPathfinding().ReleasePath(path);
+	}
 }
 
 void RegisterLevelLib()
@@ -111,8 +213,10 @@ void RegisterLevelLib()
 	BEGIN_MODULE()
 	MODULE_FUNCTION(GetEntitiesOnTile)
 	MODULE_FUNCTION(GetTile)
-	MODULE_FUNCTION(BeginPath)
+	MODULE_FUNCTION(BeginPathfinding)
+	MODULE_FUNCTION(BeginPathfindingImmediate)
 	MODULE_FUNCTION(FindPath)
+	MODULE_FUNCTION(ReleasePath)
 	END_MODULE()
 }
 
