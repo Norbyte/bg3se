@@ -4,17 +4,17 @@
 
 BEGIN_NS(lua)
 
-BitfieldInfoStore* BitfieldValueMetatable::GetBitfieldInfo(CppValueMetadata const& self)
+BitfieldInfoStore* BitfieldValueMetatable::GetBitfieldInfo(CppObjectMetadata const& self)
 {
 	return BitfieldRegistry::Get().BitfieldsById[self.PropertyMapTag];
 }
 
-EnumUnderlyingType BitfieldValueMetatable::GetValue(CppValueMetadata const& self)
+EnumUnderlyingType BitfieldValueMetatable::GetValue(CppObjectMetadata const& self)
 {
 	return static_cast<EnumUnderlyingType>(self.Value);
 }
 
-std::optional<EnumUnderlyingType> BitfieldValueMetatable::GetValueAtIndex(CppValueMetadata const& self, int index)
+std::optional<EnumUnderlyingType> BitfieldValueMetatable::GetValueAtIndex(CppObjectMetadata const& self, int index)
 {
 	auto ei = GetBitfieldInfo(self);
 	auto v = self.Value & ei->AllowedFlags;
@@ -32,7 +32,7 @@ std::optional<EnumUnderlyingType> BitfieldValueMetatable::GetValueAtIndex(CppVal
 	}
 }
 
-STDString BitfieldValueMetatable::GetValueAsString(CppValueMetadata& self)
+STDString BitfieldValueMetatable::GetValueAsString(CppObjectMetadata& self)
 {
 	STDString labels;
 	auto ei = GetBitfieldInfo(self);
@@ -46,7 +46,7 @@ STDString BitfieldValueMetatable::GetValueAsString(CppValueMetadata& self)
 	return labels;
 }
 
-Json::Value BitfieldValueMetatable::ToJson(CppValueMetadata& self)
+Json::Value BitfieldValueMetatable::ToJson(CppObjectMetadata& self)
 {
 	Json::Value arr(Json::arrayValue);
 	auto ei = GetBitfieldInfo(self);
@@ -58,7 +58,7 @@ Json::Value BitfieldValueMetatable::ToJson(CppValueMetadata& self)
 	return arr;
 }
 
-int BitfieldValueMetatable::Index(lua_State* L, CppValueMetadata& self)
+int BitfieldValueMetatable::Index(lua_State* L, CppObjectMetadata& self)
 {
 	switch (lua_type(L, 2)) {
 	case LUA_TSTRING:
@@ -117,7 +117,7 @@ int BitfieldValueMetatable::Index(lua_State* L, CppValueMetadata& self)
 	return 1;
 }
 
-int BitfieldValueMetatable::ToString(lua_State* L, CppValueMetadata& self)
+int BitfieldValueMetatable::ToString(lua_State* L, CppObjectMetadata& self)
 {
 	StackCheck _(L, 1);
 	STDString labels;
@@ -139,14 +139,14 @@ int BitfieldValueMetatable::ToString(lua_State* L, CppValueMetadata& self)
 	return 1;
 }
 
-bool BitfieldValueMetatable::IsEqual(lua_State* L, CppValueMetadata& self, int otherIndex)
+bool BitfieldValueMetatable::IsEqual(lua_State* L, CppObjectMetadata& self, int otherIndex)
 {
 	auto ei = GetBitfieldInfo(self);
 	auto other = try_get_bitfield_value(L, otherIndex, self.PropertyMapTag, false);
 	return other && *other == self.Value;
 }
 
-int BitfieldValueMetatable::Length(lua_State* L, CppValueMetadata& self)
+int BitfieldValueMetatable::Length(lua_State* L, CppObjectMetadata& self)
 {
 	auto ei = GetBitfieldInfo(self);
 	auto len = (unsigned)_mm_popcnt_u64(self.Value & ei->AllowedFlags);
@@ -154,7 +154,7 @@ int BitfieldValueMetatable::Length(lua_State* L, CppValueMetadata& self)
 	return 1;
 }
 
-int BitfieldValueMetatable::Next(lua_State* L, CppValueMetadata& self)
+int BitfieldValueMetatable::Next(lua_State* L, CppObjectMetadata& self)
 {
 	int key;
 	if (lua_type(L, 2) == LUA_TNIL) {
@@ -176,35 +176,35 @@ int BitfieldValueMetatable::Next(lua_State* L, CppValueMetadata& self)
 	return 0;
 }
 
-int BitfieldValueMetatable::BAnd(lua_State* L, CppValueMetadata& self, int otherIndex)
+int BitfieldValueMetatable::BAnd(lua_State* L, CppObjectMetadata& self, int otherIndex)
 {
 	auto other = get_bitfield_value(L, otherIndex, self.PropertyMapTag, true);
 	Make(L, self.Value & other, self.PropertyMapTag);
 	return 1;
 }
 
-int BitfieldValueMetatable::BOr(lua_State* L, CppValueMetadata& self, int otherIndex)
+int BitfieldValueMetatable::BOr(lua_State* L, CppObjectMetadata& self, int otherIndex)
 {
 	auto other = get_bitfield_value(L, otherIndex, self.PropertyMapTag, false);
 	Make(L, self.Value | other, self.PropertyMapTag);
 	return 1;
 }
 
-int BitfieldValueMetatable::BXor(lua_State* L, CppValueMetadata& self, int otherIndex)
+int BitfieldValueMetatable::BXor(lua_State* L, CppObjectMetadata& self, int otherIndex)
 {
 	auto other = get_bitfield_value(L, otherIndex, self.PropertyMapTag, false);
 	Make(L, self.Value ^ other, self.PropertyMapTag);
 	return 1;
 }
 
-int BitfieldValueMetatable::BNot(lua_State* L, CppValueMetadata& self)
+int BitfieldValueMetatable::BNot(lua_State* L, CppObjectMetadata& self)
 {
 	auto ei = GetBitfieldInfo(self);
 	Make(L, (~self.Value & ei->AllowedFlags), self.PropertyMapTag);
 	return 1;
 }
 
-char const* BitfieldValueMetatable::GetTypeName(lua_State* L, CppValueMetadata& self)
+char const* BitfieldValueMetatable::GetTypeName(lua_State* L, CppObjectMetadata& self)
 {
 	auto ei = GetBitfieldInfo(self);
 	return ei->LuaName.GetString();
@@ -259,8 +259,7 @@ EnumUnderlyingType get_bitfield_value(lua_State* L, int index, BitfieldTypeId ty
 
 	case LUA_TLIGHTCPPOBJECT:
 	{
-		CppValueMetadata meta;
-		lua_get_cppvalue(L, lua_absindex(L, index), meta);
+		auto meta = lua_get_cppvalue(L, lua_absindex(L, index));
 		if (meta.MetatableTag == BitfieldValueMetatable::MetaTag && meta.PropertyMapTag == (unsigned)store.RegistryIndex) {
 			return static_cast<EnumUnderlyingType>(meta.Value);
 		} else {
@@ -322,8 +321,7 @@ std::optional<EnumUnderlyingType> try_get_bitfield_value(lua_State* L, int index
 
 	case LUA_TLIGHTCPPOBJECT:
 	{
-		CppValueMetadata meta;
-		lua_get_cppvalue(L, lua_absindex(L, index), meta);
+		auto meta = lua_get_cppvalue(L, lua_absindex(L, index));
 		if (meta.MetatableTag == BitfieldValueMetatable::MetaTag && meta.PropertyMapTag == (unsigned)store.RegistryIndex) {
 			return static_cast<EnumUnderlyingType>(meta.Value);
 		}

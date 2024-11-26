@@ -79,8 +79,7 @@ char const* MapProxyMetatable::GetTypeName(lua_State* L, CppObjectMetadata& self
 
 void* MapProxyMetatable::GetRaw(lua_State* L, int index, int propertyMapIndex)
 {
-	CppObjectMetadata meta;
-	lua_get_lightcppobject(L, index, MetatableTag::Map, meta);
+	auto meta = lua_get_lightcppobject(L, index, MetatableTag::Map);
 
 	if (meta.PropertyMapTag != propertyMapIndex) {
 		auto curTy = gExtender->GetPropertyMapManager().GetMapProxy(meta.PropertyMapTag);

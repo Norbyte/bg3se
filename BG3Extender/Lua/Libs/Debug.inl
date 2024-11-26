@@ -51,10 +51,6 @@ void DumpStack(lua_State* L)
 			INFO("<%d> %s", idx, lua_toboolean(L, idx) ? "true" : "false");
 			break;
 
-		case LUA_TLIGHTUSERDATA:
-			INFO("<%d> Handle %ull", idx, (uint64_t)lua_touserdata(L, idx));
-			break;
-
 		case LUA_TNUMBER:
 			INFO("<%d> %f", idx, (float)lua_tonumber(L, idx));
 			break;

@@ -169,7 +169,6 @@ namespace lua
 	class State;
 
 	struct CppObjectMetadata;
-	struct CppValueMetadata;
 
 	template <class T>
 	class LuaDelegate;

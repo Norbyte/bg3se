@@ -55,7 +55,7 @@ int64_t LuaToInt(lua_State* L, int i, int type)
 #else
 		return (int64_t)lua_tonumber(L, i);
 #endif
-	} else if (type == LUA_TLIGHTUSERDATA) {
+	} else if (type == LUA_TLIGHTCPPOBJECT) {
 		auto handle = get<EntityHandle>(L, i);
 		return (int64_t)handle.Handle;
 	} else {

@@ -2,7 +2,7 @@
 
 BEGIN_NS(esv::lua)
 
-int OsiFunctionNameMetatable::Index(lua_State* L, CppValueMetadata& self)
+int OsiFunctionNameMetatable::Index(lua_State* L, CppObjectMetadata& self)
 {
 	auto prop = get<FixedString>(L, 2);
 	if (prop == GFS.strGet) {
@@ -25,7 +25,7 @@ int OsiFunctionNameMetatable::Index(lua_State* L, CppValueMetadata& self)
 }
 
 
-int OsiFunctionNameMetatable::Call(lua_State* L, CppValueMetadata& self)
+int OsiFunctionNameMetatable::Call(lua_State* L, CppObjectMetadata& self)
 {
 	auto cache = Get(L, self);
 
@@ -39,7 +39,7 @@ int OsiFunctionNameMetatable::Call(lua_State* L, CppValueMetadata& self)
 }
 
 
-int OsiFunctionNameMetatable::ToString(lua_State* L, CppValueMetadata& self)
+int OsiFunctionNameMetatable::ToString(lua_State* L, CppObjectMetadata& self)
 {
 	char name[200];
 	sprintf_s(name, "OsiFunction(%s)", Get(L, self)->name.GetString());
@@ -48,7 +48,7 @@ int OsiFunctionNameMetatable::ToString(lua_State* L, CppValueMetadata& self)
 }
 
 
-char const* OsiFunctionNameMetatable::GetTypeName(lua_State* L, CppValueMetadata& self)
+char const* OsiFunctionNameMetatable::GetTypeName(lua_State* L, CppObjectMetadata& self)
 {
 	return "OsiFunctionName";
 }
@@ -140,7 +140,7 @@ int OsiFunctionNameMetatable::LuaType(lua_State* L)
 }
 
 
-void OsiFunctionNameMetatable::GetInputArities(lua_State* L, CppValueMetadata& self)
+void OsiFunctionNameMetatable::GetInputArities(lua_State* L, CppObjectMetadata& self)
 {
 	auto cache = Get(L, self);
 
@@ -154,7 +154,7 @@ void OsiFunctionNameMetatable::GetInputArities(lua_State* L, CppValueMetadata& s
 	}
 }
 
-void OsiFunctionNameMetatable::GetArities(lua_State* L, CppValueMetadata& self)
+void OsiFunctionNameMetatable::GetArities(lua_State* L, CppObjectMetadata& self)
 {
 	auto cache = Get(L, self);
 

@@ -3,22 +3,22 @@
 
 BEGIN_NS(lua)
 
-EnumInfoStore* EnumValueMetatable::GetEnumInfo(CppValueMetadata const& self)
+EnumInfoStore* EnumValueMetatable::GetEnumInfo(CppObjectMetadata const& self)
 {
 	return EnumRegistry::Get().EnumsById[self.PropertyMapTag];
 }
 
-FixedString EnumValueMetatable::GetLabel(CppValueMetadata const& self)
+FixedString EnumValueMetatable::GetLabel(CppObjectMetadata const& self)
 {
 	return GetEnumInfo(self)->Find(static_cast<EnumUnderlyingType>(self.Value));
 }
 
-EnumUnderlyingType EnumValueMetatable::GetValue(CppValueMetadata const& self)
+EnumUnderlyingType EnumValueMetatable::GetValue(CppObjectMetadata const& self)
 {
 	return static_cast<EnumUnderlyingType>(self.Value);
 }
 
-int EnumValueMetatable::Index(lua_State* L, CppValueMetadata& self)
+int EnumValueMetatable::Index(lua_State* L, CppObjectMetadata& self)
 {
 	auto index = get<FixedString>(L, 2);
 	if (index == GFS.strLabel) {
@@ -35,35 +35,35 @@ int EnumValueMetatable::Index(lua_State* L, CppValueMetadata& self)
 	return 1;
 }
 
-int EnumValueMetatable::ToString(lua_State* L, CppValueMetadata& self)
+int EnumValueMetatable::ToString(lua_State* L, CppObjectMetadata& self)
 {
 	StackCheck _(L, 1);
 	push(L, GetLabel(self));
 	return 1;
 }
 
-bool EnumValueMetatable::IsEqual(lua_State* L, CppValueMetadata& self, int otherIndex)
+bool EnumValueMetatable::IsEqual(lua_State* L, CppObjectMetadata& self, int otherIndex)
 {
 	auto ei = GetEnumInfo(self);
 	auto other = try_get_enum_value(L, otherIndex, self.PropertyMapTag);
 	return other && *other == self.Value;
 }
 
-bool EnumValueMetatable::IsLessThan(lua_State* L, CppValueMetadata& self, int otherIndex)
+bool EnumValueMetatable::IsLessThan(lua_State* L, CppObjectMetadata& self, int otherIndex)
 {
 	auto ei = GetEnumInfo(self);
 	auto other = try_get_enum_value(L, otherIndex, self.PropertyMapTag);
 	return other && self.Value < *other;
 }
 
-bool EnumValueMetatable::IsLessThan(lua_State* L, int selfIndex, CppValueMetadata& other)
+bool EnumValueMetatable::IsLessThan(lua_State* L, int selfIndex, CppObjectMetadata& other)
 {
 	auto ei = GetEnumInfo(other);
 	auto self = try_get_enum_value(L, selfIndex, other.PropertyMapTag);
 	return self && *self < other.Value;
 }
 
-char const* EnumValueMetatable::GetTypeName(lua_State* L, CppValueMetadata& self)
+char const* EnumValueMetatable::GetTypeName(lua_State* L, CppObjectMetadata& self)
 {
 	auto ei = GetEnumInfo(self);
 	return ei->LuaName.GetString();
@@ -99,8 +99,7 @@ EnumUnderlyingType get_enum_value(lua_State* L, int index, EnumTypeId typeId)
 
 	case LUA_TLIGHTCPPOBJECT:
 	{
-		CppValueMetadata meta;
-		lua_get_cppvalue(L, lua_absindex(L, index), meta);
+		auto meta = lua_get_cppvalue(L, lua_absindex(L, index));
 		if (meta.MetatableTag == EnumValueMetatable::MetaTag && meta.PropertyMapTag == (unsigned)store.RegistryIndex) {
 			return static_cast<EnumUnderlyingType>(meta.Value);
 		} else {
@@ -144,8 +143,7 @@ std::optional<EnumUnderlyingType> try_get_enum_value(lua_State* L, int index, En
 
 	case LUA_TLIGHTCPPOBJECT:
 	{
-		CppValueMetadata meta;
-		lua_get_cppvalue(L, lua_absindex(L, index), meta);
+		auto meta = lua_get_cppvalue(L, lua_absindex(L, index));
 		if (meta.MetatableTag == EnumValueMetatable::MetaTag && meta.PropertyMapTag == (unsigned)store.RegistryIndex) {
 			return static_cast<EnumUnderlyingType>(meta.Value);
 		}

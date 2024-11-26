@@ -3,8 +3,7 @@ BEGIN_NS(lua::types)
 
 std::optional<STDString> GetCppObjectTypeName(lua_State * L, int index)
 {
-	CppObjectMetadata meta;
-	lua_get_lightcppobject(L, index, meta);
+	auto meta = lua_get_lightcppany(L, index);
 
 	switch (meta.MetatableTag) {
 	case MetatableTag::ObjectRef:
@@ -33,30 +32,22 @@ std::optional<STDString> GetCppObjectTypeName(lua_State * L, int index)
 
 	case MetatableTag::EnumValue:
 	{
-		CppValueMetadata val;
-		lua_get_cppvalue(L, index, val);
-		return EnumValueMetatable::GetTypeName(L, val);
+		return EnumValueMetatable::GetTypeName(L, meta);
 	}
 
 	case MetatableTag::BitfieldValue:
 	{
-		CppValueMetadata val;
-		lua_get_cppvalue(L, index, val);
-		return BitfieldValueMetatable::GetTypeName(L, val);
+		return BitfieldValueMetatable::GetTypeName(L, meta);
 	}
 
 	case MetatableTag::UserVariableHolder:
 	{
-		CppValueMetadata val;
-		lua_get_cppvalue(L, index, val);
-		return UserVariableHolderMetatable::GetTypeName(L, val);
+		return UserVariableHolderMetatable::GetTypeName(L, meta);
 	}
 
 	case MetatableTag::ModVariableHolder:
 	{
-		CppValueMetadata val;
-		lua_get_cppvalue(L, index, val);
-		return ModVariableHolderMetatable::GetTypeName(L, val);
+		return ModVariableHolderMetatable::GetTypeName(L, meta);
 	}
 
 	case MetatableTag::Entity:
@@ -67,9 +58,7 @@ std::optional<STDString> GetCppObjectTypeName(lua_State * L, int index)
 #if defined(ENABLE_IMGUI)
 	case MetatableTag::ImguiObject:
 	{
-		CppValueMetadata val;
-		lua_get_cppvalue(L, index, val);
-		return ImguiObjectProxyMetatable::GetTypeName(L, val);
+		return ImguiObjectProxyMetatable::GetTypeName(L, meta);
 	}
 #endif
 
@@ -85,20 +74,7 @@ std::optional<STDString> GetCppObjectTypeName(lua_State * L, int index)
 
 TypeInformation const* GetCppObjectType(lua_State * L, int index)
 {
-#if defined(ENABLE_IMGUI)
-	CppValueMetadata val;
-	if (lua_try_get_cppvalue(L, index, val) && val.MetatableTag == MetatableTag::ImguiObject) {
-		auto obj = ImguiObjectProxyMetatable::GetRenderable(val);
-		if (obj != nullptr) {
-			return obj->GetRTTI().TypeInfo;
-		} else {
-			return nullptr;
-		}
-	}
-#endif
-
-	CppObjectMetadata meta;
-	lua_get_lightcppobject(L, index, meta);
+	auto meta = lua_get_lightcppany(L, index);
 
 	switch (meta.MetatableTag) {
 	case MetatableTag::ObjectRef:
@@ -124,6 +100,18 @@ TypeInformation const* GetCppObjectType(lua_State * L, int index)
 		auto impl = gExtender->GetPropertyMapManager().GetSetProxy(meta.PropertyMapTag);
 		return &impl->GetContainerType();
 	}
+
+#if defined(ENABLE_IMGUI)
+	case MetatableTag::ImguiObject:
+	{
+		auto obj = ImguiObjectProxyMetatable::GetRenderable(meta);
+		if (obj != nullptr) {
+			return obj->GetRTTI().TypeInfo;
+		} else {
+			return nullptr;
+		}
+	}
+#endif
 
 	case MetatableTag::EnumValue:
 	case MetatableTag::BitfieldValue:
@@ -255,22 +243,14 @@ void RegisterEnumerations(lua_State* L)
 
 bool Validate(lua_State* L)
 {
-	CppObjectMetadata meta;
-	lua_get_lightcppobject(L, 1, MetatableTag::ObjectRef, meta);
+	auto meta = lua_get_lightcppobject(L, 1, MetatableTag::ObjectRef);
 	auto& pm = LightObjectProxyMetatable::GetPropertyMap(meta);
 	return pm.ValidateObject(meta.Ptr);
 }
 
 UserReturn Serialize(lua_State* L)
 {
-	auto type = lua_type(L, 1);
-
-	if (type != LUA_TLIGHTCPPOBJECT) {
-		return luaL_error(L, "Don't know how to serialize values of type %s", lua_typename(L, type));
-	}
-
-	CppObjectMetadata meta;
-	lua_get_lightcppobject(L, 1, meta);
+	auto meta = lua_get_lightcppany(L, 1);
 
 	switch (meta.MetatableTag) {
 		case MetatableTag::ObjectRef:
@@ -308,44 +288,36 @@ UserReturn Serialize(lua_State* L)
 
 void Unserialize(lua_State* L)
 {
-	auto type = lua_type(L, 1);
+	auto meta = lua_get_lightcppany(L, 1);
 	luaL_checktype(L, 2, LUA_TTABLE);
-
-	if (type != LUA_TLIGHTCPPOBJECT) {
-		luaL_error(L, "Don't know how to unserialize objects of this type");
-	}
-
-	CppObjectMetadata meta;
-	lua_get_lightcppobject(L, 1, meta);
 
 	switch (meta.MetatableTag) {
 		case MetatableTag::ObjectRef:
 		{
 			auto& pm = LightObjectProxyMetatable::GetPropertyMap(meta);
 			pm.Unserialize(L, 2, meta.Ptr);
-			return;
 		}
 
 		case MetatableTag::Array:
 		{
 			auto impl = ArrayProxyMetatable::GetImpl(meta);
 			impl->Unserialize(L, meta, 2);
-			return;
 		}
 
 		case MetatableTag::Map:
 		{
 			auto impl = MapProxyMetatable::GetImpl(meta);
 			impl->Unserialize(L, meta, 2);
-			return;
 		}
 
 		case MetatableTag::Set:
 		{
 			auto impl = SetProxyMetatable::GetImpl(meta);
 			impl->Unserialize(L, meta, 2);
-			return;
 		}
+
+		default:
+			luaL_error(L, "Don't know how to unserialize userdata of metatype %d", (unsigned)meta.MetatableTag);
 	}
 }
 
@@ -371,8 +343,7 @@ UserReturn Construct(lua_State* L, FixedString const& typeName)
 std::optional<STDString> GetValueType(lua_State* L, AnyRef object)
 {
 	if (lua_type(L, object.Index) == LUA_TLIGHTCPPOBJECT) {
-		CppObjectMetadata meta;
-		lua_get_lightcppobject(L, object.Index, meta);
+		auto meta = lua_get_lightcppany(L, object.Index);
 
 		switch (meta.MetatableTag) {
 		case MetatableTag::ObjectRef: return "CppObject";

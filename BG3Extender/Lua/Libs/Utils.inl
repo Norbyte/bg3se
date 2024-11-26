@@ -120,9 +120,6 @@ bool IsValidHandle(lua_State* L)
 {
 	switch (lua_type(L, 1))
 	{
-	case LUA_TLIGHTUSERDATA:
-		return (bool)get<EntityHandle>(L, 1);
-
 	case LUA_TLIGHTCPPOBJECT:
 	{
 		auto handle = EntityProxyMetatable::Get(L, 1);
@@ -154,11 +151,7 @@ EntityHandle IntegerToHandle(int64_t i)
 
 STDString GetValueType(lua_State* L)
 {
-	if (lua_type(L, 1) == LUA_TLIGHTUSERDATA) {
-		return "lightuserdata";
-	} else {
-		return lua_typename(L, 1);
-	}
+	return lua_typename(L, 1);
 }
 
 void ShowErrorAndExitGame(STDString message)

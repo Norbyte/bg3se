@@ -30,17 +30,14 @@ private:
 
 struct CppObjectMetadata
 {
-	void* Ptr;
+	union
+	{
+		void* Ptr;
+		uint64_t Value;
+	};
 	MetatableTag MetatableTag;
 	uint16_t PropertyMapTag;
 	LifetimeHandle Lifetime;
-};
-
-struct CppValueMetadata
-{
-	uint64_t Value;
-	MetatableTag MetatableTag;
-	uint32_t PropertyMapTag;
 };
 
 class CppMetatableManager

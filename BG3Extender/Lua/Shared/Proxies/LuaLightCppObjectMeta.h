@@ -22,8 +22,7 @@ public:
 	static int CallProxy(lua_State* L)
 	{
 		if constexpr (std::is_base_of_v<Callable, TSubclass>) {
-			CppObjectMetadata self;
-			lua_get_lightcppobject(L, 1, TSubclass::MetaTag, self);
+			auto self = lua_get_lightcppobject(L, 1, TSubclass::MetaTag);
 			return TSubclass::Call(L, self);
 		} else {
 			return luaL_error(L, "Not callable!");
@@ -34,8 +33,7 @@ public:
 	{
 		if constexpr (std::is_base_of_v<Indexable, TSubclass>) {
 			StackCheck _(L, 1);
-			CppObjectMetadata self;
-			lua_get_lightcppobject(L, 1, TSubclass::MetaTag, self);
+			auto self = lua_get_lightcppobject(L, 1, TSubclass::MetaTag);
 
 			if constexpr (TSubclass::HasLifetime) {
 				if (!self.Lifetime.IsAlive(L)) {
@@ -54,8 +52,7 @@ public:
 	{
 		if constexpr (std::is_base_of_v<NewIndexable, TSubclass>) {
 			StackCheck _(L, 0);
-			CppObjectMetadata self;
-			lua_get_lightcppobject(L, 1, TSubclass::MetaTag, self);
+			auto self = lua_get_lightcppobject(L, 1, TSubclass::MetaTag);
 
 			if constexpr (TSubclass::HasLifetime) {
 				if (!self.Lifetime.IsAlive(L)) {
@@ -74,8 +71,7 @@ public:
 	{
 		if constexpr (std::is_base_of_v<Lengthable, TSubclass>) {
 			StackCheck _(L, 1);
-			CppObjectMetadata self;
-			lua_get_lightcppobject(L, 1, TSubclass::MetaTag, self);
+			auto self = lua_get_lightcppobject(L, 1, TSubclass::MetaTag);
 
 			if constexpr (TSubclass::HasLifetime) {
 				if (!self.Lifetime.IsAlive(L)) {
@@ -94,8 +90,7 @@ public:
 	static int PairsProxy(lua_State* L)
 	{
 		if constexpr (std::is_base_of_v<Iterable, TSubclass>) {
-			CppObjectMetadata self;
-			lua_get_lightcppobject(L, 1, TSubclass::MetaTag, self);
+			auto self = lua_get_lightcppobject(L, 1, TSubclass::MetaTag);
 			return TSubclass::Pairs(L, self);
 		} else {
 			return luaL_error(L, "Not iterable!");
@@ -106,8 +101,7 @@ public:
 	{
 		if constexpr (std::is_base_of_v<Stringifiable, TSubclass>) {
 			StackCheck _(L, 1);
-			CppObjectMetadata self;
-			lua_get_lightcppobject(L, 1, TSubclass::MetaTag, self);
+			auto self = lua_get_lightcppobject(L, 1, TSubclass::MetaTag);
 			return TSubclass::ToString(L, self);
 		} else {
 			return luaL_error(L, "Not stringifiable!");
@@ -118,8 +112,8 @@ public:
 	{
 		if constexpr (std::is_base_of_v<EqualityComparable, TSubclass>) {
 			StackCheck _(L, 1);
-			CppObjectMetadata self, other;
-			lua_get_lightcppobject(L, 1, TSubclass::MetaTag, self);
+			auto self = lua_get_lightcppobject(L, 1, TSubclass::MetaTag);
+			CppObjectMetadata other;
 
 			bool equal;
 			if (lua_try_get_lightcppobject(L, 2, TSubclass::MetaTag, other)) {
@@ -139,8 +133,8 @@ public:
 	{
 		if constexpr (std::is_base_of_v<LessThanComparable, TSubclass>) {
 			StackCheck _(L, 1);
-			CppObjectMetadata self, other;
-			lua_get_lightcppobject(L, 1, TSubclass::MetaTag, self);
+			auto self = lua_get_lightcppobject(L, 1, TSubclass::MetaTag);
+			CppObjectMetadata other;
 
 			bool lt;
 			if (lua_try_get_lightcppobject(L, 2, TSubclass::MetaTag, other)) {
@@ -170,8 +164,7 @@ public:
 	static int NextProxy(lua_State* L)
 	{
 		if constexpr (std::is_base_of_v<Iterable, TSubclass>) {
-			CppObjectMetadata self;
-			lua_get_lightcppobject(L, 1, TSubclass::MetaTag, self);
+			auto self = lua_get_lightcppobject(L, 1, TSubclass::MetaTag);
 
 			if (!self.Lifetime.IsAlive(L)) {
 				luaL_error(L, "Attempted to iterate '%s' whose lifetime has expired", TSubclass::GetTypeName(L, self));
@@ -187,8 +180,7 @@ public:
 	static int NameProxy(lua_State* L)
 	{
 		StackCheck _(L, 1);
-		CppObjectMetadata self;
-		lua_get_lightcppobject(L, 1, TSubclass::MetaTag, self);
+		auto self = lua_get_lightcppobject(L, 1, TSubclass::MetaTag);
 		push(L, TSubclass::GetTypeName(L, self));
 		return 1;
 	}

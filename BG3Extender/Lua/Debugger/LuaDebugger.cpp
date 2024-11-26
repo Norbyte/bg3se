@@ -20,19 +20,23 @@ namespace bg3se::lua::dbg
 		return type == MsgValueType::TABLE || type == MsgValueType::USERDATA;
 	}
 	
+	inline bool IsLuaContainerType(MetatableTag tag)
+	{
+		return tag == MetatableTag::ObjectRef
+			|| tag == MetatableTag::Array
+			|| tag == MetatableTag::Map
+			|| tag == MetatableTag::Set
+			|| tag == MetatableTag::Entity
+			|| tag == MetatableTag::ImguiObject;
+	}
+	
 	inline bool IsLuaContainerType(lua_State* L, int index)
 	{
 		auto tt = lua_type(L, index);
 
 		if (tt == LUA_TLIGHTCPPOBJECT || tt == LUA_TCPPOBJECT) {
-			CppObjectMetadata meta;
-			lua_get_lightcppobject(L, index, meta);
-			return meta.MetatableTag == MetatableTag::ObjectRef
-				|| meta.MetatableTag == MetatableTag::Array
-				|| meta.MetatableTag == MetatableTag::Map
-				|| meta.MetatableTag == MetatableTag::Set
-				|| meta.MetatableTag == MetatableTag::Entity
-				|| meta.MetatableTag == MetatableTag::ImguiObject;
+			auto meta = lua_get_lightcppany(L, index);
+			return IsLuaContainerType(meta.MetatableTag);
 		} else {
 			return tt == LUA_TTABLE;
 		}
@@ -110,8 +114,7 @@ namespace bg3se::lua::dbg
 		case LUA_TCPPOBJECT:
 		case LUA_TLIGHTCPPOBJECT:
 		{
-			CppObjectMetadata meta;
-			lua_get_lightcppobject(L, idx, meta);
+			auto meta = lua_get_lightcppany(L, idx);
 			switch (meta.MetatableTag) {
 			case MetatableTag::ObjectRef:
 				value->set_type_id(MsgValueType::USERDATA);
@@ -135,29 +138,23 @@ namespace bg3se::lua::dbg
 
 			case MetatableTag::EnumValue:
 			{
-				CppValueMetadata val;
-				lua_get_cppvalue(L, idx, val);
 				value->set_type_id(MsgValueType::STRING);
-				value->set_stringval(EnumValueMetatable::GetLabel(val).GetString());
+				value->set_stringval(EnumValueMetatable::GetLabel(meta).GetString());
 				break;
 			}
 
 			case MetatableTag::BitfieldValue:
 			{
-				CppValueMetadata val;
-				lua_get_cppvalue(L, idx, val);
 				value->set_type_id(MsgValueType::STRING);
-				value->set_stringval(BitfieldValueMetatable::GetValueAsString(val).c_str());
+				value->set_stringval(BitfieldValueMetatable::GetValueAsString(meta).c_str());
 				break;
 			}
 
 			case MetatableTag::Entity:
 			{
-				CppValueMetadata val;
-				lua_get_cppvalue(L, idx, val);
 				value->set_type_id(MsgValueType::USERDATA);
 				char name[100];
-				sprintf_s(name, "Entity (%016llx)", EntityProxyMetatable::GetHandle(val).Handle);
+				sprintf_s(name, "Entity (%016llx)", EntityProxyMetatable::GetHandle(meta).Handle);
 				value->set_stringval(name);
 				break;
 			}
@@ -165,10 +162,8 @@ namespace bg3se::lua::dbg
 #if defined(ENABLE_IMGUI)
 			case MetatableTag::ImguiObject:
 			{
-				CppValueMetadata val;
-				lua_get_cppvalue(L, idx, val);
 				value->set_type_id(MsgValueType::USERDATA);
-				auto obj = ecl::ExtensionState::Get().GetClientLua()->IMGUI().GetRenderable(val.Value);
+				auto obj = ecl::ExtensionState::Get().GetClientLua()->IMGUI().GetRenderable(meta.Value);
 				if (obj) {
 					value->set_stringval(obj->GetTypeName());
 				} else {
@@ -180,11 +175,9 @@ namespace bg3se::lua::dbg
 
 			case MetatableTag::OsiFunctionName:
 			{
-				CppValueMetadata val;
-				lua_get_cppvalue(L, idx, val);
 				value->set_type_id(MsgValueType::USERDATA);
 				char name[200];
-				sprintf_s(name, "OsiFunction (%s)", esv::lua::OsiFunctionNameMetatable::Get(L, val)->name.GetString());
+				sprintf_s(name, "OsiFunction (%s)", esv::lua::OsiFunctionNameMetatable::Get(L, meta)->name.GetString());
 				value->set_stringval(name);
 				break;
 			}
@@ -391,7 +384,7 @@ namespace bg3se::lua::dbg
 	}
 
 #if defined(ENABLE_IMGUI)
-	void LuaImguiObjectToEvalResults(lua_State* L, int index, CppValueMetadata& meta, DebuggerGetVariablesRequest const& req)
+	void LuaImguiObjectToEvalResults(lua_State* L, int index, CppObjectMetadata& meta, DebuggerGetVariablesRequest const& req)
 	{
 		StackCheck _(L);
 
@@ -496,8 +489,7 @@ namespace bg3se::lua::dbg
 
 	void LuaLightCppObjectToEvalResults(lua_State* L, int index, DebuggerGetVariablesRequest const& req)
 	{
-		CppObjectMetadata meta;
-		lua_get_lightcppobject(L, index, meta);
+		auto meta = lua_get_lightcppany(L, index);
 
 		switch (meta.MetatableTag) {
 		case MetatableTag::ObjectRef:

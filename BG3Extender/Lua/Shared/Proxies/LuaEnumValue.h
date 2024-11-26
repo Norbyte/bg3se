@@ -9,7 +9,6 @@ class EnumValueMetatable : public LightCppValueMetatable<EnumValueMetatable>,
 {
 public:
 	static constexpr MetatableTag MetaTag = MetatableTag::EnumValue;
-	static constexpr bool HasLifetime = false;
 
 	inline static void Make(lua_State* L, EnumUnderlyingType value, int registryIndex)
 	{
@@ -22,16 +21,16 @@ public:
 		Make(L, static_cast<EnumUnderlyingType>(value), EnumID<T>::ID);
 	}
 
-	static EnumInfoStore* GetEnumInfo(CppValueMetadata const& val);
-	static FixedString GetLabel(CppValueMetadata const& self);
-	static EnumUnderlyingType GetValue(CppValueMetadata const& self);
+	static EnumInfoStore* GetEnumInfo(CppObjectMetadata const& val);
+	static FixedString GetLabel(CppObjectMetadata const& self);
+	static EnumUnderlyingType GetValue(CppObjectMetadata const& self);
 
-	static int Index(lua_State* L, CppValueMetadata& self);
-	static int ToString(lua_State* L, CppValueMetadata& self);
-	static bool IsEqual(lua_State* L, CppValueMetadata& self, int otherIndex);
-	static bool IsLessThan(lua_State* L, CppValueMetadata& self, int otherIndex);
-	static bool IsLessThan(lua_State* L, int selfIndex, CppValueMetadata& other);
-	static char const* GetTypeName(lua_State* L, CppValueMetadata& self);
+	static int Index(lua_State* L, CppObjectMetadata& self);
+	static int ToString(lua_State* L, CppObjectMetadata& self);
+	static bool IsEqual(lua_State* L, CppObjectMetadata& self, int otherIndex);
+	static bool IsLessThan(lua_State* L, CppObjectMetadata& self, int otherIndex);
+	static bool IsLessThan(lua_State* L, int selfIndex, CppObjectMetadata& other);
+	static char const* GetTypeName(lua_State* L, CppObjectMetadata& self);
 };
 
 END_NS()

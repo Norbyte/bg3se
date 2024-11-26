@@ -24,8 +24,8 @@ void lua_release_internal_state(LuaInternalState* state);
 // Object API for storing pointer-like data in a Lua TValue.
 void lua_push_lightcppobject(lua_State* L, MetatableTag metatableTag, int propertyMapIndex, void* object, LifetimeHandle const& lifetime);
 void lua_push_lightcppobject(lua_State* L, MetatableTag metatableTag, int propertyMapIndex, void const* object, LifetimeHandle const& lifetime);
-void lua_get_lightcppobject(lua_State* L, int idx, MetatableTag expectedMetatableTag, CppObjectMetadata& obj);
-void lua_get_lightcppobject(lua_State* L, int idx, CppObjectMetadata& obj);
+CppObjectMetadata lua_get_lightcppobject(lua_State* L, int idx, MetatableTag expectedMetatableTag);
+CppObjectMetadata lua_get_lightcppobject(lua_State* L, int idx);
 bool lua_try_get_lightcppobject(lua_State* L, int idx, CppObjectMetadata& obj);
 bool lua_try_get_lightcppobject(lua_State* L, int idx, MetatableTag expectedMetatableTag, CppObjectMetadata& obj);
 
@@ -33,10 +33,13 @@ void* lua_push_newcppobject(lua_State* L, MetatableTag metatableTag, int propert
 
 // Value API for storing raw 64-bit data in a Lua TValue.
 void lua_push_cppvalue(lua_State* L, MetatableTag metatableTag, int propertyMapIndex, uint64_t object);
-void lua_get_cppvalue(lua_State* L, int idx, MetatableTag expectedMetatableTag, CppValueMetadata& obj);
-void lua_get_cppvalue(lua_State* L, int idx, CppValueMetadata& obj);
-bool lua_try_get_cppvalue(lua_State* L, int idx, CppValueMetadata& obj);
-bool lua_try_get_cppvalue(lua_State* L, int idx, MetatableTag expectedMetatableTag, CppValueMetadata& obj);
+CppObjectMetadata lua_get_cppvalue(lua_State* L, int idx, MetatableTag expectedMetatableTag);
+CppObjectMetadata lua_get_cppvalue(lua_State* L, int idx);
+bool lua_try_get_cppvalue(lua_State* L, int idx, CppObjectMetadata& obj);
+bool lua_try_get_cppvalue(lua_State* L, int idx, MetatableTag expectedMetatableTag, CppObjectMetadata& obj);
+
+// Object/Value combined getter API
+CppObjectMetadata lua_get_lightcppany(lua_State* L, int idx);
 
 void* LuaCppAlloc(lua_State* L, size_t size);
 void LuaCppFree(lua_State* L, void* block, size_t size);

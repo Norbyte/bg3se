@@ -104,8 +104,7 @@ Array<ExtComponentType> EntityHelper::GetAllComponentTypes() const
 
 EntityHandle EntityProxyMetatable::Get(lua_State* L, int index)
 {
-	CppValueMetadata meta;
-	lua_get_cppvalue(L, index, MetatableTag::Entity, meta);
+	auto meta = lua_get_cppvalue(L, index, MetatableTag::Entity);
 	return GetHandle(meta);
 }
 
@@ -404,7 +403,7 @@ void EntityProxyMetatable::StaticInitialize()
 	ADD_FUNC(OnChanged);
 }
 
-int EntityProxyMetatable::Index(lua_State* L, CppValueMetadata& self)
+int EntityProxyMetatable::Index(lua_State* L, CppObjectMetadata& self)
 {
 	StackCheck _(L, 1);
 	auto handle = GetHandle(self);
@@ -438,33 +437,33 @@ int EntityProxyMetatable::Index(lua_State* L, CppValueMetadata& self)
 	return 1;
 }
 
-bool EntityProxyMetatable::IsEqual(lua_State* L, CppValueMetadata& self, int otherIndex)
+bool EntityProxyMetatable::IsEqual(lua_State* L, CppObjectMetadata& self, int otherIndex)
 {
-	CppValueMetadata other;
+	CppObjectMetadata other;
 	return lua_try_get_cppvalue(L, otherIndex, MetatableTag::Entity, other)
 		&& GetHandle(other) == GetHandle(self);
 }
 
-bool EntityProxyMetatable::IsLessThan(lua_State* L, CppValueMetadata& self, int otherIndex)
+bool EntityProxyMetatable::IsLessThan(lua_State* L, CppObjectMetadata& self, int otherIndex)
 {
-	CppValueMetadata other;
+	CppObjectMetadata other;
 	return lua_try_get_cppvalue(L, otherIndex, MetatableTag::Entity, other)
 		&& GetHandle(self).Handle < GetHandle(other).Handle;
 }
 
-bool EntityProxyMetatable::IsLessThan(lua_State* L, int selfIndex, CppValueMetadata& other)
+bool EntityProxyMetatable::IsLessThan(lua_State* L, int selfIndex, CppObjectMetadata& other)
 {
-	CppValueMetadata self;
+	CppObjectMetadata self;
 	return lua_try_get_cppvalue(L, selfIndex, MetatableTag::Entity, self)
 		&& GetHandle(self).Handle < GetHandle(other).Handle;
 }
 
-char const* EntityProxyMetatable::GetTypeName(lua_State* L, CppValueMetadata& self)
+char const* EntityProxyMetatable::GetTypeName(lua_State* L, CppObjectMetadata& self)
 {
 	return "EntityProxy";
 }
 
-int EntityProxyMetatable::ToString(lua_State* L, CppValueMetadata& self)
+int EntityProxyMetatable::ToString(lua_State* L, CppObjectMetadata& self)
 {
 	StackCheck _(L, 1);
 	char entityName[100];

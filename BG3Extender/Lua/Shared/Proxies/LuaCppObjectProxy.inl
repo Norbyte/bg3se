@@ -65,12 +65,11 @@ CppMetatableManager& CppMetatableManager::FromLua(lua_State* L)
 
 void* ObjectProxy::GetRaw(lua_State* L, int index, GenericPropertyMap const& pm)
 {
-	CppObjectMetadata meta;
-	lua_get_lightcppobject(L, index, meta);
+	auto meta = lua_get_lightcppany(L, index);
 
 	if (meta.MetatableTag == MetatableTag::ImguiObject) {
 		// Temporary jank to support imgui objects
-		auto obj = ImguiObjectProxyMetatable::GetGeneric(L, index);
+		auto obj = ImguiObjectProxyMetatable::GetGeneric(L, index, meta);
 		auto& objPm = obj->GetRTTI();
 		if (!objPm.IsA(pm.RegistryIndex)) {
 			luaL_error(L, "Argument %d: Expected object of type '%s', got '%s'", index,

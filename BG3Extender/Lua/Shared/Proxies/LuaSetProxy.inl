@@ -21,8 +21,7 @@ int SetProxyImplBase::GetRegistryIndex() const
 
 void* SetProxyMetatable::GetRaw(lua_State* L, int index, int propertyMapIndex)
 {
-	CppObjectMetadata meta;
-	lua_get_lightcppobject(L, index, MetatableTag::Set, meta);
+	auto meta = lua_get_lightcppobject(L, index, MetatableTag::Set);
 
 	if (meta.PropertyMapTag != propertyMapIndex) {
 		auto curTy = gExtender->GetPropertyMapManager().GetSetProxy(meta.PropertyMapTag);

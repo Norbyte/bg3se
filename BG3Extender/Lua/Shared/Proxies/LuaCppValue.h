@@ -9,9 +9,9 @@ template <class T>
 class LightCppValueMetatable
 {
 public:
-	static std::optional<CppValueMetadata> TryGet(lua_State* L, int index)
+	static std::optional<CppObjectMetadata> TryGet(lua_State* L, int index)
 	{
-		CppValueMetadata meta;
+		CppObjectMetadata meta;
 		if (lua_try_get_cppvalue(L, index, T::MetaTag, meta)) {
 			return meta;
 		} else {
@@ -22,8 +22,7 @@ public:
 	static int CallProxy(lua_State* L)
 	{
 		if constexpr (std::is_base_of_v<Callable, T>) {
-			CppValueMetadata self;
-			lua_get_cppvalue(L, 1, T::MetaTag, self);
+			auto self = lua_get_cppvalue(L, 1, T::MetaTag);
 			return T::Call(L, self);
 		} else {
 			return luaL_error(L, "Not callable!");
@@ -34,8 +33,7 @@ public:
 	{
 		if constexpr (std::is_base_of_v<Indexable, T>) {
 			StackCheck _(L, 1);
-			CppValueMetadata self;
-			lua_get_cppvalue(L, 1, T::MetaTag, self);
+			auto self = lua_get_cppvalue(L, 1, T::MetaTag);
 			return T::Index(L, self);
 		} else {
 			return luaL_error(L, "Not indexable!");
@@ -46,8 +44,7 @@ public:
 	{
 		if constexpr (std::is_base_of_v<NewIndexable, T>) {
 			StackCheck _(L, 0);
-			CppValueMetadata self;
-			lua_get_cppvalue(L, 1, T::MetaTag, self);
+			auto self = lua_get_cppvalue(L, 1, T::MetaTag);
 			return T::NewIndex(L, self);
 		} else {
 			return luaL_error(L, "Not newindexable!");
@@ -58,8 +55,7 @@ public:
 	{
 		if constexpr (std::is_base_of_v<Lengthable, T>) {
 			StackCheck _(L, 1);
-			CppValueMetadata self;
-			lua_get_cppvalue(L, 1, T::MetaTag, self);
+			auto self = lua_get_cppvalue(L, 1, T::MetaTag);
 			return T::Length(L, self);
 		} else {
 			return luaL_error(L, "Not lengthable!");
@@ -69,8 +65,7 @@ public:
 	static int PairsProxy(lua_State* L)
 	{
 		if constexpr (std::is_base_of_v<Iterable, T>) {
-			CppValueMetadata self;
-			lua_get_cppvalue(L, 1, T::MetaTag, self);
+			auto self = lua_get_cppvalue(L, 1, T::MetaTag);
 			return T::Pairs(L, self);
 		} else {
 			return luaL_error(L, "Not iterable!");
@@ -81,8 +76,7 @@ public:
 	{
 		if constexpr (std::is_base_of_v<Stringifiable, T>) {
 			StackCheck _(L, 1);
-			CppValueMetadata self;
-			lua_get_cppvalue(L, 1, T::MetaTag, self);
+			auto self = lua_get_cppvalue(L, 1, T::MetaTag);
 			return T::ToString(L, self);
 		} else {
 			return luaL_error(L, "Not stringifiable!");
@@ -97,11 +91,11 @@ public:
 			// __eq is called for both (TValue == x) and (x == TValue) scenarios, i.e.
 			// the CppValue can be either in the 1st, 2nd or both arguments.
 			// We'll always try to cast the first argument first and if it fails check the second.
-			CppValueMetadata self;
+			CppObjectMetadata self;
 			if (lua_try_get_cppvalue(L, 1, T::MetaTag, self)) {
 				push(L, T::IsEqual(L, self, 2));
 			} else {
-				lua_get_cppvalue(L, 2, T::MetaTag, self);
+				self = lua_get_cppvalue(L, 2, T::MetaTag);
 				push(L, T::IsEqual(L, self, 1));
 			}
 
@@ -119,11 +113,11 @@ public:
 			// __lt is called for both (TValue < x) and (x < TValue) scenarios, i.e.
 			// the CppValue can be either in the 1st, 2nd or both arguments.
 			// We'll always try to cast the first argument first and if it fails check the second.
-			CppValueMetadata self;
+			CppObjectMetadata self;
 			if (lua_try_get_cppvalue(L, 1, T::MetaTag, self)) {
 				push(L, T::IsLessThan(L, self, 2));
 			} else {
-				lua_get_cppvalue(L, 2, T::MetaTag, self);
+				self = lua_get_cppvalue(L, 2, T::MetaTag);
 				push(L, T::IsLessThan(L, 1, self));
 			}
 
@@ -137,11 +131,11 @@ public:
 	{
 		if constexpr (std::is_base_of_v<HasBinaryOps, T>) {
 			StackCheck _(L, 1);
-			CppValueMetadata self;
+			CppObjectMetadata self;
 			if (lua_try_get_cppvalue(L, 1, T::MetaTag, self)) {
 				return T::BAnd(L, self, 2);
 			} else {
-				lua_get_cppvalue(L, 2, T::MetaTag, self);
+				self = lua_get_cppvalue(L, 2, T::MetaTag);
 				return T::BAnd(L, self, 1);
 			}
 		} else {
@@ -153,11 +147,11 @@ public:
 	{
 		if constexpr (std::is_base_of_v<HasBinaryOps, T>) {
 			StackCheck _(L, 1);
-			CppValueMetadata self;
+			CppObjectMetadata self;
 			if (lua_try_get_cppvalue(L, 1, T::MetaTag, self)) {
 				return T::BOr(L, self, 2);
 			} else {
-				lua_get_cppvalue(L, 2, T::MetaTag, self);
+				self = lua_get_cppvalue(L, 2, T::MetaTag);
 				return T::BOr(L, self, 1);
 			}
 		} else {
@@ -169,11 +163,11 @@ public:
 	{
 		if constexpr (std::is_base_of_v<HasBinaryOps, T>) {
 			StackCheck _(L, 1);
-			CppValueMetadata self;
+			CppObjectMetadata self;
 			if (lua_try_get_cppvalue(L, 1, T::MetaTag, self)) {
 				return T::BXor(L, self, 2);
 			} else {
-				lua_get_cppvalue(L, 2, T::MetaTag, self);
+				self = lua_get_cppvalue(L, 2, T::MetaTag);
 				return T::BXor(L, self, 1);
 			}
 		} else {
@@ -185,8 +179,7 @@ public:
 	{
 		if constexpr (std::is_base_of_v<HasBinaryOps, T>) {
 			StackCheck _(L, 1);
-			CppValueMetadata self;
-			lua_get_cppvalue(L, 2, T::MetaTag, self);
+			auto self = lua_get_cppvalue(L, 2, T::MetaTag);
 			return T::BNot(L, self);
 		} else {
 			return luaL_error(L, "Binary ops not supported!");
@@ -194,7 +187,7 @@ public:
 	}
 
 	// Default __pairs implementation
-	static int Pairs(lua_State* L, CppValueMetadata const& self)
+	static int Pairs(lua_State* L, CppObjectMetadata const& self)
 	{
 		StackCheck _(L, 3);
 		lua_pushcfunction(L, &NextProxy);
@@ -207,8 +200,7 @@ public:
 	static int NextProxy(lua_State* L)
 	{
 		if constexpr (std::is_base_of_v<Iterable, T>) {
-			CppValueMetadata self;
-			lua_get_cppvalue(L, 1, T::MetaTag, self);
+			auto self = lua_get_cppvalue(L, 1, T::MetaTag);
 			return T::Next(L, self);
 		} else {
 			return luaL_error(L, "Not iterable!");
@@ -218,8 +210,7 @@ public:
 	static int NameProxy(lua_State* L)
 	{
 		StackCheck _(L, 1);
-		CppValueMetadata self;
-		lua_get_cppvalue(L, 1, T::MetaTag, self);
+		auto self = lua_get_cppvalue(L, 1, T::MetaTag);
 		push(L, T::GetTypeName(L, self));
 		return 1;
 	}

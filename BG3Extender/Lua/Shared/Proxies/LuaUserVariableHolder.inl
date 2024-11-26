@@ -2,7 +2,7 @@
 
 BEGIN_NS(lua)
 
-int UserVariableHolderMetatable::Index(lua_State* L, CppValueMetadata& self)
+int UserVariableHolderMetatable::Index(lua_State* L, CppObjectMetadata& self)
 {
 	auto key = get<FixedString>(L, 2);
 
@@ -24,7 +24,7 @@ int UserVariableHolderMetatable::Index(lua_State* L, CppValueMetadata& self)
 	return 1;
 }
 
-int UserVariableHolderMetatable::NewIndex(lua_State* L, CppValueMetadata& self)
+int UserVariableHolderMetatable::NewIndex(lua_State* L, CppObjectMetadata& self)
 {
 	auto key = get<FixedString>(L, 2);
 
@@ -45,7 +45,7 @@ int UserVariableHolderMetatable::NewIndex(lua_State* L, CppValueMetadata& self)
 	return 0;
 }
 
-int UserVariableHolderMetatable::Length(lua_State* L, CppValueMetadata& self)
+int UserVariableHolderMetatable::Length(lua_State* L, CppObjectMetadata& self)
 {
 	auto& vars = State::FromLua(L)->GetVariableManager();
 	auto guid = vars.GetGlobal().EntityToGuid(EntityHandle(self.Value));
@@ -54,7 +54,7 @@ int UserVariableHolderMetatable::Length(lua_State* L, CppValueMetadata& self)
 	return 1;
 }
 
-int UserVariableHolderMetatable::Next(lua_State* L, CppValueMetadata& self)
+int UserVariableHolderMetatable::Next(lua_State* L, CppObjectMetadata& self)
 {
 	auto& vars = State::FromLua(L)->GetVariableManager();
 	auto guid = vars.GetGlobal().EntityToGuid(EntityHandle(self.Value));
@@ -87,7 +87,7 @@ int UserVariableHolderMetatable::Next(lua_State* L, CppValueMetadata& self)
 	return 0;
 }
 
-int UserVariableHolderMetatable::ToString(lua_State* L, CppValueMetadata& self)
+int UserVariableHolderMetatable::ToString(lua_State* L, CppObjectMetadata& self)
 {
 	char name[100];
 	sprintf_s(name, "UserVariables(%16llx)", self.Value);
@@ -95,14 +95,14 @@ int UserVariableHolderMetatable::ToString(lua_State* L, CppValueMetadata& self)
 	return 1;
 }
 
-char const* UserVariableHolderMetatable::GetTypeName(lua_State* L, CppValueMetadata& self)
+char const* UserVariableHolderMetatable::GetTypeName(lua_State* L, CppObjectMetadata& self)
 {
 	return "UserVariableHolder";
 }
 
 
 
-int ModVariableHolderMetatable::Index(lua_State* L, CppValueMetadata& self)
+int ModVariableHolderMetatable::Index(lua_State* L, CppObjectMetadata& self)
 {
 	auto key = get<FixedString>(L, 2);
 
@@ -125,7 +125,7 @@ int ModVariableHolderMetatable::Index(lua_State* L, CppValueMetadata& self)
 	return 1;
 }
 
-int ModVariableHolderMetatable::NewIndex(lua_State* L, CppValueMetadata& self)
+int ModVariableHolderMetatable::NewIndex(lua_State* L, CppObjectMetadata& self)
 {
 	auto key = get<FixedString>(L, 2);
 
@@ -147,7 +147,7 @@ int ModVariableHolderMetatable::NewIndex(lua_State* L, CppValueMetadata& self)
 	return 0;
 }
 
-int ModVariableHolderMetatable::Length(lua_State* L, CppValueMetadata& self)
+int ModVariableHolderMetatable::Length(lua_State* L, CppObjectMetadata& self)
 {
 	auto& vars = State::FromLua(L)->GetModVariableManager();
 	auto modUuid = vars.ModIndexToGuid((uint32_t)self.Value);
@@ -156,7 +156,7 @@ int ModVariableHolderMetatable::Length(lua_State* L, CppValueMetadata& self)
 	return 1;
 }
 
-int ModVariableHolderMetatable::Next(lua_State* L, CppValueMetadata& self)
+int ModVariableHolderMetatable::Next(lua_State* L, CppObjectMetadata& self)
 {
 	auto& vars = State::FromLua(L)->GetModVariableManager();
 	auto modUuid = vars.ModIndexToGuid((uint32_t)self.Value);
@@ -189,7 +189,7 @@ int ModVariableHolderMetatable::Next(lua_State* L, CppValueMetadata& self)
 	return 0;
 }
 
-int ModVariableHolderMetatable::ToString(lua_State* L, CppValueMetadata& self)
+int ModVariableHolderMetatable::ToString(lua_State* L, CppObjectMetadata& self)
 {
 	char name[100];
 	sprintf_s(name, "ModVariables(%lld)", self.Value);
@@ -197,7 +197,7 @@ int ModVariableHolderMetatable::ToString(lua_State* L, CppValueMetadata& self)
 	return 1;
 }
 
-char const* ModVariableHolderMetatable::GetTypeName(lua_State* L, CppValueMetadata& self)
+char const* ModVariableHolderMetatable::GetTypeName(lua_State* L, CppObjectMetadata& self)
 {
 	return "ModVariableHolder";
 }

@@ -16,7 +16,6 @@ class OsiFunctionNameMetatable : public LightCppValueMetatable<OsiFunctionNameMe
 {
 public:
 	static constexpr MetatableTag MetaTag = MetatableTag::OsiFunctionName;
-	static constexpr bool HasLifetime = false;
 
 	inline static void Make(lua_State* L, uint64_t handle)
 	{
@@ -25,12 +24,11 @@ public:
 
 	inline static OsirisNameCache const* Get(lua_State* L)
 	{
-		CppValueMetadata self;
-		lua_get_cppvalue(L, 1, MetaTag, self);
+		auto self = lua_get_cppvalue(L, 1, MetaTag);
 		return Get(L, self);
 	}
 
-	inline static OsirisNameCache const* Get(lua_State* L, CppValueMetadata& self)
+	inline static OsirisNameCache const* Get(lua_State* L, CppObjectMetadata& self)
 	{
 		auto cache = ServerState::FromLua(L)->Osiris().GetNameResolver().GetCache(self.Value);
 		if (!cache) {
@@ -40,14 +38,14 @@ public:
 		return cache;
 	}
 
-	static int Index(lua_State* L, CppValueMetadata& self);
-	static int Call(lua_State* L, CppValueMetadata& self);
-	static int ToString(lua_State* L, CppValueMetadata& self);
-	static char const* GetTypeName(lua_State* L, CppValueMetadata& self);
+	static int Index(lua_State* L, CppObjectMetadata& self);
+	static int Call(lua_State* L, CppObjectMetadata& self);
+	static int ToString(lua_State* L, CppObjectMetadata& self);
+	static char const* GetTypeName(lua_State* L, CppObjectMetadata& self);
 
 private:
-	static void GetInputArities(lua_State* L, CppValueMetadata& self);
-	static void GetArities(lua_State* L, CppValueMetadata& self);
+	static void GetInputArities(lua_State* L, CppObjectMetadata& self);
+	static void GetArities(lua_State* L, CppObjectMetadata& self);
 
 	static int LuaGet(lua_State* L);
 	static int LuaDelete(lua_State* L);

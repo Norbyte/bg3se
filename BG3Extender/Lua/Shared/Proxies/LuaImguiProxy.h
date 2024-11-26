@@ -9,7 +9,6 @@ class ImguiObjectProxyMetatable : public LightCppValueMetatable<ImguiObjectProxy
 {
 public:
 	static constexpr MetatableTag MetaTag = MetatableTag::ImguiObject;
-	static constexpr bool HasLifetime = false;
 
 	inline static void Make(lua_State* L, ImguiHandle const& object)
 	{
@@ -21,11 +20,12 @@ public:
 		lua_push_cppvalue(L, MetaTag, 0, object->Handle);
 	}
 
-	static GenericPropertyMap& GetPropertyMap(CppValueMetadata const& meta);
-	static extui::Renderable* GetRenderable(CppValueMetadata const& meta);
+	static GenericPropertyMap& GetPropertyMap(CppObjectMetadata const& meta);
+	static extui::Renderable* GetRenderable(CppObjectMetadata const& meta);
 	static extui::Renderable* TryGetGeneric(lua_State* L, int index, extui::IMGUIObjectType type);
 	static extui::Renderable* GetGeneric(lua_State* L, int index, extui::IMGUIObjectType type);
 	static extui::Renderable* GetGeneric(lua_State* L, int index);
+	static extui::Renderable* GetGeneric(lua_State* L, int index, CppObjectMetadata const& meta);
 
 	template <class T>
 	static T* TryGet(lua_State* L, int index)
@@ -39,12 +39,12 @@ public:
 		return reinterpret_cast<T*>(GetGeneric(L, index, T::ObjectType));
 	}
 
-	static int Index(lua_State* L, CppValueMetadata& self);
-	static int NewIndex(lua_State* L, CppValueMetadata& self);
-	static int ToString(lua_State* L, CppValueMetadata& self);
-	static bool IsEqual(lua_State* L, CppValueMetadata& self, int otherIndex);
-	static int Next(lua_State* L, CppValueMetadata& self);
-	static char const* GetTypeName(lua_State* L, CppValueMetadata& self);
+	static int Index(lua_State* L, CppObjectMetadata& self);
+	static int NewIndex(lua_State* L, CppObjectMetadata& self);
+	static int ToString(lua_State* L, CppObjectMetadata& self);
+	static bool IsEqual(lua_State* L, CppObjectMetadata& self, int otherIndex);
+	static int Next(lua_State* L, CppObjectMetadata& self);
+	static char const* GetTypeName(lua_State* L, CppObjectMetadata& self);
 };
 
 END_NS()

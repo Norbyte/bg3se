@@ -47,7 +47,6 @@ class EntityProxyMetatable : public LightCppValueMetatable<EntityProxyMetatable>
 {
 public:
 	static constexpr MetatableTag MetaTag = MetatableTag::Entity;
-	static constexpr bool HasLifetime = false;
 
 	inline static void Make(lua_State* L, EntityHandle const& handle)
 	{
@@ -57,17 +56,17 @@ public:
 	static EntityHandle Get(lua_State* L, int index);
 	static EntityHelper GetHelper(lua_State* L, int index);
 
-	inline static EntityHandle GetHandle(CppValueMetadata& self)
+	inline static EntityHandle GetHandle(CppObjectMetadata& self)
 	{
 		return EntityHandle(self.Value);
 	}
 
-	static int Index(lua_State* L, CppValueMetadata& self);
-	static int ToString(lua_State* L, CppValueMetadata& self);
-	static bool IsEqual(lua_State* L, CppValueMetadata& self, int otherIndex);
-	static bool IsLessThan(lua_State* L, CppValueMetadata& self, int otherIndex);
-	static bool IsLessThan(lua_State* L, int selfIndex, CppValueMetadata& other);
-	static char const* GetTypeName(lua_State* L, CppValueMetadata& self);
+	static int Index(lua_State* L, CppObjectMetadata& self);
+	static int ToString(lua_State* L, CppObjectMetadata& self);
+	static bool IsEqual(lua_State* L, CppObjectMetadata& self, int otherIndex);
+	static bool IsLessThan(lua_State* L, CppObjectMetadata& self, int otherIndex);
+	static bool IsLessThan(lua_State* L, int selfIndex, CppObjectMetadata& other);
+	static char const* GetTypeName(lua_State* L, CppObjectMetadata& self);
 	static void StaticInitialize();
 
 private:
