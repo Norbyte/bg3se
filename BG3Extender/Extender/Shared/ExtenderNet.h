@@ -65,4 +65,22 @@ protected:
 	virtual void ProcessExtenderMessage(net::MessageContext& context, MessageWrapper & msg) = 0;
 };
 
+#if defined(__APPLE__)
+class MacOSExtenderProtocol : public ExtenderProtocolBase
+{
+public:
+    ~MacOSExtenderProtocol() override;
+
+    ProtocolResult ProcessMsg(void * unused, MessageContext * unknown, Message* usg) override;
+    ProtocolResult PreUpdate(GameTime const& time) override;
+    ProtocolResult PostUpdate(GameTime const& time) override;
+    void OnAddedToHost() override;
+    void OnRemovedFromHost() override;
+    void Reset() override;
+
+protected:
+    void ProcessExtenderMessage(net::MessageContext& context, MessageWrapper & msg) override;
+};
+#endif
+
 END_NS()

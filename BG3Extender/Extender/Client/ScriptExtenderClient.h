@@ -84,4 +84,33 @@ private:
 	void ShowVersionNumber();
 };
 
+#if defined(__APPLE__)
+class MacOSScriptExtender : public ScriptExtender
+{
+public:
+    MacOSScriptExtender(ExtenderConfig& config);
+
+    void Initialize();
+    void PostStartup();
+    void Shutdown();
+
+    bool IsInClientThread() const;
+    void ResetLuaState();
+    void ResetExtensionState();
+    void LoadExtensionState(ExtensionStateContext ctx);
+
+    void UpdateServerProgress(STDString const& status);
+    void UpdateClientProgress(STDString const& status);
+    void OnGameStateChanged(GameState fromState, GameState toState);
+
+private:
+    void OnBaseModuleLoaded(void * self);
+    void GameStateWorkerWrapper(void (*wrapped)(void*), void* self);
+    void OnUpdate(void* self, GameTime* time);
+    void OnIncLocalProgress(void* self, int progress, char const* state);
+    void ShowLoadingProgress();
+    void ShowVersionNumber();
+};
+#endif
+
 END_NS()

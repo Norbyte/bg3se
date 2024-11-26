@@ -12,4 +12,10 @@ namespace bg3se::script {
 	bool GetTranslatedStringFromKey(FixedString const& key, TranslatedString& translated);
 	bool CreateTranslatedStringKey(FixedString const& key, FixedString const& handle);
 	bool CreateTranslatedString(FixedString const& handle, STDString const& string);
+
+#if defined(__APPLE__)
+    // MacOS-specific script helpers
+    bool IsMacOS();
+    bool IsAppleSilicon();
+#endif
 }

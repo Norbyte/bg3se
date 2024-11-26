@@ -72,4 +72,9 @@ struct DisableCrashReporting
 	DisableCrashReporting& operator = (DisableCrashReporting const&) = delete;
 };
 
+#if defined(__APPLE__)
+bool IsMacOS();
+bool IsAppleSilicon();
+#endif
+
 END_SE()
