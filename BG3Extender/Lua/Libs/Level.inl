@@ -121,7 +121,7 @@ Array<EntityHandle> GetEntitiesOnTile(lua_State* L, glm::vec3 pos)
 
 AiGridLuaTile gTestTile;
 
-AiGridLuaTile* GetTile(lua_State* L, glm::vec3 pos)
+AiGridLuaTile* GetTileDebugInfo(lua_State* L, glm::vec3 pos)
 {
 	auto aiGrid = GetAiGrid(L);
 	auto worldPos = AiGrid::ToWorldPos(pos);
@@ -219,7 +219,7 @@ void RegisterLevelLib()
 	DECLARE_MODULE(Level, Both)
 	BEGIN_MODULE()
 	MODULE_FUNCTION(GetEntitiesOnTile)
-	MODULE_FUNCTION(GetTile)
+	MODULE_FUNCTION(GetTileDebugInfo)
 	MODULE_FUNCTION(GetHeightsAt)
 	MODULE_FUNCTION(BeginPathfinding)
 	MODULE_FUNCTION(BeginPathfindingImmediate)
