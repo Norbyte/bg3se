@@ -30,13 +30,13 @@ public:
 	template <class T>
 	static T* TryGet(lua_State* L, int index)
 	{
-		return reinterpret_cast<T*>(TryGetGeneric(L, index, T::ObjectType));
+		return static_cast<T*>(TryGetGeneric(L, index, T::ObjectType));
 	}
 
 	template <class T>
 	static T* Get(lua_State* L, int index)
 	{
-		return reinterpret_cast<T*>(GetGeneric(L, index, T::ObjectType));
+		return static_cast<T*>(GetGeneric(L, index, T::ObjectType));
 	}
 
 	static int Index(lua_State* L, CppObjectMetadata& self);

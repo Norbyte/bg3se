@@ -125,8 +125,8 @@ namespace bg3se
 			float InvestigationTimer;
 			uint8_t CrimeState;
 			uint8_t PreviousCrimeState;
-			bool BlockNewDisturbanceReactions;
-			bool field_173;
+			uint8_t BlockNewDisturbanceReactions;
+			uint8_t field_173;
 			uint8_t HasOsirisDialog;
 			uint8_t NeedsUpdate;
 			uint8_t ForceSynch;

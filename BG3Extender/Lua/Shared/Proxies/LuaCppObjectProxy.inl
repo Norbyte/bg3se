@@ -77,8 +77,8 @@ void* ObjectProxy::GetRaw(lua_State* L, int index, GenericPropertyMap const& pm)
 		}
 
 		return obj;
-	} else {
 
+	} else if (meta.MetatableTag == MetatableTag::ObjectRef) {
 		auto& objPm = *gStructRegistry.Get(meta.PropertyMapTag);
 		if (!objPm.IsA(pm.RegistryIndex)) {
 			luaL_error(L, "Argument %d: Expected object of type '%s', got '%s'", index,
@@ -90,6 +90,10 @@ void* ObjectProxy::GetRaw(lua_State* L, int index, GenericPropertyMap const& pm)
 		}
 
 		return meta.Ptr;
+	} else {
+		luaL_error(L, "Argument %d: Expected C++ object of type '%s', got metatype '%d'", index,
+			pm.Name.GetString(), (unsigned)meta.MetatableTag);
+		return nullptr;
 	}
 }
 

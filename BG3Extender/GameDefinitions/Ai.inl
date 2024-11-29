@@ -243,7 +243,7 @@ Array<float> AiGrid::GetHeightsAt(AiWorldPos const& pos) const
 			if (subgrid->WorldToTilePos(pos, localPos)) {
 				auto tile = subgrid->TileGrid->GetTileAt(localPos.x, localPos.y);
 				if ((tile->AiFlags & 1) == 0) {
-					heights.push_back(subgrid->Translate.y + tile->GetLocalMinHeight());
+					heights.push_back(subgrid->Translate.y + tile->GetLocalMaxHeight());
 				}
 			}
 		}
