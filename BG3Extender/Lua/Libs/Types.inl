@@ -296,28 +296,35 @@ void Unserialize(lua_State* L)
 		{
 			auto& pm = LightObjectProxyMetatable::GetPropertyMap(meta);
 			pm.Unserialize(L, 2, meta.Ptr);
+			break;
 		}
 
 		case MetatableTag::Array:
 		{
 			auto impl = ArrayProxyMetatable::GetImpl(meta);
 			impl->Unserialize(L, meta, 2);
+			break;
 		}
 
 		case MetatableTag::Map:
 		{
 			auto impl = MapProxyMetatable::GetImpl(meta);
 			impl->Unserialize(L, meta, 2);
+			break;
 		}
 
 		case MetatableTag::Set:
 		{
 			auto impl = SetProxyMetatable::GetImpl(meta);
 			impl->Unserialize(L, meta, 2);
+			break;
 		}
 
 		default:
+		{
 			luaL_error(L, "Don't know how to unserialize userdata of metatype %d", (unsigned)meta.MetatableTag);
+			break;
+		}
 	}
 }
 
