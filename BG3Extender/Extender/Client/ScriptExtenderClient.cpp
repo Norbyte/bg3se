@@ -363,4 +363,303 @@ void ScriptExtender::LoadExtensionState(ExtensionStateContext ctx)
 	extensionLoaded_ = true;
 }
 
+#if defined(__APPLE__)
+class MacOSScriptExtender : public ScriptExtender
+{
+public:
+    MacOSScriptExtender(ExtenderConfig& config);
+
+    void Initialize();
+    void PostStartup();
+    void Shutdown();
+
+    bool IsInClientThread() const;
+    void ResetLuaState();
+    void ResetExtensionState();
+    void LoadExtensionState(ExtensionStateContext ctx);
+
+    void UpdateServerProgress(STDString const& status);
+    void UpdateClientProgress(STDString const& status);
+    void OnGameStateChanged(GameState fromState, GameState toState);
+
+private:
+    void OnBaseModuleLoaded(void * self);
+    void GameStateWorkerWrapper(void (*wrapped)(void*), void* self);
+    void OnUpdate(void* self, GameTime* time);
+    void OnIncLocalProgress(void* self, int progress, char const* state);
+    void ShowLoadingProgress();
+    void ShowVersionNumber();
+};
+
+MacOSScriptExtender::MacOSScriptExtender(ExtenderConfig& config)
+    : ScriptExtender(config)
+{
+}
+
+void MacOSScriptExtender::Initialize()
+{
+    // Wrap state change functions even if extension startup failed, otherwise
+    // we won't be able to show any startup errors
+
+    auto& lib = GetStaticSymbols();
+
+    DetourTransactionBegin();
+    DetourUpdateThread(GetCurrentThread());
+
+    if (lib.ecl__GameStateThreaded__GameStateWorker__DoWork != nullptr) {
+        gameStateWorkerStart_.Wrap(lib.ecl__GameStateThreaded__GameStateWorker__DoWork);
+    }
+
+    if (lib.ecl__GameStateMachine__Update != nullptr) {
+        gameStateMachineUpdate_.Wrap(lib.ecl__GameStateMachine__Update);
+    }
+
+    DetourTransactionCommit();
+
+    gameStateWorkerStart_.SetWrapper(&MacOSScriptExtender::GameStateWorkerWrapper, this);
+    gameStateMachineUpdate_.SetPostHook(&MacOSScriptExtender::OnUpdate, this);
+
+    sdl_.EnableHooks();
+}
+
+void MacOSScriptExtender::Shutdown()
+{
+    DEBUG("ecl::MacOSScriptExtender::Shutdown: Exiting");
+    sdl_.DisableHooks();
+    ResetExtensionState();
+}
+
+void MacOSScriptExtender::PostStartup()
+{
+    if (postStartupDone_) return;
+
+    entityHelpers_.Setup();
+    gExtender->GetPropertyMapManager().RegisterComponents(entityHelpers_);
+    postStartupDone_ = true;
+}
+
+void MacOSScriptExtender::OnGameStateChanged(GameState fromState, GameState toState)
+{
+    if (gExtender->GetConfig().SendCrashReports) {
+        // We need to initialize the crash reporter after the game engine has started,
+        // otherwise the game will overwrite the top level exception filter
+        InitCrashReporting();
+    }
+
+    // Check to make sure that startup is done even if the extender was loaded when the game was already in GameState::Init
+    if (toState != GameState::Unknown
+        && toState != GameState::StartLoading
+        && toState != GameState::InitMenu
+        && !gExtender->GetLibraryManager().CriticalInitializationFailed()) {
+        // We need to initialize the function library here, as GlobalAllocator isn't available in Init().
+        gExtender->PostStartup();
+    }
+
+    if (toState == GameState::Menu
+        && gExtender->GetLibraryManager().InitializationFailed()) {
+        gExtender->PostStartup();
+    }
+
+    if (fromState != GameState::Unknown) {
+        AddThread(GetCurrentThreadId());
+    }
+
+    if (gExtender->WasInitialized() && !gExtender->GetLibraryManager().CriticalInitializationFailed()) {
+        if (IsLoadingState(toState)) {
+            UpdateClientProgress(EnumInfo<GameState>::Find(toState).GetString());
+        } else {
+            UpdateClientProgress("");
+        }
+    }
+
+    switch (fromState) {
+    case GameState::LoadModule:
+        INFO("ecl::MacOSScriptExtender::OnGameStateChanged(): Loaded module");
+        gExtender->GetVirtualTextureHelpers().Load();
+        ShowVersionNumber();
+        LoadExtensionState(ExtensionStateContext::Game);
+        break;
+
+    case GameState::LoadMenu:
+        LoadExtensionState(ExtensionStateContext::Game);
+        break;
+
+    case GameState::LoadSession:
+        if (extensionState_) {
+            extensionState_->OnGameSessionLoaded();
+        }
+        break;
+
+    case GameState::InitNetwork:
+        network_.ExtendNetworking();
+        break;
+    }
+
+    switch (toState) {
+    case GameState::Init:
+        ResetExtensionState();
+        break;
+
+    case GameState::InitNetwork:
+    case GameState::Disconnect:
+        network_.Reset();
+        break;
+
+    case GameState::UnloadSession:
+        INFO("ecl::MacOSScriptExtender::OnGameStateChanged(): Unloading session");
+        ResetExtensionState();
+        break;
+
+    case GameState::Menu:
+        #if defined(SE_IS_DEVELOPER_BUILD) && defined(NDEBUG)
+        if (!gExtender->GetConfig().DeveloperMode) {
+            gExtender->GetLibraryManager().ShowStartupError("This is an experimental version of the Script Extender meant for development use; things may frequently break here. It is recommended to switch back to the Release version unless you know what you are doing!", false, false);
+        }
+        #endif
+        break;
+
+    case GameState::LoadModule:
+        gExtender->InitRuntimeLogging();
+        break;
+
+    case GameState::LoadSession:
+        INFO("ecl::MacOSScriptExtender::OnClientGameStateChanged(): Loading game session");
+        LoadExtensionState(ExtensionStateContext::Game);
+        network_.ExtendNetworking();
+        if (extensionState_) {
+            extensionState_->OnGameSessionLoading();
+        }
+        break;
+
+    case GameState::LoadLevel:
+        if (extensionState_ && extensionState_->GetLua()) {
+            extensionState_->GetLua()->OnLevelLoading();
+        }
+        break;
+    }
+
+    if (extensionState_) {
+        LuaClientPin lua(*extensionState_);
+        if (lua) {
+            lua->OnGameStateChanged(fromState, toState);
+        }
+    }
+}
+
+void MacOSScriptExtender::GameStateWorkerWrapper(void (*wrapped)(void*), void* self)
+{
+    AddThread(GetCurrentThreadId());
+    wrapped(self);
+    RemoveThread(GetCurrentThreadId());
+}
+
+void MacOSScriptExtender::OnUpdate(void* self, GameTime* time)
+{
+    BEGIN_GUARDED()
+    AddThread(GetCurrentThreadId());
+
+    RunPendingTasks();
+    gExtender->IMGUI().Update();
+    if (extensionState_) {
+        extensionState_->OnUpdate(*time);
+        if (gExtender->GetLuaDebugger()) {
+            gExtender->GetLuaDebugger()->ClientTick();
+        }
+    }
+    END_GUARDED()
+}
+
+void MacOSScriptExtender::OnIncLocalProgress(void* self, int progress, char const* state)
+{
+    if (strcmp(state, "EffectManager") != 0) {
+        UpdateClientProgress(state);
+    }
+    else {
+        UpdateClientProgress("");
+    }
+}
+
+void MacOSScriptExtender::UpdateServerProgress(STDString const& status)
+{
+    serverStatus_ = status;
+    ShowLoadingProgress();
+}
+
+void MacOSScriptExtender::UpdateClientProgress(STDString const& status)
+{
+    clientStatus_ = status;
+    ShowLoadingProgress();
+}
+
+void MacOSScriptExtender::ShowLoadingProgress()
+{
+    // FIXME - not supported for now
+}
+
+void MacOSScriptExtender::ShowVersionNumber()
+{
+    RuntimeStringHandle rsh(FixedString("h5b6e4138g2cf0g4d67gb825gee416cf8c54f"));
+    auto versionText = GetStaticSymbols().GetTranslatedStringRepository()->GetTranslatedString(rsh);
+    if (versionText && !STDString(*versionText).contains("Script Extender")) {
+        auto expandedVersion = STDString(*versionText) +
+            "\r\nScript Extender v" + STDString(std::to_string(CurrentVersion)) + " loaded, built on " + BuildDate + ".";
+        GetStaticSymbols().GetTranslatedStringRepository()->UpdateTranslatedString(rsh, expandedVersion);
+    }
+}
+
+bool MacOSScriptExtender::IsInClientThread() const
+{
+    return IsInThread();
+}
+
+void MacOSScriptExtender::ResetLuaState()
+{
+    if (extensionState_ && extensionState_->GetLua()) {
+        auto ext = extensionState_.get();
+
+        ext->AddPostResetCallback([&ext]() {
+            ext->OnModuleResume();
+            auto state = GetStaticSymbols().GetClientState();
+            if (state && (state == GameState::Paused || state == GameState::Running)) {
+                ext->OnGameSessionLoading();
+                ext->OnGameSessionLoaded();
+                ext->OnResetCompleted();
+            }
+        });
+        ext->LuaReset(true);
+    }
+}
+
+void MacOSScriptExtender::ResetExtensionState()
+{
+    extensionState_ = std::make_unique<ExtensionState>();
+    extensionState_->Reset();
+    gExtender->ClearPathOverrides();
+    extensionLoaded_ = false;
+}
+
+void MacOSScriptExtender::LoadExtensionState(ExtensionStateContext ctx)
+{
+    if (extensionLoaded_ && (!extensionState_ || ctx == extensionState_->Context())) {
+        return;
+    }
+
+    PostStartup();
+
+    if (!extensionState_) {
+        ResetExtensionState();
+    }
+
+    extensionState_->LoadConfigs();
+
+    if (!gExtender->GetLibraryManager().CriticalInitializationFailed()) {
+        OsiMsg("Initializing client with target context " << ContextToString(ctx));
+        gExtender->GetLibraryManager().ApplyCodePatches();
+        extensionState_->LuaReset(ctx, true);
+    }
+
+    extensionLoaded_ = true;
+}
+#endif
+
 END_NS()

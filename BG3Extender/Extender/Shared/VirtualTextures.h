@@ -24,4 +24,16 @@ private:
 	void RebuildIfNecessary();
 };
 
+#if defined(__APPLE__)
+class MacOSVirtualTextureHelpers : public VirtualTextureHelpers
+{
+public:
+    void Load();
+    bool Stitch();
+    HashMap<FixedString, FixedString> CollectRemaps();
+    bool NeedsRebuild(std::unordered_set<FixedString> const& newTileSets);
+    void RebuildIfNecessary();
+};
+#endif
+
 END_SE()

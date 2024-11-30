@@ -586,4 +586,217 @@ void ScriptExtender::OnSDLEvent(SDL_Event* event)
 	}
 }
 
+#if defined(__APPLE__)
+class MacOSClientEventManagerHook
+{
+public:
+	struct GameStates
+	{
+		ecl::GameState From;
+		ecl::GameState To;
+	};
+
+	virtual ~MacOSClientEventManagerHook()
+	{}
+
+	virtual bool OnGameStateChanged(GameStates& states)
+	{
+		BEGIN_GUARDED()
+		gExtender->GetClient().OnGameStateChanged(states.From, states.To);
+		END_GUARDED()
+
+		return true;
+	}
+
+	virtual bool Unknown()
+	{
+		return false;
+	}
+
+	uint64_t dummy{ 0 };
+};
+
+class MacOSServerEventManagerHook
+{
+public:
+	struct GameStates
+	{
+		esv::GameState From;
+		esv::GameState To;
+	};
+
+	virtual ~MacOSServerEventManagerHook()
+	{}
+
+	virtual bool OnGameStateChanged(GameStates& states)
+	{
+		BEGIN_GUARDED()
+		gExtender->GetServer().OnGameStateChanged(states.From, states.To);
+		END_GUARDED()
+
+		return true;
+	}
+
+	virtual bool Unknown()
+	{
+		return false;
+	}
+
+	uint64_t dummy{ 0 };
+};
+
+void MacOSScriptExtender::OnAppLoadGraphicSettings(App * self)
+{
+	HookStateMachineUpdates();
+}
+
+void MacOSScriptExtender::HookStateMachineUpdates()
+{
+	if (updateHooksAdded_ || Libraries.CriticalInitializationFailed()) return;
+
+	auto clientEvtMgr = GetStaticSymbols().ecl__gGameStateEventManager;
+	if (clientEvtMgr && *clientEvtMgr) {
+		auto client = GameAlloc<MacOSClientEventManagerHook>();
+		(*clientEvtMgr)->Callbacks.push_back(&client->dummy);
+	}
+
+	auto serverEvtMgr = GetStaticSymbols().esv__gGameStateEventManager;
+	if (serverEvtMgr && *serverEvtMgr) {
+		auto server = GameAlloc<MacOSServerEventManagerHook>();
+		(*serverEvtMgr)->Callbacks.push_back(&server->dummy);
+	}
+
+	updateHooksAdded_ = true;
+}
+
+void MacOSScriptExtender::OnBaseModuleLoaded(void * self)
+{
+}
+
+void MacOSScriptExtender::ClearPathOverrides()
+{
+	std::unique_lock lock(pathOverrideMutex_);
+	pathOverrides_.clear();
+}
+
+void MacOSScriptExtender::AddPathOverride(STDString const & path, STDString const & overriddenPath)
+{
+	auto absolutePath = GetStaticSymbols().ToPath(path, PathRootType::Data);
+	auto absoluteOverriddenPath = GetStaticSymbols().ToPath(overriddenPath, PathRootType::Data);
+
+	std::unique_lock lock(pathOverrideMutex_);
+	pathOverrides_.insert(std::make_pair(absolutePath, absoluteOverriddenPath));
+}
+
+std::optional<STDString> MacOSScriptExtender::GetPathOverride(STDString const & path)
+{
+	auto absolutePath = GetStaticSymbols().ToPath(path, PathRootType::Data);
+
+	std::unique_lock lock(pathOverrideMutex_);
+	auto it = pathOverrides_.find(absolutePath);
+	if (it != pathOverrides_.end()) {
+		return it->second;
+	} else {
+		return {};
+	}
+}
+
+FileReader * MacOSScriptExtender::OnFileReaderCreate(FileReader::CtorProc* next, FileReader * self, Path const& path, unsigned int type, unsigned int unknown)
+{
+	if (!pathOverrides_.empty()) {
+		std::shared_lock lock(pathOverrideMutex_);
+		auto it = pathOverrides_.find(path.Name);
+		if (it != pathOverrides_.end()) {
+			DEBUG("FileReader path override: %s -> %s", path.Name.c_str(), it->second.c_str());
+			Path overriddenPath;
+			overriddenPath.Name = it->second;
+#if !defined(OSI_EOCAPP)
+			overriddenPath.Unknown = path->Unknown;
+#endif
+			lock.unlock();
+			return next(self, overriddenPath, type, unknown);
+		}
+	}
+
+	if (path.Name.size() > 4 
+		&& memcmp(path.Name.data() + path.Name.size() - 4, ".txt", 4) == 0) {
+		statLoadOrderHelper_.OnStatFileOpened(path);
+	}
+
+	DisableCrashReporting _;
+	return next(self, path, type, unknown);
+}
+
+void MacOSScriptExtender::PostStartup()
+{
+	if (postStartupDone_) return;
+
+	std::lock_guard _(globalStateLock_);
+	// We need to initialize the function library here, as GlobalAllocator isn't available in Init().
+	if (Libraries.PostStartupFindLibraries()) {
+		lua::RegisterLibraries();
+		lua::InitObjectProxyPropertyMaps();
+		TypeInformationRepository::GetInstance().Initialize();
+
+		engineHooks_.HookAll();
+		hooks_.Startup();
+		server_.PostStartup();
+		client_.PostStartup();
+
+		luaBuiltinBundle_.SetResourcePath(config_.LuaBuiltinResourceDirectory);
+		if (!luaBuiltinBundle_.LoadBuiltinResource(IDR_LUA_BUILTIN_BUNDLE)) {
+			ERR("Failed to load Lua builtin resource bundle!");
+		}
+
+		engineHooks_.FileReader__ctor.SetWrapper(&MacOSScriptExtender::OnFileReaderCreate, this);
+		//engineHooks_.Kernel_FindFirstFileW.SetWrapper(&MacOSScriptExtender::OnFindFirstFileW, this);
+		//engineHooks_.Kernel_FindNextFileW.SetWrapper(&MacOSScriptExtender::OnFindNextFileW, this);
+		//engineHooks_.Kernel_FindClose.SetWrapper(&MacOSScriptExtender::OnFindClose, this);
+		
+		engineHooks_.RPGStats__Load.SetWrapper(&MacOSScriptExtender::OnStatsLoad, this);
+		engineHooks_.ecs__EntityWorld__Update.SetWrapper(&MacOSScriptExtender::OnECSUpdate, this);
+		engineHooks_.ecs__EntityWorld__FlushECBs.SetPreHook(&MacOSScriptExtender::OnECSFlushECBs, this);
+	}
+
+	GameVersionInfo gameVersion;
+	if (Libraries.GetGameVersion(gameVersion) && !gameVersion.IsSupported()) {
+		std::stringstream ss;
+		ss << "Your game version (v" << gameVersion.Major << "." << gameVersion.Minor << "." << gameVersion.Revision << "." << gameVersion.Build
+			<< ") is not supported by the Script Extender";
+		Libraries.ShowStartupError(ss.str().c_str(), true, false);
+	} else if (Libraries.CriticalInitializationFailed()) {
+		Libraries.ShowStartupError("A severe error has occurred during Script Extender initialization. Extension features will be unavailable.", true, false);
+	} else if (Libraries.InitializationFailed()) {
+		Libraries.ShowStartupError("An error has occurred during Script Extender initialization. Some extension features might be unavailable.", true, false);
+	}
+
+	HookStateMachineUpdates();
+
+	postStartupDone_ = true;
+}
+
+void MacOSScriptExtender::InitRuntimeLogging()
+{
+	if (!config_.LogRuntime) return;
+
+	auto path = MakeLogFilePath(L"Extender Runtime", L"log");
+	gCoreLibPlatformInterface.GlobalConsole->OpenLogFile(path);
+	DEBUG("Extender runtime log written to '%s'", ToStdUTF8(path).c_str());
+}
+
+void MacOSScriptExtender::OnSDLEvent(SDL_Event* event)
+{
+	if (event->type == SDL_KEYDOWN 
+		&& event->key.keysym.scancode == SDL_SCANCODE_F12 
+		&& (unsigned)((SDLKeyModifier)event->key.keysym.mod & (SDLKeyModifier::LCtrl | SDLKeyModifier::RCtrl)) != 0) {
+		
+		auto console = gCoreLibPlatformInterface.GlobalConsole;
+		if (!console->WasCreated()) {
+			console->Create();
+		}
+
+	}
+}
+#endif
+
 }

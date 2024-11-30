@@ -24,4 +24,18 @@ void LogOsirisMsg(std::string_view msg)
 	gExtender->LogOsirisMsg(msg);
 }
 
+#if defined(__APPLE__)
+bool IsMacOS() {
+    return true;
+}
+
+bool IsAppleSilicon() {
+#if defined(__arm64__) || defined(__aarch64__)
+    return true;
+#else
+    return false;
+#endif
+}
+#endif
+
 END_SE()

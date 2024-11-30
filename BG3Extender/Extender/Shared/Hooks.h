@@ -25,4 +25,20 @@ private:
 	bool networkingInitialized_{ false };
 };
 
+#if defined(__APPLE__)
+class MacOSHooks : public Hooks
+{
+public:
+    void Startup();
+    void HookNetworkMessages(net::MessageFactory* factory);
+
+    void OnParseDataFolder(stats::RPGStats::ParseStructureFolderProc* next, stats::RPGStats* self, Array<STDString>* paths);
+    void OnClientConnectMessage(net::Message::SerializeProc* wrapped, net::Message* msg, net::BitstreamSerializer* serializer);
+
+private:
+    bool loaded_{ false };
+    bool networkingInitialized_{ false };
+};
+#endif
+
 END_SE()
