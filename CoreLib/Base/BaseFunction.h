@@ -18,8 +18,7 @@ template <class R, class... Args>
 class Function<R (Args...)>
 {
 public:
-	// Seems to be 4 for editor, 5 for release?
-	static constexpr unsigned UserDataSize = 5;
+	static constexpr unsigned UserDataSize = 4;
 
 	Function(Function const& o)
 	{

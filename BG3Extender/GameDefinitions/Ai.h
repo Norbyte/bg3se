@@ -396,7 +396,9 @@ struct AiPath : public ProtectedGameObject<AiPath>
 	Array<EntityHandle> IgnoreEntities;
 	glm::vec3 field_178;
 	[[bg3::hidden]] UnknownFunction DestinationFunc;
+	[[bg3::hidden]] uint64_t DestinationFunc1;
 	[[bg3::hidden]] UnknownFunction WeightFunc;
+	[[bg3::hidden]] uint64_t WeightFunc1;
 	HashMap<AiTilePos, uint64_t> AoOTiles;
 	Array<AiPathAoOPosition> AoOPositions;
 	DangerousAuras DangerousAuras;
