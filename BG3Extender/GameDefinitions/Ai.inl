@@ -33,19 +33,18 @@ void AiPath::Reset()
 	MovedEntities.clear();
 	PathType = 3;
 	CoverFlags = 0;
-	SearchHorizon = 0x7D00;
-	WorldClimbType = 1;
+	SearchHorizon = 32000;
+	WorldClimbType = 0;
 	WorldDropType = 0;
 	DangerousAuras.Auras.clear();
-	DangerousAuras.Avoidance = 1;
-	CollisionMask = 0x40000000400084;
-	CollisionMaskMove = CollisionMask;
+	DangerousAuras.Avoidance = 0;
+	CollisionMask = 0x40000000440094;
+	CollisionMaskMove = 0x40000000000084;
 	CollisionMaskStand = 0x10;
-	CloseEnoughMin = 0i64;
-	CloseEnoughMax = 0i64;
-	CloseEnoughFloor = 0i64;
+	CloseEnoughMin = .0f;
+	CloseEnoughMax = .0f;
+	CloseEnoughFloor = .0f;
 	CloseEnoughPreference = 0;
-	AddSourceBoundsToMargin = false;
 	PreciseItemInteraction = false;
 	UseSmoothing = true;
 	UseSplines = true;
@@ -56,18 +55,6 @@ void AiPath::Reset()
 void AiPath::SetSourceEntity(ecs::EntitySystemHelpersBase& helpers, EntityHandle entity)
 {
 	Source = entity;
-	auto esvCharacter = helpers.GetComponent<esv::Character>(entity);
-	if (esvCharacter) {
-		SetSourceTemplate(esvCharacter->Template);
-		IsPlayer = (esvCharacter->Flags & esv::CharacterFlags::IsPlayer) == esv::CharacterFlags::IsPlayer;
-	} else {
-		auto eclCharacter = helpers.GetComponent<ecl::Character>(entity);
-		if (eclCharacter) {
-			SetSourceTemplate(eclCharacter->Template);
-			IsPlayer = (eclCharacter->Flags & ecl::CharacterFlags::IsPlayer) == ecl::CharacterFlags::IsPlayer;
-		}
-	}
-
 	auto transform = helpers.GetComponent<TransformComponent>(entity);
 	auto bounds = helpers.GetComponent<BoundComponent>(entity);
 
@@ -92,6 +79,18 @@ void AiPath::SetSourceEntity(ecs::EntitySystemHelpersBase& helpers, EntityHandle
 	} else {
 		SetBounds(0.5f, 0.5f);
 	}
+
+	auto esvCharacter = helpers.GetComponent<esv::Character>(entity);
+	if (esvCharacter) {
+		SetSourceTemplate(esvCharacter->Template);
+		IsPlayer = (esvCharacter->Flags & esv::CharacterFlags::IsPlayer) == esv::CharacterFlags::IsPlayer;
+	} else {
+		auto eclCharacter = helpers.GetComponent<ecl::Character>(entity);
+		if (eclCharacter) {
+			SetSourceTemplate(eclCharacter->Template);
+			IsPlayer = (eclCharacter->Flags & ecl::CharacterFlags::IsPlayer) == ecl::CharacterFlags::IsPlayer;
+		}
+	}
 }
 
 void AiPath::SetSourceTemplate(CharacterTemplate* tmpl)
@@ -99,13 +98,23 @@ void AiPath::SetSourceTemplate(CharacterTemplate* tmpl)
 	StepHeight = tmpl->MovementStepUpHeight.Value;
 	WorldClimbingHeight = 0.0f;
 	if (tmpl->IsWorldClimbingEnabled.Value) {
-		WorldClimbingHeight = tmpl->WorldClimbingHeight.Value;
+		if (tmpl->WorldClimbingHeight.Value >= 0) {
+			WorldClimbingHeight = tmpl->WorldClimbingHeight.Value;
+		} else {
+			WorldClimbingHeight = MovingBound;
+		}
 	}
 
 	WorldClimbingRadius = tmpl->WorldClimbingRadius.Value;
 	TurningNodeAngle = tmpl->TurningNodeAngle.Value;
 	TurningNodeOffset = tmpl->TurningNodeOffset.Value;
 	UseStandAtDestination = tmpl->UseStandAtDestination.Value;
+
+	WorldClimbType = 1;
+	WorldDropType = 1;
+	CheckLockedDoors = true;
+	CloseEnoughMin = 0.5f;
+	CloseEnoughMax = 3.5f;
 }
 
 void AiPath::SetSource(glm::vec3 position)
@@ -122,6 +131,7 @@ void AiPath::SetTargetEntity(EntityHandle entity)
 void AiPath::SetTarget(glm::vec3 position)
 {
 	TargetAdjusted = position;
+	field_178 = position;
 }
 
 void AiPath::SetBounds(float movingBound, float standingBound)
