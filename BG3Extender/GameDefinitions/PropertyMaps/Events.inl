@@ -27,7 +27,6 @@ END_CLS()
 
 BEGIN_CLS(lua::FindPathEvent)
 INHERIT(lua::EventBase)
-P(AiGrid)
 P(Path)
 END_CLS()
 

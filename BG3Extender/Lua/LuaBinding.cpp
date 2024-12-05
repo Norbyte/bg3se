@@ -581,7 +581,6 @@ void State::OnFindPath(AiGrid* self, AiPathId pathId)
 	if (!path || path->SearchStarted) return;
 
 	FindPathEvent params;
-	params.AiGrid = self;
 	params.Path = path;
 	ThrowEvent("FindPath", params);
 }

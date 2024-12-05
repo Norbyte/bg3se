@@ -395,7 +395,7 @@ struct AiPath : public ProtectedGameObject<AiPath>
 	int field_154;
 	Array<AiPathEntityPosition> MovedEntities;
 	Array<EntityHandle> IgnoreEntities;
-	glm::vec3 field_178;
+	[[bg3::legacy(field_178)]] glm::vec3 TargetPosition;
 	[[bg3::hidden]] UnknownFunction* pDestinationFunc;
 	[[bg3::hidden]] UnknownFunction DestinationFunc;
 	[[bg3::hidden]] UnknownFunction* pWeightFunc;

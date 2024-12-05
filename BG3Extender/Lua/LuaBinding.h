@@ -306,7 +306,6 @@ namespace bg3se::lua
 
 	struct FindPathEvent : public EventBase
 	{
-		AiGrid* AiGrid;
 		AiPath* Path;
 	};
 }

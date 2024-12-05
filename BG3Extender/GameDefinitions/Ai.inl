@@ -131,7 +131,7 @@ void AiPath::SetTargetEntity(EntityHandle entity)
 void AiPath::SetTarget(glm::vec3 position)
 {
 	TargetAdjusted = position;
-	field_178 = position;
+	TargetPosition = position;
 }
 
 void AiPath::SetBounds(float movingBound, float standingBound)
