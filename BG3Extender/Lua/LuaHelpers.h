@@ -60,12 +60,6 @@ struct StackCheck
 };
 #endif
 
-END_NS()
-
-#include <Lua/Shared/LuaDelegate.h>
-
-BEGIN_NS(lua)
-
 struct LocalRef
 {
 	inline LocalRef() : Index(-1) {} 
@@ -87,6 +81,12 @@ struct FunctionRef : public LocalRef {};
 
 // Helper type for getting userdata/cpplightuserdata as parameters
 struct AnyUserdataRef : public LocalRef {};
+
+END_NS()
+
+#include <Lua/Shared/LuaDelegate.h>
+
+BEGIN_NS(lua)
 
 #if defined(ENABLE_IMGUI)
 struct ImguiHandle

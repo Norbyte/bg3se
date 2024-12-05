@@ -24,6 +24,10 @@ public:
         : ref_(L, local)
     {}
 
+    inline LuaDelegate(lua_State* L, FunctionRef const& f)
+        : ref_(L, f.Index)
+    {}
+
     inline ~LuaDelegate() {}
 
     inline LuaDelegate(LuaDelegate const& o)
@@ -149,7 +153,16 @@ public:
     {
         if (!delegate) return;
 
-        auto call = new DeferredLuaDelegateCallImpl<TRet, TArgs...>(delegate, args...);
+        auto call = GameAlloc<DeferredLuaDelegateCallImpl<TRet, TArgs...>>(delegate, std::forward<TArgs>(args)...);
+        queue_.push_back(call);
+    }
+    
+    template <class TRet, class... TArgs>
+    void Call(LuaDelegate<TRet(TArgs...)> && delegate, TArgs... args)
+    {
+        if (!delegate) return;
+
+        auto call = GameAlloc<DeferredLuaDelegateCallImpl<TRet, TArgs...>>(std::move(delegate), std::forward<TArgs>(args)...);
         queue_.push_back(call);
     }
 
