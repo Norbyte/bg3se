@@ -65,4 +65,11 @@ protected:
 	virtual void ProcessExtenderMessage(net::MessageContext& context, MessageWrapper & msg) = 0;
 };
 
+class BaseNetworkManager
+{
+public:
+	virtual ExtenderMessage* GetFreeMessage() = 0;
+	virtual ExtenderMessage* GetFreeMessage(UserId userId) = 0;
+};
+
 END_NS()

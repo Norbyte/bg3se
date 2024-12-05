@@ -1,6 +1,7 @@
 local _I = Ext._Internal
 local SubscribableEvent = Ext.CoreLib("Events/SubscribableEvent")
 local MissingSubscribableEvent = Ext.CoreLib("Events/MissingSubscribableEvent")
+local NetworkManager = Ext.CoreLib("NetworkManager")
 
 --- @class EventManager
 --- @field Events table<string, SubscribableEvent>
@@ -28,8 +29,6 @@ end
 
 
 function EventManager:RegisterEvents()
-	self:RegisterEngineEvent("NetMessage")
-	
 	for i,ev in pairs(_I._PublishedSharedEvents) do
 		self:RegisterEngineEvent(ev)
 	end
@@ -47,6 +46,8 @@ function EventManager:RegisterEvents()
 	self.Events.NetMessage:Subscribe(function (e)
 		self:NetMessageReceived(e.Channel, e.Payload, e.UserID)
 	end)
+
+	NetworkManager:RegisterEvents()
 end
 
 

@@ -16,7 +16,9 @@ _I._PublishedSharedEvents = {
 	"DoConsoleCommand",
 	"Tick",
 	"StatsStructureLoaded",
-	"FindPath"
+	"FindPath",
+	"NetMessage",
+	"NetModMessage"
 }
 
 _I._DoStartup = function ()

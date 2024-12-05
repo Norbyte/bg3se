@@ -22,7 +22,7 @@ void ExtenderProtocol::ProcessExtenderMessage(net::MessageContext& context, net:
 		auto & postMsg = msg.post_lua();
 		esv::LuaServerPin pin(esv::ExtensionState::Get());
 		if (pin) {
-			pin->OnNetMessageReceived(STDString(postMsg.channel_name()), STDString(postMsg.payload()), context.UserID);
+			pin->OnNetMessageReceived(postMsg.channel_name().c_str(), postMsg.payload().c_str(), postMsg.module().c_str(), postMsg.request_id(), postMsg.reply_id(), context.UserID);
 		}
 		break;
 	}

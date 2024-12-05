@@ -20,6 +20,7 @@
 #include <Lua/Libs/Types.inl>
 #include <Lua/Libs/Utils.inl>
 #include <Lua/Libs/Vars.inl>
+#include <Lua/Libs/Net.inl>
 #include <Lua/Libs/ClientNet.inl>
 #include <Lua/Libs/ServerNet.inl>
 #include <Lua/Libs/ServerTemplate.inl>

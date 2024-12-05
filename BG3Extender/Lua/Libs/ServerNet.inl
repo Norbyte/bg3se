@@ -1,19 +1,18 @@
 /// <lua_module>Net</lua_module>
 BEGIN_NS(esv::lua::net)
 
-void BroadcastMessage(lua_State* L, char const* channel, char const* payload, std::optional<Guid> excludeCharacterGuid)
+using namespace bg3se::lua::net;
+
+void BroadcastMessage(lua_State* L, char const* channel, char const* payload, std::optional<Guid> excludeCharacterGuid, std::optional<Guid> moduleGuid, std::optional<FunctionRef> requestHandler, std::optional<RequestId> replyId)
 {
 	esv::Character* excludeCharacter = nullptr;
 	if (excludeCharacterGuid) {
-		excludeCharacter = State::FromLua(L)->GetEntitySystemHelpers()->GetComponent<Character>(*excludeCharacterGuid);
+		excludeCharacter = State::FromLua(L)->GetEntitySystemHelpers()->GetComponent<esv::Character>(*excludeCharacterGuid);
 	}
 
-	auto & networkMgr = gExtender->GetServer().GetNetworkManager();
-	auto msg = networkMgr.GetFreeMessage(ReservedUserId);
+	auto& networkMgr = gExtender->GetServer().GetNetworkManager();
+	auto msg = BuildMessage(L, ReservedUserId, channel, payload, moduleGuid, requestHandler, replyId);
 	if (msg != nullptr) {
-		auto postMsg = msg->GetMessage().mutable_post_lua();
-		postMsg->set_channel_name(channel);
-		postMsg->set_payload(payload);
 		if (excludeCharacter != nullptr) {
 			networkMgr.Broadcast(msg, excludeCharacter->UserID);
 		} else {
@@ -22,21 +21,18 @@ void BroadcastMessage(lua_State* L, char const* channel, char const* payload, st
 	}
 }
 
-void PostMessageToUserInternal(UserId userId, char const* channel, char const* payload)
+void PostMessageToUserInternal(lua_State* L, UserId userId, char const* channel, char const* payload, std::optional<Guid> moduleGuid, std::optional<FunctionRef> requestHandler, std::optional<RequestId> replyId)
 {
 	auto& networkMgr = gExtender->GetServer().GetNetworkManager();
-	auto msg = networkMgr.GetFreeMessage(userId);
+	auto msg = BuildMessage(L, userId, channel, payload, moduleGuid, requestHandler, replyId);
 	if (msg != nullptr) {
-		auto postMsg = msg->GetMessage().mutable_post_lua();
-		postMsg->set_channel_name(channel);
-		postMsg->set_payload(payload);
 		networkMgr.Send(msg, userId);
 	}
 }
 
-void PostMessageToClient(lua_State* L, Guid characterGuid, char const* channel, char const* payload)
+void PostMessageToClient(lua_State* L, Guid characterGuid, char const* channel, char const* payload, std::optional<Guid> moduleGuid, std::optional<FunctionRef> requestHandler, std::optional<RequestId> replyId)
 {
-	auto character = State::FromLua(L)->GetEntitySystemHelpers()->GetComponent<Character>(characterGuid);
+	auto character = State::FromLua(L)->GetEntitySystemHelpers()->GetComponent<esv::Character>(characterGuid);
 	if (character == nullptr) return;
 
 	if (character->UserID == ReservedUserId) {
@@ -44,22 +40,22 @@ void PostMessageToClient(lua_State* L, Guid characterGuid, char const* channel, 
 		return;
 	}
 
-	PostMessageToUserInternal(character->UserID, channel, payload);
+	PostMessageToUserInternal(L, character->UserID, channel, payload, moduleGuid, requestHandler, replyId);
 }
 
-void PostMessageToUser(int userId, char const* channel, char const* payload)
+void PostMessageToUser(lua_State* L, int userId, char const* channel, char const* payload, std::optional<Guid> moduleGuid, std::optional<FunctionRef> requestHandler, std::optional<RequestId> replyId)
 {
 	if (UserId(userId) == ReservedUserId) {
 		OsiError("Attempted to send message to reserved user ID!");
 		return;
 	}
 
-	PostMessageToUserInternal(UserId(userId), channel, payload);
+	PostMessageToUserInternal(L, UserId(userId), channel, payload, moduleGuid, requestHandler, replyId);
 }
 
 std::optional<bool> PlayerHasExtender(lua_State* L, Guid characterGuid)
 {
-	auto character = State::FromLua(L)->GetEntitySystemHelpers()->GetComponent<Character>(characterGuid);
+	auto character = State::FromLua(L)->GetEntitySystemHelpers()->GetComponent<esv::Character>(characterGuid);
 	if (character == nullptr || character->UserID == ReservedUserId) return {};
 
 	// FIXME - access server from Lua context!

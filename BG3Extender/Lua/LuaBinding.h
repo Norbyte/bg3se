@@ -20,6 +20,7 @@
 #include <Extender/Shared/UserVariables.h>
 #include <Lua/Libs/Timer.h>
 #include <Lua/Libs/Level.h>
+#include <Lua/Libs/Net.h>
 #include <GameDefinitions/Ai.h>
 
 #include <mutex>
@@ -167,6 +168,11 @@ namespace bg3se::lua
 			return pathfinding_;
 		}
 
+		inline net::NetworkRequestSystem& GetNetworkRequests()
+		{
+			return networkRequests_;
+		}
+
 		virtual void Initialize();
 		virtual void Shutdown();
 		virtual bool IsClient() = 0;
@@ -192,7 +198,7 @@ namespace bg3se::lua
 		void OnShutdown();
 		virtual void OnUpdate(GameTime const& time);
 		void OnStatsStructureLoaded();
-		void OnNetMessageReceived(STDString const& channel, STDString const& payload, UserId userId);
+		void OnNetMessageReceived(char const* channel, char const* payload, char const* moduleUuid, int32_t requestId, int32_t replyId, UserId userId);
 		void OnFindPath(AiGrid* self, AiPathId pathId);
 
 		template <class... Ret, class... Args>
@@ -253,6 +259,7 @@ namespace bg3se::lua
 		EntityComponentEventHooks entityHooks_;
 		timer::TimerSystem timers_;
 		level::PathfindingSystem pathfinding_;
+		net::NetworkRequestSystem networkRequests_;
 
 		void OpenLibs();
 		EventResult DispatchEvent(EventBase& evt, char const* eventName, bool canPreventAction, uint32_t restrictions);
@@ -292,6 +299,8 @@ namespace bg3se::lua
 	{
 		STDString Channel;
 		STDString Payload;
+		std::optional<Guid> Module;
+		std::optional<net::RequestId> RequestId;
 		UserId UserID;
 	};
 

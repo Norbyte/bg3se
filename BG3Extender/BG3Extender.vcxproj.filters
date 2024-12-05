@@ -497,6 +497,7 @@
     <ClInclude Include="Lua\Libs\Level.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaLightCppObjectMeta.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaCppObjectMeta.h" />
+    <ClInclude Include="Lua\Libs\Net.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -741,6 +742,7 @@
     <None Include="Lua\Shared\EntityEventHelpersClient.inl" />
     <None Include="Lua\Client\ClientEntityReplicationEvents.inl" />
     <None Include="Lua\Libs\Level.inl" />
+    <None Include="Lua\Libs\Net.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

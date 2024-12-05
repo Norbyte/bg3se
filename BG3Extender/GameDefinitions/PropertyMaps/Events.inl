@@ -20,6 +20,8 @@ BEGIN_CLS(lua::NetMessageEvent)
 INHERIT(lua::EventBase)
 P(Channel)
 P(Payload)
+P(Module)
+P(RequestId)
 P(UserID)
 END_CLS()
 

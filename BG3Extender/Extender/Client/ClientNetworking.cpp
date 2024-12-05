@@ -12,7 +12,7 @@ void ExtenderProtocol::ProcessExtenderMessage(net::MessageContext& context, net:
 		auto & postMsg = msg.post_lua();
 		ecl::LuaClientPin pin(ecl::ExtensionState::Get());
 		if (pin) {
-			pin->OnNetMessageReceived(STDString(postMsg.channel_name()), STDString(postMsg.payload()), ReservedUserId);
+			pin->OnNetMessageReceived(postMsg.channel_name().c_str(), postMsg.payload().c_str(), postMsg.module().c_str(), postMsg.request_id(), postMsg.reply_id(), ReservedUserId);
 		}
 		break;
 	}
@@ -131,6 +131,12 @@ void NetworkManager::OnExtenderHello(net::MsgC2SExtenderHello const& hello)
 
 net::ExtenderMessage* NetworkManager::GetFreeMessage()
 {
+	auto client = GetClient();
+	if (!client || client->Status == 0) {
+		ERR("Attempted to send extender message when not connected to a server!");
+		return nullptr;
+	}
+
 	// We need to make sure that no extender message is sent if the other party
 	// does not have the new message ID-s installed, otherwise the peer will crash
 	// while trying to parse the packet.
@@ -139,12 +145,17 @@ net::ExtenderMessage* NetworkManager::GetFreeMessage()
 		return nullptr;
 	}
 
-	auto client = GetClient();
-	if (client != nullptr) {
-		return (net::ExtenderMessage *)client->NetMessageFactory->GetFreeMessage((uint32_t)net::ExtenderMessage::MessageId);
-	} else {
+	return (net::ExtenderMessage*)client->NetMessageFactory->GetFreeMessage((uint32_t)net::ExtenderMessage::MessageId);
+}
+
+net::ExtenderMessage* NetworkManager::GetFreeMessage(UserId userId)
+{
+	if (userId != ReservedUserId) {
+		ERR("The client cannot send messages to other users directly");
 		return nullptr;
 	}
+
+	return GetFreeMessage();
 }
 
 void NetworkManager::Send(net::ExtenderMessage* msg)

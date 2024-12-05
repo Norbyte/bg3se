@@ -1,6 +1,6 @@
 #pragma once
 
-/// <lua_module>Timer</lua_module>
+/// <lua_module>Level</lua_module>
 BEGIN_NS(lua::level)
 
 class PathfindingSystem

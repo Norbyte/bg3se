@@ -13,7 +13,7 @@ protected:
 	void ProcessExtenderMessage(net::MessageContext& context, net::MessageWrapper& msg) override;
 };
 
-class NetworkManager
+class NetworkManager : public net::BaseNetworkManager
 {
 public:
 	void Reset();
@@ -21,7 +21,8 @@ public:
 	bool CanSendExtenderMessages() const;
 	void AllowExtenderMessages();
 	void ExtendNetworking();
-	net::ExtenderMessage* GetFreeMessage();
+	net::ExtenderMessage* GetFreeMessage() override;
+	net::ExtenderMessage* GetFreeMessage(UserId userId) override;
 	void Send(net::ExtenderMessage* msg);
 	void OnClientConnectMessage(net::ClientConnectMessage* msg);
 	void OnExtenderHello(net::MsgC2SExtenderHello const& hello);

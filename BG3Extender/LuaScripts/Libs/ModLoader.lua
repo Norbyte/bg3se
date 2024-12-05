@@ -1,5 +1,7 @@
---- @var Logger
-local Logger = Ext.CoreLib("Logger")
+--- @type Logger
+local logger = Ext.CoreLib("Logger")
+--- @type NetworkManager
+local net = Ext.CoreLib("NetworkManager")
 
 --- @class ModLoader
 local ModLoader = {
@@ -9,9 +11,10 @@ local ModLoader = {
 
 function ModLoader:CreateModExtensionTable(moduleUuid)
 	local ext = {
-		Log = Logger:CreateLogModule(moduleUuid)
+		Log = logger:CreateLogModule(moduleUuid)
 	}
-	ext.Utils = Logger:CreateUtilsCompatModule(Ext)
+	ext.Utils = logger:CreateUtilsCompatModule(Ext)
+	ext.Net = net:CreateNetModule(Ext)
 	setmetatable(ext, {
 		__index = Ext,
 		

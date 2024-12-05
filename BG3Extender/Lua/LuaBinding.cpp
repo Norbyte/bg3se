@@ -537,6 +537,7 @@ void State::OnUpdate(GameTime const& time)
 {
 	timers_.Update(time.Time);
 	pathfinding_.Update();
+	networkRequests_.Update();
 
 	TickEvent params{ .Time = time };
 	ThrowEvent("Tick", params, false, 0);
@@ -552,13 +553,26 @@ void State::OnStatsStructureLoaded()
 	ThrowEvent("StatsStructureLoaded", params, false, 0);
 }
 
-void State::OnNetMessageReceived(STDString const& channel, STDString const& payload, UserId userId)
+void State::OnNetMessageReceived(char const* channel, char const* payload, char const* moduleUuid, int32_t requestId, int32_t replyId, UserId userId)
 {
-	NetMessageEvent params;
-	params.Channel = channel;
-	params.Payload = payload;
-	params.UserID = userId;
-	ThrowEvent("NetMessage", params);
+	if (replyId != 0) {
+		networkRequests_.HandleReply(replyId, payload);
+		return;
+	}
+
+	NetMessageEvent params {
+		.Channel = channel,
+		.Payload = payload,
+		.Module = (moduleUuid && *moduleUuid) ? Guid::Parse(moduleUuid) : std::optional<Guid>{},
+		.RequestId = (requestId != 0) ? requestId : std::optional<net::RequestId>{},
+		.UserID = userId
+	};
+	if (!params.RequestId && !params.Module) {
+		// Only dispatch legacy network messages through the old NetMessage event
+		ThrowEvent("NetMessage", params);
+	} else {
+		ThrowEvent("NetModMessage", params);
+	}
 }
 
 void State::OnFindPath(AiGrid* self, AiPathId pathId)

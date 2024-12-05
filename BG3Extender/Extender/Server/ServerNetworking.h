@@ -15,7 +15,7 @@ protected:
 	void ProcessExtenderMessage(net::MessageContext& context, net::MessageWrapper& msg) override;
 };
 
-class NetworkManager
+class NetworkManager : public net::BaseNetworkManager
 {
 public:
 	void Reset();
@@ -27,8 +27,8 @@ public:
 
 	void ExtendNetworking();
 
-	net::ExtenderMessage * GetFreeMessage(UserId userId);
-	net::ExtenderMessage * GetFreeMessage();
+	net::ExtenderMessage * GetFreeMessage(UserId userId) override;
+	net::ExtenderMessage * GetFreeMessage() override;
 	net::GameServer* GetServer() const;
 
 	void Send(net::ExtenderMessage * msg, UserId userId);
