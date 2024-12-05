@@ -9,7 +9,12 @@ DummyFieldTracker::~DummyFieldTracker() {}
 
 void DummyFieldTracker::Add(EntityHandle entity, EntityHandle entity2, void* component)
 {
-	if (Base) Base->Add(entity, entity2, component);
+	assert(Changes.empty());
+
+	if (Base) {
+		assert(ChangeEvent.Connections.size() == Base->ChangeEvent.Connections.size());
+		Base->Add(entity, entity2, component);
+	}
 
 	auto change = SharedChanges->ChangedEntities.try_get(entity);
 	if (!change) {
@@ -21,7 +26,12 @@ void DummyFieldTracker::Add(EntityHandle entity, EntityHandle entity2, void* com
 
 void DummyFieldTracker::FireEvents()
 {
-	if (Base) Base->FireEvents();
+	assert(Changes.empty());
+
+	if (Base) {
+		assert(ChangeEvent.Connections.size() == Base->ChangeEvent.Connections.size());
+		Base->FireEvents();
+	}
 
 	for (auto& it : SharedChanges->ChangedEntities) {
 		PerComponentChangeEvent.Invoke(it.Key(), it.Value().Component, it.Value().FieldMask);
@@ -83,6 +93,11 @@ EntityReplicationEventHooks::ReplicationHooks* ClientEntityReplicationEventHooks
 				auto tracker = GameAlloc<DummyFieldTracker>();
 				tracker->SharedChanges = sharedState;
 				tracker->Base = base ? *base : nullptr;
+				if (base) {
+					for (auto const& conn : (*base)->ChangeEvent.Connections) {
+						tracker->ChangeEvent.Add(conn.Handler);
+					}
+				}
 				tracker->FieldMask = (1ull << i);
 				tracker->PerComponentChangeEvent.Add(MakeFunction(&ClientEntityReplicationEventHooks::OnEntityReplication, this, type));
 				trackers.set(i, tracker);

@@ -5,6 +5,7 @@
 #include <GameDefinitions/Stats/Stats.h>
 #include <GameDefinitions/Resources.h>
 #include <GameDefinitions/Misc.h>
+#include <GameDefinitions/Ai.h>
 
 namespace bg3se
 {

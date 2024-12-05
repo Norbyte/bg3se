@@ -20,6 +20,7 @@
 #include <Extender/Shared/UserVariables.h>
 #include <Lua/Libs/Timer.h>
 #include <Lua/Libs/Level.h>
+#include <GameDefinitions/Ai.h>
 
 #include <mutex>
 #include <unordered_set>
@@ -192,6 +193,7 @@ namespace bg3se::lua
 		virtual void OnUpdate(GameTime const& time);
 		void OnStatsStructureLoaded();
 		void OnNetMessageReceived(STDString const& channel, STDString const& payload, UserId userId);
+		void OnFindPath(AiGrid* self, AiPathId pathId);
 
 		template <class... Ret, class... Args>
 		bool CallExtRet(char const * func, uint32_t restrictions, std::tuple<Ret...>& ret, Args... args)
@@ -275,10 +277,6 @@ namespace bg3se::lua
 		uint32_t oldFlags_;
 	};
 
-	int GetCellInfo(lua_State* L);
-
-	/*int NewDamageList(lua_State* L);
-	int GetSurfaceTemplate(lua_State* L);*/
 
 	struct DoConsoleCommandEvent : public EventBase
 	{
@@ -295,6 +293,12 @@ namespace bg3se::lua
 		STDString Channel;
 		STDString Payload;
 		UserId UserID;
+	};
+
+	struct FindPathEvent : public EventBase
+	{
+		AiGrid* AiGrid;
+		AiPath* Path;
 	};
 }
 

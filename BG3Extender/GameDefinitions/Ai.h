@@ -9,6 +9,7 @@ using AiGridLayerId = uint16_t;
 
 static constexpr AiMetaDataId AiNullMetaData = 0xffff;
 
+using AiPathId = int32_t;
 
 struct AIPortalObjectData : public ProtectedGameObject<AIPortalObjectData>
 {
@@ -395,10 +396,10 @@ struct AiPath : public ProtectedGameObject<AiPath>
 	Array<AiPathEntityPosition> MovedEntities;
 	Array<EntityHandle> IgnoreEntities;
 	glm::vec3 field_178;
+	[[bg3::hidden]] UnknownFunction* pDestinationFunc;
 	[[bg3::hidden]] UnknownFunction DestinationFunc;
-	[[bg3::hidden]] uint64_t DestinationFunc1;
+	[[bg3::hidden]] UnknownFunction* pWeightFunc;
 	[[bg3::hidden]] UnknownFunction WeightFunc;
-	[[bg3::hidden]] uint64_t WeightFunc1;
 	HashMap<AiTilePos, uint64_t> AoOTiles;
 	Array<AiPathAoOPosition> AoOPositions;
 	DangerousAuras DangerousAuras;
@@ -433,10 +434,8 @@ struct AiGrid : public ProtectedGameObject<AiGrid>
 {
 	static constexpr float PatchSize = 25.0f;
 
-	using PathId = int32_t;
-
-	using FindPathProc = void (AiGrid* self, PathId pathId);
-	using FindPathImmediateProc = bool (AiGrid* self, PathId pathId);
+	using FindPathProc = void (AiGrid* self, AiPathId pathId);
+	using FindPathImmediateProc = bool (AiGrid* self, AiPathId pathId);
 
 	[[bg3::hidden]] void* VMT;
 	__int64 field_8;
@@ -452,10 +451,10 @@ struct AiGrid : public ProtectedGameObject<AiGrid>
 	HashMap<Guid, AiGridLayerId> LayerMap;
 	[[bg3::hidden]] ecs::EntityWorld* EntityWorld;
 	[[bg3::hidden]] void* ThothMachine;
-	PathId NextPathHandle;
+	AiPathId NextPathHandle;
 	int field_EC;
 	Array<AiPath*> PathPool;
-	LegacyRefMap<PathId, AiPath*> PathMap;
+	LegacyRefMap<AiPathId, AiPath*> PathMap;
 	Array<AiPath*> Paths;
 	[[bg3::hidden]] AiGridRequestMap<void*> TileStates;
 	[[bg3::hidden]] AiGridRequestMap<void*> Floods;
@@ -520,7 +519,7 @@ struct AiGrid : public ProtectedGameObject<AiGrid>
 	bool ToTilePos(AiWorldPos const& pos, AiSubgrid*& pSubgrid, AiTilePos& tilePos, AiGridTile const*& tileInfo) const;
 	Array<float> GetHeightsAt(AiWorldPos const& pos) const;
 	AiPath* CreatePath();
-	std::optional<PathId> GetPathId(AiPath* path);
+	std::optional<AiPathId> GetPathId(AiPath* path);
 	void FreePath(AiPath* path);
 };
 

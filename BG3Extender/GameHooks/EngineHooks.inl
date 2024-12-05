@@ -46,6 +46,7 @@ HOOK_DEFN(ecs__EntityWorld__FlushECBs, ecs__EntityWorld__FlushECBs, ecs::EntityW
 HOOK_DEFN(esv__OsirisVariableHelper__SavegameVisit, esv__OsirisVariableHelper__SavegameVisit, esv::OsirisVariableHelper__SavegameVisitProc)
 HOOK_DEFN(stats__DealDamageFunctor__ApplyDamage, stats__DealDamageFunctor__ApplyDamage, stats::DealDamageFunctor::ApplyDamageProc)
 HOOK_DEFN(esv__StatsSystem__ThrowDamageEvent, esv__StatsSystem__ThrowDamageEvent, stats::StatsSystem_ThrowDamageEventProc)
+HOOK_DEFN(eoc__AiGrid__FindPath, eoc__AiGrid__FindPath, AiGrid::FindPathProc)
 
 HOOK_DEFN(stats__Functors__ExecuteAttackTarget, stats__Functors__ExecuteAttackTarget, stats::ExecuteFunctorProc<stats::AttackTargetContextData>)
 HOOK_DEFN(stats__Functors__ExecuteAttackPosition, stats__Functors__ExecuteAttackPosition, stats::ExecuteFunctorProc<stats::AttackPositionContextData>)

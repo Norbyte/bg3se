@@ -317,6 +317,25 @@ void ScriptExtender::OnECSFlushECBs(ecs::EntityWorld* entityWorld)
 	END_GUARDED()
 }
 
+void ScriptExtender::OnFindPath(AiGrid* self, AiPathId pathId)
+{
+	if (server_.IsInServerThread()) {
+		if (server_.HasExtensionState()) {
+			esv::LuaServerPin lua(GetServer().GetExtensionState());
+			if (lua) {
+				lua->OnFindPath(self, pathId);
+			}
+		}
+	} else if (client_.IsInClientThread()) {
+		if (GetClient().HasExtensionState()) {
+			ecl::LuaClientPin lua(GetClient().GetExtensionState());
+			if (lua) {
+				lua->OnFindPath(self, pathId);
+			}
+		}
+	}
+}
+
 bool ScriptExtender::HasFeatureFlag(char const * flag) const
 {
 	return (server_.HasExtensionState() && server_.GetExtensionState().HasFeatureFlag(flag))
@@ -544,6 +563,7 @@ void ScriptExtender::PostStartup()
 		engineHooks_.RPGStats__Load.SetWrapper(&ScriptExtender::OnStatsLoad, this);
 		engineHooks_.ecs__EntityWorld__Update.SetWrapper(&ScriptExtender::OnECSUpdate, this);
 		engineHooks_.ecs__EntityWorld__FlushECBs.SetPreHook(&ScriptExtender::OnECSFlushECBs, this);
+		engineHooks_.eoc__AiGrid__FindPath.SetPreHook(&ScriptExtender::OnFindPath, this);
 	}
 
 	GameVersionInfo gameVersion;

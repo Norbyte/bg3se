@@ -214,6 +214,19 @@ void ReleasePath(lua_State* L, AiPath* path)
 	}
 }
 
+Array<AiPath*> GetActivePathfindingRequests(lua_State* L)
+{
+	Array<AiPath*> paths;
+	auto aiGrid = GetAiGrid(L);
+	for (auto path : aiGrid->PathPool) {
+		if (path->InUse) {
+			paths.push_back(path);
+		}
+	}
+
+	return paths;
+}
+
 void RegisterLevelLib()
 {
 	DECLARE_MODULE(Level, Both)
@@ -225,6 +238,7 @@ void RegisterLevelLib()
 	MODULE_FUNCTION(BeginPathfindingImmediate)
 	MODULE_FUNCTION(FindPath)
 	MODULE_FUNCTION(ReleasePath)
+	MODULE_FUNCTION(GetActivePathfindingRequests)
 	END_MODULE()
 }
 

@@ -191,6 +191,7 @@ private:
 	void OnECSUpdate(ecs::EntityWorld::UpdateProc* wrapped, ecs::EntityWorld* entityWorld, GameTime const& time);
 	void OnECSUpdateGuarded(ecs::EntityWorld::UpdateProc* wrapped, ecs::EntityWorld* entityWorld, GameTime const& time);
 	void OnECSFlushECBs(ecs::EntityWorld* entityWorld);
+	void OnFindPath(AiGrid* self, AiPathId pathId);
 	FileReader * OnFileReaderCreate(FileReader::CtorProc* next, FileReader * self, Path const& path, unsigned int type, unsigned int unknown);
 };
 

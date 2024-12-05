@@ -275,7 +275,7 @@ AiPath* AiGrid::CreatePath()
 	return path;
 }
 
-std::optional<AiGrid::PathId> AiGrid::GetPathId(AiPath* path)
+std::optional<AiPathId> AiGrid::GetPathId(AiPath* path)
 {
 	for (auto const& it : PathMap) {
 		if (it.Value == path) {

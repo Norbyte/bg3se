@@ -15,7 +15,8 @@ _I._PublishedSharedEvents = {
 	"Shutdown",
 	"DoConsoleCommand",
 	"Tick",
-	"StatsStructureLoaded"
+	"StatsStructureLoaded",
+	"FindPath"
 }
 
 _I._DoStartup = function ()

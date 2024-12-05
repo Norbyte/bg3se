@@ -23,6 +23,12 @@ P(Payload)
 P(UserID)
 END_CLS()
 
+BEGIN_CLS(lua::FindPathEvent)
+INHERIT(lua::EventBase)
+P(AiGrid)
+P(Path)
+END_CLS()
+
 BEGIN_CLS(lua::DoConsoleCommandEvent)
 INHERIT(lua::EventBase)
 P_RO(Command)
