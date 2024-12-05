@@ -224,7 +224,7 @@ inline AnyRef do_get(lua_State* L, int index, Overload<AnyRef>)
 	auto i = lua_absindex(L, index);
 	auto type = lua_type(L, i);
 	if (type == LUA_TNONE) {
-		luaL_error(L, "any value expected, got %s", lua_typename(L, lua_type(L, i)));
+		luaL_error(L, "any value expected, got %s", GetDebugName(L, i));
 	}
 
 	return AnyRef(i);
@@ -242,7 +242,7 @@ inline AnyUserdataRef do_get(lua_State* L, int index, Overload<AnyUserdataRef>)
 	auto i = lua_absindex(L, index);
 	auto type = lua_type(L, i);
 	if (type != LUA_TLIGHTCPPOBJECT && type != LUA_TCPPOBJECT) {
-		luaL_error(L, "lightcppobject expected, got %s", lua_typename(L, lua_type(L, i)));
+		luaL_error(L, "lightcppobject expected, got %s", GetDebugName(L, i));
 	}
 
 	return AnyUserdataRef(i);

@@ -59,7 +59,7 @@ int64_t LuaToInt(lua_State* L, int i, int type)
 		auto handle = get<EntityHandle>(L, i);
 		return (int64_t)handle.Handle;
 	} else {
-		luaL_error(L, "Number expected for argument %d, got %s", i, lua_typename(L, type));
+		luaL_error(L, "Number expected for argument %d, got %s", i, GetDebugName(L, i));
 	}
 
 	return 0;
@@ -78,7 +78,7 @@ char * LuaToString(lua_State* L, int i, int type, char* reuseString)
 			return _strdup(lua_tostring(L, i));
 		}
 	} else {
-		luaL_error(L, "String expected for argument %d, got %s", i, lua_typename(L, type));
+		luaL_error(L, "String expected for argument %d, got %s", i, GetDebugName(L, i));
 	}
 
 	return nullptr;
@@ -106,7 +106,7 @@ void LuaToOsi(lua_State * L, int i, TypedValue & tv, ValueType osiType, bool all
 
 	case ValueType::Real:
 		if (type != LUA_TNUMBER) {
-			luaL_error(L, "Number expected for argument %d, got %s", i, lua_typename(L, type));
+			luaL_error(L, "Number expected for argument %d, got %s", i, GetDebugName(L, i));
 		}
 
 #if LUA_VERSION_NUM > 501

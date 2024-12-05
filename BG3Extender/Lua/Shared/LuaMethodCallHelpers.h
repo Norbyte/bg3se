@@ -153,8 +153,8 @@ T* get_object(lua_State* L, int index)
 		return ObjectProxy::Get<T>(L, index);
 
 	default:
-		luaL_error(L, "Argument %d: Expected object of type '%s', got '%s'", index, 
-			GetStaticPropertyMap<T>().Name.GetString(), lua_typename(L, lua_type(L, index)));
+		luaL_error(L, "Argument %d: Expected %s, got %s", index, 
+			GetStaticPropertyMap<T>().Name.GetString(), GetDebugName(L, index));
 		return nullptr;
 	}
 }

@@ -242,6 +242,69 @@ void RegisterLib(lua_State* L, char const* name, luaL_Reg const * lib)
 	lua_pop(L, 1);
 }
 
+char const* GetDebugName(lua_State* L, int idx)
+{
+	auto type = lua_type(L, idx);
+	if (type == LUA_TCPPOBJECT || type == LUA_TLIGHTCPPOBJECT) {
+		auto meta = lua_get_lightcppany(L, idx);
+		return GetDebugName(meta);
+	}
+
+	return lua_typename(L, type);
+}
+
+char const* GetDebugName(MetatableTag tag)
+{
+	switch (tag) {
+	case MetatableTag::ObjectRef: return "CppObject";
+	case MetatableTag::Array: return "Array";
+	case MetatableTag::Map: return "Map";
+	case MetatableTag::Set: return "Set";
+	case MetatableTag::EnumValue: return "Enum";
+	case MetatableTag::BitfieldValue: return "Bitfield";
+	case MetatableTag::UserVariableHolder: return "UserVariableHolder";
+	case MetatableTag::ModVariableHolder: return "ModVariableHolder";
+	case MetatableTag::Entity: return "Entity";
+#if defined(ENABLE_IMGUI)
+	case MetatableTag::ImguiObject: return "ImguiObject";
+#endif
+	case MetatableTag::OsiFunctionName: return "OsiFunction";
+
+	default: return "(Unknown C++ type)";
+	}
+}
+
+char const* GetDebugName(MetatableTag tag, int propertyMapIdx)
+{
+	switch (tag) {
+	case MetatableTag::ObjectRef:
+		return gStructRegistry.Get(propertyMapIdx)->Name.GetString();
+
+	case MetatableTag::Array:
+		return gExtender->GetPropertyMapManager().GetArrayProxy(propertyMapIdx)->GetContainerType().TypeName.GetString();
+
+	case MetatableTag::Map:
+		return gExtender->GetPropertyMapManager().GetMapProxy(propertyMapIdx)->GetContainerType().TypeName.GetString();
+
+	case MetatableTag::Set:
+		return gExtender->GetPropertyMapManager().GetSetProxy(propertyMapIdx)->GetContainerType().TypeName.GetString();
+
+	case MetatableTag::EnumValue:
+		return EnumRegistry::Get().EnumsById[propertyMapIdx]->LuaName.GetString();
+
+	case MetatableTag::BitfieldValue:
+		return BitfieldRegistry::Get().BitfieldsById[propertyMapIdx]->LuaName.GetString();
+
+	default:
+		return GetDebugName(tag);
+	}
+}
+
+char const* GetDebugName(CppObjectMetadata const& meta)
+{
+	return GetDebugName(meta.MetatableTag, meta.PropertyMapTag);
+}
+
 int LuaPanic(lua_State * L)
 {
 	char const* err = "(Unknown)";
@@ -496,6 +559,17 @@ void State::OnNetMessageReceived(STDString const& channel, STDString const& payl
 	params.Payload = payload;
 	params.UserID = userId;
 	ThrowEvent("NetMessage", params);
+}
+
+void State::OnFindPath(AiGrid* self, AiPathId pathId)
+{
+	auto path = self->PathMap.try_get(pathId);
+	if (!path || path->SearchStarted) return;
+
+	FindPathEvent params;
+	params.AiGrid = self;
+	params.Path = path;
+	ThrowEvent("FindPath", params);
 }
 
 STDString State::GetBuiltinLibrary(int resourceId)

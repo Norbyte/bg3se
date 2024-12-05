@@ -60,7 +60,7 @@ void DumpStack(lua_State* L)
 			break;
 
 		default:
-			INFO("<%d> %s", idx, lua_typename(L, lua_type(L, idx)));
+			INFO("<%d> %s", idx, GetDebugName(L, idx));
 			break;
 		}
 	}

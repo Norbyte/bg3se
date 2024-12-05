@@ -109,7 +109,7 @@ int BitfieldValueMetatable::Index(lua_State* L, CppObjectMetadata& self)
 	}
 
 	default:
-		luaL_error(L, "Bitfield __index parameter must be an integer, enum label, or special property name; got %s", lua_typename(L, lua_type(L, 2)));
+		luaL_error(L, "Bitfield __index parameter must be an integer, enum label, or special property name; got %s", GetDebugName(L, 2));
 		push(L, nullptr);
 		break;
 	}
@@ -263,14 +263,14 @@ EnumUnderlyingType get_bitfield_value(lua_State* L, int index, BitfieldTypeId ty
 		if (meta.MetatableTag == BitfieldValueMetatable::MetaTag && meta.PropertyMapTag == (unsigned)store.RegistryIndex) {
 			return static_cast<EnumUnderlyingType>(meta.Value);
 		} else {
-			luaL_error(L, "Param %d: expected a '%s' bitfield value, got type %d", index, store.EnumName.GetString(), meta.MetatableTag);
+			luaL_error(L, "Param %d: expected a '%s' bitfield value, got %s", index, store.EnumName.GetString(), GetDebugName(L, index));
 		}
 		break;
 	}
 
 	default:
 		luaL_error(L, "Param %d: expected integer, string or table '%s' bitfield value, got %s", index,
-			store.EnumName.GetString(), lua_typename(L, lua_type(L, index)));
+			store.EnumName.GetString(), GetDebugName(L, index));
 		break;
 	}
 

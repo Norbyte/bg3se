@@ -4,7 +4,7 @@ Table* lua_get_array(lua_State* L, int idx)
 {
 	auto val = lua_index2addr(L, idx);
 	if (!ttistable(val)) {
-		luaL_error(L, "Param %d: expected a table", idx);
+		luaL_error(L, "Param %d: expected a table, got %s", idx, GetDebugName(L, idx));
 		return nullptr;
 	}
 
@@ -255,7 +255,7 @@ MathParam do_get(lua_State* L, int index, Overload<MathParam>)
 		default: luaL_error(L, "Param %d: Unsupported vector or matrix size (%d)", index, val.Arity); break;
 		}
 	} else {
-		luaL_error(L, "Param %d: expected a table", index);
+		luaL_error(L, "Param %d: expected a table, got %s", GetDebugName(L, index));
 		val.Arity = 0;
 	}
 

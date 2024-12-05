@@ -934,7 +934,7 @@ CachedUserVariable::CachedUserVariable(lua_State* L, Ref const& v)
 
 	default:
 		Type = CachedUserVariableType::Null;
-		ERR("Tried to make cached user variable from unsupported type '%s'!", lua_typename(L, lua_type(L, v.Index())));
+		ERR("Tried to make cached user variable from unsupported type '%s'!", GetDebugName(L, v.Index()));
 		break;
 	}
 }

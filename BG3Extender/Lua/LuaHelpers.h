@@ -234,8 +234,20 @@ PropertyOperationResult Unserialize(lua_State* L, int index, T* obj);
 
 END_NS()
 
+
 #include <Lua/Shared/LuaLifetime.h>
 #include <Lua/Shared/LuaCustomizations.h>
+
+
+BEGIN_NS(lua)
+
+char const* GetDebugName(lua_State* L, int idx);
+char const* GetDebugName(MetatableTag tag);
+char const* GetDebugName(MetatableTag tag, int propertyMapIdx);
+char const* GetDebugName(CppObjectMetadata const& meta);
+
+END_NS()
+
 
 #include <Lua/Helpers/LuaPush.h>
 #include <Lua/Helpers/LuaGet.h>
@@ -254,6 +266,7 @@ END_NS()
 #include <Lua/Helpers/LuaUnserialize.h>
 #include <Lua/Helpers/LuaPushObject.h>
 #include <Lua/Helpers/LuaGetObject.h>
+
 
 BEGIN_NS(lua)
 

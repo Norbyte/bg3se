@@ -117,23 +117,11 @@ namespace bg3se::lua::dbg
 			auto meta = lua_get_lightcppany(L, idx);
 			switch (meta.MetatableTag) {
 			case MetatableTag::ObjectRef:
-				value->set_type_id(MsgValueType::USERDATA);
-				value->set_stringval(gStructRegistry.Get(meta.PropertyMapTag)->Name.GetString());
-				break;
-
 			case MetatableTag::Array:
-				value->set_type_id(MsgValueType::USERDATA);
-				value->set_stringval(gExtender->GetPropertyMapManager().GetArrayProxy(meta.PropertyMapTag)->GetContainerType().TypeName.GetString());
-				break;
-
 			case MetatableTag::Map:
-				value->set_type_id(MsgValueType::USERDATA);
-				value->set_stringval(gExtender->GetPropertyMapManager().GetMapProxy(meta.PropertyMapTag)->GetContainerType().TypeName.GetString());
-				break;
-
 			case MetatableTag::Set:
 				value->set_type_id(MsgValueType::USERDATA);
-				value->set_stringval(gExtender->GetPropertyMapManager().GetSetProxy(meta.PropertyMapTag)->GetContainerType().TypeName.GetString());
+				value->set_stringval(GetDebugName(meta));
 				break;
 
 			case MetatableTag::EnumValue:

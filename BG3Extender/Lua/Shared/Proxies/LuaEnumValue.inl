@@ -103,14 +103,14 @@ EnumUnderlyingType get_enum_value(lua_State* L, int index, EnumTypeId typeId)
 		if (meta.MetatableTag == EnumValueMetatable::MetaTag && meta.PropertyMapTag == (unsigned)store.RegistryIndex) {
 			return static_cast<EnumUnderlyingType>(meta.Value);
 		} else {
-			luaL_error(L, "Param %d: expected a '%s' enum value, got type %d", index, store.EnumName.GetString(), meta.MetatableTag);
+			luaL_error(L, "Param %d: expected a '%s' enum value, got %s", index, store.EnumName.GetString(), GetDebugName(meta));
 		}
 		break;
 	}
 
 	default:
 		luaL_error(L, "Param %d: expected integer, string or enum label of type '%s' value, got %s", index,
-			store.EnumName.GetString(), lua_typename(L, lua_type(L, index)));
+			store.EnumName.GetString(), GetDebugName(L, index));
 		break;
 	}
 

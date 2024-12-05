@@ -7,65 +7,21 @@ std::optional<STDString> GetCppObjectTypeName(lua_State * L, int index)
 
 	switch (meta.MetatableTag) {
 	case MetatableTag::ObjectRef:
-	{
-		auto propertyMap = gStructRegistry.Get(meta.PropertyMapTag);
-		return propertyMap->Name.GetString();
-	}
-
 	case MetatableTag::Array:
-	{
-		auto impl = gExtender->GetPropertyMapManager().GetArrayProxy(meta.PropertyMapTag);
-		return impl->GetContainerType().TypeName.GetString();
-	}
-
 	case MetatableTag::Map:
-	{
-		auto impl = gExtender->GetPropertyMapManager().GetMapProxy(meta.PropertyMapTag);
-		return impl->GetContainerType().TypeName.GetString();
-	}
-
 	case MetatableTag::Set:
-	{
-		auto impl = gExtender->GetPropertyMapManager().GetSetProxy(meta.PropertyMapTag);
-		return impl->GetContainerType().TypeName.GetString();
-	}
-
 	case MetatableTag::EnumValue:
-	{
-		return EnumValueMetatable::GetTypeName(L, meta);
-	}
-
 	case MetatableTag::BitfieldValue:
-	{
-		return BitfieldValueMetatable::GetTypeName(L, meta);
-	}
-
 	case MetatableTag::UserVariableHolder:
-	{
-		return UserVariableHolderMetatable::GetTypeName(L, meta);
-	}
-
 	case MetatableTag::ModVariableHolder:
-	{
-		return ModVariableHolderMetatable::GetTypeName(L, meta);
-	}
-
 	case MetatableTag::Entity:
-	{
-		return "Entity";
-	}
+	case MetatableTag::OsiFunctionName:
+		return GetDebugName(meta);
 
 #if defined(ENABLE_IMGUI)
 	case MetatableTag::ImguiObject:
-	{
 		return ImguiObjectProxyMetatable::GetTypeName(L, meta);
-	}
 #endif
-
-	case MetatableTag::OsiFunctionName:
-	{
-		return "OsiFunction";
-	}
 
 	default:
 		return {};
@@ -282,7 +238,7 @@ UserReturn Serialize(lua_State* L)
 		}
 
 		default:
-			return luaL_error(L, "Don't know how to serialize userdata of metatype %d", (unsigned)meta.MetatableTag);
+			return luaL_error(L, "Don't know how to serialize userdata of type %s", GetDebugName(meta.MetatableTag));
 	}
 }
 
@@ -349,29 +305,7 @@ UserReturn Construct(lua_State* L, FixedString const& typeName)
 
 std::optional<STDString> GetValueType(lua_State* L, AnyRef object)
 {
-	if (lua_type(L, object.Index) == LUA_TLIGHTCPPOBJECT) {
-		auto meta = lua_get_lightcppany(L, object.Index);
-
-		switch (meta.MetatableTag) {
-		case MetatableTag::ObjectRef: return "CppObject";
-		case MetatableTag::Array: return "Array";
-		case MetatableTag::Map: return "Map";
-		case MetatableTag::Set: return "Set";
-		case MetatableTag::EnumValue: return "Enum";
-		case MetatableTag::BitfieldValue: return "Bitfield";
-		case MetatableTag::UserVariableHolder: return "UserVariableHolder";
-		case MetatableTag::ModVariableHolder: return "ModVariableHolder";
-		case MetatableTag::Entity: return "Entity";
-	#if defined(ENABLE_IMGUI)
-		case MetatableTag::ImguiObject: return "ImguiObject";
-	#endif
-		case MetatableTag::OsiFunctionName: return "OsiFunction";
-
-		default: return {};
-		}
-	} else {
-		return lua_typename(L, lua_type(L, object.Index));
-	}
+	return GetDebugName(L, object.Index);
 }
 
 void RegisterTypesLib()

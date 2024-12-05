@@ -60,7 +60,7 @@ struct CppLightObjectVal
 		: value_(lua_index2addr(L, idx))
 	{
 		if (!IsCppObject(value_)) {
-			luaL_error(L, "Param %d: expected a light C++ object, got %s", idx, lua_typename(L, lua_type(L, idx)));
+			luaL_error(L, "Param %d: expected a light C++ object, got %s", idx, GetDebugName(L, idx));
 		}
 	}
 
@@ -159,7 +159,7 @@ struct CppObjectVal
 		: value_(lua_index2addr(L, idx))
 	{
 		if (!IsCppObject(value_)) {
-			luaL_error(L, "Param %d: expected a C++ object, got %s", idx, lua_typename(L, lua_type(L, idx)));
+			luaL_error(L, "Param %d: expected a C++ object, got %s", idx, GetDebugName(L, idx));
 		}
 	}
 
@@ -232,7 +232,7 @@ struct CppValue
 		: value_(lua_index2addr(L, idx))
 	{
 		if (!IsCppObject(value_)) {
-			luaL_error(L, "Param %d: expected a C++ value, got %s", idx, lua_typename(L, lua_type(L, idx)));
+			luaL_error(L, "Param %d: expected a C++ value, got %s", idx, GetDebugName(L, idx));
 		}
 	}
 
@@ -335,7 +335,7 @@ CppObjectMetadata lua_get_lightcppobject(lua_State* L, int idx, MetatableTag exp
 	CppLightObjectVal val(L, idx);
 	auto metatableTag = val.MetatableTag();
 	if (metatableTag != expectedMetatableTag) {
-		luaL_error(L, "Param %d must be a C++ object of type %d; got %d", idx, expectedMetatableTag, metatableTag);
+		luaL_error(L, "Param %d must be a %s; got %s", idx, GetDebugName(expectedMetatableTag), GetDebugName(metatableTag));
 	}
 
 	return CppObjectMetadata{
@@ -407,7 +407,7 @@ CppObjectMetadata lua_get_cppvalue(lua_State* L, int idx, MetatableTag expectedM
 	CppValue val(L, idx);
 	auto metatableTag = val.MetatableTag();
 	if (metatableTag != expectedMetatableTag) {
-		luaL_error(L, "Param %d must be a C++ of type %d; got %d", idx, expectedMetatableTag, metatableTag);
+		luaL_error(L, "Param %d must be a %s; got %s", idx, GetDebugName(expectedMetatableTag), GetDebugName(metatableTag));
 	}
 
 	return CppObjectMetadata{
@@ -475,7 +475,7 @@ CppObjectMetadata lua_get_lightcppany(lua_State* L, int idx)
 {
 	auto val = lua_index2addr(L, idx);
 	if (!ttislightcppobject(val)) {
-		luaL_error(L, "Param %d: expected a light C++ object, got %s", idx, lua_typename(L, lua_type(L, idx)));
+		luaL_error(L, "Param %d: expected a light C++ object, got %s", idx, GetDebugName(L, idx));
 	}
 
 	if (CppLightObjectVal::ValueClassFromExtra(valextra(val)) == 0) {

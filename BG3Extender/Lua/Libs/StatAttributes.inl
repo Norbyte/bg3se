@@ -478,7 +478,7 @@ PropertyOperationResult LuaStatSetAttribute(lua_State* L, stats::Object* object,
 	}
 
 	default:
-		LuaError("Lua property values of type '" << lua_typename(L, lua_type(L, valueIdx)) << "' are not supported");
+		LuaError("Lua property values of type '" << GetDebugName(L, valueIdx) << "' are not supported");
 		return PropertyOperationResult::UnsupportedType;
 	}
 

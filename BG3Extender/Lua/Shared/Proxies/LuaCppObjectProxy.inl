@@ -91,8 +91,8 @@ void* ObjectProxy::GetRaw(lua_State* L, int index, GenericPropertyMap const& pm)
 
 		return meta.Ptr;
 	} else {
-		luaL_error(L, "Argument %d: Expected C++ object of type '%s', got metatype '%d'", index,
-			pm.Name.GetString(), (unsigned)meta.MetatableTag);
+		luaL_error(L, "Argument %d: Expected %s, got %s", index,
+			pm.Name.GetString(), GetDebugName(meta));
 		return nullptr;
 	}
 }
@@ -138,7 +138,7 @@ void* LightObjectProxyMetatable::GetGeneric(lua_State* L, int index, int propert
 	} else {
 		luaL_error(L, "Argument %d: Expected object of type '%s', got '%s'", index,
 			gStructRegistry.Get(propertyMapIndex)->Name.GetString(),
-			lua_typename(L, lua_type(L, index)));
+			GetDebugName(L, index));
 		return nullptr;
 	}
 }
