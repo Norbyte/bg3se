@@ -308,6 +308,17 @@ std::optional<STDString> GetValueType(lua_State* L, AnyRef object)
     return GetDebugName(L, object.Index);
 }
 
+UserReturn GetHashSetValueAt(lua_State* L, AnyRef object, uint32_t index)
+{
+    auto meta = lua_get_lightcppobject(L, object.Index, MetatableTag::Set);
+    auto impl = SetProxyMetatable::GetImpl(meta);
+    if (!impl->GetElementAt(L, meta, index)) {
+        push(L, nullptr);
+    }
+
+    return 1;
+}
+
 void RegisterTypesLib()
 {
     DECLARE_MODULE(Types, Both)
@@ -322,6 +333,7 @@ void RegisterTypesLib()
     MODULE_FUNCTION(Serialize)
     MODULE_FUNCTION(Unserialize)
     MODULE_FUNCTION(Construct)
+    MODULE_FUNCTION(GetHashSetValueAt)
     END_MODULE()
 }
 

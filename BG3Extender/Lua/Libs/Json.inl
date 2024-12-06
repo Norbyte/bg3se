@@ -408,7 +408,7 @@ Json::Value StringifyInternalType(lua_State * L, int index, StringifyContext& ct
         lua_pop(L, 1);
         return val;
     } else {
-        throw std::runtime_error("Attempted to stringify a lightuserdata, userdata, function or thread value");
+        throw std::runtime_error("Attempted to stringify unsupported type: " + std::string(GetDebugName(L, index)));
     }
 }
 

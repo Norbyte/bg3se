@@ -743,6 +743,7 @@
     <None Include="Lua\Client\ClientEntityReplicationEvents.inl" />
     <None Include="Lua\Libs\Level.inl" />
     <None Include="Lua\Libs\Net.inl" />
+    <None Include=".editorconfig" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

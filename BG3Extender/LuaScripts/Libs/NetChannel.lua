@@ -29,7 +29,10 @@ function NetChannel:SendToServer(message)
 end
 
 function NetChannel:RequestToServer(message, handler)
-    Ext.Net.PostMessageToServer(self.Channel, Ext.Json.Stringify(message), self.Module, handler)
+    local replyHandler = function (reply)
+        handler(Ext.Json.Parse(reply))
+    end
+    Ext.Net.PostMessageToServer(self.Channel, Ext.Json.Stringify(message), self.Module, replyHandler)
 end
 
 function NetChannel:SendToClient(message, user)
@@ -43,10 +46,13 @@ end
 
 function NetChannel:RequestToClient(message, user, handler)
     local msg = Ext.Json.Stringify(message)
+    local replyHandler = function (reply)
+        handler(Ext.Json.Parse(reply))
+    end
     if type(user) == "number" then
-        Ext.Net.PostMessageToUser(user, self.Channel, msg, self.Module, handler)
+        Ext.Net.PostMessageToUser(user, self.Channel, msg, self.Module, replyHandler)
     else
-        Ext.Net.PostMessageToClient(user, self.Channel, msg, self.Module, handler)
+        Ext.Net.PostMessageToClient(user, self.Channel, msg, self.Module, replyHandler)
     end
 end
 
