@@ -114,6 +114,16 @@ PlayerPickingHelper* GetPickingHelper(uint16_t playerIndex)
     }
 }
 
+ecl::CursorControl* GetCursorControl()
+{
+    auto cc = GetStaticSymbols().ecl__gCursorControl;
+    if (cc && *cc) {
+        return *cc;
+    } else {
+        return nullptr;
+    }
+}
+
 void RegisterUILib()
 {
     DECLARE_MODULE(UI, Client)
@@ -122,6 +132,7 @@ void RegisterUILib()
     MODULE_FUNCTION(GetStateMachine)
     MODULE_FUNCTION(SetState)
     MODULE_FUNCTION(GetPickingHelper)
+    MODULE_FUNCTION(GetCursorControl)
     END_MODULE()
 }
 

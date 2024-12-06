@@ -144,6 +144,7 @@ namespace ecl
     struct Level;
     struct Status;
     struct StatusMachine;
+    struct CursorControl;
     class ExtensionState;
 
     namespace lua

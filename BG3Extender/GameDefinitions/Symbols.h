@@ -50,6 +50,7 @@ namespace bg3se
         esv::EoCServer** esv__EoCServer{ nullptr };
 
         ecl::EoCClient::HandleErrorProc* ecl__EoCClient__HandleError{ nullptr };
+        ecl::CursorControl** ecl__gCursorControl{ nullptr };
 
         TranslatedStringRepository** ls__gTranslatedStringRepository{ nullptr };
 

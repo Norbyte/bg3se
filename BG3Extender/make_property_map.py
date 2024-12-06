@@ -612,6 +612,7 @@ sources = [
     'GameDefinitions/Animation.h',
     'GameDefinitions/AllSparkShared.h',
     'GameDefinitions/AllSpark.h',
+    'GameDefinitions/Cursor.h',
     'GameDefinitions/Dialog.h',
     'GameDefinitions/RootTemplates.h',
     'GameDefinitions/Components/Boosts.h',

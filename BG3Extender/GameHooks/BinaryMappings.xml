@@ -974,5 +974,18 @@
       <Target Type="Indirect" Offset="@ref1" Symbol="eoc__AiGrid__FindPath" />
       <Target Type="Indirect" Offset="@ref2" Symbol="eoc__AiGrid__FindPathImmediate" />
     </Mapping>
+
+    <!-- Sig from ecl::CharacterTask_Dialog::SetCursor -->
+    <Mapping Name="ecl::CharacterTask_Dialog::SetCursor">
+      @ref1 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:ecl__gCursorControl
+      83 78 3c 00 // cmp     dword ptr [rax+3Ch], 0
+      75 1a // jnz     short loc_141E3CAD7
+      83 78 24 02 // cmp     dword ptr [rax+24h], 2
+      74 07 // jz      short loc_141E3CACA
+      c7 40 24 02 00 00 00 // mov     dword ptr [rax+24h], 2
+      83 78 24 2a // cmp     dword ptr [rax+24h], 2Ah ; '*'
+      74 07 // jz      short loc_141E3CAD7
+      <Target Type="Indirect" Offset="@ref1" Symbol="ecl__gCursorControl" />
+    </Mapping>
   </Mappings>
 </BinaryMappings>
