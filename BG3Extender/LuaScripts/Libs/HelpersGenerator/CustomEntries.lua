@@ -7,8 +7,8 @@ local SubscribableEventType = [[--- @class SubscribableEvent<T>:{ (Subscribe:fun
 --- @class SubscribableEventDev<T>:{ (Throw:fun(self:SubscribableEvent, e:T|LuaEventBase))}
 ]]
 return {
-	Specific = {SubscribableEventType = SubscribableEventType},
-	Misc = {
+    Specific = {SubscribableEventType = SubscribableEventType},
+    Misc = {
 [[--#region Extender Functions / Globals
 
 --- @alias NetListenerCallback fun(channel:string, payload:string, user:UserId?)
@@ -77,7 +77,7 @@ function Ext.RegisterConsoleCommand(cmd, handler) end
 ]],
 },
 
-	Entity = [[
+    Entity = [[
 --- @class EntityHandle
 --- @field CreateComponent fun(self:EntityHandle, type:ExtComponentType):BaseComponent
 --- @field GetComponent fun(self:EntityHandle, type:ExtComponentType):BaseComponent

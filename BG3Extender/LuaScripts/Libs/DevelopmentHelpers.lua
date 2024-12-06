@@ -135,7 +135,7 @@ local function ReserializeEntities()
         for name,component in pairs(entity:GetAllComponents()) do
             DebugValidate(component, entity, counters)
             if name ~= "ServerCharacter" and name ~= "ServerItem" then
-			    local reason = TryToReserializeObject(component)
+                local reason = TryToReserializeObject(component)
                 if reason ~= nil then
                     _PE("Serialization failed: " .. tostring(entity) .. ", component " .. name)
                     _PE(reason)

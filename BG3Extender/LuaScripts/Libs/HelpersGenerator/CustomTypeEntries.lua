@@ -2,7 +2,7 @@
 
 return {
 Ext_Types = {
-	After = [[
+    After = [[
 --- @class GenerateIdeHelpersOptions
 --- @field AddAliasEnums boolean Add the enums in alias format, for string comparison. Defaults to true.
 --- @field UseBaseExtraData boolean Only include the base ExtraData keys/values in Shared, instead of grabbing whatever the current keys are in the mod environment.
@@ -16,7 +16,7 @@ function Ext_Types.GenerateIdeHelpers(outputPath, opts) end
 ]]},
 
 Ext_Json = {
-	After = [[
+    After = [[
 --- @class JsonStringifyOptions
 --- @field Beautify boolean Sorts the output table, and indents with tabs. Defaults to true.
 --- @field StringifyInternalTypes boolean Defaults to false.
@@ -28,7 +28,7 @@ Ext_Json = {
 },
 
 ImguiHandle = {
-	Replace = [[
+    Replace = [[
 --- @alias ImguiHandle ExtuiStyledRenderable
 ]]
 },

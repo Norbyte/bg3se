@@ -43,7 +43,7 @@ Ext.Stats.LoadStatsFile = function (path, debug)
         end
     end
 
-	if object ~= nil then
-		Ext.Stats.Sync(object.Name)
-	end
+    if object ~= nil then
+        Ext.Stats.Sync(object.Name)
+    end
 end

@@ -10,92 +10,92 @@ local NetworkManager = Ext.CoreLib("NetworkManager")
 local EventManager = {}
 
 function EventManager:Instantiate()
-	return {
-		Events = {},
+    return {
+        Events = {},
         NetListeners = {},
         ConsoleCommandListeners = {}
-	}
+    }
 end
 
 
 function EventManager:ThrowEvent(event)
-	self.Events[event.Name]:Throw(event)
+    self.Events[event.Name]:Throw(event)
 end
 
 
 function EventManager:RegisterEngineEvent(event)
-	self.Events[event] = SubscribableEvent:New(event)
+    self.Events[event] = SubscribableEvent:New(event)
 end
 
 
 function EventManager:RegisterEvents()
-	for i,ev in pairs(_I._PublishedSharedEvents) do
-		self:RegisterEngineEvent(ev)
-	end
-	
-	for i,ev in pairs(_I._PublishedEvents) do
-		self:RegisterEngineEvent(ev)
-	end
+    for i,ev in pairs(_I._PublishedSharedEvents) do
+        self:RegisterEngineEvent(ev)
+    end
+    
+    for i,ev in pairs(_I._PublishedEvents) do
+        self:RegisterEngineEvent(ev)
+    end
 
-	-- Support for Ext.RegisterConsoleCommand()
-	self.Events.DoConsoleCommand:Subscribe(function (e)
-		self:DoConsoleCommand(e.Command)
-	end)
+    -- Support for Ext.RegisterConsoleCommand()
+    self.Events.DoConsoleCommand:Subscribe(function (e)
+        self:DoConsoleCommand(e.Command)
+    end)
 
-	-- Support for Ext.RegisterNetListener()
-	self.Events.NetMessage:Subscribe(function (e)
-		self:NetMessageReceived(e.Channel, e.Payload, e.UserID)
-	end)
+    -- Support for Ext.RegisterNetListener()
+    self.Events.NetMessage:Subscribe(function (e)
+        self:NetMessageReceived(e.Channel, e.Payload, e.UserID)
+    end)
 
-	NetworkManager:RegisterEvents()
+    NetworkManager:RegisterEvents()
 end
 
 
 function EventManager:RegisterNetListener(channel, fn)
-	if self.NetListeners[channel] == nil then
-		self.NetListeners[channel] = {}
-	end
+    if self.NetListeners[channel] == nil then
+        self.NetListeners[channel] = {}
+    end
 
-	table.insert(self.NetListeners[channel], fn)
+    table.insert(self.NetListeners[channel], fn)
 end
 
 
 function EventManager:NetMessageReceived(channel, payload, userId)
-	if self.NetListeners[channel] ~= nil then
-		for i,callback in pairs(self.NetListeners[channel]) do
-			local ok, err = xpcall(callback, debug.traceback, channel, payload, userId)
-			if not ok then
-				_PE("Error during NetMessage dispatch: ", err)
-			end
-		end
-	end
+    if self.NetListeners[channel] ~= nil then
+        for i,callback in pairs(self.NetListeners[channel]) do
+            local ok, err = xpcall(callback, debug.traceback, channel, payload, userId)
+            if not ok then
+                _PE("Error during NetMessage dispatch: ", err)
+            end
+        end
+    end
 end
 
 
 function EventManager:DoConsoleCommand(cmd)
-	local params = {}
-	for param in string.gmatch(cmd, "%S+") do
-		table.insert(params, param)
-	end
+    local params = {}
+    for param in string.gmatch(cmd, "%S+") do
+        table.insert(params, param)
+    end
 
-	local listeners = self.ConsoleCommandListeners[params[1]]
-	if listeners ~= nil then
-		for i,callback in pairs(listeners) do
-			local status, result = xpcall(callback, debug.traceback, table.unpack(params))
-			if not status then
-				_PE("Error during console command callback: ", result)
-			end
-		end
-	end
+    local listeners = self.ConsoleCommandListeners[params[1]]
+    if listeners ~= nil then
+        for i,callback in pairs(listeners) do
+            local status, result = xpcall(callback, debug.traceback, table.unpack(params))
+            if not status then
+                _PE("Error during console command callback: ", result)
+            end
+        end
+    end
 end
 
 
 function EventManager:RegisterConsoleCommand(cmd, fn)
-	if self.ConsoleCommandListeners[cmd] == nil then
-		self.ConsoleCommandListeners[cmd] = {}
-	end
+    if self.ConsoleCommandListeners[cmd] == nil then
+        self.ConsoleCommandListeners[cmd] = {}
+    end
 
-	table.insert(self.ConsoleCommandListeners[cmd], fn)
+    table.insert(self.ConsoleCommandListeners[cmd], fn)
 end
 
 

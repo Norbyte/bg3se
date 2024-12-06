@@ -10,7 +10,7 @@ local _I = Ext._Internal
 _I.FileLoader = Ext.Utils.Include(nil, "builtin://Libs/FileLoader.lua")
 
 Ext.Require = function(mod, path)
-	return _I.FileLoader:Require(mod, path)
+    return _I.FileLoader:Require(mod, path)
 end
 
 Ext.CoreLib = function (name)

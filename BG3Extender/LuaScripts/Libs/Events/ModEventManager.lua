@@ -4,10 +4,10 @@ local _I = Ext._Internal
 local ModEventManager = {}
 
 function ModEventManager:Instantiate()
-	return {
+    return {
         Mods = {},
         Finalized = false
-	}
+    }
 end
 
 

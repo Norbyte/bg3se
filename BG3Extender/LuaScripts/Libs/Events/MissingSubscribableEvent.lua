@@ -1,9 +1,9 @@
 local MissingSubscribableEvent = {}
 
 function MissingSubscribableEvent:Instantiate(name)
-	return {
-		Name = name
-	}
+    return {
+        Name = name
+    }
 end
 
 function MissingSubscribableEvent:Subscribe(handler, opts)
