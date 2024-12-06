@@ -152,70 +152,49 @@ void StyledRenderable::Render()
     if (!Visible) return;
 
     ImFont* font{ nullptr };
-    if (Font) {
-        auto info = gExtender->IMGUI().GetFont(Font);
-        if (info) font = info->Font;
-    }
-
-    if (font) ImGui::PushFont(font);
-
-    for (auto const& var : StyleVars) {
-        auto varInfo = ImGui::GetStyleVarInfo((ImGuiStyleVar)var.Key);
-        if (varInfo->Count == 2) {
-            ImGui::PushStyleVar((ImGuiStyleVar)var.Key, ToImVec(var.Value));
-        } else {
-            ImGui::PushStyleVar((ImGuiStyleVar)var.Key, var.Value.x);
-        }
-    }
-
-    for (auto const& var : StyleColors) {
-        ImGui::PushStyleColor((ImGuiCol)var.Key, ImVec4(var.Value.r, var.Value.g, var.Value.b, var.Value.a));
-    }
-
-    if (!IDContext.empty()) {
-        ImGui::PushID(IDContext.data(), IDContext.data() + IDContext.size());
-    } else if (Label.empty()) {
-        ImGui::PushID((int32_t)Handle | (int32_t)(Handle >> 32));
-    }
-
-    if (SameLine) ImGui::SameLine();
-
-    if (PositionOffset) {
-        auto pos = ImGui::GetCursorPos();
-        ImGui::SetCursorPos(ImVec2(pos.x + PositionOffset->x, pos.y + PositionOffset->y));
-    } else if (AbsolutePosition) {
-        ImGui::SetCursorPos(ToImVec(*AbsolutePosition));
-    }
-
-    if (ItemFlags != (GuiItemFlags)0) ImGui::PushItemFlag((ImGuiItemFlags)ItemFlags, true);
-    if (TextWrapPos) ImGui::PushTextWrapPos(*TextWrapPos);
-    if (ItemWidth) ImGui::SetNextItemWidth(*ItemWidth);
-
-    if (RequestActivate) {
-        ImGui::ActivateItemByID(ImGui::GetCurrentWindow()->GetID(Label.c_str()));
-        RequestActivate = false;
-    }
+    PushStyleChanges();
+    PushWindowStyleChanges(font);
 
     StyledRender();
+    UpdateStatusFlags();
+    FireEvents();
 
-    auto status = (GuiItemStatusFlags)ImGui::GetItemStatusFlags();
-    if (ImGui::IsItemFocused()) status |= GuiItemStatusFlags::Focused;
-    if (ImGui::IsItemActive()) status |= GuiItemStatusFlags::Active;
-    if (StatusFlags != status) StatusFlags = status;
+    PopWindowStyleChanges(font);
+    PopStyleChanges();
 
-    if (ItemFlags != (GuiItemFlags)0) ImGui::PopItemFlag();
-    if (TextWrapPos) ImGui::PopTextWrapPos();
+    DrawTooltip();
+    HandleDragDrop();
+}
 
-    if (!StyleColors.empty()) {
-        ImGui::PopStyleColor(StyleColors.size());
+
+void StyledRenderable::FireEvents()
+{
+    if (OnActivate && ImGui::IsItemActivated()) {
+        Manager->GetEventQueue().Call(OnActivate, lua::ImguiHandle(Handle));
     }
 
-    if (!StyleVars.empty()) {
-        ImGui::PopStyleVar(StyleVars.size());
+    if (OnDeactivate && ImGui::IsItemDeactivated()) {
+        Manager->GetEventQueue().Call(OnDeactivate, lua::ImguiHandle(Handle));
     }
 
-    if (font) ImGui::PopFont();
+    // IsItemHovered() is expensive so we need to make sure we have a handler before doing a hover check
+    if (OnHoverEnter || OnHoverLeave) {
+        auto hovered = ImGui::IsItemHovered();
+        if (WasHovered != hovered) {
+            if (hovered && OnHoverEnter) {
+                Manager->GetEventQueue().Call(OnHoverEnter, lua::ImguiHandle(Handle));
+            }
+            if (!hovered && OnHoverLeave) {
+                Manager->GetEventQueue().Call(OnHoverLeave, lua::ImguiHandle(Handle));
+            }
+        }
+        WasHovered = hovered;
+    }
+}
 
+
+void StyledRenderable::HandleDragDrop()
+{
     if (CanDrag && DragDropType) {
         if (ImGui::BeginDragDropSource((ImGuiDragDropFlags)DragFlags)) {
             if (!IsDragging) {
@@ -253,37 +232,102 @@ void StyledRenderable::Render()
         }
         ImGui::EndDragDropTarget();
     }
+}
 
+
+void StyledRenderable::DrawTooltip()
+{
     if (tooltip_) {
         auto tooltip = Manager->GetRenderable(tooltip_.Handle);
         if (tooltip) tooltip->Render();
     }
+}
+
+
+void StyledRenderable::UpdateStatusFlags()
+{
+    auto status = (GuiItemStatusFlags)ImGui::GetItemStatusFlags();
+    if (ImGui::IsItemFocused()) status |= GuiItemStatusFlags::Focused;
+    if (ImGui::IsItemActive()) status |= GuiItemStatusFlags::Active;
+    if (StatusFlags != status) StatusFlags = status;
+}
+
+
+void StyledRenderable::PushStyleChanges()
+{
+    for (auto const& var : StyleVars) {
+        auto varInfo = ImGui::GetStyleVarInfo((ImGuiStyleVar)var.Key);
+        if (varInfo->Count == 2) {
+            ImGui::PushStyleVar((ImGuiStyleVar)var.Key, ToImVec(var.Value));
+        } else {
+            ImGui::PushStyleVar((ImGuiStyleVar)var.Key, var.Value.x);
+        }
+    }
+
+    for (auto const& var : StyleColors) {
+        ImGui::PushStyleColor((ImGuiCol)var.Key, ImVec4(var.Value.r, var.Value.g, var.Value.b, var.Value.a));
+    }
+
+    if (ItemFlags != (GuiItemFlags)0) ImGui::PushItemFlag((ImGuiItemFlags)ItemFlags, true);
+    if (ItemWidth) ImGui::SetNextItemWidth(*ItemWidth);
+
+    if (RequestActivate) {
+        ImGui::ActivateItemByID(ImGui::GetCurrentWindow()->GetID(Label.c_str()));
+        RequestActivate = false;
+    }
+}
+
+
+void StyledRenderable::PopStyleChanges()
+{
+    if (ItemFlags != (GuiItemFlags)0) ImGui::PopItemFlag();
+
+    if (!StyleColors.empty()) {
+        ImGui::PopStyleColor(StyleColors.size());
+    }
+
+    if (!StyleVars.empty()) {
+        ImGui::PopStyleVar(StyleVars.size());
+    }
+}
+
+
+void StyledRenderable::PushWindowStyleChanges(ImFont*& font)
+{
+    if (Font) {
+        auto info = gExtender->IMGUI().GetFont(Font);
+        if (info) font = info->Font;
+    }
+
+    if (font) ImGui::PushFont(font);
+
+    if (!IDContext.empty()) {
+        ImGui::PushID(IDContext.data(), IDContext.data() + IDContext.size());
+    } else if (Label.empty()) {
+        ImGui::PushID((int32_t)Handle | (int32_t)(Handle >> 32));
+    }
+
+    if (PositionOffset) {
+        auto pos = ImGui::GetCursorPos();
+        ImGui::SetCursorPos(ImVec2(pos.x + PositionOffset->x, pos.y + PositionOffset->y));
+    } else if (AbsolutePosition) {
+        ImGui::SetCursorPos(ToImVec(*AbsolutePosition));
+    }
+
+    if (SameLine) ImGui::SameLine();
+    if (TextWrapPos) ImGui::PushTextWrapPos(*TextWrapPos);
+}
+
+
+void StyledRenderable::PopWindowStyleChanges(ImFont* font)
+{
+    if (TextWrapPos) ImGui::PopTextWrapPos();
 
     if (!IDContext.empty() || Label.empty()) {
         ImGui::PopID();
     }
 
-    if (OnActivate && ImGui::IsItemActivated()) {
-        Manager->GetEventQueue().Call(OnActivate, lua::ImguiHandle(Handle));
-    }
-
-    if (OnDeactivate && ImGui::IsItemDeactivated()) {
-        Manager->GetEventQueue().Call(OnDeactivate, lua::ImguiHandle(Handle));
-    }
-
-    // IsItemHovered() is expensive so we need to make sure we have a handler before doing a hover check
-    if (OnHoverEnter || OnHoverLeave) {
-        auto hovered = ImGui::IsItemHovered();
-        if (WasHovered != hovered) {
-            if (hovered && OnHoverEnter) {
-                Manager->GetEventQueue().Call(OnHoverEnter, lua::ImguiHandle(Handle));
-            }
-            if (!hovered && OnHoverLeave) {
-                Manager->GetEventQueue().Call(OnHoverLeave, lua::ImguiHandle(Handle));
-            }
-        }
-        WasHovered = hovered;
-    }
+    if (font) ImGui::PopFont();
 }
 
 

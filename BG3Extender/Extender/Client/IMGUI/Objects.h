@@ -172,6 +172,16 @@ public:
     lua::LuaDelegate<void(lua::ImguiHandle)> OnDragEnd;
     lua::LuaDelegate<void(lua::ImguiHandle, lua::ImguiHandle)> OnDragDrop;
 
+protected:
+    void HandleDragDrop();
+    void FireEvents();
+    void DrawTooltip();
+    void UpdateStatusFlags();
+    void PushStyleChanges();
+    void PopStyleChanges();
+    void PushWindowStyleChanges(ImFont*& font);
+    void PopWindowStyleChanges(ImFont* font);
+
 private:
     lua::ImguiHandle tooltip_;
 };
