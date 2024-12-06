@@ -5,83 +5,83 @@ local _I = Ext._Internal
 Mods = {}
 
 _I._PublishedSharedEvents = {
-	"ModuleLoadStarted",
-	"StatsLoaded",
-	"ModuleResume",
-	"SessionLoading",
-	"SessionLoaded",
-	"GameStateChanged",
-	"ResetCompleted",
-	"Shutdown",
-	"DoConsoleCommand",
-	"Tick",
-	"StatsStructureLoaded",
-	"FindPath",
-	"NetMessage",
-	"NetModMessage"
+    "ModuleLoadStarted",
+    "StatsLoaded",
+    "ModuleResume",
+    "SessionLoading",
+    "SessionLoaded",
+    "GameStateChanged",
+    "ResetCompleted",
+    "Shutdown",
+    "DoConsoleCommand",
+    "Tick",
+    "StatsStructureLoaded",
+    "FindPath",
+    "NetMessage",
+    "NetModMessage"
 }
 
 _I._DoStartup = function ()
-	_I.EventManager:RegisterEvents()
+    _I.EventManager:RegisterEvents()
 end
 
 _I._LoadBootstrap = function (path, modTable)
-	_I.ModLoader:LoadBootstrap(path, modTable)
+    _I.ModLoader:LoadBootstrap(path, modTable)
 end
 
 -- Helper for dumping variables in console
 Ext.DumpExport = function (val)
-	local opts = {
-		Beautify = true,
-		StringifyInternalTypes = true,
-		IterateUserdata = true,
-		AvoidRecursion = true
-	}
-	return Ext.Json.Stringify(val, opts)
+    local opts = {
+        Beautify = true,
+        StringifyInternalTypes = true,
+        IterateUserdata = true,
+        AvoidRecursion = true
+    }
+    return Ext.Json.Stringify(val, opts)
 end
 
 Ext.Dump = function (val)
-	Ext.Log.Print(Ext.DumpExport(val))
+    Ext.Log.Print(Ext.DumpExport(val))
 end
 
 Ext.DumpShallow = function (val)
-	local opts = {
-		Beautify = true,
-		StringifyInternalTypes = true,
-		IterateUserdata = true,
-		AvoidRecursion = true,
-		LimitDepth = 1,
-		LimitArrayElements = 3
-	}
-	Ext.Log.Print(Ext.Json.Stringify(val, opts))
+    local opts = {
+        Beautify = true,
+        StringifyInternalTypes = true,
+        IterateUserdata = true,
+        AvoidRecursion = true,
+        LimitDepth = 1,
+        LimitArrayElements = 3
+    }
+    Ext.Log.Print(Ext.Json.Stringify(val, opts))
 end
 
 Ext.Utils.LoadTestLibrary = function ()
-	local env = {}
-	env._G = env
-	setmetatable(env, {__index = _G})
-	Ext.Test = env
+    local env = {}
+    env._G = env
+    setmetatable(env, {__index = _G})
+    Ext.Test = env
 
-	if Ext.IsServer() then
-		Ext.Utils.Include(nil, "builtin://Tests/ServerTestRunner.lua", env)
-	else
-		Ext.Utils.Include(nil, "builtin://Tests/ClientTestRunner.lua", env)
-	end
+    if Ext.IsServer() then
+        Ext.Utils.Include(nil, "builtin://Tests/ServerTestRunner.lua", env)
+    else
+        Ext.Utils.Include(nil, "builtin://Tests/ClientTestRunner.lua", env)
+    end
 end
 
 Ext.OnNextTick = function (fun)
-	Ext.Events.Tick:Subscribe(fun, {Once = true})
+    Ext.Events.Tick:Subscribe(fun, {Once = true})
 end
 
 -- v20 compatibility wrappers for Ext.Utils.Print{x}
 Ext.Utils.Print = function (...)
-	Ext.Log.Print(...)
+    Ext.Log.Print(...)
 end
 Ext.Utils.PrintWarning = function (...)
-	Ext.Log.PrintWarning(...)
+    Ext.Log.PrintWarning(...)
 end
 Ext.Utils.PrintError = function (...)
-	Ext.Log.PrintError(...)
+    Ext.Log.PrintError(...)
 end
 
 -- Global helper aliases for Ext.Dump, Ext.Log.Print

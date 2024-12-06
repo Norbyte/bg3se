@@ -8,17 +8,17 @@ local NetworkManager = {
 }
 
 function NetworkManager:CreateNetModule(ext)
-	local net = {}
-	setmetatable(net, {
-		__index = ext.Net,
-	})
-	net.CreateChannel = function (module, channel, messageHandler, requestHandler)
-		local ch = self:AddChannel(module, channel)
+    local net = {}
+    setmetatable(net, {
+        __index = ext.Net,
+    })
+    net.CreateChannel = function (module, channel, messageHandler, requestHandler)
+        local ch = self:AddChannel(module, channel)
         ch.MessageHandler = messageHandler
         ch.RequestHandler = requestHandler
         return ch
-	end
-	return net
+    end
+    return net
 end
 
 --- @param module string
@@ -48,9 +48,9 @@ end
 
 
 function NetworkManager:RegisterEvents()
-	Ext.Events.NetModMessage:Subscribe(function (e)
-		self:MessageReceived(e)
-	end)
+    Ext.Events.NetModMessage:Subscribe(function (e)
+        self:MessageReceived(e)
+    end)
 end
 
 

@@ -11,10 +11,10 @@ BEGIN_NS(esv::tags)
 
 struct TagsChangedEventOneFrameComponent : public BaseComponent
 {
-	DEFINE_ONEFRAME_COMPONENT(TagsChangedEvent, "esv::tags::TagsChangedEventOneFrameComponent")
+    DEFINE_ONEFRAME_COMPONENT(TagsChangedEvent, "esv::tags::TagsChangedEventOneFrameComponent")
 
-	Array<Guid> AddedTags;
-	Array<Guid> RemovedTags;
+    Array<Guid> AddedTags;
+    Array<Guid> RemovedTags;
 };
 
 END_NS()
@@ -23,77 +23,77 @@ BEGIN_NS(esv::ecsstats)
 
 struct AbilityCheckEventOneFrameComponent : public BaseComponent
 {
-	DEFINE_ONEFRAME_COMPONENT(AbilityCheckEvent, "esv::stats::AbilityCheckEventOneFrameComponent")
+    DEFINE_ONEFRAME_COMPONENT(AbilityCheckEvent, "esv::stats::AbilityCheckEventOneFrameComponent")
 
-	EntityHandle Source;
-	EntityHandle Target;
-	AbilityId Ability;
-	Guid field_18;
-	bool Success;
-	uint8_t field_29;
+    EntityHandle Source;
+    EntityHandle Target;
+    AbilityId Ability;
+    Guid field_18;
+    bool Success;
+    uint8_t field_29;
 };
 
 struct EquipmentSlotChangedEventOneFrameComponent : public BaseComponent
 {
-	DEFINE_ONEFRAME_COMPONENT(EquipmentSlotChangedEvent, "esv::stats::EquipmentSlotChangedEventOneFrameComponent")
+    DEFINE_ONEFRAME_COMPONENT(EquipmentSlotChangedEvent, "esv::stats::EquipmentSlotChangedEventOneFrameComponent")
 
-	HashSet<ItemSlot> Slots;
+    HashSet<ItemSlot> Slots;
 };
 
 struct LevelChangedOneFrameComponent : public BaseComponent
 {
-	DEFINE_ONEFRAME_COMPONENT(LevelChanged, "esv::stats::LevelChangedOneFrameComponent")
+    DEFINE_ONEFRAME_COMPONENT(LevelChanged, "esv::stats::LevelChangedOneFrameComponent")
 
-	int PreviousLevel;
-	int NewLevel;
+    int PreviousLevel;
+    int NewLevel;
 };
 
 struct SavingThrowRolledEventOneFrameComponent : public BaseComponent
 {
-	DEFINE_ONEFRAME_COMPONENT(SavingThrowRolledEvent, "esv::stats::SavingThrowRolledEventOneFrameComponent")
+    DEFINE_ONEFRAME_COMPONENT(SavingThrowRolledEvent, "esv::stats::SavingThrowRolledEventOneFrameComponent")
 
-	EntityHandle Source;
-	EntityHandle Target;
-	bool Advantage;
-	bool Disadvantage;
-	AbilityId Ability;
-	stats::RollType RollType;
-	int RollBonus;
-	bool Success;
-	int Total;
-	FixedString field_20;
-	FixedString field_24;
-	uint8_t field_28;
-	FixedString field_2C;
-	ConditionRoll ConditionRoll;
-	Guid SpellCastUuid;
-	FixedString field_178;
-	uint8_t field_17C;
+    EntityHandle Source;
+    EntityHandle Target;
+    bool Advantage;
+    bool Disadvantage;
+    AbilityId Ability;
+    stats::RollType RollType;
+    int RollBonus;
+    bool Success;
+    int Total;
+    FixedString field_20;
+    FixedString field_24;
+    uint8_t field_28;
+    FixedString field_2C;
+    ConditionRoll ConditionRoll;
+    Guid SpellCastUuid;
+    FixedString field_178;
+    uint8_t field_17C;
 };
 
 struct SkillCheckEventOneFrameComponent : public BaseComponent
 {
-	DEFINE_ONEFRAME_COMPONENT(SkillCheckEvent, "esv::stats::SkillCheckEventOneFrameComponent")
+    DEFINE_ONEFRAME_COMPONENT(SkillCheckEvent, "esv::stats::SkillCheckEventOneFrameComponent")
 
-	EntityHandle Target;
-	EntityHandle Source;
-	SkillId Skill;
-	AbilityId Ability;
-	FixedString field_14;
-	FixedString SpellId;
-	ConditionRoll ConditionRoll;
-	uint8_t field_158;
-	bool Success;
-	STDString StatsExpression;
-	Guid SpellCastUuid;
-	uint8_t Critical;
+    EntityHandle Target;
+    EntityHandle Source;
+    SkillId Skill;
+    AbilityId Ability;
+    FixedString field_14;
+    FixedString SpellId;
+    ConditionRoll ConditionRoll;
+    uint8_t field_158;
+    bool Success;
+    STDString StatsExpression;
+    Guid SpellCastUuid;
+    uint8_t Critical;
 };
 
 struct WeaponPropertiesChangedEventOneFrameComponent : public BaseComponent
 {
-	DEFINE_ONEFRAME_COMPONENT(WeaponPropertiesChangedEvent, "esv::stats::WeaponPropertiesChangedEventOneFrameComponent")
+    DEFINE_ONEFRAME_COMPONENT(WeaponPropertiesChangedEvent, "esv::stats::WeaponPropertiesChangedEventOneFrameComponent")
 
-	uint32_t Properties;
+    uint32_t Properties;
 };
 
 DEFINE_ONEFRAME_TAG_COMPONENT(esv::stats, AttributeFlagsChangedEventOneFrameComponent, AttributeFlagsChangedEvent)
@@ -106,57 +106,57 @@ BEGIN_NS(esv::summon)
 
 struct SpawnCreatedEventOneFrameComponent : public BaseComponent
 {
-	DEFINE_ONEFRAME_COMPONENT(SummonCreatedEvent, "esv::summon::SpawnCreatedEventOneFrameComponent")
+    DEFINE_ONEFRAME_COMPONENT(SummonCreatedEvent, "esv::summon::SpawnCreatedEventOneFrameComponent")
 
-	EntityHandle Entity;
+    EntityHandle Entity;
 };
 
 struct AddConcentrationRequestOneFrameComponent : public BaseComponent
 {
-	DEFINE_ONEFRAME_COMPONENT(SummonAddConcentrationRequest, "esv::summon::AddConcentrationRequestOneFrameComponent")
+    DEFINE_ONEFRAME_COMPONENT(SummonAddConcentrationRequest, "esv::summon::AddConcentrationRequestOneFrameComponent")
 
-	SpellId Spell;
-	EntityHandle Caster;
-	uint8_t field_30;
+    SpellId Spell;
+    EntityHandle Caster;
+    uint8_t field_30;
 };
 
 struct AddToExistingConcentrationRequestOneFrameComponent : public BaseComponent
 {
-	DEFINE_ONEFRAME_COMPONENT(SummonAddToExistingConcentrationRequest, "esv::summon::AddToExistingConcentrationRequestOneFrameComponent")
+    DEFINE_ONEFRAME_COMPONENT(SummonAddToExistingConcentrationRequest, "esv::summon::AddToExistingConcentrationRequestOneFrameComponent")
 
-	EntityHandle field_0;
-	uint8_t field_8;
+    EntityHandle field_0;
+    uint8_t field_8;
 };
 
 struct AttachToProjectileRequestOneFrameComponent : public BaseComponent
 {
-	DEFINE_ONEFRAME_COMPONENT(SummonAttachToProjectileRequest, "esv::summon::AttachToProjectileRequestOneFrameComponent")
+    DEFINE_ONEFRAME_COMPONENT(SummonAttachToProjectileRequest, "esv::summon::AttachToProjectileRequestOneFrameComponent")
 
-	EntityHandle field_0;
+    EntityHandle field_0;
 };
 
 struct OwnerSetEventOneFrameComponent : public BaseComponent
 {
-	DEFINE_ONEFRAME_COMPONENT(SummonOwnerSetEvent, "esv::summon::OwnerSetEventOneFrameComponent")
+    DEFINE_ONEFRAME_COMPONENT(SummonOwnerSetEvent, "esv::summon::OwnerSetEventOneFrameComponent")
 
-	EntityHandle Owner;
+    EntityHandle Owner;
 };
 
 struct PlaceInInventoryRequestOneFrameComponent : public BaseComponent
 {
-	DEFINE_ONEFRAME_COMPONENT(SummonPlaceInInventoryRequest, "esv::summon::PlaceInInventoryRequestOneFrameComponent")
+    DEFINE_ONEFRAME_COMPONENT(SummonPlaceInInventoryRequest, "esv::summon::PlaceInInventoryRequestOneFrameComponent")
 
-	EntityHandle Owner;
-	bool field_8;
-	bool field_9;
-	bool CannotRemove;
+    EntityHandle Owner;
+    bool field_8;
+    bool field_9;
+    bool CannotRemove;
 };
 
 struct SetLifetimeRequestOneFrameComponent : public BaseComponent
 {
-	DEFINE_ONEFRAME_COMPONENT(SummonSetLifetimeRequest, "esv::summon::SetLifetimeRequestOneFrameComponent")
+    DEFINE_ONEFRAME_COMPONENT(SummonSetLifetimeRequest, "esv::summon::SetLifetimeRequestOneFrameComponent")
 
-	std::optional<float> Lifetime;
+    std::optional<float> Lifetime;
 };
 
 DEFINE_ONEFRAME_TAG_COMPONENT(esv::summon, DespawnRequestOneFrameComponent, SummonDespawnRequest)

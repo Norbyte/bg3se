@@ -8,7 +8,7 @@ std::optional<VersionNumber> GetFileVersion(std::wstring const& path)
 {
     DWORD versionSize = GetFileVersionInfoSizeW(path.c_str(), 0);
     if (!versionSize) {
-		std::cout << GetLastError() << std::endl;
+        std::cout << GetLastError() << std::endl;
         return {};
     }
 
@@ -34,31 +34,31 @@ std::optional<VersionNumber> GetFileVersion(std::wstring const& path)
 
 std::optional<std::string> GetFileDigest(std::wstring const& path)
 {
-	std::vector<uint8_t> contents;
-	if (!LoadFile(path, contents)) {
-		return {};
-	}
+    std::vector<uint8_t> contents;
+    if (!LoadFile(path, contents)) {
+        return {};
+    }
 
-	uint8_t digest[TC_SHA256_DIGEST_SIZE];
-	CryptoUtils::SHA256(contents.data(), contents.size(), digest);
+    uint8_t digest[TC_SHA256_DIGEST_SIZE];
+    CryptoUtils::SHA256(contents.data(), contents.size(), digest);
 
-	static char const* hex = "0123456789abcdef";
+    static char const* hex = "0123456789abcdef";
 
-	std::string digestStr;
-	for (auto i = 0; i < std::size(digest); i++) {
-		digestStr += hex[digest[i] >> 4];
-		digestStr += hex[digest[i] & 0x0f];
-	}
+    std::string digestStr;
+    for (auto i = 0; i < std::size(digest); i++) {
+        digestStr += hex[digest[i] >> 4];
+        digestStr += hex[digest[i] & 0x0f];
+    }
 
-	return digestStr;
+    return digestStr;
 }
 
 bool Manifest::ResourceVersion::UpdatePackageMetadata(std::wstring const& path)
 {
-	auto digest = GetFileDigest(path);
-	if (!digest) {
-		return false;
-	}
+    auto digest = GetFileDigest(path);
+    if (!digest) {
+        return false;
+    }
 
     Digest = *digest;
 
@@ -74,18 +74,18 @@ bool Manifest::ResourceVersion::UpdatePackageMetadata(std::wstring const& path)
 
     CloseHandle(hFile);
 
-	PackageSignature sig;
-	if (!CryptoUtils::GetFileSignature(path, sig)) {
-		return false;
-	}
+    PackageSignature sig;
+    if (!CryptoUtils::GetFileSignature(path, sig)) {
+        return false;
+    }
 
-	Signature = "";
-	for (auto p = 0; p < sizeof(PackageSignatureBase); p++) {
-		auto b = reinterpret_cast<uint8_t *>(&sig)[p];
-		char hex[4];
-		sprintf_s(hex, "%02x", (unsigned)b);
-		Signature += hex;
-	}
+    Signature = "";
+    for (auto p = 0; p < sizeof(PackageSignatureBase); p++) {
+        auto b = reinterpret_cast<uint8_t *>(&sig)[p];
+        char hex[4];
+        sprintf_s(hex, "%02x", (unsigned)b);
+        Signature += hex;
+    }
 
     BuildDate = (uint64_t)updateTime.dwLowDateTime | ((uint64_t)updateTime.dwHighDateTime << 32);
 
@@ -94,269 +94,269 @@ bool Manifest::ResourceVersion::UpdatePackageMetadata(std::wstring const& path)
 
 bool Manifest::ResourceVersion::UpdateDLLMetadata(std::wstring const& path)
 {
-	auto fileVer = GetFileVersion(path);
-	if (!fileVer) {
-		return false;
-	}
+    auto fileVer = GetFileVersion(path);
+    if (!fileVer) {
+        return false;
+    }
 
-	Version = *fileVer;
-	return true;
+    Version = *fileVer;
+    return true;
 }
 
 
 std::optional<Manifest::ResourceVersion> Manifest::Resource::FindResourceVersionWithOverrides(VersionNumber const& gameVersion,
-	UpdaterConfig const& config) const
+    UpdaterConfig const& config) const
 {
-	std::optional<Manifest::ResourceVersion> version;
-	if (!config.TargetResourceDigest.empty()) {
-		auto found = ResourceVersions.find(config.TargetResourceDigest);
-		if (found != ResourceVersions.end()) {
-			return found->second;
-		} else {
-			return {};
-		}
-	}
+    std::optional<Manifest::ResourceVersion> version;
+    if (!config.TargetResourceDigest.empty()) {
+        auto found = ResourceVersions.find(config.TargetResourceDigest);
+        if (found != ResourceVersions.end()) {
+            return found->second;
+        } else {
+            return {};
+        }
+    }
 
-	if (!config.TargetVersion.empty()) {
-		auto resourceVersion = VersionNumber::FromString(config.TargetVersion.c_str());
-		return FindResourceVersion(gameVersion, resourceVersion);
-	}
+    if (!config.TargetVersion.empty()) {
+        auto resourceVersion = VersionNumber::FromString(config.TargetVersion.c_str());
+        return FindResourceVersion(gameVersion, resourceVersion);
+    }
 
-	return FindResourceVersion(gameVersion, {});
+    return FindResourceVersion(gameVersion, {});
 }
 
 std::optional<Manifest::ResourceVersion> Manifest::Resource::FindResourceVersion(VersionNumber const& gameVersion,
-	std::optional<VersionNumber> resourceVersion) const
+    std::optional<VersionNumber> resourceVersion) const
 {
-	std::vector<ResourceVersion> availableVersions;
-	for (auto const& ver : ResourceVersions) {
-		if (!ver.second.Revoked
-			&& (!resourceVersion || ver.second.Version == *resourceVersion)
-			&& !(ver.second.MinGameVersion && *ver.second.MinGameVersion > gameVersion)
-			&& !(ver.second.MaxGameVersion && *ver.second.MaxGameVersion < gameVersion)) {
-			availableVersions.push_back(ver.second);
-		}
-	}
+    std::vector<ResourceVersion> availableVersions;
+    for (auto const& ver : ResourceVersions) {
+        if (!ver.second.Revoked
+            && (!resourceVersion || ver.second.Version == *resourceVersion)
+            && !(ver.second.MinGameVersion && *ver.second.MinGameVersion > gameVersion)
+            && !(ver.second.MaxGameVersion && *ver.second.MaxGameVersion < gameVersion)) {
+            availableVersions.push_back(ver.second);
+        }
+    }
 
-	std::sort(availableVersions.begin(), availableVersions.end(), [](ResourceVersion const& a, ResourceVersion const& b) {
-		if (a.MinGameVersion && b.MinGameVersion && a.MinGameVersion != b.MinGameVersion) {
-			return a.MinGameVersion < b.MinGameVersion;
-		}
+    std::sort(availableVersions.begin(), availableVersions.end(), [](ResourceVersion const& a, ResourceVersion const& b) {
+        if (a.MinGameVersion && b.MinGameVersion && a.MinGameVersion != b.MinGameVersion) {
+            return a.MinGameVersion < b.MinGameVersion;
+        }
 
-		return a.BuildDate < b.BuildDate;
-	});
+        return a.BuildDate < b.BuildDate;
+    });
 
-	if (availableVersions.empty()) {
-		return {};
-	} else {
-		return *availableVersions.rbegin();
-	}
+    if (availableVersions.empty()) {
+        return {};
+    } else {
+        return *availableVersions.rbegin();
+    }
 }
 
 ManifestParseResult ManifestSerializer::Parse(std::string const& json, Manifest& manifest, std::string& parseError)
 {
-	Json::CharReaderBuilder factory;
-	Json::Value root;
-	std::string errs;
-	auto reader = factory.newCharReader();
-	if (!reader->parse(json.data(), json.data() + json.size(), &root, &errs)) {
-		parseError = errs;
-		return ManifestParseResult::Failed;
-	}
+    Json::CharReaderBuilder factory;
+    Json::Value root;
+    std::string errs;
+    auto reader = factory.newCharReader();
+    if (!reader->parse(json.data(), json.data() + json.size(), &root, &errs)) {
+        parseError = errs;
+        return ManifestParseResult::Failed;
+    }
 
-	manifest.Resources.clear();
+    manifest.Resources.clear();
 
-	auto& version = root["ManifestVersion"];
-	if (!version.isNumeric()) {
-		parseError = "Manifest has no 'ManifestVersion' property";
-		return ManifestParseResult::Failed;
-	}
+    auto& version = root["ManifestVersion"];
+    if (!version.isNumeric()) {
+        parseError = "Manifest has no 'ManifestVersion' property";
+        return ManifestParseResult::Failed;
+    }
 
-	if (version.asInt() != Manifest::CurrentVersion) {
-		parseError = "Expected manifest version 1; got ";
-		parseError += std::to_string(version.asInt());
-		if (version.asInt() > Manifest::CurrentVersion) {
-			return ManifestParseResult::UpdateRequired;
-		} else {
-			return ManifestParseResult::Failed;
-		}
-	}
+    if (version.asInt() != Manifest::CurrentVersion) {
+        parseError = "Expected manifest version 1; got ";
+        parseError += std::to_string(version.asInt());
+        if (version.asInt() > Manifest::CurrentVersion) {
+            return ManifestParseResult::UpdateRequired;
+        } else {
+            return ManifestParseResult::Failed;
+        }
+    }
 
-	manifest.ManifestVersion = version.asInt();
+    manifest.ManifestVersion = version.asInt();
 
-	auto& minorVersion = root["ManifestMinorVersion"];
-	if (!minorVersion.isNumeric()) {
-		manifest.ManifestMinorVersion = 0;
-	} else {
-		manifest.ManifestMinorVersion = minorVersion.asInt();
-	}
+    auto& minorVersion = root["ManifestMinorVersion"];
+    if (!minorVersion.isNumeric()) {
+        manifest.ManifestMinorVersion = 0;
+    } else {
+        manifest.ManifestMinorVersion = minorVersion.asInt();
+    }
 
-	manifest.Notice = root["Notice"].asString();
-	manifest.NoMatchingVersionNotice = root["NoMatchingVersionNotice"].asString();
+    manifest.Notice = root["Notice"].asString();
+    manifest.NoMatchingVersionNotice = root["NoMatchingVersionNotice"].asString();
 
-	if (Parse(root, manifest, parseError)) {
-		return ManifestParseResult::Successful;
-	} else {
-		return ManifestParseResult::Failed;
-	}
+    if (Parse(root, manifest, parseError)) {
+        return ManifestParseResult::Successful;
+    } else {
+        return ManifestParseResult::Failed;
+    }
 }
 
 bool ManifestSerializer::Parse(Json::Value const& node, Manifest& manifest, std::string& parseError)
 {
-	manifest.Resources.clear();
+    manifest.Resources.clear();
 
-	auto& resources = node["Resources"];
-	if (!resources.isArray()) {
-		parseError = "Manifest has no 'Resources' array";
-		return false;
-	}
+    auto& resources = node["Resources"];
+    if (!resources.isArray()) {
+        parseError = "Manifest has no 'Resources' array";
+        return false;
+    }
 
-	for (auto const& resourceNode : resources) {
-		if (!resourceNode.isObject()) {
-			parseError = "Bundle info is not an object";
-			return false;
-		}
+    for (auto const& resourceNode : resources) {
+        if (!resourceNode.isObject()) {
+            parseError = "Bundle info is not an object";
+            return false;
+        }
 
-		Manifest::Resource resource;
-		if (!ParseResource(resourceNode, resource, parseError)) {
-			return false;
-		}
+        Manifest::Resource resource;
+        if (!ParseResource(resourceNode, resource, parseError)) {
+            return false;
+        }
 
-		manifest.Resources.insert(std::make_pair(resource.Name, resource));
-	}
+        manifest.Resources.insert(std::make_pair(resource.Name, resource));
+    }
 
-	return true;
+    return true;
 }
 
 bool ManifestSerializer::ParseResource(Json::Value const& node, Manifest::Resource& resource, std::string& parseError)
 {
-	resource.Name = node["Name"].asString();
+    resource.Name = node["Name"].asString();
 
-	auto& versions = node["Versions"];
-	if (!versions.isArray()) {
-		parseError = "Manifest resource has no 'Versions' array";
-		return false;
-	}
+    auto& versions = node["Versions"];
+    if (!versions.isArray()) {
+        parseError = "Manifest resource has no 'Versions' array";
+        return false;
+    }
 
-	for (auto const& versionNode : versions) {
-		if (!versionNode.isObject()) {
-			parseError = "Bundle version info is not an object";
-			return false;
-		}
+    for (auto const& versionNode : versions) {
+        if (!versionNode.isObject()) {
+            parseError = "Bundle version info is not an object";
+            return false;
+        }
 
-		Manifest::ResourceVersion version;
-		if (!ParseVersion(versionNode, version, parseError)) {
-			return false;
-		}
+        Manifest::ResourceVersion version;
+        if (!ParseVersion(versionNode, version, parseError)) {
+            return false;
+        }
 
-		resource.ResourceVersions.insert(std::make_pair(version.Digest, version));
-	}
+        resource.ResourceVersions.insert(std::make_pair(version.Digest, version));
+    }
 
-	return true;
+    return true;
 }
 
 bool ManifestSerializer::ParseVersion(Json::Value const& node, Manifest::ResourceVersion& version, std::string& parseError)
 {
-	if (!node["MinGameVersion"].isNull()) {
-		auto minVersion = VersionNumber::FromString(node["MinGameVersion"].asString().c_str());
-		if (!minVersion) {
-			parseError = "Unable to parse 'MinGameVersion'.";
-			return false;
-		}
+    if (!node["MinGameVersion"].isNull()) {
+        auto minVersion = VersionNumber::FromString(node["MinGameVersion"].asString().c_str());
+        if (!minVersion) {
+            parseError = "Unable to parse 'MinGameVersion'.";
+            return false;
+        }
 
-		version.MinGameVersion = minVersion;
-	}
+        version.MinGameVersion = minVersion;
+    }
 
-	if (!node["MaxGameVersion"].isNull()) {
-		auto maxVersion = VersionNumber::FromString(node["MaxGameVersion"].asString().c_str());
-		if (!maxVersion) {
-			parseError = "Unable to parse 'MaxGameVersion'.";
-			return false;
-		}
+    if (!node["MaxGameVersion"].isNull()) {
+        auto maxVersion = VersionNumber::FromString(node["MaxGameVersion"].asString().c_str());
+        if (!maxVersion) {
+            parseError = "Unable to parse 'MaxGameVersion'.";
+            return false;
+        }
 
-		version.MaxGameVersion = maxVersion;
-	}
+        version.MaxGameVersion = maxVersion;
+    }
 
-	auto resVersion = VersionNumber::FromString(node["Version"].asString().c_str());
-	if (!resVersion) {
-		parseError = "Unable to parse 'Version'.";
-		return false;
-	}
+    auto resVersion = VersionNumber::FromString(node["Version"].asString().c_str());
+    if (!resVersion) {
+        parseError = "Unable to parse 'Version'.";
+        return false;
+    }
 
-	version.Version = *resVersion;
+    version.Version = *resVersion;
 
-	version.URL = node["URL"].asString();
-	version.Digest = node["Digest"].asString();
-	version.BuildDate = node["BuildDate"].asUInt64();
-	version.Revoked = node["Revoked"].isBool() ? node["Revoked"].asBool() : false;
-	version.Signature = node["Signature"].asString();
-	version.Notice = node["Notice"].asString();
-	return true;
+    version.URL = node["URL"].asString();
+    version.Digest = node["Digest"].asString();
+    version.BuildDate = node["BuildDate"].asUInt64();
+    version.Revoked = node["Revoked"].isBool() ? node["Revoked"].asBool() : false;
+    version.Signature = node["Signature"].asString();
+    version.Notice = node["Notice"].asString();
+    return true;
 }
 
 std::string ManifestSerializer::Stringify(Manifest& manifest)
 {
-	Json::Value resources(Json::arrayValue);
-	for (auto const& res : manifest.Resources) {
-		Json::Value jsonRes(Json::objectValue);
-		jsonRes["Name"] = res.first;
+    Json::Value resources(Json::arrayValue);
+    for (auto const& res : manifest.Resources) {
+        Json::Value jsonRes(Json::objectValue);
+        jsonRes["Name"] = res.first;
 
-		Json::Value versions(Json::arrayValue);
-		for (auto const& ver : res.second.ResourceVersions) {
-			Json::Value jsonVer(Json::objectValue);
-			if (ver.second.MinGameVersion) {
-				jsonVer["MinGameVersion"] = ver.second.MinGameVersion->ToString();
-			}
+        Json::Value versions(Json::arrayValue);
+        for (auto const& ver : res.second.ResourceVersions) {
+            Json::Value jsonVer(Json::objectValue);
+            if (ver.second.MinGameVersion) {
+                jsonVer["MinGameVersion"] = ver.second.MinGameVersion->ToString();
+            }
 
-			if (ver.second.MaxGameVersion) {
-				jsonVer["MaxGameVersion"] = ver.second.MaxGameVersion->ToString();
-			}
+            if (ver.second.MaxGameVersion) {
+                jsonVer["MaxGameVersion"] = ver.second.MaxGameVersion->ToString();
+            }
 
-			jsonVer["Version"] = ver.second.Version.ToString();
-			jsonVer["URL"] = ver.second.URL;
-			jsonVer["Digest"] = ver.second.Digest;
-			jsonVer["BuildDate"] = ver.second.BuildDate;
+            jsonVer["Version"] = ver.second.Version.ToString();
+            jsonVer["URL"] = ver.second.URL;
+            jsonVer["Digest"] = ver.second.Digest;
+            jsonVer["BuildDate"] = ver.second.BuildDate;
 
-			if (ver.second.Revoked) {
-				jsonVer["Revoked"] = true;
-			}
+            if (ver.second.Revoked) {
+                jsonVer["Revoked"] = true;
+            }
 
-			if (!ver.second.Signature.empty()) {
-				jsonVer["Signature"] = ver.second.Signature;
-			}
+            if (!ver.second.Signature.empty()) {
+                jsonVer["Signature"] = ver.second.Signature;
+            }
 
-			if (!ver.second.Notice.empty()) {
-				jsonVer["Notice"] = ver.second.Notice;
-			}
+            if (!ver.second.Notice.empty()) {
+                jsonVer["Notice"] = ver.second.Notice;
+            }
 
-			versions.append(jsonVer);
-		}
+            versions.append(jsonVer);
+        }
 
-		jsonRes["Versions"] = versions;
-		resources.append(jsonRes);
-	}
+        jsonRes["Versions"] = versions;
+        resources.append(jsonRes);
+    }
 
-	Json::Value root(Json::objectValue);
-	root["ManifestVersion"] = manifest.ManifestVersion;
-	root["ManifestMinorVersion"] = manifest.ManifestMinorVersion;
+    Json::Value root(Json::objectValue);
+    root["ManifestVersion"] = manifest.ManifestVersion;
+    root["ManifestMinorVersion"] = manifest.ManifestMinorVersion;
 
-	if (!manifest.Notice.empty()) {
-		root["Notice"] = manifest.Notice;
-	}
+    if (!manifest.Notice.empty()) {
+        root["Notice"] = manifest.Notice;
+    }
 
-	if (!manifest.NoMatchingVersionNotice.empty()) {
-		root["NoMatchingVersionNotice"] = manifest.NoMatchingVersionNotice;
-	}
+    if (!manifest.NoMatchingVersionNotice.empty()) {
+        root["NoMatchingVersionNotice"] = manifest.NoMatchingVersionNotice;
+    }
 
-	root["Resources"] = resources;
+    root["Resources"] = resources;
 
-	Json::StreamWriterBuilder builder;
-	builder["commentStyle"] = "None";
-	builder["indentation"] = "    ";
-	std::unique_ptr<Json::StreamWriter> writer(builder.newStreamWriter());
-	std::ostringstream os;
-	writer->write(root, &os);
-	return os.str();
+    Json::StreamWriterBuilder builder;
+    builder["commentStyle"] = "None";
+    builder["indentation"] = "    ";
+    std::unique_ptr<Json::StreamWriter> writer(builder.newStreamWriter());
+    std::ostringstream os;
+    writer->write(root, &os);
+    return os.str();
 }
 
 END_SE()

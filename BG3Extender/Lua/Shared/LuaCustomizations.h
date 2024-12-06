@@ -2,19 +2,19 @@ BEGIN_NS(lua)
 
 enum class MetatableTag : uint8_t
 {
-	ObjectRef = 0,
-	Array = 1,
-	Map = 2,
-	Set = 3,
-	EnumValue = 4,
-	BitfieldValue = 5,
-	UserVariableHolder = 6,
-	ModVariableHolder = 7,
-	Entity = 8,
-	ImguiObject = 9,
-	OsiFunctionName = 10,
-	ObjectVal = 11,
-	Max = ObjectVal
+    ObjectRef = 0,
+    Array = 1,
+    Map = 2,
+    Set = 3,
+    EnumValue = 4,
+    BitfieldValue = 5,
+    UserVariableHolder = 6,
+    ModVariableHolder = 7,
+    Entity = 8,
+    ImguiObject = 9,
+    OsiFunctionName = 10,
+    ObjectVal = 11,
+    Max = ObjectVal
 };
 
 struct LuaInternalState;
@@ -24,8 +24,9 @@ void lua_release_internal_state(LuaInternalState* state);
 // Object API for storing pointer-like data in a Lua TValue.
 void lua_push_lightcppobject(lua_State* L, MetatableTag metatableTag, int propertyMapIndex, void* object, LifetimeHandle const& lifetime);
 void lua_push_lightcppobject(lua_State* L, MetatableTag metatableTag, int propertyMapIndex, void const* object, LifetimeHandle const& lifetime);
-CppObjectMetadata lua_get_lightcppobject(lua_State* L, int idx, MetatableTag expectedMetatableTag);
 CppObjectMetadata lua_get_lightcppobject(lua_State* L, int idx);
+CppObjectMetadata lua_get_lightcppobject(lua_State* L, int idx, MetatableTag expectedMetatableTag);
+CppObjectMetadata lua_get_lightcppobject(lua_State* L, int idx, MetatableTag expectedMetatableTag, int expectedPropertyMap);
 bool lua_try_get_lightcppobject(lua_State* L, int idx, CppObjectMetadata& obj);
 bool lua_try_get_lightcppobject(lua_State* L, int idx, MetatableTag expectedMetatableTag, CppObjectMetadata& obj);
 

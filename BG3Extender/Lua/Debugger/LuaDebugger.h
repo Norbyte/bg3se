@@ -12,176 +12,176 @@ struct lua_Debug;
 
 namespace bg3se
 {
-	class ExtensionStateBase;
+    class ExtensionStateBase;
 }
 
 namespace bg3se::esv::lua
 {
-	class ServerState;
+    class ServerState;
 }
 
 namespace bg3se::ecl::lua
 {
-	class ClientState;
+    class ClientState;
 }
 
 namespace bg3se::lua::dbg
 {
-	struct DebuggerEvaluateRequest
-	{
-		uint32_t Seq;
-		DbgContext Context;
-		BackendToDebugger* Msg;
-		BkEvaluateResponse* Response;
-		int32_t Frame;
-		STDString Expression;
-		std::function<void(DebuggerEvaluateRequest const&, ResultCode)> CompletionCallback;
-	};
+    struct DebuggerEvaluateRequest
+    {
+        uint32_t Seq;
+        DbgContext Context;
+        BackendToDebugger* Msg;
+        BkEvaluateResponse* Response;
+        int32_t Frame;
+        STDString Expression;
+        std::function<void(DebuggerEvaluateRequest const&, ResultCode)> CompletionCallback;
+    };
 
 
-	struct DebuggerGetVariablesRequest
-	{
-		struct KeyType
-		{
-			std::optional<STDString> String;
-			std::optional<int64_t> Int;
-		};
+    struct DebuggerGetVariablesRequest
+    {
+        struct KeyType
+        {
+            std::optional<STDString> String;
+            std::optional<int64_t> Int;
+        };
 
-		uint32_t Seq;
-		DbgContext Context;
-		BackendToDebugger* Msg;
-		int VariablesRef;
-		int Frame;
-		int Local;
-		std::vector<KeyType> Key;
-		BkGetVariablesResponse* Response;
-		std::function<void(DebuggerGetVariablesRequest const&, ResultCode)> CompletionCallback;
-	};
+        uint32_t Seq;
+        DbgContext Context;
+        BackendToDebugger* Msg;
+        int VariablesRef;
+        int Frame;
+        int Local;
+        std::vector<KeyType> Key;
+        BkGetVariablesResponse* Response;
+        std::function<void(DebuggerGetVariablesRequest const&, ResultCode)> CompletionCallback;
+    };
 
 
-	class ContextDebugger
-	{
-	public:
-		ContextDebugger(DebugMessageHandler& messageHandler, DbgContext ctx);
+    class ContextDebugger
+    {
+    public:
+        ContextDebugger(DebugMessageHandler& messageHandler, DbgContext ctx);
 
-		void RequestEnableDebugging(bool enabled);
-		void OnContextCreated(lua_State* L);
-		void OnContextDestroyed();
-		void OnLuaHook(lua_State* L, lua_Debug* ar);
-		void OnLuaError(lua_State* L, char const* msg);
-		void OnGenericError(char const* msg);
-		void DebugBreak(lua_State* L);
-		void Tick();
+        void RequestEnableDebugging(bool enabled);
+        void OnContextCreated(lua_State* L);
+        void OnContextDestroyed();
+        void OnLuaHook(lua_State* L, lua_Debug* ar);
+        void OnLuaError(lua_State* L, char const* msg);
+        void OnGenericError(char const* msg);
+        void DebugBreak(lua_State* L);
+        void Tick();
 
-		inline bool IsPaused() const
-		{
-			return isPaused_;
-		}
+        inline bool IsPaused() const
+        {
+            return isPaused_;
+        }
 
-		void BeginUpdatingBreakpoints();
-		void AddBreakpoint(STDString const& path, int line);
-		void FinishUpdatingBreakpoints();
+        void BeginUpdatingBreakpoints();
+        void AddBreakpoint(STDString const& path, int line);
+        void FinishUpdatingBreakpoints();
 
-		void UpdateSettings(bool breakOnError, bool breakOnGenericError);
-		ResultCode ContinueExecution(DbgContinue_Action action);
-		void Evaluate(DebuggerEvaluateRequest const& req);
-		void GetVariables(DebuggerGetVariablesRequest const& req);
+        void UpdateSettings(bool breakOnError, bool breakOnGenericError);
+        ResultCode ContinueExecution(DbgContinue_Action action);
+        void Evaluate(DebuggerEvaluateRequest const& req);
+        void GetVariables(DebuggerGetVariablesRequest const& req);
 
-		ResultCode GetVariablesInLocal(lua_State* L, DebuggerGetVariablesRequest const& req);
-		ResultCode GetVariablesInStackFrame(lua_State* L, DebuggerGetVariablesRequest const& req);
+        ResultCode GetVariablesInLocal(lua_State* L, DebuggerGetVariablesRequest const& req);
+        ResultCode GetVariablesInStackFrame(lua_State* L, DebuggerGetVariablesRequest const& req);
 
-	private:
-		friend class DebugEvalGuard;
+    private:
+        friend class DebugEvalGuard;
 
-		struct BreakpointSet
-		{
-			// Currently active breakpoints
-			std::unordered_map<STDString, std::unordered_set<int>> breakpoints;
-			// Line-only map to avoid string-based file lookup if a specific line has no breakpoints globally
-			std::unordered_set<int> lines;
-		};
+        struct BreakpointSet
+        {
+            // Currently active breakpoints
+            std::unordered_map<STDString, std::unordered_set<int>> breakpoints;
+            // Line-only map to avoid string-based file lookup if a specific line has no breakpoints globally
+            std::unordered_set<int> lines;
+        };
 
-		DebugMessageHandler& messageHandler_;
-		DbgContext context_;
-		bool enabled_{ false };
+        DebugMessageHandler& messageHandler_;
+        DbgContext context_;
+        bool enabled_{ false };
 
-		// Actions that we'll perform in the server/client thread instead of the messaging runtime thread.
-		// This is needed to make sure that certain operations (eg. expression evaluation) execute in a thread-safe way.
-		Concurrency::concurrent_queue<std::function<void()>> pendingActions_;
+        // Actions that we'll perform in the server/client thread instead of the messaging runtime thread.
+        // This is needed to make sure that certain operations (eg. expression evaluation) execute in a thread-safe way.
+        Concurrency::concurrent_queue<std::function<void()>> pendingActions_;
 
-		std::mutex breakpointMutex_;
-		std::condition_variable breakpointCv_;
-		// Is the Lua context currently held in pause?
-		// The server/client thread will recheck this value when the condition variable is notified,
-		// and resume execution if the pause flag is no longer set.
-		bool isPaused_{ false };
-		// Requests the Lua thread to halt execution
-		bool requestPause_{ false };
-		int pauseMaxStackDepth_{ -1 };
-		int currentStackDepth_{ 0 };
-		// Trigger breakpoint on Lua errors
-		bool breakOnError_{ false };
-		// Trigger breakpoint on non-Lua error message if we're running Lua code
-		bool breakOnGenericError_{ false };
-		// Are we currently evaluating a debugger expression?
-		int32_t evaluatingExpression_{ 0 };
-		// Lua registry index of global evaluation results
-		int evalContextRef_{ -1 };
+        std::mutex breakpointMutex_;
+        std::condition_variable breakpointCv_;
+        // Is the Lua context currently held in pause?
+        // The server/client thread will recheck this value when the condition variable is notified,
+        // and resume execution if the pause flag is no longer set.
+        bool isPaused_{ false };
+        // Requests the Lua thread to halt execution
+        bool requestPause_{ false };
+        int pauseMaxStackDepth_{ -1 };
+        int currentStackDepth_{ 0 };
+        // Trigger breakpoint on Lua errors
+        bool breakOnError_{ false };
+        // Trigger breakpoint on non-Lua error message if we're running Lua code
+        bool breakOnGenericError_{ false };
+        // Are we currently evaluating a debugger expression?
+        int32_t evaluatingExpression_{ 0 };
+        // Lua registry index of global evaluation results
+        int evalContextRef_{ -1 };
 
-		// Breakpoint set currently in use by the debugger
-		std::unique_ptr<BreakpointSet> breakpoints_;
-		// Breakpoint set being updated through DAP
-		std::unique_ptr<BreakpointSet> newBreakpoints_;
+        // Breakpoint set currently in use by the debugger
+        std::unique_ptr<BreakpointSet> breakpoints_;
+        // Breakpoint set being updated through DAP
+        std::unique_ptr<BreakpointSet> newBreakpoints_;
 
-		ExtensionStateBase& GetExtensionState();
-		void SetupLuaBindings(lua_State* L);
-		void CleanupLuaBindings(lua_State* L);
-		void EnableDebugging(bool enabled);
-		void ExecuteQueuedActions();
-		bool IsBreakpoint(lua_State* L, lua_Debug* ar, BkBreakpointTriggered::Reason& reason);
-		void TriggerBreakpoint(lua_State* L, BkBreakpointTriggered_Reason reason, char const* msg);
+        ExtensionStateBase& GetExtensionState();
+        void SetupLuaBindings(lua_State* L);
+        void CleanupLuaBindings(lua_State* L);
+        void EnableDebugging(bool enabled);
+        void ExecuteQueuedActions();
+        bool IsBreakpoint(lua_State* L, lua_Debug* ar, BkBreakpointTriggered::Reason& reason);
+        void TriggerBreakpoint(lua_State* L, BkBreakpointTriggered_Reason reason, char const* msg);
 
-		ResultCode EvaluateInContext(DebuggerEvaluateRequest const& req);
-		bool PushVariableContext(lua_State* L, DebuggerGetVariablesRequest const& req);
+        ResultCode EvaluateInContext(DebuggerEvaluateRequest const& req);
+        bool PushVariableContext(lua_State* L, DebuggerGetVariablesRequest const& req);
 
-		ResultCode GetVariablesInContext(DebuggerGetVariablesRequest const& req);
-	};
+        ResultCode GetVariablesInContext(DebuggerGetVariablesRequest const& req);
+    };
 
-	class Debugger
-	{
-	public:
-		Debugger(DebugMessageHandler& messageHandler);
-		~Debugger();
+    class Debugger
+    {
+    public:
+        Debugger(DebugMessageHandler& messageHandler);
+        ~Debugger();
 
-		bool IsDebuggerReady() const;
-		void OnLogMessage(DebugMessageType type, STDString const& message);
-		void OnLuaHook(lua_State* L, lua_Debug* ar);
-		void OnLuaError(lua_State* L, char const* msg);
-		void OnGenericError(char const* msg);
-		void DebugBreak(lua_State* L);
+        bool IsDebuggerReady() const;
+        void OnLogMessage(DebugMessageType type, STDString const& message);
+        void OnLuaHook(lua_State* L, lua_Debug* ar);
+        void OnLuaError(lua_State* L, char const* msg);
+        void OnGenericError(char const* msg);
+        void DebugBreak(lua_State* L);
 
-		void ServerStateCreated(esv::lua::ServerState* state);
-		void ClientStateCreated(ecl::lua::ClientState* state);
-		void ServerStateDeleted();
-		void ClientStateDeleted();
-		void ServerTick();
-		void ClientTick();
-		void EnableDebugging(bool enabled);
+        void ServerStateCreated(esv::lua::ServerState* state);
+        void ClientStateCreated(ecl::lua::ClientState* state);
+        void ServerStateDeleted();
+        void ClientStateDeleted();
+        void ServerTick();
+        void ClientTick();
+        void EnableDebugging(bool enabled);
 
-		void BeginUpdatingBreakpoints();
-		ResultCode AddBreakpoint(STDString const& path, int line);
-		void FinishUpdatingBreakpoints();
+        void BeginUpdatingBreakpoints();
+        ResultCode AddBreakpoint(STDString const& path, int line);
+        void FinishUpdatingBreakpoints();
 
-		void UpdateSettings(bool breakOnError, bool breakOnGenericError);
-		ResultCode ContinueExecution(DbgContext ctx, DbgContinue_Action action);
-		void Evaluate(DebuggerEvaluateRequest const& req);
-		void GetVariables(DebuggerGetVariablesRequest const& req);
+        void UpdateSettings(bool breakOnError, bool breakOnGenericError);
+        ResultCode ContinueExecution(DbgContext ctx, DbgContinue_Action action);
+        void Evaluate(DebuggerEvaluateRequest const& req);
+        void GetVariables(DebuggerGetVariablesRequest const& req);
 
-	private:
-		DebugMessageHandler& messageHandler_;
-		ContextDebugger server_;
-		ContextDebugger client_;
-	};
+    private:
+        DebugMessageHandler& messageHandler_;
+        ContextDebugger server_;
+        ContextDebugger client_;
+    };
 }
 
 #endif

@@ -30,12 +30,12 @@ template <class T>
 class Noncopyable
 {
 public:
-	inline Noncopyable() = default;
+    inline Noncopyable() = default;
 
-	Noncopyable(const Noncopyable&) = delete;
-	T& operator = (const T&) = delete;
-	Noncopyable(Noncopyable&&) = delete;
-	T& operator = (T&&) = delete;
+    Noncopyable(const Noncopyable&) = delete;
+    T& operator = (const T&) = delete;
+    Noncopyable(Noncopyable&&) = delete;
+    T& operator = (T&&) = delete;
 };
 
 class ProtectedGameObjectBase {};
@@ -46,21 +46,21 @@ template <class T>
 class ProtectedGameObject : public ProtectedGameObjectBase
 {
 public:
-	ProtectedGameObject(const ProtectedGameObject&) = delete;
-	T& operator = (const T&) = delete;
-	ProtectedGameObject(ProtectedGameObject&&) = delete;
-	T& operator = (T&&) = delete;
+    ProtectedGameObject(const ProtectedGameObject&) = delete;
+    T& operator = (const T&) = delete;
+    ProtectedGameObject(ProtectedGameObject&&) = delete;
+    T& operator = (T&&) = delete;
 
 protected:
-	ProtectedGameObject() = delete;
-	//~ProtectedGameObject() = delete;
+    ProtectedGameObject() = delete;
+    //~ProtectedGameObject() = delete;
 };
 
 // Tag indicating whether a specific type should be handled as a value (by-val) 
 // or as an object via an object/array proxy (by-ref)
 template <class T>
 struct ByVal {
-	static constexpr bool Value = std::is_integral_v<T> || std::is_floating_point_v<T> || std::is_enum_v<T>;
+    static constexpr bool Value = std::is_integral_v<T> || std::is_floating_point_v<T> || std::is_enum_v<T>;
 };
 
 template <class T>
@@ -70,135 +70,135 @@ template <class T>
 constexpr bool IsByVal = ByVal<T>::Value;
 
 #define BY_VAL(cls) template<> \
-	struct ByVal<cls> { \
-		static_assert(std::is_default_constructible_v<cls>, "By-value types must be default constructible"); \
-		static constexpr bool Value = true; \
-	}
+    struct ByVal<cls> { \
+        static_assert(std::is_default_constructible_v<cls>, "By-value types must be default constructible"); \
+        static constexpr bool Value = true; \
+    }
 
 
 template <class T>
 struct IsOptional { 
-	static constexpr bool Value = false;
+    static constexpr bool Value = false;
 };
 
 template <class T>
 struct IsOptional<std::optional<T>> { 
-	static constexpr bool Value = true;
-	using ValueType = T;
+    static constexpr bool Value = true;
+    using ValueType = T;
 };
 
 inline constexpr uint64_t Hash(uint8_t v)
 {
-	return v;
+    return v;
 }
 
 inline constexpr uint64_t Hash(uint16_t v)
 {
-	return v;
+    return v;
 }
 
 inline constexpr uint64_t Hash(uint32_t v)
 {
-	return v;
+    return v;
 }
 
 inline constexpr uint64_t Hash(int32_t v)
 {
-	return v;
+    return v;
 }
 
 inline constexpr uint64_t Hash(uint64_t v)
 {
-	return v;
+    return v;
 }
 
 template <class T>
 inline typename std::enable_if_t<std::is_enum_v<T>, uint64_t> Hash(T v)
 {
-	return Hash(std::underlying_type_t<T>(v));
+    return Hash(std::underlying_type_t<T>(v));
 }
 
 template <class T>
 inline typename std::enable_if_t<std::is_pointer_v<T>, uint64_t> Hash(T v)
 {
-	return Hash(std::uintptr_t(v));
+    return Hash(std::uintptr_t(v));
 }
 
 // See https://github.com/google/cityhash/blob/master/src/city.h#L101
 inline constexpr uint64_t HashMix(uint64_t x, uint64_t y)
 {
-	constexpr uint64_t K = 0x9ddfea08eb382d69ull;
+    constexpr uint64_t K = 0x9ddfea08eb382d69ull;
 
-	uint64_t r1 = K * (x ^ y);
-	uint64_t r2 = r1 ^ (r1 >> 47);
-	uint64_t r3 = (y ^ r2) * K;
-	return K * (r3 ^ (r3 >> 47));
+    uint64_t r1 = K * (x ^ y);
+    uint64_t r2 = r1 ^ (r1 >> 47);
+    uint64_t r3 = (y ^ r2) * K;
+    return K * (r3 ^ (r3 >> 47));
 }
 
 template <class T1, class T2>
 inline uint64_t HashMulti(T1 const& a, T2 const& b)
 {
-	return HashMix(Hash(a), Hash(b));
+    return HashMix(Hash(a), Hash(b));
 }
 
 template <class T1, class T2, class T3>
 inline uint64_t HashMulti(T1 const& a, T2 const& b, T3 const& c)
 {
-	auto h1 = HashMix(Hash(a), Hash(b));
-	return HashMix(h1, Hash(c));
+    auto h1 = HashMix(Hash(a), Hash(b));
+    return HashMix(h1, Hash(c));
 }
 
 template <class T1, class T2, class T3, class T4>
 inline uint64_t HashMulti(T1 const& a, T2 const& b, T3 const& c, T4 const& d)
 {
-	auto h1 = HashMix(Hash(a), Hash(b));
-	auto h2 = HashMix(h1, Hash(c));
-	return HashMix(h2, Hash(d));
+    auto h1 = HashMix(Hash(a), Hash(b));
+    auto h2 = HashMix(h1, Hash(c));
+    return HashMix(h2, Hash(d));
 }
 
 template <class T>
 struct OverrideableProperty
 {
-	using Type = T;
+    using Type = T;
 
-	T Value;
-	bool IsOverridden;
+    T Value;
+    bool IsOverridden;
 };
 
 enum PropertyOperationResult
 {
-	Success,
-	NoSuchProperty,
-	ReadOnly,
-	UnsupportedType,
-	Unknown
+    Success,
+    NoSuchProperty,
+    ReadOnly,
+    UnsupportedType,
+    Unknown
 };
 
 enum class DebugMessageType
 {
-	Debug,
-	Info,
-	Osiris,
-	Warning,
-	Error
+    Debug,
+    Info,
+    Osiris,
+    Warning,
+    Error
 };
 
 void LSAcquireSRWLockExclusive(PSRWLOCK SRWLock);
 
 struct SRWLockPin
 {
-	inline SRWLockPin(PSRWLOCK SRWLock)
-		: Lock(SRWLock)
-	{
-		LSAcquireSRWLockExclusive(Lock);
-	}
-	
-	inline ~SRWLockPin()
-	{
-		ReleaseSRWLockExclusive(Lock);
-	}
+    inline SRWLockPin(PSRWLOCK SRWLock)
+        : Lock(SRWLock)
+    {
+        LSAcquireSRWLockExclusive(Lock);
+    }
+    
+    inline ~SRWLockPin()
+    {
+        ReleaseSRWLockExclusive(Lock);
+    }
 
-	PSRWLOCK Lock;
+    PSRWLOCK Lock;
 };
 
 END_SE()

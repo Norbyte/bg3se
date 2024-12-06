@@ -8,11 +8,11 @@ BEGIN_SE()
 template <typename... Args>
 void Debug(DebugMessageType type, char const * fmt, Args... args)
 {
-	if (gCoreLibPlatformInterface.GlobalConsole) {
-		char buf[1024];
-		_snprintf_s(buf, std::size(buf), _TRUNCATE, fmt, args...);
-		gCoreLibPlatformInterface.GlobalConsole->Print(type, buf);
-	}
+    if (gCoreLibPlatformInterface.GlobalConsole) {
+        char buf[1024];
+        _snprintf_s(buf, std::size(buf), _TRUNCATE, fmt, args...);
+        gCoreLibPlatformInterface.GlobalConsole->Print(type, buf);
+    }
 }
 
 #define DEBUG(msg, ...) Debug(DebugMessageType::Debug, msg, __VA_ARGS__)

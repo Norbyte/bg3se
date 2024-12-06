@@ -9,62 +9,62 @@ decltype(Hooks::eocnet__ClientConnectMessage__Serialize)* decltype(Hooks::eocnet
 
 void Hooks::Startup()
 {
-	if (loaded_) {
-		return;
-	}
+    if (loaded_) {
+        return;
+    }
 
-	auto& lib = gExtender->GetEngineHooks();
-	lib.RPGStats__PreParseDataFolder.SetWrapper(&Hooks::OnParseDataFolder, this);
-	eocnet__ClientConnectMessage__Serialize.SetWrapper(&Hooks::OnClientConnectMessage, this);
-	
-	loaded_ = true;
+    auto& lib = gExtender->GetEngineHooks();
+    lib.RPGStats__PreParseDataFolder.SetWrapper(&Hooks::OnParseDataFolder, this);
+    eocnet__ClientConnectMessage__Serialize.SetWrapper(&Hooks::OnClientConnectMessage, this);
+    
+    loaded_ = true;
 }
 
 void Hooks::HookNetworkMessages(net::MessageFactory* factory)
 {
-	if (networkingInitialized_) {
-		return;
-	}
+    if (networkingInitialized_) {
+        return;
+    }
 
-	if (factory->MessagePools.size() <= (unsigned)NetMessage::NETMSG_CLIENT_CONNECT) {
-		ERR("MessageFactory not initialized yet");
-		return;
-	}
+    if (factory->MessagePools.size() <= (unsigned)NetMessage::NETMSG_CLIENT_CONNECT) {
+        ERR("MessageFactory not initialized yet");
+        return;
+    }
 
-	DetourTransactionBegin();
-	DetourUpdateThread(GetCurrentThread());
+    DetourTransactionBegin();
+    DetourUpdateThread(GetCurrentThread());
 
-	auto clientConnect = factory->MessagePools[(unsigned)NetMessage::NETMSG_CLIENT_CONNECT]->Template;
-	eocnet__ClientConnectMessage__Serialize.Wrap((*(net::Message::VMT**)clientConnect)->Serialize);
+    auto clientConnect = factory->MessagePools[(unsigned)NetMessage::NETMSG_CLIENT_CONNECT]->Template;
+    eocnet__ClientConnectMessage__Serialize.Wrap((*(net::Message::VMT**)clientConnect)->Serialize);
 
-	DetourTransactionCommit();
+    DetourTransactionCommit();
 
-	networkingInitialized_ = true;
+    networkingInitialized_ = true;
 }
 
 void Hooks::OnParseDataFolder(stats::RPGStats::ParseStructureFolderProc* next, stats::RPGStats* self, Array<STDString>* paths)
 {
-	LuaVirtualPin lua(gExtender->GetCurrentExtensionState());
-	if (lua) {
-		lua->OnStatsStructureLoaded();
-	}
+    LuaVirtualPin lua(gExtender->GetCurrentExtensionState());
+    if (lua) {
+        lua->OnStatsStructureLoaded();
+    }
 
-	{
-		DisableCrashReporting _;
-		next(self, paths);
-	}
+    {
+        DisableCrashReporting _;
+        next(self, paths);
+    }
 
-	gExtender->GetStatLoadOrderHelper().OnLoadFinished();
+    gExtender->GetStatLoadOrderHelper().OnLoadFinished();
 }
 
 void Hooks::OnClientConnectMessage(net::Message::SerializeProc* wrapped, net::Message* msg, net::BitstreamSerializer* serializer)
 {
-	auto m = (net::ClientConnectMessage*)msg;
-	if (serializer->IsWriting) {
-		gExtender->GetClient().GetNetworkManager().OnClientConnectMessage(m);
-	}
+    auto m = (net::ClientConnectMessage*)msg;
+    if (serializer->IsWriting) {
+        gExtender->GetClient().GetNetworkManager().OnClientConnectMessage(m);
+    }
 
-	wrapped(msg, serializer);
+    wrapped(msg, serializer);
 }
 
 END_SE()

@@ -63,11 +63,11 @@ public:
 
     TRet Call(TArgs... args)
     {
-		if constexpr (std::is_same_v<TRet, void>) {
+        if constexpr (std::is_same_v<TRet, void>) {
             Call(std::tuple(args...));
-		} else {
+        } else {
             return Call(std::tuple(args...));
-		}
+        }
     }
 
     TRet Call(ArgumentTuple const& args)
@@ -80,14 +80,14 @@ public:
 
         ProtectedFunctionCaller<ArgumentTuple, TRet> caller{ func, args };
 
-		if constexpr (std::is_same_v<TRet, void>) {
-			caller.Call(L);
-			lua_pop(L, 1);
-		} else {
-			auto rval = caller.Call(L);
-			lua_pop(L, 1);
-			return rval;
-		}
+        if constexpr (std::is_same_v<TRet, void>) {
+            caller.Call(L);
+            lua_pop(L, 1);
+        } else {
+            auto rval = caller.Call(L);
+            lua_pop(L, 1);
+            return rval;
+        }
     }
 
 private:

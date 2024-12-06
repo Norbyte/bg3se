@@ -5,8 +5,10 @@
 local Logger = {
     EnabledLogLevels = {},
     EnabledMods = {},
-    EnabledTopics = {}
+    EnabledTopics = {},
 }
+
+local LogLevels = {"Debug", "Info", "Warning", "Error"}
 
 function Logger:Log(moduleUuid, level, topic, ...)
     if self.EnabledLogLevels[level] == false then return end
@@ -25,6 +27,9 @@ function Logger:CreateLogModule(moduleUuid)
 	log.Log = function (level, topic, ...)
 		self:Log(moduleUuid, level, topic, ...)
 	end
+	log.Debug = function (...)
+		self:Log(moduleUuid, "Debug", "", ...)
+	end
 	log.Print = function (...)
 		self:Log(moduleUuid, "Info", "", ...)
 	end
@@ -39,7 +44,31 @@ function Logger:CreateLogModule(moduleUuid)
             self:Log(moduleUuid, level, topic, ...)
         end
 	end
+	log.SetLogLevel = function (level)
+		self:SetLogLevel(level)
+	end
+	log.EnableModLogging = function (modUuid, enable)
+		self.EnabledMods[modUuid] = enable
+	end
+	log.EnableTopic = function (topic, enable)
+		self.EnabledTopics[topic] = enable
+	end
 	return log
+end
+
+function Logger:SetLogLevel(level)
+	local enable = false
+	for i,llevel in ipairs(LogLevels) do
+		if level == llevel then
+			enable = true
+		end
+
+		self.EnabledLogLevels[llevel] = enable
+	end
+
+	if not enable then
+		error("Unknown log level: " .. level)
+	end
 end
 
 function Logger:CreateUtilsCompatModule(ext)

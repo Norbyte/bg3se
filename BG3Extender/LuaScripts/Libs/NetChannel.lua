@@ -9,19 +9,19 @@ local NetChannel = {}
 ---@param channel string
 ---@return NetChannel
 function NetChannel:Instantiate(module, channel)
-	return {
+    return {
         Module = module,
         Channel = channel
-	}
+    }
 end
 
 
 function NetChannel:SetHandler(handler)
-	self.MessageHandler = handler
+    self.MessageHandler = handler
 end
 
 function NetChannel:SetRequestHandler(handler)
-	self.RequestHandler = handler
+    self.RequestHandler = handler
 end
 
 function NetChannel:SendToServer(message)
@@ -58,8 +58,8 @@ function NetChannel:OnMessage(e)
     local request = Ext.Json.Parse(e.Payload)
     if e.RequestId then
         if self.RequestHandler then
-			local ok, ret = xpcall(self.RequestHandler, debug.traceback, request, e.UserID)
-			if ok then
+            local ok, ret = xpcall(self.RequestHandler, debug.traceback, request, e.UserID)
+            if ok then
                 local reply = Ext.Json.Stringify(ret)
                 if Ext.IsServer() then
                     Ext.Net.PostMessageToUser(e.UserID, e.Channel, reply, e.Module, nil, e.RequestId)
@@ -67,17 +67,17 @@ function NetChannel:OnMessage(e)
                     Ext.Net.PostMessageToServer(e.Channel, reply, e.Module, nil, e.RequestId)
                 end
             else
-				_PE("Error during request dispatch for module " .. e.Module .. ", channel " .. e.Channel .. ": " .. ret)
-			end
+                _PE("Error during request dispatch for module " .. e.Module .. ", channel " .. e.Channel .. ": " .. ret)
+            end
         else
             Ext.Log.PrintWarning("Net request received for module " .. e.Module .. ", channel " .. e.Channel .. ", but no request handler was registered!")
         end
     else
         if self.MessageHandler then
-			local ok, err = xpcall(self.MessageHandler, debug.traceback, request, e.UserID)
-			if not ok then
-				_PE("Error during message dispatch for module " .. e.Module .. ", channel " .. e.Channel .. ": " .. err)
-			end
+            local ok, err = xpcall(self.MessageHandler, debug.traceback, request, e.UserID)
+            if not ok then
+                _PE("Error during message dispatch for module " .. e.Module .. ", channel " .. e.Channel .. ": " .. err)
+            end
         else
             Ext.Log.PrintWarning("Net message received for module " .. e.Module .. ", channel " .. e.Channel .. ", but no message handler was registered!")
         end

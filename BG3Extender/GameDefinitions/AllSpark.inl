@@ -6,7 +6,7 @@ BEGIN_NS(aspk)
 
 FixedString Component::LuaGetTypeName() const
 {
-	return GetTypeName();
+    return GetTypeName();
 }
 
 END_NS()

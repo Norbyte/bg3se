@@ -11,18 +11,18 @@ BEGIN_SE()
 class Hooks
 {
 public:
-	void Startup();
-	void HookNetworkMessages(net::MessageFactory* factory);
+    void Startup();
+    void HookNetworkMessages(net::MessageFactory* factory);
 
-	void OnParseDataFolder(stats::RPGStats::ParseStructureFolderProc* next, stats::RPGStats* self, Array<STDString>* paths);
-	void OnClientConnectMessage(net::Message::SerializeProc* wrapped, net::Message* msg, net::BitstreamSerializer* serializer);
+    void OnParseDataFolder(stats::RPGStats::ParseStructureFolderProc* next, stats::RPGStats* self, Array<STDString>* paths);
+    void OnClientConnectMessage(net::Message::SerializeProc* wrapped, net::Message* msg, net::BitstreamSerializer* serializer);
 
-	enum class ClientConnectMessageSerializeTag{};
-	WrappableFunction<ClientConnectMessageSerializeTag, void(net::Message*, net::BitstreamSerializer*)> eocnet__ClientConnectMessage__Serialize;
+    enum class ClientConnectMessageSerializeTag{};
+    WrappableFunction<ClientConnectMessageSerializeTag, void(net::Message*, net::BitstreamSerializer*)> eocnet__ClientConnectMessage__Serialize;
 
 private:
-	bool loaded_{ false };
-	bool networkingInitialized_{ false };
+    bool loaded_{ false };
+    bool networkingInitialized_{ false };
 };
 
 END_SE()

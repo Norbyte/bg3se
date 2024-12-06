@@ -481,8 +481,8 @@ struct ItemTemplate : public SceneryTemplate
     OverrideableProperty<glm::vec3> ExamineRotation;
 
     // Lua helpers
-	//# P_FUN(AddUseAction, ItemTemplate::AddUseAction)
-	//# P_FUN(RemoveUseAction, ItemTemplate::RemoveUseAction)
+    //# P_FUN(AddUseAction, ItemTemplate::AddUseAction)
+    //# P_FUN(RemoveUseAction, ItemTemplate::RemoveUseAction)
     IActionData* AddUseAction(ActionDataType type);
     void RemoveUseAction(int32_t index);
 };

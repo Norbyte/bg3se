@@ -4,17 +4,17 @@ BEGIN_NS(tadpole_tree)
 
 struct TreeStateComponent : public BaseComponent
 {
-	DEFINE_COMPONENT(TadpoleTreeState, "eoc::tadpole_tree::TreeStateComponent")
+    DEFINE_COMPONENT(TadpoleTreeState, "eoc::tadpole_tree::TreeStateComponent")
 
-	uint8_t State;
+    uint8_t State;
 };
 
 
 struct PowerContainerComponent : public BaseComponent
 {
-	DEFINE_COMPONENT(TadpolePowers, "eoc::tadpole_tree::PowerContainerComponent")
+    DEFINE_COMPONENT(TadpolePowers, "eoc::tadpole_tree::PowerContainerComponent")
 
-	Array<FixedString> Powers;
+    Array<FixedString> Powers;
 };
 
 

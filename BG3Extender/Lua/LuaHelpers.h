@@ -26,51 +26,51 @@ BEGIN_NS(lua)
 // may keep populating the stack with unused items and cause a stack overflow after some time.
 struct StackCheck
 {
-	inline StackCheck(lua_State* state, int delta = 0)
-		: L(state)
-	{
-		expectedTop = lua_gettop(L) + delta;
-	}
+    inline StackCheck(lua_State* state, int delta = 0)
+        : L(state)
+    {
+        expectedTop = lua_gettop(L) + delta;
+    }
 
-	~StackCheck()
-	{
-		// During stack unwinding the topmost frame will clean up the stack,
-		// so frames where we didn't reach the catch{} handler yet may see incorrect results
-		if (std::uncaught_exceptions() > 0) return;
+    ~StackCheck()
+    {
+        // During stack unwinding the topmost frame will clean up the stack,
+        // so frames where we didn't reach the catch{} handler yet may see incorrect results
+        if (std::uncaught_exceptions() > 0) return;
 
-		int newTop = lua_gettop(L);
-		if (newTop != expectedTop) {
-			// DebugBreak() crashes without a debugger
-			if (IsDebuggerPresent()) {
-				TryDebugBreak();
-			} else {
-				luaL_error(L, "Stack check failed! Top is %d, expected %d", newTop, expectedTop);
-			}
-		}
-	}
+        int newTop = lua_gettop(L);
+        if (newTop != expectedTop) {
+            // DebugBreak() crashes without a debugger
+            if (IsDebuggerPresent()) {
+                TryDebugBreak();
+            } else {
+                luaL_error(L, "Stack check failed! Top is %d, expected %d", newTop, expectedTop);
+            }
+        }
+    }
 
-	lua_State* L;
-	int expectedTop;
+    lua_State* L;
+    int expectedTop;
 };
 #else
 struct StackCheck
 {
-	inline StackCheck(lua_State* state, int delta = 0)
-	{}
+    inline StackCheck(lua_State* state, int delta = 0)
+    {}
 };
 #endif
 
 struct LocalRef
 {
-	inline LocalRef() : Index(-1) {} 
-	inline LocalRef(int index) : Index(index) {} 
+    inline LocalRef() : Index(-1) {} 
+    inline LocalRef(int index) : Index(index) {} 
 
-	int Index;
+    int Index;
 
-	inline RegistryEntry MakePersistent(lua_State* L) const
-	{
-		return RegistryEntry(L, Index);
-	}
+    inline RegistryEntry MakePersistent(lua_State* L) const
+    {
+        return RegistryEntry(L, Index);
+    }
 };
 
 // Helper type for getting any Lua value as parameter
@@ -91,42 +91,42 @@ BEGIN_NS(lua)
 #if defined(ENABLE_IMGUI)
 struct ImguiHandle
 {
-	uint64_t Handle;
+    uint64_t Handle;
 
-	inline constexpr ImguiHandle()
-		: Handle(extui::InvalidHandle)
-	{}
+    inline constexpr ImguiHandle()
+        : Handle(extui::InvalidHandle)
+    {}
 
-	explicit inline constexpr ImguiHandle(uint64_t handle)
-		: Handle(handle)
-	{}
+    explicit inline constexpr ImguiHandle(uint64_t handle)
+        : Handle(handle)
+    {}
 
-	ImguiHandle(extui::Renderable* o);
+    ImguiHandle(extui::Renderable* o);
 
-	inline constexpr ImguiHandle(ImguiHandle const & oh)
-		: Handle(oh.Handle)
-	{}
+    inline constexpr ImguiHandle(ImguiHandle const & oh)
+        : Handle(oh.Handle)
+    {}
 
-	inline constexpr ImguiHandle& operator = (ImguiHandle const & oh)
-	{
-		Handle = oh.Handle;
-		return *this;
-	}
+    inline constexpr ImguiHandle& operator = (ImguiHandle const & oh)
+    {
+        Handle = oh.Handle;
+        return *this;
+    }
 
-	inline constexpr bool operator == (ImguiHandle const & oh) const
-	{
-		return Handle == oh.Handle;
-	}
+    inline constexpr bool operator == (ImguiHandle const & oh) const
+    {
+        return Handle == oh.Handle;
+    }
 
-	explicit inline constexpr operator bool() const
-	{
-		return Handle != extui::InvalidHandle;
-	}
+    explicit inline constexpr operator bool() const
+    {
+        return Handle != extui::InvalidHandle;
+    }
 
-	inline constexpr bool operator !() const
-	{
-		return Handle == extui::InvalidHandle;
-	}
+    inline constexpr bool operator !() const
+    {
+        return Handle == extui::InvalidHandle;
+    }
 };
 #endif
 
@@ -143,87 +143,87 @@ void push_bitfield_value(lua_State* L, EnumUnderlyingType value, BitfieldTypeId 
 
 struct MathParam
 {
-	union {
-		float f;
-		glm::vec3 vec3;
-		glm::vec4 vec4;
-		glm::quat quat;
-		glm::mat3 mat3;
-		glm::mat4 mat4;
-	};
-	uint32_t Arity;
+    union {
+        float f;
+        glm::vec3 vec3;
+        glm::vec4 vec4;
+        glm::quat quat;
+        glm::mat3 mat3;
+        glm::mat4 mat4;
+    };
+    uint32_t Arity;
 };
 
 struct TableIterationHelper
 {
-	struct EndIterator {};
+    struct EndIterator {};
 
-	struct Iterator
-	{
-		lua_State* L;
-		int Index;
-		bool End;
+    struct Iterator
+    {
+        lua_State* L;
+        int Index;
+        bool End;
 
-		inline Iterator(lua_State* _L, int index)
-			: L(_L), Index(index), End(false)
-		{}
+        inline Iterator(lua_State* _L, int index)
+            : L(_L), Index(index), End(false)
+        {}
 
-		inline Iterator operator ++ ()
-		{
-			lua_pop(L, 1);
-			Iterator it(L, Index);
-			it.End = lua_next(L, Index) == 0;
-			End = it.End;
-			return it;
-		}
+        inline Iterator operator ++ ()
+        {
+            lua_pop(L, 1);
+            Iterator it(L, Index);
+            it.End = lua_next(L, Index) == 0;
+            End = it.End;
+            return it;
+        }
 
-		inline Iterator& operator ++ (int)
-		{
-			lua_pop(L, 1);
-			End = lua_next(L, Index) == 0;
-			return *this;
-		}
+        inline Iterator& operator ++ (int)
+        {
+            lua_pop(L, 1);
+            End = lua_next(L, Index) == 0;
+            return *this;
+        }
 
-		inline bool operator == (EndIterator const&)
-		{
-			return End;
-		}
+        inline bool operator == (EndIterator const&)
+        {
+            return End;
+        }
 
-		inline bool operator != (EndIterator const&)
-		{
-			return !End;
-		}
+        inline bool operator != (EndIterator const&)
+        {
+            return !End;
+        }
 
-		inline int operator * ()
-		{
-			return -1;
-		}
-	};
+        inline int operator * ()
+        {
+            return -1;
+        }
+    };
 
-	lua_State* L;
-	int Index;
+    lua_State* L;
+    int Index;
 
-	inline Iterator begin()
-	{
-		lua_pushnil(L);
+    inline Iterator begin()
+    {
+        lua_pushnil(L);
 
-		Iterator it(L, Index);
-		it.End = lua_next(L, Index) == 0;
-		return it;
-	}
+        Iterator it(L, Index);
+        it.End = lua_next(L, Index) == 0;
+        return it;
+    }
 
-	inline EndIterator end()
-	{
-		return EndIterator{};
-	}
+    inline EndIterator end()
+    {
+        return EndIterator{};
+    }
 };
 
 inline TableIterationHelper iterate(lua_State* L, int index)
 {
-	TableIterationHelper helper;
-	helper.L = L;
-	helper.Index = lua_absindex(L, index);
-	return helper;
+    TableIterationHelper helper;
+    helper.L = L;
+    helper.Index = lua_absindex(L, index);
+    return helper;
 }
 
 template <class T>
@@ -275,54 +275,54 @@ BEGIN_NS(lua)
 template <class ...Args>
 inline void PushArguments(lua_State * L, std::tuple<Args...> args)
 {
-	std::apply([=](const auto &... elem)
-	{
-		(push(L, elem), ...);
-	}, args);
+    std::apply([=](const auto &... elem)
+    {
+        (push(L, elem), ...);
+    }, args);
 }
 
 // Fetches a required return value (i.e. succeeded = false if arg doesn't exist or is nil)
 template <class T>
 void CheckedGetReturnValue(lua_State * L, int & index, T& ret, bool & succeeded)
 {
-	auto i = index--;
-	if (lua_isnil(L, i)) {
-		ERR("Return value %d must not be missing or nil", -i);
-		succeeded = false;
-		ret = T{};
-	} else {
-		auto val = safe_get<T>(L, i);
-		if (val.has_value()) {
-			ret = *val;
-		} else {
-			ERR("Failed to fetch return value %d, incorrect type?", -i);
-			succeeded = false;
-			ret = T{};
-		}
-	}
+    auto i = index--;
+    if (lua_isnil(L, i)) {
+        ERR("Return value %d must not be missing or nil", -i);
+        succeeded = false;
+        ret = T{};
+    } else {
+        auto val = safe_get<T>(L, i);
+        if (val.has_value()) {
+            ret = *val;
+        } else {
+            ERR("Failed to fetch return value %d, incorrect type?", -i);
+            succeeded = false;
+            ret = T{};
+        }
+    }
 }
 
 // Fetches an optional return value (i.e. succeeded = true if arg doesn't exist or is nil)
 template <class T>
 void CheckedGetReturnValue(lua_State * L, int & index, std::optional<T>& ret, bool& succeeded)
 {
-	auto i = index--;
-	if (lua_isnil(L, i)) {
-		ret = {};
-		succeeded = true;
-	} else {
-		// FIXME - add exception handling!
-		ret = get<T>(L, i);
-		succeeded = true;
-	}
+    auto i = index--;
+    if (lua_isnil(L, i)) {
+        ret = {};
+        succeeded = true;
+    } else {
+        // FIXME - add exception handling!
+        ret = get<T>(L, i);
+        succeeded = true;
+    }
 }
 
 template <class... Ret, size_t... Is>
 inline bool CheckedGetReturnValuesInner(lua_State * L, bool& succeeded, std::tuple<Ret...>& ret, std::index_sequence<Is...>)
 {
-	int index{ -1 };
-	(CheckedGetReturnValue(L, index, std::get<Is>(ret), succeeded), ...);
-	return succeeded;
+    int index{ -1 };
+    (CheckedGetReturnValue(L, index, std::get<Is>(ret), succeeded), ...);
+    return succeeded;
 }
 
 // Fetch Lua return values into a tuple
@@ -331,9 +331,9 @@ inline bool CheckedGetReturnValuesInner(lua_State * L, bool& succeeded, std::tup
 template <class... Ret>
 bool CheckedGetReturnValues(lua_State * L, std::tuple<Ret...>& ret)
 {
-	bool succeeded{ true };
-	CheckedGetReturnValuesInner(L, succeeded, ret, std::index_sequence_for<Ret...>{});
-	return succeeded;
+    bool succeeded{ true };
+    CheckedGetReturnValuesInner(L, succeeded, ret, std::index_sequence_for<Ret...>{});
+    return succeeded;
 }
 
 // Fetch Lua return values into a tuple
@@ -342,9 +342,9 @@ bool CheckedGetReturnValues(lua_State * L, std::tuple<Ret...>& ret)
 template <class... Ret>
 auto CheckedPopReturnValues(lua_State * L, std::tuple<Ret...>& ret)
 {
-	auto succeeded = CheckedGetReturnValues<Ret...>(L, ret);
-	lua_pop(L, (int)sizeof...(Ret));
-	return succeeded;
+    auto succeeded = CheckedGetReturnValues<Ret...>(L, ret);
+    lua_pop(L, (int)sizeof...(Ret));
+    return succeeded;
 }
 
 int CallWithTraceback(lua_State* L, int narg, int nres);
@@ -363,18 +363,18 @@ bool CheckedCall(lua_State * L, int numArgs, char const * functionName);
 template <class... Ret>
 bool CheckedCall(lua_State * L, int numArgs, std::tuple<Ret...>& ret, char const * functionName)
 {
-	if (CallWithTraceback(L, numArgs, sizeof...(Ret)) != 0) { // stack: errmsg
-		ERR("%s Lua call failed: %s", functionName, lua_tostring(L, -1));
-		lua_pop(L, 1);
-		return false;
-	}
+    if (CallWithTraceback(L, numArgs, sizeof...(Ret)) != 0) { // stack: errmsg
+        ERR("%s Lua call failed: %s", functionName, lua_tostring(L, -1));
+        lua_pop(L, 1);
+        return false;
+    }
 
-	if (!CheckedPopReturnValues<Ret...>(L, ret)) {
-		ERR("Got incorrect return values from %s", functionName);
-		return false;
-	}
+    if (!CheckedPopReturnValues<Ret...>(L, ret)) {
+        ERR("Got incorrect return values from %s", functionName);
+        return false;
+    }
 
-	return true;
+    return true;
 }
 
 int CallWithTraceback(lua_State * L, int narg, int nres);

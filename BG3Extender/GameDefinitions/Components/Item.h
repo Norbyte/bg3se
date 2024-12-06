@@ -4,37 +4,37 @@ BEGIN_NS(item)
 
 struct DestroyInfo
 {
-	FixedString field_0;
-	uint8_t field_4;
+    FixedString field_0;
+    uint8_t field_4;
 };
 
 struct DestroyedComponent : public BaseComponent
 {
-	DEFINE_COMPONENT(ItemDestroyed, "eoc::item::DestroyedComponent")
+    DEFINE_COMPONENT(ItemDestroyed, "eoc::item::DestroyedComponent")
 
-	std::optional<DestroyInfo> Info;
+    std::optional<DestroyInfo> Info;
 };
 
 struct DyeComponent : public BaseComponent
 {
-	DEFINE_COMPONENT(ItemDye, "eoc::item::DyeComponent")
+    DEFINE_COMPONENT(ItemDye, "eoc::item::DyeComponent")
 
-	Guid Color;
+    Guid Color;
 };
 
 struct MapMarkerStyleComponent : public BaseComponent
 {
-	DEFINE_COMPONENT(MapMarkerStyle, "eoc::item::MapMarkerStyleComponent")
+    DEFINE_COMPONENT(MapMarkerStyle, "eoc::item::MapMarkerStyleComponent")
 
-	FixedString Style;
+    FixedString Style;
 };
 
 struct PortalComponent : public BaseComponent
 {
-	DEFINE_COMPONENT(ItemPortal, "eoc::item::PortalComponent")
+    DEFINE_COMPONENT(ItemPortal, "eoc::item::PortalComponent")
 
-	uint8_t field_0;
-	uint8_t field_1;
+    uint8_t field_0;
+    uint8_t field_1;
 };
 
 
@@ -54,16 +54,16 @@ BEGIN_NS(item_template)
 
 struct ActionTypeComponent : public BaseComponent
 {
-	DEFINE_COMPONENT(ActionType, "eoc::item_template::ActionTypeComponent")
+    DEFINE_COMPONENT(ActionType, "eoc::item_template::ActionTypeComponent")
 
-	HashSet<uint8_t> ActionTypes;
+    HashSet<uint8_t> ActionTypes;
 };
 
 struct UseActionComponent : public BaseComponent
 {
-	DEFINE_COMPONENT(UseAction, "eoc::item_template::UseActionComponent")
+    DEFINE_COMPONENT(UseAction, "eoc::item_template::UseActionComponent")
 
-	Array<IActionData*> UseActions;
+    Array<IActionData*> UseActions;
 };
 
 
@@ -82,9 +82,9 @@ BEGIN_NS(ownership)
 
 struct OwneeCurrentComponent : public BaseComponent
 {
-	DEFINE_COMPONENT(OwneeCurrent, "eoc::ownership::OwneeCurrentComponent")
+    DEFINE_COMPONENT(OwneeCurrent, "eoc::ownership::OwneeCurrentComponent")
 
-	EntityHandle Ownee;
+    EntityHandle Ownee;
 };
 
 
@@ -97,9 +97,9 @@ BEGIN_NS(esv::item)
 
 struct DynamicLayerOwnerComponent : public BaseComponent
 {
-	DEFINE_COMPONENT(ServerDynamicLayerOwner, "esv::item::DynamicLayerOwnerComponent")
+    DEFINE_COMPONENT(ServerDynamicLayerOwner, "esv::item::DynamicLayerOwnerComponent")
 
-	FixedString Owner;
+    FixedString Owner;
 };
 
 END_NS()
@@ -109,48 +109,48 @@ BEGIN_NS(esv::ownership)
 
 struct IsCurrentOwnerComponent : public BaseComponent
 {
-	DEFINE_COMPONENT(ServerIsCurrentOwner, "esv::ownership::IsCurrentOwnerComponent")
+    DEFINE_COMPONENT(ServerIsCurrentOwner, "esv::ownership::IsCurrentOwnerComponent")
 
-	HashSet<EntityHandle> Owner;
+    HashSet<EntityHandle> Owner;
 };
 
 struct IsLatestOwnerComponent : public BaseComponent
 {
-	DEFINE_COMPONENT(ServerIsLatestOwner, "esv::ownership::IsLatestOwnerComponent")
+    DEFINE_COMPONENT(ServerIsLatestOwner, "esv::ownership::IsLatestOwnerComponent")
 
-	HashSet<EntityHandle> Owner;
+    HashSet<EntityHandle> Owner;
 };
 
 struct IsPreviousOwnerComponent : public BaseComponent
 {
-	DEFINE_COMPONENT(ServerIsPreviousOwner, "esv::ownership::IsPreviousOwnerComponent")
+    DEFINE_COMPONENT(ServerIsPreviousOwner, "esv::ownership::IsPreviousOwnerComponent")
 
-	HashSet<EntityHandle> Owner;
+    HashSet<EntityHandle> Owner;
 };
 
 struct IsOriginalOwnerComponent : public BaseComponent
 {
-	DEFINE_COMPONENT(ServerIsOriginalOwner, "esv::ownership::IsOriginalOwnerComponent")
+    DEFINE_COMPONENT(ServerIsOriginalOwner, "esv::ownership::IsOriginalOwnerComponent")
 
-	HashSet<EntityHandle> Owner;
+    HashSet<EntityHandle> Owner;
 };
 
 struct OwneeHistoryComponent : public BaseComponent
 {
-	DEFINE_COMPONENT(ServerOwneeHistory, "esv::ownership::OwneeHistoryComponent")
+    DEFINE_COMPONENT(ServerOwneeHistory, "esv::ownership::OwneeHistoryComponent")
 
-	EntityHandle OriginalOwner;
-	EntityHandle LatestOwner;
-	EntityHandle PreviousOwner;
+    EntityHandle OriginalOwner;
+    EntityHandle LatestOwner;
+    EntityHandle PreviousOwner;
 };
 
 struct OwneeRequestComponent : public BaseComponent
 {
-	DEFINE_COMPONENT(ServerOwneeRequest, "esv::ownership::OwneeRequestComponent")
+    DEFINE_COMPONENT(ServerOwneeRequest, "esv::ownership::OwneeRequestComponent")
 
-	std::optional<EntityHandle> NewCurrentOwnee;
-	std::optional<EntityHandle> LatestOwner;
-	std::optional<EntityHandle> OriginalOwner;
+    std::optional<EntityHandle> NewCurrentOwnee;
+    std::optional<EntityHandle> LatestOwner;
+    std::optional<EntityHandle> OriginalOwner;
 };
 
 END_NS()

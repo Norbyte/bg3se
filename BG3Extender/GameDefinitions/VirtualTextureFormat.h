@@ -125,25 +125,25 @@ struct GTSFourCCMetadata
     uint8_t ExtendedLength;
     uint16_t Length;
 
-	inline uint32_t ValueLength() const
-	{
-		uint32_t valueSize = Length;
-		if (ExtendedLength == 1) {
-			valueSize |= (*(uint32_t*)(this + 1) << 16);
-		}
+    inline uint32_t ValueLength() const
+    {
+        uint32_t valueSize = Length;
+        if (ExtendedLength == 1) {
+            valueSize |= (*(uint32_t*)(this + 1) << 16);
+        }
 
-		return valueSize;
-	}
+        return valueSize;
+    }
 
-	inline uint8_t const* ValuePtr() const
-	{
-		auto val = (uint8_t const*)(this + 1);
-		if (ExtendedLength == 1) {
-			val += 4;
-		}
+    inline uint8_t const* ValuePtr() const
+    {
+        auto val = (uint8_t const*)(this + 1);
+        if (ExtendedLength == 1) {
+            val += 4;
+        }
 
-		return val;
-	}
+        return val;
+    }
 };
 
 
@@ -167,67 +167,67 @@ struct GTSThumbnailInfo
 
 struct GTSPackedTileID
 {
-	uint32_t Val;
+    uint32_t Val;
 
-	inline GTSPackedTileID(uint32_t layer, uint32_t level, uint32_t x, uint32_t y)
-		: Val((layer & 0xF)
-			| ((level & 0xF) << 4)
-			| ((y & 0xFFF) << 8)
-			| ((x & 0xFFF) << 20))
-	{}
+    inline GTSPackedTileID(uint32_t layer, uint32_t level, uint32_t x, uint32_t y)
+        : Val((layer & 0xF)
+            | ((level & 0xF) << 4)
+            | ((y & 0xFFF) << 8)
+            | ((x & 0xFFF) << 20))
+    {}
 
-	inline uint32_t Layer() const
-	{
-		return Val & 0x0F;
-	}
+    inline uint32_t Layer() const
+    {
+        return Val & 0x0F;
+    }
 
-	inline uint32_t Level() const
-	{
-		return (Val >> 4) & 0x0F;
-	}
+    inline uint32_t Level() const
+    {
+        return (Val >> 4) & 0x0F;
+    }
 
-	inline uint32_t Y() const
-	{
-		return (Val >> 8) & 0x0FFF;
-	}
+    inline uint32_t Y() const
+    {
+        return (Val >> 8) & 0x0FFF;
+    }
 
-	inline uint32_t X() const
-	{
-		return Val >> 20;
-	}
+    inline uint32_t X() const
+    {
+        return Val >> 20;
+    }
 };
 
 struct GTSFlatTileInfo
 {
-	uint16_t PageFileIndex; // Index of file in PageFileInfos
-	uint16_t PageIndex; // Index of 1MB page
-	uint16_t ChunkIndex; // Index of entry within page
-	uint16_t D; // Always 1?
-	uint32_t PackedTileIndex; // Index of tile in PackedTileIDs
+    uint16_t PageFileIndex; // Index of file in PageFileInfos
+    uint16_t PageIndex; // Index of 1MB page
+    uint16_t ChunkIndex; // Index of entry within page
+    uint16_t D; // Always 1?
+    uint32_t PackedTileIndex; // Index of tile in PackedTileIDs
 };
 #pragma pack(pop)
 
 struct FourCCTextureMeta
 {
-	struct GTSFile* File;
-	STDWString Name;
-	uint32_t X;
-	uint32_t Y;
-	uint32_t Width;
-	uint32_t Height;
+    struct GTSFile* File;
+    STDWString Name;
+    uint32_t X;
+    uint32_t Y;
+    uint32_t Width;
+    uint32_t Height;
 };
 
 struct FourCCNode
 {
-	GTSFourCCMetadata* Node;
-	uint32_t Size;
+    GTSFourCCMetadata* Node;
+    uint32_t Size;
 
     FourCCNode FindNext(uint32_t tag);
     FourCCNode Advance();
-	FourCCNode Enter(uint32_t tag);
-	int32_t ReadInt(uint32_t tag);
-	bool ReadBinary(uint32_t tag, void* buf, uint32_t size);
-	STDWString ReadString(uint32_t tag);
+    FourCCNode Enter(uint32_t tag);
+    int32_t ReadInt(uint32_t tag);
+    bool ReadBinary(uint32_t tag, void* buf, uint32_t size);
+    STDWString ReadString(uint32_t tag);
 };
 
 END_NS()

@@ -37,14 +37,14 @@ BEGIN_NS(ecl::lua)
 
 void RegisterClientLibraries()
 {
-	net::RegisterNetLib();
-	tmpl::RegisterTemplateLib();
-	audio::RegisterAudioLib();
+    net::RegisterNetLib();
+    tmpl::RegisterTemplateLib();
+    audio::RegisterAudioLib();
 #if defined(ENABLE_UI)
-	ui::RegisterUILib();
+    ui::RegisterUILib();
 #endif
 #if defined(ENABLE_IMGUI)
-	imgui::RegisterIMGUILib();
+    imgui::RegisterIMGUILib();
 #endif
 }
 
@@ -54,13 +54,13 @@ BEGIN_NS(esv::lua)
 
 void RegisterServerLibraries()
 {
-	net::RegisterNetLib();
-	tmpl::RegisterTemplateLib();
+    net::RegisterNetLib();
+    tmpl::RegisterTemplateLib();
 }
 
 void RegisterServerMetatables(lua_State* L)
 {
-	OsiFunctionNameMetatable::RegisterMetatable(L);
+    OsiFunctionNameMetatable::RegisterMetatable(L);
 }
 
 END_NS()
@@ -71,48 +71,48 @@ void InitObjectProxyPropertyMaps();
 
 void RegisterSharedMetatables(lua_State* L)
 {
-	ArrayProxyMetatable::RegisterMetatable(L);
-	SetProxyMetatable::RegisterMetatable(L);
-	MapProxyMetatable::RegisterMetatable(L);
-	LightObjectProxyMetatable::RegisterMetatable(L);
-	EnumValueMetatable::RegisterMetatable(L);
-	BitfieldValueMetatable::RegisterMetatable(L);
-	UserVariableHolderMetatable::RegisterMetatable(L);
-	ModVariableHolderMetatable::RegisterMetatable(L);
-	EntityProxyMetatable::RegisterMetatable(L);
-	EntityProxyMetatable::StaticInitialize();
+    ArrayProxyMetatable::RegisterMetatable(L);
+    SetProxyMetatable::RegisterMetatable(L);
+    MapProxyMetatable::RegisterMetatable(L);
+    LightObjectProxyMetatable::RegisterMetatable(L);
+    EnumValueMetatable::RegisterMetatable(L);
+    BitfieldValueMetatable::RegisterMetatable(L);
+    UserVariableHolderMetatable::RegisterMetatable(L);
+    ModVariableHolderMetatable::RegisterMetatable(L);
+    EntityProxyMetatable::RegisterMetatable(L);
+    EntityProxyMetatable::StaticInitialize();
 #if defined(ENABLE_IMGUI)
-	ImguiObjectProxyMetatable::RegisterMetatable(L);
+    ImguiObjectProxyMetatable::RegisterMetatable(L);
 #endif
-	types::RegisterEnumerations(L);
+    types::RegisterEnumerations(L);
 }
 
 void RegisterSharedLibraries()
 {
-	utils::RegisterUtilsLib();
-	entity::RegisterEntityLib();
-	json::RegisterJsonLib();
-	types::RegisterTypesLib();
-	io::RegisterIOLib();
-	loca::RegisterLocalizationLib();
-	log::RegisterLogLib();
-	math::RegisterMathLib();
-	mod::RegisterModLib();
-	debug::RegisterDebugLib();
-	stats::RegisterStatsLib();
-	res::RegisterStaticDataLib();
-	vars::RegisterVarsLib();
-	timer::RegisterTimerLib();
-	level::RegisterLevelLib();
+    utils::RegisterUtilsLib();
+    entity::RegisterEntityLib();
+    json::RegisterJsonLib();
+    types::RegisterTypesLib();
+    io::RegisterIOLib();
+    loca::RegisterLocalizationLib();
+    log::RegisterLogLib();
+    math::RegisterMathLib();
+    mod::RegisterModLib();
+    debug::RegisterDebugLib();
+    stats::RegisterStatsLib();
+    res::RegisterStaticDataLib();
+    vars::RegisterVarsLib();
+    timer::RegisterTimerLib();
+    level::RegisterLevelLib();
 }
 
 void RegisterLibraries()
 {
-	if (!gModuleRegistry.GetModules().empty()) return;
+    if (!gModuleRegistry.GetModules().empty()) return;
 
-	RegisterSharedLibraries();
-	esv::lua::RegisterServerLibraries();
-	ecl::lua::RegisterClientLibraries();
+    RegisterSharedLibraries();
+    esv::lua::RegisterServerLibraries();
+    ecl::lua::RegisterClientLibraries();
 }
 
 END_NS()
