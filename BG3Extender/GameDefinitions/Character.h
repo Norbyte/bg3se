@@ -141,7 +141,6 @@ struct PlayerCustomData : public ProtectedGameObject<PlayerCustomData>
     uint8_t field_0;
     __int64 field_8;
     bg3se::PlayerCustomData Base;
-    int field_24;
     uint8_t field_28;
     int field_2C;
     NetId PickpocketTarget;
@@ -206,10 +205,9 @@ struct Character : public BaseProxyComponent
     uint8_t BloodType;
     CharacterFlags2 Flags2;
     CharacterFlags3 Flags3;
-    Array<FixedString> field_120;
-    Array<FixedString> field_130;
-    bool OffstageVisibilityVisualLoaded;
-    bool IsInvisible;
+    uint8_t OffstageVisibilityVisualLoaded;
+    uint8_t IsInvisible;
+    [[bg3::hidden]] void* _PAD;
 };
 
 END_NS()

@@ -310,7 +310,7 @@ struct Status : public ProtectedGameObject<Status>
     Guid UUID;
     NetId NetworkId;
     EntityHandle Target;
-    EntityHandle StatusHandle;
+    ComponentHandle StatusHandle;
     ecs::EntityRef Cause;
     ecs::EntityRef TickingOwner;
     FixedString StatusId;
