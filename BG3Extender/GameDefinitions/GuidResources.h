@@ -1266,7 +1266,7 @@ struct EffectInfo
     STDString EndTextKey;
     float MinDistance;
     float MaxDistance;
-    uint32_t Flags;
+    MultiEffectFlags Flags;
     bool Pivot;
     uint32_t BindSourceTo;
     uint32_t BindTargetTo;

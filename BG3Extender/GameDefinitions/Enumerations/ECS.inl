@@ -997,6 +997,23 @@ BEGIN_BITMASK_NS(esv, StatusFlags5, ServerStatusFlags5, uint8_t)
 END_ENUM_NS()
 
 
+BEGIN_BITMASK_NS(ecl, StatusFlags, ClientStatusFlags, uint8_t)
+    EV(RequestDelete, 1)
+    EV(Started, 2)
+    EV(WasEnteredDuringSave, 4)
+    EV(KeepAlive, 8)
+    EV(DontTickWhileOnSurface, 0x10)
+    EV(IsOnSourceSurface, 0x20)
+    EV(VisualsCreated, 0x40)
+    EV(HasSounds, 0x80)
+END_ENUM_NS()
+
+BEGIN_BITMASK_NS(ecl, StatusFlags2, ClientStatusFlags2, uint8_t)
+    EV(HasLoopSound, 1)
+    EV(Ticked, 2)
+    EV(IsSourceDependent, 4)
+END_ENUM_NS()
+
 // Persistent flags: 0x2414170022110
 // AI flags: 0x4000070000060
 BEGIN_BITMASK_NS(esv, CharacterFlags, ServerCharacterFlags, uint64_t)
