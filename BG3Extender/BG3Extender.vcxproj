@@ -432,6 +432,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="GameDefinitions\PropertyMaps\UI.inl" />
     <None Include="GameDefinitions\Render.inl" />
     <None Include="GameDefinitions\RootTemplates.inl" />
+    <None Include="GameDefinitions\Status.inl" />
     <None Include="GameHooks\EngineHooks.inl" />
     <None Include="LuaScripts\BuiltinLibrary.lua" />
     <None Include="LuaScripts\BuiltinLibraryClient.lua" />
@@ -486,7 +487,6 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="Lua\Server\FunctorEvents.inl" />
     <None Include="Lua\Osiris\FunctionProxy.inl" />
     <None Include="Lua\Server\ServerFunctors.inl" />
-    <None Include="Lua\Server\ServerStatus.inl" />
     <None Include="Lua\Shared\EntityComponentEvents.inl" />
     <None Include="Lua\Shared\EntityEventHelpersClient.inl" />
     <None Include="Lua\Shared\EntityEventHelpersServer.inl" />

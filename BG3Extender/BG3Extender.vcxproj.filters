@@ -521,9 +521,6 @@
     <None Include="Lua\Libs\StatMisc.inl">
       <Filter>Lua\Shared</Filter>
     </None>
-    <None Include="Lua\Server\ServerStatus.inl">
-      <Filter>Lua\Server</Filter>
-    </None>
     <None Include="LuaScripts\BuiltinLibrary.lua">
       <Filter>LuaScripts</Filter>
     </None>
@@ -743,6 +740,7 @@
     <None Include="Lua\Libs\Level.inl" />
     <None Include="Lua\Libs\Net.inl" />
     <None Include=".editorconfig" />
+    <None Include="GameDefinitions\Status.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

@@ -217,6 +217,75 @@ private:
 };
 
 
+template <class TData, class R, class... Args>
+class FunctionImpl<R (TData, Args...), TData> : public Function<R (Args...)>
+{
+private:
+    using Base = Function<R (Args...)>;
+    using UserCallProc = R (TData, Args...);
+
+    struct Context
+    {
+        UserCallProc Handler;
+        TData Data;
+    };
+
+    static_assert(sizeof(Context) <= sizeof(void*) * Base::UserDataSize);
+
+public:
+    FunctionImpl(UserCallProc handler, TData const& data)
+    {
+        this->call_ = [](Base const& self, Args... args) -> R {
+            auto& impl = static_cast<FunctionImpl const&>(self);
+            if constexpr (std::is_same_v<R, void>) {
+                impl(std::forward<Args>(args)...);
+            } else {
+                return impl(std::forward<Args>(args)...);
+            }
+        };
+        this->copy_ = [](Base const& self, Base const& src, Base* dst) -> Base* {
+            *static_cast<FunctionImpl*>(dst)->Data() = *static_cast<FunctionImpl const&>(src).Data();
+            return dst;
+        };
+        this->move_ = [](Base const& self, Base&& src, Base* dst) -> Base* {
+            if (dst == nullptr) {
+                static_cast<FunctionImpl&>(src).Data()->~Context();
+                return nullptr;
+            } else {
+                *static_cast<FunctionImpl*>(dst)->Data() = std::move(*static_cast<FunctionImpl const&>(src).Data());
+                return dst;
+            }
+        };
+        *Data() = Context{
+            .Handler = handler,
+            .Data = data
+        };
+    }
+
+private:
+    R operator ()(Args&&... args) const
+    {
+        auto proc = Data()->Handler;
+        auto& data = Data()->Data;
+        if constexpr (std::is_same_v<R, void>) {
+            return proc(data, std::forward<Args>(args)...);
+        } else {
+            proc(data, std::forward<Args>(args)...);
+        }
+    }
+
+    inline Context* Data()
+    {
+        return reinterpret_cast<Context*>(&this->data_[0]);
+    }
+
+    inline Context const* Data() const
+    {
+        return reinterpret_cast<Context const*>(&this->data_[0]);
+    }
+};
+
+
 template <class TData, class R, class T, class... Args>
 class FunctionImpl<R (T::*)(TData, Args...), TData> : public Function<R (Args...)>
 {
@@ -237,10 +306,11 @@ public:
     FunctionImpl(T* this_, UserCallProc handler, TData const& data)
     {
         this->call_ = [](Base const& self, Args... args) -> R {
+            auto& impl = static_cast<FunctionImpl const&>(self);
             if constexpr (std::is_same_v<R, void>) {
-                static_cast<FunctionImpl const&>(self)(std::forward<Args>(args)...);
+                impl(std::forward<Args>(args)...);
             } else {
-                return static_cast<FunctionImpl const&>(self)(std::forward<Args>(args)...);
+                return impl(self)(std::forward<Args>(args)...);
             }
         };
         this->copy_ = [](Base const& self, Base const& src, Base* dst) -> Base* {
@@ -375,6 +445,12 @@ template <class R, class T, class... Args>
 Function<R(Args...)> MakeFunction(R (T::* fun)(Args...), T* self)
 {
     return FunctionImpl<R (T::*)(Args...), void>(self, fun);
+}
+
+template <class R, class TData, class... Args>
+Function<R (Args...)> MakeFunction(R (* fun)(TData, Args...), TData const& data)
+{
+    return FunctionImpl<R (TData, Args...), TData>(fun, data);
 }
 
 template <class R, class T, class TData, class... Args>
