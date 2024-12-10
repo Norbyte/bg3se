@@ -158,6 +158,17 @@ public:
         ImGui_ImplVulkan_CreateFontsTexture();
 
         initialized_ = true;
+
+        IMGUI_DEBUG("VK POSTINIT - uiFrameworkStarted %d", uiFrameworkStarted_ ? 1 : 0);
+        IMGUI_DEBUG("    Instance %p, PhysicalDevice %p, Device %p", instance_, physicalDevice_, device_);
+        IMGUI_DEBUG("    QueueFamily %d, RenderQueue %p", queueFamily_, renderQueue_, swapChain_);
+        IMGUI_DEBUG("    PipelineCache %p, DescriptorPool %p, Sampler %p", pipelineCache_, descriptorPool_, sampler_);
+        IMGUI_DEBUG("VK SWAPCHAIN");
+        IMGUI_DEBUG("    SwapChain %p, RenderPass %p, CommandPool %p", swapChain_, swapchain_.renderPass_, swapchain_.commandPool_);
+        IMGUI_DEBUG("VK FRAMEBUFFERS");
+        for (auto const& image : swapchain_.images_) {
+            IMGUI_DEBUG("    Image %p, FB %p, View %p, Fence %p", image.image, image.framebuffer, image.view, image.fence);
+        }
     }
 
     void DestroyUI() override
@@ -191,6 +202,7 @@ public:
         }
 
         ImGui_ImplVulkan_NewFrame();
+        IMGUI_FRAME_DEBUG("VK: NewFrame");
     }
 
     void FinishFrame() override
@@ -221,6 +233,7 @@ public:
         }
 
         drawViewport_ = curViewport_;
+        IMGUI_FRAME_DEBUG("VK: FinishFrame");
     }
 
     void ClearFrame() override
@@ -658,6 +671,7 @@ private:
         if (!vp.DrawDataP.Valid) return;
 
         auto& image = swapchain_.images_[pPresentInfo->pImageIndices[0]];
+        IMGUI_FRAME_DEBUG("vkQueuePresentKHR: Swap chain image #%d (%p)", pPresentInfo->pImageIndices[0], image.image);
 
         // wait for this command buffer to be free
         // If this ring has never been used the fence is signalled on creation.
@@ -764,14 +778,23 @@ private:
     {
         if (pPresentInfo->swapchainCount != 1
             || pPresentInfo->pSwapchains[0] != swapChain_) {
+            IMGUI_FRAME_DEBUG("vkQueuePresentKHR: Bad swapchain (%d: %p vs. %p)",
+                pPresentInfo->swapchainCount, 
+                pPresentInfo->swapchainCount ? pPresentInfo->pSwapchains[0] : nullptr,
+                swapChain_);
+            frameNo_++;
             return;
         }
 
         std::lock_guard _(globalResourceLock_);
         if (!initialized_) {
+            IMGUI_DEBUG("vkQueuePresentKHR: Render backend initialized yet");
+            frameNo_ = 0;
+
             if (!uiFrameworkStarted_) {
                 ui_.OnRenderBackendInitialized();
                 uiFrameworkStarted_ = true;
+                IMGUI_DEBUG("vkQueuePresentKHR: uiFrameworkStarted_ = true");
 
                 for (auto i = 0; i < viewports_.size(); i++) {
                     viewports_[i].Viewport = *GImGui->Viewports[0];
@@ -786,7 +809,12 @@ private:
 
         if (initialized_ && drawViewport_ != -1) {
             presentPreHook(const_cast<VkPresentInfoKHR*>(pPresentInfo));
+        } else {
+            IMGUI_FRAME_DEBUG("vkQueuePresentKHR: Cannot append command buffer - initialized %d, drawViewport %d",
+                initialized_ ? 1 : 0, drawViewport_);
         }
+
+        frameNo_++;
     }
 
     IMGUIManager& ui_;
@@ -802,6 +830,7 @@ private:
     std::array<ViewportInfo, 3> viewports_;
     int32_t drawViewport_{ -1 };
     int32_t curViewport_{ 0 };
+    int32_t frameNo_{ 0 };
     bool textureLimitWarningShown_{ false };
 
     bool initialized_{ false };

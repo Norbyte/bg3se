@@ -7,106 +7,106 @@ BEGIN_NS(ecl)
 
 ExtensionState & ExtensionState::Get()
 {
-	return gExtender->GetClient().GetExtensionState();
+    return gExtender->GetClient().GetExtensionState();
 }
 
 ExtensionState::ExtensionState()
-	: ExtensionStateBase(false)
+    : ExtensionStateBase(false)
 {}
 
 ExtensionState::~ExtensionState()
 {
-	if (Lua) Lua->Shutdown();
+    if (Lua) Lua->Shutdown();
 }
 
 lua::State * ExtensionState::GetLua()
 {
-	if (Lua) {
-		return Lua.get();
-	} else {
-		return nullptr;
-	}
+    if (Lua) {
+        return Lua.get();
+    } else {
+        return nullptr;
+    }
 }
 
 ModManager* ExtensionState::GetModManager()
 {
-	return GetStaticSymbols().GetModManagerClient();
+    return GetStaticSymbols().GetModManagerClient();
 }
 
 bg3se::LevelManager* ExtensionState::GetLevelManager()
 {
-	return GetStaticSymbols().GetClientLevelManager();
+    return GetStaticSymbols().GetClientLevelManager();
 }
 
 void ExtensionState::OnUpdate(GameTime const& time)
 {
-	FireInputEvents();
-	ExtensionStateBase::OnUpdate(time);
+    FireInputEvents();
+    ExtensionStateBase::OnUpdate(time);
 }
 
 void ExtensionState::DoLuaReset()
 {
-	if (Lua) {
-		// Keep around a fake reference during the reset callback
-		luaRefs_++;
-		Lua->OnShutdown();
-		luaRefs_--;
-		Lua->Shutdown();
-	}
-	Lua.reset();
+    if (Lua) {
+        // Keep around a fake reference during the reset callback
+        luaRefs_++;
+        Lua->OnShutdown();
+        luaRefs_--;
+        Lua->Shutdown();
+    }
+    Lua.reset();
 
-	context_ = nextContext_;
-	assert(context_ != ExtensionStateContext::Uninitialized);
-	Lua = std::make_unique<lua::ClientState>(*this, nextGenerationId_++);
-	Lua->Initialize();
+    context_ = nextContext_;
+    assert(context_ != ExtensionStateContext::Uninitialized);
+    Lua = std::make_unique<lua::ClientState>(*this, nextGenerationId_++);
+    Lua->Initialize();
 }
 
 void ExtensionState::LuaStartup()
 {
-	ExtensionStateBase::LuaStartup();
+    ExtensionStateBase::LuaStartup();
 
-	LuaClientPin lua(*this);
-	auto gameState = GetStaticSymbols().GetClientState();
-	if (gameState
-		&& (*gameState == GameState::LoadLevel
-			|| (*gameState == GameState::LoadModule && WasStatLoadTriggered())
-			|| *gameState == GameState::LoadSession
-			|| *gameState == GameState::Paused
-			|| *gameState == GameState::PrepareRunning
-			|| *gameState == GameState::Running)) {
-		lua->OnModuleResume();
-	}
+    LuaClientPin lua(*this);
+    auto gameState = GetStaticSymbols().GetClientState();
+    if (gameState
+        && (*gameState == GameState::LoadLevel
+            || (*gameState == GameState::LoadModule && WasStatLoadTriggered())
+            || *gameState == GameState::LoadSession
+            || *gameState == GameState::Paused
+            || *gameState == GameState::PrepareRunning
+            || *gameState == GameState::Running)) {
+        lua->OnModuleResume();
+    }
 }
 
 void ExtensionState::FireInputEvents()
 {
-	if (!deferredInputEvents_.empty()) {
-		LuaClientPin lua(*this);
-		if (lua) {
-			for (auto& e : deferredInputEvents_) {
-				lua->OnInputEvent(&e, nullptr);
-			}
-		}
+    if (!deferredInputEvents_.empty()) {
+        LuaClientPin lua(*this);
+        if (lua) {
+            for (auto& e : deferredInputEvents_) {
+                lua->OnInputEvent(&e, nullptr);
+            }
+        }
 
-		deferredInputEvents_.clear();
-	}
+        deferredInputEvents_.clear();
+    }
 }
 
 void ExtensionState::OnInputEvent(SDL_Event* event, int& result)
 {
-	// Only dispatch cancelable events from the SDL thread 
-	// (i.e. where we need immediate feedback from Lua code); 
-	// others are deferred to the client update loop
-	if (Lua && Lua->IsEventCancelable(event)) {
-		gExtender->GetClient().AddThread(GetCurrentThreadId());
+    // Only dispatch cancelable events from the SDL thread 
+    // (i.e. where we need immediate feedback from Lua code); 
+    // others are deferred to the client update loop
+    if (Lua && Lua->IsEventCancelable(event)) {
+        gExtender->GetClient().AddThread(GetCurrentThreadId());
 
-		LuaClientPin lua(*this);
-		if (lua) {
-			lua->OnInputEvent(event, &result);
-		}
-	} else {
-		deferredInputEvents_.push_back(*event);
-	}
+        LuaClientPin lua(*this);
+        if (lua) {
+            lua->OnInputEvent(event, &result);
+        }
+    } else {
+        deferredInputEvents_.push_back(*event);
+    }
 }
 
 END_NS()

@@ -38,45 +38,45 @@ END_SE()
 #include <GameDefinitions/GlobalFixedStrings.h>
 
 #define DEFINE_COMPONENT(componentType, cls) \
-	static constexpr ExtComponentType ComponentType = ExtComponentType::componentType; \
-	static constexpr auto ComponentName = #componentType; \
-	static constexpr auto EngineClass = cls; \
-	static constexpr auto OneFrame = false;
+    static constexpr ExtComponentType ComponentType = ExtComponentType::componentType; \
+    static constexpr auto ComponentName = #componentType; \
+    static constexpr auto EngineClass = cls; \
+    static constexpr auto OneFrame = false;
 
 #define DEFINE_ONEFRAME_COMPONENT(componentType, cls) \
-	static constexpr ExtComponentType ComponentType = ExtComponentType::componentType; \
-	static constexpr auto ComponentName = #componentType; \
-	static constexpr auto EngineClass = cls; \
-	static constexpr auto OneFrame = true;
+    static constexpr ExtComponentType ComponentType = ExtComponentType::componentType; \
+    static constexpr auto ComponentName = #componentType; \
+    static constexpr auto EngineClass = cls; \
+    static constexpr auto OneFrame = true;
 
 #define DEFINE_TAG_COMPONENT(ns, name, componentType) \
-	struct name : public BaseComponent \
-	{ \
-		static constexpr ExtComponentType ComponentType = ExtComponentType::componentType; \
-		static constexpr auto ComponentName = #componentType; \
-		static constexpr auto EngineClass = #ns "::" #name; \
-		static constexpr auto OneFrame = false; \
-		uint8_t Dummy; \
-	};
+    struct name : public BaseComponent \
+    { \
+        static constexpr ExtComponentType ComponentType = ExtComponentType::componentType; \
+        static constexpr auto ComponentName = #componentType; \
+        static constexpr auto EngineClass = #ns "::" #name; \
+        static constexpr auto OneFrame = false; \
+        uint8_t Dummy; \
+    };
 
 #define DEFINE_ONEFRAME_TAG_COMPONENT(ns, name, componentType) \
-	struct name : public BaseComponent \
-	{ \
-		static constexpr ExtComponentType ComponentType = ExtComponentType::componentType; \
-		static constexpr auto ComponentName = #componentType; \
-		static constexpr auto EngineClass = #ns "::" #name; \
-		static constexpr auto OneFrame = true; \
-		uint8_t Dummy; \
-	};
+    struct name : public BaseComponent \
+    { \
+        static constexpr ExtComponentType ComponentType = ExtComponentType::componentType; \
+        static constexpr auto ComponentName = #componentType; \
+        static constexpr auto EngineClass = #ns "::" #name; \
+        static constexpr auto OneFrame = true; \
+        uint8_t Dummy; \
+    };
 
 #define DEFN_BOOST(name, boostType, defn) \
-	struct name##BoostComponent_Base : public BaseComponent \
-	defn; \
-	struct name##BoostComponent : public name##BoostComponent_Base \
-	{ \
-		static constexpr ExtComponentType ComponentType = ExtComponentType::name##Boost; \
-		static constexpr auto ComponentName = #name "Boost"; \
-		static constexpr auto BoostType = BoostType::boostType; \
-		static constexpr auto EngineClass = "eoc::" #name "BoostComponent"; \
-		static constexpr auto OneFrame = false; \
-	};
+    struct name##BoostComponent_Base : public BaseComponent \
+    defn; \
+    struct name##BoostComponent : public name##BoostComponent_Base \
+    { \
+        static constexpr ExtComponentType ComponentType = ExtComponentType::name##Boost; \
+        static constexpr auto ComponentName = #name "Boost"; \
+        static constexpr auto BoostType = BoostType::boostType; \
+        static constexpr auto EngineClass = "eoc::" #name "BoostComponent"; \
+        static constexpr auto OneFrame = false; \
+    };

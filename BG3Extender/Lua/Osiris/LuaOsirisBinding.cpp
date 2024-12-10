@@ -13,37 +13,37 @@
 BEGIN_NS(esv::lua)
 
 OsirisBinding::OsirisBinding(ExtensionState& state)
-	: identityAdapters_(gExtender->GetServer().Osiris().GetGlobals()),
-	resolver_(*this, gExtender->GetServer().Osiris().GetGlobals()),
-	osirisCallbacks_(state)
+    : identityAdapters_(gExtender->GetServer().Osiris().GetGlobals()),
+    resolver_(*this, gExtender->GetServer().Osiris().GetGlobals()),
+    osirisCallbacks_(state)
 {
-	identityAdapters_.UpdateAdapters();
-	resolver_.InvalidateCache();
+    identityAdapters_.UpdateAdapters();
+    resolver_.InvalidateCache();
 }
 
 OsirisBinding::~OsirisBinding()
 {
-	if (gExtender) {
-		// FIXME - HANDLE IN SERVER LOGIC!
-		gExtender->GetServer().Osiris().GetCustomFunctionManager().ClearDynamicEntries();
-	}
+    if (gExtender) {
+        // FIXME - HANDLE IN SERVER LOGIC!
+        gExtender->GetServer().Osiris().GetCustomFunctionManager().ClearDynamicEntries();
+    }
 }
 
 void OsirisBinding::StoryLoaded()
 {
-	generationId_++;
-	identityAdapters_.UpdateAdapters();
-	if (!identityAdapters_.HasAllAdapters()) {
-		OsiWarn("Not all identity adapters are available - some queries may not work!");
-	}
+    generationId_++;
+    identityAdapters_.UpdateAdapters();
+    if (!identityAdapters_.HasAllAdapters()) {
+        OsiWarn("Not all identity adapters are available - some queries may not work!");
+    }
 
-	resolver_.InvalidateCache();
-	osirisCallbacks_.StoryLoaded();
+    resolver_.InvalidateCache();
+    osirisCallbacks_.StoryLoaded();
 }
 
 void OsirisBinding::StorySetMerging(bool isMerging)
 {
-	osirisCallbacks_.StorySetMerging(isMerging);
+    osirisCallbacks_.StorySetMerging(isMerging);
 }
 
 }

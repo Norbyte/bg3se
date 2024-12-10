@@ -130,6 +130,10 @@ struct StyledRenderable : public Renderable
 public:
     virtual void StyledRender() = 0;
 
+    lua::ImguiHandle GetDragPreview() const;
+    FixedString GetDragDropType() const;
+    void SetDragDropType(lua_State* L, FixedString type);
+
     void Render() override;
     std::optional<float> GetStyleVar(GuiStyleVar var);
     void SetStyleVar(GuiStyleVar var, float value, std::optional<float> value2);
@@ -146,6 +150,10 @@ public:
     bool Visible{ true };
     bool RequestActivate{ false };
     bool WasHovered{ false };
+    bool CanDrag{ false };
+    bool IsDragging{ false };
+    HandleType DragPreview{ InvalidHandle };
+    FixedString DragDropType;
     FixedString Font;
     std::optional<glm::vec2> PositionOffset;
     std::optional<glm::vec2> AbsolutePosition;
@@ -153,11 +161,26 @@ public:
     std::optional<float> TextWrapPos;
     GuiItemFlags ItemFlags{ 0 };
     GuiItemStatusFlags StatusFlags{ 0 };
+    GuiDragFlags DragFlags{ 0 };
+    GuiDropFlags DropFlags{ 0 };
 
     lua::LuaDelegate<void(lua::ImguiHandle)> OnActivate;
     lua::LuaDelegate<void(lua::ImguiHandle)> OnDeactivate;
     lua::LuaDelegate<void(lua::ImguiHandle)> OnHoverEnter;
     lua::LuaDelegate<void(lua::ImguiHandle)> OnHoverLeave;
+    lua::LuaDelegate<void(lua::ImguiHandle, lua::ImguiHandle)> OnDragStart;
+    lua::LuaDelegate<void(lua::ImguiHandle)> OnDragEnd;
+    lua::LuaDelegate<void(lua::ImguiHandle, lua::ImguiHandle)> OnDragDrop;
+
+protected:
+    void HandleDragDrop();
+    void FireEvents();
+    void DrawTooltip();
+    void UpdateStatusFlags();
+    void PushStyleChanges();
+    void PopStyleChanges();
+    void PushWindowStyleChanges(ImFont*& font);
+    void PopWindowStyleChanges(ImFont* font);
 
 private:
     lua::ImguiHandle tooltip_;

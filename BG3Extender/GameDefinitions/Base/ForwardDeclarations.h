@@ -7,14 +7,14 @@ struct SDL_Window;
 
 namespace Json
 {
-	class Value;
+    class Value;
 }
 
 namespace Noesis
 {
-	class BaseObject;
-	class BaseObservableCollection;
-	class UIElementCollection;
+    class BaseObject;
+    class BaseObservableCollection;
+    class UIElementCollection;
 }
 
 BEGIN_SE()
@@ -26,6 +26,7 @@ struct EoCGameObjectTemplate;
 struct CharacterTemplate;
 struct ItemTemplate;
 struct ProjectileTemplate;
+struct SceneryTemplate;
 struct SurfaceTemplate;
 struct TriggerTemplate;
 struct LevelTemplate;
@@ -52,6 +53,7 @@ struct CacheTemplateManagerBase;
 
 struct AiGrid;
 
+struct BoundComponent;
 struct UuidComponent;
 struct UuidToHandleMappingComponent;
 
@@ -71,81 +73,84 @@ class ExtensionStateBase;
 
 namespace resource
 {
-	struct GuidResource;
-	struct GuidResourceBankBase;
-	struct GuidResourceManager;
+    struct GuidResource;
+    struct GuidResourceBankBase;
+    struct GuidResourceManager;
 
-	struct Resource;
-	struct VisualSet;
-	struct TextureResource;
+    struct Resource;
+    struct VisualSet;
+    struct EffectResource;
+    struct TextureResource;
 }
 
 namespace net
 {
-	struct Bitstream;
-	struct BitstreamSerializer;
-	struct Message;
-	struct MessagePool;
-	struct MessageFactory;
-	struct Protocol;
-	struct AbstractPeer;
-	struct Host;
-	struct Client;
-	struct GameServer;
+    struct Bitstream;
+    struct BitstreamSerializer;
+    struct Message;
+    struct MessagePool;
+    struct MessageFactory;
+    struct Protocol;
+    struct AbstractPeer;
+    struct Host;
+    struct Client;
+    struct GameClient;
+    struct GameServer;
 }
 
 namespace ecs
 {
-	struct EntityRef;
-	struct EntityWorld;
-	class EntitySystemHelpersBase;
+    struct EntityRef;
+    struct EntityWorld;
+    class EntitySystemHelpersBase;
 }
 
 namespace stats
 {
-	struct Modifier;
-	struct ModifierList;
-	struct Requirement;
-	struct Functor;
-	struct Functors;
-	struct ConditionId;
-	struct SpellPrototype;
-	struct PassivePrototype;
-	struct RPGEnumeration;
-	struct Object;
-	struct TreasureTable;
-	struct TreasureSubTable;
-	struct TreasureCategory;
+    struct Modifier;
+    struct ModifierList;
+    struct Requirement;
+    struct Functor;
+    struct Functors;
+    struct ConditionId;
+    struct SpellPrototype;
+    struct PassivePrototype;
+    struct RPGEnumeration;
+    struct Object;
+    struct TreasureTable;
+    struct TreasureSubTable;
+    struct TreasureCategory;
 }
 
 namespace esv
 {
-	struct Item;
-	struct Character;
-	struct Level;
-	struct Status;
-	struct StatusMachine;
-	class ExtensionState;
+    struct Item;
+    struct Character;
+    struct Level;
+    struct Status;
+    struct StatusMachine;
+    class ExtensionState;
 
-	namespace lua
-	{
-		class OsirisCallbackManager;
-	}
+    namespace lua
+    {
+        class OsirisCallbackManager;
+    }
 }
 
 namespace ecl
 {
-	struct Item;
-	struct Character;
-	struct Level;
-	struct Status;
-	struct StatusMachine;
-	class ExtensionState;
+    struct Item;
+    struct Character;
+    struct Level;
+    struct Status;
+    struct StatusMachine;
+    struct CursorControl;
+    class ExtensionState;
 
-	namespace lua
-	{
-		class ClientState;
-	}
+    namespace lua
+    {
+        class ClientState;
+    }
 }
 
 class OsirisExtender;
@@ -154,38 +159,43 @@ class ScriptExtender;
 // Forward declarations for custom Lua serializers
 namespace lua
 {
-	struct LifetimeHandle;
-	class Ref;
-	class EntityHelper;
-	class GenericPropertyMap;
-	class CachedUserVariableManager;
-	class CachedModVariableManager;
-	class EntityReplicationEventHooks;
-	class EntityComponentEventHooks;
-	class State;
+    struct LifetimeHandle;
+    class Ref;
+    class EntityHelper;
+    class GenericPropertyMap;
+    class CachedUserVariableManager;
+    class CachedModVariableManager;
+    class EntityReplicationEventHooks;
+    class EntityComponentEventHooks;
+    class State;
 
-	struct CppObjectMetadata;
-	struct CppValueMetadata;
+    struct CppObjectMetadata;
 
-	template <class T>
-	class LuaDelegate;
+    template <class T>
+    class LuaDelegate;
+}
+
+namespace aspk
+{
+    struct Input;
+    struct Component;
 }
 
 namespace ui
 {
-	struct UIManager;
+    struct UIManager;
 }
 
 namespace extui
 {
-	class IMGUIManager;
-	class IMGUIObjectManager;
-	struct Renderable;
+    class IMGUIManager;
+    class IMGUIObjectManager;
+    struct Renderable;
 }
 
 namespace osidbg
 {
-	class Debugger;
+    class Debugger;
 }
 
 END_SE()

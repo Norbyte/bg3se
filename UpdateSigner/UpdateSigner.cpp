@@ -12,7 +12,7 @@ extern "C" {
 
 int default_CSPRNG(uint8_t* dest, unsigned int size)
 {
-	return CryptGenRandom(hCryptProv, size, dest);
+    return CryptGenRandom(hCryptProv, size, dest);
 }
 
 }
@@ -141,15 +141,15 @@ int SignerMain(int argc, char** argv)
 {
     if (argc < 2) return 0;
 
-	if (!CryptAcquireContext(
-		&hCryptProv,
-		NULL,
-		(LPCWSTR)L"Microsoft Base Cryptographic Provider v1.0",
-		PROV_RSA_FULL,
-		CRYPT_VERIFYCONTEXT)) {
+    if (!CryptAcquireContext(
+        &hCryptProv,
+        NULL,
+        (LPCWSTR)L"Microsoft Base Cryptographic Provider v1.0",
+        PROV_RSA_FULL,
+        CRYPT_VERIFYCONTEXT)) {
         std::cout << "CryptAcquireContext failed" << std::endl;
-		return 1;
-	}
+        return 1;
+    }
 
     if (strcmp(argv[1], "genkey") == 0) {
         auto path = FromStdUTF8(std::string(argv[2]));

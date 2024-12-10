@@ -70,7 +70,7 @@ P_FUN(GetStatusByType, esv::Character::GetStatusByType)
 END_CLS()
 
 
-BEGIN_CLS(eoc::PlayerCustomData)
+BEGIN_CLS(PlayerCustomData)
 P_RO(Initialized)
 P(OwnerProfileID)
 P(ReservedProfileID)

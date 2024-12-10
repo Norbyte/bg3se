@@ -952,5 +952,40 @@
       @ref3 e8 ?? ?? ?? ?? // call    ls__UIStateMachine__FireStateEvent2
       <Target Type="Indirect" Offset="@ref3" Symbol="ls__UIStateMachine__FireStateEvent2" />
     </Mapping>
+
+    <!-- Sigs: exposed as "IsReachable" -->
+    <Mapping Name="eoc::AiGrid::FindPath">
+      48 8b 83 a0 01 00 00 // mov     rax, [rbx+1A0h]
+      48 8b 98 90 00 00 00 // mov     rbx, [rax+90h]
+      48 85 db // test    rbx, rbx
+      0f 84 b7 00 00 00 // jz      loc_142628DF3
+      48 8b 9b 80 00 00 00 // mov     rbx, [rbx+80h]
+      8b d7 // mov     edx, edi
+      48 8b cb // mov     rcx, rbx
+      @ref1 e8 ?? ?? ?? ?? // call    eoc__AiGrid__FindPath
+      8b d7 // mov     edx, edi
+      48 8b cb // mov     rcx, rbx
+      @ref2 e8 ?? ?? ?? ?? // call    eoc__AiGrid__FindPathImmediate
+      0f b6 f8 // movzx   edi, al
+      48 8d 4d 40 // lea     rcx, [rbp+180h+var_140]
+      e8 ?? ?? ?? ?? // call    sub_141A26EE0
+      90 // nop
+      48 8b 4d b0 // mov     rcx, [rbp+180h+var_1D0]
+      <Target Type="Indirect" Offset="@ref1" Symbol="eoc__AiGrid__FindPath" />
+      <Target Type="Indirect" Offset="@ref2" Symbol="eoc__AiGrid__FindPathImmediate" />
+    </Mapping>
+
+    <!-- Sig from ecl::CharacterTask_Dialog::SetCursor -->
+    <Mapping Name="ecl::CharacterTask_Dialog::SetCursor">
+      @ref1 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:ecl__gCursorControl
+      83 78 3c 00 // cmp     dword ptr [rax+3Ch], 0
+      75 1a // jnz     short loc_141E3CAD7
+      83 78 24 02 // cmp     dword ptr [rax+24h], 2
+      74 07 // jz      short loc_141E3CACA
+      c7 40 24 02 00 00 00 // mov     dword ptr [rax+24h], 2
+      83 78 24 2a // cmp     dword ptr [rax+24h], 2Ah ; '*'
+      74 07 // jz      short loc_141E3CAD7
+      <Target Type="Indirect" Offset="@ref1" Symbol="ecl__gCursorControl" />
+    </Mapping>
   </Mappings>
 </BinaryMappings>

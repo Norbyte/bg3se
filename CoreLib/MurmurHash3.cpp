@@ -16,18 +16,18 @@
 
 #if defined(_MSC_VER)
 
-#define FORCE_INLINE	__forceinline
+#define FORCE_INLINE    __forceinline
 
 #include <stdlib.h>
 
-#define ROTL32(x,y)	_rotl(x,y)
-#define ROTL64(x,y)	_rotl64(x,y)
+#define ROTL32(x,y)    _rotl(x,y)
+#define ROTL64(x,y)    _rotl64(x,y)
 
 #define BIG_CONSTANT(x) (x)
 
 // Other compilers
 
-#else	// defined(_MSC_VER)
+#else    // defined(_MSC_VER)
 
 #if defined(GNUC) && ((GNUC > 4) || (GNUC == 4 && GNUC_MINOR >= 4))
 
@@ -52,8 +52,8 @@ inline uint64_t rotl64 ( uint64_t x, int8_t r )
   return (x << r) | (x >> (64 - r));
 }
 
-#define	ROTL32(x,y)	rotl32(x,y)
-#define ROTL64(x,y)	rotl64(x,y)
+#define    ROTL32(x,y)    rotl32(x,y)
+#define ROTL64(x,y)    rotl64(x,y)
 
 #define BIG_CONSTANT(x) (x##LLU)
 
@@ -70,9 +70,9 @@ FORCE_INLINE uint32_t getblock ( const uint32_t * p, int i )
 #else
   const uint8_t *c = (const uint8_t *)&p[i];
   return (uint32_t)c[0] |
-	 (uint32_t)c[1] <<  8 |
-	 (uint32_t)c[2] << 16 |
-	 (uint32_t)c[3] << 24;
+     (uint32_t)c[1] <<  8 |
+     (uint32_t)c[2] << 16 |
+     (uint32_t)c[3] << 24;
 #endif
 }
 
@@ -83,13 +83,13 @@ FORCE_INLINE uint64_t getblock ( const uint64_t * p, int i )
 #else
   const uint8_t *c = (const uint8_t *)&p[i];
   return (uint64_t)c[0] |
-	 (uint64_t)c[1] <<  8 |
-	 (uint64_t)c[2] << 16 |
-	 (uint64_t)c[3] << 24 |
-	 (uint64_t)c[4] << 32 |
-	 (uint64_t)c[5] << 40 |
-	 (uint64_t)c[6] << 48 |
-	 (uint64_t)c[7] << 56;
+     (uint64_t)c[1] <<  8 |
+     (uint64_t)c[2] << 16 |
+     (uint64_t)c[3] << 24 |
+     (uint64_t)c[4] << 32 |
+     (uint64_t)c[5] << 40 |
+     (uint64_t)c[6] << 48 |
+     (uint64_t)c[7] << 56;
 #endif
 }
 

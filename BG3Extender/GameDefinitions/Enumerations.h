@@ -22,9 +22,9 @@
 BEGIN_SE()
 
 #define BEGIN_BITMASK_NS(NS, T, luaName, type, id) namespace NS { \
-	enum class T : type {
+    enum class T : type {
 #define BEGIN_ENUM_NS(NS, T, luaName, type, id) namespace NS { \
-	enum class T : type {
+    enum class T : type {
 #define BEGIN_BITMASK(T, type, id) enum class T : type {
 #define BEGIN_ENUM(T, type, id) enum class T : type {
 #define EV(label, value) label = value,
@@ -63,14 +63,14 @@ void InitializeEnumerations();
 
 
 #define BEGIN_BITMASK_NS(NS, T, luaName, type, id) \
-	template<> struct IsBitfield<NS::T> { \
-		static const bool value = true; \
-	};
+    template<> struct IsBitfield<NS::T> { \
+        static const bool value = true; \
+    };
 #define BEGIN_ENUM_NS(NS, T, luaName, type, id)
 #define BEGIN_BITMASK(T, type, id) \
-	template<> struct IsBitfield<T> { \
-		static const bool value = true; \
-	};
+    template<> struct IsBitfield<T> { \
+        static const bool value = true; \
+    };
 #define BEGIN_ENUM(T, type, id)
 #define EV(label, value)
 #define END_ENUM_NS()

@@ -10,6 +10,8 @@
 // #define IMGUI_DEBUG(msg, ...) DEBUG("[IMGUI] " msg, __VA_ARGS__)
 #define IMGUI_DEBUG(msg, ...)
 
+#define IMGUI_FRAME_DEBUG(msg, ...) if ((frameNo_ % 100) == 0) { IMGUI_DEBUG(msg, __VA_ARGS__); }
+
 #include <Extender/Client/IMGUI/Vulkan.inl>
 #include <Extender/Client/IMGUI/DX11.inl>
 #include <Lua/Shared/LuaMethodCallHelpers.h>
@@ -125,84 +127,48 @@ lua::ImguiHandle Renderable::GetParent() const
     return lua::ImguiHandle(Parent);
 }
 
+lua::ImguiHandle StyledRenderable::GetDragPreview() const
+{
+    return lua::ImguiHandle(DragPreview);
+}
+
+FixedString StyledRenderable::GetDragDropType() const
+{
+    return DragDropType;
+}
+
+void StyledRenderable::SetDragDropType(lua_State* L, FixedString type)
+{
+    if (type.GetLength() >= IM_ARRAYSIZE(ImGuiPayload::DataType)) {
+        luaL_error(L, "Drag drop type must be at most %d characters", IM_ARRAYSIZE(ImGuiPayload::DataType));
+        return;
+    }
+
+    DragDropType = type;
+}
+
 void StyledRenderable::Render()
 {
     if (!Visible) return;
 
     ImFont* font{ nullptr };
-    if (Font) {
-        auto info = gExtender->IMGUI().GetFont(Font);
-        if (info) font = info->Font;
-    }
-
-    if (font) ImGui::PushFont(font);
-
-    for (auto const& var : StyleVars) {
-        auto varInfo = ImGui::GetStyleVarInfo((ImGuiStyleVar)var.Key);
-        if (varInfo->Count == 2) {
-            ImGui::PushStyleVar((ImGuiStyleVar)var.Key, ToImVec(var.Value));
-        } else {
-            ImGui::PushStyleVar((ImGuiStyleVar)var.Key, var.Value.x);
-        }
-    }
-
-    for (auto const& var : StyleColors) {
-        ImGui::PushStyleColor((ImGuiCol)var.Key, ImVec4(var.Value.r, var.Value.g, var.Value.b, var.Value.a));
-    }
-
-    if (!IDContext.empty()) {
-        ImGui::PushID(IDContext.data(), IDContext.data() + IDContext.size());
-    } else if (Label.empty()) {
-        ImGui::PushID((int32_t)Handle | (int32_t)(Handle >> 32));
-    }
-
-    if (SameLine) ImGui::SameLine();
-
-    if (PositionOffset) {
-        auto pos = ImGui::GetCursorPos();
-        ImGui::SetCursorPos(ImVec2(pos.x + PositionOffset->x, pos.y + PositionOffset->y));
-    } else if (AbsolutePosition) {
-        ImGui::SetCursorPos(ToImVec(*AbsolutePosition));
-    }
-
-    if (ItemFlags != (GuiItemFlags)0) ImGui::PushItemFlag((ImGuiItemFlags)ItemFlags, true);
-    if (TextWrapPos) ImGui::PushTextWrapPos(*TextWrapPos);
-    if (ItemWidth) ImGui::SetNextItemWidth(*ItemWidth);
-
-    if (RequestActivate) {
-        ImGui::ActivateItemByID(ImGui::GetCurrentWindow()->GetID(Label.c_str()));
-        RequestActivate = false;
-    }
+    PushStyleChanges();
+    PushWindowStyleChanges(font);
 
     StyledRender();
+    UpdateStatusFlags();
+    FireEvents();
 
-    auto status = (GuiItemStatusFlags)ImGui::GetItemStatusFlags();
-    if (ImGui::IsItemFocused()) status |= GuiItemStatusFlags::Focused;
-    if (ImGui::IsItemActive()) status |= GuiItemStatusFlags::Active;
-    if (StatusFlags != status) StatusFlags = status;
+    PopWindowStyleChanges(font);
+    PopStyleChanges();
 
-    if (ItemFlags != (GuiItemFlags)0) ImGui::PopItemFlag();
-    if (TextWrapPos) ImGui::PopTextWrapPos();
+    DrawTooltip();
+    HandleDragDrop();
+}
 
-    if (!StyleColors.empty()) {
-        ImGui::PopStyleColor(StyleColors.size());
-    }
 
-    if (!StyleVars.empty()) {
-        ImGui::PopStyleVar(StyleVars.size());
-    }
-
-    if (font) ImGui::PopFont();
-
-    if (tooltip_) {
-        auto tooltip = Manager->GetRenderable(tooltip_.Handle);
-        if (tooltip) tooltip->Render();
-    }
-
-    if (!IDContext.empty() || Label.empty()) {
-        ImGui::PopID();
-    }
-
+void StyledRenderable::FireEvents()
+{
     if (OnActivate && ImGui::IsItemActivated()) {
         Manager->GetEventQueue().Call(OnActivate, lua::ImguiHandle(Handle));
     }
@@ -224,6 +190,144 @@ void StyledRenderable::Render()
         }
         WasHovered = hovered;
     }
+}
+
+
+void StyledRenderable::HandleDragDrop()
+{
+    if (CanDrag && DragDropType) {
+        if (ImGui::BeginDragDropSource((ImGuiDragDropFlags)DragFlags)) {
+            if (!IsDragging) {
+                if (OnDragStart) {
+                    DragPreview = Manager->CreateRenderable<Group>()->Handle;
+                    Manager->GetEventQueue().Call(OnDragStart, lua::ImguiHandle(Handle), lua::ImguiHandle(DragPreview));
+                }
+                IsDragging = true;
+            }
+
+            ImGui::SetDragDropPayload(DragDropType.GetString(), &Handle, sizeof(Handle));
+            if (DragPreview) {
+                auto preview = Manager->GetRenderable(DragPreview);
+                if (preview) {
+                    preview->Render();
+                }
+            }
+            ImGui::EndDragDropSource();
+        } else if (IsDragging) {
+            Manager->GetEventQueue().Call(OnDragEnd, lua::ImguiHandle(Handle));
+            if (DragPreview) {
+                Manager->DestroyRenderable(DragPreview);
+                DragPreview = InvalidHandle;
+            }
+            IsDragging = false;
+        }
+    }
+
+    if (DragDropType && OnDragDrop && ImGui::BeginDragDropTarget())
+    {
+        auto payload = ImGui::AcceptDragDropPayload(DragDropType.GetString());
+        if (payload) {
+            auto source = *reinterpret_cast<HandleType*>(payload->Data);
+            Manager->GetEventQueue().Call(OnDragDrop, lua::ImguiHandle(Handle), lua::ImguiHandle(source));
+        }
+        ImGui::EndDragDropTarget();
+    }
+}
+
+
+void StyledRenderable::DrawTooltip()
+{
+    if (tooltip_) {
+        auto tooltip = Manager->GetRenderable(tooltip_.Handle);
+        if (tooltip) tooltip->Render();
+    }
+}
+
+
+void StyledRenderable::UpdateStatusFlags()
+{
+    auto status = (GuiItemStatusFlags)ImGui::GetItemStatusFlags();
+    if (ImGui::IsItemFocused()) status |= GuiItemStatusFlags::Focused;
+    if (ImGui::IsItemActive()) status |= GuiItemStatusFlags::Active;
+    if (StatusFlags != status) StatusFlags = status;
+}
+
+
+void StyledRenderable::PushStyleChanges()
+{
+    for (auto const& var : StyleVars) {
+        auto varInfo = ImGui::GetStyleVarInfo((ImGuiStyleVar)var.Key);
+        if (varInfo->Count == 2) {
+            ImGui::PushStyleVar((ImGuiStyleVar)var.Key, ToImVec(var.Value));
+        } else {
+            ImGui::PushStyleVar((ImGuiStyleVar)var.Key, var.Value.x);
+        }
+    }
+
+    for (auto const& var : StyleColors) {
+        ImGui::PushStyleColor((ImGuiCol)var.Key, ImVec4(var.Value.r, var.Value.g, var.Value.b, var.Value.a));
+    }
+
+    if (ItemFlags != (GuiItemFlags)0) ImGui::PushItemFlag((ImGuiItemFlags)ItemFlags, true);
+    if (ItemWidth) ImGui::SetNextItemWidth(*ItemWidth);
+
+    if (RequestActivate) {
+        ImGui::ActivateItemByID(ImGui::GetCurrentWindow()->GetID(Label.c_str()));
+        RequestActivate = false;
+    }
+}
+
+
+void StyledRenderable::PopStyleChanges()
+{
+    if (ItemFlags != (GuiItemFlags)0) ImGui::PopItemFlag();
+
+    if (!StyleColors.empty()) {
+        ImGui::PopStyleColor(StyleColors.size());
+    }
+
+    if (!StyleVars.empty()) {
+        ImGui::PopStyleVar(StyleVars.size());
+    }
+}
+
+
+void StyledRenderable::PushWindowStyleChanges(ImFont*& font)
+{
+    if (Font) {
+        auto info = gExtender->IMGUI().GetFont(Font);
+        if (info) font = info->Font;
+    }
+
+    if (font) ImGui::PushFont(font);
+
+    if (!IDContext.empty()) {
+        ImGui::PushID(IDContext.data(), IDContext.data() + IDContext.size());
+    } else if (Label.empty()) {
+        ImGui::PushID((int32_t)Handle | (int32_t)(Handle >> 32));
+    }
+
+    if (PositionOffset) {
+        auto pos = ImGui::GetCursorPos();
+        ImGui::SetCursorPos(ImVec2(pos.x + PositionOffset->x, pos.y + PositionOffset->y));
+    } else if (AbsolutePosition) {
+        ImGui::SetCursorPos(ToImVec(*AbsolutePosition));
+    }
+
+    if (SameLine) ImGui::SameLine();
+    if (TextWrapPos) ImGui::PushTextWrapPos(*TextWrapPos);
+}
+
+
+void StyledRenderable::PopWindowStyleChanges(ImFont* font)
+{
+    if (TextWrapPos) ImGui::PopTextWrapPos();
+
+    if (!IDContext.empty() || Label.empty()) {
+        ImGui::PopID();
+    }
+
+    if (font) ImGui::PopFont();
 }
 
 
@@ -1520,6 +1624,8 @@ void IMGUIManager::DestroyUI()
 {
     if (!initialized_) return;
 
+    IMGUI_DEBUG("IMGUIManager::DestroyUI()");
+
     initialized_ = false;
     renderer_->DestroyUI();
     sdl_.DestroyUI();
@@ -1529,6 +1635,7 @@ void IMGUIManager::DestroyUI()
 void IMGUIManager::EnableUI(bool enabled)
 {
     enableUI_ = enabled;
+    IMGUI_DEBUG("IMGUIManager::EnableUI: %d", enabled ? 1 : 0);
 }
 
 void IMGUIManager::SetObjects(IMGUIObjectManager* objects)
@@ -1538,6 +1645,8 @@ void IMGUIManager::SetObjects(IMGUIObjectManager* objects)
     if (objects_ == nullptr) {
         renderer_->ClearFrame();
     }
+
+    IMGUI_DEBUG("IMGUIManager::SetObjects() - Binding object manager");
 }
 
 bool IMGUIManager::LoadFont(FixedString const& name, char const* path, float size)
@@ -1591,7 +1700,7 @@ bool IMGUIManager::LoadFont(FontData& request)
             // IMGUI creates a texture with small width so height will be 32768 for CN fonts.
             // (DX11 can't create textures larger than 16384).
             // Compensate by using a larger width than default
-            ImGui::GetIO().Fonts->TexDesiredWidth = 8192;
+            ImGui::GetIO().Fonts->TexDesiredWidth = 16384;
         } else {
             if (language == "Russian" || language == "Ukrainian") {
                 glyphRanges = ImGui::GetIO().Fonts->GetGlyphRangesCyrillic();
@@ -1657,10 +1766,14 @@ void IMGUIManager::OnRenderBackendInitialized()
 {
     IMGUI_DEBUG("IMGUIManager::OnRenderBackendInitialized()");
     OnViewportUpdated();
+    frameNo_ = 0;
 
     if (!initialized_) {
         InitializeUI();
     }
+
+    IMGUI_DEBUG("READY STATE CHECK - enableUI %d, initialized %d, objects %d, rendererInitialized %d",
+        enableUI_ ? 1 : 0, initialized_ ? 1 : 0, objects_ ? 1 : 0, renderer_->IsInitialized() ? 1 : 0);
 }
 
 void IMGUIManager::OnViewportUpdated()
@@ -1674,6 +1787,7 @@ void IMGUIManager::OnViewportUpdated()
 
 void IMGUIManager::UpdateStyle()
 {
+    IMGUI_DEBUG("Recalculating IMGUI style");
     auto& style = ImGui::GetStyle();
     style = ImGuiStyle();
 
@@ -1766,6 +1880,10 @@ void IMGUIManager::Update()
         || !initialized_
         || !objects_
         || !renderer_->IsInitialized()) {
+
+        IMGUI_FRAME_DEBUG("Skip drawing - enableUI %d, initialized %d, objects %d, rendererInitialized %d",
+            enableUI_ ? 1 : 0, initialized_ ? 1 : 0, objects_ ? 1 : 0, renderer_->IsInitialized() ? 1 : 0);
+        frameNo_++;
         return;
     }
 

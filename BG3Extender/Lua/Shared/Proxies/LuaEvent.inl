@@ -4,16 +4,16 @@ BEGIN_NS(lua)
 
 void EventBase::StopPropagation()
 {
-	Stopped = true;
+    Stopped = true;
 }
 
 void EventBase::PreventAction()
 {
-	if (CanPreventAction) {
-		ActionPrevented = true;
-	} else {
-		OsiErrorS("Can't prevent action");
-	}
+    if (CanPreventAction) {
+        ActionPrevented = true;
+    } else {
+        OsiErrorS("Can't prevent action");
+    }
 }
 
 END_NS()

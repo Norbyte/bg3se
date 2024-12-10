@@ -55,33 +55,33 @@ struct IsMapLike { static constexpr bool Value = false; };
 template <class TK, class TV>
 struct IsMapLike<LegacyMap<TK, TV>>
 { 
-	static constexpr bool Value = true; 
-	using TKey = TK;
-	using TValue = TV;
+    static constexpr bool Value = true; 
+    using TKey = TK;
+    using TValue = TV;
 };
 
 template <class TK, class TV>
 struct IsMapLike<LegacyRefMap<TK, TV>>
 { 
-	static constexpr bool Value = true;
-	using TKey = TK;
-	using TValue = TV;
+    static constexpr bool Value = true;
+    using TKey = TK;
+    using TValue = TV;
 };
 
 template <class TK, class TV>
 struct IsMapLike<HashMap<TK, TV>>
 { 
-	static constexpr bool Value = true;
-	using TKey = TK;
-	using TValue = TV;
+    static constexpr bool Value = true;
+    using TKey = TK;
+    using TValue = TV;
 };
 
 template <class TK, class TV>
 struct IsMapLike<VirtualHashMap<TK, TV>>
 { 
-	static constexpr bool Value = true;
-	using TKey = TK;
-	using TValue = TV;
+    static constexpr bool Value = true;
+    using TKey = TK;
+    using TValue = TV;
 };
 
 template <class T>
@@ -90,15 +90,15 @@ struct IsSetLike { static constexpr bool Value = false; };
 template <class TK>
 struct IsSetLike<HashSet<TK>>
 { 
-	static constexpr bool Value = true;
-	using TKey = TK;
+    static constexpr bool Value = true;
+    using TKey = TK;
 };
 
 template <class TK>
 struct IsSetLike<VirtualMultiHashSet<TK>>
 { 
-	static constexpr bool Value = true;
-	using TKey = TK;
+    static constexpr bool Value = true;
+    using TKey = TK;
 };
 
 template <class T>
@@ -107,7 +107,7 @@ struct IsVariantLike { static constexpr bool Value = false; };
 template <class... Args>
 struct IsVariantLike<std::variant<Args...>>
 { 
-	static constexpr bool Value = true;
+    static constexpr bool Value = true;
 };
 
 END_NS()

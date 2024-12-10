@@ -81,7 +81,7 @@ message DbgSetGlobalBreakpoints {
     GAME_INIT = 128;
     GAME_EXIT = 256;
     DELETE_ = 512;
-	FAILED_QUERY = 1024;
+    FAILED_QUERY = 1024;
   };
 
   uint32 breakpoint_mask = 1;
@@ -97,7 +97,7 @@ message MsgBreakpoint {
     INIT_CALL = 16;
     EXIT_CALL = 32;
     DELETE_ = 64;
-	FAILED_QUERY = 128;
+    FAILED_QUERY = 128;
   };
 
   uint32 node_id = 1;
@@ -279,7 +279,7 @@ message DebuggerToBackend {
     DbgContinue continue = 4;
     DbgGetDatabaseContents getDatabaseContents = 5;
     DbgSyncStory syncStory = 8;
-	DbgEvaluate evaluate = 9;
+    DbgEvaluate evaluate = 9;
   }
   uint32 seq_no = 6;
   uint32 reply_seq_no = 7;
@@ -295,12 +295,12 @@ message BackendToDebugger {
     BkGlobalBreakpointTriggered globalBreakpointTriggered = 7;
     BkSyncStoryData syncStoryData = 10;
     BkSyncStoryFinished syncStoryFinished = 11;
-	BkDebugOutput debugOutput = 12;
-	BkBeginDatabaseContents beginDatabaseContents = 13;
-	BkDatabaseRow databaseRow = 14;
-	BkEndDatabaseContents endDatabaseContents = 15;
-	BkEvaluateRow evaluateRow = 16;
-	BkEvaluateFinished evaluateFinished = 17;
+    BkDebugOutput debugOutput = 12;
+    BkBeginDatabaseContents beginDatabaseContents = 13;
+    BkDatabaseRow databaseRow = 14;
+    BkEndDatabaseContents endDatabaseContents = 15;
+    BkEvaluateRow evaluateRow = 16;
+    BkEvaluateFinished evaluateFinished = 17;
   }
   uint32 seq_no = 8;
   uint32 reply_seq_no = 9;

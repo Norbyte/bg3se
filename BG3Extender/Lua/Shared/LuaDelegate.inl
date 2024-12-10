@@ -6,7 +6,7 @@ void DeferredLuaDelegateQueue::Flush()
     std::swap(cur, queue_);
     for (auto const& call : cur) {
         call->Call();
-        delete call;
+        GameDelete(call);
     }
 }
 

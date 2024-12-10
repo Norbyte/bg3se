@@ -8,61 +8,68 @@ BEGIN_NS(net)
 class ExtenderMessage : public Message
 {
 public:
-	static constexpr NetMessage MessageId = NetMessage::NETMSG_SCRIPT_EXTENDER;
-	static constexpr uint32_t MaxPayloadLength = 0xfffff;
+    static constexpr NetMessage MessageId = NetMessage::NETMSG_SCRIPT_EXTENDER;
+    static constexpr uint32_t MaxPayloadLength = 0xfffff;
 
-	static constexpr uint32_t VerInitial = 1;
-	// Version of protocol, increment each time the protobuf changes
-	static constexpr uint32_t ProtoVersion = VerInitial;
+    static constexpr uint32_t VerInitial = 1;
+    // Version of protocol, increment each time the protobuf changes
+    static constexpr uint32_t ProtoVersion = VerInitial;
 
-	ExtenderMessage();
-	~ExtenderMessage() override;
+    ExtenderMessage();
+    ~ExtenderMessage() override;
 
-	void Serialize(BitstreamSerializer & serializer) override;
-	void Unknown() override;
-	Message * CreateNew() override;
-	void Reset() override;
+    void Serialize(BitstreamSerializer & serializer) override;
+    void Unknown() override;
+    Message * CreateNew() override;
+    void Reset() override;
 
-	inline MessageWrapper & GetMessage()
-	{
+    inline MessageWrapper & GetMessage()
+    {
 #if defined(_DEBUG)
-		return *message_;
+        return *message_;
 #else
-		return message_;
+        return message_;
 #endif
-	}
+    }
 
-	inline bool IsValid() const
-	{
-		return valid_;
-	}
+    inline bool IsValid() const
+    {
+        return valid_;
+    }
 
 private:
 #if defined(_DEBUG)
-	MessageWrapper* message_{ nullptr };
+    MessageWrapper* message_{ nullptr };
 #else
-	MessageWrapper message_;
+    MessageWrapper message_;
 #endif
-	bool valid_{ false };
+    bool valid_{ false };
 };
 
 
 class ExtenderProtocolBase : public Protocol
 {
 public:
-	~ExtenderProtocolBase() override;
+    ~ExtenderProtocolBase() override;
 
-	ProtocolResult ProcessMsg(void * unused, MessageContext * unknown, Message* usg) override;
-	ProtocolResult PreUpdate(GameTime const& time) override;
-	ProtocolResult PostUpdate(GameTime const& time) override;
-	void OnAddedToHost() override;
-	void OnRemovedFromHost() override;
-	void Reset() override;
+    ProtocolResult ProcessMsg(void * unused, MessageContext * unknown, Message* usg) override;
+    ProtocolResult PreUpdate(GameTime const& time) override;
+    ProtocolResult PostUpdate(GameTime const& time) override;
+    void OnAddedToHost() override;
+    void OnRemovedFromHost() override;
+    void Reset() override;
 
-	void SyncUserVars(MsgUserVars const& msg);
+    void SyncUserVars(MsgUserVars const& msg);
 
 protected:
-	virtual void ProcessExtenderMessage(net::MessageContext& context, MessageWrapper & msg) = 0;
+    virtual void ProcessExtenderMessage(net::MessageContext& context, MessageWrapper & msg) = 0;
+};
+
+class BaseNetworkManager
+{
+public:
+    virtual ExtenderMessage* GetFreeMessage() = 0;
+    virtual ExtenderMessage* GetFreeMessage(UserId userId) = 0;
 };
 
 END_NS()

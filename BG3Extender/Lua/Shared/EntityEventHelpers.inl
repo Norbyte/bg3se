@@ -1,19 +1,19 @@
 BEGIN_NS(lua)
 
-LuaEntitySubscriptionId EntityEventHelpers::SubscribeReplication(lua_State* L, EntityHandle entity, ExtComponentType component, RegistryEntry&& hook, std::optional<uint64_t> flags)
+std::optional<LuaEntitySubscriptionId> EntityEventHelpers::SubscribeReplication(lua_State* L, EntityHandle entity, ExtComponentType component, RegistryEntry&& hook, std::optional<uint64_t> flags)
 {
-	auto hooks = State::FromLua(L)->GetReplicationEventHooks();
-	if (!hooks) {
-		luaL_error(L, "Entity replication events are only available on the server");
-	}
-
 	auto replicationType = State::FromLua(L)->GetEntitySystemHelpers()->GetReplicationIndex(component);
 	if (!replicationType) {
 		luaL_error(L, "No replication events are available for components of type %s", EnumInfo<ExtComponentType>::GetStore().Find((EnumUnderlyingType)component).GetString());
 	}
 
+	auto hooks = State::FromLua(L)->GetReplicationEventHooks();
 	auto index = hooks->Subscribe(*replicationType, entity, flags ? *flags : 0xffffffffffffffffull, std::move(hook));
-	return LuaEntitySubscriptionId((ReplicationEventHandleType << 32) | index);
+	if (index) {
+		return LuaEntitySubscriptionId((ReplicationEventHandleType << 32) | *index);
+	} else {
+		return {};
+	}
 }
 
 LuaEntitySubscriptionId EntityEventHelpers::Subscribe(lua_State* L, EntityHandle entity, ExtComponentType component, 
@@ -48,12 +48,7 @@ bool EntityEventHelpers::Unsubscribe(lua_State* L, LuaEntitySubscriptionId handl
 	switch ((uint64_t)handle >> 32) {
 	case ReplicationEventHandleType:
 	{
-		auto hooks = State::FromLua(L)->GetReplicationEventHooks();
-		if (!hooks) {
-			luaL_error(L, "Entity events are only available on the server");
-		}
-
-		return hooks->Unsubscribe((uint32_t)handle);
+		return State::FromLua(L)->GetReplicationEventHooks()->Unsubscribe((uint32_t)handle);
 	}
 
 	case ComponentEventHandleType:

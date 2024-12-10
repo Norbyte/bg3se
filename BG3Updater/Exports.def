@@ -1,15 +1,15 @@
 LIBRARY BG3Updater
 
 EXPORTS
-	DWriteCreateFactory=WrappedDWriteCreateFactory @1
-	SEUpdaterInitialize=SEUpdaterInitialize @100
-	SESetGameVersion=SESetGameVersion @101
-	SEUpdate=SEUpdate @102
-	SEUpdaterGetError=SEUpdaterGetError @103
-	SEUpdaterGetLog=SEUpdaterGetLog @104
-	SEUpdaterGetResourceVersion=SEUpdaterGetResourceVersion @105
-	SEUpdaterShowConsole=SEUpdaterShowConsole @106
-	SEUpdaterTest=SEUpdaterTest @107
-	SEUpdaterShutdown=SEUpdaterShutdown @108
-	SEUpdaterInitializeLibrary=SEUpdaterInitializeLibrary @109
-	SEUpdaterSetLogCallback=SEUpdaterSetLogCallback @110
+    DWriteCreateFactory=WrappedDWriteCreateFactory @1
+    SEUpdaterInitialize=SEUpdaterInitialize @100
+    SESetGameVersion=SESetGameVersion @101
+    SEUpdate=SEUpdate @102
+    SEUpdaterGetError=SEUpdaterGetError @103
+    SEUpdaterGetLog=SEUpdaterGetLog @104
+    SEUpdaterGetResourceVersion=SEUpdaterGetResourceVersion @105
+    SEUpdaterShowConsole=SEUpdaterShowConsole @106
+    SEUpdaterTest=SEUpdaterTest @107
+    SEUpdaterShutdown=SEUpdaterShutdown @108
+    SEUpdaterInitializeLibrary=SEUpdaterInitializeLibrary @109
+    SEUpdaterSetLogCallback=SEUpdaterSetLogCallback @110

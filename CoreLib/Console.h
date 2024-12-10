@@ -9,34 +9,34 @@ BEGIN_SE()
 class Console
 {
 public:
-	using LogCallbackProc = void (char const* message);
+    using LogCallbackProc = void (char const* message);
 
-	virtual ~Console();
-	virtual void Create();
-	void Destroy();
-	void OpenLogFile(std::wstring const& path);
-	void CloseLogFile();
+    virtual ~Console();
+    virtual void Create();
+    void Destroy();
+    void OpenLogFile(std::wstring const& path);
+    void CloseLogFile();
 
-	virtual void Print(DebugMessageType type, char const* msg);
-	void SetColor(DebugMessageType type);
+    virtual void Print(DebugMessageType type, char const* msg);
+    void SetColor(DebugMessageType type);
 
-	void Clear();
-	void EnableOutput(bool enabled);
-	void SetLogCallback(LogCallbackProc* callback);
+    void Clear();
+    void EnableOutput(bool enabled);
+    void SetLogCallback(LogCallbackProc* callback);
 
-	inline bool WasCreated() const
-	{
-		return created_;
-	}
+    inline bool WasCreated() const
+    {
+        return created_;
+    }
 
 protected:
-	bool created_{ false };
-	bool silence_{ false };
-	bool inputEnabled_{ false };
-	bool enabled_{ false };
-	bool logToFile_{ false };
-	LogCallbackProc* logCallback_{ nullptr };
-	std::ofstream logFile_;
+    bool created_{ false };
+    bool silence_{ false };
+    bool inputEnabled_{ false };
+    bool enabled_{ false };
+    bool logToFile_{ false };
+    LogCallbackProc* logCallback_{ nullptr };
+    std::ofstream logFile_;
 };
 
 END_SE()

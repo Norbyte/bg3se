@@ -15,24 +15,24 @@ BEGIN_NS(lua::mod)
 /// <param name="modNameGuid">UUID of mod to check</param>
 bool IsModLoaded(lua_State* L, FixedString modNameGuid)
 {
-	auto modManager = ExtensionStateBase::FromLua(L).GetModManager();
+    auto modManager = ExtensionStateBase::FromLua(L).GetModManager();
 
-	auto modUuid = Guid::Parse(modNameGuid.GetStringView());
-	if (modUuid) {
-		for (auto const& mod : modManager->BaseModule.LoadOrderedModules) {
-			if (mod.Info.ModuleUUID == *modUuid) {
-				return true;
-			}
-		}
-	}
-	
-	for (auto const& mod : modManager->BaseModule.LoadOrderedModules) {
-		if (mod.Info.ModuleUUIDString == modNameGuid) {
-			return true;
-		}
-	}
+    auto modUuid = Guid::Parse(modNameGuid.GetStringView());
+    if (modUuid) {
+        for (auto const& mod : modManager->BaseModule.LoadOrderedModules) {
+            if (mod.Info.ModuleUUID == *modUuid) {
+                return true;
+            }
+        }
+    }
+    
+    for (auto const& mod : modManager->BaseModule.LoadOrderedModules) {
+        if (mod.Info.ModuleUUIDString == modNameGuid) {
+            return true;
+        }
+    }
 
-	return false;
+    return false;
 }
 
 /// <summary>
@@ -41,14 +41,14 @@ bool IsModLoaded(lua_State* L, FixedString modNameGuid)
 /// <returns></returns>
 Array<FixedString> GetLoadOrder(lua_State* L)
 {
-	Array<FixedString> loadOrder;
-	auto modManager = ExtensionStateBase::FromLua(L).GetModManager();
+    Array<FixedString> loadOrder;
+    auto modManager = ExtensionStateBase::FromLua(L).GetModManager();
 
-	for (auto const& mod : modManager->BaseModule.LoadOrderedModules) {
-		loadOrder.Add(mod.Info.ModuleUUIDString);
-	}
+    for (auto const& mod : modManager->BaseModule.LoadOrderedModules) {
+        loadOrder.Add(mod.Info.ModuleUUIDString);
+    }
 
-	return loadOrder;
+    return loadOrder;
 }
 
 /// <summary>
@@ -57,46 +57,46 @@ Array<FixedString> GetLoadOrder(lua_State* L)
 /// <param name="modNameGuid">Mod UUID to query</param>
 Module* GetMod(lua_State* L, FixedString modNameGuid)
 {
-	auto modManager = ExtensionStateBase::FromLua(L).GetModManager();
+    auto modManager = ExtensionStateBase::FromLua(L).GetModManager();
 
-	auto modUuid = Guid::Parse(modNameGuid.GetStringView());
-	if (modUuid) {
-		for (auto& mod : modManager->BaseModule.LoadOrderedModules) {
-			if (mod.Info.ModuleUUID == *modUuid) {
-				return &mod;
-			}
-		}
-	}
+    auto modUuid = Guid::Parse(modNameGuid.GetStringView());
+    if (modUuid) {
+        for (auto& mod : modManager->BaseModule.LoadOrderedModules) {
+            if (mod.Info.ModuleUUID == *modUuid) {
+                return &mod;
+            }
+        }
+    }
 
-	for (auto& mod : modManager->BaseModule.LoadOrderedModules) {
-		if (mod.Info.ModuleUUIDString == modNameGuid) {
-			return &mod;
-		}
-	}
+    for (auto& mod : modManager->BaseModule.LoadOrderedModules) {
+        if (mod.Info.ModuleUUIDString == modNameGuid) {
+            return &mod;
+        }
+    }
 
-	return nullptr;
+    return nullptr;
 }
 
 Module* GetBaseMod(lua_State* L)
 {
-	return &ExtensionStateBase::FromLua(L).GetModManager()->BaseModule;
+    return &ExtensionStateBase::FromLua(L).GetModManager()->BaseModule;
 }
 
 ModManager* GetModManager(lua_State* L)
 {
-	return ExtensionStateBase::FromLua(L).GetModManager();
+    return ExtensionStateBase::FromLua(L).GetModManager();
 }
 
 void RegisterModLib()
 {
-	DECLARE_MODULE(Mod, Both)
-	BEGIN_MODULE()
-	MODULE_FUNCTION(IsModLoaded)
-	MODULE_FUNCTION(GetLoadOrder)
-	MODULE_FUNCTION(GetMod)
-	MODULE_FUNCTION(GetBaseMod)
-	MODULE_FUNCTION(GetModManager)
-	END_MODULE()
+    DECLARE_MODULE(Mod, Both)
+    BEGIN_MODULE()
+    MODULE_FUNCTION(IsModLoaded)
+    MODULE_FUNCTION(GetLoadOrder)
+    MODULE_FUNCTION(GetMod)
+    MODULE_FUNCTION(GetBaseMod)
+    MODULE_FUNCTION(GetModManager)
+    END_MODULE()
 }
 
 END_NS()
