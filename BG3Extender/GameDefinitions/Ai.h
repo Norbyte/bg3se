@@ -325,6 +325,17 @@ struct AiPathCheckpoint : public ProtectedGameObject<AiPathCheckpoint>
 };
 
 
+struct AiPlayerWeightFuncData
+{
+    int CharacterBounds;
+    bool IsAvoidingDynamics;
+    bool IsAvoidingObstacles;
+    bool UseSurfaceInfluences;
+    bool IsAvoidingTraps;
+    Array<SurfacePathInfluence> SurfacePathInfluences;
+    int DamagingSurfacesThreshold;
+};
+
 
 struct AiPath : public ProtectedGameObject<AiPath>
 {

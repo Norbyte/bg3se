@@ -72,4 +72,55 @@ void LuaPolymorphic<ecl::Status>::MakeRef(lua_State* L, ecl::Status* v, Lifetime
 #undef V
 }
 
+void LuaPolymorphic<ecl::StatusVFX>::MakeRef(lua_State* L, ecl::StatusVFX* v, LifetimeHandle const& lifetime)
+{
+    // add rcx, 18h
+    // Insn for chain-calling EffectHandler::UpdateSafe
+    const uint8_t vfxEffect[4] = { 0x48, 0x83, 0xc1, 0x18 };
+    
+    // cmp byte ptr [rcx+20h], 0
+    // Insn checking this->Created
+    const uint8_t vfxBoostMaterial[4] = { 0x80, 0x79, 0x20, 0x00 };
+    
+    // add rcx, 28h
+    // Insn for chain-calling EffectHandler::UpdateSafe
+    const uint8_t vfxManagedStatus[4] = { 0x48, 0x83, 0xc1, 0x28 };
+
+    if (memcmp((uint8_t*)v->VMT->DestroyVisuals + 6, vfxBoostMaterial, 4) == 0) {
+        MakeDirectObjectRef(L, static_cast<ecl::StatusVFXBoostMaterial*>(v), lifetime);
+        return;
+    }
+
+    bool hasApply = *(uint8_t*)v->VMT->Apply != 0xC2; // instruction is not "ret"
+
+    if (memcmp((uint8_t*)v->VMT->UpdateVisuals + 0, vfxEffect, 4) == 0) {
+        if (hasApply) {
+            MakeDirectObjectRef(L, static_cast<ecl::StatusVFXApplyEffect*>(v), lifetime);
+        } else {
+            MakeDirectObjectRef(L, static_cast<ecl::StatusVFXEffect*>(v), lifetime);
+        }
+        return;
+    }
+
+    if (hasApply) {
+        MakeDirectObjectRef(L, static_cast<ecl::StatusVisual*>(v), lifetime);
+        return;
+    }
+
+    bool hasUpdate = *(uint8_t*)v->VMT->UpdateVisuals != 0xC2; // instruction is not "ret"
+
+    if (hasUpdate) {
+        if (memcmp((uint8_t*)v->VMT->UpdateVisuals + 0, vfxManagedStatus, 4) == 0) {
+            MakeDirectObjectRef(L, static_cast<ecl::ManagedStatusVFX*>(v), lifetime);
+            return;
+        } else {
+            MakeDirectObjectRef(L, static_cast<ecl::StatusVFXBeam*>(v), lifetime);
+            return;
+        }
+    }
+
+    // Aura, Material statuses unused
+    MakeDirectObjectRef(L, v, lifetime);
+}
+
 END_NS()

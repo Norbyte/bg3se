@@ -369,12 +369,25 @@ END_NS()
 
 BEGIN_NS(ecl)
 
-struct StatusVFX
+struct [[bg3::hidden]] StatusVFXVMT
 {
-    __int64 field_0;
-    ecl::Status* Status;
-    ecl::StatusVFXData* VFX;
-    bool Created;
+    using DestroyProc = void(StatusVFXVMT*, bool);
+    using UpdateVisualsProc = void(StatusVFXVMT*);
+    using RecreateVisualsProc = void(StatusVFXVMT*, void*, bool);
+    using DestroyVisualsProc = void(StatusVFXVMT*);
+    using ApplyProc = void(StatusVFXVMT*, void*);
+
+    DestroyProc* Destroy;
+    UpdateVisualsProc* UpdateVisuals;
+    RecreateVisualsProc* RecreateVisuals;
+    DestroyVisualsProc* DestroyVisuals;
+    ApplyProc* Apply;
+};
+
+struct StatusVFX : public ProtectedGameObject<StatusVFX>
+{
+    [[bg3::hidden]] StatusVFXVMT* VMT;
+    ComponentHandle Status;
 };
 
 struct ManagedStatusEffect
@@ -494,7 +507,7 @@ struct StatusBoost : public StatusAura
 {
     static constexpr auto Type = StatusType::BOOST;
 
-    bool HasData;
+    //bool HasData;
     FixedString Icon;
     StatusEffectData BoostEffect;
     StatusEffectData EffectOnTurn;
@@ -504,7 +517,7 @@ struct StatusBoost : public StatusAura
     StatusVFXBoostMaterialDefinition Material;
     int field_12C;
     StatusVisualDefinition VisualDefinition;
-    bool NeedsEffectStart;
+    //bool NeedsEffectStart;
     EffectHandler EffectHandler;
 };
 
@@ -641,6 +654,12 @@ struct StatusHeal : public Status
     StatusEffectData Effect;
 };
 
+struct StatusBeamEffectData
+{
+    FixedString BeamEffect;
+    EntityHandle Source;
+};
+
 struct StatusEffect : public Status
 {
     static constexpr auto Type = StatusType::EFFECT;
@@ -650,8 +669,7 @@ struct StatusEffect : public Status
     bool PeaceOnly;
     FixedString PlayerTag;
     StatusEffectData Effect;
-    FixedString BeamEffect;
-    EntityHandle BeamSource;
+    StatusBeamEffectData BeamEffect;
 };
 
 struct StatusDying : public Status
@@ -695,18 +713,98 @@ struct [[bg3::hidden]] NetworkObjectFactory2 : public ObjectFactory2
 };
 
 
+struct EntityStatusData
+{
+    Array<StatusVFX*> VFX;
+    bool HasVFX1;
+    bool HasVFX2;
+};
+
+
+struct ManagedStatusFXGroup
+{
+    int References0;
+    int References1;
+    uint8_t Type;
+    StatusVFX* VFX;
+};
+
+
+struct ManagedStatusFXs
+{
+    HashMap<Guid, ManagedStatusFXGroup> FXs;
+    bool field_40;
+};
+
+
 struct [[bg3::hidden]] StatusMachine : public NetworkObjectFactory2
 {
     void* VMT2;
     EntityHandle OwnerHandle;
     uint8_t Flags;
-    HashMap<EntityHandle, void*> StatusData_MHM_EH_EntityStatusData;
-    HashMap<EntityHandle, void*> ManagedStatusFXs_MHM_EH_ManagedStatusFXs;
+    HashMap<EntityHandle, EntityStatusData> StatusFX;
+    HashMap<EntityHandle, ManagedStatusFXs> ManagedFX;
     HashSet<ComponentHandle> StatusHandles;
     void* unk;
     Array<Status*> Statuses;
     Array<Status*> ExternalStatuses;
     uint32_t unk2;
+};
+
+
+struct ManagedStatusVFX : public StatusVFX
+{
+    ManagedStatusEffect ManagedStatusEffect;
+    EffectHandler EffectHandler;
+};
+
+struct StatusVisual : public StatusVFX
+{
+    StatusVisualDefinition* Definition;
+    EntityHandle Entity;
+    uint8_t State;
+    [[bg3::hidden]] void* VisualLoader;
+    float FadeOut;
+};
+
+struct StatusVFXMaterial : public StatusVFX
+{
+    ecl::StatusVFXData* VFX;
+    bool Created;
+};
+
+struct StatusVFXEffect : public StatusVFX
+{
+    StatusEffectData* Effect;
+    EffectHandler EffectHandler;
+};
+
+struct StatusVFXApplyEffect : public StatusVFX
+{
+    FixedString* Effect;
+    EffectHandler EffectHandler;
+};
+
+struct StatusVFXBoostMaterial : public StatusVFX
+{
+    StatusVFXBoostMaterialDefinition* Material;
+    int MaterialType;
+    FixedString MaterialUUID;
+    bool Created;
+};
+
+struct StatusVFXBeam : public StatusVFX
+{
+    StatusBeamEffectData* Beam;
+    EffectHandler EffectHandler;
+    bool Initialized;
+    bool Created;
+};
+
+struct StatusVFXAura : public StatusVFX
+{
+    StatusAuraData* Aura;
+    EntityHandle Effect;
 };
 
 
@@ -716,5 +814,6 @@ BEGIN_NS(lua)
 
 LUA_POLYMORPHIC(esv::Status)
 LUA_POLYMORPHIC(ecl::Status)
+LUA_POLYMORPHIC(ecl::StatusVFX)
 
 END_NS()
