@@ -25,5 +25,16 @@ if Ext.Debug.IsDeveloperMode() then
     Ext.Utils.Include(nil, "builtin://Libs/DevelopmentHelpers.lua")
 end
 
+function _C()
+    local controlled = Ext.Entity.GetAllEntitiesWithComponent("ClientControl")
+    for _,entity in pairs(controlled) do
+        if entity.ClientCharacter and entity.ClientCharacter.ReservedUserID == 1 then
+            return entity
+        end
+    end
+
+    return nil
+end
+
 -- FIXME - should be called from global load finalizer
 -- _I.ModEventManager:FinishedLoading()
