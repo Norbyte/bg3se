@@ -29,6 +29,7 @@ public:
 
     net::ExtenderMessage * GetFreeMessage(UserId userId) override;
     net::ExtenderMessage * GetFreeMessage() override;
+    void HandleLocalMessage(char const* channel, char const* payload, char const* moduleUuid, int32_t requestId, int32_t replyId, UserId userId) override;
     net::GameServer* GetServer() const;
 
     void Send(net::ExtenderMessage * msg, UserId userId);

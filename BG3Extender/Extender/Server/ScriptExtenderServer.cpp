@@ -57,7 +57,7 @@ void ScriptExtender::Initialize()
         DetourTransactionCommit();
 
         gameStateWorkerStart_.SetWrapper(&ScriptExtender::GameStateWorkerWrapper, this);
-        gameStateMachineUpdate_.SetPostHook(&ScriptExtender::OnUpdate, this);
+        gameStateMachineUpdate_.SetPrePostHook(&ScriptExtender::PreUpdate, &ScriptExtender::PostUpdate, this);
 
         gExtender->GetEngineHooks().esv__OsirisVariableHelper__SavegameVisit.SetPreHook(&ScriptExtender::OnSavegameVisit, this);
     }
@@ -179,8 +179,9 @@ void ScriptExtender::GameStateWorkerWrapper(void (* wrapped)(void *), void* self
     RemoveThread(GetCurrentThreadId());
 }
 
-void ScriptExtender::OnUpdate(void* self, GameTime* time)
+void ScriptExtender::PreUpdate(void* self, GameTime* time)
 {
+    network_.Update();
     RunPendingTasks();
     if (extensionState_) {
         extensionState_->OnUpdate(*time);
@@ -188,6 +189,12 @@ void ScriptExtender::OnUpdate(void* self, GameTime* time)
             gExtender->GetLuaDebugger()->ServerTick();
         }
     }
+}
+
+void ScriptExtender::PostUpdate(void* self, GameTime* time)
+{
+    network_.Update();
+    RunPendingTasks();
 }
 
 bool ScriptExtender::IsInServerThread() const
@@ -234,6 +241,7 @@ bool ScriptExtender::RequestResetClientLuaState()
 
 void ScriptExtender::ResetExtensionState()
 {
+    network_.OnResetExtensionState();
     extensionState_ = std::make_unique<ExtensionState>();
     extensionState_->Reset();
     extensionLoaded_ = false;

@@ -32,6 +32,7 @@ public:
 
     inline ExtensionState & GetExtensionState() const
     {
+        assert(extensionState_);
         return *extensionState_;
     }
 

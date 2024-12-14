@@ -23,6 +23,7 @@ public:
     void ExtendNetworking();
     net::ExtenderMessage* GetFreeMessage() override;
     net::ExtenderMessage* GetFreeMessage(UserId userId) override;
+    void HandleLocalMessage(char const* channel, char const* payload, char const* moduleUuid, int32_t requestId, int32_t replyId, UserId userId) override;
     void Send(net::ExtenderMessage* msg);
     void OnClientConnectMessage(net::ClientConnectMessage* msg);
     void OnExtenderHello(net::MsgC2SExtenderHello const& hello);

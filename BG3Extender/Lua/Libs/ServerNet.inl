@@ -23,10 +23,16 @@ void BroadcastMessage(lua_State* L, char const* channel, char const* payload, st
 
 void PostMessageToUserInternal(lua_State* L, UserId userId, char const* channel, char const* payload, std::optional<Guid> moduleGuid, std::optional<FunctionRef> requestHandler, std::optional<RequestId> replyId)
 {
-    auto& networkMgr = gExtender->GetServer().GetNetworkManager();
-    auto msg = BuildMessage(L, userId, channel, payload, moduleGuid, requestHandler, replyId);
-    if (msg != nullptr) {
-        networkMgr.Send(msg, userId);
+    if (moduleGuid && (uint32_t)userId.GetPeerId() == 1) {
+        bg3se::net::LocalMessage msg;
+        BuildMessage(L, msg, userId, channel, payload, moduleGuid, requestHandler, replyId);
+        gExtender->GetClient().GetNetworkManager().PushLocalMessage(std::move(msg));
+    } else {
+        auto& networkMgr = gExtender->GetServer().GetNetworkManager();
+        auto msg = BuildMessage(L, userId, channel, payload, moduleGuid, requestHandler, replyId);
+        if (msg != nullptr) {
+            networkMgr.Send(msg, userId);
+        }
     }
 }
 

@@ -55,4 +55,21 @@ bg3se::net::ExtenderMessage* BuildMessage(lua_State* L, UserId userId, char cons
     return msg;
 }
 
+void BuildMessage(lua_State* L, bg3se::net::LocalMessage& msg, UserId userId, char const* channel, char const* payload, std::optional<Guid> moduleGuid, std::optional<FunctionRef> requestHandler, std::optional<RequestId> replyId)
+{
+    msg.Channel = channel;
+    msg.Payload = payload;
+    if (moduleGuid) {
+        msg.Module = moduleGuid->ToString();
+    }
+    if (requestHandler) {
+        auto requestId = State::FromLua(L)->GetNetworkRequests().CreateRequest(LuaDelegate<void(STDString)>(L, *requestHandler));
+        msg.RequestId = requestId;
+    }
+    if (replyId) {
+        msg.ReplyId = *replyId;
+    }
+    msg.User = userId;
+}
+
 END_NS()
