@@ -129,6 +129,7 @@ namespace esv
     struct Level;
     struct Status;
     struct StatusMachine;
+    struct TaskController;
     class ExtensionState;
 
     namespace lua

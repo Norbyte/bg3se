@@ -94,7 +94,7 @@ struct Character : public BaseProxyComponent
     void* DialogController;
     void* FallbackController;
     void* NetworkController;
-    void* OsirisController;
+    TaskController* OsirisController;
     void* GameplayController;
     StatusMachine* StatusManager;
     void* VariableManager;

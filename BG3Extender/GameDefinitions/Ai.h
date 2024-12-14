@@ -11,6 +11,17 @@ static constexpr AiMetaDataId AiNullMetaData = 0xffff;
 
 using AiPathId = int32_t;
 
+struct PathSettings
+{
+    uint8_t PathClimbingMode;
+    uint8_t PathDroppingMode;
+    std::variant<uint8_t, float> Speed;
+    bool HasSmoothingNodes;
+    bool HasSpliningNodes;
+    bool HasTurningNodes;
+};
+
+
 struct AIPortalObjectData : public ProtectedGameObject<AIPortalObjectData>
 {
     [[bg3::hidden]] void* VMT;

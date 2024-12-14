@@ -500,6 +500,8 @@
     <ClInclude Include="Lua\Libs\Net.h" />
     <ClInclude Include="GameDefinitions\Cursor.h" />
     <ClInclude Include="GameDefinitions\Effect.h" />
+    <ClInclude Include="GameDefinitions\OsirisTask.h" />
+    <ClInclude Include="GameDefinitions\Controller.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

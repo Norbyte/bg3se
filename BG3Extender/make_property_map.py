@@ -649,6 +649,8 @@ sources = [
     'GameDefinitions/Resources.h',
     'GameDefinitions/Status.h',
     'GameDefinitions/Ai.h',
+    'GameDefinitions/Controller.h',
+    'GameDefinitions/OsirisTask.h',
     'Lua/Client/ClientEvents.h',
     'Lua/Server/ServerEvents.h',
 ]
