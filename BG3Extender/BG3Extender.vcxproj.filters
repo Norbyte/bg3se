@@ -505,6 +505,7 @@
     <ClInclude Include="GameDefinitions\Controllers\Behaviour.h" />
     <ClInclude Include="GameDefinitions\Controllers\Action.h" />
     <ClInclude Include="GameDefinitions\Controllers\Movement.h" />
+    <ClInclude Include="GameDefinitions\Controllers\Steering.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -748,6 +749,7 @@
     <None Include="GameDefinitions\Status.inl" />
     <None Include="GameDefinitions\Controllers\OsirisTask.inl" />
     <None Include="GameDefinitions\Controllers\Action.inl" />
+    <None Include="GameDefinitions\Controllers\Steering.inl" />
     <None Include="GameDefinitions\Controllers\Movement.inl" />
     <None Include="GameDefinitions\Controllers\Behaviour.inl" />
   </ItemGroup>

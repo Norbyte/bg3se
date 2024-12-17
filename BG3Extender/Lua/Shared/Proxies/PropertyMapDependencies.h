@@ -9,6 +9,7 @@
 #include <GameDefinitions/Controllers/Action.h>
 #include <GameDefinitions/Controllers/Behaviour.h>
 #include <GameDefinitions/Controllers/Movement.h>
+#include <GameDefinitions/Controllers/Steering.h>
 #include <GameDefinitions/Controllers/OsirisTask.h>
 #include <GameDefinitions/Picking.h>
 #include <GameDefinitions/Resources.h>

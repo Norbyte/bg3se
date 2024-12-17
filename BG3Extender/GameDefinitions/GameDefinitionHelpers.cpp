@@ -9,3 +9,4 @@
 #include <GameDefinitions/Controllers/Behaviour.inl>
 #include <GameDefinitions/Controllers/Movement.inl>
 #include <GameDefinitions/Controllers/OsirisTask.inl>
+#include <GameDefinitions/Controllers/Steering.inl>
