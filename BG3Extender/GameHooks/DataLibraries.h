@@ -1,14 +1,9 @@
 #pragma once
 
 #include <GameDefinitions/Character.h>
-/*#include <GameDefinitions/CustomStats.h>
-#include <GameDefinitions/GameAction.h>*/
 #include <GameDefinitions/Item.h>
 #include <GameDefinitions/Misc.h>
 #include <GameDefinitions/Osiris.h>
-/*#include <GameDefinitions/Status.h>
-#include <GameDefinitions/ActionMachine.h>
-#include <GameDefinitions/TurnManager.h>*/
 #include <GameDefinitions/Symbols.h>
 #include <CoreLib/SymbolMapper.h>
 #include <CoreLib/Wrappers.h>
