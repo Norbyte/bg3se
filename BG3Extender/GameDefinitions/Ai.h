@@ -347,7 +347,6 @@ struct AiPlayerWeightFuncData
     int DamagingSurfacesThreshold;
 };
 
-
 struct AiPath : public ProtectedGameObject<AiPath>
 {
     Array<SurfacePathInfluence> SurfacePathInfluences;

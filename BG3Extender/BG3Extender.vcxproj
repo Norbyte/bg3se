@@ -193,6 +193,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\Components\Tadpole.h" />
     <ClInclude Include="GameDefinitions\Components\Timeline.h" />
     <ClInclude Include="GameDefinitions\Components\Visual.h" />
+    <ClInclude Include="GameDefinitions\Controllers\Behaviour.h" />
     <ClInclude Include="GameDefinitions\Controllers\Controller.h" />
     <ClInclude Include="GameDefinitions\Cursor.h" />
     <ClInclude Include="GameDefinitions\Dialog.h" />
@@ -417,6 +418,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="GameDefinitions\Animation.inl" />
     <None Include="GameDefinitions\Base\TypeInformation.inl" />
     <None Include="GameDefinitions\Components\AllComponentTypes.inl" />
+    <None Include="GameDefinitions\Controllers\Behaviour.inl" />
     <None Include="GameDefinitions\Enumerations\ECS.inl" />
     <None Include="GameDefinitions\Enumerations\Engine.inl" />
     <None Include="GameDefinitions\Enumerations\IMGUI.inl" />

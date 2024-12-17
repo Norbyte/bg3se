@@ -6,6 +6,7 @@
 #include <GameDefinitions/Cursor.h>
 #include <GameDefinitions/Dialog.h>
 #include <GameDefinitions/OsirisTask.h>
+#include <GameDefinitions/Controllers/Behaviour.h>
 #include <GameDefinitions/Picking.h>
 #include <GameDefinitions/Resources.h>
 #include <GameDefinitions/Render.h>

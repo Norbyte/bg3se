@@ -502,6 +502,7 @@
     <ClInclude Include="GameDefinitions\Effect.h" />
     <ClInclude Include="GameDefinitions\Controllers\OsirisTask.h" />
     <ClInclude Include="GameDefinitions\Controllers\Controller.h" />
+    <ClInclude Include="GameDefinitions\Controllers\Behaviour.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -743,6 +744,7 @@
     <None Include="Lua\Libs\Net.inl" />
     <None Include=".editorconfig" />
     <None Include="GameDefinitions\Status.inl" />
+    <None Include="GameDefinitions\Controllers\Behaviour.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

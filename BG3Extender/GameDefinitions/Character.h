@@ -86,10 +86,10 @@ struct Character : public BaseProxyComponent
     CharacterTemplate* Template;
     CharacterTemplate* OriginalTemplate;
     CharacterTemplate* TemplateUsedForSpells;
-    void* AiActionMachine;
-    void* AiBehaviourMachine;
-    void* AiMovementMachine;
-    void* AiSteeringMachine;
+    ActionMachine* AiActionMachine;
+    BehaviourMachine* AiBehaviourMachine;
+    MovementMachine* AiMovementMachine;
+    SteeringMachine* AiSteeringMachine;
     void* AiSupervisor;
     void* DialogController;
     void* FallbackController;

@@ -127,9 +127,19 @@ namespace esv
     struct Item;
     struct Character;
     struct Level;
+
     struct Status;
     struct StatusMachine;
+    struct BehaviourState;
+    struct BehaviourMachine;
+    struct ActionState;
+    struct ActionMachine;
+    struct MovementState;
+    struct MovementMachine;
+    struct SteeringState;
+    struct SteeringMachine;
     struct TaskController;
+
     class ExtensionState;
 
     namespace lua
