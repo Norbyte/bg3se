@@ -7,4 +7,5 @@
 #include <GameDefinitions/Status.inl>
 #include <GameDefinitions/Controllers/Action.inl>
 #include <GameDefinitions/Controllers/Behaviour.inl>
+#include <GameDefinitions/Controllers/Movement.inl>
 #include <GameDefinitions/Controllers/OsirisTask.inl>

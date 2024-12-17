@@ -651,6 +651,7 @@ sources = [
     'GameDefinitions/Ai.h',
     'GameDefinitions/Controllers/Action.h',
     'GameDefinitions/Controllers/Behaviour.h',
+    'GameDefinitions/Controllers/Movement.h',
     'GameDefinitions/Controllers/Controller.h',
     'GameDefinitions/Controllers/OsirisTask.h',
     'Lua/Client/ClientEvents.h',
