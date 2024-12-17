@@ -669,6 +669,12 @@ BEGIN_BITMASK(GuiButtonFlags, uint32_t)
     EV(MouseButtonMiddle, (uint32_t)ImGuiButtonFlags_MouseButtonMiddle)
 END_ENUM()
 
+BEGIN_ENUM(GuiSortDirection, uint32_t)
+    EV(None, (uint32_t)ImGuiSortDirection_None)
+    EV(Ascending, (uint32_t)ImGuiSortDirection_Ascending)
+    EV(Descending, (uint32_t)ImGuiSortDirection_Descending)
+END_ENUM()
+
 BEGIN_BITMASK(GuiItemStatusFlags, uint32_t)
     EV(HoveredRect, (uint32_t)(1 << 0))
     EV(HasDisplayRect, (uint32_t)(1 << 1))

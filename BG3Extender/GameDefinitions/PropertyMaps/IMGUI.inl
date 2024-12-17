@@ -162,6 +162,12 @@ P(Width)
 END_CLS()
 
 
+BEGIN_CLS(extui::SortSpec)
+P(ColumnIndex)
+P(Direction)
+END_CLS()
+
+
 BEGIN_CLS(extui::Table)
 INHERIT(extui::TreeParent)
 P(Columns)

@@ -450,6 +450,12 @@ struct ColumnDefinition
     float Width;
 };
 
+struct SortSpec
+{
+    int32_t ColumnIndex;
+    GuiSortDirection Direction;
+};
+
 struct Table : public TreeParent
 {
 public:
@@ -466,10 +472,16 @@ public:
     bool ShowHeader{ false };
     bool AngledHeader{ false };
     Array<ColumnDefinition> ColumnDefs;
+    Array<SortSpec> Sorting;
     std::optional<glm::vec2> Size;
+
+    lua::LuaDelegate<void(lua::ImguiHandle)> OnSortChanged;
 
 private:
     bool rendering_{ false };
+    bool needsSortingUpdate_{ true };
+
+    void UpdateSorting();
 };
 
 

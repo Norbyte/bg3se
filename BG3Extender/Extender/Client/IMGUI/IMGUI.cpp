@@ -1034,6 +1034,32 @@ void Tree::SetOpen(bool open, std::optional<GuiCond> cond)
     };
 }
 
+void Table::UpdateSorting()
+{
+    auto sorting = ImGui::TableGetSortSpecs();
+
+    if (!needsSortingUpdate_ || !(sorting && sorting->SpecsDirty)) {
+        return;
+    }
+
+    Sorting.clear();
+    if (sorting) {
+        for (int i = 0; i < sorting->SpecsCount; i++) {
+            auto const& spec = sorting->Specs[i];
+            Sorting.push_back(SortSpec{
+                .ColumnIndex = spec.ColumnIndex,
+                .Direction = (GuiSortDirection)spec.SortDirection
+            });
+        }
+    }
+
+    if (sorting && sorting->SpecsDirty && OnSortChanged) {
+        Manager->GetEventQueue().Call(OnSortChanged, lua::ImguiHandle(Handle));
+    }
+
+    needsSortingUpdate_ = false;
+}
+
 bool Table::BeginRender()
 {
     rendering_ = ImGui::BeginTable(Label.c_str(), (int)Columns, (ImGuiTableFlags)Flags, ToImVec(Size));
