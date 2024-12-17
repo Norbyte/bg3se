@@ -2,7 +2,7 @@
 
 BEGIN_NS(esv)
 
-struct Task
+struct Task : public ProtectedGameObject<Task>
 {
 	virtual ~Task() = 0;
 	virtual bool Update(GameTime const&) = 0;
@@ -27,7 +27,7 @@ struct Task
 };
 
 
-struct [[bg3::hidden]] BaseController : public ProtectedGameObject<BaseController>
+struct BaseController : public ProtectedGameObject<BaseController>
 {
 	virtual ~BaseController() = 0;
 	virtual char const* GetName() = 0;
@@ -55,11 +55,11 @@ struct [[bg3::hidden]] OsirisTaskFactory
 };
 
 
-struct [[bg3::hidden]] TaskController : public BaseController
+struct TaskController : public BaseController
 {
 	Queue<Task*> Tasks;
-	bool RemoveNextTask_M;
-	bool UpdateInProgress;
+	[[bg3::readonly]] bool RemoveNextTask_M;
+	[[bg3::readonly]] bool UpdateInProgress;
 	bool FlushRequested;
 
 	void PurgeQueue();

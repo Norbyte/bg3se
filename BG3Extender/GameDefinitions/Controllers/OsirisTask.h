@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GameDefinitions/Controller.h>
+#include <GameDefinitions/Controllers/Controller.h>
 
 BEGIN_NS(esv)
 
@@ -345,5 +345,11 @@ struct OsirisCombineTask : public Task
     int CombineAmount;
 };
 
+
+END_NS()
+
+BEGIN_NS(lua)
+
+LUA_POLYMORPHIC(esv::Task);
 
 END_NS()

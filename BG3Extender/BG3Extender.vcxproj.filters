@@ -744,6 +744,7 @@
     <None Include="Lua\Libs\Net.inl" />
     <None Include=".editorconfig" />
     <None Include="GameDefinitions\Status.inl" />
+    <None Include="GameDefinitions\Controllers\OsirisTask.inl" />
     <None Include="GameDefinitions\Controllers\Behaviour.inl" />
   </ItemGroup>
   <ItemGroup>

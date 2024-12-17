@@ -6,3 +6,4 @@
 #include <GameDefinitions/RootTemplates.inl>
 #include <GameDefinitions/Status.inl>
 #include <GameDefinitions/Controllers/Behaviour.inl>
+#include <GameDefinitions/Controllers/OsirisTask.inl>

@@ -391,7 +391,6 @@ BEGIN_ENUM_NS(esv, OsirisTaskType, OsirisTaskType, uint32_t)
     EV(FleeFromEntity, 25)
     EV(Combine, 26)
 END_ENUM_NS()
-END_ENUM()
 
 BEGIN_ENUM_NS(esv, BehaviourType, ServerBehaviourType, uint32_t)
     EV(Move, 2)
