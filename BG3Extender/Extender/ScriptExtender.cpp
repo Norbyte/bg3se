@@ -240,6 +240,13 @@ void ScriptExtender::OnStatsLoadGuarded(stats::RPGStats::LoadProc* wrapped, stat
 
     statLoadOrderHelper_.OnLoadStarted();
     client_.LoadExtensionState(ExtensionStateContext::Load);
+    
+    {
+        ecl::LuaClientPin lua(client_.GetExtensionState());
+        if (lua) {
+            lua->OnModuleLoadStarted();
+        }
+    }
 
     {
         DisableCrashReporting _;
@@ -473,11 +480,6 @@ void ScriptExtender::HookStateMachineUpdates()
 
     updateHooksAdded_ = true;
 }
-
-void ScriptExtender::OnBaseModuleLoaded(void * self)
-{
-}
-
 
 void ScriptExtender::ClearPathOverrides()
 {
