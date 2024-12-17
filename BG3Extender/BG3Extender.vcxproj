@@ -193,7 +193,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\Components\Tadpole.h" />
     <ClInclude Include="GameDefinitions\Components\Timeline.h" />
     <ClInclude Include="GameDefinitions\Components\Visual.h" />
-    <ClInclude Include="GameDefinitions\Controller.h" />
+    <ClInclude Include="GameDefinitions\Controllers\Controller.h" />
     <ClInclude Include="GameDefinitions\Cursor.h" />
     <ClInclude Include="GameDefinitions\Dialog.h" />
     <ClInclude Include="GameDefinitions\Effect.h" />
@@ -213,7 +213,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\Net.h" />
     <ClInclude Include="GameDefinitions\Osiris.h" />
     <ClInclude Include="GameDefinitions\GuidResources.h" />
-    <ClInclude Include="GameDefinitions\OsirisTask.h" />
+    <ClInclude Include="GameDefinitions\Controllers\OsirisTask.h" />
     <ClInclude Include="GameDefinitions\Picking.h" />
     <ClInclude Include="GameDefinitions\Progression.h" />
     <ClInclude Include="GameDefinitions\Render.h" />

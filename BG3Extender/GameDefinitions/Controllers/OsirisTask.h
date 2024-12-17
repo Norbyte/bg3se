@@ -24,6 +24,8 @@ struct MoveTask : public Task
 
 struct OsirisMoveToLocationTask : public MoveTask
 {
+    static constexpr auto Type = OsirisTaskType::MoveToLocation;
+
     float TargetRotation;
     float MinDistance;
     float MaxDistance;
@@ -33,6 +35,8 @@ struct OsirisMoveToLocationTask : public MoveTask
 
 struct OsirisMoveToObjectTask : public MoveTask
 {
+    static constexpr auto Type = OsirisTaskType::MoveToObject;
+
     float MinDistance;
     float MaxDistance;
     EntityHandle Target;
@@ -43,13 +47,17 @@ struct OsirisMoveToObjectTask : public MoveTask
 
 struct OsirisFleeFromGridTask : public MoveTask
 {
-    glm::vec3 field_90;
-    uint8_t field_9C;
+    static constexpr auto Type = OsirisTaskType::FleeFromGrid;
+
+    glm::vec3 Position;
+    bool field_9C;
     float Range;
 };
 
 struct OsirisMoveInRangeTask : public MoveTask
 {
+    static constexpr auto Type = OsirisTaskType::MoveInRange;
+
     EntityHandle Target;
     glm::vec3 TargetPos;
     float MinRange;
@@ -65,9 +73,9 @@ struct OsirisMoveInRangeTask : public MoveTask
     glm::vec3 CachedTarget;
     float CachedCloseEnough;
     bool CachedResult;
-    char MustBeInTrigger;
-    char FallbackMoveCloser;
-    uint8_t field_F7;
+    bool MustBeInTrigger;
+    bool FallbackMoveCloser;
+    bool OnlyUseMoveSpellIfRequired;
     uint8_t field_F8;
     glm::vec3 OverrideSourcePosition;
     [[bg3::hidden]] Array<void*> pAIHintAreaTrigger;
@@ -82,6 +90,8 @@ struct OsirisMoveInRangeTask : public MoveTask
 
 struct OsirisTeleportToLocationTask : public Task
 {
+    static constexpr auto Type = OsirisTaskType::TeleportToLocation;
+
     glm::vec3 Position;
     FixedString PreviousLevel;
     FixedString Level;
@@ -100,27 +110,31 @@ struct OsirisTeleportToLocationTask : public Task
 
 struct OsirisAppearTask : public Task
 {
+    static constexpr auto Type = OsirisTaskType::Appear;
+
     STDString FinishedEvent;
     FixedString Animation;
     EntityHandle Target;
     glm::vec3 TargetPos;
     float Angle;
-    int field_70;
+    float Time;
     int SpawnState;
     bool PlayerSpawn;
     bool OutOfSight;
     bool OnTrail;
     bool PreventForceComplete;
-    uint8_t field_7C;
+    bool InvisibilityUpdated;
 };
 
 struct OsirisDisappearTask : public Task
 {
+    static constexpr auto Type = OsirisTaskType::Disappear;
+
     STDString FinishedEvent;
     glm::vec3 TargetPos;
     float Angle;
-    int field_60;
-    int StoryTransactionID;
+    int BehaviourTransactionId;
+    int StoryTransactionId;
     float SpeedMultiplier;
     float DefaultSpeed;
     int field_70;
@@ -132,37 +146,47 @@ struct OsirisDisappearTask : public Task
 
 struct OsirisFollowNPCTask : public Task
 {
+    static constexpr auto Type = OsirisTaskType::FollowNPC;
+
     EntityHandle Target;
 };
 
 struct OsirisFollowOwnerOrLeaderTask : public Task
 {
+    static constexpr auto Type = OsirisTaskType::FollowOwnerOrLeader;
+
     EntityHandle Leader;
-    int field_40;
+    int BehaviourTransactionId;
 };
 
 struct OsirisWanderTask : public Task
 {
+    static constexpr auto Type = OsirisTaskType::Wander;
+
     float Range;
     EntityHandle Trigger;
     std::variant<EntityHandle, glm::vec3> Anchor;
     float Duration;
     glm::vec3 Start;
-    int field_68;
+    int BehaviourTransactionId;
 };
 
 struct OsirisSteerTask : public Task
 {
+    static constexpr auto Type = OsirisTaskType::Steer;
+
     EntityHandle Target;
     glm::vec3 TargetPos;
     float AngleTolerance;
     bool LookAt;
     bool SnapToTarget;
-    int field_54;
+    int BehaviourTransactionId;
 };
 
 struct OsirisDropTask : public Task
 {
+    static constexpr auto Type = OsirisTaskType::Drop;
+
     EntityHandle Item;
     glm::vec3 TargetPos;
     std::optional<glm::vec3> DesiredPosition;
@@ -170,29 +194,35 @@ struct OsirisDropTask : public Task
 
 struct OsirisPickupItemTask : public Task
 {
+    static constexpr auto Type = OsirisTaskType::PickupItem;
+
     EntityHandle Item;
     STDString ArriveEvent;
-    int field_58;
+    int BehaviourTransactionId;
     bool MoveAvoidAoO;
 };
 
 struct OsirisUseItemTask : public Task
 {
+    static constexpr auto Type = OsirisTaskType::UseItem;
+
     EntityHandle Item;
     bool IsInteraction;
     bool UseItem;
     bool MoveAvoidAoO;
     STDString ArriveEvent;
-    int field_60;
+    int BehaviourTransactionId;
 };
 
 struct OsirisMoveItemTask : public Task
 {
+    static constexpr auto Type = OsirisTaskType::MoveItem;
+
     EntityHandle Item;
     glm::vec3 Position;
     int Amount;
     STDString ArriveEvent;
-    int field_68;
+    int BehaviourTransactionId;
     bool SplitProcessed;
     bool CheckSplitEvent;
     bool CheckRemovedFromInventory;
@@ -200,6 +230,8 @@ struct OsirisMoveItemTask : public Task
 
 struct OsirisResurrectTask : public Task
 {
+    static constexpr auto Type = OsirisTaskType::Resurrect;
+
     float Chance;
     float HPPercentage;
     bool IsResurrected;
@@ -208,18 +240,20 @@ struct OsirisResurrectTask : public Task
 
 struct OsirisUseSpellTask : public Task
 {
+    static constexpr auto Type = OsirisTaskType::UseSpell;
+
     SpellId Spell;
     glm::vec3 CastPosition;
     EntityHandle Target;
     glm::vec3 TargetPos;
-    char field_84;
+    bool HasTargetPos;
     EntityHandle Target2;
     glm::vec3 TargetPos2;
-    uint8_t field_9C;
+    bool HasTargetPos2;
     EntityHandle Item;
     bool Success;
     uint8_t field_A9;
-    uint8_t field_AA;
+    uint8_t State;
     bool WithoutMove;
     bool MoveAvoidAoO;
     uint8_t SpellCastOptions;
@@ -229,8 +263,10 @@ struct OsirisUseSpellTask : public Task
 
 struct OsirisMoveToAndTalkTask : public Task
 {
+    static constexpr auto Type = OsirisTaskType::MoveToAndTalk;
+
     EntityHandle Target;
-    int field_40;
+    int BehaviourTransactionId;
     FixedString Speed;
     FixedString DialogInstance;
     float Timeout;
@@ -238,6 +274,8 @@ struct OsirisMoveToAndTalkTask : public Task
 
 struct OsirisLookAtTask : public Task
 {
+    static constexpr auto Type = OsirisTaskType::LookAt;
+
     Guid TransactionGuid;
     EntityHandle EntityHandle;
     FixedString Bone;
@@ -247,11 +285,15 @@ struct OsirisLookAtTask : public Task
 
 struct OsirisTimerTask : public Task
 {
+    static constexpr auto Type = OsirisTaskType::Timer;
+
     float Time;
 };
 
 struct OsirisAutomatedDialogTask : public Task
 {
+    static constexpr auto Type = OsirisTaskType::AutomatedDialog;
+
     [[bg3::hidden]] void* DialogEventListenerVMT;
     Guid Dialog;
     Guid Trigger;
@@ -262,6 +304,8 @@ struct OsirisAutomatedDialogTask : public Task
 
 struct OsirisRateLimitedAutomatedDialogTask : public Task
 {
+    static constexpr auto Type = OsirisTaskType::RateLimitedAutomatedDialog;
+
     Guid Dialog;
     bool WaitForCompletion;
     Array<EntityHandle> SpeakerList;
@@ -272,24 +316,30 @@ struct OsirisRateLimitedAutomatedDialogTask : public Task
 
 struct OsirisFleeFromRelationTask : public MoveTask
 {
+    static constexpr auto Type = OsirisTaskType::FleeFromRelation;
+
     glm::vec3 Position;
     bool field_9C;
-    float field_A0;
+    float FleeRange;
     int field_A4;
     int FleeFromRelation;
 };
 
 struct OsirisFleeFromEntityTask : public MoveTask
 {
+    static constexpr auto Type = OsirisTaskType::FleeFromEntity;
+
     glm::vec3 Position;
     bool field_9C;
-    float field_A0;
+    float FleeRange;
     int field_A4;
     EntityHandle FleeFromEntity;
 };
 
 struct OsirisCombineTask : public Task
 {
+    static constexpr auto Type = OsirisTaskType::Combine;
+
     EntityHandle CombineTarget;
     Array<EntityHandle> CombineIngredients;
     int CombineAmount;
