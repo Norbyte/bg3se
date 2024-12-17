@@ -117,7 +117,15 @@ public:
             auto size = obj->size();
             if (arrayIndex > 0 && arrayIndex <= size) {
                 if (lua_type(L, luaIndex) == LUA_TNIL) {
-                    obj->erase(obj->begin() + arrayIndex - 1);
+                    if constexpr (std::is_same_v<TContainer, Queue<T>>) {
+                        if (arrayIndex == 1) {
+                            obj->pop();
+                        } else {
+                            return false;
+                        }
+                    } else {
+                        obj->erase(obj->begin() + arrayIndex - 1);
+                    }
                 } else {
                     (*obj)[arrayIndex - 1] = get<T>(L, luaIndex);
                 }
@@ -642,6 +650,18 @@ public:
     inline static void Make(lua_State* L, ObjectSet<T> const* object, LifetimeHandle const& lifetime)
     {
         MakeImpl(L, object, lifetime, GetImplementation<DynamicArrayProxyImpl<ObjectSet<T>, T, 3>>());
+    }
+
+    template <class T>
+    inline static void Make(lua_State* L, Queue<T>* object, LifetimeHandle const& lifetime)
+    {
+        MakeImpl(L, object, lifetime, GetImplementation<DynamicArrayProxyImpl<Queue<T>, T, 7>>());
+    }
+
+    template <class T>
+    inline static void Make(lua_State* L, Queue<T> const* object, LifetimeHandle const& lifetime)
+    {
+        MakeImpl(L, object, lifetime, GetImplementation<DynamicArrayProxyImpl<Queue<T>, T, 7>>());
     }
 
     template <class T, int Size>
