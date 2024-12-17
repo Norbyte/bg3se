@@ -649,6 +649,7 @@ sources = [
     'GameDefinitions/Resources.h',
     'GameDefinitions/Status.h',
     'GameDefinitions/Ai.h',
+    'GameDefinitions/Controllers/Action.h',
     'GameDefinitions/Controllers/Behaviour.h',
     'GameDefinitions/Controllers/Controller.h',
     'GameDefinitions/Controllers/OsirisTask.h',

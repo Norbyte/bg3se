@@ -503,6 +503,7 @@
     <ClInclude Include="GameDefinitions\Controllers\OsirisTask.h" />
     <ClInclude Include="GameDefinitions\Controllers\Controller.h" />
     <ClInclude Include="GameDefinitions\Controllers\Behaviour.h" />
+    <ClInclude Include="GameDefinitions\Controllers\Action.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -745,6 +746,7 @@
     <None Include=".editorconfig" />
     <None Include="GameDefinitions\Status.inl" />
     <None Include="GameDefinitions\Controllers\OsirisTask.inl" />
+    <None Include="GameDefinitions\Controllers\Action.inl" />
     <None Include="GameDefinitions\Controllers\Behaviour.inl" />
   </ItemGroup>
   <ItemGroup>
