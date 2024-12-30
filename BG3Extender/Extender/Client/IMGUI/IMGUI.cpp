@@ -1555,7 +1555,7 @@ bool IMGUIObjectManager::DestroyRenderable(HandleType handle)
         if (type == (unsigned)IMGUIObjectType::Window) {
             auto it = windows_.find(handle);
             if (it != windows_.end()) {
-                //windows_.ordered_remove_at(it);
+                windows_.erase(it);
             }
         }
     }
