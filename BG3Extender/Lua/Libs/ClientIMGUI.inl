@@ -9,6 +9,11 @@ ImguiHandle NewWindow(lua_State* L, char const* name)
     auto& ui = ClientState::FromLua(L)->IMGUI();
     auto window = ui.CreateRenderable<extui::Window>();
     window->Label = name;
+
+    if (window->Label.empty()) {
+        WARN_ONCE("Creating window with empty label - window will not be drawn until a Label or IDContext is assigned!");
+    }
+
     return window;
 }
 

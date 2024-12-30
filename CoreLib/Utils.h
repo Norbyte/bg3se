@@ -20,6 +20,8 @@ void Debug(DebugMessageType type, char const * fmt, Args... args)
 #define WARN(msg, ...) Debug(DebugMessageType::Warning, msg, __VA_ARGS__)
 #define ERR(msg, ...) Debug(DebugMessageType::Error, msg, __VA_ARGS__)
 
+#define WARN_ONCE(msg, ...) { static bool _warned{false}; if (!_warned) { _warned = true; WARN(msg, __VA_ARGS__); } }
+
 void TryDebugBreak();
 
 [[noreturn]]

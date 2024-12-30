@@ -767,7 +767,7 @@ Array<lua::ImguiHandle> TreeParent::GetChildren() const
 
 bool Window::BeginRender()
 {
-    if (!Open) return false;
+    if (!Open || (Label.empty() && IDContext.empty())) return false;
 
     ProcessRenderSettings();
 
