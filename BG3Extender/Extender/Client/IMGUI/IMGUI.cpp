@@ -1069,6 +1069,7 @@ bool Table::BeginRender()
             ImGui::TableSetupColumn(def.Name.c_str(), (ImGuiTableColumnFlags)def.Flags, def.Width);
         }
 
+        if (FreezeRows || FreezeCols) ImGui::TableSetupScrollFreeze((int)FreezeCols, (int)FreezeRows);
         if (ShowHeader && AngledHeader) ImGui::TableAngledHeadersRow();
         if (ShowHeader) ImGui::TableHeadersRow();
     }

@@ -469,6 +469,8 @@ public:
 
     uint32_t Columns{ 1 };
     GuiTableFlags Flags{ 0 };
+    uint32_t FreezeRows{ 0 };
+    uint32_t FreezeCols{ 0 };
     bool ShowHeader{ false };
     bool AngledHeader{ false };
     Array<ColumnDefinition> ColumnDefs;
