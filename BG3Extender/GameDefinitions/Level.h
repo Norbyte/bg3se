@@ -44,7 +44,7 @@ namespace bg3se
         LevelData* LevelData;
         LocalTemplateManager* LocalTemplateManager;
         void* Scene;
-        void* SimplePhysXScene;
+        phx::PhysXScene* PhysicsScene;
         FixedString LevelGuid;
     };
 

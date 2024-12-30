@@ -12,6 +12,7 @@
 #include <GameDefinitions/Controllers/Steering.h>
 #include <GameDefinitions/Controllers/OsirisTask.h>
 #include <GameDefinitions/Picking.h>
+#include <GameDefinitions/Physics.h>
 #include <GameDefinitions/Resources.h>
 #include <GameDefinitions/Render.h>
 #include <GameDefinitions/Components/All.h>

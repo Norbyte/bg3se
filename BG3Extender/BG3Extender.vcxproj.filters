@@ -506,6 +506,7 @@
     <ClInclude Include="GameDefinitions\Controllers\Action.h" />
     <ClInclude Include="GameDefinitions\Controllers\Movement.h" />
     <ClInclude Include="GameDefinitions\Controllers\Steering.h" />
+    <ClInclude Include="GameDefinitions\Physics.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

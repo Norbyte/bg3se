@@ -33,6 +33,7 @@ struct LevelTemplate;
 struct WallConstructionTemplate;
 struct LightProbeTemplate;
 struct LightTemplate;
+struct PhysicsTemplate;
 
 struct LevelBase;
 struct EoCLevel;
@@ -190,6 +191,14 @@ namespace aspk
 {
     struct Input;
     struct Component;
+}
+
+namespace phx
+{
+    struct PhysicsObject;
+    struct PhysicsShape;
+    struct PhysicsRagdoll;
+    struct PhysXScene;
 }
 
 namespace ui
