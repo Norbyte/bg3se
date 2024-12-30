@@ -1068,10 +1068,10 @@ bool Table::BeginRender()
         for (auto const& def : ColumnDefs) {
             ImGui::TableSetupColumn(def.Name.c_str(), (ImGuiTableColumnFlags)def.Flags, def.Width);
         }
-    }
 
-    if (ShowHeader && AngledHeader) ImGui::TableAngledHeadersRow();
-    if (ShowHeader) ImGui::TableHeadersRow();
+        if (ShowHeader && AngledHeader) ImGui::TableAngledHeadersRow();
+        if (ShowHeader) ImGui::TableHeadersRow();
+    }
 
     return rendering_;
 }
