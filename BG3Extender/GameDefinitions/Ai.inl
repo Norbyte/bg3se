@@ -1,5 +1,6 @@
 #include <GameDefinitions/Ai.h>
 #include <GameDefinitions/Components/Components.h>
+#include <GameDefinitions/Components/Combat.h>
 #include <GameDefinitions/Components/Data.h>
 
 BEGIN_SE()
@@ -38,9 +39,9 @@ void AiPath::Reset()
     WorldDropType = 0;
     DangerousAuras.Auras.clear();
     DangerousAuras.Avoidance = 0;
-    CollisionMask = 0x40000000440094;
-    CollisionMaskMove = 0x40000000000084;
-    CollisionMaskStand = 0x10;
+    CollisionMask.Flags = 0x40000000440094;
+    CollisionMaskMove.Flags = 0x40000000000084;
+    CollisionMaskStand.Flags = 0x10;
     CloseEnoughMin = .0f;
     CloseEnoughMax = .0f;
     CloseEnoughFloor = .0f;
@@ -145,6 +146,99 @@ void AiPath::SetBounds(float movingBound, float standingBound)
     MovingBoundTiles2 = (int)floor(2.0f * movingBound + 0.5f - 0.001f);
 }
 
+int CalculateInfluenceCost(Array<SurfacePathInfluence> const& influences, AiFlags const& flags, int damagingSurfacesThreshold)
+{
+    int cost = 0;
+
+    for (auto const& influence : influences) {
+        if (flags.GetSurface(influence.IsCloud) == influence.SurfaceType) {
+            if (influence.Influence < damagingSurfacesThreshold) {
+                cost += std::min(influence.Influence, 12);
+            } else {
+                cost += influence.Influence;
+            }
+        }
+    }
+
+    return cost;
+}
+
+bool CheckPlayerWeightCell(AiPlayerWeightFuncData const& data, AiGrid* aiGrid, AiTilePos const& pos, int& pathScore)
+{
+    auto tile = aiGrid->GetTileAt(pos);
+    auto area = aiGrid->GetStateInArea(pos, 1);
+
+    AiFlags charBound;
+    if (data.CharacterBounds == 0) {
+        charBound = tile->Flags;
+    } else if (data.CharacterBounds == 1) {
+        charBound = area;
+    } else {
+        charBound = aiGrid->GetStateInArea(pos, data.CharacterBounds);
+    }
+
+    pathScore = 0;
+    if (data.IsAvoidingObstacles && area.IsObstacle()) {
+        pathScore += 20;
+    }
+
+    if (data.IsAvoidingDynamics) {
+        if (tile->Flags.Flags & (uint32_t)AiBaseFlags::WalkBlockCharacter) {
+            pathScore += 200;
+        } else if (charBound.Flags & (uint32_t)AiBaseFlags::WalkBlockCharacter) {
+            pathScore += 20;
+        }
+    }
+
+    if (data.UseSurfaceInfluences && area.HasAnySurface()) {
+        auto surfaceCost = 2 * CalculateInfluenceCost(*data.SurfacePathInfluences, tile->Flags, data.DamagingSurfacesThreshold);
+        if (!surfaceCost) {
+            surfaceCost = CalculateInfluenceCost(*data.SurfacePathInfluences, area, data.DamagingSurfacesThreshold) / 5;
+        }
+    }
+
+    if (data.IsAvoidingTraps) {
+        if (tile->Flags.Flags & (uint32_t)AiBaseFlags::Trap) {
+            pathScore += 500;
+        } else if (charBound.Flags & (uint32_t)AiBaseFlags::Trap) {
+            pathScore += 100;
+        }
+    }
+
+    return true;
+}
+
+void AiPath::SetPlayerWeightFunction(AiPlayerWeightFuncData const& params)
+{
+    pWeightFunc = &WeightFunc;
+    WeightFunc = MakeFunction(&CheckPlayerWeightCell, params);
+}
+
+void AiPath::UsePlayerWeighting(lua_State* L, std::optional<bool> avoidObstacles, std::optional<bool> avoidDynamics)
+{
+    auto helpers = lua::State::FromLua(L)->GetEntitySystemHelpers();
+
+    bool inCombat{ false };
+    if (Source) {
+        auto combat = helpers->GetComponent<combat::ParticipantComponent>(Source);
+        if (combat) {
+            inCombat = (bool)combat->CombatHandle;
+        }
+    }
+
+    auto damagingSurfacesThreshold = GetStaticSymbols().GetStats()->ExtraData->get_or_default(FixedString{ "DamagingSurfacesThreshold" }, 0.0f);
+
+    SetPlayerWeightFunction(AiPlayerWeightFuncData{
+        .CharacterBounds = StandingBoundTiles,
+        .IsAvoidingDynamics = avoidDynamics.value_or(true),
+        .IsAvoidingObstacles = avoidObstacles.value_or(true),
+        .UseSurfaceInfluences = !inCombat,
+        .IsAvoidingTraps = (CollisionMask.Flags & (uint32_t)AiBaseFlags::Trap) != 0,
+        .SurfacePathInfluences = &SurfacePathInfluences,
+        .DamagingSurfacesThreshold = (int)damagingSurfacesThreshold
+    });
+}
+
 bool AiSubgrid::WorldToTilePos(AiWorldPos const& pos, glm::ivec2& localPos) const
 {
     int gX, gZ;
@@ -164,6 +258,34 @@ bool AiSubgrid::WorldToTilePos(AiWorldPos const& pos, glm::ivec2& localPos) cons
 
     localPos = glm::ivec2(gX, gZ);
     return true;
+}
+
+AiFlags AiSubgrid::GetStateInArea(glm::ivec2 const& pos, int radius) const
+{
+    AiFlags flags = 0;
+
+    glm::ivec2 topLeft, bottomRight;
+    GetCornerTiles(pos, radius, topLeft, bottomRight);
+
+    for (int y = topLeft.y; y <= bottomRight.y; y++) {
+        for (int x = topLeft.x; x <= bottomRight.x; x++) {
+            flags.Flags |= TileGrid->GetTileAt(x, y)->Flags.Flags;
+        }
+    }
+
+    return flags;
+}
+
+void AiSubgrid::GetCornerTiles(glm::ivec2 const& pos, int radius, glm::ivec2& topLeft, glm::ivec2& bottomRight) const
+{
+    topLeft = glm::ivec2(
+        std::max(0, pos.x - radius),
+        std::max(0, pos.y - radius)
+    );
+    bottomRight = glm::ivec2(
+        std::min(SizeX - 1, pos.x + radius),
+        std::min(SizeY - 1, pos.y + radius)
+    );
 }
 
 AiGridTile const* AiGridTileData::GetTileAt(int x, int y) const
@@ -220,7 +342,7 @@ bool AiGrid::ToTilePos(AiWorldPos const& pos, AiSubgrid*& pSubgrid, AiTilePos& t
         if (subgrid) {
             if (subgrid->WorldToTilePos(pos, localPos)) {
                 auto tile = subgrid->TileGrid->GetTileAt(localPos.x, localPos.y);
-                if ((tile->AiFlags & 1) == 0) {
+                if (!tile->Flags.IsBlocker()) {
                     auto minY = subgrid->Translate.y + tile->GetLocalMinHeight();
                     auto maxY = subgrid->Translate.y + tile->GetLocalMaxHeight();
 
@@ -241,6 +363,26 @@ bool AiGrid::ToTilePos(AiWorldPos const& pos, AiSubgrid*& pSubgrid, AiTilePos& t
     return ydiff < 3.40282347e+38f;
 }
 
+AiGridTile const* AiGrid::GetTileAt(AiTilePos const& pos) const
+{
+    auto subgrid = Subgrids.try_get(pos.SubgridId);
+    if (subgrid) {
+        return subgrid->TileGrid->GetTileAt(pos.X, pos.Y);
+    }
+
+    return nullptr;
+}
+
+AiFlags AiGrid::GetStateInArea(AiTilePos const& pos, int radius) const
+{
+    auto subgrid = Subgrids.try_get(pos.SubgridId);
+    if (subgrid) {
+        return subgrid->GetStateInArea(glm::ivec2(pos.X, pos.Y), radius);
+    }
+
+    return 0;
+}
+
 Array<float> AiGrid::GetHeightsAt(AiWorldPos const& pos) const
 {
     glm::ivec2 localPos;
@@ -252,7 +394,7 @@ Array<float> AiGrid::GetHeightsAt(AiWorldPos const& pos) const
         if (subgrid) {
             if (subgrid->WorldToTilePos(pos, localPos)) {
                 auto tile = subgrid->TileGrid->GetTileAt(localPos.x, localPos.y);
-                if ((tile->AiFlags & 1) == 0) {
+                if (!tile->Flags.IsBlocker()) {
                     heights.push_back(subgrid->Translate.y + tile->GetLocalMaxHeight());
                 }
             }

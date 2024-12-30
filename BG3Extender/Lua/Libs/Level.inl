@@ -131,12 +131,12 @@ AiGridLuaTile* GetTileDebugInfo(lua_State* L, glm::vec3 pos)
     AiGridTile const* tileInfo;
     AiSubgrid* subgrid;
     if (aiGrid->ToTilePos(worldPos, subgrid, tilePos, tileInfo)) {
-        tile.Flags = tileInfo->GetFlags();
-        tile.GroundSurface = tileInfo->GetGroundSurface();
-        tile.CloudSurface = tileInfo->GetCloudSurface();
-        tile.Material = tileInfo->GetMaterial();
-        tile.UnmappedFlags = (uint32_t)(tileInfo->AiFlags & 0x200001);
-        tile.ExtraFlags = (uint32_t)(tileInfo->AiFlags >> 46) & 0xffffc;
+        tile.Flags = tileInfo->Flags.GetFlags();
+        tile.GroundSurface = tileInfo->Flags.GetGroundSurface();
+        tile.CloudSurface = tileInfo->Flags.GetCloudSurface();
+        tile.Material = tileInfo->Flags.GetMaterial();
+        tile.UnmappedFlags = (uint32_t)(tileInfo->Flags.Flags & 0x200001);
+        tile.ExtraFlags = (uint32_t)(tileInfo->Flags.Flags >> 46) & 0xffffc;
 
         tile.SubgridId = tilePos.SubgridId;
         tile.TileX = tilePos.X;

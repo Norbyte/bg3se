@@ -1394,6 +1394,7 @@ BEGIN_BITMASK(BoundFlags, uint16_t)
 END_ENUM()
 
 BEGIN_BITMASK(AiBaseFlags, uint32_t)
+    EV(Blocker, 0x01)
     EV(WalkBlock, 0x02)
     EV(WalkBlock2, 0x04)
     EV(ShootBlock, 0x08)

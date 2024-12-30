@@ -73,7 +73,7 @@ private:
     HashSet<ComponentRef> pendingReplications_;
     Array<DeferredEvent> pendingEvents_;
 
-    void OnEntityReplication(ecs::ReplicationTypeIndex type, EntityHandle entity, void* component, uint64_t fields);
+    void OnEntityReplication(ecs::ReplicationTypeIndex const& type, EntityHandle entity, void* component, uint64_t fields);
     void CallHandler(EntityHandle entity, uint64_t fields, ecs::ReplicationTypeIndex type, ReplicationHook const& hook);
     ReplicationHooks* AddComponentType(ecs::ReplicationTypeIndex type);
     void RemoveComponentType(ecs::ReplicationTypeIndex type);

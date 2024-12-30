@@ -62,9 +62,9 @@ public:
     R operator ()(Args&&... args) const
     {
         if constexpr (std::is_same_v<R, void>) {
-            return call_(*this, std::forward<Args>(args)...);
-        } else {
             call_(*this, std::forward<Args>(args)...);
+        } else {
+            return call_(*this, std::forward<Args>(args)...);
         }
     }
 
@@ -131,9 +131,9 @@ private:
     R operator ()(Args&&... args) const
     {
         if constexpr (std::is_same_v<R, void>) {
-            return (Data()->Handler)(std::forward<Args>(args)...);
-        } else {
             (Data()->Handler)(std::forward<Args>(args)...);
+        } else {
+            return (Data()->Handler)(std::forward<Args>(args)...);
         }
     }
 
@@ -199,9 +199,9 @@ private:
         auto this_ = Data()->This;
         auto proc = Data()->Handler;
         if constexpr (std::is_same_v<R, void>) {
-            return (this_->*proc)(std::forward<Args>(args)...);
-        } else {
             (this_->*proc)(std::forward<Args>(args)...);
+        } else {
+            return (this_->*proc)(std::forward<Args>(args)...);
         }
     }
 
@@ -218,22 +218,22 @@ private:
 
 
 template <class TData, class R, class... Args>
-class FunctionImpl<R (TData, Args...), TData> : public Function<R (Args...)>
+class FunctionImpl<R (TData const&, Args...), TData> : public Function<R (Args...)>
 {
 private:
     using Base = Function<R (Args...)>;
-    using UserCallProc = R (TData, Args...);
+    using UserCallProc = R (TData const&, Args...);
 
     struct Context
     {
-        UserCallProc Handler;
+        UserCallProc* Handler;
         TData Data;
     };
 
     static_assert(sizeof(Context) <= sizeof(void*) * Base::UserDataSize);
 
 public:
-    FunctionImpl(UserCallProc handler, TData const& data)
+    FunctionImpl(UserCallProc* handler, TData const& data)
     {
         this->call_ = [](Base const& self, Args... args) -> R {
             auto& impl = static_cast<FunctionImpl const&>(self);
@@ -268,9 +268,9 @@ private:
         auto proc = Data()->Handler;
         auto& data = Data()->Data;
         if constexpr (std::is_same_v<R, void>) {
-            return proc(data, std::forward<Args>(args)...);
-        } else {
             proc(data, std::forward<Args>(args)...);
+        } else {
+            return proc(data, std::forward<Args>(args)...);
         }
     }
 
@@ -287,11 +287,11 @@ private:
 
 
 template <class TData, class R, class T, class... Args>
-class FunctionImpl<R (T::*)(TData, Args...), TData> : public Function<R (Args...)>
+class FunctionImpl<R (T::*)(TData const&, Args...), TData> : public Function<R (Args...)>
 {
 private:
     using Base = Function<R (Args...)>;
-    using UserCallProc = R (T::*)(TData, Args...);
+    using UserCallProc = R (T::*)(TData const&, Args...);
 
     struct Context
     {
@@ -340,9 +340,9 @@ private:
         auto proc = Data()->Handler;
         auto& data = Data()->Data;
         if constexpr (std::is_same_v<R, void>) {
-            return (this_->*proc)(data, std::forward<Args>(args)...);
-        } else {
             (this_->*proc)(data, std::forward<Args>(args)...);
+        } else {
+            return (this_->*proc)(data, std::forward<Args>(args)...);
         }
     }
 
@@ -448,15 +448,15 @@ Function<R(Args...)> MakeFunction(R (T::* fun)(Args...), T* self)
 }
 
 template <class R, class TData, class... Args>
-Function<R (Args...)> MakeFunction(R (* fun)(TData, Args...), TData const& data)
+Function<R (Args...)> MakeFunction(R (* fun)(TData const&, Args...), TData const& data)
 {
-    return FunctionImpl<R (TData, Args...), TData>(fun, data);
+    return FunctionImpl<R (TData const&, Args...), TData>(fun, data);
 }
 
 template <class R, class T, class TData, class... Args>
-Function<R (Args...)> MakeFunction(R (T::* fun)(TData, Args...), T* self, TData const& data)
+Function<R (Args...)> MakeFunction(R (T::* fun)(TData const&, Args...), T* self, TData const& data)
 {
-    return FunctionImpl<R (T::*)(TData, Args...), TData>(self, fun, data);
+    return FunctionImpl<R (T::*)(TData const&, Args...), TData>(self, fun, data);
 }
 
 END_SE()
