@@ -112,7 +112,7 @@ Renderable::~Renderable() {}
 
 void Renderable::Destroy()
 {
-    if (Parent) {
+    if (Parent != InvalidHandle) {
         auto parent = Manager->GetRenderable(Parent);
         if (parent != nullptr) {
             static_cast<TreeParent*>(parent)->RemoveChild(lua::ImguiHandle(Handle));
@@ -1550,7 +1550,16 @@ bool IMGUIObjectManager::DestroyRenderable(HandleType handle)
 {
     auto type = (handle >> 56);
     if (type > (unsigned)IMGUIObjectType::Max) return false;
-    return pools_[type]->Destroy(handle);
+    auto destroyed = pools_[type]->Destroy(handle);
+    if (destroyed) {
+        if (type == (unsigned)IMGUIObjectType::Window) {
+            auto it = windows_.find(handle);
+            if (it != windows_.end()) {
+                //windows_.ordered_remove_at(it);
+            }
+        }
+    }
+    return destroyed;
 }
 
 void IMGUIObjectManager::Render()
