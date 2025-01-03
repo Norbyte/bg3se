@@ -27,13 +27,13 @@ void lua_push_lightcppobject(lua_State* L, MetatableTag metatableTag, int proper
 CppObjectMetadata lua_get_lightcppobject(lua_State* L, int idx);
 CppObjectMetadata lua_get_lightcppobject(lua_State* L, int idx, MetatableTag expectedMetatableTag);
 CppObjectMetadata lua_get_lightcppobject(lua_State* L, int idx, MetatableTag expectedMetatableTag, int expectedPropertyMap);
-CppObjectOpaqueMetadata* lua_get_opaque_lightcppobject(lua_State* L, int idx, MetatableTag expectedMetatableTag);
+CppObjectOpaque* lua_get_opaque_lightcppobject(lua_State* L, int idx, MetatableTag expectedMetatableTag);
 bool lua_try_get_lightcppobject(lua_State* L, int idx, CppObjectMetadata& obj);
 bool lua_try_get_lightcppobject(lua_State* L, int idx, MetatableTag expectedMetatableTag, CppObjectMetadata& obj);
 
-LifetimeHandle lua_get_opaque_lifetime(CppObjectOpaqueMetadata* meta);
-uint16_t lua_get_opaque_property_map(CppObjectOpaqueMetadata* meta);
-void* lua_get_opaque_ptr(CppObjectOpaqueMetadata* meta);
+LifetimeHandle lua_get_opaque_lifetime(CppObjectOpaque* meta);
+uint16_t lua_get_opaque_property_map(CppObjectOpaque* meta);
+void* lua_get_opaque_ptr(CppObjectOpaque* meta);
 
 void* lua_push_newcppobject(lua_State* L, MetatableTag metatableTag, int propertyMapIndex, uint32_t size);
 
@@ -44,10 +44,10 @@ CppObjectMetadata lua_get_cppvalue(lua_State* L, int idx);
 bool lua_try_get_cppvalue(lua_State* L, int idx, CppObjectMetadata& obj);
 bool lua_try_get_cppvalue(lua_State* L, int idx, MetatableTag expectedMetatableTag, CppObjectMetadata& obj);
 
-CppValueOpaqueMetadata* lua_get_opaque_cppvalue(lua_State* L, int idx, MetatableTag expectedMetatableTag);
+CppValueOpaque* lua_get_opaque_cppvalue(lua_State* L, int idx, MetatableTag expectedMetatableTag);
 
-uint32_t lua_get_opaque_property_map(CppValueOpaqueMetadata* meta);
-uint64_t lua_get_opaque_value(CppValueOpaqueMetadata* meta);
+uint32_t lua_get_opaque_property_map(CppValueOpaque* meta);
+uint64_t lua_get_opaque_value(CppValueOpaque* meta);
 
 // Object/Value combined getter API
 CppObjectMetadata lua_get_lightcppany(lua_State* L, int idx);

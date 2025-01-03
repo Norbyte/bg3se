@@ -182,8 +182,8 @@ namespace lua
     class State;
 
     struct CppObjectMetadata;
-    struct CppObjectOpaqueMetadata;
-    struct CppValueOpaqueMetadata;
+    struct CppObjectOpaque;
+    struct CppValueOpaque;
 
     template <class T>
     class LuaDelegate;

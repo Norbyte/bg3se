@@ -407,7 +407,7 @@ CppObjectMetadata lua_get_lightcppobject(lua_State* L, int idx, MetatableTag exp
     };
 }
 
-CppObjectOpaqueMetadata* lua_get_opaque_lightcppobject(lua_State* L, int idx, MetatableTag expectedMetatableTag)
+CppObjectOpaque* lua_get_opaque_lightcppobject(lua_State* L, int idx, MetatableTag expectedMetatableTag)
 {
     CppLightObjectVal val(L, idx);
     auto metatableTag = val.MetatableTag();
@@ -415,20 +415,20 @@ CppObjectOpaqueMetadata* lua_get_opaque_lightcppobject(lua_State* L, int idx, Me
         luaL_error(L, "Param %d must be a %s; got %s", idx, GetDebugName(expectedMetatableTag), GetDebugName(L, idx));
     }
 
-    return (CppObjectOpaqueMetadata*)val.value_;
+    return (CppObjectOpaque*)val.value_;
 }
 
-LifetimeHandle lua_get_opaque_lifetime(CppObjectOpaqueMetadata* meta)
+LifetimeHandle lua_get_opaque_lifetime(CppObjectOpaque* meta)
 {
     return CppLightObjectVal::LifetimeFromValue((TValue*)meta);
 }
 
-uint16_t lua_get_opaque_property_map(CppObjectOpaqueMetadata* meta)
+uint16_t lua_get_opaque_property_map(CppObjectOpaque* meta)
 {
     return CppLightObjectVal::PropertyMapTagFromValue((TValue*)meta);
 }
 
-void* lua_get_opaque_ptr(CppObjectOpaqueMetadata* meta)
+void* lua_get_opaque_ptr(CppObjectOpaque* meta)
 {
     return CppLightObjectVal::PtrFromValue((TValue*)meta);
 }
@@ -515,7 +515,7 @@ CppObjectMetadata lua_get_cppvalue(lua_State* L, int idx, MetatableTag expectedM
     };
 }
 
-CppValueOpaqueMetadata* lua_get_opaque_cppvalue(lua_State* L, int idx, MetatableTag expectedMetatableTag)
+CppValueOpaque* lua_get_opaque_cppvalue(lua_State* L, int idx, MetatableTag expectedMetatableTag)
 {
     CppValue val(L, idx);
     auto metatableTag = val.MetatableTag();
@@ -523,15 +523,15 @@ CppValueOpaqueMetadata* lua_get_opaque_cppvalue(lua_State* L, int idx, Metatable
         luaL_error(L, "Param %d must be a %s; got %s", idx, GetDebugName(expectedMetatableTag), GetDebugName(L, idx));
     }
 
-    return (CppValueOpaqueMetadata*)val.value_;
+    return (CppValueOpaque*)val.value_;
 }
 
-uint32_t lua_get_opaque_property_map(CppValueOpaqueMetadata* meta)
+uint32_t lua_get_opaque_property_map(CppValueOpaque* meta)
 {
     return CppValue::PropertyMapTagFromValue((TValue*)meta);
 }
 
-uint64_t lua_get_opaque_value(CppValueOpaqueMetadata* meta)
+uint64_t lua_get_opaque_value(CppValueOpaque* meta)
 {
     return CppValue::RawValueFromValue((TValue*)meta);
 }
