@@ -222,7 +222,7 @@ namespace bg3se::lua
         {
             StackCheck _(L);
             // FIXME - Restriction restriction(*this, restrictions);
-            LifetimeStackPin _p(lifetimeStack_);
+            LifetimeStackPin _p(L, lifetimeStack_);
             auto lifetime = lifetimeStack_.GetCurrent();
             PushInternalFunction(L, func);
             (push(L, args, lifetime), ...);
@@ -234,7 +234,7 @@ namespace bg3se::lua
         {
             StackCheck _(L, 0);
             // FIXME - Restriction restriction(*this, restrictions);
-            LifetimeStackPin _p(lifetimeStack_);
+            LifetimeStackPin _p(L, lifetimeStack_);
             auto lifetime = lifetimeStack_.GetCurrent();
             PushInternalFunction(L, func);
             (push(L, args, lifetime), ...);
@@ -246,7 +246,7 @@ namespace bg3se::lua
         {
             static_assert(std::is_base_of_v<EventBase, TEvent>, "Event object must be a descendant of EventBase");
             StackCheck _(L, 0);
-            LifetimeStackPin _p(GetStack());
+            LifetimeStackPin _p(L, GetStack());
             PushInternalFunction(L, "_ThrowEvent");
             MakeObjectRef(L, &evt);
             return DispatchEvent(evt, eventName, canPreventAction, restrictions);

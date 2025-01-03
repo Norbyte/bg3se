@@ -472,7 +472,7 @@ std::optional<int> State::LoadScript(STDString const & script, STDString const &
 #endif
 
     /* Ask Lua to run our little script */
-    LifetimeStackPin _(lifetimeStack_);
+    LifetimeStackPin _(L, lifetimeStack_);
     status = CallWithTraceback(L, 0, LUA_MULTRET);
     if (status != LUA_OK) {
         LuaError("Failed to execute script: " << lua_tostring(L, -1));

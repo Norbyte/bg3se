@@ -126,7 +126,7 @@ void OsirisCallbackManager::RunHandler(ServerState& lua, RegistryEntry const& fu
 {
     auto L = lua.GetState();
     StackCheck _(L, 0);
-    LifetimeStackPin p_(lua.GetStack());
+    LifetimeStackPin p_(L, lua.GetStack());
     int32_t stackArgs = 1;
     if (tuple != nullptr) {
         auto node = tuple->Items.Head->Next;
@@ -194,7 +194,7 @@ void OsirisCallbackManager::RunHandler(ServerState& lua, RegistryEntry const& fu
 {
     auto L = lua.GetState();
     StackCheck _(L, 0);
-    LifetimeStackPin _p(lua.GetStack());
+    LifetimeStackPin _p(L, lua.GetStack());
     int32_t stackArgs = 1;
     auto node = args;
     while (node) {

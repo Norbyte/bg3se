@@ -303,7 +303,7 @@ struct ProtectedFunctionCaller : public ProtectedFunctionCallerBase
     {
         auto self = reinterpret_cast<ProtectedFunctionCaller<TArgs, TReturn>*>(lua_touserdata(L, 1));
 
-        LifetimeStackPin _p(State::FromLua(L)->GetStack());
+        LifetimeStackPin _p(L, State::FromLua(L)->GetStack());
 
         lua_pushcfunction(L, &TracebackHandler);
         int tracebackHandlerIdx = lua_gettop(L);
