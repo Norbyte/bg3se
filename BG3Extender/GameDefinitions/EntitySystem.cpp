@@ -298,10 +298,6 @@ EntityStorageData* EntityStorageContainer::GetEntityStorage(EntityHandle entityH
 
 EntityStorageData* EntityWorld::GetEntityStorage(EntityHandle entityHandle) const
 {
-    if (!IsValid(entityHandle)) {
-        return nullptr;
-    }
-
     return Storage->GetEntityStorage(entityHandle);
 }
 
