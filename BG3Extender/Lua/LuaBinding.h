@@ -64,10 +64,18 @@ namespace bg3se::lua
         LuaInternalState* Internal;
     };
 
+    class State;
+
+    struct LuaExtraSpace
+    {
+        State* State;
+        LifetimeHandle CurrentLifetime;
+    };
+
     class State : Noncopyable<State>
     {
     public:
-        static_assert(LUA_EXTRASPACE >= sizeof(State*), "Should have enough extra space in Lua for state ptr");
+        static_assert(LUA_EXTRASPACE >= sizeof(LuaExtraSpace), "Should have enough extra space in Lua for state");
 
         enum RestrictionFlag
         {
@@ -98,8 +106,16 @@ namespace bg3se::lua
         State(State &&) = delete;
         State & operator = (State const &) = delete;
         State & operator = (State &&) = delete;
+        
+        inline static LuaExtraSpace* GetExtra(lua_State* L)
+        {
+            return (LuaExtraSpace *)lua_getextraspace(L);
+        }
 
-        static State* FromLua(lua_State* L);
+        inline static State* FromLua(lua_State* L)
+        {
+            return GetExtra(L)->State;
+        }
 
         inline lua_State * GetState()
         {
