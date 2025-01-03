@@ -26,6 +26,7 @@ inline char const* do_get(lua_State* L, int index, Overload<char const*>)
 }
 
 FixedString do_get(lua_State* L, int index, Overload<FixedString>);
+FixedStringNoRef do_get(lua_State* L, int index, Overload<FixedStringNoRef>);
 
 inline STDString do_get(lua_State* L, int index, Overload<STDString>)
 {
