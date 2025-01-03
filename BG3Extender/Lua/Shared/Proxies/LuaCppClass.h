@@ -40,6 +40,9 @@ struct CppObjectMetadata
     LifetimeHandle Lifetime;
 };
 
+struct CppObjectOpaqueMetadata : public ProtectedGameObject<CppObjectOpaqueMetadata> {};
+struct CppValueOpaqueMetadata : public ProtectedGameObject<CppValueOpaqueMetadata> {};
+
 class CppMetatableManager
 {
 public:

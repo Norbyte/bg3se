@@ -52,11 +52,11 @@ struct CppLightObjectVal
     static constexpr std::uintptr_t MetatableTagMask = (1ull << MetatableTagBits) - 1;
     static_assert(LifetimeHandle::HandleBits + TypeTagBits <= 56);
 
-    CppLightObjectVal(TValue* val)
+    inline CppLightObjectVal(TValue* val)
         : value_(val)
     {}
     
-    CppLightObjectVal(lua_State* L, int idx)
+    inline CppLightObjectVal(lua_State* L, int idx)
         : value_(lua_index2addr(L, idx))
     {
         if (!IsCppObject(value_)) {
@@ -98,6 +98,36 @@ struct CppLightObjectVal
     static inline uint8_t ValueClassFromExtra(uint64_t extra)
     {
         return (uint8_t)(TypeTagFromExtra(extra) >> MetatableTagBits);
+    }
+
+    static inline void* PtrFromValue(TValue* value)
+    {
+        return PtrFromRaw(lcppvalue(value));
+    }
+
+    static inline uint16_t PropertyMapTagFromValue(TValue* value)
+    {
+        return PropertyMapTagFromRaw(lcppvalue(value));
+    }
+
+    static inline LifetimeHandle LifetimeFromValue(TValue* value)
+    {
+        return LifetimeFromExtra(valextra(value));
+    }
+
+    static inline uint64_t TypeTagFromValue(TValue* value)
+    {
+        return TypeTagFromExtra(valextra(value));
+    }
+
+    static inline MetatableTag MetatableTagFromValue(TValue* value)
+    {
+        return MetatableTagFromExtra(valextra(value));
+    }
+
+    static inline uint8_t ValueClassFromValue(TValue* value)
+    {
+        return ValueClassFromExtra(valextra(value));
     }
 
     static inline uint64_t MakeRaw(void const* ptr, uint16_t propertyMapTag)
@@ -262,6 +292,26 @@ struct CppValue
         return (uint32_t)((extra >> PropertyMapTagOffset) & PropertyMapTagMask);
     }
 
+    static inline uint64_t RawValueFromValue(TValue* value)
+    {
+        return lcppvalue(value);
+    }
+
+    static inline MetatableTag MetatableTagFromValue(TValue* value)
+    {
+        return MetatableTagFromExtra(valextra(value));
+    }
+
+    static inline uint8_t ValueClassFromValue(TValue* value)
+    {
+        return ValueClassFromExtra(valextra(value));
+    }
+
+    static inline uint32_t PropertyMapTagFromValue(TValue* value)
+    {
+        return PropertyMapTagFromExtra(valextra(value));
+    }
+
     static inline uint64_t MakeRaw(uint64_t value)
     {
         return value;
@@ -357,6 +407,32 @@ CppObjectMetadata lua_get_lightcppobject(lua_State* L, int idx, MetatableTag exp
     };
 }
 
+CppObjectOpaqueMetadata* lua_get_opaque_lightcppobject(lua_State* L, int idx, MetatableTag expectedMetatableTag)
+{
+    CppLightObjectVal val(L, idx);
+    auto metatableTag = val.MetatableTag();
+    if (metatableTag != expectedMetatableTag) {
+        luaL_error(L, "Param %d must be a %s; got %s", idx, GetDebugName(expectedMetatableTag), GetDebugName(L, idx));
+    }
+
+    return (CppObjectOpaqueMetadata*)val.value_;
+}
+
+LifetimeHandle lua_get_opaque_lifetime(CppObjectOpaqueMetadata* meta)
+{
+    return CppLightObjectVal::LifetimeFromValue((TValue*)meta);
+}
+
+uint16_t lua_get_opaque_property_map(CppObjectOpaqueMetadata* meta)
+{
+    return CppLightObjectVal::PropertyMapTagFromValue((TValue*)meta);
+}
+
+void* lua_get_opaque_ptr(CppObjectOpaqueMetadata* meta)
+{
+    return CppLightObjectVal::PtrFromValue((TValue*)meta);
+}
+
 CppObjectMetadata lua_get_lightcppobject(lua_State* L, int idx, MetatableTag expectedMetatableTag, int expectedPropertyMap)
 {
     CppLightObjectVal val(L, idx);
@@ -437,6 +513,27 @@ CppObjectMetadata lua_get_cppvalue(lua_State* L, int idx, MetatableTag expectedM
         .PropertyMapTag = val.PropertyMapTag(),
         .Lifetime = NullLifetime
     };
+}
+
+CppValueOpaqueMetadata* lua_get_opaque_cppvalue(lua_State* L, int idx, MetatableTag expectedMetatableTag)
+{
+    CppValue val(L, idx);
+    auto metatableTag = val.MetatableTag();
+    if (metatableTag != expectedMetatableTag) {
+        luaL_error(L, "Param %d must be a %s; got %s", idx, GetDebugName(expectedMetatableTag), GetDebugName(L, idx));
+    }
+
+    return (CppValueOpaqueMetadata*)val.value_;
+}
+
+uint32_t lua_get_opaque_property_map(CppValueOpaqueMetadata* meta)
+{
+    return CppValue::PropertyMapTagFromValue((TValue*)meta);
+}
+
+uint64_t lua_get_opaque_value(CppValueOpaqueMetadata* meta)
+{
+    return CppValue::RawValueFromValue((TValue*)meta);
 }
 
 CppObjectMetadata lua_get_cppvalue(lua_State* L, int idx)
@@ -599,6 +696,30 @@ FixedString do_get(lua_State* L, int index, Overload<FixedString>)
     size_t len;
     auto str = luaL_tolstring(L, index, &len);
     auto fs = FixedString(StringView(str, len));
+    lua_pop(L, 1);
+    return fs;
+}
+
+FixedStringNoRef do_get(lua_State* L, int index, Overload<FixedStringNoRef>)
+{
+    StkId o = index2addr(L, index);
+    if (ttisstring(o)) {
+        auto s = tsvalue(o);
+        auto& fs = *reinterpret_cast<CachedFixedString *>(&s->cache);
+        if (fs.IsCached) {
+            return FixedStringNoRef{ fs.Str };
+        } else {
+            return FixedStringNoRef(StringView(getstr(s), tsslen(s)));
+        }
+    }
+
+    if (ttisnil(o)) {
+        return FixedString{};
+    }
+
+    size_t len;
+    auto str = luaL_tolstring(L, index, &len);
+    auto fs = FixedStringNoRef{ StringView(str, len) };
     lua_pop(L, 1);
     return fs;
 }
