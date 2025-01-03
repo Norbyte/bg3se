@@ -24,9 +24,9 @@ struct ObjectHelpers
     static bool SetRawAttribute(Object* obj, FixedString key, char const* value);
     static bool CopyFrom(Object* obj, FixedString parent);
 
-    static PropertyOperationResult FallbackGet(lua_State* L, lua::LifetimeHandle const& lifetime, Object const* object, bg3se::FixedString const& prop);
+    static PropertyOperationResult FallbackGet(lua_State* L, lua::LifetimeHandle lifetime, Object const* object, bg3se::FixedString const& prop);
     static PropertyOperationResult FallbackSet(lua_State* L, Object* object, bg3se::FixedString const& prop, int index);
-    static int FallbackNext(lua_State* L, LifetimeHandle const& lifetime, Object const* object, FixedString const& prop);
+    static int FallbackNext(lua_State* L, LifetimeHandle lifetime, Object const* object, FixedString const& prop);
 };
 
 

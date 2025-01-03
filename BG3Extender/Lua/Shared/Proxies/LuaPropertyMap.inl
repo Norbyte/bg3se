@@ -51,6 +51,7 @@ PropertyOperationResult GenericPropertyMap::GetRawProperty(lua_State* L, Lifetim
 PropertyOperationResult GenericPropertyMap::GetRawProperty(lua_State* L, LifetimeHandle const& lifetime, void const* object, RawPropertyAccessors const& prop) const
 {
     return prop.Get(L, lifetime, object, prop);
+    return prop.Get(L, lifetime, data, prop);
 }
 
 PropertyOperationResult GenericPropertyMap::SetRawProperty(lua_State* L, void* object, FixedString const& prop, int index) const

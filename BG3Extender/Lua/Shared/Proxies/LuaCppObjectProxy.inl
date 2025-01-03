@@ -3,7 +3,7 @@
 
 BEGIN_NS(lua)
 
-int CppObjectProxyHelpers::Next(lua_State* L, GenericPropertyMap const& pm, void* object, LifetimeHandle const& lifetime, FixedString const& key)
+int CppObjectProxyHelpers::Next(lua_State* L, GenericPropertyMap const& pm, void* object, LifetimeHandle lifetime, FixedString const& key)
 {
     if (!key) {
         if (!pm.IterableProperties.empty()) {

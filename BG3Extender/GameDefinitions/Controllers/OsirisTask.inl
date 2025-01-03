@@ -2,7 +2,7 @@
 
 BEGIN_NS(lua)
 
-void LuaPolymorphic<esv::Task>::MakeRef(lua_State* L, esv::Task* v, LifetimeHandle const& lifetime)
+void LuaPolymorphic<esv::Task>::MakeRef(lua_State* L, esv::Task* v, LifetimeHandle lifetime)
 {
 #define V(type) case esv::type::Type: \
             MakeDirectObjectRef(L, static_cast<esv::type*>(v), lifetime); break;

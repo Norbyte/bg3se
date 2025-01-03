@@ -556,71 +556,71 @@ public:
         return impl;
     }
 
-    inline static void MakeImpl(lua_State* L, void* object, LifetimeHandle const& lifetime, ArrayProxyImplBase* impl)
+    inline static void MakeImpl(lua_State* L, void* object, LifetimeHandle lifetime, ArrayProxyImplBase* impl)
     {
         lua_push_lightcppobject(L, MetatableTag::Array, impl->GetRegistryIndex(), object, lifetime);
     }
 
-    inline static void MakeImpl(lua_State* L, void const* object, LifetimeHandle const& lifetime, ArrayProxyImplBase* impl)
+    inline static void MakeImpl(lua_State* L, void const* object, LifetimeHandle lifetime, ArrayProxyImplBase* impl)
     {
         lua_push_lightcppobject(L, MetatableTag::Array, impl->GetRegistryIndex(), object, lifetime);
     }
 
     template <class T>
-    static inline void Make(lua_State* L, StaticArray<T>* object, const LifetimeHandle& lifetime)
+    static inline void Make(lua_State* L, StaticArray<T>* object, LifetimeHandle lifetime)
     {
         MakeImpl(L, object, lifetime, GetImplementation<ConstSizeArrayProxyImpl<StaticArray<T>, T, 2>>());
     }
 
     template <class T>
-    static inline void Make(lua_State* L, StaticArray<T> const* object, const LifetimeHandle& lifetime)
+    static inline void Make(lua_State* L, StaticArray<T> const* object, LifetimeHandle lifetime)
     {
         MakeImpl(L, object, lifetime, GetImplementation<ConstSizeArrayProxyImpl<StaticArray<T>, T, 2>>());
     }
 
     template <class T>
-    inline static void Make(lua_State* L, Array<T>* object, LifetimeHandle const& lifetime)
+    inline static void Make(lua_State* L, Array<T>* object, LifetimeHandle lifetime)
     {
         MakeImpl(L, object, lifetime, GetImplementation<DynamicArrayProxyImpl<Array<T>, T, 2>>());
     }
 
     template <class T>
-    inline static void Make(lua_State* L, Array<T> const* object, LifetimeHandle const& lifetime)
+    inline static void Make(lua_State* L, Array<T> const* object, LifetimeHandle lifetime)
     {
         MakeImpl(L, object, lifetime, GetImplementation<DynamicArrayProxyImpl<Array<T>, T, 2>>());
     }
 
     template <class T>
-    inline static void Make(lua_State* L, LegacyArray<T>* object, LifetimeHandle const& lifetime)
+    inline static void Make(lua_State* L, LegacyArray<T>* object, LifetimeHandle lifetime)
     {
         MakeImpl(L, static_cast<Array<T>*>(object), lifetime, GetImplementation<DynamicArrayProxyImpl<Array<T>, T, 2>>());
     }
 
     template <class T>
-    inline static void Make(lua_State* L, LegacyArray<T> const* object, LifetimeHandle const& lifetime)
+    inline static void Make(lua_State* L, LegacyArray<T> const* object, LifetimeHandle lifetime)
     {
         MakeImpl(L, static_cast<Array<T> const*>(object), lifetime, GetImplementation<DynamicArrayProxyImpl<Array<T>, T, 2>>());
     }
 
 #if defined(ENABLE_UI)
     template <class T, unsigned N>
-    inline static void Make(lua_State* L, Noesis::Vector<T, N>* object, LifetimeHandle const& lifetime)
+    inline static void Make(lua_State* L, Noesis::Vector<T, N>* object, LifetimeHandle lifetime)
     {
         MakeImpl(L, object, lifetime, GetImplementation<DynamicNoesisArrayProxyImpl<Noesis::Vector<T, N>, T, 7>>());
     }
     
     template <class T, unsigned N>
-    inline static void Make(lua_State* L, Noesis::Vector<T, N> const* object, LifetimeHandle const& lifetime)
+    inline static void Make(lua_State* L, Noesis::Vector<T, N> const* object, LifetimeHandle lifetime)
     {
         MakeImpl(L, object, lifetime, GetImplementation<DynamicNoesisArrayProxyImpl<Noesis::Vector<T, N>, T, 7>>());
     }
 
-    inline static void Make(lua_State* L, Noesis::BaseCollection* object, LifetimeHandle const& lifetime)
+    inline static void Make(lua_State* L, Noesis::BaseCollection* object, LifetimeHandle lifetime)
     {
         MakeImpl(L, object, lifetime, GetImplementation<DynamicNoesisCollectionProxyImpl<Noesis::BaseCollection, Noesis::BaseComponent*, 8>>());
     }
 
-    inline static void Make(lua_State* L, Noesis::BaseCollection const* object, LifetimeHandle const& lifetime)
+    inline static void Make(lua_State* L, Noesis::BaseCollection const* object, LifetimeHandle lifetime)
     {
         MakeImpl(L, object, lifetime, GetImplementation<DynamicNoesisCollectionProxyImpl<Noesis::BaseCollection, Noesis::BaseComponent*, 8>>());
     }
@@ -628,74 +628,74 @@ public:
 
     template <class TWord, unsigned Words>
     inline static void Make(
-        lua_State* L, BitArray<TWord, Words>* object, const LifetimeHandle& lifetime)
+        lua_State* L, BitArray<TWord, Words>* object, LifetimeHandle lifetime)
     {
         MakeImpl(L, object, lifetime, GetImplementation<ConstSizeArrayProxyImpl<BitArray<TWord, Words>, bool, 5>>());
     }
 
     template <class TWord, unsigned Words>
     inline static void Make(
-        lua_State* L, BitArray<TWord, Words> const* object, const LifetimeHandle& lifetime)
+        lua_State* L, BitArray<TWord, Words> const* object, LifetimeHandle lifetime)
     {
         MakeImpl(L, object, lifetime, GetImplementation<ConstSizeArrayProxyImpl<BitArray<TWord, Words>, bool, 5>>());
     }
 
     template <class T>
-    inline static void Make(lua_State* L, ObjectSet<T>* object, LifetimeHandle const& lifetime)
+    inline static void Make(lua_State* L, ObjectSet<T>* object, LifetimeHandle lifetime)
     {
         MakeImpl(L, object, lifetime, GetImplementation<DynamicArrayProxyImpl<ObjectSet<T>, T, 3>>());
     }
 
     template <class T>
-    inline static void Make(lua_State* L, ObjectSet<T> const* object, LifetimeHandle const& lifetime)
+    inline static void Make(lua_State* L, ObjectSet<T> const* object, LifetimeHandle lifetime)
     {
         MakeImpl(L, object, lifetime, GetImplementation<DynamicArrayProxyImpl<ObjectSet<T>, T, 3>>());
     }
 
     template <class T>
-    inline static void Make(lua_State* L, Queue<T>* object, LifetimeHandle const& lifetime)
+    inline static void Make(lua_State* L, Queue<T>* object, LifetimeHandle lifetime)
     {
         MakeImpl(L, object, lifetime, GetImplementation<DynamicArrayProxyImpl<Queue<T>, T, 7>>());
     }
 
     template <class T>
-    inline static void Make(lua_State* L, Queue<T> const* object, LifetimeHandle const& lifetime)
+    inline static void Make(lua_State* L, Queue<T> const* object, LifetimeHandle lifetime)
     {
         MakeImpl(L, object, lifetime, GetImplementation<DynamicArrayProxyImpl<Queue<T>, T, 7>>());
     }
 
     template <class T, int Size>
-    inline static void Make(lua_State* L, std::array<T, Size>* object, LifetimeHandle const& lifetime)
+    inline static void Make(lua_State* L, std::array<T, Size>* object, LifetimeHandle lifetime)
     {
         MakeImpl(L, object, lifetime, GetImplementation<ConstSizeArrayProxyImpl<std::array<T, Size>, T, 1>>());
     }
 
     template <class T, int Size>
-    inline static void Make(lua_State* L, std::array<T, Size> const* object, LifetimeHandle const& lifetime)
+    inline static void Make(lua_State* L, std::array<T, Size> const* object, LifetimeHandle lifetime)
     {
         MakeImpl(L, object, lifetime, GetImplementation<ConstSizeArrayProxyImpl<std::array<T, Size>, T, 1>>());
     }
 
     template <class T, class TAllocator>
-    inline static void Make(lua_State* L, std::vector<T, TAllocator>* object, LifetimeHandle const& lifetime)
+    inline static void Make(lua_State* L, std::vector<T, TAllocator>* object, LifetimeHandle lifetime)
     {
         MakeImpl(L, object, lifetime, GetImplementation<DynamicArrayProxyImpl<std::vector<T, TAllocator>, T, 4>>());
     }
 
     template <class T, class TAllocator>
-    inline static void Make(lua_State* L, std::vector<T, TAllocator> const* object, LifetimeHandle const& lifetime)
+    inline static void Make(lua_State* L, std::vector<T, TAllocator> const* object, LifetimeHandle lifetime)
     {
         MakeImpl(L, object, lifetime, GetImplementation<DynamicArrayProxyImpl<std::vector<T, TAllocator>, T, 4>>());
     }
 
     template <class T, size_t Extent>
-    inline static void Make(lua_State* L, std::span<T, Extent>* object, LifetimeHandle const& lifetime)
+    inline static void Make(lua_State* L, std::span<T, Extent>* object, LifetimeHandle lifetime)
     {
         MakeImpl(L, object, lifetime, GetImplementation<ConstSizeArrayProxyImpl<std::span<T, Extent>, T, 6>>());
     }
 
     template <class T, size_t Extent>
-    inline static void Make(lua_State* L, std::span<T, Extent> const* object, LifetimeHandle const& lifetime)
+    inline static void Make(lua_State* L, std::span<T, Extent> const* object, LifetimeHandle lifetime)
     {
         MakeImpl(L, object, lifetime, GetImplementation<ConstSizeArrayProxyImpl<std::span<T, Extent>, T, 6>>());
     }

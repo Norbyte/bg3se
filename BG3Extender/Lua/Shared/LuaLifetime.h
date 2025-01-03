@@ -119,7 +119,15 @@ class LifetimePool;
 class Lifetime : public Noncopyable<Lifetime>
 {
 public:
-    static constexpr uint32_t SaltMask = (1ull << 30) - 1;
+    static constexpr unsigned HandleBits = 48;
+    static constexpr unsigned IndexBits = 18;
+    static constexpr unsigned SaltBits = (HandleBits - IndexBits);
+
+    static constexpr uint64_t IndexMask = (1ull << IndexBits) - 1;
+    static constexpr uint64_t SaltMask = (1ull << SaltBits) - 1;
+    static constexpr uint64_t HandleMask = (1ull << HandleBits) - 1;
+
+    static constexpr uint64_t AliveBit = (1ull << HandleBits);
 
     inline Lifetime()
     {}
@@ -188,24 +196,25 @@ private:
 
 struct LifetimeHandle
 {
-    static constexpr unsigned HandleBits = 48;
-    static constexpr unsigned IndexBits = 18;
-    static constexpr unsigned SaltBits = (HandleBits - IndexBits);
+    static constexpr unsigned HandleBits = Lifetime::HandleBits;
+    static constexpr unsigned IndexBits = Lifetime::IndexBits;
+    static constexpr unsigned SaltBits = Lifetime::SaltBits;
+
+    static constexpr uint64_t IndexMask = Lifetime::IndexMask;
+    static constexpr uint64_t SaltMask = Lifetime::SaltMask;
+    static constexpr uint64_t HandleMask = Lifetime::HandleMask;
+
     static constexpr unsigned MaxPoolSize = 1 << IndexBits;
-    static constexpr uint64_t IndexMask = (1ull << IndexBits) - 1;
-    static constexpr uint64_t SaltMask = (1ull << SaltBits) - 1;
-    static constexpr uint64_t HandleMask = (1ull << HandleBits) - 1;
-    static_assert(SaltMask == Lifetime::SaltMask);
 
     static constexpr uint64_t NullHandle = 0ull;
 
     uint64_t handle_;
 
-    inline LifetimeHandle()
-        : handle_(NullHandle)
-    {}
+    explicit inline LifetimeHandle() = default;
+    inline LifetimeHandle(LifetimeHandle const& oh) = default;
+    inline LifetimeHandle& operator = (LifetimeHandle const& oh) = default;
 
-    explicit inline LifetimeHandle(uint64_t handle)
+    explicit inline constexpr LifetimeHandle(uint64_t handle)
         : handle_(handle)
     {}
 
@@ -224,16 +233,6 @@ struct LifetimeHandle
         } else {
             return NullHandle;
         }
-    }
-
-    inline LifetimeHandle(LifetimeHandle const& oh)
-        : handle_(oh.handle_)
-    {}
-
-    inline LifetimeHandle& operator = (LifetimeHandle const& oh)
-    {
-        handle_ = oh.handle_;
-        return *this;
     }
 
     inline bool operator == (LifetimeHandle const& oh) const
@@ -273,6 +272,10 @@ struct LifetimeHandle
 
     Lifetime* GetLifetime(lua_State* L) const;
 };
+
+static constexpr LifetimeHandle NullLifetime{ LifetimeHandle ::NullHandle };
+
+static_assert(std::is_pod_v<LifetimeHandle>);
 
 class LifetimePool : Noncopyable<LifetimePool>
 {
@@ -462,12 +465,12 @@ public:
         : pool_(pool), lifetime_(pool_.Allocate())
     {}
     
-    inline LifetimeOwnerPin(LifetimePool& pool, LifetimeHandle const& lifetime)
+    inline LifetimeOwnerPin(LifetimePool& pool, LifetimeHandle lifetime)
         : pool_(pool), lifetime_(lifetime)
     {}
     
     LifetimeOwnerPin(lua_State* L);
-    LifetimeOwnerPin(lua_State* L, LifetimeHandle const& lifetime);
+    LifetimeOwnerPin(lua_State* L, LifetimeHandle lifetime);
 
     inline ~LifetimeOwnerPin()
     {

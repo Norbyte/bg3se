@@ -16,7 +16,7 @@ ecs::EntitySystemHelpersBase* GetEntitySystem(lua_State* L)
 
 template <class T>
 void PushComponentType(lua_State* L, ecs::EntitySystemHelpersBase* helpers, EntityHandle const& handle,
-    LifetimeHandle const& lifetime)
+    LifetimeHandle lifetime)
 {
     auto component = helpers->GetComponent<T>(handle);
     if (component) {
@@ -34,7 +34,7 @@ case cls::ComponentType: \
 }
 
 void PushComponent(lua_State* L, ecs::EntitySystemHelpersBase* helpers, EntityHandle const& handle, ExtComponentType componentType,
-    LifetimeHandle const& lifetime)
+    LifetimeHandle lifetime)
 {
     switch (componentType) {
 
@@ -51,7 +51,7 @@ void PushComponent(lua_State* L, ecs::EntitySystemHelpersBase* helpers, EntityHa
 
 #define T(cls) case cls::ComponentType: MakeDirectObjectRef(L, reinterpret_cast<cls*>(rawComponent), lifetime); break;
 
-void PushComponent(lua_State* L, void* rawComponent, ExtComponentType componentType, LifetimeHandle const& lifetime)
+void PushComponent(lua_State* L, void* rawComponent, ExtComponentType componentType, LifetimeHandle lifetime)
 {
     switch (componentType) {
 

@@ -6,7 +6,7 @@ BEGIN_NS(lua)
 
 struct CppObjectProxyHelpers
 {
-    static int Next(lua_State* L, GenericPropertyMap const& pm, void* object, LifetimeHandle const& lifetime, FixedString const& key);
+    static int Next(lua_State* L, GenericPropertyMap const& pm, void* object, LifetimeHandle lifetime, FixedString const& key);
 };
 
 
@@ -17,26 +17,25 @@ public:
     static constexpr MetatableTag MetaTag = MetatableTag::ObjectRef;
     static constexpr bool HasLifetime = true;
 
-    inline static void Make(lua_State* L, GenericPropertyMap& pm, void* object, LifetimeHandle const& lifetime)
+    inline static void Make(lua_State* L, GenericPropertyMap& pm, void* object, LifetimeHandle lifetime)
     {
         lua_push_lightcppobject(L, MetaTag, pm.RegistryIndex, object, lifetime);
     }
 
-    inline static void Make(lua_State* L, GenericPropertyMap& pm, void const* object, LifetimeHandle const& lifetime)
+    inline static void Make(lua_State* L, GenericPropertyMap& pm, void const* object, LifetimeHandle lifetime)
     {
         // TODO - add RO tag
         lua_push_lightcppobject(L, MetaTag, pm.RegistryIndex, object, lifetime);
     }
 
     template <class T>
-    inline static void Make(lua_State* L, T* object, LifetimeHandle const& lifetime)
+    inline static void Make(lua_State* L, T* object, LifetimeHandle lifetime)
     {
-        auto const& pm = GetStaticPropertyMap<T>();
-        lua_push_lightcppobject(L, MetaTag, pm.RegistryIndex, object, lifetime);
+        lua_push_lightcppobject(L, MetaTag, StructID<T>::ID, object, lifetime);
     }
 
     template <class T>
-    inline static void Make(lua_State* L, T const* object, LifetimeHandle const& lifetime)
+    inline static void Make(lua_State* L, T const* object, LifetimeHandle lifetime)
     {
         // TODO - add RO tag
         auto const& pm = GetStaticPropertyMap<T>();
@@ -82,7 +81,7 @@ public:
 class ObjectProxy
 {
 public:
-    inline static void MakeRef(lua_State* L, GenericPropertyMap& pm, void* object, LifetimeHandle const& lifetime)
+    inline static void MakeRef(lua_State* L, GenericPropertyMap& pm, void* object, LifetimeHandle lifetime)
     {
         if (!pm.ValidatePropertyMap(object)) {
             push(L, nullptr);
@@ -92,7 +91,7 @@ public:
     }
     
     template <class T>
-    inline static void MakeRef(lua_State* L, T* object, LifetimeHandle const& lifetime)
+    inline static void MakeRef(lua_State* L, T* object, LifetimeHandle lifetime)
     {
         if (!GetStaticPropertyMap<T>().ValidatePropertyMap(object)) {
             push(L, nullptr);

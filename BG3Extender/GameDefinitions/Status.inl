@@ -1,6 +1,6 @@
 BEGIN_NS(lua)
 
-void LuaPolymorphic<esv::Status>::MakeRef(lua_State* L, esv::Status* v, LifetimeHandle const& lifetime)
+void LuaPolymorphic<esv::Status>::MakeRef(lua_State* L, esv::Status* v, LifetimeHandle lifetime)
 {
 #define V(type) case esv::Status##type::Type: \
             MakeDirectObjectRef(L, static_cast<esv::Status##type*>(v), lifetime); break;
@@ -36,7 +36,7 @@ void LuaPolymorphic<esv::Status>::MakeRef(lua_State* L, esv::Status* v, Lifetime
 #undef V
 }
 
-void LuaPolymorphic<ecl::Status>::MakeRef(lua_State* L, ecl::Status* v, LifetimeHandle const& lifetime)
+void LuaPolymorphic<ecl::Status>::MakeRef(lua_State* L, ecl::Status* v, LifetimeHandle lifetime)
 {
 #define V(type) case ecl::Status##type::Type: \
             MakeDirectObjectRef(L, static_cast<ecl::Status##type*>(v), lifetime); break;
@@ -72,7 +72,7 @@ void LuaPolymorphic<ecl::Status>::MakeRef(lua_State* L, ecl::Status* v, Lifetime
 #undef V
 }
 
-void LuaPolymorphic<ecl::StatusVFX>::MakeRef(lua_State* L, ecl::StatusVFX* v, LifetimeHandle const& lifetime)
+void LuaPolymorphic<ecl::StatusVFX>::MakeRef(lua_State* L, ecl::StatusVFX* v, LifetimeHandle lifetime)
 {
     // add rcx, 18h
     // Insn for chain-calling EffectHandler::UpdateSafe

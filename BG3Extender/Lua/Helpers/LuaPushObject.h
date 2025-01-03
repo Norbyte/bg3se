@@ -5,7 +5,7 @@ BEGIN_NS(lua)
 LifetimeHandle GetCurrentLifetime(lua_State* L);
 
 template <class T>
-inline void MakeObjectRef(lua_State* L, T* value, LifetimeHandle const& lifetime)
+inline void MakeObjectRef(lua_State* L, T* value, LifetimeHandle lifetime)
 {
     using TVal = std::remove_cv_t<T>;
 
@@ -55,7 +55,7 @@ inline void MakeObjectCopy(lua_State* L, T&& value)
     // FIXME - ObjectProxy::MakeRef<T>(L, std::move(value));
 }
 
-inline void MakeDirectObjectRef(lua_State* L, GenericPropertyMap& pm, void* value, LifetimeHandle const& lifetime)
+inline void MakeDirectObjectRef(lua_State* L, GenericPropertyMap& pm, void* value, LifetimeHandle lifetime)
 {
     if (value == nullptr) {
         push(L, nullptr);
@@ -65,7 +65,7 @@ inline void MakeDirectObjectRef(lua_State* L, GenericPropertyMap& pm, void* valu
 }
 
 template <class T>
-inline void MakeDirectObjectRef(lua_State* L, T* value, LifetimeHandle const& lifetime)
+inline void MakeDirectObjectRef(lua_State* L, T* value, LifetimeHandle lifetime)
 {
     if (value == nullptr) {
         push(L, nullptr);
@@ -77,13 +77,13 @@ inline void MakeDirectObjectRef(lua_State* L, T* value, LifetimeHandle const& li
 }
 
 template <class T>
-inline auto MakeObjectRef(lua_State* L, OverrideableProperty<T>* value, LifetimeHandle const& lifetime)
+inline auto MakeObjectRef(lua_State* L, OverrideableProperty<T>* value, LifetimeHandle lifetime)
 {
     return MakeObjectRef(L, &value->Value, lifetime);
 }
 
 template <class T>
-inline auto MakeObjectRef(lua_State* L, OverrideableProperty<T> const* value, LifetimeHandle const& lifetime)
+inline auto MakeObjectRef(lua_State* L, OverrideableProperty<T> const* value, LifetimeHandle lifetime)
 {
     return MakeObjectRef(L, &value->Value, lifetime);
 }
@@ -95,19 +95,19 @@ inline auto MakeObjectRef(lua_State* L, T* value)
 }
 
 template <class... Args>
-inline auto MakeObjectRef(lua_State* L, std::variant<Args...>* value, LifetimeHandle const& lifetime)
+inline auto MakeObjectRef(lua_State* L, std::variant<Args...>* value, LifetimeHandle lifetime)
 {
     std::visit([=](auto& arg) { push(L, &arg, lifetime); }, *value);
 }
 
 template <class... Args>
-inline auto MakeObjectRef(lua_State* L, std::variant<Args...> const* value, LifetimeHandle const& lifetime)
+inline auto MakeObjectRef(lua_State* L, std::variant<Args...> const* value, LifetimeHandle lifetime)
 {
     std::visit([=](auto& arg) { push(L, &arg, lifetime); }, *value);
 }
 
 template <class T>
-inline void push(lua_State* L, T& value, LifetimeHandle const& lifetime)
+inline void push(lua_State* L, T& value, LifetimeHandle lifetime)
 {
     if constexpr (IsByVal<std::remove_cv_t<T>>) {
         push(L, value);
@@ -117,7 +117,7 @@ inline void push(lua_State* L, T& value, LifetimeHandle const& lifetime)
 }
 
 template <class T>
-inline void push(lua_State* L, T* value, LifetimeHandle const& lifetime)
+inline void push(lua_State* L, T* value, LifetimeHandle lifetime)
 {
     if (value == nullptr) {
         push(L, nullptr);

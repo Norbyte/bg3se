@@ -22,8 +22,8 @@ LuaInternalState* lua_new_internal_state();
 void lua_release_internal_state(LuaInternalState* state);
 
 // Object API for storing pointer-like data in a Lua TValue.
-void lua_push_lightcppobject(lua_State* L, MetatableTag metatableTag, int propertyMapIndex, void* object, LifetimeHandle const& lifetime);
-void lua_push_lightcppobject(lua_State* L, MetatableTag metatableTag, int propertyMapIndex, void const* object, LifetimeHandle const& lifetime);
+void lua_push_lightcppobject(lua_State* L, MetatableTag metatableTag, int propertyMapIndex, void* object, LifetimeHandle lifetime);
+void lua_push_lightcppobject(lua_State* L, MetatableTag metatableTag, int propertyMapIndex, void const* object, LifetimeHandle lifetime);
 CppObjectMetadata lua_get_lightcppobject(lua_State* L, int idx);
 CppObjectMetadata lua_get_lightcppobject(lua_State* L, int idx, MetatableTag expectedMetatableTag);
 CppObjectMetadata lua_get_lightcppobject(lua_State* L, int idx, MetatableTag expectedMetatableTag, int expectedPropertyMap);

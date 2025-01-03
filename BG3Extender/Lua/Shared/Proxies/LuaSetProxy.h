@@ -129,24 +129,24 @@ public:
         return impl;
     }
 
-    inline static void MakeImpl(lua_State* L, void* object, LifetimeHandle const& lifetime, SetProxyImplBase* impl)
+    inline static void MakeImpl(lua_State* L, void* object, LifetimeHandle lifetime, SetProxyImplBase* impl)
     {
         lua_push_lightcppobject(L, MetatableTag::Set, impl->GetRegistryIndex(), object, lifetime);
     }
 
-    inline static void MakeImpl(lua_State* L, void const* object, LifetimeHandle const& lifetime, SetProxyImplBase* impl)
+    inline static void MakeImpl(lua_State* L, void const* object, LifetimeHandle lifetime, SetProxyImplBase* impl)
     {
         lua_push_lightcppobject(L, MetatableTag::Set, impl->GetRegistryIndex(), object, lifetime);
     }
 
     template <class T>
-    inline static void Make(lua_State* L, HashSet<T>* object, LifetimeHandle const& lifetime)
+    inline static void Make(lua_State* L, HashSet<T>* object, LifetimeHandle lifetime)
     {
         MakeImpl(L, object, lifetime, GetImplementation<MultiHashSetProxyImpl<T>>());
     }
 
     template <class T>
-    inline static void Make(lua_State* L, HashSet<T> const* object, LifetimeHandle const& lifetime)
+    inline static void Make(lua_State* L, HashSet<T> const* object, LifetimeHandle lifetime)
     {
         MakeImpl(L, object, lifetime, GetImplementation<MultiHashSetProxyImpl<T>>());
     }

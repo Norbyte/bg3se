@@ -34,7 +34,7 @@ LifetimeOwnerPin::LifetimeOwnerPin(lua_State* L)
     : LifetimeOwnerPin(State::FromLua(L)->GetLifetimePool())
 {}
 
-LifetimeOwnerPin::LifetimeOwnerPin(lua_State* L, LifetimeHandle const& lifetime)
+LifetimeOwnerPin::LifetimeOwnerPin(lua_State* L, LifetimeHandle lifetime)
     : LifetimeOwnerPin(State::FromLua(L)->GetLifetimePool(), lifetime)
 {}
 

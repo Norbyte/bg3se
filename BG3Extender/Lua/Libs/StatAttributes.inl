@@ -150,7 +150,7 @@ bool ObjectHelpers::CopyFrom(Object* object, FixedString parent)
 }
 
 
-PropertyOperationResult ObjectHelpers::FallbackGet(lua_State* L, lua::LifetimeHandle const& lifetime, Object const* object, bg3se::FixedString const& prop)
+PropertyOperationResult ObjectHelpers::FallbackGet(lua_State* L, lua::LifetimeHandle lifetime, Object const* object, bg3se::FixedString const& prop)
 {
     return LuaStatGetAttribute(L, object, prop);
 }
@@ -162,7 +162,7 @@ PropertyOperationResult ObjectHelpers::FallbackSet(lua_State* L, Object* object,
 }
 
 
-int ObjectHelpers::FallbackNext(lua_State* L, LifetimeHandle const& lifetime, Object const* object, FixedString const& prop)
+int ObjectHelpers::FallbackNext(lua_State* L, LifetimeHandle lifetime, Object const* object, FixedString const& prop)
 {
     auto stats = GetStaticSymbols().GetStats();
 

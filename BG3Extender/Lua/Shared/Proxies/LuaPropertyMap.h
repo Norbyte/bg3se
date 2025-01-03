@@ -35,9 +35,9 @@ struct RawPropertyAccessors
 class GenericPropertyMap : Noncopyable<GenericPropertyMap>
 {
 public:
-    using TFallbackGetter = PropertyOperationResult (lua_State* L, LifetimeHandle const& lifetime, void const* object, FixedString const& prop);
+    using TFallbackGetter = PropertyOperationResult (lua_State* L, LifetimeHandle lifetime, void const* object, FixedString const& prop);
     using TFallbackSetter = PropertyOperationResult (lua_State* L, void* object, FixedString const& prop, int index);
-    using TFallbackNext = int (lua_State* L, LifetimeHandle const& lifetime, void const* object, FixedString const& prop);
+    using TFallbackNext = int (lua_State* L, LifetimeHandle lifetime, void const* object, FixedString const& prop);
     using TConstructor = void (void*);
     using TDestructor = void (void*);
     using TSerializer = void (lua_State* L, void const*);
@@ -64,9 +64,9 @@ public:
     void Init();
     void Finish();
     bool HasProperty(FixedString const& prop) const;
-    PropertyOperationResult GetRawProperty(lua_State* L, LifetimeHandle const& lifetime, void const* object, FixedString const& prop) const;
-    PropertyOperationResult GetRawProperty(lua_State* L, LifetimeHandle const& lifetime, void const* object, RawPropertyAccessors const& prop) const;
-    PropertyOperationResult SetRawProperty(lua_State* L, void* object, FixedString const& prop, int index) const;
+    PropertyOperationResult GetRawProperty(lua_State* L, LifetimeHandle lifetime, void const* object, FixedStringId const& prop) const;
+    PropertyOperationResult GetRawProperty(lua_State* L, LifetimeHandle lifetime, void const* object, RawPropertyAccessors const& prop) const;
+    PropertyOperationResult SetRawProperty(lua_State* L, void* object, FixedStringId const& prop, int index) const;
     void AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter, typename RawPropertyAccessors::Setter* setter,
         typename RawPropertyAccessors::Serializer* serialize, std::size_t offset, uint64_t flag, 
         PropertyNotification notification, char const* newName = nullptr, bool iterable = true);
