@@ -645,6 +645,37 @@ struct ComponentOpsRegistry
     ComponentOps* Get(ComponentTypeIndex id) const;
 };
 
+struct EntityStorageChangeBatch
+{
+    PagedHashMap<EntityHandle, ECBEntityChangeSet, ECBFrameAllocator> EntityChanges;
+    EntityStorageContainer* Storage;
+    FrameAllocator* FrameAllocator;
+    SparseArray<uint16_t> OneFrameComponentTypes;
+    __int64 field_78;
+    std::array<uint8_t, 256> QueryFlag0Mask;
+    std::array<uint8_t, 256> QueryFlag1Mask;
+    BitSet<> field_280;
+};
+
+
+struct ECBExecutor
+{
+    EntityHandleGenerator* HandleGenerator;
+    EntityStorageContainer* Storage;
+    ComponentRegistry* ComponentRegistry;
+    ComponentOpsRegistry* ComponentOps;
+    std::array<uint8_t, 256> RemovedComponentsMask;
+    std::array<uint8_t, 256> AddedComponentsMask;
+    std::array<uint8_t, 64> AddedOneFrameComponentsMask;
+    Array<ComponentPool> ComponentPools;
+    PagedHashMap<EntityHandle, ECBEntityChangeSet, ECBFrameAllocator> EntityChanges;
+    __int64 field_2B8;
+    EntityStorageChangeBatch ChangeBatch;
+    FrameAllocator* FrameAllocator;
+    void* ScratchMemory;
+};
+
+
 struct EntityWorld : public ProtectedGameObject<EntityWorld>
 {
     using UpdateProc = void (EntityWorld* self, GameTime const& time);
@@ -673,7 +704,7 @@ struct EntityWorld : public ProtectedGameObject<EntityWorld>
     Array<void*> SystemDependencyExecutors;
     ComponentOpsRegistry ComponentOps;
     ScratchString field_2E0;
-    void* ECBExecutor;
+    ECBExecutor* Executor;
     GroupAllocator GroupAllocator;
     ImmediateWorldCache* Cache;
     EntityWorldSettings Settings;
