@@ -29,37 +29,65 @@ void GenericPropertyMap::Finish()
     Initialized = true;
 }
 
-bool GenericPropertyMap::HasProperty(FixedString const& prop) const
+void GenericPropertyMap::BuildHotPropertyMap()
 {
-    return Properties.find(prop) != Properties.end();
+    assert(InheritanceUpdated);
+    
+    Array<FixedStringUnhashed> keys;
+    Array<lua::RawPropertyAccessorsHotData> hotProps;
+    for (auto const& prop : Properties) {
+        keys.push_back(prop.Key());
+        hotProps.push_back(lua::RawPropertyAccessorsHotData(prop.Value()));
+    }
+
+    PropertiesHot.Build(keys, hotProps);
 }
 
-PropertyOperationResult GenericPropertyMap::GetRawProperty(lua_State* L, LifetimeHandle const& lifetime, void const* object, FixedString const& prop) const
+bool GenericPropertyMap::HasProperty(FixedStringId const& prop) const
 {
-    auto it = Properties.try_get(prop);
-    if (it == nullptr) {
+    auto& ah = static_cast<FixedStringUnhashed const&>(prop);
+    return Properties.find(ah) != Properties.end();
+}
+
+PropertyOperationResult GenericPropertyMap::GetRawProperty(lua_State* L, LifetimeHandle lifetime, void const* object, FixedStringId const& prop) const
+{
+    auto& ah = static_cast<FixedStringUnhashed const&>(prop);
+    auto const& entry = PropertiesHot.get(ah);
+
+    if (entry.HasNotifications()) [[unlikely]] {
+        const_cast<RawPropertyAccessorsHotData&>(entry).MarkNotificationsProcessed();
+        ProcessPropertyNotifications(*entry.Cold, false);
+    }
+
+    auto getter = entry.Getter();
+    auto offset = entry.Offset();
+    auto data = reinterpret_cast<uint8_t const*>(object) + offset;
+    auto result = getter(L, lifetime, data, entry);
+
+    if (result == PropertyOperationResult::NoSuchProperty) {
         if (FallbackGetter) {
-            return FallbackGetter(L, lifetime, object, prop);
-        } else {
-            return PropertyOperationResult::NoSuchProperty;
+            auto& fs = static_cast<FixedString const&>(prop);
+            result = FallbackGetter(L, lifetime, object, fs);
         }
     }
 
-    return it->Get(L, lifetime, object, *it);
+    return result;
 }
 
-PropertyOperationResult GenericPropertyMap::GetRawProperty(lua_State* L, LifetimeHandle const& lifetime, void const* object, RawPropertyAccessors const& prop) const
+PropertyOperationResult GenericPropertyMap::GetRawProperty(lua_State* L, LifetimeHandle lifetime, void const* object, RawPropertyAccessors const& prop) const
 {
-    return prop.Get(L, lifetime, object, prop);
+    auto data = reinterpret_cast<uint8_t const*>(object) + prop.Offset;
     return prop.Get(L, lifetime, data, prop);
 }
 
-PropertyOperationResult GenericPropertyMap::SetRawProperty(lua_State* L, void* object, FixedString const& prop, int index) const
+PropertyOperationResult GenericPropertyMap::SetRawProperty(lua_State* L, void* object, FixedStringId const& prop, int index) const
 {
-    auto it = Properties.try_get(prop);
+    auto& ah = static_cast<FixedStringUnhashed const&>(prop);
+    auto& fs = static_cast<FixedString const&>(prop);
+    auto it = Properties.try_get(ah);
     if (it == nullptr) {
         if (FallbackSetter) {
-            return FallbackSetter(L, object, prop, index);
+            return FallbackSetter(L, object, fs, index);
         } else {
             return PropertyOperationResult::NoSuchProperty;
         }
@@ -73,7 +101,7 @@ void GenericPropertyMap::AddRawProperty(char const* prop, typename RawPropertyAc
     std::size_t offset, uint64_t flag, PropertyNotification notification, char const* newName, bool iterable)
 {
     assert((!Initialized || !InheritanceUpdated) && IsInitializing);
-    FixedString key{ prop };
+    FixedStringUnhashed key{ prop };
     FixedString newNameKey{ newName ? newName : "" };
     assert(Properties.find(key) == Properties.end());
     Properties.set(key, RawPropertyAccessors{ key, offset, flag, getter, setter, serialize, notification, this, newNameKey, iterable });

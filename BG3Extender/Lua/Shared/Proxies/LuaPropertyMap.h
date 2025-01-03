@@ -13,10 +13,23 @@ enum class PropertyNotification
 };
 
 class GenericPropertyMap;
+struct RawPropertyAccessors;
+struct RawPropertyAccessorsHotData;
+
+
+inline PropertyOperationResult GenericHotDataPlaceholderGetter(lua_State* L, LifetimeHandle lifetime, void const* object, RawPropertyAccessorsHotData const& prop)
+{
+    return PropertyOperationResult::NoSuchProperty;
+}
+
+inline PropertyOperationResult GenericHotDataPlaceholderSetter(lua_State* L, void* object, int index, RawPropertyAccessors const& prop)
+{
+    return PropertyOperationResult::NoSuchProperty;
+}
 
 struct RawPropertyAccessors
 {
-    using Getter = PropertyOperationResult (lua_State* L, LifetimeHandle const& lifetime, void const* object, RawPropertyAccessors const& prop);
+    using Getter = PropertyOperationResult (lua_State* L, LifetimeHandle lifetime, void const* object, RawPropertyAccessorsHotData const& prop);
     using Setter = PropertyOperationResult (lua_State* L, void* object, int index, RawPropertyAccessors const& prop);
     using Serializer = PropertyOperationResult (lua_State* L, void const* object, RawPropertyAccessors const& prop);
 
@@ -30,6 +43,67 @@ struct RawPropertyAccessors
     GenericPropertyMap* PropertyMap{ nullptr };
     FixedString NewName;
     bool Iterable{ true };
+
+    inline uint64_t FlagValue() const
+    {
+        return (Flag & 0xff) << (Flag >> 8);
+    }
+};
+
+struct RawPropertyAccessorsHotData
+{
+    inline RawPropertyAccessorsHotData()
+        : Get((uint64_t)&GenericHotDataPlaceholderGetter),
+        Set((uint64_t)&GenericHotDataPlaceholderSetter),
+        Cold(nullptr)
+    {}
+    
+    inline RawPropertyAccessorsHotData(RawPropertyAccessors const& props)
+        : Get((uint64_t)props.Get
+            | (((props.PendingNotifications != PropertyNotification::None) ? 1ull : 0ull) << 48)
+            | ((uint64_t)props.Offset << 49)),
+        Set((uint64_t)props.Set
+            | ((uint64_t)props.Flag << 48)),
+        Cold(&props)
+    {
+        assert(props.Offset <= 0x7fff);
+        assert(props.Flag <= 0xffff);
+    }
+
+    uint64_t Get{ 0 };
+    uint64_t Set{ 0 };
+    RawPropertyAccessors const* Cold{ nullptr };
+
+    inline RawPropertyAccessors::Getter* Getter() const
+    {
+        return reinterpret_cast<RawPropertyAccessors::Getter*>(Get & 0x0000ffffffffffffull);
+    }
+
+    inline RawPropertyAccessors::Setter* Setter() const
+    {
+        return reinterpret_cast<RawPropertyAccessors::Setter*>(Set & 0x0000ffffffffffffull);
+    }
+
+    inline bool HasNotifications() const
+    {
+        return (Get >> 48) & 1;
+    }
+
+    inline uint64_t Offset() const
+    {
+        return (Get >> 49);
+    }
+
+    inline uint64_t Flag() const
+    {
+        auto flag = (Set >> 48);
+        return (flag & 0xff) << (flag >> 8);
+    }
+
+    inline void MarkNotificationsProcessed()
+    {
+        Get = (Get & ~(1ull << 48));
+    }
 };
 
 class GenericPropertyMap : Noncopyable<GenericPropertyMap>
@@ -63,7 +137,8 @@ public:
 
     void Init();
     void Finish();
-    bool HasProperty(FixedString const& prop) const;
+    void BuildHotPropertyMap();
+    bool HasProperty(FixedStringId const& prop) const;
     PropertyOperationResult GetRawProperty(lua_State* L, LifetimeHandle lifetime, void const* object, FixedStringId const& prop) const;
     PropertyOperationResult GetRawProperty(lua_State* L, LifetimeHandle lifetime, void const* object, RawPropertyAccessors const& prop) const;
     PropertyOperationResult SetRawProperty(lua_State* L, void* object, FixedStringId const& prop, int index) const;
@@ -79,8 +154,13 @@ public:
     bool ValidatePropertyMap(void const* object);
     bool ValidateObject(void const* object);
 
+    // Hot data
+    StaticHashMap<FixedStringUnhashed, RawPropertyAccessorsHotData> PropertiesHot;
     FixedString Name;
-    HashMap<FixedString, RawPropertyAccessors> Properties;
+    ValidationState Validated{ ValidationState::Unknown };
+
+    // Cold data
+    HashMap<FixedStringUnhashed, RawPropertyAccessors> Properties;
     HashMap<FixedString, uint32_t> IterableProperties;
     Array<RawPropertyValidators> Validators;
     Array<FixedString> Parents;
@@ -102,6 +182,11 @@ public:
     StructTypeId RegistryIndex{ -1 };
     std::optional<ExtComponentType> ComponentType;
     TypeInformation* TypeInfo{ nullptr };
+        } else {
+            return true;
+        }
+#endif
+    }
 };
 
 inline PropertyOperationResult GenericSetNonWriteableProperty(lua_State* L,  void* obj, int index, RawPropertyAccessors const&)
@@ -161,6 +246,11 @@ void DefaultAssign(void* object, void* rhs)
 struct StructRegistry
 {
     Array<GenericPropertyMap*> StructsById;
+            return true;
+        } else {
+            return Get(id)->ValidateIfNecessary(object);
+        }
+    }
 
     void Register(GenericPropertyMap* ei, StructTypeId id);
 
