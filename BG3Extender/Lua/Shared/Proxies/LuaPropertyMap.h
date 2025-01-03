@@ -178,10 +178,19 @@ public:
     bool IsInitializing{ false };
     bool Initialized{ false };
     bool InheritanceUpdated{ false };
-    ValidationState Validated{ ValidationState::Unknown };
     StructTypeId RegistryIndex{ -1 };
     std::optional<ExtComponentType> ComponentType;
     TypeInformation* TypeInfo{ nullptr };
+
+    inline bool ValidateIfNecessary(void const* object)
+    {
+#if defined(_DEBUG)
+        // Need to do a full validation because RuntimeCheckLevel can change
+        return ValidatePropertyMap(object);
+#else
+        // RuntimeCheckLevel is always 'Once'
+        if (Validated != ValidationState::Valid) [[unlikely]] {
+            return ValidatePropertyMap(object);
         } else {
             return true;
         }
@@ -246,6 +255,11 @@ void DefaultAssign(void* object, void* rhs)
 struct StructRegistry
 {
     Array<GenericPropertyMap*> StructsById;
+    StaticBitSet<> Validated;
+
+    inline bool ValidateIfNecessary(StructTypeId id, void const* object) const
+    {
+        if (Validated[id]) [[likely]] {
             return true;
         } else {
             return Get(id)->ValidateIfNecessary(object);

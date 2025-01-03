@@ -9,6 +9,10 @@ void StructRegistry::Register(GenericPropertyMap* pm, StructTypeId id)
     assert(pm->IsInitializing);
     pm->RegistryIndex = id;
 
+    if (Validated.Size < (uint32_t)id + 1) {
+        Validated.EnsureSize(id + 1);
+    }
+
     if (StructsById.size() < (uint32_t)id + 1) {
         StructsById.resize(id + 1);
     }
@@ -141,6 +145,8 @@ bool GenericPropertyMap::ValidatePropertyMap(void const* object)
         if (Validated == ValidationState::Unknown) {
             if (ValidateObject(object)) {
                 Validated = ValidationState::Valid;
+                assert(RegistryIndex >= 0);
+                gStructRegistry.Validated.Set(RegistryIndex);
             } else {
                 ERR("Object class %s failed validation; proxying of this class is disabled", Name.GetString());
                 Validated = ValidationState::Invalid;
