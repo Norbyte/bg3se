@@ -38,15 +38,13 @@ public:
     inline static void Make(lua_State* L, T const* object, LifetimeHandle lifetime)
     {
         // TODO - add RO tag
-        auto const& pm = GetStaticPropertyMap<T>();
-        lua_push_lightcppobject(L, MetaTag, pm.RegistryIndex, object, lifetime);
+        lua_push_lightcppobject(L, MetaTag, StructID<T>::ID, object, lifetime);
     }
 
     template <class T>
     inline static T* Copy(lua_State* L, T&& object)
     {
-        auto const& pm = GetStaticPropertyMap<T>();
-        void* p = reinterpret_cast<T*>(lua_push_newcppobject(L, MetaTag, pm.RegistryIndex, sizeof(T)));
+        void* p = reinterpret_cast<T*>(lua_push_newcppobject(L, MetaTag, StructID<T>::ID, sizeof(T)));
         *p = std::move(object);
         return p;
     }
