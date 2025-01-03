@@ -103,6 +103,11 @@ struct BitSet
         }
     }
 
+    inline bool UnsafeGet(uint32_t index) const
+    {
+        return (GetBuf()[index / 64] & (1ull << (index % 64))) != 0;
+    }
+
     inline bool operator [] (uint32_t index) const
     {
         if (Size < index) {
@@ -180,6 +185,134 @@ struct BitSet
         }
 
         Size = 0;
+    }
+};
+
+template <class Allocator = GameMemoryAllocator>
+struct StaticBitSet
+{
+    uint64_t* Buf{ nullptr };
+    uint32_t Size{ 0 };
+
+    inline StaticBitSet() {}
+
+    StaticBitSet(StaticBitSet const& other)
+    {
+        Reallocate(other.Size);
+        Size = other.Size;
+        for (uint32_t i = 0; i < other.NumQwords(); i++) {
+            Buf[i] = other.Buf[i];
+        }
+    }
+
+    StaticBitSet(StaticBitSet&& other)
+    {
+        Buf = other.Buf;
+        Size = other.Size;
+
+        other.Buf = 0;
+        other.Size = 0;
+    }
+
+    ~StaticBitSet()
+    {
+        if (Buf) {
+            Allocator::Free(Buf);
+        }
+    }
+
+    StaticBitSet& operator = (StaticBitSet const& other)
+    {
+        Clear();
+        Reallocate(other.Size);
+        Size = other.Size;
+        for (uint32_t i = 0; i < other.NumQwords(); i++) {
+            Buf[i] = other.Buf[i];
+        }
+        return *this;
+    }
+
+    StaticBitSet& operator = (StaticBitSet&& other)
+    {
+        Buf = other.Buf;
+        Size = other.Size;
+
+        other.Buf = 0;
+        other.Size = 0;
+
+        return *this;
+    }
+
+    inline uint32_t NumQwords() const
+    {
+        return (Size / 64);
+    }
+
+    inline bool Get(uint32_t index) const
+    {
+        assert(index < Size);
+        return (Buf[index / 64] & (1ull << (index % 64))) != 0;
+    }
+
+    inline bool operator [] (uint32_t index) const
+    {
+        assert(index < Size);
+        return (Buf[index / 64] & (1ull << (index % 64))) != 0;
+    }
+
+    inline void Set(uint32_t index)
+    {
+        assert(index < Size);
+        Buf[index / 64] |= (1ull << (index % 64));
+    }
+
+    inline void Clear(uint32_t index)
+    {
+        assert(index < Size);
+        Buf[index / 64] &= ~(1ull << (index % 64));
+    }
+
+    void EnsureSize(uint32_t size)
+    {
+        if (Size < size) {
+            Reallocate(size);
+            Size = size;
+        }
+    }
+
+    void Reallocate(uint32_t newSize)
+    {
+        newSize = ((newSize / 64) + ((newSize % 64) ? 1 : 0)) * 64;
+
+        if (Size == newSize) {
+            return;
+        }
+
+        auto oldSize = Size;
+        auto oldBuf = Buf;
+
+        if (newSize > 0) {
+            Buf = Allocator::template New<uint64_t>(newSize);
+        } else {
+            Buf = nullptr;
+        }
+
+        Size = newSize;
+
+        for (uint32_t i = 0; i < std::min(Size/64, oldSize/64); i++) {
+            Buf[i] = oldBuf[i];
+        }
+                
+        if (oldBuf) {
+            Allocator::Free(oldBuf);
+        }
+    }
+
+    void Clear()
+    {
+        for (uint32_t i = 0; i < NumQwords(); i++) {
+            Buf[i] = 0;
+        }
     }
 };
 
