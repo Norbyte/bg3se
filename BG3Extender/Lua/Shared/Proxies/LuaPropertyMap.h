@@ -46,7 +46,7 @@ struct RawPropertyAccessors
 
     inline uint64_t FlagValue() const
     {
-        return (Flag & 0xff) << (Flag >> 8);
+        return (Flag & 0x3ff) << (Flag >> 10);
     }
 };
 
@@ -97,7 +97,7 @@ struct RawPropertyAccessorsHotData
     inline uint64_t Flag() const
     {
         auto flag = (Set >> 48);
-        return (flag & 0xff) << (flag >> 8);
+        return (flag & 0x3ff) << (flag >> 10);
     }
 
     inline void MarkNotificationsProcessed()

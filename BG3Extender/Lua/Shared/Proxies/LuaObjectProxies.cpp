@@ -141,10 +141,11 @@ uint16_t BitfieldValueToFlag(uint64_t value)
         return 0;
     }
 
-    auto shift = 63 - __lzcnt64(value);
+    DWORD shift{ 0 };
+    _BitScanForward64(&shift, value);
     value >>= shift;
-    assert(value <= 0xff);
-    return (uint16_t)((value & 0xff) | (shift << 8));
+    assert(value <= 0x3ff);
+    return (uint16_t)((value & 0x3ff) | (shift << 10));
 }
 
 void AddBitfieldProperty(GenericPropertyMap& pm, BitfieldTypeId typeId, std::size_t offset,
@@ -456,6 +457,7 @@ void UpdateInheritance()
             assert(!pm->InheritanceUpdated);
             if (pm->Parent == nullptr) {
                 pm->InheritanceUpdated = true;
+                pm->BuildHotPropertyMap();
                 progressed = true;
             } else if (pm->Parent->InheritanceUpdated) {
                 InheritProperties(*pm->Parent, *pm);
