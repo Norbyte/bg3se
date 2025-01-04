@@ -81,7 +81,7 @@ class ObjectProxy
 public:
     inline static void MakeRef(lua_State* L, GenericPropertyMap& pm, void* object, LifetimeHandle lifetime)
     {
-        if (!pm.ValidatePropertyMap(object)) {
+        if (!pm.ValidateIfNecessary(object)) {
             push(L, nullptr);
         } else {
             LightObjectProxyMetatable::Make(L, pm, object, lifetime);
@@ -91,7 +91,7 @@ public:
     template <class T>
     inline static void MakeRef(lua_State* L, T* object, LifetimeHandle lifetime)
     {
-        if (!GetStaticPropertyMap<T>().ValidatePropertyMap(object)) {
+        if (!gStructRegistry.ValidateIfNecessary(StructID<std::remove_cv_t<T>>::ID, object)) {
             push(L, nullptr);
         } else {
             LightObjectProxyMetatable::Make(L, object, lifetime);
