@@ -11,7 +11,7 @@ struct CppObjectProxyHelpers
 
 
 class LightObjectProxyMetatable : public LightCppObjectMetatable<LightObjectProxyMetatable>,
-    public Indexable, public NewIndexable, public Iterable, public Stringifiable, public EqualityComparable
+    public Indexable, public OpaqueIndexable, public NewIndexable, public Iterable, public Stringifiable, public EqualityComparable
 {
 public:
     static constexpr MetatableTag MetaTag = MetatableTag::ObjectRef;
@@ -67,12 +67,13 @@ public:
         return reinterpret_cast<T*>(ptr);
     }
 
-    static int Index(lua_State* L, CppObjectMetadata& self);
+    static int Index(lua_State* L, CppObjectOpaque* self);
     static int NewIndex(lua_State* L, CppObjectMetadata& self);
     static int ToString(lua_State* L, CppObjectMetadata& self);
     static bool IsEqual(lua_State* L, CppObjectMetadata& self, CppObjectMetadata& other);
     static int Next(lua_State* L, CppObjectMetadata& self);
     static char const* GetTypeName(lua_State* L, CppObjectMetadata& self);
+    static char const* GetTypeName(lua_State* L, CppObjectOpaque* self);
 };
 
 
