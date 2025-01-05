@@ -6,48 +6,45 @@ BEGIN_NS(lua)
 
 struct CppObjectProxyHelpers
 {
-    static int Next(lua_State* L, GenericPropertyMap const& pm, void* object, LifetimeHandle const& lifetime, FixedString const& key);
+    static int Next(lua_State* L, GenericPropertyMap const& pm, void* object, LifetimeHandle lifetime, FixedString const& key);
 };
 
 
 class LightObjectProxyMetatable : public LightCppObjectMetatable<LightObjectProxyMetatable>,
-    public Indexable, public NewIndexable, public Iterable, public Stringifiable, public EqualityComparable
+    public Indexable, public OpaqueIndexable, public NewIndexable, public Iterable, public Stringifiable, public EqualityComparable
 {
 public:
     static constexpr MetatableTag MetaTag = MetatableTag::ObjectRef;
     static constexpr bool HasLifetime = true;
 
-    inline static void Make(lua_State* L, GenericPropertyMap& pm, void* object, LifetimeHandle const& lifetime)
+    inline static void Make(lua_State* L, GenericPropertyMap& pm, void* object, LifetimeHandle lifetime)
     {
         lua_push_lightcppobject(L, MetaTag, pm.RegistryIndex, object, lifetime);
     }
 
-    inline static void Make(lua_State* L, GenericPropertyMap& pm, void const* object, LifetimeHandle const& lifetime)
+    inline static void Make(lua_State* L, GenericPropertyMap& pm, void const* object, LifetimeHandle lifetime)
     {
         // TODO - add RO tag
         lua_push_lightcppobject(L, MetaTag, pm.RegistryIndex, object, lifetime);
     }
 
     template <class T>
-    inline static void Make(lua_State* L, T* object, LifetimeHandle const& lifetime)
+    inline static void Make(lua_State* L, T* object, LifetimeHandle lifetime)
     {
-        auto const& pm = GetStaticPropertyMap<T>();
-        lua_push_lightcppobject(L, MetaTag, pm.RegistryIndex, object, lifetime);
+        lua_push_lightcppobject(L, MetaTag, StructID<T>::ID, object, lifetime);
     }
 
     template <class T>
-    inline static void Make(lua_State* L, T const* object, LifetimeHandle const& lifetime)
+    inline static void Make(lua_State* L, T const* object, LifetimeHandle lifetime)
     {
         // TODO - add RO tag
-        auto const& pm = GetStaticPropertyMap<T>();
-        lua_push_lightcppobject(L, MetaTag, pm.RegistryIndex, object, lifetime);
+        lua_push_lightcppobject(L, MetaTag, StructID<T>::ID, object, lifetime);
     }
 
     template <class T>
     inline static T* Copy(lua_State* L, T&& object)
     {
-        auto const& pm = GetStaticPropertyMap<T>();
-        void* p = reinterpret_cast<T*>(lua_push_newcppobject(L, MetaTag, pm.RegistryIndex, sizeof(T)));
+        void* p = reinterpret_cast<T*>(lua_push_newcppobject(L, MetaTag, StructID<T>::ID, sizeof(T)));
         *p = std::move(object);
         return p;
     }
@@ -70,21 +67,22 @@ public:
         return reinterpret_cast<T*>(ptr);
     }
 
-    static int Index(lua_State* L, CppObjectMetadata& self);
+    static int Index(lua_State* L, CppObjectOpaque* self);
     static int NewIndex(lua_State* L, CppObjectMetadata& self);
     static int ToString(lua_State* L, CppObjectMetadata& self);
     static bool IsEqual(lua_State* L, CppObjectMetadata& self, CppObjectMetadata& other);
     static int Next(lua_State* L, CppObjectMetadata& self);
     static char const* GetTypeName(lua_State* L, CppObjectMetadata& self);
+    static char const* GetTypeName(lua_State* L, CppObjectOpaque* self);
 };
 
 
 class ObjectProxy
 {
 public:
-    inline static void MakeRef(lua_State* L, GenericPropertyMap& pm, void* object, LifetimeHandle const& lifetime)
+    inline static void MakeRef(lua_State* L, GenericPropertyMap& pm, void* object, LifetimeHandle lifetime)
     {
-        if (!pm.ValidatePropertyMap(object)) {
+        if (!pm.ValidateIfNecessary(object)) {
             push(L, nullptr);
         } else {
             LightObjectProxyMetatable::Make(L, pm, object, lifetime);
@@ -92,9 +90,9 @@ public:
     }
     
     template <class T>
-    inline static void MakeRef(lua_State* L, T* object, LifetimeHandle const& lifetime)
+    inline static void MakeRef(lua_State* L, T* object, LifetimeHandle lifetime)
     {
-        if (!GetStaticPropertyMap<T>().ValidatePropertyMap(object)) {
+        if (!gStructRegistry.ValidateIfNecessary(StructID<std::remove_cv_t<T>>::ID, object)) {
             push(L, nullptr);
         } else {
             LightObjectProxyMetatable::Make(L, object, lifetime);

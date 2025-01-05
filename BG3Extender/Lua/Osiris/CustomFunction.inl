@@ -18,7 +18,7 @@ bool CustomLuaCall::Call(OsiArgumentDesc const & params)
 
     auto L = lua->GetState();
     lua_checkstack(L, params.Count() + 1);
-    LifetimeStackPin _(lua->GetStack());
+    LifetimeStackPin _(L, lua->GetStack());
     handler_.Push();
 
     auto param = &params;
@@ -74,7 +74,7 @@ bool ServerState::QueryInternal(char const* mod, char const* name, RegistryEntry
 {
     auto L = GetState();
     lua_checkstack(L, params.Count() + 1);
-    LifetimeStackPin _(GetStack());
+    LifetimeStackPin _(L, GetStack());
 
     auto stackSize = lua_gettop(L);
     if (func) {

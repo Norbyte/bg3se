@@ -31,7 +31,20 @@ public:
 
     static int IndexProxy(lua_State* L)
     {
-        if constexpr (std::is_base_of_v<Indexable, TSubclass>) {
+        if constexpr (std::is_base_of_v<OpaqueIndexable, TSubclass>) {
+            StackCheck _(L, 1);
+            auto self = lua_get_opaque_lightcppobject(L, 1, TSubclass::MetaTag);
+
+            if constexpr (TSubclass::HasLifetime) {
+                auto lifetime = lua_get_opaque_lifetime(self);
+                if (!lifetime.IsAlive(L)) {
+                    luaL_error(L, "Attempted to read '%s' whose lifetime has expired", TSubclass::GetTypeName(L, self));
+                    return 0;
+                }
+            }
+
+            return TSubclass::Index(L, self);
+        } else if constexpr (std::is_base_of_v<Indexable, TSubclass>) {
             StackCheck _(L, 1);
             auto self = lua_get_lightcppobject(L, 1, TSubclass::MetaTag);
 

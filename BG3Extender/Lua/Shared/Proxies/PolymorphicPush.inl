@@ -4,7 +4,7 @@ BEGIN_NS(lua)
 
 static bool ShownTemplateTypeWarning{ false };
 
-void LuaPolymorphic<GameObjectTemplate>::MakeRef(lua_State* L, GameObjectTemplate* obj, LifetimeHandle const& lifetime)
+void LuaPolymorphic<GameObjectTemplate>::MakeRef(lua_State* L, GameObjectTemplate* obj, LifetimeHandle lifetime)
 {
     auto type = obj->GetType();
     auto global = State::FromLua(L)->GetGlobalLifetime();

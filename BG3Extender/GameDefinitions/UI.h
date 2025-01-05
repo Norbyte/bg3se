@@ -103,7 +103,7 @@ inline bool TypeClass::IsInterface() const
 
 struct ObjectHelpers
 {
-    static PropertyOperationResult FallbackGetProperty(lua_State* L, lua::LifetimeHandle const& lifetime, BaseObject const* object, bg3se::FixedString const& prop);
+    static PropertyOperationResult FallbackGetProperty(lua_State* L, lua::LifetimeHandle lifetime, BaseObject const* object, bg3se::FixedString const& prop);
     static PropertyOperationResult FallbackSetProperty(lua_State* L, BaseObject* object, bg3se::FixedString const& prop, int index);
     static UserReturn GetNamedProperty(lua_State* L, BaseObject const* o, Symbol name);
     static UserReturn GetProperty(lua_State* L, BaseObject const* o, TypeProperty const* prop);

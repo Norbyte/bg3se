@@ -50,12 +50,12 @@ void EntityComponentEventHooks::FireDeferredEvents()
     }
 }
 
-void EntityComponentEventHooks::OnComponentCreated(ecs::ComponentTypeIndex type, ecs::EntityRef* entity, void* component)
+void EntityComponentEventHooks::OnComponentCreated(ecs::ComponentTypeIndex const& type, ecs::EntityRef* entity, void* component)
 {
     OnEntityEvent(*entity->World, entity->Handle, type, EntityComponentEvent::Create, component);
 }
 
-void EntityComponentEventHooks::OnComponentDestroyed(ecs::ComponentTypeIndex type, ecs::EntityRef* entity, void* component)
+void EntityComponentEventHooks::OnComponentDestroyed(ecs::ComponentTypeIndex const& type, ecs::EntityRef* entity, void* component)
 {
     OnEntityEvent(*entity->World, entity->Handle, type, EntityComponentEvent::Destroy, component);
 }

@@ -11,6 +11,86 @@ static constexpr AiMetaDataId AiNullMetaData = 0xffff;
 
 using AiPathId = int32_t;
 
+struct AiFlags
+{
+    AiFlags()
+        : Flags(0)
+    {}
+    
+    AiFlags(uint64_t flags)
+        : Flags(flags)
+    {}
+
+    uint64_t Flags{ 0 };
+
+    inline AiBaseFlags GetFlags() const
+    {
+        return (AiBaseFlags)(Flags & 0xffffff);
+    }
+
+    inline bool IsBlocker() const
+    {
+        return (GetFlags() & AiBaseFlags::Blocker) == AiBaseFlags::Blocker;
+    }
+
+    inline bool IsObstacle() const
+    {
+        return (GetFlags() & AiBaseFlags::WalkBlock2) == AiBaseFlags::WalkBlock2;
+    }
+
+    inline SurfaceType GetGroundSurface() const
+    {
+        return (SurfaceType)((Flags >> 24) & 0xff);
+    }
+
+    inline SurfaceType GetCloudSurface() const
+    {
+        auto surface = ((Flags >> 32) & 0xff);
+        return surface ? (SurfaceType)(surface + 38) : SurfaceType::None;
+    }
+
+    inline SurfaceType GetSurface(bool cloud) const
+    {
+        return cloud ? GetCloudSurface() : GetGroundSurface();
+    }
+
+    inline bool HasGroundSurface() const
+    {
+        return GetGroundSurface() != SurfaceType::None;
+    }
+
+    inline bool HasCloudSurface() const
+    {
+        return GetCloudSurface() != SurfaceType::None;
+    }
+
+    inline bool HasAnySurface() const
+    {
+        return ((Flags >> 24) & 0xffff) != 0;
+    }
+
+    inline uint8_t GetMaterial() const
+    {
+        return (uint8_t)((Flags >> 40) & 0x3f);
+    }
+
+    inline uint32_t GetExtraFlags() const
+    {
+        return (uint32_t)(Flags >> 46);
+    }
+};
+
+struct PathSettings
+{
+    uint8_t PathClimbingMode;
+    uint8_t PathDroppingMode;
+    std::variant<uint8_t, float> Speed;
+    bool HasSmoothingNodes;
+    bool HasSpliningNodes;
+    bool HasTurningNodes;
+};
+
+
 struct AIPortalObjectData : public ProtectedGameObject<AIPortalObjectData>
 {
     [[bg3::hidden]] void* VMT;
@@ -41,8 +121,8 @@ struct SomeArray2int
 struct AiIgnoreMask
 {
     AiGrid* AiGrid;
-    uint64_t AggregateFlags;
-    Array<uint64_t> AiFlags;
+    AiFlags AggregateFlags;
+    Array<AiFlags> Flags;
     bool Restore;
     uint64_t NextId;
 };
@@ -91,7 +171,7 @@ struct AiGridTile
 {
     static constexpr float HeightScale = 1.0f/50.0f;
 
-    uint64_t AiFlags;
+    AiFlags Flags;
     uint16_t MaxHeight;
     uint16_t MinHeight;
     AiMetaDataId MetaDataIndex;
@@ -105,31 +185,6 @@ struct AiGridTile
     inline float GetLocalMaxHeight() const
     {
         return (float)MaxHeight * HeightScale;
-    }
-
-    inline AiBaseFlags GetFlags() const
-    {
-        return (AiBaseFlags)(AiFlags & 0xffffff);
-    }
-
-    inline SurfaceType GetGroundSurface() const
-    {
-        return (SurfaceType)((AiFlags >> 24) & 0xff);
-    }
-
-    inline SurfaceType GetCloudSurface() const
-    {
-        return (SurfaceType)((AiFlags >> 32) & 0xff);
-    }
-
-    inline uint8_t GetMaterial() const
-    {
-        return (uint8_t)((AiFlags >> 40) & 0x3f);
-    }
-
-    inline uint32_t GetExtraFlags() const
-    {
-        return (uint32_t)(AiFlags >> 46);
     }
 };
 
@@ -193,12 +248,14 @@ struct AiSubgrid : public DataGrid
     [[bg3::hidden]] void* Visual; // AiGridVisual*
 
     bool WorldToTilePos(AiWorldPos const& pos, glm::ivec2& localPos) const;
+    AiFlags GetStateInArea(glm::ivec2 const& pos, int radius) const;
+    void GetCornerTiles(glm::ivec2 const& pos, int radius, glm::ivec2& topLeft, glm::ivec2& bottomRight) const;
 };
 
 
 struct AiGridLayerDelta
 {
-    uint64_t AiFlags;
+    AiFlags Flags;
     float Height;
 };
 
@@ -325,6 +382,16 @@ struct AiPathCheckpoint : public ProtectedGameObject<AiPathCheckpoint>
 };
 
 
+struct AiPlayerWeightFuncData
+{
+    int CharacterBounds;
+    bool IsAvoidingDynamics;
+    bool IsAvoidingObstacles;
+    bool UseSurfaceInfluences;
+    bool IsAvoidingTraps;
+    Array<SurfacePathInfluence>* SurfacePathInfluences;
+    int DamagingSurfacesThreshold;
+};
 
 struct AiPath : public ProtectedGameObject<AiPath>
 {
@@ -333,9 +400,9 @@ struct AiPath : public ProtectedGameObject<AiPath>
     EntityHandle Target;
     float MovingBound;
     float StandingBound;
-    uint64_t CollisionMask;
-    uint64_t CollisionMaskMove;
-    uint64_t CollisionMaskStand;
+    AiFlags CollisionMask;
+    AiFlags CollisionMaskMove;
+    AiFlags CollisionMaskStand;
 #if 0
     // STDString CallerLocation;
     // int CallerLine;
@@ -398,8 +465,8 @@ struct AiPath : public ProtectedGameObject<AiPath>
     [[bg3::legacy(field_178)]] glm::vec3 TargetPosition;
     [[bg3::hidden]] UnknownFunction* pDestinationFunc;
     [[bg3::hidden]] UnknownFunction DestinationFunc;
-    [[bg3::hidden]] UnknownFunction* pWeightFunc;
-    [[bg3::hidden]] UnknownFunction WeightFunc;
+    [[bg3::hidden]] Function<bool(AiGrid*, AiTilePos const&, int&)>* pWeightFunc;
+    [[bg3::hidden]] Function<bool (AiGrid*, AiTilePos const&, int&)> WeightFunc;
     HashMap<AiTilePos, uint64_t> AoOTiles;
     Array<AiPathAoOPosition> AoOPositions;
     DangerousAuras DangerousAuras;
@@ -427,6 +494,11 @@ struct AiPath : public ProtectedGameObject<AiPath>
     void SetTargetEntity(EntityHandle entity);
     void SetTarget(glm::vec3 position);
     void SetBounds(float movingBound, float standingBound);
+    void SetPlayerWeightFunction(AiPlayerWeightFuncData const& params);
+
+    // Lua call helpers
+    //# P_FUN(UsePlayerWeighting, AiPath::UsePlayerWeighting)
+    void UsePlayerWeighting(lua_State* L, std::optional<bool> avoidObstacles, std::optional<bool> avoidDynamics);
 };
 
 
@@ -517,7 +589,10 @@ struct AiGrid : public ProtectedGameObject<AiGrid>
     static AiWorldPos ToWorldPos(glm::vec3 pos);
     std::span<AiSubgridId const> GetSubgridsAt(AiWorldPos const& pos) const;
     bool ToTilePos(AiWorldPos const& pos, AiSubgrid*& pSubgrid, AiTilePos& tilePos, AiGridTile const*& tileInfo) const;
+    AiGridTile const* GetTileAt(AiTilePos const& pos) const;
+    AiFlags GetStateInArea(AiTilePos const& pos, int radius) const;
     Array<float> GetHeightsAt(AiWorldPos const& pos) const;
+
     AiPath* CreatePath();
     std::optional<AiPathId> GetPathId(AiPath* path);
     void FreePath(AiPath* path);

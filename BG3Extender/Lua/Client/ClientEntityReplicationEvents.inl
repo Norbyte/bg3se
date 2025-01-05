@@ -223,7 +223,7 @@ void ClientEntityReplicationEventHooks::PostUpdate()
     pendingEvents_.clear();
 }
 
-void ClientEntityReplicationEventHooks::OnEntityReplication(ecs::ReplicationTypeIndex type, EntityHandle entity, void* component, uint64_t fields)
+void ClientEntityReplicationEventHooks::OnEntityReplication(ecs::ReplicationTypeIndex const& type, EntityHandle entity, void* component, uint64_t fields)
 {
     auto& hooks = hookedReplicationComponents_[(unsigned)type];
     if ((hooks.Fields & fields) == 0) return;

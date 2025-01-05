@@ -259,6 +259,7 @@ void ScriptExtender::OnUpdate(void* self, GameTime* time)
     // In case we're loaded too late to see LoadModule transition
     AddThread(GetCurrentThreadId());
 
+    network_.Update();
     RunPendingTasks();
     gExtender->IMGUI().Update();
     if (extensionState_) {
@@ -333,6 +334,7 @@ void ScriptExtender::ResetLuaState()
 
 void ScriptExtender::ResetExtensionState()
 {
+    network_.OnResetExtensionState();
     extensionState_ = std::make_unique<ExtensionState>();
     extensionState_->Reset();
     gExtender->ClearPathOverrides();

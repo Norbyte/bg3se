@@ -5,7 +5,14 @@
 #include <GameDefinitions/Ai.h>
 #include <GameDefinitions/Cursor.h>
 #include <GameDefinitions/Dialog.h>
+#include <GameDefinitions/Controllers/Controller.h>
+#include <GameDefinitions/Controllers/Action.h>
+#include <GameDefinitions/Controllers/Behaviour.h>
+#include <GameDefinitions/Controllers/Movement.h>
+#include <GameDefinitions/Controllers/Steering.h>
+#include <GameDefinitions/Controllers/OsirisTask.h>
 #include <GameDefinitions/Picking.h>
+#include <GameDefinitions/Physics.h>
 #include <GameDefinitions/Resources.h>
 #include <GameDefinitions/Render.h>
 #include <GameDefinitions/Components/All.h>

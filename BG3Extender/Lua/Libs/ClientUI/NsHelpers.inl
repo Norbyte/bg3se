@@ -125,7 +125,7 @@ uint32_t ObjectHelpers::GetNumReferences(BaseRefCounted const* o)
     return o->GetNumReferences();
 }
 
-PropertyOperationResult ObjectHelpers::FallbackGetProperty(lua_State* L, lua::LifetimeHandle const& lifetime, BaseObject const* object, bg3se::FixedString const& prop)
+PropertyOperationResult ObjectHelpers::FallbackGetProperty(lua_State* L, lua::LifetimeHandle lifetime, BaseObject const* object, bg3se::FixedString const& prop)
 {
     auto typeProp = TypeHelpers::GetProperty(object->GetClassType(), Symbol(prop.GetString(), Symbol::NullIfNotFound{}));
     if (typeProp != nullptr) {

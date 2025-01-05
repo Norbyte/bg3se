@@ -44,20 +44,28 @@ namespace bg3se::lua
         return s;
     }
 
-    LuaSerializer& serialize(LuaSerializer& s, bg3se::stats::TreasureTable* v)
+    LuaSerializer& serialize(LuaSerializer& s, bg3se::stats::TreasureTable*& v)
     {
         serialize(s, *v);
         return s;
     }
 
-    LuaSerializer& serialize(LuaSerializer& s, bg3se::stats::TreasureSubTable* v)
+    LuaSerializer& serialize(LuaSerializer& s, bg3se::stats::TreasureSubTable*& v)
     {
+        if (!s.IsWriting && !v) {
+            v = GameAlloc<stats::TreasureSubTable>();
+        }
+
         serialize(s, *v);
         return s;
     }
 
-    LuaSerializer& serialize(LuaSerializer& s, bg3se::stats::TreasureCategory* v)
+    LuaSerializer& serialize(LuaSerializer& s, bg3se::stats::TreasureCategory*& v)
     {
+        if (!s.IsWriting && !v) {
+            v = GameAlloc<stats::TreasureCategory>();
+        }
+
         serialize(s, *v);
         return s;
     }
@@ -131,8 +139,12 @@ namespace bg3se::lua
         return s;
     }
 
-    LuaSerializer& serialize(LuaSerializer& s, bg3se::stats::TreasureSubTableCategory* v)
+    LuaSerializer& serialize(LuaSerializer& s, bg3se::stats::TreasureSubTableCategory*& v)
     {
+        if (!s.IsWriting && !v) {
+            v = GameAlloc<stats::TreasureSubTableCategory>();
+        }
+
         serialize(s, *v);
         return s;
     }
@@ -157,7 +169,7 @@ namespace bg3se::lua
 
         if (!s.IsWriting) {
             v.TotalFrequency = 0;
-            v.CategoryFrequencies.Reallocate(v.Categories.Size());
+            v.CategoryFrequencies.resize(v.Categories.Size());
             for (uint32_t i = 0; i < v.Categories.Size(); i++) {
                 v.CategoryFrequencies[i] = v.Categories[i]->Frequency;
                 v.TotalFrequency += v.Categories[i]->Frequency;
@@ -171,7 +183,7 @@ namespace bg3se::lua
                 }
             }
 
-            v.Amounts.Reallocate(v.DropCounts.Size());
+            v.Amounts.resize(v.DropCounts.Size());
             for (uint32_t i = 0; i < v.DropCounts.Size(); i++) {
                 v.Amounts[i] = v.DropCounts[i].Amount;
             }

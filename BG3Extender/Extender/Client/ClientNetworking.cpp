@@ -9,10 +9,12 @@ void ExtenderProtocol::ProcessExtenderMessage(net::MessageContext& context, net:
     switch (msg.msg_case()) {
     case net::MessageWrapper::kPostLua:
     {
-        auto & postMsg = msg.post_lua();
-        ecl::LuaClientPin pin(ecl::ExtensionState::Get());
-        if (pin) {
-            pin->OnNetMessageReceived(postMsg.channel_name().c_str(), postMsg.payload().c_str(), postMsg.module().c_str(), postMsg.request_id(), postMsg.reply_id(), ReservedUserId);
+        if (gExtender->GetClient().HasExtensionState()) {
+            auto& postMsg = msg.post_lua();
+            ecl::LuaClientPin pin(ecl::ExtensionState::Get());
+            if (pin) {
+                pin->OnNetMessageReceived(postMsg.channel_name().c_str(), postMsg.payload().c_str(), postMsg.module().c_str(), postMsg.request_id(), postMsg.reply_id(), ReservedUserId);
+            }
         }
         break;
     }
@@ -156,6 +158,14 @@ net::ExtenderMessage* NetworkManager::GetFreeMessage(UserId userId)
     }
 
     return GetFreeMessage();
+}
+
+void NetworkManager::HandleLocalMessage(char const* channel, char const* payload, char const* moduleUuid, int32_t requestId, int32_t replyId, UserId userId)
+{
+    ecl::LuaClientPin pin(ecl::ExtensionState::Get());
+    if (pin) {
+        pin->OnNetMessageReceived(channel, payload, moduleUuid, requestId, replyId, userId);
+    }
 }
 
 void NetworkManager::Send(net::ExtenderMessage* msg)

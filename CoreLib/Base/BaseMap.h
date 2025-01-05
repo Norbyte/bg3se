@@ -5,6 +5,7 @@
 BEGIN_SE()
 
 unsigned int GetNearestMultiHashMapPrime(unsigned int num);
+unsigned int GetNearestSmallMultiHashMapPrime(unsigned int num);
 
 template <class T>
 inline uint64_t SparseHashMapHash(T const& v);
@@ -22,6 +23,49 @@ inline uint64_t HashMapHash<FixedString>(FixedString const& v)
 {
     return v.GetHash();
 }
+
+template <>
+inline uint64_t HashMapHash<FixedStringNoRef>(FixedStringNoRef const& v)
+{
+    return v.Index;
+}
+
+template <>
+inline uint64_t HashMapHash<FixedStringUnhashed>(FixedStringUnhashed const& v)
+{
+    return v.Index;
+}
+
+template <class T>
+uint32_t GetHashSizeFor(std::span<T const> const& vals, uint32_t maxCollisions)
+{
+    uint32_t hsize = (uint32_t)vals.size() + 1;
+    uint32_t collisions{ 0 };
+    uint32_t numBuckets{ 0 };
+    for (;;) {
+        numBuckets = GetNearestSmallMultiHashMapPrime(hsize + 1);
+
+        collisions = 0;
+
+        BitSet<> buckets;
+        buckets.EnsureSize(numBuckets);
+        for (auto const& k : vals) {
+            auto hash = (uint32_t)HashMapHash(k) % numBuckets;
+            if (buckets[hash]) {
+                collisions++;
+            }
+
+            buckets.Set(hash);
+        }
+
+        if (collisions <= maxCollisions) {
+            return numBuckets;
+        }
+
+        hsize = numBuckets + 1;
+    }
+}
+
 
 template <class T>
 class HashSet
@@ -627,6 +671,102 @@ template <class TKey, class TValue>
 struct VirtualHashMap : public HashMap<TKey, TValue>
 {
     virtual inline void Dummy() {}
+};
+
+template <class TK, class TV>
+class StaticHashMap
+{
+public:
+    struct Entry
+    {
+        TK Key{};
+        int32_t Next{ -1 };
+        TV Value{};
+    };
+
+    inline StaticHashMap()
+    {}
+
+    ~StaticHashMap()
+    {
+        if (Hash) {
+            GameDeleteArray(Hash, TotalSize);
+        }
+    }
+
+    void Build(Array<TK> const& keys, Array<TV> const& values)
+    {
+        auto hashSize = GetHashSizeFor(std::span<TK const>(keys.raw_buf(), keys.raw_buf() + keys.size()), 2);
+        Build(hashSize, keys, values);
+    }
+
+    void Build(uint32_t hashSize, Array<TK> const& keys, Array<TV> const& values)
+    {
+        uint32_t collisions = 0;
+        BitSet<> buckets;
+        buckets.EnsureSize(hashSize);
+        for (auto const& k : keys) {
+            auto hash = (uint32_t)(HashMapHash(k) % hashSize);
+            if (buckets[hash]) {
+                collisions++;
+            }
+
+            buckets.Set(hash);
+        }
+
+        Hash = GameAllocArray<Entry>(hashSize + collisions);
+        HashSize = hashSize;
+        TotalSize = hashSize + collisions;
+
+        uint32_t nextCollision = HashSize;
+        for (uint32_t i = 0; i < keys.size(); i++) {
+            int32_t hash = HashMapHash(keys[i]) % HashSize;
+            int32_t prev = -1;
+            while (Hash[hash].Key != TK{}) {
+                prev = hash;
+                if (Hash[hash].Next < 0) {
+                    hash = nextCollision++;
+                    break;
+                } else {
+                    hash = Hash[hash].Next;
+                }
+            }
+
+            if (prev >= 0) {
+                Hash[prev].Next = hash;
+            }
+
+            auto& bucket = Hash[hash];
+            assert(bucket.Key == TK{});
+            bucket.Key = keys[i];
+            bucket.Value = values[i];
+        }
+    }
+
+    TV const& get(TK const& key) const
+    {
+        if (HashSize == 0) return Tombstone;
+
+        auto hash = (int32_t)(HashMapHash(key) % HashSize);
+        for (;;) {
+            auto& k = Hash[hash];
+            if (k.Key == key) {
+                return k.Value;
+            }
+
+            if (k.Next >= 0) {
+                hash = k.Next;
+            } else {
+                return Tombstone;
+            }
+        }
+    }
+
+public:
+    Entry* Hash{ nullptr };
+    uint32_t HashSize{ 0 };
+    uint32_t TotalSize{ 0 };
+    TV Tombstone;
 };
 
 END_SE()

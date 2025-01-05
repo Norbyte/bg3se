@@ -14,7 +14,7 @@ public:
     using pointer = T*;
     using difference_type = int32_t;
     using size_type = uint32_t;
-    using iterator_category = std::random_access_iterator_tag;
+    using iterator_category = std::contiguous_iterator_tag;
 
     ContiguousIterator(T* p) : ptr_(p) {}
 
@@ -85,7 +85,7 @@ public:
     using pointer = T const*;
     using difference_type = int32_t;
     using size_type = uint32_t;
-    using iterator_category = std::random_access_iterator_tag;
+    using iterator_category = std::contiguous_iterator_tag;
 
     ContiguousConstIterator(T const* p) : ptr_(p) {}
 

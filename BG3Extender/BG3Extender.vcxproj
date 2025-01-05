@@ -193,6 +193,11 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\Components\Tadpole.h" />
     <ClInclude Include="GameDefinitions\Components\Timeline.h" />
     <ClInclude Include="GameDefinitions\Components\Visual.h" />
+    <ClInclude Include="GameDefinitions\Controllers\Action.h" />
+    <ClInclude Include="GameDefinitions\Controllers\Behaviour.h" />
+    <ClInclude Include="GameDefinitions\Controllers\Controller.h" />
+    <ClInclude Include="GameDefinitions\Controllers\Movement.h" />
+    <ClInclude Include="GameDefinitions\Controllers\Steering.h" />
     <ClInclude Include="GameDefinitions\Cursor.h" />
     <ClInclude Include="GameDefinitions\Dialog.h" />
     <ClInclude Include="GameDefinitions\Effect.h" />
@@ -212,6 +217,8 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\Net.h" />
     <ClInclude Include="GameDefinitions\Osiris.h" />
     <ClInclude Include="GameDefinitions\GuidResources.h" />
+    <ClInclude Include="GameDefinitions\Controllers\OsirisTask.h" />
+    <ClInclude Include="GameDefinitions\Physics.h" />
     <ClInclude Include="GameDefinitions\Picking.h" />
     <ClInclude Include="GameDefinitions\Progression.h" />
     <ClInclude Include="GameDefinitions\Render.h" />
@@ -415,6 +422,11 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="GameDefinitions\Animation.inl" />
     <None Include="GameDefinitions\Base\TypeInformation.inl" />
     <None Include="GameDefinitions\Components\AllComponentTypes.inl" />
+    <None Include="GameDefinitions\Controllers\Action.inl" />
+    <None Include="GameDefinitions\Controllers\Behaviour.inl" />
+    <None Include="GameDefinitions\Controllers\Movement.inl" />
+    <None Include="GameDefinitions\Controllers\OsirisTask.inl" />
+    <None Include="GameDefinitions\Controllers\Steering.inl" />
     <None Include="GameDefinitions\Enumerations\ECS.inl" />
     <None Include="GameDefinitions\Enumerations\Engine.inl" />
     <None Include="GameDefinitions\Enumerations\IMGUI.inl" />
@@ -432,6 +444,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="GameDefinitions\PropertyMaps\UI.inl" />
     <None Include="GameDefinitions\Render.inl" />
     <None Include="GameDefinitions\RootTemplates.inl" />
+    <None Include="GameDefinitions\Status.inl" />
     <None Include="GameHooks\EngineHooks.inl" />
     <None Include="LuaScripts\BuiltinLibrary.lua" />
     <None Include="LuaScripts\BuiltinLibraryClient.lua" />
@@ -486,7 +499,6 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="Lua\Server\FunctorEvents.inl" />
     <None Include="Lua\Osiris\FunctionProxy.inl" />
     <None Include="Lua\Server\ServerFunctors.inl" />
-    <None Include="Lua\Server\ServerStatus.inl" />
     <None Include="Lua\Shared\EntityComponentEvents.inl" />
     <None Include="Lua\Shared\EntityEventHelpersClient.inl" />
     <None Include="Lua\Shared\EntityEventHelpersServer.inl" />

@@ -15,7 +15,30 @@ struct Status : public ProtectedGameObject<Status>
     // 2 - Apply only one instance, new instances replace old ones
     // 3 - Apply only the first instance; triggers combat?
     virtual uint32_t GetStatusType() = 0;
-    // TODO - map VMTs later
+    virtual void SetStatusSpecificParam1(uint32_t, uint32_t) = 0;
+    virtual void SetStatusSpecificParam2(FixedString const&) = 0;
+    virtual void VMT07() = 0;
+    virtual uint32_t VMT08() = 0;
+    virtual bool CanEnter() = 0;
+    virtual void Init() = 0;
+    virtual void InitStaticProperties() = 0;
+    virtual bool Enter() = 0;
+    virtual bool Resume() = 0;
+    virtual void Update(GameTime const&) = 0;
+    virtual void Tick(Guid const& combatGuid, float deltaTime, uint32_t type) = 0;
+    virtual void Exit() = 0;
+    virtual bool VMT17() = 0;
+    virtual bool DisablesTarget() = 0;
+    virtual void PrepareForLevelUnloading() = 0;
+    virtual EntityHandle GetTarget() const = 0;
+    virtual uint32_t OnStatusEvent(uint32_t event, HitDesc const& hit, AttackDesc const& attack, FixedString const&, uint32_t removeCause) = 0;
+    virtual bool GetSyncData(ScratchBuffer&) = 0;
+    virtual bool VMT23() = 0;
+    virtual bool SavegameVisit(ObjectVisitor*) = 0;
+    virtual bool VMT25() = 0;
+    virtual bool Activate() = 0;
+    virtual void Deactivate() = 0;
+    virtual void OnSetRequestDelete(bool) = 0;
 
     Guid field_8;
     __int64 field_18;
@@ -90,18 +113,22 @@ struct StatusAura : public Status
 
 struct StatusBoost : public StatusAura
 {
-    ObjectSet<FixedString> Spell;
-    ObjectSet<FixedString> Items;
+    static constexpr auto Type = StatusType::BOOST;
+
+    Array<FixedString> Spell;
+    Array<FixedString> Items;
     bool LoseControl;
-    ObjectSet<EntityHandle> ItemHandles;
+    Array<EntityHandle> ItemHandles;
     float EffectTime;
-    FixedString BoostStackId;
     glm::vec3 SourceDirection;
-    ObjectSet<uint32_t> SurfaceChanges;
+    Array<uint32_t> SurfaceChanges;
+    bool HasStatusEffectOnTurn;
 };
 
 struct StatusClimbing : public Status
 {
+    static constexpr auto Type = StatusType::CLIMBING;
+
     __int64 field_120;
     int field_128;
     int field_12C;
@@ -119,6 +146,8 @@ struct StatusClimbing : public Status
 
 struct StatusIncapacitated : public StatusBoost
 {
+    static constexpr auto Type = StatusType::INCAPACITATED;
+
     float CurrentFreezeTime;
     float FreezeTime;
     uint8_t IncapacitateFlags;
@@ -127,6 +156,8 @@ struct StatusIncapacitated : public StatusBoost
 
 struct StatusDowned : public StatusIncapacitated
 {
+    static constexpr auto Type = StatusType::DOWNED;
+
     int NumStableSuccess;
     int NumStableFailed;
     int StableRollDC;
@@ -143,16 +174,13 @@ struct StatusDowned : public StatusIncapacitated
 
 struct StatusDying : public Status
 {
-    ecs::EntityRef Source;
-    __int64 field_128;
-    EntityHandle field_130;
-    HitDesc HitDescription;
-    Guid Combat;
-    uint8_t DyingFlags;
+    static constexpr auto Type = StatusType::DYING;
 };
 
 struct StatusHeal : public Status
 {
+    static constexpr auto Type = StatusType::HEAL;
+
     float EffectTime;
     int HealAmount;
     int HealEffect;
@@ -160,7 +188,7 @@ struct StatusHeal : public Status
     uint8_t HealType; // TODO enum
     int AbsorbSurfaceRange;
     uint8_t TargetDependentHeal;
-    ObjectSet<SurfaceType> AbsorbSurfaceTypes;
+    Array<SurfaceType> AbsorbSurfaceTypes;
     int TargetDependentValue;
     int TargetDependentHealAmount;
 };
@@ -168,35 +196,50 @@ struct StatusHeal : public Status
 struct SurfaceLayerCheck
 {
     uint8_t EvaluateSurfaceApplyTypes;
-    float TurnTimerCheck;
-    float SurfaceOnMoveDistanceMultiplier;
     float SurfaceDistanceCheck;
+    float SurfaceOnMoveDistanceMultiplier;
     int OnMoveCount;
+    uint8_t field_10;
     bool FullyEntered;
     bool Inside;
-    bool Unknown;
+    glm::vec3 Translate;
+    int field_20;
+};
+
+struct SurfaceTypeCheck
+{
+    float TurnTimerCheck;
+    HashSet<EntityHandle> Entities;
 };
 
 struct StatusInSurface : public Status
 {
-    std::array<SurfaceLayerCheck, 2> LayerChecks;
-    glm::vec3 Translate;
+    static constexpr auto Type = StatusType::INSURFACE;
+
+    HashMap<EntityHandle, std::array<SurfaceLayerCheck, 2>> TargetData;
+    HashMap<SurfaceType, SurfaceTypeCheck> TypeData;
     HashMap<FixedString, bool> Unknown;
 };
 
 struct StatusInvisible : public StatusBoost
 {
+    static constexpr auto Type = StatusType::INVISIBLE;
+
     glm::vec3 InvisiblePosition;
 };
 
 struct StatusKnockedDown : public Status
 {
+    static constexpr auto Type = StatusType::KNOCKED_DOWN;
+
     uint8_t KnockedDownState;
     bool IsInstant;
 };
 
 struct StatusMaterial : public Status
 {
+    static constexpr auto Type = StatusType::MATERIAL;
+
     FixedString MaterialUUID;
     uint8_t ApplyFlags;
     bool IsOverlayMaterial;
@@ -207,11 +250,15 @@ struct StatusMaterial : public Status
 
 struct StatusPolymorphed : public StatusBoost
 {
+    static constexpr auto Type = StatusType::POLYMORPHED;
+
     Guid Id;
 };
 
 struct StatusReaction : public Status
 {
+    static constexpr auto Type = StatusType::REACTION;
+
     ecs::EntityRef Source;
     ecs::EntityRef Target;
     glm::vec3 TargetPosition;
@@ -226,16 +273,22 @@ struct StatusReaction : public Status
 
 struct StatusStoryFrozen : public Status
 {
+    static constexpr auto Type = StatusType::STORY_FROZEN;
+
 };
 
 struct StatusRotate : public Status
 {
+    static constexpr auto Type = StatusType::ROTATE;
+
     float Yaw;
     float RotationSpeed;
 };
 
 struct StatusTeleportFalling : public Status
 {
+    static constexpr auto Type = StatusType::TELEPORT_FALLING;
+
     glm::vec3 Target;
     float ReappearTime;
     SpellId Spell;
@@ -245,6 +298,8 @@ struct StatusTeleportFalling : public Status
 
 struct StatusUnlock : public Status
 {
+    static constexpr auto Type = StatusType::UNLOCK;
+
     EntityHandle Source;
     FixedString field_128;
     bool Success;
@@ -253,23 +308,33 @@ struct StatusUnlock : public Status
 
 struct StatusFear : public StatusBoost
 {
+    static constexpr auto Type = StatusType::FEAR;
+
 };
 
 struct StatusSmelly : public Status
 {
+    static constexpr auto Type = StatusType::SMELLY;
+
 };
 
 struct StatusSneaking : public StatusBoost
 {
+    static constexpr auto Type = StatusType::SNEAKING;
+
     bool ClientRequestStop;
 };
 
 struct StatusEffect : public Status
 {
+    static constexpr auto Type = StatusType::EFFECT;
+
 };
 
 struct StatusDeactivated : public StatusBoost
 {
+    static constexpr auto Type = StatusType::DEACTIVATED;
+
 };
 
 
@@ -304,9 +369,61 @@ END_NS()
 
 BEGIN_NS(ecl)
 
+struct [[bg3::hidden]] StatusVFXVMT
+{
+    using DestroyProc = void(StatusVFXVMT*, bool);
+    using UpdateVisualsProc = void(StatusVFXVMT*);
+    using RecreateVisualsProc = void(StatusVFXVMT*, void*, bool);
+    using DestroyVisualsProc = void(StatusVFXVMT*);
+    using ApplyProc = void(StatusVFXVMT*, void*);
+
+    DestroyProc* Destroy;
+    UpdateVisualsProc* UpdateVisuals;
+    RecreateVisualsProc* RecreateVisuals;
+    DestroyVisualsProc* DestroyVisuals;
+    ApplyProc* Apply;
+};
+
+struct StatusVFX : public ProtectedGameObject<StatusVFX>
+{
+    [[bg3::hidden]] StatusVFXVMT* VMT;
+    ComponentHandle Status;
+};
+
+struct ManagedStatusEffect
+{
+    Guid Group;
+    uint8_t Type;
+};
+
+
 struct Status : public ProtectedGameObject<Status>
 {
-    [[bg3::hidden]] void* VMT;
+    virtual ~Status() = 0;
+    virtual StatusType GetStatusId() = 0;
+    virtual uint32_t GetStatusType() = 0;
+    virtual void Init() = 0;
+    virtual bool Enter() = 0;
+    virtual bool Resume() = 0;
+    virtual void Update(GameTime const&) = 0;
+    virtual bool RequiresTick() = 0;
+    virtual void Tick(Guid const& combatGuid, float deltaTime) = 0;
+    virtual void Exit() = 0;
+    virtual void VMT10() = 0;
+    virtual FixedString GetIcon() const = 0;
+    virtual int GetLevel() const = 0;
+    virtual void CollectEffects(Array<StatusVFX*>) = 0;
+    virtual bool GetManagedStatusEffectGroup(ManagedStatusEffect&) = 0;
+    virtual void ApplyEndEffect(void*) = 0;
+    virtual bool ShouldShowOverhead() const = 0;
+    virtual bool HasVisuals() const = 0;
+    virtual bool SyncData(ScratchBuffer&) = 0;
+    virtual void DestroyVisuals() = 0;
+    virtual void VMT20() = 0;
+    virtual void RecreateVisuals() = 0;
+    virtual void VMT22() = 0;
+    virtual void OnSetRequestDelete(bool) = 0;
+
     Guid UUID;
     NetId NetworkId;
     EntityHandle Target;
@@ -344,12 +461,6 @@ struct StatusEffectData
 {
     Array<Guid> Tags;
     FixedString Effect;
-};
-
-struct ManagedStatusEffect
-{
-    Guid Group;
-    uint8_t Type;
 };
 
 struct StatusMaterialParam
@@ -394,8 +505,10 @@ struct StatusVisualDefinition
 
 struct StatusBoost : public StatusAura
 {
-    bool HasData;
-    FixedString field_A4;
+    static constexpr auto Type = StatusType::BOOST;
+
+    //bool HasData;
+    FixedString Icon;
     StatusEffectData BoostEffect;
     StatusEffectData EffectOnTurn;
     ManagedStatusEffect ManagedStatusEffect;
@@ -404,12 +517,14 @@ struct StatusBoost : public StatusAura
     StatusVFXBoostMaterialDefinition Material;
     int field_12C;
     StatusVisualDefinition VisualDefinition;
-    bool NeedsEffectStart;
+    //bool NeedsEffectStart;
     EffectHandler EffectHandler;
 };
 
 struct StatusSneaking : public StatusBoost
 {
+    static constexpr auto Type = StatusType::SNEAKING;
+
     bool SneakingFailed;
     bool SneakingFailed2;
     bool IsPlayer;
@@ -419,27 +534,63 @@ struct StatusSneaking : public StatusBoost
 
 struct StatusInvisible : public StatusBoost
 {
+    static constexpr auto Type = StatusType::INVISIBLE;
+
 };
 
 struct StatusIncapacitated : public StatusBoost
 {
+    static constexpr auto Type = StatusType::INCAPACITATED;
+
+    float field_2B0;
+    float field_2B4;
+};
+
+struct StatusDowned : public StatusIncapacitated
+{
+    static constexpr auto Type = StatusType::DOWNED;
+
+    uint8_t field_2B8;
+    uint8_t field_2B9;
+    uint8_t field_2BA;
+    int field_2BC;
+    int field_2C0;
+    int field_2C4;
+    uint8_t Entered;
+    uint8_t DownedFlags;
 };
 
 struct StatusFear : public StatusBoost
 {
+    static constexpr auto Type = StatusType::FEAR;
+};
+
+struct StatusInSurface : public StatusBoost
+{
+    static constexpr auto Type = StatusType::INSURFACE;
+};
+
+struct StatusPolymorphed : public StatusBoost
+{
+    static constexpr auto Type = StatusType::POLYMORPHED;
 };
 
 struct StatusDeactivated : public StatusBoost
 {
+    static constexpr auto Type = StatusType::DEACTIVATED;
 };
 
 struct StatusUnlock : public Status
 {
+    static constexpr auto Type = StatusType::UNLOCK;
+
     int State;
 };
 
 struct StatusTeleportFalling : public Status
 {
+    static constexpr auto Type = StatusType::TELEPORT_FALLING;
+
     glm::vec3 field_98;
     float FallTimer;
     SpellId TeleportSpell;
@@ -449,10 +600,13 @@ struct StatusTeleportFalling : public Status
 
 struct StatusStoryFrozen : public Status
 {
+    static constexpr auto Type = StatusType::STORY_FROZEN;
 };
 
 struct StatusSmelly : public Status
 {
+    static constexpr auto Type = StatusType::SMELLY;
+
     StatusEffectData Effect;
     StatusVFXData Material;
     __int64 field_C0;
@@ -460,12 +614,16 @@ struct StatusSmelly : public Status
 
 struct StatusRotate : public Status
 {
+    static constexpr auto Type = StatusType::ROTATE;
+
     float field_98;
     float field_9C;
 };
 
 struct StatusReaction : public Status
 {
+    static constexpr auto Type = StatusType::REACTION;
+
     ecs::EntityRef ReactionSource;
     ecs::EntityRef ReactionTarget;
     uint8_t field_B8;
@@ -473,16 +631,22 @@ struct StatusReaction : public Status
 
 struct StatusMaterial : public Status
 {
+    static constexpr auto Type = StatusType::MATERIAL;
+
     ecl::StatusVFXData VFX;
 };
 
 struct StatusKnockedDown : public Status
 {
+    static constexpr auto Type = StatusType::KNOCKED_DOWN;
+
     StatusEffectData Effect;
 };
 
 struct StatusHeal : public Status
 {
+    static constexpr auto Type = StatusType::HEAL;
+
     float HealTimer;
     int HealAmount;
     int HealEffect;
@@ -490,23 +654,33 @@ struct StatusHeal : public Status
     StatusEffectData Effect;
 };
 
+struct StatusBeamEffectData
+{
+    FixedString BeamEffect;
+    EntityHandle Source;
+};
+
 struct StatusEffect : public Status
 {
+    static constexpr auto Type = StatusType::EFFECT;
+
     bool IsPlayer;
     bool PlayerSameParty;
     bool PeaceOnly;
     FixedString PlayerTag;
     StatusEffectData Effect;
-    FixedString BeamEffect;
-    EntityHandle BeamSource;
+    StatusBeamEffectData BeamEffect;
 };
 
 struct StatusDying : public Status
 {
+    static constexpr auto Type = StatusType::DYING;
 };
 
 struct StatusClimbing : public Status
 {
+    static constexpr auto Type = StatusType::CLIMBING;
+
     glm::quat Rotation;
     glm::vec3 MoveDirection;
     uint8_t State;
@@ -539,13 +713,37 @@ struct [[bg3::hidden]] NetworkObjectFactory2 : public ObjectFactory2
 };
 
 
+struct EntityStatusData
+{
+    Array<StatusVFX*> VFX;
+    bool HasVFX1;
+    bool HasVFX2;
+};
+
+
+struct ManagedStatusFXGroup
+{
+    int References0;
+    int References1;
+    uint8_t Type;
+    StatusVFX* VFX;
+};
+
+
+struct ManagedStatusFXs
+{
+    HashMap<Guid, ManagedStatusFXGroup> FXs;
+    bool field_40;
+};
+
+
 struct [[bg3::hidden]] StatusMachine : public NetworkObjectFactory2
 {
     void* VMT2;
     EntityHandle OwnerHandle;
     uint8_t Flags;
-    HashMap<EntityHandle, void*> StatusData_MHM_EH_EntityStatusData;
-    HashMap<EntityHandle, void*> ManagedStatusFXs_MHM_EH_ManagedStatusFXs;
+    HashMap<EntityHandle, EntityStatusData> StatusFX;
+    HashMap<EntityHandle, ManagedStatusFXs> ManagedFX;
     HashSet<ComponentHandle> StatusHandles;
     void* unk;
     Array<Status*> Statuses;
@@ -554,5 +752,68 @@ struct [[bg3::hidden]] StatusMachine : public NetworkObjectFactory2
 };
 
 
+struct ManagedStatusVFX : public StatusVFX
+{
+    ManagedStatusEffect ManagedStatusEffect;
+    EffectHandler EffectHandler;
+};
+
+struct StatusVisual : public StatusVFX
+{
+    StatusVisualDefinition* Definition;
+    EntityHandle Entity;
+    uint8_t State;
+    [[bg3::hidden]] void* VisualLoader;
+    float FadeOut;
+};
+
+struct StatusVFXMaterial : public StatusVFX
+{
+    ecl::StatusVFXData* VFX;
+    bool Created;
+};
+
+struct StatusVFXEffect : public StatusVFX
+{
+    StatusEffectData* Effect;
+    EffectHandler EffectHandler;
+};
+
+struct StatusVFXApplyEffect : public StatusVFX
+{
+    FixedString* Effect;
+    EffectHandler EffectHandler;
+};
+
+struct StatusVFXBoostMaterial : public StatusVFX
+{
+    StatusVFXBoostMaterialDefinition* Material;
+    int MaterialType;
+    FixedString MaterialUUID;
+    bool Created;
+};
+
+struct StatusVFXBeam : public StatusVFX
+{
+    StatusBeamEffectData* Beam;
+    EffectHandler EffectHandler;
+    bool Initialized;
+    bool Created;
+};
+
+struct StatusVFXAura : public StatusVFX
+{
+    StatusAuraData* Aura;
+    EntityHandle Effect;
+};
+
+
 END_NS()
 
+BEGIN_NS(lua)
+
+LUA_POLYMORPHIC(esv::Status)
+LUA_POLYMORPHIC(ecl::Status)
+LUA_POLYMORPHIC(ecl::StatusVFX)
+
+END_NS()

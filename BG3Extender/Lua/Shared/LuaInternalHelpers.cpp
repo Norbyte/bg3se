@@ -16,25 +16,45 @@
 
 BEGIN_NS(lua)
 
+bool LifetimeHandle::IsAlive(lua_State* L) const
+{
+    if (*this == State::GetExtra(L)->CurrentLifetime) [[likely]] {
+        return true;
+    }
+
+    return State::FromLua(L)->GetLifetimePool().IsValid(*this);
+}
+
 Lifetime* LifetimeHandle::GetLifetime(lua_State* L) const
 {
     auto& pool = State::FromLua(L)->GetLifetimePool();
     return pool.Get(*this);
 }
 
+LifetimeStackPin::LifetimeStackPin(lua_State* L, LifetimeStack& stack)
+    : stack_(stack), currentLifetime_(State::GetExtra(L)->CurrentLifetime)
+{
+    previousLifetime_ = currentLifetime_;
+    currentLifetime_ = stack_.Push();
+}
+
 LifetimeStackPin::LifetimeStackPin(lua_State* L)
-    : LifetimeStackPin(State::FromLua(L)->GetStack())
+    : LifetimeStackPin(L, State::FromLua(L)->GetStack())
 {}
 
 StaticLifetimeStackPin::StaticLifetimeStackPin(lua_State* L, LifetimeHandle lifetime)
-    : StaticLifetimeStackPin(State::FromLua(L)->GetStack(), lifetime)
-{}
+    : stack_(State::FromLua(L)->GetStack()), currentLifetime_(State::GetExtra(L)->CurrentLifetime)
+{
+    previousLifetime_ = currentLifetime_;
+    currentLifetime_ = lifetime;
+    stack_.Push(lifetime);
+}
 
 LifetimeOwnerPin::LifetimeOwnerPin(lua_State* L)
     : LifetimeOwnerPin(State::FromLua(L)->GetLifetimePool())
 {}
 
-LifetimeOwnerPin::LifetimeOwnerPin(lua_State* L, LifetimeHandle const& lifetime)
+LifetimeOwnerPin::LifetimeOwnerPin(lua_State* L, LifetimeHandle lifetime)
     : LifetimeOwnerPin(State::FromLua(L)->GetLifetimePool(), lifetime)
 {}
 

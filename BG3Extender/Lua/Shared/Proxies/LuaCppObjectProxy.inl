@@ -3,7 +3,7 @@
 
 BEGIN_NS(lua)
 
-int CppObjectProxyHelpers::Next(lua_State* L, GenericPropertyMap const& pm, void* object, LifetimeHandle const& lifetime, FixedString const& key)
+int CppObjectProxyHelpers::Next(lua_State* L, GenericPropertyMap const& pm, void* object, LifetimeHandle lifetime, FixedString const& key)
 {
     if (!key) {
         if (!pm.IterableProperties.empty()) {
@@ -143,23 +143,23 @@ void* LightObjectProxyMetatable::GetGeneric(lua_State* L, int index, int propert
     }
 }
 
-int LightObjectProxyMetatable::Index(lua_State* L, CppObjectMetadata& self)
+int LightObjectProxyMetatable::Index(lua_State* L, CppObjectOpaque* self)
 {
-    auto pm = gStructRegistry.Get(self.PropertyMapTag);
-    auto prop = get<FixedString>(L, 2);
-    auto result = pm->GetRawProperty(L, self.Lifetime, self.Ptr, prop);
+    auto pm = gStructRegistry.Get(lua_get_opaque_property_map(self));
+    auto prop = get<FixedStringNoRef>(L, 2);
+    auto result = pm->GetRawProperty(L, lua_get_opaque_lifetime(self), lua_get_opaque_ptr(self), prop);
     switch (result) {
     case PropertyOperationResult::Success:
         break;
 
     case PropertyOperationResult::NoSuchProperty:
-        luaL_error(L, "Property does not exist: %s::%s - property does not exist", GetTypeName(L, self), prop.GetString());
+        luaL_error(L, "Property does not exist: %s::%s - property does not exist", GetTypeName(L, self), get<char const*>(L, 2));
         push(L, nullptr);
         break;
 
     case PropertyOperationResult::Unknown:
     default:
-        luaL_error(L, "Cannot get property %s::%s - unknown error", GetTypeName(L, self), prop.GetString());
+        luaL_error(L, "Cannot get property %s::%s - unknown error", GetTypeName(L, self), get<char const*>(L, 2));
         push(L, nullptr);
         break;
     }
@@ -170,27 +170,27 @@ int LightObjectProxyMetatable::Index(lua_State* L, CppObjectMetadata& self)
 int LightObjectProxyMetatable::NewIndex(lua_State* L, CppObjectMetadata& self)
 {
     auto pm = gStructRegistry.Get(self.PropertyMapTag);
-    auto prop = get<FixedString>(L, 2);
+    auto prop = get<FixedStringNoRef>(L, 2);
     auto result = pm->SetRawProperty(L, self.Ptr, prop, 3);
     switch (result) {
     case PropertyOperationResult::Success:
         break;
 
     case PropertyOperationResult::NoSuchProperty:
-        luaL_error(L, "Cannot set property %s::%s - property does not exist", GetTypeName(L, self), prop.GetString());
+        luaL_error(L, "Cannot set property %s::%s - property does not exist", GetTypeName(L, self), get<char const*>(L, 2));
         break;
 
     case PropertyOperationResult::ReadOnly:
-        luaL_error(L, "Cannot set property %s::%s - property is read-only", GetTypeName(L, self), prop.GetString());
+        luaL_error(L, "Cannot set property %s::%s - property is read-only", GetTypeName(L, self), get<char const*>(L, 2));
         break;
 
     case PropertyOperationResult::UnsupportedType:
-        luaL_error(L, "Cannot set property %s::%s - cannot write properties of this type", GetTypeName(L, self), prop.GetString());
+        luaL_error(L, "Cannot set property %s::%s - cannot write properties of this type", GetTypeName(L, self), get<char const*>(L, 2));
         break;
 
     case PropertyOperationResult::Unknown:
     default:
-        luaL_error(L, "Cannot set property %s::%s - unknown error", GetTypeName(L, self), prop.GetString());
+        luaL_error(L, "Cannot set property %s::%s - unknown error", GetTypeName(L, self), get<char const*>(L, 2));
         break;
     }
 
@@ -229,6 +229,12 @@ int LightObjectProxyMetatable::Next(lua_State* L, CppObjectMetadata& self)
 char const* LightObjectProxyMetatable::GetTypeName(lua_State* L, CppObjectMetadata& self)
 {
     auto pm = gStructRegistry.Get(self.PropertyMapTag);
+    return pm->Name.GetString();
+}
+
+char const* LightObjectProxyMetatable::GetTypeName(lua_State* L, CppObjectOpaque* self)
+{
+    auto pm = gStructRegistry.Get(lua_get_opaque_property_map(self));
     return pm->Name.GetString();
 }
 

@@ -106,12 +106,12 @@ struct TreasureSubTable
 {
     Array<TreasureSubTableCategory*> Categories;
     Array<int32_t> CategoryFrequencies;
-    int32_t TotalFrequency;
+    int32_t TotalFrequency{ 0 };
     Array<TreasureSubTableDropCount> DropCounts;
     Array<int32_t> Amounts;
-    int32_t TotalCount;
-    int32_t StartLevel;
-    int32_t EndLevel;
+    int32_t TotalCount{ 0 };
+    int32_t StartLevel{ 0 };
+    int32_t EndLevel{ 0 };
     FixedString field_54;
 };
 

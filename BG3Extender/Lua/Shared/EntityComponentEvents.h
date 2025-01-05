@@ -28,8 +28,8 @@ public:
         EntityComponentEventFlags flags, RegistryEntry&& hook);
     bool Unsubscribe(SubscriptionIndex index);
 
-    void OnComponentCreated(ecs::ComponentTypeIndex type, ecs::EntityRef* entity, void* component);
-    void OnComponentDestroyed(ecs::ComponentTypeIndex type, ecs::EntityRef* entity, void* component);
+    void OnComponentCreated(ecs::ComponentTypeIndex const& type, ecs::EntityRef* entity, void* component);
+    void OnComponentDestroyed(ecs::ComponentTypeIndex const& type, ecs::EntityRef* entity, void* component);
     void OnEntityEvent(ecs::EntityWorld& world, EntityHandle entity, ecs::ComponentTypeIndex type, EntityComponentEvent events, void* component);
 
 private:

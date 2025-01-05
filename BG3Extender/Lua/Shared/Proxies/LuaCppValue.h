@@ -31,7 +31,11 @@ public:
 
     static int IndexProxy(lua_State* L)
     {
-        if constexpr (std::is_base_of_v<Indexable, T>) {
+        if constexpr (std::is_base_of_v<OpaqueIndexable, T>) {
+            StackCheck _(L, 1);
+            auto self = lua_get_opaque_cppvalue(L, 1, T::MetaTag);
+            return T::Index(L, self);
+        } else if constexpr (std::is_base_of_v<Indexable, T>) {
             StackCheck _(L, 1);
             auto self = lua_get_cppvalue(L, 1, T::MetaTag);
             return T::Index(L, self);

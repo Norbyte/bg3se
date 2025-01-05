@@ -4,6 +4,151 @@
 
 BEGIN_SE()
 
+template <class T> class Queue;
+
+template <class T>
+class QueueIterator
+{
+public:
+    using value_type = T;
+    using reference = T&;
+    using pointer = T*;
+    using difference_type = int32_t;
+    using size_type = uint32_t;
+    using iterator_category = std::random_access_iterator_tag;
+
+    QueueIterator(Queue<T>& q, int32_t i) : queue_(q), index_(i) {}
+
+    QueueIterator operator ++ ()
+    {
+        QueueIterator<T> it(queue_, index_);
+        index_++;
+        return it;
+    }
+
+    QueueIterator& operator ++ (int)
+    {
+        index_++;
+        return *this;
+    }
+
+    bool operator == (QueueIterator const& it) const
+    {
+        return it.index_ == index_;
+    }
+
+    bool operator != (QueueIterator const& it) const
+    {
+        return it.index_ != index_;
+    }
+
+    QueueIterator operator + (difference_type n) const
+    {
+        return QueueIterator(queue_, index_ + n);
+    }
+
+    QueueIterator operator - (difference_type n) const
+    {
+        return QueueIterator(queue_, index_ - n);
+    }
+
+    difference_type operator - (QueueIterator const& o) const
+    {
+        return (difference_type)(index_ - o.index_);
+    }
+
+    T& operator * () const
+    {
+        return queue_[index_];
+    }
+
+    T* operator -> () const
+    {
+        return &queue_[index_];
+    }
+
+    T* get () const
+    {
+        return &queue_[index_];
+    }
+
+private:
+    Queue<T>& queue_;
+    int32_t index_;
+};
+
+
+template <class T>
+class QueueConstIterator
+{
+public:
+    using value_type = T;
+    using reference = T const&;
+    using pointer = T const*;
+    using difference_type = int32_t;
+    using size_type = uint32_t;
+    using iterator_category = std::random_access_iterator_tag;
+
+    QueueConstIterator(Queue<T> const& q, int32_t i) : queue_(q), index_(i) {}
+
+    QueueConstIterator operator ++ ()
+    {
+        QueueConstIterator<T> it(queue_, index_);
+        index_++;
+        return it;
+    }
+
+    QueueConstIterator& operator ++ (int)
+    {
+        index_++;
+        return *this;
+    }
+
+    bool operator == (QueueConstIterator const& it) const
+    {
+        return it.index_ == index_;
+    }
+
+    bool operator != (QueueConstIterator const& it) const
+    {
+        return it.index_ != index_;
+    }
+
+    QueueConstIterator operator + (difference_type n) const
+    {
+        return QueueConstIterator(queue_, index_ + n);
+    }
+
+    QueueConstIterator operator - (difference_type n) const
+    {
+        return QueueConstIterator(queue_, index_ - n);
+    }
+
+    difference_type operator - (QueueConstIterator const& o) const
+    {
+        return (difference_type)(index_ - o.index_);
+    }
+
+    T const& operator * () const
+    {
+        return queue_[index_];
+    }
+
+    T const* operator -> () const
+    {
+        return &queue_[index_];
+    }
+
+    T const* get() const
+    {
+        return &queue_[index_];
+    }
+
+private:
+    Queue<T> const& queue_;
+    uint32_t index_;
+};
+
 template <class T>
 class Queue
 {
@@ -11,8 +156,10 @@ public:
     using value_type = T;
     using reference = T&;
     using const_reference = T const&;
+    using iterator = QueueIterator<T>;
+    using const_iterator = QueueConstIterator<T>;
     using difference_type = int32_t;
-    using size_type = int32_t;
+    using size_type = uint32_t;
 
     inline Queue() {}
 
@@ -88,6 +235,26 @@ public:
         return buf_[(readIndex_ + index) % capacity_];
     }
 
+    iterator begin()
+    {
+        return iterator(*this, 0);
+    }
+
+    const_iterator begin() const
+    {
+        return const_iterator(*this, 0);
+    }
+
+    iterator end()
+    {
+        return iterator(*this, size());
+    }
+
+    const_iterator end() const
+    {
+        return const_iterator(*this, size());
+    }
+
     void push_back(T const& value)
     {
         if (capacity_ == 0 || (size_ > 0 && readIndex_ == writeIndex_)) {
@@ -134,16 +301,16 @@ public:
 
         if (readIndex_ < writeIndex_) {
             auto wr = 0;
-            for (size_type i = readIndex_ + 1; i < writeIndex_; i++, wr++) {
+            for (int32_t i = readIndex_ + 1; i < writeIndex_; i++, wr++) {
                 newBuf[wr] = buf_[i];
             }
         } else {
             auto wr = 0;
-            for (size_type i = readIndex_ + 1; i < capacity_; i++, wr++) {
+            for (int32_t i = readIndex_ + 1; i < (int32_t)capacity_; i++, wr++) {
                 newBuf[wr] = buf_[i];
             }
 
-            for (size_type i = 0; i < writeIndex_; i++, wr++) {
+            for (int32_t i = 0; i < writeIndex_; i++, wr++) {
                 newBuf[wr] = buf_[i];
             }
         }
@@ -168,6 +335,11 @@ public:
         size_ = 0; 
         readIndex_ = 0;
         writeIndex_ = 0;
+    }
+
+    T const* raw_buf() const
+    {
+        return buf_;
     }
 
 private:

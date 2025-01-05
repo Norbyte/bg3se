@@ -132,6 +132,20 @@ void InheritProperties(GenericPropertyMap const& base, GenericPropertyMap& child
 
     child.IsInitializing = false;
     child.InheritanceUpdated = true;
+    child.BuildHotPropertyMap();
+}
+
+uint16_t BitfieldValueToFlag(uint64_t value)
+{
+    if (value == 0) {
+        return 0;
+    }
+
+    DWORD shift{ 0 };
+    _BitScanForward64(&shift, value);
+    value >>= shift;
+    assert(value <= 0x3ff);
+    return (uint16_t)((value & 0x3ff) | (shift << 10));
 }
 
 void AddBitfieldProperty(GenericPropertyMap& pm, BitfieldTypeId typeId, std::size_t offset,
@@ -146,7 +160,7 @@ void AddBitfieldProperty(GenericPropertyMap& pm, BitfieldTypeId typeId, std::siz
             nullptr,
             nullptr,
             offset,
-            (uint64_t)label.Value,
+            BitfieldValueToFlag(label.Value),
             PropertyNotification::None
         );
     }
@@ -443,6 +457,7 @@ void UpdateInheritance()
             assert(!pm->InheritanceUpdated);
             if (pm->Parent == nullptr) {
                 pm->InheritanceUpdated = true;
+                pm->BuildHotPropertyMap();
                 progressed = true;
             } else if (pm->Parent->InheritanceUpdated) {
                 InheritProperties(*pm->Parent, *pm);
@@ -562,7 +577,7 @@ struct PropertyMapRegistrations;
 #define P_FREE_GETTER(name, fun) \
         { .Type = PropertyMapEntryType::Property, .Property = { \
             .Name = #name, \
-            .Getter = [](lua_State* L, LifetimeHandle const& lifetime, void const* obj, RawPropertyAccessors const& prop) { \
+            .Getter = [](lua_State* L, LifetimeHandle lifetime, void const* obj, RawPropertyAccessorsHotData const& prop) { \
                 CallGetter(L, reinterpret_cast<ObjectType const*>(obj), &fun); \
                 return PropertyOperationResult::Success; \
             }, \
@@ -574,7 +589,7 @@ struct PropertyMapRegistrations;
 #define P_GETTER_SETTER(name, getter, setter) \
         { .Type = PropertyMapEntryType::Property, .Property = { \
             .Name = #name, \
-            .Getter = [](lua_State* L, LifetimeHandle const& lifetime, void const* obj, RawPropertyAccessors const& prop) { \
+            .Getter = [](lua_State* L, LifetimeHandle lifetime, void const* obj, RawPropertyAccessorsHotData const& prop) { \
                 CallGetter(L, reinterpret_cast<ObjectType const*>(obj), &ObjectType::getter); \
                 return PropertyOperationResult::Success; \
             }, \
@@ -588,7 +603,7 @@ struct PropertyMapRegistrations;
 #define P_FUN(name, fun) \
         { .Type = PropertyMapEntryType::Property, .Property = { \
             .Name = #name, \
-            .Getter = [](lua_State* L, LifetimeHandle const& lifetime, void const* obj, RawPropertyAccessors const& prop) { \
+            .Getter = [](lua_State* L, LifetimeHandle lifetime, void const* obj, RawPropertyAccessorsHotData const& prop) { \
                 lua_pushcfunction(L, [](lua_State* L) -> int { \
                     return CallMethod(L, &fun); \
                 }); \

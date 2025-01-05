@@ -75,12 +75,37 @@ namespace bg3se
     STDString ToUTF8(WStringView s);
     STDWString FromUTF8(StringView s);
 
-    struct FixedString
+    struct FixedStringId
+    {
+        static constexpr uint32_t NullIndex = 0xffffffffu;
+
+        inline FixedStringId() {}
+        
+        inline FixedStringId(uint32_t index)
+            : Index(index)
+        {}
+
+        inline bool operator !() const
+        {
+            return Index == NullIndex;
+        }
+
+        inline explicit operator bool() const
+        {
+            return Index != NullIndex;
+        }
+
+        uint32_t Index{ NullIndex };
+    };
+
+    struct FixedStringBase : public FixedStringId
     {
         using CreateFromStringProc = uint32_t (LSStringView const&);
-        using GetStringProc = LSStringView * (FixedString const*, LSStringView&);
+        using GetStringProc = LSStringView * (FixedStringBase const*, LSStringView&);
         using IncRefProc = void(uint32_t index);
         using DecRefProc = void(uint32_t index);
+
+        inline FixedStringBase() {}
 
         struct Header
         {
@@ -91,23 +116,66 @@ namespace bg3se
             uint64_t NextFreeIndex;
         };
 
-        static constexpr uint32_t NullIndex = 0xffffffffu;
+        char const* GetString() const;
+        StringView GetStringView() const;
+        uint32_t GetLength() const;
+        uint32_t GetHash() const;
+        bool IsValid() const;
 
+        inline operator char const* () const
+        {
+            return GetString();
+        }
+
+        inline operator StringView () const
+        {
+            return GetStringView();
+        }
+
+        static void StaticIncRef(uint32_t index);
+        static void StaticDecRef(uint32_t index);
+        static uint32_t CreateFixedString(StringView const& sv);
+
+    protected:
+        explicit inline FixedStringBase(uint32_t index)
+            : FixedStringId(index)
+        {}
+
+        inline FixedStringBase(FixedStringBase const& fs)
+            : FixedStringId(fs.Index)
+        {}
+
+        void IncRef();
+        void DecRef();
+
+        char const* GetPooledStringPtr() const;
+        Header const* GetMetadata() const;
+        static Header const* FindEntry(uint32_t id);
+    };
+
+    struct FixedString : public FixedStringBase
+    {
         inline FixedString()
-            : Index(NullIndex)
+            : FixedStringBase()
         {}
 
         explicit FixedString(StringView str);
         explicit FixedString(char const* str);
 
         inline FixedString(FixedString const& fs)
-            : Index(fs.Index)
+            : FixedStringBase(fs.Index)
+        {
+            IncRef();
+        }
+
+        inline FixedString(FixedStringBase const& fs)
+            : FixedStringBase(fs.Index)
         {
             IncRef();
         }
 
         inline FixedString(FixedString&& fs) noexcept
-            : Index(fs.Index)
+            : FixedStringBase(fs.Index)
         {
             fs.Index = NullIndex;
         }
@@ -147,45 +215,100 @@ namespace bg3se
         {
             return Index != fs.Index;
         }
+    };
 
-        inline bool operator !() const
+    struct FixedStringUnhashed : public FixedStringBase
+    {
+        inline FixedStringUnhashed()
+            : FixedStringBase()
+        {}
+
+        explicit FixedStringUnhashed(StringView str);
+        explicit FixedStringUnhashed(char const* str);
+
+        inline FixedStringUnhashed(FixedStringUnhashed const& fs)
+            : FixedStringBase(fs.Index)
         {
-            return Index == 0xffffffffu;
+            IncRef();
         }
 
-        inline explicit operator bool() const
+        inline FixedStringUnhashed(FixedStringId const& fs)
+            : FixedStringBase(fs.Index)
         {
-            return Index != 0xffffffffu;
+            IncRef();
         }
 
-        char const* GetString() const;
-        StringView GetStringView() const;
-        uint32_t GetLength() const;
-        uint32_t GetHash() const;
-        bool IsValid() const;
-
-        inline operator char const* () const
+        inline FixedStringUnhashed(FixedStringUnhashed&& fs) noexcept
+            : FixedStringBase(fs.Index)
         {
-            return GetString();
+            fs.Index = NullIndex;
         }
 
-        inline operator StringView () const
+        inline ~FixedStringUnhashed()
         {
-            return GetStringView();
+            DecRef();
         }
 
-        uint32_t Index;
+        inline FixedStringUnhashed& operator = (FixedStringUnhashed const& fs)
+        {
+            if (fs.Index != Index) {
+                DecRef();
+                Index = fs.Index;
+                IncRef();
+            }
 
-    private:
-        void IncRef();
-        void DecRef();
+            return *this;
+        }
 
-        char const* GetPooledStringPtr() const;
-        Header const* GetMetadata() const;
+        inline FixedStringUnhashed& operator = (FixedStringUnhashed&& fs) noexcept
+        {
+            Index = fs.Index;
+            if (this != &fs) {
+                fs.Index = NullIndex;
+            }
+
+            return *this;
+        }
+
+        inline bool operator == (FixedStringUnhashed const& fs) const
+        {
+            return Index == fs.Index;
+        }
+
+        inline bool operator != (FixedStringUnhashed const& fs) const
+        {
+            return Index != fs.Index;
+        }
+    };
+
+    struct FixedStringNoRef : public FixedStringId
+    {
+        explicit FixedStringNoRef(StringView str);
+        explicit FixedStringNoRef(char const* str);
+
+        inline FixedStringNoRef(FixedStringId const& fs)
+            : FixedStringId(fs.Index)
+        {}
+
+        inline FixedStringNoRef& operator = (FixedStringId const& fs)
+        {
+            Index = fs.Index;
+            return *this;
+        }
+
+        inline bool operator == (FixedStringId const& fs) const
+        {
+            return Index == fs.Index;
+        }
+
+        inline bool operator != (FixedStringId const& fs) const
+        {
+            return Index != fs.Index;
+        }
     };
 
 
-    inline uint64_t Hash(FixedString const& s)
+    inline uint64_t Hash(FixedStringId const& s)
     {
         return (uint64_t)s.Index;
     }
@@ -228,8 +351,8 @@ namespace bg3se
 
         struct MainTable
         {
-            using DecRefProc = void (MainTable* self, FixedString* fs);
-            using CreateFromStringProc = FixedString* (MainTable* self, FixedString* fs, LSStringView* src);
+            using DecRefProc = void (MainTable* self, uint32_t* fs);
+            using CreateFromStringProc = FixedString* (MainTable* self, uint32_t* fs, LSStringView* src);
 
             SubTable::Element SomeTable[64];
             uint64_t field_1000;

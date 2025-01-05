@@ -112,7 +112,7 @@ Renderable::~Renderable() {}
 
 void Renderable::Destroy()
 {
-    if (Parent) {
+    if (Parent != InvalidHandle) {
         auto parent = Manager->GetRenderable(Parent);
         if (parent != nullptr) {
             static_cast<TreeParent*>(parent)->RemoveChild(lua::ImguiHandle(Handle));
@@ -767,7 +767,7 @@ Array<lua::ImguiHandle> TreeParent::GetChildren() const
 
 bool Window::BeginRender()
 {
-    if (!Open) return false;
+    if (!Open || (Label.empty() && IDContext.empty())) return false;
 
     ProcessRenderSettings();
 
@@ -1034,6 +1034,32 @@ void Tree::SetOpen(bool open, std::optional<GuiCond> cond)
     };
 }
 
+void Table::UpdateSorting()
+{
+    auto sorting = ImGui::TableGetSortSpecs();
+
+    if (!needsSortingUpdate_ || !(sorting && sorting->SpecsDirty)) {
+        return;
+    }
+
+    Sorting.clear();
+    if (sorting) {
+        for (int i = 0; i < sorting->SpecsCount; i++) {
+            auto const& spec = sorting->Specs[i];
+            Sorting.push_back(SortSpec{
+                .ColumnIndex = spec.ColumnIndex,
+                .Direction = (GuiSortDirection)spec.SortDirection
+            });
+        }
+    }
+
+    if (sorting && sorting->SpecsDirty && OnSortChanged) {
+        Manager->GetEventQueue().Call(OnSortChanged, lua::ImguiHandle(Handle));
+    }
+
+    needsSortingUpdate_ = false;
+}
+
 bool Table::BeginRender()
 {
     rendering_ = ImGui::BeginTable(Label.c_str(), (int)Columns, (ImGuiTableFlags)Flags, ToImVec(Size));
@@ -1042,10 +1068,11 @@ bool Table::BeginRender()
         for (auto const& def : ColumnDefs) {
             ImGui::TableSetupColumn(def.Name.c_str(), (ImGuiTableColumnFlags)def.Flags, def.Width);
         }
-    }
 
-    if (ShowHeader && AngledHeader) ImGui::TableAngledHeadersRow();
-    if (ShowHeader) ImGui::TableHeadersRow();
+        if (FreezeRows || FreezeCols) ImGui::TableSetupScrollFreeze((int)FreezeCols, (int)FreezeRows);
+        if (ShowHeader && AngledHeader) ImGui::TableAngledHeadersRow();
+        if (ShowHeader) ImGui::TableHeadersRow();
+    }
 
     return rendering_;
 }
@@ -1524,7 +1551,16 @@ bool IMGUIObjectManager::DestroyRenderable(HandleType handle)
 {
     auto type = (handle >> 56);
     if (type > (unsigned)IMGUIObjectType::Max) return false;
-    return pools_[type]->Destroy(handle);
+    auto destroyed = pools_[type]->Destroy(handle);
+    if (destroyed) {
+        if (type == (unsigned)IMGUIObjectType::Window) {
+            auto it = windows_.find(handle);
+            if (it != windows_.end()) {
+                windows_.erase(it);
+            }
+        }
+    }
+    return destroyed;
 }
 
 void IMGUIObjectManager::Render()

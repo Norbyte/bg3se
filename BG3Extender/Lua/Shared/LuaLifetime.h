@@ -28,6 +28,9 @@ public:
         for (std::size_t i = 0; i < Size; i++) {
             pool_[i].SetIndex(i);
         }
+
+        // Reserve lifetime #0 for 'null' lifetimes
+        l3_[0] &= ~1;
     }
 
     ~HierarchicalPoolAllocator()
@@ -119,21 +122,32 @@ class LifetimePool;
 class Lifetime : public Noncopyable<Lifetime>
 {
 public:
-    static constexpr uint32_t SaltMask = (1ull << 30) - 1;
+    static constexpr unsigned HandleBits = 48;
+    static constexpr unsigned IndexBits = 18;
+    static constexpr unsigned SaltBits = (HandleBits - IndexBits);
+
+    static constexpr uint64_t IndexMask = (1ull << IndexBits) - 1;
+    static constexpr uint64_t SaltMask = (1ull << SaltBits) - 1;
+    static constexpr uint64_t HandleMask = (1ull << HandleBits) - 1;
+
+    static constexpr uint64_t AliveBit = (1ull << HandleBits);
 
     inline Lifetime()
     {}
 
     inline ~Lifetime()
     {
-        assert(!isAlive_);
+        assert(!IsAlive());
     }
 
     inline void Acquire()
     {
-        assert(!isAlive_);
-        isAlive_ = true;
-        salt_ = ((salt_ + 1) & SaltMask);
+        assert(!IsAlive());
+        
+        data_ = Index()
+            | (((Salt() + 1) & SaltMask) << IndexBits)
+            | AliveBit;
+
 #if defined(TRACE_LIFETIMES)
         INFO("[%p] ACQUIRE", this);
 #endif
@@ -142,13 +156,13 @@ public:
     inline void Release()
     {
 #if defined(DEBUG_LIFETIMES)
-        if (!isAlive_) {
+        if (!IsAlive()) {
             ERR("[%p] Attempted to release a lifetime that is not alive.", this);
         }
 #endif
 
-        assert(isAlive_);
-        isAlive_ = false;
+        assert(IsAlive());
+        data_ &= ~AliveBit;
 #if defined(TRACE_LIFETIMES)
         INFO("[%p] RELEASE", this);
 #endif
@@ -156,22 +170,27 @@ public:
 
     inline bool IsAlive() const
     {
-        return isAlive_;
+        return data_ & AliveBit;
     }
 
-    inline uint32_t Index() const
+    inline uint64_t Index() const
     {
-        return index_;
+        return (data_ & IndexMask);
     }
 
-    inline uint32_t Salt() const
+    inline uint64_t Salt() const
     {
-        return salt_;
+        return (data_ >> IndexBits) & SaltMask;
     }
 
     inline void SetIndex(std::size_t i)
     {
-        index_ = (uint32_t)i;
+        data_ = (uint32_t)i;
+    }
+
+    inline uint64_t Data() const
+    {
+        return data_;
     }
 
 protected:
@@ -180,32 +199,31 @@ protected:
     friend class StaticLifetimePin;
 
 private:
-    uint32_t index_{ 0 };
-    uint32_t salt_{ 0 };
-    bool isAlive_{ false };
+    uint64_t data_{ 0 };
 };
 
 
 struct LifetimeHandle
 {
-    static constexpr unsigned HandleBits = 48;
-    static constexpr unsigned IndexBits = 18;
-    static constexpr unsigned SaltBits = (HandleBits - IndexBits);
+    static constexpr unsigned HandleBits = Lifetime::HandleBits;
+    static constexpr unsigned IndexBits = Lifetime::IndexBits;
+    static constexpr unsigned SaltBits = Lifetime::SaltBits;
+
+    static constexpr uint64_t IndexMask = Lifetime::IndexMask;
+    static constexpr uint64_t SaltMask = Lifetime::SaltMask;
+    static constexpr uint64_t HandleMask = Lifetime::HandleMask;
+
     static constexpr unsigned MaxPoolSize = 1 << IndexBits;
-    static constexpr uint64_t IndexMask = (1ull << IndexBits) - 1;
-    static constexpr uint64_t SaltMask = (1ull << SaltBits) - 1;
-    static constexpr uint64_t HandleMask = (1ull << HandleBits) - 1;
-    static_assert(SaltMask == Lifetime::SaltMask);
 
     static constexpr uint64_t NullHandle = 0ull;
 
     uint64_t handle_;
 
-    inline LifetimeHandle()
-        : handle_(NullHandle)
-    {}
+    explicit inline LifetimeHandle() = default;
+    inline LifetimeHandle(LifetimeHandle const& oh) = default;
+    inline LifetimeHandle& operator = (LifetimeHandle const& oh) = default;
 
-    explicit inline LifetimeHandle(uint64_t handle)
+    explicit inline constexpr LifetimeHandle(uint64_t handle)
         : handle_(handle)
     {}
 
@@ -224,16 +242,6 @@ struct LifetimeHandle
         } else {
             return NullHandle;
         }
-    }
-
-    inline LifetimeHandle(LifetimeHandle const& oh)
-        : handle_(oh.handle_)
-    {}
-
-    inline LifetimeHandle& operator = (LifetimeHandle const& oh)
-    {
-        handle_ = oh.handle_;
-        return *this;
     }
 
     inline bool operator == (LifetimeHandle const& oh) const
@@ -266,13 +274,18 @@ struct LifetimeHandle
         return (handle_ >> IndexBits) & SaltMask;
     }
 
-    inline bool IsAlive(lua_State* L) const
+    inline bool MatchesLifetime(Lifetime const& l) const
     {
-        return GetLifetime(L) != nullptr;
+        return (handle_ | Lifetime::AliveBit) == l.Data();
     }
 
+    bool IsAlive(lua_State* L) const;
     Lifetime* GetLifetime(lua_State* L) const;
 };
+
+static constexpr LifetimeHandle NullLifetime{ LifetimeHandle ::NullHandle };
+
+static_assert(std::is_pod_v<LifetimeHandle>);
 
 class LifetimePool : Noncopyable<LifetimePool>
 {
@@ -282,33 +295,45 @@ public:
         return LifetimeHandle(pool_.Allocate());
     }
 
-    inline Lifetime* Get(LifetimeHandle handle)
+    inline void DebugPrintMismatch(LifetimeHandle handle, Lifetime const* ref) const
     {
-        if (!handle) return nullptr;
-
-        auto ref = pool_.Get(handle.GetIndex());
-        if (ref == nullptr) {
 #if defined(DEBUG_LIFETIMES)
-            ERR("[%012lx] Attempted to get lifetime with invalid index %d (max is %d).", (uint64_t)handle, handle.GetIndex(), LifetimeHandle::MaxPoolSize);
-#endif
-            return nullptr;
+        if (ref->Index() != handle.GetIndex()) {
+            ERR("[%012lx] Lifetime index mismatch; got %d, expected %d", (uint64_t)handle, ref->Index(), handle.GetIndex());
         }
 
         if (ref->Salt() != handle.GetSalt()) {
-#if defined(DEBUG_LIFETIMES)
             ERR("[%012lx] Lifetime salt mismatch; got %d, expected %d", (uint64_t)handle, ref->Salt(), handle.GetSalt());
-#endif
-            return nullptr;
         }
 
         if (!ref->IsAlive()) {
-#if defined(TRACE_LIFETIMES)
             ERR("[%012lx] Attempted to get a dead lifetime.", (uint64_t)handle);
+        }
 #endif
+    }
+
+    inline Lifetime* Get(LifetimeHandle handle)
+    {
+        auto ref = pool_.Get(handle.GetIndex());
+
+        if (!handle.MatchesLifetime(*ref)) [[unlikely]] {
+            DebugPrintMismatch(handle, ref);
             return nullptr;
         }
 
         return ref;
+    }
+
+    inline bool IsValid(LifetimeHandle handle) const
+    {
+        auto ref = pool_.Get(handle.GetIndex());
+
+        if (!handle.MatchesLifetime(*ref)) [[unlikely]] {
+            DebugPrintMismatch(handle, ref);
+            return false;
+        }
+
+        return true;
     }
 
     inline void Release(LifetimeHandle handle)
@@ -399,27 +424,24 @@ private:
 class LifetimeStackPin : Noncopyable<LifetimeStackPin>
 {
 public:
-    inline LifetimeStackPin(LifetimeStack& stack)
-        : stack_(stack)
-    {
-        lifetime_ = stack_.Push();
-    }
-
+    LifetimeStackPin(lua_State* L, LifetimeStack& stack);
     LifetimeStackPin(lua_State* L);
 
     inline ~LifetimeStackPin()
     {
-        stack_.PopAndKill(lifetime_);
+        stack_.PopAndKill(currentLifetime_);
+        currentLifetime_ = previousLifetime_;
     }
 
     inline LifetimeHandle GetLifetime() const
     {
-        return lifetime_;
+        return currentLifetime_;
     }
 
 private:
     LifetimeStack& stack_;
-    LifetimeHandle lifetime_;
+    LifetimeHandle& currentLifetime_;
+    LifetimeHandle previousLifetime_;
 };
 
 
@@ -429,27 +451,23 @@ private:
 class StaticLifetimeStackPin : Noncopyable<StaticLifetimeStackPin>
 {
 public:
-    inline StaticLifetimeStackPin(LifetimeStack& stack, LifetimeHandle lifetime)
-        : stack_(stack), lifetime_(lifetime)
-    {
-         stack_.Push(lifetime_);
-    }
-
     StaticLifetimeStackPin(lua_State* L, LifetimeHandle lifetime);
 
     inline ~StaticLifetimeStackPin()
     {
-        stack_.Pop(lifetime_);
+        stack_.Pop(currentLifetime_);
+        currentLifetime_ = previousLifetime_;
     }
 
     inline LifetimeHandle GetLifetime() const
     {
-        return lifetime_;
+        return currentLifetime_;
     }
 
 private:
     LifetimeStack& stack_;
-    LifetimeHandle lifetime_;
+    LifetimeHandle& currentLifetime_;
+    LifetimeHandle previousLifetime_;
 };
 
 
@@ -462,12 +480,12 @@ public:
         : pool_(pool), lifetime_(pool_.Allocate())
     {}
     
-    inline LifetimeOwnerPin(LifetimePool& pool, LifetimeHandle const& lifetime)
+    inline LifetimeOwnerPin(LifetimePool& pool, LifetimeHandle lifetime)
         : pool_(pool), lifetime_(lifetime)
     {}
     
     LifetimeOwnerPin(lua_State* L);
-    LifetimeOwnerPin(lua_State* L, LifetimeHandle const& lifetime);
+    LifetimeOwnerPin(lua_State* L, LifetimeHandle lifetime);
 
     inline ~LifetimeOwnerPin()
     {

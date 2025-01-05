@@ -7,8 +7,8 @@
 BEGIN_NS(lua)
 
 void PushComponent(lua_State* L, ecs::EntitySystemHelpersBase* helpers, EntityHandle const& handle, 
-    ExtComponentType componentType, LifetimeHandle const& lifetime);
-void PushComponent(lua_State* L, void* rawComponent, ExtComponentType componentType, LifetimeHandle const& lifetime);
+    ExtComponentType componentType, LifetimeHandle lifetime);
+void PushComponent(lua_State* L, void* rawComponent, ExtComponentType componentType, LifetimeHandle lifetime);
 
 class EntityHelper
 {
@@ -43,7 +43,7 @@ private:
 };
 
 class EntityProxyMetatable : public LightCppValueMetatable<EntityProxyMetatable>,
-    public Indexable, public Stringifiable, public EqualityComparable, public LessThanComparable
+    public Indexable, public OpaqueIndexable, public Stringifiable, public EqualityComparable, public LessThanComparable
 {
 public:
     static constexpr MetatableTag MetaTag = MetatableTag::Entity;
@@ -61,7 +61,7 @@ public:
         return EntityHandle(self.Value);
     }
 
-    static int Index(lua_State* L, CppObjectMetadata& self);
+    static int Index(lua_State* L, CppValueOpaque* self);
     static int ToString(lua_State* L, CppObjectMetadata& self);
     static bool IsEqual(lua_State* L, CppObjectMetadata& self, int otherIndex);
     static bool IsLessThan(lua_State* L, CppObjectMetadata& self, int otherIndex);
@@ -100,8 +100,14 @@ private:
     static std::optional<LuaEntitySubscriptionId> OnChanged(lua_State* L, EntityHandle entity, ExtComponentType component,
         FunctionRef func, std::optional<uint64_t> flags);
 
+    struct PropertyMapEntry
+    {
+        lua_CFunction Function{ nullptr };
+        std::optional<ExtComponentType> Component;
+    };
 
-    static HashMap<FixedString, lua_CFunction> functions_;
+    static HashMap<FixedStringUnhashed, lua_CFunction> functions_;
+    static HashMap<FixedStringUnhashed, PropertyMapEntry> propertyMap_;
 };
 
 END_NS()

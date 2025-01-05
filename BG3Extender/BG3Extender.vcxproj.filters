@@ -500,6 +500,13 @@
     <ClInclude Include="Lua\Libs\Net.h" />
     <ClInclude Include="GameDefinitions\Cursor.h" />
     <ClInclude Include="GameDefinitions\Effect.h" />
+    <ClInclude Include="GameDefinitions\Controllers\OsirisTask.h" />
+    <ClInclude Include="GameDefinitions\Controllers\Controller.h" />
+    <ClInclude Include="GameDefinitions\Controllers\Behaviour.h" />
+    <ClInclude Include="GameDefinitions\Controllers\Action.h" />
+    <ClInclude Include="GameDefinitions\Controllers\Movement.h" />
+    <ClInclude Include="GameDefinitions\Controllers\Steering.h" />
+    <ClInclude Include="GameDefinitions\Physics.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -520,9 +527,6 @@
     </None>
     <None Include="Lua\Libs\StatMisc.inl">
       <Filter>Lua\Shared</Filter>
-    </None>
-    <None Include="Lua\Server\ServerStatus.inl">
-      <Filter>Lua\Server</Filter>
     </None>
     <None Include="LuaScripts\BuiltinLibrary.lua">
       <Filter>LuaScripts</Filter>
@@ -743,6 +747,12 @@
     <None Include="Lua\Libs\Level.inl" />
     <None Include="Lua\Libs\Net.inl" />
     <None Include=".editorconfig" />
+    <None Include="GameDefinitions\Status.inl" />
+    <None Include="GameDefinitions\Controllers\OsirisTask.inl" />
+    <None Include="GameDefinitions\Controllers\Action.inl" />
+    <None Include="GameDefinitions\Controllers\Steering.inl" />
+    <None Include="GameDefinitions\Controllers\Movement.inl" />
+    <None Include="GameDefinitions\Controllers\Behaviour.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

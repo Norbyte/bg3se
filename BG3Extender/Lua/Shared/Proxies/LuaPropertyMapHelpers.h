@@ -12,13 +12,9 @@ void DisablePropertyWarnings();
 void EnablePropertyWarnings();
 
 template <class T>
-PropertyOperationResult GenericGetOffsetProperty(lua_State* L, LifetimeHandle const& lifetime, void const* obj, RawPropertyAccessors const& prop)
+PropertyOperationResult GenericGetOffsetProperty(lua_State* L, LifetimeHandle lifetime, void const* obj, RawPropertyAccessorsHotData const& prop)
 {
-    if (prop.PendingNotifications != PropertyNotification::None) [[unlikely]] {
-        ProcessPropertyNotifications(prop, false);
-    }
-
-    auto* value = (T const*)((std::uintptr_t)obj + prop.Offset);
+    auto value = reinterpret_cast<T const*>(obj);
     push(L, *value, lifetime);
     return PropertyOperationResult::Success;
 }
@@ -68,10 +64,11 @@ PropertyOperationResult GenericSetOffsetProperty(lua_State* L, void* obj, int in
 }
 
 template <class UnderlyingType>
-PropertyOperationResult GenericGetOffsetBitmaskFlag(lua_State* L, LifetimeHandle const& lifetime, void const* obj, RawPropertyAccessors const& prop)
+PropertyOperationResult GenericGetOffsetBitmaskFlag(lua_State* L, LifetimeHandle lifetime, void const* obj, RawPropertyAccessorsHotData const& prop)
 {
-    auto value = *(UnderlyingType const*)((std::uintptr_t)obj + prop.Offset);
-    push(L, (value & (UnderlyingType)prop.Flag) == (UnderlyingType)prop.Flag);
+    auto value = *reinterpret_cast<UnderlyingType const*>(obj);
+    auto flag = (UnderlyingType)prop.Flag();
+    push(L, (value & flag) == flag);
     return PropertyOperationResult::Success;
 }
 
@@ -79,11 +76,12 @@ template <class UnderlyingType>
 PropertyOperationResult GenericSetOffsetBitmaskFlag(lua_State* L, void* obj, int index, RawPropertyAccessors const& prop)
 {
     auto* value = (UnderlyingType*)((std::uintptr_t)obj + prop.Offset);
+    auto flag = (UnderlyingType)prop.FlagValue();
     auto set = get<bool>(L, index);
     if (set) {
-        *value |= (UnderlyingType)prop.Flag;
+        *value |= flag;
     } else {
-        *value &= (UnderlyingType)~prop.Flag;
+        *value &= ~flag;
     }
 
     return PropertyOperationResult::Success;

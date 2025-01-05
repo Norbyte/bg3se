@@ -5,10 +5,16 @@ using namespace bg3se::lua::net;
 
 void PostMessageToServer(lua_State* L, char const* channel, char const* payload, std::optional<Guid> moduleGuid, std::optional<FunctionRef> requestHandler, std::optional<RequestId> replyId)
 {
-    auto& networkMgr = gExtender->GetClient().GetNetworkManager();
-    auto msg = BuildMessage(L, ReservedUserId, channel, payload, moduleGuid, requestHandler, replyId);
-    if (msg != nullptr) {
-        networkMgr.Send(msg);
+    if (moduleGuid && gExtender->GetServer().HasExtensionState()) {
+        bg3se::net::LocalMessage msg;
+        BuildMessage(L, msg, UserId{0x10001}, channel, payload, moduleGuid, requestHandler, replyId);
+        gExtender->GetServer().GetNetworkManager().PushLocalMessage(std::move(msg));
+    } else {
+        auto& networkMgr = gExtender->GetClient().GetNetworkManager();
+        auto msg = BuildMessage(L, ReservedUserId, channel, payload, moduleGuid, requestHandler, replyId);
+        if (msg != nullptr) {
+            networkMgr.Send(msg);
+        }
     }
 }
 

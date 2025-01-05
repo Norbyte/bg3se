@@ -341,7 +341,7 @@ void* LuaAlloc(void* ud, void* ptr, size_t osize, size_t nsize)
 
 LifetimeHandle GetCurrentLifetime(lua_State* L)
 {
-    return State::FromLua(L)->GetCurrentLifetime();
+    return State::GetExtra(L)->CurrentLifetime;
 }
 
 LuaStateWrapper::LuaStateWrapper()
@@ -372,7 +372,8 @@ State::State(ExtensionStateBase& state, uint32_t generationId, bool isServer)
     timers_(*this, isServer),
     pathfinding_(*state_.GetLevelManager())
 {
-    *reinterpret_cast<State**>(lua_getextraspace(L.L)) = this;
+    GetExtra(L.L)->State = this;
+    GetExtra(L.L)->CurrentLifetime = LifetimeHandle{};
     OpenLibs();
 }
 
@@ -395,19 +396,16 @@ void State::Shutdown()
     GetEntitySystemHelpers()->GetLog().Clear();
 }
 
-State* State::FromLua(lua_State* L)
-{
-    return *reinterpret_cast<State**>(lua_getextraspace(L));
-}
-
 LifetimeHandle State::GetCurrentLifetime()
 {
+#if defined(_DEBUG)
     if (lifetimeStack_.IsEmpty()) {
         OsiErrorS("Attempted to construct Lua object proxy while lifetime stack is empty");
         return LifetimeHandle{};
-    } else {
-        return lifetimeStack_.GetCurrent();
     }
+#endif
+
+    return GetExtra(L.L)->CurrentLifetime;
 }
 
 void State::LoadBootstrap(STDString const& path, STDString const& modTable)
@@ -474,7 +472,7 @@ std::optional<int> State::LoadScript(STDString const & script, STDString const &
 #endif
 
     /* Ask Lua to run our little script */
-    LifetimeStackPin _(lifetimeStack_);
+    LifetimeStackPin _(L, lifetimeStack_);
     status = CallWithTraceback(L, 0, LUA_MULTRET);
     if (status != LUA_OK) {
         LuaError("Failed to execute script: " << lua_tostring(L, -1));

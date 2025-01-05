@@ -52,11 +52,11 @@ struct CppLightObjectVal
     static constexpr std::uintptr_t MetatableTagMask = (1ull << MetatableTagBits) - 1;
     static_assert(LifetimeHandle::HandleBits + TypeTagBits <= 56);
 
-    CppLightObjectVal(TValue* val)
+    inline CppLightObjectVal(TValue* val)
         : value_(val)
     {}
     
-    CppLightObjectVal(lua_State* L, int idx)
+    inline CppLightObjectVal(lua_State* L, int idx)
         : value_(lua_index2addr(L, idx))
     {
         if (!IsCppObject(value_)) {
@@ -100,12 +100,42 @@ struct CppLightObjectVal
         return (uint8_t)(TypeTagFromExtra(extra) >> MetatableTagBits);
     }
 
+    static inline void* PtrFromValue(TValue* value)
+    {
+        return PtrFromRaw(lcppvalue(value));
+    }
+
+    static inline uint16_t PropertyMapTagFromValue(TValue* value)
+    {
+        return PropertyMapTagFromRaw(lcppvalue(value));
+    }
+
+    static inline LifetimeHandle LifetimeFromValue(TValue* value)
+    {
+        return LifetimeFromExtra(valextra(value));
+    }
+
+    static inline uint64_t TypeTagFromValue(TValue* value)
+    {
+        return TypeTagFromExtra(valextra(value));
+    }
+
+    static inline MetatableTag MetatableTagFromValue(TValue* value)
+    {
+        return MetatableTagFromExtra(valextra(value));
+    }
+
+    static inline uint8_t ValueClassFromValue(TValue* value)
+    {
+        return ValueClassFromExtra(valextra(value));
+    }
+
     static inline uint64_t MakeRaw(void const* ptr, uint16_t propertyMapTag)
     {
         return ((uint64_t)ptr & PointerMask) | (((uint64_t)propertyMapTag & PropertyMapTagMask) << PointerBits);
     }
 
-    static inline uint64_t MakeExtra(MetatableTag metatableTag, LifetimeHandle const& lifetime)
+    static inline uint64_t MakeExtra(MetatableTag metatableTag, LifetimeHandle lifetime)
     {
         return (((uint64_t)lifetime.handle_ & LifetimeHandle::HandleMask) << TypeTagBits)
             | (1ull << MetatableTagBits) // Value class
@@ -132,7 +162,7 @@ struct CppLightObjectVal
         return PropertyMapTagFromRaw(RawValue());
     }
 
-    inline LifetimeHandle Lifetime(lua_State* L) const
+    inline LifetimeHandle Lifetime() const
     {
         return LifetimeFromExtra(Extra());
     }
@@ -262,6 +292,26 @@ struct CppValue
         return (uint32_t)((extra >> PropertyMapTagOffset) & PropertyMapTagMask);
     }
 
+    static inline uint64_t RawValueFromValue(TValue* value)
+    {
+        return lcppvalue(value);
+    }
+
+    static inline MetatableTag MetatableTagFromValue(TValue* value)
+    {
+        return MetatableTagFromExtra(valextra(value));
+    }
+
+    static inline uint8_t ValueClassFromValue(TValue* value)
+    {
+        return ValueClassFromExtra(valextra(value));
+    }
+
+    static inline uint32_t PropertyMapTagFromValue(TValue* value)
+    {
+        return PropertyMapTagFromExtra(valextra(value));
+    }
+
     static inline uint64_t MakeRaw(uint64_t value)
     {
         return value;
@@ -313,7 +363,7 @@ void* lua_push_newcppobject(lua_State* L, MetatableTag metatableTag, int propert
     return obj + 1;
 }
 
-void lua_push_lightcppobject(lua_State* L, MetatableTag metatableTag, int propertyMapIndex, void* object, LifetimeHandle const& lifetime)
+void lua_push_lightcppobject(lua_State* L, MetatableTag metatableTag, int propertyMapIndex, void* object, LifetimeHandle lifetime)
 {
     assert(propertyMapIndex >= 0);
     auto val = CppLightObjectVal::MakeRaw(object, propertyMapIndex);
@@ -321,7 +371,7 @@ void lua_push_lightcppobject(lua_State* L, MetatableTag metatableTag, int proper
     lua_pushlightcppobject(L, val, extra);
 }
 
-void lua_push_lightcppobject(lua_State* L, MetatableTag metatableTag, int propertyMapIndex, void const* object, LifetimeHandle const& lifetime)
+void lua_push_lightcppobject(lua_State* L, MetatableTag metatableTag, int propertyMapIndex, void const* object, LifetimeHandle lifetime)
 {
     // TODO - add RO tag
     assert(propertyMapIndex >= 0);
@@ -337,7 +387,7 @@ CppObjectMetadata lua_get_lightcppobject(lua_State* L, int idx)
         .Ptr = val.Ptr(),
         .MetatableTag = val.MetatableTag(),
         .PropertyMapTag = val.PropertyMapTag(),
-        .Lifetime = val.Lifetime(L)
+        .Lifetime = val.Lifetime()
     };
 }
 
@@ -353,8 +403,34 @@ CppObjectMetadata lua_get_lightcppobject(lua_State* L, int idx, MetatableTag exp
         .Ptr = val.Ptr(),
         .MetatableTag = metatableTag,
         .PropertyMapTag = val.PropertyMapTag(),
-        .Lifetime = val.Lifetime(L)
+        .Lifetime = val.Lifetime()
     };
+}
+
+CppObjectOpaque* lua_get_opaque_lightcppobject(lua_State* L, int idx, MetatableTag expectedMetatableTag)
+{
+    CppLightObjectVal val(L, idx);
+    auto metatableTag = val.MetatableTag();
+    if (metatableTag != expectedMetatableTag) {
+        luaL_error(L, "Param %d must be a %s; got %s", idx, GetDebugName(expectedMetatableTag), GetDebugName(L, idx));
+    }
+
+    return (CppObjectOpaque*)val.value_;
+}
+
+LifetimeHandle lua_get_opaque_lifetime(CppObjectOpaque* meta)
+{
+    return CppLightObjectVal::LifetimeFromValue((TValue*)meta);
+}
+
+uint16_t lua_get_opaque_property_map(CppObjectOpaque* meta)
+{
+    return CppLightObjectVal::PropertyMapTagFromValue((TValue*)meta);
+}
+
+void* lua_get_opaque_ptr(CppObjectOpaque* meta)
+{
+    return CppLightObjectVal::PtrFromValue((TValue*)meta);
 }
 
 CppObjectMetadata lua_get_lightcppobject(lua_State* L, int idx, MetatableTag expectedMetatableTag, int expectedPropertyMap)
@@ -374,7 +450,7 @@ CppObjectMetadata lua_get_lightcppobject(lua_State* L, int idx, MetatableTag exp
         .Ptr = val.Ptr(),
         .MetatableTag = metatableTag,
         .PropertyMapTag = propertyMap,
-        .Lifetime = val.Lifetime(L)
+        .Lifetime = val.Lifetime()
     };
 }
 
@@ -394,7 +470,7 @@ bool lua_try_get_lightcppobject(lua_State* L, int idx, MetatableTag expectedType
     obj.Ptr = val.Ptr();
     obj.MetatableTag = metatableTag;
     obj.PropertyMapTag = val.PropertyMapTag();
-    obj.Lifetime = val.Lifetime(L);
+    obj.Lifetime = val.Lifetime();
     return true;
 }
 
@@ -409,7 +485,7 @@ bool lua_try_get_lightcppobject(lua_State* L, int idx, CppObjectMetadata& obj)
     obj.Ptr = val.Ptr();
     obj.MetatableTag = val.MetatableTag();
     obj.PropertyMapTag = val.PropertyMapTag();
-    obj.Lifetime = val.Lifetime(L);
+    obj.Lifetime = val.Lifetime();
     return true;
 }
 
@@ -434,8 +510,30 @@ CppObjectMetadata lua_get_cppvalue(lua_State* L, int idx, MetatableTag expectedM
     return CppObjectMetadata{
         .Value = val.Value(),
         .MetatableTag = metatableTag,
-        .PropertyMapTag = val.PropertyMapTag()
+        .PropertyMapTag = val.PropertyMapTag(),
+        .Lifetime = NullLifetime
     };
+}
+
+CppValueOpaque* lua_get_opaque_cppvalue(lua_State* L, int idx, MetatableTag expectedMetatableTag)
+{
+    CppValue val(L, idx);
+    auto metatableTag = val.MetatableTag();
+    if (metatableTag != expectedMetatableTag) {
+        luaL_error(L, "Param %d must be a %s; got %s", idx, GetDebugName(expectedMetatableTag), GetDebugName(L, idx));
+    }
+
+    return (CppValueOpaque*)val.value_;
+}
+
+uint32_t lua_get_opaque_property_map(CppValueOpaque* meta)
+{
+    return CppValue::PropertyMapTagFromValue((TValue*)meta);
+}
+
+uint64_t lua_get_opaque_value(CppValueOpaque* meta)
+{
+    return CppValue::RawValueFromValue((TValue*)meta);
 }
 
 CppObjectMetadata lua_get_cppvalue(lua_State* L, int idx)
@@ -444,7 +542,8 @@ CppObjectMetadata lua_get_cppvalue(lua_State* L, int idx)
     return CppObjectMetadata{
         .Value = val.Value(),
         .MetatableTag = val.MetatableTag(),
-        .PropertyMapTag = val.PropertyMapTag()
+        .PropertyMapTag = val.PropertyMapTag(),
+        .Lifetime = NullLifetime
     };
 }
 
@@ -454,7 +553,8 @@ CppObjectMetadata lua_get_cppvalue(lua_State* L, TValue* v)
     return CppObjectMetadata{
         .Value = val.Value(),
         .MetatableTag = val.MetatableTag(),
-        .PropertyMapTag = val.PropertyMapTag()
+        .PropertyMapTag = val.PropertyMapTag(),
+        .Lifetime = NullLifetime
     };
 }
 
@@ -504,7 +604,8 @@ CppObjectMetadata lua_get_lightcppany(lua_State* L, int idx)
         return CppObjectMetadata{
             .Value = v.Value(),
             .MetatableTag = v.MetatableTag(),
-            .PropertyMapTag = v.PropertyMapTag()
+            .PropertyMapTag = v.PropertyMapTag(),
+            .Lifetime = NullLifetime
         };
     } else {
         CppLightObjectVal v(val);
@@ -512,7 +613,7 @@ CppObjectMetadata lua_get_lightcppany(lua_State* L, int idx)
             .Ptr = v.Ptr(),
             .MetatableTag = v.MetatableTag(),
             .PropertyMapTag = v.PropertyMapTag(),
-            .Lifetime = v.Lifetime(L)
+            .Lifetime = v.Lifetime()
         };
     }
 }
@@ -595,6 +696,30 @@ FixedString do_get(lua_State* L, int index, Overload<FixedString>)
     size_t len;
     auto str = luaL_tolstring(L, index, &len);
     auto fs = FixedString(StringView(str, len));
+    lua_pop(L, 1);
+    return fs;
+}
+
+FixedStringNoRef do_get(lua_State* L, int index, Overload<FixedStringNoRef>)
+{
+    StkId o = index2addr(L, index);
+    if (ttisstring(o)) {
+        auto s = tsvalue(o);
+        auto& fs = *reinterpret_cast<CachedFixedString *>(&s->cache);
+        if (fs.IsCached) {
+            return FixedStringNoRef{ fs.Str };
+        } else {
+            return FixedStringNoRef(StringView(getstr(s), tsslen(s)));
+        }
+    }
+
+    if (ttisnil(o)) {
+        return FixedString{};
+    }
+
+    size_t len;
+    auto str = luaL_tolstring(L, index, &len);
+    auto fs = FixedStringNoRef{ StringView(str, len) };
     lua_pop(L, 1);
     return fs;
 }

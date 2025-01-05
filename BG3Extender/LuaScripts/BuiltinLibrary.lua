@@ -93,7 +93,15 @@ _PE = Ext.Log.PrintError
 Print = Ext.Log.Print
 print = Ext.Log.Print
 
-require = Ext.Require
+require = function (name)
+    if string.sub(name, -4) == ".lua" then
+        -- Name is already a path (backwards compatibility with v21)
+        return Ext.Require(name)
+    else
+        -- Convert module name to .lua path
+        return Ext.Require(string.gsub(name, "%.", "/") .. ".lua")
+    end
+end
 
 -- Backwards compatibility with v3
 Ext.Definition = Ext.StaticData

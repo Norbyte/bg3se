@@ -19,10 +19,12 @@ void ExtenderProtocol::ProcessExtenderMessage(net::MessageContext& context, net:
     switch (msg.msg_case()) {
     case net::MessageWrapper::kPostLua:
     {
-        auto & postMsg = msg.post_lua();
-        esv::LuaServerPin pin(esv::ExtensionState::Get());
-        if (pin) {
-            pin->OnNetMessageReceived(postMsg.channel_name().c_str(), postMsg.payload().c_str(), postMsg.module().c_str(), postMsg.request_id(), postMsg.reply_id(), context.UserID);
+        if (gExtender->GetServer().HasExtensionState()) {
+            auto& postMsg = msg.post_lua();
+            esv::LuaServerPin pin(esv::ExtensionState::Get());
+            if (pin) {
+                pin->OnNetMessageReceived(postMsg.channel_name().c_str(), postMsg.payload().c_str(), postMsg.module().c_str(), postMsg.request_id(), postMsg.reply_id(), context.UserID);
+            }
         }
         break;
     }
@@ -138,6 +140,14 @@ net::ExtenderMessage * NetworkManager::GetFreeMessage()
         return (net::ExtenderMessage*)server->NetMessageFactory->GetFreeMessage((uint32_t)net::ExtenderMessage::MessageId);
     } else {
         return nullptr;
+    }
+}
+
+void NetworkManager::HandleLocalMessage(char const* channel, char const* payload, char const* moduleUuid, int32_t requestId, int32_t replyId, UserId userId)
+{
+    esv::LuaServerPin pin(esv::ExtensionState::Get());
+    if (pin) {
+        pin->OnNetMessageReceived(channel, payload, moduleUuid, requestId, replyId, userId);
     }
 }
 

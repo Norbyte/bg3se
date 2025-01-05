@@ -7,7 +7,8 @@
 
 BEGIN_NS(lua)
 
-HashMap<FixedString, lua_CFunction> EntityProxyMetatable::functions_;
+HashMap<FixedStringUnhashed, lua_CFunction> EntityProxyMetatable::functions_;
+HashMap<FixedStringUnhashed, EntityProxyMetatable::PropertyMapEntry> EntityProxyMetatable::propertyMap_;
 
 ecs::EntitySystemHelpersBase* GetEntitySystem(lua_State* L)
 {
@@ -16,7 +17,7 @@ ecs::EntitySystemHelpersBase* GetEntitySystem(lua_State* L)
 
 template <class T>
 void PushComponentType(lua_State* L, ecs::EntitySystemHelpersBase* helpers, EntityHandle const& handle,
-    LifetimeHandle const& lifetime)
+    LifetimeHandle lifetime)
 {
     auto component = helpers->GetComponent<T>(handle);
     if (component) {
@@ -34,7 +35,7 @@ case cls::ComponentType: \
 }
 
 void PushComponent(lua_State* L, ecs::EntitySystemHelpersBase* helpers, EntityHandle const& handle, ExtComponentType componentType,
-    LifetimeHandle const& lifetime)
+    LifetimeHandle lifetime)
 {
     switch (componentType) {
 
@@ -51,7 +52,7 @@ void PushComponent(lua_State* L, ecs::EntitySystemHelpersBase* helpers, EntityHa
 
 #define T(cls) case cls::ComponentType: MakeDirectObjectRef(L, reinterpret_cast<cls*>(rawComponent), lifetime); break;
 
-void PushComponent(lua_State* L, void* rawComponent, ExtComponentType componentType, LifetimeHandle const& lifetime)
+void PushComponent(lua_State* L, void* rawComponent, ExtComponentType componentType, LifetimeHandle lifetime)
 {
     switch (componentType) {
 
@@ -401,18 +402,45 @@ void EntityProxyMetatable::StaticInitialize()
     ADD_FUNC(OnDestroyOnce);
 
     ADD_FUNC(OnChanged);
+
+    auto const& components = EnumInfo<ExtComponentType>::GetStore();
+    for (auto const& component : components.Values) {
+        propertyMap_.set(component.Key, PropertyMapEntry{
+            .Function = nullptr,
+            .Component = (ExtComponentType)component.Value
+        });
+    }
+
+    for (auto const& func : functions_) {
+        propertyMap_.set(func.Key(), PropertyMapEntry{
+            .Function = func.Value(),
+            .Component = {}
+        });
+    }
 }
 
-int EntityProxyMetatable::Index(lua_State* L, CppObjectMetadata& self)
+int EntityProxyMetatable::Index(lua_State* L, CppValueOpaque* self)
 {
     StackCheck _(L, 1);
-    auto handle = GetHandle(self);
-    auto key = get<FixedString>(L, 2);
+    EntityHandle handle(lua_get_opaque_value(self));
+    auto key = get<FixedStringNoRef>(L, 2);
+    auto& keyAH = reinterpret_cast<FixedStringUnhashed&>(key);
 
-    auto func = functions_.get_or_default(key);
-    if (func) {
-        push(L, func);
-        return 1;
+    auto entry = propertyMap_.try_get(keyAH);
+    if (entry) {
+        if (entry->Function) {
+            push(L, entry->Function);
+            return 1;
+        } else {
+            auto ecs = GetEntitySystem(L);
+            auto rawComponent = ecs->GetRawComponent(handle, *entry->Component);
+            if (rawComponent != nullptr) {
+                PushComponent(L, rawComponent, *entry->Component, GetCurrentLifetime(L));
+            } else {
+                push(L, nullptr);
+            }
+            return 1;
+        }
     }
 
     if (key == GFS.strVars) {
@@ -420,21 +448,8 @@ int EntityProxyMetatable::Index(lua_State* L, CppObjectMetadata& self)
         return 1;
     }
 
-    auto componentType = EnumInfo<ExtComponentType>::Find(key);
-    if (componentType) {
-        auto ecs = GetEntitySystem(L);
-        auto rawComponent = ecs->GetRawComponent(handle, *componentType);
-        if (rawComponent != nullptr) {
-            PushComponent(L, GetEntitySystem(L), handle, *componentType, GetCurrentLifetime(L));
-        } else {
-            push(L, nullptr);
-        }
-    } else {
-        auto componentTypeName = get<char const*>(L, 2);
-        luaL_error(L, "Not a valid EntityProxy method or component type: %s", componentTypeName);
-    }
-
-    return 1;
+    auto componentTypeName = get<char const*>(L, 2);
+    return luaL_error(L, "Not a valid EntityProxy method or component type: %s", componentTypeName);
 }
 
 bool EntityProxyMetatable::IsEqual(lua_State* L, CppObjectMetadata& self, int otherIndex)

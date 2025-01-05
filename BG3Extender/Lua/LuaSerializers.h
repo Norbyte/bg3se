@@ -156,6 +156,10 @@ namespace bg3se::lua
     LuaSerializer& serialize(LuaSerializer& s, bg3se::stats::TreasureSubTable& v);
     LuaSerializer& serialize(LuaSerializer& s, bg3se::stats::TreasureCategory& v);
 
+    LuaSerializer& serialize(LuaSerializer& s, bg3se::stats::TreasureTable*& v);
+    LuaSerializer& serialize(LuaSerializer& s, bg3se::stats::TreasureSubTable*& v);
+    LuaSerializer& serialize(LuaSerializer& s, bg3se::stats::TreasureCategory*& v);
+
     template <class T>
     LuaSerializer& serialize(LuaSerializer& s, OverrideableProperty<T>& v)
     {
@@ -464,10 +468,6 @@ namespace bg3se::lua
 
         return s;
     }
-
-    LuaSerializer& serialize(LuaSerializer& s, bg3se::stats::TreasureTable* v);
-    LuaSerializer& serialize(LuaSerializer& s, bg3se::stats::TreasureSubTable* v);
-    LuaSerializer& serialize(LuaSerializer& s, bg3se::stats::TreasureCategory* v);
 
     template <class T>
     std::enable_if_t<!IsByVal<T>, LuaSerializer&> serialize(LuaSerializer& s, T* v)

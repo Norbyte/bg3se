@@ -82,4 +82,26 @@ unsigned int GetNearestMultiHashMapPrime(unsigned int num)
     return MultiHashMapPrimes[std::size(MultiHashMapPrimes) - 1];
 }
 
+
+unsigned int SmallMultiHashMapPrimes[] = {
+    5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47,
+    0x35, 0x61, 0xC1, 0x185, 0x301, 0x607,
+    0xC07, 0x1807, 0x3001, 0x6011, 0xC005,
+    0x1800D, 0x30005, 0x60019, 0xC0001, 0x180005,
+    0x30000B, 0x60000D, 0xC00005, 0x1800013,
+    0x3000005, 0x6000017, 0x0C000013, 0x18000005,
+    0x30000059, 0x60000005, 0x400CCCCD
+};
+
+unsigned int GetNearestSmallMultiHashMapPrime(unsigned int num)
+{
+    for (auto i = 0; i < std::size(SmallMultiHashMapPrimes); i++) {
+        if (SmallMultiHashMapPrimes[i] >= num) {
+            return SmallMultiHashMapPrimes[i];
+        }
+    }
+
+    return SmallMultiHashMapPrimes[std::size(SmallMultiHashMapPrimes) - 1];
+}
+
 END_SE()

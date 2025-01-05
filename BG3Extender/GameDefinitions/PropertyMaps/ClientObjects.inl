@@ -9,7 +9,10 @@ END_CLS()
 
 
 BEGIN_CLS(ecl::StatusMachine)
+P(StatusFX)
+P(ManagedFX)
 P(Statuses)
+P(ExternalStatuses)
 END_CLS()
 
 

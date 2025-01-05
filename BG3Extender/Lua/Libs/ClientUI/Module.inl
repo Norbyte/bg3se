@@ -9,7 +9,7 @@ BEGIN_NS(lua)
     MakeDirectObjectRef(L, static_cast<T*>(obj), lifetime); return; \
 }
 
-void NoesisPush(lua_State* L, Noesis::BaseObject* obj, LifetimeHandle const& lifetime)
+void NoesisPush(lua_State* L, Noesis::BaseObject* obj, LifetimeHandle lifetime)
 {
     Noesis::gStaticSymbols.Initialize();
 
@@ -26,14 +26,14 @@ void NoesisPush(lua_State* L, Noesis::BaseObject* obj, LifetimeHandle const& lif
 
 #undef FOR_NOESIS_TYPE
 
-#define FOR_NOESIS_TYPE(T) void LuaPolymorphic<T>::MakeRef(lua_State* L, T* value, LifetimeHandle const& lifetime) { \
+#define FOR_NOESIS_TYPE(T) void LuaPolymorphic<T>::MakeRef(lua_State* L, T* value, LifetimeHandle lifetime) { \
     NoesisPush(L, value, lifetime); \
 }
 
 FOR_EACH_NOESIS_TYPE()
 #undef FOR_NOESIS_TYPE
 
-void LuaPolymorphic<Noesis::RoutedEventArgs>::MakeRef(lua_State* L, Noesis::RoutedEventArgs* value, LifetimeHandle const& lifetime)
+void LuaPolymorphic<Noesis::RoutedEventArgs>::MakeRef(lua_State* L, Noesis::RoutedEventArgs* value, LifetimeHandle lifetime)
 {
     auto evtName = value->routedEvent->GetName();
     auto const& events = Noesis::gStaticSymbols.Events;

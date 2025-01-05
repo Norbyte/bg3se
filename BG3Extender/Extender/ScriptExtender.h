@@ -184,8 +184,6 @@ private:
     void OnAppUpdatePaths(void * self);
     void OnAppLoadGraphicSettings(App* self);
     void HookStateMachineUpdates();
-    void OnBaseModuleLoaded(void * self);
-    void OnModuleLoadStarted(TranslatedStringRepository* self);
     void OnStatsLoad(stats::RPGStats::LoadProc* wrapped, stats::RPGStats* mgr, Array<STDString>* paths);
     void OnStatsLoadGuarded(stats::RPGStats::LoadProc* wrapped, stats::RPGStats* mgr, Array<STDString>* paths);
     void OnECSUpdate(ecs::EntityWorld::UpdateProc* wrapped, ecs::EntityWorld* entityWorld, GameTime const& time);

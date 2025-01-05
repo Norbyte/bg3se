@@ -2,6 +2,7 @@
 
 #include <GameDefinitions/Net.h>
 #include <Extender/Shared/ExtenderProtocol.pb.h>
+#include <concurrent_queue.h>
 
 BEGIN_NS(net)
 
@@ -65,11 +66,34 @@ protected:
     virtual void ProcessExtenderMessage(net::MessageContext& context, MessageWrapper & msg) = 0;
 };
 
+struct LocalMessage
+{
+    STDString Channel;
+    STDString Module;
+    STDString Payload;
+    int32_t RequestId{ 0 };
+    int32_t ReplyId{ 0 };
+    UserId User;
+};
+
 class BaseNetworkManager
 {
 public:
     virtual ExtenderMessage* GetFreeMessage() = 0;
     virtual ExtenderMessage* GetFreeMessage(UserId userId) = 0;
+    virtual void HandleLocalMessage(char const* channel, char const* payload, char const* moduleUuid, int32_t requestId, int32_t replyId, UserId userId) = 0;
+    virtual void Update();
+    virtual void OnResetExtensionState();
+
+    inline void PushLocalMessage(LocalMessage&& msg)
+    {
+        localMessages_.push(std::move(msg));
+    }
+
+private:
+    concurrency::concurrent_queue<LocalMessage, GameAllocator<LocalMessage>> localMessages_;
+
+    void ProcessLocalMessages();
 };
 
 END_NS()
