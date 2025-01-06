@@ -16,3 +16,4 @@
 #include <CoreLib/Base/BaseInterface.h>
 #include <CoreLib/Base/SparseArray.h>
 #include <CoreLib/Base/PagedArray.h>
+#include <CoreLib/Base/PagedMap.h>

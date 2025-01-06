@@ -96,6 +96,9 @@
     <ClInclude Include="Base\BitSet.h">
       <Filter>Header Files\Base</Filter>
     </ClInclude>
+    <ClInclude Include="Base\PagedMap.h">
+      <Filter>Header Files\Base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
