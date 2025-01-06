@@ -281,6 +281,58 @@ void* ImmediateWorldCache::Changes::GetChange(EntityHandle entityHandle, Compone
     return nullptr;
 }
 
+ImmediateWorldCache::ComponentChanges* ImmediateWorldCache::Changes::AddComponentChanges(ComponentTypeEntry const* type, FrameAllocator* allocator)
+{
+    auto typeIdx = (uint16_t)type->TypeId;
+    auto components = ComponentsByType + typeIdx;
+    if (!AvailableComponentTypes[typeIdx]) {
+        AvailableComponentTypes.AtomicSet(typeIdx);
+        new (components) ComponentChanges(allocator);
+        components->FrameStorage.ComponentTypeId = type->TypeId;
+        components->FrameStorage.ComponentSizeInBytes = type->InlineSize;
+        components->FrameStorage.DestructorProc = type->DtorProc;
+    }
+
+    return components;
+}
+
+ImmediateWorldCache::ComponentChanges* ImmediateWorldCache::AddComponentChanges(ComponentTypeIndex type)
+{
+    auto typeIdx = (uint16_t)type;
+    auto typeInfo = EntityWorld->ComponentRegistry_.Get(type);
+    return WriteChanges.AddComponentChanges(typeInfo, Allocator);
+}
+
+bool ImmediateWorldCache::RemoveComponent(EntityHandle entity, ComponentTypeIndex type)
+{
+    auto changes = AddComponentChanges(type);
+    auto change = changes->Components.find(entity);
+    if (!change) {
+        auto typeInfo = EntityWorld->ComponentRegistry_.Get(type);
+        // TODO - different behavior for proxy objects?
+        auto component = EntityWorld->GetRawComponent(entity, type, typeInfo->InlineSize, false);
+        if (component) {
+            auto& onDestroy = Callbacks->Get(type)->OnDestroy;
+            EntityRef e{
+                .Handle = entity,
+                .World = EntityWorld
+            };
+            onDestroy.Invoke(&e, component);
+
+            change = changes->Components.add_uninitialized(entity);
+            // Default change means deletion
+            new (change) ComponentChange();
+            return true;
+        } else {
+            WARN("Tried to remove component [%d] that does not exist on entity [%08x]!", type, entity.Handle);
+            return false;
+        }
+    } else {
+        WARN("A change for component [%d] already exists on entity [%08x]!", type, entity.Handle);
+        return false;
+    }
+}
+
 PerECSComponentData const& ECSComponentDataMap::Get(ComponentTypeIndex type) const
 {
     auto idx = (uint32_t)SparseHashMapHash(type);

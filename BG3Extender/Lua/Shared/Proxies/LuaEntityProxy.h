@@ -71,6 +71,7 @@ public:
 
 private:
     static UserReturn CreateComponent(lua_State* L, EntityHandle entity, ExtComponentType component);
+    static bool RemoveComponent(lua_State* L, EntityHandle entity, ExtComponentType component);
     static UserReturn GetComponent(lua_State* L, EntityHandle entity, ExtComponentType component);
     static bool HasRawComponent(lua_State* L, EntityHandle entity, STDString componentName);
     static UserReturn GetAllComponents(lua_State* L, EntityHandle entity, std::optional<bool> warnOnMissing);

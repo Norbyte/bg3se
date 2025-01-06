@@ -175,6 +175,16 @@ struct BitArray
         return true;
     }
 
+    inline bool AtomicSet(uint32_t index)
+    {
+        if (index >= NumBits) {
+            return false;
+        }
+
+        InterlockedOr64((LONG64*)(Bits + (index >> IndexBitsPerWord)), (TWord(1) << (index & (BitsPerWord - 1))));
+        return true;
+    }
+
     inline bool Clear(uint32_t index)
     {
         if (index >= NumBits) {

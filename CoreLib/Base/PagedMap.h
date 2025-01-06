@@ -7,6 +7,12 @@ BEGIN_SE()
 template <class TKey, class TAllocator = DefaultPagedAllocator>
 struct PagedHashSet : protected TAllocator
 {
+    inline PagedHashSet(uint16_t bitsPerPage, TAllocator const& allocator = TAllocator{})
+        : TAllocator(allocator),
+        hashLayout_(bitsPerPage),
+        keyLayout_(bitsPerPage)
+    {}
+
     int32_t** hash_;
     int32_t** nextIds_;
     TKey** keys_;
@@ -90,6 +96,11 @@ private:
 template <class TKey, class TValue, class TAllocator = DefaultPagedAllocator>
 struct PagedHashMap : public PagedHashSet<TKey, TAllocator>
 {
+    inline PagedHashMap(uint16_t bitsPerPage, TAllocator const& allocator = TAllocator{})
+        : PagedHashSet<TKey, TAllocator>(bitsPerPage, allocator),
+        Values(bitsPerPage, allocator)
+    {}
+
     PagedArray<TValue, TAllocator> Values;
 
     inline TAllocator const& allocator() const

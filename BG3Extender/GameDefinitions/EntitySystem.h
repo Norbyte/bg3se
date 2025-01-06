@@ -451,8 +451,8 @@ struct EntityStorageData : public ProtectedGameObject<EntityStorageData>
             
     struct EntityStorageIndex
     {
-        uint16_t PageIndex;
-        uint16_t EntryIndex;
+        uint16_t PageIndex{ 0xffff };
+        uint16_t EntryIndex{ 0xffff };
     };
 
     struct HandlePage
@@ -603,27 +603,36 @@ struct ECBEntityChangeSet
 
 struct ComponentFrameStorage
 {
+    inline ComponentFrameStorage(FrameAllocator* allocator)
+        : Components(3, allocator)
+    {}
+
     PagedArray<void*, ECBFrameAllocator> Components;
-    uint32_t NumComponents;
-    uint16_t ComponentSizeInBytes;
-    ComponentTypeIndex ComponentTypeId;
-    void* DestructorProc;
+    uint32_t NumComponents{ 0 };
+    uint16_t ComponentSizeInBytes{ 0 };
+    ComponentTypeIndex ComponentTypeId{ 0 };
+    void* DestructorProc{ nullptr };
 };
 
 struct ImmediateWorldCache : public ProtectedGameObject<ImmediateWorldCache>
 {
     struct ComponentChange
     {
-        void* Ptr;
+        void* Ptr{ nullptr };
         EntityStorageData::EntityStorageIndex StorageIndex;
     };
 
     struct ComponentChanges
     {
+        inline ComponentChanges(FrameAllocator* allocator)
+            : Components(5, allocator),
+            FrameStorage(allocator)
+        {}
+
         PagedHashMap<EntityHandle, ComponentChange, ECBFrameAllocator> Components;
         ComponentFrameStorage FrameStorage;
-        void* field_70;
-        void* field_78;
+        void* field_70{ nullptr };
+        void* field_78{ nullptr };
     };
 
     struct Changes
@@ -633,6 +642,7 @@ struct ImmediateWorldCache : public ProtectedGameObject<ImmediateWorldCache>
         uint64_t Unknown;
 
         void* GetChange(EntityHandle entityHandle, ComponentTypeIndex type) const;
+        ComponentChanges* AddComponentChanges(ComponentTypeEntry const* type, FrameAllocator* allocator);
     };
 
     Changes WriteChanges;
@@ -642,6 +652,9 @@ struct ImmediateWorldCache : public ProtectedGameObject<ImmediateWorldCache>
     EntityWorld* EntityWorld;
     EntityHandleGenerator* HandleGenerator;
     __int64 field_158;
+
+    ComponentChanges* AddComponentChanges(ComponentTypeIndex type);
+    bool RemoveComponent(EntityHandle entity, ComponentTypeIndex type);
 };
 
 struct ECBData : public ProtectedGameObject<ECBData>

@@ -131,6 +131,13 @@ UserReturn EntityProxyMetatable::CreateComponent(lua_State* L, EntityHandle enti
     return 1;
 }
 
+bool EntityProxyMetatable::RemoveComponent(lua_State* L, EntityHandle entity, ExtComponentType component)
+{
+    auto ecs = GetEntitySystem(L);
+    auto typeId = *ecs->GetComponentIndex(component);
+    return ecs->GetEntityWorld()->Cache->RemoveComponent(entity, typeId);
+}
+
 UserReturn EntityProxyMetatable::GetComponent(lua_State* L, EntityHandle entity, ExtComponentType component)
 {
     auto ecs = GetEntitySystem(L);
@@ -362,6 +369,7 @@ std::optional<LuaEntitySubscriptionId> EntityProxyMetatable::OnChanged(lua_State
 void EntityProxyMetatable::StaticInitialize()
 {
     ADD_FUNC(CreateComponent);
+    ADD_FUNC(RemoveComponent);
     ADD_FUNC(GetComponent);
     ADD_FUNC(HasRawComponent);
     ADD_FUNC(GetAllComponents);
