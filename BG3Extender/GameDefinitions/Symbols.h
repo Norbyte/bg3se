@@ -40,6 +40,7 @@ namespace bg3se
         GlobalStringTable::MainTable::DecRefProc* ls__GlobalStringTable__MainTable__DecRef{ nullptr };
         GlobalStringTable** ls__gGlobalStringTable{ nullptr };
 
+        ThreadRegistry::RequestThreadIndexProc* ls__ThreadRegistry__RequestThreadIndex{ nullptr };
         FileReader::CtorProc* ls__FileReader__ctor{ nullptr };
         FileReader::DtorProc* ls__FileReader__dtor{ nullptr };
         STDString** ls__PathRoots{ nullptr };

@@ -76,9 +76,6 @@ private:
     static UserReturn GetAllComponents(lua_State* L, EntityHandle entity, std::optional<bool> warnOnMissing);
     static Array<STDString> GetAllComponentNames(lua_State* L, EntityHandle entity, std::optional<bool> requireMapped);
 
-    static uint32_t GetEntityType(EntityHandle entity);
-    static uint32_t GetSalt(EntityHandle entity);
-    static uint32_t GetIndex(EntityHandle entity);
     static bool IsAlive(lua_State* L, EntityHandle entity);
 
     static void Replicate(lua_State* L, EntityHandle entity, ExtComponentType component);

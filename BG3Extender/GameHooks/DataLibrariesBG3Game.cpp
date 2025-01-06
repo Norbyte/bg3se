@@ -126,6 +126,7 @@ namespace bg3se
         SYM_OFF(ls__GlobalStringTable__MainTable__DecRef);
         SYM_OFF(ls__gGlobalStringTable);
 
+        SYM_OFF(ls__ThreadRegistry__RequestThreadIndex);
         SYM_OFF(ls__FileReader__ctor);
         SYM_OFF(ls__FileReader__dtor);
         SYM_OFF(ls__PathRoots);

@@ -133,6 +133,85 @@ EntityHandle NewEntityPools::Add(uint32_t classIndex)
 
 FieldTracker::~FieldTracker() {}
 
+
+void* FrameAllocator::Allocate(uint16_t size)
+{
+    auto realSize = (uint16_t)(size + 63) & 0xFFC0u;
+
+    auto curPage = CurrentPage;
+    auto offset = (uint64_t)InterlockedExchangeAdd64(&curPage->Offset, realSize);
+    while (offset + realSize > PageSize) {
+
+        EnterCriticalSection(&CS);
+        if (curPage == CurrentPage) {
+            auto page = AllocPage();
+            page->Offset = 0x40;
+            CurrentPage = page;
+        }
+        LeaveCriticalSection(&CS);
+
+        curPage = CurrentPage;
+        offset = (uint64_t)InterlockedExchangeAdd64(&curPage->Offset, realSize);
+    }
+
+    return curPage + offset;
+}
+
+FrameAllocator::FrameBuffer* FrameAllocator::AllocPage()
+{
+    auto page = GameAllocRaw(PageSize);
+    FrameBuffers[0].push_back(page);
+    return static_cast<FrameBuffer*>(page);
+}
+
+void FrameAllocator::Free(void* ptr)
+{
+    // Per-frame data is batch released at the end of the frame
+}
+
+
+EntityHandle EntityHandleGenerator::Create()
+{
+    auto tid = ThreadRegistry::RequestThreadIndex();
+    auto entry = ThreadStates[tid].Add();
+    return EntityHandle(tid, entry->Index, entry->Salt);
+}
+
+EntityHandleGenerator::ThreadState::Entry* EntityHandleGenerator::ThreadState::Add()
+{
+    if (NumFreeSlots < Entries.bucket_size() / 2) {
+        auto oldCapacity = Entries.capacity();
+        if (Entries.capacity() < Entries.size() + Entries.bucket_size()) {
+            Entries.resize(Entries.capacity() + Entries.bucket_size());
+        }
+
+        auto growSize = Entries.capacity() - oldCapacity;
+        for (uint32_t i = 0; i < growSize; i++) {
+            auto index = Entries.size();
+            auto entry = Entries.add();
+            *entry = Entry{
+                .Index = index,
+                .Salt = 1
+            };
+            if (NumFreeSlots > 0) {
+                Entries[LastFreeSlotIndex].Index = index;
+            } else {
+                NextFreeSlotIndex = index;
+            }
+
+            LastFreeSlotIndex = index;
+            NumFreeSlots++;
+        }
+    }
+
+    auto index = NextFreeSlotIndex;
+    NumFreeSlots--;
+    auto entry = &Entries[index];
+    NextFreeSlotIndex = entry->Index;
+    entry->Index = index;
+    return entry;
+}
+
 void* EntityStorageData::GetComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy) const
 {
     auto ref = InstanceToPageMap.try_get(entityHandle);
@@ -180,7 +259,7 @@ void* ImmediateWorldCache::Changes::GetChange(EntityHandle entityHandle, Compone
 {
     auto typeIdx = (uint16_t)type;
     if (AvailableComponentTypes[typeIdx]) {
-        auto change = ComponentsByType[typeIdx].Components.Find(entityHandle);
+        auto change = ComponentsByType[typeIdx].Components.find(entityHandle);
         if (change) {
             return change->Ptr;
         }
@@ -240,6 +319,33 @@ ComponentOps* ComponentOpsRegistry::Get(ComponentTypeIndex id) const
     auto idx = (uint32_t)SparseHashMapHash(id);
     return idx < Ops.size() ? Ops[idx] : nullptr;
 }
+
+ECBEntityChangeSet* ECBData::GetEntityChange(EntityHandle const& entity)
+{
+    auto changes = EntityChanges.find(entity);
+    if (changes == nullptr) {
+        changes = EntityChanges.add_uninitialized(entity);
+        new (changes) ECBEntityChangeSet(EntityChanges.allocator().Allocator);
+    }
+
+    return changes;
+}
+
+EntityHandle EntityCommandBuffer::CreateEntity()
+{
+    auto entity = HandleGenerator->Create();
+    auto change = Data.GetEntityChange(entity);
+    change->Flags |= EntityChangeFlags::Create;
+    return entity;
+}
+
+EntityHandle EntityCommandBuffer::CreateEntityImmediate()
+{
+    auto entity = HandleGenerator->Create();
+    auto change = Data.GetEntityChange(entity);
+    change->Flags |= EntityChangeFlags::Create | EntityChangeFlags::Immediate;
+    return entity;
+}
     
 void* EntityWorld::GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy)
 {
@@ -272,10 +378,10 @@ void* EntityWorld::GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex
 
 bool EntityWorld::IsValid(EntityHandle entityHandle) const
 {
-    if (entityHandle.GetType() < std::size(HandleGenerator->ThreadStates)) {
-        auto& state = HandleGenerator->ThreadStates[entityHandle.GetType()];
-        if (entityHandle.GetIndex() < state.Salts.Size) {
-            auto const& salt = state.Salts[entityHandle.GetIndex()];
+    if (entityHandle.GetThreadIndex() < std::size(HandleGenerator->ThreadStates)) {
+        auto& state = HandleGenerator->ThreadStates[entityHandle.GetThreadIndex()];
+        if (entityHandle.GetIndex() < state.Entries.size()) {
+            auto const& salt = state.Entries[entityHandle.GetIndex()];
             return salt.Salt == entityHandle.GetSalt() && salt.Index == entityHandle.GetIndex();
         }
     }
@@ -283,10 +389,15 @@ bool EntityWorld::IsValid(EntityHandle entityHandle) const
     return false;
 }
 
+EntityCommandBuffer* EntityWorld::Deferred()
+{
+    return &CommandBuffers[ThreadRegistry::RequestThreadIndex()];
+}
+
 EntityStorageData* EntityStorageContainer::GetEntityStorage(EntityHandle entityHandle) const
 {
-    auto& componentSalts = Salts.Buckets[entityHandle.GetType()];
-    if (entityHandle.GetIndex() < componentSalts.Size) {
+    auto& componentSalts = Salts.Buckets[entityHandle.GetThreadIndex()];
+    if (entityHandle.GetIndex() < componentSalts.size()) {
         auto const& salt = componentSalts[entityHandle.GetIndex()];
         if (salt.Salt == entityHandle.GetSalt()) {
             return Entities[salt.EntityClassIndex];
@@ -734,8 +845,8 @@ void EntitySystemHelpersBase::DebugLogUpdateChanges()
     for (unsigned i = 0; i < changes.AvailableComponentTypes.NumBits; i++) {
         if (changes.AvailableComponentTypes[i]) {
             auto const& changeSet = changes.ComponentsByType[i];
-            for (unsigned j = 0; j < changeSet.Components.KeysSize; j++) {
-                auto entityHandle = changeSet.Components.KeyAt(j);
+            for (unsigned j = 0; j < changeSet.Components.size(); j++) {
+                auto entityHandle = changeSet.Components.key_at(j);
                 auto const& change = changeSet.Components.Values[j];
 
                 log_.AddComponentChange(world, entityHandle, ComponentTypeIndex{ (uint16_t)i }, change.Ptr ? ComponentChangeFlags::Create : ComponentChangeFlags::Destroy);
@@ -805,13 +916,13 @@ void EntitySystemHelpersBase::DebugLogECBFlushChanges()
     auto world = GetEntityWorld();
 
     for (auto& ecb : world->CommandBuffers) {
-        for (unsigned i = 0; i < ecb.Data.EntityChanges.KeysSize; i++) {
-            auto entityHandle = ecb.Data.EntityChanges.KeyAt(i);
+        for (unsigned i = 0; i < ecb.Data.EntityChanges.size(); i++) {
+            auto entityHandle = ecb.Data.EntityChanges.key_at(i);
             auto const& entityChanges = ecb.Data.EntityChanges.Values[i];
 
             log_.AddEntityChange(entityHandle, entityChanges.Flags);
 
-            for (unsigned j = 0; j < entityChanges.Store.Size; j++) {
+            for (unsigned j = 0; j < entityChanges.Store.size(); j++) {
                 auto const& upd = entityChanges.Store[j];
 
                 log_.AddComponentChange(world, entityHandle, upd.ComponentTypeId, 
@@ -830,11 +941,11 @@ void EntitySystemHelpersBase::ThrowECBFlushEvents()
     auto& hooks = state->GetLua()->GetComponentEventHooks();
 
     for (auto& ecb : world->CommandBuffers) {
-        for (unsigned i = 0; i < ecb.Data.EntityChanges.KeysSize; i++) {
-            auto entity = ecb.Data.EntityChanges.KeyAt(i);
+        for (unsigned i = 0; i < ecb.Data.EntityChanges.size(); i++) {
+            auto entity = ecb.Data.EntityChanges.key_at(i);
             auto const& entityChanges = ecb.Data.EntityChanges.Values[i];
 
-            for (unsigned j = 0; j < entityChanges.Store.Size; j++) {
+            for (unsigned j = 0; j < entityChanges.Store.size(); j++) {
                 auto const& upd = entityChanges.Store[j];
                 if (upd.PoolIndex.PageIndex != 0xffff) {
                     auto typeInfo = GetComponentMeta(upd.ComponentTypeId);
@@ -941,11 +1052,11 @@ void EntitySystemHelpersBase::ValidateECBFlushChanges()
     EntityHandle last{};
 
     for (auto& ecb : world->CommandBuffers) {
-        for (unsigned i = 0; i < ecb.Data.EntityChanges.KeysSize; i++) {
-            auto entityHandle = ecb.Data.EntityChanges.KeyAt(i);
+        for (unsigned i = 0; i < ecb.Data.EntityChanges.size(); i++) {
+            auto entityHandle = ecb.Data.EntityChanges.key_at(i);
             auto const& entityChanges = ecb.Data.EntityChanges.Values[i];
 
-            for (unsigned j = 0; j < entityChanges.Store.Size; j++) {
+            for (unsigned j = 0; j < entityChanges.Store.size(); j++) {
                 auto const& change = entityChanges.Store[j];
 
                 if (change.PoolIndex.PageIndex != 0xffff) {
@@ -1001,8 +1112,8 @@ void EntitySystemHelpersBase::ValidateEntityChanges(ImmediateWorldCache::Changes
             auto componentType = GetComponentType(ComponentTypeIndex(componentId));
             if (componentType) {
                 auto pm = GetPropertyMap(*componentType);
-                if (pm != nullptr && components.Values.Size > 0) {
-                    for (uint32_t j = 0; j < components.Values.Size; j++) {
+                if (pm != nullptr && components.Values.size() > 0) {
+                    for (uint32_t j = 0; j < components.Values.size(); j++) {
                         auto const& component = components.Values[j];
                         if (component.Ptr != nullptr) {
                             pm->ValidateObject(component.Ptr);

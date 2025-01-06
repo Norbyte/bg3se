@@ -98,6 +98,12 @@ Array<EntityHandle> GetAllEntities(lua_State* L)
     return entities;
 }
 
+EntityHandle Create(lua_State* L)
+{
+    auto world = State::FromLua(L)->GetEntitySystemHelpers()->GetEntityWorld();
+    return world->Deferred()->CreateEntityImmediate();
+}
+
 std::optional<LuaEntitySubscriptionId> Subscribe(lua_State* L, ExtComponentType type, FunctionRef func, std::optional<EntityHandle> entity, std::optional<uint64_t> flags)
 {
     return EntityEventHelpers::SubscribeReplication(L, entity ? *entity : EntityHandle{}, type, func.MakePersistent(L), flags);
@@ -214,10 +220,14 @@ void RegisterEntityLib()
     BEGIN_MODULE()
     MODULE_FUNCTION(HandleToUuid)
     MODULE_FUNCTION(UuidToHandle)
+
     MODULE_FUNCTION(Get)
     MODULE_FUNCTION(GetAllEntitiesWithUuid)
     MODULE_FUNCTION(GetAllEntitiesWithComponent)
     MODULE_FUNCTION(GetAllEntities)
+
+    MODULE_FUNCTION(Create)
+
     MODULE_FUNCTION(Subscribe)
     MODULE_NAMED_FUNCTION("OnChange", Subscribe)
     MODULE_FUNCTION(OnCreate)
@@ -229,9 +239,11 @@ void RegisterEntityLib()
     MODULE_FUNCTION(OnDestroyOnce)
     MODULE_FUNCTION(OnDestroyDeferredOnce)
     MODULE_FUNCTION(Unsubscribe)
+
     MODULE_FUNCTION(EnableTracing)
     MODULE_FUNCTION(GetTrace)
     MODULE_FUNCTION(ClearTrace)
+
     MODULE_FUNCTION(GetRegisteredComponentTypes)
     END_MODULE()
 }

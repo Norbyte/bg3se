@@ -53,6 +53,13 @@
       <Target Type="Indirect" Offset="@ref3" Symbol="ls__GlobalStringTable__MainTable__DecRef" />
     </Mapping>
 
+    <Mapping Name="ls::ThreadRegistry::RequestThreadIndex" Scope="Custom">
+      @ref1 e8 ?? ?? ?? ?? // call    ls__ThreadRegistry__RequestThreadIndex
+      48 63 c8 // movsxd  rcx, eax
+      48 c1 e1 06 // shl     rcx, 6
+      <Target Type="Indirect" Offset="@ref1" Symbol="ls__ThreadRegistry__RequestThreadIndex" />
+    </Mapping>
+
     <Mapping Name="ls::FixedString::CreateFromString" Critical="true">
       @str1 48 8d 05 ?? ?? ?? ?? // lea     rax, aH8e3f9e82g8fda; "h8e3f9e82g8fdag437cg99c1g4988a6aeccff"
       48 89 44 24 28 // mov     [rsp+58h+a3.Str], rax
@@ -66,6 +73,7 @@
       @ref2 e8 ?? ?? ?? ?? // call    ls__GlobalStringTable__MainTable__FromString
       <Condition Type="String" Offset="@str1" Value="h8e3f9e82g8fdag437cg99c1g4988a6aeccff" />
       <Target Type="Indirect" Offset="@ref2" Symbol="ls__GlobalStringTable__MainTable__CreateFromString" />
+      <Target Type="Indirect" Offset="@ref2" NextSymbol="ls::ThreadRegistry::RequestThreadIndex" NextSymbolSeekSize="512" />
     </Mapping>
 
     <Mapping Name="ls::FixedString::GetString" Critical="true">

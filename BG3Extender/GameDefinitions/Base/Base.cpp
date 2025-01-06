@@ -30,4 +30,9 @@ std::optional<StringView> TranslatedFSString::Get() const
     return GetStaticSymbols().GetTranslatedStringRepository()->GetTranslatedString(Handle);
 }
 
+uint32_t ThreadRegistry::RequestThreadIndex()
+{
+    return GetStaticSymbols().ls__ThreadRegistry__RequestThreadIndex();
+}
+
 END_SE()

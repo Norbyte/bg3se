@@ -243,21 +243,6 @@ Array<STDString> EntityProxyMetatable::GetAllComponentNames(lua_State* L, Entity
     return names;
 }
 
-uint32_t EntityProxyMetatable::GetEntityType(EntityHandle entity)
-{
-    return entity.GetType();
-}
-
-uint32_t EntityProxyMetatable::GetSalt(EntityHandle entity)
-{
-    return entity.GetSalt();
-}
-
-uint32_t EntityProxyMetatable::GetIndex(EntityHandle entity)
-{
-    return entity.GetIndex();
-}
-
 bool EntityProxyMetatable::IsAlive(lua_State* L, EntityHandle entity)
 {
     auto world = GetEntitySystem(L)->GetEntityWorld();
@@ -382,9 +367,6 @@ void EntityProxyMetatable::StaticInitialize()
     ADD_FUNC(GetAllComponents);
     ADD_FUNC(GetAllComponentNames);
 
-    ADD_FUNC(GetEntityType);
-    ADD_FUNC(GetSalt);
-    ADD_FUNC(GetIndex);
     ADD_FUNC(IsAlive);
 
     ADD_FUNC(GetReplicationFlags);
