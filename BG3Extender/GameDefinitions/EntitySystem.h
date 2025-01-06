@@ -422,6 +422,7 @@ struct EntityHandleGenerator : public ProtectedGameObject<EntityHandleGenerator>
     std::array<ThreadState, 0x40> ThreadStates;
 
     EntityHandle Create();
+    bool IsEntityAlive(EntityHandle entity) const;
 };
 
 struct EntityStorageComponentPage
@@ -661,6 +662,7 @@ struct EntityCommandBuffer : public ProtectedGameObject<EntityCommandBuffer>
 
     EntityHandle CreateEntity();
     EntityHandle CreateEntityImmediate();
+    bool DestroyEntity(EntityHandle entity);
 };
 
 struct GroupAllocator : public ProtectedGameObject<GroupAllocator>

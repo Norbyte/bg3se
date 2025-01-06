@@ -169,6 +169,19 @@ void FrameAllocator::Free(void* ptr)
     // Per-frame data is batch released at the end of the frame
 }
 
+bool EntityHandleGenerator::IsEntityAlive(EntityHandle entity) const
+{
+    if (entity.GetThreadIndex() < ThreadStates.size()) {
+        auto const& state = ThreadStates[entity.GetThreadIndex()];
+        if (entity.GetIndex() < state.Entries.size()) {
+            auto const& entry = state.Entries[entity.GetIndex()];
+            return entry.Index == entity.GetIndex()
+                && entry.Salt == entity.GetSalt();
+        }
+    }
+
+    return false;
+}
 
 EntityHandle EntityHandleGenerator::Create()
 {
@@ -345,6 +358,21 @@ EntityHandle EntityCommandBuffer::CreateEntityImmediate()
     auto change = Data.GetEntityChange(entity);
     change->Flags |= EntityChangeFlags::Create | EntityChangeFlags::Immediate;
     return entity;
+}
+
+bool EntityCommandBuffer::DestroyEntity(EntityHandle entity)
+{
+    if (HandleGenerator->IsEntityAlive(entity)) {
+        auto change = Data.GetEntityChange(entity);
+        if ((change->Flags & EntityChangeFlags::Create) == EntityChangeFlags::Create) {
+            ERR("Cannot create and destroy an entity in the same frame");
+        } else {
+            change->Flags |= EntityChangeFlags::Destroy;
+            return true;
+        }
+    }
+
+    return false;
 }
     
 void* EntityWorld::GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy)

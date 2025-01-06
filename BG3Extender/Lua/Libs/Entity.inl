@@ -104,6 +104,12 @@ EntityHandle Create(lua_State* L)
     return world->Deferred()->CreateEntityImmediate();
 }
 
+bool Destroy(lua_State* L, EntityHandle entity)
+{
+    auto world = State::FromLua(L)->GetEntitySystemHelpers()->GetEntityWorld();
+    return world->Deferred()->DestroyEntity(entity);
+}
+
 std::optional<LuaEntitySubscriptionId> Subscribe(lua_State* L, ExtComponentType type, FunctionRef func, std::optional<EntityHandle> entity, std::optional<uint64_t> flags)
 {
     return EntityEventHelpers::SubscribeReplication(L, entity ? *entity : EntityHandle{}, type, func.MakePersistent(L), flags);
@@ -227,6 +233,7 @@ void RegisterEntityLib()
     MODULE_FUNCTION(GetAllEntities)
 
     MODULE_FUNCTION(Create)
+    MODULE_FUNCTION(Destroy)
 
     MODULE_FUNCTION(Subscribe)
     MODULE_NAMED_FUNCTION("OnChange", Subscribe)
