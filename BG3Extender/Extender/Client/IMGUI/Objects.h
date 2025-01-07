@@ -289,16 +289,9 @@ struct WindowRenderRequests
     std::optional<float> BgAlpha;
 };
 
-struct Window : public TreeParent
+struct WindowBase : public TreeParent
 {
 public:
-    DECL_UI_TYPE(Window)
-
-    bool BeginRender() override;
-    void EndRender() override;
-
-    lua::ImguiHandle AddMainMenu();
-
     void SetPos(glm::vec2 pos, std::optional<GuiCond> cond, std::optional<glm::vec2> pivot);
     void SetSize(glm::vec2 size, std::optional<GuiCond> cond);
     void SetSizeConstraints(std::optional<glm::vec2> size_min, std::optional<glm::vec2> size_max);
@@ -308,17 +301,31 @@ public:
     void SetScroll(std::optional<glm::vec2> scroll);
     void SetBgAlpha(std::optional<float> alpha);
 
+    GuiWindowFlags Flags{ 0 };
+
+protected:
+    WindowRenderRequests req_;
+
+    void ProcessRenderSettings();
+};
+
+struct Window : public WindowBase
+{
+public:
+    DECL_UI_TYPE(Window)
+
+    bool BeginRender() override;
+    void EndRender() override;
+
+    lua::ImguiHandle AddMainMenu();
+
     bool Open{ true };
     bool Closeable{ false };
-    GuiWindowFlags Flags{ 0 };
     lua::LuaDelegate<void(lua::ImguiHandle)> OnClose;
     lua::ImguiHandle MainMenu;
 
 private:
     bool rendering_{ false };
-    WindowRenderRequests req_;
-
-    void ProcessRenderSettings();
 };
 
 
@@ -512,7 +519,7 @@ public:
 };
 
 
-struct Tooltip : public TreeParent
+struct Tooltip : public WindowBase
 {
 public:
     DECL_UI_TYPE(Tooltip)
@@ -525,7 +532,7 @@ private:
 };
 
 
-struct Popup : public TreeParent
+struct Popup : public WindowBase
 {
 public:
     DECL_UI_TYPE(Popup)
@@ -535,8 +542,6 @@ public:
 
     void Open(std::optional<GuiPopupFlags> flags);
 
-    GuiWindowFlags Flags{ 0 };
-
 private:
     bool rendering_{ false };
     bool requestOpen_{ false };
@@ -544,7 +549,7 @@ private:
 };
 
 
-struct ChildWindow : public TreeParent
+struct ChildWindow : public WindowBase
 {
 public:
     DECL_UI_TYPE(ChildWindow)
@@ -552,7 +557,6 @@ public:
     bool BeginRender() override;
     void EndRender() override;
 
-    GuiWindowFlags Flags{ 0 };
     GuiChildFlags ChildFlags{ 0 };
     std::optional<glm::vec2> Size;
 };

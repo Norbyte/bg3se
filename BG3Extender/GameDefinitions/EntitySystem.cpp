@@ -385,7 +385,12 @@ ComponentOps* ComponentOpsRegistry::Get(ComponentTypeIndex id) const
     return idx < Ops.size() ? Ops[idx] : nullptr;
 }
 
-ECBEntityChangeSet* ECBData::GetEntityChange(EntityHandle const& entity)
+ECBEntityChangeSet const* ECBData::GetEntityChange(EntityHandle const& entity) const
+{
+    return EntityChanges.find(entity);
+}
+
+ECBEntityChangeSet* ECBData::GetOrAddEntityChange(EntityHandle const& entity)
 {
     auto changes = EntityChanges.find(entity);
     if (changes == nullptr) {
@@ -399,7 +404,7 @@ ECBEntityChangeSet* ECBData::GetEntityChange(EntityHandle const& entity)
 EntityHandle EntityCommandBuffer::CreateEntity()
 {
     auto entity = HandleGenerator->Create();
-    auto change = Data.GetEntityChange(entity);
+    auto change = Data.GetOrAddEntityChange(entity);
     change->Flags |= EntityChangeFlags::Create;
     return entity;
 }
@@ -407,7 +412,7 @@ EntityHandle EntityCommandBuffer::CreateEntity()
 EntityHandle EntityCommandBuffer::CreateEntityImmediate()
 {
     auto entity = HandleGenerator->Create();
-    auto change = Data.GetEntityChange(entity);
+    auto change = Data.GetOrAddEntityChange(entity);
     change->Flags |= EntityChangeFlags::Create | EntityChangeFlags::Immediate;
     return entity;
 }
@@ -415,7 +420,7 @@ EntityHandle EntityCommandBuffer::CreateEntityImmediate()
 bool EntityCommandBuffer::DestroyEntity(EntityHandle entity)
 {
     if (HandleGenerator->IsEntityAlive(entity)) {
-        auto change = Data.GetEntityChange(entity);
+        auto change = Data.GetOrAddEntityChange(entity);
         if ((change->Flags & EntityChangeFlags::Create) == EntityChangeFlags::Create) {
             ERR("Cannot create and destroy an entity in the same frame");
         } else {
@@ -426,7 +431,7 @@ bool EntityCommandBuffer::DestroyEntity(EntityHandle entity)
 
     return false;
 }
-    
+
 void* EntityWorld::GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy)
 {
     auto storage = GetEntityStorage(entityHandle);

@@ -663,7 +663,8 @@ struct ECBData : public ProtectedGameObject<ECBData>
     DoubleIndexedPagedArray<ComponentTypeIndex, ComponentFrameStorage, ECBFrameAllocator> ComponentPools;
     bool field_A0;
 
-    ECBEntityChangeSet* GetEntityChange(EntityHandle const& entity);
+    ECBEntityChangeSet const* GetEntityChange(EntityHandle const& entity) const;
+    ECBEntityChangeSet* GetOrAddEntityChange(EntityHandle const& entity);
 };
 
 struct EntityCommandBuffer : public ProtectedGameObject<EntityCommandBuffer>

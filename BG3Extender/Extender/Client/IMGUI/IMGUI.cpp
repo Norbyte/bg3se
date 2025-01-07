@@ -765,43 +765,7 @@ Array<lua::ImguiHandle> TreeParent::GetChildren() const
     return handles;
 }
 
-bool Window::BeginRender()
-{
-    if (!Open || (Label.empty() && IDContext.empty())) return false;
-
-    ProcessRenderSettings();
-
-    bool wasOpen = Open;
-    bool renderChildren = ImGui::Begin(Label.c_str(), Closeable ? &Open : nullptr, (ImGuiWindowFlags)Flags);
-
-    rendering_ = true;
-
-    if (wasOpen && !Open && OnClose) {
-        Manager->GetEventQueue().Call(OnClose, lua::ImguiHandle(Handle));
-    }
-
-    return renderChildren;
-}
-
-void Window::EndRender()
-{
-    if (rendering_) {
-        ImGui::End();
-        rendering_ = false;
-    }
-}
-
-lua::ImguiHandle Window::AddMainMenu()
-{
-    if (!MainMenu) {
-        MainMenu = AddChild<MenuBar>();
-        Flags |= GuiWindowFlags::MenuBar;
-    }
-
-    return MainMenu;
-}
-
-void Window::SetPos(glm::vec2 pos, std::optional<GuiCond> cond, std::optional<glm::vec2> pivot)
+void WindowBase::SetPos(glm::vec2 pos, std::optional<GuiCond> cond, std::optional<glm::vec2> pivot)
 {
     req_.Pos = WindowRenderRequests::SetPos { 
         ToImVec(pos),
@@ -810,12 +774,12 @@ void Window::SetPos(glm::vec2 pos, std::optional<GuiCond> cond, std::optional<gl
     };
 }
 
-void Window::SetSize(glm::vec2 size, std::optional<GuiCond> cond)
+void WindowBase::SetSize(glm::vec2 size, std::optional<GuiCond> cond)
 {
     req_.Size = WindowRenderRequests::SetSize{ ToImVec(size), cond ? (ImGuiCond)*cond : ImGuiCond_Always };
 }
 
-void Window::SetSizeConstraints(std::optional<glm::vec2> size_min, std::optional<glm::vec2> size_max)
+void WindowBase::SetSizeConstraints(std::optional<glm::vec2> size_min, std::optional<glm::vec2> size_max)
 {
     if (size_min || size_max) {
         req_.SizeConstraints = WindowRenderRequests::SetSizeConstraints{ 
@@ -827,33 +791,33 @@ void Window::SetSizeConstraints(std::optional<glm::vec2> size_min, std::optional
     }
 }
 
-void Window::SetContentSize(std::optional<glm::vec2> size)
+void WindowBase::SetContentSize(std::optional<glm::vec2> size)
 {
     req_.ContentSize = size ? std::optional<ImVec2>(ToImVec(*size)) : std::optional<ImVec2>{};
 }
 
-void Window::SetCollapsed(bool collapsed, std::optional<GuiCond> cond)
+void WindowBase::SetCollapsed(bool collapsed, std::optional<GuiCond> cond)
 {
     req_.Collapsed = WindowRenderRequests::SetCollapsed{ collapsed, cond ? (ImGuiCond)*cond : ImGuiCond_Always };
 }
 
-void Window::SetFocus()
+void WindowBase::SetFocus()
 {
     req_.Focus = true;
 }
 
-void Window::SetScroll(std::optional<glm::vec2> scroll)
+void WindowBase::SetScroll(std::optional<glm::vec2> scroll)
 {
     req_.Scroll = scroll ? std::optional<ImVec2>(ToImVec(*scroll)) : std::optional<ImVec2>{};
 }
 
-void Window::SetBgAlpha(std::optional<float> alpha)
+void WindowBase::SetBgAlpha(std::optional<float> alpha)
 {
     req_.BgAlpha = alpha;
 }
 
 
-void Window::ProcessRenderSettings()
+void WindowBase::ProcessRenderSettings()
 {
     if (req_.Pos) {
         ImGui::SetNextWindowPos(req_.Pos->Pos, req_.Pos->Cond, req_.Pos->Pivot);
@@ -894,6 +858,42 @@ void Window::ProcessRenderSettings()
         ImGui::SetNextWindowBgAlpha(*req_.BgAlpha);
         req_.BgAlpha = {};
     }
+}
+
+bool Window::BeginRender()
+{
+    if (!Open || (Label.empty() && IDContext.empty())) return false;
+
+    ProcessRenderSettings();
+
+    bool wasOpen = Open;
+    bool renderChildren = ImGui::Begin(Label.c_str(), Closeable ? &Open : nullptr, (ImGuiWindowFlags)Flags);
+
+    rendering_ = true;
+
+    if (wasOpen && !Open && OnClose) {
+        Manager->GetEventQueue().Call(OnClose, lua::ImguiHandle(Handle));
+    }
+
+    return renderChildren;
+}
+
+void Window::EndRender()
+{
+    if (rendering_) {
+        ImGui::End();
+        rendering_ = false;
+    }
+}
+
+lua::ImguiHandle Window::AddMainMenu()
+{
+    if (!MainMenu) {
+        MainMenu = AddChild<MenuBar>();
+        Flags |= GuiWindowFlags::MenuBar;
+    }
+
+    return MainMenu;
 }
 
 bool MenuBar::BeginRender()
@@ -1128,7 +1128,14 @@ void TableCell::EndRender()
 
 bool Tooltip::BeginRender()
 {
-    rendering_ = ImGui::BeginItemTooltip();
+    // BeginItemTooltip() doesn't consume next window settings so we need to set them conditionally
+    if (ImGui::IsItemHovered(ImGuiHoveredFlags_ForTooltip)) {
+        ProcessRenderSettings();
+        rendering_ = ImGui::BeginTooltipEx(ImGuiTooltipFlags_None, (ImGuiWindowFlags)Flags);
+    } else {
+        rendering_ = false;
+    }
+    
     return rendering_;
 }
 
@@ -1147,6 +1154,7 @@ bool Popup::BeginRender()
         requestOpen_ = false;
     }
 
+    ProcessRenderSettings();
     rendering_ = ImGui::BeginPopup(Label.c_str(), (ImGuiWindowFlags)Flags);
     return rendering_;
 }
@@ -1169,6 +1177,7 @@ void Popup::Open(std::optional<GuiPopupFlags> flags)
 bool ChildWindow::BeginRender()
 {
     ImGuiID id = ImGui::GetCurrentWindow()->GetID(Label.c_str());
+    ProcessRenderSettings();
     return ImGui::BeginChildEx(Label.c_str(), id, ToImVec(Size), (ImGuiWindowFlags)Flags, (ImGuiChildFlags)ChildFlags);
 }
 
