@@ -122,6 +122,7 @@ INHERIT(extui::WindowBase)
 P_FUN(AddMainMenu, extui::Window::AddMainMenu)
 P(Open)
 P(Closeable)
+P(Scaling)
 P(OnClose)
 END_CLS()
 

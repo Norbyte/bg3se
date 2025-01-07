@@ -5,6 +5,21 @@
 
 BEGIN_NS(extui)
 
+inline ImVec2 ToImVec(glm::vec2 const& v)
+{
+    return ImVec2(v.x, v.y);
+}
+
+inline ImVec4 ToImVec(glm::vec4 const& v)
+{
+    return ImVec4(v.x, v.y, v.z, v.w);
+}
+
+inline ImVec2 ToImVec(std::optional<glm::vec2> const& v, ImVec2 defaultVal = ImVec2(0.0f, 0.0f))
+{
+    return v ? ImVec2(v->x, v->y) : defaultVal;
+}
+
 using HandleType = uint64_t;
 static constexpr HandleType InvalidHandle = 0xffffffffffffffffull;
 
