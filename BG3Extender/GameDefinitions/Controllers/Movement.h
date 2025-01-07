@@ -18,6 +18,10 @@ struct MovementState : public ProtectedGameObject<MovementState>
 
     MovementMachine* MovementMachine;
     int TransactionId;
+
+    // Lua getter helpers
+    MovementType LuaGetType() const;
+    //# P_GETTER(Type, LuaGetType)
 };
 
 

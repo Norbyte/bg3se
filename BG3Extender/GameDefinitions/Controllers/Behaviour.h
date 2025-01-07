@@ -29,6 +29,10 @@ struct BehaviourState : public ProtectedGameObject<BehaviourMachine>
 
     BehaviourMachine* BehaviourMachine;
     int TransactionId;
+
+    // Lua getter helpers
+    BehaviourType LuaGetType() const;
+    //# P_GETTER(Type, LuaGetType)
 };
 
 struct BSMoveCheckpoint : public AiPathCheckpoint

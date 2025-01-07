@@ -28,3 +28,12 @@ void LuaPolymorphic<esv::BehaviourState>::MakeRef(lua_State* L, esv::BehaviourSt
 }
 
 END_NS()
+
+BEGIN_NS(esv)
+
+BehaviourType BehaviourState::LuaGetType() const
+{
+    return GetType();
+}
+
+END_NS()

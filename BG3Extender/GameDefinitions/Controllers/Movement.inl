@@ -24,3 +24,12 @@ void LuaPolymorphic<esv::MovementState>::MakeRef(lua_State* L, esv::MovementStat
 }
 
 END_NS()
+
+BEGIN_NS(esv)
+
+MovementType MovementState::LuaGetType() const
+{
+    return GetType();
+}
+
+END_NS()
