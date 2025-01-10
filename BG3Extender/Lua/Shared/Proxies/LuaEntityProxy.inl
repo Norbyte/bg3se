@@ -157,13 +157,9 @@ bool EntityProxyMetatable::HasRawComponent(lua_State* L, EntityHandle entity, ST
     }
 }
 
-UserReturn EntityProxyMetatable::GetAllComponents(lua_State* L, EntityHandle entity, std::optional<bool> warnOnMissing)
+template <class F>
+void EnumerateComponents(ecs::EntitySystemHelpersBase* ecs, EntityHandle entity, bool warnOnMissing, F f)
 {
-    StackCheck _(L, 1);
-
-    lua_newtable(L);
-
-    auto ecs = GetEntitySystem(L);
     auto world = ecs->GetEntityWorld();
     auto storage = world->GetEntityStorage(entity);
     if (storage != nullptr) {
@@ -175,9 +171,7 @@ UserReturn EntityProxyMetatable::GetAllComponents(lua_State* L, EntityHandle ent
                     auto const& meta = ecs->GetComponentMeta(*extType);
                     auto component = storage->GetComponent(*componentPtr, typeInfo.Value(), meta.Size, meta.IsProxy);
 
-                    push(L, *extType);
-                    PushComponent(L, component, *extType, GetCurrentLifetime(L));
-                    lua_rawset(L, -3);
+                    f(*extType, component);
                 } else if (warnOnMissing) {
                     auto name = ecs->GetComponentName(typeInfo.Key());
                     if (name) {
@@ -194,10 +188,7 @@ UserReturn EntityProxyMetatable::GetAllComponents(lua_State* L, EntityHandle ent
                     if (extType) {
                         auto const& meta = ecs->GetComponentMeta(*extType);
                         auto component = pool->Value().get_or_default(entity);
-
-                        push(L, *extType);
-                        PushComponent(L, component, *extType, GetCurrentLifetime(L));
-                        lua_rawset(L, -3);
+                        f(*extType, component);
                     } else if (warnOnMissing) {
                         auto name = ecs->GetComponentName(pool.Key());
                         if (name) {
@@ -210,6 +201,44 @@ UserReturn EntityProxyMetatable::GetAllComponents(lua_State* L, EntityHandle ent
             }
         }
     }
+
+    auto changes = world->Deferred();
+    auto change = changes->Data.GetEntityChange(entity);
+    if (change) {
+        for (uint32_t i = 0; i < change->Store.size(); i++) {
+            auto const& comp = change->Store[i];
+            if (comp.PoolIndex) {
+                auto extType = ecs->GetComponentType(comp.ComponentTypeId);
+                if (extType) {
+                    auto component = changes->GetComponentChange(comp.ComponentTypeId, comp.PoolIndex);
+                    if (component) {
+                        f(*extType, component);
+                    }
+                } else if (warnOnMissing) {
+                    auto name = ecs->GetComponentName(comp.ComponentTypeId);
+                    if (name) {
+                        OsiWarn("No model found for component: " << *name);
+                    } else {
+                        OsiWarn("No model found for component ID: " << (unsigned)comp.ComponentTypeId);
+                    }
+                }
+            }
+        }
+    }
+}
+
+UserReturn EntityProxyMetatable::GetAllComponents(lua_State* L, EntityHandle entity, std::optional<bool> warnOnMissing)
+{
+    StackCheck _(L, 1);
+
+    lua_newtable(L);
+
+    auto ecs = GetEntitySystem(L);
+    EnumerateComponents(ecs, entity, warnOnMissing && *warnOnMissing, [L] (ExtComponentType type, void* component) {
+        push(L, type);
+        PushComponent(L, component, type, GetCurrentLifetime(L));
+        lua_rawset(L, -3);
+    });
 
     return 1;
 }

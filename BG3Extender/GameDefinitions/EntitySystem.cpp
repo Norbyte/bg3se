@@ -432,6 +432,16 @@ bool EntityCommandBuffer::DestroyEntity(EntityHandle entity)
     return false;
 }
 
+void* EntityCommandBuffer::GetComponentChange(ComponentTypeIndex type, EntityStorageData::EntityStorageIndex const& index) const
+{
+    auto pool = Data.ComponentPools.Find(type);
+    if (index && pool) {
+        return pool->GetComponent(index);
+    }
+
+    return nullptr;
+}
+
 void* EntityWorld::GetRawComponent(EntityHandle entityHandle, ComponentTypeIndex type, std::size_t componentSize, bool isProxy)
 {
     auto storage = GetEntityStorage(entityHandle);
@@ -1150,12 +1160,9 @@ void EntitySystemHelpersBase::ValidateECBFlushChanges()
                         auto const& meta = GetComponentMeta(*componentType);
                         auto pm = GetPropertyMap(*componentType);
                         if (pm != nullptr) {
-                            auto pool = ecb.Data.ComponentPools.Find(change.ComponentTypeId);
-                            if (pool) {
-                                auto page = pool->Components[change.PoolIndex.PageIndex];
-                                auto component = reinterpret_cast<uint8_t*>(page) + (pool->ComponentSizeInBytes * change.PoolIndex.EntryIndex);
+                            auto component = ecb.GetComponentChange(change.ComponentTypeId, change.PoolIndex);
+                            if (component) {
                                 if (meta.IsProxy) {
-                                    assert(pool->ComponentSizeInBytes == sizeof(void*));
                                     pm->ValidateObject(*(void**)component);
                                 } else {
                                     pm->ValidateObject(component);

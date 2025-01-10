@@ -453,6 +453,11 @@ struct EntityStorageData : public ProtectedGameObject<EntityStorageData>
     {
         uint16_t PageIndex{ 0xffff };
         uint16_t EntryIndex{ 0xffff };
+
+        inline operator bool() const
+        {
+            return PageIndex != 0xffff;
+        }
     };
 
     struct HandlePage
@@ -604,14 +609,21 @@ struct ECBEntityChangeSet
 struct ComponentFrameStorage
 {
     inline ComponentFrameStorage(FrameAllocator* allocator)
-        : Components(3, allocator)
+        : Pages(3, allocator)
     {}
 
-    PagedArray<void*, ECBFrameAllocator> Components;
+    PagedArray<void*, ECBFrameAllocator> Pages;
     uint32_t NumComponents{ 0 };
     uint16_t ComponentSizeInBytes{ 0 };
     ComponentTypeIndex ComponentTypeId{ 0 };
     void* DestructorProc{ nullptr };
+
+    inline void* GetComponent(EntityStorageData::EntityStorageIndex const& index) const
+    {
+        assert(index.PageIndex < Pages.size());
+        auto page = Pages[index.PageIndex];
+        return reinterpret_cast<uint8_t*>(page) + (index.EntryIndex * ComponentSizeInBytes);
+    }
 };
 
 struct ImmediateWorldCache : public ProtectedGameObject<ImmediateWorldCache>
@@ -677,6 +689,7 @@ struct EntityCommandBuffer : public ProtectedGameObject<EntityCommandBuffer>
     EntityHandle CreateEntity();
     EntityHandle CreateEntityImmediate();
     bool DestroyEntity(EntityHandle entity);
+    void* GetComponentChange(ComponentTypeIndex type, EntityStorageData::EntityStorageIndex const& index) const;
 };
 
 struct GroupAllocator : public ProtectedGameObject<GroupAllocator>
