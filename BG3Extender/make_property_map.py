@@ -615,6 +615,7 @@ sources = [
     'GameDefinitions/Cursor.h',
     'GameDefinitions/Dialog.h',
     'GameDefinitions/Effect.h',
+    'GameDefinitions/Lighting.h',
     'GameDefinitions/RootTemplates.h',
     'GameDefinitions/Components/Boosts.h',
     'GameDefinitions/Components/Camera.h',
