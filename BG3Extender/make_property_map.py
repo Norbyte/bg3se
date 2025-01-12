@@ -645,6 +645,7 @@ sources = [
     'GameDefinitions/Stats/Functors.h',
     'GameDefinitions/Stats/Prototype.h',
     'GameDefinitions/Stats/UseActions.h',
+    'GameDefinitions/Physics.h',
     'GameDefinitions/Picking.h',
     'GameDefinitions/Render.h',
     'GameDefinitions/Resources.h',

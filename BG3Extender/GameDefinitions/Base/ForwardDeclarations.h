@@ -200,6 +200,7 @@ namespace phx
     struct PhysicsObject;
     struct PhysicsShape;
     struct PhysicsRagdoll;
+    struct PhysicsSceneBase;
     struct PhysXScene;
 }
 
