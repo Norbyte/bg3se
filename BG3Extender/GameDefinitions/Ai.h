@@ -463,9 +463,7 @@ struct AiPath : public ProtectedGameObject<AiPath>
     Array<AiPathEntityPosition> MovedEntities;
     Array<EntityHandle> IgnoreEntities;
     [[bg3::legacy(field_178)]] glm::vec3 TargetPosition;
-    [[bg3::hidden]] UnknownFunction* pDestinationFunc;
     [[bg3::hidden]] UnknownFunction DestinationFunc;
-    [[bg3::hidden]] Function<bool(AiGrid*, AiTilePos const&, int&)>* pWeightFunc;
     [[bg3::hidden]] Function<bool (AiGrid*, AiTilePos const&, int&)> WeightFunc;
     HashMap<AiTilePos, uint64_t> AoOTiles;
     Array<AiPathAoOPosition> AoOPositions;

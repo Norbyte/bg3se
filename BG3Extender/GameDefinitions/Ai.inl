@@ -210,7 +210,6 @@ bool CheckPlayerWeightCell(AiPlayerWeightFuncData const& data, AiGrid* aiGrid, A
 
 void AiPath::SetPlayerWeightFunction(AiPlayerWeightFuncData const& params)
 {
-    pWeightFunc = &WeightFunc;
     WeightFunc = MakeFunction(&CheckPlayerWeightCell, params);
 }
 
