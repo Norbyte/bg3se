@@ -26,6 +26,7 @@
 #include <Lua/Libs/ServerTemplate.inl>
 #include <Lua/Libs/ClientTemplate.inl>
 #include <Lua/Libs/ClientAudio.inl>
+#include <Lua/Libs/ClientInput.inl>
 #if defined(ENABLE_UI)
 #include <Lua/Libs/ClientUI/Module.inl>
 #endif
@@ -40,6 +41,7 @@ void RegisterClientLibraries()
     net::RegisterNetLib();
     tmpl::RegisterTemplateLib();
     audio::RegisterAudioLib();
+    input::RegisterInputLib();
 #if defined(ENABLE_UI)
     ui::RegisterUILib();
 #endif
