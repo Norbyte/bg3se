@@ -51,11 +51,13 @@ struct Functor
 };
 
 
-struct ContextData
+struct ContextData : public ProtectedGameObject<ContextData>
 {
+    virtual ~ContextData() = 0;
+
     FunctorContextType Type{ 0 };
-    PropertyContext PropertyContext{ 0 };
     int32_t StoryActionId{ 0 };
+    PropertyContext PropertyContext{ 0 };
     ActionOriginator Originator;
     [[bg3::hidden]] resource::GuidResourceBankBase* ClassResources{ nullptr };
     EntityHandle HistoryEntity;

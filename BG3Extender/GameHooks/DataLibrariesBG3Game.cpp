@@ -180,15 +180,15 @@ namespace bg3se
         SYM_OFF(stats__DealDamageFunctor__ApplyDamage);
         SYM_OFF(esv__StatsSystem__ThrowDamageEvent);
 
-        SYM_OFF(stats__Functors__ExecuteAttackTarget);
-        SYM_OFF(stats__Functors__ExecuteAttackPosition);
-        SYM_OFF(stats__Functors__ExecuteMove);
-        SYM_OFF(stats__Functors__ExecuteTarget);
-        SYM_OFF(stats__Functors__ExecuteNearbyAttacked);
-        SYM_OFF(stats__Functors__ExecuteNearbyAttacking);
-        SYM_OFF(stats__Functors__ExecuteEquip);
-        SYM_OFF(stats__Functors__ExecuteSource);
-        SYM_OFF(stats__Functors__ExecuteInterrupt);
+        SYM_OFF(esv__ExecuteStatsFunctor_AttackTargetContext);
+        SYM_OFF(esv__ExecuteStatsFunctor_AttackPositionContext);
+        SYM_OFF(esv__ExecuteStatsFunctor_MoveContext);
+        SYM_OFF(esv__ExecuteStatsFunctor_TargetContext);
+        SYM_OFF(esv__ExecuteStatsFunctor_NearbyAttackedContext);
+        SYM_OFF(esv__ExecuteStatsFunctor_NearbyAttackingContext);
+        SYM_OFF(esv__ExecuteStatsFunctor_EquipContext);
+        SYM_OFF(esv__ExecuteStatsFunctor_SourceContext);
+        SYM_OFF(esv__ExecuteStatsFunctor_InterruptContext);
 
         SYM_OFF(gRPGStats);
         SYM_OFF(RPGStats__Load);

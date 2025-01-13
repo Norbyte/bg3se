@@ -326,85 +326,71 @@
       </Patch>
     </Mapping>
 
-    <!--
-            Sig: Only caller to eoc::FunctorList::ExecuteType8
-            - ExecuteType8 refs fs_Surface_Type
-        -->
-    <!--
-        <Mapping Name="esv::PassiveSystem::ExecFunctorsBaseCtx">
-            <Target Type="Indirect" Offset="15" Symbol="eoc__StatsFunctorSet__ExecuteType1" />
-            <Target Type="Indirect" Offset="34" Symbol="eoc__StatsFunctorSet__ExecuteType2" />
-            <Target Type="Indirect" Offset="53" Symbol="eoc__StatsFunctorSet__ExecuteType3" />
-            <Target Type="Indirect" Offset="72" Symbol="eoc__StatsFunctorSet__ExecuteType4" />
-            <Target Type="Indirect" Offset="91" Symbol="eoc__StatsFunctorSet__ExecuteType5" />
-            <Target Type="Indirect" Offset="110" Symbol="eoc__StatsFunctorSet__ExecuteType6" />
-            <Target Type="Indirect" Offset="129" Symbol="eoc__StatsFunctorSet__ExecuteType7" />
-            <Target Type="Indirect" Offset="148" Symbol="eoc__StatsFunctorSet__ExecuteType8" />
-            4C 03 C8 // add     r9, rax
-            41 ?? ??  // jmp     xxx
-
-            4D 8B C2 // mov     r8, r10
-            49 8B D3 // mov     rdx, r11
-            48 8B CF // mov     rcx, rdi
-            E8 ?? ?? ?? ?? // call    eoc__FunctorList__xxx
-            E9 ?? ?? 00 00 // jmp     xxx
-
-            4D 8B C2 // mov     r8, r10
-            49 8B D3 // mov     rdx, r11
-            48 8B CF // mov     rcx, rdi
-            E8 ?? ?? ?? ?? // call    eoc__FunctorList__xxx
-            E9 ?? ?? 00 00 // jmp     xxx
-
-            4D 8B C2 // mov     r8, r10
-            49 8B D3 // mov     rdx, r11
-            48 8B CF // mov     rcx, rdi
-            E8 ?? ?? ?? ?? // call    eoc__FunctorList__xxx
-            E9 ?? ?? 00 00 // jmp     xxx
-
-            4D 8B C2 // mov     r8, r10
-            49 8B D3 // mov     rdx, r11
-            48 8B CF // mov     rcx, rdi
-            E8 ?? ?? ?? ?? // call    eoc__FunctorList__xxx
-            E9 ?? ?? 00 00 // jmp     xxx
-
-            4D 8B C2 // mov     r8, r10
-            49 8B D3 // mov     rdx, r11
-            48 8B CF // mov     rcx, rdi
-            E8 ?? ?? ?? ?? // call    eoc__FunctorList__xxx
-            E9 ?? ?? 00 00 // jmp     xxx
-
-            4D 8B C2 // mov     r8, r10
-            49 8B D3 // mov     rdx, r11
-            48 8B CF // mov     rcx, rdi
-            E8 ?? ?? ?? ?? // call    eoc__FunctorList__xxx
-            E9 ?? ?? 00 00 // jmp     xxx
-
-            4D 8B C2 // mov     r8, r10
-            49 8B D3 // mov     rdx, r11
-            48 8B CF // mov     rcx, rdi
-            E8 ?? ?? ?? ?? // call    eoc__FunctorList__xxx
-            E9 ?? ?? 00 00 // jmp     xxx
-
-            4D 8B C2 // mov     r8, r10
-            49 8B D3 // mov     rdx, r11
-            48 8B CF // mov     rcx, rdi
-            E8 ?? ?? ?? ?? // call    eoc__FunctorList__xxx
-            E9 ?? ?? 00 00 // jmp     xxx
-
-            48 8D 4C ?? ?? // lea     rcx, [rsp+238h+var_1D8]
-        </Mapping>
-
-        <Mapping Name="eoc::DealDamageFunctor::ApplyDamage Outer">
-            <Condition Type="FixedString" Offset="0" Value="FallDamageDamageType" />
-            <Target Type="Absolute" Offset="0" NextSymbol="eoc::DealDamageFunctor::ApplyDamage" NextSymbolSeekSize="384" />
-            48 8D 15 ?? ?? ?? ?? // lea     rdx, fs_FallDamageDamageType
-            48 8B 88 48 02 00 00 // mov     rcx, [rax+248h]
-            E8 ?? ?? ?? ?? // call    CRPGStats_ExtraData__Get
-            F3 0F 2C C0 // cvttss2si eax, xmm0
-            88 45 ?? // mov     [rbp+450h+var_40B], al
-            44 0F B6 C0 // movzx   r8d, al
-        </Mapping>
-        -->
+    <Mapping Name="esv::spell_cast::UnitTestHelper::ExecuteStatsFunctors">
+      41 8b 40 08 // mov     eax, [r8+8]
+      ff c8 // dec     eax; switch 9 cases
+      83 f8 08 // cmp     eax, 8
+      0f 87 ?? ?? ?? ?? // ja      def_1433D35CC; jumptable 00000001433D35CC default case
+      48 63 c8 // movsxd  rcx, eax
+      48 8d 05 ?? ?? ?? ?? // lea     rax, __ImageBase
+      44 8b 8c 88 ?? ?? ?? ?? // mov     r9d, ds:(jpt_1433D35CC - 140000000h)[rax+rcx*4]
+      4c 03 c8 // add     r9, rax
+      41 ff e1 // jmp     r9; switch jump
+      49 8b d2 // mov     rdx, r10; jumptable 00000001433D35CC case 1
+      49 8b ce // mov     rcx, r14
+      @ref2 e8 ?? ?? ?? ?? // call    esv__ExecuteStatsFunctor_AttackTargetContext
+      90 // nop
+      e9 10 04 00 00 // jmp     loc_1433D39F0
+      49 8b d2 // mov     rdx, r10; jumptable 00000001433D35CC case 2
+      49 8b ce // mov     rcx, r14
+      @ref3 e8 ?? ?? ?? ?? // call    esv__ExecuteStatsFunctor_AttackPositionContext
+      90 // nop
+      e9 ff 03 00 00 // jmp     loc_1433D39F0
+      49 8b d2 // mov     rdx, r10; jumptable 00000001433D35CC case 3
+      49 8b ce // mov     rcx, r14
+      @ref4 e8 ?? ?? ?? ?? // call    esv__ExecuteStatsFunctor_MoveContext
+      90 // nop
+      e9 ee 03 00 00 // jmp     loc_1433D39F0
+      49 8b d2 // mov     rdx, r10; jumptable 00000001433D35CC case 4
+      49 8b ce // mov     rcx, r14
+      @ref5 e8 ?? ?? ?? ?? // call    esv__ExecuteStatsFunctor_TargetContext
+      90 // nop
+      e9 dd 03 00 00 // jmp     loc_1433D39F0
+      49 8b d2 // mov     rdx, r10; jumptable 00000001433D35CC case 5
+      49 8b ce // mov     rcx, r14
+      @ref6 e8 ?? ?? ?? ?? // call    esv__ExecuteStatsFunctor_NearbyAttackedContext
+      90 // nop
+      e9 cc 03 00 00 // jmp     loc_1433D39F0
+      49 8b d2 // mov     rdx, r10; jumptable 00000001433D35CC case 6
+      49 8b ce // mov     rcx, r14
+      @ref7 e8 ?? ?? ?? ?? // call    esv__ExecuteStatsFunctor_NearbyAttackingContext
+      90 // nop
+      e9 bb 03 00 00 // jmp     loc_1433D39F0
+      49 8b d2 // mov     rdx, r10; jumptable 00000001433D35CC case 7
+      49 8b ce // mov     rcx, r14
+      @ref8 e8 ?? ?? ?? ?? // call    esv__ExecuteStatsFunctor_EquipContext
+      90 // nop
+      e9 aa 03 00 00 // jmp     loc_1433D39F0
+      49 8b d2 // mov     rdx, r10; jumptable 00000001433D35CC case 8
+      49 8b ce // mov     rcx, r14
+      @ref9 e8 ?? ?? ?? ?? // call    esv__ExecuteStatsFunctor_SourceContext
+      90 // nop
+      e9 99 03 00 00 // jmp     loc_1433D39F0
+      4d 8b c8 // mov     r9, r8; jumptable 00000001433D35CC case 9
+      4d 8b c2 // mov     r8, r10
+      49 8b 13 // mov     rdx, [r11]
+      49 8b ce // mov     rcx, r14
+      @ref10 e8 ?? ?? ?? ?? // call    esv__ExecuteStatsFunctor_InterruptContext
+      <Target Type="Indirect" Offset="@ref2" Symbol="esv__ExecuteStatsFunctor_AttackTargetContext" />
+      <Target Type="Indirect" Offset="@ref3" Symbol="esv__ExecuteStatsFunctor_AttackPositionContext" />
+      <Target Type="Indirect" Offset="@ref4" Symbol="esv__ExecuteStatsFunctor_MoveContext" />
+      <Target Type="Indirect" Offset="@ref5" Symbol="esv__ExecuteStatsFunctor_TargetContext" />
+      <Target Type="Indirect" Offset="@ref6" Symbol="esv__ExecuteStatsFunctor_NearbyAttackedContext" />
+      <Target Type="Indirect" Offset="@ref7" Symbol="esv__ExecuteStatsFunctor_NearbyAttackingContext" />
+      <Target Type="Indirect" Offset="@ref8" Symbol="esv__ExecuteStatsFunctor_EquipContext" />
+      <Target Type="Indirect" Offset="@ref9" Symbol="esv__ExecuteStatsFunctor_SourceContext" />
+      <Target Type="Indirect" Offset="@ref10" Symbol="esv__ExecuteStatsFunctor_InterruptContext" />
+    </Mapping>
 
     <!-- Sig: call from DealDamageFunctor::ApplyDamage, near ref to PassiveSystemID -->
     <Mapping Name="esv::StatsSystem::ThrowDamageEvent">
