@@ -113,9 +113,9 @@ struct PhysicsComponent : public BaseComponent
     DEFINE_COMPONENT(Physics, "ls::PhysicsComponent")
 
     phx::PhysicsObject* Physics;
-    int field_8;
-    int field_C;
-    int field_10;
+    uint32_t PhysicsGroup;
+    uint32_t CollidesWith;
+    uint32_t ExtraFlags;
     uint8_t field_14;
     uint8_t field_15;
     uint8_t field_16;
