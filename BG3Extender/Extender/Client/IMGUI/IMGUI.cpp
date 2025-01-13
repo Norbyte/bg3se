@@ -1039,7 +1039,7 @@ void Table::UpdateSorting()
 {
     auto sorting = ImGui::TableGetSortSpecs();
 
-    if (!needsSortingUpdate_ || !(sorting && sorting->SpecsDirty)) {
+    if (!needsSortingUpdate_ && !(sorting && sorting->SpecsDirty)) {
         return;
     }
 
@@ -1054,8 +1054,11 @@ void Table::UpdateSorting()
         }
     }
 
-    if (sorting && sorting->SpecsDirty && OnSortChanged) {
-        Manager->GetEventQueue().Call(OnSortChanged, lua::ImguiHandle(Handle));
+    if (sorting && sorting->SpecsDirty) {
+        sorting->SpecsDirty = false;
+        if (OnSortChanged) {
+            Manager->GetEventQueue().Call(OnSortChanged, lua::ImguiHandle(Handle));
+        }
     }
 
     needsSortingUpdate_ = false;
@@ -1073,6 +1076,7 @@ bool Table::BeginRender(DrawingContext& context)
         if (FreezeRows || FreezeCols) ImGui::TableSetupScrollFreeze((int)FreezeCols, (int)FreezeRows);
         if (ShowHeader && AngledHeader) ImGui::TableAngledHeadersRow();
         if (ShowHeader) ImGui::TableHeadersRow();
+        UpdateSorting();
     }
 
     return rendering_;
