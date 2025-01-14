@@ -810,20 +810,6 @@
       <Target Type="Indirect" Offset="@ref9" Symbol="eoc__InterruptPrototypeManager" />
     </Mapping>
 
-    <Mapping Name="stats__Functors__VMT">
-      4c 89 49 30 // mov     [rcx+30h], r9
-      4c 89 49 38 // mov     [rcx+38h], r9
-      44 89 4a 58 // mov     [rdx+58h], r9d
-      @ref1 4c 8d 05 ?? ?? ?? ?? // lea     r8, stats__Functors__VMT
-      4c 89 02 // mov     [rdx], r8
-      c7 42 60 ff ff ff ff // mov     dword ptr [rdx+60h], 0FFFFFFFFh
-      48 8d 93 38 01 00 00 // lea     rdx, [rbx+138h]
-      48 89 54 24 30 // mov     [rsp+28h+arg_0], rdx
-      48 8d 42 08 // lea     rax, [rdx+8]
-      48 89 44 24 30 // mov     [rsp+28h+arg_0], rax
-      <Target Type="Indirect" Offset="@ref1" Symbol="stats__Functors__VMT" />
-    </Mapping>
-
     <Mapping Name="eoc::StatusPrototype::Init">
       41 c7 46 04 11 00 00 00 // mov     dword ptr [r14+4], 11h
       41 b0 01 // mov     r8b, 1

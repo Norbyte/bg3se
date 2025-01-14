@@ -101,6 +101,7 @@ int SDLManager::SDLPollEventSEH(SDL_Event* event, int result)
     BEGIN_GUARDED()
     return SDLPollEventInternal(event, result);
     END_GUARDED()
+    return 0;
 }
 
 int SDLManager::SDLPollEventInternal(SDL_Event* event, int result)

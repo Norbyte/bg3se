@@ -19,13 +19,13 @@ STDString* ConditionId::Get() const
 
 Array<Functor*> FunctorGroup::GetFunctors() const
 {
-    return Functors->FunctorList;
+    return Functors->Values;
 }
 
 RPGEnumeration* Object::GetAttributeInfo(FixedString const& attributeName, int& attributeIndex) const
 {
     auto stats = GetStaticSymbols().GetStats();
-    auto objModifiers = stats->ModifierLists.Find(ModifierListIndex);
+    auto objModifiers = stats->ModifierLists.GetByHandle(ModifierListIndex);
     if (objModifiers == nullptr) {
         return nullptr;
     }
@@ -35,7 +35,7 @@ RPGEnumeration* Object::GetAttributeInfo(FixedString const& attributeName, int& 
         return nullptr;
     }
 
-    return stats->ModifierValueLists.Find(modifierInfo->EnumerationIndex);
+    return stats->ModifierValueLists.GetByHandle(modifierInfo->EnumerationIndex);
 }
 
 std::optional<STDString> Object::GetString(FixedString const& attributeName) const
@@ -589,8 +589,8 @@ bool Object::CopyFrom(Object* source)
 {
     if (ModifierListIndex != source->ModifierListIndex) {
         auto stats = GetStaticSymbols().GetStats();
-        auto objModifier = stats->ModifierLists.Find(ModifierListIndex);
-        auto copyModifier = stats->ModifierLists.Find(source->ModifierListIndex);
+        auto objModifier = stats->ModifierLists.GetByHandle(ModifierListIndex);
+        auto copyModifier = stats->ModifierLists.GetByHandle(source->ModifierListIndex);
         OsiError("Cannot copy stats from object '" << source->Name << "' (a " << copyModifier->Name
             << ") to an object of type " << objModifier->Name);
         return false;

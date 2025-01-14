@@ -15,7 +15,7 @@ namespace bg3se::esv
                 return false;
             }
 
-            auto object = stats->Objects.Find(statName);
+            auto object = stats->Objects.GetByName(FixedString(statName));
             return object != nullptr;
         }
 
@@ -29,7 +29,7 @@ namespace bg3se::esv
                 return false;
             }
 
-            auto object = stats->Objects.Find(statName);
+            auto object = stats->Objects.GetByName(FixedString(statName));
             if (object == nullptr) {
                 return false;
             }
@@ -49,7 +49,7 @@ namespace bg3se::esv
                 return false;
             }
 
-            auto object = stats->Objects.Find(statName);
+            auto object = stats->Objects.GetByName(FixedString(statName));
             if (object == nullptr) {
                 OsiError("Stat object '" << statName << "' does not exist");
                 return false;
@@ -75,7 +75,7 @@ namespace bg3se::esv
                 return false;
             }
 
-            auto object = stats->Objects.Find(statName);
+            auto object = stats->Objects.GetByName(FixedString(statName));
             if (object == nullptr) {
                 OsiError("Stat object '" << statName << "' does not exist");
                 return false;
@@ -83,7 +83,7 @@ namespace bg3se::esv
 
             if (strcmp(attributeName, "Using") == 0) {
                 if (object->Using) {
-                    auto parent = stats->Objects.Find(object->Using);
+                    auto parent = stats->Objects.GetByHandle(object->Using);
                     if (parent != nullptr) {
                         args[2].Set(parent->Name.GetString());
                         return true;
@@ -112,7 +112,7 @@ namespace bg3se::esv
                 return false;
             }
 
-            auto object = stats->Objects.Find(statsId);
+            auto object = stats->Objects.GetByName(FixedString(statsId));
             if (object == nullptr) {
                 OsiError("Stat object '" << statsId << "' does not exist");
                 return false;

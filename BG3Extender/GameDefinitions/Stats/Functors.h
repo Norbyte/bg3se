@@ -17,18 +17,10 @@ struct ExportedConditionalRoll
 
 struct Functor
 {
-    using DtorProc = void (Functor *, bool);
-    using ParseParamsProc = void (Functor *, std::span<StringView>& params, STDString& key, uint64_t unkn);
-    using CloneProc = Functor * (Functor *);
+    virtual ~Functor();
+    virtual bool ParseParams(std::span<StringView>& params, STDString& key, PropertyContext context);
+    virtual Functor* Clone() const;
 
-    struct [[bg3::hidden]] FunctorVMT
-    {
-        DtorProc* Destroy;
-        ParseParamsProc* ParseParams;
-        CloneProc* Clone;
-    };
-
-    [[bg3::hidden]] FunctorVMT* VMT{ nullptr };
     FixedString UniqueName;
     Guid FunctorUuid;
     Array<ExportedConditionalRoll> RollConditions;
@@ -38,6 +30,11 @@ struct Functor
     ObserverType ObserverType{ ObserverType::None };
     FunctorId TypeId{ FunctorId::CustomDescription };
     FunctorFlags Flags{ 0 };
+
+    inline FixedString const& GetElementName() const
+    {
+        return UniqueName;
+    }
 
     template <class T>
     std::optional<T*> Cast()
@@ -200,47 +197,13 @@ struct InterruptContextData : public ContextData
 template <class TContext>
 using ExecuteFunctorProc = void(HitResult* hit, Functors* self, TContext* params);
 
-struct Functors
+struct Functors : public stats::CNamedElementManager<Functor>
 {
-    struct [[bg3::hidden]] BaseVMT
-    {
-        void (*Destroy)(Functors*);
-        void (*ClearNextIndex)(Functors*);
-        void (*Clear)(Functors*);
-        void (*AddOrUpdate)(Functors*, Functor*);
-        Functor* (*GetByIndex)(Functors*, int64_t);
-        Functor* (*GetByName)(Functors*, FixedString const&);
-        void (*Unknown_30)(Functors*);
-        int64_t (*GetSize)(Functors*);
-        Functor* (*GetByIndex2)(Functors*, int64_t);
-        Functor* (*GetByIndex3)(Functors*, int64_t);
-        void (*UpdateNameMap)(Functors*);
-    };
-
-    Functors() noexcept;
-    Functors(Functors const& o);
-    Functors(Functors&& o) noexcept;
-    Functors& operator = (Functors const& o);
-    Functors& operator = (Functors&& o) noexcept;
-
-    /*virtual ~Functors() = 0;
-    virtual void ClearNextIndex() = 0;
-    virtual void Clear() = 0;
-    virtual void AddOrUpdate(Functor*) = 0;
-    virtual Functor* GetByIndex(int64_t) = 0;
-    virtual Functor* GetByName(FixedString const&) = 0;
-    virtual void Unknown_30() = 0;
-    virtual int64_t GetSize() = 0;
-    virtual Functor* GetByIndex2(int64_t) = 0;
-    virtual Functor* GetByIndex3(int64_t) = 0;
-    virtual void UpdateNameMap() = 0;*/
-
-    [[bg3::hidden]] BaseVMT* VMT{ nullptr };
-    Array<Functor*> FunctorList;
-    HashMap<FixedString, int> FunctorsByName;
-    int NextFunctorIndex{ 0 };
-    int Unknown{ 0 };
     FixedString UniqueName;
+
+    // Lua getter helpers
+    Array<Functor*>* LuaGetFunctorList() const;
+    //# P_GETTER(FunctorList, LuaGetFunctorList)
 };
 
 
@@ -260,17 +223,22 @@ struct StatsFunctorSetImpl : public Functors
     void UpdateNameMap() override;*/
 };
 
+#define DEFN_FUNCTOR(ty) \
+    static constexpr auto FunctorType = FunctorId::ty; \
+    ~ty##Functor() override; \
+    Functor* Clone() const override;
+    
 
 struct CustomDescriptionFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::CustomDescription;
+    DEFN_FUNCTOR(CustomDescription)
 
     FixedString Description; // Arg0
 };
 
 struct ApplyStatusFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::ApplyStatus;
+    DEFN_FUNCTOR(ApplyStatus)
 
     FixedString StatusId; // Arg1
     FixedString StatusSpecificParam1; // Arg4
@@ -285,7 +253,7 @@ struct ApplyStatusFunctor : public Functor
 
 struct SurfaceChangeFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::SurfaceChange;
+    DEFN_FUNCTOR(SurfaceChange)
 
     float Chance{ 1.0f };
     float field_24{ 0.0f };
@@ -296,7 +264,7 @@ struct SurfaceChangeFunctor : public Functor
 
 struct ResurrectFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::Resurrect;
+    DEFN_FUNCTOR(Resurrect)
 
     float Probability{ 1.0f }; // Arg0
     float HealthPercentage{ 1.0f }; // Arg1
@@ -305,14 +273,14 @@ struct ResurrectFunctor : public Functor
 
 struct SabotageFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::Sabotage;
+    DEFN_FUNCTOR(Sabotage)
 
     int Amount{ 1 };
 };
 
 struct SummonFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::Summon;
+    DEFN_FUNCTOR(Summon)
 
     FixedString Template; // Arg1
     FixedString AIHelper; // Arg 3
@@ -325,7 +293,7 @@ struct SummonFunctor : public Functor
 
 struct ForceFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::Force;
+    DEFN_FUNCTOR(Force)
 
     FixedString Distance; // Arg0
     ForceFunctorOrigin Origin{ ForceFunctorOrigin::OriginToEntity }; // Arg1
@@ -337,7 +305,7 @@ struct ForceFunctor : public Functor
 
 struct DouseFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::Douse;
+    DEFN_FUNCTOR(Douse)
 
     float field_20{ -1.0f };
     float field_24{ 1.0f };
@@ -345,7 +313,7 @@ struct DouseFunctor : public Functor
 
 struct SwapPlacesFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::SwapPlaces;
+    DEFN_FUNCTOR(SwapPlaces)
 
     FixedString Animation; // Arg0
     bool Arg1{ false };
@@ -354,14 +322,14 @@ struct SwapPlacesFunctor : public Functor
 
 struct PickupFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::Pickup;
+    DEFN_FUNCTOR(Pickup)
 
     FixedString Arg0;
 };
 
 struct CreateSurfaceFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::CreateSurface;
+    DEFN_FUNCTOR(CreateSurface)
 
     FixedString SurfaceType; // Arg2 - SurfaceType or DamageType
     float Radius{ -1.0f }; // Arg0
@@ -373,7 +341,7 @@ struct CreateSurfaceFunctor : public Functor
 
 struct CreateConeSurfaceFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::CreateConeSurface;
+    DEFN_FUNCTOR(CreateConeSurface)
 
     FixedString SurfaceType;
     float Radius{ -1.0f };
@@ -384,7 +352,7 @@ struct CreateConeSurfaceFunctor : public Functor
 
 struct RemoveStatusFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::RemoveStatus;
+    DEFN_FUNCTOR(RemoveStatus)
 
     FixedString StatusId; // Arg0
 };
@@ -393,7 +361,7 @@ using StatsSystem_ThrowDamageEventProc = void (void* statsSystem, void* temp5, H
 
 struct DealDamageFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::DealDamage;
+    DEFN_FUNCTOR(DealDamage)
 
     using ApplyDamageProc = HitResult * (HitResult* result, DealDamageFunctor* functor, ecs::EntityRef* casterHandle,
         ecs::EntityRef* targetHandle, glm::vec3* position, bool isFromItem, SpellIdWithPrototype* spellId, 
@@ -416,14 +384,14 @@ struct DealDamageFunctor : public Functor
 
 struct ExecuteWeaponFunctorsFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::ExecuteWeaponFunctors;
+    DEFN_FUNCTOR(ExecuteWeaponFunctors)
 
     ExecuteWeaponFunctorsType WeaponType;
 };
 
 struct RegainHitPointsFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::RegainHitPoints;
+    DEFN_FUNCTOR(RegainHitPoints)
 
     StatsExpressionParam* HitPoints{ nullptr };
     TargetTypeFlags HealingType{ TargetTypeFlags::Living };
@@ -431,7 +399,7 @@ struct RegainHitPointsFunctor : public Functor
 
 struct TeleportSourceFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::TeleportSource;
+    DEFN_FUNCTOR(TeleportSource)
 
     bool Arg1{ false };
     bool Arg2{ false };
@@ -439,7 +407,7 @@ struct TeleportSourceFunctor : public Functor
 
 struct SetStatusDurationFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::SetStatusDuration;
+    DEFN_FUNCTOR(SetStatusDuration)
 
     FixedString StatusId; // Arg0
     float Duration{ 6.0f }; // Arg1
@@ -448,7 +416,7 @@ struct SetStatusDurationFunctor : public Functor
 
 struct UseSpellFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::UseSpell;
+    DEFN_FUNCTOR(UseSpell)
 
     FixedString SpellId; // Arg0
     bool IgnoreHasSpell{ false }; // Arg1
@@ -460,7 +428,7 @@ struct UseSpellFunctor : public Functor
 
 struct UseActionResourceFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::UseActionResource;
+    DEFN_FUNCTOR(UseActionResource)
 
     Guid ActionResource; // Arg0
     double Amount{ 0.0 }; // Arg1
@@ -471,7 +439,7 @@ struct UseActionResourceFunctor : public Functor
 
 struct UseAttackFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::UseAttack;
+    DEFN_FUNCTOR(UseAttack)
 
     bool IgnoreChecks{ false }; // Arg1
     bool IgnoreBlindness{ false }; // Arg2
@@ -479,26 +447,26 @@ struct UseAttackFunctor : public Functor
 
 struct CreateExplosionFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::CreateExplosion;
+    DEFN_FUNCTOR(CreateExplosion)
 
     FixedString SpellId; // Arg0
 };
 
 struct BreakConcentrationFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::BreakConcentration;
+    DEFN_FUNCTOR(BreakConcentration)
 };
 
 struct ApplyEquipmentStatusFunctor : public ApplyStatusFunctor
 {
-    static constexpr auto FunctorType = FunctorId::ApplyEquipmentStatus;
+    DEFN_FUNCTOR(ApplyEquipmentStatus)
 
     StatsItemSlot EquipmentSlot{ StatsItemSlot::MainHand };
 };
 
 struct RestoreResourceFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::RestoreResource;
+    DEFN_FUNCTOR(RestoreResource)
 
     Guid ActionResource; // Arg0
     int Hex{ 0 }; // Arg2
@@ -510,7 +478,7 @@ struct RestoreResourceFunctor : public Functor
 
 struct SpawnFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::Spawn;
+    DEFN_FUNCTOR(Spawn)
 
     FixedString TemplateId; // Arg0
     FixedString AIHelper;
@@ -520,29 +488,29 @@ struct SpawnFunctor : public Functor
 
 struct StabilizeFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::Stabilize;
+    DEFN_FUNCTOR(Stabilize)
 };
 
 struct UnlockFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::Unlock;
+    DEFN_FUNCTOR(Unlock)
 };
 
 struct ResetCombatTurnFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::ResetCombatTurn;
+    DEFN_FUNCTOR(ResetCombatTurn)
 };
 
 struct RemoveAuraByChildStatusFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::RemoveAuraByChildStatus;
+    DEFN_FUNCTOR(RemoveAuraByChildStatus)
 
     FixedString StatusId; // Arg0
 };
 
 struct SummonInInventoryFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::SummonInInventory;
+    DEFN_FUNCTOR(SummonInInventory)
 
     FixedString TemplateId;
     FixedString Arg8;
@@ -558,7 +526,7 @@ struct SummonInInventoryFunctor : public Functor
 
 struct SpawnInInventoryFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::SpawnInInventory;
+    DEFN_FUNCTOR(SpawnInInventory)
 
     FixedString TemplateId;
     FixedString Arg7;
@@ -571,31 +539,31 @@ struct SpawnInInventoryFunctor : public Functor
 
 struct RemoveUniqueStatusFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::RemoveUniqueStatus;
+    DEFN_FUNCTOR(RemoveUniqueStatus)
 
     FixedString StatusId; // Arg0
 };
 
 struct DisarmWeaponFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::DisarmWeapon;
+    DEFN_FUNCTOR(DisarmWeapon)
 };
 
 struct DisarmAndStealWeaponFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::DisarmAndStealWeapon;
+    DEFN_FUNCTOR(DisarmAndStealWeapon)
 };
 
 struct SwitchDeathTypeFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::SwitchDeathType;
+    DEFN_FUNCTOR(SwitchDeathType)
 
     DeathType DeathType;
 };
 
 struct TriggerRandomCastFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::TriggerRandomCast;
+    DEFN_FUNCTOR(TriggerRandomCast)
 
     uint8_t Arg1;
     float Arg2;
@@ -604,26 +572,26 @@ struct TriggerRandomCastFunctor : public Functor
 
 struct GainTemporaryHitPointsFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::GainTemporaryHitPoints;
+    DEFN_FUNCTOR(GainTemporaryHitPoints)
 
     StatsExpressionParam* HitPointsExpression;
 };
 
 struct FireProjectileFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::FireProjectile;
+    DEFN_FUNCTOR(FireProjectile)
 
     FixedString Arg1;
 };
 
 struct ShortRestFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::ShortRest;
+    DEFN_FUNCTOR(ShortRest)
 };
 
 struct CreateZoneFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::CreateZone;
+    DEFN_FUNCTOR(CreateZone)
 
     ZoneShape Shape; // Arg1
     FixedString Arg4;
@@ -634,21 +602,21 @@ struct CreateZoneFunctor : public Functor
 
 struct DoTeleportFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::DoTeleport;
+    DEFN_FUNCTOR(DoTeleport)
 
     float Arg1;
 };
 
 struct RegainTemporaryHitPointsFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::RegainTemporaryHitPoints;
+    DEFN_FUNCTOR(RegainTemporaryHitPoints)
 
     StatsExpressionParam* HitPoints;
 };
 
 struct RemoveStatusByLevelFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::RemoveStatusByLevel;
+    DEFN_FUNCTOR(RemoveStatusByLevel)
 
     std::variant<FixedString, StatusGroup> NameOrStatusGroup; // Arg1
     int8_t Arg2;
@@ -657,29 +625,29 @@ struct RemoveStatusByLevelFunctor : public Functor
 
 struct SurfaceClearLayerFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::SurfaceClearLayer;
+    DEFN_FUNCTOR(SurfaceClearLayer)
 
     HashSet<SurfaceLayer8> Layers;
 };
 
 struct UnsummonFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::Unsummon;
+    DEFN_FUNCTOR(Unsummon)
 };
 
 struct CreateWallFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::CreateWall;
+    DEFN_FUNCTOR(CreateWall)
 };
 
 struct CounterspellFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::Counterspell;
+    DEFN_FUNCTOR(Counterspell)
 };
 
 struct AdjustRollFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::AdjustRoll;
+    DEFN_FUNCTOR(AdjustRoll)
 
     StatsExpressionParam* Expression; // Arg1
     RollAdjustmentType Type; // Arg2
@@ -688,40 +656,40 @@ struct AdjustRollFunctor : public Functor
 
 struct SpawnExtraProjectilesFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::SpawnExtraProjectiles;
+    DEFN_FUNCTOR(SpawnExtraProjectiles)
 
     FixedString Arg1;
 };
 
 struct KillFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::Kill;
+    DEFN_FUNCTOR(Kill)
 };
 
 struct TutorialEventFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::TutorialEvent;
+    DEFN_FUNCTOR(TutorialEvent)
 
     Guid Event;
 };
 
 struct DropFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::Drop;
+    DEFN_FUNCTOR(Drop)
 
     FixedString Arg1;
 };
 
 struct ResetCooldownsFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::ResetCooldowns;
+    DEFN_FUNCTOR(ResetCooldowns)
 
     SpellCooldownType CooldownType;
 };
 
 struct SetRollFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::SetRoll;
+    DEFN_FUNCTOR(SetRoll)
 
     int Roll;
     RollAdjustmentType Type; // Arg2
@@ -730,14 +698,14 @@ struct SetRollFunctor : public Functor
 
 struct SetDamageResistanceFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::SetDamageResistance;
+    DEFN_FUNCTOR(SetDamageResistance)
 
     DamageType DamageType; // Arg1
 };
 
 struct SetRerollFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::SetReroll;
+    DEFN_FUNCTOR(SetReroll)
 
     uint8_t Roll;
     bool Arg2;
@@ -745,31 +713,31 @@ struct SetRerollFunctor : public Functor
 
 struct SetAdvantageFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::SetAdvantage;
+    DEFN_FUNCTOR(SetAdvantage)
 };
 
 struct SetDisadvantageFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::SetDisadvantage;
+    DEFN_FUNCTOR(SetDisadvantage)
 };
 
 struct MaximizeRollFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::MaximizeRoll;
+    DEFN_FUNCTOR(MaximizeRoll)
 
     DamageType DamageType;
 };
 
 struct CameraWaitFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::CameraWait;
+    DEFN_FUNCTOR(CameraWait)
 
     float Arg1;
 };
 
 struct ExtenderFunctor : public Functor
 {
-    static constexpr auto FunctorType = FunctorId::Extender;
+    DEFN_FUNCTOR(Extender)
 };
 
 

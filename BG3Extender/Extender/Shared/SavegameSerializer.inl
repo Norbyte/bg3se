@@ -148,9 +148,9 @@ void SavegameSerializer::RestoreStatObject(FixedString const& statId, FixedStrin
 {
     auto stats = GetStaticSymbols().GetStats();
 
-    auto object = stats->Objects.Find(statId);
+    auto object = stats->Objects.GetByName(statId);
     if (object) {
-        auto modifier = stats->ModifierLists.Find(object->ModifierListIndex);
+        auto modifier = stats->ModifierLists.GetByHandle(object->ModifierListIndex);
         if (modifier->Name != statType) {
             OsiError("Stat entry '" << statId << "' is a '" << statType << "' in the save, but a '" 
                 << modifier->Name << "' in the game. It will not be loaded from the savegame!");
@@ -188,13 +188,13 @@ bool SavegameSerializer::SerializeStatObject(FixedString const& statId, FixedStr
 {
     auto stats = GetStaticSymbols().GetStats();
 
-    auto object = stats->Objects.Find(statId);
+    auto object = stats->Objects.GetByName(statId);
     if (!object) {
         OsiError("Stat entry '" << statId << "' is marked as modified but cannot be found! It will not be written to the savegame!");
         return false;
     }
 
-    auto modifier = stats->ModifierLists.Find(object->ModifierListIndex);
+    auto modifier = stats->ModifierLists.GetByHandle(object->ModifierListIndex);
     statType = modifier->Name;
 
     /*MsgS2CSyncStat msg;

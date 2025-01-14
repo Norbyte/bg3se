@@ -13,69 +13,142 @@ struct ActionResourceCost
 };
 
 template <class T>
-struct CNamedElementManager : public Noncopyable<CNamedElementManager<T>>
+class CNamedElementManager : public Noncopyable<CNamedElementManager<T>>
 {
-    void* VMT{ nullptr };
-    Array<T *> Primitives;
-    HashMap<FixedString, uint32_t> NameHashMap;
-    uint32_t NextHandle{ 0 };
-    uint32_t NumSomeItems{ 0 };
+public:
+    CNamedElementManager() noexcept
+    {}
 
-    void Add(FixedString const& name, T* elem)
+    CNamedElementManager(CNamedElementManager const& o) noexcept
+        : Values(o.Values),
+        NameToHandle(o.NameToHandle),
+        NextHandle(o.NextHandle)
     {
-        NameHashMap.set(name, Primitives.Size());
-        Primitives.Add(elem);
-        NextHandle++;
-    }
-
-    std::optional<int> FindIndex(char const * str) const
-    {
-        FixedString fs{ str };
-        if (fs) {
-            return FindIndex(fs);
-        } else {
-            return {};
+        for (auto& e : Values) {
+            e = e->Clone();
         }
     }
 
-    std::optional<int> FindIndex(FixedString const& str) const
+    CNamedElementManager(CNamedElementManager&& o) noexcept
+        : Values(std::move(o.Values)),
+        NameToHandle(std::move(o.NameToHandle)),
+        NextHandle(o.NextHandle)
+    {}
+
+    CNamedElementManager& operator = (CNamedElementManager const& o)
     {
-        auto ptr = NameHashMap.try_get(str);
-        if (ptr) {
-            return (int)*ptr;
-        } else {
-            return {};
+        Values = o.Values;
+        NameToHandle = o.NameToHandle;
+        NextHandle = o.NextHandle;
+
+        for (auto& e : Values) {
+            e = e->Clone();
         }
+
+        return *this;
     }
 
-    T * Find(int index) const
+    CNamedElementManager& operator = (CNamedElementManager&& o) noexcept
     {
-        if (index < 0 || index >= (int)Primitives.Size()) {
+        Values = std::move(o.Values);
+        NameToHandle = std::move(o.NameToHandle);
+        NextHandle = o.NextHandle;
+
+        return *this;
+    }
+
+    virtual ~CNamedElementManager()
+    {
+        Destroy();
+    }
+
+    virtual void Destroy()
+    {
+        for (auto ele : Values) {
+            GameDelete(ele);
+        }
+
+        Values.clear();
+        NameToHandle.clear();
+        NextHandle = 0;
+    }
+
+    virtual int Insert(T* value)
+    {
+        auto const& name = value->GetElementName();
+        auto handle = GetHandleByName(name);
+        if (handle == -1) {
+            handle = NextHandle++;
+            Values.Add(value);
+            NameToHandle.set(name, handle);
+        } else {
+            auto cur = Values[handle];
+            if (cur) {
+                GameDelete(cur);
+            }
+            Values[handle] = value;
+        }
+
+        return handle;
+    }
+
+    virtual T* GetByHandle(int handle) const
+    {
+        if (handle >= 0 && handle < NextHandle) {
+            return Values[handle];
+        } else {
             return nullptr;
-        } else {
-            return Primitives[index];
         }
     }
 
-    T * Find(char const * str) const
+    virtual int GetHandleByName(FixedString const& name) const
     {
-        FixedString fs(str);
-        if (fs) {
-            return Find(fs);
+        return NameToHandle.get_or_default(name, -1);
+    }
+
+    virtual T* GetByName(FixedString const& name) const
+    {
+        auto handle = NameToHandle.try_get(name);
+        if (handle) {
+            return Values[*handle];
         } else {
             return nullptr;
         }
     }
 
-    T * Find(FixedString const& str) const
+    virtual uint64_t GetAmountOfEntries() const
     {
-        auto ptr = NameHashMap.try_get(str);
-        if (ptr) {
-            return Primitives[*ptr];
+        return Values.size();
+    }
+
+    virtual T const* GetEntryConst(uint64_t index) const
+    {
+        if (index < Values.size()) {
+            return Values[(uint32_t)index];
         } else {
             return nullptr;
         }
     }
+
+    virtual T* GetEntry(uint64_t index)
+    {
+        if (index < Values.size()) {
+            return Values[(uint32_t)index];
+        } else {
+            return nullptr;
+        }
+    }
+
+    virtual void UpdateHandles()
+    {
+        for (uint32_t i = 0; i < Values.size(); i++) {
+            NameToHandle.set(Values[i]->GetElementName(), i);
+        }
+    }
+
+    [[bg3::hidden]] Array<T*> Values;
+    [[bg3::hidden]] HashMap<FixedString, int32_t> NameToHandle;
+    [[bg3::hidden]] int32_t NextHandle{ 0 };
 };
 
 struct ConditionId
@@ -123,6 +196,11 @@ struct Object : public Noncopyable<Object>
     int32_t Using{ -1 };
     uint32_t ModifierListIndex{ 0 };
     uint32_t Level{ 0 };
+
+    inline FixedString const& GetElementName() const
+    {
+        return Name;
+    }
 
     RPGEnumeration* GetAttributeInfo(FixedString const& attributeName, int& attributeIndex) const;
     std::optional<STDString> GetString(FixedString const& attributeName) const;

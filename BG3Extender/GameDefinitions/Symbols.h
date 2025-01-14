@@ -70,8 +70,6 @@ namespace bg3se
         esv::SurfaceActionFactory::CreateActionProc* esv__SurfaceActionFactory__CreateAction{ nullptr };
         esv::SurfaceManager::AddActionProc* esv__SurfaceManager__AddAction{ nullptr };*/
 
-        stats::Functors::BaseVMT* stats__Functors__VMT{ nullptr };
-
         stats::SpellPrototypeManager** eoc__SpellPrototypeManager{ nullptr };
         stats::SpellPrototype::InitProc* eoc__SpellPrototype__Init{ nullptr };
 

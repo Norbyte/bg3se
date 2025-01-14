@@ -32,6 +32,11 @@ struct RPGEnumeration : public ProtectedGameObject<RPGEnumeration>
 
     static bool IsFlagType(FixedString const& typeName);
     RPGEnumerationType GetPropertyType() const;
+
+    inline FixedString const& GetElementName() const
+    {
+        return Name;
+    }
 };
 
 struct Modifier : public Noncopyable<Modifier>
@@ -40,17 +45,38 @@ struct Modifier : public Noncopyable<Modifier>
     int32_t LevelMapIndex{ -1 };
     int32_t UnknownZero{ 0 };
     FixedString Name;
+
+    inline FixedString const& GetElementName() const
+    {
+        return Name;
+    }
 };
 
-struct ModifierList
+struct ModifierList : public Noncopyable<ModifierList>
 {
     CNamedElementManager<Modifier> Attributes;
     FixedString Name;
 
     Modifier* GetAttributeInfo(FixedString const& name, int * attributeIndex) const;
+
+    inline FixedString const& GetElementName() const
+    {
+        return Name;
+    }
 };
 
-struct ItemTypeManager : public CNamedElementManager<uint64_t>
+struct ItemType
+{
+    // UNMAPPED
+    FixedString Name;
+
+    inline FixedString const& GetElementName() const
+    {
+        return Name;
+    }
+};
+
+struct ItemTypeManager : public CNamedElementManager<ItemType>
 {
     uint64_t Unknown;
 };
@@ -125,6 +151,11 @@ struct TreasureTable
     bool UseTreasureGroupContainers;
     bool CanMerge;
     Array<TreasureSubTable*> SubTables;
+
+    inline FixedString const& GetElementName() const
+    {
+        return Name;
+    }
 };
 
 struct TreasureCategoryItem
@@ -144,6 +175,11 @@ struct TreasureCategory
     FixedString Category;
     Vector<TreasureCategoryItem*> Items;
     uint64_t Unknown[3];
+
+    inline FixedString const& GetElementName() const
+    {
+        return Category;
+    }
 };
 
 struct RPGStats_Treasure_Object_Info
@@ -276,8 +312,6 @@ struct RPGStats : public ProtectedGameObject<RPGStats>
     {
         bool VMTsMapped{ false };
         void* ObjectVMT{ nullptr };
-        Functors::BaseVMT* StatsFunctorSetVMT{ nullptr };
-        std::unordered_map<FunctorId, Functor::FunctorVMT*> FunctorVMTs;
 
         void Update();
     };

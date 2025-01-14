@@ -5,6 +5,8 @@
 #include <Extender/Shared/ScriptHelpers.h>
 #include <Extender/ScriptExtender.h>
 
+#include <GameDefinitions/Stats/Functors.inl>
+
 BEGIN_NS(stats)
 
 bool SpellPrototypeManager::SyncStat(Object* object, SpellPrototype* proto)
@@ -156,61 +158,6 @@ void InterruptPrototypeManager::SyncStat(Object* object)
     }
 
     SyncStat(object, proto);
-}
-
-
-Functors::Functors() noexcept
-    : VMT(GetStaticSymbols().stats__Functors__VMT)
-{}
-
-Functors::Functors(Functors const& o)
-    : VMT(o.VMT),
-    FunctorList(o.FunctorList),
-    FunctorsByName(o.FunctorsByName),
-    NextFunctorIndex(o.NextFunctorIndex),
-    Unknown(o.Unknown),
-    UniqueName(o.UniqueName)
-{
-    for (auto& functor : FunctorList) {
-        functor = functor->VMT->Clone(functor);
-    }
-}
-
-Functors::Functors(Functors&& o) noexcept
-    : VMT(o.VMT),
-    FunctorList(std::move(o.FunctorList)),
-    FunctorsByName(std::move(o.FunctorsByName)),
-    NextFunctorIndex(o.NextFunctorIndex),
-    Unknown(o.Unknown),
-    UniqueName(std::move(o.UniqueName))
-{}
-
-Functors& Functors::operator = (Functors const& o)
-{
-    VMT = o.VMT;
-    FunctorList = o.FunctorList;
-    FunctorsByName = o.FunctorsByName;
-    NextFunctorIndex = o.NextFunctorIndex;
-    Unknown = o.Unknown;
-    UniqueName = o.UniqueName;
-
-    for (auto& functor : FunctorList) {
-        functor = functor->VMT->Clone(functor);
-    }
-
-    return *this;
-}
-
-Functors& Functors::operator = (Functors&& o) noexcept
-{
-    VMT = o.VMT;
-    FunctorList = std::move(o.FunctorList);
-    FunctorsByName = std::move(o.FunctorsByName);
-    NextFunctorIndex = o.NextFunctorIndex;
-    Unknown = o.Unknown;
-    UniqueName = std::move(o.UniqueName);
-
-    return *this;
 }
 
 
@@ -429,18 +376,18 @@ RPGEnumerationType RPGEnumeration::GetPropertyType() const
 
 Modifier * ModifierList::GetAttributeInfo(FixedString const& name, int * attributeIndex) const
 {
-    auto index = Attributes.FindIndex(name);
-    if (!index) {
+    auto index = Attributes.GetHandleByName(name);
+    if (index == -1) {
         return nullptr;
     } else {
-        *attributeIndex = *index;
-        return Attributes.Find(*index);
+        *attributeIndex = index;
+        return Attributes.GetByHandle(index);
     }
 }
 
 bool RPGStats::ObjectExists(FixedString const& statsId, FixedString const& type)
 {
-    auto object = Objects.Find(statsId);
+    auto object = Objects.GetByName(statsId);
     if (object == nullptr) {
         return false;
     }
@@ -456,43 +403,43 @@ bool RPGStats::ObjectExists(FixedString const& statsId, FixedString const& type)
 
 std::optional<Object*> RPGStats::CreateObject(FixedString const& name, FixedString const& type)
 {
-    auto modifierIdx = ModifierLists.FindIndex(type);
-    if (!modifierIdx) {
+    auto modifierIdx = ModifierLists.GetHandleByName(type);
+    if (modifierIdx == -1) {
         OsiError("Unknown modifier list type: " << type);
         return {};
     }
 
-    return CreateObject(name, *modifierIdx);
+    return CreateObject(name, modifierIdx);
 }
 
 std::optional<Object*> RPGStats::CreateObject(FixedString const& name, int32_t modifierListIndex)
 {
-    auto modifierList = ModifierLists.Find(modifierListIndex);
+    auto modifierList = ModifierLists.GetByHandle(modifierListIndex);
     if (!modifierList) {
         OsiError("Modifier list doesn't exist: " << name);
         return {};
     }
 
-    auto object = Objects.Find(name);
+    auto object = Objects.GetByName(name);
     if (object) {
         OsiError("A stats object already exists with this name: " << name);
         return {};
     }
 
-    if (Objects.Primitives.empty()) {
+    if (Objects.Values.empty()) {
         OsiError("No stats object found to copy VMT from!");
         return {};
     }
 
     object = GameAlloc<Object>();
-    object->VMT = Objects.Primitives[0]->VMT;
+    object->VMT = Objects.Values[0]->VMT;
     object->ModifierListIndex = modifierListIndex;
-    object->IndexedProperties.resize(modifierList->Attributes.Primitives.size(), 0);
+    object->IndexedProperties.resize(modifierList->Attributes.Values.size(), 0);
     object->Name = name;
 
-    for (unsigned i = 0; i < modifierList->Attributes.Primitives.size(); i++) {
-        auto const& modifier = modifierList->Attributes.Primitives[i];
-        auto valueList = ModifierValueLists.Find(modifier->EnumerationIndex);
+    for (unsigned i = 0; i < modifierList->Attributes.Values.size(); i++) {
+        auto const& modifier = modifierList->Attributes.Values[i];
+        auto valueList = ModifierValueLists.GetByHandle(modifier->EnumerationIndex);
         if (valueList) {
             auto type = valueList->GetPropertyType();
             if (type == RPGEnumerationType::Conditions || type == RPGEnumerationType::RollConditions) {
@@ -501,7 +448,7 @@ std::optional<Object*> RPGStats::CreateObject(FixedString const& name, int32_t m
         }
     }
 
-    Objects.Add(name, object);
+    Objects.Insert(object);
     return object;
 }
 
@@ -525,7 +472,7 @@ std::optional<Object*> RPGStats::CreateObject(FixedString const& name, int32_t m
 
 void RPGStats::SyncWithPrototypeManager(Object* object)
 {
-    auto modifier = ModifierLists.Find(object->ModifierListIndex);
+    auto modifier = ModifierLists.GetByHandle(object->ModifierListIndex);
     if (modifier->Name == GFS.strSpellData) {
         auto spellProtoMgr = GetStaticSymbols().eoc__SpellPrototypeManager;
         if (spellProtoMgr && *spellProtoMgr) {
@@ -563,7 +510,7 @@ void RPGStats::SyncWithPrototypeManager(Object* object)
 
 std::optional<int> RPGStats::EnumLabelToIndex(FixedString const& enumName, char const* enumLabel)
 {
-    auto rpgEnum = ModifierValueLists.Find(enumName);
+    auto rpgEnum = ModifierValueLists.GetByName(enumName);
     if (rpgEnum == nullptr) {
         OsiError("No enum named '" << enumName << "' exists");
         return {};
@@ -579,7 +526,7 @@ std::optional<int> RPGStats::EnumLabelToIndex(FixedString const& enumName, char 
 
 FixedString RPGStats::EnumIndexToLabel(FixedString const& enumName, int index)
 {
-    auto rpgEnum = ModifierValueLists.Find(enumName);
+    auto rpgEnum = ModifierValueLists.GetByName(enumName);
     if (rpgEnum == nullptr) {
         OsiError("No enum named '" << enumName << "' exists");
         return FixedString{};
@@ -718,9 +665,9 @@ int RPGStats::GetOrCreateConditions(STDString const& conditions)
 
 Modifier * RPGStats::GetModifierInfo(FixedString const& modifierListName, FixedString const& modifierName)
 {
-    auto modifiers = ModifierLists.Find(modifierListName);
+    auto modifiers = ModifierLists.GetByName(modifierListName);
     if (modifiers != nullptr) {
-        return modifiers->Attributes.Find(modifierName);
+        return modifiers->Attributes.GetByName(modifierName);
     } else {
         return nullptr;
     }
@@ -728,7 +675,7 @@ Modifier * RPGStats::GetModifierInfo(FixedString const& modifierListName, FixedS
 
 ModifierList * RPGStats::GetTypeInfo(Object * object)
 {
-    return ModifierLists.Find(object->ModifierListIndex);
+    return ModifierLists.GetByHandle(object->ModifierListIndex);
 }
 
 RPGStats::VMTMappings RPGStats::sVMTMappings;
@@ -738,21 +685,8 @@ void RPGStats::VMTMappings::Update()
     if (VMTsMapped) return;
     auto stats = GetStaticSymbols().GetStats();
 
-    if (stats->Objects.Primitives.Size() > 0) {
-        ObjectVMT = stats->Objects.Primitives[0]->VMT;
-    }
-
-    for (auto const& kv : stats->StatsFunctors) {
-        if (StatsFunctorSetVMT == nullptr) {
-            StatsFunctorSetVMT = kv.Value->VMT;
-        }
-
-        for (auto const& prop : kv.Value->FunctorList) {
-            auto it = FunctorVMTs.find(prop->TypeId);
-            if (it == FunctorVMTs.end()) {
-                FunctorVMTs.insert(std::make_pair(prop->TypeId, prop->VMT));
-            }
-        }
+    if (stats->Objects.Values.Size() > 0) {
+        ObjectVMT = stats->Objects.Values[0]->VMT;
     }
 
     VMTsMapped = true;
@@ -762,14 +696,7 @@ Functors* RPGStats::ConstructFunctorSet(FixedString const& propertyName)
 {
     sVMTMappings.Update();
 
-    if (!sVMTMappings.StatsFunctorSetVMT) {
-        OsiError("Cannot construct functor set - VMT not mapped!");
-        return nullptr;
-    }
-
     auto functorSet = GameAlloc<Functors>();
-    functorSet->VMT = sVMTMappings.StatsFunctorSetVMT;
-    // functorSet->FunctorsByName.ResizeHashtable(31);
     functorSet->UniqueName = propertyName;
     return functorSet;
 }
@@ -778,12 +705,6 @@ Functor* RPGStats::ConstructFunctor(FunctorId action)
 {
     sVMTMappings.Update();
     auto stats = GetStaticSymbols().GetStats();
-
-    auto vmtIt = sVMTMappings.FunctorVMTs.find(action);
-    if (vmtIt == sVMTMappings.FunctorVMTs.end()) {
-        LuaError("Unable to construct functors of this type: " << (unsigned)action << " - VMT not mapped!");
-        return nullptr;
-    }
 
 #define V(type) case type::FunctorType: \
     functor = GameAlloc<type>(); \
@@ -832,7 +753,6 @@ Functor* RPGStats::ConstructFunctor(FunctorId action)
         return nullptr;
     }
 
-    functor->VMT = vmtIt->second;
     functor->TypeId = action;
 
     return functor;
@@ -846,7 +766,7 @@ Object * StatFindObject(char const * name, bool warnOnError)
         return nullptr;
     }
 
-    auto object = stats->Objects.Find(name);
+    auto object = stats->Objects.GetByName(FixedString(name));
     if (object == nullptr) {
         if (warnOnError) {
             OsiError("Stat object '" << name << "' does not exist");
@@ -865,7 +785,7 @@ Object * StatFindObject(int index)
         return nullptr;
     }
 
-    auto object = stats->Objects.Find(index);
+    auto object = stats->Objects.GetByHandle(index);
     if (object == nullptr) {
         OsiError("Stat object #" << index << " does not exist");
         return nullptr;
