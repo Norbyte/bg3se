@@ -18,9 +18,7 @@ OsirisExtender::OsirisExtender(ExtenderConfig & config)
     : config_(config), 
     injector_(wrappers_, customFunctions_),
     functionLibrary_(*this)
-{
-    functionLibrary_.Startup();
-}
+{}
 
 
 OsirisExtender::~OsirisExtender()

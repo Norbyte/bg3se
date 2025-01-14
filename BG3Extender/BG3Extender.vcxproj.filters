@@ -64,15 +64,6 @@
     <ClCompile Include="Osiris\Functions\LuaFunctions.cpp">
       <Filter>Osiris\Functions</Filter>
     </ClCompile>
-    <ClCompile Include="Osiris\Functions\MathFunctions.cpp">
-      <Filter>Osiris\Functions</Filter>
-    </ClCompile>
-    <ClCompile Include="Osiris\Functions\StatFunctions.cpp">
-      <Filter>Osiris\Functions</Filter>
-    </ClCompile>
-    <ClCompile Include="Osiris\Functions\UtilityFunctions.cpp">
-      <Filter>Osiris\Functions</Filter>
-    </ClCompile>
     <ClCompile Include="GameDefinitions\Enumerations.cpp">
       <Filter>GameDefinitions</Filter>
     </ClCompile>

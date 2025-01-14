@@ -390,9 +390,6 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClCompile Include="Osiris\Functions\FunctionLibrary.cpp" />
     <ClCompile Include="Osiris\Functions\FunctionUtilities.cpp" />
     <ClCompile Include="Osiris\Functions\LuaFunctions.cpp" />
-    <ClCompile Include="Osiris\Functions\MathFunctions.cpp" />
-    <ClCompile Include="Osiris\Functions\StatFunctions.cpp" />
-    <ClCompile Include="Osiris\Functions\UtilityFunctions.cpp" />
     <ClCompile Include="Osiris\OsirisExtender.cpp" />
     <ClCompile Include="Osiris\Shared\CustomFunctions.cpp" />
     <ClCompile Include="Osiris\Shared\NodeHooks.cpp" />
