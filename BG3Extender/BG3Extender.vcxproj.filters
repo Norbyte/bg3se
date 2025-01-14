@@ -754,7 +754,6 @@
     <None Include="GameDefinitions\Controllers\Steering.inl" />
     <None Include="GameDefinitions\Controllers\Movement.inl" />
     <None Include="GameDefinitions\Controllers\Behaviour.inl" />
-    <None Include="Lua\Libs\ClientInput.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">
