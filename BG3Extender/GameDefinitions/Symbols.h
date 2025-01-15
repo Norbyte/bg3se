@@ -52,6 +52,7 @@ namespace bg3se
 
         ecl::EoCClient::HandleErrorProc* ecl__EoCClient__HandleError{ nullptr };
         ecl::CursorControl** ecl__gCursorControl{ nullptr };
+        ecl::DragDropManager** ls__gDragDropManager{ nullptr };
 
         TranslatedStringRepository** ls__gTranslatedStringRepository{ nullptr };
 

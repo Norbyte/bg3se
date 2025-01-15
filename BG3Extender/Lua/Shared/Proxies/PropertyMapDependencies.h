@@ -5,6 +5,7 @@
 #include <GameDefinitions/Ai.h>
 #include <GameDefinitions/Cursor.h>
 #include <GameDefinitions/Dialog.h>
+#include <GameDefinitions/DragDrop.h>
 #include <GameDefinitions/Controllers/Controller.h>
 #include <GameDefinitions/Controllers/Action.h>
 #include <GameDefinitions/Controllers/Behaviour.h>

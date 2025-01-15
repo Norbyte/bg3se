@@ -614,6 +614,7 @@ sources = [
     'GameDefinitions/AllSpark.h',
     'GameDefinitions/Cursor.h',
     'GameDefinitions/Dialog.h',
+    'GameDefinitions/DragDrop.h',
     'GameDefinitions/Effect.h',
     'GameDefinitions/Lighting.h',
     'GameDefinitions/RootTemplates.h',

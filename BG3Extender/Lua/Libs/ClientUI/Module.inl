@@ -1,6 +1,7 @@
 #include <Lua/Libs/ClientUI/NsHelpers.inl>
 #include <NsGui/UIElementCollection.h>
 #include <NsGui/IList.h>
+#include <GameDefinitions/DragDrop.h>
 #include <GameDefinitions/Picking.h>
 
 BEGIN_NS(lua)
@@ -124,6 +125,16 @@ ecl::CursorControl* GetCursorControl()
     }
 }
 
+ecl::PlayerDragData* GetDragDrop(uint16_t playerId)
+{
+    auto dragDrop = GetStaticSymbols().ls__gDragDropManager;
+    if (dragDrop && *dragDrop) {
+        return (*dragDrop)->PlayerData.try_get_ptr(playerId);
+    }
+
+    return nullptr;
+}
+
 void RegisterUILib()
 {
     DECLARE_MODULE(UI, Client)
@@ -133,6 +144,7 @@ void RegisterUILib()
     MODULE_FUNCTION(SetState)
     MODULE_FUNCTION(GetPickingHelper)
     MODULE_FUNCTION(GetCursorControl)
+    MODULE_FUNCTION(GetDragDrop)
     END_MODULE()
 }
 

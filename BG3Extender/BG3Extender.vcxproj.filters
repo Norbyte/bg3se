@@ -499,6 +499,7 @@
     <ClInclude Include="GameDefinitions\Controllers\Steering.h" />
     <ClInclude Include="GameDefinitions\Physics.h" />
     <ClInclude Include="GameDefinitions\Lighting.h" />
+    <ClInclude Include="GameDefinitions\DragDrop.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -746,6 +747,7 @@
     <None Include="GameDefinitions\Controllers\Movement.inl" />
     <None Include="GameDefinitions\Controllers\Behaviour.inl" />
     <None Include="GameDefinitions\Stats\Functors.inl" />
+    <None Include="GameDefinitions\DragDrop.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

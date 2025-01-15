@@ -157,6 +157,7 @@ namespace ecl
     struct Status;
     struct StatusMachine;
     struct CursorControl;
+    struct DragDropManager;
     class ExtensionState;
 
     namespace lua

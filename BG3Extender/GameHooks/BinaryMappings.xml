@@ -967,5 +967,23 @@
       74 07 // jz      short loc_141E3CAD7
       <Target Type="Indirect" Offset="@ref1" Symbol="ecl__gCursorControl" />
     </Mapping>
+
+    <!-- Sig: "ls.thoth.client.condition" -->
+    <Mapping Name="ecl::EocClient::Init">
+      48 8b 8e 90 01 00 00 // mov     rcx, [rsi+190h]
+      @ref1 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:ls__gDragDropManager
+      48 89 88 a0 00 00 00 // mov     [rax+0A0h], rcx
+      0f 57 c0 // xorps   xmm0, xmm0
+      0f 11 45 50 // movups  [rbp+110h+var_C0], xmm0
+      33 db // xor     ebx, ebx
+      89 5d 60 // mov     [rbp+110h+var_B0], ebx
+      c7 45 64 0f 00 00 00 // mov     [rbp+110h+var_AC], 0Fh
+      88 5d 50 // mov     byte ptr [rbp+110h+var_C0], bl
+      44 8d 43 19 // lea     r8d, [rbx+19h]; Size
+      @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, aLsThothClientC; "ls.thoth.client.condition"
+      48 8d 4d 50 // lea     rcx, [rbp+110h+var_C0]; void *
+      <Condition Type="String" Offset="@str1" Value="ls.thoth.client.condition" />
+      <Target Type="Indirect" Offset="@ref1" Symbol="ls__gDragDropManager" />
+    </Mapping>
   </Mappings>
 </BinaryMappings>
