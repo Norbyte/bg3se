@@ -217,17 +217,11 @@ void ObjectHelpers::SetProperty(lua_State* L, BaseObject* o, TypeProperty const*
     prop->Set(o, pValue);
 }
 
-UserReturn ObjectHelpers::GetAllProperties(lua_State* L, BaseObject const* o)
+UserReturn ObjectHelpers::GetDependencyProperties(lua_State* L, BaseObject const* o)
 {
     lua_newtable(L);
 
     auto type = o->GetClassType();
-    for (auto& prop : type->mProperties) {
-        lua::push(L, prop->GetName());
-        StoredValueHelpers::PushProperty(L, o, type, prop);
-        lua_settable(L, -3);
-    }
-
     if (TypeHelpers::IsDescendantOf(type, gStaticSymbols.TypeClasses.DependencyObject.Type)) {
         auto dep = static_cast<DependencyObject const*>(o);
         for (auto& prop : dep->mValues) {
@@ -237,6 +231,53 @@ UserReturn ObjectHelpers::GetAllProperties(lua_State* L, BaseObject const* o)
             lua_settable(L, -3);
         }
     }
+
+    return 1;
+}
+
+UserReturn ObjectHelpers::GetDirectProperties(lua_State* L, BaseObject const* o)
+{
+    lua_newtable(L);
+
+    auto type = o->GetClassType();
+    do {
+        for (auto& prop : type->mProperties) {
+            lua::push(L, prop->GetName());
+            StoredValueHelpers::PushProperty(L, o, type, prop);
+            lua_settable(L, -3);
+        }
+
+        type = type->GetBase();
+    } while (type);
+
+    return 1;
+}
+
+UserReturn ObjectHelpers::GetAllProperties(lua_State* L, BaseObject const* o)
+{
+    lua_newtable(L);
+
+    auto type = o->GetClassType();
+    if (TypeHelpers::IsDescendantOf(type, gStaticSymbols.TypeClasses.DependencyObject.Type)) {
+        auto dep = static_cast<DependencyObject const*>(o);
+        for (auto& prop : dep->mValues) {
+            auto name = prop.key->GetName();
+            lua::push(L, name);
+            StoredValueHelpers::PushValue(L, prop.key->GetType(), prop.value, type, &name);
+            lua_settable(L, -3);
+        }
+    }
+
+    auto propTy = type;
+    do {
+        for (auto& prop : propTy->mProperties) {
+            lua::push(L, prop->GetName());
+            StoredValueHelpers::PushProperty(L, o, propTy, prop);
+            lua_settable(L, -3);
+        }
+
+        propTy = propTy->GetBase();
+    } while (propTy);
 
     return 1;
 }
@@ -960,7 +1001,7 @@ Array<RoutedEvent*> TypeHelpers::GetRoutedEvents(TypeClass const* o)
 {
     Array<RoutedEvent*> events;
 
-    ForEachMeta(o, gStaticSymbols.TypeClasses.DependencyData.Type, [&](TypeMetaData const* meta) {
+    ForEachMeta(o, gStaticSymbols.TypeClasses.UIElementData.Type, [&](TypeMetaData const* meta) {
         auto uiData = static_cast<UIElementData const*>(meta);
         for (auto const& evt : uiData->mEvents) {
             events.push_back(const_cast<RoutedEvent*>(evt.GetPtr()));
@@ -1003,11 +1044,15 @@ TypeClass::PropertyVector const* TypeHelpers::GetProperties(TypeClass const* o)
 
 TypeProperty const* TypeHelpers::GetProperty(TypeClass const* o, Symbol name)
 {
-    for (auto property : o->mProperties) {
-        if (property->mName == name) {
-            return property;
+    do {
+        for (auto property : o->mProperties) {
+            if (property->mName == name) {
+                return property;
+            }
         }
-    }
+
+        o = o->GetBase();
+    } while (o != nullptr);
 
     return nullptr;
 }
