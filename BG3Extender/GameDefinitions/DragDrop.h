@@ -49,13 +49,13 @@ struct [[bg3::hidden]] DragDropManager : public ProtectedGameObject<DragDropMana
 
 struct GameUIDragController : public DragController
 {
-    bool Active;
+    bool Enabled;
 };
 
 struct WorldDragController : public DragController
 {
     [[bg3::hidden]] void* InputManagerVMT2;
-    uint8_t field_18;
+    bool Enabled;
     bool Active;
     uint8_t field_1A;
     uint8_t field_1B;
@@ -66,10 +66,10 @@ struct WorldDragController : public DragController
     [[bg3::readonly]] int PathId;
     [[bg3::readonly]] int PathId2;
     float field_60;
-    float LastUpdate;
-    float field_68;
-    float field_6C;
-    float field_70;
+    float Rotation;
+    float TimeSpentSq;
+    float TimeSpent;
+    float RotationRate;
     uint64_t ErrorFlags;
     [[bg3::readonly]] int State;
     [[bg3::hidden]] void* PathPreviewer;
@@ -78,10 +78,10 @@ struct WorldDragController : public DragController
 struct CharacterDragController : public DragController
 {
     [[bg3::hidden]] void* VMT2;
+    bool Enabled;
     bool Active;
-    uint8_t field_19;
     uint8_t field_1A;
-    uint8_t field_1B;
+    bool AnimationEventTriggered;
     EntityHandle Outline1;
     EntityHandle Character;
     EntityHandle VisualEntity;
@@ -90,10 +90,10 @@ struct CharacterDragController : public DragController
     glm::vec3 WorldPosition;
     glm::vec4 WorldRotate;
     glm::vec4 WorldRotate2;
-    float LastUpdate;
-    float field_198;
-    float field_19C;
-    float field_1A0;
+    float Rotation;
+    float TimeSpentSq;
+    float TimeSpent;
+    float RotationRate;
     int field_1A4;
     uint64_t ErrorFlags;
 };
