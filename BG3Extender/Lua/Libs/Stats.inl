@@ -788,6 +788,50 @@ std::optional<int32_t> AddEnumerationValue(FixedString const& typeName, FixedStr
     return value;
 }
 
+template <class T>
+void DoExecuteFunctors(ExecuteFunctorProc<T>* proc, Functors* functors, HitResult& hit, T* context)
+{
+    if (!proc) {
+        ERR("Handle not found for executing functors in context %d", context->Type);
+        return;
+    }
+
+    proc(&hit, functors, context);
+}
+
+#define P(ty) \
+    case FunctorContextType::ty: \
+        DoExecuteFunctors(GetStaticSymbols().esv__ExecuteStatsFunctor_##ty##Context, functors, hit, static_cast<ty##ContextData*>(context)); \
+        break;
+
+void ExecuteFunctors(Functors* functors, ContextData* context)
+{
+    HitResult hit;
+    switch (context->Type) {
+    P(AttackTarget)
+    P(AttackPosition)
+    P(Move)
+    P(Target)
+    P(NearbyAttacked)
+    P(NearbyAttacking)
+    P(Equip)
+    P(Source)
+    P(Interrupt)
+    default:
+        ERR("Don't know how to execute functors in context %d", context->Type);
+        break;
+    }
+}
+
+#undef P
+
+void ExecuteFunctor(Functor* functor, ContextData* context)
+{
+    Functors functors;
+    functors.Insert(functor->Clone());
+    ExecuteFunctors(&functors, context);
+}
+
 void RegisterStatsLib()
 {
     DECLARE_MODULE(Stats, Both)
@@ -809,6 +853,8 @@ void RegisterStatsLib()
     MODULE_FUNCTION(EnumLabelToIndex)
     MODULE_FUNCTION(AddAttribute)
     MODULE_FUNCTION(AddEnumerationValue)
+    MODULE_FUNCTION(ExecuteFunctors)
+    MODULE_FUNCTION(ExecuteFunctor)
     END_MODULE()
         
 /*    DECLARE_SUBMODULE(Stats, SkillSet, Both)
