@@ -10,6 +10,8 @@ P_FUN(ToString, Noesis::ObjectHelpers::ToString)
 // For both TypeProperty & DependencyProperty
 P_FUN(GetProperty, Noesis::ObjectHelpers::GetNamedProperty)
 P_FUN(GetAllProperties, Noesis::ObjectHelpers::GetAllProperties)
+P_FUN(DirectProperties, Noesis::ObjectHelpers::GetDirectProperties)
+P_FUN(DependencyProperties, Noesis::ObjectHelpers::GetDependencyProperties)
 P_FUN(SetProperty, Noesis::ObjectHelpers::SetNamedProperty)
 P_FALLBACK(&Noesis::ObjectHelpers::FallbackGetProperty, &Noesis::ObjectHelpers::FallbackSetProperty, nullptr)
 END_CLS()

@@ -99,6 +99,13 @@ struct SurfacePathInfluence
     int Influence;
 };
 
+struct ThreadRegistry : public ProtectedGameObject<ThreadRegistry>
+{
+    using RequestThreadIndexProc = uint32_t ();
+
+    static uint32_t RequestThreadIndex();
+};
+
 END_SE()
 
 BEGIN_NS(ecs)

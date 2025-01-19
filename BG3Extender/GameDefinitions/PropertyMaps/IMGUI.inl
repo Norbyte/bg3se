@@ -103,9 +103,8 @@ P_FUN(AttachChild, extui::TreeParent::AttachChild)
 END_CLS()
 
 
-BEGIN_CLS(extui::Window)
+BEGIN_CLS(extui::WindowBase)
 INHERIT(extui::TreeParent)
-P_FUN(AddMainMenu, extui::Window::AddMainMenu)
 P_FUN(SetPos, extui::Window::SetPos)
 P_FUN(SetSize, extui::Window::SetSize)
 P_FUN(SetSizeConstraints, extui::Window::SetSizeConstraints)
@@ -114,9 +113,16 @@ P_FUN(SetCollapsed, extui::Window::SetCollapsed)
 P_FUN(SetFocus, extui::Window::SetFocus)
 P_FUN(SetScroll, extui::Window::SetScroll)
 P_FUN(SetBgAlpha, extui::Window::SetBgAlpha)
+P_BITMASK(Flags)
+END_CLS()
+
+
+BEGIN_CLS(extui::Window)
+INHERIT(extui::WindowBase)
+P_FUN(AddMainMenu, extui::Window::AddMainMenu)
 P(Open)
 P(Closeable)
-P_BITMASK(Flags)
+P(Scaling)
 P(OnClose)
 END_CLS()
 
@@ -198,20 +204,18 @@ END_CLS()
 
 
 BEGIN_CLS(extui::Tooltip)
-INHERIT(extui::TreeParent)
+INHERIT(extui::WindowBase)
 END_CLS()
 
 
 BEGIN_CLS(extui::Popup)
-INHERIT(extui::TreeParent)
-P_BITMASK(Flags)
+INHERIT(extui::WindowBase)
 P_FUN(Open, extui::Popup::Open)
 END_CLS()
 
 
 BEGIN_CLS(extui::ChildWindow)
-INHERIT(extui::TreeParent)
-P_BITMASK(Flags)
+INHERIT(extui::WindowBase)
 P_BITMASK(ChildFlags)
 P(Size)
 END_CLS()

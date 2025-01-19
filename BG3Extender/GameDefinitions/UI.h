@@ -110,6 +110,8 @@ struct ObjectHelpers
     static void SetNamedProperty(lua_State* L, BaseObject* o, Symbol name, lua::AnyRef value);
     static void SetProperty(lua_State* L, BaseObject* o, TypeProperty const* prop, lua::AnyRef value);
     static UserReturn GetAllProperties(lua_State* L, BaseObject const* o);
+    static UserReturn GetDirectProperties(lua_State* L, BaseObject const* o);
+    static UserReturn GetDependencyProperties(lua_State* L, BaseObject const* o);
 
     static TypeClass* GetClassType(BaseObject const* o);
     static Symbol GetClassTypeName(BaseObject const* o);

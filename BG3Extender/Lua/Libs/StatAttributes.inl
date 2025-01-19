@@ -10,7 +10,7 @@ BEGIN_NS(lua::stats)
 FixedString ObjectHelpers::GetModifierList(Object const* obj)
 {
     auto stats = GetStaticSymbols().GetStats();
-    return stats->ModifierLists.Find(obj->ModifierListIndex)->Name;
+    return stats->ModifierLists.GetByHandle(obj->ModifierListIndex)->Name;
 }
 
 
@@ -32,7 +32,7 @@ FixedString ObjectHelpers::GetUsing(Object const* obj)
 {
     auto stats = GetStaticSymbols().GetStats();
     if (obj->Using) {
-        auto parent = stats->Objects.Find(obj->Using);
+        auto parent = stats->Objects.GetByHandle(obj->Using);
         if (parent != nullptr) {
             return parent->Name;
         }
@@ -137,7 +137,7 @@ bool ObjectHelpers::SetRawAttribute(Object* object, FixedString key, char const*
 bool ObjectHelpers::CopyFrom(Object* object, FixedString parent)
 {
     auto stats = GetStaticSymbols().GetStats();
-    auto copyFromObject = stats->Objects.Find(parent);
+    auto copyFromObject = stats->Objects.GetByName(parent);
     if (copyFromObject == nullptr) {
         OsiError("Cannot copy stats from nonexistent object: " << parent);
         return false;
@@ -166,21 +166,21 @@ int ObjectHelpers::FallbackNext(lua_State* L, LifetimeHandle lifetime, Object co
 {
     auto stats = GetStaticSymbols().GetStats();
 
-    auto modifiers = stats->ModifierLists.Find(object->ModifierListIndex);
+    auto modifiers = stats->ModifierLists.GetByHandle(object->ModifierListIndex);
 
     Modifier* next;
     if (!prop) {
-        if (modifiers->Attributes.Primitives.empty()) {
+        if (modifiers->Attributes.Values.empty()) {
             return 0;
         }
 
-        next = modifiers->Attributes.Primitives[0];
+        next = modifiers->Attributes.Values[0];
     } else {
-        auto index = modifiers->Attributes.FindIndex(prop);
-        if (!index) {
-            next = modifiers->Attributes.Primitives[0];
-        } else if ((uint32_t)*index < modifiers->Attributes.Primitives.size() - 1) {
-            next = modifiers->Attributes.Primitives[*index + 1];
+        auto index = modifiers->Attributes.GetHandleByName(prop);
+        if (index == -1) {
+            next = modifiers->Attributes.Values[0];
+        } else if ((uint32_t)index < modifiers->Attributes.Values.size() - 1) {
+            next = modifiers->Attributes.Values[index + 1];
         } else {
             return 0;
         }

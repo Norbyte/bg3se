@@ -158,6 +158,11 @@ namespace bg3se
             return Handle >> 54;
         }
 
+        inline constexpr uint32_t GetThreadIndex() const
+        {
+            return Handle >> 54;
+        }
+
         inline constexpr uint32_t GetSalt() const
         {
             return (Handle >> 32) & 0x3fffff;

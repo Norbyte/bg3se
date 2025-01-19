@@ -14,15 +14,15 @@ namespace bg3se::lua::stats
             return {};
         }
 
-        auto modifierList = stats->ModifierLists.Find(modifierName);
+        auto modifierList = stats->ModifierLists.GetByName(modifierName);
         if (!modifierList) {
             OsiError("No such modifier list: " << modifierName);
             return {};
         }
 
         LegacyMap<FixedString, FixedString> modifiers;
-        for (auto const& modifier : modifierList->Attributes.Primitives) {
-            auto enumeration = GetStaticSymbols().GetStats()->ModifierValueLists.Find(modifier->EnumerationIndex);
+        for (auto const& modifier : modifierList->Attributes.Values) {
+            auto enumeration = GetStaticSymbols().GetStats()->ModifierValueLists.GetByHandle(modifier->EnumerationIndex);
             modifiers.insert(modifier->Name, enumeration->Name);
         }
 

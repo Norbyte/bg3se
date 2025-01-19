@@ -17,13 +17,13 @@ bool IsAliveEntity(EntityHandle const& handle, ecs::EntityWorld& world)
 {
     if (!handle) return true;
 
-    CHECKR(handle.GetType() < std::size(world.HandleGenerator->ThreadStates));
+    CHECKR(handle.GetThreadIndex() < std::size(world.HandleGenerator->ThreadStates));
 
     // There is no observed shrink logic in per-thread paged pools, so index cannot be greater than pool size
-    auto& state = world.HandleGenerator->ThreadStates[handle.GetType()];
-    CHECKR(handle.GetIndex() < state.Salts.Size);
+    auto& state = world.HandleGenerator->ThreadStates[handle.GetThreadIndex()];
+    CHECKR(handle.GetIndex() < state.Entries.size());
 
-    auto const& salt = state.Salts[handle.GetIndex()];
+    auto const& salt = state.Entries[handle.GetIndex()];
     CHECKR(salt.Index == handle.GetIndex());
     CHECKR(salt.Salt == handle.GetSalt());
 
@@ -50,18 +50,18 @@ bool WasValidEntity(EntityHandle const& handle, ecs::EntityWorld& world)
 {
     if (!handle) return true;
 
-    CHECK(handle.GetType() < std::size(world.HandleGenerator->ThreadStates));
+    CHECK(handle.GetThreadIndex() < std::size(world.HandleGenerator->ThreadStates));
 
     // There is no observed shrink logic in per-thread paged pools, so index cannot be greater than pool size
-    auto& state = world.HandleGenerator->ThreadStates[handle.GetType()];
-    CHECK(handle.GetIndex() < state.Salts.Size);
+    auto& state = world.HandleGenerator->ThreadStates[handle.GetThreadIndex()];
+    CHECK(handle.GetIndex() < state.Entries.capacity());
 
     // Check that handle are within rational bounds
     CHECK(handle.GetSalt() < 0x1000);
 
     // Allow salt mismatches if the handle has an old salt.
     // It should never have a salt value that is newer than the current one in ECS
-    auto const& salt = state.Salts[handle.GetIndex()];
+    auto const& salt = state.Entries[handle.GetIndex()];
     // FIXME This is weird - sometimes the index can change after an entity gets deleted?
     // CHECK(salt.Index == handle.GetIndex());
     // CHECK(salt.Salt <= handle.GetSalt());

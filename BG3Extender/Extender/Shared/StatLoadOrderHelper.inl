@@ -102,7 +102,7 @@ std::vector<Object*> StatLoadOrderHelper::GetStatsLoadedBefore(FixedString modId
 
     std::vector<Object*> statsLoadedBefore;
     auto stats = GetStaticSymbols().GetStats();
-    for (auto const& object : stats->Objects.Primitives) {
+    for (auto object : stats->Objects.Values) {
         auto statEntryMod = GetStatsEntryMod(object->Name);
         if (statEntryMod && modsLoadedBefore.find(statEntryMod->LastMod) != modsLoadedBefore.end()) {
             statsLoadedBefore.push_back(object);

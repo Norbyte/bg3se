@@ -28,6 +28,10 @@ struct SteeringState : public ProtectedGameObject<SteeringState>
     SteeringMachine* SteeringMachine;
     bool field_10;
     int TransactionId;
+
+    // Lua getter helpers
+    SteeringType LuaGetType() const;
+    //# P_GETTER(Type, LuaGetType)
 };
 
 struct SSSteer : public SteeringState

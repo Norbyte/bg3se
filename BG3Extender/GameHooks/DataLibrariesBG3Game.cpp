@@ -126,6 +126,7 @@ namespace bg3se
         SYM_OFF(ls__GlobalStringTable__MainTable__DecRef);
         SYM_OFF(ls__gGlobalStringTable);
 
+        SYM_OFF(ls__ThreadRegistry__RequestThreadIndex);
         SYM_OFF(ls__FileReader__ctor);
         SYM_OFF(ls__FileReader__dtor);
         SYM_OFF(ls__PathRoots);
@@ -136,6 +137,7 @@ namespace bg3se
         SYM_OFF(esv__EoCServer);
         SYM_OFF(ecl__EoCClient__HandleError);
         SYM_OFF(ecl__gCursorControl);
+        SYM_OFF(ls__gDragDropManager);
         SYM_OFF(ls__gTranslatedStringRepository);
 
         SYM_OFF(ecl__gGameStateEventManager);
@@ -152,8 +154,6 @@ namespace bg3se
         /*SYM_OFF(esv__SurfaceActionFactory);
         SYM_OFF(esv__SurfaceActionFactory__CreateAction);
         SYM_OFF(esv__SurfaceManager__AddAction);*/
-
-        SYM_OFF(stats__Functors__VMT);
 
         SYM_OFF(eoc__SpellPrototypeManager);
         SYM_OFF(eoc__SpellPrototype__Init);
@@ -179,15 +179,15 @@ namespace bg3se
         SYM_OFF(stats__DealDamageFunctor__ApplyDamage);
         SYM_OFF(esv__StatsSystem__ThrowDamageEvent);
 
-        SYM_OFF(stats__Functors__ExecuteAttackTarget);
-        SYM_OFF(stats__Functors__ExecuteAttackPosition);
-        SYM_OFF(stats__Functors__ExecuteMove);
-        SYM_OFF(stats__Functors__ExecuteTarget);
-        SYM_OFF(stats__Functors__ExecuteNearbyAttacked);
-        SYM_OFF(stats__Functors__ExecuteNearbyAttacking);
-        SYM_OFF(stats__Functors__ExecuteEquip);
-        SYM_OFF(stats__Functors__ExecuteSource);
-        SYM_OFF(stats__Functors__ExecuteInterrupt);
+        SYM_OFF(esv__ExecuteStatsFunctor_AttackTargetContext);
+        SYM_OFF(esv__ExecuteStatsFunctor_AttackPositionContext);
+        SYM_OFF(esv__ExecuteStatsFunctor_MoveContext);
+        SYM_OFF(esv__ExecuteStatsFunctor_TargetContext);
+        SYM_OFF(esv__ExecuteStatsFunctor_NearbyAttackedContext);
+        SYM_OFF(esv__ExecuteStatsFunctor_NearbyAttackingContext);
+        SYM_OFF(esv__ExecuteStatsFunctor_EquipContext);
+        SYM_OFF(esv__ExecuteStatsFunctor_SourceContext);
+        SYM_OFF(esv__ExecuteStatsFunctor_InterruptContext);
 
         SYM_OFF(gRPGStats);
         SYM_OFF(RPGStats__Load);

@@ -30,6 +30,10 @@ struct ActionState : public ProtectedGameObject<ActionState>
     bool Finished;
     uint8_t field_16;
     ActionOriginator Originator;
+
+    // Lua getter helpers
+    ActionType LuaGetType() const;
+    //# P_GETTER(Type, LuaGetType)
 };
 
 struct ActionLayer

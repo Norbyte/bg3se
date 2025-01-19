@@ -67,6 +67,12 @@ void SDLManager::NewFrame()
     ImGui_ImplSDL2_NewFrame();
 }
 
+void SDLManager::InjectEvent(SDL_Event const& evt)
+{
+    std::lock_guard _(injectedEventMutex_);
+    injectedEvents_.push_back(evt);
+}
+
 void SDLManager::SDLCreateWindowHooked(const char* title,
     int x, int y, int w,
     int h, uint32_t flags,
@@ -77,13 +83,25 @@ void SDLManager::SDLCreateWindowHooked(const char* title,
 
 int SDLManager::SDLPollEventHooked(SDLPollEventProc* wrapped, SDL_Event* event)
 {
-    int result = wrapped(event);
+    if (!injectedEvents_.empty()) {
+        std::lock_guard _(injectedEventMutex_);
+        *event = *injectedEvents_.begin();
+        injectedEvents_.ordered_remove_at(0);
+        return 1;
+    }
 
-    BEGIN_GUARDED()
-    result = SDLPollEventInternal(event, result);
-    END_GUARDED()
+    int result = wrapped(event);
+    result = SDLPollEventSEH(event, result);
 
     return result;
+}
+
+int SDLManager::SDLPollEventSEH(SDL_Event* event, int result)
+{
+    BEGIN_GUARDED()
+    return SDLPollEventInternal(event, result);
+    END_GUARDED()
+    return 0;
 }
 
 int SDLManager::SDLPollEventInternal(SDL_Event* event, int result)

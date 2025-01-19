@@ -102,19 +102,20 @@ struct StaticPhysicsComponent : public BaseComponent
 {
     DEFINE_COMPONENT(StaticPhysics, "ls::StaticPhysicsComponent")
 
-    [[bg3::hidden]]
-    void* field_0;
+    // Editor only
+    // FixedString field_0;
+    // GameObjectTemplate* Template;
+    phx::PhysicsObject* Physics;
 };
 
 struct PhysicsComponent : public BaseComponent
 {
     DEFINE_COMPONENT(Physics, "ls::PhysicsComponent")
 
-    [[bg3::hidden]]
-    void* Physics;
-    int field_8;
-    int field_C;
-    int field_10;
+    phx::PhysicsObject* Physics;
+    uint32_t PhysicsGroup;
+    uint32_t CollidesWith;
+    uint32_t ExtraFlags;
     uint8_t field_14;
     uint8_t field_15;
     uint8_t field_16;

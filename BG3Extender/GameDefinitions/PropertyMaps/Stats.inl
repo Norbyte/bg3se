@@ -167,23 +167,22 @@ P(Attributes)
 END_CLS()
 
 BEGIN_CLS(stats::CNamedElementManager<stats::RPGEnumeration>)
-P(Primitives)
-P(NameHashMap)
+P(Values)
 END_CLS()
 
 BEGIN_CLS(stats::CNamedElementManager<stats::ModifierList>)
-P(Primitives)
-P(NameHashMap)
+P(Values)
 END_CLS()
 
 BEGIN_CLS(stats::CNamedElementManager<stats::Modifier>)
-P(Primitives)
-P(NameHashMap)
+P(Values)
 END_CLS()
 
 BEGIN_CLS(stats::CNamedElementManager<stats::TreasureTable>)
-P(Primitives)
-P(NameHashMap)
+P(Values)
+END_CLS()
+
+BEGIN_CLS(stats::CNamedElementManager<stats::Functor>)
 END_CLS()
 
 BEGIN_CLS(stats::RPGStats)

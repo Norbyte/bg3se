@@ -85,15 +85,54 @@ BEGIN_NS(ecs)
 
 struct alignas(64) FrameAllocator : public ProtectedGameObject<FrameAllocator>
 {
-    __int64 FastLock;
-    __int64 FastLock2;
-    CRITICAL_SECTION field_10;
-    Array<void*> Pages[2];
+    struct FrameBuffer
+    {
+        volatile int64_t Offset;
+    };
+
+    FrameBuffer* CurrentPage;
+    uint64_t PageSize;
+    CRITICAL_SECTION CS;
+    Array<void*> FrameBuffers[2];
+
+    void* Allocate(uint16_t size);
+    FrameBuffer* AllocPage();
+    void Free(void* ptr);
 };
 
 struct ECBFrameAllocator
 {
+    inline ECBFrameAllocator(FrameAllocator* allocator)
+        : Allocator(allocator)
+    {}
+    
+    inline ECBFrameAllocator(ECBFrameAllocator const& allocator)
+        : Allocator(allocator.Allocator)
+    {}
+
     FrameAllocator* Allocator;
+
+    inline void* alloc(std::size_t size)
+    {
+        assert(size <= 0xFFC0);
+        return Allocator->Allocate((uint16_t)size);
+    }
+
+    template <class T, class ...Args>
+    T* allocArray(std::size_t n, Args... args)
+    {
+        assert(n * sizeof(T) <= 0xFFC0);
+        auto ptr = static_cast<T*>(Allocator->Allocate((uint16_t)(n * sizeof(T))));
+        for (auto i = 0; i < n; i++) {
+            new (ptr + i) T(args...);
+        }
+        return ptr;
+    }
+
+    inline void free(void* ptr)
+    {
+        Allocator->Free(ptr);
+    }
 };
 
 struct ComponentTypeEntry : public ProtectedGameObject<ComponentTypeEntry>
@@ -372,18 +411,18 @@ struct EntityHandleGenerator : public ProtectedGameObject<EntityHandleGenerator>
             uint32_t Salt;
         };
 
-        PagedArray<Entry> Salts;
+        PagedArray<Entry> Entries;
         uint32_t NextFreeSlotIndex;
-        uint32_t HighestIndex;
+        uint32_t LastFreeSlotIndex;
         uint32_t NumFreeSlots;
 
-        uint64_t Add();
-        void Grow();
+        Entry* Add();
     };
 
     std::array<ThreadState, 0x40> ThreadStates;
 
-    EntityHandle Add(uint32_t classIndex);
+    EntityHandle Create();
+    bool IsEntityAlive(EntityHandle entity) const;
 };
 
 struct EntityStorageComponentPage
@@ -412,8 +451,13 @@ struct EntityStorageData : public ProtectedGameObject<EntityStorageData>
             
     struct EntityStorageIndex
     {
-        uint16_t PageIndex;
-        uint16_t EntryIndex;
+        uint16_t PageIndex{ 0xffff };
+        uint16_t EntryIndex{ 0xffff };
+
+        inline operator bool() const
+        {
+            return PageIndex != 0xffff;
+        }
     };
 
     struct HandlePage
@@ -481,7 +525,7 @@ struct EntityStorageContainer : public ProtectedGameObject<EntityStorageContaine
         uint16_t EntityClassIndex;
     };
 
-    struct SaltMap : public ProtectedGameObject<SaltMap>
+    struct ThreadSalts : public ProtectedGameObject<ThreadSalts>
     {
         std::array<PagedArray<TypeSalt>, 0x40> Buckets;
         uint32_t Size;
@@ -489,7 +533,7 @@ struct EntityStorageContainer : public ProtectedGameObject<EntityStorageContaine
 
     Array<EntityStorageData*> Entities;
     HashMap<uint64_t, uint16_t> TypeHashToEntityTypeIndex;
-    SaltMap Salts;
+    ThreadSalts Salts;
     HashMap<uint64_t, uint64_t> field_458;
     BitSet<> UsedFrameDataStorages;
     ComponentRegistry* ComponentRegistry;
@@ -551,36 +595,56 @@ struct ECBEntityComponentChange
 
 struct ECBEntityChangeSet
 {
+    inline ECBEntityChangeSet(FrameAllocator* allocator)
+        : Store(4, ECBFrameAllocator(allocator))
+    {}
+
     PagedArray<ECBEntityComponentChange, ECBFrameAllocator> Store;
-    uint64_t X;
-    uint64_t Y;
-    EntityChangeFlags Flags;
-    __int16 field_2A;
+    uint64_t X{ 0 };
+    uint64_t Y{ 0 };
+    EntityChangeFlags Flags{ 0 };
+    int16_t field_2A{ -1 };
 };
 
 struct ComponentFrameStorage
 {
-    PagedArray<void*, ECBFrameAllocator> Components;
-    uint32_t NumComponents;
-    uint16_t ComponentSizeInBytes;
-    ComponentTypeIndex ComponentTypeId;
-    void* DestructorProc;
+    inline ComponentFrameStorage(FrameAllocator* allocator)
+        : Pages(3, allocator)
+    {}
+
+    PagedArray<void*, ECBFrameAllocator> Pages;
+    uint32_t NumComponents{ 0 };
+    uint16_t ComponentSizeInBytes{ 0 };
+    ComponentTypeIndex ComponentTypeId{ 0 };
+    void* DestructorProc{ nullptr };
+
+    inline void* GetComponent(EntityStorageData::EntityStorageIndex const& index) const
+    {
+        assert(index.PageIndex < Pages.size());
+        auto page = Pages[index.PageIndex];
+        return reinterpret_cast<uint8_t*>(page) + (index.EntryIndex * ComponentSizeInBytes);
+    }
 };
 
 struct ImmediateWorldCache : public ProtectedGameObject<ImmediateWorldCache>
 {
     struct ComponentChange
     {
-        void* Ptr;
+        void* Ptr{ nullptr };
         EntityStorageData::EntityStorageIndex StorageIndex;
     };
 
     struct ComponentChanges
     {
+        inline ComponentChanges(FrameAllocator* allocator)
+            : Components(5, allocator),
+            FrameStorage(allocator)
+        {}
+
         PagedHashMap<EntityHandle, ComponentChange, ECBFrameAllocator> Components;
         ComponentFrameStorage FrameStorage;
-        void* field_70;
-        void* field_78;
+        void* field_70{ nullptr };
+        void* field_78{ nullptr };
     };
 
     struct Changes
@@ -590,6 +654,7 @@ struct ImmediateWorldCache : public ProtectedGameObject<ImmediateWorldCache>
         uint64_t Unknown;
 
         void* GetChange(EntityHandle entityHandle, ComponentTypeIndex type) const;
+        ComponentChanges* AddComponentChanges(ComponentTypeEntry const* type, FrameAllocator* allocator);
     };
 
     Changes WriteChanges;
@@ -599,6 +664,9 @@ struct ImmediateWorldCache : public ProtectedGameObject<ImmediateWorldCache>
     EntityWorld* EntityWorld;
     EntityHandleGenerator* HandleGenerator;
     __int64 field_158;
+
+    ComponentChanges* AddComponentChanges(ComponentTypeIndex type);
+    bool RemoveComponent(EntityHandle entity, ComponentTypeIndex type);
 };
 
 struct ECBData : public ProtectedGameObject<ECBData>
@@ -606,6 +674,9 @@ struct ECBData : public ProtectedGameObject<ECBData>
     PagedHashMap<EntityHandle, ECBEntityChangeSet, ECBFrameAllocator> EntityChanges;
     DoubleIndexedPagedArray<ComponentTypeIndex, ComponentFrameStorage, ECBFrameAllocator> ComponentPools;
     bool field_A0;
+
+    ECBEntityChangeSet const* GetEntityChange(EntityHandle const& entity) const;
+    ECBEntityChangeSet* GetOrAddEntityChange(EntityHandle const& entity);
 };
 
 struct EntityCommandBuffer : public ProtectedGameObject<EntityCommandBuffer>
@@ -614,6 +685,11 @@ struct EntityCommandBuffer : public ProtectedGameObject<EntityCommandBuffer>
     FrameAllocator* Allocator;
     ECBData Data;
     uint32_t ThreadId;
+
+    EntityHandle CreateEntity();
+    EntityHandle CreateEntityImmediate();
+    bool DestroyEntity(EntityHandle entity);
+    void* GetComponentChange(ComponentTypeIndex type, EntityStorageData::EntityStorageIndex const& index) const;
 };
 
 struct GroupAllocator : public ProtectedGameObject<GroupAllocator>
@@ -718,6 +794,7 @@ struct EntityWorld : public ProtectedGameObject<EntityWorld>
 
     EntityStorageData* GetEntityStorage(EntityHandle entityHandle) const;
     bool IsValid(EntityHandle entityHandle) const;
+    EntityCommandBuffer* Deferred();
 };
 
 END_NS()

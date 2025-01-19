@@ -14,29 +14,51 @@ class Function
     static_assert(AlwaysFalse<TFun>, "Function<T> expects a function template argument");
 };
 
-template <class R, class... Args>
-class Function<R (Args...)>
+template <class TFun>
+class FunctionStorage
 {
-public:
+    static_assert(AlwaysFalse<TFun>, "Function<T> expects a function template argument");
+};
+
+template <class R, class... Args>
+struct FunctionStorage<R (Args...)>
+{
     static constexpr unsigned UserDataSize = 4;
 
-    Function(Function const& o)
+    FunctionStorage()
+        : call_(nullptr),
+        copy_(nullptr),
+        move_(nullptr)
+    {}
+
+    FunctionStorage(FunctionStorage const& o)
+        : call_(o.call_),
+        copy_(o.copy_),
+        move_(o.move_)
     {
-        call_ = o.call_;
-        copy_ = o.copy_;
-        move_ = o.move_;
         o.copy_(o, o, this);
     }
 
-    Function(Function&& o)
+    FunctionStorage(FunctionStorage&& o)
+        : call_(o.call_),
+        copy_(o.copy_),
+        move_(o.move_)
     {
-        call_ = o.call_;
-        copy_ = o.copy_;
-        move_ = o.move_;
         o.move_(o, std::move(o), this);
     }
 
-    Function& operator =(Function const& o)
+    FunctionStorage& operator =(FunctionStorage const* o)
+    {
+        if (o) {
+            call_ = o->call_;
+            copy_ = o->copy_;
+            move_ = o->move_;
+            o->copy_(*o, *o, this);
+        }
+        return *this;
+    }
+
+    FunctionStorage& operator =(FunctionStorage const& o)
     {
         call_ = o.call_;
         copy_ = o.copy_;
@@ -45,7 +67,7 @@ public:
         return *this;
     }
 
-    Function& operator =(Function&& o)
+    FunctionStorage& operator =(FunctionStorage&& o)
     {
         call_ = o.call_;
         copy_ = o.copy_;
@@ -54,7 +76,7 @@ public:
         return *this;
     }
 
-    ~Function()
+    ~FunctionStorage()
     {
         move_(*this, std::move(*this), nullptr);
     }
@@ -68,28 +90,107 @@ public:
         }
     }
 
-protected:
-    friend FunctionImpl;
-
-    Function() {}
-
-private:
-    using CallProc = R (Function const& self, Args... args);
-    using CopyProc = Function* (Function const& self, Function const& src, Function* dst);
-    using MoveProc = Function* (Function const& self, Function&& src, Function* dst);
+    using CallProc = R (FunctionStorage const& self, Args... args);
+    using CopyProc = FunctionStorage* (FunctionStorage const& self, FunctionStorage const& src, FunctionStorage* dst);
+    using MoveProc = FunctionStorage* (FunctionStorage const& self, FunctionStorage&& src, FunctionStorage* dst);
 
     CallProc* call_;
     CopyProc* copy_;
     MoveProc* move_;
     std::uintptr_t data_[UserDataSize];
+
+    template <class T>
+    inline T* data()
+    {
+        static_assert(sizeof(T) <= sizeof(data_));
+        return reinterpret_cast<T*>(&this->data_[0]);
+    }
+
+    template <class T>
+    inline T const* data() const
+    {
+        static_assert(sizeof(T) <= sizeof(data_));
+        return reinterpret_cast<T const*>(&this->data_[0]);
+    }
+};
+
+template <class R, class... Args>
+class Function<R (Args...)>
+{
+public:
+    static constexpr unsigned UserDataSize = 4;
+
+    Function()
+        : pStorage_(nullptr)
+    {}
+
+    Function(Function const& o)
+        : pStorage_(o ? &storage_ : nullptr)
+    {
+        if (o) {
+            storage_ = o.storage_;
+        }
+    }
+
+    Function(FunctionStorage<R(Args...)> const& o)
+        : pStorage_(&storage_),
+        storage_(o)
+    {}
+
+    Function(Function&& o)
+        : pStorage_(o ? &storage_ : nullptr)
+    {
+        if (o) {
+            storage_ = std::move(o.storage_);
+        }
+    }
+
+    Function& operator =(Function const& o)
+    {
+        pStorage_ = o ? &storage_ : nullptr;
+        if (o) {
+            storage_ = o.storage_;
+        }
+        return *this;
+    }
+
+    Function& operator =(Function&& o)
+    {
+        pStorage_ = o ? &storage_ : nullptr;
+        if (o) {
+            storage_ = std::move(o.storage_);
+        }
+        return *this;
+    }
+
+    inline operator bool() const
+    {
+        return pStorage_ != nullptr;
+    }
+
+    inline R operator ()(Args&&... args) const
+    {
+        if constexpr (std::is_same_v<R, void>) {
+            storage_(std::forward<Args>(args)...);
+        } else {
+            return storage_(std::forward<Args>(args)...);
+        }
+    }
+
+protected:
+    friend FunctionImpl;
+
+private:
+    FunctionStorage<R(Args...)>* pStorage_;
+    FunctionStorage<R(Args...)> storage_;
 };
 
 
 template <class R, class... Args>
-class FunctionImpl<R (Args...), void> : public Function<R (Args...)>
+struct FunctionImpl<R (Args...), void>
 {
-private:
-    using Base = Function<R(Args...)>;
+    using Fn = Function<R(Args...)>;
+    using Storage = FunctionStorage<R(Args...)>;
     using UserCallProc = R (Args... args);
 
     struct Context
@@ -97,63 +198,49 @@ private:
         UserCallProc* Handler;
     };
 
-    static_assert(sizeof(Context) <= sizeof(void*) * Base::UserDataSize);
-
-public:
-    FunctionImpl(UserCallProc* handler) : Function()
+    static Fn Make(UserCallProc* handler)
     {
-        this->call_ = [](Base const& self, Args... args) -> R {
+        Storage fn;
+        fn.call_ = [] (Storage const& self, Args... args) -> R {
+            auto handler = self.data<Context>()->Handler;
             if constexpr (std::is_same_v<R, void>) {
-                static_cast<FunctionImpl const&>(self)(std::forward<Args>(args)...);
+                handler(std::forward<Args>(args)...);
             } else {
-                return static_cast<FunctionImpl const&>(self)(std::forward<Args>(args)...);
+                return handler(std::forward<Args>(args)...);
             }
         };
-        this->copy_ = [](Base const& self, Base const& src, Base* dst) -> Base* {
-            *static_cast<FunctionImpl*>(dst)->Data() = *static_cast<FunctionImpl const&>(src).Data();
+        fn.copy_ = [] (Storage const& self, Storage const& src, Storage* dst) -> Storage* {
+            dst->call_ = src.call_;
+            dst->copy_ = src.copy_;
+            dst->move_ = src.move_;
+            *dst->data<Context>() = *src.data<Context>();
             return dst;
         };
-        this->move_ = [](Base const& self, Base&& src, Base* dst) -> Base* {
+        fn.move_ = [] (Storage const& self, Storage&& src, Storage* dst) -> Storage* {
             if (dst == nullptr) {
-                static_cast<FunctionImpl&>(src).Data()->~Context();
+                src.data<Context>()->~Context();
                 return nullptr;
             } else {
-                *static_cast<FunctionImpl*>(dst)->Data() = std::move(*static_cast<FunctionImpl const&>(src).Data());
+                dst->call_ = src.call_;
+                dst->copy_ = src.copy_;
+                dst->move_ = src.move_;
+                *dst->data<Context>() = std::move(*src.data<Context>());
                 return dst;
             }
         };
-        *Data() = Context{
+        new (fn.data<Context>()) Context{
             .Handler = handler
         };
-    }
-
-private:
-    R operator ()(Args&&... args) const
-    {
-        if constexpr (std::is_same_v<R, void>) {
-            (Data()->Handler)(std::forward<Args>(args)...);
-        } else {
-            return (Data()->Handler)(std::forward<Args>(args)...);
-        }
-    }
-
-    inline Context* Data()
-    {
-        return reinterpret_cast<Context*>(&this->data_[0]);
-    }
-
-    inline Context const* Data() const
-    {
-        return reinterpret_cast<Context const*>(&this->data_[0]);
+        return Fn(fn);
     }
 };
 
 
 template <class R, class T, class... Args>
-class FunctionImpl<R (T::*)(Args...), void> : public Function<R (Args...)>
+struct FunctionImpl<R (T::*)(Args...), void>
 {
-private:
-    using Base = Function<R (Args...)>;
+    using Fn = Function<R(Args...)>;
+    using Storage = FunctionStorage<R(Args...)>;
     using UserCallProc = R (T::*)(Args... args);
 
     struct Context
@@ -162,66 +249,51 @@ private:
         UserCallProc Handler;
     };
 
-    static_assert(sizeof(Context) <= sizeof(void*) * Base::UserDataSize);
-
-public:
-    FunctionImpl(T* this_, UserCallProc handler)
+    static Fn Make(T* this_, UserCallProc* handler)
     {
-        this->call_ = [](Base const& self, Args... args) -> R {
+        Storage fn;
+        fn.call_ = [](Storage const& self, Args... args) -> R {
+            auto this_ = self.data<Context>()->This;
+            auto handler = self.data<Context>()->Handler;
             if constexpr (std::is_same_v<R, void>) {
-                static_cast<FunctionImpl const&>(self)(std::forward<Args>(args)...);
+                (this_->*handler)(std::forward<Args>(args)...);
             } else {
-                return static_cast<FunctionImpl const&>(self)(std::forward<Args>(args)...);
+                return (this_->*handler)(std::forward<Args>(args)...);
             }
         };
-        this->copy_ = [](Base const& self, Base const& src, Base* dst) -> Base* {
-            *static_cast<FunctionImpl*>(dst)->Data() = *static_cast<FunctionImpl const&>(src).Data();
+        fn.copy_ = [](Storage const& self, Storage const& src, Storage* dst) -> Storage* {
+            dst->call_ = src.call_;
+            dst->copy_ = src.copy_;
+            dst->move_ = src.move_;
+            *dst->data<Context>() = *src.data<Context>();
             return dst;
         };
-        this->move_ = [](Base const& self, Base&& src, Base* dst) -> Base* {
+        fn.move_ = [](Storage const& self, Storage&& src, Storage* dst) -> Storage* {
             if (dst == nullptr) {
-                static_cast<FunctionImpl&>(src).Data()->~Context();
+                src.data<Context>()->~Context();
                 return nullptr;
             } else {
-                *static_cast<FunctionImpl*>(dst)->Data() = std::move(*static_cast<FunctionImpl const&>(src).Data());
+                dst->call_ = src.call_;
+                dst->copy_ = src.copy_;
+                dst->move_ = src.move_;
+                *dst->data<Context>() = std::move(*src.data<Context>());
                 return dst;
             }
         };
-        *Data() = Context{
+        new (fn.data<Context>()) Context{
             .This = this_,
             .Handler = handler
         };
-    }
-
-private:
-    R operator ()(Args&&... args) const
-    {
-        auto this_ = Data()->This;
-        auto proc = Data()->Handler;
-        if constexpr (std::is_same_v<R, void>) {
-            (this_->*proc)(std::forward<Args>(args)...);
-        } else {
-            return (this_->*proc)(std::forward<Args>(args)...);
-        }
-    }
-
-    inline Context* Data()
-    {
-        return reinterpret_cast<Context*>(&this->data_[0]);
-    }
-
-    inline Context const* Data() const
-    {
-        return reinterpret_cast<Context const*>(&this->data_[0]);
+        return fn;
     }
 };
 
 
 template <class TData, class R, class... Args>
-class FunctionImpl<R (TData const&, Args...), TData> : public Function<R (Args...)>
+struct FunctionImpl<R (TData const&, Args...), TData>
 {
-private:
-    using Base = Function<R (Args...)>;
+    using Fn = Function<R(Args...)>;
+    using Storage = FunctionStorage<R(Args...)>;
     using UserCallProc = R (TData const&, Args...);
 
     struct Context
@@ -230,67 +302,51 @@ private:
         TData Data;
     };
 
-    static_assert(sizeof(Context) <= sizeof(void*) * Base::UserDataSize);
-
-public:
-    FunctionImpl(UserCallProc* handler, TData const& data)
+    static Fn Make(UserCallProc* handler, TData const& data)
     {
-        this->call_ = [](Base const& self, Args... args) -> R {
-            auto& impl = static_cast<FunctionImpl const&>(self);
+        Storage fn;
+        fn.call_ = [] (Storage const& self, Args... args) -> R {
+            auto proc = self.data<Context>()->Handler;
+            auto& data = self.data<Context>()->Data;
             if constexpr (std::is_same_v<R, void>) {
-                impl(std::forward<Args>(args)...);
+                proc(data, std::forward<Args>(args)...);
             } else {
-                return impl(std::forward<Args>(args)...);
+                return proc(data, std::forward<Args>(args)...);
             }
         };
-        this->copy_ = [](Base const& self, Base const& src, Base* dst) -> Base* {
-            *static_cast<FunctionImpl*>(dst)->Data() = *static_cast<FunctionImpl const&>(src).Data();
+        fn.copy_ = [] (Storage const& self, Storage const& src, Storage* dst) -> Storage* {
+            dst->call_ = src.call_;
+            dst->copy_ = src.copy_;
+            dst->move_ = src.move_;
+            *dst->data<Context>() = *src.data<Context>();
             return dst;
         };
-        this->move_ = [](Base const& self, Base&& src, Base* dst) -> Base* {
+        fn.move_ = [] (Storage const& self, Storage&& src, Storage* dst) -> Storage* {
             if (dst == nullptr) {
-                static_cast<FunctionImpl&>(src).Data()->~Context();
+                src.data<Context>()->~Context();
                 return nullptr;
             } else {
-                *static_cast<FunctionImpl*>(dst)->Data() = std::move(*static_cast<FunctionImpl const&>(src).Data());
+                dst->call_ = src.call_;
+                dst->copy_ = src.copy_;
+                dst->move_ = src.move_;
+                *dst->data<Context>() = std::move(*src.data<Context>());
                 return dst;
             }
         };
-        *Data() = Context{
+        new (fn.data<Context>()) Context{
             .Handler = handler,
             .Data = data
         };
-    }
-
-private:
-    R operator ()(Args&&... args) const
-    {
-        auto proc = Data()->Handler;
-        auto& data = Data()->Data;
-        if constexpr (std::is_same_v<R, void>) {
-            proc(data, std::forward<Args>(args)...);
-        } else {
-            return proc(data, std::forward<Args>(args)...);
-        }
-    }
-
-    inline Context* Data()
-    {
-        return reinterpret_cast<Context*>(&this->data_[0]);
-    }
-
-    inline Context const* Data() const
-    {
-        return reinterpret_cast<Context const*>(&this->data_[0]);
+        return fn;
     }
 };
 
 
 template <class TData, class R, class T, class... Args>
-class FunctionImpl<R (T::*)(TData const&, Args...), TData> : public Function<R (Args...)>
+struct FunctionImpl<R (T::*)(TData const&, Args...), TData>
 {
-private:
-    using Base = Function<R (Args...)>;
+    using Fn = Function<R(Args...)>;
+    using Storage = FunctionStorage<R(Args...)>;
     using UserCallProc = R (T::*)(TData const&, Args...);
 
     struct Context
@@ -300,60 +356,44 @@ private:
         TData Data;
     };
 
-    static_assert(sizeof(Context) <= sizeof(void*) * Base::UserDataSize);
-
-public:
-    FunctionImpl(T* this_, UserCallProc handler, TData const& data)
+    static Fn Make(T* this_, UserCallProc handler, TData const& data)
     {
-        this->call_ = [](Base const& self, Args... args) -> R {
-            auto& impl = static_cast<FunctionImpl const&>(self);
+        Storage fn;
+        fn.call_ = [](Storage const& self, Args... args) -> R {
+            auto this_ = self.data<Context>()->This;
+            auto proc = self.data<Context>()->Handler;
+            auto& data = self.data<Context>()->Data;
             if constexpr (std::is_same_v<R, void>) {
-                impl(std::forward<Args>(args)...);
+                (this_->*proc)(data, std::forward<Args>(args)...);
             } else {
-                return impl(self)(std::forward<Args>(args)...);
+                return (this_->*proc)(data, std::forward<Args>(args)...);
             }
         };
-        this->copy_ = [](Base const& self, Base const& src, Base* dst) -> Base* {
-            *static_cast<FunctionImpl*>(dst)->Data() = *static_cast<FunctionImpl const&>(src).Data();
+        fn.copy_ = [](Storage const& self, Storage const& src, Storage* dst) -> Storage* {
+            dst->call_ = src.call_;
+            dst->copy_ = src.copy_;
+            dst->move_ = src.move_;
+            *dst->data<Context>() = *src.data<Context>();
             return dst;
         };
-        this->move_ = [](Base const& self, Base&& src, Base* dst) -> Base* {
+        fn.move_ = [](Storage const& self, Storage&& src, Storage* dst) -> Storage* {
             if (dst == nullptr) {
-                static_cast<FunctionImpl&>(src).Data()->~Context();
+                src.data<Context>()->~Context();
                 return nullptr;
             } else {
-                *static_cast<FunctionImpl*>(dst)->Data() = std::move(*static_cast<FunctionImpl const&>(src).Data());
+                dst->call_ = src.call_;
+                dst->copy_ = src.copy_;
+                dst->move_ = src.move_;
+                *dst->data<Context>() = std::move(*src.data<Context>());
                 return dst;
             }
         };
-        *Data() = Context{
+        new (fn.data<Context>()) Context{
             .This = this_,
             .Handler = handler,
             .Data = data
         };
-    }
-
-private:
-    R operator ()(Args&&... args) const
-    {
-        auto this_ = Data()->This;
-        auto proc = Data()->Handler;
-        auto& data = Data()->Data;
-        if constexpr (std::is_same_v<R, void>) {
-            (this_->*proc)(data, std::forward<Args>(args)...);
-        } else {
-            return (this_->*proc)(data, std::forward<Args>(args)...);
-        }
-    }
-
-    inline Context* Data()
-    {
-        return reinterpret_cast<Context*>(&this->data_[0]);
-    }
-
-    inline Context const* Data() const
-    {
-        return reinterpret_cast<Context const*>(&this->data_[0]);
+        return fn;
     }
 };
 
@@ -366,37 +406,30 @@ struct Signal
     struct Connection
     {
         Connection()
-        {
-            pHandler = &Handler;
-        }
+        {}
 
         Connection(Connection const& o)
-            : pHandler(&Handler),
-            Handler(o.Handler),
+            : Handler(o.Handler),
             RegistrantIndex(o.RegistrantIndex)
         {}
 
         Connection(Connection&& o)
-            : pHandler(&Handler),
-            Handler(std::move(o.Handler)),
+            : Handler(std::move(o.Handler)),
             RegistrantIndex(o.RegistrantIndex)
         {}
 
         Connection(Function const& handler, uint64_t index)
-            : pHandler(&Handler),
-            Handler(handler),
+            : Handler(handler),
             RegistrantIndex(index)
         {}
 
         Connection& operator =(Connection && o)
         {
-            pHandler = &Handler;
             Handler = std::move(o.Handler);
             RegistrantIndex = o.RegistrantIndex;
             return *this;
         }
 
-        Function* pHandler{ nullptr };
         Function Handler;
         uint64_t RegistrantIndex{ 0 };
     };
@@ -408,6 +441,13 @@ struct Signal
     {
         auto index = NextRegistrantId++;
         Connections.push_back(Connection{ handler, index });
+        return index;
+    }
+
+    uint64_t Add(Function&& handler)
+    {
+        auto index = NextRegistrantId++;
+        Connections.push_back(Connection{ std::move(handler), index });
         return index;
     }
 
@@ -438,25 +478,25 @@ Function<T> MakeFunction();
 template <class R, class... Args>
 Function<R(Args...)> MakeFunction(R (* fun)(Args...))
 {
-    return FunctionImpl<R (Args...), void>(fun);
+    return FunctionImpl<R (Args...), void>::Make(fun);
 }
 
 template <class R, class T, class... Args>
 Function<R(Args...)> MakeFunction(R (T::* fun)(Args...), T* self)
 {
-    return FunctionImpl<R (T::*)(Args...), void>(self, fun);
+    return FunctionImpl<R (T::*)(Args...), void>::Make(self, fun);
 }
 
 template <class R, class TData, class... Args>
 Function<R (Args...)> MakeFunction(R (* fun)(TData const&, Args...), TData const& data)
 {
-    return FunctionImpl<R (TData const&, Args...), TData>(fun, data);
+    return FunctionImpl<R (TData const&, Args...), TData>::Make(fun, data);
 }
 
 template <class R, class T, class TData, class... Args>
 Function<R (Args...)> MakeFunction(R (T::* fun)(TData const&, Args...), T* self, TData const& data)
 {
-    return FunctionImpl<R (T::*)(TData const&, Args...), TData>(self, fun, data);
+    return FunctionImpl<R (T::*)(TData const&, Args...), TData>::Make(self, fun, data);
 }
 
 END_SE()

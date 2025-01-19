@@ -159,6 +159,7 @@
     <ClInclude Include="Base\LegacyArray.h" />
     <ClInclude Include="Base\LegacyMap.h" />
     <ClInclude Include="Base\PagedArray.h" />
+    <ClInclude Include="Base\PagedMap.h" />
     <ClInclude Include="Base\Pool.h" />
     <ClInclude Include="Base\Queue.h" />
     <ClInclude Include="Base\SparseArray.h" />

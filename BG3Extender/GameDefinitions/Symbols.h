@@ -40,6 +40,7 @@ namespace bg3se
         GlobalStringTable::MainTable::DecRefProc* ls__GlobalStringTable__MainTable__DecRef{ nullptr };
         GlobalStringTable** ls__gGlobalStringTable{ nullptr };
 
+        ThreadRegistry::RequestThreadIndexProc* ls__ThreadRegistry__RequestThreadIndex{ nullptr };
         FileReader::CtorProc* ls__FileReader__ctor{ nullptr };
         FileReader::DtorProc* ls__FileReader__dtor{ nullptr };
         STDString** ls__PathRoots{ nullptr };
@@ -51,6 +52,7 @@ namespace bg3se
 
         ecl::EoCClient::HandleErrorProc* ecl__EoCClient__HandleError{ nullptr };
         ecl::CursorControl** ecl__gCursorControl{ nullptr };
+        ecl::DragDropManager** ls__gDragDropManager{ nullptr };
 
         TranslatedStringRepository** ls__gTranslatedStringRepository{ nullptr };
 
@@ -68,8 +70,6 @@ namespace bg3se
         /*esv::SurfaceActionFactory** esv__SurfaceActionFactory{nullptr};
         esv::SurfaceActionFactory::CreateActionProc* esv__SurfaceActionFactory__CreateAction{ nullptr };
         esv::SurfaceManager::AddActionProc* esv__SurfaceManager__AddAction{ nullptr };*/
-
-        stats::Functors::BaseVMT* stats__Functors__VMT{ nullptr };
 
         stats::SpellPrototypeManager** eoc__SpellPrototypeManager{ nullptr };
         stats::SpellPrototype::InitProc* eoc__SpellPrototype__Init{ nullptr };
@@ -95,15 +95,15 @@ namespace bg3se
         stats::DealDamageFunctor::ApplyDamageProc* stats__DealDamageFunctor__ApplyDamage{ nullptr };
         stats::StatsSystem_ThrowDamageEventProc* esv__StatsSystem__ThrowDamageEvent{ nullptr };
 
-        stats::ExecuteFunctorProc<stats::AttackTargetContextData>* stats__Functors__ExecuteAttackTarget{ nullptr };
-        stats::ExecuteFunctorProc<stats::AttackPositionContextData>* stats__Functors__ExecuteAttackPosition{ nullptr };
-        stats::ExecuteFunctorProc<stats::MoveContextData>* stats__Functors__ExecuteMove{ nullptr };
-        stats::ExecuteFunctorProc<stats::TargetContextData>* stats__Functors__ExecuteTarget{ nullptr };
-        stats::ExecuteFunctorProc<stats::NearbyAttackedContextData>* stats__Functors__ExecuteNearbyAttacked{ nullptr };
-        stats::ExecuteFunctorProc<stats::NearbyAttackingContextData>* stats__Functors__ExecuteNearbyAttacking{ nullptr };
-        stats::ExecuteFunctorProc<stats::EquipContextData>* stats__Functors__ExecuteEquip{ nullptr };
-        stats::ExecuteFunctorProc<stats::SourceContextData>* stats__Functors__ExecuteSource{ nullptr };
-        stats::ExecuteFunctorProc<stats::InterruptContextData>* stats__Functors__ExecuteInterrupt{ nullptr };
+        stats::ExecuteFunctorProc<stats::AttackTargetContextData>* esv__ExecuteStatsFunctor_AttackTargetContext{ nullptr };
+        stats::ExecuteFunctorProc<stats::AttackPositionContextData>* esv__ExecuteStatsFunctor_AttackPositionContext{ nullptr };
+        stats::ExecuteFunctorProc<stats::MoveContextData>* esv__ExecuteStatsFunctor_MoveContext{ nullptr };
+        stats::ExecuteFunctorProc<stats::TargetContextData>* esv__ExecuteStatsFunctor_TargetContext{ nullptr };
+        stats::ExecuteFunctorProc<stats::NearbyAttackedContextData>* esv__ExecuteStatsFunctor_NearbyAttackedContext{ nullptr };
+        stats::ExecuteFunctorProc<stats::NearbyAttackingContextData>* esv__ExecuteStatsFunctor_NearbyAttackingContext{ nullptr };
+        stats::ExecuteFunctorProc<stats::EquipContextData>* esv__ExecuteStatsFunctor_EquipContext{ nullptr };
+        stats::ExecuteFunctorProc<stats::SourceContextData>* esv__ExecuteStatsFunctor_SourceContext{ nullptr };
+        stats::ExecuteFunctorProc<stats::InterruptContextData>* esv__ExecuteStatsFunctor_InterruptContext{ nullptr };
 
         stats::RPGStats** gRPGStats{ nullptr };
         stats::RPGStats::LoadProc* RPGStats__Load{ nullptr };

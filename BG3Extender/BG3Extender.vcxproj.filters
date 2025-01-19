@@ -64,15 +64,6 @@
     <ClCompile Include="Osiris\Functions\LuaFunctions.cpp">
       <Filter>Osiris\Functions</Filter>
     </ClCompile>
-    <ClCompile Include="Osiris\Functions\MathFunctions.cpp">
-      <Filter>Osiris\Functions</Filter>
-    </ClCompile>
-    <ClCompile Include="Osiris\Functions\StatFunctions.cpp">
-      <Filter>Osiris\Functions</Filter>
-    </ClCompile>
-    <ClCompile Include="Osiris\Functions\UtilityFunctions.cpp">
-      <Filter>Osiris\Functions</Filter>
-    </ClCompile>
     <ClCompile Include="GameDefinitions\Enumerations.cpp">
       <Filter>GameDefinitions</Filter>
     </ClCompile>
@@ -507,6 +498,8 @@
     <ClInclude Include="GameDefinitions\Controllers\Movement.h" />
     <ClInclude Include="GameDefinitions\Controllers\Steering.h" />
     <ClInclude Include="GameDefinitions\Physics.h" />
+    <ClInclude Include="GameDefinitions\Lighting.h" />
+    <ClInclude Include="GameDefinitions\DragDrop.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -753,6 +746,8 @@
     <None Include="GameDefinitions\Controllers\Steering.inl" />
     <None Include="GameDefinitions\Controllers\Movement.inl" />
     <None Include="GameDefinitions\Controllers\Behaviour.inl" />
+    <None Include="GameDefinitions\Stats\Functors.inl" />
+    <None Include="GameDefinitions\DragDrop.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

@@ -1110,8 +1110,9 @@ struct DeflectorComponent : public FxBaseComponent
     FloatProperty* PositionModifierXProperty;
     FloatProperty* PositionModifierYProperty;
     FloatProperty* PositionModifierZProperty;
-    RenderableObject* PlaneVisual1;
-    RenderableObject* PlaneVisual2;
+    // Only available in editor
+    // RenderableObject* PlaneVisual1;
+    // RenderableObject* PlaneVisual2;
 };
 
 struct DragForceComponent : public FxBaseComponent
@@ -1152,6 +1153,8 @@ struct LightComponent : public FxBaseComponent
     FloatKeyFrameProperty* InitialRotationProperty;
     FloatKeyFrameProperty* RotationLifeProperty;
     [[bg3::hidden]] void* field_E8;
+    // Only available in editor
+    // RenderableObject* PreviewVisual;
     EntityHandle LightEntity;
     float SnapToTop;
     float SnapToBottom;
@@ -1283,11 +1286,13 @@ struct OverlayMaterialComponent : public FxBaseComponent
     uint8_t field_154;
     uint8_t AlphaChannel;
     [[bg3::hidden]] uint64_t field_158;
+    [[bg3::hidden]] uint64_t field_158x;
     glm::vec4 field_160;
     glm::vec4 field_170;
-    bool HasPreview;
-    EntityHandle VisualEntity;
-    FixedString Animation;
+    // Only available in editor
+    // bool HasPreview;
+    // EntityHandle DebugVisualEntity;
+    // FixedString DebugAnimation;
 };
 
 struct PackedUnitVector
@@ -1315,7 +1320,7 @@ struct FxParticleData
     Array<uint16_t> FixedScalars;
     Array<float> DiscardValues;
     Array<float> UnitAges;
-    Array<glm::vec3> Scales;
+    [[bg3::hidden]] Array<glm::vec3> Scales;
     Array<glm::vec3> AppliedForces;
     [[bg3::hidden]] Array<void*> MoveInstructions;
     Array<uint32_t> DiedParticles;
@@ -1513,16 +1518,14 @@ struct Ribbon2Component : public FxBaseComponent
     uint32_t EmissionBehavior;
     uint32_t TexCoordType;
     [[bg3::hidden]] RibbonParticleData ParticleData;
+    [[bg3::hidden]] uint64_t Unknown;
     uint32_t DynamicParametersType;
     FloatKeyFrameProperty* DynamicParameterValueProperty;
     FloatProperty* DynamicParameterModifierXProperty;
     FloatProperty* DynamicParameterModifierYProperty;
     FloatProperty* DynamicParameterModifierZProperty;
     FloatProperty* DynamicParameterModifierWProperty;
-    float field_118;
-    float field_11C;
-    float field_120;
-    float field_124;
+    glm::vec4 DynamicParameterVec;
     uint32_t ColorType;
     ColorARGBKeyFrameProperty* ColorProperty;
     FloatKeyFrameProperty* BrightnessProperty;

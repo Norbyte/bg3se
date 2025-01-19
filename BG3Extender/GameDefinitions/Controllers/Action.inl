@@ -26,3 +26,12 @@ void LuaPolymorphic<esv::ActionState>::MakeRef(lua_State* L, esv::ActionState* v
 }
 
 END_NS()
+
+BEGIN_NS(esv)
+
+ActionType ActionState::LuaGetType() const
+{
+    return GetType();
+}
+
+END_NS()

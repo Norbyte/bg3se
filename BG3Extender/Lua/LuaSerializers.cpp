@@ -93,12 +93,12 @@ namespace bg3se::lua
 
         if (s.IsWriting) {
             if (v.IsTreasureTable) {
-                auto refTable = stats->TreasureTables.Find(v.Index);
+                auto refTable = stats->TreasureTables.GetByHandle(v.Index);
                 if (refTable) {
                     s.VisitProperty("TreasureTable", refTable->Name);
                 }
             } else {
-                auto refCategory = stats->TreasureCategories.Find(v.Index);
+                auto refCategory = stats->TreasureCategories.GetByHandle(v.Index);
                 if (refCategory) {
                     s.VisitProperty("TreasureCategory", refCategory->Category);
                 }
@@ -109,9 +109,9 @@ namespace bg3se::lua
             s.VisitOptionalProperty("TreasureCategory", treasureCategory, GFS.strEmpty);
 
             if (treasureTable && treasureTable != GFS.strEmpty) {
-                auto idx = stats->TreasureTables.FindIndex(treasureTable);
-                if (idx) {
-                    v.Index = *idx;
+                auto idx = stats->TreasureTables.GetHandleByName(treasureTable);
+                if (idx != -1) {
+                    v.Index = idx;
                 } else {
                     luaL_error(s.L, "Treasure table '%s' does not exist!", treasureTable.GetString());
                 }
@@ -119,9 +119,9 @@ namespace bg3se::lua
                 v.IsTreasureTable = true;
                 v.IsTreasureTable2 = true;
             } else {
-                auto idx = stats->TreasureCategories.FindIndex(treasureCategory);
-                if (idx) {
-                    v.Index = *idx;
+                auto idx = stats->TreasureCategories.GetHandleByName(treasureCategory);
+                if (idx != -1) {
+                    v.Index = idx;
                 } else {
                     luaL_error(s.L, "Treasure category '%s' does not exist!", treasureCategory.GetString());
                 }

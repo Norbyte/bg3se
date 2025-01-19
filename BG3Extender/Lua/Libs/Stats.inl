@@ -84,7 +84,7 @@ Array<FixedString> FetchItemNameGroupEntries(RPGStats* stats)
 Array<FixedString> FetchTreasureTableEntries(RPGStats* stats)
 {
     Array<FixedString> names;
-    for (auto treasureTable : stats->TreasureTables.Primitives) {
+    for (auto treasureTable : stats->TreasureTables.Values) {
         names.push_back(treasureTable->Name);
     }
 
@@ -94,7 +94,7 @@ Array<FixedString> FetchTreasureTableEntries(RPGStats* stats)
 Array<FixedString> FetchTreasureCategoryEntries(RPGStats* stats)
 {
     Array<FixedString> names;
-    for (auto treasureCategory : stats->TreasureCategories.Primitives) {
+    for (auto treasureCategory : stats->TreasureCategories.Values) {
         names.push_back(treasureCategory->Category);
     }
 
@@ -105,7 +105,7 @@ Array<FixedString> FetchStatEntries(RPGStats * stats, FixedString const& statTyp
 {
     ModifierList* modifierList{ nullptr };
     if (statType) {
-        modifierList = stats->ModifierLists.Find(statType);
+        modifierList = stats->ModifierLists.GetByName(statType);
         if (modifierList == nullptr) {
             OsiError("Unknown stats entry type: " << statType);
             return {};
@@ -113,7 +113,7 @@ Array<FixedString> FetchStatEntries(RPGStats * stats, FixedString const& statTyp
     }
 
     Array<FixedString> names;
-    for (auto object : stats->Objects.Primitives) {
+    for (auto object : stats->Objects.Values) {
         if (statType) {
             auto type = stats->GetTypeInfo(object);
             if (modifierList != nullptr && type != modifierList) {
@@ -131,7 +131,7 @@ Array<FixedString> FetchStatEntriesBefore(RPGStats* stats, FixedString const& mo
 {
     ModifierList* modifierList{ nullptr };
     if (statType) {
-        modifierList = stats->ModifierLists.Find(*statType);
+        modifierList = stats->ModifierLists.GetByName(*statType);
         if (modifierList == nullptr) {
             OsiError("Unknown stats entry type: " << *statType);
             return {};
@@ -272,7 +272,7 @@ void UpdateEquipmentSet(lua_State* L)
 UserReturn GetTreasureTableLegacy(lua_State* L, FixedString const& tableName)
 {
     auto stats = GetStaticSymbols().GetStats();
-    auto table = stats->TreasureTables.Find(tableName);
+    auto table = stats->TreasureTables.GetByName(tableName);
     if (table) {
         return LuaWrite(L, table);
     } else {
@@ -284,7 +284,7 @@ UserReturn GetTreasureTableLegacy(lua_State* L, FixedString const& tableName)
 stats::TreasureTable* GetTreasureTable(FixedString const& tableName)
 {
     auto stats = GetStaticSymbols().GetStats();
-    return stats->TreasureTables.Find(tableName);
+    return stats->TreasureTables.GetByName(tableName);
 }
 
 void UpdateTreasureTable(lua_State* L)
@@ -293,7 +293,7 @@ void UpdateTreasureTable(lua_State* L)
     auto name = checked_getfield<FixedString>(L, "Name", 1);
 
     auto stats = GetStaticSymbols().GetStats();
-    auto table = stats->TreasureTables.Find(name);
+    auto table = stats->TreasureTables.GetByName(name);
     bool isNew = (table == nullptr);
 
     lua_pushvalue(L, 1);
@@ -301,14 +301,14 @@ void UpdateTreasureTable(lua_State* L)
     lua_pop(L, 1);
 
     if (isNew) {
-        stats->TreasureTables.Add(name, table);
+        stats->TreasureTables.Insert(table);
     }
 }
 
 UserReturn GetTreasureCategory(lua_State* L, FixedString const& categoryName)
 {
     auto const* stats = GetStaticSymbols().GetStats();
-    auto category = stats->TreasureCategories.Find(categoryName);
+    auto category = stats->TreasureCategories.GetByName(categoryName);
     if (category) {
         return LuaWrite(L, category);
     } else {
@@ -322,7 +322,7 @@ void UpdateTreasureCategory(lua_State* L, FixedString const& name)
     luaL_checktype(L, 2, LUA_TTABLE);
 
     auto stats = GetStaticSymbols().GetStats();
-    auto category = stats->TreasureCategories.Find(name);
+    auto category = stats->TreasureCategories.GetByName(name);
     bool isNew = (category == nullptr);
 
     lua_pushvalue(L, 2);
@@ -330,7 +330,7 @@ void UpdateTreasureCategory(lua_State* L, FixedString const& name)
     lua_pop(L, 1);
 
     if (isNew) {
-        stats->TreasureCategories.Add(name, category);
+        stats->TreasureCategories.Insert(category);
     }
 }
 
@@ -529,7 +529,7 @@ InterruptPrototype* GetCachedInterrupt(lua_State * L, FixedString name)
 bool CopyStats(Object* obj, FixedString const& copyFrom)
 {
     auto stats = GetStaticSymbols().GetStats();
-    auto copyFromObject = stats->Objects.Find(copyFrom);
+    auto copyFromObject = stats->Objects.GetByName(copyFrom);
     if (copyFromObject == nullptr) {
         OsiError("Cannot copy stats from nonexistent object: " << copyFrom);
         return false;
@@ -603,7 +603,7 @@ Object* Create(lua_State * L, FixedString const& statName, FixedString const& mo
 void Sync(FixedString const& statName, std::optional<bool> persist)
 {
     auto stats = GetStaticSymbols().GetStats();
-    auto object = stats->Objects.Find(statName);
+    auto object = stats->Objects.GetByName(statName);
     if (!object) {
         OsiError("Cannot sync nonexistent stat: " << statName);
         return;
@@ -638,7 +638,7 @@ void SetPersistence(FixedString const& statName, bool persist)
     }
 
     auto stats = GetStaticSymbols().GetStats();
-    auto object = stats->Objects.Find(statName);
+    auto object = stats->Objects.GetByName(statName);
     if (!object) {
         OsiError("Cannot set persistence for nonexistent stat: " << statName);
         return;
@@ -673,7 +673,7 @@ std::optional<FixedString> EnumIndexToLabel(FixedString const& enumName, int ind
         }
     }
 
-    auto valueList = GetStaticSymbols().GetStats()->ModifierValueLists.Find(enumName);
+    auto valueList = GetStaticSymbols().GetStats()->ModifierValueLists.GetByName(enumName);
     if (valueList) {
         std::optional<FixedString> value;
         for (auto const& val : valueList->Values) {
@@ -716,7 +716,7 @@ std::optional<int64_t> EnumLabelToIndex(FixedString const& enumName, FixedString
         }
     }
 
-    auto valueList = GetStaticSymbols().GetStats()->ModifierValueLists.Find(enumName);
+    auto valueList = GetStaticSymbols().GetStats()->ModifierValueLists.GetByName(enumName);
     if (valueList) {
         auto value = valueList->Values.find(FixedString(label));
 
@@ -735,39 +735,39 @@ std::optional<int64_t> EnumLabelToIndex(FixedString const& enumName, FixedString
 
 bool AddAttribute(FixedString const& modifierList, FixedString const& modifierName, FixedString const& typeName)
 {
-    if (GetStaticSymbols().GetStats()->Objects.Primitives.Size() > 0) {
+    if (GetStaticSymbols().GetStats()->Objects.Values.Size() > 0) {
         OsiError("It is not safe to modify stats types after stats data files were loaded!");
         OsiError("(Try using the StatsStructureLoaded event)");
         return false;
     } 
     
-    auto modList = GetStaticSymbols().GetStats()->ModifierLists.Find(modifierList);
+    auto modList = GetStaticSymbols().GetStats()->ModifierLists.GetByName(modifierList);
     if (!modList) {
         OsiError("No such modifier list: " << modifierList);
         return false;
     }
     
-    if (modList->Attributes.Find(modifierName)) {
+    if (modList->Attributes.GetByName(modifierName)) {
         OsiError("Modifier list already has an attribute named '" << modifierName << "'");
         return false;
     }
 
-    auto valueListIdx = GetStaticSymbols().GetStats()->ModifierValueLists.FindIndex(typeName);
-    if (!valueListIdx) {
+    auto valueListIdx = GetStaticSymbols().GetStats()->ModifierValueLists.GetHandleByName(typeName);
+    if (valueListIdx == -1) {
         OsiError("No such stats value type: " << typeName);
         return false;
     }
 
     auto modifier = GameAlloc<Modifier>();
-    modifier->EnumerationIndex = *valueListIdx;
+    modifier->EnumerationIndex = valueListIdx;
     modifier->Name = modifierName;
-    modList->Attributes.Add(modifierName, modifier);
+    modList->Attributes.Insert(modifier);
     return true;
 }
 
 std::optional<int32_t> AddEnumerationValue(FixedString const& typeName, FixedString const& enumLabel)
 {
-    auto valueList = GetStaticSymbols().GetStats()->ModifierValueLists.Find(typeName);
+    auto valueList = GetStaticSymbols().GetStats()->ModifierValueLists.GetByName(typeName);
     if (!valueList) {
         OsiError("No such stats value type: " << typeName);
         return {};
@@ -786,6 +786,50 @@ std::optional<int32_t> AddEnumerationValue(FixedString const& typeName, FixedStr
     auto value = valueList->Values.size();
     valueList->Values.insert(std::make_pair(enumLabel, value));
     return value;
+}
+
+template <class T>
+void DoExecuteFunctors(ExecuteFunctorProc<T>* proc, Functors* functors, HitResult& hit, T* context)
+{
+    if (!proc) {
+        ERR("Handle not found for executing functors in context %d", context->Type);
+        return;
+    }
+
+    proc(&hit, functors, context);
+}
+
+#define P(ty) \
+    case FunctorContextType::ty: \
+        DoExecuteFunctors(GetStaticSymbols().esv__ExecuteStatsFunctor_##ty##Context, functors, hit, static_cast<ty##ContextData*>(context)); \
+        break;
+
+void ExecuteFunctors(Functors* functors, ContextData* context)
+{
+    HitResult hit;
+    switch (context->Type) {
+    P(AttackTarget)
+    P(AttackPosition)
+    P(Move)
+    P(Target)
+    P(NearbyAttacked)
+    P(NearbyAttacking)
+    P(Equip)
+    P(Source)
+    P(Interrupt)
+    default:
+        ERR("Don't know how to execute functors in context %d", context->Type);
+        break;
+    }
+}
+
+#undef P
+
+void ExecuteFunctor(Functor* functor, ContextData* context)
+{
+    Functors functors;
+    functors.Insert(functor->Clone());
+    ExecuteFunctors(&functors, context);
 }
 
 void RegisterStatsLib()
@@ -809,6 +853,8 @@ void RegisterStatsLib()
     MODULE_FUNCTION(EnumLabelToIndex)
     MODULE_FUNCTION(AddAttribute)
     MODULE_FUNCTION(AddEnumerationValue)
+    MODULE_FUNCTION(ExecuteFunctors)
+    MODULE_FUNCTION(ExecuteFunctor)
     END_MODULE()
         
 /*    DECLARE_SUBMODULE(Stats, SkillSet, Both)

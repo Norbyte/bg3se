@@ -711,4 +711,9 @@ BEGIN_BITMASK(GuiDropFlags, uint32_t)
     EV(NoPreviewTooltip, (uint32_t)ImGuiDragDropFlags_AcceptNoPreviewTooltip)
 END_ENUM()
 
+BEGIN_ENUM(GuiMeasureScaling, uint32_t)
+    EV(Absolute, 0)
+    EV(Scaled, 1)
+END_ENUM()
+
 #endif

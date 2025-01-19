@@ -22,3 +22,12 @@ void LuaPolymorphic<esv::SteeringState>::MakeRef(lua_State* L, esv::SteeringStat
 }
 
 END_NS()
+
+BEGIN_NS(esv)
+
+SteeringType SteeringState::LuaGetType() const
+{
+    return GetType();
+}
+
+END_NS()

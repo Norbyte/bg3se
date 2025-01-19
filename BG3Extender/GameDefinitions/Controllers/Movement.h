@@ -18,6 +18,10 @@ struct MovementState : public ProtectedGameObject<MovementState>
 
     MovementMachine* MovementMachine;
     int TransactionId;
+
+    // Lua getter helpers
+    MovementType LuaGetType() const;
+    //# P_GETTER(Type, LuaGetType)
 };
 
 
@@ -81,7 +85,6 @@ struct MSMoveTo : public MovementState
     bool CheckEndPosition;
     bool IsAiEntity;
     bool NeedsPathfinding;
-    [[bg3::hidden]] UnknownFunction* pDestinationFunc;
     [[bg3::hidden]] UnknownFunction DestinationFunc;
     MSMoveToSettings Settings;
     MSMoveToSettings CurrentSettings;
