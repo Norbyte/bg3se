@@ -113,7 +113,7 @@ struct MoveContextData : public ContextData
 
     ecs::EntityRef Caster;
     ecs::EntityRef Target;
-    ecs::EntityRef field_C0;
+    ecs::EntityRef Source;
     glm::vec3 Position;
     float Distance{ 0.0f };
 };
@@ -124,11 +124,13 @@ struct TargetContextData : public ContextData
 
     virtual ~TargetContextData() override;
 
-    ecs::EntityRef Caster;
-    ecs::EntityRef field_B0;
+    ecs::EntityRef Source;
+    ecs::EntityRef SourceProxy;
     glm::vec3 Position;
+    uint8_t StatusExitCause{ 3 };
+    uint8_t field_C5{ 0 };
+    uint8_t field_C6{ 19 };
     SpellIdWithPrototype SpellId;
-    uint8_t StatusExitCause{ 0 };
     HitDesc Hit;
     AttackDesc Attack;
     uint32_t StatusEvent{ 0 };
@@ -142,34 +144,25 @@ struct NearbyAttackedContextData : public ContextData
 
     virtual ~NearbyAttackedContextData() override;
 
-    ecs::EntityRef Owner_M;
+    ecs::EntityRef OriginalSource;
+    ecs::EntityRef Source;
+    ecs::EntityRef SourceProxy;
     ecs::EntityRef Target;
-    ecs::EntityRef Caster;
-    ecs::EntityRef field_D0;
-    ecs::EntityRef field_E0;
+    ecs::EntityRef TargetProxy;
     glm::vec3 Position;
     bool IsFromItem{ false };
     SpellIdWithPrototype SpellId;
     HitDesc Hit;
     AttackDesc Attack;
+    float SurfaceChangeHeight{ 2.4f };
+    uint8_t field_314{ 2 };
 };
 
-struct NearbyAttackingContextData : public ContextData
+struct NearbyAttackingContextData : public NearbyAttackedContextData
 {
     static constexpr auto ContextType = FunctorContextType::NearbyAttacking;
 
     virtual ~NearbyAttackingContextData() override;
-
-    ecs::EntityRef Target;
-    ecs::EntityRef TargetProxy;
-    ecs::EntityRef Caster;
-    ecs::EntityRef field_D0;
-    ecs::EntityRef field_E0;
-    glm::vec3 Position;
-    bool IsFromItem{ false };
-    SpellIdWithPrototype SpellId;
-    HitDesc Hit;
-    AttackDesc Attack;
 };
 
 struct EquipContextData : public ContextData
@@ -189,8 +182,8 @@ struct SourceContextData : public ContextData
 
     virtual ~SourceContextData() override;
 
-    ecs::EntityRef Caster;
-    ecs::EntityRef Target;
+    ecs::EntityRef Source;
+    ecs::EntityRef SourceProxy;
 };
 
 struct InterruptContextData : public ContextData
