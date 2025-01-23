@@ -62,7 +62,7 @@ struct DamageRollAdjustments
 
 struct AppliedChange
 {
-    uint8_t Flags;
+    uint8_t Flags{ 0 };
     Array<RollAdjustments> Adjustments;
     HashMap<DamageFunctorKey, DamageRollAdjustments> DamageRollAdjustments;
 };
@@ -214,7 +214,7 @@ struct InterruptEvent
     Array<Guid> field_D0;
     std::optional<glm::vec3> SourcePos;
     std::optional<glm::vec3> TargetPos;
-    uint8_t field_100;
+    uint8_t field_100{ 0 };
 
     // FIXME - needs adjustment depending on variant
     inline bool operator == (InterruptEvent const& o) const

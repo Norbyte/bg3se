@@ -16,14 +16,14 @@ struct ActionOriginator
     FixedString PassiveId;
     FixedString StatusId;
     FixedString InterruptId;
-    bool CanApplyConcentration;
+    bool CanApplyConcentration{ false };
 };
 
 struct SpellMetaId
 {
     FixedString OriginatorPrototype;
     uint8_t _Pad[4];
-    SpellSourceType SourceType;
+    SpellSourceType SourceType{ SpellSourceType::Sentinel };
     Guid ProgressionSource;
 };
 
@@ -31,7 +31,7 @@ struct SpellId
 {
     FixedString OriginatorPrototype;
     uint8_t _Pad[4];
-    SpellSourceType SourceType;
+    SpellSourceType SourceType{ SpellSourceType::Sentinel };
     Guid ProgressionSource;
     FixedString Prototype;
 
@@ -53,7 +53,7 @@ inline uint64_t HashMapHash<SpellId>(SpellId const& v)
 
 struct SpellIdWithPrototype : public SpellId
 {
-    stats::SpellPrototype* SpellProto;
+    stats::SpellPrototype* SpellProto{ nullptr };
     std::optional<Guid> SpellCastSource;
 };
 

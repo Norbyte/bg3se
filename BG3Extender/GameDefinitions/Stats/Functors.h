@@ -48,11 +48,11 @@ struct Functor
 };
 
 
-struct ContextData : public ProtectedGameObject<ContextData>
+struct ContextData
 {
-    virtual ~ContextData() = 0;
+    virtual ~ContextData();
 
-    FunctorContextType Type{ 0 };
+    [[bg3::readonly]] FunctorContextType Type{ 0 };
     int32_t StoryActionId{ 0 };
     PropertyContext PropertyContext{ 0 };
     ActionOriginator Originator;
@@ -60,74 +60,87 @@ struct ContextData : public ProtectedGameObject<ContextData>
     EntityHandle HistoryEntity;
     EntityHandle StatusSource;
     HashMap<EntityHandle, int32_t> EntityToThothContextIndex;
-    int field_98;
-    uint8_t ConditionCategory;
+    int field_98{ 0 };
+    uint8_t ConditionCategory{ 0 };
 };
 
 struct AttackTargetContextData : public ContextData
 {
     static constexpr auto ContextType = FunctorContextType::AttackTarget;
 
+    virtual ~AttackTargetContextData() override;
+
     ecs::EntityRef Caster;
     ecs::EntityRef CasterProxy;
     ecs::EntityRef Target;
     ecs::EntityRef TargetProxy;
     glm::vec3 Position;
-    bool IsFromItem;
+    bool IsFromItem{ false };
     SpellIdWithPrototype SpellId;
     HitDesc Hit;
     AttackDesc Attack;
-    float SomeRadius;
-    HitWith HitWith;
-    uint32_t field_310;
-    uint32_t field_314;
+    float SomeRadius{ 2.4f };
+    HitWith HitWith{ HitWith::None };
+    uint32_t StatusEvent{ 0 };
+    FixedString StatusId;
     FixedString field_26C;
-    uint8_t field_31C;
+    uint8_t StatusExitCause{ 3 };
+    uint8_t field_315{ 0 };
+    uint8_t field_316{ 19 };
 };
 
 struct AttackPositionContextData : public ContextData
 {
     static constexpr auto ContextType = FunctorContextType::AttackPosition;
 
+    virtual ~AttackPositionContextData() override;
+
     ecs::EntityRef Caster;
     glm::vec3 Position;
-    float ExplodeRadius;
-    bool IsFromItem;
+    float HitRadius{ -1.0f };
     SpellIdWithPrototype SpellId;
     HitDesc Hit;
     AttackDesc Attack;
-    float SomeRadius;
+    float SurfaceChangeHeight{ 2.4f };
+    bool IsFromItem{ false };
 };
 
 struct MoveContextData : public ContextData
 {
     static constexpr auto ContextType = FunctorContextType::Move;
 
+    virtual ~MoveContextData() override;
+
     ecs::EntityRef Caster;
     ecs::EntityRef Target;
     ecs::EntityRef field_C0;
     glm::vec3 Position;
-    float Distance;
+    float Distance{ 0.0f };
 };
 
 struct TargetContextData : public ContextData
 {
     static constexpr auto ContextType = FunctorContextType::Target;
 
+    virtual ~TargetContextData() override;
+
     ecs::EntityRef Caster;
     ecs::EntityRef field_B0;
     glm::vec3 Position;
     SpellIdWithPrototype SpellId;
+    uint8_t StatusExitCause{ 0 };
     HitDesc Hit;
     AttackDesc Attack;
-    uint32_t field_2E8;
-    FixedString field_2EC;
-    uint8_t field_2F0;
+    uint32_t StatusEvent{ 0 };
+    FixedString StatusId;
+    bool IsFromItem{ false };
 };
 
 struct NearbyAttackedContextData : public ContextData
 {
     static constexpr auto ContextType = FunctorContextType::NearbyAttacked;
+
+    virtual ~NearbyAttackedContextData() override;
 
     ecs::EntityRef Owner_M;
     ecs::EntityRef Target;
@@ -135,7 +148,7 @@ struct NearbyAttackedContextData : public ContextData
     ecs::EntityRef field_D0;
     ecs::EntityRef field_E0;
     glm::vec3 Position;
-    bool IsFromItem;
+    bool IsFromItem{ false };
     SpellIdWithPrototype SpellId;
     HitDesc Hit;
     AttackDesc Attack;
@@ -145,13 +158,15 @@ struct NearbyAttackingContextData : public ContextData
 {
     static constexpr auto ContextType = FunctorContextType::NearbyAttacking;
 
+    virtual ~NearbyAttackingContextData() override;
+
     ecs::EntityRef Target;
     ecs::EntityRef TargetProxy;
     ecs::EntityRef Caster;
     ecs::EntityRef field_D0;
     ecs::EntityRef field_E0;
     glm::vec3 Position;
-    bool IsFromItem;
+    bool IsFromItem{ false };
     SpellIdWithPrototype SpellId;
     HitDesc Hit;
     AttackDesc Attack;
@@ -161,14 +176,18 @@ struct EquipContextData : public ContextData
 {
     static constexpr auto ContextType = FunctorContextType::Equip;
 
+    virtual ~EquipContextData() override;
+
     ecs::EntityRef Caster;
     ecs::EntityRef Target;
-    bool UseCasterStats;
+    bool UseCasterStats{ false };
 };
 
 struct SourceContextData : public ContextData
 {
     static constexpr auto ContextType = FunctorContextType::Source;
+
+    virtual ~SourceContextData() override;
 
     ecs::EntityRef Caster;
     ecs::EntityRef Target;
@@ -178,7 +197,9 @@ struct InterruptContextData : public ContextData
 {
     static constexpr auto ContextType = FunctorContextType::Interrupt;
 
-    bool OnlyAllowRollAdjustments;
+    virtual ~InterruptContextData() override;
+
+    bool OnlyAllowRollAdjustments{ false };
     ecs::EntityRef Source;
     ecs::EntityRef SourceProxy;
     ecs::EntityRef Target;
@@ -189,7 +210,7 @@ struct InterruptContextData : public ContextData
     interrupt::InterruptEvent Interrupt;
     HitDesc Hit;
     AttackDesc Attack;
-    uint8_t field_428;
+    uint8_t field_428{ 0 };
     interrupt::AppliedChange Changes;
 };
 

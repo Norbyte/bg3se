@@ -88,4 +88,19 @@ IMPL_FUNCTOR(MaximizeRoll)
 IMPL_FUNCTOR(CameraWait)
 IMPL_FUNCTOR(Extender)
 
+#define IMPL_CONTEXT(ty) ty##ContextData::~ty##ContextData() {}
+
+ContextData::~ContextData()
+{}
+
+IMPL_CONTEXT(AttackTarget)
+IMPL_CONTEXT(AttackPosition)
+IMPL_CONTEXT(Move)
+IMPL_CONTEXT(Target)
+IMPL_CONTEXT(NearbyAttacked)
+IMPL_CONTEXT(NearbyAttacking)
+IMPL_CONTEXT(Equip)
+IMPL_CONTEXT(Source)
+IMPL_CONTEXT(Interrupt)
+
 END_NS()

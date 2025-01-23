@@ -8,10 +8,10 @@ BEGIN_SE()
 
 struct AttackDesc
 {
-    int TotalDamageDone;
-    int TotalHealDone;
-    [[bg3::legacy(DamagePercentage)]] uint8_t InitialHPPercentage;
-    uint8_t field_9;
+    int TotalDamageDone{ 0 };
+    int TotalHealDone{ 0 };
+    [[bg3::legacy(DamagePercentage)]] uint8_t InitialHPPercentage{ 0 };
+    uint8_t field_9{ 0 };
     Array<DamagePair> DamageList;
 };
 
@@ -141,14 +141,14 @@ struct StatsDamage
     StatsExpressionResolved ConditionRoll;
     Array<DamageModifierMetadata> Modifiers2;
     Array<DamageResistance> Resistances;
-    int AdditionalDamage;
-    int TotalDamage;
-    int FinalDamage;
+    int AdditionalDamage{ 0 };
+    int TotalDamage{ 0 };
+    int FinalDamage{ 0 };
     LegacyRefMap<DamageType, int32_t> TotalDamagePerType;
     LegacyRefMap<DamageType, int32_t> FinalDamagePerType;
-    [[bg3::legacy(field_D0)]] uint32_t Multiplier;
-    [[bg3::legacy(field_D4)]] uint32_t BaseValue;
-    [[bg3::legacy(field_D8)]] uint32_t SecondaryValue;
+    [[bg3::legacy(field_D0)]] uint32_t Multiplier{ 1 };
+    [[bg3::legacy(field_D4)]] uint32_t BaseValue{ 1 };
+    [[bg3::legacy(field_D8)]] uint32_t SecondaryValue{ 1 };
     [[bg3::legacy(field_DC)]] uint8_t DamageMultiplierType;
 };
 
@@ -161,45 +161,45 @@ struct HitDamageOverride
 
 struct HitDesc
 {
-    int TotalDamageDone;
-    stats::DeathType DeathType;
-    DamageType DamageType;
-    CauseType CauseType;
+    int TotalDamageDone{ 0 };
+    stats::DeathType DeathType{ stats::DeathType::None };
+    DamageType DamageType{ DamageType::None };
+    CauseType CauseType{ CauseType::None };
     glm::vec3 ImpactPosition;
     glm::vec3 ImpactDirection;
-    float ImpactForce;
-    int ArmorAbsorption;
-    int LifeSteal;
+    float ImpactForce{ 0.0f };
+    int ArmorAbsorption{ 0 };
+    int LifeSteal{ 0 };
     // TODO - need to remap DamageFlags
-    uint32_t EffectFlags;
+    uint32_t EffectFlags{ 0 };
     EntityHandle Inflicter;
     EntityHandle InflicterOwner;
     EntityHandle Throwing;
-    int StoryActionId;
-    HitWith HitWith;
-    AbilityId AttackRollAbility;
-    AbilityId SaveAbility;
-    [[bg3::legacy(field_4F)]] uint8_t SpellAttackType;
+    int StoryActionId{ 0 };
+    HitWith HitWith{ HitWith::None };
+    AbilityId AttackRollAbility{ AbilityId::None };
+    AbilityId SaveAbility{ AbilityId::None };
+    [[bg3::legacy(field_4F)]] uint8_t SpellAttackType{ 0 };
     Array<ConditionRoll> ConditionRolls;
     [[bg3::legacy(Results)]] StatsDamage Damage;
     Guid SpellCastGuid;
     FixedString SpellId;
-    FixedString field_150;
-    EntityHandle field_158;
-    uint8_t field_160;
-    SpellSchoolId SpellSchool;
-    [[bg3::legacy(HitDescFlags)]] uint8_t HealingTypes;
-    AttackFlags AttackFlags;
-    int SpellLevel;
-    int SpellPowerLevel;
-    int TotalHealDone;
-    [[bg3::legacy(field_174)]] float RedirectedDamage;
-    int OriginalDamageValue;
-    [[bg3::legacy(field_178)]] float FallHeight;
-    [[bg3::legacy(field_17C)]] float FallDamageMultiplier;
-    [[bg3::legacy(field_180)]] float FallMaxDamage;
-    [[bg3::legacy(field_184)]] float FallWeight;
-    uint8_t field_188;
+    [[bg3::legacy(field_150)]] FixedString StatusId;
+    [[bg3::legacy(field_158)]] EntityHandle StatusEntity;
+    uint8_t field_160{ 0 };
+    SpellSchoolId SpellSchool{ SpellSchoolId::None };
+    [[bg3::legacy(HitDescFlags)]] uint8_t HealingTypes{ 1 };
+    AttackFlags AttackFlags{ 0 };
+    int SpellLevel{ 0 };
+    int SpellPowerLevel{ 0 };
+    int TotalHealDone{ 0 };
+    [[bg3::legacy(field_174)]] float RedirectedDamage{ 0.0f };
+    int OriginalDamageValue{ 0 };
+    [[bg3::legacy(field_178)]] float FallHeight{ 0.0f };
+    [[bg3::legacy(field_17C)]] float FallDamageMultiplier{ 0.0f };
+    [[bg3::legacy(field_180)]] float FallMaxDamage{ 0.0f };
+    [[bg3::legacy(field_184)]] float FallWeight{ 0.0f };
+    uint8_t field_188{ 0 };
     Array<HitDamageOverride> OverriddenDamage;
     Array<DamagePair> DamageList;
 };

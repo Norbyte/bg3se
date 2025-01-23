@@ -832,6 +832,44 @@ void ExecuteFunctor(Functor* functor, ContextData* context)
     ExecuteFunctors(&functors, context);
 }
 
+template <class T>
+T* DefaultInitFunctorParams(lua_State* L)
+{
+    auto* helpers = State::FromLua(L)->GetEntitySystemHelpers();
+    auto classDescs = helpers->GetResourceManager<resource::ClassDescription>();
+
+    static T ctx;
+
+    new (&ctx) T();
+    ctx.Type = T::ContextType;
+    ctx.PropertyContext = stats::PropertyContext::TARGET | stats::PropertyContext::AOE;
+    ctx.ClassResources = *classDescs;
+    return &ctx;
+}
+
+#define CTX(ty) case FunctorContextType::ty: return DefaultInitFunctorParams<ty##ContextData>(L);
+
+ContextData* PrepareFunctorParams(lua_State* L, FunctorContextType type)
+{
+    switch (type) {
+        CTX(AttackTarget)
+        CTX(AttackPosition)
+        CTX(Move)
+        CTX(Target)
+        CTX(NearbyAttacked)
+        CTX(NearbyAttacking)
+        CTX(Equip)
+        CTX(Source)
+        CTX(Interrupt)
+
+    default:
+        {
+            luaL_error(L, "Unsupported context type");
+            return nullptr;
+        }
+    }
+}
+
 void RegisterStatsLib()
 {
     DECLARE_MODULE(Stats, Both)
@@ -855,6 +893,7 @@ void RegisterStatsLib()
     MODULE_FUNCTION(AddEnumerationValue)
     MODULE_FUNCTION(ExecuteFunctors)
     MODULE_FUNCTION(ExecuteFunctor)
+    MODULE_FUNCTION(PrepareFunctorParams)
     END_MODULE()
         
 /*    DECLARE_SUBMODULE(Stats, SkillSet, Both)
