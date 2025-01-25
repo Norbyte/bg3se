@@ -7,17 +7,17 @@ BEGIN_SE()
 class UseActionHelpers
 {
 public:
-	UseActionHelpers();
+    UseActionHelpers();
 
-	IActionData* Create(ActionDataType type);
+    IActionData* Create(ActionDataType type);
 
 private:
-	std::vector<IActionDataVMT*> vftables_;
-	std::vector<IActionData* (*)()> factories_;
-	bool mapped_{ false };
+    std::vector<IActionDataVMT*> vftables_;
+    std::vector<IActionData* (*)()> factories_;
+    bool mapped_{ false };
 
-	void DiscoverVftables();
-	void DiscoverVftables(Array<IActionData*> const& actions);
+    void DiscoverVftables();
+    void DiscoverVftables(Array<IActionData*> const& actions);
 };
 
 END_SE()

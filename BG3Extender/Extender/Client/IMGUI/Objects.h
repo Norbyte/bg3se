@@ -51,6 +51,7 @@ enum class IMGUIObjectType : uint8_t
     Separator,
 
     // 
+    Selectable,
     Button,
     ImageButton,
     Checkbox,
@@ -69,6 +70,42 @@ enum class IMGUIObjectType : uint8_t
     Max = ProgressBar
 };
 
+struct DrawingContext
+{
+    float UIScale{ 1.0f };
+    GuiMeasureScaling Scaling{ GuiMeasureScaling::Absolute };
+    Array<GuiMeasureScaling> ScalingStack;
+
+    void PushScaling(GuiMeasureScaling scaling);
+    void PopScaling();
+
+    inline float Scale(float f) const
+    {
+        if (Scaling == GuiMeasureScaling::Absolute) {
+            return f;
+        } else {
+            return f * UIScale;
+        }
+    }
+
+    inline ImVec2 Scale(glm::vec2 f) const
+    {
+        if (Scaling == GuiMeasureScaling::Absolute) {
+            return ToImVec(f);
+        } else {
+            return ToImVec(f * UIScale);
+        }
+    }
+
+    inline ImVec2 Scale(ImVec2 f) const
+    {
+        if (Scaling == GuiMeasureScaling::Absolute) {
+            return f;
+        } else {
+            return ImVec2(f.x * UIScale, f.y * UIScale);
+        }
+    }
+};
 
 struct ImageReference : Noncopyable<ImageReference>
 {
@@ -99,7 +136,7 @@ public:
     virtual IMGUIObjectType GetType() = 0;
     virtual char const* GetTypeName() = 0;
     virtual lua::GenericPropertyMap& GetRTTI() = 0;
-    virtual void Render() = 0;
+    virtual void Render(DrawingContext& context) = 0;
     void Destroy();
 
     lua::ImguiHandle GetParent() const;
@@ -127,9 +164,13 @@ struct StyleVar
 struct StyledRenderable : public Renderable
 {
 public:
-    virtual void StyledRender() = 0;
+    virtual void StyledRender(DrawingContext& context) = 0;
 
-    void Render() override;
+    lua::ImguiHandle GetDragPreview() const;
+    FixedString GetDragDropType() const;
+    void SetDragDropType(lua_State* L, FixedString type);
+
+    void Render(DrawingContext& context) override;
     std::optional<float> GetStyleVar(GuiStyleVar var);
     void SetStyleVar(GuiStyleVar var, float value, std::optional<float> value2);
     std::optional<glm::vec4> GetStyleColor(GuiColor color);
@@ -145,6 +186,10 @@ public:
     bool Visible{ true };
     bool RequestActivate{ false };
     bool WasHovered{ false };
+    bool CanDrag{ false };
+    bool IsDragging{ false };
+    HandleType DragPreview{ InvalidHandle };
+    FixedString DragDropType;
     FixedString Font;
     std::optional<glm::vec2> PositionOffset;
     std::optional<glm::vec2> AbsolutePosition;
@@ -152,11 +197,26 @@ public:
     std::optional<float> TextWrapPos;
     GuiItemFlags ItemFlags{ 0 };
     GuiItemStatusFlags StatusFlags{ 0 };
+    GuiDragFlags DragFlags{ 0 };
+    GuiDropFlags DropFlags{ 0 };
 
     lua::LuaDelegate<void(lua::ImguiHandle)> OnActivate;
     lua::LuaDelegate<void(lua::ImguiHandle)> OnDeactivate;
     lua::LuaDelegate<void(lua::ImguiHandle)> OnHoverEnter;
     lua::LuaDelegate<void(lua::ImguiHandle)> OnHoverLeave;
+    lua::LuaDelegate<void(lua::ImguiHandle, lua::ImguiHandle)> OnDragStart;
+    lua::LuaDelegate<void(lua::ImguiHandle)> OnDragEnd;
+    lua::LuaDelegate<void(lua::ImguiHandle, lua::ImguiHandle)> OnDragDrop;
+
+protected:
+    void HandleDragDrop(DrawingContext& context);
+    void FireEvents();
+    void DrawTooltip(DrawingContext& context);
+    void UpdateStatusFlags();
+    void PushStyleChanges(DrawingContext& context);
+    void PopStyleChanges();
+    void PushWindowStyleChanges(DrawingContext& context, ImFont*& font);
+    void PopWindowStyleChanges(ImFont* font);
 
 private:
     lua::ImguiHandle tooltip_;
@@ -167,10 +227,10 @@ struct TreeParent : public StyledRenderable
 {
 public:
     virtual ~TreeParent();
-    virtual bool BeginRender() = 0;
-    virtual void EndRender() = 0;
+    virtual bool BeginRender(DrawingContext& context) = 0;
+    virtual void EndRender(DrawingContext& context) = 0;
 
-    void StyledRender() override;
+    void StyledRender(DrawingContext& context) override;
 
     lua::ImguiHandle AddGroup(char const* label);
     lua::ImguiHandle AddCollapsingHeader(char const* label);
@@ -181,6 +241,8 @@ public:
     lua::ImguiHandle AddChildWindow(char const* label);
     lua::ImguiHandle AddMenu(char const* label);
 
+    lua::ImguiHandle AddSelectable(char const* label, std::optional<GuiSelectableFlags> flags, 
+        std::optional<glm::vec2> size);
     lua::ImguiHandle AddButton(char const* label);
     lua::ImguiHandle AddImageButton(char const* label, FixedString iconOrTexture,
         std::optional<glm::vec2> size, std::optional<glm::vec2> uv0, std::optional<glm::vec2> uv1);
@@ -263,16 +325,9 @@ struct WindowRenderRequests
     std::optional<float> BgAlpha;
 };
 
-struct Window : public TreeParent
+struct WindowBase : public TreeParent
 {
 public:
-    DECL_UI_TYPE(Window)
-
-    bool BeginRender() override;
-    void EndRender() override;
-
-    lua::ImguiHandle AddMainMenu();
-
     void SetPos(glm::vec2 pos, std::optional<GuiCond> cond, std::optional<glm::vec2> pivot);
     void SetSize(glm::vec2 size, std::optional<GuiCond> cond);
     void SetSizeConstraints(std::optional<glm::vec2> size_min, std::optional<glm::vec2> size_max);
@@ -282,17 +337,32 @@ public:
     void SetScroll(std::optional<glm::vec2> scroll);
     void SetBgAlpha(std::optional<float> alpha);
 
+    GuiWindowFlags Flags{ 0 };
+
+protected:
+    WindowRenderRequests req_;
+
+    void ProcessRenderSettings(DrawingContext& context);
+};
+
+struct Window : public WindowBase
+{
+public:
+    DECL_UI_TYPE(Window)
+
+    bool BeginRender(DrawingContext& context) override;
+    void EndRender(DrawingContext& context) override;
+
+    lua::ImguiHandle AddMainMenu();
+
     bool Open{ true };
     bool Closeable{ false };
-    GuiWindowFlags Flags{ 0 };
+    GuiMeasureScaling Scaling{ GuiMeasureScaling::Absolute };
     lua::LuaDelegate<void(lua::ImguiHandle)> OnClose;
     lua::ImguiHandle MainMenu;
 
 private:
     bool rendering_{ false };
-    WindowRenderRequests req_;
-
-    void ProcessRenderSettings();
 };
 
 
@@ -301,8 +371,8 @@ struct MenuBar : public TreeParent
 public:
     DECL_UI_TYPE(MenuBar)
 
-    bool BeginRender() override;
-    void EndRender() override;
+    bool BeginRender(DrawingContext& context) override;
+    void EndRender(DrawingContext& context) override;
 
 private:
     bool rendering_{ false };
@@ -314,8 +384,8 @@ struct Menu : public TreeParent
 public:
     DECL_UI_TYPE(Menu)
 
-    bool BeginRender() override;
-    void EndRender() override;
+    bool BeginRender(DrawingContext& context) override;
+    void EndRender(DrawingContext& context) override;
 
     lua::ImguiHandle AddItem(char const* label, std::optional<char const*> shortcut);
 
@@ -329,7 +399,7 @@ struct MenuItem : public StyledRenderable
 public:
     DECL_UI_TYPE(MenuItem)
 
-    void StyledRender() override;
+    void StyledRender(DrawingContext& context) override;
 
     bool Enabled{ true };
     std::optional<STDString> Shortcut;
@@ -342,8 +412,8 @@ struct Group : public TreeParent
 public:
     DECL_UI_TYPE(Group)
 
-    bool BeginRender() override;
-    void EndRender() override;
+    bool BeginRender(DrawingContext& context) override;
+    void EndRender(DrawingContext& context) override;
 };
 
 
@@ -352,8 +422,8 @@ struct CollapsingHeader : public TreeParent
 public:
     DECL_UI_TYPE(CollapsingHeader)
 
-    bool BeginRender() override;
-    void EndRender() override;
+    bool BeginRender(DrawingContext& context) override;
+    void EndRender(DrawingContext& context) override;
 
     GuiTreeNodeFlags Flags{ 0 };
 };
@@ -364,8 +434,8 @@ struct TabBar : public TreeParent
 public:
     DECL_UI_TYPE(TabBar)
 
-    bool BeginRender() override;
-    void EndRender() override;
+    bool BeginRender(DrawingContext& context) override;
+    void EndRender(DrawingContext& context) override;
 
     lua::ImguiHandle AddTabItem(char const* label);
 
@@ -381,8 +451,8 @@ struct TabItem : public TreeParent
 public:
     DECL_UI_TYPE(TabItem)
 
-    bool BeginRender() override;
-    void EndRender() override;
+    bool BeginRender(DrawingContext& context) override;
+    void EndRender(DrawingContext& context) override;
 
     GuiTabItemFlags Flags{ 0 };
 
@@ -396,8 +466,8 @@ struct Tree : public TreeParent
 public:
     DECL_UI_TYPE(Tree)
 
-    bool BeginRender() override;
-    void EndRender() override;
+    bool BeginRender(DrawingContext& context) override;
+    void EndRender(DrawingContext& context) override;
     void SetOpen(bool open, std::optional<GuiCond> cond);
 
     GuiTreeNodeFlags Flags{ 0 };
@@ -424,26 +494,40 @@ struct ColumnDefinition
     float Width;
 };
 
+struct SortSpec
+{
+    int32_t ColumnIndex;
+    GuiSortDirection Direction;
+};
+
 struct Table : public TreeParent
 {
 public:
     DECL_UI_TYPE(Table)
 
-    bool BeginRender() override;
-    void EndRender() override;
+    bool BeginRender(DrawingContext& context) override;
+    void EndRender(DrawingContext& context) override;
 
     void AddColumn(char const* name, std::optional<GuiTableColumnFlags> flags, std::optional<float> width);
     lua::ImguiHandle AddRow();
 
     uint32_t Columns{ 1 };
     GuiTableFlags Flags{ 0 };
+    uint32_t FreezeRows{ 0 };
+    uint32_t FreezeCols{ 0 };
     bool ShowHeader{ false };
     bool AngledHeader{ false };
     Array<ColumnDefinition> ColumnDefs;
+    Array<SortSpec> Sorting;
     std::optional<glm::vec2> Size;
+
+    lua::LuaDelegate<void(lua::ImguiHandle)> OnSortChanged;
 
 private:
     bool rendering_{ false };
+    bool needsSortingUpdate_{ true };
+
+    void UpdateSorting();
 };
 
 
@@ -452,8 +536,8 @@ struct TableRow : public TreeParent
 public:
     DECL_UI_TYPE(TableRow)
 
-    bool BeginRender() override;
-    void EndRender() override;
+    bool BeginRender(DrawingContext& context) override;
+    void EndRender(DrawingContext& context) override;
 
     lua::ImguiHandle AddCell();
 
@@ -467,35 +551,33 @@ struct TableCell : public TreeParent
 public:
     DECL_UI_TYPE(TableCell)
 
-    bool BeginRender() override;
-    void EndRender() override;
+    bool BeginRender(DrawingContext& context) override;
+    void EndRender(DrawingContext& context) override;
 };
 
 
-struct Tooltip : public TreeParent
+struct Tooltip : public WindowBase
 {
 public:
     DECL_UI_TYPE(Tooltip)
 
-    bool BeginRender() override;
-    void EndRender() override;
+    bool BeginRender(DrawingContext& context) override;
+    void EndRender(DrawingContext& context) override;
 
 private:
     bool rendering_{ false };
 };
 
 
-struct Popup : public TreeParent
+struct Popup : public WindowBase
 {
 public:
     DECL_UI_TYPE(Popup)
 
-    bool BeginRender() override;
-    void EndRender() override;
+    bool BeginRender(DrawingContext& context) override;
+    void EndRender(DrawingContext& context) override;
 
     void Open(std::optional<GuiPopupFlags> flags);
-
-    GuiWindowFlags Flags{ 0 };
 
 private:
     bool rendering_{ false };
@@ -504,15 +586,14 @@ private:
 };
 
 
-struct ChildWindow : public TreeParent
+struct ChildWindow : public WindowBase
 {
 public:
     DECL_UI_TYPE(ChildWindow)
 
-    bool BeginRender() override;
-    void EndRender() override;
+    bool BeginRender(DrawingContext& context) override;
+    void EndRender(DrawingContext& context) override;
 
-    GuiWindowFlags Flags{ 0 };
     GuiChildFlags ChildFlags{ 0 };
     std::optional<glm::vec2> Size;
 };
@@ -523,7 +604,7 @@ struct Image : public StyledRenderable
 public:
     DECL_UI_TYPE(Image)
 
-    void StyledRender() override;
+    void StyledRender(DrawingContext& context) override;
 
     ImageReference ImageData;
     glm::vec4 Border{ 0.0f };
@@ -535,7 +616,7 @@ struct Text : public StyledRenderable
 public:
     DECL_UI_TYPE(Text)
 
-    void StyledRender() override;
+    void StyledRender(DrawingContext& context) override;
 };
 
 
@@ -544,7 +625,7 @@ struct BulletText : public StyledRenderable
 public:
     DECL_UI_TYPE(BulletText)
 
-    void StyledRender() override;
+    void StyledRender(DrawingContext& context) override;
 };
 
 
@@ -553,7 +634,7 @@ struct SeparatorText : public StyledRenderable
 public:
     DECL_UI_TYPE(SeparatorText)
 
-    void StyledRender() override;
+    void StyledRender(DrawingContext& context) override;
 };
 
 
@@ -562,7 +643,7 @@ struct Spacing : public StyledRenderable
 public:
     DECL_UI_TYPE(Spacing)
 
-    void StyledRender() override;
+    void StyledRender(DrawingContext& context) override;
 };
 
 
@@ -571,7 +652,7 @@ struct Dummy : public StyledRenderable
 public:
     DECL_UI_TYPE(Dummy)
 
-    void StyledRender() override;
+    void StyledRender(DrawingContext& context) override;
 
     float Width{ 0.0f };
     float Height{ 0.0f };
@@ -583,7 +664,7 @@ struct NewLine : public StyledRenderable
 public:
     DECL_UI_TYPE(NewLine)
 
-    void StyledRender() override;
+    void StyledRender(DrawingContext& context) override;
 };
 
 
@@ -592,7 +673,22 @@ struct Separator : public StyledRenderable
 public:
     DECL_UI_TYPE(Separator)
 
-    void StyledRender() override;
+    void StyledRender(DrawingContext& context) override;
+};
+
+
+struct Selectable : public StyledRenderable
+{
+public:
+    DECL_UI_TYPE(Selectable)
+
+    void StyledRender(DrawingContext& context) override;
+
+    std::optional<glm::vec2> Size;
+    GuiSelectableFlags Flags;
+    bool Selected{ false };
+
+    lua::LuaDelegate<void (lua::ImguiHandle)> OnClick;
 };
 
 
@@ -601,7 +697,7 @@ struct Button : public StyledRenderable
 public:
     DECL_UI_TYPE(Button)
 
-    void StyledRender() override;
+    void StyledRender(DrawingContext& context) override;
 
     std::optional<glm::vec2> Size;
     GuiButtonFlags Flags;
@@ -615,7 +711,7 @@ struct ImageButton : public StyledRenderable
 public:
     DECL_UI_TYPE(ImageButton)
 
-    void StyledRender() override;
+    void StyledRender(DrawingContext& context) override;
 
     ImageReference Image;
     glm::vec4 Background{ 0.0f };
@@ -631,7 +727,7 @@ struct Checkbox : public StyledRenderable
 public:
     DECL_UI_TYPE(Checkbox)
 
-    void StyledRender() override;
+    void StyledRender(DrawingContext& context) override;
 
     bool Checked{ false };
     lua::LuaDelegate<void (lua::ImguiHandle, bool)> OnChange;
@@ -643,7 +739,7 @@ struct RadioButton : public StyledRenderable
 public:
     DECL_UI_TYPE(RadioButton)
 
-    void StyledRender() override;
+    void StyledRender(DrawingContext& context) override;
 
     bool Active{ false };
     lua::LuaDelegate<void (lua::ImguiHandle, bool)> OnChange;
@@ -659,7 +755,7 @@ public:
     static constexpr unsigned MaxSize = 0x10000;
 
     InputText();
-    void StyledRender() override;
+    void StyledRender(DrawingContext& context) override;
 
     STDString GetText() const;
     void SetText(STDString text);
@@ -680,7 +776,7 @@ struct Combo : public StyledRenderable
 public:
     DECL_UI_TYPE(Combo)
 
-    void StyledRender() override;
+    void StyledRender(DrawingContext& context) override;
 
     Array<STDString> Options;
     int SelectedIndex{ -1 };
@@ -694,7 +790,7 @@ struct DragScalar : public StyledRenderable
 public:
     DECL_UI_TYPE(DragScalar)
 
-    void StyledRender() override;
+    void StyledRender(DrawingContext& context) override;
 
     glm::vec4 Value{ 0.0f };
     glm::vec4 Min{ 0.0f };
@@ -710,7 +806,7 @@ struct DragInt : public StyledRenderable
 public:
     DECL_UI_TYPE(DragInt)
 
-    void StyledRender() override;
+    void StyledRender(DrawingContext& context) override;
 
     glm::ivec4 Value{ 0 };
     glm::ivec4 Min{ 0 };
@@ -726,7 +822,7 @@ struct SliderScalar : public StyledRenderable
 public:
     DECL_UI_TYPE(SliderScalar)
 
-    void StyledRender() override;
+    void StyledRender(DrawingContext& context) override;
 
     glm::vec4 Value{ 0.0f };
     glm::vec4 Min{ 0.0f };
@@ -744,7 +840,7 @@ struct SliderInt : public StyledRenderable
 public:
     DECL_UI_TYPE(SliderInt)
 
-    void StyledRender() override;
+    void StyledRender(DrawingContext& context) override;
 
     glm::ivec4 Value{ 0 };
     glm::ivec4 Min{ 0 };
@@ -762,7 +858,7 @@ struct InputScalar : public StyledRenderable
 public:
     DECL_UI_TYPE(InputScalar)
 
-    void StyledRender() override;
+    void StyledRender(DrawingContext& context) override;
 
     glm::vec4 Value{ 0.0f };
     int Components{ 1 };
@@ -776,7 +872,7 @@ struct InputInt : public StyledRenderable
 public:
     DECL_UI_TYPE(InputInt)
 
-    void StyledRender() override;
+    void StyledRender(DrawingContext& context) override;
 
     glm::ivec4 Value{ 0 };
     int Components{ 1 };
@@ -790,7 +886,7 @@ struct ColorEdit : public StyledRenderable
 public:
     DECL_UI_TYPE(ColorEdit)
 
-    void StyledRender() override;
+    void StyledRender(DrawingContext& context) override;
 
     glm::vec4 Color{ 0.0f };
     GuiColorEditFlags Flags{ ImGuiColorEditFlags_DefaultOptions_ };
@@ -803,7 +899,7 @@ struct ColorPicker : public StyledRenderable
 public:
     DECL_UI_TYPE(ColorPicker)
 
-    void StyledRender() override;
+    void StyledRender(DrawingContext& context) override;
 
     glm::vec4 Color{ 0.0f };
     GuiColorEditFlags Flags{ ImGuiColorEditFlags_DefaultOptions_ };
@@ -816,7 +912,7 @@ struct ProgressBar : public StyledRenderable
 public:
     DECL_UI_TYPE(ProgressBar)
 
-    void StyledRender() override;
+    void StyledRender(DrawingContext& context) override;
 
     float Value{ 0.0f };
     glm::vec2 Size{ 0.0f };
@@ -890,7 +986,7 @@ public:
     Renderable* CreateRenderable(IMGUIObjectType type);
     Renderable* GetRenderable(HandleType handle);
     bool DestroyRenderable(HandleType handle);
-    void Render();
+    void Render(DrawingContext& context);
     void EnableDemo(bool enable);
     void ClientUpdate();
 

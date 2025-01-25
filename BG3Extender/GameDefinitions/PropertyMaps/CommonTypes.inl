@@ -105,6 +105,7 @@ END_CLS()
 BEGIN_CLS(ecs::ECSComponentLog)
 P_BITMASK(Flags)
 P_GETTER(Name, GetName)
+P_GETTER(Type, GetType)
 END_CLS()
 
 

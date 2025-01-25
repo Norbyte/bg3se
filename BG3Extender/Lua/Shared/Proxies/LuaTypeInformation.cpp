@@ -9,23 +9,23 @@ BEGIN_SE()
 template <class UnderlyingType>
 void AddBitfieldTypeInfo(TypeInformation& ty, LegacyMap<FixedString, UnderlyingType> const& values)
 {
-	for (auto const& label : values) {
-		ty.Members.insert(std::make_pair(label.Key, GetTypeInfoRef<bool>()));
-	}
+    for (auto const& label : values) {
+        ty.Members.insert(std::make_pair(label.Key, GetTypeInfoRef<bool>()));
+    }
 }
 
 template <class T>
 void AddBitfieldTypeInfo(TypeInformation& ty)
 {
-	AddBitfieldTypeInfo(ty, BitfieldInfo<T>::GetStore().Values);
+    AddBitfieldTypeInfo(ty, BitfieldInfo<T>::GetStore().Values);
 }
 
 template <class Fun>
 void AddFunctionSignature(TypeInformation& ty, char const* method, Fun f)
 {
-	TypeInformation sig;
-	ConstructFunctionSignature(sig, f);
-	ty.Methods.insert(std::make_pair(FixedString(method), sig));
+    TypeInformation sig;
+    ConstructFunctionSignature(sig, f);
+    ty.Methods.insert(std::make_pair(FixedString(method), sig));
 }
 
 void RegisterObjectProxyTypeInformation()
@@ -34,16 +34,16 @@ void RegisterObjectProxyTypeInformation()
 #define ADD_TYPE(prop, type) ty.Members.insert(std::make_pair(FixedString(prop), GetTypeInfoRef<type>()));
 
 #define BEGIN_CLS_TN(clsName, typeName, id) ([]() { \
-	using TClass = clsName;\
-	auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(#typeName)); \
-	ty.Kind = LuaTypeId::Object; \
-	ty.NativeName = FixedString(typeid(TClass).name()); \
-	ty.PropertyMap = &lua::GetStaticPropertyMap<TClass>(); \
-	if constexpr (std::is_base_of_v<BaseComponent, TClass> && !std::is_same_v<BaseComponent, TClass> && !std::is_same_v<BaseProxyComponent, TClass>) { \
-		ty.ComponentName = FixedString(TClass::ComponentName); \
-	} \
-	ty.PropertyMap->TypeInfo = &ty; \
-	assert(FixedString(#typeName) == ty.PropertyMap->Name);
+    using TClass = clsName;\
+    auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(#typeName)); \
+    ty.Kind = LuaTypeId::Object; \
+    ty.NativeName = FixedString(typeid(TClass).name()); \
+    ty.PropertyMap = &lua::GetStaticPropertyMap<TClass>(); \
+    if constexpr (std::is_base_of_v<BaseComponent, TClass> && !std::is_same_v<BaseComponent, TClass> && !std::is_same_v<BaseProxyComponent, TClass>) { \
+        ty.ComponentName = FixedString(TClass::ComponentName); \
+    } \
+    ty.PropertyMap->TypeInfo = &ty; \
+    assert(FixedString(#typeName) == ty.PropertyMap->Name);
 
 #define BEGIN_CLS(clsName, id) BEGIN_CLS_TN(clsName, clsName, id)
 
@@ -52,7 +52,7 @@ void RegisterObjectProxyTypeInformation()
 #define P(prop) ty.Members.insert(std::make_pair(FixedString(#prop), GetTypeInfoRef<decltype(TClass::prop)>()));
 #define P_NOTIFY(prop, notification) ty.Members.insert(std::make_pair(FixedString(#prop), GetTypeInfoRef<decltype(TClass::prop)>()));
 #define P_RENAMED(prop, oldName) ty.Members.insert(std::make_pair(FixedString(#prop), GetTypeInfoRef<decltype(TClass::prop)>())); \
-	ty.Members.insert(std::make_pair(FixedString(#oldName), GetTypeInfoRef<decltype(TClass::prop)>()));
+    ty.Members.insert(std::make_pair(FixedString(#oldName), GetTypeInfoRef<decltype(TClass::prop)>()));
 #define P_RO(prop) ty.Members.insert(std::make_pair(FixedString(#prop), GetTypeInfoRef<decltype(TClass::prop)>()));
 #define P_BITMASK(prop) AddBitfieldTypeInfo<decltype(TClass::prop)>(ty);
 #define P_BITMASK_GETTER_SETTER(prop, getter, setter) AddBitfieldTypeInfo<decltype(TClass::prop)>(ty);
@@ -86,26 +86,26 @@ void RegisterObjectProxyTypeInformation()
 
 
 #define BEGIN_BITMASK_NS(NS, T, luaName, type, id) ([]() { \
-	using TEnum = NS::T; \
-	auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(#luaName)); \
-	ty.Kind = LuaTypeId::Enumeration; \
-	ty.IsBitfield = true;
+    using TEnum = NS::T; \
+    auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(#luaName)); \
+    ty.Kind = LuaTypeId::Enumeration; \
+    ty.IsBitfield = true;
 
 #define BEGIN_ENUM_NS(NS, T, luaName, type, id) ([]() { \
-	using TEnum = NS::T; \
-	auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(#luaName)); \
-	ty.Kind = LuaTypeId::Enumeration;
+    using TEnum = NS::T; \
+    auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(#luaName)); \
+    ty.Kind = LuaTypeId::Enumeration;
 
 #define BEGIN_BITMASK(T, type, id) ([]() { \
-	using TEnum = T; \
-	auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(#T)); \
-	ty.Kind = LuaTypeId::Enumeration; \
-	ty.IsBitfield = true;
+    using TEnum = T; \
+    auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(#T)); \
+    ty.Kind = LuaTypeId::Enumeration; \
+    ty.IsBitfield = true;
 
 #define BEGIN_ENUM(T, type, id) ([]() { \
-	using TEnum = T; \
-	auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(#T)); \
-	ty.Kind = LuaTypeId::Enumeration;
+    using TEnum = T; \
+    auto& ty = TypeInformationRepository::GetInstance().RegisterType(FixedString(#T)); \
+    ty.Kind = LuaTypeId::Enumeration;
 
 #define EV(label, value) ty.EnumValues.insert(std::make_pair(FixedString(#label), (uint64_t)TEnum::label));
 #define END_ENUM_NS() GetStaticTypeInfo(Overload<TEnum>{}).Type = &ty; })();

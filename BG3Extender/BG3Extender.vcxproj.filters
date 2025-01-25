@@ -64,15 +64,6 @@
     <ClCompile Include="Osiris\Functions\LuaFunctions.cpp">
       <Filter>Osiris\Functions</Filter>
     </ClCompile>
-    <ClCompile Include="Osiris\Functions\MathFunctions.cpp">
-      <Filter>Osiris\Functions</Filter>
-    </ClCompile>
-    <ClCompile Include="Osiris\Functions\StatFunctions.cpp">
-      <Filter>Osiris\Functions</Filter>
-    </ClCompile>
-    <ClCompile Include="Osiris\Functions\UtilityFunctions.cpp">
-      <Filter>Osiris\Functions</Filter>
-    </ClCompile>
     <ClCompile Include="GameDefinitions\Enumerations.cpp">
       <Filter>GameDefinitions</Filter>
     </ClCompile>
@@ -430,7 +421,7 @@
     <ClInclude Include="Extender\Shared\ExtenderProtocol.pb.h" />
     <ClInclude Include="Extender\Client\ClientNetworking.h" />
     <ClInclude Include="Extender\Server\ServerNetworking.h" />
-    <ClInclude Include="Lua\Server\EntityEvents.h" />
+    <ClInclude Include="Lua\Server\ServerEntityReplicationEvents.h" />
     <ClInclude Include="Extender\Shared\UserVariables.h" />
     <ClInclude Include="Lua\Shared\LuaCustomizations.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaCppObjectProxy.h" />
@@ -490,6 +481,25 @@
     <ClInclude Include="GameDefinitions\Components\Timeline.h" />
     <ClInclude Include="GameDefinitions\Components\Events.h" />
     <ClInclude Include="Extender\Shared\UseActions.h" />
+    <ClInclude Include="GameDefinitions\Components\Camera.h" />
+    <ClInclude Include="GameDefinitions\AllSparkShared.h" />
+    <ClInclude Include="Lua\Shared\EntityReplicationEvents.h" />
+    <ClInclude Include="Lua\Client\ClientEntityReplicationEvents.h" />
+    <ClInclude Include="Lua\Libs\Level.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaLightCppObjectMeta.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaCppObjectMeta.h" />
+    <ClInclude Include="Lua\Libs\Net.h" />
+    <ClInclude Include="GameDefinitions\Cursor.h" />
+    <ClInclude Include="GameDefinitions\Effect.h" />
+    <ClInclude Include="GameDefinitions\Controllers\OsirisTask.h" />
+    <ClInclude Include="GameDefinitions\Controllers\Controller.h" />
+    <ClInclude Include="GameDefinitions\Controllers\Behaviour.h" />
+    <ClInclude Include="GameDefinitions\Controllers\Action.h" />
+    <ClInclude Include="GameDefinitions\Controllers\Movement.h" />
+    <ClInclude Include="GameDefinitions\Controllers\Steering.h" />
+    <ClInclude Include="GameDefinitions\Physics.h" />
+    <ClInclude Include="GameDefinitions\Lighting.h" />
+    <ClInclude Include="GameDefinitions\DragDrop.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -502,9 +512,6 @@
     <None Include="LuaScripts\Game.Tooltip.lua" />
     <None Include="LuaScripts\SandboxStartup.lua" />
     <None Include="Misc\ExtIdeHelpers.lua" />
-    <None Include="Lua\Shared\LuaShared.inl">
-      <Filter>Lua\Shared</Filter>
-    </None>
     <None Include="Lua\Libs\StatAttributes.inl">
       <Filter>Lua\Shared</Filter>
     </None>
@@ -513,9 +520,6 @@
     </None>
     <None Include="Lua\Libs\StatMisc.inl">
       <Filter>Lua\Shared</Filter>
-    </None>
-    <None Include="Lua\Server\ServerStatus.inl">
-      <Filter>Lua\Server</Filter>
     </None>
     <None Include="LuaScripts\BuiltinLibrary.lua">
       <Filter>LuaScripts</Filter>
@@ -551,9 +555,6 @@
       <Filter>Lua\Server</Filter>
     </None>
     <None Include="GameDefinitions\PropertyMaps\SurfaceActions.inl">
-      <Filter>GameDefinitions\PropertyMaps</Filter>
-    </None>
-    <None Include="GameDefinitions\PropertyMaps\Statuses.inl">
       <Filter>GameDefinitions\PropertyMaps</Filter>
     </None>
     <None Include="GameDefinitions\Components\AllComponentTypes.inl">
@@ -636,7 +637,7 @@
     <None Include="Lua\Libs\Localization.inl">
       <Filter>Lua\Libs</Filter>
     </None>
-    <None Include="Lua\Server\EntityEvents.inl">
+    <None Include="Lua\Server\ServerEntityReplicationEvents.inl">
       <Filter>Lua\Server</Filter>
     </None>
     <None Include="Extender\Shared\UserVariables.inl">
@@ -724,13 +725,29 @@
     <None Include="Lua\Osiris\ValueHelpers.inl" />
     <None Include="Lua\Osiris\LuaNameResolver.inl" />
     <None Include="GameDefinitions\PropertyMaps\ClientObjects.inl" />
-    <None Include="Lua\Shared\EntityEventHelpers.inl" />
+    <None Include="Lua\Shared\EntityEventHelpersServer.inl" />
     <None Include="GameDefinitions\Ai.inl" />
     <None Include="Lua\Libs\ClientUI\Names.inl" />
     <None Include="Lua\Shared\LuaDelegate.inl" />
     <None Include="GameDefinitions\Animation.inl" />
     <None Include="Extender\Shared\UseActions.inl" />
     <None Include="GameDefinitions\RootTemplates.inl" />
+    <None Include="GameDefinitions\Render.inl" />
+    <None Include="Lua\Libs\Log.inl" />
+    <None Include="GameDefinitions\AllSpark.inl" />
+    <None Include="Lua\Shared\EntityEventHelpersClient.inl" />
+    <None Include="Lua\Client\ClientEntityReplicationEvents.inl" />
+    <None Include="Lua\Libs\Level.inl" />
+    <None Include="Lua\Libs\Net.inl" />
+    <None Include=".editorconfig" />
+    <None Include="GameDefinitions\Status.inl" />
+    <None Include="GameDefinitions\Controllers\OsirisTask.inl" />
+    <None Include="GameDefinitions\Controllers\Action.inl" />
+    <None Include="GameDefinitions\Controllers\Steering.inl" />
+    <None Include="GameDefinitions\Controllers\Movement.inl" />
+    <None Include="GameDefinitions\Controllers\Behaviour.inl" />
+    <None Include="GameDefinitions\Stats\Functors.inl" />
+    <None Include="GameDefinitions\DragDrop.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

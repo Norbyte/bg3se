@@ -10,25 +10,23 @@
 // #define IMGUI_DEBUG(msg, ...) DEBUG("[IMGUI] " msg, __VA_ARGS__)
 #define IMGUI_DEBUG(msg, ...)
 
+#define IMGUI_FRAME_DEBUG(msg, ...) if ((frameNo_ % 100) == 0) { IMGUI_DEBUG(msg, __VA_ARGS__); }
+
 #include <Extender/Client/IMGUI/Vulkan.inl>
 #include <Extender/Client/IMGUI/DX11.inl>
 #include <Lua/Shared/LuaMethodCallHelpers.h>
 
 BEGIN_NS(extui)
 
-inline ImVec2 ToImVec(glm::vec2 const& v)
+void DrawingContext::PushScaling(GuiMeasureScaling scaling)
 {
-    return ImVec2(v.x, v.y);
+    ScalingStack.push_back(Scaling);
+    Scaling = scaling;
 }
 
-inline ImVec4 ToImVec(glm::vec4 const& v)
+void DrawingContext::PopScaling()
 {
-    return ImVec4(v.x, v.y, v.z, v.w);
-}
-
-inline ImVec2 ToImVec(std::optional<glm::vec2> const& v, ImVec2 defaultVal = ImVec2(0.0f, 0.0f))
-{
-    return v ? ImVec2(v->x, v->y) : defaultVal;
+    Scaling = ScalingStack.pop_last();
 }
 
 ImageReference::~ImageReference()
@@ -110,7 +108,7 @@ Renderable::~Renderable() {}
 
 void Renderable::Destroy()
 {
-    if (Parent) {
+    if (Parent != InvalidHandle) {
         auto parent = Manager->GetRenderable(Parent);
         if (parent != nullptr) {
             static_cast<TreeParent*>(parent)->RemoveChild(lua::ImguiHandle(Handle));
@@ -125,84 +123,48 @@ lua::ImguiHandle Renderable::GetParent() const
     return lua::ImguiHandle(Parent);
 }
 
-void StyledRenderable::Render()
+lua::ImguiHandle StyledRenderable::GetDragPreview() const
+{
+    return lua::ImguiHandle(DragPreview);
+}
+
+FixedString StyledRenderable::GetDragDropType() const
+{
+    return DragDropType;
+}
+
+void StyledRenderable::SetDragDropType(lua_State* L, FixedString type)
+{
+    if (type.GetLength() >= IM_ARRAYSIZE(ImGuiPayload::DataType)) {
+        luaL_error(L, "Drag drop type must be at most %d characters", IM_ARRAYSIZE(ImGuiPayload::DataType));
+        return;
+    }
+
+    DragDropType = type;
+}
+
+void StyledRenderable::Render(DrawingContext& context)
 {
     if (!Visible) return;
 
     ImFont* font{ nullptr };
-    if (Font) {
-        auto info = gExtender->IMGUI().GetFont(Font);
-        if (info) font = info->Font;
-    }
+    PushStyleChanges(context);
+    PushWindowStyleChanges(context, font);
 
-    if (font) ImGui::PushFont(font);
+    StyledRender(context);
+    UpdateStatusFlags();
+    FireEvents();
 
-    for (auto const& var : StyleVars) {
-        auto varInfo = ImGui::GetStyleVarInfo((ImGuiStyleVar)var.Key);
-        if (varInfo->Count == 2) {
-            ImGui::PushStyleVar((ImGuiStyleVar)var.Key, ToImVec(var.Value));
-        } else {
-            ImGui::PushStyleVar((ImGuiStyleVar)var.Key, var.Value.x);
-        }
-    }
+    PopWindowStyleChanges(font);
+    PopStyleChanges();
 
-    for (auto const& var : StyleColors) {
-        ImGui::PushStyleColor((ImGuiCol)var.Key, ImVec4(var.Value.r, var.Value.g, var.Value.b, var.Value.a));
-    }
+    DrawTooltip(context);
+    HandleDragDrop(context);
+}
 
-    if (!IDContext.empty()) {
-        ImGui::PushID(IDContext.data(), IDContext.data() + IDContext.size());
-    } else if (Label.empty()) {
-        ImGui::PushID((int32_t)Handle | (int32_t)(Handle >> 32));
-    }
 
-    if (SameLine) ImGui::SameLine();
-
-    if (PositionOffset) {
-        auto pos = ImGui::GetCursorPos();
-        ImGui::SetCursorPos(ImVec2(pos.x + PositionOffset->x, pos.y + PositionOffset->y));
-    } else if (AbsolutePosition) {
-        ImGui::SetCursorPos(ToImVec(*AbsolutePosition));
-    }
-
-    if (ItemFlags != (GuiItemFlags)0) ImGui::PushItemFlag((ImGuiItemFlags)ItemFlags, true);
-    if (TextWrapPos) ImGui::PushTextWrapPos(*TextWrapPos);
-    if (ItemWidth) ImGui::SetNextItemWidth(*ItemWidth);
-
-    if (RequestActivate) {
-        ImGui::ActivateItemByID(ImGui::GetCurrentWindow()->GetID(Label.c_str()));
-        RequestActivate = false;
-    }
-
-    StyledRender();
-
-    auto status = (GuiItemStatusFlags)ImGui::GetItemStatusFlags();
-    if (ImGui::IsItemFocused()) status |= GuiItemStatusFlags::Focused;
-    if (ImGui::IsItemActive()) status |= GuiItemStatusFlags::Active;
-    if (StatusFlags != status) StatusFlags = status;
-
-    if (ItemFlags != (GuiItemFlags)0) ImGui::PopItemFlag();
-    if (TextWrapPos) ImGui::PopTextWrapPos();
-
-    if (!StyleColors.empty()) {
-        ImGui::PopStyleColor(StyleColors.size());
-    }
-
-    if (!StyleVars.empty()) {
-        ImGui::PopStyleVar(StyleVars.size());
-    }
-
-    if (font) ImGui::PopFont();
-
-    if (tooltip_) {
-        auto tooltip = Manager->GetRenderable(tooltip_.Handle);
-        if (tooltip) tooltip->Render();
-    }
-
-    if (!IDContext.empty() || Label.empty()) {
-        ImGui::PopID();
-    }
-
+void StyledRenderable::FireEvents()
+{
     if (OnActivate && ImGui::IsItemActivated()) {
         Manager->GetEventQueue().Call(OnActivate, lua::ImguiHandle(Handle));
     }
@@ -224,6 +186,145 @@ void StyledRenderable::Render()
         }
         WasHovered = hovered;
     }
+}
+
+
+void StyledRenderable::HandleDragDrop(DrawingContext& context)
+{
+    if (CanDrag && DragDropType) {
+        if (ImGui::BeginDragDropSource((ImGuiDragDropFlags)DragFlags)) {
+            if (!IsDragging) {
+                if (OnDragStart) {
+                    DragPreview = Manager->CreateRenderable<Group>()->Handle;
+                    Manager->GetEventQueue().Call(OnDragStart, lua::ImguiHandle(Handle), lua::ImguiHandle(DragPreview));
+                }
+                IsDragging = true;
+            }
+
+            ImGui::SetDragDropPayload(DragDropType.GetString(), &Handle, sizeof(Handle));
+            if (DragPreview) {
+                auto preview = Manager->GetRenderable(DragPreview);
+                if (preview) {
+                    preview->Render(context);
+                }
+            }
+            ImGui::EndDragDropSource();
+        } else if (IsDragging) {
+            Manager->GetEventQueue().Call(OnDragEnd, lua::ImguiHandle(Handle));
+            if (DragPreview) {
+                Manager->DestroyRenderable(DragPreview);
+                DragPreview = InvalidHandle;
+            }
+            IsDragging = false;
+        }
+    }
+
+    if (DragDropType && OnDragDrop && ImGui::BeginDragDropTarget())
+    {
+        auto payload = ImGui::AcceptDragDropPayload(DragDropType.GetString());
+        if (payload) {
+            auto source = *reinterpret_cast<HandleType*>(payload->Data);
+            Manager->GetEventQueue().Call(OnDragDrop, lua::ImguiHandle(Handle), lua::ImguiHandle(source));
+        }
+        ImGui::EndDragDropTarget();
+    }
+}
+
+
+void StyledRenderable::DrawTooltip(DrawingContext& context)
+{
+    if (tooltip_) {
+        auto tooltip = Manager->GetRenderable(tooltip_.Handle);
+        if (tooltip) tooltip->Render(context);
+    }
+}
+
+
+void StyledRenderable::UpdateStatusFlags()
+{
+    auto status = (GuiItemStatusFlags)ImGui::GetItemStatusFlags();
+    if (ImGui::IsItemFocused()) status |= GuiItemStatusFlags::Focused;
+    if (ImGui::IsItemActive()) status |= GuiItemStatusFlags::Active;
+    if (StatusFlags != status) StatusFlags = status;
+}
+
+
+void StyledRenderable::PushStyleChanges(DrawingContext& context)
+{
+    for (auto const& var : StyleVars) {
+        auto varInfo = ImGui::GetStyleVarInfo((ImGuiStyleVar)var.Key);
+        if (varInfo->Count == 2) {
+            ImGui::PushStyleVar((ImGuiStyleVar)var.Key, ToImVec(var.Value));
+        } else {
+            ImGui::PushStyleVar((ImGuiStyleVar)var.Key, var.Value.x);
+        }
+    }
+
+    for (auto const& var : StyleColors) {
+        ImGui::PushStyleColor((ImGuiCol)var.Key, ToImVec(var.Value));
+    }
+
+    if (ItemFlags != (GuiItemFlags)0) ImGui::PushItemFlag((ImGuiItemFlags)ItemFlags, true);
+    if (ItemWidth) ImGui::SetNextItemWidth(context.Scale(*ItemWidth));
+
+    if (RequestActivate) {
+        ImGui::ActivateItemByID(ImGui::GetCurrentWindow()->GetID(Label.c_str()));
+        RequestActivate = false;
+    }
+}
+
+
+void StyledRenderable::PopStyleChanges()
+{
+    if (ItemFlags != (GuiItemFlags)0) ImGui::PopItemFlag();
+
+    if (!StyleColors.empty()) {
+        ImGui::PopStyleColor(StyleColors.size());
+    }
+
+    if (!StyleVars.empty()) {
+        ImGui::PopStyleVar(StyleVars.size());
+    }
+}
+
+
+void StyledRenderable::PushWindowStyleChanges(DrawingContext& context, ImFont*& font)
+{
+    if (Font) {
+        auto info = gExtender->IMGUI().GetFont(Font);
+        if (info) font = info->Font;
+    }
+
+    if (font) ImGui::PushFont(font);
+
+    if (!IDContext.empty()) {
+        ImGui::PushID(IDContext.data(), IDContext.data() + IDContext.size());
+    } else if (Label.empty()) {
+        ImGui::PushID((int32_t)Handle | (int32_t)(Handle >> 32));
+    }
+
+    if (PositionOffset) {
+        auto pos = ImGui::GetCursorPos();
+        auto offset = context.Scale(*PositionOffset);
+        ImGui::SetCursorPos(ImVec2(pos.x + offset.x, pos.y + offset.y));
+    } else if (AbsolutePosition) {
+        ImGui::SetCursorPos(ToImVec(*AbsolutePosition));
+    }
+
+    if (SameLine) ImGui::SameLine();
+    if (TextWrapPos) ImGui::PushTextWrapPos(context.Scale(*TextWrapPos));
+}
+
+
+void StyledRenderable::PopWindowStyleChanges(ImFont* font)
+{
+    if (TextWrapPos) ImGui::PopTextWrapPos();
+
+    if (!IDContext.empty() || Label.empty()) {
+        ImGui::PopID();
+    }
+
+    if (font) ImGui::PopFont();
 }
 
 
@@ -298,18 +399,18 @@ TreeParent::~TreeParent()
 }
 
 
-void TreeParent::StyledRender()
+void TreeParent::StyledRender(DrawingContext& context)
 {
-    if (BeginRender()) {
+    if (BeginRender(context)) {
         for (auto childHandle : Children) {
             auto child = Manager->GetRenderable(childHandle);
             if (child) {
-                child->Render();
+                child->Render(context);
             }
         }
     }
 
-    EndRender();
+    EndRender(context);
 }
 
 
@@ -375,6 +476,16 @@ lua::ImguiHandle TreeParent::AddMenu(char const* label)
     auto menu = AddChild<Menu>();
     menu->Label = label;
     return menu;
+}
+
+
+lua::ImguiHandle TreeParent::AddSelectable(char const* label, std::optional<GuiSelectableFlags> flags, std::optional<glm::vec2> size)
+{
+    auto sel = AddChild<Selectable>();
+    sel->Label = label;
+    if (flags) sel->Flags = *flags;
+    if (size) sel->Size = size;
+    return sel;
 }
 
 
@@ -651,43 +762,7 @@ Array<lua::ImguiHandle> TreeParent::GetChildren() const
     return handles;
 }
 
-bool Window::BeginRender()
-{
-    if (!Open) return false;
-
-    ProcessRenderSettings();
-
-    bool wasOpen = Open;
-    bool renderChildren = ImGui::Begin(Label.c_str(), Closeable ? &Open : nullptr, (ImGuiWindowFlags)Flags);
-
-    rendering_ = true;
-
-    if (wasOpen && !Open && OnClose) {
-        Manager->GetEventQueue().Call(OnClose, lua::ImguiHandle(Handle));
-    }
-
-    return renderChildren;
-}
-
-void Window::EndRender()
-{
-    if (rendering_) {
-        ImGui::End();
-        rendering_ = false;
-    }
-}
-
-lua::ImguiHandle Window::AddMainMenu()
-{
-    if (!MainMenu) {
-        MainMenu = AddChild<MenuBar>();
-        Flags |= GuiWindowFlags::MenuBar;
-    }
-
-    return MainMenu;
-}
-
-void Window::SetPos(glm::vec2 pos, std::optional<GuiCond> cond, std::optional<glm::vec2> pivot)
+void WindowBase::SetPos(glm::vec2 pos, std::optional<GuiCond> cond, std::optional<glm::vec2> pivot)
 {
     req_.Pos = WindowRenderRequests::SetPos { 
         ToImVec(pos),
@@ -696,12 +771,12 @@ void Window::SetPos(glm::vec2 pos, std::optional<GuiCond> cond, std::optional<gl
     };
 }
 
-void Window::SetSize(glm::vec2 size, std::optional<GuiCond> cond)
+void WindowBase::SetSize(glm::vec2 size, std::optional<GuiCond> cond)
 {
     req_.Size = WindowRenderRequests::SetSize{ ToImVec(size), cond ? (ImGuiCond)*cond : ImGuiCond_Always };
 }
 
-void Window::SetSizeConstraints(std::optional<glm::vec2> size_min, std::optional<glm::vec2> size_max)
+void WindowBase::SetSizeConstraints(std::optional<glm::vec2> size_min, std::optional<glm::vec2> size_max)
 {
     if (size_min || size_max) {
         req_.SizeConstraints = WindowRenderRequests::SetSizeConstraints{ 
@@ -713,33 +788,33 @@ void Window::SetSizeConstraints(std::optional<glm::vec2> size_min, std::optional
     }
 }
 
-void Window::SetContentSize(std::optional<glm::vec2> size)
+void WindowBase::SetContentSize(std::optional<glm::vec2> size)
 {
     req_.ContentSize = size ? std::optional<ImVec2>(ToImVec(*size)) : std::optional<ImVec2>{};
 }
 
-void Window::SetCollapsed(bool collapsed, std::optional<GuiCond> cond)
+void WindowBase::SetCollapsed(bool collapsed, std::optional<GuiCond> cond)
 {
     req_.Collapsed = WindowRenderRequests::SetCollapsed{ collapsed, cond ? (ImGuiCond)*cond : ImGuiCond_Always };
 }
 
-void Window::SetFocus()
+void WindowBase::SetFocus()
 {
     req_.Focus = true;
 }
 
-void Window::SetScroll(std::optional<glm::vec2> scroll)
+void WindowBase::SetScroll(std::optional<glm::vec2> scroll)
 {
     req_.Scroll = scroll ? std::optional<ImVec2>(ToImVec(*scroll)) : std::optional<ImVec2>{};
 }
 
-void Window::SetBgAlpha(std::optional<float> alpha)
+void WindowBase::SetBgAlpha(std::optional<float> alpha)
 {
     req_.BgAlpha = alpha;
 }
 
 
-void Window::ProcessRenderSettings()
+void WindowBase::ProcessRenderSettings(DrawingContext& context)
 {
     if (req_.Pos) {
         ImGui::SetNextWindowPos(req_.Pos->Pos, req_.Pos->Cond, req_.Pos->Pivot);
@@ -747,22 +822,24 @@ void Window::ProcessRenderSettings()
     }
 
     if (req_.Size) {
-        ImGui::SetNextWindowSize(req_.Size->Size, req_.Size->Cond);
+        ImGui::SetNextWindowSize(context.Scale(req_.Size->Size), req_.Size->Cond);
         req_.Size = {};
     }
 
     if (req_.SizeConstraints) {
-        ImGui::SetNextWindowSizeConstraints(req_.SizeConstraints->SizeMin, req_.SizeConstraints->SizeMax);
+        ImGui::SetNextWindowSizeConstraints(
+            context.Scale(req_.SizeConstraints->SizeMin), 
+            context.Scale(req_.SizeConstraints->SizeMax));
         req_.SizeConstraints = {};
     }
 
     if (req_.ContentSize) {
-        ImGui::SetNextWindowContentSize(*req_.ContentSize);
+        ImGui::SetNextWindowContentSize(context.Scale(*req_.ContentSize));
         req_.ContentSize = {};
     }
 
     if (req_.Scroll) {
-        ImGui::SetNextWindowScroll(*req_.Scroll);
+        ImGui::SetNextWindowScroll(context.Scale(*req_.Scroll));
         req_.Scroll = {};
     }
 
@@ -782,13 +859,51 @@ void Window::ProcessRenderSettings()
     }
 }
 
-bool MenuBar::BeginRender()
+bool Window::BeginRender(DrawingContext& context)
+{
+    if (!Open || (Label.empty() && IDContext.empty())) return false;
+
+    ProcessRenderSettings(context);
+
+    bool wasOpen = Open;
+    context.PushScaling(Scaling);
+    bool renderChildren = ImGui::Begin(Label.c_str(), Closeable ? &Open : nullptr, (ImGuiWindowFlags)Flags);
+
+    rendering_ = true;
+
+    if (wasOpen && !Open && OnClose) {
+        Manager->GetEventQueue().Call(OnClose, lua::ImguiHandle(Handle));
+    }
+
+    return renderChildren;
+}
+
+void Window::EndRender(DrawingContext& context)
+{
+    if (rendering_) {
+        ImGui::End();
+        context.PopScaling();
+        rendering_ = false;
+    }
+}
+
+lua::ImguiHandle Window::AddMainMenu()
+{
+    if (!MainMenu) {
+        MainMenu = AddChild<MenuBar>();
+        Flags |= GuiWindowFlags::MenuBar;
+    }
+
+    return MainMenu;
+}
+
+bool MenuBar::BeginRender(DrawingContext& context)
 {
     rendering_ = ImGui::BeginMenuBar();
     return rendering_;
 }
 
-void MenuBar::EndRender()
+void MenuBar::EndRender(DrawingContext& context)
 {
     if (rendering_) {
         ImGui::EndMenuBar();
@@ -796,13 +911,13 @@ void MenuBar::EndRender()
     }
 }
 
-bool Menu::BeginRender()
+bool Menu::BeginRender(DrawingContext& context)
 {
     rendering_ = ImGui::BeginMenu(Label.c_str());
     return rendering_;
 }
 
-void Menu::EndRender()
+void Menu::EndRender(DrawingContext& context)
 {
     if (rendering_) {
         ImGui::EndMenu();
@@ -818,42 +933,42 @@ lua::ImguiHandle Menu::AddItem(char const* label, std::optional<char const*> sho
     return menu;
 }
 
-void MenuItem::StyledRender()
+void MenuItem::StyledRender(DrawingContext& context)
 {
     if (ImGui::MenuItem(Label.c_str(), Shortcut ? Shortcut->c_str() : nullptr, false, Enabled) && OnClick) {
         Manager->GetEventQueue().Call(OnClick, lua::ImguiHandle(Handle));
     }
 }
 
-bool Group::BeginRender()
+bool Group::BeginRender(DrawingContext& context)
 {
     ImGui::BeginGroup();
     return true;
 }
 
 
-void Group::EndRender()
+void Group::EndRender(DrawingContext& context)
 {
     ImGui::EndGroup();
 }
 
 
-bool CollapsingHeader::BeginRender()
+bool CollapsingHeader::BeginRender(DrawingContext& context)
 {
     return ImGui::CollapsingHeader(Label.c_str(), (ImGuiTreeNodeFlags)Flags);
 }
 
-void CollapsingHeader::EndRender()
+void CollapsingHeader::EndRender(DrawingContext& context)
 {}
 
 
-bool TabBar::BeginRender()
+bool TabBar::BeginRender(DrawingContext& context)
 {
     rendering_ = ImGui::BeginTabBar(Label.c_str(), (ImGuiTabBarFlags)Flags);
     return rendering_;
 }
 
-void TabBar::EndRender()
+void TabBar::EndRender(DrawingContext& context)
 {
     if (rendering_) ImGui::EndTabBar();
     rendering_ = false;
@@ -867,20 +982,20 @@ lua::ImguiHandle TabBar::AddTabItem(char const* label)
 }
 
 
-bool TabItem::BeginRender()
+bool TabItem::BeginRender(DrawingContext& context)
 {
     rendering_ = ImGui::BeginTabItem(Label.c_str(), nullptr, (ImGuiTabItemFlags)Flags);
     return rendering_;
 }
 
-void TabItem::EndRender()
+void TabItem::EndRender(DrawingContext& context)
 {
     if (rendering_) ImGui::EndTabItem();
     rendering_ = false;
 }
 
 
-bool Tree::BeginRender()
+bool Tree::BeginRender(DrawingContext& context)
 {
     if (open_) {
         ImGui::SetNextItemOpen(open_->Open, open_->Cond);
@@ -904,7 +1019,7 @@ bool Tree::BeginRender()
     return rendering_;
 }
 
-void Tree::EndRender()
+void Tree::EndRender(DrawingContext& context)
 {
     if (rendering_ && !(Flags & GuiTreeNodeFlags::NoTreePushOnOpen)) {
         ImGui::TreePop();
@@ -920,23 +1035,54 @@ void Tree::SetOpen(bool open, std::optional<GuiCond> cond)
     };
 }
 
-bool Table::BeginRender()
+void Table::UpdateSorting()
 {
-    rendering_ = ImGui::BeginTable(Label.c_str(), (int)Columns, (ImGuiTableFlags)Flags, ToImVec(Size));
+    auto sorting = ImGui::TableGetSortSpecs();
 
-    if (rendering_) {
-        for (auto const& def : ColumnDefs) {
-            ImGui::TableSetupColumn(def.Name.c_str(), (ImGuiTableColumnFlags)def.Flags, def.Width);
+    if (!needsSortingUpdate_ && !(sorting && sorting->SpecsDirty)) {
+        return;
+    }
+
+    Sorting.clear();
+    if (sorting) {
+        for (int i = 0; i < sorting->SpecsCount; i++) {
+            auto const& spec = sorting->Specs[i];
+            Sorting.push_back(SortSpec{
+                .ColumnIndex = spec.ColumnIndex,
+                .Direction = (GuiSortDirection)spec.SortDirection
+            });
         }
     }
 
-    if (ShowHeader && AngledHeader) ImGui::TableAngledHeadersRow();
-    if (ShowHeader) ImGui::TableHeadersRow();
+    if (sorting && sorting->SpecsDirty) {
+        sorting->SpecsDirty = false;
+        if (OnSortChanged) {
+            Manager->GetEventQueue().Call(OnSortChanged, lua::ImguiHandle(Handle));
+        }
+    }
+
+    needsSortingUpdate_ = false;
+}
+
+bool Table::BeginRender(DrawingContext& context)
+{
+    rendering_ = ImGui::BeginTable(Label.c_str(), (int)Columns, (ImGuiTableFlags)Flags, context.Scale(ToImVec(Size)));
+
+    if (rendering_) {
+        for (auto const& def : ColumnDefs) {
+            ImGui::TableSetupColumn(def.Name.c_str(), (ImGuiTableColumnFlags)def.Flags, context.Scale(def.Width));
+        }
+
+        if (FreezeRows || FreezeCols) ImGui::TableSetupScrollFreeze((int)FreezeCols, (int)FreezeRows);
+        if (ShowHeader && AngledHeader) ImGui::TableAngledHeadersRow();
+        if (ShowHeader) ImGui::TableHeadersRow();
+        UpdateSorting();
+    }
 
     return rendering_;
 }
 
-void Table::EndRender()
+void Table::EndRender(DrawingContext& context)
 {
     if (rendering_) ImGui::EndTable();
     rendering_ = false;
@@ -955,14 +1101,17 @@ lua::ImguiHandle Table::AddRow()
 }
 
 
-bool TableRow::BeginRender()
+bool TableRow::BeginRender(DrawingContext& context)
 {
-    ImGui::TableNextRow((ImGuiTableRowFlags)Flags, MinHeight);
+    ImGui::TableNextRow((ImGuiTableRowFlags)Flags, context.Scale(MinHeight));
     return true;
 }
 
-void TableRow::EndRender()
+void TableRow::EndRender(DrawingContext& context)
 {
+    if (GImGui->CurrentTable && GImGui->CurrentTable->IsInsideRow) {
+        ImGui::TableEndRow(GImGui->CurrentTable);
+    }
 }
 
 lua::ImguiHandle TableRow::AddCell()
@@ -971,44 +1120,52 @@ lua::ImguiHandle TableRow::AddCell()
 }
 
 
-bool TableCell::BeginRender()
+bool TableCell::BeginRender(DrawingContext& context)
 {
     ImGui::TableNextColumn();
     return true;
 }
 
-void TableCell::EndRender()
+void TableCell::EndRender(DrawingContext& context)
 {
 }
 
 
-bool Tooltip::BeginRender()
+bool Tooltip::BeginRender(DrawingContext& context)
 {
-    rendering_ = ImGui::BeginItemTooltip();
+    // BeginItemTooltip() doesn't consume next window settings so we need to set them conditionally
+    if (ImGui::IsItemHovered(ImGuiHoveredFlags_ForTooltip)) {
+        ProcessRenderSettings(context);
+        rendering_ = ImGui::BeginTooltipEx(ImGuiTooltipFlags_None, (ImGuiWindowFlags)Flags);
+    } else {
+        rendering_ = false;
+    }
+    
     return rendering_;
 }
 
 
-void Tooltip::EndRender()
+void Tooltip::EndRender(DrawingContext& context)
 {
     if (rendering_) ImGui::EndTooltip();
     rendering_ = false;
 }
 
 
-bool Popup::BeginRender()
+bool Popup::BeginRender(DrawingContext& context)
 {
     if (requestOpen_) {
         ImGui::OpenPopup(Label.c_str(), (ImGuiPopupFlags)openFlags_);
         requestOpen_ = false;
     }
 
+    ProcessRenderSettings(context);
     rendering_ = ImGui::BeginPopup(Label.c_str(), (ImGuiWindowFlags)Flags);
     return rendering_;
 }
 
 
-void Popup::EndRender()
+void Popup::EndRender(DrawingContext& context)
 {
     if (rendering_) ImGui::EndPopup();
     rendering_ = false;
@@ -1022,25 +1179,26 @@ void Popup::Open(std::optional<GuiPopupFlags> flags)
 }
 
 
-bool ChildWindow::BeginRender()
+bool ChildWindow::BeginRender(DrawingContext& context)
 {
     ImGuiID id = ImGui::GetCurrentWindow()->GetID(Label.c_str());
-    return ImGui::BeginChildEx(Label.c_str(), id, ToImVec(Size), (ImGuiWindowFlags)Flags, (ImGuiChildFlags)ChildFlags);
+    ProcessRenderSettings(context);
+    return ImGui::BeginChildEx(Label.c_str(), id, context.Scale(ToImVec(Size)), (ImGuiWindowFlags)Flags, (ImGuiChildFlags)ChildFlags);
 }
 
 
-void ChildWindow::EndRender()
+void ChildWindow::EndRender(DrawingContext& context)
 {
     ImGui::EndChild();
 }
 
 
-void Image::StyledRender()
+void Image::StyledRender(DrawingContext& context)
 {
     if (ImageData.IsValid()) {
         ImGui::Image(
             ImageData.TextureId,
-            ToImVec(ImageData.Size),
+            context.Scale(ImageData.Size),
             ToImVec(ImageData.UV0),
             ToImVec(ImageData.UV1),
             ToImVec(Tint),
@@ -1050,19 +1208,19 @@ void Image::StyledRender()
 }
 
 
-void Text::StyledRender()
+void Text::StyledRender(DrawingContext& context)
 {
     ImGui::TextUnformatted(Label.c_str(), Label.c_str() + Label.size());
 }
 
 
-void BulletText::StyledRender()
+void BulletText::StyledRender(DrawingContext& context)
 {
     ImGui::BulletText("%s", Label.c_str());
 }
 
 
-void SeparatorText::StyledRender()
+void SeparatorText::StyledRender(DrawingContext& context)
 {
     if (Label.empty()) {
         ImGui::Separator();
@@ -1072,33 +1230,33 @@ void SeparatorText::StyledRender()
 }
 
 
-void Spacing::StyledRender()
+void Spacing::StyledRender(DrawingContext& context)
 {
     ImGui::Spacing();
 }
 
 
-void Dummy::StyledRender()
+void Dummy::StyledRender(DrawingContext& context)
 {
-    ImGui::Dummy(ImVec2(Width, Height));
+    ImGui::Dummy(context.Scale(ImVec2(Width, Height)));
 }
 
 
-void NewLine::StyledRender()
+void NewLine::StyledRender(DrawingContext& context)
 {
     ImGui::NewLine();
 }
 
 
-void Separator::StyledRender()
+void Separator::StyledRender(DrawingContext& context)
 {
     ImGui::Separator();
 }
 
 
-void Button::StyledRender()
+void Selectable::StyledRender(DrawingContext& context)
 {
-    if (ImGui::ButtonEx(Label.c_str(), ToImVec(Size), (ImGuiButtonFlags)Flags)) {
+    if (ImGui::Selectable(Label.c_str(), &Selected, (ImGuiSelectableFlags)Flags, context.Scale(ToImVec(Size)))) {
         if (OnClick) {
             Manager->GetEventQueue().Call(OnClick, lua::ImguiHandle(Handle));
         }
@@ -1106,12 +1264,22 @@ void Button::StyledRender()
 }
 
 
-void ImageButton::StyledRender()
+void Button::StyledRender(DrawingContext& context)
+{
+    if (ImGui::ButtonEx(Label.c_str(), context.Scale(ToImVec(Size)), (ImGuiButtonFlags)Flags)) {
+        if (OnClick) {
+            Manager->GetEventQueue().Call(OnClick, lua::ImguiHandle(Handle));
+        }
+    }
+}
+
+
+void ImageButton::StyledRender(DrawingContext& context)
 {
     if (!Image.IsValid()) return;
 
     auto id = ImGui::GetCurrentWindow()->GetID(Label.c_str());
-    if (ImGui::ImageButtonEx(id, Image.TextureId, ToImVec(Image.Size), ToImVec(Image.UV0), ToImVec(Image.UV1), ToImVec(Background), ToImVec(Tint), (ImGuiButtonFlags)Flags)) {
+    if (ImGui::ImageButtonEx(id, Image.TextureId, context.Scale(ToImVec(Image.Size)), ToImVec(Image.UV0), ToImVec(Image.UV1), ToImVec(Background), ToImVec(Tint), (ImGuiButtonFlags)Flags)) {
         if (OnClick) {
             Manager->GetEventQueue().Call(OnClick, lua::ImguiHandle(Handle));
         }
@@ -1119,7 +1287,7 @@ void ImageButton::StyledRender()
 }
 
 
-void Checkbox::StyledRender()
+void Checkbox::StyledRender(DrawingContext& context)
 {
     if (ImGui::Checkbox(Label.c_str(), &Checked)) {
         if (OnChange) {
@@ -1129,7 +1297,7 @@ void Checkbox::StyledRender()
 }
 
 
-void RadioButton::StyledRender()
+void RadioButton::StyledRender(DrawingContext& context)
 {
     if (ImGui::RadioButton(Label.c_str(), Active)) {
         if (OnChange) {
@@ -1145,7 +1313,7 @@ InputText::InputText()
 }
 
 
-void InputText::StyledRender()
+void InputText::StyledRender(DrawingContext& context)
 {
     if (reloadText_) {
         auto id = ImGui::GetCurrentWindow()->GetID(Label.c_str());
@@ -1156,7 +1324,7 @@ void InputText::StyledRender()
         reloadText_ = false;
     }
 
-    if (ImGui::InputTextEx(Label.c_str(), Hint ? Hint->c_str() : nullptr, Text.data(), Text.capacity(), ToImVec(SizeHint), (ImGuiInputTextFlags)Flags, nullptr, nullptr)) {
+    if (ImGui::InputTextEx(Label.c_str(), Hint ? Hint->c_str() : nullptr, Text.data(), Text.capacity(), context.Scale(ToImVec(SizeHint)), (ImGuiInputTextFlags)Flags, nullptr, nullptr)) {
         Text.resize((uint32_t)strlen(Text.data()));
 
         if (Text.size() + GrowSize - 64 > Text.capacity() && Text.capacity() < MaxSize) {
@@ -1183,7 +1351,7 @@ void InputText::SetText(STDString text)
 }
 
 
-void Combo::StyledRender()
+void Combo::StyledRender(DrawingContext& context)
 {
     char const* preview = nullptr;
     if (SelectedIndex >= 0 && SelectedIndex < (int)Options.size()) {
@@ -1219,7 +1387,7 @@ void Combo::StyledRender()
 }
 
 
-void DragScalar::StyledRender()
+void DragScalar::StyledRender(DrawingContext& context)
 {
     if (ImGui::DragScalarN(Label.c_str(), ImGuiDataType_Float, &Value, Components, 1.0f, &Min, &Max, nullptr, (ImGuiSliderFlags)Flags)) {
         if (OnChange) {
@@ -1229,7 +1397,7 @@ void DragScalar::StyledRender()
 }
 
 
-void DragInt::StyledRender()
+void DragInt::StyledRender(DrawingContext& context)
 {
     if (ImGui::DragScalarN(Label.c_str(), ImGuiDataType_S32, &Value, Components, 1.0f, &Min, &Max, nullptr, (ImGuiSliderFlags)Flags)) {
         if (OnChange) {
@@ -1239,7 +1407,7 @@ void DragInt::StyledRender()
 }
 
 
-void SliderScalar::StyledRender()
+void SliderScalar::StyledRender(DrawingContext& context)
 {
     if (Vertical) {
         if (ImGui::VSliderScalar(Label.c_str(), ToImVec(VerticalSize), ImGuiDataType_Float, &Value, &Min, &Max, nullptr, (ImGuiSliderFlags)Flags)) {
@@ -1257,7 +1425,7 @@ void SliderScalar::StyledRender()
 }
 
 
-void SliderInt::StyledRender()
+void SliderInt::StyledRender(DrawingContext& context)
 {
     if (Vertical) {
         if (ImGui::VSliderInt(Label.c_str(), ToImVec(VerticalSize), &Value.x, Min.x, Max.x, nullptr, (ImGuiSliderFlags)Flags)) {
@@ -1275,7 +1443,7 @@ void SliderInt::StyledRender()
 }
 
 
-void InputScalar::StyledRender()
+void InputScalar::StyledRender(DrawingContext& context)
 {
     if (ImGui::InputScalarN(Label.c_str(), ImGuiDataType_Float, &Value, Components, nullptr, nullptr, nullptr, (ImGuiInputTextFlags)Flags)) {
         if (OnChange) {
@@ -1285,7 +1453,7 @@ void InputScalar::StyledRender()
 }
 
 
-void InputInt::StyledRender()
+void InputInt::StyledRender(DrawingContext& context)
 {
     if (ImGui::InputScalarN(Label.c_str(), ImGuiDataType_S32, &Value, Components, nullptr, nullptr, nullptr, (ImGuiInputTextFlags)Flags)) {
         if (OnChange) {
@@ -1295,7 +1463,7 @@ void InputInt::StyledRender()
 }
 
 
-void ColorEdit::StyledRender()
+void ColorEdit::StyledRender(DrawingContext& context)
 {
     if (ImGui::ColorEdit4(Label.c_str(), &Color.x, (ImGuiColorEditFlags)Flags)) {
         if (OnChange) {
@@ -1305,7 +1473,7 @@ void ColorEdit::StyledRender()
 }
 
 
-void ColorPicker::StyledRender()
+void ColorPicker::StyledRender(DrawingContext& context)
 {
     if (ImGui::ColorPicker4(Label.c_str(), &Color.x, (ImGuiColorEditFlags)Flags)) {
         if (OnChange) {
@@ -1315,9 +1483,9 @@ void ColorPicker::StyledRender()
 }
 
 
-void ProgressBar::StyledRender()
+void ProgressBar::StyledRender(DrawingContext& context)
 {
-    ImGui::ProgressBar(Value, ToImVec(Size), Overlay.empty() ? nullptr : Overlay.c_str());
+    ImGui::ProgressBar(Value, context.Scale(ToImVec(Size)), Overlay.empty() ? nullptr : Overlay.c_str());
 }
 
 
@@ -1353,6 +1521,7 @@ IMGUIObjectManager::IMGUIObjectManager()
     pools_[(unsigned)IMGUIObjectType::NewLine] = std::make_unique<IMGUIObjectPool<NewLine>>();
     pools_[(unsigned)IMGUIObjectType::Separator] = std::make_unique<IMGUIObjectPool<Separator>>();
 
+    pools_[(unsigned)IMGUIObjectType::Selectable] = std::make_unique<IMGUIObjectPool<Selectable>>();
     pools_[(unsigned)IMGUIObjectType::Button] = std::make_unique<IMGUIObjectPool<Button>>();
     pools_[(unsigned)IMGUIObjectType::ImageButton] = std::make_unique<IMGUIObjectPool<ImageButton>>();
     pools_[(unsigned)IMGUIObjectType::Checkbox] = std::make_unique<IMGUIObjectPool<Checkbox>>();
@@ -1396,10 +1565,19 @@ bool IMGUIObjectManager::DestroyRenderable(HandleType handle)
 {
     auto type = (handle >> 56);
     if (type > (unsigned)IMGUIObjectType::Max) return false;
-    return pools_[type]->Destroy(handle);
+    auto destroyed = pools_[type]->Destroy(handle);
+    if (destroyed) {
+        if (type == (unsigned)IMGUIObjectType::Window) {
+            auto it = windows_.find(handle);
+            if (it != windows_.end()) {
+                windows_.erase(it);
+            }
+        }
+    }
+    return destroyed;
 }
 
-void IMGUIObjectManager::Render()
+void IMGUIObjectManager::Render(DrawingContext& context)
 {
     if (renderDemo_) {
         ImGui::ShowDemoWindow();
@@ -1408,7 +1586,7 @@ void IMGUIObjectManager::Render()
     for (auto windowHandle : windows_) {
         auto window = GetRenderable(windowHandle);
         if (window) {
-            window->Render();
+            window->Render(context);
         }
     }
 }
@@ -1496,6 +1674,8 @@ void IMGUIManager::DestroyUI()
 {
     if (!initialized_) return;
 
+    IMGUI_DEBUG("IMGUIManager::DestroyUI()");
+
     initialized_ = false;
     renderer_->DestroyUI();
     sdl_.DestroyUI();
@@ -1505,6 +1685,7 @@ void IMGUIManager::DestroyUI()
 void IMGUIManager::EnableUI(bool enabled)
 {
     enableUI_ = enabled;
+    IMGUI_DEBUG("IMGUIManager::EnableUI: %d", enabled ? 1 : 0);
 }
 
 void IMGUIManager::SetObjects(IMGUIObjectManager* objects)
@@ -1514,6 +1695,8 @@ void IMGUIManager::SetObjects(IMGUIObjectManager* objects)
     if (objects_ == nullptr) {
         renderer_->ClearFrame();
     }
+
+    IMGUI_DEBUG("IMGUIManager::SetObjects() - Binding object manager");
 }
 
 bool IMGUIManager::LoadFont(FixedString const& name, char const* path, float size)
@@ -1567,7 +1750,7 @@ bool IMGUIManager::LoadFont(FontData& request)
             // IMGUI creates a texture with small width so height will be 32768 for CN fonts.
             // (DX11 can't create textures larger than 16384).
             // Compensate by using a larger width than default
-            ImGui::GetIO().Fonts->TexDesiredWidth = 8192;
+            ImGui::GetIO().Fonts->TexDesiredWidth = 16384;
         } else {
             if (language == "Russian" || language == "Ukrainian") {
                 glyphRanges = ImGui::GetIO().Fonts->GetGlyphRangesCyrillic();
@@ -1633,10 +1816,14 @@ void IMGUIManager::OnRenderBackendInitialized()
 {
     IMGUI_DEBUG("IMGUIManager::OnRenderBackendInitialized()");
     OnViewportUpdated();
+    frameNo_ = 0;
 
     if (!initialized_) {
         InitializeUI();
     }
+
+    IMGUI_DEBUG("READY STATE CHECK - enableUI %d, initialized %d, objects %d, rendererInitialized %d",
+        enableUI_ ? 1 : 0, initialized_ ? 1 : 0, objects_ ? 1 : 0, renderer_->IsInitialized() ? 1 : 0);
 }
 
 void IMGUIManager::OnViewportUpdated()
@@ -1650,6 +1837,7 @@ void IMGUIManager::OnViewportUpdated()
 
 void IMGUIManager::UpdateStyle()
 {
+    IMGUI_DEBUG("Recalculating IMGUI style");
     auto& style = ImGui::GetStyle();
     style = ImGuiStyle();
 
@@ -1742,6 +1930,10 @@ void IMGUIManager::Update()
         || !initialized_
         || !objects_
         || !renderer_->IsInitialized()) {
+
+        IMGUI_FRAME_DEBUG("Skip drawing - enableUI %d, initialized %d, objects %d, rendererInitialized %d",
+            enableUI_ ? 1 : 0, initialized_ ? 1 : 0, objects_ ? 1 : 0, renderer_->IsInitialized() ? 1 : 0);
+        frameNo_++;
         return;
     }
 
@@ -1768,7 +1960,11 @@ void IMGUIManager::Update()
     renderer_->NewFrame();
     ImGui::NewFrame();
 
-    objects_->Render();
+    DrawingContext dc{
+        .UIScale = scale_
+    };
+    objects_->Render(dc);
+    assert(dc.ScalingStack.empty());
 
     ImGui::Render();
     renderer_->FinishFrame();

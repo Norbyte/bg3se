@@ -156,6 +156,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="Extender\Version.h" />
     <ClInclude Include="GameDefinitions\Ai.h" />
     <ClInclude Include="GameDefinitions\AllSpark.h" />
+    <ClInclude Include="GameDefinitions\AllSparkShared.h" />
     <ClInclude Include="GameDefinitions\Animation.h" />
     <ClInclude Include="GameDefinitions\Base\Base.h" />
     <ClInclude Include="GameDefinitions\Base\ExposedTypes.h" />
@@ -168,6 +169,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\CharacterCreation.h" />
     <ClInclude Include="GameDefinitions\Components\All.h" />
     <ClInclude Include="GameDefinitions\Components\Boosts.h" />
+    <ClInclude Include="GameDefinitions\Components\Camera.h" />
     <ClInclude Include="GameDefinitions\Components\Camp.h" />
     <ClInclude Include="GameDefinitions\Components\CharacterCreation.h" />
     <ClInclude Include="GameDefinitions\Components\Combat.h" />
@@ -191,7 +193,15 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\Components\Tadpole.h" />
     <ClInclude Include="GameDefinitions\Components\Timeline.h" />
     <ClInclude Include="GameDefinitions\Components\Visual.h" />
+    <ClInclude Include="GameDefinitions\Controllers\Action.h" />
+    <ClInclude Include="GameDefinitions\Controllers\Behaviour.h" />
+    <ClInclude Include="GameDefinitions\Controllers\Controller.h" />
+    <ClInclude Include="GameDefinitions\Controllers\Movement.h" />
+    <ClInclude Include="GameDefinitions\Controllers\Steering.h" />
+    <ClInclude Include="GameDefinitions\Cursor.h" />
     <ClInclude Include="GameDefinitions\Dialog.h" />
+    <ClInclude Include="GameDefinitions\DragDrop.h" />
+    <ClInclude Include="GameDefinitions\Effect.h" />
     <ClInclude Include="GameDefinitions\EntityManager.h" />
     <ClInclude Include="GameDefinitions\EntitySystemHelpers.h" />
     <ClInclude Include="GameDefinitions\EnumRepository.h" />
@@ -200,6 +210,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\Hit.h" />
     <ClInclude Include="GameDefinitions\Interrupt.h" />
     <ClInclude Include="GameDefinitions\Level.h" />
+    <ClInclude Include="GameDefinitions\Lighting.h" />
     <ClInclude Include="GameDefinitions\Misc.h" />
     <ClInclude Include="GameDefinitions\EntitySystem.h" />
     <ClInclude Include="GameDefinitions\Enumerations.h" />
@@ -208,6 +219,8 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\Net.h" />
     <ClInclude Include="GameDefinitions\Osiris.h" />
     <ClInclude Include="GameDefinitions\GuidResources.h" />
+    <ClInclude Include="GameDefinitions\Controllers\OsirisTask.h" />
+    <ClInclude Include="GameDefinitions\Physics.h" />
     <ClInclude Include="GameDefinitions\Picking.h" />
     <ClInclude Include="GameDefinitions\Progression.h" />
     <ClInclude Include="GameDefinitions\Render.h" />
@@ -229,6 +242,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="GameHooks\DataLibraries.h" />
     <ClInclude Include="GameHooks\EngineHooks.h" />
     <ClInclude Include="GameHooks\OsirisWrappers.h" />
+    <ClInclude Include="Lua\Client\ClientEntityReplicationEvents.h" />
     <ClInclude Include="Lua\Client\ClientEvents.h" />
     <ClInclude Include="Lua\Client\LuaBindingClient.h" />
     <ClInclude Include="Lua\Client\UIEvents.h" />
@@ -240,7 +254,9 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="Lua\Helpers\LuaSerialize.h" />
     <ClInclude Include="Lua\Helpers\LuaUnserialize.h" />
     <ClInclude Include="Lua\Libs\Json.h" />
+    <ClInclude Include="Lua\Libs\Level.h" />
     <ClInclude Include="Lua\Libs\LibraryRegistrationHelpers.h" />
+    <ClInclude Include="Lua\Libs\Net.h" />
     <ClInclude Include="Lua\Libs\Timer.h" />
     <ClInclude Include="Lua\LuaBinding.h" />
     <ClInclude Include="Lua\Helpers\LuaGet.h" />
@@ -253,13 +269,14 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="Lua\Osiris\Function.h" />
     <ClInclude Include="Lua\Osiris\NameCache.h" />
     <ClInclude Include="Lua\Osiris\ValueHelpers.h" />
-    <ClInclude Include="Lua\Server\EntityEvents.h" />
+    <ClInclude Include="Lua\Server\ServerEntityReplicationEvents.h" />
     <ClInclude Include="Lua\Server\LuaBindingServer.h" />
     <ClInclude Include="Lua\Osiris\Binding.h" />
     <ClInclude Include="Lua\Osiris\FunctionProxy.h" />
     <ClInclude Include="Lua\Server\ServerEvents.h" />
     <ClInclude Include="Lua\Shared\EntityComponentEvents.h" />
     <ClInclude Include="Lua\Shared\EntityEventHelpers.h" />
+    <ClInclude Include="Lua\Shared\EntityReplicationEvents.h" />
     <ClInclude Include="Lua\Shared\LuaBundle.h" />
     <ClInclude Include="Lua\Shared\LuaCustomizations.h" />
     <ClInclude Include="Lua\Shared\LuaDelegate.h" />
@@ -272,12 +289,14 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="Lua\Shared\Proxies\LuaArrayProxy.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaBitfieldValue.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaCppClass.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaCppObjectMeta.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaCppObjectProxy.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaCppValue.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaEntityProxy.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaEnumValue.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaEvent.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaImguiProxy.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaLightCppObjectMeta.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaMapProxy.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaPropertyMap.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaPropertyMapHelpers.h" />
@@ -372,9 +391,6 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClCompile Include="Osiris\Functions\FunctionLibrary.cpp" />
     <ClCompile Include="Osiris\Functions\FunctionUtilities.cpp" />
     <ClCompile Include="Osiris\Functions\LuaFunctions.cpp" />
-    <ClCompile Include="Osiris\Functions\MathFunctions.cpp" />
-    <ClCompile Include="Osiris\Functions\StatFunctions.cpp" />
-    <ClCompile Include="Osiris\Functions\UtilityFunctions.cpp" />
     <ClCompile Include="Osiris\OsirisExtender.cpp" />
     <ClCompile Include="Osiris\Shared\CustomFunctions.cpp" />
     <ClCompile Include="Osiris\Shared\NodeHooks.cpp" />
@@ -386,6 +402,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
   </ItemGroup>
   <ItemGroup>
     <None Include="..\CHANGELOG.md" />
+    <None Include=".editorconfig" />
     <None Include="cpp.hint" />
     <None Include="Exports.def" />
     <None Include="Extender\Client\IMGUI\DX11.inl" />
@@ -400,9 +417,16 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="Extender\Shared\VirtualTextureMerge.inl" />
     <None Include="Extender\Shared\VirtualTextures.inl" />
     <None Include="GameDefinitions\Ai.inl" />
+    <None Include="GameDefinitions\AllSpark.inl" />
     <None Include="GameDefinitions\Animation.inl" />
     <None Include="GameDefinitions\Base\TypeInformation.inl" />
     <None Include="GameDefinitions\Components\AllComponentTypes.inl" />
+    <None Include="GameDefinitions\Controllers\Action.inl" />
+    <None Include="GameDefinitions\Controllers\Behaviour.inl" />
+    <None Include="GameDefinitions\Controllers\Movement.inl" />
+    <None Include="GameDefinitions\Controllers\OsirisTask.inl" />
+    <None Include="GameDefinitions\Controllers\Steering.inl" />
+    <None Include="GameDefinitions\DragDrop.inl" />
     <None Include="GameDefinitions\Enumerations\ECS.inl" />
     <None Include="GameDefinitions\Enumerations\Engine.inl" />
     <None Include="GameDefinitions\Enumerations\IMGUI.inl" />
@@ -416,10 +440,12 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="GameDefinitions\PropertyMaps\Events.inl" />
     <None Include="GameDefinitions\PropertyMaps\IMGUI.inl" />
     <None Include="GameDefinitions\PropertyMaps\ServerObjects.inl" />
-    <None Include="GameDefinitions\PropertyMaps\Statuses.inl" />
     <None Include="GameDefinitions\PropertyMaps\SurfaceActions.inl" />
     <None Include="GameDefinitions\PropertyMaps\UI.inl" />
+    <None Include="GameDefinitions\Render.inl" />
     <None Include="GameDefinitions\RootTemplates.inl" />
+    <None Include="GameDefinitions\Stats\Functors.inl" />
+    <None Include="GameDefinitions\Status.inl" />
     <None Include="GameHooks\EngineHooks.inl" />
     <None Include="LuaScripts\BuiltinLibrary.lua" />
     <None Include="LuaScripts\BuiltinLibraryClient.lua" />
@@ -430,6 +456,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="LuaScripts\Libs\Event.lua" />
     <None Include="LuaScripts\SandboxStartup.lua" />
     <None Include="LuaScripts\ServerStartup.lua" />
+    <None Include="Lua\Client\ClientEntityReplicationEvents.inl" />
     <None Include="Lua\Client\UIEvents.inl" />
     <None Include="Lua\Debugger\LuaDebug.proto" />
     <None Include="Lua\LevelIteratorFunctions.inl">
@@ -449,9 +476,12 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="Lua\Libs\Entity.inl" />
     <None Include="Lua\Libs\IO.inl" />
     <None Include="Lua\Libs\Json.inl" />
+    <None Include="Lua\Libs\Level.inl" />
     <None Include="Lua\Libs\Localization.inl" />
+    <None Include="Lua\Libs\Log.inl" />
     <None Include="Lua\Libs\Math.inl" />
     <None Include="Lua\Libs\Mod.inl" />
+    <None Include="Lua\Libs\Net.inl" />
     <None Include="Lua\Libs\ServerNet.inl" />
     <None Include="Lua\Libs\ServerTemplate.inl" />
     <None Include="Lua\Libs\StaticData.inl" />
@@ -466,13 +496,13 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="Lua\Osiris\LuaNameResolver.inl" />
     <None Include="Lua\Osiris\NameCache.inl" />
     <None Include="Lua\Osiris\ValueHelpers.inl" />
-    <None Include="Lua\Server\EntityEvents.inl" />
+    <None Include="Lua\Server\ServerEntityReplicationEvents.inl" />
     <None Include="Lua\Server\FunctorEvents.inl" />
     <None Include="Lua\Osiris\FunctionProxy.inl" />
     <None Include="Lua\Server\ServerFunctors.inl" />
-    <None Include="Lua\Server\ServerStatus.inl" />
     <None Include="Lua\Shared\EntityComponentEvents.inl" />
-    <None Include="Lua\Shared\EntityEventHelpers.inl" />
+    <None Include="Lua\Shared\EntityEventHelpersClient.inl" />
+    <None Include="Lua\Shared\EntityEventHelpersServer.inl" />
     <None Include="Lua\Shared\LuaCustomizations.inl" />
     <None Include="Lua\Shared\LuaDelegate.inl" />
     <None Include="Lua\Shared\LuaGet.inl" />
@@ -481,7 +511,6 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="Lua\Shared\LuaPush.inl" />
     <None Include="Lua\Shared\LuaReference.h" />
     <None Include="Lua\Shared\LuaReference.inl" />
-    <None Include="Lua\Shared\LuaShared.inl" />
     <None Include="Lua\Shared\Proxies\LuaArrayProxy.inl" />
     <None Include="Lua\Shared\Proxies\LuaBitfieldValue.inl" />
     <None Include="Lua\Shared\Proxies\LuaCppClass.inl" />

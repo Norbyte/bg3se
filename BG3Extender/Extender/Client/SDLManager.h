@@ -37,6 +37,7 @@ public:
     void InitializeUI();
     void DestroyUI();
     void NewFrame();
+    void InjectEvent(SDL_Event const& evt);
 
 private:
     void SDLCreateWindowHooked(const char* title,
@@ -45,6 +46,7 @@ private:
         SDL_Window* window);
     int SDLPollEventHooked(SDLPollEventProc* wrapped, SDL_Event* event);
     int SDLPollEventInternal(SDL_Event* event, int result);
+    int SDLPollEventSEH(SDL_Event* event, int result);
     void SDLIsTextInputActiveHooked(SDL_bool active);
     void SDLStartTextInputHooked(SDLStartTextInputProc* wrapped);
     void SDLStopTextInputHooked(SDLStartTextInputProc* wrapped);
@@ -52,6 +54,8 @@ private:
     SDL_Window* window_{ nullptr };
     bool enableUI_{ false };
     std::recursive_mutex mutex_;
+    std::recursive_mutex injectedEventMutex_;
+    Array<SDL_Event> injectedEvents_;
 
     SDLCreateWindowHookType CreateWindowHook_;
     SDLPollEventHookType PollEventHook_;

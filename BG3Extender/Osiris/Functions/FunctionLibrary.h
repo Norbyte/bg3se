@@ -2,26 +2,21 @@
 
 namespace bg3se
 {
-	class OsirisExtender;
+    class OsirisExtender;
 }
 
 namespace bg3se::esv
 {
-	class CustomFunctionLibrary
-	{
-	public:
-		CustomFunctionLibrary(OsirisExtender& osiris);
+    class CustomFunctionLibrary
+    {
+    public:
+        CustomFunctionLibrary(OsirisExtender& osiris);
 
-		void Startup();
-		void Register();
-		void RegisterHelperFunctions();
-		void RegisterMathFunctions();
-		void RegisterStatFunctions();
-		void RegisterLuaFunctions();
+        void Register();
+        void RegisterLuaFunctions();
 
-	private:
-		OsirisExtender& osiris_;
-		bool loaded_{ false };
-	};
+    private:
+        OsirisExtender& osiris_;
+    };
 
 }

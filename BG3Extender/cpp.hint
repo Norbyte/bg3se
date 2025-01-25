@@ -8,9 +8,9 @@
 #define END_NS() }
 
 #define BEGIN_BITMASK_NS(NS, T, luaName, type, id) namespace NS { \
-	enum class T : type {
+    enum class T : type {
 #define BEGIN_ENUM_NS(NS, T, luaName, type, id) namespace NS { \
-	enum class T : type {
+    enum class T : type {
 #define BEGIN_BITMASK(T, type, id) enum class T : type {
 #define BEGIN_ENUM(T, type, id) enum class T : type {
 #define EV(label, value) label = value,

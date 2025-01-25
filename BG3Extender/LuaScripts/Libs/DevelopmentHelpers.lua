@@ -1,5 +1,5 @@
 Ext.RegisterConsoleCommand("se_dyntest", function ()
-    Ext.Utils.Print(" --- STARTING TESTS --- ")
+    _P(" --- STARTING TESTS --- ")
 
     local tests = {
         "TestCharacterEnumeration",
@@ -11,7 +11,7 @@ Ext.RegisterConsoleCommand("se_dyntest", function ()
         RunTest(test, _G[test])
     end
 
-    Ext.Utils.Print(" --- FINISHING TESTS --- ")
+    _P(" --- FINISHING TESTS --- ")
 end)
 
 local function DebugValidate(obj, entity, counters)
@@ -36,18 +36,23 @@ local function ValidateEntities()
 
     for i,entity in ipairs(Ext.Entity.GetAllEntities()) do
         for name,component in pairs(entity:GetAllComponents()) do
-            DebugValidate(component, entity, counters)
-            if name == "ServerCharacter" then
-                if DebugValidate(component, entity, counters) then
+            local ok = DebugValidate(component, entity, counters)
+            if ok then
+                if name == "ServerCharacter" then
                     DebugValidate(component.Template, entity, counters)
                     DebugValidate(component.StatusManager, entity, counters)
                     for i,status in pairs(component.StatusManager.Statuses) do
                         DebugValidate(status, entity, counters)
                     end
                 end
-            end
-            if name == "ServerItem" then
-                if DebugValidate(component, entity, counters) then
+                if name == "ClientCharacter" then
+                    DebugValidate(component.Template, entity, counters)
+                    DebugValidate(component.StatusManager, entity, counters)
+                    for i,status in pairs(component.StatusManager.Statuses) do
+                        DebugValidate(status, entity, counters)
+                    end
+                end
+                if name == "ServerItem" then
                     DebugValidate(component.Template, entity, counters)
                     DebugValidate(component.StatusManager, entity, counters)
                     for i,status in pairs(component.StatusManager.Statuses) do
@@ -135,7 +140,7 @@ local function ReserializeEntities()
         for name,component in pairs(entity:GetAllComponents()) do
             DebugValidate(component, entity, counters)
             if name ~= "ServerCharacter" and name ~= "ServerItem" then
-			    local reason = TryToReserializeObject(component)
+                local reason = TryToReserializeObject(component)
                 if reason ~= nil then
                     _PE("Serialization failed: " .. tostring(entity) .. ", component " .. name)
                     _PE(reason)

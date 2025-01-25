@@ -147,15 +147,22 @@
   <ItemGroup>
     <ClInclude Include="Base\Base.h" />
     <ClInclude Include="Base\BaseArray.h" />
+    <ClInclude Include="Base\BaseFunction.h" />
     <ClInclude Include="Base\BaseInterface.h" />
     <ClInclude Include="Base\BaseMap.h" />
     <ClInclude Include="Base\BaseMemory.h" />
     <ClInclude Include="Base\BaseString.h" />
     <ClInclude Include="Base\BaseTypes.h" />
     <ClInclude Include="Base\BaseUtilities.h" />
+    <ClInclude Include="Base\BitSet.h" />
     <ClInclude Include="Base\EnumHelpers.h" />
+    <ClInclude Include="Base\LegacyArray.h" />
     <ClInclude Include="Base\LegacyMap.h" />
     <ClInclude Include="Base\PagedArray.h" />
+    <ClInclude Include="Base\PagedMap.h" />
+    <ClInclude Include="Base\Pool.h" />
+    <ClInclude Include="Base\Queue.h" />
+    <ClInclude Include="Base\SparseArray.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="Crypto.h" />
     <ClInclude Include="framework.h" />

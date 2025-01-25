@@ -45,7 +45,7 @@ struct GameObjectTemplate
 
     //# P_GETTER(TemplateType, GetTemplateType)
 
-    [[bg3::readonly]] uint64_t field_8;
+    [[bg3::hidden]] void* field_8;
     [[bg3::readonly]] FixedString Id;
     [[bg3::readonly]] FixedString TemplateName;
     [[bg3::readonly]] FixedString ParentTemplateId;
@@ -481,8 +481,8 @@ struct ItemTemplate : public SceneryTemplate
     OverrideableProperty<glm::vec3> ExamineRotation;
 
     // Lua helpers
-	//# P_FUN(AddUseAction, ItemTemplate::AddUseAction)
-	//# P_FUN(RemoveUseAction, ItemTemplate::RemoveUseAction)
+    //# P_FUN(AddUseAction, ItemTemplate::AddUseAction)
+    //# P_FUN(RemoveUseAction, ItemTemplate::RemoveUseAction)
     IActionData* AddUseAction(ActionDataType type);
     void RemoveUseAction(int32_t index);
 };

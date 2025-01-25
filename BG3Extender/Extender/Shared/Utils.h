@@ -5,34 +5,34 @@
 
 namespace std
 {
-	class thread;
+    class thread;
 }
 
 BEGIN_SE()
 
 #if !defined(OSI_NO_DEBUG_LOG)
 #define LuaError(msg) { \
-	std::stringstream ss; \
-	ss << __FUNCTION__ "(): " msg; \
-	LogLuaError(ss.str()); \
+    std::stringstream ss; \
+    ss << __FUNCTION__ "(): " msg; \
+    LogLuaError(ss.str()); \
 }
 
 #define OsiError(msg) { \
-	std::stringstream ss; \
-	ss << __FUNCTION__ "(): " msg; \
-	LogOsirisError(ss.str()); \
+    std::stringstream ss; \
+    ss << __FUNCTION__ "(): " msg; \
+    LogOsirisError(ss.str()); \
 }
 
 #define OsiWarn(msg) { \
-	std::stringstream ss; \
-	ss << __FUNCTION__ "(): " msg; \
-	LogOsirisWarning(ss.str()); \
+    std::stringstream ss; \
+    ss << __FUNCTION__ "(): " msg; \
+    LogOsirisWarning(ss.str()); \
 }
 
 #define OsiMsg(msg) { \
-	std::stringstream ss; \
-	ss << msg; \
-	LogOsirisMsg(ss.str()); \
+    std::stringstream ss; \
+    ss << msg; \
+    LogOsirisMsg(ss.str()); \
 }
 
 #define OsiErrorS(msg) LogOsirisError(__FUNCTION__ "(): " msg)
@@ -58,18 +58,18 @@ extern std::atomic<uint32_t> gDisableCrashReportingCount;
 
 struct DisableCrashReporting
 {
-	inline DisableCrashReporting()
-	{
-		++gDisableCrashReportingCount;
-	}
+    inline DisableCrashReporting()
+    {
+        ++gDisableCrashReportingCount;
+    }
 
-	inline ~DisableCrashReporting()
-	{
-		--gDisableCrashReportingCount;
-	}
+    inline ~DisableCrashReporting()
+    {
+        --gDisableCrashReportingCount;
+    }
 
-	DisableCrashReporting(DisableCrashReporting const&) = delete;
-	DisableCrashReporting& operator = (DisableCrashReporting const&) = delete;
+    DisableCrashReporting(DisableCrashReporting const&) = delete;
+    DisableCrashReporting& operator = (DisableCrashReporting const&) = delete;
 };
 
 END_SE()

@@ -10,5 +10,5 @@ _I.ModEventManager = ModEventManager:New()
 Ext.ModEvents = _I.ModEventManager:CreateModTable()
 
 Ext.RegisterModEvent = function (mod, event)
-	_I.ModEventManager:RegisterEvent(mod, event)
+    _I.ModEventManager:RegisterEvent(mod, event)
 end

@@ -8,17 +8,19 @@ BEGIN_SE()
 template <typename... Args>
 void Debug(DebugMessageType type, char const * fmt, Args... args)
 {
-	if (gCoreLibPlatformInterface.GlobalConsole) {
-		char buf[1024];
-		_snprintf_s(buf, std::size(buf), _TRUNCATE, fmt, args...);
-		gCoreLibPlatformInterface.GlobalConsole->Print(type, buf);
-	}
+    if (gCoreLibPlatformInterface.GlobalConsole) {
+        char buf[1024];
+        _snprintf_s(buf, std::size(buf), _TRUNCATE, fmt, args...);
+        gCoreLibPlatformInterface.GlobalConsole->Print(type, buf);
+    }
 }
 
 #define DEBUG(msg, ...) Debug(DebugMessageType::Debug, msg, __VA_ARGS__)
 #define INFO(msg, ...) Debug(DebugMessageType::Info, msg, __VA_ARGS__)
 #define WARN(msg, ...) Debug(DebugMessageType::Warning, msg, __VA_ARGS__)
 #define ERR(msg, ...) Debug(DebugMessageType::Error, msg, __VA_ARGS__)
+
+#define WARN_ONCE(msg, ...) { static bool _warned{false}; if (!_warned) { _warned = true; WARN(msg, __VA_ARGS__); } }
 
 void TryDebugBreak();
 

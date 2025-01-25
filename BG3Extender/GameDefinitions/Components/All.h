@@ -1,5 +1,6 @@
 #pragma once
 
+#include <GameDefinitions/Components/Camera.h>
 #include <GameDefinitions/Components/Camp.h>
 #include <GameDefinitions/Components/CharacterCreation.h>
 #include <GameDefinitions/Components/Combat.h>

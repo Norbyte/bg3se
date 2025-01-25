@@ -4,82 +4,88 @@ BEGIN_NS(inventory)
 
 struct DataComponent : public BaseComponent
 {
-	DEFINE_COMPONENT(InventoryData, "eoc::inventory::DataComponent")
+    DEFINE_COMPONENT(InventoryData, "eoc::inventory::DataComponent")
 
-	uint8_t field_0;
-	uint16_t Flags;
+    uint8_t field_0;
+    uint16_t Flags;
 };
 
 struct OwnerComponent : public BaseComponent
 {
-	DEFINE_COMPONENT(InventoryOwner, "eoc::inventory::OwnerComponent")
+    DEFINE_COMPONENT(InventoryOwner, "eoc::inventory::OwnerComponent")
 
-	Array<EntityHandle> Inventories;
-	EntityHandle PrimaryInventory;
+    Array<EntityHandle> Inventories;
+    EntityHandle PrimaryInventory;
 };
 
 struct IsOwnedComponent : public BaseComponent
 {
-	DEFINE_COMPONENT(InventoryIsOwned, "eoc::inventory::IsOwnedComponent")
+    DEFINE_COMPONENT(InventoryIsOwned, "eoc::inventory::IsOwnedComponent")
 
-	EntityHandle Owner;
+    EntityHandle Owner;
 };
 
 struct ContainerSlotData
 {
-	EntityHandle Item;
-	uint32_t field_8;
+    EntityHandle Item;
+    uint32_t field_8;
 };
 
 struct ContainerComponent : public BaseComponent
 {
-	DEFINE_COMPONENT(InventoryContainer, "eoc::inventory::ContainerComponent")
+    DEFINE_COMPONENT(InventoryContainer, "eoc::inventory::ContainerComponent")
 
-	HashMap<uint16_t, ContainerSlotData> Items;
+    HashMap<uint16_t, ContainerSlotData> Items;
 };
 
 struct MemberComponent : public BaseComponent
 {
-	DEFINE_COMPONENT(InventoryMember, "eoc::inventory::MemberComponent")
+    DEFINE_COMPONENT(InventoryMember, "eoc::inventory::MemberComponent")
 
-	EntityHandle Inventory;
-	int16_t EquipmentSlot;
+    EntityHandle Inventory;
+    int16_t EquipmentSlot;
 };
 
 struct MemberTransformComponent : public BaseComponent
 {
-	DEFINE_COMPONENT(InventoryMemberTransform, "eoc::inventory::MemberTransformComponent")
+    DEFINE_COMPONENT(InventoryMemberTransform, "eoc::inventory::MemberTransformComponent")
 
-	Transform Transform;
+    Transform Transform;
+};
+
+struct StackEntry
+{
+    uint16_t EntityIndex;
+    uint32_t Quantity;
 };
 
 struct StackComponent : public BaseComponent
 {
-	DEFINE_COMPONENT(InventoryStack, "eoc::inventory::StackComponent")
+    DEFINE_COMPONENT(InventoryStack, "eoc::inventory::StackComponent")
 
-	[[bg3::legacy(Arr_u64)]] Array<EntityHandle> Elements;
-	Array<uint8_t> Arr_u8;
+    [[bg3::legacy(Arr_u64)]] Array<EntityHandle> Elements;
+    [[bg3::legacy(Arr_u8)]] Array<StackEntry> Entries;
 };
 
 struct StackMemberComponent : public BaseComponent
 {
-	DEFINE_COMPONENT(InventoryStackMember, "eoc::inventory::StackMemberComponent")
+    DEFINE_COMPONENT(InventoryStackMember, "eoc::inventory::StackMemberComponent")
 
-	EntityHandle Stack;
+    EntityHandle Stack;
 };
 
 struct WeightComponent : public BaseComponent
 {
-	DEFINE_COMPONENT(InventoryWeight, "eoc::inventory::WeightComponent")
+    DEFINE_COMPONENT(InventoryWeight, "eoc::inventory::WeightComponent")
 
-	int Weight;
+    int Weight;
 };
 
 struct WieldedComponent : public BaseComponent
 {
-	DEFINE_COMPONENT(Wielded, "eoc::inventory::WieldedComponent")
+    DEFINE_COMPONENT(Wielded, "eoc::inventory::WieldedComponent")
 
-	Guid field_0;
+    Guid field_0;
 };
 
 
@@ -96,24 +102,24 @@ BEGIN_NS(esv::inventory)
 
 struct ContainerDataComponent : public BaseComponent
 {
-	DEFINE_COMPONENT(ServerInventoryContainerData, "esv::inventory::ContainerDataComponent")
+    DEFINE_COMPONENT(ServerInventoryContainerData, "esv::inventory::ContainerDataComponent")
 
-	uint16_t Flags;
-	int field_4;
+    uint16_t Flags;
+    int field_4;
 };
 
 struct GroupCheckComponent : public BaseComponent
 {
-	DEFINE_COMPONENT(ServerInventoryGroupCheck, "esv::inventory::GroupCheckComponent")
+    DEFINE_COMPONENT(ServerInventoryGroupCheck, "esv::inventory::GroupCheckComponent")
 
-	stats::ConditionId Conditions;
+    uint32_t Conditions;
 };
 
 struct ShapeshiftEquipmentHistoryComponent : public BaseComponent
 {
-	DEFINE_COMPONENT(ServerShapeshiftEquipmentHistory, "esv::inventory::ShapeshiftEquipmentHistoryComponent")
+    DEFINE_COMPONENT(ServerShapeshiftEquipmentHistory, "esv::inventory::ShapeshiftEquipmentHistoryComponent")
 
-	Array<Guid> History;
+    Array<Guid> History;
 };
 
 DEFINE_TAG_COMPONENT(esv::inventory, CharacterHasGeneratedTradeTreasureComponent, CharacterHasGeneratedTradeTreasure)
@@ -127,23 +133,23 @@ BEGIN_NS(esv)
 
 struct InventoryPropertyCanBePickpocketedComponent : public BaseComponent
 {
-	DEFINE_COMPONENT(InventoryPropertyCanBePickpocketed, "esv::InventoryPropertyCanBePickpocketedComponent")
+    DEFINE_COMPONENT(InventoryPropertyCanBePickpocketed, "esv::InventoryPropertyCanBePickpocketedComponent")
 
-	GenericPropertyTag Tag;
+    GenericPropertyTag Tag;
 };
 
 struct InventoryPropertyIsDroppedOnDeathComponent : public BaseComponent
 {
-	DEFINE_COMPONENT(InventoryPropertyIsDroppedOnDeath, "esv::InventoryPropertyIsDroppedOnDeathComponent")
+    DEFINE_COMPONENT(InventoryPropertyIsDroppedOnDeath, "esv::InventoryPropertyIsDroppedOnDeathComponent")
 
-	GenericPropertyTag Tag;
+    GenericPropertyTag Tag;
 };
 
 struct InventoryPropertyIsTradableComponent : public BaseComponent
 {
-	DEFINE_COMPONENT(InventoryPropertyIsTradable, "esv::InventoryPropertyIsTradableComponent")
+    DEFINE_COMPONENT(InventoryPropertyIsTradable, "esv::InventoryPropertyIsTradableComponent")
 
-	GenericPropertyTag Tag;
+    GenericPropertyTag Tag;
 };
 
 DEFINE_TAG_COMPONENT(esv, ScriptPropertyCanBePickpocketedComponent, ScriptPropertyCanBePickpocketed)

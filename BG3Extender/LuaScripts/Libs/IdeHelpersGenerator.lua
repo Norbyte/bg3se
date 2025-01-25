@@ -165,8 +165,8 @@ function Generator:LoadNativeData()
             self.NativeModules[name] = mod
         end
     else
-        Ext.Utils.PrintWarning("Unable to load native class data; IDE helpers will not include annotations from C++ code")
-        Ext.Utils.PrintWarning(res)
+        Ext.Log.PrintWarning("Unable to load native class data; IDE helpers will not include annotations from C++ code")
+        Ext.Log.PrintWarning(res)
     end
 end
 
@@ -1031,7 +1031,7 @@ local function GenerateSubscriptionEvents(self)
     for _,k in pairs(Ext._Internal._PublishedSharedEvents) do
         if not eventTypeGenerationDataIndex[k] then
             if _DEBUG then
-                Ext.Utils.PrintWarning("Found unregistered event, assuming empty event", k)
+                Ext.Log.PrintWarning("Found unregistered event, assuming empty event", k)
             end
             eventTypeGenerationData[#eventTypeGenerationData+1] = {Type="LuaEmptyEvent", Event = k, Context = "any"}
         end

@@ -4,23 +4,23 @@ local _I = Ext._Internal
 local ModEventManager = {}
 
 function ModEventManager:Instantiate()
-	return {
+    return {
         Mods = {},
         Finalized = false
-	}
+    }
 end
 
 
 function ModEventManager:FinishedLoading()
     for mod,events in pairs(self.Mods) do
-        if _I.LoadedMods[mod] ~= true then
-            Ext.Utils.PrintWarning("Accessing events of mod '" .. mod .. "' that is not loaded!")
+        if _I.ModLoader.LoadedMods[mod] ~= true then
+            Ext.Log.PrintWarning("Accessing events of mod '" .. mod .. "' that is not loaded!")
         else
             events.Loaded = true
 
             for name,event in pairs(events.Events) do
                 if not event.Registered then
-                    Ext.Utils.PrintWarning("Accessing nonexistent event '" .. name .. "' of mod '" .. mod .. "'!")
+                    Ext.Log.PrintWarning("Accessing nonexistent event '" .. name .. "' of mod '" .. mod .. "'!")
                 end
             end
         end
@@ -35,8 +35,8 @@ function ModEventManager:CreateModTable()
     setmetatable(mods, {
         __index = function (_, mod)
             if self.Mods[mod] == nil then
-                if _I.LoadedMods[mod] ~= true and self.Finalized then
-                    Ext.Utils.PrintWarning("Accessing events of mod '" .. mod .. "' that is not loaded!")
+                if _I.ModLoader.LoadedMods[mod] ~= true and self.Finalized then
+                    Ext.Log.PrintWarning("Accessing events of mod '" .. mod .. "' that is not loaded!")
                 end
 
                 self.Mods[mod] = self:CreateModEvents(mod)
@@ -65,7 +65,7 @@ function ModEventManager:CreateModEvents(mod)
         __index = function (_, event)
             if events.Events[event] == nil then
                 if self.Finalized then
-                    Ext.Utils.PrintWarning("Accessing nonexistent event '" .. event .. "' of mod '" .. mod .. "'!")
+                    Ext.Log.PrintWarning("Accessing nonexistent event '" .. event .. "' of mod '" .. mod .. "'!")
                 end
 
                 events.Events[event] = ModEvent:New(mod, event)
@@ -86,17 +86,17 @@ end
 
 function ModEventManager:RegisterEvent(mod, event)
     if self.Finalized then
-        Ext.Utils.PrintWarning("Tried to register mod event after bootstrap phase has ended; this is not allowed.")
+        Ext.Log.PrintWarning("Tried to register mod event after bootstrap phase has ended; this is not allowed.")
         return
     end
 
-    if _I.BootstrappingMod == nil then
-        Ext.Utils.PrintWarning("Tried to register mod event while not bootstrapping a mod; this is not allowed.")
+    if _I.ModLoader.BootstrappingMod == nil then
+        Ext.Log.PrintWarning("Tried to register mod event while not bootstrapping a mod; this is not allowed.")
         return
     end
 
-    if _I.BootstrappingMod ~= mod then
-        Ext.Utils.PrintWarning("Tried to register mod event for mod '" .. tostring(mod) .. "' while bootstrapping mod '" .. _I.BootstrappingMod .. "'; this is not allowed.")
+    if _I.ModLoader.BootstrappingMod ~= mod then
+        Ext.Log.PrintWarning("Tried to register mod event for mod '" .. tostring(mod) .. "' while bootstrapping mod '" .. _I.ModLoader.BootstrappingMod .. "'; this is not allowed.")
         return
     end
 
@@ -105,7 +105,7 @@ function ModEventManager:RegisterEvent(mod, event)
     end
 
     if self.Mods[mod].Events[event] ~= nil then
-        Ext.Utils.PrintWarning("Tried to register mod event '" .. mod .. '.' .. event .. "' twice")
+        Ext.Log.PrintWarning("Tried to register mod event '" .. mod .. '.' .. event .. "' twice")
         return
     end
 

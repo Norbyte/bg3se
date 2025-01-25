@@ -9,25 +9,30 @@ BEGIN_SE()
 
 TranslatedString TranslatedString::FromString(StringView const& sv)
 {
-	TranslatedString ts;
-	auto sep = sv.find_first_of(';');
-	if (sep != STDString::npos) {
-		ts.Handle.Handle = FixedString(sv.substr(0, sep));
-		ts.Handle.Version = (uint16_t)atoi(sv.substr(sep + 1).data());
-	} else {
-		ts.Handle.Handle = FixedString(sv);
-	}
-	return ts;
+    TranslatedString ts;
+    auto sep = sv.find_first_of(';');
+    if (sep != STDString::npos) {
+        ts.Handle.Handle = FixedString(sv.substr(0, sep));
+        ts.Handle.Version = (uint16_t)atoi(sv.substr(sep + 1).data());
+    } else {
+        ts.Handle.Handle = FixedString(sv);
+    }
+    return ts;
 }
 
 std::optional<StringView> TranslatedString::Get() const
 {
-	return GetStaticSymbols().GetTranslatedStringRepository()->GetTranslatedString(Handle);
+    return GetStaticSymbols().GetTranslatedStringRepository()->GetTranslatedString(Handle);
 }
 
 std::optional<StringView> TranslatedFSString::Get() const
 {
-	return GetStaticSymbols().GetTranslatedStringRepository()->GetTranslatedString(Handle);
+    return GetStaticSymbols().GetTranslatedStringRepository()->GetTranslatedString(Handle);
+}
+
+uint32_t ThreadRegistry::RequestThreadIndex()
+{
+    return GetStaticSymbols().ls__ThreadRegistry__RequestThreadIndex();
 }
 
 END_SE()

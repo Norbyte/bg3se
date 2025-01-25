@@ -4,6 +4,7 @@
 #include <GameDefinitions/GuidResources.h>
 #include <GameDefinitions/Components/Spell.h>
 #include <GameDefinitions/Progression.h>
+#include <GameDefinitions/AllSpark.h>
 #include <GameDefinitions/Render.h>
 #include <GameDefinitions/Stats/Common.h>
 
@@ -41,7 +42,7 @@ BEGIN_SE()
 using StructTypeId = int32_t;
 
 template <class T> struct StructID {
-	static constexpr bool Valid = false;
+    static constexpr bool Valid = false;
 };
 
 // Struct ID values

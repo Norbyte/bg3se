@@ -5,26 +5,26 @@
 class CrashReporter
 {
 public:
-	CrashReporter(std::wstring const & miniDumpPath);
+    CrashReporter(std::wstring const & miniDumpPath);
 
-	void Report();
+    void Report();
 
 private:
-	std::wstring miniDumpPath_;
-	std::wstring backtracePath_;
-	HWND progressBarWindowHWnd_;
-	bool uploadSucceeded_;
-	std::wstring resultText_;
+    std::wstring miniDumpPath_;
+    std::wstring backtracePath_;
+    HWND progressBarWindowHWnd_;
+    bool uploadSucceeded_;
+    std::wstring resultText_;
 
-	std::string GetBacktrace();
+    std::string GetBacktrace();
 
-	static HRESULT CALLBACK UploadProgressCallbackProc(HWND hwnd,
-		UINT uNotification, WPARAM wParam, LPARAM lParam, LONG_PTR dwRefData);
-	bool ShowUploadProgressDialog();
+    static HRESULT CALLBACK UploadProgressCallbackProc(HWND hwnd,
+        UINT uNotification, WPARAM wParam, LPARAM lParam, LONG_PTR dwRefData);
+    bool ShowUploadProgressDialog();
 
-	static HRESULT CALLBACK UploadConfirmationCallbackProc(HWND hwnd,
-		UINT uNotification, WPARAM wParam, LPARAM lParam, LONG_PTR dwRefData);
-	bool ShowUploadConfirmationDialog();
+    static HRESULT CALLBACK UploadConfirmationCallbackProc(HWND hwnd,
+        UINT uNotification, WPARAM wParam, LPARAM lParam, LONG_PTR dwRefData);
+    bool ShowUploadConfirmationDialog();
 
-	static DWORD WINAPI MinidumpUploaderThread(LPVOID lpThreadParameter);
+    static DWORD WINAPI MinidumpUploaderThread(LPVOID lpThreadParameter);
 };

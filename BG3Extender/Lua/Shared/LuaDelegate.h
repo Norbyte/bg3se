@@ -24,6 +24,10 @@ public:
         : ref_(L, local)
     {}
 
+    inline LuaDelegate(lua_State* L, FunctionRef const& f)
+        : ref_(L, f.Index)
+    {}
+
     inline ~LuaDelegate() {}
 
     inline LuaDelegate(LuaDelegate const& o)
@@ -59,11 +63,11 @@ public:
 
     TRet Call(TArgs... args)
     {
-		if constexpr (std::is_same_v<TRet, void>) {
+        if constexpr (std::is_same_v<TRet, void>) {
             Call(std::tuple(args...));
-		} else {
+        } else {
             return Call(std::tuple(args...));
-		}
+        }
     }
 
     TRet Call(ArgumentTuple const& args)
@@ -76,14 +80,14 @@ public:
 
         ProtectedFunctionCaller<ArgumentTuple, TRet> caller{ func, args };
 
-		if constexpr (std::is_same_v<TRet, void>) {
-			caller.Call(L);
-			lua_pop(L, 1);
-		} else {
-			auto rval = caller.Call(L);
-			lua_pop(L, 1);
-			return rval;
-		}
+        if constexpr (std::is_same_v<TRet, void>) {
+            caller.Call(L);
+            lua_pop(L, 1);
+        } else {
+            auto rval = caller.Call(L);
+            lua_pop(L, 1);
+            return rval;
+        }
     }
 
 private:
@@ -149,7 +153,16 @@ public:
     {
         if (!delegate) return;
 
-        auto call = new DeferredLuaDelegateCallImpl<TRet, TArgs...>(delegate, args...);
+        auto call = GameAlloc<DeferredLuaDelegateCallImpl<TRet, TArgs...>>(delegate, std::forward<TArgs>(args)...);
+        queue_.push_back(call);
+    }
+    
+    template <class TRet, class... TArgs>
+    void Call(LuaDelegate<TRet(TArgs...)> && delegate, TArgs... args)
+    {
+        if (!delegate) return;
+
+        auto call = GameAlloc<DeferredLuaDelegateCallImpl<TRet, TArgs...>>(std::move(delegate), std::forward<TArgs>(args)...);
         queue_.push_back(call);
     }
 

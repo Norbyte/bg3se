@@ -1,14 +1,9 @@
 #pragma once
 
 #include <GameDefinitions/Character.h>
-/*#include <GameDefinitions/CustomStats.h>
-#include <GameDefinitions/GameAction.h>*/
 #include <GameDefinitions/Item.h>
 #include <GameDefinitions/Misc.h>
 #include <GameDefinitions/Osiris.h>
-/*#include <GameDefinitions/Status.h>
-#include <GameDefinitions/ActionMachine.h>
-#include <GameDefinitions/TurnManager.h>*/
 #include <GameDefinitions/Symbols.h>
 #include <CoreLib/SymbolMapper.h>
 #include <CoreLib/Wrappers.h>
@@ -16,73 +11,73 @@
 
 namespace bg3se {
 
-	struct GameVersionInfo
-	{
-		uint16_t Major{ 0 }, Minor{ 0 }, Revision{ 0 }, Build{ 0 };
+    struct GameVersionInfo
+    {
+        uint16_t Major{ 0 }, Minor{ 0 }, Revision{ 0 }, Build{ 0 };
 
-		inline bool IsSupported() const
-		{
-			// We need v4.57 or later for game
-			return (Major == 4 && Minor >= 57);
-		}
-	};
+        inline bool IsSupported() const
+        {
+            // We need v4.57 or later for game
+            return (Major == 4 && Minor >= 57);
+        }
+    };
 
-	class LibraryManager
-	{
-	public:
-		LibraryManager();
-		bool FindLibraries(uint32_t gameRevision);
-		bool PostStartupFindLibraries();
-		void ApplyCodePatches();
-		bool GetGameVersion(GameVersionInfo & version);
+    class LibraryManager
+    {
+    public:
+        LibraryManager();
+        bool FindLibraries(uint32_t gameRevision);
+        bool PostStartupFindLibraries();
+        void ApplyCodePatches();
+        bool GetGameVersion(GameVersionInfo & version);
 
-		void ShowStartupError(STDString const & msg, bool wait, bool exitGame);
-		void ShowStartupError(STDString const & msg, bool exitGame);
+        void ShowStartupError(STDString const & msg, bool wait, bool exitGame);
+        void ShowStartupError(STDString const & msg, bool exitGame);
 
-		bool WasPatchApplied(std::string const& mapping);
-		bool ApplyCodePatch(std::string const& mapping);
-		bool UndoCodePatch(std::string const& mapping);
+        bool WasPatchApplied(std::string const& mapping);
+        bool ApplyCodePatch(std::string const& mapping);
+        bool UndoCodePatch(std::string const& mapping);
 
-		inline bool CriticalInitializationFailed() const
-		{
-			return CriticalInitFailed;
-		}
+        inline bool CriticalInitializationFailed() const
+        {
+            return CriticalInitFailed;
+        }
 
-		inline bool InitializationFailed() const
-		{
-			return InitFailed;
-		}
+        inline bool InitializationFailed() const
+        {
+            return InitFailed;
+        }
 
-		inline SymbolMapper& Mapper()
-		{
-			return symbolMapper_;
-		}
+        inline SymbolMapper& Mapper()
+        {
+            return symbolMapper_;
+        }
 
-	private:
-		void PreRegisterLibraries(SymbolMappingLoader& loader);
-		void RegisterLibraries(SymbolMapper& mapper);
-		void RegisterSymbols();
-		bool BindApp();
-		SymbolMapper::MappingResult BindECSContext(uint8_t const*);
-		SymbolMapper::MappingResult BindECSIndex(uint8_t const*);
-		SymbolMapper::MappingResult BindECSStaticStringConstructor(uint8_t const*);
-		SymbolMapper::MappingResult BindECSStaticRegistrant(uint8_t const*);
-		SymbolMapper::MappingResult BindComponentReplicationIDRef(uint8_t const*);
-		HMODULE GetAppHandle();
+    private:
+        void PreRegisterLibraries(SymbolMappingLoader& loader);
+        void RegisterLibraries(SymbolMapper& mapper);
+        void RegisterSymbols();
+        bool BindApp();
+        SymbolMapper::MappingResult BindECSContext(uint8_t const*);
+        SymbolMapper::MappingResult BindECSIndex(uint8_t const*);
+        SymbolMapper::MappingResult BindECSStaticStringConstructor(uint8_t const*);
+        SymbolMapper::MappingResult BindECSStaticRegistrant(uint8_t const*);
+        SymbolMapper::MappingResult BindComponentReplicationIDRef(uint8_t const*);
+        HMODULE GetAppHandle();
 
-		bool CanShowError();
-		bool CanShowMessages();
+        bool CanShowError();
+        bool CanShowMessages();
 
-		bool ApplyPatch(SymbolMappings::Patch& patch);
-		bool UndoPatch(SymbolMappings::Patch& patch);
+        bool ApplyPatch(SymbolMappings::Patch& patch);
+        bool UndoPatch(SymbolMappings::Patch& patch);
 
-		SymbolMappings mappings_;
-		SymbolMapper symbolMapper_;
-		SymbolMapper::ModuleInfo appModule_;
+        SymbolMappings mappings_;
+        SymbolMapper symbolMapper_;
+        SymbolMapper::ModuleInfo appModule_;
 
-		bool InitFailed{ false };
-		bool CriticalInitFailed{ false };
-		bool PostLoaded{ false };
-		bool EnabledCustomStats{ false };
-	};
+        bool InitFailed{ false };
+        bool CriticalInitFailed{ false };
+        bool PostLoaded{ false };
+        bool EnabledCustomStats{ false };
+    };
 }
