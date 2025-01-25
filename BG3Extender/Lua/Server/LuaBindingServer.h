@@ -48,6 +48,7 @@ private:
 
     template <class TParams>
     void OnFunctorExecute(bg3se::stats::ExecuteFunctorProc<TParams>* next, HitResult* hit, bg3se::stats::Functors* self, TParams* params);
+    void OnInterruptFunctorExecute(bg3se::stats::ExecuteInterruptFunctorProc* next, HitResult* hit, ecs::EntityWorld* world, bg3se::stats::Functors* self, bg3se::stats::InterruptContextData* params);
 };
 
 

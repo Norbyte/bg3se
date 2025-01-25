@@ -799,12 +799,22 @@ void DoExecuteFunctors(ExecuteFunctorProc<T>* proc, Functors* functors, HitResul
     proc(&hit, functors, context);
 }
 
+void DoExecuteInterruptFunctors(ExecuteInterruptFunctorProc* proc, ecs::EntityWorld* world, Functors* functors, HitResult& hit, InterruptContextData* context)
+{
+    if (!proc) {
+        ERR("Handle not found for executing functors in context %d", context->Type);
+        return;
+    }
+
+    proc(&hit, world, functors, context);
+}
+
 #define P(ty) \
     case FunctorContextType::ty: \
         DoExecuteFunctors(GetStaticSymbols().esv__ExecuteStatsFunctor_##ty##Context, functors, hit, static_cast<ty##ContextData*>(context)); \
         break;
 
-void ExecuteFunctors(Functors* functors, ContextData* context)
+void ExecuteFunctors(lua_State* L, Functors* functors, ContextData* context)
 {
     HitResult hit;
     switch (context->Type) {
@@ -816,7 +826,11 @@ void ExecuteFunctors(Functors* functors, ContextData* context)
     P(NearbyAttacking)
     P(Equip)
     P(Source)
-    P(Interrupt)
+
+    case FunctorContextType::Interrupt:
+        DoExecuteInterruptFunctors(GetStaticSymbols().esv__ExecuteStatsFunctor_InterruptContext, State::FromLua(L)->GetEntityWorld(), functors, hit, static_cast<InterruptContextData*>(context));
+        break;
+
     default:
         ERR("Don't know how to execute functors in context %d", context->Type);
         break;
@@ -825,11 +839,11 @@ void ExecuteFunctors(Functors* functors, ContextData* context)
 
 #undef P
 
-void ExecuteFunctor(Functor* functor, ContextData* context)
+void ExecuteFunctor(lua_State* L, Functor* functor, ContextData* context)
 {
     Functors functors;
     functors.Insert(functor->Clone());
-    ExecuteFunctors(&functors, context);
+    ExecuteFunctors(L, &functors, context);
 }
 
 template <class T>

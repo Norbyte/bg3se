@@ -211,6 +211,8 @@ struct InterruptContextData : public ContextData
 template <class TContext>
 using ExecuteFunctorProc = void(HitResult* hit, Functors* self, TContext* params);
 
+using ExecuteInterruptFunctorProc = void (HitResult* hit, ecs::EntityWorld* world, Functors* self, InterruptContextData* params);
+
 struct Functors : public stats::CNamedElementManager<Functor>
 {
     FixedString UniqueName;

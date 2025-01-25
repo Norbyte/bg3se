@@ -37,6 +37,13 @@ void FunctorEventHooks::OnFunctorExecute(bg3se::stats::ExecuteFunctorProc<TParam
     LuaTriggerFunctorPostExecEvent<TParams>(self, params, hit);
 }
 
+void FunctorEventHooks::OnInterruptFunctorExecute(bg3se::stats::ExecuteInterruptFunctorProc* next, HitResult* hit, ecs::EntityWorld* world, bg3se::stats::Functors* self, bg3se::stats::InterruptContextData* params)
+{
+    LuaTriggerFunctorPreExecEvent(self, params);
+    next(hit, world, self, params);
+    LuaTriggerFunctorPostExecEvent(self, params, hit);
+}
+
 FunctorEventHooks::FunctorEventHooks()
 {
     auto& hooks = gExtender->GetEngineHooks();
@@ -51,7 +58,7 @@ FunctorEventHooks::FunctorEventHooks()
     hooks.esv__ExecuteStatsFunctor_NearbyAttackingContext.SetWrapper(&FunctorEventHooks::OnFunctorExecute<bg3se::stats::NearbyAttackingContextData>, this);
     hooks.esv__ExecuteStatsFunctor_EquipContext.SetWrapper(&FunctorEventHooks::OnFunctorExecute<bg3se::stats::EquipContextData>, this);
     hooks.esv__ExecuteStatsFunctor_SourceContext.SetWrapper(&FunctorEventHooks::OnFunctorExecute<bg3se::stats::SourceContextData>, this);
-    hooks.esv__ExecuteStatsFunctor_InterruptContext.SetWrapper(&FunctorEventHooks::OnFunctorExecute<bg3se::stats::InterruptContextData>, this);
+    hooks.esv__ExecuteStatsFunctor_InterruptContext.SetWrapper(&FunctorEventHooks::OnInterruptFunctorExecute, this);
 }
 
 FunctorEventHooks::~FunctorEventHooks()
