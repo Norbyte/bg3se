@@ -195,6 +195,9 @@ namespace bg3se
             }
         }
 
+        return nullptr;
+    }
+
     esv::Status* esv::StatusMachine::GetStatus(FixedString const& statusId) const
     {
         for (auto status : Statuses) {

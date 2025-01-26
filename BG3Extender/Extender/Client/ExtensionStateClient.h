@@ -36,10 +36,10 @@ public:
 
     void OnInputEvent(SDL_Event* event, int& result);
 
-	inline char const * GetUnconditionalFileName() override
-	{
-		return "OverrideClient.lua";
-	}
+    inline char const * GetUnconditionalFileName() override
+    {
+        return "OverrideClient.lua";
+    }
 
 protected:
     friend LuaStatePin<ExtensionState, lua::ClientState>;
