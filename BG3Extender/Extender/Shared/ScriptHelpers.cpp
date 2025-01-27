@@ -107,7 +107,7 @@ bool CreateParentDirectoryRecursive(std::wstring_view path)
     return true;
 }
 
-bool SaveExternalFile(std::string_view path, PathRootType root, std::string_view contents)
+bool SaveExternalFile(std::string_view path, PathRootType root, StringView contents)
 {
     auto absolutePath = GetPathForExternalIo(path, root);
     if (!absolutePath) return false;
