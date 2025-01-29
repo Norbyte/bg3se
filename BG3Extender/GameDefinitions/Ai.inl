@@ -5,6 +5,10 @@
 
 BEGIN_SE()
 
+AiPathCheckpoint::~AiPathCheckpoint()
+{}
+
+
 void AiPath::Reset()
 {
     // CoverManager = ...;
