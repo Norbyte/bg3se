@@ -366,7 +366,7 @@ PerECSReplicationData const& ECSComponentDataMap::Get(ReplicationTypeIndex type)
 PerECSReplicationData& ECSComponentDataMap::GetOrAdd(ReplicationTypeIndex type)
 {
     auto idx = (unsigned)type;
-    if (idx > replicationData_.size()) {
+    if (idx >= replicationData_.size()) {
         replicationData_.resize(idx + 1);
     }
 
