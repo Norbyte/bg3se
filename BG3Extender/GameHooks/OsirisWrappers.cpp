@@ -195,15 +195,14 @@ void * OsirisWrappers::FindRuleActionCallProc()
     static const uint8_t instructions[] = {
         0x48, 0x89, 0x5c, 0x24, 0x10, // mov     [rsp-28h+arg_8], rbx
         0x48, 0x89, 0x74, 0x24, 0x18, // mov     [rsp-28h+arg_10], rsi
-        0x48, 0x89, 0x7c, 0x24, 0x20, // mov     [rsp-28h+arg_18], rdi
         0x55, // push    rbp
+        0x57, // push    rdi
         0x41, 0x54, // push    r12
-        0x41, 0x55, // push    r13
         0x41, 0x56, // push    r14
         0x41, 0x57, // push    r15
         0x48, 0x8b, 0xec, // mov     rbp, rsp
-        0x48, 0x83, 0xec, 0x60, // sub     rsp, 80h
-        0x48, 0x8b, 0xf1, // mov     rsi, rcx
+        0x48, 0x81, 0xec, 0x80, 0x00, 0x00, 0x00, // sub     rsp, 80h
+        0x4c, 0x8b, 0xf1, // mov     r14, rcx
         0x8b, 0x49, 0x14, // mov     ecx, [rcx+14h]
         0x85, 0xc9, // test    ecx, ecx
     };
@@ -282,8 +281,8 @@ void OsirisWrappers::FindDebugFlags(FARPROC SetOptionProc)
     {
         // Look for the instruction "mov ecx, cs:xxx"
         if (ptr[0] == 0x8B && ptr[1] == 0x0D &&
-            // Look for the instruction "shr e*x, 14h"
-            ptr[8] == 0xC1 && ptr[10] == 0x14)
+            // Look for the instruction "shr e*x, 2h"
+            ptr[8] == 0xC1 && ptr[10] == 2)
         {
             int32_t relOffset = *reinterpret_cast<int32_t const *>(ptr + 2);
             uint64_t dbgPtr = (uint64_t)ptr + relOffset + 6;

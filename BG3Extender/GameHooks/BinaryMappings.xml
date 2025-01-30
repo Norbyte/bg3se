@@ -6,31 +6,24 @@
     <DllImport Module="Kernel32" Proc="FindClose" Symbol="Kernel_FindClose" />
 
     <Mapping Name="ls__GlobalAllocator" Critical="true">
-      48 89 5c 24 08 // mov     [rsp+arg_0], rbx
-      57 // push    rdi
-      48 83 ec 30 // sub     rsp, 30h
-      48 8b d9 // mov     rbx, rcx
-      83 79 08 00 // cmp     dword ptr [rcx+8], 0
-      74 47 // jz      short loc_14052B63A
-      83 79 0c 00 // cmp     dword ptr [rcx+0Ch], 0
-      7e 07 // jle     short loc_14052B600
-      c7 41 0c 00 00 00 00 // mov     dword ptr [rcx+0Ch], 0
-      48 8b 39 // mov     rdi, [rcx]
-      48 85 ff // test    rdi, rdi
-      74 10 // jz      short loc_14052B618
-      @ref1 e8 ?? ?? ?? ?? // call    ls__GlobalAllocator__Get
+      4c 8b 74 24 68 // mov     r14, [rsp+48h+arg_18]
+      4c 8b 6c 24 60 // mov     r13, [rsp+48h+arg_10]
+      48 89 2e // mov     [rsi], rbp
+      eb 32 // jmp     short loc_1405E56A7
+      e8 ?? ?? ?? ?? // call    ls__GlobalAllocator__Get
       48 8b d7 // mov     rdx, rdi; a2
       48 8b c8 // mov     rcx, rax; a1
       @ref2 e8 ?? ?? ?? ?? // call    ls__GlobalAllocator__Free
       @ref3 e8 ?? ?? ?? ?? // call    ls__GlobalAllocator__Get
-      48 c7 44 24 20 10 00 00 00 // mov     [rsp+38h+var_18], 10h
-      33 d2 // xor     edx, edx
-      48 8b c8 // mov     rcx, rax
+      33 d2 // xor     edx, edx; size
+      48 c7 44 24 20 10 00 00 00 // mov     [rsp+48h+alignment], 10h; alignment
+      48 8b c8 // mov     rcx, rax; this
       @ref4 e8 ?? ?? ?? ?? // call    ls__GlobalAllocator__Alloc
-      48 89 03 // mov     [rbx], rax
-      c7 43 08 00 00 00 00 // mov     dword ptr [rbx+8], 0
-      <Target Type="Indirect" Offset="@ref1" Symbol="ls__GlobalAllocator__Get" />
+      45 33 ff // xor     r15d, r15d
+      48 89 06 // mov     [rsi], rax
+      44 89 7e 08 // mov     [rsi+8], r15d
       <Target Type="Indirect" Offset="@ref2" Symbol="ls__GlobalAllocator__Free" />
+      <Target Type="Indirect" Offset="@ref3" Symbol="ls__GlobalAllocator__Get" />
       <Target Type="Indirect" Offset="@ref4" Symbol="ls__GlobalAllocator__Alloc" />
     </Mapping>
 
@@ -118,13 +111,13 @@
     </Mapping>
 
     <Mapping Name="ls__PathRoots" Critical="true">
-      0f b6 81 a6 00 00 00 // movzx   eax, byte ptr [rcx+0A6h]
+      0f b6 81 8e 00 00 00 // movzx   eax, byte ptr [rcx+8Eh]
       24 fe // and     al, 0FEh
       24 fd // and     al, 0FDh
       24 fb // and     al, 0FBh
-      88 81 a6 00 00 00 // mov     [rcx+0A6h], al
-      c7 81 a7 00 00 00 04 00 00 00 // mov     dword ptr [rcx+0A7h], 4
-      48 81 c1 b0 00 00 00 // add     rcx, 0B0h ; '°'; a1
+      88 81 8e 00 00 00 // mov     [rcx+8Eh], al
+      c7 81 8f 00 00 00 04 00 00 00 // mov     dword ptr [rcx+8Fh], 4
+      48 81 c1 98 00 00 00 // add     rcx, 98h
       @ref1 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:cpath_Roots
       <Target Type="Indirect" Offset="@ref1" Symbol="ls__PathRoots" />
     </Mapping>
@@ -151,8 +144,8 @@
       @ref1 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:ecl__gEocClient
       4c 8b b0 98 00 00 00 // mov     r14, [rax+98h]
       @ref2 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:ls__gGlobalSwitches
-      44 38 b8 ee 00 00 00 // cmp     [rax+0EEh], r15b
-      75 7e // jnz     short loc_1405629BC
+      44 38 b8 11 01 00 00 // cmp     [rax+111h], r15b
+      75 7e // jnz     short loc_1405C620C
       @ref3 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:esv__gEocServer
       48 8b b8 a8 00 00 00 // mov     rdi, [rax+0A8h]
       48 8b 4f 20 // mov     rcx, [rdi+20h]
@@ -290,8 +283,8 @@
       41 54 // push    r12
       41 56 // push    r14
       41 57 // push    r15
-      48 8d a8 88 fb ff ff // lea     rbp, [rax-478h]
-      48 81 ec 40 05 00 00 // sub     rsp, 540h
+      48 8d a8 68 fb ff ff // lea     rbp, [rax-498h]
+      48 81 ec 60 05 00 00 // sub     rsp, 560h
       0f 29 70 b8 // movaps  xmmword ptr [rax-48h], xmm6
       0f 29 78 a8 // movaps  xmmword ptr [rax-58h], xmm7
       48 8b f1 // mov     rsi, rcx
@@ -340,42 +333,42 @@
       49 8b ce // mov     rcx, r14
       @ref2 e8 ?? ?? ?? ?? // call    esv__ExecuteStatsFunctor_AttackTargetContext
       90 // nop
-      e9 10 04 00 00 // jmp     loc_1433D39F0
+      e9 ?? ?? 00 00 // jmp     loc_1433D39F0
       49 8b d2 // mov     rdx, r10; jumptable 00000001433D35CC case 2
       49 8b ce // mov     rcx, r14
       @ref3 e8 ?? ?? ?? ?? // call    esv__ExecuteStatsFunctor_AttackPositionContext
       90 // nop
-      e9 ff 03 00 00 // jmp     loc_1433D39F0
+      e9 ?? ?? 00 00 // jmp     loc_1433D39F0
       49 8b d2 // mov     rdx, r10; jumptable 00000001433D35CC case 3
       49 8b ce // mov     rcx, r14
       @ref4 e8 ?? ?? ?? ?? // call    esv__ExecuteStatsFunctor_MoveContext
       90 // nop
-      e9 ee 03 00 00 // jmp     loc_1433D39F0
+      e9 ?? ?? 00 00 // jmp     loc_1433D39F0
       49 8b d2 // mov     rdx, r10; jumptable 00000001433D35CC case 4
       49 8b ce // mov     rcx, r14
       @ref5 e8 ?? ?? ?? ?? // call    esv__ExecuteStatsFunctor_TargetContext
       90 // nop
-      e9 dd 03 00 00 // jmp     loc_1433D39F0
+      e9 ?? ?? 00 00 // jmp     loc_1433D39F0
       49 8b d2 // mov     rdx, r10; jumptable 00000001433D35CC case 5
       49 8b ce // mov     rcx, r14
       @ref6 e8 ?? ?? ?? ?? // call    esv__ExecuteStatsFunctor_NearbyAttackedContext
       90 // nop
-      e9 cc 03 00 00 // jmp     loc_1433D39F0
+      e9 ?? ?? 00 00 // jmp     loc_1433D39F0
       49 8b d2 // mov     rdx, r10; jumptable 00000001433D35CC case 6
       49 8b ce // mov     rcx, r14
       @ref7 e8 ?? ?? ?? ?? // call    esv__ExecuteStatsFunctor_NearbyAttackingContext
       90 // nop
-      e9 bb 03 00 00 // jmp     loc_1433D39F0
+      e9 ?? ?? 00 00 // jmp     loc_1433D39F0
       49 8b d2 // mov     rdx, r10; jumptable 00000001433D35CC case 7
       49 8b ce // mov     rcx, r14
       @ref8 e8 ?? ?? ?? ?? // call    esv__ExecuteStatsFunctor_EquipContext
       90 // nop
-      e9 aa 03 00 00 // jmp     loc_1433D39F0
+      e9 ?? ?? 00 00 // jmp     loc_1433D39F0
       49 8b d2 // mov     rdx, r10; jumptable 00000001433D35CC case 8
       49 8b ce // mov     rcx, r14
       @ref9 e8 ?? ?? ?? ?? // call    esv__ExecuteStatsFunctor_SourceContext
       90 // nop
-      e9 99 03 00 00 // jmp     loc_1433D39F0
+      e9 ?? ?? 00 00 // jmp     loc_1433D39F0
       4d 8b c8 // mov     r9, r8; jumptable 00000001433D35CC case 9
       4d 8b c2 // mov     r8, r10
       49 8b 13 // mov     rdx, [r11]
@@ -394,34 +387,34 @@
 
     <!-- Sig: call from DealDamageFunctor::ApplyDamage, near ref to PassiveSystemID -->
     <Mapping Name="esv::StatsSystem::ThrowDamageEvent">
-      88 44 24 20 // mov     [rsp+0FE0h+a5], al; a5
-      4c 8d 8d 50 09 00 00 // lea     r9, [rbp+0EE0h+damageAmounts]; damageAmounts
-      4c 8d 85 60 05 00 00 // lea     r8, [rbp+0EE0h+var_980]; hit
-      48 8d 95 40 02 00 00 // lea     rdx, [rbp+0EE0h+temp5]; temp5
-      48 8b 4d 50 // mov     rcx, [rbp+0EE0h+rcx0]; rcx0
+      88 44 24 20 // mov     byte ptr [rsp+1170h+alignment], al
+      4c 8d 8d 50 09 00 00 // lea     r9, [rbp+1070h+var_720]
+      4c 8d 85 60 05 00 00 // lea     r8, [rbp+1070h+var_B10]
+      48 8d 95 40 02 00 00 // lea     rdx, [rbp+1070h+var_E30]
+      48 8b 4d 50 // mov     rcx, [rbp+1070h+var_1020]
       @ref1 e8 ?? ?? ?? ?? // call    esv__StatsSystem__ThrowEntityDamagedEvent
-      80 bd 66 05 00 00 0a // cmp     [rbp+0EE0h+var_980.CauseType], 0Ah
-      0f 84 9f 01 00 00 // jz      loc_1424F4B27
-      83 bd 60 05 00 00 00 // cmp     [rbp+0EE0h+var_980.TotalDamageDone], 0
+      80 bd 66 05 00 00 0a // cmp     byte ptr [rbp+1070h+var_B10+6], 0Ah
+      0f 84 39 02 00 00 // jz      loc_1436B2E8E
+      83 bd 60 05 00 00 00 // cmp     dword ptr [rbp+1070h+var_B10], 0
       41 0f 9f c4 // setnle  r12b
       <Target Type="Indirect" Offset="@ref1" Symbol="esv__StatsSystem__ThrowDamageEvent" />
     </Mapping>
 
     <!-- Sig: call from osi::ApplyDamage -->
     <Mapping Name="eoc::DealDamageFunctor::ApplyDamage">
-      48 8d 4d a0 // lea     rcx, [rbp+50h+var_B0]
-      48 89 4c 24 30 // mov     [rsp+160h+spellId2], rcx; spellId2
-      88 44 24 28 // mov     [rsp+160h+var_138], al; char
-      4c 89 7c 24 20 // mov     [rsp+160h+position], r15; position
-      4d 8b cc // mov     r9, r12; target
-      4d 8b c5 // mov     r8, r13; cause
-      48 8b 7d 80 // mov     rdi, qword ptr [rbp+50h+a2.ID]
-      48 8b d7 // mov     rdx, rdi; functor
-      48 8b 5d 90 // mov     rbx, [rbp+50h+hitResult]
-      48 8b cb // mov     rcx, rbx; hitResult
-      @ref1 e8 ?? ?? ?? ?? // call    esv__ExecuteDamageFunctor
+      48 8d 4d a0 // lea     rcx, [rbp+70h+var_D0]
+      48 89 4c 24 30 // mov     [rsp+180h+var_150], rcx
+      88 44 24 28 // mov     [rsp+180h+var_158], al
+      4c 89 7c 24 20 // mov     [rsp+180h+var_160], r15
+      4d 8b cc // mov     r9, r12
+      4d 8b c5 // mov     r8, r13
+      48 8b 7d 80 // mov     rdi, [rbp+70h+var_F0]
+      48 8b d7 // mov     rdx, rdi
+      48 8b 5d 90 // mov     rbx, [rbp+70h+var_E0]
+      48 8b cb // mov     rcx, rbx
+      @ref1 e8 ?? ?? ?? ?? // call    esv__functor__StatsFunctorDealDamage__Execute
       90 // nop
-      8b 45 c0 // mov     eax, [rbp+50h+var_B0.baseclass_0.Prototype.ID]
+      8b 45 d0 // mov     eax, [rbp+70h+var_A0]
       83 f8 ff // cmp     eax, 0FFFFFFFFh
       <Target Type="Indirect" Offset="@ref1" Symbol="stats__DealDamageFunctor__ApplyDamage" />
     </Mapping>
@@ -429,8 +422,8 @@
     <Mapping Name="App::Instance">
       @str1 48 8d 0d ?? ?? ?? ?? // lea     rcx, aCreatingApp; "Creating App\n"
       ff 15 ?? ?? ?? ?? // call    cs:OutputDebugStringA
-      b9 c8 01 00 00 // mov     ecx, 1C8h
-      ff 15 ?? ?? ?? ?? // call    cs:malloc
+      b9 18 02 00 00 // mov     ecx, 218h; Size
+      ff 15 ?? ?? ?? ?? // call    cs:__imp_malloc
       4c 8b e0 // mov     r12, rax
       @ref1 48 89 05 ?? ?? ?? ?? // mov     cs:ls__gApp2, rax
       48 8b c8 // mov     rcx, rax
@@ -452,13 +445,13 @@
     </Mapping>
 
     <Mapping Name="stats::Object::SetPropertyString">
-      49 8b 4f 20 // mov     rcx, [r15+20h]; this
+      49 8b 4f 20 // mov     rcx, [r15+20h]
       @str1 3b 05 ?? ?? ?? ?? // cmp     eax, cs:fs_ComboCategory.ID
-      75 0a // jnz     short loc_140EF9214
+      75 0a // jnz     short loc_140ECB384
       48 8b d1 // mov     rdx, rcx
-      e8 ?? ?? ?? ?? // call    sub_140EF9600
-      eb 0b // jmp     short loc_140EF921F
-      48 8d 54 24 30 // lea     rdx, [rsp+211E0h+propertyName]; propertyName
+      e8 ?? ?? ?? ?? // call    sub_140ECB770
+      eb 0b // jmp     short loc_140ECB38F
+      48 8d 54 24 34 // lea     rdx, [rsp+211D0h+var_2119C]
       @ref2 e8 ?? ?? ?? ?? // call    stats__Object__SetPropertyString
       90 // nop
       <Condition Type="FixedString" Offset="@str1" Value="ComboCategory" />
@@ -821,7 +814,7 @@
     </Mapping>
 
     <Mapping Name="eoc::ParseStaticBoosts">
-      49 8d 94 24 d8 00 00 00 // lea     rdx, [r12+0D8h]
+      49 8d 97 d8 00 00 00 // lea     rdx, [r15+0D8h]
       4c 8d 45 cf // lea     r8, [rbp+57h+var_88]
       48 8d 4d af // lea     rcx, [rbp+57h+var_A8]
       @ref2 e8 ?? ?? ?? ?? // call    eoc__ParseStaticBoosts
@@ -935,10 +928,10 @@
 
     <!-- Sigs: exposed as "IsReachable" -->
     <Mapping Name="eoc::AiGrid::FindPath">
-      48 8b 83 a0 01 00 00 // mov     rax, [rbx+1A0h]
+      48 8b 83 a8 01 00 00 // mov     rax, [rbx+1A8h]
       48 8b 98 90 00 00 00 // mov     rbx, [rax+90h]
       48 85 db // test    rbx, rbx
-      0f 84 b7 00 00 00 // jz      loc_142628DF3
+      0f 84 12 01 00 00 // jz      loc_1427DEBF1
       48 8b 9b 80 00 00 00 // mov     rbx, [rbx+80h]
       8b d7 // mov     edx, edi
       48 8b cb // mov     rcx, rbx
@@ -947,10 +940,9 @@
       48 8b cb // mov     rcx, rbx
       @ref2 e8 ?? ?? ?? ?? // call    eoc__AiGrid__FindPathImmediate
       0f b6 f8 // movzx   edi, al
-      48 8d 4d 40 // lea     rcx, [rbp+180h+var_140]
-      e8 ?? ?? ?? ?? // call    sub_141A26EE0
-      90 // nop
-      48 8b 4d b0 // mov     rcx, [rbp+180h+var_1D0]
+      48 8b 8d f8 00 00 00 // mov     rcx, [rbp+190h+var_98]
+      48 85 c9 // test    rcx, rcx
+      74 11 // jz      short loc_1427DEB1A
       <Target Type="Indirect" Offset="@ref1" Symbol="eoc__AiGrid__FindPath" />
       <Target Type="Indirect" Offset="@ref2" Symbol="eoc__AiGrid__FindPathImmediate" />
     </Mapping>
@@ -970,18 +962,18 @@
 
     <!-- Sig: "ls.thoth.client.condition" -->
     <Mapping Name="ecl::EocClient::Init">
-      48 8b 8e 90 01 00 00 // mov     rcx, [rsi+190h]
+      49 8b 8e 90 01 00 00 // mov     rcx, [r14+190h]
       @ref1 48 8b 05 ?? ?? ?? ?? // mov     rax, cs:ls__gDragDropManager
-      48 89 88 a0 00 00 00 // mov     [rax+0A0h], rcx
+      48 89 88 e0 00 00 00 // mov     [rax+0E0h], rcx
       0f 57 c0 // xorps   xmm0, xmm0
-      0f 11 45 50 // movups  [rbp+110h+var_C0], xmm0
+      0f 11 45 50 // movups  xmmword ptr [rbp+100h+a2], xmm0
       33 db // xor     ebx, ebx
-      89 5d 60 // mov     [rbp+110h+var_B0], ebx
-      c7 45 64 0f 00 00 00 // mov     [rbp+110h+var_AC], 0Fh
-      88 5d 50 // mov     byte ptr [rbp+110h+var_C0], bl
+      89 5d 60 // mov     [rbp+100h+var_A0], ebx
+      c7 45 64 0f 00 00 00 // mov     [rbp+100h+var_9C], 0Fh
+      88 5d 50 // mov     byte ptr [rbp+100h+a2], bl
       44 8d 43 19 // lea     r8d, [rbx+19h]; Size
       @str1 48 8d 15 ?? ?? ?? ?? // lea     rdx, aLsThothClientC; "ls.thoth.client.condition"
-      48 8d 4d 50 // lea     rcx, [rbp+110h+var_C0]; void *
+      48 8d 4d 50 // lea     rcx, [rbp+100h+a2]; void *
       <Condition Type="String" Offset="@str1" Value="ls.thoth.client.condition" />
       <Target Type="Indirect" Offset="@ref1" Symbol="ls__gDragDropManager" />
     </Mapping>
