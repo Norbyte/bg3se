@@ -98,7 +98,7 @@ HashMap<FixedString, FixedString> VirtualTextureHelpers::CollectRemaps()
     HashMap<FixedString, FixedString> remaps;
 
     auto modManager = GetStaticSymbols().GetModManagerClient();
-    for (auto const& mod : modManager->BaseModule.LoadOrderedModules) {
+    for (auto const& mod : modManager->LoadOrderedModules) {
         auto virtualTextureConfig = "Mods/" + mod.Info.Directory + "/ScriptExtender/VirtualTextures.json";
         auto reader = GetStaticSymbols().MakeFileReader(virtualTextureConfig);
 

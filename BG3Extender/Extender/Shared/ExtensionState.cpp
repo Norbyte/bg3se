@@ -54,7 +54,7 @@ namespace bg3se
         }
 
         unsigned numConfigs{ 0 };
-        for (auto const& mod : modManager->BaseModule.LoadOrderedModules) {
+        for (auto const& mod : modManager->LoadOrderedModules) {
             auto dir = mod.Info.Directory;
             auto configFile = "Mods/" + dir + "/ScriptExtender/Config.json";
             auto reader = GetStaticSymbols().MakeFileReader(configFile);
@@ -524,7 +524,7 @@ namespace bg3se
         }
 
         lua::Restriction restriction(*lua, lua::State::RestrictAll);
-        for (auto const& mod : modManager->BaseModule.LoadOrderedModules) {
+        for (auto const& mod : modManager->LoadOrderedModules) {
             auto configIt = modConfigs_.find(mod.Info.ModuleUUIDString);
             if (configIt != modConfigs_.end()) {
                 auto const & config = configIt->second;

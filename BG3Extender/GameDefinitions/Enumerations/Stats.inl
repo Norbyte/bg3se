@@ -999,7 +999,7 @@ BEGIN_BITMASK(RestFlags, uint16_t)
     EV(Unknown0x04, 4)
 END_ENUM()
 
-BEGIN_BITMASK(RestErrorFlags, uint8_t)
+BEGIN_BITMASK(RestErrorFlags, uint16_t)
     EV(GlobalDisabled, 1)
     EV(Script, 2)
     EV(Dialog, 4)

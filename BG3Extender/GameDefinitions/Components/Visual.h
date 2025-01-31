@@ -360,6 +360,7 @@ struct EquipmentVisual
     EntityHandle Item;
     Array<EntityHandle> SubVisuals;
     EquipmentVisualRequest* VisualRequest;
+    std::optional<EquipmentVisualData> VisualData;
     bool field_20;
 };
 
@@ -368,7 +369,7 @@ struct EquipmentVisualsComponent : public BaseComponent
     DEFINE_COMPONENT(ClientEquipmentVisuals, "ecl::EquipmentVisualsComponent")
 
     EntityHandle Entity;
-    std::array<EquipmentVisual, 19> Equipment;
+    HashMap<ItemSlot, EquipmentVisual> Equipment;
 };
 
 struct PaperdollComponent : public BaseComponent

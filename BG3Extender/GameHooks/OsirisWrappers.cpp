@@ -228,7 +228,7 @@ void OsirisWrappers::FindOsirisGlobals(FARPROC CtorProc)
     auto addr = (uint8_t const *)ResolveRealFunctionAddress((void const *)CtorProc);
 
     // Try to find pointers of Osiris globals
-    const unsigned NumGlobals = 9;
+    const unsigned NumGlobals = 10;
     uint8_t * globals[NumGlobals];
     unsigned foundGlobals = 0;
     for (auto ptr = addr; ptr < addr + 0x500; ptr++)
@@ -250,15 +250,15 @@ void OsirisWrappers::FindOsirisGlobals(FARPROC CtorProc)
         Fail("Could not locate global Osiris variables");
     }
 
-    Globals.Variables = (VariableDb **)globals[0];
-    Globals.Types = (OsiTypeDb **)globals[1];
-    Globals.Enums = (EnumDb**)globals[2];
-    Globals.Functions = (FunctionDb **)globals[3];
-    Globals.Objects = (ObjectDb **)globals[4];
-    Globals.Goals = (GoalDb **)globals[5];
-    Globals.Adapters = (AdapterDb **)globals[6];
-    Globals.Databases = (DatabaseDb **)globals[7];
-    Globals.Nodes = (NodeDb **)globals[8];
+    Globals.Variables = (VariableDb **)globals[1];
+    Globals.Types = (OsiTypeDb **)globals[2];
+    Globals.Enums = (EnumDb**)globals[3];
+    Globals.Functions = (FunctionDb **)globals[4];
+    Globals.Objects = (ObjectDb **)globals[5];
+    Globals.Goals = (GoalDb **)globals[6];
+    Globals.Adapters = (AdapterDb **)globals[7];
+    Globals.Databases = (DatabaseDb **)globals[8];
+    Globals.Nodes = (NodeDb **)globals[9];
 
 #if 0
     DEBUG("\tVariables = %p", Globals.Variables);

@@ -481,21 +481,12 @@ struct TransformComponent : public BaseComponent
 
     Transform Transform;
 };
-    
-struct ClockComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(Clock, "ls::ClockComponent")
 
-    double Time{ 0 };
-    float DeltaTime{ 0 };
-};
-    
 struct TimeFactorComponent : public BaseComponent
 {
     DEFINE_COMPONENT(TimeFactor, "ls::TimeFactorComponent")
 
     float Value{ 1.0f };
-    float Value2{ 1.0f };
 };
 
 END_SE()
