@@ -85,6 +85,11 @@ void OsirisWrappers::Initialize()
         Fail("Could not locate COsiris::SetOption in osiris.dll");
     }
 
+    Globals.GetString = (COsiStringTableGetStringProc*)GetProcAddress(OsirisModule, "?GetStr@COsiStringTable@@QEAAPEBDUCOsiStringHandle@@@Z");
+    Globals.AddString = (COsiStringTableAddStringProc*)GetProcAddress(OsirisModule, "?AddStr@COsiStringTable@@QEAA?AUCOsiStringHandle@@PEBD_N@Z");
+    Globals.AddStringRef = (COsiStringTableAddStringRefProc*)GetProcAddress(OsirisModule, "?AddStrRef@COsiStringTable@@QEAAXUCOsiStringHandle@@@Z");
+    Globals.RemoveString = (COsiStringTableRemoveStringProc*)GetProcAddress(OsirisModule, "?RemoveStr@COsiStringTable@@QEAAXUCOsiStringHandle@@@Z");
+
     FindDebugFlags(SetOptionProc);
 
 #if 0
@@ -250,6 +255,7 @@ void OsirisWrappers::FindOsirisGlobals(FARPROC CtorProc)
         Fail("Could not locate global Osiris variables");
     }
 
+    Globals.StringTable = (COsiStringTable ***)globals[0];
     Globals.Variables = (VariableDb **)globals[1];
     Globals.Types = (OsiTypeDb **)globals[2];
     Globals.Enums = (EnumDb**)globals[3];
