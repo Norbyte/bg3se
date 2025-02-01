@@ -361,6 +361,7 @@ void LuaPolymorphic<stats::Functor>::MakeRef(lua_State* L, stats::Functor* value
         V(SetDisadvantage)
         V(MaximizeRoll)
         V(CameraWait)
+        V(ModifySpellCameraFocus)
         V(Extender)
 
     default:

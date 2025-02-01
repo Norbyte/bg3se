@@ -305,6 +305,7 @@ struct SummonFunctor : public Functor
     FixedString StackId;
     bool Arg5;
     bool Arg9;
+    bool UseOwnerPassives;
 };
 
 struct ForceFunctor : public Functor
@@ -749,6 +750,13 @@ struct CameraWaitFunctor : public Functor
     DEFN_FUNCTOR(CameraWait)
 
     float Arg1;
+};
+
+struct ModifySpellCameraFocusFunctor : public Functor
+{
+    DEFN_FUNCTOR(ModifySpellCameraFocus)
+
+    // Unmapped
 };
 
 struct ExtenderFunctor : public Functor

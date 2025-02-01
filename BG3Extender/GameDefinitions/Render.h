@@ -50,7 +50,6 @@ struct MoveableObject : ProtectedGameObject<MoveableObject>
     Transform WorldTransform;
     LocalTransform* LocalTransform;
     [[bg3::hidden]] void* Scene;
-    uint8_t DirtyFlags;
     AABound WorldBound;
     AABound BaseBound;
     float MinLODDistance;
@@ -424,6 +423,7 @@ struct Visual : public MoveableObject
     uint8_t PhysicsFlags;
     uint8_t LightChannel;
     bool HasValidPose;
+    bool HasAnimatedObjects;
     int16_t WrinkleBaseBoneIndex;
     int16_t Wrinkle01BoneIndex;
     int16_t Wrinkle02BoneIndex;
@@ -455,12 +455,11 @@ struct RenderableObject : public MoveableObject
     [[bg3::hidden]] void* Model;
     RenderPropertyList PropertyList;
     [[bg3::hidden]] void* ModelData;
+    glm::vec4 MeshRandomData;
     Array<AppliedMaterial*> AppliedMaterials;
     AppliedMaterial* ActiveMaterial;
     Array<AppliedMaterial*> AppliedOverlayMaterials;
     uint8_t LOD;
-    uint32_t _Pad;
-    glm::vec4 MeshRandomData;
 };
 
 

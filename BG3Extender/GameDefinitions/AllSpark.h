@@ -1161,7 +1161,6 @@ struct LightComponent : public FxBaseComponent
     glm::vec3 CalculatedPosition;
     glm::vec3 LastPosition;
     glm::vec3 field_120;
-    glm::vec3 Velocity;
     glm::vec3 Offset;
     glm::vec3 Position;
     glm::vec3 KeyframedPosition;

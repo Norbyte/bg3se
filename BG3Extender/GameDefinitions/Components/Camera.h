@@ -117,6 +117,7 @@ struct CameraComponent : public BaseComponent
 {
     DEFINE_COMPONENT(Camera, "ls::CameraComponent")
 
+    uint32_t MasterBehaviorType;
     rf::CameraController* Controller;
     int ExposureSettingIndex;
     uint8_t field_C;
@@ -124,7 +125,6 @@ struct CameraComponent : public BaseComponent
     bool UseCameraPPSettings;
     bool UseSplitScreenFov;
     PostProcessCameraSetting PostProcess;
-    uint32_t MasterBehaviorType;
 };
 
 

@@ -84,6 +84,7 @@ BEGIN_ENUM_NS(stats, FunctorId, StatsFunctorId, uint8_t)
     E(SetDisadvantage)
     E(MaximizeRoll)
     E(CameraWait)
+    E(ModifySpellCameraFocus)
     EV(Extender, 127)
 END_ENUM_NS()
 

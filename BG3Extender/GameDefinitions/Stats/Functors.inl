@@ -86,6 +86,7 @@ IMPL_FUNCTOR(SetAdvantage)
 IMPL_FUNCTOR(SetDisadvantage)
 IMPL_FUNCTOR(MaximizeRoll)
 IMPL_FUNCTOR(CameraWait)
+IMPL_FUNCTOR(ModifySpellCameraFocus)
 IMPL_FUNCTOR(Extender)
 
 #define IMPL_CONTEXT(ty) ty##ContextData::~ty##ContextData() {}
