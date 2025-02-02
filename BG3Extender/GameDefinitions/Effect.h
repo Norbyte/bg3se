@@ -11,14 +11,19 @@ struct ProvidedMultiEffectObject
 };
 
 
+struct EffectHandlerInitUnknown
+{
+    uint64_t field_0;
+    float field_8;
+};
+
 struct EffectHandlerInitInfo
 {
     EntityHandle EventProviderEntity;
     EntityHandle Player;
     ProvidedMultiEffectObject SourceEffect;
     ProvidedMultiEffectObject TargetEffect;
-    DamageType DamageType;
-    uint8_t VerbalIntent;
+    Array<EffectHandlerInitUnknown> field_70;
     STDString MultiEffectDefinition;
     FixedString field_90;
     float FXScale;

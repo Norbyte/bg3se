@@ -259,6 +259,7 @@ struct ImpactEventOneFrameComponent : public BaseComponent
 
     bg3se::spell_cast::IntermediateTarget Target;
     EntityHandle field_A8;
+    bool field_B0;
 };
 
 struct RequestTargetTrackingOneFrameComponent : public BaseComponent

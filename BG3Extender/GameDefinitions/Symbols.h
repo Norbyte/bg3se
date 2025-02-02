@@ -103,7 +103,7 @@ namespace bg3se
         stats::ExecuteFunctorProc<stats::NearbyAttackingContextData>* esv__ExecuteStatsFunctor_NearbyAttackingContext{ nullptr };
         stats::ExecuteFunctorProc<stats::EquipContextData>* esv__ExecuteStatsFunctor_EquipContext{ nullptr };
         stats::ExecuteFunctorProc<stats::SourceContextData>* esv__ExecuteStatsFunctor_SourceContext{ nullptr };
-        stats::ExecuteFunctorProc<stats::InterruptContextData>* esv__ExecuteStatsFunctor_InterruptContext{ nullptr };
+        stats::ExecuteInterruptFunctorProc* esv__ExecuteStatsFunctor_InterruptContext{ nullptr };
 
         stats::RPGStats** gRPGStats{ nullptr };
         stats::RPGStats::LoadProc* RPGStats__Load{ nullptr };

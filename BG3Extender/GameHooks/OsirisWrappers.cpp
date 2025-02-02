@@ -85,6 +85,11 @@ void OsirisWrappers::Initialize()
         Fail("Could not locate COsiris::SetOption in osiris.dll");
     }
 
+    Globals.GetString = (COsiStringTableGetStringProc*)GetProcAddress(OsirisModule, "?GetStr@COsiStringTable@@QEAAPEBDUCOsiStringHandle@@@Z");
+    Globals.AddString = (COsiStringTableAddStringProc*)GetProcAddress(OsirisModule, "?AddStr@COsiStringTable@@QEAA?AUCOsiStringHandle@@PEBD_N@Z");
+    Globals.AddStringRef = (COsiStringTableAddStringRefProc*)GetProcAddress(OsirisModule, "?AddStrRef@COsiStringTable@@QEAAXUCOsiStringHandle@@@Z");
+    Globals.RemoveString = (COsiStringTableRemoveStringProc*)GetProcAddress(OsirisModule, "?RemoveStr@COsiStringTable@@QEAAXUCOsiStringHandle@@@Z");
+
     FindDebugFlags(SetOptionProc);
 
 #if 0
@@ -195,15 +200,14 @@ void * OsirisWrappers::FindRuleActionCallProc()
     static const uint8_t instructions[] = {
         0x48, 0x89, 0x5c, 0x24, 0x10, // mov     [rsp-28h+arg_8], rbx
         0x48, 0x89, 0x74, 0x24, 0x18, // mov     [rsp-28h+arg_10], rsi
-        0x48, 0x89, 0x7c, 0x24, 0x20, // mov     [rsp-28h+arg_18], rdi
         0x55, // push    rbp
+        0x57, // push    rdi
         0x41, 0x54, // push    r12
-        0x41, 0x55, // push    r13
         0x41, 0x56, // push    r14
         0x41, 0x57, // push    r15
         0x48, 0x8b, 0xec, // mov     rbp, rsp
-        0x48, 0x83, 0xec, 0x60, // sub     rsp, 80h
-        0x48, 0x8b, 0xf1, // mov     rsi, rcx
+        0x48, 0x81, 0xec, 0x80, 0x00, 0x00, 0x00, // sub     rsp, 80h
+        0x4c, 0x8b, 0xf1, // mov     r14, rcx
         0x8b, 0x49, 0x14, // mov     ecx, [rcx+14h]
         0x85, 0xc9, // test    ecx, ecx
     };
@@ -229,7 +233,7 @@ void OsirisWrappers::FindOsirisGlobals(FARPROC CtorProc)
     auto addr = (uint8_t const *)ResolveRealFunctionAddress((void const *)CtorProc);
 
     // Try to find pointers of Osiris globals
-    const unsigned NumGlobals = 9;
+    const unsigned NumGlobals = 10;
     uint8_t * globals[NumGlobals];
     unsigned foundGlobals = 0;
     for (auto ptr = addr; ptr < addr + 0x500; ptr++)
@@ -251,15 +255,16 @@ void OsirisWrappers::FindOsirisGlobals(FARPROC CtorProc)
         Fail("Could not locate global Osiris variables");
     }
 
-    Globals.Variables = (VariableDb **)globals[0];
-    Globals.Types = (OsiTypeDb **)globals[1];
-    Globals.Enums = (EnumDb**)globals[2];
-    Globals.Functions = (FunctionDb **)globals[3];
-    Globals.Objects = (ObjectDb **)globals[4];
-    Globals.Goals = (GoalDb **)globals[5];
-    Globals.Adapters = (AdapterDb **)globals[6];
-    Globals.Databases = (DatabaseDb **)globals[7];
-    Globals.Nodes = (NodeDb **)globals[8];
+    Globals.StringTable = (COsiStringTable ***)globals[0];
+    Globals.Variables = (VariableDb **)globals[1];
+    Globals.Types = (OsiTypeDb **)globals[2];
+    Globals.Enums = (EnumDb**)globals[3];
+    Globals.Functions = (FunctionDb **)globals[4];
+    Globals.Objects = (ObjectDb **)globals[5];
+    Globals.Goals = (GoalDb **)globals[6];
+    Globals.Adapters = (AdapterDb **)globals[7];
+    Globals.Databases = (DatabaseDb **)globals[8];
+    Globals.Nodes = (NodeDb **)globals[9];
 
 #if 0
     DEBUG("\tVariables = %p", Globals.Variables);
@@ -282,8 +287,8 @@ void OsirisWrappers::FindDebugFlags(FARPROC SetOptionProc)
     {
         // Look for the instruction "mov ecx, cs:xxx"
         if (ptr[0] == 0x8B && ptr[1] == 0x0D &&
-            // Look for the instruction "shr e*x, 14h"
-            ptr[8] == 0xC1 && ptr[10] == 0x14)
+            // Look for the instruction "shr e*x, 2h"
+            ptr[8] == 0xC1 && ptr[10] == 2)
         {
             int32_t relOffset = *reinterpret_cast<int32_t const *>(ptr + 2);
             uint64_t dbgPtr = (uint64_t)ptr + relOffset + 6;

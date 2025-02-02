@@ -587,12 +587,14 @@ struct SomeDbItem
     SomeDbItem * Next;
 };
 
+enum class OsiStringHandle : uint64_t {};
+
 union ValueUnion
 {
     int64_t Int64;
     float Float;
     int32_t Int32;
-    char * String;
+    OsiStringHandle StringHandle;
 };
 
 struct RawValue
@@ -605,49 +607,45 @@ struct RawValue
 class TypedValue
 {
 public:
-    /*virtual bool Serialize(void * SmartBuf);
-    virtual ~TypedValue() {};
-    virtual bool SetType(ValueType type);
-    virtual ValueType GetType();
-    virtual bool IsValid();
-    virtual void DebugDump(char * log);
-    virtual void SetValue(TValue * value);
-    virtual TValue * GetValue();
-    virtual bool IsVariable();
-    virtual void SetOutParam(bool OutParam);
-    virtual void SetOutParam2(bool OutParam);
-    virtual bool IsOutParam();
-    virtual uint8_t Index();
-    virtual bool IsUnused();
-    virtual bool IsAdapted();*/
+    inline TypedValue()
+        : Value{ .Int64 = 0 }
+    {}
 
-    void * VMT{ nullptr };
+    ~TypedValue();
+    
+    TypedValue(TypedValue &);
+    TypedValue(TypedValue &&);
+
+    TypedValue& operator = (TypedValue const&);
+    TypedValue& operator = (TypedValue &&);
+
+    char const* GetString() const;
+    void ClearValue();
+    void SetValue(ValueType typeId, int32_t v);
+    void SetValue(ValueType typeId, float v);
+    void SetValue(ValueType typeId, int64_t v);
+    void SetValue(ValueType typeId, OsiStringHandle s);
+    void SetValue(ValueType typeId, char const* s);
+
+    inline bool HasValue() const
+    {
+        return (Flags2 & 0x08);
+    }
+
     ValueUnion Value;
-    uint16_t TypeId{ 0 };
-};
+    ValueType TypeId{ ValueType::None };
+    uint8_t Flags1{ 0xff };
+    uint8_t Flags2{ 0x02 };
 
-struct DatabaseParam
-{
-    uint64_t A;
-    uint64_t B;
-};
-
-struct TypedValueList
-{
-    uint64_t Size;
-    TypedValue Values[1];
+private:
+    void ReleaseValue();
 };
 
 class TupleVec
 {
 public:
-    virtual ~TupleVec() {};
-
-    // Ptr to (&TypedValueList->Values)
     TypedValue * Values{ nullptr };
-    uint8_t Size{ 0 };
-    uint8_t __Padding[7];
-    uint32_t Unknown{ 0 };
+    uint64_t Size{ 0 };
 };
 
 class SmallTuple
@@ -690,13 +688,10 @@ public:
 struct Database : public ProtectedGameObject<Database>
 {
     uint32_t DatabaseId;
-    SomeDbItem Items[16];
-    uint64_t C;
     void * FactsVMT;
     List<TupleVec> Facts;
     Vector<uint32_t> ParamTypes;
     uint8_t NumParams;
-    Vector<DatabaseParam> OrderedFacts;
 };
 
 class RuleActionArguments
@@ -744,9 +739,7 @@ struct TypedDb
 
 struct GoalDb : public TypeDb<Goal*>
 {
-    uint32_t Unknown;
-    TMap<uint32_t, Goal*> Goals;
-    void* Unknown2;
+    Vector<Goal*> Goals;
 };
 
 class VirtTupleLL;
@@ -1193,8 +1186,41 @@ struct OsiTypeDb : public TypeDb<OsirisTypeInfo>
     }
 };
 
+struct COsiString
+{
+    const char* Str;
+    uint64_t field_8;
+    uint32_t SomeRef;
+    int field_14;
+    int RefCount;
+    int field_1C;
+};
+
+
+struct COsiStringPool
+{
+    float field_0;
+    std::unordered_map<char const*, uint32_t> Values;
+    OsiVector<COsiString> Strings;
+    OsiVector<uint32_t> FreeList;
+};
+
+
+struct COsiStringTable
+{
+    COsiStringPool GlobalPool;
+    COsiStringPool UnknownPool;
+    COsiStringPool GuidPool;
+};
+
+using COsiStringTableGetStringProc = char const* (COsiStringTable** a1, OsiStringHandle handle);
+using COsiStringTableAddStringProc = OsiStringHandle* (COsiStringTable** a1, OsiStringHandle& pHandle, const char* str, bool isGuidString);
+using COsiStringTableAddStringRefProc = void (COsiStringTable** a1, OsiStringHandle handle);
+using COsiStringTableRemoveStringProc = void (COsiStringTable** a1, OsiStringHandle handle);
+
 struct OsirisStaticGlobals
 {
+    COsiStringTable *** StringTable{ nullptr };
     VariableDb ** Variables{ nullptr };
     OsiTypeDb ** Types{ nullptr };
     EnumDb ** Enums{ nullptr };
@@ -1205,7 +1231,11 @@ struct OsirisStaticGlobals
     DatabaseDb ** Databases{ nullptr };
     NodeDb ** Nodes{ nullptr };
     DebugFlag * DebugFlags{ nullptr };
-    void * TypedValueVMT{ nullptr };
+
+    COsiStringTableGetStringProc* GetString{ nullptr };
+    COsiStringTableAddStringProc* AddString{ nullptr };
+    COsiStringTableAddStringRefProc* AddStringRef{ nullptr };
+    COsiStringTableRemoveStringProc* RemoveString{ nullptr };
 };
 
 struct OsirisDynamicGlobals

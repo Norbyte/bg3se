@@ -16,7 +16,7 @@ std::optional<STDString> LoadFile(char const* path, std::optional<FixedString> c
     }
 }
 
-bool SaveFile(char const* path, char const* contents)
+bool SaveFile(char const* path, StringView contents)
 {
     return script::SaveExternalFile(path, PathRootType::UserProfile, contents);
 }

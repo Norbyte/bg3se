@@ -2,6 +2,179 @@
 
 BEGIN_SE()
 
+OsirisStaticGlobals& GetOsiGlobals()
+{
+    return gExtender->GetServer().Osiris().GetWrappers().Globals;
+}
+
+OsiStringHandle OsiStringMake(char const* str, bool isGuidString)
+{
+    OsiStringHandle handle;
+    auto& globals = GetOsiGlobals();
+    globals.AddString(*globals.StringTable, handle, str, isGuidString);
+    return handle;
+}
+
+void OsiStringIncRef(OsiStringHandle str)
+{
+    auto& globals = GetOsiGlobals();
+    globals.AddStringRef(*globals.StringTable, str);
+}
+
+void OsiStringDecRef(OsiStringHandle str)
+{
+    auto& globals = GetOsiGlobals();
+    globals.RemoveString(*globals.StringTable, str);
+}
+
+char const* OsiStringGet(OsiStringHandle str)
+{
+    auto& globals = GetOsiGlobals();
+    return globals.GetString(*globals.StringTable, str);
+}
+
+bool OsiIsStringAlias(ValueType typeId)
+{
+    if (typeId < ValueType::String) return false;
+
+    if (typeId == ValueType::String || typeId == ValueType::GuidString) return true;
+
+    auto& globals = GetOsiGlobals();
+    auto alias = (*globals.Types)->ResolveAlias((uint16_t)typeId);
+    return alias == ValueType::String || alias == ValueType::GuidString;
+}
+
+bool OsiIsGuidStringAlias(ValueType typeId)
+{
+    if (typeId < ValueType::String) return false;
+
+    if (typeId == ValueType::GuidString) return true;
+
+    auto& globals = GetOsiGlobals();
+    auto alias = (*globals.Types)->ResolveAlias((uint16_t)typeId);
+    return alias == ValueType::GuidString;
+}
+
+TypedValue::~TypedValue()
+{
+    ReleaseValue();
+}
+
+TypedValue::TypedValue(TypedValue& o)
+    : Value(o.Value), TypeId(o.TypeId), Flags1(o.Flags1), Flags2(o.Flags2)
+{
+    if (OsiIsStringAlias(TypeId)) {
+        OsiStringIncRef(Value.StringHandle);
+    }
+}
+
+TypedValue::TypedValue(TypedValue&& o)
+    : Value(o.Value), TypeId(o.TypeId), Flags1(o.Flags1), Flags2(o.Flags2)
+{
+    o.Flags2 &= ~0x08;
+    o.Value.Int64 = 0;
+    o.TypeId = ValueType::None;
+}
+
+void TypedValue::ReleaseValue()
+{
+    if (OsiIsStringAlias(TypeId)) {
+        OsiStringDecRef(Value.StringHandle);
+    }
+}
+
+TypedValue& TypedValue::operator = (TypedValue const& o)
+{
+    ReleaseValue();
+
+    Value = o.Value;
+    TypeId = o.TypeId;
+    Flags1 = o.Flags1;
+    Flags2 = o.Flags2;
+
+    if (OsiIsStringAlias(TypeId)) {
+        OsiStringIncRef(Value.StringHandle);
+    }
+
+    return *this;
+}
+
+TypedValue& TypedValue::operator = (TypedValue&& o)
+{
+    ReleaseValue();
+
+    Value = o.Value;
+    TypeId = o.TypeId;
+    Flags1 = o.Flags1;
+    Flags2 = o.Flags2;
+
+    o.Flags2 &= ~0x08;
+    o.Value.Int64 = 0;
+    o.TypeId = ValueType::None;
+
+    return *this;
+}
+
+char const* TypedValue::GetString() const
+{
+    assert(OsiIsStringAlias(TypeId));
+    return OsiStringGet(Value.StringHandle);
+}
+
+void TypedValue::ClearValue()
+{
+    ReleaseValue();
+
+    Flags2 &= ~0x08;
+    Value.Int64 = 0;
+    TypeId = ValueType::None;
+}
+
+void TypedValue::SetValue(ValueType typeId, int32_t v)
+{
+    ReleaseValue();
+
+    Value.Int32 = v;
+    TypeId = typeId;
+    Flags2 |= 0x08;
+}
+
+void TypedValue::SetValue(ValueType typeId, float v)
+{
+    ReleaseValue();
+
+    Value.Float = v;
+    TypeId = typeId;
+    Flags2 |= 0x08;
+}
+
+void TypedValue::SetValue(ValueType typeId, int64_t v)
+{
+    ReleaseValue();
+
+    Value.Int64 = v;
+    TypeId = typeId;
+    Flags2 |= 0x08;
+}
+
+void TypedValue::SetValue(ValueType typeId, OsiStringHandle s)
+{
+    ReleaseValue();
+
+    Value.StringHandle = s;
+    TypeId = typeId;
+    Flags2 |= 0x08;
+}
+
+void TypedValue::SetValue(ValueType typeId, char const* s)
+{
+    ReleaseValue();
+
+    Value.StringHandle = OsiStringMake(s, OsiIsGuidStringAlias(typeId));
+    TypeId = typeId;
+    Flags2 |= 0x08;
+}
+
 Database* DatabaseRef::Get() const
 {
     auto manager = *gExtender->GetServer().Osiris().GetGlobals().Databases;
@@ -86,22 +259,19 @@ char * LuaToString(lua_State* L, int i, int type, char* reuseString)
 
 void LuaToOsi(lua_State * L, int i, TypedValue & tv, ValueType osiType, bool allowNil)
 {
-    tv.VMT = gExtender->GetServer().Osiris().GetGlobals().TypedValueVMT;
-    tv.TypeId = (uint32_t)osiType;
-
     auto type = lua_type(L, i);
     if (allowNil && type == LUA_TNIL) {
-        tv.TypeId = (uint32_t)ValueType::None;
+        tv.ClearValue();
         return;
     }
 
     switch (GetBaseType(osiType)) {
     case ValueType::Integer:
-        tv.Value.Int32 = (int32_t)LuaToInt(L, i, type);
+        tv.SetValue(osiType, (int32_t)LuaToInt(L, i, type));
         break;
 
     case ValueType::Integer64:
-        tv.Value.Int64 = (int64_t)LuaToInt(L, i, type);
+        tv.SetValue(osiType, (int64_t)LuaToInt(L, i, type));
         break;
 
     case ValueType::Real:
@@ -111,18 +281,18 @@ void LuaToOsi(lua_State * L, int i, TypedValue & tv, ValueType osiType, bool all
 
 #if LUA_VERSION_NUM > 501
         if (lua_isinteger(L, i)) {
-            tv.Value.Float = (float)lua_tointeger(L, i);
+            tv.SetValue(osiType, (float)lua_tointeger(L, i));
         } else {
-            tv.Value.Float = (float)lua_tonumber(L, i);
+            tv.SetValue(osiType, (float)lua_tonumber(L, i));
         }
 #else
-        tv.Value.Val.Float = (float)lua_tonumber(L, i);
+        tv.SetValue(osiType, (float)lua_tonumber(L, i));
 #endif
         break;
 
     case ValueType::String:
     case ValueType::GuidString:
-        tv.Value.String = LuaToString(L, i, type, nullptr);
+        tv.SetValue(osiType, LuaToString(L, i, type, nullptr));
         break;
 
     default:
@@ -238,7 +408,7 @@ void OsiToLua(lua_State * L, TypedValue const & tv)
 
     case ValueType::String:
     case ValueType::GuidString:
-        push(L, tv.Value.String);
+        push(L, tv.GetString());
         break;
 
     default:

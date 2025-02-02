@@ -37,8 +37,9 @@ inline STDString do_get(lua_State* L, int index, Overload<STDString>)
 
 inline StringView do_get(lua_State* L, int index, Overload<StringView>)
 {
-    luaL_error(L, "Cannot unserialize Lua strings into a StringView");
-    return {};
+    size_t len;
+    auto str = luaL_checklstring(L, index, &len);
+    return StringView(str, str + len);
 }
 
 inline LSStringView do_get(lua_State* L, int index, Overload<LSStringView>)

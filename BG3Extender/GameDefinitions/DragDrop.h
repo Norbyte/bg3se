@@ -43,6 +43,7 @@ struct [[bg3::hidden]] DragDropManager : public ProtectedGameObject<DragDropMana
     UnknownSignal OnStartDragActionPositional;
     UnknownSignal OnStartDragActionPassive;
     UnknownSignal OnStopDrag;
+    uint8_t field_90[0x40]; // MPMCQueueBounded maybe?
     LegacyRefMap<uint16_t, PlayerDragData> PlayerData;
     ecs::EntityWorld* EntityWorld;
 };

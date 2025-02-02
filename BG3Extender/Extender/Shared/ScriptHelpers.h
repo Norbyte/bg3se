@@ -6,7 +6,7 @@ namespace bg3se::script {
 
     std::optional<STDWString> GetPathForExternalIo(std::string_view scriptPath, PathRootType root);
     std::optional<STDString> LoadExternalFile(std::string_view path, PathRootType root);
-    bool SaveExternalFile(std::string_view path, PathRootType root, std::string_view contents);
+    bool SaveExternalFile(std::string_view path, PathRootType root, StringView contents);
 
     bool GetTranslatedString(char const* handle, STDString& translated);
     bool GetTranslatedStringFromKey(FixedString const& key, TranslatedString& translated);

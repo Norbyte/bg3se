@@ -326,15 +326,15 @@ struct EquipmentVisualData
     FixedString BoneSheathed;
     FixedString SourceBoneSheathed;
     FixedString field_18;
+    uint32_t AttachFlags;
     EntityHandle field_20;
     Array<resource::PresetData::ScalarParameter> ScalarParameters;
     Array<resource::PresetData::Vector3Parameter> Vector3Parameters;
-    uint8_t HairType;
     ecs::EntityRef Item;
-    uint32_t Flags_60;
-    uint16_t Flags_64;
+    uint16_t VisualFlags;
+    uint8_t HairType;
+    uint8_t Flags_63;
     uint32_t SlotAndFlags;
-    uint8_t Flags_6C;
 };
 
 
@@ -360,6 +360,7 @@ struct EquipmentVisual
     EntityHandle Item;
     Array<EntityHandle> SubVisuals;
     EquipmentVisualRequest* VisualRequest;
+    std::optional<EquipmentVisualData> VisualData;
     bool field_20;
 };
 
@@ -368,7 +369,7 @@ struct EquipmentVisualsComponent : public BaseComponent
     DEFINE_COMPONENT(ClientEquipmentVisuals, "ecl::EquipmentVisualsComponent")
 
     EntityHandle Entity;
-    std::array<EquipmentVisual, 19> Equipment;
+    HashMap<ItemSlot, EquipmentVisual> Equipment;
 };
 
 struct PaperdollComponent : public BaseComponent

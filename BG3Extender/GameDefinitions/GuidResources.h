@@ -183,7 +183,7 @@ struct ClassDescription : public resource::GuidResource
     bool CanLearnSpells;
     bool HasGod;
     bool IsDefaultForUseSpellAction;
-    bool IsSomaticWithInstrument;
+    HashSet<FixedString> SomaticEquipmentSet;
     Array<Guid> Tags;
     FixedString ClassEquipment;
     FixedString CharacterCreationPose;

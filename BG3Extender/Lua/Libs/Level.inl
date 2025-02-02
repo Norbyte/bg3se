@@ -215,6 +215,12 @@ void ReleasePath(lua_State* L, AiPath* path)
     }
 }
 
+AiPath* GetPathById(lua_State* L, AiPathId id)
+{
+    auto aiGrid = GetAiGrid(L);
+    return aiGrid->PathMap.try_get(id);
+}
+
 Array<AiPath*> GetActivePathfindingRequests(lua_State* L)
 {
     Array<AiPath*> paths;
@@ -371,6 +377,7 @@ void RegisterLevelLib()
     MODULE_FUNCTION(BeginPathfindingImmediate)
     MODULE_FUNCTION(FindPath)
     MODULE_FUNCTION(ReleasePath)
+    MODULE_FUNCTION(GetPathById)
     MODULE_FUNCTION(GetActivePathfindingRequests)
 
     MODULE_FUNCTION(RaycastClosest)

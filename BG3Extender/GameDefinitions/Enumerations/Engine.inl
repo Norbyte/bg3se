@@ -407,7 +407,6 @@ END_ENUM_NS()
 
 BEGIN_ENUM_NS(esv, ActionType, ServerActionType, uint8_t)
     EV(Animation, 2)
-    EV(PickupItem, 3)
     EV(MoveItem, 4)
     EV(KnockedDown, 5)
     EV(UseItem, 6)

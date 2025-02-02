@@ -135,11 +135,12 @@ struct BSPickupItem : public BSMoveAndX
 
     EntityHandle Item;
     EntityHandle Inventory;
-    int16_t Slot;
+    Guid field_118;
     int Amount;
-    int BehaviourTransactionId;
+    int16_t Slot;
     bool Failed;
-    int FailReason;
+    uint8_t FailReason;
+    uint8_t field_130;
 };
 
 struct BSWander : public BehaviourState

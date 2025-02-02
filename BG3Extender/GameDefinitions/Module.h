@@ -58,13 +58,9 @@ struct Module
 
     [[bg3::hidden]] void* VMT{ nullptr };
     ModuleInfo Info;
-    Array<Module> LoadOrderedModules;
-    Array<Module> DependentModules;
-    Array<Module> AddonModules;
     Array<ModuleShortDesc> Dependencies;
     Array<ModuleShortDesc> ModConflicts;
     Array<ModuleShortDesc> Addons;
-    uint8_t UnknownFlag;
 };
 
 struct ModManager : public ProtectedGameObject<ModManager>

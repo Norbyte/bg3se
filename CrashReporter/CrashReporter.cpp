@@ -54,7 +54,7 @@ DWORD WINAPI CrashReporter::MinidumpUploaderThread(LPVOID lpThreadParameter)
     std::string dumpId;
     HttpUploader uploader;
 
-    bool succeeded = uploader.Upload("https://osicrashreports.norbyte.dev/submit.php?game=bg3&v=21.0.0.0", crashDump, response);
+    bool succeeded = uploader.Upload("https://osicrashreports.norbyte.dev/submit.php?game=bg3&v=23.0.0.0", crashDump, response);
     if (succeeded) {
         if (response.size() < 4 || memcmp(response.data(), "OK:", 3) != 0) {
             errorReason = "Server returned illegible response";
