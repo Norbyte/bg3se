@@ -310,6 +310,7 @@ phx::PhysicsHitAll* SweepSphereAll(lua_State* L, glm::vec3 const& source, glm::v
 {
     auto levelManager = State::FromLua(L)->GetExtensionState().GetLevelManager();
     auto phys = levelManager->CurrentLevel->PhysicsScene;
+    gHits = phx::PhysicsHitAll{};
     auto xhit = phys->SweepSphereAll(radius, source, destination, gHits, physicsType, includePhysicsGroup, excludePhysicsGroup, context, -1, -1);
     if (xhit) {
         return &gHits;
@@ -322,6 +323,7 @@ phx::PhysicsHitAll* SweepCapsuleAll(lua_State* L, glm::vec3 const& source, glm::
 {
     auto levelManager = State::FromLua(L)->GetExtensionState().GetLevelManager();
     auto phys = levelManager->CurrentLevel->PhysicsScene;
+    gHits = phx::PhysicsHitAll{};
     auto xhit = phys->SweepCapsuleAll(radius, halfHeight, source, destination, gHits, physicsType, includePhysicsGroup, excludePhysicsGroup, context, -1, -1);
     if (xhit) {
         return &gHits;
@@ -334,6 +336,7 @@ phx::PhysicsHitAll* SweepBoxAll(lua_State* L, glm::vec3 const& source, glm::vec3
 {
     auto levelManager = State::FromLua(L)->GetExtensionState().GetLevelManager();
     auto phys = levelManager->CurrentLevel->PhysicsScene;
+    gHits = phx::PhysicsHitAll{};
     auto xhit = phys->SweepBoxAll(extents, source, destination, gHits, physicsType, includePhysicsGroup, excludePhysicsGroup, context, -1, -1);
     if (xhit) {
         return &gHits;
@@ -346,6 +349,7 @@ phx::PhysicsHitAll* TestBox(lua_State* L, glm::vec3 const& position, glm::vec3 c
 {
     auto levelManager = State::FromLua(L)->GetExtensionState().GetLevelManager();
     auto phys = levelManager->CurrentLevel->PhysicsScene;
+    gHits = phx::PhysicsHitAll{};
     auto xhit = phys->TestBox(extents, position, gHits, physicsType, includePhysicsGroup, excludePhysicsGroup);
     if (xhit) {
         return &gHits;
@@ -358,6 +362,7 @@ phx::PhysicsHitAll* TestSphere(lua_State* L, glm::vec3 const& position, float ra
 {
     auto levelManager = State::FromLua(L)->GetExtensionState().GetLevelManager();
     auto phys = levelManager->CurrentLevel->PhysicsScene;
+    gHits = phx::PhysicsHitAll{};
     auto xhit = phys->TestSphere(position, radius, gHits, physicsType, includePhysicsGroup, excludePhysicsGroup);
     if (xhit) {
         return &gHits;
