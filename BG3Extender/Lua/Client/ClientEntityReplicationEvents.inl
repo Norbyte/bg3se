@@ -7,13 +7,13 @@ using namespace bg3se::lua;
 
 DummyFieldTracker::~DummyFieldTracker() {}
 
-void DummyFieldTracker::Add(EntityHandle entity, EntityHandle entity2, void* component)
+void DummyFieldTracker::Add(EntityHandle entity, void* component)
 {
     assert(Changes.empty());
 
     if (Base) {
         assert(ChangeEvent.Connections.size() == Base->ChangeEvent.Connections.size());
-        Base->Add(entity, entity2, component);
+        Base->Add(entity, component);
     }
 
     auto change = SharedChanges->ChangedEntities.try_get(entity);

@@ -378,7 +378,7 @@ struct FieldTracker
     };
 
     virtual ~FieldTracker();
-    virtual void Add(EntityHandle entity, EntityHandle entity2, void* component) = 0;
+    virtual void Add(EntityHandle entity, void* component) = 0;
     virtual void FireEvents() = 0;
     virtual void Remove(EntityHandle entity) = 0;
 

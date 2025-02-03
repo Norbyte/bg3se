@@ -44,7 +44,7 @@ struct DummyFieldTracker : public ecs::FieldTracker
     };
 
     ~DummyFieldTracker() override;
-    void Add(EntityHandle entity, EntityHandle entity2, void* component) override;
+    void Add(EntityHandle entity, void* component) override;
     void FireEvents() override;
     void Remove(EntityHandle entity) override;
 
