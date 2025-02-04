@@ -11,7 +11,8 @@ struct CppObjectProxyHelpers
 
 
 class LightObjectProxyMetatable : public LightCppObjectMetatable<LightObjectProxyMetatable>,
-    public Indexable, public OpaqueIndexable, public NewIndexable, public Iterable, public Stringifiable, public EqualityComparable
+    public Indexable, public OpaqueIndexable, public NewIndexable, public Iterable, public Stringifiable, 
+    public EqualityComparable, public GarbageCollected
 {
 public:
     static constexpr MetatableTag MetaTag = MetatableTag::ObjectRef;
@@ -44,7 +45,7 @@ public:
     template <class T>
     inline static T* Copy(lua_State* L, T&& object)
     {
-        void* p = reinterpret_cast<T*>(lua_push_newcppobject(L, MetaTag, StructID<T>::ID, sizeof(T)));
+        auto p = reinterpret_cast<T*>(lua_push_newcppobject(L, MetaTag, StructID<T>::ID, sizeof(T)));
         *p = std::move(object);
         return p;
     }
@@ -70,6 +71,7 @@ public:
     static int Index(lua_State* L, CppObjectOpaque* self);
     static int NewIndex(lua_State* L, CppObjectMetadata& self);
     static int ToString(lua_State* L, CppObjectMetadata& self);
+    static int GC(lua_State* L, CppObjectMetadata& self);
     static bool IsEqual(lua_State* L, CppObjectMetadata& self, CppObjectMetadata& other);
     static int Next(lua_State* L, CppObjectMetadata& self);
     static char const* GetTypeName(lua_State* L, CppObjectMetadata& self);

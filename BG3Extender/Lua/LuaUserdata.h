@@ -11,6 +11,7 @@ class NewIndexable {};
 class Lengthable {};
 class Iterable {};
 class Stringifiable {};
+class GarbageCollected {};
 class EqualityComparable {};
 class LessThanComparable {};
 class HasBinaryOps {};
