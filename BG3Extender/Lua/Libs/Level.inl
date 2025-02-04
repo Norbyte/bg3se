@@ -247,6 +247,7 @@ phx::PhysicsHit* RaycastClosest(lua_State* L, glm::vec3 const& source, glm::vec3
     auto levelManager = State::FromLua(L)->GetExtensionState().GetLevelManager();
     auto phys = levelManager->CurrentLevel->PhysicsScene;
     auto callback = MakeFunction(&filterfunc);
+    gHit = phx::PhysicsHit{};
     auto xhit = phys->RaycastClosest(source, destination, gHit, physicsType, includePhysicsGroup, excludePhysicsGroup, context , -1, -1, &callback);
     if (xhit) {
         return &gHit;
@@ -274,6 +275,7 @@ phx::PhysicsHit* SweepSphereClosest(lua_State* L, glm::vec3 const& source, glm::
 {
     auto levelManager = State::FromLua(L)->GetExtensionState().GetLevelManager();
     auto phys = levelManager->CurrentLevel->PhysicsScene;
+    gHit = phx::PhysicsHit{};
     auto xhit = phys->SweepSphereClosest(radius, source, destination, gHit, physicsType, includePhysicsGroup, excludePhysicsGroup, context, -1, -1);
     if (xhit) {
         return &gHit;
@@ -286,6 +288,7 @@ phx::PhysicsHit* SweepCapsuleClosest(lua_State* L, glm::vec3 const& source, glm:
 {
     auto levelManager = State::FromLua(L)->GetExtensionState().GetLevelManager();
     auto phys = levelManager->CurrentLevel->PhysicsScene;
+    gHit = phx::PhysicsHit{};
     auto xhit = phys->SweepCapsuleClosest(radius, halfHeight, source, destination, gHit, physicsType, includePhysicsGroup, excludePhysicsGroup, context, -1, -1);
     if (xhit) {
         return &gHit;
@@ -298,6 +301,7 @@ phx::PhysicsHit* SweepBoxClosest(lua_State* L, glm::vec3 const& source, glm::vec
 {
     auto levelManager = State::FromLua(L)->GetExtensionState().GetLevelManager();
     auto phys = levelManager->CurrentLevel->PhysicsScene;
+    gHit = phx::PhysicsHit{};
     auto xhit = phys->SweepBoxClosest(extents, source, destination, gHit, physicsType, includePhysicsGroup, excludePhysicsGroup, context, -1, -1);
     if (xhit) {
         return &gHit;
