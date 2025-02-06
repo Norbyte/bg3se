@@ -241,7 +241,7 @@ BEGIN_BITMASK(VisualFlags, uint32_t)
     EV(HasBlueprint, 0x10000)
     EV(SeeThrough, 0x20000)
     EV(PreparedDestroyed, 0x40000000)
-    EV(PreparedDestroyed2, 0x40000000)
+    EV(PreparedDestroyed2, 0x80000000)
 END_ENUM()
 
 BEGIN_BITMASK(VisualCullFlags, uint16_t)
