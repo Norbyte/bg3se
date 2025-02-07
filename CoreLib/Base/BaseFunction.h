@@ -77,9 +77,7 @@ struct FunctionStorage<R (Args...)>
     }
 
     ~FunctionStorage()
-    {
-        move_(*this, std::move(*this), nullptr);
-    }
+    {}
 
     R operator ()(Args&&... args) const
     {
@@ -142,6 +140,13 @@ public:
     {
         if (o) {
             storage_ = std::move(o.storage_);
+        }
+    }
+
+    ~Function()
+    {
+        if (pStorage_) {
+            pStorage_->move_(storage_, std::move(storage_), nullptr);
         }
     }
 

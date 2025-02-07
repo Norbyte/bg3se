@@ -149,11 +149,6 @@ namespace bg3se::lua
 
         LifetimeHandle GetCurrentLifetime();
 
-        inline LifetimeHandle GetGlobalLifetime()
-        {
-            return globalLifetime_;
-        }
-
         inline LifetimePool& GetLifetimePool()
         {
             return lifetimePool_;
@@ -266,7 +261,6 @@ namespace bg3se::lua
 
         LifetimePool lifetimePool_;
         LifetimeStack lifetimeStack_;
-        LifetimeHandle globalLifetime_;
 
         CppMetatableManager metatableManager_;
 

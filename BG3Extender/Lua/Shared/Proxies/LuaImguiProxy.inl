@@ -73,7 +73,7 @@ int ImguiObjectProxyMetatable::Index(lua_State* L, CppObjectMetadata& self)
 
     auto& pm = obj->GetRTTI();
     auto prop = get<FixedString>(L, 2);
-    auto result = pm.GetRawProperty(L, State::FromLua(L)->GetGlobalLifetime(), obj, prop);
+    auto result = pm.GetRawProperty(L, LifetimeHandle{}, obj, prop);
 
     switch (result) {
     case PropertyOperationResult::Success:
@@ -165,10 +165,10 @@ int ImguiObjectProxyMetatable::Next(lua_State* L, CppObjectMetadata& self)
 
     auto& pm = obj->GetRTTI();
     if (lua_type(L, 2) == LUA_TNIL) {
-        return CppObjectProxyHelpers::Next(L, pm, obj, State::FromLua(L)->GetGlobalLifetime(), FixedString{});
+        return CppObjectProxyHelpers::Next(L, pm, obj, LifetimeHandle{}, FixedString{});
     } else {
         auto key = get<FixedString>(L, 2);
-        return CppObjectProxyHelpers::Next(L, pm, obj, State::FromLua(L)->GetGlobalLifetime(), key);
+        return CppObjectProxyHelpers::Next(L, pm, obj, LifetimeHandle{}, key);
     }
 }
 

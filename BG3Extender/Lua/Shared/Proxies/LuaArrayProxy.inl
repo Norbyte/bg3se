@@ -23,14 +23,6 @@ int ArrayProxyImplBase::GetRegistryIndex() const
 void* ArrayProxyMetatable::GetRaw(lua_State* L, int index, int propertyMapIndex)
 {
     auto meta = lua_get_lightcppobject(L, index, MetatableTag::Array, propertyMapIndex);
-
-    if (!meta.Lifetime.IsAlive(L)) {
-        auto curTy = gExtender->GetPropertyMapManager().GetArrayProxy(meta.PropertyMapTag);
-        luaL_error(L, "Argument %d: got %s whose lifetime has expired", index,
-            curTy->GetContainerType().TypeName.GetString());
-        return nullptr;
-    }
-
     return meta.Ptr;
 }
 

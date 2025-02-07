@@ -462,7 +462,7 @@ struct DialogInstance : public ProtectedGameObject<DialogInstance>
     bool WorldHadTriggered;
     bool IsPlayerWatchingTimeline;
     bool TimelineConfirmed;
-    // bool IsPreview; - maybe?
+    bool IsPreview;
     int8_t LocalHighlightedAnswer;
     int8_t HostHighlightedAnswer;
     uint8_t Flags;

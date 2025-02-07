@@ -207,7 +207,8 @@ bool OsiFunction::MatchTuple(lua_State * L, int firstIndex, TupleVec const & tup
             case ValueType::String:
             {
                 auto str = lua_tostring(L, firstIndex + i);
-                if (!str || _stricmp(v.Value.String, str) != 0) {
+                auto tval = v.GetString();
+                if (!str || _stricmp(tval, str) != 0) {
                     return false;
                 }
                 break;
@@ -219,15 +220,16 @@ bool OsiFunction::MatchTuple(lua_State * L, int firstIndex, TupleVec const & tup
                 if (!str) return false;
 
                 auto len = strlen(str);
-                auto valueLen = strlen(v.Value.String);
-                if (valueLen < 36 || len < 36 || _stricmp(&v.Value.String[valueLen - 36], &str[len - 36]) != 0) {
+                auto tval = v.GetString();
+                auto valueLen = strlen(tval);
+                if (valueLen < 36 || len < 36 || _stricmp(&tval[valueLen - 36], &str[len - 36]) != 0) {
                     return false;
                 }
                 break;
             }
 
             default:
-                OsiError("Unsupported ValueType for comparison: " << v.TypeId);
+                OsiError("Unsupported ValueType for comparison: " << (uint16_t)v.TypeId);
                 return false;
             }
         }
@@ -431,8 +433,7 @@ int OsiFunction::OsiUserQuery(lua_State * L) const
             LuaToOsi(L, inputArgIndex + 2, node->Item.Value, (ValueType)argType->Item.Type);
             inputArgIndex++;
         } else {
-            node->Item.Value.VMT = gExtender->GetServer().Osiris().GetGlobals().TypedValueVMT;
-            node->Item.Value.TypeId = (uint32_t)ValueType::None;
+            node->Item.Value.TypeId = ValueType::None;
         }
 
         prev = node;

@@ -87,7 +87,7 @@ std::vector<Object*> StatLoadOrderHelper::GetStatsLoadedBefore(FixedString modId
     if (!state) return {};
 
     bool modIdFound{ false };
-    for (auto const& mod : state->GetModManager()->BaseModule.LoadOrderedModules) {
+    for (auto const& mod : state->GetModManager()->LoadOrderedModules) {
         modsLoadedBefore.insert(mod.Info.ModuleUUIDString);
         if (mod.Info.ModuleUUIDString == modId) {
             modIdFound = true;

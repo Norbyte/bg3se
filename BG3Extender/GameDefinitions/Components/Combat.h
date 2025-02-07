@@ -39,19 +39,15 @@ struct TurnBasedComponent : public BaseComponent
 {
     DEFINE_COMPONENT(TurnBased, "eoc::TurnBasedComponent")
 
-    uint8_t field_8;
     [[bg3::legacy(IsInCombat_M)]] bool IsActiveCombatTurn;
     bool field_A;
     bool RequestedEndTurn;
     [[bg3::legacy(field_C), bg3::legacy(ItemCanAct)]] bool TurnActionsCompleted;
-    [[bg3::legacy(field_10)]] int EndTurnRequestReason;
     bool ActedThisRoundInCombat;
     bool HadTurnInCombat;
     [[bg3::legacy(CanAct_M)]] bool CanActInCombat;
-    int field_18;
-    uint8_t field_1C;
-    int field_20;
-    [[bg3::legacy(field_24)]] bool CanActInCombat2;
+    std::optional<float> field_18;
+    std::optional<float> field_20;
     std::optional<float> field_28;
     Guid Combat;
 };

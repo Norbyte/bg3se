@@ -45,9 +45,9 @@ namespace bg3se::osidbg
 
         auto const & goalDb = (*globals_.Goals);
         for (unsigned i = 0; i < goalDb->NumItems; i++) {
-            auto goal = goalDb->Goals.Find(i + 1);
-            AddRuleActionMappings(nullptr, *goal, true, (*goal)->InitCalls);
-            AddRuleActionMappings(nullptr, *goal, false, (*goal)->ExitCalls);
+            auto goal = goalDb->Goals[i + 1];
+            AddRuleActionMappings(nullptr, goal, true, goal->InitCalls);
+            AddRuleActionMappings(nullptr, goal, false, goal->ExitCalls);
         }
     }
 
@@ -486,8 +486,8 @@ namespace bg3se::osidbg
     {
         auto const & goalDb = (*globals_.Goals);
         for (unsigned i = 0; i < goalDb->NumItems; i++) {
-            auto goal = goalDb->Goals.Find(i + 1);
-            messageHandler_.SendSyncStory(*goal);
+            auto goal = goalDb->Goals[i + 1];
+            messageHandler_.SendSyncStory(goal);
         }
 
         auto const & databaseDb = (*globals_.Databases)->Db;
@@ -514,35 +514,34 @@ namespace bg3se::osidbg
         breakpointCv_.notify_one();
     }
 
-    void MsgToValue(MsgTypedValue const & msg, TypedValue & tv, void * tvVmt)
+    void MsgToValue(MsgTypedValue const & msg, TypedValue & tv)
     {
-        tv.VMT = tvVmt;
-        tv.TypeId = msg.type_id();
+        auto type = (ValueType)msg.type_id();
         switch ((ValueType)msg.type_id()) {
         case ValueType::None:
             break;
 
         case ValueType::Integer:
-            tv.Value.Int32 = (int32_t)msg.intval();
+            tv.SetValue(type, (int32_t)msg.intval());
             break;
 
         case ValueType::Integer64:
-            tv.Value.Int64 = msg.intval();
+            tv.SetValue(type, (int64_t)msg.intval());
             break;
 
         case ValueType::Real:
-            tv.Value.Float = msg.floatval();
+            tv.SetValue(type, msg.floatval());
             break;
 
         case ValueType::String:
         case ValueType::GuidString:
         default:
-            tv.Value.String = _strdup(msg.stringval().c_str());
+            tv.SetValue(type, msg.stringval().c_str());
             break;
         }
     }
 
-    void MsgToTuple(MsgTuple const & msg, VirtTupleLL & tuple, void * tvVmt)
+    void MsgToTuple(MsgTuple const & msg, VirtTupleLL & tuple)
     {
         tuple.Data.Items.Size = msg.column_size();
         auto head = new ListNode<TupleLL::Item>();
@@ -559,13 +558,13 @@ namespace bg3se::osidbg
 
             auto & param = msg.column()[i];
             item->Item.Index = i;
-            MsgToValue(param, item->Item.Value, tvVmt);
+            MsgToValue(param, item->Item.Value);
 
             prev = item;
         }
     }
 
-    void MsgToTuple(MsgTuple const & msg, TuplePtrLL & tuple, void * tvVmt)
+    void MsgToTuple(MsgTuple const & msg, TuplePtrLL & tuple)
     {
         auto & items = tuple.Items;
         items.Init();
@@ -575,7 +574,7 @@ namespace bg3se::osidbg
             auto & param = msg.column()[i];
             prev = items.Insert(prev);
             prev->Item = new TypedValue();
-            MsgToValue(param, *prev->Item, tvVmt);
+            MsgToValue(param, *prev->Item);
         }
     }
 
@@ -585,7 +584,7 @@ namespace bg3se::osidbg
         auto cur = head->Next;
         for (unsigned i = 0; i < tuple.Data.Items.Size; i++) {
             if (signature.OutParamList.isOutParam(i)) {
-                cur->Item.Value.TypeId = (uint32_t)ValueType::None;
+                cur->Item.Value.ClearValue();
             }
 
             cur = cur->Next;
@@ -655,11 +654,6 @@ namespace bg3se::osidbg
             return ResultCode::NoAdapter;
         }
 
-        if (globals_.TypedValueVMT == nullptr) {
-            WARN("Debugger::EvaluateInServerThread(): TypedValue VMT not available");
-            return ResultCode::EvalEngineNotReady;
-        }
-
         breakpoints_.SetDebuggingDisabled(true);
 
         switch (type)
@@ -667,7 +661,7 @@ namespace bg3se::osidbg
         case EvalType::IsValid:
         {
             VirtTupleLL tuple;
-            MsgToTuple(params, tuple, globals_.TypedValueVMT);
+            MsgToTuple(params, tuple);
             // Evaluate whether the query succeeds
             querySucceeded = node->IsValid(&tuple, adapter->Id);
             // Fetch output values
@@ -683,7 +677,7 @@ namespace bg3se::osidbg
         case EvalType::Insert:
         {
             TuplePtrLL tuple;
-            MsgToTuple(params, tuple, globals_.TypedValueVMT);
+            MsgToTuple(params, tuple);
             node->InsertTuple(&tuple);
             break;
         }
@@ -691,7 +685,7 @@ namespace bg3se::osidbg
         case EvalType::Delete:
         {
             TuplePtrLL tuple;
-            MsgToTuple(params, tuple, globals_.TypedValueVMT);
+            MsgToTuple(params, tuple);
             node->DeleteTuple(&tuple);
             break;
         }
@@ -981,9 +975,9 @@ namespace bg3se::osidbg
             && action->Arguments->Args.Size == 1
             && strcmp(action->FunctionName, "DebugBreak") == 0) {
             TypedValue * message = action->Arguments->Args.Head->Next->Item;
-            if (message->TypeId == (uint32_t)ValueType::String
-                && message->Value.String != nullptr) {
-                messageHandler_.SendDebugOutput(message->Value.String);
+            if (message->TypeId == ValueType::String
+                && *message->GetString()) {
+                messageHandler_.SendDebugOutput(message->GetString());
             }
             else {
                 WARN("Invalid message parameter type for DebugBreak(): %d", message->TypeId);

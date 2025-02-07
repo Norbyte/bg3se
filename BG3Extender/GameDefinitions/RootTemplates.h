@@ -54,11 +54,9 @@ struct GameObjectTemplate
     OverrideableProperty<uint32_t> GroupID;
     FixedString LevelName;
     uint8_t _Pad[4];
-    OverrideableProperty<glm::vec3> CameraOffset;
     OverrideableProperty<Transform> Transform;
     OverrideableProperty<FixedString> VisualTemplate;
     OverrideableProperty<FixedString> PhysicsTemplate;
-    OverrideableProperty<FixedString> PhysicsOpenTemplate;
     OverrideableProperty<bool> CastShadow;
     OverrideableProperty<bool> ReceiveDecal;
     OverrideableProperty<bool> AllowReceiveDecalWhenAnimated;

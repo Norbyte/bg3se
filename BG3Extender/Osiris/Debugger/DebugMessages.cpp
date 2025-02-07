@@ -18,7 +18,7 @@ namespace bg3se::osidbg
 
     void MakeMsgColumn(MsgTypedValue & msgTv, TypedValue const & tv)
     {
-        msgTv.set_type_id(tv.TypeId);
+        msgTv.set_type_id((uint16_t)tv.TypeId);
         auto const & val = tv.Value;
 
         switch ((ValueType)tv.TypeId) {
@@ -27,7 +27,7 @@ namespace bg3se::osidbg
         case ValueType::Integer: msgTv.set_intval(val.Int32); break;
         case ValueType::Integer64: msgTv.set_intval(val.Int64); break;
         case ValueType::Real: msgTv.set_floatval(val.Float); break;
-        default: *msgTv.mutable_stringval() = val.String; break;
+        default: *msgTv.mutable_stringval() = tv.GetString(); break;
         }
     }
 
@@ -105,13 +105,15 @@ namespace bg3se::osidbg
             break;
 
         default:
-            if (tv.Value.String) {
-                ss << '"' << tv.Value.String << '"';
-            }
-            else {
+        {
+            auto s = tv.GetString();
+            if (s) {
+                ss << '"' << s << '"';
+            } else {
                 ss << "(Null)";
             }
             break;
+        }
         }
     }
 

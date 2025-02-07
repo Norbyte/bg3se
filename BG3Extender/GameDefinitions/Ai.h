@@ -346,10 +346,10 @@ struct DangerousAuras
 
 struct AiPathAoOPosition
 {
-    int field_0;
-    int field_4;
-    int field_8;
-    int field_C;
+    glm::vec3 Position;
+    float Distance;
+    float field_10;
+    float field_14;
 };
 
 
@@ -372,9 +372,10 @@ struct AiPathNode
 };
 
 
-struct AiPathCheckpoint : public ProtectedGameObject<AiPathCheckpoint>
+struct AiPathCheckpoint
 {
-    [[bg3::hidden]] void* field_0;
+    virtual ~AiPathCheckpoint();
+
     glm::vec3 Position;
     EntityHandle Portal;
     EntityHandle field_20;

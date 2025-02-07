@@ -5,6 +5,10 @@
 
 BEGIN_SE()
 
+AiPathCheckpoint::~AiPathCheckpoint()
+{}
+
+
 void AiPath::Reset()
 {
     // CoverManager = ...;
@@ -51,6 +55,9 @@ void AiPath::Reset()
     UseSplines = true;
     UseTurning = true;
     IsPlayer = false;
+
+    DestinationFunc = {};
+    WeightFunc = {};
 }
 
 void AiPath::SetSourceEntity(ecs::EntitySystemHelpersBase& helpers, EntityHandle entity)

@@ -348,7 +348,7 @@ LuaStateWrapper::LuaStateWrapper()
 {
     L = lua_newstate(LuaAlloc, nullptr);
     Internal = lua_new_internal_state();
-    lua_setup_cppobjects(L, &LuaCppAlloc, &LuaCppFree, &LuaCppGetLightMetatable, &LuaCppGetMetatable, &LuaCppCanonicalize);
+    lua_setup_cppobjects(L, &LuaCppAlloc, &LuaCppFree, &LuaCppGetLightMetatable, &LuaCppGetMetatable, &LuaCppFinalize, &LuaCppCanonicalize);
     lua_setup_strcache(L, &LuaCacheString, &LuaReleaseString);
 #if LUA_VERSION_NUM <= 501
     luaJIT_setmode(L, 0, LUAJIT_MODE_ENGINE | LUAJIT_MODE_ON);
@@ -365,7 +365,6 @@ State::State(ExtensionStateBase& state, uint32_t generationId, bool isServer)
     : generationId_(generationId),
     state_(state),
     lifetimeStack_(lifetimePool_),
-    globalLifetime_(lifetimePool_.Allocate()),
     variableManager_(isServer ? gExtender->GetServer().GetExtensionState().GetUserVariables() : gExtender->GetClient().GetExtensionState().GetUserVariables(), isServer),
     modVariableManager_(isServer ? gExtender->GetServer().GetExtensionState().GetModVariables() : gExtender->GetClient().GetExtensionState().GetModVariables(), isServer),
     entityHooks_(*this),
@@ -378,9 +377,7 @@ State::State(ExtensionStateBase& state, uint32_t generationId, bool isServer)
 }
 
 State::~State()
-{
-    lifetimePool_.Release(globalLifetime_);
-}
+{}
 
 void State::Initialize()
 {

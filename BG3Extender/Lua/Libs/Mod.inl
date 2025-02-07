@@ -19,14 +19,14 @@ bool IsModLoaded(lua_State* L, FixedString modNameGuid)
 
     auto modUuid = Guid::Parse(modNameGuid.GetStringView());
     if (modUuid) {
-        for (auto const& mod : modManager->BaseModule.LoadOrderedModules) {
+        for (auto const& mod : modManager->LoadOrderedModules) {
             if (mod.Info.ModuleUUID == *modUuid) {
                 return true;
             }
         }
     }
     
-    for (auto const& mod : modManager->BaseModule.LoadOrderedModules) {
+    for (auto const& mod : modManager->LoadOrderedModules) {
         if (mod.Info.ModuleUUIDString == modNameGuid) {
             return true;
         }
@@ -86,7 +86,7 @@ Array<FixedString> GetLoadOrder(lua_State* L)
     Array<FixedString> loadOrder;
     auto modManager = ExtensionStateBase::FromLua(L).GetModManager();
 
-    for (auto const& mod : modManager->BaseModule.LoadOrderedModules) {
+    for (auto const& mod : modManager->LoadOrderedModules) {
         loadOrder.Add(mod.Info.ModuleUUIDString);
     }
 
@@ -110,7 +110,7 @@ Module* GetMod(lua_State* L, FixedString modNameGuid)
         }
     }
 
-    for (auto& mod : modManager->BaseModule.LoadOrderedModules) {
+    for (auto& mod : modManager->LoadOrderedModules) {
         if (mod.Info.ModuleUUIDString == modNameGuid) {
             return &mod;
         }

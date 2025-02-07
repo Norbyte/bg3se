@@ -10,7 +10,6 @@ void LuaPolymorphic<esv::ActionState>::MakeRef(lua_State* L, esv::ActionState* v
     switch (v->GetType()) {
         V(ASAnimation)
         V(ASMoveItem)
-        V(ASPickupItem)
         V(ASKnockedDown)
         V(ASUseItem)
         V(ASCombineItem)

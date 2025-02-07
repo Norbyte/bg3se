@@ -1363,7 +1363,7 @@ BEGIN_BITMASK_NS(ecs, ComponentChangeFlags, ECSComponentChangeFlags, uint8_t)
     EV(ReplicatedComponent, 0x10)
 END_ENUM_NS()
 
-BEGIN_BITMASK(DynamicModifierType, uint8_t)
+BEGIN_ENUM(DynamicModifierType, uint8_t)
     EV(None, 0)
     EV(Consumable, 1)
     EV(ItemSpell, 2)

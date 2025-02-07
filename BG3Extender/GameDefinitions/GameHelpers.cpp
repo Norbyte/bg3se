@@ -183,7 +183,7 @@ namespace bg3se
             return nullptr;
         }
 
-        for (auto const& mod : BaseModule.LoadOrderedModules) {
+        for (auto const& mod : LoadOrderedModules) {
             if (mod.Info.ModuleUUIDString == modUuidFS) {
                 return &mod;
             }
@@ -367,6 +367,7 @@ void LuaPolymorphic<stats::Functor>::MakeRef(lua_State* L, stats::Functor* value
         V(SetDisadvantage)
         V(MaximizeRoll)
         V(CameraWait)
+        V(ModifySpellCameraFocus)
         V(Extender)
 
     default:

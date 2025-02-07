@@ -35,19 +35,26 @@ struct BitfieldInfoStoreBase
 
     void __declspec(noinline) Add(T val, char const* label)
     {
-        DWORD index;
-        if (_BitScanForward64(&index, (uint64_t)val)) {
-            index++;
-        } else {
-            index = 0;
+        FixedString fs(label);
+
+        // Mapping composite flags (i.e. combination of flags) only supported in one direction
+        if ((val & (val - 1)) == 0) {
+            DWORD index;
+            if (_BitScanForward64(&index, (uint64_t)val)) {
+                index++;
+            } else {
+                index = 0;
+            }
+
+            if (Labels.size() <= index) {
+                Labels.resize(index + 1);
+            }
+
+            assert(!Labels[index]);
+            Labels[index] = fs;
         }
 
-        if (Labels.size() <= index) {
-            Labels.resize(index + 1);
-        }
-            
-        FixedString fs(label);
-        Labels[index] = fs;
+        assert(Values.find(fs) == Values.end());
         Values.insert(std::move(fs), val);
         AllowedFlags |= val;
     }
@@ -106,7 +113,10 @@ struct EnumInfoStoreBase
             Labels.resize(index + 1);
         }
 
+        assert(!Labels[index]);
         Labels[index] = fs;
+
+        assert(Values.find(fs) == Values.end());
         Values.insert(std::move(fs), val);
     }
 

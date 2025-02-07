@@ -18,7 +18,7 @@ BEGIN_NS(lua)
 
 bool LifetimeHandle::IsAlive(lua_State* L) const
 {
-    if (*this == State::GetExtra(L)->CurrentLifetime) [[likely]] {
+    if (*this == State::GetExtra(L)->CurrentLifetime || handle_ == NullHandle) [[likely]] {
         return true;
     }
 

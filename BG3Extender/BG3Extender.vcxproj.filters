@@ -487,7 +487,6 @@
     <ClInclude Include="Lua\Client\ClientEntityReplicationEvents.h" />
     <ClInclude Include="Lua\Libs\Level.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaLightCppObjectMeta.h" />
-    <ClInclude Include="Lua\Shared\Proxies\LuaCppObjectMeta.h" />
     <ClInclude Include="Lua\Libs\Net.h" />
     <ClInclude Include="GameDefinitions\Cursor.h" />
     <ClInclude Include="GameDefinitions\Effect.h" />

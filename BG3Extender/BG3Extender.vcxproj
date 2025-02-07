@@ -75,7 +75,7 @@
       <DelayLoadDLLs>vulkan-1.dll;d3dcompiler_47.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y "$(TargetPath)" "D:\SteamLibrary\steamapps\common\Baldurs Gate 3\bin\DWrite.dll"
+      <Command>copy /Y "$(TargetPath)" "D:\SteamLibrary\steamapps\common\Baldur's Gate 3 Playtest\bin\DWrite.dll"
 rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\steamapps\common\Baldurs Gate 3\Data\"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
@@ -289,7 +289,6 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="Lua\Shared\Proxies\LuaArrayProxy.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaBitfieldValue.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaCppClass.h" />
-    <ClInclude Include="Lua\Shared\Proxies\LuaCppObjectMeta.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaCppObjectProxy.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaCppValue.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaEntityProxy.h" />

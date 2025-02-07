@@ -191,15 +191,13 @@ struct SpellData
 {
     SpellId Id;
     [[bg3::legacy(SpellUUID)]] Guid PreferredCastingResource;
-    int32_t field_38;
-    int32_t field_3C;
+    int32_t UsedCharges;
+    int32_t NumCharges;
     SpellCooldownType CooldownType;
     [[bg3::legacy(field_41)]] bool Charged;
     [[bg3::legacy(field_42)]] SpellPrepareType PrepareType;
     AbilityId SpellCastingAbility;
     Array<CastRequirements> CastRequirements;
-    // uint32_t NumCharges;
-    // uint32_t UsedCharges;
 };
 
 struct BookComponent : public BaseComponent

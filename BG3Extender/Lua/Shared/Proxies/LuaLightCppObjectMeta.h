@@ -34,28 +34,13 @@ public:
         if constexpr (std::is_base_of_v<OpaqueIndexable, TSubclass>) {
             StackCheck _(L, 1);
             auto self = lua_get_opaque_lightcppobject(L, 1, TSubclass::MetaTag);
-
-            if constexpr (TSubclass::HasLifetime) {
-                auto lifetime = lua_get_opaque_lifetime(self);
-                if (!lifetime.IsAlive(L)) {
-                    luaL_error(L, "Attempted to read '%s' whose lifetime has expired", TSubclass::GetTypeName(L, self));
-                    return 0;
-                }
-            }
-
             return TSubclass::Index(L, self);
+
         } else if constexpr (std::is_base_of_v<Indexable, TSubclass>) {
             StackCheck _(L, 1);
             auto self = lua_get_lightcppobject(L, 1, TSubclass::MetaTag);
-
-            if constexpr (TSubclass::HasLifetime) {
-                if (!self.Lifetime.IsAlive(L)) {
-                    luaL_error(L, "Attempted to read '%s' whose lifetime has expired", TSubclass::GetTypeName(L, self));
-                    return 0;
-                }
-            }
-
             return TSubclass::Index(L, self);
+
         } else {
             return luaL_error(L, "Not indexable!");
         }
@@ -66,14 +51,6 @@ public:
         if constexpr (std::is_base_of_v<NewIndexable, TSubclass>) {
             StackCheck _(L, 0);
             auto self = lua_get_lightcppobject(L, 1, TSubclass::MetaTag);
-
-            if constexpr (TSubclass::HasLifetime) {
-                if (!self.Lifetime.IsAlive(L)) {
-                    luaL_error(L, "Attempted to write '%s' whose lifetime has expired", TSubclass::GetTypeName(L, self));
-                    return 0;
-                }
-            }
-
             return TSubclass::NewIndex(L, self);
         } else {
             return luaL_error(L, "Not newindexable!");
@@ -85,15 +62,6 @@ public:
         if constexpr (std::is_base_of_v<Lengthable, TSubclass>) {
             StackCheck _(L, 1);
             auto self = lua_get_lightcppobject(L, 1, TSubclass::MetaTag);
-
-            if constexpr (TSubclass::HasLifetime) {
-                if (!self.Lifetime.IsAlive(L)) {
-                    luaL_error(L, "Attempted to get length of '%s' whose lifetime has expired", TSubclass::GetTypeName(L, self));
-                    push(L, nullptr);
-                    return 1;
-                }
-            }
-
             return TSubclass::Length(L, self);
         } else {
             return luaL_error(L, "Not lengthable!");
@@ -114,10 +82,20 @@ public:
     {
         if constexpr (std::is_base_of_v<Stringifiable, TSubclass>) {
             StackCheck _(L, 1);
-            auto self = lua_get_lightcppobject(L, 1, TSubclass::MetaTag);
+            auto self = lua_get_unchecked_lightcppobject(L, 1, TSubclass::MetaTag);
             return TSubclass::ToString(L, self);
         } else {
             return luaL_error(L, "Not stringifiable!");
+        }
+    }
+
+    static int GCProxy(lua_State* L)
+    {
+        if constexpr (std::is_base_of_v<GarbageCollected, TSubclass>) {
+            auto self = lua_get_lightcppobject(L, 1, TSubclass::MetaTag);
+            return TSubclass::GC(L, self);
+        } else {
+            return luaL_error(L, "Not garbage collected!");
         }
     }
 
@@ -178,12 +156,6 @@ public:
     {
         if constexpr (std::is_base_of_v<Iterable, TSubclass>) {
             auto self = lua_get_lightcppobject(L, 1, TSubclass::MetaTag);
-
-            if (!self.Lifetime.IsAlive(L)) {
-                luaL_error(L, "Attempted to iterate '%s' whose lifetime has expired", TSubclass::GetTypeName(L, self));
-                return 0;
-            }
-
             return TSubclass::Next(L, self);
         } else {
             return luaL_error(L, "Not iterable!");
@@ -231,7 +203,9 @@ public:
             lua_cmetatable_set(L, mt, (int)MetamethodName::ToString, &ToStringProxy);
         }
 
-        // Light cppobjects are not garbage collected (they're passed by value)
+        if constexpr (std::is_base_of_v<GarbageCollected, TSubclass>) {
+            lua_cmetatable_set(L, mt, (int)MetamethodName::GC, &GCProxy);
+        }
 
         if constexpr (std::is_base_of_v<EqualityComparable, TSubclass>) {
             lua_cmetatable_set(L, mt, (int)MetamethodName::Eq, &EqualProxy);

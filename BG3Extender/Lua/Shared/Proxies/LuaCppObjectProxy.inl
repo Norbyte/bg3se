@@ -210,6 +210,13 @@ int LightObjectProxyMetatable::ToString(lua_State* L, CppObjectMetadata& self)
     return 1;
 }
 
+int LightObjectProxyMetatable::GC(lua_State* L, CppObjectMetadata& self)
+{
+    auto pm = gStructRegistry.Get(self.PropertyMapTag);
+    pm->Destroy(self.Ptr);
+    return 0;
+}
+
 bool LightObjectProxyMetatable::IsEqual(lua_State* L, CppObjectMetadata& self, CppObjectMetadata& other)
 {
     return self.Ptr == other.Ptr && self.PropertyMapTag == other.PropertyMapTag;

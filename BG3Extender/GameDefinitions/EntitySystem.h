@@ -21,8 +21,13 @@ BEGIN_NS(ecs)
 struct EntityWorld;
 struct EntityStorageData;
 
-using ComponentTypeMask = BitArray<uint64_t, 32>;
-using QueryMask = BitArray<uint64_t, 40>;
+constexpr unsigned ComponentMapSize = 0x880;
+constexpr unsigned OneFrameComponentMapSize = 0x280;
+constexpr unsigned QueryMapSize = 0xB00;
+
+using ComponentTypeMask = BitArray<uint64_t, ComponentMapSize/64>;
+using OneFrameComponentTypeMask = BitArray<uint64_t, OneFrameComponentMapSize /64>;
+using QueryMask = BitArray<uint64_t, QueryMapSize/64>;
 using EntityTypeMask = BitArray<uint64_t, 4>;
 
 // Component type index, registered statically during game startup
@@ -56,13 +61,13 @@ BEGIN_SE()
 template <>
 inline uint64_t SparseHashMapHash<ecs::ComponentTypeIndex>(ecs::ComponentTypeIndex const& v)
 {
-    return (ecs::TComponentTypeIndex(v) & 0x7FFF) + (ecs::TComponentTypeIndex(v) >> 15 << 11);
+    return (ecs::TComponentTypeIndex(v) & 0x7FFF) + (ecs::TComponentTypeIndex(v) >> 15) * ecs::ComponentMapSize;
 }
 
 template <>
 inline uint64_t HashMapHash<ecs::ComponentTypeIndex>(ecs::ComponentTypeIndex const& v)
 {
-    auto h0 = ((uint64_t)v & 0x7FFF) + ((uint64_t)v >> 15 << 11);
+    auto h0 = ((uint64_t)v & 0x7FFF) + ((uint64_t)v >> 15) * ecs::ComponentMapSize;
     return h0 | (h0 << 16);
 }
 
@@ -373,7 +378,7 @@ struct FieldTracker
     };
 
     virtual ~FieldTracker();
-    virtual void Add(EntityHandle entity, EntityHandle entity2, void* component) = 0;
+    virtual void Add(EntityHandle entity, void* component) = 0;
     virtual void FireEvents() = 0;
     virtual void Remove(EntityHandle entity) = 0;
 
@@ -728,8 +733,8 @@ struct EntityStorageChangeBatch
     FrameAllocator* FrameAllocator;
     SparseArray<uint16_t> OneFrameComponentTypes;
     __int64 field_78;
-    std::array<uint8_t, 256> QueryFlag0Mask;
-    std::array<uint8_t, 256> QueryFlag1Mask;
+    ComponentTypeMask QueryFlag0Mask;
+    ComponentTypeMask QueryFlag1Mask;
     BitSet<> field_280;
 };
 
@@ -740,9 +745,9 @@ struct ECBExecutor
     EntityStorageContainer* Storage;
     ComponentRegistry* ComponentRegistry;
     ComponentOpsRegistry* ComponentOps;
-    std::array<uint8_t, 256> RemovedComponentsMask;
-    std::array<uint8_t, 256> AddedComponentsMask;
-    std::array<uint8_t, 64> AddedOneFrameComponentsMask;
+    ComponentTypeMask RemovedComponentsMask;
+    ComponentTypeMask AddedComponentsMask;
+    OneFrameComponentTypeMask AddedOneFrameComponentsMask;
     Array<ComponentPool> ComponentPools;
     PagedHashMap<EntityHandle, ECBEntityChangeSet, ECBFrameAllocator> EntityChanges;
     __int64 field_2B8;
@@ -766,6 +771,7 @@ struct EntityWorld : public ProtectedGameObject<EntityWorld>
     MPMCQueueBounded<void*> DependencyExecutorQueue;
     GameTime Time;
     void* ECSUpdateBatch;
+    void* field_160x;
     int field_160;
     Array<EntityCommandBuffer> CommandBuffers;
     ComponentCallbackRegistry ComponentCallbacks;

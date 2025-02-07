@@ -383,7 +383,7 @@ namespace bg3se::lua::dbg
 
         for (auto it : pm.IterableProperties) {
             auto const& prop = pm.Properties.values()[it.Value()];
-            auto result = prop.Get(L, State::FromLua(L)->GetGlobalLifetime(), obj, prop);
+            auto result = prop.Get(L, LifetimeHandle{}, obj, prop);
             if (result == PropertyOperationResult::Success) {
                 push(L, it.Key());
                 LuaElementToEvalResults(L, -1, -2, req);
@@ -897,7 +897,7 @@ namespace bg3se::lua::dbg
         auto L = lua->GetState();
         DebugEvalGuard _G(*this);
         StackCheck _(L);
-        StaticLifetimeStackPin _LT(lua->GetState(), lua->GetGlobalLifetime());
+        StaticLifetimeStackPin _LT(lua->GetState(), lua::LifetimeHandle{});
 
         if (req.Expression == "reset") {
             if (gExtender->GetServer().HasExtensionState() && gExtender->GetServer().GetExtensionState().GetLua()) {
@@ -1091,7 +1091,7 @@ namespace bg3se::lua::dbg
         auto L = lua->GetState();
         DebugEvalGuard _G(*this);
         StackCheck _(L);
-        StaticLifetimeStackPin _LT(lua->GetState(), lua->GetGlobalLifetime());
+        StaticLifetimeStackPin _LT(lua->GetState(), lua::LifetimeHandle{});
 
         ContextDebuggerGetVarCtx ctx{ this, &req, ResultCode::Success };
         char const* error;

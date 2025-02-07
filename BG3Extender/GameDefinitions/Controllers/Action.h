@@ -93,24 +93,6 @@ struct ASMoveItem : public ASMoveBase
     bool MoveFinished;
 };
 
-struct ASPickupItem : public ASMoveBase
-{
-    static constexpr auto Type = ActionType::PickupItem;
-
-    EntityHandle Item;
-    int16_t Slot2;
-    EntityHandle field_58;
-    int Amount;
-    int16_t Slot;
-    uint8_t field_66;
-    uint8_t field_67;
-    bool Failed;
-    bool PickupRequested;
-    bool MoveCompleted;
-    glm::vec3 PickupPosition;
-    glm::vec3 PickupPosition2;
-};
-
 struct ASKnockedDown : public ASMoveBase
 {
     static constexpr auto Type = ActionType::KnockedDown;

@@ -215,6 +215,12 @@ void ReleasePath(lua_State* L, AiPath* path)
     }
 }
 
+AiPath* GetPathById(lua_State* L, AiPathId id)
+{
+    auto aiGrid = GetAiGrid(L);
+    return aiGrid->PathMap.try_get(id);
+}
+
 Array<AiPath*> GetActivePathfindingRequests(lua_State* L)
 {
     Array<AiPath*> paths;
@@ -241,6 +247,7 @@ phx::PhysicsHit* RaycastClosest(lua_State* L, glm::vec3 const& source, glm::vec3
     auto levelManager = State::FromLua(L)->GetExtensionState().GetLevelManager();
     auto phys = levelManager->CurrentLevel->PhysicsScene;
     auto callback = MakeFunction(&filterfunc);
+    gHit = phx::PhysicsHit{};
     auto xhit = phys->RaycastClosest(source, destination, gHit, physicsType, includePhysicsGroup, excludePhysicsGroup, context , -1, -1, &callback);
     if (xhit) {
         return &gHit;
@@ -268,6 +275,7 @@ phx::PhysicsHit* SweepSphereClosest(lua_State* L, glm::vec3 const& source, glm::
 {
     auto levelManager = State::FromLua(L)->GetExtensionState().GetLevelManager();
     auto phys = levelManager->CurrentLevel->PhysicsScene;
+    gHit = phx::PhysicsHit{};
     auto xhit = phys->SweepSphereClosest(radius, source, destination, gHit, physicsType, includePhysicsGroup, excludePhysicsGroup, context, -1, -1);
     if (xhit) {
         return &gHit;
@@ -280,6 +288,7 @@ phx::PhysicsHit* SweepCapsuleClosest(lua_State* L, glm::vec3 const& source, glm:
 {
     auto levelManager = State::FromLua(L)->GetExtensionState().GetLevelManager();
     auto phys = levelManager->CurrentLevel->PhysicsScene;
+    gHit = phx::PhysicsHit{};
     auto xhit = phys->SweepCapsuleClosest(radius, halfHeight, source, destination, gHit, physicsType, includePhysicsGroup, excludePhysicsGroup, context, -1, -1);
     if (xhit) {
         return &gHit;
@@ -292,6 +301,7 @@ phx::PhysicsHit* SweepBoxClosest(lua_State* L, glm::vec3 const& source, glm::vec
 {
     auto levelManager = State::FromLua(L)->GetExtensionState().GetLevelManager();
     auto phys = levelManager->CurrentLevel->PhysicsScene;
+    gHit = phx::PhysicsHit{};
     auto xhit = phys->SweepBoxClosest(extents, source, destination, gHit, physicsType, includePhysicsGroup, excludePhysicsGroup, context, -1, -1);
     if (xhit) {
         return &gHit;
@@ -304,6 +314,7 @@ phx::PhysicsHitAll* SweepSphereAll(lua_State* L, glm::vec3 const& source, glm::v
 {
     auto levelManager = State::FromLua(L)->GetExtensionState().GetLevelManager();
     auto phys = levelManager->CurrentLevel->PhysicsScene;
+    gHits = phx::PhysicsHitAll{};
     auto xhit = phys->SweepSphereAll(radius, source, destination, gHits, physicsType, includePhysicsGroup, excludePhysicsGroup, context, -1, -1);
     if (xhit) {
         return &gHits;
@@ -316,6 +327,7 @@ phx::PhysicsHitAll* SweepCapsuleAll(lua_State* L, glm::vec3 const& source, glm::
 {
     auto levelManager = State::FromLua(L)->GetExtensionState().GetLevelManager();
     auto phys = levelManager->CurrentLevel->PhysicsScene;
+    gHits = phx::PhysicsHitAll{};
     auto xhit = phys->SweepCapsuleAll(radius, halfHeight, source, destination, gHits, physicsType, includePhysicsGroup, excludePhysicsGroup, context, -1, -1);
     if (xhit) {
         return &gHits;
@@ -328,6 +340,7 @@ phx::PhysicsHitAll* SweepBoxAll(lua_State* L, glm::vec3 const& source, glm::vec3
 {
     auto levelManager = State::FromLua(L)->GetExtensionState().GetLevelManager();
     auto phys = levelManager->CurrentLevel->PhysicsScene;
+    gHits = phx::PhysicsHitAll{};
     auto xhit = phys->SweepBoxAll(extents, source, destination, gHits, physicsType, includePhysicsGroup, excludePhysicsGroup, context, -1, -1);
     if (xhit) {
         return &gHits;
@@ -340,6 +353,7 @@ phx::PhysicsHitAll* TestBox(lua_State* L, glm::vec3 const& position, glm::vec3 c
 {
     auto levelManager = State::FromLua(L)->GetExtensionState().GetLevelManager();
     auto phys = levelManager->CurrentLevel->PhysicsScene;
+    gHits = phx::PhysicsHitAll{};
     auto xhit = phys->TestBox(extents, position, gHits, physicsType, includePhysicsGroup, excludePhysicsGroup);
     if (xhit) {
         return &gHits;
@@ -352,6 +366,7 @@ phx::PhysicsHitAll* TestSphere(lua_State* L, glm::vec3 const& position, float ra
 {
     auto levelManager = State::FromLua(L)->GetExtensionState().GetLevelManager();
     auto phys = levelManager->CurrentLevel->PhysicsScene;
+    gHits = phx::PhysicsHitAll{};
     auto xhit = phys->TestSphere(position, radius, gHits, physicsType, includePhysicsGroup, excludePhysicsGroup);
     if (xhit) {
         return &gHits;
@@ -371,6 +386,7 @@ void RegisterLevelLib()
     MODULE_FUNCTION(BeginPathfindingImmediate)
     MODULE_FUNCTION(FindPath)
     MODULE_FUNCTION(ReleasePath)
+    MODULE_FUNCTION(GetPathById)
     MODULE_FUNCTION(GetActivePathfindingRequests)
 
     MODULE_FUNCTION(RaycastClosest)

@@ -338,6 +338,7 @@ public:
 
     inline void Release(LifetimeHandle handle)
     {
+        assert(handle);
         auto ref = Get(handle);
         if (ref) {
             pool_.Free(ref);

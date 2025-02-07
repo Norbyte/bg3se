@@ -1,13 +1,12 @@
 BEGIN_NS(lua)
 
-#define MAKE_REF(ty, cls) if (*type == GFS.ty) { MakeDirectObjectRef(L, static_cast<cls*>(obj), global); return; }
+#define MAKE_REF(ty, cls) if (*type == GFS.ty) { MakeDirectObjectRef(L, static_cast<cls*>(obj), LifetimeHandle{}); return; }
 
 static bool ShownTemplateTypeWarning{ false };
 
 void LuaPolymorphic<GameObjectTemplate>::MakeRef(lua_State* L, GameObjectTemplate* obj, LifetimeHandle lifetime)
 {
     auto type = obj->GetType();
-    auto global = State::FromLua(L)->GetGlobalLifetime();
 
     MAKE_REF(strcharacter, CharacterTemplate)
     MAKE_REF(stritem, ItemTemplate)
@@ -26,7 +25,7 @@ void LuaPolymorphic<GameObjectTemplate>::MakeRef(lua_State* L, GameObjectTemplat
         OsiWarn("Found template of unknown type '" << *type << "'; unknown templates will be proxied as GameObjectTemplate");
     }
 
-    MakeDirectObjectRef(L, obj, global);
+    MakeDirectObjectRef(L, obj, LifetimeHandle{});
 }
 
 #undef MAKE_REF

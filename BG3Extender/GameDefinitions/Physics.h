@@ -43,10 +43,10 @@ struct PhysicsObject : public ProtectedGameObject<PhysicsObject>
     glm::vec3 Translate;
     glm::quat Rotate;
     glm::vec3 Scale;
-    uint32_t PhysicsGroup;
-    uint32_t CollidesWith;
+    PhysicsGroupFlags PhysicsGroup;
+    PhysicsGroupFlags CollidesWith;
     int PhysicsObjectIndex;
-    uint32_t PhysicsExtraFlags;
+    PhysicsExtraFlags PhysicsExtraFlags;
     // Editor only
     // FixedString ResourceID;
 };
@@ -57,9 +57,9 @@ struct PhysicsHit
     glm::vec3 Normal;
     glm::vec3 Position;
     float Distance;
-    int32_t PhysicsGroup;
-    int32_t PhysicsExtraFlags;
-    PhysicsShape* Shape;
+    PhysicsGroupFlags PhysicsGroup;
+    PhysicsExtraFlags PhysicsExtraFlags;
+    PhysicsShape* Shape{ nullptr };
 };
 
 struct PhysicsHitAll
@@ -67,8 +67,8 @@ struct PhysicsHitAll
     Array<glm::vec3> Normals;
     Array<glm::vec3> Positions;
     Array<float> Distances;
-    Array<int32_t> PhysicsGroup;
-    Array<int32_t> PhysicsExtraFlags;
+    Array<PhysicsGroupFlags> PhysicsGroup;
+    Array<PhysicsExtraFlags> PhysicsExtraFlags;
     Array<PhysicsShape*> Shapes;
 };
 
