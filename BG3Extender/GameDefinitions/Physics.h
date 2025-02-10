@@ -51,6 +51,68 @@ struct PhysicsObject : public ProtectedGameObject<PhysicsObject>
     // FixedString ResourceID;
 };
 
+struct UnskinnedBoneInfo
+{
+    int16_t ParentBoneIndex;
+    int16_t ChildBoneIndex;
+    float field_4;
+    float field_8;
+    glm::vec3 field_C;
+    int field_18;
+    glm::vec4 field_1C;
+};
+
+struct SkinnedActorInfo
+{
+    PhysicsShape* Shape;
+    int16_t BoneIndex;
+    float Blend;
+    __int64 field_10;
+};
+
+struct PhysicsKinematicTargetInfo
+{
+    PhysicsShape* Shape;
+    glm::vec3 Translate;
+    glm::quat Rotate;
+    int field_24;
+};
+
+struct PhysicsSkinnedCollisionObject : public PhysicsObject
+{
+    bool QueuedForDeletion;
+    bool field_81;
+    Array<SkinnedActorInfo> SkinnedActors;
+    Visual* TargetVisual;
+    [[bg3::hidden]] HashMap<PhysicsShape*, PhysicsKinematicTargetInfo> KinematicTargets;
+    bool HasCustomScene;
+    Array<FixedString> SoftbodyCollisionResources;
+};
+
+struct PhysicsSkinnedObject : public PhysicsSkinnedCollisionObject
+{
+    Array<FixedString> IgnoreColliders;
+    Array<UnskinnedBoneInfo> UnskinnableBones;
+    Skeleton* Skeleton;
+    Visual* BaseCollisionVisual;
+    bool ImmediateSkinningForward;
+    bool HasValidWeight;
+    glm::vec3 VisualTranslate;
+    glm::quat VisualRotate;
+    double LastVisibleTime;
+    float SettleTimer;
+    glm::vec3 InitialImpact;
+    int field_160;
+    float field_164;
+    bool NeedsTranslateUpdate;
+    Array<FixedString> field_170;
+    [[bg3::readonly]] __int64 field_180;
+    bool NeedsMeshBindingUpdate;
+    bool AutoForward;
+    Array<MeshBinding*> MeshBindings;
+    [[bg3::hidden]] CRITICAL_SECTION CriticalSection;
+};
+
 
 struct PhysicsHit
 {
@@ -129,10 +191,6 @@ struct [[bg3::hidden]] PhysicsScene : public PhysicsSceneBase
     UnknownSignal SIG_field_C8;
     UnknownSignal SIG_field_E0;
     UnknownSignal SIG_field_F8;
-};
-
-struct PhysicsKinematicTargetInfo
-{
 };
 
 struct [[bg3::hidden]] PhysXScene : public PhysicsScene

@@ -144,6 +144,7 @@ struct AnimationBlueprintComponent : public BaseProxyComponent
     [[bg3::hidden]] void* LoadCallback;
     [[bg3::readonly]] int InstanceId;
     [[bg3::readonly]] uint8_t Flags;
+    [[bg3::readonly]] uint64_t field_40;
 };
 
 struct AnimationWaterfallElement

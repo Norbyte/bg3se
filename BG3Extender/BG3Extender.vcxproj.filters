@@ -499,6 +499,7 @@
     <ClInclude Include="GameDefinitions\Physics.h" />
     <ClInclude Include="GameDefinitions\Lighting.h" />
     <ClInclude Include="GameDefinitions\DragDrop.h" />
+    <ClInclude Include="GameDefinitions\Skeleton.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

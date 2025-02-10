@@ -502,10 +502,10 @@ struct AnimationResource : public TwoStepLoadableResource
 
 struct AnimationBlueprintResource : public TwoStepLoadableResource
 {
-    [[bg3::hidden]] void* field_48;              // Deleter
-    Array<__int64> field_50; // Vtable pointers??? Why???
-
-    [[bg3::hidden]] LegacyRefMap<bg3se::Guid, gn::GenomeVariant> Params;
+    [[bg3::hidden]] void* VMT3;
+    Array<gn::GenomeBlueprint*> Blueprints;
+    LegacyRefMap<bg3se::Guid, gn::GenomeVariant> Params;
+    bg3se::Guid PreviewVisualResourceID;
 };
 
 struct AnimationSetResource : public LoadableResource
@@ -1133,8 +1133,10 @@ struct SkeletonResource : public TwoStepLoadableResource
     FixedString Template;
     FixedString IKRigResourceID;
     FixedString ClothColliderResourceID;
+    FixedString MirrorTableResourceID;
+    uint64_t field_98;
+    FixedString PreviewVisualResource;
     FixedString PreviewAnimationResource;
-    __int64 field_98;
 };
 
 struct SkeletonMirrorTableResource : public TwoStepLoadableResource

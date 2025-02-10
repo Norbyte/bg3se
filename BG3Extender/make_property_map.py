@@ -650,6 +650,7 @@ sources = [
     'GameDefinitions/Picking.h',
     'GameDefinitions/Render.h',
     'GameDefinitions/Resources.h',
+    'GameDefinitions/Skeleton.h',
     'GameDefinitions/Status.h',
     'GameDefinitions/Ai.h',
     'GameDefinitions/Controllers/Action.h',

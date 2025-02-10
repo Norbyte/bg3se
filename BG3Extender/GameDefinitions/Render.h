@@ -10,6 +10,22 @@ struct AABound
     glm::vec3 Max;
 };
 
+struct [[bg3::hidden]] Pose : ProtectedGameObject<Pose>
+{
+    glm::mat3x4* Pose1;
+    glm::mat3x4* Pose2;
+    uint16_t BoneCount;
+};
+
+struct MeshBinding : ProtectedGameObject<MeshBinding>
+{
+    [[bg3::hidden]] void* VMT;
+    [[bg3::hidden]] Pose Pose;
+    [[bg3::hidden]] void* field_20;
+    glm::mat4 Transform;
+    AABound Bound1;
+    AABound Bound2;
+};
 
 struct LocalTransform
 {

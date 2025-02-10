@@ -66,6 +66,10 @@ struct Scene;
 struct Material;
 struct IActionData;
 
+struct Skeleton;
+struct SkeletonBone;
+struct SkeletonSocket;
+
 struct SoundManager;
 struct WwiseManager;
 class SDLManager;
@@ -206,6 +210,7 @@ namespace gn
 namespace phx
 {
     struct PhysicsObject;
+    struct PhysicsSkinnedObject;
     struct PhysicsShape;
     struct PhysicsRagdoll;
     struct PhysicsSceneBase;
