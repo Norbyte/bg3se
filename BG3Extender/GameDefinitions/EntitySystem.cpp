@@ -789,6 +789,7 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
     MapSystemIndex("ecl::UISystem", ExtSystemType::UISystem);
     MapSystemIndex("ecl::PickingHelperManager", ExtSystemType::PickingHelperManager);
     MapSystemIndex("esv::DialogSystem", ExtSystemType::ServerDialogSystem);
+    MapSystemIndex("ls::AnimationBlueprintSystem", ExtSystemType::AnimationBlueprint);
 
 #define FOR_RESOURCE_TYPE(cls) MapResourceManagerIndex(resource::cls::EngineClass, resource::cls::ResourceManagerType);
     FOR_EACH_GUID_RESOURCE_TYPE()

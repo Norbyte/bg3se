@@ -196,6 +196,13 @@ namespace aspk
     struct Component;
 }
 
+namespace gn
+{
+    struct GenomeManager;
+    struct GenomeBlueprint;
+    struct GenomeBlueprintInstance;
+}
+
 namespace phx
 {
     struct PhysicsObject;

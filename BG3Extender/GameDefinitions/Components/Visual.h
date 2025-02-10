@@ -134,6 +134,18 @@ struct CharacterCreationAppearanceComponent : public BaseComponent
     Guid HairColor;
 };
 
+struct AnimationBlueprintComponent : public BaseProxyComponent
+{
+    DEFINE_COMPONENT(AnimationBlueprint, "ls::AnimationBlueprintComponent")
+
+    gn::GenomeBlueprintInstance* Instance;
+    resource::AnimationBlueprintResource* Resource;
+    gn::GenomeBlueprint* Blueprint;
+    [[bg3::hidden]] void* LoadCallback;
+    [[bg3::readonly]] int InstanceId;
+    [[bg3::readonly]] uint8_t Flags;
+};
+
 struct AnimationWaterfallElement
 {
     FixedString Slot;
@@ -175,21 +187,6 @@ struct TemplateAnimationSetOverrideComponent : public BaseComponent
     DEFINE_COMPONENT(TemplateAnimationSetOverride, "ls::animation::TemplateAnimationSetOverrideComponent")
 
     Array<AnimationWaterfallElement> Overrides;
-};
-
-
-struct AnimationReceivedGameplayEvent
-{
-    EntityHandle Entity;
-    FixedString Event;
-    [[bg3::hidden]] gn::GenomeParametrizedEventArgs Args;
-};
-
-struct AnimationReceivedTextKeyEvent
-{
-    EntityHandle Entity;
-    TextKeyEvent* Event;
-    [[bg3::hidden]] void* Skeleton;
 };
 
 struct EffectComponent : public BaseProxyComponent
@@ -251,6 +248,12 @@ struct TextKeyEventsSingletonComponent : public BaseComponent
     Array<AnimationReceivedTextKeyEvent> Events;
 };
 
+struct GameplayEventsSingletonComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(AnimationGameplayEventsSingleton, "ls::animation::GameplayEventsSingletonComponent")
+
+    Array<AnimationReceivedGameplayEvent> Events;
+};
 
 struct GameplayEventsOneFrameComponent : public BaseComponent
 {
