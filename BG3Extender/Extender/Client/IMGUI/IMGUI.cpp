@@ -816,9 +816,9 @@ void WindowBase::SetBgAlpha(std::optional<float> alpha)
 void WindowBase::EndDrawingWindow()
 {
     auto size = ImGui::GetWindowSize();
-    Size = glm::vec2(size.x, size.y);
+    LastSize = glm::vec2(size.x, size.y);
     auto pos = ImGui::GetWindowPos();
-    Position = glm::vec2(pos.x, pos.y);
+    LastPosition = glm::vec2(pos.x, pos.y);
 }
 
 void WindowBase::ProcessRenderSettings(DrawingContext& context)

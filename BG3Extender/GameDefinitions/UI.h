@@ -335,10 +335,10 @@ struct UIWidget : public ContentControl
     __int64 field_298;
     __int64 field_2A0;
     __int64 field_2A8;
-    int field_2B0;
-    int field_2B4;
+    __int64 field_2B0;
     __int64 field_2B8;
     __int64 field_2C0;
+    __int64 field_2C8[5];
     UIManager_Sub1F0* Sub1F0;
     UIStateWidget* WidgetData;
     __int64 field_2D0;
