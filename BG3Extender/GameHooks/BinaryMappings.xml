@@ -422,7 +422,7 @@
     <Mapping Name="App::Instance">
       @str1 48 8d 0d ?? ?? ?? ?? // lea     rcx, aCreatingApp; "Creating App\n"
       ff 15 ?? ?? ?? ?? // call    cs:OutputDebugStringA
-      b9 18 02 00 00 // mov     ecx, 218h; Size
+      b9 ?? ?? 00 00 // mov     ecx, 218h; Size
       ff 15 ?? ?? ?? ?? // call    cs:__imp_malloc
       4c 8b e0 // mov     r12, rax
       @ref1 48 89 05 ?? ?? ?? ?? // mov     cs:ls__gApp2, rax
