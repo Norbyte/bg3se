@@ -813,6 +813,13 @@ void WindowBase::SetBgAlpha(std::optional<float> alpha)
     req_.BgAlpha = alpha;
 }
 
+void WindowBase::EndDrawingWindow()
+{
+    auto size = ImGui::GetWindowSize();
+    Size = glm::vec2(size.x, size.y);
+    auto pos = ImGui::GetWindowPos();
+    Position = glm::vec2(pos.x, pos.y);
+}
 
 void WindowBase::ProcessRenderSettings(DrawingContext& context)
 {
@@ -881,6 +888,7 @@ bool Window::BeginRender(DrawingContext& context)
 void Window::EndRender(DrawingContext& context)
 {
     if (rendering_) {
+        EndDrawingWindow();
         ImGui::End();
         context.PopScaling();
         rendering_ = false;
@@ -1147,7 +1155,10 @@ bool Tooltip::BeginRender(DrawingContext& context)
 
 void Tooltip::EndRender(DrawingContext& context)
 {
-    if (rendering_) ImGui::EndTooltip();
+    if (rendering_) {
+        EndDrawingWindow();
+        ImGui::EndTooltip();
+    }
     rendering_ = false;
 }
 
@@ -1167,7 +1178,10 @@ bool Popup::BeginRender(DrawingContext& context)
 
 void Popup::EndRender(DrawingContext& context)
 {
-    if (rendering_) ImGui::EndPopup();
+    if (rendering_) {
+        EndDrawingWindow();
+        ImGui::EndPopup();
+    }
     rendering_ = false;
 }
 
@@ -1189,6 +1203,7 @@ bool ChildWindow::BeginRender(DrawingContext& context)
 
 void ChildWindow::EndRender(DrawingContext& context)
 {
+    EndDrawingWindow();
     ImGui::EndChild();
 }
 
