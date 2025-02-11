@@ -57,7 +57,7 @@ PropertyOperationResult GenericSetOffsetProperty(lua_State* L, void* obj, int in
     } else {
         // TEMP HACK - undo offset math done by caller until Unserialize uses offset properties
         auto origObj = reinterpret_cast<uint8_t*>(obj) - prop.Offset();
-        return GenericUnserializeOffsetProperty<T>(L, obj, index, *prop.Cold);
+        return GenericUnserializeOffsetProperty<T>(L, origObj, index, *prop.Cold);
     }
 }
 
