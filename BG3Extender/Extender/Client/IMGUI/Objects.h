@@ -338,8 +338,8 @@ public:
     void SetBgAlpha(std::optional<float> alpha);
 
     GuiWindowFlags Flags{ 0 };
-    glm::vec2 Size{ 0.0f, 0.0f };
-    glm::vec2 Position{ 0.0f, 0.0f };
+    glm::vec2 LastSize{ 0.0f, 0.0f };
+    glm::vec2 LastPosition{ 0.0f, 0.0f };
 
 protected:
     WindowRenderRequests req_;

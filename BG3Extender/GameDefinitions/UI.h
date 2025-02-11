@@ -578,6 +578,8 @@ struct UIManager : public ProtectedGameObject<UIManager>
     void* VMT5;
     UnknownSignal field_38;
     UIManager_Sub50 field_50;
+    void* field_88x;
+    uint64_t field_90[6];
     UIManager_Sub70 field_88;
     __int64 field_120;
     UnknownSignal field_148;

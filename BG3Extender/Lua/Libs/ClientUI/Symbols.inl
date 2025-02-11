@@ -93,8 +93,13 @@ struct StaticTypeClasses
         {
             Name = MakeNoesisSymbol(name);
             auto type = Reflection::GetType(Name);
-            assert(type->GetClassType()->GetTypeId() == SymbolInfo<Noesis::TypeClass>::Name);
-            Type = static_cast<Noesis::TypeClass const*>(type);
+            if (type) {
+                assert(type->GetClassType()->GetTypeId() == SymbolInfo<Noesis::TypeClass>::Name);
+                Type = static_cast<Noesis::TypeClass const*>(type);
+            } else {
+                ERR("Couldn't resolve Noesis type class: %s", name);
+                Type = nullptr;
+            }
         }
     };
 
@@ -209,7 +214,7 @@ struct ExtStaticSymbols
         SymbolInfo<ui::UIStateEvent>::Name = MakeNoesisSymbol("ls.StateEvent");
         SymbolInfo<ui::UIState>::Name = MakeNoesisSymbol("ls.State");
         SymbolInfo<ui::UIWidget>::Name = MakeNoesisSymbol("ls.UIWidget");
-        SymbolInfo<ui::DCWidget>::Name = MakeNoesisSymbol("ui::DCWidget");
+        SymbolInfo<ui::DCWidget>::Name = MakeNoesisSymbol("ls.DCWidget");
 
         Types.Setup();
         TypeClasses.Setup();

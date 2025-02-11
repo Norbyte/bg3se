@@ -114,8 +114,8 @@ P_FUN(SetFocus, extui::Window::SetFocus)
 P_FUN(SetScroll, extui::Window::SetScroll)
 P_FUN(SetBgAlpha, extui::Window::SetBgAlpha)
 P_BITMASK(Flags)
-P_RO(Size)
-P_RO(Position)
+P_RO(LastSize)
+P_RO(LastPosition)
 END_CLS()
 
 

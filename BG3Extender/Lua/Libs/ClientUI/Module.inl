@@ -54,16 +54,14 @@ BEGIN_NS(ecl::lua::ui)
 Noesis::FrameworkElement* GetRoot()
 {
     Noesis::gStaticSymbols.Initialize();
-
-    //auto t38 = (*GetStaticSymbols().ls__gGlobalResourceManager)->UIManager->field_88.field_38->GetClassType();
-
     return (*GetStaticSymbols().ls__gGlobalResourceManager)->UIManager->field_88.Canvas;
 }
 
 bg3se::ui::UIStateMachine* GetStateMachine()
 {
     Noesis::gStaticSymbols.Initialize();
-    return (*GetStaticSymbols().ls__gGlobalResourceManager)->UIManager->field_3B8.StateMachine;
+    return nullptr; // FIXME - not handled yet!
+    // return (*GetStaticSymbols().ls__gGlobalResourceManager)->UIManager->field_3B8.StateMachine;
 }
 
 using FireStateEventProc = void(bg3se::ui::UIStateMachine*, bg3se::ui::UIStateMachine::EventResult&, bg3se::ui::UIStateMachine::EntityContext const&, bg3se::ui::UIStateMachine::EventArgs const&);
