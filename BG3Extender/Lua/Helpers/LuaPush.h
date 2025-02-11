@@ -55,6 +55,7 @@ inline void push(lua_State* L, char const* v)
 }
 
 void push(lua_State* L, FixedString const& v);
+void push(lua_State* L, FixedStringUnhashed const& v);
 
 inline void push(lua_State* L, std::string const& s)
 {

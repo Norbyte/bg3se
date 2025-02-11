@@ -722,6 +722,11 @@ void push(lua_State* L, FixedString const& v)
     lua_unlock(L);
 }
 
+void push(lua_State* L, FixedStringUnhashed const& v)
+{
+    push(L, *reinterpret_cast<FixedString const*>(&v));
+}
+
 void LuaCacheString(lua_State* L, TString* s)
 {
     static_assert(sizeof(LUA_STRING_EXTRATYPE) == sizeof(CachedFixedString));

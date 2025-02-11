@@ -11,6 +11,7 @@ class NewIndexable {};
 class OpaqueNewIndexable {};
 class Lengthable {};
 class Iterable {};
+class OpaqueIterable {};
 class Stringifiable {};
 class GarbageCollected {};
 class EqualityComparable {};

@@ -109,9 +109,9 @@ struct RawPropertyAccessorsHotData
 class GenericPropertyMap : Noncopyable<GenericPropertyMap>
 {
 public:
-    using TFallbackGetter = PropertyOperationResult (lua_State* L, LifetimeHandle lifetime, void const* object, FixedString const& prop);
-    using TFallbackSetter = PropertyOperationResult (lua_State* L, void* object, FixedString const& prop, int index);
-    using TFallbackNext = int (lua_State* L, LifetimeHandle lifetime, void const* object, FixedString const& prop);
+    using TFallbackGetter = PropertyOperationResult (lua_State* L, LifetimeHandle lifetime, void const* object, FixedStringId const& prop);
+    using TFallbackSetter = PropertyOperationResult (lua_State* L, void* object, FixedStringId const& prop, int index);
+    using TFallbackNext = int (lua_State* L, LifetimeHandle lifetime, void const* object, FixedStringId const& prop);
     using TConstructor = void (void*);
     using TDestructor = void (void*);
     using TSerializer = void (lua_State* L, void const*);
@@ -161,7 +161,7 @@ public:
 
     // Cold data
     HashMap<FixedStringUnhashed, RawPropertyAccessors> Properties;
-    HashMap<FixedString, uint32_t> IterableProperties;
+    HashMap<FixedStringUnhashed, uint32_t> IterableProperties;
     Array<RawPropertyValidators> Validators;
     Array<FixedString> Parents;
     Array<int> ParentRegistryIndices;

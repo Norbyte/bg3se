@@ -70,8 +70,7 @@ PropertyOperationResult GenericPropertyMap::GetRawProperty(lua_State* L, Lifetim
 
     if (result == PropertyOperationResult::NoSuchProperty) {
         if (FallbackGetter) {
-            auto& fs = static_cast<FixedString const&>(prop);
-            result = FallbackGetter(L, lifetime, object, fs);
+            result = FallbackGetter(L, lifetime, object, ah);
         }
     }
 
@@ -101,8 +100,7 @@ PropertyOperationResult GenericPropertyMap::SetRawProperty(lua_State* L, void* o
 
     if (result == PropertyOperationResult::NoSuchProperty) {
         if (FallbackSetter) {
-            auto& fs = static_cast<FixedString const&>(prop);
-            result = FallbackSetter(L, object, fs, index);
+            result = FallbackSetter(L, object, ah, index);
         }
     }
 

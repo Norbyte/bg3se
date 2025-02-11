@@ -6,13 +6,13 @@ BEGIN_NS(lua)
 
 struct CppObjectProxyHelpers
 {
-    static int Next(lua_State* L, GenericPropertyMap const& pm, void* object, LifetimeHandle lifetime, FixedString const& key);
+    static int Next(lua_State* L, GenericPropertyMap const& pm, void* object, LifetimeHandle lifetime, FixedStringId const& key);
 };
 
 
 class LightObjectProxyMetatable : public LightCppObjectMetatable<LightObjectProxyMetatable>,
     public Indexable, public OpaqueIndexable, public NewIndexable, public OpaqueNewIndexable,
-    public Iterable, public Stringifiable, public EqualityComparable, public GarbageCollected
+    public Iterable, public OpaqueIterable, public Stringifiable, public EqualityComparable, public GarbageCollected
 {
 public:
     static constexpr MetatableTag MetaTag = MetatableTag::ObjectRef;
@@ -73,7 +73,7 @@ public:
     static int ToString(lua_State* L, CppObjectMetadata& self);
     static int GC(lua_State* L, CppObjectMetadata& self);
     static bool IsEqual(lua_State* L, CppObjectMetadata& self, CppObjectMetadata& other);
-    static int Next(lua_State* L, CppObjectMetadata& self);
+    static int Next(lua_State* L, CppObjectOpaque* self);
     static char const* GetTypeName(lua_State* L, CppObjectMetadata& self);
     static char const* GetTypeName(lua_State* L, CppObjectOpaque* self);
 };

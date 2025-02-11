@@ -3,7 +3,7 @@
 
 BEGIN_NS(lua)
 
-int CppObjectProxyHelpers::Next(lua_State* L, GenericPropertyMap const& pm, void* object, LifetimeHandle lifetime, FixedString const& key)
+int CppObjectProxyHelpers::Next(lua_State* L, GenericPropertyMap const& pm, void* object, LifetimeHandle lifetime, FixedStringId const& key)
 {
     if (!key) {
         if (!pm.IterableProperties.empty()) {
@@ -18,7 +18,8 @@ int CppObjectProxyHelpers::Next(lua_State* L, GenericPropertyMap const& pm, void
             return 2;
         }
     } else {
-        auto it = pm.IterableProperties.find(key);
+        auto const& k = reinterpret_cast<FixedStringUnhashed const&>(key);
+        auto it = pm.IterableProperties.find(k);
         if (it != pm.IterableProperties.end()) {
             ++it;
             if (it != pm.IterableProperties.end()) {
@@ -222,14 +223,16 @@ bool LightObjectProxyMetatable::IsEqual(lua_State* L, CppObjectMetadata& self, C
     return self.Ptr == other.Ptr && self.PropertyMapTag == other.PropertyMapTag;
 }
 
-int LightObjectProxyMetatable::Next(lua_State* L, CppObjectMetadata& self)
+int LightObjectProxyMetatable::Next(lua_State* L, CppObjectOpaque* self)
 {
-    auto pm = gStructRegistry.Get(self.PropertyMapTag);
+    auto pm = gStructRegistry.Get(lua_get_opaque_property_map(self));
+    auto object = lua_get_opaque_ptr(self);
+    auto lifetime = lua_get_opaque_lifetime(self);
     if (lua_type(L, 2) == LUA_TNIL) {
-        return CppObjectProxyHelpers::Next(L, *pm, self.Ptr, self.Lifetime, FixedString{});
+        return CppObjectProxyHelpers::Next(L, *pm, object, lifetime, FixedStringId{});
     } else {
-        auto key = get<FixedString>(L, 2);
-        return CppObjectProxyHelpers::Next(L, *pm, self.Ptr, self.Lifetime, key);
+        auto key = get<FixedStringNoRef>(L, 2);
+        return CppObjectProxyHelpers::Next(L, *pm, object, lifetime, key);
     }
 }
 

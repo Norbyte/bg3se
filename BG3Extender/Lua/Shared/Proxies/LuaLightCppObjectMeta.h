@@ -75,7 +75,10 @@ public:
 
     static int PairsProxy(lua_State* L)
     {
-        if constexpr (std::is_base_of_v<Iterable, TSubclass>) {
+        if constexpr (std::is_base_of_v<OpaqueIterable, TSubclass>) {
+            auto self = lua_get_opaque_lightcppobject(L, 1, TSubclass::MetaTag);
+            return TSubclass::OpaquePairs(L, self);
+        } else if constexpr (std::is_base_of_v<Iterable, TSubclass>) {
             auto self = lua_get_lightcppobject(L, 1, TSubclass::MetaTag);
             return TSubclass::Pairs(L, self);
         } else {
@@ -149,21 +152,53 @@ public:
     // Default __pairs implementation
     static int Pairs(lua_State* L, CppObjectMetadata const& self)
     {
-        StackCheck _(L, 3);
-        lua_pushcfunction(L, &NextProxy);
-        lua_pushvalue(L, 1);
-        push(L, nullptr);
+        if constexpr (std::is_base_of_v<OpaqueIterable, TSubclass>) {
+            return luaL_error(L, "Should use opaque __pairs!");
+        } else {
+            StackCheck _(L, 3);
+            lua_pushcfunction(L, &NextProxy);
+            lua_pushvalue(L, 1);
+            push(L, nullptr);
 
-        return 3;
+            return 3;
+        }
+    }
+
+    static int OpaquePairs(lua_State* L, CppObjectOpaque* self)
+    {
+        if constexpr (!std::is_base_of_v<OpaqueIterable, TSubclass>) {
+            return luaL_error(L, "Should use non-opaque __pairs!");
+        } else {
+            StackCheck _(L, 3);
+            lua_pushcfunction(L, &OpaqueNextProxy);
+            lua_pushvalue(L, 1);
+            push(L, nullptr);
+
+            return 3;
+        }
     }
 
     static int NextProxy(lua_State* L)
     {
-        if constexpr (std::is_base_of_v<Iterable, TSubclass>) {
+        if constexpr (!std::is_base_of_v<Iterable, TSubclass>) {
+            return luaL_error(L, "Not iterable!");
+        } else if constexpr (std::is_base_of_v<OpaqueIterable, TSubclass>) {
+            return luaL_error(L, "Should use opaque __next!");
+        } else {
             auto self = lua_get_lightcppobject(L, 1, TSubclass::MetaTag);
             return TSubclass::Next(L, self);
-        } else {
+        }
+    }
+
+    static int OpaqueNextProxy(lua_State* L)
+    {
+        if constexpr (!std::is_base_of_v<Iterable, TSubclass>) {
             return luaL_error(L, "Not iterable!");
+        } else if constexpr (!std::is_base_of_v<OpaqueIterable, TSubclass>) {
+            return luaL_error(L, "Should use non-opaque __next!");
+        } else {
+            auto self = lua_get_opaque_lightcppobject(L, 1, TSubclass::MetaTag);
+            return TSubclass::Next(L, self);
         }
     }
 
