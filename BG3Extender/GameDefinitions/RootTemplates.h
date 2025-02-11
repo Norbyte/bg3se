@@ -550,6 +550,7 @@ struct SurfaceStatusData
     bool ApplyToCharacters;
     bool ApplyToItems;
     bool KeepAlive;
+    bool DontTickWhileOnSurface;
     bool VanishOnApply;
     bool Force;
     bool AffectedByRoll;

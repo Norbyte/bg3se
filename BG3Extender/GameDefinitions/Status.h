@@ -72,7 +72,7 @@ struct Status : public ProtectedGameObject<Status>
     StatusFlags3 Flags3;
     bool FreezeDuration;
     uint8_t ExitCause;
-    uint8_t field_105;
+    [[bg3::legacy(field_105)]] SurfaceType SourceSurface;
     uint8_t SpellCastingAbility;
     SpellId SourceSpell;
     Guid SpellCastSourceUuid;
