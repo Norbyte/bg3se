@@ -167,11 +167,11 @@ int LightObjectProxyMetatable::Index(lua_State* L, CppObjectOpaque* self)
     return 1;
 }
 
-int LightObjectProxyMetatable::NewIndex(lua_State* L, CppObjectMetadata& self)
+int LightObjectProxyMetatable::NewIndex(lua_State* L, CppObjectOpaque* self)
 {
-    auto pm = gStructRegistry.Get(self.PropertyMapTag);
+    auto pm = gStructRegistry.Get(lua_get_opaque_property_map(self));
     auto prop = get<FixedStringNoRef>(L, 2);
-    auto result = pm->SetRawProperty(L, self.Ptr, prop, 3);
+    auto result = pm->SetRawProperty(L, lua_get_opaque_ptr(self), prop, 3);
     switch (result) {
     case PropertyOperationResult::Success:
         break;

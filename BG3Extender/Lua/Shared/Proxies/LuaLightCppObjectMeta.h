@@ -48,7 +48,12 @@ public:
 
     static int NewIndexProxy(lua_State* L)
     {
-        if constexpr (std::is_base_of_v<NewIndexable, TSubclass>) {
+        if constexpr (std::is_base_of_v<OpaqueNewIndexable, TSubclass>) {
+            StackCheck _(L, 0);
+            auto self = lua_get_opaque_lightcppobject(L, 1, TSubclass::MetaTag);
+            return TSubclass::NewIndex(L, self);
+
+        } else if constexpr (std::is_base_of_v<NewIndexable, TSubclass>) {
             StackCheck _(L, 0);
             auto self = lua_get_lightcppobject(L, 1, TSubclass::MetaTag);
             return TSubclass::NewIndex(L, self);

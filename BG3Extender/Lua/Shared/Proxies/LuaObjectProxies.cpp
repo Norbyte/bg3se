@@ -578,7 +578,7 @@ struct PropertyMapRegistrations;
         { .Type = PropertyMapEntryType::Property, .Property = { \
             .Name = #name, \
             .Getter = [](lua_State* L, LifetimeHandle lifetime, void const* obj, RawPropertyAccessorsHotData const& prop) { \
-                CallGetter(L, reinterpret_cast<ObjectType const*>(obj), &fun); \
+                CallGetter(L, reinterpret_cast<ObjectType const*>(reinterpret_cast<uint8_t const*>(obj) - prop.Offset()), &fun); \
                 return PropertyOperationResult::Success; \
             }, \
             .Setter = &GenericSetNonWriteableProperty, \
@@ -590,11 +590,11 @@ struct PropertyMapRegistrations;
         { .Type = PropertyMapEntryType::Property, .Property = { \
             .Name = #name, \
             .Getter = [](lua_State* L, LifetimeHandle lifetime, void const* obj, RawPropertyAccessorsHotData const& prop) { \
-                CallGetter(L, reinterpret_cast<ObjectType const*>(obj), &ObjectType::getter); \
+                CallGetter(L, reinterpret_cast<ObjectType const*>(reinterpret_cast<uint8_t const*>(obj) - prop.Offset()), &ObjectType::getter); \
                 return PropertyOperationResult::Success; \
             }, \
-            .Setter = [](lua_State* L, void* obj, int index, RawPropertyAccessors const& prop) { \
-                CallSetter(L, reinterpret_cast<ObjectType*>(obj), index, &ObjectType::setter); \
+            .Setter = [](lua_State* L, void* obj, int index, RawPropertyAccessorsHotData const& prop) { \
+                CallSetter(L, reinterpret_cast<ObjectType*>(reinterpret_cast<uint8_t*>(obj) - prop.Offset()), index, &ObjectType::setter); \
                 return PropertyOperationResult::Success; \
             }, \
         } },

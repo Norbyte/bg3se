@@ -87,17 +87,26 @@ PropertyOperationResult GenericPropertyMap::GetRawProperty(lua_State* L, Lifetim
 PropertyOperationResult GenericPropertyMap::SetRawProperty(lua_State* L, void* object, FixedStringId const& prop, int index) const
 {
     auto& ah = static_cast<FixedStringUnhashed const&>(prop);
-    auto& fs = static_cast<FixedString const&>(prop);
-    auto it = Properties.try_get(ah);
-    if (it == nullptr) {
+    auto const& entry = PropertiesHot.get(ah);
+
+    if (entry.HasNotifications()) [[unlikely]] {
+        const_cast<RawPropertyAccessorsHotData&>(entry).MarkNotificationsProcessed();
+        ProcessPropertyNotifications(*entry.Cold, true);
+    }
+
+    auto setter = entry.Setter();
+    auto offset = entry.Offset();
+    auto data = reinterpret_cast<uint8_t*>(object) + offset;
+    auto result = setter(L, data, index, entry);
+
+    if (result == PropertyOperationResult::NoSuchProperty) {
         if (FallbackSetter) {
-            return FallbackSetter(L, object, fs, index);
-        } else {
-            return PropertyOperationResult::NoSuchProperty;
+            auto& fs = static_cast<FixedString const&>(prop);
+            result = FallbackSetter(L, object, fs, index);
         }
     }
 
-    return it->Set(L, object, index, *it);
+    return result;
 }
 
 void GenericPropertyMap::AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter,

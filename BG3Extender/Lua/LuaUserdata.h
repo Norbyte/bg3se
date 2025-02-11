@@ -8,6 +8,7 @@ class Indexable {};
 // Supports TValue indexing through CppObjectOpaque
 class OpaqueIndexable {};
 class NewIndexable {};
+class OpaqueNewIndexable {};
 class Lengthable {};
 class Iterable {};
 class Stringifiable {};

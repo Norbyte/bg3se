@@ -48,18 +48,16 @@ PropertyOperationResult GenericUnserializeOffsetProperty(lua_State* L, void* obj
 }
 
 template <class T>
-PropertyOperationResult GenericSetOffsetProperty(lua_State* L, void* obj, int index, RawPropertyAccessors const& prop)
+PropertyOperationResult GenericSetOffsetProperty(lua_State* L, void* obj, int index, RawPropertyAccessorsHotData const& prop)
 {
-    if (prop.PendingNotifications != PropertyNotification::None) [[unlikely]] {
-        ProcessPropertyNotifications(prop, true);
-    }
-
     if constexpr (IsByVal<T>) {
-        auto* value = (T*)((std::uintptr_t)obj + prop.Offset);
+        auto value = reinterpret_cast<T*>(obj);
         *value = get<T>(L, index);
         return PropertyOperationResult::Success;
     } else {
-        return GenericUnserializeOffsetProperty<T>(L, obj, index, prop);
+        // TEMP HACK - undo offset math done by caller until Unserialize uses offset properties
+        auto origObj = reinterpret_cast<uint8_t*>(obj) - prop.Offset();
+        return GenericUnserializeOffsetProperty<T>(L, obj, index, *prop.Cold);
     }
 }
 
@@ -73,10 +71,10 @@ PropertyOperationResult GenericGetOffsetBitmaskFlag(lua_State* L, LifetimeHandle
 }
 
 template <class UnderlyingType>
-PropertyOperationResult GenericSetOffsetBitmaskFlag(lua_State* L, void* obj, int index, RawPropertyAccessors const& prop)
+PropertyOperationResult GenericSetOffsetBitmaskFlag(lua_State* L, void* obj, int index, RawPropertyAccessorsHotData const& prop)
 {
-    auto* value = (UnderlyingType*)((std::uintptr_t)obj + prop.Offset);
-    auto flag = (UnderlyingType)prop.FlagValue();
+    auto value = reinterpret_cast<UnderlyingType*>(obj);
+    auto flag = (UnderlyingType)prop.Flag();
     auto set = get<bool>(L, index);
     if (set) {
         *value |= flag;

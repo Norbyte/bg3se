@@ -30,7 +30,7 @@ inline PropertyOperationResult GenericHotDataPlaceholderSetter(lua_State* L, voi
 struct RawPropertyAccessors
 {
     using Getter = PropertyOperationResult (lua_State* L, LifetimeHandle lifetime, void const* object, RawPropertyAccessorsHotData const& prop);
-    using Setter = PropertyOperationResult (lua_State* L, void* object, int index, RawPropertyAccessors const& prop);
+    using Setter = PropertyOperationResult (lua_State* L, void* object, int index, RawPropertyAccessorsHotData const& prop);
     using Serializer = PropertyOperationResult (lua_State* L, void const* object, RawPropertyAccessors const& prop);
 
     FixedString Name;
@@ -198,12 +198,12 @@ public:
     }
 };
 
-inline PropertyOperationResult GenericSetNonWriteableProperty(lua_State* L,  void* obj, int index, RawPropertyAccessors const&)
+inline PropertyOperationResult GenericSetNonWriteableProperty(lua_State* L,  void* obj, int index, RawPropertyAccessorsHotData const&)
 {
     return PropertyOperationResult::UnsupportedType;
 }
 
-inline PropertyOperationResult GenericSetReadOnlyProperty(lua_State* L, void* obj, int index, RawPropertyAccessors const&)
+inline PropertyOperationResult GenericSetReadOnlyProperty(lua_State* L, void* obj, int index, RawPropertyAccessorsHotData const&)
 {
     return PropertyOperationResult::ReadOnly;
 }
