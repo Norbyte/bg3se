@@ -143,7 +143,7 @@ struct StaticTypeClasses
         StateWidget.Setup("ls.StateWidget");
         State.Setup("ls.State");
         Widget.Setup("ls.UIWidget");
-        DCWidget.Setup("ui::DCWidget");
+        DCWidget.Setup("ls.DCWidget");
     }
 };
 
