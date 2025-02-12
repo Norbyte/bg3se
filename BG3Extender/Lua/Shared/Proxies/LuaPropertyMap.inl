@@ -107,6 +107,12 @@ PropertyOperationResult GenericPropertyMap::SetRawProperty(lua_State* L, void* o
     return result;
 }
 
+PropertyOperationResult GenericPropertyMap::SetRawProperty(lua_State* L, void* object, RawPropertyAccessors const& prop, int index) const
+{
+    auto data = reinterpret_cast<uint8_t*>(object) + prop.Offset;
+    return prop.Set(L, data, index, prop);
+}
+
 void GenericPropertyMap::AddRawProperty(char const* prop, typename RawPropertyAccessors::Getter* getter,
     typename RawPropertyAccessors::Setter* setter, typename RawPropertyAccessors::Serializer* serialize, 
     std::size_t offset, uint64_t flag, PropertyNotification notification, char const* newName, bool iterable)
@@ -218,7 +224,7 @@ void UnserializeRawObjectFromTable(lua_State* L, int index, void* obj, GenericPr
         auto const& prop = pm.Properties.values()[it.Value()];
         lua_getfield(L, index, it.Key().GetString());
         if (lua_type(L, -1) != LUA_TNIL) {
-            prop.Set(L, obj, lua_absindex(L, -1), prop);
+            pm.SetRawProperty(L, obj, prop, lua_absindex(L, -1));
         }
         lua_pop(L, 1);
     }

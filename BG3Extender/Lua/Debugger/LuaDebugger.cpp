@@ -362,7 +362,7 @@ namespace bg3se::lua::dbg
 
         for (auto it : pm.IterableProperties) {
             auto const& prop = pm.Properties.values()[it.Value()];
-            auto result = prop.Get(L, meta.Lifetime, obj, prop);
+            auto result = pm.GetRawProperty(L, meta.Lifetime, obj, prop);
             if (result == PropertyOperationResult::Success) {
                 push(L, it.Key());
                 LuaElementToEvalResults(L, -1, -2, req);
@@ -383,7 +383,7 @@ namespace bg3se::lua::dbg
 
         for (auto it : pm.IterableProperties) {
             auto const& prop = pm.Properties.values()[it.Value()];
-            auto result = prop.Get(L, LifetimeHandle{}, obj, prop);
+            auto result = pm.GetRawProperty(L, LifetimeHandle{}, obj, prop);
             if (result == PropertyOperationResult::Success) {
                 push(L, it.Key());
                 LuaElementToEvalResults(L, -1, -2, req);
