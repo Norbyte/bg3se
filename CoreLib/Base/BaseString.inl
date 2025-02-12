@@ -6,6 +6,10 @@ uint32_t FixedStringBase::CreateFixedString(StringView const& str)
         ERR("Tried to create FixedString of length %d - this will crash! %s", str.size(), str.data());
         return NullIndex;
     }
+    
+    if (str.empty()) {
+        return NullIndex;
+    }
 
     auto createGlobal = gCoreLibPlatformInterface.ls__GlobalStringTable__MainTable__CreateFromString;
     if (createGlobal) {
