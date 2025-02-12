@@ -529,7 +529,6 @@ struct AnimationSetResource : public LoadableResource
     struct Bank
     {
         LegacyRefMap<FixedString, Subset> AnimationSubSets;
-        bg3se::Guid ShortNameSetId;
     };
 
     Bank* AnimationBank;
