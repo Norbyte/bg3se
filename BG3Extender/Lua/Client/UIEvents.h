@@ -38,6 +38,7 @@ private:
         RoutedEvent const* EventType;
         RegistryEntry Handler;
         SubscriptionIndex Index;
+        bool IsActive{ false };
     };
 
     ClientState& state_;

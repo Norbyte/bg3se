@@ -44,6 +44,8 @@ UIEventHooks::EventHandler& UIEventHooks::EventHandler::operator = (EventHandler
 
 void UIEventHooks::EventHandler::Unsubscribe()
 {
+    IsActive = true;
+
     if (Target) {
         auto event = Target->mRoutedEventHandlers.Find(EventType);
         if (event != Target->mRoutedEventHandlers.End()) {
@@ -75,11 +77,13 @@ UIEventHooks::SubscriptionIndex UIEventHooks::Subscribe(UIElement* target, Route
         handlers->value.Add(RoutedEventHandler{ self, &DummyDelegate::Handler });
     }
 
-    sub->Target.Reset(target);
+    // HACK - don't set reference to avoid dtor crash in patch 8+
+    sub->Target.Reset();
     sub->Event = eventName;
     sub->EventType = event;
     sub->Handler = std::move(hook);
     sub->Index = index;
+    sub->IsActive = true;
 
     return index;
 }
@@ -99,7 +103,7 @@ bool UIEventHooks::Unsubscribe(SubscriptionIndex index)
 void UIEventHooks::EventFired(SubscriptionIndex index, Noesis::BaseComponent* target, const RoutedEventArgs& args)
 {
     auto sub = subscriptions_.Find(index);
-    if (sub == nullptr) {
+    if (sub == nullptr || !sub->IsActive) {
         return;
     }
 
