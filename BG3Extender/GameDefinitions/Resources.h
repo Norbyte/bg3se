@@ -1133,9 +1133,10 @@ struct SkeletonResource : public TwoStepLoadableResource
     FixedString IKRigResourceID;
     FixedString ClothColliderResourceID;
     FixedString MirrorTableResourceID;
-    uint64_t field_98;
-    FixedString PreviewVisualResource;
-    FixedString PreviewAnimationResource;
+    // Editor build only
+    // uint64_t field_98;
+    // FixedString PreviewVisualResource;
+    // FixedString PreviewAnimationResource;
 };
 
 struct SkeletonMirrorTableResource : public TwoStepLoadableResource
