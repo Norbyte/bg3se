@@ -189,6 +189,12 @@ namespace bg3se
             }
         }
 
+        for (auto const& mod : AvailableMods) {
+            if (mod.Info.ModuleUUIDString == modUuidFS) {
+                return &mod;
+            }
+        }
+
         return nullptr;
     }
 
