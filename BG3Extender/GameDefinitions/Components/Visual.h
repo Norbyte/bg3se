@@ -327,14 +327,14 @@ BEGIN_NS(ecl)
 struct EquipmentVisualData
 {
     Array<FixedString> VisualTemplates;
-    FixedString BoneSheathed;
-    FixedString SourceBoneSheathed;
+    [[bg3::legacy(BoneSheathed)]] FixedString Bone;
+    [[bg3::legacy(SourceBoneSheathed)]] FixedString SourceBone;
     FixedString field_18;
     uint32_t AttachFlags;
     EntityHandle field_20;
     Array<resource::PresetData::ScalarParameter> ScalarParameters;
     Array<resource::PresetData::Vector3Parameter> Vector3Parameters;
-    ecs::EntityRef Item;
+    EntityHandle Item;
     uint16_t VisualFlags;
     uint8_t HairType;
     uint8_t Flags_63;
