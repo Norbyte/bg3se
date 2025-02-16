@@ -416,7 +416,7 @@ struct Visual : public MoveableObject
 
         FixedString RemapperSlot;
         int field_4;
-        void* Skeleton;
+        Skeleton* Skeleton;
         Remap* Remaps;
         uint8_t RemapsCapacity;
         uint8_t RemapsSize;

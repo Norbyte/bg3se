@@ -683,6 +683,7 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
     E(UseSocket)
     E(UserAvatar)
     E(UserReservedFor)
+    E(Sound)
 
     E(BackgroundGoals)
 

@@ -151,13 +151,6 @@ public:
     [[bg3::hidden]] int32_t NextHandle{ 0 };
 };
 
-struct ConditionId
-{
-    int32_t Id{ -1 };
-
-    STDString* Get() const;
-};
-
 struct Requirement
 {
     RequirementType RequirementId;

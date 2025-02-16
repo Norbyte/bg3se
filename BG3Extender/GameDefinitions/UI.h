@@ -635,7 +635,7 @@ struct ViewModel : public Noesis::BaseComponent, public INotifyPropertyChanged
 
 struct DCWidget : public ViewModel
 {
-    __int64 VMT3;
+    /*__int64 VMT3;
     __int64 field_20;
     __int64 field_28;
     __int64 field_30;
@@ -658,7 +658,7 @@ struct DCWidget : public ViewModel
     ui::DeferredCommand* CustomEvent;
     ui::DeferredCommand* OpenMessageBox;
     ui::DeferredCommand* PasteFromClipboardToTextBoxCommand;
-    __int64 field_F8;
+    __int64 field_F8;*/
 };
 
 

@@ -106,7 +106,25 @@ struct ThreadRegistry : public ProtectedGameObject<ThreadRegistry>
     static uint32_t RequestThreadIndex();
 };
 
+using SoundNameId = int32_t;
+using SoundObjectId = uint64_t;
+static constexpr uint64_t InvalidSoundObjectId = 0xffffffffffffffffull;
+
+enum class LuaSoundObjectId : SoundObjectId {};
+MARK_INTEGRAL_ALIAS(LuaSoundObjectId)
+
 END_SE()
+
+BEGIN_NS(stats)
+
+struct ConditionId
+{
+    int32_t Id{ -1 };
+
+    STDString* Get() const;
+};
+
+END_NS()
 
 BEGIN_NS(ecs)
 
