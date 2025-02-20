@@ -24,8 +24,8 @@ void StatLoadOrderHelper::UpdateModDirectoryMap()
 
     auto modManager = gExtender->GetCurrentExtensionState()->GetModManager();
     if (modManager) {
-        for (auto const& mod : modManager->LoadOrderedModules) {
-           modDirectoryToModMap_.insert(std::make_pair(mod.Info.Directory, mod.Info.ModuleUUIDString));
+        for (auto const& mod : modManager->AvailableMods) {
+            modDirectoryToModMap_.insert(std::make_pair(mod.Info.Directory, mod.Info.ModuleUUIDString));
         }
     }
 }
