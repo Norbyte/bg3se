@@ -480,7 +480,7 @@ BEGIN_ENUM(CursorType, uint32_t)
     EV(LootedContainer, 0x33)
 END_ENUM()
 
-BEGIN_ENUM(AudioCodec, uint32_t)
+BEGIN_ENUM(AudioCodec, uint8_t)
     EV(Bank, 0)
     EV(PCM, 1)
     EV(ADPCM, 2)

@@ -505,7 +505,8 @@ struct AnimationBlueprintResource : public TwoStepLoadableResource
     [[bg3::hidden]] void* VMT3;
     Array<gn::GenomeBlueprint*> Blueprints;
     LegacyRefMap<bg3se::Guid, gn::GenomeVariant> Params;
-    bg3se::Guid PreviewVisualResourceID;
+    // Editor only
+    // Guid PreviewVisualResourceID;
 };
 
 struct AnimationSetResource : public LoadableResource
@@ -845,8 +846,9 @@ struct EffectResource : public TwoStepLoadableResource
     bool Looping;
     bool UseSoundOcclusion;
     uint32_t InterruptionMode;
-    bool PreRollMode;
-    [[bg3::hidden]] Array<void*> TimelineDependencies;
+    // Editor only
+    // bool PreRollMode;
+    // [[bg3::hidden]] Array<void*> TimelineDependencies;
 };
 
 struct FCurveResource : public TwoStepLoadableResource
@@ -1155,13 +1157,13 @@ struct SkinPresetResource : public LoadableResource
     PresetData Presets;
 };
 
-struct SoundResource : public TwoStepLoadableResource
+struct SoundResource : public Resource
 {
     FixedString SoundEvent;
     uint32_t SoundEventID;
     float Duration;
     float MaxDistance;
-    uint8_t SoundCodec;
+    AudioCodec SoundCodec;
     uint8_t Flags;
 };
 

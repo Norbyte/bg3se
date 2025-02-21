@@ -235,9 +235,7 @@ struct GodComponent : public BaseComponent
     DEFINE_COMPONENT(God, "eoc::god::GodComponent")
 
     Guid God;
-    Guid field_10;
-    uint8_t field_20;
-    int field_24;
+    std::optional<Guid> GodOverride;
 };
     
 struct ProficiencyComponent : public BaseComponent

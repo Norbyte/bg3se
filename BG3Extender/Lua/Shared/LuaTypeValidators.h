@@ -654,6 +654,10 @@ bool Validate(HashMap<TK, TV> const* v, Overload<HashMap<TK, TV>>)
 template <class T>
 bool Validate(std::optional<T> const* v, Overload<std::optional<T>>)
 {
+    // Ensure that _Has_Value is a bool
+    auto hasValue = (uint8_t const*)v + sizeof(T);
+    CHECK(*hasValue == 0 || *hasValue == 1);
+
     if (v->has_value()) {
         return Validate(&v->value(), Overload<T>{});
     } else {
@@ -667,6 +671,10 @@ bool ValidateRef(std::array<TE, Size> const* v, Overload<std::array<TE, Size>>);
 template <class T>
 bool ValidateRef(std::optional<T> const* v, Overload<std::optional<T>>)
 {
+    // Ensure that _Has_Value is a bool
+    auto hasValue = (uint8_t const*)v + sizeof(T);
+    CHECK(*hasValue == 0 || *hasValue == 1);
+
     if (v->has_value()) {
         return ValidateRef(&v->value(), Overload<T>{});
     } else {

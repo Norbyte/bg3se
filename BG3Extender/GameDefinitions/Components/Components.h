@@ -364,7 +364,8 @@ struct OriginalTemplateComponent : public BaseComponent
 {
     DEFINE_COMPONENT(OriginalTemplate, "eoc::templates::OriginalTemplateComponent")
 
-    std::optional<FixedString> OriginalTemplate;
+    FixedString OriginalTemplate;
+    uint8_t TemplateType;
 };
 
 

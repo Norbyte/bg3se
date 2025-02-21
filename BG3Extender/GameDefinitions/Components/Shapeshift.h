@@ -43,7 +43,7 @@ struct State
     bool KillEntityAtZeroHP;
     Array<Guid> TagsAdd;
     Array<Guid> TagsRemove;
-    std::optional<bool> RemoveOldTags;
+    bool RemoveOldTags;
     std::optional<uint16_t> ActionCapabilities;
     std::optional<uint16_t> InteractionsCapabilities;
     std::optional<uint16_t> AwarenessCapabilities;

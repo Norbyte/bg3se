@@ -151,7 +151,6 @@ struct StatusIncapacitated : public StatusBoost
     float CurrentFreezeTime;
     float FreezeTime;
     uint8_t IncapacitateFlags;
-    bool IncapacitationAnimationFinished;
 };
 
 struct StatusDowned : public StatusIncapacitated
