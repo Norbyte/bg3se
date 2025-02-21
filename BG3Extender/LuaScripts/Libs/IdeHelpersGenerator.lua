@@ -400,7 +400,7 @@ function Generator:Build(opts)
     self:EmitEmptyLine()
     self:EmitEmptyLine()
 
-    local modifierLists = Ext.Stats.GetStatsManager().ModifierLists.Primitives
+    local modifierLists = Ext.Stats.GetStatsManager().ModifierLists.Values
     for _,modifierList in ipairs(modifierLists) do
         self:EmitModifierList(modifierList)
         self:EmitEmptyLine()
@@ -838,8 +838,8 @@ function Generator:EmitModifierList(modifierList)
     self:EmitComment("@class " .. name)
 
     local modifiers = Ext.Stats.GetStatsManager().ModifierValueLists
-    for _,attr in ipairs(modifierList.Attributes.Primitives) do
-        local modifier = modifiers.Primitives[attr.EnumerationIndex+1]
+    for _,attr in ipairs(modifierList.Attributes.Values) do
+        local modifier = modifiers.Values[attr.EnumerationIndex+1]
         self:EmitModifier(attr, modifier)
     end
 end
