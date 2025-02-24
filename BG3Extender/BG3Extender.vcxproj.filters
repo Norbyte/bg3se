@@ -500,6 +500,7 @@
     <ClInclude Include="GameDefinitions\Lighting.h" />
     <ClInclude Include="GameDefinitions\DragDrop.h" />
     <ClInclude Include="GameDefinitions\Skeleton.h" />
+    <ClInclude Include="Lua\Libs\ClientUI\ClassCache.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -748,6 +749,7 @@
     <None Include="GameDefinitions\Controllers\Behaviour.inl" />
     <None Include="GameDefinitions\Stats\Functors.inl" />
     <None Include="GameDefinitions\DragDrop.inl" />
+    <None Include="Lua\Libs\ClientUI\ClassCache.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

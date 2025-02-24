@@ -103,11 +103,12 @@ inline bool TypeClass::IsInterface() const
 
 struct ObjectHelpers
 {
+public:
     static PropertyOperationResult FallbackGetProperty(lua_State* L, lua::LifetimeHandle lifetime, BaseObject const* object, bg3se::FixedString const& prop);
     static PropertyOperationResult FallbackSetProperty(lua_State* L, BaseObject* object, bg3se::FixedString const& prop, int index);
-    static UserReturn GetNamedProperty(lua_State* L, BaseObject const* o, Symbol name);
+    static UserReturn GetNamedProperty(lua_State* L, BaseObject const* o, bg3se::FixedString const& name);
     static UserReturn GetProperty(lua_State* L, BaseObject const* o, TypeProperty const* prop);
-    static void SetNamedProperty(lua_State* L, BaseObject* o, Symbol name, lua::AnyRef value);
+    static void SetNamedProperty(lua_State* L, BaseObject* o, bg3se::FixedString const& name, lua::AnyRef value);
     static void SetProperty(lua_State* L, BaseObject* o, TypeProperty const* prop, lua::AnyRef value);
     static UserReturn GetAllProperties(lua_State* L, BaseObject const* o);
     static UserReturn GetDirectProperties(lua_State* L, BaseObject const* o);
@@ -117,6 +118,10 @@ struct ObjectHelpers
     static Symbol GetClassTypeName(BaseObject const* o);
     static STDString ToString(BaseObject const* o);
     static uint32_t GetNumReferences(BaseRefCounted const* o);
+
+private:
+    static void DoGetDirectProperties(lua_State* L, BaseObject const* o);
+    static void DoGetDependencyProperties(lua_State* L, BaseObject const* o);
 };
 
 struct RoutedEventHelpers
@@ -127,9 +132,9 @@ struct RoutedEventHelpers
 
 struct DependencyObjectHelpers
 {
-    static UserReturn GetProperty(lua_State* L, DependencyObject const* o, Symbol name);
+    static UserReturn GetProperty(lua_State* L, DependencyObject const* o, bg3se::FixedString const& name);
     static UserReturn GetDependencyProperty(lua_State* L, DependencyObject const* o, DependencyProperty const* prop);
-    static void SetProperty(lua_State* L, DependencyObject* o, Symbol name, lua::AnyRef value);
+    static void SetProperty(lua_State* L, DependencyObject* o, bg3se::FixedString const& name, lua::AnyRef value);
     static void SetDependencyProperty(lua_State* L, DependencyObject* o, DependencyProperty const* prop, lua::AnyRef value);
 };
 
@@ -195,7 +200,7 @@ struct UIElementDataHelpers
 
 struct UIElementHelpers
 {
-    static uint64_t Subscribe(lua_State* L, UIElement* o, Symbol evt, lua::FunctionRef func);
+    static uint64_t Subscribe(lua_State* L, UIElement* o, bg3se::FixedString const& evt, lua::FunctionRef func);
     static bool Unsubscribe(lua_State* L, UIElement* o, uint64_t index);
 };
 
@@ -208,7 +213,7 @@ struct FrameworkElementHelpers
     static BaseComponent* GetResource(FrameworkElement const* o, char const* key, std::optional<bool> fullElementSearch);
     static BaseObject* GetTreeParent(FrameworkElement const* o);
     static FrameworkElement* AttachXamlChild(FrameworkElement* o, char const* path);
-    static FrameworkElement* SetXamlProperty(FrameworkElement* o, char const* prop, char const* path);
+    static FrameworkElement* SetXamlProperty(FrameworkElement* o, bg3se::FixedString const& prop, char const* path);
 };
 
 struct TypePropertyHelpers
@@ -227,17 +232,15 @@ struct TypeHelpers
     static TypeClass* GetBase(TypeClass const* o);
     static bool IsInterface(TypeClass const* o);
     static TypeClass::AncestorVector const* GetInterfaces(TypeClass const* o);
-    static TypeClass::PropertyVector const* GetProperties(TypeClass const* o);
-    static TypeClass::PropertyVector const* GetEvents(TypeClass const* o);
-    static TypeProperty const* GetProperty(TypeClass const* o, Symbol name);
-    static TypeMetaData* FindMetaRecursive(TypeClass const* o, const TypeClass* metaDataType);
+
+    static Array<TypeProperty const*> const* GetProperties(TypeClass const* o);
+    static Array<DependencyProperty const*> const* GetDependencyProperties(TypeClass const* o);
+    static Array<RoutedEvent const*> const* GetRoutedEvents(TypeClass const* o);
+
+    static TypeProperty const* GetProperty(TypeClass const* o, bg3se::FixedString const& name);
+    static DependencyProperty const* GetDependencyProperty(TypeClass const* o, bg3se::FixedString const& name);
+    static RoutedEvent const* GetRoutedEvent(TypeClass const* o, bg3se::FixedString const& name);
     static TypeMetaData* FindMetaOrDescendant(TypeClass const* o, const TypeClass* metaDataType);
-    static DependencyData* GetDependencyData(TypeClass const* o);
-    static DependencyProperty const* GetDependencyProperty(TypeClass const* o, Symbol name);
-    static RoutedEvent const* GetRoutedEvent(TypeClass const* o, Symbol name);
-    static UIElementData* GetUIElementData(TypeClass const* o);
-    static Array<DependencyProperty*> GetDependencyProperties(TypeClass const* o);
-    static Array<RoutedEvent*> GetRoutedEvents(TypeClass const* o);
 
     static std::optional<uint64_t> StringToEnum(TypeEnum const* e, char const* value);
     static std::optional<uint64_t> StringToEnum(TypeEnum const* e, Symbol value);

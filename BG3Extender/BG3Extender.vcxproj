@@ -75,7 +75,7 @@
       <DelayLoadDLLs>vulkan-1.dll;d3dcompiler_47.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y "$(TargetPath)" "D:\SteamLibrary\steamapps\common\Baldur's Gate 3 Playtest\bin\DWrite.dll"
+      <Command>copy /Y "$(TargetPath)" "D:\SteamLibrary\steamapps\common\Baldurs Gate 3\bin\DWrite.dll"
 rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\steamapps\common\Baldurs Gate 3\Data\"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
@@ -119,7 +119,7 @@ $(SolutionDir)\External\protobuf\tools\protobuf\protoc --cpp_out=$(SolutionDir)\
 $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(ProjectDir)Lua.bundle"</Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>copy /Y "$(TargetPath)" "D:\SteamLibrary\steamapps\common\Baldurs Gate 3\bin\DWrite.dll"
+      <Command>copy /Y "$(TargetPath)" "D:\SteamLibrary\steamapps\common\Baldur's Gate 3 Playtest\bin\DWrite.dll"
 rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\steamapps\common\Baldurs Gate 3\Data\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -254,6 +254,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="Lua\Helpers\LuaPushObject.h" />
     <ClInclude Include="Lua\Helpers\LuaSerialize.h" />
     <ClInclude Include="Lua\Helpers\LuaUnserialize.h" />
+    <ClInclude Include="Lua\Libs\ClientUI\ClassCache.h" />
     <ClInclude Include="Lua\Libs\Json.h" />
     <ClInclude Include="Lua\Libs\Level.h" />
     <ClInclude Include="Lua\Libs\LibraryRegistrationHelpers.h" />
@@ -471,6 +472,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="Lua\Libs\ClientUI\Names.inl" />
     <None Include="Lua\Libs\ClientUI\NsHelpers.inl" />
     <None Include="Lua\Libs\ClientUI\Events.inl" />
+    <None Include="Lua\Libs\ClientUI\ClassCache.inl" />
     <None Include="Lua\Libs\ClientUI\Symbols.inl" />
     <None Include="Lua\Libs\Debug.inl" />
     <None Include="Lua\Libs\Entity.inl" />

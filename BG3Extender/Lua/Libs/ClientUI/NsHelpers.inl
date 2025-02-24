@@ -3,7 +3,9 @@
 #include <NsGui/Uri.h>
 #include <NsDrawing/Color.h>
 #include <NsMath/Vector.h>
+#include <Lua/Libs/ClientUI/ClassCache.h>
 #include <Lua/Libs/ClientUI/Symbols.inl>
+#include <Lua/Libs/ClientUI/ClassCache.inl>
 
 BEGIN_BARE_NS(Noesis)
 
@@ -125,56 +127,55 @@ uint32_t ObjectHelpers::GetNumReferences(BaseRefCounted const* o)
     return o->GetNumReferences();
 }
 
-PropertyOperationResult ObjectHelpers::FallbackGetProperty(lua_State* L, lua::LifetimeHandle lifetime, BaseObject const* object, bg3se::FixedString const& prop)
+PropertyOperationResult ObjectHelpers::FallbackGetProperty(lua_State* L, lua::LifetimeHandle lifetime, BaseObject const* object, bg3se::FixedString const& name)
 {
-    auto typeProp = TypeHelpers::GetProperty(object->GetClassType(), Symbol(prop.GetString(), Symbol::NullIfNotFound{}));
-    if (typeProp != nullptr) {
-        GetProperty(L, object, typeProp);
-        return PropertyOperationResult::Success;
-    }
-
-    auto dependencyProp = TypeHelpers::GetDependencyProperty(object->GetClassType(), Symbol(prop.GetString(), Symbol::NullIfNotFound{}));
-    if (dependencyProp != nullptr) {
-        DependencyObjectHelpers::GetDependencyProperty(L, static_cast<DependencyObject const*>(object), dependencyProp);
-        return PropertyOperationResult::Success;
+    auto const& cls = gClassCache.GetClass(object->GetClassType());
+    auto prop = cls.Names.try_get(name);
+    
+    if (prop) {
+        if (prop->Property) {
+            GetProperty(L, object, prop->Property);
+            return PropertyOperationResult::Success;
+        }
+        
+        if (prop->DepProperty) {
+            DependencyObjectHelpers::GetDependencyProperty(L, static_cast<DependencyObject const*>(object), prop->DepProperty);
+            return PropertyOperationResult::Success;
+        }
     }
 
     return PropertyOperationResult::NoSuchProperty;
 }
 
-PropertyOperationResult ObjectHelpers::FallbackSetProperty(lua_State* L, BaseObject* object, bg3se::FixedString const& prop, int index)
+PropertyOperationResult ObjectHelpers::FallbackSetProperty(lua_State* L, BaseObject* object, bg3se::FixedString const& name, int index)
 {
-    auto typeProp = TypeHelpers::GetProperty(object->GetClassType(), Symbol(prop.GetString(), Symbol::NullIfNotFound{}));
-    if (typeProp != nullptr) {
-        SetProperty(L, object, typeProp, lua::AnyRef(index));
-        return PropertyOperationResult::Success;
-    }
+    auto const& cls = gClassCache.GetClass(object->GetClassType());
+    auto prop = cls.Names.try_get(name);
 
-    auto dependencyProp = TypeHelpers::GetDependencyProperty(object->GetClassType(), Symbol(prop.GetString(), Symbol::NullIfNotFound{}));
-    if (dependencyProp != nullptr) {
-        DependencyObjectHelpers::SetDependencyProperty(L, static_cast<DependencyObject*>(object), dependencyProp, lua::AnyRef(index));
-        return PropertyOperationResult::Success;
-    }
-
-    return PropertyOperationResult::NoSuchProperty;
-}
-
-UserReturn ObjectHelpers::GetNamedProperty(lua_State* L, BaseObject const* o, Symbol name)
-{
-    auto prop = TypeHelpers::GetProperty(o->GetClassType(), name);
-    if (prop == nullptr) {
-        // Check DependencyObject path for dependency properties
-        if (TypeHelpers::IsDescendantOf(o->GetClassType(), gStaticSymbols.TypeClasses.DependencyObject.Type)) {
-            auto dep = static_cast<DependencyObject const*>(o);
-            return DependencyObjectHelpers::GetProperty(L, dep, name);
+    if (prop) {
+        if (prop->Property) {
+            SetProperty(L, object, prop->Property, lua::AnyRef(index));
+            return PropertyOperationResult::Success;
         }
 
-        OsiError("Object " << o->GetClassType()->GetName() << " has no property named '" << name.Str() << "'");
-        lua::push(L, nullptr);
-        return 1;
+        if (prop->DepProperty) {
+            DependencyObjectHelpers::SetDependencyProperty(L, static_cast<DependencyObject*>(object), prop->DepProperty, lua::AnyRef(index));
+            return PropertyOperationResult::Success;
+        }
     }
 
-    return GetProperty(L, o, prop);
+    return PropertyOperationResult::NoSuchProperty;
+}
+
+UserReturn ObjectHelpers::GetNamedProperty(lua_State* L, BaseObject const* o, bg3se::FixedString const& name)
+{
+    auto result = FallbackGetProperty(L, lua::GetCurrentLifetime(L), o, name);
+    if (result != PropertyOperationResult::Success) {
+        OsiError("Object " << o->GetClassType()->GetName() << " has no property named '" << name << "'");
+        lua::push(L, nullptr);
+    }
+
+    return 1;
 }
 
 UserReturn ObjectHelpers::GetProperty(lua_State* L, BaseObject const* o, TypeProperty const* prop)
@@ -183,21 +184,12 @@ UserReturn ObjectHelpers::GetProperty(lua_State* L, BaseObject const* o, TypePro
     return 1;
 }
 
-void ObjectHelpers::SetNamedProperty(lua_State* L, BaseObject* o, Symbol name, lua::AnyRef value)
+void ObjectHelpers::SetNamedProperty(lua_State* L, BaseObject* o, bg3se::FixedString const& name, lua::AnyRef value)
 {
-    auto prop = TypeHelpers::GetProperty(o->GetClassType(), name);
-    if (prop == nullptr) {
-        // Check DependencyObject path for dependency properties
-        if (TypeHelpers::IsDescendantOf(o->GetClassType(), gStaticSymbols.TypeClasses.DependencyObject.Type)) {
-            auto dep = static_cast<DependencyObject*>(o);
-            return DependencyObjectHelpers::SetProperty(L, dep, name, value);
-        }
-
-        OsiError("Object " << o->GetClassType()->GetName() << " has no property named '" << name.Str() << "'");
-        return;
+    auto result = FallbackSetProperty(L, o, name, value.Index);
+    if (result != PropertyOperationResult::Success) {
+        OsiError("Object " << o->GetClassType()->GetName() << " has no property named '" << name << "'");
     }
-
-    SetProperty(L, o, prop, value);
 }
 
 void ObjectHelpers::SetProperty(lua_State* L, BaseObject* o, TypeProperty const* prop, lua::AnyRef value)
@@ -217,10 +209,8 @@ void ObjectHelpers::SetProperty(lua_State* L, BaseObject* o, TypeProperty const*
     prop->Set(o, pValue);
 }
 
-UserReturn ObjectHelpers::GetDependencyProperties(lua_State* L, BaseObject const* o)
+void ObjectHelpers::DoGetDependencyProperties(lua_State* L, BaseObject const* o)
 {
-    lua_newtable(L);
-
     auto type = o->GetClassType();
     if (TypeHelpers::IsDescendantOf(type, gStaticSymbols.TypeClasses.DependencyObject.Type)) {
         auto dep = static_cast<DependencyObject const*>(o);
@@ -231,54 +221,40 @@ UserReturn ObjectHelpers::GetDependencyProperties(lua_State* L, BaseObject const
             lua_settable(L, -3);
         }
     }
+}
 
+void ObjectHelpers::DoGetDirectProperties(lua_State* L, BaseObject const* o)
+{
+    auto nsType = o->GetClassType();
+    auto const& cls = gClassCache.GetClass(nsType);
+    for (auto prop : cls.Names) {
+        if (prop.Value().Property) {
+            lua::push(L, prop.Key());
+            StoredValueHelpers::PushProperty(L, o, nsType, prop.Value().Property);
+            lua_settable(L, -3);
+        }
+    }
+}
+
+UserReturn ObjectHelpers::GetDependencyProperties(lua_State* L, BaseObject const* o)
+{
+    lua_newtable(L);
+    DoGetDependencyProperties(L, o);
     return 1;
 }
 
 UserReturn ObjectHelpers::GetDirectProperties(lua_State* L, BaseObject const* o)
 {
     lua_newtable(L);
-
-    auto type = o->GetClassType();
-    do {
-        for (auto& prop : type->mProperties) {
-            lua::push(L, prop->GetName());
-            StoredValueHelpers::PushProperty(L, o, type, prop);
-            lua_settable(L, -3);
-        }
-
-        type = type->GetBase();
-    } while (type);
-
+    DoGetDirectProperties(L, o);
     return 1;
 }
 
 UserReturn ObjectHelpers::GetAllProperties(lua_State* L, BaseObject const* o)
 {
     lua_newtable(L);
-
-    auto type = o->GetClassType();
-    if (TypeHelpers::IsDescendantOf(type, gStaticSymbols.TypeClasses.DependencyObject.Type)) {
-        auto dep = static_cast<DependencyObject const*>(o);
-        for (auto& prop : dep->mValues) {
-            auto name = prop.key->GetName();
-            lua::push(L, name);
-            StoredValueHelpers::PushValue(L, prop.key->GetType(), prop.value, type, &name);
-            lua_settable(L, -3);
-        }
-    }
-
-    auto propTy = type;
-    do {
-        for (auto& prop : propTy->mProperties) {
-            lua::push(L, prop->GetName());
-            StoredValueHelpers::PushProperty(L, o, propTy, prop);
-            lua_settable(L, -3);
-        }
-
-        propTy = propTy->GetBase();
-    } while (propTy);
-
+    DoGetDependencyProperties(L, o);
+    DoGetDirectProperties(L, o);
     return 1;
 }
 
@@ -294,11 +270,11 @@ TypeClass* RoutedEventHelpers::GetOwnerType(RoutedEvent const* o)
 }
 
 
-UserReturn DependencyObjectHelpers::GetProperty(lua_State* L, DependencyObject const* o, Symbol name)
+UserReturn DependencyObjectHelpers::GetProperty(lua_State* L, DependencyObject const* o, bg3se::FixedString const& name)
 {
     auto prop = TypeHelpers::GetDependencyProperty(o->GetClassType(), name);
     if (prop == nullptr) {
-        OsiError("Dependency object " << o->GetClassType()->GetName() << " has no property named '" << name.Str() << "'");
+        OsiError("Dependency object " << o->GetClassType()->GetName() << " has no property named '" << name << "'");
         lua::push(L, nullptr);
         return 1;
     }
@@ -319,11 +295,11 @@ UserReturn DependencyObjectHelpers::GetDependencyProperty(lua_State* L, Dependen
     return 1;
 }
 
-void DependencyObjectHelpers::SetProperty(lua_State* L, DependencyObject* o, Symbol name, lua::AnyRef value)
+void DependencyObjectHelpers::SetProperty(lua_State* L, DependencyObject* o, bg3se::FixedString const& name, lua::AnyRef value)
 {
     auto prop = TypeHelpers::GetDependencyProperty(o->GetClassType(), name);
     if (prop == nullptr) {
-        OsiError("Dependency object " << o->GetClassType()->GetName() << " has no property named '" << name.Str() << "'");
+        OsiError("Dependency object " << o->GetClassType()->GetName() << " has no property named '" << name << "'");
         return;
     }
 
@@ -760,11 +736,11 @@ Array<RoutedEvent*> UIElementDataHelpers::GetAllEvents(UIElementData const* o)
     return events;
 }
 
-uint64_t UIElementHelpers::Subscribe(lua_State* L, UIElement* target, Symbol evt, lua::FunctionRef func)
+uint64_t UIElementHelpers::Subscribe(lua_State* L, UIElement* target, bg3se::FixedString const& evt, lua::FunctionRef func)
 {
     auto routedEvent = TypeHelpers::GetRoutedEvent(target->GetClassType(), evt);
     if (routedEvent == nullptr) {
-        OsiError("UI element " << target->GetClassType()->GetName() << " has no event named '" << evt.Str() << "'");
+        OsiError("UI element " << target->GetClassType()->GetName() << " has no event named '" << evt << "'");
         return 0;
     }
 
@@ -828,9 +804,9 @@ FrameworkElement* FrameworkElementHelpers::AttachXamlChild(FrameworkElement* o, 
     return element.GetPtr();
 }
 
-FrameworkElement* FrameworkElementHelpers::SetXamlProperty(FrameworkElement* o, char const* prop, char const* path)
+FrameworkElement* FrameworkElementHelpers::SetXamlProperty(FrameworkElement* o, bg3se::FixedString const& prop, char const* path)
 {
-    auto dependencyProp = TypeHelpers::GetDependencyProperty(o->GetClassType(), Symbol(prop, Symbol::NullIfNotFound{}));
+    auto dependencyProp = TypeHelpers::GetDependencyProperty(o->GetClassType(), prop);
     if (dependencyProp == nullptr) {
         OsiError("FrameworkElement " << o->GetClassType()->GetName() << " has no property named '" << prop << "'");
         return nullptr;
@@ -910,66 +886,6 @@ bool TypeHelpers::IsInterface(TypeClass const* o)
     return o->IsInterface();
 }
 
-DependencyData* TypeHelpers::GetDependencyData(TypeClass const* o)
-{
-    gStaticSymbols.Initialize();
-    return static_cast<DependencyData *>(TypeHelpers::FindMetaRecursive(o, (TypeClass const*)Reflection::GetType(StaticSymbol<DependencyData>())));
-}
-
-DependencyProperty const* TypeHelpers::GetDependencyProperty(TypeClass const* o, Symbol name)
-{
-    gStaticSymbols.Initialize();
-    auto dependencyDataType = (TypeClass const*)Reflection::GetType(StaticSymbol<DependencyData>());
-    auto uiElementDataType = (TypeClass const*)Reflection::GetType(StaticSymbol<UIElementData>());
-
-    do {
-        auto meta = o->FindMeta(dependencyDataType);
-        if (meta == nullptr) meta = o->FindMeta(uiElementDataType);
-
-        if (meta != nullptr) {
-            auto deps = static_cast<DependencyData*>(meta);
-
-            auto propIt = deps->mProperties.Find(name);
-            if (propIt != deps->mProperties.End()) {
-                return propIt->GetPtr();
-            }
-        }
-
-        o = o->GetBase();
-    } while (o != nullptr);
-
-    return nullptr;
-}
-
-RoutedEvent const* TypeHelpers::GetRoutedEvent(TypeClass const* o, Symbol name)
-{
-    gStaticSymbols.Initialize();
-    auto uiElementDataType = (TypeClass const*)Reflection::GetType(StaticSymbol<UIElementData>());
-
-    do {
-        auto meta = o->FindMeta(uiElementDataType);
-
-        if (meta != nullptr) {
-            auto deps = static_cast<UIElementData*>(meta);
-
-            auto eventIt = deps->mEvents.Find(name);
-            if (eventIt != deps->mEvents.End()) {
-                return eventIt->GetPtr();
-            }
-        }
-
-        o = o->GetBase();
-    } while (o != nullptr);
-
-    return nullptr;
-}
-
-UIElementData* TypeHelpers::GetUIElementData(TypeClass const* o)
-{
-    gStaticSymbols.Initialize();
-    return static_cast<UIElementData*>(TypeHelpers::FindMetaRecursive(o, (TypeClass const*)Reflection::GetType(StaticSymbol<UIElementData>())));
-}
-
 template <class Fun>
 void TypeHelpers::ForEachMeta(TypeClass const* cls, const TypeClass* metaDataType, Fun fun)
 {
@@ -981,34 +897,6 @@ void TypeHelpers::ForEachMeta(TypeClass const* cls, const TypeClass* metaDataTyp
 
         cls = cls->GetBase();
     } while (cls != nullptr);
-}
-
-Array<DependencyProperty*> TypeHelpers::GetDependencyProperties(TypeClass const* o)
-{
-    Array<DependencyProperty*> props;
-
-    ForEachMeta(o, gStaticSymbols.TypeClasses.DependencyData.Type, [&](TypeMetaData const* meta) {
-        auto deps = static_cast<DependencyData const*>(meta);
-        for (auto const& dep : deps->mProperties) {
-            props.push_back(const_cast<DependencyProperty*>(dep.GetPtr()));
-        }
-    });
-
-    return props;
-}
-
-Array<RoutedEvent*> TypeHelpers::GetRoutedEvents(TypeClass const* o)
-{
-    Array<RoutedEvent*> events;
-
-    ForEachMeta(o, gStaticSymbols.TypeClasses.UIElementData.Type, [&](TypeMetaData const* meta) {
-        auto uiData = static_cast<UIElementData const*>(meta);
-        for (auto const& evt : uiData->mEvents) {
-            events.push_back(const_cast<RoutedEvent*>(evt.GetPtr()));
-        }
-    });
-
-    return events;
 }
 
 std::optional<uint64_t> TypeHelpers::StringToEnum(TypeEnum const* e, char const* value)
@@ -1037,41 +925,43 @@ TypeClass::AncestorVector const* TypeHelpers::GetInterfaces(TypeClass const* o)
     return &o->mInterfaces;
 }
 
-TypeClass::PropertyVector const* TypeHelpers::GetProperties(TypeClass const* o)
+Array<TypeProperty const*> const* TypeHelpers::GetProperties(TypeClass const* o)
 {
-    return &o->mProperties;
+    auto const& cls = gClassCache.GetClass(o);
+    return &cls.Properties;
 }
 
-TypeProperty const* TypeHelpers::GetProperty(TypeClass const* o, Symbol name)
+Array<DependencyProperty const*> const* TypeHelpers::GetDependencyProperties(TypeClass const* o)
 {
-    do {
-        for (auto property : o->mProperties) {
-            if (property->mName == name) {
-                return property;
-            }
-        }
-
-        o = o->GetBase();
-    } while (o != nullptr);
-
-    return nullptr;
+    auto const& cls = gClassCache.GetClass(o);
+    return &cls.DependencyProperties;
 }
 
-TypeClass::PropertyVector const* TypeHelpers::GetEvents(TypeClass const* o)
+Array<RoutedEvent const*> const* TypeHelpers::GetRoutedEvents(TypeClass const* o)
 {
-    return &o->mEvents;
+    auto const& cls = gClassCache.GetClass(o);
+    return &cls.Events;
 }
 
-TypeMetaData* TypeHelpers::FindMetaRecursive(TypeClass const* o, const TypeClass* metaDataType)
+TypeProperty const* TypeHelpers::GetProperty(TypeClass const* o, bg3se::FixedString const& name)
 {
-    do {
-        auto meta = o->FindMeta(metaDataType);
-        if (meta != nullptr) return meta;
+    auto const& cls = gClassCache.GetClass(o);
+    auto prop = cls.Names.try_get(name);
+    return prop ? prop->Property : nullptr;
+}
 
-        o = o->GetBase();
-    } while (o != nullptr);
+DependencyProperty const* TypeHelpers::GetDependencyProperty(TypeClass const* o, bg3se::FixedString const& name)
+{
+    auto const& cls = gClassCache.GetClass(o);
+    auto prop = cls.Names.try_get(name);
+    return prop ? prop->DepProperty : nullptr;
+}
 
-    return nullptr;
+RoutedEvent const* TypeHelpers::GetRoutedEvent(TypeClass const* o, bg3se::FixedString const& name)
+{
+    auto const& cls = gClassCache.GetClass(o);
+    auto prop = cls.Names.try_get(name);
+    return prop ? prop->Event : nullptr;
 }
 
 TypeMetaData* TypeHelpers::FindMetaOrDescendant(TypeClass const* o, const TypeClass* metaDataType)

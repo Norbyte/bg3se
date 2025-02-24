@@ -16,7 +16,7 @@ public:
     UIEventHooks(ClientState& state);
     ~UIEventHooks();
 
-    SubscriptionIndex Subscribe(UIElement* target, RoutedEvent const* event, Symbol eventName, RegistryEntry&& hook);
+    SubscriptionIndex Subscribe(UIElement* target, RoutedEvent const* event, bg3se::FixedString const& eventName, RegistryEntry&& hook);
     bool Unsubscribe(SubscriptionIndex index);
     void EventFired(SubscriptionIndex index, Noesis::BaseComponent* target, const RoutedEventArgs& args);
 
@@ -34,7 +34,7 @@ private:
         void Unsubscribe();
 
         Ptr<UIElement> Target;
-        Symbol Event;
+        bg3se::FixedString Event;
         RoutedEvent const* EventType;
         RegistryEntry Handler;
         SubscriptionIndex Index;

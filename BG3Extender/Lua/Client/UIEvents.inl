@@ -64,7 +64,7 @@ UIEventHooks::UIEventHooks(ClientState& state)
 UIEventHooks::~UIEventHooks()
 {}
 
-UIEventHooks::SubscriptionIndex UIEventHooks::Subscribe(UIElement* target, RoutedEvent const* event, Symbol eventName, RegistryEntry&& hook)
+UIEventHooks::SubscriptionIndex UIEventHooks::Subscribe(UIElement* target, RoutedEvent const* event, bg3se::FixedString const& eventName, RegistryEntry&& hook)
 {
     SubscriptionIndex index;
     auto sub = subscriptions_.Add(index);

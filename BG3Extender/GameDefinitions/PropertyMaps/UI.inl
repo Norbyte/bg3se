@@ -28,11 +28,6 @@ INHERIT(Noesis::BaseRefCounted)
 END_CLS()
 
 
-BEGIN_CLS(Noesis::TypeMetaData)
-INHERIT(Noesis::BaseObject)
-END_CLS()
-
-
 BEGIN_CLS(Noesis::Type)
 INHERIT(Noesis::BaseObject)
 P_FREE_GETTER(Name, Noesis::TypeHelpers::GetName)
@@ -53,17 +48,12 @@ END_CLS()
 
 
 BEGIN_CLS(Noesis::TypeClass)
-INHERIT(Noesis::TypeMeta)
+// Not inheriting anything from parent for type descriptors
 P_FREE_GETTER(Base, Noesis::TypeHelpers::GetBase)
 P_FREE_GETTER(IsInterface, Noesis::TypeHelpers::IsInterface)
 P_FREE_GETTER(Properties, Noesis::TypeHelpers::GetProperties)
-P_FREE_GETTER(Events, Noesis::TypeHelpers::GetEvents)
-P_FREE_GETTER(Dependency, Noesis::TypeHelpers::GetDependencyData)
-P_FREE_GETTER(UIElement, Noesis::TypeHelpers::GetUIElementData)
-P_FUN(GetDependencyProperties, Noesis::TypeHelpers::GetDependencyProperties)
-P_FUN(GetRoutedEvents, Noesis::TypeHelpers::GetRoutedEvents)
-// FindProperty
-// FindEvent
+P_FREE_GETTER(DependencyProperties, Noesis::TypeHelpers::GetDependencyProperties)
+P_FREE_GETTER(RoutedEvents, Noesis::TypeHelpers::GetRoutedEvents)
 END_CLS()
 
 
@@ -83,11 +73,6 @@ END_CLS()
 BEGIN_CLS(Noesis::DependencyObject)
 INHERIT(Noesis::DispatcherObject)
 // Dependency properties handled by polymorphic logic in ObjectHelpers
-END_CLS()
-
-
-BEGIN_CLS(Noesis::DependencyData)
-INHERIT(Noesis::TypeMetaData)
 END_CLS()
 
 
@@ -114,13 +99,6 @@ INHERIT(Noesis::DependencyObject)
 P_FREE_GETTER(VisualParent, Noesis::VisualHelpers::GetVisualParent)
 P_FREE_GETTER(VisualChildrenCount, Noesis::VisualHelpers::GetVisualChildrenCount)
 P_FUN(VisualChild, Noesis::VisualHelpers::GetVisualChild)
-END_CLS()
-
-
-BEGIN_CLS(Noesis::UIElementData)
-INHERIT(Noesis::DependencyData)
-P_FUN(GetEvent, Noesis::UIElementDataHelpers::GetEvent)
-P_FUN(GetAllEvents, Noesis::UIElementDataHelpers::GetAllEvents)
 END_CLS()
 
 
