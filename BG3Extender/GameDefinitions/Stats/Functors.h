@@ -263,8 +263,8 @@ struct ApplyStatusFunctor : public Functor
     int StatusSpecificParam2{ -1 }; // Arg5
     int StatusSpecificParam3{ -1 }; // Arg6
     bool RequiresConcentration{ false };
-    [[bg3::hidden]] void* DurationLuaExpression{ nullptr }; // Arg3
-    bool HasParam6{ false };
+    [[bg3::hidden]] StatsExpressionParam* DurationLuaExpression{ nullptr }; // Arg3
+    [[bg3::legacy(HasParam6)]] bool KeepAlive{ false };
 };
 
 struct SurfaceChangeFunctor : public Functor
@@ -272,9 +272,9 @@ struct SurfaceChangeFunctor : public Functor
     DEFN_FUNCTOR(SurfaceChange)
 
     float Chance{ 1.0f };
-    float field_24{ 0.0f };
+    [[bg3::legacy(field_24)]] float DetourMaxWaitTime{ 0.0f };
     float field_28{ 0.0f };    
-    float field_2C{ -1.0f };
+    [[bg3::legacy(field_2C)]] float Radius{ -1.0f };
     SurfaceChange SurfaceChange{ SurfaceChange::None };
 };
 
@@ -299,12 +299,12 @@ struct SummonFunctor : public Functor
     DEFN_FUNCTOR(Summon)
 
     FixedString Template; // Arg1
-    FixedString AIHelper; // Arg 3
+    [[bg3::legacy(AIHelper)]] FixedString AiSpellOverride; // Arg 3
     std::variant<SummonLifetimeType, float> SpawnLifetime;
     HashSet<FixedString> StatusesToApply;
     FixedString StackId;
-    bool Arg5;
-    bool Arg9;
+    [[bg3::legacy(Arg5)]] bool ExtendExistingConcentration;
+    [[bg3::legacy(Arg9)]] bool LateJoinPenalty;
     bool UseOwnerPassives;
 };
 
@@ -324,7 +324,7 @@ struct DouseFunctor : public Functor
 {
     DEFN_FUNCTOR(Douse)
 
-    float field_20{ -1.0f };
+    [[bg3::legacy(field_20)]] float Radius{ -1.0f };
     float field_24{ 1.0f };
 };
 
@@ -341,7 +341,7 @@ struct PickupFunctor : public Functor
 {
     DEFN_FUNCTOR(Pickup)
 
-    FixedString Arg0;
+    [[bg3::legacy(Arg0)]] FixedString Effect;
 };
 
 struct CreateSurfaceFunctor : public Functor
@@ -353,7 +353,7 @@ struct CreateSurfaceFunctor : public Functor
     float Arg4{ 0.0f };
     float Duration{ -1.0f }; //Arg1
     bool IsControlledByConcentration{ true }; // Arg3
-    bool Arg5{ false };
+    [[bg3::legacy(Arg5)]] bool ExtendExistingConcentration{ false };
 };
 
 struct CreateConeSurfaceFunctor : public Functor
@@ -418,8 +418,8 @@ struct TeleportSourceFunctor : public Functor
 {
     DEFN_FUNCTOR(TeleportSource)
 
-    bool Arg1{ false };
-    bool Arg2{ false };
+    [[bg3::legacy(Arg1)]] bool FindValidPosition{ false };
+    [[bg3::legacy(Arg2)]] bool RotateTowardsTarget{ false };
 };
 
 struct SetStatusDurationFunctor : public Functor
@@ -440,7 +440,7 @@ struct UseSpellFunctor : public Functor
     bool IgnoreChecks{ false }; // Arg2
     bool Arg4{ false };
     Guid SpellCastGuid;
-    bool Arg6{ false };
+    [[bg3::legacy(Arg6)]] bool IgnoreBlindness{ false };
 };
 
 struct UseActionResourceFunctor : public Functor
@@ -486,8 +486,7 @@ struct RestoreResourceFunctor : public Functor
     DEFN_FUNCTOR(RestoreResource)
 
     Guid ActionResource; // Arg0
-    int Hex{ 0 }; // Arg2
-    int field_34{ 0 };
+    [[bg3::legacy(Hex)]] int Level{ 0 }; // Arg2
     StatsExpressionParam* LuaAmount{ nullptr }; // Arg1
     double Amount{ 0.0 }; // Arg1
     RestoreResourceAmountType AmountType{ RestoreResourceAmountType::None };
@@ -500,7 +499,7 @@ struct SpawnFunctor : public Functor
     FixedString TemplateId; // Arg0
     FixedString AIHelper;
     HashSet<FixedString> StatusesToApply;
-    bool Arg7{ false };
+    [[bg3::legacy(Arg7)]] bool ApplyLateJoinPenalty{ false };
 };
 
 struct StabilizeFunctor : public Functor
@@ -530,15 +529,15 @@ struct SummonInInventoryFunctor : public Functor
     DEFN_FUNCTOR(SummonInInventory)
 
     FixedString TemplateId;
-    FixedString Arg8;
+    [[bg3::legacy(Arg8)]] FixedString AiSpellOverride;
     std::variant<SummonLifetimeType, float> Lifetime;
-    HashSet<FixedString> AdditionalArgs;
-    FixedString Arg9;
+    [[bg3::legacy(AdditionalArgs)]] HashSet<FixedString> StatusesToApply;
+    [[bg3::legacy(Arg9)]] FixedString SpellContainer;
     int32_t Amount{ 0 };
+    bool PlaceInInventory{ false };
     bool Equip{ false };
-    bool Arg5{ false };
-    bool Arg6{ false };
-    bool Arg7{ false };
+    [[bg3::legacy(Arg6)]] bool AllowOffHand{ false };
+    [[bg3::legacy(Arg7)]] bool ExtendExistingConcentration{ false };
 };
 
 struct SpawnInInventoryFunctor : public Functor
@@ -546,12 +545,12 @@ struct SpawnInInventoryFunctor : public Functor
     DEFN_FUNCTOR(SpawnInInventory)
 
     FixedString TemplateId;
-    FixedString Arg7;
-    int32_t Arg3{ 0 };
-    bool Arg4{ false };
-    bool Arg5{ false };
-    bool Arg6{ false };
-    HashSet<FixedString> AdditionalArgs;
+    [[bg3::legacy(Arg7)]] FixedString AiSpellOverride;
+    [[bg3::legacy(Arg3)]] int32_t Amount{ 0 };
+    [[bg3::legacy(Arg4)]] bool PlaceInInventory{ false };
+    [[bg3::legacy(Arg5)]] bool Equip{ false };
+    [[bg3::legacy(Arg6)]] bool AllowOffHand{ false };
+    [[bg3::legacy(AdditionalArgs)]] HashSet<FixedString> StatusesToApply;
 };
 
 struct RemoveUniqueStatusFunctor : public Functor
@@ -582,8 +581,8 @@ struct TriggerRandomCastFunctor : public Functor
 {
     DEFN_FUNCTOR(TriggerRandomCast)
 
-    uint8_t Arg1;
-    float Arg2;
+    [[bg3::legacy(Arg1)]] uint8_t DC;
+    [[bg3::legacy(Arg2)]] float Delay;
     Array<FixedString> RandomCastOutcomes;
 };
 
@@ -598,7 +597,7 @@ struct FireProjectileFunctor : public Functor
 {
     DEFN_FUNCTOR(FireProjectile)
 
-    FixedString Arg1;
+    [[bg3::legacy(Arg1)]] FixedString ProjectileTemplate;
 };
 
 struct ShortRestFunctor : public Functor
@@ -636,7 +635,7 @@ struct RemoveStatusByLevelFunctor : public Functor
     DEFN_FUNCTOR(RemoveStatusByLevel)
 
     std::variant<FixedString, StatusGroup> NameOrStatusGroup; // Arg1
-    int8_t Arg2;
+    [[bg3::legacy(Arg2)]] int8_t Level;
     std::optional<AbilityId> Ability;
 };
 
@@ -675,7 +674,7 @@ struct SpawnExtraProjectilesFunctor : public Functor
 {
     DEFN_FUNCTOR(SpawnExtraProjectiles)
 
-    FixedString Arg1;
+    [[bg3::legacy(Arg1)]] FixedString ProjectileSpell;
 };
 
 struct KillFunctor : public Functor
@@ -694,7 +693,7 @@ struct DropFunctor : public Functor
 {
     DEFN_FUNCTOR(Drop)
 
-    FixedString Arg1;
+    [[bg3::legacy(Arg1)]] FixedString Effect;
 };
 
 struct ResetCooldownsFunctor : public Functor
@@ -725,7 +724,7 @@ struct SetRerollFunctor : public Functor
     DEFN_FUNCTOR(SetReroll)
 
     uint8_t Roll;
-    bool Arg2;
+    [[bg3::legacy(Arg2)]] bool KeepNew;
 };
 
 struct SetAdvantageFunctor : public Functor
