@@ -39,6 +39,18 @@ INHERIT(Noesis::Type)
 // FindMeta, GetMeta
 END_CLS()
 
+BEGIN_CLS(Noesis::TypeMetaData)
+INHERIT(Noesis::BaseComponent)
+END_CLS()
+
+BEGIN_CLS(Noesis::DependencyData)
+INHERIT(Noesis::TypeMetaData)
+END_CLS()
+
+BEGIN_CLS(Noesis::UIElementData)
+INHERIT(Noesis::DependencyData)
+END_CLS()
+
 BEGIN_CLS(Noesis::TypeProperty)
 P_FREE_GETTER(Name, Noesis::TypePropertyHelpers::GetName)
 P_FREE_GETTER(ContentType, Noesis::TypePropertyHelpers::GetContentType)

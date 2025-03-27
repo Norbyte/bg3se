@@ -120,8 +120,8 @@ struct CameraComponent : public BaseComponent
     uint32_t MasterBehaviorType;
     rf::CameraController* Controller;
     int ExposureSettingIndex;
-    uint8_t field_C;
-    bool field_D;
+    bool Active;
+    bool AcceptsInput;
     bool UseCameraPPSettings;
     bool UseSplitScreenFov;
     PostProcessCameraSetting PostProcess;
@@ -160,9 +160,9 @@ struct GameCameraBehavior : public BaseComponent
 
     EntityHandle Trigger;
     EntityHandle Target;
-    bool field_10;
+    bool TargetFalling;
     bool field_11;
-    bool field_12;
+    bool MovingToTarget;
     bool field_13;
     float field_14;
     glm::vec3 TargetPreviousDestination;
@@ -186,7 +186,7 @@ struct GameCameraBehavior : public BaseComponent
     float ZoomSpeed;
     uint8_t CameraMode;
     uint8_t field_A9;
-    int RotationY;
+    float RotationY;
     std::optional<glm::vec3> RotationTarget;
     float MouseRotationSpeed;
     glm::vec3 TargetLastPosition;
@@ -209,8 +209,8 @@ struct GameCameraBehavior : public BaseComponent
     bool field_145;
     bool IsPaused;
     uint32_t TargetMode;
-    bool field_14C;
-    bool field_14D;
+    bool SelectMode;
+    bool WasInSelectMode;
     glm::vec3 field_150;
     float field_15C;
     float Zoom;
@@ -219,19 +219,19 @@ struct GameCameraBehavior : public BaseComponent
     std::optional<float> TacticalTimeout;
     Array<EntityHandle> EffectEntities;
     bool field_188;
-    bool field_189;
+    bool FreezeHeight;
     bool field_18A;
     bool field_18B;
     [[bg3::hidden]] HashMap<EntityHandle, void*> field_190__EH_CameraCollisionDebugInfo;
-    __int64 field_1D0;
-    __int64 field_1D8;
+    glm::vec3 DebugPosition;
+    float DebugOffset;
     std::optional<float> field_1E0;
     EntityHandle TrackTarget;
     bool IsMoving;
     bool IsRotating;
     bool field_1F2;
-    bool field_1F3;
-    EntityHandle field_1F8;
+    bool IsSnapping;
+    EntityHandle LastPickingTarget;
     uint8_t field_200;
     HashSet<int16_t> field_208;
     std::optional<glm::vec3> field_238;
