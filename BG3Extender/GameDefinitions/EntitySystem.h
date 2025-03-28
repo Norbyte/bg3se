@@ -803,4 +803,55 @@ struct EntityWorld : public ProtectedGameObject<EntityWorld>
     EntityCommandBuffer* Deferred();
 };
 
+struct PeerReplicationData
+{
+    PeerId PeerID;
+    HashSet<EntityHandle> ReplicatedToPeer;
+    HashSet<EntityHandle> RequestedForReplication;
+    HashSet<EntityHandle> RequestedToStopReplication;
+    HashMap<EntityHandle, BitSet<>> Components;
+    HashMap<EntityHandle, BitSet<>> Components2;
+};
+
+struct NetIdGenerator
+{
+    PagedArray<NetId> AssignedNetIds;
+    NetId NextFreeNetId;
+    NetId LastFreeNetId;
+    int FreeSlots;
+};
+
+struct EntitiesDirtyFieldsBuffer
+{
+    Array<HashMap<EntityHandle, BitSet<>>> field_0;
+    bool field_10;
+};
+
+struct EntitiesDirtyCollectionIndicesBuffer
+{
+    BitSet<> field_0;
+    Array<void*> field_10;
+};
+
+struct EntityReplicationAuthority : public ProtectedGameObject<EntityReplicationAuthority>
+{
+    net::Host* Host;
+    EntityWorld* World;
+    EntitiesDirtyFieldsBuffer DirtyFields;
+    EntitiesDirtyCollectionIndicesBuffer DirtyCollectionIndices;
+    NetIdGenerator NetIdGenerator;
+    SparseArray<void*> field_70_IComponentSerializer;
+    HashMap<EntityHandle, NetId> EntityToNetId;
+    HashMap<NetId, EntityHandle> NetIdToEntity;
+    HashMap<EntityHandle, BitSet<>> field_110;
+    HashSet<EntityHandle> ReplicateEntities;
+    HashSet<EntityHandle> StopReplicateEntities;
+    SparseArray<PeerReplicationData> ReplicationData;
+    Array<PeerId> Peers;
+    Array<PeerId> ConnectedPeers;
+    Array<void*> field_1F0_pIComponentSubscription;
+    HashMap<PeerId, void*> field_200_PeerID_pECSReplicationMessage;
+};
+
+
 END_NS()

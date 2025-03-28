@@ -63,13 +63,13 @@ struct Message : Noncopyable<Message>
     virtual void Reset() = 0;
 
     NetMessage MsgId;
-    uint32_t Always4{ 4 };
-    uint32_t MsgType{ 1 };
-    uint8_t Always0{ 0 };
-    uint8_t Unknown1{ 0 };
-    uint64_t ReceivedAtTime{ 0 };
-    uint32_t ReceiveTimeDelta{ 0 };
-    uint32_t Unknown4{ 0 };
+    uint32_t Reliability{ 4 };
+    uint32_t Priority{ 1 };
+    uint8_t OrderingSequence{ 0 };
+    bool Timestamped{ 0 };
+    uint64_t Timestamp{ 0 };
+    uint32_t OriginalSize{ 0 };
+    float Latency{ 0 };
 };
 
 struct MessagePool : Noncopyable<MessagePool>
@@ -182,6 +182,13 @@ struct AbstractPeerBase : ProtectedGameObject<AbstractPeerBase>
     virtual bool fun_110() = 0;
 };
 
+struct AbstractPeerCompressor
+{
+    HashMap<PeerId, void*> field_0; // compression::PrANS*
+    HashMap<PeerId, void*> field_50; // compression::PrANS*
+    bool field_A0;
+};
+
 struct AbstractPeer : public AbstractPeerBase
 {
     void* VMT2;
@@ -193,18 +200,15 @@ struct AbstractPeer : public AbstractPeerBase
     STDString PeerHost1;
     uint16_t PeerPort1;
     STDString PeerHost2;
-    void* field_58;
+    void* LoopbackPeer;
     void* field_60;
-    HashMap<int32_t, void*> field_68;
-    HashMap<int32_t, void*> field_A8;
-    bool field_E8;
-    uint8_t _Pad1[7];
+    AbstractPeerCompressor Compressor;
     bool field_F0;
     PacketHandlers Handlers;
-    int MessageContextPool;
+    Pool MessageContextPool;
     QueueCS<Message*> ImmediateIncomingMessages;
-    QueueCS<Message*> DeferredIncomingMessages;
-    QueueCS<Message*> OutgoingMessages;
+    QueueCS<Message*> Inbox;
+    QueueCS<Message*> Outbox;
     Array<TPeerId> PeerIdClassName;
     Array<void*> DisconnectDelays;
     void* SocketLayerOverride;
@@ -216,16 +220,17 @@ struct AbstractPeer : public AbstractPeerBase
     void *FullyConnectedMesh;
     bool UseMesh;
     void *NatPunchDebugInterface;
-    int PeerAddressID2;
+    void *NatPunchDebugInterface2;
+    int NatPunchServerPeerID;
     GameTime LastTickTime;
-    int field_288;
-    uint16_t field_28C;
-    uint16_t field_28E;
-    bool DisconnectRequested;
+    int Timeout;
+    uint16_t MaxPeers;
+    uint16_t NetworkVersion;
+    bool FreezeProcessing;
     bool WasInitialized;
-    bool IsTickingProtocols;
-    bool NextIsTickingProtocols;
-    uint32_t NextTickTime;
+    bool IsAutoProcessing;
+    bool NextIsAutoProcessing;
+    uint32_t MaxMessageProcessTime;
     uint32_t MaxConnectRetries;
     uint32_t UpdateInterval;
     STDString RemoteHost1;
@@ -243,10 +248,17 @@ struct AbstractPeer : public AbstractPeerBase
     Array<Protocol*> ProtocolList;
     HashMap<uint32_t, Protocol*> ProtocolMap;
     QueueCS<Message*> PacketsToSend;
-    QueueCS<Message*> Ring2;
-    QueueCS<Message*> Ring3;
-    uint64_t field_440;
-    uint8_t field_448;
+    QueueCS<Message*> MessagesToDecompress;
+    QueueCS<Message*> MessagesToDecompress2;
+    void* DecompressJobBatch;
+    bool DecompressJobLaunched;
+
+#if 0 // Editor only
+    STDString Name;
+    double LocalLatency;
+    double LocalLatency2;
+    QueueCS<Message*> Ring4;
+#endif
 };
 
 struct Host : public AbstractPeer
@@ -254,81 +266,60 @@ struct Host : public AbstractPeer
     void* GameServerVMT2;
 };
 
-template <class T>
-struct SaltMap : public ProtectedGameObject<SaltMap<T>>
+struct ExternalCommunityUserID
 {
-    T** Buckets;
-    uint16_t BitsPerBucket;
-    uint16_t NumBuckets;
-    uint32_t NumElements;
+    uint32_t field_0;
+    uint8_t CommunityType;
+    uint64_t ID;
+};
+
+struct GameServerUserMappings
+{
+    Array<UserId> UserIds;
+    Array<void*> field_10_UserId_Mapping;
+    Array<void*> field_20_UserSlotId_Mapping;
+    LegacyMap<FixedString, uint32_t> field_30_FS_UserSlotId;
+};
+
+struct GamePlayerInfo
+{
+    uint32_t Flags;
+    EntityHandle Character;
+    FixedString PlayerProfileId;
+    STDString Username;
+    ExternalCommunityUserID CommunityUserId;
+    __int64 field_40;
+    bool TutorialCompleted;
+};
+
+struct GamePeerInfo
+{
+    uint32_t Flags;
+    LegacyRefMap<uint16_t, GamePlayerInfo> Players;
+    HashSet<Guid> DLCs;
+    STDString BuildName;
 };
 
 struct GameServer : public Host
 {
-    struct Inner
-    {
-        __int64 field_0;
-        __int64 field_8;
-        Array<void*> field_10;
-        char field_20;
-        BitSet<> field_28;
-        __int64 field_38;
-        __int64 field_40;
-        SaltMap<void*> field_48;
-        __int64 field_58;
-        __int64 field_60;
-        int field_68;
-        BitSet<> field_70;
-        Array<void*> field_80;
-        HashMap<EntityHandle, void*> field_90;
-        HashMap<EntityHandle, void*> field_D0;
-        HashMap<EntityHandle, void*> field_110;
-        HashSet<EntityHandle> field_150;
-        HashSet<EntityHandle> field_180;
-        BitSet<> field_1B0;
-        Array<void*> field_1C0;
-        Array<void*> field_1D0;
-        Array<void*> field_1E0;
-        Array<void*> field_1F0;
-        HashMap<int32_t, void*> field_200;
-    };
-
-    struct Inner2
-    {
-        Array<void*> field_0;
-        Array<void*> field_10;
-        Array<void*> field_20;
-        LegacyMap<int32_t, void*> field_30;
-    };
-
     void* VMT3;
-    void* field_3C0;
+    void* VMT_EventListenerBase;
     void* VMT4;
-    Inner InnerObj;
+    ecs::EntityReplicationAuthority Replication;
     void* LobbyManager;
     ecs::EntityWorld* EntityWorld;
     Array<PeerId> ConnectedPeerIds;
-    Inner2 InnerObj2;
+    GameServerUserMappings UserMappings;
     Array<PeerId> ActivePeerIds;
-    Array<PeerId> SomePeerIds3;
-    Array<PeerId> SomePeerIds;
+    Array<PeerId> SessionPeerIds;
+    Array<PeerId> LevelPeerIds;
     Array<PeerId> KickedPeerIds;
-    int field_6B8;
-    int field_6BC;
-    __int64 field_6C0;
-    __int64 field_6C8;
-    __int64 field_6D0;
+    LegacyRefMap<PeerId, GamePeerInfo> PeerInfo;
+    LegacyRefMap<EntityHandle, UserId> CharacterOwners;
     int ServerState;
-    int AcceptingClientId;
-    __int64 field_6E0;
-    __int64 field_6E8;
-    __int64 field_6F0;
-    __int64 field_6F8;
-    __int64 field_700;
-    __int64 field_708;
-    __int64 field_710;
-    __int64 field_718;
-    __int64 field_720;
+    int LocalPeerId;
+    void* VoicePeerInterface;
+    UnknownFunction field_6E8;
 };
 
 struct Client : public AbstractPeer
