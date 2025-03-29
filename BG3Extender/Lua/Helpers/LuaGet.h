@@ -11,7 +11,7 @@ inline bool do_get(lua_State * L, int index, Overload<bool>)
 inline NetId do_get(lua_State* L, int index, Overload<NetId>)
 {
     auto v = luaL_checkinteger(L, index);
-    return NetId((uint32_t)v);
+    return NetId((uint64_t)v);
 }
 
 inline UserId do_get(lua_State* L, int index, Overload<UserId>)
