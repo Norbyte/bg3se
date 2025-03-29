@@ -247,7 +247,7 @@ char const* GetDebugName(lua_State* L, int idx)
     auto type = lua_type(L, idx);
     if (type == LUA_TCPPOBJECT || type == LUA_TLIGHTCPPOBJECT) {
         auto meta = lua_get_lightcppany(L, idx);
-        return GetDebugName(meta.MetatableTag);
+        return GetDebugName(meta);
     }
 
     return lua_typename(L, type);
