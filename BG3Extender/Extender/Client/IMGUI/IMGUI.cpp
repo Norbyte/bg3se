@@ -1072,6 +1072,28 @@ void Table::UpdateSorting()
     needsSortingUpdate_ = false;
 }
 
+void Table::StyledRender(DrawingContext& context)
+{
+    if (OptimizedDraw) {
+        if (BeginRender(context)) {
+            ImGuiListClipper clipper;
+            clipper.Begin(Children.size());
+            while (clipper.Step()) {
+                for (auto row = clipper.DisplayStart; row < clipper.DisplayEnd; row++) {
+                    auto child = Manager->GetRenderable(Children[row]);
+                    if (child) {
+                        child->Render(context);
+                    }
+                }
+            }
+        }
+
+        EndRender(context);
+    } else {
+        TreeParent::StyledRender(context);
+    }
+}
+
 bool Table::BeginRender(DrawingContext& context)
 {
     rendering_ = ImGui::BeginTable(Label.c_str(), (int)Columns, (ImGuiTableFlags)Flags, context.Scale(ToImVec(Size)));

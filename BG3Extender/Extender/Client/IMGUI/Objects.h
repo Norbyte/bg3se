@@ -508,6 +508,7 @@ struct Table : public TreeParent
 public:
     DECL_UI_TYPE(Table)
 
+    void StyledRender(DrawingContext& context) override;
     bool BeginRender(DrawingContext& context) override;
     void EndRender(DrawingContext& context) override;
 
@@ -520,6 +521,7 @@ public:
     uint32_t FreezeCols{ 0 };
     bool ShowHeader{ false };
     bool AngledHeader{ false };
+    bool OptimizedDraw{ false };
     Array<ColumnDefinition> ColumnDefs;
     Array<SortSpec> Sorting;
     std::optional<glm::vec2> Size;
