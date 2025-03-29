@@ -78,6 +78,7 @@ private:
     static Array<STDString> GetAllComponentNames(lua_State* L, EntityHandle entity, std::optional<bool> requireMapped);
 
     static bool IsAlive(lua_State* L, EntityHandle entity);
+    static std::optional<NetId> GetNetId(lua_State* L, EntityHandle entity);
 
     static void Replicate(lua_State* L, EntityHandle entity, ExtComponentType component);
     static void SetReplicationFlags(lua_State* L, EntityHandle entity, ExtComponentType component, uint64_t flags, std::optional<uint32_t> qword);

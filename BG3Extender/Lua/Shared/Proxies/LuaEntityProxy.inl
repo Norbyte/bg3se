@@ -286,6 +286,11 @@ bool EntityProxyMetatable::IsAlive(lua_State* L, EntityHandle entity)
     return storage != nullptr;
 }
 
+std::optional<NetId> EntityProxyMetatable::GetNetId(lua_State* L, EntityHandle entity)
+{
+    auto ecs = GetEntitySystem(L);
+    return ecs->EntityToNetId(entity);
+}
 
 uint64_t EntityProxyMetatable::GetReplicationFlags(lua_State* L, EntityHandle entity, ExtComponentType component, std::optional<uint32_t> qword)
 {
@@ -405,6 +410,7 @@ void EntityProxyMetatable::StaticInitialize()
     ADD_FUNC(GetAllComponentNames);
 
     ADD_FUNC(IsAlive);
+    ADD_FUNC(GetNetId);
 
     ADD_FUNC(GetReplicationFlags);
     ADD_FUNC(SetReplicationFlags);

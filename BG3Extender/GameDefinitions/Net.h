@@ -220,7 +220,9 @@ struct AbstractPeer : public AbstractPeerBase
     void *FullyConnectedMesh;
     bool UseMesh;
     void *NatPunchDebugInterface;
+#if 0 // Editor only
     void *NatPunchDebugInterface2;
+#endif
     int NatPunchServerPeerID;
     GameTime LastTickTime;
     int Timeout;
@@ -249,7 +251,9 @@ struct AbstractPeer : public AbstractPeerBase
     HashMap<uint32_t, Protocol*> ProtocolMap;
     QueueCS<Message*> PacketsToSend;
     QueueCS<Message*> MessagesToDecompress;
+#if 0 // Editor only
     QueueCS<Message*> MessagesToDecompress2;
+#endif
     void* DecompressJobBatch;
     bool DecompressJobLaunched;
 

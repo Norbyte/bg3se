@@ -216,6 +216,9 @@ public:
     virtual EntityWorld* GetEntityWorld() const = 0;
     virtual ExtensionStateBase* GetExtensionState() const = 0;
 
+    virtual std::optional<EntityHandle> NetIdToEntity(NetId netId) const = 0;
+    virtual std::optional<NetId> EntityToNetId(EntityHandle entity) const = 0;
+
     template <class T>
     std::optional<resource::GuidResourceBank<T>*> GetResourceManager()
     {
@@ -330,6 +333,8 @@ public:
 
     EntityWorld* GetEntityWorld() const override;
     ExtensionStateBase* GetExtensionState() const override;
+    std::optional<EntityHandle> NetIdToEntity(NetId netId) const override;
+    std::optional<NetId> EntityToNetId(EntityHandle entity) const override;
 };
 
 class ClientEntitySystemHelpers : public EntitySystemHelpersBase
@@ -339,6 +344,8 @@ public:
 
     EntityWorld* GetEntityWorld() const override;
     ExtensionStateBase* GetExtensionState() const override;
+    std::optional<EntityHandle> NetIdToEntity(NetId netId) const override;
+    std::optional<NetId> EntityToNetId(EntityHandle entity) const override;
 };
 
 END_NS()

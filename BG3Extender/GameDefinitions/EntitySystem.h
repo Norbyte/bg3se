@@ -400,8 +400,8 @@ struct EntityReplicationPeer : public ProtectedGameObject<EntityReplicationPeer>
     ecs::EntityWorld* World;
     SyncBuffers** Buffers;
     net::GameClient* Client;
-    HashMap<NetId, EntityHandle> NetIDToEntity;
-    HashMap<EntityHandle, NetId> EntityToNetID;
+    HashMap<NetId, EntityHandle> NetIdToEntity;
+    HashMap<EntityHandle, NetId> EntityToNetId;
     SparseArray<ComponentDeserializer*> Deserializers;
 };
 

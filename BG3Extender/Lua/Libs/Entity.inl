@@ -16,13 +16,54 @@ EntityHandle UuidToHandle(lua_State* L, Guid uuid)
     return State::FromLua(L)->GetEntitySystemHelpers()->GetEntityHandle(uuid);
 }
 
-UserReturn Get(lua_State* L, Guid uuid)
+UserReturn Get(lua_State* L, lua::AnyRef entity)
 {
-    auto handle = State::FromLua(L)->GetEntitySystemHelpers()->GetEntityHandle(uuid);
-    if (handle) {
-        EntityProxyMetatable::Make(L, handle);
-    } else {
+    auto type = lua_type(L, entity.Index);
+    switch (type) {
+    case LUA_TNIL:
+    {
         push(L, nullptr);
+        break;
+    }
+    
+    case LUA_TSTRING:
+    {
+        auto uuid = get<Guid>(L, entity.Index);
+        auto handle = State::FromLua(L)->GetEntitySystemHelpers()->GetEntityHandle(uuid);
+        if (handle) {
+            EntityProxyMetatable::Make(L, handle);
+        } else {
+            push(L, nullptr);
+        }
+        break;
+    }
+    
+    case LUA_TNUMBER:
+    {
+        auto netId = get<NetId>(L, entity.Index);
+        auto ecs = State::FromLua(L)->GetEntitySystemHelpers();
+        auto handle = ecs->NetIdToEntity(netId);
+        if (handle) {
+            EntityProxyMetatable::Make(L, *handle);
+        } else {
+            push(L, nullptr);
+        }
+        break;
+    }
+    
+    case LUA_TLIGHTCPPOBJECT:
+    {
+        auto handle = get<EntityHandle>(L, entity.Index);
+        if (handle) {
+            EntityProxyMetatable::Make(L, handle);
+        } else {
+            push(L, nullptr);
+        }
+        break;
+    }
+
+    default:
+        return luaL_error(L, "Expected entity GUID, network ID or entity handle, got %s", GetDebugName(L, entity.Index));
     }
 
     return 1;

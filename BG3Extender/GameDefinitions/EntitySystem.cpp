@@ -1335,6 +1335,20 @@ ExtensionStateBase* ServerEntitySystemHelpers::GetExtensionState() const
     return gExtender->GetServer().HasExtensionState() ? &gExtender->GetServer().GetExtensionState() : nullptr;
 }
 
+std::optional<EntityHandle> ServerEntitySystemHelpers::NetIdToEntity(NetId netId) const
+{
+    auto& repl = GetStaticSymbols().GetEoCServer()->GameServer->Replication;
+    auto entity = repl.NetIdToEntity.try_get(netId);
+    return entity ? *entity : std::optional<EntityHandle>{};
+}
+
+std::optional<NetId> ServerEntitySystemHelpers::EntityToNetId(EntityHandle entity) const
+{
+    auto& repl = GetStaticSymbols().GetEoCServer()->GameServer->Replication;
+    auto netId = repl.EntityToNetId.try_get(entity);
+    return netId ? *netId : std::optional<NetId>{};
+}
+
 EntityWorld* ClientEntitySystemHelpers::GetEntityWorld() const
 {
     return GetStaticSymbols().GetClientEntityWorld();
@@ -1343,6 +1357,28 @@ EntityWorld* ClientEntitySystemHelpers::GetEntityWorld() const
 ExtensionStateBase* ClientEntitySystemHelpers::GetExtensionState() const
 {
     return gExtender->GetClient().HasExtensionState() ? &gExtender->GetClient().GetExtensionState() : nullptr;
+}
+
+std::optional<EntityHandle> ClientEntitySystemHelpers::NetIdToEntity(NetId netId) const
+{
+    auto client = GetStaticSymbols().GetEoCClient()->GameClient;
+    if (client) {
+        auto entity = client->ReplicationPeer.NetIdToEntity.try_get(netId);
+        return entity ? *entity : std::optional<EntityHandle>{};
+    } else {
+        return {};
+    }
+}
+
+std::optional<NetId> ClientEntitySystemHelpers::EntityToNetId(EntityHandle entity) const
+{
+    auto client = GetStaticSymbols().GetEoCClient()->GameClient;
+    if (client) {
+        auto netId = client->ReplicationPeer.EntityToNetId.try_get(entity);
+        return netId ? *netId : std::optional<NetId>{};
+    } else {
+        return {};
+    }
 }
 
 END_NS()
