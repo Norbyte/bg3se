@@ -23,15 +23,17 @@ struct ClassCache
     ClassDefinition const& GetClass(TypeClass const* cls)
     {
         auto entry = Classes.try_get(cls);
-        if (!entry) {
-            entry = Classes.add_key(cls);
-            entry->Populate(cls);
+        if (entry) {
+            return *entry->get();
         }
 
-        return *entry;
+        auto cached = Classes.set(cls, std::make_unique<ClassDefinition>())->get();
+        cached->Populate(cls);
+
+        return *cached;
     }
 
-    bg3se::HashMap<TypeClass const*, ClassDefinition> Classes;
+    bg3se::HashMap<TypeClass const*, std::unique_ptr<ClassDefinition>> Classes;
 };
 
 extern ClassCache gClassCache;
