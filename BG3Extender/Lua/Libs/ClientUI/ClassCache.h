@@ -4,6 +4,7 @@ struct NameInfo
 {
     TypeProperty const* Property{ nullptr };
     DependencyProperty const* DepProperty{ nullptr };
+    TypeProperty const* EventProperty{ nullptr };
     RoutedEvent const* Event{ nullptr };
 };
 

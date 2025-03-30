@@ -21,7 +21,7 @@ void ClassDefinition::Populate(TypeClass const* cls)
 
     for (auto evt : cls->mEvents) {
         Properties.push_back(evt);
-        Names.get_or_add(bg3se::FixedString(evt->GetName().Str()))->Property = evt;
+        Names.get_or_add(bg3se::FixedString(evt->GetName().Str()))->EventProperty = evt;
     }
 
     for (auto prop : cls->mProperties) {
