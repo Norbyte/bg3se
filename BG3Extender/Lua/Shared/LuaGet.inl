@@ -255,7 +255,7 @@ MathParam do_get(lua_State* L, int index, Overload<MathParam>)
         default: luaL_error(L, "Param %d: Unsupported vector or matrix size (%d)", index, val.Arity); break;
         }
     } else {
-        luaL_error(L, "Param %d: expected a table, got %s", GetDebugName(L, index));
+        luaL_error(L, "Param %d: expected a table, got %s", index, GetDebugName(L, index));
         val.Arity = 0;
     }
 
