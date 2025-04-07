@@ -63,6 +63,7 @@ namespace bg3se
         ecl::GameStateMachine__Update ecl__GameStateMachine__Update{ nullptr };
         esv::GameStateMachine__Update esv__GameStateMachine__Update{ nullptr };
         App::LoadGraphicSettingsProc* App__LoadGraphicSettings{ nullptr };
+        input::InputManager** ls__gInputManager{ nullptr };
 
         ecs::EntityWorld::UpdateProc* ecs__EntityWorld__Update{ nullptr };
         ecs::EntityWorld::FlushECBsProc* ecs__EntityWorld__FlushECBs{ nullptr };

@@ -110,6 +110,11 @@ namespace ecs
     class EntitySystemHelpersBase;
 }
 
+namespace input
+{
+    struct InputManager;
+}
+
 namespace stats
 {
     struct Modifier;

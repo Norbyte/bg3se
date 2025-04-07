@@ -208,6 +208,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\GameState.h" />
     <ClInclude Include="GameDefinitions\GlobalFixedStrings.h" />
     <ClInclude Include="GameDefinitions\Hit.h" />
+    <ClInclude Include="GameDefinitions\Input.h" />
     <ClInclude Include="GameDefinitions\Interrupt.h" />
     <ClInclude Include="GameDefinitions\Level.h" />
     <ClInclude Include="GameDefinitions\Lighting.h" />

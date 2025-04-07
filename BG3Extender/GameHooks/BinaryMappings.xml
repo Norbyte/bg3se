@@ -273,6 +273,19 @@
       <Target Type="Absolute" Offset="0" Symbol="App__LoadGraphicSettings" />
     </Mapping>
 
+    <Mapping Name="ls::gInputManager">
+      0f 28 44 24 30 // movaps  xmm0, [rsp+88h+var_58]
+      @str1 48 8d 05 ?? ?? ?? ?? // lea     rax, aPlayerprofiles_2; "PlayerProfiles/Eoc/keyboard_WhiteBoxing"...
+      c7 44 24 38 2c 00 00 00 // mov     dword ptr [rsp+88h+var_58+8], 2Ch ; ','
+      66 0f 7f 44 24 40 // movdqa  [rsp+88h+var_48], xmm0
+      48 89 44 24 30 // mov     qword ptr [rsp+88h+var_58], rax
+      0f 28 44 24 30 // movaps  xmm0, [rsp+88h+var_58]
+      66 0f 7f 44 24 30 // movdqa  [rsp+88h+var_58], xmm0
+      @ref1 48 8b 1d ?? ?? ?? ?? // mov     rbx, cs:ls__gInputManager
+      <Condition Type="String" Offset="@str1" Value="PlayerProfiles/Eoc/keyboard_WhiteBoxing.json" />
+      <Target Type="Indirect" Offset="@ref1" Symbol="ls__gInputManager" />
+    </Mapping>
+
     <!-- Sig: Ref to esv::platform::MovementSystemID -->
     <Mapping Name="esv::GameStateThreaded::GameStateWorker::DoWork" Critical="true">
       48 8b c4 // mov     rax, rsp

@@ -147,6 +147,7 @@ namespace bg3se
         SYM_OFF(ecl__GameStateMachine__Update);
         SYM_OFF(esv__GameStateMachine__Update);
         SYM_OFF(App__LoadGraphicSettings);
+        SYM_OFF(ls__gInputManager);
 
         SYM_OFF(ecs__EntityWorld__Update);
         SYM_OFF(ecs__EntityWorld__FlushECBs);
