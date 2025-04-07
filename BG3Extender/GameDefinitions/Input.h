@@ -51,11 +51,11 @@ struct InputDevice
 struct InputEventDesc
 {
 	int EventID;
-	uint8_t Flags1;
+	uint32_t Flags;
 	InputType Type;
 	FixedString CategoryName;
 	void* EventListeners[4];
-	const char* EventName;
+	StringView EventName;
 	TranslatedString EventDesc;
 	int field_E8;
 };
@@ -131,10 +131,10 @@ struct InputEvent
 struct FireEventDesc
 {
 	InputEventDesc* EventDesc;
-	int32_t PlayerIndex;
+	uint8_t PlayerIndex;
 	InputEvent Event;
 	int16_t DeviceId;
-	int16_t field_32;
+	int16_t InputId;
 	int32_t field_34;
 };
 
@@ -206,7 +206,7 @@ struct InputScheme
 
 	std::array<LegacyRefMap<uint16_t, uint16_t>, 4> ControllerRemaps;
 	std::array<RawBindingDataMapping, 186>* RawToBinding;
-	std::array<LegacyRefMap<InputEventId, Array<InputBinding>>, 4> InputBindings;
+	std::array<LegacyRefMap<InputEventId, LegacyArray<InputBinding>>, 4> InputBindings;
 	Array<void*> DeviceIdToPlayerId; // FIXME! MAP Array<uint16_t, int32_t>
 	std::array<Array<InputDeviceId>, 4> DeviceLists;
 	std::array<Array<void*>, 4> field_D8; // FIXME! MAP 
@@ -234,16 +234,16 @@ struct InputManager
 	using GetInstanceProc = InputManager * ();
 	using InjectInputProc = bool (InputManager*, InjectInputData const&);
 
+	CRITICAL_SECTION CS;
 	UnknownSignal OnInputEvent;
-	LegacyRefMap<InputPlayerId, HoldRepeatEvents> HoldRepeatEvents;
-	LegacyArray<InputValueSet*> InputStates;
+	HashMap<uint32_t, HoldRepeatEvents> HoldRepeatEvents;
+	HashMap<uint16_t, InputValueSet*> InputStates;
 	LegacyRefMap<int32_t, InputEventDesc> InputDefinitions;
 	InputScheme InputScheme;
 	InputModifier PressedModifiers;
 	double LastUpdateTime;
 	bool ControllerAllowKeyboardMouseInput;
 	bool AllowDeviceEvents;
-	Array<void*> field_248;
 	InputListenerGroup InputListeners;
 	InputListenerGroup DeviceListeners;
 	InputListenerGroup NotifyUpListeners;

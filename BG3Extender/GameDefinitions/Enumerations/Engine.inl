@@ -37,7 +37,7 @@ BEGIN_ENUM(PathRootType, int)
     EV(Debug, 15)
 END_ENUM()
 
-BEGIN_BITMASK(InputType, uint32_t)
+BEGIN_BITMASK(InputType, uint8_t)
     EV(Press, 1)
     EV(Release, 2)
     EV(ValueChange, 4)
