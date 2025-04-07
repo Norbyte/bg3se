@@ -64,7 +64,7 @@ void AiPath::Reset()
 
     ClosestFullTileIndex = -1;
     ClosestCollidingCount = 0x7fffffff;
-    ClosestCost = 1.0e100;
+    ClosestCost = 1.0e30f;
 
     DestinationFunc = {};
     WeightFunc = {};

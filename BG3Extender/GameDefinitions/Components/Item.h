@@ -154,3 +154,30 @@ struct OwneeRequestComponent : public BaseComponent
 };
 
 END_NS()
+
+BEGIN_NS(ecl)
+
+struct SceneryInitSound
+{
+    int16_t Attenuation;
+    FixedString InitSound;
+    FixedString LoopSound;
+};
+
+struct Scenery : public BaseProxyComponent
+{
+    DEFINE_COMPONENT(Scenery, "ecl::Scenery")
+
+    [[bg3::readonly]] EntityHandle Entity2;
+    SceneryFlags Flags;
+    ecs::EntityRef Entity;
+    Guid Uuid;
+    SceneryInitSound* Sound;
+    FixedString Visual;
+    uint16_t VisualLoadFlags;
+    // Likely unused
+    [[bg3::hidden]] uint64_t field_60;
+    [[bg3::hidden]] uint64_t field_68;
+};
+
+END_NS()
