@@ -15,6 +15,7 @@ void AiPath::Reset()
     SearchStarted = false;
     SearchComplete = false;
     GoalFound = false;
+    DestinationReached = false;
     CanUseLadders = false;
     CanUsePortals = false;
     CanUseCombatPortals = false;
@@ -38,6 +39,7 @@ void AiPath::Reset()
     MovedEntities.clear();
     PathType = 3;
     CoverFlags = 0;
+    InteractionRange = .0f;
     SearchHorizon = 32000;
     WorldClimbType = 0;
     WorldDropType = 0;
@@ -55,6 +57,14 @@ void AiPath::Reset()
     UseSplines = true;
     UseTurning = true;
     IsPlayer = false;
+
+    Portal = EntityHandle{};
+    Climbing = false;
+    field_154 = 0;
+
+    ClosestFullTileIndex = -1;
+    ClosestCollidingCount = 0x7fffffff;
+    ClosestCost = 1.0e100;
 
     DestinationFunc = {};
     WeightFunc = {};

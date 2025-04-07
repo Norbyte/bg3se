@@ -111,10 +111,10 @@ struct AIPortalObjectData : public ProtectedGameObject<AIPortalObjectData>
 };
 
 
-struct SomeArray2int
+struct AiFullTileRef
 {
-    int32_t A;
-    int32_t B;
+    int32_t Cost;
+    int32_t FullTileIndex;
 };
 
 
@@ -418,7 +418,7 @@ struct AiPath : public ProtectedGameObject<AiPath>
     float CloseEnoughPreference;
     int PathType;
     uint16_t CoverFlags;
-    int field_90;
+    [[bg3::legacy(field_90)]] float InteractionRange;
     glm::vec3 SourceAdjusted;
     glm::vec3 SourceOriginal;
     glm::vec3 TargetAdjusted;
@@ -458,9 +458,9 @@ struct AiPath : public ProtectedGameObject<AiPath>
     bool UseStandAtDestination;
     bool PickUpTarget;
     [[bg3::hidden]] void* CoverManager;
-    EntityHandle field_148;
-    uint8_t field_150;
-    int field_154;
+    [[bg3::legacy(field_148)]] EntityHandle Portal;
+    [[bg3::legacy(field_150)]] bool Climbing;
+    int field_154; // Some portal ID
     Array<AiPathEntityPosition> MovedEntities;
     Array<EntityHandle> IgnoreEntities;
     [[bg3::legacy(field_178)]] glm::vec3 TargetPosition;
@@ -472,13 +472,13 @@ struct AiPath : public ProtectedGameObject<AiPath>
     int MovingBoundTiles;
     int StandingBoundTiles;
     int MovingBoundTiles2;
-    int field_294;
-    int32_t field_298;
-    float field_29C;
+    [[bg3::legacy(field_294)]] int ClosestFullTileIndex;
+    [[bg3::legacy(field_298)]] int32_t ClosestCollidingCount;
+    [[bg3::legacy(field_29C)]] float ClosestCost;
     bool SearchStarted;
     bool SearchComplete;
     bool GoalFound;
-    uint8_t field_2A3;
+    [[bg3::legacy(field_2A3)]] bool DestinationReached;
     bool InUse;
     Array<AiPathNode> Nodes;
     Array<AiPathCheckpoint> Checkpoints;
@@ -523,26 +523,25 @@ struct AiGrid : public ProtectedGameObject<AiGrid>
     [[bg3::hidden]] ecs::EntityWorld* EntityWorld;
     [[bg3::hidden]] void* ThothMachine;
     AiPathId NextPathHandle;
-    int field_EC;
     Array<AiPath*> PathPool;
     LegacyRefMap<AiPathId, AiPath*> PathMap;
     Array<AiPath*> Paths;
     [[bg3::hidden]] AiGridRequestMap<void*> TileStates;
     [[bg3::hidden]] AiGridRequestMap<void*> Floods;
     [[bg3::hidden]] AiGridRequestMap<void*> TileHeights;
-    uint8_t field_1C8;
+    bool ReverseClimb;
     int NumIterations;
     __int64 PreciseClock;
     __int64 field_1D8;
     __int64 field_1E0;
     Array<AiFullTile> FullTiles;
-    StaticArray<SomeArray2int> field_1F8_Arr_2xint;
-    StaticArray<SomeArray2int> field_208_Arr_2xint;
+    StaticArray<AiFullTileRef> TilesToCheck;
+    StaticArray<AiFullTileRef> ReverseTilesToCheck;
     AiIgnoreMask IgnoreMask;
-    int field_248_SomeNodeId;
-    int field_24C_SomeNodeId;
+    int FinalFullTileIndex;
+    int FinalReverseFullTileIndex;
     int PathDistanceToClosestPortal;
-    int field_254;
+    int DistanceToClosestPortal;
     //[[bg3::hidden]] Array<void*> PathHistory;
     //[[bg3::hidden]] Array<void*> PathHistory2;
     //int field_278;
