@@ -80,16 +80,6 @@ struct AiFlags
     }
 };
 
-struct PathSettings
-{
-    uint8_t PathClimbingMode;
-    uint8_t PathDroppingMode;
-    std::variant<uint8_t, float> Speed;
-    bool HasSmoothingNodes;
-    bool HasSpliningNodes;
-    bool HasTurningNodes;
-};
-
 
 struct AIPortalObjectData : public ProtectedGameObject<AIPortalObjectData>
 {

@@ -102,7 +102,7 @@ struct InjectDeviceEvent
 
 struct InputEventText
 {
-	int PlayerId;
+	InputPlayerId PlayerIndex;
 	char const* Text;
 	uint64_t TextLength;
 };

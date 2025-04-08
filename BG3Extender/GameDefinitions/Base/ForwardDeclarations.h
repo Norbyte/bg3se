@@ -53,6 +53,7 @@ struct LocalTemplateManager;
 struct CacheTemplateManagerBase;
 
 struct AiGrid;
+struct AiPath;
 
 struct BoundComponent;
 struct UuidComponent;
@@ -113,6 +114,8 @@ namespace ecs
 namespace input
 {
     struct InputManager;
+    struct InputEvent;
+    struct InputEventText;
 }
 
 namespace stats
@@ -167,6 +170,7 @@ namespace ecl
     struct StatusMachine;
     struct CursorControl;
     struct DragDropManager;
+    struct InputController;
     class ExtensionState;
 
     namespace lua

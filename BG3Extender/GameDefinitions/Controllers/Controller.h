@@ -68,3 +68,22 @@ struct TaskController : public BaseController
 };
 
 END_NS()
+
+BEGIN_NS(ecl)
+
+struct BaseController : public ProtectedGameObject<BaseController>
+{
+	virtual ~BaseController() = 0;
+	virtual char const* GetName() = 0;
+	virtual int GetPriority() = 0;
+	virtual int GetTypeId() = 0;
+	virtual void Update(GameTime const&) = 0;
+	virtual bool Pause() = 0;
+	virtual void Resume() = 0;
+	virtual void Reset() = 0;
+	virtual void ResetState(bool forceSync) = 0;
+
+	ecs::EntityRef Owner;
+};
+
+END_NS()

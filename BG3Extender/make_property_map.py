@@ -655,6 +655,8 @@ sources = [
     'GameDefinitions/Ai.h',
     'GameDefinitions/Controllers/Action.h',
     'GameDefinitions/Controllers/Behaviour.h',
+    'GameDefinitions/Controllers/CharacterTask.h',
+    'GameDefinitions/Controllers/Input.h',
     'GameDefinitions/Controllers/Movement.h',
     'GameDefinitions/Controllers/Steering.h',
     'GameDefinitions/Controllers/Controller.h',

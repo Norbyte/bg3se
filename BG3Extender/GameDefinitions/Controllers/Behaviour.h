@@ -41,29 +41,6 @@ struct BSMoveCheckpoint : public AiPathCheckpoint
     int field_34;
 };
 
-struct NavigationTargetInfo
-{
-    glm::vec3 Position;
-    float CloseEnoughMin;
-    float CloseEnoughMax;
-    float CloseEnoughFloor;
-    int field_18;
-    int CloseEnoughPreference;
-    EntityHandle TargetHandle;
-    Array<EntityHandle> IgnoreEntities;
-    uint32_t AiTargetCheck;
-    uint8_t field_3C;
-    uint8_t field_3D;
-    bool AddSourceBoundsToMargin;
-    uint8_t field_3F;
-    uint8_t field_40;
-    bool IsAvoidingObstacles;
-    bool IsPreciseItemInteraction;
-    EntityHandle IgnoreEntity2;
-    std::optional<glm::vec3> CharacterPositionOverride;
-    uint8_t WeightFuncType;
-};
-
 struct BSMove : public BehaviourState
 {
     static constexpr auto Type = BehaviourType::Move;

@@ -178,7 +178,7 @@ struct Character : public BaseProxyComponent
     void* AiSupervisor;
     void* DialogController;
     void* FallbackController;
-    void* InputController;
+    InputController* InputController;
     void* NetworkController;
     void* GameplayController;
     StatusMachine* StatusManager;
