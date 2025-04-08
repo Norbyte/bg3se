@@ -501,7 +501,9 @@
     <ClInclude Include="GameDefinitions\DragDrop.h" />
     <ClInclude Include="GameDefinitions\Skeleton.h" />
     <ClInclude Include="Lua\Libs\ClientUI\ClassCache.h" />
+    <ClInclude Include="GameDefinitions\Controllers\CharacterTask.h" />
     <ClInclude Include="GameDefinitions\Input.h" />
+    <ClInclude Include="GameDefinitions\Controllers\Input.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

@@ -167,6 +167,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\Character.h" />
     <ClInclude Include="GameDefinitions\Base\CommonTypes.h" />
     <ClInclude Include="GameDefinitions\CharacterCreation.h" />
+    <ClInclude Include="GameDefinitions\Controllers\CharacterTask.h" />
     <ClInclude Include="GameDefinitions\Components\All.h" />
     <ClInclude Include="GameDefinitions\Components\Boosts.h" />
     <ClInclude Include="GameDefinitions\Components\Camera.h" />
@@ -196,6 +197,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <ClInclude Include="GameDefinitions\Controllers\Action.h" />
     <ClInclude Include="GameDefinitions\Controllers\Behaviour.h" />
     <ClInclude Include="GameDefinitions\Controllers\Controller.h" />
+    <ClInclude Include="GameDefinitions\Controllers\Input.h" />
     <ClInclude Include="GameDefinitions\Controllers\Movement.h" />
     <ClInclude Include="GameDefinitions\Controllers\Steering.h" />
     <ClInclude Include="GameDefinitions\Cursor.h" />
