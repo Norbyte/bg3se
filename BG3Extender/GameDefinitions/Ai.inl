@@ -191,7 +191,8 @@ bool CheckPlayerWeightCell(AiPlayerWeightFuncData const& data, AiGrid* aiGrid, A
     } else if (data.CharacterBounds == 1) {
         charBound = area;
     } else {
-        charBound = aiGrid->GetStateInArea(pos, data.CharacterBounds);
+        area = aiGrid->GetStateInArea(pos, data.CharacterBounds);
+        charBound = area;
     }
 
     pathScore = 0;
