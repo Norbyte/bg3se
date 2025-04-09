@@ -10,7 +10,8 @@ BEGIN_NS(lua::stats)
 FixedString ObjectHelpers::GetModifierList(Object const* obj)
 {
     auto stats = GetStaticSymbols().GetStats();
-    return stats->ModifierLists.GetByHandle(obj->ModifierListIndex)->Name;
+    auto modifierList = stats->ModifierLists.GetByHandle(obj->ModifierListIndex);
+    return modifierList ? modifierList->Name : FixedString{};
 }
 
 
