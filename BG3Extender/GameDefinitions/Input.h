@@ -7,9 +7,13 @@ BEGIN_NS(input)
 
 using InputPlayerId = uint8_t;
 using InputRawType = uint16_t;
+using InputDeviceId = uint16_t;
 using InputEventId = uint32_t;
 
-enum class InputDeviceId : int16_t
+static constexpr unsigned NumRawInputs = 186;
+static constexpr unsigned NumPlayers = 4;
+
+enum class EInputDeviceId : int16_t
 {
 	C = -2,
 	Unknown = -1,
@@ -36,13 +40,12 @@ struct InputValue
 	InputState State;
 };
 
-
 struct InputDevice
 {
 	int64_t InputPlayerIndex;
 	int32_t field_8;
 	int32_t ControllerMapping;
-	int16_t DeviceId;
+	InputDeviceId DeviceId;
 	std::array<float, 4> field_14;
 	uint8_t field_24;
 };
@@ -50,12 +53,12 @@ struct InputDevice
 
 struct InputEventDesc
 {
-	int EventID;
+	[[bg3::readonly]] int EventID;
 	uint32_t Flags;
 	InputType Type;
 	FixedString CategoryName;
-	void* EventListeners[4];
-	StringView EventName;
+	[[bg3::hidden]] std::array<void*, 4> EventListeners;
+	[[bg3::readonly]] LSStringView EventName;
 	TranslatedString EventDesc;
 	int field_E8;
 };
@@ -88,16 +91,16 @@ struct InjectInputData : public InputRawChange
 {
 };
 
-struct InjectTextData
+struct [[bg3::hidden]] InjectTextData
 {
-	int16_t DeviceId;
+	InputDeviceId DeviceId;
 	char Text[64];
 };
 
 struct InjectDeviceEvent
 {
 	uint32_t EventId;
-	uint16_t DeviceId;
+	InputDeviceId DeviceId;
 };
 
 struct InputEventText
@@ -133,7 +136,7 @@ struct FireEventDesc
 	InputEventDesc* EventDesc;
 	uint8_t PlayerIndex;
 	InputEvent Event;
-	int16_t DeviceId;
+	InputDeviceId DeviceId;
 	int16_t InputId;
 	int32_t field_34;
 };
@@ -148,7 +151,7 @@ struct HoldRepeatEventDesc
 	FireEventDesc FireEvent;
 };
 
-struct InputEventListener
+struct [[bg3::hidden]] InputEventListener
 {
 	virtual ~InputEventListener() = 0;
 	virtual int GetInputListenerPriority() = 0;
@@ -159,10 +162,10 @@ struct InputEventListener
 	virtual uint16_t* OnInputEvent(uint16_t* eventRetVal, InputEvent* inputEvent) = 0;
 	virtual void OnInputModifierChangedEvent(bool, bool, bool, bool) = 0;
 	virtual uint16_t* OnInputEvent(uint16_t* eventRetVal, InputEventText* inputEvent) = 0;
-	virtual uint16_t* OnUnlinkedInput(uint16_t* eventRetVal, uint16_t inputDeviceId) = 0;
+	virtual uint16_t* OnUnlinkedInput(uint16_t* eventRetVal, InputDeviceId inputDeviceId) = 0;
 };
 
-struct InputListenerGroup
+struct [[bg3::hidden]] InputListenerGroup
 {
 	int RefCount;
 	Array<InputEventListener*> TraversingListeners;
@@ -186,7 +189,7 @@ struct InputBindingDesc
 
 struct PendingInputRemap
 {
-	void* InputRemapListener;
+	[[bg3::hidden]] void* InputRemapListener;
 	InputBinding Binding;
 };
 
@@ -196,26 +199,20 @@ struct RawBindingDataMapping
 	bool HasModifierKeys;
 };
 
-struct InputScheme
+struct InputScheme : public ProtectedGameObject<InputScheme>
 {
-	struct BindingSet
-	{
-		Array<InputBindingDesc> Bindings;
-		bool Initialized;
-	};
-
-	std::array<LegacyRefMap<uint16_t, uint16_t>, 4> ControllerRemaps;
-	std::array<RawBindingDataMapping, 186>* RawToBinding;
-	std::array<LegacyRefMap<InputEventId, LegacyArray<InputBinding>>, 4> InputBindings;
-	Array<void*> DeviceIdToPlayerId; // FIXME! MAP Array<uint16_t, int32_t>
-	std::array<Array<InputDeviceId>, 4> DeviceLists;
-	std::array<Array<void*>, 4> field_D8; // FIXME! MAP 
-	std::array<HashSet<InputEventId>, 4> DebugEvents;
+	std::array<LegacyRefMap<InputDeviceId, InputDeviceId>, NumPlayers> ControllerRemaps;
+	std::array<RawBindingDataMapping, NumRawInputs>* RawToBinding;
+	std::array<LegacyRefMap<InputEventId, LegacyArray<InputBinding>>, NumPlayers> InputBindings;
+	[[bg3::hidden]] Array<void*> DeviceIdToPlayerId; // FIXME! MAP Array<InputDeviceId, int32_t>
+	std::array<Array<InputDeviceId>, NumPlayers> DeviceLists;
+	[[bg3::hidden]] std::array<Array<void*>, NumPlayers> field_D8; // FIXME! MAP 
+	std::array<HashSet<InputEventId>, NumPlayers> DebugEvents;
 };
 
 struct InputValueSet
 {
-	std::array<InputValue, 186> Inputs;
+	std::array<InputValue, NumRawInputs> Inputs;
 	bool Initialized;
 };
 
@@ -229,38 +226,35 @@ struct HoldRepeatEvents
 	Array<HoldRepeatEventDesc> HoldRepeatEvents;
 };
 
-struct InputManager
+struct InputManager : public ProtectedGameObject<InputManager>
 {
-	using GetInstanceProc = InputManager * ();
-	using InjectInputProc = bool (InputManager*, InjectInputData const&);
-
-	CRITICAL_SECTION CS;
-	UnknownSignal OnInputEvent;
+	[[bg3::hidden]] CRITICAL_SECTION CS;
+	[[bg3::hidden]] UnknownSignal OnInputEvent;
 	HashMap<uint32_t, HoldRepeatEvents> HoldRepeatEvents;
-	HashMap<uint16_t, InputValueSet*> InputStates;
+	HashMap<InputDeviceId, InputValueSet*> InputStates;
 	LegacyRefMap<int32_t, InputEventDesc> InputDefinitions;
 	InputScheme InputScheme;
 	InputModifier PressedModifiers;
 	double LastUpdateTime;
 	bool ControllerAllowKeyboardMouseInput;
 	bool AllowDeviceEvents;
-	InputListenerGroup InputListeners;
-	InputListenerGroup DeviceListeners;
-	InputListenerGroup NotifyUpListeners;
+	[[bg3::hidden]] InputListenerGroup InputListeners;
+	[[bg3::hidden]] InputListenerGroup DeviceListeners;
+	[[bg3::hidden]] InputListenerGroup NotifyUpListeners;
 	Array<InputRaw> RawInputs;
-	std::array<int, 4> PlayerDevices;
-	std::array<InputDeviceId, 4> PlayerDeviceIDs;
+	std::array<int, NumPlayers> PlayerDevices;
+	std::array<InputDeviceId, NumPlayers> PlayerDeviceIDs;
 	PendingInputRemap CurrentRemap;
-#if !defined(OSI_EOCAPP)
-	std::array<Array<uint32_t>, 12> RawInputTypes;
+#if 0 // Editor only
+	// std::array<Array<uint32_t>, 12> RawInputTypes;
 #endif
 	Array<FireEventDesc> Events;
-	Array<InjectTextData> TextInjects;
+	[[bg3::hidden]] Array<InjectTextData> TextInjects;
 	Array<InjectInputData> InputInjects;
 	Array<InjectDeviceEvent> DeviceEventInjects;
-	glm::vec4 PlayerColors[4];
+	std::array<glm::vec4, NumPlayers> PlayerColors;
 	std::array<InputDevice, 12> PerDeviceData;
-	void* KeyboardLayoutTranslator;
+	[[bg3::hidden]] void* KeyboardLayoutTranslator;
 };
 
 END_NS()

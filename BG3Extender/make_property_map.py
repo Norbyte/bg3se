@@ -2,7 +2,8 @@ import os, re
 
 ns_start_re = r'^BEGIN(_BARE)?_NS\(\s*(.*)\s*\)$'
 ns_end_re = r'^END(_BARE)?_NS\(\s*\)$'
-struct_re = r'^(struct|union|class)\s+(?P<attributes>\[\[(\s*[a-zA-Z0-9:_]+\s*(\([^)]*\))?\s*,?\s*)+\]\])?\s*(?P<class>[a-zA-Z0-9_]+)(\s*:(\s*public)?\s+(?P<baseclass>[a-zA-Z0-9_<>:]+))?$'
+struct_re = r'^(struct|union|class)\s+(?P<attributes>\[\[(\s*[a-zA-Z0-9:_]+\s*(\([^)]*\))?\s*,?\s*)+\]\])?\s*(?P<class>[a-zA-Z0-9_]+)(\s*:(\s*public)?\s*(?P<baseclass>[a-zA-Z0-9_<>:]+))?$'
+enum_re = r'^(enum|enum class)\s+(?P<enum>[a-zA-Z0-9_]+)(\s*:\s*(?P<base>[a-zA-Z0-9_<>:]+))?$'
 struct_start_re = r'^{$'
 struct_end_re = r'^(};|}\))$'
 static_property_re = r'^static\s+constexpr\s+(?P<type>.+)\s+(?P<name>.+)\s*=\s*(?P<value>.+)\s*;?$'
@@ -498,6 +499,13 @@ class DefinitionLoader:
             self.next_struct_base = match.group('baseclass')
             return
         
+        match = re.match(enum_re, line)
+        if match is not None:
+            self.parse_attributes('bg3::hidden')
+            self.next_struct = match.group('enum')
+            self.next_struct_base = match.group('base')
+            return
+        
         if self.next_struct is not None and re.match(struct_start_re, line) is not None:
             self.enter_struct(self.next_struct, self.next_struct_base, self.next_attributes)
             return
@@ -616,6 +624,7 @@ sources = [
     'GameDefinitions/Dialog.h',
     'GameDefinitions/DragDrop.h',
     'GameDefinitions/Effect.h',
+    'GameDefinitions/Input.h',
     'GameDefinitions/Lighting.h',
     'GameDefinitions/RootTemplates.h',
     'GameDefinitions/Components/Boosts.h',

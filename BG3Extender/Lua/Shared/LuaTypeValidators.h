@@ -14,6 +14,9 @@
 
 BEGIN_NS(lua)
 
+// Max plausible string length
+static constexpr unsigned MaxStringLengthHeuristic = 0x1000000;
+
 template <class T>
 bool ValidateAny(T const* v);
 
@@ -170,8 +173,7 @@ inline bool Validate(STDString const* s, Overload<STDString>)
 {
     auto i = reinterpret_cast<STDStringInternals const*>(s);
     CHECK(i->Size <= i->Capacity);
-    // Sanity check for very large values
-    CHECK(i->Capacity <= 0x1000000);
+    CHECK(i->Capacity <= MaxStringLengthHeuristic);
 
     if (i->Capacity > 0xF) {
         CHECK(!IsBadReadPtr(i->Ptr, (uint64_t)i->Capacity + 1));
@@ -187,9 +189,32 @@ inline bool Validate(STDString const* s, Overload<STDString>)
 inline bool Validate(Noesis::String const* s, Overload<Noesis::String>)
 {
     CHECK(s->Size() <= s->Capacity());
-    // Sanity check for very large values
-    CHECK(s->Capacity() <= 0x1000000);
+    CHECK(s->Capacity() <= MaxStringLengthHeuristic);
     CHECK(!IsBadReadPtr(s->Str(), (uint64_t)s->Capacity()));
+
+    return true;
+}
+
+inline bool Validate(StringView const* s, Overload<StringView>)
+{
+    CHECK(s->size() <= MaxStringLengthHeuristic);
+    CHECK(!IsBadReadPtr(s->data(), (uint64_t)s->size()));
+
+    return true;
+}
+
+inline bool Validate(LSStringView const* s, Overload<LSStringView>)
+{
+    CHECK(s->size() <= MaxStringLengthHeuristic);
+    CHECK(!IsBadReadPtr(s->data(), (uint64_t)s->size()));
+
+    return true;
+}
+
+inline bool Validate(WStringView const* s, Overload<WStringView>)
+{
+    CHECK(s->size() <= MaxStringLengthHeuristic);
+    CHECK(!IsBadReadPtr(s->data(), (uint64_t)s->size() * 2));
 
     return true;
 }

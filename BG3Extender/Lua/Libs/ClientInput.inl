@@ -36,6 +36,11 @@ void InjectKeyUp(SDLScanCode key, std::optional<SDLKeyModifier> modifiers)
     InjectKeyEvent(SDL_KEYUP, SDL_RELEASED, key, modifiers);
 }
 
+bg3se::input::InputManager* GetInputManager()
+{
+    return *GetStaticSymbols().ls__gInputManager;
+}
+
 
 void RegisterInputLib()
 {
@@ -44,6 +49,7 @@ void RegisterInputLib()
     MODULE_FUNCTION(InjectKeyPress)
     MODULE_FUNCTION(InjectKeyDown)
     MODULE_FUNCTION(InjectKeyUp)
+    MODULE_FUNCTION(GetInputManager)
     END_MODULE()
 }
 

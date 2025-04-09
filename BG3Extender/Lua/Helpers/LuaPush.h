@@ -82,6 +82,11 @@ inline void push(lua_State* L, StringView const& v)
     lua_pushlstring(L, v.data(), v.size());
 }
 
+inline void push(lua_State* L, LSStringView const& v)
+{
+    lua_pushlstring(L, v.data(), v.size());
+}
+
 inline void push(lua_State* L, WStringView const& v)
 {
     push(L, ToUTF8(v));
