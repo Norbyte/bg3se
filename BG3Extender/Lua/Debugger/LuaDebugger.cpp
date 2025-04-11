@@ -510,6 +510,14 @@ namespace bg3se::lua::dbg
             break;
         }
 
+#if defined(ENABLE_IMGUI)
+        case MetatableTag::ImguiObject:
+        {
+            LuaImguiObjectToEvalResults(L, index, meta, req);
+            break;
+        }
+#endif
+
         default:
             WARN("LuaLightCppObjectToEvalResults(): Evaluating unrecognized lightcppobject type");
         }
