@@ -52,7 +52,7 @@ namespace bg3se
 
         struct ControlSwitch
         {
-            float field_0[39];
+            float field_0[37];
         };
 
         struct SomeSetting
@@ -61,7 +61,7 @@ namespace bg3se
             __int64 field_8;
         };
 
-        uint64_t VMT;
+        void* VMT;
         uint8_t field_8;
         uint8_t field_9;
         uint8_t field_A;
@@ -71,8 +71,10 @@ namespace bg3se
         uint8_t field_E;
         uint8_t field_F;
         float field_10;
-        int field_14;
-        uint64_t field_18;
+        uint8_t field_14;
+        uint8_t field_15;
+        float field_18;
+        int field_1C;
         float field_20;
         float field_24;
         float field_28;
@@ -80,6 +82,7 @@ namespace bg3se
         float field_30;
         int UIScaling;
         uint8_t ControllerMode;
+        uint8_t field_39;
         float NodeWaitTimeMultiplier;
         float AnimationBlueprintSpeedScale_M;
         float field_44;
@@ -116,19 +119,19 @@ namespace bg3se
         int ControllerStickPressDeadZone;
         int ControllerTriggerDeadZone;
         bool field_AC;
-        bool ServerMonitor_M;
-        uint8_t field_AE;
+        bool ServerMonitor;
+        bool SaveStory;
         bool StoryLog;
         bool Story;
         bool StoryEvents;
         bool DisableStoryPatching;
         bool ForceStoryPatching;
-        bool RandomStartOrigin_M;
+        bool RandomStartOrigin;
         bool Stats;
         int Modded;
         uint8_t field_BC;
         STDString Language;
-        uint8_t ShowLocalizationMarkers;
+        bool ShowLocalizationMarkers;
         int16_t ForcePort;
         bool EnablePortmapping;
         uint32_t GameVisibilityOnline;
@@ -136,12 +139,17 @@ namespace bg3se
         uint32_t GameVisibilityDirect;
 
         bool CrossplayEnabled;
+        bool CrossplayInUse;
+        bool field_EE;
+        bool field_EF;
+        bool field_F0;
+        STDString ScreenshotDir;
         bool AutoListenEnabled;
+        bool DisableLocalMessagePassing;
         bool EnableSteamP2P;
-        bool EnableSteamP2P_M;
-        uint8_t field_F0;
-        uint8_t field_F1;
-        uint8_t field_F2;
+        uint8_t field_113;
+        uint8_t field_114;
+        uint8_t field_115;
 
         uint16_t field_F4;
         uint16_t field_F6;
@@ -158,6 +166,7 @@ namespace bg3se
         uint8_t field_101;
         uint8_t field_102;
         uint8_t field_103;
+        uint8_t field_104;
         bool CameraShakeEnabled;
         uint8_t field_105;
         uint8_t field_106;
@@ -190,7 +199,7 @@ namespace bg3se
         bool ScriptLog;
         bool ShroudEnabled;
         bool field_1AC;
-        bool field_1AD;
+        bool GodMode;
         bool Fading;
         bool CheckRequirements;
 
@@ -199,12 +208,12 @@ namespace bg3se
         bool ShowOriginIntroInCC;
         bool UseSavingThrows;
         bool AlwaysShowSplitter;
-        bool ResetTutorialsOnNewGame;
-        bool ControllerLayout;
+        bool field_1B5;
+        uint8_t ControllerLayout;
         bool NorthFacingMinimap;
         
         bool HoldToEndTurn;
-        bool ExtraTooltipDescriptions;
+        uint8_t ExtraTooltipDescriptions;
         uint8_t field_1BA;
         uint8_t field_1BB;
         uint8_t field_1BC;
@@ -221,26 +230,31 @@ namespace bg3se
         int SoundPartyLosingThreshold;
         int SoundPartyWinningThreshold;
 
-        int GameCameraRotation;
+        float GameCameraRotation;
         float GameCameraSpeedMultiplier;
 
         bool GameCameraRotationLocked;
         bool GameCameraEnableCloseUpDialog;
         bool GameCameraEnableDynamicCombatCamera;
         uint8_t field_65F;
-        uint8_t field_660;
         bool GameCameraEnableAttackCamera;
         bool GameCameraEnableAttackCameraOtherPlayers;
         bool GameCameraEnableFlyFollow;
 
-        bool GameCameraAutoRotateEnabled;
+        uint8_t field_664;
         uint8_t field_665;
-        uint8_t field_666;
+        bool GameCameraAutoRotateEnabled;
         float GameCameraAutoRotateSpeed;
         uint8_t field_66C;
         uint8_t field_66D;
+        uint8_t field_66E;
         float field_670;
         float field_674;
+        bool field_698;
+        bool field_699;
+        bool field_69A;
+        bool field_69B;
+        bool field_69C;
 
         int NrOfQuickSaves;
         int NrOfAutoSaves;
@@ -254,17 +268,14 @@ namespace bg3se
         bool HasSeenEAMsg;
         bool ForceSplitscreen;
         int MaxAmountDialogsInLog;
-        float field_694;
-        uint8_t field_698;
+
+        float FadeSpeed;
         float ControllerCharacterWalkThreshold;
         float ControllerCharacterRunThreshold;
         float field_6A4;
-        float GameObjectRadiusScale_M;
         float field_6AC;
         float field_6B0;
-        float field_6B4;
         int ControllerRumbleStrength;
-        int field_6BC;
         uint64_t field_6C0;
         
         uint8_t field_6C8;
@@ -279,15 +290,7 @@ namespace bg3se
         uint8_t field_6D3;
         int field_6D4;
         
-        uint8_t field_6D8;
-        uint8_t field_6D9;
-        uint8_t field_6DA;
-        uint8_t field_6DB;
-        uint8_t field_6DC;
-        uint8_t field_6DD;
-        uint8_t field_6DE;
-        uint8_t field_6DF;
-        
+        uint64_t field_6D8;
         uint64_t field_6E0;
         uint8_t field_6E8;
         uint8_t field_6E9;
@@ -296,7 +299,7 @@ namespace bg3se
         uint8_t field_6EC;
         uint8_t field_6ED;
         uint8_t field_6EE;
-        uint8_t field_6EF;
+        bool PeaceMode;
         
         bool EnableVoiceLogging;
         bool EnableLongPressAndHold;
@@ -327,7 +330,8 @@ namespace bg3se
         uint8_t Difficulty;
 
         Array<Guid> Rulesets;
-        [[bg3::hidden]] HashMap<Guid, void*> RulesetOptions;
+        // FIXME: First variant is void
+        HashMap<Guid, std::variant<uint8_t, int32_t, float, FixedString, bool>> RulesetModifiers;
         uint8_t field_768;
         FixedString field_76C;
 
@@ -338,7 +342,7 @@ namespace bg3se
         bool WeightedRolls;
         uint8_t field_775;
         uint8_t field_776;
-        bool PostCombatAssignation;
+        uint8_t PostCombatAssignation;
 
         uint8_t field_778;
         uint8_t field_779;
@@ -391,9 +395,11 @@ namespace bg3se
         bool ShowExplicitRomanceScenes;
         bool NoPrivateDialogues;
         uint8_t field_1321;
-        bool EnableGameplayLightSystem_M;
+        bool EnableGameplayLightSystem;
         uint8_t field_1323;
+        float field_1324;
 
+        int field_1328;
         int field_132C;
         int field_1330;
         uint8_t field_1334;
@@ -402,14 +408,14 @@ namespace bg3se
         int field_1338;
         float field_133C;
         int field_1340;
-        int field_1344;
-        float field_1348;
-        float field_134C;
         int field_1350;
         int field_1354;
-        uint8_t field_1358;
+        int field_1358;
+
+        uint8_t field_1358x;
         float field_135C;
         float field_1360;
+
         float field_1364;
         float field_1368;
         float field_136C;
@@ -431,6 +437,8 @@ namespace bg3se
         float field_1390;
         float field_1394;
         float field_1398;
+
+        float field_1398x;
         float field_139C;
         float field_13A0;
 
@@ -445,15 +453,12 @@ namespace bg3se
         uint8_t field_13A3;
         uint8_t field_13A4;
         bool WasLarianModPolicyAccepted;
-        float PointAndClickSoundFrequencyFloat;
+        float PointAndClickSoundFrequency;
         STDString ActiveCustomDice;
         uint8_t field_13C8;
-        uint8_t field_13C9;
-        uint8_t field_13CA;
-        uint8_t field_13CB;
         int field_13CC;
         uint8_t field_13C0;
-        bool AiEnableSwarm2_M;
+        bool AiEnableSwarm;
         uint8_t field_13D2;
         uint8_t field_13D3;
         uint8_t field_13D4;
@@ -470,6 +475,8 @@ namespace bg3se
         bool HideCompletedQuests;
         uint8_t field_13E8;
         uint8_t field_13E9;
+        int field_13FC;
+        bool field_1400;
     };
 
 

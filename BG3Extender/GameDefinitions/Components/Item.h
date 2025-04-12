@@ -177,7 +177,6 @@ struct Scenery : public BaseProxyComponent
     uint16_t VisualLoadFlags;
     // Likely unused
     [[bg3::hidden]] uint64_t field_60;
-    [[bg3::hidden]] uint64_t field_68;
 };
 
 END_NS()
