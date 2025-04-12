@@ -4,6 +4,7 @@
 #include "Version.h"
 #include "resource.h"
 #include <iomanip>
+#include <chrono>
 
 #include <Extender/Shared/StatLoadOrderHelper.inl>
 #include <Extender/Shared/UserVariables.inl>

@@ -5,6 +5,7 @@
 #include <GameDefinitions/Symbols.h>
 #include <string>
 #include <functional>
+#include <chrono>
 #include <psapi.h>
 #include <DbgHelp.h>
 #include "resource.h"
