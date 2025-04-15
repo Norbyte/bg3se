@@ -452,7 +452,7 @@ namespace bg3se
         bool ShowFirstTimeSetup;
         uint8_t field_13A3;
         uint8_t field_13A4;
-        bool WasLarianModPolicyAccepted;
+        // bool WasLarianModPolicyAccepted; - Unknown?
         float PointAndClickSoundFrequency;
         STDString ActiveCustomDice;
         uint8_t field_13C8;
