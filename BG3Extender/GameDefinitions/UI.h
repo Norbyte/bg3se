@@ -188,7 +188,7 @@ struct CommandHelpers
 struct VisualHelpers
 {
     static Visual* GetVisualParent(Visual const* o);
-    static uint32_t GetVisualChildrenCount(Visual const* o);
+    static uint32_t GetVisualChildrenCount(lua_State* L, Visual const* o);
     static Visual* GetVisualChild(Visual const* o, uint32_t index);
 };
 

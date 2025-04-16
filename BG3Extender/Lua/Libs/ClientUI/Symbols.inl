@@ -115,6 +115,7 @@ struct StaticTypeClasses
     TypeClassInfo UIElementData;
     TypeClassInfo DependencyData;
     TypeClassInfo FrameworkElement;
+    TypeClassInfo Visual;
 
     TypeClassInfo InitialSubstate;
     TypeClassInfo StateEvent;
@@ -137,6 +138,7 @@ struct StaticTypeClasses
         UIElementData.Setup("UIElementData");
         DependencyData.Setup("DependencyData");
         FrameworkElement.Setup("FrameworkElement");
+        Visual.Setup("Visual");
 
         InitialSubstate.Setup("ls.InitialSubstate");
         StateEvent.Setup("ls.StateEvent");

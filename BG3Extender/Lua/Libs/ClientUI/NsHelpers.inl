@@ -702,8 +702,14 @@ Visual* VisualHelpers::GetVisualParent(Visual const* o)
     return o->mVisualParent;
 }
 
-uint32_t VisualHelpers::GetVisualChildrenCount(Visual const* o)
+uint32_t VisualHelpers::GetVisualChildrenCount(lua_State* L, Visual const* o)
 {
+    auto cls = o->GetClassType();
+    if (!TypeHelpers::IsDescendantOf(cls, gStaticSymbols.TypeClasses.Visual.Type)) {
+        luaL_error(L, "Trying to get visual child count of type %s?", cls->GetName());
+        return 0;
+    }
+
     return o->GetVisualChildrenCount();
 }
 
