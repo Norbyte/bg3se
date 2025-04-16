@@ -50,7 +50,7 @@ namespace bg3se
 
     void IdentityAdapterMap::TryAddAdapter(Adapter * adapter)
     {
-        if (adapter->Constants.Data.Items.Size > 0) return;
+        if (adapter->Constants.Size() > 0) return;
 
         for (size_t i = 0; i < adapter->VarToColumnMapCount; i++) {
             if (i != adapter->ColumnToVarMaps[(uint32_t)i]) return;

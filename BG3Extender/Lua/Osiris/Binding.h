@@ -51,11 +51,6 @@ public:
         return tvNodePool_;
     }
 
-    inline OsiArgumentPool<ListNode<TupleLL::Item>> & GetTupleNodePool()
-    {
-        return tupleNodePool_;
-    }
-
     inline OsirisCallbackManager& GetOsirisCallbacks()
     {
         return osirisCallbacks_;
@@ -68,7 +63,6 @@ private:
     OsiArgumentPool<OsiArgumentDesc> argDescPool_;
     OsiArgumentPool<TypedValue> tvPool_;
     OsiArgumentPool<ListNode<TypedValue *>> tvNodePool_;
-    OsiArgumentPool<ListNode<TupleLL::Item>> tupleNodePool_;
     IdentityAdapterMap identityAdapters_;
     OsirisNameResolver resolver_;
     // ID of current story instance.

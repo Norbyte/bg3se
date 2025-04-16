@@ -22,16 +22,16 @@ namespace bg3se
         NodeVMTWrapper(NodeVMT * vmt, NodeWrapOptions & options);
         ~NodeVMTWrapper();
 
-        bool WrappedIsValid(Node * node, VirtTupleLL * tuple, uint32_t adapter);
-        void WrappedPushDownTuple(Node * node, VirtTupleLL * tuple, uint32_t adapter, EntryPoint which);
-        void WrappedPushDownTupleDelete(Node * node, VirtTupleLL * tuple, uint32_t adapter, EntryPoint which);
+        bool WrappedIsValid(Node * node, SmallTuple* tuple, uint32_t adapter);
+        void WrappedPushDownTuple(Node * node, SmallTuple* tuple, uint32_t adapter, EntryPoint which);
+        void WrappedPushDownTupleDelete(Node * node, SmallTuple* tuple, uint32_t adapter, EntryPoint which);
         void WrappedInsertTuple(Node * node, TuplePtrLL * tuple);
         void WrappedDeleteTuple(Node * node, TuplePtrLL * tuple);
         bool WrappedCallQuery(Node * node, OsiArgumentDesc * args);
 
-        static bool s_WrappedIsValid(Node * node, VirtTupleLL * tuple, uint32_t adapter);
-        static void s_WrappedPushDownTuple(Node * node, VirtTupleLL * tuple, uint32_t adapter, EntryPoint which);
-        static void s_WrappedPushDownTupleDelete(Node * node, VirtTupleLL * tuple, uint32_t adapter, EntryPoint which);
+        static bool s_WrappedIsValid(Node * node, SmallTuple* tuple, uint32_t adapter);
+        static void s_WrappedPushDownTuple(Node * node, SmallTuple* tuple, uint32_t adapter, EntryPoint which);
+        static void s_WrappedPushDownTupleDelete(Node * node, SmallTuple* tuple, uint32_t adapter, EntryPoint which);
         static void s_WrappedInsertTuple(Node * node, TuplePtrLL * tuple);
         static void s_WrappedDeleteTuple(Node * node, TuplePtrLL * tuple);
         static bool s_WrappedCallQuery(Node * node, OsiArgumentDesc * args);
@@ -48,9 +48,9 @@ namespace bg3se
         NodeVMTWrappers(NodeVMT ** vmts);
         ~NodeVMTWrappers();
 
-        bool WrappedIsValid(Node * node, VirtTupleLL * tuple, uint32_t adapter);
-        void WrappedPushDownTuple(Node * node, VirtTupleLL * tuple, uint32_t adapter, EntryPoint which);
-        void WrappedPushDownTupleDelete(Node * node, VirtTupleLL * tuple, uint32_t adapter, EntryPoint which);
+        bool WrappedIsValid(Node * node, SmallTuple* tuple, uint32_t adapter);
+        void WrappedPushDownTuple(Node * node, SmallTuple* tuple, uint32_t adapter, EntryPoint which);
+        void WrappedPushDownTupleDelete(Node * node, SmallTuple* tuple, uint32_t adapter, EntryPoint which);
         void WrappedInsertTuple(Node * node, TuplePtrLL * tuple);
         void WrappedDeleteTuple(Node * node, TuplePtrLL * tuple);
         bool WrappedCallQuery(Node * node, OsiArgumentDesc * args);

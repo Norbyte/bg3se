@@ -415,43 +415,33 @@ int OsiFunction::OsiUserQuery(lua_State * L) const
     }
 
     auto state = ServerState::FromLua(L);
-    OsiArgumentListPin<ListNode<TupleLL::Item>> nodes(state->Osiris().GetTupleNodePool(), (uint32_t)numParams + 1);
 
-    VirtTupleLL tuple;
-        
-    auto & args = tuple.Data.Items;
+    SmallTuple args;
+    args.Reserve((uint32_t)numParams);
+ 
     auto argType = function_->Signature->Params->Params.Head->Next;
-    args.Init(nodes.Args());
 
-    auto prev = args.Head;
     uint32_t inputArgIndex = 0;
     for (uint32_t i = 0; i < numParams; i++) {
-        auto node = nodes.Args() + i + 1;
-        args.Insert(node, prev);
-        node->Item.Index = i;
+        auto& tv = args.Add();
         if (!function_->Signature->OutParamList.isOutParam(i)) {
-            LuaToOsi(L, inputArgIndex + 2, node->Item.Value, (ValueType)argType->Item.Type);
+            LuaToOsi(L, inputArgIndex + 2, tv, (ValueType)argType->Item.Type);
             inputArgIndex++;
-        } else {
-            node->Item.Value.TypeId = ValueType::None;
         }
 
-        prev = node;
         argType = argType->Next;
     }
 
     auto node = (*gExtender->GetServer().Osiris().GetGlobals().Nodes)->Db.Elements[function_->Node.Id - 1];
-    bool valid = node->IsValid(&tuple, adapter_.Id);
+    bool valid = node->IsValid(&args, adapter_.Id);
     if (valid) {
         if (outParams > 0) {
             auto retType = function_->Signature->Params->Params.Head->Next;
-            auto ret = args.Head->Next;
             for (uint32_t i = 0; i < numParams; i++) {
                 if (function_->Signature->OutParamList.isOutParam(i)) {
-                    OsiToLua(L, ret->Item.Value);
+                    OsiToLua(L, args[i]);
                 }
 
-                ret = ret->Next;
                 retType = retType->Next;
             }
 

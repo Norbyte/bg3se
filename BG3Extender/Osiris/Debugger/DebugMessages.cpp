@@ -45,14 +45,11 @@ namespace bg3se::osidbg
         }
     }
 
-    void MakeMsgTuple(MsgTuple & msgTuple, TupleLL const & tuple)
+    void MakeMsgTuple(MsgTuple & msgTuple, SmallTuple const & tuple)
     {
-        auto head = tuple.Items.Head;
-        auto col = head->Next;
-        while (col != head) {
+        for (uint32_t i = 0; i < tuple.Size(); i++) {
             auto column = msgTuple.add_column();
-            MakeMsgColumn(*column, col->Item.Value);
-            col = col->Next;
+            MakeMsgColumn(*column, tuple[i]);
         }
     }
 
@@ -117,14 +114,11 @@ namespace bg3se::osidbg
         }
     }
 
-    void DebugDumpTuple(std::stringstream & ss, TupleLL const & tuple)
+    void DebugDumpTuple(std::stringstream & ss, SmallTuple const & tuple)
     {
-        auto head = tuple.Items.Head;
-        auto cur = head->Next;
-        while (cur != head) {
-            DebugDumpTV(ss, cur->Item.Value);
+        for (unsigned i = 0; i < tuple.Size(); i++) {
+            DebugDumpTV(ss, tuple[i]);
             ss << ", ";
-            cur = cur->Next;
         }
     }
 
@@ -156,8 +150,8 @@ namespace bg3se::osidbg
             }
 
             auto tuple = msgFrame->mutable_tuple();
-            if (frame.tupleLL != nullptr) {
-                MakeMsgTuple(*tuple, *frame.tupleLL);
+            if (frame.tuple != nullptr) {
+                MakeMsgTuple(*tuple, *frame.tuple);
             } else if (frame.tuplePtrLL != nullptr) {
                 MakeMsgTuple(*tuple, *frame.tuplePtrLL);
             }
@@ -190,8 +184,8 @@ namespace bg3se::osidbg
         Send(msg);
 
         std::stringstream tup;
-        if (lastFrame.tupleLL != nullptr) {
-            DebugDumpTuple(tup, *lastFrame.tupleLL);
+        if (lastFrame.tuple != nullptr) {
+            DebugDumpTuple(tup, *lastFrame.tuple);
         } else if (lastFrame.tuplePtrLL != nullptr) {
             DebugDumpTuple(tup, *lastFrame.tuplePtrLL);
         }
@@ -596,13 +590,13 @@ namespace bg3se::osidbg
         DEBUG(" <-- BkEndDatabaseContents()");
     }
 
-    void DebugMessageHandler::SendEvaluateRow(uint32_t seq, VirtTupleLL & row)
+    void DebugMessageHandler::SendEvaluateRow(uint32_t seq, SmallTuple& row)
     {
         BackendToDebugger msg;
         msg.set_reply_seq_no(seq);
         auto rowMsg = msg.mutable_evaluaterow();
         auto msgRow = rowMsg->add_row();
-        MakeMsgTuple(*msgRow, row.Data);
+        MakeMsgTuple(*msgRow, row);
 
         Send(msg);
         DEBUG(" <-- BkEvaluateRow()");

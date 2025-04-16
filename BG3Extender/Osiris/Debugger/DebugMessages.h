@@ -64,7 +64,7 @@ struct CallStackFrame
     Node * node;
     Goal * goal;
     uint32_t actionIndex;
-    TupleLL * tupleLL;
+    SmallTuple * tuple;
     TuplePtrLL * tuplePtrLL;
 };
 
@@ -106,7 +106,7 @@ public:
     void SendBeginDatabaseContents(uint32_t databaseId);
     void SendDatabaseRow(uint32_t databaseId, TupleVec * row);
     void SendEndDatabaseContents(uint32_t databaseId);
-    void SendEvaluateRow(uint32_t seq, VirtTupleLL & row);
+    void SendEvaluateRow(uint32_t seq, SmallTuple& row);
     void SendEvaluateFinished(uint32_t seq, ResultCode rc, bool querySucceeded);
 
 private:

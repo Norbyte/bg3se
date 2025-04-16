@@ -24,7 +24,6 @@ inline void OsiReleaseArgument(OsiArgumentDesc & arg)
 
 inline void OsiReleaseArgument(TypedValue & arg) {}
 inline void OsiReleaseArgument(ListNode<TypedValue *> & arg) {}
-inline void OsiReleaseArgument(ListNode<TupleLL::Item> & arg) {}
 
 template <class T>
 class OsiArgumentPool

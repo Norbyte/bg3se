@@ -629,13 +629,13 @@ public:
 
     inline bool HasValue() const
     {
-        return (Flags2 & 0x08);
+        return (Flags & 0x08);
     }
 
     ValueUnion Value;
     ValueType TypeId{ ValueType::None };
-    uint8_t Flags1{ 0xff };
-    uint8_t Flags2{ 0x02 };
+    int8_t Index{ -1 };
+    uint8_t Flags{ 0x02 };
 
 private:
     void ReleaseValue();
@@ -648,41 +648,70 @@ public:
     uint64_t Size{ 0 };
 };
 
-class SmallTuple
-{
-public:
-    virtual ~SmallTuple();
-    virtual void DebugDump();
-
-    void Resize(uint32_t size);
-
-    TypedValue * Values{ nullptr };
-    uint8_t Size{ 0 };
-};
-
 struct TuplePtrLL
 {
     void* VMT{ nullptr };
     List<TypedValue*> Items;
 };
 
-struct TupleLL
-{
-    struct Item
-    {
-        uint8_t Index;
-        TypedValue Value;
-    };
-
-    List<Item> Items;
-};
-
-class VirtTupleLL
+class SmallTuple
 {
 public:
-    virtual ~VirtTupleLL() {}
+    static constexpr uint32_t InlineSize = 8;
 
-    TupleLL Data;
+    SmallTuple();
+    ~SmallTuple();
+
+    SmallTuple(SmallTuple const&) = delete;
+    SmallTuple& operator =(SmallTuple const&) = delete;
+
+    void Reserve(uint32_t size);
+    TypedValue& Add();
+
+    inline uint32_t Size() const
+    {
+        return size_;
+    }
+
+    inline TypedValue* Buf()
+    {
+        if (capacity_ <= InlineSize) {
+            return inline_;
+        } else {
+            return values_;
+        }
+    }
+
+    inline TypedValue const* Buf() const
+    {
+        if (capacity_ <= InlineSize) {
+            return inline_;
+        } else {
+            return values_;
+        }
+    }
+
+    TypedValue& operator [] (uint32_t index)
+    {
+        assert(index < size_);
+        return Buf()[index];
+    }
+
+    TypedValue const& operator [] (uint32_t index) const
+    {
+        assert(index < size_);
+        return Buf()[index];
+    }
+
+private:
+    union
+    {
+        TypedValue inline_[InlineSize];
+        TypedValue* values_;
+    };
+    uint32_t size_{ 0 };
+    uint32_t capacity_{ 8 };
+
 };
 
 struct Database : public ProtectedGameObject<Database>
@@ -742,7 +771,6 @@ struct GoalDb : public TypeDb<Goal*>
     Vector<Goal*> Goals;
 };
 
-class VirtTupleLL;
 class Node;
 
 struct Adapter : public ProtectedGameObject<Adapter>
@@ -751,7 +779,7 @@ struct Adapter : public ProtectedGameObject<Adapter>
     TMap<uint8_t, uint8_t> VarToColumnMaps;
     uint64_t VarToColumnMapCount;
     Vector<int8_t> ColumnToVarMaps;
-    VirtTupleLL Constants;
+    SmallTuple Constants;
 };
 
 using DatabaseDb = TypedDb<Database>;
@@ -889,14 +917,14 @@ struct NodeVMT
     using DestroyProc = void (*)(Node * self, bool free);
     using GetDatabaseRefProc = DatabaseRef * (*)(Node * self, DatabaseRef * ref);
     using IsDataNodeProc = bool (*)(Node * self);
-    using IsValidProc = bool(*)(Node * self, VirtTupleLL * Values, uint32_t Adapter);
+    using IsValidProc = bool(*)(Node * self, SmallTuple* Values, uint32_t Adapter);
     using IsProcProc = bool(*)(Node * self);
     using IsPartOfAProcProc = bool(*)(Node * self);
     using GetParentProc = NodeRef * (*)(Node * self, NodeRef * ref);
     using SetNextNodeProc = void (*)(Node * self, NodeEntryRef * ref);
     using GetAdapterProc = Adapter * (*)(Node * self, EntryPoint which);
     using InsertTupleProc = void (*)(Node * self, TuplePtrLL * tuple);
-    using PushDownTupleProc = void(*)(Node * self, VirtTupleLL * tuple, uint32_t adapter, EntryPoint entryPoint);
+    using PushDownTupleProc = void(*)(Node * self, SmallTuple* tuple, uint32_t adapter, EntryPoint entryPoint);
     using TriggerInsertEventProc = void (*)(Node * self, TupleVec * tuple);
     using GetLowDatabaseRefProc = NodeRef * (*)(Node * self, NodeRef * ref);
     using GetLowDatabaseProc = NodeEntryRef * (*)(Node * self, NodeEntryRef * ref);
@@ -944,16 +972,16 @@ public:
     virtual DatabaseRef * GetDatabaseRef(DatabaseRef * Db) = 0;
     virtual DatabaseRef * GetDatabaseRef2(DatabaseRef * Db) = 0;
     virtual bool IsDataNode() = 0;
-    virtual bool IsValid(VirtTupleLL* Tuple, uint32_t Adapter) = 0;
+    virtual bool IsValid(SmallTuple* Tuple, uint32_t Adapter) = 0;
     virtual bool IsProc() = 0;
     virtual bool IsPartOfAProc() = 0;
     virtual NodeRef * GetParent(NodeRef * Node) = 0;
     virtual void SetNextNode(NodeEntryRef * Node) = 0;
     virtual Adapter * GetAdapter(EntryPoint Which) = 0;
     virtual void InsertTuple(TuplePtrLL* Tuple) = 0;
-    virtual void PushDownTuple(VirtTupleLL * Tuple, uint32_t Adapter, EntryPoint Which) = 0;
+    virtual void PushDownTuple(SmallTuple* Tuple, uint32_t Adapter, EntryPoint Which) = 0;
     virtual void DeleteTuple(TuplePtrLL* Tuple) = 0;
-    virtual void PushDownTupleDelete(VirtTupleLL * Tuple, uint32_t Adapter, EntryPoint Which) = 0;
+    virtual void PushDownTupleDelete(SmallTuple* Tuple, uint32_t Adapter, EntryPoint Which) = 0;
     virtual void TriggerInsertEvent(TupleVec * Tuple) = 0;
     virtual void TriggerInsertEvent2(TupleVec * Tuple) = 0;
     virtual NodeRef * GetLowDatabaseRef(NodeRef * Node) = 0;

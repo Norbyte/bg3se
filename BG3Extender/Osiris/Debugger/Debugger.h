@@ -186,10 +186,10 @@ public:
     void RuleActionPreHook(RuleActionNode * action);
     void RuleActionPostHook(RuleActionNode * action);
 
-    void IsValidPreHook(Node* node, VirtTupleLL* tuple, uint32_t adapter);
-    void IsValidPostHook(Node* node, VirtTupleLL* tuple, uint32_t adapter, bool succeeded);
-    void PushDownPreHook(Node* node, VirtTupleLL* tuple, uint32_t adapter, EntryPoint entry, bool deleted);
-    void PushDownPostHook(Node* node, VirtTupleLL* tuple, uint32_t adapter, EntryPoint entry, bool deleted);
+    void IsValidPreHook(Node* node, SmallTuple* tuple, uint32_t adapter);
+    void IsValidPostHook(Node* node, SmallTuple* tuple, uint32_t adapter, bool succeeded);
+    void PushDownPreHook(Node* node, SmallTuple* tuple, uint32_t adapter, EntryPoint entry, bool deleted);
+    void PushDownPostHook(Node* node, SmallTuple* tuple, uint32_t adapter, EntryPoint entry, bool deleted);
     void InsertPreHook(Node* node, TuplePtrLL* tuple, bool deleted);
     void InsertPostHook(Node* node, TuplePtrLL* tuple, bool deleted);
     void CallQueryPreHook(Node* node, OsiArgumentDesc* args);

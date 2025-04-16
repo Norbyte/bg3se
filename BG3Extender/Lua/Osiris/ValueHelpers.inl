@@ -61,7 +61,7 @@ TypedValue::~TypedValue()
 }
 
 TypedValue::TypedValue(TypedValue& o)
-    : Value(o.Value), TypeId(o.TypeId), Flags1(o.Flags1), Flags2(o.Flags2)
+    : Value(o.Value), TypeId(o.TypeId), Index(o.Index), Flags(o.Flags)
 {
     if (OsiIsStringAlias(TypeId)) {
         OsiStringIncRef(Value.StringHandle);
@@ -69,9 +69,9 @@ TypedValue::TypedValue(TypedValue& o)
 }
 
 TypedValue::TypedValue(TypedValue&& o)
-    : Value(o.Value), TypeId(o.TypeId), Flags1(o.Flags1), Flags2(o.Flags2)
+    : Value(o.Value), TypeId(o.TypeId), Index(o.Index), Flags(o.Flags)
 {
-    o.Flags2 &= ~0x08;
+    o.Flags &= ~0x08;
     o.Value.Int64 = 0;
     o.TypeId = ValueType::None;
 }
@@ -89,8 +89,8 @@ TypedValue& TypedValue::operator = (TypedValue const& o)
 
     Value = o.Value;
     TypeId = o.TypeId;
-    Flags1 = o.Flags1;
-    Flags2 = o.Flags2;
+    Index = o.Index;
+    Flags = o.Flags;
 
     if (OsiIsStringAlias(TypeId)) {
         OsiStringIncRef(Value.StringHandle);
@@ -105,10 +105,10 @@ TypedValue& TypedValue::operator = (TypedValue&& o)
 
     Value = o.Value;
     TypeId = o.TypeId;
-    Flags1 = o.Flags1;
-    Flags2 = o.Flags2;
+    Index = o.Index;
+    Flags = o.Flags;
 
-    o.Flags2 &= ~0x08;
+    o.Flags &= ~0x08;
     o.Value.Int64 = 0;
     o.TypeId = ValueType::None;
 
@@ -125,7 +125,7 @@ void TypedValue::ClearValue()
 {
     ReleaseValue();
 
-    Flags2 &= ~0x08;
+    Flags &= ~0x08;
     Value.Int64 = 0;
     TypeId = ValueType::None;
 }
@@ -136,7 +136,7 @@ void TypedValue::SetValue(ValueType typeId, int32_t v)
 
     Value.Int32 = v;
     TypeId = typeId;
-    Flags2 |= 0x08;
+    Flags |= 0x08;
 }
 
 void TypedValue::SetValue(ValueType typeId, float v)
@@ -145,7 +145,7 @@ void TypedValue::SetValue(ValueType typeId, float v)
 
     Value.Float = v;
     TypeId = typeId;
-    Flags2 |= 0x08;
+    Flags |= 0x08;
 }
 
 void TypedValue::SetValue(ValueType typeId, int64_t v)
@@ -154,7 +154,7 @@ void TypedValue::SetValue(ValueType typeId, int64_t v)
 
     Value.Int64 = v;
     TypeId = typeId;
-    Flags2 |= 0x08;
+    Flags |= 0x08;
 }
 
 void TypedValue::SetValue(ValueType typeId, OsiStringHandle s)
@@ -163,7 +163,7 @@ void TypedValue::SetValue(ValueType typeId, OsiStringHandle s)
 
     Value.StringHandle = s;
     TypeId = typeId;
-    Flags2 |= 0x08;
+    Flags |= 0x08;
 }
 
 void TypedValue::SetValue(ValueType typeId, char const* s)
@@ -172,7 +172,7 @@ void TypedValue::SetValue(ValueType typeId, char const* s)
 
     Value.StringHandle = OsiStringMake(s, OsiIsGuidStringAlias(typeId));
     TypeId = typeId;
-    Flags2 |= 0x08;
+    Flags |= 0x08;
 }
 
 Database* DatabaseRef::Get() const
@@ -203,6 +203,47 @@ Node* NodeRef::Get() const
     }
 
     return manager->Db.Elements[Id - 1];
+}
+
+SmallTuple::SmallTuple()
+{
+    for (uint32_t i = 0; i < std::size(inline_); i++) {
+        new (inline_ + i) TypedValue();
+    }
+}
+
+SmallTuple::~SmallTuple()
+{
+    for (uint32_t i = 0; i < size_; i++) {
+        Buf()[i].~TypedValue();
+    }
+
+    if (capacity_ > InlineSize) {
+        GameFree(values_);
+    }
+}
+
+void SmallTuple::Reserve(uint32_t newCapacity)
+{
+    if (capacity_ < newCapacity) {
+        auto buf = GameAllocArray<TypedValue>(newCapacity);
+        for (uint32_t i = 0; i < size_; i++) {
+            buf[i] = Buf()[i];
+            Buf()[i].~TypedValue();
+        }
+
+        values_ = buf;
+        capacity_ = newCapacity;
+    }
+}
+
+TypedValue& SmallTuple::Add()
+{
+    if (size_ == capacity_) Reserve(capacity_ * 2);
+    auto& val = Buf()[size_++];
+    val = TypedValue{};
+    val.Index = size_ - 1;
+    return val;
 }
 
 END_SE()

@@ -541,26 +541,14 @@ namespace bg3se::osidbg
         }
     }
 
-    void MsgToTuple(MsgTuple const & msg, VirtTupleLL & tuple)
+    void MsgToTuple(MsgTuple const & msg, SmallTuple& tuple)
     {
-        tuple.Data.Items.Size = msg.column_size();
-        auto head = new ListNode<TupleLL::Item>();
-        tuple.Data.Items.Head = head;
-        head->Head = head;
-        head->Next = head;
+        tuple.Reserve(msg.column_size());
 
-        auto prev = head;
         for (int i = 0; i < msg.column_size(); i++) {
-            auto item = new ListNode<TupleLL::Item>();
-            item->Head = head;
-            item->Next = head;
-            prev->Next = item;
-
+            auto& tv = tuple.Add();
             auto & param = msg.column()[i];
-            item->Item.Index = i;
-            MsgToValue(param, item->Item.Value);
-
-            prev = item;
+            MsgToValue(param, tv);
         }
     }
 
@@ -578,16 +566,12 @@ namespace bg3se::osidbg
         }
     }
 
-    void TupClearOutParams(VirtTupleLL & tuple, FunctionSignature const & signature)
+    void TupClearOutParams(SmallTuple& tuple, FunctionSignature const & signature)
     {
-        auto head = tuple.Data.Items.Head;
-        auto cur = head->Next;
-        for (unsigned i = 0; i < tuple.Data.Items.Size; i++) {
+        for (unsigned i = 0; i < tuple.Size(); i++) {
             if (signature.OutParamList.isOutParam(i)) {
-                cur->Item.Value.ClearValue();
+                tuple[i].ClearValue();
             }
-
-            cur = cur->Next;
         }
     }
 
@@ -660,7 +644,7 @@ namespace bg3se::osidbg
         {
         case EvalType::IsValid:
         {
-            VirtTupleLL tuple;
+            SmallTuple tuple;
             MsgToTuple(params, tuple);
             // Evaluate whether the query succeeds
             querySucceeded = node->IsValid(&tuple, adapter->Id);
@@ -800,7 +784,7 @@ namespace bg3se::osidbg
         if (lastFrame.frameType != frame.frameType
             || lastFrame.node != frame.node
             || lastFrame.goal != frame.goal
-            || lastFrame.tupleLL != frame.tupleLL
+            || lastFrame.tuple != frame.tuple
             || lastFrame.tuplePtrLL != frame.tuplePtrLL
             || lastFrame.actionIndex != frame.actionIndex) {
             Fail("Call stack frame mismatch");
@@ -809,10 +793,10 @@ namespace bg3se::osidbg
         callStack_.pop_back();
     }
 
-    void Debugger::IsValidPreHook(Node * node, VirtTupleLL * tuple, uint32_t adapter)
+    void Debugger::IsValidPreHook(Node * node, SmallTuple* tuple, uint32_t adapter)
     {
         ServerThreadReentry();
-        PushFrame({ BreakpointReason::NodeIsValid, node, nullptr, 0, &tuple->Data, nullptr });
+        PushFrame({ BreakpointReason::NodeIsValid, node, nullptr, 0, tuple, nullptr });
 
 #if defined(DUMP_TRACEPOINTS)
         DEBUG("IsValid(Node %d)", node->Id);
@@ -824,7 +808,7 @@ namespace bg3se::osidbg
             GlobalBreakOnValid);
     }
 
-    void Debugger::IsValidPostHook(Node * node, VirtTupleLL * tuple, uint32_t adapter, bool succeeded)
+    void Debugger::IsValidPostHook(Node * node, SmallTuple* tuple, uint32_t adapter, bool succeeded)
     {
         hasLastQueryInfo_ = true;
         lastQueryDepth_ = (uint32_t)callStack_.size();
@@ -837,14 +821,14 @@ namespace bg3se::osidbg
         }
 
         ServerThreadReentry();
-        PopFrame({ BreakpointReason::NodeIsValid, node, nullptr, 0, &tuple->Data, nullptr });
+        PopFrame({ BreakpointReason::NodeIsValid, node, nullptr, 0, tuple, nullptr });
     }
 
-    void Debugger::PushDownPreHook(Node * node, VirtTupleLL * tuple, uint32_t adapter, EntryPoint entry, bool deleted)
+    void Debugger::PushDownPreHook(Node * node, SmallTuple* tuple, uint32_t adapter, EntryPoint entry, bool deleted)
     {
         ServerThreadReentry();
         auto reason = deleted ? BreakpointReason::NodePushDownTupleDelete : BreakpointReason::NodePushDownTuple;
-        PushFrame({ reason, node, nullptr, 0, &tuple->Data, nullptr });
+        PushFrame({ reason, node, nullptr, 0, tuple, nullptr });
 
 #if defined(DUMP_TRACEPOINTS)
         DEBUG("PushDown(Node %d)", node->Id);
@@ -858,7 +842,7 @@ namespace bg3se::osidbg
         hasLastQueryInfo_ = false;
     }
 
-    void Debugger::PushDownPostHook(Node * node, VirtTupleLL * tuple, uint32_t adapter, EntryPoint entry, bool deleted)
+    void Debugger::PushDownPostHook(Node * node, SmallTuple* tuple, uint32_t adapter, EntryPoint entry, bool deleted)
     {
         // Trigger a failed query breakpoint if the last query didn't succeed
         if (hasLastQueryInfo_
@@ -873,7 +857,7 @@ namespace bg3se::osidbg
 
         ServerThreadReentry();
         auto reason = deleted ? BreakpointReason::NodePushDownTupleDelete : BreakpointReason::NodePushDownTuple;
-        PopFrame({ reason, node, nullptr, 0, &tuple->Data, nullptr });
+        PopFrame({ reason, node, nullptr, 0, tuple, nullptr });
     }
 
     void Debugger::InsertPreHook(Node * node, TuplePtrLL * tuple, bool deleted)
