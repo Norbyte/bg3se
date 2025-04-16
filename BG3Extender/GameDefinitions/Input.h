@@ -6,7 +6,6 @@
 BEGIN_NS(input)
 
 using InputPlayerId = uint8_t;
-using InputRawType = uint16_t;
 using InputDeviceId = uint16_t;
 using InputEventId = uint32_t;
 
@@ -137,7 +136,7 @@ struct FireEventDesc
 	uint8_t PlayerIndex;
 	InputEvent Event;
 	InputDeviceId DeviceId;
-	int16_t InputId;
+	InputRawType InputId;
 	int32_t field_34;
 };
 
