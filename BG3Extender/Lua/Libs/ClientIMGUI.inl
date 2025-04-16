@@ -24,6 +24,11 @@ void EnableDemo(lua_State* L, bool enabled)
 
 bool LoadFont(FixedString const& name, char const* path, float size)
 {
+    if (!gExtender->IMGUI().WasUIInitialized()) {
+        ERR("LoadFont() called before IMGUI was initialized!");
+        return false;
+    }
+
     return gExtender->IMGUI().LoadFont(name, path, size);
 }
 
@@ -34,6 +39,11 @@ void SetScale(float scale)
 
 glm::ivec2 GetViewportSize()
 {
+    if (!gExtender->IMGUI().WasUIInitialized()) {
+        ERR("GetViewportSize() called before IMGUI was initialized!");
+        return { 0, 0 };
+    }
+
     return gExtender->IMGUI().GetViewportSize();
 }
 

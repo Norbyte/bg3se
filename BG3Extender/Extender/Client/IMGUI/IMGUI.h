@@ -39,6 +39,11 @@ public:
     IMGUIManager(SDLManager& sdl);
     ~IMGUIManager();
 
+    inline bool WasUIInitialized() const
+    {
+        return initialized_;
+    }
+
     void EnableHooks();
     void DisableHooks();
 
