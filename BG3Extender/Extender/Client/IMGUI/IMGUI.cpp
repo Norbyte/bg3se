@@ -1653,7 +1653,6 @@ IMGUIManager::IMGUIManager(SDLManager& sdl)
 
 IMGUIManager::~IMGUIManager()
 {
-    ImGui::GetIO().Fonts->ClearFonts();
     DestroyUI();
 }
 
