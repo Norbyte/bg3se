@@ -14,6 +14,7 @@
 #include <iomanip>
 
 #undef DEBUG_CRASH_REPORTER
+#define ALLOW_DEBUG_CRASH_REPORTING
 
 #if defined(DEBUG_CRASH_REPORTER)
 #define CRASHDBG(...) INFO(__VA_ARGS__)
@@ -195,11 +196,12 @@ public:
     // Show at most 12 lines to avoid flooding the crash reporter dialog
 #if !defined(DEBUG_CRASH_REPORTER)
     static constexpr unsigned MaxBacktraceLines = 12;
-    static constexpr unsigned MaxLuaBacktraceLines = 12;
+    static constexpr unsigned MaxLuaDisplayBacktraceLines = 12;
 #else
     static constexpr unsigned MaxBacktraceLines = 32;
-    static constexpr unsigned MaxLuaBacktraceLines = 32;
+    static constexpr unsigned MaxLuaDisplayBacktraceLines = 32;
 #endif
+    static constexpr unsigned MaxLuaFullBacktraceLines = 200;
 
     void* Backtrace[32];
     WORD BacktraceSize;
@@ -321,17 +323,19 @@ public:
         return backtrace.str();
     }
 
-    std::string DumpLuaBacktrace(ExtensionStateBase& state)
+    std::pair<std::string, std::string> DumpLuaBacktrace(ExtensionStateBase& state)
     {
         auto lua = state.GetLua();
         if (!lua || !lua->GetState()) {
-            return std::string();
+            return { std::string(), std::string() };
         }
 
         auto L = lua->GetState();
 
         lua_Debug ar;
         std::stringstream bt;
+        std::string fullTrace;
+        std::string displayTrace;
 
         unsigned lines{ 0 };
         for (int i = 0;; i++) {
@@ -363,17 +367,31 @@ public:
 
             bt << std::endl;
 
-            if (lines++ >= MaxLuaBacktraceLines) {
+            if (lines++ == MaxLuaDisplayBacktraceLines) {
+                displayTrace = bt.str();
+                displayTrace += "(...)\r\n";
+            }
+
+            if (lines++ == MaxLuaDisplayBacktraceLines) {
                 bt << "(...)" << std::endl;
+                fullTrace = bt.str();
                 break;
             }
         }
 
-        CRASHDBG("Lua Backtrace:\r\n%s\r\n", bt.str().c_str());
-        return bt.str();
+        if (displayTrace.empty()) {
+            displayTrace = bt.str();
+        }
+
+        if (fullTrace.empty()) {
+            fullTrace = bt.str();
+        }
+
+        CRASHDBG("Lua Backtrace:\r\n%s\r\n", fullTrace.c_str());
+        return { fullTrace, displayTrace };
     }
 
-    std::string DumpLuaBacktrace()
+    std::pair<std::string, std::string> DumpLuaBacktrace()
     {
         if (gExtender->GetServer().IsInThread(CrashThreadId) && gExtender->GetServer().HasExtensionState()) {
             return DumpLuaBacktrace(gExtender->GetServer().GetExtensionState());
@@ -383,7 +401,7 @@ public:
             return DumpLuaBacktrace(gExtender->GetClient().GetExtensionState());
         }
 
-        return std::string();
+        return { std::string(), std::string() };
     }
 
     std::string DumpModuleList()
@@ -434,7 +452,8 @@ public:
     static std::terminate_handler PrevTerminateHandler;
     static BacktraceDumper Dumper;
     static std::string Backtrace;
-    static std::string LuaBacktrace;
+    static std::string LuaFullBacktrace;
+    static std::string LuaDisplayBacktrace;
     static std::string ModuleList;
     static std::string ErrorLog;
 
@@ -442,6 +461,7 @@ public:
     {
         if (!Initialized) return;
         if (type != DebugMessageType::Warning && type != DebugMessageType::Error) return;
+        if (ErrorLog.size() > 0x10000) return;
 
         ErrorLog += msg;
         ErrorLog += "\r\n";
@@ -665,7 +685,9 @@ public:
 
     static void TryDumpLuaBacktraceInternal()
     {
-        LuaBacktrace = Dumper.DumpLuaBacktrace();
+        auto traces = Dumper.DumpLuaBacktrace();
+        LuaDisplayBacktrace = traces.first;
+        LuaFullBacktrace = traces.first;
     }
 
     static bool TryDumpLuaBacktrace()
@@ -674,7 +696,6 @@ public:
             TryDumpLuaBacktraceInternal();
             return true;
         } __except (EXCEPTION_EXECUTE_HANDLER) {
-            LuaBacktrace.clear();
             return false;
         }
     }
@@ -698,9 +719,9 @@ public:
     static void CreateBacktraceFile(std::wstring const& dumpPath)
     {
         auto bt = Backtrace;
-        if (!LuaBacktrace.empty()) {
+        if (!LuaDisplayBacktrace.empty()) {
             bt += "\r\n\r\nLua Backtrace:\r\n";
-            bt += LuaBacktrace;
+            bt += LuaDisplayBacktrace;
         }
 
         std::wstring btPath = dumpPath;
@@ -747,7 +768,7 @@ public:
         writer.AddSection(CrashDataWriter::TagStackTrace, Backtrace);
         
         if (TryDumpLuaBacktrace()) {
-            writer.AddSection(CrashDataWriter::TagLuaStackTrace, LuaBacktrace);
+            writer.AddSection(CrashDataWriter::TagLuaStackTrace, LuaFullBacktrace);
         }
 
         if (TryDumpModuleList()) {
@@ -857,7 +878,8 @@ LPTOP_LEVEL_EXCEPTION_FILTER CrashReporter::PrevExceptionFilter{ nullptr };
 std::terminate_handler CrashReporter::PrevTerminateHandler{ nullptr };
 BacktraceDumper CrashReporter::Dumper;
 std::string CrashReporter::Backtrace;
-std::string CrashReporter::LuaBacktrace;
+std::string CrashReporter::LuaFullBacktrace;
+std::string CrashReporter::LuaDisplayBacktrace;
 std::string CrashReporter::ModuleList;
 std::string CrashReporter::ErrorLog;
 
@@ -874,7 +896,7 @@ void ShutdownCrashReporting()
 LONG HandleGuardedException(DWORD code, EXCEPTION_POINTERS* info)
 {
     if (CrashReporter::Initialized || code == 0xE06D7363L /* STATUS_CPP_EH_EXCEPTION */) {
-#if defined(DEBUG_CRASH_REPORTER) || !defined(_DEBUG)
+#if defined(DEBUG_CRASH_REPORTER) || defined(ALLOW_DEBUG_CRASH_REPORTING) || !defined(_DEBUG)
         return CrashReporter::OnUnhandledException(info);
 #else
         DebugBreak();
