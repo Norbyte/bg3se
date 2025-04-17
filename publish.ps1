@@ -15,8 +15,10 @@ $CloudFrontDistributionID = "EVZRUV2YONUZF"
 
 $S3ManifestPath = "Manifest.json"
 
-$PublishingRoot = Join-Path "D:\Dev\LS\BG3PublishingRoot" "$Channel"
-$SigningKey = Join-Path "D:\Dev\LS\BG3PublishingRoot" "package-signer.key"
+$PublishingBaseDir = "D:\Dev\LS\BG3PublishingRoot"
+$PublishingRoot = Join-Path "$PublishingBaseDir" "$Channel"
+$SigningKey = Join-Path "$PublishingBaseDir" "package-signer.key"
+$CertificationFile = Join-Path "$PublishingBaseDir" "certification.txt"
 $BuildRoot = Join-Path "$PublishingRoot" "Build"
 $PDBRoot = Join-Path "$PublishingRoot" "PDB"
 $RootPath = (Get-Location).Path
@@ -45,12 +47,24 @@ function Build-Extender
 {
 	# Force a build date refresh
 	(gci BG3Extender/Extender/Shared/Console.cpp).LastWriteTime = Get-Date
-	(gci BG3Extender/Extender/BuildInfo.h).LastWriteTime = Get-Date
+
 	if ($Channel -eq "Release") {
-		echo "#undef SE_IS_DEVELOPER_BUILD" | Out-File -FilePath BG3Extender/Extender/BuildInfo.h
+		$BuildInfo = "#undef SE_IS_DEVELOPER_BUILD`r`n"
 	} else {
-		echo "#define SE_IS_DEVELOPER_BUILD" | Out-File -FilePath BG3Extender/Extender/BuildInfo.h
+		$BuildInfo = "#define SE_IS_DEVELOPER_BUILD`r`n"
 	}
+	
+	$BuildInfo += "#define SE_BUILD_CHANNEL `"$Channel`"`r`n"
+
+	if (Test-Path $CertificationFile) {
+		$CertificationId = Get-Content -Path $CertificationFile
+		$BuildInfo += "#define SE_CERTIFICATION_ID `"$CertificationId`"`r`n"
+	} else {
+		$BuildInfo += "#undef SE_CERTIFICATION_ID`r`n"
+	}
+	
+	echo $BuildInfo | Out-File -FilePath BG3Extender/Extender/BuildInfo.h
+	(gci BG3Extender/Extender/BuildInfo.h).LastWriteTime = Get-Date
 
 	Write-Output " ===== BUILDING GAME EXTENDER ===== "
 	msbuild BG3Tools.sln "/p:Configuration=Game Release" /t:Build /m /nologo /verbosity:quiet /consoleloggerparameters:summary

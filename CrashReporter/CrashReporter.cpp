@@ -33,6 +33,7 @@ std::wstring FromUTF8(std::string const & s)
 
 CrashReporter::CrashReporter(std::wstring const & miniDumpPath)
     : miniDumpPath_(miniDumpPath),
+    reportPath_(miniDumpPath + L".crpt"),
     backtracePath_(miniDumpPath + L".bt")
 {}
 
@@ -40,7 +41,7 @@ DWORD WINAPI CrashReporter::MinidumpUploaderThread(LPVOID lpThreadParameter)
 {
     auto self = reinterpret_cast<CrashReporter *>(lpThreadParameter);
 
-    std::ifstream f(self->miniDumpPath_, std::ios::in | std::ios::binary);
+    std::ifstream f(self->reportPath_, std::ios::in | std::ios::binary);
     if (!f.good()) return 0;
     std::vector<uint8_t> crashDump;
     f.seekg(0, std::ios::end);
@@ -54,13 +55,20 @@ DWORD WINAPI CrashReporter::MinidumpUploaderThread(LPVOID lpThreadParameter)
     std::string dumpId;
     HttpUploader uploader;
 
-    bool succeeded = uploader.Upload("https://osicrashreports.norbyte.dev/submit.php?game=bg3&v=23.0.0.0", crashDump, response);
+    bool succeeded = uploader.Upload("https://osicrashreports.norbyte.dev/submit-bg3", crashDump, response);
     if (succeeded) {
-        if (response.size() < 4 || memcmp(response.data(), "OK:", 3) != 0) {
-            errorReason = "Server returned illegible response";
-        } else {
+        if (response.size() > 3 && memcmp(response.data(), "OK:", 3) == 0) {
             dumpId.resize(response.size() - 3);
             memcpy(dumpId.data(), response.data() + 3, response.size() - 3);
+        } else if (response.size() > 4 && memcmp(response.data(), "ERR:", 4) == 0) {
+            errorReason.resize(response.size() - 4);
+            memcpy(errorReason.data(), response.data() + 4, response.size() - 4);
+            succeeded = false;
+        } else {
+            //errorReason = "Server returned illegible response";
+            errorReason.resize(response.size());
+            memcpy(errorReason.data(), response.data(), response.size());
+            succeeded = false;
         }
     } else {
         errorReason = uploader.GetLastError();
@@ -72,7 +80,6 @@ DWORD WINAPI CrashReporter::MinidumpUploaderThread(LPVOID lpThreadParameter)
     } else {
         self->resultText_ = L"Unable to upload crash dump. Reason:\r\n";
         self->resultText_ += FromUTF8(errorReason);
-
     }
 
     self->uploadSucceeded_ = succeeded;
@@ -109,7 +116,7 @@ bool CrashReporter::ShowUploadConfirmationDialog()
     TASKDIALOG_BUTTON buttons[2];
     memset(&buttons, 0, sizeof(buttons));
     buttons[0].nButtonID = IDYES;
-    buttons[0].pszButtonText = L"Send Crash Info";
+    buttons[0].pszButtonText = L"Send Crash Report";
     buttons[1].nButtonID = IDNO;
     buttons[1].pszButtonText = L"Don't Send";
 
@@ -183,7 +190,7 @@ bool CrashReporter::ShowUploadProgressDialog()
 
 void CrashReporter::Report()
 {
-    DWORD attributes = GetFileAttributes(miniDumpPath_.c_str());
+    DWORD attributes = GetFileAttributes(reportPath_.c_str());
     if (attributes == INVALID_FILE_ATTRIBUTES) return;
 
     if (ShowUploadConfirmationDialog()) {

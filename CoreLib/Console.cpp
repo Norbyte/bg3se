@@ -52,7 +52,7 @@ void Console::Print(DebugMessageType type, char const* msg)
     }
 
     if (logCallback_) {
-        logCallback_(msg);
+        logCallback_(type, msg);
     }
 
     if (logToFile_) {

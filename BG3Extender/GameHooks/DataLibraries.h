@@ -30,6 +30,7 @@ namespace bg3se {
         bool PostStartupFindLibraries();
         void ApplyCodePatches();
         bool GetGameVersion(GameVersionInfo & version);
+        HMODULE GetAppHandle();
 
         void ShowStartupError(STDString const & msg, bool wait, bool exitGame);
         void ShowStartupError(STDString const & msg, bool exitGame);
@@ -63,7 +64,6 @@ namespace bg3se {
         SymbolMapper::MappingResult BindECSStaticStringConstructor(uint8_t const*);
         SymbolMapper::MappingResult BindECSStaticRegistrant(uint8_t const*);
         SymbolMapper::MappingResult BindComponentReplicationIDRef(uint8_t const*);
-        HMODULE GetAppHandle();
 
         bool CanShowError();
         bool CanShowMessages();

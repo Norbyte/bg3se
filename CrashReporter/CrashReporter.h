@@ -11,6 +11,7 @@ public:
 
 private:
     std::wstring miniDumpPath_;
+    std::wstring reportPath_;
     std::wstring backtracePath_;
     HWND progressBarWindowHWnd_;
     bool uploadSucceeded_;

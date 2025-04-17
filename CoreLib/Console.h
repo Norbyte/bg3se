@@ -9,7 +9,7 @@ BEGIN_SE()
 class Console
 {
 public:
-    using LogCallbackProc = void (char const* message);
+    using LogCallbackProc = void (DebugMessageType type, char const* message);
 
     virtual ~Console();
     virtual void Create();

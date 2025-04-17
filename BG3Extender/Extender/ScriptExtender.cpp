@@ -68,12 +68,13 @@ void ScriptExtender::Initialize()
         InitCrashReporting();
     }
 
-    GameVersionInfo gameVersion;
-    if (Libraries.GetGameVersion(gameVersion)) {
-        if (gameVersion.IsSupported()) {
-            INFO("Game version v%d.%d.%d.%d OK", gameVersion.Major, gameVersion.Minor, gameVersion.Revision, gameVersion.Build);
+    startTime_ = GetTickCount64();
+
+    if (Libraries.GetGameVersion(gameVersion_)) {
+        if (gameVersion_.IsSupported()) {
+            INFO("Game version v%d.%d.%d.%d OK", gameVersion_.Major, gameVersion_.Minor, gameVersion_.Revision, gameVersion_.Build);
         } else {
-            ERR("Game version v%d.%d.%d.%d is not supported, please upgrade!", gameVersion.Major, gameVersion.Minor, gameVersion.Revision, gameVersion.Build);
+            ERR("Game version v%d.%d.%d.%d is not supported, please upgrade!", gameVersion_.Major, gameVersion_.Minor, gameVersion_.Revision, gameVersion_.Build);
             // Hard exit below a certain version as the EoCClient error display UI won't work anymore
             Fail("Script Extender doesn't support game versions below v4.65, please upgrade!");
         }
@@ -88,7 +89,7 @@ void ScriptExtender::Initialize()
 
     InitStaticSymbols();
 
-    if (!Libraries.FindLibraries(gameVersion.Revision)) {
+    if (!Libraries.FindLibraries(gameVersion_.Revision)) {
         ERR("ScriptExtender::Initialize: Could not load libraries; skipping scripting extension initialization.");
     }
 

@@ -126,6 +126,16 @@ public:
         return useActions_;
     }
 
+    inline GameVersionInfo const& GetGameVersion() const
+    {
+        return gameVersion_;
+    }
+
+    inline ULONGLONG GetStartTime() const
+    {
+        return startTime_;
+    }
+
 #if defined(ENABLE_IMGUI)
     inline extui::IMGUIManager& IMGUI()
     {
@@ -178,6 +188,9 @@ private:
     std::unique_ptr<lua::dbg::DebugMessageHandler> luaDebugMsgHandler_;
     std::unique_ptr<lua::dbg::Debugger> luaDebugger_;
 #endif
+
+    GameVersionInfo gameVersion_;
+    ULONGLONG startTime_{ 0 };
 
     void WarnIfOffline();
     void OnCoreLibInit(void * self);

@@ -3,6 +3,7 @@
 #include <DbgHelp.h>
 #include <psapi.h>
 #include <Extender/ScriptExtender.h>
+#include <Extender/Version.h>
 #include <Osiris/Shared/NodeHooks.h>
 #include <resource.h>
 
@@ -21,6 +22,8 @@
 #endif
 
 BEGIN_SE()
+
+extern char const* BuildDate;
 
 std::atomic<uint32_t> gDisableCrashReportingCount{ 0 };
 
@@ -136,6 +139,56 @@ struct PeHeader
 };
 #pragma pack(pop)
 
+class CrashDataWriter
+{
+public:
+    static constexpr uint32_t Version = 1;
+    static constexpr uint32_t Signature = 'CRSH';
+    static constexpr uint32_t TagHeader = 'VERS';
+    static constexpr uint32_t TagExtenderVersion = 'SVER';
+    static constexpr uint32_t TagGameVersion = 'GVER';
+    static constexpr uint32_t TagBuildDate = 'SDAT';
+    static constexpr uint32_t TagCertification = 'CERT';
+    static constexpr uint32_t TagReleaseChannel = 'CHAN';
+    static constexpr uint32_t TagBuildType = 'BLDT';
+    static constexpr uint32_t TagStackTrace = 'TRAC';
+    static constexpr uint32_t TagLuaStackTrace = 'LUAT';
+    static constexpr uint32_t TagLoadedModules = 'MODS';
+    static constexpr uint32_t TagErrorLog = 'ERRL';
+    static constexpr uint32_t TagServerState = 'SSTA';
+    static constexpr uint32_t TagClientState = 'CSTA';
+    static constexpr uint32_t TagSessionLength = 'SLEN';
+    static constexpr uint32_t TagMinidump = 'MDMP';
+
+    CrashDataWriter(std::wstring const& path)
+        : f_(path.c_str(), std::ios::out | std::ios::binary)
+    {}
+
+    bool CanWrite()
+    {
+        return f_.good();
+    }
+
+    void AddSection(uint32_t fourCC, std::string_view buf)
+    {
+        auto len = (uint32_t)buf.size();
+        f_.write((char*)&fourCC, sizeof(fourCC));
+        f_.write((char*)&len, sizeof(len));
+        f_.write(buf.data(), buf.size());
+    }
+
+    void AddHeader()
+    {
+        f_.write((char*)&Signature, sizeof(Signature));
+
+        uint32_t ver = Version;
+        AddSection(TagHeader, std::string_view((char*)&ver, sizeof(ver)));
+    }
+
+private:
+    std::ofstream f_;
+};
+
 class BacktraceDumper
 {
 public:
@@ -163,7 +216,7 @@ public:
 #endif
 
         MODULEINFO moduleInfo;
-        auto hEoCApp = GetModuleHandleW(L"EoCApp.exe");
+        auto hEoCApp = gExtender->GetLibraryManager().GetAppHandle();
         if (hEoCApp != NULL) {
             if (GetModuleInformation(GetCurrentProcess(), hEoCApp, &moduleInfo, sizeof(moduleInfo))) {
                 eocAppStart_ = (uint8_t*)moduleInfo.lpBaseOfDll;
@@ -333,6 +386,29 @@ public:
         return std::string();
     }
 
+    std::string DumpModuleList()
+    {
+        auto modManager = GetStaticSymbols().GetModManagerClient();
+        if (!modManager) {
+            return {};
+        }
+
+        std::string mods;
+        for (auto const& mod : modManager->LoadOrderedModules) {
+            mods += mod.Info.ModuleUUIDString.GetStringView();
+            mods += "\t";
+            mods += mod.Info.Name;
+            mods += "\t";
+            mods += std::to_string(mod.Info.ModVersion.Major()) + "."
+                + std::to_string(mod.Info.ModVersion.Minor()) + "."
+                + std::to_string(mod.Info.ModVersion.Revision()) + "."
+                + std::to_string(mod.Info.ModVersion.Build());
+            mods += "\r\n";
+        }
+
+        return mods;
+    }
+
 private:
     CrashReporterSymbolData eocAppSymbols_;
     CrashReporterSymbolData symbols_;
@@ -357,7 +433,19 @@ public:
     static LPTOP_LEVEL_EXCEPTION_FILTER PrevExceptionFilter;
     static std::terminate_handler PrevTerminateHandler;
     static BacktraceDumper Dumper;
+    static std::string Backtrace;
     static std::string LuaBacktrace;
+    static std::string ModuleList;
+    static std::string ErrorLog;
+
+    static void OnLogMessage(DebugMessageType type, char const* msg)
+    {
+        if (!Initialized) return;
+        if (type != DebugMessageType::Warning && type != DebugMessageType::Error) return;
+
+        ErrorLog += msg;
+        ErrorLog += "\r\n";
+    }
 
     static void Initialize()
     {
@@ -367,6 +455,12 @@ public:
         gRegisteredTrampolines.insert(ResolveRealFunctionAddress(&CrashReporter::OnUnhandledException));
         PrevExceptionFilter = SetUnhandledExceptionFilter(&OnUnhandledException);
         PrevTerminateHandler = std::set_terminate(&OnTerminate);
+
+        if (gCoreLibPlatformInterface.GlobalConsole) {
+            gCoreLibPlatformInterface.GlobalConsole->SetLogCallback(&OnLogMessage);
+        }
+
+        ErrorLog.reserve(0x10000);
         Dumper.Initialize();
         Initialized = true;
         CRASHDBG("Enabled crash reporting");
@@ -375,6 +469,10 @@ public:
     static void Shutdown()
     {
         if (!Initialized) return;
+
+        if (gCoreLibPlatformInterface.GlobalConsole) {
+            gCoreLibPlatformInterface.GlobalConsole->SetLogCallback(nullptr);
+        }
 
         SetUnhandledExceptionFilter(PrevExceptionFilter);
         std::set_terminate(PrevTerminateHandler);
@@ -554,6 +652,7 @@ public:
 
         auto cmdline = std::wstring(L"CrashReporter.exe ") + miniDumpPath;
 
+        CRASHDBG("Saved MiniDump to: %s", ToStdUTF8(miniDumpPath).c_str());
         CRASHDBG("Launch crash reporter: %s", ToStdUTF8(crashReporterPath).c_str());
         if (!CreateProcessW(crashReporterPath.c_str(), cmdline.data(), NULL, NULL, FALSE, 0,
             NULL, NULL, &si, &pi)) {
@@ -567,32 +666,48 @@ public:
     static void TryDumpLuaBacktraceInternal()
     {
         LuaBacktrace = Dumper.DumpLuaBacktrace();
-
-        if (!LuaBacktrace.empty()) {
-            LuaBacktrace = "\r\n\r\nLua backtrace:\r\n" + LuaBacktrace;
-        }
     }
 
-    static void TryDumpLuaBacktrace()
+    static bool TryDumpLuaBacktrace()
     {
         __try {
             TryDumpLuaBacktraceInternal();
+            return true;
         } __except (EXCEPTION_EXECUTE_HANDLER) {
-            LuaBacktrace = "\r\n(error retrieving Lua stack trace)";
+            LuaBacktrace.clear();
+            return false;
+        }
+    }
+
+    static void TryDumpModuleListInternal()
+    {
+        ModuleList = Dumper.DumpModuleList();
+    }
+
+    static bool TryDumpModuleList()
+    {
+        __try {
+            TryDumpModuleListInternal();
+            return true;
+        } __except (EXCEPTION_EXECUTE_HANDLER) {
+            ModuleList.clear();
+            return false;
         }
     }
 
     static void CreateBacktraceFile(std::wstring const& dumpPath)
     {
-        auto bt = Dumper.DumpBacktrace();
-        TryDumpLuaBacktrace();
-        bt += LuaBacktrace;
+        auto bt = Backtrace;
+        if (!LuaBacktrace.empty()) {
+            bt += "\r\n\r\nLua Backtrace:\r\n";
+            bt += LuaBacktrace;
+        }
 
         std::wstring btPath = dumpPath;
         btPath += L".bt";
 
         CRASHDBG("BT path: %s", ToStdUTF8(btPath).c_str());
-        CRASHDBG("BT contents:\r\n%s\r\n", bt.c_str());
+        CRASHDBG("BT contents:\r\n%s\r\n", Backtrace.c_str());
 
         std::ofstream f(btPath.c_str(), std::ios::out | std::ios::binary);
         if (f.good()) {
@@ -601,11 +716,86 @@ public:
         }
     }
 
+    static void CreateCrashReportFile(std::wstring const& dumpPath)
+    {
+        CrashDataWriter writer(dumpPath + L".crpt");
+        writer.AddHeader();
+        writer.AddSection(CrashDataWriter::TagExtenderVersion, RES_DLL_VERSION_STRING);
+
+        auto const& ver = gExtender->GetGameVersion();
+        std::string gameVer = std::to_string(ver.Major) + "."
+            + std::to_string(ver.Minor) + "."
+            + std::to_string(ver.Revision) + "."
+            + std::to_string(ver.Build);
+        writer.AddSection(CrashDataWriter::TagGameVersion, gameVer);
+        writer.AddSection(CrashDataWriter::TagBuildDate, BuildDate);
+        writer.AddSection(CrashDataWriter::TagReleaseChannel, SE_BUILD_CHANNEL);
+
+#if !defined(NDEBUG)
+        writer.AddSection(CrashDataWriter::TagBuildType, "Debug");
+#elif defined(SE_IS_DEVELOPER_BUILD)
+        writer.AddSection(CrashDataWriter::TagBuildType, "Devel");
+#else
+        writer.AddSection(CrashDataWriter::TagBuildType, "Release");
+#endif
+
+#if defined(SE_CERTIFICATION_ID)
+        writer.AddSection(CrashDataWriter::TagCertification, SE_CERTIFICATION_ID);
+#endif
+        
+        Backtrace = Dumper.DumpBacktrace();
+        writer.AddSection(CrashDataWriter::TagStackTrace, Backtrace);
+        
+        if (TryDumpLuaBacktrace()) {
+            writer.AddSection(CrashDataWriter::TagLuaStackTrace, LuaBacktrace);
+        }
+
+        if (TryDumpModuleList()) {
+            writer.AddSection(CrashDataWriter::TagLoadedModules, ModuleList);
+        }
+
+        if (!ErrorLog.empty()) {
+            writer.AddSection(CrashDataWriter::TagErrorLog, ErrorLog);
+        }
+
+        auto clientState = GetStaticSymbols().GetClientState();
+        if (clientState) {
+            auto state = *clientState;
+            writer.AddSection(CrashDataWriter::TagClientState, std::string_view((char *)&state, sizeof(state)));
+        }
+
+        auto serverState = GetStaticSymbols().GetServerState();
+        if (serverState) {
+            auto state = *serverState;
+            writer.AddSection(CrashDataWriter::TagServerState, std::string_view((char *)&state, sizeof(state)));
+        }
+
+        auto startTime = gExtender->GetStartTime();
+        if (startTime) {
+            auto runtime = GetTickCount64() - startTime;
+            writer.AddSection(CrashDataWriter::TagSessionLength, std::string_view((char*)&runtime, sizeof(runtime)));
+        }
+
+        std::ifstream df(dumpPath.c_str(), std::ios::in | std::ios::binary);
+        if (df.good()) {
+            df.seekg(0, std::ios::end);
+            auto size = df.tellg();
+            df.seekg(0, std::ios::beg);
+
+            std::vector<char> dump;
+            dump.resize(size);
+            df.read(dump.data(), size);
+
+            writer.AddSection(CrashDataWriter::TagMinidump, std::string_view(dump.data(), dump.size()));
+        }
+    }
+
     static DWORD WINAPI CrashReporterThread(LPVOID userData)
     {
         auto params = (CrashReporterThreadParams *)userData;
         auto dumpPath = GetMiniDumpPath();
         if (CreateMiniDump(params, dumpPath)) {
+            CreateCrashReportFile(dumpPath);
             CreateBacktraceFile(dumpPath);
             LaunchCrashReporter(dumpPath);
         }
@@ -666,7 +856,10 @@ bool CrashReporter::Initialized{ false };
 LPTOP_LEVEL_EXCEPTION_FILTER CrashReporter::PrevExceptionFilter{ nullptr };
 std::terminate_handler CrashReporter::PrevTerminateHandler{ nullptr };
 BacktraceDumper CrashReporter::Dumper;
+std::string CrashReporter::Backtrace;
 std::string CrashReporter::LuaBacktrace;
+std::string CrashReporter::ModuleList;
+std::string CrashReporter::ErrorLog;
 
 void InitCrashReporting()
 {
