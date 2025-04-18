@@ -83,7 +83,11 @@ DWORD WINAPI CrashReporter::MinidumpUploaderThread(LPVOID lpThreadParameter)
     }
 
     self->uploadSucceeded_ = succeeded;
-    SendMessage(self->progressBarWindowHWnd_, TDM_CLICK_BUTTON, IDABORT, 0);
+    self->uploadFinished_ = true;
+
+    if (!self->quiet_) {
+        SendMessage(self->progressBarWindowHWnd_, TDM_CLICK_BUTTON, IDABORT, 0);
+    }
 
     return 0;
 }
@@ -193,16 +197,25 @@ void CrashReporter::Report()
     DWORD attributes = GetFileAttributes(reportPath_.c_str());
     if (attributes == INVALID_FILE_ATTRIBUTES) return;
 
-    if (ShowUploadConfirmationDialog()) {
-        ShowUploadProgressDialog();
+    if (quiet_ || ShowUploadConfirmationDialog()) {
+        if (!quiet_) {
+            ShowUploadProgressDialog();
+        } else {
+            CreateThread(NULL, 0, &MinidumpUploaderThread, this, 0, NULL);
+            while (!uploadFinished_) {
+                Sleep(50);
+            }
+        }
 
         if (!resultText_.empty()) {
-            if (uploadSucceeded_) {
-                MessageBoxW(NULL, resultText_.c_str(), L"Script Extender Crash",
-                    MB_OK | MB_ICONINFORMATION | MB_TASKMODAL | MB_SETFOREGROUND | MB_TOPMOST);
-            } else {
-                MessageBoxW(NULL, resultText_.c_str(), L"Script Extender Crash",
-                    MB_OK | MB_ICONWARNING | MB_TASKMODAL | MB_SETFOREGROUND | MB_TOPMOST);
+            if (!quiet_) {
+                if (uploadSucceeded_) {
+                    MessageBoxW(NULL, resultText_.c_str(), L"Script Extender Crash",
+                        MB_OK | MB_ICONINFORMATION | MB_TASKMODAL | MB_SETFOREGROUND | MB_TOPMOST);
+                } else {
+                    MessageBoxW(NULL, resultText_.c_str(), L"Script Extender Crash",
+                        MB_OK | MB_ICONWARNING | MB_TASKMODAL | MB_SETFOREGROUND | MB_TOPMOST);
+                }
             }
         }
     }
