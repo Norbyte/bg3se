@@ -30,4 +30,4 @@ The following configuration variables can be set in the `ScriptExtenderSettings.
 
 ### Build Instructions
 
-Download the latest [external dependencies from here](https://nb-stor.s3.eu-central-1.amazonaws.com/bg3/External.7z) and extract them to the `External/` folder.
+Download the latest [external dependencies from here](https://nb-stor.s3.eu-central-1.amazonaws.com/bg3-legacy/External.7z) and extract them to the `External/` folder.
