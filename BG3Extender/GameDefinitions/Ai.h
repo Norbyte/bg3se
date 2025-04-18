@@ -478,7 +478,7 @@ struct AiPath : public ProtectedGameObject<AiPath>
 
     void Reset();
     void SetSourceEntity(ecs::EntitySystemHelpersBase& helpers, EntityHandle entity);
-    void SetSourceTemplate(CharacterTemplate* tmpl);
+    void SetSourceTemplate(ecs::EntitySystemHelpersBase& helpers, CharacterTemplate* tmpl);
     void SetSource(glm::vec3 position);
     void SetTargetEntity(EntityHandle entity);
     void SetTarget(glm::vec3 position);

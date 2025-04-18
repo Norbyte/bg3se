@@ -100,30 +100,33 @@ void AiPath::SetSourceEntity(ecs::EntitySystemHelpersBase& helpers, EntityHandle
 
     auto esvCharacter = helpers.GetComponent<esv::Character>(entity);
     if (esvCharacter) {
-        SetSourceTemplate(esvCharacter->Template);
+        SetSourceTemplate(helpers, esvCharacter->Template);
         IsPlayer = (esvCharacter->Flags & esv::CharacterFlags::IsPlayer) == esv::CharacterFlags::IsPlayer;
     } else {
         auto eclCharacter = helpers.GetComponent<ecl::Character>(entity);
         if (eclCharacter) {
-            SetSourceTemplate(eclCharacter->Template);
+            SetSourceTemplate(helpers, eclCharacter->Template);
             IsPlayer = (eclCharacter->Flags & ecl::CharacterFlags::IsPlayer) == ecl::CharacterFlags::IsPlayer;
         }
     }
 }
 
-void AiPath::SetSourceTemplate(CharacterTemplate* tmpl)
+void AiPath::SetSourceTemplate(ecs::EntitySystemHelpersBase& helpers, CharacterTemplate* tmpl)
 {
     StepHeight = tmpl->MovementStepUpHeight.Value;
     WorldClimbingHeight = 0.0f;
     if (tmpl->IsWorldClimbingEnabled.Value) {
-        if (tmpl->WorldClimbingHeight.Value >= 0) {
+        auto canMove = helpers.GetComponent<CanMoveComponent>(Source);
+        if (canMove && (canMove->Flags & CanMoveFlags::CanWorldClimb) == CanMoveFlags::CanWorldClimb) {
             WorldClimbingHeight = tmpl->WorldClimbingHeight.Value;
-        } else {
-            WorldClimbingHeight = MovingBound;
         }
     }
 
     WorldClimbingRadius = tmpl->WorldClimbingRadius.Value;
+    if (WorldClimbingRadius < 0) {
+        WorldClimbingRadius = MovingBound;
+    }
+
     TurningNodeAngle = tmpl->TurningNodeAngle.Value;
     TurningNodeOffset = tmpl->TurningNodeOffset.Value;
     UseStandAtDestination = tmpl->UseStandAtDestination.Value;
