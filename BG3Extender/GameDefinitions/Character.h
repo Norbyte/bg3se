@@ -167,8 +167,8 @@ struct Character : public BaseProxyComponent
     ecs::EntityRef SelfEntity;
 
     Array<SurfacePathInfluence> SurfacePathInfluences;
-    uint64_t DialogRequest;
-    uint64_t ListenRequest;
+    NetId DialogRequest;
+    NetId ListenRequest;
     CharacterTemplate* Template;
     CharacterTemplate* OriginalTemplate;
     void* AiAction;
@@ -199,14 +199,12 @@ struct Character : public BaseProxyComponent
     Array<void*> CircleColors_Arr_EntityRef;
     float LastTick;
     float SneakCheck;
-    int field_110;
+    float SpeedMultiplier;
     int DialogData;
     __int16 PhysicsFlags_M;
-    uint8_t BloodType;
+    uint8_t FeetStatus;
     CharacterFlags2 Flags2;
     CharacterFlags3 Flags3;
-    uint8_t OffstageVisibilityVisualLoaded;
-    uint8_t IsInvisible;
     [[bg3::hidden]] void* _PAD;
 };
 

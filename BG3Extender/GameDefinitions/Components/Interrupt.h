@@ -119,13 +119,12 @@ struct InterruptDataComponent : public BaseComponent
 {
     DEFINE_COMPONENT(ServerSpellCastInterrupt, "esv::spell_cast::InterruptDataComponent")
 
-    std::optional<bg3se::interrupt::UndecidedEventWithId> Event;
+    Guid SpellCastGuid;
+    std::optional<bg3se::interrupt::UndecidedEvent> Event;
     int32_t field_250;
-    uint8_t field_254;
     Array<bg3se::interrupt::PausedAnimationEvent> PausedAnimationEvents;
     Array<bg3se::interrupt::AnimationInterruptData> AnimationInterrupts;
     int32_t field_278;
-    int32_t field_27C;
 };
 
 END_NS()

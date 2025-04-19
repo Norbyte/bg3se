@@ -117,7 +117,7 @@ struct AddConcentrationRequestOneFrameComponent : public BaseComponent
 
     SpellId Spell;
     EntityHandle Caster;
-    uint8_t field_30;
+    [[bg3::legacy(field_30)]] bool UnsummonOnConcentrationBreak;
 };
 
 struct AddToExistingConcentrationRequestOneFrameComponent : public BaseComponent

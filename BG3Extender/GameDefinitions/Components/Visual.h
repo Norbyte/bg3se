@@ -10,7 +10,7 @@ struct CustomIconComponent : public BaseComponent
 
     [[bg3::hidden]]
     ScratchBuffer Buffer;
-    uint8_t Unknown;
+    uint8_t Source;
 };
 
 struct IconComponent : public BaseComponent
@@ -199,15 +199,14 @@ struct EffectComponent : public BaseProxyComponent
     EntityHandle Entity;
     resource::EffectResource* EffectResource;
     aspk::EffectTimeline* Timeline;
-    bool field_28;
-    bool PreviewEffect;
-    // bool OverridingFadeOpacity;
+    bool Initialized;
+    bool OverridingFadeOpacity;
     EffectFlags Flags;
     FixedString EffectName;
     FixedString AnimationName;
     bool UpdateQueued;
     EntityHandle SoundEntity;
-    EntityHandle field_48;
+    [[bg3::legacy(field_48)]] EntityHandle Parent;
     std::array<float, 2> OverrideFadeCapacity;
     std::array<bool, 2> OverrideFadeShadowEnabled;
     [[bg3::hidden]] void* ConstructionJob;
@@ -381,7 +380,7 @@ struct PaperdollComponent : public BaseComponent
     DEFINE_COMPONENT(ClientPaperdoll, "ecl::PaperdollComponent")
 
     EntityHandle Entity;
-    uint8_t field_8;
+    [[bg3::legacy(field_8)]] bool Combat;
 };
 
 END_NS()

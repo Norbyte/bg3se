@@ -73,8 +73,8 @@ struct CompanionDefinitionComponent : public BaseComponent
     Guid field_110;
     Guid field_120;
     uint8_t field_130;
-    uint32_t field_138;
-    bool field_13C;
+    [[bg3::legacy(field_138)]] uint32_t IconVersion;
+    [[bg3::legacy(field_13C)]] bool HasIcon;
 };
 
 

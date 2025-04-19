@@ -467,8 +467,8 @@ struct CanDoRestComponent : public BaseComponent
     DEFINE_COMPONENT(CanDoRest, "eoc::CanDoRestComponent")
 
     RestFlags Flags;
-    RestErrorFlags RestErrorFlags1;
-    RestErrorFlags RestErrorFlags2;
+    [[bg3::legacy(RestErrorFlags1)]] RestErrorFlags LongRestErrorFlags;
+    [[bg3::legacy(RestErrorFlags2)]] RestErrorFlags ShortRestErrorFlags;
 };
 
 struct CanModifyHealthComponent : public BaseComponent

@@ -189,16 +189,14 @@ struct StartSpellRequestOneFrameComponent : public BaseComponent
     StartSpellRequestOneFrameComponent& operator = (const StartSpellRequestOneFrameComponent&) = delete;
 
     SpellId Spell;
-    int field_28;
-    EntityHandle field_30;
+    [[bg3::legacy(field_28)]] uint32_t Flags;
+    [[bg3::legacy(field_30)]] EntityHandle Caster;
     Array<bg3se::spell_cast::InitialTarget> Targets;
     ActionOriginator Originator;
-    EntityHandle field_68;
+    [[bg3::legacy(field_68)]] EntityHandle Source;
     EntityHandle field_70;
-    __int64 field_78;
-    int field_80;
-    uint8_t field_84;
-    int field_88;
+    std::optional<glm::vec3> Position;
+    [[bg3::legacy(field_88)]] int StoryActionId;
     STDString NetGUID;
     uint8_t field_A8;
 };

@@ -340,10 +340,10 @@ struct StateComponent : public BaseComponent
     [[bg3::legacy(field_38)]] uint32_t Flags;
     Array<InitialTarget> Targets;
     std::optional<glm::vec3> CasterMoveToPosition;
-    std::optional<glm::vec3> field_60;
+    [[bg3::legacy(field_60)]] std::optional<glm::vec3> CasterTargetPosition;
     glm::vec3 CasterStartPosition;
-    EntityHandle field_80;
-    [[bg3::legacy(field_88)]] uint32_t StartTime;
+    [[bg3::legacy(field_80)]] EntityHandle Source;
+    [[bg3::legacy(field_88)]] uint32_t Random;
     Guid SpellCastGuid;
     STDString field_A0;
 };
@@ -423,10 +423,10 @@ struct TargetHitInterruptEventOneFrameComponent : public BaseComponent
 
     HitDesc Hit;
     AttackDesc Attack;
-    EntityHandle field_1D0;
-    EntityHandle field_1D8;
-    std::optional<glm::vec3> field_1E0;
-    std::optional<glm::vec3> field_1F0;
+    [[bg3::legacy(field_1D0)]] EntityHandle Target;
+    [[bg3::legacy(field_1D8)]] EntityHandle Source;
+    [[bg3::legacy(field_1E0)]] std::optional<glm::vec3> TargetPosition;
+    [[bg3::legacy(field_1F0)]] std::optional<glm::vec3> SourcePosition;
     SpellId Spell;
 };
 

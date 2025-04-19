@@ -95,7 +95,6 @@ struct CharacterDragController : public DragController
     float TimeSpentSq;
     float TimeSpent;
     float RotationRate;
-    int field_1A4;
     uint64_t ErrorFlags;
 };
 
