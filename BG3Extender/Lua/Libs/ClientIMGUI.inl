@@ -39,11 +39,6 @@ void SetScale(float scale)
 
 glm::ivec2 GetViewportSize()
 {
-    if (!gExtender->IMGUI().WasUIInitialized()) {
-        ERR("GetViewportSize() called before IMGUI was initialized!");
-        return { 0, 0 };
-    }
-
     return gExtender->IMGUI().GetViewportSize();
 }
 
