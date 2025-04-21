@@ -486,7 +486,16 @@ public:
 
     void clear(size_type initializedCapacity)
     {
-        resize(0, 0, initializedCapacity);
+        if (buf_ != nullptr) {
+            for (size_type i = 0; i < initializedCapacity; i++) {
+                buf_[i].~T();
+            }
+
+            GameFree(buf_);
+        }
+
+        buf_ = nullptr;
+        size_ = 0;
     }
 
     void resize(size_type newSize, size_type newInitializedCapacity, size_type initializedCapacity)

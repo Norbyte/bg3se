@@ -427,6 +427,7 @@ rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\s
     <None Include="GameDefinitions\Components\AllComponentTypes.inl" />
     <None Include="GameDefinitions\Controllers\Action.inl" />
     <None Include="GameDefinitions\Controllers\Behaviour.inl" />
+    <None Include="GameDefinitions\Controllers\CharacterTask.inl" />
     <None Include="GameDefinitions\Controllers\Movement.inl" />
     <None Include="GameDefinitions\Controllers\OsirisTask.inl" />
     <None Include="GameDefinitions\Controllers\Steering.inl" />

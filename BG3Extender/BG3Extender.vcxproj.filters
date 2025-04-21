@@ -753,6 +753,7 @@
     <None Include="GameDefinitions\Stats\Functors.inl" />
     <None Include="GameDefinitions\DragDrop.inl" />
     <None Include="Lua\Libs\ClientUI\ClassCache.inl" />
+    <None Include="GameDefinitions\Controllers\CharacterTask.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

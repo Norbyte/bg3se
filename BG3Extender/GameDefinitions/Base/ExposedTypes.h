@@ -137,3 +137,30 @@ struct TextLine : TranslatedString
 };
 
 END_SE()
+
+
+BEGIN_NS(navigation)
+
+struct TargetInfo
+{
+    glm::vec3 Position;
+    float TargetRadius;
+    float SpellRange;
+    float TargetFloor;
+    float TargetCeiling;
+    int CloseEnoughPreference;
+    EntityHandle InteractionTarget;
+    Array<EntityHandle> InteractionTargets;
+    int Type;
+    uint16_t CoverFlags;
+    bool AddSourceBoundsToMargin;
+    bool field_3F;
+    bool SurfaceAvoidance;
+    bool IsAvoidingObstacles;
+    bool IsPreciseItemInteraction;
+    EntityHandle PickupEntity;
+    std::optional<glm::vec3> PickupPosition;
+    uint8_t WeightFuncType;
+};
+
+END_NS()
