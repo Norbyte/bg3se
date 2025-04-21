@@ -1,11 +1,32 @@
+local _I = Ext._Internal
+
+--- @class SubscriptionData
+--- @field Handler fun()
+--- @field Index number
+--- @field Priority number
+--- @field Once boolean
+--- @field Options table
+--- @field Prev SubscriptionData
+--- @field Next SubscriptionData
+
+
 --- @class SubscribableEvent
+--- @field First SubscriptionData
+--- @field NextIndex number
+--- @field IdPrefix number
 --- @field Name string
+--- @field PendingDeletions number[]
+--- @field EnterCount number
 local SubscribableEvent = {}
 
-function SubscribableEvent:Instantiate(name)
+---@param name string
+---@param idPrefix number|nil
+---@return SubscribableEvent
+function SubscribableEvent:Instantiate(name, idPrefix)
     return {
         First = nil,
         NextIndex = 1,
+        IdPrefix = idPrefix or Ext.Math.Round(Ext.Math.Random() * 0xfffffff),
         Name = name,
         PendingDeletions = {},
         EnterCount = 0
@@ -26,9 +47,11 @@ function SubscribableEvent:Subscribe(handler, opts)
     }
 
     self:DoSubscribe(sub)
-    return index
+    return index | (self.IdPrefix << 32)
 end
 
+---@param node SubscriptionData
+---@param sub SubscriptionData
 function SubscribableEvent:DoSubscribeBefore(node, sub)
     sub.Prev = node.Prev
     sub.Next = node
@@ -42,8 +65,9 @@ function SubscribableEvent:DoSubscribeBefore(node, sub)
     node.Prev = sub
 end
 
+---@param sub SubscriptionData
 function SubscribableEvent:DoSubscribe(sub)
-    if self.First == nil then 
+    if self.First == nil then
         self.First = sub
         return
     end
@@ -65,6 +89,7 @@ function SubscribableEvent:DoSubscribe(sub)
     sub.Prev = last
 end
 
+---@param node SubscriptionData
 function SubscribableEvent:RemoveNode(node)
     if node.Prev ~= nil then
         node.Prev.Next = node.Next
@@ -82,7 +107,18 @@ function SubscribableEvent:RemoveNode(node)
     node.Next = nil
 end
 
-function SubscribableEvent:Unsubscribe(handlerIndex)
+function SubscribableEvent:Unsubscribe(id)
+    if id >> 32 ~= self.IdPrefix then
+        local evt = _I.EventManager.EventsById[id >> 32]
+        if evt == nil then
+            Ext.Log.PrintWarning("Attempted to remove subscriber ID " .. id .. " for event '" .. self.Name .. "', but the subscription is for a different event!")
+        else
+            Ext.Log.PrintWarning("Attempted to remove subscriber ID " .. id .. " for event '" .. self.Name .. "', but the subscription is for event '" .. evt.Name .. "'!")
+        end
+        return
+    end
+
+    local handlerIndex = id & 0xffffffff
     if self.EnterCount == 0 then
         self:DoUnsubscribe(handlerIndex)
     else
@@ -101,7 +137,7 @@ function SubscribableEvent:DoUnsubscribe(handlerIndex)
         cur = cur.Next
     end
     
-    Ext.Log.PrintWarning("Attempted to remove subscriber ID " .. handlerIndex .. " for event '" .. self.Name .. "', but no such subscriber exists (maybe it was removed already?)")
+    Ext.Log.PrintWarning("Attempted to remove subscriber index " .. handlerIndex .. " for event '" .. self.Name .. "', but no such subscriber exists (maybe it was removed already?)")
 end
 
 function SubscribableEvent:ProcessUnsubscriptions()

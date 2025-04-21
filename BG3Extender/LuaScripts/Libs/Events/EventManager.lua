@@ -7,13 +7,15 @@ local NetworkManager = Ext.CoreLib("NetworkManager")
 --- @field Events table<string, SubscribableEvent>
 --- @field NetListeners table<string, fun(string, string, number)[]>
 --- @field ConsoleCommandListeners table<string, fun(...)[]>
+--- @field EventsById SubscribableEvent[]
 local EventManager = {}
 
 function EventManager:Instantiate()
     return {
         Events = {},
         NetListeners = {},
-        ConsoleCommandListeners = {}
+        ConsoleCommandListeners = {},
+        EventsById = {}
     }
 end
 
@@ -24,7 +26,9 @@ end
 
 
 function EventManager:RegisterEngineEvent(event)
-    self.Events[event] = SubscribableEvent:New(event)
+    local ev = SubscribableEvent:New(event, #self.EventsById + 1)
+    self.Events[event] = ev
+    table.insert(self.EventsById, ev)
 end
 
 
