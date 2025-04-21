@@ -48,7 +48,7 @@ DEFN_BOOST(Ability, Ability, {
     AbilityId Ability;
     int32_t Value;
     [[bg3::legacy(field_8)]] int32_t ValueCap;
-    bool field_C;
+    [[bg3::legacy(field_C)]] bool DontAdjustHealth;
 })
 
 DEFN_BOOST(RollBonus, RollBonus, {
@@ -74,8 +74,8 @@ DEFN_BOOST(ActionResourceValue, ActionResource, {
 })
 
 DEFN_BOOST(CriticalHit, CriticalHit, {
-    CriticalHitBoostFlags Flags;
-    uint8_t field_1;
+    CriticalHitAttackFlags Flags;
+    [[bg3::legacy(field_1)]] CriticalHitSuccessFlags SuccessFlags;
     float Value;
 })
 
@@ -143,7 +143,7 @@ DEFN_BOOST(ActionResourceBlock, ActionResourceBlock, {
 
 DEFN_BOOST(StatusImmunity, StatusImmunity, {
     FixedString StatusID;
-    Array<Guid> UnknownUUIDs;
+    Array<Guid> UnknownUUIDs; // PersonalStatusImmunities GUIDs
 })
 
 struct UseBoostsComponent : public BaseComponent

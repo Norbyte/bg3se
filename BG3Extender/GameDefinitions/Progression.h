@@ -13,13 +13,13 @@ struct LevelUpUpgrades
         Guid Subclass;
         [[bg3::legacy(field_28)]] int Level;
         [[bg3::legacy(field_2C)]] bool Multiclass;
-        int field_30;
+        [[bg3::legacy(field_30)]] int DefinitionIndex;
     };
 
     struct FeatSelector : public Selector
     {
         Guid Feat;
-        Array<uint8_t> Array_b8;
+        [[bg3::legacy(Array_b8)]] Array<AbilityId> AbilityImprovements;
         STDString FeatName;
         int field_80;
     };

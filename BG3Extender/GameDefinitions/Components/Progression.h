@@ -24,10 +24,10 @@ struct MetaComponent : public BaseComponent
     Guid Progression;
     [[bg3::legacy(Race)]] Guid Source;
     [[bg3::legacy(field_40)]] int ClassLevel;
-    [[bg3::legacy(field_44)]] uint8_t ProgressionType;
+    [[bg3::legacy(field_44), bg3::legacy(ProgressionType)]] SpellSourceType SpellSourceType;
     [[bg3::legacy(field_48)]] int Level;
     EntityHandle Owner;
-    HashMap<Guid, Guid> field_50;
+    [[bg3::legacy(field_50)]] HashMap<Guid, Guid> MulticlassSpellSlotOverride;
 };
 
 END_NS()
