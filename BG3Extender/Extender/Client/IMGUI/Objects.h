@@ -951,7 +951,7 @@ public:
     {
         uint32_t index{ 0 };
         for (;;) {
-            auto obj = pool_.Next(index);
+            auto obj = pool_.PopNext(index);
             if (obj) {
                 GameDelete(*obj);
             } else {

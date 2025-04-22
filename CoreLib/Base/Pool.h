@@ -69,10 +69,31 @@ public:
         return nullptr;
     }
 
+    T* PopNext(uint32_t& index)
+    {
+        for (auto i = index; i < pool_.size(); i++) {
+            if ((salts_[i] & DeletedFlag) == 0) {
+                MarkFree(i);
+                index = i + 1;
+                return &pool_[i];
+            }
+        }
+
+        return nullptr;
+    }
+
 private:
     Array<T> pool_;
     Array<TId> freeIndices_;
     Array<TId> salts_;
+
+    void MarkFree(uint32_t index)
+    {
+        freeIndices_.push_back(index);
+        auto salt = salts_[index];
+        salt = (salt + 1) & TSalt(((TId(1) << SaltBits) - 1));
+        salts_[index] = salt | DeletedFlag;
+    }
 };
 
 END_SE()
