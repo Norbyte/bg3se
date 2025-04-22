@@ -278,6 +278,7 @@ public:
     bool RemoveChild(lua::ImguiHandle child);
     bool DetachChild(lua::ImguiHandle child);
     bool AttachChild(lua::ImguiHandle child);
+    void RemoveAllChildren();
     Array<lua::ImguiHandle> GetChildren() const;
 
     Array<HandleType> Children;
@@ -929,6 +930,7 @@ class IMGUIObjectPoolInterface
 {
 public:
     virtual ~IMGUIObjectPoolInterface();
+    virtual void Clear() = 0;
     virtual Renderable* Create() = 0;
     virtual Renderable* Get(HandleType handle) = 0;
     virtual bool Destroy(HandleType handle) = 0;
@@ -940,7 +942,23 @@ class IMGUIObjectPool : public IMGUIObjectPoolInterface
 {
 public:
     IMGUIObjectPool() {}
-    ~IMGUIObjectPool() override {}
+    ~IMGUIObjectPool() override
+    {
+        Clear();
+    }
+    
+    void Clear() override
+    {
+        uint32_t index{ 0 };
+        for (;;) {
+            auto obj = pool_.Next(index);
+            if (obj) {
+                GameDelete(*obj);
+            } else {
+                break;
+            }
+        }
+    }
 
     T* Create() override
     {
@@ -976,6 +994,7 @@ class IMGUIObjectManager
 {
 public:
     IMGUIObjectManager();
+    ~IMGUIObjectManager();
 
     inline lua::DeferredLuaDelegateQueue& GetEventQueue()
     {
@@ -994,6 +1013,7 @@ public:
     void Render(DrawingContext& context);
     void EnableDemo(bool enable);
     void ClientUpdate();
+    void Clear();
 
 private:
     std::array<std::unique_ptr<IMGUIObjectPoolInterface>, (unsigned)IMGUIObjectType::Max + 1> pools_;

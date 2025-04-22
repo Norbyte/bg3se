@@ -393,9 +393,7 @@ void StyledRenderable::Activate()
 
 TreeParent::~TreeParent()
 {
-    for (auto child : Children) {
-        Manager->DestroyRenderable(child);
-    }
+    RemoveAllChildren();
 }
 
 
@@ -749,6 +747,19 @@ bool TreeParent::AttachChild(lua::ImguiHandle child)
     ele->Parent = Handle;
     Children.Add(ele->Handle);
     return true;
+}
+
+void TreeParent::RemoveAllChildren()
+{
+    for (auto child : Children) {
+        auto ele = Manager->GetRenderable(child);
+        if (ele) {
+            ele->Parent = InvalidHandle;
+            Manager->DestroyRenderable(child);
+        }
+    }
+
+    Children.clear();
 }
 
 // Lua helper for making a copy of children without returning a reference to the internal child list.
@@ -1579,6 +1590,11 @@ IMGUIObjectManager::IMGUIObjectManager()
     pools_[(unsigned)IMGUIObjectType::ProgressBar] = std::make_unique<IMGUIObjectPool<ProgressBar>>();
 }
 
+IMGUIObjectManager::~IMGUIObjectManager()
+{
+    Clear();
+}
+
 Renderable* IMGUIObjectManager::CreateRenderable(IMGUIObjectType type)
 {
     auto obj = pools_[(unsigned)type]->Create();
@@ -1638,6 +1654,17 @@ void IMGUIObjectManager::ClientUpdate()
     LuaVirtualPin lua(ecl::ExtensionState::Get());
     if (lua) {
         eventQueue_.Flush();
+    }
+}
+
+void IMGUIObjectManager::Clear()
+{
+    for (auto window : windows_) {
+        DestroyRenderable(window);
+    }
+    
+    for (auto& pool : pools_) {
+        pool->Clear();
     }
 }
 
