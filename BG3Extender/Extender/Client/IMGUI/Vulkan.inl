@@ -40,12 +40,6 @@ BEGIN_NS(extui)
 class VulkanBackend : public RenderingBackend
 {
 public:
-    struct TextureRefCount
-    {
-        TextureDescriptor* Descriptor;
-        uint32_t RefCount;
-    };
-
     VulkanBackend(IMGUIManager& ui) : ui_(ui) {}
 
     ~VulkanBackend() override
@@ -250,26 +244,17 @@ public:
         auto view = descriptor->Vulkan.Views[0]->View;
         if (!view) return {};
 
-        auto tex = textures_.find(descriptor);
-        if (tex != textures_.end()) {
-            auto desc = tex.Value();
-            auto refCount = textureRefCounts_.find(desc);
-            refCount.Value().RefCount++;
-            return TextureLoadResult{ desc, descriptor->Vulkan.ImageData.Width, descriptor->Vulkan.ImageData.Height };
-        } else {
-            if (textures_.size() > 2000) {
-                if (!textureLimitWarningShown_) {
-                    ERR("UI texture limit reached. Newly loaded textures may not load or render correctly");
-                    textureLimitWarningShown_ = true;
-                }
-                return {};
+        if (textures_ > 2000) {
+            if (!textureLimitWarningShown_) {
+                ERR("UI texture limit reached. Newly loaded textures may not load or render correctly");
+                textureLimitWarningShown_ = true;
             }
-
-            auto desc = ImGui_ImplVulkan_AddTexture(sampler_, VkImageView(view), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-            textures_.set(descriptor, desc);
-            textureRefCounts_.set(desc, TextureRefCount{ descriptor, 1 });
-            return TextureLoadResult{ desc, descriptor->Vulkan.ImageData.Width, descriptor->Vulkan.ImageData.Height };
+            return {};
         }
+
+        textures_++;
+        auto desc = ImGui_ImplVulkan_AddTexture(sampler_, VkImageView(view), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+        return TextureLoadResult{ desc, descriptor->Vulkan.ImageData.Width, descriptor->Vulkan.ImageData.Height };
     }
 
     void UnregisterTexture(ImTextureID id) override
@@ -277,15 +262,8 @@ public:
         if (!initialized_) return;
 
         auto desc = static_cast<VkDescriptorSet>(id);
-        auto refCount = textureRefCounts_.find(desc);
-        if (refCount != textureRefCounts_.end()) {
-            refCount.Value().RefCount--;
-            if (refCount.Value().RefCount == 0) {
-                ImGui_ImplVulkan_RemoveTexture(desc);
-                textures_.remove(refCount.Value().Descriptor);
-                textureRefCounts_.remove(desc);
-            }
-        }
+        ImGui_ImplVulkan_RemoveTexture(desc);
+        textures_--;
     }
 
     bool IsInitialized() override
@@ -847,9 +825,7 @@ private:
     VkQueuePresentKHRHookType QueuePresentKHRHook_;
 
     SwapchainInfo swapchain_;
-
-    HashMap<TextureDescriptor*, VkDescriptorSet> textures_;
-    HashMap<VkDescriptorSet, TextureRefCount> textureRefCounts_;
+    uint32_t textures_{ 0 };
 };
 
 END_NS()

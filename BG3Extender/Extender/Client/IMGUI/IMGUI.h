@@ -25,6 +25,36 @@ static constexpr HandleType InvalidHandle = 0xffffffffffffffffull;
 
 class IMGUIObjectManager;
 
+class IMGUITextureLoader
+{
+public:
+    // Number of frames to wait before releasing rendering resources
+    static constexpr unsigned DeleteAfterFrames = 3;
+
+    void BindRenderer(RenderingBackend*);
+    void Update();
+    std::optional<TextureLoadResult> IncTextureRef(FixedString const& textureGuid);
+    bool DecTextureRef(ImTextureID id, FixedString const& textureGuid);
+
+private:
+    struct TextureRefCount
+    {
+        TextureDescriptor* Descriptor{ nullptr };
+        TextureLoadResult LoadResult;
+        uint32_t RefCount{ 0 };
+    };
+    
+    struct TextureUnloadRequest
+    {
+        ImTextureID Id;
+        uint32_t WaitForFrames{ 0 };
+    };
+
+    RenderingBackend* renderer_{ nullptr };
+    HashMap<FixedString, TextureRefCount> refCounts_;
+    HashMap<FixedString, TextureUnloadRequest> pendingUnloads_;
+};
+
 class IMGUIManager
 {
 public:
@@ -67,6 +97,7 @@ private:
     HashMap<FixedString, FontData> fonts_;
     float scale_{ 1.0f };
     float requestedScale_{ 1.0f };
+    IMGUITextureLoader textureLoader_;
 
     IMGUIObjectManager* objects_{ nullptr };
 

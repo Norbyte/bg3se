@@ -200,20 +200,20 @@ union [[bg3::hidden]] TextureDescriptor
     TextureDescriptorVulkan Vulkan;
 };
 
-struct [[bg3::hidden]] TextureData
+struct [[bg3::hidden]] TrackedTexture
 {
     TextureDescriptor* Descriptor;
-    uint32_t LoadRequestCount;
     uint32_t RefCount;
-    uint8_t State[8];
+    uint32_t WaitingForLoadRefCount;
+    uint8_t State;
     STDString Path;
-    uint64_t EventObject;
+    void* EventObject;
     CRITICAL_SECTION CriticalSection;
-    Array<void*> field_60;
+    Array<void*> LoadCallbacks;
     uint8_t field_70;
-    uint8_t Flags[3];
-    uint32_t field_74;
-    uint64_t field_78;
+    uint8_t Flags;
+    uint32_t CriticalSectionRefCount;
+    CRITICAL_SECTION* TextureStreamerCS;
 };
 
 struct [[bg3::hidden]] TextureManager
@@ -222,7 +222,7 @@ struct [[bg3::hidden]] TextureManager
 
     SRWLOCK Lock;
     HashMap<TextureDescriptor*, FixedString> Names;
-    HashMap<FixedString, TextureData*> Textures;
+    HashMap<FixedString, TrackedTexture*> Textures;
 };
 
 struct [[bg3::hidden]] UVValues

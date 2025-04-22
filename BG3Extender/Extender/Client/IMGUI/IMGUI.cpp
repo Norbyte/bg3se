@@ -1676,6 +1676,8 @@ IMGUIManager::IMGUIManager(SDLManager& sdl)
     } else {
         renderer_ = std::make_unique<DX11Backend>(*this);
     }
+
+    textureLoader_.BindRenderer(renderer_.get());
 }
 
 IMGUIManager::~IMGUIManager()
@@ -2020,6 +2022,7 @@ void IMGUIManager::Update()
 
     frameNo_++;
 
+    textureLoader_.Update();
     renderer_->NewFrame();
     ImGui::NewFrame();
 
@@ -2035,19 +2038,90 @@ void IMGUIManager::Update()
     objects_->ClientUpdate();
 }
 
+void IMGUITextureLoader::BindRenderer(RenderingBackend* renderer)
+{
+    renderer_ = renderer;
+}
+
+void IMGUITextureLoader::Update()
+{
+    Array<FixedString> unloaded;
+    for (auto const& it : pendingUnloads_) {
+        if (--it.Value().WaitForFrames == 0) {
+            renderer_->UnregisterTexture(it.Value().Id);
+
+            auto textureManager = (*GetStaticSymbols().ls__gGlobalResourceManager)->TextureManager;
+            (*GetStaticSymbols().ls__TextureManager__UnloadTexture)(textureManager, it.Key());
+
+            unloaded.push_back(it.Key());
+        }
+    }
+
+    for (auto const& tex : unloaded) {
+        pendingUnloads_.remove(tex);
+    }
+}
+
+std::optional<TextureLoadResult> IMGUITextureLoader::IncTextureRef(FixedString const& textureGuid)
+{
+    if (!renderer_) {
+        ERR("Loading texture with no rendering backend?");
+        return {};
+    }
+
+    auto refs = refCounts_.try_get(textureGuid);
+    if (refs) {
+        refs->RefCount++;
+        return refs->LoadResult;
+    }
+
+    auto descriptor = (*GetStaticSymbols().ls__AppliedMaterial__LoadTexture)(nullptr, textureGuid);
+    if (!descriptor) {
+        return {};
+    }
+
+    auto loadResult = renderer_->RegisterTexture(descriptor);
+    if (!loadResult) {
+        auto textureManager = (*GetStaticSymbols().ls__gGlobalResourceManager)->TextureManager;
+        (*GetStaticSymbols().ls__TextureManager__UnloadTexture)(textureManager, textureGuid);
+        return {};
+    }
+
+    refCounts_.set(textureGuid, TextureRefCount{ descriptor, *loadResult, 1 });
+    pendingUnloads_.remove(textureGuid);
+    return *loadResult;
+}
+
+
+bool IMGUITextureLoader::DecTextureRef(ImTextureID id, FixedString const& textureGuid)
+{
+    if (!renderer_) {
+        ERR("Unloading texture with no rendering backend?");
+        return false;
+    }
+
+    auto refs = refCounts_.try_get(textureGuid);
+    if (!refs) {
+        ERR("Trying to release reference to texture '%s' but it has no references?", textureGuid.GetString());
+        return false;
+    }
+    
+    if (--refs->RefCount == 0) {
+        refCounts_.remove(textureGuid);
+        pendingUnloads_.set(textureGuid, TextureUnloadRequest{ id, DeleteAfterFrames });
+    }
+
+    return true;
+}
+
 std::optional<TextureLoadResult> IMGUIManager::RegisterTexture(FixedString const& textureGuid)
 {
-    auto descriptor = (*GetStaticSymbols().ls__AppliedMaterial__LoadTexture)(nullptr, textureGuid);
-    if (!descriptor) return {};
-
-    return renderer_->RegisterTexture(descriptor);
+    return textureLoader_.IncTextureRef(textureGuid);
 }
 
 void IMGUIManager::UnregisterTexture(ImTextureID id, FixedString const& textureGuid)
 {
-    renderer_->UnregisterTexture(id);
-    auto textureManager = (*GetStaticSymbols().ls__gGlobalResourceManager)->TextureManager;
-    (*GetStaticSymbols().ls__TextureManager__UnloadTexture)(textureManager, textureGuid);
+    textureLoader_.DecTextureRef(id, textureGuid);
 }
 
 END_NS()
