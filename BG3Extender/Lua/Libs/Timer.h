@@ -13,24 +13,45 @@ public:
     static constexpr uint64_t PersistentFlag = 0x100000000ull;
     static constexpr uint64_t RealtimeFlag = 0x200000000ull;
 
-    struct EphemeralTimer 
+    struct BaseTimer 
     {
-        double Time;
+        double Time{ .0 };
+        float FrozenTime{ .0f };
+        float Repeat{ .0f };
+        uint32_t InvokeId{ 0 };
+        bool Paused{ false };
+
+        void SavegameVisit(ObjectVisitor* visitor);
+        void Start(double time, float repeat = .0f);
+        void Pause(double time);
+        void Resume(double time);
+    };
+
+    struct EphemeralTimer : public BaseTimer
+    {
         LuaDelegate<void(TimerHandle)> Callback;
-        float Repeat;
     };
     
-    struct PersistentTimer
+    struct PersistentTimer : public BaseTimer
     {
-        double Time;
         FixedString Callback;
         STDString ArgsJson;
+
+        void SavegameVisit(ObjectVisitor* visitor);
     };
     
     struct TimerQueueEntry
     {
         double Time;
         TimerHandle Handle;
+        uint32_t InvokeId;
+
+        inline bool Matches(BaseTimer const& timer) const
+        {
+            return InvokeId == timer.InvokeId
+                && Time == timer.Time
+                && !timer.Paused;
+        }
 
         inline bool operator > (TimerQueueEntry const& o) const
         {
@@ -42,6 +63,8 @@ public:
     TimerHandle Add(double time, Ref callback, float repeat = 0.0f);
     TimerHandle AddPersistent(double time, FixedString const& callback, StringView argsJson);
     void RegisterPersistentCallback(FixedString const& name, Ref callback);
+    bool Pause(TimerHandle handle, double curTime);
+    bool Resume(TimerHandle handle, double curTime);
     bool Cancel(TimerHandle handle);
     void Update(double time);
     void SavegameVisit(ObjectVisitor* visitor);
@@ -55,7 +78,10 @@ private:
     State& state_;
     DeferredLuaDelegateQueue& eventQueue_;
 
-    void FireTimer(TimerHandle handle, double time);
+    void FireTimer(TimerQueueEntry const& entry, double time);
+    void RepeatOrReleaseTimer(TimerHandle handle, BaseTimer& timer, double time);
+    void QueueTimer(TimerHandle handle, BaseTimer const& timer);
+    TimerHandle RestorePersistent(PersistentTimer const& timer);
 };
 
 class TimerSystem
@@ -80,6 +106,8 @@ public:
 
     void Update(double time);
     bool Cancel(TimerHandle handle);
+    bool Pause(TimerHandle handle, double time);
+    bool Resume(TimerHandle handle, double time);
     void SavegameVisit(ObjectVisitor* visitor);
 
 private:

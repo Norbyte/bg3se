@@ -3,6 +3,61 @@
 /// <lua_module>Timer</lua_module>
 BEGIN_NS(lua::timer)
 
+void TimerManager::BaseTimer::SavegameVisit(ObjectVisitor* visitor)
+{
+    STDString nullStr;
+    if (visitor->IsReading()) {
+        visitor->VisitDouble(GFS.strTime, Time, .0);
+        visitor->VisitFloat(GFS.strTime, FrozenTime, .0f);
+        visitor->VisitFloat(GFS.strTime, Repeat, .0f);
+        visitor->VisitBool(GFS.strTime, Paused, false);
+    } else {
+        visitor->VisitDouble(GFS.strTime, Time, .0);
+        visitor->VisitFloat(GFS.strTime, FrozenTime, .0f);
+        visitor->VisitFloat(GFS.strTime, Repeat, .0f);
+        visitor->VisitBool(GFS.strTime, Paused, false);
+    }
+}
+
+void TimerManager::BaseTimer::Start(double time, float repeat)
+{
+    Time = time;
+    FrozenTime = .0f;
+    Repeat = repeat;
+    Paused = false;
+    InvokeId = 0;
+}
+
+void TimerManager::BaseTimer::Pause(double time)
+{
+    assert(!Paused);
+    FrozenTime = (float)std::max(Time - time, .0);
+    Time = .0f;
+    Paused = true;
+}
+
+void TimerManager::BaseTimer::Resume(double time)
+{
+    assert(Paused);
+    Time = time + FrozenTime;
+    FrozenTime = .0f;
+    Paused = false;
+    InvokeId++;
+}
+
+void TimerManager::PersistentTimer::SavegameVisit(ObjectVisitor* visitor)
+{
+    BaseTimer::SavegameVisit(visitor);
+
+    if (visitor->IsReading()) {
+        visitor->VisitFixedString(GFS.strHandler, Callback, GFS.strEmpty);
+        visitor->VisitSTDString(GFS.strArgs, ArgsJson, STDString{});
+    } else {
+        visitor->VisitFixedString(GFS.strHandler, Callback, GFS.strEmpty);
+        visitor->VisitSTDString(GFS.strArgs, ArgsJson, STDString{});
+    }
+}
+
 TimerManager::TimerManager(State& state, lua::DeferredLuaDelegateQueue& queue)
     : state_(state), eventQueue_(queue)
 {}
@@ -11,17 +66,11 @@ TimerHandle TimerManager::Add(double time, Ref callback, float repeat)
 {
     uint32_t id;
     auto timer = ephemeralTimers_.Add(id);
-    timer->Time = time;
+    timer->Start(time, repeat);
     timer->Callback = LuaDelegate<void(TimerHandle)>(state_.GetState(), callback);
-    timer->Repeat = repeat;
 
     TimerHandle handle{ id };
-
-    queue_.push(TimerQueueEntry{
-        .Time = time,
-        .Handle = handle
-    });
-
+    QueueTimer(handle, *timer);
     return handle;
 }
 
@@ -29,16 +78,25 @@ TimerHandle TimerManager::AddPersistent(double time, FixedString const& callback
 {
     uint32_t id;
     auto timer = persistentTimers_.Add(id);
-    timer->Time = time;
+    timer->Start(time);
     timer->Callback = callback;
     timer->ArgsJson = argsJson;
 
     TimerHandle handle{ (uint64_t)id | PersistentFlag };
+    QueueTimer(handle, *timer);
+    return handle;
+}
 
-    queue_.push(TimerQueueEntry{
-        .Time = time,
-        .Handle = handle
-    });
+TimerHandle TimerManager::RestorePersistent(PersistentTimer const& t)
+{
+    uint32_t id;
+    auto timer = persistentTimers_.Add(id);
+    *timer = t;
+
+    TimerHandle handle{ (uint64_t)id | PersistentFlag };
+    if (!timer->Paused) {
+        QueueTimer(handle, *timer);
+    }
 
     return handle;
 }
@@ -57,28 +115,71 @@ bool TimerManager::Cancel(TimerHandle handle)
     }
 }
 
-void TimerManager::Update(double time)
+bool TimerManager::Pause(TimerHandle handle, double curTime)
 {
-    while (!queue_.empty() && queue_.top().Time <= time) {
-        auto handle = queue_.top().Handle;
-        queue_.pop();
+    BaseTimer* timer{ nullptr };
+    if (handle & PersistentFlag) {
+        timer = persistentTimers_.Find((uint32_t)handle);
+    } else {
+        timer = ephemeralTimers_.Find((uint32_t)handle);
+    }
 
-        FireTimer(handle, time);
+    if (timer) {
+        if (!timer->Paused) {
+            timer->Pause(curTime);
+        } else {
+            WARN("Tried to pause timer '%ld' that is already paused!", handle);
+        }
+        return true;
+    } else {
+        return false;
     }
 }
 
-void TimerManager::FireTimer(TimerHandle handle, double time)
+bool TimerManager::Resume(TimerHandle handle, double curTime)
 {
+    BaseTimer* timer{ nullptr };
     if (handle & PersistentFlag) {
-        auto timer = persistentTimers_.Find((uint32_t)handle);
-        if (timer != nullptr) {
+        timer = persistentTimers_.Find((uint32_t)handle);
+    } else {
+        timer = ephemeralTimers_.Find((uint32_t)handle);
+    }
+
+    if (timer) {
+        if (timer->Paused) {
+            timer->Resume(curTime);
+            QueueTimer(handle, *timer);
+        } else {
+            WARN("Tried to resume timer '%ld' that is not paused!", handle);
+        }
+        return true;
+    } else {
+        return false;
+    }
+}
+
+void TimerManager::Update(double time)
+{
+    while (!queue_.empty() && queue_.top().Time <= time) {
+        auto entry = queue_.top();
+        queue_.pop();
+
+        FireTimer(entry, time);
+    }
+}
+
+void TimerManager::FireTimer(TimerQueueEntry const& entry, double time)
+{
+    if (entry.Handle & PersistentFlag) {
+        auto timer = persistentTimers_.Find((uint32_t)entry.Handle);
+        if (timer != nullptr && entry.Matches(*timer)) {
             auto callback = persistentCallbacks_.try_get(timer->Callback);
             if (callback) {
                 auto L = state_.GetState();
                 if (json::Parse(L, timer->ArgsJson)) {
                     RegistryEntry args(L, -1);
                     lua_pop(L, 1);
-                    eventQueue_.Call(*callback, std::move(args), handle);
+                    eventQueue_.Call(*callback, std::move(args), entry.Handle);
                 } else {
                     ERR("Unable to parse persistent timer payload for '%s'!", timer->Callback.GetString());
                 }
@@ -86,24 +187,39 @@ void TimerManager::FireTimer(TimerHandle handle, double time)
                 WARN("Tried to fire persistent timer '%s' but it has no callback registered!", timer->Callback.GetString());
             }
             
-            persistentTimers_.Free((uint32_t)handle);
+            RepeatOrReleaseTimer(entry.Handle, *timer, time);
         }
     } else {
-        auto timer = ephemeralTimers_.Find((uint32_t)handle);
-        if (timer != nullptr) {
-            eventQueue_.Call(timer->Callback, handle);
-
-            if (timer->Repeat > 0.0f) {
-                timer->Time = time + timer->Repeat;
-                queue_.push(TimerQueueEntry{
-                    .Time = timer->Time,
-                    .Handle = handle
-                });
-            } else {
-                ephemeralTimers_.Free((uint32_t)handle);
-            }
+        auto timer = ephemeralTimers_.Find((uint32_t)entry.Handle);
+        if (timer != nullptr && entry.Matches(*timer)) {
+            eventQueue_.Call(timer->Callback, entry.Handle);
+            RepeatOrReleaseTimer(entry.Handle, *timer, time);
         }
     }
+}
+
+void TimerManager::RepeatOrReleaseTimer(TimerHandle handle, BaseTimer& timer, double time)
+{
+    if (timer.Repeat > 0.0f) {
+        timer.Time = time + timer.Repeat;
+        QueueTimer(handle, timer);
+    } else {
+        if (handle & PersistentFlag) {
+            persistentTimers_.Free((uint32_t)handle);
+        } else {
+            ephemeralTimers_.Free((uint32_t)handle);
+        }
+    }
+}
+
+void TimerManager::QueueTimer(TimerHandle handle, BaseTimer const& timer)
+{
+    assert(!timer.Paused);
+    queue_.push(TimerQueueEntry{
+        .Time = timer.Time,
+        .Handle = handle,
+        .InvokeId = timer.InvokeId
+    });
 }
 
 void TimerManager::SavegameVisit(ObjectVisitor* visitor)
@@ -116,10 +232,8 @@ void TimerManager::SavegameVisit(ObjectVisitor* visitor)
         for (uint32_t i = 0; i < numVars; i++) {
             if (visitor->EnterNode(GFS.strTimer, GFS.strEmpty)) {
                 PersistentTimer timer;
-                visitor->VisitDouble(GFS.strTime, timer.Time, 0.0);
-                visitor->VisitFixedString(GFS.strHandler, timer.Callback, GFS.strEmpty);
-                visitor->VisitSTDString(GFS.strArgs, timer.ArgsJson, STDString{});
-                AddPersistent(timer.Time, timer.Callback, timer.ArgsJson);
+                timer.SavegameVisit(visitor);
+                RestorePersistent(timer);
             }
         }
     } else {
@@ -129,9 +243,7 @@ void TimerManager::SavegameVisit(ObjectVisitor* visitor)
             if (timer == nullptr) break;
 
             if (visitor->EnterNode(GFS.strTimer, GFS.strEmpty)) {
-                visitor->VisitDouble(GFS.strTime, timer->Time, 0.0);
-                visitor->VisitFixedString(GFS.strHandler, timer->Callback, GFS.strEmpty);
-                visitor->VisitSTDString(GFS.strArgs, timer->ArgsJson, STDString{});
+                timer->SavegameVisit(visitor);
                 visitor->ExitNode(GFS.strTimer);
             }
         }
@@ -158,6 +270,24 @@ bool TimerSystem::Cancel(TimerHandle handle)
         return realtime_.Cancel(handle);
     } else {
         return game_.Cancel(handle);
+    }
+}
+
+bool TimerSystem::Pause(TimerHandle handle, double time)
+{
+    if (handle & TimerManager::RealtimeFlag) {
+        return realtime_.Pause(handle, time);
+    } else {
+        return game_.Pause(handle, time);
+    }
+}
+
+bool TimerSystem::Resume(TimerHandle handle, double time)
+{
+    if (handle & TimerManager::RealtimeFlag) {
+        return realtime_.Resume(handle, time);
+    } else {
+        return game_.Resume(handle, time);
     }
 }
 
@@ -216,6 +346,18 @@ void RegisterPersistentHandler(lua_State* L, FixedString name, Ref callback)
     return State::FromLua(L)->GetTimers().GameTimer().RegisterPersistentCallback(name, callback);
 }
 
+bool Pause(lua_State* L, TimerHandle handle)
+{
+    double time = ExtensionStateBase::FromLua(L).Time().Time;
+    return State::FromLua(L)->GetTimers().Pause(handle, time);
+}
+
+bool Resume(lua_State* L, TimerHandle handle)
+{
+    double time = ExtensionStateBase::FromLua(L).Time().Time;
+    return State::FromLua(L)->GetTimers().Resume(handle, time);
+}
+
 bool Cancel(lua_State* L, TimerHandle handle)
 {
     return State::FromLua(L)->GetTimers().Cancel(handle);
@@ -229,6 +371,8 @@ void RegisterTimerLib()
     MODULE_FUNCTION(WaitForPersistent)
     MODULE_FUNCTION(WaitForRealtime)
     MODULE_FUNCTION(RegisterPersistentHandler)
+    MODULE_FUNCTION(Pause)
+    MODULE_FUNCTION(Resume)
     MODULE_FUNCTION(Cancel)
     END_MODULE()
 }

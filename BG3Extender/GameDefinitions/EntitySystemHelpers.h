@@ -219,6 +219,8 @@ public:
     virtual std::optional<EntityHandle> NetIdToEntity(NetId netId) const = 0;
     virtual std::optional<NetId> EntityToNetId(EntityHandle entity) const = 0;
 
+    resource::GuidResourceBankBase* GetRawResourceManager(ExtResourceManagerType type);
+
     template <class T>
     std::optional<resource::GuidResourceBank<T>*> GetResourceManager()
     {
@@ -318,7 +320,6 @@ private:
     void BindReplication(std::string_view name, ReplicationTypeIndex id);
     void* GetRawComponent(Guid const& guid, ExtComponentType type);
     void* GetRawComponent(FixedString const& guid, ExtComponentType type);
-    resource::GuidResourceBankBase* GetRawResourceManager(ExtResourceManagerType type);
 
     void DebugLogUpdateChanges();
     void DebugLogReplicationChanges();
