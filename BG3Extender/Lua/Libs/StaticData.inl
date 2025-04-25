@@ -109,6 +109,21 @@ Array<Guid> GetAllGuidResources(lua_State* L, ExtResourceManagerType type)
 #undef FOR_RESOURCE_TYPE
 
 
+HashMap<Guid, Array<Guid>>* GetGuidResourceSources(lua_State* L, ExtResourceManagerType type)
+{
+    auto& helpers = gExtender->GetServer().GetEntityHelpers();
+    auto resourceMgr = helpers.GetRawResourceManager(type);
+    return &resourceMgr->ResourceGuidsByMod;
+}
+
+Array<Guid>* GetGuidResourcesByModId(lua_State* L, ExtResourceManagerType type, Guid modGuid)
+{
+    auto& helpers = gExtender->GetServer().GetEntityHelpers();
+    auto resourceMgr = helpers.GetRawResourceManager(type);
+    return resourceMgr->ResourceGuidsByMod.try_get(modGuid);
+}
+
+
 #define FOR_RESOURCE_TYPE(ty)                                                            		  \
     case ResourceBankType::ty: MakeObjectRef(L, (ty##Resource*)resource.Value()); break;
 
@@ -157,6 +172,8 @@ void RegisterStaticDataLib()
     BEGIN_MODULE()
     MODULE_NAMED_FUNCTION("Get", GetGuidResource)
     MODULE_NAMED_FUNCTION("GetAll", GetAllGuidResources)
+    MODULE_NAMED_FUNCTION("GetSources", GetGuidResourceSources)
+    MODULE_NAMED_FUNCTION("GetByModId", GetGuidResourcesByModId)
     END_MODULE()
 
     DECLARE_MODULE(Resource, Both)
