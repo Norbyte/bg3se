@@ -201,6 +201,17 @@ dlg::DialogManager* GetDialogManager(lua_State* L)
     }
 }
 
+UserReturn GetGameState(lua_State* L)
+{
+    if (gExtender->GetServer().IsInServerThread()) {
+        push(L, GetStaticSymbols().GetServerState());
+    } else {
+        push(L, GetStaticSymbols().GetClientState());
+    }
+
+    return 1;
+}
+
 void RegisterUtilsLib()
 {
     QueryPerformanceCounter(&AppStartCounter);
@@ -223,6 +234,7 @@ void RegisterUtilsLib()
     MODULE_FUNCTION(GetGlobalSwitches)
     MODULE_FUNCTION(GetCommandLineParams)
     MODULE_FUNCTION(GetDialogManager)
+    MODULE_FUNCTION(GetGameState)
     END_MODULE()
 }
 
