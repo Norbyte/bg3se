@@ -604,6 +604,20 @@ struct RawValue
     OsiString Str;
 };
 
+enum class ValueFlags : uint8_t
+{
+    NoneValue = 0,
+    SimpleValue = 0x1,
+    TypedValue = 0x2,
+    Variable = 0x3,
+
+    IsValid = 0x8,
+    OutParam = 0x10,
+    IsAType = 0x20,
+    Unused = 0x40,
+    Adapted = 0x80
+};
+
 class TypedValue
 {
 public:
@@ -629,13 +643,13 @@ public:
 
     inline bool HasValue() const
     {
-        return (Flags & 0x08);
+        return (Flags & ValueFlags::IsValid) == ValueFlags::IsValid;
     }
 
     ValueUnion Value;
     ValueType TypeId{ ValueType::None };
     int8_t Index{ -1 };
-    uint8_t Flags{ 0x02 };
+    ValueFlags Flags{ ValueFlags::TypedValue };
 
 private:
     void ReleaseValue();

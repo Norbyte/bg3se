@@ -71,7 +71,7 @@ TypedValue::TypedValue(TypedValue& o)
 TypedValue::TypedValue(TypedValue&& o)
     : Value(o.Value), TypeId(o.TypeId), Index(o.Index), Flags(o.Flags)
 {
-    o.Flags &= ~0x08;
+    o.Flags &= ~ValueFlags::IsValid;
     o.Value.Int64 = 0;
     o.TypeId = ValueType::None;
 }
@@ -108,7 +108,7 @@ TypedValue& TypedValue::operator = (TypedValue&& o)
     Index = o.Index;
     Flags = o.Flags;
 
-    o.Flags &= ~0x08;
+    o.Flags &= ~ValueFlags::IsValid;
     o.Value.Int64 = 0;
     o.TypeId = ValueType::None;
 
@@ -125,7 +125,7 @@ void TypedValue::ClearValue()
 {
     ReleaseValue();
 
-    Flags &= ~0x08;
+    Flags &= ~ValueFlags::IsValid;
     Value.Int64 = 0;
     TypeId = ValueType::None;
 }
@@ -136,7 +136,7 @@ void TypedValue::SetValue(ValueType typeId, int32_t v)
 
     Value.Int32 = v;
     TypeId = typeId;
-    Flags |= 0x08;
+    Flags |= ValueFlags::IsValid;
 }
 
 void TypedValue::SetValue(ValueType typeId, float v)
@@ -145,7 +145,7 @@ void TypedValue::SetValue(ValueType typeId, float v)
 
     Value.Float = v;
     TypeId = typeId;
-    Flags |= 0x08;
+    Flags |= ValueFlags::IsValid;
 }
 
 void TypedValue::SetValue(ValueType typeId, int64_t v)
@@ -154,7 +154,7 @@ void TypedValue::SetValue(ValueType typeId, int64_t v)
 
     Value.Int64 = v;
     TypeId = typeId;
-    Flags |= 0x08;
+    Flags |= ValueFlags::IsValid;
 }
 
 void TypedValue::SetValue(ValueType typeId, OsiStringHandle s)
@@ -163,7 +163,7 @@ void TypedValue::SetValue(ValueType typeId, OsiStringHandle s)
 
     Value.StringHandle = s;
     TypeId = typeId;
-    Flags |= 0x08;
+    Flags |= ValueFlags::IsValid;
 }
 
 void TypedValue::SetValue(ValueType typeId, char const* s)
@@ -172,7 +172,7 @@ void TypedValue::SetValue(ValueType typeId, char const* s)
 
     Value.StringHandle = OsiStringMake(s, OsiIsGuidStringAlias(typeId));
     TypeId = typeId;
-    Flags |= 0x08;
+    Flags |= ValueFlags::IsValid;
 }
 
 Database* DatabaseRef::Get() const
