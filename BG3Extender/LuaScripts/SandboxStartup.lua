@@ -6,13 +6,8 @@ loadfile = function ()
     error("loadfile() has been disabled for security reasons")
 end
 
-load = function ()
-    error("load() has been disabled for security reasons")
-end
-
-loadstring = function ()
-    error("loadstring() has been disabled for security reasons")
-end
+load = Ext.Utils.LoadString
+loadstring = Ext.Utils.LoadString
 
 local oldDebug = debug
 debug = {
