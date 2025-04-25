@@ -38,6 +38,8 @@ public:
         STDString ArgsJson;
 
         void SavegameVisit(ObjectVisitor* visitor);
+        void FreezeBeforeSave(double time);
+        void UnfreezeAfterRestore(double time);
     };
     
     struct TimerQueueEntry
@@ -60,11 +62,11 @@ public:
     };
 
     TimerManager(State& state, DeferredLuaDelegateQueue& queue);
-    TimerHandle Add(double time, Ref callback, float repeat = 0.0f);
-    TimerHandle AddPersistent(double time, FixedString const& callback, StringView argsJson);
+    TimerHandle Add(float delta, Ref callback, float repeat = .0f);
+    TimerHandle AddPersistent(float delta, FixedString const& callback, StringView argsJson, float repeat = .0f);
     void RegisterPersistentCallback(FixedString const& name, Ref callback);
-    bool Pause(TimerHandle handle, double curTime);
-    bool Resume(TimerHandle handle, double curTime);
+    bool Pause(TimerHandle handle);
+    bool Resume(TimerHandle handle);
     bool Cancel(TimerHandle handle);
     void Update(double time);
     void SavegameVisit(ObjectVisitor* visitor);
@@ -74,12 +76,14 @@ private:
     SaltedPool<PersistentTimer> persistentTimers_;
     HashMap<FixedString, LuaDelegate<void(RegistryEntry, TimerHandle)>> persistentCallbacks_;
     std::priority_queue<TimerQueueEntry, Vector<TimerQueueEntry>, std::greater<TimerQueueEntry>> queue_;
+    Array<PersistentTimer> pendingRestore_;
 
     State& state_;
     DeferredLuaDelegateQueue& eventQueue_;
+    double lastUpdate_{ .0f };
 
-    void FireTimer(TimerQueueEntry const& entry, double time);
-    void RepeatOrReleaseTimer(TimerHandle handle, BaseTimer& timer, double time);
+    void FireTimer(TimerQueueEntry const& entry);
+    void RepeatOrReleaseTimer(TimerHandle handle, BaseTimer& timer);
     void QueueTimer(TimerHandle handle, BaseTimer const& timer);
     TimerHandle RestorePersistent(PersistentTimer const& timer);
 };
@@ -106,8 +110,8 @@ public:
 
     void Update(double time);
     bool Cancel(TimerHandle handle);
-    bool Pause(TimerHandle handle, double time);
-    bool Resume(TimerHandle handle, double time);
+    bool Pause(TimerHandle handle);
+    bool Resume(TimerHandle handle);
     void SavegameVisit(ObjectVisitor* visitor);
 
 private:
