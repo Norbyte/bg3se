@@ -111,3 +111,8 @@ Ext.Utils.Random = Ext.Math.Random
 -- Backwards compatibility with v21 beta
 Ext.Entity.GetTile = Ext.Level.GetTile
 Ext.Entity.GetEntitiesOnTile = Ext.Level.GetEntitiesOnTile
+
+-- Backwards compatibility with v23
+Ext.Utils.MonotonicTime = Ext.Timer.MonotonicTime
+Ext.Utils.MicrosecTime = Ext.Timer.MicrosecTime
+Ext.Utils.GameTime = Ext.Timer.GameTime

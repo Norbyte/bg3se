@@ -93,29 +93,6 @@ std::optional<STDString> GameVersion()
     }
 }
 
-int64_t MonotonicTime()
-{
-    using namespace std::chrono;
-    return (int64_t)time_point_cast<milliseconds>(steady_clock::now()).time_since_epoch().count();
-}
-
-// Keep a reference for game start to reduce precision loss caused by casting an uint64 to double
-LARGE_INTEGER AppStartCounter;
-
-double MicrosecTime()
-{
-    LARGE_INTEGER perf, freq;
-    QueryPerformanceCounter(&perf);
-    QueryPerformanceFrequency(&freq);
-
-    return (perf.QuadPart - AppStartCounter.QuadPart) / (double(freq.QuadPart) / 1000000.0);
-}
-
-double GameTime(lua_State* L)
-{
-    return ExtensionStateBase::FromLua(L).Time().Time;
-}
-
 bool IsValidHandle(lua_State* L)
 {
     switch (lua_type(L, 1))
@@ -214,15 +191,10 @@ UserReturn GetGameState(lua_State* L)
 
 void RegisterUtilsLib()
 {
-    QueryPerformanceCounter(&AppStartCounter);
-
     DECLARE_MODULE(Utils, Both)
     BEGIN_MODULE()
     MODULE_NAMED_FUNCTION("Version", GetExtensionVersion)
     MODULE_FUNCTION(GameVersion)
-    MODULE_FUNCTION(MonotonicTime)
-    MODULE_FUNCTION(MicrosecTime)
-    MODULE_FUNCTION(GameTime)
     MODULE_FUNCTION(Include)
     MODULE_FUNCTION(LoadString)
     MODULE_FUNCTION(GetValueType)

@@ -1,4 +1,5 @@
 #include <Lua/Libs/Timer.h>
+#include <chrono>
 
 /// <lua_module>Timer</lua_module>
 BEGIN_NS(lua::timer)
@@ -370,10 +371,39 @@ bool Cancel(lua_State* L, TimerHandle handle)
     return State::FromLua(L)->GetTimers().Cancel(handle);
 }
 
+int64_t MonotonicTime()
+{
+    using namespace std::chrono;
+    return (int64_t)time_point_cast<milliseconds>(steady_clock::now()).time_since_epoch().count();
+}
+
+// Keep a reference for game start to reduce precision loss caused by casting an uint64 to double
+LARGE_INTEGER AppStartCounter;
+
+double MicrosecTime()
+{
+    LARGE_INTEGER perf, freq;
+    QueryPerformanceCounter(&perf);
+    QueryPerformanceFrequency(&freq);
+
+    return (perf.QuadPart - AppStartCounter.QuadPart) / (double(freq.QuadPart) / 1000000.0);
+}
+
+double GameTime(lua_State* L)
+{
+    return ExtensionStateBase::FromLua(L).Time().Time;
+}
+
 void RegisterTimerLib()
 {
+    QueryPerformanceCounter(&AppStartCounter);
+
     DECLARE_MODULE(Timer, Both)
     BEGIN_MODULE()
+    MODULE_FUNCTION(MonotonicTime)
+    MODULE_FUNCTION(MicrosecTime)
+    MODULE_FUNCTION(GameTime)
+
     MODULE_FUNCTION(WaitFor)
     MODULE_FUNCTION(WaitForPersistent)
     MODULE_FUNCTION(WaitForRealtime)
