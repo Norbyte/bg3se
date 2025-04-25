@@ -394,6 +394,20 @@ double GameTime(lua_State* L)
     return ExtensionStateBase::FromLua(L).Time().Time;
 }
 
+int64_t ClockEpoch(lua_State* L)
+{
+    using namespace std::chrono;
+    auto now = system_clock::now().time_since_epoch();
+    return duration_cast<std::chrono::seconds>(now).count();
+}
+
+STDString ClockTime(lua_State* L)
+{
+    using namespace std::chrono;
+    auto now = system_clock::now();
+    return std::format("{0:%F} {0:%T}", now).c_str();
+}
+
 void RegisterTimerLib()
 {
     QueryPerformanceCounter(&AppStartCounter);
@@ -403,6 +417,8 @@ void RegisterTimerLib()
     MODULE_FUNCTION(MonotonicTime)
     MODULE_FUNCTION(MicrosecTime)
     MODULE_FUNCTION(GameTime)
+    MODULE_FUNCTION(ClockEpoch)
+    MODULE_FUNCTION(ClockTime)
 
     MODULE_FUNCTION(WaitFor)
     MODULE_FUNCTION(WaitForPersistent)
