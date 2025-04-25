@@ -99,13 +99,16 @@ struct GenomeBlueprint : public ProtectedGameObject<GenomeBlueprint>
     [[bg3::hidden]] void* GenomePluginDataWrapper;
     LegacyRefMap<FixedString, GenomeEventTypeIndex> Events;
     LegacyRefMap<Guid, int16_t> VariableIndices;
-    [[bg3::hidden]] void* DebugContext;
-    STDString Path;
-    [[bg3::hidden]] __int64 field_98;
+    // Editor only
+#if 0
+    // [[bg3::hidden]] void* DebugContext;
+    // STDString Path;
+    // [[bg3::hidden]] __int64 field_98;
+#endif
     [[bg3::hidden]] GenomeManager* GenomeManager;
     Version Version;
     bool IsValid;
-    Array<GenomeVariant> Stack;
+    Array<Array<GenomeVariant>*> Stacks;
     [[bg3::hidden]] CRITICAL_SECTION StackLock;
 };
 

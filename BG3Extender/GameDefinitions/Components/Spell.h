@@ -183,8 +183,8 @@ struct SpellAiConditionsComponent : public BaseComponent
 
 struct CastRequirements
 {
-    uint8_t field_0;
-    int32_t field_4;
+    [[bg3::legacy(field_0)]] uint8_t CastContext;
+    [[bg3::legacy(field_4)]] CastRequirementFlags Requirements;
 };
 
 struct SpellData

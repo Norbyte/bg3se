@@ -754,6 +754,22 @@ BEGIN_BITMASK(DamageFlags, uint32_t)
 END_ENUM()
 
 
+BEGIN_BITMASK(CastRequirementFlags, uint32_t)
+    EV(Somatic, 1)
+    EV(Speech, 2)
+    EV(ActionResources, 4)
+    EV(SpellCast, 0x10)
+    EV(WeaponRequirements, 0x20)
+    EV(Shield, 0x40)
+    EV(SpellPrepared, 0x80)
+    EV(ItemCharges, 0x100)
+    EV(EquipmentProficiency, 0x200)
+    EV(Cooldowns, 0x400)
+    EV(StatsConditions, 0x800)
+    EV(Range, 0x1000)
+END_ENUM()
+
+
 BEGIN_ENUM_NS(stats, Size, StatsSize, uint8_t)
     EV(None, 0)
     EV(Tiny, 1)

@@ -91,7 +91,7 @@ struct Status : public ProtectedGameObject<Status>
 struct EntityAuraStatus
 {
     EntityHandle Entity;
-    int StatusId;
+    EntityHandle AuraStatus;
 };
 
 struct Aura : public ProtectedGameObject<Aura>
