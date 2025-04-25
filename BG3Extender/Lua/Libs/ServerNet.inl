@@ -42,7 +42,7 @@ void PostMessageToClient(lua_State* L, Guid characterGuid, char const* channel, 
     if (character == nullptr) return;
 
     if (character->UserID == ReservedUserId) {
-        OsiError("Attempted to send message to character " << characterGuid << " that has no user assigned!");
+        OsiError("Attempted to send message to character " << characterGuid << " on channel '" << channel << "' that has no user assigned!");
         return;
     }
 
@@ -52,7 +52,7 @@ void PostMessageToClient(lua_State* L, Guid characterGuid, char const* channel, 
 void PostMessageToUser(lua_State* L, int userId, char const* channel, char const* payload, std::optional<Guid> moduleGuid, std::optional<FunctionRef> requestHandler, std::optional<RequestId> replyId)
 {
     if (UserId(userId) == ReservedUserId) {
-        OsiError("Attempted to send message to reserved user ID!");
+        OsiError("Attempted to send message on channel '" << channel << "' to reserved user ID!");
         return;
     }
 
