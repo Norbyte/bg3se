@@ -82,6 +82,8 @@ function EventManager:DoConsoleCommand(cmd)
         table.insert(params, param)
     end
 
+    if #params == 0 then return end
+
     local listeners = self.ConsoleCommandListeners[params[1]]
     if listeners ~= nil then
         for i,callback in pairs(listeners) do
@@ -90,6 +92,8 @@ function EventManager:DoConsoleCommand(cmd)
                 _PE("Error during console command callback: ", result)
             end
         end
+    else
+        _PE("Console command does not exist: " .. params[1])
     end
 end
 
