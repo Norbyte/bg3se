@@ -52,7 +52,7 @@ namespace bg3se::lua
     class LuaStateWrapper : Noncopyable<LuaStateWrapper>
     {
     public:
-        LuaStateWrapper();
+        LuaStateWrapper(ExtensionStateBase& state);
         ~LuaStateWrapper();
 
         inline operator lua_State* () const
@@ -62,6 +62,7 @@ namespace bg3se::lua
 
         lua_State* L;
         LuaInternalState* Internal;
+        ExtensionStateBase& state_;
     };
 
     class State;

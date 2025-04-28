@@ -7,6 +7,7 @@ RegistryEntry::RegistryEntry()
 RegistryEntry::RegistryEntry(lua_State * L, int index)
     : L_(L)
 {
+    VMCheck(L_);
     lua_pushvalue(L, index);
     ref_ = luaL_ref(L, LUA_REGISTRYINDEX);
 }
@@ -16,6 +17,7 @@ RegistryEntry::RegistryEntry(lua_State* L, Ref const& local)
 {
     if ((bool)local) {
         local.Push(L);
+        VMCheck(L_);
         ref_ = luaL_ref(L, LUA_REGISTRYINDEX);
     } else {
         ref_ = -1;
@@ -25,6 +27,7 @@ RegistryEntry::RegistryEntry(lua_State* L, Ref const& local)
 RegistryEntry::~RegistryEntry()
 {
     if (ref_ != -1) {
+        VMCheck(L_);
         luaL_unref(L_, LUA_REGISTRYINDEX, ref_);
     }
 }
@@ -34,6 +37,7 @@ RegistryEntry::RegistryEntry(RegistryEntry const& other)
 {
     if (other.ref_ != -1) {
         other.Push();
+        VMCheck(L_);
         ref_ = luaL_ref(L_, LUA_REGISTRYINDEX);
     }
 }
@@ -47,6 +51,7 @@ RegistryEntry::RegistryEntry(RegistryEntry && other)
 RegistryEntry & RegistryEntry::operator = (RegistryEntry const& other)
 {
     if (ref_ != -1) {
+        VMCheck(L_);
         luaL_unref(L_, LUA_REGISTRYINDEX, ref_);
     }
 
@@ -54,6 +59,7 @@ RegistryEntry & RegistryEntry::operator = (RegistryEntry const& other)
     ref_ = other.ref_;
 
     if (other.ref_ != -1) {
+        VMCheck(L_);
         other.Push();
         ref_ = luaL_ref(L_, LUA_REGISTRYINDEX);
     }
@@ -64,6 +70,7 @@ RegistryEntry & RegistryEntry::operator = (RegistryEntry const& other)
 RegistryEntry & RegistryEntry::operator = (RegistryEntry && other)
 {
     if (ref_ != -1) {
+        VMCheck(L_);
         luaL_unref(L_, LUA_REGISTRYINDEX, ref_);
     }
 
@@ -76,6 +83,7 @@ RegistryEntry & RegistryEntry::operator = (RegistryEntry && other)
 void RegistryEntry::Push() const
 {
     se_assert(ref_ != -1);
+    VMCheck(L_);
     lua_rawgeti(L_, LUA_REGISTRYINDEX, ref_);
 }
 
@@ -85,6 +93,7 @@ void RegistryEntry::Bind(lua_State* L, Ref const& ref)
 
     L_ = L;
     if (ref) {
+        VMCheck(L);
         ref.Push(L);
         ref_ = luaL_ref(L, LUA_REGISTRYINDEX);
     } else {
@@ -95,6 +104,7 @@ void RegistryEntry::Bind(lua_State* L, Ref const& ref)
 void RegistryEntry::Reset()
 {
     if (ref_ != -1) {
+        VMCheck(L_);
         luaL_unref(L_, LUA_REGISTRYINDEX, ref_);
         ref_ = -1;
         L_ = nullptr;
@@ -117,6 +127,7 @@ PersistentRegistryEntry::PersistentRegistryEntry(lua_State* L, Ref const& local)
     : L_(L), generationId_(get_generation_id(L))
 {
     if ((bool)local) {
+        VMCheck(L);
         local.Push(L);
         ref_ = luaL_ref(L, LUA_REGISTRYINDEX);
     } else {
@@ -182,6 +193,7 @@ void PersistentRegistryEntry::Bind(lua_State* L, Ref const& ref)
     L_ = L;
     generationId_ = get_generation_id(L);
     if (ref) {
+        VMCheck(L);
         ref.Push(L);
         ref_ = luaL_ref(L, LUA_REGISTRYINDEX);
     } else {

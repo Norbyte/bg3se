@@ -128,12 +128,29 @@ int TracebackHandler(lua_State * L)
     return 1;  /* return the traceback */
 }
 
+#if !defined(NDEBUG) || defined(SE_RELEASE_ASSERTS)
+ExtensionStateBase* DebugServerState{ nullptr };
+lua_State* DebugServerVM{ nullptr };
+ExtensionStateBase* DebugClientState{ nullptr };
+lua_State* DebugClientVM{ nullptr };
+#endif
+
 void EnterVMCheck(lua_State* L)
 {
-#if !defined(NDEBUG)
-    auto state = GetCurrentExtensionState();
-    assert(state->GetLua() == State::FromLua(L));
-    assert(state->GetEnterCount() > 0);
+#if !defined(NDEBUG) || defined(SE_RELEASE_ASSERTS)
+    bool server = gExtender->GetServer().IsInServerThread();
+    auto vm = server ? DebugServerVM : DebugClientVM;
+    auto state = server ? DebugServerState : DebugClientState;
+    se_assert(vm != nullptr && vm == L);
+    se_assert(state->GetEnterCount() > 0);
+#endif
+}
+
+void VMCheck(lua_State* L)
+{
+#if !defined(NDEBUG) || defined(SE_RELEASE_ASSERTS)
+    auto state = gExtender->GetServer().IsInServerThread() ? DebugServerVM : DebugClientVM;
+    se_assert(state != nullptr && state == L);
 #endif
 }
 
@@ -344,7 +361,8 @@ LifetimeHandle GetCurrentLifetime(lua_State* L)
     return State::GetExtra(L)->CurrentLifetime;
 }
 
-LuaStateWrapper::LuaStateWrapper()
+LuaStateWrapper::LuaStateWrapper(ExtensionStateBase& state)
+    : state_(state)
 {
     L = lua_newstate(LuaAlloc, nullptr);
     Internal = lua_new_internal_state();
@@ -354,15 +372,38 @@ LuaStateWrapper::LuaStateWrapper()
     luaJIT_setmode(L, 0, LUAJIT_MODE_ENGINE | LUAJIT_MODE_ON);
 #endif
     lua_atpanic(L, &LuaPanic);
+
+#if !defined(NDEBUG) || defined(SE_RELEASE_ASSERTS)
+    if (gExtender->GetServer().IsInServerThread()) {
+        DebugServerState = &state;
+        DebugServerVM = L;
+    } else {
+        DebugClientState = &state;
+        DebugClientVM = L;
+    }
+#endif
 }
 
 LuaStateWrapper::~LuaStateWrapper()
 {
+#if !defined(NDEBUG) || defined(SE_RELEASE_ASSERTS)
+    if (gExtender->GetServer().IsInServerThread()) {
+        se_assert(DebugServerVM == L);
+        DebugServerState = nullptr;
+        DebugServerVM = nullptr;
+    } else {
+        se_assert(DebugClientVM == L);
+        DebugClientState = nullptr;
+        DebugClientVM = nullptr;
+    }
+#endif
+
     lua_close(L);
 }
 
 State::State(ExtensionStateBase& state, uint32_t generationId, bool isServer)
-    : generationId_(generationId),
+    : L(state),
+    generationId_(generationId),
     state_(state),
     lifetimeStack_(lifetimePool_),
     variableManager_(isServer ? gExtender->GetServer().GetExtensionState().GetUserVariables() : gExtender->GetClient().GetExtensionState().GetUserVariables(), isServer),

@@ -73,6 +73,7 @@ public:
     TRet Call(ArgumentTuple const& args)
     {
         auto L = ref_.GetState();
+        VMCheck(L);
         StackCheck _(L);
 
         ref_.Push();

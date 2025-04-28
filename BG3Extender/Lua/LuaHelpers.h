@@ -82,6 +82,9 @@ struct FunctionRef : public LocalRef {};
 // Helper type for getting userdata/cpplightuserdata as parameters
 struct AnyUserdataRef : public LocalRef {};
 
+void EnterVMCheck(lua_State* L);
+void VMCheck(lua_State* L);
+
 END_NS()
 
 #include <Lua/Shared/LuaDelegate.h>
@@ -348,7 +351,6 @@ auto CheckedPopReturnValues(lua_State * L, std::tuple<Ret...>& ret)
 }
 
 int CallWithTraceback(lua_State* L, int narg, int nres);
-void EnterVMCheck(lua_State* L);
 
 // Calls Lua function.
 // Function and arguments must be already pushed to the Lua stack.
