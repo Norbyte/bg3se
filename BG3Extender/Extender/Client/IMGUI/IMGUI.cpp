@@ -2075,6 +2075,16 @@ std::optional<TextureLoadResult> IMGUITextureLoader::IncTextureRef(FixedString c
         return refs->LoadResult;
     }
 
+    auto tex = (resource::TextureResource*)GetStaticSymbols().GetCurrentResourceBank()->GetResource(ResourceBankType::Texture, textureGuid);
+    if (!tex) {
+        return {};
+    }
+    
+    if (tex->Type != TextureType::T2D) {
+        ERR("Cannot render texture '%s': expected 2D texture, got %d", textureGuid.GetString(), tex->Type);
+        return {};
+    }
+
     auto descriptor = (*GetStaticSymbols().ls__AppliedMaterial__LoadTexture)(nullptr, textureGuid);
     if (!descriptor) {
         return {};

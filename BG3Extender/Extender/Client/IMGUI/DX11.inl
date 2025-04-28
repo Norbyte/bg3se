@@ -193,9 +193,12 @@ public:
 
     std::optional<TextureLoadResult> RegisterTexture(TextureDescriptor* descriptor) override
     {
-        auto view = descriptor->DX11.Views[0].View;
-        if (!view) return {};
+        if (descriptor->DX11.Views.size() != 1 || !descriptor->DX11.Views[0].View) {
+            ERR("DX11 texture has no render view?");
+            return {};
+        }
 
+        auto view = descriptor->DX11.Views[0].View;
         return TextureLoadResult{ view, descriptor->DX11.Width, descriptor->DX11.Height };
     }
 

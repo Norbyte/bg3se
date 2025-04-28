@@ -241,6 +241,11 @@ public:
     {
         if (!initialized_) return {};
 
+        if (descriptor->Vulkan.Views.size() != 1 || !descriptor->Vulkan.Views[0]->View) {
+            ERR("VK texture has no render view?");
+            return {};
+        }
+
         auto view = descriptor->Vulkan.Views[0]->View;
         if (!view) return {};
 

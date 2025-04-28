@@ -276,6 +276,8 @@ struct [[bg3::hidden]] ResourceBank
     LegacyMap<FixedString, ResourcePackage*> Packages;
     void* LoadHelper;
     FixedString ModName;
+
+    resource::Resource* GetResource(ResourceBankType type, FixedString const& resource);
 };
 
 struct [[bg3::hidden]] ResourcePackage
@@ -1196,11 +1198,11 @@ struct TerrainBrushResource : public LoadableResource
 
 struct TextureResource : public LoadableResource
 {
-    [[bg3::hidden]] void* field_30;
+    [[bg3::hidden]] void* RfTexture;
     FixedString Template;
     bool Streaming;
     bool SRGB;
-    uint8_t Type;
+    TextureType Type;
     int32_t Width;
     int32_t Height;
     int32_t Depth;

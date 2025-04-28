@@ -157,6 +157,19 @@ BEGIN_ENUM(ResourceBankType, uint32_t)
 END_ENUM()
 
 
+BEGIN_ENUM(TextureType, uint8_t)
+    EV(T1D, 0)
+    EV(T2D, 1)
+    EV(T3D, 2)
+    EV(T1DArray, 3)
+    EV(T2DArray, 4)
+    EV(T3DArray, 5)
+    EV(T2DCube, 6)
+    EV(T2DCubeArray, 7)
+    EV(T2DRenderTarget, 8)
+END_ENUM()
+
+
 BEGIN_BITMASK(AnimationSetAnimationFlags, uint8_t)
     EV(AlwaysIgnore, 1)
     EV(NoFallback, 2)
