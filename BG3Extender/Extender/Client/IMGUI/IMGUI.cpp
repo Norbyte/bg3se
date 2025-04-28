@@ -1707,6 +1707,11 @@ void IMGUIManager::InitializeUI()
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 
+    auto configPath = GetStaticSymbols().ToPath("imgui.ini", PathRootType::UserProfile);
+    if (!configPath.empty()) {
+        io.IniFilename = _strdup(configPath.c_str());
+    }
+
     sdl_.InitializeUI();
     renderer_->InitializeUI();
 
