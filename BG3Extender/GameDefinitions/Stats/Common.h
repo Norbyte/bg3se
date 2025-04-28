@@ -184,8 +184,8 @@ struct Object : public Noncopyable<Object>
     HashMap<FixedString, Array<RollCondition>> RollConditions;
     FixedString AIFlags;
     Array<Requirement> Requirements;
-    Array<FixedString> ComboProperties;
-    Array<FixedString> ComboCategories;
+    TrackedCompactSet<FixedString> ComboProperties;
+    TrackedCompactSet<FixedString> ComboCategories;
     int32_t Using{ -1 };
     uint32_t ModifierListIndex{ 0 };
     uint32_t Level{ 0 };

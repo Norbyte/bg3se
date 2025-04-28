@@ -232,7 +232,7 @@ struct SpeakerComponent : public BaseComponent
 {
     DEFINE_COMPONENT(Speaker, "eoc::SpeakerComponent")
 
-    Array<FixedString> field_0;
+    TrackedCompactSet<FixedString> field_0;
 };
 
 

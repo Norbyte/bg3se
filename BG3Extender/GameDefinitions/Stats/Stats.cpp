@@ -553,8 +553,8 @@ std::optional<FixedString*> RPGStats::GetFixedString(int stringId)
 FixedString* RPGStats::GetOrCreateFixedString(int& stringId)
 {
     if (stringId < 0) {
-        stringId = (int)FixedStrings.Size();
-        FixedStrings.Add(FixedString{});
+        stringId = (int)FixedStrings.size();
+        FixedStrings.push_back(FixedString{});
     }
 
     return &FixedStrings[stringId];

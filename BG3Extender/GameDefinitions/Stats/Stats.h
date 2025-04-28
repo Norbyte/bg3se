@@ -333,7 +333,7 @@ struct RPGStats : public ProtectedGameObject<RPGStats>
     LegacyMap<FixedString, void*> field_2D8;
     LegacyRefMap<FixedString, void*> field_2F0;
     FixedString TreasureRarities[7];
-    Array<FixedString> FixedStrings;
+    TrackedCompactSet<FixedString> FixedStrings;
     Array<int64_t*> Int64s;
     Array<Guid> GUIDs;
     Array<float> Floats;

@@ -154,7 +154,7 @@ struct DialogGameData : public ProtectedGameObject<DialogGameData>
     virtual void Clone(DialogGameData const*) = 0;
 
     DialogNode* ParentNode;
-    Array<FixedString> AiPersonality;
+    TrackedCompactSet<FixedString> AiPersonality;
     Array<LookAtInfo> LookAt;
     STDString SoundEvent;
     STDString SoundPerMusicInstrument[4];
