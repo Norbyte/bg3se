@@ -9,10 +9,10 @@ DummyFieldTracker::~DummyFieldTracker() {}
 
 void DummyFieldTracker::Add(EntityHandle entity, void* component)
 {
-    assert(Changes.empty());
+    se_assert(Changes.empty());
 
     if (Base) {
-        assert(ChangeEvent.Connections.size() == Base->ChangeEvent.Connections.size());
+        se_assert(ChangeEvent.Connections.size() == Base->ChangeEvent.Connections.size());
         Base->Add(entity, component);
     }
 
@@ -26,10 +26,10 @@ void DummyFieldTracker::Add(EntityHandle entity, void* component)
 
 void DummyFieldTracker::FireEvents()
 {
-    assert(Changes.empty());
+    se_assert(Changes.empty());
 
     if (Base) {
-        assert(ChangeEvent.Connections.size() == Base->ChangeEvent.Connections.size());
+        se_assert(ChangeEvent.Connections.size() == Base->ChangeEvent.Connections.size());
         Base->FireEvents();
     }
 

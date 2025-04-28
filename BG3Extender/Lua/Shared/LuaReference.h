@@ -189,7 +189,7 @@ public:
 
     inline Ref MakeRef(lua_State* L) const
     {
-        assert(IsValid(L));
+        se_assert(IsValid(L));
         return Ref(L, type_, index_);
     }
 

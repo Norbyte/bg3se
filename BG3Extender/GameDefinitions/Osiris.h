@@ -707,13 +707,13 @@ public:
 
     TypedValue& operator [] (uint32_t index)
     {
-        assert(index < size_);
+        se_assert(index < size_);
         return Buf()[index];
     }
 
     TypedValue const& operator [] (uint32_t index) const
     {
-        assert(index < size_);
+        se_assert(index < size_);
         return Buf()[index];
     }
 
@@ -872,7 +872,7 @@ struct FuncSigOutParamList
 
     inline bool isOutParam(unsigned i) const
     {
-        assert(i < Count*8);
+        se_assert(i < Count*8);
         return ((Params[i >> 3] << (i & 7)) & 0x80) == 0x80;
     }
 };

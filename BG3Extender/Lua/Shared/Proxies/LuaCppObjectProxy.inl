@@ -49,13 +49,13 @@ CppMetatableManager::CppMetatableManager()
 
 void CppMetatableManager::RegisterMetatable(MetatableTag tag, CMetatable* mt)
 {
-    assert(tag <= MetatableTag::Max);
+    se_assert(tag <= MetatableTag::Max);
     metatables_[(int)tag] = mt;
 }
 
 CMetatable* CppMetatableManager::GetMetatable(MetatableTag tag)
 {
-    assert(tag <= MetatableTag::Max);
+    se_assert(tag <= MetatableTag::Max);
     return metatables_[(int)tag];
 }
 
@@ -100,7 +100,7 @@ void* ObjectProxy::GetRaw(lua_State* L, int index, GenericPropertyMap const& pm)
 
 GenericPropertyMap& LightObjectProxyMetatable::GetPropertyMap(CppObjectMetadata const& meta)
 {
-    assert(meta.MetatableTag == MetaTag);
+    se_assert(meta.MetatableTag == MetaTag);
     return *gStructRegistry.Get(meta.PropertyMapTag);
 }
 

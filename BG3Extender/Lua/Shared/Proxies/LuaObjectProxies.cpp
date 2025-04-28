@@ -88,12 +88,12 @@ bool Validate(EntityHandle const* handle, Overload<EntityHandle>)
 void InheritProperties(GenericPropertyMap const& base, GenericPropertyMap& child)
 {
     // Check to make sure that the property map we're inheriting from is already initialized
-    assert(base.Initialized);
-    assert(base.InheritanceUpdated);
-    assert(child.Initialized);
-    assert(!child.IsInitializing);
-    assert(!child.InheritanceUpdated);
-    assert(child.Parent == &base);
+    se_assert(base.Initialized);
+    se_assert(base.InheritanceUpdated);
+    se_assert(child.Initialized);
+    se_assert(!child.IsInitializing);
+    se_assert(!child.InheritanceUpdated);
+    se_assert(child.Parent == &base);
 
     child.IsInitializing = true;
 
@@ -144,7 +144,7 @@ uint16_t BitfieldValueToFlag(uint64_t value)
     DWORD shift{ 0 };
     _BitScanForward64(&shift, value);
     value >>= shift;
-    assert(value <= 0x3ff);
+    se_assert(value <= 0x3ff);
     return (uint16_t)((value & 0x3ff) | (shift << 10));
 }
 
@@ -168,9 +168,9 @@ void AddBitfieldProperty(GenericPropertyMap& pm, BitfieldTypeId typeId, std::siz
 
 inline void MarkAsInherited(GenericPropertyMap const& base, GenericPropertyMap& child)
 {
-    assert(!child.InheritanceUpdated);
-    assert(child.IsInitializing);
-    assert(child.Parent == nullptr);
+    se_assert(!child.InheritanceUpdated);
+    se_assert(child.IsInitializing);
+    se_assert(child.Parent == nullptr);
 
     child.Parent = &base;
 }
@@ -396,7 +396,7 @@ void ProcessPropertyMapDefinitions(PropertyMapRegistrationEntry const* defn)
         }
 
         default:
-            assert(false);
+            se_assert(false);
         }
 
         defn++;
@@ -454,7 +454,7 @@ void UpdateInheritance()
         for (auto pm : pendingUpdates) {
             if (pm == nullptr) continue;
 
-            assert(!pm->InheritanceUpdated);
+            se_assert(!pm->InheritanceUpdated);
             if (pm->Parent == nullptr) {
                 pm->InheritanceUpdated = true;
                 pm->BuildHotPropertyMap();
@@ -469,7 +469,7 @@ void UpdateInheritance()
 
         pendingUpdates = nextBatchUpdates;
         nextBatchUpdates.clear();
-        assert(progressed && "Recursion in property map inheritance tree?");
+        se_assert(progressed && "Recursion in property map inheritance tree?");
     } while (!pendingUpdates.empty());
 }
 

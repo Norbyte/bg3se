@@ -185,7 +185,7 @@ public:
 
     void BindPropertyMap(ExtComponentType type, lua::GenericPropertyMap* pm)
     {
-        assert(components_[(unsigned)type].Properties == nullptr);
+        se_assert(components_[(unsigned)type].Properties == nullptr);
         components_[(unsigned)type].Properties = pm;
     }
 

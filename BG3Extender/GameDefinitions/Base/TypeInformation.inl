@@ -23,7 +23,7 @@ void StaticTypeInformation::DeferredInitialize()
 {
     if (Type == nullptr && Initializer != nullptr) {
         Type = Initializer();
-        assert(Type != nullptr);
+        se_assert(Type != nullptr);
     }
 
     if (Type) {

@@ -19,13 +19,13 @@ public:
         size_(size)
     {
         BOOL succeeded = VirtualProtect((LPVOID)ptr_, size_, PAGE_EXECUTE_READWRITE, &oldProtect_);
-        assert(succeeded);
+        se_assert(succeeded);
     }
 
     inline ~WriteAnchor()
     {
         BOOL succeeded = VirtualProtect((LPVOID)ptr_, size_, oldProtect_, &oldProtect_);
-        assert(succeeded);
+        se_assert(succeeded);
     }
 
     inline uint8_t * ptr()

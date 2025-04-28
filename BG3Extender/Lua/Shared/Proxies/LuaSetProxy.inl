@@ -9,13 +9,13 @@ SetProxyImplBase::SetProxyImplBase()
 
 void SetProxyImplBase::Register()
 {
-    assert(registryIndex_ == -1);
+    se_assert(registryIndex_ == -1);
     registryIndex_ = gExtender->GetPropertyMapManager().RegisterSetProxy(this);
 }
 
 int SetProxyImplBase::GetRegistryIndex() const
 {
-    assert(registryIndex_ >= 0);
+    se_assert(registryIndex_ >= 0);
     return registryIndex_;
 }
 

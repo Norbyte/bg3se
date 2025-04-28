@@ -62,15 +62,15 @@ public:
 
     inline T const& operator [] (size_type index) const
     {
-        assert(mask_[index]);
-        assert(index < values_.size());
+        se_assert(mask_[index]);
+        se_assert(index < values_.size());
         return values_[index];
     }
 
     inline T& operator [] (size_type index)
     {
-        assert(mask_[index]);
-        assert(index < values_.size());
+        se_assert(mask_[index]);
+        se_assert(index < values_.size());
         return values_[index];
     }
 
@@ -79,7 +79,7 @@ public:
         if (!mask_[index]) {
             return nullptr;
         } else {
-            assert(index < values_.size());
+            se_assert(index < values_.size());
             return &values_[index];
         }
     }
@@ -89,7 +89,7 @@ public:
         if (!mask_[index]) {
             return nullptr;
         } else {
-            assert(index < values_.size());
+            se_assert(index < values_.size());
             return &values_[index];
         }
     }
@@ -102,21 +102,21 @@ public:
 
     void clear(uint32_t index)
     {
-        assert(index < values_.size());
+        se_assert(index < values_.size());
         mask_.Clear(index);
         values_[index] = T{};
     }
 
     void set(uint32_t index, T const& value)
     {
-        assert(index < values_.size());
+        se_assert(index < values_.size());
         mask_.Set(index);
         values_[index] = value;
     }
 
     void set(uint32_t index, T&& value)
     {
-        assert(index < values_.size());
+        se_assert(index < values_.size());
         mask_.Set(index);
         values_[index] = std::move(value);
     }

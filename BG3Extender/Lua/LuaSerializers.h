@@ -233,7 +233,7 @@ namespace bg3se::lua
     template <class T>
     LuaSerializer& serialize(LuaSerializer& s, Array<T> const& v)
     {
-        assert(!s.IsWriting);
+        se_assert(!s.IsWriting);
 
         s.BeginObject();
         int i = 1;

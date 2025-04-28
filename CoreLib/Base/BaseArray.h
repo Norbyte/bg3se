@@ -307,13 +307,13 @@ public:
 
     inline T const& operator [] (size_type index) const
     {
-        assert(index < size_);
+        se_assert(index < size_);
         return buf_[index];
     }
 
     inline T& operator [] (size_type index)
     {
-        assert(index < size_);
+        se_assert(index < size_);
         return buf_[index];
     }
 
@@ -474,13 +474,13 @@ public:
 
     inline T const& operator [] (size_type index) const
     {
-        assert(index < size_);
+        se_assert(index < size_);
         return buf_[index];
     }
 
     inline T& operator [] (size_type index)
     {
-        assert(index < size_);
+        se_assert(index < size_);
         return buf_[index];
     }
 
@@ -500,8 +500,8 @@ public:
 
     void resize(size_type newSize, size_type newInitializedCapacity, size_type initializedCapacity)
     {
-        assert(initializedCapacity <= size_);
-        assert(newInitializedCapacity <= newSize);
+        se_assert(initializedCapacity <= size_);
+        se_assert(newInitializedCapacity <= newSize);
 
         if (size_ != newSize) {
             T* newBuf;
@@ -534,7 +534,7 @@ public:
 
     void copy_from(UninitializedStaticArray const& a, size_type curInitializedCapacity, size_type newInitializedCapacity)
     {
-        assert(newInitializedCapacity <= a.size());
+        se_assert(newInitializedCapacity <= a.size());
         resize(a.size(), newInitializedCapacity, curInitializedCapacity);
         for (size_type i = 0; i < newInitializedCapacity; i++) {
             buf_[i] = a.buf_[i];
@@ -653,13 +653,13 @@ public:
 
     inline T const& operator [] (size_type index) const
     {
-        assert(index < size_);
+        se_assert(index < size_);
         return buf_[index];
     }
 
     inline T& operator [] (size_type index)
     {
-        assert(index < size_);
+        se_assert(index < size_);
         return buf_[index];
     }
 
@@ -748,7 +748,7 @@ public:
 
     void ordered_insert_at(size_type index, T const& value)
     {
-        assert(index <= size_);
+        se_assert(index <= size_);
         if (capacity_ <= size_) {
             Reallocate(CapacityIncrement());
         }
@@ -764,7 +764,7 @@ public:
 
     void insert_at(size_type index, T const& value)
     {
-        assert(index <= size_);
+        se_assert(index <= size_);
         if (capacity_ <= size_) {
             Reallocate(CapacityIncrement());
         }
@@ -776,7 +776,7 @@ public:
 
     void remove_at(size_type index)
     {
-        assert(index < size_);
+        se_assert(index < size_);
 
         if (index + 1 < size_) {
             buf_[index] = std::move(buf_[size_ - 1]);
@@ -788,7 +788,7 @@ public:
 
     void ordered_remove_at(size_type index)
     {
-        assert(index < size_);
+        se_assert(index < size_);
 
         for (size_type i = index; i < size_ - 1; i++) {
             buf_[i] = std::move(buf_[i + 1]);
@@ -800,20 +800,20 @@ public:
 
     void erase(iterator const& it)
     {
-        assert(it != end());
+        se_assert(it != end());
         ordered_remove_at((size_type)(it.get() - buf_));
     }
 
     void remove_last()
     {
-        assert(size_ > 0);
+        se_assert(size_ > 0);
         buf_[size_ - 1].~T();
         size_--;
     }
 
     T pop_last()
     {
-        assert(size_ > 0);
+        se_assert(size_ > 0);
         return std::move(buf_[--size_]);
     }
 

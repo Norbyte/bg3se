@@ -712,7 +712,7 @@ public:
 
     inline static ArrayProxyImplBase* GetImpl(CppObjectMetadata const& meta)
     {
-        assert(meta.MetatableTag == MetatableTag::Array);
+        se_assert(meta.MetatableTag == MetatableTag::Array);
         return GetImpl(meta.PropertyMapTag);
     }
 

@@ -237,7 +237,7 @@ protected:
             index = NextIds[index];
         }
 
-        assert(index < -1);
+        se_assert(index < -1);
         return (uint32_t)(-2 - index);
     }
 
@@ -249,7 +249,7 @@ protected:
         } else {
             int32_t lastIndex = -1;
             do {
-                assert(index >= 0);
+                se_assert(index >= 0);
                 lastIndex = index;
                 index = NextIds[index];
             } while (index != indexToRemove);
@@ -737,7 +737,7 @@ public:
             }
 
             auto& bucket = Hash[hash];
-            assert(bucket.Key == TK{});
+            se_assert(bucket.Key == TK{});
             bucket.Key = keys[i];
             bucket.Value = values[i];
         }

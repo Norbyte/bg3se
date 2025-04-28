@@ -21,7 +21,7 @@ namespace bg3se
 
     void EnumRegistry::Register(EnumInfoStore* ei, int32_t id)
     {
-        assert(EnumsByName.find(ei->EnumName) == EnumsByName.end());
+        se_assert(EnumsByName.find(ei->EnumName) == EnumsByName.end());
         EnumsByName.insert(ei->EnumName, ei);
         ei->RegistryIndex = id;
 
@@ -41,7 +41,7 @@ namespace bg3se
     
     void BitfieldRegistry::Register(BitfieldInfoStore* ei, int32_t id)
     {
-        assert(BitfieldsByName.find(ei->EnumName) == BitfieldsByName.end());
+        se_assert(BitfieldsByName.find(ei->EnumName) == BitfieldsByName.end());
         BitfieldsByName.insert(ei->EnumName, ei);
         ei->RegistryIndex = id;
 
@@ -748,7 +748,7 @@ bool Material::SetVector4(FixedString const& paramName, glm::vec4 value)
 
 void* Material::GetOrCreateConstantBuffer(uint8_t shaderIndex)
 {
-    assert(shaderIndex < std::size(ShaderDescriptions));
+    se_assert(shaderIndex < std::size(ShaderDescriptions));
 
     if (MaterialCBs[shaderIndex].MaterialCB != nullptr) {
         return MaterialCBs[shaderIndex].MaterialCB;

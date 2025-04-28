@@ -10,13 +10,13 @@ ArrayProxyImplBase::ArrayProxyImplBase()
 
 void ArrayProxyImplBase::Register()
 {
-    assert(registryIndex_ == -1);
+    se_assert(registryIndex_ == -1);
     registryIndex_ = gExtender->GetPropertyMapManager().RegisterArrayProxy(this);
 }
 
 int ArrayProxyImplBase::GetRegistryIndex() const
 {
-    assert(registryIndex_ >= 0);
+    se_assert(registryIndex_ >= 0);
     return registryIndex_;
 }
 

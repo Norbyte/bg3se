@@ -315,7 +315,7 @@ public:
 
     inline static MapProxyImplBase* GetImpl(CppObjectMetadata const& meta)
     {
-        assert(meta.MetatableTag == MetatableTag::Map);
+        se_assert(meta.MetatableTag == MetatableTag::Map);
         return GetImpl(meta.PropertyMapTag);
     }
 

@@ -119,14 +119,14 @@ struct ECBFrameAllocator
 
     inline void* alloc(std::size_t size)
     {
-        assert(size <= 0xFFC0);
+        se_assert(size <= 0xFFC0);
         return Allocator->Allocate((uint16_t)size);
     }
 
     template <class T, class ...Args>
     T* allocArray(std::size_t n, Args... args)
     {
-        assert(n * sizeof(T) <= 0xFFC0);
+        se_assert(n * sizeof(T) <= 0xFFC0);
         auto ptr = static_cast<T*>(Allocator->Allocate((uint16_t)(n * sizeof(T))));
         for (auto i = 0; i < n; i++) {
             new (ptr + i) T(args...);
@@ -180,7 +180,7 @@ struct StorageComponentMap : public ProtectedGameObject<StorageComponentMap>
 
     uint8_t GetComponentIndex(uint8_t idx) const
     {
-        assert(idx < NumComponents);
+        se_assert(idx < NumComponents);
         if (NumComponents > 8) {
             return ComponentIndices[idx];
         }
@@ -191,7 +191,7 @@ struct StorageComponentMap : public ProtectedGameObject<StorageComponentMap>
 
     uint8_t const* GetComponentIndexPtr(uint8_t idx) const
     {
-        assert(idx < NumComponents);
+        se_assert(idx < NumComponents);
         if (NumComponents > 8) {
             return ComponentIndices + idx;
         } else {
@@ -625,7 +625,7 @@ struct ComponentFrameStorage
 
     inline void* GetComponent(EntityStorageData::EntityStorageIndex const& index) const
     {
-        assert(index.PageIndex < Pages.size());
+        se_assert(index.PageIndex < Pages.size());
         auto page = Pages[index.PageIndex];
         return reinterpret_cast<uint8_t*>(page) + (index.EntryIndex * ComponentSizeInBytes);
     }

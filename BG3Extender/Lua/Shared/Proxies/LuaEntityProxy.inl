@@ -309,7 +309,7 @@ void ReplicateComponent(lua_State* L, EntityHandle entity, ExtComponentType comp
 {
     auto ecs = State::FromLua(L)->GetEntitySystemHelpers();
     if (!ecs->GetEntityWorld()->Replication) {
-        OsiError("Replication system is unavailable");
+        OsiError("Changes can only be replicated from server to client");
         return;
     }
 

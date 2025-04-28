@@ -1,5 +1,6 @@
 #pragma once
 
+#include <CoreLib/Config.h>
 #include <CoreLib/Base/BaseUtilities.h>
 #include <CoreLib/Base/EnumHelpers.h>
 #include <CoreLib/Base/BaseMemory.h>

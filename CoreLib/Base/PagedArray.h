@@ -47,7 +47,7 @@ struct PageLayout
     template <class T>
     inline T* at(T** pages, uint32_t index) const
     {
-        assert(index < capacity());
+        se_assert(index < capacity());
         return &pages[index >> BitsPerPage][index & ((1 << BitsPerPage) - 1)];
     }
 };
@@ -199,14 +199,14 @@ struct PagedBitSet
 
     inline void set(uint32_t index)
     {
-        assert(index < size());
+        se_assert(index < size());
         auto qword = index >> 6;
         Storage[qword] |= (1ull << (index & 0x3f));
     }
 
     inline void clear(uint32_t index)
     {
-        assert(index < size());
+        se_assert(index < size());
         auto qword = index >> 6;
         Storage[qword] &= ~(1ull << (index & 0x3f));
     }

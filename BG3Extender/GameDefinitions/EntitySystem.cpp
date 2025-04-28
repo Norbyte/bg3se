@@ -23,7 +23,7 @@ void* QueryDescription::GetFirstMatchingComponent(std::size_t componentSize, boo
         if (cls.Storage->InstanceToPageMap.size() > 0) {
             auto const& instPage = cls.Storage->InstanceToPageMap.values()[0];
             auto componentIdx = cls.GetComponentIndex(0);
-            assert(cls.Storage->Components.size() >= 1);
+            se_assert(cls.Storage->Components.size() >= 1);
             return cls.Storage->GetComponent(instPage, componentIdx, componentSize, isProxy);
         }
     }
@@ -259,7 +259,7 @@ void* EntityStorageData::GetComponent(EntityStorageIndex const& entityPtr, uint8
 {
     auto& page = Components[entityPtr.PageIndex]->Components[componentSlot];
     auto buf = (uint8_t*)page.ComponentBuffer;
-    assert(buf != nullptr);
+    se_assert(buf != nullptr);
     if (isProxy) {
         auto ptr = buf + sizeof(void*) * entityPtr.EntryIndex;
         return *(uint8_t**)ptr;
@@ -819,7 +819,7 @@ void EntitySystemHelpersBase::MapComponentIndices(char const* componentName, Ext
             binding.ComponentType = it->second.ComponentIndex;
         }
 
-        assert(size < 0x10000);
+        se_assert(size < 0x10000);
         components_[(unsigned)type].Size = (uint16_t)size;
         components_[(unsigned)type].IsProxy = isProxy;
     } else {

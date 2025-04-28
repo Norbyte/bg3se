@@ -50,11 +50,11 @@ struct BitfieldInfoStoreBase
                 Labels.resize(index + 1);
             }
 
-            assert(!Labels[index]);
+            se_assert(!Labels[index]);
             Labels[index] = fs;
         }
 
-        assert(Values.find(fs) == Values.end());
+        se_assert(Values.find(fs) == Values.end());
         Values.insert(std::move(fs), val);
         AllowedFlags |= val;
     }
@@ -113,10 +113,10 @@ struct EnumInfoStoreBase
             Labels.resize(index + 1);
         }
 
-        assert(!Labels[index]);
+        se_assert(!Labels[index]);
         Labels[index] = fs;
 
-        assert(Values.find(fs) == Values.end());
+        se_assert(Values.find(fs) == Values.end());
         Values.insert(std::move(fs), val);
     }
 

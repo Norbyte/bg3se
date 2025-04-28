@@ -142,7 +142,7 @@ namespace bg3se
     NodeVMTWrappers::NodeVMTWrappers(NodeVMT ** vmts)
         : vmts_(vmts)
     {
-        assert(gNodeVMTWrappers == nullptr);
+        se_assert(gNodeVMTWrappers == nullptr);
         gNodeVMTWrappers = this;
         for (unsigned i = 1; i < (unsigned)NodeType::Max + 1; i++) {
             wrappers_[i] = std::make_unique<NodeVMTWrapper>(vmts_[i], VMTWrapOptions[i]);
@@ -152,7 +152,7 @@ namespace bg3se
 
     NodeVMTWrappers::~NodeVMTWrappers()
     {
-        assert(gNodeVMTWrappers == this);
+        se_assert(gNodeVMTWrappers == this);
         gNodeVMTWrappers = nullptr;
     }
 
@@ -167,7 +167,7 @@ namespace bg3se
     NodeVMTWrapper & NodeVMTWrappers::GetWrapper(Node * node)
     {
         NodeType type = GetType(node);
-        assert(type >= NodeType::Database && type <= NodeType::Max);
+        se_assert(type >= NodeType::Database && type <= NodeType::Max);
         return *wrappers_[(unsigned)type].get();
     }
 

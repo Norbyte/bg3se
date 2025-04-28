@@ -195,19 +195,19 @@ namespace bg3se
 
         inline lua::State & Get() const
         {
-            assert(*this);
+            se_assert(*this);
             return *state_->GetLua();
         }
 
         inline lua::State & operator *() const
         {
-            assert(*this);
+            se_assert(*this);
             return *state_->GetLua();
         }
 
         inline lua::State * operator ->() const
         {
-            assert(*this);
+            se_assert(*this);
             return state_->GetLua();
         }
 
@@ -242,19 +242,19 @@ namespace bg3se
 
         inline TLua & Get() const
         {
-            assert(*this);
+            se_assert(*this);
             return *state_.Lua;
         }
 
         inline TLua & operator *() const
         {
-            assert(*this);
+            se_assert(*this);
             return *state_.Lua;
         }
 
         inline TLua * operator ->() const
         {
-            assert(*this);
+            se_assert(*this);
             return state_.Lua.get();
         }
 

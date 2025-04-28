@@ -9,13 +9,13 @@ MapProxyImplBase::MapProxyImplBase()
 
 void MapProxyImplBase::Register()
 {
-    assert(registryIndex_ == -1);
+    se_assert(registryIndex_ == -1);
     registryIndex_ = gExtender->GetPropertyMapManager().RegisterMapProxy(this);
 }
 
 int MapProxyImplBase::GetRegistryIndex() const
 {
-    assert(registryIndex_ >= 0);
+    se_assert(registryIndex_ >= 0);
     return registryIndex_;
 }
 

@@ -45,13 +45,13 @@ namespace bg3se::esv::lua
 
     LifetimeHandle GetServerLifetime()
     {
-        assert(gExtender->GetServer().IsInServerThread());
+        se_assert(gExtender->GetServer().IsInServerThread());
         return esv::ExtensionState::Get().GetLua()->GetCurrentLifetime();
     }
 
     LifetimePool& GetServerLifetimePool()
     {
-        assert(gExtender->GetServer().IsInServerThread());
+        se_assert(gExtender->GetServer().IsInServerThread());
         return esv::ExtensionState::Get().GetLua()->GetLifetimePool();
     }
 

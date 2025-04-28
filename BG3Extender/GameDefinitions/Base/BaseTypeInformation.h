@@ -343,7 +343,7 @@ TypeInformation const& GetTypeInfo()
     if (type.Type == nullptr) {
         type.DeferredInitialize();
     }
-    assert(type.Type != nullptr);
+    se_assert(type.Type != nullptr);
     return *type.Type;
 }
 

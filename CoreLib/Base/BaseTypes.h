@@ -143,13 +143,13 @@ namespace bg3se
 
         inline constexpr TypedHandle(uint64_t type, uint64_t index, uint64_t salt)
         {
-            assert(type < 0x400 && salt < 0x400000);
+            se_assert(type < 0x400 && salt < 0x400000);
             Handle = index | (salt << 32) | (type << 54);
         }
 
         inline constexpr TypedHandle(uint64_t type, uint64_t indexAndSalt)
         {
-            assert(type < 0x400 && (indexAndSalt >> 32) < 0x400000);
+            se_assert(type < 0x400 && (indexAndSalt >> 32) < 0x400000);
             Handle = indexAndSalt | (type << 54);
         }
 

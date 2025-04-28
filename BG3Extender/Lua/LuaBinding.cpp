@@ -412,7 +412,7 @@ void State::LoadBootstrap(STDString const& path, STDString const& modTable)
 
 void State::FinishStartup()
 {
-    assert(!startupDone_);
+    se_assert(!startupDone_);
     startupDone_ = true;
 
 #if !defined(OSI_NO_DEBUGGER)

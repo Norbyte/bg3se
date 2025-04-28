@@ -66,8 +66,8 @@ struct RawPropertyAccessorsHotData
             | ((uint64_t)props.Flag << 48)),
         Cold(&props)
     {
-        assert(props.Offset <= 0x7fff);
-        assert(props.Flag <= 0xffff);
+        se_assert(props.Offset <= 0x7fff);
+        se_assert(props.Flag <= 0xffff);
     }
 
     uint64_t Get{ 0 };
@@ -271,7 +271,7 @@ struct StructRegistry
 
     inline GenericPropertyMap* Get(StructTypeId id) const
     {
-        assert(id < (int)StructsById.size());
+        se_assert(id < (int)StructsById.size());
         return StructsById[id];
     }
 };

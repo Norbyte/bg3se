@@ -114,7 +114,7 @@ struct CompactSet
 
     void ordered_remove_at(uint32_t index)
     {
-        assert(index < Size);
+        se_assert(index < Size);
 
         for (auto i = index; i < Size - 1; i++) {
             Buf[i] = Buf[i + 1];
@@ -126,7 +126,7 @@ struct CompactSet
 
     void erase(iterator const& it)
     {
-        assert(it != end());
+        se_assert(it != end());
         ordered_remove_at((size_type)(it.get() - Buf));
     }
 
@@ -212,13 +212,13 @@ struct Set : public CompactSet<T, Allocator, StoreSize>
 
     void remove_last()
     {
-        assert(this->Size > 0);
+        se_assert(this->Size > 0);
         this->Size--;
     }
 
     T pop_last()
     {
-        assert(this->Size > 0);
+        se_assert(this->Size > 0);
         return this->Buf[--this->Size];
     }
 };

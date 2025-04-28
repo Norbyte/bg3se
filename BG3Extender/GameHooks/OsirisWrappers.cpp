@@ -308,7 +308,7 @@ void OsirisWrappers::FindDebugFlags(FARPROC SetOptionProc)
 
 void OsirisWrappers::SaveNodeVMT(NodeType type, NodeVMT * vmt)
 {
-    assert(type >= NodeType::Database && type <= NodeType::Max);
+    se_assert(type >= NodeType::Database && type <= NodeType::Max);
     VMTs[(unsigned)type] = vmt;
 }
 

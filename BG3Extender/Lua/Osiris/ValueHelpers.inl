@@ -117,7 +117,7 @@ TypedValue& TypedValue::operator = (TypedValue&& o)
 
 char const* TypedValue::GetString() const
 {
-    assert(OsiIsStringAlias(TypeId));
+    se_assert(OsiIsStringAlias(TypeId));
     return OsiStringGet(Value.StringHandle);
 }
 

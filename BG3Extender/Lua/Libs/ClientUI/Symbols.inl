@@ -94,7 +94,7 @@ struct StaticTypeClasses
             Name = MakeNoesisSymbol(name);
             auto type = Reflection::GetType(Name);
             if (type) {
-                assert(type->GetClassType()->GetTypeId() == SymbolInfo<Noesis::TypeClass>::Name);
+                se_assert(type->GetClassType()->GetTypeId() == SymbolInfo<Noesis::TypeClass>::Name);
                 Type = static_cast<Noesis::TypeClass const*>(type);
             } else {
                 ERR("Couldn't resolve Noesis type class: %s", name);

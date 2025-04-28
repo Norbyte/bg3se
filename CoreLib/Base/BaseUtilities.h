@@ -14,7 +14,19 @@
 #define BEGIN_BARE_NS(ns) namespace ns {
 #define END_BARE_NS() }
 
+#if defined(NDEBUG)
+#if defined(SE_RELEASE_ASSERTS)
+#define se_assert(x) if (!(x)) [[unlikely]] { bg3se::AssertionFailed(#x); }
+#else
+#define se_assert(x)
+#endif
+#else
+#define se_assert(x) assert(x)
+#endif
+
 BEGIN_SE()
+
+void AssertionFailed(char const* expr);
 
 template <class>
 // false value attached to a dependent name (for static_assert)

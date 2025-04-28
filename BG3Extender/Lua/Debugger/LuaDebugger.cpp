@@ -552,7 +552,7 @@ namespace bg3se::lua::dbg
 
         inline ~DebugEvalGuard()
         {
-            assert(dbg_.evaluatingExpression_ > 0);
+            se_assert(dbg_.evaluatingExpression_ > 0);
             dbg_.evaluatingExpression_--;
         }
 

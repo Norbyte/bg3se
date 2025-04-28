@@ -43,7 +43,7 @@ void RegisterObjectProxyTypeInformation()
         ty.ComponentName = FixedString(TClass::ComponentName); \
     } \
     ty.PropertyMap->TypeInfo = &ty; \
-    assert(FixedString(#typeName) == ty.PropertyMap->Name);
+    se_assert(FixedString(#typeName) == ty.PropertyMap->Name);
 
 #define BEGIN_CLS(clsName, id) BEGIN_CLS_TN(clsName, clsName, id)
 

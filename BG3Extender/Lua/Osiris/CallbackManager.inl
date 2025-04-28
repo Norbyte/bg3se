@@ -29,7 +29,7 @@ Array<uint32_t>* PendingCallbackManager::Enter(std::unordered_multimap<uint64_t,
 
 void PendingCallbackManager::Exit(Array<uint32_t>* v)
 {
-    assert(depth_ > 0 && cache_[depth_ - 1] == v);
+    se_assert(depth_ > 0 && cache_[depth_ - 1] == v);
     depth_--;
 }
 

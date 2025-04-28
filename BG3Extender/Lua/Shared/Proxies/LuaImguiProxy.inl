@@ -5,13 +5,13 @@ BEGIN_NS(lua)
 
 GenericPropertyMap& ImguiObjectProxyMetatable::GetPropertyMap(CppObjectMetadata const& meta)
 {
-    assert(meta.MetatableTag == MetaTag);
+    se_assert(meta.MetatableTag == MetaTag);
     return GetRenderable(meta)->GetRTTI();
 }
 
 extui::Renderable* ImguiObjectProxyMetatable::GetRenderable(CppObjectMetadata const& meta)
 {
-    assert(meta.MetatableTag == MetaTag);
+    se_assert(meta.MetatableTag == MetaTag);
     return ecl::ExtensionState::Get().GetClientLua()->IMGUI().GetRenderable(meta.Value);
 }
 

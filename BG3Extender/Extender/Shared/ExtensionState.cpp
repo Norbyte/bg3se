@@ -286,7 +286,7 @@ namespace bg3se
 
     void ExtensionStateBase::DecLuaRefs()
     {
-        assert(luaRefs_ > 0);
+        se_assert(luaRefs_ > 0);
         luaRefs_--;
         luaMutex_.unlock();
 
@@ -476,8 +476,8 @@ namespace bg3se
             gExtender->GetClient().UpdateServerProgress("Lua Init");
         }
 
-        assert(LuaPendingDelete);
-        assert(luaRefs_ == 0);
+        se_assert(LuaPendingDelete);
+        se_assert(luaRefs_ == 0);
 
         LuaPendingDelete = false;
 

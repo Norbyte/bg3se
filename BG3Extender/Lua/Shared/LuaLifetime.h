@@ -46,11 +46,11 @@ public:
                 auto l2off = (i << PageShift) + l1;
                 unsigned long l2;
                 _BitScanForward64(&l2, l2_[l2off]);
-                assert(l2 < PageBits);
+                se_assert(l2 < PageBits);
                 auto l3off = (i << (2 * PageShift)) + (l1 << PageShift) + l2;
                 unsigned long l3;
                 _BitScanForward64(&l3, l3_[l3off]);
-                assert(l3 < PageBits);
+                se_assert(l3 < PageBits);
                 l3_[l3off] &= ~(1ull << l3);
                 if (l3_[l3off] == 0) {
                     l2_[l2off] &= ~(1ull << l2);
@@ -76,7 +76,7 @@ public:
 
     void Free(T* ptr)
     {
-        assert(ptr >= pool_ && ptr < pool_ + Size);
+        se_assert(ptr >= pool_ && ptr < pool_ + Size);
         auto index = ptr - pool_;
         auto off = index;
         auto l3 = index & (PageBits - 1);
@@ -104,7 +104,7 @@ public:
 
     T* Get(std::size_t index) const
     {
-        assert(index < Size);
+        se_assert(index < Size);
         return pool_ + index;
     }
 
@@ -137,12 +137,12 @@ public:
 
     inline ~Lifetime()
     {
-        assert(!IsAlive());
+        se_assert(!IsAlive());
     }
 
     inline void Acquire()
     {
-        assert(!IsAlive());
+        se_assert(!IsAlive());
         
         data_ = Index()
             | (((Salt() + 1) & SaltMask) << IndexBits)
@@ -161,7 +161,7 @@ public:
         }
 #endif
 
-        assert(IsAlive());
+        se_assert(IsAlive());
         data_ &= ~AliveBit;
 #if defined(TRACE_LIFETIMES)
         INFO("[%p] RELEASE", this);
@@ -338,7 +338,7 @@ public:
 
     inline void Release(LifetimeHandle handle)
     {
-        assert(handle);
+        se_assert(handle);
         auto ref = Get(handle);
         if (ref) {
             pool_.Free(ref);
@@ -373,7 +373,7 @@ public:
 
     inline LifetimeHandle Push()
     {
-        assert(stack_.size() < 0x1000);
+        se_assert(stack_.size() < 0x1000);
         auto lifetime = pool_.Allocate();
         stack_.push_back(lifetime);
         return lifetime;
@@ -381,13 +381,13 @@ public:
 
     inline void Push(LifetimeHandle lifetime)
     {
-        assert(stack_.size() < 0x1000);
+        se_assert(stack_.size() < 0x1000);
         stack_.push_back(lifetime);
     }
 
     inline void PopAndKill()
     {
-        assert(!stack_.empty());
+        se_assert(!stack_.empty());
         auto lifetime = *stack_.rbegin();
         pool_.Release(lifetime);
         stack_.pop_back();
@@ -395,22 +395,22 @@ public:
 
     inline void PopAndKill(LifetimeHandle lifetime)
     {
-        assert(!stack_.empty());
-        assert(*stack_.rbegin() == lifetime);
+        se_assert(!stack_.empty());
+        se_assert(*stack_.rbegin() == lifetime);
         pool_.Release(lifetime);
         stack_.pop_back();
     }
 
     inline void Pop(LifetimeHandle lifetime)
     {
-        assert(!stack_.empty());
-        assert(*stack_.rbegin() == lifetime);
+        se_assert(!stack_.empty());
+        se_assert(*stack_.rbegin() == lifetime);
         stack_.pop_back();
     }
 
     inline LifetimeHandle GetCurrent() const
     {
-        assert(!stack_.empty());
+        se_assert(!stack_.empty());
         return *stack_.rbegin();
     }
 

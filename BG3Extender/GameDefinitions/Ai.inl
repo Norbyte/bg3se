@@ -310,8 +310,8 @@ void AiSubgrid::GetCornerTiles(glm::ivec2 const& pos, int radius, glm::ivec2& to
 
 AiGridTile const* AiGridTileData::GetTileAt(int x, int y) const
 {
-    assert(x >= 0 && x < Width);
-    assert(y >= 0 && y < Height);
+    se_assert(x >= 0 && x < Width);
+    se_assert(y >= 0 && y < Height);
     return &Tiles[x + y * Width];
 }
 

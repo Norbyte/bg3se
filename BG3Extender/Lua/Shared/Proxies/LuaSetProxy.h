@@ -160,7 +160,7 @@ public:
 
     inline static SetProxyImplBase* GetImpl(CppObjectMetadata const& meta)
     {
-        assert(meta.MetatableTag == MetatableTag::Set);
+        se_assert(meta.MetatableTag == MetatableTag::Set);
         return GetImpl(meta.PropertyMapTag);
     }
 

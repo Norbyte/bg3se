@@ -99,6 +99,9 @@
     <ClInclude Include="Base\PagedMap.h">
       <Filter>Header Files\Base</Filter>
     </ClInclude>
+    <ClInclude Include="Config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

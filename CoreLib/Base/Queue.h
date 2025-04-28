@@ -279,7 +279,7 @@ public:
 
     T pop()
     {
-        assert(size_ > 0);
+        se_assert(size_ > 0);
 
         T val = buf_[readIndex_];
         size_--;

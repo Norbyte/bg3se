@@ -138,7 +138,7 @@ bool CustomQuery::Query(OsiArgumentDesc & params)
 
 void CustomFunctionManager::BeginStaticRegistrationPhase()
 {
-    assert(!staticRegistrationDone_);
+    se_assert(!staticRegistrationDone_);
 }
 
 void CustomFunctionManager::EndStaticRegistrationPhase()
@@ -151,7 +151,7 @@ void CustomFunctionManager::EndStaticRegistrationPhase()
 
 void CustomFunctionManager::ClearDynamicEntries()
 {
-    assert(staticRegistrationDone_);
+    se_assert(staticRegistrationDone_);
     DEBUG("CustomFunctionManager::ClearDynamicEntries(): Clearing dynamic functions");
 
     for (auto it = dynamicSignatures_.begin(); it != dynamicSignatures_.end(); ++it) {
@@ -173,7 +173,7 @@ void CustomFunctionManager::ClearDynamicEntries()
 
 FunctionHandle CustomFunctionManager::Register(std::unique_ptr<CustomCallBase> call)
 {
-    assert(!staticRegistrationDone_);
+    se_assert(!staticRegistrationDone_);
     RegisterSignature(call.get());
     auto index = (uint32_t)calls_.size();
     FunctionHandle handle{ EoCFunctionType::Call, CallClassId, index | CustomFunctionId };
@@ -184,7 +184,7 @@ FunctionHandle CustomFunctionManager::Register(std::unique_ptr<CustomCallBase> c
 
 FunctionHandle CustomFunctionManager::Register(std::unique_ptr<CustomQueryBase> qry)
 {
-    assert(!staticRegistrationDone_);
+    se_assert(!staticRegistrationDone_);
     RegisterSignature(qry.get());
     auto index = (uint32_t)queries_.size();
     FunctionHandle handle{ EoCFunctionType::Query, QueryClassId, index | CustomFunctionId };
@@ -195,7 +195,7 @@ FunctionHandle CustomFunctionManager::Register(std::unique_ptr<CustomQueryBase> 
 
 FunctionHandle CustomFunctionManager::Register(std::unique_ptr<CustomEvent> event)
 {
-    assert(!staticRegistrationDone_);
+    se_assert(!staticRegistrationDone_);
     RegisterSignature(event.get());
     auto index = (uint32_t)events_.size();
     FunctionHandle handle{ EoCFunctionType::Event, EventClassId, index | CustomFunctionId };
@@ -206,7 +206,7 @@ FunctionHandle CustomFunctionManager::Register(std::unique_ptr<CustomEvent> even
 
 std::optional<FunctionHandle> CustomFunctionManager::RegisterDynamic(std::unique_ptr<CustomCallBase> call)
 {
-    assert(staticRegistrationDone_);
+    se_assert(staticRegistrationDone_);
     uint32_t index;
     if (RegisterDynamicSignature(call.get(), index)) {
         FunctionHandle handle{ EoCFunctionType::Call, CallClassId, index | CustomFunctionId };
@@ -220,7 +220,7 @@ std::optional<FunctionHandle> CustomFunctionManager::RegisterDynamic(std::unique
 
 std::optional<FunctionHandle> CustomFunctionManager::RegisterDynamic(std::unique_ptr<CustomQueryBase> query)
 {
-    assert(staticRegistrationDone_);
+    se_assert(staticRegistrationDone_);
     uint32_t index;
     if (RegisterDynamicSignature(query.get(), index)) {
         FunctionHandle handle{ EoCFunctionType::Query, QueryClassId, index | CustomFunctionId };
@@ -234,7 +234,7 @@ std::optional<FunctionHandle> CustomFunctionManager::RegisterDynamic(std::unique
 
 std::optional<FunctionHandle> CustomFunctionManager::RegisterDynamic(std::unique_ptr<CustomEvent> event)
 {
-    assert(staticRegistrationDone_);
+    se_assert(staticRegistrationDone_);
     uint32_t index;
     if (RegisterDynamicSignature(event.get(), index)) {
         FunctionHandle handle{ EoCFunctionType::Event, EventClassId, index | CustomFunctionId };

@@ -6,7 +6,7 @@ StructRegistry gStructRegistry;
 
 void StructRegistry::Register(GenericPropertyMap* pm, StructTypeId id)
 {
-    assert(pm->IsInitializing);
+    se_assert(pm->IsInitializing);
     pm->RegistryIndex = id;
 
     if (Validated.Size < (uint32_t)id + 1) {
@@ -22,20 +22,20 @@ void StructRegistry::Register(GenericPropertyMap* pm, StructTypeId id)
 
 void GenericPropertyMap::Init()
 {
-    assert(!IsInitializing && !Initialized);
+    se_assert(!IsInitializing && !Initialized);
     IsInitializing = true;
 }
 
 void GenericPropertyMap::Finish()
 {
-    assert(!Initialized && IsInitializing);
+    se_assert(!Initialized && IsInitializing);
     IsInitializing = false;
     Initialized = true;
 }
 
 void GenericPropertyMap::BuildHotPropertyMap()
 {
-    assert(InheritanceUpdated);
+    se_assert(InheritanceUpdated);
     
     Array<FixedStringUnhashed> keys;
     Array<lua::RawPropertyAccessorsHotData> hotProps;
@@ -117,10 +117,10 @@ void GenericPropertyMap::AddRawProperty(char const* prop, typename RawPropertyAc
     typename RawPropertyAccessors::Setter* setter, typename RawPropertyAccessors::Serializer* serialize, 
     std::size_t offset, uint64_t flag, PropertyNotification notification, char const* newName, bool iterable)
 {
-    assert((!Initialized || !InheritanceUpdated) && IsInitializing);
+    se_assert((!Initialized || !InheritanceUpdated) && IsInitializing);
     FixedStringUnhashed key{ prop };
     FixedString newNameKey{ newName ? newName : "" };
-    assert(Properties.find(key) == Properties.end());
+    se_assert(Properties.find(key) == Properties.end());
     Properties.set(key, RawPropertyAccessors{ key, offset, flag, getter, setter, serialize, notification, this, newNameKey, iterable });
 
     if (iterable) {
@@ -130,7 +130,7 @@ void GenericPropertyMap::AddRawProperty(char const* prop, typename RawPropertyAc
 
 void GenericPropertyMap::AddRawValidator(char const* prop, typename RawPropertyValidators::Validator* validate, std::size_t offset, uint64_t flag)
 {
-    assert((!Initialized || !InheritanceUpdated) && IsInitializing);
+    se_assert((!Initialized || !InheritanceUpdated) && IsInitializing);
     Validators.push_back(RawPropertyValidators{ FixedString(prop), validate, offset, flag });
 }
 
@@ -158,7 +158,7 @@ bool GenericPropertyMap::ValidatePropertyMap(void const* object)
         if (Validated == ValidationState::Unknown) {
             if (ValidateObject(object)) {
                 Validated = ValidationState::Valid;
-                assert(RegistryIndex >= 0);
+                se_assert(RegistryIndex >= 0);
                 gStructRegistry.Validated.Set(RegistryIndex);
             } else {
                 ERR("Object class %s failed validation; proxying of this class is disabled", Name.GetString());

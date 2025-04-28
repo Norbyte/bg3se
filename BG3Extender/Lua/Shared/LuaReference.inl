@@ -75,13 +75,13 @@ RegistryEntry & RegistryEntry::operator = (RegistryEntry && other)
 
 void RegistryEntry::Push() const
 {
-    assert(ref_ != -1);
+    se_assert(ref_ != -1);
     lua_rawgeti(L_, LUA_REGISTRYINDEX, ref_);
 }
 
 void RegistryEntry::Bind(lua_State* L, Ref const& ref)
 {
-    assert(ref_ == -1);
+    se_assert(ref_ == -1);
 
     L_ = L;
     if (ref) {
@@ -177,7 +177,7 @@ bool PersistentRegistryEntry::TryPush(lua_State* L) const
 
 void PersistentRegistryEntry::Bind(lua_State* L, Ref const& ref)
 {
-    assert(ref_ == -1);
+    se_assert(ref_ == -1);
 
     L_ = L;
     generationId_ = get_generation_id(L);

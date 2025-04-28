@@ -19,7 +19,7 @@ int CppPropertyMapManager::RegisterArrayProxy(ArrayProxyImplBase* mt)
 
 ArrayProxyImplBase* CppPropertyMapManager::GetArrayProxy(int index)
 {
-    assert(index >= 0 && (uint32_t)index < arrayProxies_.Size());
+    se_assert(index >= 0 && (uint32_t)index < arrayProxies_.Size());
     return arrayProxies_[index];
 }
 
@@ -31,7 +31,7 @@ int CppPropertyMapManager::RegisterMapProxy(MapProxyImplBase* mt)
 
 MapProxyImplBase* CppPropertyMapManager::GetMapProxy(int index)
 {
-    assert(index >= 0 && (uint32_t)index < mapProxies_.Size());
+    se_assert(index >= 0 && (uint32_t)index < mapProxies_.Size());
     return mapProxies_[index];
 }
 
@@ -43,7 +43,7 @@ int CppPropertyMapManager::RegisterSetProxy(SetProxyImplBase* mt)
 
 SetProxyImplBase* CppPropertyMapManager::GetSetProxy(int index)
 {
-    assert(index >= 0 && (uint32_t)index < setProxies_.Size());
+    se_assert(index >= 0 && (uint32_t)index < setProxies_.Size());
     return setProxies_[index];
 }
 

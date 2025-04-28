@@ -250,25 +250,25 @@ struct StaticBitSet
 
     inline bool Get(uint32_t index) const
     {
-        assert(index < Size);
+        se_assert(index < Size);
         return (Buf[index / 64] & (1ull << (index % 64))) != 0;
     }
 
     inline bool operator [] (uint32_t index) const
     {
-        assert(index < Size);
+        se_assert(index < Size);
         return (Buf[index / 64] & (1ull << (index % 64))) != 0;
     }
 
     inline void Set(uint32_t index)
     {
-        assert(index < Size);
+        se_assert(index < Size);
         Buf[index / 64] |= (1ull << (index % 64));
     }
 
     inline void Clear(uint32_t index)
     {
-        assert(index < Size);
+        se_assert(index < Size);
         Buf[index / 64] &= ~(1ull << (index % 64));
     }
 

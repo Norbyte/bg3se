@@ -292,7 +292,7 @@ struct CppValue
 
 void* lua_push_newcppobject(lua_State* L, MetatableTag metatableTag, int propertyMapIndex, uint32_t size)
 {
-    assert(propertyMapIndex >= 0);
+    se_assert(propertyMapIndex >= 0);
     auto sz = size + sizeof(CppObjectUdata);
     auto extra = CppLightObjectVal::MakeExtra(metatableTag, (uint16_t)propertyMapIndex, LifetimeHandle());
     auto obj = reinterpret_cast<CppObjectUdata*>(lua_newcppobject(L, extra, sz));
@@ -303,7 +303,7 @@ void* lua_push_newcppobject(lua_State* L, MetatableTag metatableTag, int propert
 
 void lua_push_lightcppobject(lua_State* L, MetatableTag metatableTag, int propertyMapIndex, void* object, LifetimeHandle lifetime)
 {
-    assert(propertyMapIndex >= 0);
+    se_assert(propertyMapIndex >= 0);
     auto val = CppLightObjectVal::MakeRaw(object, lifetime);
     auto extra = CppLightObjectVal::MakeExtra(metatableTag, (uint16_t)propertyMapIndex, lifetime);
     lua_pushlightcppobject(L, val, extra);
@@ -312,7 +312,7 @@ void lua_push_lightcppobject(lua_State* L, MetatableTag metatableTag, int proper
 void lua_push_lightcppobject(lua_State* L, MetatableTag metatableTag, int propertyMapIndex, void const* object, LifetimeHandle lifetime)
 {
     // TODO - add RO tag
-    assert(propertyMapIndex >= 0);
+    se_assert(propertyMapIndex >= 0);
     auto val = CppLightObjectVal::MakeRaw(object, lifetime);
     auto extra = CppLightObjectVal::MakeExtra(metatableTag, (uint16_t)propertyMapIndex, lifetime);
     lua_pushlightcppobject(L, val, extra);
@@ -462,7 +462,7 @@ bool lua_try_get_lightcppobject(lua_State* L, int idx, CppObjectMetadata& obj)
 
 void lua_push_cppvalue(lua_State* L, MetatableTag metatableTag, int propertyMapIndex, uint64_t object)
 {
-    assert(propertyMapIndex >= 0);
+    se_assert(propertyMapIndex >= 0);
     auto val = CppValue::MakeRaw(object);
     auto extra = CppValue::MakeExtra(metatableTag, propertyMapIndex);
     lua_pushlightcppobject(L, val, extra);
@@ -619,7 +619,7 @@ void LuaCppFinalize(lua_State* L, void* udata)
         auto pm = gStructRegistry.Get(obj->PropertyMap);
         pm->Destroy((void*)(obj + 1));
     } else {
-        assert(false);
+        se_assert(false);
     }
 }
 

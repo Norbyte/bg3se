@@ -23,7 +23,7 @@ void TimerManager::BaseTimer::Start(double time, float repeat)
 
 void TimerManager::BaseTimer::Pause(double time)
 {
-    assert(!Paused);
+    se_assert(!Paused);
     FrozenTime = (float)std::max(Time - time, .0);
     Time = .0f;
     Paused = true;
@@ -31,7 +31,7 @@ void TimerManager::BaseTimer::Pause(double time)
 
 void TimerManager::BaseTimer::Resume(double time)
 {
-    assert(Paused);
+    se_assert(Paused);
     Time = time + FrozenTime;
     FrozenTime = .0f;
     Paused = false;
@@ -226,7 +226,7 @@ void TimerManager::RepeatOrReleaseTimer(TimerHandle handle, BaseTimer& timer)
 
 void TimerManager::QueueTimer(TimerHandle handle, BaseTimer const& timer)
 {
-    assert(!timer.Paused);
+    se_assert(!timer.Paused);
     queue_.push(TimerQueueEntry{
         .Time = timer.Time,
         .Handle = handle,

@@ -66,6 +66,15 @@ function Build-Extender
 	echo $BuildInfo | Out-File -FilePath BG3Extender/Extender/BuildInfo.h
 	(gci BG3Extender/Extender/BuildInfo.h).LastWriteTime = Get-Date
 
+	if ($Channel -eq "Release") {
+		$CLConfig = "#undef SE_RELEASE_ASSERTS`r`n"
+	} else {
+		$CLConfig = "#define SE_RELEASE_ASSERTS`r`n"
+	}
+	
+	echo $CLConfig | Out-File -FilePath CoreLib/Config.h
+	(gci CoreLib/Config.h).LastWriteTime = Get-Date
+
 	Write-Output " ===== BUILDING GAME EXTENDER ===== "
 	msbuild BG3Tools.sln "/p:Configuration=Game Release" /t:Build /m /nologo /verbosity:quiet /consoleloggerparameters:summary
 	

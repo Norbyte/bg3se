@@ -2030,7 +2030,7 @@ void IMGUIManager::Update()
         .UIScale = scale_
     };
     objects_->Render(dc);
-    assert(dc.ScalingStack.empty());
+    se_assert(dc.ScalingStack.empty());
 
     ImGui::Render();
     renderer_->FinishFrame();

@@ -163,6 +163,7 @@
     <ClInclude Include="Base\Pool.h" />
     <ClInclude Include="Base\Queue.h" />
     <ClInclude Include="Base\SparseArray.h" />
+    <ClInclude Include="Config.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="Crypto.h" />
     <ClInclude Include="framework.h" />

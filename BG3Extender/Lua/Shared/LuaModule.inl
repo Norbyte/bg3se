@@ -20,7 +20,7 @@ void ModuleRegistry::ConstructState(lua_State* L, ModuleRole role)
 
 void ModuleRegistry::RegisterTypeInformation()
 {
-    assert(!modules_.empty());
+    se_assert(!modules_.empty());
     for (auto const& module : modules_) {
         RegisterModuleTypeInformation(module);
     }
