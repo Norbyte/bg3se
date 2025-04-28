@@ -125,7 +125,7 @@ Array<Guid>* GetGuidResourcesByModId(lua_State* L, ExtResourceManagerType type, 
 
 
 #define FOR_RESOURCE_TYPE(ty)                                                            		  \
-    case ResourceBankType::ty: MakeObjectRef(L, (ty##Resource*)resource.Value()); break;
+    case ResourceBankType::ty: MakeObjectRef(L, static_cast<ty##Resource*>(resource)); break;
 
 UserReturn GetResource(lua_State* L, FixedString const& resourceGuid, ResourceBankType type)
 {
@@ -136,11 +136,11 @@ UserReturn GetResource(lua_State* L, FixedString const& resourceGuid, ResourceBa
         return 1;
     }
 
-    auto resource = bank->Container.Banks[(unsigned)type]->Resources.find(resourceGuid);
-    if (resource != bank->Container.Banks[(unsigned)type]->Resources.end()) {
+    auto resource = bank->GetResource(type, resourceGuid);
+    if (resource != nullptr) {
         switch (type)
         {
-            FOR_EACH_NONGUID_RESOURCE_TYPE();
+            FOR_EACH_NONGUID_RESOURCE_TYPE()
         }
     } else {
         push(L, nullptr);

@@ -170,6 +170,12 @@ inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overl
     return &MakeDeferredArrayType<T>;
 }
 
+template <class T>
+inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<TrackedCompactSet<T>>)
+{
+    return &MakeDeferredArrayType<T>;
+}
+
 #if defined(ENABLE_UI)
 template <class T, unsigned N>
 inline StaticTypeInformation::InitializerProc* MakeDeferredTypeInitializer(Overload<Noesis::Vector<T, N>>)
@@ -276,6 +282,12 @@ template <class T, class Allocator, bool StoreSize>
 StaticTypeInformation& GetStaticTypeInfoInternal(Overload<ObjectSet<T, Allocator, StoreSize>>)
 {
     return GetStaticTypeInfoInternal(Overload<Set<T, Allocator, StoreSize>>{});
+}
+
+template <class T>
+StaticTypeInformation& GetStaticTypeInfoInternal(Overload<TrackedCompactSet<T>>)
+{
+    return GetStaticTypeInfoInternal(Overload<Set<T, GameMemoryAllocator, true>>{});
 }
 
 template <class T>

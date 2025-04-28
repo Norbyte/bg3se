@@ -56,11 +56,13 @@ struct CompactSet
 
     inline T const& operator [] (uint32_t index) const
     {
+        se_assert(index < Size);
         return Buf[index];
     }
 
     inline T& operator [] (uint32_t index)
     {
+        se_assert(index < Size);
         return Buf[index];
     }
 
@@ -85,8 +87,7 @@ struct CompactSet
                 *(uint64_t*)newBuf = newCapacity;
 
                 Buf = (T*)((std::ptrdiff_t)newBuf + 8);
-            }
-            else {
+            } else {
                 Buf = Allocator::template New<T>(newCapacity);
             }
         } else {
@@ -99,13 +100,18 @@ struct CompactSet
     void Reallocate(uint32_t newCapacity)
     {
         auto oldBuf = Buf;
+        auto oldCapacity = Capacity;
         RawReallocate(newCapacity);
 
         for (uint32_t i = 0; i < std::min(Size, newCapacity); i++) {
             new (Buf + i) T(oldBuf[i]);
         }
 
-        for (uint32_t i = 0; i < Size; i++) {
+        for (uint32_t i = std::min(Size, newCapacity); i < newCapacity; i++) {
+            new (Buf + i) T();
+        }
+
+        for (uint32_t i = 0; i < oldCapacity; i++) {
             oldBuf[i].~T();
         }
 
@@ -120,7 +126,7 @@ struct CompactSet
             Buf[i] = Buf[i + 1];
         }
 
-        Buf[Size - 1].~T();
+        Buf[Size - 1] = T();
         Size--;
     }
 
@@ -133,10 +139,28 @@ struct CompactSet
     void clear()
     {
         for (uint32_t i = 0; i < Size; i++) {
-            Buf[i].~T();
+            Buf[i] = T();
         }
 
         Size = 0;
+    }
+
+    uint32_t CapacityIncrement() const
+    {
+        if (this->Capacity > 0) {
+            return 2 * this->Capacity;
+        } else {
+            return 1;
+        }
+    }
+
+    void push_back(T const& value)
+    {
+        if (this->Capacity <= this->Size) {
+            this->Reallocate(CapacityIncrement());
+        }
+
+        new (&this->Buf[this->Size++]) T(value);
     }
 
     ContiguousIterator<T> begin()
@@ -159,6 +183,9 @@ struct CompactSet
         return ContiguousConstIterator<T>(Buf + Size);
     }
 };
+
+template <class T>
+using TrackedCompactSet = CompactSet<T, GameMemoryAllocator, true>;
 
 template <class T, class Allocator = GameMemoryAllocator, bool StoreSize = false>
 struct Set : public CompactSet<T, Allocator, StoreSize>

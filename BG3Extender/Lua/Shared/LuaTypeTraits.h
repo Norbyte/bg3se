@@ -27,6 +27,9 @@ template <class T, class Allocator, bool StoreSize>
 struct IsArrayLike<ObjectSet<T, Allocator, StoreSize>> { static constexpr bool Value = true; using TElement = T; };
 
 template <class T>
+struct IsArrayLike<TrackedCompactSet<T>> { static constexpr bool Value = true; using TElement = T; };
+
+template <class T>
 struct IsArrayLike<Queue<T>> { static constexpr bool Value = true; using TElement = T; };
 
 #if defined(ENABLE_UI)

@@ -144,6 +144,41 @@ PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, Ob
 }
 
 template <class TK>
+PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, TrackedCompactSet<TK>* obj)
+{
+    if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>) {
+        return PropertyOperationResult::UnsupportedType;
+    } else {
+        StackCheck _(L);
+        luaL_checktype(L, index, LUA_TTABLE);
+
+        // FIXME - in-place resize object by using raw size from the Lua table meta
+        // (this will also require the table to be array-like)
+        obj->clear();
+        for (auto idx : iterate(L, index)) {
+            TK value;
+            Unserialize(L, idx, &value);
+            obj->push_back(std::move(value));
+        }
+
+        return PropertyOperationResult::Success;
+    }
+}
+
+template <class TK>
+PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, TrackedCompactSet<TK>* obj)
+{
+    if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>) {
+        return PropertyOperationResult::UnsupportedType;
+    } else {
+        StackCheck _(L);
+        auto arr = ArrayProxyMetatable::Get<DynamicArrayProxyImpl<TrackedCompactSet<TK>, TK, 8>>(L, index);
+        *obj = *arr;
+        return PropertyOperationResult::Success;
+    }
+}
+
+template <class TK>
 PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, Queue<TK>* obj)
 {
     if constexpr (std::is_pointer_v<TK> || !std::is_default_constructible_v<TK>) {
