@@ -328,28 +328,34 @@ inline bool ValidateRef(TranslatedString const* h, Overload<TranslatedString>)
 }
 
 template <class TE>
-bool ValidateRef(Array<TE> const* v, Overload<Array<TE>>)
+bool ValidateLinearContainer(TE const* buf, uint64_t size, uint64_t capacity)
 {
-    if (v->raw_buf() == nullptr) {
-        CHECK(v->size() == 0);
-        CHECK(v->capacity() == 0);
+    if (buf == nullptr) {
+        CHECK(size == 0);
+        CHECK(capacity == 0);
     } else {
-        CHECK(v->size() <= v->capacity());
-        CHECK(v->capacity() <= 0x1000000);
-        CHECK(!IsBadReadPtr(v->raw_buf(), v->capacity() * sizeof(TE)));
+        CHECK(size <= capacity);
+        CHECK(capacity <= 0x1000000);
+        CHECK(!IsBadReadPtr(buf, capacity * sizeof(TE)));
 
         if constexpr (!std::is_pointer_v<TE>) {
-            for (auto& ele : *v) {
-                CHECKR(ValidateAny<TE>(&ele));
+            for (auto i = 0; i < size; i++) {
+                CHECKR(ValidateAny<TE>(buf + i));
             }
         } else {
-            for (auto& ele : *v) {
-                CHECKR(ValidatePointer(ele));
+            for (auto i = 0; i < size; i++) {
+                CHECKR(ValidatePointer(buf[i]));
             }
         }
     }
 
     return true;
+}
+
+template <class TE>
+bool ValidateRef(Array<TE> const* v, Overload<Array<TE>>)
+{
+    return ValidateLinearContainer(v->raw_buf(), v->size(), v->capacity());
 }
 
 template <class TE>
@@ -387,50 +393,20 @@ bool ValidateRef(LegacyArray<TE> const* v, Overload<LegacyArray<TE>>)
 template <class TE, class TAllocator>
 bool ValidateRef(std::vector<TE, TAllocator> const* v, Overload<std::vector<TE, TAllocator>>)
 {
-    CHECK(v->size() <= v->capacity());
-    CHECK(v->capacity() <= 0x1000000);
-    if (v->capacity() > 0) {
-        CHECK(!IsBadReadPtr(v->data(), v->capacity() * sizeof(TE)));
-
-        if constexpr (!std::is_pointer_v<TE>) {
-            for (auto& ele : *v) {
-                CHECKR(ValidateAny<TE>(&ele));
-            }
-        } else {
-            for (auto& ele : *v) {
-                CHECKR(ValidatePointer(ele));
-            }
-        }
-    }
-
-    return true;
+    return ValidateLinearContainer(v->data(), v->size(), v->capacity());
 }
 
 template <class TE>
 bool ValidateRef(ObjectSet<TE> const* v, Overload<ObjectSet<TE>>)
 {
     CHECK(v->CapacityIncrementSize <= 0x100000);
+    return ValidateLinearContainer(v->Buf, v->Size, v->Capacity);
+}
 
-    if (v->Buf == nullptr) {
-        CHECK(v->Size == 0);
-        CHECK(v->Capacity == 0);
-    } else {
-        CHECK(v->Size <= v->Capacity);
-        CHECK(v->Capacity <= 0x1000000);
-        CHECK(!IsBadReadPtr(v->Buf, v->Capacity * sizeof(TE)));
-
-        if constexpr (!std::is_pointer_v<TE>) {
-            for (auto& ele : *v) {
-                CHECKR(ValidateAny<TE>(&ele));
-            }
-        } else {
-            for (auto& ele : *v) {
-                CHECKR(ValidatePointer(ele));
-            }
-        }
-    }
-
-    return true;
+template <class TE>
+bool ValidateRef(TrackedCompactSet<TE> const* v, Overload<TrackedCompactSet<TE>>)
+{
+    return ValidateLinearContainer(v->Buf, v->Size, v->Capacity);
 }
 
 #if defined(ENABLE_UI)
@@ -468,49 +444,13 @@ bool ValidateRef(Noesis::Vector<TE, N> const* v, Overload<Noesis::Vector<TE, N>>
 template <class TE>
 bool ValidateRef(StaticArray<TE> const* v, Overload<StaticArray<TE>>)
 {
-    if (v->raw_buf() == nullptr) {
-        CHECK(v->size() == 0);
-    } else {
-        CHECK(v->size() <= 0x1000000);
-        CHECK(!IsBadReadPtr(v->raw_buf(), v->size() * sizeof(TE)));
-
-        if constexpr (!std::is_pointer_v<TE>) {
-            for (auto& ele : *v) {
-                CHECKR(ValidateAny<TE>(&ele));
-            }
-        } else {
-            for (auto& ele : *v) {
-                CHECKR(ValidatePointer(ele));
-            }
-        }
-    }
-
-    return true;
+    return ValidateLinearContainer(v->raw_buf(), v->size(), v->size());
 }
 
 template <class TE>
 bool ValidateRef(UninitializedStaticArray<TE> const* v, uint32_t initializedSize, Overload<UninitializedStaticArray<TE>>)
 {
-    if (v->raw_buf() == nullptr) {
-        CHECK(v->size() == 0);
-        CHECK(initializedSize == 0);
-    } else {
-        CHECK(v->size() <= 0x1000000);
-        CHECK(initializedSize <= v->size());
-        CHECK(!IsBadReadPtr(v->raw_buf(), v->size() * sizeof(TE)));
-
-        if constexpr (!std::is_pointer_v<TE>) {
-            for (uint32_t i = 0; i < initializedSize; i++) {
-                CHECKR(ValidateAny<TE>(&(*v)[i]));
-            }
-        } else {
-            for (uint32_t i = 0; i < initializedSize; i++) {
-                CHECKR(ValidatePointer((*v)[i]));
-            }
-        }
-    }
-
-    return true;
+    return ValidateLinearContainer(v->raw_buf(), initializedSize, v->size());
 }
 
 template <class TK, class TV>
@@ -642,6 +582,12 @@ template <class TE>
 bool Validate(ObjectSet<TE> const* v, Overload<ObjectSet<TE>>)
 {
     return ValidateRef(v, Overload<ObjectSet<TE>>{});
+}
+
+template <class TE>
+bool Validate(TrackedCompactSet<TE> const* v, Overload<TrackedCompactSet<TE>>)
+{
+    return ValidateRef(v, Overload<TrackedCompactSet<TE>>{});
 }
 
 #if defined(ENABLE_UI)
