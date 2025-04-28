@@ -260,6 +260,7 @@ phx::PhysicsHitAll* RaycastAll(lua_State* L, glm::vec3 const& source, glm::vec3 
 {
     auto levelManager = State::FromLua(L)->GetExtensionState().GetLevelManager();
     auto phys = levelManager->CurrentLevel->PhysicsScene;
+    gHits = phx::PhysicsHitAll{};
     auto xhit = phys->RaycastAll(source, destination, gHits, physicsType, includePhysicsGroup, excludePhysicsGroup, context, -1, -1, {});
     return &gHits;
 }
