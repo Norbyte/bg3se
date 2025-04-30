@@ -205,13 +205,13 @@
 
     <Mapping Name="ecl::EoCClient::HandleError">
       41 b0 01 // mov     r8b, 1
-      48 8d 54 24 48 // lea     rdx, [rsp+3B0h+var_368]
+      48 8d 55 07 // lea     rdx, [rbp+7]
       48 8b cf // mov     rcx, rdi
       @ref1 e8 ?? ?? ?? ?? // call    ecl__EocClient__HandleError
       90 // nop
-      48 8d 4c 24 38 // lea     rcx, [rsp+3B0h+var_378]
-      e9 3e 01 00 00 // jmp     loc_1416CFC8B
-      48 c7 44 24 38 05 00 00 00 // mov     [rsp+3B0h+var_378], 5
+      48 8d 4d c7 // lea     rcx, [rbp-39h]
+      e9 1e 01 00 00 // jmp     loc_141865D9A
+      48 c7 45 d7 05 00 00 00 // mov     qword ptr [rbp-29h], 5
       44 8b c8 // mov     r9d, eax
       @str1 4c 8d 05 ?? ?? ?? ?? // lea     r8, a4x; "%.4x"
       <Condition Type="String" Offset="@str1" Value="%.4x" />
