@@ -130,9 +130,9 @@ int TracebackHandler(lua_State * L)
 
 #if !defined(NDEBUG) || defined(SE_RELEASE_ASSERTS)
 ExtensionStateBase* DebugServerState{ nullptr };
-lua_State* DebugServerVM{ nullptr };
+global_State* DebugServerVM{ nullptr };
 ExtensionStateBase* DebugClientState{ nullptr };
-lua_State* DebugClientVM{ nullptr };
+global_State* DebugClientVM{ nullptr };
 #endif
 
 void EnterVMCheck(lua_State* L)
@@ -141,7 +141,7 @@ void EnterVMCheck(lua_State* L)
     bool server = gExtender->GetServer().IsInServerThread();
     auto vm = server ? DebugServerVM : DebugClientVM;
     auto state = server ? DebugServerState : DebugClientState;
-    se_assert(vm != nullptr && vm == L);
+    se_assert(vm != nullptr && vm == L->l_G);
     se_assert(state->GetEnterCount() > 0);
 #endif
 }
@@ -150,7 +150,7 @@ void VMCheck(lua_State* L)
 {
 #if !defined(NDEBUG) || defined(SE_RELEASE_ASSERTS)
     auto state = gExtender->GetServer().IsInServerThread() ? DebugServerVM : DebugClientVM;
-    se_assert(state != nullptr && state == L);
+    se_assert(state != nullptr && state == L->l_G);
 #endif
 }
 
@@ -376,10 +376,10 @@ LuaStateWrapper::LuaStateWrapper(ExtensionStateBase& state)
 #if !defined(NDEBUG) || defined(SE_RELEASE_ASSERTS)
     if (gExtender->GetServer().IsInServerThread()) {
         DebugServerState = &state;
-        DebugServerVM = L;
+        DebugServerVM = L->l_G;
     } else {
         DebugClientState = &state;
-        DebugClientVM = L;
+        DebugClientVM = L->l_G;
     }
 #endif
 }
@@ -388,11 +388,11 @@ LuaStateWrapper::~LuaStateWrapper()
 {
 #if !defined(NDEBUG) || defined(SE_RELEASE_ASSERTS)
     if (gExtender->GetServer().IsInServerThread()) {
-        se_assert(DebugServerVM == L);
+        se_assert(DebugServerVM == L->l_G);
         DebugServerState = nullptr;
         DebugServerVM = nullptr;
     } else {
-        se_assert(DebugClientVM == L);
+        se_assert(DebugClientVM == L->l_G);
         DebugClientState = nullptr;
         DebugClientVM = nullptr;
     }
