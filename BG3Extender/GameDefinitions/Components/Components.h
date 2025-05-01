@@ -510,10 +510,10 @@ struct SightBaseComponent : public BaseComponent
 {
     DEFINE_COMPONENT(Sight, "eoc::sight::BaseComponent")
 
-    float field_0;
-    float field_4;
-    float field_8;
-    float field_C;
+    [[bg3::legacy(field_0)]] float Sight;
+    [[bg3::legacy(field_4)]] float DarkvisionRange;
+    [[bg3::legacy(field_8)]] float FOV;
+    [[bg3::legacy(field_C)]] float VerticalFOV;
 };
 
 
@@ -522,10 +522,10 @@ struct DataComponent : public BaseComponent
     DEFINE_COMPONENT(SightData, "eoc::sight::DataComponent")
 
     Guid field_0;
-    float field_10;
-    float field_14;
-    float field_18;
-    float field_1C;
+    [[bg3::legacy(field_10)]] float DarkvisionRange;
+    [[bg3::legacy(field_14)]] float FOV;
+    [[bg3::legacy(field_18)]] float VerticalFOV;
+    [[bg3::legacy(field_1C)]] float Sight;
     int field_20;
     int field_24;
 };

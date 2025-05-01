@@ -47,8 +47,8 @@ struct TurnBasedComponent : public BaseComponent
     bool HadTurnInCombat;
     [[bg3::legacy(CanAct_M)]] bool CanActInCombat;
     [[bg3::legacy(field_18)]] std::optional<float> Timeout;
-    std::optional<float> field_20;
-    std::optional<float> field_28;
+    [[bg3::legacy(field_20)]] std::optional<float> PauseTimer;
+    [[bg3::legacy(field_28)]] std::optional<float> EndTurnHoldTimer;
     [[bg3::legacy(Combat)]] Guid CombatTeam;
 };
 

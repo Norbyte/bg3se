@@ -184,12 +184,7 @@ struct StatusHeal : public Status
     int HealAmount;
     int HealEffect;
     FixedString HealEffectId;
-    uint8_t HealType; // TODO enum
-    int AbsorbSurfaceRange;
-    uint8_t TargetDependentHeal;
-    Array<SurfaceType> AbsorbSurfaceTypes;
-    int TargetDependentValue;
-    int TargetDependentHealAmount;
+    int TargetHealth;
 };
 
 struct SurfaceLayerCheck

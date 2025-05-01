@@ -60,7 +60,8 @@ inline bool Validate(float const* v, Overload<float>)
     CHECK((*v > -100000000.0f && *v < 100000000.0f) 
         // Various max boundary values seen in the game
         || *v == 3.06254467e+38f // max LOD distance
-        || *v == 3.40282347e+38f 
+        || *v == 3.40282347e+38f
+        || *v == -3.40282347e+38f
         || *v == 3.78091496e+37f);
 #endif
     return true;
