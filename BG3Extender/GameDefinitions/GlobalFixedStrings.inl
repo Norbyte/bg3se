@@ -137,6 +137,7 @@ FS(trigger);
 FS(decal);
 FS(prefab);
 FS(light);
+FS(CombinedLight);
 
 // Default IMGUI fonts
 FS(Tiny);

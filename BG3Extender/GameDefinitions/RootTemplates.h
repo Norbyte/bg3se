@@ -595,6 +595,63 @@ struct SurfaceTemplate : public GameObjectTemplate
 };
 
 
+struct TimelineReferencedTemplate
+{
+    bool ReferencedInTimeline;
+    HashSet<Guid> Timelines;
+};
+
+
+struct LightTemplate : public GameObjectTemplate
+{
+    int field_110;
+    int field_114;
+    OverrideableProperty<glm::vec3> Color;
+    OverrideableProperty<glm::vec2> Angle;
+    OverrideableProperty<float> Kelvin;
+    OverrideableProperty<float> Radius;
+    OverrideableProperty<float> Intensity;
+    OverrideableProperty<float> ScatteringScale;
+    OverrideableProperty<float> Gain;
+    OverrideableProperty<float> Speed;
+    OverrideableProperty<float> Amount;
+    OverrideableProperty<float> MovementSpeed;
+    OverrideableProperty<float> MovementAmount;
+    OverrideableProperty<bool> UseTemperature;
+    OverrideableProperty<bool> Enabled;
+    OverrideableProperty<bool> IsFlickering;
+    OverrideableProperty<bool> IsMoving;
+    OverrideableProperty<bool> Shadow;
+    OverrideableProperty<bool> VolumetricShadow;
+    OverrideableProperty<bool> PreExpose;
+    OverrideableProperty<bool> FlatFalloff;
+    OverrideableProperty<uint8_t> LightChannelFlag;
+    OverrideableProperty<uint8_t> LightType;
+    OverrideableProperty<FixedString> LightCookieTexture;
+    OverrideableProperty<glm::vec3> DirectionLightDimensions;
+    OverrideableProperty<uint8_t> DirectionLightAttenuationFunction;
+    OverrideableProperty<float> DirectionLightAttenuationStart;
+    OverrideableProperty<float> DirectionLightAttenuationEnd;
+    OverrideableProperty<float> DirectionLightAttenuationSide;
+    TimelineReferencedTemplate ReferencedInTimelines;
+};
+
+
+struct CombinedLightTemplate : public LightTemplate
+{
+    OverrideableProperty<bool> GameplayIsActive;
+    OverrideableProperty<float> GameplayRadius;
+    OverrideableProperty<float> GameplayEdgeSharpening;
+    OverrideableProperty<bool> GameplayCheckLOS;
+    OverrideableProperty<float> GameplaySpotlightAngle;
+    OverrideableProperty<glm::vec3> GameplayDirectionalDimensions;
+    OverrideableProperty<FixedString> LightCookieResource;
+    OverrideableProperty<bool> IsHalfLit;
+    OverrideableProperty<bool> IsSunlight;
+};
+
+
+
 struct [[bg3::hidden]] GlobalTemplateBank
 {
     void* VMT;
@@ -656,5 +713,7 @@ LUA_INFINITE_LIFETIME(ItemTemplate)
 LUA_INFINITE_LIFETIME(CharacterTemplate)
 LUA_INFINITE_LIFETIME(ProjectileTemplate)
 LUA_INFINITE_LIFETIME(SurfaceTemplate)
+LUA_INFINITE_LIFETIME(LightTemplate)
+LUA_INFINITE_LIFETIME(CombinedLightTemplate)
 
 END_NS()

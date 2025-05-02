@@ -479,4 +479,35 @@ struct RenderableObject : public MoveableObject
 };
 
 
+struct LightComponent : public MoveableObject
+{
+    EntityHandle field_80;
+    glm::vec3 Color;
+    float SpotLightInnerAngle;
+    float SpotLightOuterAngle;
+    glm::vec3 DirectionLightDimensions;
+    float DirectionLightAttenuationSide;
+    float DirectionLightAttenuationEnd;
+    float DirectionLightAttenuationSide2;
+    float Kelvin;
+    float Radius;
+    float Intensity;
+    uint32_t field_C0;
+    float ScatteringIntensityScale;
+    float Gain;
+    float EdgeSharpening;
+    uint8_t DirectionLightAttenuationFunction;
+    uint8_t Flags;
+    uint8_t LightChannelFlag;
+    uint8_t LightType;
+    glm::vec3 Blackbody;
+    glm::vec3 field_E0;
+    [[bg3::hidden]] void* LightCookieTexture;
+    LightTemplate* Template;
+    EntityHandle AssociatedScene;
+    uint64_t CullFlags;
+    FixedString UUID;
+};
+
+
 END_SE()

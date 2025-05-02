@@ -250,9 +250,9 @@ DEFN_BOOST(Attribute, Attribute, {
 })
 
 DEFN_BOOST(GameplayLight, GameplayLight, {
-    [[bg3::legacy(field_0)]] int Distance;
-    bool field_4;
-    int field_8;
+    [[bg3::legacy(field_0)]] float Radius;
+    bool LOS;
+    float Sharpening;
     [[bg3::legacy(field_C)]] uint8_t Sunlight;
 })
 

@@ -81,21 +81,28 @@ struct GameplayLightComponent : public BaseComponent
 {
     DEFINE_COMPONENT(GameplayLight, "eoc::GameplayLightComponent")
 
-    uint8_t field_0;
-    float field_4;
-    int field_8;
-    int field_C;
-    glm::vec3 field_10;
-    uint8_t field_1C;
-    uint8_t field_1D;
-    uint8_t field_1E;
-    glm::vec3 field_20;
-    std::optional<float> field_2C;
-    bool field_34;
-    FixedString field_38;
+    [[bg3::legacy(field_0)]] bool Active;
+    [[bg3::legacy(field_4)]] float Radius;
+    [[bg3::legacy(field_8)]] float EdgeSharpening;
+    [[bg3::legacy(field_C)]] float SpotlightAngle;
+    [[bg3::legacy(field_10)]] glm::vec3 DirectionalDimensions;
+    [[bg3::legacy(field_1C)]] uint8_t LightType;
+    [[bg3::legacy(field_1D)]] bool IsHalfLit;
+    [[bg3::legacy(field_1E)]] bool Sunlight;
+    [[bg3::legacy(field_20)]] glm::vec3 AttachAt;
+    [[bg3::legacy(field_2C)]] std::optional<float> PointLightVerticalLimit;
+    [[bg3::legacy(field_34)]] bool CheckLOS;
+    [[bg3::legacy(field_38)]] FixedString LightCookie;
     float field_3C;
     float field_40;
     uint8_t field_44;
+};
+
+struct LightComponentProxy : public BaseComponent
+{
+    DEFINE_COMPONENT(Light, "ls::LightComponent")
+
+    LightComponent* Light;
 };
 
 struct StaticPhysicsComponent : public BaseComponent
