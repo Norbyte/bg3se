@@ -1210,7 +1210,7 @@ namespace bg3se::lua::dbg
     {
         if (!IsDebuggerReady()) return;
 
-        if (gExtender->GetServer().IsInServerThread()) {
+        if (gExtender->GetServer().IsInContext()) {
             server_.OnLuaHook(L, ar);
         } else {
             client_.OnLuaHook(L, ar);
@@ -1221,7 +1221,7 @@ namespace bg3se::lua::dbg
     {
         if (!IsDebuggerReady()) return;
 
-        if (gExtender->GetServer().IsInServerThread()) {
+        if (gExtender->GetServer().IsInContext()) {
             server_.OnLuaError(L, msg);
         } else {
             client_.OnLuaError(L, msg);
@@ -1232,7 +1232,7 @@ namespace bg3se::lua::dbg
     {
         if (!IsDebuggerReady()) return;
 
-        if (gExtender->GetServer().IsInServerThread()) {
+        if (gExtender->GetServer().IsInContext()) {
             server_.OnGenericError(msg);
         } else {
             client_.OnGenericError(msg);
@@ -1243,7 +1243,7 @@ namespace bg3se::lua::dbg
     {
         if (!IsDebuggerReady()) return;
 
-        if (gExtender->GetServer().IsInServerThread()) {
+        if (gExtender->GetServer().IsInContext()) {
             server_.DebugBreak(L);
         } else {
             client_.DebugBreak(L);

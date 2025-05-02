@@ -49,7 +49,7 @@ void ObjectHelpers::Sync(Object* object, std::optional<bool> persist)
 
     stats->SyncWithPrototypeManager(object);
 
-    if (gExtender->GetServer().IsInServerThread()) {
+    if (gExtender->GetServer().IsInContext()) {
         object->BroadcastSyncMessage(false);
 
         gExtender->GetServer().GetExtensionState().MarkDynamicStat(object->Name);

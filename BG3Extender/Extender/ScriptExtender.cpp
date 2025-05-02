@@ -232,7 +232,7 @@ std::wstring ScriptExtender::MakeLogFilePath(std::wstring const & Type, std::wst
 void ScriptExtender::OnStatsLoadGuarded(stats::RPGStats::LoadProc* wrapped, stats::RPGStats* mgr, Array<STDString>* paths)
 {
     // Stats load is scheduled from the client on the shared worker pool
-    client_.AddThread(GetCurrentThreadId());
+    ContextGuard _(ContextType::Client);
 
     // Ensure that we have an empty extension state ready in case OnStatsLoad() is the first callback
     // due to late load
@@ -264,8 +264,6 @@ void ScriptExtender::OnStatsLoadGuarded(stats::RPGStats::LoadProc* wrapped, stat
 #if defined(ENABLE_IMGUI)
     imgui_.EnableUI(true);
 #endif
-
-    client_.RemoveThread(GetCurrentThreadId());
 }
 
 void ScriptExtender::OnStatsLoad(stats::RPGStats::LoadProc* wrapped, stats::RPGStats* mgr, Array<STDString>* paths)
@@ -295,7 +293,10 @@ void ScriptExtender::OnECSUpdateGuarded(ecs::EntityWorld::UpdateProc* wrapped, e
 
         ecs->PostUpdate();
 
-        if (entityWorld->Replication) {
+        auto ctx = GetCurrentContextType();
+        se_assert(ctx != ContextType::None);
+
+        if (ctx == ContextType::Server) {
             if (GetServer().HasExtensionState()) {
                 esv::LuaServerPin lua(GetServer().GetExtensionState());
                 if (lua) {
@@ -328,14 +329,16 @@ void ScriptExtender::OnECSFlushECBs(ecs::EntityWorld* entityWorld)
 
 void ScriptExtender::OnFindPath(AiGrid* self, AiPathId pathId)
 {
-    if (server_.IsInServerThread()) {
+    auto ctx = GetCurrentContextType();
+
+    if (ctx == ContextType::Server) {
         if (server_.HasExtensionState()) {
             esv::LuaServerPin lua(GetServer().GetExtensionState());
             if (lua) {
                 lua->OnFindPath(self, pathId);
             }
         }
-    } else if (client_.IsInClientThread()) {
+    } else if (ctx == ContextType::Client) {
         if (GetClient().HasExtensionState()) {
             ecl::LuaClientPin lua(GetClient().GetExtensionState());
             if (lua) {
@@ -353,20 +356,22 @@ bool ScriptExtender::HasFeatureFlag(char const * flag) const
 
 ExtensionStateBase* ScriptExtender::GetCurrentExtensionState()
 {
-    if (server_.IsInServerThread()) {
+    auto ctx = GetCurrentContextType();
+
+    if (ctx == ContextType::Server) {
         if (server_.HasExtensionState()) {
             return &server_.GetExtensionState();
         } else {
             return nullptr;
         }
-    } else if (client_.IsInClientThread()) {
+    } else if (ctx == ContextType::Client) {
         if (client_.HasExtensionState()) {
             return &client_.GetExtensionState();
         } else {
             return nullptr;
         }
     } else {
-        WARN("Called from unknown thread %d?", GetCurrentThreadId());
+        ERR("Called from thread %d that is not bound to any context!", GetCurrentThreadId());
         if (client_.HasExtensionState()) {
             return &client_.GetExtensionState();
         } else {

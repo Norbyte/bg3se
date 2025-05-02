@@ -393,11 +393,11 @@ public:
 
     std::pair<std::string, std::string> DumpLuaBacktrace()
     {
-        if (gExtender->GetServer().IsInThread(CrashThreadId) && gExtender->GetServer().HasExtensionState()) {
+        if (gExtender->GetServer().HasExtensionState() && gExtender->GetServer().GetExtensionState().GetOwningThread() == CrashThreadId) {
             return DumpLuaBacktrace(gExtender->GetServer().GetExtensionState());
         }
 
-        if (gExtender->GetClient().IsInThread(CrashThreadId) && gExtender->GetClient().HasExtensionState()) {
+        if (gExtender->GetClient().HasExtensionState() && gExtender->GetClient().GetExtensionState().GetOwningThread() == CrashThreadId) {
             return DumpLuaBacktrace(gExtender->GetClient().GetExtensionState());
         }
 

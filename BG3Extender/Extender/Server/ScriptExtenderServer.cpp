@@ -34,7 +34,8 @@ char const * GameStateNames[] =
 };
 
 ScriptExtender::ScriptExtender(ExtenderConfig& config)
-    : osiris_(config)
+    : ThreadedExtenderState(ContextType::Server), 
+    osiris_(config)
 {
 }
 
@@ -105,7 +106,7 @@ void ScriptExtender::OnGameStateChanged(GameState fromState, GameState toState)
 #endif
 
     if (fromState != GameState::Unknown) {
-        AddThread(GetCurrentThreadId());
+        BindToThreadPersistent();
     }
 
     switch (fromState) {
@@ -174,9 +175,8 @@ void ScriptExtender::OnGameStateChanged(GameState fromState, GameState toState)
 
 void ScriptExtender::GameStateWorkerWrapper(void (* wrapped)(void *), void* self)
 {
-    AddThread(GetCurrentThreadId());
+    ContextGuard _(ContextType::Server);
     wrapped(self);
-    RemoveThread(GetCurrentThreadId());
 }
 
 void ScriptExtender::PreUpdate(void* self, GameTime* time)
@@ -197,16 +197,9 @@ void ScriptExtender::PostUpdate(void* self, GameTime* time)
     RunPendingTasks();
 }
 
-bool ScriptExtender::IsInServerThread() const
-{
-    return IsInThread();
-}
-
 void ScriptExtender::ResetLuaState()
 {
     if (extensionState_ && extensionState_->GetLua()) {
-        bool serverThread = IsInServerThread();
-
         auto ext = extensionState_.get();
         ext->AddPostResetCallback([ext]() {
             ext->OnModuleResume();

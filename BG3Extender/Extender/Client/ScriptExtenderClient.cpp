@@ -57,7 +57,8 @@ char const * GameStateNames[] =
 };
 
 ScriptExtender::ScriptExtender(ExtenderConfig& config)
-    : config_(config)
+    : ThreadedExtenderState(ContextType::Client),
+    config_(config)
 {
 }
 
@@ -160,7 +161,7 @@ void ScriptExtender::OnGameStateChanged(GameState fromState, GameState toState)
 #endif
 
     if (fromState != GameState::Unknown) {
-        AddThread(GetCurrentThreadId());
+        BindToThreadPersistent();
     }
 
     if (gExtender->WasInitialized() && !gExtender->GetLibraryManager().CriticalInitializationFailed()) {
@@ -248,16 +249,15 @@ void ScriptExtender::OnGameStateChanged(GameState fromState, GameState toState)
 
 void ScriptExtender::GameStateWorkerWrapper(void (*wrapped)(void*), void* self)
 {
-    AddThread(GetCurrentThreadId());
+    ContextGuard _(ContextType::Client);
     wrapped(self);
-    RemoveThread(GetCurrentThreadId());
 }
 
 void ScriptExtender::OnUpdate(void* self, GameTime* time)
 {
     BEGIN_GUARDED()
     // In case we're loaded too late to see LoadModule transition
-    AddThread(GetCurrentThreadId());
+    BindToThreadPersistent();
 
     network_.Update();
     RunPendingTasks();
@@ -307,11 +307,6 @@ void ScriptExtender::ShowVersionNumber()
             "\r\nScript Extender v" + STDString(std::to_string(CurrentVersion)) + " loaded, built on " + BuildDate + ".";
         GetStaticSymbols().GetTranslatedStringRepository()->UpdateTranslatedString(rsh, expandedVersion);
     }
-}
-
-bool ScriptExtender::IsInClientThread() const
-{
-    return IsInThread();
 }
 
 void ScriptExtender::ResetLuaState()

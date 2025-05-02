@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Extender/Shared/ScriptExtenderBase.h>
 #include "ExtensionHelpers.h"
 #include "Lua/LuaBinding.h"
 #include <random>
@@ -64,6 +65,11 @@ namespace bg3se
             return StatLoadTriggered;
         }
 
+        inline DWORD GetOwningThread() const
+        {
+            return owningThread_;
+        }
+
         inline GameTime const& Time() const
         {
             return time_;
@@ -120,9 +126,14 @@ namespace bg3se
             return modVariables_;
         }
 
-        inline uint32_t GetEnterCount()
+        inline uint32_t GetEnterCount() const
         {
             return luaRefs_;
+        }
+
+        inline bool IsServer() const
+        {
+            return server_;
         }
 
     protected:
@@ -135,10 +146,12 @@ namespace bg3se
 
         std::recursive_mutex luaMutex_;
         std::atomic<uint32_t> luaRefs_{ 0 };
+        DWORD owningThread_{ 0 };
         std::vector<PostResetCallback> luaPostResetCallbacks_;
         bool LuaPendingDelete{ false };
         bool LuaPendingStartup{ false };
         bool StatLoadTriggered{ false };
+        bool server_{ false };
         ExtensionStateContext context_{ ExtensionStateContext::Uninitialized };
         ExtensionStateContext nextContext_{ ExtensionStateContext::Uninitialized };
 
@@ -223,12 +236,14 @@ namespace bg3se
         inline LuaStatePin(T & state)
             : state_(state)
         {
+            se_assert((state_.IsServer() ? ContextType::Server : ContextType::Client) == GetCurrentContextType());
             state_.IncLuaRefs();
         }
 
         inline ~LuaStatePin()
         {
             state_.DecLuaRefs();
+            se_assert((state_.IsServer() ? ContextType::Server : ContextType::Client) == GetCurrentContextType());
         }
 
         LuaStatePin(LuaStatePin const& state) = delete;

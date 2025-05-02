@@ -170,7 +170,7 @@ Array<STDString> GetCommandLineParams()
 
 dlg::DialogManager* GetDialogManager(lua_State* L)
 {
-    if (gExtender->GetServer().IsInServerThread()) {
+    if (gExtender->GetServer().IsInContext()) {
         auto ds = State::FromLua(L)->GetEntitySystemHelpers()->GetSystem<esv::DialogSystem>();
         return ds ? ds->GameInterface.DialogManager : nullptr;
     } else {
@@ -180,7 +180,7 @@ dlg::DialogManager* GetDialogManager(lua_State* L)
 
 UserReturn GetGameState(lua_State* L)
 {
-    if (gExtender->GetServer().IsInServerThread()) {
+    if (gExtender->GetServer().IsInContext()) {
         push(L, GetStaticSymbols().GetServerState());
     } else {
         push(L, GetStaticSymbols().GetClientState());

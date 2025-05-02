@@ -29,10 +29,14 @@ void NetworkRequestSystem::Update()
 bg3se::net::ExtenderMessage* BuildMessage(lua_State* L, UserId userId, char const* channel, char const* payload, std::optional<Guid> moduleGuid, std::optional<FunctionRef> requestHandler, std::optional<RequestId> replyId)
 {
     bg3se::net::BaseNetworkManager* networkMgr;
-    if (gExtender->GetServer().IsInServerThread()) {
+    se_assert(GetCurrentContextType() != ContextType::None);
+    if (GetCurrentContextType() == ContextType::Server) {
         networkMgr = &gExtender->GetServer().GetNetworkManager();
-    } else {
+    } else if (GetCurrentContextType() == ContextType::Client) {
         networkMgr = &gExtender->GetClient().GetNetworkManager();
+    } else {
+        ERR("Tried to send net message from unknown context!");
+        return nullptr;
     }
 
     auto msg = networkMgr->GetFreeMessage(ReservedUserId);

@@ -3,20 +3,30 @@
 
 BEGIN_SE()
 
-void ThreadedExtenderState::AddThread(DWORD threadId)
+thread_local ContextType gCurrentContext = ContextType::None;
+
+ContextType GetCurrentContextType()
 {
-    if (threadIds_.find(threadId) == threadIds_.end()) {
-        threadIds_.insert(threadId);
-    }
+    return gCurrentContext;
 }
 
-void ThreadedExtenderState::RemoveThread(DWORD threadId)
+ContextGuard::ContextGuard(ContextType ctx)
+    : context_(ctx)
 {
-    auto it = threadIds_.find(threadId);
-    if (it != threadIds_.end()) {
-        threadIds_.erase(it);
-    }
+    se_assert(gCurrentContext == ContextType::None || gCurrentContext == ctx);
+    previousContext_ = gCurrentContext;
+    gCurrentContext = context_;
 }
+
+ContextGuard::~ContextGuard()
+{
+    se_assert(gCurrentContext == context_);
+    gCurrentContext = previousContext_;
+}
+
+ThreadedExtenderState::ThreadedExtenderState(ContextType ctx)
+    : context_(ctx)
+{}
 
 void ThreadedExtenderState::EnqueueTask(std::function<void()> fun)
 {
@@ -52,15 +62,15 @@ void ThreadedExtenderState::RunPendingTasks()
     }
 }
 
-bool ThreadedExtenderState::IsInThread() const
+void ThreadedExtenderState::BindToThreadPersistent()
 {
-    auto tid = GetCurrentThreadId();
-    return threadIds_.find(tid) != threadIds_.end();
+    se_assert(gCurrentContext == ContextType::None || gCurrentContext == context_);
+    gCurrentContext = context_;
 }
 
-bool ThreadedExtenderState::IsInThread(DWORD threadId) const
+bool ThreadedExtenderState::IsInContext() const
 {
-    return threadIds_.find(threadId) != threadIds_.end();
+    return gCurrentContext == context_;
 }
 
 END_SE()

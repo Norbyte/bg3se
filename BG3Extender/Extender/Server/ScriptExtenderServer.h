@@ -56,7 +56,6 @@ public:
         return network_;
     }
 
-    bool IsInServerThread() const;
     void ResetLuaState();
     bool RequestResetClientLuaState();
     void ResetExtensionState();

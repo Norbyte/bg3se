@@ -22,13 +22,13 @@ using namespace bg3se::lua;
 
 LifetimeHandle GetClientLifetime()
 {
-    se_assert(gExtender->GetClient().IsInClientThread());
+    se_assert(gExtender->GetClient().IsInContext());
     return ExtensionState::Get().GetLua()->GetCurrentLifetime();
 }
 
 LifetimePool& GetClientLifetimePool()
 {
-    se_assert(gExtender->GetClient().IsInClientThread());
+    se_assert(gExtender->GetClient().IsInContext());
     return ExtensionState::Get().GetLua()->GetLifetimePool();
 }
 
@@ -53,7 +53,7 @@ void ExtensionLibraryClient::RegisterLib(lua_State * L)
 
 ClientState* ClientState::FromLua(lua_State* L)
 {
-    se_assert(gExtender->GetClient().IsInClientThread());
+    se_assert(GetCurrentContextType() == ContextType::Client);
     return static_cast<ClientState*>(State::FromLua(L));
 }
 

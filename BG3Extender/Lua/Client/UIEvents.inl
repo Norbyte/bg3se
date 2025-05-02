@@ -7,6 +7,7 @@ struct DummyDelegate
 {
     void Handler(Noesis::BaseComponent* o, const RoutedEventArgs& args)
     {
+        ContextGuard ctx(ContextType::Client);
         LuaClientPin lua(gExtender->GetClient().GetExtensionState());
         if (lua) {
             auto index = (UIEventHooks::SubscriptionIndex)(uintptr_t)this;

@@ -138,19 +138,30 @@ global_State* DebugClientVM{ nullptr };
 void EnterVMCheck(lua_State* L)
 {
 #if !defined(NDEBUG) || defined(SE_RELEASE_ASSERTS)
-    bool server = gExtender->GetServer().IsInServerThread();
-    auto vm = server ? DebugServerVM : DebugClientVM;
-    auto state = server ? DebugServerState : DebugClientState;
-    se_assert(vm != nullptr && vm == L->l_G);
-    se_assert(state->GetEnterCount() > 0);
+    auto ctx = GetCurrentContextType();
+    se_assert(ctx != ContextType::None);
+
+    if (ctx == ContextType::Server) {
+        se_assert(DebugServerVM != nullptr && DebugServerVM == L->l_G);
+        se_assert(DebugServerState != nullptr && DebugServerState->GetEnterCount() > 0);
+    } else {
+        se_assert(DebugClientVM != nullptr && DebugClientVM == L->l_G);
+        se_assert(DebugClientState != nullptr && DebugClientState->GetEnterCount() > 0);
+    }
 #endif
 }
 
 void VMCheck(lua_State* L)
 {
 #if !defined(NDEBUG) || defined(SE_RELEASE_ASSERTS)
-    auto state = gExtender->GetServer().IsInServerThread() ? DebugServerVM : DebugClientVM;
-    se_assert(state != nullptr && state == L->l_G);
+    auto ctx = GetCurrentContextType();
+    se_assert(ctx != ContextType::None);
+
+    if (ctx == ContextType::Server) {
+        se_assert(DebugServerVM != nullptr && DebugServerVM == L->l_G);
+    } else {
+        se_assert(DebugClientVM != nullptr && DebugClientVM == L->l_G);
+    }
 #endif
 }
 
@@ -374,7 +385,10 @@ LuaStateWrapper::LuaStateWrapper(ExtensionStateBase& state)
     lua_atpanic(L, &LuaPanic);
 
 #if !defined(NDEBUG) || defined(SE_RELEASE_ASSERTS)
-    if (gExtender->GetServer().IsInServerThread()) {
+    auto ctx = GetCurrentContextType();
+    se_assert(ctx != ContextType::None);
+
+    if (ctx == ContextType::Server) {
         DebugServerState = &state;
         DebugServerVM = L->l_G;
     } else {
@@ -387,7 +401,10 @@ LuaStateWrapper::LuaStateWrapper(ExtensionStateBase& state)
 LuaStateWrapper::~LuaStateWrapper()
 {
 #if !defined(NDEBUG) || defined(SE_RELEASE_ASSERTS)
-    if (gExtender->GetServer().IsInServerThread()) {
+    auto ctx = GetCurrentContextType();
+    se_assert(ctx != ContextType::None);
+
+    if (ctx == ContextType::Server) {
         se_assert(DebugServerVM == L->l_G);
         DebugServerState = nullptr;
         DebugServerVM = nullptr;

@@ -22,7 +22,7 @@ namespace bg3se::lua
 {
     LifetimeHandle GetCurrentLifetime()
     {
-        if (gExtender->GetServer().IsInServerThread()) {
+        if (gExtender->GetServer().IsInContext()) {
             return esv::lua::GetServerLifetime();
         } else {
             return ecl::lua::GetClientLifetime();
@@ -31,7 +31,7 @@ namespace bg3se::lua
 
     LifetimePool& GetLifetimePool()
     {
-        if (gExtender->GetServer().IsInServerThread()) {
+        if (gExtender->GetServer().IsInContext()) {
             return esv::lua::GetServerLifetimePool();
         } else {
             return ecl::lua::GetClientLifetimePool();
@@ -45,13 +45,13 @@ namespace bg3se::esv::lua
 
     LifetimeHandle GetServerLifetime()
     {
-        se_assert(gExtender->GetServer().IsInServerThread());
+        se_assert(gExtender->GetServer().IsInContext());
         return esv::ExtensionState::Get().GetLua()->GetCurrentLifetime();
     }
 
     LifetimePool& GetServerLifetimePool()
     {
-        se_assert(gExtender->GetServer().IsInServerThread());
+        se_assert(gExtender->GetServer().IsInContext());
         return esv::ExtensionState::Get().GetLua()->GetLifetimePool();
     }
 

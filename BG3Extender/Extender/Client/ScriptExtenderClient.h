@@ -51,7 +51,6 @@ public:
         return sdl_;
     }
 
-    bool IsInClientThread() const;
     void ResetLuaState();
     void ResetExtensionState();
     void LoadExtensionState(ExtensionStateContext ctx);

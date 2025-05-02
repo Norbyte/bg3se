@@ -32,7 +32,8 @@ namespace bg3se
     }
 
     ExtensionStateBase::ExtensionStateBase(bool isServer)
-        : userVariables_(isServer, isServer ? (ecs::EntitySystemHelpersBase &)gExtender->GetServer().GetEntityHelpers() : gExtender->GetClient().GetEntityHelpers()),
+        : server_(isServer),
+        userVariables_(isServer, isServer ? (ecs::EntitySystemHelpersBase &)gExtender->GetServer().GetEntityHelpers() : gExtender->GetClient().GetEntityHelpers()),
         modVariables_(isServer)
     {}
 
@@ -281,13 +282,19 @@ namespace bg3se
     void ExtensionStateBase::IncLuaRefs()
     {
         luaMutex_.lock();
-        luaRefs_++;
+        if (++luaRefs_ == 1) {
+            se_assert(owningThread_ == 0);
+            owningThread_ = GetCurrentThreadId();
+        }
     }
 
     void ExtensionStateBase::DecLuaRefs()
     {
         se_assert(luaRefs_ > 0);
-        luaRefs_--;
+        se_assert(owningThread_ == GetCurrentThreadId());
+        if (--luaRefs_ == 0) {
+            owningThread_ = 0;
+        }
         luaMutex_.unlock();
 
         if (luaRefs_ == 0 && LuaPendingDelete) {
@@ -470,7 +477,7 @@ namespace bg3se
     void ExtensionStateBase::LuaResetInternal()
     {
         std::lock_guard _(luaMutex_);
-        if (gExtender->GetClient().IsInClientThread()) {
+        if (gExtender->GetClient().IsInContext()) {
             gExtender->GetClient().UpdateClientProgress("Lua Init");
         } else {
             gExtender->GetClient().UpdateServerProgress("Lua Init");
@@ -529,7 +536,7 @@ namespace bg3se
             if (configIt != modConfigs_.end()) {
                 auto const & config = configIt->second;
                 if (config.FeatureFlags.find("Lua") != config.FeatureFlags.end()) {
-                    if (gExtender->GetClient().IsInClientThread()) {
+                    if (gExtender->GetClient().IsInContext()) {
                         gExtender->GetClient().UpdateClientProgress(mod.Info.Name);
                     } else {
                         gExtender->GetClient().UpdateServerProgress(mod.Info.Name);

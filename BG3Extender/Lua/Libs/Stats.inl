@@ -568,7 +568,7 @@ Object* Create(lua_State * L, FixedString const& statName, FixedString const& mo
     }
 
     if (!(lua->RestrictionFlags & State::ScopeModuleLoad)) {
-        if (gExtender->GetServer().IsInServerThread()) {
+        if (gExtender->GetServer().IsInContext()) {
             static bool syncWarningShown{ false };
             if (!syncWarningShown) {
                 OsiWarn("Stats entres created after ModuleLoad must be synced manually; make sure that you call SyncStat() on it when you're finished!");
@@ -611,7 +611,7 @@ void Sync(FixedString const& statName, std::optional<bool> persist)
 
     stats->SyncWithPrototypeManager(object);
 
-    if (gExtender->GetServer().IsInServerThread()) {
+    if (gExtender->GetServer().IsInContext()) {
         object->BroadcastSyncMessage(false);
 
         gExtender->GetServer().GetExtensionState().MarkDynamicStat(statName);
@@ -632,7 +632,7 @@ void Sync(FixedString const& statName, std::optional<bool> persist)
 /// <param name="persist">Is the stats entry persistent, i.e. if it will be written to savegames</param>
 void SetPersistence(FixedString const& statName, bool persist)
 {
-    if (!gExtender->GetServer().IsInServerThread()) {
+    if (!gExtender->GetServer().IsInContext()) {
         OsiError("Can only set persistence in server context");
         return;
     }
