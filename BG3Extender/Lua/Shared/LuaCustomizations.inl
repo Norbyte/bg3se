@@ -705,13 +705,21 @@ FixedStringNoRef do_get(lua_State* L, int index, Overload<FixedStringNoRef>)
     return fs;
 }
 
+void LuaCacheString(lua_State* L, TString* s, FixedString const& fstr)
+{
+    static_assert(sizeof(LUA_STRING_EXTRATYPE) == sizeof(CachedFixedString));
+    auto fs = reinterpret_cast<CachedFixedString*>(&s->cache);
+    new (&fs->Str) FixedString(fstr);
+    fs->IsCached = true;
+}
+
 void push(lua_State* L, FixedString const& v)
 {
     lua_lock(L);
     TString* ts;
     if (v) {
         ts = luaS_new(L, v.GetString());
-        LuaCacheString(L, ts);
+        LuaCacheString(L, ts, v);
     } else {
         ts = luaS_new(L, "");
     }
