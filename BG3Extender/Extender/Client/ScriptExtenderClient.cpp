@@ -2,6 +2,7 @@
 #include <Extender/Client/ScriptExtenderClient.h>
 #include <Extender/ScriptExtender.h>
 #include <Extender/Version.h>
+#include <shlwapi.h>
 
 #define STATIC_HOOK(name) decltype(bg3se::ecl::ScriptExtender::name) * decltype(bg3se::ecl::ScriptExtender::name)::gHook;
 STATIC_HOOK(gameStateWorkerStart_)
@@ -123,6 +124,17 @@ bool IsLoadingState(GameState state)
         || state == GameState::ModReceiving;
 }
 
+// Undo "ModCrashSanityCheck" mechanism that disables mods on an unclean exit
+void CleanupSanityCheck()
+{
+    auto path = GetStaticSymbols().ToPath("ModCrashSanityCheck", PathRootType::UserProfile);
+    auto pathw = FromUTF8(path);
+    if (PathIsDirectoryW(pathw.c_str())) {
+        RemoveDirectoryW(pathw.c_str());
+        INFO("Removed ModCrashSanityCheck");
+    }
+}
+
 void ScriptExtender::OnGameStateChanged(GameState fromState, GameState toState)
 {
     if (gExtender->GetConfig().SendCrashReports) {
@@ -143,6 +155,12 @@ void ScriptExtender::OnGameStateChanged(GameState fromState, GameState toState)
     if (toState == GameState::Menu
         && gExtender->GetLibraryManager().InitializationFailed()) {
         gExtender->PostStartup();
+    }
+
+    if ((toState == GameState::InitMenu || toState == GameState::StartLoading)
+        && !gExtender->GetLibraryManager().CriticalInitializationFailed()
+        && gExtender->GetConfig().InsanityCheck) {
+        CleanupSanityCheck();
     }
 
     // FIXME - EnableModuleHashing flag not currently mapped
