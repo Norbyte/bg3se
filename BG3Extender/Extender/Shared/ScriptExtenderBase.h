@@ -27,6 +27,19 @@ private:
     ContextType previousContext_;
 };
 
+// Same as ContextGuard, but allows temporarily "conversion" of 
+// a client thread into server context and vice versa
+class ContextGuardAnyThread
+{
+public:
+    ContextGuardAnyThread(ContextType ctx);
+    ~ContextGuardAnyThread();
+
+private:
+    ContextType context_;
+    ContextType previousContext_;
+};
+
 class ThreadedExtenderState
 {
 public:

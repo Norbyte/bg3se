@@ -24,6 +24,19 @@ ContextGuard::~ContextGuard()
     gCurrentContext = previousContext_;
 }
 
+ContextGuardAnyThread::ContextGuardAnyThread(ContextType ctx)
+    : context_(ctx)
+{
+    previousContext_ = gCurrentContext;
+    gCurrentContext = context_;
+}
+
+ContextGuardAnyThread::~ContextGuardAnyThread()
+{
+    se_assert(gCurrentContext == context_);
+    gCurrentContext = previousContext_;
+}
+
 ThreadedExtenderState::ThreadedExtenderState(ContextType ctx)
     : context_(ctx)
 {}
