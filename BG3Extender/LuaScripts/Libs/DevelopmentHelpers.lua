@@ -295,7 +295,10 @@ local function ValidateStats()
         ValidateFunctorGroups(spell.ThrowableSpellFail)
         ValidateFunctorGroups(spell.ThrowableSpellProperties)
         ValidateFunctorGroups(spell.ThrowableSpellSuccess)
-        Ext.Types.Validate(Ext.Stats.GetCachedSpell(name))
+        local cached = Ext.Stats.GetCachedSpell(name)
+        if cached ~= nil then
+            Ext.Types.Validate(Ext.Stats.GetCachedSpell(name))
+        end
     end
 
     for i,name in pairs(Ext.Stats.GetStats("InterruptData")) do

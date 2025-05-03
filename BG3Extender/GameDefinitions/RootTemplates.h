@@ -4,6 +4,8 @@
 
 BEGIN_SE()
 
+struct TemplateTagContainer;
+
 struct GameObjectTemplate
 {
     virtual ~GameObjectTemplate() = 0;
@@ -45,7 +47,7 @@ struct GameObjectTemplate
 
     //# P_GETTER(TemplateType, GetTemplateType)
 
-    [[bg3::hidden]] void* field_8;
+    TemplateTagContainer* Tags;
     [[bg3::readonly]] FixedString Id;
     [[bg3::readonly]] FixedString TemplateName;
     [[bg3::readonly]] FixedString ParentTemplateId;
@@ -53,7 +55,7 @@ struct GameObjectTemplate
     [[bg3::readonly]] STDString Name;
     OverrideableProperty<uint32_t> GroupID;
     FixedString LevelName;
-    uint8_t _Pad[4];
+    [[bg3::hidden]] uint32_t _Pad;
     OverrideableProperty<Transform> Transform;
     OverrideableProperty<FixedString> VisualTemplate;
     OverrideableProperty<FixedString> PhysicsTemplate;
@@ -64,8 +66,16 @@ struct GameObjectTemplate
     OverrideableProperty<bool> IsShadowProxy;
     uint8_t GlobalDeletedFlag;
     OverrideableProperty<uint8_t> RenderChannel;
-    uint8_t ParentTemplateFlags;
+    OverrideableProperty<uint8_t> ParentTemplateFlags;
     STDString FileName;
+};
+
+struct TemplateTagContainer
+{
+    HashSet<Guid> DirectTags;
+    HashSet<Guid> Tags;
+    [[bg3::hidden]] GameObjectTemplate* Template;
+    [[bg3::hidden]] void* GetTagsCallback;
 };
 
 
@@ -562,10 +572,11 @@ struct SurfaceTemplate : public GameObjectTemplate
 {
     SurfaceType SurfaceType;
     FixedString SurfaceName;
-    uint64_t field_158[4];
-    uint32_t field_188;
+    uint32_t field_158;
     OverrideableProperty<TranslatedString> DisplayName;
     OverrideableProperty<TranslatedString> Description;
+    OverrideableProperty<Guid> CursorMessage;
+    OverrideableProperty<FixedString> Icon;
     OverrideableProperty<FixedString> DecalMaterial;
     OverrideableProperty<uint8_t> MaterialType;
     OverrideableProperty<uint8_t> SurfaceCategory;
@@ -590,8 +601,12 @@ struct SurfaceTemplate : public GameObjectTemplate
     OverrideableProperty<uint8_t> ObscuredStateOverride;
     OverrideableProperty<float> OnEnterDistanceOverride;
     OverrideableProperty<float> OnMoveDistanceOverride;
+    OverrideableProperty<bool> AiPathVisible;
     OverrideableProperty<glm::vec3> AiPathColor;
     OverrideableProperty<FixedString> AiPathIconFX;
+    OverrideableProperty<bool> EnableLightSpawning;
+    OverrideableProperty<FixedString> SpawnLightTemplateID;
+    OverrideableProperty<glm::vec2> SpawnLightRandomVerticalRangeOffset;
 };
 
 
