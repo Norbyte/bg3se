@@ -70,7 +70,6 @@ void LoadConfig(std::wstring const & configPath, ExtenderConfig & config)
     ConfigGetBool(root, "ForceCrashReporting", config.ForceCrashReporting);
     ConfigGetBool(root, "EnableDebugger", config.EnableDebugger);
     ConfigGetBool(root, "EnableLuaDebugger", config.EnableLuaDebugger);
-    ConfigGetBool(root, "DisableModValidation", config.DisableModValidation);
     ConfigGetBool(root, "DeveloperMode", config.DeveloperMode);
     ConfigGetBool(root, "ClearOnReset", config.ClearOnReset);
     ConfigGetBool(root, "ShowPerfWarnings", config.ShowPerfWarnings);

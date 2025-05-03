@@ -33,14 +33,12 @@ struct ExtenderConfig
     bool InsanityCheck{ false };
 
 #if defined(OSI_EXTENSION_BUILD)
-    bool DisableModValidation{ true };
 #if defined(_DEBUG)
     bool DeveloperMode{ true };
 #else
     bool DeveloperMode{ false };
 #endif // defined(_DEBUG)
 #else
-    bool DisableModValidation{ false };
     bool DeveloperMode{ true };
 #endif // defined(OSI_EXTENSION_BUILD)
 

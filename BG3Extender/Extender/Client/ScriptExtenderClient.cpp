@@ -163,16 +163,6 @@ void ScriptExtender::OnGameStateChanged(GameState fromState, GameState toState)
         CleanupSanityCheck();
     }
 
-    // FIXME - EnableModuleHashing flag not currently mapped
-    /*if (toState == GameState::LoadModule && config_.DisableModValidation) {
-        if (GetStaticSymbols().GetGlobalSwitches()) {
-            GetStaticSymbols().GetGlobalSwitches()->EnableModuleHashing = false;
-            INFO("Disabled module hashing");
-        } else {
-            WARN("Could not disable mod hashing - GlobalSwitches not mapped");
-        }
-    }*/
-
 #if defined(DEBUG_SERVER_CLIENT)
     DEBUG("ecl::ScriptExtender::OnGameStateChanged(): %s -> %s", 
         GameStateNames[(unsigned)fromState], ClientGameStateNames[(unsigned)toState]);
