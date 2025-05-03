@@ -98,13 +98,6 @@ struct GameplayLightComponent : public BaseComponent
     uint8_t field_44;
 };
 
-struct LightComponentProxy : public BaseComponent
-{
-    DEFINE_COMPONENT(Light, "ls::LightComponent")
-
-    LightComponent* Light;
-};
-
 struct StaticPhysicsComponent : public BaseComponent
 {
     DEFINE_COMPONENT(StaticPhysics, "ls::StaticPhysicsComponent")

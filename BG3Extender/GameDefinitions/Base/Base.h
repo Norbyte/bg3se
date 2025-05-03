@@ -41,13 +41,22 @@ END_SE()
     static constexpr ExtComponentType ComponentType = ExtComponentType::componentType; \
     static constexpr auto ComponentName = #componentType; \
     static constexpr auto EngineClass = cls; \
-    static constexpr auto OneFrame = false;
+    static constexpr auto OneFrame = false; \
+    static constexpr auto ForceProxy = false;
+
+#define DEFINE_PROXY_COMPONENT(componentType, cls) \
+    static constexpr ExtComponentType ComponentType = ExtComponentType::componentType; \
+    static constexpr auto ComponentName = #componentType; \
+    static constexpr auto EngineClass = cls; \
+    static constexpr auto OneFrame = false; \
+    static constexpr auto ForceProxy = true;
 
 #define DEFINE_ONEFRAME_COMPONENT(componentType, cls) \
     static constexpr ExtComponentType ComponentType = ExtComponentType::componentType; \
     static constexpr auto ComponentName = #componentType; \
     static constexpr auto EngineClass = cls; \
-    static constexpr auto OneFrame = true;
+    static constexpr auto OneFrame = true; \
+    static constexpr auto ForceProxy = false;
 
 #define DEFINE_TAG_COMPONENT(ns, name, componentType) \
     struct name : public BaseComponent \
@@ -56,6 +65,7 @@ END_SE()
         static constexpr auto ComponentName = #componentType; \
         static constexpr auto EngineClass = #ns "::" #name; \
         static constexpr auto OneFrame = false; \
+        static constexpr auto ForceProxy = false; \
         uint8_t Dummy; \
     };
 
@@ -66,6 +76,7 @@ END_SE()
         static constexpr auto ComponentName = #componentType; \
         static constexpr auto EngineClass = #ns "::" #name; \
         static constexpr auto OneFrame = true; \
+        static constexpr auto ForceProxy = false; \
         uint8_t Dummy; \
     };
 
@@ -79,4 +90,5 @@ END_SE()
         static constexpr auto BoostType = BoostType::boostType; \
         static constexpr auto EngineClass = "eoc::" #name "BoostComponent"; \
         static constexpr auto OneFrame = false; \
+        static constexpr auto ForceProxy = false; \
     };

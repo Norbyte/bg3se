@@ -604,8 +604,6 @@ struct TimelineReferencedTemplate
 
 struct LightTemplate : public GameObjectTemplate
 {
-    int field_110;
-    int field_114;
     OverrideableProperty<glm::vec3> Color;
     OverrideableProperty<glm::vec2> Angle;
     OverrideableProperty<float> Kelvin;
@@ -633,7 +631,8 @@ struct LightTemplate : public GameObjectTemplate
     OverrideableProperty<float> DirectionLightAttenuationStart;
     OverrideableProperty<float> DirectionLightAttenuationEnd;
     OverrideableProperty<float> DirectionLightAttenuationSide;
-    TimelineReferencedTemplate ReferencedInTimelines;
+    // Editor only?
+    // TimelineReferencedTemplate ReferencedInTimelines;
 };
 
 

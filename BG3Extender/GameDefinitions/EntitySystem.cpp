@@ -781,7 +781,7 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
     DEBUG_IDX("-------------------------------------------------------");
 #endif
 
-    #define T(cls) MapComponentIndices(cls::EngineClass, cls::ComponentType, sizeof(cls), std::is_base_of_v<BaseProxyComponent, cls>);
+    #define T(cls) MapComponentIndices(cls::EngineClass, cls::ComponentType, sizeof(cls), std::is_base_of_v<BaseProxyComponent, cls> || cls::ForceProxy);
     #include <GameDefinitions/Components/AllComponentTypes.inl>
     #undef T
 

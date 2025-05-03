@@ -479,8 +479,10 @@ struct RenderableObject : public MoveableObject
 };
 
 
-struct LightComponent : public MoveableObject
+struct [[bg3::component]] LightComponent : public MoveableObject
 {
+    DEFINE_PROXY_COMPONENT(Light, "ls::LightComponent")
+
     EntityHandle field_80;
     glm::vec3 Color;
     float SpotLightInnerAngle;

@@ -100,6 +100,9 @@ class Structure:
     def is_hidden(self) -> bool:
         return get_attr(self.attributes, 'bg3::hidden') is not None
         
+    def is_component(self) -> bool:
+        return self.base == 'BaseComponent' or self.base == 'BaseProxyComponent' or get_attr(self.attributes, 'bg3::component') is not None
+        
     def generate_property_map_header(self) -> str:
         return make_struct_forward_decl(self.name(), self.id)
 
@@ -686,7 +689,7 @@ propmap_names = ''
 component_names = ''
 for n,struct in structs.items():
     if not struct.is_hidden():
-        if struct.base == 'BaseComponent' or struct.base == 'BaseProxyComponent':
+        if struct.is_component():
             component_names += 'T(' + n + ')\n'
         if struct.base is not None:
             struct.base = expand_namespaces(struct.name_ns, structs, struct.base)
