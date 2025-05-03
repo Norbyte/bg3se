@@ -83,12 +83,11 @@ void ExtensionState::FireInputEvents()
     if (!deferredInputEvents_.empty()) {
         LuaClientPin lua(*this);
         if (lua) {
-            for (auto& e : deferredInputEvents_) {
-                lua->OnInputEvent(&e, nullptr);
+            SDL_Event evt;
+            while (deferredInputEvents_.try_pop(evt)) {
+                lua->OnInputEvent(&evt, nullptr);
             }
         }
-
-        deferredInputEvents_.clear();
     }
 }
 
@@ -104,7 +103,7 @@ void ExtensionState::OnInputEvent(SDL_Event* event, int& result)
             lua->OnInputEvent(event, &result);
         }
     } else {
-        deferredInputEvents_.push_back(*event);
+        deferredInputEvents_.push(*event);
     }
 }
 

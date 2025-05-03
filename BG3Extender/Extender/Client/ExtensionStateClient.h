@@ -41,7 +41,7 @@ protected:
     std::unique_ptr<lua::ClientState> Lua;
     uint32_t nextGenerationId_{ 1 };
 
-    Array<SDL_Event> deferredInputEvents_;
+    concurrency::concurrent_queue<SDL_Event> deferredInputEvents_;
 
     void DoLuaReset() override;
     void LuaStartup() override;
