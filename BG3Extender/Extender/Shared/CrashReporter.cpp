@@ -583,13 +583,15 @@ public:
     // noinline needed to ensure that the error handler stack is always 2 levels deep
     static __declspec(noinline) bool IsExtensionRelatedCrash(_EXCEPTION_POINTERS* exceptionInfo)
     {
-        if (exceptionInfo != nullptr && exceptionInfo->ExceptionRecord->ExceptionCode == 0xC00000FD) {
+        if (exceptionInfo != nullptr 
+            && exceptionInfo->ExceptionRecord->ExceptionCode == 0xC00000FD
+            && !gExtender->GetConfig().ForceCrashReporting) {
             // Osiris is riddled with various stack overflow issues, skip reporting those
             return false;
         }
 
         CRASHDBG("IsExtensionRelatedCrash() - checking frames");
-        if (gDisableCrashReportingCount > 0) {
+        if (gDisableCrashReportingCount > 0 && !gExtender->GetConfig().ForceCrashReporting) {
             CRASHDBG("gDisableCrashReportingCount > 0 --> false");
             return false;
         }
@@ -837,6 +839,9 @@ public:
         // Run crash reporter in a separate thread to ensure that
         // we succeed if the stack is corrupted
         CreateThread(NULL, 0, &CrashReporterThread, &params, 0, NULL);
+#if defined(DEBUG_CRASH_REPORTER)
+        MessageBoxW(NULL, L"OnUnhandledException: Launched crash reporter thread", L"", MB_OK | MB_APPLMODAL);
+#endif
         SuspendThread(GetCurrentThread());
     }
 
