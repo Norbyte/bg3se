@@ -1,2 +1,2 @@
-powershell -ExecutionPolicy Bypass .\publish.ps1 Devel
+powershell -ExecutionPolicy Bypass .\publish.ps1 Nightly
 pause

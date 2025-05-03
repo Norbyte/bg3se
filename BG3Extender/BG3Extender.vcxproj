@@ -75,8 +75,7 @@
       <DelayLoadDLLs>vulkan-1.dll;d3dcompiler_47.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y "$(TargetPath)" "D:\SteamLibrary\steamapps\common\Baldurs Gate 3\bin\DWrite.dll"
-rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\steamapps\common\Baldurs Gate 3\Data\"</Command>
+      <Command>copy /Y "$(TargetPath)" "D:\SteamLibrary\steamapps\common\Baldurs Gate 3\bin\DWrite.dll"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>rem $(SolutionDir)\External\protobuf\tools\protobuf\protoc --cpp_out=$(SolutionDir)\BG3Extender\Osiris\Debugger Osiris\Debugger\osidebug.proto
@@ -119,8 +118,7 @@ $(SolutionDir)\External\protobuf\tools\protobuf\protoc --cpp_out=$(SolutionDir)\
 $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(ProjectDir)Lua.bundle"</Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>copy /Y "$(TargetPath)" "D:\SteamLibrary\steamapps\common\Baldur's Gate 3 Playtest\bin\DWrite.dll"
-rem xcopy /Y /E /I "$(SolutionDir)\TestModule\*" "D:\Program Files (x86)\Steam\steamapps\common\Baldurs Gate 3\Data\"</Command>
+      <Command>copy /Y "$(TargetPath)" "D:\SteamLibrary\steamapps\common\Baldurs Gate 3\bin\DWrite.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

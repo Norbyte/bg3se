@@ -1,6 +1,6 @@
 param($Channel)
 
-if ($Channel -ne "Devel" -And $Channel -ne "Release" -And $Channel -ne "NextVersion") {
+if ($Channel -ne "Devel" -And $Channel -ne "Release" -And $Channel -ne "Nightly") {
 	Write-Error -Message "Usage: publish.ps1 <Channel>"
 	Exit 1
 }
@@ -99,7 +99,7 @@ function Create-PDBDir
 	#Copy-Item "x64\Editor Release\BG3EditorScriptExtender.dll" -Destination $PDBDir\BG3EditorScriptExtender.dll
 	Copy-Item External\protobuf\bin\libprotobuf-lite.dll -Destination $PDBDir\libprotobuf-lite.dll
 
-	if ($Channel -eq "Devel" -Or $Channel -eq "NextVersion") {
+	if ($Channel -eq "Devel" -Or $Channel -eq "Nightly") {
 		New-Item $PDBDir\DAP -ItemType "directory"
 		Copy-Item "LuaDebugger\bin\Release\Google.Protobuf.dll" -Destination $PDBDir\DAP\Google.Protobuf.dll
 		Copy-Item "LuaDebugger\bin\Release\Newtonsoft.Json.dll" -Destination $PDBDir\DAP\Newtonsoft.Json.dll
