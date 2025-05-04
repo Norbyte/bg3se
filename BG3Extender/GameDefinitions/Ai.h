@@ -558,7 +558,7 @@ struct AiGrid : public ProtectedGameObject<AiGrid>
     //bool VisualVisible;
     //int field_2C0;
     //int field_2C4;
-    //[[bg3::hidden]] void* Scene;
+    //[[bg3::hidden]] Scene* Scene;
     //int NumAiMetaData;
     //int NumAiSurfaceMetaData;
     //AiSomeFloodObj SomeFloodObj;

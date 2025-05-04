@@ -60,6 +60,7 @@ struct UuidComponent;
 struct UuidToHandleMappingComponent;
 
 union TextureDescriptor;
+struct Scene;
 struct MoveableObject;
 struct RenderableObject;
 struct Visual;

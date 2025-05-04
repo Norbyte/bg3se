@@ -68,7 +68,7 @@ namespace bg3se
                         featureFlags << flag << " ";
                     }
 
-                    INFO("Configuration for '%s':\r\n\tMinVersion %d; Feature flags: %s", mod.Info.Name.c_str(),
+                    INFO("    '%s': SE v%d; flags: %s", mod.Info.Name.c_str(),
                         config.MinimumVersion, featureFlags.str());
 
                     if (config.MinimumVersion == 0) {
@@ -104,13 +104,12 @@ namespace bg3se
         }
 
         if (numConfigs > 0) {
-            INFO("%d mod configuration(s) loaded.", numConfigs);
             std::stringstream featureFlags;
             for (auto const & flag : MergedConfig.FeatureFlags) {
                 featureFlags << flag << " ";
             }
 
-            INFO("Merged configuration:\r\n\tMinVersion %d; Feature flags: %s",
+            DEBUG("Merged config: SE v%d; flags: %s",
                 MergedConfig.MinimumVersion, featureFlags.str());
         }
 

@@ -62,7 +62,7 @@ struct EffectHandler : public ProtectedGameObject<EffectHandler>
     [[bg3::hidden]] void* EffectManager;
     [[bg3::hidden]] ResourceManager* ResourceManager;
     EffectHandlerInitInfo InitInfo;
-    [[bg3::hidden]] void* Scene;
+    [[bg3::hidden]] Scene* Scene;
     EntityHandle EventProviderEntity;
     resource::MultiEffectInfo MultiEffectInfo;
     bool IsActive;

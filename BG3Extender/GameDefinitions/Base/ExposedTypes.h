@@ -136,6 +136,12 @@ struct TextLine : TranslatedString
     bool field_10{ false };
 };
 
+struct TemplateInfo
+{
+    FixedString TemplateId;
+    uint8_t TemplateType;
+};
+
 END_SE()
 
 

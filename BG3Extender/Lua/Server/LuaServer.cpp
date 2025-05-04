@@ -375,7 +375,6 @@ namespace bg3se::esv
 
         auto modTable = GetModTable(mod);
         if (modTable) {
-            DEBUG("Restoring persistent vars for mod %s (%ld bytes)", mod.GetString(), vars.size());
             LuaServerPin lua(*this);
             if (lua) {
                 lua->RestoreModPersistentVars(*modTable, vars);

@@ -14,6 +14,18 @@ struct BaseProxyComponent : public BaseComponent
 {
 };
 
+// Base class for all systems
+struct BaseSystem : ProtectedGameObject<BaseSystem>
+{
+    virtual ~BaseSystem() = 0;
+    virtual bool VMT01() = 0;
+    virtual void SystemLoad() = 0;
+    virtual void SystemUnload() = 0;
+    virtual void OnActivated() = 0;
+    virtual void OnDeactivated() = 0;
+    virtual void VMT06() = 0;
+};
+
 END_SE()
 
 BEGIN_NS(ecs)

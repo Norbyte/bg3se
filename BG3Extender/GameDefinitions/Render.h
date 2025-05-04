@@ -65,12 +65,12 @@ struct MoveableObject : ProtectedGameObject<MoveableObject>
 
     Transform WorldTransform;
     LocalTransform* LocalTransform;
-    [[bg3::hidden]] void* Scene;
+    [[bg3::hidden]] Scene* Scene;
     AABound WorldBound;
     AABound BaseBound;
     float MinLODDistance;
     float MaxLODDistance;
-    int CullDataHandleIndex;
+    int SceneIndex;
 
     // Lua call helpers
     //# P_FUN(SetWorldTranslate, MoveableObject::LuaSetWorldTranslate)
@@ -79,6 +79,45 @@ struct MoveableObject : ProtectedGameObject<MoveableObject>
     void LuaSetWorldTranslate(glm::vec3 const& translate);
     void LuaSetWorldRotate(glm::quat const& rotate);
     void LuaSetWorldScale(glm::vec3 const& scale);
+};
+
+struct SceneObjectBounds
+{
+    Array<float> BoundMinX;
+    Array<float> BoundMinY;
+    Array<float> BoundMinZ;
+    Array<float> BoundMaxX;
+    Array<float> BoundMaxY;
+    Array<float> BoundMaxZ;
+};
+
+struct SceneObjects
+{
+    SceneObjectBounds WorldBound;
+    Array<float> BoundRadius;
+    Array<float> MinLODDistanceSquared;
+    Array<float> MaxLODDistanceSquared;
+    SceneObjectBounds RootBound;
+    SceneObjectBounds HLODBound;
+    Array<bool> field_150;
+    Array<MoveableObject*> Objects;
+    Array<uint32_t> CullFlags;
+    Array<uint32_t> RenderPasses;
+};
+
+
+struct [[bg3::hidden]] Scene : public ProtectedGameObject<Scene>
+{
+    EntityHandle field_0;
+    bool Active;
+    void* SceneViewMode;
+    CRITICAL_SECTION DirtyListCS;
+    Array<MoveableObject*> DirtyList;
+    LevelBase* Level;
+    bool CullRegions;
+    SRWLOCK SRWLock;
+    std::array<SceneObjects, 11> ObjectsByType;
+    Array<MoveableObject*> DistantLightProbes;
 };
 
 
@@ -507,8 +546,9 @@ struct [[bg3::component]] LightComponent : public MoveableObject
     [[bg3::hidden]] void* LightCookieTexture;
     LightTemplate* Template;
     EntityHandle AssociatedScene;
-    uint64_t CullFlags;
+    uint16_t CullFlags;
     FixedString UUID;
+    [[bg3::hidden]] void* _PAD;
 };
 
 

@@ -170,6 +170,21 @@ BEGIN_ENUM(TextureType, uint8_t)
 END_ENUM()
 
 
+BEGIN_ENUM(SceneObjectType, uint32_t)
+    EV(RenderableObject, 0)
+    EV(Light, 1)
+    EV(LightProbe, 2)
+    EV(FogVolume, 3)
+    EV(Visual, 4)
+    EV(Effect, 5)
+    EV(InstanceBatchRenderableObject, 6)
+    EV(InstancingObject, 7)
+    EV(CullableInstance, 8)
+    EV(DeferredDecal, 9)
+    EV(RoomTriggerVisual, 10)
+END_ENUM()
+
+
 BEGIN_BITMASK(AnimationSetAnimationFlags, uint8_t)
     EV(AlwaysIgnore, 1)
     EV(NoFallback, 2)

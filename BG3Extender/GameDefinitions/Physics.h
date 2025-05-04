@@ -35,7 +35,7 @@ struct PhysicsObject : public ProtectedGameObject<PhysicsObject>
 {
     [[bg3::hidden]] void* VMT;
     Array<PhysicsTemplate*> Templates;
-    [[bg3::hidden]] void* Scene;
+    [[bg3::hidden]] Scene* Scene;
     // Editor only
     // [[bg3::hidden]] void* GameObject;
     EntityHandle Entity;

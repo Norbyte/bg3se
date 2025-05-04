@@ -104,4 +104,28 @@ struct StatesComponent : public BaseComponent
     Array<State> States;
 };
 
+struct AddRequest
+{
+    Guid StateGuid;
+    std::optional<TemplateInfo> Template;
+    EntityHandle TargetTemplate;
+    bool field_28;
+    Guid ShapeshiftRule;
+    bool ApplyToDead;
+};
+
+struct System : public BaseSystem
+{
+    static constexpr auto SystemType = ExtSystemType::ServerShapeshiftSystem;
+
+    [[bg3::hidden]] __int64 field_8;
+    [[bg3::hidden]] UnknownSignal field_10;
+    HashMap<EntityHandle, Array<AddRequest>> RequestAddStates;
+    HashMap<EntityHandle, Array<Guid>> RequestDeleteStates;
+    HashSet<EntityHandle> RequestDeleteAllStates;
+    [[bg3::hidden]] void* ShapeshiftRulebook;
+    [[bg3::hidden]] void* RPGStats;
+};
+
+
 END_NS()

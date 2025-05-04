@@ -80,6 +80,9 @@ END_CLS()
 BEGIN_CLS(BaseProxyComponent)
 END_CLS()
 
+BEGIN_CLS(BaseSystem)
+END_CLS()
+
 
 BEGIN_CLS(stats::FunctorGroup)
 P(TextKey)

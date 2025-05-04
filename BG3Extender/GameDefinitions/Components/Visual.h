@@ -214,6 +214,20 @@ struct EffectComponent : public BaseProxyComponent
     [[bg3::hidden]] uint64_t _Pad;
 };
 
+struct CullComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(Cull, "ls::CullComponent")
+
+    uint16_t CullFlags;
+};
+
+struct SceneAttachComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(SceneAttach, "ls::SceneAttachComponent")
+
+    [[bg3::hidden]] Scene* Scene;
+};
+
 
 END_SE()
 
