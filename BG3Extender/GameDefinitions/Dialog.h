@@ -586,11 +586,10 @@ struct [[bg3::hidden]] DialogGameInterface : public dlg::SharedDialogGameInterfa
 };
 
 
-struct [[bg3::hidden]] DialogSystem : public ProtectedGameObject<DialogSystem>
+struct [[bg3::hidden]] DialogSystem : public BaseSystem
 {
-    static constexpr auto SystemType = ExtSystemType::ServerDialogSystem;
+    DEFINE_SYSTEM(ServerDialogSystem, "esv::DialogSystem")
 
-    void* VMT;
     void* field_8;
     void* TimelineSystem;
     void* CombatLogSystem;

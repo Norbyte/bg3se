@@ -116,7 +116,7 @@ struct AddRequest
 
 struct System : public BaseSystem
 {
-    static constexpr auto SystemType = ExtSystemType::ServerShapeshiftSystem;
+    DEFINE_SYSTEM(ServerShapeshiftSystem, "esv::shapeshift::System")
 
     [[bg3::hidden]] __int64 field_8;
     [[bg3::hidden]] UnknownSignal field_10;

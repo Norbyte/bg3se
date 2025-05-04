@@ -90,11 +90,10 @@ struct PlayerPickingHelper : public ProtectedGameObject<PlayerPickingHelper>
 };
 
 
-struct [[bg3::hidden]] PickingHelperManager : public ProtectedGameObject<PickingHelperManager>
+struct [[bg3::hidden]] PickingHelperManager : public BaseSystem
 {
-    static constexpr auto SystemType = ExtSystemType::PickingHelperManager;
+    DEFINE_SYSTEM(PickingHelperManager, "ecl::PickingHelperManager")
 
-    void* VMT;
     void* field_8;
     LegacyRefMap<uint16_t, PlayerPickingHelper*> PlayerHelpers;
     void* field_20;

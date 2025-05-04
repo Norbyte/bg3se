@@ -1,6 +1,7 @@
 #pragma once
 
 #include <GameDefinitions/Base/Base.h>
+#include <GameDefinitions/EntitySystem.h>
 
 BEGIN_NS(gn)
 
@@ -348,11 +349,10 @@ struct AnimationReceivedTextKeyEvent
     [[bg3::hidden]] void* Skeleton;
 };
 
-struct [[bg3::hidden]] AnimationBlueprintSystem : public ProtectedGameObject<AnimationBlueprintSystem>
+struct [[bg3::hidden]] AnimationBlueprintSystem : public BaseSystem
 {
-    static constexpr auto SystemType = ExtSystemType::AnimationBlueprint;
+    DEFINE_SYSTEM(AnimationBlueprint, "ls::AnimationBlueprintSystem")
 
-    void* VMT;
     ecs::EntityWorld* EntityWorld;
     void* VMT_IBlueprintInstanceListener;
     void* VMT_IGenomeManagerCallback;

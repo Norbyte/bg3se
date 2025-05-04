@@ -1,10 +1,9 @@
 BEGIN_ENUM(ExtSystemType, uint32_t)
-    E(UISystem)
     E(PickingHelperManager)
     E(ServerDialogSystem)
     E(AnimationBlueprint)
     E(ServerShapeshiftSystem)
-    E(Max)utils.inl
+    E(Max)
 END_ENUM()
 
 BEGIN_ENUM(ExtResourceManagerType, uint32_t)

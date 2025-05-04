@@ -423,6 +423,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <None Include="GameDefinitions\Animation.inl" />
     <None Include="GameDefinitions\Base\TypeInformation.inl" />
     <None Include="GameDefinitions\Components\AllComponentTypes.inl" />
+    <None Include="GameDefinitions\Components\AllSystemTypes.inl" />
     <None Include="GameDefinitions\Controllers\Action.inl" />
     <None Include="GameDefinitions\Controllers\Behaviour.inl" />
     <None Include="GameDefinitions\Controllers\CharacterTask.inl" />

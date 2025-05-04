@@ -785,12 +785,11 @@ void EntitySystemHelpersBase::UpdateComponentMappings()
     #include <GameDefinitions/Components/AllComponentTypes.inl>
     #undef T
 
+    #define T(cls) MapSystemIndex(cls::EngineClass, cls::SystemType);
+    #include <GameDefinitions/Components/AllSystemTypes.inl>
+    #undef T
+
     MapQueryIndex("ecs::query::spec::Spec<struct ls::TypeList<struct ls::uuid::ToHandleMappingComponent>,struct ls::TypeList<>,struct ls::TypeList<>,struct ls::TypeList<>,struct ls::TypeList<>,struct ls::TypeList<>,struct ecs::QueryTypePersistentTag,struct ecs::QueryTypeAliveTag>", ExtQueryType::UuidToHandleMapping);
-    MapSystemIndex("ecl::UISystem", ExtSystemType::UISystem);
-    MapSystemIndex("ecl::PickingHelperManager", ExtSystemType::PickingHelperManager);
-    MapSystemIndex("esv::DialogSystem", ExtSystemType::ServerDialogSystem);
-    MapSystemIndex("ls::AnimationBlueprintSystem", ExtSystemType::AnimationBlueprint);
-    MapSystemIndex("esv::shapeshift::System", ExtSystemType::ServerShapeshiftSystem);
 
 #define FOR_RESOURCE_TYPE(cls) MapResourceManagerIndex(resource::cls::EngineClass, resource::cls::ResourceManagerType);
     FOR_EACH_GUID_RESOURCE_TYPE()

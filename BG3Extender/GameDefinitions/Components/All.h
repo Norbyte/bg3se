@@ -25,3 +25,5 @@
 #include <GameDefinitions/Components/ServerData.h>
 #include <GameDefinitions/Components/Roll.h>
 #include <GameDefinitions/Components/Timeline.h>
+#include <GameDefinitions/Dialog.h>
+#include <GameDefinitions/Picking.h>

@@ -754,6 +754,7 @@
     <None Include="GameDefinitions\DragDrop.inl" />
     <None Include="Lua\Libs\ClientUI\ClassCache.inl" />
     <None Include="GameDefinitions\Controllers\CharacterTask.inl" />
+    <None Include="GameDefinitions\Components\AllSystemTypes.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

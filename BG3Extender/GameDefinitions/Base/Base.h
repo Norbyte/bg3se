@@ -92,3 +92,8 @@ END_SE()
         static constexpr auto OneFrame = false; \
         static constexpr auto ForceProxy = false; \
     };
+
+#define DEFINE_SYSTEM(systemType, cls) \
+    static constexpr auto SystemType = ExtSystemType::systemType; \
+    static constexpr auto SystemName = #systemType; \
+    static constexpr auto EngineClass = cls;
