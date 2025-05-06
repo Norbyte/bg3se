@@ -1749,6 +1749,7 @@ void IMGUIManager::DestroyUI()
     initialized_ = false;
     renderer_->DestroyUI();
     sdl_.DestroyUI();
+    GImGui->Viewports.clear();
     ImGui::DestroyContext();
 }
 
