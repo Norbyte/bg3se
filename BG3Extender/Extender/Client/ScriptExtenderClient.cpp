@@ -93,6 +93,7 @@ void ScriptExtender::Shutdown()
 {
     DEBUG("ecl::ScriptExtender::Shutdown: Exiting");
     sdl_.DisableHooks();
+    ContextGuardAnyThread _(ContextType::Client);
     ResetExtensionState();
 }
 

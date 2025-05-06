@@ -66,6 +66,7 @@ void ScriptExtender::Initialize()
 
 void ScriptExtender::Shutdown()
 {
+    ContextGuardAnyThread _(ContextType::Server);
     ResetExtensionState();
     osiris_.Shutdown();
 }
