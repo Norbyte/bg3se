@@ -1244,13 +1244,13 @@ void ChildWindow::EndRender(DrawingContext& context)
 void Image::StyledRender(DrawingContext& context)
 {
     if (ImageData.IsValid()) {
-        ImGui::Image(
+        ImGui::ImageWithBg(
             ImageData.TextureId,
             context.Scale(ImageData.Size),
             ToImVec(ImageData.UV0),
             ToImVec(ImageData.UV1),
-            ToImVec(Tint),
-            ToImVec(Border)
+            ImVec4(0, 0, 0, 0),
+            ToImVec(Tint)
         );
     }
 }
@@ -1965,9 +1965,9 @@ void IMGUIManager::UpdateStyle()
     DEFAULT_COLOR(ResizeGripActive, BoxActiveColor);
     DEFAULT_COLOR(Tab, BoxColor);
     DEFAULT_COLOR(TabHovered, BoxHoverColor);
-    DEFAULT_COLOR(TabActive, BoxActiveColor);
-    DEFAULT_COLOR(TabUnfocused, ImVec4(0.05f, 0.05f, 0.05f, 0.78f));
-    DEFAULT_COLOR(TabUnfocusedActive, ImVec4(0.05f, 0.05f, 0.05f, 0.78f));
+    DEFAULT_COLOR(TabSelected, BoxActiveColor);
+    DEFAULT_COLOR(TabDimmed, ImVec4(0.05f, 0.05f, 0.05f, 0.78f));
+    DEFAULT_COLOR(TabDimmedSelected, ImVec4(0.05f, 0.05f, 0.05f, 0.78f));
     DEFAULT_COLOR(PlotLines, ImVec4(0.86f, 0.79f, 0.68f, 0.63f));
     DEFAULT_COLOR(PlotLinesHovered, ImVec4(0.41f, 0.28f, 0.22f, 1.00f));
     DEFAULT_COLOR(PlotHistogram, ImVec4(0.86f, 0.79f, 0.68f, 0.63f));
@@ -1979,7 +1979,7 @@ void IMGUIManager::UpdateStyle()
     DEFAULT_COLOR(TableRowBgAlt, ImVec4(0.52f, 0.29f, 0.15f, 0.43f));
     DEFAULT_COLOR(TextSelectedBg, ImVec4(0.57f, 0.21f, 0.21f, 0.43f));
     DEFAULT_COLOR(DragDropTarget, ImVec4(0.6f, 0.45f, 0.3f, 1.0f));
-    DEFAULT_COLOR(NavHighlight, ImVec4(0.55f, 0.00f, 0.00f, 0.78f));
+    DEFAULT_COLOR(NavCursor, ImVec4(0.55f, 0.00f, 0.00f, 0.78f));
     DEFAULT_COLOR(NavWindowingHighlight, ImVec4(0.55f, 0.00f, 0.00f, 0.78f));
     DEFAULT_COLOR(NavWindowingDimBg, ImVec4(0.07f, 0.07f, 0.07f, 0.78f));
     DEFAULT_COLOR(ModalWindowDimBg, ImVec4(0.18f, 0.15f, 0.15f, 0.73f));

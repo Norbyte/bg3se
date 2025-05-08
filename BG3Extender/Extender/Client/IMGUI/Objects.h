@@ -613,7 +613,7 @@ public:
     void StyledRender(DrawingContext& context) override;
 
     ImageReference ImageData;
-    glm::vec4 Border{ 0.0f };
+    [[bg3::deprecated]] glm::vec4 Border{ 0.0f };
     glm::vec4 Tint{ 1.0f };
 };
 
