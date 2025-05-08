@@ -1383,6 +1383,7 @@ struct VisualResource : public TwoStepLoadableResource
     bool SupportsVertexColorMask;
     uint8_t MaterialType;
     uint8_t HairType;
+    bool ExcludeFromHLOD;
 };
 
 struct VisualSetResource : public LoadableResource

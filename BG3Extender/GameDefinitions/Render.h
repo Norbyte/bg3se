@@ -70,7 +70,7 @@ struct MoveableObject : ProtectedGameObject<MoveableObject>
     AABound BaseBound;
     float MinLODDistance;
     float MaxLODDistance;
-    int SceneIndex;
+    [[bg3::readonly]] int SceneIndex;
 
     // Lua call helpers
     //# P_FUN(SetWorldTranslate, MoveableObject::LuaSetWorldTranslate)
