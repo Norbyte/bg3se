@@ -637,6 +637,75 @@ struct UpdateTargetTrackingOneFrameComponent : public BaseComponent
     HashSet<EntityHandle> Targets;
 };
 
+struct CastStartRequest
+{
+    SpellId Spell;
+    uint32_t CastOptions;
+    EntityHandle Caster;
+    Array<bg3se::spell_cast::InitialTarget> Targets;
+    ActionOriginator Originator;
+    EntityHandle Item;
+    EntityHandle field_70;
+    std::optional<glm::vec3> CastPosition;
+    int field_88;
+    STDString NetGuid;
+    uint8_t field_A8;
+    __int64 field_B0;
+    __int64 field_B8;
+};
+
+struct CastCancelRequestBase
+{
+    EntityHandle Caster;
+    Guid SpellCastGuid;
+    bool CancelAny;
+};
+
+struct CastCancelRequest : public CastCancelRequestBase
+{
+    bool Forced;
+    bool CharacterReassigned;
+};
+
+struct CastConfirmRequest
+{
+    EntityHandle Entity;
+    Guid SpellCastGuid;
+    [[bg3::hidden]] Array<void*> ProjectileResultsExtraData;
+    std::optional<navigation::TargetInfo> TargetInfo;
+    std::optional<PathSettings> PathSettings;
+    bool field_AC;
+};
+
+
+struct CastRequestSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerCastRequestSystem, "esv::spell_cast::CastRequestSystem")
+
+    [[bg3::hidden]] ecs::EntityWorld* EntityWorld;
+    [[bg3::hidden]] void* VMT2;
+    Array<CastStartRequest> AnubisCastRequests;
+    Array<CastStartRequest> OsirisCastRequests;
+    Array<CastStartRequest> NetworkStartRequests;
+    Array<CastStartRequest> ReactionStartRequests;
+    Array<CastStartRequest> ItemStartRequests;
+    Array<CastStartRequest> ActiveRollNodeStartRequests;
+    Array<CastStartRequest> JumpStartRequests;
+    Array<CastStartRequest> CommandProtocolStartRequests;
+    Array<CastStartRequest> PlanCancelRequests;
+    Array<CastStartRequest> field_A8;
+    Array<CastCancelRequest> AnubisCancelRequests;
+    Array<CastCancelRequest> OsirisCancelRequests;
+    Array<CastCancelRequest> NetworkCancelRequests;
+    Array<CastCancelRequest> field_E8;
+    Array<CastCancelRequest> GameplayControllerCancelRequests;
+    Array<CastCancelRequest> ReactionCancelRequests;
+    Array<CastCancelRequest> CharacterCancelRequests;
+    Array<CastCancelRequest> TeleportCancelRequests;
+    [[bg3::hidden]] Array<void*> NetworkPreviewUpdateRequests_PreviewSetRequest;
+    Array<CastConfirmRequest> ConfirmRequests;
+};
+
 END_NS()
 
 BEGIN_NS(esv::concentration)
