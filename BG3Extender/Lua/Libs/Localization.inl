@@ -7,6 +7,7 @@ RuntimeStringHandle::RuntimeStringHandle()
 
 std::optional<StringView> TranslatedStringRepository::GetTranslatedString(RuntimeStringHandle const& handle)
 {
+    Lock.ReadLock();
     auto text = TranslatedStrings[0]->Texts.try_get(handle);
     if (!text) {
         text = VersionedFallbackPool->Texts.try_get(handle);
@@ -14,6 +15,7 @@ std::optional<StringView> TranslatedStringRepository::GetTranslatedString(Runtim
             text = FallbackPool->Texts.try_get(handle);
         }
     }
+    Lock.ReadUnlock();
 
     return text ? *text : std::optional<StringView>{};
 }
@@ -21,8 +23,10 @@ std::optional<StringView> TranslatedStringRepository::GetTranslatedString(Runtim
 void TranslatedStringRepository::UpdateTranslatedString(RuntimeStringHandle const& handle, StringView translated)
 {
     auto text = GameAlloc<STDString>(translated);
+    Lock.WriteLock();
     TranslatedStrings[0]->Strings.push_back(text);
     TranslatedStrings[0]->Texts.set(handle, LSStringView(text->data(), text->size()));
+    Lock.WriteUnlock();
 }
 
 END_SE()

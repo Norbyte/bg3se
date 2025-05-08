@@ -68,42 +68,21 @@ inline void SpinWait(Pred pred)
     }
 }
 
-class ThreadedFastLock
+class SRWSpinLock
 {
 public:
-    inline void Enter()
-    {
-        auto tid = GetCurrentThreadId();
-        if (CurrentThreadId == 0xffffffffu || CurrentThreadId != tid) {
-            for (;;) {
-                SpinWait([&]() { return (FastLock & 0xfff00000u) == 0; });
-
-                if ((FastLock.fetch_add(0x100000u) & 0xfff00000u) == 0) {
-                    break;
-                }
-
-                FastLock -= 0x100000u;
-            }
-
-            SpinWait([&]() { return (FastLock & 0x000fffffu) == 0; });
-            CurrentThreadId = tid;
-        }
-
-        ++EnterCount;
-    }
-    
-    inline void Leave()
-    {
-        if (--EnterCount == 0) {
-            CurrentThreadId = 0xffffffffu;
-            FastLock -= 0x100000u;
-        }
-    }
+    void ReadLock();
+    void ReadUnlock();
+    void WriteLock();
+    void WriteUnlock();
 
 private:
     std::atomic<uint32_t> FastLock;
-    DWORD CurrentThreadId;
-    DWORD EnterCount;
+    DWORD OwningThreadId;
+    uint32_t WriteEnterCount;
+
+    void WriteWait();
+    void ReadWait();
 };
 
 struct TranslatedArgumentStringBuffer
@@ -141,7 +120,7 @@ struct TranslatedStringRepository : public ProtectedGameObject<TranslatedStringR
     Array<void*> field_60;
     HashMap<FixedString, TranslatedArgumentStringBuffer> ArgumentStrings;
     HashMap<FixedString, RuntimeStringHandle> TextToStringKey;
-    ThreadedFastLock Lock;
+    SRWSpinLock Lock;
     bool IsLoaded;
 
     std::optional<StringView> GetTranslatedString(RuntimeStringHandle const& handle);
