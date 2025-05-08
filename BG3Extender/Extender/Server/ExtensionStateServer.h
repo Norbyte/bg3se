@@ -27,6 +27,11 @@ namespace bg3se::esv
             return "BootstrapServer.lua";
         }
 
+        inline char const * GetUnconditionalFileName() override
+        {
+            return "OverrideServer.lua";
+        }
+
         inline std::unordered_set<FixedString> const& GetPersistentStats() const
         {
             return persistentStats_;

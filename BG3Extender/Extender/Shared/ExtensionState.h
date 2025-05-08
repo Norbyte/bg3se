@@ -18,6 +18,8 @@ namespace bg3se
         // Name to use in Lua Mods global table (>= v43)
         STDString ModTable;
         std::unordered_set<STDString> FeatureFlags;
+
+        bool IsLoaded;
     };
 
     enum class ExtensionStateContext
@@ -47,8 +49,9 @@ namespace bg3se
         virtual void Reset();
         virtual lua::State * GetLua() = 0;
         virtual ModManager * GetModManager() = 0;
-        virtual LevelManager* GetLevelManager() = 0;
+        virtual LevelManager * GetLevelManager() = 0;
         virtual char const * GetBootstrapFileName() = 0;
+        virtual char const * GetUnconditionalFileName() = 0;
 
         void LoadConfigs();
         bool LoadConfig(Module const & mod, STDString const & configText, ExtensionModConfig & config);
@@ -166,6 +169,8 @@ namespace bg3se
         void LuaResetInternal();
         virtual void DoLuaReset() = 0;
         virtual void LuaStartup();
+        void LuaLoadPreinitUnconditional(ExtensionModConfig const& config, Module const& mod);
+        void LuaLoadGameUnconditional(ExtensionModConfig const& config, Module const& mod);
         void LuaLoadGameBootstrap(ExtensionModConfig const& config, Module const& mod);
         void LuaLoadPreinitBootstrap(ExtensionModConfig const& config, Module const& mod);
     };

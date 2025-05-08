@@ -757,7 +757,7 @@ void ModVariableManager::OnSessionLoading()
     auto modManager = isServer_ ? GetStaticSymbols().GetModManagerServer() : GetStaticSymbols().GetModManagerClient();
     if (modManager != nullptr) {
         uint32_t nextIndex{ 0 };
-        for (auto const& mod : modManager->LoadOrderedModules) {
+        for (auto const& mod : modManager->AvailableMods) {
             modIndices_.set(mod.Info.ModuleUUID, nextIndex++);
         }
     } else {
@@ -1291,9 +1291,9 @@ CachedModVariableManager::~CachedModVariableManager()
 Guid CachedModVariableManager::ModIndexToGuid(uint32_t modIndex)
 {
     if (isServer_) {
-        return GetStaticSymbols().GetModManagerServer()->LoadOrderedModules[modIndex].Info.ModuleUUID;
+        return GetStaticSymbols().GetModManagerServer()->AvailableMods[modIndex].Info.ModuleUUID;
     } else {
-        return GetStaticSymbols().GetModManagerClient()->LoadOrderedModules[modIndex].Info.ModuleUUID;
+        return GetStaticSymbols().GetModManagerClient()->AvailableMods[modIndex].Info.ModuleUUID;
     }
 }
 
