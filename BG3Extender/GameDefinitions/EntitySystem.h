@@ -865,5 +865,9 @@ struct EntityReplicationAuthority : public ProtectedGameObject<EntityReplication
     HashMap<PeerId, void*> field_200_PeerID_pECSReplicationMessage;
 };
 
+struct WorldView
+{
+    EntityWorld* World;
+};
 
 END_NS()

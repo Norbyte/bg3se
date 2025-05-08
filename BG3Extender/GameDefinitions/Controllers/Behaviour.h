@@ -47,7 +47,7 @@ struct BSMove : public BehaviourState
 
     Array<BSMoveCheckpoint> Checkpoints;
     uint16_t SearchHorizon;
-    NavigationTargetInfo TargetInfo;
+    navigation::TargetInfo TargetInfo;
     float PathDistanceXZ;
     uint8_t Flags;
     PathSettings PathingSettings;

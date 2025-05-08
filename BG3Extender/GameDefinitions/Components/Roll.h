@@ -185,9 +185,6 @@ struct StartSpellRequestOneFrameComponent : public BaseComponent
 {
     DEFINE_ONEFRAME_COMPONENT(ServerRollStartSpellRequest, "esv::active_roll::StartSpellRequestOneFrameComponent")
 
-    StartSpellRequestOneFrameComponent(const StartSpellRequestOneFrameComponent&) = delete;
-    StartSpellRequestOneFrameComponent& operator = (const StartSpellRequestOneFrameComponent&) = delete;
-
     SpellId Spell;
     [[bg3::legacy(field_28)]] uint32_t Flags;
     [[bg3::legacy(field_30)]] EntityHandle Caster;

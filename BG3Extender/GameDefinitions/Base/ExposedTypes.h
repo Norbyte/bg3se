@@ -99,28 +99,6 @@ struct ResourceRollDefinition
     uint8_t field_10;
 };
 
-struct NavigationTargetInfo
-{
-    glm::vec3 Position;
-    float CloseEnoughMin;
-    float CloseEnoughMax;
-    float CloseEnoughFloor;
-    float CloseEnoughCeiling;
-    int CloseEnoughPreference;
-    EntityHandle TargetHandle;
-    Array<EntityHandle> IgnoreEntities;
-    uint32_t AiTargetCheck;
-    uint16_t CoverFlags;
-    bool AddSourceBoundsToMargin;
-    bool field_3F;
-    bool AvoidSurfaces;
-    bool IsAvoidingObstacles;
-    bool IsPreciseItemInteraction;
-    EntityHandle PickupEntity;
-    std::optional<glm::vec3> CharacterPositionOverride;
-    uint8_t WeightFuncType;
-};
-
 struct PathSettings
 {
     uint8_t PathClimbingMode;
@@ -150,14 +128,14 @@ BEGIN_NS(navigation)
 struct TargetInfo
 {
     glm::vec3 Position;
-    float TargetRadius;
-    float SpellRange;
-    float TargetFloor;
-    float TargetCeiling;
+    float CloseEnoughMin;
+    float CloseEnoughMax;
+    float CloseEnoughFloor;
+    float CloseEnoughCeiling;
     int CloseEnoughPreference;
-    EntityHandle InteractionTarget;
-    Array<EntityHandle> InteractionTargets;
-    int Type;
+    EntityHandle Target;
+    Array<EntityHandle> IgnoreEntities;
+    uint32_t AiTargetCheck;
     uint16_t CoverFlags;
     bool AddSourceBoundsToMargin;
     bool field_3F;

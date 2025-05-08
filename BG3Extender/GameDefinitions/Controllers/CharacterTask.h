@@ -190,8 +190,8 @@ struct CharacterMoveTask : public CharacterTask
 	virtual bool NeedsMovement(std::optional<glm::vec3>) = 0;
 	virtual bool CheckCanReachTarget() = 0;
 	virtual EntityHandle& GetTarget(EntityHandle&) = 0;
-	virtual bool GetTargetInfo(NavigationTargetInfo&) = 0;
-	virtual bool GetPreviewTargetInfo(NavigationTargetInfo&) = 0;
+	virtual bool GetTargetInfo(navigation::TargetInfo&) = 0;
+	virtual bool GetPreviewTargetInfo(navigation::TargetInfo&) = 0;
 	virtual void OnCalculatePathStarted() = 0;
 	virtual void OnCalculatePathFinished(AiPath*) = 0;
 	virtual void OnMovePreviewDisabled() = 0;
@@ -222,8 +222,8 @@ struct CharacterMoveTask : public CharacterTask
 	uint8_t field_14C;
 	Array<EntityHandle> TargetHighlights;
 	PreviewEffectMap PreviewEffects;
-	NavigationTargetInfo StartTargetInfo;
-	NavigationTargetInfo EndTargetInfo;
+	navigation::TargetInfo StartTargetInfo;
+	navigation::TargetInfo EndTargetInfo;
 };
 
 

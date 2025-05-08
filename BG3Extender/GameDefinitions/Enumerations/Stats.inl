@@ -1229,6 +1229,7 @@ BEGIN_ENUM(GameActionType, int)
 END_ENUM()
 
 BEGIN_ENUM(SpellType, uint8_t)
+    EV(None, 1)
     EV(Zone, 0x1)
     EV(MultiStrike, 0x2)
     EV(Projectile, 0x3)

@@ -307,17 +307,31 @@ struct RollsComponent : public BaseComponent
     Array<SpellRollData> Rolls;
 };
 
-struct BaseTarget : public ProtectedGameObject<BaseTarget>
+struct BaseTarget
 {
-    [[bg3::hidden]] void* VMT;
+    virtual ~BaseTarget();
+    virtual glm::vec3 GetTargetPosition(ecs::WorldView& world, glm::vec3 const* pos, std::optional<SpellType> type) const;
+    virtual glm::vec3 LEGACY_GetTargetPosition(ecs::EntityWorld& world) const;
+    virtual std::optional<glm::vec3> GetEntityPosition(ecs::WorldView& world) const;
+    virtual bool IsAlive(ecs::WorldView&) const;
+    virtual bool IsValid() const;
+
+    glm::vec3 DoGetTargetPosition(ecs::EntityWorld* world, SpellType type, glm::vec3 const* pos) const;
+    std::optional<glm::vec3> DoGetPosition(EntityHandle entity, ecs::EntityWorld* world, SpellType type) const;
+
     EntityHandle Target;
-    std::optional<EntityHandle> field_10;
+    std::optional<EntityHandle> TargetOverride;
     std::optional<glm::vec3> Position;
 };
 
 struct InitialTarget : public BaseTarget
 {
-    SpellType SpellType;
+    glm::vec3 GetTargetPosition(ecs::WorldView& world, glm::vec3 const* pos, std::optional<SpellType> type) const override;
+    glm::vec3 LEGACY_GetTargetPosition(ecs::EntityWorld& world) const override;
+    bool IsAlive(ecs::WorldView&) const override;
+    bool IsValid() const override;
+
+    SpellType TargetingType;
     std::optional<BaseTarget> Target2;
 };
 
@@ -330,9 +344,6 @@ struct IntermediateTarget : public BaseTarget
 struct StateComponent : public BaseComponent
 {
     DEFINE_COMPONENT(SpellCastState, "eoc::spell_cast::StateComponent")
-
-    StateComponent(const StateComponent&) = delete;
-    StateComponent& operator = (const StateComponent&) = delete;
 
     EntityHandle Entity;
     EntityHandle Caster;
@@ -352,11 +363,7 @@ struct SyncTargetingComponent : public BaseComponent
 {
     DEFINE_COMPONENT(SpellSyncTargeting, "eoc::spell_cast::SyncTargetingComponent")
 
-    SyncTargetingComponent(const SyncTargetingComponent&) = delete;
-    SyncTargetingComponent& operator = (const SyncTargetingComponent&) = delete;
-
-    [[bg3::hidden]]
-    void* VMT;
+    [[bg3::hidden]] void* VMT;
     EntityHandle field_8;
     std::optional<EntityHandle> field_10;
     std::optional<glm::vec3> field_20;
@@ -443,9 +450,6 @@ struct TargetReactionEventOneFrameComponent : public BaseComponent
 struct TargetsChangedEventOneFrameComponent : public BaseComponent
 {
     DEFINE_ONEFRAME_COMPONENT(SpellCastTargetsChangedEvent, "eoc::spell_cast::TargetsChangedEventOneFrameComponent")
-
-    TargetsChangedEventOneFrameComponent(const TargetsChangedEventOneFrameComponent&) = delete;
-    TargetsChangedEventOneFrameComponent& operator = (const TargetsChangedEventOneFrameComponent&) = delete;
 
     Array<InitialTarget> Targets;
 };
@@ -590,7 +594,7 @@ struct CacheComponent : public BaseComponent
     HashMap<int, bool> field_10;
     uint32_t field_50;
     int32_t field_54;
-    [[bg3::hidden]] HashMap<FixedString, HashMap<int, Array<bg3se::spell_cast::IntermediateTarget>>> Targets;
+    HashMap<FixedString, HashMap<int, Array<bg3se::spell_cast::IntermediateTarget>>> Targets;
     HashMap<FixedString, int> field_98;
     uint32_t field_D8;
     int32_t field_DC;
