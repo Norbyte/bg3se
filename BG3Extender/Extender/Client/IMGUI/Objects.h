@@ -339,12 +339,14 @@ public:
     void SetBgAlpha(std::optional<float> alpha);
 
     GuiWindowFlags Flags{ 0 };
+    float FontScale{ 1.0f };
     glm::vec2 LastSize{ 0.0f, 0.0f };
     glm::vec2 LastPosition{ 0.0f, 0.0f };
 
 protected:
     WindowRenderRequests req_;
 
+    void BeginDrawingWindow();
     void EndDrawingWindow();
     void ProcessRenderSettings(DrawingContext& context);
 };

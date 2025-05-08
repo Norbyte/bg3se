@@ -824,6 +824,11 @@ void WindowBase::SetBgAlpha(std::optional<float> alpha)
     req_.BgAlpha = alpha;
 }
 
+void WindowBase::BeginDrawingWindow()
+{
+    ImGui::SetWindowFontScale(FontScale);
+}
+
 void WindowBase::EndDrawingWindow()
 {
     auto size = ImGui::GetWindowSize();
@@ -888,9 +893,12 @@ bool Window::BeginRender(DrawingContext& context)
     bool renderChildren = ImGui::Begin(Label.c_str(), Closeable ? &Open : nullptr, (ImGuiWindowFlags)Flags);
 
     rendering_ = true;
-
     if (wasOpen && !Open && OnClose) {
         Manager->GetEventQueue().Call(OnClose, lua::ImguiHandle(Handle));
+    }
+
+    if (renderChildren) {
+        BeginDrawingWindow();
     }
 
     return renderChildren;
@@ -1181,6 +1189,10 @@ bool Tooltip::BeginRender(DrawingContext& context)
     } else {
         rendering_ = false;
     }
+
+    if (rendering_) {
+        BeginDrawingWindow();
+    }
     
     return rendering_;
 }
@@ -1205,6 +1217,11 @@ bool Popup::BeginRender(DrawingContext& context)
 
     ProcessRenderSettings(context);
     rendering_ = ImGui::BeginPopup(Label.c_str(), (ImGuiWindowFlags)Flags);
+
+    if (rendering_) {
+        BeginDrawingWindow();
+    }
+
     return rendering_;
 }
 
@@ -1230,7 +1247,13 @@ bool ChildWindow::BeginRender(DrawingContext& context)
 {
     ImGuiID id = ImGui::GetCurrentWindow()->GetID(Label.c_str());
     ProcessRenderSettings(context);
-    return ImGui::BeginChildEx(Label.c_str(), id, context.Scale(ToImVec(Size)), (ImGuiWindowFlags)Flags, (ImGuiChildFlags)ChildFlags);
+    auto rendering = ImGui::BeginChildEx(Label.c_str(), id, context.Scale(ToImVec(Size)), (ImGuiWindowFlags)Flags, (ImGuiChildFlags)ChildFlags);
+
+    if (rendering) {
+        BeginDrawingWindow();
+    }
+
+    return rendering;
 }
 
 
