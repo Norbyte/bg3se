@@ -116,7 +116,7 @@ struct ImageReference : Noncopyable<ImageReference>
 
     inline bool IsValid() const
     {
-        return TextureId != nullptr;
+        return TextureId != 0;
     }
 
     glm::vec2 Size{ 0.0f, 0.0f };
@@ -125,7 +125,7 @@ struct ImageReference : Noncopyable<ImageReference>
 
     FixedString TextureResource;
     FixedString Icon;
-    ImTextureID TextureId{ nullptr };
+    ImTextureID TextureId{ 0 };
 };
 
 

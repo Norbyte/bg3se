@@ -199,7 +199,7 @@ public:
         }
 
         auto view = descriptor->DX11.Views[0].View;
-        return TextureLoadResult{ view, descriptor->DX11.Width, descriptor->DX11.Height };
+        return TextureLoadResult{ reinterpret_cast<ImTextureID>(view), descriptor->DX11.Width, descriptor->DX11.Height };
     }
 
     void UnregisterTexture(ImTextureID id) override

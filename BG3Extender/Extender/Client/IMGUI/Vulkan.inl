@@ -259,14 +259,14 @@ public:
 
         textures_++;
         auto desc = ImGui_ImplVulkan_AddTexture(sampler_, VkImageView(view), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-        return TextureLoadResult{ desc, descriptor->Vulkan.ImageData.Width, descriptor->Vulkan.ImageData.Height };
+        return TextureLoadResult{ reinterpret_cast<ImTextureID>(desc), descriptor->Vulkan.ImageData.Width, descriptor->Vulkan.ImageData.Height };
     }
 
     void UnregisterTexture(ImTextureID id) override
     {
         if (!initialized_) return;
 
-        auto desc = static_cast<VkDescriptorSet>(id);
+        auto desc = reinterpret_cast<VkDescriptorSet>(id);
         ImGui_ImplVulkan_RemoveTexture(desc);
         textures_--;
     }
