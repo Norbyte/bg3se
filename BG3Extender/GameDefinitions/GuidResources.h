@@ -409,7 +409,7 @@ struct Progression : public resource::GuidResource
     STDString PassivesRemoved;
     Array<Guid> BoostPrototypes;
     STDString Boosts;
-    uint8_t ProgressionType; // FIXME - map to enumeration
+    ProgressionType ProgressionType;
     uint8_t Level;
     bool AllowImprovement;
     Array<FixedString> field_D0;

@@ -106,12 +106,12 @@ struct SpellMeta
     SpellMetaId SpellId;
     EntityHandle BoostHandle;
     [[bg3::legacy(SelectionType)]] SpellLearningStrategy LearningStrategy;
-    uint8_t field_29;
+    [[bg3::legacy(field_29)]] SpellPrepareType PrepareType;
     [[bg3::legacy(SpellUUID)]] Guid PreferredCastingResource;
     AbilityId SpellCastingAbility;
     SpellCooldownType CooldownType;
     FixedString ContainerSpell;
-    uint8_t field_48;
+    [[bg3::legacy(field_48)]] bool LinkedSpellContainer;
 };
 
 struct SpellContainerComponent : public BaseComponent

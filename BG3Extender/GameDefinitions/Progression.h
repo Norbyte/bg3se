@@ -8,7 +8,7 @@ struct LevelUpUpgrades
 {
     struct Selector
     {
-        [[bg3::legacy(field_0)]] uint8_t Type;
+        [[bg3::legacy(field_0)]] ProgressionSelectorType Type;
         Guid Class;
         Guid Subclass;
         [[bg3::legacy(field_28)]] int Level;
