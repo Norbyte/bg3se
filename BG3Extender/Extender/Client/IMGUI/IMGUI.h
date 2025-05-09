@@ -86,6 +86,8 @@ public:
     bool LoadFont(FixedString const& name, char const* path, float size);
     FontData* GetFont(FixedString const& name);
     void SetScale(float scale);
+    void SetUIScaleMultiplier(float scale);
+    void SetFontScaleMultiplier(float scale);
     glm::ivec2 GetViewportSize();
 
     void OnRenderBackendInitialized();
@@ -96,7 +98,11 @@ private:
     std::unique_ptr<RenderingBackend> renderer_;
     HashMap<FixedString, FontData> fonts_;
     float scale_{ 1.0f };
+    float uiScaleMultiplier_{ 1.0f };
+    float fontScaleMultiplier_{ 1.0f };
     float requestedScale_{ 1.0f };
+    float requestedUiScaleMultiplier_{ 1.0f };
+    float requestedFontScaleMultiplier_{ 1.0f };
     IMGUITextureLoader textureLoader_;
 
     IMGUIObjectManager* objects_{ nullptr };

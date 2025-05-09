@@ -826,7 +826,6 @@ void WindowBase::SetBgAlpha(std::optional<float> alpha)
 
 void WindowBase::BeginDrawingWindow()
 {
-    ImGui::SetWindowFontScale(FontScale);
 }
 
 void WindowBase::EndDrawingWindow()
@@ -897,9 +896,7 @@ bool Window::BeginRender(DrawingContext& context)
         Manager->GetEventQueue().Call(OnClose, lua::ImguiHandle(Handle));
     }
 
-    if (renderChildren) {
-        BeginDrawingWindow();
-    }
+    BeginDrawingWindow();
 
     return renderChildren;
 }
@@ -1865,7 +1862,7 @@ bool IMGUIManager::LoadFont(FontData& request)
     auto& io = ImGui::GetIO();
     ImFontConfig cfg;
     cfg.FontDataOwnedByAtlas = false;
-    cfg.RasterizerDensity = requestedScale_;
+    cfg.RasterizerDensity = requestedScale_ * requestedFontScaleMultiplier_;
     cfg.SizePixels = request.SizePixels;
     cfg.GlyphRanges = glyphRanges;
 
@@ -1874,7 +1871,7 @@ bool IMGUIManager::LoadFont(FontData& request)
         OsiError("Failed to load font file (not a valid TTF font?): " << path);
         return false;
     } else {
-        request.Font->Scale = requestedScale_;
+        request.Font->Scale = requestedScale_ * requestedFontScaleMultiplier_;
     }
 
     renderer_->ReloadFonts();
@@ -1899,6 +1896,16 @@ IMGUIManager::FontData* IMGUIManager::GetFont(FixedString const& name)
 void IMGUIManager::SetScale(float scale)
 {
     requestedScale_ = scale;
+}
+
+void IMGUIManager::SetUIScaleMultiplier(float scale)
+{
+    requestedUiScaleMultiplier_ = scale;
+}
+
+void IMGUIManager::SetFontScaleMultiplier(float scale)
+{
+    requestedFontScaleMultiplier_ = scale;
 }
 
 glm::ivec2 IMGUIManager::GetViewportSize()
@@ -2007,15 +2014,22 @@ void IMGUIManager::UpdateStyle()
     DEFAULT_COLOR(NavWindowingDimBg, ImVec4(0.07f, 0.07f, 0.07f, 0.78f));
     DEFAULT_COLOR(ModalWindowDimBg, ImVec4(0.18f, 0.15f, 0.15f, 0.73f));
 
-    style.ScaleAllSizes(requestedScale_);
-    scale_ = requestedScale_;
+    bool fontReloadRequired = scale_ != requestedScale_
+        || fontScaleMultiplier_ != requestedFontScaleMultiplier_;
 
-    ImGui::GetIO().Fonts->Clear();
-    for (auto& font : fonts_) {
-        font->Value().Font = nullptr;
-        LoadFont(font->Value());
+    style.ScaleAllSizes(requestedScale_ * requestedUiScaleMultiplier_);
+    scale_ = requestedScale_;
+    uiScaleMultiplier_ = requestedUiScaleMultiplier_;
+    fontScaleMultiplier_ = requestedFontScaleMultiplier_;
+
+    if (fontReloadRequired) {
+        ImGui::GetIO().Fonts->Clear();
+        for (auto& font : fonts_) {
+            font->Value().Font = nullptr;
+            LoadFont(font->Value());
+        }
+        renderer_->ReloadFonts();
     }
-    renderer_->ReloadFonts();
 }
 
 void IMGUIManager::Update()
@@ -2031,7 +2045,9 @@ void IMGUIManager::Update()
         return;
     }
 
-    if (scale_ != requestedScale_) {
+    if (scale_ != requestedScale_ 
+        || uiScaleMultiplier_ != requestedUiScaleMultiplier_
+        || fontScaleMultiplier_ != requestedFontScaleMultiplier_) {
         UpdateStyle();
     }
 
