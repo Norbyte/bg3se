@@ -41,6 +41,7 @@ enum class IMGUIObjectType : uint8_t
 
     // Texts
     Text,
+    TextLink,
     BulletText,
     SeparatorText,
 
@@ -252,6 +253,7 @@ public:
     lua::ImguiHandle AddIcon(FixedString iconName, std::optional<glm::vec2> height);
 
     lua::ImguiHandle AddText(char const* label);
+    lua::ImguiHandle AddTextLink(char const* label);
     lua::ImguiHandle AddBulletText(char const* label);
     lua::ImguiHandle AddSeparatorText(char const* label);
 
@@ -624,6 +626,16 @@ public:
     DECL_UI_TYPE(Text)
 
     void StyledRender(DrawingContext& context) override;
+};
+
+struct TextLink : public StyledRenderable
+{
+public:
+    DECL_UI_TYPE(TextLink)
+
+    void StyledRender(DrawingContext& context) override;
+
+    lua::LuaDelegate<void(lua::ImguiHandle)> OnClick;
 };
 
 

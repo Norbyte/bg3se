@@ -536,6 +536,14 @@ lua::ImguiHandle TreeParent::AddText(char const* label)
 }
 
 
+lua::ImguiHandle TreeParent::AddTextLink(char const* label)
+{
+    auto txt = AddChild<TextLink>();
+    txt->Label = label;
+    return txt;
+}
+
+
 lua::ImguiHandle TreeParent::AddBulletText(char const* label)
 {
     auto txt = AddChild<BulletText>();
@@ -1282,6 +1290,16 @@ void Text::StyledRender(DrawingContext& context)
 }
 
 
+void TextLink::StyledRender(DrawingContext& context)
+{
+    if (ImGui::TextLink(Label.c_str())) {
+        if (OnClick) {
+            Manager->GetEventQueue().Call(OnClick, lua::ImguiHandle(Handle));
+        }
+    }
+}
+
+
 void BulletText::StyledRender(DrawingContext& context)
 {
     ImGui::BulletText("%s", Label.c_str());
@@ -1581,6 +1599,7 @@ IMGUIObjectManager::IMGUIObjectManager()
     pools_[(unsigned)IMGUIObjectType::Image] = std::make_unique<IMGUIObjectPool<Image>>();
 
     pools_[(unsigned)IMGUIObjectType::Text] = std::make_unique<IMGUIObjectPool<Text>>();
+    pools_[(unsigned)IMGUIObjectType::TextLink] = std::make_unique<IMGUIObjectPool<TextLink>>();
     pools_[(unsigned)IMGUIObjectType::BulletText] = std::make_unique<IMGUIObjectPool<BulletText>>();
     pools_[(unsigned)IMGUIObjectType::SeparatorText] = std::make_unique<IMGUIObjectPool<SeparatorText>>();
 

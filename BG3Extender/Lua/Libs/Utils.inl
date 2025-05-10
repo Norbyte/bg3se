@@ -189,6 +189,11 @@ UserReturn GetGameState(lua_State* L)
     return 1;
 }
 
+esv::shapeshift::System* DEBUG_GetShapeshiftSystem(lua_State* L)
+{
+    return State::FromLua(L)->GetEntitySystemHelpers()->GetSystem< esv::shapeshift::System>();
+}
+
 void RegisterUtilsLib()
 {
     DECLARE_MODULE(Utils, Both)
@@ -207,6 +212,7 @@ void RegisterUtilsLib()
     MODULE_FUNCTION(GetCommandLineParams)
     MODULE_FUNCTION(GetDialogManager)
     MODULE_FUNCTION(GetGameState)
+    MODULE_FUNCTION(DEBUG_GetShapeshiftSystem)
     END_MODULE()
 }
 
