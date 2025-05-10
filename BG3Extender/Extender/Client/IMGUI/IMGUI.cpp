@@ -1745,6 +1745,11 @@ void IMGUIManager::InitializeUI()
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+#if !defined(NDEBUG)
+    io.ConfigDebugIsDebuggerPresent = IsDebuggerPresent();
+#endif
+    io.ConfigDebugHighlightIdConflicts = gExtender->GetConfig().DeveloperMode;
+    io.ConfigDebugIniSettings = gExtender->GetConfig().DeveloperMode;
 
     auto configPath = GetStaticSymbols().ToPath("imgui.ini", PathRootType::UserProfile);
     if (!configPath.empty()) {
