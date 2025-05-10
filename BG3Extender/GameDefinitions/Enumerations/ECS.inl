@@ -4,6 +4,7 @@ BEGIN_ENUM(ExtSystemType, uint32_t)
     E(AnimationBlueprint)
     E(ServerShapeshiftSystem)
     E(ServerCastRequestSystem)
+    E(ServerSpellSystem)
     E(Max)
 END_ENUM()
 

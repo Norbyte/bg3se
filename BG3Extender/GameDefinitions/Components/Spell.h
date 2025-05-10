@@ -520,6 +520,52 @@ struct SpellsLearnedEventOneFrameComponent : public BaseComponent
 
 DEFINE_ONEFRAME_TAG_COMPONENT(esv::spell, BookChangedOneFrameComponent, SpellBookChanged)
 
+
+struct SpellUnprepareInfo : public SpellMetaId
+{
+    uint8_t field_20;
+};
+
+struct SpellSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerSpellSystem, "esv::SpellSystem")
+
+    [[bg3::hidden]] void* field_8;
+    [[bg3::hidden]] UnknownSignal field_10;
+    [[bg3::hidden]] UnknownSignal SpellPreparedSignal;
+    [[bg3::hidden]] void* ThothMachine;
+    [[bg3::hidden]] void* StatsSystem;
+    [[bg3::hidden]] void* BoostSystem;
+    [[bg3::hidden]] void* ActionResourceSystem;
+    [[bg3::hidden]] void* SpellPrototypeManager;
+    [[bg3::hidden]] void* ActionResourceTypes;
+    [[bg3::hidden]] void* LevelMaps;
+    [[bg3::hidden]] void* ShapeshiftSystem;
+    [[bg3::hidden]] void* LearningSystem;
+    [[bg3::hidden]] void* ClassDescriptions;
+    [[bg3::hidden]] void* FeatManager;
+    [[bg3::hidden]] void* RulesetModifierOptions;
+    [[bg3::hidden]] void* GlobalSwitches;
+    [[bg3::hidden]] void* Random;
+    [[bg3::hidden]] UnknownFunction field_B0;
+    HashSet<EntityHandle> UpdateItemSpells;
+    HashSet<EntityHandle> InvalidateSpells;
+    HashSet<EntityHandle> ReloadSpellbook;
+    HashMap<EntityHandle, Array<bg3se::spell::SpellMeta>> AddSpells;
+    HashMap<EntityHandle, Array<SpellMetaId>> RemoveSpell;
+    HashSet<EntityHandle> RemoveAllDebugSpells;
+    HashMap<EntityHandle, Array<SpellMetaId>> PrepareSpell;
+    HashMap<EntityHandle, Array<SpellUnprepareInfo>> UnprepareSpell;
+    HashMap<EntityHandle, Array<SpellMetaId>> PlayerPrepareSpell;
+    HashMap<EntityHandle, Array<SpellMetaId>> PlayerUnprepareSpell;
+    HashSet<EntityHandle> CCPrepareSpells;
+    HashSet<EntityHandle> PrepareChanges;
+    HashSet<EntityHandle> RefreshPreparedAmounts;
+    HashSet<EntityHandle> RefreshPrepareMaxAmounts;
+    HashSet<EntityHandle> UpdateEquipmentSpells;
+    HashSet<EntityHandle> field_420;
+};
+
 END_NS()
 
 BEGIN_NS(esv::spell_cast)

@@ -29,7 +29,7 @@ struct RootTemplateOverride
 
 struct State
 {
-    Guid field_0;
+    [[bg3::legacy(field_0)]] Guid StateGuid;
     std::array<std::optional<IntOverride>, 7> Abilities;
     std::optional<IntOverride> Vitality;
     std::optional<IntOverride> VitalityBoost;
