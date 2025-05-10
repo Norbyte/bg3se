@@ -71,13 +71,6 @@ struct RollDefinition
     [[bg3::legacy(field_8)]] bool DiceNegative;
 };
 
-struct BoostParameters
-{
-    FixedString Boost;
-    FixedString Params;
-    FixedString Params2;
-};
-
 struct BoostSource
 {
     BoostSourceType Type;
@@ -88,9 +81,9 @@ struct BoostSource
 
 struct BoostDescription
 {
-    FixedString field_0;
-    FixedString field_4;
-    FixedString field_8;
+    FixedString Boost;
+    FixedString Params;
+    FixedString Params2;
 };
 
 struct ResourceRollDefinition

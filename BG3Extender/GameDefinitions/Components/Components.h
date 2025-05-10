@@ -90,9 +90,9 @@ struct UseComponent : public BaseComponent
     [[bg3::legacy(field_19)]] uint8_t ItemUseBlocked;
     [[bg3::legacy(field_1A)]] uint8_t CanCombine;
     [[bg3::legacy(field_1B)]] uint8_t CombineFlag;
-    Array<BoostParameters> Boosts;
-    Array<BoostParameters> BoostsOnEquipMainHand;
-    Array<BoostParameters> BoostsOnEquipOffHand;
+    Array<BoostDescription> Boosts;
+    Array<BoostDescription> BoostsOnEquipMainHand;
+    Array<BoostDescription> BoostsOnEquipOffHand;
 };
 
 struct WieldingComponent : public BaseComponent
