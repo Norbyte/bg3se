@@ -35,7 +35,7 @@ struct BoostInfoComponent : public BaseComponent
     uint8_t field_20;
     BoostSource Cause;
     EntityHandle Owner;
-    BoostParameters Params;
+    BoostDescription Params;
     uint8_t field_44;
     Guid field_80;
 };
@@ -150,7 +150,7 @@ struct UseBoostsComponent : public BaseComponent
 {
     DEFINE_COMPONENT(UseBoosts, "eoc::UseBoostsComponent")
 
-    Array<BoostParameters> Boosts;
+    Array<BoostDescription> Boosts;
 };
 
 DEFN_BOOST(CannotHarmCauseEntity, CannotHarmCauseEntity, {

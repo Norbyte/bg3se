@@ -92,7 +92,7 @@ struct PlayerPickingHelper : public ProtectedGameObject<PlayerPickingHelper>
 
 struct [[bg3::hidden]] PickingHelperManager : public BaseSystem
 {
-    DEFINE_SYSTEM(PickingHelperManager, "ecl::PickingHelperManager")
+    DEFINE_SYSTEM(PickingHelper, "ecl::PickingHelperManager")
 
     void* field_8;
     LegacyRefMap<uint16_t, PlayerPickingHelper*> PlayerHelpers;

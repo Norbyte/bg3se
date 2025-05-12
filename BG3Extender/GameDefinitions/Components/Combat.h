@@ -152,6 +152,74 @@ DEFINE_ONEFRAME_TAG_COMPONENT(esv::combat, SurprisedJoinRequestOneFrameComponent
 DEFINE_ONEFRAME_TAG_COMPONENT(esv::combat, SurprisedStealthRequestOneFrameComponent, CombatSurprisedStealthRequest)
 DEFINE_ONEFRAME_TAG_COMPONENT(esv::combat, ThreatRangeChangedEventOneFrameComponent, CombatThreatRangeChangedEvent)
 
+struct CombatGroupUpdate
+{
+    EntityHandle Combat;
+    FixedString CombatGroup;
+    bool field_C;
+};
+
+struct GlobalCombatRequest
+{
+    EntityHandle field_0;
+    EntityHandle field_8;
+    uint32_t Action; // 1 = RequestCombat
+    EntityHandle Combat;
+};
+
+struct NarrativeCombatRequest
+{
+    NarrativeCombatRequestType Action;
+    EntityHandle Entity;
+    Guid CombatGuid;
+};
+
+
+struct System : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerCombat, "esv::combat::System")
+
+    [[bg3::hidden]] __int64 field_8;
+    [[bg3::hidden]] void* VMT_NetEventListener;
+    [[bg3::hidden]] __int64 field_18;
+    [[bg3::hidden]] void* VMT_GameEventListener;
+    [[bg3::hidden]] UnknownSignal field_28;
+    [[bg3::hidden]] UnknownSignal field_40;
+    [[bg3::hidden]] UnknownSignal field_58;
+    [[bg3::hidden]] UnknownSignal field_70;
+    [[bg3::hidden]] void* FactionContainer;
+    [[bg3::hidden]] void* EoCGlobalSwitches;
+    [[bg3::hidden]] void* GameControl;
+    [[bg3::hidden]] void* StatusPrototypeManager;
+    [[bg3::hidden]] void* LevelManager;
+    [[bg3::hidden]] void* SpellPrototypeManager;
+    [[bg3::hidden]] void* ShroudManager;
+    [[bg3::hidden]] void* AiHelpers;
+    [[bg3::hidden]] void* StreamRollManager;
+    [[bg3::hidden]] void* CombatSystemHelper;
+    HashSet<Guid> EndCombat;
+    HashSet<Guid> SkipCombatStartDelay;
+    HashSet<FixedString> DestroyCombats;
+    HashMap<EntityHandle, CombatPauseSourceType> ResumeCombat;
+    HashMap<EntityHandle, CombatPauseSourceType> PauseCombat;
+    HashSet<EntityHandle> ResetCombatTimer;
+    HashMap<EntityHandle, EntityHandle> JoinCombat;
+    HashMap<EntityHandle, EntityHandle> JoinNarrativeCombat;
+    Array<CombatGroupUpdate> CombatGroupUpdates;
+    HashSet<EntityHandle> ResetTurn;
+    HashSet<EntityHandle> LeaveCombat;
+    Array<GlobalCombatRequest> CombatRequests;
+    Array<NarrativeCombatRequest> NarrativeCombatRequests;
+    bool field_328;
+    bool field_329;
+    [[bg3::hidden]] UnknownFunction field_330;
+    HashMap<EntityHandle, UserId> Flee;
+    HashSet<uint32_t> ActivatedPeers_PeerId;
+    HashSet<uint32_t> field_3E0_PeerId;
+    HashSet<uint32_t> field_410_PeerId;
+};
+
+
 END_NS()
 
 BEGIN_NS(esv::ai::combat)

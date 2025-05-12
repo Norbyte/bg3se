@@ -116,7 +116,7 @@ struct AddRequest
 
 struct System : public BaseSystem
 {
-    DEFINE_SYSTEM(ServerShapeshiftSystem, "esv::shapeshift::System")
+    DEFINE_SYSTEM(ServerShapeshift, "esv::shapeshift::System")
 
     [[bg3::hidden]] __int64 field_8;
     [[bg3::hidden]] UnknownSignal field_10;

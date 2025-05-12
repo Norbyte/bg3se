@@ -528,7 +528,7 @@ struct SpellUnprepareInfo : public SpellMetaId
 
 struct SpellSystem : public BaseSystem
 {
-    DEFINE_SYSTEM(ServerSpellSystem, "esv::SpellSystem")
+    DEFINE_SYSTEM(ServerSpell, "esv::SpellSystem")
 
     [[bg3::hidden]] void* field_8;
     [[bg3::hidden]] UnknownSignal field_10;
@@ -726,7 +726,7 @@ struct CastConfirmRequest
 
 struct CastRequestSystem : public BaseSystem
 {
-    DEFINE_SYSTEM(ServerCastRequestSystem, "esv::spell_cast::CastRequestSystem")
+    DEFINE_SYSTEM(ServerCastRequest, "esv::spell_cast::CastRequestSystem")
 
     [[bg3::hidden]] ecs::EntityWorld* EntityWorld;
     [[bg3::hidden]] void* VMT2;

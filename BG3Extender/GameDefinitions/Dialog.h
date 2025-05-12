@@ -588,7 +588,7 @@ struct [[bg3::hidden]] DialogGameInterface : public dlg::SharedDialogGameInterfa
 
 struct [[bg3::hidden]] DialogSystem : public BaseSystem
 {
-    DEFINE_SYSTEM(ServerDialogSystem, "esv::DialogSystem")
+    DEFINE_SYSTEM(ServerDialog, "esv::DialogSystem")
 
     void* field_8;
     void* TimelineSystem;
