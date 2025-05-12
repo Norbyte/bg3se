@@ -2149,7 +2149,8 @@ std::optional<TextureLoadResult> IMGUITextureLoader::IncTextureRef(FixedString c
         return {};
     }
     
-    if (tex->Type != TextureType::T2D) {
+    if (tex->Type != TextureType::T1D // shouldn't be here, but tex type is set incorrectly for some atlases
+        && tex->Type != TextureType::T2D) {
         ERR("Cannot render texture '%s': expected 2D texture, got %d", textureGuid.GetString(), tex->Type);
         return {};
     }
