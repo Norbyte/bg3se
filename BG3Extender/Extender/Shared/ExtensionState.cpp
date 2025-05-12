@@ -284,6 +284,8 @@ namespace bg3se
         if (++luaRefs_ == 1) {
             se_assert(owningThread_ == 0);
             owningThread_ = GetCurrentThreadId();
+        } else {
+            se_assert(owningThread_ == GetCurrentThreadId());
         }
     }
 

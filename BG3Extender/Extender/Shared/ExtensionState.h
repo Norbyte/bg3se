@@ -83,6 +83,12 @@ namespace bg3se
         void OnResetCompleted();
         virtual void OnUpdate(GameTime const& time);
 
+        inline void EnteredCheck() const
+        {
+            se_assert(luaRefs_ > 0);
+            se_assert(owningThread_ == GetCurrentThreadId());
+        }
+
         void IncLuaRefs();
         void DecLuaRefs();
         void LuaReset(ExtensionStateContext nextContext, bool startup);

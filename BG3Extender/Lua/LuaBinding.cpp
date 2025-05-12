@@ -133,37 +133,23 @@ ExtensionStateBase* DebugServerState{ nullptr };
 global_State* DebugServerVM{ nullptr };
 ExtensionStateBase* DebugClientState{ nullptr };
 global_State* DebugClientVM{ nullptr };
-#endif
+
 
 void EnterVMCheck(lua_State* L)
 {
-#if !defined(NDEBUG) || defined(SE_RELEASE_ASSERTS)
     auto ctx = GetCurrentContextType();
     se_assert(ctx != ContextType::None);
 
     if (ctx == ContextType::Server) {
-        se_assert(DebugServerVM != nullptr && DebugServerVM == L->l_G);
-        se_assert(DebugServerState != nullptr && DebugServerState->GetEnterCount() > 0);
-    } else {
-        se_assert(DebugClientVM != nullptr && DebugClientVM == L->l_G);
-        se_assert(DebugClientState != nullptr && DebugClientState->GetEnterCount() > 0);
-    }
-#endif
-}
-
-void VMCheck(lua_State* L)
-{
-#if !defined(NDEBUG) || defined(SE_RELEASE_ASSERTS)
-    auto ctx = GetCurrentContextType();
-    se_assert(ctx != ContextType::None);
-
-    if (ctx == ContextType::Server) {
+        if (gExtender->GetServer().HasExtensionState()) gExtender->GetServer().GetExtensionState().EnteredCheck();
         se_assert(DebugServerVM != nullptr && DebugServerVM == L->l_G);
     } else {
+        if (gExtender->GetClient().HasExtensionState()) gExtender->GetClient().GetExtensionState().EnteredCheck();
         se_assert(DebugClientVM != nullptr && DebugClientVM == L->l_G);
     }
-#endif
 }
+
+#endif
 
 int CallWithTraceback(lua_State * L, int narg, int nres)
 {

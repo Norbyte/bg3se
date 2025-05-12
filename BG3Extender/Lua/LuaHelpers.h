@@ -7,6 +7,17 @@
 #include <optional>
 
 #include <GameDefinitions/Base/Base.h>
+
+BEGIN_NS(lua)
+
+#if !defined(NDEBUG) || defined(SE_RELEASE_ASSERTS)
+void EnterVMCheck(lua_State* L);
+#else
+inline void EnterVMCheck(lua_State* L) {}
+#endif
+
+END_NS()
+
 #include <Lua/Shared/LuaReference.h>
 #include <Lua/Shared/RawComponentRef.h>
 #include <Lua/Shared/LuaTypeTraits.h>
@@ -81,9 +92,6 @@ struct FunctionRef : public LocalRef {};
 
 // Helper type for getting userdata/cpplightuserdata as parameters
 struct AnyUserdataRef : public LocalRef {};
-
-void EnterVMCheck(lua_State* L);
-void VMCheck(lua_State* L);
 
 END_NS()
 
