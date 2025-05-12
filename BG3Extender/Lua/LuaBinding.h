@@ -160,6 +160,11 @@ namespace bg3se::lua
             return metatableManager_;
         }
 
+        inline GlobalRefManager& GetGlobals()
+        {
+            return globals_;
+        }
+
         inline CachedUserVariableManager& GetVariableManager()
         {
             return variableManager_;
@@ -264,6 +269,7 @@ namespace bg3se::lua
         LifetimeStack lifetimeStack_;
 
         CppMetatableManager metatableManager_;
+        GlobalRefManager globals_;
 
         CachedUserVariableManager variableManager_;
         CachedModVariableManager modVariableManager_;

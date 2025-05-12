@@ -1,16 +1,54 @@
 #pragma once
 
+#include <concurrent_vector.h>
+#include <concurrent_queue.h>
+
 BEGIN_NS(lua)
 
 // Generation ID forward declarations
 uint32_t get_generation_id(lua_State* L);
 
+class GlobalRefManager : public Noncopyable<GlobalRefManager>
+{
+public:
+    GlobalRefManager(lua_State* L);
+    ~GlobalRefManager();
+
+    int32_t AddGlobalIndex(lua_State* L, int local);
+    void IncRef(int32_t i);
+    void DecRef(int32_t i);
+    void Push(lua_State* L, int32_t i);
+
+private:
+    struct GlobalEntry
+    {
+        inline GlobalEntry(int32_t index)
+            : Index(index), RefCount(1)
+        {}
+        
+        inline GlobalEntry()
+            : Index(-1), RefCount(0)
+        {}
+        
+        inline GlobalEntry(GlobalEntry const& o)
+            : Index(o.Index), RefCount(o.RefCount.load())
+        {}
+
+        int32_t Index;
+        std::atomic<uint32_t> RefCount;
+    };
+
+    lua_State * L_;
+    concurrency::concurrent_vector<GlobalEntry> ref_;
+    concurrency::concurrent_queue<int32_t> freeList_;
+};
+
 class RegistryEntry
 {
 public:
     RegistryEntry();
-    RegistryEntry(lua_State * L, int index);
-    RegistryEntry(lua_State * L, Ref const& local);
+    RegistryEntry(lua_State* L, int index);
+    RegistryEntry(lua_State* L, Ref const& local);
     ~RegistryEntry();
 
     RegistryEntry(RegistryEntry const &);
@@ -21,33 +59,20 @@ public:
 
     explicit inline operator bool() const
     {
-        return ref_ != -1;
-    }
-
-    inline lua_State* GetState() const
-    {
-        return L_;
+        return global_ != -1;
     }
 
     inline int GetRef() const
     {
-        return ref_;
+        return global_;
     }
 
-    void Push() const;
-
-    inline void ResetWithoutUnbind()
-    {
-        L_ = nullptr;
-        ref_ = -1;
-    }
-
-    void Bind(lua_State* L, Ref const& ref);
+    void Push(lua_State* L) const;
     void Reset();
 
 private:
-    lua_State * L_;
-    int ref_;
+    GlobalRefManager* manager_;
+    int global_;
 };
 
 class PersistentRegistryEntry
@@ -124,6 +149,7 @@ public:
 
     void Push(lua_State* L) const
     {
+        EnterVMCheck(L);
         switch (type_) {
         case RefType::None:
             lua_pushnil(L);

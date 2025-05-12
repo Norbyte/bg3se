@@ -409,6 +409,7 @@ State::State(ExtensionStateBase& state, uint32_t generationId, bool isServer)
     generationId_(generationId),
     state_(state),
     lifetimeStack_(lifetimePool_),
+    globals_(L.L),
     variableManager_(isServer ? gExtender->GetServer().GetExtensionState().GetUserVariables() : gExtender->GetClient().GetExtensionState().GetUserVariables(), isServer),
     modVariableManager_(isServer ? gExtender->GetServer().GetExtensionState().GetModVariables() : gExtender->GetClient().GetExtensionState().GetModVariables(), isServer),
     entityHooks_(*this),
