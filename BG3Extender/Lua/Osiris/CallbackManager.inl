@@ -140,7 +140,7 @@ void OsirisCallbackManager::RunHandler(ServerState& lua, RegistryEntry const& fu
     auto stackSize = lua_gettop(L);
 
     try {
-        func.Push();
+        func.Push(L);
 
         int32_t numArgs = 0;
         if (tuple != nullptr) {
@@ -206,7 +206,7 @@ void OsirisCallbackManager::RunHandler(ServerState& lua, RegistryEntry const& fu
     auto stackSize = lua_gettop(L);
 
     try {
-        func.Push();
+        func.Push(L);
 
         int32_t numArgs = 0;
         auto node = args;

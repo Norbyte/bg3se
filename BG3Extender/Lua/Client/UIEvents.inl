@@ -109,7 +109,7 @@ void UIEventHooks::EventFired(SubscriptionIndex index, Noesis::BaseComponent* ta
     }
 
     auto L = state_.GetState();
-    sub->Handler.Push();
+    sub->Handler.Push(L);
     Ref func(L, lua_absindex(L, -1));
 
     auto eventArgs = const_cast<RoutedEventArgs*>(&args);

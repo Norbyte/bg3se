@@ -143,7 +143,7 @@ template <class T>
 void push(lua_State* L, LuaDelegate<T> const& v)
 {
     if (v) {
-        v.Push();
+        v.Push(L);
     } else {
         lua_pushnil(L);
     }

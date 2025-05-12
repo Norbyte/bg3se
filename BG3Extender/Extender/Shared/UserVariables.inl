@@ -1050,7 +1050,7 @@ UserVariable CachedUserVariable::ToUserVariable(lua_State* L) const
 
 STDString CachedUserVariable::StringifyReference(lua_State* L) const
 {
-    std::get<RegistryEntry>(Value).Push();
+    std::get<RegistryEntry>(Value).Push(L);
     json::StringifyContext ctx;
     ctx.Beautify = false;
 

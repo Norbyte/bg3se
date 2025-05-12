@@ -180,7 +180,7 @@ void EntityComponentEventHooks::CallHandlerUnsafe(EntityHandle entity, ecs::Comp
 
     auto L = state_.GetState();
     auto componentType = state_.GetEntitySystemHelpers()->GetComponentType(type);
-    hook.Hook.Push();
+    hook.Hook.Push(L);
     Ref func(L, lua_absindex(L, -1));
 
     RawComponentRef componentRef{ component, type };

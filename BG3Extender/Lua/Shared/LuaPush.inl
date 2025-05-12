@@ -178,7 +178,7 @@ void push(lua_State* L, PersistentRef const& v)
 void push(lua_State* L, RegistryEntry const& v)
 {
     if (v) {
-        v.Push();
+        v.Push(L);
     } else {
         lua_pushnil(L);
     }

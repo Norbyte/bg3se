@@ -143,7 +143,7 @@ void ServerEntityReplicationEventHooks::CallHandler(EntityHandle entity, uint64_
 {
     auto L = state_.GetState();
     auto componentType = state_.GetEntitySystemHelpers()->GetComponentType(type);
-    hook.Hook.Push();
+    hook.Hook.Push(L);
     Ref func(L, lua_absindex(L, -1));
 
     ProtectedFunctionCaller<std::tuple<EntityHandle, ExtComponentType, uint64_t>, void> caller{ func, std::tuple(entity, *componentType, fields) };
