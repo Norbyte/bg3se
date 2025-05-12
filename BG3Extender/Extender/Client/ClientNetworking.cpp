@@ -36,7 +36,7 @@ void ExtenderProtocol::ProcessExtenderMessage(net::MessageContext& context, net:
             ext.OnGameSessionLoaded();
             ext.OnResetCompleted();
         });
-        ext.LuaReset(resetMsg.bootstrap_scripts());
+        ext.RequestLuaReset(resetMsg.bootstrap_scripts());
         break;
     }
 

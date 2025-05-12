@@ -16,7 +16,11 @@ ExtensionState::ExtensionState()
 
 ExtensionState::~ExtensionState()
 {
-    if (Lua) Lua->Shutdown();
+    if (Lua) {
+        IncLuaRefs();
+        ShutdownLuaState();
+        DecLuaRefs(false);
+    }
 }
 
 lua::State * ExtensionState::GetLua()
@@ -44,26 +48,29 @@ void ExtensionState::OnUpdate(GameTime const& time)
     ExtensionStateBase::OnUpdate(time);
 }
 
-void ExtensionState::DoLuaReset()
+void ExtensionState::ShutdownLuaState()
 {
+    EnteredCheck();
     if (Lua) {
-        // Keep around a fake reference during the reset callback
-        luaRefs_++;
         Lua->OnShutdown();
-        luaRefs_--;
         Lua->Shutdown();
     }
     Lua.reset();
+}
 
+void ExtensionState::InitializeLuaState()
+{
     context_ = nextContext_;
     se_assert(context_ != ExtensionStateContext::Uninitialized);
+    EnteredCheck();
+
     Lua = std::make_unique<lua::ClientState>(*this, nextGenerationId_++);
     Lua->Initialize();
 }
 
-void ExtensionState::LuaStartup()
+void ExtensionState::BootstrapLua()
 {
-    ExtensionStateBase::LuaStartup();
+    ExtensionStateBase::BootstrapLua();
 
     LuaClientPin lua(*this);
     auto gameState = GetStaticSymbols().GetClientState();

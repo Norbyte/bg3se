@@ -251,7 +251,11 @@ namespace bg3se::esv
 
     ExtensionState::~ExtensionState()
     {
-        if (Lua) Lua->Shutdown();
+        if (Lua) {
+            IncLuaRefs();
+            ShutdownLuaState();
+            DecLuaRefs(false);
+        }
     }
 
     lua::State * ExtensionState::GetLua()
@@ -291,27 +295,30 @@ namespace bg3se::esv
         ExtensionStateBase::Reset();
     }
 
-    void ExtensionState::DoLuaReset()
+    void ExtensionState::ShutdownLuaState()
     {
+        EnteredCheck();
         if (Lua) {
-            // Keep around a fake reference during the reset callback
-            luaRefs_++;
             Lua->OnShutdown();
-            luaRefs_--;
             Lua->Shutdown();
         }
         Lua.reset();
-
-        context_ = nextContext_;
-        Lua = std::make_unique<lua::ServerState>(*this, nextGenerationId_++);
-        LuaStatePin<ExtensionState, lua::ServerState> pin(*this);
-        pin->Initialize();
-        pin->StoryFunctionMappingsUpdated();
     }
 
-    void ExtensionState::LuaStartup()
+    void ExtensionState::InitializeLuaState()
     {
-        ExtensionStateBase::LuaStartup();
+        se_assert(!Lua);
+        context_ = nextContext_;
+        EnteredCheck();
+
+        Lua = std::make_unique<lua::ServerState>(*this, nextGenerationId_++);
+        Lua->Initialize();
+        Lua->StoryFunctionMappingsUpdated();
+    }
+
+    void ExtensionState::BootstrapLua()
+    {
+        ExtensionStateBase::BootstrapLua();
 
         LuaServerPin lua(*this);
         auto gameState = GetStaticSymbols().GetServerState();

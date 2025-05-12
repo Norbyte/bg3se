@@ -332,13 +332,14 @@ void ScriptExtender::ResetLuaState()
                 ext->OnResetCompleted();
             }
         });
-        ext->LuaReset(true);
+        ext->RequestLuaReset(true);
     }
 }
 
 void ScriptExtender::ResetExtensionState()
 {
     network_.OnResetExtensionState();
+    extensionState_.reset();
     extensionState_ = std::make_unique<ExtensionState>();
     extensionState_->Reset();
     gExtender->ClearPathOverrides();
@@ -363,7 +364,7 @@ void ScriptExtender::LoadExtensionState(ExtensionStateContext ctx)
         OsiMsg("Initializing client with target context " << ContextToString(ctx));
         gExtender->GetLibraryManager().ApplyCodePatches();
         //networkManager_.ExtendNetworkingClient();
-        extensionState_->LuaReset(ctx, true);
+        extensionState_->RequestLuaReset(ctx, true);
     }
 
     extensionLoaded_ = true;

@@ -289,27 +289,28 @@ namespace bg3se
         }
     }
 
-    void ExtensionStateBase::DecLuaRefs()
+    void ExtensionStateBase::DecLuaRefs(bool releaseVm)
     {
         se_assert(luaRefs_ > 0);
         se_assert(owningThread_ == GetCurrentThreadId());
         if (--luaRefs_ == 0) {
             owningThread_ = 0;
         }
-        luaMutex_.unlock();
 
-        if (luaRefs_ == 0 && LuaPendingDelete) {
+        if (luaRefs_ == 0 && LuaPendingDelete && releaseVm) {
             LuaResetInternal();
         }
+
+        luaMutex_.unlock();
     }
 
-    void ExtensionStateBase::LuaReset(ExtensionStateContext nextContext, bool startup)
+    void ExtensionStateBase::RequestLuaReset(ExtensionStateContext nextContext, bool startup)
     {
         nextContext_ = nextContext;
-        LuaReset(startup);
+        RequestLuaReset(startup);
     }
 
-    void ExtensionStateBase::LuaReset(bool startup)
+    void ExtensionStateBase::RequestLuaReset(bool startup)
     {
         if (LuaPendingDelete) {
             OsiWarn("State delete is already pending!");
@@ -477,7 +478,9 @@ namespace bg3se
 
     void ExtensionStateBase::LuaResetInternal()
     {
-        std::lock_guard _(luaMutex_);
+        // Make sure that we won't get destroyed during startup/shutdown
+        IncLuaRefs();
+
         if (gExtender->GetClient().IsInContext()) {
             gExtender->GetClient().UpdateClientProgress("Lua Init");
         } else {
@@ -485,21 +488,19 @@ namespace bg3se
         }
 
         se_assert(LuaPendingDelete);
-        se_assert(luaRefs_ == 0);
+        se_assert(luaRefs_ == 1);
 
         LuaPendingDelete = false;
 
         // Destroy previous instance first to make sure that no dangling
         // references are made to the old state while constructing the new
-        DoLuaReset();
-        OsiWarn("LUA VM reset.");
-
-        // Make sure that we won't get destroyed during startup
-        IncLuaRefs();
+        ShutdownLuaState();
+        OsiMsg("LUA VM reset");
+        InitializeLuaState();
 
         if (LuaPendingStartup) {
             LuaPendingStartup = false;
-            LuaStartup();
+            BootstrapLua();
         }
 
         for (auto const& cb : luaPostResetCallbacks_) {
@@ -514,10 +515,10 @@ namespace bg3se
             OsiError("Lua state deletion requested during startup? Weird");
         }
 
-        DecLuaRefs();
+        DecLuaRefs(false);
     }
 
-    void ExtensionStateBase::LuaStartup()
+    void ExtensionStateBase::BootstrapLua()
     {
         LuaVirtualPin lua(*this);
         if (!lua) {

@@ -90,9 +90,9 @@ namespace bg3se
         }
 
         void IncLuaRefs();
-        void DecLuaRefs();
-        void LuaReset(ExtensionStateContext nextContext, bool startup);
-        void LuaReset(bool startup);
+        void DecLuaRefs(bool releaseVm);
+        void RequestLuaReset(ExtensionStateContext nextContext, bool startup);
+        void RequestLuaReset(bool startup);
         void AddPostResetCallback(PostResetCallback callback);
 
         std::optional<STDString> ResolveModScriptPath(STDString const& modNameGuid, STDString const& fileName);
@@ -170,8 +170,9 @@ namespace bg3se
         GameTime time_;
 
         void LuaResetInternal();
-        virtual void DoLuaReset() = 0;
-        virtual void LuaStartup();
+        virtual void ShutdownLuaState() = 0;
+        virtual void InitializeLuaState() = 0;
+        virtual void BootstrapLua();
         void LuaLoadGameBootstrap(ExtensionModConfig const& config, Module const& mod);
         void LuaLoadPreinitBootstrap(ExtensionModConfig const& config, Module const& mod);
     };
@@ -202,7 +203,7 @@ namespace bg3se
 
         inline ~LuaVirtualPin()
         {
-            if (state_) state_->DecLuaRefs();
+            if (state_) state_->DecLuaRefs(true);
         }
 
         inline operator bool() const
@@ -248,7 +249,7 @@ namespace bg3se
 
         inline ~LuaStatePin()
         {
-            state_.DecLuaRefs();
+            state_.DecLuaRefs(true);
             se_assert((state_.IsServer() ? ContextType::Server : ContextType::Client) == GetCurrentContextType());
         }
 

@@ -43,8 +43,9 @@ protected:
 
     concurrency::concurrent_queue<SDL_Event> deferredInputEvents_;
 
-    void DoLuaReset() override;
-    void LuaStartup() override;
+    void ShutdownLuaState() override;
+    void InitializeLuaState() override;
+    void BootstrapLua() override;
     void FireInputEvents();
 };
 
