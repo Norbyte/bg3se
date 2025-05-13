@@ -7,6 +7,7 @@ BEGIN_ENUM(ExtSystemType, uint32_t)
     E(ServerSpell)
     E(ServerCombat)
     E(ServerActionResource)
+    E(ServerBoost)
     E(Max)
 END_ENUM()
 

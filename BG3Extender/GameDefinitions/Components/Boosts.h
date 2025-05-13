@@ -605,4 +605,57 @@ struct StatusBoostsRefreshedOneFrameComponent : public BaseComponent
 
 DEFINE_ONEFRAME_TAG_COMPONENT(esv::boost, BaseUpdatedOneFrameComponent, BoostBaseUpdated)
 
+struct AddBoostRequest
+{
+    EntityHandle Entity;
+    Array<BoostDescription> BoostDescriptions;
+    BoostSource Source;
+    BoostParameters Parameters;
+};
+
+struct RemoveBoostRequest
+{
+    EntityHandle Entity;
+    Array<BoostDescription> BoostDescriptions;
+    BoostSource Source;
+    BoostParameters Params;
+    uint8_t field_48;
+};
+
+struct EquipmentBoostAddRemoveRequest
+{
+    int Action;
+    EntityHandle Boost;
+};
+
+struct BoostSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerBoost, "esv::BoostSystem")
+
+    EntityHandle Singleton;
+    [[bg3::hidden]] UnknownSignal OnBoostChangedEvent;
+    [[bg3::hidden]] void* ThothShared;
+    [[bg3::hidden]] void* BoostPrototypes;
+    [[bg3::hidden]] void* ImmutableData;
+    [[bg3::hidden]] void* StatusPrototypes;
+    [[bg3::hidden]] void* StatusFactory;
+    [[bg3::hidden]] void* StatsExpressionManager;
+    [[bg3::hidden]] void* Stats;
+    HashSet<EntityHandle> CharacterCreationUpdates;
+    HashSet<EntityHandle> ProgressionUpdates;
+    HashSet<EntityHandle> ReloadBaseBoost;
+    HashSet<EntityHandle> DetachAndDestroyBoost;
+    Array<int32_t> ReleaseConditionHandles;
+    HashMap<EntityHandle, Array<EquipmentBoostAddRemoveRequest>> ItemBoostChanges;
+    HashSet<EntityHandle> field_170;
+    Array<AddBoostRequest> AddDebugBoost;
+    Array<RemoveBoostRequest> RemoveDebugBoosts;
+    Array<AddBoostRequest> AddStoryBoosts;
+    Array<RemoveBoostRequest> RemoveStoryBoosts;
+    HashSet<EntityHandle> ClearStoryBoosts;
+    bool ReloadStatusBoosts;
+    [[bg3::hidden]] UnknownFunction field_218;
+};
+
+
 END_NS()
