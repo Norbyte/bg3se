@@ -3,6 +3,7 @@
 #include <GameDefinitions/Base/Base.h>
 #include <GameDefinitions/EntitySystem.h>
 #include <GameDefinitions/Misc.h>
+#include <GameDefinitions/Components/Status.h>
 
 BEGIN_SE()
 
@@ -656,6 +657,5 @@ struct BoostSystem : public BaseSystem
     bool ReloadStatusBoosts;
     [[bg3::hidden]] UnknownFunction field_218;
 };
-
 
 END_NS()

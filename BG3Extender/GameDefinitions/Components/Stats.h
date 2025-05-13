@@ -170,4 +170,84 @@ struct WeaponComponent : public BaseComponent
     DiceSizeId VersatileDamageDice;
 };
 
+struct BaseStatsSystem : public BaseSystem
+{
+    [[bg3::hidden]] ecs::EntityWorld* EntityWorld;
+    [[bg3::hidden]] UnknownSignal ObjectHealed;
+    [[bg3::hidden]] UnknownSignal CurrentHitPointsChanged;
+    [[bg3::hidden]] UnknownSignal CurrentTemporaryHitPointsChanged;
+    [[bg3::hidden]] UnknownSignal ObjectHit;
+    [[bg3::hidden]] UnknownSignal ObjectDestroyed;
+    [[bg3::hidden]] UnknownSignal LevelChanged;
+    [[bg3::hidden]] UnknownSignal ObjectThrown;
+    [[bg3::hidden]] UnknownSignal MaxSpellsChanged;
+    [[bg3::hidden]] void* ThothSharedContext;
+    [[bg3::hidden]] void* ClassDescriptions;
+    [[bg3::hidden]] void* StreamRollManager;
+    [[bg3::hidden]] void* SpellPrototypes;
+    [[bg3::hidden]] void* StatusPrototypes;
+    [[bg3::hidden]] void* LevelMapValueProvider;
+    [[bg3::hidden]] void* EntityManager;
+    [[bg3::hidden]] void* LevelManager;
+    [[bg3::hidden]] void* RpgStats;
+};
+
 END_SE()
+
+BEGIN_NS(esv)
+
+struct [[bg3::hidden]] StatsRollStreamProvider
+{
+    void* VMT;
+    ecs::EntityWorld* EntityWorld;
+    void* EocServer;
+    void* StreamRollManager;
+    void* FactionContainer;
+    void* GlobalSwitches;
+};
+
+struct UseBoostUpdateRequest
+{
+    EntityHandle Boost;
+    BoostSource Source;
+    Guid field_20;
+    uint64_t field_30;
+    bool IsNew;
+};
+
+struct StatsEntityDirtyData
+{
+    HashSet<EntityHandle> Boosts;
+    int SetCurrentHP;
+    int field_34;
+    __int64 field_38;
+    Array<UseBoostUpdateRequest> UseBoostRequests;
+};
+
+struct StatsSystem : public BaseStatsSystem
+{
+    DEFINE_SYSTEM(ServerStats, "esv::StatsSystem")
+
+    [[bg3::hidden]] UnknownSignal EquipmentUpdated;
+    [[bg3::hidden]] UnknownSignal WeightChanged;
+    [[bg3::hidden]] UnknownSignal DirtyFlagsChanged;
+    [[bg3::hidden]] void* BoostSystem;
+    [[bg3::hidden]] void* RpgStats;
+    [[bg3::hidden]] void* EocServer;
+    [[bg3::hidden]] void* FactionContainer;
+    [[bg3::hidden]] void* GlobalSwitches;
+    [[bg3::hidden]] void* WeightCategories;
+    [[bg3::hidden]] StatsRollStreamProvider RollStream;
+    HashMap<EntityHandle, StatsDirtyFlags> CalculationRequests;
+    HashMap<EntityHandle, StatsDirtyFlags> DeferredCalculationRequests;
+    LegacyRefMap<EntityHandle, LegacyRefMap<uint64_t, StatsEntityDirtyData>> EntityDirtyData;
+    HashMap<EntityHandle, Guid> SetEquipmentType;
+    HashSet<EntityHandle> EncumbranceChanged;
+    HashSet<EntityHandle> ReloadStats;
+    HashSet<EntityHandle> StatsApplied;
+    HashSet<EntityHandle> EquipmentModified;
+    HashMap<EntityHandle, HashSet<ItemSlot>> EquipmentChanged;
+    [[bg3::hidden]] UnknownFunction field_398;
+};
+
+END_NS()

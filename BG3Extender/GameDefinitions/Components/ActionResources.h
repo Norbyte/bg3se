@@ -87,6 +87,10 @@ struct ActionResourceSpendEventOneFrameComponent : public BaseComponent
     Array<ActionResourceSpendResult> Results;
 };
 
+END_SE()
+
+BEGIN_NS(esv)
+
 struct ActionResourceSystem : public BaseSystem
 {
     DEFINE_SYSTEM(ServerActionResource, "esv::ActionResourceSystem")
@@ -112,4 +116,4 @@ struct ActionResourceSystem : public BaseSystem
     [[bg3::hidden]] void* UnitTestHelper;
 };
 
-END_SE()
+END_NS()
