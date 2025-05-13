@@ -504,6 +504,8 @@
     <ClInclude Include="GameDefinitions\Controllers\CharacterTask.h" />
     <ClInclude Include="GameDefinitions\Input.h" />
     <ClInclude Include="GameDefinitions\Controllers\Input.h" />
+    <ClInclude Include="GameDefinitions\Components\ActionResources.h" />
+    <ClInclude Include="GameDefinitions\Components\Stats.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />

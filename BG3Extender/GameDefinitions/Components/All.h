@@ -1,5 +1,7 @@
 #pragma once
 
+#include <GameDefinitions/Components/ActionResources.h>
+#include <GameDefinitions/Components/Boosts.h>
 #include <GameDefinitions/Components/Camera.h>
 #include <GameDefinitions/Components/Camp.h>
 #include <GameDefinitions/Components/CharacterCreation.h>
@@ -15,15 +17,15 @@
 #include <GameDefinitions/Components/Party.h>
 #include <GameDefinitions/Components/Spell.h>
 #include <GameDefinitions/Components/Interrupt.h>
-#include <GameDefinitions/Components/Status.h>
 #include <GameDefinitions/Components/Tadpole.h>
 #include <GameDefinitions/Components/Visual.h>
-#include <GameDefinitions/Components/Boosts.h>
 #include <GameDefinitions/Components/Projectile.h>
 #include <GameDefinitions/Components/Progression.h>
+#include <GameDefinitions/Components/Roll.h>
 #include <GameDefinitions/Components/Shapeshift.h>
 #include <GameDefinitions/Components/ServerData.h>
-#include <GameDefinitions/Components/Roll.h>
+#include <GameDefinitions/Components/Stats.h>
+#include <GameDefinitions/Components/Status.h>
 #include <GameDefinitions/Components/Timeline.h>
 #include <GameDefinitions/Dialog.h>
 #include <GameDefinitions/Picking.h>

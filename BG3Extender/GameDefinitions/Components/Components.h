@@ -23,76 +23,11 @@ struct RulesetModifiersComponent : public BaseComponent
     HashMap<Guid, std::variant<uint8_t, int32_t, float, FixedString, bool>> Modifiers;
 };
 
-struct ActionResourceDiceValue
-{
-    double Amount;
-    double MaxAmount;
-};
-
-struct ActionResourceEntry
-{
-    Guid ResourceUUID;
-    [[bg3::legacy(ResourceId)]] int Level;
-    double Amount;
-    double MaxAmount;
-    [[bg3::legacy(field_28)]] ResourceReplenishType ReplenishType;
-    [[bg3::legacy(SubAmounts)]] std::optional<std::array<ActionResourceDiceValue, 7>> DiceValues;
-    uint8_t field_A8;
-};
-
-struct ActionResourcesComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(ActionResources, "eoc::ActionResourcesComponent")
-
-    HashMap<Guid, Array<ActionResourceEntry>> Resources;
-};
-
-struct ActionResourceSpendResult
-{
-    Guid Resource;
-    uint8_t field_10;
-    uint8_t field_11;
-    uint8_t field_12;
-    uint8_t field_13;
-    uint32_t field_14;
-};
-
-struct ActionResourceSpendEventOneFrameComponent : public BaseComponent
-{
-    DEFINE_ONEFRAME_COMPONENT(ActionResourceSpendEvent, "eoc::ActionResourceSpendEventOneFrameComponent")
-
-    Array<ActionResourceSpendResult> Results;
-};
-
-
-struct HearingComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(Hearing, "eoc::HearingComponent")
-
-    float Hearing;
-};
-
 struct SurfacePathInfluencesComponent : public BaseComponent
 {
     DEFINE_COMPONENT(SurfacePathInfluences, "eoc::SurfacePathInfluencesComponent")
 
     Array<SurfacePathInfluence> PathInfluences;
-};
-
-struct UseComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(Use, "eoc::UseComponent")
-
-    Array<stats::Requirement> Requirements;
-    int Charges;
-    int MaxCharges;
-    ItemUseType ItemUseType;
-    [[bg3::legacy(field_19)]] uint8_t ItemUseBlocked;
-    [[bg3::legacy(field_1A)]] uint8_t CanCombine;
-    [[bg3::legacy(field_1B)]] uint8_t CombineFlag;
-    Array<BoostDescription> Boosts;
-    Array<BoostDescription> BoostsOnEquipMainHand;
-    Array<BoostDescription> BoostsOnEquipOffHand;
 };
 
 struct WieldingComponent : public BaseComponent
@@ -186,27 +121,6 @@ struct ActiveComponent : public BaseComponent
     DEFINE_COMPONENT(Active, "eoc::ActiveComponent")
 };
 
-struct EocLevelComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(EocLevel, "eoc::LevelComponent")
-
-    int Level;
-};
-
-struct ClassInfo
-{
-    Guid ClassUUID;
-    Guid SubClassUUID;
-    int Level;
-};
-
-struct ClassesComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(Classes, "eoc::ClassesComponent")
-
-    Array<ClassInfo> Classes;
-};
-
 struct MaterialParameterOverride
 {
     STDString field_0;
@@ -296,24 +210,6 @@ struct DialogStateComponent : public BaseComponent
     uint8_t field_2;
     [[bg3::legacy(field_4)]] int DialogId;
     uint8_t field_8;
-};
-
-
-struct EncumbranceStateComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(EncumbranceState, "eoc::encumbrance::StateComponent")
-
-    uint32_t State;
-};
-
-
-struct EncumbranceStatsComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(EncumbranceStats, "eoc::encumbrance::StatsComponent")
-
-    [[bg3::legacy(field_0)]] int UnencumberedWeight;
-    [[bg3::legacy(field_4)]] int EncumberedWeight;
-    [[bg3::legacy(field_8)]] int HeavilyEncumberedWeight;
 };
 
 

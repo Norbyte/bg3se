@@ -71,6 +71,12 @@ struct RollDefinition
     [[bg3::legacy(field_8)]] bool DiceNegative;
 };
 
+struct BoostParameters
+{
+    Guid Owner;
+    uint8_t field_10;
+};
+
 struct BoostSource
 {
     BoostSourceType Type;

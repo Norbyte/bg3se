@@ -165,6 +165,8 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClInclude Include="GameDefinitions\Character.h" />
     <ClInclude Include="GameDefinitions\Base\CommonTypes.h" />
     <ClInclude Include="GameDefinitions\CharacterCreation.h" />
+    <ClInclude Include="GameDefinitions\Components\ActionResources.h" />
+    <ClInclude Include="GameDefinitions\Components\Stats.h" />
     <ClInclude Include="GameDefinitions\Controllers\CharacterTask.h" />
     <ClInclude Include="GameDefinitions\Components\All.h" />
     <ClInclude Include="GameDefinitions\Components\Boosts.h" />

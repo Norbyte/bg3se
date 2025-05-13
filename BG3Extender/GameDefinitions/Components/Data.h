@@ -13,32 +13,6 @@ struct GenericPropertyTag
     Guid Entity;
 };
 
-struct ArmorComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(Armor, "eoc::ArmorComponent")
-
-    int ArmorType;
-    int ArmorClass;
-    int AbilityModifierCap;
-    uint8_t ArmorClassAbility;
-    uint8_t Shield;
-};
-
-struct ArmorSetStateComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(ArmorSetState, "eoc::armor_set::StateComponent")
-
-    uint8_t State;
-};
-
-struct BaseHpComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(BaseHp, "eoc::BaseHpComponent")
-
-    int Vitality;
-    int VitalityBoost;
-};
-
 struct Bound
 {
     EntityHandle Entity;
@@ -73,15 +47,6 @@ struct CustomStatsComponent : public BaseComponent
     LegacyMap<FixedString, int> Stats;
 };
 
-struct DataComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(Data, "eoc::DataComponent")
-
-    int32_t Weight;
-    FixedString StatsId;
-    uint32_t StepsType;
-};
-
 struct DetachedComponent : public BaseComponent
 {
     DEFINE_COMPONENT(Detached, "eoc::DetachedComponent")
@@ -112,17 +77,6 @@ struct HealthComponent : public BaseComponent
     [[bg3::legacy(field_20)]] bool IsInvulnerable;
 };
 
-struct ResistancesComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(Resistances, "eoc::ResistancesComponent")
-
-    std::array<ResistanceBoostFlags, 14> Resistances;
-    uint8_t field_E;
-    int AC;
-    std::array<uint16_t, 14> PerDamageTypeHealthThresholds;
-    std::array<uint32_t, 14> PerDamageTypeHealthThresholds2;
-};
-
 struct DifficultyCheckComponent : public BaseComponent
 {
     DEFINE_COMPONENT(DifficultyCheck, "eoc::DifficultyCheckComponent")
@@ -133,13 +87,6 @@ struct DifficultyCheckComponent : public BaseComponent
     Array<uint32_t> field_30;
     int field_40;
     int field_44;
-};
-
-struct AttributeFlagsComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(AttributeFlags, "eoc::AttributeFlagsComponent")
-
-    uint32_t AttributeFlags;
 };
 
 struct BodyTypeComponent : public BaseComponent
@@ -172,55 +119,11 @@ struct ExpertiseComponent : public BaseComponent
     HashSet<SkillId> Expertise;
 };
 
-struct StatsComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(Stats, "eoc::StatsComponent")
-
-    int InitiativeBonus;
-    std::array<int, 7> Abilities;
-    std::array<int, 7> AbilityModifiers;
-    std::array<int, 18> Skills;
-    int ProficiencyBonus;
-    AbilityId SpellCastingAbility;
-    int field_8C;
-    int field_90;
-    int ArmorType;
-    int ArmorType2;
-    AbilityId UnarmedAttackAbility;
-    AbilityId RangedAttackAbility;
-};
-
 struct StatusImmunitiesComponent : public BaseComponent
 {
     DEFINE_COMPONENT(StatusImmunities, "eoc::StatusImmunitiesComponent")
 
     HashMap<FixedString, Guid> PersonalStatusImmunities;
-};
-
-struct ValueComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(Value, "eoc::ValueComponent")
-
-    int Value;
-    uint8_t Rarity;
-    bool Unique;
-};
-
-struct WeaponComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(Weapon, "eoc::WeaponComponent")
-
-    LegacyRefMap<AbilityId, Array<RollDefinition>> Rolls;
-    LegacyRefMap<AbilityId, Array<RollDefinition>> Rolls2;
-    float WeaponRange;
-    float DamageRange;
-    stats::Functors* WeaponFunctors;
-    uint32_t WeaponProperties;
-    uint8_t WeaponGroup;
-    AbilityId Ability;
-    [[bg3::legacy(field_38)]] Array<StatsExpressionWithMetadata> DamageValues;
-    DiceSizeId DamageDice;
-    DiceSizeId VersatileDamageDice;
 };
 
 struct BackgroundComponent : public BaseComponent
@@ -608,14 +511,6 @@ struct ItemBoostsComponent : public BaseComponent
     DEFINE_COMPONENT(ItemBoosts, "eoc::ItemBoostsComponent")
 
     Array<EntityHandle> Boosts;
-};
-
-struct EquipableComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(Equipable, "eoc::EquipableComponent")
-
-    [[bg3::legacy(field_18)]] Guid EquipmentTypeID;
-    ItemSlot Slot;
 };
 
 struct RaceComponent : public BaseComponent
