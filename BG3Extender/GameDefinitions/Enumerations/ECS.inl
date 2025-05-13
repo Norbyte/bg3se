@@ -8,6 +8,7 @@ BEGIN_ENUM(ExtSystemType, uint32_t)
     E(ServerCombat)
     E(ServerActionResource)
     E(ServerBoost)
+    E(ServerPassive)
     E(Max)
 END_ENUM()
 

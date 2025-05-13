@@ -113,4 +113,71 @@ struct ConditionalRollInterruptEventOneFrameComponent : public BaseComponent
 DEFINE_ONEFRAME_TAG_COMPONENT(esv::passive, PassivesUpdatedEventOneFrameComponent, PassivesUpdatedEvent)
 DEFINE_ONEFRAME_TAG_COMPONENT(esv::passive, UsageCountIncrementedEventOneFrameComponent, PasssiveUsageCountIncrementedEvent)
 
+struct BasicRollInfo : public StatsRoll
+{
+    ConditionRollType RollType;
+    int DC;
+};
+
+struct ExecutePassiveRequest
+{
+    EntityHandle Passive;
+    std::variant<stats::AttackTargetContextData, stats::AttackPositionContextData, stats::MoveContextData, stats::SourceContextData, stats::TargetContextData, stats::NearbyAttackedContextData, stats::NearbyAttackingContextData, stats::EquipContextData> Context;
+    Guid RollGuid;
+    uint8_t field_338;
+};
+
+struct ChangePassiveRequest
+{
+    EntityHandle Entity;
+    FixedString Passive;
+    int field_C;
+    EntityHandle PassiveEntity;
+    uint8_t field_18;
+    uint8_t PassiveChange;
+};
+
+struct PassiveSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerPassive, "esv::PassiveSystem")
+
+    EntityHandle Singleton;
+    [[bg3::hidden]] void* TurnOrderSystem;
+    [[bg3::hidden]] void* FTBZoneSystem;
+    [[bg3::hidden]] void* ThothMachine;
+    [[bg3::hidden]] void* DarknessSystem;
+    [[bg3::hidden]] void* StatsRollNotificationSystem;
+    [[bg3::hidden]] void* FeatManager;
+    [[bg3::hidden]] void* RPGStats;
+    [[bg3::hidden]] void* Passives;
+    [[bg3::hidden]] void* StatusFactory;
+    [[bg3::hidden]] void* StatusPrototypeManager;
+    [[bg3::hidden]] void* ProgressionManager;
+    [[bg3::hidden]] void* ClassDescriptions;
+    [[bg3::hidden]] void* LevelManager;
+    [[bg3::hidden]] void* SpellPrototypeManager;
+    Array<ExecutePassiveRequest> ExecutePassives;
+    Array<ChangePassiveRequest> ChangePassive;
+    HashSet<EntityHandle> field_A0;
+    HashSet<EntityHandle> field_D0;
+    HashSet<EntityHandle> TogglePassives;
+    HashSet<EntityHandle> LongRest;
+    HashSet<EntityHandle> WieldingAddPassives;
+    HashSet<EntityHandle> AddPassives;
+    HashMap<EntityHandle, HashSet<EntityHandle>> WieldingChangedPassives;
+    HashSet<EntityHandle> WieldingRemovePassives;
+    HashSet<EntityHandle> RemovePassives;
+    HashSet<EntityHandle> ReloadStatsPassives;
+    HashSet<EntityHandle> UsageCountReset;
+    HashSet<EntityHandle> ObscurityChanged;
+    HashSet<EntityHandle> SurfaceEntered;
+    HashSet<EntityHandle> RemovedPassives;
+    HashSet<EntityHandle> AddedPassives;
+    HashMap<EntityHandle, Array<SpellCooldownType>> ResetUsageCount;
+    HashMap<Guid, BasicRollInfo> ActiveRollPassiveRequests;
+    bool ReloadAllStatusPassives;
+    bool ReloadPassivesBoosts;
+    [[bg3::hidden]] UnknownFunction field_408;
+};
+
 END_NS()
