@@ -5,6 +5,44 @@
 
 BEGIN_SE()
 
+struct ActionResourceSetValueRequest
+{
+    Guid ResourceId;
+    double Amount;
+    double OldAmount;
+};
+
+struct ActionResourceRefillRequest
+{
+    EntityHandle Entity;
+    uint64_t Flags;
+};
+
+struct InspirationPointGainedRequest
+{
+    EntityHandle Entity;
+    float Amount;
+    TranslatedString field_C;
+    TranslatedString field_1C;
+    EntityHandle Entity2;
+};
+
+struct PartyResourceUpdateRequest
+{
+    EntityHandle Entity;
+    EntityHandle Party;
+    Guid Resource;
+    int Level;
+    float Amount;
+    bool AddNewResourceType;
+};
+
+struct ActionResourceQuery
+{
+    Guid ResourceId;
+    int BoostAmount;
+};
+
 struct ActionResourceDiceValue
 {
     double Amount;
@@ -47,6 +85,31 @@ struct ActionResourceSpendEventOneFrameComponent : public BaseComponent
     DEFINE_ONEFRAME_COMPONENT(ActionResourceSpendEvent, "eoc::ActionResourceSpendEventOneFrameComponent")
 
     Array<ActionResourceSpendResult> Results;
+};
+
+struct ActionResourceSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerActionResource, "esv::ActionResourceSystem")
+
+    EntityHandle Singleton;
+    [[bg3::hidden]] UnknownSignal ObjectActionResourceValueChanged;
+    [[bg3::hidden]] UnknownSignal field_28;
+    [[bg3::hidden]] UnknownSignal ObjectActionPointsValueChanged;
+    HashMap<EntityHandle, Array<InspirationPointGainedRequest>> IncreaseInspirationResource;
+    [[bg3::hidden]] UnknownFunction field_98;
+    HashMap<EntityHandle, ActionResourceQuery> ActionResourceBoosts;
+    HashMap<EntityHandle, Array<ActionResourceSetValueRequest>> SetResourceValue;
+    Array<ActionResourceRefillRequest> RefillResources;
+    Array<ActionResourceRefillRequest> RefillResources2;
+    Array<PartyResourceUpdateRequest> UpdatePartyResources;
+    [[bg3::hidden]] UnknownFunction field_188;
+    [[bg3::hidden]] UnknownFunction field_1C8;
+    [[bg3::hidden]] void* ThothMachine;
+    [[bg3::hidden]] void* RPGStats;
+    [[bg3::hidden]] void* ImmutableDataHeadmaster;
+    [[bg3::hidden]] void* SpellPrototypeManager;
+    [[bg3::hidden]] void* StatsPrototypeManager;
+    [[bg3::hidden]] void* UnitTestHelper;
 };
 
 END_SE()

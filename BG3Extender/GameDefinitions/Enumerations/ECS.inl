@@ -6,6 +6,7 @@ BEGIN_ENUM(ExtSystemType, uint32_t)
     E(ServerCastRequest)
     E(ServerSpell)
     E(ServerCombat)
+    E(ServerActionResource)
     E(Max)
 END_ENUM()
 
