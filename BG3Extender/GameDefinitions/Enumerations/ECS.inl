@@ -9,6 +9,7 @@ BEGIN_ENUM(ExtSystemType, uint32_t)
     E(ServerActionResource)
     E(ServerBoost)
     E(ServerPassive)
+    E(ServerRoll)
     E(Max)
 END_ENUM()
 

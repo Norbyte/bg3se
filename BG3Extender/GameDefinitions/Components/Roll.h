@@ -235,4 +235,49 @@ struct RollFinishedEventOneFrameComponent : public BaseComponent
     Array<FinishedEvent> Events;
 };
 
+struct DeathSavingThrowRequest : public ProtectedGameObject<DeathSavingThrowRequest>
+{
+    EntityHandle Entity;
+    [[bg3::hidden]] void* StatsExpression;
+    std::variant<int, Guid> DC;
+};
+
+struct RollSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerRoll, "esv::RollSystem")
+
+    [[bg3::hidden]] ecs::EntityWorld* EntityWorld;
+    [[bg3::hidden]] void* VMT2;
+    [[bg3::hidden]] void* field_18;
+    [[bg3::hidden]] void* VMT_GameEventListener;
+    [[bg3::hidden]] void* VMT_DialogListener;
+    [[bg3::hidden]] UnknownSignal RollFinishedSignal;
+    [[bg3::hidden]] void* StatsSystem;
+    [[bg3::hidden]] void* ActionResourceSystem;
+    [[bg3::hidden]] void* EocServer;
+    [[bg3::hidden]] void* RollManager;
+    [[bg3::hidden]] void* SpellPrototypeManager;
+    [[bg3::hidden]] void* StatusPrototypeManager;
+    [[bg3::hidden]] void* DynamicStatsExpressionManager;
+    [[bg3::hidden]] void* DifficultyClassManager;
+    [[bg3::hidden]] void* ClassDescriptions;
+    [[bg3::hidden]] void* LevelMapValuesProvider;
+    [[bg3::hidden]] void* ThothMachine;
+    [[bg3::hidden]] void* RPGStats;
+    [[bg3::hidden]] void* RollSystemDataProvider;
+    HashMap<EntityHandle, int32_t> ActorJoinsDialog; // -> dialogId
+    HashSet<EntityHandle> field_F0;
+    HashSet<EntityHandle> DestroyRoll;
+    HashSet<EntityHandle> CancelRoll;
+    HashSet<EntityHandle> RestartRoll2;
+    HashSet<EntityHandle> RestartRoll;
+    HashSet<Guid> FinishRoll;
+    HashSet<Guid> StopRoll;
+    Array<DeathSavingThrowRequest> DeathSavingThrows;
+    bool SessionUnloadStarting;
+    [[bg3::hidden]] void* field_258_StatsExpressionInternal;
+    HashMap<EntityHandle, EntityHandle> EntityToRollEntity;
+};
+
+
 END_NS()
