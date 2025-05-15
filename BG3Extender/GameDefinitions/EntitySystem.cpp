@@ -491,6 +491,10 @@ EntityCommandBuffer* EntityWorld::Deferred()
 
 EntityStorageData* EntityStorageContainer::GetEntityStorage(EntityHandle entityHandle) const
 {
+    if (entityHandle.GetThreadIndex() >= Salts.Buckets.size()) {
+        return nullptr;
+    }
+
     auto& componentSalts = Salts.Buckets[entityHandle.GetThreadIndex()];
     if (entityHandle.GetIndex() < componentSalts.size()) {
         auto const& salt = componentSalts[entityHandle.GetIndex()];
