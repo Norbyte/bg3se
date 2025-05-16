@@ -68,12 +68,19 @@ FS(WeaponFlags);
 FS(ResistanceFlags);
 FS(PassiveFlags);
 FS(ProficiencyGroupFlags);
+FS(CinematicArenaFlags);
 FS(StatsFunctorContext);
 FS(StatusEvent);
 FS(StatusPropertyFlags);
 FS(StatusGroupFlags);
 FS(LineOfSightFlags);
 FS(SpellCategoryFlags);
+FS(InterruptContext);
+FS(InterruptContextScope);
+FS(InterruptDefaultValue);
+FS(InterruptFlagsList);
+FS(AuraFlags);
+FS(AbilityFlags);
 
 FS(Default);
 

@@ -305,17 +305,24 @@ bool RPGEnumeration::IsFlagType(FixedString const& typeName)
 {
     return
         typeName == GFS.strAttributeFlags
-        || typeName == GFS.strSpellFlagList
         || typeName == GFS.strWeaponFlags
         || typeName == GFS.strResistanceFlags
         || typeName == GFS.strPassiveFlags
-        || typeName == GFS.strProficiencyGroupFlags
-        || typeName == GFS.strStatsFunctorContext
+        || typeName == GFS.strSpellFlagList
         || typeName == GFS.strStatusEvent
         || typeName == GFS.strStatusPropertyFlags
-        || typeName == GFS.strStatusGroupFlags
+        || typeName == GFS.strProficiencyGroupFlags
+        || typeName == GFS.strCinematicArenaFlags
         || typeName == GFS.strLineOfSightFlags
-        || typeName == GFS.strSpellCategoryFlags;
+        || typeName == GFS.strSpellCategoryFlags
+        || typeName == GFS.strStatsFunctorContext
+        || typeName == GFS.strStatusGroupFlags
+        || typeName == GFS.strInterruptContext
+        || typeName == GFS.strInterruptContextScope
+        || typeName == GFS.strInterruptDefaultValue
+        || typeName == GFS.strInterruptFlagsList
+        || typeName == GFS.strAuraFlags
+        || typeName == GFS.strAbilityFlags;
 }
 
 RPGEnumerationType RPGEnumeration::GetPropertyType() const
