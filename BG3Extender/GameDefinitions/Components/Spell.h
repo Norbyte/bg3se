@@ -700,15 +700,10 @@ struct CastStartRequest
     __int64 field_B8;
 };
 
-struct CastCancelRequestBase
+struct CastCancelRequest
 {
     EntityHandle Caster;
-    Guid SpellCastGuid;
-    bool CancelAny;
-};
-
-struct CastCancelRequest : public CastCancelRequestBase
-{
+    std::optional<Guid> SpellCastGuid;
     bool Forced;
     bool CharacterReassigned;
 };

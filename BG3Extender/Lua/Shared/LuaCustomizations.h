@@ -14,7 +14,8 @@ enum class MetatableTag : uint8_t
     ImguiObject = 9,
     OsiFunctionName = 10,
     ObjectVal = 11,
-    Max = ObjectVal
+    SystemMap = 12,
+    Max = SystemMap
 };
 
 struct LuaInternalState;

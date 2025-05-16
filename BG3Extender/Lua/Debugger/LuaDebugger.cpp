@@ -170,6 +170,12 @@ namespace bg3se::lua::dbg
                 break;
             }
 
+            case MetatableTag::SystemMap:
+            {
+                value->set_stringval("SystemMap");
+                break;
+            }
+
             default:
                 value->set_type_id(MsgValueType::UNKNOWN);
                 break;

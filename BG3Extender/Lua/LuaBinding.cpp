@@ -283,6 +283,7 @@ char const* GetDebugName(MetatableTag tag)
     case MetatableTag::ImguiObject: return "ImguiObject";
 #endif
     case MetatableTag::OsiFunctionName: return "OsiFunction";
+    case MetatableTag::SystemMap: return "SystemMap";
 
     default: return "(Unknown C++ type)";
     }

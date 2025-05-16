@@ -306,6 +306,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClInclude Include="Lua\Shared\Proxies\LuaPropertyMapHelpers.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaSetProxy.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaStructIDs.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaSystemMap.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaUserVariableHolder.h" />
     <ClInclude Include="Lua\Shared\Proxies\PropertyMapDependencies.h" />
     <ClInclude Include="Lua\Shared\RawComponentRef.h" />
@@ -426,6 +427,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <None Include="GameDefinitions\Base\TypeInformation.inl" />
     <None Include="GameDefinitions\Components\AllComponentTypes.inl" />
     <None Include="GameDefinitions\Components\AllSystemTypes.inl" />
+    <None Include="GameDefinitions\Components\ExposedSystemTypes.inl" />
     <None Include="GameDefinitions\Components\Spell.inl" />
     <None Include="GameDefinitions\Controllers\Action.inl" />
     <None Include="GameDefinitions\Controllers\Behaviour.inl" />
@@ -533,6 +535,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <None Include="Lua\Libs\StatAttributes.inl" />
     <None Include="Lua\Libs\StatEnumerators.inl" />
     <None Include="Lua\Libs\StatMisc.inl" />
+    <None Include="Lua\Shared\Proxies\LuaSystemMap.inl" />
     <None Include="Lua\Shared\Proxies\LuaUserVariableHolder.inl" />
     <None Include="Lua\Shared\Proxies\PolymorphicPush.inl" />
     <None Include="Misc\ExtIdeHelpers.lua" />

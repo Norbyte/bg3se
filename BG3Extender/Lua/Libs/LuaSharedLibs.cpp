@@ -71,6 +71,15 @@ BEGIN_NS(lua)
 
 void InitObjectProxyPropertyMaps();
 
+void RegisterSystemProxy(lua_State* L)
+{
+    StackCheck _(L);
+    lua_getglobal(L, "Ext");
+    SystemMapMetatable::Make(L);
+    lua_setfield(L, -2, "System");
+    lua_pop(L, 1);
+}
+
 void RegisterSharedMetatables(lua_State* L)
 {
     ArrayProxyMetatable::RegisterMetatable(L);
@@ -86,6 +95,8 @@ void RegisterSharedMetatables(lua_State* L)
 #if defined(ENABLE_IMGUI)
     ImguiObjectProxyMetatable::RegisterMetatable(L);
 #endif
+    SystemMapMetatable::RegisterMetatable(L);
+    RegisterSystemProxy(L);
     types::RegisterEnumerations(L);
 }
 

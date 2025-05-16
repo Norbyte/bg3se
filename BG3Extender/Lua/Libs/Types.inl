@@ -16,6 +16,7 @@ std::optional<STDString> GetCppObjectTypeName(lua_State * L, int index)
     case MetatableTag::ModVariableHolder:
     case MetatableTag::Entity:
     case MetatableTag::OsiFunctionName:
+    case MetatableTag::SystemMap:
         return GetDebugName(meta);
 
 #if defined(ENABLE_IMGUI)

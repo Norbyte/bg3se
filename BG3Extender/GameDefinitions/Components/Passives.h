@@ -141,7 +141,7 @@ struct PassiveSystem : public BaseSystem
 {
     DEFINE_SYSTEM(ServerPassive, "esv::PassiveSystem")
 
-    EntityHandle Singleton;
+    [[bg3::hidden]] ecs::EntityWorld* EntityWorld;
     [[bg3::hidden]] void* TurnOrderSystem;
     [[bg3::hidden]] void* FTBZoneSystem;
     [[bg3::hidden]] void* ThothMachine;

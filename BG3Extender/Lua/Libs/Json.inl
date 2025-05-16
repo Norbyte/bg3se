@@ -137,7 +137,8 @@ void* GetLightCppObjectPointer(lua_State* L, int index)
     if (meta.MetatableTag == MetatableTag::EnumValue
         || meta.MetatableTag == MetatableTag::BitfieldValue
         || meta.MetatableTag == MetatableTag::Entity
-        || meta.MetatableTag == MetatableTag::OsiFunctionName) {
+        || meta.MetatableTag == MetatableTag::OsiFunctionName
+        || meta.MetatableTag == MetatableTag::SystemMap) {
         return nullptr;
     }
 

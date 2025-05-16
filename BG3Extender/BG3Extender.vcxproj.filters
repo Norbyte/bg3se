@@ -506,6 +506,7 @@
     <ClInclude Include="GameDefinitions\Controllers\Input.h" />
     <ClInclude Include="GameDefinitions\Components\ActionResources.h" />
     <ClInclude Include="GameDefinitions\Components\Stats.h" />
+    <ClInclude Include="Lua\Shared\Proxies\LuaSystemMap.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
@@ -758,6 +759,8 @@
     <None Include="GameDefinitions\Controllers\CharacterTask.inl" />
     <None Include="GameDefinitions\Components\AllSystemTypes.inl" />
     <None Include="GameDefinitions\Components\Spell.inl" />
+    <None Include="Lua\Shared\Proxies\LuaSystemMap.inl" />
+    <None Include="GameDefinitions\Components\ExposedSystemTypes.inl" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GameDefinitions">

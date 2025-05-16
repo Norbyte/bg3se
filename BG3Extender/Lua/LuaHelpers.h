@@ -272,6 +272,7 @@ END_NS()
 #include <Lua/Shared/Proxies/LuaSetProxy.h>
 #include <Lua/Shared/Proxies/LuaMapProxy.h>
 #include <Lua/Shared/Proxies/LuaCppObjectProxy.h>
+#include <Lua/Shared/Proxies/LuaSystemMap.h>
 
 #include <Lua/Helpers/LuaSerialize.h>
 #include <Lua/Helpers/LuaUnserialize.h>

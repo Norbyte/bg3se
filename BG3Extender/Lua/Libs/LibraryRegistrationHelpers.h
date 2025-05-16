@@ -18,6 +18,7 @@
 #if defined(ENABLE_IMGUI)
 #include <Lua/Shared/Proxies/LuaImguiProxy.inl>
 #endif
+#include <Lua/Shared/Proxies/LuaSystemMap.inl>
 
 BEGIN_SE()
 

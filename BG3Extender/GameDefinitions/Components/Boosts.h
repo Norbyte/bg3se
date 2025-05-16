@@ -633,7 +633,7 @@ struct BoostSystem : public BaseSystem
 {
     DEFINE_SYSTEM(ServerBoost, "esv::BoostSystem")
 
-    EntityHandle Singleton;
+    [[bg3::hidden]] ecs::EntityWorld* EntityWorld;
     [[bg3::hidden]] UnknownSignal OnBoostChangedEvent;
     [[bg3::hidden]] void* ThothShared;
     [[bg3::hidden]] void* BoostPrototypes;
