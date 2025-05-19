@@ -11,6 +11,8 @@ BEGIN_ENUM(ExtSystemType, uint32_t)
     E(ServerPassive)
     E(ServerRoll)
     E(ServerStats)
+    E(ServerSummonSpawn)
+    E(ServerSummonDespawn)
     E(Max)
 END_ENUM()
 

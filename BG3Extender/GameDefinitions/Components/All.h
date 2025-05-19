@@ -26,6 +26,7 @@
 #include <GameDefinitions/Components/ServerData.h>
 #include <GameDefinitions/Components/Stats.h>
 #include <GameDefinitions/Components/Status.h>
+#include <GameDefinitions/Components/Summon.h>
 #include <GameDefinitions/Components/Timeline.h>
 #include <GameDefinitions/Dialog.h>
 #include <GameDefinitions/Picking.h>

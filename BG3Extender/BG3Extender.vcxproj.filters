@@ -507,6 +507,7 @@
     <ClInclude Include="GameDefinitions\Components\ActionResources.h" />
     <ClInclude Include="GameDefinitions\Components\Stats.h" />
     <ClInclude Include="Lua\Shared\Proxies\LuaSystemMap.h" />
+    <ClInclude Include="GameDefinitions\Components\Summon.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BG3Extender.rc" />
