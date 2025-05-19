@@ -237,6 +237,44 @@ struct UsedOneFrameComponent : public BaseComponent
     HashMap<EntityHandle, HashMap<bg3se::interrupt::InterruptEvent, bg3se::interrupt::InterruptUsageEntry>> Interrupts;
 };
 
+struct DecisionSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerInterruptDecision, "esv::interrupt::DecisionSystem")
+
+    HashMap<EntityHandle, uint8_t> Decisions;
+};
+
+struct InterruptRequest
+{
+    bool IsRemoval;
+    FixedString Interrupt;
+    InterruptRequestSource Source;
+    EntityHandle Boost;
+    FixedString Spell;
+};
+
+struct RequestsSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerInterruptRequests, "esv::interrupt::RequestsSystem")
+
+    [[bg3::hidden]] void* SpellPrototypeManager;
+    HashMap<EntityHandle, Array<InterruptRequest>> Requests;
+};
+
+struct ManagementSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerInterruptManagement, "esv::interrupt::ManagementSystem")
+
+    [[bg3::hidden]] void* InterruptPrototypeManager;
+    [[bg3::hidden]] UnknownFunction field_18;
+    HashMap<EntityHandle, bool> IsAsk;
+    [[bg3::hidden]] void* field_98;
+    [[bg3::hidden]] void* qwordA0;
+    Array<EntityHandle> PrototypeInteractionRequests;
+    Array<bool> field_B8;
+    HashMap<EntityHandle, bool> IsEnabled;
+};
+
 
 END_NS()
 
