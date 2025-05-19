@@ -565,6 +565,23 @@ struct SpellSystem : public BaseSystem
     HashSet<EntityHandle> field_420;
 };
 
+struct SpellCooldownSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerSpellCooldown, "esv::SpellCooldownSystem")
+
+    [[bg3::hidden]] UnknownFunction field_10;
+    [[bg3::hidden]] void* CharacterManager;
+    [[bg3::hidden]] void* SpellPrototypeManager;
+    [[bg3::hidden]] void* RollManager;
+    HashMap<EntityHandle, HashMap<SpellId, Guid>> StartCooldown;
+    HashMap<EntityHandle, HashSet<SpellCooldownType>> ResetCooldowns;
+    HashMap<EntityHandle, float> UpdateCooldown;
+    HashSet<EntityHandle> ResetAllCooldowns;
+    HashSet<EntityHandle> RoundCooldowns;
+    HashMap<EntityHandle, bool> RechargeSpells_EH_bool;
+    HashMap<EntityHandle, Array<SpellId>> UseRechargeSpell;
+};
+
 END_NS()
 
 BEGIN_NS(esv::spell_cast)
