@@ -43,4 +43,15 @@ struct ChangedContainersComponent : public BaseComponent
 
 DEFINE_ONEFRAME_TAG_COMPONENT(esv::progression, LevelUpChangedOneFrameComponent, ProgressionLevelUpChanged)
 
+struct ManagementSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerProgression, "esv::progression::ManagementSystem")
+
+    HashSet<EntityHandle> DestroyedProgressions;
+    HashMap<EntityHandle, int> ProgressionUpdates;
+    [[bg3::hidden]] void* ImmutableDataHeadmaster;
+    [[bg3::hidden]] void* RPGStats;
+    [[bg3::hidden]] CriticalSection CS_;
+};
+
 END_NS()
