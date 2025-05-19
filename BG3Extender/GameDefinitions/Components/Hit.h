@@ -134,4 +134,46 @@ struct OnHitJoinCombatRequestOneFrameComponent : public BaseComponent
     HashSet<EntityHandle> Entities;
 };
 
+struct HitRequest
+{
+    EntityHandle Target;
+    EntityHandle TargetProxy;
+    HitDesc Desc;
+    HitWith HitWith;
+    int StoryActionId;
+    ActionOriginator Originator;
+    AbilityId Ability;
+    EntityHandle Weapon;
+    bool FromFunctor;
+    bool field_1F9;
+    uint8_t field_1FA;
+};
+
+struct ReactionRequest
+{
+    EntityHandle Target;
+    EntityHandle TargetProxy;
+    HitDesc Hit;
+};
+
+struct HitSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerHit, "esv::hit::HitSystem")
+
+    [[bg3::hidden]] void* GameEventListenerVMT;
+    [[bg3::hidden]] void* FactionContainer;
+    [[bg3::hidden]] void* GlobalSwitches;
+    [[bg3::hidden]] void* StoryCharacterEventManager;
+    [[bg3::hidden]] void* SpellPrototypeManager;
+    [[bg3::hidden]] void* StatusPrototypeManager;
+    [[bg3::hidden]] void* AnimationBlueprintSystem;
+    [[bg3::hidden]] void* ThothMachine;
+    Array<HitRequest> Hits;
+    Array<ReactionRequest> Reactions;
+    Array<EntityHandle> HitAnimationFinished;
+    uint8_t field_80;
+    [[bg3::hidden]] UnknownFunction field_88;
+    [[bg3::hidden]] void* HitHelper;
+};
+
 END_NS()
