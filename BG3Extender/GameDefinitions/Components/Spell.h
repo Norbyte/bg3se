@@ -582,6 +582,28 @@ struct SpellCooldownSystem : public BaseSystem
     HashMap<EntityHandle, Array<SpellId>> UseRechargeSpell;
 };
 
+struct LearnRequest
+{
+    Guid Class;
+    FixedString SpellId;
+};
+
+struct LearningSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerSpellLearning, "esv::spell::LearningSystem")
+
+    [[bg3::hidden]] UnknownSignal field_10;
+    [[bg3::hidden]] void* ThothMachine;
+    [[bg3::hidden]] void* BoostSystem;
+    [[bg3::hidden]] void* ClassDescriptions;
+    [[bg3::hidden]] void* SpellPrototypeManager;
+    [[bg3::hidden]] UnknownFunction field_48;
+    HashSet<EntityHandle> SavantChanged;
+    HashSet<EntityHandle> RemoveLearnedSpells;
+    HashMap<EntityHandle, Array<LearnRequest>> LearnRequests;
+};
+
+
 END_NS()
 
 BEGIN_NS(esv::spell_cast)
