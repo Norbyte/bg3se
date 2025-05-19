@@ -1,6 +1,7 @@
 T(esv::ActionResourceSystem)
 T(esv::boost::BoostSystem)
 T(esv::combat::System)
+T(esv::combat::TurnOrderSystem)
 T(esv::passive::PassiveSystem)
 T(esv::roll::RollSystem)
 T(esv::shapeshift::System)

@@ -218,6 +218,34 @@ struct System : public BaseSystem
     HashSet<uint32_t> field_410_PeerId;
 };
 
+struct TurnActionCompletedRequest
+{
+    EntityHandle Entity;
+    bool ActionsCompleted;
+};
+
+struct TurnOrderSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerTurnOrder, "esv::TurnOrderSystem")
+
+    [[bg3::hidden]] void* GameStateEventListenerVMT;
+    [[bg3::hidden]] UnknownSignal field_18;
+    [[bg3::hidden]] UnknownSignal field_30;
+    HashMap<EntityHandle, float> SetTimeout;
+    Array<TurnActionCompletedRequest> TurnCompleted;
+    Array<EntityHandle> ClearTimeout;
+    Array<EntityHandle> EndTurn;
+    Array<EntityHandle> CancelEndTurn;
+    Array<EntityHandle> BeginCancelEndTurn;
+    Array<EntityHandle> EndCancelEndTurn;
+    bool GameState13;
+    [[bg3::hidden]] void* EocServer;
+    [[bg3::hidden]] void* LevelManager;
+    [[bg3::hidden]] void* StoryGameEventManager;
+    [[bg3::hidden]] void* StatusPrototypeManager;
+    [[bg3::hidden]] void* TurnOrderSystemHelper;
+};
+
 
 END_NS()
 
