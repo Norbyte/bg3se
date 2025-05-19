@@ -332,6 +332,30 @@ struct IconListComponent : public BaseComponent
     Array<IconInfo> Icons;
 };
 
+struct VisualSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerVisual, "esv::VisualSystem")
+
+    [[bg3::hidden]] void* ThothMachine;
+    [[bg3::hidden]] void* AnimationBlueprintSystem;
+    [[bg3::hidden]] void* ShapeshiftSystem;
+    [[bg3::hidden]] void* ResourceManager;
+    HashSet<EntityHandle> UpdateVisuals;
+    HashSet<EntityHandle> BoostsRemoved;
+    [[bg3::hidden]] HashMap<EntityHandle, std::optional<TemplateInfo>> CharacterSetVisualResource;
+    HashMap<EntityHandle, FixedString> ItemSetVisualResource;
+    // Editor only?
+    // [[bg3::hidden]] void* field_110;
+    // HashSet<EntityHandle> ScaleChange;
+    // HashMap<EntityHandle, FixedString> TemplateIDChange;
+    [[bg3::hidden]] void* GlobalTemplateManager;
+    [[bg3::hidden]] void* CacheTemplateManager;
+    [[bg3::hidden]] void* LevelManager;
+    [[bg3::hidden]] UnknownFunction field_1A0;
+    [[bg3::hidden]] UnknownFunction field_1E0;
+};
+
+
 END_NS()
 
 BEGIN_NS(ecl)
