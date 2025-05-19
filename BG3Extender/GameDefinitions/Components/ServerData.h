@@ -33,8 +33,6 @@ struct ExperienceGaveOutComponent : public BaseComponent
     int Experience;
 };
 
-DEFINE_TAG_COMPONENT(esv::summon, IsUnsummoningComponent, ServerIsUnsummoning)
-
 struct ActivationGroupData
 {
     FixedString field_0;

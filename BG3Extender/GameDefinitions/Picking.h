@@ -94,7 +94,6 @@ struct [[bg3::hidden]] PickingHelperManager : public BaseSystem
 {
     DEFINE_SYSTEM(PickingHelper, "ecl::PickingHelperManager")
 
-    void* field_8;
     LegacyRefMap<uint16_t, PlayerPickingHelper*> PlayerHelpers;
     void* field_20;
 };

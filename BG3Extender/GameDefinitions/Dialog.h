@@ -590,7 +590,6 @@ struct [[bg3::hidden]] DialogSystem : public BaseSystem
 {
     DEFINE_SYSTEM(ServerDialog, "esv::DialogSystem")
 
-    void* field_8;
     void* TimelineSystem;
     void* CombatLogSystem;
     void* RollSystem;

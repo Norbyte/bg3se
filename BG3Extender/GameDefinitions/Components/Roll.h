@@ -246,7 +246,6 @@ struct RollSystem : public BaseSystem
 {
     DEFINE_SYSTEM(ServerRoll, "esv::RollSystem")
 
-    [[bg3::hidden]] ecs::EntityWorld* EntityWorld;
     [[bg3::hidden]] void* VMT2;
     [[bg3::hidden]] void* field_18;
     [[bg3::hidden]] void* VMT_GameEventListener;

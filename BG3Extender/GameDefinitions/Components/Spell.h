@@ -530,7 +530,6 @@ struct SpellSystem : public BaseSystem
 {
     DEFINE_SYSTEM(ServerSpell, "esv::SpellSystem")
 
-    [[bg3::hidden]] void* field_8;
     [[bg3::hidden]] UnknownSignal field_10;
     [[bg3::hidden]] UnknownSignal SpellPreparedSignal;
     [[bg3::hidden]] void* ThothMachine;
@@ -723,7 +722,6 @@ struct CastRequestSystem : public BaseSystem
 {
     DEFINE_SYSTEM(ServerCastRequest, "esv::spell_cast::CastRequestSystem")
 
-    [[bg3::hidden]] ecs::EntityWorld* EntityWorld;
     [[bg3::hidden]] void* VMT2;
     Array<CastStartRequest> AnubisCastRequests;
     Array<CastStartRequest> OsirisCastRequests;

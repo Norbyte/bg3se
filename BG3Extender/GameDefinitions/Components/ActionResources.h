@@ -95,7 +95,6 @@ struct ActionResourceSystem : public BaseSystem
 {
     DEFINE_SYSTEM(ServerActionResource, "esv::ActionResourceSystem")
 
-    [[bg3::hidden]] ecs::EntityWorld* EntityWorld;
     [[bg3::hidden]] UnknownSignal ObjectActionResourceValueChanged;
     [[bg3::hidden]] UnknownSignal field_28;
     [[bg3::hidden]] UnknownSignal ObjectActionPointsValueChanged;

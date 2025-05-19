@@ -353,7 +353,6 @@ struct [[bg3::hidden]] AnimationBlueprintSystem : public BaseSystem
 {
     DEFINE_SYSTEM(AnimationBlueprint, "ls::AnimationBlueprintSystem")
 
-    ecs::EntityWorld* EntityWorld;
     void* VMT_IBlueprintInstanceListener;
     void* VMT_IGenomeManagerCallback;
     UnknownSignal StopUpdateSignal;

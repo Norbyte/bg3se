@@ -24,6 +24,8 @@ struct BaseSystem : ProtectedGameObject<BaseSystem>
     virtual void OnActivated() = 0;
     virtual void OnDeactivated() = 0;
     virtual void VMT06() = 0;
+
+    [[bg3::hidden]] ecs::EntityWorld* EntityWorld;
 };
 
 END_SE()

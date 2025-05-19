@@ -179,7 +179,6 @@ struct System : public BaseSystem
 {
     DEFINE_SYSTEM(ServerCombat, "esv::combat::System")
 
-    [[bg3::hidden]] ecs::EntityWorld* EntityWorld;
     [[bg3::hidden]] void* VMT_NetEventListener;
     [[bg3::hidden]] __int64 field_18;
     [[bg3::hidden]] void* VMT_GameEventListener;

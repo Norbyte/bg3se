@@ -172,7 +172,6 @@ struct WeaponComponent : public BaseComponent
 
 struct BaseStatsSystem : public BaseSystem
 {
-    [[bg3::hidden]] ecs::EntityWorld* EntityWorld;
     [[bg3::hidden]] UnknownSignal ObjectHealed;
     [[bg3::hidden]] UnknownSignal CurrentHitPointsChanged;
     [[bg3::hidden]] UnknownSignal CurrentTemporaryHitPointsChanged;

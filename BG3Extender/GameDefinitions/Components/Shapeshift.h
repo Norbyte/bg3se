@@ -118,7 +118,6 @@ struct System : public BaseSystem
 {
     DEFINE_SYSTEM(ServerShapeshift, "esv::shapeshift::System")
 
-    [[bg3::hidden]] __int64 field_8;
     [[bg3::hidden]] UnknownSignal field_10;
     HashMap<EntityHandle, Array<AddRequest>> RequestAddStates;
     HashMap<EntityHandle, Array<Guid>> RequestDeleteStates;
