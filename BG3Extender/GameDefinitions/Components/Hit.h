@@ -176,4 +176,40 @@ struct HitSystem : public BaseSystem
     [[bg3::hidden]] void* HitHelper;
 };
 
+struct HitEventData
+{
+    Guid Inflicter;
+    Guid InflicterOwner;
+    Guid TargetProxy;
+    char DamageType;
+    int Damage;
+    BYTE CauseType;
+    int StoryActionId;
+};
+
+struct UnresolvedHitNotificationComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(UnresolvedHitNotification, "esv::hit::UnresolvedHitNotificationComponent")
+
+    Array<HitEventData> Hits;
+};
+
+struct HitNotificationEventOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(HitNotification, "esv::hit::HitNotificationEventOneFrameComponent")
+
+    EntityHandle Target;
+    HitEventData Hit;
+    bool Dead;
+};
+
+struct HitNotificationRequestOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(HitNotificationRequest, "esv::hit::HitNotificationRequestOneFrameComponent")
+
+    EntityHandle Target;
+    HitEventData Hit;
+};
+
+
 END_NS()

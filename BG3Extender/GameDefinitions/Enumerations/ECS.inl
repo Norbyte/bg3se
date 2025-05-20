@@ -391,6 +391,9 @@ BEGIN_ENUM(ExtComponentType, uint32_t)
     E(HitAnimationRequest)
     E(HitResultEvent)
     E(HitJoinCombatRequest)
+    E(UnresolvedHitNotification)
+    E(HitNotification)
+    E(HitNotificationRequest)
 
     // Identity
     E(Identity)
