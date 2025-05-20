@@ -23,6 +23,7 @@ BEGIN_ENUM(ExtSystemType, uint32_t)
     E(ServerSummonSpawn)
     E(ServerSummonDespawn)
     E(ServerCapabilities)
+    E(ServerTemplateChange)
     E(Max)
 END_ENUM()
 

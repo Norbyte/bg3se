@@ -434,5 +434,16 @@ struct CapabilitiesSystem : public BaseSystem
     bool IsRunning;
 };
 
+END_NS()
+
+BEGIN_NS(esv::templates)
+
+struct ChangeSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerTemplateChange, "esv::templates::ChangeSystem")
+
+    HashMap<EntityHandle, TemplateInfo> TemplateSwitch;
+    HashMap<EntityHandle, TemplateInfo> TemplateTransformWithScript;
+};
 
 END_NS()
