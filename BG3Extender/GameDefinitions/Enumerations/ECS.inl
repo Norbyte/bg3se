@@ -22,6 +22,7 @@ BEGIN_ENUM(ExtSystemType, uint32_t)
     E(ServerInterruptManagement)
     E(ServerSummonSpawn)
     E(ServerSummonDespawn)
+    E(ServerCapabilities)
     E(Max)
 END_ENUM()
 

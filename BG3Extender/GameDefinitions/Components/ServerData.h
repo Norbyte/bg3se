@@ -363,5 +363,76 @@ struct JumpFollowComponent : public BaseComponent
     uint8_t field_13A;
 };
 
+struct GlobalRestStateRequest
+{
+    int RestType;
+    int Remove;
+};
+
+struct StoryShortRestStateRequest
+{
+    bool Enabled;
+    uint8_t Cause;
+};
+
+struct CapabilitiesSystem : public BaseSystem
+{
+    DEFINE_SYSTEM(ServerCapabilities, "esv::CapabilitiesSystem")
+
+    [[bg3::hidden]] void* GameEventManagerVMT;
+    [[bg3::hidden]] void* field_18;
+    [[bg3::hidden]] void* GameStateEventListenerVMT;
+    [[bg3::hidden]] void* field_28;
+    [[bg3::hidden]] void* FlagEventListenerVMT;
+    [[bg3::hidden]] UnknownSignal field_38;
+    [[bg3::hidden]] void* qword50;
+    [[bg3::hidden]] UnknownSignal qword58;
+    [[bg3::hidden]] UnknownSignal qword70;
+    [[bg3::hidden]] UnknownSignal qword88;
+    [[bg3::hidden]] UnknownSignal qwordA0;
+    [[bg3::hidden]] void* AnubisLegacyEvents;
+    [[bg3::hidden]] void* BoostSystem;
+    [[bg3::hidden]] void* CharacterManager;
+    [[bg3::hidden]] void* GameControl;
+    [[bg3::hidden]] void* LootValidationSystem;
+    [[bg3::hidden]] void* ShapeshiftSystem;
+    [[bg3::hidden]] void* TagSystem;
+    [[bg3::hidden]] void* WaypointManager;
+    [[bg3::hidden]] void* FactionContainer;
+    [[bg3::hidden]] void* TagManager;
+    [[bg3::hidden]] void* EoCGlobalSwitches;
+    [[bg3::hidden]] void* ThothMachine;
+    [[bg3::hidden]] void* TransformSystem;
+    [[bg3::hidden]] void* StatusPrototypeManager;
+    [[bg3::hidden]] UnknownFunction SignalConnections;
+    HashSet<EntityHandle> TemplateChanged;
+    HashSet<EntityHandle> CanBeDisarmedChanged;
+    HashSet<EntityHandle> CanBeLootedChanged;
+    HashSet<EntityHandle> CanDeflectProjectilesChanged;
+    HashSet<EntityHandle> CanDoActionsChanged;
+    HashSet<EntityHandle> CanInteractChanged;
+    HashSet<EntityHandle> CanModifyHealthChanged;
+    HashSet<EntityHandle> CanMoveChanged;
+    HashSet<EntityHandle> CanSpeakChanged;
+    HashSet<EntityHandle> CanShortRestChanged;
+    HashSet<EntityHandle> CanTravelChanged;
+    HashSet<EntityHandle> CanTriggerRandomCastChanged;
+    HashSet<EntityHandle> CanDoLongRestChanged;
+    HashSet<EntityHandle> InvulnerableChanged;
+    HashMap<EntityHandle, int> FleeCapability;
+    HashSet<EntityHandle> StatusesChanged;
+    HashSet<EntityHandle> qword478;
+    HashSet<EntityHandle> qword4A8;
+    HashSet<EntityHandle> RestCapabilityChanged;
+    HashSet<EntityHandle> ShortRestPointsUpdated;
+    Array<GlobalRestStateRequest> GlobalRestState;
+    HashMap<EntityHandle, StoryShortRestStateRequest> StoryShortRestState;
+    bool UpdateShortRestState;
+    bool UpdateLongRestState;
+    bool field_58A;
+    bool field_58B;
+    bool IsRunning;
+};
+
 
 END_NS()
