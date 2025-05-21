@@ -128,3 +128,9 @@ BEGIN_CLS(gn::GenomeVariant)
 P_GETTER(Type, GetTypeName)
 P_GETTER(Value, LuaGetValue)
 END_CLS()
+
+BEGIN_CLS(ScratchBuffer)
+P_GETTER(Buffer, GetBufferString)
+P_RO(Size)
+END_CLS()
+
