@@ -1,7 +1,5 @@
 #pragma once
 
-#if !defined(OSI_NO_DEBUGGER)
-
 #include <cstdint>
 #include <Osiris/Debugger/osidebug.pb.h>
 #include <GameDefinitions/Osiris.h>
@@ -133,5 +131,3 @@ private:
 };
 
 END_NS()
-
-#endif

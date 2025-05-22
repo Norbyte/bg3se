@@ -213,7 +213,6 @@ PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int index, Qu
     }
 }
 
-#if defined(ENABLE_UI)
 template <class TK, unsigned N>
 PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, Noesis::Vector<TK, N>* obj)
 {
@@ -258,7 +257,6 @@ inline PropertyOperationResult UnserializeArrayFromUserdata(lua_State* L, int in
 {
     return PropertyOperationResult::UnsupportedType;
 }
-#endif
 
 template <class TK, size_t Size>
 PropertyOperationResult UnserializeArrayFromTable(lua_State* L, int index, std::array<TK, Size>* obj)

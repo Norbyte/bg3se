@@ -22,9 +22,7 @@
 #include <GameDefinitions/Skeleton.h>
 #include <GameDefinitions/Components/All.h>
 #include <GameDefinitions/Stats/UseActions.h>
-#if defined(ENABLE_UI)
 #include <GameDefinitions/UI.h>
-#endif
 
 #include <Lua/LuaBinding.h>
 #include <Lua/LuaSerializers.h>
@@ -37,11 +35,7 @@
 
 #include <Extender/ScriptExtender.h>
 
-#if defined(ENABLE_UI)
 #include <NsGui/FrameworkElement.h>
-#endif
 
-#if defined(ENABLE_IMGUI)
 #include <imgui.h>
 #include <Extender/Client/IMGUI/Objects.h>
-#endif

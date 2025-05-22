@@ -3,21 +3,15 @@
 #include <GameDefinitions/EnumRepository.h>
 
 #include <cstdint>
-#if defined(ENABLE_SDL)
 #include <SDL_scancode.h>
 #include <SDL_keycode.h>
 #include <SDL_gamecontroller.h>
-#endif
 
-#if defined(ENABLE_UI)
 #include <NsGui/Enums.h>
 #include <NsGui/InputEnums.h>
 #include <NsGui/UIElementEvents.h>
-#endif
 
-#if defined(ENABLE_IMGUI)
 #include <imgui.h>
-#endif
 
 BEGIN_SE()
 

@@ -7,12 +7,10 @@
 namespace bg3se
 {
 
-#if !defined(OSI_NO_DEBUGGER)
 void OsirisDebugThreadRunner(OsirisDebugInterface & intf)
 {
     intf.Run();
 }
-#endif
 
 OsirisExtender::OsirisExtender(ExtenderConfig & config)
     : config_(config), 
@@ -41,9 +39,7 @@ void OsirisExtender::Initialize()
     wrappers_.Load.SetPostHook(&OsirisExtender::OnAfterOsirisLoad, this);
     wrappers_.Merge.SetWrapper(&OsirisExtender::MergeWrapper, this);
     wrappers_.Event.SetWrapper(&OsirisExtender::OnEvent, this);
-#if !defined(OSI_NO_DEBUGGER)
     wrappers_.RuleActionCall.SetWrapper(&OsirisExtender::RuleActionCall, this);
-#endif
 
     injector_.Initialize();
     functionLibrary_.Register();
@@ -152,7 +148,6 @@ void OsirisExtender::OnRegisterDIVFunctions(void * Osiris, DivFunctions * Functi
     DEBUG("\tOsirisInterface = %p", osirisInterface);
 #endif
 
-#if !defined(OSI_NO_DEBUGGER)
     // FIXME - move to DebuggerHooks
     if (config_.EnableDebugger) {
         if (!debuggerThread_) {
@@ -168,29 +163,24 @@ void OsirisExtender::OnRegisterDIVFunctions(void * Osiris, DivFunctions * Functi
             }
         }
     }
-#endif
 }
 
 void OsirisExtender::OnInitGame(void * Osiris)
 {
     DEBUG("OsirisExtender::OnInitGame()");
-#if !defined(OSI_NO_DEBUGGER)
     if (debugger_) {
         debugger_->GameInitHook();
     }
-#endif
     DEBUG("OnRegisterDIVFunctions END");
 }
 
 void OsirisExtender::OnDeleteAllData(void * Osiris, bool DeleteTypes)
 {
-#if !defined(OSI_NO_DEBUGGER)
     if (debugger_) {
         DEBUG("OsirisExtender::OnDeleteAllData()");
         debugger_->DeleteAllDataHook();
         debugger_.reset();
     }
-#endif
 }
 
 void OsirisExtender::OnError(char const * Message)
@@ -258,22 +248,18 @@ void OsirisExtender::OnAfterOsirisLoad(void * Osiris, void * Buf, int retval)
 {
     std::lock_guard _(storyLoadLock_);
 
-#if !defined(OSI_NO_DEBUGGER)
     if (debuggerThread_) {
         HookNodeVMTs();
     }
-#endif
 
     storyLoaded_ = true; 
     DEBUG("ScriptExtender::OnAfterOsirisLoad: %d nodes", (*wrappers_.Globals.Nodes)->Db.Size);
 
-#if !defined(OSI_NO_DEBUGGER)
     if (debuggerThread_ && nodeVmtWrappers_) {
         debugger_.reset();
         debugger_ = std::make_unique<osidbg::Debugger>(wrappers_.Globals, std::ref(*debugMsgHandler_));
         debugger_->StoryLoaded();
     }
-#endif
 
     if (gExtender->GetServer().HasExtensionState()) {
         gExtender->GetServer().GetExtensionState().StoryLoaded();
@@ -291,19 +277,15 @@ bool OsirisExtender::MergeWrapper(bool (*next)(void*, wchar_t*), void * Osiris, 
         gExtender->GetServer().GetExtensionState().StorySetMerging(true);
     }
 
-#if !defined(OSI_NO_DEBUGGER)
     if (debugger_ != nullptr) {
         debugger_->MergeStarted();
     }
-#endif
 
     bool retval = next(Osiris, Src);
 
-#if !defined(OSI_NO_DEBUGGER)
     if (debugger_ != nullptr) {
         debugger_->MergeFinished();
     }
-#endif
 
     if (gExtender->GetServer().HasExtensionState()) {
         gExtender->GetServer().GetExtensionState().StorySetMerging(false);
@@ -332,19 +314,15 @@ ReturnCode OsirisExtender::OnEvent(ReturnCode(*next)(void*, uint32_t, OsiArgumen
 
 void OsirisExtender::RuleActionCall(void (*next)(RuleActionNode*, void*, void*, void*, void*), RuleActionNode * Action, void * a1, void * a2, void * a3, void * a4)
 {
-#if !defined(OSI_NO_DEBUGGER)
     if (debugger_ != nullptr) {
         debugger_->RuleActionPreHook(Action);
     }
-#endif
 
     next(Action, a1, a2, a3, a4);
 
-#if !defined(OSI_NO_DEBUGGER)
     if (debugger_ != nullptr) {
         debugger_->RuleActionPostHook(Action);
     }
-#endif
 }
 
 void OsirisExtender::InitRuntimeLogging()

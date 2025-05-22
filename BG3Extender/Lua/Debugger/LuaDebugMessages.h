@@ -1,7 +1,5 @@
 #pragma once
 
-#if !defined(OSI_NO_DEBUGGER)
-
 #include <cstdint>
 #include <Lua/Debugger/LuaDebug.pb.h>
 #include <GameDefinitions/Module.h>
@@ -90,6 +88,3 @@ namespace bg3se::lua::dbg
         void Send(dbg::BackendToDebugger& msg);
     };
 }
-
-#endif
-#pragma once

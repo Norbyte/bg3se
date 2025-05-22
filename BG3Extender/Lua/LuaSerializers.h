@@ -114,12 +114,8 @@ namespace bg3se::lua
     inline LuaSerializer& serialize(LuaSerializer& s, STDString& v) { return s.Visit(v); }
     inline LuaSerializer& serialize(LuaSerializer& s, STDWString& v) { return s.Visit(v); }
     inline LuaSerializer& serialize(LuaSerializer& s, StringView& v) { return s.Visit(v); }
-#if defined(ENABLE_UI)
     inline LuaSerializer& serialize(LuaSerializer& s, Noesis::Symbol& v) { return s.Visit(v); }
-#endif
-#if defined(ENABLE_IMGUI)
     inline LuaSerializer& serialize(LuaSerializer& s, ImguiHandle& v) { return s.Visit(v); }
-#endif
     inline LuaSerializer& serialize(LuaSerializer& s, Path& v) { return s.Visit(v); }
     inline LuaSerializer& serialize(LuaSerializer& s, Guid& v) { return s.Visit(v); }
     inline LuaSerializer& serialize(LuaSerializer& s, NetId& v) { return s.Visit(v); }
@@ -272,7 +268,6 @@ namespace bg3se::lua
         return s;
     }
 
-#if defined(ENABLE_UI)
     template <class T, unsigned N>
     LuaSerializer& serialize(LuaSerializer& s, Noesis::Vector<T, N>& v)
     {
@@ -297,7 +292,6 @@ namespace bg3se::lua
         s.EndObject();
         return s;
     }
-#endif
 
     template <class T>
     LuaSerializer& serialize(LuaSerializer& s, HashSet<T>& v)

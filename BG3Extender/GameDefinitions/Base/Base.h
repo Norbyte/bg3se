@@ -13,7 +13,6 @@ BEGIN_SE()
 LONG HandleGuardedException(DWORD code, EXCEPTION_POINTERS* info);
 END_SE()
 
-#if defined(ENABLE_UI)
 #include <NsCore/Symbol.h>
 #include <NsCore/String.h>
 #include <NsCore/Vector.h>
@@ -23,11 +22,8 @@ END_SE()
 #include <NsDrawing/Point.h>
 #include <NsDrawing/Rect.h>
 #include <NsGui/BaseCollection.h>
-#endif
 
-#if defined(ENABLE_IMGUI)
 #include <Extender/Client/IMGUI/IMGUI.h>
-#endif
 
 #include <GameDefinitions/Base/LuaAnnotations.h>
 #include <GameDefinitions/Base/BaseTypeInformation.h>

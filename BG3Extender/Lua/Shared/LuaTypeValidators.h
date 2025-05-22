@@ -410,7 +410,6 @@ bool ValidateRef(TrackedCompactSet<TE> const* v, Overload<TrackedCompactSet<TE>>
     return ValidateLinearContainer(v->Buf, v->Size, v->Capacity);
 }
 
-#if defined(ENABLE_UI)
 template <class TE, unsigned N>
 bool ValidateRef(Noesis::Vector<TE, N> const* v, Overload<Noesis::Vector<TE, N>>)
 {
@@ -440,7 +439,6 @@ bool ValidateRef(Noesis::Vector<TE, N> const* v, Overload<Noesis::Vector<TE, N>>
 
     return true;
 }
-#endif
 
 template <class TE>
 bool ValidateRef(StaticArray<TE> const* v, Overload<StaticArray<TE>>)
@@ -591,13 +589,11 @@ bool Validate(TrackedCompactSet<TE> const* v, Overload<TrackedCompactSet<TE>>)
     return ValidateRef(v, Overload<TrackedCompactSet<TE>>{});
 }
 
-#if defined(ENABLE_UI)
 template <class TE, unsigned N>
 bool Validate(Noesis::Vector<TE, N> const* v, Overload<Noesis::Vector<TE, N>>)
 {
     return ValidateRef(v, Overload<Noesis::Vector<TE, N>>{});
 }
-#endif
 
 template <class TK, class TV>
 bool Validate(LegacyMap<TK, TV> const* v, Overload<LegacyMap<TK, TV>>)

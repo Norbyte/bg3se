@@ -4,9 +4,7 @@
 #include <Lua/Shared/Proxies/LuaEvent.h>
 #include <Lua/Client/ClientEvents.h>
 #include <Lua/Client/ClientEntityReplicationEvents.h>
-#if defined(ENABLE_UI)
 #include <Lua/Client/UIEvents.h>
-#endif
 
 BEGIN_NS(ecl::lua)
 
@@ -48,26 +46,18 @@ public:
     bool IsEventCancelable(SDL_Event* event);
     void OnInputEvent(SDL_Event* event, int* result);
 
-#if defined(ENABLE_UI)
     UIEventHooks& GetUIEvents()
     {
         return uiEvents_;
     }
-#endif
 
-#if defined(ENABLE_IMGUI)
     extui::IMGUIObjectManager& IMGUI();
-#endif
 
 private:
     ExtensionLibraryClient library_;
     ClientEntityReplicationEventHooks replicationHooks_;
-#if defined(ENABLE_UI)
     UIEventHooks uiEvents_;
-#endif
-#if defined(ENABLE_IMGUI)
     extui::IMGUIObjectManager* imgui_{ nullptr };
-#endif
 };
 
 END_NS()

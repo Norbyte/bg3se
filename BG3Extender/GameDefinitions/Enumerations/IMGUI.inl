@@ -1,5 +1,4 @@
 
-#if defined(ENABLE_SDL)
 BEGIN_ENUM(SDLControllerAxis, int32_t)
     EV(LeftX, SDL_CONTROLLER_AXIS_LEFTX)
     EV(LeftY, SDL_CONTROLLER_AXIS_LEFTY)
@@ -320,9 +319,6 @@ BEGIN_ENUM(SDLScanCode, int32_t)
     EV(CALL, SDL_SCANCODE_CALL)
     EV(ENDCALL, SDL_SCANCODE_ENDCALL)
 END_ENUM()
-#endif
-
-#if defined(ENABLE_IMGUI)
 
 BEGIN_ENUM(GuiStyleVar, int32_t)
     EV(Alpha, (int32_t)ImGuiStyleVar_Alpha)
@@ -741,5 +737,3 @@ BEGIN_ENUM(GuiMeasureScaling, uint32_t)
     EV(Absolute, 0)
     EV(Scaled, 1)
 END_ENUM()
-
-#endif

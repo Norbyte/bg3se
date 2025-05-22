@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include <Osiris/Debugger/DebugInterface.h>
 
-#if !defined(OSI_NO_DEBUGGER)
-
 #include <sstream>
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/io/zero_copy_stream.h>
@@ -156,5 +154,3 @@ namespace bg3se
         }
     }
 }
-
-#endif

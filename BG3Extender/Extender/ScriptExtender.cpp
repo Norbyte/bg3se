@@ -25,12 +25,10 @@ decltype(ScriptExtender::AppLoadGraphicSettings)* decltype(ScriptExtender::AppLo
 
 std::unique_ptr<ScriptExtender> gExtender;
 
-#if !defined(OSI_NO_DEBUGGER)
 void LuaDebugThreadRunner(LuaDebugInterface& intf)
 {
     intf.Run();
 }
-#endif
 
 ScriptExtender::ScriptExtender()
     : server_(config_),
@@ -93,11 +91,9 @@ void ScriptExtender::Initialize()
         ERR("ScriptExtender::Initialize: Could not load libraries; skipping scripting extension initialization.");
     }
 
-#if defined(ENABLE_IMGUI)
     if (!Libraries.CriticalInitializationFailed()) {
         imgui_.EnableHooks();
     }
-#endif
 
     server_.Initialize();
     client_.Initialize();
@@ -122,7 +118,6 @@ void ScriptExtender::Initialize()
 
     DetourTransactionCommit();
 
-#if !defined(OSI_NO_DEBUGGER)
     if (config_.EnableLuaDebugger && luaDebuggerThread_ == nullptr) {
         DEBUG("Starting Lua debugger server");
         try {
@@ -136,7 +131,6 @@ void ScriptExtender::Initialize()
             ERR("Lua debugger startup failed: %s", e.what());
         }
     }
-#endif
 
     auto initEnd = std::chrono::high_resolution_clock::now();
     auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(initEnd - initStart).count();
@@ -172,11 +166,9 @@ void ScriptExtender::LogOsirisError(std::string_view msg)
     gCoreLibPlatformInterface.GlobalConsole->Print(DebugMessageType::Error, msg.data());
     server_.Osiris().LogError(msg);
 
-#if !defined(OSI_NO_DEBUGGER)
     if (luaDebugger_) {
         luaDebugger_->OnGenericError(msg.data());
     }
-#endif
 }
 
 void ScriptExtender::LogOsirisWarning(std::string_view msg)
@@ -261,9 +253,7 @@ void ScriptExtender::OnStatsLoadGuarded(stats::RPGStats::LoadProc* wrapped, stat
         client_.GetExtensionState().OnStatsLoaded();
     }
 
-#if defined(ENABLE_IMGUI)
     imgui_.EnableUI(true);
-#endif
 }
 
 void ScriptExtender::OnStatsLoad(stats::RPGStats::LoadProc* wrapped, stats::RPGStats* mgr, Array<STDString>* paths)

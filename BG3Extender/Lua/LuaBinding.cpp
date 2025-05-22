@@ -23,7 +23,6 @@
 //
 void nse_lua_report_handled_error(lua_State* L)
 {
-#if !defined(OSI_NO_DEBUGGER)
     char const* err = "(Unknown)";
     if (lua_type(L, -1) == LUA_TSTRING) {
         err = lua_tostring(L, -1);
@@ -33,7 +32,6 @@ void nse_lua_report_handled_error(lua_State* L)
     if (debugger) {
         debugger->OnLuaError(L, err);
     }
-#endif
 }
 
 BEGIN_NS(lua)
@@ -93,7 +91,6 @@ void push(lua_State* L, stats::ConditionId const& h)
     }
 }
 
-#if defined(ENABLE_IMGUI)
 void push(lua_State* L, ImguiHandle const& h)
 {
     if (h) {
@@ -111,7 +108,6 @@ void push(lua_State* L, extui::Renderable* o)
         push(L, nullptr);
     }
 }
-#endif
 
 int TracebackHandler(lua_State * L)
 {
@@ -279,9 +275,7 @@ char const* GetDebugName(MetatableTag tag)
     case MetatableTag::UserVariableHolder: return "UserVariableHolder";
     case MetatableTag::ModVariableHolder: return "ModVariableHolder";
     case MetatableTag::Entity: return "Entity";
-#if defined(ENABLE_IMGUI)
     case MetatableTag::ImguiObject: return "ImguiObject";
-#endif
     case MetatableTag::OsiFunctionName: return "OsiFunction";
     case MetatableTag::SystemMap: return "SystemMap";
 
@@ -327,12 +321,10 @@ int LuaPanic(lua_State * L)
         err = lua_tostring(L, -1);
     }
 
-#if !defined(OSI_NO_DEBUGGER)
     auto debugger = gExtender->GetLuaDebugger();
     if (debugger) {
         debugger->OnLuaError(L, err);
     }
-#endif
 
     throw Exception(err);
 }
@@ -461,12 +453,10 @@ void State::FinishStartup()
     se_assert(!startupDone_);
     startupDone_ = true;
 
-#if !defined(OSI_NO_DEBUGGER)
     auto debugger = gExtender->GetLuaDebugMessageHandler();
     if (debugger && debugger->IsDebuggerReady()) {
         debugger->SendModInfo();
     }
-#endif
 }
         
 void State::OpenLibs()

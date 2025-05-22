@@ -199,10 +199,8 @@ void TypeInformationRepository::Initialize()
     RegisterStaticType<StringView>("StringView", LuaTypeId::String);
     RegisterStaticType<WStringView>("WStringView", LuaTypeId::String);
     RegisterStaticType<LSStringView>("LSStringView", LuaTypeId::String);
-#if defined(ENABLE_UI)
     RegisterStaticType<Noesis::Symbol>("Noesis::Symbol", LuaTypeId::String);
     RegisterStaticType<Noesis::String>("Noesis::String", LuaTypeId::String);
-#endif
     RegisterStaticType<Path>("Path", LuaTypeId::String);
     RegisterStaticType<NetId>("NetId", LuaTypeId::Integer);
     RegisterStaticType<UserId>("UserId", LuaTypeId::Integer);

@@ -4,7 +4,6 @@
 #include <Extender/ScriptExtender.h>
 #include <sstream>
 
-#if !defined(OSI_NO_DEBUGGER)
 #undef DUMP_TRACEPOINTS
 
 namespace bg3se::osidbg
@@ -996,5 +995,3 @@ namespace bg3se::osidbg
         PopFrame({ reason, mapping->rule, mapping->goal, mapping->actionIndex, nullptr, nullptr });
     }
 }
-
-#endif

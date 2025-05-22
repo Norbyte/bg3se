@@ -27,12 +27,8 @@
 #include <Lua/Libs/ClientTemplate.inl>
 #include <Lua/Libs/ClientAudio.inl>
 #include <Lua/Libs/ClientInput.inl>
-#if defined(ENABLE_UI)
 #include <Lua/Libs/ClientUI/Module.inl>
-#endif
-#if defined(ENABLE_IMGUI)
 #include <Lua/Libs/ClientIMGUI.inl>
-#endif
 
 BEGIN_NS(ecl::lua)
 
@@ -42,12 +38,8 @@ void RegisterClientLibraries()
     tmpl::RegisterTemplateLib();
     audio::RegisterAudioLib();
     input::RegisterInputLib();
-#if defined(ENABLE_UI)
     ui::RegisterUILib();
-#endif
-#if defined(ENABLE_IMGUI)
     imgui::RegisterIMGUILib();
-#endif
 }
 
 END_NS()
@@ -92,9 +84,7 @@ void RegisterSharedMetatables(lua_State* L)
     ModVariableHolderMetatable::RegisterMetatable(L);
     EntityProxyMetatable::RegisterMetatable(L);
     EntityProxyMetatable::StaticInitialize();
-#if defined(ENABLE_IMGUI)
     ImguiObjectProxyMetatable::RegisterMetatable(L);
-#endif
     SystemMapMetatable::RegisterMetatable(L);
     RegisterSystemProxy(L);
     types::RegisterEnumerations(L);

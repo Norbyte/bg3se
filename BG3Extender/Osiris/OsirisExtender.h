@@ -2,11 +2,9 @@
 
 #include <Extender/Shared/ExtenderConfig.h>
 #include <GameDefinitions/Osiris.h>
-#if !defined(OSI_NO_DEBUGGER)
 #include <Osiris/Debugger/DebugInterface.h>
 #include <Osiris/Debugger/DebugMessages.h>
 #include <Osiris/Debugger/Debugger.h>
-#endif
 #include <GameHooks/OsirisWrappers.h>
 #include <Osiris/Shared/CustomFunctions.h>
 #include <Osiris/Shared/NodeHooks.h>
@@ -117,12 +115,10 @@ private:
     bool storyLoaded_{ false };
     std::recursive_mutex storyLoadLock_;
 
-#if !defined(OSI_NO_DEBUGGER)
     std::unique_ptr<std::thread> debuggerThread_;
     std::unique_ptr<OsirisDebugInterface> debugInterface_;
     std::unique_ptr<osidbg::DebugMessageHandler> debugMsgHandler_;
     std::unique_ptr<osidbg::Debugger> debugger_;
-#endif
 
     void RestartLogging(std::wstring const & Type);
 };

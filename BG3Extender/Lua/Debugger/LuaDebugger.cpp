@@ -6,12 +6,8 @@
 #include <lobject.h>
 #include <lgc.h>
 #include <regex>
-#if defined(ENABLE_IMGUI)
 #include <Extender/Client/IMGUI/Objects.h>
-#endif
 #include <Lua/Osiris/FunctionProxy.h>
-
-#if !defined(OSI_NO_DEBUGGER)
 
 namespace bg3se::lua::dbg
 {
@@ -147,7 +143,6 @@ namespace bg3se::lua::dbg
                 break;
             }
 
-#if defined(ENABLE_IMGUI)
             case MetatableTag::ImguiObject:
             {
                 value->set_type_id(MsgValueType::USERDATA);
@@ -159,7 +154,6 @@ namespace bg3se::lua::dbg
                 }
                 break;
             }
-#endif
 
             case MetatableTag::OsiFunctionName:
             {
@@ -377,7 +371,6 @@ namespace bg3se::lua::dbg
         }
     }
 
-#if defined(ENABLE_IMGUI)
     void LuaImguiObjectToEvalResults(lua_State* L, int index, CppObjectMetadata& meta, DebuggerGetVariablesRequest const& req)
     {
         StackCheck _(L);
@@ -397,7 +390,6 @@ namespace bg3se::lua::dbg
             }
         }
     }
-#endif
 
     void LuaEntityToEvalResults(lua_State* L, int index, CppObjectMetadata& meta, DebuggerGetVariablesRequest const& req)
     {
@@ -516,13 +508,11 @@ namespace bg3se::lua::dbg
             break;
         }
 
-#if defined(ENABLE_IMGUI)
         case MetatableTag::ImguiObject:
         {
             LuaImguiObjectToEvalResults(L, index, meta, req);
             break;
         }
-#endif
 
         default:
             WARN("LuaLightCppObjectToEvalResults(): Evaluating unrecognized lightcppobject type");
@@ -1349,5 +1339,3 @@ namespace bg3se::lua::dbg
         }
     }
 }
-
-#endif

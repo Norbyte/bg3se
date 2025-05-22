@@ -21,10 +21,8 @@ BY_VAL(STDWString);
 BY_VAL(StringView);
 BY_VAL(WStringView);
 BY_VAL(LSStringView);
-#if defined(ENABLE_UI)
 BY_VAL(Noesis::String);
 BY_VAL(Noesis::Symbol);
-#endif
 BY_VAL(Guid);
 BY_VAL(Path);
 BY_VAL(NetId);
@@ -181,7 +179,6 @@ public:
 };
 
 
-#if defined(ENABLE_UI)
 template <class TContainer, class T, unsigned TContainerClassId>
 class DynamicNoesisArrayProxyImpl : public ArrayProxyImplBase
 {
@@ -373,7 +370,6 @@ public:
         }
     }
 };
-#endif
 
 
 template <class TContainer, class T, unsigned TContainerClassId>
@@ -605,7 +601,6 @@ public:
         MakeImpl(L, static_cast<Array<T> const*>(object), lifetime, GetImplementation<DynamicArrayProxyImpl<Array<T>, T, 2>>());
     }
 
-#if defined(ENABLE_UI)
     template <class T, unsigned N>
     inline static void Make(lua_State* L, Noesis::Vector<T, N>* object, LifetimeHandle lifetime)
     {
@@ -627,7 +622,6 @@ public:
     {
         MakeImpl(L, object, lifetime, GetImplementation<DynamicNoesisCollectionProxyImpl<Noesis::BaseCollection, Noesis::BaseComponent*, 8>>());
     }
-#endif
 
     template <class TWord, unsigned Words>
     inline static void Make(

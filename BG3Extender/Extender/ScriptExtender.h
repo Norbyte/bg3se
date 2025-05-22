@@ -4,18 +4,14 @@
 #include <GameDefinitions/Osiris.h>
 #include <GameDefinitions/GuidResources.h>
 #include <Extender/Client/ScriptExtenderClient.h>
-#if defined(ENABLE_IMGUI)
 #include <Extender/Client/IMGUI/IMGUI.h>
-#endif
 #include <Extender/Server/ScriptExtenderServer.h>
 #include <Extender/Shared/StatLoadOrderHelper.h>
 #include <Extender/Shared/VirtualTextures.h>
 #include <Extender/Shared/UseActions.h>
 #include <Extender/Shared/Hooks.h>
-#if !defined(OSI_NO_DEBUGGER)
 #include <Lua/Debugger/LuaDebugger.h>
 #include <Lua/Debugger/LuaDebugMessages.h>
-#endif
 #include <Lua/Shared/LuaBundle.h>
 #include <Lua/Shared/Proxies/LuaCppClass.h>
 #include <GameHooks/OsirisWrappers.h>
@@ -74,7 +70,6 @@ public:
         return Libraries;
     }
 
-#if !defined(OSI_NO_DEBUGGER)
     inline lua::dbg::Debugger* GetLuaDebugger()
     {
         return luaDebugger_.get();
@@ -84,7 +79,6 @@ public:
     {
         return luaDebugMsgHandler_.get();
     }
-#endif
 
     ExtensionStateBase* GetCurrentExtensionState();
     ecs::EntitySystemHelpersBase* GetECS(ecs::EntityWorld* world);
@@ -136,12 +130,10 @@ public:
         return startTime_;
     }
 
-#if defined(ENABLE_IMGUI)
     inline extui::IMGUIManager& IMGUI()
     {
         return imgui_;
     }
-#endif
 
     void ClearPathOverrides();
     void AddPathOverride(STDString const & path, STDString const & overriddenPath);
@@ -174,20 +166,16 @@ private:
     lua::CppPropertyMapManager propertyMapManager_;
     VirtualTextureHelpers virtualTextures_;
     UseActionHelpers useActions_;
-#if defined(ENABLE_IMGUI)
     extui::IMGUIManager imgui_;
-#endif
 
     ExtenderConfig config_;
     bool postStartupDone_{ false };
     bool updateHooksAdded_{ false };
 
-#if !defined(OSI_NO_DEBUGGER)
     std::thread* luaDebuggerThread_{ nullptr };
     std::unique_ptr<LuaDebugInterface> luaDebugInterface_;
     std::unique_ptr<lua::dbg::DebugMessageHandler> luaDebugMsgHandler_;
     std::unique_ptr<lua::dbg::Debugger> luaDebugger_;
-#endif
 
     GameVersionInfo gameVersion_;
     ULONGLONG startTime_{ 0 };

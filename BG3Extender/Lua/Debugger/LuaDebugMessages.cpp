@@ -6,8 +6,6 @@
 #include <shlwapi.h>
 #include "resource.h"
 
-#if !defined(OSI_NO_DEBUGGER)
-
 // Hack to avoid issues from debug/release CRT difference between protobuf and extender
 #if defined(NDEBUG)
 #define DEBUGGER_MSG(name) BackendToDebugger name
@@ -596,5 +594,3 @@ void DebugMessageHandler::Send(BackendToDebugger& msg)
 }
 
 END_NS()
-
-#endif

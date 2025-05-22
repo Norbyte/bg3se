@@ -1,5 +1,3 @@
-#if defined(ENABLE_UI)
-
 BEGIN_ENUM_NS(Noesis, Orientation, NsOrientation, int32_t)
     E(Orientation_Horizontal)
     E(Orientation_Vertical)
@@ -277,5 +275,3 @@ BEGIN_BITMASK_NS(Noesis, ManipulationModes, NsManipulationModes, int32_t)
     E(ManipulationModes_Rotate)
     E(ManipulationModes_Scale)
 END_ENUM_NS()
-
-#endif

@@ -1,7 +1,5 @@
 #include <stdafx.h>
 
-#if defined(ENABLE_IMGUI)
-
 #include <Extender/Client/IMGUI/IMGUI.h>
 #include <Extender/Client/IMGUI/Objects.h>
 #include <Extender/Shared/ScriptHelpers.h>
@@ -2205,5 +2203,3 @@ void IMGUIManager::UnregisterTexture(ImTextureID id, FixedString const& textureG
 }
 
 END_NS()
-
-#endif

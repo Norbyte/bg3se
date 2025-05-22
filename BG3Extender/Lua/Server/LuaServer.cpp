@@ -140,12 +140,10 @@ namespace bg3se::esv::lua
     ServerState::~ServerState()
     {
         if (gExtender) {
-#if !defined(OSI_NO_DEBUGGER)
             auto debugger = gExtender->GetLuaDebugger();
             if (debugger) {
                 debugger->ServerStateDeleted();
             }
-#endif
 
             // FIXME - HANDLE IN SERVER LOGIC!
             gExtender->GetServer().Osiris().GetCustomFunctionManager().ClearDynamicEntries();
@@ -169,12 +167,10 @@ namespace bg3se::esv::lua
         // Ext is not writeable after loading SandboxStartup!
         gExtender->GetServer().GetExtensionState().LuaLoadBuiltinFile("SandboxStartup.lua");
 
-#if !defined(OSI_NO_DEBUGGER)
         auto debugger = gExtender->GetLuaDebugger();
         if (debugger) {
             debugger->ServerStateCreated(this);
         }
-#endif
     }
 
 

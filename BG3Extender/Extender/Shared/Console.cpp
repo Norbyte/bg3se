@@ -170,14 +170,12 @@ void DebugConsole::Print(DebugMessageType type, char const* msg)
 {
     Console::Print(type, msg);
 
-    #if !defined(OSI_NO_DEBUGGER)
     if (!silence_ && gExtender) {
         auto debugger = gExtender->GetLuaDebugger();
         if (debugger && debugger->IsDebuggerReady()) {
             debugger->OnLogMessage(type, msg);
         }
     }
-    #endif
 }
 
 void DebugConsole::ConsoleThread()

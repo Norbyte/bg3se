@@ -97,10 +97,8 @@ void push(lua_State* L, ComponentHandle const& h);
 void push(lua_State* L, ecs::EntityRef const& h);
 void push(lua_State* L, TypeInformationRef const& h);
 void push(lua_State* L, stats::ConditionId const& h);
-#if defined(ENABLE_IMGUI)
 void push(lua_State* L, ImguiHandle const& h);
 void push(lua_State* L, extui::Renderable* o);
-#endif
 
 inline void push(lua_State* L, lua_CFunction v)
 {
@@ -159,7 +157,6 @@ void assign(lua_State* L, int idx, glm::mat3x4 const& m);
 void assign(lua_State* L, int idx, glm::mat4x3 const& m);
 void assign(lua_State* L, int idx, glm::mat4 const& m);
 
-#if defined(ENABLE_UI)
 inline void push(lua_State* L, Noesis::String const& s)
 {
     lua_pushlstring(L, s.Str(), s.Size());
@@ -189,7 +186,6 @@ inline void push(lua_State* L, Noesis::Vector3 const& v)
 {
     push(L, glm::vec3(v.x, v.y, v.z));
 }
-#endif
 
 template <class T>
 inline typename std::enable_if_t<std::is_enum_v<T>, void> push(lua_State* L, T v)

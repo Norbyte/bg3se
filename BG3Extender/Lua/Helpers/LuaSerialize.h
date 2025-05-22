@@ -69,7 +69,6 @@ void SerializeArray(lua_State* L, Queue<TK> const* obj)
     }
 }
 
-#if defined(ENABLE_UI)
 template <class TK, unsigned N>
 void SerializeArray(lua_State* L, Noesis::Vector<TK, N> const* obj)
 {
@@ -82,7 +81,6 @@ void SerializeArray(lua_State* L, Noesis::Vector<TK, N> const* obj)
 }
 
 void SerializeArray(lua_State* L, Noesis::BaseCollection const* obj);
-#endif
 
 template <class TK, size_t Size>
 void SerializeArray(lua_State* L, std::array<TK, Size> const* obj)

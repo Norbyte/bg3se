@@ -1,5 +1,3 @@
-#if defined(ENABLE_UI)
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// BASE CLASSES
 
@@ -368,5 +366,3 @@ PN(KeyStates, keyStates)
 PN(AllowedEffects, allowedEffects)
 PN(Effects, effects)
 END_CLS()
-
-#endif

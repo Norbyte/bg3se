@@ -1,7 +1,5 @@
 #pragma once
 
-#if !defined(OSI_NO_DEBUGGER)
-
 #include <cstdint>
 #include <WinSock2.h>
 
@@ -101,5 +99,3 @@ namespace bg3se
     using OsirisDebugInterface = ProtobufSocketInterface<osidbg::DebuggerToBackend, osidbg::BackendToDebugger>;
     using LuaDebugInterface = ProtobufSocketInterface<lua::dbg::DebuggerToBackend, lua::dbg::BackendToDebugger>;
 }
-
-#endif

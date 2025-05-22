@@ -222,12 +222,10 @@ bool IsDeveloperMode()
 
 void LuaDebugBreak(lua_State* L)
 {
-#if !defined(OSI_NO_DEBUGGER)
     auto debugger = gExtender->GetLuaDebugger();
     if (debugger) {
         debugger->DebugBreak(L);
     }
-#endif
 }
 
 // Development-only function for testing crash reporting

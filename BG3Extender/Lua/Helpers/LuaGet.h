@@ -48,7 +48,6 @@ inline LSStringView do_get(lua_State* L, int index, Overload<LSStringView>)
     return {};
 }
 
-#if defined(ENABLE_UI)
 inline Noesis::String do_get(lua_State* L, int index, Overload<Noesis::String>)
 {
     size_t len;
@@ -61,7 +60,6 @@ inline Noesis::Symbol do_get(lua_State* L, int index, Overload<Noesis::Symbol>)
     auto str = luaL_checkstring(L, index);
     return Noesis::Symbol{ Noesis::SymbolManager::FindString(str) };
 }
-#endif
 
 inline STDWString do_get(lua_State* L, int index, Overload<STDWString>)
 {
@@ -86,10 +84,8 @@ ComponentHandle do_get(lua_State* L, int index, Overload<ComponentHandle>);
 EntityHandle do_get(lua_State* L, int index, Overload<EntityHandle>);
 ecs::EntityRef do_get(lua_State* L, int index, Overload<ecs::EntityRef>);
 TypeInformationRef do_get(lua_State* L, int index, Overload<TypeInformationRef>);
-#if defined(ENABLE_IMGUI)
 ImguiHandle do_get(lua_State* L, int index, Overload<ImguiHandle>);
 extui::Renderable* do_get(lua_State* L, int index, Overload<extui::Renderable*>);
-#endif
 
 inline Path do_get(lua_State* L, int index, Overload<Path>)
 {

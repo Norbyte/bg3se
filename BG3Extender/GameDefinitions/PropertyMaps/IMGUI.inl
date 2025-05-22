@@ -1,5 +1,3 @@
-#if defined(ENABLE_IMGUI)
-
 BEGIN_CLS(extui::ImageReference)
 P(Size)
 P(UV0)
@@ -443,5 +441,3 @@ P(Value)
 P(Size)
 P(Overlay)
 END_CLS()
-
-#endif

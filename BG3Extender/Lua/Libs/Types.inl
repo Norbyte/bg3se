@@ -19,10 +19,8 @@ std::optional<STDString> GetCppObjectTypeName(lua_State * L, int index)
     case MetatableTag::SystemMap:
         return GetDebugName(meta);
 
-#if defined(ENABLE_IMGUI)
     case MetatableTag::ImguiObject:
         return ImguiObjectProxyMetatable::GetTypeName(L, meta);
-#endif
 
     default:
         return {};
@@ -58,7 +56,6 @@ TypeInformation const* GetCppObjectType(lua_State * L, int index)
         return &impl->GetContainerType();
     }
 
-#if defined(ENABLE_IMGUI)
     case MetatableTag::ImguiObject:
     {
         auto obj = ImguiObjectProxyMetatable::GetRenderable(meta);
@@ -68,7 +65,6 @@ TypeInformation const* GetCppObjectType(lua_State * L, int index)
             return nullptr;
         }
     }
-#endif
 
     case MetatableTag::EnumValue:
     case MetatableTag::BitfieldValue:

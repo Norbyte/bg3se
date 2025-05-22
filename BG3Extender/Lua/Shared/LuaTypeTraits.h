@@ -32,7 +32,6 @@ struct IsArrayLike<TrackedCompactSet<T>> { static constexpr bool Value = true; u
 template <class T>
 struct IsArrayLike<Queue<T>> { static constexpr bool Value = true; using TElement = T; };
 
-#if defined(ENABLE_UI)
 template <class T, unsigned N>
 struct IsArrayLike<Noesis::Vector<T, N>> { static constexpr bool Value = true; using TElement = T; };
 
@@ -44,7 +43,6 @@ struct IsArrayLike<Noesis::BaseObservableCollection> { static constexpr bool Val
 
 template <>
 struct IsArrayLike<Noesis::UIElementCollection> { static constexpr bool Value = true; using TElement = Noesis::BaseComponent*; };
-#endif
 
 template <class T, size_t Size>
 struct IsArrayLike<std::array<T, Size>> { static constexpr bool Value = true; using TElement = T; };

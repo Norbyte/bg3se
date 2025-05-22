@@ -99,7 +99,6 @@ END_NS()
 
 BEGIN_NS(lua)
 
-#if defined(ENABLE_IMGUI)
 struct ImguiHandle
 {
     uint64_t Handle;
@@ -139,7 +138,6 @@ struct ImguiHandle
         return Handle == extui::InvalidHandle;
     }
 };
-#endif
 
 bool ProtectedCallC(lua_State* L, lua_CFunction fun, void* context, void* context2, char const* funcDescription, char const*& error);
 

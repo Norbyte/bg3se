@@ -3,8 +3,6 @@
 #include <Extender/ScriptExtender.h>
 #include <sstream>
 
-#if !defined(OSI_NO_DEBUGGER)
-
 namespace bg3se::osidbg
 {
     DebugMessageHandler::DebugMessageHandler(OsirisDebugInterface& intf)
@@ -613,5 +611,3 @@ namespace bg3se::osidbg
         DEBUG(" <-- BkEvaluateFinished()");
     }
 }
-
-#endif

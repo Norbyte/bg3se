@@ -1,7 +1,5 @@
 #pragma once
 
-#if !defined(OSI_NO_DEBUGGER)
-
 #include <cstdint>
 #include <concurrent_queue.h>
 #include "LuaDebug.pb.h"
@@ -183,5 +181,3 @@ namespace bg3se::lua::dbg
         ContextDebugger client_;
     };
 }
-
-#endif

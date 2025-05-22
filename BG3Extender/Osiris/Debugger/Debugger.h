@@ -1,7 +1,5 @@
 #pragma once
 
-#if !defined(OSI_NO_DEBUGGER)
-
 #include <cstdint>
 #include <concurrent_queue.h>
 #include <GameDefinitions/Osiris.h>
@@ -239,5 +237,3 @@ private:
 };
 
 END_NS()
-
-#endif
