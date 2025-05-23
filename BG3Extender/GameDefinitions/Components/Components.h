@@ -345,18 +345,6 @@ struct ShapeshiftStateComponent : public BaseComponent
     std::optional<ShapeshiftStateInner> field_C;
 };
 
-struct SoundComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(Sound, "ls::SoundComponent")
-
-    EntityHandle Entity;
-    uint64_t SoundObjectId;
-    uint32_t Flags;
-    float field_14;
-    FixedString field_18;
-    int field_1C;
-};
-
 
 END_SE()
 

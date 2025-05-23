@@ -653,6 +653,7 @@ sources = [
     'GameDefinitions/Components/Runtime.h',
     'GameDefinitions/Components/ServerData.h',
     'GameDefinitions/Components/Shapeshift.h',
+    'GameDefinitions/Components/Sound.h',
     'GameDefinitions/Components/Stats.h',
     'GameDefinitions/Components/Status.h',
     'GameDefinitions/Components/Summon.h',

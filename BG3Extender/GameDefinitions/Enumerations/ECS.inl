@@ -24,6 +24,7 @@ BEGIN_ENUM(ExtSystemType, uint32_t)
     E(ServerSummonDespawn)
     E(ServerCapabilities)
     E(ServerTemplateChange)
+    E(SoundRouting)
     E(Max)
 END_ENUM()
 

@@ -50,7 +50,7 @@ struct ScriptFlag
 {
     Guid Uuid;
     STDString Script;
-    uint64_t field_28;
+    uint64_t KeywordConditionList;
 #if 0
     //STDString Name;
     //STDString Description;
