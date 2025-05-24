@@ -74,12 +74,12 @@ struct RollDefinition
 struct BoostParameters
 {
     Guid Owner;
-    uint8_t field_10;
+    uint8_t field_10{ 0 };
 };
 
 struct BoostSource
 {
-    BoostSourceType Type;
+    BoostSourceType Type{ BoostSourceType::Undefined };
     FixedString Cause;
     EntityHandle Entity;
     ComponentHandle Status;

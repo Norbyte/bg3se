@@ -620,12 +620,12 @@ struct RemoveBoostRequest
     Array<BoostDescription> BoostDescriptions;
     BoostSource Source;
     BoostParameters Params;
-    uint8_t field_48;
+    uint8_t field_48{ 0 };
 };
 
 struct EquipmentBoostAddRemoveRequest
 {
-    int Action;
+    int Action{ 0 };
     EntityHandle Boost;
 };
 

@@ -26,7 +26,7 @@ struct Functor
     Array<ExportedConditionalRoll> RollConditions;
     stats::ConditionId StatsConditions;
     PropertyContext PropertyContext{ 0 };
-    uint32_t StoryActionId{ 0 };
+    int32_t StoryActionId{ -1 };
     ObserverType ObserverType{ ObserverType::None };
     FunctorId TypeId{ FunctorId::CustomDescription };
     FunctorFlags Flags{ 0 };
@@ -53,7 +53,7 @@ struct ContextData
     virtual ~ContextData();
 
     [[bg3::readonly]] FunctorContextType Type{ 0 };
-    int32_t StoryActionId{ 0 };
+    int32_t StoryActionId{ -1 };
     PropertyContext PropertyContext{ 0 };
     ActionOriginator Originator;
     [[bg3::hidden]] resource::GuidResourceBankBase* ClassResources{ nullptr };

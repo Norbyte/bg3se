@@ -246,9 +246,9 @@ struct DecisionSystem : public BaseSystem
 
 struct InterruptRequest
 {
-    bool IsRemoval;
+    bool IsRemoval{ false };
     FixedString Interrupt;
-    InterruptRequestSource Source;
+    InterruptRequestSource Source{ InterruptRequestSource::Debug };
     EntityHandle Boost;
     FixedString Spell;
 };

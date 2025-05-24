@@ -523,7 +523,7 @@ DEFINE_ONEFRAME_TAG_COMPONENT(esv::spell, BookChangedOneFrameComponent, SpellBoo
 
 struct SpellUnprepareInfo : public SpellMetaId
 {
-    uint8_t field_20;
+    uint8_t field_20{ 0 };
 };
 
 struct SpellSystem : public BaseSystem
@@ -724,26 +724,25 @@ struct UpdateTargetTrackingOneFrameComponent : public BaseComponent
 struct CastStartRequest
 {
     SpellId Spell;
-    uint32_t CastOptions;
+    uint32_t CastOptions{ 0 };
     EntityHandle Caster;
     Array<bg3se::spell_cast::InitialTarget> Targets;
     ActionOriginator Originator;
     EntityHandle Item;
     EntityHandle field_70;
     std::optional<glm::vec3> CastPosition;
-    int field_88;
+    int field_88{ 0 };
     STDString NetGuid;
-    uint8_t field_A8;
-    __int64 field_B0;
-    __int64 field_B8;
+    uint8_t field_A8{ 1 };
+    Guid RequestGuid;
 };
 
 struct CastCancelRequest
 {
     EntityHandle Caster;
     std::optional<Guid> SpellCastGuid;
-    bool Forced;
-    bool CharacterReassigned;
+    bool Forced{ false };
+    bool CharacterReassigned{ false };
 };
 
 struct CastConfirmRequest
@@ -753,7 +752,7 @@ struct CastConfirmRequest
     [[bg3::hidden]] Array<void*> ProjectileResultsExtraData;
     std::optional<navigation::TargetInfo> TargetInfo;
     std::optional<PathSettings> PathSettings;
-    bool field_AC;
+    bool field_AC{ false };
 };
 
 

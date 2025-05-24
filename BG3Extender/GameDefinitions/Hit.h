@@ -175,7 +175,7 @@ struct HitDesc
     EntityHandle Inflicter;
     EntityHandle InflicterOwner;
     EntityHandle Throwing;
-    int StoryActionId{ 0 };
+    int StoryActionId{ -1 };
     HitWith HitWith{ HitWith::None };
     AbilityId AttackRollAbility{ AbilityId::None };
     AbilityId SaveAbility{ AbilityId::None };

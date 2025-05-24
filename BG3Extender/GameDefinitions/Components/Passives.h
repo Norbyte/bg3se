@@ -16,7 +16,7 @@ struct PassiveComponent : public BaseComponent
 {
     DEFINE_COMPONENT(Passive, "eoc::PassiveComponent")
 
-    [[bg3::legacy(field_0)]] uint8_t Type;
+    [[bg3::legacy(field_0)]] PassiveSourceType Type;
     FixedString PassiveId;
     [[bg3::legacy(field_8)]] EntityHandle Source;
     [[bg3::legacy(field_10)]] EntityHandle Item;
@@ -124,17 +124,16 @@ struct ExecutePassiveRequest
     EntityHandle Passive;
     std::variant<stats::AttackTargetContextData, stats::AttackPositionContextData, stats::MoveContextData, stats::SourceContextData, stats::TargetContextData, stats::NearbyAttackedContextData, stats::NearbyAttackingContextData, stats::EquipContextData> Context;
     Guid RollGuid;
-    uint8_t field_338;
+    uint8_t field_338{ 0 };
 };
 
 struct ChangePassiveRequest
 {
     EntityHandle Entity;
     FixedString Passive;
-    int field_C;
-    EntityHandle PassiveEntity;
-    uint8_t field_18;
-    uint8_t PassiveChange;
+    EntityHandle Source;
+    PassiveSourceType PassiveSourceType{ PassiveSourceType::Debug };
+    uint8_t PassiveChange{ 0 };
 };
 
 struct PassiveSystem : public BaseSystem

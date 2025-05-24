@@ -35,24 +35,24 @@ struct SoundExternalPath
 struct SoundPostEventRequest
 {
     std::variant<EntityHandle, uint64_t> Subject;
-    SoundEventType Type;
-    int field_14;
-    float Seek;
+    SoundEventType Type{ SoundEventType::Sound };
+    int field_14{ 0 };
+    float Seek{ -1.0f };
     std::variant<FixedString, SoundEvent*, STDString> Event;
     std::variant<FixedString, SoundExternalPath> Path;
-    [[bg3::hidden]] void* Callback;
-    uint8_t PlayerIndex;
+    [[bg3::hidden]] void* Callback{ nullptr };
+    uint8_t PlayerIndex{ 0 };
 };
 
 struct SoundSetRTPCRequest
 {
     EntityHandle Entity;
-    SoundEventType Type;
+    SoundEventType Type{ SoundEventType::Sound };
     std::variant<FixedString, STDString> RTPC;
-    float Value;
-    uint8_t PlayerIndex;
-    bool Reset;
-    uint8_t field_36;
+    float Value{ 0.0f };
+    uint8_t PlayerIndex{ 0 };
+    bool Reset{ false };
+    uint8_t field_36{ 0 };
 };
 
 struct SoundSetSwitchRequest
@@ -65,11 +65,11 @@ struct SoundSetSwitchRequest
 struct SoundSeekRequest
 {
     EntityHandle Entity;
-    SoundEventType Type;
+    SoundEventType Type{ SoundEventType::Sound };;
     std::variant<FixedString, SoundEvent*, STDString> Event;
-    float Seek;
-    uint8_t PlayerIndex;
-    int field_38;
+    float Seek{ -1.0f };
+    uint8_t PlayerIndex{ 0 };
+    int field_38{ 0 };
 };
 
 struct SoundRoutingSystem : public BaseSystem

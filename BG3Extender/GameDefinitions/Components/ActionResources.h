@@ -15,13 +15,13 @@ struct ActionResourceSetValueRequest
 struct ActionResourceRefillRequest
 {
     EntityHandle Entity;
-    uint64_t Flags;
+    uint64_t Flags{ 0 };
 };
 
 struct InspirationPointGainedRequest
 {
     EntityHandle Entity;
-    float Amount;
+    float Amount{ .0f };
     TranslatedString field_C;
     TranslatedString field_1C;
     EntityHandle Entity2;
@@ -32,21 +32,21 @@ struct PartyResourceUpdateRequest
     EntityHandle Entity;
     EntityHandle Party;
     Guid Resource;
-    int Level;
-    float Amount;
-    bool AddNewResourceType;
+    int Level{ 0 };
+    float Amount{ .0f };
+    bool AddNewResourceType{ false };
 };
 
 struct ActionResourceQuery
 {
     Guid ResourceId;
-    int BoostAmount;
+    int BoostAmount{ 0 };
 };
 
 struct ActionResourceDiceValue
 {
-    double Amount;
-    double MaxAmount;
+    double Amount{ .0f };
+    double MaxAmount{ .0f };
 };
 
 struct ActionResourceEntry

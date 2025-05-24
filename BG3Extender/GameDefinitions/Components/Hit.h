@@ -139,14 +139,14 @@ struct HitRequest
     EntityHandle Target;
     EntityHandle TargetProxy;
     HitDesc Desc;
-    HitWith HitWith;
-    int StoryActionId;
+    HitWith HitWith{ HitWith::None };
+    int StoryActionId{ -1 };
     ActionOriginator Originator;
-    AbilityId Ability;
+    AbilityId Ability{ AbilityId::None };
     EntityHandle Weapon;
-    bool FromFunctor;
-    bool field_1F9;
-    uint8_t field_1FA;
+    bool FromFunctor{ false };
+    bool field_1F9{ false };
+    uint8_t field_1FA{ 0 };
 };
 
 struct ReactionRequest

@@ -187,7 +187,7 @@ struct DispelRollCheckOneFrameComponent : public BaseComponent
 struct RefreshCause
 {
     Guid field_0;
-    uint32_t StoryActionId;
+    int32_t StoryActionId;
     uint32_t field_14;
 };
 
