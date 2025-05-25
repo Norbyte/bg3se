@@ -348,7 +348,7 @@ struct StateComponent : public BaseComponent
     EntityHandle Entity;
     EntityHandle Caster;
     SpellId SpellId;
-    [[bg3::legacy(field_38)]] uint32_t Flags;
+    [[bg3::legacy(field_38)]] SpellCastOptions Flags;
     Array<InitialTarget> Targets;
     std::optional<glm::vec3> CasterMoveToPosition;
     [[bg3::legacy(field_60)]] std::optional<glm::vec3> CasterTargetPosition;
@@ -356,7 +356,7 @@ struct StateComponent : public BaseComponent
     [[bg3::legacy(field_80)]] EntityHandle Source;
     [[bg3::legacy(field_88)]] uint32_t Random;
     Guid SpellCastGuid;
-    STDString field_A0;
+    [[bg3::legacy(field_A0)]] STDString NetGuid;
 };
 
 struct SyncTargetingComponent : public BaseComponent
@@ -724,7 +724,7 @@ struct UpdateTargetTrackingOneFrameComponent : public BaseComponent
 struct CastStartRequest
 {
     SpellId Spell;
-    uint32_t CastOptions{ 0 };
+    SpellCastOptions CastOptions{ 0 };
     EntityHandle Caster;
     Array<bg3se::spell_cast::InitialTarget> Targets;
     ActionOriginator Originator;
