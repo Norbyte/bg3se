@@ -347,12 +347,14 @@ struct ComponentRegistry : public ProtectedGameObject<ComponentRegistry>
 
 struct SystemTypeEntry : public ProtectedGameObject<SystemTypeEntry>
 {
-    void* System;
+    using UpdateProcType = void (BaseSystem*, EntityWorld&, GameTime const&);
+
+    BaseSystem* System;
     SystemTypeIndex SystemIndex0;
     SystemTypeIndex SystemIndex1;
     __int16 field_10;
     bool Activated;
-    void* UpdateProc;
+    UpdateProcType* UpdateProc;
     void* SomeProc2;
     void* SomeProc3;
     void* ECBFlushJob;

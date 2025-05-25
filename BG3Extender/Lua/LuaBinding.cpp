@@ -6,6 +6,7 @@
 #include <fstream>
 #include <lstate.h>
 #include <Lua/Shared/EntityComponentEvents.inl>
+#include <Lua/Shared/SystemEvents.inl>
 #include <Lua/Shared/EntityEventHelpers.inl>
 
 // Callback from the Lua runtime when a handled (i.e. pcall/xpcall'd) error was thrown.
@@ -406,6 +407,7 @@ State::State(ExtensionStateBase& state, uint32_t generationId, bool isServer)
     variableManager_(isServer ? gExtender->GetServer().GetExtensionState().GetUserVariables() : gExtender->GetClient().GetExtensionState().GetUserVariables(), isServer),
     modVariableManager_(isServer ? gExtender->GetServer().GetExtensionState().GetModVariables() : gExtender->GetClient().GetExtensionState().GetModVariables(), isServer),
     entityHooks_(*this),
+    systemHooks_(*this),
     timers_(*this, isServer),
     pathfinding_(*state_.GetLevelManager())
 {
@@ -420,6 +422,7 @@ State::~State()
 void State::Initialize()
 {
     entityHooks_.BindECS();
+    systemHooks_.BindECS();
 }
 
 void State::Shutdown()

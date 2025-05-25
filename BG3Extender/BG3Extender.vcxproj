@@ -312,6 +312,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <ClInclude Include="Lua\Shared\Proxies\LuaUserVariableHolder.h" />
     <ClInclude Include="Lua\Shared\Proxies\PropertyMapDependencies.h" />
     <ClInclude Include="Lua\Shared\RawComponentRef.h" />
+    <ClInclude Include="Lua\Shared\SystemEvents.h" />
     <ClInclude Include="Osiris\Debugger\Debugger.h" />
     <ClInclude Include="Osiris\Debugger\DebugInterface.h" />
     <ClInclude Include="Osiris\Debugger\DebugMessages.h" />
@@ -540,6 +541,7 @@ $(SolutionDir)x64\Release\ResourceBundler.exe "$(ProjectDir)LuaScripts" "$(Proje
     <None Include="Lua\Shared\Proxies\LuaSystemMap.inl" />
     <None Include="Lua\Shared\Proxies\LuaUserVariableHolder.inl" />
     <None Include="Lua\Shared\Proxies\PolymorphicPush.inl" />
+    <None Include="Lua\Shared\SystemEvents.inl" />
     <None Include="Misc\ExtIdeHelpers.lua" />
     <None Include="Osiris\Debugger\osidebug.proto" />
   </ItemGroup>
