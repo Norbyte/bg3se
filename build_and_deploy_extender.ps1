@@ -15,12 +15,12 @@ if ($LASTEXITCODE -ne 0) { Write-Error "generate-proto.bat FAILED!"; exit 1 }
 Write-Host "generate-proto.bat successful." -ForegroundColor Green
 
 Write-Host "Building SymbolTableGenerator.vcxproj..." -ForegroundColor Cyan
-& "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" "${WorkspaceFolder}\SymbolTableGenerator\SymbolTableGenerator.vcxproj" "/p:Configuration=Release" "/p:Platform=x64" /t:Build /m /nologo /verbosity:quiet /consoleloggerparameters:summary
+& "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe" "${WorkspaceFolder}\SymbolTableGenerator\SymbolTableGenerator.vcxproj" "/p:Configuration=Release" "/p:Platform=x64" /t:Build /m /nologo /verbosity:quiet /consoleloggerparameters:summary
 if ($LASTEXITCODE -ne 0) { Write-Error "MSBuild SymbolTableGenerator.vcxproj FAILED!"; exit 1 }
 Write-Host "SymbolTableGenerator.vcxproj build successful." -ForegroundColor Green
 
 Write-Host "Building BG3Tools.sln..." -ForegroundColor Cyan
-& "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" "${WorkspaceFolder}\BG3Tools.sln" "/p:Configuration=Release" /t:Build /m /nologo /verbosity:quiet /consoleloggerparameters:summary
+& "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe" "${WorkspaceFolder}\BG3Tools.sln" "/p:Configuration=Release" /t:Build /m /nologo /verbosity:quiet /consoleloggerparameters:summary
 if ($LASTEXITCODE -ne 0) { Write-Error "MSBuild BG3Tools.sln FAILED!"; exit 1 }
 Write-Host "BG3Tools.sln build successful." -ForegroundColor Green
 
