@@ -679,6 +679,7 @@ private:
 
     void presentPreHook(VkPresentInfoKHR* pPresentInfo)
     {
+        IMGUI_FRAME_DEBUG("presentPreHook log");
         auto& vp = viewports_[drawViewport_].Viewport;
         if (!vp.DrawDataP.Valid) return;
     
