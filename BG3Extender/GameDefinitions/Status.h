@@ -258,7 +258,7 @@ struct StatusReaction : public Status
     glm::vec3 TargetPosition;
     ComponentHandle PartnerStatus;
     SpellId Spell;
-    bool field_1D8;
+    uint8_t UpdatesSinceSpellCastRequest;
     bool IgnoreHasSpell;
     bool IgnoreChecks;
     bool FromInterrupt;
