@@ -136,7 +136,7 @@ public:
             initializationFailed_ = false;
         }
 
-        if (!initializationFailed_ && !ImGui_ImplDX11_RenderObjectsInitialized()) {
+        if (!initializationFailed_) {
             IMGUI_DEBUG("Re-initializing DX11 render objects");
             initializationFailed_ = !ImGui_ImplDX11_CreateDeviceObjects();
             if (initializationFailed_) {

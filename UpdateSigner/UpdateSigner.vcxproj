@@ -116,7 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;_ITERATOR_DEBUG_LEVEL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\BG3Updater;$(SolutionDir)\External\jsoncpp-master\include;$(SolutionDir)\External\tinycrypt\lib\include;$(SolutionDir)\BG3Extender;$(SolutionDir)\External\glm</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)External\imgui;$(SolutionDir)External\NoesisGUI-NativeSDK-win-3.1.7-Indie\Include;$(SolutionDir)External\SDL2\include;$(SolutionDir);$(SolutionDir)\BG3Updater;$(SolutionDir)\External\jsoncpp-master\include;$(SolutionDir)\External\tinycrypt\lib\include;$(SolutionDir)\BG3Extender;$(SolutionDir)\External\glm</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
@@ -134,7 +134,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\BG3Updater;$(SolutionDir)\External\jsoncpp-master\include;$(SolutionDir)\External\tinycrypt\lib\include;$(SolutionDir)\BG3Extender;$(SolutionDir)\External\glm</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)External\imgui;$(SolutionDir)External\NoesisGUI-NativeSDK-win-3.1.7-Indie\Include;$(SolutionDir)External\SDL2\include;$(SolutionDir);$(SolutionDir)\BG3Updater;$(SolutionDir)\External\jsoncpp-master\include;$(SolutionDir)\External\tinycrypt\lib\include;$(SolutionDir)\BG3Extender;$(SolutionDir)\External\glm</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
