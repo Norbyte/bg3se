@@ -256,8 +256,8 @@ struct DelayedTargetHitInterruptEvent
 
 struct PausedAnimationEvent
 {
-    FixedString field_0;
-    int field_4;
+    FixedString TextKey;
+    bool PauseFinishedAnimations;
 };
 
 struct PrecalculatedInterruptEvent : public InterruptEvent
@@ -282,7 +282,7 @@ struct InterruptUsageEntry
 
 struct ExecutedDependency
 {
-    // UNKNOWN
+    uint32_t field_0;
 };
 
 struct InterruptUsage
@@ -291,21 +291,25 @@ struct InterruptUsage
     HashMap<EntityHandle, HashMap<InterruptEvent, InterruptUsageEntry>> Usage;
 };
 
-struct AnimationInterruptData
+struct PrecalculatedAnimationInterruptData
 {
     Array<InterruptEvent> Events;
     Array<PrecalculatedInterruptEvent> PrecalculatedInterrupts;
-    __int64 field_20;
+    uint8_t field_20;
     HashMap<Guid, ResolvedData> Resolved;
     HashMap<EntityHandle, HashMap<InterruptEvent, InterruptUsageEntry>> Usage;
-    [[bg3::hidden]] HashMap<Guid, ExecutedDependency> ExecutedDependencies;
-    HashMap<InterruptEvent, HashMap<EntityHandle, EntityHandle>> field_E8;
+    HashMap<Guid, ExecutedDependency> ExecutedDependencies;
+};
+
+struct AnimationInterruptData : public PrecalculatedAnimationInterruptData
+{
+    HashMap<InterruptEvent, HashMap<EntityHandle, HashSet<EntityHandle>>> Interruptors;
     int32_t field_128;
     float field_12C;
     HashMap<Guid, RollAdjustments> RollAdjustments;
     HashMap<DamageFunctorKey, DamageRollAdjustments> DamageRollAdjustments;
     HashMap<EntityHandle, InterruptUsage> InterruptUsage;
-    [[bg3::hidden]] HashMap<Guid, ExecutedDependency> ExecutedDependencies2;
+    HashMap<Guid, ExecutedDependency> ExecutedDependencies2;
 };
 
 END_NS()

@@ -225,16 +225,16 @@ struct AnimationInfoComponent : public BaseComponent
 {
     DEFINE_COMPONENT(SpellCastAnimationInfo, "eoc::spell_cast::AnimationInfoComponent")
 
-    [[bg3::legacy(field_0)]] uint8_t Event;
-    std::optional<glm::vec3> TargetPosition;
-    glm::vec3 TargetRotation;
+    [[bg3::legacy(field_0)]] SpellAnimationCastEvent Event;
+    std::optional<glm::vec3> TargetHitPosition;
+    glm::vec3 TargetPosition;
     EntityHandle Target;
     uint8_t field_28;
-    uint8_t field_29;
-    [[bg3::legacy(field_2A)]] uint8_t LoopingCastAnimation;
-    uint8_t field_2B;
-    [[bg3::legacy(field_2C)]] uint8_t DualWielding;
-    [[bg3::legacy(field_2D)]] uint8_t HasWeapon;
+    bool TargetIsCaster;
+    [[bg3::legacy(field_2A)]] bool LoopingCastAnimation;
+    uint8_t field_2B; // CacheFlag256
+    [[bg3::legacy(field_2C)]] bool DualWielding;
+    [[bg3::legacy(field_2D)]] bool HasWeapon;
     [[bg3::legacy(field_2E)]] uint8_t ObjectSize;
 };
 
@@ -242,15 +242,8 @@ struct CacheComponent : public BaseComponent
 {
     DEFINE_COMPONENT(SpellCastCache, "eoc::spell_cast::CacheComponent")
 
-    uint8_t field_0;
-    uint32_t field_4;
-};
-
-struct CanBeTargetedComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(SpellCastCanBeTargeted, "eoc::spell_cast::CanBeTargetedComponent")
-
-    uint8_t Dummy;
+    AbilityId SpellCastingAbility;
+    uint32_t Flags;
 };
 
 struct IsCastingComponent : public BaseComponent
@@ -264,7 +257,7 @@ struct InterruptResultsComponent : public BaseComponent
 {
     DEFINE_COMPONENT(SpellCastInterruptResults, "eoc::spell_cast::InterruptResultsComponent")
     
-    char field_0;
+    bool HasReplacement;
     HashSet<EntityHandle> Results;
 };
 
@@ -272,7 +265,7 @@ struct MovementComponent : public BaseComponent
 {
     DEFINE_COMPONENT(SpellCastMovement, "eoc::spell_cast::MovementComponent")
 
-    glm::vec3 field_0;
+    glm::vec3 Position;
     std::optional<glm::vec3> field_C;
     // FixedString TextKey;
 };
@@ -292,7 +285,7 @@ struct SpellRollTargetInfo
 struct SpellRollData
 {
     EntityHandle Target;
-    std::optional<EntityHandle> field_8;
+    std::optional<EntityHandle> TargetProxy;
     [[bg3::legacy(Hits)]] Array<SpellRollCastEventData> Casts;
     HashMap<FixedString, int32_t> NameToCastIndex;
     int NextReaction;
@@ -320,7 +313,7 @@ struct BaseTarget
     std::optional<glm::vec3> DoGetPosition(EntityHandle entity, ecs::EntityWorld* world, SpellType type) const;
 
     EntityHandle Target;
-    std::optional<EntityHandle> TargetOverride;
+    [[bg3::legacy(TargetOverride)]] std::optional<EntityHandle> TargetProxy;
     std::optional<glm::vec3> Position;
 };
 
@@ -341,6 +334,7 @@ struct IntermediateTarget : public BaseTarget
     uint8_t field_A0;
 };
 
+
 struct StateComponent : public BaseComponent
 {
     DEFINE_COMPONENT(SpellCastState, "eoc::spell_cast::StateComponent")
@@ -348,10 +342,10 @@ struct StateComponent : public BaseComponent
     EntityHandle Entity;
     EntityHandle Caster;
     SpellId SpellId;
-    [[bg3::legacy(field_38)]] SpellCastOptions Flags;
+    [[bg3::legacy(field_38), bg3::legacy(Flags)]] SpellCastOptions CastOptions;
     Array<InitialTarget> Targets;
-    std::optional<glm::vec3> CasterMoveToPosition;
-    [[bg3::legacy(field_60)]] std::optional<glm::vec3> CasterTargetPosition;
+    [[bg3::legacy(CasterMoveToPosition)]] std::optional<glm::vec3> CastPosition;
+    [[bg3::legacy(field_60)]] std::optional<glm::vec3> CastEndPosition;
     glm::vec3 CasterStartPosition;
     [[bg3::legacy(field_80)]] EntityHandle Source;
     [[bg3::legacy(field_88)]] uint32_t Random;
@@ -363,12 +357,9 @@ struct SyncTargetingComponent : public BaseComponent
 {
     DEFINE_COMPONENT(SpellSyncTargeting, "eoc::spell_cast::SyncTargetingComponent")
 
-    [[bg3::hidden]] void* VMT;
-    EntityHandle field_8;
-    std::optional<EntityHandle> field_10;
-    std::optional<glm::vec3> field_20;
+    BaseTarget Target;
     Array<InitialTarget> Targets;
-    [[bg3::legacy(field_40)]] uint8_t CanMoveToThrowTarget;
+    [[bg3::legacy(field_40)]] bool CanMoveToThrowTarget;
     int field_44;
     std::optional<glm::vec3> field_48;
     [[bg3::legacy(field_58)]] std::optional<glm::vec3> HoverPosition;
@@ -377,6 +368,28 @@ struct SyncTargetingComponent : public BaseComponent
     std::optional<glm::vec3> field_88;
 };
 
+struct OutcomeComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(SpellCastOutcome, "eoc::spell_cast::OutcomeComponent")
+
+    SpellCastFailReason Result;
+};
+
+struct ExecutionTimeComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(SpellCastExecutionTime, "eoc::spell_cast::ExecutionTimeComponent")
+
+    std::optional<float> Time;
+};
+
+struct CastEventOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(SpellCastEvent, "eoc::spell_cast::CastEventOneFrameComponent")
+
+    HitDesc Hit;
+    EntityHandle Target;
+    std::optional<EntityHandle> TargetProxy;
+};
 
 struct CastTextKeyEventOneFrameComponent : public BaseComponent
 {
@@ -406,9 +419,8 @@ struct SpellRollAbortEventOneFrameComponent : public BaseComponent
     DEFINE_ONEFRAME_COMPONENT(SpellCastSpellRollAbortEvent, "eoc::spell_cast::SpellRollAbortEventOneFrameComponent")
 
     HitDesc Hit;
-    EntityHandle field_1B0;
-    __int64 field_1B8;
-    uint8_t field_1C0;
+    EntityHandle Target;
+    std::optional<EntityHandle> TargetProxy;
 };
 
 struct TargetHitEventOneFrameComponent : public BaseComponent
@@ -417,11 +429,10 @@ struct TargetHitEventOneFrameComponent : public BaseComponent
 
     HitDesc Hit;
     AttackDesc Attack;
-    EntityHandle field_1D0;
-    __int64 field_1D8;
-    uint8_t field_1E0;
-    EntityHandle field_1E8;
-    glm::vec3 field_1F0;
+    EntityHandle Target;
+    std::optional<EntityHandle> TargetProxy;
+    EntityHandle SpellCast;
+    glm::vec3 TargetPosition;
 };
 
 struct TargetHitInterruptEventOneFrameComponent : public BaseComponent
@@ -442,8 +453,8 @@ struct TargetReactionEventOneFrameComponent : public BaseComponent
     DEFINE_ONEFRAME_COMPONENT(SpellCastTargetReactionEvent, "eoc::spell_cast::TargetReactionEventOneFrameComponent")
 
     HitDesc Hit;
-    EntityHandle field_1B0;
-    std::optional<glm::vec3> field_1B8;
+    EntityHandle Target;
+    std::optional<EntityHandle> TargetProxy;
     EntityHandle CastEntity;
 };
 
@@ -458,12 +469,12 @@ struct AnimationRequestOneFrameComponent : public BaseComponent
 {
     DEFINE_ONEFRAME_COMPONENT(SpellCastAnimationRequest, "eoc::spell_cast::AnimationRequestOneFrameComponent")
 
-    uint8_t Event;
+    SpellAnimationCastEvent Event;
     std::optional<glm::vec3> TargetHitPosition;
-    glm::vec3 field_14;
+    glm::vec3 TargetPosition;
     EntityHandle Target;
     uint8_t field_28;
-    uint8_t field_29;
+    bool TargetIsCaster;
     bool LoopingCastAnimation;
     bool CacheFlag256;
     bool DualWielding;
@@ -471,12 +482,22 @@ struct AnimationRequestOneFrameComponent : public BaseComponent
     uint8_t ObjectSize;
 };
 
+struct FinishedEventOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(SpellCastFinishedEvent, "eoc::spell_cast::FinishedEventOneFrameComponent")
+
+    SpellCastFailReason Result;
+    uint8_t field_1;
+};
+
+DEFINE_TAG_COMPONENT(eoc::spell_cast, CanBeTargetedComponent, SpellCastCanBeTargeted)
+DEFINE_ONEFRAME_TAG_COMPONENT(eoc::spell_cast, PrepareStartEventOneFrameComponent, SpellCastPrepareStartEvent)
+DEFINE_ONEFRAME_TAG_COMPONENT(eoc::spell_cast, PrepareEndEventOneFrameComponent, SpellCastPrepareEndEvent)
+DEFINE_ONEFRAME_TAG_COMPONENT(eoc::spell_cast, LogicExecutionStartEventOneFrameComponent, SpellCastLogicExecutionStartEvent)
+DEFINE_ONEFRAME_TAG_COMPONENT(eoc::spell_cast, LogicExecutionEndEventOneFrameComponent, SpellCastLogicExecutionEndEvent)
+DEFINE_ONEFRAME_TAG_COMPONENT(eoc::spell_cast, PreviewEndEventOneFrameComponent, SpellCastPreviewEndEvent)
 DEFINE_ONEFRAME_TAG_COMPONENT(eoc::spell_cast, CounteredEventOneFrameComponent, SpellCastCounteredEvent)
 DEFINE_ONEFRAME_TAG_COMPONENT(eoc::spell_cast, JumpStartEventOneFrameComponent, SpellCastJumpStartEvent)
-DEFINE_ONEFRAME_TAG_COMPONENT(eoc::spell_cast, LogicExecutionEndEventOneFrameComponent, SpellCastLogicExecutionEndEvent)
-DEFINE_ONEFRAME_TAG_COMPONENT(eoc::spell_cast, PrepareEndEventOneFrameComponent, SpellCastPrepareEndEvent)
-DEFINE_ONEFRAME_TAG_COMPONENT(eoc::spell_cast, PrepareStartEventOneFrameComponent, SpellCastPrepareStartEvent)
-DEFINE_ONEFRAME_TAG_COMPONENT(eoc::spell_cast, PreviewEndEventOneFrameComponent, SpellCastPreviewEndEvent)
 DEFINE_ONEFRAME_TAG_COMPONENT(eoc::spell_cast, ThrowPickupPositionChangedEventOneFrameComponent, SpellCastThrowPickupPositionChangedEvent)
 
 
@@ -608,119 +629,6 @@ END_NS()
 
 BEGIN_NS(esv::spell_cast)
 
-struct CastHitDelayInfo
-{
-    int HitNumber;
-    int field_4;
-    int field_8;
-    int field_C;
-    float field_10;
-    FixedString TextKey;
-    int field_18;
-};
-
-struct CastHitDelayComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(ServerSpellCastHitDelay, "esv::spell_cast::CastHitDelayComponent")
-
-    Array<CastHitDelayInfo> CastHitDelays;
-    float CastTargetHitDelay;
-    float CastTargetHitDelay2;
-};
-
-struct CastResponsibleComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(ServerSpellCastResponsible, "esv::spell_cast::CastResponsibleComponent")
-
-    EntityHandle Entity;
-};
-
-DEFINE_TAG_COMPONENT(esv::spell_cast, ClientInitiatedComponent, ServerSpellClientInitiated)
-
-struct ExternalsComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(ServerSpellExternals, "esv::spell_cast::ExternalsComponent")
-
-    Array<Guid> Externals;
-};
-
-struct HitRegister
-{
-    EntityHandle field_0;
-    uint64_t field_8;
-};
-
-struct HitRegisterComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(ServerSpellHitRegister, "esv::spell_cast::HitRegisterComponent")
-
-    Array<HitRegister> Hits;
-};
-
-struct StateComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(ServerSpellCastState, "esv::spell_cast::StateComponent")
-
-    uint8_t Status;
-    int field_4;
-    ActionOriginator Originator;
-    int StoryActionId;
-};
-
-struct CacheComponent : public BaseComponent
-{
-    DEFINE_COMPONENT(ServerSpellCastCache, "esv::spell_cast::CacheComponent")
-
-    CacheComponent(const CacheComponent&) = delete;
-    CacheComponent& operator = (const CacheComponent&) = delete;
-
-    Array<stats::ActionResourceCost> Costs;
-    HashMap<int, bool> field_10;
-    uint32_t field_50;
-    int32_t field_54;
-    HashMap<FixedString, HashMap<int, Array<bg3se::spell_cast::IntermediateTarget>>> Targets;
-    HashMap<FixedString, int> field_98;
-    uint32_t field_D8;
-    int32_t field_DC;
-    [[bg3::hidden]] void* field_E0;
-    uint8_t field_E8;
-    uint16_t field_EC;
-    uint16_t field_EE;
-};
-
-struct MoveDuringCastUpdateEventOneFrameComponent : public BaseComponent
-{
-    DEFINE_ONEFRAME_COMPONENT(SpellCastMoveDuringCastUpdateEvent, "esv::spell_cast::MoveDuringCastUpdateEventOneFrameComponent")
-
-    glm::vec3 field_0;
-    glm::vec3 field_C;
-    glm::vec3 SurfaceTrail;
-};
-
-struct MovementAndPrecalculationEndEventOneFrameComponent : public BaseComponent
-{
-    DEFINE_ONEFRAME_COMPONENT(SpellCastMovementAndPrecalculationEndEvent, "esv::spell_cast::MovementAndPrecalculationEndEventOneFrameComponent")
-
-    uint8_t field_0;
-    int field_4;
-};
-
-struct RequestTargetTrackingOneFrameComponent : public BaseComponent
-{
-    DEFINE_ONEFRAME_COMPONENT(SpellCastRequestTargetTracking, "esv::spell_cast::RequestTargetTrackingOneFrameComponent")
-
-    Guid field_0;
-    HashSet<EntityHandle> Targets;
-};
-
-struct UpdateTargetTrackingOneFrameComponent : public BaseComponent
-{
-    DEFINE_ONEFRAME_COMPONENT(SpellCastUpdateTargetTracking, "esv::spell_cast::UpdateTargetTrackingOneFrameComponent")
-
-    Guid field_0;
-    HashSet<EntityHandle> Targets;
-};
-
 struct CastStartRequest
 {
     SpellId Spell;
@@ -731,7 +639,7 @@ struct CastStartRequest
     EntityHandle Item;
     EntityHandle field_70;
     std::optional<glm::vec3> CastPosition;
-    int field_88{ 0 };
+    int StoryActionId{ 0 };
     STDString NetGuid;
     uint8_t field_A8{ 1 };
     Guid RequestGuid;
@@ -753,6 +661,211 @@ struct CastConfirmRequest
     std::optional<navigation::TargetInfo> TargetInfo;
     std::optional<PathSettings> PathSettings;
     bool field_AC{ false };
+};
+
+struct PreviewSetRequest
+{
+    EntityHandle Entity;
+    Guid SpellCastGuid;
+    uint8_t field_18;
+    std::optional<std::variant<std::optional<navigation::TargetInfo>, std::optional<PathSettings>, uint8_t /* SpellTargetingState */, std::optional<glm::vec3>, bg3se::spell_cast::BaseTarget, bool, int>> Param;
+};
+
+struct CastHitDelayInfo
+{
+    int InitialIndex;
+    int NextIndex;
+    int IntermediateIndex;
+    std::optional<int> OverallIndex;
+    FixedString TextKey;
+    int TextKeyIndex;
+};
+
+struct CastHitDelayComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ServerSpellCastHitDelay, "esv::spell_cast::CastHitDelayComponent")
+
+    Array<CastHitDelayInfo> Delays;
+    float HitDelay;
+    float HitDelayRemaining;
+};
+
+struct CastRequestsComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ServerSpellCastRequests, "esv::spell_cast::CastRequestsComponent")
+
+    Array<CastStartRequest> StartRequests;
+    Array<CastConfirmRequest> ConfirmRequests;
+    Array<CastCancelRequest> CancelRequests;
+    Array<PreviewSetRequest> PreviewSetRequests;
+};
+
+struct PendingRequestsComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ServerSpellCastPendingRequests, "esv::spell_cast::PendingRequestsComponent")
+
+    Array<CastConfirmRequest> ConfirmRequests;
+    Array<CastCancelRequest> CancelRequests;
+    Array<PreviewSetRequest> PreviewSetRequests;
+};
+
+
+struct CastResponsibleComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ServerSpellCastResponsible, "esv::spell_cast::CastResponsibleComponent")
+
+    EntityHandle Entity;
+};
+
+DEFINE_TAG_COMPONENT(esv::spell_cast, ClientInitiatedComponent, ServerSpellClientInitiated)
+
+struct ExternalDependency
+{
+    __int64 field_0;
+    int field_8;
+    char field_C;
+};
+
+struct ExternalsComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ServerSpellExternals, "esv::spell_cast::ExternalsComponent")
+
+    Array<ExternalDependency> Externals;
+};
+
+struct HitRegister
+{
+    EntityHandle Target;
+    uint64_t ContextType;
+};
+
+struct HitRegisterComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ServerSpellHitRegister, "esv::spell_cast::HitRegisterComponent")
+
+    Array<HitRegister> Hits;
+};
+
+struct MovementComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ServerSpellCastMovement, "esv::spell_cast::MovementComponent")
+
+    std::optional<glm::vec3> field_0;
+    bool IsMoving;
+    float Duration;
+    float Progress;
+    FixedString TextKey;
+};
+
+struct MovementInfoComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ServerSpellCastMovementInfo, "esv::spell_cast::MovementInfoComponent")
+
+    std::optional<navigation::TargetInfo> Settings;
+    std::optional<PathSettings> PathSettings;
+};
+
+struct StateComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ServerSpellCastState, "esv::spell_cast::StateComponent")
+
+    SpellCastPhase Phase;
+    int field_4;
+    ActionOriginator Originator;
+    int StoryActionId;
+};
+
+struct ZoneRangeComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ServerSpellCastZoneRange, "esv::spell_cast::ZoneRangeComponent")
+
+    int field_0;
+    int field_4;
+    int field_8;
+    int field_C;
+};
+
+struct CacheComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ServerSpellCastCache, "esv::spell_cast::CacheComponent")
+
+    Array<stats::ActionResourceCost> Costs;
+    HashMap<int, bool> TextKeyIndices;
+    uint32_t TextKeyIndex;
+    int32_t field_54;
+    HashMap<FixedString, HashMap<int, Array<bg3se::spell_cast::IntermediateTarget>>> IntermediateTargets;
+    HashMap<FixedString, int> TargetCounts;
+    uint32_t MovementTransactionId;
+    int32_t field_DC;
+    std::optional<glm::vec3> field_E0;
+    bool HasPathfindTemplate;
+    bool PhaseFinished;
+};
+
+struct PathfindTrajectory
+{
+    [[bg3::hidden]] Array<void*> Path; // navcloud::NodePath
+};
+
+struct ProjectilePathfindCacheComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ServerSpellCastProjectilePathfindCache, "esv::spell_cast::ProjectilePathfindCacheComponent")
+
+    Array<EntityHandle> Targets;
+    [[bg3::hidden]] Array<PathfindTrajectory> Trajectories;
+};
+
+struct UnsheathFallbackTimerComponent : public BaseComponent
+{
+    DEFINE_COMPONENT(ServerSpellCastUnsheathFallbackTimer, "esv::spell_cast::UnsheathFallbackTimerComponent")
+
+    std::optional<float> Time;
+};
+
+struct SurfaceTrail
+{
+    SurfaceType SurfaceType;
+    float Radius;
+};
+
+struct MoveDuringCastUpdateEventOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(SpellCastMoveDuringCastUpdateEvent, "esv::spell_cast::MoveDuringCastUpdateEventOneFrameComponent")
+
+    glm::vec3 Position;
+    glm::vec3 AdjustedPosition;
+    std::optional<SurfaceTrail> SurfaceTrail;
+};
+
+struct MovementAndPrecalculationEndEventOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(SpellCastMovementAndPrecalculationEndEvent, "esv::spell_cast::MovementAndPrecalculationEndEventOneFrameComponent")
+
+    bool PhaseFinished;
+    int field_4;
+};
+
+struct RequestTargetTrackingOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(SpellCastRequestTargetTracking, "esv::spell_cast::RequestTargetTrackingOneFrameComponent")
+
+    Guid field_0;
+    HashSet<EntityHandle> Targets;
+};
+
+struct UpdateTargetTrackingOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(SpellCastUpdateTargetTracking, "esv::spell_cast::UpdateTargetTrackingOneFrameComponent")
+
+    Guid TargetHistoryUUID;
+    HashSet<EntityHandle> Targets;
+};
+
+struct WeaponSetChangeRequestOneFrameComponent : public BaseComponent
+{
+    DEFINE_ONEFRAME_COMPONENT(SpellCastWeaponSetChangeRequest, "esv::spell_cast::WeaponSetChangeRequestOneFrameComponent")
+
+    bool IsRanged;
 };
 
 
@@ -779,7 +892,7 @@ struct CastRequestSystem : public BaseSystem
     Array<CastCancelRequest> ReactionCancelRequests;
     Array<CastCancelRequest> CharacterCancelRequests;
     Array<CastCancelRequest> TeleportCancelRequests;
-    [[bg3::hidden]] Array<void*> NetworkPreviewUpdateRequests_PreviewSetRequest;
+    Array<PreviewSetRequest> NetworkPreviewUpdateRequests;
     Array<CastConfirmRequest> ConfirmRequests;
 };
 

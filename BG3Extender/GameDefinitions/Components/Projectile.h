@@ -127,8 +127,8 @@ struct SpellComponent : public BaseComponent
 
     EntityHandle Spell;
     bg3se::spell_cast::IntermediateTarget Target;
-    int field_B0;
-    uint8_t field_B4;
+    int Index;
+    bool ConsumeStack;
 };
 
 struct InitializationData
@@ -290,10 +290,8 @@ struct ProjectileTargetData
     FixedString TextKey;
     int field_BC;
     HitDesc Hit;
-    path::Settings PathSettings;
-    char PathSettingsOpt;
-    projectile::ProjectileResult Result;
-    char ResultOpt;
+    std::optional<path::Settings> PathSettings;
+    std::optional<projectile::ProjectileResult> Result;
     EntityHandle ThrownObject;
 };
 
@@ -314,7 +312,7 @@ struct ProjectileCacheComponent : public BaseComponent
     DEFINE_COMPONENT(ServerProjectileCache, "esv::spell_cast::ProjectileCacheComponent")
 
     std::optional<bg3se::spell_cast::ProjectileTargetData> Target;
-    HashMap<int, float> field_350;
+    HashMap<int, float> ProjectileDelayTimers;
     [[bg3::hidden]] HashMap<int, void*> field_390; // ObjectQueue<ProjectileTargetData>
     Array<ProjectileResultsExtraData> ExtraData;
 };
