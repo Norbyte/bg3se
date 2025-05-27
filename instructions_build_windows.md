@@ -1,7 +1,13 @@
+ON EVERY GIT CLONE:
+
 .\nuget.exe restore BG3Tools.sln
 
-get new imgui version and rename to imgui, delete old
+download External
+
+get new imgui version and rename to imgui,
 copy/paste SDL2-2.30.1 to SDL2 and keep old too
+
+MY TRACK RECORD:
 
 remove line dx11 in DX11.inl =         //if (!initializationFailed_ && !ImGui_ImplDX11_RenderObjectsInitialized()) { DX11 PROB DOESNT WORK ANYMORE WITHOUT IT?
 
@@ -15,7 +21,7 @@ run in admin powershell: regsvr32 "C:\Program Files\Microsoft Visual Studio\2022
 
 IF NOT DONE ALREADY: remove PostBuild in BG3Extender.vcxproj and BG3Updater.vcxproj and fix UpdateSigner.vcxproj/BG3Extender.vcxproj/BG3Updater.vcxproj/UpdateSigner.vcxproj with correct AdditionalIncludeDirectories
 
-create Generated folder in correct place...
+create Generated folder in correct place if needed...
 
 remove pause in .bat
 
